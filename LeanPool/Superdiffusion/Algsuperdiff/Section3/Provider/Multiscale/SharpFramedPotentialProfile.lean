@@ -44,7 +44,7 @@ variable {d : ℕ}
 
 /-- At a fixed strict descendant, the translated framed sharp envelope follows from
 the profile gates. -/
-theorem ofReal_cutoffBBlockFamily_descendant_le_sharpFramedMeanEnvelope_ae_of_profileAuxiliaryMaxGate
+theorem descendant_cutoffBlock_le_meanEnvelope_ae_of_profileGate
     (M : ABKModel d) {m : ℤ} {k : ℕ} {R : TriadicCube d}
     (hR : R ∈ descendantsAtScale (originCube d m) (m - 1 - (k : ℤ)))
     {E : {E : ℝ // 1 ≤ E}}

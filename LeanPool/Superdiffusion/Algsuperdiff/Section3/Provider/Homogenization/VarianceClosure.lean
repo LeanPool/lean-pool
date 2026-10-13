@@ -184,6 +184,7 @@ variable {d : ℕ} [NeZero d]
 
 /-! ## The diagonal gauge -/
 
+omit [NeZero d] in
 /-- **Re-derivation of the seam's first gauge lemma.**  The continuous
 functional-calculus square root of the constant full block matrix of the
 isotropic comparator `σ𝟙` is the diagonal multiplier
@@ -214,6 +215,7 @@ private theorem diagonal_mul_mul_diagonal_apply (r : BlockCoord d → ℝ)
   simp [Matrix.mul_apply, Matrix.diagonal_apply, Finset.sum_ite_eq,
     Finset.sum_ite_eq', mul_comm, mul_left_comm]
 
+omit [NeZero d] in
 /-- **The conjugated matrix, entrywise.**  At the isotropic comparator
 normalizer the starred fluctuation matrix is the diagonal gauge conjugation of
 the reflected difference `𝐑(𝐀(U;a) - 𝐂)𝐑`. -/
@@ -256,7 +258,7 @@ private theorem mulVec_starredFluctuationMatrix_primalLoad_inl
         (((coarseBlockMatrix U a.toFun).lowerRight - C.lowerRight) i j * e j) := by
     intro j
     rw [starredFluctuationMatrix_isotropicComparatorMatrix_apply]
-    show Real.sqrt (sigma : ℝ) *
+    change Real.sqrt (sigma : ℝ) *
         (((coarseBlockMatrix U a.toFun).lowerRight - C.lowerRight) i j) *
         Real.sqrt (sigma : ℝ) * e j = _
     calc Real.sqrt (sigma : ℝ) *
@@ -272,7 +274,7 @@ private theorem mulVec_starredFluctuationMatrix_primalLoad_inl
           C U a (Sum.inl i) (Sum.inr j) *
         toFullBlockVec (e, (0 : Vec d)) (Sum.inr j) = 0 := by
     intro j
-    show _ * (0 : ℝ) = 0
+    change _ * (0 : ℝ) = 0
     ring
   rw [Matrix.mulVec, dotProduct, Fintype.sum_sum_type,
     Finset.sum_congr rfl (fun j _ => hterm j),
@@ -302,7 +304,7 @@ private theorem mulVec_starredFluctuationMatrix_dualLoad_inl
       ((coarseBlockMatrix U a.toFun).lowerLeft - C.lowerLeft) i j * e j := by
     intro j
     rw [starredFluctuationMatrix_isotropicComparatorMatrix_apply]
-    show Real.sqrt (sigma : ℝ) *
+    change Real.sqrt (sigma : ℝ) *
         (((coarseBlockMatrix U a.toFun).lowerLeft - C.lowerLeft) i j) *
         (Real.sqrt (sigma : ℝ))⁻¹ * e j = _
     field_simp
@@ -312,7 +314,7 @@ private theorem mulVec_starredFluctuationMatrix_dualLoad_inl
           C U a (Sum.inl i) (Sum.inl j) *
         toFullBlockVec ((0 : Vec d), e) (Sum.inl j) = 0 := by
     intro j
-    show _ * (0 : ℝ) = 0
+    change _ * (0 : ℝ) = 0
     ring
   rw [Matrix.mulVec, dotProduct, Fintype.sum_sum_type,
     Finset.sum_congr rfl (fun j _ => hzero j),
@@ -445,7 +447,7 @@ theorem sq_mul_sq_matrixOperatorNorm_lowerRight_sub_le_starredFluctuationOperato
     have hloadr : ∀ i : Fin d,
         (toFullBlockVec (e, (0 : Vec d)) (Sum.inr i)) ^ 2 = 0 := by
       intro i
-      show (0 : ℝ) ^ 2 = 0
+      change (0 : ℝ) ^ 2 = 0
       ring
     rw [Finset.sum_congr rfl (fun i _ => hupper i),
       Finset.sum_congr rfl (fun i _ => hloadl i),
@@ -543,7 +545,7 @@ theorem sq_matrixOperatorNorm_lowerLeft_sub_le_starredFluctuationOperatorNormSq
     have hloadl : ∀ i : Fin d,
         (toFullBlockVec ((0 : Vec d), e) (Sum.inl i)) ^ 2 = 0 := by
       intro i
-      show (0 : ℝ) ^ 2 = 0
+      change (0 : ℝ) ^ 2 = 0
       ring
     have hloadr : ∀ i : Fin d,
         (toFullBlockVec ((0 : Vec d), e) (Sum.inr i)) ^ 2 = (e i) ^ 2 := fun _ => rfl
@@ -606,7 +608,7 @@ var[σ_{L,*}^{-1}(□_n)κ_L(□_n)]` is at most twice the expectation of the St
 corridor observable.
 
 The `Integrable` clause is a conditional A obligation in the convention of
-`integral_starredFluctuationOperatorNormSq_le_two_descendantsAverage_add_eight_blockJTraceAverageSq_of_integrable`;
+`integral_starredFluctuationNormSq_le_descendantAndResponseBounds`;
 see the module docstring. -/
 theorem coefficientCutoffLaw_sq_sigmaBar_mul_starInverseVarianceAtScale_add_le
     (M : ABKModel d) (L n : ℤ)
@@ -749,7 +751,7 @@ This is
 `Cutoff.maxDescendantSigmaStarInvMatrixNormAtScale_le_cutoffCoercivity`) read
 on the `coarseBlockMatrix` carrier through the *public* CoarseGraining
 `Ch05.Section52` sup identity for the lower-right block
-(`maxDescendantSigmaStarInvMatrixNormCoeffFieldAtScale_eq_sup_lowerRight_of_aelocallyUniformlyEllipticField`),
+(identifying the descendant inverse-ellipticity maximum with the lower-right-block supremum),
 applied below.  It is the `σ_*^{-1}` half of the `hK` producer (3); the `κ`
 half is not supplied (see the module docstring). -/
 theorem matrixOperatorNorm_coarseBlockMatrix_lowerRight_le_of_mem_descendantsAtScale

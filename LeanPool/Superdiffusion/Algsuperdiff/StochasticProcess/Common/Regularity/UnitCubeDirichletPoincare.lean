@@ -318,13 +318,13 @@ theorem scaled_dirichlet_poincare_explicit_norm [NeZero d]
       dilationL2Factor d L * ‖w.toH1Function.toScalarL2‖ := by
     have e1 : ‖w4.toH1Function.toScalarL2‖ =
         dilationL2Factor d L * ‖w3.toH1Function.toScalarL2‖ := by
-      show ‖(H10Function.unscale hL w3).toH1Function.toScalarL2‖ = _
+      change ‖(H10Function.unscale hL w3).toH1Function.toScalarL2‖ = _
       rw [H10Function.unscale_toH1Function]
       exact H1Function.norm_toScalarL2_unscale_eq hL w3.toH1Function
     have e2 : ‖w3.toH1Function.toScalarL2‖ = ‖w2.toH1Function.toScalarL2‖ :=
       norm_toScalarL2_h10_congr heq2 w2
     have e3 : ‖w2.toH1Function.toScalarL2‖ = ‖w1.toH1Function.toScalarL2‖ := by
-      show ‖(H10Function.untranslate z w1).toH1Function.toScalarL2‖ = _
+      change ‖(H10Function.untranslate z w1).toH1Function.toScalarL2‖ = _
       rw [H10Function.untranslate_toH1Function]
       exact norm_toScalarL2_untranslate_eq z w1.toH1Function
     have e4 : ‖w1.toH1Function.toScalarL2‖ = ‖w.toH1Function.toScalarL2‖ :=
@@ -334,7 +334,7 @@ theorem scaled_dirichlet_poincare_explicit_norm [NeZero d]
       L * dilationL2Factor d L * w.toH1Function.gradientCoordL2NormSum := by
     have e1 : w4.toH1Function.gradientCoordL2NormSum =
         L * dilationL2Factor d L * w3.toH1Function.gradientCoordL2NormSum := by
-      show (H10Function.unscale hL w3).toH1Function.gradientCoordL2NormSum = _
+      change (H10Function.unscale hL w3).toH1Function.gradientCoordL2NormSum = _
       rw [H10Function.unscale_toH1Function]
       exact H1Function.gradientCoordL2NormSum_unscale_eq hL w3.toH1Function
     have e2 : w3.toH1Function.gradientCoordL2NormSum =
@@ -342,7 +342,7 @@ theorem scaled_dirichlet_poincare_explicit_norm [NeZero d]
       gradientCoordL2NormSum_h10_congr heq2 w2
     have e3 : w2.toH1Function.gradientCoordL2NormSum =
         w1.toH1Function.gradientCoordL2NormSum := by
-      show (H10Function.untranslate z w1).toH1Function.gradientCoordL2NormSum = _
+      change (H10Function.untranslate z w1).toH1Function.gradientCoordL2NormSum = _
       rw [H10Function.untranslate_toH1Function]
       exact gradientCoordL2NormSum_untranslate_eq z w1.toH1Function
     have e4 : w1.toH1Function.gradientCoordL2NormSum =

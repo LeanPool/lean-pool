@@ -99,7 +99,7 @@ theorem openCubeAtScale_subset_of_le (z : Vec d) {n ell : ℤ} (h : n ≤ ell) :
   have hy' : |y i - z i| < Real.rpow (3 : ℝ) ((n : ℤ) : ℝ) / 2 := hy i
   have h3 : Real.rpow (3 : ℝ) ((n : ℤ) : ℝ) ≤ Real.rpow (3 : ℝ) ((ell : ℤ) : ℝ) :=
     Real.rpow_le_rpow_of_exponent_le (by norm_num) (by exact_mod_cast h)
-  show |y i - z i| < Real.rpow (3 : ℝ) ((ell : ℤ) : ℝ) / 2
+  change |y i - z i| < Real.rpow (3 : ℝ) ((ell : ℤ) : ℝ) / 2
   linarith
 
 /-- **The oscillation cell of the fresh-shell forcing.**

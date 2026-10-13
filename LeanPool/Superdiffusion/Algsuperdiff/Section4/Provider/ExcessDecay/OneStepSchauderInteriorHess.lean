@@ -352,7 +352,7 @@ theorem interiorSecondDerivEstimateL2 (d : ℕ) [NeZero d] :
     rw [h2, h3]
   have hwuc : ∀ y ∈ ball x r, w y = u y - c := by
     intro y hy
-    show v y - c = u y - c
+    change v y - c = u y - c
     rw [hvu_on y (Metric.ball_subset_closedBall hy)]
   -- core `L¹` Hessian bound at `ε = r/2`, `ρ = r`.
   have hcore := norm_fderiv_fderiv_le_L1_of_harmonic (d := d) hw_cd (x₀ := x) (ε := ε) (ρ := r)

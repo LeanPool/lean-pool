@@ -45,7 +45,8 @@ unconditionally.
 ## The chain
 
 ```
-Mu-locality (Section 3)                               [measurable_Mu_coefficientCutoff_cutoffSampleLocal]
+Mu-locality (Section 3)
+[measurable_Mu_coefficientCutoff_cutoffSampleLocal]
   → coarse full block matrix, literal                 [measurable_cutoffCoarseFullBlockRaw_local]
   → coarse full block matrix, representative          (a.e. stability)
   → normalized block response, representative         (continuous functional)
@@ -304,7 +305,7 @@ theorem measurable_errorFunctionalAtCube_local [NeZero d] (M : ABKModel d) (L : 
 private theorem scaleResponse_finite_nonneg [NeZero d] (Q : TriadicCube d) (k : ℤ)
     (p : ℝ) (F : Ch02.TriadicCoeffFamily d) (a0 : Mat d) :
     0 ≤ Ch02.scaleResponseAtScale Q k (.finite p) F a0 := by
-  show (0 : ℝ) ≤ Real.rpow (Ch02.finsetAverageReal (descendantsAtScale Q k)
+  change (0 : ℝ) ≤ Real.rpow (Ch02.finsetAverageReal (descendantsAtScale Q k)
     (fun R => Real.rpow (Ch02.normalizedBlockResponseMax R F a0) (p / 2))) (1 / p)
   refine Real.rpow_nonneg ?_ _
   exact mul_nonneg (inv_nonneg.2 (Nat.cast_nonneg _))
@@ -397,7 +398,8 @@ theorem annularErrorObservable_comp_translate_ae_eq_literal (M : ABKModel d)
     (fun omega => Support.annularErrorObservable M n s
         (Cutoff.translateCutoffSample (Support.triadicLatticePoint n v) omega))
       =ᵐ[(Cutoff.cutoffSampleLaw M).toMeasure]
-    fun omega => @Ch02.HomogenizationErrorOnCube d (Localize.latticeCube n v) (s : ℝ) (.finite 2) (.finite 2)
+    fun omega => @Ch02.HomogenizationErrorOnCube d (Localize.latticeCube n v) (s : ℝ) (.finite 2)
+      (.finite 2)
       (Cutoff.coefficientCutoffTriadicCoeffFamily M (n - 2) omega)
       (Observable.isotropicComparatorMatrix (Annealed.sigmaBar M (n - 2))) := by
   let : NeZero d := neZero_of_model M
@@ -420,7 +422,7 @@ theorem annularErrorObservable_comp_translate_ae_eq_literal (M : ABKModel d)
   rw [hshift] at hcov
   have hscale : (Localize.latticeCube n v).scale = n := rfl
   rw [hscale] at hcov
-  show Support.annularErrorAtom M n (s : ℝ)
+  change Support.annularErrorAtom M n (s : ℝ)
       (Cutoff.translateCutoffSample (Support.triadicLatticePoint n v) omega) = _
   rw [Support.annularErrorAtom, hchar]
   exact hcov.symm

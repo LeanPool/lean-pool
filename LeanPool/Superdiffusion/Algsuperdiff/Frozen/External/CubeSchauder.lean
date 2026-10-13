@@ -34,7 +34,8 @@ open Algsuperdiff.Section4.Support
 -- representative, so no continuous-representative bookkeeping leaks to the consumer; the
 -- Dirichlet solution is unique (zero-trace difference + the weak equation), so this is the
 -- solution.  Carriers: the repository's Support layer (IsDirichletSolutionOn,
--- HolderSeminormBoundOn) over CoarseGraining's H1Function/openCubeSet/originCube; the left-hand gauge
+-- HolderSeminormBoundOn) over CoarseGraining's H1Function/openCubeSet/originCube; the left-hand
+-- gauge
 -- and the right-hand data bracket are spelled in primitives (the provider definitions
 -- wsInftyGauge/dataBracket unfold to exactly these terms at Q = originCube d m).  The
 -- constant depends on (d, s) only -- uniform in m (scaling), sigma (linearity), g, h.

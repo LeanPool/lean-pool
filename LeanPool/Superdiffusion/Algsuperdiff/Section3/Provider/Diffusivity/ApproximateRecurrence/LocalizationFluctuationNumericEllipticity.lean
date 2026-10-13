@@ -30,7 +30,7 @@ lambda_{s,2}^{-1}(Q; a)`, and the two halves are proved:
   `LocalizationFluctuationAncestor.doubledPoincareEllipticityFactor_sq_le_recurrenceAncestor`,
   which reads the per-cell display at the cell's own scale-`m` ancestor;
 * the **probabilistic** half,
-  `LocalizationFluctuationStationarity.integral_gaugedEllipticitySum_pow_ancestorAtScale_eq_originCube`,
+`integral_gaugedEllipticitySum_pow_ancestorAtScale_eq_originCube`,
   which transports the annealed moment from that ancestor back to `cu_m`.
 
 What was still missing is the **number**: a bound on the annealed fourth moment
@@ -171,7 +171,7 @@ theorem LambdaSq_originCube_coefficientCutoffTriadicCoeffFamily_eq [NeZero d]
       Observable.cutoffUpperEllipticity M m L s hs coarseExponentTwo omega := by
   have hell := Cutoff.coefficientCutoff_aeLocallyUniformlyEllipticField M L omega
   rw [Observable.cutoffUpperEllipticity_eq_literal]
-  show Ch02.LambdaSq (originCube d m) s (.finite 2)
+  change Ch02.LambdaSq (originCube d m) s (.finite 2)
       (Cutoff.coefficientCutoffTriadicCoeffFamily M L omega) =
     Ch04.LambdaSqCoeffField (originCube d m) s (Ch02.MultiscaleExponent.finite 2)
       (Cutoff.coefficientCutoff M.nu L omega)
@@ -188,7 +188,7 @@ theorem lambdaSq_originCube_coefficientCutoffTriadicCoeffFamily_eq [NeZero d]
       Observable.cutoffLowerEllipticityInv M m L s hs coarseExponentTwo omega := by
   have hell := Cutoff.coefficientCutoff_aeLocallyUniformlyEllipticField M L omega
   rw [Observable.cutoffLowerEllipticityInv_eq_literal]
-  show (Ch02.lambdaSq (originCube d m) s (.finite 2)
+  change (Ch02.lambdaSq (originCube d m) s (.finite 2)
       (Cutoff.coefficientCutoffTriadicCoeffFamily M L omega))⁻¹ =
     (Ch04.lambdaSqCoeffField (originCube d m) s (Ch02.MultiscaleExponent.finite 2)
       (Cutoff.coefficientCutoff M.nu L omega))⁻¹
@@ -511,7 +511,7 @@ theorem integral_gaugedEllipticitySum_pow_four_le (d : ℕ) [NeZero d] :
   have heq8 : ∫ omega, (X omega ^ (4 : ℕ)) ^ 2 ∂(Cutoff.cutoffSampleLaw M).toMeasure =
       ∫ omega, X omega ^ (8 : ℝ) ∂(Cutoff.cutoffSampleLaw M).toMeasure := by
     refine integral_congr_ae (Filter.Eventually.of_forall fun omega => ?_)
-    show (X omega ^ (4 : ℕ)) ^ 2 = X omega ^ (8 : ℝ)
+    change (X omega ^ (4 : ℕ)) ^ 2 = X omega ^ (8 : ℝ)
     rw [show ((8 : ℝ)) = ((8 : ℕ) : ℝ) by norm_num, Real.rpow_natCast]
     ring
   have hrpow : (C * (Disorder.cstar M)⁻¹ * M.gamma⁻¹) ^ (8 : ℝ) =

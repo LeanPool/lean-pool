@@ -116,11 +116,11 @@ theorem isDirichletSolutionAt_const_smul {y : Vec d} {n : ℤ} {a : CoeffField d
     IsDirichletSolutionAt a y n (t • u) fun x => t • g x := by
   obtain ⟨⟨w, hwf, hwg⟩, heq⟩ := hu
   refine ⟨⟨t • w, fun x => ?_, fun x => ?_⟩, fun phi => ?_⟩
-  · show (t • u).toFun x = (t • w.toH1Function).toFun x
+  · change (t • u).toFun x = (t • w.toH1Function).toFun x
     rw [H1Function.smul_toFun, H1Function.smul_toFun]
-    show t * u.toFun x = t * w.toH1Function.toFun x
+    change t * u.toFun x = t * w.toH1Function.toFun x
     rw [hwf x]
-  · show (t • u).grad x = (t • w.toH1Function).grad x
+  · change (t • u).grad x = (t • w.toH1Function).grad x
     simp only [H1Function.smul_grad, hwg x]
   · have hkeyA : ∀ x : Vec d,
         vecDot (matVecMul (a x) ((t • u).grad x)) (phi.toH1Function.grad x) =

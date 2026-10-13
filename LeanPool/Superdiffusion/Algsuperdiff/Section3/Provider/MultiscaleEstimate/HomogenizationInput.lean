@@ -21,6 +21,11 @@ Module imports, support namespace and local option directives adapted for Lean P
 
 @[expose] public section
 
+open _root_.Algsuperdiff.Section3.Provider.Homogenization
+  (isCommonEventTwoTermBigOWith_of_ae_forall_exists_le)
+open _root_.Algsuperdiff.Section3.Provider.Localization
+  (ae_forall_descendant_responseJ_cutoffFamily_eq_cutoffResponseJ_translate)
+
 /-!
 # Provider: the per-cube homogenization input of `p.multiscale.estimate`
 
@@ -121,6 +126,8 @@ open _root_.HCPolySupport.IndependentSums
 open _root_.Algsuperdiff.Section3.Cutoff
 
 noncomputable section
+
+
 
 variable {d : ℕ}
 
@@ -272,7 +279,7 @@ theorem isCommonEventTwoTermBigOWith_cutoffResponseJ_epsSq
       (epsilon ^ 2 * (E : ℝ) ^ 2 * M.gamma)
       (epsilon ^ 2 * Real.exp (-(2 * ((E : ℝ)⁻¹) ^ 3 * M.gamma⁻¹))) := by
   refine
-    _root_.Algsuperdiff.Section3.Provider.Homogenization.isCommonEventTwoTermBigOWith_of_ae_forall_exists_le
+    isCommonEventTwoTermBigOWith_of_ae_forall_exists_le
       (homogenizationStep_spec d M l E hE hgammaE hstate (epsilon ^ 2)
         (sq_mem_Ioc_of_mem_Ioc hepsilon) hgate)
       (fun i => Observable.measurable_cutoffResponseJ M l i.1.1 i.1.2.1) ?_
@@ -428,7 +435,7 @@ theorem exists_envelope_responseJ_descendant_epsSq
       hE hgammaE hstate epsilon hepsilon hgate
   refine ⟨Y, Z, hYm, hZm, hYt, hZt, ?_⟩
   filter_upwards [hdom,
-    _root_.Algsuperdiff.Section3.Provider.Localization.ae_forall_descendant_responseJ_cutoffFamily_eq_cutoffResponseJ_translate
+    ae_forall_descendant_responseJ_cutoffFamily_eq_cutoffResponseJ_translate
       M hlm] with omega hdomega hidomega
   intro L hL e he
   rw [hidomega R hR L e]

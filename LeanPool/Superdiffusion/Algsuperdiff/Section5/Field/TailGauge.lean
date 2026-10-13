@@ -254,7 +254,8 @@ theorem tsum_lowerValue_le_of_streamGrowthBounded {C : ℕ} {omega : CutoffSampl
 the volume-normalized gradient series is bounded by `C 3^{-ℓ}`. -/
 theorem upperGradBounded_of_streamGrowthBounded {C : ℕ} {omega : CutoffSample d}
     (h : StreamGrowthBounded C omega) (ell : ℕ) :
-    ∀ q : ℕ, upperGradPartialSum (ell : ℤ) 0 q omega ≤ (C : ℝ) * (3 : ℝ) ^ ell / (3 : ℝ) ^ (2 * ell) := by
+    ∀ q : ℕ, upperGradPartialSum (ell : ℤ) 0 q omega ≤ (C : ℝ) * (3 : ℝ) ^ ell / (3 : ℝ) ^ (2 *
+      ell) := by
   intro q
   have hq := h ell q
   have hlow : (0 : ℝ) ≤ lowerValuePartialSum ell q omega :=

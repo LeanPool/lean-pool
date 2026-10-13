@@ -277,7 +277,7 @@ theorem vecNorm_zero_le_one_fold : Book.Ch02.vecNorm (0 : Vec d) ≤ 1 := by
   have h : Book.Ch02.vecNorm (0 : Vec d) = 0 := by
     rw [vecNorm_eq_sqrt_vecNormSq]
     have hz : vecNormSq (0 : Vec d) = 0 := by
-      show (∑ i, (0 : Vec d) i * (0 : Vec d) i) = 0
+      change (∑ i, (0 : Vec d) i * (0 : Vec d) i) = 0
       simp
     rw [hz, Real.sqrt_zero]
   rw [h]

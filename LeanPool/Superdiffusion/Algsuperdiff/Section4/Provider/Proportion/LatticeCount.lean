@@ -87,7 +87,8 @@ theorem abs_le_of_mem_latticeCubeSet {j outer : ℤ} (hj : j ≤ outer) {v : Fin
     rw [hsplit] at h
     have h' : (3 : ℝ) ^ j * ((v i : ℤ) : ℝ)
         < (3 : ℝ) ^ j * ((1 / 2 : ℝ) * (3 : ℝ) ^ ((outer - j).toNat : ℕ)) := by
-      calc (3 : ℝ) ^ j * ((v i : ℤ) : ℝ) < 1 / 2 * ((3 : ℝ) ^ j * (3 : ℝ) ^ ((outer - j).toNat : ℕ)) :=
+      calc (3 : ℝ) ^ j * ((v i : ℤ) : ℝ) < 1 / 2 * ((3 : ℝ) ^ j * (3 : ℝ) ^ ((outer - j).toNat :
+        ℕ)) :=
             h
         _ = (3 : ℝ) ^ j * ((1 / 2 : ℝ) * (3 : ℝ) ^ ((outer - j).toNat : ℕ)) := by ring
     have h'' := lt_of_mul_lt_mul_left h' h3.le

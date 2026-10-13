@@ -200,7 +200,7 @@ theorem ae_stepSevenLambdaCaps (d : ℕ) [NeZero d] :
       ((⟨stepOneSEighth, stepOneSEighth_pos⟩ : {t : ℝ // 0 < t}) : ℝ) ∈
         Set.Icc (8 * M.gamma) (1 / 4 : ℝ) := by
     refine ⟨hfloor, ?_⟩
-    show stepOneSEighth ≤ (1 : ℝ) / 4
+    change stepOneSEighth ≤ (1 : ℝ) / 4
     rw [stepOneSEighth_eq]; norm_num
   filter_upwards [hC M hregime ⟨stepOneSEighth, stepOneSEighth_pos⟩ hslot
     (stepOneEp delta) (stepOneEp_mem_Ioc hdelta) hsmall k z] with omega homega

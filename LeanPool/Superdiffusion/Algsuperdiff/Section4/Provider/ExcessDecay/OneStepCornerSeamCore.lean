@@ -93,7 +93,7 @@ theorem harmonicOnNhd_congr_eqOn {S : Set (Vec d)} (hS : IsOpen S) {V W : Vec d 
     intro e he
     refine Filter.eventually_of_mem (hopen.mem_nhds he) ?_
     rintro w ⟨p, hp, rfl⟩
-    show W (toEuc.symm (toEuc p)) = V (toEuc.symm (toEuc p))
+    change W (toEuc.symm (toEuc p)) = V (toEuc.symm (toEuc p))
     rw [ContinuousLinearEquiv.symm_apply_apply]
     exact h hp
   rintro e ⟨y, hy, rfl⟩
@@ -235,7 +235,7 @@ theorem exists_faceOdd_forall_eqOn_reflectedWindow {x : Vec d} {m k : ℤ} (hkm 
     · rw [ite_eq_right (fun h => hz (hiff.mp h)), ite_eq_right hz]
       exact hlowO i hlow z
   · intro y hy
-    show (if y ∈ reflectedWindow x m k then V y else O y) = V y
+    change (if y ∈ reflectedWindow x m k then V y else O y) = V y
     rw [ite_eq_left hy]
 
 /-! ## 4. The consumers transported along the `EqOn` -/

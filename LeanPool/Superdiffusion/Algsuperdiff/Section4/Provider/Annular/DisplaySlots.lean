@@ -83,7 +83,7 @@ theorem ofReal_fmax_le_iSup {iota : Type*} {S : Finset iota} {T : Set iota}
     exact zero_le
   · obtain ⟨i, hi, hsup⟩ := Finset.exists_mem_eq_sup S hne fun j => (f j).toNNReal
     have hval : Proportion.fmax S f = max (f i) 0 := by
-      show ((S.sup fun j => (f j).toNNReal : ℝ≥0) : ℝ) = max (f i) 0
+      change ((S.sup fun j => (f j).toNNReal : ℝ≥0) : ℝ) = max (f i) 0
       rw [hsup, Real.coe_toNNReal']
     rw [hval]
     rcases le_total 0 (f i) with h | h
@@ -191,7 +191,7 @@ theorem ofReal_shellSingleSum_le_clauseOneTermFour (M : ABKModel d) (m : ℤ)
       push_cast
       ring
     rw [ENNReal.ofReal_mul (Real.rpow_nonneg (by norm_num) _)]
-    show ENNReal.ofReal ((3 : ℝ) ^ (-((s : ℝ) / 2) * (v : ℝ)))
+    change ENNReal.ofReal ((3 : ℝ) ^ (-((s : ℝ) / 2) * (v : ℝ)))
         * ENNReal.ofReal (A (m - (v : ℤ)) ^ 2)
       ≤ ENNReal.ofReal ((3 : ℝ) ^ (-(1 / 2 : ℝ) * (s : ℝ) * ((m - (m - (v : ℤ)) : ℤ) : ℝ)))
         * ∑ k ∈ Finset.Icc (m - (v : ℤ) - 1) m, shellBlockLatticeAtom M m omega k ^ 2

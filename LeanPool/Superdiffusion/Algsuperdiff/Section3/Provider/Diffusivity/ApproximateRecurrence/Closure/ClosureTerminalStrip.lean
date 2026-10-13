@@ -35,7 +35,8 @@ consumed route to that contract all the way through:
 
 | route | `ClosureSplitInput` producer | surviving inputs |
 |---|---|---|
-| interior mesh + strip | `Closure.ClosureInteriorSplit.closureSplitInput_of_interiorEnvelope` | `ClosureInteriorBesovEnvelopeInput d`, `ClosureStripRemainder d` |
+| interior mesh + strip | `Closure.ClosureInteriorSplit.closureSplitInput_of_interiorEnvelope` |
+`ClosureInteriorBesovEnvelopeInput d`, `ClosureStripRemainder d` |
 
 A full-mesh sibling route once ran here as well, on the single input
 `Closure.GammaTenCloserAssembly.ClosureBesovEnvelopeInput d`.  It had no consumer

@@ -159,7 +159,7 @@ private theorem tendsto_frobeniusMass_finiteLowerCutoff_on_cube
     Tendsto
       (fun q : ℕ => matrixFrobeniusNormSq (finiteLowerCutoff m q omega.1 x))
       atTop (nhds (matrixFrobeniusNormSq (cutoff m omega x))) := by
-  show Tendsto (fun q : ℕ =>
+  change Tendsto (fun q : ℕ =>
       ∑ i : Fin d, ∑ j : Fin d, finiteLowerCutoff m q omega.1 x i j ^ 2)
     atTop (nhds (∑ i : Fin d, ∑ j : Fin d, cutoff m omega x i j ^ 2))
   exact tendsto_finsetSum _ fun i _ =>

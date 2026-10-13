@@ -291,7 +291,7 @@ theorem rpow_three_gamma_sub_one_le {g : ℝ} (hg : g ≤ 1 / 2) :
   have h1 : Real.rpow 3 (g - 1) ≤ Real.rpow 3 (-((1 : ℝ) / 2)) :=
     Real.rpow_le_rpow_of_exponent_le (by norm_num) (by linarith only [hg])
   have h2 : Real.rpow 3 (-((1 : ℝ) / 2)) = (Real.sqrt 3)⁻¹ := by
-    show (3 : ℝ) ^ (-((1 : ℝ) / 2)) = (Real.sqrt 3)⁻¹
+    change (3 : ℝ) ^ (-((1 : ℝ) / 2)) = (Real.sqrt 3)⁻¹
     rw [Real.rpow_neg (by norm_num : (0 : ℝ) ≤ 3), ← Real.sqrt_eq_rpow]
   have hs0 : (0 : ℝ) < Real.sqrt 3 := Real.sqrt_pos.mpr (by norm_num)
   have h3 : (5 : ℝ) / 3 ≤ Real.sqrt 3 := by

@@ -359,7 +359,7 @@ theorem tsum_three_rpow_quarter_two {s : ℝ} (hs : 0 < s) :
     ∑' j : ℕ, Real.rpow (3 : ℝ) (-(s / 4) * 2 * (j : ℝ)) =
       (Ch02.geometricDiscount (s / 4) 2)⁻¹ := by
   have hdisc : Ch02.geometricDiscount (s / 4) 2 = Ch02.geometricDiscount (s / 2) 1 := by
-    show 1 - Real.rpow (3 : ℝ) (-(s / 4) * 2) = 1 - Real.rpow (3 : ℝ) (-(s / 2) * 1)
+    change 1 - Real.rpow (3 : ℝ) (-(s / 4) * 2) = 1 - Real.rpow (3 : ℝ) (-(s / 2) * 1)
     congr 2
     ring
   rw [tsum_congr fun j : ℕ => three_rpow_quarter_two_eq_half_one (s := s) j, hdisc]

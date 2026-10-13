@@ -98,7 +98,7 @@ private theorem three_zpow_two_mul (k : ℤ) :
 private theorem three_zpow_mul_rpow_gamma_sub_one (gamma : ℝ) (k : ℤ) :
     (3 : ℝ) ^ k * Real.rpow 3 ((gamma - 1) * (k : ℝ)) =
       (3 : ℝ) ^ (gamma * (k : ℝ)) := by
-  show (3 : ℝ) ^ k * (3 : ℝ) ^ ((gamma - 1) * (k : ℝ)) =
+  change (3 : ℝ) ^ k * (3 : ℝ) ^ ((gamma - 1) * (k : ℝ)) =
     (3 : ℝ) ^ (gamma * (k : ℝ))
   rw [← Real.rpow_intCast (3 : ℝ) k, ← Real.rpow_add (by norm_num : (0 : ℝ) < 3)]
   congr 1

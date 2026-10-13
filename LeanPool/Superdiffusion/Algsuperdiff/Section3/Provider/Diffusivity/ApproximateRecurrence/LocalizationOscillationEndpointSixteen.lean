@@ -33,7 +33,8 @@ same three inputs
 
 * `LocalizationOscillationDisplay.exists_freshShell*_gradient_oscillation_lower_bound_display`,
 * `LocalizationEnvelopeWire.exists_freshShell_gridFourthMoment_mesoWindowEnergy_le_wired`,
-* `LocalizationFluctuationCellIntegrable.exists_gamma0_integrable_freshShell*_meshEnergyCell_rpow_four`,
+*
+`exists_gamma0_integrable_freshShell*_meshEnergyCell_rpow_four`,
 
 at the *same* explicit threshold
 `min gcell (min (1/4) (min genv (min 3^{-(d+3)} (1/(1+Ctot)))))`.
@@ -190,6 +191,180 @@ theorem three_term_budget_le_sixteen {C W Csig sqd Nr G P S Eb gamma Ctot Kn : �
   linarith
 
 /-! ## The two sharpened endpoints -/
+
+private theorem localizationOscillationEndpointSixteen_comparisonBounds1 :
+    ∀ (d : ℕ) (Cdisp : ℝ) (_ : (0 : ℝ) ≤ Cdisp)
+      (_ :
+        ∀ (M : ABKModel d) (K n : ℤ) (N : ℕ),
+          d + (3 : ℕ) ≤ N →
+            ∀ (highScale : ℤ),
+              n + (↑N : ℤ) < highScale →
+                ∀ (sigmaInv : ℝ),
+                  (0 : ℝ) ≤ sigmaInv →
+                    ∀ (e z₀ : Vec d) (wD : ShellSeq d → H10Function (openCubeSet (originCube d K))),
+                      (∀ (omega : ShellSeq d),
+                          IsZeroTraceDirichletRhsWeakSolution (fun (_ : Vec d) => (1 : Matrix (Fin d) (Fin d) ℝ))
+                            (openCubeSet (originCube d K)) (wD omega) fun (x : Vec d) =>
+                            -Corrector.streamForcing sigmaInv omega (n + (↑N : ℤ)) highScale e x) →
+                        ∀ (W : ℝ),
+                          (0 : ℝ) ≤ W →
+                            (gridFourthMoment (↑M.P : Measure (ℤ → Frozen.Assumptions.ShellField d))
+                                  (interiorMesoCubeGrid d K n (n + (↑N : ℤ) - (1 : ℤ)))
+                                  fun (R : TriadicCube d) (omega : ℤ → Frozen.Assumptions.ShellField d) =>
+                                  meshEnergyCell (n + (↑N : ℤ)) (wD omega).grad R) ≤
+                                W ^ (4 : ℕ) →
+                              (∀ R ∈ interiorMesoCubeGrid d K n (n + (↑N : ℤ) - (1 : ℤ)),
+                                  Integrable
+                                    (fun (omega : ShellSeq d) => meshEnergyCell (n + (↑N : ℤ)) (wD omega).grad R ^ (4 : ℝ))
+                                    (↑M.P : Measure (ℤ → Frozen.Assumptions.ShellField d))) →
+                                (gridFourthMomentRoot (↑M.P : Measure (ℤ → Frozen.Assumptions.ShellField d))
+                                      (interiorMesoCubeGrid d K n (n + (↑N : ℤ) - (1 : ℤ)))
+                                      fun (R : TriadicCube d) (omega : ℤ → Frozen.Assumptions.ShellField d) =>
+                                      meshOscillationCell n (wD omega).grad R) +
+                                    sigmaInv *
+                                      ((3 : ℝ) ^ (↑n : ℝ) *
+                                        (∫ (omega : ShellSeq d),
+                                            shellDerivNormSum (n + (↑N : ℤ)) highScale z₀ omega ^
+                                              (4 : ℝ) ∂(↑M.P : Measure (ℤ → Frozen.Assumptions.ShellField d))) ^
+                                          (4 : ℝ)⁻¹) ≤
+                                  Cdisp * ((3 : ℝ) ^ (-(↑N : ℝ)) * W) +
+                                      Cdisp * ((↑N : ℝ) * (sigmaInv * √(↑d : ℝ) * vecNorm e)) *
+                                        ((3 : ℝ) ^ (-(↑N : ℝ)) * (3 : ℝ) ^ (M.gamma * ((↑n : ℝ) + (↑N : ℝ)))) +
+                                    Cdisp * sigmaInv *
+                                      ((3 : ℝ) ^ (-(↑N : ℝ)) * (3 : ℝ) ^ (M.gamma * ((↑n : ℝ) + (↑N : ℝ)))))
+      (Chead W0 : ℝ) (_ : W0 = ((3 : ℝ) ^ d * freshShellFourthEnergyConst Chead (1 : ℝ)) ^ (4 : ℝ)⁻¹) (Ctot : ℝ)
+      (_ :
+        Ctot = Cdisp * W0 + (96 : ℝ) * (Cdisp * √(↑d : ℝ) * shellNormalizationConst) + Cdisp * shellNormalizationConst)
+      (_ : (0 : ℝ) ≤ Ctot) (M : ABKModel d) (m0 : ℤ) (Eind : { E : ℝ // (1 : ℝ) ≤ E })
+      (_ : Frozen.Section3.inductionState M m0 Eind) (m K : ℤ) (h : ℕ) (_ : (0 : ℕ) < h) (_ : m - (↑h : ℤ) ≤ m0)
+      (_ : (↑h : ℝ) ≤ (6 : ℝ) * Disorder.cstar M * M.gamma⁻¹) (e : Vec d) (_ : vecNorm e ≤ (1 : ℝ)) (z₀ : Vec d)
+      (wD : ShellSeq d → H10Function (openCubeSet (originCube d K)))
+      (_ :
+        ∀ (omega : ShellSeq d),
+          IsZeroTraceDirichletRhsWeakSolution (fun (_ : Vec d) => (1 : Matrix (Fin d) (Fin d) ℝ))
+            (openCubeSet (originCube d K)) (wD omega) fun (x : Vec d) =>
+            -Corrector.streamForcing (↑(Annealed.sigmaBar M (m - (↑h : ℤ))) : ℝ)⁻¹ omega (m - (↑h : ℤ)) m e x)
+      (_ : M.gamma ≤ (1 : ℝ) / ((1 : ℝ) + Ctot))
+      (_ :
+        ∀ (omega : ShellSeq d),
+          IntegrableOn (fun (x : Vec d) => vecNormSq ((wD omega).grad x)) (openCubeSet (originCube d K)) volume)
+      (_ : (0 : ℝ) < M.gamma) (_ : M.gamma ≤ (1 : ℝ)) (nbuf : ℤ) (Ngap : ℕ)
+      (_ : Ngap = recurrenceGap recurrenceGapMultiplier M.gamma) (_ : nbuf + (↑Ngap : ℤ) = m - (↑h : ℤ))
+      (_ : (↑nbuf : ℝ) + (↑Ngap : ℝ) = (↑(m - (↑h : ℤ)) : ℝ)) (_ : d + (3 : ℕ) ≤ Ngap)
+      (_ : nbuf + (↑Ngap : ℤ) < m)
+      (_ :
+        ∀ R ∈ interiorMesoCubeGrid d K nbuf (nbuf + (↑Ngap : ℤ) - (1 : ℤ)),
+          Integrable (fun (omega : ShellSeq d) => meshEnergyCell (nbuf + (↑Ngap : ℤ)) (wD omega).grad R ^ (4 : ℝ))
+            (↑M.P : Measure (ℤ → Frozen.Assumptions.ShellField d)))
+      (Aenv : ℝ)
+      (_ :
+        (gridFourthMoment (↑M.P : Measure (ℤ → Frozen.Assumptions.ShellField d))
+            (interiorMesoCubeGrid d K nbuf (nbuf + (↑Ngap : ℤ) - (1 : ℤ)))
+            fun (R : TriadicCube d) (omega : ℤ → Frozen.Assumptions.ShellField d) =>
+            mesoWindowEnergy (nbuf + (↑Ngap : ℤ)) (wD omega).grad R) ≤
+          Aenv)
+      (_ : Aenv = (3 : ℝ) ^ d * freshShellFourthEnergyConst Chead (M.gamma ^ (100 : ℕ))) (_ : (0 : ℝ) ≤ Aenv)
+      (W : ℝ) (_ : W = Aenv ^ (4 : ℝ)⁻¹),
+      (gridFourthMomentRoot (↑M.P : Measure (ℤ → Frozen.Assumptions.ShellField d))
+            (interiorMesoCubeGrid d K nbuf (nbuf + (↑Ngap : ℤ) - (1 : ℤ)))
+            fun (R : TriadicCube d) (omega : ℤ → Frozen.Assumptions.ShellField d) =>
+            meshOscillationCell nbuf (wD omega).grad R) +
+          (↑(Annealed.sigmaBar M (m - (↑h : ℤ))) : ℝ)⁻¹ *
+            ((3 : ℝ) ^ (↑nbuf : ℝ) *
+              (∫ (omega : ShellSeq d),
+                  shellDerivNormSum (nbuf + (↑Ngap : ℤ)) m z₀ omega ^
+                    (4 : ℝ) ∂(↑M.P : Measure (ℤ → Frozen.Assumptions.ShellField d))) ^
+                (4 : ℝ)⁻¹) ≤
+        M.gamma ^ (16 : ℕ) := by
+  intro d Cdisp hCdisp0 hdisp Chead W0 hW0 Ctot hCtot hCtot0 M _ _ hstate m K h hhpos hm0 hcstar e he z₀ wD hsol hCgate hsq hgamma0 hgamma1 nbuf Ngap hNgap hsum hsumR hdimN hlt hcellInt Aenv henvD hAenv hAenv0 W hW
+  have hW0nn : 0 ≤ W := by rw [hW]; exact Real.rpow_nonneg hAenv0 _
+  have hWpow : W ^ (4 : ℕ) = Aenv := by
+    rw [hW, ← Real.rpow_natCast (Aenv ^ ((4 : ℝ)⁻¹)) 4, ← Real.rpow_mul hAenv0,
+      show ((4 : ℝ)⁻¹ * ((4 : ℕ) : ℝ)) = 1 by norm_num]
+    exact Real.rpow_one Aenv
+  have hcoarse : gridFourthMoment M.P.toMeasure
+      (interiorMesoCubeGrid d K nbuf (nbuf + (Ngap : ℤ) - 1))
+      (fun R omega => meshEnergyCell (nbuf + (Ngap : ℤ))
+        (wD omega).toH1Function.grad R) ≤ W ^ (4 : ℕ) := by
+    rw [hWpow]
+    exact henvD
+  have hsigma0 : (0 : ℝ) ≤ ((Annealed.sigmaBar M (m - (h : ℤ)) : ℝ))⁻¹ :=
+    (inv_pos.2 (Annealed.sigmaBar_characterization M (m - (h : ℤ))).1).le
+  have hmain := hdisp M K nbuf Ngap hdimN m hlt
+    ((Annealed.sigmaBar M (m - (h : ℤ)) : ℝ))⁻¹ hsigma0 e z₀ wD
+    (by rw [hsum]; exact hsol) W hW0nn hcoarse hcellInt
+  have hGle : (3 : ℝ) ^ (-((Ngap : ℕ) : ℝ)) ≤ M.gamma ^ (32 : ℕ) := by
+    have hbase := rpow_three_neg_recurrenceGap_le_gamma_pow recurrenceGapMultiplier
+      (gamma := M.gamma) hgamma0 hgamma1
+    rw [hNgap]
+    simpa [recurrenceGapMultiplier] using hbase
+  have hNrle : ((Ngap : ℕ) : ℝ) * M.gamma ≤ 96 := by
+    have hbase := recurrenceGap_mul_gamma_le recurrenceGapMultiplier
+      (gamma := M.gamma) hgamma0 hgamma1
+    rw [hNgap]
+    calc ((recurrenceGap recurrenceGapMultiplier M.gamma : ℕ) : ℝ) * M.gamma
+        ≤ 3 * ((recurrenceGapMultiplier : ℕ) : ℝ) := hbase
+      _ = 96 := by norm_num [recurrenceGapMultiplier]
+  have hSPle : ((Annealed.sigmaBar M (m - (h : ℤ)) : ℝ))⁻¹ *
+      (3 : ℝ) ^ (M.gamma * (((nbuf : ℤ) : ℝ) + ((Ngap : ℕ) : ℝ))) ≤
+        shellNormalizationConst := by
+    rw [hsumR]
+    exact sigmaBarInv_mul_rpow_gamma_shell_le M hstate hhpos hm0 hcstar
+  have hWle : W ≤ W0 := by
+    rw [hW, hW0]
+    refine Real.rpow_le_rpow hAenv0 ?_ (by norm_num)
+    rw [hAenv]
+    have hmono : freshShellFourthEnergyConst Chead (M.gamma ^ (100 : ℕ)) ≤
+        freshShellFourthEnergyConst Chead 1 := by
+      simp only [freshShellFourthEnergyConst]
+      have h1 : M.gamma ^ (100 : ℕ) ≤ 1 := pow_le_one₀ hgamma0.le hgamma1
+      have h0 : (0 : ℝ) ≤ M.gamma ^ (100 : ℕ) := by positivity
+      have hsq : (M.gamma ^ (100 : ℕ)) ^ (2 : ℕ) ≤ (1 : ℝ) ^ (2 : ℕ) :=
+        pow_le_pow_left₀ h0 h1 2
+      have hcoef : (0 : ℝ) ≤ 32 * Real.exp 1 ^ (2 : ℕ) := by positivity
+      exact add_le_add le_rfl (mul_le_mul_of_nonneg_left hsq hcoef)
+    have h3d : (0 : ℝ) ≤ (3 : ℝ) ^ d := by positivity
+    exact mul_le_mul_of_nonneg_left hmono h3d
+  have hCtotle : Cdisp * W + 96 * (Cdisp * Real.sqrt (d : ℝ) * shellNormalizationConst)
+      + Cdisp * shellNormalizationConst ≤ Ctot := by
+    rw [hCtot]
+    have : Cdisp * W ≤ Cdisp * W0 := mul_le_mul_of_nonneg_left hWle hCdisp0
+    linarith
+  have hfinal : Ctot * M.gamma ^ (15 : ℕ) ≤ 1 := by
+    have h15 : M.gamma ^ (15 : ℕ) ≤ M.gamma := by
+      calc M.gamma ^ (15 : ℕ) ≤ M.gamma ^ (1 : ℕ) :=
+            pow_le_pow_of_le_one hgamma0.le hgamma1 (by norm_num)
+        _ = M.gamma := pow_one _
+    have hCg : Ctot * M.gamma ^ (15 : ℕ) ≤ Ctot * M.gamma :=
+      mul_le_mul_of_nonneg_left h15 hCtot0
+    have hCg2 : Ctot * M.gamma ≤ Ctot * (1 / (1 + Ctot)) :=
+      mul_le_mul_of_nonneg_left hCgate hCtot0
+    have hden : (0 : ℝ) < 1 + Ctot := by linarith
+    have hlast : Ctot * (1 / (1 + Ctot)) ≤ 1 := by
+      rw [mul_one_div, div_le_one hden]
+      linarith
+    linarith
+  have hG0 : (0 : ℝ) ≤ (3 : ℝ) ^ (-((Ngap : ℕ) : ℝ)) :=
+    (Real.rpow_pos_of_pos (by norm_num : (0 : ℝ) < 3) _).le
+  have hP0 : (0 : ℝ) ≤
+      (3 : ℝ) ^ (M.gamma * (((nbuf : ℤ) : ℝ) + ((Ngap : ℕ) : ℝ))) :=
+    (Real.rpow_pos_of_pos (by norm_num : (0 : ℝ) < 3) _).le
+  have hbudget : Cdisp * ((3 : ℝ) ^ (-((Ngap : ℕ) : ℝ)) * W) +
+        Cdisp * (((Ngap : ℕ) : ℝ) *
+            (((Annealed.sigmaBar M (m - (h : ℤ)) : ℝ))⁻¹ * Real.sqrt (d : ℝ) *
+              Book.Ch02.vecNorm e)) *
+          ((3 : ℝ) ^ (-((Ngap : ℕ) : ℝ)) *
+            (3 : ℝ) ^ (M.gamma * (((nbuf : ℤ) : ℝ) + ((Ngap : ℕ) : ℝ)))) +
+        Cdisp * ((Annealed.sigmaBar M (m - (h : ℤ)) : ℝ))⁻¹ *
+          ((3 : ℝ) ^ (-((Ngap : ℕ) : ℝ)) *
+            (3 : ℝ) ^ (M.gamma * (((nbuf : ℤ) : ℝ) + ((Ngap : ℕ) : ℝ)))) ≤
+      M.gamma ^ (16 : ℕ) :=
+    three_term_budget_le_sixteen hCdisp0 hW0nn shellNormalizationConst_nonneg
+      (Real.sqrt_nonneg _) (Nat.cast_nonneg _) hG0 hP0 hsigma0
+      (Book.Ch02.vecNorm_nonneg e) (by norm_num) hgamma0 hgamma1 hGle hSPle hNrle he
+      hCtotle hfinal
+  have hgoal := le_trans hmain hbudget
+  exact hgoal
 
 /-- **`e.lower.bound.oscillations` for the Dirichlet corrector of `e.def.w`, at the
 recurrence parameters, below `gamma^{16}`.**
@@ -354,93 +529,11 @@ theorem exists_gamma0_freshShellDirichlet_meshOscillation_le_gamma_pow_sixteen
     rw [hAenv]
     exact mul_nonneg (by positivity) (freshShellFourthEnergyConst_nonneg _ _)
   obtain ⟨W, hW⟩ : ∃ W : ℝ, W = Aenv ^ ((4 : ℝ)⁻¹) := ⟨_, rfl⟩
-  have hW0nn : 0 ≤ W := by rw [hW]; exact Real.rpow_nonneg hAenv0 _
-  have hWpow : W ^ (4 : ℕ) = Aenv := by
-    rw [hW, ← Real.rpow_natCast (Aenv ^ ((4 : ℝ)⁻¹)) 4, ← Real.rpow_mul hAenv0,
-      show ((4 : ℝ)⁻¹ * ((4 : ℕ) : ℝ)) = 1 by norm_num]
-    exact Real.rpow_one Aenv
-  have hcoarse : gridFourthMoment M.P.toMeasure
-      (interiorMesoCubeGrid d K nbuf (nbuf + (Ngap : ℤ) - 1))
-      (fun R omega => meshEnergyCell (nbuf + (Ngap : ℤ))
-        (wD omega).toH1Function.grad R) ≤ W ^ (4 : ℕ) := by
-    rw [hWpow]
-    exact henvD
-  have hsigma0 : (0 : ℝ) ≤ ((Annealed.sigmaBar M (m - (h : ℤ)) : ℝ))⁻¹ :=
-    (inv_pos.2 (Annealed.sigmaBar_characterization M (m - (h : ℤ))).1).le
-  have hmain := hdisp M K nbuf Ngap hdimN m hlt
-    ((Annealed.sigmaBar M (m - (h : ℤ)) : ℝ))⁻¹ hsigma0 e z₀ wD
-    (by rw [hsum]; exact hsol) W hW0nn hcoarse hcellInt
-  have hGle : (3 : ℝ) ^ (-((Ngap : ℕ) : ℝ)) ≤ M.gamma ^ (32 : ℕ) := by
-    have hbase := rpow_three_neg_recurrenceGap_le_gamma_pow recurrenceGapMultiplier
-      (gamma := M.gamma) hgamma0 hgamma1
-    rw [hNgap]
-    simpa [recurrenceGapMultiplier] using hbase
-  have hNrle : ((Ngap : ℕ) : ℝ) * M.gamma ≤ 96 := by
-    have hbase := recurrenceGap_mul_gamma_le recurrenceGapMultiplier
-      (gamma := M.gamma) hgamma0 hgamma1
-    rw [hNgap]
-    calc ((recurrenceGap recurrenceGapMultiplier M.gamma : ℕ) : ℝ) * M.gamma
-        ≤ 3 * ((recurrenceGapMultiplier : ℕ) : ℝ) := hbase
-      _ = 96 := by norm_num [recurrenceGapMultiplier]
-  have hSPle : ((Annealed.sigmaBar M (m - (h : ℤ)) : ℝ))⁻¹ *
-      (3 : ℝ) ^ (M.gamma * (((nbuf : ℤ) : ℝ) + ((Ngap : ℕ) : ℝ))) ≤
-        shellNormalizationConst := by
-    rw [hsumR]
-    exact sigmaBarInv_mul_rpow_gamma_shell_le M hstate hhpos hm0 hcstar
-  have hWle : W ≤ W0 := by
-    rw [hW, hW0]
-    refine Real.rpow_le_rpow hAenv0 ?_ (by norm_num)
-    rw [hAenv]
-    have hmono : freshShellFourthEnergyConst Chead (M.gamma ^ (100 : ℕ)) ≤
-        freshShellFourthEnergyConst Chead 1 := by
-      simp only [freshShellFourthEnergyConst]
-      have h1 : M.gamma ^ (100 : ℕ) ≤ 1 := pow_le_one₀ hgamma0.le hgamma1
-      have h0 : (0 : ℝ) ≤ M.gamma ^ (100 : ℕ) := by positivity
-      have hsq : (M.gamma ^ (100 : ℕ)) ^ (2 : ℕ) ≤ (1 : ℝ) ^ (2 : ℕ) :=
-        pow_le_pow_left₀ h0 h1 2
-      have hcoef : (0 : ℝ) ≤ 32 * Real.exp 1 ^ (2 : ℕ) := by positivity
-      exact add_le_add le_rfl (mul_le_mul_of_nonneg_left hsq hcoef)
-    have h3d : (0 : ℝ) ≤ (3 : ℝ) ^ d := by positivity
-    exact mul_le_mul_of_nonneg_left hmono h3d
-  have hCtotle : Cdisp * W + 96 * (Cdisp * Real.sqrt (d : ℝ) * shellNormalizationConst)
-      + Cdisp * shellNormalizationConst ≤ Ctot := by
-    rw [hCtot]
-    have : Cdisp * W ≤ Cdisp * W0 := mul_le_mul_of_nonneg_left hWle hCdisp0
-    linarith
-  have hfinal : Ctot * M.gamma ^ (15 : ℕ) ≤ 1 := by
-    have h15 : M.gamma ^ (15 : ℕ) ≤ M.gamma := by
-      calc M.gamma ^ (15 : ℕ) ≤ M.gamma ^ (1 : ℕ) :=
-            pow_le_pow_of_le_one hgamma0.le hgamma1 (by norm_num)
-        _ = M.gamma := pow_one _
-    have hCg : Ctot * M.gamma ^ (15 : ℕ) ≤ Ctot * M.gamma :=
-      mul_le_mul_of_nonneg_left h15 hCtot0
-    have hCg2 : Ctot * M.gamma ≤ Ctot * (1 / (1 + Ctot)) :=
-      mul_le_mul_of_nonneg_left hCgate hCtot0
-    have hden : (0 : ℝ) < 1 + Ctot := by linarith
-    have hlast : Ctot * (1 / (1 + Ctot)) ≤ 1 := by
-      rw [mul_one_div, div_le_one hden]
-      linarith
-    linarith
-  have hG0 : (0 : ℝ) ≤ (3 : ℝ) ^ (-((Ngap : ℕ) : ℝ)) :=
-    (Real.rpow_pos_of_pos (by norm_num : (0 : ℝ) < 3) _).le
-  have hP0 : (0 : ℝ) ≤
-      (3 : ℝ) ^ (M.gamma * (((nbuf : ℤ) : ℝ) + ((Ngap : ℕ) : ℝ))) :=
-    (Real.rpow_pos_of_pos (by norm_num : (0 : ℝ) < 3) _).le
-  have hbudget : Cdisp * ((3 : ℝ) ^ (-((Ngap : ℕ) : ℝ)) * W) +
-        Cdisp * (((Ngap : ℕ) : ℝ) *
-            (((Annealed.sigmaBar M (m - (h : ℤ)) : ℝ))⁻¹ * Real.sqrt (d : ℝ) *
-              Book.Ch02.vecNorm e)) *
-          ((3 : ℝ) ^ (-((Ngap : ℕ) : ℝ)) *
-            (3 : ℝ) ^ (M.gamma * (((nbuf : ℤ) : ℝ) + ((Ngap : ℕ) : ℝ)))) +
-        Cdisp * ((Annealed.sigmaBar M (m - (h : ℤ)) : ℝ))⁻¹ *
-          ((3 : ℝ) ^ (-((Ngap : ℕ) : ℝ)) *
-            (3 : ℝ) ^ (M.gamma * (((nbuf : ℤ) : ℝ) + ((Ngap : ℕ) : ℝ)))) ≤
-      M.gamma ^ (16 : ℕ) :=
-    three_term_budget_le_sixteen hCdisp0 hW0nn shellNormalizationConst_nonneg
-      (Real.sqrt_nonneg _) (Nat.cast_nonneg _) hG0 hP0 hsigma0
-      (Book.Ch02.vecNorm_nonneg e) (by norm_num) hgamma0 hgamma1 hGle hSPle hNrle he
-      hCtotle hfinal
-  have hgoal := le_trans hmain hbudget
+  have hgoal :=
+    @localizationOscillationEndpointSixteen_comparisonBounds1 (d) (Cdisp) (hCdisp0) (hdisp)
+      (Chead) (W0) (hW0) (Ctot) (hCtot) (hCtot0) (M) (m0) (Eind) (hstate) (m) (K) (h) (hhpos)
+        (hm0) (hcstar) (e) (he) (z₀) (wD) (hsol) (hCgate) (hsq) (hgamma0) (hgamma1) (nbuf) (Ngap)
+          (hNgap) (hsum) (hsumR) (hdimN) (hlt) (hcellInt) (Aenv) (henvD) (hAenv) (hAenv0) (W) (hW)
   rw [hsum] at hgoal
   exact hgoal
 

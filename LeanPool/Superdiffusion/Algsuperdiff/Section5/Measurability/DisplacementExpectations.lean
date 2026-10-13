@@ -96,7 +96,8 @@ theorem measurable_integral_streamProcess
       ∫ path, G (onePointRetract (0 : Vec d) (path t))
         ∂streamProcess M omega (x : OnePoint (Vec d)) := by
   let K : Kernel (FullSample d M.gamma) (Vec d) :=
-    ⟨fun omega => (streamWholeSpaceResolvent M omega).kernelSemigroup t x, measurable_streamTransition_point M x t⟩
+    ⟨fun omega => (streamWholeSpaceResolvent M omega).kernelSemigroup t x,
+      measurable_streamTransition_point M x t⟩
   have hK : Measurable fun omega => ∫ y, G y ∂K omega :=
     (hG.stronglyMeasurable.integral_kernel (κ := K)).measurable
   have heq : (fun omega : FullSample d M.gamma =>

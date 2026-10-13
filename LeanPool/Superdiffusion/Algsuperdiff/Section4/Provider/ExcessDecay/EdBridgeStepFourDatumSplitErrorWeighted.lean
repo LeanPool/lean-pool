@@ -76,7 +76,8 @@ variable {d : ℕ}
 datum leg — carrying the clause's own `𝓔` factor and reading the AV
 `‖(∇h)_{U_n}‖` in place of the normalized `L²` norm on `U_{n+1}`.  The
 first three summands are unchanged. -/
-def edBridgeDeltaBracketErrorWeighted (M : ABKModel d) (C : ℝ) (L m : ℤ) (s : ℝ) (t : {t : ℝ // 0 < t})
+def edBridgeDeltaBracketErrorWeighted (M : ABKModel d) (C : ℝ) (L m : ℤ) (s : ℝ) (t : {t : ℝ // 0
+  < t})
     (z : Vec d) (gflux gradh : Vec d → Vec d) (omega : Cutoff.CutoffSample d) (n : ℤ) : ℝ :=
   C * Real.rpow s (-(4 : ℝ)) *
         fluxCorrectedErrorRepresentative M L (n + 1) t (Cutoff.translateCutoffSample z omega) *

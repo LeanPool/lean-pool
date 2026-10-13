@@ -138,7 +138,7 @@ on the diagonal `s = γ`.  This is the identification that lets the `𝒢₀` br
 subtract the anchor's own shift and call it `C_{(e.cg.ellip.lower)}`. -/
 theorem lowerEllipticityProfile_two_diag (C gamma : ℝ) (hgamma : gamma ≠ 0) :
     lowerEllipticityProfile C gamma gamma Support.coarseEllipticityExponentTwo = C := by
-  show (if (2 : ℝ) < 2 then C * Real.rpow (gamma / (2 * gamma - gamma)) (2 / 2)
+  change (if (2 : ℝ) < 2 then C * Real.rpow (gamma / (2 * gamma - gamma)) (2 / 2)
       else C * gamma * (2 * gamma - gamma)⁻¹) = C
   rw [ite_eq_right (by norm_num : ¬((2 : ℝ) < 2))]
   rw [show (2 : ℝ) * gamma - gamma = gamma by ring, mul_assoc,

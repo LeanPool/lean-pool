@@ -158,7 +158,7 @@ theorem averagedSymmPartInv_coefficientCutoff (M : ABKModel d) (m : ℤ)
     rw [volume_openCubeSet_toReal]
     exact (cubeVolume_pos Q).ne'
   ext i j
-  show volumeAverage (openCubeSet Q)
+  change volumeAverage (openCubeSet Q)
       (fun x => ((symmPart (coefficientCutoff M.nu m omega x))⁻¹ : Mat d) i j) = _
   rw [show (fun x : Vec d => ((symmPart (coefficientCutoff M.nu m omega x))⁻¹ : Mat d) i j)
       = fun _ : Vec d => (M.nu⁻¹ • (1 : Mat d)) i j from
@@ -207,7 +207,7 @@ private theorem continuous_transposeMul_cutoff_entry (m : ℤ) (omega : CutoffSa
 private theorem continuous_vecNormSq_matVecMul_cutoff (m : ℤ) (omega : CutoffSample d)
     (xi : Vec d) :
     Continuous (fun x : Vec d => vecNormSq (matVecMul (cutoff m omega x) xi)) := by
-  show Continuous fun x : Vec d => ∑ i : Fin d,
+  change Continuous fun x : Vec d => ∑ i : Fin d,
     (∑ j : Fin d, cutoff m omega x i j * xi j) *
       (∑ j : Fin d, cutoff m omega x i j * xi j)
   refine continuous_finsetSum _ fun i _ => Continuous.mul ?_ ?_ <;>
@@ -407,7 +407,7 @@ theorem matLoewnerLE_averagedSymmPartPlusCorrection_coefficientCutoff
               (fun x => Ch02.matrixFrobeniusNormSq (cutoff m omega x)))) *
                 vecNormSq xi := by
           have hnu : M.nu ≠ 0 := M.nu_pos.ne'
-          show M.nu * vecNormSq xi + M.nu⁻¹ * vecNormSq xi *
+          change M.nu * vecNormSq xi + M.nu⁻¹ * vecNormSq xi *
               volumeAverage (openCubeSet (originCube d l))
                 (fun x => Ch02.matrixFrobeniusNormSq (cutoff m omega x)) =
             (M.nu * (1 + (M.nu ^ 2)⁻¹ *

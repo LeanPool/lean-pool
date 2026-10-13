@@ -225,7 +225,7 @@ theorem ae_summable_tailLayerTerm (M : ABKModel d) (m k : ℤ) (v : Fin d → �
     have hxm : ¬ m < x := by
       intro hlt
       refine hx ⟨(x - (m + 1)).toNat, ?_⟩
-      show m + 1 + (((x - (m + 1)).toNat : ℕ) : ℤ) = x
+      change m + 1 + (((x - (m + 1)).toNat : ℕ) : ℤ) = x
       omega
     rw [tailLayerTerm, ite_eq_right hxm]
   refine (hemb.summable_iff hzero).mp ?_

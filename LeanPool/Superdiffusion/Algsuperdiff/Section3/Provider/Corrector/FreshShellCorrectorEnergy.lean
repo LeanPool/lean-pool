@@ -71,7 +71,8 @@ covariance-isomorphism argument is used: the adjoint replaces all of them.
 **Disclosure.**  This file realizes the fresh-shell (`k = 0`) instance of the
 first equality of `e.perturb.assumption`, with its `|e|²` factor, and *without*
 the shell sum `Σ_{k = m-h+1}^m`, the `σ_{m-h}^{-2}` normalization and the
-`3^{2γk}` dilation factor; those three are *not* proved here.  Its inputs are the frozen assumptions (J1),
+`3^{2γk}` dilation factor; those three are *not* proved here.  Its inputs are the frozen assumptions
+(J1),
 (J2), (J4) through `ABKModel`, the proved corrector limit of
 `CorrectorLimitNode.lean`, and Mathlib.  No draft theorem, in particular not
 `Frozen.External.calderon_zygmund`, is used.

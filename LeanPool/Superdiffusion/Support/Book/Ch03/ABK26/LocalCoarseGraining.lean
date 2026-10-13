@@ -249,7 +249,8 @@ private theorem localCoarseGraining_descendant_response_two
   apply rootPointwise_descendant_infinity_two_le_parent_of_lt
     Q n hn a sigma0 hsigma0 hkn hR (fractionalOrderHalf s1)
       (fractionalOrderHalf s)
-  simpa only [fractionalOrderHalf_value] using (div_lt_div_of_pos_right hs1s (by norm_num : (0 : ℝ) < 2))
+  simpa only [fractionalOrderHalf_value] using (div_lt_div_of_pos_right hs1s (by norm_num : (0 :
+    ℝ) < 2))
 
 /-- The local flux-defect carrier used by the negative Besov definition is
 definitionally the flux field in the one-cube theorem after restricting to
@@ -936,7 +937,8 @@ private theorem localCoarseGraining_outer_power_bound
                             (a.restrictToSubcube
                               (openCubeSet_subset_of_mem_descendantsAtScale (by omega) R.2))
                             (restrictH1ToSubcube u
-                              (openCubeSet_subset_of_mem_descendantsAtScale (by omega) R.2))) ^ r)) := by
+                              (openCubeSet_subset_of_mem_descendantsAtScale (by omega) R.2))) ^
+                                r)) := by
               apply tsum_congr
               intro j
               unfold descendantsAtScaleENNAverage

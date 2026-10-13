@@ -371,7 +371,7 @@ theorem ae_gradedFiniteEnvelopeENNReal_ne_top
   have hreal : (N : ℝ) + 1 <
       X k i.1 omega / gradedFiniteEnvelopeScale growth a k :=
     (ENNReal.ofReal_lt_ofReal_iff'.mp hi).1
-  show omega ∈ gradedFiniteAllRowsEvent I X a growth ((N : ℝ) + 1)
+  change omega ∈ gradedFiniteAllRowsEvent I X a growth ((N : ℝ) + 1)
   refine Set.mem_iUnion.2 ⟨k, ?_⟩
   refine Set.mem_iUnion.2 ⟨i.1, Set.mem_iUnion.2 ⟨i.2, ?_⟩⟩
   rw [mem_upperTailEvent]

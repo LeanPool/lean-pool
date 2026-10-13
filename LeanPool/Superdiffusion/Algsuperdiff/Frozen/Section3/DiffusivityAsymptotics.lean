@@ -19,8 +19,13 @@ Module imports, support namespace and local option directives adapted for Lean P
 
 @[expose] public section
 
+open Algsuperdiff.Section3.Provider.Diffusivity.ApproximateRecurrence.Closure
+  (diffusivity_asymptotics_proved)
+
 open Algsuperdiff.Section3
 open HCPolySupport MeasureTheory
+
+
 
 -- FROZEN-STATEMENT-BEGIN
 theorem Algsuperdiff.Frozen.Section3.diffusivity_asymptotics
@@ -60,7 +65,7 @@ theorem Algsuperdiff.Frozen.Section3.diffusivity_asymptotics
     -- The provider export is gated at `mStarStar`; the frozen gate
     -- `mStar M < m0` is the stronger one, so the composition is a fortiori.
     obtain ⟨Cflow, hCflow, hmain⟩ :=
-      Algsuperdiff.Section3.Provider.Diffusivity.ApproximateRecurrence.Closure.diffusivity_asymptotics_proved
+      diffusivity_asymptotics_proved
         d hd
     exact ⟨Cflow, hCflow, fun M m0 E hm0 =>
       hmain M m0 E (lt_of_le_of_lt (Provider.Scales.mStarStar_le_mStar M) hm0)⟩

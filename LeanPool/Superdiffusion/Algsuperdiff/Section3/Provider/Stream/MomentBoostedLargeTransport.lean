@@ -356,7 +356,8 @@ theorem normalizedCenteredLpMassRep_origin_moments
     have hZsq_map : (∫ a, Z a ^ (2 : ℕ) ∂P) = ∫ omega, Z (F omega) ^ (2 : ℕ) ∂M.P.toMeasure := by
       rw [show P = Measure.map F M.P.toMeasure by rfl]
       exact integral_map (measurable_partitionIncrementField (d := d) n m).aemeasurable
-        (((measurable_regFieldLpMassRep p _).sub measurable_const).pow_const 2 |>.aestronglyMeasurable)
+        (((measurable_regFieldLpMassRep p _).sub measurable_const).pow_const 2
+          |>.aestronglyMeasurable)
     rw [hZsq_map]
     change (∫ omega, Z (F omega) ^ (2 : ℕ) ∂M.P.toMeasure) ≤ V ^ (2 : ℕ)
     rw [hZsqcomp]
@@ -479,7 +480,8 @@ private theorem isBigOWith_gammaSigma_centeredDescendantAverage_momentBoosted
   have hcolored := isBigOWith_gammaSigma_finset_sum_momentBoosted_colored
     (mu := P) (X := Y) (s := S) (color := color) (sigma := sigma) hS
     (fun c hc => by
-      exact Book.Ch04.iIndepFun_descendantsAtScaleScaleColorClass_of_restrictionUnitRangeDependentLaw
+      exact
+        Book.Ch04.iIndepFun_descendantsAtScaleScaleColorClass_of_restrictionUnitRangeDependentLaw
         (Q := originCube d j) (k := 0) (c := c) (P := P)
         (partitionStreamIncrementLaw_unitRangeDependent M n m)
         (fun R => hlocal R.1 (Finset.mem_filter.mp R.2).1))

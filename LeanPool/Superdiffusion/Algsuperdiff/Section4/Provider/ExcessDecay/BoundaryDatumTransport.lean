@@ -124,7 +124,7 @@ theorem localizedZeroTraceFunctionOn_untranslate {U V : Set (Vec d)} (c : Vec d)
   funext p
   rw [H10Function.untranslate_toH1Function, H1Function.untranslate_toFun]
   rw [hw]
-  show eta (p + c - c) * f (p + c) = eta p * f (p + c)
+  change eta (p + c - c) * f (p + c) = eta p * f (p + c)
   rw [add_sub_cancel_right]
 
 /-- **The anchor's Dirichlet datum, on the covering cube, in its own frame.**

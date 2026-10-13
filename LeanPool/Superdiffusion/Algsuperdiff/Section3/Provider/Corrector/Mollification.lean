@@ -346,7 +346,7 @@ theorem integral_normSq_mollify_le {E : Type*} [NormedAddCommGroup E] [NormedSpa
         = ∫ y, (∫ ω, |κ y| * ‖X ((-y) +ᵥ ω)‖ ^ 2 ∂μ) := integral_integral_swap hprod
       _ = ∫ y, |κ y| * ∫ ω, ‖X ω‖ ^ 2 ∂μ := by
           refine integral_congr_ae (Filter.Eventually.of_forall fun y => ?_)
-          show ∫ ω, |κ y| * ‖X ((-y) +ᵥ ω)‖ ^ 2 ∂μ = |κ y| * ∫ ω, ‖X ω‖ ^ 2 ∂μ
+          change ∫ ω, |κ y| * ‖X ((-y) +ᵥ ω)‖ ^ 2 ∂μ = |κ y| * ∫ ω, ‖X ω‖ ^ 2 ∂μ
           rw [integral_const_mul]
           exact congrArg (fun t => |κ y| * t)
             (integral_comp_const_vadd (fun ω => ‖X ω‖ ^ 2) (-y))

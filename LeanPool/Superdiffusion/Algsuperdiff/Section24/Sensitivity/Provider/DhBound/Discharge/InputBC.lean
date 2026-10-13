@@ -38,7 +38,8 @@ with the weak divergence `∇·h`.  The source estimate is the Besov product rul
 followed by the two `u`-estimates
 
 ```
-‖u‖_{L²}            ≤ C [∇u]_{B^{-3/8}_{2,2}}      (`e.fractional.Sobolev.embedding.zero.bndr`, `t = 3/16`),
+‖u‖_{L²}            ≤ C [∇u]_{B^{-3/8}_{2,2}}      (`e.fractional.Sobolev.embedding.zero.bndr`, `t =
+3/16`),
 [u]_{B^{3/8}_{2,2}} ≤ C [∇u]_{B^{-3/8}_{2,2}}      (`l.Besov.grad.to.function` in the `ℓ²` form),
 ```
 
@@ -76,7 +77,7 @@ theorem toReal_eLpNorm_matrixDerivativeNorm_le_gradientW1Infinity
 
 theorem ae_abs_firstDeriv_le_gradientW1Infinity (h : UnitCubeSkewW2Infinity d)
     (k i j : Fin d) :
-    ∀ᵐ x ∂ volumeMeasureOn
+    ∀ᵐ x ∂volumeMeasureOn
       ((cubeDomain (originCube d 0) : Domain d) : Set (Vec d)),
       |h.firstDeriv x (basisVec k) i j| ≤ h.gradientW1Infinity := by
   filter_upwards [ae_abs_apply_le_toReal_eLpNorm_matrixDerivativeNorm
@@ -129,7 +130,7 @@ theorem divRep_ae_eq (h : UnitCubeSkewW2Infinity d) :
     exact derivRep_ae_eq h k i j
   filter_upwards [hall] with x hx
   funext j
-  show (∑ i : Fin d, derivRep h i i j x) = ∑ i : Fin d, h.firstDeriv x (basisVec i) i j
+  change (∑ i : Fin d, derivRep h i i j x) = ∑ i : Fin d, h.firstDeriv x (basisVec i) i j
   exact Finset.sum_congr rfl fun i _ => hx i i j
 
 theorem divRep_lipschitz (h : UnitCubeSkewW2Infinity d) (x y : Vec d) :
@@ -144,7 +145,7 @@ theorem divRep_lipschitz (h : UnitCubeSkewW2Infinity d) (x y : Vec d) :
       = |∑ i : Fin d, (derivRep h i i j x - derivRep h i i j y)| := by
         rw [Real.norm_eq_abs]
         congr 1
-        show (∑ i : Fin d, derivRep h i i j x) - ∑ i : Fin d, derivRep h i i j y =
+        change (∑ i : Fin d, derivRep h i i j x) - ∑ i : Fin d, derivRep h i i j y =
           ∑ i : Fin d, (derivRep h i i j x - derivRep h i i j y)
         rw [← Finset.sum_sub_distrib]
     _ ≤ ∑ i : Fin d, |derivRep h i i j x - derivRep h i i j y| :=
@@ -384,7 +385,7 @@ theorem scaleNormalizedPositiveBesovVectorNormTwo_termBCField_le [NeZero d]
       vAdj)
     (hv : IsResponseMaximizer (cubeDomain (originCube d 0)) a p q v)
     (u : H10Function ((cubeDomain (originCube d 0) : Domain d) : Set (Vec d)))
-    (hu : ∀ᵐ x ∂ volumeMeasureOn
+    (hu : ∀ᵐ x ∂volumeMeasureOn
         ((cubeDomain (originCube d 0) : Domain d) : Set (Vec d)),
       u.toH1Function.grad x =
         (2 : ℝ)⁻¹ • (vAdj.toH1.grad x + v.toH1.grad x) + p) :

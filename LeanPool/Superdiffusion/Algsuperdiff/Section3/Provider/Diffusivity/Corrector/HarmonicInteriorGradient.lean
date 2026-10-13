@@ -165,7 +165,8 @@ theorem hasDerivAt_gradKernel (a b t : ℝ) :
   have h1 : HasDerivAt (fun s : ℝ => posPartSq (s - a)) (2 * max 0 (t - a)) t := by
     simpa using! (hasDerivAt_posPartSq (t - a)).comp t ((hasDerivAt_id t).sub_const a)
   have h2 : HasDerivAt (fun s : ℝ => posPartSq (b - s)) (-(2 * max 0 (b - t))) t := by
-    simpa using! (hasDerivAt_posPartSq (b - t)).comp t ((hasDerivAt_const t b).sub (hasDerivAt_id t))
+    simpa using! (hasDerivAt_posPartSq (b - t)).comp t ((hasDerivAt_const t b).sub (hasDerivAt_id
+      t))
   refine (h1.mul h2).congr_deriv ?_
   rw [gradKernelDeriv]
   ring
@@ -468,7 +469,8 @@ private theorem integral_gradKernel_comp_ge {r : ℝ} (hr : 0 < r) (z : Vec (m +
       measure_mono (euclideanClosedBall_subset_euclideanBall (by linarith) (by linarith))
     have hcomb : volume (euclideanBall z (7 * r / 16))
         ≤ volume A + volume (euclideanBall z (6 * r / 16)) :=
-      le_trans (le_trans (measure_mono hsub) (measure_union_le _ _)) (add_le_add (le_refl (volume A)) hcl)
+      le_trans (le_trans (measure_mono hsub) (measure_union_le _ _)) (add_le_add (le_refl (volume
+        A)) hcl)
     have hfinA : volume A ≠ ⊤ :=
       ne_top_of_le_ne_top (volume_euclideanBall_ne_top z (7 * r / 16))
         (measure_mono Set.sdiff_subset)

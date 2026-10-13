@@ -65,7 +65,7 @@ variable {d : ℕ}
 private theorem ofReal_three_rpow_mul_toReal {t : ℝ} {R : ℝ≥0∞} (hR : R ≠ ⊤) :
     ENNReal.ofReal (Real.rpow 3 t) * R =
       ENNReal.ofReal (Real.rpow 3 t * R.toReal) := by
-  show ENNReal.ofReal ((3 : ℝ) ^ t) * R = ENNReal.ofReal ((3 : ℝ) ^ t * R.toReal)
+  change ENNReal.ofReal ((3 : ℝ) ^ t) * R = ENNReal.ofReal ((3 : ℝ) ^ t * R.toReal)
   rw [ENNReal.ofReal_mul (Real.rpow_nonneg (by norm_num : (0 : ℝ) ≤ 3) t),
     ENNReal.ofReal_toReal hR]
 

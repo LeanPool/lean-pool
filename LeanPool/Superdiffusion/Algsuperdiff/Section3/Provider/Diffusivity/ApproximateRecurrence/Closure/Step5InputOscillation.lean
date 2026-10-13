@@ -28,7 +28,7 @@ the oscillation cell of `e.nablaw.oscillations` on the closure's grid:
 
 * `hmemOsc` --- the cell is `L^4` in the sample;
 * `hosc` --- `e.lower.bound.oscillations` itself, in the **re-sited** shape
-  `Closure.Step5DefectGauge.exists_gamma0_freshShellDirichlet_step5MeshOscillationResited_le_gamma_pow_fifteen`
+`exists_gamma0_freshShellDirichlet_step5MeshOscillationResited_le_gamma_pow_fifteen`
   delivers.
 
 Both come from a single pair, the octic grid envelope
@@ -256,7 +256,7 @@ theorem exists_gamma0_step5OscillationLegs (d : ℕ) [NeZero d] (hd : 2 ≤ d) :
     (by omega) hcstar hK e 0 he
     (by
       have hz : vecNormSq (0 : Vec d) = 0 := by
-        show ∑ i, (0 : Vec d) i * (0 : Vec d) i = 0
+        change ∑ i, (0 : Vec d) i * (0 : Vec d) i = 0
         simp
       rw [vecNorm_eq_sqrt_vecNormSq, hz, Real.sqrt_zero]
       norm_num)

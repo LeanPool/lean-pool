@@ -62,7 +62,7 @@ variable {d : ℕ}
 theorem perturbCoeffOn_zero_aeeq_domain (U : Domain d) (c : CoeffOn U)
     (g : LInfSkewMatrixFieldOn U) : CoeffOn.AEEq (perturbCoeffOn U c g 0) c := by
   refine Filter.Eventually.of_forall fun x => ?_
-  show c.toCoeffField x + (0 : ℝ) • g.1.1 x = c.toCoeffField x
+  change c.toCoeffField x + (0 : ℝ) • g.1.1 x = c.toCoeffField x
   simp
 
 /-- **The per-cube conditional estimate at a mesoscopic cube.**  Under the

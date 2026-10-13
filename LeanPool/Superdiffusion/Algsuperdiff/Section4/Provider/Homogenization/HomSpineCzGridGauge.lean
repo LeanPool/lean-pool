@@ -197,7 +197,7 @@ theorem ofReal_negBesovLpDepthSeminorm_rpow_le (Q : TriadicCube d) (s : Fraction
     omega
   have hexp : Real.rpow 3 (s.1 * p.exponent.toReal * (((Q.scale - (j : ℤ) : ℤ) : ℝ))) =
       (3 : ℝ) ^ (s.1 * p.exponent.toReal * ((Q.scale : ℝ) - (j : ℝ))) := by
-    show (3 : ℝ) ^ (s.1 * p.exponent.toReal * (((Q.scale - (j : ℤ) : ℤ) : ℝ))) = _
+    change (3 : ℝ) ^ (s.1 * p.exponent.toReal * (((Q.scale - (j : ℤ) : ℤ) : ℝ))) = _
     congr 1
     push_cast
     ring

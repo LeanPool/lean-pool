@@ -50,7 +50,8 @@ are settled here.
   (A ×ˢ A)`, the own rewrite) plus `CoarseGraining`'s own kernel-measurability idiom
   (`measurable_dist.pow measurable_const`, the scalar factor is GLOBALLY
   measurable; only the vector factor needs the window).
-* **(M1)+(M2)** discharge `ForceBesovRegularity` — the hypothesis of the coarse-graining right-hand side
+* **(M1)+(M2)** discharge `ForceBesovRegularity` — the hypothesis of the coarse-graining right-hand
+side
   itself — at the §4.5 data (`forceBesovRegularity_of_holderHalf`,
   `forceBesovRegularity_neg_of_holderHalf`), and give the printed data legs
   `B_g, B_h ≤ C 3^{m/2}`.
@@ -231,14 +232,15 @@ theorem aestronglyMeasurable_gagliardoKernel_of_holderHalf {Q : TriadicCube d} {
   exact hscal.smul hvec
 
 /-- **`M2`.**  A Hölder-`1/2` datum on `□_m` lies in `W^{s,2}(□_m)` for every
-`0 < s < 1/2`.  The strict inequality `s < 1/2` is load-bearing: at `s = 1/2` the Gagliardo integral diverges. -/
+`0 < s < 1/2`.  The strict inequality `s < 1/2` is load-bearing: at `s = 1/2` the Gagliardo integral
+diverges. -/
 theorem memWsp_of_holderHalf {m : ℤ} {K s : ℝ} {f : Vec d → E} (hd : 1 ≤ d)
     (hs0 : 0 < s) (hs : s < 1 / 2) (hK : 0 ≤ K)
     (hf : Support.HolderSeminormBoundOn (openCubeSet (originCube d m)) (1 / 2) K f) :
     Gagliardo.MemWsp (originCube d m) s 2 f := by
   have hid := normalizedGagliardoESeminormOn_openCubeSet (originCube d m) s f
   have hbound := normalizedGagliardoESeminormOn_cube_le (E := E) hd hs0 hs hK hf
-  show eLpNorm (Gagliardo.gagliardoKernel s 2 f) 2
+  change eLpNorm (Gagliardo.gagliardoKernel s 2 f) 2
     (Gagliardo.gagliardoCubeMeasure (originCube d m)) < ⊤
   rw [← Gagliardo.Internal.cubeGagliardoESeminorm_def, ← hid]
   exact lt_of_le_of_lt hbound ENNReal.ofReal_lt_top
@@ -258,7 +260,8 @@ theorem holderSeminormBoundOn_neg {U : Set (Vec d)} {alpha K : ℝ} {f : Vec d �
   exact h
 
 /-- **`ForceBesovRegularity` from the §4.5 Hölder normalization.**  This is the
-hypothesis the coarse-graining right-hand side itself carries, discharged at the frozen root's own data
+hypothesis the coarse-graining right-hand side itself carries, discharged at the frozen root's own
+data
 binders. -/
 theorem forceBesovRegularity_of_holderHalf [NeZero d] {m : ℤ} {K s : ℝ}
     {g : Vec d → Vec d} (hd : 1 ≤ d) (hs0 : 0 < s) (hs : s < 1 / 2) (hK : 0 ≤ K)

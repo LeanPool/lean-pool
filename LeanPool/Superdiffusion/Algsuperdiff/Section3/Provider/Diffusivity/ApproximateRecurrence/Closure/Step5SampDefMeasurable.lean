@@ -159,7 +159,7 @@ the transposed direction. -/
 theorem vecDot_step5CrossWeightVec (e : Vec d) (A : Mat d) (v : Vec d) :
     vecDot (step5CrossWeightVec e A) v = vecDot e (matVecMul A v) := by
   classical
-  show (∑ j, (∑ i, e i * A i j) * v j) = ∑ i, e i * ∑ j, A i j * v j
+  change (∑ j, (∑ i, e i * A i j) * v j) = ∑ i, e i * ∑ j, A i j * v j
   simp only [Finset.sum_mul, Finset.mul_sum]
   rw [Finset.sum_comm]
   exact Finset.sum_congr rfl fun i _ => Finset.sum_congr rfl fun j _ => by ring
@@ -262,14 +262,14 @@ theorem step5CrossPairing_apply_class {Q R : TriadicCube d} {jd : ℕ}
     rw [h1, h2, HilbertVec.inner_def]
     by_cases hx : x ∈ cubeSet R
     · rw [Set.indicator_of_mem hx]
-      show vecDot (step5CrossWeightField R e n m omega x) (u x) = _
+      change vecDot (step5CrossWeightField R e n m omega x) (u x) = _
       rw [step5CrossWeightField, Set.indicator_of_mem hx, vecDot_step5CrossWeightVec]
     · rw [Set.indicator_of_notMem hx]
-      show vecDot (step5CrossWeightField R e n m omega x) (u x) = 0
+      change vecDot (step5CrossWeightField R e n m omega x) (u x) = 0
       rw [step5CrossWeightField, Set.indicator_of_notMem hx]
       simp [vecDot]
   rw [hstep, integral_indicator (measurableSet_cubeSet R)]
-  show ∫ x, vecDot e (matVecMul (finiteShellIncrement omega n m x) (u x))
+  change ∫ x, vecDot e (matVecMul (finiteShellIncrement omega n m x) (u x))
       ∂((volume.restrict (openCubeSet Q)).restrict (cubeSet R)) = _
   rw [restrict_openCubeSet_restrict_cubeSet_descendant hR]
 

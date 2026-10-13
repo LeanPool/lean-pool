@@ -144,7 +144,7 @@ theorem exists_mem_latticeAnnulusSet {n m : ℤ} {v : Fin d → ℤ} (hv : v ≠
 /-- The centre `0` of the scale-`n` lattice is in `□_m` for every `n <= m`
 (indeed for every `m`): the manuscript's `{0}` component of the cover. -/
 theorem zero_mem_latticeCubeSet (n m : ℤ) : (0 : Fin d → ℤ) ∈ latticeCubeSet d n m := by
-  show triadicLatticePoint n (0 : Fin d → ℤ) ∈ openCubeSet (originCube d m)
+  change triadicLatticePoint n (0 : Fin d → ℤ) ∈ openCubeSet (originCube d m)
   rw [mem_openCubeSet_originCube_iff]
   intro i
   have hval : triadicLatticePoint n (0 : Fin d → ℤ) i = 0 := by

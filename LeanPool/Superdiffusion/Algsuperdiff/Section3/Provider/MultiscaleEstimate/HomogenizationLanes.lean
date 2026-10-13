@@ -619,7 +619,7 @@ private theorem log_grid_card (d : ℕ) (m : ℤ) (j : ℕ) :
       (j : ℝ) * ((d : ℝ) * Real.log 3) := by
   have hk : m - (j : ℤ) ≤ (originCube d m).scale := show m - (j : ℤ) ≤ m by omega
   rw [Provider.BadEvents.log_card_descendantsAtScale (originCube d m) hk]
-  show (d : ℝ) * ((m : ℝ) - ((m - (j : ℤ) : ℤ) : ℝ)) * Real.log 3 = _
+  change (d : ℝ) * ((m : ℝ) - ((m - (j : ℤ) : ℤ) : ℝ)) * Real.log 3 = _
   push_cast
   ring
 

@@ -124,7 +124,8 @@ formula in the parabolic variable turns the displacement tail into a fourth mome
 theorem lintegral_edist_pow_le_of_hasResolventTail
     (R : PositiveC0ContractiveResolvent X) (hcons : R.kernelSemigroup.IsConservative)
     {phi : ℝ → ℝ} (hphi : ∀ s, 0 ≤ phi s)
-    {mu : PositiveShift} (htail : SubMarkovKernelSemigroup.HasResolventTail R.kernelSemigroup (mu : ℝ) phi)
+    {mu : PositiveShift} (htail : SubMarkovKernelSemigroup.HasResolventTail R.kernelSemigroup (mu
+      : ℝ) phi)
     {t : ℝ≥0} (htmu : (mu : ℝ) * (t : ℝ) = 1) {a I : ℝ} (ha : 0 ≤ a) (hI : 0 ≤ I)
     (hint : ∫⁻ s in Set.Ioi a, ENNReal.ofReal (phi s * s ^ 3) ≤ ENNReal.ofReal I) (x : X) :
     ∫⁻ z, edist z x ^ (4 : ℝ) ∂(R.kernelSemigroup t x) ≤

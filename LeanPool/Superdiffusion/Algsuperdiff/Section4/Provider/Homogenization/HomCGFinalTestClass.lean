@@ -395,7 +395,8 @@ theorem smoothDualDominatesHolderTestsAt (Q : TriadicCube d) (s' s : FractionalO
 /-- **The Step-4 carrier, produced from the smooth-dual level at order `s′`.**
 
 The conversion of a smooth-dual level into the Step-4 carrier, with the
-`CoarseGraining` side read at `s′ < s`. The output level is the data order `s`, which is what the bundle's
+`CoarseGraining` side read at `s′ < s`. The output level is the data order `s`, which is what the
+bundle's
 duality clauses use. -/
 theorem weakNegDualBoundOn_of_smoothDualAt {Q : TriadicCube d} {s' s : FractionalOrder}
     {p : FiniteLpExponent} {Ktest : ℝ} (hK : 0 ≤ Ktest)

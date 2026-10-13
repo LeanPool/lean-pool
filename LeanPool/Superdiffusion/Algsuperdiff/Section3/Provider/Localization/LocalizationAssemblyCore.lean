@@ -148,7 +148,7 @@ theorem exists_frameLegAVec_eq [NeZero d] {v : Vec d} (hv : vecNormSq v ≤ 2) :
     rw [hsplit, hun, ht2]
     ring
   · funext i
-    show ((2 : ℝ)⁻¹ * v i + u i) - (-((2 : ℝ)⁻¹ * v i) + u i) = v i
+    change ((2 : ℝ)⁻¹ * v i + u i) - (-((2 : ℝ)⁻¹ * v i) + u i) = v i
     ring
 
 /-- **The adjoint frame map is onto the loading ball.** -/
@@ -186,7 +186,7 @@ theorem exists_frameLegBVec_eq [NeZero d] {v : Vec d} (hv : vecNormSq v ≤ 2) :
     rw [hsplit, hun, ht2]
     ring
   · funext i
-    show ((2 : ℝ)⁻¹ * v i + u i) + ((2 : ℝ)⁻¹ * v i - u i) = v i
+    change ((2 : ℝ)⁻¹ * v i + u i) + ((2 : ℝ)⁻¹ * v i - u i) = v i
     ring
 
 /-- **The primal leg majorizes every paired loading of the ball.**  The exact

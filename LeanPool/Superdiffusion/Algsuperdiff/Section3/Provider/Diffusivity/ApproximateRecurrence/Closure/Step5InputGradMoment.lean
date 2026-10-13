@@ -89,7 +89,7 @@ theorem descendantsAverage_vecNorm_cubeAverageVec_pow_four_le (Q : TriadicCube d
       8 * cubeEuclideanLpNorm Q 8 u ^ (4 : ℕ) := by
   have hbase := descendantsAverage_sq_vecNormSq_add_cubeAverageVec_le Q j (0 : Vec d) u hu
   have hzero : vecNormSq (0 : Vec d) = 0 := by
-    show ∑ i, (0 : Vec d) i * (0 : Vec d) i = 0
+    change ∑ i, (0 : Vec d) i * (0 : Vec d) i = 0
     simp
   have hfun : (fun R : TriadicCube d =>
       vecNormSq ((0 : Vec d) + cubeAverageVec R u) ^ (2 : ℕ)) =
@@ -148,8 +148,8 @@ theorem gridFourthMoment_le_integral_of_cubeFamilyAverage_le {Omega : Type*}
   have hpull : (∫ omega, ((I.card : ℝ))⁻¹ * ∑ R ∈ I, F R omega ^ (4 : ℝ) ∂mu) =
       ((I.card : ℝ))⁻¹ * ∫ omega, ∑ R ∈ I, F R omega ^ (4 : ℝ) ∂mu :=
     integral_const_mul _ _
-  show cubeFamilyAverage I (fun R => ∫ omega, F R omega ^ (4 : ℝ) ∂mu) ≤ _
-  show ((I.card : ℝ))⁻¹ * ∑ R ∈ I, (∫ omega, F R omega ^ (4 : ℝ) ∂mu) ≤ _
+  change cubeFamilyAverage I (fun R => ∫ omega, F R omega ^ (4 : ℝ) ∂mu) ≤ _
+  change ((I.card : ℝ))⁻¹ * ∑ R ∈ I, (∫ omega, F R omega ^ (4 : ℝ) ∂mu) ≤ _
   rw [hswap, ← hpull]
   exact hmono
 
@@ -248,7 +248,7 @@ theorem exists_integral_streamIncrementLpNorm_eight_pow_four_le (d : ℕ) :
       (K := C * A0 * decay) (σ := 1) (p := 2) (by norm_num) (by positivity) (by norm_num)
       (fun omega => hGp0 omega.val) hGpc_meas.aemeasurable hGpc_tail
     refine h.congr (Filter.Eventually.of_forall fun omega => ?_)
-    show Gp omega.val ^ (2 : ℝ) = Gp omega.val ^ (2 : ℕ)
+    change Gp omega.val ^ (2 : ℝ) = Gp omega.val ^ (2 : ℕ)
     rw [← Real.rpow_natCast (Gp omega.val) 2]
     norm_num
   -- the pathwise fourth-power majorant

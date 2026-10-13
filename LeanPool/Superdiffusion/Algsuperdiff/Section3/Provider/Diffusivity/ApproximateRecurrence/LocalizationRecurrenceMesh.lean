@@ -44,7 +44,7 @@ reads that statement at the recurrence's own data --
 depth `j` fixed by `(originCube d Kc).scale - j = recurrenceMesoScale 32 gamma m h`.
 
 That is exactly the carrier convention of
-`PrincipalResponseTerminal.exists_const_descendantsAverage_integral_principalEnergy_le_annealedLimit`,
+`exists_const_descendantsAverage_integral_principalEnergy_le_annealedLimit`,
 whose conclusion bounds the `descendantsAverage` of the *first* summand
 produced here.  The two statements are therefore composable at one and the same
 corrector pair: the terminal produces a corrector family and this module's
@@ -131,7 +131,7 @@ here.**
 
 The `descendantsAverage` carrier, the `sigmaBar` gauge, the shell pair
 `(m - h, m)` and the depth identity are the same as those of
-`PrincipalResponseTerminal.exists_const_descendantsAverage_integral_principalEnergy_le_annealedLimit`,
+`exists_const_descendantsAverage_integral_principalEnergy_le_annealedLimit`,
 so a caller holding both may add them cube by cube.
 
 : identical to the previous statement. -/

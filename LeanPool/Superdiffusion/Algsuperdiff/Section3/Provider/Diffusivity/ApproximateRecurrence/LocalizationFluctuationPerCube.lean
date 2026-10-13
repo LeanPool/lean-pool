@@ -29,14 +29,14 @@ Source displays in ABK26, inside Step 2 of `l.approximate.recurrence.formula`:
 * The Euler--Lagrange identity and the block Besov duality bound (proved as
   `LocalizationFluctuationDuality.two_mul_doubledMuValue_le_besovDualityConst_localizationFz`);
 * The doubled coarse Poincare inequality (proved as
-  `CoarseEllipticity.DoubledPairingResponse.partialSeminormTwo_blockGaugeDown_le_of_isDoubledResponseField`);
+`partialSeminormTwo_blockGaugeDown_le_of_isDoubledResponseField`);
 * The self-improvement that cancels one power of `|| bfA_m^{1/2} tilde S_z
   ||`, the cross-term bound;
 * The display `e.lower.bound.localization.terms`, whose bracketed integrand is
   `2 P_z.
   fint bfA_m tilde S_z + fint tilde S_z. bfA_m tilde S_z` -- verbatim the two
   fluctuation summands of
-  `LocalizationRecurrenceMesh.exists_localizationRecurrenceMeshSplit_le_descendantsAverage_expanded`.
+`LocalizationRecurrenceMesh.exists_localizationRecurrenceMeshSplit_le_descendantsAverage_expanded`.
 
 ## What is proved
 

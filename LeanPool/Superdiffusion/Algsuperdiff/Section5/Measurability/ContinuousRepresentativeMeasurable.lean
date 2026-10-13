@@ -8,14 +8,16 @@ module
 
 public import LeanPool.Superdiffusion.Algsuperdiff.Section5.Support.SolutionSelector
 
-@[expose] public section
-
 /-!
 # Measurability of continuous representatives from their averages
 
 Continuity in the spatial variable recovers the value at every interior point
 from measurable integrals over shrinking balls.
 -/
+
+@[expose] public section
+
+
 
 namespace Algsuperdiff.Section5.Measurability
 

@@ -258,7 +258,7 @@ theorem superposedCompetitorSlope_eq_cellSlope [NeZero d] {m : ℤ} {hn : ℕ �
     componentClauses hmono hI hC (hwin C hC).1 (hwin C hC).2 p hT
   refine ⟨?_, ?_, ?_⟩
   · intro x hx
-    show p + ∑ᶠ C ∈ badComponents I, _ = p + ∑ᶠ C ∈ badComponents I, _
+    change p + ∑ᶠ C ∈ badComponents I, _ = p + ∑ᶠ C ∈ badComponents I, _
     refine congrArg (p + ·) (finsum_mem_congr rfl fun C hC => ?_)
     rw [(hclause C hC).1 x hx,
       (hclause C hC).1 _ (Multiscale.kuhnCellInteriorPoint_mem_openCarrier T)]
@@ -286,7 +286,7 @@ theorem superposedCompetitorSlope_eq_cellSlope [NeZero d] {m : ℤ} {hn : ℕ �
         (globalCompetitorCellSlope m
           (simplexScale m hn (componentWindowLayer m hn C)) C p T - p) = 0 := by
       refine finsum_mem_of_eqOn_zero fun C hC => ?_
-      show globalCompetitorCellSlope m
+      change globalCompetitorCellSlope m
         (simplexScale m hn (componentWindowLayer m hn C)) C p T - p = 0
       rw [(hclause C hC).2.2 fun hmem =>
         hR (whitneyNeighborhood_mono (badComponents_subset hC) hmem)]

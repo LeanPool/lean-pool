@@ -80,7 +80,7 @@ private theorem exists_seq_of_step {alpha : Type*} (a0 : alpha) (R : alpha → a
 /-- `3^{n/2} · 3^{n/2} = 3^n`. -/
 private theorem rpow_three_half_mul_self (n : ℤ) :
     Real.rpow 3 ((n : ℝ) / 2) * Real.rpow 3 ((n : ℝ) / 2) = Real.rpow 3 (n : ℝ) := by
-  show (3 : ℝ) ^ ((n : ℝ) / 2) * (3 : ℝ) ^ ((n : ℝ) / 2) = (3 : ℝ) ^ (n : ℝ)
+  change (3 : ℝ) ^ ((n : ℝ) / 2) * (3 : ℝ) ^ ((n : ℝ) / 2) = (3 : ℝ) ^ (n : ℝ)
   rw [← Real.rpow_add (by norm_num : (0 : ℝ) < 3)]
   congr 1
   ring
@@ -88,7 +88,7 @@ private theorem rpow_three_half_mul_self (n : ℤ) :
 /-- `3^{-n/2} = (3^{n/2})⁻¹`. -/
 theorem rpow_three_neg_half_eq_inv (n : ℤ) :
     Real.rpow 3 (-(n : ℝ) / 2) = (Real.rpow 3 ((n : ℝ) / 2))⁻¹ := by
-  show (3 : ℝ) ^ (-(n : ℝ) / 2) = ((3 : ℝ) ^ ((n : ℝ) / 2))⁻¹
+  change (3 : ℝ) ^ (-(n : ℝ) / 2) = ((3 : ℝ) ^ ((n : ℝ) / 2))⁻¹
   rw [show (-(n : ℝ) / 2) = -((n : ℝ) / 2) by ring,
     Real.rpow_neg (by norm_num : (0 : ℝ) ≤ 3)]
 
@@ -257,7 +257,8 @@ theorem exists_iterationSequence (hdim : 2 ≤ d) :
       obtain ⟨z, hz, -⟩ := hw'sol.1
       exact ⟨z, hz⟩
     refine ⟨⟨w', w'Rep, rho * s.K, mul_nonneg hrho0 s.hK0, hw'rep,
-      (holderSeminormOn_le_ofReal_iff (mul_nonneg hrho0 s.hK0)).1 hcancel, hzero'⟩, ⟨lap, ?_, ?_, ?_⟩, rfl⟩
+      (holderSeminormOn_le_ofReal_iff (mul_nonneg hrho0 s.hK0)).1 hcancel, hzero'⟩, ⟨lap, ?_, ?_,
+        ?_⟩, rfl⟩
     · exact hlapsol
     · intro x hx
       refine (hlapsup x hx).trans (le_of_eq ?_)
@@ -275,7 +276,7 @@ theorem exists_iterationSequence (hdim : 2 ≤ d) :
         ring
   refine ⟨fun j => (f j).w, fun j => (f j).wRep, lap, ?_, fun j => (f j).hrep,
     fun j => (f j).hzero, ?_, hlapsol, ?_, hlapnext⟩
-  · show (f 0).w = w0
+  · change (f 0).w = w0
     rw [hf0, hs0def]
   · intro j
     have h := (f j).hKb

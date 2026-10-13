@@ -290,7 +290,7 @@ theorem vecNormSq_meshCellLoad_fst_le_energy (M : ABKModel d) (n : ℤ) (h : ℕ
         vecNormSq (e' +
           cubeAverageVec R (fun x => (wD omega.val).toH1Function.grad x)) := by
     simp only [meshCellLoad, principalPz_fst]
-    show vecNormSq ((Real.sqrt ((Annealed.sigmaBar M n : ℝ)))⁻¹ • _) = _
+    change vecNormSq ((Real.sqrt ((Annealed.sigmaBar M n : ℝ)))⁻¹ • _) = _
     rw [vecNormSq_smul, inv_pow, Real.sq_sqrt hsig.le]
   rw [hload, meshCellBackgroundPotentialEnergy_eq_cubeAverage]
   exact mul_le_mul_of_nonneg_left hjensen (inv_nonneg.2 hsig.le)
@@ -316,7 +316,7 @@ theorem vecNormSq_meshCellLoad_snd_le_energy (M : ABKModel d) (n : ℤ) (h : ℕ
         vecNormSq (e + cubeAverageVec R (neumannFluxField (Annealed.sigmaBar M n)
           omega.val n (n + (h : ℤ)) e' (wN omega.val))) := by
     simp only [meshCellLoad, principalPz_snd]
-    show vecNormSq (Real.sqrt ((Annealed.sigmaBar M n : ℝ)) • _) = _
+    change vecNormSq (Real.sqrt ((Annealed.sigmaBar M n : ℝ)) • _) = _
     rw [vecNormSq_smul, Real.sq_sqrt hsig.le]
   rw [hload, meshCellBackgroundFluxEnergy_eq_cubeAverage]
   exact mul_le_mul_of_nonneg_left hjensen hsig.le

@@ -38,6 +38,57 @@ noncomputable section
 
 variable {d : ℕ}
 
+private theorem summable_normalizedFlux_weightedProfile :
+    ∀ {d : ℕ} (M : ABKModel d) (m : ℤ)
+      (E r : { r : ℝ // (1 : ℝ) ≤ r }),
+      (↑r : ℝ) < (2 : ℝ) →
+        ∀ (s : ℝ),
+          (0 : ℝ) < (↑r : ℝ) →
+            (0 : ℝ) < s →
+              ∀ (U : ℕ → CutoffSample d → ℝ),
+                (∀ (n : ℕ) (omega : CutoffSample d), (0 : ℝ) ≤ U n omega) →
+                  (∀ (n : ℕ) (omega : CutoffSample d), U n omega ≤ superposedFluxCutoffCap M m) →
+                    let a : ℕ → ℝ := fun (n : ℕ) => superposedFluxDepthAmpProfile M (↑E : ℝ) n;
+                    let V : ℕ → CutoffSample d → ℝ := fun (n : ℕ) (omega : CutoffSample d) => (a n)⁻¹ * U n omega;
+                    let X : ℝ := (↑E : ℝ)⁻¹ ^ (2 : ℕ) * M.gamma⁻¹;
+                    let a0 : ℝ := superposedFluxDepthAmpConst d * Real.exp (-(superposedFluxBfaRate d * X));
+                    (∀ (n : ℕ), (0 : ℝ) < a n) →
+                      (∀ (n : ℕ) (omega : CutoffSample d), (0 : ℝ) ≤ V n omega) →
+                        (0 : ℝ) < a0 →
+                          (∀ (n : ℕ), a0 ≤ a n) →
+                            ∀ (omega : CutoffSample d),
+                              Summable fun (n : ℕ) =>
+                                Ch02.geometricWeight s (↑r : ℝ) n * a n ^ ((↑r : ℝ) / (2 : ℝ)) * V n omega := by
+  intro _ M m _ r _ _ hr0 hs U hUnonneg hUcap a V _ a0 ha hVnonneg ha0pos ha0le omega
+  let H : ℝ := superposedFluxCutoffCap M m
+  let C : ℝ := a0 ^ ((r : ℝ) / 2 - 1) * H
+  have hweight := (HCPolySupport.summable_geometricWeight
+    (mul_pos hs hr0)).mul_right C
+  refine Summable.of_nonneg_of_le ?_ ?_ hweight
+  · intro n
+    exact mul_nonneg
+      (mul_nonneg
+        (HCPolySupport.geometricWeight_nonneg n (mul_pos hs hr0).le)
+        (Real.rpow_nonneg (ha n).le _))
+      (hVnonneg n omega)
+  · intro n
+    have hexp : (r : ℝ) / 2 - 1 ≤ 0 := by linarith
+    have hcoeff : a n ^ ((r : ℝ) / 2 - 1) ≤
+        a0 ^ ((r : ℝ) / 2 - 1) :=
+      Real.rpow_le_rpow_of_nonpos ha0pos (ha0le n) hexp
+    have hnormalize : a n ^ ((r : ℝ) / 2) * V n omega =
+        a n ^ ((r : ℝ) / 2 - 1) * U n omega := by
+      rw [Real.rpow_sub_one (ha n).ne']
+      dsimp [V]
+      field_simp
+    have hnormalized : a n ^ ((r : ℝ) / 2) * V n omega ≤ C := by
+      rw [hnormalize]
+      dsimp [C]
+      exact mul_le_mul hcoeff (hUcap n omega) (hUnonneg n omega)
+        (Real.rpow_nonneg ha0pos.le _)
+    simpa only [mul_assoc] using! mul_le_mul_of_nonneg_left hnormalized
+      (HCPolySupport.geometricWeight_nonneg n (mul_pos hs hr0).le)
+
 /-- The model-facing normalized finite-`q < 2` producer consumed by
 `coarse_ellipticity_lower_branchPayload_lt_two_of_finiteQPresplit`. -/
 theorem exists_superposedFluxFiniteQPresplit_lt_two [NeZero d]
@@ -145,37 +196,8 @@ theorem exists_superposedFluxFiniteQPresplit_lt_two [NeZero d]
       _ = a n := by
         dsimp [a, superposedFluxDepthAmpProfile, X]
         ring
-  have hVlinsum : ∀ omega, Summable fun n : ℕ =>
-      Book.Ch02.geometricWeight s (r : ℝ) n *
-        a n ^ ((r : ℝ) / 2) * V n omega := by
-    intro omega
-    let C : ℝ := a0 ^ ((r : ℝ) / 2 - 1) * H
-    have hweight := (HCPolySupport.summable_geometricWeight
-      (mul_pos hs hr0)).mul_right C
-    refine Summable.of_nonneg_of_le ?_ ?_ hweight
-    · intro n
-      exact mul_nonneg
-        (mul_nonneg
-          (HCPolySupport.geometricWeight_nonneg n (mul_pos hs hr0).le)
-          (Real.rpow_nonneg (ha n).le _))
-        (hVnonneg n omega)
-    · intro n
-      have hexp : (r : ℝ) / 2 - 1 ≤ 0 := by linarith
-      have hcoeff : a n ^ ((r : ℝ) / 2 - 1) ≤
-          a0 ^ ((r : ℝ) / 2 - 1) :=
-        Real.rpow_le_rpow_of_nonpos ha0pos (ha0le n) hexp
-      have hnormalize : a n ^ ((r : ℝ) / 2) * V n omega =
-          a n ^ ((r : ℝ) / 2 - 1) * U n omega := by
-        rw [Real.rpow_sub_one (ha n).ne']
-        dsimp [V]
-        field_simp
-      have hnormalized : a n ^ ((r : ℝ) / 2) * V n omega ≤ C := by
-        rw [hnormalize]
-        dsimp [C]
-        exact mul_le_mul hcoeff (hUcap n omega) (hUnonneg n omega)
-          (Real.rpow_nonneg ha0pos.le _)
-      simpa only [mul_assoc] using! mul_le_mul_of_nonneg_left hnormalized
-        (HCPolySupport.geometricWeight_nonneg n (mul_pos hs hr0).le)
+  have hVlinsum := @summable_normalizedFlux_weightedProfile (d) (M) (m) (E) (r) (hr) (s) (hr0)
+    (hs) (U) (hUnonneg) (hUcap) (ha) (hVnonneg) (ha0pos) (ha0le)
   have hVO : ∀ n, IsBigOWith (cutoffSampleLaw M).toMeasure
       (gammaSigma ((1 - sigma) / 2)) (V n) 1 := by
     intro n

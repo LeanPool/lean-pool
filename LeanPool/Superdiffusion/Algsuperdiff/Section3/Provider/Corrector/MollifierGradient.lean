@@ -105,7 +105,7 @@ theorem mollify_kernelShift {Ω : Type*} [AddAction (Vec d) Ω] {E : Type*}
   have hstep : ∀ y : Vec d, kernelShift κ z y • X ((-y) +ᵥ ω)
       = (fun w : Vec d => κ w • X ((z - w) +ᵥ ω)) (y + z) := by
     intro y
-    show κ (y + z) • X ((-y) +ᵥ ω) = κ (y + z) • X ((z - (y + z)) +ᵥ ω)
+    change κ (y + z) • X ((-y) +ᵥ ω) = κ (y + z) • X ((z - (y + z)) +ᵥ ω)
     rw [show z - (y + z) = -y by abel]
   have hshift : ∀ w : Vec d, κ w • X ((z - w) +ᵥ ω) = κ w • X ((-w) +ᵥ (z +ᵥ ω)) := by
     intro w
@@ -439,7 +439,7 @@ theorem koopman_toLp_mollify_sub_sub_smul {κ : Vec d → ℝ} (hκc : Continuou
         = (kernelShift κ (t • (Pi.single i (1 : ℝ) : Vec d)) y • φ ((-y) +ᵥ ω)
             - κ y • φ ((-y) +ᵥ ω)) - t * (κ₁ y • φ ((-y) +ᵥ ω)) := by
     intro y
-    show ν y * φ ((-y) +ᵥ ω)
+    change ν y * φ ((-y) +ᵥ ω)
       = (κ (y + t • (Pi.single i (1 : ℝ) : Vec d)) * φ ((-y) +ᵥ ω) - κ y * φ ((-y) +ᵥ ω))
         - t * (κ₁ y * φ ((-y) +ᵥ ω))
     rw [hν y]
@@ -467,7 +467,7 @@ theorem koopman_toLp_mollify_sub_sub_smul {κ : Vec d → ℝ} (hκc : Continuou
   have hrhs : mollify ν φ ω
       = mollify κ φ ((t • (Pi.single i (1 : ℝ) : Vec d)) +ᵥ ω) - mollify κ φ ω
         - t * mollify κ₁ φ ω := by
-    show (∫ y, ν y • φ ((-y) +ᵥ ω)) = _
+    change (∫ y, ν y • φ ((-y) +ᵥ ω)) = _
     rw [e1, e2, e3, e4, e5]
     rfl
   rw [h1]

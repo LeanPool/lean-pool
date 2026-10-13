@@ -129,7 +129,7 @@ theorem vecDot_matVecMul_skew (A : Mat d) (hA : A.transpose = -A) (u v : Vec d) 
     intro i j
     have hij := congrFun (congrFun hA i) j
     simpa [Matrix.transpose_apply, Matrix.neg_apply] using hij
-  show (∑ i, (∑ j, A i j * u j) * v i) = -∑ j, u j * ∑ i, A j i * v i
+  change (∑ i, (∑ j, A i j * u j) * v i) = -∑ j, u j * ∑ i, A j i * v i
   rw [show (∑ j, u j * ∑ i, A j i * v i) = ∑ j, ∑ i, u j * (A j i * v i) from
       Finset.sum_congr rfl fun j _ => Finset.mul_sum _ _ _,
     Finset.sum_comm]
@@ -174,19 +174,19 @@ theorem cubeAverage_vecNormSq_grad_eq_shellPairing (Q : TriadicCube d) (c : ℝ)
     have hlin : vecDot (-streamForcing c omega n m e x) (w.toH1Function.grad x)
         = -c * vecDot (matVecMul (finiteShellIncrement omega n m x) e)
             (w.toH1Function.grad x) := by
-      show (∑ i, (-(streamForcing c omega n m e x)) i * (w.toH1Function.grad x) i)
+      change (∑ i, (-(streamForcing c omega n m e x)) i * (w.toH1Function.grad x) i)
         = -c * ∑ i, matVecMul (finiteShellIncrement omega n m x) e i *
             (w.toH1Function.grad x) i
       rw [Finset.mul_sum]
       refine Finset.sum_congr rfl fun i _ => ?_
-      show -(c * matVecMul (finiteShellIncrement omega n m x) e i) *
+      change -(c * matVecMul (finiteShellIncrement omega n m x) e i) *
           (w.toH1Function.grad x) i = _
       ring
-    show vecDot (-streamForcing c omega n m e x) (w.toH1Function.grad x) = _
+    change vecDot (-streamForcing c omega n m e x) (w.toH1Function.grad x) = _
     rw [hlin, hskew]
     ring
   rw [hLfun, hRfun, integral_const_mul] at hself
-  show (cubeVolume Q)⁻¹ * ∫ x in cubeSet Q, vecNormSq (w.toH1Function.grad x) ∂volume
+  change (cubeVolume Q)⁻¹ * ∫ x in cubeSet Q, vecNormSq (w.toH1Function.grad x) ∂volume
     = c * ((cubeVolume Q)⁻¹ * ∫ x in cubeSet Q, vecDot e
         (matVecMul (finiteShellIncrement omega n m x) (w.toH1Function.grad x)) ∂volume)
   rw [setIntegral_cubeSet_eq_setIntegral_openCubeSet,
@@ -461,7 +461,7 @@ private theorem descendantsAverage_integral_comm' {Omega : Type*} [MeasurableSpa
     descendantsAverage Q j (fun R => ∫ w, F R w ∂mu)
       = ∫ w, descendantsAverage Q j (fun R => F R w) ∂mu := by
   classical
-  show ((descendantsAtDepth Q j).card : ℝ)⁻¹ *
+  change ((descendantsAtDepth Q j).card : ℝ)⁻¹ *
       ∑ R ∈ descendantsAtDepth Q j, ∫ w, F R w ∂mu = _
   rw [show (fun w => descendantsAverage Q j (fun R => F R w))
       = fun w => ((descendantsAtDepth Q j).card : ℝ)⁻¹ *
@@ -503,7 +503,7 @@ private theorem descendantsAverage_congr_mem (Q : TriadicCube d) (j : ℕ)
     (hFG : ∀ R ∈ descendantsAtDepth Q j, F R = G R) :
     descendantsAverage Q j F = descendantsAverage Q j G := by
   classical
-  show ((descendantsAtDepth Q j).card : ℝ)⁻¹ * ∑ R ∈ descendantsAtDepth Q j, F R
+  change ((descendantsAtDepth Q j).card : ℝ)⁻¹ * ∑ R ∈ descendantsAtDepth Q j, F R
     = ((descendantsAtDepth Q j).card : ℝ)⁻¹ * ∑ R ∈ descendantsAtDepth Q j, G R
   rw [Finset.sum_congr rfl hFG]
 
@@ -592,26 +592,34 @@ private theorem step5CellExcess_integral_eq (M : ABKModel d) (n : ℤ) (h : ℕ)
       = fun omega : CutoffSample d =>
         (vecNormSq (cubeAverageVec R
           (fun x => (alongIncrementPath n h wD omega.val).toH1Function.grad x))
-            - (2 * ((Annealed.sigmaBar M n : ℝ))⁻¹) * (vecDot e (matVecMul (freshShellCubeAverage R omega.val n (n + (h : ℤ)))
+            - (2 * ((Annealed.sigmaBar M n : ℝ))⁻¹) * (vecDot e (matVecMul (freshShellCubeAverage
+              R omega.val n (n + (h : ℤ)))
         (cubeAverageVec R
           (fun x => (alongIncrementPath n h wD omega.val).toH1Function.grad x)))))
-        + ((Annealed.sigmaBar M n : ℝ))⁻¹ ^ 2 * (vecNormSq (matVecMul (freshShellCubeAverage R omega.val n (n + (h : ℤ)))
+        + ((Annealed.sigmaBar M n : ℝ))⁻¹ ^ 2 * (vecNormSq (matVecMul (freshShellCubeAverage R
+          omega.val n (n + (h : ℤ)))
         (cubeAverageVec R
           (fun x => (alongIncrementPath n h wD omega.val).toH1Function.grad x)))) := rfl
   have hIX : Integrable (fun omega : CutoffSample d =>
-      (2 * ((Annealed.sigmaBar M n : ℝ))⁻¹) * (vecDot e (matVecMul (freshShellCubeAverage R omega.val n (n + (h : ℤ)))
+      (2 * ((Annealed.sigmaBar M n : ℝ))⁻¹) * (vecDot e (matVecMul (freshShellCubeAverage R
+        omega.val n (n + (h : ℤ)))
         (cubeAverageVec R
-          (fun x => (alongIncrementPath n h wD omega.val).toH1Function.grad x))))) (cutoffSampleLaw M).toMeasure := hX.const_mul _
+          (fun x => (alongIncrementPath n h wD omega.val).toH1Function.grad x)))))
+            (cutoffSampleLaw M).toMeasure := hX.const_mul _
   have hIS : Integrable (fun omega : CutoffSample d =>
-      ((Annealed.sigmaBar M n : ℝ))⁻¹ ^ 2 * (vecNormSq (matVecMul (freshShellCubeAverage R omega.val n (n + (h : ℤ)))
+      ((Annealed.sigmaBar M n : ℝ))⁻¹ ^ 2 * (vecNormSq (matVecMul (freshShellCubeAverage R
+        omega.val n (n + (h : ℤ)))
         (cubeAverageVec R
-          (fun x => (alongIncrementPath n h wD omega.val).toH1Function.grad x))))) (cutoffSampleLaw M).toMeasure := hS.const_mul _
+          (fun x => (alongIncrementPath n h wD omega.val).toH1Function.grad x)))))
+            (cutoffSampleLaw M).toMeasure := hS.const_mul _
   have hIsub : Integrable (fun omega : CutoffSample d =>
       vecNormSq (cubeAverageVec R
           (fun x => (alongIncrementPath n h wD omega.val).toH1Function.grad x))
-            - (2 * ((Annealed.sigmaBar M n : ℝ))⁻¹) * (vecDot e (matVecMul (freshShellCubeAverage R omega.val n (n + (h : ℤ)))
+            - (2 * ((Annealed.sigmaBar M n : ℝ))⁻¹) * (vecDot e (matVecMul (freshShellCubeAverage
+              R omega.val n (n + (h : ℤ)))
         (cubeAverageVec R
-          (fun x => (alongIncrementPath n h wD omega.val).toH1Function.grad x))))) (cutoffSampleLaw M).toMeasure := hN.sub hIX
+          (fun x => (alongIncrementPath n h wD omega.val).toH1Function.grad x)))))
+            (cutoffSampleLaw M).toMeasure := hN.sub hIX
   rw [hfun, integral_add hIsub hIS, integral_sub hN hIX,
     integral_const_mul, integral_const_mul]
 
@@ -619,7 +627,8 @@ private theorem step5CellExcess_integral_eq (M : ABKModel d) (n : ℤ) (h : ℕ)
 corrector. -/
 private theorem step5_jensen_leg (M : ABKModel d) (n : ℤ) (h : ℕ) (K j : ℕ)
     (wD : C(Vec d, Mat d) → H10Function (openCubeSet (originCube d (K : ℤ))))
-    (hmemD : ∀ (omega : ShellSeq d) (R : TriadicCube d), R ∈ descendantsAtDepth (originCube d (K : ℤ)) j →
+    (hmemD : ∀ (omega : ShellSeq d) (R : TriadicCube d), R ∈ descendantsAtDepth (originCube d (K :
+      ℤ)) j →
       MemLp (fun x => (alongIncrementPath n h wD omega).toH1Function.grad x) 2
         (normalizedCubeMeasure R))
     (hintD : ∀ omega : ShellSeq d, IntegrableOn
@@ -644,7 +653,8 @@ private theorem step5_jensen_leg (M : ABKModel d) (n : ℤ) (h : ℕ) (K j : ℕ
   rw [descendantsAverage_integral_comm' _ _ _ _ hsampN]
   have hLint : Integrable (fun omega : CutoffSample d =>
       descendantsAverage (originCube d (K : ℤ)) j (fun R => vecNormSq (cubeAverageVec R
-          (fun x => (alongIncrementPath n h wD omega.val).toH1Function.grad x)))) (cutoffSampleLaw M).toMeasure :=
+          (fun x => (alongIncrementPath n h wD omega.val).toH1Function.grad x)))) (cutoffSampleLaw
+            M).toMeasure :=
     (integrable_finsetSum (descendantsAtDepth (originCube d (K : ℤ)) j) hsampN).const_mul _
   exact integral_mono hLint hsampG fun omega =>
     descendantsAverage_vecNormSq_cubeAverageVec_le_cubeAverage (originCube d (K : ℤ)) j _
@@ -727,7 +737,8 @@ private theorem step5_cross_leg (M : ABKModel d) (n : ℤ) (h : ℕ) (K j : ℕ)
   have hDefAvgInt : Integrable (fun omega : CutoffSample d =>
       descendantsAverage (originCube d (K : ℤ)) j (fun R =>
             step5CrossDefect R omega.val n (n + (h : ℤ)) e
-          (fun x => (alongIncrementPath n h wD omega.val).toH1Function.grad x))) (cutoffSampleLaw M).toMeasure :=
+          (fun x => (alongIncrementPath n h wD omega.val).toH1Function.grad x))) (cutoffSampleLaw
+            M).toMeasure :=
     (integrable_finsetSum (descendantsAtDepth (originCube d (K : ℤ)) j) hsampDef).const_mul _
   rw [descendantsAverage_integral_comm' _ _ _ _ hsampX,
     descendantsAverage_integral_comm' _ _ _ _ hsampDef,
@@ -764,7 +775,8 @@ private theorem step5_defect_leg (M : ABKModel d) (n : ℤ) (h : ℕ) (K j : ℕ
           (cutoffSampleLaw M).toMeasure)
     (hdefect : ∀ R ∈ descendantsAtDepth (originCube d (K : ℤ)) j, ∀ omega : CutoffSample d,
       step5CrossDefect R omega.val n (n + (h : ℤ)) e
-          (fun x => (alongIncrementPath n h wD omega.val).toH1Function.grad x) ≤ Cdef * ((meshOscillationCell nmesh
+          (fun x => (alongIncrementPath n h wD omega.val).toH1Function.grad x) ≤ Cdef *
+            ((meshOscillationCell nmesh
         (fun x => (alongIncrementPath n h wD omega.val).toH1Function.grad x) R) * gauge R omega))
     (hmemOsc : ∀ R ∈ descendantsAtDepth (originCube d (K : ℤ)) j,
       MemLp
@@ -780,7 +792,8 @@ private theorem step5_defect_leg (M : ABKModel d) (n : ℤ) (h : ℕ) (K j : ℕ
             step5CrossDefect R omega.val n (n + (h : ℤ)) e
           (fun x => (alongIncrementPath n h wD omega.val).toH1Function.grad x)
             ∂(cutoffSampleLaw M).toMeasure)
-      ≤ Cdef * ((gridFourthMomentRoot (cutoffSampleLaw M).toMeasure (descendantsAtDepth (originCube d (K : ℤ)) j)
+      ≤ Cdef * ((gridFourthMomentRoot (cutoffSampleLaw M).toMeasure (descendantsAtDepth
+        (originCube d (K : ℤ)) j)
       (fun R omega => meshOscillationCell nmesh
         (fun x => (alongIncrementPath n h wD omega.val).toH1Function.grad x) R)) *
       gridFourthMomentRoot (cutoffSampleLaw M).toMeasure
@@ -939,7 +952,8 @@ theorem step5CellDisplay_of_legs (M : ABKModel d) (n : ℤ) (h : ℕ) (K j : ℕ
         (fun _ : Vec d => (1 : Matrix (Fin d) (Fin d) ℝ))
         (openCubeSet (originCube d (K : ℤ))) (alongIncrementPath n h wD omega)
         (fun x => -streamForcing ((Annealed.sigmaBar M n : ℝ))⁻¹ omega n (n + (h : ℤ)) e x))
-    (hmemD : ∀ (omega : ShellSeq d) (R : TriadicCube d), R ∈ descendantsAtDepth (originCube d (K : ℤ)) j →
+    (hmemD : ∀ (omega : ShellSeq d) (R : TriadicCube d), R ∈ descendantsAtDepth (originCube d (K :
+      ℤ)) j →
       MemLp (fun x => (alongIncrementPath n h wD omega).toH1Function.grad x) 2
         (normalizedCubeMeasure R))
     (hintD : ∀ omega : ShellSeq d, IntegrableOn
@@ -981,7 +995,8 @@ theorem step5CellDisplay_of_legs (M : ABKModel d) (n : ℤ) (h : ℕ) (K j : ℕ
           (cutoffSampleLaw M).toMeasure)
     (hdefect : ∀ R ∈ descendantsAtDepth (originCube d (K : ℤ)) j, ∀ omega : CutoffSample d,
       step5CrossDefect R omega.val n (n + (h : ℤ)) e
-          (fun x => (alongIncrementPath n h wD omega.val).toH1Function.grad x) ≤ Cdef * ((meshOscillationCell nmesh
+          (fun x => (alongIncrementPath n h wD omega.val).toH1Function.grad x) ≤ Cdef *
+            ((meshOscillationCell nmesh
         (fun x => (alongIncrementPath n h wD omega.val).toH1Function.grad x) R) * gauge R omega))
     (hmemOsc : ∀ R ∈ descendantsAtDepth (originCube d (K : ℤ)) j,
       MemLp
@@ -992,9 +1007,11 @@ theorem step5CellDisplay_of_legs (M : ABKModel d) (n : ℤ) (h : ℕ) (K j : ℕ
     (hmemGauge : ∀ R ∈ descendantsAtDepth (originCube d (K : ℤ)) j,
       MemLp (fun omega : CutoffSample d => gauge R omega) 4
           (cutoffSampleLaw M).toMeasure)
-    (hosc : (gridFourthMomentRoot (cutoffSampleLaw M).toMeasure (descendantsAtDepth (originCube d (K : ℤ)) j)
+    (hosc : (gridFourthMomentRoot (cutoffSampleLaw M).toMeasure (descendantsAtDepth (originCube d
+      (K : ℤ)) j)
       (fun R omega => meshOscillationCell nmesh
-        (fun x => (alongIncrementPath n h wD omega.val).toH1Function.grad x) R)) + ((Annealed.sigmaBar M n : ℝ))⁻¹ *
+        (fun x => (alongIncrementPath n h wD omega.val).toH1Function.grad x) R)) +
+          ((Annealed.sigmaBar M n : ℝ))⁻¹ *
       gridFourthMomentRoot (cutoffSampleLaw M).toMeasure
         (descendantsAtDepth (originCube d (K : ℤ)) j) gauge ≤ M.gamma ^ (15 : ℕ))
     (hC1 : 0 ≤ C1) (hgrad0 : 0 ≤ gradMoment)
@@ -1056,29 +1073,37 @@ private theorem step5CellExcess_integrable (M : ABKModel d) (n : ℤ) (h : ℕ) 
       step5CellExcess (Annealed.sigmaBar M n) R n (n + (h : ℤ)) e
         (alongIncrementPath n h wD) omega.val) (cutoffSampleLaw M).toMeasure := by
   have hIX : Integrable (fun omega : CutoffSample d =>
-      (2 * ((Annealed.sigmaBar M n : ℝ))⁻¹) * (vecDot e (matVecMul (freshShellCubeAverage R omega.val n (n + (h : ℤ)))
+      (2 * ((Annealed.sigmaBar M n : ℝ))⁻¹) * (vecDot e (matVecMul (freshShellCubeAverage R
+        omega.val n (n + (h : ℤ)))
         (cubeAverageVec R
-          (fun x => (alongIncrementPath n h wD omega.val).toH1Function.grad x))))) (cutoffSampleLaw M).toMeasure := hX.const_mul _
+          (fun x => (alongIncrementPath n h wD omega.val).toH1Function.grad x)))))
+            (cutoffSampleLaw M).toMeasure := hX.const_mul _
   have hIS : Integrable (fun omega : CutoffSample d =>
-      ((Annealed.sigmaBar M n : ℝ))⁻¹ ^ 2 * (vecNormSq (matVecMul (freshShellCubeAverage R omega.val n (n + (h : ℤ)))
+      ((Annealed.sigmaBar M n : ℝ))⁻¹ ^ 2 * (vecNormSq (matVecMul (freshShellCubeAverage R
+        omega.val n (n + (h : ℤ)))
         (cubeAverageVec R
-          (fun x => (alongIncrementPath n h wD omega.val).toH1Function.grad x))))) (cutoffSampleLaw M).toMeasure := hS.const_mul _
+          (fun x => (alongIncrementPath n h wD omega.val).toH1Function.grad x)))))
+            (cutoffSampleLaw M).toMeasure := hS.const_mul _
   have hIsub : Integrable (fun omega : CutoffSample d =>
       vecNormSq (cubeAverageVec R
           (fun x => (alongIncrementPath n h wD omega.val).toH1Function.grad x))
-            - (2 * ((Annealed.sigmaBar M n : ℝ))⁻¹) * (vecDot e (matVecMul (freshShellCubeAverage R omega.val n (n + (h : ℤ)))
+            - (2 * ((Annealed.sigmaBar M n : ℝ))⁻¹) * (vecDot e (matVecMul (freshShellCubeAverage
+              R omega.val n (n + (h : ℤ)))
         (cubeAverageVec R
-          (fun x => (alongIncrementPath n h wD omega.val).toH1Function.grad x))))) (cutoffSampleLaw M).toMeasure := hN.sub hIX
+          (fun x => (alongIncrementPath n h wD omega.val).toH1Function.grad x)))))
+            (cutoffSampleLaw M).toMeasure := hN.sub hIX
   have hfun : (fun omega : CutoffSample d =>
       step5CellExcess (Annealed.sigmaBar M n) R n (n + (h : ℤ)) e
         (alongIncrementPath n h wD) omega.val)
       = fun omega : CutoffSample d =>
         (vecNormSq (cubeAverageVec R
           (fun x => (alongIncrementPath n h wD omega.val).toH1Function.grad x))
-            - (2 * ((Annealed.sigmaBar M n : ℝ))⁻¹) * (vecDot e (matVecMul (freshShellCubeAverage R omega.val n (n + (h : ℤ)))
+            - (2 * ((Annealed.sigmaBar M n : ℝ))⁻¹) * (vecDot e (matVecMul (freshShellCubeAverage
+              R omega.val n (n + (h : ℤ)))
         (cubeAverageVec R
           (fun x => (alongIncrementPath n h wD omega.val).toH1Function.grad x)))))
-        + ((Annealed.sigmaBar M n : ℝ))⁻¹ ^ 2 * (vecNormSq (matVecMul (freshShellCubeAverage R omega.val n (n + (h : ℤ)))
+        + ((Annealed.sigmaBar M n : ℝ))⁻¹ ^ 2 * (vecNormSq (matVecMul (freshShellCubeAverage R
+          omega.val n (n + (h : ℤ)))
         (cubeAverageVec R
           (fun x => (alongIncrementPath n h wD omega.val).toH1Function.grad x)))) := rfl
   rw [hfun]
@@ -1108,8 +1133,10 @@ theorem step5GaugeEndpoint_of_correctors_gauge (M : ABKModel d) (n : ℤ) (h : �
       IsMeanZeroNeumannRhsWeakSolution
         (fun _ : Vec d => (1 : Matrix (Fin d) (Fin d) ℝ))
         (openCubeSet (originCube d (K : ℤ))) (alongIncrementPath n h wN omega)
-        (fun x => -streamForcing ((Annealed.sigmaBar M n : ℝ))⁻¹ omega n (n + (h : ℤ)) (0 : Vec d) x))
-    (hmemD : ∀ (omega : ShellSeq d) (R : TriadicCube d), R ∈ descendantsAtDepth (originCube d (K : ℤ)) j →
+        (fun x => -streamForcing ((Annealed.sigmaBar M n : ℝ))⁻¹ omega n (n + (h : ℤ)) (0 : Vec d)
+          x))
+    (hmemD : ∀ (omega : ShellSeq d) (R : TriadicCube d), R ∈ descendantsAtDepth (originCube d (K :
+      ℤ)) j →
       MemLp (fun x => (alongIncrementPath n h wD omega).toH1Function.grad x) 2
         (normalizedCubeMeasure R))
     (hintD : ∀ omega : ShellSeq d, IntegrableOn
@@ -1151,7 +1178,8 @@ theorem step5GaugeEndpoint_of_correctors_gauge (M : ABKModel d) (n : ℤ) (h : �
           (cutoffSampleLaw M).toMeasure)
     (hdefect : ∀ R ∈ descendantsAtDepth (originCube d (K : ℤ)) j, ∀ omega : CutoffSample d,
       step5CrossDefect R omega.val n (n + (h : ℤ)) e
-          (fun x => (alongIncrementPath n h wD omega.val).toH1Function.grad x) ≤ Cdef * ((meshOscillationCell nmesh
+          (fun x => (alongIncrementPath n h wD omega.val).toH1Function.grad x) ≤ Cdef *
+            ((meshOscillationCell nmesh
         (fun x => (alongIncrementPath n h wD omega.val).toH1Function.grad x) R) * gauge R omega))
     (hmemOsc : ∀ R ∈ descendantsAtDepth (originCube d (K : ℤ)) j,
       MemLp
@@ -1162,9 +1190,11 @@ theorem step5GaugeEndpoint_of_correctors_gauge (M : ABKModel d) (n : ℤ) (h : �
     (hmemGauge : ∀ R ∈ descendantsAtDepth (originCube d (K : ℤ)) j,
       MemLp (fun omega : CutoffSample d => gauge R omega) 4
           (cutoffSampleLaw M).toMeasure)
-    (hosc : (gridFourthMomentRoot (cutoffSampleLaw M).toMeasure (descendantsAtDepth (originCube d (K : ℤ)) j)
+    (hosc : (gridFourthMomentRoot (cutoffSampleLaw M).toMeasure (descendantsAtDepth (originCube d
+      (K : ℤ)) j)
       (fun R omega => meshOscillationCell nmesh
-        (fun x => (alongIncrementPath n h wD omega.val).toH1Function.grad x) R)) + ((Annealed.sigmaBar M n : ℝ))⁻¹ *
+        (fun x => (alongIncrementPath n h wD omega.val).toH1Function.grad x) R)) +
+          ((Annealed.sigmaBar M n : ℝ))⁻¹ *
       gridFourthMomentRoot (cutoffSampleLaw M).toMeasure
         (descendantsAtDepth (originCube d (K : ℤ)) j) gauge ≤ M.gamma ^ (15 : ℕ))
     (hC1 : 0 ≤ C1) (hgrad0 : 0 ≤ gradMoment)

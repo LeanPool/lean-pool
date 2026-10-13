@@ -136,7 +136,7 @@ namespace Matrix.Norms.Elementwise
 
 scoped instance instContinuousENormMatrixElementwise {m n : Type*} [Fintype m] [Fintype n] :
     ContinuousENorm (Matrix m n ℝ) := by
-  show ContinuousENorm (m → n → ℝ)
+  change ContinuousENorm (m → n → ℝ)
   infer_instance
 
 end Matrix.Norms.Elementwise

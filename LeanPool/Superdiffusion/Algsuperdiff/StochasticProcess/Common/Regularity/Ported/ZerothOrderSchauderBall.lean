@@ -96,7 +96,7 @@ theorem ballChart_mem_euclideanBall_iff (x₀ : Vec d) {r s : ℝ} (hr : 0 < r)
     exact lt_of_mul_lt_mul_left (by linarith only [hx']) hr2.le
   · intro hx
     have hx' : euclideanSqDist x 0 < s ^ 2 := hx
-    show euclideanSqDist (ballChart x₀ r x) x₀ < (r * s) ^ 2
+    change euclideanSqDist (ballChart x₀ r x) x₀ < (r * s) ^ 2
     simpa [ballChart, hkey, mul_pow] using
       (mul_lt_mul_of_pos_left hx' hr2)
 

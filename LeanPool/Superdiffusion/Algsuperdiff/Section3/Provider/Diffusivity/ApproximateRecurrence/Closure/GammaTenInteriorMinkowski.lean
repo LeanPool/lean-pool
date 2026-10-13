@@ -101,7 +101,7 @@ theorem volumeAverageVec_add {V : Set (Vec d)} {f g : Vec d → Vec d}
       volumeAverageVec V f + volumeAverageVec V g := by
   funext k
   have hstep := volumeAverage_add (hf k) (hg k)
-  show volumeAverage V (fun x => f x k + g x k) =
+  change volumeAverage V (fun x => f x k + g x k) =
     volumeAverage V (fun x => f x k) + volumeAverage V (fun x => g x k)
   exact hstep
 
@@ -124,7 +124,7 @@ theorem sqrt_meanSquareOscillationVecOn_add_le_of_memVectorL2 {V : Set (Vec d)}
       volumeAverageVec V f + volumeAverageVec V g :=
     volumeAverageVec_add (fun k => integrableOn_coord_of_memVectorL2 hf k)
       (fun k => integrableOn_coord_of_memVectorL2 hg k)
-  show Real.sqrt (Book.Ch01.meanSquareDeviationVecOn V (fun x => f x + g x)
+  change Real.sqrt (Book.Ch01.meanSquareDeviationVecOn V (fun x => f x + g x)
       (volumeAverageVec V (fun x => f x + g x))) ≤ _
   rw [havg]
   exact sqrt_meanSquareDeviationVecOn_add_le_of_memVectorL2 hf hg

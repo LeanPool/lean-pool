@@ -236,7 +236,7 @@ theorem mem_eventG0_negateCutoffSample_iff (M : ABKModel d) (Ccg : ℝ) (m : ℤ
     rwa [hsup] at h'
   · intro h
     have h' : _ ≤ (1 : ℝ≥0∞) := h
-    show _ ≤ (1 : ℝ≥0∞)
+    change _ ≤ (1 : ℝ≥0∞)
     rwa [← hsup] at h'
 
 end

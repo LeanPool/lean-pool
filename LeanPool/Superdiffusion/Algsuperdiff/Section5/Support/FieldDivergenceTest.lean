@@ -9,7 +9,6 @@ module
 public import LeanPool.HighContrastHomogenization.Support.Sobolev.Foundations.CubeNeumannW22CZ.WeakInteriorDQ.SmoothLimit
 public import LeanPool.HighContrastHomogenization.Support.Sobolev.H1.BasicLemmas
 public import LeanPool.HighContrastHomogenization.Support.Sobolev.PotentialSolenoidalL2
-public import LeanPool.Superdiffusion.Support.Examples.Periodic.PeriodicSmoothComparison
 
 /-!
 # FieldDivergenceTest

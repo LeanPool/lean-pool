@@ -135,7 +135,7 @@ theorem cubeFamilyAverage_le_max_add_sqrt_boundaryFraction {I J : Finset (Triadi
       simp [cubeFamilyAverage]
     · have hM : (0 : ℝ) < (J.card : ℝ) := by exact_mod_cast hJpos
       have hsumJ : ∑ R ∈ J, F R = (J.card : ℝ) * cubeFamilyAverage J F := by
-        show _ = (J.card : ℝ) * (((J.card : ℝ))⁻¹ * ∑ R ∈ J, F R)
+        change _ = (J.card : ℝ) * (((J.card : ℝ))⁻¹ * ∑ R ∈ J, F R)
         field_simp
       rw [hsumJ]
       have hle1 : (J.card : ℝ) / (I.card : ℝ) ≤ 1 := (div_le_one hN).2 hMNR

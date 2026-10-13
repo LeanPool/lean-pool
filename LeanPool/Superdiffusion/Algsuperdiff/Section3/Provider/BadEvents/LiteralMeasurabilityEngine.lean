@@ -19,6 +19,9 @@ Module imports, support namespace and local option directives adapted for Lean P
 
 @[expose] public section
 
+open HCPolySupport.Book.Ch04.RestrictionLawCarrier
+  (maxDescendantSigmaStarInvMatrixNormCoeffFieldAtScale_eq_finsetSupReal_ae)
+
 /-!
 # The genuine measurability engine for multiscale ellipticity of a carrier source
 
@@ -107,6 +110,8 @@ open HCPolySupport HCPolySupport.Book
 open scoped BigOperators Matrix.Norms.L2Operator
 
 noncomputable section
+
+
 
 variable {d : ℕ}
 
@@ -369,7 +374,8 @@ theorem measurable_comp_maxDescendantSigmaStarInv (hX : Measurable X)
         (fun R => Ch02.matrixNorm
           (coarseBlockMatrix (cubeSet R) (X omega).toFun).lowerRight) := by
     funext omega
-    exact Ch04.RestrictionLawCarrier.maxDescendantSigmaStarInvMatrixNormCoeffFieldAtScale_eq_finsetSupReal_ae
+    exact
+      maxDescendantSigmaStarInvMatrixNormCoeffFieldAtScale_eq_finsetSupReal_ae
       (hell omega) Q (Q.scale - (n : ℤ))
   rw [hrw]
   exact hfin

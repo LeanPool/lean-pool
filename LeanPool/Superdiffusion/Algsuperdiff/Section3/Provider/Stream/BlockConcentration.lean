@@ -20,6 +20,9 @@ Module imports, support namespace and local option directives adapted for Lean P
 
 @[expose] public section
 
+open HCPolySupport.Book.Ch04
+  (isBigO_gammaSigma_finset_sum_of_iIndepFun_of_isBigO_of_integral_eq_zero)
+
 /-!
 # Concentration for independent sums with geometrically growing scales
 
@@ -75,6 +78,8 @@ open MeasureTheory
 open HCPolySupport.IndependentSums
 
 noncomputable section
+
+
 
 variable {Ω : Type*} [MeasurableSpace Ω] {μ : Measure Ω}
 
@@ -294,7 +299,7 @@ theorem isBigO_gammaSigma_two_geometricBlock [IsProbabilityMeasure μ]
       push_cast at hkreal
       linarith
     have hmain :=
-      HCPolySupport.Book.Ch04.isBigO_gammaSigma_finset_sum_of_iIndepFun_of_isBigO_of_integral_eq_zero
+      isBigO_gammaSigma_finset_sum_of_iIndepFun_of_isBigO_of_integral_eq_zero
         (μ := μ) (X := X)
         (s := Finset.Ioc (geometricBlockEnd gamma n m (j + 1))
           (geometricBlockEnd gamma n m j))
@@ -353,7 +358,7 @@ theorem isBigO_gammaSigma_two_sum_Ioc_of_card [IsProbabilityMeasure μ]
     refine mul_le_mul_of_nonneg_left ?_ hgamma.le
     exact_mod_cast (Finset.mem_Ioc.1 hk).2
   have hmain :=
-    HCPolySupport.Book.Ch04.isBigO_gammaSigma_finset_sum_of_iIndepFun_of_isBigO_of_integral_eq_zero
+    isBigO_gammaSigma_finset_sum_of_iIndepFun_of_isBigO_of_integral_eq_zero
       (μ := μ) (X := X) (s := Finset.Ioc n m) (σ := 2)
       (K := (3 : ℝ) ^ (gamma * (m : ℝ)))
       h_indep h_meas hs (by norm_num) (le_refl 2) hK hscale (fun k _ => h_mean k)

@@ -100,7 +100,7 @@ theorem exists_eta_abs_setIntegral_sub_le [NeZero d] {y : Vec d} {n : ℤ} {a : 
       (u'.memL2.mono_measure (Measure.restrict_mono hB le_rfl)).integrable one_le_two
     rw [← integral_sub hintu hintu']
     refine integral_congr_ae (Filter.Eventually.of_forall fun z => ?_)
-    show u.toFun z - u'.toFun z = w.toH1Function.toFun z
+    change u.toFun z - u'.toFun z = w.toH1Function.toFun z
     rw [hwf z]
   rw [hsplit]
   have hUint : IntegrableOn (fun z => w.toH1Function.toFun z ^ (2 : ℕ))
@@ -117,7 +117,7 @@ theorem exists_eta_abs_setIntegral_sub_le [NeZero d] {y : Vec d} {n : ℤ} {a : 
   have hgrad : (∫ x in cubeSetAt y n, ‖w.toH1Function.grad x‖ ^ (2 : ℕ) ∂volume) =
       ∫ x in cubeSetAt y n, ‖u.grad x - u'.grad x‖ ^ (2 : ℕ) ∂volume := by
     refine integral_congr_ae (Filter.Eventually.of_forall fun x => ?_)
-    show ‖w.toH1Function.grad x‖ ^ (2 : ℕ) = ‖u.grad x - u'.grad x‖ ^ (2 : ℕ)
+    change ‖w.toH1Function.grad x‖ ^ (2 : ℕ) = ‖u.grad x - u'.grad x‖ ^ (2 : ℕ)
     rw [hwg x]
   have h3 := hpoin w
   rw [hgrad] at h3

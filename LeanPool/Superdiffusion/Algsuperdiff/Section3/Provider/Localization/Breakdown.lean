@@ -249,6 +249,7 @@ def breakdownLegB (R : TriadicCube d) (a : Book.Ch02.TriadicCoeffFamily d)
     (a0 : Mat d) : ℝ :=
   sSup (breakdownLegBValueSet R a a0)
 
+omit [NeZero d] in
 /-- The unconditional block splitting of the doubled response at the normalized
 frame loadings. -/
 private theorem doubledResponseJ_frame_split (R : TriadicCube d)
@@ -266,6 +267,7 @@ private theorem doubledResponseJ_frame_split (R : TriadicCube d)
     (a.coeffOn R) (frameLoadInvSqrt a0 e).1 (frameLoadSqrt a0 e).2
     (frameLoadInvSqrt a0 e).2 (frameLoadSqrt a0 e).1
 
+omit [NeZero d] in
 /-- Each doubled unit direction contributes to the normalized block-response value
 set. -/
 private theorem doubledResponseJ_mem_normalizedBlockResponseValueSet
@@ -276,6 +278,7 @@ private theorem doubledResponseJ_mem_normalizedBlockResponseValueSet
       Book.Ch02.normalizedBlockResponseValueSet R a a0 :=
   ⟨e, he, rfl⟩
 
+omit [NeZero d] in
 /-- The `a`-leg is nonnegative. -/
 theorem breakdownLegA_nonneg (R : TriadicCube d)
     (a : Book.Ch02.TriadicCoeffFamily d) (a0 : Mat d) :
@@ -284,6 +287,7 @@ theorem breakdownLegA_nonneg (R : TriadicCube d)
   rintro v ⟨e, -, rfl⟩
   exact Book.Ch02.responseJ_nonneg (Book.Ch02.cubeDomain R) (a.coeffOn R) _ _
 
+omit [NeZero d] in
 /-- The `a^t`-leg is nonnegative. -/
 theorem breakdownLegB_nonneg (R : TriadicCube d)
     (a : Book.Ch02.TriadicCoeffFamily d) (a0 : Mat d) :
@@ -293,6 +297,7 @@ theorem breakdownLegB_nonneg (R : TriadicCube d)
   exact Book.Ch02.responseJ_nonneg (Book.Ch02.cubeDomain R)
     (a.coeffOn R).transpose _ _
 
+omit [NeZero d] in
 /-- Each `a`-leg frame value is bounded by twice the normalized block response of
 the same cube. -/
 private theorem legA_frame_le_two_mul_normalizedBlockResponseMax
@@ -319,6 +324,7 @@ private theorem legA_frame_le_two_mul_normalizedBlockResponseMax
     Book.Ch02.responseJ_nonneg (Book.Ch02.cubeDomain R) (a.coeffOn R).transpose _ _
   linarith
 
+omit [NeZero d] in
 /-- Each `a^t`-leg frame value is bounded by twice the normalized block response of
 the same cube. -/
 private theorem legB_frame_le_two_mul_normalizedBlockResponseMax
@@ -345,6 +351,7 @@ private theorem legB_frame_le_two_mul_normalizedBlockResponseMax
     Book.Ch02.responseJ_nonneg (Book.Ch02.cubeDomain R) (a.coeffOn R) _ _
   linarith
 
+omit [NeZero d] in
 /-- On a descendant cube the `a`-leg value set is bounded above. -/
 theorem breakdownLegAValueSet_bddAbove {Q R : TriadicCube d} {k : ℤ}
     (a : Book.Ch02.TriadicCoeffFamily d) (a0 : Mat d)
@@ -354,6 +361,7 @@ theorem breakdownLegAValueSet_bddAbove {Q R : TriadicCube d} {k : ℤ}
   rintro v ⟨e, he, rfl⟩
   exact legA_frame_le_two_mul_normalizedBlockResponseMax a a0 hR he
 
+omit [NeZero d] in
 /-- On a descendant cube the `a^t`-leg value set is bounded above. -/
 theorem breakdownLegBValueSet_bddAbove {Q R : TriadicCube d} {k : ℤ}
     (a : Book.Ch02.TriadicCoeffFamily d) (a0 : Mat d)
@@ -363,6 +371,7 @@ theorem breakdownLegBValueSet_bddAbove {Q R : TriadicCube d} {k : ℤ}
   rintro v ⟨e, he, rfl⟩
   exact legB_frame_le_two_mul_normalizedBlockResponseMax a a0 hR he
 
+omit [NeZero d] in
 /-- Every `a`-leg frame value of a descendant cube is bounded by the leg. -/
 theorem responseJ_le_breakdownLegA {Q R : TriadicCube d} {k : ℤ}
     (a : Book.Ch02.TriadicCoeffFamily d) (a0 : Mat d)
@@ -374,6 +383,7 @@ theorem responseJ_le_breakdownLegA {Q R : TriadicCube d} {k : ℤ}
       breakdownLegA R a a0 :=
   le_csSup (breakdownLegAValueSet_bddAbove a a0 hR) ⟨e, he, rfl⟩
 
+omit [NeZero d] in
 /-- Every `a^t`-leg frame value of a descendant cube is bounded by the leg. -/
 theorem responseJ_le_breakdownLegB {Q R : TriadicCube d} {k : ℤ}
     (a : Book.Ch02.TriadicCoeffFamily d) (a0 : Mat d)
@@ -385,6 +395,7 @@ theorem responseJ_le_breakdownLegB {Q R : TriadicCube d} {k : ℤ}
       breakdownLegB R a a0 :=
   le_csSup (breakdownLegBValueSet_bddAbove a a0 hR) ⟨e, he, rfl⟩
 
+omit [NeZero d] in
 /-- A uniform bound on the `a`-leg frame values bounds the leg.  This is the
 entry point through which the downstream comparator normalization converts a
 per-frame response estimate into an estimate on the leg. -/
@@ -399,6 +410,7 @@ theorem breakdownLegA_le_of_forall_frame (R : TriadicCube d)
   rintro v ⟨e, he, rfl⟩
   exact h e he
 
+omit [NeZero d] in
 /-- A uniform bound on the `a^t`-leg frame values bounds the leg. -/
 theorem breakdownLegB_le_of_forall_frame (R : TriadicCube d)
     (a : Book.Ch02.TriadicCoeffFamily d) (a0 : Mat d) {c : ℝ} (hc : 0 ≤ c)
@@ -411,6 +423,7 @@ theorem breakdownLegB_le_of_forall_frame (R : TriadicCube d)
   rintro v ⟨e, he, rfl⟩
   exact h e he
 
+omit [NeZero d] in
 /-- The `a`-leg of a descendant cube is bounded by twice its normalized block
 response. -/
 theorem breakdownLegA_le_two_mul_normalizedBlockResponseMax {Q R : TriadicCube d}
@@ -421,6 +434,7 @@ theorem breakdownLegA_le_two_mul_normalizedBlockResponseMax {Q R : TriadicCube d
     (by linarith [Book.Ch02.normalizedBlockResponseMax_nonneg R a a0])
     fun e he => legA_frame_le_two_mul_normalizedBlockResponseMax a a0 hR he
 
+omit [NeZero d] in
 /-- The `a^t`-leg of a descendant cube is bounded by twice its normalized block
 response. -/
 theorem breakdownLegB_le_two_mul_normalizedBlockResponseMax {Q R : TriadicCube d}
@@ -455,7 +469,7 @@ theorem normalizedBlockResponseMax_le_breakdownLegA_add_breakdownLegB
   have hsplit := doubledResponseJ_frame_split R a a0 e
   have hA := responseJ_le_breakdownLegA a a0 hR he
   have hB := responseJ_le_breakdownLegB a a0 hR he
-  show Book.Ch02.doubledResponseJ (Book.Ch02.cubeDomain R) (a.coeffOn R)
+  change Book.Ch02.doubledResponseJ (Book.Ch02.cubeDomain R) (a.coeffOn R)
       (frameLoadInvSqrt a0 e) (frameLoadSqrt a0 e) ≤ _
   linarith
 
@@ -557,7 +571,7 @@ theorem legScaleAverage_smul (Q : TriadicCube d) (k : ℤ) {s : ℝ} (hs : 0 < s
             (fun R => Real.rpow (leg R) ((d : ℝ) / s)) := by
     rw [hlhs, hrhs, hsum]
     ring
-  show Real.rpow
+  change Real.rpow
       (Book.Ch02.finsetAverageReal (descendantsAtScale Q k)
         (fun R => Real.rpow (c * leg R) ((d : ℝ) / s))) (s / (d : ℝ)) =
     c * Real.rpow
@@ -644,7 +658,7 @@ private theorem scaleResponseAtScale_infinity_sq_le_legScaleAverage
       Real.rpow (Book.Ch02.scaleResponseAtScale Q k (.finite p) a a0) 2 =
         legScaleAverage Q k s
           (fun R => Book.Ch02.normalizedBlockResponseMax R a a0) := by
-    show Real.rpow (Book.Ch02.scaleResponseAtScale Q k (.finite p) a a0) 2 =
+    change Real.rpow (Book.Ch02.scaleResponseAtScale Q k (.finite p) a a0) 2 =
       Real.rpow
         (Book.Ch02.finsetAverageReal (descendantsAtScale Q k)
           (fun R => Real.rpow (Book.Ch02.normalizedBlockResponseMax R a a0)
@@ -672,11 +686,11 @@ private theorem card_descendants_rpow_eq (m : ℤ) (s : ℝ) (j : ℕ) :
   have hdR : (0 : ℝ) < (d : ℝ) := by
     exact_mod_cast Nat.pos_of_ne_zero (NeZero.ne d)
   have hk : m - (j : ℤ) ≤ (originCube d m).scale := by
-    show m - (j : ℤ) ≤ m
+    change m - (j : ℤ) ≤ m
     omega
   have hdepth : Int.toNat ((originCube d m).scale - (m - (j : ℤ))) = j := by
     have hred : (originCube d m).scale - (m - (j : ℤ)) = (j : ℤ) := by
-      show m - (m - (j : ℤ)) = (j : ℤ)
+      change m - (m - (j : ℤ)) = (j : ℤ)
       ring
     rw [hred, Int.toNat_natCast]
   rw [ErrorComparison.card_descendantsAtScale_eq_rpow (originCube d m) hk, hdepth,
@@ -707,7 +721,7 @@ private theorem scale_term_le_leg_terms (m : ℤ)
             legScaleAverage (originCube d m) (m - (j : ℤ)) s
               (fun R => breakdownLegB R a a0))) := by
   have hk : m - (j : ℤ) ≤ (originCube d m).scale := by
-    show m - (j : ℤ) ≤ m
+    change m - (j : ℤ) ≤ m
     omega
   have hweight_nonneg : 0 ≤ Book.Ch02.geometricWeight s 2 j := by
     simpa [Book.Ch02.geometricWeight_eq_old] using
@@ -909,7 +923,7 @@ theorem homogenizationErrorOnCube_sq_le_breakdown (m : ℤ)
             a a0) 2 := by
     intro j
     have hk : m - (j : ℤ) ≤ (originCube d m).scale := by
-      show m - (j : ℤ) ≤ m
+      change m - (j : ℤ) ≤ m
       omega
     refine mul_nonneg ?_ (Real.rpow_nonneg
       (Book.Ch02.scaleResponseAtScale_infinity_nonneg (originCube d m) hk a a0) 2)
@@ -1003,6 +1017,7 @@ section Diagonal
 
 variable [NeZero d]
 
+omit [NeZero d] in
 private theorem frameLoadSqrt_fst (sigma : Observable.PositiveScalar)
     (e : FullBlockVec d) :
     (frameLoadSqrt (Observable.isotropicComparatorMatrix (d := d) sigma) e).1 =
@@ -1016,6 +1031,7 @@ private theorem frameLoadSqrt_fst (sigma : Observable.PositiveScalar)
   simp [ofFullBlockVec, Matrix.mulVec_diagonal,
     Book.Ch05.Section56.scalarFullBlockSqrtDiag]
 
+omit [NeZero d] in
 private theorem frameLoadSqrt_snd (sigma : Observable.PositiveScalar)
     (e : FullBlockVec d) :
     (frameLoadSqrt (Observable.isotropicComparatorMatrix (d := d) sigma) e).2 =
@@ -1029,6 +1045,7 @@ private theorem frameLoadSqrt_snd (sigma : Observable.PositiveScalar)
   simp [ofFullBlockVec, Matrix.mulVec_diagonal,
     Book.Ch05.Section56.scalarFullBlockSqrtDiag]
 
+omit [NeZero d] in
 private theorem frameLoadInvSqrt_fst (sigma : Observable.PositiveScalar)
     (e : FullBlockVec d) :
     (frameLoadInvSqrt (Observable.isotropicComparatorMatrix (d := d) sigma) e).1 =
@@ -1042,6 +1059,7 @@ private theorem frameLoadInvSqrt_fst (sigma : Observable.PositiveScalar)
   simp [ofFullBlockVec, Matrix.mulVec_diagonal,
     Book.Ch04.scalarFullBlockInvSqrtDiag]
 
+omit [NeZero d] in
 private theorem frameLoadInvSqrt_snd (sigma : Observable.PositiveScalar)
     (e : FullBlockVec d) :
     (frameLoadInvSqrt (Observable.isotropicComparatorMatrix (d := d) sigma) e).2 =
@@ -1057,6 +1075,7 @@ private theorem frameLoadInvSqrt_snd (sigma : Observable.PositiveScalar)
 
 /-! ## The legs in the manuscript's paired form -/
 
+omit [NeZero d] in
 /-- **The primal leg at the isotropic comparator is the manuscript's paired
 family.**  Each doubled unit direction `e` contributes exactly
 `J(R, σ^{-1/2}v, σ^{1/2}v; a)` at the loading vector `v = e₁ - e₂`. -/
@@ -1088,6 +1107,7 @@ theorem breakdownLegAValueSet_isotropic_eq (R : TriadicCube d)
   · rintro ⟨e, he, rfl⟩
     exact ⟨e, he, by rw [hfirst e, hsecond e]⟩
 
+omit [NeZero d] in
 /-- **The adjoint leg at the isotropic comparator is the manuscript's paired
 family.**  Each doubled unit direction `e` contributes exactly
 `J(R, σ^{-1/2}v, σ^{1/2}v; a^t)` at the loading vector `v = e₁ + e₂`. -/
@@ -1122,6 +1142,7 @@ theorem breakdownLegBValueSet_isotropic_eq (R : TriadicCube d)
 
 /-! ## The consumption interface -/
 
+omit [NeZero d] in
 /-- **The primal leg under a paired-loading bound.**  A bound on the manuscript's
 paired response `J(R, σ^{-1/2}v, σ^{1/2}v; a)`, uniform over loading vectors of
 squared Euclidean length at most `2`, bounds the leg.  This is the interface
@@ -1140,6 +1161,7 @@ theorem breakdownLegA_le_of_paired_bound (R : TriadicCube d)
   rintro x ⟨e, he, rfl⟩
   exact h (frameLegAVec e) (vecNormSq_frameLegAVec_le e he)
 
+omit [NeZero d] in
 /-- **The adjoint leg under a paired-loading bound.** -/
 theorem breakdownLegB_le_of_paired_bound (R : TriadicCube d)
     (a : Book.Ch02.TriadicCoeffFamily d) (sigma : Observable.PositiveScalar)

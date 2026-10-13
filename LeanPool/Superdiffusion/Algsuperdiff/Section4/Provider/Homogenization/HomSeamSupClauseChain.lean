@@ -27,7 +27,8 @@ Module imports, support namespace and local option directives adapted for Lean P
 Step 3 is realized at the fixed exponent `p = 4d`, and the
 object the route actually produces is the manuscript's own sup-over-depths
 clause (`HomSpineSupFormClause.CoarseGrainingSupMultiscale`), supplied by
-`HomSpineSupFormClause` from the single-depth grid/smooth-dual comparison.  The seam chain consumes the `ℓ^p` clause instead.
+`HomSpineSupFormClause` from the single-depth grid/smooth-dual comparison.  The seam chain consumes
+the `ℓ^p` clause instead.
 
 The swap is FREE at the point of consumption:
 `HomSpineSupFormRethread.spineClauseC3_of_supMultiscale` produces clause (C3)

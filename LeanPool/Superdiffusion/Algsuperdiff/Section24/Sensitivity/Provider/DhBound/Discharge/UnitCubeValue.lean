@@ -68,7 +68,7 @@ theorem memLp_normalizedCubeMeasure_of_memLp_frozen_carrier {E : Type*}
 /-- Any a.e. property on the frozen open-cube carrier holds a.e. for the
 normalized cube measure. -/
 theorem ae_normalizedCubeMeasure_of_ae_frozen_carrier {P : Vec d → Prop}
-    (h : ∀ᵐ x ∂ volumeMeasureOn
+    (h : ∀ᵐ x ∂volumeMeasureOn
       ((cubeDomain (originCube d 0) : Domain d) : Set (Vec d)), P x) :
     ∀ᵐ x ∂ normalizedCubeMeasure (originCube d 0), P x := by
   rw [cubeDomain_originCube_coe] at h
@@ -101,11 +101,11 @@ theorem toReal_eLpNorm_matrixNorm_le_w1Infinity (h : UnitCubeSkewW2Infinity d) :
 
 /-- Every entry of the frozen matrix field is bounded a.e. by `w1Infinity`. -/
 theorem ae_abs_value_le_w1Infinity (h : UnitCubeSkewW2Infinity d) (i j : Fin d) :
-    ∀ᵐ x ∂ volumeMeasureOn ((cubeDomain (originCube d 0) : Domain d) : Set (Vec d)),
+    ∀ᵐ x ∂volumeMeasureOn ((cubeDomain (originCube d 0) : Domain d) : Set (Vec d)),
       |h.toLInfSkewMatrixFieldOn.1.1 x i j| ≤ h.w1Infinity := by
   classical
   set U : Set (Vec d) := ((cubeDomain (originCube d 0) : Domain d) : Set (Vec d)) with hU
-  have hall : ∀ᵐ x ∂ volumeMeasureOn U, ∀ i' j' : Fin d,
+  have hall : ∀ᵐ x ∂volumeMeasureOn U, ∀ i' j' : Fin d,
       |h.toLInfSkewMatrixFieldOn.1.1 x i' j'| ≤
         ENNReal.toReal (eLpNorm (fun y => h.toLInfSkewMatrixFieldOn.1.1 y i' j') ∞
           (volumeMeasureOn U)) := by
@@ -115,7 +115,7 @@ theorem ae_abs_value_le_w1Infinity (h : UnitCubeSkewW2Infinity d) (i j : Fin d) 
     intro j'
     exact ae_abs_le_toReal_eLpNorm_top
       (h.toLInfSkewMatrixFieldOn.1.2 i' j').eLpNorm_lt_top.ne
-  have hbd : ∀ᵐ x ∂ volumeMeasureOn U,
+  have hbd : ∀ᵐ x ∂volumeMeasureOn U,
       |matrixNorm (h.toLInfSkewMatrixFieldOn.1.1 x)| ≤
         ∑ i' : Fin d, ∑ j' : Fin d,
           ENNReal.toReal (eLpNorm (fun y => h.toLInfSkewMatrixFieldOn.1.1 y i' j') ∞
@@ -135,7 +135,6 @@ theorem ae_abs_value_le_w1Infinity (h : UnitCubeSkewW2Infinity d) (i j : Fin d) 
   filter_upwards [ae_abs_le_toReal_eLpNorm_top (eLpNorm_top_ne_top_of_ae_abs_le hmeas hbd)]
     with x hx
   refine le_trans ?_ (hx.trans (toReal_eLpNorm_matrixNorm_le_w1Infinity h))
-
   rw [matrixNorm_eq_matrixOperatorNorm]
   exact (abs_entry_le_matrixOperatorNorm (h.toLInfSkewMatrixFieldOn.1.1 x) i j).trans
     (le_abs_self _)

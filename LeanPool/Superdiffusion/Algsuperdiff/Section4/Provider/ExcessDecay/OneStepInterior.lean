@@ -106,7 +106,8 @@ theorem excessDecay_oneStep_interior_of_weaklyHarmonic_regated [NeZero d] (hd : 
     calc s / 8 * Real.sqrt delta ≤ (1 / 8 : ℝ) * 1 :=
           mul_le_mul h1 hsqrtle hsqrtnn (by norm_num)
       _ ≤ 1 / 2 := by norm_num
-  refine excessDecay_oneStep_interior_of_weaklyHarmonic hd hk hs hs1 hdelta1 hx hnm hcube hu hw hmem hB ?_
+  refine excessDecay_oneStep_interior_of_weaklyHarmonic hd hk hs hs1 hdelta1 hx hnm hcube hu hw
+    hmem hB ?_
   exact indicator_goodEventAt_transfer hep0 hrep hhalf hmem hharm
 
 end

@@ -156,7 +156,7 @@ theorem exists_isWhitneyLift {m : ℤ} {hn : ℕ → ℕ} {n h : ℕ} {V : Triad
   rw [hsplit] at hVd
   obtain ⟨A, hA, hVA⟩ := exists_descendant_ancestor_at_depth h (n + hn n - h) hVd
   refine ⟨A, ?_⟩
-  show A ∈ descendantsAtDepth (originCube d m) h ∧
+  change A ∈ descendantsAtDepth (originCube d m) h ∧
     ∃ g : ℕ, g < 10 ∧ V ∈ descendantsAtDepth A g
   exact ⟨hA, n + hn n - h, hgap, hVA⟩
 

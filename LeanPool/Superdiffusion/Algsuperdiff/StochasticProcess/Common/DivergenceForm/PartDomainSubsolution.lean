@@ -57,7 +57,8 @@ theorem partDomainZeroExtension_isSubsolution [NeZero d]
   let uU : ZeroTraceSobolev U :=
     ZeroTraceSobolev.extendByZeroToPartSuperset hV hU.isOpen hVU uV
   have hfVspec : fV =ᵐ[volumeMeasureOn V] f := by
-    simpa only [fV] using restrictScalarL2ToPart_coeFn hV.isOpen.measurableSet hU.isOpen.measurableSet hVU f
+    simpa only [fV] using restrictScalarL2ToPart_coeFn hV.isOpen.measurableSet
+      hU.isOpen.measurableSet hVU f
   have hfV : ∀ᵐ x ∂volumeMeasureOn V, 0 ≤ fV x := by
     filter_upwards
       [hfVspec, ae_restrict_of_ae_restrict_of_subset hVU hf]

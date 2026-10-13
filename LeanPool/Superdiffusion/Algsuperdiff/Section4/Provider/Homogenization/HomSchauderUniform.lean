@@ -171,7 +171,7 @@ theorem exists_comparator_schauder_package_uniform (dimension : 2 ≤ d) :
     ring
   have hleft : A * wsInftyGauge (originCube d m) (1 / 2) Ksup KHol =
       wsInftyGauge (originCube d m) s Ksup (KHol * A) := by
-    show A * (Real.rpow 3 (-((1 / 2 : ℝ) * (m : ℝ))) * Ksup + KHol) =
+    change A * (Real.rpow 3 (-((1 / 2 : ℝ) * (m : ℝ))) * Ksup + KHol) =
       Real.rpow 3 (-(s * (m : ℝ))) * Ksup + KHol * A
     calc A * (Real.rpow 3 (-((1 / 2 : ℝ) * (m : ℝ))) * Ksup + KHol)
         = A * Real.rpow 3 (-((1 / 2 : ℝ) * (m : ℝ))) * Ksup + KHol * A := by ring

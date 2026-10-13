@@ -18,6 +18,9 @@ Module imports, support namespace and local option directives adapted for Lean P
 
 @[expose] public section
 
+open _root_.Algsuperdiff.Section3.Provider.Corrector
+  (hasPotentialZeroTraceClosureRealization_openCubeSet)
+
 
 /-!
 # The two typing binders of the closure's energy display
@@ -88,6 +91,8 @@ open Algsuperdiff.Section3.Provider.Corrector (realize valuePathForcing
 matrix-field class of `Corrector.CorrectorMeasurableForcing`**, at the direction
 `(-c) • e`.
 
+
+
 The realization of `valuePathForcing (c • e)` at a continuous path `f` is the
 literal matrix-vector product `f(x) (c • e)`, so the two `L^2` classes are the
 class of one and the same function; only the membership witnesses differ, and
@@ -100,8 +105,8 @@ theorem closureForcingL2_eq_contMatrixFieldL2 (Q : TriadicCube d) (c : ℝ) (e :
       = contMatrixFieldL2 Q ((-c) • e) f := by
   refine toHilbertVectorL2OfVecField_congr _ _ ?_
   funext x
-  show -(realize (valuePathForcing (c • e)) f x).toVec = matVecMul (f x) ((-c) • e)
-  show -(HilbertVec.toVec (HilbertVec.ofVec
+  change -(realize (valuePathForcing (c • e)) f x).toVec = matVecMul (f x) ((-c) • e)
+  change -(HilbertVec.toVec (HilbertVec.ofVec
       (matVecMul (((x +ᵥ f) : C(Vec d, Mat d)) 0) (c • e)))) = _
   rw [HilbertVec.toVec_ofVec, ShellField.vadd_apply, zero_add, matVecMul_smul_right,
     matVecMul_smul_right, neg_smul]
@@ -129,11 +134,11 @@ theorem continuous_gradToHilbertVectorL2_closureDirichletFamily [NeZero d]
           (isEllipticFieldOn_const_one_openCubeSet _)) ∘
         contMatrixFieldL2 (originCube d (K : ℤ)) ((-c) • e) := by
     funext f
-    show _ = dirichletGradientOfForcingClass _ _ _
+    change _ = dirichletGradientOfForcingClass _ _ _
       (contMatrixFieldL2 (originCube d (K : ℤ)) ((-c) • e) f)
     rw [← closureForcingL2_eq_contMatrixFieldL2 (originCube d (K : ℤ)) c e f]
     exact gradToHilbertVectorL2_eq_dirichletGradientOfForcingClass _
-      (_root_.Algsuperdiff.Section3.Provider.Corrector.hasPotentialZeroTraceClosureRealization_openCubeSet _)
+      (hasPotentialZeroTraceClosureRealization_openCubeSet _)
       (_root_.Algsuperdiff.Section3.Provider.Corrector.nonempty_openCubeSet _)
       (isEllipticFieldOn_const_one_openCubeSet _)
       (isZeroTraceDirichletRhsWeakSolution_closureDirichletFamily c e K f)
@@ -159,7 +164,7 @@ theorem continuous_gradToHilbertVectorL2_closureNeumannFamily
           (isEllipticFieldOn_const_one_openCubeSet _)) ∘
         contMatrixFieldL2 (originCube d (K : ℤ)) ((-c) • e) := by
     funext f
-    show _ = neumannGradientOfForcingClass _ _ _
+    change _ = neumannGradientOfForcingClass _ _ _
       (contMatrixFieldL2 (originCube d (K : ℤ)) ((-c) • e) f)
     rw [← closureForcingL2_eq_contMatrixFieldL2 (originCube d (K : ℤ)) c e f]
     exact gradToHilbertVectorL2_eq_neumannGradientOfForcingClass _

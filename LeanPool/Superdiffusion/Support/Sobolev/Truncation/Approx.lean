@@ -156,78 +156,167 @@ namespace HCPolySupport
 open HCPolySupport MeasureTheory Filter Topology
 open scoped ENNReal
 
-/-- **C¹ chain rule (weak-gradient form).** -/
-theorem hasWeakGradientOn_comp_of_deriv_bounded
-    {d : ℕ} {U : Set (Vec d)} (hU : IsOpenBoundedConvexDomain U)
-    (u : H1Function U) {G : ℝ → ℝ} (hG : ContDiff ℝ 1 G)
-    {M : ℝ} (hM : 0 ≤ M) (hderiv : ∀ t, |deriv G t| ≤ M) :
-    HasWeakGradientOn U (fun x => G (u.toFun x))
-      (fun x i => deriv G (u.toFun x) * u.grad x i) := by
-  -- `G` is `M`-Lipschitz and differentiable.
-  have hGdiff : Differentiable ℝ G := hG.differentiable (by norm_num)
-  have hGlip : LipschitzWith M.toNNReal G := lipschitzWith_of_abs_deriv_le hM hGdiff hderiv
-  have : IsFiniteMeasure (volumeMeasureOn U) := hU.isBoundedDomain.isFiniteMeasure_restrict_volume
-  -- Empty domain: the pairing identity is trivial.
-  rcases U.eq_empty_or_nonempty with hempty | hne
-  · subst hempty
-    intro i φ _ _ _
-    simp
-  -- A closed ball inside `U`.
-  obtain ⟨x0, hx0U⟩ := hne
-  obtain ⟨r0, hr0, hball0⟩ := Metric.isOpen_iff.mp hU.isOpen x0 hx0U
-  set r : ℝ := r0 / 2 with hr_def
-  have hr : 0 < r := by positivity
-  have hball : Metric.closedBall x0 r ⊆ U := by
-    refine (Metric.closedBall_subset_ball ?_).trans hball0
-    rw [hr_def]; linarith
-  set ρ : Vec d → ℝ := unitConvexApproxKernel (d := d) with hρ_def
-  have hρ : IsConvexApproxKernel ρ := isConvexApproxKernel_unitConvexApproxKernel
-  -- Scale sequence shifted to land in `(0,1)`.
-  set e : ℕ → ℝ := fun n => unitConvexApproxScale (n + 1) with he_def
-  have he_pos : ∀ n, 0 < e n := by
-    intro n; simp only [he_def, unitConvexApproxScale]; positivity
-  have he_lt : ∀ n, e n < 1 := by
-    intro n
-    simp only [he_def, unitConvexApproxScale]
-    rw [div_lt_one (by positivity)]
-    have : (0:ℝ) ≤ (n:ℝ) := by positivity
-    push_cast; linarith
-  have he_le : ∀ n, e n ≤ 1 := fun n => (he_lt n).le
-  have he_tendsto : Tendsto e atTop (𝓝 0) :=
-    tendsto_unitConvexApproxScale_zero.comp (tendsto_add_atTop_nat 1)
-  -- The globally-smooth representative sequence.
-  set w : ℕ → Vec d → ℝ := fun n => convexApproxSmoothRepresentative U ρ u.toFun x0 r (e n)
-    with hw_def
-  have hw_smooth : ∀ n, ContDiff ℝ (⊤ : ℕ∞) (w n) := fun n =>
-    contDiff_convexApproxSmoothRepresentative hU.isOpen.measurableSet hρ one_le_two u.memL2 hr
-      (he_pos n)
-  -- On `U`, `w n` agrees with the smoothing sequence `unitConvexApproxSequence u (n+1)`.
-  have hw_eq : ∀ n, ∀ x ∈ U, w n x = unitConvexApproxSequence u.toFun x0 r (n + 1) x := by
-    intro n x hx
-    simpa [hw_def, unitConvexApproxSequence, he_def] using
-      convexApproxSmoothRepresentative_eq_convexApproxSmoothing_of_mem hU hρ hx hball hr
-        (he_pos n) (he_lt n)
-  -- Local integrability of `u` and its gradient (for the smoothing weak-gradient identity).
-  have huLoc : LocallyIntegrableOn u.toFun U volume :=
-    locallyIntegrableOn_of_locallyIntegrable_restrict (u.memL2.locallyIntegrable one_le_two)
-  have hDuLoc : ∀ j : Fin d, LocallyIntegrableOn (fun x => u.grad x j) U volume :=
-    fun j => locallyIntegrableOn_of_locallyIntegrable_restrict
-      ((u.gradMemL2 j).locallyIntegrable one_le_two)
-  -- Transport of a weak partial derivative along agreement on `U`.
-  have htransport : ∀ (i : Fin d) (f g h : Vec d → ℝ), (∀ x ∈ U, f x = g x) →
-      HasWeakPartialDerivOn U i g h → HasWeakPartialDerivOn U i f h := by
-    intro i f g h hfg hg φ hφ hφc hφs
-    rw [← hg φ hφ hφc hφs]
-    exact setIntegral_congr_fun hU.isOpen.measurableSet
-      (fun x hx => by rw [hfg x hx])
-  intro i
-  -- Per-`n` classical `i`-partial of `w n` and the composite gradient.
-  set Dwn : ℕ → Vec d → ℝ := fun n x => (fderiv ℝ (w n) x) (basisVec i) with hDwn_def
-  set un : ℕ → Vec d → ℝ := fun n x => G (w n x) with hun_def
-  set gn : ℕ → Vec d → ℝ := fun n x => deriv G (w n x) * Dwn n x with hgn_def
-  set smi : ℕ → Vec d → ℝ :=
-    fun n => convexApproxSmoothing ρ (fun y => u.grad y i) x0 r (e n) with hsmi_def
-  -- Each `G ∘ w n` is `C¹`, with weak `i`-partial `gn n`.
+private theorem weakGradientComposition_gradientConvergence :
+    ∀ {d : ℕ} {U : Set (Vec d)} (u : H1Function U) {G : ℝ → ℝ}
+      {M : ℝ},
+      (0 : ℝ) ≤ M →
+        (∀ (t : ℝ), |deriv G t| ≤ M) →
+          IsFiniteMeasure (volumeMeasureOn U) →
+            ∀ (x0 : Vec d) (r0 : ℝ),
+              let r : ℝ := r0 / (2 : ℝ);
+              let ρ : Vec d → ℝ := unitConvexApproxKernel;
+              let e : ℕ → ℝ := fun (n : ℕ) => unitConvexApproxScale (n + (1 : ℕ));
+              let w : ℕ → Vec d → ℝ := fun (n : ℕ) => convexApproxSmoothRepresentative U ρ u.toFun x0 r (e n);
+              (∀ (n : ℕ), ContDiff ℝ ((⊤ : ℕ∞) : WithTop ℕ∞) (w n)) →
+                ∀ (i : Fin d),
+                  let Dwn : ℕ → Vec d → ℝ := fun (n : ℕ) (x : Vec d) => (fderiv ℝ (w n) x : Vec d → ℝ) (basisVec i);
+                  let gn : ℕ → Vec d → ℝ := fun (n : ℕ) (x : Vec d) => deriv G (w n x) * Dwn n x;
+                  (gn = fun (n : ℕ) (x : Vec d) => deriv G (w n x) * Dwn n x) →
+                    (1 : ℝ≥0∞) ≤ (2 : ℝ≥0∞) →
+                      Continuous (deriv G) →
+                        (∀ (v : Vec d → ℝ),
+                            AEStronglyMeasurable v (volumeMeasureOn U) →
+                              AEStronglyMeasurable (fun (x : Vec d) => deriv G (v x)) (volumeMeasureOn U)) →
+                          (∀ (n : ℕ), MemLp (Dwn n) (2 : ℝ≥0∞) (volumeMeasureOn U)) →
+                            ∀ (σ : ℕ → ℕ),
+                              StrictMono σ →
+                                (∀ᵐ (x : Vec d) ∂volumeMeasureOn U,
+                                    Tendsto (fun (i : ℕ) => w (σ i) x) atTop (𝓝 (u.toFun x))) →
+                                  Tendsto
+                                      (fun (n : ℕ) =>
+                                        eLpNorm (fun (x : Vec d) => Dwn n x - u.grad x i) (2 : ℝ≥0∞) (volumeMeasureOn U))
+                                      atTop (𝓝 (0 : ℝ≥0∞)) →
+                                    Tendsto
+                                      (fun (k : ℕ) =>
+                                        eLpNorm (fun (x : Vec d) => gn (σ k) x - deriv G (u.toFun x) * u.grad x i)
+                                          (2 : ℝ≥0∞) (volumeMeasureOn U))
+                                      atTop (𝓝 (0 : ℝ≥0∞)) := by
+  intro d U u G M hM hderiv this _ _ _ _ _ w hw_smooth i Dwn gn hgn_def h12 hderivG_cont haesm_comp hDwn_memL2 σ hσ_mono hσ_ae hDwn_conv
+  -- Term B via dominated convergence.
+  set TB : ℕ → Vec d → ℝ :=
+    fun k x => (deriv G (w (σ k) x) - deriv G (u.toFun x)) * u.grad x i with hTB_def
+  have hTB_conv : Tendsto
+      (fun k => eLpNorm (fun x => TB k x) 2 (volumeMeasureOn U)) atTop (𝓝 0) := by
+    have hmeasTB : ∀ k, AEStronglyMeasurable (TB k) (volumeMeasureOn U) := fun k =>
+      ((haesm_comp (w (σ k)) (hw_smooth (σ k)).continuous.aestronglyMeasurable).sub
+        (haesm_comp u.toFun u.memL2.aestronglyMeasurable)).mul
+          (u.gradMemL2 i).aestronglyMeasurable
+    have hdom : MemLp (fun x => ‖(2 * M) * u.grad x i‖) 2 (volumeMeasureOn U) :=
+      ((u.gradMemL2 i).const_mul (2 * M)).norm
+    have hbnd : ∀ k, ∀ᵐ x ∂(volumeMeasureOn U), ‖TB k x‖ ≤ ‖(2 * M) * u.grad x i‖ := by
+      intro k
+      filter_upwards with x
+      rw [hTB_def, norm_mul, norm_mul]
+      refine mul_le_mul_of_nonneg_right ?_ (norm_nonneg _)
+      rw [Real.norm_eq_abs, Real.norm_eq_abs, abs_of_nonneg (by positivity : (0:ℝ) ≤ 2 * M)]
+      calc |deriv G (w (σ k) x) - deriv G (u.toFun x)|
+          ≤ |deriv G (w (σ k) x)| + |deriv G (u.toFun x)| := abs_sub _ _
+        _ ≤ M + M := add_le_add (hderiv _) (hderiv _)
+        _ = 2 * M := by ring
+    have hae : ∀ᵐ x ∂(volumeMeasureOn U), Tendsto (fun k => TB k x) atTop (𝓝 0) := by
+      filter_upwards [hσ_ae] with x hx
+      have h1 : Tendsto (fun k => deriv G (w (σ k) x)) atTop (𝓝 (deriv G (u.toFun x))) :=
+        (hderivG_cont.tendsto _).comp hx
+      have h2 := (h1.sub (tendsto_const_nhds (x := deriv G (u.toFun x)))).mul_const (u.grad x i)
+      simpa [hTB_def] using h2
+    have := tendsto_eLpNorm_two_of_tendsto_ae_of_dominated hmeasTB
+      (memLp_const 0) hdom hbnd (by filter_upwards [hae] with x hx using by simpa using hx)
+    simpa using this
+  -- Term A dominated by `M · ‖∂ᵢw(σk) − ∂ᵢu‖`.
+  have hTA_le : ∀ k,
+      eLpNorm (fun x => deriv G (w (σ k) x) * (Dwn (σ k) x - u.grad x i)) 2 (volumeMeasureOn U)
+        ≤ ENNReal.ofReal M *
+            eLpNorm (fun x => Dwn (σ k) x - u.grad x i) 2 (volumeMeasureOn U) := by
+    intro k
+    have hpt : ∀ x, ‖deriv G (w (σ k) x) * (Dwn (σ k) x - u.grad x i)‖
+        ≤ ‖M • (Dwn (σ k) x - u.grad x i)‖ := by
+      intro x
+      rw [norm_smul, norm_mul, Real.norm_eq_abs, Real.norm_eq_abs M]
+      exact mul_le_mul_of_nonneg_right
+        (by rw [abs_of_nonneg hM]; exact hderiv (w (σ k) x)) (abs_nonneg _)
+    calc eLpNorm (fun x => deriv G (w (σ k) x) * (Dwn (σ k) x - u.grad x i)) 2 (volumeMeasureOn U)
+        ≤ eLpNorm (fun x => M • (Dwn (σ k) x - u.grad x i)) 2 (volumeMeasureOn U) :=
+          eLpNorm_mono
+            ((haesm_comp (w (σ k)) (hw_smooth (σ k)).continuous.aestronglyMeasurable).fun_mul
+              ((hDwn_memL2 (σ k)).aestronglyMeasurable.fun_sub
+                (u.gradMemL2 i).aestronglyMeasurable)) hpt
+      _ = ENNReal.ofReal M *
+            eLpNorm (fun x => Dwn (σ k) x - u.grad x i) 2 (volumeMeasureOn U) := by
+          rw [show (fun x => M • (Dwn (σ k) x - u.grad x i))
+                = M • (fun x => Dwn (σ k) x - u.grad x i) from rfl, eLpNorm_const_smul]
+          simp [Real.enorm_eq_ofReal hM]
+  have hTA_conv : Tendsto
+      (fun k => eLpNorm (fun x => deriv G (w (σ k) x) * (Dwn (σ k) x - u.grad x i)) 2
+        (volumeMeasureOn U)) atTop (𝓝 0) := by
+    have hrhs : Tendsto
+        (fun k => ENNReal.ofReal M *
+          eLpNorm (fun x => Dwn (σ k) x - u.grad x i) 2 (volumeMeasureOn U)) atTop (𝓝 0) := by
+      have := ENNReal.Tendsto.const_mul (a := ENNReal.ofReal M)
+        (hDwn_conv.comp hσ_mono.tendsto_atTop) (Or.inr ENNReal.ofReal_ne_top)
+      simpa using this
+    exact tendsto_of_tendsto_of_tendsto_of_le_of_le tendsto_const_nhds hrhs
+      (fun k => zero_le) hTA_le
+  -- Combine: the gradient difference splits into Term A plus Term B.
+  have hsplit : ∀ k, eLpNorm (fun x => gn (σ k) x - deriv G (u.toFun x) * u.grad x i) 2
+        (volumeMeasureOn U)
+      ≤ eLpNorm (fun x => deriv G (w (σ k) x) * (Dwn (σ k) x - u.grad x i)) 2 (volumeMeasureOn U)
+        + eLpNorm (fun x => TB k x) 2 (volumeMeasureOn U) := by
+    intro k
+    have heq : (fun x => gn (σ k) x - deriv G (u.toFun x) * u.grad x i)
+        = (fun x => deriv G (w (σ k) x) * (Dwn (σ k) x - u.grad x i) + TB k x) := by
+      funext x; simp only [hgn_def, hTB_def]; ring
+    rw [heq]
+    exact eLpNorm_add_le h12
+  have hsum : Tendsto
+      (fun k => eLpNorm (fun x => deriv G (w (σ k) x) * (Dwn (σ k) x - u.grad x i)) 2
+          (volumeMeasureOn U)
+        + eLpNorm (fun x => TB k x) 2 (volumeMeasureOn U)) atTop (𝓝 0) := by
+    simpa using hTA_conv.add hTB_conv
+  exact tendsto_of_tendsto_of_tendsto_of_le_of_le tendsto_const_nhds hsum
+    (fun k => zero_le) hsplit
+
+private theorem approx_comparisonBounds1 :
+    ∀ {d : ℕ} {U : Set (Vec d)} (hU : IsOpenBoundedConvexDomain U) (u : H1Function U) {G : ℝ → ℝ}
+      (hG : ContDiff ℝ (1 : WithTop ℕ∞) G) {M : ℝ} (hGdiff : Differentiable ℝ G) (hGlip : LipschitzWith M.toNNReal G)
+      (this : IsFiniteMeasure (volumeMeasureOn U)) (x0 : Vec d) (r0 : ℝ),
+      let r : ℝ := r0 / (2 : ℝ);
+      ∀ (hr : (0 : ℝ) < r) (hball : Metric.closedBall x0 r ⊆ U),
+        let ρ : Vec d → ℝ := unitConvexApproxKernel;
+        ∀ (hρ_def : ρ = unitConvexApproxKernel) (hρ : IsConvexApproxKernel ρ),
+          let e : ℕ → ℝ := fun (n : ℕ) => unitConvexApproxScale (n + (1 : ℕ));
+          ∀ (he_def : e = fun (n : ℕ) => unitConvexApproxScale (n + (1 : ℕ))) (he_pos : ∀ (n : ℕ), (0 : ℝ) < e n)
+            (he_lt : ∀ (n : ℕ), e n < (1 : ℝ)),
+            let w : ℕ → Vec d → ℝ := fun (n : ℕ) => convexApproxSmoothRepresentative U ρ u.toFun x0 r (e n);
+            ∀ (hw_def : w = fun (n : ℕ) => convexApproxSmoothRepresentative U ρ u.toFun x0 r (e n))
+              (hw_smooth : ∀ (n : ℕ), ContDiff ℝ ((⊤ : ℕ∞) : WithTop ℕ∞) (w n))
+              (hw_eq : ∀ (n : ℕ), ∀ x ∈ U, w n x = unitConvexApproxSequence u.toFun x0 r (n + (1 : ℕ)) x)
+              (huLoc : LocallyIntegrableOn u.toFun U volume)
+              (hDuLoc : ∀ (j : Fin d), LocallyIntegrableOn (fun (x : Vec d) => u.grad x j) U volume)
+              (htransport :
+                ∀ (i : Fin d) (f g h : Vec d → ℝ),
+                  (∀ x ∈ U, f x = g x) → HasWeakPartialDerivOn U i g h → HasWeakPartialDerivOn U i f h)
+              (i : Fin d),
+              let Dwn : ℕ → Vec d → ℝ := fun (n : ℕ) (x : Vec d) => (fderiv ℝ (w n) x : (a : Vec d) → ℝ) (basisVec i);
+              ∀ (hDwn_def : Dwn = fun (n : ℕ) (x : Vec d) => (fderiv ℝ (w n) x : (a : Vec d) → ℝ) (basisVec i)),
+                let un : ℕ → Vec d → ℝ := fun (n : ℕ) (x : Vec d) => G (w n x);
+                let gn : ℕ → Vec d → ℝ := fun (n : ℕ) (x : Vec d) => deriv G (w n x) * Dwn n x;
+                let smi : ℕ → Vec d → ℝ := fun (n : ℕ) =>
+                  convexApproxSmoothing ρ (fun (y : Vec d) => u.grad y i) x0 r (e n);
+                ∀ (hsmi_def : smi = fun (n : ℕ) => convexApproxSmoothing ρ (fun (y : Vec d) => u.grad y i) x0 r (e n)),
+                  (∀ (n : ℕ), HasWeakPartialDerivOn U i (un n) (gn n)) ∧
+                    (∀ (n : ℕ), Dwn n =ᵐ[volumeMeasureOn U] fun (x : Vec d) => ((1 : ℝ) - e n) * smi n x) ∧
+                      (2 : ℝ≥0∞) ≠ ∞ ∧
+                        (1 : ℝ≥0∞) ≤ (2 : ℝ≥0∞) ∧
+                          (∀ (v : Vec d → ℝ),
+                              MemLp v (2 : ℝ≥0∞) (volumeMeasureOn U) →
+                                MemLp (fun (x : Vec d) => G (v x)) (2 : ℝ≥0∞) (volumeMeasureOn U)) ∧
+                            Continuous (deriv G) ∧
+                              (∀ (v : Vec d → ℝ),
+                                  AEStronglyMeasurable v (volumeMeasureOn U) →
+                                    AEStronglyMeasurable (fun (x : Vec d) => deriv G (v x)) (volumeMeasureOn U)) ∧
+                                (∀ (n : ℕ), MemLp (un n) (2 : ℝ≥0∞) (volumeMeasureOn U)) ∧
+                                  ∀ (n : ℕ), MemLp (smi n) (2 : ℝ≥0∞) (volumeMeasureOn U) := by
+  intro d U hU u G hG M hGdiff hGlip this x0 r0 r hr hball ρ hρ_def hρ e he_def he_pos he_lt w hw_def hw_smooth hw_eq huLoc hDuLoc htransport i Dwn hDwn_def un gn smi hsmi_def
   have hweak_n : ∀ n, HasWeakPartialDerivOn U i (un n) (gn n) := by
     intro n
     have hGwn : ContDiff ℝ 1 (fun x => G (w n x)) :=
@@ -307,6 +396,85 @@ theorem hasWeakGradientOn_comp_of_deriv_bounded
     intro n
     simpa [hsmi_def] using
       memLpOn_convexApproxSmoothing hU hρ h12 h2t (u.gradMemL2 i) hball hr (he_pos n) (he_lt n)
+  exact ⟨hweak_n, hbridge, h2t, h12, hcompL2, hderivG_cont, haesm_comp, hun_memL2, hsmi_memL2⟩
+
+/-- **C¹ chain rule (weak-gradient form).** -/
+theorem hasWeakGradientOn_comp_of_deriv_bounded
+    {d : ℕ} {U : Set (Vec d)} (hU : IsOpenBoundedConvexDomain U)
+    (u : H1Function U) {G : ℝ → ℝ} (hG : ContDiff ℝ 1 G)
+    {M : ℝ} (hM : 0 ≤ M) (hderiv : ∀ t, |deriv G t| ≤ M) :
+    HasWeakGradientOn U (fun x => G (u.toFun x))
+      (fun x i => deriv G (u.toFun x) * u.grad x i) := by
+  -- `G` is `M`-Lipschitz and differentiable.
+  have hGdiff : Differentiable ℝ G := hG.differentiable (by norm_num)
+  have hGlip : LipschitzWith M.toNNReal G := lipschitzWith_of_abs_deriv_le hM hGdiff hderiv
+  have : IsFiniteMeasure (volumeMeasureOn U) := hU.isBoundedDomain.isFiniteMeasure_restrict_volume
+  -- Empty domain: the pairing identity is trivial.
+  rcases U.eq_empty_or_nonempty with hempty | hne
+  · subst hempty
+    intro i φ _ _ _
+    simp
+  -- A closed ball inside `U`.
+  obtain ⟨x0, hx0U⟩ := hne
+  obtain ⟨r0, hr0, hball0⟩ := Metric.isOpen_iff.mp hU.isOpen x0 hx0U
+  set r : ℝ := r0 / 2 with hr_def
+  have hr : 0 < r := by positivity
+  have hball : Metric.closedBall x0 r ⊆ U := by
+    refine (Metric.closedBall_subset_ball ?_).trans hball0
+    rw [hr_def]; linarith
+  set ρ : Vec d → ℝ := unitConvexApproxKernel (d := d) with hρ_def
+  have hρ : IsConvexApproxKernel ρ := isConvexApproxKernel_unitConvexApproxKernel
+  -- Scale sequence shifted to land in `(0,1)`.
+  set e : ℕ → ℝ := fun n => unitConvexApproxScale (n + 1) with he_def
+  have he_pos : ∀ n, 0 < e n := by
+    intro n; simp only [he_def, unitConvexApproxScale]; positivity
+  have he_lt : ∀ n, e n < 1 := by
+    intro n
+    simp only [he_def, unitConvexApproxScale]
+    rw [div_lt_one (by positivity)]
+    have : (0:ℝ) ≤ (n:ℝ) := by positivity
+    push_cast; linarith
+  have he_le : ∀ n, e n ≤ 1 := fun n => (he_lt n).le
+  have he_tendsto : Tendsto e atTop (𝓝 0) :=
+    tendsto_unitConvexApproxScale_zero.comp (tendsto_add_atTop_nat 1)
+  -- The globally-smooth representative sequence.
+  set w : ℕ → Vec d → ℝ := fun n => convexApproxSmoothRepresentative U ρ u.toFun x0 r (e n)
+    with hw_def
+  have hw_smooth : ∀ n, ContDiff ℝ (⊤ : ℕ∞) (w n) := fun n =>
+    contDiff_convexApproxSmoothRepresentative hU.isOpen.measurableSet hρ one_le_two u.memL2 hr
+      (he_pos n)
+  -- On `U`, `w n` agrees with the smoothing sequence `unitConvexApproxSequence u (n+1)`.
+  have hw_eq : ∀ n, ∀ x ∈ U, w n x = unitConvexApproxSequence u.toFun x0 r (n + 1) x := by
+    intro n x hx
+    simpa [hw_def, unitConvexApproxSequence, he_def] using
+      convexApproxSmoothRepresentative_eq_convexApproxSmoothing_of_mem hU hρ hx hball hr
+        (he_pos n) (he_lt n)
+  -- Local integrability of `u` and its gradient (for the smoothing weak-gradient identity).
+  have huLoc : LocallyIntegrableOn u.toFun U volume :=
+    locallyIntegrableOn_of_locallyIntegrable_restrict (u.memL2.locallyIntegrable one_le_two)
+  have hDuLoc : ∀ j : Fin d, LocallyIntegrableOn (fun x => u.grad x j) U volume :=
+    fun j => locallyIntegrableOn_of_locallyIntegrable_restrict
+      ((u.gradMemL2 j).locallyIntegrable one_le_two)
+  -- Transport of a weak partial derivative along agreement on `U`.
+  have htransport : ∀ (i : Fin d) (f g h : Vec d → ℝ), (∀ x ∈ U, f x = g x) →
+      HasWeakPartialDerivOn U i g h → HasWeakPartialDerivOn U i f h := by
+    intro i f g h hfg hg φ hφ hφc hφs
+    rw [← hg φ hφ hφc hφs]
+    exact setIntegral_congr_fun hU.isOpen.measurableSet
+      (fun x hx => by rw [hfg x hx])
+  intro i
+  -- Per-`n` classical `i`-partial of `w n` and the composite gradient.
+  set Dwn : ℕ → Vec d → ℝ := fun n x => (fderiv ℝ (w n) x) (basisVec i) with hDwn_def
+  set un : ℕ → Vec d → ℝ := fun n x => G (w n x) with hun_def
+  set gn : ℕ → Vec d → ℝ := fun n x => deriv G (w n x) * Dwn n x with hgn_def
+  set smi : ℕ → Vec d → ℝ :=
+    fun n => convexApproxSmoothing ρ (fun y => u.grad y i) x0 r (e n) with hsmi_def
+  -- Each `G ∘ w n` is `C¹`, with weak `i`-partial `gn n`.
+  obtain ⟨hweak_n, hbridge, h2t, h12, hcompL2, hderivG_cont, haesm_comp, hun_memL2, hsmi_memL2⟩ :=
+    (show (∀ n, HasWeakPartialDerivOn U i (un n) (gn n)) ∧ (∀ n, Dwn n =ᵐ[volumeMeasureOn U] (fun x => (1 - e n) * smi n x)) ∧ ((2 : ℝ≥0∞) ≠ ⊤) ∧ ((1 : ℝ≥0∞) ≤ 2) ∧ (∀ v : Vec d → ℝ, MemLp v 2 (volumeMeasureOn U) →
+      MemLp (fun x => G (v x)) 2 (volumeMeasureOn U)) ∧ (Continuous (deriv G)) ∧ (∀ v : Vec d → ℝ, AEStronglyMeasurable v (volumeMeasureOn U) →
+      AEStronglyMeasurable (fun x => deriv G (v x)) (volumeMeasureOn U)) ∧ (∀ n, MemLp (un n) 2 (volumeMeasureOn U)) ∧ (∀ n, MemLp (smi n) 2 (volumeMeasureOn U)) from
+      @approx_comparisonBounds1 (d) (U) (hU) (u) (G) (hG) (M) (hGdiff) (hGlip) (by infer_instance) (x0) (r0) (hr) (hball) (hρ_def) (hρ) (he_def) (he_pos) (he_lt) (hw_def) (hw_smooth) (hw_eq) (huLoc) (hDuLoc) (htransport) (i) (hDwn_def) (hsmi_def))
   have hDwn_memL2 : ∀ n, MemLp (Dwn n) 2 (volumeMeasureOn U) := fun n =>
     ((hsmi_memL2 n).const_mul (1 - e n)).ae_eq (hbridge n).symm
   have hgn_memL2 : ∀ n, MemLp (gn n) 2 (volumeMeasureOn U) := by
@@ -322,7 +490,8 @@ theorem hasWeakGradientOn_comp_of_deriv_bounded
     hcompL2 u.toFun u.memL2
   have hg_memL2 : MemLp (fun x => deriv G (u.toFun x) * u.grad x i) 2 (volumeMeasureOn U) := by
     refine MemLp.of_le ((u.gradMemL2 i).const_mul M) ?_ ?_
-    · exact (haesm_comp u.toFun u.memL2.aestronglyMeasurable).mul (u.gradMemL2 i).aestronglyMeasurable
+    · exact (haesm_comp u.toFun u.memL2.aestronglyMeasurable).mul (u.gradMemL2
+      i).aestronglyMeasurable
     · filter_upwards with x
       simp only [norm_mul, Real.norm_eq_abs]
       exact mul_le_mul_of_nonneg_right
@@ -331,7 +500,8 @@ theorem hasWeakGradientOn_comp_of_deriv_bounded
   have hwu_L2 : Tendsto
       (fun n => eLpNorm (fun x => w n x - u.toFun x) 2 (volumeMeasureOn U)) atTop (𝓝 0) := by
     have hbase :=
-      (tendsto_eLpNorm_sub_zero_unitConvexApproxSequence_of_memLpOn hU h12 h2t u.memL2 hball hr).comp
+      (tendsto_eLpNorm_sub_zero_unitConvexApproxSequence_of_memLpOn hU h12 h2t u.memL2 hball
+        hr).comp
         (tendsto_add_atTop_nat 1)
     refine hbase.congr (fun n => ?_)
     apply eLpNorm_congr_ae
@@ -417,91 +587,9 @@ theorem hasWeakGradientOn_comp_of_deriv_bounded
     exact tendsto_of_tendsto_of_tendsto_of_le_of_le tendsto_const_nhds hrhs
       (fun k => zero_le) hle
   -- Gradient-side convergence `gn (σ k) → G'(u)·∂ᵢu` in `L²` (Term A + Term B).
-  have hgn_conv : Tendsto
-      (fun k => eLpNorm (fun x => gn (σ k) x - deriv G (u.toFun x) * u.grad x i) 2
-        (volumeMeasureOn U)) atTop (𝓝 0) := by
-    -- Term B via dominated convergence.
-    set TB : ℕ → Vec d → ℝ :=
-      fun k x => (deriv G (w (σ k) x) - deriv G (u.toFun x)) * u.grad x i with hTB_def
-    have hTB_conv : Tendsto
-        (fun k => eLpNorm (fun x => TB k x) 2 (volumeMeasureOn U)) atTop (𝓝 0) := by
-      have hmeasTB : ∀ k, AEStronglyMeasurable (TB k) (volumeMeasureOn U) := fun k =>
-        ((haesm_comp (w (σ k)) (hw_smooth (σ k)).continuous.aestronglyMeasurable).sub
-          (haesm_comp u.toFun u.memL2.aestronglyMeasurable)).mul
-            (u.gradMemL2 i).aestronglyMeasurable
-      have hdom : MemLp (fun x => ‖(2 * M) * u.grad x i‖) 2 (volumeMeasureOn U) :=
-        ((u.gradMemL2 i).const_mul (2 * M)).norm
-      have hbnd : ∀ k, ∀ᵐ x ∂(volumeMeasureOn U), ‖TB k x‖ ≤ ‖(2 * M) * u.grad x i‖ := by
-        intro k
-        filter_upwards with x
-        rw [hTB_def, norm_mul, norm_mul]
-        refine mul_le_mul_of_nonneg_right ?_ (norm_nonneg _)
-        rw [Real.norm_eq_abs, Real.norm_eq_abs, abs_of_nonneg (by positivity : (0:ℝ) ≤ 2 * M)]
-        calc |deriv G (w (σ k) x) - deriv G (u.toFun x)|
-            ≤ |deriv G (w (σ k) x)| + |deriv G (u.toFun x)| := abs_sub _ _
-          _ ≤ M + M := add_le_add (hderiv _) (hderiv _)
-          _ = 2 * M := by ring
-      have hae : ∀ᵐ x ∂(volumeMeasureOn U), Tendsto (fun k => TB k x) atTop (𝓝 0) := by
-        filter_upwards [hσ_ae] with x hx
-        have h1 : Tendsto (fun k => deriv G (w (σ k) x)) atTop (𝓝 (deriv G (u.toFun x))) :=
-          (hderivG_cont.tendsto _).comp hx
-        have h2 := (h1.sub (tendsto_const_nhds (x := deriv G (u.toFun x)))).mul_const (u.grad x i)
-        simpa [hTB_def] using h2
-      have := tendsto_eLpNorm_two_of_tendsto_ae_of_dominated hmeasTB
-        (memLp_const 0) hdom hbnd (by filter_upwards [hae] with x hx using by simpa using hx)
-      simpa using this
-    -- Term A dominated by `M · ‖∂ᵢw(σk) − ∂ᵢu‖`.
-    have hTA_le : ∀ k,
-        eLpNorm (fun x => deriv G (w (σ k) x) * (Dwn (σ k) x - u.grad x i)) 2 (volumeMeasureOn U)
-          ≤ ENNReal.ofReal M *
-              eLpNorm (fun x => Dwn (σ k) x - u.grad x i) 2 (volumeMeasureOn U) := by
-      intro k
-      have hpt : ∀ x, ‖deriv G (w (σ k) x) * (Dwn (σ k) x - u.grad x i)‖
-          ≤ ‖M • (Dwn (σ k) x - u.grad x i)‖ := by
-        intro x
-        rw [norm_smul, norm_mul, Real.norm_eq_abs, Real.norm_eq_abs M]
-        exact mul_le_mul_of_nonneg_right
-          (by rw [abs_of_nonneg hM]; exact hderiv (w (σ k) x)) (abs_nonneg _)
-      calc eLpNorm (fun x => deriv G (w (σ k) x) * (Dwn (σ k) x - u.grad x i)) 2 (volumeMeasureOn U)
-          ≤ eLpNorm (fun x => M • (Dwn (σ k) x - u.grad x i)) 2 (volumeMeasureOn U) :=
-            eLpNorm_mono
-              ((haesm_comp (w (σ k)) (hw_smooth (σ k)).continuous.aestronglyMeasurable).fun_mul
-                ((hDwn_memL2 (σ k)).aestronglyMeasurable.fun_sub
-                  (u.gradMemL2 i).aestronglyMeasurable)) hpt
-        _ = ENNReal.ofReal M *
-              eLpNorm (fun x => Dwn (σ k) x - u.grad x i) 2 (volumeMeasureOn U) := by
-            rw [show (fun x => M • (Dwn (σ k) x - u.grad x i))
-                  = M • (fun x => Dwn (σ k) x - u.grad x i) from rfl, eLpNorm_const_smul]
-            simp [Real.enorm_eq_ofReal hM]
-    have hTA_conv : Tendsto
-        (fun k => eLpNorm (fun x => deriv G (w (σ k) x) * (Dwn (σ k) x - u.grad x i)) 2
-          (volumeMeasureOn U)) atTop (𝓝 0) := by
-      have hrhs : Tendsto
-          (fun k => ENNReal.ofReal M *
-            eLpNorm (fun x => Dwn (σ k) x - u.grad x i) 2 (volumeMeasureOn U)) atTop (𝓝 0) := by
-        have := ENNReal.Tendsto.const_mul (a := ENNReal.ofReal M)
-          (hDwn_conv.comp hσ_mono.tendsto_atTop) (Or.inr ENNReal.ofReal_ne_top)
-        simpa using this
-      exact tendsto_of_tendsto_of_tendsto_of_le_of_le tendsto_const_nhds hrhs
-        (fun k => zero_le) hTA_le
-    -- Combine: the gradient difference splits into Term A plus Term B.
-    have hsplit : ∀ k, eLpNorm (fun x => gn (σ k) x - deriv G (u.toFun x) * u.grad x i) 2
-          (volumeMeasureOn U)
-        ≤ eLpNorm (fun x => deriv G (w (σ k) x) * (Dwn (σ k) x - u.grad x i)) 2 (volumeMeasureOn U)
-          + eLpNorm (fun x => TB k x) 2 (volumeMeasureOn U) := by
-      intro k
-      have heq : (fun x => gn (σ k) x - deriv G (u.toFun x) * u.grad x i)
-          = (fun x => deriv G (w (σ k) x) * (Dwn (σ k) x - u.grad x i) + TB k x) := by
-        funext x; simp only [hgn_def, hTB_def]; ring
-      rw [heq]
-      exact eLpNorm_add_le h12
-    have hsum : Tendsto
-        (fun k => eLpNorm (fun x => deriv G (w (σ k) x) * (Dwn (σ k) x - u.grad x i)) 2
-            (volumeMeasureOn U)
-          + eLpNorm (fun x => TB k x) 2 (volumeMeasureOn U)) atTop (𝓝 0) := by
-      simpa using hTA_conv.add hTB_conv
-    exact tendsto_of_tendsto_of_tendsto_of_le_of_le tendsto_const_nhds hsum
-      (fun k => zero_le) hsplit
+  have hgn_conv := @weakGradientComposition_gradientConvergence (d) (U) (u) (G) (M) (hM) (hderiv)
+    (this) (x0) (r0) (hw_smooth) (i) (hgn_def) (h12) (hderivG_cont) (haesm_comp) (hDwn_memL2) (σ)
+      (hσ_mono) (hσ_ae) (hDwn_conv)
   -- Apply the L²-limit closure keystone along the subsequence.
   exact hasWeakPartialDerivOn_of_tendsto_L2
     hGu_memL2 hg_memL2 (fun k => hun_memL2 (σ k)) (fun k => hgn_memL2 (σ k))

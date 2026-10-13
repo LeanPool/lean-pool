@@ -194,7 +194,7 @@ def triadicGridPointAt (c : Vec d) (s : ℝ) (x : Vec d) : Vec d :=
 
 theorem triadicGridPointAt_mem_triadicLatticeAt (c : Vec d) (s : ℝ) (x : Vec d) :
     triadicGridPointAt c s x ∈ (triadicLatticeAt c s : Set (Vec d)) := by
-  show triadicGridPointAt c s x - c ∈ (triadicLattice s : Set (Vec d))
+  change triadicGridPointAt c s x - c ∈ (triadicLattice s : Set (Vec d))
   rw [triadicGridPointAt, add_sub_cancel_left]
   exact triadicGridPoint_mem_triadicLattice s (x - c)
 

@@ -155,7 +155,7 @@ theorem solutionFluxField_memVectorL2 [NeZero d] (Q : TriadicCube d) (a : CoeffF
     filter_upwards [h1] with x hx
     have hpwf : Internal.Ch02.BookCh02.pointwiseCoeffField U aQ x =
         (Internal.Ch02.BookCh02.pointwiseCoeffOn U aQ).toCoeffField x := rfl
-    show matVecMul (Internal.Ch02.BookCh02.pointwiseCoeffField U aQ x)
+    change matVecMul (Internal.Ch02.BookCh02.pointwiseCoeffField U aQ x)
         (solutionGradientField u x) = solutionFluxField Q a u x
     rw [hpwf, hx, solutionFluxField, haQ, solutionGradientField]
   exact hpw.ae_eq hae

@@ -114,7 +114,7 @@ def h10Trim {U : Set (Vec d)} (hU : MeasurableSet U) (w : H10Function U) :
     refine eLpNorm_congr_ae ?_
     refine ae_eq_of_forall_mem hU ?_
     intro y hy
-    show w.approx n y - w.toH1Function.toFun y
+    change w.approx n y - w.toH1Function.toFun y
       = w.approx n y - Set.indicator U w.toH1Function.toFun y
     rw [Set.indicator_of_mem hy]
   tendsto_approx_grad := fun i => w.tendsto_approx_grad i

@@ -28,7 +28,7 @@ ABK26, `l.approximate.recurrence.formula`, Steps 1--3 and
 
 `Closure.Junctions.PrincipalSwitchEndpoint` is the proved principal-response
 terminal
-`PrincipalResponseTerminal.exists_const_descendantsAverage_integral_principalEnergy_le_annealedLimit`,
+`exists_const_descendantsAverage_integral_principalEnergy_le_annealedLimit`,
 re-indexed from the terminal's `(m - hgap, m)` to the recurrence pair `(n, n +
 h)`.  Two things separate the two statements, and this module supplies both.
 
@@ -114,7 +114,7 @@ theorem cubeAverageVec_congr_ae (R : TriadicCube d) {g1 g2 : Vec d → Vec d}
   have hcomp : (fun x => g1 x i) =ᵐ[volume.restrict (cubeSet R)] fun x => g2 x i := by
     filter_upwards [hg] with x hx
     exact congrFun hx i
-  show cubeAverage R (fun x => g1 x i) = cubeAverage R (fun x => g2 x i)
+  change cubeAverage R (fun x => g1 x i) = cubeAverage R (fun x => g2 x i)
   rw [cubeAverage, cubeAverage, integral_congr_ae hcomp]
 
 /-! ## Gradient uniqueness of `e.def.w`, in the pointwise a.e. spelling -/
@@ -158,7 +158,7 @@ theorem grad_ae_eq_of_isMeanZeroNeumannRhsWeakSolution (Q : TriadicCube d)
 private theorem descendantsAverage_congr_mem' (Q : TriadicCube d) (j : ℕ)
     {f g : TriadicCube d → ℝ} (hfg : ∀ R ∈ descendantsAtDepth Q j, f R = g R) :
     descendantsAverage Q j f = descendantsAverage Q j g := by
-  show ((descendantsAtDepth Q j).card : ℝ)⁻¹ * ∑ R ∈ descendantsAtDepth Q j, f R =
+  change ((descendantsAtDepth Q j).card : ℝ)⁻¹ * ∑ R ∈ descendantsAtDepth Q j, f R =
     ((descendantsAtDepth Q j).card : ℝ)⁻¹ * ∑ R ∈ descendantsAtDepth Q j, g R
   rw [Finset.sum_congr rfl hfg]
 
@@ -184,7 +184,7 @@ theorem principalPz_congr_ae (sigma : PositiveScalar) (omega : ShellSeq d)
       cubeAverageVec R (neumannFluxField sigma omega lowScale highScale e' wN2) := by
     refine cubeAverageVec_congr_ae R ?_
     filter_upwards [hNR] with x hx
-    show wN1.toH1Function.grad x + _ = wN2.toH1Function.grad x + _
+    change wN1.toH1Function.grad x + _ = wN2.toH1Function.grad x + _
     rw [hx]
   rw [principalPz, principalPz, h1, h2]
 

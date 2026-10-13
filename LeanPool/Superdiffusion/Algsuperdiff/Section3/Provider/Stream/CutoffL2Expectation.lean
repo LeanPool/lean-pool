@@ -74,7 +74,7 @@ the sample. -/
 theorem measurable_frobeniusMass_cutoff (m : ℤ) (x : Vec d) :
     Measurable (fun omega : CutoffSample d =>
       matrixFrobeniusNormSq (cutoff m omega x)) := by
-  show Measurable fun omega : CutoffSample d =>
+  change Measurable fun omega : CutoffSample d =>
     ∑ i : Fin d, ∑ l : Fin d, cutoff m omega x i l ^ 2
   exact Finset.univ.measurable_sum fun i _ =>
     Finset.univ.measurable_sum fun l _ =>
@@ -83,7 +83,7 @@ theorem measurable_frobeniusMass_cutoff (m : ℤ) (x : Vec d) :
 /-- The Frobenius mass of the genuine cutoff is continuous in the point. -/
 theorem continuous_frobeniusMass_cutoff (m : ℤ) (omega : CutoffSample d) :
     Continuous (fun x : Vec d => matrixFrobeniusNormSq (cutoff m omega x)) := by
-  show Continuous fun x : Vec d =>
+  change Continuous fun x : Vec d =>
     ∑ i : Fin d, ∑ l : Fin d, cutoff m omega x i l ^ 2
   exact continuous_finsetSum _ fun i _ =>
     continuous_finsetSum _ fun l _ =>
@@ -201,7 +201,7 @@ theorem continuous_frobeniusMass_finiteShellIncrement (n m : ℤ)
     (omega : ShellSeq d) :
     Continuous
       (fun x : Vec d => matrixFrobeniusNormSq (finiteShellIncrement omega n m x)) := by
-  show Continuous fun x : Vec d =>
+  change Continuous fun x : Vec d =>
     ∑ i : Fin d, ∑ l : Fin d, finiteShellIncrement omega n m x i l ^ 2
   refine continuous_finsetSum _ fun i _ => continuous_finsetSum _ fun l _ => ?_
   have hentry : Continuous
@@ -216,7 +216,7 @@ measurable in the sample. -/
 theorem measurable_frobeniusMass_finiteShellIncrement (n m : ℤ) (x : Vec d) :
     Measurable (fun omega : ShellSeq d =>
       matrixFrobeniusNormSq (finiteShellIncrement omega n m x)) := by
-  show Measurable fun omega : ShellSeq d =>
+  change Measurable fun omega : ShellSeq d =>
     ∑ i : Fin d, ∑ l : Fin d, finiteShellIncrement omega n m x i l ^ 2
   refine Finset.univ.measurable_sum fun i _ =>
     Finset.univ.measurable_sum fun l _ => ?_
@@ -251,7 +251,7 @@ theorem integrable_frobeniusMass_finiteShellIncrement (M : ABKModel d) (n m : �
     refine integrable_finsetSum _ fun i _ => integrable_finsetSum _ fun l _ => ?_
     exact (memLp_two_iff_integrable_sq (hmem i l).aestronglyMeasurable).mp (hmem i l)
   refine hbase.congr (Filter.Eventually.of_forall fun omega => ?_)
-  show (∑ i : Fin d, ∑ l : Fin d,
+  change (∑ i : Fin d, ∑ l : Fin d,
       (∑ k ∈ Finset.Ioc n m, (omega k) x i l) ^ 2) =
     ∑ i : Fin d, ∑ l : Fin d, finiteShellIncrement omega n m x i l ^ 2
   simp only [finiteShellIncrement_apply_entry]

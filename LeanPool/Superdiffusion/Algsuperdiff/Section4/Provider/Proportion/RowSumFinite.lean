@@ -125,7 +125,7 @@ theorem measure_scaleProp_le_of_null_enlargement (P : Measure Omega)
         by_cases h : omega ∈ (Ev k)ᶜ
         · rw [ite_eq_left h, ite_eq_left (hiff.2 h)]
         · rw [ite_eq_right h, ite_eq_right (fun hc => h (hiff.1 hc))]
-      show theta < scaleProp (fun k => (Ev k ∪ N)ᶜ) n omega
+      change theta < scaleProp (fun k => (Ev k ∪ N)ᶜ) n omega
       rw [← heq]
       exact homega
   calc P {omega | theta < scaleProp (fun k => (Ev k)ᶜ) n omega}

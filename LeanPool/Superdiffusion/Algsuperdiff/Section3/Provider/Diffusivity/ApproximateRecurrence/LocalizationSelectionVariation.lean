@@ -107,11 +107,11 @@ theorem isDoubledMuAdmissibleField_add_of_isDoubledMuAdmissible {U : Domain d}
       = (S - constantDoubledField P) + (T - F) := by
     refine HCPolySupport.Internal.Ch02.BookCh02.doubledField_ext ?_ ?_
     · funext x
-      show S.potential x + T.potential x - (P.1 + F.potential x)
+      change S.potential x + T.potential x - (P.1 + F.potential x)
         = (S.potential x - P.1) + (T.potential x - F.potential x)
       abel
     · funext x
-      show S.flux x + T.flux x - (P.2 + F.flux x)
+      change S.flux x + T.flux x - (P.2 + F.flux x)
         = (S.flux x - P.2) + (T.flux x - F.flux x)
       abel
   have hT' : IsDoubledTestField U (T - F) := hT
@@ -140,7 +140,7 @@ theorem isDoubledAmbientField_of_isDoubledMuAdmissibleField {U : Domain d}
   · refine ⟨hXpot, u + v.toH1Function, ?_⟩
     filter_upwards [hu, hv] with x hx hy
     have hdec : X.potential x = F.potential x + (X - F).potential x := by
-      show X.potential x = F.potential x + (X.potential x - F.potential x)
+      change X.potential x = F.potential x + (X.potential x - F.potential x)
       abel
     rw [hdec, hx, hy, H1Function.add_grad]
   · refine ⟨hXflux, fun phi => ?_⟩
@@ -152,7 +152,7 @@ theorem isDoubledAmbientField_of_isDoubledMuAdmissibleField {U : Domain d}
             + vecDot ((X - F).flux x) (phi.toH1Function.grad x) := by
       intro x
       have hdec : X.flux x = F.flux x + (X - F).flux x := by
-        show X.flux x = F.flux x + (X.flux x - F.flux x)
+        change X.flux x = F.flux x + (X.flux x - F.flux x)
         abel
       conv_lhs => rw [hdec]
       exact vecDot_add_left _ _ _
@@ -219,14 +219,14 @@ theorem two_mul_doubledMuValue_eq_volumeAverage_of_isDoubledMuMinimizerField
       = doubledBlockPairingIntegrand U a F X
         + doubledBlockPairingIntegrand U a (X - F) X := by
     funext x
-    show blockVecDot (X.eval x) (blockMatVecMul (blockMatrixField a x) (X.eval x))
+    change blockVecDot (X.eval x) (blockMatVecMul (blockMatrixField a x) (X.eval x))
       = blockVecDot (F.eval x) (blockMatVecMul (blockMatrixField a x) (X.eval x))
         + blockVecDot ((X - F).eval x) (blockMatVecMul (blockMatrixField a x) (X.eval x))
     have hdec : X.eval x = F.eval x + (X - F).eval x := by
       refine Prod.ext ?_ ?_
-      · show X.potential x = F.potential x + (X.potential x - F.potential x)
+      · change X.potential x = F.potential x + (X.potential x - F.potential x)
         abel
-      · show X.flux x = F.flux x + (X.flux x - F.flux x)
+      · change X.flux x = F.flux x + (X.flux x - F.flux x)
         abel
     conv_lhs => rw [hdec]
     rw [blockVecDot_add_left, ← hdec]
@@ -240,10 +240,10 @@ theorem two_mul_doubledMuValue_eq_volumeAverage_of_isDoubledMuMinimizerField
     have hpt : (fun x => blockEnergyDensityAt a (X.eval x) x)
         = (1 / 2 : ℝ) • doubledBlockPairingIntegrand U a X X := by
       funext x
-      show (1 / 2 : ℝ) * blockVecDot (X.eval x)
+      change (1 / 2 : ℝ) * blockVecDot (X.eval x)
           (blockMatVecMul (blockMatrixField a x) (X.eval x)) = _
       rfl
-    show 2 * volumeAverage (U : Set (Vec d))
+    change 2 * volumeAverage (U : Set (Vec d))
       (fun x => blockEnergyDensityAt a (X.eval x) x) = _
     rw [hpt, volumeAverage_smul]
     ring

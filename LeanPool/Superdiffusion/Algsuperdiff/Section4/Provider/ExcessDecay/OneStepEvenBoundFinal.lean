@@ -91,7 +91,7 @@ variable {d : ℕ}
 /-- The `i`-th coordinate of the normal displacement `delta·eᵢ`. -/
 theorem smul_basisVec_apply (delta : ℝ) (i j : Fin d) :
     (delta • (basisVec i : Vec d)) j = if j = i then delta else 0 := by
-  show delta * (basisVec i : Vec d) j = _
+  change delta * (basisVec i : Vec d) j = _
   rw [HCPolySupport.basisVec_apply]
   split_ifs <;> ring
 
@@ -233,7 +233,7 @@ theorem normalizedL2On_evenAffinePart_le_of_hessian_bound [NeZero d] {m n : ℤ}
       coordBox_deep_subset_taylor hdelta hyD0
     have h := abs_evenAffinePart_le_pointwise (n := n) hVodd hdelta hM hharm hMbound hy hyD
     rw [hgdef]
-    show |e y| ≤ 2 * |f y| + (|f (y - v0)| + 3 * (M * delta ^ 2))
+    change |e y| ≤ 2 * |f y| + (|f (y - v0)| + 3 * (M * delta ^ 2))
     have habs : |f (y - v0)| = |V (y - v0) - affineEval (c - vecDot A x) A (y - v0)| := rfl
     have habs2 : |f y| = |V y - affineEval (c - vecDot A x) A y| := rfl
     rw [habs, habs2]

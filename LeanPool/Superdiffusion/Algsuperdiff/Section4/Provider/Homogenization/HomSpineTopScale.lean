@@ -580,7 +580,8 @@ theorem stepTwoIndexBridge_of_representative [NeZero d] (M : ABKModel d) {L m : 
 Sections 5 and 6 composed into section 3: the binder
 `energySlot_of_regularityDisplay` consumes, at the Theorem-C bracket, from
 
-* the LANDED the coarse-graining right-hand side + the display bounding the `Λ`'s by the `𝓔`'s composition
+* the LANDED the coarse-graining right-hand side + the display bounding the `Λ`'s by the `𝓔`'s
+composition
   (`exists_sqrt_nu_mul_gradL2_le`),
 * the ONE named data-leg input `StepTwoDataBridge`,
 * the standard a.e. carrier identification `hrep1`/`hrep2`, and

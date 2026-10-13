@@ -96,7 +96,7 @@ theorem holderHalf_const_nonneg [NeZero d] {m : ℤ} {K : ℝ} {f : Vec d → Ve
         ‖(fun _ : Fin d => (3 : ℝ) ^ m / 4) - (0 : Vec d)‖ := norm_le_pi_norm _ i0
     have hval : ‖((fun _ : Fin d => (3 : ℝ) ^ m / 4) - (0 : Vec d)) i0‖ =
         (3 : ℝ) ^ m / 4 := by
-      show ‖(3 : ℝ) ^ m / 4 - 0‖ = (3 : ℝ) ^ m / 4
+      change ‖(3 : ℝ) ^ m / 4 - 0‖ = (3 : ℝ) ^ m / 4
       rw [sub_zero, Real.norm_eq_abs, abs_of_pos (by linarith only [h3])]
     rw [hval] at hi
     linarith only [hi, h3]

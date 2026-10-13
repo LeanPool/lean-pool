@@ -53,7 +53,8 @@ cannot be applied against `L` directly.  Instead:
 -/
 
 open HCPolySupport
-open HCPolySupport.Book.Ch04 (RestrictionCoeffLaw RestrictionLawCarrier AELocallyUniformlyEllipticField
+open HCPolySupport.Book.Ch04 (RestrictionCoeffLaw RestrictionLawCarrier
+  AELocallyUniformlyEllipticField
   AELocallyUniformlyEllipticLaw lawCarrier_of_aeLocallyUniformlyElliptic)
 open MeasureTheory
 

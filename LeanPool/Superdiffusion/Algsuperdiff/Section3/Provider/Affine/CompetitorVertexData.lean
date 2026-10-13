@@ -167,7 +167,7 @@ theorem abs_linearFn_sub_le (p x y : Vec d) :
     _ = vecNormOne p * dist x y := by rw [vecNormOne_apply, ← Finset.sum_mul]
 
 theorem continuous_linearFn (p : Vec d) : Continuous (linearFn (d := d) p) := by
-  show Continuous fun x : Vec d => ∑ i, p i * x i
+  change Continuous fun x : Vec d => ∑ i, p i * x i
   exact continuous_finsetSum _ fun i _ => continuous_const.mul (continuous_apply i)
 
 /-! ## The component that claims a point -/

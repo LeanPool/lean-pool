@@ -112,7 +112,7 @@ theorem coefficientCutoffLaw_sq_sigmaBar_mul_annealedSigmaStarInvScalarAtScale_s
     filter_upwards [eventually_ge_atTop m.toNat] with k hk
     have hmk : m ≤ (k : ℤ) := le_trans (Int.self_le_toNat m) (by exact_mod_cast hk)
     exact
-      coefficientCutoffLaw_sq_sigmaBar_mul_annealedSigmaStarInvScalarAtScale_sub_le_four_mul_sq
+      annealedInverseDiffusivity_defect_bound
         M L hLm hmk hs hdelta1 hmoment hpq hqnorm
   have hseq :
       Tendsto

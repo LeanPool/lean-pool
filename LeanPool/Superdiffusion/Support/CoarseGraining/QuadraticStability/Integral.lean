@@ -230,9 +230,9 @@ theorem abs_setIntegral_energy_sub_le
   have hID1_S : IntegrableOn δ1 S := hID1.mono_set hSU
   have hh1_meas : AEStronglyMeasurable h1 (volume.restrict S) := by
     apply AEStronglyMeasurable.mul
-    apply AEStronglyMeasurable.mul
-    · exact aestronglyMeasurable_const
-    · exact Real.continuous_sqrt.comp_aestronglyMeasurable hIA_S.1
+    · apply AEStronglyMeasurable.mul
+      · exact aestronglyMeasurable_const
+      · exact Real.continuous_sqrt.comp_aestronglyMeasurable hIA_S.1
     · exact Real.continuous_sqrt.comp_aestronglyMeasurable hID_S.1
   have hIh1_S : IntegrableOn h1 S := by
     refine Integrable.mono' (g := fun x => Real.sqrt K * (eB x + eBtY x))

@@ -42,7 +42,6 @@ Only `4 ≤ ℓ` and `ℓ ≤ N` are used; the constant `3` is not sharp (any
 
 open HCPolySupport
 open scoped MeasureTheory
-open Classical
 
 namespace HCPolySupport
 
@@ -69,6 +68,7 @@ private theorem toNat_cast_le {k : ℤ} {r : ℝ} (h : (k : ℝ) ≤ r) (hr : 0 
 
 /-! ## 1-d heart -/
 
+open Classical in
 /-- **M0 (1-d count).**  For `4 ≤ ℓ` and `ℓ ≤ N`, at most `3N/ℓ` of the grid
 points `c ↦ c·ℓ/N`, `c : Fin N`, lie within sup-distance `1` of `t` modulo the
 lattice `ℓ·ℤ`. -/

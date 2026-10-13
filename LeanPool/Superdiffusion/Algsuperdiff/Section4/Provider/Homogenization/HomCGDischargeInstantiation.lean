@@ -116,7 +116,7 @@ theorem hasH10Difference_of_dirichletPair {Q : TriadicCube d}
   obtain ⟨w1, hw1val, _⟩ := hu.hasZeroTraceDifferenceOn
   obtain ⟨w2, hw2val, _⟩ := hv.hasZeroTraceDifferenceOn
   refine ⟨w1 - w2, Filter.Eventually.of_forall fun x => ?_⟩
-  show (w1 - w2).toH1Function.toFun x = u.toFun x - v.toFun x
+  change (w1 - w2).toH1Function.toFun x = u.toFun x - v.toFun x
   have hsub : (w1 - w2).toH1Function.toFun x =
       w1.toH1Function.toFun x - w2.toH1Function.toFun x := by
     change (w1.toH1Function - w2.toH1Function).toFun x = _

@@ -179,7 +179,7 @@ theorem exists_isDirichletSolutionOn_smul_one [NeZero d] {m : ℤ} {sigma : ℝ}
       ((h + w.toH1Function).grad x)
       = (fun x => sigma • h.grad x) x + (fun x => sigma • w.toH1Function.grad x) x := by
     intro x
-    show matVecMul (sigma • (1 : Mat d)) ((h + w.toH1Function).grad x)
+    change matVecMul (sigma • (1 : Mat d)) ((h + w.toH1Function).grad x)
       = sigma • h.grad x + sigma • w.toH1Function.grad x
     rw [H1Function.add_grad, matVecMul_smul_one, smul_add]
   rw [integral_vecDot_add_split hsh hsw hflux φ]
@@ -191,7 +191,7 @@ theorem exists_isDirichletSolutionOn_smul_one [NeZero d] {m : ℤ} {sigma : ℝ}
         vecDot ((fun x => sigma • w.toH1Function.grad x) x)
           (φ.toH1Function.grad x) ∂volume :=
     integral_congr_ae (Filter.Eventually.of_forall fun x => by
-      show vecDot (matVecMul (sigma • (1 : Mat d)) (w.toH1Function.grad x))
+      change vecDot (matVecMul (sigma • (1 : Mat d)) (w.toH1Function.grad x))
           (φ.toH1Function.grad x)
         = vecDot (sigma • w.toH1Function.grad x) (φ.toH1Function.grad x)
       rw [matVecMul_smul_one])

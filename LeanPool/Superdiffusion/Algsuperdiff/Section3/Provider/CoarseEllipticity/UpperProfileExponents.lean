@@ -6,7 +6,11 @@ Authors: Scott Armstrong, Tuomo Kuusi
 
 module
 
-public import Mathlib
+public import Mathlib.Basic.Real.Basic
+public import Mathlib.Tactic.FieldSimp
+public import Mathlib.Tactic.Linarith
+public import Mathlib.Tactic.Positivity
+public import Mathlib.Tactic.Ring
 
 /-!
 # UpperProfileExponents

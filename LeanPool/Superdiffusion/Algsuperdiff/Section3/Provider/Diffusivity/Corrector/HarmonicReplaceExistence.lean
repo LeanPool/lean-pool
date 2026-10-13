@@ -88,7 +88,7 @@ variable {d : ℕ}
 /-- Left additivity of the coordinate inner product in subtracted form. -/
 theorem vecDot_sub_left' (x y z : Vec d) :
     vecDot (x - y) z = vecDot x z - vecDot y z := by
-  show ∑ i : Fin d, (x - y) i * z i =
+  change ∑ i : Fin d, (x - y) i * z i =
     (∑ i : Fin d, x i * z i) - ∑ i : Fin d, y i * z i
   rw [← Finset.sum_sub_distrib]
   refine Finset.sum_congr rfl fun i _ => ?_
@@ -260,7 +260,7 @@ theorem exists_h10Function_isWeaklyHarmonicOn_sub_openCubeAtScale [NeZero d]
     Book.Ch01.meanSquareDeviationVecOn_eq_volumeAverage_vecNormSq_sub_of_memVectorL2 hG c]
   have hzero : ∀ x : Vec d, φ.toH1Function.grad x - 0 = φ.toH1Function.grad x :=
     fun x => sub_zero _
-  show (volume (openCubeAtScale z m)).toReal⁻¹ *
+  change (volume (openCubeAtScale z m)).toReal⁻¹ *
       ∫ x in openCubeAtScale z m, vecNormSq (φ.toH1Function.grad x - 0) ∂volume ≤
     (volume (openCubeAtScale z m)).toReal⁻¹ *
       ∫ x in openCubeAtScale z m, vecNormSq (G x - c) ∂volume

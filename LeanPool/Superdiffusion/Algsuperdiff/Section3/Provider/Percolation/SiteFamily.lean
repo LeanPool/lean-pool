@@ -164,7 +164,7 @@ theorem badExtended_subset_iUnion_badScaleEvent (M : ABKModel d)
 
 /-- The cutoff-sample sigma-field carrying the integral-local information in
 `U` of every shell of index at most `n`. -/
-def cutoffShellLocalSigma (n : ℤ) (U : Set (Vec d)) :
+abbrev cutoffShellLocalSigma (n : ℤ) (U : Set (Vec d)) :
     MeasurableSpace (CutoffSample d) :=
   (lowerShellLocalSigma n U).comap Subtype.val
 
@@ -181,7 +181,6 @@ theorem shellCoordinateLocalSigma_le_cutoffShellLocalSigma {L n : ℤ} (hLn : L 
     omega
   rw [MeasurableSpace.comap_comp]
   simp only [Function.comp_def, hidx]
-  rfl
 
 /-- **Locality of every positive level of the site family.**  The level-`l + 1`
 bad event of the cube `Q` is measurable for the integral-local information of

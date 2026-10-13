@@ -248,7 +248,7 @@ theorem potentialZeroTraceFieldOn_add {U : Set (Vec d)} {f g : Vec d → Vec d}
   obtain ⟨hgmem, v, hgae⟩ := hg
   refine ⟨hfmem.add hgmem, u + v, ?_⟩
   filter_upwards [hfae, hgae] with x hx hy
-  show f x + g x = (u.toH1Function + v.toH1Function).grad x
+  change f x + g x = (u.toH1Function + v.toH1Function).grad x
   rw [H1Function.add_grad]
   simp [hx, hy]
 

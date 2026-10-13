@@ -250,7 +250,7 @@ private theorem isBigO_of_isBigOWith_of_nonneg {mu : Measure Omega} {Psi : ℝ �
     {X : Omega → ℝ} {A : ℝ} (hnn : ∀ omega, 0 ≤ X omega)
     (h : IsBigOWith mu Psi X A) : IsBigO mu Psi X A := by
   have hrw : (fun omega => |X omega|) = X := funext fun omega => abs_of_nonneg (hnn omega)
-  show IsBigOWith mu Psi (fun omega => |X omega|) A
+  change IsBigOWith mu Psi (fun omega => |X omega|) A
   rw [hrw]
   exact h
 

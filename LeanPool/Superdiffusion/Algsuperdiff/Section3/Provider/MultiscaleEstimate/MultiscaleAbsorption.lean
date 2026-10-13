@@ -815,7 +815,7 @@ theorem exists_absorbed_envelope (d : ℕ) [NeZero d] :
         triadicCubeShift).Nonempty := fun j =>
     Finset.Nonempty.image (descendantsAtScale_nonempty (originCube d m)
       (show m - (j : ℤ) ≤ (originCube d m).scale by
-        show m - (j : ℤ) ≤ m
+        change m - (j : ℤ) ≤ m
         omega)) triadicCubeShift
   have hbadM := hbad M m E epsilon h hS hmStar hcgE hshomE hE5 hgammaE hepsilon hhH
     hwinBig hh1 s hs8 hs1

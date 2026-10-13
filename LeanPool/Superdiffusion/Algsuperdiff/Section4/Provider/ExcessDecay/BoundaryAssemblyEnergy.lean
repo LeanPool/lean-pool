@@ -69,6 +69,7 @@ variable {d : ℕ} [NeZero d]
 
 /-! ## 1. The quadratic-form Minkowski step -/
 
+omit [NeZero d] in
 /-- **The Minkowski step of the printed display.**
 
 On the Caccioppoli core the coefficient energy of `u` is at most twice the
@@ -112,6 +113,7 @@ theorem localizedCoeffEnergyValue_core_le_two_mul_sub_add
 
 /-! ## 2. The core-volume ratio -/
 
+omit [NeZero d] in
 /-- **The core-volume ratio.**  A core average of the nonnegative coefficient
 energy density is at most `18^d = 2^d 3^{2d}` times the parent-cube average:
 `|□_m| / |caccioppoliCoreSet □_m x| ≤ 2^d 3^{2d}` for `x ∈ □_m`. -/

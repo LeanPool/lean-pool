@@ -86,7 +86,7 @@ continuous addition, needed for finite sums. -/
 private theorem secondCountableTopology_shellField (d : ℕ) :
     SecondCountableTopology (ShellField d) := by
   have hMat : SecondCountableTopology (Mat d) := by
-    show SecondCountableTopology (Fin d → Fin d → ℝ)
+    change SecondCountableTopology (Fin d → Fin d → ℝ)
     infer_instance
   have hDeriv : SecondCountableTopology (Vec d →L[ℝ] Mat d) :=
     @secondCountable_of_proper (Vec d →L[ℝ] Mat d)
@@ -118,7 +118,7 @@ private theorem secondCountableTopology_shellField (d : ℕ) :
     have := hSecondDeriv
     infer_instance
   have hAmbient : SecondCountableTopology (ShellAmbient d) := by
-    show SecondCountableTopology
+    change SecondCountableTopology
       (C(Vec d, Mat d) ×
         (C(Vec d, Vec d →L[ℝ] Mat d) × C(Vec d, Vec d →L[ℝ] (Vec d →L[ℝ] Mat d))))
     have := hC1

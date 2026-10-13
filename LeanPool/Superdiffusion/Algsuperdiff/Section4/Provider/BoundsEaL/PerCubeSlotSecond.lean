@@ -127,6 +127,285 @@ theorem secondRatioLegBound_pos (d : ℕ) {cst EL EB C2b : ℝ} (hEL : 0 < EL) (
 
 /-! ## 4. The second summand at the anchor's linear and flat slots -/
 
+private theorem stepThreeSecondTerm_diffusivityRatioBound :
+    ∀ (d : ℕ) (CL CB C2b : ℝ),
+      (0 : ℝ) < C2b →
+        ∀ (M : ABKModel d) (m : ℤ) (R : TriadicCube d) (q : ℝ),
+          (1 : ℝ) ≤ q →
+            (0 : ℝ) < CL * (Disorder.cstar M)⁻¹ →
+              (0 : ℝ) < CB * (Disorder.cstar M)⁻¹ →
+                (0 : ℝ) < M.gamma →
+                  (0 : ℝ) ≤ (↑m : ℝ) - (↑R.scale : ℝ) →
+                    (0 : ℝ) ≤ (↑(Annealed.sigmaBar M m) : ℝ)⁻¹ →
+                      (0 : ℝ) ≤ lambdaSlotMajorant d M (CL * (Disorder.cstar M)⁻¹) R.scale ((2 : ℝ) * q) →
+                        (0 : ℝ) ≤ bracketMajorant d M (CB * (Disorder.cstar M)⁻¹) R.scale ((2 : ℝ) * q) →
+                          bracketMajorant d M (CB * (Disorder.cstar M)⁻¹) R.scale ((2 : ℝ) * q) ≤
+                              (1 : ℝ) + slotProductBound d (Disorder.cstar M) (CB * (Disorder.cstar M)⁻¹) →
+                            (0 : ℝ) ≤ (3 : ℝ) ^ ((2 : ℝ) * (M.gamma * ((↑m : ℝ) - (↑R.scale : ℝ)))) →
+                              (0 : ℝ) ≤
+                                  (M.gamma * ((↑m : ℝ) - (↑R.scale : ℝ)) + M.gamma) *
+                                    (3 : ℝ) ^ ((2 : ℝ) * (M.gamma * ((↑m : ℝ) - (↑R.scale : ℝ)))) →
+                                (↑(Annealed.sigmaBar M m) : ℝ)⁻¹ *
+                                        (↑(Annealed.sigmaBar M (R.scale - (2 : ℤ))) : ℝ) ^ (2 : ℕ) *
+                                      lambdaSlotMajorant d M (CL * (Disorder.cstar M)⁻¹) R.scale ((2 : ℝ) * q) ≤
+                                    (4 : ℝ) * (4 : ℝ) * lambdaSlotFactorBound d (CL * (Disorder.cstar M)⁻¹) →
+                                  ((↑(Annealed.sigmaBar M m) : ℝ) * (↑(Annealed.sigmaBar M (R.scale - (2 : ℤ))) : ℝ)⁻¹ -
+                                          (1 : ℝ)) ^
+                                        (2 : ℕ) ≤
+                                      C2b * ((320004 : ℝ) * (M.gamma * ((↑m : ℝ) - (↑R.scale : ℝ)) + M.gamma)) *
+                                        (3 : ℝ) ^ ((2 : ℝ) * (M.gamma * ((↑m : ℝ) - (↑R.scale : ℝ)))) →
+                                    (0 : ℝ) ≤
+                                        ((↑(Annealed.sigmaBar M m) : ℝ) *
+                                              (↑(Annealed.sigmaBar M (R.scale - (2 : ℤ))) : ℝ)⁻¹ -
+                                            (1 : ℝ)) ^
+                                          (2 : ℕ) →
+                                      (↑(Annealed.sigmaBar M m) : ℝ)⁻¹ *
+                                              (↑(Annealed.sigmaBar M (R.scale - (2 : ℤ))) : ℝ) ^ (2 : ℕ) *
+                                            ((↑(Annealed.sigmaBar M m) : ℝ) *
+                                                  (↑(Annealed.sigmaBar M (R.scale - (2 : ℤ))) : ℝ)⁻¹ -
+                                                (1 : ℝ)) ^
+                                              (2 : ℕ) *
+                                          (lambdaSlotMajorant d M (CL * (Disorder.cstar M)⁻¹) R.scale ((2 : ℝ) * q) *
+                                            bracketMajorant d M (CB * (Disorder.cstar M)⁻¹) R.scale ((2 : ℝ) * q)) ≤
+                                        secondRatioLegBound d (Disorder.cstar M) (CL * (Disorder.cstar M)⁻¹)
+                                            (CB * (Disorder.cstar M)⁻¹) C2b *
+                                          (q *
+                                            ((M.gamma * ((↑m : ℝ) - (↑R.scale : ℝ)) + M.gamma) *
+                                              (3 : ℝ) ^ ((2 : ℝ) * (M.gamma * ((↑m : ℝ) - (↑R.scale : ℝ)))))) := by
+  intro d CL CB C2b hC2b0 M m R q hq hEL0 hEB0 hgam0 ht hsig0 hlam0 hbrB0 hbrBle hwt0 hslot0 hratio hdelta hdelta0
+  have hgroup : ((Annealed.sigmaBar M m : ℝ))⁻¹ *
+      (Annealed.sigmaBar M (R.scale - 2) : ℝ) ^ 2 *
+      ((Annealed.sigmaBar M m : ℝ) *
+        ((Annealed.sigmaBar M (R.scale - 2) : ℝ))⁻¹ - 1) ^ 2 *
+      (lambdaSlotMajorant d M (CL * (Disorder.cstar M)⁻¹) R.scale (2 * q) *
+        bracketMajorant d M (CB * (Disorder.cstar M)⁻¹) R.scale (2 * q)) =
+      (((Annealed.sigmaBar M m : ℝ))⁻¹ *
+          (Annealed.sigmaBar M (R.scale - 2) : ℝ) ^ 2 *
+          lambdaSlotMajorant d M (CL * (Disorder.cstar M)⁻¹) R.scale (2 * q)) *
+        (((Annealed.sigmaBar M m : ℝ) *
+            ((Annealed.sigmaBar M (R.scale - 2) : ℝ))⁻¹ - 1) ^ 2 *
+          bracketMajorant d M (CB * (Disorder.cstar M)⁻¹) R.scale (2 * q)) := by
+    ring
+  rw [hgroup]
+  have hY : ((Annealed.sigmaBar M m : ℝ) *
+      ((Annealed.sigmaBar M (R.scale - 2) : ℝ))⁻¹ - 1) ^ 2 *
+      bracketMajorant d M (CB * (Disorder.cstar M)⁻¹) R.scale (2 * q) ≤
+      C2b * (320004 * (M.gamma * ((m : ℝ) - (R.scale : ℝ)) + M.gamma)) *
+        (3 : ℝ) ^ (2 * (M.gamma * ((m : ℝ) - (R.scale : ℝ)))) *
+        (1 + slotProductBound d (Disorder.cstar M) (CB * (Disorder.cstar M)⁻¹)) := by
+    refine mul_le_mul hdelta hbrBle hbrB0 ?_
+    refine mul_nonneg (mul_nonneg hC2b0.le ?_) hwt0
+    have h1 := mul_nonneg hgam0.le ht
+    linarith only [h1, hgam0]
+  have hX0 : (0 : ℝ) ≤ ((Annealed.sigmaBar M m : ℝ))⁻¹ *
+      (Annealed.sigmaBar M (R.scale - 2) : ℝ) ^ 2 *
+      lambdaSlotMajorant d M (CL * (Disorder.cstar M)⁻¹) R.scale (2 * q) :=
+    mul_nonneg (mul_nonneg hsig0 (sq_nonneg _)) hlam0
+  have hY0 : (0 : ℝ) ≤ ((Annealed.sigmaBar M m : ℝ) *
+      ((Annealed.sigmaBar M (R.scale - 2) : ℝ))⁻¹ - 1) ^ 2 *
+      bracketMajorant d M (CB * (Disorder.cstar M)⁻¹) R.scale (2 * q) :=
+    mul_nonneg hdelta0 hbrB0
+  have hprod := mul_le_mul hratio hY hY0
+    (by
+      have h2 : (0 : ℝ) < lambdaSlotFactorBound d (CL * (Disorder.cstar M)⁻¹) :=
+        lambdaSlotFactorBound_pos d hEL0
+      positivity)
+  refine le_trans hprod ?_
+  have hqlift : (1 : ℝ) ≤ q := hq
+  have hbase : (0 : ℝ) ≤ secondRatioLegBound d (Disorder.cstar M)
+      (CL * (Disorder.cstar M)⁻¹) (CB * (Disorder.cstar M)⁻¹) C2b *
+      ((M.gamma * ((m : ℝ) - (R.scale : ℝ)) + M.gamma) *
+        (3 : ℝ) ^ (2 * (M.gamma * ((m : ℝ) - (R.scale : ℝ))))) :=
+    mul_nonneg (secondRatioLegBound_pos d hEL0 hEB0 hC2b0).le hslot0
+  have hlift := mul_le_mul_of_nonneg_left hqlift hbase
+  have hidL : 4 * 4 * lambdaSlotFactorBound d (CL * (Disorder.cstar M)⁻¹) *
+      (C2b * (320004 * (M.gamma * ((m : ℝ) - (R.scale : ℝ)) + M.gamma)) *
+        (3 : ℝ) ^ (2 * (M.gamma * ((m : ℝ) - (R.scale : ℝ)))) *
+        (1 + slotProductBound d (Disorder.cstar M) (CB * (Disorder.cstar M)⁻¹))) =
+      secondRatioLegBound d (Disorder.cstar M) (CL * (Disorder.cstar M)⁻¹)
+          (CB * (Disorder.cstar M)⁻¹) C2b *
+        ((M.gamma * ((m : ℝ) - (R.scale : ℝ)) + M.gamma) *
+          (3 : ℝ) ^ (2 * (M.gamma * ((m : ℝ) - (R.scale : ℝ))))) * 1 := by
+    rw [secondRatioLegBound]
+    ring
+  have hidR : secondRatioLegBound d (Disorder.cstar M) (CL * (Disorder.cstar M)⁻¹)
+        (CB * (Disorder.cstar M)⁻¹) C2b *
+      ((M.gamma * ((m : ℝ) - (R.scale : ℝ)) + M.gamma) *
+        (3 : ℝ) ^ (2 * (M.gamma * ((m : ℝ) - (R.scale : ℝ))))) * q =
+      secondRatioLegBound d (Disorder.cstar M) (CL * (Disorder.cstar M)⁻¹)
+          (CB * (Disorder.cstar M)⁻¹) C2b *
+        (q * ((M.gamma * ((m : ℝ) - (R.scale : ℝ)) + M.gamma) *
+          (3 : ℝ) ^ (2 * (M.gamma * ((m : ℝ) - (R.scale : ℝ)))))) := by ring
+  linarith only [hlift, hidL, hidR]
+
+private theorem perCubeSlotSecond_comparisonBounds1 :
+    ∀ (d : ℕ) (CL CB C2b : ℝ) (_ : (0 : ℝ) < C2b)
+      (_ :
+        ∀ (M : ABKModel d),
+          M.gamma ≤ C2b⁻¹ ^ (10 : ℕ) * Disorder.cstar M ^ (10 : ℕ) →
+            M.gamma ≤ (1 / 8 : ℝ) →
+              ∀ (m j : ℤ),
+                j - (2 : ℤ) ≤ m →
+                  ((↑(Annealed.sigmaBar M m) : ℝ) * (↑(Annealed.sigmaBar M (j - (2 : ℤ))) : ℝ)⁻¹ - (1 : ℝ)) ^ (2 : ℕ) ≤
+                    C2b *
+                        min (1 : ℝ)
+                            (M.gamma * ((↑m : ℝ) - (↑j : ℝ) + (2 : ℝ)) +
+                              M.gamma ^ (3 / 5 : ℝ) * |Real.log M.gamma| ^ (2 : ℕ)) ^
+                          (2 : ℕ) *
+                      (3 : ℝ) ^ ((2 : ℝ) * (M.gamma * ((↑m : ℝ) - (↑j : ℝ)))))
+      (M : ABKModel d) (_ : M.gamma ≤ (1 / 8 : ℝ)) (m : ℤ) (R : TriadicCube d) (_ : R.scale ≤ m) (q : ℝ)
+      (_ : (1 : ℝ) ≤ q) (_ : (0 : ℝ) < Disorder.cstar M) (_ : (0 : ℝ) < CL * (Disorder.cstar M)⁻¹)
+      (_ : (0 : ℝ) < CB * (Disorder.cstar M)⁻¹) (_ : (0 : ℝ) < M.gamma) (_ : M.gamma ≤ (1 : ℝ))
+      (_ : M.gamma ≤ (1 / 2 : ℝ)) (_ : (0 : ℝ) ≤ (2 : ℝ) * q) (_ : (0 : ℝ) ≤ (8 : ℝ) * q)
+      (_ : (2 : ℝ) * q ≤ M.gamma⁻¹) (_ : (0 : ℝ) ≤ (↑m : ℝ) - (↑R.scale : ℝ))
+      (_ : M.gamma ≤ C2b⁻¹ ^ (10 : ℕ) * Disorder.cstar M ^ (10 : ℕ))
+      (_ :
+        ∀ (j : ℤ),
+          (3 : ℝ) ^ (M.gamma * (↑j : ℝ)) * (↑(Annealed.sigmaBar M (j - (1 : ℤ))) : ℝ)⁻¹ ≤
+            (16 : ℝ) * ((√(Disorder.cstar M))⁻¹ * √M.gamma))
+      (_ :
+        ∀ (m : ℤ),
+          (3 : ℝ) ^ (M.gamma * (↑m : ℝ)) * (↑(Annealed.sigmaBar M m) : ℝ)⁻¹ ≤
+            (4 : ℝ) * ((√(Disorder.cstar M))⁻¹ * √M.gamma))
+      (_ :
+        ∀ (m j : ℤ),
+          j - (2 : ℤ) ≤ m → (↑(Annealed.sigmaBar M m) : ℝ)⁻¹ * (↑(Annealed.sigmaBar M (j - (2 : ℤ))) : ℝ) ≤ (4 : ℝ))
+      (_ :
+        ∀ (j : ℤ), (↑(Annealed.sigmaBar M (j - (2 : ℤ))) : ℝ) * (↑(Annealed.sigmaBar M (j - (1 : ℤ))) : ℝ)⁻¹ ≤ (4 : ℝ))
+      (_ : √M.gamma * √M.gamma = M.gamma) (_ : (0 : ℝ) ≤ (↑(Annealed.sigmaBar M m) : ℝ)⁻¹)
+      (_ : (0 : ℝ) < (↑(Annealed.sigmaBar M (R.scale - (2 : ℤ))) : ℝ))
+      (_ : (0 : ℝ) ≤ (↑(Annealed.sigmaBar M (R.scale - (1 : ℤ))) : ℝ)⁻¹)
+      (_ : (0 : ℝ) ≤ lambdaSlotMajorant d M (CL * (Disorder.cstar M)⁻¹) R.scale ((2 : ℝ) * q))
+      (_ : (0 : ℝ) ≤ bracketMajorant d M (CB * (Disorder.cstar M)⁻¹) R.scale ((4 : ℝ) * q))
+      (_ : (0 : ℝ) ≤ bracketMajorant d M (CB * (Disorder.cstar M)⁻¹) R.scale ((2 : ℝ) * q))
+      (_ : (0 : ℝ) ≤ lambdaSlotFactor d M (CL * (Disorder.cstar M)⁻¹) ((2 : ℝ) * q))
+      (_ :
+        lambdaSlotFactor d M (CL * (Disorder.cstar M)⁻¹) ((2 : ℝ) * q) ≤
+          lambdaSlotFactorBound d (CL * (Disorder.cstar M)⁻¹))
+      (_ :
+        bracketMajorant d M (CB * (Disorder.cstar M)⁻¹) R.scale ((4 : ℝ) * q) ≤
+          (1 : ℝ) + slotProductBound d (Disorder.cstar M) (CB * (Disorder.cstar M)⁻¹))
+      (_ :
+        bracketMajorant d M (CB * (Disorder.cstar M)⁻¹) R.scale ((2 : ℝ) * q) ≤
+          (1 : ℝ) + slotProductBound d (Disorder.cstar M) (CB * (Disorder.cstar M)⁻¹))
+      (_ : (0 : ℝ) ≤ slotProductBound d (Disorder.cstar M) (CB * (Disorder.cstar M)⁻¹))
+      (_ : (0 : ℝ) ≤ (3 : ℝ) ^ ((2 : ℝ) * (M.gamma * ((↑m : ℝ) - (↑R.scale : ℝ))))),
+      (↑(Annealed.sigmaBar M m) : ℝ)⁻¹ *
+            (lambdaSlotMajorant d M (CL * (Disorder.cstar M)⁻¹) R.scale ((2 : ℝ) * q) *
+              (bracketMajorant d M (CB * (Disorder.cstar M)⁻¹) R.scale ((4 : ℝ) * q) *
+                valueSlotMajorant M m R.scale ((8 : ℝ) * q) ^ (2 : ℕ))) ≤
+          secondValueLegBound d (Disorder.cstar M) (CL * (Disorder.cstar M)⁻¹) (CB * (Disorder.cstar M)⁻¹) *
+            (q *
+              ((M.gamma * ((↑m : ℝ) - (↑R.scale : ℝ)) + M.gamma) *
+                (3 : ℝ) ^ ((2 : ℝ) * (M.gamma * ((↑m : ℝ) - (↑R.scale : ℝ)))))) ∧
+        (↑(Annealed.sigmaBar M m) : ℝ)⁻¹ * (↑(Annealed.sigmaBar M (R.scale - (2 : ℤ))) : ℝ) ^ (2 : ℕ) *
+              ((↑(Annealed.sigmaBar M m) : ℝ) * (↑(Annealed.sigmaBar M (R.scale - (2 : ℤ))) : ℝ)⁻¹ - (1 : ℝ)) ^ (2 : ℕ) *
+            (lambdaSlotMajorant d M (CL * (Disorder.cstar M)⁻¹) R.scale ((2 : ℝ) * q) *
+              bracketMajorant d M (CB * (Disorder.cstar M)⁻¹) R.scale ((2 : ℝ) * q)) ≤
+          secondRatioLegBound d (Disorder.cstar M) (CL * (Disorder.cstar M)⁻¹) (CB * (Disorder.cstar M)⁻¹) C2b *
+            (q *
+              ((M.gamma * ((↑m : ℝ) - (↑R.scale : ℝ)) + M.gamma) *
+                (3 : ℝ) ^ ((2 : ℝ) * (M.gamma * ((↑m : ℝ) - (↑R.scale : ℝ)))))) := by
+  intro d CL CB C2b hC2b0 hB2 M hgam m R _ q hq _ hEL0 hEB0 hgam0 hgam1 hgam2 h2q0 h8q0 h2qg ht hregB2 hgB5 hgM hgB1 hgIdx hsg hsig0 hsigA0 hsigB0 hlam0 hbrA0 hbrB0 hfac0 hfacle hbrAle hbrBle hSPB0 hwt0
+  have hslot0 : (0 : ℝ) ≤ (M.gamma * ((m : ℝ) - (R.scale : ℝ)) + M.gamma) *
+      (3 : ℝ) ^ (2 * (M.gamma * ((m : ℝ) - (R.scale : ℝ)))) := by
+    refine mul_nonneg ?_ hwt0
+    have := mul_nonneg hgam0.le ht
+    linarith only [this, hgam0]
+  -- (a) the value leg
+  have hvalue : ((Annealed.sigmaBar M m : ℝ))⁻¹ *
+      (lambdaSlotMajorant d M (CL * (Disorder.cstar M)⁻¹) R.scale (2 * q) *
+        (bracketMajorant d M (CB * (Disorder.cstar M)⁻¹) R.scale (4 * q) *
+          valueSlotMajorant M m R.scale (8 * q) ^ 2)) ≤
+      secondValueLegBound d (Disorder.cstar M) (CL * (Disorder.cstar M)⁻¹)
+          (CB * (Disorder.cstar M)⁻¹) *
+        (q * ((M.gamma * ((m : ℝ) - (R.scale : ℝ)) + M.gamma) *
+          (3 : ℝ) ^ (2 * (M.gamma * ((m : ℝ) - (R.scale : ℝ)))))) := by
+    have hstep := mulLeMul4 hsig0 hlam0 hbrA0 (sq_nonneg _)
+      (inv_sigmaBar_le_weight M m (hgM m))
+      (lambdaSlotMajorant_le_weight d M hEL0 R.scale h2q0 h2qg (hgB5 R.scale))
+      hbrAle
+      (valueSlotMajorant_sq_le M m R.scale h8q0 hgam2 ht)
+    refine le_trans hstep ?_
+    have hgt := rpow_three_gauge_triple (M.gamma * (m : ℝ)) (M.gamma * (R.scale : ℝ))
+    have hgt2 : (3 : ℝ) ^ (M.gamma * (m : ℝ) - M.gamma * (R.scale : ℝ)) =
+        (3 : ℝ) ^ (M.gamma * ((m : ℝ) - (R.scale : ℝ))) := by
+      congr 1
+      ring
+    have hregroup : (3 : ℝ) ^ (-(M.gamma * (m : ℝ))) *
+        (4 * ((Real.sqrt (Disorder.cstar M))⁻¹ * Real.sqrt M.gamma)) *
+        ((3 : ℝ) ^ (-(M.gamma * (R.scale : ℝ))) *
+            (16 * ((Real.sqrt (Disorder.cstar M))⁻¹ * Real.sqrt M.gamma) *
+              lambdaSlotFactorBound d (CL * (Disorder.cstar M)⁻¹)) *
+          ((1 + slotProductBound d (Disorder.cstar M) (CB * (Disorder.cstar M)⁻¹)) *
+            (2 * (gammaMomentConst 2 ^ 2 * valueSlotWidth d ^ 2) *
+              (8 * q * (1 + ((m : ℝ) - (R.scale : ℝ)))) *
+              (3 : ℝ) ^ (2 * (M.gamma * (m : ℝ)))))) =
+        512 * ((Real.sqrt (Disorder.cstar M))⁻¹ * (Real.sqrt (Disorder.cstar M))⁻¹) *
+          lambdaSlotFactorBound d (CL * (Disorder.cstar M)⁻¹) *
+          (1 + slotProductBound d (Disorder.cstar M) (CB * (Disorder.cstar M)⁻¹)) *
+          (2 * (gammaMomentConst 2 ^ 2 * valueSlotWidth d ^ 2)) * q *
+          (1 + ((m : ℝ) - (R.scale : ℝ))) *
+          (Real.sqrt M.gamma * Real.sqrt M.gamma) *
+          ((3 : ℝ) ^ (-(M.gamma * (m : ℝ))) *
+            ((3 : ℝ) ^ (-(M.gamma * (R.scale : ℝ))) *
+              (3 : ℝ) ^ (2 * (M.gamma * (m : ℝ))))) := by ring
+    rw [hregroup, hsg, hgt, hgt2]
+    have hmono : (3 : ℝ) ^ (M.gamma * ((m : ℝ) - (R.scale : ℝ))) ≤
+        (3 : ℝ) ^ (2 * (M.gamma * ((m : ℝ) - (R.scale : ℝ)))) := by
+      refine rpow_three_le_rpow_three ?_
+      have := mul_nonneg hgam0.le ht
+      linarith only [this]
+    have hcoef : (0 : ℝ) ≤ 512 *
+        ((Real.sqrt (Disorder.cstar M))⁻¹ * (Real.sqrt (Disorder.cstar M))⁻¹) *
+        lambdaSlotFactorBound d (CL * (Disorder.cstar M)⁻¹) *
+        (1 + slotProductBound d (Disorder.cstar M) (CB * (Disorder.cstar M)⁻¹)) *
+        (2 * (gammaMomentConst 2 ^ 2 * valueSlotWidth d ^ 2)) * q *
+        (1 + ((m : ℝ) - (R.scale : ℝ))) * M.gamma := by
+      have h1 : (0 : ℝ) ≤ (Real.sqrt (Disorder.cstar M))⁻¹ :=
+        inv_nonneg.mpr (Real.sqrt_nonneg _)
+      have h2 : (0 : ℝ) < lambdaSlotFactorBound d (CL * (Disorder.cstar M)⁻¹) :=
+        lambdaSlotFactorBound_pos d hEL0
+      have h3 : (0 : ℝ) < 1 + slotProductBound d (Disorder.cstar M)
+          (CB * (Disorder.cstar M)⁻¹) := by linarith only [hSPB0]
+      have h4 : (0 : ℝ) ≤ 1 + ((m : ℝ) - (R.scale : ℝ)) := by linarith only [ht]
+      positivity
+    have hstep2 := mul_le_mul_of_nonneg_left hmono hcoef
+    refine le_trans hstep2 (le_of_eq ?_)
+    rw [secondValueLegBound]
+    ring
+  -- (b) the (B2) leg
+  have hratio : ((Annealed.sigmaBar M m : ℝ))⁻¹ *
+      (Annealed.sigmaBar M (R.scale - 2) : ℝ) ^ 2 *
+      lambdaSlotMajorant d M (CL * (Disorder.cstar M)⁻¹) R.scale (2 * q) ≤
+      4 * 4 * lambdaSlotFactorBound d (CL * (Disorder.cstar M)⁻¹) := by
+    rw [lambdaSlotMajorant_eq_mul]
+    have hid : ((Annealed.sigmaBar M m : ℝ))⁻¹ *
+        (Annealed.sigmaBar M (R.scale - 2) : ℝ) ^ 2 *
+        (((Annealed.sigmaBar M (R.scale - 1) : ℝ))⁻¹ *
+          lambdaSlotFactor d M (CL * (Disorder.cstar M)⁻¹) (2 * q)) =
+        ((Annealed.sigmaBar M m : ℝ))⁻¹ * (Annealed.sigmaBar M (R.scale - 2) : ℝ) *
+          ((Annealed.sigmaBar M (R.scale - 2) : ℝ) *
+            ((Annealed.sigmaBar M (R.scale - 1) : ℝ))⁻¹) *
+          lambdaSlotFactor d M (CL * (Disorder.cstar M)⁻¹) (2 * q) := by ring
+    rw [hid]
+    refine mul_le_mul ?_ hfacle hfac0 (by norm_num)
+    exact mul_le_mul (hgB1 m R.scale (by omega)) (hgIdx R.scale)
+      (mul_nonneg hsigA0.le hsigB0) (by norm_num)
+  have hdelta : ((Annealed.sigmaBar M m : ℝ) *
+      ((Annealed.sigmaBar M (R.scale - 2) : ℝ))⁻¹ - 1) ^ 2 ≤
+      C2b * (320004 * (M.gamma * ((m : ℝ) - (R.scale : ℝ)) + M.gamma)) *
+        (3 : ℝ) ^ (2 * (M.gamma * ((m : ℝ) - (R.scale : ℝ)))) := by
+    refine le_trans (hB2 M hregB2 hgam m R.scale (by omega)) ?_
+    refine mul_le_mul_of_nonneg_right (mul_le_mul_of_nonneg_left ?_ hC2b0.le) hwt0
+    exact sigmaBarContinuity_min_sq_le hgam0 hgam1 ht
+  have hdelta0 : (0 : ℝ) ≤ ((Annealed.sigmaBar M m : ℝ) *
+      ((Annealed.sigmaBar M (R.scale - 2) : ℝ))⁻¹ - 1) ^ 2 := sq_nonneg _
+  have hratioLeg := @stepThreeSecondTerm_diffusivityRatioBound (d) (CL) (CB) (C2b) (hC2b0) (M) (m)
+    (R) (q) (hq) (hEL0) (hEB0) (hgam0) (ht) (hsig0) (hlam0) (hbrB0) (hbrBle) (hwt0) (hslot0)
+      (hratio) (hdelta) (hdelta0)
+  exact ⟨hvalue, hratioLeg⟩
+
 /-- **The second summand, evaluated.**
 
 `∫⁻ (step3SecondTerm)^q ≤ (ofReal (C_d A q (γ(m−j)+γ) 3^{2γ(m−j)}))^q`: the
@@ -238,174 +517,11 @@ theorem exists_lintegral_rpow_step3SecondTerm_slot (d : ℕ) [NeZero d] (cstar :
       (CB * (Disorder.cstar M)⁻¹) := slotProductBound_nonneg d hEB0
   have hwt0 : (0 : ℝ) ≤ (3 : ℝ) ^ (2 * (M.gamma * ((m : ℝ) - (R.scale : ℝ)))) :=
     Real.rpow_nonneg (by norm_num) _
-  have hslot0 : (0 : ℝ) ≤ (M.gamma * ((m : ℝ) - (R.scale : ℝ)) + M.gamma) *
-      (3 : ℝ) ^ (2 * (M.gamma * ((m : ℝ) - (R.scale : ℝ)))) := by
-    refine mul_nonneg ?_ hwt0
-    have := mul_nonneg hgam0.le ht
-    linarith only [this, hgam0]
-  -- (a) the value leg
-  have hvalue : ((Annealed.sigmaBar M m : ℝ))⁻¹ *
-      (lambdaSlotMajorant d M (CL * (Disorder.cstar M)⁻¹) R.scale (2 * q) *
-        (bracketMajorant d M (CB * (Disorder.cstar M)⁻¹) R.scale (4 * q) *
-          valueSlotMajorant M m R.scale (8 * q) ^ 2)) ≤
-      secondValueLegBound d (Disorder.cstar M) (CL * (Disorder.cstar M)⁻¹)
-          (CB * (Disorder.cstar M)⁻¹) *
-        (q * ((M.gamma * ((m : ℝ) - (R.scale : ℝ)) + M.gamma) *
-          (3 : ℝ) ^ (2 * (M.gamma * ((m : ℝ) - (R.scale : ℝ)))))) := by
-    have hstep := mulLeMul4 hsig0 hlam0 hbrA0 (sq_nonneg _)
-      (inv_sigmaBar_le_weight M m (hgM m))
-      (lambdaSlotMajorant_le_weight d M hEL0 R.scale h2q0 h2qg (hgB5 R.scale))
-      hbrAle
-      (valueSlotMajorant_sq_le M m R.scale h8q0 hgam2 ht)
-    refine le_trans hstep ?_
-    have hgt := rpow_three_gauge_triple (M.gamma * (m : ℝ)) (M.gamma * (R.scale : ℝ))
-    have hgt2 : (3 : ℝ) ^ (M.gamma * (m : ℝ) - M.gamma * (R.scale : ℝ)) =
-        (3 : ℝ) ^ (M.gamma * ((m : ℝ) - (R.scale : ℝ))) := by
-      congr 1
-      ring
-    have hregroup : (3 : ℝ) ^ (-(M.gamma * (m : ℝ))) *
-        (4 * ((Real.sqrt (Disorder.cstar M))⁻¹ * Real.sqrt M.gamma)) *
-        ((3 : ℝ) ^ (-(M.gamma * (R.scale : ℝ))) *
-            (16 * ((Real.sqrt (Disorder.cstar M))⁻¹ * Real.sqrt M.gamma) *
-              lambdaSlotFactorBound d (CL * (Disorder.cstar M)⁻¹)) *
-          ((1 + slotProductBound d (Disorder.cstar M) (CB * (Disorder.cstar M)⁻¹)) *
-            (2 * (gammaMomentConst 2 ^ 2 * valueSlotWidth d ^ 2) *
-              (8 * q * (1 + ((m : ℝ) - (R.scale : ℝ)))) *
-              (3 : ℝ) ^ (2 * (M.gamma * (m : ℝ)))))) =
-        512 * ((Real.sqrt (Disorder.cstar M))⁻¹ * (Real.sqrt (Disorder.cstar M))⁻¹) *
-          lambdaSlotFactorBound d (CL * (Disorder.cstar M)⁻¹) *
-          (1 + slotProductBound d (Disorder.cstar M) (CB * (Disorder.cstar M)⁻¹)) *
-          (2 * (gammaMomentConst 2 ^ 2 * valueSlotWidth d ^ 2)) * q *
-          (1 + ((m : ℝ) - (R.scale : ℝ))) *
-          (Real.sqrt M.gamma * Real.sqrt M.gamma) *
-          ((3 : ℝ) ^ (-(M.gamma * (m : ℝ))) *
-            ((3 : ℝ) ^ (-(M.gamma * (R.scale : ℝ))) *
-              (3 : ℝ) ^ (2 * (M.gamma * (m : ℝ))))) := by ring
-    rw [hregroup, hsg, hgt, hgt2]
-    have hmono : (3 : ℝ) ^ (M.gamma * ((m : ℝ) - (R.scale : ℝ))) ≤
-        (3 : ℝ) ^ (2 * (M.gamma * ((m : ℝ) - (R.scale : ℝ)))) := by
-      refine rpow_three_le_rpow_three ?_
-      have := mul_nonneg hgam0.le ht
-      linarith only [this]
-    have hcoef : (0 : ℝ) ≤ 512 *
-        ((Real.sqrt (Disorder.cstar M))⁻¹ * (Real.sqrt (Disorder.cstar M))⁻¹) *
-        lambdaSlotFactorBound d (CL * (Disorder.cstar M)⁻¹) *
-        (1 + slotProductBound d (Disorder.cstar M) (CB * (Disorder.cstar M)⁻¹)) *
-        (2 * (gammaMomentConst 2 ^ 2 * valueSlotWidth d ^ 2)) * q *
-        (1 + ((m : ℝ) - (R.scale : ℝ))) * M.gamma := by
-      have h1 : (0 : ℝ) ≤ (Real.sqrt (Disorder.cstar M))⁻¹ :=
-        inv_nonneg.mpr (Real.sqrt_nonneg _)
-      have h2 : (0 : ℝ) < lambdaSlotFactorBound d (CL * (Disorder.cstar M)⁻¹) :=
-        lambdaSlotFactorBound_pos d hEL0
-      have h3 : (0 : ℝ) < 1 + slotProductBound d (Disorder.cstar M)
-          (CB * (Disorder.cstar M)⁻¹) := by linarith only [hSPB0]
-      have h4 : (0 : ℝ) ≤ 1 + ((m : ℝ) - (R.scale : ℝ)) := by linarith only [ht]
-      positivity
-    have hstep2 := mul_le_mul_of_nonneg_left hmono hcoef
-    refine le_trans hstep2 (le_of_eq ?_)
-    rw [secondValueLegBound]
-    ring
-  -- (b) the (B2) leg
-  have hratio : ((Annealed.sigmaBar M m : ℝ))⁻¹ *
-      (Annealed.sigmaBar M (R.scale - 2) : ℝ) ^ 2 *
-      lambdaSlotMajorant d M (CL * (Disorder.cstar M)⁻¹) R.scale (2 * q) ≤
-      4 * 4 * lambdaSlotFactorBound d (CL * (Disorder.cstar M)⁻¹) := by
-    rw [lambdaSlotMajorant_eq_mul]
-    have hid : ((Annealed.sigmaBar M m : ℝ))⁻¹ *
-        (Annealed.sigmaBar M (R.scale - 2) : ℝ) ^ 2 *
-        (((Annealed.sigmaBar M (R.scale - 1) : ℝ))⁻¹ *
-          lambdaSlotFactor d M (CL * (Disorder.cstar M)⁻¹) (2 * q)) =
-        ((Annealed.sigmaBar M m : ℝ))⁻¹ * (Annealed.sigmaBar M (R.scale - 2) : ℝ) *
-          ((Annealed.sigmaBar M (R.scale - 2) : ℝ) *
-            ((Annealed.sigmaBar M (R.scale - 1) : ℝ))⁻¹) *
-          lambdaSlotFactor d M (CL * (Disorder.cstar M)⁻¹) (2 * q) := by ring
-    rw [hid]
-    refine mul_le_mul ?_ hfacle hfac0 (by norm_num)
-    exact mul_le_mul (hgB1 m R.scale (by omega)) (hgIdx R.scale)
-      (mul_nonneg hsigA0.le hsigB0) (by norm_num)
-  have hdelta : ((Annealed.sigmaBar M m : ℝ) *
-      ((Annealed.sigmaBar M (R.scale - 2) : ℝ))⁻¹ - 1) ^ 2 ≤
-      C2b * (320004 * (M.gamma * ((m : ℝ) - (R.scale : ℝ)) + M.gamma)) *
-        (3 : ℝ) ^ (2 * (M.gamma * ((m : ℝ) - (R.scale : ℝ)))) := by
-    refine le_trans (hB2 M hregB2 hgam m R.scale (by omega)) ?_
-    refine mul_le_mul_of_nonneg_right (mul_le_mul_of_nonneg_left ?_ hC2b0.le) hwt0
-    exact sigmaBarContinuity_min_sq_le hgam0 hgam1 ht
-  have hdelta0 : (0 : ℝ) ≤ ((Annealed.sigmaBar M m : ℝ) *
-      ((Annealed.sigmaBar M (R.scale - 2) : ℝ))⁻¹ - 1) ^ 2 := sq_nonneg _
-  have hratioLeg : ((Annealed.sigmaBar M m : ℝ))⁻¹ *
-      (Annealed.sigmaBar M (R.scale - 2) : ℝ) ^ 2 *
-      ((Annealed.sigmaBar M m : ℝ) *
-        ((Annealed.sigmaBar M (R.scale - 2) : ℝ))⁻¹ - 1) ^ 2 *
-      (lambdaSlotMajorant d M (CL * (Disorder.cstar M)⁻¹) R.scale (2 * q) *
-        bracketMajorant d M (CB * (Disorder.cstar M)⁻¹) R.scale (2 * q)) ≤
-      secondRatioLegBound d (Disorder.cstar M) (CL * (Disorder.cstar M)⁻¹)
-          (CB * (Disorder.cstar M)⁻¹) C2b *
-        (q * ((M.gamma * ((m : ℝ) - (R.scale : ℝ)) + M.gamma) *
-          (3 : ℝ) ^ (2 * (M.gamma * ((m : ℝ) - (R.scale : ℝ)))))) := by
-    have hgroup : ((Annealed.sigmaBar M m : ℝ))⁻¹ *
-        (Annealed.sigmaBar M (R.scale - 2) : ℝ) ^ 2 *
-        ((Annealed.sigmaBar M m : ℝ) *
-          ((Annealed.sigmaBar M (R.scale - 2) : ℝ))⁻¹ - 1) ^ 2 *
-        (lambdaSlotMajorant d M (CL * (Disorder.cstar M)⁻¹) R.scale (2 * q) *
-          bracketMajorant d M (CB * (Disorder.cstar M)⁻¹) R.scale (2 * q)) =
-        (((Annealed.sigmaBar M m : ℝ))⁻¹ *
-            (Annealed.sigmaBar M (R.scale - 2) : ℝ) ^ 2 *
-            lambdaSlotMajorant d M (CL * (Disorder.cstar M)⁻¹) R.scale (2 * q)) *
-          (((Annealed.sigmaBar M m : ℝ) *
-              ((Annealed.sigmaBar M (R.scale - 2) : ℝ))⁻¹ - 1) ^ 2 *
-            bracketMajorant d M (CB * (Disorder.cstar M)⁻¹) R.scale (2 * q)) := by
-      ring
-    rw [hgroup]
-    have hY : ((Annealed.sigmaBar M m : ℝ) *
-        ((Annealed.sigmaBar M (R.scale - 2) : ℝ))⁻¹ - 1) ^ 2 *
-        bracketMajorant d M (CB * (Disorder.cstar M)⁻¹) R.scale (2 * q) ≤
-        C2b * (320004 * (M.gamma * ((m : ℝ) - (R.scale : ℝ)) + M.gamma)) *
-          (3 : ℝ) ^ (2 * (M.gamma * ((m : ℝ) - (R.scale : ℝ)))) *
-          (1 + slotProductBound d (Disorder.cstar M) (CB * (Disorder.cstar M)⁻¹)) := by
-      refine mul_le_mul hdelta hbrBle hbrB0 ?_
-      refine mul_nonneg (mul_nonneg hC2b0.le ?_) hwt0
-      have h1 := mul_nonneg hgam0.le ht
-      linarith only [h1, hgam0]
-    have hX0 : (0 : ℝ) ≤ ((Annealed.sigmaBar M m : ℝ))⁻¹ *
-        (Annealed.sigmaBar M (R.scale - 2) : ℝ) ^ 2 *
-        lambdaSlotMajorant d M (CL * (Disorder.cstar M)⁻¹) R.scale (2 * q) :=
-      mul_nonneg (mul_nonneg hsig0 (sq_nonneg _)) hlam0
-    have hY0 : (0 : ℝ) ≤ ((Annealed.sigmaBar M m : ℝ) *
-        ((Annealed.sigmaBar M (R.scale - 2) : ℝ))⁻¹ - 1) ^ 2 *
-        bracketMajorant d M (CB * (Disorder.cstar M)⁻¹) R.scale (2 * q) :=
-      mul_nonneg hdelta0 hbrB0
-    have hprod := mul_le_mul hratio hY hY0
-      (by
-        have h2 : (0 : ℝ) < lambdaSlotFactorBound d (CL * (Disorder.cstar M)⁻¹) :=
-          lambdaSlotFactorBound_pos d hEL0
-        positivity)
-    refine le_trans hprod ?_
-    have hqlift : (1 : ℝ) ≤ q := hq
-    have hbase : (0 : ℝ) ≤ secondRatioLegBound d (Disorder.cstar M)
-        (CL * (Disorder.cstar M)⁻¹) (CB * (Disorder.cstar M)⁻¹) C2b *
-        ((M.gamma * ((m : ℝ) - (R.scale : ℝ)) + M.gamma) *
-          (3 : ℝ) ^ (2 * (M.gamma * ((m : ℝ) - (R.scale : ℝ))))) :=
-      mul_nonneg (secondRatioLegBound_pos d hEL0 hEB0 hC2b0).le hslot0
-    have hlift := mul_le_mul_of_nonneg_left hqlift hbase
-    have hidL : 4 * 4 * lambdaSlotFactorBound d (CL * (Disorder.cstar M)⁻¹) *
-        (C2b * (320004 * (M.gamma * ((m : ℝ) - (R.scale : ℝ)) + M.gamma)) *
-          (3 : ℝ) ^ (2 * (M.gamma * ((m : ℝ) - (R.scale : ℝ)))) *
-          (1 + slotProductBound d (Disorder.cstar M) (CB * (Disorder.cstar M)⁻¹))) =
-        secondRatioLegBound d (Disorder.cstar M) (CL * (Disorder.cstar M)⁻¹)
-            (CB * (Disorder.cstar M)⁻¹) C2b *
-          ((M.gamma * ((m : ℝ) - (R.scale : ℝ)) + M.gamma) *
-            (3 : ℝ) ^ (2 * (M.gamma * ((m : ℝ) - (R.scale : ℝ))))) * 1 := by
-      rw [secondRatioLegBound]
-      ring
-    have hidR : secondRatioLegBound d (Disorder.cstar M) (CL * (Disorder.cstar M)⁻¹)
-          (CB * (Disorder.cstar M)⁻¹) C2b *
-        ((M.gamma * ((m : ℝ) - (R.scale : ℝ)) + M.gamma) *
-          (3 : ℝ) ^ (2 * (M.gamma * ((m : ℝ) - (R.scale : ℝ))))) * q =
-        secondRatioLegBound d (Disorder.cstar M) (CL * (Disorder.cstar M)⁻¹)
-            (CB * (Disorder.cstar M)⁻¹) C2b *
-          (q * ((M.gamma * ((m : ℝ) - (R.scale : ℝ)) + M.gamma) *
-            (3 : ℝ) ^ (2 * (M.gamma * ((m : ℝ) - (R.scale : ℝ)))))) := by ring
-    linarith only [hlift, hidL, hidR]
+  obtain ⟨hvalue, hratioLeg⟩ :=
+    @perCubeSlotSecond_comparisonBounds1 (d) (CL) (CB) (C2b) (hC2b0) (hB2) (M) (hgam) (m) (R)
+      (hkm) (q) (hq) (hcstar) (hEL0) (hEB0) (hgam0) (hgam1) (hgam2) (h2q0) (h8q0) (h2qg) (ht)
+        (hregB2) (hgB5) (hgM) (hgB1) (hgIdx) (hsg) (hsig0) (hsigA0) (hsigB0) (hlam0) (hbrA0)
+          (hbrB0) (hfac0) (hfacle) (hbrAle) (hbrBle) (hSPB0) (hwt0)
   -- (c) the two legs, summed
   rw [secondTermMajorant]
   have hA := mul_le_mul_of_nonneg_left hvalue hCd

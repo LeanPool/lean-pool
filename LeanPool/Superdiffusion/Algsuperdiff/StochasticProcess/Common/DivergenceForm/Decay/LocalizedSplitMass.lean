@@ -101,7 +101,7 @@ theorem integral_sq_mul_gradSq_product_le {u : H1Function U}
       funext i
       have hfd : DifferentiableAt ℝ eta x := heta.differentiable (by simp) x
       have hhd : DifferentiableAt ℝ chi x := hchi.differentiable (by simp) x
-      show (fderiv ℝ (fun y => eta y * chi y) x) (basisVec i) = _
+      change (fderiv ℝ (fun y => eta y * chi y) x) (basisVec i) = _
       rw [show (fun y => eta y * chi y) = eta * chi by
         funext y; simp only [Pi.mul_apply]]
       rw [fderiv_mul hfd hhd]
@@ -262,7 +262,7 @@ theorem integral_sq_mul_vecDot_skewFieldDiv_le {Om : Set (Vec d)}
         mass / 8 * zeta y ^ 2 + 2 * Kl ^ 2 / mass * vecNormSq Dz := by
       linarith only [habs, hyoung, hcbound]
     have hscaled := mul_le_mul_of_nonneg_left hstep hunn
-    show -(1 / 2) * (u.toFun y ^ 2 *
+    change -(1 / 2) * (u.toFun y ^ 2 *
       vecDot b (fun i =>
         (fderiv ℝ (fun w => zeta w ^ 2) y) (basisVec i))) ≤ _
     rw [hdot]
@@ -276,7 +276,7 @@ theorem integral_sq_mul_vecDot_skewFieldDiv_le {Om : Set (Vec d)}
         zero_apply]
     have hnormZero : vecNormSq (fun _ : Fin d => (0 : ℝ)) = 0 := by
       simp only [vecNormSq, vecDot, mul_zero, Finset.sum_const_zero]
-    show -(1 / 2) * (u.toFun y ^ 2 *
+    change -(1 / 2) * (u.toFun y ^ 2 *
       vecDot b (fun i =>
         (fderiv ℝ (fun w => zeta w ^ 2) y) (basisVec i))) ≤ _
     rw [hdot, hzetaZero, hDzZero, hnormZero]

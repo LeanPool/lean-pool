@@ -144,7 +144,7 @@ theorem volumeAverage_comp_coordFaceReflection {a : ℝ} (i : Fin d) {W : Set (V
     (hW : MeasurableSet W) (f : Vec d → ℝ) :
     volumeAverage (coordFaceReflection (d := d) a i ⁻¹' W)
         (fun y => f (coordFaceReflection a i y)) = volumeAverage W f := by
-  show (volume (coordFaceReflection (d := d) a i ⁻¹' W)).toReal⁻¹
+  change (volume (coordFaceReflection (d := d) a i ⁻¹' W)).toReal⁻¹
       * ∫ y in coordFaceReflection (d := d) a i ⁻¹' W,
           f (coordFaceReflection a i y) ∂volume
     = (volume W).toReal⁻¹ * ∫ y in W, f y ∂volume
@@ -155,7 +155,7 @@ theorem normalizedL2On_comp_coordFaceReflection {a : ℝ} (i : Fin d) {W : Set (
     (hW : MeasurableSet W) (f : Vec d → ℝ) :
     normalizedL2On (coordFaceReflection (d := d) a i ⁻¹' W)
         (fun y => f (coordFaceReflection a i y)) = normalizedL2On W f := by
-  show Real.sqrt (volumeAverage (coordFaceReflection (d := d) a i ⁻¹' W)
+  change Real.sqrt (volumeAverage (coordFaceReflection (d := d) a i ⁻¹' W)
       (fun y => f (coordFaceReflection a i y) ^ 2))
     = Real.sqrt (volumeAverage W (fun y => f y ^ 2))
   exact congrArg Real.sqrt
@@ -201,7 +201,7 @@ theorem affineDistOn_comp_coordFaceReflection_zero (i : Fin d) {W : Set (Vec d)}
           - affineEval c g (coordFaceReflection (0 : ℝ) i x) := by
     funext x
     rw [affineEval_comp_coordFaceReflection_zero]
-  show normalizedL2On (coordFaceReflection (0 : ℝ) i ⁻¹' W)
+  change normalizedL2On (coordFaceReflection (0 : ℝ) i ⁻¹' W)
       (fun x => f (coordFaceReflection (0 : ℝ) i x)
         - affineEval c (coordFaceReflection (0 : ℝ) i g) x)
     = normalizedL2On W (fun x => f x - affineEval c g x)

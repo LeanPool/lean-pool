@@ -133,6 +133,52 @@ private theorem exists_localRep_starredComparatorQuadratic_cubeSet
     toFullBlockMat_blockReflect]
   rw [ha]
 
+private theorem centeredComparatorQuadratic_integral_bound :
+    ∀ {d : ℕ} {P : Ch04.RestrictionCoeffLaw d},
+      Annealed.IsStationaryRealR P →
+        ∀ (B : FullBlockMat d) (C : BlockMat d) (q : FullBlockVec d) {child parent : ℤ},
+          IsProbabilityMeasure P →
+            let Q : TriadicCube d := originCube d parent;
+            let D : Finset (TriadicCube d) := descendantsAtScale Q child;
+            let X : Set (Vec d) → RegCoeffField d → ℝ := starredComparatorQuadratic B C q;
+            let mu0 : ℝ := ∫ (a : RegCoeffField d), X (cubeSet (originCube d child)) a ∂P;
+            let Z : TriadicCube d → RegCoeffField d → ℝ := fun (R : TriadicCube d) (a : RegCoeffField d) =>
+              X (cubeSet R) a - mu0;
+            Integrable (X (cubeSet (originCube d child))) P →
+              (∀ R ∈ D, R.scale = child) →
+                (∀ R ∈ D, Z R = fun (a : RegCoeffField d) => Z (originCube d child) (translateReg (triadicCubeShift R) a)) →
+                  ∀ R ∈ D, ∫ (a : RegCoeffField d), Z R a ∂P = (0 : ℝ) := by
+  intro d P hstat B C q child _ _ _ _ X mu0 Z hX0Int hScale hComp R hR
+  have hXInt : Integrable (X (cubeSet R)) P := by
+    have hcompInt :=
+      (show MeasurePreserving (translateReg (triadicCubeShift R)) P P from
+        ⟨measurable_translateReg (triadicCubeShift R), hstat (triadicCubeShift
+          R)⟩).integrable_comp_of_integrable
+        hX0Int
+    refine hcompInt.congr ?_
+    filter_upwards with a
+    have h := congrFun (hComp R hR) a
+    dsimp only [Z] at h
+    exact sub_left_injective h.symm
+  have hmean : ∫ a, X (cubeSet R) a ∂P = mu0 := by
+    have hgeom : cubeSet R =
+        translateSet (triadicCubeShift R) (cubeSet (originCube d child)) := by
+      calc
+        cubeSet R = translateSet (triadicCubeShift R)
+            (cubeSet (originCube d R.scale)) :=
+          cubeSet_eq_translateSet_originCube_of_triadicCube R
+        _ = translateSet (triadicCubeShift R)
+            (cubeSet (originCube d child)) := by rw [hScale R hR]
+    rw [hgeom]
+    simpa only [X, starredComparatorQuadratic, mu0] using
+      Provider.Annealed.integral_comp_toFun_translation_transfer_real
+        hstat hX0Int.aestronglyMeasurable
+        (starredComparatorQuadraticRaw_translation_covariant B C q)
+        (triadicCubeShift R)
+  simp only [Z]
+  rw [integral_sub hXInt (integrable_const mu0), hmean, integral_const]
+  simp
+
 private theorem starredComparatorQuadratic_centeredDescendantSum_root_le
     {d : ℕ} {P : Book.Ch04.RestrictionCoeffLaw d}
     (hP : Book.Ch04.RestrictionLawCarrier P)
@@ -231,41 +277,14 @@ private theorem starredComparatorQuadratic_centeredDescendantSum_root_le
     intro R hR
     have hcompInt :=
       (show MeasurePreserving (translateReg (triadicCubeShift R)) P P from
-        ⟨measurable_translateReg (triadicCubeShift R), hstat (triadicCubeShift R)⟩).integrable_comp_of_integrable
+        ⟨measurable_translateReg (triadicCubeShift R), hstat (triadicCubeShift
+          R)⟩).integrable_comp_of_integrable
         hZ0Int
     refine hcompInt.congr ?_
     filter_upwards with a
     simp only [Function.comp_apply, hComp R hR]
-  have hZMean : ∀ R ∈ D, ∫ a, Z R a ∂P = 0 := by
-    intro R hR
-    have hXInt : Integrable (X (cubeSet R)) P := by
-      have hcompInt :=
-        (show MeasurePreserving (translateReg (triadicCubeShift R)) P P from
-          ⟨measurable_translateReg (triadicCubeShift R), hstat (triadicCubeShift R)⟩).integrable_comp_of_integrable
-          hX0Int
-      refine hcompInt.congr ?_
-      filter_upwards with a
-      have h := congrFun (hComp R hR) a
-      dsimp only [Z] at h
-      exact sub_left_injective h.symm
-    have hmean : ∫ a, X (cubeSet R) a ∂P = mu0 := by
-      have hgeom : cubeSet R =
-          translateSet (triadicCubeShift R) (cubeSet (originCube d child)) := by
-        calc
-          cubeSet R = translateSet (triadicCubeShift R)
-              (cubeSet (originCube d R.scale)) :=
-            cubeSet_eq_translateSet_originCube_of_triadicCube R
-          _ = translateSet (triadicCubeShift R)
-              (cubeSet (originCube d child)) := by rw [hScale R hR]
-      rw [hgeom]
-      simpa only [X, starredComparatorQuadratic, mu0] using
-        Provider.Annealed.integral_comp_toFun_translation_transfer_real
-          hstat hX0Int.aestronglyMeasurable
-          (starredComparatorQuadraticRaw_translation_covariant B C q)
-          (triadicCubeShift R)
-    simp only [Z]
-    rw [integral_sub hXInt (integrable_const mu0), hmean, integral_const]
-    simp
+  have hZMean := @centeredComparatorQuadratic_integral_bound (d) (P) (hstat) (B) (C) (q) (child)
+    (parent) (this) (hX0Int) (hScale) (hComp)
   have hZRoot : ∀ R ∈ D,
       (∫ a, |Z R a| ^ (2 : ℕ) ∂P) ^ (1 / (2 : ℝ)) ≤ K := by
     intro R hR
@@ -382,46 +401,34 @@ private theorem starredComparatorQuadratic_centeredDescendantSum_root_le
         simp only [D, Q, Z, X, mu0], hIntegralEq]
     simpa only [Q, D] using! hRosenthal
 
-private theorem relativeOrigin_centeredStarredComparatorQuadratic_sq_integrable_and_le
-    {d : ℕ} [NeZero d] (M : ABKModel d) (L : ℤ)
-    {s A D : ℝ} (hs : 0 < s)
-    (hLower : Probability.IsTwoTermBigOWith
-      (Cutoff.cutoffSampleLaw M).toMeasure
-      (gammaSigma 2) (gammaSigma (1 / 2))
-      (Observable.cutoffHomogenizationError M L ⟨s, hs⟩) A D)
-    (q : FullBlockVec d) :
-    let c : ℤ := Cutoff.cutoffRelativeNormalizationShift d
-    let sigma := Annealed.sigmaBar M L
-    let a0 : Mat d := Observable.isotropicComparatorMatrix sigma
-    let B : FullBlockMat d := Book.Ch02.constantFullBlockMatrix a0
-    let C0 : BlockMat d := Book.Ch02.constantBlockMatrix a0
-    let X : Set (Vec d) → RegCoeffField d → ℝ :=
-      starredComparatorQuadratic B C0 q
-    Integrable (fun a =>
-        (X (cubeSet (originCube d (-c))) a) ^ (2 : ℕ))
-        (Cutoff.relativeNormalizedCutoffLaw M L) ∧
-      (∫ a, (X (cubeSet (originCube d (-c))) a) ^ (2 : ℕ)
-          ∂(Cutoff.relativeNormalizedCutoffLaw M L)) ≤
-        6 * (dotProduct q q) ^ (2 : ℕ) * twoTermSecondFourthBudget A D ∧
-      Integrable
-        (fun a => |Book.Ch04.restrictionCenteredOriginObservable
-          (Cutoff.relativeNormalizedCutoffLaw M L) (-c) X a| ^ (2 : ℕ))
-        (Cutoff.relativeNormalizedCutoffLaw M L) ∧
-      ∫ a, |Book.Ch04.restrictionCenteredOriginObservable
-          (Cutoff.relativeNormalizedCutoffLaw M L) (-c) X a| ^ (2 : ℕ)
-          ∂(Cutoff.relativeNormalizedCutoffLaw M L) ≤
-        6 * (dotProduct q q) ^ (2 : ℕ) * twoTermSecondFourthBudget A D := by
-  let mu := (Cutoff.cutoffSampleLaw M).toMeasure
-  let X0 : Cutoff.CutoffSample d → ℝ :=
-    Observable.cutoffHomogenizationError M L ⟨s, hs⟩
-  obtain ⟨Y, Z, _hPsiY, _hPsiZ, hA, hD, hXmeas, hYmeas, hZmeas,
-      hdom, hYtail, hZtail⟩ := hLower
-  let Y0 : Cutoff.CutoffSample d → ℝ := fun omega => max 0 (Y omega)
-  let Z0 : Cutoff.CutoffSample d → ℝ := fun omega => max 0 (Z omega)
-  have hY0nonneg : ∀ omega, 0 ≤ Y0 omega := fun omega => le_max_left _ _
-  have hZ0nonneg : ∀ omega, 0 ≤ Z0 omega := fun omega => le_max_left _ _
-  have hY0meas : AEMeasurable Y0 mu :=
-    (measurable_const.max hYmeas).aemeasurable
+private theorem combineFiniteMean_momentBounds1 :
+    ∀ {d : ℕ} (M : ABKModel d) (L : ℤ) {s A D : ℝ} (hs : (0 : ℝ) < s),
+      let mu : Measure (Cutoff.CutoffSample d) := (↑(Cutoff.cutoffSampleLaw M) : Measure (Cutoff.CutoffSample d));
+      let X0 : Cutoff.CutoffSample d → ℝ := Observable.cutoffHomogenizationError M L ⟨s, hs⟩;
+      ∀ (Y Z : Cutoff.CutoffSample d → ℝ) (_ : (0 : ℝ) < A) (_ : (0 : ℝ) < D)
+        (_ : Measurable (Observable.cutoffHomogenizationError M L ⟨s, hs⟩)) (_ : Measurable Z)
+        (_ : ∀ (ω : Cutoff.CutoffSample d), Observable.cutoffHomogenizationError M L ⟨s, hs⟩ ω ≤ Y ω + Z ω)
+        (_ : IsBigOWith (↑(Cutoff.cutoffSampleLaw M) : Measure (Cutoff.CutoffSample d)) (gammaSigma (2 : ℝ)) Y A)
+        (_ : IsBigOWith (↑(Cutoff.cutoffSampleLaw M) : Measure (Cutoff.CutoffSample d)) (gammaSigma (1 / 2 : ℝ)) Z D),
+        let Y0 : Cutoff.CutoffSample d → ℝ := fun (omega : Cutoff.CutoffSample d) => max (0 : ℝ) (Y omega);
+        let Z0 : Cutoff.CutoffSample d → ℝ := fun (omega : Cutoff.CutoffSample d) => max (0 : ℝ) (Z omega);
+        ∀ (_ : ∀ (omega : Cutoff.CutoffSample d), (0 : ℝ) ≤ Y0 omega)
+          (_ : ∀ (omega : Cutoff.CutoffSample d), (0 : ℝ) ≤ Z0 omega) (_ : AEMeasurable Y0 mu),
+          Integrable (fun (omega : Cutoff.CutoffSample d) => Y0 omega ^ (4 : ℕ)) mu ∧
+            Integrable (fun (omega : Cutoff.CutoffSample d) => Z0 omega ^ (4 : ℕ)) mu ∧
+              ∫ (omega : Cutoff.CutoffSample d), Y0 omega ^ (4 : ℕ) ∂mu ≤
+                  (gammaMomentConst (2 : ℝ) * (4 : ℝ) ^ (2 : ℝ)⁻¹ * A) ^ (4 : ℕ) ∧
+                ∫ (omega : Cutoff.CutoffSample d), Z0 omega ^ (4 : ℕ) ∂mu ≤
+                    (gammaMomentConst (1 / 2 : ℝ) * (4 : ℝ) ^ (1 / 2 : ℝ)⁻¹ * D) ^ (4 : ℕ) ∧
+                  (∀ (omega : Cutoff.CutoffSample d),
+                      X0 omega ^ (4 : ℕ) ≤ (8 : ℝ) * (Y0 omega ^ (4 : ℕ) + Z0 omega ^ (4 : ℕ))) ∧
+                    Integrable (fun (omega : Cutoff.CutoffSample d) => X0 omega ^ (2 : ℕ)) mu ∧
+                      Integrable (fun (omega : Cutoff.CutoffSample d) => X0 omega ^ (4 : ℕ)) mu ∧
+                        ∫ (omega : Cutoff.CutoffSample d), X0 omega ^ (2 : ℕ) ∂mu ≤
+                          (2 : ℝ) *
+                            ((gammaMomentConst (2 : ℝ) * (2 : ℝ) ^ (2 : ℝ)⁻¹ * A) ^ (2 : ℕ) +
+                              (gammaMomentConst (1 / 2 : ℝ) * (2 : ℝ) ^ (1 / 2 : ℝ)⁻¹ * D) ^ (2 : ℕ)) := by
+  intro _ M L s A D hs mu X0 Y _ hA hD hXmeas hZmeas hdom hYtail hZtail Y0 Z0 hY0nonneg hZ0nonneg hY0meas
   have hZ0meas : AEMeasurable Z0 mu :=
     (measurable_const.max hZmeas).aemeasurable
   have hY0tail : IsBigOWith mu (gammaSigma 2) Y0 A := by
@@ -517,6 +524,51 @@ private theorem relativeOrigin_centeredStarredComparatorQuadratic_sq_integrable_
           ∫ omega, Z0 omega ^ (2 : ℕ) ∂mu) := by
         rw [integral_const_mul, integral_add hY2Int hZ2Int]
       _ ≤ _ := mul_le_mul_of_nonneg_left (add_le_add hY2 hZ2) (by norm_num)
+  exact ⟨hY4Int, hZ4Int, hY4, hZ4, hX4Point, hX2Int, hX4Int, hX2⟩
+
+private theorem relativeOrigin_centeredStarredComparatorQuadratic_sq_integrable_and_le
+    {d : ℕ} [NeZero d] (M : ABKModel d) (L : ℤ)
+    {s A D : ℝ} (hs : 0 < s)
+    (hLower : Probability.IsTwoTermBigOWith
+      (Cutoff.cutoffSampleLaw M).toMeasure
+      (gammaSigma 2) (gammaSigma (1 / 2))
+      (Observable.cutoffHomogenizationError M L ⟨s, hs⟩) A D)
+    (q : FullBlockVec d) :
+    let c : ℤ := Cutoff.cutoffRelativeNormalizationShift d
+    let sigma := Annealed.sigmaBar M L
+    let a0 : Mat d := Observable.isotropicComparatorMatrix sigma
+    let B : FullBlockMat d := Book.Ch02.constantFullBlockMatrix a0
+    let C0 : BlockMat d := Book.Ch02.constantBlockMatrix a0
+    let X : Set (Vec d) → RegCoeffField d → ℝ :=
+      starredComparatorQuadratic B C0 q
+    Integrable (fun a =>
+        (X (cubeSet (originCube d (-c))) a) ^ (2 : ℕ))
+        (Cutoff.relativeNormalizedCutoffLaw M L) ∧
+      (∫ a, (X (cubeSet (originCube d (-c))) a) ^ (2 : ℕ)
+          ∂(Cutoff.relativeNormalizedCutoffLaw M L)) ≤
+        6 * (dotProduct q q) ^ (2 : ℕ) * twoTermSecondFourthBudget A D ∧
+      Integrable
+        (fun a => |Book.Ch04.restrictionCenteredOriginObservable
+          (Cutoff.relativeNormalizedCutoffLaw M L) (-c) X a| ^ (2 : ℕ))
+        (Cutoff.relativeNormalizedCutoffLaw M L) ∧
+      ∫ a, |Book.Ch04.restrictionCenteredOriginObservable
+          (Cutoff.relativeNormalizedCutoffLaw M L) (-c) X a| ^ (2 : ℕ)
+          ∂(Cutoff.relativeNormalizedCutoffLaw M L) ≤
+        6 * (dotProduct q q) ^ (2 : ℕ) * twoTermSecondFourthBudget A D := by
+  let mu := (Cutoff.cutoffSampleLaw M).toMeasure
+  let X0 : Cutoff.CutoffSample d → ℝ :=
+    Observable.cutoffHomogenizationError M L ⟨s, hs⟩
+  obtain ⟨Y, Z, _hPsiY, _hPsiZ, hA, hD, hXmeas, hYmeas, hZmeas,
+      hdom, hYtail, hZtail⟩ := hLower
+  let Y0 : Cutoff.CutoffSample d → ℝ := fun omega => max 0 (Y omega)
+  let Z0 : Cutoff.CutoffSample d → ℝ := fun omega => max 0 (Z omega)
+  have hY0nonneg : ∀ omega, 0 ≤ Y0 omega := fun omega => le_max_left _ _
+  have hZ0nonneg : ∀ omega, 0 ≤ Z0 omega := fun omega => le_max_left _ _
+  have hY0meas : AEMeasurable Y0 mu :=
+    (measurable_const.max hYmeas).aemeasurable
+  obtain ⟨hY4Int, hZ4Int, hY4, hZ4, hX4Point, hX2Int, hX4Int, hX2⟩ :=
+    @combineFiniteMean_momentBounds1 (d) (M) (L) (s) (A) (D) (hs) (Y) (Z) (hA) (hD) (hXmeas)
+      (hZmeas) (hdom) (hYtail) (hZtail) (hY0nonneg) (hZ0nonneg) (hY0meas)
   have hX4 : ∫ omega, X0 omega ^ (4 : ℕ) ∂mu ≤
       8 *
         ((gammaMomentConst 2 * (4 : ℝ) ^ ((2 : ℝ)⁻¹) * A) ^ (4 : ℕ) +

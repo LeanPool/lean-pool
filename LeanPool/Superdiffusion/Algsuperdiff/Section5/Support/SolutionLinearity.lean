@@ -57,10 +57,10 @@ theorem isDirichletSolutionAt_sub {y : Vec d} {n : ℤ} {a : CoeffField d} {lam 
   obtain ⟨w1, h1f, h1g⟩ := hu.1
   obtain ⟨w2, h2f, h2g⟩ := hu'.1
   refine ⟨⟨w1 - w2, fun x => ?_, fun x => ?_⟩, ?_⟩
-  · show (u - u').toFun x = (w1.toH1Function - w2.toH1Function).toFun x
+  · change (u - u').toFun x = (w1.toH1Function - w2.toH1Function).toFun x
     simp only [H1Function.sub_toFun]
     rw [h1f x, h2f x]
-  · show (u - u').grad x = (w1.toH1Function - w2.toH1Function).grad x
+  · change (u - u').grad x = (w1.toH1Function - w2.toH1Function).grad x
     simp only [H1Function.sub_grad]
     rw [h1g x, h2g x]
   · intro phi

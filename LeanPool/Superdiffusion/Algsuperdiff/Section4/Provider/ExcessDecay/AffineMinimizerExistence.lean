@@ -174,7 +174,7 @@ theorem exists_isAffineMinimizer_of_nondegenerate {W : Set (Vec d)} {c₀ K : �
       funext x
       rw [affineEval_zero]
       ring
-    show normalizedL2On W (fun x => u x - affineEval (0 : ℝ) (0 : Vec d) x)
+    change normalizedL2On W (fun x => u x - affineEval (0 : ℝ) (0 : Vec d) x)
       = normalizedL2On W u
     rw [hpt]
   obtain ⟨p, hp⟩ : ∃ p : ℝ × Vec d, ∀ q : ℝ × Vec d, F p ≤ F q := by
@@ -192,7 +192,7 @@ theorem exists_isAffineMinimizer_of_nondegenerate {W : Set (Vec d)} {c₀ K : �
     linarith only [h1, h2, h3]
   -- Step 4: a global minimizer realizes the infimum.
   refine ⟨p.1, p.2, ?_⟩
-  show affineDistOn W u p.1 p.2 = affineExcessRaw W u
+  change affineDistOn W u p.1 p.2 = affineExcessRaw W u
   refine le_antisymm ?_ (affineExcessRaw_le_affineDistOn W u p.1 p.2)
   refine le_csInf (affineDistSet_nonempty W u) ?_
   rintro y ⟨q, rfl⟩

@@ -38,6 +38,7 @@ noncomputable section
 
 variable {d : ℕ} [NeZero d]
 
+omit [NeZero d] in
 /-- The upper Chapter 4 multiscale observable shifts by an arbitrary integer
 triadic dilation. -/
 theorem LambdaSqCoeffField_dilateReg_of_aelocallyUniformlyElliptic
@@ -68,6 +69,7 @@ theorem LambdaSqCoeffField_dilateReg_of_aelocallyUniformlyElliptic
     _ = Ch04.LambdaSqCoeffField Qsrc s q a := by
       simp [Ch04.LambdaSqCoeffField, F, ha]
 
+omit [NeZero d] in
 /-- The lower Chapter 4 multiscale observable shifts by an arbitrary integer
 triadic dilation. -/
 theorem lambdaSqCoeffField_dilateReg_of_aelocallyUniformlyElliptic

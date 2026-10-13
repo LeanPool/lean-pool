@@ -114,15 +114,15 @@ theorem doubledMuValue_nonneg (U : Domain d) (a : CoeffOn U) (F : DoubledField d
     have hself : (0 : ℝ) ≤ blockVecDot (F.eval x) (F.eval x) := by
       have h1 : (0 : ℝ) ≤ vecNormSq (F.eval x).1 := vecNormSq_nonneg _
       have h2 : (0 : ℝ) ≤ vecNormSq (F.eval x).2 := vecNormSq_nonneg _
-      show (0 : ℝ) ≤ vecDot (F.eval x).1 (F.eval x).1 + vecDot (F.eval x).2 (F.eval x).2
+      change (0 : ℝ) ≤ vecDot (F.eval x).1 (F.eval x).1 + vecDot (F.eval x).2 (F.eval x).2
       exact add_nonneg h1 h2
     have hc : (0 : ℝ) ≤ a.lam / (1 + 2 * a.Lam ^ 2) := by
       have hden : (0 : ℝ) < 1 + 2 * a.Lam ^ 2 := by positivity
       exact div_nonneg a.lam_pos.le hden.le
-    show (0 : ℝ) ≤ (1 / 2 : ℝ) * blockVecDot (F.eval x)
+    change (0 : ℝ) ≤ (1 / 2 : ℝ) * blockVecDot (F.eval x)
       (blockMatVecMul (blockMatrixOfCoeff (a.toCoeffField x)) (F.eval x))
     nlinarith [mul_nonneg hc hself]
-  show (0 : ℝ) ≤ (MeasureTheory.volume (U : Set (Vec d))).toReal⁻¹ *
+  change (0 : ℝ) ≤ (MeasureTheory.volume (U : Set (Vec d))).toReal⁻¹ *
     ∫ x, blockEnergyDensityAt a (F.eval x) x ∂(volumeMeasureOn (U : Set (Vec d)))
   exact mul_nonneg (inv_nonneg.2 ENNReal.toReal_nonneg) hden
 
@@ -162,12 +162,12 @@ theorem doubledMuValue_le_plainUpperBound (U : Domain d) (a : CoeffOn U)
     have hself : (0 : ℝ) ≤ blockVecDot (F.eval x) (F.eval x) := by
       have h1 : (0 : ℝ) ≤ vecNormSq (F.eval x).1 := vecNormSq_nonneg _
       have h2 : (0 : ℝ) ≤ vecNormSq (F.eval x).2 := vecNormSq_nonneg _
-      show (0 : ℝ) ≤ vecDot (F.eval x).1 (F.eval x).1 + vecDot (F.eval x).2 (F.eval x).2
+      change (0 : ℝ) ≤ vecDot (F.eval x).1 (F.eval x).1 + vecDot (F.eval x).2 (F.eval x).2
       exact add_nonneg h1 h2
     have hc : (0 : ℝ) ≤ a.lam / (1 + 2 * a.Lam ^ 2) := by
       have hden : (0 : ℝ) < 1 + 2 * a.Lam ^ 2 := by positivity
       exact div_nonneg a.lam_pos.le hden.le
-    show (0 : ℝ) ≤ (1 / 2 : ℝ) * blockVecDot (F.eval x)
+    change (0 : ℝ) ≤ (1 / 2 : ℝ) * blockVecDot (F.eval x)
       (blockMatVecMul (blockMatrixOfCoeff (a.toCoeffField x)) (F.eval x))
     nlinarith [mul_nonneg hc hself]
   have hle : (fun x => blockEnergyDensityAt a (F.eval x) x) ≤ᵐ[volumeMeasureOn
@@ -177,7 +177,7 @@ theorem doubledMuValue_le_plainUpperBound (U : Domain d) (a : CoeffOn U)
     filter_upwards [a.aeElliptic] with x hx
     have hup := blockMatrixOfCoeff_quadratic_plainUpperBound_of_isEllipticMatrix hx
       (F.potential x) (F.flux x)
-    show (1 / 2 : ℝ) * blockVecDot (F.potential x, F.flux x)
+    change (1 / 2 : ℝ) * blockVecDot (F.potential x, F.flux x)
         (blockMatVecMul (blockMatrixOfCoeff (a.toCoeffField x))
           (F.potential x, F.flux x)) ≤ _
     linarith
@@ -196,7 +196,7 @@ theorem doubledMuValue_le_plainUpperBound (U : Domain d) (a : CoeffOn U)
   have hstep : doubledMuValue U a F ≤ average U
       (fun x => (1 / 2 : ℝ) * ((a.Lam + 2 * a.lam⁻¹ * a.Lam ^ 2) * vecNormSq (F.potential x) +
         2 * a.lam⁻¹ * vecNormSq (F.flux x))) := by
-    show (MeasureTheory.volume (U : Set (Vec d))).toReal⁻¹ *
+    change (MeasureTheory.volume (U : Set (Vec d))).toReal⁻¹ *
         ∫ x, blockEnergyDensityAt a (F.eval x) x ∂(volumeMeasureOn (U : Set (Vec d))) ≤
       (MeasureTheory.volume (U : Set (Vec d))).toReal⁻¹ * _
     exact mul_le_mul_of_nonneg_left hmono (inv_nonneg.2 ENNReal.toReal_nonneg)
@@ -267,10 +267,10 @@ theorem meshCellBackgroundPotentialEnergy_eq (M : ABKModel d) (n : ℤ) (h : ℕ
         vecNormSq (e' + (wD omega.val).toH1Function.grad x) := by
     funext x
     simp only [meshCellBackground_potential]
-    show vecNormSq ((Real.sqrt ((Annealed.sigmaBar M n : ℝ)))⁻¹ •
+    change vecNormSq ((Real.sqrt ((Annealed.sigmaBar M n : ℝ)))⁻¹ •
       (e' + (wD omega.val).toH1Function.grad x)) = _
     rw [vecNormSq_smul, inv_pow, Real.sq_sqrt hsig.le]
-  show Ch02.average (cubeDomain R) _ = _
+  change Ch02.average (cubeDomain R) _ = _
   rw [hpt]
   exact average_const_mul (cubeDomain R) _ _
 
@@ -294,11 +294,11 @@ theorem meshCellBackgroundFluxEnergy_eq (M : ABKModel d) (n : ℤ) (h : ℕ) (Kc
           (n + (h : ℤ)) e' (wN omega.val) x) := by
     funext x
     simp only [meshCellBackground_flux]
-    show vecNormSq (Real.sqrt ((Annealed.sigmaBar M n : ℝ)) •
+    change vecNormSq (Real.sqrt ((Annealed.sigmaBar M n : ℝ)) •
       (e + neumannFluxField (Annealed.sigmaBar M n) omega.val n (n + (h : ℤ)) e'
         (wN omega.val) x)) = _
     rw [vecNormSq_smul, Real.sq_sqrt hsig.le]
-  show Ch02.average (cubeDomain R) _ = _
+  change Ch02.average (cubeDomain R) _ = _
   rw [hpt]
   exact average_const_mul (cubeDomain R) _ _
 

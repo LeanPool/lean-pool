@@ -161,271 +161,26 @@ private theorem natCast_add_one_le_three_pow (m : ℕ) :
           mul_le_mul_of_nonneg_left ih (by norm_num)
         _ = (3 : ℝ) ^ m * 3 := by ring
 
-/-- The analytic boundary defect for the stream coefficient tends pointwise
-to zero along the cubic exhaustion. -/
-theorem tendsto_abs_streamAnalyticCubeBoundaryRemainder
-    (M : ABKModel d) (omega : FullSample d M.gamma)
-    (mu : PositiveShift) (x : Vec d) :
-    Tendsto (fun m ↦ |1 - (mu : ℝ) *
-        (streamWholeSpaceAnalyticData M omega).analyticCubeResolvent mu
-          (fun _ : Vec d ↦ (1 : ℝ)) measurable_const
-          (D := 1) (fun _ ↦ by norm_num) m x|) atTop (nhds 0) := by
-  let A := streamWholeSpaceAnalyticData M omega
-  let L := streamLocalizedSplitData M omega
-  let r₀ := L.freezingRadius x
-  let U := streamBoundaryLocalizedUpperConst M omega mu
-  let alpha : ℝ := 1 / 2
-  let q : ℝ := alpha / (alpha + (d : ℝ) / 2)
-  let c : ℝ := Real.sqrt (M.nu * (mu : ℝ)) / (2 * Real.sqrt 2 * U) * q / 4
-  have hU : 0 < U := streamBoundaryLocalizedUpperConst_pos M omega mu
-  have hr₀ : 0 < r₀ := L.freezingRadius_pos x
-  have hq : 0 < q := by unfold q alpha; positivity
-  have hc : 0 < c := by
-    unfold c
-    exact div_pos
-      (mul_pos
-        (div_pos (Real.sqrt_pos.2 (mul_pos M.nu_pos mu.property)) (by positivity)) hq)
-      (by norm_num)
-  let P : ℕ → ℝ := fun m : ℕ ↦
-    localizedInteriorDecayConstant d M.nu (mu : ℝ)
-      (L.roughBound 0 ((3 : ℝ) ^ m)) (L.smoothDivBound 0 ((3 : ℝ) ^ m)) 1
-      (cubeBoundaryCutoffUniformGradientBudget (d := d))
-      (volume (wholeSpaceCube d m)).toReal alpha
-      ((mu : ℝ) * (min (mu : ℝ) M.nu)⁻¹ *
-        (volume (wholeSpaceCube d m)).toReal) r₀
-  have hPexists : ∃ C : ℝ, 0 ≤ C ∧ ∀ m : ℕ,
-      P m ≤ C * ((m : ℝ) + 1) * ((3 : ℝ) ^ (d + 1)) ^ m := by
-    let Ceta := cubeBoundaryCutoffUniformGradientBudget (d := d)
-    let V0 : ℝ := (2 : ℝ) ^ d
-    let Q : ℝ := 8 * U ^ 2 / (M.nu * (mu : ℝ)) * Ceta * V0
-    let den : ℝ := Real.sqrt ((volume (smallContrastUnitBall d)).toReal) *
-      Real.sqrt ((r₀ / 2) ^ d)
-    let e : ℝ := (mu : ℝ) * (min (mu : ℝ) M.nu)⁻¹
-    let C2 : ℝ := smallContrastZerothSchauderConstant d *
-      (r₀ ^ (1 - alpha - (d : ℝ) / 2) * e * V0 +
-        r₀ ^ (2 - alpha) * ((mu : ℝ) / M.nu)) * (r₀ / 2) ^ alpha
-    let C : ℝ := (Q + 1) / den + C2
-    have hCeta : 0 ≤ Ceta := by
-      unfold Ceta cubeBoundaryCutoffUniformGradientBudget
-      positivity
-    have hV0 : 0 ≤ V0 := by unfold V0; positivity
-    have hQ : 0 ≤ Q := by
-      unfold Q
-      exact mul_nonneg
-        (mul_nonneg
-          (div_nonneg (mul_nonneg (by norm_num) (sq_nonneg U))
-            (mul_nonneg M.nu_pos.le mu.property.le)) hCeta) hV0
-    have hden : 0 < den := by
-      unfold den
-      exact mul_pos (Real.sqrt_pos.2 unitBallVolume_pos)
-        (Real.sqrt_pos.2 (pow_pos (half_pos hr₀) d))
-    have he : 0 ≤ e := by
-      unfold e
-      exact mul_nonneg mu.property.le
-        (inv_nonneg.mpr (le_of_lt (lt_min mu.property M.nu_pos)))
-    have hC2 : 0 ≤ C2 := by
-      unfold C2
-      exact mul_nonneg
-        (mul_nonneg (smallContrastZerothSchauderConstant_nonneg d)
-          (add_nonneg
-            (mul_nonneg
-              (mul_nonneg (Real.rpow_nonneg hr₀.le _) he) hV0)
-            (mul_nonneg (Real.rpow_nonneg hr₀.le _)
-              (div_nonneg mu.property.le M.nu_pos.le))))
-        (Real.rpow_nonneg (half_pos hr₀).le _)
-    have hC : 0 ≤ C := by
-      unfold C
-      exact add_nonneg (div_nonneg (by linarith only [hQ]) hden.le) hC2
-    refine ⟨C, hC, fun m ↦ ?_⟩
-    let t : ℝ := (m : ℝ) + 1
-    let B : ℝ := ((3 : ℝ) ^ d) ^ m
-    let V : ℝ := (volume (wholeSpaceCube d m)).toReal
-    let Lm := localizedInteriorUpper M.nu (mu : ℝ)
-      (L.roughBound 0 ((3 : ℝ) ^ m)) (L.smoothDivBound 0 ((3 : ℝ) ^ m))
-    let X : ℝ := 8 * Lm ^ 2 / (M.nu * (mu : ℝ)) * Ceta * V
-    have ht : 1 ≤ t := by
-      unfold t
-      exact le_add_of_nonneg_left (Nat.cast_nonneg m)
-    have hB : 1 ≤ B := by
-      unfold B
-      exact one_le_pow₀ (one_le_pow₀ (by norm_num))
-    have hV : V = V0 * B := by
-      unfold V V0 B
-      rw [volume_wholeSpaceCube_toReal, mul_pow]
-      congr 1
-      rw [← pow_mul, Nat.mul_comm m d, pow_mul]
-    have hLm : Lm ≤ U * t := by
-      simpa only [Lm, U, t, A, L, streamLocalizedSplitData] using
-        localizedInteriorUpper_streamBoundary_le M omega mu m
-    have hLm0 : 0 < Lm := localizedInteriorUpper_pos M.nu_pos
-      (L.roughBound_nonneg 0 ((3 : ℝ) ^ m) (pow_nonneg (by norm_num) m))
-      (L.smoothDivBound_nonneg 0 ((3 : ℝ) ^ m) (pow_nonneg (by norm_num) m))
-    have hX : 0 ≤ X := by
-      unfold X
-      exact mul_nonneg
-        (mul_nonneg
-          (div_nonneg (mul_nonneg (by norm_num) (sq_nonneg Lm))
-            (mul_nonneg M.nu_pos.le mu.property.le)) hCeta) ENNReal.toReal_nonneg
-    have hXbound : X ≤ Q * t ^ 2 * B := by
-      have hsq : Lm ^ 2 ≤ (U * t) ^ 2 :=
-        pow_le_pow_left₀ hLm0.le hLm 2
-      have hK : 0 ≤ 8 / (M.nu * (mu : ℝ)) * Ceta * V0 := by
-        exact mul_nonneg
-          (mul_nonneg (div_nonneg (by norm_num : (0 : ℝ) ≤ 8)
-            (mul_nonneg M.nu_pos.le mu.property.le)) hCeta) hV0
-      have hB0 : 0 ≤ B := zero_le_one.trans hB
-      unfold X
-      rw [hV]
-      unfold Q
-      calc
-        8 * Lm ^ 2 / (M.nu * (mu : ℝ)) * Ceta * (V0 * B) =
-            (8 / (M.nu * (mu : ℝ)) * Ceta * V0) * Lm ^ 2 * B := by ring
-        _ ≤ (8 / (M.nu * (mu : ℝ)) * Ceta * V0) * (U * t) ^ 2 * B :=
-          mul_le_mul_of_nonneg_right (mul_le_mul_of_nonneg_left hsq hK) hB0
-        _ = (8 * U ^ 2 / (M.nu * (mu : ℝ)) * Ceta * V0) * t ^ 2 * B := by ring
-    have hsqrtX : Real.sqrt X ≤ X + 1 := by
-      have hs := Real.sqrt_nonneg X
-      have hs2 := Real.sq_sqrt hX
-      nlinarith only [hs, hs2, sq_nonneg (Real.sqrt X - 1)]
-    have hXone : X + 1 ≤ (Q + 1) * t ^ 2 * B := by
-      have htb : 1 ≤ t ^ 2 * B := by
-        calc
-          (1 : ℝ) = 1 * 1 := by ring
-          _ ≤ t ^ 2 * B := mul_le_mul (one_le_pow₀ ht) hB (by norm_num)
-            (pow_nonneg (zero_le_one.trans ht) 2)
-      calc
-        X + 1 ≤ Q * t ^ 2 * B + 1 := by linarith only [hXbound]
-        _ ≤ Q * t ^ 2 * B + 1 * (t ^ 2 * B) :=
-          by simp only [one_mul]; linarith only [htb]
-        _ = (Q + 1) * t ^ 2 * B := by ring
-    have hfirst : Real.sqrt X /
-          Real.sqrt ((volume (smallContrastUnitBall d)).toReal) /
-          Real.sqrt ((r₀ / 2) ^ d) ≤
-        ((Q + 1) / den) * t ^ 2 * B := by
-      calc
-        _ ≤ (X + 1) /
-            Real.sqrt ((volume (smallContrastUnitBall d)).toReal) /
-            Real.sqrt ((r₀ / 2) ^ d) := by gcongr
-        _ ≤ ((Q + 1) * t ^ 2 * B) /
-            Real.sqrt ((volume (smallContrastUnitBall d)).toReal) /
-            Real.sqrt ((r₀ / 2) ^ d) := by gcongr
-        _ = ((Q + 1) / den) * t ^ 2 * B := by
-          unfold den
-          field_simp
-    have hsecond : smallContrastZerothSchauderConstant d *
-          (r₀ ^ (1 - alpha - (d : ℝ) / 2) * (e * V) +
-            r₀ ^ (2 - alpha) * ((mu : ℝ) / M.nu)) *
-          (r₀ / 2) ^ alpha ≤ C2 * t ^ 2 * B := by
-      have htb : 1 ≤ t ^ 2 * B :=
-        calc
-          (1 : ℝ) = 1 * 1 := by ring
-          _ ≤ t ^ 2 * B := mul_le_mul (one_le_pow₀ ht) hB (by norm_num)
-            (pow_nonneg (zero_le_one.trans ht) 2)
-      rw [hV]
-      unfold C2
-      have hleft0 : 0 ≤ smallContrastZerothSchauderConstant d :=
-        smallContrastZerothSchauderConstant_nonneg d
-      have hrpow1 : 0 ≤ r₀ ^ (1 - alpha - (d : ℝ) / 2) :=
-        Real.rpow_nonneg hr₀.le _
-      have hrpow2 : 0 ≤ r₀ ^ (2 - alpha) := Real.rpow_nonneg hr₀.le _
-      have hrpow3 : 0 ≤ (r₀ / 2) ^ alpha :=
-        Real.rpow_nonneg (half_pos hr₀).le _
-      have hmain :
-          r₀ ^ (1 - alpha - (d : ℝ) / 2) * (e * (V0 * B)) +
-              r₀ ^ (2 - alpha) * ((mu : ℝ) / M.nu) ≤
-            (r₀ ^ (1 - alpha - (d : ℝ) / 2) * e * V0 +
-              r₀ ^ (2 - alpha) * ((mu : ℝ) / M.nu)) * (t ^ 2 * B) := by
-        have hterm1 :
-            r₀ ^ (1 - alpha - (d : ℝ) / 2) * (e * (V0 * B)) ≤
-              (r₀ ^ (1 - alpha - (d : ℝ) / 2) * e * V0) * (t ^ 2 * B) := by
-          have ht2 : 1 ≤ t ^ 2 := one_le_pow₀ ht
-          have hBscale : B ≤ t ^ 2 * B := by
-            simpa only [one_mul] using
-              mul_le_mul_of_nonneg_right ht2 (zero_le_one.trans hB)
-          have hcoef : 0 ≤ r₀ ^ (1 - alpha - (d : ℝ) / 2) * e * V0 :=
-            mul_nonneg (mul_nonneg hrpow1 he) hV0
-          calc
-            _ = (r₀ ^ (1 - alpha - (d : ℝ) / 2) * e * V0) * B := by ring
-            _ ≤ (r₀ ^ (1 - alpha - (d : ℝ) / 2) * e * V0) * (t ^ 2 * B) :=
-              mul_le_mul_of_nonneg_left hBscale hcoef
-        have hterm2 := mul_le_mul_of_nonneg_left htb
-          (mul_nonneg hrpow2 (div_nonneg mu.property.le M.nu_pos.le))
-        calc
-          _ ≤ (r₀ ^ (1 - alpha - (d : ℝ) / 2) * e * V0) * (t ^ 2 * B) +
-              (r₀ ^ (2 - alpha) * ((mu : ℝ) / M.nu)) * (t ^ 2 * B) :=
-            add_le_add hterm1 (by simpa only [mul_one] using hterm2)
-          _ = _ := by ring
-      convert mul_le_mul_of_nonneg_right
-        (mul_le_mul_of_nonneg_left hmain hleft0) hrpow3 using 1
-      all_goals first | rfl | ring
-    have hPquad : P m ≤ C * t ^ 2 * B := by
-      calc
-        P m ≤ ((Q + 1) / den) * t ^ 2 * B + C2 * t ^ 2 * B := by
-          convert add_le_add hfirst hsecond using 1
-          dsimp only [P, localizedInteriorDecayConstant, X, e, V, Lm, Ceta]
-          simp only [one_mul, mul_one]
-        _ = ((Q + 1) / den + C2) * t ^ 2 * B := by ring
-        _ = C * t ^ 2 * B := by rfl
-    have htThree : t ≤ (3 : ℝ) ^ m := by
-      simpa only [t] using natCast_add_one_le_three_pow m
-    calc
-      P m ≤ C * t ^ 2 * B := hPquad
-      _ ≤ C * t * ((3 : ℝ) ^ m) * B := by
-        have hCt : 0 ≤ C * t := mul_nonneg hC (zero_le_one.trans ht)
-        calc
-          C * t ^ 2 * B = (C * t) * t * B := by ring
-          _ ≤ (C * t) * ((3 : ℝ) ^ m) * B := by gcongr
-      _ = C * ((m : ℝ) + 1) * ((3 : ℝ) ^ (d + 1)) ^ m := by
-        unfold t B
-        rw [pow_add, mul_pow]
-        ring
-  obtain ⟨C, hC, hPC⟩ := hPexists
-  have hmajor := tendsto_triadicVolume_mul_exp_neg_triadic_div_linear
-    (d + 1) hC hc
-  refine squeeze_zero' (Filter.Eventually.of_forall fun m ↦ abs_nonneg _) ?_ hmajor
-  filter_upwards [((tendsto_pow_atTop_atTop_of_one_lt
-    (by norm_num : (1 : ℝ) < 3)).eventually_gt_atTop
-      (4 * (euclideanNorm x + r₀ / 2 + 1)))] with m hm
-  have hball : euclideanBall x r₀ ⊆ wholeSpaceCube d m := by
-    intro y hy
-    rw [mem_wholeSpaceCube_iff]
-    have hdist := euclideanNorm_sub_lt_of_mem_euclideanBall hr₀.le hy
-    have hnormy : euclideanNorm y ≤ euclideanNorm (y - x) + euclideanNorm x := by
-      convert euclideanNorm_add_le (d := d) (y - x) x using 1
-      ring_nf
-    have hnormlt : euclideanNorm y < (3 : ℝ) ^ m := by
-      exact lt_of_le_of_lt hnormy
-        (by linarith only [hdist, hm, hr₀, euclideanNorm_nonneg x])
-    intro i
-    exact abs_lt.mp ((abs_coordinate_le_euclideanNorm y i).trans_lt hnormlt)
-  have hinner : euclideanBall x (r₀ / 2) ⊆
-      euclideanBall 0 (cubeBoundaryCutoffInnerRadius m) := by
-    intro y hy
-    have hdist := euclideanNorm_sub_lt_of_mem_euclideanBall
-      (half_pos hr₀).le hy
-    have hnormy : euclideanNorm y ≤ euclideanNorm (y - x) + euclideanNorm x := by
-      convert euclideanNorm_add_le (d := d) (y - x) x using 1
-      ring_nf
-    have hhalf : euclideanNorm x + r₀ / 2 < (3 : ℝ) ^ m / 2 := by
-      linarith only [hm, euclideanNorm_nonneg x, hr₀]
-    have hnormlt : euclideanNorm (y - 0) < cubeBoundaryCutoffInnerRadius m := by
-      simp only [sub_zero]
-      unfold cubeBoundaryCutoffInnerRadius
-      linarith only [hdist, hnormy, hhalf]
-    change euclideanSqDist y 0 < cubeBoundaryCutoffInnerRadius m ^ 2
-    rw [show euclideanSqDist y 0 = euclideanNorm (y - 0) ^ 2 by
-      rw [euclideanNorm_sq]; rfl]
-    exact (sq_lt_sq₀ (euclideanNorm_nonneg _)
-      (by unfold cubeBoundaryCutoffInnerRadius; positivity)).2 hnormlt
-  have hlayer : -cubeBoundaryCutoffInnerRadius m + 1 ≤
-      -(euclideanNorm (x - 0) + r₀ / 2) := by
-    simp only [sub_zero]
-    unfold cubeBoundaryCutoffInnerRadius
-    have hhalf : euclideanNorm x + r₀ / 2 + 1 ≤ (3 : ℝ) ^ m / 2 := by
-      linarith only [hm, euclideanNorm_nonneg x, hr₀]
-    linarith only [hhalf]
-  have hdecay := A.abs_analyticCubeBoundaryRemainder_le_localized L mu m
-    (x := x) hball hinner hlayer
+private theorem boundaryConservativity_comparisonBounds1 :
+    ∀ {d : ℕ} [inst : NeZero d] (M : ABKModel d) (omega : FullSample d M.gamma) (mu : (↑PositiveShift : Type))
+      (x : Vec d),
+      let L : WholeSpaceLocalizedSplitData (streamWholeSpaceAnalyticData M omega) := streamLocalizedSplitData M omega;
+      let r₀ : ℝ := L.freezingRadius x;
+      let U : ℝ := streamBoundaryLocalizedUpperConst M omega mu;
+      let alpha : ℝ := (1 / 2 : ℝ);
+      let q : ℝ := alpha / (alpha + (↑d : ℝ) / (2 : ℝ));
+      let c : ℝ := √(M.nu * (↑mu : ℝ)) / ((2 : ℝ) * √(2 : ℝ) * U) * q / (4 : ℝ);
+      ∀ (hU : (0 : ℝ) < U) (hq : (0 : ℝ) < q) (m : ℕ)
+        (hm : (4 : ℝ) * (euclideanNorm x + r₀ / (2 : ℝ) + (1 : ℝ)) < (3 : ℝ) ^ m),
+        Real.exp
+            (-(agmonRate M.nu
+                    (localizedInteriorUpper M.nu (↑mu : ℝ) (L.roughBound (0 : Vec d) ((3 : ℝ) ^ m))
+                      (L.smoothDivBound (0 : Vec d) ((3 : ℝ) ^ m)))
+                    (↑mu : ℝ) *
+                  q *
+                (-(euclideanNorm (x - (0 : Vec d)) + r₀ / (2 : ℝ)) - (-cubeBoundaryCutoffInnerRadius m + (1 : ℝ))))) ≤
+          Real.exp (-(c * (3 : ℝ) ^ m / ((↑m : ℝ) + (1 : ℝ)))) := by
+  intro d instance1 M omega mu x L r₀ U alpha q c hU hq m hm
   have hLupper := localizedInteriorUpper_streamBoundary_le M omega mu m
   have hLpos := localizedInteriorUpper_pos (mass := (mu : ℝ)) M.nu_pos
     (L.roughBound_nonneg 0 ((3 : ℝ) ^ m) (pow_nonneg (by norm_num) m))
@@ -491,6 +246,338 @@ theorem tendsto_abs_streamAnalyticCubeBoundaryRemainder
       c * (3 : ℝ) ^ m / ((m : ℝ) + 1) =
           (c * 4 / ((m : ℝ) + 1)) * ((3 : ℝ) ^ m / 4) := by ring
       _ ≤ _ := hmul
+  exact hexp
+
+private theorem boundaryConservativity_comparisonBounds2 :
+    ∀ {d : ℕ} [inst : NeZero d] (M : ABKModel d) (omega : FullSample d M.gamma) (x : Vec d),
+      let L : WholeSpaceLocalizedSplitData (streamWholeSpaceAnalyticData M omega) := streamLocalizedSplitData M omega;
+      let r₀ : ℝ := L.freezingRadius x;
+      ∀ (hr₀ : (0 : ℝ) < r₀) (m : ℕ) (hm : (4 : ℝ) * (euclideanNorm x + r₀ / (2 : ℝ) + (1 : ℝ)) < (3 : ℝ) ^ m),
+        euclideanBall x r₀ ⊆ wholeSpaceCube d m ∧
+          euclideanBall x (r₀ / (2 : ℝ)) ⊆ euclideanBall (0 : Vec d) (cubeBoundaryCutoffInnerRadius m) ∧
+            -cubeBoundaryCutoffInnerRadius m + (1 : ℝ) ≤ -(euclideanNorm (x - (0 : Vec d)) + r₀ / (2 : ℝ)) := by
+  intro d instance1 M omega x L r₀ hr₀ m hm
+  have hball : euclideanBall x r₀ ⊆ wholeSpaceCube d m := by
+    intro y hy
+    rw [mem_wholeSpaceCube_iff]
+    have hdist := euclideanNorm_sub_lt_of_mem_euclideanBall hr₀.le hy
+    have hnormy : euclideanNorm y ≤ euclideanNorm (y - x) + euclideanNorm x := by
+      convert euclideanNorm_add_le (d := d) (y - x) x using 1
+      ring_nf
+    have hnormlt : euclideanNorm y < (3 : ℝ) ^ m := by
+      exact lt_of_le_of_lt hnormy
+        (by linarith only [hdist, hm, hr₀, euclideanNorm_nonneg x])
+    intro i
+    exact abs_lt.mp ((abs_coordinate_le_euclideanNorm y i).trans_lt hnormlt)
+  have hinner : euclideanBall x (r₀ / 2) ⊆
+      euclideanBall 0 (cubeBoundaryCutoffInnerRadius m) := by
+    intro y hy
+    have hdist := euclideanNorm_sub_lt_of_mem_euclideanBall
+      (half_pos hr₀).le hy
+    have hnormy : euclideanNorm y ≤ euclideanNorm (y - x) + euclideanNorm x := by
+      convert euclideanNorm_add_le (d := d) (y - x) x using 1
+      ring_nf
+    have hhalf : euclideanNorm x + r₀ / 2 < (3 : ℝ) ^ m / 2 := by
+      linarith only [hm, euclideanNorm_nonneg x, hr₀]
+    have hnormlt : euclideanNorm (y - 0) < cubeBoundaryCutoffInnerRadius m := by
+      simp only [sub_zero]
+      unfold cubeBoundaryCutoffInnerRadius
+      linarith only [hdist, hnormy, hhalf]
+    change euclideanSqDist y 0 < cubeBoundaryCutoffInnerRadius m ^ 2
+    rw [show euclideanSqDist y 0 = euclideanNorm (y - 0) ^ 2 by
+      rw [euclideanNorm_sq]; rfl]
+    exact (sq_lt_sq₀ (euclideanNorm_nonneg _)
+      (by unfold cubeBoundaryCutoffInnerRadius; positivity)).2 hnormlt
+  have hlayer : -cubeBoundaryCutoffInnerRadius m + 1 ≤
+      -(euclideanNorm (x - 0) + r₀ / 2) := by
+    simp only [sub_zero]
+    unfold cubeBoundaryCutoffInnerRadius
+    have hhalf : euclideanNorm x + r₀ / 2 + 1 ≤ (3 : ℝ) ^ m / 2 := by
+      linarith only [hm, euclideanNorm_nonneg x, hr₀]
+    linarith only [hhalf]
+  exact ⟨hball, hinner, hlayer⟩
+
+private theorem boundaryConservativity_estimate1 :
+    ∀ {d : ℕ} [NeZero d] (M : ABKModel d)
+      (omega : FullSample d M.gamma) (mu : (↑PositiveShift : Type)) (x : Vec d),
+      let L : WholeSpaceLocalizedSplitData (streamWholeSpaceAnalyticData M omega) := streamLocalizedSplitData M omega;
+      let r₀ : ℝ := L.freezingRadius x;
+      let alpha : ℝ := (1 / 2 : ℝ);
+      ∀ (hr₀ : (0 : ℝ) < r₀),
+        let V0 : ℝ := (2 : ℝ) ^ d;
+        let e : ℝ := (↑mu : ℝ) * (min (↑mu : ℝ) M.nu)⁻¹;
+        let C2 : ℝ :=
+          smallContrastZerothSchauderConstant d *
+              (r₀ ^ ((1 : ℝ) - alpha - (↑d : ℝ) / (2 : ℝ)) * e * V0 + r₀ ^ ((2 : ℝ) - alpha) * ((↑mu : ℝ) / M.nu)) *
+            (r₀ / (2 : ℝ)) ^ alpha;
+        ∀ (hV0 : (0 : ℝ) ≤ V0) (he : (0 : ℝ) ≤ e) (m : ℕ),
+          let t : ℝ := (↑m : ℝ) + (1 : ℝ);
+          let B : ℝ := ((3 : ℝ) ^ d) ^ m;
+          let V : ℝ := ((volume : (a : Set (Vec d)) → ℝ≥0∞) (wholeSpaceCube d m)).toReal;
+          ∀ (ht : (1 : ℝ) ≤ t) (hB : (1 : ℝ) ≤ B) (hV : V = V0 * B),
+            smallContrastZerothSchauderConstant d *
+                  (r₀ ^ ((1 : ℝ) - alpha - (↑d : ℝ) / (2 : ℝ)) * (e * V) + r₀ ^ ((2 : ℝ) - alpha) * ((↑mu : ℝ) / M.nu)) *
+                (r₀ / (2 : ℝ)) ^ alpha ≤
+              C2 * t ^ (2 : ℕ) * B := by
+  intro d instance1 M omega mu x L r₀ alpha hr₀ V0 e C2 hV0 he m t B V ht hB hV
+  have htb : 1 ≤ t ^ 2 * B :=
+    calc
+      (1 : ℝ) = 1 * 1 := by ring
+      _ ≤ t ^ 2 * B := mul_le_mul (one_le_pow₀ ht) hB (by norm_num)
+        (pow_nonneg (zero_le_one.trans ht) 2)
+  rw [hV]
+  unfold C2
+  have hleft0 : 0 ≤ smallContrastZerothSchauderConstant d :=
+    smallContrastZerothSchauderConstant_nonneg d
+  have hrpow1 : 0 ≤ r₀ ^ (1 - alpha - (d : ℝ) / 2) :=
+    Real.rpow_nonneg hr₀.le _
+  have hrpow2 : 0 ≤ r₀ ^ (2 - alpha) := Real.rpow_nonneg hr₀.le _
+  have hrpow3 : 0 ≤ (r₀ / 2) ^ alpha :=
+    Real.rpow_nonneg (half_pos hr₀).le _
+  have hmain :
+      r₀ ^ (1 - alpha - (d : ℝ) / 2) * (e * (V0 * B)) +
+          r₀ ^ (2 - alpha) * ((mu : ℝ) / M.nu) ≤
+        (r₀ ^ (1 - alpha - (d : ℝ) / 2) * e * V0 +
+          r₀ ^ (2 - alpha) * ((mu : ℝ) / M.nu)) * (t ^ 2 * B) := by
+    have hterm1 :
+        r₀ ^ (1 - alpha - (d : ℝ) / 2) * (e * (V0 * B)) ≤
+          (r₀ ^ (1 - alpha - (d : ℝ) / 2) * e * V0) * (t ^ 2 * B) := by
+      have ht2 : 1 ≤ t ^ 2 := one_le_pow₀ ht
+      have hBscale : B ≤ t ^ 2 * B := by
+        simpa only [one_mul] using
+          mul_le_mul_of_nonneg_right ht2 (zero_le_one.trans hB)
+      have hcoef : 0 ≤ r₀ ^ (1 - alpha - (d : ℝ) / 2) * e * V0 :=
+        mul_nonneg (mul_nonneg hrpow1 he) hV0
+      calc
+        _ = (r₀ ^ (1 - alpha - (d : ℝ) / 2) * e * V0) * B := by ring
+        _ ≤ (r₀ ^ (1 - alpha - (d : ℝ) / 2) * e * V0) * (t ^ 2 * B) :=
+          mul_le_mul_of_nonneg_left hBscale hcoef
+    have hterm2 := mul_le_mul_of_nonneg_left htb
+      (mul_nonneg hrpow2 (div_nonneg mu.property.le M.nu_pos.le))
+    calc
+      _ ≤ (r₀ ^ (1 - alpha - (d : ℝ) / 2) * e * V0) * (t ^ 2 * B) +
+          (r₀ ^ (2 - alpha) * ((mu : ℝ) / M.nu)) * (t ^ 2 * B) :=
+        add_le_add hterm1 (by simpa only [mul_one] using hterm2)
+      _ = _ := by ring
+  convert mul_le_mul_of_nonneg_right
+    (mul_le_mul_of_nonneg_left hmain hleft0) hrpow3 using 1
+  all_goals first | rfl | ring
+
+/-- The analytic boundary defect for the stream coefficient tends pointwise
+to zero along the cubic exhaustion. -/
+private theorem boundaryConservativity_estimate2 :
+    ∀ {d : ℕ} [inst : NeZero d] (M : ABKModel d)
+      (omega : FullSample d M.gamma) (mu : (↑PositiveShift : Type)) (x : Vec d),
+      let A : WholeSpaceAnalyticData d := streamWholeSpaceAnalyticData M omega;
+      let L : WholeSpaceLocalizedSplitData (streamWholeSpaceAnalyticData M omega) := streamLocalizedSplitData M omega;
+      let r₀ : ℝ := L.freezingRadius x;
+      let U : ℝ := streamBoundaryLocalizedUpperConst M omega mu;
+      let alpha : ℝ := (1 / 2 : ℝ);
+      ∀ (hr₀ : (0 : ℝ) < r₀),
+        let P : ℕ → ℝ := fun (m : ℕ) =>
+          localizedInteriorDecayConstant d M.nu (↑mu : ℝ) (L.roughBound (0 : Vec d) ((3 : ℝ) ^ m))
+            (L.smoothDivBound (0 : Vec d) ((3 : ℝ) ^ m)) (1 : ℝ) (cubeBoundaryCutoffUniformGradientBudget (d := d))
+            ((volume : (a : Set (Vec d)) → ℝ≥0∞) (wholeSpaceCube d m)).toReal alpha
+            ((↑mu : ℝ) * (min (↑mu : ℝ) M.nu)⁻¹ * ((volume : (a : Set (Vec d)) → ℝ≥0∞) (wholeSpaceCube d m)).toReal) r₀;
+        ∃ (C : ℝ), (0 : ℝ) ≤ C ∧ ∀ (m : ℕ), P m ≤ C * ((↑m : ℝ) + (1 : ℝ)) * ((3 : ℝ) ^ (d + (1 : ℕ))) ^ m := by
+  intro d instance1 M omega mu x A L r₀ U alpha hr₀ P
+  let Ceta := cubeBoundaryCutoffUniformGradientBudget (d := d)
+  let V0 : ℝ := (2 : ℝ) ^ d
+  let Q : ℝ := 8 * U ^ 2 / (M.nu * (mu : ℝ)) * Ceta * V0
+  let den : ℝ := Real.sqrt ((volume (smallContrastUnitBall d)).toReal) *
+    Real.sqrt ((r₀ / 2) ^ d)
+  let e : ℝ := (mu : ℝ) * (min (mu : ℝ) M.nu)⁻¹
+  let C2 : ℝ := smallContrastZerothSchauderConstant d *
+    (r₀ ^ (1 - alpha - (d : ℝ) / 2) * e * V0 +
+      r₀ ^ (2 - alpha) * ((mu : ℝ) / M.nu)) * (r₀ / 2) ^ alpha
+  let C : ℝ := (Q + 1) / den + C2
+  have hCeta : 0 ≤ Ceta := by
+    unfold Ceta cubeBoundaryCutoffUniformGradientBudget
+    positivity
+  have hV0 : 0 ≤ V0 := by unfold V0; positivity
+  have hQ : 0 ≤ Q := by
+    unfold Q
+    exact mul_nonneg
+      (mul_nonneg
+        (div_nonneg (mul_nonneg (by norm_num) (sq_nonneg U))
+          (mul_nonneg M.nu_pos.le mu.property.le)) hCeta) hV0
+  have hden : 0 < den := by
+    unfold den
+    exact mul_pos (Real.sqrt_pos.2 unitBallVolume_pos)
+      (Real.sqrt_pos.2 (pow_pos (half_pos hr₀) d))
+  have he : 0 ≤ e := by
+    unfold e
+    exact mul_nonneg mu.property.le
+      (inv_nonneg.mpr (le_of_lt (lt_min mu.property M.nu_pos)))
+  have hC2 : 0 ≤ C2 := by
+    unfold C2
+    exact mul_nonneg
+      (mul_nonneg (smallContrastZerothSchauderConstant_nonneg d)
+        (add_nonneg
+          (mul_nonneg
+            (mul_nonneg (Real.rpow_nonneg hr₀.le _) he) hV0)
+          (mul_nonneg (Real.rpow_nonneg hr₀.le _)
+            (div_nonneg mu.property.le M.nu_pos.le))))
+      (Real.rpow_nonneg (half_pos hr₀).le _)
+  have hC : 0 ≤ C := by
+    unfold C
+    exact add_nonneg (div_nonneg (by linarith only [hQ]) hden.le) hC2
+  refine ⟨C, hC, fun m ↦ ?_⟩
+  let t : ℝ := (m : ℝ) + 1
+  let B : ℝ := ((3 : ℝ) ^ d) ^ m
+  let V : ℝ := (volume (wholeSpaceCube d m)).toReal
+  let Lm := localizedInteriorUpper M.nu (mu : ℝ)
+    (L.roughBound 0 ((3 : ℝ) ^ m)) (L.smoothDivBound 0 ((3 : ℝ) ^ m))
+  let X : ℝ := 8 * Lm ^ 2 / (M.nu * (mu : ℝ)) * Ceta * V
+  have ht : 1 ≤ t := by
+    unfold t
+    exact le_add_of_nonneg_left (Nat.cast_nonneg m)
+  have hB : 1 ≤ B := by
+    unfold B
+    exact one_le_pow₀ (one_le_pow₀ (by norm_num))
+  have hV : V = V0 * B := by
+    unfold V V0 B
+    rw [volume_wholeSpaceCube_toReal, mul_pow]
+    congr 1
+    rw [← pow_mul, Nat.mul_comm m d, pow_mul]
+  have hLm : Lm ≤ U * t := by
+    simpa only [Lm, U, t, A, L, streamLocalizedSplitData] using
+      localizedInteriorUpper_streamBoundary_le M omega mu m
+  have hLm0 : 0 < Lm := localizedInteriorUpper_pos M.nu_pos
+    (L.roughBound_nonneg 0 ((3 : ℝ) ^ m) (pow_nonneg (by norm_num) m))
+    (L.smoothDivBound_nonneg 0 ((3 : ℝ) ^ m) (pow_nonneg (by norm_num) m))
+  have hX : 0 ≤ X := by
+    unfold X
+    exact mul_nonneg
+      (mul_nonneg
+        (div_nonneg (mul_nonneg (by norm_num) (sq_nonneg Lm))
+          (mul_nonneg M.nu_pos.le mu.property.le)) hCeta) ENNReal.toReal_nonneg
+  have hXbound : X ≤ Q * t ^ 2 * B := by
+    have hsq : Lm ^ 2 ≤ (U * t) ^ 2 :=
+      pow_le_pow_left₀ hLm0.le hLm 2
+    have hK : 0 ≤ 8 / (M.nu * (mu : ℝ)) * Ceta * V0 := by
+      exact mul_nonneg
+        (mul_nonneg (div_nonneg (by norm_num : (0 : ℝ) ≤ 8)
+          (mul_nonneg M.nu_pos.le mu.property.le)) hCeta) hV0
+    have hB0 : 0 ≤ B := zero_le_one.trans hB
+    unfold X
+    rw [hV]
+    unfold Q
+    calc
+      8 * Lm ^ 2 / (M.nu * (mu : ℝ)) * Ceta * (V0 * B) =
+          (8 / (M.nu * (mu : ℝ)) * Ceta * V0) * Lm ^ 2 * B := by ring
+      _ ≤ (8 / (M.nu * (mu : ℝ)) * Ceta * V0) * (U * t) ^ 2 * B :=
+        mul_le_mul_of_nonneg_right (mul_le_mul_of_nonneg_left hsq hK) hB0
+      _ = (8 * U ^ 2 / (M.nu * (mu : ℝ)) * Ceta * V0) * t ^ 2 * B := by ring
+  have hsqrtX : Real.sqrt X ≤ X + 1 := by
+    have hs := Real.sqrt_nonneg X
+    have hs2 := Real.sq_sqrt hX
+    nlinarith only [hs, hs2, sq_nonneg (Real.sqrt X - 1)]
+  have hXone : X + 1 ≤ (Q + 1) * t ^ 2 * B := by
+    have htb : 1 ≤ t ^ 2 * B := by
+      calc
+        (1 : ℝ) = 1 * 1 := by ring
+        _ ≤ t ^ 2 * B := mul_le_mul (one_le_pow₀ ht) hB (by norm_num)
+          (pow_nonneg (zero_le_one.trans ht) 2)
+    calc
+      X + 1 ≤ Q * t ^ 2 * B + 1 := by linarith only [hXbound]
+      _ ≤ Q * t ^ 2 * B + 1 * (t ^ 2 * B) :=
+        by simp only [one_mul]; linarith only [htb]
+      _ = (Q + 1) * t ^ 2 * B := by ring
+  have hfirst : Real.sqrt X /
+        Real.sqrt ((volume (smallContrastUnitBall d)).toReal) /
+        Real.sqrt ((r₀ / 2) ^ d) ≤
+      ((Q + 1) / den) * t ^ 2 * B := by
+    calc
+      _ ≤ (X + 1) /
+          Real.sqrt ((volume (smallContrastUnitBall d)).toReal) /
+          Real.sqrt ((r₀ / 2) ^ d) := by gcongr
+      _ ≤ ((Q + 1) * t ^ 2 * B) /
+          Real.sqrt ((volume (smallContrastUnitBall d)).toReal) /
+          Real.sqrt ((r₀ / 2) ^ d) := by gcongr
+      _ = ((Q + 1) / den) * t ^ 2 * B := by
+        unfold den
+        field_simp
+  have hsecond : smallContrastZerothSchauderConstant d *
+        (r₀ ^ (1 - alpha - (d : ℝ) / 2) * (e * V) +
+          r₀ ^ (2 - alpha) * ((mu : ℝ) / M.nu)) *
+        (r₀ / 2) ^ alpha ≤ C2 * t ^ 2 * B  := @boundaryConservativity_estimate1 (d) (by infer_instance) (M) (omega) (mu) (x) (hr₀) (hV0) (he) (m) (ht) (hB) (hV)
+  have hPquad : P m ≤ C * t ^ 2 * B := by
+    calc
+      P m ≤ ((Q + 1) / den) * t ^ 2 * B + C2 * t ^ 2 * B := by
+        convert add_le_add hfirst hsecond using 1
+        dsimp only [P, localizedInteriorDecayConstant, X, e, V, Lm, Ceta]
+        simp only [one_mul, mul_one]
+      _ = ((Q + 1) / den + C2) * t ^ 2 * B := by ring
+      _ = C * t ^ 2 * B := by rfl
+  have htThree : t ≤ (3 : ℝ) ^ m := by
+    simpa only [t] using natCast_add_one_le_three_pow m
+  calc
+    P m ≤ C * t ^ 2 * B := hPquad
+    _ ≤ C * t * ((3 : ℝ) ^ m) * B := by
+      have hCt : 0 ≤ C * t := mul_nonneg hC (zero_le_one.trans ht)
+      calc
+        C * t ^ 2 * B = (C * t) * t * B := by ring
+        _ ≤ (C * t) * ((3 : ℝ) ^ m) * B := by gcongr
+    _ = C * ((m : ℝ) + 1) * ((3 : ℝ) ^ (d + 1)) ^ m := by
+      unfold t B
+      rw [pow_add, mul_pow]
+      ring
+
+theorem tendsto_abs_streamAnalyticCubeBoundaryRemainder
+    (M : ABKModel d) (omega : FullSample d M.gamma)
+    (mu : PositiveShift) (x : Vec d) :
+    Tendsto (fun m ↦ |1 - (mu : ℝ) *
+        (streamWholeSpaceAnalyticData M omega).analyticCubeResolvent mu
+          (fun _ : Vec d ↦ (1 : ℝ)) measurable_const
+          (D := 1) (fun _ ↦ by norm_num) m x|) atTop (nhds 0) := by
+  let A := streamWholeSpaceAnalyticData M omega
+  let L := streamLocalizedSplitData M omega
+  let r₀ := L.freezingRadius x
+  let U := streamBoundaryLocalizedUpperConst M omega mu
+  let alpha : ℝ := 1 / 2
+  let q : ℝ := alpha / (alpha + (d : ℝ) / 2)
+  let c : ℝ := Real.sqrt (M.nu * (mu : ℝ)) / (2 * Real.sqrt 2 * U) * q / 4
+  have hU : 0 < U := streamBoundaryLocalizedUpperConst_pos M omega mu
+  have hr₀ : 0 < r₀ := L.freezingRadius_pos x
+  have hq : 0 < q := by unfold q alpha; positivity
+  have hc : 0 < c := by
+    unfold c
+    exact div_pos
+      (mul_pos
+        (div_pos (Real.sqrt_pos.2 (mul_pos M.nu_pos mu.property)) (by positivity)) hq)
+      (by norm_num)
+  let P : ℕ → ℝ := fun m : ℕ ↦
+    localizedInteriorDecayConstant d M.nu (mu : ℝ)
+      (L.roughBound 0 ((3 : ℝ) ^ m)) (L.smoothDivBound 0 ((3 : ℝ) ^ m)) 1
+      (cubeBoundaryCutoffUniformGradientBudget (d := d))
+      (volume (wholeSpaceCube d m)).toReal alpha
+      ((mu : ℝ) * (min (mu : ℝ) M.nu)⁻¹ *
+        (volume (wholeSpaceCube d m)).toReal) r₀
+  have hPexists : ∃ C : ℝ, 0 ≤ C ∧ ∀ m : ℕ,
+      P m ≤ C * ((m : ℝ) + 1) * ((3 : ℝ) ^ (d + 1)) ^ m  := @boundaryConservativity_estimate2 (d) (by infer_instance) (M) (omega) (mu) (x) (hr₀)
+  obtain ⟨C, hC, hPC⟩ := hPexists
+  have hmajor := tendsto_triadicVolume_mul_exp_neg_triadic_div_linear
+    (d + 1) hC hc
+  refine squeeze_zero' (Filter.Eventually.of_forall fun m ↦ abs_nonneg _) ?_ hmajor
+  filter_upwards [((tendsto_pow_atTop_atTop_of_one_lt
+    (by norm_num : (1 : ℝ) < 3)).eventually_gt_atTop
+      (4 * (euclideanNorm x + r₀ / 2 + 1)))] with m hm
+  obtain ⟨hball, hinner, hlayer⟩ :=
+    (show (euclideanBall x r₀ ⊆ wholeSpaceCube d m) ∧ (euclideanBall x (r₀ / 2) ⊆
+      euclideanBall 0 (cubeBoundaryCutoffInnerRadius m)) ∧ (-cubeBoundaryCutoffInnerRadius m + 1 ≤
+      -(euclideanNorm (x - 0) + r₀ / 2)) from
+      @boundaryConservativity_comparisonBounds2 (d) (by infer_instance) (M) (omega) (x) (hr₀) (m) (hm))
+  have hdecay := A.abs_analyticCubeBoundaryRemainder_le_localized L mu m
+    (x := x) hball hinner hlayer
+  have hexp : Real.exp (-((agmonRate M.nu
+      (localizedInteriorUpper M.nu (mu : ℝ)
+        (L.roughBound 0 ((3 : ℝ) ^ m))
+        (L.smoothDivBound 0 ((3 : ℝ) ^ m))) (mu : ℝ) * q) *
+      (-(euclideanNorm (x - 0) + r₀ / 2) -
+        (-cubeBoundaryCutoffInnerRadius m + 1)))) ≤
+      Real.exp (-(c * (3 : ℝ) ^ m / ((m : ℝ) + 1))) :=
+    @boundaryConservativity_comparisonBounds1 (d) (by infer_instance) (M) (omega) (mu) (x) (hU) (hq) (m) (hm)
   calc
     _ ≤ P m * Real.exp (-((agmonRate M.nu
           (localizedInteriorUpper M.nu (mu : ℝ)

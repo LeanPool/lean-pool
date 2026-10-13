@@ -84,7 +84,7 @@ variable {d : ℕ}
 /-- The value of an `H¹₀` difference. -/
 private theorem h10_sub_toFun {U : Set (Vec d)} (a b : H10Function U) (x : Vec d) :
     (a - b).toH1Function.toFun x = a.toH1Function.toFun x - b.toH1Function.toFun x := by
-  show (a.toH1Function + ((-1 : ℝ) • b.toH1Function)).toFun x = _
+  change (a.toH1Function + ((-1 : ℝ) • b.toH1Function)).toFun x = _
   rw [H1Function.add_toFun, H1Function.smul_toFun]
   ring
 
@@ -111,7 +111,7 @@ theorem exists_h10Function_sub_of_hasZeroTrace {U : Set (Vec d)}
       have hv' : v.grad x = h.grad x + wv.toH1Function.grad x := hwvG x
       have hsub : (wu - wv).toH1Function.grad x =
           wu.toH1Function.grad x - wv.toH1Function.grad x := by
-        show (wu.toH1Function + ((-1 : ℝ) • wv.toH1Function)).grad x = _
+        change (wu.toH1Function + ((-1 : ℝ) • wv.toH1Function)).grad x = _
         rw [H1Function.add_grad, H1Function.smul_grad]
         simp only [neg_smul, one_smul]
         rw [sub_eq_add_neg]
@@ -200,7 +200,7 @@ theorem dirichletComparator_energyAverage_eq {Q : TriadicCube d} {sigmaBarM : �
   congr 1
   refine MeasureTheory.integral_congr_ae ?_
   refine hgrad.mono fun x hx => ?_
-  show sigmaBarM * vecNormSq (v.grad x) = sigmaBarM * vecNormSq (v'.grad x)
+  change sigmaBarM * vecNormSq (v.grad x) = sigmaBarM * vecNormSq (v'.grad x)
   rw [hx]
 
 end

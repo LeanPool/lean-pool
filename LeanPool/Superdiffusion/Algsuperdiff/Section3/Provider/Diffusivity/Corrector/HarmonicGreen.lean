@@ -137,7 +137,7 @@ theorem integral_mul_euclideanCoordSecondDeriv_eq
         -∫ x, euclideanCoordDeriv i (euclideanCoordDeriv i u) x * ψ x ∂volume :=
     integral_mul_euclideanCoordDeriv_eq_neg_of_contDiff_one
       hdu hψ1 hψc i
-  show ∫ x, u x * euclideanCoordDeriv i (euclideanCoordDeriv i ψ) x ∂volume =
+  change ∫ x, u x * euclideanCoordDeriv i (euclideanCoordDeriv i ψ) x ∂volume =
     ∫ x, euclideanCoordDeriv i (euclideanCoordDeriv i u) x * ψ x ∂volume
   rw [hstep₁, hstep₂, neg_neg]
 
@@ -168,7 +168,8 @@ theorem integral_mul_euclideanCoordLaplacian_eq_integral_euclideanCoordLaplacian
     intro v hv i
     have hdv : ContDiff ℝ (1 : ℕ) (euclideanCoordDeriv i v) :=
       contDiff_euclideanCoordDeriv_of_contDiff_succ (n := 1) (by exact_mod_cast hv) i
-    exact (contDiff_euclideanCoordDeriv_of_contDiff_succ (n := 0) (by exact_mod_cast hdv) i).continuous
+    exact (contDiff_euclideanCoordDeriv_of_contDiff_succ (n := 0) (by exact_mod_cast hdv)
+      i).continuous
   have hddsupp : ∀ i : Fin d, HasCompactSupport (euclideanCoordSecondDeriv i i ψ) :=
     fun i =>
       hasCompactSupport_euclideanCoordDeriv

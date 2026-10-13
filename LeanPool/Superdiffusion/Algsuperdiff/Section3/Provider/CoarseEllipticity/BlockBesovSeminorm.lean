@@ -91,7 +91,7 @@ theorem cubeAverage_const_mul (R : TriadicCube d) (c : ℝ) (f : Vec d → ℝ) 
 theorem cubeAverageVec_const_smul (R : TriadicCube d) (c : ℝ) (u : Vec d → Vec d) :
     cubeAverageVec R (fun x => c • u x) = c • cubeAverageVec R u := by
   funext i
-  show cubeAverage R (fun x => (c • u x) i) = (c • cubeAverageVec R u) i
+  change cubeAverage R (fun x => (c • u x) i) = (c • cubeAverageVec R u) i
   have h1 : (fun x => (c • u x) i) = (fun x => c * u x i) := by
     funext x; simp [Pi.smul_apply, smul_eq_mul]
   rw [h1, cubeAverage_const_mul]

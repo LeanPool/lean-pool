@@ -34,7 +34,7 @@ those numbers:
 
 * the Besov tower the closure's `hosc` is stated at is the tower of the
   **gauged** `bfF_z`, which by
-  `Closure.GammaTenEnvelopeInputGauge.cubeBesovPositiveVectorPartialSeminormTwo_gauged_localizationFz_potential`
+`cubeBesovPositiveVectorPartialSeminormTwo_gauged_localizationFz_potential`
   and `..._flux` is a fixed *scalar multiple* of the tower of the raw field; and
 * the flux leg's raw field is `neumannFluxField = grad w_N + streamForcing`,
   whose oscillation cell exceeds that of `grad w_N` by the forcing term of
@@ -220,7 +220,7 @@ theorem exists_besovEnvelope_interiorMesoCubeGrid_of_depth_gridRoot_const
       (fun N => le_trans (sum_depth_fold_const_le D (fun i => le_of_eq rfl) N) hbudget)
   refine ⟨B, hB0, hBmem, ?_, hBdom⟩
   have hmom : gridFourthMoment mu (interiorMesoCubeGrid d K n outer) B ≤ c ^ (4 : ℕ) := by
-    show cubeFamilyAverage _ (fun R => ∫ w, B R w ^ (4 : ℝ) ∂mu) ≤ _
+    change cubeFamilyAverage _ (fun R => ∫ w, B R w ^ (4 : ℝ) ∂mu) ≤ _
     have hcongr : (fun R => ∫ w, B R w ^ (4 : ℝ) ∂mu) =
         fun R => ∫ w, B R w ^ (4 : ℕ) ∂mu := by
       funext R

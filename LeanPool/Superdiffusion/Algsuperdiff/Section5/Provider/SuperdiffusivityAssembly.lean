@@ -224,15 +224,10 @@ private theorem annealed_v2_bounds_of_components {d : ℕ} [NeZero d]
   have hEmeas : AEMeasurable E mu := H.renormalizationError_aemeasurable.ennreal_ofReal
   have hSmeas : AEMeasurable S mu := H.confinementRadius_aemeasurable.ennreal_ofReal
   have hS2meas : AEMeasurable S2 mu := hSmeas.pow_const 2
-  have hRE0 : 0 ≤ RE := by
-    dsimp only [RE]
-    positivity
+  have hRE0 : 0 ≤ RE := by positivity
   have hRS0 : 0 ≤ RS := by
-    dsimp only [RS]
     exact mul_nonneg (mul_nonneg hC0 (Real.sqrt_nonneg _))
       (intrinsicScale_pos M.nu_pos hcstar M.shellPrefix.gamma_pos ht).le
-  have hEm2 : (∫⁻ omega, E omega ^ (2 * p) ∂mu) ≤ ENNReal.ofReal RE ^ (2 * p) := by
-    exact H.renormalizationError_moment_two
   have hEm4 : (∫⁻ omega, E omega ^ (4 * p) ∂mu) ≤ ENNReal.ofReal RE ^ (4 * p) := by
     exact H.renormalizationError_moment_four
   have hSm4 : (∫⁻ omega, S omega ^ (4 * p) ∂mu) ≤ ENNReal.ofReal RS ^ (4 * p) := by
@@ -249,7 +244,8 @@ private theorem annealed_v2_bounds_of_components {d : ℕ} [NeZero d]
       (by linarith only [hp]) hS2m2
   have hES2 : (∫⁻ omega, (E omega * S2 omega) ^ p ∂mu) ≤
       ENNReal.ofReal (RE * RS ^ (2 : ℕ)) ^ p :=
-    lintegral_mul_rpow_le_of_moments mu hp0 hEmeas hS2meas hRE0 hEm2 hS2m2
+    lintegral_mul_rpow_le_of_moments mu hp0 hEmeas hS2meas hRE0 H.renormalizationError_moment_two
+      hS2m2
   have hE2m2 : (∫⁻ omega, (E omega ^ (2 : ℝ)) ^ (2 * p) ∂mu) ≤
       ENNReal.ofReal (RE ^ (2 : ℕ)) ^ (2 * p) := by
     have h := lintegral_sq_rpow_le_of_moment (mu := mu) (F := E) (RF := RE)
@@ -261,9 +257,7 @@ private theorem annealed_v2_bounds_of_components {d : ℕ} [NeZero d]
     lintegral_mul_rpow_le_of_moments mu hp0 (hEmeas.pow_const 2) hS2meas
       (sq_nonneg RE) hE2m2 hS2m2
   let A := Real.sqrt M.gamma * |Real.log M.gamma|
-  have hA0 : 0 ≤ A := by
-    dsimp only [A]
-    exact mul_nonneg (Real.sqrt_nonneg _) (abs_nonneg _)
+  have hA0 : 0 ≤ A := mul_nonneg (Real.sqrt_nonneg _) (abs_nonneg _)
   have hAS2 : (∫⁻ omega, (ENNReal.ofReal A * S2 omega) ^ p ∂mu) ≤
       ENNReal.ofReal (A * RS ^ (2 : ℕ)) ^ p :=
     lintegral_const_mul_rpow_le hp0 hA0 hS2mp

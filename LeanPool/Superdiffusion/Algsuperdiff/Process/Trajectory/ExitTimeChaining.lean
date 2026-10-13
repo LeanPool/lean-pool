@@ -353,7 +353,8 @@ theorem IsConservative.lintegral_exp_neg_exitTime_le_rho_pow
       · have hmem : omega ∉ {omega | ContinuousPath.exitTime U omega < ⊤} := hexit
         rw [Set.indicator_of_notMem hmem]
         exact zero_le
-    _ ≤ rho ^ N := IsFellerKernelSemigroup.lintegral_iteratedStoppingWeight_le P hP hFeller hK W sigma
+    _ ≤ rho ^ N := IsFellerKernelSemigroup.lintegral_iteratedStoppingWeight_le P hP hFeller hK W
+      sigma
       hsigma lam rho hrho hsmall hstay N x hx
 
 end

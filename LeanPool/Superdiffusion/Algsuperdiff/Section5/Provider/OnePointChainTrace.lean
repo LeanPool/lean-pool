@@ -19,6 +19,9 @@ Module imports, support namespace and local option directives adapted for Lean P
 
 @[expose] public section
 
+open Algsuperdiff.Process.SubMarkovKernelSemigroup.IsConservative
+  (measure_exitTime_le_le_rho_pow_hitExit)
+
 
 /-!
 # The early-exit bound for a process read inside a larger carrier
@@ -61,6 +64,8 @@ open HCPolySupport MarkovProcess MarkovProcess.SubMarkovKernelSemigroup MeasureT
 open scoped ENNReal NNReal
 
 noncomputable section
+
+
 
 variable {d r : ℕ}
 
@@ -250,7 +255,8 @@ theorem measure_exitTime_le_le_rho_pow_of_good_cube_trace_image
     hP.continuousProcess P x
         {omega | ContinuousPath.exitTime (emb '' U) omega ≤ (t : ℝ≥0∞)} ≤
       ENNReal.ofReal (Real.exp (lam * (t : ℝ))) * rho ^ N := by
-  apply Algsuperdiff.Process.SubMarkovKernelSemigroup.IsConservative.measure_exitTime_le_le_rho_pow_hitExit
+  apply
+    measure_exitTime_le_le_rho_pow_hitExit
     P hP hFeller hK
     (fun i => emb '' enumeratedClosedCubeFamily n sites i)
     (fun i => emb '' enumeratedOpenEnlargementFamily n sites i)

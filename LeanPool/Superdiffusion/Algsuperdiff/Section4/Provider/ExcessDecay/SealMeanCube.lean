@@ -439,30 +439,49 @@ private theorem sealSlabMem_lower {c : Vec d} {i : Fin d} {L hs : ℝ} (hhs0 : 0
   · rw [hdiv]
     exact (div_le_one hhs0).mpr (by linarith only [hy'.1.2])
 
-/-- **`(A)` at a flush cube.**
-
-Let `K = sealCube c L` be the cube of centre `c` and side `L > 0`, let `σ = ±1`
-and let `a = cᵢ + σ·L/2` be the level of its `σeᵢ` face.  If `W` is odd about
-`{yᵢ = a}`, square integrable on the doubled cube `D = sealDouble c L i σ`, and
-`W − β` is classically harmonic on `D`, then
-
-```text
-  |β| ≤ C(d) · ‖W − β‖_{L²(K)}
-```
-
-with a constant that depends on the dimension alone.  Taking `β = ⨍_K W` gives
-the flush-cube mean bound; the general-`β` form is what the composition uses. -/
-theorem exists_abs_le_normalizedL2On_sealCube (d : ℕ) [NeZero d] :
-    ∃ C : ℝ, 0 ≤ C ∧
-      ∀ (i : Fin d) (sg L : ℝ) (c : Vec d) (W : Vec d → ℝ) (beta : ℝ),
-        (sg = 1 ∨ sg = -1) → 0 < L →
-        (∀ z, W (coordFaceReflection (c i + sg * (L / 2)) i z) = -W z) →
-        MemLp W 2 (volume.restrict (sealDouble c L i sg)) →
-        HarmonicOnNhd ((fun y => W y - beta) ∘
-            (toEuc.symm : EuclideanSpace ℝ (Fin d) → Vec d))
-          ((toEuc : Vec d → EuclideanSpace ℝ (Fin d)) '' sealDouble c L i sg) →
-        |beta| ≤ C * normalizedL2On (sealCube c L) (fun y => W y - beta) := by
+private theorem sealMeanCube_comparisonBounds1 :
+    ∀ (d : ℕ) [NeZero d],
+      ∃ (CH : ℝ) (_ :
+        ∀ (i : Fin d) (a w r : ℝ) (K D S T : Set (Vec d)) (W : Vec d → ℝ) (beta RK RD : ℝ),
+          (∀ (z : Vec d), W (coordFaceReflection a i z) = -W z) →
+            MemLp W (2 : ENNReal) (volume.restrict D) →
+              HarmonicOnNhd ((fun (y : Vec d) => W y - beta) ∘ (⇑toEuc.symm : (a : EuclideanSpace ℝ (Fin d)) → Vec d))
+                  ((⇑toEuc : (a : Vec d) → EuclideanSpace ℝ (Fin d)) '' D) →
+                Convex ℝ T →
+                  T ⊆ D →
+                    S ⊆ K →
+                      K ⊆ D →
+                        (fun (z : Vec d) => z - w • basisVec i) '' S ⊆ K →
+                          (∀ y ∈ S,
+                              y ∈ T ∧
+                                coordFaceReflection a i y ∈ T ∧
+                                  y - w • basisVec i ∈ T ∧ (0 : ℝ) < (a - y i) / w ∧ (a - y i) / w ≤ (1 : ℝ)) →
+                            (∀ z ∈ T, Metric.ball z r ⊆ D) →
+                              (0 : ℝ) < r →
+                                (∀ y ∈ D, y ∈ K ∨ coordFaceReflection a i y ∈ K ∨ y i = a) →
+                                  MeasurableSet S →
+                                    MeasurableSet K →
+                                      MeasurableSet D →
+                                        (volume : (a : Set (Vec d)) → ENNReal) D ≠ ⊤ →
+                                          (0 : ℝ) < ((volume : (a : Set (Vec d)) → ENNReal) S).toReal →
+                                            (0 : ℝ) < ((volume : (a : Set (Vec d)) → ENNReal) K).toReal →
+                                              (0 : ℝ) < ((volume : (a : Set (Vec d)) → ENNReal) D).toReal →
+                                                ((volume : (a : Set (Vec d)) → ENNReal) K).toReal ≤
+                                                    ((volume : (a : Set (Vec d)) → ENNReal) D).toReal →
+                                                  √(((volume : (a : Set (Vec d)) → ENNReal) K).toReal /
+                                                          ((volume : (a : Set (Vec d)) → ENNReal) S).toReal) ≤
+                                                      RK →
+                                                    √(((volume : (a : Set (Vec d)) → ENNReal) D).toReal / r ^ d) ≤ RD →
+                                                      (0 : ℝ) ≤ RD →
+                                                        (9 : ℝ) * (CH * r⁻¹ * r⁻¹ * RD * w ^ (2 : ℕ)) ≤ (1 / 2 : ℝ) →
+                                                          |beta| ≤
+                                                            ((6 : ℝ) * RK +
+                                                                (12 : ℝ) * (CH * r⁻¹ * r⁻¹ * RD * w ^ (2 : ℕ))) *
+                                                              normalizedL2On K fun (y : Vec d) => W y - beta)
+        (_ : (0 : ℝ) ≤ CH * (4 : ℝ) ^ d) (lam : ℝ) (_ : (0 : ℝ) < lam) (_ : (16 : ℝ) * lam ≤ (1 : ℝ)) (_ :
+        (1152 : ℝ) * (CH * (4 : ℝ) ^ d) * lam ^ (2 : ℕ) ≤ (1 : ℝ)), True := by
   classical
+  intro d instance1
   obtain ⟨CH, hCH0, hCH⟩ := exists_abs_le_normalizedL2On_of_faceOdd d
   have hP0 : (0 : ℝ) ≤ CH * (4 : ℝ) ^ d := mul_nonneg hCH0 (pow_nonneg (by norm_num) d)
   have hQpos : (0 : ℝ) < 16 + 1152 * (CH * (4 : ℝ) ^ d) := by linarith only [hP0]
@@ -495,6 +514,53 @@ theorem exists_abs_le_normalizedL2On_sealCube (d : ℕ) [NeZero d] :
       rw [mul_comm]
       exact hsq
     linarith only [hmul, heq]
+  exact ⟨CH, hCH, hP0, lam, hlampos, hlam16, hroom, True.intro⟩
+
+/-- **`(A)` at a flush cube.**
+
+Let `K = sealCube c L` be the cube of centre `c` and side `L > 0`, let `σ = ±1`
+and let `a = cᵢ + σ·L/2` be the level of its `σeᵢ` face.  If `W` is odd about
+`{yᵢ = a}`, square integrable on the doubled cube `D = sealDouble c L i σ`, and
+`W − β` is classically harmonic on `D`, then
+
+```text
+  |β| ≤ C(d) · ‖W − β‖_{L²(K)}
+```
+
+with a constant that depends on the dimension alone.  Taking `β = ⨍_K W` gives
+the flush-cube mean bound; the general-`β` form is what the composition uses. -/
+private theorem sealMeanCube_estimate1 :
+    ∀ (d : ℕ) (i : Fin d) (L : ℝ) (c y : Vec d),
+      y ∈ axisBox c i (c i - (3 : ℝ) * L / (2 : ℝ)) (c i + L / (2 : ℝ)) (L / (2 : ℝ)) →
+        y ∈ axisBox c i (c i - L / (2 : ℝ)) (c i + L / (2 : ℝ)) (L / (2 : ℝ)) ∨
+          coordFaceReflection (c i - L / (2 : ℝ)) i y ∈ axisBox c i (c i - L / (2 : ℝ)) (c i + L / (2 : ℝ)) (L / (2 : ℝ)) ∨
+            y i = c i - L / (2 : ℝ) := by
+  intro d i L c y hy
+  have hy' := mem_axisBox_iff.mp hy
+  rcases lt_trichotomy (y i) (c i - L / 2) with hlt | heq | hgt
+  · refine Or.inr (Or.inl (mem_axisBox_iff.mpr ⟨⟨?_, ?_⟩, fun j hji => ?_⟩))
+    · rw [coordFaceReflection_apply_self]
+      linarith only [hlt]
+    · rw [coordFaceReflection_apply_self]
+      linarith only [hy'.1.1]
+    · rw [coordFaceReflection_apply_ne _ i j y hji]
+      exact hy'.2 j hji
+  · exact Or.inr (Or.inr heq)
+  · exact Or.inl (mem_axisBox_iff.mpr ⟨⟨hgt, hy'.1.2⟩, hy'.2⟩)
+
+theorem exists_abs_le_normalizedL2On_sealCube (d : ℕ) [NeZero d] :
+    ∃ C : ℝ, 0 ≤ C ∧
+      ∀ (i : Fin d) (sg L : ℝ) (c : Vec d) (W : Vec d → ℝ) (beta : ℝ),
+        (sg = 1 ∨ sg = -1) → 0 < L →
+        (∀ z, W (coordFaceReflection (c i + sg * (L / 2)) i z) = -W z) →
+        MemLp W 2 (volume.restrict (sealDouble c L i sg)) →
+        HarmonicOnNhd ((fun y => W y - beta) ∘
+            (toEuc.symm : EuclideanSpace ℝ (Fin d) → Vec d))
+          ((toEuc : Vec d → EuclideanSpace ℝ (Fin d)) '' sealDouble c L i sg) →
+        |beta| ≤ C * normalizedL2On (sealCube c L) (fun y => W y - beta) := by
+  classical
+  obtain ⟨CH, hCH, hP0, lam, hlampos, hlam16, hroom, _⟩ :=
+    @sealMeanCube_comparisonBounds1 (d) (by infer_instance)
   refine ⟨6 * Real.sqrt (lam⁻¹ ^ d) + 12 * (64 * (CH * (4 : ℝ) ^ d) * lam ^ 2), ?_, ?_⟩
   · have h1 : 0 ≤ Real.sqrt (lam⁻¹ ^ d) := Real.sqrt_nonneg _
     have h2 : (0 : ℝ) ≤ 64 * (CH * (4 : ℝ) ^ d) * lam ^ 2 :=
@@ -657,19 +723,7 @@ theorem exists_abs_le_normalizedL2On_sealCube (d : ℕ) [NeZero d] :
         y ∈ axisBox c i (c i - L / 2) (c i + L / 2) (L / 2) ∨
         coordFaceReflection (c i - L / 2) i y
           ∈ axisBox c i (c i - L / 2) (c i + L / 2) (L / 2) ∨
-        y i = c i - L / 2 := by
-      intro y hy
-      have hy' := mem_axisBox_iff.mp hy
-      rcases lt_trichotomy (y i) (c i - L / 2) with hlt | heq | hgt
-      · refine Or.inr (Or.inl (mem_axisBox_iff.mpr ⟨⟨?_, ?_⟩, fun j hji => ?_⟩))
-        · rw [coordFaceReflection_apply_self]
-          linarith only [hlt]
-        · rw [coordFaceReflection_apply_self]
-          linarith only [hy'.1.1]
-        · rw [coordFaceReflection_apply_ne _ i j y hji]
-          exact hy'.2 j hji
-      · exact Or.inr (Or.inr heq)
-      · exact Or.inl (mem_axisBox_iff.mpr ⟨⟨hgt, hy'.1.2⟩, hy'.2⟩)
+        y i = c i - L / 2  := @sealMeanCube_estimate1 (d) (i) (L) (c)
     have hcoef : CH * (L / 8)⁻¹ * (L / 8)⁻¹ * (4 : ℝ) ^ d * (-hs) ^ 2
         = 64 * (CH * (4 : ℝ) ^ d) * lam ^ 2 :=
       coef_eq_of_sq hL0 (by rw [hhsdef]; ring)

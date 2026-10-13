@@ -310,7 +310,7 @@ theorem analyticPenalizedResolventReal_perturbation {V : Set (Vec d)}
     exact A.analyticMinimalResolventReal_sub mu (hqm.mul hup) (hqm.mul hun)
       hloadpB hloadnB hdiffB x
   rw [hloadsplit, hfsplit]
-  show up x - un x = _
+  change up x - un x = _
   linarith only [hp, hn]
 
 end WholeSpaceAnalyticData

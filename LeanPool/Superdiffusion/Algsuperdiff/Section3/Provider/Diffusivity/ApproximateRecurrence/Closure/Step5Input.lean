@@ -27,13 +27,16 @@ binders.  Nine of them are discharged by this lane:
 
 | binder | discharged by |
 |---|---|
-| `hgate` | `Closure.Step5Basket.step5CrossDefectConst_mul_gamma_pow_fifteen_le_two_of_regime`, from `ClosureRegime` |
-| `hshell` | `Closure.Step5InputShellMoment.gridFourthMoment_matrixOperatorNorm_freshShellCubeAverage_root_le` |
+| `hgate` | `Closure.Step5Basket.step5CrossDefectConst_mul_gamma_pow_fifteen_le_two_of_regime`, from
+`ClosureRegime` |
+| `hshell` |
+`Closure.Step5InputShellMoment.gridFourthMoment_matrixOperatorNorm_freshShellCubeAverage_root_le` |
 | `hAmem` | `Closure.Step5InputShellMoment.memLp_four_matrixOperatorNorm_freshShellCubeAverage` |
 | `hgradM`, `hvmem` | `Closure.Step5InputGradMoment.exists_step5GradMomentConst` |
 | `hmemOsc`, `hosc` | `Closure.Step5InputOscillation.exists_gamma0_step5OscillationLegs` |
 | `hmeasX`, `hmeasS` | `Closure.Step5InputSideConditions.aestronglyMeasurable_step5PairingX`/`S` |
-| `hintP` | `Closure.Step5InputSideConditions.integrableOn_cubeSet_vecDot_matVecMul_finiteShellIncrement` |
+| `hintP` |
+`Closure.Step5InputSideConditions.integrableOn_cubeSet_vecDot_matVecMul_finiteShellIncrement` |
 
 The tenth, `hsampDef`, is carried here as an explicit binder of
 `closureStep5Input_of_sampDef`; see the disclosure.

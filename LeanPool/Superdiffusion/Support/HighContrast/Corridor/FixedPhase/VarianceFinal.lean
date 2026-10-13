@@ -219,7 +219,8 @@ theorem fixed_phase_variance [NeZero d] (hd : 3 ≤ d) {m : ℤ} {ℓ Θ : ℝ} 
   have hAESM_diag : AEStronglyMeasurable
       (fun p : RegCoeffField d × RegCoeffField d =>
         phaseObservable ℓ σ m P p.1.toFun) (L.prod L) :=
-    (aestronglyMeasurable_phaseObservable_of_thetaLaw hℓ0 hΘ P hLaw K hK).comp_quasiMeasurePreserving
+    (aestronglyMeasurable_phaseObservable_of_thetaLaw hℓ0 hΘ P hLaw K
+      hK).comp_quasiMeasurePreserving
       (Measure.quasiMeasurePreserving_fst)
   have hAESM_g : ∀ k : {k // k ∈ K}, AEStronglyMeasurable (g k) (L.prod L) := by
     intro k

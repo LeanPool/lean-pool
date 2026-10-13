@@ -59,7 +59,7 @@ theorem pathLinearPairingDensity_add_eq {U : Domain d} (a : CoeffOn U)
     (blockMatVecMul (blockMatrixField a x) (Z.eval x)).2 with hV
   have hVsub : V (X - Y) = V X - V Y := by
     have hev : (X - Y).eval x = X.eval x - Y.eval x := rfl
-    show (blockMatVecMul (blockMatrixField a x) ((X - Y).eval x)).2 =
+    change (blockMatVecMul (blockMatrixField a x) ((X - Y).eval x)).2 =
       (blockMatVecMul (blockMatrixField a x) (X.eval x)).2 -
         (blockMatVecMul (blockMatrixField a x) (Y.eval x)).2
     rw [hev, blockMatVecMul_sub]
@@ -74,7 +74,7 @@ theorem pathLinearPairingDensity_add_eq {U : Domain d} (a : CoeffOn U)
   have hright : ∀ u v w : Vec d, vecDot u (v - w) = vecDot u v - vecDot u w := by
     intro u v w
     rw [sub_eq_add_neg, vecDot_add_right, vecDot_neg_right, ← sub_eq_add_neg]
-  show -vecDot (matVecMul (hField x) ((X - Y).potential x)) (V X)
+  change -vecDot (matVecMul (hField x) ((X - Y).potential x)) (V X)
       + -vecDot (matVecMul (hField x) (Y.potential x)) (V (X - Y))
     = -vecDot (matVecMul (hField x) (X.potential x)) (V X)
       - -vecDot (matVecMul (hField x) (Y.potential x)) (V Y)
@@ -107,7 +107,7 @@ theorem pathLinearTerm_sub_eq {U : Domain d} (a : CoeffOn U)
         = pathLinearDensity a h.1 X - pathLinearDensity a h.1 Y := by
     funext x
     exact pathLinearPairingDensity_add_eq a h.1 X Y x
-  show volumeAverage (U : Set (Vec d)) (pathLinearDensity a h.1 X)
+  change volumeAverage (U : Set (Vec d)) (pathLinearDensity a h.1 X)
       - volumeAverage (U : Set (Vec d)) (pathLinearDensity a h.1 Y) = _
   rw [← volumeAverage_sub hLX hLY, ← hfun, volumeAverage_add hI1 hI2]
   rfl

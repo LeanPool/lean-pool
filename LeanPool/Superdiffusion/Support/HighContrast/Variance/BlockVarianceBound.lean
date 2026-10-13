@@ -50,7 +50,8 @@ namespace HCPolySupport
 
 open HCPolySupport MeasureTheory
 open HCPolySupport.Book.Ch04
-  (RestrictionCoeffLaw RestrictionLawCarrier RestrictionStructuralLaw fullBlockNormalizedFluctuationOperatorNormSqAtScale)
+  (RestrictionCoeffLaw RestrictionLawCarrier RestrictionStructuralLaw
+    fullBlockNormalizedFluctuationOperatorNormSqAtScale)
 open HCPolySupport.Book.Ch05.Section54.VarianceBoundGoodScale
   (normalizedFluctuationMatrix fullBlockQuadratic fullBlockProbeSqBudget
     fullBlockCoordinateProbe fullBlockPlusProbe fullBlockMinusProbe
@@ -211,7 +212,8 @@ at the same origin-cube scale.  See the high-moment paper (Armstrong–Kuusi–L
 to appear). -/
 theorem integral_fullBlockNormalizedFluctuation_le [NeZero d] (hd : 3 ≤ d) :
     ∃ Cd : ℝ, 0 ≤ Cd ∧ ∀ {Θ : ℝ} (_hΘ : 1 ≤ Θ) {P : RestrictionCoeffLaw d} [IsProbabilityMeasure P]
-      (hP : RestrictionLawCarrier P) (hStruct : RestrictionStructuralLaw P) (_hLaw : ThetaEllipticLaw Θ P)
+      (hP : RestrictionLawCarrier P) (hStruct : RestrictionStructuralLaw P) (_hLaw :
+        ThetaEllipticLaw Θ P)
       {m : ℤ} (_hm : 0 ≤ m),
       ∫ a, fullBlockNormalizedFluctuationOperatorNormSqAtScale hP hStruct m (originCube d m) a ∂P
         ≤ Cd * Θ ^ 6 * ((3 : ℝ) ^ m) ^ (-((d : ℝ) - 2) / ((d : ℝ) - 1)) := by

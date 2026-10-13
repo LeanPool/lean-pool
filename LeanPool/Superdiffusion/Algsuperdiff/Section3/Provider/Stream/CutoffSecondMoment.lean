@@ -84,7 +84,7 @@ private theorem matrixFrobeniusNormSq_finset_sum (s : Finset ℤ) (A : ℤ → M
       (∑ k ∈ s, A k) i l ^ 2 = ∑ k ∈ s, ∑ k' ∈ s, A k i l * A k' i l := by
     intro i l
     rw [Matrix.sum_apply, sq, Finset.sum_mul_sum]
-  show (∑ i : Fin d, ∑ l : Fin d, (∑ k ∈ s, A k) i l ^ 2) = _
+  change (∑ i : Fin d, ∑ l : Fin d, (∑ k ∈ s, A k) i l ^ 2) = _
   calc (∑ i : Fin d, ∑ l : Fin d, (∑ k ∈ s, A k) i l ^ 2)
       = ∑ i : Fin d, ∑ l : Fin d, ∑ k ∈ s, ∑ k' ∈ s, A k i l * A k' i l :=
         Finset.sum_congr rfl fun i _ =>
@@ -103,7 +103,7 @@ private theorem matrixFrobeniusNormSq_finset_sum (s : Finset ℤ) (A : ℤ → M
 theorem matrixFrobeniusNormSq_le_of_abs_entry_le {A : Mat d} {C : ℝ}
     (h : ∀ i l : Fin d, |A i l| ≤ C) :
     matrixFrobeniusNormSq A ≤ (d : ℝ) ^ 2 * C ^ 2 := by
-  show (∑ i : Fin d, ∑ l : Fin d, A i l ^ 2) ≤ _
+  change (∑ i : Fin d, ∑ l : Fin d, A i l ^ 2) ≤ _
   calc (∑ i : Fin d, ∑ l : Fin d, A i l ^ 2)
       ≤ ∑ _i : Fin d, ∑ _l : Fin d, C ^ 2 := by
         refine Finset.sum_le_sum fun i _ => Finset.sum_le_sum fun l _ => ?_
@@ -124,7 +124,7 @@ private theorem measurable_shellSeq_entry (k : ℤ) (x : Vec d) (i l : Fin d) :
 private theorem measurable_frobeniusMass_finsetSum (s : Finset ℤ) (x : Vec d) :
     Measurable (fun omega : ShellSeq d =>
       matrixFrobeniusNormSq (∑ k ∈ s, (omega k) x)) := by
-  show Measurable fun omega : ShellSeq d =>
+  change Measurable fun omega : ShellSeq d =>
     ∑ i : Fin d, ∑ l : Fin d, (∑ k ∈ s, (omega k) x) i l ^ 2
   refine Finset.univ.measurable_sum fun i _ =>
     Finset.univ.measurable_sum fun l _ => ?_
@@ -160,7 +160,7 @@ private theorem integral_shellPairing_of_ne (M : ABKModel d) (x : Vec d)
   have hindep : ProbabilityTheory.IndepFun
       (fun omega : ShellSeq d => omega k) (fun omega : ShellSeq d => omega k')
       M.P.toMeasure := M.shellPrefix.independent.indepFun hne
-  show (∫ omega : ShellSeq d,
+  change (∫ omega : ShellSeq d,
     ∑ i : Fin d, ∑ l : Fin d, (omega k) x i l * (omega k') x i l
     ∂M.P.toMeasure) = 0
   rw [integral_finsetSum _ fun i _ =>
@@ -186,7 +186,7 @@ private theorem integral_shellPairing_self (M : ABKModel d) (x : Vec d) (k : ℤ
   rw [← integral_shellFrobeniusMass M k x]
   refine integral_congr_ae ?_
   filter_upwards with omega
-  show (∑ i : Fin d, ∑ l : Fin d, (omega k) x i l * (omega k) x i l) =
+  change (∑ i : Fin d, ∑ l : Fin d, (omega k) x i l * (omega k) x i l) =
     ∑ i : Fin d, ∑ l : Fin d, (omega k) x i l ^ 2
   exact Finset.sum_congr rfl fun i _ =>
     Finset.sum_congr rfl fun l _ => (sq (((omega k) x) i l)).symm
@@ -316,7 +316,7 @@ private theorem tendsto_frobeniusMass_finiteLowerCutoff (ell m : ℤ)
         abs_entry_le_localCubeControl ell (omega.1 (m - (r : ℤ))) hx i l
     simpa only [finiteLowerCutoff_apply_entry_eq_sum_range_desc,
       cutoff_apply_entry] using hsum.hasSum.tendsto_sum_nat
-  show Tendsto (fun q : ℕ =>
+  change Tendsto (fun q : ℕ =>
     ∑ i : Fin d, ∑ l : Fin d, finiteLowerCutoff m q omega.1 x i l ^ 2) atTop
     (nhds (∑ i : Fin d, ∑ l : Fin d, cutoff m omega x i l ^ 2))
   exact tendsto_finsetSum _ fun i _ =>

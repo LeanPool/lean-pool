@@ -87,7 +87,7 @@ theorem affineDistSet_sub_affineEval (W : Set (Vec d)) (u : Vec d → ℝ) (c : 
   constructor
   · rintro ⟨⟨c', g'⟩, rfl⟩
     refine ⟨(c + c', g + g'), ?_⟩
-    show affineDistOn W u (c + c') (g + g')
+    change affineDistOn W u (c + c') (g + g')
       = affineDistOn W (fun y => u y - affineEval c g y) c' g'
     simp only [affineDistOn]
     congr 1
@@ -96,7 +96,7 @@ theorem affineDistSet_sub_affineEval (W : Set (Vec d)) (u : Vec d → ℝ) (c : 
     ring
   · rintro ⟨⟨c', g'⟩, rfl⟩
     refine ⟨(c' - c, g' - g), ?_⟩
-    show affineDistOn W (fun y => u y - affineEval c g y) (c' - c) (g' - g)
+    change affineDistOn W (fun y => u y - affineEval c g y) (c' - c) (g' - g)
       = affineDistOn W u c' g'
     simp only [affineDistOn]
     congr 1
@@ -149,7 +149,7 @@ theorem normalizedL2On_le_of_ae_abs_le {W : Set (Vec d)} (hWpos : 0 < volume W)
   have hconst : (∫ _y in W, R ^ 2) = (volume W).toReal * R ^ 2 := by
     rw [MeasureTheory.setIntegral_const, MeasureTheory.measureReal_def, smul_eq_mul]
   rw [hconst] at hle
-  show (volume W).toReal⁻¹ * ∫ y in W, f y ^ 2 ≤ R ^ 2
+  change (volume W).toReal⁻¹ * ∫ y in W, f y ^ 2 ≤ R ^ 2
   have hmul := mul_le_mul_of_nonneg_left hle (inv_nonneg.2 hVpos.le)
   rw [← mul_assoc, inv_mul_cancel₀ (ne_of_gt hVpos), one_mul] at hmul
   exact hmul
@@ -345,7 +345,7 @@ theorem excessDecay_oneStep_boundary_datumSplit_core (hd : d ≠ 0) {m n : ℤ}
     have h := (hv2.sub haff).sub hVU
     refine h.ae_eq ?_
     filter_upwards [hVae] with y hy
-    show v y - affineLift x cl Al y - V y = v₁ y
+    change v y - affineLift x cl Al y - V y = v₁ y
     rw [hy]
     ring
   have hRnn : (0 : ℝ) ≤ datumResidualBound d n Kh := datumResidualBound_nonneg d n hKh

@@ -130,13 +130,13 @@ private theorem ioc_eq_range_desc (m : ℤ) (q : ℕ) :
     refine ⟨(m - k).toNat, ?_, ?_⟩
     · have h2 : ((m - k).toNat : ℤ) < (q : ℤ) := by omega
       exact_mod_cast h2
-    · show m - ((m - k).toNat : ℤ) = k
+    · change m - ((m - k).toNat : ℤ) = k
       rw [htoNat]
       ring
   · rintro ⟨r, hr, rfl⟩
     have hr' : (r : ℤ) < (q : ℤ) := by exact_mod_cast hr
     have hr0 : (0 : ℤ) ≤ (r : ℤ) := by exact_mod_cast Nat.zero_le r
-    show m - (q : ℤ) < m - (r : ℤ) ∧ m - (r : ℤ) ≤ m
+    change m - (q : ℤ) < m - (r : ℤ) ∧ m - (r : ℤ) ≤ m
     constructor
     · linarith
     · linarith

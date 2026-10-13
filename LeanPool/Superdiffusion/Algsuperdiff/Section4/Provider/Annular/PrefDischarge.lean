@@ -149,12 +149,12 @@ private theorem descendantsAtDepth_one_originCube (n : ℤ) :
     descendantsAtDepth (originCube d n) 1
       = (latticeCubeFinset d (n - 1) n).image (latticeCube (n - 1)) := by
   have hk : n - 1 ≤ (originCube d n).scale := by
-    show n - 1 ≤ n
+    change n - 1 ≤ n
     omega
   have h1 := descendantsAtScale_eq_descendantsAtDepth (originCube d n) hk
   have h2 : Int.toNat ((originCube d n).scale - (n - 1)) = 1 := by
     have h : (originCube d n).scale - (n - 1) = (1 : ℤ) := by
-      show n - (n - 1) = (1 : ℤ)
+      change n - (n - 1) = (1 : ℤ)
       ring
     rw [h]
     rfl

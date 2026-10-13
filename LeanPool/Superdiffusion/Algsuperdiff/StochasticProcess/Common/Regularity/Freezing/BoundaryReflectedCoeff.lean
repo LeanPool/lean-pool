@@ -312,7 +312,7 @@ theorem coefficientIdentityDistanceLE_faceReflectedCoeff
         · exact hsigma h
         · exact hplaney (by linarith only [h])
       have hneg : sigma * (c - y i) < 0 := lt_of_le_of_ne (not_lt.1 hle) hnezero
-      show (0 : ℝ) < sigma * (c - coordFaceReflection c i y i)
+      change (0 : ℝ) < sigma * (c - coordFaceReflection c i y i)
       rw [coordFaceReflection_coord]
       have hid : sigma * (c - (2 * c - y i)) = -(sigma * (c - y i)) := by ring
       rw [hid]

@@ -241,7 +241,7 @@ theorem notGood_subset_union (M : ABKModel d) (m : ℤ) (E b : ℝ) (h : ℕ) :
   by_cases hdiam : ∀ u ∈ cubeFinset (d := d) h,
       (badClusterDiam M m h omega u : ℝ) < (3 : ℝ) ^ (b * (h : ℝ))
   · refine Or.inr ?_
-    show scaleSeparationDensityThreshold M E h < badExtendedDensity M m h omega
+    change scaleSeparationDensityThreshold M E h < badExtendedDensity M m h omega
     by_contra hdens
     exact homega ⟨hdiam, not_lt.1 hdens⟩
   · refine Or.inl ?_

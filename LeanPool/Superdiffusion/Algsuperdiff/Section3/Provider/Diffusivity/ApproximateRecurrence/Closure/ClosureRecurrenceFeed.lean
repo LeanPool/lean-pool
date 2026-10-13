@@ -31,7 +31,8 @@ hypotheses.  This module runs that conversion over the **whole** admissible
 range and hands the result to the proved frozen-root splice
 
 ```
-  ApproximateRecurrence.SubLandmarkDisplays.sigmaBar_integrate_approx_recurrence_of_mStarStar_floored ,
+ApproximateRecurrence.SubLandmarkDisplays.sigmaBar_integrate_approx_recurrence_of_mStarStar_floored
+  ,
 ```
 
 whose `hupper`/`hlower` binders are exactly what comes out.  The shapes meet

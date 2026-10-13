@@ -213,13 +213,13 @@ theorem exists_cubeCauchyConstant (v : ℕ) (mu : PositiveShift) {f : Vec d → 
       A.analyticCubeResolvent mu f hf hfD m x := by
     rw [hZ, H1Function.sub_toFun]
     funext x
-    show (A.cubeLevelSolution k mu hf hfD).toFun x - (A.cubeLevelSolution m mu hf hfD).toFun x = _
+    change (A.cubeLevelSolution k mu hf hfD).toFun x - (A.cubeLevelSolution m mu hf hfD).toFun x = _
     rw [A.cubeLevelSolution_toFun, A.cubeLevelSolution_toFun]
   have hZgrad : Z.grad = fun x ↦ (A.cubeLevelSolution k mu hf hfD).grad x -
       (A.cubeLevelSolution m mu hf hfD).grad x := by
     rw [hZ, H1Function.sub_grad]
     funext x
-    show (A.cubeLevelSolution k mu hf hfD).grad x -
+    change (A.cubeLevelSolution k mu hf hfD).grad x -
       (A.cubeLevelSolution m mu hf hfD).grad x = _
     rfl
   -- the homogeneous shifted equation solved by the difference
@@ -243,7 +243,7 @@ theorem exists_cubeCauchyConstant (v : ℕ) (mu : PositiveShift) {f : Vec d → 
     intro x
     have hmu : (0 : ℝ) < (mu : ℝ) := mu.property
     have hsq : 0 ≤ eta x ^ 2 * Z.toFun x ^ 2 := by positivity
-    show (-(mu : ℝ) * Z.toFun x) * (eta x ^ 2 * Z.toFun x) ≤ 0
+    change (-(mu : ℝ) * Z.toFun x) * (eta x ^ 2 * Z.toFun x) ≤ 0
     nlinarith only [hsq, hmu]
   -- the cutoff-gradient term
   have hZsqInt : Integrable (fun x ↦ Z.toFun x ^ 2) (volumeMeasureOn W) := by
@@ -275,7 +275,7 @@ theorem exists_cubeCauchyConstant (v : ℕ) (mu : PositiveShift) {f : Vec d → 
       refine setIntegral_congr_fun
         (isOpenBoundedConvexDomain_wholeSpaceCube d v).isOpen.measurableSet ?_
       intro x hx
-      show vecNormSq (Z.grad x) = eta x ^ 2 * vecNormSq (Z.grad x)
+      change vecNormSq (Z.grad x) = eta x ^ 2 * vecNormSq (Z.grad x)
       rw [hetaOne x hx, one_pow, one_mul]
     rw [hcongr]
     refine setIntegral_mono_set hinnerInt ?_ hVW.eventuallyLE

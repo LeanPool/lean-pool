@@ -116,17 +116,17 @@ theorem mem_triadicSimplex_iff {n : ℤ} {z : Vec d} {pi : Equiv.Perm (Fin d)}
   · rintro ⟨hbox, hord⟩
     refine ⟨fun i => ((3 : ℝ) ^ n)⁻¹ * (y i - z i), ⟨fun i => ?_, fun i j hij => ?_⟩, ?_⟩
     · have h := hbox i
-      show -(1 / 2 : ℝ) < ((3 : ℝ) ^ n)⁻¹ * (y i - z i) ∧
+      change -(1 / 2 : ℝ) < ((3 : ℝ) ^ n)⁻¹ * (y i - z i) ∧
         ((3 : ℝ) ^ n)⁻¹ * (y i - z i) < 1 / 2
       rw [inv_mul_eq_div, lt_div_iff₀ hpos, div_lt_iff₀ hpos]
       exact ⟨h.1, h.2⟩
     · have h := hord i j hij
-      show ((3 : ℝ) ^ n)⁻¹ * (y (pi i) - z (pi i)) <
+      change ((3 : ℝ) ^ n)⁻¹ * (y (pi i) - z (pi i)) <
         ((3 : ℝ) ^ n)⁻¹ * (y (pi j) - z (pi j))
       exact mul_lt_mul_of_pos_left h (inv_pos.2 hpos)
     · funext i
       have hne : ((3 : ℝ) ^ n) ≠ 0 := ne_of_gt hpos
-      show z i + (3 : ℝ) ^ n * (((3 : ℝ) ^ n)⁻¹ * (y i - z i)) = y i
+      change z i + (3 : ℝ) ^ n * (((3 : ℝ) ^ n)⁻¹ * (y i - z i)) = y i
       rw [mul_inv_cancel_left₀ hne]
       ring
 

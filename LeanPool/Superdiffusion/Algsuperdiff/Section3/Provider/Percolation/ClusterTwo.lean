@@ -104,7 +104,7 @@ theorem Connected₂.symm {S : Finset (Fin d → ℤ)} {u v : Fin d → ℤ}
     have hstep : N - i = (N - (i + 1)) + 1 := by omega
     have := hxp (N - (i + 1)) (by omega)
     rw [latDist_comm]
-    show latDist (x (N - (i + 1))) (x (N - i)) ≤ 2
+    change latDist (x (N - (i + 1))) (x (N - i)) ≤ 2
     rw [hstep]
     exact this
   · intro i hi
@@ -116,15 +116,15 @@ theorem Connected₂.trans {S : Finset (Fin d → ℤ)} {u v w : Fin d → ℤ}
   obtain ⟨N, x, hx0, hxN, hxp, hxS⟩ := h₁
   obtain ⟨M, y, hy0, hyM, hyp, hyS⟩ := h₂
   refine ⟨N + M, fun i => if i ≤ N then x i else y (i - N), ?_, ?_, ?_, ?_⟩
-  · show (if (0 : ℕ) ≤ N then x 0 else y (0 - N)) = u
+  · change (if (0 : ℕ) ≤ N then x 0 else y (0 - N)) = u
     rw [ite_eq_left (Nat.zero_le N)]; exact hx0
-  · show (if N + M ≤ N then x (N + M) else y (N + M - N)) = w
+  · change (if N + M ≤ N then x (N + M) else y (N + M - N)) = w
     rcases Nat.eq_zero_or_pos M with rfl | hM
     · rw [ite_eq_left (by omega), Nat.add_zero, hxN, ← hyM, hy0]
     · rw [ite_eq_right (by omega), show N + M - N = M from by omega]
       exact hyM
   · intro i hi
-    show latDist (if i ≤ N then x i else y (i - N))
+    change latDist (if i ≤ N then x i else y (i - N))
       (if i + 1 ≤ N then x (i + 1) else y (i + 1 - N)) ≤ 2
     by_cases h1 : i + 1 ≤ N
     · rw [ite_eq_left (by omega), ite_eq_left h1]
@@ -139,7 +139,7 @@ theorem Connected₂.trans {S : Finset (Fin d → ℤ)} {u v w : Fin d → ℤ}
           show i + 1 - N = (i - N) + 1 from by omega]
         exact hyp (i - N) (by omega)
   · intro i hi
-    show (if i ≤ N then x i else y (i - N)) ∈ S
+    change (if i ≤ N then x i else y (i - N)) ∈ S
     by_cases h1 : i ≤ N
     · rw [ite_eq_left h1]; exact hxS i h1
     · rw [ite_eq_right h1]; exact hyS (i - N) (by omega)

@@ -152,6 +152,46 @@ private theorem sqrt_gamma_log_seven_half_le {g : ℝ} (hg0 : 0 < g) (hg1 : g �
       mul_le_mul_of_nonneg_left hpow (Real.sqrt_nonneg _)
     _ = 65536 * g ^ (1 / 4 : ℝ) := hid
 
+private theorem regularityMoment_squareRootBound :
+    ∀ (d : ℕ) (c0 : ℝ),
+      (0 : ℝ) < c0 →
+        ∀ (CE : ℝ),
+          (0 : ℝ) < CE →
+            let c : ℝ := min (c0 / (2 : ℝ)) ((2 : ℝ) * CE)⁻¹;
+            (0 : ℝ) < c →
+              ∀ (M : ABKModel d),
+                (0 : ℝ) < M.gamma →
+                  (1 : ℝ) ≤ |Real.log M.gamma| →
+                    let p : ℝ := c * M.gamma⁻¹ * |Real.log M.gamma| ^ (-6 : ℤ);
+                    CE * √((2 : ℝ) * p) * √M.gamma * |Real.log M.gamma| ^ (3 : ℕ) = CE * √((2 : ℝ) * c) := by
+  intro _ _ _ CE _ c _ M hgam _ p
+  have hlogpos := abs_log_gamma_pos M
+  have hsqrtid : Real.sqrt (2 * p) * Real.sqrt M.gamma =
+      Real.sqrt (2 * c) * |Real.log M.gamma|⁻¹ ^ (3 : ℕ) := by
+    dsimp only [p]
+    rw [show |Real.log M.gamma| ^ (-6 : ℤ) =
+      (|Real.log M.gamma|⁻¹ ^ (3 : ℕ)) ^ (2 : ℕ) by
+        rw [show (-6 : ℤ) = -(6 : ℕ) by norm_num, zpow_neg, zpow_natCast,
+          ← inv_pow, ← pow_mul]]
+    rw [show 2 * (c * M.gamma⁻¹ * (|Real.log M.gamma|⁻¹ ^ 3) ^ 2) =
+      (2 * c) * (M.gamma⁻¹ * (|Real.log M.gamma|⁻¹ ^ 3) ^ 2) by ring,
+      Real.sqrt_mul (by positivity : 0 ≤ 2 * c),
+      Real.sqrt_mul (by positivity : 0 ≤ M.gamma⁻¹), Real.sqrt_inv M.gamma]
+    rw [Real.sqrt_sq (by positivity : 0 ≤ |Real.log M.gamma|⁻¹ ^ (3 : ℕ))]
+    have hsne : Real.sqrt M.gamma ≠ 0 := (Real.sqrt_pos.2 hgam).ne'
+    rw [show Real.sqrt (2 * c) *
+        ((Real.sqrt M.gamma)⁻¹ * |Real.log M.gamma|⁻¹ ^ 3) * Real.sqrt M.gamma =
+        Real.sqrt (2 * c) * ((Real.sqrt M.gamma)⁻¹ * Real.sqrt M.gamma) *
+          |Real.log M.gamma|⁻¹ ^ 3 by ring,
+      inv_mul_cancel₀ hsne, mul_one]
+  calc
+    CE * Real.sqrt (2 * p) * Real.sqrt M.gamma * |Real.log M.gamma| ^ (3 : ℕ)
+        = CE * (Real.sqrt (2 * p) * Real.sqrt M.gamma) *
+            |Real.log M.gamma| ^ (3 : ℕ) := by ring
+    _ = CE * (Real.sqrt (2 * c) * |Real.log M.gamma|⁻¹ ^ (3 : ℕ)) *
+            |Real.log M.gamma| ^ (3 : ℕ) := by rw [hsqrtid]
+    _ = CE * Real.sqrt (2 * c) := by field_simp
+
 /-- The localized regularity moment bound at the successor logarithmic
 exponent. -/
 theorem s5_regularity_moment_bound_v2_provider
@@ -221,7 +261,8 @@ theorem s5_regularity_moment_bound_v2_provider
       lintegral_rpow_le_of_lintegral_rpow_le (by positivity) h2p_le_scale
         ((Real.continuous_const_rpow (by norm_num : (3 : ℝ) ≠ 0)).measurable.comp
           (measurable_const.mul
-            ((measurable_of_countable (f := fun k : ℕ => (k : ℝ))).comp hXmeas))).ennreal_ofReal.aemeasurable
+            ((measurable_of_countable (f := fun k : ℕ => (k : ℝ))).comp
+              hXmeas))).ennreal_ofReal.aemeasurable
         hscaleTop
     have hgammaLog := gamma_log_six_le hgam hgam1
     have hgammaQuarter : M.gamma ^ (1 / 4 : ℝ) ≤ 2 * c / 262144 := by
@@ -282,34 +323,8 @@ theorem s5_regularity_moment_bound_v2_provider
           mul_le_mul_of_nonneg_left hbase hCE.le
         _ ≤ CE * (65536 * (1 / (CE * 65536))) := by gcongr
         _ = 1 := by field_simp
-    have hsqrtTerm : CE * Real.sqrt (2 * p) * Real.sqrt M.gamma *
-        |Real.log M.gamma| ^ (3 : ℕ) = CE * Real.sqrt (2 * c) := by
-      have hlogpos := abs_log_gamma_pos M
-      have hsqrtid : Real.sqrt (2 * p) * Real.sqrt M.gamma =
-          Real.sqrt (2 * c) * |Real.log M.gamma|⁻¹ ^ (3 : ℕ) := by
-        dsimp only [p]
-        rw [show |Real.log M.gamma| ^ (-6 : ℤ) =
-          (|Real.log M.gamma|⁻¹ ^ (3 : ℕ)) ^ (2 : ℕ) by
-            rw [show (-6 : ℤ) = -(6 : ℕ) by norm_num, zpow_neg, zpow_natCast,
-              ← inv_pow, ← pow_mul]]
-        rw [show 2 * (c * M.gamma⁻¹ * (|Real.log M.gamma|⁻¹ ^ 3) ^ 2) =
-          (2 * c) * (M.gamma⁻¹ * (|Real.log M.gamma|⁻¹ ^ 3) ^ 2) by ring,
-          Real.sqrt_mul (by positivity : 0 ≤ 2 * c),
-          Real.sqrt_mul (by positivity : 0 ≤ M.gamma⁻¹), Real.sqrt_inv M.gamma]
-        rw [Real.sqrt_sq (by positivity : 0 ≤ |Real.log M.gamma|⁻¹ ^ (3 : ℕ))]
-        have hsne : Real.sqrt M.gamma ≠ 0 := (Real.sqrt_pos.2 hgam).ne'
-        rw [show Real.sqrt (2 * c) *
-            ((Real.sqrt M.gamma)⁻¹ * |Real.log M.gamma|⁻¹ ^ 3) * Real.sqrt M.gamma =
-            Real.sqrt (2 * c) * ((Real.sqrt M.gamma)⁻¹ * Real.sqrt M.gamma) *
-              |Real.log M.gamma|⁻¹ ^ 3 by ring,
-          inv_mul_cancel₀ hsne, mul_one]
-      calc
-        CE * Real.sqrt (2 * p) * Real.sqrt M.gamma * |Real.log M.gamma| ^ (3 : ℕ)
-            = CE * (Real.sqrt (2 * p) * Real.sqrt M.gamma) *
-                |Real.log M.gamma| ^ (3 : ℕ) := by ring
-        _ = CE * (Real.sqrt (2 * c) * |Real.log M.gamma|⁻¹ ^ (3 : ℕ)) *
-                |Real.log M.gamma| ^ (3 : ℕ) := by rw [hsqrtid]
-        _ = CE * Real.sqrt (2 * c) := by field_simp
+    have hsqrtTerm := @regularityMoment_squareRootBound (d) (c0) (hc0) (CE) (hCE) (hc) (M) (hgam)
+      (hlog1)
     have hAmp : CE * (Real.sqrt (2 * p) + Real.sqrt |Real.log M.gamma|) *
           Real.sqrt M.gamma * |Real.log M.gamma| ^ (3 : ℕ) ≤
         CE * Real.sqrt (2 * c) + 1 := by
@@ -368,7 +383,8 @@ theorem s5_regularity_moment_bound_v2_provider
       ((measurable_const.mul
         ((Real.continuous_const_rpow (by norm_num : (3 : ℝ) ≠ 0)).measurable.comp
           (measurable_const.mul
-            ((measurable_of_countable (f := fun k : ℕ => (k : ℝ))).comp hXmeas)))).ennreal_ofReal).aemeasurable
+            ((measurable_of_countable (f := fun k : ℕ => (k : ℝ))).comp
+              hXmeas)))).ennreal_ofReal).aemeasurable
       ((measurable_const.add (measurable_localizedError M n y)).aemeasurable)
       (mul_nonneg hCamp.le hK.le) hscaled honeError
     refine (lintegral_mono_ae (hpointwise.mono fun omega hw =>

@@ -303,7 +303,7 @@ theorem responseJ_potential_cube_sensitivity [NeZero d] (dimension : 2 ≤ d)
     rw [hy]
     refine responseJ_eq_ofAEEq ?_ p 0
     refine Filter.Eventually.of_forall fun x => ?_
-    show (F.coeffOn R).toCoeffField x + (0 : ℝ) • gR.1.1 x = (F.coeffOn R).toCoeffField x
+    change (F.coeffOn R).toCoeffField x + (0 : ℝ) • gR.1.1 x = (F.coeffOn R).toCoeffField x
     simp
   -- the energy term
   have hA2 : A ^ 2 = 2 * (potCubeConstA d ^ 2 * h.w1Infinity ^ 2 * vecNormSq p * LRF) := by

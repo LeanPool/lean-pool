@@ -269,7 +269,7 @@ theorem scaleResponseAtScale_adjointFamily [NeZero d]
       scaleResponseAtScale Q k p F (scalarMatrix (d := d) σ0) := by
   cases p with
   | finite pp =>
-      show Real.rpow (Ch02.finsetAverageReal (descendantsAtScale Q k)
+      change Real.rpow (Ch02.finsetAverageReal (descendantsAtScale Q k)
             (fun R => Real.rpow (normalizedBlockResponseMax R (adjointFamily F)
               (scalarMatrix (d := d) σ0)) (pp / 2))) (1 / pp)
         = Real.rpow (Ch02.finsetAverageReal (descendantsAtScale Q k)
@@ -278,7 +278,7 @@ theorem scaleResponseAtScale_adjointFamily [NeZero d]
       congr 2
       exact funext fun R => by rw [normalizedBlockResponseMax_adjointFamily F R hσ0]
   | infinity =>
-      show Real.rpow (maxDescendantNormalizedBlockResponseAtScale Q k (adjointFamily F)
+      change Real.rpow (maxDescendantNormalizedBlockResponseAtScale Q k (adjointFamily F)
             (scalarMatrix (d := d) σ0)) (1 / 2)
         = Real.rpow (maxDescendantNormalizedBlockResponseAtScale Q k F
             (scalarMatrix (d := d) σ0)) (1 / 2)
@@ -298,7 +298,7 @@ theorem homogenizationError_adjointFamily [NeZero d]
             Real.rpow (scaleResponseAtScale Q (n - (l : ℤ)) p F
               (scalarMatrix (d := d) σ0)) qq :=
         tsum_congr fun l => by rw [scaleResponseAtScale_adjointFamily F Q _ p hσ0]
-      show Ch02.HomogenizationErrorFinite Q n s p qq (adjointFamily F)
+      change Ch02.HomogenizationErrorFinite Q n s p qq (adjointFamily F)
           (scalarMatrix (d := d) σ0) = _
       unfold Ch02.HomogenizationErrorFinite
       rw [hsum]
@@ -316,7 +316,7 @@ theorem homogenizationError_adjointFamily [NeZero d]
           exact ⟨l, by rw [scaleResponseAtScale_adjointFamily F Q _ p hσ0]⟩
         · rintro ⟨l, rfl⟩
           exact ⟨l, by rw [scaleResponseAtScale_adjointFamily F Q _ p hσ0]⟩
-      show Ch02.HomogenizationErrorInfinity Q n s p (adjointFamily F)
+      change Ch02.HomogenizationErrorInfinity Q n s p (adjointFamily F)
           (scalarMatrix (d := d) σ0) = _
       unfold Ch02.HomogenizationErrorInfinity
       rw [hset]

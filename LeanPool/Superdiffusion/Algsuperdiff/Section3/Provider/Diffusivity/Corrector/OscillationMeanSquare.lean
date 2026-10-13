@@ -95,7 +95,7 @@ theorem meanSquareDeviationOn_le_volume_ratio_mul {V U : Set (Vec d)}
         ((volume U).toReal⁻¹ * ∫ x in U, (u x - c) ^ 2) =
       (volume V).toReal⁻¹ * ∫ x in U, (u x - c) ^ 2 := by
     field_simp
-  show (volume V).toReal⁻¹ * ∫ x in V, (u x - c) ^ 2 ≤
+  change (volume V).toReal⁻¹ * ∫ x in V, (u x - c) ^ 2 ≤
     ((volume U).toReal / (volume V).toReal) *
       ((volume U).toReal⁻¹ * ∫ x in U, (u x - c) ^ 2)
   rw [hrewrite]
@@ -114,7 +114,7 @@ theorem meanSquareDeviationVecOn_le_volume_ratio_mul {V U : Set (Vec d)}
     Book.Ch01.meanSquareDeviationVecOn V h c ≤
       ((volume U).toReal / (volume V).toReal) *
         Book.Ch01.meanSquareDeviationVecOn U h c := by
-  show ∑ k : Fin d, Book.Ch01.meanSquareDeviationOn V (fun y => h y k) (c k) ≤
+  change ∑ k : Fin d, Book.Ch01.meanSquareDeviationOn V (fun y => h y k) (c k) ≤
     ((volume U).toReal / (volume V).toReal) *
       ∑ k : Fin d, Book.Ch01.meanSquareDeviationOn U (fun y => h y k) (c k)
   rw [Finset.mul_sum]

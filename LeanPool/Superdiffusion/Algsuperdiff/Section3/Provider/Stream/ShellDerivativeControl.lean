@@ -548,14 +548,14 @@ private theorem spatialScale_triadicScale (gamma : ℝ) (ell k : ℤ)
 private theorem rpow_three_sub_one_mul (a : ℝ) (k : ℤ) :
     Real.rpow 3 ((a - 1) * (k : ℝ)) =
       Real.rpow 3 (a * (k : ℝ)) * ((3 : ℝ) ^ k)⁻¹ := by
-  show (3 : ℝ) ^ ((a - 1) * (k : ℝ)) = (3 : ℝ) ^ (a * (k : ℝ)) * ((3 : ℝ) ^ k)⁻¹
+  change (3 : ℝ) ^ ((a - 1) * (k : ℝ)) = (3 : ℝ) ^ (a * (k : ℝ)) * ((3 : ℝ) ^ k)⁻¹
   rw [show (a - 1) * (k : ℝ) = a * (k : ℝ) - (k : ℝ) by ring,
     Real.rpow_sub (by norm_num : (0 : ℝ) < 3), Real.rpow_intCast, div_eq_mul_inv]
 
 private theorem rpow_three_sub_two_mul (a : ℝ) (k : ℤ) :
     Real.rpow 3 ((a - 2) * (k : ℝ)) =
       Real.rpow 3 (a * (k : ℝ)) * ((3 : ℝ) ^ k)⁻¹ * ((3 : ℝ) ^ k)⁻¹ := by
-  show (3 : ℝ) ^ ((a - 2) * (k : ℝ)) =
+  change (3 : ℝ) ^ ((a - 2) * (k : ℝ)) =
     (3 : ℝ) ^ (a * (k : ℝ)) * ((3 : ℝ) ^ k)⁻¹ * ((3 : ℝ) ^ k)⁻¹
   rw [show (a - 2) * (k : ℝ) = a * (k : ℝ) - (k : ℝ) - (k : ℝ) by ring,
     Real.rpow_sub (by norm_num : (0 : ℝ) < 3),

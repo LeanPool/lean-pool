@@ -577,7 +577,10 @@ theorem streamLocalizedTailProfile_amp_le_uniform
     have hlog := Real.strictMonoOn_log.monotoneOn
       (lt_of_lt_of_le zero_lt_one hqx) (by positivity : 0 < 1 + 4 * Real.sqrt lam) hqxBound
     have hWq : 0 < Wq := by unfold Wq; have := Real.log_nonneg hqx; linarith only [this]
-    have hWs : 0 < Ws := by unfold Ws; have := Real.log_nonneg (by linarith only [hspos] : 1 ≤ 1 + s); linarith only [this]
+    have hWs : 0 < Ws := by
+      unfold Ws
+      have := Real.log_nonneg (by linarith only [hspos] : 1 ≤ 1 + s)
+      linarith only [this]
     have hWqBound : Wq ≤ 5 * L := by
       have hfirst : Wq ≤ 1 + Real.log (1 + 4 * Real.sqrt lam) := by
         unfold Wq

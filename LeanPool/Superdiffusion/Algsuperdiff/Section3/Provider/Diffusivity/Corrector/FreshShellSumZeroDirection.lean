@@ -66,7 +66,7 @@ theorem streamForcing_zero_direction (c : ℝ) (omega : Cutoff.ShellSeq d) (n m 
     streamForcing c omega n m (0 : Vec d) = fun _ : Vec d => (0 : Vec d) := by
   funext x
   funext i
-  show c * (∑ j, Cutoff.finiteShellIncrement omega n m x i j * (0 : Vec d) j) = 0
+  change c * (∑ j, Cutoff.finiteShellIncrement omega n m x i j * (0 : Vec d) j) = 0
   simp
 
 /-- The negated forcing at the zero direction is again the zero field. -/
@@ -88,7 +88,7 @@ theorem isZeroTraceDirichletRhsWeakSolution_one_zero (U : Set (Vec d)) :
         ((0 : H10Function U).toH1Function.grad x)) (phi.toH1Function.grad x))
       = fun _ : Vec d => (0 : ℝ) := by
     funext x
-    show vecDot (matVecMul (1 : Matrix (Fin d) (Fin d) ℝ) (0 : Vec d))
+    change vecDot (matVecMul (1 : Matrix (Fin d) (Fin d) ℝ) (0 : Vec d))
       (phi.toH1Function.grad x) = 0
     simp [matVecMul, vecDot, Matrix.one_apply]
   have hright : (fun x => vecDot (0 : Vec d) (phi.toH1Function.grad x))
@@ -107,7 +107,7 @@ theorem isMeanZeroNeumannRhsWeakSolution_one_zero (U : Set (Vec d)) :
         ((0 : H1MeanZeroFunction U).toH1Function.grad x)) (phi.toH1Function.grad x))
       = fun _ : Vec d => (0 : ℝ) := by
     funext x
-    show vecDot (matVecMul (1 : Matrix (Fin d) (Fin d) ℝ) (0 : Vec d))
+    change vecDot (matVecMul (1 : Matrix (Fin d) (Fin d) ℝ) (0 : Vec d))
       (phi.toH1Function.grad x) = 0
     simp [matVecMul, vecDot, Matrix.one_apply]
   have hright : (fun x => vecDot (0 : Vec d) (phi.toH1Function.grad x))

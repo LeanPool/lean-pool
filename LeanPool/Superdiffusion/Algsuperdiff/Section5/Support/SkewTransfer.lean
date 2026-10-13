@@ -259,6 +259,83 @@ private theorem integral_vecDot_congr_of_forall_smooth {U : Set (Vec d)} {P Q : 
 
 /-! ## 5. The identity against smooth tests -/
 
+private theorem smoothMatrixField_componentIntegrationByParts :
+    ∀ {d : ℕ} {U : Set (Vec d)},
+      IsOpenBoundedConvexDomain U →
+        ∀ {k : Vec d → Mat d},
+          (∀ (a b : Fin d), ContDiff ℝ (1 : WithTop ℕ∞) fun (x : Vec d) => k x a b) →
+            ∀ (w : H1Function U) {psi : Vec d → ℝ},
+              IsFiniteMeasure (volume.restrict U) →
+                (∀ (j : Fin d), ContDiff ℝ ((⊤ : ℕ∞) : WithTop ℕ∞) (euclideanCoordDeriv j psi)) →
+                  (∀ (j : Fin d), HasCompactSupport (euclideanCoordDeriv j psi)) →
+                    (∀ (j : Fin d), tsupport (euclideanCoordDeriv j psi) ⊆ U) →
+                      (∀ (i j : Fin d),
+                          Integrable (fun (x : Vec d) => w.toFun x * (k x i j * euclideanCoordSecondDeriv j i psi x))
+                            (volume.restrict U)) →
+                        (∀ (i j : Fin d),
+                            Integrable
+                              (fun (x : Vec d) =>
+                                w.toFun x *
+                                  (euclideanCoordDeriv j psi x * euclideanCoordDeriv i (fun (y : Vec d) => k y i j) x))
+                              (volume.restrict U)) →
+                          ∀ (i j : Fin d),
+                            (∫ (x : Vec d) in U, w.toFun x * (k x i j * euclideanCoordSecondDeriv j i psi x)) +
+                                ∫ (x : Vec d) in U,
+                                  w.toFun x *
+                                    (euclideanCoordDeriv j psi x * euclideanCoordDeriv i (fun (y : Vec d) => k y i j) x) =
+                              -∫ (x : Vec d) in U, w.grad x i * (euclideanCoordDeriv j psi x * k x i j) := by
+  intro d U hU k hk w psi _ hDpsi_smooth hDpsi_cs hDpsi_sub hP_int hQ_int i j
+  have hchi : ContDiff ℝ 1 fun x => euclideanCoordDeriv j psi x * k x i j :=
+    ((hDpsi_smooth j).of_le (by norm_num)).mul (hk i j)
+  obtain ⟨X, hX⟩ : MemH10 U fun x => euclideanCoordDeriv j psi x * k x i j :=
+    memH10_mul_of_contDiff_hasCompactSupport hU (hDpsi_smooth j) (hDpsi_cs j) (hDpsi_sub j)
+      (memH1_of_contDiff_one hU.isOpen.measurableSet hU.isBoundedDomain (hk i j))
+  have hweakX : HasWeakPartialDerivOn U i (fun x => euclideanCoordDeriv j psi x * k x i j)
+      fun x => X.toH1Function.grad x i := by
+    rw [← hX]
+    exact X.toH1Function.hasWeakGradient i
+  have hgrad_ae : (fun x => X.toH1Function.grad x i) =ᵐ[volume.restrict U]
+      fun x => euclideanCoordDeriv i (fun y => euclideanCoordDeriv j psi y * k y i j) x :=
+    HasWeakPartialDerivOn.ae_eq hU.isOpen
+      (MeasureTheory.IntegrableOn.locallyIntegrableOn
+        ((X.toH1Function.gradMemL2 i).integrable one_le_two))
+      (((hchi.continuous_fderiv (by simp)).clm_apply
+        continuous_const).locallyIntegrable.locallyIntegrableOn U)
+      hweakX (HasWeakPartialDerivOn.of_contDiff hchi)
+  have hprod : ∀ x : Vec d,
+      euclideanCoordDeriv i (fun y => euclideanCoordDeriv j psi y * k y i j) x =
+        k x i j * euclideanCoordSecondDeriv j i psi x +
+          euclideanCoordDeriv j psi x * euclideanCoordDeriv i (fun y => k y i j) x := by
+    intro x
+    have hf : HasFDerivAt (euclideanCoordDeriv j psi)
+        (fderiv ℝ (euclideanCoordDeriv j psi) x) x :=
+      ((hDpsi_smooth j).differentiable (by norm_num) x).hasFDerivAt
+    have hg : HasFDerivAt (fun y : Vec d => k y i j)
+        (fderiv ℝ (fun y : Vec d => k y i j) x) x :=
+      ((hk i j).differentiable (by norm_num) x).hasFDerivAt
+    change (fderiv ℝ (fun y : Vec d => euclideanCoordDeriv j psi y * k y i j) x) (basisVec i) =
+      k x i j * (fderiv ℝ (euclideanCoordDeriv j psi) x) (basisVec i) +
+        euclideanCoordDeriv j psi x * (fderiv ℝ (fun y : Vec d => k y i j) x) (basisVec i)
+    have hmul : HasFDerivAt (fun y : Vec d => euclideanCoordDeriv j psi y * k y i j)
+        (euclideanCoordDeriv j psi x • fderiv ℝ (fun y : Vec d => k y i j) x +
+          k x i j • fderiv ℝ (euclideanCoordDeriv j psi) x) x := hf.mul hg
+    rw [hmul.fderiv]
+    simp only [add_apply, smul_apply, smul_eq_mul]
+    ring
+  have hibp := H1Function.integral_mul_zeroTrace_gradCoord_eq_neg_integral_gradCoord_mul w X i
+  have hL : ∫ x in U, w.toFun x * X.toH1Function.grad x i ∂volume =
+      (∫ x in U, w.toFun x * (k x i j * euclideanCoordSecondDeriv j i psi x) ∂volume) +
+        ∫ x in U, w.toFun x *
+          (euclideanCoordDeriv j psi x *
+            euclideanCoordDeriv i (fun y => k y i j) x) ∂volume := by
+    rw [← integral_add (hP_int i j) (hQ_int i j)]
+    refine integral_congr_ae ?_
+    filter_upwards [hgrad_ae] with x hx
+    rw [hx, hprod x, mul_add]
+  rw [hL] at hibp
+  rw [hibp]
+  simp only [hX]
+
 private theorem integral_smul_matFieldDiv_eq_of_smooth
     {U : Set (Vec d)} (hU : IsOpenBoundedConvexDomain U)
     {k : Vec d → Mat d} (hk : ∀ a b : Fin d, ContDiff ℝ 1 fun x => k x a b)
@@ -309,63 +386,8 @@ private theorem integral_smul_matFieldDiv_eq_of_smooth
     integrable_mul_of_memScalarL2 (w.gradMemL2 a) (hS3 i i j)
   -- One integration by parts per pair of indices, against the `C¹` zero-trace test
   -- `x ↦ ∂_j ψ (x) · k_{i j}(x)`.
-  have key : ∀ i j : Fin d,
-      (∫ x in U, w.toFun x * (k x i j * euclideanCoordSecondDeriv j i psi x) ∂volume) +
-          ∫ x in U, w.toFun x *
-            (euclideanCoordDeriv j psi x *
-              euclideanCoordDeriv i (fun y => k y i j) x) ∂volume =
-        -∫ x in U, w.grad x i * (euclideanCoordDeriv j psi x * k x i j) ∂volume := by
-    intro i j
-    have hchi : ContDiff ℝ 1 fun x => euclideanCoordDeriv j psi x * k x i j :=
-      ((hDpsi_smooth j).of_le (by norm_num)).mul (hk i j)
-    obtain ⟨X, hX⟩ : MemH10 U fun x => euclideanCoordDeriv j psi x * k x i j :=
-      memH10_mul_of_contDiff_hasCompactSupport hU (hDpsi_smooth j) (hDpsi_cs j) (hDpsi_sub j)
-        (memH1_of_contDiff_one hU.isOpen.measurableSet hU.isBoundedDomain (hk i j))
-    have hweakX : HasWeakPartialDerivOn U i (fun x => euclideanCoordDeriv j psi x * k x i j)
-        fun x => X.toH1Function.grad x i := by
-      rw [← hX]
-      exact X.toH1Function.hasWeakGradient i
-    have hgrad_ae : (fun x => X.toH1Function.grad x i) =ᵐ[volume.restrict U]
-        fun x => euclideanCoordDeriv i (fun y => euclideanCoordDeriv j psi y * k y i j) x :=
-      HasWeakPartialDerivOn.ae_eq hU.isOpen
-        (MeasureTheory.IntegrableOn.locallyIntegrableOn
-          ((X.toH1Function.gradMemL2 i).integrable one_le_two))
-        (((hchi.continuous_fderiv (by simp)).clm_apply
-          continuous_const).locallyIntegrable.locallyIntegrableOn U)
-        hweakX (HasWeakPartialDerivOn.of_contDiff hchi)
-    have hprod : ∀ x : Vec d,
-        euclideanCoordDeriv i (fun y => euclideanCoordDeriv j psi y * k y i j) x =
-          k x i j * euclideanCoordSecondDeriv j i psi x +
-            euclideanCoordDeriv j psi x * euclideanCoordDeriv i (fun y => k y i j) x := by
-      intro x
-      have hf : HasFDerivAt (euclideanCoordDeriv j psi)
-          (fderiv ℝ (euclideanCoordDeriv j psi) x) x :=
-        ((hDpsi_smooth j).differentiable (by norm_num) x).hasFDerivAt
-      have hg : HasFDerivAt (fun y : Vec d => k y i j)
-          (fderiv ℝ (fun y : Vec d => k y i j) x) x :=
-        ((hk i j).differentiable (by norm_num) x).hasFDerivAt
-      show (fderiv ℝ (fun y : Vec d => euclideanCoordDeriv j psi y * k y i j) x) (basisVec i) =
-        k x i j * (fderiv ℝ (euclideanCoordDeriv j psi) x) (basisVec i) +
-          euclideanCoordDeriv j psi x * (fderiv ℝ (fun y : Vec d => k y i j) x) (basisVec i)
-      have hmul : HasFDerivAt (fun y : Vec d => euclideanCoordDeriv j psi y * k y i j)
-          (euclideanCoordDeriv j psi x • fderiv ℝ (fun y : Vec d => k y i j) x +
-            k x i j • fderiv ℝ (euclideanCoordDeriv j psi) x) x := hf.mul hg
-      rw [hmul.fderiv]
-      simp only [add_apply, smul_apply, smul_eq_mul]
-      ring
-    have hibp := H1Function.integral_mul_zeroTrace_gradCoord_eq_neg_integral_gradCoord_mul w X i
-    have hL : ∫ x in U, w.toFun x * X.toH1Function.grad x i ∂volume =
-        (∫ x in U, w.toFun x * (k x i j * euclideanCoordSecondDeriv j i psi x) ∂volume) +
-          ∫ x in U, w.toFun x *
-            (euclideanCoordDeriv j psi x *
-              euclideanCoordDeriv i (fun y => k y i j) x) ∂volume := by
-      rw [← integral_add (hP_int i j) (hQ_int i j)]
-      refine integral_congr_ae ?_
-      filter_upwards [hgrad_ae] with x hx
-      rw [hx, hprod x, mul_add]
-    rw [hL] at hibp
-    rw [hibp]
-    simp only [hX]
+  have key := @smoothMatrixField_componentIntegrationByParts (d) (U) (hU) (k) (hk) (w) (psi)
+    (this) (hDpsi_smooth) (hDpsi_cs) (hDpsi_sub) (hP_int) (hQ_int)
   -- The left-hand side as a double sum of scalar integrals.
   have hLHS : ∫ x in U, vecDot (w.toFun x • matFieldDiv k x) (euclideanGradient psi x) ∂volume =
       ∑ i : Fin d, ∑ j : Fin d, ∫ x in U, w.toFun x *
@@ -412,7 +434,7 @@ private theorem integral_smul_matFieldDiv_eq_of_smooth
       intro i j
       rw [← integral_neg]
       refine integral_congr_ae (Filter.Eventually.of_forall fun x => ?_)
-      show w.grad x j * (euclideanCoordDeriv i psi x * k x i j) =
+      change w.grad x j * (euclideanCoordDeriv i psi x * k x i j) =
         -(w.grad x j * (euclideanCoordDeriv i psi x * k x j i))
       rw [skew_entry_of_matTranspose (hskew x) j i]
       ring

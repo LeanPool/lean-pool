@@ -172,6 +172,131 @@ private theorem factor_majorant_le {A P W Br G L B C : ℝ}
 
 /-! ## 4. The five re-pinned Step-1 factor moments -/
 
+private theorem homStepOneSeamAnchor_comparisonBounds1 :
+    ∀ (d : ℕ) (CA : ℝ) (_ : (0 : ℝ) < CA) (M : ABKModel d) (_ : (0 : ℝ) < homS M) (m : ℤ) (t : ℝ)
+      (_ : (0 : ℝ) < t) (_ : homS M / (8 : ℝ) ≤ t) (q : ℝ) (_ : (64 : ℝ) * (↑d : ℝ) * |Real.log M.gamma| ≤ q)
+      (_ : q ≤ (homConst CA)⁻¹ * M.gamma⁻¹ * homS M) (_ : (0 : ℝ) < M.gamma⁻¹) (_ : CA ≤ max CA (1 : ℝ))
+      (_ : (4 : ℝ) ≤ |Real.log M.gamma|) (_ : (0 : ℝ) < |Real.log M.gamma|) (_ : |Real.log M.gamma| ≠ (0 : ℝ))
+      (_ : homS M ≤ (1 / 4 : ℝ)) (_ : (↑m : ℝ) - (↑(homN M m) : ℝ) = (↑(homK M) : ℝ))
+      (_ : (0 : ℝ) < (32 : ℝ) * |Real.log M.gamma|) (_ : (homS M / (8 : ℝ))⁻¹ = (8 : ℝ) * |Real.log M.gamma|)
+      (_ : (homS M / (16 : ℝ))⁻¹ = (16 : ℝ) * |Real.log M.gamma|)
+      (_ : (homS M / (32 : ℝ))⁻¹ = (32 : ℝ) * |Real.log M.gamma|),
+      (0 : ℝ) < t⁻¹ ∧
+        (t / (2 : ℝ))⁻¹ = (2 : ℝ) * t⁻¹ ∧
+          (0 : ℝ) ≤ q ∧
+            (2 : ℝ) * (↑d : ℝ) * (homS M / (16 : ℝ))⁻¹ ≤ q ∧
+              (2 : ℝ) * (↑d : ℝ) * (homS M / (32 : ℝ))⁻¹ ≤ q ∧
+                (2 : ℝ) * (↑d : ℝ) * (1 / 4 : ℝ)⁻¹ ≤ q ∧
+                  (2 : ℝ) * (↑d : ℝ) * (t / (2 : ℝ))⁻¹ ≤ q ∧
+                    (2 : ℝ) * (↑d : ℝ) * t⁻¹ ≤ q ∧
+                      q ≤ CA⁻¹ * M.gamma⁻¹ * (homS M / (16 : ℝ)) ∧
+                        q ≤ CA⁻¹ * M.gamma⁻¹ * (homS M / (32 : ℝ)) ∧
+                          q ≤ CA⁻¹ * M.gamma⁻¹ * (1 / 4 : ℝ) ∧
+                            q ≤ CA⁻¹ * M.gamma⁻¹ * (t / (2 : ℝ)) ∧
+                              q ≤ CA⁻¹ * M.gamma⁻¹ * t ∧
+                                (↑(homK M) : ℝ) ≤ (12 : ℝ) * |Real.log M.gamma| ∧
+                                  (1 / 2 : ℝ) * (homS M / (16 : ℝ)) * ((↑m : ℝ) - (↑(homN M m) : ℝ)) ≤ (1 : ℝ) := by
+  intro d CA hCApos M hs m t ht htlo q hq_lo hq_hi hginv hCAK hL4 hLpos _ hs4 hgap h32L hinv8 hinv16 hinv32
+  have htinv : (0 : ℝ) < t⁻¹ := inv_pos.mpr ht
+  have hinvhalf : (t / 2)⁻¹ = 2 * t⁻¹ := by
+    rw [div_eq_mul_inv, mul_inv, inv_inv]; ring
+  have htinv8 : t⁻¹ ≤ 8 * |Real.log M.gamma| := by
+    have h8pos : (0 : ℝ) < homS M / 8 := by linarith only [hs]
+    have h := one_div_le_one_div_of_le h8pos htlo
+    rw [one_div, one_div, hinv8] at h
+    exact h
+  /- ### the `q`-range, lower endpoints (the gate is `64 d |log γ|`) -/
+  have hd0 : (0 : ℝ) ≤ (d : ℝ) := Nat.cast_nonneg d
+  have hdL : (0 : ℝ) ≤ (d : ℝ) * |Real.log M.gamma| := mul_nonneg hd0 hLpos.le
+  have hqnn : (0 : ℝ) ≤ q := by
+    have hlow : (0 : ℝ) ≤ 64 * (d : ℝ) * |Real.log M.gamma| := by positivity
+    linarith only [hq_lo, hlow]
+  have hqlo16 : 2 * (d : ℝ) * (homS M / 16)⁻¹ ≤ q := by
+    rw [hinv16]
+    have he1 : 2 * (d : ℝ) * (16 * |Real.log M.gamma|) =
+        32 * ((d : ℝ) * |Real.log M.gamma|) := by ring
+    have he2 : 64 * (d : ℝ) * |Real.log M.gamma| =
+        64 * ((d : ℝ) * |Real.log M.gamma|) := by ring
+    linarith only [hdL, he1, he2, hq_lo]
+  have hqlo32 : 2 * (d : ℝ) * (homS M / 32)⁻¹ ≤ q := by
+    rw [hinv32]
+    have he : 2 * (d : ℝ) * (32 * |Real.log M.gamma|) =
+        64 * (d : ℝ) * |Real.log M.gamma| := by ring
+    linarith only [he, hq_lo]
+  have hqloQ : 2 * (d : ℝ) * ((1 : ℝ) / 4)⁻¹ ≤ q := by
+    have hprodd : (0 : ℝ) ≤ (d : ℝ) * (8 * |Real.log M.gamma| - 1) :=
+      mul_nonneg hd0 (by linarith only [hL4])
+    have he1 : 2 * (d : ℝ) * ((1 : ℝ) / 4)⁻¹ = 8 * (d : ℝ) := by norm_num; ring
+    have he2 : 64 * (d : ℝ) * |Real.log M.gamma| - 8 * (d : ℝ) =
+        8 * ((d : ℝ) * (8 * |Real.log M.gamma| - 1)) := by ring
+    have hstep : 2 * (d : ℝ) * ((1 : ℝ) / 4)⁻¹ ≤ 64 * (d : ℝ) * |Real.log M.gamma| := by
+      linarith only [hprodd, he1, he2]
+    linarith only [hstep, hq_lo]
+  have hqloT2 : 2 * (d : ℝ) * (t / 2)⁻¹ ≤ q := by
+    rw [hinvhalf]
+    have hfac : (0 : ℝ) ≤ 2 * (d : ℝ) * 2 := by positivity
+    have h := mul_le_mul_of_nonneg_left htinv8 hfac
+    have hstep : 2 * (d : ℝ) * (2 * t⁻¹) ≤ 32 * ((d : ℝ) * |Real.log M.gamma|) := by
+      calc 2 * (d : ℝ) * (2 * t⁻¹) = 2 * (d : ℝ) * 2 * t⁻¹ := by ring
+        _ ≤ 2 * (d : ℝ) * 2 * (8 * |Real.log M.gamma|) := h
+        _ = 32 * ((d : ℝ) * |Real.log M.gamma|) := by ring
+    have he2 : 64 * (d : ℝ) * |Real.log M.gamma| =
+        64 * ((d : ℝ) * |Real.log M.gamma|) := by ring
+    linarith only [hstep, he2, hq_lo, hdL]
+  have hqloT : 2 * (d : ℝ) * t⁻¹ ≤ q := by
+    have hfac : (0 : ℝ) ≤ 2 * (d : ℝ) := by positivity
+    have h := mul_le_mul_of_nonneg_left htinv8 hfac
+    have he : 2 * (d : ℝ) * (8 * |Real.log M.gamma|) =
+        16 * ((d : ℝ) * |Real.log M.gamma|) := by ring
+    have he2 : 64 * (d : ℝ) * |Real.log M.gamma| =
+        64 * ((d : ℝ) * |Real.log M.gamma|) := by ring
+    linarith only [h, he, he2, hq_lo, hdL]
+  /- ### the `q`-range, upper endpoints (the divisor `200` covers every slo -/
+  have hCinv : (homConst CA)⁻¹ = (200 * max CA 1)⁻¹ := by rw [homConst]
+  have hCApos' : (0 : ℝ) < CA⁻¹ := inv_pos.mpr hCApos
+  have hKle : (max CA 1)⁻¹ ≤ CA⁻¹ := by
+    have h := one_div_le_one_div_of_le hCApos hCAK
+    rwa [one_div, one_div] at h
+  have hconst_le : (homConst CA)⁻¹ ≤ (max CA 1)⁻¹ / 200 := by
+    rw [hCinv, mul_inv]
+    have h : (200 : ℝ)⁻¹ * (max CA 1)⁻¹ = (max CA 1)⁻¹ / 200 := by ring
+    linarith only [h]
+  have hupper : ∀ s' : ℝ, homS M / 200 ≤ s' → q ≤ CA⁻¹ * M.gamma⁻¹ * s' := by
+    intro s' hle
+    have h1 : (homConst CA)⁻¹ * homS M ≤ ((max CA 1)⁻¹ / 200) * homS M :=
+      mul_le_mul_of_nonneg_right hconst_le hs.le
+    have h2 : ((max CA 1)⁻¹ / 200) * homS M ≤ CA⁻¹ * s' := by
+      have hstep1 : (max CA 1)⁻¹ * (homS M / 200) ≤ CA⁻¹ * (homS M / 200) :=
+        mul_le_mul_of_nonneg_right hKle (by linarith only [hs])
+      have hstep2 : CA⁻¹ * (homS M / 200) ≤ CA⁻¹ * s' :=
+        mul_le_mul_of_nonneg_left hle hCApos'.le
+      have he : ((max CA 1)⁻¹ / 200) * homS M = (max CA 1)⁻¹ * (homS M / 200) := by ring
+      linarith only [hstep1, hstep2, he]
+    have hbase : (homConst CA)⁻¹ * homS M ≤ CA⁻¹ * s' := by linarith only [h1, h2]
+    have hstep : (homConst CA)⁻¹ * M.gamma⁻¹ * homS M ≤ CA⁻¹ * M.gamma⁻¹ * s' := by
+      have e1 : (homConst CA)⁻¹ * M.gamma⁻¹ * homS M =
+          M.gamma⁻¹ * ((homConst CA)⁻¹ * homS M) := by ring
+      have e2 : CA⁻¹ * M.gamma⁻¹ * s' = M.gamma⁻¹ * (CA⁻¹ * s') := by ring
+      rw [e1, e2]
+      exact mul_le_mul_of_nonneg_left hbase hginv.le
+    linarith only [hq_hi, hstep]
+  have hup16 : q ≤ CA⁻¹ * M.gamma⁻¹ * (homS M / 16) := hupper _ (by linarith only [hs])
+  have hup32 : q ≤ CA⁻¹ * M.gamma⁻¹ * (homS M / 32) := hupper _ (by linarith only [hs])
+  have hupQ : q ≤ CA⁻¹ * M.gamma⁻¹ * (1 / 4) := hupper _ (by linarith only [hs, hs4])
+  have hupT2 : q ≤ CA⁻¹ * M.gamma⁻¹ * (t / 2) := hupper _ (by linarith only [hs, htlo])
+  have hupT : q ≤ CA⁻¹ * M.gamma⁻¹ * t := hupper _ (by linarith only [hs, htlo])
+  /- ### the IMPROVED `3`-power budge -/
+  have hkle : (homK M : ℝ) ≤ 12 * |Real.log M.gamma| := by
+    have h := homK_le M
+    linarith only [h, hL4]
+  have hexp16 : 1 / 2 * (homS M / 16) * ((m : ℝ) - ((homN M m : ℤ) : ℝ)) ≤ 1 := by
+    rw [hgap, homS]
+    have hval : 1 / 2 * (|Real.log M.gamma|⁻¹ / 16) * (homK M : ℝ) =
+        (homK M : ℝ) / (32 * |Real.log M.gamma|) := by field_simp; ring
+    rw [hval, div_le_iff₀ h32L]
+    linarith only [hkle, hLpos]
+  exact ⟨htinv, hinvhalf, hqnn, hqlo16, hqlo32, hqloQ, hqloT2, hqloT, hup16, hup32, hupQ, hupT2, hupT, hkle, hexp16⟩
+
 /-- **THE RE-PINNED STEP-1 FACTOR MOMENTS.**
 
 The sibling of the anchor's Step-1 factor moments at the re-pinned
@@ -312,104 +437,9 @@ theorem exists_ethmB_seam_factor_moments (d : ℕ) (cstar : ℝ) (hcstar : 0 < c
   have hinv16 : (homS M / 16)⁻¹ = 16 * |Real.log M.gamma| := by rw [homS]; field_simp
   have hinv32 : (homS M / 32)⁻¹ = 32 * |Real.log M.gamma| := by rw [homS]; field_simp
   have htne : t ≠ 0 := ne_of_gt ht
-  have htinv : (0 : ℝ) < t⁻¹ := inv_pos.mpr ht
-  have hinvhalf : (t / 2)⁻¹ = 2 * t⁻¹ := by
-    rw [div_eq_mul_inv, mul_inv, inv_inv]; ring
-  have htinv8 : t⁻¹ ≤ 8 * |Real.log M.gamma| := by
-    have h8pos : (0 : ℝ) < homS M / 8 := by linarith only [hs]
-    have h := one_div_le_one_div_of_le h8pos htlo
-    rw [one_div, one_div, hinv8] at h
-    exact h
-  /- ### the `q`-range, lower endpoints (the gate is `64 d |log γ|`) -/
-  have hd0 : (0 : ℝ) ≤ (d : ℝ) := Nat.cast_nonneg d
-  have hdL : (0 : ℝ) ≤ (d : ℝ) * |Real.log M.gamma| := mul_nonneg hd0 hLpos.le
-  have hqnn : (0 : ℝ) ≤ q := by
-    have hlow : (0 : ℝ) ≤ 64 * (d : ℝ) * |Real.log M.gamma| := by positivity
-    linarith only [hq_lo, hlow]
-  have hqlo16 : 2 * (d : ℝ) * (homS M / 16)⁻¹ ≤ q := by
-    rw [hinv16]
-    have he1 : 2 * (d : ℝ) * (16 * |Real.log M.gamma|) =
-        32 * ((d : ℝ) * |Real.log M.gamma|) := by ring
-    have he2 : 64 * (d : ℝ) * |Real.log M.gamma| =
-        64 * ((d : ℝ) * |Real.log M.gamma|) := by ring
-    linarith only [hdL, he1, he2, hq_lo]
-  have hqlo32 : 2 * (d : ℝ) * (homS M / 32)⁻¹ ≤ q := by
-    rw [hinv32]
-    have he : 2 * (d : ℝ) * (32 * |Real.log M.gamma|) =
-        64 * (d : ℝ) * |Real.log M.gamma| := by ring
-    linarith only [he, hq_lo]
-  have hqloQ : 2 * (d : ℝ) * ((1 : ℝ) / 4)⁻¹ ≤ q := by
-    have hprodd : (0 : ℝ) ≤ (d : ℝ) * (8 * |Real.log M.gamma| - 1) :=
-      mul_nonneg hd0 (by linarith only [hL4])
-    have he1 : 2 * (d : ℝ) * ((1 : ℝ) / 4)⁻¹ = 8 * (d : ℝ) := by norm_num; ring
-    have he2 : 64 * (d : ℝ) * |Real.log M.gamma| - 8 * (d : ℝ) =
-        8 * ((d : ℝ) * (8 * |Real.log M.gamma| - 1)) := by ring
-    have hstep : 2 * (d : ℝ) * ((1 : ℝ) / 4)⁻¹ ≤ 64 * (d : ℝ) * |Real.log M.gamma| := by
-      linarith only [hprodd, he1, he2]
-    linarith only [hstep, hq_lo]
-  have hqloT2 : 2 * (d : ℝ) * (t / 2)⁻¹ ≤ q := by
-    rw [hinvhalf]
-    have hfac : (0 : ℝ) ≤ 2 * (d : ℝ) * 2 := by positivity
-    have h := mul_le_mul_of_nonneg_left htinv8 hfac
-    have hstep : 2 * (d : ℝ) * (2 * t⁻¹) ≤ 32 * ((d : ℝ) * |Real.log M.gamma|) := by
-      calc 2 * (d : ℝ) * (2 * t⁻¹) = 2 * (d : ℝ) * 2 * t⁻¹ := by ring
-        _ ≤ 2 * (d : ℝ) * 2 * (8 * |Real.log M.gamma|) := h
-        _ = 32 * ((d : ℝ) * |Real.log M.gamma|) := by ring
-    have he2 : 64 * (d : ℝ) * |Real.log M.gamma| =
-        64 * ((d : ℝ) * |Real.log M.gamma|) := by ring
-    linarith only [hstep, he2, hq_lo, hdL]
-  have hqloT : 2 * (d : ℝ) * t⁻¹ ≤ q := by
-    have hfac : (0 : ℝ) ≤ 2 * (d : ℝ) := by positivity
-    have h := mul_le_mul_of_nonneg_left htinv8 hfac
-    have he : 2 * (d : ℝ) * (8 * |Real.log M.gamma|) =
-        16 * ((d : ℝ) * |Real.log M.gamma|) := by ring
-    have he2 : 64 * (d : ℝ) * |Real.log M.gamma| =
-        64 * ((d : ℝ) * |Real.log M.gamma|) := by ring
-    linarith only [h, he, he2, hq_lo, hdL]
-  /- ### the `q`-range, upper endpoints (the divisor `200` covers every slo -/
-  have hCinv : (homConst CA)⁻¹ = (200 * max CA 1)⁻¹ := by rw [homConst]
-  have hCApos' : (0 : ℝ) < CA⁻¹ := inv_pos.mpr hCApos
-  have hKle : (max CA 1)⁻¹ ≤ CA⁻¹ := by
-    have h := one_div_le_one_div_of_le hCApos hCAK
-    rwa [one_div, one_div] at h
-  have hconst_le : (homConst CA)⁻¹ ≤ (max CA 1)⁻¹ / 200 := by
-    rw [hCinv, mul_inv]
-    have h : (200 : ℝ)⁻¹ * (max CA 1)⁻¹ = (max CA 1)⁻¹ / 200 := by ring
-    linarith only [h]
-  have hupper : ∀ s' : ℝ, homS M / 200 ≤ s' → q ≤ CA⁻¹ * M.gamma⁻¹ * s' := by
-    intro s' hle
-    have h1 : (homConst CA)⁻¹ * homS M ≤ ((max CA 1)⁻¹ / 200) * homS M :=
-      mul_le_mul_of_nonneg_right hconst_le hs.le
-    have h2 : ((max CA 1)⁻¹ / 200) * homS M ≤ CA⁻¹ * s' := by
-      have hstep1 : (max CA 1)⁻¹ * (homS M / 200) ≤ CA⁻¹ * (homS M / 200) :=
-        mul_le_mul_of_nonneg_right hKle (by linarith only [hs])
-      have hstep2 : CA⁻¹ * (homS M / 200) ≤ CA⁻¹ * s' :=
-        mul_le_mul_of_nonneg_left hle hCApos'.le
-      have he : ((max CA 1)⁻¹ / 200) * homS M = (max CA 1)⁻¹ * (homS M / 200) := by ring
-      linarith only [hstep1, hstep2, he]
-    have hbase : (homConst CA)⁻¹ * homS M ≤ CA⁻¹ * s' := by linarith only [h1, h2]
-    have hstep : (homConst CA)⁻¹ * M.gamma⁻¹ * homS M ≤ CA⁻¹ * M.gamma⁻¹ * s' := by
-      have e1 : (homConst CA)⁻¹ * M.gamma⁻¹ * homS M =
-          M.gamma⁻¹ * ((homConst CA)⁻¹ * homS M) := by ring
-      have e2 : CA⁻¹ * M.gamma⁻¹ * s' = M.gamma⁻¹ * (CA⁻¹ * s') := by ring
-      rw [e1, e2]
-      exact mul_le_mul_of_nonneg_left hbase hginv.le
-    linarith only [hq_hi, hstep]
-  have hup16 : q ≤ CA⁻¹ * M.gamma⁻¹ * (homS M / 16) := hupper _ (by linarith only [hs])
-  have hup32 : q ≤ CA⁻¹ * M.gamma⁻¹ * (homS M / 32) := hupper _ (by linarith only [hs])
-  have hupQ : q ≤ CA⁻¹ * M.gamma⁻¹ * (1 / 4) := hupper _ (by linarith only [hs, hs4])
-  have hupT2 : q ≤ CA⁻¹ * M.gamma⁻¹ * (t / 2) := hupper _ (by linarith only [hs, htlo])
-  have hupT : q ≤ CA⁻¹ * M.gamma⁻¹ * t := hupper _ (by linarith only [hs, htlo])
-  /- ### the IMPROVED `3`-power budge -/
-  have hkle : (homK M : ℝ) ≤ 12 * |Real.log M.gamma| := by
-    have h := homK_le M
-    linarith only [h, hL4]
-  have hexp16 : 1 / 2 * (homS M / 16) * ((m : ℝ) - ((homN M m : ℤ) : ℝ)) ≤ 1 := by
-    rw [hgap, homS]
-    have hval : 1 / 2 * (|Real.log M.gamma|⁻¹ / 16) * (homK M : ℝ) =
-        (homK M : ℝ) / (32 * |Real.log M.gamma|) := by field_simp; ring
-    rw [hval, div_le_iff₀ h32L]
-    linarith only [hkle, hLpos]
+  obtain ⟨htinv, hinvhalf, hqnn, hqlo16, hqlo32, hqloQ, hqloT2, hqloT, hup16, hup32, hupQ, hupT2, hupT, hkle, hexp16⟩ :=
+    (show ((0 : ℝ) < t⁻¹) ∧ ((t / 2)⁻¹ = 2 * t⁻¹) ∧ ((0 : ℝ) ≤ q) ∧ (2 * (d : ℝ) * (homS M / 16)⁻¹ ≤ q) ∧ (2 * (d : ℝ) * (homS M / 32)⁻¹ ≤ q) ∧ (2 * (d : ℝ) * ((1 : ℝ) / 4)⁻¹ ≤ q) ∧ (2 * (d : ℝ) * (t / 2)⁻¹ ≤ q) ∧ (2 * (d : ℝ) * t⁻¹ ≤ q) ∧ (q ≤ CA⁻¹ * M.gamma⁻¹ * (homS M / 16)) ∧ (q ≤ CA⁻¹ * M.gamma⁻¹ * (homS M / 32)) ∧ (q ≤ CA⁻¹ * M.gamma⁻¹ * (1 / 4)) ∧ (q ≤ CA⁻¹ * M.gamma⁻¹ * (t / 2)) ∧ (q ≤ CA⁻¹ * M.gamma⁻¹ * t) ∧ ((homK M : ℝ) ≤ 12 * |Real.log M.gamma|) ∧ (1 / 2 * (homS M / 16) * ((m : ℝ) - ((homN M m : ℤ) : ℝ)) ≤ 1) from
+      @homStepOneSeamAnchor_comparisonBounds1 (d) (CA) (hCApos) (M) (hs) (m) (t) (ht) (htlo) (q) (hq_lo) (hq_hi) (hginv) (hCAK) (hL4) (hLpos) (hLne) (hs4) (hgap) (h32L) (hinv8) (hinv16) (hinv32))
   have hexp32 : 1 / 2 * (homS M / 32) * ((m : ℝ) - ((homN M m : ℤ) : ℝ)) ≤ 1 := by
     rw [hgap, homS]
     have hval : 1 / 2 * (|Real.log M.gamma|⁻¹ / 32) * (homK M : ℝ) =

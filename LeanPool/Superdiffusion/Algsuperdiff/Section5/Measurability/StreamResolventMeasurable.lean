@@ -9,14 +9,16 @@ module
 public import LeanPool.Superdiffusion.Algsuperdiff.Section5.Field.StreamProcess
 public import LeanPool.Superdiffusion.Algsuperdiff.Section5.Measurability.ResolventFamilyMeasurable
 
-@[expose] public section
-
 /-!
 # From measurable cube resolvents to stream transition laws
 
 The analytic minimal resolvent is a countable supremum of cube resolvents,
 with positive and negative parts supplying its real-valued version.
 -/
+
+@[expose] public section
+
+
 
 namespace Algsuperdiff.Section5.Measurability
 

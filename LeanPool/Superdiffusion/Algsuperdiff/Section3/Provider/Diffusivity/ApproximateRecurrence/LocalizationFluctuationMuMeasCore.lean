@@ -117,7 +117,7 @@ private theorem toHilbertBlockL2OfBlockField_add {U : Set (Vec d)}
          (toHilbertBlockL2OfBlockField (U := U) hG)]
     with x hHx hFx hGx hsum
   rw [hHx, hsum]
-  show hilbertifyBlockField H x
+  change hilbertifyBlockField H x
       = (toHilbertBlockL2OfBlockField (U := U) hF) x
         + (toHilbertBlockL2OfBlockField (U := U) hG) x
   rw [hFx, hGx]
@@ -131,10 +131,10 @@ private theorem toHilbertBlockL2OfBlockField_add {U : Set (Vec d)}
 theorem add_sub_cancel_doubledField (F X : DoubledField d) : F + (X - F) = X := by
   refine HCPolySupport.Internal.Ch02.BookCh02.doubledField_ext ?_ ?_
   · funext x
-    show F.potential x + (X.potential x - F.potential x) = X.potential x
+    change F.potential x + (X.potential x - F.potential x) = X.potential x
     abel
   · funext x
-    show F.flux x + (X.flux x - F.flux x) = X.flux x
+    change F.flux x + (X.flux x - F.flux x) = X.flux x
     abel
 
 /-! ## Nonnegativity and the two elementary bounds on the field-slope minimum
@@ -234,10 +234,10 @@ theorem exists_countable_doubledMuFieldCompetitors (U : Domain d) :
       intro a W
       have hfun : (fun x : Vec 0 => blockEnergyDensityAt a (W.eval x) x) = 0 := by
         funext x
-        show (1 / 2 : ℝ) * blockVecDot (W.eval x)
+        change (1 / 2 : ℝ) * blockVecDot (W.eval x)
           (blockMatVecMul (blockMatrixField a x) (W.eval x)) = 0
         simp [blockVecDot, vecDot]
-      show volumeAverage (U : Set (Vec 0)) (fun x => blockEnergyDensityAt a (W.eval x) x) = 0
+      change volumeAverage (U : Set (Vec 0)) (fun x => blockEnergyDensityAt a (W.eval x) x) = 0
       rw [hfun]
       simp [volumeAverage]
     refine ⟨fun _ => 0, fun _ => isDoubledTestField_zero U, ?_⟩
@@ -250,7 +250,7 @@ theorem exists_countable_doubledMuFieldCompetitors (U : Domain d) :
       · rintro rfl
         exact ⟨F, isDoubledMuAdmissibleField_self U F, (hzero a F).symm⟩
     have hmu : doubledMuField U a F = 0 := by
-      show sInf (doubledMuFieldValueSet U a F) = 0
+      change sInf (doubledMuFieldValueSet U a F) = 0
       rw [hset]
       exact csInf_singleton 0
     have hrange : (Set.range fun n : ℕ => doubledMuValue U a (F + (0 : DoubledField 0)))
@@ -338,7 +338,7 @@ theorem exists_countable_doubledMuFieldCompetitors (U : Domain d) :
         ⟨X - F, (isDoubledMuAdmissibleField_iff_isDoubledTestField_sub U F X).1 hX⟩ with hYdef
       have hgY : g (E Y) = doubledMuValue U a X := by
         rw [hgE Y]
-        show doubledMuValue U a (F + (X - F)) = _
+        change doubledMuValue U a (F + (X - F)) = _
         rw [add_sub_cancel_doubledField]
       obtain ⟨delta, hdelta, hball⟩ := Metric.continuousAt_iff.1 hgcont.continuousAt ε hε
       obtain ⟨n, hn⟩ :=

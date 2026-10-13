@@ -137,7 +137,7 @@ theorem descendantsAverage_add_real (Q : TriadicCube d) (j : ℕ)
     descendantsAverage Q j (fun R => f R + g R) =
       descendantsAverage Q j f + descendantsAverage Q j g := by
   classical
-  show ((descendantsAtDepth Q j).card : ℝ)⁻¹ *
+  change ((descendantsAtDepth Q j).card : ℝ)⁻¹ *
       ∑ R ∈ descendantsAtDepth Q j, (f R + g R) = _
   rw [Finset.sum_add_distrib, mul_add]
   rfl
@@ -416,7 +416,7 @@ theorem descendantsAverage_integral_principalEnergy_le_annealedLimit [NeZero d]
         (∫ omega, energy R omega * (Ebad R)ᶜ.indicator (fun _ => (1 : ℝ)) omega ∂mu) +
           ∫ omega,
             energy R omega * (Ebad R).indicator (fun _ => (1 : ℝ)) omega ∂mu) := by
-    show ((descendantsAtDepth Q j).card : ℝ)⁻¹ *
+    change ((descendantsAtDepth Q j).card : ℝ)⁻¹ *
         ∑ R ∈ descendantsAtDepth Q j, _ = ((descendantsAtDepth Q j).card : ℝ)⁻¹ *
         ∑ R ∈ descendantsAtDepth Q j, _
     congr 1

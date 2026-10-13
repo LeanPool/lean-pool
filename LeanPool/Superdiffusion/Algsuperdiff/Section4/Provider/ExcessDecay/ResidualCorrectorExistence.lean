@@ -85,7 +85,7 @@ def unitCoeffField (d : ℕ) : CoeffField d := constantCoeffField (scalarMatrix 
 
 theorem matVecMul_unitCoeffField (x v : Vec d) :
     matVecMul (unitCoeffField d x) v = v := by
-  show matVecMul (scalarMatrix (d := d) 1) v = v
+  change matVecMul (scalarMatrix (d := d) 1) v = v
   rw [matVecMul_scalarMatrix, one_smul]
 
 theorem isEllipticFieldOn_unitCoeffField {V : Set (Vec d)} (hV : MeasurableSet V) :
@@ -125,7 +125,7 @@ theorem exists_weaklyHarmonicOn_of_datum [NeZero d] {V : Set (Vec d)}
           (rho.toH1Function.grad x)) (φ.toH1Function.grad x) ∂volume =
         ∫ x in V, vecDot (rho.toH1Function.grad x) (φ.toH1Function.grad x) ∂volume :=
       integral_congr_ae (Filter.Eventually.of_forall fun x => by
-        show vecDot (matVecMul (unitCoeffField d x) (rho.toH1Function.grad x))
+        change vecDot (matVecMul (unitCoeffField d x) (rho.toH1Function.grad x))
             (φ.toH1Function.grad x) =
           vecDot (rho.toH1Function.grad x) (φ.toH1Function.grad x)
         rw [matVecMul_unitCoeffField])
@@ -135,7 +135,7 @@ theorem exists_weaklyHarmonicOn_of_datum [NeZero d] {V : Set (Vec d)}
       have hfun : (fun x => vecDot ((fun y => -Φ.grad y) x) (φ.toH1Function.grad x)) =
           fun x => -vecDot (Φ.grad x) (φ.toH1Function.grad x) := by
         funext x
-        show vecDot (-Φ.grad x) (φ.toH1Function.grad x) = _
+        change vecDot (-Φ.grad x) (φ.toH1Function.grad x) = _
         rw [vecDot_neg_left]
       rw [hfun, integral_neg]
     rw [hneg] at hid
@@ -144,7 +144,7 @@ theorem exists_weaklyHarmonicOn_of_datum [NeZero d] {V : Set (Vec d)}
   · funext y
     show rho.toH1Function.toFun y = (Φ + rho.toH1Function).toFun y - Φ.toFun y
     rw [H1Function.add_toFun]
-    show rho.toH1Function.toFun y = Φ.toFun y + rho.toH1Function.toFun y - Φ.toFun y
+    change rho.toH1Function.toFun y = Φ.toFun y + rho.toH1Function.toFun y - Φ.toFun y
     ring
 
 /-! ## 3. The boundary bound from the datum -/
@@ -205,7 +205,7 @@ theorem exists_h1_clamp {V : Set (Vec d)} (hV : IsOpenBoundedConvexDomain V)
       Φ.toFun y - max (Φ.toFun y - M) 0 + max (-Φ.toFun y - M) 0 := by
     intro y
     rw [H1Function.add_toFun, H1Function.sub_toFun]
-    show Φ.toFun y - v1.toFun y + v2.toFun y = _
+    change Φ.toFun y - v1.toFun y + v2.toFun y = _
     rw [hv1f, hv2f, H1Function.neg_toFun]
   refine ⟨Φ - v1 + v2, fun y => ?_, fun y => ?_, fun y hy => ?_⟩
   · rw [hval y]
@@ -237,7 +237,7 @@ theorem exists_residualCorrector [NeZero d] {V : Set (Vec d)}
     rwa [hfun] at h
   refine hasBoundaryUpperBoundOn_of_datum_le hV hdiffneg fun y => ?_
   rw [H1Function.neg_toFun]
-  show -Φ.toFun y ≤ M
+  change -Φ.toFun y ≤ M
   linarith only [hlower y]
 
 end

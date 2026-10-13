@@ -24,7 +24,8 @@ Module imports, support namespace and local option directives adapted for Lean P
 
 ## What this file does
 
-The composition of `HomSeamComposition` reduced the frozen root to ONE object, but at the lane's NUMERAL clause
+The composition of `HomSeamComposition` reduced the frozen root to ONE object, but at the lane's
+NUMERAL clause
 constant `recutPinnedCcgFlux d p` — which the producing route cannot meet
 (`CA ≍ |log γ|^{1-1/(4d)}`).  This file re-states the reduction at
 a model-dependent constant `CcgF: ABKModel d → ℝ`, subject to exactly the two
@@ -61,7 +62,8 @@ noncomputable section
 
 /-- **THE FROZEN `generator_renormalization` BODY FROM A BUDGETED CLAUSE.**
 
-The provider at the sup-form clause, with the numeral `Ccg` pin freed.  The hypothesis list is `{0 < cstar, 0 <
+The provider at the sup-form clause, with the numeral `Ccg` pin freed.  The hypothesis list is `{0 <
+cstar, 0 <
 gamma0, 0 < Cgap, 0 ≤ Cbud}` plus the three properties of `CcgF` and the clause
 supply — and NOTHING else.  `C_en⁰`, `C_top` and the geometric factor are still
 closed terms pinned inside; `K_abs` is now the closed term `seamKabsAt d hd1

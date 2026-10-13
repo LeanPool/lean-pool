@@ -137,10 +137,10 @@ private theorem blockEnergyDensityAt_add_ae {U : Domain d} (a : CoeffOn U)
   have hexp := blockVecDot_blockMatVecMul_add_smul_of_isSymmetricBlockMat hx
     (S.eval x) (T.eval x) 1
   rw [one_smul] at hexp
-  show blockEnergyDensityAt a (S.eval x + T.eval x) x = _
-  show (1 / 2 : ℝ) * blockVecDot (S.eval x + T.eval x)
+  change blockEnergyDensityAt a (S.eval x + T.eval x) x = _
+  change (1 / 2 : ℝ) * blockVecDot (S.eval x + T.eval x)
       (blockMatVecMul (blockMatrixField a x) (S.eval x + T.eval x)) = _
-  show _ = ((1 / 2 : ℝ) * blockVecDot (S.eval x)
+  change _ = ((1 / 2 : ℝ) * blockVecDot (S.eval x)
         (blockMatVecMul (blockMatrixField a x) (S.eval x))
       + (1 / 2 : ℝ) * blockVecDot (T.eval x)
         (blockMatVecMul (blockMatrixField a x) (T.eval x)))
@@ -162,7 +162,7 @@ theorem doubledMuValue_add {U : Domain d} (a : CoeffOn U) {S T : DoubledField d}
   have hES := integrableOn_blockEnergyDensity a hSpot hSflux
   have hET := integrableOn_blockEnergyDensity a hTpot hTflux
   have hcross := integrableOn_doubledBlockPairingIntegrand a hSpot hSflux hTpot hTflux
-  show volumeAverage (U : Set (Vec d))
+  change volumeAverage (U : Set (Vec d))
       (fun x => blockEnergyDensityAt a ((S + T).eval x) x) = _
   rw [volumeAverage_congr_ae (blockEnergyDensityAt_add_ae a S T),
     volumeAverage_add (hES.add hET) hcross, volumeAverage_add hES hET]
@@ -197,15 +197,15 @@ theorem volumeAverage_doubledBlockPairingIntegrand_of_isDoubledResponseField
       doubledBlockPairingIntegrand U a (constantDoubledField P) T
         + doubledBlockPairingIntegrand U a (S - constantDoubledField P) T := by
     funext x
-    show blockVecDot (S.eval x) (blockMatVecMul (blockMatrixField a x) (T.eval x)) =
+    change blockVecDot (S.eval x) (blockMatVecMul (blockMatrixField a x) (T.eval x)) =
       blockVecDot P (blockMatVecMul (blockMatrixField a x) (T.eval x))
         + blockVecDot ((S - constantDoubledField P).eval x)
             (blockMatVecMul (blockMatrixField a x) (T.eval x))
     have hdec : S.eval x = P + (S - constantDoubledField P).eval x := by
       refine Prod.ext ?_ ?_
-      · show S.potential x = P.1 + (S.potential x - P.1)
+      · change S.potential x = P.1 + (S.potential x - P.1)
         ring
-      · show S.flux x = P.2 + (S.flux x - P.2)
+      · change S.flux x = P.2 + (S.flux x - P.2)
         ring
     rw [hdec, blockVecDot_add_left]
   have hzero : volumeAverage (U : Set (Vec d))
@@ -251,7 +251,7 @@ theorem isDoubledTestField_smul {U : Domain d} {Y : DoubledField d}
   obtain ⟨⟨hpotL2, u, hu⟩, hfluxL2, hflux⟩ := hY
   refine ⟨⟨hpotL2.const_smul t, t • u, ?_⟩, hfluxL2.const_smul t, ?_⟩
   · filter_upwards [hu] with x hx
-    show t • Y.potential x = (t • u).toH1Function.grad x
+    change t • Y.potential x = (t • u).toH1Function.grad x
     rw [hx]
     rfl
   · intro phi
@@ -259,7 +259,7 @@ theorem isDoubledTestField_smul {U : Domain d} {Y : DoubledField d}
     have hrw : ∀ x : Vec d, vecDot ((t • Y).flux x) (phi.grad x) =
         t * vecDot (Y.flux x) (phi.grad x) := by
       intro x
-      show vecDot (t • Y.flux x) (phi.grad x) = t * vecDot (Y.flux x) (phi.grad x)
+      change vecDot (t • Y.flux x) (phi.grad x) = t * vecDot (Y.flux x) (phi.grad x)
       simp [vecDot, Finset.mul_sum, mul_assoc]
     calc
       ∫ x in (U : Set (Vec d)), vecDot ((t • Y).flux x) (phi.grad x) ∂volume
@@ -299,7 +299,7 @@ theorem isDoubledResponseField_of_forall_le_add_isDoubledTestField {U : Domain d
       have hpt : doubledBlockPairingIntegrand U a T (t • Y) =
           t • doubledBlockPairingIntegrand U a T Y := by
         funext x
-        show blockVecDot (T.eval x) (blockMatVecMul (blockMatrixField a x) ((t • Y).eval x)) =
+        change blockVecDot (T.eval x) (blockMatVecMul (blockMatrixField a x) ((t • Y).eval x)) =
           t * blockVecDot (T.eval x) (blockMatVecMul (blockMatrixField a x) (Y.eval x))
         have hev : (t • Y).eval x = t • Y.eval x := rfl
         rw [hev, blockMatVecMul_smul, blockVecDot_smul_right]
@@ -308,7 +308,7 @@ theorem isDoubledResponseField_of_forall_le_add_isDoubledTestField {U : Domain d
       have hpt : (fun x => blockEnergyDensityAt a ((t • Y).eval x) x) =
           (t ^ 2) • fun x => blockEnergyDensityAt a (Y.eval x) x := by
         funext x
-        show (1 / 2 : ℝ) * blockVecDot ((t • Y).eval x)
+        change (1 / 2 : ℝ) * blockVecDot ((t • Y).eval x)
             (blockMatVecMul (blockMatrixField a x) ((t • Y).eval x)) =
           (t ^ 2) • ((1 / 2 : ℝ) * blockVecDot (Y.eval x)
             (blockMatVecMul (blockMatrixField a x) (Y.eval x)))
@@ -316,7 +316,7 @@ theorem isDoubledResponseField_of_forall_le_add_isDoubledTestField {U : Domain d
         rw [hev, blockMatVecMul_smul, blockVecDot_smul_left, blockVecDot_smul_right]
         simp only [smul_eq_mul]
         ring
-      show volumeAverage (U : Set (Vec d))
+      change volumeAverage (U : Set (Vec d))
         (fun x => blockEnergyDensityAt a ((t • Y).eval x) x) = _
       rw [hpt, volumeAverage_smul]
       rfl

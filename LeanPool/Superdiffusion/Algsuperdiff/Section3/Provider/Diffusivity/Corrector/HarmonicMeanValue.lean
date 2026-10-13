@@ -126,7 +126,8 @@ theorem integral_radial_eq_zero_of_radialMoment_eq_zero (hk : Continuous k) (ha 
     (hb : 0 < b) (hk0 : ∀ s : ℝ, s ≤ a → k s = 0) (hkb : ∀ s : ℝ, b ≤ s → k s = 0)
     (hmom : radialMoment m k b = 0) (z : Vec (m + 1)) :
     ∫ x, k (euclideanNorm (x - z)) ∂volume = 0 := by
-  have h := integral_mul_radial_eq_zero_of_radialMoment_eq_zero (u := fun _ : Vec (m + 1) => (1 : ℝ))
+  have h := integral_mul_radial_eq_zero_of_radialMoment_eq_zero (u := fun _ : Vec (m + 1) => (1 :
+    ℝ))
     contDiff_const hk ha hb hk0 hkb hmom (z := z)
     (fun x _ => euclideanCoordLaplacian_const (1 : ℝ) x)
   simpa using h

@@ -90,7 +90,7 @@ theorem toFun_ae_zero_of_holderSeminormOn_eq_zero {y : Vec d} {n : ℤ} {a : Coe
   have hae := (isDirichletSolutionAt_ae_unique hd hEll huzero
     (isDirichletSolutionAt_zero a y n)).2
   filter_upwards [hae] with x hx
-  show u.toFun x = 0
+  change u.toFun x = 0
   rw [hx]
   rfl
 
@@ -148,7 +148,7 @@ theorem eLpNorm_top_sub_le_localizedError (M : ABKModel d) (n : ℤ) (y : Vec d)
       rw [hNdef]
       refine eLpNorm_eq_zero_of_ae_zero ?_
       filter_upwards [hau, hav] with x hx hx'
-      show u.toFun x - v.toFun x = 0
+      change u.toFun x - v.toFun x = 0
       rw [hx, hx']
       simp
     rw [hzero, mul_zero]
@@ -170,7 +170,7 @@ theorem eLpNorm_top_sub_le_localizedError (M : ABKModel d) (n : ℤ) (y : Vec d)
       have hfun : (fun x => (t • u).toFun x - (t • v).toFun x) =
           fun x => t * (u.toFun x - v.toFun x) := by
         funext x
-        show t * u.toFun x - t * v.toFun x = t * (u.toFun x - v.toFun x)
+        change t * u.toFun x - t * v.toFun x = t * (u.toFun x - v.toFun x)
         ring
       rw [hfun, eLpNorm_top_const_mul htpos.le, hNdef]
     have hle : ENNReal.ofReal t * (c * N) ≤ localizedError M n y omega := by

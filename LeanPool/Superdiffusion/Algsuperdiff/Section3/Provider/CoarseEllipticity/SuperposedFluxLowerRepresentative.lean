@@ -18,6 +18,9 @@ Module imports, support namespace and local option directives adapted for Lean P
 
 @[expose] public section
 
+open Algsuperdiff.Section3.Cutoff
+  (maxDescendantSigmaStarInvMatrixNormCoeffFieldAtScale_le_cutoffCoercivity)
+
 /-!
 # Pointwise representative for the sharp lower coarse-ellipticity lane
 
@@ -44,6 +47,8 @@ open Algsuperdiff.Section3.Provider.Multiscale
 open Algsuperdiff.Section3.Provider.Affine
 
 noncomputable section
+
+
 
 variable {d : ℕ}
 
@@ -216,7 +221,7 @@ theorem exists_superposedFluxLowerPointwiseRepresentative
               (originCube d m) (m - (n : ℤ))
               (coefficientCutoff M.nu L omega) ≤ H := by
       have hbase :=
-        Algsuperdiff.Section3.Cutoff.maxDescendantSigmaStarInvMatrixNormCoeffFieldAtScale_le_cutoffCoercivity
+        maxDescendantSigmaStarInvMatrixNormCoeffFieldAtScale_le_cutoffCoercivity
           M L omega (originCube d m) n
       exact mul_le_mul_of_nonneg_left hbase
         (Annealed.sigmaBar M (m - 1)).2.le

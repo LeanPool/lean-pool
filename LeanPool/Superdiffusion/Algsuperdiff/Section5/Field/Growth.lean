@@ -117,7 +117,8 @@ private theorem tsum_succ_le_of_nonneg {f : ℕ → ℝ} (hf : Summable f)
   have hsplit := hf.tsum_eq_zero_add
   linarith only [hsplit, h, hf0 0]
 
-private theorem tsum_localCubeDerivNorm_succ_le (M : ABKModel d) (omega : FullSample d M.gamma) {C : ℕ}
+private theorem tsum_localCubeDerivNorm_succ_le (M : ABKModel d) (omega : FullSample d M.gamma) {C
+  : ℕ}
     (hC : StreamGrowthBounded C omega.1) (ell : ℕ) :
     (∑' r : ℕ,
         localCubeDerivNorm (ell : ℤ) (omega.1.1 ((ell : ℤ) + 1 + (r : ℤ)))) ≤ (C : ℝ) := by
@@ -131,7 +132,8 @@ private theorem tsum_localCubeDerivNorm_succ_le (M : ABKModel d) (omega : FullSa
     push_cast; ring
   rw [hidx]
 
-private theorem abs_upperTail_entry_le_on_cube (M : ABKModel d) (omega : FullSample d M.gamma) {C : ℕ}
+private theorem abs_upperTail_entry_le_on_cube (M : ABKModel d) (omega : FullSample d M.gamma) {C
+  : ℕ}
     (hC : StreamGrowthBounded C omega.1) (ell : ℕ) {x : Vec d}
     (hx : x ∈ openCubeSet (originCube d (ell : ℤ))) (i k : Fin d) :
     |∑' r : ℕ, (omega.1.1 ((ell : ℤ) + 1 + (r : ℤ)) x i k -
@@ -179,7 +181,8 @@ private theorem abs_upperTail_entry_le_on_cube (M : ABKModel d) (omega : FullSam
 /-! ## 4. The bound on a cube -/
 
 /-- **The size of the field on the origin cube of scale `ℓ`.** -/
-theorem matrixOperatorNorm_streamField_le_on_cube (M : ABKModel d) (omega : FullSample d M.gamma) (ell : ℕ)
+theorem matrixOperatorNorm_streamField_le_on_cube (M : ABKModel d) (omega : FullSample d M.gamma)
+  (ell : ℕ)
     {x : Vec d} (hx : x ∈ openCubeSet (originCube d (ell : ℤ))) :
     matrixOperatorNorm (streamField omega x) ≤
       ((d : ℝ) ^ 2 * ((streamTailConst M omega : ℝ) * (2 + (d : ℝ) / 2))) * (3 : ℝ) ^ ell := by
@@ -235,7 +238,8 @@ theorem streamFieldGrowthConst_nonneg (M : ABKModel d) (omega : FullSample d M.g
 
 /-- **Linear growth**: `‖k‖_{L^∞(B_R)} ≤ C_k (1 + R)` for every `R ≥ 1`, with the
 sample constant `C_k` of `streamFieldGrowthConst`. -/
-theorem matrixOperatorNorm_streamField_le (M : ABKModel d) (omega : FullSample d M.gamma) {R : ℝ} (hR : 1 ≤ R)
+theorem matrixOperatorNorm_streamField_le (M : ABKModel d) (omega : FullSample d M.gamma) {R : ℝ}
+  (hR : 1 ≤ R)
     {x : Vec d} (hx : ‖x‖ ≤ R) :
     matrixOperatorNorm (streamField omega x) ≤ streamFieldGrowthConst M omega * (1 + R) := by
   classical
@@ -295,7 +299,8 @@ private theorem norm_le_sqrt_vecNormSq (x : Vec d) : ‖x‖ ≤ Real.sqrt (vecN
 `‖k‖_{L^∞(B_R)} ≤ C_k (1 + R)`: the ambient supremum norm of `Vec d` is
 dominated by the Euclidean norm, so the ball statement follows from the cube
 statement with the same constant. -/
-theorem matrixOperatorNorm_streamField_le_of_euclidean (M : ABKModel d) (omega : FullSample d M.gamma) {R : ℝ}
+theorem matrixOperatorNorm_streamField_le_of_euclidean (M : ABKModel d) (omega : FullSample d
+  M.gamma) {R : ℝ}
     (hR : 1 ≤ R) {x : Vec d} (hx : Real.sqrt (vecNormSq x) ≤ R) :
     matrixOperatorNorm (streamField omega x) ≤ streamFieldGrowthConst M omega * (1 + R) :=
   matrixOperatorNorm_streamField_le M omega hR ((norm_le_sqrt_vecNormSq x).trans hx)

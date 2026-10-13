@@ -107,7 +107,7 @@ theorem coordDeriv_eq_of_hasDerivAt_update {F : Vec d → ℝ} {h : ℝ → ℝ}
       (fderiv ℝ F x (basisVec k)) (x k) := by
     have hFA : HasFDerivAt F (fderiv ℝ F x)
         ((fun t : ℝ => x + (t - x k) • basisVec k) (x k)) := by
-      show HasFDerivAt F (fderiv ℝ F x) (x + (x k - x k) • basisVec k)
+      change HasFDerivAt F (fderiv ℝ F x) (x + (x k - x k) • basisVec k)
       rw [show x + (x k - x k) • basisVec k = x by simp]
       exact hF.hasFDerivAt
     exact hFA.comp_hasDerivAt (x k) hline
@@ -115,7 +115,7 @@ theorem coordDeriv_eq_of_hasDerivAt_update {F : Vec d → ℝ} {h : ℝ → ℝ}
     funext t
     rw [Function.comp_apply, ← update_eq_add_smul_basisVec, hupd]
   rw [hfun] at hcomp
-  show fderiv ℝ F x (basisVec k) = c
+  change fderiv ℝ F x (basisVec k) = c
   exact hcomp.unique hh
 
 /-! ### The index blocks of the telescoping -/

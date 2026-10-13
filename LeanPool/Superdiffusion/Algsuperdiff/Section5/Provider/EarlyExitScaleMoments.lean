@@ -38,7 +38,7 @@ family, one confinement constant, one deterministic factor, hence one confinemen
 
 ## Main results
 
-* `measureReal_compl_survivalEvent_confinementScale_le_pow_of_threshold_with_scaleMomentRange`
+* `measureReal_exitEvent_confinementScale_le_pow_of_threshold`
   — the early-exit probability at the confinement scale together with the moment field of the
   displacement scales and the restricted displacement tail, at one and the same family.
 
@@ -88,7 +88,7 @@ from below by `Cscale⁻¹ γ^{-1} |log γ|^{-6} ≤ pS`; `CSbar` and `Kbar`, wh
 Everything is stated at one and the same `S`, `K` and `L`, hence at one and the same
 confinement scale, and the confinement constant is above the prescribed threshold `Kmin`, so
 a consumer with a further lower bound on it can impose that bound here. -/
-theorem measureReal_compl_survivalEvent_confinementScale_le_pow_of_threshold_with_scaleMomentRange
+theorem measureReal_exitEvent_confinementScale_le_pow_of_threshold
     (d : ℕ) [NeZero d] (hdim : 2 ≤ d) (cstar : ℝ) (hcstar : 0 < cstar) :
     ∃ gamma0 Cscale CSbar Kbar cbar : ℝ,
       0 < gamma0 ∧ 1 ≤ Cscale ∧ 1 ≤ CSbar ∧ 1 ≤ Kbar ∧ 0 < cbar ∧ cbar ≤ 1 ∧
@@ -151,7 +151,7 @@ theorem measureReal_compl_survivalEvent_confinementScale_le_pow_of_threshold_wit
                   (3 : ℝ) ^ (confinementScale S L omega.1)) ^ (2 : ℕ))) := by
   obtain ⟨gamma0, Cscale, CSbar, Kbar, cbar, hgamma0, hCscale1, hCSbar1, hKbar1, hcbarpos,
     hcbar1, hgcstar, hmain⟩ :=
-    exists_ae_measure_exitTime_le_exp_neg_displacementMinScale_confinementScale_of_threshold_with_scaleMomentRange
+    exists_ae_confinement_exitTime_bound_of_threshold
       d hdim cstar hcstar
   refine ⟨gamma0, Cscale, CSbar, Kbar, cbar, hgamma0, hCscale1, hCSbar1, hKbar1, hcbarpos,
     hcbar1, ?_⟩

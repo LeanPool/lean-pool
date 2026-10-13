@@ -204,7 +204,7 @@ theorem tsum_measureReal_badFirst [IsFiniteMeasure μ] {B : ℕ → (Fin d → �
   have hmeas := measure_iUnion (μ := μ) (pairwise_disjoint_badFirst B z)
     fun L => measurableSet_badFirst hB L z
   rw [iUnion_badFirst] at hmeas
-  show ∑' L, (μ (badFirst B L z)).toReal = (μ (badUnion B z)).toReal
+  change ∑' L, (μ (badFirst B L z)).toReal = (μ (badUnion B z)).toReal
   rw [hmeas, ENNReal.tsum_toReal_eq fun L => measure_ne_top μ _]
 
 /-! ### Centered indicators -/
@@ -237,7 +237,7 @@ theorem summable_centeredScale [IsFiniteMeasure μ] {B : ℕ → (Fin d → ℤ)
 theorem tsum_centeredScale [IsFiniteMeasure μ] {B : ℕ → (Fin d → ℤ) → Set Ω}
     (hB : ∀ (l : ℕ) (y : Fin d → ℤ), MeasurableSet (B l y)) (z : Fin d → ℤ) (ω : Ω) :
     ∑' L, centeredScale B μ L z ω = centeredUnion B μ z ω := by
-  show ∑' L, ((badFirst B L z).indicator (fun _ => (1 : ℝ)) ω -
+  change ∑' L, ((badFirst B L z).indicator (fun _ => (1 : ℝ)) ω -
       μ.real (badFirst B L z)) = _
   rw [Summable.tsum_sub (summable_indicator_badFirst B z ω)
       (summable_measureReal_badFirst (μ := μ) hB z),
@@ -261,7 +261,7 @@ theorem integral_centeredScale_eq_zero [IsProbabilityMeasure μ]
   have hmeas := measurableSet_badFirst hB L z
   have hint : Integrable ((badFirst B L z).indicator fun _ => (1 : ℝ)) μ :=
     (integrable_const (1 : ℝ)).indicator hmeas
-  show ∫ ω, ((badFirst B L z).indicator (fun _ => (1 : ℝ)) ω -
+  change ∫ ω, ((badFirst B L z).indicator (fun _ => (1 : ℝ)) ω -
     μ.real (badFirst B L z)) ∂μ = 0
   rw [integral_sub hint (integrable_const _), integral_indicator_const (1 : ℝ) hmeas,
     integral_const]
@@ -287,7 +287,7 @@ theorem summable_abs_scaleAverage [IsFiniteMeasure μ] {B : ℕ → (Fin d → �
     Summable.mul_left _ (summable_sum fun z (_ : z ∈ cubeFinset (d := d) m) =>
       summable_abs_centeredScale (μ := μ) hB z ω)
   refine Summable.of_nonneg_of_le (fun L => abs_nonneg _) (fun L => ?_) hmaj
-  show |((cubeFinset (d := d) m).card : ℝ)⁻¹ *
+  change |((cubeFinset (d := d) m).card : ℝ)⁻¹ *
       ∑ z ∈ cubeFinset m, centeredScale B μ L z ω| ≤
     ((cubeFinset (d := d) m).card : ℝ)⁻¹ *
       ∑ z ∈ cubeFinset m, |centeredScale B μ L z ω|
@@ -301,11 +301,11 @@ overshoot. -/
 theorem tsum_scaleAverage [IsFiniteMeasure μ] {B : ℕ → (Fin d → ℤ) → Set Ω}
     (hB : ∀ (l : ℕ) (y : Fin d → ℤ), MeasurableSet (B l y)) (m : ℕ) (ω : Ω) :
     ∑' L, scaleAverage B μ L m ω = densityAverage B μ m ω := by
-  show ∑' L, ((cubeFinset (d := d) m).card : ℝ)⁻¹ *
+  change ∑' L, ((cubeFinset (d := d) m).card : ℝ)⁻¹ *
       ∑ z ∈ cubeFinset m, centeredScale B μ L z ω = _
   rw [tsum_mul_left,
     Summable.tsum_finsetSum fun z _ => summable_centeredScale (μ := μ) hB z ω]
-  show _ = ((cubeFinset (d := d) m).card : ℝ)⁻¹ *
+  change _ = ((cubeFinset (d := d) m).card : ℝ)⁻¹ *
     ∑ z ∈ cubeFinset m, centeredUnion B μ z ω
   exact congrArg _ (Finset.sum_congr rfl fun z _ => tsum_centeredScale (μ := μ) hB z ω)
 

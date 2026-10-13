@@ -143,7 +143,7 @@ available from
 
 It does not remove the independence binder `hindep`: that binder still stands on
 `ApproximateRecurrence.PrincipalResponseBudgetWire`
-`exists_gamma0_descendantsAverage_integral_principalGoodEventEnergy_le_annealedCube_of_centeringConst`
+`exists_smallCoupling_principalEnergy_bound_of_centering`
 and on its predecessors, untouched by anything here.
 
 It asserts nothing about the correctors beyond the two weak-solution properties
@@ -225,7 +225,7 @@ private theorem measurable_matVecMul {Omega : Type*} {mOmega : MeasurableSpace O
     {A : Omega → Mat d} {x : Omega → Vec d} (hA : Measurable A) (hx : Measurable x) :
     Measurable fun omega => matVecMul (A omega) (x omega) := by
   refine Measurable.of_eval fun i => ?_
-  show Measurable fun omega => ∑ j, A omega i j * x omega j
+  change Measurable fun omega => ∑ j, A omega i j * x omega j
   exact Finset.measurable_sum _ fun j _ =>
     (((measurable_pi_apply j).comp ((measurable_pi_apply i).comp hA)).mul
       ((measurable_pi_apply j).comp hx))
@@ -247,7 +247,7 @@ private theorem neg_streamForcing_neg_one_apply (omega : Cutoff.ShellSeq d) (n m
       rw [Pi.single_eq_of_ne hb, mul_zero]
     · intro h
       exact absurd (Finset.mem_univ j0) h
-  show -((-1 : ℝ) • matVecMul (Cutoff.finiteShellIncrement omega n m x)
+  change -((-1 : ℝ) • matVecMul (Cutoff.finiteShellIncrement omega n m x)
       (Pi.single j0 (1 : ℝ))) i = _
   rw [Pi.smul_apply, smul_eq_mul, hsingle, neg_mul, neg_neg, one_mul]
 
@@ -293,7 +293,7 @@ private theorem cubeAverage_eq_of_coeFn_ae {Q R : TriadicCube d} {jd : ℕ}
   have hcoord : (fun x => (G : Vec d → HilbertVec d) x i)
       =ᵐ[volume.restrict (cubeSet R)] fun x => F x i :=
     ae_eq_cubeSet_of_mem_descendantsAtDepth_of_ae_eq_openCubeSet hR hG
-  show ∫ x in cubeSet R, F x i ∂volume =
+  change ∫ x in cubeSet R, F x i ∂volume =
     ∫ x, (G : Vec d → HilbertVec d) x i
       ∂((volume.restrict (openCubeSet Q)).restrict (cubeSet R))
   rw [hmeas]
@@ -338,7 +338,7 @@ private theorem measurable_shellIndexSigma_cubeAverageVec_of_class
             (measurableSet_cubeSet R) i (G omega) : Vec d) := by
     funext omega
     funext i
-    show cubeAverage R (fun x => F omega x i) = _
+    change cubeAverage R (fun x => F omega x i) = _
     rw [cubeAverage_eq_of_coeFn_ae hR (F omega) (G omega) i (hG omega i)]
     congr 1
     exact (hilbertVectorL2CoordSetIntegralCLM_apply (U := openCubeSet Q)
@@ -378,7 +378,7 @@ theorem measurable_shellIndexSigma_freshShellCubeAverage
           (fun x => -streamForcing (-1 : ℝ) omega n m (Pi.single j0 (1 : ℝ)) x) i := by
     funext omega
     rw [freshShellCubeAverage_apply]
-    show cubeAverage R _ = cubeAverage R _
+    change cubeAverage R _ = cubeAverage R _
     exact congrArg (cubeAverage R)
       (funext fun x => (neg_streamForcing_neg_one_apply omega n m j0 x i).symm)
   rw [hEq]
@@ -488,15 +488,15 @@ private theorem measurable_shellIndexSigma_cubeAverageVec_neumannFluxField
   filter_upwards [Lp.coeFn_sub ((wN omega).gradToHilbertVectorL2)
       (freshShellForcingL2 Q ((sigma : ℝ))⁻¹ n m e' omega),
     coeFn_ae_coord hgrad i, coeFn_ae_coord hforc i] with x h1 h2 h3
-  show ((((wN omega).gradToHilbertVectorL2 -
+  change ((((wN omega).gradToHilbertVectorL2 -
       freshShellForcingL2 Q ((sigma : ℝ))⁻¹ n m e' omega :
         HilbertVectorL2 (openCubeSet Q)) : Vec d → HilbertVec d) x) i = _
   rw [h1]
-  show ((((wN omega).gradToHilbertVectorL2 : Vec d → HilbertVec d) x) i -
+  change ((((wN omega).gradToHilbertVectorL2 : Vec d → HilbertVec d) x) i -
       (((freshShellForcingL2 Q ((sigma : ℝ))⁻¹ n m e' omega :
         HilbertVectorL2 (openCubeSet Q)) : Vec d → HilbertVec d) x) i) = _
   rw [h2, h3]
-  show (wN omega).toH1Function.grad x i -
+  change (wN omega).toH1Function.grad x i -
       -(streamForcing ((sigma : ℝ))⁻¹ omega n m e' x i) = _
   rw [sub_neg_eq_add]
   rfl

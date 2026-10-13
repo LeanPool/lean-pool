@@ -47,7 +47,8 @@ scale, which has to satisfy both `100 ≤ c K²` and `3^k ≤ K²`.
 
 * `displacementScale_add_le_displacementMinScale_of_isConfinementScale` — the displacement
   scale at a confinement scale, shifted by a triadic factor below `K²`.
-* `exists_ae_measure_exitTime_le_exp_neg_displacementMinScale_confinementScale_of_threshold_with_scaleMomentRange`
+*
+`exists_ae_confinement_exitTime_bound_of_threshold`
   — the early-exit tail of the stream process at and above the random confinement scale,
   together with the moment field of the displacement scales, above a prescribed lower bound
   on the confinement constant.
@@ -72,6 +73,227 @@ noncomputable section
 variable {d : ℕ} [NeZero d]
 
 /-! ## 1. The displacement scale at a confinement scale, with a margin -/
+
+private abbrev earlyExitConfinementModel_rates_statement : Prop :=
+    ∀ (d : ℕ) [inst : NeZero d] (hdim : (2 : ℕ) ≤ d) (cstar : ℝ) (hcstar : (0 : ℝ) < cstar)
+      (gammaT Cev Cfloor Cchain ctail csmall Creg : ℝ) (hCchain : (0 : ℝ) < Cchain) (gammaL gammaR : ℝ),
+      let ep : ℝ := min (1 / 4 : ℝ) csmall;
+      ∀ (hepdef : ep = min (1 / 4 : ℝ) csmall),
+        let kappa : ℝ := earlyExitKappa Cchain.toNNReal Cchain⁻¹.toNNReal;
+        ∀ (hkappa : (0 : ℝ) < kappa) (hkappa1 : kappa ≤ (1 : ℝ)),
+          let costBar : ℝ := (3 : ℝ) + (3 : ℝ) * (max (1 : ℝ) √cstar * Real.exp (1 / 2 : ℝ));
+          ∀ (hcostBardef : costBar = (3 : ℝ) + (3 : ℝ) * (max (1 : ℝ) √cstar * Real.exp (1 / 2 : ℝ))),
+            let delta : ℝ := min (1 : ℝ) (Cchain * kappa / ((128 : ℝ) * (3 : ℝ) ^ d * costBar));
+            ∀ (hdelta1 : delta ≤ (1 : ℝ)) (hdelta : (0 : ℝ) < delta)
+              (hdeltaBar : (128 : ℝ) * (3 : ℝ) ^ d * delta * costBar ≤ Cchain * kappa),
+              let jbase : ℕ := earlyExitBaseScale d;
+              ∀
+                (htail :
+                  ∀ (M : ABKModel d),
+                    Disorder.cstar M = cstar →
+                      M.gamma ≤ gammaT →
+                        Cfloor * √M.gamma * |Real.log M.gamma|.rpow (7 / 2 : ℝ) ≤ ep ∧
+                          ∀ ep ∈ Set.Icc (Cfloor * √M.gamma * |Real.log M.gamma|.rpow (7 / 2 : ℝ)) (1 / 4 : ℝ),
+                            ep ≤ csmall →
+                              ∀ (m : ℤ),
+                                ∃ (Y : Cutoff.CutoffSample d → ℕ),
+                                  Measurable Y ∧
+                                    (∀ (N : ℕ),
+                                        (1 : ℕ) ≤ N →
+                                          ((↑(fullSampleLaw M) : Measure (FullSample d M.gamma)) :
+                                                (a : Set (FullSample d M.gamma)) → ℝ≥0∞)
+                                              {omegaFull : FullSample d M.gamma |
+                                                N ≤ Y (↑omegaFull : Cutoff.CutoffSample d)} ≤
+                                            ENNReal.ofReal
+                                              (Real.exp
+                                                (-(ctail * ep ^ (2 : ℕ) * M.gamma⁻¹ * |Real.log M.gamma| ^ (-6 : ℤ) *
+                                                    (3 : ℝ) ^ N)))) ∧
+                                      ∀ᵐ (omegaFull :
+                                        FullSample d M.gamma) ∂(↑(fullSampleLaw M) : Measure (FullSample d M.gamma)),
+                                        ∀ n ≤ m - (↑(Y (↑omegaFull : Cutoff.CutoffSample d)) : ℤ),
+                                          ∀ (_i : Fin d) (Good : Percolation.Site d → Prop) [DecidablePred Good],
+                                            (∀ (z : Percolation.Site d),
+                                                Good z ↔
+                                                  (↑omegaFull : Cutoff.CutoffSample d) ∈
+                                                    qEvent M Creg Cev n (rescaledLatticePoint n z) ep) →
+                                              ∀ (delta : ℝ),
+                                                (0 : ℝ) < delta →
+                                                  delta ≤ (1 : ℝ) →
+                                                    ∀ (t : ℝ≥0),
+                                                      (0 : ℝ) < (↑t : ℝ) →
+                                                        (3 : ℝ) ^ n ≤
+                                                            auxiliaryScaleBound M.nu (Disorder.cstar M) M.gamma delta
+                                                              (↑t : ℝ) m →
+                                                          auxiliaryScaleBound M.nu (Disorder.cstar M) M.gamma delta (↑t : ℝ)
+                                                                m <
+                                                              (3 : ℝ) ^ (n + (1 : ℤ)) →
+                                                            lengthTimeScale M.nu (Disorder.cstar M) M.gamma ((3 : ℝ) ^ n) ≤
+                                                                (2 : ℝ) * exitTimeScale M n →
+                                                              (128 : ℝ) * (3 : ℝ) ^ d * delta *
+                                                                    earlyExitProfileCost (Disorder.cstar M) M.gamma ≤
+                                                                  Cchain * kappa →
+                                                                jbase ≤ (3 : ℕ) ^ (m - n).toNat →
+                                                                  ∀
+                                                                    x ∈
+                                                                      Metric.closedBall (0 : Vec d)
+                                                                        ((1 / 2 : ℝ) * (3 : ℝ) ^ (m - (1 : ℤ))),
+                                                                    ((streamProcess M omegaFull :
+                                                                              (a : OnePoint (Vec d)) →
+                                                                                Measure (ContinuousPath (OnePoint (Vec d))))
+                                                                            (↑x : OnePoint (Vec d)) :
+                                                                          (a : Set (ContinuousPath (OnePoint (Vec d)))) →
+                                                                            ℝ≥0∞)
+                                                                        {eta : ContinuousPath (OnePoint (Vec d)) |
+                                                                          ContinuousPath.exitTime
+                                                                              (OnePoint.some ''
+                                                                                openCubeSet (originCube d m))
+                                                                              eta ≤
+                                                                            (↑t : ℝ≥0∞)} ≤
+                                                                      ENNReal.ofReal
+                                                                        (Real.exp
+                                                                          (-earlyExitDecayConstant d M.gamma delta kappa *
+                                                                            displacementMinScale M.nu (Disorder.cstar M)
+                                                                              M.gamma (↑t : ℝ) m))),
+                let cbar : ℝ := kappa * delta ^ (2 : ℕ) / ((192 : ℝ) * (3 : ℝ) ^ d);
+                ∀ (hcbardef : cbar = kappa * delta ^ (2 : ℕ) / ((192 : ℝ) * (3 : ℝ) ^ d)) (hcbarpos : (0 : ℝ) < cbar),
+                  let Kbar : ℝ := max (max (1 : ℝ) √((100 : ℝ) / cbar)) √((3 : ℝ) ^ jbase);
+                  ∀ (hKbardef : Kbar = max (max (1 : ℝ) √((100 : ℝ) / cbar)) √((3 : ℝ) ^ jbase)) (M : ABKModel d)
+                    (hcs : Disorder.cstar M = cstar) (hgam : M.gamma ≤ min (min gammaT gammaL) (min gammaR cstar))
+                    (Kmin : ℝ),
+                    M.gamma ≤ gammaL ∧
+                      M.gamma ≤ gammaR ∧
+                        M.gamma ≤ cstar ∧
+                          (0 : ℝ) < M.gamma ∧
+                            M.gamma ≤ (1 / 4 : ℝ) ∧
+                              M.gamma < (1 : ℝ) ∧
+                                (0 : ℕ) < d ∧
+                                  Cfloor * √M.gamma * |Real.log M.gamma|.rpow (7 / 2 : ℝ) ≤ ep ∧
+                                    (∀ ep ∈ Set.Icc (Cfloor * √M.gamma * |Real.log M.gamma|.rpow (7 / 2 : ℝ)) (1 / 4 : ℝ),
+                                        ep ≤ csmall →
+                                          ∀ (m : ℤ),
+                                            ∃ (Y : Cutoff.CutoffSample d → ℕ),
+                                              Measurable Y ∧
+                                                (∀ (N : ℕ),
+                                                    (1 : ℕ) ≤ N →
+                                                      ((↑(fullSampleLaw M) : Measure (FullSample d M.gamma)) :
+                                                            (a : Set (FullSample d M.gamma)) → ℝ≥0∞)
+                                                          {omegaFull : FullSample d M.gamma |
+                                                            N ≤ Y (↑omegaFull : Cutoff.CutoffSample d)} ≤
+                                                        ENNReal.ofReal
+                                                          (Real.exp
+                                                            (-(ctail * ep ^ (2 : ℕ) * M.gamma⁻¹ *
+                                                                  |Real.log M.gamma| ^ (-6 : ℤ) *
+                                                                (3 : ℝ) ^ N)))) ∧
+                                                  ∀ᵐ (omegaFull :
+                                                    FullSample d
+                                                      M.gamma) ∂(↑(fullSampleLaw M) : Measure (FullSample d M.gamma)),
+                                                    ∀ n ≤ m - (↑(Y (↑omegaFull : Cutoff.CutoffSample d)) : ℤ),
+                                                      ∀ (_i : Fin d) (Good : Percolation.Site d → Prop)
+                                                        [DecidablePred Good],
+                                                        (∀ (z : Percolation.Site d),
+                                                            Good z ↔
+                                                              (↑omegaFull : Cutoff.CutoffSample d) ∈
+                                                                qEvent M Creg Cev n (rescaledLatticePoint n z) ep) →
+                                                          ∀ (delta : ℝ),
+                                                            (0 : ℝ) < delta →
+                                                              delta ≤ (1 : ℝ) →
+                                                                ∀ (t : ℝ≥0),
+                                                                  (0 : ℝ) < (↑t : ℝ) →
+                                                                    (3 : ℝ) ^ n ≤
+                                                                        auxiliaryScaleBound M.nu (Disorder.cstar M) M.gamma
+                                                                          delta (↑t : ℝ) m →
+                                                                      auxiliaryScaleBound M.nu (Disorder.cstar M) M.gamma
+                                                                            delta (↑t : ℝ) m <
+                                                                          (3 : ℝ) ^ (n + (1 : ℤ)) →
+                                                                        lengthTimeScale M.nu (Disorder.cstar M) M.gamma
+                                                                              ((3 : ℝ) ^ n) ≤
+                                                                            (2 : ℝ) * exitTimeScale M n →
+                                                                          (128 : ℝ) * (3 : ℝ) ^ d * delta *
+                                                                                earlyExitProfileCost (Disorder.cstar M)
+                                                                                  M.gamma ≤
+                                                                              Cchain * kappa →
+                                                                            jbase ≤ (3 : ℕ) ^ (m - n).toNat →
+                                                                              ∀
+                                                                                x ∈
+                                                                                  Metric.closedBall (0 : Vec d)
+                                                                                    ((1 / 2 : ℝ) * (3 : ℝ) ^ (m - (1 : ℤ))),
+                                                                                ((streamProcess M omegaFull :
+                                                                                          (a : OnePoint (Vec d)) →
+                                                                                            Measure
+                                                                                              (ContinuousPath
+                                                                                                (OnePoint (Vec d))))
+                                                                                        (↑x : OnePoint (Vec d)) :
+                                                                                      (a :
+                                                                                          Set
+                                                                                            (ContinuousPath
+                                                                                              (OnePoint (Vec d)))) →
+                                                                                        ℝ≥0∞)
+                                                                                    {eta :
+                                                                                      ContinuousPath (OnePoint (Vec d)) |
+                                                                                      ContinuousPath.exitTime
+                                                                                          (OnePoint.some ''
+                                                                                            openCubeSet (originCube d m))
+                                                                                          eta ≤
+                                                                                        (↑t : ℝ≥0∞)} ≤
+                                                                                  ENNReal.ofReal
+                                                                                    (Real.exp
+                                                                                      (-earlyExitDecayConstant d M.gamma
+                                                                                            delta kappa *
+                                                                                        displacementMinScale M.nu
+                                                                                          (Disorder.cstar M) M.gamma
+                                                                                          (↑t : ℝ) m))) ∧
+                                      ep ∈ Set.Icc (Cfloor * √M.gamma * |Real.log M.gamma|.rpow (7 / 2 : ℝ)) (1 / 4 : ℝ) ∧
+                                        ep ≤ csmall ∧
+                                          (128 : ℝ) * (3 : ℝ) ^ d * delta * earlyExitProfileCost cstar M.gamma ≤
+                                              Cchain * kappa ∧
+                                            earlyExitDecayConstant d M.gamma delta kappa =
+                                                earlyExitDecayConstant d M.gamma delta kappa ∧
+                                              ((1 : ℝ) - M.gamma)⁻¹ ≤ (2 : ℝ) ∧
+                                                (0 : ℝ) < earlyExitDecayConstant d M.gamma delta kappa ∧
+                                                  earlyExitDecayConstant d M.gamma delta kappa ≤ (1 : ℝ) ∧
+                                                    cbar ≤ earlyExitDecayConstant d M.gamma delta kappa ∧
+                                                      (1 : ℝ) ≤
+                                                          max
+                                                            (max
+                                                              (max (1 : ℝ)
+                                                                √((100 : ℝ) / earlyExitDecayConstant d M.gamma delta kappa))
+                                                              √((3 : ℝ) ^ jbase))
+                                                            Kmin ∧
+                                                        Kmin ≤
+                                                            max
+                                                              (max
+                                                                (max (1 : ℝ)
+                                                                  √((100 : ℝ) /
+                                                                      earlyExitDecayConstant d M.gamma delta kappa))
+                                                                √((3 : ℝ) ^ jbase))
+                                                              Kmin ∧
+                                                          (100 : ℝ) ≤
+                                                              earlyExitDecayConstant d M.gamma delta kappa *
+                                                                max
+                                                                    (max
+                                                                      (max (1 : ℝ)
+                                                                        √((100 : ℝ) /
+                                                                            earlyExitDecayConstant d M.gamma delta kappa))
+                                                                      √((3 : ℝ) ^ jbase))
+                                                                    Kmin ^
+                                                                  (2 : ℕ) ∧
+                                                            (3 : ℝ) ^ jbase ≤
+                                                                max
+                                                                    (max
+                                                                      (max (1 : ℝ)
+                                                                        √((100 : ℝ) /
+                                                                            earlyExitDecayConstant d M.gamma delta kappa))
+                                                                      √((3 : ℝ) ^ jbase))
+                                                                    Kmin ^
+                                                                  (2 : ℕ) ∧
+                                                              max
+                                                                  (max
+                                                                    (max (1 : ℝ)
+                                                                      √((100 : ℝ) /
+                                                                          earlyExitDecayConstant d M.gamma delta kappa))
+                                                                    √((3 : ℝ) ^ jbase))
+                                                                  Kmin ≤
+                                                                max Kbar Kmin
 
 private theorem three_zpow_pow_two (m : ℤ) :
     ((3 : ℝ) ^ m) ^ (2 : ℕ) = (3 : ℝ) ^ (2 * m) := by
@@ -323,6 +545,410 @@ private theorem compl_survivalEvent_eq {alpha : Type*} [MetricSpace alpha] (U : 
   ext eta
   simp only [Set.mem_compl_iff, survivalEvent, Set.mem_ofPred_eq, not_lt]
 
+private theorem earlyExitConfinementModel_momentBounds1 :
+    ∀ (d : ℕ) (cstar Cchain ctail csmall : ℝ) (hctail : (0 : ℝ) < ctail) (hcsmall : (0 : ℝ) < csmall)
+      (hlog3 : (0 : ℝ) < Real.log (3 : ℝ)),
+      let ep : ℝ := min (1 / 4 : ℝ) csmall;
+      ∀ (heppos : (0 : ℝ) < ep),
+        let Cscale : ℝ := max (1 : ℝ) ((16 : ℝ) * Real.log (3 : ℝ) / (ctail * ep ^ (2 : ℕ)));
+        let kappa : ℝ := earlyExitKappa Cchain.toNNReal Cchain⁻¹.toNNReal;
+        let costBar : ℝ := (3 : ℝ) + (3 : ℝ) * (max (1 : ℝ) √cstar * Real.exp (1 / 2 : ℝ));
+        let delta : ℝ := min (1 : ℝ) (Cchain * kappa / ((128 : ℝ) * (3 : ℝ) ^ d * costBar));
+        ∀ (hdelta : (0 : ℝ) < delta),
+          let jbase : ℕ := earlyExitBaseScale d;
+          ∀ (M : ABKModel d) (t Kmin : ℝ) (hgamma : (0 : ℝ) < M.gamma),
+            let c : ℝ := earlyExitDecayConstant d M.gamma delta kappa;
+            let K : ℝ := max (max (max (1 : ℝ) √((100 : ℝ) / c)) √((3 : ℝ) ^ jbase)) Kmin;
+            let L : ℝ := K * √|Real.log M.gamma| * intrinsicScale M.nu cstar M.gamma t;
+            ∀ (hL : (0 : ℝ) < L) (Yfam : (m : ℤ) → Cutoff.CutoffSample d → ℕ) (hYmeas : ∀ (m : ℤ), Measurable (Yfam m)),
+              let S : ℤ → Cutoff.CutoffSample d → ℝ := fun (i : ℤ) (omega : Cutoff.CutoffSample d) =>
+                displacementScale delta M.gamma (Yfam i omega);
+              ∀ (hSmeas : ∀ (i : ℤ), Measurable (S i)),
+                let a : ℝ := ctail * ep ^ (2 : ℕ) * M.gamma⁻¹ * |Real.log M.gamma| ^ (-6 : ℤ);
+                ∀
+                  (hYtail :
+                    ∀ (m : ℤ) (N : ℕ),
+                      (1 : ℕ) ≤ N →
+                        ((↑(fullSampleLaw M) : Measure (FullSample d M.gamma)) : (a : Set (FullSample d M.gamma)) → ℝ≥0∞)
+                            {omegaFull : FullSample d M.gamma | N ≤ Yfam m (↑omegaFull : Cutoff.CutoffSample d)} ≤
+                          ENNReal.ofReal (Real.exp (-(a * (3 : ℝ) ^ N))))
+                  (hadef : a = ctail * ep ^ (2 : ℕ) * M.gamma⁻¹ * |Real.log M.gamma| ^ (-6 : ℤ))
+                  (ha16 : (16 : ℝ) * Real.log (3 : ℝ) ≤ a) (ha : (0 : ℝ) < a),
+                  let Cmom : ℝ := delta ^ (-((1 : ℝ) - M.gamma)⁻¹) * ((1 : ℝ) - Real.exp (-(a / (2 : ℝ))))⁻¹;
+                  let CS : ℝ := max (1 : ℝ) Cmom;
+                  ∀ (hCS : (1 : ℝ) ≤ CS),
+                    let pS : ℝ := a / ((16 : ℝ) * Real.log (3 : ℝ));
+                    ∀ (hpSdef : pS = a / ((16 : ℝ) * Real.log (3 : ℝ))),
+                      (1 : ℝ) ≤ pS ∧
+                        Cscale⁻¹ * M.gamma⁻¹ * |Real.log M.gamma| ^ (-6 : ℤ) ≤ pS ∧
+                          (∀ (p : ℝ),
+                              (1 : ℝ) ≤ p →
+                                p ≤ pS →
+                                  (∀ (n : ℤ),
+                                      ∫⁻ (omega : Cutoff.CutoffSample d),
+                                          ENNReal.ofReal (S n omega) ^
+                                            ((4 : ℝ) * p) ∂(↑(Cutoff.cutoffSampleLaw M) : Measure (Cutoff.CutoffSample d)) ≤
+                                        ENNReal.ofReal CS ^ ((4 : ℝ) * p)) ∧
+                                    ∀ (n : ℤ),
+                                      ∫⁻ (omega : Cutoff.CutoffSample d),
+                                          ENNReal.ofReal (S n omega) ^
+                                            ((8 : ℝ) * p) ∂(↑(Cutoff.cutoffSampleLaw M) : Measure (Cutoff.CutoffSample d)) ≤
+                                        ENNReal.ofReal CS ^ ((8 : ℝ) * p)) ∧
+                            ∀ᵐ (omega : FullSample d M.gamma) ∂(↑(fullSampleLaw M) : Measure (FullSample d M.gamma)),
+                              IsConfinementScale
+                                (fun (n : ℤ) => widenedScale (fun (k : ℤ) => S k (↑omega : Cutoff.CutoffSample d)) n) L
+                                (confinementScale S L (↑omega : Cutoff.CutoffSample d)) := by
+  intro d cstar Cchain ctail csmall hctail hcsmall hlog3 ep heppos Cscale kappa costBar delta hdelta jbase M t Kmin hgamma c K L hL Yfam hYmeas S hSmeas a hYtail hadef ha16 ha Cmom CS hCS pS hpSdef
+  have hpS1 : (1 : ℝ) ≤ pS := by
+    rw [hpSdef, le_div_iff₀ (by positivity : (0 : ℝ) < 16 * Real.log 3)]
+    linarith only [ha16]
+  have hpSrange : Cscale⁻¹ * M.gamma⁻¹ * |Real.log M.gamma| ^ (-6 : ℤ) ≤ pS := by
+    have hLg : (0 : ℝ) < |Real.log M.gamma| := abs_log_gamma_pos M
+    have hnn : (0 : ℝ) ≤ M.gamma⁻¹ * |Real.log M.gamma| ^ (-6 : ℤ) := by positivity
+    have hden : (0 : ℝ) < ctail * ep ^ (2 : ℕ) := by positivity
+    have hBpos' : (0 : ℝ) < 16 * Real.log 3 / (ctail * ep ^ (2 : ℕ)) := by positivity
+    have hinv : Cscale⁻¹ ≤ ctail * ep ^ (2 : ℕ) / (16 * Real.log 3) := by
+      have h := inv_anti₀ hBpos'
+        (le_max_right (1 : ℝ) (16 * Real.log 3 / (ctail * ep ^ (2 : ℕ))))
+      rwa [inv_div] at h
+    have h16 : (16 : ℝ) * Real.log 3 ≠ 0 := by positivity
+    calc Cscale⁻¹ * M.gamma⁻¹ * |Real.log M.gamma| ^ (-6 : ℤ)
+        = Cscale⁻¹ * (M.gamma⁻¹ * |Real.log M.gamma| ^ (-6 : ℤ)) := by ring
+      _ ≤ (ctail * ep ^ (2 : ℕ) / (16 * Real.log 3)) *
+            (M.gamma⁻¹ * |Real.log M.gamma| ^ (-6 : ℤ)) :=
+          mul_le_mul_of_nonneg_right hinv hnn
+      _ = pS := by rw [hpSdef, hadef]; field_simp
+  have hcut : ∀ (i : ℤ) (N : ℕ), 1 ≤ N →
+      (Cutoff.cutoffSampleLaw M).toMeasure {omega | N ≤ Yfam i omega} ≤
+        ENNReal.ofReal (Real.exp (-(a * (3 : ℝ) ^ N))) := by
+    intro i N hN
+    have hSet : MeasurableSet {omega : Cutoff.CutoffSample d | N ≤ Yfam i omega} :=
+      measurableSet_le measurable_const (hYmeas i)
+    have hEq : (Cutoff.cutoffSampleLaw M).toMeasure {omega | N ≤ Yfam i omega} =
+        (fullSampleLaw M).toMeasure {omegaFull | N ≤ Yfam i omegaFull.1} := by
+      rw [← map_fullSampleLaw_val M, Measure.map_apply measurable_subtype_coe hSet]
+      rfl
+    rw [hEq]
+    exact hYtail i N hN
+  have hmomq : ∀ q : ℝ, 1 ≤ q → 2 * (q * Real.log 3) ≤ a → ∀ i : ℤ,
+      (∫⁻ omega, ENNReal.ofReal (S i omega) ^ q
+          ∂(Cutoff.cutoffSampleLaw M).toMeasure) ≤ ENNReal.ofReal CS ^ q := by
+    intro q hq hqa i
+    refine (lintegral_ofReal_displacementScale_rpow_le (Cutoff.cutoffSampleLaw M).toMeasure
+      (hYmeas i) hdelta ha hq hqa (hcut i)).trans ?_
+    exact ENNReal.rpow_le_rpow (ENNReal.ofReal_le_ofReal (le_max_right _ _))
+      (le_trans zero_le_one hq)
+  have hSmom : ∀ p : ℝ, 1 ≤ p → p ≤ pS →
+      (∀ n : ℤ, (∫⁻ omega, ENNReal.ofReal (S n omega) ^ (4 * p)
+          ∂(Cutoff.cutoffSampleLaw M).toMeasure) ≤ ENNReal.ofReal CS ^ (4 * p)) ∧
+      (∀ n : ℤ, (∫⁻ omega, ENNReal.ofReal (S n omega) ^ (8 * p)
+          ∂(Cutoff.cutoffSampleLaw M).toMeasure) ≤ ENNReal.ofReal CS ^ (8 * p)) := by
+    intro p hp hpSle
+    have hp0 : (0 : ℝ) < p := lt_of_lt_of_le zero_lt_one hp
+    have hpl : (0 : ℝ) < p * Real.log 3 := mul_pos hp0 hlog3
+    rw [hpSdef, le_div_iff₀ (by positivity : (0 : ℝ) < 16 * Real.log 3)] at hpSle
+    exact ⟨hmomq (4 * p) (by linarith only [hp]) (by linarith only [hpSle, hpl]),
+      hmomq (8 * p) (by linarith only [hp]) (by linarith only [hpSle])⟩
+  have hmom : ∀ i : ℤ,
+      (∫⁻ omega, ENNReal.ofReal (S i omega) ^ (1 : ℝ)
+          ∂(Cutoff.cutoffSampleLaw M).toMeasure) ≤ ENNReal.ofReal CS ^ (1 : ℝ) :=
+    hmomq 1 le_rfl (by linarith only [ha16, hlog3])
+  have hconf := ae_isConfinementScale_confinementScale_fullSample M hSmeas
+    (le_trans zero_le_one hCS) (le_refl (1 : ℝ)) hL hmom
+  exact ⟨hpS1, hpSrange, hSmom, hconf⟩
+
+private theorem earlyExitConfinementModel_rates : earlyExitConfinementModel_rates_statement := by
+  classical
+  intro d instance1 hdim cstar hcstar gammaT Cev Cfloor Cchain ctail csmall Creg hCchain gammaL gammaR ep hepdef kappa hkappa hkappa1 costBar hcostBardef delta hdelta1 hdelta hdeltaBar jbase htail cbar hcbardef hcbarpos Kbar hKbardef M hcs hgam Kmin
+  have hgamT : M.gamma ≤ gammaT :=
+    hgam.trans (le_trans (min_le_left _ _) (min_le_left _ _))
+  have hgamL : M.gamma ≤ gammaL :=
+    hgam.trans (le_trans (min_le_left _ _) (min_le_right _ _))
+  have hgamR : M.gamma ≤ gammaR :=
+    hgam.trans (le_trans (min_le_right _ _) (min_le_left _ _))
+  have hgc : M.gamma ≤ cstar :=
+    hgam.trans (le_trans (min_le_right _ _) (min_le_right _ _))
+  have hgamma : 0 < M.gamma := M.shellPrefix.gamma_pos
+  have hgamma4 : M.gamma ≤ 1 / 4 := M.shellPrefix.gamma_le_quarter
+  have hgamma1 : M.gamma < 1 := lt_of_le_of_lt hgamma4 (by norm_num)
+  have hi : (0 : ℕ) < d := lt_of_lt_of_le (by norm_num) hdim
+  obtain ⟨hwindow, hmain⟩ := htail M hcs hgamT
+  have hepIcc : ep ∈ Set.Icc (Cfloor * Real.sqrt M.gamma *
+      Real.rpow |Real.log M.gamma| (7 / 2)) (1 / 4) :=
+    ⟨hwindow, by rw [hepdef]; exact min_le_left _ _⟩
+  have hepsmall : ep ≤ csmall := by rw [hepdef]; exact min_le_right _ _
+  -- the smallness of the separation parameter at this model
+  have hcostM : earlyExitProfileCost cstar M.gamma ≤ costBar := by
+    rw [hcostBardef]
+    exact earlyExitProfileCost_le hcstar hgamma (by linarith only [hgamma4])
+  have hdeltaSmall : 128 * (3 : ℝ) ^ d * delta *
+      earlyExitProfileCost cstar M.gamma ≤ Cchain * kappa := by
+    have hnn : (0 : ℝ) ≤ 128 * (3 : ℝ) ^ d * delta := by positivity
+    calc 128 * (3 : ℝ) ^ d * delta * earlyExitProfileCost cstar M.gamma
+        ≤ 128 * (3 : ℝ) ^ d * delta * costBar := mul_le_mul_of_nonneg_left hcostM hnn
+      _ ≤ Cchain * kappa := hdeltaBar
+  -- the exponential rate and the confinement constant
+  set c : ℝ := earlyExitDecayConstant d M.gamma delta kappa with hcdef
+  have hexpnn : (0 : ℝ) ≤ (1 - M.gamma)⁻¹ := by
+    rw [inv_nonneg]; linarith only [hgamma1]
+  have hexple : (1 - M.gamma)⁻¹ ≤ 2 := by
+    rw [inv_le_comm₀ (by linarith only [hgamma1]) (by norm_num)]
+    linarith only [hgamma4]
+  have hdpos : (0 : ℝ) < delta ^ (1 - M.gamma)⁻¹ := Real.rpow_pos_of_pos hdelta _
+  have hcpos : 0 < c := by
+    have h3 : (0 : ℝ) < 192 * (3 : ℝ) ^ d := by positivity
+    rw [hcdef, earlyExitDecayConstant]
+    exact div_pos (mul_pos hkappa hdpos) h3
+  have hc1 : c ≤ 1 := by
+    have hdle : delta ^ (1 - M.gamma)⁻¹ ≤ 1 :=
+      Real.rpow_le_one hdelta.le hdelta1 hexpnn
+    have h3d : (1 : ℝ) ≤ (3 : ℝ) ^ d := one_le_pow₀ (by norm_num)
+    have hnum : kappa * delta ^ (1 - M.gamma)⁻¹ ≤ 192 * (3 : ℝ) ^ d := by
+      nlinarith only [hkappa1, hdle, hkappa, hdpos, h3d]
+    rw [hcdef, earlyExitDecayConstant, div_le_one (by positivity)]
+    exact hnum
+  have hdge : delta ^ (2 : ℕ) ≤ delta ^ (1 - M.gamma)⁻¹ := by
+    have hstep := Real.rpow_le_rpow_of_exponent_ge hdelta hdelta1 hexple
+    rwa [show ((2 : ℝ)) = ((2 : ℕ) : ℝ) by norm_num, Real.rpow_natCast] at hstep
+  have hcbarle : cbar ≤ c := by
+    have h3 : (0 : ℝ) < 192 * (3 : ℝ) ^ d := by positivity
+    have hnum : kappa * delta ^ (2 : ℕ) ≤ kappa * delta ^ (1 - M.gamma)⁻¹ :=
+      mul_le_mul_of_nonneg_left hdge hkappa.le
+    rw [hcbardef, hcdef, earlyExitDecayConstant, div_le_div_iff₀ h3 h3]
+    exact mul_le_mul_of_nonneg_right hnum h3.le
+  set K : ℝ :=
+    max (max (max 1 (Real.sqrt (100 / c))) (Real.sqrt ((3 : ℝ) ^ jbase))) Kmin with hKdef
+  have hK : 1 ≤ K :=
+    le_trans (le_max_left (1 : ℝ) (Real.sqrt (100 / c)))
+      (le_trans (le_max_left _ _) (le_max_left _ _))
+  have hKmin : Kmin ≤ K := le_max_right _ _
+  have hK0pos : (0 : ℝ) < K := lt_of_lt_of_le zero_lt_one hK
+  have hcK : (100 : ℝ) ≤ c * K ^ (2 : ℕ) := by
+    have hsq : Real.sqrt (100 / c) ≤ K :=
+      le_trans (le_max_right (1 : ℝ) (Real.sqrt (100 / c)))
+        (le_trans (le_max_left _ _) (le_max_left _ _))
+    have h2 := pow_le_pow_left₀ (Real.sqrt_nonneg (100 / c)) hsq 2
+    rw [Real.sq_sqrt (by positivity : (0 : ℝ) ≤ 100 / c), div_le_iff₀ hcpos] at h2
+    linarith only [h2]
+  have hkK : (3 : ℝ) ^ jbase ≤ K ^ (2 : ℕ) := by
+    have h1 : Real.sqrt ((3 : ℝ) ^ jbase) ≤ K :=
+      le_trans (le_max_right _ _) (le_max_left _ _)
+    have h2 := pow_le_pow_left₀ (Real.sqrt_nonneg ((3 : ℝ) ^ jbase)) h1 2
+    rwa [Real.sq_sqrt (by positivity : (0 : ℝ) ≤ (3 : ℝ) ^ jbase)] at h2
+  have hKle : K ≤ max Kbar Kmin := by
+    have hdivle : 100 / c ≤ 100 / cbar := by
+      rw [div_le_div_iff₀ hcpos hcbarpos]
+      linarith only [hcbarle]
+    have hsqrtle : Real.sqrt (100 / c) ≤ Real.sqrt (100 / cbar) :=
+      Real.sqrt_le_sqrt hdivle
+    rw [hKdef, hKbardef]
+    exact max_le_max (max_le_max (max_le_max (le_refl (1 : ℝ)) hsqrtle)
+      (le_refl (Real.sqrt ((3 : ℝ) ^ jbase)))) (le_refl Kmin)
+  exact ⟨hgamL, hgamR, hgc, hgamma, hgamma4, hgamma1, hi, hwindow, hmain, hepIcc, hepsmall, hdeltaSmall, hcdef, hexple, hcpos, hc1, hcbarle, hK, hKmin, hcK, hkK, hKle⟩
+
+private theorem earlyExitConfinementModel_comparisonBounds1 :
+    ∀ (d : ℕ) (cstar Cfloor Cchain ctail csmall : ℝ) (hCfloor : (0 : ℝ) < Cfloor) (hCchain : (0 : ℝ) < Cchain)
+      (hctail : (0 : ℝ) < ctail) (hcsmall : (0 : ℝ) < csmall) (gammaR : ℝ)
+      (hgrate :
+        ∀ (gamma : ℝ),
+          (0 : ℝ) < gamma →
+            gamma ≤ gammaR →
+              gamma ≤ (1 / 4 : ℝ) → (16 : ℝ) * Real.log (3 : ℝ) ≤ ctail * Cfloor ^ (2 : ℕ) * |Real.log gamma|)
+      (hlog3 : (0 : ℝ) < Real.log (3 : ℝ)),
+      let ep : ℝ := min (1 / 4 : ℝ) csmall;
+      ∀ (heppos : (0 : ℝ) < ep),
+        let Cscale : ℝ := max (1 : ℝ) ((16 : ℝ) * Real.log (3 : ℝ) / (ctail * ep ^ (2 : ℕ)));
+        let kappa : ℝ := earlyExitKappa Cchain.toNNReal Cchain⁻¹.toNNReal;
+        ∀ (hkappa : (0 : ℝ) < kappa),
+          let costBar : ℝ := (3 : ℝ) + (3 : ℝ) * (max (1 : ℝ) √cstar * Real.exp (1 / 2 : ℝ));
+          let delta : ℝ := min (1 : ℝ) (Cchain * kappa / ((128 : ℝ) * (3 : ℝ) ^ d * costBar));
+          ∀ (hdelta1 : delta ≤ (1 : ℝ)) (hdelta : (0 : ℝ) < delta),
+            let jbase : ℕ := earlyExitBaseScale d;
+            let CSbar : ℝ := max (1 : ℝ) ((2 : ℝ) * delta⁻¹ ^ (2 : ℕ));
+            ∀ (hCSbardef : CSbar = max (1 : ℝ) ((2 : ℝ) * delta⁻¹ ^ (2 : ℕ))) (M : ABKModel d) (t Kmin : ℝ)
+              (hgamR : M.gamma ≤ gammaR) (hgamma : (0 : ℝ) < M.gamma) (hgamma4 : M.gamma ≤ (1 / 4 : ℝ))
+              (hwindow : Cfloor * √M.gamma * |Real.log M.gamma|.rpow (7 / 2 : ℝ) ≤ min (1 / 4 : ℝ) csmall)
+              (hexple : ((1 : ℝ) - M.gamma)⁻¹ ≤ (2 : ℝ)),
+              let c : ℝ := earlyExitDecayConstant d M.gamma delta kappa;
+              let K : ℝ := max (max (max (1 : ℝ) √((100 : ℝ) / c)) √((3 : ℝ) ^ jbase)) Kmin;
+              let L : ℝ := K * √|Real.log M.gamma| * intrinsicScale M.nu cstar M.gamma t;
+              ∀ (hL : (0 : ℝ) < L) (Yfam : (m : ℤ) → Cutoff.CutoffSample d → ℕ) (hYmeas : ∀ (m : ℤ), Measurable (Yfam m))
+                (hYtail :
+                  ∀ (m : ℤ) (N : ℕ),
+                    (1 : ℕ) ≤ N →
+                      ((↑(fullSampleLaw M) : Measure (FullSample d M.gamma)) : (a : Set (FullSample d M.gamma)) → ℝ≥0∞)
+                          {omegaFull : FullSample d M.gamma | N ≤ Yfam m (↑omegaFull : Cutoff.CutoffSample d)} ≤
+                        ENNReal.ofReal
+                          (Real.exp (-(ctail * ep ^ (2 : ℕ) * M.gamma⁻¹ * |Real.log M.gamma| ^ (-6 : ℤ) * (3 : ℝ) ^ N)))),
+                let S : ℤ → Cutoff.CutoffSample d → ℝ := fun (i : ℤ) (omega : Cutoff.CutoffSample d) =>
+                  displacementScale delta M.gamma (Yfam i omega);
+                (∀ (i : ℤ), Measurable (S i)) ∧
+                  (∀ (i : ℤ) (omega : Cutoff.CutoffSample d), (0 : ℝ) ≤ S i omega) ∧
+                    (1 : ℝ) ≤
+                        max (1 : ℝ)
+                          (delta ^ (-((1 : ℝ) - M.gamma)⁻¹) *
+                            ((1 : ℝ) -
+                                Real.exp
+                                  (-(ctail * ep ^ (2 : ℕ) * M.gamma⁻¹ * |Real.log M.gamma| ^ (-6 : ℤ) / (2 : ℝ))))⁻¹) ∧
+                      max (1 : ℝ)
+                            (delta ^ (-((1 : ℝ) - M.gamma)⁻¹) *
+                              ((1 : ℝ) -
+                                  Real.exp
+                                    (-(ctail * ep ^ (2 : ℕ) * M.gamma⁻¹ * |Real.log M.gamma| ^ (-6 : ℤ) / (2 : ℝ))))⁻¹) ≤
+                          CSbar ∧
+                        (1 : ℝ) ≤
+                            ctail * ep ^ (2 : ℕ) * M.gamma⁻¹ * |Real.log M.gamma| ^ (-6 : ℤ) /
+                              ((16 : ℝ) * Real.log (3 : ℝ)) ∧
+                          Cscale⁻¹ * M.gamma⁻¹ * |Real.log M.gamma| ^ (-6 : ℤ) ≤
+                              ctail * ep ^ (2 : ℕ) * M.gamma⁻¹ * |Real.log M.gamma| ^ (-6 : ℤ) /
+                                ((16 : ℝ) * Real.log (3 : ℝ)) ∧
+                            (∀ (p : ℝ),
+                                (1 : ℝ) ≤ p →
+                                  p ≤
+                                      ctail * ep ^ (2 : ℕ) * M.gamma⁻¹ * |Real.log M.gamma| ^ (-6 : ℤ) /
+                                        ((16 : ℝ) * Real.log (3 : ℝ)) →
+                                    (∀ (n : ℤ),
+                                        ∫⁻ (omega : Cutoff.CutoffSample d),
+                                            ENNReal.ofReal (S n omega) ^
+                                              ((4 : ℝ) *
+                                                p) ∂(↑(Cutoff.cutoffSampleLaw M) : Measure (Cutoff.CutoffSample d)) ≤
+                                          ENNReal.ofReal
+                                              (max (1 : ℝ)
+                                                (delta ^ (-((1 : ℝ) - M.gamma)⁻¹) *
+                                                  ((1 : ℝ) -
+                                                      Real.exp
+                                                        (-(ctail * ep ^ (2 : ℕ) * M.gamma⁻¹ *
+                                                              |Real.log M.gamma| ^ (-6 : ℤ) /
+                                                            (2 : ℝ))))⁻¹)) ^
+                                            ((4 : ℝ) * p)) ∧
+                                      ∀ (n : ℤ),
+                                        ∫⁻ (omega : Cutoff.CutoffSample d),
+                                            ENNReal.ofReal (S n omega) ^
+                                              ((8 : ℝ) *
+                                                p) ∂(↑(Cutoff.cutoffSampleLaw M) : Measure (Cutoff.CutoffSample d)) ≤
+                                          ENNReal.ofReal
+                                              (max (1 : ℝ)
+                                                (delta ^ (-((1 : ℝ) - M.gamma)⁻¹) *
+                                                  ((1 : ℝ) -
+                                                      Real.exp
+                                                        (-(ctail * ep ^ (2 : ℕ) * M.gamma⁻¹ *
+                                                              |Real.log M.gamma| ^ (-6 : ℤ) /
+                                                            (2 : ℝ))))⁻¹)) ^
+                                            ((8 : ℝ) * p)) ∧
+                              ∀ᵐ (omega : FullSample d M.gamma) ∂(↑(fullSampleLaw M) : Measure (FullSample d M.gamma)),
+                                IsConfinementScale
+                                  (fun (n : ℤ) =>
+                                    widenedScale
+                                      (fun (k : ℤ) =>
+                                        (fun (i : ℤ) (omega : Cutoff.CutoffSample d) =>
+                                            displacementScale
+                                              (min (1 : ℝ)
+                                                (Cchain * earlyExitKappa Cchain.toNNReal Cchain⁻¹.toNNReal /
+                                                  ((128 : ℝ) * (3 : ℝ) ^ d *
+                                                    ((3 : ℝ) + (3 : ℝ) * (max (1 : ℝ) √cstar * Real.exp (1 / 2 : ℝ))))))
+                                              M.gamma (Yfam i omega))
+                                          k (↑omega : Cutoff.CutoffSample d))
+                                      n)
+                                  (max
+                                        (max
+                                          (max (1 : ℝ)
+                                            √((100 : ℝ) /
+                                                earlyExitDecayConstant d M.gamma
+                                                  (min (1 : ℝ)
+                                                    (Cchain * earlyExitKappa Cchain.toNNReal Cchain⁻¹.toNNReal /
+                                                      ((128 : ℝ) * (3 : ℝ) ^ d *
+                                                        ((3 : ℝ) + (3 : ℝ) * (max (1 : ℝ) √cstar * Real.exp (1 / 2 : ℝ))))))
+                                                  (earlyExitKappa Cchain.toNNReal Cchain⁻¹.toNNReal)))
+                                          √((3 : ℝ) ^ earlyExitBaseScale d))
+                                        Kmin *
+                                      √|Real.log M.gamma| *
+                                    intrinsicScale M.nu cstar M.gamma t)
+                                  (confinementScale
+                                    (fun (i : ℤ) (omega : Cutoff.CutoffSample d) =>
+                                      displacementScale
+                                        (min (1 : ℝ)
+                                          (Cchain * earlyExitKappa Cchain.toNNReal Cchain⁻¹.toNNReal /
+                                            ((128 : ℝ) * (3 : ℝ) ^ d *
+                                              ((3 : ℝ) + (3 : ℝ) * (max (1 : ℝ) √cstar * Real.exp (1 / 2 : ℝ))))))
+                                        M.gamma (Yfam i omega))
+                                    (max
+                                          (max
+                                            (max (1 : ℝ)
+                                              √((100 : ℝ) /
+                                                  earlyExitDecayConstant d M.gamma
+                                                    (min (1 : ℝ)
+                                                      (Cchain * earlyExitKappa Cchain.toNNReal Cchain⁻¹.toNNReal /
+                                                        ((128 : ℝ) * (3 : ℝ) ^ d *
+                                                          ((3 : ℝ) +
+                                                            (3 : ℝ) * (max (1 : ℝ) √cstar * Real.exp (1 / 2 : ℝ))))))
+                                                    (earlyExitKappa Cchain.toNNReal Cchain⁻¹.toNNReal)))
+                                            √((3 : ℝ) ^ earlyExitBaseScale d))
+                                          Kmin *
+                                        √|Real.log M.gamma| *
+                                      intrinsicScale M.nu cstar M.gamma t)
+                                    (↑omega : Cutoff.CutoffSample d)) := by
+  classical
+  intro d cstar Cfloor Cchain ctail csmall hCfloor hCchain hctail hcsmall gammaR hgrate hlog3 ep heppos Cscale kappa hkappa costBar delta hdelta1 hdelta jbase CSbar hCSbardef M t Kmin hgamR hgamma hgamma4 hwindow hexple c K L hL Yfam hYmeas hYtail S
+  have hSmeas : ∀ i, Measurable (S i) := fun i =>
+    measurable_displacementScale (hYmeas i) delta M.gamma
+  have hSnn : ∀ (i : ℤ) (omega : Cutoff.CutoffSample d), 0 ≤ S i omega := fun i omega =>
+    (displacementScale_pos hdelta M.gamma (Yfam i omega)).le
+  set a : ℝ := ctail * ep ^ (2 : ℕ) * M.gamma⁻¹ * |Real.log M.gamma| ^ (-6 : ℤ) with hadef
+  have ha16 : 16 * Real.log 3 ≤ a := by
+    rw [hadef]
+    exact le_percolationRate hctail hCfloor hgamma hgamma4 hwindow
+      (hgrate M.gamma hgamma hgamR hgamma4)
+  have ha : 0 < a := lt_of_lt_of_le (by linarith only [hlog3]) ha16
+  have hexpa : Real.exp (-(a / 2)) < 1 := by
+    rw [Real.exp_lt_one_iff]; linarith only [ha]
+  have hexppos : (0 : ℝ) < 1 - Real.exp (-(a / 2)) := by linarith only [hexpa]
+  set Cmom : ℝ := delta ^ (-(1 - M.gamma)⁻¹) * (1 - Real.exp (-(a / 2)))⁻¹ with hCmomdef
+  set CS : ℝ := max 1 Cmom with hCSdef
+  have hCS : (1 : ℝ) ≤ CS := le_max_left _ _
+  have hCSle : CS ≤ CSbar := by
+    have hdinv : (1 : ℝ) ≤ delta⁻¹ := (one_le_inv₀ hdelta).mpr hdelta1
+    have hdrw : delta ^ (-(1 - M.gamma)⁻¹) = (delta⁻¹) ^ (1 - M.gamma)⁻¹ := by
+      rw [Real.rpow_neg hdelta.le, ← Real.inv_rpow hdelta.le]
+    have hd2 : (delta⁻¹) ^ (1 - M.gamma)⁻¹ ≤ (delta⁻¹) ^ (2 : ℕ) := by
+      have hstep := Real.rpow_le_rpow_of_exponent_le hdinv hexple
+      rwa [show ((2 : ℝ)) = ((2 : ℕ) : ℝ) by norm_num, Real.rpow_natCast] at hstep
+    have hlog2 : Real.log 2 ≤ 8 * Real.log 3 := by
+      have h23 : Real.log 2 ≤ Real.log 3 := Real.log_le_log (by norm_num) (by norm_num)
+      linarith only [h23, hlog3]
+    have hea : Real.exp (-(a / 2)) ≤ 1 / 2 := by
+      have hle : -(a / 2) ≤ -Real.log 2 := by linarith only [ha16, hlog2]
+      calc Real.exp (-(a / 2)) ≤ Real.exp (-Real.log 2) := Real.exp_le_exp.2 hle
+        _ = (2 : ℝ)⁻¹ := by rw [Real.exp_neg, Real.exp_log (by norm_num)]
+        _ = 1 / 2 := by norm_num
+    have hinv2 : (1 - Real.exp (-(a / 2)))⁻¹ ≤ 2 := by
+      rw [inv_le_comm₀ hexppos (by norm_num)]
+      linarith only [hea]
+    have hCmomle : Cmom ≤ 2 * (delta⁻¹) ^ (2 : ℕ) := by
+      have hA : delta ^ (-(1 - M.gamma)⁻¹) ≤ (delta⁻¹) ^ (2 : ℕ) := by
+        rw [hdrw]; exact hd2
+      have hAnn : (0 : ℝ) ≤ delta ^ (-(1 - M.gamma)⁻¹) :=
+        (Real.rpow_pos_of_pos hdelta _).le
+      have hBnn : (0 : ℝ) ≤ (1 - Real.exp (-(a / 2)))⁻¹ := by positivity
+      have hDnn : (0 : ℝ) ≤ (delta⁻¹) ^ (2 : ℕ) := by positivity
+      rw [hCmomdef]
+      calc delta ^ (-(1 - M.gamma)⁻¹) * (1 - Real.exp (-(a / 2)))⁻¹
+          ≤ (delta⁻¹) ^ (2 : ℕ) * 2 := mul_le_mul hA hinv2 hBnn hDnn
+        _ = 2 * (delta⁻¹) ^ (2 : ℕ) := by ring
+    rw [hCSdef, hCSbardef]
+    exact max_le_max (le_refl (1 : ℝ)) hCmomle
+  set pS : ℝ := a / (16 * Real.log 3) with hpSdef
+  obtain ⟨stage_hpS1, stage_hpSrange, stage_hSmom, stage_hconf⟩ :=
+    @earlyExitConfinementModel_momentBounds1 (d) (cstar) (Cchain) (ctail) (csmall) (hctail) (hcsmall) (hlog3) (heppos) (hdelta) (M) (t) (Kmin) (hgamma) (hL) (Yfam) (hYmeas) (hSmeas) (hYtail) (hadef) (ha16) (ha) (hCS) (hpSdef)
+  have hpS1 : (1 : ℝ) ≤ pS := stage_hpS1
+  have hpSrange : Cscale⁻¹ * M.gamma⁻¹ * |Real.log M.gamma| ^ (-6 : ℤ) ≤ pS := stage_hpSrange
+  have hSmom : ∀ p : ℝ, 1 ≤ p → p ≤ pS →
+      (∀ n : ℤ, (∫⁻ omega, ENNReal.ofReal (S n omega) ^ (4 * p)
+          ∂(Cutoff.cutoffSampleLaw M).toMeasure) ≤ ENNReal.ofReal CS ^ (4 * p)) ∧
+      (∀ n : ℤ, (∫⁻ omega, ENNReal.ofReal (S n omega) ^ (8 * p)
+          ∂(Cutoff.cutoffSampleLaw M).toMeasure) ≤ ENNReal.ofReal CS ^ (8 * p)) := stage_hSmom
+  have hconf := stage_hconf
+  exact ⟨hSmeas, hSnn, hCS, hCSle, hpS1, hpSrange, hSmom, hconf⟩
+
 /-- **The early-exit tail of the stream process at and above the random confinement scale,
 with uniform constants.**  The displacement scales of the crossing scales of the percolation
 estimate determine a confinement scale, and at every scale above it each condition of the
@@ -356,7 +982,7 @@ The accuracy is taken at the top of its window rather than at the floor, so the 
 crossing tail is `c_tail ep² γ^{-1} |log γ|^{-6}` at a value of `ep` that does not shrink
 with the disorder.  Integrating that tail bounds the moments of the displacement scales of
 order at most `8 pS` by one constant `CS ≥ 1`, uniformly in the order and in the scale. -/
-theorem exists_ae_measure_exitTime_le_exp_neg_displacementMinScale_confinementScale_of_threshold_with_scaleMomentRange
+theorem exists_ae_confinement_exitTime_bound_of_threshold
     (d : ℕ) [NeZero d] (hdim : 2 ≤ d) (cstar : ℝ) (hcstar : 0 < cstar) :
     ∃ gamma0 Cscale CSbar Kbar cbar : ℝ,
       0 < gamma0 ∧ 1 ≤ Cscale ∧ 1 ≤ CSbar ∧ 1 ≤ Kbar ∧ 0 < cbar ∧ cbar ≤ 1 ∧
@@ -463,90 +1089,11 @@ theorem exists_ae_measure_exitTime_le_exp_neg_displacementMinScale_confinementSc
     lt_min (lt_min hgammaT hgammaL) (lt_min hgammaR hcstar), hCscale1, hCSbar1, hKbar1,
     hcbarpos, hcbar1, le_trans (min_le_right _ _) (min_le_right _ _), ?_⟩
   intro M hcs hgam t ht Kmin
-  have hgamT : M.gamma ≤ gammaT :=
-    hgam.trans (le_trans (min_le_left _ _) (min_le_left _ _))
-  have hgamL : M.gamma ≤ gammaL :=
-    hgam.trans (le_trans (min_le_left _ _) (min_le_right _ _))
-  have hgamR : M.gamma ≤ gammaR :=
-    hgam.trans (le_trans (min_le_right _ _) (min_le_left _ _))
-  have hgc : M.gamma ≤ cstar :=
-    hgam.trans (le_trans (min_le_right _ _) (min_le_right _ _))
-  have hgamma : 0 < M.gamma := M.shellPrefix.gamma_pos
-  have hgamma4 : M.gamma ≤ 1 / 4 := M.shellPrefix.gamma_le_quarter
-  have hgamma1 : M.gamma < 1 := lt_of_le_of_lt hgamma4 (by norm_num)
-  have hi : (0 : ℕ) < d := lt_of_lt_of_le (by norm_num) hdim
-  obtain ⟨hwindow, hmain⟩ := htail M hcs hgamT
-  have hepIcc : ep ∈ Set.Icc (Cfloor * Real.sqrt M.gamma *
-      Real.rpow |Real.log M.gamma| (7 / 2)) (1 / 4) :=
-    ⟨hwindow, by rw [hepdef]; exact min_le_left _ _⟩
-  have hepsmall : ep ≤ csmall := by rw [hepdef]; exact min_le_right _ _
-  -- the smallness of the separation parameter at this model
-  have hcostM : earlyExitProfileCost cstar M.gamma ≤ costBar := by
-    rw [hcostBardef]
-    exact earlyExitProfileCost_le hcstar hgamma (by linarith only [hgamma4])
-  have hdeltaSmall : 128 * (3 : ℝ) ^ d * delta *
-      earlyExitProfileCost cstar M.gamma ≤ Cchain * kappa := by
-    have hnn : (0 : ℝ) ≤ 128 * (3 : ℝ) ^ d * delta := by positivity
-    calc 128 * (3 : ℝ) ^ d * delta * earlyExitProfileCost cstar M.gamma
-        ≤ 128 * (3 : ℝ) ^ d * delta * costBar := mul_le_mul_of_nonneg_left hcostM hnn
-      _ ≤ Cchain * kappa := hdeltaBar
-  -- the exponential rate and the confinement constant
+  obtain ⟨hgamL, hgamR, hgc, hgamma, hgamma4, hgamma1, hi, hwindow, hmain, hepIcc, hepsmall, hdeltaSmall, hcdef, hexple, hcpos, hc1, hcbarle, hK, hKmin, hcK, hkK, hKle⟩ :=
+    @earlyExitConfinementModel_rates (d) (by infer_instance) (hdim) (cstar) (hcstar) (gammaT) (Cev) (Cfloor) (Cchain) (ctail) (csmall) (Creg) (hCchain) (gammaL) (gammaR) (hepdef) (hkappa) (hkappa1) (hcostBardef) (hdelta1) (hdelta) (hdeltaBar) (htail) (hcbardef) (hcbarpos) (hKbardef) (M) (hcs) (hgam) (Kmin)
   set c : ℝ := earlyExitDecayConstant d M.gamma delta kappa with hcdef
-  have hexpnn : (0 : ℝ) ≤ (1 - M.gamma)⁻¹ := by
-    rw [inv_nonneg]; linarith only [hgamma1]
-  have hexple : (1 - M.gamma)⁻¹ ≤ 2 := by
-    rw [inv_le_comm₀ (by linarith only [hgamma1]) (by norm_num)]
-    linarith only [hgamma4]
-  have hdpos : (0 : ℝ) < delta ^ (1 - M.gamma)⁻¹ := Real.rpow_pos_of_pos hdelta _
-  have hcpos : 0 < c := by
-    have h3 : (0 : ℝ) < 192 * (3 : ℝ) ^ d := by positivity
-    rw [hcdef, earlyExitDecayConstant]
-    exact div_pos (mul_pos hkappa hdpos) h3
-  have hc1 : c ≤ 1 := by
-    have hdle : delta ^ (1 - M.gamma)⁻¹ ≤ 1 :=
-      Real.rpow_le_one hdelta.le hdelta1 hexpnn
-    have h3d : (1 : ℝ) ≤ (3 : ℝ) ^ d := one_le_pow₀ (by norm_num)
-    have hnum : kappa * delta ^ (1 - M.gamma)⁻¹ ≤ 192 * (3 : ℝ) ^ d := by
-      nlinarith only [hkappa1, hdle, hkappa, hdpos, h3d]
-    rw [hcdef, earlyExitDecayConstant, div_le_one (by positivity)]
-    exact hnum
-  have hdge : delta ^ (2 : ℕ) ≤ delta ^ (1 - M.gamma)⁻¹ := by
-    have hstep := Real.rpow_le_rpow_of_exponent_ge hdelta hdelta1 hexple
-    rwa [show ((2 : ℝ)) = ((2 : ℕ) : ℝ) by norm_num, Real.rpow_natCast] at hstep
-  have hcbarle : cbar ≤ c := by
-    have h3 : (0 : ℝ) < 192 * (3 : ℝ) ^ d := by positivity
-    have hnum : kappa * delta ^ (2 : ℕ) ≤ kappa * delta ^ (1 - M.gamma)⁻¹ :=
-      mul_le_mul_of_nonneg_left hdge hkappa.le
-    rw [hcbardef, hcdef, earlyExitDecayConstant, div_le_div_iff₀ h3 h3]
-    exact mul_le_mul_of_nonneg_right hnum h3.le
   set K : ℝ :=
     max (max (max 1 (Real.sqrt (100 / c))) (Real.sqrt ((3 : ℝ) ^ jbase))) Kmin with hKdef
-  have hK : 1 ≤ K :=
-    le_trans (le_max_left (1 : ℝ) (Real.sqrt (100 / c)))
-      (le_trans (le_max_left _ _) (le_max_left _ _))
-  have hKmin : Kmin ≤ K := le_max_right _ _
-  have hK0pos : (0 : ℝ) < K := lt_of_lt_of_le zero_lt_one hK
-  have hcK : (100 : ℝ) ≤ c * K ^ (2 : ℕ) := by
-    have hsq : Real.sqrt (100 / c) ≤ K :=
-      le_trans (le_max_right (1 : ℝ) (Real.sqrt (100 / c)))
-        (le_trans (le_max_left _ _) (le_max_left _ _))
-    have h2 := pow_le_pow_left₀ (Real.sqrt_nonneg (100 / c)) hsq 2
-    rw [Real.sq_sqrt (by positivity : (0 : ℝ) ≤ 100 / c), div_le_iff₀ hcpos] at h2
-    linarith only [h2]
-  have hkK : (3 : ℝ) ^ jbase ≤ K ^ (2 : ℕ) := by
-    have h1 : Real.sqrt ((3 : ℝ) ^ jbase) ≤ K :=
-      le_trans (le_max_right _ _) (le_max_left _ _)
-    have h2 := pow_le_pow_left₀ (Real.sqrt_nonneg ((3 : ℝ) ^ jbase)) h1 2
-    rwa [Real.sq_sqrt (by positivity : (0 : ℝ) ≤ (3 : ℝ) ^ jbase)] at h2
-  have hKle : K ≤ max Kbar Kmin := by
-    have hdivle : 100 / c ≤ 100 / cbar := by
-      rw [div_le_div_iff₀ hcpos hcbarpos]
-      linarith only [hcbarle]
-    have hsqrtle : Real.sqrt (100 / c) ≤ Real.sqrt (100 / cbar) :=
-      Real.sqrt_le_sqrt hdivle
-    rw [hKdef, hKbardef]
-    exact max_le_max (max_le_max (max_le_max (le_refl (1 : ℝ)) hsqrtle)
-      (le_refl (Real.sqrt ((3 : ℝ) ^ jbase)))) (le_refl Kmin)
   have hR : 0 < intrinsicScale M.nu cstar M.gamma t :=
     intrinsicScale_pos M.nu_pos hcstar hgamma ht
   have hs1 : 1 ≤ Real.sqrt |Real.log M.gamma| := one_le_sqrt_abs_log hgamma hgamma4
@@ -558,110 +1105,12 @@ theorem exists_ae_measure_exitTime_le_exp_neg_displacementMinScale_confinementSc
   choose Yfam hYmeas hYtail hYcross using hmain ep hepIcc hepsmall
   set S : ℤ → Cutoff.CutoffSample d → ℝ :=
     fun i omega => displacementScale delta M.gamma (Yfam i omega) with hSdef
-  have hSmeas : ∀ i, Measurable (S i) := fun i =>
-    measurable_displacementScale (hYmeas i) delta M.gamma
-  have hSnn : ∀ (i : ℤ) (omega : Cutoff.CutoffSample d), 0 ≤ S i omega := fun i omega =>
-    (displacementScale_pos hdelta M.gamma (Yfam i omega)).le
+  obtain ⟨hSmeas, hSnn, hCS, hCSle, hpS1, hpSrange, hSmom, hconf⟩ :=
+    @earlyExitConfinementModel_comparisonBounds1 (d) (cstar) (Cfloor) (Cchain) (ctail) (csmall) (hCfloor) (hCchain) (hctail) (hcsmall) (gammaR) (hgrate) (hlog3) (heppos) (hkappa) (hdelta1) (hdelta) (hCSbardef) (M) (t) (Kmin) (hgamR) (hgamma) (hgamma4) (hwindow) (hexple) (hL) (Yfam) (hYmeas) (hYtail)
   set a : ℝ := ctail * ep ^ (2 : ℕ) * M.gamma⁻¹ * |Real.log M.gamma| ^ (-6 : ℤ) with hadef
-  have ha16 : 16 * Real.log 3 ≤ a := by
-    rw [hadef]
-    exact le_percolationRate hctail hCfloor hgamma hgamma4 hwindow
-      (hgrate M.gamma hgamma hgamR hgamma4)
-  have ha : 0 < a := lt_of_lt_of_le (by linarith only [hlog3]) ha16
-  have hexpa : Real.exp (-(a / 2)) < 1 := by
-    rw [Real.exp_lt_one_iff]; linarith only [ha]
-  have hexppos : (0 : ℝ) < 1 - Real.exp (-(a / 2)) := by linarith only [hexpa]
   set Cmom : ℝ := delta ^ (-(1 - M.gamma)⁻¹) * (1 - Real.exp (-(a / 2)))⁻¹ with hCmomdef
   set CS : ℝ := max 1 Cmom with hCSdef
-  have hCS : (1 : ℝ) ≤ CS := le_max_left _ _
-  have hCSle : CS ≤ CSbar := by
-    have hdinv : (1 : ℝ) ≤ delta⁻¹ := (one_le_inv₀ hdelta).mpr hdelta1
-    have hdrw : delta ^ (-(1 - M.gamma)⁻¹) = (delta⁻¹) ^ (1 - M.gamma)⁻¹ := by
-      rw [Real.rpow_neg hdelta.le, ← Real.inv_rpow hdelta.le]
-    have hd2 : (delta⁻¹) ^ (1 - M.gamma)⁻¹ ≤ (delta⁻¹) ^ (2 : ℕ) := by
-      have hstep := Real.rpow_le_rpow_of_exponent_le hdinv hexple
-      rwa [show ((2 : ℝ)) = ((2 : ℕ) : ℝ) by norm_num, Real.rpow_natCast] at hstep
-    have hlog2 : Real.log 2 ≤ 8 * Real.log 3 := by
-      have h23 : Real.log 2 ≤ Real.log 3 := Real.log_le_log (by norm_num) (by norm_num)
-      linarith only [h23, hlog3]
-    have hea : Real.exp (-(a / 2)) ≤ 1 / 2 := by
-      have hle : -(a / 2) ≤ -Real.log 2 := by linarith only [ha16, hlog2]
-      calc Real.exp (-(a / 2)) ≤ Real.exp (-Real.log 2) := Real.exp_le_exp.2 hle
-        _ = (2 : ℝ)⁻¹ := by rw [Real.exp_neg, Real.exp_log (by norm_num)]
-        _ = 1 / 2 := by norm_num
-    have hinv2 : (1 - Real.exp (-(a / 2)))⁻¹ ≤ 2 := by
-      rw [inv_le_comm₀ hexppos (by norm_num)]
-      linarith only [hea]
-    have hCmomle : Cmom ≤ 2 * (delta⁻¹) ^ (2 : ℕ) := by
-      have hA : delta ^ (-(1 - M.gamma)⁻¹) ≤ (delta⁻¹) ^ (2 : ℕ) := by
-        rw [hdrw]; exact hd2
-      have hAnn : (0 : ℝ) ≤ delta ^ (-(1 - M.gamma)⁻¹) :=
-        (Real.rpow_pos_of_pos hdelta _).le
-      have hBnn : (0 : ℝ) ≤ (1 - Real.exp (-(a / 2)))⁻¹ := by positivity
-      have hDnn : (0 : ℝ) ≤ (delta⁻¹) ^ (2 : ℕ) := by positivity
-      rw [hCmomdef]
-      calc delta ^ (-(1 - M.gamma)⁻¹) * (1 - Real.exp (-(a / 2)))⁻¹
-          ≤ (delta⁻¹) ^ (2 : ℕ) * 2 := mul_le_mul hA hinv2 hBnn hDnn
-        _ = 2 * (delta⁻¹) ^ (2 : ℕ) := by ring
-    rw [hCSdef, hCSbardef]
-    exact max_le_max (le_refl (1 : ℝ)) hCmomle
   set pS : ℝ := a / (16 * Real.log 3) with hpSdef
-  have hpS1 : (1 : ℝ) ≤ pS := by
-    rw [hpSdef, le_div_iff₀ (by positivity : (0 : ℝ) < 16 * Real.log 3)]
-    linarith only [ha16]
-  have hpSrange : Cscale⁻¹ * M.gamma⁻¹ * |Real.log M.gamma| ^ (-6 : ℤ) ≤ pS := by
-    have hLg : (0 : ℝ) < |Real.log M.gamma| := abs_log_gamma_pos M
-    have hnn : (0 : ℝ) ≤ M.gamma⁻¹ * |Real.log M.gamma| ^ (-6 : ℤ) := by positivity
-    have hden : (0 : ℝ) < ctail * ep ^ (2 : ℕ) := by positivity
-    have hBpos' : (0 : ℝ) < 16 * Real.log 3 / (ctail * ep ^ (2 : ℕ)) := by positivity
-    have hinv : Cscale⁻¹ ≤ ctail * ep ^ (2 : ℕ) / (16 * Real.log 3) := by
-      have h := inv_anti₀ hBpos'
-        (le_max_right (1 : ℝ) (16 * Real.log 3 / (ctail * ep ^ (2 : ℕ))))
-      rwa [inv_div] at h
-    have h16 : (16 : ℝ) * Real.log 3 ≠ 0 := by positivity
-    calc Cscale⁻¹ * M.gamma⁻¹ * |Real.log M.gamma| ^ (-6 : ℤ)
-        = Cscale⁻¹ * (M.gamma⁻¹ * |Real.log M.gamma| ^ (-6 : ℤ)) := by ring
-      _ ≤ (ctail * ep ^ (2 : ℕ) / (16 * Real.log 3)) *
-            (M.gamma⁻¹ * |Real.log M.gamma| ^ (-6 : ℤ)) :=
-          mul_le_mul_of_nonneg_right hinv hnn
-      _ = pS := by rw [hpSdef, hadef]; field_simp
-  have hcut : ∀ (i : ℤ) (N : ℕ), 1 ≤ N →
-      (Cutoff.cutoffSampleLaw M).toMeasure {omega | N ≤ Yfam i omega} ≤
-        ENNReal.ofReal (Real.exp (-(a * (3 : ℝ) ^ N))) := by
-    intro i N hN
-    have hSet : MeasurableSet {omega : Cutoff.CutoffSample d | N ≤ Yfam i omega} :=
-      measurableSet_le measurable_const (hYmeas i)
-    have hEq : (Cutoff.cutoffSampleLaw M).toMeasure {omega | N ≤ Yfam i omega} =
-        (fullSampleLaw M).toMeasure {omegaFull | N ≤ Yfam i omegaFull.1} := by
-      rw [← map_fullSampleLaw_val M, Measure.map_apply measurable_subtype_coe hSet]
-      rfl
-    rw [hEq]
-    exact hYtail i N hN
-  have hmomq : ∀ q : ℝ, 1 ≤ q → 2 * (q * Real.log 3) ≤ a → ∀ i : ℤ,
-      (∫⁻ omega, ENNReal.ofReal (S i omega) ^ q
-          ∂(Cutoff.cutoffSampleLaw M).toMeasure) ≤ ENNReal.ofReal CS ^ q := by
-    intro q hq hqa i
-    refine (lintegral_ofReal_displacementScale_rpow_le (Cutoff.cutoffSampleLaw M).toMeasure
-      (hYmeas i) hdelta ha hq hqa (hcut i)).trans ?_
-    exact ENNReal.rpow_le_rpow (ENNReal.ofReal_le_ofReal (le_max_right _ _))
-      (le_trans zero_le_one hq)
-  have hSmom : ∀ p : ℝ, 1 ≤ p → p ≤ pS →
-      (∀ n : ℤ, (∫⁻ omega, ENNReal.ofReal (S n omega) ^ (4 * p)
-          ∂(Cutoff.cutoffSampleLaw M).toMeasure) ≤ ENNReal.ofReal CS ^ (4 * p)) ∧
-      (∀ n : ℤ, (∫⁻ omega, ENNReal.ofReal (S n omega) ^ (8 * p)
-          ∂(Cutoff.cutoffSampleLaw M).toMeasure) ≤ ENNReal.ofReal CS ^ (8 * p)) := by
-    intro p hp hpSle
-    have hp0 : (0 : ℝ) < p := lt_of_lt_of_le zero_lt_one hp
-    have hpl : (0 : ℝ) < p * Real.log 3 := mul_pos hp0 hlog3
-    rw [hpSdef, le_div_iff₀ (by positivity : (0 : ℝ) < 16 * Real.log 3)] at hpSle
-    exact ⟨hmomq (4 * p) (by linarith only [hp]) (by linarith only [hpSle, hpl]),
-      hmomq (8 * p) (by linarith only [hp]) (by linarith only [hpSle])⟩
-  have hmom : ∀ i : ℤ,
-      (∫⁻ omega, ENNReal.ofReal (S i omega) ^ (1 : ℝ)
-          ∂(Cutoff.cutoffSampleLaw M).toMeasure) ≤ ENNReal.ofReal CS ^ (1 : ℝ) :=
-    hmomq 1 le_rfl (by linarith only [ha16, hlog3])
-  have hconf := ae_isConfinementScale_confinementScale_fullSample M hSmeas
-    (le_trans zero_le_one hCS) (le_refl (1 : ℝ)) hL hmom
   refine ⟨S, K, L, c, CS, pS, hK, hKmin, hcpos, hc1, hcbarle, hcK, hLdef,
     ⟨delta, Yfam, hdelta, hdelta1, hYmeas, fun i omega => rfl⟩, hSmeas, hSnn, hCS, hpS1,
     hCSle, hKle, hpSrange, hSmom, hconf, ?_⟩

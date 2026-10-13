@@ -23,7 +23,7 @@ Module imports, support namespace and local option directives adapted for Lean P
 This module supplies the conditional large-window concentration kernel used
 toward `e.kl.bounds.large` (ABK26): CoarseGraining's partition-average
 fluctuation theorem
-`Homogenization.Book.Ch04.isBigO_gammaSigma_restrictionCenteredDescendantAverage_of_restrictionUnitRangeDependentLaw`
+`isBigO_gammaSigma_restrictionCenteredDescendantAverage_of_restrictionUnitRangeDependentLaw`
 is applied to the per-subcube `L^p` mass of a finite stream increment, and its
 conclusion is transported back to the shell-sequence sample space in exactly
 the head-plus-tail shape that
@@ -372,7 +372,7 @@ theorem integral_regFieldLpMassRep_originCube_zero (M : ABKModel d) {p : ℝ} (h
     integral_map (measurable_partitionIncrementField n m).aemeasurable
       (measurable_regFieldLpMassRep p (cubeSet (originCube d 0))).aestronglyMeasurable]
   refine integral_congr_ae (Filter.Eventually.of_forall fun omega => ?_)
-  show regFieldLpMassRep p (cubeSet (originCube d 0))
+  change regFieldLpMassRep p (cubeSet (originCube d 0))
       (smulReg (incrementPartitionScale d m) (incrementPartitionScale_ne_zero d m)
         (finiteShellIncrement omega n m)) =
     streamIncrementLpMass p (m + (incrementPartitionShift d : ℤ)) n m omega

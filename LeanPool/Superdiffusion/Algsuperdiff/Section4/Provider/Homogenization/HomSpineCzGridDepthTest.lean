@@ -162,7 +162,7 @@ theorem normalizedCubeMeasure_cubeSet_of_mem_descendantsAtDepth {Q R : TriadicCu
     rw [hcard]
     have hRpos : (0 : ℝ) < cubeVolume R := cubeVolume_pos R
     field_simp
-  show (ENNReal.ofReal ((cubeVolume Q)⁻¹) • cubeMeasure Q) (cubeSet R) = _
+  change (ENNReal.ofReal ((cubeVolume Q)⁻¹) • cubeMeasure Q) (cubeSet R) = _
   rw [Measure.smul_apply, smul_eq_mul, cubeMeasure,
     Measure.restrict_apply (measurableSet_cubeSet R),
     Set.inter_eq_self_of_subset_left hsub, hvolR,
@@ -380,7 +380,7 @@ theorem weight_mul_flat_rpow_le_depthEnergy (Q : TriadicCube d) (s : FractionalO
             (Real.rpow_nonneg (norm_nonneg _) _))]
     congr 1
     rw [← Finset.mul_sum, ← Finset.mul_sum]
-    show ((D.card : ℝ))⁻¹ * ((3 : ℝ) ^ (s.1 * t * M * r) *
+    change ((D.card : ℝ))⁻¹ * ((3 : ℝ) ^ (s.1 * t * M * r) *
         ∑ R ∈ D, ‖cubeAverageVec R F.toField‖ ^ t) =
       (3 : ℝ) ^ (s.1 * t * M * r) *
         (((D.card : ℝ))⁻¹ * ∑ R ∈ D, ‖cubeAverageVec R F.toField‖ ^ t)

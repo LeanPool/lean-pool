@@ -50,7 +50,8 @@ at most a maximum.  Hence:
       ⟹  ⨍_Q |∇u|² ≤ B,
 ```
 
-`cubeAverage_le_of_descendants`, at the depth where the descendants sit.  Consequently the shallow-range display holds with
+`cubeAverage_le_of_descendants`, at the depth where the descendants sit.  Consequently the
+shallow-range display holds with
 the SAME constant as the deep-range one, i.e. the printed
 `3^{(1-α)X_m(α)} 3^{(1-α)(m-j)}` is not merely sufficient but generous by the
 factor `3^{(1-α)(m-j)} ≥ 1`.

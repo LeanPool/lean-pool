@@ -169,12 +169,14 @@ frozen statement changes.
 
 ## Main results
 
-* `Algsuperdiff.Section3.Provider.MultiscaleEstimate.isDeterministicShiftTwoTermOneSidedOrlicz_of_ae_le`
+*
+`isDeterministicShiftTwoTermOneSidedOrlicz_of_ae_le`
 * `Algsuperdiff.Section3.Provider.MultiscaleEstimate.quarter_pos_of_eight_gamma_le`
 * `Algsuperdiff.Section3.Provider.MultiscaleEstimate.quarter_mem_crude_window`
 * `Algsuperdiff.Section3.Provider.MultiscaleEstimate.exists_crude_bound`
 * `Algsuperdiff.Section3.Provider.MultiscaleEstimate.exists_badEvent_indicatorAverage_rpow`
-* `Algsuperdiff.Section3.Provider.MultiscaleEstimate.exists_badEvent_indicatorAverage_rpow_at_s_div_d`
+*
+`Algsuperdiff.Section3.Provider.MultiscaleEstimate.exists_badEvent_indicatorAverage_rpow_at_s_div_d`
 
 ## In-repo consumed set
 

@@ -262,7 +262,8 @@ to turn the tail bound at the starting point into a lower bound for the resolven
 complementary cutoff. -/
 theorem measure_compl_ball_le_of_hasResolventTail (R : PositiveC0ContractiveResolvent X)
     (hcons : R.kernelSemigroup.IsConservative) {phi : ℝ → ℝ} (hphi : ∀ s, 0 ≤ phi s)
-    {mu : PositiveShift} (htail : SubMarkovKernelSemigroup.HasResolventTail R.kernelSemigroup (mu : ℝ) phi)
+    {mu : PositiveShift} (htail : SubMarkovKernelSemigroup.HasResolventTail R.kernelSemigroup (mu
+      : ℝ) phi)
     {t : ℝ≥0} (ht : (mu : ℝ) * (t : ℝ) = 1) (x : X) {r : ℝ} (hr : 0 < r) :
     R.kernelSemigroup t x (Metric.ball x (4 * r))ᶜ ≤
       ENNReal.ofReal (2 * Real.exp 1 * phi (Real.sqrt (mu : ℝ) * r)) := by

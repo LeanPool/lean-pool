@@ -114,7 +114,7 @@ theorem scaledCoefficientCutoffLaw_adjoint_invariant (M : ABKModel d) (m : ℤ)
     {r : ℝ} (hr : r ≠ 0) :
     Ch04.RestrictionAdjointInvariantLaw
       (scaledCoefficientCutoffLaw M m r hr) := by
-  show Measure.map adjointReg (scaledCoefficientCutoffLaw M m r hr) =
+  change Measure.map adjointReg (scaledCoefficientCutoffLaw M m r hr) =
     scaledCoefficientCutoffLaw M m r hr
   have key : adjointReg (d := d) ∘ smulReg r hr =
       smulReg r hr ∘ adjointReg := by

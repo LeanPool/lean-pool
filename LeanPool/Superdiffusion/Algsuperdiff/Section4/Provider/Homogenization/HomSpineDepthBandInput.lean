@@ -167,7 +167,7 @@ theorem lintegral_normalized_enorm_gridDualTestCoeff_le (Q : TriadicCube d)
             (Real.rpow_nonneg (norm_nonneg _) _))]
     congr 1
     rw [← Finset.mul_sum, ← Finset.mul_sum]
-    show ((D.card : ℝ))⁻¹ * ((3 : ℝ) ^ (s.1 * t * M * r) *
+    change ((D.card : ℝ))⁻¹ * ((3 : ℝ) ^ (s.1 * t * M * r) *
         ∑ R ∈ D, ‖cubeAverageVec R F.toField‖ ^ t) =
       (3 : ℝ) ^ (s.1 * t * M * r) *
         (((D.card : ℝ))⁻¹ * ∑ R ∈ D, ‖cubeAverageVec R F.toField‖ ^ t)

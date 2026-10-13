@@ -80,7 +80,7 @@ private theorem vecDot_single_matVecMul_single' (M : Mat d) (i j : Fin d) :
   have hleft : vecDot (basisVec i) (matVecMul M (basisVec j)) =
       matVecMul M (basisVec j) i := vecDot_basisVec_left i _
   have hright : matVecMul M (basisVec j) i = M i j := by
-    show ∑ k : Fin d, M i k * basisVec j k = M i j
+    change ∑ k : Fin d, M i k * basisVec j k = M i j
     rw [Finset.sum_eq_single j]
     · simp
     · intro k _hk hkj
@@ -101,7 +101,7 @@ theorem sigmaStarInvCoarse_sub_const_skew (hskew : matTranspose hbar = -hbar)
     intro q
     rw [responseJ_sub_const_skew hskew hab 0 q, matVecMul_zero, sub_zero]
   ext i j
-  show Book.Ch02.sigmaStarInvEntry U b i j = Book.Ch02.sigmaStarInvEntry U a i j
+  change Book.Ch02.sigmaStarInvEntry U b i j = Book.Ch02.sigmaStarInvEntry U a i j
   unfold Book.Ch02.sigmaStarInvEntry
   by_cases hij : i = j <;> simp [hij, h0]
 
@@ -156,7 +156,7 @@ theorem sigmaStarInvKappaCoarse_sub_const_skew (hskew : matTranspose hbar = -hba
     Book.Ch02.sigmaStarInvKappaCoarse U b =
       Book.Ch02.sigmaStarInvCoarse U a * (Book.Ch02.kappaCoarse U a - hbar) := by
   ext i j
-  show mixedResponse U b (Pi.single j 1) (Pi.single i 1) = _
+  change mixedResponse U b (Pi.single j 1) (Pi.single i 1) = _
   rw [mixedResponse_sub_const_skew hskew hab, matVecMul_mul]
   exact vecDot_single_matVecMul_single' _ i j
 
@@ -193,7 +193,7 @@ theorem sigmaCoarse_sub_const_skew (hskew : matTranspose hbar = -hbar)
     (hab : ∀ x, b.toCoeffField x = a.toCoeffField x - hbar) :
     Book.Ch02.sigmaCoarse U b = Book.Ch02.sigmaCoarse U a := by
   ext i j
-  show Book.Ch02.sigmaEntry U b i j = Book.Ch02.sigmaEntry U a i j
+  change Book.Ch02.sigmaEntry U b i j = Book.Ch02.sigmaEntry U a i j
   unfold Book.Ch02.sigmaEntry
   by_cases hij : i = j <;>
     simp [hij, canonicalSigmaCorrectedResponse_sub_const_skew hskew hab]
@@ -234,7 +234,7 @@ theorem blockVecDot_coarseBlockMatrix_sub_const_skew
   have hbmat : Book.Ch02.coarseBlockMatrix U b =
       blockMatrixOfCoarseMatrices
         (gaugeShiftCoarseMatrices hbar (Book.Ch02.coarseMatrices U a)) := by
-    show blockMatrixOfCoarseMatrices (Book.Ch02.coarseMatrices U b) = _
+    change blockMatrixOfCoarseMatrices (Book.Ch02.coarseMatrices U b) = _
     rw [coarseMatrices_sub_const_skew hskew hab]
   have hamat : Book.Ch02.coarseBlockMatrix U a =
       blockMatrixOfCoarseMatrices (Book.Ch02.coarseMatrices U a) := rfl

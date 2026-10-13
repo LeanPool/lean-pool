@@ -248,7 +248,7 @@ theorem perturbCoeffOn_unitRescaledCutoffCoeff_toCoeffField_ae_eq
           (((3 : ℝ) ^ Q.scale) • y + triadicCubeShift Q) := by
   filter_upwards [unitRescaledCutoffCoeff_toCoeffField_ae_eq M Q n omega]
     with y hy
-  show (unitRescaledCutoffCoeff M Q n omega).toCoeffField y +
+  change (unitRescaledCutoffCoeff M Q n omega).toCoeffField y +
       (1 : ℝ) • (incrementUnitCube₂ Q n L omega).toLInfSkewMatrixFieldOn.1.1 y =
     coefficientCutoff M.nu L omega (((3 : ℝ) ^ Q.scale) • y + triadicCubeShift Q)
   rw [hy, incrementUnitCube₂_value Q hnL omega y, cubeBasePoint_eq_triadicCubeShift,

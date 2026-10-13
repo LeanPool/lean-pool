@@ -48,7 +48,8 @@ as Theorem C's display enters as `hC`.  It is **not** available as a theorem:
   step needs;
 * it is recorded that the literal endpoint `p = ∞` is UNAVAILABLE from the
   source (the dual exponent `p' = 1` breaks the flat-cube CZ estimate behind
-  the Calderón--Zygmund flux comparison lemma), and neither a `p`-uniformity remark on `C(p,d)` nor an
+  the Calderón--Zygmund flux comparison lemma), and neither a `p`-uniformity remark on `C(p,d)` nor
+  an
   explicit large-`q` conclusion is given.
 
 The chain that consumes that Proposition reads the `p → ∞` reading of its

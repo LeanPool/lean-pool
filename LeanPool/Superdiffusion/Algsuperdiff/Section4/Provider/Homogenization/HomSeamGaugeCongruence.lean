@@ -89,7 +89,7 @@ theorem negBesovLpDepthMean_congr_of_eqOn (Q : TriadicCube d) (p : ℝ) (j : ℕ
         Real.sqrt (vecNormSq (cubeAverageVec R G)) ^ p) =
       descendantsAverage Q j fun R =>
         Real.sqrt (vecNormSq (cubeAverageVec R G')) ^ p := by
-    show ((descendantsAtDepth Q j).card : ℝ)⁻¹ *
+    change ((descendantsAtDepth Q j).card : ℝ)⁻¹ *
         ∑ R ∈ descendantsAtDepth Q j, Real.sqrt (vecNormSq (cubeAverageVec R G)) ^ p =
       ((descendantsAtDepth Q j).card : ℝ)⁻¹ *
         ∑ R ∈ descendantsAtDepth Q j, Real.sqrt (vecNormSq (cubeAverageVec R G')) ^ p

@@ -89,7 +89,7 @@ theorem integral_comp_toFun_translation_transfer_real
         fun a : RegCoeffField d =>
           (fun b : RegCoeffField d => X U b.toFun) (translateReg z a) := by
     funext a
-    show X (translateSet z U) a.toFun = X U (translateReg z a).toFun
+    change X (translateSet z U) a.toFun = X U (translateReg z a).toFun
     rw [hcov U z a.toFun, translateReg_toFun_real]
   calc
     ∫ a, X (translateSet z U) a.toFun ∂P

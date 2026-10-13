@@ -131,7 +131,7 @@ theorem potTermARep_lipschitz (h : UnitCubeSkewW2Infinity d) (p : Vec d)
       = |∑ j : Fin d, (potValueRep h j i x - potValueRep h j i y) * p j| := by
         rw [Real.norm_eq_abs]
         congr 1
-        show (∑ j : Fin d, potValueRep h j i x * p j) -
+        change (∑ j : Fin d, potValueRep h j i x * p j) -
             ∑ j : Fin d, potValueRep h j i y * p j = _
         rw [← Finset.sum_sub_distrib]
         exact Finset.sum_congr rfl fun j _ => by ring

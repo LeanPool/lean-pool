@@ -100,7 +100,7 @@ private theorem scaleTermBridge {s : ℝ} (K p gam D : ℝ) (l : ℕ) :
           (gam * (D + (l : ℝ)) * (3 : ℝ) ^ (2 * gam * (D + (l : ℝ))) +
             gam * (3 : ℝ) ^ (2 * gam * (D + (l : ℝ))))))) := by
   have h1 : Ch02.geometricDiscount s 2 = 1 - (3 : ℝ) ^ (-(2 * s)) := by
-    show 1 - Real.rpow 3 (-s * 2) = 1 - (3 : ℝ) ^ (-(2 * s))
+    change 1 - Real.rpow 3 (-s * 2) = 1 - (3 : ℝ) ^ (-(2 * s))
     rw [show -s * 2 = -(2 * s) from by ring, rpowBridgeFinal]
   have h2 : Real.rpow 3 (-s * (l : ℝ)) = (3 : ℝ) ^ (-(s * (l : ℝ))) := by
     rw [rpowBridgeFinal, show -s * (l : ℝ) = -(s * (l : ℝ)) from by ring]

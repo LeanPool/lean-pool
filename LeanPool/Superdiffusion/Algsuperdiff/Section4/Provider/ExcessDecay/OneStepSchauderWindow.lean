@@ -102,7 +102,7 @@ theorem metricBall_subset_truncatedWindow_of_interior {x : Vec d} {m n : ℤ}
     have hyi := hy i
     have hpi : p i - x i = y i := by
       rw [← hpy]
-      show x i + y i - x i = y i
+      change x i + y i - x i = y i
       ring
     rw [hpi, abs_lt]
     exact ⟨by linarith only [hyi.1], by linarith only [hyi.2]⟩
@@ -131,7 +131,7 @@ theorem metricBall_subset_truncatedWindow_of_interior {x : Vec d} {m n : ℤ}
         by simpa using (by linarith only [h.2] :
           q i - x i < (1 / 2 : ℝ) * (3 : ℝ) ^ (n - 2))⟩
     · funext i
-      show x i + (q i - x i) = q i
+      change x i + (q i - x i) = q i
       ring
   exact ⟨hmem, hcube hmem⟩
 

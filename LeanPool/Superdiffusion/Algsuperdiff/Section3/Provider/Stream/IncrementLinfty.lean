@@ -60,7 +60,8 @@ Deviations from the source, all absorbed by its `C(d)`:
 
 ## Main results
 
-* `Algsuperdiff.Section3.Provider.Stream.matrixOperatorNorm_finiteShellIncrement_le_incrementSupBound`
+*
+`Algsuperdiff.Section3.Provider.Stream.matrixOperatorNorm_finiteShellIncrement_le_incrementSupBound`
 * `Algsuperdiff.Section3.Provider.Stream.isBigOWith_gammaSigma_incrementSupBound`
 
 ## References
@@ -357,7 +358,7 @@ theorem measurable_matrixOperatorNorm_finiteShellIncrement_origin (n m : ℤ) :
   have hvec : Measurable (fun omega : ShellSeq d =>
       finiteShellIncrement omega n m 0) := by
     have hMAdd : MeasurableAdd₂ (Mat d) := by
-      show MeasurableAdd₂ (Fin d → Fin d → ℝ)
+      change MeasurableAdd₂ (Fin d → Fin d → ℝ)
       infer_instance
     have hrw : (fun omega : ShellSeq d => finiteShellIncrement omega n m 0) =
         fun omega : ShellSeq d => ∑ k ∈ Finset.Ioc n m, (omega k) 0 := by

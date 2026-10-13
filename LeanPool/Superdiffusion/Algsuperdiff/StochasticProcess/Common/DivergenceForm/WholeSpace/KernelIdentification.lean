@@ -575,7 +575,7 @@ private theorem analyticMinimalResolvent_smul_nonneg
     ENNReal.mul_ne_top ENNReal.ofReal_ne_top
     (A.analyticMinimalResolvent_ne_top mu hf hf0 hD hfD x)
   apply (ENNReal.toReal_eq_toReal_iff' hleft hright).mp
-  show (A.analyticMinimalResolvent mu (fun y ↦ c * f y) (hf.const_smul c) hcf x).toReal =
+  change (A.analyticMinimalResolvent mu (fun y ↦ c * f y) (hf.const_smul c) hcf x).toReal =
     (ENNReal.ofReal c * A.analyticMinimalResolvent mu f hf hfD x).toReal
   rw [A.toReal_analyticMinimalResolvent_smul mu hc hf hf0 hD hfD x,
     ENNReal.toReal_mul, ENNReal.toReal_ofReal hc]

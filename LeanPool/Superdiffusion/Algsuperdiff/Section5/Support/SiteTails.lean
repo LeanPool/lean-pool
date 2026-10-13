@@ -118,7 +118,7 @@ theorem measureReal_shellExcessEvent_le (M : ABKModel d) {C0 ep : ℝ}
       shellThreshold M C0 ep L := by
     rw [shellThreshold, shellDecayBase_pow, hA, ht, hzpow,
       show ((n + (L : ℤ) : ℤ) : ℝ) = (n : ℝ) + (L : ℝ) by push_cast; ring]
-    show (3 : ℝ) ^ ((2 - M.gamma) * (n : ℝ)) *
+    change (3 : ℝ) ^ ((2 - M.gamma) * (n : ℝ)) *
         ((3 : ℝ) ^ (-(n : ℝ)) * (3 : ℝ) ^ ((M.gamma - 1) * ((n : ℝ) + (L : ℝ))) *
           (C0 * ep * (Real.sqrt M.gamma)⁻¹ * (3 : ℝ) ^ ((7 / 8 - M.gamma) * (L : ℝ)))) =
       C0 * ep * (Real.sqrt M.gamma)⁻¹ * (3 : ℝ) ^ (-((L : ℝ) / 8))

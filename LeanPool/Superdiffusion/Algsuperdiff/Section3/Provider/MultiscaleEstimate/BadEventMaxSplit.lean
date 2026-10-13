@@ -189,7 +189,7 @@ them.  Both lemmas below exist only to absorb that seam; they are `private`. -/
 private theorem three_rpow_mul_natCast_add (x y : ℝ) (j : ℕ) :
     Real.rpow (3 : ℝ) (x * (j : ℝ)) * Real.rpow (3 : ℝ) (y * (j : ℝ)) =
       Real.rpow (3 : ℝ) ((x + y) * (j : ℝ)) := by
-  show (3 : ℝ) ^ (x * (j : ℝ)) * (3 : ℝ) ^ (y * (j : ℝ)) = (3 : ℝ) ^ ((x + y) * (j : ℝ))
+  change (3 : ℝ) ^ (x * (j : ℝ)) * (3 : ℝ) ^ (y * (j : ℝ)) = (3 : ℝ) ^ ((x + y) * (j : ℝ))
   rw [← Real.rpow_add (by norm_num : (0 : ℝ) < 3)]
   congr 1
   ring
@@ -283,7 +283,7 @@ theorem geometricDiscount_two_le_four_mul_quarter {s : ℝ} (hs : 0 ≤ s) :
     congr 1
     push_cast
     ring
-  show 1 - (3 : ℝ) ^ (-s * 2) ≤ 4 * (1 - (3 : ℝ) ^ (-(s / 4) * 2))
+  change 1 - (3 : ℝ) ^ (-s * 2) ≤ 4 * (1 - (3 : ℝ) ^ (-(s / 4) * 2))
   rw [← hpow]
   nlinarith [hq0, hq1, hsq, hcb]
 

@@ -190,7 +190,7 @@ theorem euclideanCoordLaplacian_convolution_indicator_eq_zero {U : Set (Vec d)}
   set ψ : Vec d → ℝ := fun y => K (A - y) with hψdef
   have hψ : ContDiff ℝ (⊤ : ℕ∞) ψ := hK.comp (contDiff_const.sub contDiff_id)
   have hψ_supp : HasCompactSupport ψ := by
-    show HasCompactSupport (K ∘ Homeomorph.subLeft A)
+    change HasCompactSupport (K ∘ Homeomorph.subLeft A)
     simpa [ψ, Function.comp_def] using hK_supp.comp_homeomorph (Homeomorph.subLeft A)
   have hweak_zero : ∫ y in U, u y * euclideanCoordLaplacian ψ y ∂volume = 0 :=
     isWeaklyHarmonicOn_integral_mul_euclideanCoordLaplacian_eq_zero hUopen hu hψ hψ_supp hsub

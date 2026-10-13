@@ -114,7 +114,7 @@ theorem toHilbertBlockL2OfBlockField_add {U : Set (Vec d)}
          (toHilbertBlockL2OfBlockField (U := U) hG)]
     with x hHx hFx hGx hsum
   rw [hHx, hsum]
-  show hilbertifyBlockField H x
+  change hilbertifyBlockField H x
       = (toHilbertBlockL2OfBlockField (U := U) hF) x
         + (toHilbertBlockL2OfBlockField (U := U) hG) x
   rw [hFx, hGx]

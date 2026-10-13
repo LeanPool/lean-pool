@@ -147,7 +147,7 @@ theorem cubeEuclideanLpNorm_add_le (Q : TriadicCube d) {p : ℝ≥0∞} (hp : 1 
       (normalizedCubeMeasure Q)
   swap
   · have h0 : cubeEuclideanLpNorm Q p (fun x => f x + g x) = 0 := by
-      show (eLpNorm (fun x => Book.Ch02.vecNorm (f x + g x)) p
+      change (eLpNorm (fun x => Book.Ch02.vecNorm (f x + g x)) p
         (normalizedCubeMeasure Q)).toReal = 0
       rw [eLpNorm_of_not_aestronglyMeasurable hm, ENNReal.toReal_top]
     rw [h0]

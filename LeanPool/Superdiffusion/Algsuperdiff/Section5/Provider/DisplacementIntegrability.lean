@@ -44,7 +44,7 @@ theorem exists_ae_integrable_streamProcess_norm_rpow
             (streamProcess M omega ((0 : Vec d) : OnePoint (Vec d))) := by
   obtain ⟨gammaI, Cscale, CSbar, Kbar, cbar, hgammaI, _hCscale, _hCSbar, _hKbar,
     hcbar, hcbar1, hlift⟩ :=
-    measureReal_compl_survivalEvent_confinementScale_le_pow_of_threshold_with_scaleMomentRange
+    measureReal_exitEvent_confinementScale_le_pow_of_threshold
       d hd cstar hcstar
   refine ⟨gammaI, hgammaI, ?_⟩
   intro M hcs hgamma t ht

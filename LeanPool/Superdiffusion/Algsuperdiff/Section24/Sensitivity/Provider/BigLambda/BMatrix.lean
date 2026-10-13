@@ -72,7 +72,7 @@ theorem responseJ_potential_eq_half_bCoarse (U : Domain d) (a : CoeffOn U)
       Ch02.sigmaCoarse U a +
         matTranspose (Ch02.kappaCoarse U a) *
           (Ch02.sigmaStarInvCoarse U a * Ch02.kappaCoarse U a) := by
-    show Ch02.sigmaCoarse U a +
+    change Ch02.sigmaCoarse U a +
         matTranspose (Ch02.kappaCoarse U a) * Ch02.sigmaStarInvCoarse U a *
           Ch02.kappaCoarse U a = _
     rw [mul_assoc]
@@ -105,7 +105,7 @@ theorem responseJ_potential_transpose (U : Domain d) (a : CoeffOn U) (p : Vec d)
       Ch02.sigmaCoarse U a +
         matTranspose (Ch02.kappaCoarse U a) *
           (Ch02.sigmaStarInvCoarse U a * Ch02.kappaCoarse U a) := by
-    show Ch02.sigmaCoarse U a +
+    change Ch02.sigmaCoarse U a +
         matTranspose (Ch02.kappaCoarse U a) * Ch02.sigmaStarInvCoarse U a *
           Ch02.kappaCoarse U a = _
     rw [mul_assoc]

@@ -125,7 +125,7 @@ theorem integrableOn_openCubeSet_of_integrable_normalized (R : TriadicCube d)
     (ENNReal.ofReal_pos.mpr (inv_pos.mpr (cubeVolume_pos R))).ne'
   rw [normalizedCubeMeasure, cubeMeasure] at hf
   have h := (integrable_smul_measure hne ENNReal.ofReal_ne_top).1 hf
-  show Integrable f (volume.restrict (openCubeSet R))
+  change Integrable f (volume.restrict (openCubeSet R))
   rwa [volume_restrict_cubeSet_eq_volume_restrict_openCubeSet R] at h
 
 theorem memLp_two_coord (R : TriadicCube d) {u : Vec d → Vec d}
@@ -211,12 +211,12 @@ theorem abs_finiteShellIncrement_entry_sub_center_le (R : TriadicCube d)
   have hval : ∀ k : ℤ, (omega' k) (x - z) = (omega k) x := by
     intro k
     rw [hom]
-    show (omega k) ((x - z) + z) = (omega k) x
+    change (omega k) ((x - z) + z) = (omega k) x
     rw [sub_add_cancel]
   have hval0 : ∀ k : ℤ, (omega' k) 0 = (omega k) z := by
     intro k
     rw [hom]
-    show (omega k) ((0 : Vec d) + z) = (omega k) z
+    change (omega k) ((0 : Vec d) + z) = (omega k) z
     rw [zero_add]
   have hgauge : ∑ k ∈ Finset.Ioc n m, Provider.Stream.localCubeDerivNorm n (omega' k) = G :=
     rfl
@@ -297,7 +297,7 @@ private theorem integral_vecDot_matVecMul (nu : Measure (Vec d)) (e : Vec d)
   have hpt : (fun x : Vec d => vecDot e (matVecMul (A x) (v x)))
       = fun x : Vec d => ∑ i, ∑ j, e i * (A x i j * v x j) := by
     funext x
-    show (∑ i, e i * (∑ j, A x i j * v x j)) = _
+    change (∑ i, e i * (∑ j, A x i j * v x j)) = _
     exact Finset.sum_congr rfl fun i _ => Finset.mul_sum _ _ _
   rw [hpt, integral_finsetSum _ (fun i _ =>
     integrable_finsetSum _ (fun j _ => (h i j).const_mul (e i)))]
@@ -412,7 +412,7 @@ theorem step5CrossDefect_le_meshOscillationCell (R : TriadicCube d) (omega : She
       congr 1
       · rw [hnu, cubeAverage_eq_integral_normalizedCubeMeasure]
         exact integral_vecDot_matVecMul nu e A u hAuint
-      · show (∑ i, e i * (∑ j, freshShellCubeAverage R omega n m i j * ubar j)) = _
+      · change (∑ i, e i * (∑ j, freshShellCubeAverage R omega n m i j * ubar j)) = _
         refine Finset.sum_congr rfl fun i _ => ?_
         rw [Finset.mul_sum]
         exact Finset.sum_congr rfl fun j _ => by rw [hbar i j, hubar j]
@@ -429,7 +429,7 @@ theorem step5CrossDefect_le_meshOscillationCell (R : TriadicCube d) (omega : She
     have hfun : (fun x : Vec d => vecDot e (matVecMul (A x - C) (u x - ubar)))
         = fun x : Vec d => ∑ i, ∑ j, e i * ((A x - C) i j * (u x - ubar) j) := by
       funext x
-      show (∑ i, e i * (∑ j, (A x - C) i j * (u x - ubar) j)) = _
+      change (∑ i, e i * (∑ j, (A x - C) i j * (u x - ubar) j)) = _
       exact Finset.sum_congr rfl fun i _ => Finset.mul_sum _ _ _
     rw [hfun]
     exact integrable_finsetSum _ fun i _ =>
@@ -548,7 +548,8 @@ maximizing cube of the finite grid supplies the transfer.  Every binder is that
 producer's own.
 
 Inherited unchanged from
-`ApproximateRecurrence.exists_gamma0_freshShellDirichlet_step5MeshOscillation_le_gamma_pow_fifteen`. -/
+`ApproximateRecurrence.exists_gamma0_freshShellDirichlet_step5MeshOscillation_le_gamma_pow_fifteen`.
+-/
 theorem exists_gamma0_freshShellDirichlet_step5MeshOscillationResited_le_gamma_pow_fifteen
     (d : ℕ) (hd : 2 ≤ d) (E : ℝ) :
     ∃ gamma0 : ℝ, 0 < gamma0 ∧ gamma0 ≤ 1 / 4 ∧

@@ -63,7 +63,7 @@ theorem isBigOWith_gammaSigma_of_ae_tendsto_uniform
     obtain ⟨N, hN⟩ := Filter.eventually_atTop.1 heventually
     refine Set.mem_iUnion.2 ⟨N, ?_⟩
     intro n hNn
-    show c < W n ω
+    change c < W n ω
     exact hN n hNn
   have hE_bound :
       ∀ n, μ (E n) ≤ ENNReal.ofReal (Real.exp (-(t ^ σ))) := by

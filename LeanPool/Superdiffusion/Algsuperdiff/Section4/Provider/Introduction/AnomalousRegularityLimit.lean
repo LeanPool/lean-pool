@@ -90,7 +90,7 @@ variable {d : ℕ}
 
 /-- The squared Euclidean magnitude is continuous on `Vec d`. -/
 theorem continuous_vecNormSq : Continuous fun v : Vec d => vecNormSq v := by
-  show Continuous fun v : Vec d => ∑ i, v i * v i
+  change Continuous fun v : Vec d => ∑ i, v i * v i
   exact continuous_finsetSum _ fun i _ => (continuous_apply i).mul (continuous_apply i)
 
 /-- The Euclidean magnitude is continuous on `Vec d`. -/
@@ -411,7 +411,7 @@ theorem tendsto_sqrt_integral_grad_sub_cubeSetAt (M : ABKModel d)
     have hwg : ∀ z, (wL - wv).toH1Function.grad z = (u L).grad z - v.grad z := by
       intro z
       rw [sub_toH1Function, H1Function.sub_grad]
-      show wL.toH1Function.grad z - wv.toH1Function.grad z = _
+      change wL.toH1Function.grad z - wv.toH1Function.grad z = _
       rw [hwLg z, hwvg z]
       abel
     obtain ⟨Lam, hEll⟩ :=

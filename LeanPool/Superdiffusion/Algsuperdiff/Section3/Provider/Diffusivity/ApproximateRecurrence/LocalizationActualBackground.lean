@@ -524,7 +524,8 @@ theorem isDoubledMuAdmissible_localizationBackground (sigma : PositiveScalar)
       simp only [localizationBackground_flux, recurrenceP_snd, sqrtLoad, smul_add]
       abel
     rw [hfun]
-    exact _root_.Algsuperdiff.Section24.Sensitivity.Provider.Path.solenoidalZeroNormalTraceFieldOn_smul
+    exact
+      _root_.Algsuperdiff.Section24.Sensitivity.Provider.Path.solenoidalZeroNormalTraceFieldOn_smul
       (solenoidalZeroNormalTraceFieldOn_neumannFluxField sigma omega lowScale highScale e' hwN) _
 
 /-! ## The actual-source `hFpot`, `hFflux` and ambient membership of `bfF_z` -/

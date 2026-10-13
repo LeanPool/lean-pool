@@ -186,7 +186,7 @@ theorem valuePathForcing_pathScale (gamma : ℝ) (k : ℤ) (e : Vec d)
     (f : C(Vec d, Mat d)) :
     valuePathForcing e (pathScale gamma k f)
       = (3 : ℝ) ^ (gamma * (k : ℝ)) • valuePathForcing e f := by
-  show HilbertVec.ofVec (matVecMul (pathScale gamma k f 0) e) = _
+  change HilbertVec.ofVec (matVecMul (pathScale gamma k f 0) e) = _
   rw [pathScale_apply, smul_zero]
   exact ofVec_matVecMul_smul_left _ _ _
 

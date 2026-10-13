@@ -26,7 +26,8 @@ ABK26's oscillation event `e.Bosc.def` is stated with the literal stream
 increment `k_L - k_j`: `sup_{L >= j} 3^{2j} ||grad (k_L -
 k_j)||_{W^{1,infinity}(z + square_j)}`.
 
-That local measurability input is now proved.  `Algsuperdiff.Section3.Provider.Stream.shellIncrement`
+That local measurability input is now proved.
+`Algsuperdiff.Section3.Provider.Stream.shellIncrement`
 is the increment as a genuine shell field (values literally `k_L - k_j`, by
 `shellIncrement_apply_eq_cutoff_sub`), and this module measures it in exactly
 the norm of `e.Bosc.def`:
@@ -155,12 +156,12 @@ private theorem ioc_eq_range_map_asc {j L : ℤ} (hjL : j ≤ L) :
   constructor
   · rintro ⟨hlo, hhi⟩
     refine ⟨(k - j - 1).toNat, by omega, ?_⟩
-    show j + 1 + ((k - j - 1).toNat : ℤ) = k
+    change j + 1 + ((k - j - 1).toNat : ℤ) = k
     have h1 : (0 : ℤ) ≤ k - j - 1 := by omega
     rw [Int.toNat_of_nonneg h1]
     omega
   · rintro ⟨n, hn, rfl⟩
-    show j < j + 1 + (n : ℤ) ∧ j + 1 + (n : ℤ) ≤ L
+    change j < j + 1 + (n : ℤ) ∧ j + 1 + (n : ℤ) ≤ L
     have h2 : (0 : ℤ) ≤ L - j := by omega
     have hn' : (n : ℤ) < ((L - j).toNat : ℤ) := by exact_mod_cast hn
     rw [Int.toNat_of_nonneg h2] at hn'

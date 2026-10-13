@@ -255,7 +255,7 @@ private theorem legScaleAverage_bad_le [NeZero d] (M : ABKModel d) (Ccg : ℝ)
     (fun _ _ => Set.indicator_nonneg (fun _ _ => zero_le_one) omega)
   · have := Ch02.maxDescendantNormalizedBlockResponseAtScale_nonneg (originCube d m)
       (show m - (j : ℤ) ≤ (originCube d m).scale from by
-        show m - (j : ℤ) ≤ m
+        change m - (j : ℤ) ≤ m
         omega) a a0
     linarith
   · exact le_trans (hlegle R hR)
@@ -287,7 +287,7 @@ private theorem summable_badMax_terms [NeZero d] (m : ℤ) {s : ℝ} (hs : 0 < s
     (hbase.mul_left (2 * Ch02.geometricDiscount s 2 / Ch02.geometricDiscount (s / 4) 2))
   · have hmax0 := Ch02.maxDescendantNormalizedBlockResponseAtScale_nonneg (originCube d m)
       (show m - (j : ℤ) ≤ (originCube d m).scale from by
-        show m - (j : ℤ) ≤ m
+        change m - (j : ℤ) ≤ m
         omega) a a0
     have hw0 : (0 : ℝ) ≤ Real.rpow (3 : ℝ) (-s * (j : ℝ)) :=
       Real.rpow_nonneg (by norm_num) _
@@ -296,7 +296,7 @@ private theorem summable_badMax_terms [NeZero d] (m : ℤ) {s : ℝ} (hs : 0 < s
   · obtain ⟨hG0, hG1⟩ := Set.mem_Icc.1 (hG j)
     have hmax0 := Ch02.maxDescendantNormalizedBlockResponseAtScale_nonneg (originCube d m)
       (show m - (j : ℤ) ≤ (originCube d m).scale from by
-        show m - (j : ℤ) ≤ m
+        change m - (j : ℤ) ≤ m
         omega) a a0
     have hjR : (0 : ℝ) ≤ (j : ℝ) := Nat.cast_nonneg j
     have hwle : Real.rpow (3 : ℝ) (-s * (j : ℝ)) ≤
@@ -585,6 +585,235 @@ private theorem ae_summable_wave_scale_series (M : ABKModel d) (m : ℤ) (hgap :
 
 /-! ## 7. The endpoint: `l.localization.mathcalE` at the printed five-term display -/
 
+private theorem localizationWave_ennrealSeries_domination :
+    ∀ (d : ℕ) (M : ABKModel d) (Ccg : ℝ) (m : ℤ) (hgap : ℕ)
+      (s : ℝ),
+      (0 : ℝ) < s →
+        ∀ (omega : CutoffSample d),
+          (0 : ℝ) ≤
+              (324 : ℝ) * responseSensitivityConst d * ((16 : ℝ) * Ccg + (8 : ℝ) * Ccg ^ (2 : ℕ)) *
+                ((Disorder.cstar M)⁻¹ * M.gamma) →
+            ((0 : ℝ) ≤
+                gridScaleSeries m s fun (x : ℕ) (R : TriadicCube d) =>
+                  MultiscaleEstimate.waveSizeW2 M m hgap R (↑omega : ShellSeq d) ^ (2 : ℕ)) →
+              (8 : ℝ) *
+                    ((324 : ℝ) * responseSensitivityConst d * ((16 : ℝ) * Ccg + (8 : ℝ) * Ccg ^ (2 : ℕ)) *
+                      ((Disorder.cstar M)⁻¹ * M.gamma)) *
+                  (Ch02.geometricDiscount s (2 : ℝ) *
+                    gridScaleSeries m s fun (x : ℕ) (R : TriadicCube d) =>
+                      MultiscaleEstimate.waveSizeW2 M m hgap R (↑omega : ShellSeq d) ^ (2 : ℕ)) ≤
+                (4 : ℝ) *
+                    ((8 : ℝ) *
+                      ((324 : ℝ) * responseSensitivityConst d * ((16 : ℝ) * Ccg + (8 : ℝ) * Ccg ^ (2 : ℕ)) *
+                        ((Disorder.cstar M)⁻¹ * M.gamma))) *
+                  MultiscaleEstimate.waveSizesTotalW2 M m hgap s (↑omega : ShellSeq d) := by
+  intro d M Ccg m hgap s hs omega hCinj0 hwavenn
+  rw [waveSizesTotalW2_eq_gridScaleSeries]
+  have hK0 : (0 : ℝ) ≤ 8 * (324 * responseSensitivityConst d *
+      (16 * Ccg + 8 * Ccg ^ 2) * ((Disorder.cstar M)⁻¹ * M.gamma)) := by
+    linarith [hCinj0]
+  have hdisc : Ch02.geometricDiscount s 2 ≤ 4 * s :=
+    geometricDiscount_two_le_four_mul hs.le
+  have hstep : Ch02.geometricDiscount s 2 * gridScaleSeries m s
+      (fun _ R => MultiscaleEstimate.waveSizeW2 M m hgap R omega.1 ^ 2) ≤
+      4 * (s * gridScaleSeries m s
+        (fun _ R => MultiscaleEstimate.waveSizeW2 M m hgap R omega.1 ^ 2)) := by
+    calc Ch02.geometricDiscount s 2 * gridScaleSeries m s
+          (fun _ R => MultiscaleEstimate.waveSizeW2 M m hgap R omega.1 ^ 2)
+        ≤ (4 * s) * gridScaleSeries m s
+            (fun _ R => MultiscaleEstimate.waveSizeW2 M m hgap R omega.1 ^ 2) :=
+          mul_le_mul_of_nonneg_right hdisc hwavenn
+      _ = 4 * (s * gridScaleSeries m s
+            (fun _ R => MultiscaleEstimate.waveSizeW2 M m hgap R omega.1 ^ 2)) := by
+          ring
+  calc (8 * (324 * responseSensitivityConst d * (16 * Ccg + 8 * Ccg ^ 2) *
+          ((Disorder.cstar M)⁻¹ * M.gamma))) *
+        (Ch02.geometricDiscount s 2 * gridScaleSeries m s
+          (fun _ R => MultiscaleEstimate.waveSizeW2 M m hgap R omega.1 ^ 2))
+      ≤ (8 * (324 * responseSensitivityConst d * (16 * Ccg + 8 * Ccg ^ 2) *
+            ((Disorder.cstar M)⁻¹ * M.gamma))) *
+          (4 * (s * gridScaleSeries m s
+            (fun _ R => MultiscaleEstimate.waveSizeW2 M m hgap R omega.1 ^ 2))) :=
+        mul_le_mul_of_nonneg_left hstep hK0
+    _ = 4 * (8 * (324 * responseSensitivityConst d * (16 * Ccg + 8 * Ccg ^ 2) *
+            ((Disorder.cstar M)⁻¹ * M.gamma))) *
+          (s * gridScaleSeries m s
+            (fun _ R => MultiscaleEstimate.waveSizeW2 M m hgap R omega.1 ^ 2)) := by
+        ring
+
+private theorem localizationAssembly_comparisonBounds1 :
+    ∀ (d : ℕ) [NeZero d] (CsA : ℝ) (_ : (0 : ℝ) < CsA) (CsB : ℝ) (M : ABKModel d)
+      (E : { E : ℝ // (1 : ℝ) ≤ E }) (Ccg : ℝ) (_ : (0 : ℝ) < Ccg) (m : ℤ) (hgap : ℕ) (s : ℝ) (_ : (0 : ℝ) < M.gamma)
+      (_ : (0 : ℝ) < s) (omega : CutoffSample d)
+      (_ :
+        ∀ (j : ℕ),
+          ∀ R ∈ descendantsAtScale (originCube d m) (m - (↑j : ℤ)),
+            omega ∈ goodLocalEvent M Ccg R (R.scale - (↑hgap : ℤ)) →
+              breakdownLegA R (coefficientCutoffTriadicCoeffFamily M m omega)
+                  (Observable.isotropicComparatorMatrix (Annealed.sigmaBar M m)) ≤
+                (24 : ℝ) *
+                      breakdownLegA R (coefficientCutoffTriadicCoeffFamily M (R.scale - (↑hgap : ℤ)) omega)
+                        (Observable.isotropicComparatorMatrix (Annealed.sigmaBar M (R.scale - (↑hgap : ℤ)))) +
+                    (8 : ℝ) *
+                        ((324 : ℝ) * responseSensitivityConst d * ((16 : ℝ) * Ccg + (8 : ℝ) * Ccg ^ (2 : ℕ)) *
+                          ((Disorder.cstar M)⁻¹ * M.gamma)) *
+                      MultiscaleEstimate.waveSizeW2 M m hgap R (↑omega : ShellSeq d) ^ (2 : ℕ) +
+                  CsA * ((48 : ℝ) * Ccg) * switchRemainder M.gamma (↑E : ℝ) hgap j)
+      (_ :
+        (0 : ℝ) ≤
+          (2 : ℝ) *
+            Ch02.normalizedBlockResponseUniformBound (originCube d m) (coefficientCutoffTriadicCoeffFamily M m omega)
+              (Observable.isotropicComparatorMatrix (Annealed.sigmaBar M m))),
+      (∀ (j : ℕ),
+          ∀ R ∈ descendantsAtScale (originCube d m) (m - (↑j : ℤ)),
+            breakdownLegA R (coefficientCutoffTriadicCoeffFamily M m omega)
+                (Observable.isotropicComparatorMatrix (Annealed.sigmaBar M m)) ≤
+              (2 : ℝ) *
+                Ch02.normalizedBlockResponseUniformBound (originCube d m) (coefficientCutoffTriadicCoeffFamily M m omega)
+                  (Observable.isotropicComparatorMatrix (Annealed.sigmaBar M m))) ∧
+        (∀ (j : ℕ),
+            ∀ R ∈ descendantsAtScale (originCube d m) (m - (↑j : ℤ)),
+              breakdownLegB R (coefficientCutoffTriadicCoeffFamily M m omega)
+                  (Observable.isotropicComparatorMatrix (Annealed.sigmaBar M m)) ≤
+                (2 : ℝ) *
+                  Ch02.normalizedBlockResponseUniformBound (originCube d m) (coefficientCutoffTriadicCoeffFamily M m omega)
+                    (Observable.isotropicComparatorMatrix (Annealed.sigmaBar M m))) ∧
+          (0 : ℝ) ≤ Ch02.geometricDiscount s (2 : ℝ) ∧
+            (0 : ℝ) ≤
+                (324 : ℝ) * responseSensitivityConst d * ((16 : ℝ) * Ccg + (8 : ℝ) * Ccg ^ (2 : ℕ)) *
+                  ((Disorder.cstar M)⁻¹ * M.gamma) ∧
+              (0 : ℝ) ≤ max CsA CsB * ((48 : ℝ) * Ccg) ∧
+                (∀ (j : ℕ), (0 : ℝ) ≤ switchRemainder M.gamma (↑E : ℝ) hgap j) ∧
+                  (0 : ℝ) ≤ (48 : ℝ) * Ccg ∧
+                    (Summable fun (j : ℕ) =>
+                        Real.rpow (3 : ℝ) (-s * (↑j : ℝ)) *
+                          legScaleAverage (originCube d m) (m - (↑j : ℤ)) s fun (R : TriadicCube d) =>
+                            breakdownLegA R (coefficientCutoffTriadicCoeffFamily M m omega)
+                                (Observable.isotropicComparatorMatrix (Annealed.sigmaBar M m)) *
+                              (goodLocalEvent M Ccg R (R.scale - (↑hgap : ℤ))).indicator
+                                (fun (_ : CutoffSample d) => (1 : ℝ)) omega) ∧
+                      (Summable fun (j : ℕ) =>
+                          Real.rpow (3 : ℝ) (-s * (↑j : ℝ)) *
+                            legScaleAverage (originCube d m) (m - (↑j : ℤ)) s fun (R : TriadicCube d) =>
+                              breakdownLegB R (coefficientCutoffTriadicCoeffFamily M m omega)
+                                  (Observable.isotropicComparatorMatrix (Annealed.sigmaBar M m)) *
+                                (goodLocalEvent M Ccg R (R.scale - (↑hgap : ℤ))).indicator
+                                  (fun (_ : CutoffSample d) => (1 : ℝ)) omega) ∧
+                        ∀ (j : ℕ),
+                          ∀ R ∈ descendantsAtScale (originCube d m) (m - (↑j : ℤ)),
+                            omega ∈ goodLocalEvent M Ccg R (R.scale - (↑hgap : ℤ)) →
+                              breakdownLegA R (coefficientCutoffTriadicCoeffFamily M m omega)
+                                  (Observable.isotropicComparatorMatrix (Annealed.sigmaBar M m)) ≤
+                                (24 : ℝ) *
+                                      breakdownLegA R
+                                        (coefficientCutoffTriadicCoeffFamily M (m - (↑j : ℤ) - (↑hgap : ℤ)) omega)
+                                        (Observable.isotropicComparatorMatrix
+                                          (Annealed.sigmaBar M (m - (↑j : ℤ) - (↑hgap : ℤ)))) +
+                                    (8 : ℝ) *
+                                        ((324 : ℝ) * responseSensitivityConst d *
+                                            ((16 : ℝ) * Ccg + (8 : ℝ) * Ccg ^ (2 : ℕ)) *
+                                          ((Disorder.cstar M)⁻¹ * M.gamma)) *
+                                      MultiscaleEstimate.waveSizeW2 M m hgap R (↑omega : ShellSeq d) ^ (2 : ℕ) +
+                                  max CsA CsB * ((48 : ℝ) * Ccg) * switchRemainder M.gamma (↑E : ℝ) hgap j := by
+  intro d _ CsA hCsA CsB M E Ccg hCcg m hgap s _ hs omega hstepA hU0
+  have hlegAD : ∀ j : ℕ, ∀ R ∈ descendantsAtScale (originCube d m) (m - (j : ℤ)),
+      breakdownLegA R (coefficientCutoffTriadicCoeffFamily M m omega)
+          (Observable.isotropicComparatorMatrix (Annealed.sigmaBar M m)) ≤
+        2 * Ch02.normalizedBlockResponseUniformBound (originCube d m)
+          (coefficientCutoffTriadicCoeffFamily M m omega)
+          (Observable.isotropicComparatorMatrix (Annealed.sigmaBar M m)) := by
+    intro j R hR
+    have h1 := breakdownLegA_le_two_mul_normalizedBlockResponseMax
+      (coefficientCutoffTriadicCoeffFamily M m omega)
+      (Observable.isotropicComparatorMatrix (Annealed.sigmaBar M m)) hR
+    have h2 := Ch02.normalizedBlockResponseMax_le_uniform_of_mem_descendantsAtScale
+      (a := coefficientCutoffTriadicCoeffFamily M m omega) (Q := originCube d m)
+      (R := R) (k := m - (j : ℤ))
+      (Observable.isotropicComparatorMatrix (Annealed.sigmaBar M m)) hR
+    linarith
+  have hlegBD : ∀ j : ℕ, ∀ R ∈ descendantsAtScale (originCube d m) (m - (j : ℤ)),
+      breakdownLegB R (coefficientCutoffTriadicCoeffFamily M m omega)
+          (Observable.isotropicComparatorMatrix (Annealed.sigmaBar M m)) ≤
+        2 * Ch02.normalizedBlockResponseUniformBound (originCube d m)
+          (coefficientCutoffTriadicCoeffFamily M m omega)
+          (Observable.isotropicComparatorMatrix (Annealed.sigmaBar M m)) := by
+    intro j R hR
+    have h1 := breakdownLegB_le_two_mul_normalizedBlockResponseMax
+      (coefficientCutoffTriadicCoeffFamily M m omega)
+      (Observable.isotropicComparatorMatrix (Annealed.sigmaBar M m)) hR
+    have h2 := Ch02.normalizedBlockResponseMax_le_uniform_of_mem_descendantsAtScale
+      (a := coefficientCutoffTriadicCoeffFamily M m omega) (Q := originCube d m)
+      (R := R) (k := m - (j : ℤ))
+      (Observable.isotropicComparatorMatrix (Annealed.sigmaBar M m)) hR
+    linarith
+  -- the good lane, both legs
+  have hc2s : (0 : ℝ) ≤ Ch02.geometricDiscount s 2 := geometricDiscount_two_nonneg hs.le
+  have hcstar : (0 : ℝ) < Disorder.cstar M := Provider.Orlicz.cstar_pos M
+  have hresp : (0 : ℝ) ≤ responseSensitivityConst d :=
+    (responseSensitivityConst_pos M.shellPrefix.dimension).le
+  have hCinj0 : (0 : ℝ) ≤ 324 * responseSensitivityConst d *
+      (16 * Ccg + 8 * Ccg ^ 2) * ((Disorder.cstar M)⁻¹ * M.gamma) := by
+    have := hCcg.le
+    positivity
+  have hCrem0 : (0 : ℝ) ≤ max CsA CsB * (48 * Ccg) := by
+    have h1 : (0 : ℝ) ≤ max CsA CsB := le_of_lt (lt_of_lt_of_le hCsA (le_max_left _ _))
+    have h2 : (0 : ℝ) ≤ 48 * Ccg := by linarith [hCcg.le]
+    exact mul_nonneg h1 h2
+  have hswr : ∀ j : ℕ, (0 : ℝ) ≤ switchRemainder M.gamma (E : ℝ) hgap j :=
+    fun j => switchRemainder_nonneg _ _ _ _
+  have h48 : (0 : ℝ) ≤ 48 * Ccg := by linarith [hCcg.le]
+  have hindnn : ∀ (Bset : Set (CutoffSample d)) (x : ℝ), 0 ≤ x →
+      (0 : ℝ) ≤ x * Bset.indicator (fun _ => (1 : ℝ)) omega := fun _ x hx =>
+    mul_nonneg hx (Set.indicator_nonneg (fun _ _ => zero_le_one) omega)
+  have hindle : ∀ (Bset : Set (CutoffSample d)) (x : ℝ), 0 ≤ x →
+      x * Bset.indicator (fun _ => (1 : ℝ)) omega ≤ x := by
+    intro Bset x hx
+    by_cases hmem : omega ∈ Bset
+    · rw [Set.indicator_of_mem hmem]; simp
+    · rw [Set.indicator_of_notMem hmem]; simpa using hx
+  have hsumGoodA : Summable (fun j : ℕ => Real.rpow (3 : ℝ) (-s * (j : ℝ)) *
+      legScaleAverage (originCube d m) (m - (j : ℤ)) s
+        (fun R => breakdownLegA R (coefficientCutoffTriadicCoeffFamily M m omega)
+            (Observable.isotropicComparatorMatrix (Annealed.sigmaBar M m)) *
+          (goodLocalEvent M Ccg R (R.scale - (hgap : ℤ))).indicator
+            (fun _ => (1 : ℝ)) omega)) :=
+    summable_gridScaleSeries_terms m hs hU0
+      (fun _ R _ => hindnn _ _ (breakdownLegA_nonneg R _ _))
+      (fun j R hR => le_trans (hindle _ _ (breakdownLegA_nonneg R _ _)) (hlegAD j R hR))
+  have hsumGoodB : Summable (fun j : ℕ => Real.rpow (3 : ℝ) (-s * (j : ℝ)) *
+      legScaleAverage (originCube d m) (m - (j : ℤ)) s
+        (fun R => breakdownLegB R (coefficientCutoffTriadicCoeffFamily M m omega)
+            (Observable.isotropicComparatorMatrix (Annealed.sigmaBar M m)) *
+          (goodLocalEvent M Ccg R (R.scale - (hgap : ℤ))).indicator
+            (fun _ => (1 : ℝ)) omega)) :=
+    summable_gridScaleSeries_terms m hs hU0
+      (fun _ R _ => hindnn _ _ (breakdownLegB_nonneg R _ _))
+      (fun j R hR => le_trans (hindle _ _ (breakdownLegB_nonneg R _ _)) (hlegBD j R hR))
+  have hstepA' : ∀ j : ℕ, ∀ R ∈ descendantsAtScale (originCube d m) (m - (j : ℤ)),
+      omega ∈ goodLocalEvent M Ccg R (R.scale - (hgap : ℤ)) →
+        breakdownLegA R (coefficientCutoffTriadicCoeffFamily M m omega)
+            (Observable.isotropicComparatorMatrix (Annealed.sigmaBar M m)) ≤
+          24 * breakdownLegA R
+              (coefficientCutoffTriadicCoeffFamily M
+                (m - (j : ℤ) - (hgap : ℤ)) omega)
+              (Observable.isotropicComparatorMatrix
+                (Annealed.sigmaBar M (m - (j : ℤ) - (hgap : ℤ)))) +
+            8 * (324 * responseSensitivityConst d * (16 * Ccg + 8 * Ccg ^ 2) *
+                ((Disorder.cstar M)⁻¹ * M.gamma)) *
+              MultiscaleEstimate.waveSizeW2 M m hgap R omega.1 ^ 2 +
+            max CsA CsB * (48 * Ccg) * switchRemainder M.gamma (E : ℝ) hgap j := by
+    intro j R hR hmem
+    have h := hstepA j R hR hmem
+    have hscale : R.scale = m - (j : ℤ) :=
+      descendant_scale_eq_of_mem_descendantsAtScale hR
+    rw [hscale] at h
+    have hrem : CsA * (48 * Ccg) * switchRemainder M.gamma (E : ℝ) hgap j ≤
+        max CsA CsB * (48 * Ccg) * switchRemainder M.gamma (E : ℝ) hgap j :=
+      mul_le_mul_of_nonneg_right
+        (mul_le_mul_of_nonneg_right (le_max_left CsA CsB) h48) (hswr j)
+    linarith
+  exact ⟨hlegAD, hlegBD, hc2s, hCinj0, hCrem0, hswr, h48, hsumGoodA, hsumGoodB, hstepA'⟩
+
 /-- For the multiscale root's own regime, every gap `h ∈ ℕ₀` with `γ h ≤ 1` and
 every `s ∈ [8γ, 1]`, almost surely:
 
@@ -592,7 +821,8 @@ every `s ∈ [8γ, 1]`, almost surely:
 𝓔_{s,∞,2}(□_m; a_m, σ_m)²
   ≤ 12 c_{2s} Σ_{l ≤ m} 3^{-s(m-l)} (⨍_z legA(z+□_l; a_{l-h}, σ_{l-h})^{d/s})^{s/d}
   + 12 c_{2s} Σ_{l ≤ m} 3^{-s(m-l)} (⨍_z legB(z+□_l; a_{l-h}, σ_{l-h})^{d/s})^{s/d}
-  + 32 Cinj(Ccg) c⋆⁻¹ γ · [a majorant of] s Σ_{l ≤ m} 3^{-s(m-l)} (⨍_z (3^{(2-γ)l}‖k_m-k_{l-h}‖_{W^{2,∞}})^{2d/s})^{s/d}
+  + 32 Cinj(Ccg) c⋆⁻¹ γ · [a majorant of] s Σ_{l ≤ m} 3^{-s(m-l)} (⨍_z
+  (3^{(2-γ)l}‖k_m-k_{l-h}‖_{W^{2,∞}})^{2d/s})^{s/d}
   + 8 max_{l ≤ m} 3^{-s(m-l)/2} (⨍_z 1_{¬𝒬(l,l-h,z)})^{s/d} · 𝓔_{s/4,∞,2}(□_m; a_m, σ_m)²
   + 1024 Cs 48Ccg γ² (h² + s^{-2} + E⁴|log γ|⁴) .
 ```
@@ -724,102 +954,9 @@ theorem localization_mathcalE_estimate_ae (d : ℕ) [NeZero d] :
         (R := R0) (k := m)
         (Observable.isotropicComparatorMatrix (Annealed.sigmaBar M m)) hR0)
     linarith
-  have hlegAD : ∀ j : ℕ, ∀ R ∈ descendantsAtScale (originCube d m) (m - (j : ℤ)),
-      breakdownLegA R (coefficientCutoffTriadicCoeffFamily M m omega)
-          (Observable.isotropicComparatorMatrix (Annealed.sigmaBar M m)) ≤
-        2 * Ch02.normalizedBlockResponseUniformBound (originCube d m)
-          (coefficientCutoffTriadicCoeffFamily M m omega)
-          (Observable.isotropicComparatorMatrix (Annealed.sigmaBar M m)) := by
-    intro j R hR
-    have h1 := breakdownLegA_le_two_mul_normalizedBlockResponseMax
-      (coefficientCutoffTriadicCoeffFamily M m omega)
-      (Observable.isotropicComparatorMatrix (Annealed.sigmaBar M m)) hR
-    have h2 := Ch02.normalizedBlockResponseMax_le_uniform_of_mem_descendantsAtScale
-      (a := coefficientCutoffTriadicCoeffFamily M m omega) (Q := originCube d m)
-      (R := R) (k := m - (j : ℤ))
-      (Observable.isotropicComparatorMatrix (Annealed.sigmaBar M m)) hR
-    linarith
-  have hlegBD : ∀ j : ℕ, ∀ R ∈ descendantsAtScale (originCube d m) (m - (j : ℤ)),
-      breakdownLegB R (coefficientCutoffTriadicCoeffFamily M m omega)
-          (Observable.isotropicComparatorMatrix (Annealed.sigmaBar M m)) ≤
-        2 * Ch02.normalizedBlockResponseUniformBound (originCube d m)
-          (coefficientCutoffTriadicCoeffFamily M m omega)
-          (Observable.isotropicComparatorMatrix (Annealed.sigmaBar M m)) := by
-    intro j R hR
-    have h1 := breakdownLegB_le_two_mul_normalizedBlockResponseMax
-      (coefficientCutoffTriadicCoeffFamily M m omega)
-      (Observable.isotropicComparatorMatrix (Annealed.sigmaBar M m)) hR
-    have h2 := Ch02.normalizedBlockResponseMax_le_uniform_of_mem_descendantsAtScale
-      (a := coefficientCutoffTriadicCoeffFamily M m omega) (Q := originCube d m)
-      (R := R) (k := m - (j : ℤ))
-      (Observable.isotropicComparatorMatrix (Annealed.sigmaBar M m)) hR
-    linarith
-  -- the good lane, both legs
-  have hc2s : (0 : ℝ) ≤ Ch02.geometricDiscount s 2 := geometricDiscount_two_nonneg hs.le
-  have hcstar : (0 : ℝ) < Disorder.cstar M := Provider.Orlicz.cstar_pos M
-  have hresp : (0 : ℝ) ≤ responseSensitivityConst d :=
-    (responseSensitivityConst_pos M.shellPrefix.dimension).le
-  have hCinj0 : (0 : ℝ) ≤ 324 * responseSensitivityConst d *
-      (16 * Ccg + 8 * Ccg ^ 2) * ((Disorder.cstar M)⁻¹ * M.gamma) := by
-    have := hCcg.le
-    positivity
-  have hCrem0 : (0 : ℝ) ≤ max CsA CsB * (48 * Ccg) := by
-    have h1 : (0 : ℝ) ≤ max CsA CsB := le_of_lt (lt_of_lt_of_le hCsA (le_max_left _ _))
-    have h2 : (0 : ℝ) ≤ 48 * Ccg := by linarith [hCcg.le]
-    exact mul_nonneg h1 h2
-  have hswr : ∀ j : ℕ, (0 : ℝ) ≤ switchRemainder M.gamma (E : ℝ) hgap j :=
-    fun j => switchRemainder_nonneg _ _ _ _
-  have h48 : (0 : ℝ) ≤ 48 * Ccg := by linarith [hCcg.le]
-  have hindnn : ∀ (Bset : Set (CutoffSample d)) (x : ℝ), 0 ≤ x →
-      (0 : ℝ) ≤ x * Bset.indicator (fun _ => (1 : ℝ)) omega := fun _ x hx =>
-    mul_nonneg hx (Set.indicator_nonneg (fun _ _ => zero_le_one) omega)
-  have hindle : ∀ (Bset : Set (CutoffSample d)) (x : ℝ), 0 ≤ x →
-      x * Bset.indicator (fun _ => (1 : ℝ)) omega ≤ x := by
-    intro Bset x hx
-    by_cases hmem : omega ∈ Bset
-    · rw [Set.indicator_of_mem hmem]; simp
-    · rw [Set.indicator_of_notMem hmem]; simpa using hx
-  have hsumGoodA : Summable (fun j : ℕ => Real.rpow (3 : ℝ) (-s * (j : ℝ)) *
-      legScaleAverage (originCube d m) (m - (j : ℤ)) s
-        (fun R => breakdownLegA R (coefficientCutoffTriadicCoeffFamily M m omega)
-            (Observable.isotropicComparatorMatrix (Annealed.sigmaBar M m)) *
-          (goodLocalEvent M Ccg R (R.scale - (hgap : ℤ))).indicator
-            (fun _ => (1 : ℝ)) omega)) :=
-    summable_gridScaleSeries_terms m hs hU0
-      (fun _ R _ => hindnn _ _ (breakdownLegA_nonneg R _ _))
-      (fun j R hR => le_trans (hindle _ _ (breakdownLegA_nonneg R _ _)) (hlegAD j R hR))
-  have hsumGoodB : Summable (fun j : ℕ => Real.rpow (3 : ℝ) (-s * (j : ℝ)) *
-      legScaleAverage (originCube d m) (m - (j : ℤ)) s
-        (fun R => breakdownLegB R (coefficientCutoffTriadicCoeffFamily M m omega)
-            (Observable.isotropicComparatorMatrix (Annealed.sigmaBar M m)) *
-          (goodLocalEvent M Ccg R (R.scale - (hgap : ℤ))).indicator
-            (fun _ => (1 : ℝ)) omega)) :=
-    summable_gridScaleSeries_terms m hs hU0
-      (fun _ R _ => hindnn _ _ (breakdownLegB_nonneg R _ _))
-      (fun j R hR => le_trans (hindle _ _ (breakdownLegB_nonneg R _ _)) (hlegBD j R hR))
-  have hstepA' : ∀ j : ℕ, ∀ R ∈ descendantsAtScale (originCube d m) (m - (j : ℤ)),
-      omega ∈ goodLocalEvent M Ccg R (R.scale - (hgap : ℤ)) →
-        breakdownLegA R (coefficientCutoffTriadicCoeffFamily M m omega)
-            (Observable.isotropicComparatorMatrix (Annealed.sigmaBar M m)) ≤
-          24 * breakdownLegA R
-              (coefficientCutoffTriadicCoeffFamily M
-                (m - (j : ℤ) - (hgap : ℤ)) omega)
-              (Observable.isotropicComparatorMatrix
-                (Annealed.sigmaBar M (m - (j : ℤ) - (hgap : ℤ)))) +
-            8 * (324 * responseSensitivityConst d * (16 * Ccg + 8 * Ccg ^ 2) *
-                ((Disorder.cstar M)⁻¹ * M.gamma)) *
-              MultiscaleEstimate.waveSizeW2 M m hgap R omega.1 ^ 2 +
-            max CsA CsB * (48 * Ccg) * switchRemainder M.gamma (E : ℝ) hgap j := by
-    intro j R hR hmem
-    have h := hstepA j R hR hmem
-    have hscale : R.scale = m - (j : ℤ) :=
-      descendant_scale_eq_of_mem_descendantsAtScale hR
-    rw [hscale] at h
-    have hrem : CsA * (48 * Ccg) * switchRemainder M.gamma (E : ℝ) hgap j ≤
-        max CsA CsB * (48 * Ccg) * switchRemainder M.gamma (E : ℝ) hgap j :=
-      mul_le_mul_of_nonneg_right
-        (mul_le_mul_of_nonneg_right (le_max_left CsA CsB) h48) (hswr j)
-    linarith
+  obtain ⟨hlegAD, hlegBD, hc2s, hCinj0, hCrem0, hswr, h48, hsumGoodA, hsumGoodB, hstepA'⟩ :=
+    @localizationAssembly_comparisonBounds1 (d) (by infer_instance) (CsA) (hCsA) (CsB) (M) (E)
+      (Ccg) (hCcg) (m) (hgap) (s) (hgam) (hs) (omega) (hstepA) (hU0)
   have hstepB' : ∀ j : ℕ, ∀ R ∈ descendantsAtScale (originCube d m) (m - (j : ℤ)),
       omega ∈ goodLocalEvent M Ccg R (R.scale - (hgap : ℤ)) →
         breakdownLegB R (coefficientCutoffTriadicCoeffFamily M m omega)
@@ -904,45 +1041,8 @@ theorem localization_mathcalE_estimate_ae (d : ℕ) [NeZero d] :
   have hwavenn : (0 : ℝ) ≤ gridScaleSeries m s
       (fun _ R => MultiscaleEstimate.waveSizeW2 M m hgap R omega.1 ^ 2) :=
     gridScaleSeries_nonneg m s (fun _ _ _ => sq_nonneg _)
-  have hwaveconv : (8 * (324 * responseSensitivityConst d *
-        (16 * Ccg + 8 * Ccg ^ 2) * ((Disorder.cstar M)⁻¹ * M.gamma))) *
-        (Ch02.geometricDiscount s 2 * gridScaleSeries m s
-          (fun _ R => MultiscaleEstimate.waveSizeW2 M m hgap R omega.1 ^ 2)) ≤
-      4 * (8 * (324 * responseSensitivityConst d * (16 * Ccg + 8 * Ccg ^ 2) *
-          ((Disorder.cstar M)⁻¹ * M.gamma))) *
-        MultiscaleEstimate.waveSizesTotalW2 M m hgap s omega.1 := by
-    rw [waveSizesTotalW2_eq_gridScaleSeries]
-    have hK0 : (0 : ℝ) ≤ 8 * (324 * responseSensitivityConst d *
-        (16 * Ccg + 8 * Ccg ^ 2) * ((Disorder.cstar M)⁻¹ * M.gamma)) := by
-      linarith [hCinj0]
-    have hdisc : Ch02.geometricDiscount s 2 ≤ 4 * s :=
-      geometricDiscount_two_le_four_mul hs.le
-    have hstep : Ch02.geometricDiscount s 2 * gridScaleSeries m s
-        (fun _ R => MultiscaleEstimate.waveSizeW2 M m hgap R omega.1 ^ 2) ≤
-        4 * (s * gridScaleSeries m s
-          (fun _ R => MultiscaleEstimate.waveSizeW2 M m hgap R omega.1 ^ 2)) := by
-      calc Ch02.geometricDiscount s 2 * gridScaleSeries m s
-            (fun _ R => MultiscaleEstimate.waveSizeW2 M m hgap R omega.1 ^ 2)
-          ≤ (4 * s) * gridScaleSeries m s
-              (fun _ R => MultiscaleEstimate.waveSizeW2 M m hgap R omega.1 ^ 2) :=
-            mul_le_mul_of_nonneg_right hdisc hwavenn
-        _ = 4 * (s * gridScaleSeries m s
-              (fun _ R => MultiscaleEstimate.waveSizeW2 M m hgap R omega.1 ^ 2)) := by
-            ring
-    calc (8 * (324 * responseSensitivityConst d * (16 * Ccg + 8 * Ccg ^ 2) *
-            ((Disorder.cstar M)⁻¹ * M.gamma))) *
-          (Ch02.geometricDiscount s 2 * gridScaleSeries m s
-            (fun _ R => MultiscaleEstimate.waveSizeW2 M m hgap R omega.1 ^ 2))
-        ≤ (8 * (324 * responseSensitivityConst d * (16 * Ccg + 8 * Ccg ^ 2) *
-              ((Disorder.cstar M)⁻¹ * M.gamma))) *
-            (4 * (s * gridScaleSeries m s
-              (fun _ R => MultiscaleEstimate.waveSizeW2 M m hgap R omega.1 ^ 2))) :=
-          mul_le_mul_of_nonneg_left hstep hK0
-      _ = 4 * (8 * (324 * responseSensitivityConst d * (16 * Ccg + 8 * Ccg ^ 2) *
-              ((Disorder.cstar M)⁻¹ * M.gamma))) *
-            (s * gridScaleSeries m s
-              (fun _ R => MultiscaleEstimate.waveSizeW2 M m hgap R omega.1 ^ 2)) := by
-          ring
+  have hwaveconv := @localizationWave_ennrealSeries_domination (d) (M) (Ccg) (m) (hgap) (s) (hs)
+    (omega) (hCinj0) (hwavenn)
   beta_reduce at hgoodA hgoodB hbadA hbadB hsplitA hsplitB hmulA hmulB
   linarith [hbreak, hgoodA, hgoodB, hbadA, hbadB, hmulA, hmulB, hwaveconv]
 

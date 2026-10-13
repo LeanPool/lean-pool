@@ -30,7 +30,8 @@ Q(m,n,z) := { C_sens sup_{L >= n} 3^{2m} ||grad (k_L - k_n)||_{W^{1,infinity}(z+
 ```
 
 The displayed event is a chain of two inequalities.  This module defines and
-proves a local version of the **second** one — the comparison of the middle threshold with the coarse-grained
+proves a local version of the **second** one — the comparison of the middle threshold with the
+coarse-grained
 lower ellipticity of the cutoff field `a_n` on the cube — as a measurable event
 `goodLocalEllipticity`, and proves the exact identification of its complement
 with the second event of the manuscript's own decomposition of `not Q(m,n,0)`

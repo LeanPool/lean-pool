@@ -181,7 +181,7 @@ theorem variationEnergyValue_nonneg (U : Ch02.Domain d) (a : Ch02.CoeffOn U)
     hx.2.2.1 (v.toH1.grad x)
   have h3 : 0 ≤ a.lam * vecNormSq (v.toH1.grad x) :=
     mul_nonneg a.lam_pos.le (vecNormSq_nonneg _)
-  show 0 ≤ Ch02.variationEnergyIntegrand U a v x
+  change 0 ≤ Ch02.variationEnergyIntegrand U a v x
   simp only [Ch02.variationEnergyIntegrand]
   rw [vecDot_matVecMul_symmPart]
   linarith

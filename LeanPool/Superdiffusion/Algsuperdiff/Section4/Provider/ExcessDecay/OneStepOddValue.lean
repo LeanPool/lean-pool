@@ -200,7 +200,7 @@ theorem affineExcessRaw_reflectedWindow_le_odd_ae {m k : ℤ} {x : Vec d} (hkm :
   have hVf : (fun y => V y - affineEval (c - vecDot A x) A y)
       =ᵐ[volume.restrict (reflectedWindow x m k)] f := by
     filter_upwards [hVO] with y hy
-    show V y - affineEval (c - vecDot A x) A y = O y - aff y
+    change V y - affineEval (c - vecDot A x) A y = O y - aff y
     rw [hy, haffdef]
     simp only [affineEval]
     ring

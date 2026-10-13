@@ -59,7 +59,7 @@ The bridge's scale bookkeeping is `K = (K - j) + p`, `outer + 1 = (K - j) + g`,
 ```
 
 `outer = n` being exactly the window scale at which
-`Closure.GammaTenStripEnvelopeConst.exists_besovEnvelope_interiorMesoCubeGrid_of_depth_gridRoot_const`
+`exists_besovEnvelope_interiorMesoCubeGrid_of_depth_gridRoot_const`
 produces the interior envelope, one larger than the depth endpoints' own
 `n - 1`.  `g <= p` and the two largeness gates hold for every sufficiently large
 localization cube.
@@ -85,9 +85,9 @@ localization cube.
   `e.lower.bound.oscillations`, read at the Besov tower of the gauged `bfF_z`
   on the interior mesh at window scale `n`.  The depth-indexed interior
   endpoints
-  `Closure.GammaTenDepthOscillation.exists_gamma0_freshShell{Dirichlet,Neumann}_meshOscillationDepth_le_gamma_pow_sixteen`
+from `Closure.GammaTenDepthOscillation` for the Dirichlet and Neumann correctors
   and the envelope device
-  `Closure.GammaTenStripEnvelopeConst.exists_besovEnvelope_interiorMesoCubeGrid_of_depth_gridRoot_const`
+`exists_besovEnvelope_interiorMesoCubeGrid_of_depth_gridRoot_const`
   are the route to it, taken downstream in
   `Closure.GammaTenInteriorHosc.closureInteriorBesovEnvelopeInput_proved`; that
   composition is not performed here and the input is carried explicitly.

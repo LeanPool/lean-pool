@@ -111,7 +111,7 @@ private theorem constH1_grad (Q : TriadicCube d) (c : ℝ) :
     (constH1 Q c).grad = fun _ => (0 : Vec d) := by
   funext y
   funext i
-  show (fderiv ℝ (fun _ : Vec d => c) y) (basisVec i) = 0
+  change (fderiv ℝ (fun _ : Vec d => c) y) (basisVec i) = 0
   rw [fderiv_fun_const]
   rfl
 

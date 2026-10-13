@@ -87,7 +87,7 @@ theorem killedResolvent_one_eq_cubeExitResolvent_stream
         (fun y => ENNReal.ofReal (P.f y)) y := by
     rintro _ ⟨y, hy, rfl⟩
     rw [PositiveC0ContractiveResolvent.onePointLiveExtension_coe]
-    show (1 : ℝ≥0∞) = ENNReal.ofReal (cubeOneDatum d v y)
+    change (1 : ℝ≥0∞) = ENNReal.ofReal (cubeOneDatum d v y)
     rw [cubeOneDatum_of_mem hy, ENNReal.ofReal_one]
   refine ((killedResolvent_congr_of_eqOn _ _ _ _ lam hobs
       (x : OnePoint (Vec d))).trans hcrux).trans ?_

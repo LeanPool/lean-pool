@@ -147,7 +147,8 @@ theorem volume_ratio_half_euclideanBall [NeZero d]
         (volume (euclideanBall z (r / 2))).toReal = (2 : ℝ) ^ d := by
   rw [volume_euclideanBall_toReal_eq_sphereMeasure_mul_pow_div z hr,
     volume_euclideanBall_toReal_eq_sphereMeasure_mul_pow_div z (by positivity : 0 < r / 2)]
-  have hσ : (Algsuperdiff.Section4.Provider.ExcessDecay.Schauder.sphereMeasure d).real Set.univ ≠ 0 :=
+  have hσ : (Algsuperdiff.Section4.Provider.ExcessDecay.Schauder.sphereMeasure d).real Set.univ ≠
+    0 :=
     Algsuperdiff.Section4.Provider.ExcessDecay.Schauder.sphereMeasure_real_univ_ne_zero
   have hd : (d : ℝ) ≠ 0 := by exact_mod_cast NeZero.ne d
   have hr0 : r ≠ 0 := hr.ne'

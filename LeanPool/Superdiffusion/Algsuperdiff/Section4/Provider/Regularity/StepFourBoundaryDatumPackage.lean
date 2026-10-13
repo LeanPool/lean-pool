@@ -126,7 +126,7 @@ theorem localizedZeroTrace_movedCubeCorrector {m k : ℤ} {z : Vec d} (hkm : k �
 /-- **The datum-split competitor package.**
 
 Every clause of the second disjunct of
-`StepFourBoundaryJoinDatumSplitErrorWeighted.excessDecay_stepFour_slot_allCentres_datumSplit_errorWeighted`,
+`excessDecay_stepFour_slot_allCentres_datumSplit_errorWeighted`,
 produced at a boundary centre from the slot's OWN moved-cube replacement pair.
 The only input beyond the slot's binders is `hgradh`, the classical `C¹` half
 of the printed datum hypothesis `h ∈ C^{1,1/2}(□_m)`. -/

@@ -11,8 +11,6 @@ public import LeanPool.Superdiffusion.Algsuperdiff.Section5.Measurability.Contin
 public import LeanPool.Superdiffusion.Algsuperdiff.Section5.Measurability.ShiftedCoefficientContinuity
 public import LeanPool.Superdiffusion.Algsuperdiff.Section5.Measurability.StreamCoefficientMeasurable
 
-@[expose] public section
-
 /-!
 # Measurability of stream cube resolvents
 
@@ -21,6 +19,10 @@ random variable.  Continuous dependence of the shifted weak solution gives
 measurability of its local integrals, and continuity of the analytic
 representative then gives pointwise measurability.
 -/
+
+@[expose] public section
+
+
 
 namespace Algsuperdiff.Section5.Measurability
 

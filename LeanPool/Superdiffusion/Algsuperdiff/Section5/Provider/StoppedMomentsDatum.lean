@@ -280,9 +280,9 @@ private theorem vecDot_matVecMul_smul_one (c : ℝ) (x z : Vec d) :
 private theorem hasZeroTraceDifferenceOn_self {U : Set (Vec d)} (v : H1Function U) :
     HasZeroTraceDifferenceOn U v v := by
   refine ⟨0, fun x ↦ ?_, fun x ↦ ?_⟩
-  · show v.toFun x = v.toFun x + (0 : H1Function U).toFun x
+  · change v.toFun x = v.toFun x + (0 : H1Function U).toFun x
     simp
-  · show v.grad x = v.grad x + (0 : H1Function U).grad x
+  · change v.grad x = v.grad x + (0 : H1Function U).grad x
     simp
 
 /-- **The linear observable solves the homogenized problem with vanishing forcing.**  The
@@ -313,7 +313,7 @@ theorem isDirichletSolutionOn_homogenized_affine (sigma : ℝ) (m : ℤ) (e : Ve
       = ∫ x in openCubeSet (originCube d m),
           sigma * vecDot e (phi.toH1Function.grad x) ∂volume := by
         refine integral_congr_ae (Filter.Eventually.of_forall fun x ↦ ?_)
-        show vecDot (matVecMul (sigma • (1 : Mat d)) (v.grad x)) (phi.toH1Function.grad x) =
+        change vecDot (matVecMul (sigma • (1 : Mat d)) (v.grad x)) (phi.toH1Function.grad x) =
           sigma * vecDot e (phi.toH1Function.grad x)
         rw [hvgrad x, vecDot_matVecMul_smul_one]
         rfl
@@ -332,7 +332,7 @@ theorem isDirichletSolutionOn_homogenized_quadratic (sigma : ℝ) (m : ℤ) (e :
   refine ⟨hasZeroTraceDifferenceOn_self v, fun phi ↦ ?_⟩
   rw [← integral_neg]
   refine integral_congr_ae (Filter.Eventually.of_forall fun x ↦ ?_)
-  show vecDot (matVecMul (sigma • (1 : Mat d)) (v.grad x)) (phi.toH1Function.grad x) =
+  change vecDot (matVecMul (sigma • (1 : Mat d)) (v.grad x)) (phi.toH1Function.grad x) =
     -vecDot (quadraticForcing sigma e x) (phi.toH1Function.grad x)
   rw [hvgrad x, show quadraticGradient e x = (2 * vecDot e x) • e from rfl,
     vecDot_matVecMul_smul_one, vecDot_smul_left,
@@ -343,14 +343,14 @@ theorem isDirichletSolutionOn_homogenized_quadratic (sigma : ℝ) (m : ℤ) (e :
 /-! ## 6. Reading the renormalization estimate at the two data -/
 
 private theorem three_rpow_neg_eq (m : ℤ) : Real.rpow 3 (-(m : ℝ)) = ((3 : ℝ) ^ m)⁻¹ := by
-  show (3 : ℝ) ^ (-(m : ℝ)) = ((3 : ℝ) ^ m)⁻¹
+  change (3 : ℝ) ^ (-(m : ℝ)) = ((3 : ℝ) ^ m)⁻¹
   rw [Real.rpow_neg (by norm_num : (0 : ℝ) ≤ 3)]
   congr 1
   exact Real.rpow_intCast 3 m
 
 private theorem three_rpow_half_mul_self (m : ℤ) :
     Real.rpow 3 ((m : ℝ) / 2) * Real.rpow 3 ((m : ℝ) / 2) = (3 : ℝ) ^ m := by
-  show (3 : ℝ) ^ ((m : ℝ) / 2) * (3 : ℝ) ^ ((m : ℝ) / 2) = (3 : ℝ) ^ m
+  change (3 : ℝ) ^ ((m : ℝ) / 2) * (3 : ℝ) ^ ((m : ℝ) / 2) = (3 : ℝ) ^ m
   rw [← Real.rpow_add (by norm_num : (0 : ℝ) < 3),
     show (m : ℝ) / 2 + (m : ℝ) / 2 = ((m : ℤ) : ℝ) by ring, Real.rpow_intCast]
 

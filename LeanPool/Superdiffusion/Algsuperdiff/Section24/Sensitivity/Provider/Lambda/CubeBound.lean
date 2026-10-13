@@ -144,7 +144,8 @@ theorem abs_dhFluxForm_cube_le [NeZero d]
   have hLnn : (0 : ℝ) ≤ cubeScaleFactor R := (cubeScaleFactor_pos_cube R).le
   -- canonical maximizers for the primal and adjoint pure-flux problems
   obtain ⟨vAdj, hvAdj⟩ :
-      ∃ z : Solution (cubeDomain R) b.transpose, IsResponseMaximizer (cubeDomain R) b.transpose 0 (-w) z :=
+      ∃ z : Solution (cubeDomain R) b.transpose, IsResponseMaximizer (cubeDomain R) b.transpose 0
+        (-w) z :=
     ⟨_, canonicalMaximizer_isMaximizer (responseExistenceTheory (cubeDomain R) b.transpose) 0 (-w)⟩
   obtain ⟨v, hv⟩ : ∃ z : Solution (cubeDomain R) b, IsResponseMaximizer (cubeDomain R) b 0 w z :=
     ⟨_, canonicalMaximizer_isMaximizer (responseExistenceTheory (cubeDomain R) b) 0 w⟩
@@ -239,7 +240,8 @@ theorem abs_dhFluxForm_cube_le [NeZero d]
     inv_nonneg.mpr (Ch02.lambdaSq_nonneg R G (by norm_num)
       (by simp [Ch02.MultiscaleExponent.IsAdmissible]))
   have hJnn : (0 : ℝ) ≤ responseJ (cubeDomain R) (G.coeffOn R) 0 w := Ch02.responseJ_nonneg _ _ 0 w
-  have hXX : X * X = (Ch02.lambdaSq R (3 / 8) (.finite 2) G)⁻¹ * responseJ (cubeDomain R) b 0 w := by
+  have hXX : X * X = (Ch02.lambdaSq R (3 / 8) (.finite 2) G)⁻¹ * responseJ (cubeDomain R) b 0 w :=
+    by
     rw [hX, ← hJeq]
     rw [show Real.sqrt ((Ch02.lambdaSq R (3 / 8) (.finite 2) G)⁻¹) *
         Real.sqrt (responseJ (cubeDomain R) (G.coeffOn R) 0 w) *

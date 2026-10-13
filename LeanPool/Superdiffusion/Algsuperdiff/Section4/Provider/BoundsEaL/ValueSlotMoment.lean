@@ -75,7 +75,8 @@ private theorem tailLayerTerm_le_deepGradTerm (m : ℤ) (omega : Cutoff.CutoffSa
     (i : ℤ) :
     tailLayerTerm m m (0 : Fin d → ℤ) omega i ≤ deepGradTerm m (0 : Fin d → ℤ) omega i := by
   rcases lt_or_ge m i with hmi | hmi
-  · rw [tailLayerTerm, ite_eq_left hmi, deepGradTerm, ite_eq_left (by omega : m ≤ i), gradLayerGauge]
+  · rw [tailLayerTerm, ite_eq_left hmi, deepGradTerm, ite_eq_left (by omega : m ≤ i),
+    gradLayerGauge]
   · rw [tailLayerTerm, ite_eq_right (by omega : ¬ m < i)]
     exact deepGradTerm_nonneg _ _ _ _
 

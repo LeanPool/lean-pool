@@ -95,7 +95,7 @@ theorem vecFieldDiv_vecDot_smul (e x : Vec d) :
 /-- The coordinates of the field `x ↦ (e ⬝ x) e` are smooth. -/
 theorem contDiff_vecDot_smul_apply (e : Vec d) (i : Fin d) :
     ContDiff ℝ 1 fun z : Vec d => ((vecDot e z) • e) i := by
-  show ContDiff ℝ 1 fun z : Vec d => vecDot e z * e i
+  change ContDiff ℝ 1 fun z : Vec d => vecDot e z * e i
   exact (contDiff_affineObservable 1 e).mul contDiff_const
 
 variable [NeZero d]
@@ -129,18 +129,18 @@ theorem isDivFormWeakSolutionOn_quadraticForcing_of_streamExitH10 (M : ABKModel 
       (fun x => (2 * sigmaBar * vecDot e e) •
         matVecMul (streamCoefficient M.nu omega x) (E.toH1Function.grad x)) x := by
     intro x
-    show matVecMul (streamCoefficient M.nu omega x)
+    change matVecMul (streamCoefficient M.nu omega x)
         ((quadraticH1 0 m e).grad x + (w - (2 * sigmaBar * vecDot e e) • E).toH1Function.grad x) =
       matVecMul (streamCoefficient M.nu omega x)
         ((quadraticH1 0 m e).grad x + w.toH1Function.grad x) -
       (2 * sigmaBar * vecDot e e) •
         matVecMul (streamCoefficient M.nu omega x) (E.toH1Function.grad x)
     rw [h10Sub_toH1Function, H1Function.sub_grad]
-    show matVecMul (streamCoefficient M.nu omega x)
+    change matVecMul (streamCoefficient M.nu omega x)
         ((quadraticH1 0 m e).grad x +
           (w.toH1Function.grad x - ((2 * sigmaBar * vecDot e e) • E.toH1Function).grad x)) = _
     rw [H1Function.smul_grad]
-    show matVecMul (streamCoefficient M.nu omega x)
+    change matVecMul (streamCoefficient M.nu omega x)
         ((quadraticH1 0 m e).grad x +
           (w.toH1Function.grad x - (2 * sigmaBar * vecDot e e) • E.toH1Function.grad x)) = _
     simp only [sub_eq_add_neg, matVecMul_add, matVecMul_neg, matVecMul_smul]
@@ -162,7 +162,7 @@ theorem isDivFormWeakSolutionOn_quadraticForcing_of_streamExitH10 (M : ABKModel 
   have hforce : ∀ x, quadraticForcing sigmaBar e x =
       (-(2 * sigmaBar)) • ((fun z : Vec d => (vecDot e z) • e) x) := by
     intro x
-    show (-(2 * sigmaBar) * vecDot e x) • e = (-(2 * sigmaBar)) • ((vecDot e x) • e)
+    change (-(2 * sigmaBar) * vecDot e x) • e = (-(2 * sigmaBar)) • ((vecDot e x) • e)
     rw [mul_smul]
   have hIBP := integral_vecDot_h10Grad_eq_neg_integral_vecFieldDiv_mul hUm hUb
     (contDiff_vecDot_smul_apply e) φ
@@ -173,7 +173,7 @@ theorem isDivFormWeakSolutionOn_quadraticForcing_of_streamExitH10 (M : ABKModel 
         vecDot ((vecDot e x) • e) (φ.toH1Function.grad x) ∂volume := by
     rw [← integral_vecDot_smul_split]
     refine integral_congr_ae (Filter.Eventually.of_forall fun x => ?_)
-    show vecDot (quadraticForcing sigmaBar e x) (φ.toH1Function.grad x) =
+    change vecDot (quadraticForcing sigmaBar e x) (φ.toH1Function.grad x) =
       vecDot ((-(2 * sigmaBar)) • ((fun z : Vec d => (vecDot e z) • e) x)) (φ.toH1Function.grad x)
     rw [hforce x]
   rw [hrhs, hIBP]
@@ -229,7 +229,7 @@ theorem exists_cutoffAffineObservable_stream (M : ABKModel d) (omega : FullSampl
     exists_streamObservable_of_zeroTraceDifference (M := M) (omega := omega) hU hbdc hbdN hd
       (fun _ => rfl) (h := affineH1 0 m e) (u := affineH1 0 m e + w.toH1Function)
       (fun x hx => by
-        show affineObservable e x = c x * affineObservable e x
+        change affineObservable e x = c x * affineObservable e x
         rw [hc1 x hx, one_mul])
       ⟨w, fun _ => rfl, fun _ => rfl⟩ hw
   have hcorr := ae_abs_sub_affineObservable_le_stream M omega m hren e
@@ -321,7 +321,7 @@ theorem exists_cutoffQuadraticObservable_stream (m : ℤ) {sigmaBarM EBm : ℝ}
     exists_streamObservable_of_zeroTraceDifference (M := M) (omega := omega) hU hbdc hbdN hd
       (fun _ => rfl) (h := quadraticH1 0 m e) (u := quadraticH1 0 m e + w.toH1Function)
       (fun x hx => by
-        show quadraticObservable e x = c x * quadraticObservable e x
+        change quadraticObservable e x = c x * quadraticObservable e x
         rw [hc1 x hx, one_mul])
       ⟨w, fun _ => rfl, fun _ => rfl⟩ hw
   -- the corrected observable and its corrector estimate
@@ -334,14 +334,15 @@ theorem exists_cutoffQuadraticObservable_stream (m : ℤ) {sigmaBarM EBm : ℝ}
       (quadraticH1 0 m e + w.toH1Function).toFun x -
         (2 * sigmaBarM * vecDot e e) * streamExitFunction M omega 0 m x := by
     intro x
-    show (quadraticH1 0 m e).toFun x + (w - (2 * sigmaBarM * vecDot e e) • E).toH1Function.toFun x =
+    change (quadraticH1 0 m e).toFun x + (w - (2 * sigmaBarM * vecDot e e) • E).toH1Function.toFun
+      x =
       (quadraticH1 0 m e).toFun x + w.toH1Function.toFun x -
         (2 * sigmaBarM * vecDot e e) * streamExitFunction M omega 0 m x
     rw [h10Sub_toH1Function, H1Function.sub_toFun]
-    show (quadraticH1 0 m e).toFun x +
+    change (quadraticH1 0 m e).toFun x +
         (w.toH1Function.toFun x - ((2 * sigmaBarM * vecDot e e) • E.toH1Function).toFun x) = _
     rw [H1Function.smul_toFun]
-    show (quadraticH1 0 m e).toFun x +
+    change (quadraticH1 0 m e).toFun x +
         (w.toH1Function.toFun x - (2 * sigmaBarM * vecDot e e) * E.toH1Function.toFun x) = _
     rw [hE_def, streamExitH10_toFun]
     ring

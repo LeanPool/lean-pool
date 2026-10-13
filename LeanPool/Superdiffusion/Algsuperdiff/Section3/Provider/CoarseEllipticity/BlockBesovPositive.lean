@@ -18,6 +18,9 @@ Module imports, support namespace and local option directives adapted for Lean P
 
 @[expose] public section
 
+open HCPolySupport
+  (abs_cubeAverage_vecDot_fluctuationVec_le_sum_sharp_note_terms_of_partialBounds_two_two)
+
 
 /-!
 # The positive block Besov seminorm and the block duality pairing
@@ -67,6 +70,8 @@ open HCPolySupport MeasureTheory
 open scoped ENNReal
 
 noncomputable section
+
+
 
 variable {d : ℕ}
 
@@ -187,10 +192,10 @@ theorem abs_cubeAverage_blockVecDot_blockCubeFluctuation_le
     rw [hpoint]
     exact cubeAverage_add_of_integrableOn Q _ _ hInt1 hInt2
   have hbound1 :=
-    HCPolySupport.abs_cubeAverage_vecDot_fluctuationVec_le_sum_sharp_note_terms_of_partialBounds_two_two
+    abs_cubeAverage_vecDot_fluctuationVec_le_sum_sharp_note_terms_of_partialBounds_two_two
       Q s (fun x => (F x).1) (fun x => (G x).1) hs hF1 hG1 hBg hneg1 hpos1
   have hbound2 :=
-    HCPolySupport.abs_cubeAverage_vecDot_fluctuationVec_le_sum_sharp_note_terms_of_partialBounds_two_two
+    abs_cubeAverage_vecDot_fluctuationVec_le_sum_sharp_note_terms_of_partialBounds_two_two
       Q s (fun x => (F x).2) (fun x => (G x).2) hs hF2 hG2 hBg hneg2 hpos2
   rw [hsplit]
   calc

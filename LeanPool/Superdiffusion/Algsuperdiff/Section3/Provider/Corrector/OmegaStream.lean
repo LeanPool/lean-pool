@@ -141,7 +141,7 @@ theorem kernelDeriv_kernelReflect {κ : Vec d → ℝ} (hκ : ContDiff ℝ (⊤ 
     ((hκ.differentiable (by simp)).differentiableAt).hasFDerivAt
   have hcomp : HasFDerivAt (kernelReflect κ)
       ((fderiv ℝ κ (-y)).comp (-ContinuousLinearMap.id ℝ (Vec d))) y := hκy.comp y hneg
-  show fderiv ℝ (kernelReflect κ) y (basisVec i) = _
+  change fderiv ℝ (kernelReflect κ) y (basisVec i) = _
   rw [hcomp.fderiv]
   simp [kernelDeriv, kernelReflect]
 
@@ -155,10 +155,10 @@ variable {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
 /-- Negating the kernel negates the mollification. -/
 theorem mollify_neg_kernel (κ : Vec d → ℝ) (X : Ω → E) (ω : Ω) :
     mollify (fun y => -κ y) X ω = -mollify κ X ω := by
-  show (∫ y, (-κ y) • X ((-y) +ᵥ ω)) = -∫ y, κ y • X ((-y) +ᵥ ω)
+  change (∫ y, (-κ y) • X ((-y) +ᵥ ω)) = -∫ y, κ y • X ((-y) +ᵥ ω)
   rw [← integral_neg]
   refine integral_congr_ae (Filter.Eventually.of_forall fun y => ?_)
-  show (-κ y) • X ((-y) +ᵥ ω) = -(κ y • X ((-y) +ᵥ ω))
+  change (-κ y) • X ((-y) +ᵥ ω) = -(κ y • X ((-y) +ᵥ ω))
   rw [neg_smul]
 
 /-- Splitting a kernel that is a pointwise difference. -/
@@ -167,10 +167,10 @@ theorem mollify_kernel_sub {κ₁ κ₂ ν : Vec d → ℝ} (hν : ∀ y, ν y =
     (h1 : Integrable (fun y => κ₁ y • X ((-y) +ᵥ ω)) volume)
     (h2 : Integrable (fun y => κ₂ y • X ((-y) +ᵥ ω)) volume) :
     mollify ν X ω = mollify κ₁ X ω - mollify κ₂ X ω := by
-  show (∫ y, ν y • X ((-y) +ᵥ ω)) = (∫ y, κ₁ y • X ((-y) +ᵥ ω)) - ∫ y, κ₂ y • X ((-y) +ᵥ ω)
+  change (∫ y, ν y • X ((-y) +ᵥ ω)) = (∫ y, κ₁ y • X ((-y) +ᵥ ω)) - ∫ y, κ₂ y • X ((-y) +ᵥ ω)
   rw [← integral_sub h1 h2]
   refine integral_congr_ae (Filter.Eventually.of_forall fun y => ?_)
-  show ν y • X ((-y) +ᵥ ω) = κ₁ y • X ((-y) +ᵥ ω) - κ₂ y • X ((-y) +ᵥ ω)
+  change ν y • X ((-y) +ᵥ ω) = κ₁ y • X ((-y) +ᵥ ω) - κ₂ y • X ((-y) +ᵥ ω)
   rw [hν y, sub_smul]
 
 end KernelAlgebra
@@ -208,10 +208,10 @@ theorem memLp_two_vecPack {ψ : Fin d → (Ω → ℝ)} (hψm : ∀ i, StronglyM
     integrable_finsetSum _ fun i _ =>
       ((memLp_two_iff_integrable_sq_norm (hψm i).aestronglyMeasurable).1 (hψ i)).congr
         (Filter.Eventually.of_forall fun ω => by
-          show ‖ψ i ω‖ ^ 2 = ψ i ω ^ 2
+          change ‖ψ i ω‖ ^ 2 = ψ i ω ^ 2
           rw [Real.norm_eq_abs, sq_abs])
   refine hsum.congr (Filter.Eventually.of_forall fun ω => ?_)
-  show (∑ i : Fin d, ψ i ω ^ 2) = ‖vecPack ψ ω‖ ^ 2
+  change (∑ i : Fin d, ψ i ω ^ 2) = ‖vecPack ψ ω‖ ^ 2
   rw [HilbertVec.norm_sq_eq_sum_sq]
   exact Finset.sum_congr rfl fun i _ => rfl
 
@@ -288,7 +288,7 @@ theorem integral_mul_mollify_eq {κ : Vec d → ℝ} (hκc : Continuous κ)
     exact integral_congr_ae (Filter.Eventually.of_forall fun ω => mul_comm _ _)
   rw [hRR, hrefl]
   refine integral_congr_ae (Filter.Eventually.of_forall fun y => ?_)
-  show κ y * (∫ ω, X ((-y) +ᵥ ω) * φ ω ∂μ) = κ y * ∫ ω, φ (y +ᵥ ω) * X ω ∂μ
+  change κ y * (∫ ω, X ((-y) +ᵥ ω) * φ ω ∂μ) = κ y * ∫ ω, φ (y +ᵥ ω) * X ω ∂μ
   rw [hshift y]
 
 /-- **The pairing identity for the mollified divergence**: its `L²(Ω)` adjoint is
@@ -342,7 +342,7 @@ theorem integral_mul_mollifyDiv_eq {κ : Vec d → ℝ} (hκc : HasCompactSuppor
       = -mollify (kernelDeriv (kernelReflect κ) m) φ ω := by
     rw [hker]
     exact mollify_neg_kernel _ _ _
-  show coordField X m ω * mollify (kernelReflect (kernelDeriv κ m)) φ ω
+  change coordField X m ω * mollify (kernelReflect (kernelDeriv κ m)) φ ω
       = -(coordField X m ω * coordField (mollifyGrad (kernelReflect κ) φ) m ω)
   rw [hval]
   have hcoord : coordField (mollifyGrad (kernelReflect κ) φ) m ω
@@ -445,7 +445,7 @@ theorem streamRealization_kernelStream_neg (g : Fin d → (Vec d → ℝ))
     streamRealization (kernelStream g X) ω m i
       = -streamRealization (kernelStream g X) ω i m := by
   funext x
-  show _ = -(_ - _)
+  change _ = -(_ - _)
   rw [neg_sub]
   rfl
 
@@ -484,7 +484,7 @@ theorem coordDeriv_streamRealization_kernelStream {g : Fin d → (Vec d → ℝ)
       (realize (d := d) (mollify (g i) (coordField X m)) ω) x :=
     (((contDiff_realize_mollify_of_hasCompactSupport (hgc i) (hgs i)
       (hloc m)).differentiable (by simp)).differentiableAt)
-  show fderiv ℝ (streamRealization (kernelStream g X) ω i m) x (basisVec m) = _
+  change fderiv ℝ (streamRealization (kernelStream g X) ω i m) x (basisVec m) = _
   rw [streamRealization_kernelStream_eq_fun, fderiv_fun_sub hA hB]
   rw [sub_apply]
   have hrw : (fderiv ℝ (realize (d := d) (mollify (g m) (coordField X i)) ω) x) (basisVec m)

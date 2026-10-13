@@ -50,7 +50,7 @@ def neumannEvenFoldedParentScalarTest {d : ℕ}
 
 private theorem hasCompactSupport_finset_sum
     {alpha beta iota : Type*} [TopologicalSpace alpha] [AddCommMonoid beta]
-    [DecidableEq iota] (s : Finset iota) (f : iota → alpha → beta)
+    (s : Finset iota) (f : iota → alpha → beta)
     (hf : ∀ i ∈ s, HasCompactSupport (f i)) :
     HasCompactSupport (fun x ↦ ∑ i ∈ s, f i x) := by
   classical

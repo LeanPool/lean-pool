@@ -129,7 +129,7 @@ theorem sqrt_energy_grad_sub_le_of_h10Diff {y : Vec d} {n : ℤ} {a b : CoeffFie
         vecDot (matVecMul (a x) (w.toH1Function.grad x)) (w.toH1Function.grad x) ∂volume := by
     refine integral_mono_ae hSqInt hEnergyInt ((ae_restrict_iff' hUmeas).2 ?_)
     refine Filter.Eventually.of_forall fun x hx => ?_
-    show lam * vecNormSq (w.toH1Function.grad x) ≤
+    change lam * vecNormSq (w.toH1Function.grad x) ≤
       vecDot (matVecMul (a x) (w.toH1Function.grad x)) (w.toH1Function.grad x)
     rw [vecDot_comm]
     exact (hEll.2 x hx).2.2.1 (w.toH1Function.grad x)
@@ -177,7 +177,7 @@ theorem sqrt_energy_grad_sub_le_of_h10Diff {y : Vec d} {n : ℤ} {a b : CoeffFie
   have hgrad : (∫ x in cubeSetAt y n, ‖u.grad x - v.grad x‖ ^ (2 : ℕ) ∂volume) =
       ∫ x in cubeSetAt y n, ‖w.toH1Function.grad x‖ ^ (2 : ℕ) ∂volume := by
     refine integral_congr_ae (Filter.Eventually.of_forall fun x => ?_)
-    show ‖u.grad x - v.grad x‖ ^ (2 : ℕ) = ‖w.toH1Function.grad x‖ ^ (2 : ℕ)
+    change ‖u.grad x - v.grad x‖ ^ (2 : ℕ) = ‖w.toH1Function.grad x‖ ^ (2 : ℕ)
     rw [hwg x]
   rw [hgrad]
   rcases eq_or_lt_of_le hSnn with hzero | hpos
@@ -239,24 +239,24 @@ theorem tendsto_l2_cutoff_of_h10Diff (M : ABKModel d) (omega : FullSample d M.ga
     have hwf : ∀ x, (wL - wv).toH1Function.toFun x = (u L).toFun x - v.toFun x := by
       intro x
       rw [h10Sub_toH1Function, H1Function.sub_toFun]
-      show wL.toH1Function.toFun x - wv.toH1Function.toFun x = _
+      change wL.toH1Function.toFun x - wv.toH1Function.toFun x = _
       rw [hwLf x, hwvf x]
       ring
     have hwg : ∀ x, (wL - wv).toH1Function.grad x = (u L).grad x - v.grad x := by
       intro x
       rw [h10Sub_toH1Function, H1Function.sub_grad]
-      show wL.toH1Function.grad x - wv.toH1Function.grad x = _
+      change wL.toH1Function.grad x - wv.toH1Function.grad x = _
       rw [hwLg x, hwvg x]
       abel
     have hval : (∫ x in cubeSetAt y n, ((u L).toFun x - v.toFun x) ^ (2 : ℕ) ∂volume) =
         ∫ x in cubeSetAt y n, (wL - wv).toH1Function.toFun x ^ (2 : ℕ) ∂volume := by
       refine integral_congr_ae (Filter.Eventually.of_forall fun x => ?_)
-      show ((u L).toFun x - v.toFun x) ^ (2 : ℕ) = (wL - wv).toH1Function.toFun x ^ (2 : ℕ)
+      change ((u L).toFun x - v.toFun x) ^ (2 : ℕ) = (wL - wv).toH1Function.toFun x ^ (2 : ℕ)
       rw [hwf x]
     have hgrad : (∫ x in cubeSetAt y n, ‖(u L).grad x - v.grad x‖ ^ (2 : ℕ) ∂volume) =
         ∫ x in cubeSetAt y n, ‖(wL - wv).toH1Function.grad x‖ ^ (2 : ℕ) ∂volume := by
       refine integral_congr_ae (Filter.Eventually.of_forall fun x => ?_)
-      show ‖(u L).grad x - v.grad x‖ ^ (2 : ℕ) = ‖(wL - wv).toH1Function.grad x‖ ^ (2 : ℕ)
+      change ‖(u L).grad x - v.grad x‖ ^ (2 : ℕ) = ‖(wL - wv).toH1Function.grad x‖ ^ (2 : ℕ)
       rw [hwg x]
     obtain ⟨Lam, hEll⟩ :=
       exists_isEllipticFieldOn_normalizedCoefficientCutoff M.nu_pos L omega.1 y n

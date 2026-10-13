@@ -173,7 +173,7 @@ theorem sq_volumeAverage_abs_sub_le_meanSquareDeviationOn {V : Set (Vec d)}
   have hcs := sq_setIntegral_abs_le_mul_setIntegral_sq hfin hpos hf hf2
   have hJnn : (0 : ℝ) ≤ ∫ x in V, (f x - c) ^ 2 ∂volume :=
     integral_nonneg fun x => sq_nonneg _
-  show ((volume V).toReal⁻¹ * ∫ x in V, |f x - c| ∂volume) ^ 2 ≤
+  change ((volume V).toReal⁻¹ * ∫ x in V, |f x - c| ∂volume) ^ 2 ≤
     (volume V).toReal⁻¹ * ∫ x in V, (f x - c) ^ 2 ∂volume
   rw [mul_pow]
   have hinv : ((volume V).toReal⁻¹) ^ 2 * ((volume V).toReal *
@@ -209,7 +209,7 @@ theorem meanSquareDeviationOn_volumeAverage_le {V : Set (Vec d)}
     rw [hexp]
     exact hf2.add ((hf.const_mul (-(2 * b))).add (integrableOn_const hfin))
   have haint : ∫ x in V, f x ∂volume = (volume V).toReal * volumeAverage V f := by
-    show ∫ x in V, f x ∂volume
+    change ∫ x in V, f x ∂volume
       = (volume V).toReal * ((volume V).toReal⁻¹ * ∫ x in V, f x ∂volume)
     rw [← mul_assoc, mul_inv_cancel₀ hne, one_mul]
   set a : ℝ := volumeAverage V f with hadef
@@ -230,7 +230,7 @@ theorem meanSquareDeviationOn_volumeAverage_le {V : Set (Vec d)}
   have hle : ∫ x in V, (f x - a) ^ 2 ∂volume ≤ ∫ x in V, (f x - c) ^ 2 ∂volume := by
     rw [hsplit]
     nlinarith [hnn]
-  show (volume V).toReal⁻¹ * ∫ x in V, (f x - a) ^ 2 ∂volume
+  change (volume V).toReal⁻¹ * ∫ x in V, (f x - a) ^ 2 ∂volume
     ≤ (volume V).toReal⁻¹ * ∫ x in V, (f x - c) ^ 2 ∂volume
   exact mul_le_mul_of_nonneg_left hle (by positivity)
 
@@ -243,7 +243,7 @@ theorem meanSquareOscillationVecOn_le_meanSquareDeviationVecOn {V : Set (Vec d)}
     (hint : ∀ i : Fin d, IntegrableOn (fun x => h x i) V volume)
     (hint2 : ∀ i : Fin d, IntegrableOn (fun x => (h x i) ^ 2) V volume) :
     Book.Ch01.meanSquareOscillationVecOn V h ≤ Book.Ch01.meanSquareDeviationVecOn V h c := by
-  show ∑ i : Fin d, Book.Ch01.meanSquareDeviationOn V (fun y => h y i)
+  change ∑ i : Fin d, Book.Ch01.meanSquareDeviationOn V (fun y => h y i)
       (volumeAverageVec V h i) ≤
     ∑ i : Fin d, Book.Ch01.meanSquareDeviationOn V (fun y => h y i) (c i)
   exact Finset.sum_le_sum fun i _ =>

@@ -220,7 +220,7 @@ theorem contDiff_mollify {δ : ℝ} (hδ : 0 < δ) {u : Vec (m + 1) → ℝ}
     have hpt : (fun y : Vec (m + 1) => u y * mollifierProfile m δ (euclideanNorm (y - x)))
         = fun y : Vec (m + 1) => u y * mollifierProfile m δ (euclideanNorm (x - y)) :=
       funext fun y => by rw [euclideanNorm_sub_comm]
-    show (∫ y, u y * mollifierProfile m δ (euclideanNorm (y - x)) ∂volume) / mollifierMass m δ = _
+    change (∫ y, u y * mollifierProfile m δ (euclideanNorm (y - x)) ∂volume) / mollifierMass m δ = _
     rw [hpt, convolution_mul]
   rw [heq]
   exact ((hasCompactSupport_mollifierKernel hδ).contDiff_convolution_right
@@ -289,7 +289,7 @@ theorem mollify_eq_mollify_of_isWeaklyHarmonicOn {U : Set (Vec (m + 1))} {u : Ve
   rw [integral_congr_ae (Filter.Eventually.of_forall hmul),
     integral_sub (integrable_mul_mollifierProfile_comp hδ hu x)
       (integrable_mul_mollifierProfile_comp hε hu x)] at hzero
-  show (∫ y, u y * mollifierProfile m δ (euclideanNorm (y - x)) ∂volume) / mollifierMass m δ
+  change (∫ y, u y * mollifierProfile m δ (euclideanNorm (y - x)) ∂volume) / mollifierMass m δ
     = (∫ y, u y * mollifierProfile m ε (euclideanNorm (y - x)) ∂volume) / mollifierMass m ε
   rw [mollifierMass_eq_of_pos hδ hε]
   have : (∫ y, u y * mollifierProfile m δ (euclideanNorm (y - x)) ∂volume)
@@ -375,7 +375,7 @@ theorem integral_mollify_mul {δ : ℝ} (hδ : 0 < δ) {u ψ : Vec (m + 1) → �
     intro y
     rw [← integral_const_mul]
     refine integral_congr_ae (Filter.Eventually.of_forall fun x => ?_)
-    show u y * mollifierProfile m δ (euclideanNorm (y - x)) * ψ x
+    change u y * mollifierProfile m δ (euclideanNorm (y - x)) * ψ x
         = u y * (ψ x * mollifierProfile m δ (euclideanNorm (x - y)))
     rw [euclideanNorm_sub_comm y x]
     ring
@@ -510,7 +510,7 @@ theorem exists_contDiff_ae_eq_of_isWeaklyHarmonicOn {U V : Set (Vec (m + 1))} (h
       have hstep1 : (∫ x, mollify m r u x * ψ x ∂volume)
           = ∫ x, mollify m (min r (ρ / 2)) u x * ψ x ∂volume := by
         refine integral_congr_ae (Filter.Eventually.of_forall fun x => ?_)
-        show mollify m r u x * ψ x = mollify m (min r (ρ / 2)) u x * ψ x
+        change mollify m r u x * ψ x = mollify m (min r (ρ / 2)) u x * ψ x
         rcases eq_or_ne (ψ x) 0 with h0 | h0
         · rw [h0, mul_zero, mul_zero]
         · rw [hconst x (hψV (subset_tsupport ψ h0)) _ hδ hδr]

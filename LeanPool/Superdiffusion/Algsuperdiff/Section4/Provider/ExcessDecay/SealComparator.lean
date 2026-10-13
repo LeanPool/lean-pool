@@ -258,7 +258,7 @@ private theorem volumeAverage_vecNormSq_eq_sum {V : Set (Vec d)} {G : Vec d → 
     simpa only [IntegrableOn] using h
   have hfun : (fun y => vecNormSq (G y)) = fun y => ∑ i : Fin d, G y i ^ 2 := by
     funext y
-    show vecDot (G y) (G y) = _
+    change vecDot (G y) (G y) = _
     simp only [vecDot, pow_two]
   unfold volumeAverage
   rw [hfun, integral_finsetSum Finset.univ fun i _ => hterm i, Finset.mul_sum]
@@ -475,7 +475,7 @@ theorem exists_deltaComparator_translatedCube [NeZero d] {m j : ℤ} {c : Vec d}
         ∫ x in V, vecDot (rho.toH1Function.grad x)
           (φ.toH1Function.grad x) ∂volume :=
       integral_congr_ae (Filter.Eventually.of_forall fun x => by
-        show vecDot (matVecMul (unitCoeffField d x) (rho.toH1Function.grad x))
+        change vecDot (matVecMul (unitCoeffField d x) (rho.toH1Function.grad x))
             (φ.toH1Function.grad x) =
           vecDot (rho.toH1Function.grad x) (φ.toH1Function.grad x)
         rw [matVecMul_unitCoeffField])

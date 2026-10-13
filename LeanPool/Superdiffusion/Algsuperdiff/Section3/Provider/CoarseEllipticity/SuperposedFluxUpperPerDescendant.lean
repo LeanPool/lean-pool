@@ -36,6 +36,41 @@ Module imports, support namespace and local option directives adapted for Lean P
 
 @[expose] public section
 
+open Algsuperdiff.Section3.Provider.CoarseEllipticity
+  (ae_ofReal_probeSharpFramedCollarDeepTailTraceLane_eq_sum_tsum)
+open Algsuperdiff.Section3.Provider.CoarseEllipticity
+  (collar_head_tuned_trace_is_big_o_with_eighth_power)
+open Algsuperdiff.Section3.Provider.CoarseEllipticity
+  (exists_tunedDeepBandTail_good_finite_trace_split)
+open Algsuperdiff.Section3.Provider.CoarseEllipticity
+  (isBigOWith_upperProfileTarget_collarWaveTailFiniteTrace)
+open Algsuperdiff.Section3.Provider.CoarseEllipticity
+  (isBigOWith_upperProfileTarget_probeSharpFramedCollarBandMeanTunedTraceLane_frozenReserve)
+open Algsuperdiff.Section3.Provider.CoarseEllipticity
+  (isBigOWith_upperProfileTarget_probeSharpFramedCollarBaseTraceLane_tuned)
+open Algsuperdiff.Section3.Provider.CoarseEllipticity
+  (measurable_probeSharpFramedCollarBandMeanTunedTraceLane)
+open Algsuperdiff.Section3.Provider.CoarseEllipticity
+  (measurable_probeSharpFramedCollarBaseTraceLane)
+open Algsuperdiff.Section3.Provider.CoarseEllipticity
+  (measurable_probeSharpFramedCollarDeepTailTraceLane)
+open Algsuperdiff.Section3.Provider.CoarseEllipticity
+  (probeSharpFramedCollarBandMeanTunedCoordinateENNRealLane)
+open Algsuperdiff.Section3.Provider.CoarseEllipticity
+  (probeSharpFramedCollarBandMeanTunedTraceENNRealLane)
+open Algsuperdiff.Section3.Provider.CoarseEllipticity
+  (probeSharpFramedCollarBandMeanTunedTraceENNRealLane_eq)
+open Algsuperdiff.Section3.Provider.CoarseEllipticity
+  (probeSharpFramedCollarBandMeanTunedTraceLane_nonneg)
+open Algsuperdiff.Section3.Provider.CoarseEllipticity
+  (probeSharpFramedCollarBaseCoordinateENNRealLane)
+open Algsuperdiff.Section3.Provider.CoarseEllipticity
+  (probeSharpFramedCollarBaseCoordinateENNRealLane_eq)
+open Algsuperdiff.Section3.Provider.CoarseEllipticity
+  (probeSharpFramedCollarBaseCoordinateLane_nonneg)
+open Algsuperdiff.Section3.Provider.CoarseEllipticity
+  (probeSharpFramedCollarDeepTailTraceLane_nonneg)
+
 /-!
 # Per-descendant upper split for the superposed flux
 
@@ -53,6 +88,1126 @@ namespace Algsuperdiff.Section3.Provider.CoarseEllipticity
 
 open Algsuperdiff.Section3
 open HCPolySupport MeasureTheory
+
+
+
+private abbrev superposedFluxUpperPerDescendant_momentBounds1_statement : Prop :=
+    ∀ {d : ℕ} (M : ABKModel d) (m : ℤ) (E : { E : ℝ // (1 : ℝ) ≤ E })
+      (_ : Frozen.Section3.inductionState M (m - (1 : ℤ)) E) (sigma Clane : ℝ) (_ : (0 : ℝ) < sigma)
+      (_ : sigma ≤ (1 / 2 : ℝ)) (_ : max (Real.exp (Clane / sigma)) (Disorder.cstar M)⁻¹ ≤ (↑E : ℝ))
+      (_ : (↑E : ℝ) ≤ M.gamma ^ (-(1 / 5 : ℝ))) (_ : profileAuxiliaryConst d ≤ Clane)
+      (_ : collarBandMeanDepthThreshold d ≤ Clane) (k : ℕ) (R : TriadicCube d)
+      (_ : R ∈ descendantsAtScale (originCube d m) (m - (1 : ℤ) - (↑k : ℤ))) (_ : (2 : ℕ) ≤ d)
+      (headRare bandRare deepRare afterRare : Cutoff.CutoffSample d → ℝ),
+      let laneX : ℝ := (↑E : ℝ)⁻¹ ^ (2 : ℕ) * M.gamma⁻¹;
+      let laneEps : ℝ := Real.exp (-(Clane⁻¹ * laneX));
+      let depthFactor : ℝ := (3 : ℝ) ^ (M.gamma * ((↑k : ℝ) + (1 : ℝ)));
+      let rarePerLaneScale : ℝ := depthFactor * laneEps ^ (8 : ℕ);
+      let collarBase : Cutoff.CutoffSample d → ℝ :=
+        probeSharpFramedCollarBaseTraceLane M R (↑E : ℝ) (collarBandMeanDepth M (↑E : ℝ));
+      let collarHead : Cutoff.CutoffSample d → ℝ := fun (omega : Cutoff.CutoffSample d) =>
+        ∑ j : Fin d,
+          ∑' (n : ℕ),
+            Multiscale.probeSharpFramedCollarWavePart M R.scale (↑E : ℝ) bfaProfileB (collarBandMeanDepth M (↑E : ℝ)) n
+              (m - (1 : ℤ)) (basisVec j) (Affine.superposedGradConst d)
+              (fun (eta : Cutoff.CutoffSample d) =>
+                Multiscale.waveHeadTerm M R.scale (↑E : ℝ) bfaProfileB
+                    (probeSharpLayerAnchor R.scale bfaProfileB (collarBandMeanDepth M (↑E : ℝ)) n) eta ^
+                  (2 : ℕ))
+              (Cutoff.translateCutoffSample (triadicCubeShift R) omega);
+      let collarBand : Cutoff.CutoffSample d → ℝ := probeSharpFramedCollarBandMeanTunedTraceLane M m R (↑E : ℝ);
+      let collarDeep : Cutoff.CutoffSample d → ℝ := probeSharpFramedCollarDeepTailTraceLane M m R (↑E : ℝ);
+      let collarAfter : Cutoff.CutoffSample d → ℝ := probeSharpFramedCollarAfterBandTraceLane M m R (↑E : ℝ);
+      let collarWave : Cutoff.CutoffSample d → ℝ := fun (omega : Cutoff.CutoffSample d) =>
+        ∑ j : Fin d,
+          ∑' (n : ℕ),
+            Multiscale.probeSharpFramedCollarWavePart M R.scale (↑E : ℝ) bfaProfileB (collarBandMeanDepth M (↑E : ℝ)) n
+              (m - (1 : ℤ)) (basisVec j) (Affine.superposedGradConst d)
+              (fun (eta : Cutoff.CutoffSample d) =>
+                Multiscale.waveTailTerm M R.scale (↑E : ℝ) bfaProfileB R.scale
+                    (probeSharpLayerAnchor R.scale bfaProfileB (collarBandMeanDepth M (↑E : ℝ)) n) eta ^
+                  (2 : ℕ))
+              (Cutoff.translateCutoffSample (triadicCubeShift R) omega);
+      ∀ (waveBounded waveRare : Cutoff.CutoffSample d → ℝ) (_ : (0 : ℝ) < rarePerLaneScale),
+        let rareLane : Fin (12 : ℕ) → Cutoff.CutoffSample d → ℝ :=
+          ![headRare, bandRare, deepRare, afterRare, waveBounded, waveRare, collarBase, collarHead, collarBand, collarDeep,
+            collarAfter, collarWave];
+        let Uexp : Cutoff.CutoffSample d → ℝ := fun (omega : Cutoff.CutoffSample d) => ∑ i : Fin (12 : ℕ), rareLane i omega;
+        ∀
+          (_ :
+            IndependentSums.IsBigOWith (↑(Cutoff.cutoffSampleLaw M) : Measure (Cutoff.CutoffSample d))
+              (IndependentSums.gammaSigma (((1 : ℝ) - sigma) / (3 : ℝ))) Uexp
+              (IndependentSums.gammaTriangleConst (((1 : ℝ) - sigma) / (3 : ℝ)) * ∑ _i : Fin (12 : ℕ), rarePerLaneScale)),
+          let K : ℝ := (12 : ℝ) * upperAfterBandRareTriangleConst;
+          IndependentSums.IsBigOWith (↑(Cutoff.cutoffSampleLaw M) : Measure (Cutoff.CutoffSample d))
+              (IndependentSums.gammaSigma (((1 : ℝ) - sigma) / (3 : ℝ))) Uexp (K * rarePerLaneScale) ∧
+            ∑ j : Fin d, ∑' (n : ℕ), ENNReal.ofReal (Multiscale.probeSharpFramedGoodBaseTerm d n (basisVec j)) =
+                ENNReal.ofReal (Multiscale.probeSharpGoodBaseConst d) ∧
+              (∀ (omega : Cutoff.CutoffSample d),
+                  ∑ j : Fin d,
+                      ∑' (n : ℕ),
+                        ENNReal.ofReal
+                          (Multiscale.probeSharpFramedCollarBaseTerm M R.scale (↑E : ℝ) bfaProfileB
+                            (collarBandMeanDepth M (↑E : ℝ)) n (basisVec j) (Affine.superposedGradConst d)
+                            (Cutoff.translateCutoffSample (triadicCubeShift R) omega)) =
+                    ENNReal.ofReal (collarBase omega)) ∧
+                (∀ (omega : Cutoff.CutoffSample d),
+                    probeSharpFramedCollarBandMeanTunedTraceENNRealLane M m R (↑E : ℝ) omega =
+                      ENNReal.ofReal (collarBand omega)) ∧
+                  ∀ᵐ (omega : Cutoff.CutoffSample d) ∂(↑(Cutoff.cutoffSampleLaw M) : Measure (Cutoff.CutoffSample d)),
+                    ENNReal.ofReal (collarDeep omega) =
+                      ∑ j : Fin d, ∑' (n : ℕ), ENNReal.ofReal (probeSharpFramedCollarDeepTailLayer M m R (↑E : ℝ) j n omega)
+
+private abbrev superposedFluxUpperPerDescendant_momentBounds2_statement : Prop :=
+    ∀ {d : ℕ} (M : ABKModel d) (m : ℤ) (E : { E : ℝ // (1 : ℝ) ≤ E }) (sigma Clane : ℝ)
+      (_ : (0 : ℝ) < sigma) (_ : sigma ≤ (1 / 2 : ℝ)) (k : ℕ) (R : TriadicCube d)
+      (headRare : Cutoff.CutoffSample d → ℝ) (_ : ∀ (omega : Cutoff.CutoffSample d), (0 : ℝ) ≤ headRare omega)
+      (_ : Measurable headRare) (bandRare : Cutoff.CutoffSample d → ℝ)
+      (_ : ∀ (omega : Cutoff.CutoffSample d), (0 : ℝ) ≤ bandRare omega)
+      (_ : Measurable bandRare) (deepRare : Cutoff.CutoffSample d → ℝ)
+      (_ : ∀ (omega : Cutoff.CutoffSample d), (0 : ℝ) ≤ deepRare omega)
+      (_ : Measurable deepRare) (afterRare : Cutoff.CutoffSample d → ℝ)
+      (_ : ∀ (omega : Cutoff.CutoffSample d), (0 : ℝ) ≤ afterRare omega)
+      (_ : Measurable afterRare),
+      let laneX : ℝ := (↑E : ℝ)⁻¹ ^ (2 : ℕ) * M.gamma⁻¹;
+      let laneEps : ℝ := Real.exp (-(Clane⁻¹ * laneX));
+      let depthFactor : ℝ := (3 : ℝ) ^ (M.gamma * ((↑k : ℝ) + (1 : ℝ)));
+      let rarePerLaneScale : ℝ := depthFactor * laneEps ^ (8 : ℕ);
+      let collarBase : Cutoff.CutoffSample d → ℝ :=
+        probeSharpFramedCollarBaseTraceLane M R (↑E : ℝ) (collarBandMeanDepth M (↑E : ℝ));
+      let collarHead : Cutoff.CutoffSample d → ℝ := fun (omega : Cutoff.CutoffSample d) =>
+        ∑ j : Fin d,
+          ∑' (n : ℕ),
+            Multiscale.probeSharpFramedCollarWavePart M R.scale (↑E : ℝ) bfaProfileB (collarBandMeanDepth M (↑E : ℝ)) n
+              (m - (1 : ℤ)) (basisVec j) (Affine.superposedGradConst d)
+              (fun (eta : Cutoff.CutoffSample d) =>
+                Multiscale.waveHeadTerm M R.scale (↑E : ℝ) bfaProfileB
+                    (probeSharpLayerAnchor R.scale bfaProfileB (collarBandMeanDepth M (↑E : ℝ)) n) eta ^
+                  (2 : ℕ))
+              (Cutoff.translateCutoffSample (triadicCubeShift R) omega);
+      let collarBand : Cutoff.CutoffSample d → ℝ := probeSharpFramedCollarBandMeanTunedTraceLane M m R (↑E : ℝ);
+      let collarDeep : Cutoff.CutoffSample d → ℝ := probeSharpFramedCollarDeepTailTraceLane M m R (↑E : ℝ);
+      let collarAfter : Cutoff.CutoffSample d → ℝ := probeSharpFramedCollarAfterBandTraceLane M m R (↑E : ℝ);
+      ∀
+        (_ :
+          IndependentSums.IsBigOWith (↑(Cutoff.cutoffSampleLaw M) : Measure (Cutoff.CutoffSample d))
+            (IndependentSums.gammaSigma (((1 : ℝ) - sigma) / (3 : ℝ)))
+            (probeSharpFramedCollarBaseTraceLane M R (↑E : ℝ) (collarBandMeanDepth M (↑E : ℝ)))
+            ((3 : ℝ) ^ (M.gamma * ((↑k : ℝ) + (1 : ℝ))) *
+              Real.exp (-(Clane⁻¹ * ((↑E : ℝ)⁻¹ ^ (2 : ℕ) * M.gamma⁻¹))) ^ (8 : ℕ)))
+        (_ :
+          ∀ (omega : Cutoff.CutoffSample d),
+            (0 : ℝ) ≤
+              (fun (omega : Cutoff.CutoffSample d) =>
+                  ∑ j : Fin d,
+                    ∑' (n : ℕ),
+                      Multiscale.probeSharpFramedCollarWavePart M R.scale (↑E : ℝ) bfaProfileB
+                        (collarBandMeanDepth M (↑E : ℝ)) n (m - (1 : ℤ)) (basisVec j) (Affine.superposedGradConst d)
+                        (fun (eta : Cutoff.CutoffSample d) =>
+                          Multiscale.waveHeadTerm M R.scale (↑E : ℝ) bfaProfileB
+                              (probeSharpLayerAnchor R.scale bfaProfileB (collarBandMeanDepth M (↑E : ℝ)) n) eta ^
+                            (2 : ℕ))
+                        (Cutoff.translateCutoffSample (triadicCubeShift R) omega))
+                omega)
+        (_ :
+          Measurable fun (omega : Cutoff.CutoffSample d) =>
+            ∑ j : Fin d,
+              ∑' (n : ℕ),
+                Multiscale.probeSharpFramedCollarWavePart M R.scale (↑E : ℝ) bfaProfileB (collarBandMeanDepth M (↑E : ℝ)) n
+                  (m - (1 : ℤ)) (basisVec j) (Affine.superposedGradConst d)
+                  (fun (eta : Cutoff.CutoffSample d) =>
+                    Multiscale.waveHeadTerm M R.scale (↑E : ℝ) bfaProfileB
+                        (probeSharpLayerAnchor R.scale bfaProfileB (collarBandMeanDepth M (↑E : ℝ)) n) eta ^
+                      (2 : ℕ))
+                  (Cutoff.translateCutoffSample (triadicCubeShift R) omega))
+        (_ :
+          IndependentSums.IsBigOWith (↑(Cutoff.cutoffSampleLaw M) : Measure (Cutoff.CutoffSample d))
+            (IndependentSums.gammaSigma (((1 : ℝ) - sigma) / (3 : ℝ)))
+            (fun (omega : Cutoff.CutoffSample d) =>
+              ∑ j : Fin d,
+                ∑' (n : ℕ),
+                  Multiscale.probeSharpFramedCollarWavePart M R.scale (↑E : ℝ) bfaProfileB (collarBandMeanDepth M (↑E : ℝ))
+                    n (m - (1 : ℤ)) (basisVec j) (Affine.superposedGradConst d)
+                    (fun (eta : Cutoff.CutoffSample d) =>
+                      Multiscale.waveHeadTerm M R.scale (↑E : ℝ) bfaProfileB
+                          (probeSharpLayerAnchor R.scale bfaProfileB (collarBandMeanDepth M (↑E : ℝ)) n) eta ^
+                        (2 : ℕ))
+                    (Cutoff.translateCutoffSample (triadicCubeShift R) omega))
+            ((3 : ℝ) ^ (M.gamma * ((↑k : ℝ) + (1 : ℝ))) *
+              Real.exp (-(Clane⁻¹ * ((↑E : ℝ)⁻¹ ^ (2 : ℕ) * M.gamma⁻¹))) ^ (8 : ℕ)))
+        (_ :
+          have eps : ℝ := Real.exp (-(Clane⁻¹ * ((↑E : ℝ)⁻¹ ^ (2 : ℕ) * M.gamma⁻¹)));
+          IndependentSums.IsBigOWith (↑(Cutoff.cutoffSampleLaw M) : Measure (Cutoff.CutoffSample d))
+            (IndependentSums.gammaSigma (upperProfileTargetSigma sigma))
+            (probeSharpFramedCollarBandMeanTunedTraceLane M m R (↑E : ℝ))
+            ((3 : ℝ) ^ (M.gamma * ((↑k : ℝ) + (1 : ℝ))) * eps ^ (8 : ℕ)))
+        (_ :
+          IndependentSums.IsBigOWith (↑(Cutoff.cutoffSampleLaw M) : Measure (Cutoff.CutoffSample d))
+            (IndependentSums.gammaSigma (((1 : ℝ) - sigma) / (3 : ℝ)))
+            (probeSharpFramedCollarDeepTailTraceLane M m R (↑E : ℝ))
+            ((3 : ℝ) ^ (M.gamma * ((↑k : ℝ) + (1 : ℝ))) *
+              Real.exp (-(Clane⁻¹ * ((↑E : ℝ)⁻¹ ^ (2 : ℕ) * M.gamma⁻¹))) ^ (8 : ℕ)))
+        (_ :
+          ∀ (omega : Cutoff.CutoffSample d), (0 : ℝ) ≤ probeSharpFramedCollarAfterBandTraceLane M m R (↑E : ℝ) omega)
+        (_ : Measurable (probeSharpFramedCollarAfterBandTraceLane M m R (↑E : ℝ)))
+        (_ :
+          IndependentSums.IsBigOWith (↑(Cutoff.cutoffSampleLaw M) : Measure (Cutoff.CutoffSample d))
+            (IndependentSums.gammaSigma (upperProfileTargetSigma sigma))
+            (probeSharpFramedCollarAfterBandTraceLane M m R (↑E : ℝ))
+            ((3 : ℝ) ^ (M.gamma * ((↑k : ℝ) + (1 : ℝ))) *
+              Real.exp (-(Clane⁻¹ * ((↑E : ℝ)⁻¹ ^ (2 : ℕ) * M.gamma⁻¹))) ^ (8 : ℕ))),
+        let collarWave : Cutoff.CutoffSample d → ℝ := fun (omega : Cutoff.CutoffSample d) =>
+          ∑ j : Fin d,
+            ∑' (n : ℕ),
+              Multiscale.probeSharpFramedCollarWavePart M R.scale (↑E : ℝ) bfaProfileB (collarBandMeanDepth M (↑E : ℝ)) n
+                (m - (1 : ℤ)) (basisVec j) (Affine.superposedGradConst d)
+                (fun (eta : Cutoff.CutoffSample d) =>
+                  Multiscale.waveTailTerm M R.scale (↑E : ℝ) bfaProfileB R.scale
+                      (probeSharpLayerAnchor R.scale bfaProfileB (collarBandMeanDepth M (↑E : ℝ)) n) eta ^
+                    (2 : ℕ))
+                (Cutoff.translateCutoffSample (triadicCubeShift R) omega);
+        ∀ (_ : ∀ (omega : Cutoff.CutoffSample d), (0 : ℝ) ≤ collarWave omega)
+          (_ : Measurable collarWave)
+          (_ :
+            IndependentSums.IsBigOWith (↑(Cutoff.cutoffSampleLaw M) : Measure (Cutoff.CutoffSample d))
+              (IndependentSums.gammaSigma (((1 : ℝ) - sigma) / (3 : ℝ))) collarWave
+              ((3 : ℝ) ^ (M.gamma * ((↑k : ℝ) + (1 : ℝ))) *
+                Real.exp (-(Clane⁻¹ * ((↑E : ℝ)⁻¹ ^ (2 : ℕ) * M.gamma⁻¹))) ^ (8 : ℕ)))
+          (waveBounded waveRare : Cutoff.CutoffSample d → ℝ)
+          (_ : ∀ (omega : Cutoff.CutoffSample d), (0 : ℝ) ≤ waveBounded omega)
+          (_ : Measurable waveBounded)
+          (_ : ∀ (omega : Cutoff.CutoffSample d), (0 : ℝ) ≤ waveRare omega)
+          (_ : Measurable waveRare) (_ : (0 : ℝ) < rarePerLaneScale)
+          (_ :
+            IndependentSums.IsBigOWith (↑(Cutoff.cutoffSampleLaw M) : Measure (Cutoff.CutoffSample d))
+              (IndependentSums.gammaSigma (((1 : ℝ) - sigma) / (3 : ℝ))) headRare rarePerLaneScale)
+          (_ :
+            IndependentSums.IsBigOWith (↑(Cutoff.cutoffSampleLaw M) : Measure (Cutoff.CutoffSample d))
+              (IndependentSums.gammaSigma (((1 : ℝ) - sigma) / (3 : ℝ))) bandRare rarePerLaneScale)
+          (_ :
+            IndependentSums.IsBigOWith (↑(Cutoff.cutoffSampleLaw M) : Measure (Cutoff.CutoffSample d))
+              (IndependentSums.gammaSigma (((1 : ℝ) - sigma) / (3 : ℝ))) deepRare rarePerLaneScale)
+          (_ :
+            IndependentSums.IsBigOWith (↑(Cutoff.cutoffSampleLaw M) : Measure (Cutoff.CutoffSample d))
+              (IndependentSums.gammaSigma (((1 : ℝ) - sigma) / (3 : ℝ))) afterRare rarePerLaneScale)
+          (_ :
+            IndependentSums.IsBigOWith (↑(Cutoff.cutoffSampleLaw M) : Measure (Cutoff.CutoffSample d))
+              (IndependentSums.gammaSigma (((1 : ℝ) - sigma) / (3 : ℝ))) waveBounded rarePerLaneScale)
+          (_ :
+            IndependentSums.IsBigOWith (↑(Cutoff.cutoffSampleLaw M) : Measure (Cutoff.CutoffSample d))
+              (IndependentSums.gammaSigma (((1 : ℝ) - sigma) / (3 : ℝ))) waveRare rarePerLaneScale)
+          (_ : ∀ (omega : Cutoff.CutoffSample d), (0 : ℝ) ≤ collarBase omega)
+          (_ : Measurable collarBase)
+          (_ : ∀ (omega : Cutoff.CutoffSample d), (0 : ℝ) ≤ collarBand omega)
+          (_ : Measurable collarBand)
+          (_ : ∀ (omega : Cutoff.CutoffSample d), (0 : ℝ) ≤ collarDeep omega)
+          (_ : Measurable collarDeep),
+          let rareLane : Fin (12 : ℕ) → Cutoff.CutoffSample d → ℝ :=
+            ![headRare, bandRare, deepRare, afterRare, waveBounded, waveRare, collarBase, collarHead, collarBand,
+              collarDeep, collarAfter, collarWave];
+          let Uexp : Cutoff.CutoffSample d → ℝ := fun (omega : Cutoff.CutoffSample d) =>
+            ∑ i : Fin (12 : ℕ), rareLane i omega;
+          (∀ (i : Fin (12 : ℕ)) (omega : Cutoff.CutoffSample d), (0 : ℝ) ≤ rareLane i omega) ∧
+            (∀ (omega : Cutoff.CutoffSample d), (0 : ℝ) ≤ Uexp omega) ∧
+              Measurable Uexp ∧
+                IndependentSums.IsBigOWith (↑(Cutoff.cutoffSampleLaw M) : Measure (Cutoff.CutoffSample d))
+                  (IndependentSums.gammaSigma (((1 : ℝ) - sigma) / (3 : ℝ))) Uexp
+                  (IndependentSums.gammaTriangleConst (((1 : ℝ) - sigma) / (3 : ℝ)) * ∑ _i : Fin (12 : ℕ), rarePerLaneScale)
+
+private abbrev superposedFluxUpperPerDescendant_comparisonBounds4_statement : Prop :=
+    ∀ {d : ℕ} (M : ABKModel d) (m : ℤ) (E : { E : ℝ // (1 : ℝ) ≤ E })
+      (hstate : Frozen.Section3.inductionState M (m - (1 : ℤ)) E) (sigma Clane : ℝ) (hsigma0 : (0 : ℝ) < sigma)
+      (hsigmaHalf : sigma ≤ (1 / 2 : ℝ)) (hmaxLane : max (Real.exp (Clane / sigma)) (Disorder.cstar M)⁻¹ ≤ (↑E : ℝ))
+      (hE2 : (↑E : ℝ) ≤ M.gamma ^ (-(1 / 5 : ℝ))) (hlanePos : (0 : ℝ) < Clane)
+      (hgoodWaveOutput : probeSharpWaveTailTunedOutputConst d ≤ Clane) (hprofileAuxLane : profileAuxiliaryConst d ≤ Clane)
+      (hdepthThresholdLane : collarBandMeanDepthThreshold d ≤ Clane) (k : ℕ) (R : TriadicCube d)
+      (hR : R ∈ descendantsAtScale (originCube d m) (m - (1 : ℤ) - (↑k : ℤ))) (hd : (2 : ℕ) ≤ d)
+      (headOrdinary headRare : Cutoff.CutoffSample d → ℝ) (headOrdinaryScale headRareScale : ℝ)
+      (hheadOrdinaryNonneg : ∀ (omega : Cutoff.CutoffSample d), (0 : ℝ) ≤ headOrdinary omega)
+      (hheadOrdinaryMeasurable : Measurable headOrdinary)
+      (hheadRareNonneg : ∀ (omega : Cutoff.CutoffSample d), (0 : ℝ) ≤ headRare omega)
+      (hheadRareMeasurable : Measurable headRare)
+      (hheadOrdinaryO :
+        IndependentSums.IsBigOWith (↑(Cutoff.cutoffSampleLaw M) : Measure (Cutoff.CutoffSample d))
+          (IndependentSums.gammaSigma (1 : ℝ)) headOrdinary headOrdinaryScale)
+      (hheadOrdinaryScaleLe : headOrdinaryScale ≤ upperSaturatedPerCubeAmplitude Clane (Disorder.cstar M) M.gamma k)
+      (hheadRareO :
+        IndependentSums.IsBigOWith (↑(Cutoff.cutoffSampleLaw M) : Measure (Cutoff.CutoffSample d))
+          (IndependentSums.gammaSigma (((1 : ℝ) - sigma) / (3 : ℝ))) headRare headRareScale)
+      (hheadRareScaleLe : headRareScale ≤ Real.exp (-(Clane⁻¹ * ((↑E : ℝ)⁻¹ ^ (2 : ℕ) * M.gamma⁻¹))) ^ (8 : ℕ))
+      (bandRare : Cutoff.CutoffSample d → ℝ) (bandRareScale : ℝ)
+      (hbandRareNonneg : ∀ (omega : Cutoff.CutoffSample d), (0 : ℝ) ≤ bandRare omega)
+      (hbandRareMeasurable : Measurable bandRare)
+      (hbandRareO :
+        IndependentSums.IsBigOWith (↑(Cutoff.cutoffSampleLaw M) : Measure (Cutoff.CutoffSample d))
+          (IndependentSums.gammaSigma (((1 : ℝ) - sigma) / (3 : ℝ))) bandRare bandRareScale)
+      (hbandRareScaleLe : bandRareScale ≤ Real.exp (-(Clane⁻¹ * ((↑E : ℝ)⁻¹ ^ (2 : ℕ) * M.gamma⁻¹))) ^ (8 : ℕ))
+      (deepOrdinary deepRare : Cutoff.CutoffSample d → ℝ) (deepOrdinaryScale deepRareScale : ℝ)
+      (hdeepOrdinaryNonneg : ∀ (omega : Cutoff.CutoffSample d), (0 : ℝ) ≤ deepOrdinary omega)
+      (hdeepOrdinaryMeasurable : Measurable deepOrdinary)
+      (hdeepRareNonneg : ∀ (omega : Cutoff.CutoffSample d), (0 : ℝ) ≤ deepRare omega)
+      (hdeepRareMeasurable : Measurable deepRare)
+      (hdeepOrdinaryO :
+        IndependentSums.IsBigOWith (↑(Cutoff.cutoffSampleLaw M) : Measure (Cutoff.CutoffSample d))
+          (IndependentSums.gammaSigma (1 : ℝ)) deepOrdinary deepOrdinaryScale)
+      (hdeepOrdinaryScaleLe : deepOrdinaryScale ≤ upperSaturatedPerCubeAmplitude Clane (Disorder.cstar M) M.gamma k)
+      (hdeepRareO :
+        IndependentSums.IsBigOWith (↑(Cutoff.cutoffSampleLaw M) : Measure (Cutoff.CutoffSample d))
+          (IndependentSums.gammaSigma (((1 : ℝ) - sigma) / (3 : ℝ))) deepRare deepRareScale)
+      (hdeepRareScaleLe : deepRareScale ≤ Real.exp (-(Clane⁻¹ * ((↑E : ℝ)⁻¹ ^ (2 : ℕ) * M.gamma⁻¹))) ^ (8 : ℕ))
+      (afterOrdinary afterRare : Cutoff.CutoffSample d → ℝ) (afterOrdinaryScale afterRareScale : ℝ)
+      (hafterOrdinaryNonneg : ∀ (omega : Cutoff.CutoffSample d), (0 : ℝ) ≤ afterOrdinary omega)
+      (hafterOrdinaryMeasurable : Measurable afterOrdinary)
+      (hafterRareNonneg : ∀ (omega : Cutoff.CutoffSample d), (0 : ℝ) ≤ afterRare omega)
+      (hafterRareMeasurable : Measurable afterRare)
+      (hafterOrdinaryO :
+        IndependentSums.IsBigOWith (↑(Cutoff.cutoffSampleLaw M) : Measure (Cutoff.CutoffSample d))
+          (IndependentSums.gammaSigma (1 : ℝ)) afterOrdinary afterOrdinaryScale)
+      (hafterOrdinaryScaleLe : afterOrdinaryScale ≤ upperSaturatedPerCubeAmplitude Clane (Disorder.cstar M) M.gamma k)
+      (hafterRareO :
+        IndependentSums.IsBigOWith (↑(Cutoff.cutoffSampleLaw M) : Measure (Cutoff.CutoffSample d))
+          (IndependentSums.gammaSigma (((1 : ℝ) - sigma) / (3 : ℝ))) afterRare afterRareScale)
+      (hafterRareScaleLe :
+        afterRareScale ≤
+          (3 : ℝ) ^ (M.gamma * (↑(k + (1 : ℕ)) : ℝ)) * Real.exp (-(Clane⁻¹ * ((↑E : ℝ)⁻¹ ^ (2 : ℕ) * M.gamma⁻¹))) ^ (8 : ℕ))
+      (hcollarBase :
+        have laneX : ℝ := (↑E : ℝ)⁻¹ ^ (2 : ℕ) * M.gamma⁻¹;
+        have laneEps : ℝ := Real.exp (-(Clane⁻¹ * laneX));
+        IndependentSums.IsBigOWith (↑(Cutoff.cutoffSampleLaw M) : Measure (Cutoff.CutoffSample d))
+          (IndependentSums.gammaSigma (((1 : ℝ) - sigma) / (3 : ℝ)))
+          (probeSharpFramedCollarBaseTraceLane M R (↑E : ℝ) (collarBandMeanDepth M (↑E : ℝ)))
+          ((3 : ℝ) ^ (M.gamma * ((↑k : ℝ) + (1 : ℝ))) *
+            Real.exp (-(Clane⁻¹ * ((↑E : ℝ)⁻¹ ^ (2 : ℕ) * M.gamma⁻¹))) ^ (8 : ℕ)))
+      (hcollarHeadNonneg :
+        ∀ (omega : Cutoff.CutoffSample d),
+          (0 : ℝ) ≤
+            (fun (omega : Cutoff.CutoffSample d) =>
+                ∑ j : Fin d,
+                  ∑' (n : ℕ),
+                    Multiscale.probeSharpFramedCollarWavePart M R.scale (↑E : ℝ) bfaProfileB
+                      (collarBandMeanDepth M (↑E : ℝ)) n (m - (1 : ℤ)) (basisVec j) (Affine.superposedGradConst d)
+                      (fun (eta : Cutoff.CutoffSample d) =>
+                        Multiscale.waveHeadTerm M R.scale (↑E : ℝ) bfaProfileB
+                            (probeSharpLayerAnchor R.scale bfaProfileB (collarBandMeanDepth M (↑E : ℝ)) n) eta ^
+                          (2 : ℕ))
+                      (Cutoff.translateCutoffSample (triadicCubeShift R) omega))
+              omega)
+      (hcollarHeadMeasurable :
+        Measurable fun (omega : Cutoff.CutoffSample d) =>
+          ∑ j : Fin d,
+            ∑' (n : ℕ),
+              Multiscale.probeSharpFramedCollarWavePart M R.scale (↑E : ℝ) bfaProfileB (collarBandMeanDepth M (↑E : ℝ)) n
+                (m - (1 : ℤ)) (basisVec j) (Affine.superposedGradConst d)
+                (fun (eta : Cutoff.CutoffSample d) =>
+                  Multiscale.waveHeadTerm M R.scale (↑E : ℝ) bfaProfileB
+                      (probeSharpLayerAnchor R.scale bfaProfileB (collarBandMeanDepth M (↑E : ℝ)) n) eta ^
+                    (2 : ℕ))
+                (Cutoff.translateCutoffSample (triadicCubeShift R) omega))
+      (hcollarHead :
+        IndependentSums.IsBigOWith (↑(Cutoff.cutoffSampleLaw M) : Measure (Cutoff.CutoffSample d))
+          (IndependentSums.gammaSigma (((1 : ℝ) - sigma) / (3 : ℝ)))
+          (fun (omega : Cutoff.CutoffSample d) =>
+            ∑ j : Fin d,
+              ∑' (n : ℕ),
+                Multiscale.probeSharpFramedCollarWavePart M R.scale (↑E : ℝ) bfaProfileB (collarBandMeanDepth M (↑E : ℝ)) n
+                  (m - (1 : ℤ)) (basisVec j) (Affine.superposedGradConst d)
+                  (fun (eta : Cutoff.CutoffSample d) =>
+                    Multiscale.waveHeadTerm M R.scale (↑E : ℝ) bfaProfileB
+                        (probeSharpLayerAnchor R.scale bfaProfileB (collarBandMeanDepth M (↑E : ℝ)) n) eta ^
+                      (2 : ℕ))
+                  (Cutoff.translateCutoffSample (triadicCubeShift R) omega))
+          ((3 : ℝ) ^ (M.gamma * ((↑k : ℝ) + (1 : ℝ))) *
+            Real.exp (-(Clane⁻¹ * ((↑E : ℝ)⁻¹ ^ (2 : ℕ) * M.gamma⁻¹))) ^ (8 : ℕ))),
+      let collarBase : Cutoff.CutoffSample d → ℝ :=
+        probeSharpFramedCollarBaseTraceLane M R (↑E : ℝ) (collarBandMeanDepth M (↑E : ℝ));
+      let collarHead : Cutoff.CutoffSample d → ℝ := fun (omega : Cutoff.CutoffSample d) =>
+        ∑ j : Fin d,
+          ∑' (n : ℕ),
+            Multiscale.probeSharpFramedCollarWavePart M R.scale (↑E : ℝ) bfaProfileB (collarBandMeanDepth M (↑E : ℝ)) n
+              (m - (1 : ℤ)) (basisVec j) (Affine.superposedGradConst d)
+              (fun (eta : Cutoff.CutoffSample d) =>
+                Multiscale.waveHeadTerm M R.scale (↑E : ℝ) bfaProfileB
+                    (probeSharpLayerAnchor R.scale bfaProfileB (collarBandMeanDepth M (↑E : ℝ)) n) eta ^
+                  (2 : ℕ))
+              (Cutoff.translateCutoffSample (triadicCubeShift R) omega);
+      let collarBand : Cutoff.CutoffSample d → ℝ := probeSharpFramedCollarBandMeanTunedTraceLane M m R (↑E : ℝ);
+      let collarDeep : Cutoff.CutoffSample d → ℝ := probeSharpFramedCollarDeepTailTraceLane M m R (↑E : ℝ);
+      let collarAfter : Cutoff.CutoffSample d → ℝ := probeSharpFramedCollarAfterBandTraceLane M m R (↑E : ℝ);
+      ∀
+        (hcollarBand :
+          have eps : ℝ := Real.exp (-(Clane⁻¹ * ((↑E : ℝ)⁻¹ ^ (2 : ℕ) * M.gamma⁻¹)));
+          IndependentSums.IsBigOWith (↑(Cutoff.cutoffSampleLaw M) : Measure (Cutoff.CutoffSample d))
+            (IndependentSums.gammaSigma (upperProfileTargetSigma sigma))
+            (probeSharpFramedCollarBandMeanTunedTraceLane M m R (↑E : ℝ))
+            ((3 : ℝ) ^ (M.gamma * ((↑k : ℝ) + (1 : ℝ))) * eps ^ (8 : ℕ)))
+        (hcollarDeep :
+          IndependentSums.IsBigOWith (↑(Cutoff.cutoffSampleLaw M) : Measure (Cutoff.CutoffSample d))
+            (IndependentSums.gammaSigma (((1 : ℝ) - sigma) / (3 : ℝ)))
+            (probeSharpFramedCollarDeepTailTraceLane M m R (↑E : ℝ))
+            ((3 : ℝ) ^ (M.gamma * ((↑k : ℝ) + (1 : ℝ))) *
+              Real.exp (-(Clane⁻¹ * ((↑E : ℝ)⁻¹ ^ (2 : ℕ) * M.gamma⁻¹))) ^ (8 : ℕ)))
+        (hcollarAfterNonneg :
+          ∀ (omega : Cutoff.CutoffSample d), (0 : ℝ) ≤ probeSharpFramedCollarAfterBandTraceLane M m R (↑E : ℝ) omega)
+        (hcollarAfterMeasurable : Measurable (probeSharpFramedCollarAfterBandTraceLane M m R (↑E : ℝ)))
+        (hcollarAfter :
+          IndependentSums.IsBigOWith (↑(Cutoff.cutoffSampleLaw M) : Measure (Cutoff.CutoffSample d))
+            (IndependentSums.gammaSigma (upperProfileTargetSigma sigma))
+            (probeSharpFramedCollarAfterBandTraceLane M m R (↑E : ℝ))
+            ((3 : ℝ) ^ (M.gamma * ((↑k : ℝ) + (1 : ℝ))) *
+              Real.exp (-(Clane⁻¹ * ((↑E : ℝ)⁻¹ ^ (2 : ℕ) * M.gamma⁻¹))) ^ (8 : ℕ))),
+        let collarWave : Cutoff.CutoffSample d → ℝ := fun (omega : Cutoff.CutoffSample d) =>
+          ∑ j : Fin d,
+            ∑' (n : ℕ),
+              Multiscale.probeSharpFramedCollarWavePart M R.scale (↑E : ℝ) bfaProfileB (collarBandMeanDepth M (↑E : ℝ)) n
+                (m - (1 : ℤ)) (basisVec j) (Affine.superposedGradConst d)
+                (fun (eta : Cutoff.CutoffSample d) =>
+                  Multiscale.waveTailTerm M R.scale (↑E : ℝ) bfaProfileB R.scale
+                      (probeSharpLayerAnchor R.scale bfaProfileB (collarBandMeanDepth M (↑E : ℝ)) n) eta ^
+                    (2 : ℕ))
+                (Cutoff.translateCutoffSample (triadicCubeShift R) omega);
+        ∀
+          (hcollarWaveRaw :
+            (∀ (omega : Cutoff.CutoffSample d), (0 : ℝ) ≤ collarWave omega) ∧
+              Measurable collarWave ∧
+                (∀ᵐ (omega : Cutoff.CutoffSample d) ∂(↑(Cutoff.cutoffSampleLaw M) : Measure (Cutoff.CutoffSample d)),
+                    ENNReal.ofReal (collarWave omega) =
+                      ∑ j : Fin d,
+                        ∑' (n : ℕ),
+                          ENNReal.ofReal
+                            (Multiscale.probeSharpFramedCollarWavePart M R.scale (↑E : ℝ) bfaProfileB
+                              (collarBandMeanDepth M (↑E : ℝ)) n (m - (1 : ℤ)) (basisVec j) (Affine.superposedGradConst d)
+                              (fun (eta : Cutoff.CutoffSample d) =>
+                                Multiscale.waveTailTerm M R.scale (↑E : ℝ) bfaProfileB R.scale
+                                    (probeSharpLayerAnchor R.scale bfaProfileB (collarBandMeanDepth M (↑E : ℝ)) n) eta ^
+                                  (2 : ℕ))
+                              (Cutoff.translateCutoffSample (triadicCubeShift R) omega))) ∧
+                  IndependentSums.IsBigOWith (↑(Cutoff.cutoffSampleLaw M) : Measure (Cutoff.CutoffSample d))
+                    (IndependentSums.gammaSigma (((1 : ℝ) - sigma) / (3 : ℝ))) collarWave
+                    ((3 : ℝ) ^ (M.gamma * ((↑k : ℝ) + (1 : ℝ))) *
+                      Real.exp (-(Clane⁻¹ * ((↑E : ℝ)⁻¹ ^ (2 : ℕ) * M.gamma⁻¹))) ^ (8 : ℕ))),
+          ∃ (_ :
+            ∀ᵐ (omega : Cutoff.CutoffSample d) ∂(↑(Cutoff.cutoffSampleLaw M) : Measure (Cutoff.CutoffSample d)),
+              ENNReal.ofReal (collarWave omega) =
+                ∑ j : Fin d,
+                  ∑' (n : ℕ),
+                    ENNReal.ofReal
+                      (Multiscale.probeSharpFramedCollarWavePart M R.scale (↑E : ℝ) bfaProfileB
+                        (collarBandMeanDepth M (↑E : ℝ)) n (m - (1 : ℤ)) (basisVec j) (Affine.superposedGradConst d)
+                        (fun (eta : Cutoff.CutoffSample d) =>
+                          Multiscale.waveTailTerm M R.scale (↑E : ℝ) bfaProfileB R.scale
+                              (probeSharpLayerAnchor R.scale bfaProfileB (collarBandMeanDepth M (↑E : ℝ)) n) eta ^
+                            (2 : ℕ))
+                        (Cutoff.translateCutoffSample (triadicCubeShift R) omega)))
+            (waveBounded : Cutoff.CutoffSample d → ℝ) (waveRare : Cutoff.CutoffSample d → ℝ) (_ :
+            ∀ᵐ (omega : Cutoff.CutoffSample d) ∂(↑(Cutoff.cutoffSampleLaw M) : Measure (Cutoff.CutoffSample d)),
+              ∑ j : Fin d,
+                  ∑' (n : ℕ),
+                    ENNReal.ofReal
+                      (Multiscale.probeSharpFramedGoodWavePart M R.scale (↑E : ℝ) bfaProfileB
+                        (collarBandMeanDepth M (↑E : ℝ)) n (m - (1 : ℤ)) (basisVec j)
+                        (fun (eta : Cutoff.CutoffSample d) =>
+                          Multiscale.waveTailTerm M R.scale (↑E : ℝ) bfaProfileB R.scale
+                              (probeSharpLayerAnchor R.scale bfaProfileB (collarBandMeanDepth M (↑E : ℝ)) n) eta ^
+                            (2 : ℕ))
+                        (Cutoff.translateCutoffSample (triadicCubeShift R) omega)) ≤
+                ENNReal.ofReal (waveBounded omega) + ENNReal.ofReal (waveRare omega))
+            (_ :
+            ∀ (i : Fin (3 : ℕ)) (omega : Cutoff.CutoffSample d),
+              (0 : ℝ) ≤ ![headOrdinary, deepOrdinary, afterOrdinary] i omega)
+            (_ :
+            ∀ (omega : Cutoff.CutoffSample d),
+              (0 : ℝ) ≤
+                (fun (omega : Cutoff.CutoffSample d) =>
+                    ∑ i : Fin (3 : ℕ), ![headOrdinary, deepOrdinary, afterOrdinary] i omega)
+                  omega)
+            (_ :
+            Measurable fun (omega : Cutoff.CutoffSample d) =>
+              ∑ i : Fin (3 : ℕ), ![headOrdinary, deepOrdinary, afterOrdinary] i omega)
+            (_ :
+            IndependentSums.IsBigOWith (↑(Cutoff.cutoffSampleLaw M) : Measure (Cutoff.CutoffSample d))
+              (IndependentSums.gammaSigma (1 : ℝ))
+              (fun (omega : Cutoff.CutoffSample d) =>
+                ∑ i : Fin (3 : ℕ), ![headOrdinary, deepOrdinary, afterOrdinary] i omega)
+              (upperSaturatedPerCubeAmplitude (((12 : ℝ) + (12 : ℝ) * IndependentSums.gammaTriangleConst (1 : ℝ)) * Clane)
+                (Disorder.cstar M) M.gamma k))
+            (_ :
+            ∀ (i : Fin (12 : ℕ)) (omega : Cutoff.CutoffSample d),
+              (0 : ℝ) ≤
+                ![headRare, bandRare, deepRare, afterRare, waveBounded, waveRare,
+                    probeSharpFramedCollarBaseTraceLane M R (↑E : ℝ) (collarBandMeanDepth M (↑E : ℝ)),
+                    fun (omega : Cutoff.CutoffSample d) =>
+                    ∑ j : Fin d,
+                      ∑' (n : ℕ),
+                        Multiscale.probeSharpFramedCollarWavePart M R.scale (↑E : ℝ) bfaProfileB
+                          (collarBandMeanDepth M (↑E : ℝ)) n (m - (1 : ℤ)) (basisVec j) (Affine.superposedGradConst d)
+                          (fun (eta : Cutoff.CutoffSample d) =>
+                            Multiscale.waveHeadTerm M R.scale (↑E : ℝ) bfaProfileB
+                                (probeSharpLayerAnchor R.scale bfaProfileB (collarBandMeanDepth M (↑E : ℝ)) n) eta ^
+                              (2 : ℕ))
+                          (Cutoff.translateCutoffSample (triadicCubeShift R) omega),
+                    probeSharpFramedCollarBandMeanTunedTraceLane M m R (↑E : ℝ),
+                    probeSharpFramedCollarDeepTailTraceLane M m R (↑E : ℝ),
+                    probeSharpFramedCollarAfterBandTraceLane M m R (↑E : ℝ), fun (omega : Cutoff.CutoffSample d) =>
+                    ∑ j : Fin d,
+                      ∑' (n : ℕ),
+                        Multiscale.probeSharpFramedCollarWavePart M R.scale (↑E : ℝ) bfaProfileB
+                          (collarBandMeanDepth M (↑E : ℝ)) n (m - (1 : ℤ)) (basisVec j) (Affine.superposedGradConst d)
+                          (fun (eta : Cutoff.CutoffSample d) =>
+                            Multiscale.waveTailTerm M R.scale (↑E : ℝ) bfaProfileB R.scale
+                                (probeSharpLayerAnchor R.scale bfaProfileB (collarBandMeanDepth M (↑E : ℝ)) n) eta ^
+                              (2 : ℕ))
+                          (Cutoff.translateCutoffSample (triadicCubeShift R) omega)]
+                  i omega)
+            (_ :
+            ∀ (omega : Cutoff.CutoffSample d),
+              (0 : ℝ) ≤
+                (fun (omega : Cutoff.CutoffSample d) =>
+                    ∑ i : Fin (12 : ℕ),
+                      ![headRare, bandRare, deepRare, afterRare, waveBounded, waveRare,
+                          probeSharpFramedCollarBaseTraceLane M R (↑E : ℝ) (collarBandMeanDepth M (↑E : ℝ)),
+                          fun (omega : Cutoff.CutoffSample d) =>
+                          ∑ j : Fin d,
+                            ∑' (n : ℕ),
+                              Multiscale.probeSharpFramedCollarWavePart M R.scale (↑E : ℝ) bfaProfileB
+                                (collarBandMeanDepth M (↑E : ℝ)) n (m - (1 : ℤ)) (basisVec j) (Affine.superposedGradConst d)
+                                (fun (eta : Cutoff.CutoffSample d) =>
+                                  Multiscale.waveHeadTerm M R.scale (↑E : ℝ) bfaProfileB
+                                      (probeSharpLayerAnchor R.scale bfaProfileB (collarBandMeanDepth M (↑E : ℝ)) n) eta ^
+                                    (2 : ℕ))
+                                (Cutoff.translateCutoffSample (triadicCubeShift R) omega),
+                          probeSharpFramedCollarBandMeanTunedTraceLane M m R (↑E : ℝ),
+                          probeSharpFramedCollarDeepTailTraceLane M m R (↑E : ℝ),
+                          probeSharpFramedCollarAfterBandTraceLane M m R (↑E : ℝ), fun (omega : Cutoff.CutoffSample d) =>
+                          ∑ j : Fin d,
+                            ∑' (n : ℕ),
+                              Multiscale.probeSharpFramedCollarWavePart M R.scale (↑E : ℝ) bfaProfileB
+                                (collarBandMeanDepth M (↑E : ℝ)) n (m - (1 : ℤ)) (basisVec j) (Affine.superposedGradConst d)
+                                (fun (eta : Cutoff.CutoffSample d) =>
+                                  Multiscale.waveTailTerm M R.scale (↑E : ℝ) bfaProfileB R.scale
+                                      (probeSharpLayerAnchor R.scale bfaProfileB (collarBandMeanDepth M (↑E : ℝ)) n) eta ^
+                                    (2 : ℕ))
+                                (Cutoff.translateCutoffSample (triadicCubeShift R) omega)]
+                        i omega)
+                  omega)
+            (_ :
+            Measurable fun (omega : Cutoff.CutoffSample d) =>
+              ∑ i : Fin (12 : ℕ),
+                ![headRare, bandRare, deepRare, afterRare, waveBounded, waveRare,
+                    probeSharpFramedCollarBaseTraceLane M R (↑E : ℝ) (collarBandMeanDepth M (↑E : ℝ)),
+                    fun (omega : Cutoff.CutoffSample d) =>
+                    ∑ j : Fin d,
+                      ∑' (n : ℕ),
+                        Multiscale.probeSharpFramedCollarWavePart M R.scale (↑E : ℝ) bfaProfileB
+                          (collarBandMeanDepth M (↑E : ℝ)) n (m - (1 : ℤ)) (basisVec j) (Affine.superposedGradConst d)
+                          (fun (eta : Cutoff.CutoffSample d) =>
+                            Multiscale.waveHeadTerm M R.scale (↑E : ℝ) bfaProfileB
+                                (probeSharpLayerAnchor R.scale bfaProfileB (collarBandMeanDepth M (↑E : ℝ)) n) eta ^
+                              (2 : ℕ))
+                          (Cutoff.translateCutoffSample (triadicCubeShift R) omega),
+                    probeSharpFramedCollarBandMeanTunedTraceLane M m R (↑E : ℝ),
+                    probeSharpFramedCollarDeepTailTraceLane M m R (↑E : ℝ),
+                    probeSharpFramedCollarAfterBandTraceLane M m R (↑E : ℝ), fun (omega : Cutoff.CutoffSample d) =>
+                    ∑ j : Fin d,
+                      ∑' (n : ℕ),
+                        Multiscale.probeSharpFramedCollarWavePart M R.scale (↑E : ℝ) bfaProfileB
+                          (collarBandMeanDepth M (↑E : ℝ)) n (m - (1 : ℤ)) (basisVec j) (Affine.superposedGradConst d)
+                          (fun (eta : Cutoff.CutoffSample d) =>
+                            Multiscale.waveTailTerm M R.scale (↑E : ℝ) bfaProfileB R.scale
+                                (probeSharpLayerAnchor R.scale bfaProfileB (collarBandMeanDepth M (↑E : ℝ)) n) eta ^
+                              (2 : ℕ))
+                          (Cutoff.translateCutoffSample (triadicCubeShift R) omega)]
+                  i omega)
+            (_ :
+            IndependentSums.IsBigOWith (↑(Cutoff.cutoffSampleLaw M) : Measure (Cutoff.CutoffSample d))
+              (IndependentSums.gammaSigma (((1 : ℝ) - sigma) / (3 : ℝ)))
+              (fun (omega : Cutoff.CutoffSample d) =>
+                ∑ i : Fin (12 : ℕ),
+                  ![headRare, bandRare, deepRare, afterRare, waveBounded, waveRare,
+                      probeSharpFramedCollarBaseTraceLane M R (↑E : ℝ) (collarBandMeanDepth M (↑E : ℝ)),
+                      fun (omega : Cutoff.CutoffSample d) =>
+                      ∑ j : Fin d,
+                        ∑' (n : ℕ),
+                          Multiscale.probeSharpFramedCollarWavePart M R.scale (↑E : ℝ) bfaProfileB
+                            (collarBandMeanDepth M (↑E : ℝ)) n (m - (1 : ℤ)) (basisVec j) (Affine.superposedGradConst d)
+                            (fun (eta : Cutoff.CutoffSample d) =>
+                              Multiscale.waveHeadTerm M R.scale (↑E : ℝ) bfaProfileB
+                                  (probeSharpLayerAnchor R.scale bfaProfileB (collarBandMeanDepth M (↑E : ℝ)) n) eta ^
+                                (2 : ℕ))
+                            (Cutoff.translateCutoffSample (triadicCubeShift R) omega),
+                      probeSharpFramedCollarBandMeanTunedTraceLane M m R (↑E : ℝ),
+                      probeSharpFramedCollarDeepTailTraceLane M m R (↑E : ℝ),
+                      probeSharpFramedCollarAfterBandTraceLane M m R (↑E : ℝ), fun (omega : Cutoff.CutoffSample d) =>
+                      ∑ j : Fin d,
+                        ∑' (n : ℕ),
+                          Multiscale.probeSharpFramedCollarWavePart M R.scale (↑E : ℝ) bfaProfileB
+                            (collarBandMeanDepth M (↑E : ℝ)) n (m - (1 : ℤ)) (basisVec j) (Affine.superposedGradConst d)
+                            (fun (eta : Cutoff.CutoffSample d) =>
+                              Multiscale.waveTailTerm M R.scale (↑E : ℝ) bfaProfileB R.scale
+                                  (probeSharpLayerAnchor R.scale bfaProfileB (collarBandMeanDepth M (↑E : ℝ)) n) eta ^
+                                (2 : ℕ))
+                            (Cutoff.translateCutoffSample (triadicCubeShift R) omega)]
+                    i omega)
+              ((12 : ℝ) * upperAfterBandRareTriangleConst *
+                ((3 : ℝ) ^ (M.gamma * ((↑k : ℝ) + (1 : ℝ))) *
+                  Real.exp (-(Clane⁻¹ * ((↑E : ℝ)⁻¹ ^ (2 : ℕ) * M.gamma⁻¹))) ^ (8 : ℕ))))
+            (_ :
+            ∑ j : Fin d, ∑' (n : ℕ), ENNReal.ofReal (Multiscale.probeSharpFramedGoodBaseTerm d n (basisVec j)) =
+              ENNReal.ofReal (Multiscale.probeSharpGoodBaseConst d))
+            (_ :
+            ∀ (omega : Cutoff.CutoffSample d),
+              ∑ j : Fin d,
+                  ∑' (n : ℕ),
+                    ENNReal.ofReal
+                      (Multiscale.probeSharpFramedCollarBaseTerm M R.scale (↑E : ℝ) bfaProfileB
+                        (collarBandMeanDepth M (↑E : ℝ)) n (basisVec j) (Affine.superposedGradConst d)
+                        (Cutoff.translateCutoffSample (triadicCubeShift R) omega)) =
+                ENNReal.ofReal (probeSharpFramedCollarBaseTraceLane M R (↑E : ℝ) (collarBandMeanDepth M (↑E : ℝ)) omega))
+            (_ :
+            ∀ (omega : Cutoff.CutoffSample d),
+              probeSharpFramedCollarBandMeanTunedTraceENNRealLane M m R (↑E : ℝ) omega =
+                ENNReal.ofReal (probeSharpFramedCollarBandMeanTunedTraceLane M m R (↑E : ℝ) omega))
+            (_ :
+            ∀ᵐ (omega : Cutoff.CutoffSample d) ∂(↑(Cutoff.cutoffSampleLaw M) : Measure (Cutoff.CutoffSample d)),
+              ENNReal.ofReal (probeSharpFramedCollarDeepTailTraceLane M m R (↑E : ℝ) omega) =
+                ∑ j : Fin d, ∑' (n : ℕ), ENNReal.ofReal (probeSharpFramedCollarDeepTailLayer M m R (↑E : ℝ) j n omega))
+            (_ :
+            ∀ (omega : Cutoff.CutoffSample d),
+              ∑ i : Fin d,
+                  ∑' (a : ℕ),
+                    ENNReal.ofReal
+                      (Multiscale.probeSharpFramedMeanLayerEnvelope M R.scale (↑E : ℝ) bfaProfileB
+                        (collarBandMeanDepth M (↑E : ℝ)) a (m - (1 : ℤ)) m
+                        (Cutoff.translateCutoffSample (triadicCubeShift R) omega) (basisVec i)
+                        (Affine.superposedGradConst d)) ≤
+                ∑ i : Fin d,
+                  ∑' (a : ℕ),
+                    (ENNReal.ofReal (Multiscale.probeSharpFramedGoodBaseTerm d a (basisVec i)) +
+                                          ENNReal.ofReal
+                                            (Multiscale.probeSharpFramedGoodWavePart M R.scale (↑E : ℝ) bfaProfileB
+                                              (collarBandMeanDepth M (↑E : ℝ)) a (m - (1 : ℤ)) (basisVec i)
+                                              (fun (eta : Cutoff.CutoffSample d) =>
+                                                Multiscale.waveHeadTerm M R.scale (↑E : ℝ) bfaProfileB
+                                                    (probeSharpLayerAnchor R.scale bfaProfileB
+                                                      (collarBandMeanDepth M (↑E : ℝ)) a)
+                                                    eta ^
+                                                  (2 : ℕ))
+                                              (Cutoff.translateCutoffSample (triadicCubeShift R) omega)) +
+                                        ENNReal.ofReal
+                                          (Multiscale.probeSharpFramedGoodWavePart M R.scale (↑E : ℝ) bfaProfileB
+                                            (collarBandMeanDepth M (↑E : ℝ)) a (m - (1 : ℤ)) (basisVec i)
+                                            (fun (_eta : Cutoff.CutoffSample d) =>
+                                              waveBandMean (probeDeepBandMeanAmplitude d) M.gamma
+                                                  (collarBandMeanDepth M (↑E : ℝ)) ^
+                                                (2 : ℕ))
+                                            (Cutoff.translateCutoffSample (triadicCubeShift R) omega)) +
+                                      ENNReal.ofReal
+                                        (Multiscale.probeSharpFramedGoodWavePart M R.scale (↑E : ℝ) bfaProfileB
+                                          (collarBandMeanDepth M (↑E : ℝ)) a (m - (1 : ℤ)) (basisVec i)
+                                          (fun (eta : Cutoff.CutoffSample d) =>
+                                            probeDeepBandGaugedTail M (originCube d R.scale)
+                                                (probeSharpLayerAnchor R.scale bfaProfileB (collarBandMeanDepth M (↑E : ℝ))
+                                                  a)
+                                                (collarBandMeanDepth M (↑E : ℝ)) (collarBandMeanDepth M (↑E : ℝ)) eta ^
+                                              (2 : ℕ))
+                                          (Cutoff.translateCutoffSample (triadicCubeShift R) omega)) +
+                                    ENNReal.ofReal
+                                      (Multiscale.probeSharpFramedGoodWavePart M R.scale (↑E : ℝ) bfaProfileB
+                                        (collarBandMeanDepth M (↑E : ℝ)) a (m - (1 : ℤ)) (basisVec i)
+                                        (fun (eta : Cutoff.CutoffSample d) =>
+                                          probeSharpAfterBandTerm M R.scale
+                                              (probeSharpLayerAnchor R.scale bfaProfileB (collarBandMeanDepth M (↑E : ℝ)) a)
+                                              (collarBandMeanDepth M (↑E : ℝ)) m eta ^
+                                            (2 : ℕ))
+                                        (Cutoff.translateCutoffSample (triadicCubeShift R) omega)) +
+                                  ENNReal.ofReal
+                                    (Multiscale.probeSharpFramedGoodWavePart M R.scale (↑E : ℝ) bfaProfileB
+                                      (collarBandMeanDepth M (↑E : ℝ)) a (m - (1 : ℤ)) (basisVec i)
+                                      (fun (eta : Cutoff.CutoffSample d) =>
+                                        Multiscale.waveTailTerm M R.scale (↑E : ℝ) bfaProfileB R.scale
+                                            (probeSharpLayerAnchor R.scale bfaProfileB (collarBandMeanDepth M (↑E : ℝ)) a)
+                                            eta ^
+                                          (2 : ℕ))
+                                      (Cutoff.translateCutoffSample (triadicCubeShift R) omega)) +
+                                ENNReal.ofReal
+                                  (Multiscale.probeSharpFramedCollarBaseTerm M R.scale (↑E : ℝ) bfaProfileB
+                                    (collarBandMeanDepth M (↑E : ℝ)) a (basisVec i) (Affine.superposedGradConst d)
+                                    (Cutoff.translateCutoffSample (triadicCubeShift R) omega)) +
+                              ENNReal.ofReal
+                                (Multiscale.probeSharpFramedCollarWavePart M R.scale (↑E : ℝ) bfaProfileB
+                                  (collarBandMeanDepth M (↑E : ℝ)) a (m - (1 : ℤ)) (basisVec i)
+                                  (Affine.superposedGradConst d)
+                                  (fun (eta : Cutoff.CutoffSample d) =>
+                                    Multiscale.waveHeadTerm M R.scale (↑E : ℝ) bfaProfileB
+                                        (probeSharpLayerAnchor R.scale bfaProfileB (collarBandMeanDepth M (↑E : ℝ)) a) eta ^
+                                      (2 : ℕ))
+                                  (Cutoff.translateCutoffSample (triadicCubeShift R) omega)) +
+                            ENNReal.ofReal
+                              (Multiscale.probeSharpFramedCollarWavePart M R.scale (↑E : ℝ) bfaProfileB
+                                (collarBandMeanDepth M (↑E : ℝ)) a (m - (1 : ℤ)) (basisVec i) (Affine.superposedGradConst d)
+                                (fun (_eta : Cutoff.CutoffSample d) =>
+                                  waveBandMean (probeDeepBandMeanAmplitude d) M.gamma (collarBandMeanDepth M (↑E : ℝ)) ^
+                                    (2 : ℕ))
+                                (Cutoff.translateCutoffSample (triadicCubeShift R) omega)) +
+                          ENNReal.ofReal
+                            (Multiscale.probeSharpFramedCollarWavePart M R.scale (↑E : ℝ) bfaProfileB
+                              (collarBandMeanDepth M (↑E : ℝ)) a (m - (1 : ℤ)) (basisVec i) (Affine.superposedGradConst d)
+                              (fun (eta : Cutoff.CutoffSample d) =>
+                                probeDeepBandGaugedTail M (originCube d R.scale)
+                                    (probeSharpLayerAnchor R.scale bfaProfileB (collarBandMeanDepth M (↑E : ℝ)) a)
+                                    (collarBandMeanDepth M (↑E : ℝ)) (collarBandMeanDepth M (↑E : ℝ)) eta ^
+                                  (2 : ℕ))
+                              (Cutoff.translateCutoffSample (triadicCubeShift R) omega)) +
+                        ENNReal.ofReal
+                          (Multiscale.probeSharpFramedCollarWavePart M R.scale (↑E : ℝ) bfaProfileB
+                            (collarBandMeanDepth M (↑E : ℝ)) a (m - (1 : ℤ)) (basisVec i) (Affine.superposedGradConst d)
+                            (fun (eta : Cutoff.CutoffSample d) =>
+                              probeSharpAfterBandTerm M R.scale
+                                  (probeSharpLayerAnchor R.scale bfaProfileB (collarBandMeanDepth M (↑E : ℝ)) a)
+                                  (collarBandMeanDepth M (↑E : ℝ)) m eta ^
+                                (2 : ℕ))
+                            (Cutoff.translateCutoffSample (triadicCubeShift R) omega)) +
+                      ENNReal.ofReal
+                        (Multiscale.probeSharpFramedCollarWavePart M R.scale (↑E : ℝ) bfaProfileB
+                          (collarBandMeanDepth M (↑E : ℝ)) a (m - (1 : ℤ)) (basisVec i) (Affine.superposedGradConst d)
+                          (fun (eta : Cutoff.CutoffSample d) =>
+                            Multiscale.waveTailTerm M R.scale (↑E : ℝ) bfaProfileB R.scale
+                                (probeSharpLayerAnchor R.scale bfaProfileB (collarBandMeanDepth M (↑E : ℝ)) a) eta ^
+                              (2 : ℕ))
+                          (Cutoff.translateCutoffSample (triadicCubeShift R) omega)))),
+            True
+
+private abbrev superposedFluxUpperPerDescendant_comparisonBounds5_statement : Prop :=
+    ∀ {d : ℕ} (M : ABKModel d) (m : ℤ) (E : { E : ℝ // (1 : ℝ) ≤ E }) (Clane : ℝ),
+      let Cblock : ℝ := ((12 : ℝ) + (12 : ℝ) * IndependentSums.gammaTriangleConst (1 : ℝ)) * Clane;
+      ∀ (k : ℕ) (R : TriadicCube d) (hR : R ∈ descendantsAtScale (originCube d m) (m - (1 : ℤ) - (↑k : ℤ)))
+        (hd : (2 : ℕ) ≤ d)
+        (hpotential :
+          ∀ (k : ℕ),
+            ∀ R ∈ descendantsAtScale (originCube d m) (m - (1 : ℤ) - (↑k : ℤ)),
+              ∀ᵐ (omega : Cutoff.CutoffSample d) ∂(↑(Cutoff.cutoffSampleLaw M) : Measure (Cutoff.CutoffSample d)),
+                ENNReal.ofReal (cutoffBBlockFamily M m (↑(Annealed.sigmaBar M (m - (1 : ℤ))) : ℝ)⁻¹ R omega) ≤
+                  ∑ j : Fin d,
+                    ∑' (n : ℕ),
+                      ENNReal.ofReal
+                        (Multiscale.probeSharpFramedMeanLayerEnvelope M R.scale (↑E : ℝ) bfaProfileB
+                          (collarBandMeanDepth M (↑E : ℝ)) n (m - (1 : ℤ)) m
+                          (Cutoff.translateCutoffSample (triadicCubeShift R) omega) (basisVec j)
+                          (Affine.superposedGradConst d)))
+        (headOrdinary headRare : Cutoff.CutoffSample d → ℝ)
+        (hheadENNRealDom :
+          ∀ (omega : Cutoff.CutoffSample d),
+            ∑ j : Fin d,
+                ∑' (n : ℕ),
+                  ENNReal.ofReal
+                    (Multiscale.probeSharpFramedGoodWavePart M R.scale (↑E : ℝ) bfaProfileB (collarBandMeanDepth M (↑E : ℝ))
+                      n (m - (1 : ℤ)) (basisVec j)
+                      (fun (eta : Cutoff.CutoffSample d) =>
+                        Multiscale.waveHeadTerm M R.scale (↑E : ℝ) bfaProfileB
+                            (probeSharpLayerAnchor R.scale bfaProfileB (collarBandMeanDepth M (↑E : ℝ)) n) eta ^
+                          (2 : ℕ))
+                      (Cutoff.translateCutoffSample (triadicCubeShift R) omega)) ≤
+              ENNReal.ofReal (headOrdinary omega) + ENNReal.ofReal (headRare omega))
+        (bandOrdinary bandRare : Cutoff.CutoffSample d → ℝ)
+        (hbandENNRealDom :
+          ∀ (omega : Cutoff.CutoffSample d),
+            ∑ j : Fin d,
+                ∑' (n : ℕ),
+                  ENNReal.ofReal
+                    (Multiscale.probeSharpFramedGoodWavePart M R.scale (↑E : ℝ) bfaProfileB (collarBandMeanDepth M (↑E : ℝ))
+                      n (m - (1 : ℤ)) (basisVec j)
+                      (fun (_eta : Cutoff.CutoffSample d) =>
+                        waveBandMean (probeDeepBandMeanAmplitude d) M.gamma (collarBandMeanDepth M (↑E : ℝ)) ^ (2 : ℕ))
+                      (Cutoff.translateCutoffSample (triadicCubeShift R) omega)) ≤
+              ENNReal.ofReal (bandOrdinary omega) + ENNReal.ofReal (bandRare omega))
+        (deepOrdinary deepRare : Cutoff.CutoffSample d → ℝ)
+        (hdeepENNRealDom :
+          ∀ᵐ (omega : Cutoff.CutoffSample d) ∂(↑(Cutoff.cutoffSampleLaw M) : Measure (Cutoff.CutoffSample d)),
+            ∑ j : Fin d,
+                ∑' (n : ℕ),
+                  ENNReal.ofReal
+                    (Multiscale.probeSharpFramedGoodWavePart M R.scale (↑E : ℝ) bfaProfileB (collarBandMeanDepth M (↑E : ℝ))
+                      n (m - (1 : ℤ)) (basisVec j)
+                      (fun (eta : Cutoff.CutoffSample d) =>
+                        probeDeepBandGaugedTail M (originCube d R.scale)
+                            (probeSharpLayerAnchor R.scale bfaProfileB (collarBandMeanDepth M (↑E : ℝ)) n)
+                            (collarBandMeanDepth M (↑E : ℝ)) (collarBandMeanDepth M (↑E : ℝ)) eta ^
+                          (2 : ℕ))
+                      (Cutoff.translateCutoffSample (triadicCubeShift R) omega)) ≤
+              ENNReal.ofReal (deepOrdinary omega) + ENNReal.ofReal (deepRare omega))
+        (afterOrdinary afterRare : Cutoff.CutoffSample d → ℝ)
+        (hafterENNRealDom :
+          ∀ᵐ (omega : Cutoff.CutoffSample d) ∂(↑(Cutoff.cutoffSampleLaw M) : Measure (Cutoff.CutoffSample d)),
+            ∑ j : Fin d,
+                ∑' (n : ℕ),
+                  ENNReal.ofReal
+                    (Multiscale.probeSharpFramedGoodWavePart M R.scale (↑E : ℝ) bfaProfileB (collarBandMeanDepth M (↑E : ℝ))
+                      n (m - (1 : ℤ)) (basisVec j)
+                      (fun (eta : Cutoff.CutoffSample d) =>
+                        probeSharpAfterBandTerm M R.scale
+                            (probeSharpLayerAnchor R.scale bfaProfileB (collarBandMeanDepth M (↑E : ℝ)) n)
+                            (collarBandMeanDepth M (↑E : ℝ)) m eta ^
+                          (2 : ℕ))
+                      (Cutoff.translateCutoffSample (triadicCubeShift R) omega)) ≤
+              ENNReal.ofReal (afterOrdinary omega) + ENNReal.ofReal (afterRare omega))
+        (hcollarHeadENNRealEq :
+          ∀ᵐ (omega : Cutoff.CutoffSample d) ∂(↑(Cutoff.cutoffSampleLaw M) : Measure (Cutoff.CutoffSample d)),
+            ENNReal.ofReal
+                ((fun (omega : Cutoff.CutoffSample d) =>
+                    ∑ j : Fin d,
+                      ∑' (n : ℕ),
+                        Multiscale.probeSharpFramedCollarWavePart M R.scale (↑E : ℝ) bfaProfileB
+                          (collarBandMeanDepth M (↑E : ℝ)) n (m - (1 : ℤ)) (basisVec j) (Affine.superposedGradConst d)
+                          (fun (eta : Cutoff.CutoffSample d) =>
+                            Multiscale.waveHeadTerm M R.scale (↑E : ℝ) bfaProfileB
+                                (probeSharpLayerAnchor R.scale bfaProfileB (collarBandMeanDepth M (↑E : ℝ)) n) eta ^
+                              (2 : ℕ))
+                          (Cutoff.translateCutoffSample (triadicCubeShift R) omega))
+                  omega) =
+              ∑ j : Fin d,
+                ∑' (n : ℕ),
+                  ENNReal.ofReal
+                    (Multiscale.probeSharpFramedCollarWavePart M R.scale (↑E : ℝ) bfaProfileB
+                      (collarBandMeanDepth M (↑E : ℝ)) n (m - (1 : ℤ)) (basisVec j) (Affine.superposedGradConst d)
+                      (fun (eta : Cutoff.CutoffSample d) =>
+                        Multiscale.waveHeadTerm M R.scale (↑E : ℝ) bfaProfileB
+                            (probeSharpLayerAnchor R.scale bfaProfileB (collarBandMeanDepth M (↑E : ℝ)) n) eta ^
+                          (2 : ℕ))
+                      (Cutoff.translateCutoffSample (triadicCubeShift R) omega))),
+        let collarBase : Cutoff.CutoffSample d → ℝ :=
+          probeSharpFramedCollarBaseTraceLane M R (↑E : ℝ) (collarBandMeanDepth M (↑E : ℝ));
+        let collarHead : Cutoff.CutoffSample d → ℝ := fun (omega : Cutoff.CutoffSample d) =>
+          ∑ j : Fin d,
+            ∑' (n : ℕ),
+              Multiscale.probeSharpFramedCollarWavePart M R.scale (↑E : ℝ) bfaProfileB (collarBandMeanDepth M (↑E : ℝ)) n
+                (m - (1 : ℤ)) (basisVec j) (Affine.superposedGradConst d)
+                (fun (eta : Cutoff.CutoffSample d) =>
+                  Multiscale.waveHeadTerm M R.scale (↑E : ℝ) bfaProfileB
+                      (probeSharpLayerAnchor R.scale bfaProfileB (collarBandMeanDepth M (↑E : ℝ)) n) eta ^
+                    (2 : ℕ))
+                (Cutoff.translateCutoffSample (triadicCubeShift R) omega);
+        let collarBand : Cutoff.CutoffSample d → ℝ := probeSharpFramedCollarBandMeanTunedTraceLane M m R (↑E : ℝ);
+        let collarDeep : Cutoff.CutoffSample d → ℝ := probeSharpFramedCollarDeepTailTraceLane M m R (↑E : ℝ);
+        let collarAfter : Cutoff.CutoffSample d → ℝ := probeSharpFramedCollarAfterBandTraceLane M m R (↑E : ℝ);
+        ∀
+          (hcollarAfterENNRealEq :
+            ∀ᵐ (omega : Cutoff.CutoffSample d) ∂(↑(Cutoff.cutoffSampleLaw M) : Measure (Cutoff.CutoffSample d)),
+              ENNReal.ofReal (probeSharpFramedCollarAfterBandTraceLane M m R (↑E : ℝ) omega) =
+                ∑ j : Fin d,
+                  ∑' (n : ℕ),
+                    ENNReal.ofReal
+                      (Multiscale.probeSharpFramedCollarWavePart M R.scale (↑E : ℝ) bfaProfileB
+                        (collarBandMeanDepth M (↑E : ℝ)) n (m - (1 : ℤ)) (basisVec j) (Affine.superposedGradConst d)
+                        (fun (eta : Cutoff.CutoffSample d) =>
+                          probeSharpAfterBandTerm M R.scale
+                              (probeSharpLayerAnchor R.scale bfaProfileB (collarBandMeanDepth M (↑E : ℝ)) n)
+                              (collarBandMeanDepth M (↑E : ℝ)) m eta ^
+                            (2 : ℕ))
+                        (Cutoff.translateCutoffSample (triadicCubeShift R) omega))),
+          let collarWave : Cutoff.CutoffSample d → ℝ := fun (omega : Cutoff.CutoffSample d) =>
+            ∑ j : Fin d,
+              ∑' (n : ℕ),
+                Multiscale.probeSharpFramedCollarWavePart M R.scale (↑E : ℝ) bfaProfileB (collarBandMeanDepth M (↑E : ℝ)) n
+                  (m - (1 : ℤ)) (basisVec j) (Affine.superposedGradConst d)
+                  (fun (eta : Cutoff.CutoffSample d) =>
+                    Multiscale.waveTailTerm M R.scale (↑E : ℝ) bfaProfileB R.scale
+                        (probeSharpLayerAnchor R.scale bfaProfileB (collarBandMeanDepth M (↑E : ℝ)) n) eta ^
+                      (2 : ℕ))
+                  (Cutoff.translateCutoffSample (triadicCubeShift R) omega);
+          ∀
+            (hcollarWaveENNRealEq :
+              ∀ᵐ (omega : Cutoff.CutoffSample d) ∂(↑(Cutoff.cutoffSampleLaw M) : Measure (Cutoff.CutoffSample d)),
+                ENNReal.ofReal
+                    ((fun (omega : Cutoff.CutoffSample d) =>
+                        ∑ j : Fin d,
+                          ∑' (n : ℕ),
+                            Multiscale.probeSharpFramedCollarWavePart M R.scale (↑E : ℝ) bfaProfileB
+                              (collarBandMeanDepth M (↑E : ℝ)) n (m - (1 : ℤ)) (basisVec j) (Affine.superposedGradConst d)
+                              (fun (eta : Cutoff.CutoffSample d) =>
+                                Multiscale.waveTailTerm M R.scale (↑E : ℝ) bfaProfileB R.scale
+                                    (probeSharpLayerAnchor R.scale bfaProfileB (collarBandMeanDepth M (↑E : ℝ)) n) eta ^
+                                  (2 : ℕ))
+                              (Cutoff.translateCutoffSample (triadicCubeShift R) omega))
+                      omega) =
+                  ∑ j : Fin d,
+                    ∑' (n : ℕ),
+                      ENNReal.ofReal
+                        (Multiscale.probeSharpFramedCollarWavePart M R.scale (↑E : ℝ) bfaProfileB
+                          (collarBandMeanDepth M (↑E : ℝ)) n (m - (1 : ℤ)) (basisVec j) (Affine.superposedGradConst d)
+                          (fun (eta : Cutoff.CutoffSample d) =>
+                            Multiscale.waveTailTerm M R.scale (↑E : ℝ) bfaProfileB R.scale
+                                (probeSharpLayerAnchor R.scale bfaProfileB (collarBandMeanDepth M (↑E : ℝ)) n) eta ^
+                              (2 : ℕ))
+                          (Cutoff.translateCutoffSample (triadicCubeShift R) omega)))
+            (waveBounded waveRare : Cutoff.CutoffSample d → ℝ)
+            (hwaveENNRealDom :
+              ∀ᵐ (omega : Cutoff.CutoffSample d) ∂(↑(Cutoff.cutoffSampleLaw M) : Measure (Cutoff.CutoffSample d)),
+                ∑ j : Fin d,
+                    ∑' (n : ℕ),
+                      ENNReal.ofReal
+                        (Multiscale.probeSharpFramedGoodWavePart M R.scale (↑E : ℝ) bfaProfileB
+                          (collarBandMeanDepth M (↑E : ℝ)) n (m - (1 : ℤ)) (basisVec j)
+                          (fun (eta : Cutoff.CutoffSample d) =>
+                            Multiscale.waveTailTerm M R.scale (↑E : ℝ) bfaProfileB R.scale
+                                (probeSharpLayerAnchor R.scale bfaProfileB (collarBandMeanDepth M (↑E : ℝ)) n) eta ^
+                              (2 : ℕ))
+                          (Cutoff.translateCutoffSample (triadicCubeShift R) omega)) ≤
+                  ENNReal.ofReal (waveBounded omega) + ENNReal.ofReal (waveRare omega))
+            (hordinaryLaneNonneg :
+              ∀ (i : Fin (3 : ℕ)) (omega : Cutoff.CutoffSample d),
+                (0 : ℝ) ≤ ![headOrdinary, deepOrdinary, afterOrdinary] i omega)
+            (hUoneNonneg :
+              ∀ (omega : Cutoff.CutoffSample d),
+                (0 : ℝ) ≤
+                  (fun (omega : Cutoff.CutoffSample d) =>
+                      ∑ i : Fin (3 : ℕ), ![headOrdinary, deepOrdinary, afterOrdinary] i omega)
+                    omega)
+            (hrareLaneNonneg :
+              ∀ (i : Fin (12 : ℕ)) (omega : Cutoff.CutoffSample d),
+                (0 : ℝ) ≤
+                  ![headRare, bandRare, deepRare, afterRare, waveBounded, waveRare,
+                      probeSharpFramedCollarBaseTraceLane M R (↑E : ℝ) (collarBandMeanDepth M (↑E : ℝ)),
+                      fun (omega : Cutoff.CutoffSample d) =>
+                      ∑ j : Fin d,
+                        ∑' (n : ℕ),
+                          Multiscale.probeSharpFramedCollarWavePart M R.scale (↑E : ℝ) bfaProfileB
+                            (collarBandMeanDepth M (↑E : ℝ)) n (m - (1 : ℤ)) (basisVec j) (Affine.superposedGradConst d)
+                            (fun (eta : Cutoff.CutoffSample d) =>
+                              Multiscale.waveHeadTerm M R.scale (↑E : ℝ) bfaProfileB
+                                  (probeSharpLayerAnchor R.scale bfaProfileB (collarBandMeanDepth M (↑E : ℝ)) n) eta ^
+                                (2 : ℕ))
+                            (Cutoff.translateCutoffSample (triadicCubeShift R) omega),
+                      probeSharpFramedCollarBandMeanTunedTraceLane M m R (↑E : ℝ),
+                      probeSharpFramedCollarDeepTailTraceLane M m R (↑E : ℝ),
+                      probeSharpFramedCollarAfterBandTraceLane M m R (↑E : ℝ), fun (omega : Cutoff.CutoffSample d) =>
+                      ∑ j : Fin d,
+                        ∑' (n : ℕ),
+                          Multiscale.probeSharpFramedCollarWavePart M R.scale (↑E : ℝ) bfaProfileB
+                            (collarBandMeanDepth M (↑E : ℝ)) n (m - (1 : ℤ)) (basisVec j) (Affine.superposedGradConst d)
+                            (fun (eta : Cutoff.CutoffSample d) =>
+                              Multiscale.waveTailTerm M R.scale (↑E : ℝ) bfaProfileB R.scale
+                                  (probeSharpLayerAnchor R.scale bfaProfileB (collarBandMeanDepth M (↑E : ℝ)) n) eta ^
+                                (2 : ℕ))
+                            (Cutoff.translateCutoffSample (triadicCubeShift R) omega)]
+                    i omega)
+            (hUexpNonneg :
+              ∀ (omega : Cutoff.CutoffSample d),
+                (0 : ℝ) ≤
+                  (fun (omega : Cutoff.CutoffSample d) =>
+                      ∑ i : Fin (12 : ℕ),
+                        ![headRare, bandRare, deepRare, afterRare, waveBounded, waveRare,
+                            probeSharpFramedCollarBaseTraceLane M R (↑E : ℝ) (collarBandMeanDepth M (↑E : ℝ)),
+                            fun (omega : Cutoff.CutoffSample d) =>
+                            ∑ j : Fin d,
+                              ∑' (n : ℕ),
+                                Multiscale.probeSharpFramedCollarWavePart M R.scale (↑E : ℝ) bfaProfileB
+                                  (collarBandMeanDepth M (↑E : ℝ)) n (m - (1 : ℤ)) (basisVec j)
+                                  (Affine.superposedGradConst d)
+                                  (fun (eta : Cutoff.CutoffSample d) =>
+                                    Multiscale.waveHeadTerm M R.scale (↑E : ℝ) bfaProfileB
+                                        (probeSharpLayerAnchor R.scale bfaProfileB (collarBandMeanDepth M (↑E : ℝ)) n) eta ^
+                                      (2 : ℕ))
+                                  (Cutoff.translateCutoffSample (triadicCubeShift R) omega),
+                            probeSharpFramedCollarBandMeanTunedTraceLane M m R (↑E : ℝ),
+                            probeSharpFramedCollarDeepTailTraceLane M m R (↑E : ℝ),
+                            probeSharpFramedCollarAfterBandTraceLane M m R (↑E : ℝ), fun (omega : Cutoff.CutoffSample d) =>
+                            ∑ j : Fin d,
+                              ∑' (n : ℕ),
+                                Multiscale.probeSharpFramedCollarWavePart M R.scale (↑E : ℝ) bfaProfileB
+                                  (collarBandMeanDepth M (↑E : ℝ)) n (m - (1 : ℤ)) (basisVec j)
+                                  (Affine.superposedGradConst d)
+                                  (fun (eta : Cutoff.CutoffSample d) =>
+                                    Multiscale.waveTailTerm M R.scale (↑E : ℝ) bfaProfileB R.scale
+                                        (probeSharpLayerAnchor R.scale bfaProfileB (collarBandMeanDepth M (↑E : ℝ)) n) eta ^
+                                      (2 : ℕ))
+                                  (Cutoff.translateCutoffSample (triadicCubeShift R) omega)]
+                          i omega)
+                    omega)
+            (hgoodBaseENNReal :
+              ∑ j : Fin d, ∑' (n : ℕ), ENNReal.ofReal (Multiscale.probeSharpFramedGoodBaseTerm d n (basisVec j)) =
+                ENNReal.ofReal (Multiscale.probeSharpGoodBaseConst d))
+            (hcollarBaseENNReal :
+              ∀ (omega : Cutoff.CutoffSample d),
+                ∑ j : Fin d,
+                    ∑' (n : ℕ),
+                      ENNReal.ofReal
+                        (Multiscale.probeSharpFramedCollarBaseTerm M R.scale (↑E : ℝ) bfaProfileB
+                          (collarBandMeanDepth M (↑E : ℝ)) n (basisVec j) (Affine.superposedGradConst d)
+                          (Cutoff.translateCutoffSample (triadicCubeShift R) omega)) =
+                  ENNReal.ofReal (probeSharpFramedCollarBaseTraceLane M R (↑E : ℝ) (collarBandMeanDepth M (↑E : ℝ)) omega)),
+            let ordinaryLane : Fin (3 : ℕ) → Cutoff.CutoffSample d → ℝ := ![headOrdinary, deepOrdinary, afterOrdinary];
+            let Uone : Cutoff.CutoffSample d → ℝ := fun (omega : Cutoff.CutoffSample d) =>
+              ∑ i : Fin (3 : ℕ), ordinaryLane i omega;
+            let rareLane : Fin (12 : ℕ) → Cutoff.CutoffSample d → ℝ :=
+              ![headRare, bandRare, deepRare, afterRare, waveBounded, waveRare, collarBase, collarHead, collarBand,
+                collarDeep, collarAfter, collarWave];
+            let Uexp : Cutoff.CutoffSample d → ℝ := fun (omega : Cutoff.CutoffSample d) =>
+              ∑ i : Fin (12 : ℕ), rareLane i omega;
+            ∀
+              (hEnvelope :
+                ∀ (omega : Cutoff.CutoffSample d),
+                  ∑ i : Fin d,
+                      ∑' (a : ℕ),
+                        ENNReal.ofReal
+                          (Multiscale.probeSharpFramedMeanLayerEnvelope M R.scale (↑E : ℝ) bfaProfileB
+                            (collarBandMeanDepth M (↑E : ℝ)) a (m - (1 : ℤ)) m
+                            (Cutoff.translateCutoffSample (triadicCubeShift R) omega) (basisVec i)
+                            (Affine.superposedGradConst d)) ≤
+                    ∑ x : Fin d, ∑' (a : ℕ), ENNReal.ofReal (Multiscale.probeSharpFramedGoodBaseTerm d a (basisVec x)) +
+                                          ∑ x : Fin d,
+                                            ∑' (a : ℕ),
+                                              ENNReal.ofReal
+                                                (Multiscale.probeSharpFramedGoodWavePart M R.scale (↑E : ℝ) bfaProfileB
+                                                  (collarBandMeanDepth M (↑E : ℝ)) a (m - (1 : ℤ)) (basisVec x)
+                                                  (fun (eta : Cutoff.CutoffSample d) =>
+                                                    Multiscale.waveHeadTerm M R.scale (↑E : ℝ) bfaProfileB
+                                                        (probeSharpLayerAnchor R.scale bfaProfileB
+                                                          (collarBandMeanDepth M (↑E : ℝ)) a)
+                                                        eta ^
+                                                      (2 : ℕ))
+                                                  (Cutoff.translateCutoffSample (triadicCubeShift R) omega)) +
+                                        ∑ x : Fin d,
+                                          ∑' (a : ℕ),
+                                            ENNReal.ofReal
+                                              (Multiscale.probeSharpFramedGoodWavePart M R.scale (↑E : ℝ) bfaProfileB
+                                                (collarBandMeanDepth M (↑E : ℝ)) a (m - (1 : ℤ)) (basisVec x)
+                                                (fun (_eta : Cutoff.CutoffSample d) =>
+                                                  waveBandMean (probeDeepBandMeanAmplitude d) M.gamma
+                                                      (collarBandMeanDepth M (↑E : ℝ)) ^
+                                                    (2 : ℕ))
+                                                (Cutoff.translateCutoffSample (triadicCubeShift R) omega)) +
+                                      ∑ x : Fin d,
+                                        ∑' (a : ℕ),
+                                          ENNReal.ofReal
+                                            (Multiscale.probeSharpFramedGoodWavePart M R.scale (↑E : ℝ) bfaProfileB
+                                              (collarBandMeanDepth M (↑E : ℝ)) a (m - (1 : ℤ)) (basisVec x)
+                                              (fun (eta : Cutoff.CutoffSample d) =>
+                                                probeDeepBandGaugedTail M (originCube d R.scale)
+                                                    (probeSharpLayerAnchor R.scale bfaProfileB
+                                                      (collarBandMeanDepth M (↑E : ℝ)) a)
+                                                    (collarBandMeanDepth M (↑E : ℝ)) (collarBandMeanDepth M (↑E : ℝ)) eta ^
+                                                  (2 : ℕ))
+                                              (Cutoff.translateCutoffSample (triadicCubeShift R) omega)) +
+                                    ∑ x : Fin d,
+                                      ∑' (a : ℕ),
+                                        ENNReal.ofReal
+                                          (Multiscale.probeSharpFramedGoodWavePart M R.scale (↑E : ℝ) bfaProfileB
+                                            (collarBandMeanDepth M (↑E : ℝ)) a (m - (1 : ℤ)) (basisVec x)
+                                            (fun (eta : Cutoff.CutoffSample d) =>
+                                              probeSharpAfterBandTerm M R.scale
+                                                  (probeSharpLayerAnchor R.scale bfaProfileB
+                                                    (collarBandMeanDepth M (↑E : ℝ)) a)
+                                                  (collarBandMeanDepth M (↑E : ℝ)) m eta ^
+                                                (2 : ℕ))
+                                            (Cutoff.translateCutoffSample (triadicCubeShift R) omega)) +
+                                  ∑ x : Fin d,
+                                    ∑' (a : ℕ),
+                                      ENNReal.ofReal
+                                        (Multiscale.probeSharpFramedGoodWavePart M R.scale (↑E : ℝ) bfaProfileB
+                                          (collarBandMeanDepth M (↑E : ℝ)) a (m - (1 : ℤ)) (basisVec x)
+                                          (fun (eta : Cutoff.CutoffSample d) =>
+                                            Multiscale.waveTailTerm M R.scale (↑E : ℝ) bfaProfileB R.scale
+                                                (probeSharpLayerAnchor R.scale bfaProfileB (collarBandMeanDepth M (↑E : ℝ))
+                                                  a)
+                                                eta ^
+                                              (2 : ℕ))
+                                          (Cutoff.translateCutoffSample (triadicCubeShift R) omega)) +
+                                ∑ x : Fin d,
+                                  ∑' (a : ℕ),
+                                    ENNReal.ofReal
+                                      (Multiscale.probeSharpFramedCollarBaseTerm M R.scale (↑E : ℝ) bfaProfileB
+                                        (collarBandMeanDepth M (↑E : ℝ)) a (basisVec x) (Affine.superposedGradConst d)
+                                        (Cutoff.translateCutoffSample (triadicCubeShift R) omega)) +
+                              ∑ x : Fin d,
+                                ∑' (a : ℕ),
+                                  ENNReal.ofReal
+                                    (Multiscale.probeSharpFramedCollarWavePart M R.scale (↑E : ℝ) bfaProfileB
+                                      (collarBandMeanDepth M (↑E : ℝ)) a (m - (1 : ℤ)) (basisVec x)
+                                      (Affine.superposedGradConst d)
+                                      (fun (eta : Cutoff.CutoffSample d) =>
+                                        Multiscale.waveHeadTerm M R.scale (↑E : ℝ) bfaProfileB
+                                            (probeSharpLayerAnchor R.scale bfaProfileB (collarBandMeanDepth M (↑E : ℝ)) a)
+                                            eta ^
+                                          (2 : ℕ))
+                                      (Cutoff.translateCutoffSample (triadicCubeShift R) omega)) +
+                            ∑ x : Fin d,
+                              ∑' (a : ℕ),
+                                ENNReal.ofReal
+                                  (Multiscale.probeSharpFramedCollarWavePart M R.scale (↑E : ℝ) bfaProfileB
+                                    (collarBandMeanDepth M (↑E : ℝ)) a (m - (1 : ℤ)) (basisVec x)
+                                    (Affine.superposedGradConst d)
+                                    (fun (_eta : Cutoff.CutoffSample d) =>
+                                      waveBandMean (probeDeepBandMeanAmplitude d) M.gamma (collarBandMeanDepth M (↑E : ℝ)) ^
+                                        (2 : ℕ))
+                                    (Cutoff.translateCutoffSample (triadicCubeShift R) omega)) +
+                          ∑ x : Fin d,
+                            ∑' (a : ℕ),
+                              ENNReal.ofReal
+                                (Multiscale.probeSharpFramedCollarWavePart M R.scale (↑E : ℝ) bfaProfileB
+                                  (collarBandMeanDepth M (↑E : ℝ)) a (m - (1 : ℤ)) (basisVec x)
+                                  (Affine.superposedGradConst d)
+                                  (fun (eta : Cutoff.CutoffSample d) =>
+                                    probeDeepBandGaugedTail M (originCube d R.scale)
+                                        (probeSharpLayerAnchor R.scale bfaProfileB (collarBandMeanDepth M (↑E : ℝ)) a)
+                                        (collarBandMeanDepth M (↑E : ℝ)) (collarBandMeanDepth M (↑E : ℝ)) eta ^
+                                      (2 : ℕ))
+                                  (Cutoff.translateCutoffSample (triadicCubeShift R) omega)) +
+                        ∑ x : Fin d,
+                          ∑' (a : ℕ),
+                            ENNReal.ofReal
+                              (Multiscale.probeSharpFramedCollarWavePart M R.scale (↑E : ℝ) bfaProfileB
+                                (collarBandMeanDepth M (↑E : ℝ)) a (m - (1 : ℤ)) (basisVec x) (Affine.superposedGradConst d)
+                                (fun (eta : Cutoff.CutoffSample d) =>
+                                  probeSharpAfterBandTerm M R.scale
+                                      (probeSharpLayerAnchor R.scale bfaProfileB (collarBandMeanDepth M (↑E : ℝ)) a)
+                                      (collarBandMeanDepth M (↑E : ℝ)) m eta ^
+                                    (2 : ℕ))
+                                (Cutoff.translateCutoffSample (triadicCubeShift R) omega)) +
+                      ∑ x : Fin d,
+                        ∑' (a : ℕ),
+                          ENNReal.ofReal
+                            (Multiscale.probeSharpFramedCollarWavePart M R.scale (↑E : ℝ) bfaProfileB
+                              (collarBandMeanDepth M (↑E : ℝ)) a (m - (1 : ℤ)) (basisVec x) (Affine.superposedGradConst d)
+                              (fun (eta : Cutoff.CutoffSample d) =>
+                                Multiscale.waveTailTerm M R.scale (↑E : ℝ) bfaProfileB R.scale
+                                    (probeSharpLayerAnchor R.scale bfaProfileB (collarBandMeanDepth M (↑E : ℝ)) a) eta ^
+                                  (2 : ℕ))
+                              (Cutoff.translateCutoffSample (triadicCubeShift R) omega)))
+              (hdetENNReal :
+                ∀ (omega : Cutoff.CutoffSample d),
+                  ENNReal.ofReal (Multiscale.probeSharpGoodBaseConst d) + ENNReal.ofReal (bandOrdinary omega) ≤
+                    ENNReal.ofReal Cblock)
+              (hCblockNonneg : (0 : ℝ) ≤ Cblock)
+              (hcollarBandRaw :
+                ∀ (omega : Cutoff.CutoffSample d),
+                  ∑ j : Fin d,
+                      ∑' (n : ℕ),
+                        ENNReal.ofReal
+                          (Multiscale.probeSharpFramedCollarWavePart M R.scale (↑E : ℝ) bfaProfileB
+                            (collarBandMeanDepth M (↑E : ℝ)) n (m - (1 : ℤ)) (basisVec j) (Affine.superposedGradConst d)
+                            (fun (_eta : Cutoff.CutoffSample d) =>
+                              waveBandMean (probeDeepBandMeanAmplitude d) M.gamma (collarBandMeanDepth M (↑E : ℝ)) ^
+                                (2 : ℕ))
+                            (Cutoff.translateCutoffSample (triadicCubeShift R) omega)) =
+                    ENNReal.ofReal (probeSharpFramedCollarBandMeanTunedTraceLane M m R (↑E : ℝ) omega))
+              (hcollarDeepRaw :
+                ∀ᵐ (omega : Cutoff.CutoffSample d) ∂(↑(Cutoff.cutoffSampleLaw M) : Measure (Cutoff.CutoffSample d)),
+                  ENNReal.ofReal (probeSharpFramedCollarDeepTailTraceLane M m R (↑E : ℝ) omega) =
+                    ∑ j : Fin d,
+                      ∑' (n : ℕ),
+                        ENNReal.ofReal
+                          (have k₀ : ℕ := collarBandMeanDepth M (↑E : ℝ);
+                          Multiscale.probeSharpFramedCollarWavePart M R.scale (↑E : ℝ) bfaProfileB k₀ n (m - (1 : ℤ))
+                            (basisVec j) (Affine.superposedGradConst d)
+                            (fun (eta : Cutoff.CutoffSample d) =>
+                              probeDeepBandGaugedTail M (originCube d R.scale)
+                                  (probeSharpLayerAnchor R.scale bfaProfileB k₀ n) k₀ k₀ eta ^
+                                (2 : ℕ))
+                            (Cutoff.translateCutoffSample (triadicCubeShift R) omega))),
+              (∀ᵐ (omega : Cutoff.CutoffSample d) ∂(↑(Cutoff.cutoffSampleLaw M) : Measure (Cutoff.CutoffSample d)),
+                  cutoffBBlockFamily M m (↑(Annealed.sigmaBar M (m - (1 : ℤ))) : ℝ)⁻¹ R omega ≤
+                    Cblock + Uone omega + Uexp omega) ∧
+                Measurable fun (omega : Cutoff.CutoffSample d) =>
+                  cutoffBBlockFamily M m (↑(Annealed.sigmaBar M (m - (1 : ℤ))) : ℝ)⁻¹ R omega
 
 private theorem named_layer_ennreal_bound
     {d : ℕ} (M : ABKModel d) (m : ℤ) (E : ℝ) (R : TriadicCube d)
@@ -321,298 +1476,47 @@ private theorem nonnegative_pointwise_repair
   exact ⟨Uone, Uexp', hUone0, hUoneMeas, hUexp'0, hUexp'Meas, hdom,
     hUoneO, Algsuperdiff.Section3.Provider.Tail.isBigOWith_of_ae_eq hAE hUexpO⟩
 
-/-- Constructs the pointwise deterministic, ordinary, and exceptional split for every
-single descendant cube. The exceptional scale is left in its raw twelve-lane form for
-the upper-leg aggregation layer to normalize. -/
-theorem superposedFlux_upper_per_descendant_split
-    {d : ℕ}
-    (M : ABKModel d) (m : ℤ)
-    (E : {E : ℝ // 1 ≤ E})
-    (hstate : Algsuperdiff.Frozen.Section3.inductionState M (m - 1) E)
-    (sigma Clane : ℝ)
-    (hsigma0 : 0 < sigma)
-    (hsigmaHalf : sigma ≤ 1 / 2)
-    (hmaxLane : max (Real.exp (Clane / sigma))
-      (Disorder.cstar M)⁻¹ ≤ (E : ℝ))
-    (hE2 : (E : ℝ) ≤ M.gamma ^ (-(1 / 5 : ℝ)))
-    (hlanePos : 0 < Clane)
-    (hgoodBaseOutput :
-      Algsuperdiff.Section3.Provider.Multiscale.probeSharpGoodBaseConst d ≤ Clane)
-    (hgoodHeadOutput :
-      Algsuperdiff.Section3.Provider.CoarseEllipticity.goodHeadTunedOutputConst d ≤ Clane)
-    (hgoodBandOutput :
-      Algsuperdiff.Section3.Provider.CoarseEllipticity.probeSharpBandMeanTunedOutputConst d ≤ Clane)
-    (hgoodDeepOutput :
-      Algsuperdiff.Section3.Provider.CoarseEllipticity.probeSharpDeepBandTailTunedOutputConst d ≤ Clane)
-    (hgoodAfterOutput :
-      Algsuperdiff.Section3.Provider.CoarseEllipticity.probeSharpAfterBandTunedOutputConst d ≤ Clane)
-    (hgoodWaveOutput :
-      Algsuperdiff.Section3.Provider.CoarseEllipticity.probeSharpWaveTailTunedOutputConst d ≤ Clane)
-    (hcollarBaseOutput :
-      Algsuperdiff.Section3.Provider.CoarseEllipticity.probeSharpCollarBaseTunedOutputConst d ≤ Clane)
-    (hcollarHeadOutput :
-      Algsuperdiff.Section3.Provider.CoarseEllipticity.collarHeadTunedPerDescendantOutputConst d ≤ Clane)
-    (hcollarBandOutput :
-      Algsuperdiff.Section3.Provider.CoarseEllipticity.collarBandMeanTunedOutputConst d ≤ Clane)
-    (hcollarDeepOutput :
-      Algsuperdiff.Section3.Provider.CoarseEllipticity.collarDeepTailTunedOutputConst d ≤ Clane)
-    (hcollarAfterOutput :
-      Algsuperdiff.Section3.Provider.CoarseEllipticity.collarAfterBandTunedOutputConst d ≤ Clane)
-    (hcollarWaveOutput :
-      Algsuperdiff.Section3.Provider.CoarseEllipticity.probeSharpCollarWaveTailTunedOutputConst d ≤ Clane)
-    (hprofileAuxLane :
-      Algsuperdiff.Section3.Provider.CoarseEllipticity.profileAuxiliaryConst d ≤ Clane)
-    (hdepthThresholdLane :
-      Algsuperdiff.Section3.Provider.CoarseEllipticity.collarBandMeanDepthThreshold d ≤ Clane)
-    (hk0 : 3 ≤
-      Algsuperdiff.Section3.Provider.CoarseEllipticity.collarBandMeanDepth
-        M (E : ℝ)) :
-    let Cblock : ℝ :=
-      (12 + 12 * HCPolySupport.IndependentSums.gammaTriangleConst 1) * Clane
-    ∀ (k : ℕ) (R : TriadicCube d),
-              R ∈ descendantsAtScale (originCube d m) (m - 1 - (k : ℤ)) →
-                ∃ Uone Uexp : Cutoff.CutoffSample d → ℝ,
-                  (∀ omega, 0 ≤ Uone omega) ∧
-                  Measurable Uone ∧
-                  (∀ omega, 0 ≤ Uexp omega) ∧
-                  Measurable Uexp ∧
-                  (∀ omega,
-                      Algsuperdiff.Section3.Provider.CoarseEllipticity.cutoffBBlockFamily
-                          M m (Annealed.sigmaBar M (m - 1) : ℝ)⁻¹ R omega ≤
-                      Cblock + Uone omega + Uexp omega) ∧
-                  HCPolySupport.IndependentSums.IsBigOWith
-                    (Cutoff.cutoffSampleLaw M).toMeasure
-                    (HCPolySupport.IndependentSums.gammaSigma 1) Uone
-                    (Algsuperdiff.Section3.Provider.CoarseEllipticity.upperSaturatedPerCubeAmplitude
-                      Cblock (Disorder.cstar M) M.gamma k) ∧
-                  HCPolySupport.IndependentSums.IsBigOWith
-                    (Cutoff.cutoffSampleLaw M).toMeasure
-                    (HCPolySupport.IndependentSums.gammaSigma ((1 - sigma) / 3)) Uexp
-                    ((12 *
-                        Algsuperdiff.Section3.Provider.CoarseEllipticity.upperAfterBandRareTriangleConst) *
-                      ((3 : ℝ) ^ (M.gamma * ((k : ℝ) + 1)) *
-                        (Real.exp
-                          (-(Clane⁻¹ * ((E : ℝ)⁻¹ ^ 2 * M.gamma⁻¹)))) ^ 8)) := by
-  let Cblock : ℝ :=
-    (12 + 12 * HCPolySupport.IndependentSums.gammaTriangleConst 1) * Clane
-  change ∀ (k : ℕ) (R : TriadicCube d),
-            R ∈ descendantsAtScale (originCube d m) (m - 1 - (k : ℤ)) →
-              ∃ Uone Uexp : Cutoff.CutoffSample d → ℝ,
-                (∀ omega, 0 ≤ Uone omega) ∧
-                Measurable Uone ∧
-                (∀ omega, 0 ≤ Uexp omega) ∧
-                Measurable Uexp ∧
-                (∀ omega,
-                    Algsuperdiff.Section3.Provider.CoarseEllipticity.cutoffBBlockFamily
-                        M m (Annealed.sigmaBar M (m - 1) : ℝ)⁻¹ R omega ≤
-                    Cblock + Uone omega + Uexp omega) ∧
-                HCPolySupport.IndependentSums.IsBigOWith
-                  (Cutoff.cutoffSampleLaw M).toMeasure
-                  (HCPolySupport.IndependentSums.gammaSigma 1) Uone
-                  (Algsuperdiff.Section3.Provider.CoarseEllipticity.upperSaturatedPerCubeAmplitude
-                    Cblock (Disorder.cstar M) M.gamma k) ∧
-                HCPolySupport.IndependentSums.IsBigOWith
-                  (Cutoff.cutoffSampleLaw M).toMeasure
-                  (HCPolySupport.IndependentSums.gammaSigma ((1 - sigma) / 3)) Uexp
-                  ((12 *
-                      Algsuperdiff.Section3.Provider.CoarseEllipticity.upperAfterBandRareTriangleConst) *
-                    ((3 : ℝ) ^ (M.gamma * ((k : ℝ) + 1)) *
-                      (Real.exp
-                        (-(Clane⁻¹ * ((E : ℝ)⁻¹ ^ 2 * M.gamma⁻¹)))) ^ 8))
-  intro k R hR
-  have hd : 2 ≤ d := M.shellPrefix.dimension
-  let : NeZero d := ⟨by omega⟩
-  have hmaxAux :
-      max (Real.exp
-        (Algsuperdiff.Section3.Provider.CoarseEllipticity.profileAuxiliaryConst d /
-          sigma)) (Disorder.cstar M)⁻¹ ≤ (E : ℝ) := by
-    refine max_le ?_ ((le_max_right _ _).trans hmaxLane)
-    exact (Real.exp_le_exp.mpr
-      ((div_le_div_iff_of_pos_right hsigma0).2 hprofileAuxLane)).trans
-        ((le_max_left _ _).trans hmaxLane)
-  have hpotential : ∀ (k : ℕ) (R : TriadicCube d),
-      R ∈ descendantsAtScale (originCube d m) (m - 1 - (k : ℤ)) →
-        ∀ᵐ omega ∂(Cutoff.cutoffSampleLaw M).toMeasure,
-          ENNReal.ofReal
-              (Algsuperdiff.Section3.Provider.CoarseEllipticity.cutoffBBlockFamily
-                M m (Annealed.sigmaBar M (m - 1) : ℝ)⁻¹ R omega) ≤
-            ∑ j : Fin d, ∑' n : ℕ, ENNReal.ofReal
-              (Algsuperdiff.Section3.Provider.Multiscale.probeSharpFramedMeanLayerEnvelope
-                M R.scale (E : ℝ)
-                  Algsuperdiff.Section3.Provider.CoarseEllipticity.bfaProfileB
-                  (Algsuperdiff.Section3.Provider.CoarseEllipticity.collarBandMeanDepth
-                    M (E : ℝ)) n (m - 1) m
-                  (Algsuperdiff.Section3.Cutoff.translateCutoffSample
-                    (triadicCubeShift R) omega)
-                  (basisVec j)
-                  (Algsuperdiff.Section3.Provider.Affine.superposedGradConst d)) := by
-    intro k R hR
-    exact
-      Algsuperdiff.Section3.Provider.Multiscale.ofReal_cutoffBBlockFamily_descendant_le_sharpFramedMeanEnvelope_ae_of_profileAuxiliaryMaxGate
-        M hR hstate hsigma0 hsigmaHalf hmaxAux hE2 hk0 (by omega)
-  obtain ⟨headOrdinary, headRare, headOrdinaryScale, headRareScale,
-      hhead⟩ :=
-    Algsuperdiff.Section3.Provider.CoarseEllipticity.exists_good_head_tuned_finite_trace_split
-      M hR hstate hsigma0 hsigmaHalf hmaxLane hE2 hgoodHeadOutput
-  rcases hhead with
-    ⟨hheadOrdinaryNonneg, hheadOrdinaryMeasurable,
-      hheadRareNonneg, hheadRareMeasurable, _,
-      _, hheadENNRealDom, hheadOrdinaryO,
-      _, hheadOrdinaryScaleLe,
-      hheadRareO, _, hheadRareScaleLe⟩
-  obtain ⟨bandOrdinary, bandRare, bandRareScale, hband⟩ :=
-    Algsuperdiff.Section3.Provider.CoarseEllipticity.exists_good_band_mean_tuned_finite_trace_split
-      M hR hstate hsigma0 hsigmaHalf hmaxLane hE2 hgoodBandOutput
-  rcases hband with
-    ⟨hbandOrdinaryNonneg, hbandOrdinaryMeasurable,
-      hbandRareNonneg, hbandRareMeasurable, _,
-      _, hbandENNRealDom, hbandOrdinaryLe,
-      hbandRareO, _, hbandRareScaleLe⟩
-  obtain ⟨deepOrdinary, deepRare, deepOrdinaryScale, deepRareScale,
-      hdeep⟩ :=
-    Algsuperdiff.Section3.Provider.CoarseEllipticity.exists_tunedDeepBandTail_good_finite_trace_split
-      M hR hstate hsigma0 hsigmaHalf hmaxLane hE2
-        (max_le hprofileAuxLane hgoodDeepOutput)
-  rcases hdeep with
-    ⟨hdeepOrdinaryNonneg, hdeepOrdinaryMeasurable,
-      hdeepRareNonneg, hdeepRareMeasurable, _,
-      _, hdeepENNRealDom,
-      hdeepOrdinaryO, _, hdeepOrdinaryScaleLe,
-      hdeepRareO, _, hdeepRareScaleLe⟩
-  obtain ⟨afterOrdinary, afterRare, afterOrdinaryScale, afterRareScale,
-      hafter⟩ :=
-    Algsuperdiff.Section3.Provider.CoarseEllipticity.exists_tunedAfterBand_good_finite_trace_split
-      M hR hstate hsigma0 hsigmaHalf hmaxLane hE2 hgoodAfterOutput
-  rcases hafter with
-    ⟨hafterOrdinaryNonneg, hafterOrdinaryMeasurable,
-      hafterRareNonneg, hafterRareMeasurable, _,
-      _, hafterENNRealDom, hafterOrdinaryO,
-      _, hafterOrdinaryScaleLe,
-      hafterRareO, _, hafterRareScaleLe⟩
-  let laneX : ℝ := (E : ℝ)⁻¹ ^ 2 * M.gamma⁻¹
-  let laneEps : ℝ := Real.exp (-(Clane⁻¹ * laneX))
-  let depthFactor : ℝ := (3 : ℝ) ^ (M.gamma * ((k : ℝ) + 1))
-  let rarePerLaneScale : ℝ := depthFactor * laneEps ^ 8
-  let collarBase : Cutoff.CutoffSample d → ℝ :=
-    Algsuperdiff.Section3.Provider.CoarseEllipticity.probeSharpFramedCollarBaseTraceLane
-      M R (E : ℝ)
-        (Algsuperdiff.Section3.Provider.CoarseEllipticity.collarBandMeanDepth
-          M (E : ℝ))
-  let collarHead : Cutoff.CutoffSample d → ℝ := fun omega =>
-    ∑ j : Fin d, ∑' n : ℕ,
-      Algsuperdiff.Section3.Provider.Multiscale.probeSharpFramedCollarWavePart
-        M R.scale (E : ℝ)
-        Algsuperdiff.Section3.Provider.CoarseEllipticity.bfaProfileB
-        (Algsuperdiff.Section3.Provider.CoarseEllipticity.collarBandMeanDepth
-          M (E : ℝ)) n (m - 1) (basisVec j)
-        (Algsuperdiff.Section3.Provider.Affine.superposedGradConst d)
-        (fun eta => Algsuperdiff.Section3.Provider.Multiscale.waveHeadTerm
-          M R.scale (E : ℝ)
-          Algsuperdiff.Section3.Provider.CoarseEllipticity.bfaProfileB
-          (Algsuperdiff.Section3.Provider.CoarseEllipticity.probeSharpLayerAnchor
-            R.scale
-            Algsuperdiff.Section3.Provider.CoarseEllipticity.bfaProfileB
-            (Algsuperdiff.Section3.Provider.CoarseEllipticity.collarBandMeanDepth
-              M (E : ℝ)) n) eta ^ 2)
-        (Algsuperdiff.Section3.Cutoff.translateCutoffSample
-          (triadicCubeShift R) omega)
-  let collarBand : Cutoff.CutoffSample d → ℝ :=
-    Algsuperdiff.Section3.Provider.CoarseEllipticity.probeSharpFramedCollarBandMeanTunedTraceLane
-      M m R (E : ℝ)
-  let collarDeep : Cutoff.CutoffSample d → ℝ :=
-    Algsuperdiff.Section3.Provider.CoarseEllipticity.probeSharpFramedCollarDeepTailTraceLane
-      M m R (E : ℝ)
-  let collarAfter : Cutoff.CutoffSample d → ℝ :=
-    Algsuperdiff.Section3.Provider.CoarseEllipticity.probeSharpFramedCollarAfterBandTraceLane
-      M m R (E : ℝ)
-  have hcollarBase :=
-    Algsuperdiff.Section3.Provider.CoarseEllipticity.isBigOWith_upperProfileTarget_probeSharpFramedCollarBaseTraceLane_tuned
-      M hR hstate hsigma0 hsigmaHalf hmaxLane hE2 hcollarBaseOutput
-  have hcollarHead :=
-    Algsuperdiff.Section3.Provider.CoarseEllipticity.collar_head_tuned_trace_is_big_o_with_eighth_power
-      M hR hstate hsigma0 hsigmaHalf hmaxLane hE2 hcollarHeadOutput
-  rcases hcollarHead with
-    ⟨hcollarHeadNonneg, hcollarHeadMeasurable,
-      hcollarHeadENNRealEq, hcollarHead⟩
-  have hcollarBand :=
-    Algsuperdiff.Section3.Provider.CoarseEllipticity.isBigOWith_upperProfileTarget_probeSharpFramedCollarBandMeanTunedTraceLane_frozenReserve
-      M hR hstate hsigma0 hsigmaHalf hmaxLane hE2
-        (max_le hprofileAuxLane hcollarBandOutput)
-  have hcollarDeep :=
-    Algsuperdiff.Section3.Provider.CoarseEllipticity.collarDeepTail_trace_isBigOWith_frozenReserve
-      M hR hstate hsigma0 hsigmaHalf hmaxLane hE2 hcollarDeepOutput
-  have hcollarAfter :=
-    Algsuperdiff.Section3.Provider.CoarseEllipticity.collar_afterBand_trace_isBigOWith_frozenReserve
-      M hR hstate hsigma0 hsigmaHalf hmaxLane hE2
-        (max_le hprofileAuxLane hcollarAfterOutput)
-  rcases hcollarAfter with
-    ⟨hcollarAfterNonneg, hcollarAfterMeasurable,
-      hcollarAfterENNRealEq, hcollarAfter⟩
-  let collarWave : Cutoff.CutoffSample d → ℝ := fun omega =>
-    ∑ j : Fin d, ∑' n : ℕ,
-      Algsuperdiff.Section3.Provider.Multiscale.probeSharpFramedCollarWavePart
-        M R.scale (E : ℝ)
-        Algsuperdiff.Section3.Provider.CoarseEllipticity.bfaProfileB
-        (Algsuperdiff.Section3.Provider.CoarseEllipticity.collarBandMeanDepth
-          M (E : ℝ)) n (m - 1) (basisVec j)
-        (Algsuperdiff.Section3.Provider.Affine.superposedGradConst d)
-        (fun eta => Algsuperdiff.Section3.Provider.Multiscale.waveTailTerm
-          M R.scale (E : ℝ)
-          Algsuperdiff.Section3.Provider.CoarseEllipticity.bfaProfileB R.scale
-          (Algsuperdiff.Section3.Provider.CoarseEllipticity.probeSharpLayerAnchor
-            R.scale
-            Algsuperdiff.Section3.Provider.CoarseEllipticity.bfaProfileB
-            (Algsuperdiff.Section3.Provider.CoarseEllipticity.collarBandMeanDepth
-              M (E : ℝ)) n) eta ^ 2)
-        (Algsuperdiff.Section3.Cutoff.translateCutoffSample
-          (triadicCubeShift R) omega)
-  have hcollarWaveRaw :=
-    Algsuperdiff.Section3.Provider.CoarseEllipticity.isBigOWith_upperProfileTarget_collarWaveTailFiniteTrace
-      M hR hstate hsigma0 hsigmaHalf hmaxLane hE2 hcollarWaveOutput
-  change (∀ omega, 0 ≤ collarWave omega) ∧ Measurable collarWave ∧
-    (∀ᵐ omega ∂(Cutoff.cutoffSampleLaw M).toMeasure,
-      ENNReal.ofReal (collarWave omega) =
-        ∑ j : Fin d, ∑' n : ℕ, ENNReal.ofReal
-          (Algsuperdiff.Section3.Provider.Multiscale.probeSharpFramedCollarWavePart
-            M R.scale (E : ℝ)
-            Algsuperdiff.Section3.Provider.CoarseEllipticity.bfaProfileB
-            (Algsuperdiff.Section3.Provider.CoarseEllipticity.collarBandMeanDepth
-              M (E : ℝ)) n (m - 1) (basisVec j)
-            (Algsuperdiff.Section3.Provider.Affine.superposedGradConst d)
-            (fun eta => Algsuperdiff.Section3.Provider.Multiscale.waveTailTerm
-              M R.scale (E : ℝ)
-              Algsuperdiff.Section3.Provider.CoarseEllipticity.bfaProfileB R.scale
-              (Algsuperdiff.Section3.Provider.CoarseEllipticity.probeSharpLayerAnchor
-                R.scale
-                Algsuperdiff.Section3.Provider.CoarseEllipticity.bfaProfileB
-                (Algsuperdiff.Section3.Provider.CoarseEllipticity.collarBandMeanDepth
-                  M (E : ℝ)) n) eta ^ 2)
-            (Algsuperdiff.Section3.Cutoff.translateCutoffSample
-              (triadicCubeShift R) omega))) ∧
-    HCPolySupport.IndependentSums.IsBigOWith
-      (Cutoff.cutoffSampleLaw M).toMeasure
-      (HCPolySupport.IndependentSums.gammaSigma ((1 - sigma) / 3))
-      collarWave
-      ((3 : ℝ) ^ (M.gamma * ((k : ℝ) + 1)) *
-        (Real.exp (-(Clane⁻¹ * ((E : ℝ)⁻¹ ^ 2 * M.gamma⁻¹)))) ^ 8) at hcollarWaveRaw
-  rcases hcollarWaveRaw with
-    ⟨hcollarWaveNonneg, hcollarWaveMeasurable,
-      hcollarWaveENNRealEq, hcollarWave⟩
-  obtain ⟨waveBounded, waveRare, hwave⟩ :=
-    Algsuperdiff.Section3.Provider.CoarseEllipticity.exists_good_wave_tail_tuned_finite_trace_split
-      M hR hstate hsigma0 hsigmaHalf hmaxLane hE2 hgoodWaveOutput
-  rcases hwave with
-    ⟨hwaveBoundedNonneg, hwaveBoundedMeasurable,
-      hwaveRareNonneg, hwaveRareMeasurable, _,
-      _, hwaveENNRealDom,
-      hwaveBoundedO, hwaveRareO, _, hwaveScaleLe⟩
-  let perCubeScale : ℝ :=
-    Algsuperdiff.Section3.Provider.CoarseEllipticity.upperSaturatedPerCubeAmplitude
-      Clane (Disorder.cstar M) M.gamma k
-  let ordinaryLane : Fin 3 → Cutoff.CutoffSample d → ℝ :=
-    ![headOrdinary, deepOrdinary, afterOrdinary]
-  let Uone : Cutoff.CutoffSample d → ℝ := fun omega =>
-    ∑ i : Fin 3, ordinaryLane i omega
+private theorem superposedFlux_ordinaryContribution :
+    ∀ {d : ℕ} (M : ABKModel d) (sigma Clane : ℝ),
+      (0 : ℝ) < sigma →
+        sigma ≤ (1 / 2 : ℝ) →
+          (0 : ℝ) < Clane →
+            let Cblock : ℝ := ((12 : ℝ) + (12 : ℝ) * IndependentSums.gammaTriangleConst (1 : ℝ)) * Clane;
+            ∀ (k : ℕ) (headOrdinary : Cutoff.CutoffSample d → ℝ) (headOrdinaryScale : ℝ),
+              (∀ (omega : Cutoff.CutoffSample d), (0 : ℝ) ≤ headOrdinary omega) →
+                Measurable headOrdinary →
+                  IndependentSums.IsBigOWith (↑(Cutoff.cutoffSampleLaw M) : Measure (Cutoff.CutoffSample d))
+                      (IndependentSums.gammaSigma (1 : ℝ)) headOrdinary headOrdinaryScale →
+                    headOrdinaryScale ≤ upperSaturatedPerCubeAmplitude Clane (Disorder.cstar M) M.gamma k →
+                      ∀ (deepOrdinary : Cutoff.CutoffSample d → ℝ) (deepOrdinaryScale : ℝ),
+                        (∀ (omega : Cutoff.CutoffSample d), (0 : ℝ) ≤ deepOrdinary omega) →
+                          Measurable deepOrdinary →
+                            IndependentSums.IsBigOWith (↑(Cutoff.cutoffSampleLaw M) : Measure (Cutoff.CutoffSample d))
+                                (IndependentSums.gammaSigma (1 : ℝ)) deepOrdinary deepOrdinaryScale →
+                              deepOrdinaryScale ≤ upperSaturatedPerCubeAmplitude Clane (Disorder.cstar M) M.gamma k →
+                                ∀ (afterOrdinary : Cutoff.CutoffSample d → ℝ) (afterOrdinaryScale : ℝ),
+                                  (∀ (omega : Cutoff.CutoffSample d), (0 : ℝ) ≤ afterOrdinary omega) →
+                                    Measurable afterOrdinary →
+                                      IndependentSums.IsBigOWith
+                                          (↑(Cutoff.cutoffSampleLaw M) : Measure (Cutoff.CutoffSample d))
+                                          (IndependentSums.gammaSigma (1 : ℝ)) afterOrdinary afterOrdinaryScale →
+                                        afterOrdinaryScale ≤
+                                            upperSaturatedPerCubeAmplitude Clane (Disorder.cstar M) M.gamma k →
+                                          let perCubeScale : ℝ :=
+                                            upperSaturatedPerCubeAmplitude Clane (Disorder.cstar M) M.gamma k;
+                                          let ordinaryLane : Fin (3 : ℕ) → Cutoff.CutoffSample d → ℝ :=
+                                            ![headOrdinary, deepOrdinary, afterOrdinary];
+                                          let Uone : Cutoff.CutoffSample d → ℝ := fun (omega : Cutoff.CutoffSample d) =>
+                                            ∑ i : Fin (3 : ℕ), ordinaryLane i omega;
+                                          (∀ (i : Fin (3 : ℕ)) (omega : Cutoff.CutoffSample d),
+                                              (0 : ℝ) ≤ ordinaryLane i omega) ∧
+                                            (∀ (omega : Cutoff.CutoffSample d), (0 : ℝ) ≤ Uone omega) ∧
+                                              Measurable Uone ∧
+                                                IndependentSums.IsBigOWith
+                                                  (↑(Cutoff.cutoffSampleLaw M) : Measure (Cutoff.CutoffSample d))
+                                                  (IndependentSums.gammaSigma (1 : ℝ)) Uone
+                                                  (upperSaturatedPerCubeAmplitude Cblock (Disorder.cstar M) M.gamma k) := by
+  intro _ M _ Clane _ _ hlanePos Cblock k _ _ hheadOrdinaryNonneg hheadOrdinaryMeasurable hheadOrdinaryO hheadOrdinaryScaleLe _ _ hdeepOrdinaryNonneg hdeepOrdinaryMeasurable hdeepOrdinaryO hdeepOrdinaryScaleLe _ _ hafterOrdinaryNonneg hafterOrdinaryMeasurable hafterOrdinaryO hafterOrdinaryScaleLe perCubeScale ordinaryLane Uone
   have hperCubeScalePos : 0 <
       perCubeScale :=
     Algsuperdiff.Section3.Provider.CoarseEllipticity.upperSaturatedPerCubeAmplitude_pos
@@ -715,6 +1619,262 @@ theorem superposedFlux_upper_per_descendant_split
         (Algsuperdiff.Section3.Provider.CoarseEllipticity.upperSaturatedPerCubeAmplitude
           Cblock (Disorder.cstar M) M.gamma k) := by
     exact hUoneRaw.mono_scale hUoneScale
+  exact ⟨hordinaryLaneNonneg, hUoneNonneg, hUoneMeasurable, hUone⟩
+
+private theorem superposedFluxUpperPerDescendant_estimate1 :
+    ∀ {d : ℕ} (M : ABKModel d) (E : { E : ℝ // (1 : ℝ) ≤ E })
+      (R : TriadicCube d) (hd : (2 : ℕ) ≤ d),
+      let collarBase : Cutoff.CutoffSample d → ℝ :=
+        probeSharpFramedCollarBaseTraceLane M R (↑E : ℝ) (collarBandMeanDepth M (↑E : ℝ));
+      ∀ (omega : Cutoff.CutoffSample d),
+        ∑ j : Fin d,
+            ∑' (n : ℕ),
+              ENNReal.ofReal
+                (Multiscale.probeSharpFramedCollarBaseTerm M R.scale (↑E : ℝ) bfaProfileB (collarBandMeanDepth M (↑E : ℝ)) n
+                  (basisVec j) (Affine.superposedGradConst d) (Cutoff.translateCutoffSample (triadicCubeShift R) omega)) =
+          ENNReal.ofReal (collarBase omega) := by
+  intro d M E R hd collarBase omega
+  change (∑ j : Fin d,
+      probeSharpFramedCollarBaseCoordinateENNRealLane
+        M R (E : ℝ)
+          (Algsuperdiff.Section3.Provider.CoarseEllipticity.collarBandMeanDepth
+            M (E : ℝ)) j omega) =
+    ENNReal.ofReal
+      (∑ j : Fin d,
+        Algsuperdiff.Section3.Provider.CoarseEllipticity.probeSharpFramedCollarBaseCoordinateLane
+          M R (E : ℝ)
+            (Algsuperdiff.Section3.Provider.CoarseEllipticity.collarBandMeanDepth
+              M (E : ℝ)) j omega)
+  rw [ENNReal.ofReal_sum_of_nonneg]
+  · exact Finset.sum_congr rfl fun j _ =>
+      probeSharpFramedCollarBaseCoordinateENNRealLane_eq
+        hd M R (E : ℝ)
+          (Algsuperdiff.Section3.Provider.CoarseEllipticity.collarBandMeanDepth
+            M (E : ℝ)) j omega
+  · intro j _
+    exact
+      probeSharpFramedCollarBaseCoordinateLane_nonneg
+        hd M R (E : ℝ)
+          (Algsuperdiff.Section3.Provider.CoarseEllipticity.collarBandMeanDepth
+            M (E : ℝ)) j omega
+
+private theorem superposedFluxUpperPerDescendant_momentBounds1 : superposedFluxUpperPerDescendant_momentBounds1_statement := by
+  intro d M m E hstate sigma _ hsigma0 hsigmaHalf hmaxLane hE2 hprofileAuxLane hdepthThresholdLane _ R hR hd _ _ _ _ _ _ _ rarePerLaneScale collarBase _ collarBand collarDeep _ _ _ _ hrarePerLaneScalePos _ Uexp hUexpRaw K
+  have htriangleBound :
+      HCPolySupport.IndependentSums.gammaTriangleConst ((1 - sigma) / 3) ≤
+        Algsuperdiff.Section3.Provider.CoarseEllipticity.upperAfterBandRareTriangleConst := by
+    simpa only
+      [Algsuperdiff.Section3.Provider.CoarseEllipticity.upperProfileTargetSigma]
+      using
+        Algsuperdiff.Section3.Provider.CoarseEllipticity.gammaTriangleConst_upperProfileTarget_le
+        hsigma0 hsigmaHalf
+  have hrawRareScale :
+      HCPolySupport.IndependentSums.gammaTriangleConst ((1 - sigma) / 3) *
+          (∑ _i : Fin 12, rarePerLaneScale) ≤
+        K * rarePerLaneScale := by
+    simp only [Finset.sum_const, Finset.card_univ, Fintype.card_fin,
+      nsmul_eq_mul]
+    calc
+      HCPolySupport.IndependentSums.gammaTriangleConst ((1 - sigma) / 3) *
+            (12 * rarePerLaneScale) =
+          (12 * HCPolySupport.IndependentSums.gammaTriangleConst
+            ((1 - sigma) / 3)) * rarePerLaneScale := by ring
+      _ ≤ (12 *
+            Algsuperdiff.Section3.Provider.CoarseEllipticity.upperAfterBandRareTriangleConst) *
+          rarePerLaneScale :=
+        mul_le_mul_of_nonneg_right
+          (mul_le_mul_of_nonneg_left htriangleBound (by norm_num))
+          hrarePerLaneScalePos.le
+      _ = K * rarePerLaneScale := by rfl
+  have hUexp :
+      HCPolySupport.IndependentSums.IsBigOWith
+        (Cutoff.cutoffSampleLaw M).toMeasure
+        (HCPolySupport.IndependentSums.gammaSigma ((1 - sigma) / 3))
+        Uexp
+      (K * rarePerLaneScale) := hUexpRaw.mono_scale hrawRareScale
+  have hgoodBaseENNReal :
+      (∑ j : Fin d, ∑' n : ℕ, ENNReal.ofReal
+        (Algsuperdiff.Section3.Provider.Multiscale.probeSharpFramedGoodBaseTerm
+          d n (basisVec j))) =
+        ENNReal.ofReal
+          (Algsuperdiff.Section3.Provider.Multiscale.probeSharpGoodBaseConst d) := by
+    change
+      Algsuperdiff.Section3.Provider.CoarseEllipticity.probeSharpFramedGoodBaseTraceENNRealLane d
+        = _
+    exact
+      Algsuperdiff.Section3.Provider.CoarseEllipticity.probeSharpFramedGoodBaseTraceENNRealLane_eq
+        hd
+  have hcollarBaseENNReal (omega : Cutoff.CutoffSample d) :
+      (∑ j : Fin d, ∑' n : ℕ, ENNReal.ofReal
+        (Algsuperdiff.Section3.Provider.Multiscale.probeSharpFramedCollarBaseTerm
+          M R.scale (E : ℝ)
+          Algsuperdiff.Section3.Provider.CoarseEllipticity.bfaProfileB
+          (Algsuperdiff.Section3.Provider.CoarseEllipticity.collarBandMeanDepth
+            M (E : ℝ)) n (basisVec j)
+          (Algsuperdiff.Section3.Provider.Affine.superposedGradConst d)
+          (Algsuperdiff.Section3.Cutoff.translateCutoffSample
+            (triadicCubeShift R) omega))) = ENNReal.ofReal (collarBase omega)  := @superposedFluxUpperPerDescendant_estimate1 (d) (M) (E) (R) (hd) (omega)
+  have hcstarE : (Disorder.cstar M)⁻¹ ≤ (E : ℝ) :=
+    (le_max_right _ _).trans hmaxLane
+  have hcollarBandENNReal (omega : Cutoff.CutoffSample d) :
+      probeSharpFramedCollarBandMeanTunedTraceENNRealLane
+          M m R (E : ℝ) omega = ENNReal.ofReal (collarBand omega) := by
+    simpa only [collarBand] using
+      probeSharpFramedCollarBandMeanTunedTraceENNRealLane_eq
+        hd M hR E.property hcstarE hE2 omega
+  have hcollarDeepENNReal :
+      ∀ᵐ omega ∂(Cutoff.cutoffSampleLaw M).toMeasure,
+        ENNReal.ofReal (collarDeep omega) =
+          ∑ j : Fin d, ∑' n : ℕ, ENNReal.ofReal
+            (Algsuperdiff.Section3.Provider.CoarseEllipticity.probeSharpFramedCollarDeepTailLayer
+              M m R (E : ℝ) j n omega) := by
+    simpa only [collarDeep] using
+      ae_ofReal_probeSharpFramedCollarDeepTailTraceLane_eq_sum_tsum
+        M hR hstate hsigma0 hsigmaHalf hmaxLane hE2
+          (max_le hprofileAuxLane hdepthThresholdLane)
+  exact ⟨hUexp, hgoodBaseENNReal, hcollarBaseENNReal, hcollarBandENNReal, hcollarDeepENNReal⟩
+
+private theorem superposedFluxUpperPerDescendant_momentBounds2 : superposedFluxUpperPerDescendant_momentBounds2_statement := by
+  intro _ M _ _ sigma _ _ _ _ _ _ hheadRareNonneg hheadRareMeasurable _ hbandRareNonneg hbandRareMeasurable _ hdeepRareNonneg hdeepRareMeasurable _ hafterRareNonneg hafterRareMeasurable laneX laneEps depthFactor rarePerLaneScale _ _ _ _ _ hcollarBase hcollarHeadNonneg hcollarHeadMeasurable hcollarHead hcollarBand hcollarDeep hcollarAfterNonneg hcollarAfterMeasurable hcollarAfter _ hcollarWaveNonneg hcollarWaveMeasurable hcollarWave _ _ hwaveBoundedNonneg hwaveBoundedMeasurable hwaveRareNonneg hwaveRareMeasurable hrarePerLaneScalePos hheadRareFull hbandRareFull hdeepRareFull hafterRareFull hwaveBoundedFull hwaveRareFull hcollarBaseNonneg hcollarBaseMeasurable hcollarBandNonneg hcollarBandMeasurable hcollarDeepNonneg hcollarDeepMeasurable rareLane Uexp
+  have hrareLaneNonneg : ∀ i, ∀ omega, 0 ≤ rareLane i omega := by
+    simp only [rareLane, Fin.forall_fin_succ, Matrix.cons_val_zero,
+      Matrix.cons_val_succ, Fin.forall_fin_zero, and_true]
+    exact ⟨hheadRareNonneg, hbandRareNonneg, hdeepRareNonneg,
+      hafterRareNonneg, hwaveBoundedNonneg, hwaveRareNonneg,
+      hcollarBaseNonneg, hcollarHeadNonneg, hcollarBandNonneg,
+      hcollarDeepNonneg, hcollarAfterNonneg, hcollarWaveNonneg⟩
+  have hrareLaneMeasurable : ∀ i, Measurable (rareLane i) := by
+    simp only [rareLane, Fin.forall_fin_succ, Matrix.cons_val_zero,
+      Matrix.cons_val_succ, Fin.forall_fin_zero, and_true]
+    exact ⟨hheadRareMeasurable, hbandRareMeasurable, hdeepRareMeasurable,
+      hafterRareMeasurable, hwaveBoundedMeasurable, hwaveRareMeasurable,
+      hcollarBaseMeasurable, hcollarHeadMeasurable, hcollarBandMeasurable,
+      hcollarDeepMeasurable, hcollarAfterMeasurable, hcollarWaveMeasurable⟩
+  have hrareLaneWith : ∀ i,
+      HCPolySupport.IndependentSums.IsBigOWith
+        (Cutoff.cutoffSampleLaw M).toMeasure
+        (HCPolySupport.IndependentSums.gammaSigma ((1 - sigma) / 3))
+        (rareLane i) rarePerLaneScale := by
+    simp only [rareLane, Fin.forall_fin_succ, Matrix.cons_val_zero,
+      Matrix.cons_val_succ, Fin.forall_fin_zero, and_true]
+    refine ⟨hheadRareFull, hbandRareFull, hdeepRareFull, hafterRareFull,
+      hwaveBoundedFull, hwaveRareFull, ?_, ?_, ?_, ?_, ?_, ?_⟩
+    · simpa only [rarePerLaneScale, depthFactor, laneEps, laneX, inv_pow,
+        Algsuperdiff.Section3.Provider.CoarseEllipticity.upperProfileTargetSigma]
+        using hcollarBase
+    · simpa only [rarePerLaneScale, depthFactor, laneEps, laneX, inv_pow,
+        Algsuperdiff.Section3.Provider.CoarseEllipticity.upperProfileTargetSigma]
+        using hcollarHead
+    · simpa only [rarePerLaneScale, depthFactor, laneEps, laneX, inv_pow,
+        Algsuperdiff.Section3.Provider.CoarseEllipticity.upperProfileTargetSigma]
+        using hcollarBand
+    · simpa only [rarePerLaneScale, depthFactor, laneEps, laneX, inv_pow,
+        Algsuperdiff.Section3.Provider.CoarseEllipticity.upperProfileTargetSigma]
+        using hcollarDeep
+    · simpa only [rarePerLaneScale, depthFactor, laneEps, laneX, inv_pow,
+        Algsuperdiff.Section3.Provider.CoarseEllipticity.upperProfileTargetSigma]
+        using hcollarAfter
+    · simpa only [rarePerLaneScale, depthFactor, laneEps, laneX, inv_pow,
+        Algsuperdiff.Section3.Provider.CoarseEllipticity.upperProfileTargetSigma]
+        using hcollarWave
+  have htargetSigmaPos : 0 < (1 - sigma) / 3 := by linarith
+  have hrareLaneO : ∀ i ∈ (Finset.univ : Finset (Fin 12)),
+      HCPolySupport.IndependentSums.IsBigO
+        (Cutoff.cutoffSampleLaw M).toMeasure
+        (HCPolySupport.IndependentSums.gammaSigma ((1 - sigma) / 3))
+        (rareLane i) rarePerLaneScale := by
+    intro i _
+    exact (Algsuperdiff.Section3.Provider.Orlicz.isBigOWith_iff_isBigO_of_nonneg
+      (hrareLaneNonneg i)).1 (hrareLaneWith i)
+  have hrareSymmetric :=
+    HCPolySupport.IndependentSums.isBigO_finset_sum_of_isBigO_gammaSigma
+      (μ := (Cutoff.cutoffSampleLaw M).toMeasure)
+      (Finset.univ : Finset (Fin 12)) htargetSigmaPos
+      ⟨0, Finset.mem_univ 0⟩
+      (fun _ _ => hrarePerLaneScalePos) hrareLaneO
+      (fun i _ => hrareLaneMeasurable i)
+  have hUexpNonneg : ∀ omega, 0 ≤ Uexp omega := by
+    intro omega
+    exact Finset.sum_nonneg fun i _ => hrareLaneNonneg i omega
+  have hUexpMeasurable : Measurable Uexp := by
+    exact Finset.measurable_fun_sum Finset.univ fun i _ =>
+      hrareLaneMeasurable i
+  have hUexpRaw :
+      HCPolySupport.IndependentSums.IsBigOWith
+        (Cutoff.cutoffSampleLaw M).toMeasure
+        (HCPolySupport.IndependentSums.gammaSigma ((1 - sigma) / 3))
+        Uexp
+        (HCPolySupport.IndependentSums.gammaTriangleConst ((1 - sigma) / 3) *
+          ∑ _i : Fin 12, rarePerLaneScale) := by
+    apply (Algsuperdiff.Section3.Provider.Orlicz.isBigOWith_iff_isBigO_of_nonneg
+      hUexpNonneg).2
+    simpa only [Uexp] using hrareSymmetric
+  exact ⟨hrareLaneNonneg, hUexpNonneg, hUexpMeasurable, hUexpRaw⟩
+
+private theorem superposedFluxUpperPerDescendant_momentBounds3 :
+    ∀ {d : ℕ} (M : ABKModel d) (m : ℤ) (E : { E : ℝ // (1 : ℝ) ≤ E }) (sigma Clane : ℝ) (k : ℕ)
+      (R : TriadicCube d) (_ : (2 : ℕ) ≤ d) (headRare : Cutoff.CutoffSample d → ℝ) (headRareScale : ℝ)
+      (_ :
+        IndependentSums.IsBigOWith (↑(Cutoff.cutoffSampleLaw M) : Measure (Cutoff.CutoffSample d))
+          (IndependentSums.gammaSigma (((1 : ℝ) - sigma) / (3 : ℝ))) headRare headRareScale)
+      (_ : headRareScale ≤ Real.exp (-(Clane⁻¹ * ((↑E : ℝ)⁻¹ ^ (2 : ℕ) * M.gamma⁻¹))) ^ (8 : ℕ))
+      (bandRare : Cutoff.CutoffSample d → ℝ) (bandRareScale : ℝ)
+      (_ :
+        IndependentSums.IsBigOWith (↑(Cutoff.cutoffSampleLaw M) : Measure (Cutoff.CutoffSample d))
+          (IndependentSums.gammaSigma (((1 : ℝ) - sigma) / (3 : ℝ))) bandRare bandRareScale)
+      (_ : bandRareScale ≤ Real.exp (-(Clane⁻¹ * ((↑E : ℝ)⁻¹ ^ (2 : ℕ) * M.gamma⁻¹))) ^ (8 : ℕ))
+      (deepRare : Cutoff.CutoffSample d → ℝ) (deepRareScale : ℝ)
+      (_ :
+        IndependentSums.IsBigOWith (↑(Cutoff.cutoffSampleLaw M) : Measure (Cutoff.CutoffSample d))
+          (IndependentSums.gammaSigma (((1 : ℝ) - sigma) / (3 : ℝ))) deepRare deepRareScale)
+      (_ : deepRareScale ≤ Real.exp (-(Clane⁻¹ * ((↑E : ℝ)⁻¹ ^ (2 : ℕ) * M.gamma⁻¹))) ^ (8 : ℕ))
+      (afterRare : Cutoff.CutoffSample d → ℝ) (afterRareScale : ℝ)
+      (_ :
+        IndependentSums.IsBigOWith (↑(Cutoff.cutoffSampleLaw M) : Measure (Cutoff.CutoffSample d))
+          (IndependentSums.gammaSigma (((1 : ℝ) - sigma) / (3 : ℝ))) afterRare afterRareScale)
+      (_ :
+        afterRareScale ≤
+          (3 : ℝ) ^ (M.gamma * (↑(k + (1 : ℕ)) : ℝ)) *
+            Real.exp (-(Clane⁻¹ * ((↑E : ℝ)⁻¹ ^ (2 : ℕ) * M.gamma⁻¹))) ^ (8 : ℕ)),
+      let laneX : ℝ := (↑E : ℝ)⁻¹ ^ (2 : ℕ) * M.gamma⁻¹;
+      let laneEps : ℝ := Real.exp (-(Clane⁻¹ * laneX));
+      let depthFactor : ℝ := (3 : ℝ) ^ (M.gamma * ((↑k : ℝ) + (1 : ℝ)));
+      let rarePerLaneScale : ℝ := depthFactor * laneEps ^ (8 : ℕ);
+      let collarBase : Cutoff.CutoffSample d → ℝ :=
+        probeSharpFramedCollarBaseTraceLane M R (↑E : ℝ) (collarBandMeanDepth M (↑E : ℝ));
+      let collarBand : Cutoff.CutoffSample d → ℝ := probeSharpFramedCollarBandMeanTunedTraceLane M m R (↑E : ℝ);
+      let collarDeep : Cutoff.CutoffSample d → ℝ := probeSharpFramedCollarDeepTailTraceLane M m R (↑E : ℝ);
+      ∀ (waveBounded waveRare : Cutoff.CutoffSample d → ℝ)
+        (_ :
+          IndependentSums.IsBigOWith (↑(Cutoff.cutoffSampleLaw M) : Measure (Cutoff.CutoffSample d))
+            (IndependentSums.gammaSigma (((1 : ℝ) - sigma) / (3 : ℝ))) waveBounded
+            (probeSharpWaveTailTunedTraceScale M (↑E : ℝ) sigma))
+        (_ :
+          IndependentSums.IsBigOWith (↑(Cutoff.cutoffSampleLaw M) : Measure (Cutoff.CutoffSample d))
+            (IndependentSums.gammaSigma (((1 : ℝ) - sigma) / (3 : ℝ))) waveRare
+            (probeSharpWaveTailTunedTraceScale M (↑E : ℝ) sigma))
+        (_ :
+          probeSharpWaveTailTunedTraceScale M (↑E : ℝ) sigma ≤
+            Real.exp (-(Clane⁻¹ * ((↑E : ℝ)⁻¹ ^ (2 : ℕ) * M.gamma⁻¹))) ^ (8 : ℕ)),
+        (0 : ℝ) < rarePerLaneScale ∧
+          IndependentSums.IsBigOWith (↑(Cutoff.cutoffSampleLaw M) : Measure (Cutoff.CutoffSample d))
+              (IndependentSums.gammaSigma (((1 : ℝ) - sigma) / (3 : ℝ))) headRare rarePerLaneScale ∧
+            IndependentSums.IsBigOWith (↑(Cutoff.cutoffSampleLaw M) : Measure (Cutoff.CutoffSample d))
+                (IndependentSums.gammaSigma (((1 : ℝ) - sigma) / (3 : ℝ))) bandRare rarePerLaneScale ∧
+              IndependentSums.IsBigOWith (↑(Cutoff.cutoffSampleLaw M) : Measure (Cutoff.CutoffSample d))
+                  (IndependentSums.gammaSigma (((1 : ℝ) - sigma) / (3 : ℝ))) deepRare rarePerLaneScale ∧
+                IndependentSums.IsBigOWith (↑(Cutoff.cutoffSampleLaw M) : Measure (Cutoff.CutoffSample d))
+                    (IndependentSums.gammaSigma (((1 : ℝ) - sigma) / (3 : ℝ))) afterRare rarePerLaneScale ∧
+                  IndependentSums.IsBigOWith (↑(Cutoff.cutoffSampleLaw M) : Measure (Cutoff.CutoffSample d))
+                      (IndependentSums.gammaSigma (((1 : ℝ) - sigma) / (3 : ℝ))) waveBounded rarePerLaneScale ∧
+                    IndependentSums.IsBigOWith (↑(Cutoff.cutoffSampleLaw M) : Measure (Cutoff.CutoffSample d))
+                        (IndependentSums.gammaSigma (((1 : ℝ) - sigma) / (3 : ℝ))) waveRare rarePerLaneScale ∧
+                      (∀ (omega : Cutoff.CutoffSample d), (0 : ℝ) ≤ collarBase omega) ∧
+                        Measurable collarBase ∧
+                          (∀ (omega : Cutoff.CutoffSample d), (0 : ℝ) ≤ collarBand omega) ∧
+                            Measurable collarBand ∧
+                              (∀ (omega : Cutoff.CutoffSample d), (0 : ℝ) ≤ collarDeep omega) ∧ Measurable collarDeep := by
+  intro _ M m E sigma _ _ R hd _ _ hheadRareO hheadRareScaleLe _ _ hbandRareO hbandRareScaleLe _ _ hdeepRareO hdeepRareScaleLe afterRare _ hafterRareO hafterRareScaleLe _ laneEps depthFactor rarePerLaneScale collarBase collarBand collarDeep _ _ hwaveBoundedO hwaveRareO hwaveScaleLe
   have hdepthFactorPos : 0 < depthFactor := by
     dsimp only [depthFactor]
     positivity
@@ -758,126 +1918,563 @@ theorem superposedFlux_upper_per_descendant_split
             M (E : ℝ)) omega
   have hcollarBaseMeasurable : Measurable collarBase := by
     simpa only [collarBase] using
-      Algsuperdiff.Section3.Provider.CoarseEllipticity.measurable_probeSharpFramedCollarBaseTraceLane
+      measurable_probeSharpFramedCollarBaseTraceLane
         M R (E : ℝ)
           (Algsuperdiff.Section3.Provider.CoarseEllipticity.collarBandMeanDepth
             M (E : ℝ))
   have hcollarBandNonneg : ∀ omega, 0 ≤ collarBand omega := by
     intro omega
     simpa only [collarBand] using
-      Algsuperdiff.Section3.Provider.CoarseEllipticity.probeSharpFramedCollarBandMeanTunedTraceLane_nonneg
+      probeSharpFramedCollarBandMeanTunedTraceLane_nonneg
         hd M m R (E : ℝ) omega
   have hcollarBandMeasurable : Measurable collarBand := by
     simpa only [collarBand] using
-      Algsuperdiff.Section3.Provider.CoarseEllipticity.measurable_probeSharpFramedCollarBandMeanTunedTraceLane
+      measurable_probeSharpFramedCollarBandMeanTunedTraceLane
         M m R (E : ℝ)
   have hcollarDeepNonneg : ∀ omega, 0 ≤ collarDeep omega := by
     intro omega
     simpa only [collarDeep] using
-      Algsuperdiff.Section3.Provider.CoarseEllipticity.probeSharpFramedCollarDeepTailTraceLane_nonneg
+      probeSharpFramedCollarDeepTailTraceLane_nonneg
         M m R (E : ℝ) omega
   have hcollarDeepMeasurable : Measurable collarDeep := by
     simpa only [collarDeep] using
-      Algsuperdiff.Section3.Provider.CoarseEllipticity.measurable_probeSharpFramedCollarDeepTailTraceLane
+      measurable_probeSharpFramedCollarDeepTailTraceLane
         M m R (E : ℝ)
+  exact ⟨hrarePerLaneScalePos, hheadRareFull, hbandRareFull, hdeepRareFull, hafterRareFull,
+    hwaveBoundedFull, hwaveRareFull, hcollarBaseNonneg, hcollarBaseMeasurable, hcollarBandNonneg,
+      hcollarBandMeasurable, hcollarDeepNonneg, hcollarDeepMeasurable⟩
+
+private theorem superposedFluxUpperPerDescendant_comparisonBounds1 :
+    ∀ {d : ℕ} (M : ABKModel d) (m : ℤ) (E : { E : ℝ // (1 : ℝ) ≤ E })
+      (hstate : Frozen.Section3.inductionState M (m - (1 : ℤ)) E) (sigma Clane : ℝ) (hsigma0 : (0 : ℝ) < sigma)
+      (hsigmaHalf : sigma ≤ (1 / 2 : ℝ)) (hmaxLane : max (Real.exp (Clane / sigma)) (Disorder.cstar M)⁻¹ ≤ (↑E : ℝ))
+      (hE2 : (↑E : ℝ) ≤ M.gamma ^ (-(1 / 5 : ℝ))) (hcollarBaseOutput : probeSharpCollarBaseTunedOutputConst d ≤ Clane)
+      (k : ℕ) (R : TriadicCube d) (hR : R ∈ descendantsAtScale (originCube d m) (m - (1 : ℤ) - (↑k : ℤ))),
+      let laneX : ℝ := (↑E : ℝ)⁻¹ ^ (2 : ℕ) * M.gamma⁻¹;
+      let laneEps : ℝ := Real.exp (-(Clane⁻¹ * laneX));
+      IndependentSums.IsBigOWith (↑(Cutoff.cutoffSampleLaw M) : Measure (Cutoff.CutoffSample d))
+        (IndependentSums.gammaSigma (((1 : ℝ) - sigma) / (3 : ℝ)))
+        (probeSharpFramedCollarBaseTraceLane M R (↑E : ℝ) (collarBandMeanDepth M (↑E : ℝ)))
+        ((3 : ℝ) ^ (M.gamma * ((↑k : ℝ) + (1 : ℝ))) * Real.exp (-(Clane⁻¹ * ((↑E : ℝ)⁻¹ ^ (2 : ℕ) * M.gamma⁻¹))) ^ (8 : ℕ)) := by
+  classical
+  intro d M m E hstate sigma Clane hsigma0 hsigmaHalf hmaxLane hE2 hcollarBaseOutput k R hR laneX laneEps
+  let depthFactor : ℝ := (3 : ℝ) ^ (M.gamma * ((k : ℝ) + 1))
+  let rarePerLaneScale : ℝ := depthFactor * laneEps ^ 8
+  let collarBase : Cutoff.CutoffSample d → ℝ :=
+    Algsuperdiff.Section3.Provider.CoarseEllipticity.probeSharpFramedCollarBaseTraceLane
+      M R (E : ℝ)
+        (Algsuperdiff.Section3.Provider.CoarseEllipticity.collarBandMeanDepth
+          M (E : ℝ))
+  let collarHead : Cutoff.CutoffSample d → ℝ := fun omega =>
+    ∑ j : Fin d, ∑' n : ℕ,
+      Algsuperdiff.Section3.Provider.Multiscale.probeSharpFramedCollarWavePart
+        M R.scale (E : ℝ)
+        Algsuperdiff.Section3.Provider.CoarseEllipticity.bfaProfileB
+        (Algsuperdiff.Section3.Provider.CoarseEllipticity.collarBandMeanDepth
+          M (E : ℝ)) n (m - 1) (basisVec j)
+        (Algsuperdiff.Section3.Provider.Affine.superposedGradConst d)
+        (fun eta => Algsuperdiff.Section3.Provider.Multiscale.waveHeadTerm
+          M R.scale (E : ℝ)
+          Algsuperdiff.Section3.Provider.CoarseEllipticity.bfaProfileB
+          (Algsuperdiff.Section3.Provider.CoarseEllipticity.probeSharpLayerAnchor
+            R.scale
+            Algsuperdiff.Section3.Provider.CoarseEllipticity.bfaProfileB
+            (Algsuperdiff.Section3.Provider.CoarseEllipticity.collarBandMeanDepth
+              M (E : ℝ)) n) eta ^ 2)
+        (Algsuperdiff.Section3.Cutoff.translateCutoffSample
+          (triadicCubeShift R) omega)
+  let collarBand : Cutoff.CutoffSample d → ℝ :=
+    Algsuperdiff.Section3.Provider.CoarseEllipticity.probeSharpFramedCollarBandMeanTunedTraceLane
+      M m R (E : ℝ)
+  let collarDeep : Cutoff.CutoffSample d → ℝ :=
+    Algsuperdiff.Section3.Provider.CoarseEllipticity.probeSharpFramedCollarDeepTailTraceLane
+      M m R (E : ℝ)
+  let collarAfter : Cutoff.CutoffSample d → ℝ :=
+    Algsuperdiff.Section3.Provider.CoarseEllipticity.probeSharpFramedCollarAfterBandTraceLane
+      M m R (E : ℝ)
+  have hcollarBase :=
+    isBigOWith_upperProfileTarget_probeSharpFramedCollarBaseTraceLane_tuned
+      M hR hstate hsigma0 hsigmaHalf hmaxLane hE2 hcollarBaseOutput
+  exact hcollarBase
+
+private theorem superposedFluxUpperPerDescendant_comparisonBounds2 :
+    ∀ {d : ℕ} (M : ABKModel d) (m : ℤ) (E : { E : ℝ // (1 : ℝ) ≤ E })
+      (hstate : Frozen.Section3.inductionState M (m - (1 : ℤ)) E) (sigma Clane : ℝ) (hsigma0 : (0 : ℝ) < sigma)
+      (hsigmaHalf : sigma ≤ (1 / 2 : ℝ)) (hmaxLane : max (Real.exp (Clane / sigma)) (Disorder.cstar M)⁻¹ ≤ (↑E : ℝ))
+      (hE2 : (↑E : ℝ) ≤ M.gamma ^ (-(1 / 5 : ℝ))) (hcollarBaseOutput : probeSharpCollarBaseTunedOutputConst d ≤ Clane)
+      (hcollarHeadOutput : collarHeadTunedPerDescendantOutputConst d ≤ Clane) (k : ℕ) (R : TriadicCube d)
+      (hR : R ∈ descendantsAtScale (originCube d m) (m - (1 : ℤ) - (↑k : ℤ))),
+      (have laneX : ℝ := (↑E : ℝ)⁻¹ ^ (2 : ℕ) * M.gamma⁻¹;
+        have laneEps : ℝ := Real.exp (-(Clane⁻¹ * laneX));
+        IndependentSums.IsBigOWith (↑(Cutoff.cutoffSampleLaw M) : Measure (Cutoff.CutoffSample d))
+          (IndependentSums.gammaSigma (((1 : ℝ) - sigma) / (3 : ℝ)))
+          (probeSharpFramedCollarBaseTraceLane M R (↑E : ℝ) (collarBandMeanDepth M (↑E : ℝ)))
+          ((3 : ℝ) ^ (M.gamma * ((↑k : ℝ) + (1 : ℝ))) *
+            Real.exp (-(Clane⁻¹ * ((↑E : ℝ)⁻¹ ^ (2 : ℕ) * M.gamma⁻¹))) ^ (8 : ℕ))) ∧
+        have trace : (omega : Cutoff.CutoffSample d) → ℝ := fun (omega : Cutoff.CutoffSample d) =>
+          ∑ j : Fin d,
+            ∑' (n : ℕ),
+              Multiscale.probeSharpFramedCollarWavePart M R.scale (↑E : ℝ) bfaProfileB (collarBandMeanDepth M (↑E : ℝ)) n
+                (m - (1 : ℤ)) (basisVec j) (Affine.superposedGradConst d)
+                (fun (eta : Cutoff.CutoffSample d) =>
+                  Multiscale.waveHeadTerm M R.scale (↑E : ℝ) bfaProfileB
+                      (probeSharpLayerAnchor R.scale bfaProfileB (collarBandMeanDepth M (↑E : ℝ)) n) eta ^
+                    (2 : ℕ))
+                (Cutoff.translateCutoffSample (triadicCubeShift R) omega);
+        (∀ (omega : Cutoff.CutoffSample d), (0 : ℝ) ≤ trace omega) ∧
+          Measurable trace ∧
+            (∀ᵐ (omega : Cutoff.CutoffSample d) ∂(↑(Cutoff.cutoffSampleLaw M) : Measure (Cutoff.CutoffSample d)),
+                ENNReal.ofReal (trace omega) =
+                  ∑ j : Fin d,
+                    ∑' (n : ℕ),
+                      ENNReal.ofReal
+                        (Multiscale.probeSharpFramedCollarWavePart M R.scale (↑E : ℝ) bfaProfileB
+                          (collarBandMeanDepth M (↑E : ℝ)) n (m - (1 : ℤ)) (basisVec j) (Affine.superposedGradConst d)
+                          (fun (eta : Cutoff.CutoffSample d) =>
+                            Multiscale.waveHeadTerm M R.scale (↑E : ℝ) bfaProfileB
+                                (probeSharpLayerAnchor R.scale bfaProfileB (collarBandMeanDepth M (↑E : ℝ)) n) eta ^
+                              (2 : ℕ))
+                          (Cutoff.translateCutoffSample (triadicCubeShift R) omega))) ∧
+              IndependentSums.IsBigOWith (↑(Cutoff.cutoffSampleLaw M) : Measure (Cutoff.CutoffSample d))
+                (IndependentSums.gammaSigma (((1 : ℝ) - sigma) / (3 : ℝ))) trace
+                ((3 : ℝ) ^ (M.gamma * ((↑k : ℝ) + (1 : ℝ))) *
+                  Real.exp (-(Clane⁻¹ * ((↑E : ℝ)⁻¹ ^ (2 : ℕ) * M.gamma⁻¹))) ^ (8 : ℕ)) := by
+  classical
+  intro d M m E hstate sigma Clane hsigma0 hsigmaHalf hmaxLane hE2 hcollarBaseOutput hcollarHeadOutput k R hR
+  let laneX : ℝ := (E : ℝ)⁻¹ ^ 2 * M.gamma⁻¹
+  let laneEps : ℝ := Real.exp (-(Clane⁻¹ * laneX))
+  have hcollarBase :=
+    @superposedFluxUpperPerDescendant_comparisonBounds1 (d) (M) (m) (E) (hstate) (sigma) (Clane) (hsigma0) (hsigmaHalf) (hmaxLane) (hE2) (hcollarBaseOutput) (k) (R) (hR)
+  let depthFactor : ℝ := (3 : ℝ) ^ (M.gamma * ((k : ℝ) + 1))
+  let rarePerLaneScale : ℝ := depthFactor * laneEps ^ 8
+  let collarBase : Cutoff.CutoffSample d → ℝ :=
+    Algsuperdiff.Section3.Provider.CoarseEllipticity.probeSharpFramedCollarBaseTraceLane
+      M R (E : ℝ)
+        (Algsuperdiff.Section3.Provider.CoarseEllipticity.collarBandMeanDepth
+          M (E : ℝ))
+  let collarHead : Cutoff.CutoffSample d → ℝ := fun omega =>
+    ∑ j : Fin d, ∑' n : ℕ,
+      Algsuperdiff.Section3.Provider.Multiscale.probeSharpFramedCollarWavePart
+        M R.scale (E : ℝ)
+        Algsuperdiff.Section3.Provider.CoarseEllipticity.bfaProfileB
+        (Algsuperdiff.Section3.Provider.CoarseEllipticity.collarBandMeanDepth
+          M (E : ℝ)) n (m - 1) (basisVec j)
+        (Algsuperdiff.Section3.Provider.Affine.superposedGradConst d)
+        (fun eta => Algsuperdiff.Section3.Provider.Multiscale.waveHeadTerm
+          M R.scale (E : ℝ)
+          Algsuperdiff.Section3.Provider.CoarseEllipticity.bfaProfileB
+          (Algsuperdiff.Section3.Provider.CoarseEllipticity.probeSharpLayerAnchor
+            R.scale
+            Algsuperdiff.Section3.Provider.CoarseEllipticity.bfaProfileB
+            (Algsuperdiff.Section3.Provider.CoarseEllipticity.collarBandMeanDepth
+              M (E : ℝ)) n) eta ^ 2)
+        (Algsuperdiff.Section3.Cutoff.translateCutoffSample
+          (triadicCubeShift R) omega)
+  let collarBand : Cutoff.CutoffSample d → ℝ :=
+    Algsuperdiff.Section3.Provider.CoarseEllipticity.probeSharpFramedCollarBandMeanTunedTraceLane
+      M m R (E : ℝ)
+  let collarDeep : Cutoff.CutoffSample d → ℝ :=
+    Algsuperdiff.Section3.Provider.CoarseEllipticity.probeSharpFramedCollarDeepTailTraceLane
+      M m R (E : ℝ)
+  let collarAfter : Cutoff.CutoffSample d → ℝ :=
+    Algsuperdiff.Section3.Provider.CoarseEllipticity.probeSharpFramedCollarAfterBandTraceLane
+      M m R (E : ℝ)
+  have hcollarHead :=
+    collar_head_tuned_trace_is_big_o_with_eighth_power
+      M hR hstate hsigma0 hsigmaHalf hmaxLane hE2 hcollarHeadOutput
+  exact ⟨hcollarBase, hcollarHead⟩
+
+private theorem superposedFlux_descendant_measurable :
+    ∀ {d : ℕ} (M : ABKModel d) (m : ℤ) (E : { E : ℝ // (1 : ℝ) ≤ E })
+      (R : TriadicCube d) (hd : (2 : ℕ) ≤ d),
+      let this : NeZero d := { out := fun (a : d = (0 : ℕ)) => (by omega) };
+      Measurable fun (omega : Cutoff.CutoffSample d) =>
+        cutoffBBlockFamily M m (↑(Annealed.sigmaBar M (m - (1 : ℤ))) : ℝ)⁻¹ R omega := by
+  intro d M m E R hd this
+  have hraw : Measurable (fun omega : Cutoff.CutoffSample d =>
+      HCPolySupport.Book.Ch02.matrixNorm
+        (HCPolySupport.coarseBlockMatrix (cubeSet R)
+          (Cutoff.coefficientCutoff M.nu m omega).toFun).upperLeft) :=
+    Algsuperdiff.Section3.Provider.BadEvents.measurable_comp_coarseBMatrixNorm
+      (Cutoff.measurable_coefficientCutoff M.nu m)
+      (Cutoff.coefficientCutoff_aeLocallyUniformlyEllipticField M m) R
+  have hcoreEq :
+      (fun omega : Cutoff.CutoffSample d =>
+        Algsuperdiff.Section3.Provider.CoarseEllipticity.coarseBNormCoeffField R
+          (Cutoff.coefficientCutoff M.nu m omega)) =
+      (fun omega : Cutoff.CutoffSample d =>
+        HCPolySupport.Book.Ch02.matrixNorm
+          (HCPolySupport.coarseBlockMatrix (cubeSet R)
+            (Cutoff.coefficientCutoff M.nu m omega).toFun).upperLeft) := by
+    funext omega
+    rw [Algsuperdiff.Section3.Provider.CoarseEllipticity.coarseBNormCoeffField,
+      dite_eq_left (Cutoff.coefficientCutoff_aeLocallyUniformlyEllipticField M m omega)]
+    have hbridge := congrArg
+      (fun A : BlockMat d => HCPolySupport.Book.Ch02.matrixNorm A.upperLeft)
+      (HCPolySupport.Book.Ch04.RestrictionLawCarrier.coarseBlockMatrix_cubeSet_eq_chapterCoarse
+        (Cutoff.coefficientCutoff_aeLocallyUniformlyEllipticField M m omega) R)
+    simpa only [HCPolySupport.Book.Ch02.coarseBMatrixNorm,
+      HCPolySupport.Book.Ch02.coarseBlockMatrix_upperLeft] using hbridge.symm
+  have hcore : Measurable (fun omega : Cutoff.CutoffSample d =>
+      Algsuperdiff.Section3.Provider.CoarseEllipticity.coarseBNormCoeffField R
+        (Cutoff.coefficientCutoff M.nu m omega)) := by
+    rw [hcoreEq]
+    exact hraw
+  simpa only
+    [Algsuperdiff.Section3.Provider.CoarseEllipticity.cutoffBBlockFamily] using!
+      (measurable_const.mul hcore)
+
+private theorem superposedFluxUpperPerDescendant_comparisonBounds3 :
+    ∀ {d : ℕ} (M : ABKModel d) (m : ℤ) (E : { E : ℝ // (1 : ℝ) ≤ E })
+      (hstate : Frozen.Section3.inductionState M (m - (1 : ℤ)) E) (sigma Clane : ℝ) (hsigma0 : (0 : ℝ) < sigma)
+      (hsigmaHalf : sigma ≤ (1 / 2 : ℝ)) (hmaxLane : max (Real.exp (Clane / sigma)) (Disorder.cstar M)⁻¹ ≤ (↑E : ℝ))
+      (hE2 : (↑E : ℝ) ≤ M.gamma ^ (-(1 / 5 : ℝ))) (hgoodHeadOutput : goodHeadTunedOutputConst d ≤ Clane)
+      (hgoodBandOutput : probeSharpBandMeanTunedOutputConst d ≤ Clane)
+      (hgoodDeepOutput : probeSharpDeepBandTailTunedOutputConst d ≤ Clane)
+      (hgoodAfterOutput : probeSharpAfterBandTunedOutputConst d ≤ Clane)
+      (hcollarBaseOutput : probeSharpCollarBaseTunedOutputConst d ≤ Clane)
+      (hcollarHeadOutput : collarHeadTunedPerDescendantOutputConst d ≤ Clane)
+      (hprofileAuxLane : profileAuxiliaryConst d ≤ Clane) (hk0 : (3 : ℕ) ≤ collarBandMeanDepth M (↑E : ℝ)) (k : ℕ)
+      (R : TriadicCube d) (hR : R ∈ descendantsAtScale (originCube d m) (m - (1 : ℤ) - (↑k : ℤ))),
+      ∃ (_ :
+        ∀ (k : ℕ),
+          ∀ R ∈ descendantsAtScale (originCube d m) (m - (1 : ℤ) - (↑k : ℤ)),
+            ∀ᵐ (omega : Cutoff.CutoffSample d) ∂(↑(Cutoff.cutoffSampleLaw M) : Measure (Cutoff.CutoffSample d)),
+              ENNReal.ofReal (cutoffBBlockFamily M m (↑(Annealed.sigmaBar M (m - (1 : ℤ))) : ℝ)⁻¹ R omega) ≤
+                ∑ j : Fin d,
+                  ∑' (n : ℕ),
+                    ENNReal.ofReal
+                      (Multiscale.probeSharpFramedMeanLayerEnvelope M R.scale (↑E : ℝ) bfaProfileB
+                        (collarBandMeanDepth M (↑E : ℝ)) n (m - (1 : ℤ)) m
+                        (Cutoff.translateCutoffSample (triadicCubeShift R) omega) (basisVec j)
+                        (Affine.superposedGradConst d)))
+        (headOrdinary : Cutoff.CutoffSample d → ℝ) (headRare : Cutoff.CutoffSample d → ℝ) (headOrdinaryScale : ℝ)
+        (headRareScale : ℝ) (_ : ∀ (omega : Cutoff.CutoffSample d), (0 : ℝ) ≤ headOrdinary omega) (_ :
+        Measurable headOrdinary) (_ : ∀ (omega : Cutoff.CutoffSample d), (0 : ℝ) ≤ headRare omega) (_ : Measurable headRare)
+        (_ :
+        ∀ (omega : Cutoff.CutoffSample d),
+          ∑ j : Fin d,
+              ∑' (n : ℕ),
+                ENNReal.ofReal
+                  (Multiscale.probeSharpFramedGoodWavePart M R.scale (↑E : ℝ) bfaProfileB (collarBandMeanDepth M (↑E : ℝ)) n
+                    (m - (1 : ℤ)) (basisVec j)
+                    (fun (eta : Cutoff.CutoffSample d) =>
+                      Multiscale.waveHeadTerm M R.scale (↑E : ℝ) bfaProfileB
+                          (probeSharpLayerAnchor R.scale bfaProfileB (collarBandMeanDepth M (↑E : ℝ)) n) eta ^
+                        (2 : ℕ))
+                    (Cutoff.translateCutoffSample (triadicCubeShift R) omega)) ≤
+            ENNReal.ofReal (headOrdinary omega) + ENNReal.ofReal (headRare omega))
+        (_ :
+        IndependentSums.IsBigOWith (↑(Cutoff.cutoffSampleLaw M) : Measure (Cutoff.CutoffSample d))
+          (IndependentSums.gammaSigma (1 : ℝ)) headOrdinary headOrdinaryScale)
+        (_ : headOrdinaryScale ≤ upperSaturatedPerCubeAmplitude Clane (Disorder.cstar M) M.gamma k) (_ :
+        IndependentSums.IsBigOWith (↑(Cutoff.cutoffSampleLaw M) : Measure (Cutoff.CutoffSample d))
+          (IndependentSums.gammaSigma (((1 : ℝ) - sigma) / (3 : ℝ))) headRare headRareScale)
+        (_ : headRareScale ≤ Real.exp (-(Clane⁻¹ * ((↑E : ℝ)⁻¹ ^ (2 : ℕ) * M.gamma⁻¹))) ^ (8 : ℕ)) (bandOrdinary :
+        Cutoff.CutoffSample d → ℝ) (bandRare : Cutoff.CutoffSample d → ℝ) (bandRareScale : ℝ) (_ :
+        ∀ (omega : Cutoff.CutoffSample d), (0 : ℝ) ≤ bandOrdinary omega) (_ :
+        ∀ (omega : Cutoff.CutoffSample d), (0 : ℝ) ≤ bandRare omega) (_ : Measurable bandRare) (_ :
+        ∀ (omega : Cutoff.CutoffSample d),
+          ∑ j : Fin d,
+              ∑' (n : ℕ),
+                ENNReal.ofReal
+                  (Multiscale.probeSharpFramedGoodWavePart M R.scale (↑E : ℝ) bfaProfileB (collarBandMeanDepth M (↑E : ℝ)) n
+                    (m - (1 : ℤ)) (basisVec j)
+                    (fun (_eta : Cutoff.CutoffSample d) =>
+                      waveBandMean (probeDeepBandMeanAmplitude d) M.gamma (collarBandMeanDepth M (↑E : ℝ)) ^ (2 : ℕ))
+                    (Cutoff.translateCutoffSample (triadicCubeShift R) omega)) ≤
+            ENNReal.ofReal (bandOrdinary omega) + ENNReal.ofReal (bandRare omega))
+        (_ : ∀ (omega : Cutoff.CutoffSample d), bandOrdinary omega ≤ Clane) (_ :
+        IndependentSums.IsBigOWith (↑(Cutoff.cutoffSampleLaw M) : Measure (Cutoff.CutoffSample d))
+          (IndependentSums.gammaSigma (((1 : ℝ) - sigma) / (3 : ℝ))) bandRare bandRareScale)
+        (_ : bandRareScale ≤ Real.exp (-(Clane⁻¹ * ((↑E : ℝ)⁻¹ ^ (2 : ℕ) * M.gamma⁻¹))) ^ (8 : ℕ)) (deepOrdinary :
+        Cutoff.CutoffSample d → ℝ) (deepRare : Cutoff.CutoffSample d → ℝ) (deepOrdinaryScale : ℝ) (deepRareScale : ℝ) (_ :
+        ∀ (omega : Cutoff.CutoffSample d), (0 : ℝ) ≤ deepOrdinary omega) (_ : Measurable deepOrdinary) (_ :
+        ∀ (omega : Cutoff.CutoffSample d), (0 : ℝ) ≤ deepRare omega) (_ : Measurable deepRare) (_ :
+        ∀ᵐ (omega : Cutoff.CutoffSample d) ∂(↑(Cutoff.cutoffSampleLaw M) : Measure (Cutoff.CutoffSample d)),
+          ∑ j : Fin d,
+              ∑' (n : ℕ),
+                ENNReal.ofReal
+                  (Multiscale.probeSharpFramedGoodWavePart M R.scale (↑E : ℝ) bfaProfileB (collarBandMeanDepth M (↑E : ℝ)) n
+                    (m - (1 : ℤ)) (basisVec j)
+                    (fun (eta : Cutoff.CutoffSample d) =>
+                      probeDeepBandGaugedTail M (originCube d R.scale)
+                          (probeSharpLayerAnchor R.scale bfaProfileB (collarBandMeanDepth M (↑E : ℝ)) n)
+                          (collarBandMeanDepth M (↑E : ℝ)) (collarBandMeanDepth M (↑E : ℝ)) eta ^
+                        (2 : ℕ))
+                    (Cutoff.translateCutoffSample (triadicCubeShift R) omega)) ≤
+            ENNReal.ofReal (deepOrdinary omega) + ENNReal.ofReal (deepRare omega))
+        (_ :
+        IndependentSums.IsBigOWith (↑(Cutoff.cutoffSampleLaw M) : Measure (Cutoff.CutoffSample d))
+          (IndependentSums.gammaSigma (1 : ℝ)) deepOrdinary deepOrdinaryScale)
+        (_ : deepOrdinaryScale ≤ upperSaturatedPerCubeAmplitude Clane (Disorder.cstar M) M.gamma k) (_ :
+        IndependentSums.IsBigOWith (↑(Cutoff.cutoffSampleLaw M) : Measure (Cutoff.CutoffSample d))
+          (IndependentSums.gammaSigma (((1 : ℝ) - sigma) / (3 : ℝ))) deepRare deepRareScale)
+        (_ : deepRareScale ≤ Real.exp (-(Clane⁻¹ * ((↑E : ℝ)⁻¹ ^ (2 : ℕ) * M.gamma⁻¹))) ^ (8 : ℕ)) (afterOrdinary :
+        Cutoff.CutoffSample d → ℝ) (afterRare : Cutoff.CutoffSample d → ℝ) (afterOrdinaryScale : ℝ) (afterRareScale : ℝ) (_
+        : ∀ (omega : Cutoff.CutoffSample d), (0 : ℝ) ≤ afterOrdinary omega) (_ : Measurable afterOrdinary) (_ :
+        ∀ (omega : Cutoff.CutoffSample d), (0 : ℝ) ≤ afterRare omega) (_ : Measurable afterRare) (_ :
+        ∀ᵐ (omega : Cutoff.CutoffSample d) ∂(↑(Cutoff.cutoffSampleLaw M) : Measure (Cutoff.CutoffSample d)),
+          ∑ j : Fin d,
+              ∑' (n : ℕ),
+                ENNReal.ofReal
+                  (Multiscale.probeSharpFramedGoodWavePart M R.scale (↑E : ℝ) bfaProfileB (collarBandMeanDepth M (↑E : ℝ)) n
+                    (m - (1 : ℤ)) (basisVec j)
+                    (fun (eta : Cutoff.CutoffSample d) =>
+                      probeSharpAfterBandTerm M R.scale
+                          (probeSharpLayerAnchor R.scale bfaProfileB (collarBandMeanDepth M (↑E : ℝ)) n)
+                          (collarBandMeanDepth M (↑E : ℝ)) m eta ^
+                        (2 : ℕ))
+                    (Cutoff.translateCutoffSample (triadicCubeShift R) omega)) ≤
+            ENNReal.ofReal (afterOrdinary omega) + ENNReal.ofReal (afterRare omega))
+        (_ :
+        IndependentSums.IsBigOWith (↑(Cutoff.cutoffSampleLaw M) : Measure (Cutoff.CutoffSample d))
+          (IndependentSums.gammaSigma (1 : ℝ)) afterOrdinary afterOrdinaryScale)
+        (_ : afterOrdinaryScale ≤ upperSaturatedPerCubeAmplitude Clane (Disorder.cstar M) M.gamma k) (_ :
+        IndependentSums.IsBigOWith (↑(Cutoff.cutoffSampleLaw M) : Measure (Cutoff.CutoffSample d))
+          (IndependentSums.gammaSigma (((1 : ℝ) - sigma) / (3 : ℝ))) afterRare afterRareScale)
+        (_ :
+        afterRareScale ≤
+          (3 : ℝ) ^ (M.gamma * (↑(k + (1 : ℕ)) : ℝ)) * Real.exp (-(Clane⁻¹ * ((↑E : ℝ)⁻¹ ^ (2 : ℕ) * M.gamma⁻¹))) ^ (8 : ℕ))
+        (_ :
+        have laneX : ℝ := (↑E : ℝ)⁻¹ ^ (2 : ℕ) * M.gamma⁻¹;
+        have laneEps : ℝ := Real.exp (-(Clane⁻¹ * laneX));
+        IndependentSums.IsBigOWith (↑(Cutoff.cutoffSampleLaw M) : Measure (Cutoff.CutoffSample d))
+          (IndependentSums.gammaSigma (((1 : ℝ) - sigma) / (3 : ℝ)))
+          (probeSharpFramedCollarBaseTraceLane M R (↑E : ℝ) (collarBandMeanDepth M (↑E : ℝ)))
+          ((3 : ℝ) ^ (M.gamma * ((↑k : ℝ) + (1 : ℝ))) *
+            Real.exp (-(Clane⁻¹ * ((↑E : ℝ)⁻¹ ^ (2 : ℕ) * M.gamma⁻¹))) ^ (8 : ℕ)))
+        (_ :
+        ∀ (omega : Cutoff.CutoffSample d),
+          (0 : ℝ) ≤
+            (fun (omega : Cutoff.CutoffSample d) =>
+                ∑ j : Fin d,
+                  ∑' (n : ℕ),
+                    Multiscale.probeSharpFramedCollarWavePart M R.scale (↑E : ℝ) bfaProfileB
+                      (collarBandMeanDepth M (↑E : ℝ)) n (m - (1 : ℤ)) (basisVec j) (Affine.superposedGradConst d)
+                      (fun (eta : Cutoff.CutoffSample d) =>
+                        Multiscale.waveHeadTerm M R.scale (↑E : ℝ) bfaProfileB
+                            (probeSharpLayerAnchor R.scale bfaProfileB (collarBandMeanDepth M (↑E : ℝ)) n) eta ^
+                          (2 : ℕ))
+                      (Cutoff.translateCutoffSample (triadicCubeShift R) omega))
+              omega)
+        (_ :
+        Measurable fun (omega : Cutoff.CutoffSample d) =>
+          ∑ j : Fin d,
+            ∑' (n : ℕ),
+              Multiscale.probeSharpFramedCollarWavePart M R.scale (↑E : ℝ) bfaProfileB (collarBandMeanDepth M (↑E : ℝ)) n
+                (m - (1 : ℤ)) (basisVec j) (Affine.superposedGradConst d)
+                (fun (eta : Cutoff.CutoffSample d) =>
+                  Multiscale.waveHeadTerm M R.scale (↑E : ℝ) bfaProfileB
+                      (probeSharpLayerAnchor R.scale bfaProfileB (collarBandMeanDepth M (↑E : ℝ)) n) eta ^
+                    (2 : ℕ))
+                (Cutoff.translateCutoffSample (triadicCubeShift R) omega))
+        (_ :
+        ∀ᵐ (omega : Cutoff.CutoffSample d) ∂(↑(Cutoff.cutoffSampleLaw M) : Measure (Cutoff.CutoffSample d)),
+          ENNReal.ofReal
+              ((fun (omega : Cutoff.CutoffSample d) =>
+                  ∑ j : Fin d,
+                    ∑' (n : ℕ),
+                      Multiscale.probeSharpFramedCollarWavePart M R.scale (↑E : ℝ) bfaProfileB
+                        (collarBandMeanDepth M (↑E : ℝ)) n (m - (1 : ℤ)) (basisVec j) (Affine.superposedGradConst d)
+                        (fun (eta : Cutoff.CutoffSample d) =>
+                          Multiscale.waveHeadTerm M R.scale (↑E : ℝ) bfaProfileB
+                              (probeSharpLayerAnchor R.scale bfaProfileB (collarBandMeanDepth M (↑E : ℝ)) n) eta ^
+                            (2 : ℕ))
+                        (Cutoff.translateCutoffSample (triadicCubeShift R) omega))
+                omega) =
+            ∑ j : Fin d,
+              ∑' (n : ℕ),
+                ENNReal.ofReal
+                  (Multiscale.probeSharpFramedCollarWavePart M R.scale (↑E : ℝ) bfaProfileB (collarBandMeanDepth M (↑E : ℝ))
+                    n (m - (1 : ℤ)) (basisVec j) (Affine.superposedGradConst d)
+                    (fun (eta : Cutoff.CutoffSample d) =>
+                      Multiscale.waveHeadTerm M R.scale (↑E : ℝ) bfaProfileB
+                          (probeSharpLayerAnchor R.scale bfaProfileB (collarBandMeanDepth M (↑E : ℝ)) n) eta ^
+                        (2 : ℕ))
+                    (Cutoff.translateCutoffSample (triadicCubeShift R) omega)))
+        (_ :
+        IndependentSums.IsBigOWith (↑(Cutoff.cutoffSampleLaw M) : Measure (Cutoff.CutoffSample d))
+          (IndependentSums.gammaSigma (((1 : ℝ) - sigma) / (3 : ℝ)))
+          (fun (omega : Cutoff.CutoffSample d) =>
+            ∑ j : Fin d,
+              ∑' (n : ℕ),
+                Multiscale.probeSharpFramedCollarWavePart M R.scale (↑E : ℝ) bfaProfileB (collarBandMeanDepth M (↑E : ℝ)) n
+                  (m - (1 : ℤ)) (basisVec j) (Affine.superposedGradConst d)
+                  (fun (eta : Cutoff.CutoffSample d) =>
+                    Multiscale.waveHeadTerm M R.scale (↑E : ℝ) bfaProfileB
+                        (probeSharpLayerAnchor R.scale bfaProfileB (collarBandMeanDepth M (↑E : ℝ)) n) eta ^
+                      (2 : ℕ))
+                  (Cutoff.translateCutoffSample (triadicCubeShift R) omega))
+          ((3 : ℝ) ^ (M.gamma * ((↑k : ℝ) + (1 : ℝ))) *
+            Real.exp (-(Clane⁻¹ * ((↑E : ℝ)⁻¹ ^ (2 : ℕ) * M.gamma⁻¹))) ^ (8 : ℕ))),
+        True := by
+  classical
+  intro d M m E hstate sigma Clane hsigma0 hsigmaHalf hmaxLane hE2 hgoodHeadOutput hgoodBandOutput hgoodDeepOutput hgoodAfterOutput hcollarBaseOutput hcollarHeadOutput hprofileAuxLane hk0 k R hR
+  have hmaxAux :
+      max (Real.exp
+        (Algsuperdiff.Section3.Provider.CoarseEllipticity.profileAuxiliaryConst d /
+          sigma)) (Disorder.cstar M)⁻¹ ≤ (E : ℝ) := by
+    refine max_le ?_ ((le_max_right _ _).trans hmaxLane)
+    exact (Real.exp_le_exp.mpr
+      ((div_le_div_iff_of_pos_right hsigma0).2 hprofileAuxLane)).trans
+        ((le_max_left _ _).trans hmaxLane)
+  have hpotential : ∀ (k : ℕ) (R : TriadicCube d),
+      R ∈ descendantsAtScale (originCube d m) (m - 1 - (k : ℤ)) →
+        ∀ᵐ omega ∂(Cutoff.cutoffSampleLaw M).toMeasure,
+          ENNReal.ofReal
+              (Algsuperdiff.Section3.Provider.CoarseEllipticity.cutoffBBlockFamily
+                M m (Annealed.sigmaBar M (m - 1) : ℝ)⁻¹ R omega) ≤
+            ∑ j : Fin d, ∑' n : ℕ, ENNReal.ofReal
+              (Algsuperdiff.Section3.Provider.Multiscale.probeSharpFramedMeanLayerEnvelope
+                M R.scale (E : ℝ)
+                  Algsuperdiff.Section3.Provider.CoarseEllipticity.bfaProfileB
+                  (Algsuperdiff.Section3.Provider.CoarseEllipticity.collarBandMeanDepth
+                    M (E : ℝ)) n (m - 1) m
+                  (Algsuperdiff.Section3.Cutoff.translateCutoffSample
+                    (triadicCubeShift R) omega)
+                  (basisVec j)
+                  (Algsuperdiff.Section3.Provider.Affine.superposedGradConst d)) := by
+    intro k R hR
+    exact
+      Algsuperdiff.Section3.Provider.Multiscale.descendant_cutoffBlock_le_meanEnvelope_ae_of_profileGate
+        M hR hstate hsigma0 hsigmaHalf hmaxAux hE2 hk0 (by omega)
+  obtain ⟨headOrdinary, headRare, headOrdinaryScale, headRareScale,
+      hhead⟩ :=
+    Algsuperdiff.Section3.Provider.CoarseEllipticity.exists_good_head_tuned_finite_trace_split
+      M hR hstate hsigma0 hsigmaHalf hmaxLane hE2 hgoodHeadOutput
+  rcases hhead with
+    ⟨hheadOrdinaryNonneg, hheadOrdinaryMeasurable,
+      hheadRareNonneg, hheadRareMeasurable, _,
+      _, hheadENNRealDom, hheadOrdinaryO,
+      _, hheadOrdinaryScaleLe,
+      hheadRareO, _, hheadRareScaleLe⟩
+  obtain ⟨bandOrdinary, bandRare, bandRareScale, hband⟩ :=
+    Algsuperdiff.Section3.Provider.CoarseEllipticity.exists_good_band_mean_tuned_finite_trace_split
+      M hR hstate hsigma0 hsigmaHalf hmaxLane hE2 hgoodBandOutput
+  rcases hband with
+    ⟨hbandOrdinaryNonneg, hbandOrdinaryMeasurable,
+      hbandRareNonneg, hbandRareMeasurable, _,
+      _, hbandENNRealDom, hbandOrdinaryLe,
+      hbandRareO, _, hbandRareScaleLe⟩
+  obtain ⟨deepOrdinary, deepRare, deepOrdinaryScale, deepRareScale,
+      hdeep⟩ :=
+    exists_tunedDeepBandTail_good_finite_trace_split
+      M hR hstate hsigma0 hsigmaHalf hmaxLane hE2
+        (max_le hprofileAuxLane hgoodDeepOutput)
+  rcases hdeep with
+    ⟨hdeepOrdinaryNonneg, hdeepOrdinaryMeasurable,
+      hdeepRareNonneg, hdeepRareMeasurable, _,
+      _, hdeepENNRealDom,
+      hdeepOrdinaryO, _, hdeepOrdinaryScaleLe,
+      hdeepRareO, _, hdeepRareScaleLe⟩
+  obtain ⟨afterOrdinary, afterRare, afterOrdinaryScale, afterRareScale,
+      hafter⟩ :=
+    Algsuperdiff.Section3.Provider.CoarseEllipticity.exists_tunedAfterBand_good_finite_trace_split
+      M hR hstate hsigma0 hsigmaHalf hmaxLane hE2 hgoodAfterOutput
+  rcases hafter with
+    ⟨hafterOrdinaryNonneg, hafterOrdinaryMeasurable,
+      hafterRareNonneg, hafterRareMeasurable, _,
+      _, hafterENNRealDom, hafterOrdinaryO,
+      _, hafterOrdinaryScaleLe,
+      hafterRareO, _, hafterRareScaleLe⟩
+  obtain ⟨hcollarBase, hcollarHead⟩ :=
+    @superposedFluxUpperPerDescendant_comparisonBounds2 (d) (M) (m) (E) (hstate) (sigma) (Clane) (hsigma0) (hsigmaHalf) (hmaxLane) (hE2) (hcollarBaseOutput) (hcollarHeadOutput) (k) (R) (hR)
+  let laneX : ℝ := (E : ℝ)⁻¹ ^ 2 * M.gamma⁻¹
+  let laneEps : ℝ := Real.exp (-(Clane⁻¹ * laneX))
+  let depthFactor : ℝ := (3 : ℝ) ^ (M.gamma * ((k : ℝ) + 1))
+  let rarePerLaneScale : ℝ := depthFactor * laneEps ^ 8
+  let collarBase : Cutoff.CutoffSample d → ℝ :=
+    Algsuperdiff.Section3.Provider.CoarseEllipticity.probeSharpFramedCollarBaseTraceLane
+      M R (E : ℝ)
+        (Algsuperdiff.Section3.Provider.CoarseEllipticity.collarBandMeanDepth
+          M (E : ℝ))
+  let collarHead : Cutoff.CutoffSample d → ℝ := fun omega =>
+    ∑ j : Fin d, ∑' n : ℕ,
+      Algsuperdiff.Section3.Provider.Multiscale.probeSharpFramedCollarWavePart
+        M R.scale (E : ℝ)
+        Algsuperdiff.Section3.Provider.CoarseEllipticity.bfaProfileB
+        (Algsuperdiff.Section3.Provider.CoarseEllipticity.collarBandMeanDepth
+          M (E : ℝ)) n (m - 1) (basisVec j)
+        (Algsuperdiff.Section3.Provider.Affine.superposedGradConst d)
+        (fun eta => Algsuperdiff.Section3.Provider.Multiscale.waveHeadTerm
+          M R.scale (E : ℝ)
+          Algsuperdiff.Section3.Provider.CoarseEllipticity.bfaProfileB
+          (Algsuperdiff.Section3.Provider.CoarseEllipticity.probeSharpLayerAnchor
+            R.scale
+            Algsuperdiff.Section3.Provider.CoarseEllipticity.bfaProfileB
+            (Algsuperdiff.Section3.Provider.CoarseEllipticity.collarBandMeanDepth
+              M (E : ℝ)) n) eta ^ 2)
+        (Algsuperdiff.Section3.Cutoff.translateCutoffSample
+          (triadicCubeShift R) omega)
+  let collarBand : Cutoff.CutoffSample d → ℝ :=
+    Algsuperdiff.Section3.Provider.CoarseEllipticity.probeSharpFramedCollarBandMeanTunedTraceLane
+      M m R (E : ℝ)
+  let collarDeep : Cutoff.CutoffSample d → ℝ :=
+    Algsuperdiff.Section3.Provider.CoarseEllipticity.probeSharpFramedCollarDeepTailTraceLane
+      M m R (E : ℝ)
+  let collarAfter : Cutoff.CutoffSample d → ℝ :=
+    Algsuperdiff.Section3.Provider.CoarseEllipticity.probeSharpFramedCollarAfterBandTraceLane
+      M m R (E : ℝ)
+  rcases hcollarHead with
+    ⟨hcollarHeadNonneg, hcollarHeadMeasurable,
+      hcollarHeadENNRealEq, hcollarHead⟩
+  exact ⟨hpotential, headOrdinary, headRare, headOrdinaryScale, headRareScale, hheadOrdinaryNonneg, hheadOrdinaryMeasurable, hheadRareNonneg, hheadRareMeasurable, hheadENNRealDom, hheadOrdinaryO, hheadOrdinaryScaleLe, hheadRareO, hheadRareScaleLe, bandOrdinary, bandRare, bandRareScale, hbandOrdinaryNonneg, hbandRareNonneg, hbandRareMeasurable, hbandENNRealDom, hbandOrdinaryLe, hbandRareO, hbandRareScaleLe, deepOrdinary, deepRare, deepOrdinaryScale, deepRareScale, hdeepOrdinaryNonneg, hdeepOrdinaryMeasurable, hdeepRareNonneg, hdeepRareMeasurable, hdeepENNRealDom, hdeepOrdinaryO, hdeepOrdinaryScaleLe, hdeepRareO, hdeepRareScaleLe, afterOrdinary, afterRare, afterOrdinaryScale, afterRareScale, hafterOrdinaryNonneg, hafterOrdinaryMeasurable, hafterRareNonneg, hafterRareMeasurable, hafterENNRealDom, hafterOrdinaryO, hafterOrdinaryScaleLe, hafterRareO, hafterRareScaleLe, hcollarBase, hcollarHeadNonneg, hcollarHeadMeasurable, hcollarHeadENNRealEq, hcollarHead, True.intro⟩
+
+private theorem superposedFluxUpperPerDescendant_comparisonBounds4 : superposedFluxUpperPerDescendant_comparisonBounds4_statement := by
+  classical
+  intro d M m E hstate sigma Clane hsigma0 hsigmaHalf hmaxLane hE2 hlanePos hgoodWaveOutput hprofileAuxLane hdepthThresholdLane k R hR hd headOrdinary headRare headOrdinaryScale headRareScale hheadOrdinaryNonneg hheadOrdinaryMeasurable hheadRareNonneg hheadRareMeasurable hheadOrdinaryO hheadOrdinaryScaleLe hheadRareO hheadRareScaleLe bandRare bandRareScale hbandRareNonneg hbandRareMeasurable hbandRareO hbandRareScaleLe deepOrdinary deepRare deepOrdinaryScale deepRareScale hdeepOrdinaryNonneg hdeepOrdinaryMeasurable hdeepRareNonneg hdeepRareMeasurable hdeepOrdinaryO hdeepOrdinaryScaleLe hdeepRareO hdeepRareScaleLe afterOrdinary afterRare afterOrdinaryScale afterRareScale hafterOrdinaryNonneg hafterOrdinaryMeasurable hafterRareNonneg hafterRareMeasurable hafterOrdinaryO hafterOrdinaryScaleLe hafterRareO hafterRareScaleLe hcollarBase hcollarHeadNonneg hcollarHeadMeasurable hcollarHead collarBase collarHead collarBand collarDeep collarAfter hcollarBand hcollarDeep hcollarAfterNonneg hcollarAfterMeasurable hcollarAfter collarWave hcollarWaveRaw
+  rcases hcollarWaveRaw with
+    ⟨hcollarWaveNonneg, hcollarWaveMeasurable,
+      hcollarWaveENNRealEq, hcollarWave⟩
+  obtain ⟨waveBounded, waveRare, hwave⟩ :=
+    Algsuperdiff.Section3.Provider.CoarseEllipticity.exists_good_wave_tail_tuned_finite_trace_split
+      M hR hstate hsigma0 hsigmaHalf hmaxLane hE2 hgoodWaveOutput
+  rcases hwave with
+    ⟨hwaveBoundedNonneg, hwaveBoundedMeasurable,
+      hwaveRareNonneg, hwaveRareMeasurable, _,
+      _, hwaveENNRealDom,
+      hwaveBoundedO, hwaveRareO, _, hwaveScaleLe⟩
+  let perCubeScale : ℝ :=
+    Algsuperdiff.Section3.Provider.CoarseEllipticity.upperSaturatedPerCubeAmplitude
+      Clane (Disorder.cstar M) M.gamma k
+  let ordinaryLane : Fin 3 → Cutoff.CutoffSample d → ℝ :=
+    ![headOrdinary, deepOrdinary, afterOrdinary]
+  let Uone : Cutoff.CutoffSample d → ℝ := fun omega =>
+    ∑ i : Fin 3, ordinaryLane i omega
+  obtain ⟨hordinaryLaneNonneg, hUoneNonneg, hUoneMeasurable, hUone⟩ :=
+    @superposedFlux_ordinaryContribution (d) (M) (sigma) (Clane) (hsigma0) (hsigmaHalf) (hlanePos)
+      (k) (headOrdinary) (headOrdinaryScale) (hheadOrdinaryNonneg) (hheadOrdinaryMeasurable)
+        (hheadOrdinaryO) (hheadOrdinaryScaleLe) (deepOrdinary) (deepOrdinaryScale)
+          (hdeepOrdinaryNonneg) (hdeepOrdinaryMeasurable) (hdeepOrdinaryO) (hdeepOrdinaryScaleLe)
+            (afterOrdinary) (afterOrdinaryScale) (hafterOrdinaryNonneg) (hafterOrdinaryMeasurable)
+              (hafterOrdinaryO) (hafterOrdinaryScaleLe)
+  obtain ⟨hrarePerLaneScalePos, hheadRareFull, hbandRareFull, hdeepRareFull, hafterRareFull,
+    hwaveBoundedFull, hwaveRareFull, hcollarBaseNonneg, hcollarBaseMeasurable, hcollarBandNonneg,
+      hcollarBandMeasurable, hcollarDeepNonneg, hcollarDeepMeasurable⟩ :=
+    @superposedFluxUpperPerDescendant_momentBounds3 (d) (M) (m) (E) (sigma) (Clane) (k) (R) (hd)
+      (headRare) (headRareScale) (hheadRareO) (hheadRareScaleLe) (bandRare) (bandRareScale)
+        (hbandRareO) (hbandRareScaleLe) (deepRare) (deepRareScale) (hdeepRareO) (hdeepRareScaleLe)
+          (afterRare) (afterRareScale) (hafterRareO) (hafterRareScaleLe) (waveBounded) (waveRare)
+            (hwaveBoundedO) (hwaveRareO) (hwaveScaleLe)
   let rareLane : Fin 12 → Cutoff.CutoffSample d → ℝ :=
     ![headRare, bandRare, deepRare, afterRare, waveBounded, waveRare,
       collarBase, collarHead, collarBand, collarDeep, collarAfter, collarWave]
   let Uexp : Cutoff.CutoffSample d → ℝ := fun omega =>
     ∑ i : Fin 12, rareLane i omega
-  have hrareLaneNonneg : ∀ i, ∀ omega, 0 ≤ rareLane i omega := by
-    intro i
-    fin_cases i
-    · simpa [rareLane] using hheadRareNonneg
-    · simpa [rareLane] using hbandRareNonneg
-    · simpa [rareLane] using hdeepRareNonneg
-    · simpa [rareLane] using hafterRareNonneg
-    · simpa [rareLane] using hwaveBoundedNonneg
-    · simpa [rareLane] using hwaveRareNonneg
-    · simpa [rareLane] using hcollarBaseNonneg
-    · simpa [rareLane] using hcollarHeadNonneg
-    · simpa [rareLane] using hcollarBandNonneg
-    · simpa [rareLane] using hcollarDeepNonneg
-    · simpa [rareLane] using hcollarAfterNonneg
-    · simpa [rareLane] using hcollarWaveNonneg
-  have hrareLaneMeasurable : ∀ i, Measurable (rareLane i) := by
-    intro i
-    fin_cases i
-    · simpa [rareLane] using hheadRareMeasurable
-    · simpa [rareLane] using hbandRareMeasurable
-    · simpa [rareLane] using hdeepRareMeasurable
-    · simpa [rareLane] using hafterRareMeasurable
-    · simpa [rareLane] using hwaveBoundedMeasurable
-    · simpa [rareLane] using hwaveRareMeasurable
-    · simpa [rareLane] using hcollarBaseMeasurable
-    · simpa [rareLane] using hcollarHeadMeasurable
-    · simpa [rareLane] using hcollarBandMeasurable
-    · simpa [rareLane] using hcollarDeepMeasurable
-    · simpa [rareLane] using hcollarAfterMeasurable
-    · simpa [rareLane] using hcollarWaveMeasurable
-  have hrareLaneWith : ∀ i,
-      HCPolySupport.IndependentSums.IsBigOWith
-        (Cutoff.cutoffSampleLaw M).toMeasure
-        (HCPolySupport.IndependentSums.gammaSigma ((1 - sigma) / 3))
-        (rareLane i) rarePerLaneScale := by
-    intro i
-    fin_cases i
-    · simpa [rareLane] using hheadRareFull
-    · simpa [rareLane] using hbandRareFull
-    · simpa [rareLane] using hdeepRareFull
-    · simpa [rareLane] using hafterRareFull
-    · simpa [rareLane] using hwaveBoundedFull
-    · simpa [rareLane] using hwaveRareFull
-    · simpa [rareLane, rarePerLaneScale, depthFactor, laneEps, laneX, inv_pow,
-        Algsuperdiff.Section3.Provider.CoarseEllipticity.upperProfileTargetSigma]
-        using hcollarBase
-    · simpa [rareLane, rarePerLaneScale, depthFactor, laneEps, laneX, inv_pow,
-        Algsuperdiff.Section3.Provider.CoarseEllipticity.upperProfileTargetSigma]
-        using hcollarHead
-    · simpa [rareLane, rarePerLaneScale, depthFactor, laneEps, laneX, inv_pow,
-        Algsuperdiff.Section3.Provider.CoarseEllipticity.upperProfileTargetSigma]
-        using hcollarBand
-    · simpa [rareLane, rarePerLaneScale, depthFactor, laneEps, laneX, inv_pow,
-        Algsuperdiff.Section3.Provider.CoarseEllipticity.upperProfileTargetSigma]
-        using hcollarDeep
-    · simpa [rareLane, rarePerLaneScale, depthFactor, laneEps, laneX, inv_pow,
-        Algsuperdiff.Section3.Provider.CoarseEllipticity.upperProfileTargetSigma]
-        using hcollarAfter
-    · simpa [rareLane, rarePerLaneScale, depthFactor, laneEps, laneX, inv_pow,
-        Algsuperdiff.Section3.Provider.CoarseEllipticity.upperProfileTargetSigma]
-        using hcollarWave
-  have htargetSigmaPos : 0 < (1 - sigma) / 3 := by linarith
-  have hrareLaneO : ∀ i ∈ (Finset.univ : Finset (Fin 12)),
-      HCPolySupport.IndependentSums.IsBigO
-        (Cutoff.cutoffSampleLaw M).toMeasure
-        (HCPolySupport.IndependentSums.gammaSigma ((1 - sigma) / 3))
-        (rareLane i) rarePerLaneScale := by
-    intro i _
-    exact (Algsuperdiff.Section3.Provider.Orlicz.isBigOWith_iff_isBigO_of_nonneg
-      (hrareLaneNonneg i)).1 (hrareLaneWith i)
-  have hrareSymmetric :=
-    HCPolySupport.IndependentSums.isBigO_finset_sum_of_isBigO_gammaSigma
-      (μ := (Cutoff.cutoffSampleLaw M).toMeasure)
-      (Finset.univ : Finset (Fin 12)) htargetSigmaPos
-      ⟨0, Finset.mem_univ 0⟩
-      (fun _ _ => hrarePerLaneScalePos) hrareLaneO
-      (fun i _ => hrareLaneMeasurable i)
-  have hUexpNonneg : ∀ omega, 0 ≤ Uexp omega := by
-    intro omega
-    exact Finset.sum_nonneg fun i _ => hrareLaneNonneg i omega
-  have hUexpMeasurable : Measurable Uexp := by
-    exact Finset.measurable_fun_sum Finset.univ fun i _ =>
-      hrareLaneMeasurable i
-  have hUexpRaw :
-      HCPolySupport.IndependentSums.IsBigOWith
-        (Cutoff.cutoffSampleLaw M).toMeasure
-        (HCPolySupport.IndependentSums.gammaSigma ((1 - sigma) / 3))
-        Uexp
-        (HCPolySupport.IndependentSums.gammaTriangleConst ((1 - sigma) / 3) *
-          ∑ _i : Fin 12, rarePerLaneScale) := by
-    apply (Algsuperdiff.Section3.Provider.Orlicz.isBigOWith_iff_isBigO_of_nonneg
-      hUexpNonneg).2
-    simpa only [Uexp] using hrareSymmetric
+  obtain ⟨hrareLaneNonneg, hUexpNonneg, hUexpMeasurable, hUexpRaw⟩ :=
+    @superposedFluxUpperPerDescendant_momentBounds2 (d) (M) (m) (E) (sigma) (Clane) (hsigma0)
+      (hsigmaHalf) (k) (R) (headRare) (hheadRareNonneg) (hheadRareMeasurable) (bandRare)
+        (hbandRareNonneg) (hbandRareMeasurable) (deepRare) (hdeepRareNonneg) (hdeepRareMeasurable)
+          (afterRare) (hafterRareNonneg) (hafterRareMeasurable) (hcollarBase) (hcollarHeadNonneg)
+            (hcollarHeadMeasurable) (hcollarHead) (hcollarBand) (hcollarDeep) (hcollarAfterNonneg)
+              (hcollarAfterMeasurable) (hcollarAfter) (hcollarWaveNonneg) (hcollarWaveMeasurable)
+                (hcollarWave) (waveBounded) (waveRare) (hwaveBoundedNonneg)
+                  (hwaveBoundedMeasurable) (hwaveRareNonneg) (hwaveRareMeasurable)
+                    (hrarePerLaneScalePos) (hheadRareFull) (hbandRareFull) (hdeepRareFull)
+                      (hafterRareFull) (hwaveBoundedFull) (hwaveRareFull) (hcollarBaseNonneg)
+                        (hcollarBaseMeasurable) (hcollarBandNonneg) (hcollarBandMeasurable)
+                          (hcollarDeepNonneg) (hcollarDeepMeasurable)
   let K : ℝ := 12 *
     Algsuperdiff.Section3.Provider.CoarseEllipticity.upperAfterBandRareTriangleConst
   have htriangleBarNonneg : 0 ≤
@@ -887,135 +2484,20 @@ theorem superposedFlux_upper_per_descendant_split
   have hKNonneg : 0 ≤ K := by
     dsimp only [K]
     positivity
-  have htriangleBound :
-      HCPolySupport.IndependentSums.gammaTriangleConst ((1 - sigma) / 3) ≤
-        Algsuperdiff.Section3.Provider.CoarseEllipticity.upperAfterBandRareTriangleConst := by
-    simpa only
-      [Algsuperdiff.Section3.Provider.CoarseEllipticity.upperProfileTargetSigma]
-      using Algsuperdiff.Section3.Provider.CoarseEllipticity.gammaTriangleConst_upperProfileTarget_le
-        hsigma0 hsigmaHalf
-  have hrawRareScale :
-      HCPolySupport.IndependentSums.gammaTriangleConst ((1 - sigma) / 3) *
-          (∑ _i : Fin 12, rarePerLaneScale) ≤
-        K * rarePerLaneScale := by
-    simp only [Finset.sum_const, Finset.card_univ, Fintype.card_fin,
-      nsmul_eq_mul]
-    calc
-      HCPolySupport.IndependentSums.gammaTriangleConst ((1 - sigma) / 3) *
-            (12 * rarePerLaneScale) =
-          (12 * HCPolySupport.IndependentSums.gammaTriangleConst
-            ((1 - sigma) / 3)) * rarePerLaneScale := by ring
-      _ ≤ (12 *
-            Algsuperdiff.Section3.Provider.CoarseEllipticity.upperAfterBandRareTriangleConst) *
-          rarePerLaneScale :=
-        mul_le_mul_of_nonneg_right
-          (mul_le_mul_of_nonneg_left htriangleBound (by norm_num))
-          hrarePerLaneScalePos.le
-      _ = K * rarePerLaneScale := by rfl
-  have hUexp :
-      HCPolySupport.IndependentSums.IsBigOWith
-        (Cutoff.cutoffSampleLaw M).toMeasure
-        (HCPolySupport.IndependentSums.gammaSigma ((1 - sigma) / 3))
-        Uexp
-      (K * rarePerLaneScale) := hUexpRaw.mono_scale hrawRareScale
-  have hgoodBaseENNReal :
-      (∑ j : Fin d, ∑' n : ℕ, ENNReal.ofReal
-        (Algsuperdiff.Section3.Provider.Multiscale.probeSharpFramedGoodBaseTerm
-          d n (basisVec j))) =
-        ENNReal.ofReal
-          (Algsuperdiff.Section3.Provider.Multiscale.probeSharpGoodBaseConst d) := by
-    change
-      Algsuperdiff.Section3.Provider.CoarseEllipticity.probeSharpFramedGoodBaseTraceENNRealLane d = _
-    exact
-      Algsuperdiff.Section3.Provider.CoarseEllipticity.probeSharpFramedGoodBaseTraceENNRealLane_eq hd
-  have hcollarBaseENNReal (omega : Cutoff.CutoffSample d) :
-      (∑ j : Fin d, ∑' n : ℕ, ENNReal.ofReal
-        (Algsuperdiff.Section3.Provider.Multiscale.probeSharpFramedCollarBaseTerm
-          M R.scale (E : ℝ)
-          Algsuperdiff.Section3.Provider.CoarseEllipticity.bfaProfileB
-          (Algsuperdiff.Section3.Provider.CoarseEllipticity.collarBandMeanDepth
-            M (E : ℝ)) n (basisVec j)
-          (Algsuperdiff.Section3.Provider.Affine.superposedGradConst d)
-          (Algsuperdiff.Section3.Cutoff.translateCutoffSample
-            (triadicCubeShift R) omega))) = ENNReal.ofReal (collarBase omega) := by
-    change (∑ j : Fin d,
-        Algsuperdiff.Section3.Provider.CoarseEllipticity.probeSharpFramedCollarBaseCoordinateENNRealLane
-          M R (E : ℝ)
-            (Algsuperdiff.Section3.Provider.CoarseEllipticity.collarBandMeanDepth
-              M (E : ℝ)) j omega) =
-      ENNReal.ofReal
-        (∑ j : Fin d,
-          Algsuperdiff.Section3.Provider.CoarseEllipticity.probeSharpFramedCollarBaseCoordinateLane
-            M R (E : ℝ)
-              (Algsuperdiff.Section3.Provider.CoarseEllipticity.collarBandMeanDepth
-                M (E : ℝ)) j omega)
-    rw [ENNReal.ofReal_sum_of_nonneg]
-    · exact Finset.sum_congr rfl fun j _ =>
-        Algsuperdiff.Section3.Provider.CoarseEllipticity.probeSharpFramedCollarBaseCoordinateENNRealLane_eq
-          hd M R (E : ℝ)
-            (Algsuperdiff.Section3.Provider.CoarseEllipticity.collarBandMeanDepth
-              M (E : ℝ)) j omega
-    · intro j _
-      exact
-        Algsuperdiff.Section3.Provider.CoarseEllipticity.probeSharpFramedCollarBaseCoordinateLane_nonneg
-          hd M R (E : ℝ)
-            (Algsuperdiff.Section3.Provider.CoarseEllipticity.collarBandMeanDepth
-              M (E : ℝ)) j omega
-  have hcstarE : (Disorder.cstar M)⁻¹ ≤ (E : ℝ) :=
-    (le_max_right _ _).trans hmaxLane
-  have hcollarBandENNReal (omega : Cutoff.CutoffSample d) :
-      Algsuperdiff.Section3.Provider.CoarseEllipticity.probeSharpFramedCollarBandMeanTunedTraceENNRealLane
-          M m R (E : ℝ) omega = ENNReal.ofReal (collarBand omega) := by
-    simpa only [collarBand] using
-      Algsuperdiff.Section3.Provider.CoarseEllipticity.probeSharpFramedCollarBandMeanTunedTraceENNRealLane_eq
-        hd M hR E.property hcstarE hE2 omega
-  have hcollarDeepENNReal :
-      ∀ᵐ omega ∂(Cutoff.cutoffSampleLaw M).toMeasure,
-        ENNReal.ofReal (collarDeep omega) =
-          ∑ j : Fin d, ∑' n : ℕ, ENNReal.ofReal
-            (Algsuperdiff.Section3.Provider.CoarseEllipticity.probeSharpFramedCollarDeepTailLayer
-              M m R (E : ℝ) j n omega) := by
-    simpa only [collarDeep] using
-      Algsuperdiff.Section3.Provider.CoarseEllipticity.ae_ofReal_probeSharpFramedCollarDeepTailTraceLane_eq_sum_tsum
-        M hR hstate hsigma0 hsigmaHalf hmaxLane hE2
-          (max_le hprofileAuxLane hdepthThresholdLane)
+  obtain ⟨hUexp, hgoodBaseENNReal, hcollarBaseENNReal, hcollarBandENNReal, hcollarDeepENNReal⟩ :=
+    @superposedFluxUpperPerDescendant_momentBounds1 (d) (M) (m) (E) (hstate) (sigma) (Clane)
+      (hsigma0) (hsigmaHalf) (hmaxLane) (hE2) (hprofileAuxLane) (hdepthThresholdLane) (k) (R) (hR)
+        (hd) (headRare) (bandRare) (deepRare) (afterRare) (waveBounded) (waveRare)
+          (hrarePerLaneScalePos) (hUexpRaw)
   have hEnvelope (omega : Cutoff.CutoffSample d) :=
     Finset.sum_le_sum fun j (_hj : j ∈ (Finset.univ : Finset (Fin d))) =>
       ENNReal.tsum_le_tsum fun n =>
         named_layer_ennreal_bound M m (E : ℝ) R j n omega
-  simp only [ENNReal.tsum_add, Finset.sum_add_distrib] at hEnvelope
-  have hblockCoeff : (12 : ℝ) ≤
-      12 + 12 * HCPolySupport.IndependentSums.gammaTriangleConst 1 :=
-    le_add_of_nonneg_right (mul_nonneg (by norm_num)
-      HCPolySupport.IndependentSums.gammaTriangleConst_pos.le)
-  have htwoLane : Clane + Clane ≤ Cblock := by
-    calc
-      Clane + Clane = 2 * Clane := by ring
-      _ ≤ 12 * Clane :=
-        mul_le_mul_of_nonneg_right (by norm_num) hlanePos.le
-      _ ≤ (12 + 12 * HCPolySupport.IndependentSums.gammaTriangleConst 1) *
-          Clane := mul_le_mul_of_nonneg_right hblockCoeff hlanePos.le
-      _ = Cblock := by rfl
-  have hdetENNReal (omega : Cutoff.CutoffSample d) :
-      ENNReal.ofReal
-          (Algsuperdiff.Section3.Provider.Multiscale.probeSharpGoodBaseConst d) +
-        ENNReal.ofReal (bandOrdinary omega) ≤ ENNReal.ofReal Cblock := by
-    rw [← ENNReal.ofReal_add
-      (Algsuperdiff.Section3.Provider.Multiscale.probeSharpGoodBaseConst_nonneg hd)
-      (hbandOrdinaryNonneg omega)]
-    apply ENNReal.ofReal_le_ofReal
-    exact (add_le_add hgoodBaseOutput (hbandOrdinaryLe omega)).trans htwoLane
-  have hCblockNonneg : 0 ≤ Cblock :=
-    (add_nonneg hlanePos.le hlanePos.le).trans htwoLane
-  have hcollarBandRaw (omega : Cutoff.CutoffSample d) := hcollarBandENNReal omega
-  unfold
-    Algsuperdiff.Section3.Provider.CoarseEllipticity.probeSharpFramedCollarBandMeanTunedTraceENNRealLane
-    Algsuperdiff.Section3.Provider.CoarseEllipticity.probeSharpFramedCollarBandMeanTunedCoordinateENNRealLane
-    at hcollarBandRaw
-  have hcollarDeepRaw := hcollarDeepENNReal
-  unfold
-    Algsuperdiff.Section3.Provider.CoarseEllipticity.probeSharpFramedCollarDeepTailLayer
-    at hcollarDeepRaw
+  exact ⟨hcollarWaveENNRealEq, waveBounded, waveRare, hwaveENNRealDom, hordinaryLaneNonneg, hUoneNonneg, hUoneMeasurable, hUone, hrareLaneNonneg, hUexpNonneg, hUexpMeasurable, hUexp, hgoodBaseENNReal, hcollarBaseENNReal, hcollarBandENNReal, hcollarDeepENNReal, hEnvelope, True.intro⟩
+
+private theorem superposedFluxUpperPerDescendant_comparisonBounds5 : superposedFluxUpperPerDescendant_comparisonBounds5_statement := by
+  classical
+  intro d M m E Clane Cblock k R hR hd hpotential headOrdinary headRare hheadENNRealDom bandOrdinary bandRare hbandENNRealDom deepOrdinary deepRare hdeepENNRealDom afterOrdinary afterRare hafterENNRealDom hcollarHeadENNRealEq collarBase collarHead collarBand collarDeep collarAfter hcollarAfterENNRealEq collarWave hcollarWaveENNRealEq waveBounded waveRare hwaveENNRealDom hordinaryLaneNonneg hUoneNonneg hrareLaneNonneg hUexpNonneg hgoodBaseENNReal hcollarBaseENNReal ordinaryLane Uone rareLane Uexp hEnvelope hdetENNReal hCblockNonneg hcollarBandRaw hcollarDeepRaw
   have hUoneOfReal (omega : Cutoff.CutoffSample d) :
       ENNReal.ofReal (Uone omega) =
         ∑ i : Fin 3, ![ENNReal.ofReal (headOrdinary omega),
@@ -1046,39 +2528,248 @@ theorem superposedFlux_upper_per_descendant_split
       hcollarAfterENNRealEq hcollarWaveENNRealEq hdetENNReal hUoneOfReal hUexpOfReal
   have hblockMeas : Measurable (fun omega : Cutoff.CutoffSample d =>
       Algsuperdiff.Section3.Provider.CoarseEllipticity.cutoffBBlockFamily
-        M m (Annealed.sigmaBar M (m - 1) : ℝ)⁻¹ R omega) := by
-    have hraw : Measurable (fun omega : Cutoff.CutoffSample d =>
-        HCPolySupport.Book.Ch02.matrixNorm
-          (HCPolySupport.coarseBlockMatrix (cubeSet R)
-            (Cutoff.coefficientCutoff M.nu m omega).toFun).upperLeft) :=
-      Algsuperdiff.Section3.Provider.BadEvents.measurable_comp_coarseBMatrixNorm
-        (Cutoff.measurable_coefficientCutoff M.nu m)
-        (Cutoff.coefficientCutoff_aeLocallyUniformlyEllipticField M m) R
-    have hcoreEq :
-        (fun omega : Cutoff.CutoffSample d =>
-          Algsuperdiff.Section3.Provider.CoarseEllipticity.coarseBNormCoeffField R
-            (Cutoff.coefficientCutoff M.nu m omega)) =
-        (fun omega : Cutoff.CutoffSample d =>
-          HCPolySupport.Book.Ch02.matrixNorm
-            (HCPolySupport.coarseBlockMatrix (cubeSet R)
-              (Cutoff.coefficientCutoff M.nu m omega).toFun).upperLeft) := by
-      funext omega
-      rw [Algsuperdiff.Section3.Provider.CoarseEllipticity.coarseBNormCoeffField,
-        dite_eq_left (Cutoff.coefficientCutoff_aeLocallyUniformlyEllipticField M m omega)]
-      have hbridge := congrArg
-        (fun A : BlockMat d => HCPolySupport.Book.Ch02.matrixNorm A.upperLeft)
-        (HCPolySupport.Book.Ch04.RestrictionLawCarrier.coarseBlockMatrix_cubeSet_eq_chapterCoarse
-          (Cutoff.coefficientCutoff_aeLocallyUniformlyEllipticField M m omega) R)
-      simpa only [HCPolySupport.Book.Ch02.coarseBMatrixNorm,
-        HCPolySupport.Book.Ch02.coarseBlockMatrix_upperLeft] using hbridge.symm
-    have hcore : Measurable (fun omega : Cutoff.CutoffSample d =>
-        Algsuperdiff.Section3.Provider.CoarseEllipticity.coarseBNormCoeffField R
-          (Cutoff.coefficientCutoff M.nu m omega)) := by
-      rw [hcoreEq]
-      exact hraw
-    simpa only
-      [Algsuperdiff.Section3.Provider.CoarseEllipticity.cutoffBBlockFamily] using!
-        (measurable_const.mul hcore)
+        M m (Annealed.sigmaBar M (m - 1) : ℝ)⁻¹ R omega)  := @superposedFlux_descendant_measurable (d) (M) (m) (E) (R) (hd)
+  exact ⟨hae, hblockMeas⟩
+
+/-- Constructs the pointwise deterministic, ordinary, and exceptional split for every
+single descendant cube. The exceptional scale is left in its raw twelve-lane form for
+the upper-leg aggregation layer to normalize. -/
+theorem superposedFlux_upper_per_descendant_split
+    {d : ℕ}
+    (M : ABKModel d) (m : ℤ)
+    (E : {E : ℝ // 1 ≤ E})
+    (hstate : Algsuperdiff.Frozen.Section3.inductionState M (m - 1) E)
+    (sigma Clane : ℝ)
+    (hsigma0 : 0 < sigma)
+    (hsigmaHalf : sigma ≤ 1 / 2)
+    (hmaxLane : max (Real.exp (Clane / sigma))
+      (Disorder.cstar M)⁻¹ ≤ (E : ℝ))
+    (hE2 : (E : ℝ) ≤ M.gamma ^ (-(1 / 5 : ℝ)))
+    (hlanePos : 0 < Clane)
+    (hgoodBaseOutput :
+      Algsuperdiff.Section3.Provider.Multiscale.probeSharpGoodBaseConst d ≤ Clane)
+    (hgoodHeadOutput :
+      Algsuperdiff.Section3.Provider.CoarseEllipticity.goodHeadTunedOutputConst d ≤ Clane)
+    (hgoodBandOutput :
+      Algsuperdiff.Section3.Provider.CoarseEllipticity.probeSharpBandMeanTunedOutputConst d ≤ Clane)
+    (hgoodDeepOutput :
+      Algsuperdiff.Section3.Provider.CoarseEllipticity.probeSharpDeepBandTailTunedOutputConst d ≤
+        Clane)
+    (hgoodAfterOutput :
+      Algsuperdiff.Section3.Provider.CoarseEllipticity.probeSharpAfterBandTunedOutputConst d ≤
+        Clane)
+    (hgoodWaveOutput :
+      Algsuperdiff.Section3.Provider.CoarseEllipticity.probeSharpWaveTailTunedOutputConst d ≤ Clane)
+    (hcollarBaseOutput :
+      Algsuperdiff.Section3.Provider.CoarseEllipticity.probeSharpCollarBaseTunedOutputConst d ≤
+        Clane)
+    (hcollarHeadOutput :
+      Algsuperdiff.Section3.Provider.CoarseEllipticity.collarHeadTunedPerDescendantOutputConst d ≤
+        Clane)
+    (hcollarBandOutput :
+      Algsuperdiff.Section3.Provider.CoarseEllipticity.collarBandMeanTunedOutputConst d ≤ Clane)
+    (hcollarDeepOutput :
+      Algsuperdiff.Section3.Provider.CoarseEllipticity.collarDeepTailTunedOutputConst d ≤ Clane)
+    (hcollarAfterOutput :
+      Algsuperdiff.Section3.Provider.CoarseEllipticity.collarAfterBandTunedOutputConst d ≤ Clane)
+    (hcollarWaveOutput :
+      Algsuperdiff.Section3.Provider.CoarseEllipticity.probeSharpCollarWaveTailTunedOutputConst d
+        ≤ Clane)
+    (hprofileAuxLane :
+      Algsuperdiff.Section3.Provider.CoarseEllipticity.profileAuxiliaryConst d ≤ Clane)
+    (hdepthThresholdLane :
+      Algsuperdiff.Section3.Provider.CoarseEllipticity.collarBandMeanDepthThreshold d ≤ Clane)
+    (hk0 : 3 ≤
+      Algsuperdiff.Section3.Provider.CoarseEllipticity.collarBandMeanDepth
+        M (E : ℝ)) :
+    let Cblock : ℝ :=
+      (12 + 12 * HCPolySupport.IndependentSums.gammaTriangleConst 1) * Clane
+    ∀ (k : ℕ) (R : TriadicCube d),
+              R ∈ descendantsAtScale (originCube d m) (m - 1 - (k : ℤ)) →
+                ∃ Uone Uexp : Cutoff.CutoffSample d → ℝ,
+                  (∀ omega, 0 ≤ Uone omega) ∧
+                  Measurable Uone ∧
+                  (∀ omega, 0 ≤ Uexp omega) ∧
+                  Measurable Uexp ∧
+                  (∀ omega,
+                      Algsuperdiff.Section3.Provider.CoarseEllipticity.cutoffBBlockFamily
+                          M m (Annealed.sigmaBar M (m - 1) : ℝ)⁻¹ R omega ≤
+                      Cblock + Uone omega + Uexp omega) ∧
+                  HCPolySupport.IndependentSums.IsBigOWith
+                    (Cutoff.cutoffSampleLaw M).toMeasure
+                    (HCPolySupport.IndependentSums.gammaSigma 1) Uone
+                    (Algsuperdiff.Section3.Provider.CoarseEllipticity.upperSaturatedPerCubeAmplitude
+                      Cblock (Disorder.cstar M) M.gamma k) ∧
+                  HCPolySupport.IndependentSums.IsBigOWith
+                    (Cutoff.cutoffSampleLaw M).toMeasure
+                    (HCPolySupport.IndependentSums.gammaSigma ((1 - sigma) / 3)) Uexp
+                    ((12 *
+                        Algsuperdiff.Section3.Provider.CoarseEllipticity.upperAfterBandRareTriangleConst) *
+                      ((3 : ℝ) ^ (M.gamma * ((k : ℝ) + 1)) *
+                        (Real.exp
+                          (-(Clane⁻¹ * ((E : ℝ)⁻¹ ^ 2 * M.gamma⁻¹)))) ^ 8)) := by
+  let Cblock : ℝ :=
+    (12 + 12 * HCPolySupport.IndependentSums.gammaTriangleConst 1) * Clane
+  dsimp only
+  intro k R hR
+  have hd : 2 ≤ d := M.shellPrefix.dimension
+  let : NeZero d := ⟨by omega⟩
+  obtain ⟨hpotential, headOrdinary, headRare, headOrdinaryScale, headRareScale, hheadOrdinaryNonneg, hheadOrdinaryMeasurable, hheadRareNonneg, hheadRareMeasurable, hheadENNRealDom, hheadOrdinaryO, hheadOrdinaryScaleLe, hheadRareO, hheadRareScaleLe, bandOrdinary, bandRare, bandRareScale, hbandOrdinaryNonneg, hbandRareNonneg, hbandRareMeasurable, hbandENNRealDom, hbandOrdinaryLe, hbandRareO, hbandRareScaleLe, deepOrdinary, deepRare, deepOrdinaryScale, deepRareScale, hdeepOrdinaryNonneg, hdeepOrdinaryMeasurable, hdeepRareNonneg, hdeepRareMeasurable, hdeepENNRealDom, hdeepOrdinaryO, hdeepOrdinaryScaleLe, hdeepRareO, hdeepRareScaleLe, afterOrdinary, afterRare, afterOrdinaryScale, afterRareScale, hafterOrdinaryNonneg, hafterOrdinaryMeasurable, hafterRareNonneg, hafterRareMeasurable, hafterENNRealDom, hafterOrdinaryO, hafterOrdinaryScaleLe, hafterRareO, hafterRareScaleLe, hcollarBase, hcollarHeadNonneg, hcollarHeadMeasurable, hcollarHeadENNRealEq, hcollarHead, _⟩ :=
+    @superposedFluxUpperPerDescendant_comparisonBounds3 (d) (M) (m) (E) (hstate) (sigma) (Clane) (hsigma0) (hsigmaHalf) (hmaxLane) (hE2) (hgoodHeadOutput) (hgoodBandOutput) (hgoodDeepOutput) (hgoodAfterOutput) (hcollarBaseOutput) (hcollarHeadOutput) (hprofileAuxLane) (hk0) (k) (R) (hR)
+  let laneX : ℝ := (E : ℝ)⁻¹ ^ 2 * M.gamma⁻¹
+  let laneEps : ℝ := Real.exp (-(Clane⁻¹ * laneX))
+  let depthFactor : ℝ := (3 : ℝ) ^ (M.gamma * ((k : ℝ) + 1))
+  let rarePerLaneScale : ℝ := depthFactor * laneEps ^ 8
+  let collarBase : Cutoff.CutoffSample d → ℝ :=
+    Algsuperdiff.Section3.Provider.CoarseEllipticity.probeSharpFramedCollarBaseTraceLane
+      M R (E : ℝ)
+        (Algsuperdiff.Section3.Provider.CoarseEllipticity.collarBandMeanDepth
+          M (E : ℝ))
+  let collarHead : Cutoff.CutoffSample d → ℝ := fun omega =>
+    ∑ j : Fin d, ∑' n : ℕ,
+      Algsuperdiff.Section3.Provider.Multiscale.probeSharpFramedCollarWavePart
+        M R.scale (E : ℝ)
+        Algsuperdiff.Section3.Provider.CoarseEllipticity.bfaProfileB
+        (Algsuperdiff.Section3.Provider.CoarseEllipticity.collarBandMeanDepth
+          M (E : ℝ)) n (m - 1) (basisVec j)
+        (Algsuperdiff.Section3.Provider.Affine.superposedGradConst d)
+        (fun eta => Algsuperdiff.Section3.Provider.Multiscale.waveHeadTerm
+          M R.scale (E : ℝ)
+          Algsuperdiff.Section3.Provider.CoarseEllipticity.bfaProfileB
+          (Algsuperdiff.Section3.Provider.CoarseEllipticity.probeSharpLayerAnchor
+            R.scale
+            Algsuperdiff.Section3.Provider.CoarseEllipticity.bfaProfileB
+            (Algsuperdiff.Section3.Provider.CoarseEllipticity.collarBandMeanDepth
+              M (E : ℝ)) n) eta ^ 2)
+        (Algsuperdiff.Section3.Cutoff.translateCutoffSample
+          (triadicCubeShift R) omega)
+  let collarBand : Cutoff.CutoffSample d → ℝ :=
+    Algsuperdiff.Section3.Provider.CoarseEllipticity.probeSharpFramedCollarBandMeanTunedTraceLane
+      M m R (E : ℝ)
+  let collarDeep : Cutoff.CutoffSample d → ℝ :=
+    Algsuperdiff.Section3.Provider.CoarseEllipticity.probeSharpFramedCollarDeepTailTraceLane
+      M m R (E : ℝ)
+  let collarAfter : Cutoff.CutoffSample d → ℝ :=
+    Algsuperdiff.Section3.Provider.CoarseEllipticity.probeSharpFramedCollarAfterBandTraceLane
+      M m R (E : ℝ)
+  have hcollarBand :=
+    isBigOWith_upperProfileTarget_probeSharpFramedCollarBandMeanTunedTraceLane_frozenReserve
+      M hR hstate hsigma0 hsigmaHalf hmaxLane hE2
+        (max_le hprofileAuxLane hcollarBandOutput)
+  have hcollarDeep :=
+    Algsuperdiff.Section3.Provider.CoarseEllipticity.collarDeepTail_trace_isBigOWith_frozenReserve
+      M hR hstate hsigma0 hsigmaHalf hmaxLane hE2 hcollarDeepOutput
+  have hcollarAfter :=
+    Algsuperdiff.Section3.Provider.CoarseEllipticity.collar_afterBand_trace_isBigOWith_frozenReserve
+      M hR hstate hsigma0 hsigmaHalf hmaxLane hE2
+        (max_le hprofileAuxLane hcollarAfterOutput)
+  rcases hcollarAfter with
+    ⟨hcollarAfterNonneg, hcollarAfterMeasurable,
+      hcollarAfterENNRealEq, hcollarAfter⟩
+  let collarWave : Cutoff.CutoffSample d → ℝ := fun omega =>
+    ∑ j : Fin d, ∑' n : ℕ,
+      Algsuperdiff.Section3.Provider.Multiscale.probeSharpFramedCollarWavePart
+        M R.scale (E : ℝ)
+        Algsuperdiff.Section3.Provider.CoarseEllipticity.bfaProfileB
+        (Algsuperdiff.Section3.Provider.CoarseEllipticity.collarBandMeanDepth
+          M (E : ℝ)) n (m - 1) (basisVec j)
+        (Algsuperdiff.Section3.Provider.Affine.superposedGradConst d)
+        (fun eta => Algsuperdiff.Section3.Provider.Multiscale.waveTailTerm
+          M R.scale (E : ℝ)
+          Algsuperdiff.Section3.Provider.CoarseEllipticity.bfaProfileB R.scale
+          (Algsuperdiff.Section3.Provider.CoarseEllipticity.probeSharpLayerAnchor
+            R.scale
+            Algsuperdiff.Section3.Provider.CoarseEllipticity.bfaProfileB
+            (Algsuperdiff.Section3.Provider.CoarseEllipticity.collarBandMeanDepth
+              M (E : ℝ)) n) eta ^ 2)
+        (Algsuperdiff.Section3.Cutoff.translateCutoffSample
+          (triadicCubeShift R) omega)
+  have hcollarWaveRaw :=
+    isBigOWith_upperProfileTarget_collarWaveTailFiniteTrace
+      M hR hstate hsigma0 hsigmaHalf hmaxLane hE2 hcollarWaveOutput
+  change (∀ omega, 0 ≤ collarWave omega) ∧ Measurable collarWave ∧
+    (∀ᵐ omega ∂(Cutoff.cutoffSampleLaw M).toMeasure,
+      ENNReal.ofReal (collarWave omega) =
+        ∑ j : Fin d, ∑' n : ℕ, ENNReal.ofReal
+          (Algsuperdiff.Section3.Provider.Multiscale.probeSharpFramedCollarWavePart
+            M R.scale (E : ℝ)
+            Algsuperdiff.Section3.Provider.CoarseEllipticity.bfaProfileB
+            (Algsuperdiff.Section3.Provider.CoarseEllipticity.collarBandMeanDepth
+              M (E : ℝ)) n (m - 1) (basisVec j)
+            (Algsuperdiff.Section3.Provider.Affine.superposedGradConst d)
+            (fun eta => Algsuperdiff.Section3.Provider.Multiscale.waveTailTerm
+              M R.scale (E : ℝ)
+              Algsuperdiff.Section3.Provider.CoarseEllipticity.bfaProfileB R.scale
+              (Algsuperdiff.Section3.Provider.CoarseEllipticity.probeSharpLayerAnchor
+                R.scale
+                Algsuperdiff.Section3.Provider.CoarseEllipticity.bfaProfileB
+                (Algsuperdiff.Section3.Provider.CoarseEllipticity.collarBandMeanDepth
+                  M (E : ℝ)) n) eta ^ 2)
+            (Algsuperdiff.Section3.Cutoff.translateCutoffSample
+              (triadicCubeShift R) omega))) ∧
+    HCPolySupport.IndependentSums.IsBigOWith
+      (Cutoff.cutoffSampleLaw M).toMeasure
+      (HCPolySupport.IndependentSums.gammaSigma ((1 - sigma) / 3))
+      collarWave
+      ((3 : ℝ) ^ (M.gamma * ((k : ℝ) + 1)) *
+        (Real.exp (-(Clane⁻¹ * ((E : ℝ)⁻¹ ^ 2 * M.gamma⁻¹)))) ^ 8) at hcollarWaveRaw
+  obtain ⟨hcollarWaveENNRealEq, waveBounded, waveRare, hwaveENNRealDom, hordinaryLaneNonneg, hUoneNonneg, hUoneMeasurable, hUone, hrareLaneNonneg, hUexpNonneg, hUexpMeasurable, hUexp, hgoodBaseENNReal, hcollarBaseENNReal, hcollarBandENNReal, hcollarDeepENNReal, hEnvelope, _⟩ :=
+    @superposedFluxUpperPerDescendant_comparisonBounds4 (d) (M) (m) (E) (hstate) (sigma) (Clane) (hsigma0) (hsigmaHalf) (hmaxLane) (hE2) (hlanePos) (hgoodWaveOutput) (hprofileAuxLane) (hdepthThresholdLane) (k) (R) (hR) (hd) (headOrdinary) (headRare) (headOrdinaryScale) (headRareScale) (hheadOrdinaryNonneg) (hheadOrdinaryMeasurable) (hheadRareNonneg) (hheadRareMeasurable) (hheadOrdinaryO) (hheadOrdinaryScaleLe) (hheadRareO) (hheadRareScaleLe) (bandRare) (bandRareScale) (hbandRareNonneg) (hbandRareMeasurable) (hbandRareO) (hbandRareScaleLe) (deepOrdinary) (deepRare) (deepOrdinaryScale) (deepRareScale) (hdeepOrdinaryNonneg) (hdeepOrdinaryMeasurable) (hdeepRareNonneg) (hdeepRareMeasurable) (hdeepOrdinaryO) (hdeepOrdinaryScaleLe) (hdeepRareO) (hdeepRareScaleLe) (afterOrdinary) (afterRare) (afterOrdinaryScale) (afterRareScale) (hafterOrdinaryNonneg) (hafterOrdinaryMeasurable) (hafterRareNonneg) (hafterRareMeasurable) (hafterOrdinaryO) (hafterOrdinaryScaleLe) (hafterRareO) (hafterRareScaleLe) (hcollarBase) (hcollarHeadNonneg) (hcollarHeadMeasurable) (hcollarHead) (hcollarBand) (hcollarDeep) (hcollarAfterNonneg) (hcollarAfterMeasurable) (hcollarAfter) (hcollarWaveRaw)
+  let perCubeScale : ℝ :=
+    Algsuperdiff.Section3.Provider.CoarseEllipticity.upperSaturatedPerCubeAmplitude
+      Clane (Disorder.cstar M) M.gamma k
+  let ordinaryLane : Fin 3 → Cutoff.CutoffSample d → ℝ :=
+    ![headOrdinary, deepOrdinary, afterOrdinary]
+  let Uone : Cutoff.CutoffSample d → ℝ := fun omega =>
+    ∑ i : Fin 3, ordinaryLane i omega
+  let rareLane : Fin 12 → Cutoff.CutoffSample d → ℝ :=
+    ![headRare, bandRare, deepRare, afterRare, waveBounded, waveRare,
+      collarBase, collarHead, collarBand, collarDeep, collarAfter, collarWave]
+  let Uexp : Cutoff.CutoffSample d → ℝ := fun omega =>
+    ∑ i : Fin 12, rareLane i omega
+  let K : ℝ := 12 *
+    Algsuperdiff.Section3.Provider.CoarseEllipticity.upperAfterBandRareTriangleConst
+  simp only [ENNReal.tsum_add, Finset.sum_add_distrib] at hEnvelope
+  have hblockCoeff : (12 : ℝ) ≤
+      12 + 12 * HCPolySupport.IndependentSums.gammaTriangleConst 1 :=
+    le_add_of_nonneg_right (mul_nonneg (by norm_num)
+      HCPolySupport.IndependentSums.gammaTriangleConst_pos.le)
+  have htwoLane : Clane + Clane ≤ Cblock := by
+    calc
+      Clane + Clane = 2 * Clane := by ring
+      _ ≤ 12 * Clane :=
+        mul_le_mul_of_nonneg_right (by norm_num) hlanePos.le
+      _ ≤ (12 + 12 * HCPolySupport.IndependentSums.gammaTriangleConst 1) *
+          Clane := mul_le_mul_of_nonneg_right hblockCoeff hlanePos.le
+      _ = Cblock := by rfl
+  have hdetENNReal (omega : Cutoff.CutoffSample d) :
+      ENNReal.ofReal
+          (Algsuperdiff.Section3.Provider.Multiscale.probeSharpGoodBaseConst d) +
+        ENNReal.ofReal (bandOrdinary omega) ≤ ENNReal.ofReal Cblock := by
+    rw [← ENNReal.ofReal_add
+      (Algsuperdiff.Section3.Provider.Multiscale.probeSharpGoodBaseConst_nonneg hd)
+      (hbandOrdinaryNonneg omega)]
+    apply ENNReal.ofReal_le_ofReal
+    exact (add_le_add hgoodBaseOutput (hbandOrdinaryLe omega)).trans htwoLane
+  have hCblockNonneg : 0 ≤ Cblock :=
+    (add_nonneg hlanePos.le hlanePos.le).trans htwoLane
+  have hcollarBandRaw (omega : Cutoff.CutoffSample d) := hcollarBandENNReal omega
+  unfold
+    probeSharpFramedCollarBandMeanTunedTraceENNRealLane
+    probeSharpFramedCollarBandMeanTunedCoordinateENNRealLane
+    at hcollarBandRaw
+  have hcollarDeepRaw := hcollarDeepENNReal
+  unfold
+    Algsuperdiff.Section3.Provider.CoarseEllipticity.probeSharpFramedCollarDeepTailLayer
+    at hcollarDeepRaw
+  obtain ⟨hae, hblockMeas⟩ :=
+    (show (∀ᵐ omega ∂(Cutoff.cutoffSampleLaw M).toMeasure,
+      Algsuperdiff.Section3.Provider.CoarseEllipticity.cutoffBBlockFamily
+          M m (Annealed.sigmaBar M (m - 1) : ℝ)⁻¹ R omega ≤
+        Cblock + Uone omega + Uexp omega) ∧ (Measurable (fun omega : Cutoff.CutoffSample d =>
+      Algsuperdiff.Section3.Provider.CoarseEllipticity.cutoffBBlockFamily
+        M m (Annealed.sigmaBar M (m - 1) : ℝ)⁻¹ R omega)) from
+      @superposedFluxUpperPerDescendant_comparisonBounds5 (d) (M) (m) (E) (Clane) (k) (R) (hR) (hd) (hpotential) (headOrdinary) (headRare) (hheadENNRealDom) (bandOrdinary) (bandRare) (hbandENNRealDom) (deepOrdinary) (deepRare) (hdeepENNRealDom) (afterOrdinary) (afterRare) (hafterENNRealDom) (hcollarHeadENNRealEq) (hcollarAfterENNRealEq) (hcollarWaveENNRealEq) (waveBounded) (waveRare) (hwaveENNRealDom) (hordinaryLaneNonneg) (hUoneNonneg) (hrareLaneNonneg) (hUexpNonneg) (hgoodBaseENNReal) (hcollarBaseENNReal) (hEnvelope) (hdetENNReal) (hCblockNonneg) (hcollarBandRaw) (hcollarDeepRaw))
   simpa only [K, rarePerLaneScale, depthFactor, laneEps, laneX] using
     (nonnegative_pointwise_repair hblockMeas hUoneNonneg
       hUoneMeasurable hUexpNonneg hUexpMeasurable hUone hUexp hae)

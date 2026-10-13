@@ -117,7 +117,7 @@ theorem faceHalf_reflectedWindow_of_meetsUpperFace {x : Vec d} {m k : ℤ} (hkm 
         exact hy j
     · have h2 := (hy i).2
       rw [windowHi_of_meetsUpperFace hup] at h2
-      show (0 : ℝ) < 1 * ((1 / 2 : ℝ) * (3 : ℝ) ^ m - y i)
+      change (0 : ℝ) < 1 * ((1 / 2 : ℝ) * (3 : ℝ) ^ m - y i)
       linarith only [h2]
 
 /-- The lower-face twin of `faceHalf_reflectedWindow_of_meetsUpperFace`. -/
@@ -162,7 +162,7 @@ theorem faceHalf_reflectedWindow_of_meetsLowerFace {x : Vec d} {m k : ℤ} (hkm 
         exact hy j
     · have h1 := (hy i).1
       rw [windowLo_of_meetsLowerFace hlow] at h1
-      show (0 : ℝ) < -1 * (-(1 / 2 : ℝ) * (3 : ℝ) ^ m - y i)
+      change (0 : ℝ) < -1 * (-(1 / 2 : ℝ) * (3 : ℝ) ^ m - y i)
       linarith only [h1]
 
 /-- **The reflected window is symmetric in a met upper face.**  Only `k < m` and

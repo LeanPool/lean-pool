@@ -114,7 +114,7 @@ theorem summable_annFam_two_annularGradBlock_of_eventG1 (M : ABKModel d) (m : �
   have hbase := (summable_annFam_annularGradBlock_of_eventG1 M m hs0 hs1 hT
     homega).mul_left 2
   refine hbase.congr fun p => ?_
-  show (2 : ℝ) * annFam m (fun j n => (3 : ℝ) ^ (-(s * ((m - n : ℤ) : ℝ)))
+  change (2 : ℝ) * annFam m (fun j n => (3 : ℝ) ^ (-(s * ((m - n : ℤ) : ℝ)))
       * annularGradBlock M m omega j n) p
     = annFam m (fun j n => (3 : ℝ) ^ (-(s * ((m - n : ℤ) : ℝ)))
       * (2 * annularGradBlock M m omega j n)) p

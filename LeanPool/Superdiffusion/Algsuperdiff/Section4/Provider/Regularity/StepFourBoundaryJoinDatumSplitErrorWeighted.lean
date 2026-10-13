@@ -71,7 +71,8 @@ variable {d : ℕ}
 
 /-- **The Step-4 decay slot at every printed centre, at the error-weighted clause.**
 
-`EdBridgeStepFourDatumSplitErrorWeighted.excessDecay_stepFour_slot_general_datumSplit_errorWeighted` with the
+`EdBridgeStepFourDatumSplitErrorWeighted.excessDecay_stepFour_slot_general_datumSplit_errorWeighted`
+with the
 join's window disjunction discharged by `RootInterfaceGate.gate_or_exists_meetsFace`: at
 every centre and every scale either the interior gate holds outright, or some coordinate
 face of `∂□_m` is met and the carried competitor package supplies the second disjunct.  No
@@ -81,7 +82,8 @@ The carried package is asked of the shifted competitor's Weyl representative `V`
 so it is not forced to vanish on the met face and is chain-satisfiable at a
 general Dirichlet datum; the price is the printed datum leg `edBridgeDatumLeg`
 in the `δ` slot. -/
-theorem excessDecay_stepFour_slot_allCentres_datumSplit_errorWeighted (d : ℕ) [NeZero d] (hd : d ≠ 0) :
+theorem excessDecay_stepFour_slot_allCentres_datumSplit_errorWeighted (d : ℕ) [NeZero d] (hd : d ≠
+  0) :
     ∃ C Ccap Cb : ℝ, 0 < C ∧ 0 < Ccap ∧ 0 ≤ Cb ∧ ∃ k₀ : ℕ, 3 ≤ k₀ ∧
       ∀ k : ℕ, k₀ ≤ k →
         ∀ (M : ABKModel d) (s : ℝ), s ∈ Set.Icc (64 * M.gamma) 1 →
@@ -283,7 +285,8 @@ theorem edBridgeDeltaErrorWeighted_add_datumLeg_le_boundaryThreeLegs {M : ABKMod
             ((3 : ℝ) ^ ((n : ℝ) / 2) * Kh) +
           epsj * (2 * stepFourBoundaryDeltaConst Crem Vd C s * Khinf)) := by
   have hKhinf : (0 : ℝ) ≤ Khinf := le_trans (norm_nonneg _) hGav
-  have hdel := edBridgeDeltaErrorWeighted_le_stepFourDeltaOutErrorWeighted (M := M) (C := C) (Crem := Crem)
+  have hdel := edBridgeDeltaErrorWeighted_le_stepFourDeltaOutErrorWeighted (M := M) (C := C) (Crem
+    := Crem)
     (Vd := Vd) (s := s) (epsj := epsj) (Khinf := Khinf) (SigInvN := SigInvN) (Kg := Kg)
     (Kh := Kh) (L := L) (m := m) (n := n) (t := t) (z := z) (gflux := gflux)
     (gradh := gradh) (omega := omega) hCV hCst hs heps0 hEfl hGav hSig hSigN0 hKg0 hGsem

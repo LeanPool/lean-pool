@@ -171,7 +171,7 @@ theorem abs_cubeCutoff_mul_quadraticObservable_le (d : ℕ) (m : ℤ) (i : Fin d
     have hzi : |z i| ≤ ‖z‖ := by
       simpa only [Real.norm_eq_abs] using norm_le_pi_norm z i
     have hq : quadraticObservable (basisVec i) z = z i * z i := by
-      show vecDot (basisVec i) z * vecDot (basisVec i) z = z i * z i
+      change vecDot (basisVec i) z * vecDot (basisVec i) z = z i * z i
       rw [vecDot_basisVec_left]
     rw [abs_mul, hq, abs_mul]
     calc |cubeCutoff d m z| * (|z i| * |z i|)

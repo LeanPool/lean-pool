@@ -90,7 +90,7 @@ theorem IsWeaklyHarmonicOn.congr_on {U : Set (Vec d)} {u u' : Vec d → ℝ}
       ∫ x in U, u x * euclideanCoordLaplacian ψ x ∂volume := by
     refine setIntegral_congr_fun hU ?_
     intro x hx
-    show u' x * euclideanCoordLaplacian ψ x = u x * euclideanCoordLaplacian ψ x
+    change u' x * euclideanCoordLaplacian ψ x = u x * euclideanCoordLaplacian ψ x
     rw [heq x hx]
   rw [hcongr]
   exact hu ψ hψ hψc hsupp
@@ -169,7 +169,7 @@ theorem meanSquareDeviationVecOn_congr_ae {V : Set (Vec d)} {f g : Vec d → Vec
     Book.Ch01.meanSquareDeviationVecOn V f c =
       Book.Ch01.meanSquareDeviationVecOn V g c := by
   refine Finset.sum_congr rfl fun k _ => ?_
-  show volumeAverage V (fun y => (f y k - c k) ^ 2) =
+  change volumeAverage V (fun y => (f y k - c k) ^ 2) =
     volumeAverage V (fun y => (g y k - c k) ^ 2)
   unfold volumeAverage
   congr 1
@@ -182,7 +182,7 @@ theorem volumeAverageVec_congr_ae {V : Set (Vec d)} {f g : Vec d → Vec d}
     (hfg : f =ᵐ[volume.restrict V] g) :
     volumeAverageVec V f = volumeAverageVec V g := by
   funext i
-  show volumeAverage V (fun x => f x i) = volumeAverage V (fun x => g x i)
+  change volumeAverage V (fun x => f x i) = volumeAverage V (fun x => g x i)
   unfold volumeAverage
   congr 1
   refine integral_congr_ae ?_
@@ -194,7 +194,7 @@ theorem meanSquareOscillationVecOn_congr_ae {V : Set (Vec d)} {f g : Vec d → V
     (hfg : f =ᵐ[volume.restrict V] g) :
     Book.Ch01.meanSquareOscillationVecOn V f =
       Book.Ch01.meanSquareOscillationVecOn V g := by
-  show Book.Ch01.meanSquareDeviationVecOn V f (volumeAverageVec V f) =
+  change Book.Ch01.meanSquareDeviationVecOn V f (volumeAverageVec V f) =
     Book.Ch01.meanSquareDeviationVecOn V g (volumeAverageVec V g)
   rw [volumeAverageVec_congr_ae hfg]
   exact meanSquareDeviationVecOn_congr_ae hfg _

@@ -119,7 +119,7 @@ theorem localizedZeroTraceFunctionOn_of_memH10_of_inter_subset {Ω W V : Set (Ve
   refine ⟨h10RestrictOfApproxSupport hWopen hWΩ
     (u.mulContDiffHasCompactSupport heta heta_compact) ?_, ?_⟩
   · intro n
-    show tsupport (fun x => eta x * u.approx n x) ⊆ W
+    change tsupport (fun x => eta x * u.approx n x) ⊆ W
     intro p hp
     refine hVW ⟨heta_sub ?_, u.approx_support_subset n ?_⟩
     · exact tsupport_mul_subset_left (f := eta) (g := u.approx n) hp

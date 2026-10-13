@@ -149,7 +149,7 @@ theorem tsum_int_guard_le (g : ℤ → ℝ) (b : ℤ) :
       by_contra hc
       exact hn (by rw [hG]; exact ite_eq_right hc)
     refine ⟨(b - n).toNat, ?_⟩
-    show b - (((b - n).toNat : ℕ) : ℤ) = n
+    change b - (((b - n).toNat : ℕ) : ℤ) = n
     omega
   have hkey := (natShift_injective b).tsum_eq hsupp
   rw [← hkey]

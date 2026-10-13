@@ -83,7 +83,7 @@ theorem memLp_normalizedCubeMeasure_of_memLp_cubeDomain {E : Type*}
 cube measure, at an arbitrary triadic cube. -/
 theorem ae_normalizedCubeMeasure_of_ae_cubeDomain {P : Vec d → Prop}
     (Q : TriadicCube d)
-    (h : ∀ᵐ x ∂ volumeMeasureOn ((cubeDomain Q : Domain d) : Set (Vec d)), P x) :
+    (h : ∀ᵐ x ∂volumeMeasureOn ((cubeDomain Q : Domain d) : Set (Vec d)), P x) :
     ∀ᵐ x ∂ normalizedCubeMeasure Q, P x := by
   rw [cubeDomain_coe_openCubeSet] at h
   have hcube : ∀ᵐ x ∂ cubeMeasure Q, P x := by
@@ -163,7 +163,7 @@ theorem cubeBesovNegativeVectorSeminormTwo_fluxWitnessGrad_le [NeZero d]
     (hvAdj : IsResponseMaximizer (cubeDomain Q) (F.coeffOn Q).transpose 0 (-w) vAdj)
     (hv : IsResponseMaximizer (cubeDomain Q) (F.coeffOn Q) 0 w v)
     (u : H10Function ((cubeDomain Q : Domain d) : Set (Vec d)))
-    (hu : ∀ᵐ x ∂ volumeMeasureOn ((cubeDomain Q : Domain d) : Set (Vec d)),
+    (hu : ∀ᵐ x ∂volumeMeasureOn ((cubeDomain Q : Domain d) : Set (Vec d)),
       u.toH1Function.grad x =
         (2 : ℝ)⁻¹ • (vAdj.toH1.grad x + v.toH1.grad x) + (0 : Vec d)) :
     cubeBesovNegativeVectorSeminormTwo Q (3 / 8) (fun x => u.toH1Function.grad x) ≤

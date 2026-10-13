@@ -24,7 +24,7 @@ Module imports, support namespace and local option directives adapted for Lean P
 # The principal good-event energy display, consumer-closed up to the `Ccg` gate
 
 Conditional Provider module: the direct successor of
-`PrincipalResponseBudgetWire.exists_gamma0_descendantsAverage_integral_principalGoodEventEnergy_le_annealedCube_of_centeringConst`,
+`PrincipalResponseBudgetWire.exists_smallCoupling_principalEnergy_bound_of_centering`,
 with thirteen previously caller-supplied inputs internalized (`n`, `highScale`,
 `hle`, `wD`, `wN`, `hwD`, `hwN`, `hmeasR`, `hintR`, `hgoodInt`, `hcubeInt`,
 `hindep`, `hbudget`).  The correctors are produced existentially on the
@@ -49,7 +49,7 @@ at twice its coarse constant.  No event monotonicity is used or assumed
 anywhere.
 
 Besides the display endpoint
-`exists_gamma0_descendantsAverage_integral_principalGoodEventEnergy_le_annealedCube_of_ccgGate`,
+`exists_smallCoupling_principalEnergy_bound_of_gate`,
 the fourth-order load integrability
 `exists_gamma0_integrable_switchEllipLoad_principalPz_sq` and the energy's
 sample measurability `aestronglyMeasurable_switchCubeEnergy` are exposed,
@@ -670,7 +670,130 @@ private theorem ccg_pos_of_gate' [NeZero d] {Ccg : ℝ}
 
 /-! ## The consumer-closed successor -/
 
-theorem exists_gamma0_descendantsAverage_integral_principalGoodEventEnergy_le_annealedCube_of_ccgGate
+private theorem principalEnergy_scaleSum_independent_bound :
+    ∀ (d : ℕ) (g2 : ℝ),
+      (∀ (M : ABKModel d),
+          M.gamma ≤ g2 →
+            ∀ (m0 : ℤ) (Eind : { E : ℝ // (1 : ℝ) ≤ E }),
+              Frozen.Section3.inductionState M m0 Eind →
+                ∀ (m K : ℤ) (hgap : ℕ),
+                  (0 : ℕ) < hgap →
+                    m - (↑hgap : ℤ) ≤ m0 →
+                      (↑hgap : ℝ) ≤ (6 : ℝ) * Disorder.cstar M * M.gamma⁻¹ →
+                        (10 : ℝ) ^ (10 : ℕ) * M.gamma⁻¹ ≤ (↑K : ℝ) - (↑m : ℝ) →
+                          ∀ (e e' : Vec d),
+                            Ch02.vecNorm e ≤ (1 : ℝ) →
+                              Ch02.vecNorm e' ≤ (1 : ℝ) →
+                                ∀ (jd : ℕ),
+                                  ∀ R ∈ descendantsAtDepth (originCube d K) jd,
+                                    ∀ (wD : ShellSeq d → H10Function (openCubeSet (originCube d K)))
+                                      (wN : ShellSeq d → H1MeanZeroFunction (openCubeSet (originCube d K))),
+                                      (∀ (omega : ShellSeq d),
+                                          IsZeroTraceDirichletRhsWeakSolution
+                                            (fun (_ : Vec d) => (1 : Matrix (Fin d) (Fin d) ℝ))
+                                            (openCubeSet (originCube d K)) (wD omega) fun (x : Vec d) =>
+                                            -streamForcing (↑(Annealed.sigmaBar M (m - (↑hgap : ℤ))) : ℝ)⁻¹ omega
+                                                (m - (↑hgap : ℤ)) m e x) →
+                                        (∀ (omega : ShellSeq d),
+                                            IsMeanZeroNeumannRhsWeakSolution
+                                              (fun (_ : Vec d) => (1 : Matrix (Fin d) (Fin d) ℝ))
+                                              (openCubeSet (originCube d K)) (wN omega) fun (x : Vec d) =>
+                                              -streamForcing (↑(Annealed.sigmaBar M (m - (↑hgap : ℤ))) : ℝ)⁻¹ omega
+                                                  (m - (↑hgap : ℤ)) m e' x) →
+                                          ∀ (alpha beta : BlockCoord d),
+                                            Integrable
+                                              (fun (omega : ShellSeq d) =>
+                                                toFullBlockVec
+                                                    (gaugedPrincipalLoadShell (Annealed.sigmaBar M (m - (↑hgap : ℤ))) R
+                                                      (m - (↑hgap : ℤ)) m e e' wD wN omega)
+                                                    alpha *
+                                                  toFullBlockVec
+                                                    (gaugedPrincipalLoadShell (Annealed.sigmaBar M (m - (↑hgap : ℤ))) R
+                                                      (m - (↑hgap : ℤ)) m e e' wD wN omega)
+                                                    beta)
+                                              (↑M.P : Measure (ℤ → Frozen.Assumptions.ShellField d))) →
+        ∀ (M : ABKModel d) (m0 : ℤ) (Eind : { E : ℝ // (1 : ℝ) ≤ E }),
+          Frozen.Section3.inductionState M m0 Eind →
+            ∀ (m K : ℤ) (hgap : ℕ),
+              (0 : ℕ) < hgap →
+                m - (↑hgap : ℤ) ≤ m0 →
+                  (↑hgap : ℝ) ≤ (6 : ℝ) * Disorder.cstar M * M.gamma⁻¹ →
+                    (10 : ℝ) ^ (10 : ℕ) * M.gamma⁻¹ ≤ (↑K : ℝ) - (↑m : ℝ) →
+                      ∀ (e e' : Vec d),
+                        Ch02.vecNorm e ≤ (1 : ℝ) →
+                          Ch02.vecNorm e' ≤ (1 : ℝ) →
+                            ∀ (j : ℕ),
+                              NeZero d →
+                                M.gamma ≤ g2 →
+                                  ∀ (wD : ShellSeq d → H10Function (openCubeSet (originCube d K))),
+                                    (∀ (omega : ShellSeq d),
+                                        IsZeroTraceDirichletRhsWeakSolution
+                                          (fun (_ : Vec d) => (1 : Matrix (Fin d) (Fin d) ℝ)) (openCubeSet (originCube d K))
+                                          (wD omega) fun (x : Vec d) =>
+                                          -streamForcing (↑(Annealed.sigmaBar M (m - (↑hgap : ℤ))) : ℝ)⁻¹ omega
+                                              (m - (↑hgap : ℤ)) m e x) →
+                                      ∀ (wN : ShellSeq d → H1MeanZeroFunction (openCubeSet (originCube d K))),
+                                        (∀ (omega : ShellSeq d),
+                                            IsMeanZeroNeumannRhsWeakSolution
+                                              (fun (_ : Vec d) => (1 : Matrix (Fin d) (Fin d) ℝ))
+                                              (openCubeSet (originCube d K)) (wN omega) fun (x : Vec d) =>
+                                              -streamForcing (↑(Annealed.sigmaBar M (m - (↑hgap : ℤ))) : ℝ)⁻¹ omega
+                                                  (m - (↑hgap : ℤ)) m e' x) →
+                                          ∀ R ∈ descendantsAtDepth (originCube d K) j,
+                                            ∫ (omega : CutoffSample d),
+                                                switchCubeQuad M (m - (↑hgap : ℤ)) m R
+                                                  (principalPz (Annealed.sigmaBar M (m - (↑hgap : ℤ))) (↑omega : ShellSeq d)
+                                                    (m - (↑hgap : ℤ)) m e e' R (wD (↑omega : ShellSeq d))
+                                                    (wN (↑omega : ShellSeq d)))
+                                                  omega ∂(↑(cutoffSampleLaw M) : Measure (CutoffSample d)) =
+                                              ∫ (omega : CutoffSample d),
+                                                blockVecDot
+                                                  (gaugedPrincipalLoadShell (Annealed.sigmaBar M (m - (↑hgap : ℤ))) R
+                                                    (m - (↑hgap : ℤ)) m e e' wD wN (↑omega : ShellSeq d))
+                                                  (blockMatVecMul
+                                                    (Ch04.annealedBlockMatrixAtScale
+                                                      (coefficientCutoffLaw M (m - (↑hgap : ℤ)))
+                                                      ((originCube d K).scale - (↑j : ℤ)))
+                                                    (gaugedPrincipalLoadShell (Annealed.sigmaBar M (m - (↑hgap : ℤ))) R
+                                                      (m - (↑hgap : ℤ)) m e e' wD wN
+                                                      (↑omega :
+                                                        ShellSeq d))) ∂(↑(cutoffSampleLaw M) : Measure (CutoffSample d)) := by
+  intro d _ hWint M m0 Eind hstate m K hgap hhpos hm hh hK e e' he he' j _ h2 wD hwD wN hwN R hR
+  obtain ⟨B, hBmeas, hBrep⟩ :=
+    exists_measurable_representative_switchCubeMatrix M (m - (hgap : ℤ)) R
+      (subset_refl (cubeSet R))
+  have key := integral_blockQuadratic_shellSplit_eq_gaugedPrincipalLoadShell M
+    (Annealed.sigmaBar M (m - (hgap : ℤ))) (le_refl (m - (hgap : ℤ))) hR hBmeas hBrep
+    ((Annealed.sigmaBar M (m - (hgap : ℤ)) : ℝ))⁻¹
+    ((Annealed.sigmaBar M (m - (hgap : ℤ)) : ℝ))⁻¹ e e' e e' wD wN hwD hwN
+    (fun alpha beta => hWint M h2 m0 Eind hstate m K hgap hhpos hm hh hK e e' he he'
+      j R hR wD wN hwD hwN alpha beta)
+  rw [transport_shellSeq_integral M
+      (fun omega : Cutoff.ShellSeq d =>
+        blockVecDot (gaugedPrincipalLoadShell
+            (Annealed.sigmaBar M (m - (hgap : ℤ))) R (m - (hgap : ℤ)) m e e' wD wN omega)
+          (blockMatVecMul (B omega)
+            (gaugedPrincipalLoadShell
+              (Annealed.sigmaBar M (m - (hgap : ℤ))) R (m - (hgap : ℤ)) m e e' wD wN omega))),
+    transport_shellSeq_integral M
+      (fun omega : Cutoff.ShellSeq d =>
+        blockVecDot (gaugedPrincipalLoadShell
+            (Annealed.sigmaBar M (m - (hgap : ℤ))) R (m - (hgap : ℤ)) m e e' wD wN omega)
+          (blockMatVecMul
+            (Ch04.annealedBlockMatrixAtScale
+              (Cutoff.coefficientCutoffLaw M (m - (hgap : ℤ)))
+              (((originCube d K).scale : ℤ) - (j : ℤ)))
+            (gaugedPrincipalLoadShell
+              (Annealed.sigmaBar M (m - (hgap : ℤ))) R (m - (hgap : ℤ)) m e e' wD wN omega)))]
+    at key
+  rw [← key]
+  refine integral_congr_ae ?_
+  filter_upwards [hBrep] with w hw
+  rw [switchCubeQuad_eq_blockVecDot_gaugedSwitchLoad,
+    ← gaugedPrincipalLoadShell_val (Annealed.sigmaBar M (m - (hgap : ℤ))) R
+      (m - (hgap : ℤ)) m e e' wD wN w, hw]
+
+theorem exists_smallCoupling_principalEnergy_bound_of_gate
     (d : ℕ) (hd : 2 ≤ d) :
     ∃ gamma0 : ℝ, 0 < gamma0 ∧ gamma0 ≤ 1 / 4 ∧
       ∀ (M : ABKModel d), M.gamma ≤ gamma0 →
@@ -740,7 +863,7 @@ theorem exists_gamma0_descendantsAverage_integral_principalGoodEventEnergy_le_an
                         M.gamma ^ (6 : ℕ) / 2 := by
   classical
   obtain ⟨g1, hg1p, hg1q, hbud⟩ :=
-    exists_gamma0_descendantsAverage_integral_principalGoodEventEnergy_le_annealedCube_of_centeringConst
+    exists_smallCoupling_principalEnergy_bound_of_centering
       d hd
   obtain ⟨g2, hg2p, hg2q, hWint⟩ :=
     exists_gamma0_integrable_toFullBlockVec_gaugedPrincipalLoadShell_mul d hd
@@ -913,57 +1036,9 @@ theorem exists_gamma0_descendantsAverage_integral_principalGoodEventEnergy_le_an
     rw [Real.norm_of_nonneg hnn]
     exact homega
   -- the independence factorization at the chosen families
-  have hindep : ∀ R ∈ descendantsAtDepth (originCube d K) j,
-      (∫ omega : Cutoff.CutoffSample d,
-          switchCubeQuad M (m - (hgap : ℤ)) m R
-            (principalPz (Annealed.sigmaBar M (m - (hgap : ℤ))) omega.val
-              (m - (hgap : ℤ)) m e e' R (wD omega.val) (wN omega.val)) omega
-          ∂(Cutoff.cutoffSampleLaw M).toMeasure) =
-        ∫ omega : Cutoff.CutoffSample d,
-          blockVecDot
-            (gaugedPrincipalLoadShell (Annealed.sigmaBar M (m - (hgap : ℤ))) R
-              (m - (hgap : ℤ)) m e e' wD wN omega.val)
-            (blockMatVecMul
-              (Ch04.annealedBlockMatrixAtScale
-                (Cutoff.coefficientCutoffLaw M (m - (hgap : ℤ)))
-                (((originCube d K).scale : ℤ) - (j : ℤ)))
-              (gaugedPrincipalLoadShell (Annealed.sigmaBar M (m - (hgap : ℤ))) R
-                (m - (hgap : ℤ)) m e e' wD wN omega.val))
-          ∂(Cutoff.cutoffSampleLaw M).toMeasure := by
-    intro R hR
-    obtain ⟨B, hBmeas, hBrep⟩ :=
-      exists_measurable_representative_switchCubeMatrix M (m - (hgap : ℤ)) R
-        (subset_refl (cubeSet R))
-    have key := integral_blockQuadratic_shellSplit_eq_gaugedPrincipalLoadShell M
-      (Annealed.sigmaBar M (m - (hgap : ℤ))) (le_refl (m - (hgap : ℤ))) hR hBmeas hBrep
-      ((Annealed.sigmaBar M (m - (hgap : ℤ)) : ℝ))⁻¹
-      ((Annealed.sigmaBar M (m - (hgap : ℤ)) : ℝ))⁻¹ e e' e e' wD wN hwD hwN
-      (fun alpha beta => hWint M h2 m0 Eind hstate m K hgap hhpos hm hh hK e e' he he'
-        j R hR wD wN hwD hwN alpha beta)
-    rw [transport_shellSeq_integral M
-        (fun omega : Cutoff.ShellSeq d =>
-          blockVecDot (gaugedPrincipalLoadShell
-              (Annealed.sigmaBar M (m - (hgap : ℤ))) R (m - (hgap : ℤ)) m e e' wD wN omega)
-            (blockMatVecMul (B omega)
-              (gaugedPrincipalLoadShell
-                (Annealed.sigmaBar M (m - (hgap : ℤ))) R (m - (hgap : ℤ)) m e e' wD wN omega))),
-      transport_shellSeq_integral M
-        (fun omega : Cutoff.ShellSeq d =>
-          blockVecDot (gaugedPrincipalLoadShell
-              (Annealed.sigmaBar M (m - (hgap : ℤ))) R (m - (hgap : ℤ)) m e e' wD wN omega)
-            (blockMatVecMul
-              (Ch04.annealedBlockMatrixAtScale
-                (Cutoff.coefficientCutoffLaw M (m - (hgap : ℤ)))
-                (((originCube d K).scale : ℤ) - (j : ℤ)))
-              (gaugedPrincipalLoadShell
-                (Annealed.sigmaBar M (m - (hgap : ℤ))) R (m - (hgap : ℤ)) m e e' wD wN omega)))]
-      at key
-    rw [← key]
-    refine integral_congr_ae ?_
-    filter_upwards [hBrep] with w hw
-    rw [switchCubeQuad_eq_blockVecDot_gaugedSwitchLoad,
-      ← gaugedPrincipalLoadShell_val (Annealed.sigmaBar M (m - (hgap : ℤ))) R
-        (m - (hgap : ℤ)) m e e' wD wN w, hw]
+  have hindep := @principalEnergy_scaleSum_independent_bound (d) (g2) (hWint) (M) (m0) (Eind)
+    (hstate) (m) (K) (hgap) (hhpos) (hm) (hh) (hK) (e) (e') (he) (he') (j) (this) (h2) (wD) (hwD)
+      (wN) (hwN)
   exact ⟨hgoodInt, hbud M h1 m0 Eind hstate m K hgap hhpos hm hh hK e e' he he' j a ha hscale
     Ccg hccg (((originCube d K).scale : ℤ) - (j : ℤ)) m hle
     (fun z : Cutoff.CutoffSample d => wD z.val)

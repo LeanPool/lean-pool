@@ -423,7 +423,7 @@ theorem norm_toLp_mollify_le_of_helmholtz {κ : Vec d → ℝ} (hκc : Continuou
       ae_integrable_smul_comp_vadd (μ := μ) hκc hκi hfm hf,
       ae_integrable_smul_comp_vadd (μ := μ) hκc hκi hpm hp] with ω h1 h2 h3 h4 h5 h6
     rw [h1, h2, Pi.add_apply, h3, h4]
-    show (∫ y, κ y • j ((-y) +ᵥ ω))
+    change (∫ y, κ y • j ((-y) +ᵥ ω))
       = (∫ y, κ y • f ((-y) +ᵥ ω)) + ∫ y, κ y • p ((-y) +ᵥ ω)
     rw [← integral_add h5 h6]
     exact integral_congr_ae (Filter.Eventually.of_forall fun y => by

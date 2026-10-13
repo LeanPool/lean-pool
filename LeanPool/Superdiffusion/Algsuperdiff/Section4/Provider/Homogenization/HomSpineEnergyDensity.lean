@@ -119,7 +119,7 @@ theorem aestronglyMeasurable_sqrt_vecNormSq_grad {U A : Set (Vec d)} (u : H1Func
       (normalizedVolumeMeasureOn A) := by
   have hcont : Continuous fun v : Vec d => Real.sqrt (vecNormSq v) := by
     refine Real.continuous_sqrt.comp ?_
-    show Continuous fun v : Vec d => ∑ i, v i * v i
+    change Continuous fun v : Vec d => ∑ i, v i * v i
     exact continuous_finsetSum _ fun i _ => (continuous_apply i).mul (continuous_apply i)
   rw [normalizedVolumeMeasureOn_def]
   exact ((hcont.comp_aestronglyMeasurable u.grad_memVectorL2.aestronglyMeasurable).mono_measure

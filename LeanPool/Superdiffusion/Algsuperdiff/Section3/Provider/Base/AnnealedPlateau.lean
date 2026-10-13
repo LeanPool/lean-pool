@@ -142,7 +142,7 @@ theorem integrable_average_frobeniusMass_cutoff (M : ABKModel d) (l m : ℤ) :
     volumeAverage_le_of_le_on hUmeas (integrableOn_frobeniusMass_cutoff l m omega) hvol
       fun x hx => Stream.matrixFrobeniusNormSq_le_of_abs_entry_le fun i j =>
         abs_cutoff_entry_le_cutoffLocalControl l m omega hx i j
-  show ‖volumeAverage (openCubeSet (originCube d l))
+  change ‖volumeAverage (openCubeSet (originCube d l))
       (fun x => Ch02.matrixFrobeniusNormSq (cutoff m omega x))‖ ≤ _
   rw [Real.norm_eq_abs, abs_of_nonneg hnonneg]
   exact hle

@@ -209,7 +209,7 @@ private theorem centeredShellUnitCube_congr_const (M : ABKModel d) (Q : TriadicC
 private theorem triadicLatticePoint_zero (k : ℤ) :
     Support.triadicLatticePoint k (0 : Fin d → ℤ) = (0 : Vec d) := by
   funext i
-  show (3 : ℝ) ^ k * (((0 : Fin d → ℤ) i : ℤ) : ℝ) = 0
+  change (3 : ℝ) ^ k * (((0 : Fin d → ℤ) i : ℤ) : ℝ) = 0
   rw [Pi.zero_apply, Int.cast_zero, mul_zero]
 
 /-- **The mean-value tail of the value slot, expanded into layers.**

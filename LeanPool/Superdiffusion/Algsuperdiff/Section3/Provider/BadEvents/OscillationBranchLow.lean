@@ -729,7 +729,7 @@ theorem measureReal_shellSensitivityFailure_le_low (M : ABKModel d) {Ccg : ℝ}
               ((1 / 2 : ℝ) * Ccg⁻¹ * 1 *
                 (Algsuperdiff.Section3.Annealed.sigmaBar M (n - 1) : ℝ))) *
             (3 : ℝ) ^ (-(1 / 5 : ℝ) * ((k : ℝ) - (n : ℝ))) := by ring
-  show (cutoffSampleLaw M).toMeasure.real
+  change (cutoffSampleLaw M).toMeasure.real
       {omega | shellSensitivityThreshold M Ccg Q.scale n k <
         shellOscGauge Q k omega} ≤ _
   rcases lt_or_ge k Q.scale with hkm | hmk

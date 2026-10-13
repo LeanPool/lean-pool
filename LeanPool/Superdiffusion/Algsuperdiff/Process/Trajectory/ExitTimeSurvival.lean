@@ -152,7 +152,8 @@ theorem IsConservative.lintegral_exitTime_sq_le_of_lintegral_le
         2 * ((4 : ℝ≥0) : ℝ) := by
       rw [hprod, Real.exp_log (by norm_num)]
       norm_num
-    have hmain := IsConservative.lintegral_exitTime_pow_le_of_lintegral_le P hP hFeller hKol U hU M hM
+    have hmain := IsConservative.lintegral_exitTime_pow_le_of_lintegral_le P hP hFeller hKol U hU
+      M hM
       4 (by norm_num) lam hlam hrate 2 x
     have hlow : (1 : ℝ) / (16 * (M : ℝ)) ≤ lam := by
       rw [hlamdef, le_div_iff₀ (by positivity)]
@@ -233,7 +234,8 @@ theorem IsConservative.sq_le_mul_measure_le_exitTime_of_lintegral_le
     _ ≤ 288 * (M : ℝ≥0∞) ^ 2 *
           IsConservative.continuousProcess P hP x
             {omega | (rho : ℝ≥0∞) * (mLow : ℝ≥0∞) ≤ ContinuousPath.exitTime U omega} :=
-      mul_le_mul' (IsConservative.lintegral_exitTime_sq_le_of_lintegral_le P hP hFeller hKol U hU M hM x)
+      mul_le_mul' (IsConservative.lintegral_exitTime_sq_le_of_lintegral_le P hP hFeller hKol U hU
+        M hM x)
         (measure_mono hsubset)
 
 /-- **Survival above half the guaranteed mean.**  The level `rho = 1 / 2` of
@@ -251,7 +253,8 @@ theorem IsConservative.sq_le_mul_measure_half_le_exitTime_of_lintegral_le
       1152 * (M : ℝ≥0∞) ^ 2 *
         IsConservative.continuousProcess P hP x
           {omega | (mLow : ℝ≥0∞) / 2 ≤ ContinuousPath.exitTime U omega} := by
-  have hhalf := IsConservative.sq_le_mul_measure_le_exitTime_of_lintegral_le P hP hFeller hKol U hU M hM
+  have hhalf := IsConservative.sq_le_mul_measure_le_exitTime_of_lintegral_le P hP hFeller hKol U
+    hU M hM
     mLow (1 / 2) x hlow
   have hcoe : (((1 : ℝ≥0) / 2 : ℝ≥0) : ℝ≥0∞) = 2⁻¹ := by
     rw [ENNReal.coe_div (by norm_num)]

@@ -163,7 +163,7 @@ private theorem mesoWindowFourthEnergy_le_ratio_mul_originCubeFourthEnergy
         ∫ x in openCubeSet (originCube d K), vecNormSq (u x) ^ 2 ∂volume := by
     unfold originCubeFourthEnergy volumeAverage
     field_simp
-  show (volume (openCubeAtScale (triadicCubeShift R) ell)).toReal⁻¹ *
+  change (volume (openCubeAtScale (triadicCubeShift R) ell)).toReal⁻¹ *
       ∫ x in openCubeAtScale (triadicCubeShift R) ell,
         vecNormSq (u x) ^ 2 ∂volume ≤ _
   calc (volume (openCubeAtScale (triadicCubeShift R) ell)).toReal⁻¹ *

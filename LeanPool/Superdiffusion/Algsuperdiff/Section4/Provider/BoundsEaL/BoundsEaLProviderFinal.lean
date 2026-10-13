@@ -61,41 +61,149 @@ noncomputable section
 
 /-! ## 1. The per-cube obligation, discharged -/
 
-/-- **`hcube`, discharged.**
+private theorem perCubeMoments_admissibleExponent :
+    ∀ (d : ℕ) (Cd Cr1 A1 Cr2 A2 Cr3 A3 : ℝ) (M : ABKModel d) (s p : ℝ),
+      p ∈
+          Set.Icc ((2 : ℝ) * (↑d : ℝ) * s⁻¹)
+            ((max (max (max Cr1 Cr2) (max Cr3 (3 : ℝ))) (max (Cd * (A1 + A3)) (Cd * A2)))⁻¹ * M.gamma⁻¹ * s) →
+        (0 : ℝ) < M.gamma →
+          (3 : ℝ) ≤ max (max (max Cr1 Cr2) (max Cr3 (3 : ℝ))) (max (Cd * (A1 + A3)) (Cd * A2)) →
+            s ≤ (1 / 4 : ℝ) → (0 : ℝ) < s → (8 : ℝ) * (p / (2 : ℝ)) ≤ M.gamma⁻¹ := by
+  intro _ Cd Cr1 A1 Cr2 A2 Cr3 A3 M s p hpmem hgam0 h3le hs1 hs
+  have hKinv : (max (max (max Cr1 Cr2) (max Cr3 3))
+      (max (Cd * (A1 + A3)) (Cd * A2)))⁻¹ ≤ (3 : ℝ)⁻¹ :=
+    inv_anti₀ (by norm_num) h3le
+  have hnn : (0 : ℝ) ≤ M.gamma⁻¹ * s := mul_nonneg (inv_pos.mpr hgam0).le hs.le
+  have hstep := mul_le_mul_of_nonneg_right hKinv hnn
+  have hid : (max (max (max Cr1 Cr2) (max Cr3 3))
+      (max (Cd * (A1 + A3)) (Cd * A2)))⁻¹ * (M.gamma⁻¹ * s) =
+      (max (max (max Cr1 Cr2) (max Cr3 3))
+        (max (Cd * (A1 + A3)) (Cd * A2)))⁻¹ * M.gamma⁻¹ * s := by ring
+  have hple : p ≤ (3 : ℝ)⁻¹ * (M.gamma⁻¹ * s) := by
+    linarith only [hpmem.2, hstep, hid]
+  have hsle : (3 : ℝ)⁻¹ * (M.gamma⁻¹ * s) ≤ (3 : ℝ)⁻¹ * (M.gamma⁻¹ * (1 / 4)) := by
+    have h := mul_le_mul_of_nonneg_left hs1 (inv_pos.mpr hgam0).le
+    have h2 := mul_le_mul_of_nonneg_left h (by norm_num : (0 : ℝ) ≤ (3 : ℝ)⁻¹)
+    linarith only [h2]
+  have hfin : (3 : ℝ)⁻¹ * (M.gamma⁻¹ * (1 / 4)) ≤ M.gamma⁻¹ / 4 := by
+    have hgi : (0 : ℝ) ≤ M.gamma⁻¹ := (inv_pos.mpr hgam0).le
+    have hid2 : (3 : ℝ)⁻¹ * (M.gamma⁻¹ * (1 / 4)) = M.gamma⁻¹ / 12 := by ring
+    have hid3 : M.gamma⁻¹ / 4 - M.gamma⁻¹ / 12 = M.gamma⁻¹ / 6 := by ring
+    have h6 : (0 : ℝ) ≤ M.gamma⁻¹ / 6 := by linarith only [hgi]
+    linarith only [hid2, hid3, h6]
+  linarith only [hple, hsle, hfin]
 
-For every positive Step-3 display constant there is a constant `K` such that, in
-the anchor's own window, the `p/2`-th moment of the `L`-free Step-3 majorant at
-every descendant cube is at most the three-shape majorant
-`minkowskiScaleMajorant K p γ s (m−n) l` raised to the `p/2`.
-
-This is Step 5's inner (Hölder) half, in full. -/
-theorem exists_perCubeMoments (d : ℕ) [NeZero d] (cstar : ℝ) (hcstar : 0 < cstar)
-    (Cd : ℝ) (hCd : 0 < Cd) :
-    ∃ K : ℝ, 0 < K ∧
-      ∀ M : ABKModel d, Disorder.cstar M = cstar → M.gamma ≤ (K⁻¹) ^ (10 : ℕ) →
-        ∀ m n : ℤ, n ≤ m → (m : ℝ) ≤ (n : ℝ) + M.gamma⁻¹ →
-          ∀ s : ℝ, s ∈ Set.Icc (K ^ (2 : ℕ) * Real.sqrt M.gamma) (1 / 4) →
-            ∀ p : ℝ, p ∈ Set.Icc (2 * (d : ℝ) * s⁻¹) (K⁻¹ * M.gamma⁻¹ * s) →
-              ∀ (l : ℕ) (R : TriadicCube d),
-                R ∈ descendantsAtScale (originCube d m) (n - (l : ℤ)) →
-                (∫⁻ omega, ENNReal.ofReal (lFreeStep3Majorant Cd M m s
-                      (lFreeGradSlot m (tailSeriesGauge m))
-                      (lFreeValueSlot m (tailSeriesGauge m)) R omega) ^ (p / 2)
-                    ∂(Cutoff.cutoffSampleLaw M).toMeasure) ≤
-                  ENNReal.ofReal (minkowskiScaleMajorant K p M.gamma s
-                    ((m : ℝ) - (n : ℝ)) l) ^ (p / 2) := by
-  classical
-  obtain ⟨Cr1, A1, hCr1, hA1, hfirst⟩ :=
-    exists_lintegral_rpow_step3FirstTerm_slot d cstar hcstar
-  obtain ⟨Cr2, A2, hCr2, hA2, hsecond⟩ :=
-    exists_lintegral_rpow_step3SecondTerm_slot d cstar hcstar
-  obtain ⟨Cr3, A3, hCr3, hA3, hthird⟩ :=
-    exists_lintegral_rpow_step3ThirdTerm_slot d cstar hcstar
-  refine ⟨max (max (max Cr1 Cr2) (max Cr3 3)) (max (Cd * (A1 + A3)) (Cd * A2)), ?_, ?_⟩
-  · exact lt_of_lt_of_le hCr1
-      (le_trans (le_trans (le_max_left Cr1 Cr2) (le_max_left _ _)) (le_max_left _ _))
-  intro M hcs hreg m n hnm hwin s hsmem p hpmem l R hR
-  have hd2 : (2 : ℕ) ≤ d := M.shellPrefix.dimension
+private theorem boundsEaLProviderFinal_comparisonBounds1 :
+    ∀ (d : ℕ) [NeZero d] (cstar Cd : ℝ) (_ : (0 : ℝ) < Cd) (Cr1 A1 : ℝ) (_ : (0 : ℝ) < Cr1)
+      (_ : (0 : ℝ) < A1)
+      (_ :
+        ∀ (M : ABKModel d),
+          Disorder.cstar M = cstar →
+            M.gamma ≤ Cr1⁻¹ ^ (10 : ℕ) →
+              M.gamma ≤ (1 / 8 : ℝ) →
+                ∀ (Cd : ℝ),
+                  (0 : ℝ) ≤ Cd →
+                    ∀ (s : ℝ),
+                      (0 : ℝ) < s →
+                        s ≤ (1 / 4 : ℝ) →
+                          (8 : ℝ) * M.gamma ≤ s →
+                            ∀ (m : ℤ) (R : TriadicCube d),
+                              R.scale ≤ m →
+                                ∀ (q : ℝ),
+                                  (1 : ℝ) ≤ q →
+                                    (8 : ℝ) * q ≤ M.gamma⁻¹ →
+                                      ∫⁻ (omega : Cutoff.CutoffSample d),
+                                          ENNReal.ofReal
+                                              (step3FirstTerm Cd M m R omega s
+                                                (lFreeGradSlot m (tailSeriesGauge m) R omega)) ^
+                                            q ∂(↑(Cutoff.cutoffSampleLaw M) : Measure (Cutoff.CutoffSample d)) ≤
+                                        ENNReal.ofReal (Cd * A1 * (q * (M.gamma * (s⁻¹ * s⁻¹)))) ^ q)
+      (Cr2 A2 : ℝ) (_ : (0 : ℝ) < Cr2)
+      (_ :
+        ∀ (M : ABKModel d),
+          Disorder.cstar M = cstar →
+            M.gamma ≤ Cr2⁻¹ ^ (10 : ℕ) →
+              M.gamma ≤ (1 / 8 : ℝ) →
+                ∀ (Cd : ℝ),
+                  (0 : ℝ) ≤ Cd →
+                    ∀ (m : ℤ) (R : TriadicCube d),
+                      R.scale ≤ m →
+                        ∀ (q : ℝ),
+                          (1 : ℝ) ≤ q →
+                            (8 : ℝ) * q ≤ M.gamma⁻¹ →
+                              ∫⁻ (omega : Cutoff.CutoffSample d),
+                                  ENNReal.ofReal
+                                      (step3SecondTerm Cd M m R omega (lFreeGradSlot m (tailSeriesGauge m) R omega)
+                                        (lFreeValueSlot m (tailSeriesGauge m) R omega)) ^
+                                    q ∂(↑(Cutoff.cutoffSampleLaw M) : Measure (Cutoff.CutoffSample d)) ≤
+                                ENNReal.ofReal
+                                    (Cd * A2 *
+                                      (q *
+                                        ((M.gamma * ((↑m : ℝ) - (↑R.scale : ℝ)) + M.gamma) *
+                                          (3 : ℝ) ^ ((2 : ℝ) * (M.gamma * ((↑m : ℝ) - (↑R.scale : ℝ))))))) ^
+                                  q)
+      (Cr3 A3 : ℝ) (_ : (0 : ℝ) < Cr3)
+      (_ :
+        ∀ (M : ABKModel d),
+          Disorder.cstar M = cstar →
+            M.gamma ≤ Cr3⁻¹ ^ (10 : ℕ) →
+              M.gamma ≤ (1 / 8 : ℝ) →
+                ∀ (Cd : ℝ),
+                  (0 : ℝ) ≤ Cd →
+                    ∀ (m : ℤ) (R : TriadicCube d),
+                      R.scale ≤ m →
+                        ∀ (q : ℝ),
+                          (1 : ℝ) ≤ q →
+                            (8 : ℝ) * q ≤ M.gamma⁻¹ →
+                              ∫⁻ (omega : Cutoff.CutoffSample d),
+                                  ENNReal.ofReal
+                                      (step3ThirdTerm Cd M m R omega (lFreeGradSlot m (tailSeriesGauge m) R omega)) ^
+                                    q ∂(↑(Cutoff.cutoffSampleLaw M) : Measure (Cutoff.CutoffSample d)) ≤
+                                ENNReal.ofReal (Cd * A3 * (q * M.gamma)) ^ q)
+      (M : ABKModel d) (_ : Disorder.cstar M = cstar)
+      (_ : M.gamma ≤ (max (max (max Cr1 Cr2) (max Cr3 (3 : ℝ))) (max (Cd * (A1 + A3)) (Cd * A2)))⁻¹ ^ (10 : ℕ)) (m n : ℤ)
+      (_ : n ≤ m) (s : ℝ)
+      (_ :
+        s ∈
+          Set.Icc (max (max (max Cr1 Cr2) (max Cr3 (3 : ℝ))) (max (Cd * (A1 + A3)) (Cd * A2)) ^ (2 : ℕ) * √M.gamma)
+            (1 / 4 : ℝ))
+      (p : ℝ)
+      (_ :
+        p ∈
+          Set.Icc ((2 : ℝ) * (↑d : ℝ) * s⁻¹)
+            ((max (max (max Cr1 Cr2) (max Cr3 (3 : ℝ))) (max (Cd * (A1 + A3)) (Cd * A2)))⁻¹ * M.gamma⁻¹ * s))
+      (l : ℕ) (R : TriadicCube d) (_ : R ∈ descendantsAtScale (originCube d m) (n - (↑l : ℤ))) (_ : (2 : ℕ) ≤ d),
+      (0 : ℝ) < M.gamma ∧
+        M.gamma ≤ (1 / 8 : ℝ) ∧
+          (0 : ℝ) < s ∧
+            (4 : ℝ) ≤ s⁻¹ ∧
+              (1 : ℝ) ≤ p / (2 : ℝ) ∧
+                (0 : ℝ) < p / (2 : ℝ) ∧
+                  (↑m : ℝ) - (↑R.scale : ℝ) = (↑m : ℝ) - (↑n : ℝ) + (↑l : ℝ) ∧
+                    (0 : ℝ) ≤ (↑m : ℝ) - (↑R.scale : ℝ) ∧
+                      ∫⁻ (omega : Cutoff.CutoffSample d),
+                            ENNReal.ofReal (step3FirstTerm Cd M m R omega s (lFreeGradSlot m (tailSeriesGauge m) R omega)) ^
+                              (p / (2 : ℝ)) ∂(↑(Cutoff.cutoffSampleLaw M) : Measure (Cutoff.CutoffSample d)) ≤
+                          ENNReal.ofReal (Cd * A1 * (p / (2 : ℝ) * (M.gamma * (s⁻¹ * s⁻¹)))) ^ (p / (2 : ℝ)) ∧
+                        ∫⁻ (omega : Cutoff.CutoffSample d),
+                              ENNReal.ofReal
+                                  (step3SecondTerm Cd M m R omega (lFreeGradSlot m (tailSeriesGauge m) R omega)
+                                    (lFreeValueSlot m (tailSeriesGauge m) R omega)) ^
+                                (p / (2 : ℝ)) ∂(↑(Cutoff.cutoffSampleLaw M) : Measure (Cutoff.CutoffSample d)) ≤
+                            ENNReal.ofReal
+                                (Cd * A2 *
+                                  (p / (2 : ℝ) *
+                                    ((M.gamma * ((↑m : ℝ) - (↑R.scale : ℝ)) + M.gamma) *
+                                      (3 : ℝ) ^ ((2 : ℝ) * (M.gamma * ((↑m : ℝ) - (↑R.scale : ℝ))))))) ^
+                              (p / (2 : ℝ)) ∧
+                          ∫⁻ (omega : Cutoff.CutoffSample d),
+                                ENNReal.ofReal
+                                    (step3ThirdTerm Cd M m R omega (lFreeGradSlot m (tailSeriesGauge m) R omega)) ^
+                                  (p / (2 : ℝ)) ∂(↑(Cutoff.cutoffSampleLaw M) : Measure (Cutoff.CutoffSample d)) ≤
+                              ENNReal.ofReal (Cd * A3 * (p / (2 : ℝ) * M.gamma)) ^ (p / (2 : ℝ)) ∧
+                            (0 : ℝ) ≤ Cd * A1 * (p / (2 : ℝ) * (M.gamma * (s⁻¹ * s⁻¹))) ∧
+                              (0 : ℝ) ≤ (3 : ℝ) ^ ((2 : ℝ) * (M.gamma * ((↑m : ℝ) - (↑R.scale : ℝ)))) := by
+  intro d _ _ Cd hCd Cr1 A1 hCr1 hA1 hfirst Cr2 A2 hCr2 hsecond Cr3 A3 hCr3 hthird M hcs hreg m n _ s hsmem p hpmem l R hR hd2
   have hgam0 : (0 : ℝ) < M.gamma := M.shellPrefix.gamma_pos
   have h3le : (3 : ℝ) ≤ max (max (max Cr1 Cr2) (max Cr3 3))
       (max (Cd * (A1 + A3)) (Cd * A2)) :=
@@ -157,29 +265,8 @@ theorem exists_perCubeMoments (d : ℕ) [NeZero d] (cstar : ℝ) (hcstar : 0 < c
     linarith only [hp1, hstep]
   have hq0 : (0 : ℝ) < p / 2 := by linarith only [hq]
   have hp0 : (0 : ℝ) < p := by linarith only [hq0]
-  have h8q : 8 * (p / 2) ≤ M.gamma⁻¹ := by
-    have hKinv : (max (max (max Cr1 Cr2) (max Cr3 3))
-        (max (Cd * (A1 + A3)) (Cd * A2)))⁻¹ ≤ (3 : ℝ)⁻¹ :=
-      inv_anti₀ (by norm_num) h3le
-    have hnn : (0 : ℝ) ≤ M.gamma⁻¹ * s := mul_nonneg (inv_pos.mpr hgam0).le hs.le
-    have hstep := mul_le_mul_of_nonneg_right hKinv hnn
-    have hid : (max (max (max Cr1 Cr2) (max Cr3 3))
-        (max (Cd * (A1 + A3)) (Cd * A2)))⁻¹ * (M.gamma⁻¹ * s) =
-        (max (max (max Cr1 Cr2) (max Cr3 3))
-          (max (Cd * (A1 + A3)) (Cd * A2)))⁻¹ * M.gamma⁻¹ * s := by ring
-    have hple : p ≤ (3 : ℝ)⁻¹ * (M.gamma⁻¹ * s) := by
-      linarith only [hpmem.2, hstep, hid]
-    have hsle : (3 : ℝ)⁻¹ * (M.gamma⁻¹ * s) ≤ (3 : ℝ)⁻¹ * (M.gamma⁻¹ * (1 / 4)) := by
-      have h := mul_le_mul_of_nonneg_left hs1 (inv_pos.mpr hgam0).le
-      have h2 := mul_le_mul_of_nonneg_left h (by norm_num : (0 : ℝ) ≤ (3 : ℝ)⁻¹)
-      linarith only [h2]
-    have hfin : (3 : ℝ)⁻¹ * (M.gamma⁻¹ * (1 / 4)) ≤ M.gamma⁻¹ / 4 := by
-      have hgi : (0 : ℝ) ≤ M.gamma⁻¹ := (inv_pos.mpr hgam0).le
-      have hid2 : (3 : ℝ)⁻¹ * (M.gamma⁻¹ * (1 / 4)) = M.gamma⁻¹ / 12 := by ring
-      have hid3 : M.gamma⁻¹ / 4 - M.gamma⁻¹ / 12 = M.gamma⁻¹ / 6 := by ring
-      have h6 : (0 : ℝ) ≤ M.gamma⁻¹ / 6 := by linarith only [hgi]
-      linarith only [hid2, hid3, h6]
-    linarith only [hple, hsle, hfin]
+  have h8q := @perCubeMoments_admissibleExponent (d) (Cd) (Cr1) (A1) (Cr2) (A2) (Cr3) (A3) (M) (s)
+    (p) (hpmem) (hgam0) (h3le) (hs1) (hs)
   -- the descendant cube's scale
   have hscale : R.scale = n - (l : ℤ) := scale_eq_of_mem_descendantsAtScale hR
   have hkm : R.scale ≤ m := by
@@ -217,6 +304,47 @@ theorem exists_perCubeMoments (d : ℕ) [NeZero d] (cstar : ℝ) (hcstar : 0 < c
     exact mul_nonneg h1 h2
   have hwt0 : (0 : ℝ) ≤ (3 : ℝ) ^ (2 * (M.gamma * ((m : ℝ) - (R.scale : ℝ)))) :=
     Real.rpow_nonneg (by norm_num) _
+  exact ⟨hgam0, hgam18, hs, hsinv, hq, hq0, ht, ht0, hm1, hm2, hm3, hR1nn, hwt0⟩
+
+/-- **`hcube`, discharged.**
+
+For every positive Step-3 display constant there is a constant `K` such that, in
+the anchor's own window, the `p/2`-th moment of the `L`-free Step-3 majorant at
+every descendant cube is at most the three-shape majorant
+`minkowskiScaleMajorant K p γ s (m−n) l` raised to the `p/2`.
+
+This is Step 5's inner (Hölder) half, in full. -/
+theorem exists_perCubeMoments (d : ℕ) [NeZero d] (cstar : ℝ) (hcstar : 0 < cstar)
+    (Cd : ℝ) (hCd : 0 < Cd) :
+    ∃ K : ℝ, 0 < K ∧
+      ∀ M : ABKModel d, Disorder.cstar M = cstar → M.gamma ≤ (K⁻¹) ^ (10 : ℕ) →
+        ∀ m n : ℤ, n ≤ m → (m : ℝ) ≤ (n : ℝ) + M.gamma⁻¹ →
+          ∀ s : ℝ, s ∈ Set.Icc (K ^ (2 : ℕ) * Real.sqrt M.gamma) (1 / 4) →
+            ∀ p : ℝ, p ∈ Set.Icc (2 * (d : ℝ) * s⁻¹) (K⁻¹ * M.gamma⁻¹ * s) →
+              ∀ (l : ℕ) (R : TriadicCube d),
+                R ∈ descendantsAtScale (originCube d m) (n - (l : ℤ)) →
+                (∫⁻ omega, ENNReal.ofReal (lFreeStep3Majorant Cd M m s
+                      (lFreeGradSlot m (tailSeriesGauge m))
+                      (lFreeValueSlot m (tailSeriesGauge m)) R omega) ^ (p / 2)
+                    ∂(Cutoff.cutoffSampleLaw M).toMeasure) ≤
+                  ENNReal.ofReal (minkowskiScaleMajorant K p M.gamma s
+                    ((m : ℝ) - (n : ℝ)) l) ^ (p / 2) := by
+  classical
+  obtain ⟨Cr1, A1, hCr1, hA1, hfirst⟩ :=
+    exists_lintegral_rpow_step3FirstTerm_slot d cstar hcstar
+  obtain ⟨Cr2, A2, hCr2, hA2, hsecond⟩ :=
+    exists_lintegral_rpow_step3SecondTerm_slot d cstar hcstar
+  obtain ⟨Cr3, A3, hCr3, hA3, hthird⟩ :=
+    exists_lintegral_rpow_step3ThirdTerm_slot d cstar hcstar
+  refine ⟨max (max (max Cr1 Cr2) (max Cr3 3)) (max (Cd * (A1 + A3)) (Cd * A2)), ?_, ?_⟩
+  · exact lt_of_lt_of_le hCr1
+      (le_trans (le_trans (le_max_left Cr1 Cr2) (le_max_left _ _)) (le_max_left _ _))
+  intro M hcs hreg m n hnm hwin s hsmem p hpmem l R hR
+  have hd2 : (2 : ℕ) ≤ d := M.shellPrefix.dimension
+  obtain ⟨hgam0, hgam18, hs, hsinv, hq, hq0, ht, ht0, hm1, hm2, hm3, hR1nn, hwt0⟩ :=
+    @boundsEaLProviderFinal_comparisonBounds1 (d) (by infer_instance) (cstar) (Cd) (hCd) (Cr1)
+      (A1) (hCr1) (hA1) (hfirst) (Cr2) (A2) (hCr2) (hsecond) (Cr3) (A3) (hCr3) (hthird) (M) (hcs)
+        (hreg) (m) (n) (hnm) (s) (hsmem) (p) (hpmem) (l) (R) (hR) (hd2)
   have hR2nn : (0 : ℝ) ≤ Cd * A2 * (p / 2 *
       ((M.gamma * ((m : ℝ) - (R.scale : ℝ)) + M.gamma) *
         (3 : ℝ) ^ (2 * (M.gamma * ((m : ℝ) - (R.scale : ℝ)))))) := by
@@ -251,7 +379,7 @@ theorem exists_perCubeMoments (d : ℕ) [NeZero d] (cstar : ℝ) (hcstar : 0 < c
     linarith only [h]
   have hweight : Real.rpow 3 (2 * M.gamma * (((m : ℝ) - (n : ℝ)) + (l : ℝ))) =
       (3 : ℝ) ^ (2 * (M.gamma * ((m : ℝ) - (R.scale : ℝ)))) := by
-    show (3 : ℝ) ^ (2 * M.gamma * (((m : ℝ) - (n : ℝ)) + (l : ℝ))) =
+    change (3 : ℝ) ^ (2 * M.gamma * (((m : ℝ) - (n : ℝ)) + (l : ℝ))) =
       (3 : ℝ) ^ (2 * (M.gamma * ((m : ℝ) - (R.scale : ℝ))))
     rw [ht]
     congr 1

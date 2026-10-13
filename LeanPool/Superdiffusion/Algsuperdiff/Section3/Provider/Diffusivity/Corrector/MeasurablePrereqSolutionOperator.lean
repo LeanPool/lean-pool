@@ -272,7 +272,7 @@ theorem gradToHilbertVectorL2_eq_neumannGradientOfForcingClass
       v.gradToHilbertVectorL2 = vectorL2ToHilbertVectorL2 (U := U) v.gradToVectorL2 := fun v =>
     (vectorL2ToHilbertVectorL2_toVectorL2 (U := U) v.toH1Function.grad_memVectorL2).symm
   rw [hbridge u, hvec, ← hbridge]
-  show (H1CoerciveHilbert.toH1MeanZeroFunction
+  change (H1CoerciveHilbert.toH1MeanZeroFunction
       (H1CoerciveHilbert.coeffGradientProblemSolution (U := U) (a := a) (lam := lam) (Lam := Lam)
         hg hC hne hEll)).gradToHilbertVectorL2 = _
   rw [H1CoerciveHilbert.toH1MeanZeroFunction_gradToHilbertVectorL2]

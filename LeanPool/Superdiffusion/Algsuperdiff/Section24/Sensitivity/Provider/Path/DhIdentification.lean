@@ -52,7 +52,7 @@ def fluxFlip (X : DoubledField d) : DoubledField d where
 
 /-- The flux flip is an involution. -/
 theorem fluxFlip_fluxFlip (X : DoubledField d) : fluxFlip (fluxFlip X) = X := by
-  show DoubledField.mk X.potential (fun x => - -X.flux x) = X
+  change DoubledField.mk X.potential (fun x => - -X.flux x) = X
   rw [show (fun x => - -X.flux x) = X.flux by funext x; rw [neg_neg]]
 
 /-- The solenoidal zero-normal-trace class is closed under negation. -/
@@ -65,7 +65,7 @@ theorem solenoidalZeroNormalTraceFieldOn_neg {U : Set (Vec d)}
     ∫ x in U, vecDot (-g x) (φ.grad x) ∂MeasureTheory.volume
         = ∫ x in U, -vecDot (g x) (φ.grad x) ∂MeasureTheory.volume := by
           refine integral_congr_ae (Filter.Eventually.of_forall fun x => ?_)
-          show vecDot (-g x) (φ.grad x) = -vecDot (g x) (φ.grad x)
+          change vecDot (-g x) (φ.grad x) = -vecDot (g x) (φ.grad x)
           rw [vecDot_neg_left]
     _ = -∫ x in U, vecDot (g x) (φ.grad x) ∂MeasureTheory.volume :=
           integral_neg _
@@ -81,7 +81,7 @@ theorem isDoubledMuAdmissible_fluxFlip {U : Domain d} {P : BlockVec d}
   have hfun : (fun x => (fluxFlip X).flux x - ((P.1, -P.2) : BlockVec d).2)
       = fun x => -(X.flux x - P.2) := by
     funext x
-    show -X.flux x - -P.2 = -(X.flux x - P.2)
+    change -X.flux x - -P.2 = -(X.flux x - P.2)
     abel
   rw [hfun]
   exact hneg
@@ -148,7 +148,7 @@ theorem doubledMuMinimizer_neg_left_extracts_adjointMaximizerGradient
       = fun x => X.potential x -
         (blockMatVecMul (blockCoeffField a.toCoeffField x) (X.eval x)).2 := by
     funext x
-    show X.potential x +
+    change X.potential x +
         (blockMatVecMul (blockCoeffField a.transpose.toCoeffField x)
           ((fluxFlip X).eval x)).2 = _
     rw [show (blockMatVecMul (blockCoeffField a.transpose.toCoeffField x)
@@ -202,7 +202,7 @@ theorem pathLinearTerm_isDoubledMuMinimizer_eq {U : Domain d} (a : CoeffOn U)
       (matVecMul (h.1.1 x)
         ((canonicalMaximizer (responseExistenceTheory U a)
           p q).toSolution.toH1.grad x)))
-  show volumeAverage (U : Set (Vec d)) (pathLinearDensity a h.1.1 X) = _
+  change volumeAverage (U : Set (Vec d)) (pathLinearDensity a h.1.1 X) = _
   rw [show ((1 / 2 : ℝ) * average U (fun x => vecDot
         ((canonicalMaximizer (responseExistenceTheory U a.transpose)
           p (-q)).toSolution.toH1.grad x)
@@ -219,7 +219,7 @@ theorem pathLinearTerm_isDoubledMuMinimizer_eq {U : Domain d} (a : CoeffOn U)
   filter_upwards [h.2, hplus, hminus] with x hskew hpx hmx
   set B : Vec d :=
     (blockMatVecMul (blockCoeffField a.toCoeffField x) (X.eval x)).2 with hB
-  show -vecDot (matVecMul (h.1.1 x) (X.potential x)) B =
+  change -vecDot (matVecMul (h.1.1 x) (X.potential x)) B =
     (1 / 2 : ℝ) * vecDot
       ((canonicalMaximizer (responseExistenceTheory U a.transpose)
         p (-q)).toSolution.toH1.grad x)

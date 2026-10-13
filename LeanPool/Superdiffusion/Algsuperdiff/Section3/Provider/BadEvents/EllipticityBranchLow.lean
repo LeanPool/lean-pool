@@ -363,7 +363,7 @@ theorem measureReal_translateCoarseEllipticityTail_le (M : ABKModel d) {Ccg : �
         cubeLowerEllipticityInv M R n (1 / 16) (by norm_num) exponentTwo omega *
           ((Algsuperdiff.Section3.Annealed.sigmaBar M (n - 1) : ℝ)) := homega
     have hdom := hY.dominates omega n (by omega)
-    show Ccg < Y omega
+    change Ccg < Y omega
     linarith
   have ht1 : (1 : ℝ) ≤ Ccg / Real.exp (-(Ccg⁻¹ * (E⁻¹) ^ 2 * M.gamma⁻¹)) :=
     (one_le_div hApos).2 (le_trans hAle hCcg)

@@ -176,7 +176,7 @@ theorem isBigO_sub_const_of_isBigOWith_of_nonneg {Omega : Type*} [MeasurableSpac
     intro omega homega
     have h : K * t < |X omega - c| := homega
     rcases abs_cases (X omega - c) with ⟨heq, _⟩ | ⟨heq, _⟩
-    · show K * t < X omega
+    · change K * t < X omega
       rw [heq] at h
       linarith
     · exact absurd (h.trans_le (by rw [heq]; linarith [hX0 omega])) (lt_irrefl _)

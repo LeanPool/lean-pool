@@ -43,7 +43,7 @@ and the quantifier range
 The manuscript's **standing dimension hypothesis** `d >= 2` is carried as the
 antecedent `2 <= d` of the contract.  It is a standing assumption of the whole
 paper, not a proof step, and it is what the proved principal comparison
-`PrincipalResponseTerminal.exists_const_descendantsAverage_integral_principalEnergy_le_annealedLimit`
+`exists_const_descendantsAverage_integral_principalEnergy_le_annealedLimit`
 binds as `hd : 2 <= d`; a discharger of the contract obtains it by `intro hd`.
 
 Nothing here proves the contract.  `TwoSidedClosure` is a `Prop`-valued

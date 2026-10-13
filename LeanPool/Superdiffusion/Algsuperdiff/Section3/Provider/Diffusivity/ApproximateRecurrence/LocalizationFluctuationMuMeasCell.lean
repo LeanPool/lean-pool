@@ -28,7 +28,7 @@ Module imports, support namespace and local option directives adapted for Lean P
 ABK26, `l.approximate.recurrence.formula`, Steps 1--2, read at the recurrence
 pair `(n, n+h)`.
 
-`LocalizationFluctuationSelectEndpoint.integral_blockVecDot_recurrenceP_le_principalSwitchEnergyAverage_add`
+`integral_blockVecDot_recurrenceP_le_principalSwitchEnergyAverage_add`
 carries exactly three analytic binders --- `hintLHS`, `hintPrincipal`,
 `hintFluctuation`.  This module supplies them.
 
@@ -129,7 +129,7 @@ theorem integrable_blockVecDot_coarseBlockMatrix_cutoffSampleLaw (M : ABKModel d
         blockMatEntry (switchCubeMatrix M m Q omega) alpha beta *
           (toFullBlockVec X alpha * toFullBlockVec X beta) := by
     funext omega
-    show blockVecDot X (blockMatVecMul (switchCubeMatrix M m Q omega) X) = _
+    change blockVecDot X (blockMatVecMul (switchCubeMatrix M m Q omega) X) = _
     rw [Provider.Block.blockVecDot_blockMatVecMul_eq_sum (switchCubeMatrix M m Q omega) X]
     refine Finset.sum_congr rfl fun alpha _ => Finset.sum_congr rfl fun beta _ => ?_
     rw [toFullBlockMat_eq_blockMatEntry]

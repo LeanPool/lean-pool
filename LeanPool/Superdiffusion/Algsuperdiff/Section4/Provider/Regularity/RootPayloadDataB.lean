@@ -85,7 +85,7 @@ theorem besovTranslated_neg_le_holder [NeZero d] {m j : ℤ} {z : Vec d}
   -- step 2: the translate IS the Step-3 window
   have hwin : stepThreeWindow z m j =
       (fun y => z + y) '' openCubeSet (originCube d j) := by
-    show truncatedWindow z m j = _
+    change truncatedWindow z m j = _
     rw [truncatedWindow_eq_translateSet_of_mem_inner hz hj, image_add_eq_translateSet]
   have hzm : z ∈ openCubeSet (originCube d m) :=
     openCubeSet_originCube_subset_of_le (by omega) hz
@@ -108,7 +108,7 @@ theorem besovTranslated_neg_le_holder [NeZero d] {m j : ℤ} {z : Vec d}
     have hsc : ((3 : ℝ) ^ (j : ℤ)) = Real.rpow (3 : ℝ) ((j : ℝ)) :=
       (Real.rpow_intCast (3 : ℝ) j).symm
     rw [cubeScaleFactor]
-    show ((3 : ℝ) ^ (j : ℤ)) = Real.rpow (3 : ℝ) ((j : ℝ))
+    change ((3 : ℝ) ^ (j : ℤ)) = Real.rpow (3 : ℝ) ((j : ℝ))
     exact hsc
   have hweight : cubeBesovScaleWeight (-stepSevenCgS) (originCube d j) =
       Real.rpow (3 : ℝ) ((j : ℝ) * stepSevenCgS) := by

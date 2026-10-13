@@ -43,6 +43,69 @@ open MeasureTheory Filter Topology Set
 
 variable {α : Type*} [MeasurableSpace α] {μ : Measure α}
 
+private theorem twoFunctionMedian_boundedDistribution :
+    ∀ {α : Type u_1} [inst : MeasurableSpace α] {μ : Measure α}
+      {f g : α → ℝ},
+      (μ : Set α → ENNReal) univ ≠ ⊤ →
+        (∀ {s t : ℝ},
+            s ≤ t →
+              (μ : Set α → ENNReal) {x : α | t < f x} + (μ : Set α → ENNReal) {x : α | t < g x} ≤
+                (μ : Set α → ENNReal) {x : α | s < f x} + (μ : Set α → ENNReal) {x : α | s < g x}) →
+          (μ : Set α → ENNReal) univ ≠ (0 : ENNReal) →
+            let S : Set ℝ :=
+              {t : ℝ |
+                (μ : Set α → ENNReal) {x : α | t < f x} + (μ : Set α → ENNReal) {x : α | t < g x} ≤
+                  (μ : Set α → ENNReal) univ};
+            (∀ (t : ℝ),
+                t ∈ S ↔
+                  (μ : Set α → ENNReal) {x : α | t < f x} + (μ : Set α → ENNReal) {x : α | t < g x} ≤
+                    (μ : Set α → ENNReal) univ) →
+              BddBelow S := by
+  intro _ _ μ f g hμfin hUanti hpos0 _ hmemS
+  have hUnionUnivF : ⋃ n : ℕ, {x | -(n : ℝ) < f x} = Set.univ := by
+    rw [Set.eq_univ_iff_forall]
+    intro x
+    rw [Set.mem_iUnion]
+    obtain ⟨n, hn⟩ := exists_nat_gt (-(f x))
+    exact ⟨n, by simp only [Set.mem_ofPred_eq]; linarith⟩
+  have hUnionUnivG : ⋃ n : ℕ, {x | -(n : ℝ) < g x} = Set.univ := by
+    rw [Set.eq_univ_iff_forall]
+    intro x
+    rw [Set.mem_iUnion]
+    obtain ⟨n, hn⟩ := exists_nat_gt (-(g x))
+    exact ⟨n, by simp only [Set.mem_ofPred_eq]; linarith⟩
+  have hmonoF : Monotone (fun n : ℕ => {x | -(n : ℝ) < f x}) := by
+    intro a b hab x hx
+    simp only [Set.mem_ofPred_eq] at hx ⊢
+    have : -(b : ℝ) ≤ -(a : ℝ) := by
+      have : (a : ℝ) ≤ b := by exact_mod_cast hab
+      linarith
+    linarith
+  have hmonoG : Monotone (fun n : ℕ => {x | -(n : ℝ) < g x}) := by
+    intro a b hab x hx
+    simp only [Set.mem_ofPred_eq] at hx ⊢
+    have : -(b : ℝ) ≤ -(a : ℝ) := by
+      have : (a : ℝ) ≤ b := by exact_mod_cast hab
+      linarith
+    linarith
+  have htf : Tendsto (fun n : ℕ => μ {x | -(n : ℝ) < f x}) atTop (𝓝 (μ Set.univ)) := by
+    have hconv := tendsto_measure_iUnion_atTop (μ := μ) hmonoF
+    rwa [hUnionUnivF] at hconv
+  have htg : Tendsto (fun n : ℕ => μ {x | -(n : ℝ) < g x}) atTop (𝓝 (μ Set.univ)) := by
+    have hconv := tendsto_measure_iUnion_atTop (μ := μ) hmonoG
+    rwa [hUnionUnivG] at hconv
+  have h2 : Tendsto (fun n : ℕ => μ {x | -(n : ℝ) < f x} + μ {x | -(n : ℝ) < g x})
+      atTop (𝓝 (μ Set.univ + μ Set.univ)) := htf.add htg
+  have hlt : μ Set.univ < μ Set.univ + μ Set.univ := ENNReal.lt_add_right hμfin hpos0
+  obtain ⟨n, hn⟩ := (h2.eventually (Ioi_mem_nhds hlt)).exists
+  refine ⟨-(n : ℝ), ?_⟩
+  intro t ht
+  by_contra hcon
+  push Not at hcon
+  rw [hmemS] at ht
+  have hcmp := hUanti hcon.le
+  exact absurd (lt_of_lt_of_le hn (le_trans hcmp ht)) (lt_irrefl _)
+
 /-- **Two-function median.**  For a finite measure and two
 a.e.-measurable real functions, there is a common level `m` at which the combined
 upper mass and the combined lower mass are each at most the total mass. -/
@@ -156,50 +219,8 @@ theorem exists_two_function_median [IsFiniteMeasure μ]
     exact ⟨(n : ℝ), (hmemS _).mpr hn.le⟩
   -- `S` is bounded below: the upper mass tends to `2 μ univ > μ univ` as the level
   -- tends to `-∞`.
-  have hbdd : BddBelow S := by
-    have hUnionUnivF : ⋃ n : ℕ, {x | -(n : ℝ) < f x} = Set.univ := by
-      rw [Set.eq_univ_iff_forall]
-      intro x
-      rw [Set.mem_iUnion]
-      obtain ⟨n, hn⟩ := exists_nat_gt (-(f x))
-      exact ⟨n, by simp only [Set.mem_ofPred_eq]; linarith⟩
-    have hUnionUnivG : ⋃ n : ℕ, {x | -(n : ℝ) < g x} = Set.univ := by
-      rw [Set.eq_univ_iff_forall]
-      intro x
-      rw [Set.mem_iUnion]
-      obtain ⟨n, hn⟩ := exists_nat_gt (-(g x))
-      exact ⟨n, by simp only [Set.mem_ofPred_eq]; linarith⟩
-    have hmonoF : Monotone (fun n : ℕ => {x | -(n : ℝ) < f x}) := by
-      intro a b hab x hx
-      simp only [Set.mem_ofPred_eq] at hx ⊢
-      have : -(b : ℝ) ≤ -(a : ℝ) := by
-        have : (a : ℝ) ≤ b := by exact_mod_cast hab
-        linarith
-      linarith
-    have hmonoG : Monotone (fun n : ℕ => {x | -(n : ℝ) < g x}) := by
-      intro a b hab x hx
-      simp only [Set.mem_ofPred_eq] at hx ⊢
-      have : -(b : ℝ) ≤ -(a : ℝ) := by
-        have : (a : ℝ) ≤ b := by exact_mod_cast hab
-        linarith
-      linarith
-    have htf : Tendsto (fun n : ℕ => μ {x | -(n : ℝ) < f x}) atTop (𝓝 (μ Set.univ)) := by
-      have hconv := tendsto_measure_iUnion_atTop (μ := μ) hmonoF
-      rwa [hUnionUnivF] at hconv
-    have htg : Tendsto (fun n : ℕ => μ {x | -(n : ℝ) < g x}) atTop (𝓝 (μ Set.univ)) := by
-      have hconv := tendsto_measure_iUnion_atTop (μ := μ) hmonoG
-      rwa [hUnionUnivG] at hconv
-    have h2 : Tendsto (fun n : ℕ => μ {x | -(n : ℝ) < f x} + μ {x | -(n : ℝ) < g x})
-        atTop (𝓝 (μ Set.univ + μ Set.univ)) := htf.add htg
-    have hlt : μ Set.univ < μ Set.univ + μ Set.univ := ENNReal.lt_add_right hμfin hpos0
-    obtain ⟨n, hn⟩ := (h2.eventually (Ioi_mem_nhds hlt)).exists
-    refine ⟨-(n : ℝ), ?_⟩
-    intro t ht
-    by_contra hcon
-    push Not at hcon
-    rw [hmemS] at ht
-    have hcmp := hUanti hcon.le
-    exact absurd (lt_of_lt_of_le hn (le_trans hcmp ht)) (lt_irrefl _)
+  have hbdd := @twoFunctionMedian_boundedDistribution (α) (by infer_instance) (μ) (f) (g) (hμfin)
+    (hUanti) (hpos0) (hmemS)
   -- The median: the infimum of the candidate set.
   set m : ℝ := sInf S with hmdef
   -- Any level strictly above `m` already lies in `S`.

@@ -80,7 +80,7 @@ theorem continuous_shrinkTo (y : Vec d) (delta : ℝ) : Continuous (shrinkTo y d
 theorem shrinkTo_sub (y : Vec d) (delta : ℝ) (x z : Vec d) :
     shrinkTo y delta x - shrinkTo y delta z = (1 - delta) • (x - z) := by
   funext i
-  show shrinkTo y delta x i - shrinkTo y delta z i = (1 - delta) * (x i - z i)
+  change shrinkTo y delta x i - shrinkTo y delta z i = (1 - delta) * (x i - z i)
   simp only [shrinkTo]
   ring
 
@@ -114,7 +114,7 @@ theorem norm_sub_shrinkTo_le {y : Vec d} {n : ℤ} {delta : ℝ} (h0 : 0 ≤ del
     ‖x - shrinkTo y delta x‖ ≤ delta * ((1 / 2 : ℝ) * (3 : ℝ) ^ n) := by
   refine (pi_norm_le_iff_of_nonneg (by positivity)).2 fun i => ?_
   have hcoord : (x - shrinkTo y delta x) i = delta * (x i - y i) := by
-    show x i - shrinkTo y delta x i = delta * (x i - y i)
+    change x i - shrinkTo y delta x i = delta * (x i - y i)
     rw [shrinkTo_apply]
     ring
   rw [Real.norm_eq_abs, hcoord, abs_mul, abs_of_nonneg h0]
@@ -131,7 +131,7 @@ theorem exists_extendVec_shrinkTo (y : Vec d) (n : ℤ) {delta : ℝ} (h0 : 0 < 
       ((continuous_shrinkTo y delta).comp continuous_subtype_val)
       fun p => shrinkTo_mem_cubeSetAt h0 h1 p.2
   · intro x hx
-    show g (shrinkTo y delta (clampTo y n x)) = g (shrinkTo y delta x)
+    change g (shrinkTo y delta (clampTo y n x)) = g (shrinkTo y delta x)
     rw [clampTo_eq_self hx]
 
 /-! ## 3. One uniformly close field with the same Hölder constant -/

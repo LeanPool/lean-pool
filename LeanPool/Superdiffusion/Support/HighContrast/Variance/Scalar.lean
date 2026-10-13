@@ -92,7 +92,8 @@ theorem scalar_block_variance [NeZero d] (hd : 3 ≤ d) :
       ≤ 4 * Msq ^ 2 := by
     refine le_trans (variance_le_expectation_sq hFaesm) ?_
     have hbnd : ∀ᵐ a ∂L,
-        (blockVecDot P (blockMatVecMul (coarseBlockMatrix (cubeSet (originCube d m)) a.toFun) P)) ^ 2
+        (blockVecDot P (blockMatVecMul (coarseBlockMatrix (cubeSet (originCube d m)) a.toFun) P))
+          ^ 2
           ≤ 4 * Msq ^ 2 := by
       filter_upwards [hFbd] with a ha; nlinarith [ha.1, ha.2, hMsq0]
     refine le_trans (integral_mono_ae hFmem.integrable_sq (integrable_const _) hbnd) ?_

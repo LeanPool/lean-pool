@@ -95,7 +95,7 @@ theorem blockEnergyDensityAt_integrableOn {U : Book.Ch02.Domain d} (a : Book.Ch0
   refine (Book.Ch02.blockMatrixField_ae_eq_ofAEEq
     (HCPolySupport.Internal.Ch02.BookCh02.pointwiseCoeffOn_ae_eq U a)).mono ?_
   intro x hx
-  show Book.Ch02.blockEnergyDensityAt
+  change Book.Ch02.blockEnergyDensityAt
       (HCPolySupport.Internal.Ch02.BookCh02.pointwiseCoeffOn U a) (X.eval x) x =
     Book.Ch02.blockEnergyDensityAt a (X.eval x) x
   rw [Book.Ch02.blockEnergyDensityAt, Book.Ch02.blockEnergyDensityAt, hx]
@@ -238,7 +238,7 @@ theorem doubledMu_le_finset_weighted_sum_add_remainder
         exact absurd hi hmem
     have hFx : F x = Fc i := hFc i x hx
     have hGx : G x = Gc i := hGc i x hx
-    show ((Y.potential x, Y.flux x) : BlockVec d) = ((X i).potential x, (X i).flux x)
+    change ((Y.potential x, Y.flux x) : BlockVec d) = ((X i).potential x, (X i).flux x)
     simp [hY, hPot, hFlux, hFx, hGx]
   -- off the glued cells the competitor is the original pair
   have hYoff : ∀ x ∈ (Q : Set (Vec d)) \ ⋃ i ∈ J, (S i : Set (Vec d)),
@@ -250,7 +250,7 @@ theorem doubledMu_le_finset_weighted_sum_add_remainder
       Finset.sum_eq_zero fun i hi => by simp [hcPot, Set.indicator_of_notMem (hxJ i hi)]
     have hFlux : ∑ i ∈ J, cFlux i x = 0 :=
       Finset.sum_eq_zero fun i hi => by simp [hcFlux, Set.indicator_of_notMem (hxJ i hi)]
-    show ((Y.potential x, Y.flux x) : BlockVec d) = (F x, G x)
+    change ((Y.potential x, Y.flux x) : BlockVec d) = (F x, G x)
     simp [hY, hPot, hFlux]
   -- the coefficient field is the same on each cell
   have hblock : ∀ i, ∀ x : Vec d,

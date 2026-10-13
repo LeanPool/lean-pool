@@ -447,6 +447,100 @@ private theorem laneCellErrorRawSq_ae_eq (M : ABKModel d) (L : ℤ)
 
 /-! ## The endpoint -/
 
+private theorem twoLaneTransport_cell_ae_bound :
+    ∀ (d : ℕ) (M : ABKModel d) (L : ℤ),
+      NeZero d →
+        ∀ (Yw Zw : TriadicCube d → Cutoff.CutoffSample d → ℝ),
+          (∀ (R : TriadicCube d) (ω : Cutoff.CutoffSample d),
+              (fun (omega : Cutoff.CutoffSample d) =>
+                    Observable.cutoffHomogenizationError M L ⟨(1 / 16 : ℝ), by norm_num⟩
+                      (Cutoff.translateCutoffSample (triadicCubeShift R) omega))
+                  ω ≤
+                Yw R ω + Zw R ω) →
+            let Ycell : TriadicCube d → Cutoff.CutoffSample d → ℝ :=
+              fun (R : TriadicCube d) (omega : Cutoff.CutoffSample d) => (2 : ℝ) * max (0 : ℝ) (Yw R omega) ^ (2 : ℕ);
+            (Ycell = fun (R : TriadicCube d) (omega : Cutoff.CutoffSample d) =>
+                (2 : ℝ) * max (0 : ℝ) (Yw R omega) ^ (2 : ℕ)) →
+              let Zcell : TriadicCube d → Cutoff.CutoffSample d → ℝ :=
+                fun (R : TriadicCube d) (omega : Cutoff.CutoffSample d) => (2 : ℝ) * max (0 : ℝ) (Zw R omega) ^ (2 : ℕ);
+              (Zcell = fun (R : TriadicCube d) (omega : Cutoff.CutoffSample d) =>
+                  (2 : ℝ) * max (0 : ℝ) (Zw R omega) ^ (2 : ℕ)) →
+                ∀ᵐ (omega : Cutoff.CutoffSample d) ∂(↑(Cutoff.cutoffSampleLaw M) : Measure (Cutoff.CutoffSample d)),
+                  ∀ (R : TriadicCube d), R.scale = L → laneCellErrorRawSq M L R omega ≤ Ycell R omega + Zcell R omega := by
+  intro _ M L _ Yw Zw hdom _ hYcell _ hZcell
+  rw [MeasureTheory.ae_all_iff]
+  intro R
+  by_cases hR : R.scale = L
+  · filter_upwards [laneCellErrorRawSq_ae_eq M L R hR] with omega homega
+    intro _
+    rw [homega]
+    have hX0 : 0 ≤ Observable.cutoffHomogenizationError M L
+        ⟨(1 / 16 : ℝ), by norm_num⟩
+        (Cutoff.translateCutoffSample
+          (HCPolySupport.triadicCubeShift R) omega) :=
+      Observable.cutoffHomogenizationError_nonneg M L _ _
+    have hdomega := hdom R omega
+    have hP : Yw R omega ≤ max 0 (Yw R omega) := le_max_right _ _
+    have hQ : Zw R omega ≤ max 0 (Zw R omega) := le_max_right _ _
+    have hP0 : (0 : ℝ) ≤ max 0 (Yw R omega) := le_max_left _ _
+    have hQ0 : (0 : ℝ) ≤ max 0 (Zw R omega) := le_max_left _ _
+    have hle : Observable.cutoffHomogenizationError M L
+        ⟨(1 / 16 : ℝ), by norm_num⟩
+        (Cutoff.translateCutoffSample
+          (HCPolySupport.triadicCubeShift R) omega) ≤
+        max 0 (Yw R omega) + max 0 (Zw R omega) := by
+      linarith
+    rw [hYcell, hZcell]
+    nlinarith [sq_nonneg (max 0 (Yw R omega) - max 0 (Zw R omega)),
+      mul_self_le_mul_self hX0 hle]
+  · exact Filter.Eventually.of_forall fun _ hcon => (hR hcon).elim
+
+private theorem twoLaneTransport_pointwiseDomination :
+    ∀ (d : ℕ) (M : ABKModel d) (m L n : ℤ),
+      let this : NeZero d := ⟨by have := M.shellPrefix.dimension; omega⟩;
+      ∀ (Yw Zw : (R : TriadicCube d) → Cutoff.CutoffSample d → ℝ),
+        let Ycell : TriadicCube d → Cutoff.CutoffSample d → ℝ := fun (R : TriadicCube d) (omega : Cutoff.CutoffSample d) =>
+          (2 : ℝ) * max (0 : ℝ) (Yw R omega) ^ (2 : ℕ);
+        let Zcell : TriadicCube d → Cutoff.CutoffSample d → ℝ := fun (R : TriadicCube d) (omega : Cutoff.CutoffSample d) =>
+          (2 : ℝ) * max (0 : ℝ) (Zw R omega) ^ (2 : ℕ);
+        ∀
+          (_ :
+            ∀ᵐ (omega : Cutoff.CutoffSample d) ∂(↑(Cutoff.cutoffSampleLaw M) : Measure (Cutoff.CutoffSample d)),
+              Observable.cutoffHomogenizationErrorRepresentative (s := (1 / 8 : ℝ)) M L n (by norm_num) (Annealed.sigmaBar M L) omega ^ (2 : ℕ) ≤
+                laneTotal L n Ycell omega + laneTotal L n Zcell omega)
+          (_ : ∀ (omega : Cutoff.CutoffSample d), (0 : ℝ) ≤ laneTotal L n Ycell omega)
+          (_ : ∀ (omega : Cutoff.CutoffSample d), (0 : ℝ) ≤ laneTotal L n Zcell omega),
+          ∀ᵐ (omega : Cutoff.CutoffSample d) ∂(↑(Cutoff.cutoffSampleLaw M) : Measure (Cutoff.CutoffSample d)),
+            Observable.cutoffHomogenizationErrorRepresentative (s := (1 / 8 : ℝ)) M L n (by norm_num) (Annealed.sigmaBar M L) omega ≤
+              √(laneTotal L n Ycell omega) + √(laneTotal L n Zcell omega) := by
+  intro _ M m L n _ _ _ Ycell Zcell hRepAE hUnonneg hVnonneg
+  filter_upwards [hRepAE] with omega homega
+  have h0 : 0 ≤ Observable.cutoffHomogenizationErrorRepresentative M L n
+      (by norm_num : (0 : ℝ) < 1 / 8) (Annealed.sigmaBar M L) omega :=
+    Observable.cutoffHomogenizationErrorRepresentative_nonneg M L n _ _ omega
+  have hsum : laneTotal L n Ycell omega + laneTotal L n Zcell omega ≤
+      (Real.sqrt (laneTotal L n Ycell omega) +
+        Real.sqrt (laneTotal L n Zcell omega)) ^ 2 := by
+    have h1 : Real.sqrt (laneTotal L n Ycell omega) ^ 2 =
+        laneTotal L n Ycell omega := Real.sq_sqrt (hUnonneg omega)
+    have h2 : Real.sqrt (laneTotal L n Zcell omega) ^ 2 =
+        laneTotal L n Zcell omega := Real.sq_sqrt (hVnonneg omega)
+    nlinarith [Real.sqrt_nonneg (laneTotal L n Ycell omega),
+      Real.sqrt_nonneg (laneTotal L n Zcell omega)]
+  calc Observable.cutoffHomogenizationErrorRepresentative M L n
+        (by norm_num : (0 : ℝ) < 1 / 8) (Annealed.sigmaBar M L) omega
+      = Real.sqrt ((Observable.cutoffHomogenizationErrorRepresentative M L n
+          (by norm_num : (0 : ℝ) < 1 / 8) (Annealed.sigmaBar M L) omega) ^ 2) :=
+        (Real.sqrt_sq h0).symm
+    _ ≤ Real.sqrt (laneTotal L n Ycell omega +
+          laneTotal L n Zcell omega) := Real.sqrt_le_sqrt homega
+    _ ≤ Real.sqrt ((Real.sqrt (laneTotal L n Ycell omega) +
+          Real.sqrt (laneTotal L n Zcell omega)) ^ 2) :=
+        Real.sqrt_le_sqrt hsum
+    _ = Real.sqrt (laneTotal L n Ycell omega) +
+          Real.sqrt (laneTotal L n Zcell omega) :=
+        Real.sqrt_sq (by positivity)
+
 /-- **Lane-separated observation-scale transport of the preceding-error
 clause.**
 
@@ -567,35 +661,8 @@ theorem exists_twoLaneObservationScaleTransport (d : ℕ) :
     rw [show ((1 / 2 : ℝ)) / 2 = 1 / 4 by norm_num] at hsq
     exact hsq.const_mul (by norm_num : (0 : ℝ) ≤ 2)
   -- the deterministic cover, split over the two lanes
-  have hcellAE : ∀ᵐ omega ∂(Cutoff.cutoffSampleLaw M).toMeasure,
-      ∀ R : HCPolySupport.TriadicCube d, R.scale = L →
-        laneCellErrorRawSq M L R omega ≤ Ycell R omega + Zcell R omega := by
-    rw [MeasureTheory.ae_all_iff]
-    intro R
-    by_cases hR : R.scale = L
-    · filter_upwards [laneCellErrorRawSq_ae_eq M L R hR] with omega homega
-      intro _
-      rw [homega]
-      have hX0 : 0 ≤ Observable.cutoffHomogenizationError M L
-          ⟨(1 / 16 : ℝ), by norm_num⟩
-          (Cutoff.translateCutoffSample
-            (HCPolySupport.triadicCubeShift R) omega) :=
-        Observable.cutoffHomogenizationError_nonneg M L _ _
-      have hdomega := hdom R omega
-      have hP : Yw R omega ≤ max 0 (Yw R omega) := le_max_right _ _
-      have hQ : Zw R omega ≤ max 0 (Zw R omega) := le_max_right _ _
-      have hP0 : (0 : ℝ) ≤ max 0 (Yw R omega) := le_max_left _ _
-      have hQ0 : (0 : ℝ) ≤ max 0 (Zw R omega) := le_max_left _ _
-      have hle : Observable.cutoffHomogenizationError M L
-          ⟨(1 / 16 : ℝ), by norm_num⟩
-          (Cutoff.translateCutoffSample
-            (HCPolySupport.triadicCubeShift R) omega) ≤
-          max 0 (Yw R omega) + max 0 (Zw R omega) := by
-        linarith
-      rw [hYcell, hZcell]
-      nlinarith [sq_nonneg (max 0 (Yw R omega) - max 0 (Zw R omega)),
-        mul_self_le_mul_self hX0 hle]
-    · exact Filter.Eventually.of_forall fun _ hcon => (hR hcon).elim
+  have hcellAE := @twoLaneTransport_cell_ae_bound (d) (M) (L) (this) (Yw) (Zw) (hdom) (hYcell)
+    (hZcell)
   have hRepAE : ∀ᵐ omega ∂(Cutoff.cutoffSampleLaw M).toMeasure,
       (Observable.cutoffHomogenizationErrorRepresentative M L n
         (by norm_num : (0 : ℝ) < 1 / 8) (Annealed.sigmaBar M L) omega) ^ 2 ≤
@@ -679,33 +746,8 @@ theorem exists_twoLaneObservationScaleTransport (d : ℕ) :
       Observable.cutoffHomogenizationErrorRepresentative M L n
           (by norm_num : (0 : ℝ) < 1 / 8) (Annealed.sigmaBar M L) omega ≤
         Real.sqrt (laneTotal L n Ycell omega) +
-          Real.sqrt (laneTotal L n Zcell omega) := by
-    filter_upwards [hRepAE] with omega homega
-    have h0 : 0 ≤ Observable.cutoffHomogenizationErrorRepresentative M L n
-        (by norm_num : (0 : ℝ) < 1 / 8) (Annealed.sigmaBar M L) omega :=
-      Observable.cutoffHomogenizationErrorRepresentative_nonneg M L n _ _ omega
-    have hsum : laneTotal L n Ycell omega + laneTotal L n Zcell omega ≤
-        (Real.sqrt (laneTotal L n Ycell omega) +
-          Real.sqrt (laneTotal L n Zcell omega)) ^ 2 := by
-      have h1 : Real.sqrt (laneTotal L n Ycell omega) ^ 2 =
-          laneTotal L n Ycell omega := Real.sq_sqrt (hUnonneg omega)
-      have h2 : Real.sqrt (laneTotal L n Zcell omega) ^ 2 =
-          laneTotal L n Zcell omega := Real.sq_sqrt (hVnonneg omega)
-      nlinarith [Real.sqrt_nonneg (laneTotal L n Ycell omega),
-        Real.sqrt_nonneg (laneTotal L n Zcell omega)]
-    calc Observable.cutoffHomogenizationErrorRepresentative M L n
-          (by norm_num : (0 : ℝ) < 1 / 8) (Annealed.sigmaBar M L) omega
-        = Real.sqrt ((Observable.cutoffHomogenizationErrorRepresentative M L n
-            (by norm_num : (0 : ℝ) < 1 / 8) (Annealed.sigmaBar M L) omega) ^ 2) :=
-          (Real.sqrt_sq h0).symm
-      _ ≤ Real.sqrt (laneTotal L n Ycell omega +
-            laneTotal L n Zcell omega) := Real.sqrt_le_sqrt homega
-      _ ≤ Real.sqrt ((Real.sqrt (laneTotal L n Ycell omega) +
-            Real.sqrt (laneTotal L n Zcell omega)) ^ 2) :=
-          Real.sqrt_le_sqrt hsum
-      _ = Real.sqrt (laneTotal L n Ycell omega) +
-            Real.sqrt (laneTotal L n Zcell omega) :=
-          Real.sqrt_sq (by positivity)
+          Real.sqrt (laneTotal L n Zcell omega)  := @twoLaneTransport_pointwiseDomination (d) (M)
+            (m) (L) (n) (Yw) (Zw) (hRepAE) (hUnonneg) (hVnonneg)
   exact Tail.isTwoTermBigOWith_of_ae_le
     (Probability.isAdmissibleTail_gammaSigma (by norm_num : (0 : ℝ) < 2))
     (Probability.isAdmissibleTail_gammaSigma (by norm_num : (0 : ℝ) < 1 / 2))

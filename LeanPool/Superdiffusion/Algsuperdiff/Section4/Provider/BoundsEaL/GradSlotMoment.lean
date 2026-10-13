@@ -182,7 +182,7 @@ private theorem tsum_deepGradTerm_eq (k : ℤ) (v : Fin d → ℤ)
     have hkx : k ≤ x := by
       by_contra hcon
       exact hx (by rw [deepGradTerm, ite_eq_right hcon])
-    exact ⟨(x - k).toNat, by show k + (((x - k).toNat : ℕ) : ℤ) = x; omega⟩
+    exact ⟨(x - k).toNat, by change k + (((x - k).toNat : ℕ) : ℤ) = x; omega⟩
   refine Eq.trans (tsum_congr fun n => ?_) (hinj.tsum_eq hsupp)
   rw [deepGradTerm, ite_eq_left (by omega : k ≤ k + (n : ℤ))]
 

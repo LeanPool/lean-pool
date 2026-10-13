@@ -61,7 +61,8 @@ theorem hasFDerivAt_radialKernelScaled {ε : ℝ} (z : 𝔼) :
       (ε⁻¹ • ContinuousLinearMap.id ℝ 𝔼) z := by
     simpa using! (hasFDerivAt_id z).const_smul (ε⁻¹ : ℝ)
   have hK : HasFDerivAt (radialKernel d) (fderiv ℝ (radialKernel d) (ε⁻¹ • z)) (ε⁻¹ • z) :=
-    ((radialKernel_contDiff (d := d) (n := 1)).differentiable (by simp)).differentiableAt.hasFDerivAt
+    ((radialKernel_contDiff (d := d) (n := 1)).differentiable (by
+      simp)).differentiableAt.hasFDerivAt
   have hcomp : HasFDerivAt (fun w : 𝔼 => radialKernel d (ε⁻¹ • w))
       ((fderiv ℝ (radialKernel d) (ε⁻¹ • z)).comp (ε⁻¹ • ContinuousLinearMap.id ℝ 𝔼)) z :=
     hK.comp z hlin

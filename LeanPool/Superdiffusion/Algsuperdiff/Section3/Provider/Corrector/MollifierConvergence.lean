@@ -85,7 +85,7 @@ form of the fact that the Koopman operators commute with the smoothing. -/
 theorem mollify_comp_vadd (κ : Vec d → ℝ) (X : Ω → E) (x : Vec d) (ω : Ω) :
     mollify κ (fun ω' => X (x +ᵥ ω')) ω = mollify κ X (x +ᵥ ω) := by
   refine integral_congr_ae (Filter.Eventually.of_forall fun y => ?_)
-  show κ y • X (x +ᵥ ((-y) +ᵥ ω)) = κ y • X ((-y) +ᵥ (x +ᵥ ω))
+  change κ y • X (x +ᵥ ((-y) +ᵥ ω)) = κ y • X ((-y) +ᵥ (x +ᵥ ω))
   rw [vadd_vadd, vadd_vadd, add_comm]
 
 /-- Mollification is additive, given the integrability of the two pieces. -/
@@ -217,7 +217,7 @@ theorem normSq_mollify_sub_le (ρ : Mollifier d)
     rw [hrepr]
     refine (norm_integral_le_integral_norm _).trans (le_of_eq ?_)
     refine integral_congr_ae (Filter.Eventually.of_forall fun y => ?_)
-    show ‖ρ.toFun y • (X ((-y) +ᵥ ω) - X ω)‖ = ρ.toFun y * ‖X ((-y) +ᵥ ω) - X ω‖
+    change ‖ρ.toFun y • (X ((-y) +ᵥ ω) - X ω)‖ = ρ.toFun y * ‖X ((-y) +ᵥ ω) - X ω‖
     rw [norm_smul, Real.norm_eq_abs, abs_of_nonneg (ρ.nonneg y)]
   have hjensen := sq_weighted_integral_le_of_integral_eq_one (ν := (volume : Measure (Vec d)))
     (g := fun y => ‖X ((-y) +ᵥ ω) - X ω‖) ρ.nonneg ρ.integral_eq_one ρ.integrable hω.2 hω.1

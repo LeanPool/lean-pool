@@ -128,7 +128,7 @@ theorem isBigOWith_min_of_isTwoTermBigOWith {mu : Measure Omega} [IsFiniteMeasur
       have hYZ : 8 * A1 * t < Y omega + Z omega := lt_of_lt_of_le hX8 (hdom omega)
       rcases le_or_gt (Y omega) (A1 * (4 * t)) with hY | hY
       · refine Set.mem_union_right _ ?_
-        show A2 * (4 * rho ^ 3 * t) < Z omega
+        change A2 * (4 * rho ^ 3 * t) < Z omega
         have heq : A2 * (4 * rho ^ 3 * t) = A1 * (4 * t) := by
           rw [← hratio]; ring
         rw [heq]
@@ -223,7 +223,7 @@ theorem isBigOWith_sub_min_of_isTwoTermBigOWith {mu : Measure Omega} [IsFiniteMe
       lt_of_lt_of_le hXbig (hdom omega)
     rcases le_or_gt (Y omega) (A1 * (4 * t / rho ^ 3 + 4 * rho)) with hY | hY
     · refine Set.mem_union_right _ ?_
-      show A2 * (4 * t + 4 * rho ^ 4) < Z omega
+      change A2 * (4 * t + 4 * rho ^ 4) < Z omega
       rw [hAY] at hY
       rw [hAZ]
       linarith only [hYZ, hY]

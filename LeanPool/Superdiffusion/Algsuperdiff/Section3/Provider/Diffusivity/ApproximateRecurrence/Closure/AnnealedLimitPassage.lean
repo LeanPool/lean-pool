@@ -79,11 +79,11 @@ The two are identified here in five steps.
 5. `coarseBlockMatrix_cubeSet_coefficientCutoff_eq_ch02` --- the annealed layer's coarse
    matrix is built on the `Set`/`RegCoeffField` carrier (`CoarseGraining.coarseBlockMatrix
    (cubeSet Q) a.toFun`), whereas the proved *structural split* of Steps 1--3
-   (`LocalizationRecurrenceMesh.exists_localizationRecurrenceMeshSplit_le_descendantsAverage_expanded`)
+(`LocalizationRecurrenceMesh.exists_localizationRecurrenceMeshSplit_le_descendantsAverage_expanded`)
    states its left-hand side on the `Domain`/`CoeffOn` carrier (`Ch02.coarseBlockMatrix
    (cubeDomain Q) ((coefficientCutoffTriadicCoeffFamily M m omega).coeffOn Q)`).  The two
    carriers are identified by CoarseGraining's
-   `Ch04.RestrictionLawCarrier.coarseBlockMatrix_cubeSet_eq_ch02_coarseBlockMatrix_of_aelocallyUniformlyEllipticField`
+`coarseBlockMatrix_cubeSet_eq_ch02_coarseBlockMatrix_of_aelocallyUniformlyEllipticField`
    together with `Ch02.coarseBlockMatrix_eq_ofAEEq`, exactly as
    `Provider.Base.AnnealedPlateau` already does for the upper-left block.  This link is
    what makes the finite-volume side of the passage *literally* the expectation of the

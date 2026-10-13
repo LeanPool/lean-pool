@@ -294,7 +294,8 @@ private theorem cubeAmpTwo_sq_sharp (C : ℝ) (M : ABKModel d) :
 ```
 
 Each clause is the corresponding clause of the crude reading with **one power
-of `θ` removed from the right-hand side** and the constant tripled.  Clause (1) is the binding one; at the consumer's coupling `ε² = s²θ`
+of `θ` removed from the right-hand side** and the constant tripled.  Clause (1) is the binding one;
+at the consumer's coupling `ε² = s²θ`
 it reads `γ ≲ θ²`, i.e. `θ ≳ γ^{1/2}` — the printed Theorem-C range — where the
 proved `θ²` form read `γ ≲ θ³`. -/
 theorem g2ThresholdSharp_le_of (M : ABKModel d) {C s theta c1 ep : ℝ} {r : ℕ}

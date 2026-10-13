@@ -91,7 +91,7 @@ private theorem negIdx_injective (m : ℤ) :
 private theorem mem_range_negIdx {m n : ℤ} (hn : n ≤ m) :
     n ∈ Set.range (fun u : ℕ => m - (u : ℤ)) :=
   ⟨(m - n).toNat, by
-    show m - ((m - n).toNat : ℤ) = n
+    change m - ((m - n).toNat : ℤ) = n
     omega⟩
 
 /-- A family on `ℤ` supported on `{n ≤ m}` is summable iff its `n = m − u`

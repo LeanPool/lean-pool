@@ -231,12 +231,12 @@ private theorem ioc_eq_range_map_asc {n L : ℤ} (hnL : n ≤ L) :
   constructor
   · rintro ⟨hlo, hhi⟩
     refine ⟨(k - n - 1).toNat, by omega, ?_⟩
-    show n + 1 + ((k - n - 1).toNat : ℤ) = k
+    change n + 1 + ((k - n - 1).toNat : ℤ) = k
     have h1 : (0 : ℤ) ≤ k - n - 1 := by omega
     rw [Int.toNat_of_nonneg h1]
     omega
   · rintro ⟨w, hw, rfl⟩
-    show n < n + 1 + (w : ℤ) ∧ n + 1 + (w : ℤ) ≤ L
+    change n < n + 1 + (w : ℤ) ∧ n + 1 + (w : ℤ) ≤ L
     have h2 : (0 : ℤ) ≤ L - n := by omega
     have hw' : (w : ℤ) < ((L - n).toNat : ℤ) := by exact_mod_cast hw
     rw [Int.toNat_of_nonneg h2] at hw'
@@ -696,7 +696,7 @@ theorem measureReal_shellSensitivityFailure_le (M : ABKModel d) {Ccg : ℝ}
       badEventOscRate M Ccg Q n * (3 : ℝ) ^ ((k : ℝ) - (n : ℝ)) :=
     one_le_mul_one_le hgate (Real.one_le_rpow (by norm_num) (by linarith))
   have htail := isBigOWith_gammaSigma_shellOscGauge M Q (le_trans hmn hnk.le)
-  show (cutoffSampleLaw M).toMeasure.real
+  change (cutoffSampleLaw M).toMeasure.real
       {omega | shellSensitivityThreshold M Ccg Q.scale n k <
         shellOscGauge Q k omega} ≤ _
   exact measureReal_upperTail_le_exp hApos hBpos hthr hBsq hrate3 htail

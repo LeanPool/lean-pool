@@ -104,7 +104,7 @@ theorem cgExcess_sub_two (M : ABKModel d) (Ccg : ℝ) (k : ℤ) (z : Vec d)
 private theorem rpow_weight_inv (M : ABKModel d) (m n : ℤ) :
     (Real.rpow (3 : ℝ) (-(1 / 4 : ℝ) * M.gamma * ((m - n : ℤ) : ℝ)))⁻¹ =
       Real.rpow (3 : ℝ) ((1 / 4 : ℝ) * M.gamma * ((m - n : ℤ) : ℝ)) := by
-  show ((3 : ℝ) ^ (-(1 / 4 : ℝ) * M.gamma * ((m - n : ℤ) : ℝ)))⁻¹ =
+  change ((3 : ℝ) ^ (-(1 / 4 : ℝ) * M.gamma * ((m - n : ℤ) : ℝ)))⁻¹ =
     (3 : ℝ) ^ ((1 / 4 : ℝ) * M.gamma * ((m - n : ℤ) : ℝ))
   rw [show -(1 / 4 : ℝ) * M.gamma * ((m - n : ℤ) : ℝ) =
         -((1 / 4 : ℝ) * M.gamma * ((m - n : ℤ) : ℝ)) from by ring,

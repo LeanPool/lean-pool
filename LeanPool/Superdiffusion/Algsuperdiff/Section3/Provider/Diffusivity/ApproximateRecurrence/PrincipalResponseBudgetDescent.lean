@@ -122,7 +122,7 @@ theorem doubledResponseJ_annealedProbe_mem_normalizedBlockResponseValueSet
   have hsig : (0 : ℝ) < (sigma : ℝ) := sigma.2
   refine ⟨Sum.elim Ev.1 Ev.2, ?_, ?_⟩
   · rw [fullBlockVecNormSq_eq_add]
-    show vecNormSq Ev.1 + vecNormSq Ev.2 = 1
+    change vecNormSq Ev.1 + vecNormSq Ev.2 = 1
     simpa [vecNormSq, blockVecDot] using hE
   · show _ = Ch02.doubledResponseJ (Ch02.cubeDomain Q) (F.coeffOn Q) _ _
     rw [show Observable.isotropicComparatorMatrix (d := d) sigma

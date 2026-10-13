@@ -75,11 +75,11 @@ theorem isDoubledTestField_sub {U : Domain d} {Y Z : DoubledField d}
   have hrw : Y + (-1 : ℝ) • Z = Y - Z := by
     refine HCPolySupport.Internal.Ch02.BookCh02.doubledField_ext ?_ ?_
     · funext x
-      show Y.potential x + (-1 : ℝ) • Z.potential x = Y.potential x - Z.potential x
+      change Y.potential x + (-1 : ℝ) • Z.potential x = Y.potential x - Z.potential x
       rw [neg_one_smul]
       abel
     · funext x
-      show Y.flux x + (-1 : ℝ) • Z.flux x = Y.flux x - Z.flux x
+      change Y.flux x + (-1 : ℝ) • Z.flux x = Y.flux x - Z.flux x
       rw [neg_one_smul]
       abel
   rwa [hrw] at h
@@ -99,7 +99,7 @@ private theorem doubledBlockPairingIntegrand_add_right {U : Domain d} (a : Coeff
     doubledBlockPairingIntegrand U a X (Y + Z)
       = doubledBlockPairingIntegrand U a X Y + doubledBlockPairingIntegrand U a X Z := by
   funext x
-  show blockVecDot (X.eval x) (blockMatVecMul (blockMatrixField a x) ((Y + Z).eval x))
+  change blockVecDot (X.eval x) (blockMatVecMul (blockMatrixField a x) ((Y + Z).eval x))
     = blockVecDot (X.eval x) (blockMatVecMul (blockMatrixField a x) (Y.eval x))
       + blockVecDot (X.eval x) (blockMatVecMul (blockMatrixField a x) (Z.eval x))
   have hev : (Y + Z).eval x = Y.eval x + Z.eval x := rfl
@@ -158,11 +158,11 @@ theorem isDoubledMuMinimizerField_add {U : Domain d} {a : CoeffOn U} {P : BlockV
         = (W - S) - F := by
       refine HCPolySupport.Internal.Ch02.BookCh02.doubledField_ext ?_ ?_
       · funext x
-        show W.potential x - (P.1 + F.potential x) - (S.potential x - P.1)
+        change W.potential x - (P.1 + F.potential x) - (S.potential x - P.1)
           = W.potential x - S.potential x - F.potential x
         abel
       · funext x
-        show W.flux x - (P.2 + F.flux x) - (S.flux x - P.2)
+        change W.flux x - (P.2 + F.flux x) - (S.flux x - P.2)
           = W.flux x - S.flux x - F.flux x
         abel
     rwa [hrw] at h
@@ -178,12 +178,12 @@ theorem isDoubledMuMinimizerField_add {U : Domain d} {a : CoeffOn U} {P : BlockV
         have hrw : ((W - S) - F) - (T - F) = (W - S) - T := by
           refine HCPolySupport.Internal.Ch02.BookCh02.doubledField_ext ?_ ?_
           · funext x
-            show W.potential x - S.potential x - F.potential x
+            change W.potential x - S.potential x - F.potential x
                 - (T.potential x - F.potential x)
               = W.potential x - S.potential x - T.potential x
             abel
           · funext x
-            show W.flux x - S.flux x - F.flux x - (T.flux x - F.flux x)
+            change W.flux x - S.flux x - F.flux x - (T.flux x - F.flux x)
               = W.flux x - S.flux x - T.flux x
             abel
         rwa [hrw] at h)
@@ -194,11 +194,11 @@ theorem isDoubledMuMinimizerField_add {U : Domain d} {a : CoeffOn U} {P : BlockV
     have hdec : T + ((W - S) - T) = W - S := by
       refine HCPolySupport.Internal.Ch02.BookCh02.doubledField_ext ?_ ?_
       · funext x
-        show T.potential x + (W.potential x - S.potential x - T.potential x)
+        change T.potential x + (W.potential x - S.potential x - T.potential x)
           = W.potential x - S.potential x
         abel
       · funext x
-        show T.flux x + (W.flux x - S.flux x - T.flux x) = W.flux x - S.flux x
+        change T.flux x + (W.flux x - S.flux x - T.flux x) = W.flux x - S.flux x
         abel
     have hDpot : MemVectorL2 (U : Set (Vec d)) ((W - S) - T).potential := by
       have hfun : (W - S).potential - T.potential = ((W - S) - T).potential := rfl
@@ -226,10 +226,10 @@ theorem isDoubledMuMinimizerField_add {U : Domain d} {a : CoeffOn U} {P : BlockV
   have hWsplit : S + (W - S) = W := by
     refine HCPolySupport.Internal.Ch02.BookCh02.doubledField_ext ?_ ?_
     · funext x
-      show S.potential x + (W.potential x - S.potential x) = W.potential x
+      change S.potential x + (W.potential x - S.potential x) = W.potential x
       abel
     · funext x
-      show S.flux x + (W.flux x - S.flux x) = W.flux x
+      change S.flux x + (W.flux x - S.flux x) = W.flux x
       abel
   have hEW : doubledMuValue U a W
       = doubledMuValue U a S + doubledMuValue U a (W - S)

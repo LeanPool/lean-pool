@@ -369,7 +369,7 @@ theorem measure_center_cesaro_le (C : ℝ) (hC1 : 1 ≤ C) (hCa : kickConst d �
     have h2 : delta < Xdet omega + Xfluc omega :=
       (ENNReal.ofReal_lt_ofReal_iff_of_nonneg hd0.le).1 h1
     have h3 : Xfluc omega ≤ |Xfluc omega| := le_abs_self _
-    show G * (Real.sqrt (j : ℝ))⁻¹ * t < |Xfluc omega|
+    change G * (Real.sqrt (j : ℝ))⁻¹ * t < |Xfluc omega|
     rw [hGut]
     linarith only [h2, hXdet omega, h3, hGsqA]
   -- Markov at the level `t`

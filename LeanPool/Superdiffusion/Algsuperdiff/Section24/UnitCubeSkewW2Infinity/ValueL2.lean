@@ -185,7 +185,7 @@ theorem valueL2_sq_eq_integral (h : UnitCubeSkewW2Infinity d) :
       ∫ x, matrixNormField h x ^ 2
         ∂ volumeMeasureOn ((cubeDomain (originCube d 0) : Domain d) : Set (Vec d)) := by
     refine integral_congr_ae (Filter.Eventually.of_forall fun x => ?_)
-    show ‖matrixNormField h x‖ ^ (2 : ℝ) = matrixNormField h x ^ (2 : ℕ)
+    change ‖matrixNormField h x‖ ^ (2 : ℝ) = matrixNormField h x ^ (2 : ℕ)
     rw [Real.norm_eq_abs, abs_of_nonneg (matrixNormField_nonneg h x),
       ← Real.rpow_natCast (matrixNormField h x) 2]
     norm_num
@@ -197,7 +197,7 @@ theorem valueL2_sq_eq_integral (h : UnitCubeSkewW2Infinity d) :
       (∫ x, matrixNormField h x ^ 2
         ∂ volumeMeasureOn ((cubeDomain (originCube d 0) : Domain d) : Set (Vec d)))
         ^ ((2 : ℝ)⁻¹) := by
-    show (eLpNorm (matrixNormField h) 2 _).toReal = _
+    change (eLpNorm (matrixNormField h) 2 _).toReal = _
     rw [hkey, ENNReal.toReal_ofReal (Real.rpow_nonneg hIntnn _)]
   rw [hval, ← Real.rpow_natCast _ 2, ← Real.rpow_mul hIntnn]
   norm_num

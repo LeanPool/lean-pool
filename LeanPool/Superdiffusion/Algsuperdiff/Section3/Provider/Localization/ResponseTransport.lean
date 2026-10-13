@@ -299,7 +299,7 @@ theorem responseJ_cutoffFamily_transpose_eq_ResponseJ_originCube_translate [NeZe
   rw [responseJ_cubeDomain_eq_ResponseJ_cubeSet,
     coefficientCutoffTriadicCoeffFamily_coeffOn_transpose_toCoeffField,
     ResponseJ_cubeSet_eq_originCube_translateCoeffField]
-  show ResponseJ (cubeSet (originCube d R.scale)) p q
+  change ResponseJ (cubeSet (originCube d R.scale)) p q
       (fun x => matTranspose (translateCoeffField (triadicCubeShift R)
         (coefficientCutoff M.nu L omega).toFun x)) = _
   rw [translateCoeffField_coefficientCutoff]

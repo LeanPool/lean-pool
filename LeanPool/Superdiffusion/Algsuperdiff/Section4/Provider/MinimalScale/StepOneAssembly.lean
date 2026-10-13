@@ -116,71 +116,157 @@ theorem three_pow_dim_clears (d : ℕ) :
 
 /-! ## 2. The endpoint -/
 
-/-- **The `D₁` half of `e.kick.Dees.Dees`.**
+private theorem stepOneAssembly_comparisonBounds1 :
+    ∀ (d : ℕ) (CK : ℝ) (M : ABKModel d) (s : { s : ℝ // (0 : ℝ) < s }) (Ccg : ℝ) (n m : ℤ) (_ : n ≤ m),
+      let rho : ℝ := √√(max (216 : ℝ) CK / CK);
+      ∀ (_ : (0 : ℝ) ≤ rho) (_ : rho = √√(max (216 : ℝ) CK / CK)) (_ : (0 : ℝ) < (↑s : ℝ))
+        (_ : (↑s : ℝ) ≤ (1 : ℝ)) (lam : ℝ) (_ : (0 : ℝ) ≤ lam),
+        let K0 : ℝ := CK * (√(↑s : ℝ) ^ (9 : ℕ))⁻¹;
+        let K1c : ℝ := max (216 : ℝ) CK * (√(↑s : ℝ) ^ (9 : ℕ))⁻¹;
+        ∀ (_ : (0 : ℝ) < K0) (_ : K0 ≤ K1c) (_ : (216 : ℝ) * (√(↑s : ℝ) ^ (9 : ℕ))⁻¹ ≤ K1c)
+          (_ : K1c / K0 = max (216 : ℝ) CK / CK)
+          (_ : ∀ (j : ℤ) (omega : Cutoff.CutoffSample d), (0 : ℝ) ≤ kickCollapsed M s lam K0 j omega),
+          let G : ℝ := geomTailConst ((↑s : ℝ) / (4 : ℝ));
+          ∀ (_ : (0 : ℝ) < G),
+            let N : ℝ := (↑(m - n + (1 : ℤ)) : ℝ);
+            ∀ (_ : (0 : ℝ) < N),
+              let aw : ℝ := √(↑s : ℝ) * rho * G;
+              ∀ (_ : aw = √(↑s : ℝ) * rho * G),
+                let ah : ℝ := √(↑s : ℝ) * rho * ((1 : ℝ) / N * min N G);
+                ∀ (_ : ah = √(↑s : ℝ) * rho * ((1 : ℝ) / N * min N G)),
+                  (0 : ℝ) ≤ aw ∧
+                    (0 : ℝ) ≤ ah ∧
+                      ∀ (omega : Cutoff.CutoffSample d),
+                        cesaroAvg (fun (k : ℤ) => (dOne M Ccg s k omega).toReal) n m ≤
+                          aw * cesaroAvg (fun (j : ℤ) => kickCollapsed M s lam K0 j omega) n m +
+                            ah *
+                              ∑' (p : ℕ),
+                                (3 : ℝ) ^ (-((↑s : ℝ) / (4 : ℝ) * (↑p : ℝ))) *
+                                  kickCollapsed M s lam K0 (n - (1 : ℤ) - (↑p : ℤ)) omega := by
+  intro d _ M s Ccg n m hnm rho hrho0 hrhodef hs0 hs1 lam hlam0 K0 _ hK00 hK0K1 hK1ge hratioeq hX0 G hG0 N hN0 aw hawdef ah hahdef
+  have haw0 : (0 : ℝ) ≤ aw :=
+    mul_nonneg (mul_nonneg (Real.sqrt_nonneg _) hrho0) hG0.le
+  have hah0 : (0 : ℝ) ≤ ah := by
+    refine mul_nonneg (mul_nonneg (Real.sqrt_nonneg _) hrho0) ?_
+    exact mul_nonneg (by positivity) (le_min hN0.le hG0.le)
+  -- the rearranged display (e.D1k.Larry)
+  have hdom : ∀ omega : Cutoff.CutoffSample d,
+      cesaroAvg (fun k => (dOne M Ccg s k omega).toReal) n m
+        ≤ aw * cesaroAvg (fun j => kickCollapsed M s lam K0 j omega) n m +
+          ah * ∑' p : ℕ, (3 : ℝ) ^ (-(((s : ℝ) / 4) * (p : ℝ))) *
+            kickCollapsed M s lam K0 (n - 1 - (p : ℤ)) omega := by
+    intro omega
+    have hpt : ∀ k ∈ Finset.Icc n m, (dOne M Ccg s k omega).toReal
+        ≤ Real.sqrt (s : ℝ) * rho * windowKickSum M s lam K0 k omega := by
+      intro k _
+      have h := dOne_toReal_le_scaled M s Ccg hlam0 hs1 hK00 hK0K1 hK1ge (k := k) omega
+      rw [hratioeq, ← hrhodef] at h
+      calc (dOne M Ccg s k omega).toReal
+          ≤ Real.sqrt (s : ℝ) * (rho * windowKickSum M s lam K0 k omega) := h
+        _ = Real.sqrt (s : ℝ) * rho * windowKickSum M s lam K0 k omega := by ring
+    have h1 : cesaroAvg (fun k => (dOne M Ccg s k omega).toReal) n m
+        ≤ cesaroAvg (fun k => Real.sqrt (s : ℝ) * rho *
+            windowKickSum M s lam K0 k omega) n m := cesaroAvg_mono hnm hpt
+    rw [cesaroAvg_const_mul] at h1
+    -- the rearrangement of the window sums
+    have h2 : ∑ k ∈ Finset.Icc n m, windowKickSum M s lam K0 k omega
+        ≤ G * (∑ l ∈ Finset.Icc n m, kickCollapsed M s lam K0 l omega) +
+          min N G * ∑' p : ℕ, (3 : ℝ) ^ (-(((s : ℝ) / 4) * (p : ℝ))) *
+            kickCollapsed M s lam K0 (n - 1 - (p : ℤ)) omega :=
+      window_geom_head_rearrange (α := (s : ℝ) / 4) (by linarith only [hs0])
+        (X := fun l => kickCollapsed M s lam K0 l omega) (fun l => hX0 l omega) hnm
+    have h3 : cesaroAvg (fun k => windowKickSum M s lam K0 k omega) n m
+        ≤ G * cesaroAvg (fun j => kickCollapsed M s lam K0 j omega) n m +
+          ((1 / N) * min N G) * ∑' p : ℕ, (3 : ℝ) ^ (-(((s : ℝ) / 4) * (p : ℝ))) *
+            kickCollapsed M s lam K0 (n - 1 - (p : ℤ)) omega := by
+      have hstep := mul_le_mul_of_nonneg_left h2
+        (by positivity : (0 : ℝ) ≤ 1 / N)
+      rw [cesaroAvg]
+      calc (1 / N) * ∑ k ∈ Finset.Icc n m, windowKickSum M s lam K0 k omega
+          ≤ (1 / N) * (G * (∑ l ∈ Finset.Icc n m, kickCollapsed M s lam K0 l omega) +
+              min N G * ∑' p : ℕ, (3 : ℝ) ^ (-(((s : ℝ) / 4) * (p : ℝ))) *
+                kickCollapsed M s lam K0 (n - 1 - (p : ℤ)) omega) := by
+            exact hstep
+        _ = G * ((1 / N) * ∑ l ∈ Finset.Icc n m, kickCollapsed M s lam K0 l omega) +
+              ((1 / N) * min N G) * ∑' p : ℕ, (3 : ℝ) ^ (-(((s : ℝ) / 4) * (p : ℝ))) *
+                kickCollapsed M s lam K0 (n - 1 - (p : ℤ)) omega := by ring
+        _ = G * cesaroAvg (fun j => kickCollapsed M s lam K0 j omega) n m +
+              ((1 / N) * min N G) * ∑' p : ℕ, (3 : ℝ) ^ (-(((s : ℝ) / 4) * (p : ℝ))) *
+                kickCollapsed M s lam K0 (n - 1 - (p : ℤ)) omega := by
+            rw [cesaroAvg]
+    have hmul := mul_le_mul_of_nonneg_left h3
+      (mul_nonneg (Real.sqrt_nonneg (s : ℝ)) hrho0)
+    refine h1.trans (hmul.trans (le_of_eq ?_))
+    rw [hawdef, hahdef]
+    ring
+  exact ⟨haw0, hah0, hdom⟩
 
-There is a dimensional constant `C` such that, in the printed regime
-`γ ≤ C^{−10}c⋆^{10}` and on the window `s ∈ [8γ, 1/4]`, for every window
-`[n, m]` the Cesàro average of `D₁` splits as a deterministic mean below the printed
-envelope plus a `Γ₂` fluctuation of the printed size:
-
-```
-avsum_{k=n}^m D₁(k) ≤ Xdet + Xfluc ,
-Xdet ≤ C c⋆^{−1}s^{−7/2}√γ ,
-Xfluc ≤ 𝒪_{Γ₂}( C c⋆^{−1}s^{−7/2}√γ · (m−n+1)^{−1/2} ) .
-```
-
-`s^{−7/2} = ((√s)⁷)⁻¹`, so no `rpow` appears in the envelope.  The additive
-`𝒪_{Γ₂}` of the manuscript is unfolded into the explicit `∃ Xdet Xfluc` split,
-which is the standard reading (and the one the proved proposition-side
-apparatus consumes).
-
-**Hypotheses.**  Exactly the premises of `l.minimal.scale.sep`, with the
-window `s ≤ 1/4` of the annular anchor in place of the printed `1/2`
-(see `DDecomposition.lean`); `n ≤ m` is the printed `n < m` weakened, and `Ccg`
-is free because `D₁`'s good-event gate only ever consumes `𝒢₂`. -/
-theorem exists_stepOne_d1_bound (d : ℕ) :
-    ∃ C : ℝ, 0 < C ∧
-      ∀ M : ABKModel d, M.gamma ≤ C⁻¹ ^ 10 * Disorder.cstar M ^ 10 →
-        ∀ s : {s : ℝ // 0 < s}, 8 * M.gamma ≤ (s : ℝ) → (s : ℝ) ≤ 1 / 4 →
-          ∀ (Ccg : ℝ) (n m : ℤ), n ≤ m →
-            ∃ Xdet Xfluc : Cutoff.CutoffSample d → ℝ,
-              (∀ omega, cesaroAvg (fun k => (dOne M Ccg s k omega).toReal) n m
-                  ≤ Xdet omega + Xfluc omega) ∧
-              (∀ omega, Xdet omega
-                ≤ C * ((Disorder.cstar M)⁻¹ * ((Real.sqrt (s : ℝ)) ^ 7)⁻¹ *
-                    Real.sqrt M.gamma)) ∧
-              IsBigO (Cutoff.cutoffSampleLaw M).toMeasure (gammaSigma 2) Xfluc
-                (C * ((Disorder.cstar M)⁻¹ * ((Real.sqrt (s : ℝ)) ^ 7)⁻¹ *
-                    Real.sqrt M.gamma) *
-                  ((m - n + 1 : ℤ) : ℝ) ^ (-(1 : ℝ) / 2)) := by
-  obtain ⟨CK, hCK, hcol⟩ := exists_kickCollapse d
-  have hCe0 : (0 : ℝ) < rDepEngineConst (d + 2) := rDepEngineConst_pos (d + 2)
-  have hCt0 : (0 : ℝ) < gammaTriangleConst 2 := gammaTriangleConst_pos
-  have hratio1 : (1 : ℝ) ≤ max 216 CK / CK := (one_le_div hCK).2 (le_max_right _ _)
-  have hrho1 : (1 : ℝ) ≤ Real.sqrt (Real.sqrt (max 216 CK / CK)) :=
-    one_le_sqrt_of_one_le (one_le_sqrt_of_one_le hratio1)
-  have hrho0 : (0 : ℝ) ≤ Real.sqrt (Real.sqrt (max 216 CK / CK)) := by
-    linarith only [hrho1]
-  -- the output constant
-  refine ⟨CK + 8 * Real.sqrt (Real.sqrt (max 216 CK / CK)) * CK +
-      2 * (8 * Real.sqrt (Real.sqrt (max 216 CK / CK)) * CK * rDepEngineConst (d + 2) +
-        24 * Real.sqrt (Real.sqrt (max 216 CK / CK)) * gammaTriangleConst 2 * CK), ?_, ?_⟩
-  · have h1 : (0 : ℝ) ≤ 8 * Real.sqrt (Real.sqrt (max 216 CK / CK)) * CK :=
-      mul_nonneg (mul_nonneg (by norm_num) hrho0) hCK.le
-    have h2 : (0 : ℝ) ≤ 8 * Real.sqrt (Real.sqrt (max 216 CK / CK)) * CK *
-        rDepEngineConst (d + 2) := mul_nonneg h1 hCe0.le
-    have h3 : (0 : ℝ) ≤ 24 * Real.sqrt (Real.sqrt (max 216 CK / CK)) *
-        gammaTriangleConst 2 * CK :=
-      mul_nonneg (mul_nonneg (mul_nonneg (by norm_num) hrho0) hCt0.le) hCK.le
-    linarith only [hCK, h1, h2, h3]
-  intro M hreg s hs8 hs4 Ccg n m hnm
-  set rho : ℝ := Real.sqrt (Real.sqrt (max 216 CK / CK)) with hrhodef
-  set Ce : ℝ := rDepEngineConst (d + 2) with hCedef
-  set Ct : ℝ := gammaTriangleConst 2 with hCtdef
-  set Cout : ℝ := CK + 8 * rho * CK + 2 * (8 * rho * CK * Ce + 24 * rho * Ct * CK)
-    with hCoutdef
-  -- standing quantities
-  have hgam : (0 : ℝ) < M.gamma := M.shellPrefix.gamma_pos
+private theorem stepOneAssembly_momentBounds1 :
+    ∀ (d : ℕ) (CK : ℝ) (hCK : (0 : ℝ) < CK)
+      (hcol :
+        ∀ (M : ABKModel d),
+          M.gamma ≤ CK⁻¹ ^ (10 : ℕ) * Disorder.cstar M ^ (10 : ℕ) →
+            ∀ (s : { s : ℝ // (0 : ℝ) < s }),
+              (8 : ℝ) * M.gamma ≤ (↑s : ℝ) →
+                (↑s : ℝ) ≤ (1 / 2 : ℝ) →
+                  ∃ (lam : ℝ),
+                    (0 : ℝ) ≤ lam ∧
+                      (∀ (j : ℤ) (omega : Cutoff.CutoffSample d),
+                          kickLegLow M s lam j omega + kickLegHigh M s lam j omega = annularKick M s j omega) ∧
+                        (∀ (j : ℤ),
+                            IsBigOWith (↑(Cutoff.cutoffSampleLaw M) : Measure (Cutoff.CutoffSample d)) (gammaSigma (2 : ℝ))
+                              (kickCollapsed M s lam (CK * (√(↑s : ℝ) ^ (9 : ℕ))⁻¹) j)
+                              (CK * (Disorder.cstar M)⁻¹ * (√(↑s : ℝ) ^ (5 : ℕ))⁻¹ * √M.gamma)) ∧
+                          ∀ (j : ℤ),
+                            ∫ (omega : Cutoff.CutoffSample d),
+                                kickCollapsed M s lam (CK * (√(↑s : ℝ) ^ (9 : ℕ))⁻¹) j
+                                  omega ∂(↑(Cutoff.cutoffSampleLaw M) : Measure (Cutoff.CutoffSample d)) ≤
+                              CK * (Disorder.cstar M)⁻¹ * (√(↑s : ℝ) ^ (5 : ℕ))⁻¹ * √M.gamma)
+      (M : ABKModel d) (s : { s : ℝ // (0 : ℝ) < s }) (hs8 : (8 : ℝ) * M.gamma ≤ (↑s : ℝ)) (hs4 : (↑s : ℝ) ≤ (1 / 4 : ℝ))
+      (n m : ℤ) (hnm : n ≤ m),
+      let rho : ℝ := √√(max (216 : ℝ) CK / CK);
+      ∀ (hrho0 : (0 : ℝ) ≤ rho),
+        let Ce : ℝ := rDepEngineConst (d + (2 : ℕ));
+        ∀ (hCe0 : (0 : ℝ) < Ce),
+          let Ct : ℝ := gammaTriangleConst (2 : ℝ);
+          ∀ (hCt0 : (0 : ℝ) < Ct) (hCtdef : Ct = gammaTriangleConst (2 : ℝ)),
+            let Cout : ℝ := CK + (8 : ℝ) * rho * CK + (2 : ℝ) * ((8 : ℝ) * rho * CK * Ce + (24 : ℝ) * rho * Ct * CK);
+            ∀ (hreg : M.gamma ≤ Cout⁻¹ ^ (10 : ℕ) * Disorder.cstar M ^ (10 : ℕ))
+              (hCoutdef : Cout = CK + (8 : ℝ) * rho * CK + (2 : ℝ) * ((8 : ℝ) * rho * CK * Ce + (24 : ℝ) * rho * Ct * CK))
+              (hgam : (0 : ℝ) < M.gamma),
+              ∃ (_ : (0 : ℝ) < (↑s : ℝ)) (_ : (↑s : ℝ) ≤ (1 : ℝ)) (_ : (0 : ℝ) < √(↑s : ℝ)) (_ : √(↑s : ℝ) ≤ (1 : ℝ)) (lam :
+                ℝ) (_ : (0 : ℝ) ≤ lam) (_ : (0 : ℝ) < (Disorder.cstar M)⁻¹ * (√(↑s : ℝ) ^ (7 : ℕ))⁻¹ * √M.gamma) (_ :
+                (0 : ℝ) < CK * (√(↑s : ℝ) ^ (9 : ℕ))⁻¹) (_ :
+                CK * (√(↑s : ℝ) ^ (9 : ℕ))⁻¹ ≤ max (216 : ℝ) CK * (√(↑s : ℝ) ^ (9 : ℕ))⁻¹) (_ :
+                (216 : ℝ) * (√(↑s : ℝ) ^ (9 : ℕ))⁻¹ ≤ max (216 : ℝ) CK * (√(↑s : ℝ) ^ (9 : ℕ))⁻¹) (_ :
+                max (216 : ℝ) CK * (√(↑s : ℝ) ^ (9 : ℕ))⁻¹ / (CK * (√(↑s : ℝ) ^ (9 : ℕ))⁻¹) = max (216 : ℝ) CK / CK) (_ :
+                (0 : ℝ) < CK * (Disorder.cstar M)⁻¹ * (√(↑s : ℝ) ^ (5 : ℕ))⁻¹ * √M.gamma) (_ :
+                ∀ (j : ℤ) (omega : Cutoff.CutoffSample d),
+                  (0 : ℝ) ≤ kickCollapsed M s lam (CK * (√(↑s : ℝ) ^ (9 : ℕ))⁻¹) j omega)
+                (_ : (0 : ℝ) < geomTailConst ((↑s : ℝ) / (4 : ℝ))) (_ :
+                geomTailConst ((↑s : ℝ) / (4 : ℝ)) ≤ (8 : ℝ) * (↑s : ℝ)⁻¹) (_ :
+                geomTailConst ((↑s : ℝ) / (4 : ℝ)) * (CK * (Disorder.cstar M)⁻¹ * (√(↑s : ℝ) ^ (5 : ℕ))⁻¹ * √M.gamma) ≤
+                  (8 : ℝ) * CK * ((Disorder.cstar M)⁻¹ * (√(↑s : ℝ) ^ (7 : ℕ))⁻¹ * √M.gamma))
+                (Xf : Cutoff.CutoffSample d → ℝ) (_ :
+                ∀ (ω : Cutoff.CutoffSample d),
+                  cesaroAvg (fun (j : ℤ) => kickCollapsed M s lam (CK * (√(↑s : ℝ) ^ (9 : ℕ))⁻¹) j ω) n m ≤
+                    CK * (Disorder.cstar M)⁻¹ * (√(↑s : ℝ) ^ (5 : ℕ))⁻¹ * √M.gamma + Xf ω)
+                (_ :
+                IsBigO (↑(Cutoff.cutoffSampleLaw M) : Measure (Cutoff.CutoffSample d)) (gammaSigma (2 : ℝ)) Xf
+                  (rDepEngineConst (d + (2 : ℕ)) * (CK * (Disorder.cstar M)⁻¹ * (√(↑s : ℝ) ^ (5 : ℕ))⁻¹ * √M.gamma) *
+                    (↑(m - n + (1 : ℤ)) : ℝ) ^ (-1 / 2 : ℝ)))
+                (_ :
+                IsBigO (↑(Cutoff.cutoffSampleLaw M) : Measure (Cutoff.CutoffSample d)) (gammaSigma (2 : ℝ))
+                  (fun (omega : Cutoff.CutoffSample d) =>
+                    ∑' (p : ℕ),
+                      (3 : ℝ) ^ (-((↑s : ℝ) / (4 : ℝ) * (↑p : ℝ))) *
+                        kickCollapsed M s lam (CK * (√(↑s : ℝ) ^ (9 : ℕ))⁻¹) (n - (1 : ℤ) - (↑p : ℤ)) omega)
+                  (Ct *
+                    (geomTailConst ((↑s : ℝ) / (4 : ℝ)) *
+                      (CK * (Disorder.cstar M)⁻¹ * (√(↑s : ℝ) ^ (5 : ℕ))⁻¹ * √M.gamma)))),
+                True := by
+  classical
+  intro d CK hCK hcol M s hs8 hs4 n m hnm rho hrho0 Ce hCe0 Ct hCt0 hCtdef Cout hreg hCoutdef hgam
   have hcs : (0 : ℝ) < Disorder.cstar M := (Disorder.cstar_characterization M).1
   have hs0 : (0 : ℝ) < (s : ℝ) := s.2
   have hs1 : (s : ℝ) ≤ 1 := by linarith only [hs4]
@@ -297,6 +383,165 @@ theorem exists_stepOne_d1_bound (d : ℕ) :
       (fun omega => ∑' p : ℕ, (3 : ℝ) ^ (-(((s : ℝ) / 4) * (p : ℝ))) *
         kickCollapsed M s lam K0 (n - 1 - (p : ℤ)) omega) (Ct * (G * A1)) :=
     isBigO_of_isBigOWith_of_nonneg hHead0 hHeadW
+  exact ⟨hs0, hs1, hsq0, hsq1, lam, hlam0, hE0, hK00, hK0K1, hK1ge, hratioeq, hA10, hX0, hG0, hGle, hGA1, Xf, hXfpt, hXfbig, hHead, True.intro⟩
+
+/-- **The `D₁` half of `e.kick.Dees.Dees`.**
+
+There is a dimensional constant `C` such that, in the printed regime
+`γ ≤ C^{−10}c⋆^{10}` and on the window `s ∈ [8γ, 1/4]`, for every window
+`[n, m]` the Cesàro average of `D₁` splits as a deterministic mean below the printed
+envelope plus a `Γ₂` fluctuation of the printed size:
+
+```
+avsum_{k=n}^m D₁(k) ≤ Xdet + Xfluc ,
+Xdet ≤ C c⋆^{−1}s^{−7/2}√γ ,
+Xfluc ≤ 𝒪_{Γ₂}( C c⋆^{−1}s^{−7/2}√γ · (m−n+1)^{−1/2} ) .
+```
+
+`s^{−7/2} = ((√s)⁷)⁻¹`, so no `rpow` appears in the envelope.  The additive
+`𝒪_{Γ₂}` of the manuscript is unfolded into the explicit `∃ Xdet Xfluc` split,
+which is the standard reading (and the one the proved proposition-side
+apparatus consumes).
+
+**Hypotheses.**  Exactly the premises of `l.minimal.scale.sep`, with the
+window `s ≤ 1/4` of the annular anchor in place of the printed `1/2`
+(see `DDecomposition.lean`); `n ≤ m` is the printed `n < m` weakened, and `Ccg`
+is free because `D₁`'s good-event gate only ever consumes `𝒢₂`. -/
+private theorem stepOneAssembly_estimate1 :
+    ∀ (d : ℕ) (CK : ℝ) (M : ABKModel d) (s : { s : ℝ // (0 : ℝ) < s }) (n m : ℤ),
+      let rho : ℝ := √√(max (216 : ℝ) CK / CK);
+      ∀ (hrho0 : (0 : ℝ) ≤ rho),
+        let Ct : ℝ := gammaTriangleConst (2 : ℝ);
+        ∀ (hCt0 : (0 : ℝ) < Ct) (hsq0 : (0 : ℝ) < √(↑s : ℝ)) (lam : ℝ),
+          let K0 : ℝ := CK * (√(↑s : ℝ) ^ (9 : ℕ))⁻¹;
+          let E : ℝ := (Disorder.cstar M)⁻¹ * (√(↑s : ℝ) ^ (7 : ℕ))⁻¹ * √M.gamma;
+          let A1 : ℝ := CK * (Disorder.cstar M)⁻¹ * (√(↑s : ℝ) ^ (5 : ℕ))⁻¹ * √M.gamma;
+          ∀ (hA10 : (0 : ℝ) < A1),
+            let G : ℝ := geomTailConst ((↑s : ℝ) / (4 : ℝ));
+            ∀ (hG0 : (0 : ℝ) < G) (hGle : G ≤ (8 : ℝ) * (↑s : ℝ)⁻¹)
+              (hHead :
+                IsBigO (↑(Cutoff.cutoffSampleLaw M) : Measure (Cutoff.CutoffSample d)) (gammaSigma (2 : ℝ))
+                  (fun (omega : Cutoff.CutoffSample d) =>
+                    ∑' (p : ℕ),
+                      (3 : ℝ) ^ (-((↑s : ℝ) / (4 : ℝ) * (↑p : ℝ))) *
+                        kickCollapsed M s lam K0 (n - (1 : ℤ) - (↑p : ℤ)) omega)
+                  (gammaTriangleConst (2 : ℝ) * (G * A1)))
+              (hGA1 : G * A1 ≤ (8 : ℝ) * CK * E),
+              let N : ℝ := (↑(m - n + (1 : ℤ)) : ℝ);
+              ∀ (hN0 : (0 : ℝ) < N),
+                let ah : ℝ := √(↑s : ℝ) * rho * ((1 : ℝ) / N * min N G);
+                ∀ (hahdef : ah = √(↑s : ℝ) * rho * ((1 : ℝ) / N * min N G)) (hah0 : (0 : ℝ) ≤ ah),
+                  IsBigO (↑(Cutoff.cutoffSampleLaw M) : Measure (Cutoff.CutoffSample d)) (gammaSigma (2 : ℝ))
+                    (fun (omega : Cutoff.CutoffSample d) =>
+                      ah *
+                        ∑' (p : ℕ),
+                          (3 : ℝ) ^ (-((↑s : ℝ) / (4 : ℝ) * (↑p : ℝ))) *
+                            kickCollapsed M s lam K0 (n - (1 : ℤ) - (↑p : ℤ)) omega)
+                    ((24 : ℝ) * rho * Ct * CK * E * N ^ (-1 / 2 : ℝ)) := by
+  intro d CK M s n m rho hrho0 Ct hCt0 hsq0 lam K0 E A1 hA10 G hG0 hGle hHead hGA1 N hN0 ah hahdef hah0
+  have hbig0 : IsBigO (Cutoff.cutoffSampleLaw M).toMeasure (gammaSigma 2)
+      (fun omega => ah * ∑' p : ℕ, (3 : ℝ) ^ (-(((s : ℝ) / 4) * (p : ℝ))) *
+        kickCollapsed M s lam K0 (n - 1 - (p : ℤ)) omega) (ah * (Ct * (G * A1))) :=
+    IsBigO.const_mul hah0 hHead
+  refine hbig0.mono_scale ?_
+  -- the sharp `min`-coefficient
+  have hmin := min_div_le_sqrt_mul_rpow hN0 hG0
+  have hsqG : Real.sqrt G ≤ 3 * (Real.sqrt (s : ℝ))⁻¹ := by
+    have h1 : Real.sqrt G ≤ Real.sqrt (8 * ((s : ℝ))⁻¹) := Real.sqrt_le_sqrt hGle
+    have h2 : Real.sqrt (8 * ((s : ℝ))⁻¹) = Real.sqrt 8 * (Real.sqrt (s : ℝ))⁻¹ := by
+      rw [Real.sqrt_mul (by norm_num), Real.sqrt_inv]
+    have h3 : Real.sqrt 8 ≤ 3 := by
+      have h := Real.sqrt_le_sqrt (show (8 : ℝ) ≤ 3 ^ 2 by norm_num)
+      rwa [Real.sqrt_sq (by norm_num : (0 : ℝ) ≤ 3)] at h
+    have h4 : Real.sqrt 8 * (Real.sqrt (s : ℝ))⁻¹ ≤ 3 * (Real.sqrt (s : ℝ))⁻¹ :=
+      mul_le_mul_of_nonneg_right h3 (inv_pos.2 hsq0).le
+    rw [h2] at h1
+    exact h1.trans h4
+  have hcoef : ah ≤ 3 * rho * N ^ (-(1 : ℝ) / 2) := by
+    have hstep : (1 / N) * min N G ≤ Real.sqrt G * N ^ (-(1 : ℝ) / 2) := hmin
+    have hpow0 : (0 : ℝ) ≤ N ^ (-(1 : ℝ) / 2) := Real.rpow_nonneg hN0.le _
+    have hsq : Real.sqrt (s : ℝ) * rho * ((1 / N) * min N G)
+        ≤ Real.sqrt (s : ℝ) * rho * (Real.sqrt G * N ^ (-(1 : ℝ) / 2)) :=
+      mul_le_mul_of_nonneg_left hstep
+        (mul_nonneg (Real.sqrt_nonneg _) hrho0)
+    have hsq2 : Real.sqrt (s : ℝ) * rho * (Real.sqrt G * N ^ (-(1 : ℝ) / 2))
+        ≤ Real.sqrt (s : ℝ) * rho * (3 * (Real.sqrt (s : ℝ))⁻¹ *
+          N ^ (-(1 : ℝ) / 2)) := by
+      refine mul_le_mul_of_nonneg_left ?_ (mul_nonneg (Real.sqrt_nonneg _) hrho0)
+      exact mul_le_mul_of_nonneg_right hsqG hpow0
+    have hsqinv : Real.sqrt (s : ℝ) * (Real.sqrt (s : ℝ))⁻¹ = 1 :=
+      mul_inv_cancel₀ (ne_of_gt hsq0)
+    have hval : Real.sqrt (s : ℝ) * rho * (3 * (Real.sqrt (s : ℝ))⁻¹ *
+        N ^ (-(1 : ℝ) / 2)) = 3 * rho * N ^ (-(1 : ℝ) / 2) := by
+      calc Real.sqrt (s : ℝ) * rho * (3 * (Real.sqrt (s : ℝ))⁻¹ * N ^ (-(1 : ℝ) / 2))
+          = 3 * rho * N ^ (-(1 : ℝ) / 2) *
+              (Real.sqrt (s : ℝ) * (Real.sqrt (s : ℝ))⁻¹) := by ring
+        _ = 3 * rho * N ^ (-(1 : ℝ) / 2) := by rw [hsqinv, mul_one]
+    rw [hahdef, ← hval]
+    exact hsq.trans hsq2
+  have hHle : Ct * (G * A1) ≤ 8 * Ct * CK * E := by
+    calc Ct * (G * A1) ≤ Ct * (8 * CK * E) :=
+          mul_le_mul_of_nonneg_left hGA1 hCt0.le
+      _ = 8 * Ct * CK * E := by ring
+  have hprod : ah * (Ct * (G * A1))
+      ≤ (3 * rho * N ^ (-(1 : ℝ) / 2)) * (8 * Ct * CK * E) := by
+    refine mul_le_mul hcoef hHle (mul_nonneg hCt0.le (mul_nonneg hG0.le hA10.le)) ?_
+    exact mul_nonneg (mul_nonneg (by norm_num) hrho0) (Real.rpow_nonneg hN0.le _)
+  refine hprod.trans (le_of_eq ?_)
+  ring
+
+theorem exists_stepOne_d1_bound (d : ℕ) :
+    ∃ C : ℝ, 0 < C ∧
+      ∀ M : ABKModel d, M.gamma ≤ C⁻¹ ^ 10 * Disorder.cstar M ^ 10 →
+        ∀ s : {s : ℝ // 0 < s}, 8 * M.gamma ≤ (s : ℝ) → (s : ℝ) ≤ 1 / 4 →
+          ∀ (Ccg : ℝ) (n m : ℤ), n ≤ m →
+            ∃ Xdet Xfluc : Cutoff.CutoffSample d → ℝ,
+              (∀ omega, cesaroAvg (fun k => (dOne M Ccg s k omega).toReal) n m
+                  ≤ Xdet omega + Xfluc omega) ∧
+              (∀ omega, Xdet omega
+                ≤ C * ((Disorder.cstar M)⁻¹ * ((Real.sqrt (s : ℝ)) ^ 7)⁻¹ *
+                    Real.sqrt M.gamma)) ∧
+              IsBigO (Cutoff.cutoffSampleLaw M).toMeasure (gammaSigma 2) Xfluc
+                (C * ((Disorder.cstar M)⁻¹ * ((Real.sqrt (s : ℝ)) ^ 7)⁻¹ *
+                    Real.sqrt M.gamma) *
+                  ((m - n + 1 : ℤ) : ℝ) ^ (-(1 : ℝ) / 2)) := by
+  obtain ⟨CK, hCK, hcol⟩ := exists_kickCollapse d
+  have hCe0 : (0 : ℝ) < rDepEngineConst (d + 2) := rDepEngineConst_pos (d + 2)
+  have hCt0 : (0 : ℝ) < gammaTriangleConst 2 := gammaTriangleConst_pos
+  have hratio1 : (1 : ℝ) ≤ max 216 CK / CK := (one_le_div hCK).2 (le_max_right _ _)
+  have hrho1 : (1 : ℝ) ≤ Real.sqrt (Real.sqrt (max 216 CK / CK)) :=
+    one_le_sqrt_of_one_le (one_le_sqrt_of_one_le hratio1)
+  have hrho0 : (0 : ℝ) ≤ Real.sqrt (Real.sqrt (max 216 CK / CK)) := by
+    linarith only [hrho1]
+  -- the output constant
+  refine ⟨CK + 8 * Real.sqrt (Real.sqrt (max 216 CK / CK)) * CK +
+      2 * (8 * Real.sqrt (Real.sqrt (max 216 CK / CK)) * CK * rDepEngineConst (d + 2) +
+        24 * Real.sqrt (Real.sqrt (max 216 CK / CK)) * gammaTriangleConst 2 * CK), ?_, ?_⟩
+  · have h1 : (0 : ℝ) ≤ 8 * Real.sqrt (Real.sqrt (max 216 CK / CK)) * CK :=
+      mul_nonneg (mul_nonneg (by norm_num) hrho0) hCK.le
+    have h2 : (0 : ℝ) ≤ 8 * Real.sqrt (Real.sqrt (max 216 CK / CK)) * CK *
+        rDepEngineConst (d + 2) := mul_nonneg h1 hCe0.le
+    have h3 : (0 : ℝ) ≤ 24 * Real.sqrt (Real.sqrt (max 216 CK / CK)) *
+        gammaTriangleConst 2 * CK :=
+      mul_nonneg (mul_nonneg (mul_nonneg (by norm_num) hrho0) hCt0.le) hCK.le
+    linarith only [hCK, h1, h2, h3]
+  intro M hreg s hs8 hs4 Ccg n m hnm
+  set rho : ℝ := Real.sqrt (Real.sqrt (max 216 CK / CK)) with hrhodef
+  set Ce : ℝ := rDepEngineConst (d + 2) with hCedef
+  set Ct : ℝ := gammaTriangleConst 2 with hCtdef
+  set Cout : ℝ := CK + 8 * rho * CK + 2 * (8 * rho * CK * Ce + 24 * rho * Ct * CK)
+    with hCoutdef
+  -- standing quantities
+  have hgam : (0 : ℝ) < M.gamma := M.shellPrefix.gamma_pos
+  obtain ⟨hs0, hs1, hsq0, hsq1, lam, hlam0, hE0, hK00, hK0K1, hK1ge, hratioeq, hA10, hX0, hG0, hGle, hGA1, Xf, hXfpt, hXfbig, hHead, _⟩ :=
+    @stepOneAssembly_momentBounds1 (d) (CK) (hCK) (hcol) (M) (s) (hs8) (hs4) (n) (m) (hnm) (hrho0) (hCe0) (hCt0) (hCtdef) (hreg) (hCoutdef) (hgam)
+  set K0 : ℝ := CK * ((Real.sqrt (s : ℝ)) ^ 9)⁻¹ with hK0def
+  set K1c : ℝ := max 216 CK * ((Real.sqrt (s : ℝ)) ^ 9)⁻¹ with hK1def
+  set E : ℝ := (Disorder.cstar M)⁻¹ * ((Real.sqrt (s : ℝ)) ^ 7)⁻¹ * Real.sqrt M.gamma
+    with hEdef
+  set A1 : ℝ := CK * (Disorder.cstar M)⁻¹ * ((Real.sqrt (s : ℝ)) ^ 5)⁻¹ *
+    Real.sqrt M.gamma with hA1def
+  set G : ℝ := geomTailConst ((s : ℝ) / 4) with hGdef
   -- the window normaliser
   set N : ℝ := ((m - n + 1 : ℤ) : ℝ) with hNdef
   have hN1 : (1 : ℝ) ≤ N := one_le_window hnm
@@ -304,61 +549,13 @@ theorem exists_stepOne_d1_bound (d : ℕ) :
   -- the two coefficients of the rearranged display
   set aw : ℝ := Real.sqrt (s : ℝ) * rho * G with hawdef
   set ah : ℝ := Real.sqrt (s : ℝ) * rho * ((1 / N) * min N G) with hahdef
-  have haw0 : (0 : ℝ) ≤ aw :=
-    mul_nonneg (mul_nonneg (Real.sqrt_nonneg _) hrho0) hG0.le
-  have hah0 : (0 : ℝ) ≤ ah := by
-    refine mul_nonneg (mul_nonneg (Real.sqrt_nonneg _) hrho0) ?_
-    exact mul_nonneg (by positivity) (le_min hN0.le hG0.le)
-  -- the rearranged display (e.D1k.Larry)
-  have hdom : ∀ omega : Cutoff.CutoffSample d,
+  obtain ⟨haw0, hah0, hdom⟩ :=
+    (show ((0 : ℝ) ≤ aw) ∧ ((0 : ℝ) ≤ ah) ∧ (∀ omega : Cutoff.CutoffSample d,
       cesaroAvg (fun k => (dOne M Ccg s k omega).toReal) n m
         ≤ aw * cesaroAvg (fun j => kickCollapsed M s lam K0 j omega) n m +
           ah * ∑' p : ℕ, (3 : ℝ) ^ (-(((s : ℝ) / 4) * (p : ℝ))) *
-            kickCollapsed M s lam K0 (n - 1 - (p : ℤ)) omega := by
-    intro omega
-    have hpt : ∀ k ∈ Finset.Icc n m, (dOne M Ccg s k omega).toReal
-        ≤ Real.sqrt (s : ℝ) * rho * windowKickSum M s lam K0 k omega := by
-      intro k _
-      have h := dOne_toReal_le_scaled M s Ccg hlam0 hs1 hK00 hK0K1 hK1ge (k := k) omega
-      rw [hratioeq, ← hrhodef] at h
-      calc (dOne M Ccg s k omega).toReal
-          ≤ Real.sqrt (s : ℝ) * (rho * windowKickSum M s lam K0 k omega) := h
-        _ = Real.sqrt (s : ℝ) * rho * windowKickSum M s lam K0 k omega := by ring
-    have h1 : cesaroAvg (fun k => (dOne M Ccg s k omega).toReal) n m
-        ≤ cesaroAvg (fun k => Real.sqrt (s : ℝ) * rho *
-            windowKickSum M s lam K0 k omega) n m := cesaroAvg_mono hnm hpt
-    rw [cesaroAvg_const_mul] at h1
-    -- the rearrangement of the window sums
-    have h2 : ∑ k ∈ Finset.Icc n m, windowKickSum M s lam K0 k omega
-        ≤ G * (∑ l ∈ Finset.Icc n m, kickCollapsed M s lam K0 l omega) +
-          min N G * ∑' p : ℕ, (3 : ℝ) ^ (-(((s : ℝ) / 4) * (p : ℝ))) *
-            kickCollapsed M s lam K0 (n - 1 - (p : ℤ)) omega :=
-      window_geom_head_rearrange (α := (s : ℝ) / 4) (by linarith only [hs0])
-        (X := fun l => kickCollapsed M s lam K0 l omega) (fun l => hX0 l omega) hnm
-    have h3 : cesaroAvg (fun k => windowKickSum M s lam K0 k omega) n m
-        ≤ G * cesaroAvg (fun j => kickCollapsed M s lam K0 j omega) n m +
-          ((1 / N) * min N G) * ∑' p : ℕ, (3 : ℝ) ^ (-(((s : ℝ) / 4) * (p : ℝ))) *
-            kickCollapsed M s lam K0 (n - 1 - (p : ℤ)) omega := by
-      have hstep := mul_le_mul_of_nonneg_left h2
-        (by positivity : (0 : ℝ) ≤ 1 / N)
-      rw [cesaroAvg]
-      calc (1 / N) * ∑ k ∈ Finset.Icc n m, windowKickSum M s lam K0 k omega
-          ≤ (1 / N) * (G * (∑ l ∈ Finset.Icc n m, kickCollapsed M s lam K0 l omega) +
-              min N G * ∑' p : ℕ, (3 : ℝ) ^ (-(((s : ℝ) / 4) * (p : ℝ))) *
-                kickCollapsed M s lam K0 (n - 1 - (p : ℤ)) omega) := by
-            exact hstep
-        _ = G * ((1 / N) * ∑ l ∈ Finset.Icc n m, kickCollapsed M s lam K0 l omega) +
-              ((1 / N) * min N G) * ∑' p : ℕ, (3 : ℝ) ^ (-(((s : ℝ) / 4) * (p : ℝ))) *
-                kickCollapsed M s lam K0 (n - 1 - (p : ℤ)) omega := by ring
-        _ = G * cesaroAvg (fun j => kickCollapsed M s lam K0 j omega) n m +
-              ((1 / N) * min N G) * ∑' p : ℕ, (3 : ℝ) ^ (-(((s : ℝ) / 4) * (p : ℝ))) *
-                kickCollapsed M s lam K0 (n - 1 - (p : ℤ)) omega := by
-            rw [cesaroAvg]
-    have hmul := mul_le_mul_of_nonneg_left h3
-      (mul_nonneg (Real.sqrt_nonneg (s : ℝ)) hrho0)
-    refine h1.trans (hmul.trans (le_of_eq ?_))
-    rw [hawdef, hahdef]
-    ring
+            kickCollapsed M s lam K0 (n - 1 - (p : ℤ)) omega) from
+      @stepOneAssembly_comparisonBounds1 (d) (CK) (M) (s) (Ccg) (n) (m) (hnm) (hrho0) (hrhodef) (hs0) (hs1) (lam) (hlam0) (hK00) (hK0K1) (hK1ge) (hratioeq) (hX0) (hG0) (hN0) (hawdef) (hahdef))
   -- assemble
   refine ⟨fun _ => aw * A1, fun omega => aw * Xf omega +
     ah * ∑' p : ℕ, (3 : ℝ) ^ (-(((s : ℝ) / 4) * (p : ℝ))) *
@@ -428,57 +625,7 @@ theorem exists_stepOne_d1_bound (d : ℕ) :
     have hhead : IsBigO (Cutoff.cutoffSampleLaw M).toMeasure (gammaSigma 2)
         (fun omega => ah * ∑' p : ℕ, (3 : ℝ) ^ (-(((s : ℝ) / 4) * (p : ℝ))) *
           kickCollapsed M s lam K0 (n - 1 - (p : ℤ)) omega)
-        (24 * rho * Ct * CK * E * N ^ (-(1 : ℝ) / 2)) := by
-      have hbig0 : IsBigO (Cutoff.cutoffSampleLaw M).toMeasure (gammaSigma 2)
-          (fun omega => ah * ∑' p : ℕ, (3 : ℝ) ^ (-(((s : ℝ) / 4) * (p : ℝ))) *
-            kickCollapsed M s lam K0 (n - 1 - (p : ℤ)) omega) (ah * (Ct * (G * A1))) :=
-        IsBigO.const_mul hah0 hHead
-      refine hbig0.mono_scale ?_
-      -- the sharp `min`-coefficient
-      have hmin := min_div_le_sqrt_mul_rpow hN0 hG0
-      have hsqG : Real.sqrt G ≤ 3 * (Real.sqrt (s : ℝ))⁻¹ := by
-        have h1 : Real.sqrt G ≤ Real.sqrt (8 * ((s : ℝ))⁻¹) := Real.sqrt_le_sqrt hGle
-        have h2 : Real.sqrt (8 * ((s : ℝ))⁻¹) = Real.sqrt 8 * (Real.sqrt (s : ℝ))⁻¹ := by
-          rw [Real.sqrt_mul (by norm_num), Real.sqrt_inv]
-        have h3 : Real.sqrt 8 ≤ 3 := by
-          have h := Real.sqrt_le_sqrt (show (8 : ℝ) ≤ 3 ^ 2 by norm_num)
-          rwa [Real.sqrt_sq (by norm_num : (0 : ℝ) ≤ 3)] at h
-        have h4 : Real.sqrt 8 * (Real.sqrt (s : ℝ))⁻¹ ≤ 3 * (Real.sqrt (s : ℝ))⁻¹ :=
-          mul_le_mul_of_nonneg_right h3 (inv_pos.2 hsq0).le
-        rw [h2] at h1
-        exact h1.trans h4
-      have hcoef : ah ≤ 3 * rho * N ^ (-(1 : ℝ) / 2) := by
-        have hstep : (1 / N) * min N G ≤ Real.sqrt G * N ^ (-(1 : ℝ) / 2) := hmin
-        have hpow0 : (0 : ℝ) ≤ N ^ (-(1 : ℝ) / 2) := Real.rpow_nonneg hN0.le _
-        have hsq : Real.sqrt (s : ℝ) * rho * ((1 / N) * min N G)
-            ≤ Real.sqrt (s : ℝ) * rho * (Real.sqrt G * N ^ (-(1 : ℝ) / 2)) :=
-          mul_le_mul_of_nonneg_left hstep
-            (mul_nonneg (Real.sqrt_nonneg _) hrho0)
-        have hsq2 : Real.sqrt (s : ℝ) * rho * (Real.sqrt G * N ^ (-(1 : ℝ) / 2))
-            ≤ Real.sqrt (s : ℝ) * rho * (3 * (Real.sqrt (s : ℝ))⁻¹ *
-              N ^ (-(1 : ℝ) / 2)) := by
-          refine mul_le_mul_of_nonneg_left ?_ (mul_nonneg (Real.sqrt_nonneg _) hrho0)
-          exact mul_le_mul_of_nonneg_right hsqG hpow0
-        have hsqinv : Real.sqrt (s : ℝ) * (Real.sqrt (s : ℝ))⁻¹ = 1 :=
-          mul_inv_cancel₀ (ne_of_gt hsq0)
-        have hval : Real.sqrt (s : ℝ) * rho * (3 * (Real.sqrt (s : ℝ))⁻¹ *
-            N ^ (-(1 : ℝ) / 2)) = 3 * rho * N ^ (-(1 : ℝ) / 2) := by
-          calc Real.sqrt (s : ℝ) * rho * (3 * (Real.sqrt (s : ℝ))⁻¹ * N ^ (-(1 : ℝ) / 2))
-              = 3 * rho * N ^ (-(1 : ℝ) / 2) *
-                  (Real.sqrt (s : ℝ) * (Real.sqrt (s : ℝ))⁻¹) := by ring
-            _ = 3 * rho * N ^ (-(1 : ℝ) / 2) := by rw [hsqinv, mul_one]
-        rw [hahdef, ← hval]
-        exact hsq.trans hsq2
-      have hHle : Ct * (G * A1) ≤ 8 * Ct * CK * E := by
-        calc Ct * (G * A1) ≤ Ct * (8 * CK * E) :=
-              mul_le_mul_of_nonneg_left hGA1 hCt0.le
-          _ = 8 * Ct * CK * E := by ring
-      have hprod : ah * (Ct * (G * A1))
-          ≤ (3 * rho * N ^ (-(1 : ℝ) / 2)) * (8 * Ct * CK * E) := by
-        refine mul_le_mul hcoef hHle (mul_nonneg hCt0.le (mul_nonneg hG0.le hA10.le)) ?_
-        exact mul_nonneg (mul_nonneg (by norm_num) hrho0) (Real.rpow_nonneg hN0.le _)
-      refine hprod.trans (le_of_eq ?_)
-      ring
+        (24 * rho * Ct * CK * E * N ^ (-(1 : ℝ) / 2))  := @stepOneAssembly_estimate1 (d) (CK) (M) (s) (n) (m) (hrho0) (hCt0) (hsq0) (lam) (hA10) (hG0) (hGle) (hHead) (hGA1) (hN0) (hahdef) (hah0)
     have hA1nn : (0 : ℝ) ≤ 8 * rho * CK * Ce * E * N ^ (-(1 : ℝ) / 2) := by
       refine mul_nonneg (mul_nonneg ?_ hE0.le) (Real.rpow_nonneg hN0.le _)
       exact mul_nonneg (mul_nonneg (mul_nonneg (by norm_num) hrho0) hCK.le) hCe0.le

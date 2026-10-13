@@ -148,7 +148,8 @@ theorem sum_coreEnergy_le [NeZero d] {Θ : ℝ} {m : ℤ} {ℓ : ℝ} (hℓ : 0 
     blockVecDot_coarseBlockMatrix_cube_le hEll P
   have hvolpos : (0 : ℝ) < (volume U).toReal :=
     volume_cubeSet_originCube_toReal_pos_recovery (d := d) m
-  have hcubeint : (∫ x in U, g x) ≤ 2 * (Θ * vecNormSq P.1 + vecNormSq P.2) * (volume U).toReal := by
+  have hcubeint : (∫ x in U, g x) ≤ 2 * (Θ * vecNormSq P.1 + vecNormSq P.2) * (volume U).toReal :=
+    by
     have h : (volume U).toReal⁻¹ * ∫ x in U, g x ≤ 2 * (Θ * vecNormSq P.1 + vecNormSq P.2) := by
       rw [← hFeq]; exact hFle
     have := mul_le_mul_of_nonneg_left h hvolpos.le

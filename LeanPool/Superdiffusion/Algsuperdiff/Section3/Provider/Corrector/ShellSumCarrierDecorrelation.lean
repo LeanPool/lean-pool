@@ -164,7 +164,7 @@ tail transported to shell `k` by `e.diff.law.shift`, through
 theorem memLp_two_shellRowForcing (M : ABKModel d) (e x : Vec d) (i : Fin d)
     (k : ℤ) :
     MemLp (shellRowForcing e x i k) 2 M.P.toMeasure := by
-  show MemLp (fun omega : ShellSeq d => ∑ l : Fin d, (omega k) x i l * e l) 2
+  change MemLp (fun omega : ShellSeq d => ∑ l : Fin d, (omega k) x i l * e l) 2
     M.P.toMeasure
   refine memLp_finsetSum (μ := M.P.toMeasure) Finset.univ fun l _ => ?_
   exact (Stream.memLp_two_shell_entry M k x i l).mul_const (e l)

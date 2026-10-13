@@ -24,7 +24,6 @@ namespace Algsuperdiff.Section4.Provider.Regularity
 open Algsuperdiff.Section3
 open HCPolySupport Algsuperdiff.Section4.Provider.ExcessDecay MeasureTheory
 open scoped ENNReal
-open scoped Classical
 
 noncomputable section
 

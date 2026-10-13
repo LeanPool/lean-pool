@@ -39,7 +39,8 @@ and the display bounding the `Λ`'s by the `𝓔`'s.
 
 The two named inputs, composed on the carriers:
 
-* the coarse-graining right-hand side = `CoarseGraining`'s `Ch03.energyConsequencesRHSTheory` (Dirichlet half),
+* the coarse-graining right-hand side = `CoarseGraining`'s `Ch03.energyConsequencesRHSTheory`
+(Dirichlet half),
   entered through the carrier map `dirichletForcedCubeSolutionOfIsDirichlet
   SolutionOn` (obstruction 2) and read on the left through the `ν`-drop
   (obstruction 1);
@@ -64,7 +65,8 @@ dimensional loss, kept visible).
 
 Each is visible in the statement; none is absorbed.
 
-1. **TWO error indices, not one.**  `CoarseGraining`'s coarse-graining right-hand side places `λ` at the index
+1. **TWO error indices, not one.**  `CoarseGraining`'s coarse-graining right-hand side places `λ` at
+the index
    `t/2` and `Λ` at the index `t` (this is confirmed
    here in the definition of
    `Ch03.dirichletEnergyWithRHSRHS`).  the display bounding the `Λ`'s by the `𝓔`'s is therefore
@@ -78,7 +80,8 @@ Each is visible in the statement; none is absorbed.
 ).  RECORDED AS A SOURCE FINDING; the two-index display is the
    honest one and is what Step 3 can consume.
 2. **The `t`-powers stay displayed**: `t^{-3/2}` and
-   `t^{-1/2}` are `CoarseGraining`'s own prefactors of the coarse-graining right-hand side.  At the §4.5 value
+   `t^{-1/2}` are `CoarseGraining`'s own prefactors of the coarse-graining right-hand side.  At the
+   §4.5 value
    `t = s = |log γ|⁻¹` they are `|log γ|^{3/2}` and `|log γ|^{1/2}`, NOT
    constants; the source absorbs them into `C` silently and the node's own
    `NOTE` licenses the absorption only because it is spent once.  Nothing is
@@ -87,13 +90,15 @@ Each is visible in the statement; none is absorbed.
    `B_g, B_h ≤ C 3^{m/2}` is the data embedding, given in
    the `H^s`/Gagliardo carrier
    (`HomBridgeDataEmbedding.three_rpow_mul_normalizedGagliardo_originCube_le_
-   pinned`), but `CoarseGraining`'s coarse-graining right-hand side states its data legs in the DYADIC-descendant
+   pinned`), but `CoarseGraining`'s coarse-graining right-hand side states its data legs in the
+   DYADIC-descendant
    `cubeBesov` carrier.  The Gagliardo → `cubeBesov` bridge exists
    (`Provider.ExcessDecay.scaleNormalizedPositiveBesovVectorSeminormTwo_le_
    gagliardo`); its two side conditions — `MemLp g 2` and `Gagliardo.MemWsp Q t 2 g`
    from a Hölder bound — do NOT exist and are the exact residue
    (they are the two Gagliardo-side atoms of the Step-2b family).  Since
-   `ForceBesovRegularity` is ALSO a hypothesis of the coarse-graining right-hand side itself, the two
+   `ForceBesovRegularity` is ALSO a hypothesis of the coarse-graining right-hand side itself, the
+   two
    residues are the same two atoms; nothing else is missing.
 -/
 
@@ -118,15 +123,16 @@ lines each) to keep this module's import cone off the excess-decay boundary
 tree, which is under concurrent edit. -/
 
 theorem homRpowHalf (x : ℝ) : Real.rpow x (1 / 2 : ℝ) = Real.sqrt x := by
-  show x ^ (1 / 2 : ℝ) = _
+  change x ^ (1 / 2 : ℝ) = _
   rw [← Real.sqrt_eq_rpow]
 
 theorem homRpowNegHalf {x : ℝ} (hx : 0 < x) :
     Real.rpow x (-(1 / 2 : ℝ)) = Real.sqrt x⁻¹ := by
-  show x ^ (-(1 / 2 : ℝ)) = _
+  change x ^ (-(1 / 2 : ℝ)) = _
   rw [Real.rpow_neg hx.le, ← Real.inv_rpow hx.le, ← Real.sqrt_eq_rpow]
 
-/-! ## 2. the display bounding the `Λ`'s by the `𝓔`'s at `CoarseGraining`'s two ellipticity factors -/
+/-! ## 2. the display bounding the `Λ`'s by the `𝓔`'s at `CoarseGraining`'s two ellipticity factors
+-/
 
 /-- The `𝓔`-envelope `√(2d(𝓔² + 1))` of the display bounding the `Λ`'s by the `𝓔`'s, at the cube
 `Q`, the family `A`, the index `t` and the comparator `σ Id`. -/
@@ -136,7 +142,8 @@ def homErrorEnvelope (d : ℕ) [NeZero d] (Q : TriadicCube d) (A : CoeffFamily d
     (Ch02.HomogenizationErrorOnCube Q t .infinity (.finite 2) A
       (scalarMatrix (d := d) sigma) ^ 2 + 1))
 
-/-- **the display bounding the `Λ`'s by the `𝓔`'s, lower half.**  `CoarseGraining`'s `λ_{t,2}^{-1/2}` factor is
+/-- **the display bounding the `Λ`'s by the `𝓔`'s, lower half.**  `CoarseGraining`'s
+`λ_{t,2}^{-1/2}` factor is
 at most `σ^{-1/2} √(2d(𝓔_t² + 1))`. -/
 theorem poincareLowerEllipticityFactor_le [NeZero d] (Q : TriadicCube d)
     (A : CoeffFamily d) {t sigma : ℝ} (ht : 0 < t) (hsigma : 0 < sigma) :
@@ -160,7 +167,8 @@ theorem poincareLowerEllipticityFactor_le [NeZero d] (Q : TriadicCube d)
     ← Real.sqrt_mul (le_of_lt (inv_pos.mpr hsigma))]
   exact Real.sqrt_le_sqrt hinv
 
-/-- **the display bounding the `Λ`'s by the `𝓔`'s, upper half.**  `CoarseGraining`'s `Λ_{t,2}^{1/2}` factor is at
+/-- **the display bounding the `Λ`'s by the `𝓔`'s, upper half.**  `CoarseGraining`'s `Λ_{t,2}^{1/2}`
+factor is at
 most `σ^{1/2} √(2d(𝓔_t² + 1))`. -/
 theorem poincareUpperEllipticityFactor_le [NeZero d] (Q : TriadicCube d)
     (A : CoeffFamily d) {t sigma : ℝ} (ht : 0 < t) (hsigma : 0 < sigma) :

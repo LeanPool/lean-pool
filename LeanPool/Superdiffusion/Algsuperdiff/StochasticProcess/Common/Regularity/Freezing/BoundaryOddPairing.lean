@@ -110,7 +110,7 @@ theorem integral_vecDot_oddFaceExtendGrad_eq
           euclideanGradient (fun z => φ (coordFaceReflection c i z)) y := by
     intro y
     funext j
-    show (fderiv ℝ (fun z => φ z - φ (coordFaceReflection c i z)) y) (basisVec j) =
+    change (fderiv ℝ (fun z => φ z - φ (coordFaceReflection c i z)) y) (basisVec j) =
       (fderiv ℝ φ y) (basisVec j) -
         (fderiv ℝ (fun z => φ (coordFaceReflection c i z)) y) (basisVec j)
     rw [fderiv_fun_sub (hφ.differentiable (by simp) y) (hφr.differentiable (by simp) y)]

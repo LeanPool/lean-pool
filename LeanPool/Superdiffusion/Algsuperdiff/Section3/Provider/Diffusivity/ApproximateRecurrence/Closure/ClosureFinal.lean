@@ -58,9 +58,17 @@ standing dimension hypothesis `2 <= d` --- exactly the shape
 
 | input | content | producer |
 |---|---|---|
-| `ClosureSplitInput` | the finite-grid half of Steps 1--3 at the `cgamma^10` endpoint, in the exact antecedent shape of `Closure.AnnealedLimitJunction.annealedSplitEndpoint_of_integral_ch02CoarseBlockMatrix_le` | **IN**, lane `gamma10-*` |
-| `ClosureStep4Input` | Junction 1, `e.lower.bound.pre1` at the closure families | `Closure.JunctionDischargeStepFour.step4GaugeEndpoint_of_correctors`, whose four remaining binders are analytic side conditions of the display |
-| `ClosureStep5Input` | Junction 2, `e.lower.bound.pre2` at the closure families, with the produced `Fend` | `Closure.JunctionDischargeStepFiveDisplay.step5GaugeEndpoint_of_correctors_gauge` (per-cube gauge), whose `hosc` binder is supplied by `Closure.Step5DefectGauge`'s re-sited full-mesh producer |
+| `ClosureSplitInput` | the finite-grid half of Steps 1--3 at the `cgamma^10` endpoint, in the exact
+antecedent shape of
+`Closure.AnnealedLimitJunction.annealedSplitEndpoint_of_integral_ch02CoarseBlockMatrix_le` | **IN**,
+lane `gamma10-*` |
+| `ClosureStep4Input` | Junction 1, `e.lower.bound.pre1` at the closure families |
+`Closure.JunctionDischargeStepFour.step4GaugeEndpoint_of_correctors`, whose four remaining binders
+are analytic side conditions of the display |
+| `ClosureStep5Input` | Junction 2, `e.lower.bound.pre2` at the closure families, with the produced
+`Fend` | `Closure.JunctionDischargeStepFiveDisplay.step5GaugeEndpoint_of_correctors_gauge` (per-cube
+gauge), whose `hosc` binder is supplied by `Closure.Step5DefectGauge`'s re-sited full-mesh producer
+|
 
 Nothing else is assumed.  In particular no smallness, no normalization and no
 bound of the manuscript is carried as a hypothesis of
@@ -104,7 +112,7 @@ theorem vecNormSq_closureUnitVec (d : ℕ) [NeZero d] :
     intro i
     simp only [closureUnitVec, Pi.single_apply]
     split <;> simp
-  show ∑ i, closureUnitVec d i * closureUnitVec d i = 1
+  change ∑ i, closureUnitVec d i * closureUnitVec d i = 1
   rw [Finset.sum_congr rfl fun i _ => hfun i]
   rw [Finset.sum_eq_single (⟨0, hi⟩ : Fin d)]
   · simp

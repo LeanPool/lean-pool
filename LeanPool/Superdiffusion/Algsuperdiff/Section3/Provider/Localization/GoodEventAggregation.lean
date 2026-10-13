@@ -44,7 +44,8 @@ content is the single `v`-free event of `BadEvents.lambda_transfer_ae`, plus the
 `v`-free `BadEvents.gradientW1Infinity_incrementUnitCube₂_le_responseGate_ae`
 (itself one `filter_upwards` on the same event) and the `v`-free
 `LambdaGateChain.inv_lambdaSq_le_of_mem_goodLocalEvent_ae`.  Every step that
-consumes a loading vector --- `BadEvents.responseJ_sensitivity_of_mem_goodLocalEvent_of_lambdaTransfer`
+consumes a loading vector ---
+`BadEvents.responseJ_sensitivity_of_mem_goodLocalEvent_of_lambdaTransfer`
 and the deterministic bridges of `SensitivityBridges` --- is a **pointwise**
 statement taking `(p, q)` as ordinary arguments.  The four theorems of Part 1
 therefore re-thread only the a.e. structure, moving `∀ p q` (and, in the last of
@@ -664,7 +665,7 @@ theorem legScaleAverage_indicator_eq {Omega : Type*} (Q : TriadicCube d) (k : �
             (B R).indicator (fun _ => (1 : ℝ)) omega) := by
     unfold Book.Ch02.finsetAverageReal
     rw [Finset.sum_congr rfl hfun]
-  show Real.rpow
+  change Real.rpow
       (Book.Ch02.finsetAverageReal (descendantsAtScale Q k)
         (fun R => Real.rpow (leg R * (B R).indicator (fun _ => (1 : ℝ)) omega)
           ((d : ℝ) / s))) (s / (d : ℝ)) = _

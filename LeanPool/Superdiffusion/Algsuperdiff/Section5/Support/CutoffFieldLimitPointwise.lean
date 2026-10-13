@@ -101,7 +101,7 @@ theorem ae_le_of_tendsto_l2 {U : Set (Vec d)} (hUfin : volume U ≠ ⊤)
       ((hf L).sub hg).integrable_sq
     refine integral_mono_ae hhint hdiff ?_
     filter_upwards [hL] with x hx
-    show max (g x - c) 0 ^ (2 : ℕ) ≤ (f L x - g x) ^ (2 : ℕ)
+    change max (g x - c) 0 ^ (2 : ℕ) ≤ (f L x - g x) ^ (2 : ℕ)
     rcases le_or_gt (g x - c) 0 with hle | hlt
     · rw [max_eq_right hle, zero_pow (by norm_num : (2 : ℕ) ≠ 0)]
       positivity
@@ -144,7 +144,7 @@ theorem ae_ge_of_tendsto_l2 {U : Set (Vec d)} (hUfin : volume U ≠ ⊤)
     refine hlim.congr fun L => ?_
     congr 1
     refine integral_congr_ae (Filter.Eventually.of_forall fun x => ?_)
-    show (f L x - g x) ^ (2 : ℕ) = (-f L x - -g x) ^ (2 : ℕ)
+    change (f L x - g x) ^ (2 : ℕ) = (-f L x - -g x) ^ (2 : ℕ)
     ring
   have hbound' : ∀ᶠ L : ℤ in atTop,
       ∀ᵐ x ∂(volume.restrict U), (fun z => -f L z) x ≤ -c := by

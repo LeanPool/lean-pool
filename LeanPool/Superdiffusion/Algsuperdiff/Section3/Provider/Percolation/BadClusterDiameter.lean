@@ -389,6 +389,57 @@ theorem measureReal_badClusterCrossingEvent₂_le_exp_of_gates (M : ABKModel d) 
 
 /-! ## The diameter conclusion -/
 
+private theorem largeBadCluster_event_subset_pathCover :
+    ∀ {d : ℕ} (M : ABKModel d) {m : ℤ} (h : ℕ) {b : ℝ},
+      (1 : ℝ) < b * (↑h : ℝ) →
+        ∀ (k : ℕ),
+          (↑k : ℝ) + (1 : ℝ) ≤ b * (↑h : ℝ) →
+            {omega : CutoffSample d |
+                ∃ u ∈ cubeFinset h, (3 : ℝ) ^ (b * (↑h : ℝ)) ≤ (↑(badClusterDiam M m h omega u) : ℝ)} ⊆
+              badClusterCrossingEvent₂ M m h k := by
+  intro d M m h b hcase k hk1
+  rintro omega ⟨u, -, hu⟩
+  have hthree : (3 : ℝ) < (3 : ℝ) ^ (b * (h : ℝ)) := by
+    have h1 : (3 : ℝ) ^ (1 : ℝ) < (3 : ℝ) ^ (b * (h : ℝ)) :=
+      Real.rpow_lt_rpow_of_exponent_lt (by norm_num) hcase
+    rwa [Real.rpow_one] at h1
+  have hne : (badCluster₂ M m h omega u).Nonempty := by
+    by_contra hcon
+    have hz : badClusterDiam M m h omega u = 0 := by
+      unfold badClusterDiam closedLatDiam
+      rw [ite_eq_right hcon]
+    rw [hz, Nat.cast_zero] at hu
+    linarith only [hu, hthree]
+  have hdiam : badClusterDiam M m h omega u = latDiam (badCluster₂ M m h omega u) + 1 :=
+    closedLatDiam_eq_of_nonempty hne
+  rw [hdiam] at hu
+  push_cast at hu
+  have hlat1 : (1 : ℝ) ≤ (latDiam (badCluster₂ M m h omega u) : ℝ) := by
+    linarith only [hu, hthree]
+  -- `3 ^ (k+1) ≤ 2 * latDiam` in `ℕ`
+  have hkey : (3 : ℕ) ^ (k + 1) ≤ 2 * latDiam (badCluster₂ M m h omega u) := by
+    have hR : ((3 ^ (k + 1) : ℕ) : ℝ) ≤ ((2 * latDiam (badCluster₂ M m h omega u) : ℕ) : ℝ) :=
+      by
+      push_cast
+      have hpow : (3 : ℝ) ^ (k + 1 : ℕ) = (3 : ℝ) ^ (((k : ℝ) + 1)) := by
+        rw [← Real.rpow_natCast (3 : ℝ) (k + 1), Nat.cast_add, Nat.cast_one]
+      rw [hpow]
+      calc (3 : ℝ) ^ ((k : ℝ) + 1) ≤ (3 : ℝ) ^ (b * (h : ℝ)) :=
+            Real.rpow_le_rpow_of_exponent_le (by norm_num) hk1
+        _ ≤ (latDiam (badCluster₂ M m h omega u) : ℝ) + 1 := hu
+        _ ≤ 2 * (latDiam (badCluster₂ M m h omega u) : ℝ) := by linarith only [hlat1]
+    exact_mod_cast hR
+  have hbadsites : ∀ y ∈ badSiteFinset M m h omega,
+      omega ∈ ⋃ L : ℕ, siteBadEvent M (m - (h : ℤ)) L y := by
+    intro y hy
+    exact badExtended_subset_iUnion_siteBadEvent M (m - (h : ℤ)) y
+      (mem_badSiteFinset_iff.mp hy).2
+  obtain ⟨w, hw, hcross⟩ :=
+    exists_crossingEvent₂At_of_le_latDiam (B := siteBadEvent M (m - (h : ℤ)))
+      (ω := omega) (S := badSiteFinset M m h omega) (u := u) (k := k) hbadsites hkey
+  refine Set.mem_iUnion₂.mpr ⟨w, ?_, hcross⟩
+  exact badSiteFinset_subset M m h omega (cluster₂_subset _ u hw)
+
 /-- **ABK26 `e.diameter.bound.bad.clusters`**, at the AUTHOR-adjacency and from the
 raw single-cube probability gates:
 
@@ -470,49 +521,7 @@ theorem measureReal_maxBadClusterDiam_le_exp_of_gates (M : ABKModel d) {m : ℤ}
             Real.rpow_add (by norm_num) _ _
         _ = 9 * (3 : ℝ) ^ ((1 - sigma) * (k : ℝ)) := by rw [← h9]
     -- the deterministic inclusion
-    have hsubset : {omega : CutoffSample d | ∃ u ∈ cubeFinset (d := d) h,
-        (3 : ℝ) ^ (b * (h : ℝ)) ≤ (badClusterDiam M m h omega u : ℝ)} ⊆
-          badClusterCrossingEvent₂ M m h k := by
-      rintro omega ⟨u, -, hu⟩
-      have hthree : (3 : ℝ) < (3 : ℝ) ^ (b * (h : ℝ)) := by
-        have h1 : (3 : ℝ) ^ (1 : ℝ) < (3 : ℝ) ^ (b * (h : ℝ)) :=
-          Real.rpow_lt_rpow_of_exponent_lt (by norm_num) hcase
-        rwa [Real.rpow_one] at h1
-      have hne : (badCluster₂ M m h omega u).Nonempty := by
-        by_contra hcon
-        have hz : badClusterDiam M m h omega u = 0 := by
-          unfold badClusterDiam closedLatDiam
-          rw [ite_eq_right hcon]
-        rw [hz, Nat.cast_zero] at hu
-        linarith only [hu, hthree]
-      have hdiam : badClusterDiam M m h omega u = latDiam (badCluster₂ M m h omega u) + 1 :=
-        closedLatDiam_eq_of_nonempty hne
-      rw [hdiam] at hu
-      push_cast at hu
-      have hlat1 : (1 : ℝ) ≤ (latDiam (badCluster₂ M m h omega u) : ℝ) := by
-        linarith only [hu, hthree]
-      -- `3 ^ (k+1) ≤ 2 * latDiam` in `ℕ`
-      have hkey : (3 : ℕ) ^ (k + 1) ≤ 2 * latDiam (badCluster₂ M m h omega u) := by
-        have hR : ((3 ^ (k + 1) : ℕ) : ℝ) ≤ ((2 * latDiam (badCluster₂ M m h omega u) : ℕ) : ℝ) := by
-          push_cast
-          have hpow : (3 : ℝ) ^ (k + 1 : ℕ) = (3 : ℝ) ^ (((k : ℝ) + 1)) := by
-            rw [← Real.rpow_natCast (3 : ℝ) (k + 1), Nat.cast_add, Nat.cast_one]
-          rw [hpow]
-          calc (3 : ℝ) ^ ((k : ℝ) + 1) ≤ (3 : ℝ) ^ (b * (h : ℝ)) :=
-                Real.rpow_le_rpow_of_exponent_le (by norm_num) hk1
-            _ ≤ (latDiam (badCluster₂ M m h omega u) : ℝ) + 1 := hu
-            _ ≤ 2 * (latDiam (badCluster₂ M m h omega u) : ℝ) := by linarith only [hlat1]
-        exact_mod_cast hR
-      have hbadsites : ∀ y ∈ badSiteFinset M m h omega,
-          omega ∈ ⋃ L : ℕ, siteBadEvent M (m - (h : ℤ)) L y := by
-        intro y hy
-        exact badExtended_subset_iUnion_siteBadEvent M (m - (h : ℤ)) y
-          (mem_badSiteFinset_iff.mp hy).2
-      obtain ⟨w, hw, hcross⟩ :=
-        exists_crossingEvent₂At_of_le_latDiam (B := siteBadEvent M (m - (h : ℤ)))
-          (ω := omega) (S := badSiteFinset M m h omega) (u := u) (k := k) hbadsites hkey
-      refine Set.mem_iUnion₂.mpr ⟨w, ?_, hcross⟩
-      exact badSiteFinset_subset M m h omega (cluster₂_subset _ u hw)
+    have hsubset := @largeBadCluster_event_subset_pathCover (d) (M) (m) (h) (b) (hcase) (k) (hk1)
     refine le_trans (measureReal_mono hsubset (measure_ne_top _ _)) ?_
     exact measureReal_badClusterCrossingEvent₂_le_exp_of_gates M h hd hh hE hS hsigma0
       hsigma hb0 hb1 hEexp hE4 hunit hgamma20 hinvSq hEb hgamma k hkgain

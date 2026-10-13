@@ -175,7 +175,7 @@ theorem blockEnergyDensityAt_coefficientCutoffTriadicCoeffFamily_congr (M : ABKM
     (m : ℤ) (omega : CutoffSample d) (Q R : TriadicCube d) (Y : BlockVec d) (x : Vec d) :
     blockEnergyDensityAt ((coefficientCutoffTriadicCoeffFamily M m omega).coeffOn Q) Y x =
       blockEnergyDensityAt ((coefficientCutoffTriadicCoeffFamily M m omega).coeffOn R) Y x := by
-  show (1 / 2 : ℝ) * blockVecDot Y
+  change (1 / 2 : ℝ) * blockVecDot Y
       (blockMatVecMul
         (blockMatrixField ((coefficientCutoffTriadicCoeffFamily M m omega).coeffOn Q) x) Y) = _
   rw [blockMatrixField_coefficientCutoffTriadicCoeffFamily_congr M m omega Q R]
@@ -264,7 +264,7 @@ theorem two_mul_doubledMuValue_gluedDoubledField_eq_mesoGridAverage (M : ABKMode
         fun x => blockEnergyDensityAt
           ((coefficientCutoffTriadicCoeffFamily M m omega).coeffOn R) ((X R).eval x) x := by
       filter_upwards [ae_restrict_mem (measurableSet_openCubeSet R)] with x hx
-      show blockEnergyDensityAt
+      change blockEnergyDensityAt
           ((coefficientCutoffTriadicCoeffFamily M m omega).coeffOn (originCube d K))
           ((gluedDoubledField (originCube d K) (K - n).toNat X).eval x) x = _
       rw [gluedDoubledField_eval_of_mem_openCubeSet X hRd hx]

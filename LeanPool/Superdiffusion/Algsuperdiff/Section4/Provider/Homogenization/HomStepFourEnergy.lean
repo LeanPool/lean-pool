@@ -41,7 +41,8 @@ printed brackets differ by exactly one factor `√σ_m`.
 
 * the **flux** weak bound and the **gradient** weak bound.  The
   manuscript's own justification reads BOTH
-  off ONE application of the general coarse-graining proposition, whose printed conclusion carries the two halves in a single sum on the left.  They
+  off ONE application of the general coarse-graining proposition, whose printed conclusion carries
+  the two halves in a single sum on the left.  They
   are therefore ONE transcribed source hypothesis, not two, and they arrive at
   the duality carrier of `HomStepFourPairing`.
 * the **Schauder** bound on `‖∇v‖_{W^{s,∞}(□_m)}`.  This is

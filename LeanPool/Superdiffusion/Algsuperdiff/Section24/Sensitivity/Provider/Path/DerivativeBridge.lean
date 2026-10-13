@@ -108,7 +108,7 @@ theorem vecDot_matVecMul_symmPartInv_nonneg {lam Lam : ℝ} {A : Mat d}
 theorem pathQuadraticTerm_nonneg {U : Domain d} (a : CoeffOn U)
     (hField : CoeffField d) (X : DoubledField d) :
     0 ≤ pathQuadraticTerm a hField X := by
-  show 0 ≤ volumeAverage (U : Set (Vec d)) (pathQuadraticDensity a hField X)
+  change 0 ≤ volumeAverage (U : Set (Vec d)) (pathQuadraticDensity a hField X)
   unfold volumeAverage
   refine mul_nonneg (by positivity) ?_
   refine integral_nonneg_of_ae ?_

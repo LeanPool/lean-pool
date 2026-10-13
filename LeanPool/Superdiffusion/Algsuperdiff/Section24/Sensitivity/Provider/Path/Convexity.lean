@@ -104,7 +104,7 @@ theorem isDoubledMuAdmissible_midpoint {U : Domain d} {P : BlockVec d}
             ((X.potential x - P.1) + (Y.potential x - P.1)) := by
       funext x
       funext i
-      show (1 / 2 : ℝ) * (X.potential x i + Y.potential x i) - P.1 i =
+      change (1 / 2 : ℝ) * (X.potential x i + Y.potential x i) - P.1 i =
         (1 / 2 : ℝ) * ((X.potential x i - P.1 i) + (Y.potential x i - P.1 i))
       ring
     rw [hfun]
@@ -117,7 +117,7 @@ theorem isDoubledMuAdmissible_midpoint {U : Domain d} {P : BlockVec d}
             ((X.flux x - P.2) + (Y.flux x - P.2)) := by
       funext x
       funext i
-      show (1 / 2 : ℝ) * (X.flux x i + Y.flux x i) - P.2 i =
+      change (1 / 2 : ℝ) * (X.flux x i + Y.flux x i) - P.2 i =
         (1 / 2 : ℝ) * ((X.flux x i - P.2 i) + (Y.flux x i - P.2 i))
       ring
     rw [hfun]
@@ -212,13 +212,13 @@ theorem doubledMuValue_parallelogram {U : Domain d} (a : CoeffOn U)
       = (1 / 2 : ℝ) • fun x => blockEnergyDensityAt a ((X - Y).eval x) x := by
     funext x
     have h := blockEnergyDensityAt_parallelogram a (X.eval x) (Y.eval x) x
-    show blockEnergyDensityAt a (X.eval x) x + blockEnergyDensityAt a (Y.eval x) x
+    change blockEnergyDensityAt a (X.eval x) x + blockEnergyDensityAt a (Y.eval x) x
         - 2 * blockEnergyDensityAt a (((1 / 2 : ℝ) • (X + Y)).eval x) x
       = (1 / 2 : ℝ) * blockEnergyDensityAt a ((X - Y).eval x) x
     rw [show ((1 / 2 : ℝ) • (X + Y)).eval x = (1 / 2 : ℝ) • (X.eval x + Y.eval x) from rfl,
       show (X - Y).eval x = X.eval x - Y.eval x from rfl]
     exact h
-  show volumeAverage (U : Set (Vec d))
+  change volumeAverage (U : Set (Vec d))
       (fun x => blockEnergyDensityAt a (X.eval x) x)
     + volumeAverage (U : Set (Vec d))
       (fun x => blockEnergyDensityAt a (Y.eval x) x)

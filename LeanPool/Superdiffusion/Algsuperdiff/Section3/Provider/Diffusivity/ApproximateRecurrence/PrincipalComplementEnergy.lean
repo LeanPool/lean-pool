@@ -208,7 +208,7 @@ private theorem integral_rpow_eight_le_of_le_const_mul {f g : Omega → ℝ}
       (by norm_num) (by norm_num)).mpr hgmem
     rw [show (8 : ℝ≥0∞).toReal = (8 : ℝ) by norm_num] at h
     refine h.congr (Filter.Eventually.of_forall fun x => ?_)
-    show ‖g x‖ ^ (8 : ℝ) = g x ^ (8 : ℝ)
+    change ‖g x‖ ^ (8 : ℝ) = g x ^ (8 : ℝ)
     rw [Real.norm_eq_abs, abs_of_nonneg (hg0 x)]
   have hpt : ∀ x, f x ^ (8 : ℝ) ≤ W ^ (8 : ℝ) * g x ^ (8 : ℝ) := by
     intro x
@@ -257,7 +257,7 @@ private theorem memLp_sqrt_four_of_integrable_sq {N : Omega → ℝ}
     MemLp (fun x => Real.sqrt (N x)) 4 mu := by
   refine (integrable_norm_rpow_iff hNm (by norm_num) (by norm_num)).mp ?_
   refine hNsq.congr (Filter.Eventually.of_forall fun x => ?_)
-  show N x ^ (2 : ℕ) = ‖Real.sqrt (N x)‖ ^ (4 : ℝ≥0∞).toReal
+  change N x ^ (2 : ℕ) = ‖Real.sqrt (N x)‖ ^ (4 : ℝ≥0∞).toReal
   rw [Real.norm_eq_abs, abs_of_nonneg (Real.sqrt_nonneg _),
     show (4 : ℝ≥0∞).toReal = ((4 : ℕ) : ℝ) by norm_num, Real.rpow_natCast,
     show Real.sqrt (N x) ^ (4 : ℕ) = (Real.sqrt (N x) ^ (2 : ℕ)) ^ (2 : ℕ) by ring,
@@ -606,6 +606,194 @@ private theorem memLp_comp_translateCutoffSample (M : ABKModel d) (z : Vec d)
 
 /-! ## The per-cube complement energy -/
 
+private theorem principalComplementEnergy_comparisonBounds1 :
+    ∀ (d : ℕ) (C : ℝ) (M : ABKModel d) (m h : ℤ) (a : ℕ) (R : TriadicCube d) (_ : a ≤ (32 : ℕ))
+      (_ : R.scale = recurrenceMesoScale a M.gamma m h) (_ : M.gamma ≤ (1 / 1089 : ℝ))
+      (_ : (↑h : ℝ) ≤ (6 : ℝ) * Disorder.cstar M * M.gamma⁻¹),
+      let this : NeZero d := ⟨by have := M.shellPrefix.dimension; omega⟩;
+      ∀ (_ : (0 : ℝ) < M.gamma) (_ : (0 : ℝ) ≤ (2 : ℝ) * (C * (Disorder.cstar M)⁻¹ * M.gamma⁻¹))
+        (_ : (0 : ℝ) < (3 : ℝ) ^ (22 : ℝ)) (_ : R.scale ≤ m)
+        (_ :
+          MemLp
+            (coarseEnvelopeCentred M m (Annealed.sigmaBar M (m - (1 : ℤ))) m M.gamma
+              coarseExponentOne.1)
+            (8 : ℝ≥0∞) (↑(cutoffSampleLaw M) : Measure (CutoffSample d)))
+        (_ :
+          ∫ (omega : CutoffSample d),
+              coarseEnvelopeCentred M m (Annealed.sigmaBar M (m - (1 : ℤ))) m M.gamma
+                  coarseExponentOne.1 omega ^
+                (8 : ℝ) ∂(↑(cutoffSampleLaw M) : Measure (CutoffSample d)) ≤
+            ((2 : ℝ) * (C * (Disorder.cstar M)⁻¹ * M.gamma⁻¹)) ^ (8 : ℝ))
+        (_ :
+          ∀ (omega : CutoffSample d),
+            (0 : ℝ) ≤
+              coarseEnvelopeCentred M m (Annealed.sigmaBar M (m - (1 : ℤ))) m M.gamma
+                coarseExponentOne.1 omega),
+        (∀ (omega : CutoffSample d),
+            (0 : ℝ) ≤
+              coarseEnvelopeCentred M m (Annealed.sigmaBar M (m - (1 : ℤ))) R.scale M.gamma
+                coarseExponentOne.1 omega) ∧
+          MemLp
+              (fun (omega : CutoffSample d) =>
+                coarseEnvelopeCentred M m (Annealed.sigmaBar M (m - (1 : ℤ))) R.scale M.gamma
+                  coarseExponentOne.1 (translateCutoffSample (triadicCubeShift R) omega))
+              (8 : ℝ≥0∞) (↑(cutoffSampleLaw M) : Measure (CutoffSample d)) ∧
+            AEStronglyMeasurable
+                (fun (omega : CutoffSample d) =>
+                  coarseEnvelopeCentred M m (Annealed.sigmaBar M (m - (1 : ℤ))) R.scale M.gamma
+                    coarseExponentOne.1 (translateCutoffSample (triadicCubeShift R) omega))
+                (↑(cutoffSampleLaw M) : Measure (CutoffSample d)) ∧
+              ∫ (omega : CutoffSample d),
+                  coarseEnvelopeCentred M m (Annealed.sigmaBar M (m - (1 : ℤ))) R.scale M.gamma
+                      coarseExponentOne.1 (translateCutoffSample (triadicCubeShift R) omega) ^
+                    (8 : ℝ) ∂(↑(cutoffSampleLaw M) : Measure (CutoffSample d)) ≤
+                ((3 : ℝ) ^ (22 : ℝ) * ((2 : ℝ) * (C * (Disorder.cstar M)⁻¹ * M.gamma⁻¹))) ^ (8 : ℝ) := by
+  intro d C M m h _ R ha hRscale hgamma hh _ hgpos hA0 hW0 hRm hGmem hGmom hG0
+  have hF0 : ∀ omega : CutoffSample d,
+      0 ≤ coarseEnvelopeCentred M m (Annealed.sigmaBar M (m - 1)) R.scale M.gamma
+        coarseExponentOne.1 omega := fun omega =>
+    coarseEnvelopeCentred_nonneg M R.scale m hgpos coarseExponentOne
+      (Annealed.sigmaBar M (m - 1)) omega
+  have hFm : Measurable
+      (coarseEnvelopeCentred M m (Annealed.sigmaBar M (m - 1)) R.scale M.gamma
+        coarseExponentOne.1) :=
+    measurable_coarseEnvelopeCentred M R.scale m hgpos coarseExponentOne
+      (Annealed.sigmaBar M (m - 1))
+  -- the descendant promotion, at the numeral of the recurrence mesoscale
+  have hweight : Ch02.multiscaleDescendantWeight (originCube d m) R.scale M.gamma ≤
+      (3 : ℝ) ^ (22 : ℝ) := by
+    rw [hRscale]
+    exact multiscaleDescendantWeight_recurrenceMesoScale_le M m h ha hh hgamma
+  have hFle : ∀ omega : CutoffSample d,
+      coarseEnvelopeCentred M m (Annealed.sigmaBar M (m - 1)) R.scale M.gamma
+          coarseExponentOne.1 omega ≤
+        (3 : ℝ) ^ (22 : ℝ) *
+          coarseEnvelopeCentred M m (Annealed.sigmaBar M (m - 1)) m M.gamma
+            coarseExponentOne.1 omega := by
+    intro omega
+    exact (coarseEnvelopeCentred_le_weight_mul M m (Annealed.sigmaBar M (m - 1)) hRm
+      hgpos coarseExponentOne.2 omega).trans
+      (mul_le_mul_of_nonneg_right hweight (hG0 omega))
+  have hFmem : MemLp
+      (coarseEnvelopeCentred M m (Annealed.sigmaBar M (m - 1)) R.scale M.gamma
+        coarseExponentOne.1) 8 (cutoffSampleLaw M).toMeasure := by
+    refine MemLp.mono (hGmem.const_mul ((3 : ℝ) ^ (22 : ℝ))) hFm.aestronglyMeasurable
+      (Filter.Eventually.of_forall fun omega => ?_)
+    rw [Real.norm_eq_abs, Real.norm_eq_abs, abs_of_nonneg (hF0 omega)]
+    exact (hFle omega).trans (le_abs_self _)
+  have hFmom : ∫ omega : CutoffSample d,
+        coarseEnvelopeCentred M m (Annealed.sigmaBar M (m - 1)) R.scale M.gamma
+            coarseExponentOne.1 omega ^ (8 : ℝ) ∂(cutoffSampleLaw M).toMeasure ≤
+      ((3 : ℝ) ^ (22 : ℝ) * (2 * (C * (Disorder.cstar M)⁻¹ * M.gamma⁻¹))) ^ (8 : ℝ) :=
+    integral_rpow_eight_le_of_le_const_mul hW0.le hA0 hF0 hG0 hFle hGmem hGmom
+  -- the same two facts at the cube's base point
+  have hBmem : MemLp
+      (fun omega : CutoffSample d =>
+        coarseEnvelopeCentred M m (Annealed.sigmaBar M (m - 1)) R.scale M.gamma
+          coarseExponentOne.1 (translateCutoffSample (triadicCubeShift R) omega))
+      8 (cutoffSampleLaw M).toMeasure :=
+    memLp_comp_translateCutoffSample M (triadicCubeShift R) hFmem
+  have hBm : AEStronglyMeasurable
+      (fun omega : CutoffSample d =>
+        coarseEnvelopeCentred M m (Annealed.sigmaBar M (m - 1)) R.scale M.gamma
+          coarseExponentOne.1 (translateCutoffSample (triadicCubeShift R) omega))
+      (cutoffSampleLaw M).toMeasure :=
+    (hFm.comp (measurable_translateCutoffSample (triadicCubeShift R))).aestronglyMeasurable
+  have hBmom : ∫ omega : CutoffSample d,
+        coarseEnvelopeCentred M m (Annealed.sigmaBar M (m - 1)) R.scale M.gamma
+            coarseExponentOne.1 (translateCutoffSample (triadicCubeShift R) omega) ^ (8 : ℝ)
+        ∂(cutoffSampleLaw M).toMeasure ≤
+      ((3 : ℝ) ^ (22 : ℝ) * (2 * (C * (Disorder.cstar M)⁻¹ * M.gamma⁻¹))) ^ (8 : ℝ) := by
+    have hpow : AEStronglyMeasurable
+        (fun omega : CutoffSample d =>
+          coarseEnvelopeCentred M m (Annealed.sigmaBar M (m - 1)) R.scale M.gamma
+            coarseExponentOne.1 omega ^ (8 : ℝ)) (cutoffSampleLaw M).toMeasure :=
+      (((Real.continuous_rpow_const
+        (by norm_num : (0 : ℝ) ≤ 8)).measurable).comp hFm).aestronglyMeasurable
+    rw [integral_comp_translateCutoffSample M (triadicCubeShift R) hpow]
+    exact hFmom
+  exact ⟨hF0, hBmem, hBm, hBmom⟩
+
+private theorem principalComplementEnergy_comparisonBounds2 :
+    ∀ (d : ℕ) (Kgate C : ℝ) (_ : (0 : ℝ) < C),
+      let Cout : ℝ := (2 : ℝ) ^ (3 / 8 : ℝ) * max C Kgate;
+      ∀ (_ : (0 : ℝ) < Cout) (_ : C ≤ Cout) (_ : Kgate ≤ Cout) (M : ABKModel d)
+        (E : { E : ℝ // (1 : ℝ) ≤ E }) (m h : ℤ) (a : ℕ) (R : TriadicCube d) (_ : (0 : ℤ) < h)
+        (_ : R.scale = recurrenceMesoScale a M.gamma m h)
+        (_ : max (Real.exp ((2 : ℝ) * Cout)) (Disorder.cstar M)⁻¹ ≤ (↑E : ℝ))
+        (_ : M.gamma / (2 : ℝ) + Real.exp (-(Cout⁻¹ * (↑E : ℝ)⁻¹ ^ (2 : ℕ) * M.gamma⁻¹)) ≤ M.gamma)
+        (_ : M.gamma ≤ (1 / 1089 : ℝ)),
+        (0 : ℝ) < M.gamma ∧
+          (0 : ℝ) < Disorder.cstar M ∧
+            (0 : ℝ) < M.gamma⁻¹ ∧
+              M.gamma / (2 : ℝ) + Real.exp (-(C⁻¹ * (↑E : ℝ)⁻¹ ^ (2 : ℕ) * M.gamma⁻¹)) ≤ M.gamma ∧
+                max (Real.exp ((2 : ℝ) * C)) (Disorder.cstar M)⁻¹ ≤ (↑E : ℝ) ∧
+                  Kgate ≤ (↑E : ℝ)⁻¹ ^ (2 : ℕ) * M.gamma⁻¹ ∧
+                    (0 : ℝ) ≤ (2 : ℝ) * (C * (Disorder.cstar M)⁻¹ * M.gamma⁻¹) ∧
+                      (0 : ℝ) < (3 : ℝ) ^ (22 : ℝ) ∧
+                        (0 : ℝ) ≤ (3 : ℝ) ^ (22 : ℝ) * ((2 : ℝ) * (C * (Disorder.cstar M)⁻¹ * M.gamma⁻¹)) ∧
+                          R.scale ≤ m ∧ R.scale ≤ m - h := by
+  intro _ Kgate C hC0 Cout hCout0 hCleCout hKleCout M E m h a R _ hRscale hEexp hwindow hgamma
+  have hgpos : (0 : ℝ) < M.gamma := M.shellPrefix.gamma_pos
+  have hcstar0 : (0 : ℝ) < Disorder.cstar M := (Disorder.cstar_characterization M).1
+  -- the enlarged exported constant, read back at the envelope constant
+  have hginv0 : (0 : ℝ) < M.gamma⁻¹ := inv_pos.2 hgpos
+  have hinvCC : Cout⁻¹ ≤ C⁻¹ := by
+    rw [inv_le_inv₀ hCout0 hC0]
+    exact hCleCout
+  have hmonoWin : Cout⁻¹ * ((E : ℝ)⁻¹) ^ 2 * M.gamma⁻¹ ≤
+      C⁻¹ * ((E : ℝ)⁻¹) ^ 2 * M.gamma⁻¹ :=
+    mul_le_mul_of_nonneg_right
+      (mul_le_mul_of_nonneg_right hinvCC (sq_nonneg _)) hginv0.le
+  have hwindowC : M.gamma / 2 +
+      Real.exp (-(C⁻¹ * ((E : ℝ)⁻¹) ^ 2 * M.gamma⁻¹)) ≤ M.gamma := by
+    have h := Real.exp_le_exp.2 (neg_le_neg hmonoWin)
+    linarith [hwindow]
+  have hEexpC : max (Real.exp (2 * C)) (Disorder.cstar M)⁻¹ ≤ (E : ℝ) :=
+    max_le (le_trans (Real.exp_le_exp.2 (by linarith)) ((le_max_left _ _).trans hEexp))
+      ((le_max_right _ _).trans hEexp)
+  -- the dimension-only gate of the frozen application, from the window premise
+  have hKgateE : Kgate ≤ ((E : ℝ)⁻¹) ^ 2 * M.gamma⁻¹ := by
+    have hw : Real.exp (-(Cout⁻¹ * ((E : ℝ)⁻¹) ^ 2 * M.gamma⁻¹)) ≤ M.gamma / 2 := by
+      linarith [hwindow]
+    have he1 : Real.exp 1 < 2.7182818286 := Real.exp_one_lt_d9
+    have hpos : (0 : ℝ) < Real.exp 1 := Real.exp_pos 1
+    have hinv : (1 : ℝ) / 2178 ≤ 1 / Real.exp 1 :=
+      one_div_le_one_div_of_le hpos (by linarith)
+    have hsmall : M.gamma / 2 ≤ Real.exp (-1) := by
+      rw [Real.exp_neg, ← one_div]
+      linarith [hgamma, hinv]
+    have hle1 : (1 : ℝ) ≤ Cout⁻¹ * ((E : ℝ)⁻¹) ^ 2 * M.gamma⁻¹ := by
+      have h := Real.exp_le_exp.1 (le_trans hw hsmall)
+      linarith
+    have heq : Cout * (Cout⁻¹ * ((E : ℝ)⁻¹) ^ 2 * M.gamma⁻¹) =
+        ((E : ℝ)⁻¹) ^ 2 * M.gamma⁻¹ := by
+      field_simp
+    calc Kgate ≤ Cout := hKleCout
+      _ = Cout * 1 := (mul_one _).symm
+      _ ≤ Cout * (Cout⁻¹ * ((E : ℝ)⁻¹) ^ 2 * M.gamma⁻¹) :=
+          mul_le_mul_of_nonneg_left hle1 hCout0.le
+      _ = ((E : ℝ)⁻¹) ^ 2 * M.gamma⁻¹ := heq
+  have hA0 : (0 : ℝ) ≤ 2 * (C * (Disorder.cstar M)⁻¹ * M.gamma⁻¹) := by
+    have h1 : (0 : ℝ) < (Disorder.cstar M)⁻¹ := inv_pos.2 hcstar0
+    have h2 : (0 : ℝ) < M.gamma⁻¹ := inv_pos.2 hgpos
+    have h3 : (0 : ℝ) < C * (Disorder.cstar M)⁻¹ * M.gamma⁻¹ :=
+      mul_pos (mul_pos hC0 h1) h2
+    linarith
+  have hW0 : (0 : ℝ) < (3 : ℝ) ^ (22 : ℝ) := Real.rpow_pos_of_pos (by norm_num) _
+  have hCb0 : (0 : ℝ) ≤ (3 : ℝ) ^ (22 : ℝ) * (2 * (C * (Disorder.cstar M)⁻¹ * M.gamma⁻¹)) :=
+    mul_nonneg hW0.le hA0
+  -- the two scale comparisons carried by the mesoscale identity
+  have hRm : R.scale ≤ m := by
+    rw [hRscale]
+    simp only [recurrenceMesoScale]
+    omega
+  have hRn : R.scale ≤ m - h := by
+    rw [hRscale]
+    simp only [recurrenceMesoScale]
+    omega
+  exact ⟨hgpos, hcstar0, hginv0, hwindowC, hEexpC, hKgateE, hA0, hW0, hCb0, hRm, hRn⟩
+
 /-- **The per-cube complement-energy estimate.**
 
 At a triadic cube `R` whose scale is the recurrence mesoscale `n - a *
@@ -707,64 +895,16 @@ private theorem exists_const_integral_switchCubeEnergy_mul_principalBadEvent_ind
   intro M E m h a R P hstate hh0 ha hRscale hEexp hEadm hEgamma hwindow hgamma hh
     hXm hVm hVint
   let : NeZero d := Algsuperdiff.Section3.Provider.BadEvents.neZeroOfModel M
-  have hgpos : (0 : ℝ) < M.gamma := M.shellPrefix.gamma_pos
-  have hcstar0 : (0 : ℝ) < Disorder.cstar M := (Disorder.cstar_characterization M).1
-  -- the enlarged exported constant, read back at the envelope constant
-  have hginv0 : (0 : ℝ) < M.gamma⁻¹ := inv_pos.2 hgpos
-  have hinvCC : Cout⁻¹ ≤ C⁻¹ := by
-    rw [inv_le_inv₀ hCout0 hC0]
-    exact hCleCout
-  have hmonoWin : Cout⁻¹ * ((E : ℝ)⁻¹) ^ 2 * M.gamma⁻¹ ≤
-      C⁻¹ * ((E : ℝ)⁻¹) ^ 2 * M.gamma⁻¹ :=
-    mul_le_mul_of_nonneg_right
-      (mul_le_mul_of_nonneg_right hinvCC (sq_nonneg _)) hginv0.le
-  have hwindowC : M.gamma / 2 +
-      Real.exp (-(C⁻¹ * ((E : ℝ)⁻¹) ^ 2 * M.gamma⁻¹)) ≤ M.gamma := by
-    have h := Real.exp_le_exp.2 (neg_le_neg hmonoWin)
-    linarith [hwindow]
-  have hEexpC : max (Real.exp (2 * C)) (Disorder.cstar M)⁻¹ ≤ (E : ℝ) :=
-    max_le (le_trans (Real.exp_le_exp.2 (by linarith)) ((le_max_left _ _).trans hEexp))
-      ((le_max_right _ _).trans hEexp)
-  -- the dimension-only gate of the frozen application, from the window premise
-  have hKgateE : Kgate ≤ ((E : ℝ)⁻¹) ^ 2 * M.gamma⁻¹ := by
-    have hw : Real.exp (-(Cout⁻¹ * ((E : ℝ)⁻¹) ^ 2 * M.gamma⁻¹)) ≤ M.gamma / 2 := by
-      linarith [hwindow]
-    have he1 : Real.exp 1 < 2.7182818286 := Real.exp_one_lt_d9
-    have hpos : (0 : ℝ) < Real.exp 1 := Real.exp_pos 1
-    have hinv : (1 : ℝ) / 2178 ≤ 1 / Real.exp 1 :=
-      one_div_le_one_div_of_le hpos (by linarith)
-    have hsmall : M.gamma / 2 ≤ Real.exp (-1) := by
-      rw [Real.exp_neg, ← one_div]
-      linarith [hgamma, hinv]
-    have hle1 : (1 : ℝ) ≤ Cout⁻¹ * ((E : ℝ)⁻¹) ^ 2 * M.gamma⁻¹ := by
-      have h := Real.exp_le_exp.1 (le_trans hw hsmall)
-      linarith
-    have heq : Cout * (Cout⁻¹ * ((E : ℝ)⁻¹) ^ 2 * M.gamma⁻¹) =
-        ((E : ℝ)⁻¹) ^ 2 * M.gamma⁻¹ := by
-      field_simp
-    calc Kgate ≤ Cout := hKleCout
-      _ = Cout * 1 := (mul_one _).symm
-      _ ≤ Cout * (Cout⁻¹ * ((E : ℝ)⁻¹) ^ 2 * M.gamma⁻¹) :=
-          mul_le_mul_of_nonneg_left hle1 hCout0.le
-      _ = ((E : ℝ)⁻¹) ^ 2 * M.gamma⁻¹ := heq
-  have hA0 : (0 : ℝ) ≤ 2 * (C * (Disorder.cstar M)⁻¹ * M.gamma⁻¹) := by
-    have h1 : (0 : ℝ) < (Disorder.cstar M)⁻¹ := inv_pos.2 hcstar0
-    have h2 : (0 : ℝ) < M.gamma⁻¹ := inv_pos.2 hgpos
-    have h3 : (0 : ℝ) < C * (Disorder.cstar M)⁻¹ * M.gamma⁻¹ :=
-      mul_pos (mul_pos hC0 h1) h2
-    linarith
-  have hW0 : (0 : ℝ) < (3 : ℝ) ^ (22 : ℝ) := Real.rpow_pos_of_pos (by norm_num) _
-  have hCb0 : (0 : ℝ) ≤ (3 : ℝ) ^ (22 : ℝ) * (2 * (C * (Disorder.cstar M)⁻¹ * M.gamma⁻¹)) :=
-    mul_nonneg hW0.le hA0
-  -- the two scale comparisons carried by the mesoscale identity
-  have hRm : R.scale ≤ m := by
-    rw [hRscale]
-    simp only [recurrenceMesoScale]
-    omega
-  have hRn : R.scale ≤ m - h := by
-    rw [hRscale]
-    simp only [recurrenceMesoScale]
-    omega
+  obtain ⟨hgpos, hcstar0, hginv0, hwindowC, hEexpC, hKgateE, hA0, hW0, hCb0, hRm, hRn⟩ :=
+    (show ((0 : ℝ) < M.gamma) ∧ ((0 : ℝ) < Disorder.cstar M) ∧ ((0 : ℝ) < M.gamma⁻¹) ∧ (M.gamma /
+      2 +
+      Real.exp (-(C⁻¹ * ((E : ℝ)⁻¹) ^ 2 * M.gamma⁻¹)) ≤ M.gamma) ∧ (max (Real.exp (2 * C))
+        (Disorder.cstar M)⁻¹ ≤ (E : ℝ)) ∧ (Kgate ≤ ((E : ℝ)⁻¹) ^ 2 * M.gamma⁻¹) ∧ ((0 : ℝ) ≤ 2 *
+          (C * (Disorder.cstar M)⁻¹ * M.gamma⁻¹)) ∧ ((0 : ℝ) < (3 : ℝ) ^ (22 : ℝ)) ∧ ((0 : ℝ) ≤ (3
+            : ℝ) ^ (22 : ℝ) * (2 * (C * (Disorder.cstar M)⁻¹ * M.gamma⁻¹))) ∧ (R.scale ≤ m) ∧
+              (R.scale ≤ m - h) from
+      @principalComplementEnergy_comparisonBounds2 (d) (Kgate) (C) (hC0) (hCout0) (hCleCout)
+        (hKleCout) (M) (E) (m) (h) (a) (R) (hh0) (hRscale) (hEexp) (hwindow) (hgamma))
   -- the field-scale envelope, its membership and its eighth moment
   obtain ⟨hGmem, hGmom⟩ := henv M m E hstate hEexpC hEgamma hwindowC
   have hG0 : ∀ omega : CutoffSample d,
@@ -772,69 +912,24 @@ private theorem exists_const_integral_switchCubeEnergy_mul_principalBadEvent_ind
         coarseExponentOne.1 omega := fun omega =>
     coarseEnvelopeCentred_nonneg M m m hgpos coarseExponentOne
       (Annealed.sigmaBar M (m - 1)) omega
-  have hF0 : ∀ omega : CutoffSample d,
+  obtain ⟨hF0, hBmem, hBm, hBmom⟩ :=
+    (show (∀ omega : CutoffSample d,
       0 ≤ coarseEnvelopeCentred M m (Annealed.sigmaBar M (m - 1)) R.scale M.gamma
-        coarseExponentOne.1 omega := fun omega =>
-    coarseEnvelopeCentred_nonneg M R.scale m hgpos coarseExponentOne
-      (Annealed.sigmaBar M (m - 1)) omega
-  have hFm : Measurable
-      (coarseEnvelopeCentred M m (Annealed.sigmaBar M (m - 1)) R.scale M.gamma
-        coarseExponentOne.1) :=
-    measurable_coarseEnvelopeCentred M R.scale m hgpos coarseExponentOne
-      (Annealed.sigmaBar M (m - 1))
-  -- the descendant promotion, at the numeral of the recurrence mesoscale
-  have hweight : Ch02.multiscaleDescendantWeight (originCube d m) R.scale M.gamma ≤
-      (3 : ℝ) ^ (22 : ℝ) := by
-    rw [hRscale]
-    exact multiscaleDescendantWeight_recurrenceMesoScale_le M m h ha hh hgamma
-  have hFle : ∀ omega : CutoffSample d,
-      coarseEnvelopeCentred M m (Annealed.sigmaBar M (m - 1)) R.scale M.gamma
-          coarseExponentOne.1 omega ≤
-        (3 : ℝ) ^ (22 : ℝ) *
-          coarseEnvelopeCentred M m (Annealed.sigmaBar M (m - 1)) m M.gamma
-            coarseExponentOne.1 omega := by
-    intro omega
-    exact (coarseEnvelopeCentred_le_weight_mul M m (Annealed.sigmaBar M (m - 1)) hRm
-      hgpos coarseExponentOne.2 omega).trans
-      (mul_le_mul_of_nonneg_right hweight (hG0 omega))
-  have hFmem : MemLp
-      (coarseEnvelopeCentred M m (Annealed.sigmaBar M (m - 1)) R.scale M.gamma
-        coarseExponentOne.1) 8 (cutoffSampleLaw M).toMeasure := by
-    refine MemLp.mono (hGmem.const_mul ((3 : ℝ) ^ (22 : ℝ))) hFm.aestronglyMeasurable
-      (Filter.Eventually.of_forall fun omega => ?_)
-    rw [Real.norm_eq_abs, Real.norm_eq_abs, abs_of_nonneg (hF0 omega)]
-    exact (hFle omega).trans (le_abs_self _)
-  have hFmom : ∫ omega : CutoffSample d,
-        coarseEnvelopeCentred M m (Annealed.sigmaBar M (m - 1)) R.scale M.gamma
-            coarseExponentOne.1 omega ^ (8 : ℝ) ∂(cutoffSampleLaw M).toMeasure ≤
-      ((3 : ℝ) ^ (22 : ℝ) * (2 * (C * (Disorder.cstar M)⁻¹ * M.gamma⁻¹))) ^ (8 : ℝ) :=
-    integral_rpow_eight_le_of_le_const_mul hW0.le hA0 hF0 hG0 hFle hGmem hGmom
-  -- the same two facts at the cube's base point
-  have hBmem : MemLp
+        coarseExponentOne.1 omega) ∧ (MemLp
       (fun omega : CutoffSample d =>
         coarseEnvelopeCentred M m (Annealed.sigmaBar M (m - 1)) R.scale M.gamma
           coarseExponentOne.1 (translateCutoffSample (triadicCubeShift R) omega))
-      8 (cutoffSampleLaw M).toMeasure :=
-    memLp_comp_translateCutoffSample M (triadicCubeShift R) hFmem
-  have hBm : AEStronglyMeasurable
+      8 (cutoffSampleLaw M).toMeasure) ∧ (AEStronglyMeasurable
       (fun omega : CutoffSample d =>
         coarseEnvelopeCentred M m (Annealed.sigmaBar M (m - 1)) R.scale M.gamma
           coarseExponentOne.1 (translateCutoffSample (triadicCubeShift R) omega))
-      (cutoffSampleLaw M).toMeasure :=
-    (hFm.comp (measurable_translateCutoffSample (triadicCubeShift R))).aestronglyMeasurable
-  have hBmom : ∫ omega : CutoffSample d,
+      (cutoffSampleLaw M).toMeasure) ∧ (∫ omega : CutoffSample d,
         coarseEnvelopeCentred M m (Annealed.sigmaBar M (m - 1)) R.scale M.gamma
             coarseExponentOne.1 (translateCutoffSample (triadicCubeShift R) omega) ^ (8 : ℝ)
         ∂(cutoffSampleLaw M).toMeasure ≤
-      ((3 : ℝ) ^ (22 : ℝ) * (2 * (C * (Disorder.cstar M)⁻¹ * M.gamma⁻¹))) ^ (8 : ℝ) := by
-    have hpow : AEStronglyMeasurable
-        (fun omega : CutoffSample d =>
-          coarseEnvelopeCentred M m (Annealed.sigmaBar M (m - 1)) R.scale M.gamma
-            coarseExponentOne.1 omega ^ (8 : ℝ)) (cutoffSampleLaw M).toMeasure :=
-      (((Real.continuous_rpow_const
-        (by norm_num : (0 : ℝ) ≤ 8)).measurable).comp hFm).aestronglyMeasurable
-    rw [integral_comp_translateCutoffSample M (triadicCubeShift R) hpow]
-    exact hFmom
+      ((3 : ℝ) ^ (22 : ℝ) * (2 * (C * (Disorder.cstar M)⁻¹ * M.gamma⁻¹))) ^ (8 : ℝ)) from
+      @principalComplementEnergy_comparisonBounds1 (d) (C) (M) (m) (h) (a) (R) (ha) (hRscale)
+        (hgamma) (hh) (hgpos) (hA0) (hW0) (hRm) (hGmem) (hGmom) (hG0))
   have hBn : eLpNorm
       (fun omega : CutoffSample d =>
         coarseEnvelopeCentred M m (Annealed.sigmaBar M (m - 1)) R.scale M.gamma
@@ -1089,7 +1184,7 @@ theorem exists_const_descendantsAverage_integral_switchCubeEnergy_badEvent_le
   have hexp : ∀ G : TriadicCube d → ℝ, descendantsAverage Q j G =
       (∑ R ∈ descendantsAtDepth Q j, G R) / ((descendantsAtDepth Q j).card : ℝ) := by
     intro G
-    show ((descendantsAtDepth Q j).card : ℝ)⁻¹ * ∑ R ∈ descendantsAtDepth Q j, G R = _
+    change ((descendantsAtDepth Q j).card : ℝ)⁻¹ * ∑ R ∈ descendantsAtDepth Q j, G R = _
     rw [div_eq_inv_mul]
   rcases Finset.eq_empty_or_nonempty (descendantsAtDepth Q j) with hempty | hne
   · rw [hexp, hempty]

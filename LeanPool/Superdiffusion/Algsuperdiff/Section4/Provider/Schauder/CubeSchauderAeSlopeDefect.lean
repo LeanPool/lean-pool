@@ -215,7 +215,7 @@ theorem abs_slope_sub_le_cutoff_split {m j : ℤ} {z : Vec d}
       ≤ ∫ y in truncatedWindow z m j, |u.grad y i - v i| ∂volume := by
     refine integral_mono (hB.mono_measure (Measure.restrict_mono hWU le_rfl)).abs hgvW ?_
     intro y
-    show |(u.grad y i - v i) * campanatoCutoff z j y| ≤ |u.grad y i - v i|
+    change |(u.grad y i - v i) * campanatoCutoff z j y| ≤ |u.grad y i - v i|
     rw [abs_mul, abs_of_nonneg (campanatoCutoff_nonneg z j y)]
     exact mul_le_of_le_one_right (abs_nonneg _) (campanatoCutoff_le_one z j y)
   -- the pairing term

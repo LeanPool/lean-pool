@@ -195,7 +195,7 @@ theorem exists_nodup_crossing_subpath {d k : ℕ} {Γ : List (Site d)}
       let q : (latticeGraph d).Path x y := p.toPath
       let Δ : List (Site d) := (q : (latticeGraph d).Walk x y).support
       have hΔcons : Δ = x :: Δ.tail := by
-        show (q : (latticeGraph d).Walk x y).support = x :: _
+        change (q : (latticeGraph d).Walk x y).support = x :: _
         rw [SimpleGraph.Walk.cons_tail_support]
       have hΔpath : IsPath Δ :=
         SimpleGraph.Walk.isChain_adj_support (q : (latticeGraph d).Walk x y)

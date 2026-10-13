@@ -235,7 +235,7 @@ theorem ae_interiorCaccioppoliEnergy_harmonicSlot (d : ℕ) [NeZero d] :
   have hsig : (0 : ℝ) < (Annealed.sigmaBar M (n + 2) : ℝ) :=
     (Annealed.sigmaBar M (n + 2)).2
   have hscale : (originCube d (n + 2)).scale - 1 = n + 1 := by
-    show n + 2 - 1 = n + 1
+    change n + 2 - 1 = n + 1
     ring
   have hpatch' : openCubeAtScale w ((originCube d (n + 2)).scale - 1) ⊆
       openCubeSet (originCube d (n + 2)) := by

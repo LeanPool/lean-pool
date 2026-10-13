@@ -83,7 +83,7 @@ variable {d : ℕ}
 /-- `s^{-4} · s = s^{-3}` for `s > 0`, the only exponent arithmetic the cap fold needs. -/
 theorem rpow_neg_four_mul_self {s : ℝ} (hs : 0 < s) :
     Real.rpow s (-(4 : ℝ)) * s = Real.rpow s (-(3 : ℝ)) := by
-  show s ^ (-(4 : ℝ)) * s = s ^ (-(3 : ℝ))
+  change s ^ (-(4 : ℝ)) * s = s ^ (-(3 : ℝ))
   rw [show (-(3 : ℝ)) = -(4 : ℝ) + 1 by norm_num, Real.rpow_add hs, Real.rpow_one]
 
 /-- ** residue 1: the good-event cap fold.**

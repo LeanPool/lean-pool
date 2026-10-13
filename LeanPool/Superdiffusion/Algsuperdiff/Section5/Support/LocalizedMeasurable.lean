@@ -122,7 +122,7 @@ theorem sqrt_energy_grad_sub_le_data {y : Vec d} {n : ℤ} {a : CoeffField d} {l
         vecDot (matVecMul (a x) (w.toH1Function.grad x)) (w.toH1Function.grad x) ∂volume := by
     refine integral_mono_ae hSqInt hEnergyInt ((ae_restrict_iff' hUmeas).2 ?_)
     refine Filter.Eventually.of_forall fun x hx => ?_
-    show lam * vecNormSq (w.toH1Function.grad x) ≤
+    change lam * vecNormSq (w.toH1Function.grad x) ≤
       vecDot (matVecMul (a x) (w.toH1Function.grad x)) (w.toH1Function.grad x)
     rw [vecDot_comm]
     exact (hEll.2 x hx).2.2.1 (w.toH1Function.grad x)
@@ -161,7 +161,7 @@ theorem sqrt_energy_grad_sub_le_data {y : Vec d} {n : ℤ} {a : CoeffField d} {l
   have hgrad : (∫ x in cubeSetAt y n, ‖u.grad x - u'.grad x‖ ^ (2 : ℕ) ∂volume) =
       ∫ x in cubeSetAt y n, ‖w.toH1Function.grad x‖ ^ (2 : ℕ) ∂volume := by
     refine integral_congr_ae (Filter.Eventually.of_forall fun x => ?_)
-    show ‖u.grad x - u'.grad x‖ ^ (2 : ℕ) = ‖w.toH1Function.grad x‖ ^ (2 : ℕ)
+    change ‖u.grad x - u'.grad x‖ ^ (2 : ℕ) = ‖w.toH1Function.grad x‖ ^ (2 : ℕ)
     rw [hwg x]
   rw [hgrad]
   rcases eq_or_lt_of_le hSnn with hzero | hpos

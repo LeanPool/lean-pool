@@ -79,7 +79,7 @@ theorem oddAffineIntercept_comp_coordFaceReflection_zero (x : Vec d) (m : ℤ)
 
 private theorem oddAffineSlope_apply_of_ne {i j : Fin d} (A : Vec d) (hji : j ≠ i) :
     oddAffineSlope i A j = 0 := by
-  show (if j = i then A i else 0) = 0
+  change (if j = i then A i else 0) = 0
   rw [ite_eq_right hji]
 
 theorem oddAffineSlope_comp_coordFaceReflection_zero (i : Fin d) (A : Vec d) :

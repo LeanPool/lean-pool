@@ -38,28 +38,28 @@ variable {d : ℕ}
 
 /-- `s^{-2} = 16` at the pin `s = 1/4`. -/
 theorem stepOneS_rpow_neg_two : Real.rpow stepOneS (-(2 : ℝ)) = 16 := by
-  show (1 / 4 : ℝ) ^ (-(2 : ℝ)) = 16
+  change (1 / 4 : ℝ) ^ (-(2 : ℝ)) = 16
   rw [Real.rpow_neg (by norm_num),
     show (2 : ℝ) = ((2 : ℕ) : ℝ) by norm_num, Real.rpow_natCast]
   norm_num
 
 /-- `s^{-3} = 64` at the pin. -/
 theorem stepOneS_rpow_neg_three : Real.rpow stepOneS (-(3 : ℝ)) = 64 := by
-  show (1 / 4 : ℝ) ^ (-(3 : ℝ)) = 64
+  change (1 / 4 : ℝ) ^ (-(3 : ℝ)) = 64
   rw [Real.rpow_neg (by norm_num),
     show (3 : ℝ) = ((3 : ℕ) : ℝ) by norm_num, Real.rpow_natCast]
   norm_num
 
 /-- `s^{-6} = 4096` at the pin. -/
 theorem stepOneS_rpow_neg_six : Real.rpow stepOneS (-(6 : ℝ)) = 4096 := by
-  show (1 / 4 : ℝ) ^ (-(6 : ℝ)) = 4096
+  change (1 / 4 : ℝ) ^ (-(6 : ℝ)) = 4096
   rw [Real.rpow_neg (by norm_num),
     show (6 : ℝ) = ((6 : ℕ) : ℝ) by norm_num, Real.rpow_natCast]
   norm_num
 
 /-- `s^{-7} = 16384` at the pin. -/
 theorem stepOneS_rpow_neg_seven : Real.rpow stepOneS (-(7 : ℝ)) = 16384 := by
-  show (1 / 4 : ℝ) ^ (-(7 : ℝ)) = 16384
+  change (1 / 4 : ℝ) ^ (-(7 : ℝ)) = 16384
   rw [Real.rpow_neg (by norm_num),
     show (7 : ℝ) = ((7 : ℕ) : ℝ) by norm_num, Real.rpow_natCast]
   norm_num

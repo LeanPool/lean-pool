@@ -234,7 +234,7 @@ theorem measurableSet_activeShellRegion {Lidx : iota → ℤ} {U : iota → Set 
   · exact MeasurableSet.empty
 
 /-- **The `(index, shell)` sigma-field**: what index `i` can see of shell `l`. -/
-def activeShellSigma (Lidx : iota → ℤ) (U : iota → Set (Vec d)) (i : iota) (l : ℤ) :
+abbrev activeShellSigma (Lidx : iota → ℤ) (U : iota → Set (Vec d)) (i : iota) (l : ℤ) :
     MeasurableSpace (ShellSeq d) :=
   (ShellField.lihLocalSigma (activeShellRegion Lidx U i l)).comap
     (fun omega : ShellSeq d => omega l)

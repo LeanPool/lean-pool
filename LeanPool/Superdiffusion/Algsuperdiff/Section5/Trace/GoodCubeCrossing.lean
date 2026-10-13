@@ -291,7 +291,7 @@ theorem exists_goodSiteEnum_eq {k : ℕ} (Good : Section5.Percolation.Site d →
   have hmem : z ∈ goodSites k Good :=
     Finset.mem_filter.mpr ⟨Section5.Percolation.mem_cubeSites_of_inCube hz, hgood⟩
   refine ⟨(goodSites k Good).equivFin ⟨z, hmem⟩, ?_⟩
-  show ((goodSites k Good).equivFin.symm
+  change ((goodSites k Good).equivFin.symm
     ((goodSites k Good).equivFin ⟨z, hmem⟩) : Section5.Percolation.Site d) = z
   rw [Equiv.symm_apply_apply]
 

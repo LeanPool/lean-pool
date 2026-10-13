@@ -566,7 +566,7 @@ private theorem multiscaleDescendantWeight_split {Q : TriadicCube d} {k : ℤ}
       2 * s * ((Q.scale - k : ℤ) : ℝ) + 2 * s * ((k - R.scale : ℤ) : ℝ) := by
     push_cast
     ring
-  show (3 : ℝ) ^ (2 * s * ((Q.scale - R.scale : ℤ) : ℝ)) =
+  change (3 : ℝ) ^ (2 * s * ((Q.scale - R.scale : ℤ) : ℝ)) =
     (3 : ℝ) ^ (2 * s * ((Q.scale - k : ℤ) : ℝ)) * (3 : ℝ) ^ (2 * s * ((k - R.scale : ℤ) : ℝ))
   rw [hexp, Real.rpow_add (by norm_num)]
 

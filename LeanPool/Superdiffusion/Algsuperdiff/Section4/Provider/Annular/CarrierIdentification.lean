@@ -119,7 +119,7 @@ theorem fluxCorrectedCoeffFamily_coeffOn_aeeq_subConstCutoff (M : ABKModel d)
         (matTranspose_fluxIncrementAverage M L m (originCube d m) omega)
         omega).coeffOn (⟨n, v⟩ : TriadicCube d)) := by
   refine Filter.Eventually.of_forall fun x => ?_
-  show (Support.fluxCorrectedRegField M L m (originCube d m) omega).toFun x = _
+  change (Support.fluxCorrectedRegField M L m (originCube d m) omega).toFun x = _
   rw [Support.fluxCorrectedRegField_toFun]
   rfl
 

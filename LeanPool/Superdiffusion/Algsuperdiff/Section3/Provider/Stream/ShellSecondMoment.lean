@@ -116,7 +116,7 @@ private theorem matrixFrobeniusNormSq_triadicScale_apply (gamma : ℝ) (k : ℤ)
         matrixFrobeniusNormSq (j ((((3 : ℝ) ^ k)⁻¹) • x)) := by
   rw [ShellField.triadicScale_apply, matrixFrobeniusNormSq_smul]
   congr 1
-  show ((3 : ℝ) ^ (gamma * (k : ℝ))) ^ 2 = (3 : ℝ) ^ (2 * gamma * (k : ℝ))
+  change ((3 : ℝ) ^ (gamma * (k : ℝ))) ^ 2 = (3 : ℝ) ^ (2 * gamma * (k : ℝ))
   rw [← Real.rpow_natCast ((3 : ℝ) ^ (gamma * (k : ℝ))) 2,
     ← Real.rpow_mul (by norm_num : (0 : ℝ) ≤ 3)]
   congr 1

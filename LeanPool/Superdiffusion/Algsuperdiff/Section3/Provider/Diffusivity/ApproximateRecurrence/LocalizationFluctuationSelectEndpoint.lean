@@ -37,7 +37,8 @@ needs the *sample integral* of that split's left-hand side, so its right-hand
 side has to be an honest function of the sample.  Three things are supplied
 here.
 
-1. **De-existentialization** (`blockVecDot_recurrenceP_le_descendantsAverage_switch_add_fluctuation`).
+1. **De-existentialization**
+(`blockVecDot_recurrenceP_le_descendantsAverage_switch_add_fluctuation`).
    The split's right-hand side is rewritten, at each cell, as
    `switchCubeEnergy` plus the canonical number
    `LocalizationFluctuationSelectValue.localizationFluctuationValue`, which is
@@ -157,7 +158,7 @@ average. -/
 theorem descendantsAverage_congr (Q : TriadicCube d) (j : ℕ)
     {F G : TriadicCube d → ℝ} (h : ∀ R ∈ descendantsAtDepth Q j, F R = G R) :
     descendantsAverage Q j F = descendantsAverage Q j G := by
-  show ((descendantsAtDepth Q j).card : ℝ)⁻¹ * ∑ R ∈ descendantsAtDepth Q j, F R =
+  change ((descendantsAtDepth Q j).card : ℝ)⁻¹ * ∑ R ∈ descendantsAtDepth Q j, F R =
     ((descendantsAtDepth Q j).card : ℝ)⁻¹ * ∑ R ∈ descendantsAtDepth Q j, G R
   rw [Finset.sum_congr rfl h]
 
@@ -166,7 +167,7 @@ theorem descendantsAverage_add (Q : TriadicCube d) (j : ℕ)
     (F G : TriadicCube d → ℝ) :
     descendantsAverage Q j (fun R => F R + G R) =
       descendantsAverage Q j F + descendantsAverage Q j G := by
-  show ((descendantsAtDepth Q j).card : ℝ)⁻¹ *
+  change ((descendantsAtDepth Q j).card : ℝ)⁻¹ *
       ∑ R ∈ descendantsAtDepth Q j, (F R + G R) =
     ((descendantsAtDepth Q j).card : ℝ)⁻¹ * ∑ R ∈ descendantsAtDepth Q j, F R +
       ((descendantsAtDepth Q j).card : ℝ)⁻¹ * ∑ R ∈ descendantsAtDepth Q j, G R
@@ -198,7 +199,7 @@ theorem integral_descendantsAverage {Omega : Type*} [MeasurableSpace Omega]
     (hint : ∀ R ∈ descendantsAtDepth Q j, Integrable (fun omega => f omega R) mu) :
     ∫ omega, descendantsAverage Q j (f omega) ∂mu =
       descendantsAverage Q j (fun R => ∫ omega, f omega R ∂mu) := by
-  show ∫ omega, ((descendantsAtDepth Q j).card : ℝ)⁻¹ *
+  change ∫ omega, ((descendantsAtDepth Q j).card : ℝ)⁻¹ *
       ∑ R ∈ descendantsAtDepth Q j, f omega R ∂mu = _
   rw [integral_const_mul, integral_finsetSum _ hint]
   rfl

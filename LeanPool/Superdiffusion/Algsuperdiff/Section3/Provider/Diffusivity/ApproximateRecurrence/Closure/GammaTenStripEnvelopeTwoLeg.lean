@@ -30,7 +30,7 @@ ABK26, Step 2 of `l.approximate.recurrence.formula`,
 restatement `Closure.ClosureInteriorSplit.ClosureInteriorBesovEnvelopeInput` ---
 asks for **one** sample family `Bg` dominating the Besov towers of **both** legs
 of the gauged `bfF_z`, with `gridFourthMomentRoot Bg <= cgamma^{15}`.  By
-`Closure.GammaTenEnvelopeInputGauge.cubeBesovPositiveVectorPartialSeminormTwo_gauged_localizationFz_potential`
+`cubeBesovPositiveVectorPartialSeminormTwo_gauged_localizationFz_potential`
 and `..._flux` those two towers are `|c_1|` and `|c_2|` times the towers of two
 **raw** fields, the Dirichlet corrector gradient and the Neumann flux field, with
 
@@ -41,7 +41,7 @@ and `..._flux` those two towers are `|c_1|` and `|c_2|` times the towers of two
 both bounded by the gauge cap of `e.shom.h.bounds`.  This module produces that
 single envelope from the two raw per-depth inputs, and closes the arithmetic:
 each leg is enveloped at the budget `cgamma^{15} / (4 C_g)` by
-`Closure.GammaTenStripEnvelopeConst.exists_besovEnvelope_interiorMesoCubeGrid_of_depth_gridRoot_const`,
+`exists_besovEnvelope_interiorMesoCubeGrid_of_depth_gridRoot_const`,
 the two envelopes are added, and the elementary constant `8^{1/4} <= 2` of
 `LocalizationOscillationGridMoment.gridFourthMomentRoot_le_add_of_le` still
 leaves the sum below `cgamma^{15}`:

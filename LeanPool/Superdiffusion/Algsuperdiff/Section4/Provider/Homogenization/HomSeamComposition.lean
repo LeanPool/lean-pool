@@ -63,7 +63,8 @@ the lane's pinned
 whole `|log γ|` is spent on `GEOM` alone at present, and `GEOM ≤ 2|log γ|` is
 generous — but a `CcgF: ABKModel d → ℝ` re-thread of the lane's sup-form clause
 carrier and of `RecutCoreSupplyFluxEnergySupGrad` (the only two carriers that
-pin `Ccg`; everything downstream already carries it free) is required first.  NOT attempted in this file.
+pin `Ccg`; everything downstream already carries it free) is required first.  NOT attempted in this
+file.
 -/
 
 open Algsuperdiff.Section3

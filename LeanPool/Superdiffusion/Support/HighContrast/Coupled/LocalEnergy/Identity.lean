@@ -187,7 +187,8 @@ theorem integrableOn_bulkIntegrand {a : CoeffField d} {Θ : ℝ}
   have hF1 : MemVectorL2 U (fun x => P.2 - (1/2:ℝ)•matVecMul (a x) P.1) := by
     have h2 : MemVectorL2 U (fun x => (1/2:ℝ)•matVecMul (a x) P.1) := by
       simpa using!
-        (memVectorL2_matVecMul_of_isEllipticFieldOn hEllO (memVectorL2_const P.1)).const_smul (1/2:ℝ)
+        (memVectorL2_matVecMul_of_isEllipticFieldOn hEllO (memVectorL2_const P.1)).const_smul
+          (1/2:ℝ)
     simpa using! (memVectorL2_const P.2).sub h2
   have hF2 : MemVectorL2 U (fun x => (1/2:ℝ)•matVecMul (matTranspose (a x)) P.1) := by
     have hEllAdj : IsEllipticFieldOn 1 Θ U (HCPolySupport.adjointCoeffField a) :=
@@ -215,7 +216,8 @@ theorem integrableOn_cutoffIntegrand {a : CoeffField d} {Θ : ℝ}
   have hus : MemScalarL2 U (centeredPotential m vstar P.1 (-c)).toFun :=
     (centeredPotential m vstar P.1 (-c)).memL2
   have hF1 : MemVectorL2 U (fun x => P.2 - matVecMul (a x) (v.grad x)) :=
-    (memVectorL2_const P.2).sub (memVectorL2_matVecMul_of_isEllipticFieldOn hEllO v.grad_memVectorL2)
+    (memVectorL2_const P.2).sub (memVectorL2_matVecMul_of_isEllipticFieldOn hEllO
+      v.grad_memVectorL2)
   have hF2 : MemVectorL2 U (fun x => matVecMul (matTranspose (a x)) (vstar.grad x)) := by
     simpa [HCPolySupport.adjointCoeffField] using
       memVectorL2_matVecMul_of_isEllipticFieldOn hEllAdj vstar.grad_memVectorL2

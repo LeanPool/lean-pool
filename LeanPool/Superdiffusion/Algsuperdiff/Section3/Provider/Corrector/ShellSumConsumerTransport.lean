@@ -20,6 +20,9 @@ Module imports, support namespace and local option directives adapted for Lean P
 
 @[expose] public section
 
+open Algsuperdiff.Section3.Provider.Diffusivity.Corrector
+  (isFiniteMeasure_volumeMeasureOn_openCubeSet)
+
 
 /-!
 # The shell-sum corrector limit at the recurrence consumer's data
@@ -88,6 +91,8 @@ open Algsuperdiff.Section3 (ABKModel)
 
 noncomputable section
 
+
+
 variable {d : ℕ}
 
 /-! ### The forcing identification -/
@@ -111,7 +116,7 @@ theorem toVec_realize_valuePathForcing_shellSumValuePath (c : ℝ) (e : Vec d)
     (realize (valuePathForcing (c • e)) (shellSumValuePath n m omega) x).toVec
       = Algsuperdiff.Section3.Provider.Diffusivity.Corrector.streamForcing
           c omega n m e x := by
-  show HilbertVec.toVec (HilbertVec.ofVec
+  change HilbertVec.toVec (HilbertVec.ofVec
       (matVecMul (((x +ᵥ shellSumValuePath n m omega) : C(Vec d, Mat d)) 0) (c • e)))
     = c • matVecMul (finiteShellIncrement omega n m x) e
   rw [HilbertVec.toVec_ofVec, ShellField.vadd_apply, zero_add,
@@ -286,7 +291,7 @@ theorem tendsto_integral_cutoffSample_cubeAverage_of_weakSolutions
       (hmem K f) (hD K f)
   · exact (wN K f).toH1Function.isPotentialOn
   · have :=
-      Algsuperdiff.Section3.Provider.Diffusivity.Corrector.isFiniteMeasure_volumeMeasureOn_openCubeSet
+      isFiniteMeasure_volumeMeasureOn_openCubeSet
         (originCube d (K : ℤ))
     exact isSolenoidalZeroNormalTraceOn_grad_add_of_isMeanZeroNeumannRhsWeakSolution_one
       (hmem K f) (hN K f)

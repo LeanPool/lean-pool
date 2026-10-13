@@ -396,7 +396,7 @@ theorem exists_isCubeRepresentative_of_tendsto (hd : 0 < d) (hK0 : 0 ≤ K0) (hr
     filter_upwards [hae] with x hx
     have hx0 : (u.toFun x - seriesTail wRep 0 x) ^ (2 : ℕ) = 0 := hx
     have := pow_eq_zero_iff (n := 2) (by norm_num) |>.1 hx0
-    show seriesTail wRep 0 x = u.toFun x
+    change seriesTail wRep 0 x = u.toFun x
     linarith only [this]
   · intro x hx z hz
     have h := abs_seriesTail_sub_le hd hK0 hrho0 hrho1 hrep hzero hK 0 hx hz

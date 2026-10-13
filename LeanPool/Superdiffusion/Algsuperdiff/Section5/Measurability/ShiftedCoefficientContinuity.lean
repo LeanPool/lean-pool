@@ -13,8 +13,6 @@ public import LeanPool.Superdiffusion.Algsuperdiff.StochasticProcess.Common.Dive
 public import LeanPool.Superdiffusion.Algsuperdiff.StochasticProcess.Common.DivergenceForm.PenalizationInterior
 public import LeanPool.Superdiffusion.Algsuperdiff.StochasticProcess.Common.DivergenceForm.WholeSpace.EllipticityWitness
 
-@[expose] public section
-
 /-!
 # Stability of shifted weak solutions under coefficient perturbations
 
@@ -23,6 +21,10 @@ shifted divergence-form solution with respect to its coefficient.  The
 coefficient-specific work is reduced to bounding the difference of the two
 shifted bilinear forms at one of the solutions.
 -/
+
+@[expose] public section
+
+
 
 namespace Algsuperdiff.Section5.Measurability.ShiftedCoefficientContinuity
 
@@ -339,7 +341,8 @@ theorem continuous_shiftedFieldResolvent (hnu : 0 < nu) (halpha : 0 < alpha)
     positivity
   refine ⟨eps / (C + 1), by positivity, fun A hA => ?_⟩
   have hentry : ∀ x ∈ U, ∀ i j,
-      |extendCoeff (0 : Vec d) n A.1 x i j - extendCoeff (0 : Vec d) n A0.1 x i j| ≤ dist A.1 A0.1 := by
+      |extendCoeff (0 : Vec d) n A.1 x i j - extendCoeff (0 : Vec d) n A0.1 x i j| ≤ dist A.1 A0.1
+        := by
     intro x hx i j
     have hxK : x ∈ closedCubeAt (0 : Vec d) n :=
       cubeSetAt_subset_closedCubeAt (0 : Vec d) n (hUsub hx)

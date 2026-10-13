@@ -134,7 +134,7 @@ theorem cubeEuclideanLpNorm_const {d : ℕ} (Q : TriadicCube d) {p : ℝ≥0∞}
 private theorem vecNorm_zero_vec {d : ℕ} : vecNorm (0 : Vec d) = 0 := by
   rw [Corrector.vecNorm_eq_sqrt_vecNormSq]
   have hz : vecNormSq (0 : Vec d) = 0 := by
-    show ∑ i, (0 : Vec d) i * (0 : Vec d) i = 0
+    change ∑ i, (0 : Vec d) i * (0 : Vec d) i = 0
     simp
   rw [hz, Real.sqrt_zero]
 
@@ -230,6 +230,134 @@ private theorem originCubeFourthEnergy_shift_le {d : ℕ} (K : ℤ) (c : Vec d)
     _ ≤ 8 * (a ^ (4 : ℕ) + b ^ (4 : ℕ)) := add_pow_four_le_eight a b
 
 /-! ## The `K`-uniform majorant -/
+
+private theorem stripFourthEnergy_calderonZygmund_bound :
+    ∀ (d : ℕ) [NeZero d] (M : ABKModel d) (n : ℤ) (h : ℕ)
+      (e e' : Vec d) (Ccz : ℝ),
+      (0 : ℝ) < Ccz →
+        (∀ (Q : TriadicCube d) (fD fN : Vec d → Vec d),
+            Continuous fD →
+              Continuous fN →
+                ∀ (wD : H10Function (openCubeSet Q)),
+                  (IsZeroTraceDirichletRhsWeakSolution (fun (_ : Vec d) => (1 : Matrix (Fin d) (Fin d) ℝ)) (openCubeSet Q)
+                      wD fun (x : Vec d) => -fD x) →
+                    ∀ (wN : H1MeanZeroFunction (openCubeSet Q)),
+                      (IsMeanZeroNeumannRhsWeakSolution (fun (_ : Vec d) => (1 : Matrix (Fin d) (Fin d) ℝ)) (openCubeSet Q)
+                          wN fun (x : Vec d) => -fN x) →
+                        cubeEuclideanLpNorm Q (8 : ℝ≥0∞) wD.grad ^ (2 : ℕ) +
+                            cubeEuclideanLpNorm Q (8 : ℝ≥0∞) wN.toH1Function.grad ^ (2 : ℕ) ≤
+                          Ccz *
+                            (cubeEuclideanLpNorm Q (8 : ℝ≥0∞) fD ^ (2 : ℕ) +
+                              cubeEuclideanLpNorm Q (8 : ℝ≥0∞) fN ^ (2 : ℕ))) →
+          let ce : ℝ := max (1 : ℝ) (vecNorm e);
+          let ce' : ℝ := max (1 : ℝ) (vecNorm e');
+          (0 : ℝ) ≤ ce →
+            (0 : ℝ) ≤ ce' →
+              let A : ℝ := √Ccz * (↑(Annealed.sigmaBar M n) : ℝ)⁻¹ * (ce + ce');
+              A = √Ccz * (↑(Annealed.sigmaBar M n) : ℝ)⁻¹ * (ce + ce') →
+                (0 : ℝ) ≤ A →
+                  ∀ (K : ℕ) (tf : ShellSeq d → ℝ),
+                    (∀ (omega : ShellSeq d), (0 : ℝ) ≤ tf omega) →
+                      (∀ (omega : ShellSeq d),
+                          cubeEuclideanLpNorm (originCube d (↑K : ℤ)) (8 : ℝ≥0∞)
+                              (streamForcing (↑(Annealed.sigmaBar M n) : ℝ)⁻¹ omega n (n + (↑h : ℤ)) e) ≤
+                            (↑(Annealed.sigmaBar M n) : ℝ)⁻¹ * ce * tf omega) →
+                        (∀ (omega : ShellSeq d),
+                            cubeEuclideanLpNorm (originCube d (↑K : ℤ)) (8 : ℝ≥0∞)
+                                (streamForcing (↑(Annealed.sigmaBar M n) : ℝ)⁻¹ omega n (n + (↑h : ℤ)) e') ≤
+                              (↑(Annealed.sigmaBar M n) : ℝ)⁻¹ * ce' * tf omega) →
+                          ∀ (omega : ShellSeq d),
+                            cubeEuclideanLpNorm (originCube d (↑K : ℤ)) (8 : ℝ≥0∞)
+                                  (closureDirichletAlong M n h K e omega).grad ≤
+                                A * tf omega ∧
+                              cubeEuclideanLpNorm (originCube d (↑K : ℤ)) (8 : ℝ≥0∞)
+                                  (closureNeumannAlong M n h K e' omega).toH1Function.grad ≤
+                                A * tf omega := by
+  intro d _ M n h e e' Ccz hCczpos hCZ ce ce' hce0 hce'0 A hAdef hAnn K tf htf0 htfD htfN omega
+  have hbase := hCZ (originCube d (K : ℤ))
+    (streamForcing ((Annealed.sigmaBar M n : ℝ))⁻¹ omega n (n + (h : ℤ)) e)
+    (streamForcing ((Annealed.sigmaBar M n : ℝ))⁻¹ omega n (n + (h : ℤ)) e')
+    (continuous_streamForcing _ _ _ _ _) (continuous_streamForcing _ _ _ _ _)
+    (closureDirichletAlong M n h K e omega)
+    (isZeroTraceDirichletRhsWeakSolution_closureDirichletAlong M n h K e omega)
+    (closureNeumannAlong M n h K e' omega)
+    (isMeanZeroNeumannRhsWeakSolution_closureNeumannAlong M n h K e' omega)
+  have ht0 := htf0 omega
+  have hfD := htfD omega
+  have hfN := htfN omega
+  have hfD0 : (0 : ℝ) ≤ cubeEuclideanLpNorm (originCube d (K : ℤ)) 8
+      (streamForcing ((Annealed.sigmaBar M n : ℝ))⁻¹ omega n (n + (h : ℤ)) e) :=
+    cubeEuclideanLpNorm_nonneg _ _ _
+  have hfN0 : (0 : ℝ) ≤ cubeEuclideanLpNorm (originCube d (K : ℤ)) 8
+      (streamForcing ((Annealed.sigmaBar M n : ℝ))⁻¹ omega n (n + (h : ℤ)) e') :=
+    cubeEuclideanLpNorm_nonneg _ _ _
+  have hnD0 : (0 : ℝ) ≤ cubeEuclideanLpNorm (originCube d (K : ℤ)) 8
+      (closureDirichletAlong M n h K e omega).toH1Function.grad :=
+    cubeEuclideanLpNorm_nonneg _ _ _
+  have hnN0 : (0 : ℝ) ≤ cubeEuclideanLpNorm (originCube d (K : ℤ)) 8
+      (closureNeumannAlong M n h K e' omega).toH1Function.grad :=
+    cubeEuclideanLpNorm_nonneg _ _ _
+  have hsq1 : cubeEuclideanLpNorm (originCube d (K : ℤ)) 8
+      (streamForcing ((Annealed.sigmaBar M n : ℝ))⁻¹ omega n (n + (h : ℤ)) e) ^ (2 : ℕ)
+      ≤ (((Annealed.sigmaBar M n : ℝ))⁻¹ * ce * tf omega) ^ (2 : ℕ) :=
+    pow_le_pow_left₀ hfD0 hfD 2
+  have hsq2 : cubeEuclideanLpNorm (originCube d (K : ℤ)) 8
+      (streamForcing ((Annealed.sigmaBar M n : ℝ))⁻¹ omega n (n + (h : ℤ)) e') ^ (2 : ℕ)
+      ≤ (((Annealed.sigmaBar M n : ℝ))⁻¹ * ce' * tf omega) ^ (2 : ℕ) :=
+    pow_le_pow_left₀ hfN0 hfN 2
+  have hcross : (((Annealed.sigmaBar M n : ℝ))⁻¹ * ce * tf omega) ^ (2 : ℕ) +
+      (((Annealed.sigmaBar M n : ℝ))⁻¹ * ce' * tf omega) ^ (2 : ℕ) ≤
+      (((Annealed.sigmaBar M n : ℝ))⁻¹ * (ce + ce') * tf omega) ^ (2 : ℕ) := by
+    have hid : (((Annealed.sigmaBar M n : ℝ))⁻¹ * (ce + ce') * tf omega) ^ (2 : ℕ) -
+        ((((Annealed.sigmaBar M n : ℝ))⁻¹ * ce * tf omega) ^ (2 : ℕ) +
+          (((Annealed.sigmaBar M n : ℝ))⁻¹ * ce' * tf omega) ^ (2 : ℕ)) =
+        2 * ((((Annealed.sigmaBar M n : ℝ))⁻¹) ^ (2 : ℕ) * tf omega ^ (2 : ℕ) *
+          (ce * ce')) := by ring
+    have hnn : (0 : ℝ) ≤ 2 * ((((Annealed.sigmaBar M n : ℝ))⁻¹) ^ (2 : ℕ) *
+        tf omega ^ (2 : ℕ) * (ce * ce')) :=
+      mul_nonneg (by norm_num)
+        (mul_nonneg (mul_nonneg (sq_nonneg _) (sq_nonneg _))
+          (mul_nonneg hce0 hce'0))
+    linarith
+  have hAt : (A * tf omega) ^ (2 : ℕ) =
+      Ccz * (((Annealed.sigmaBar M n : ℝ))⁻¹ * (ce + ce') * tf omega) ^ (2 : ℕ) := by
+    have hs : Real.sqrt Ccz ^ (2 : ℕ) = Ccz := Real.sq_sqrt hCczpos.le
+    rw [hAdef]
+    calc (Real.sqrt Ccz * ((Annealed.sigmaBar M n : ℝ))⁻¹ * (ce + ce') * tf omega)
+            ^ (2 : ℕ)
+        = Real.sqrt Ccz ^ (2 : ℕ) *
+            (((Annealed.sigmaBar M n : ℝ))⁻¹ * (ce + ce') * tf omega) ^ (2 : ℕ) := by
+          ring
+      _ = Ccz * (((Annealed.sigmaBar M n : ℝ))⁻¹ * (ce + ce') * tf omega) ^ (2 : ℕ) := by
+          rw [hs]
+  have hAtnn : (0 : ℝ) ≤ A * tf omega := mul_nonneg hAnn ht0
+  have hchain : Ccz * (cubeEuclideanLpNorm (originCube d (K : ℤ)) 8
+        (streamForcing ((Annealed.sigmaBar M n : ℝ))⁻¹ omega n (n + (h : ℤ)) e)
+          ^ (2 : ℕ) +
+        cubeEuclideanLpNorm (originCube d (K : ℤ)) 8
+        (streamForcing ((Annealed.sigmaBar M n : ℝ))⁻¹ omega n (n + (h : ℤ)) e')
+          ^ (2 : ℕ)) ≤ (A * tf omega) ^ (2 : ℕ) := by
+    rw [hAt]
+    exact mul_le_mul_of_nonneg_left (by linarith) hCczpos.le
+  constructor
+  · refine le_of_sq_le_sq_of_nonneg hnD0 hAtnn ?_
+    have hsplit : cubeEuclideanLpNorm (originCube d (K : ℤ)) 8
+        (closureDirichletAlong M n h K e omega).toH1Function.grad ^ (2 : ℕ) ≤
+        cubeEuclideanLpNorm (originCube d (K : ℤ)) 8
+          (closureDirichletAlong M n h K e omega).toH1Function.grad ^ (2 : ℕ) +
+        cubeEuclideanLpNorm (originCube d (K : ℤ)) 8
+          (closureNeumannAlong M n h K e' omega).toH1Function.grad ^ (2 : ℕ) :=
+      le_add_of_nonneg_right (sq_nonneg _)
+    linarith
+  · refine le_of_sq_le_sq_of_nonneg hnN0 hAtnn ?_
+    have hsplit : cubeEuclideanLpNorm (originCube d (K : ℤ)) 8
+        (closureNeumannAlong M n h K e' omega).toH1Function.grad ^ (2 : ℕ) ≤
+        cubeEuclideanLpNorm (originCube d (K : ℤ)) 8
+          (closureDirichletAlong M n h K e omega).toH1Function.grad ^ (2 : ℕ) +
+        cubeEuclideanLpNorm (originCube d (K : ℤ)) 8
+          (closureNeumannAlong M n h K e' omega).toH1Function.grad ^ (2 : ℕ) :=
+      le_add_of_nonneg_left (sq_nonneg _)
+    linarith
 
 /-- **A `K`-uniform integrable majorant for the two strip fourth energies.**
 
@@ -345,96 +473,8 @@ theorem exists_strip_fourthEnergy_majorant (d : ℕ) [NeZero d] (hd : 2 ≤ d)
       exact hbd
   obtain ⟨tf, htf0, htfD, htfN, htfint, htfbd⟩ := key
   -- Step 2: Calderon--Zygmund, pathwise, at both legs at once
-  have hCZstep : ∀ omega : ShellSeq d,
-      cubeEuclideanLpNorm (originCube d (K : ℤ)) 8
-          (closureDirichletAlong M n h K e omega).toH1Function.grad ≤ A * tf omega ∧
-      cubeEuclideanLpNorm (originCube d (K : ℤ)) 8
-          (closureNeumannAlong M n h K e' omega).toH1Function.grad ≤ A * tf omega := by
-    intro omega
-    have hbase := hCZ (originCube d (K : ℤ))
-      (streamForcing ((Annealed.sigmaBar M n : ℝ))⁻¹ omega n (n + (h : ℤ)) e)
-      (streamForcing ((Annealed.sigmaBar M n : ℝ))⁻¹ omega n (n + (h : ℤ)) e')
-      (continuous_streamForcing _ _ _ _ _) (continuous_streamForcing _ _ _ _ _)
-      (closureDirichletAlong M n h K e omega)
-      (isZeroTraceDirichletRhsWeakSolution_closureDirichletAlong M n h K e omega)
-      (closureNeumannAlong M n h K e' omega)
-      (isMeanZeroNeumannRhsWeakSolution_closureNeumannAlong M n h K e' omega)
-    have ht0 := htf0 omega
-    have hfD := htfD omega
-    have hfN := htfN omega
-    have hfD0 : (0 : ℝ) ≤ cubeEuclideanLpNorm (originCube d (K : ℤ)) 8
-        (streamForcing ((Annealed.sigmaBar M n : ℝ))⁻¹ omega n (n + (h : ℤ)) e) :=
-      cubeEuclideanLpNorm_nonneg _ _ _
-    have hfN0 : (0 : ℝ) ≤ cubeEuclideanLpNorm (originCube d (K : ℤ)) 8
-        (streamForcing ((Annealed.sigmaBar M n : ℝ))⁻¹ omega n (n + (h : ℤ)) e') :=
-      cubeEuclideanLpNorm_nonneg _ _ _
-    have hnD0 : (0 : ℝ) ≤ cubeEuclideanLpNorm (originCube d (K : ℤ)) 8
-        (closureDirichletAlong M n h K e omega).toH1Function.grad :=
-      cubeEuclideanLpNorm_nonneg _ _ _
-    have hnN0 : (0 : ℝ) ≤ cubeEuclideanLpNorm (originCube d (K : ℤ)) 8
-        (closureNeumannAlong M n h K e' omega).toH1Function.grad :=
-      cubeEuclideanLpNorm_nonneg _ _ _
-    have hsq1 : cubeEuclideanLpNorm (originCube d (K : ℤ)) 8
-        (streamForcing ((Annealed.sigmaBar M n : ℝ))⁻¹ omega n (n + (h : ℤ)) e) ^ (2 : ℕ)
-        ≤ (((Annealed.sigmaBar M n : ℝ))⁻¹ * ce * tf omega) ^ (2 : ℕ) :=
-      pow_le_pow_left₀ hfD0 hfD 2
-    have hsq2 : cubeEuclideanLpNorm (originCube d (K : ℤ)) 8
-        (streamForcing ((Annealed.sigmaBar M n : ℝ))⁻¹ omega n (n + (h : ℤ)) e') ^ (2 : ℕ)
-        ≤ (((Annealed.sigmaBar M n : ℝ))⁻¹ * ce' * tf omega) ^ (2 : ℕ) :=
-      pow_le_pow_left₀ hfN0 hfN 2
-    have hcross : (((Annealed.sigmaBar M n : ℝ))⁻¹ * ce * tf omega) ^ (2 : ℕ) +
-        (((Annealed.sigmaBar M n : ℝ))⁻¹ * ce' * tf omega) ^ (2 : ℕ) ≤
-        (((Annealed.sigmaBar M n : ℝ))⁻¹ * (ce + ce') * tf omega) ^ (2 : ℕ) := by
-      have hid : (((Annealed.sigmaBar M n : ℝ))⁻¹ * (ce + ce') * tf omega) ^ (2 : ℕ) -
-          ((((Annealed.sigmaBar M n : ℝ))⁻¹ * ce * tf omega) ^ (2 : ℕ) +
-            (((Annealed.sigmaBar M n : ℝ))⁻¹ * ce' * tf omega) ^ (2 : ℕ)) =
-          2 * ((((Annealed.sigmaBar M n : ℝ))⁻¹) ^ (2 : ℕ) * tf omega ^ (2 : ℕ) *
-            (ce * ce')) := by ring
-      have hnn : (0 : ℝ) ≤ 2 * ((((Annealed.sigmaBar M n : ℝ))⁻¹) ^ (2 : ℕ) *
-          tf omega ^ (2 : ℕ) * (ce * ce')) :=
-        mul_nonneg (by norm_num)
-          (mul_nonneg (mul_nonneg (sq_nonneg _) (sq_nonneg _))
-            (mul_nonneg hce0 hce'0))
-      linarith
-    have hAt : (A * tf omega) ^ (2 : ℕ) =
-        Ccz * (((Annealed.sigmaBar M n : ℝ))⁻¹ * (ce + ce') * tf omega) ^ (2 : ℕ) := by
-      have hs : Real.sqrt Ccz ^ (2 : ℕ) = Ccz := Real.sq_sqrt hCczpos.le
-      rw [hAdef]
-      calc (Real.sqrt Ccz * ((Annealed.sigmaBar M n : ℝ))⁻¹ * (ce + ce') * tf omega)
-              ^ (2 : ℕ)
-          = Real.sqrt Ccz ^ (2 : ℕ) *
-              (((Annealed.sigmaBar M n : ℝ))⁻¹ * (ce + ce') * tf omega) ^ (2 : ℕ) := by
-            ring
-        _ = Ccz * (((Annealed.sigmaBar M n : ℝ))⁻¹ * (ce + ce') * tf omega) ^ (2 : ℕ) := by
-            rw [hs]
-    have hAtnn : (0 : ℝ) ≤ A * tf omega := mul_nonneg hAnn ht0
-    have hchain : Ccz * (cubeEuclideanLpNorm (originCube d (K : ℤ)) 8
-          (streamForcing ((Annealed.sigmaBar M n : ℝ))⁻¹ omega n (n + (h : ℤ)) e)
-            ^ (2 : ℕ) +
-          cubeEuclideanLpNorm (originCube d (K : ℤ)) 8
-          (streamForcing ((Annealed.sigmaBar M n : ℝ))⁻¹ omega n (n + (h : ℤ)) e')
-            ^ (2 : ℕ)) ≤ (A * tf omega) ^ (2 : ℕ) := by
-      rw [hAt]
-      exact mul_le_mul_of_nonneg_left (by linarith) hCczpos.le
-    constructor
-    · refine le_of_sq_le_sq_of_nonneg hnD0 hAtnn ?_
-      have hsplit : cubeEuclideanLpNorm (originCube d (K : ℤ)) 8
-          (closureDirichletAlong M n h K e omega).toH1Function.grad ^ (2 : ℕ) ≤
-          cubeEuclideanLpNorm (originCube d (K : ℤ)) 8
-            (closureDirichletAlong M n h K e omega).toH1Function.grad ^ (2 : ℕ) +
-          cubeEuclideanLpNorm (originCube d (K : ℤ)) 8
-            (closureNeumannAlong M n h K e' omega).toH1Function.grad ^ (2 : ℕ) :=
-        le_add_of_nonneg_right (sq_nonneg _)
-      linarith
-    · refine le_of_sq_le_sq_of_nonneg hnN0 hAtnn ?_
-      have hsplit : cubeEuclideanLpNorm (originCube d (K : ℤ)) 8
-          (closureNeumannAlong M n h K e' omega).toH1Function.grad ^ (2 : ℕ) ≤
-          cubeEuclideanLpNorm (originCube d (K : ℤ)) 8
-            (closureDirichletAlong M n h K e omega).toH1Function.grad ^ (2 : ℕ) +
-          cubeEuclideanLpNorm (originCube d (K : ℤ)) 8
-            (closureNeumannAlong M n h K e' omega).toH1Function.grad ^ (2 : ℕ) :=
-        le_add_of_nonneg_left (sq_nonneg _)
-      linarith
+  have hCZstep := @stripFourthEnergy_calderonZygmund_bound (d) (by infer_instance) (M) (n) (h) (e)
+    (e') (Ccz) (hCczpos) (hCZ) (hce0) (hce'0) (hAdef) (hAnn) (K) (tf) (htf0) (htfD) (htfN)
   refine ⟨fun omega => A0 + A1 * tf omega.val ^ (4 : ℕ), ?_, ?_, ?_, ?_, ?_⟩
   · intro omega
     have hnn : (0 : ℝ) ≤ A1 * tf omega.val ^ (4 : ℕ) :=

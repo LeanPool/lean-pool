@@ -26,7 +26,7 @@ ABK26, `e.shom.h.bounds`, read at Step 2 of `l.approximate.recurrence.formula`,
 
 ## The gap this module fills
 
-`Closure.GammaTenEnvelopeInputGauge.cubeBesovPositiveVectorPartialSeminormTwo_gauged_localizationFz_potential`
+`cubeBesovPositiveVectorPartialSeminormTwo_gauged_localizationFz_potential`
 and `..._flux` identify the Besov tower of each gauged leg of `bfF_z` with a
 *scalar multiple* of the tower of the raw field, the two scalars being
 

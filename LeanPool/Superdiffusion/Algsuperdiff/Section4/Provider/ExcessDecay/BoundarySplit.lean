@@ -202,7 +202,7 @@ theorem eLpNorm_le_dirichletCubePoincare [NeZero d] (j : ℤ)
     Set.inter_eq_self_of_subset_right hVA
   have hvalue : eLpNorm (zeroExtendH1 hVmeas sigma A).toFun 2 (volumeMeasureOn A) =
       eLpNorm sigma.toFun 2 (volume.restrict (openCubeSet (originCube d j))) := by
-    show eLpNorm (zeroExtend (openCubeSet (originCube d j)) sigma.toFun) 2
+    change eLpNorm (zeroExtend (openCubeSet (originCube d j)) sigma.toFun) 2
       (volume.restrict A) = _
     rw [eLpNorm_zeroExtend_eq hVmeas, hinter]
   have hgrads : ∀ k : Fin d,
@@ -210,7 +210,7 @@ theorem eLpNorm_le_dirichletCubePoincare [NeZero d] (j : ℤ)
         eLpNorm (fun x => sigma.grad x k) 2
           (volume.restrict (openCubeSet (originCube d j))) := by
     intro k
-    show eLpNorm (fun x =>
+    change eLpNorm (fun x =>
       zeroExtendGrad (openCubeSet (originCube d j)) sigma.grad x k) 2
         (volume.restrict A) = _
     rw [eLpNorm_zeroExtendGrad_eq hVmeas, hinter]

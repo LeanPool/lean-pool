@@ -113,7 +113,7 @@ theorem tsupport_comp_coordFaceReflection_subset {U : Set (Vec d)} (a : ℝ) (i 
   have hclos : coordFaceReflection a i ⁻¹' closure (Function.support φ) =
       closure (coordFaceReflection a i ⁻¹' Function.support φ) :=
     (coordFaceReflectionHomeomorph a i).preimage_closure (Function.support φ)
-  show closure (Function.support fun z => φ (coordFaceReflection a i z)) ⊆ U
+  change closure (Function.support fun z => φ (coordFaceReflection a i z)) ⊆ U
   rw [hpre, ← hclos]
   intro z hz
   exact (hUsymm z).1 (hφU hz)
@@ -214,7 +214,7 @@ theorem isWeaklyHarmonicOn_of_oddFaceExtendGrad {U : Set (Vec d)}
           euclideanGradient (fun z => φ (coordFaceReflection a i z)) y := by
     intro y
     funext j
-    show (fderiv ℝ (fun z => φ z - φ (coordFaceReflection a i z)) y) (basisVec j) =
+    change (fderiv ℝ (fun z => φ z - φ (coordFaceReflection a i z)) y) (basisVec j) =
       (fderiv ℝ φ y) (basisVec j) -
         (fderiv ℝ (fun z => φ (coordFaceReflection a i z)) y) (basisVec j)
     rw [fderiv_fun_sub (hφ.differentiable (by simp) y) (hφr.differentiable (by simp) y)]

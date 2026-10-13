@@ -196,7 +196,7 @@ private theorem sq_volumeAverage_le_volumeAverage_sq_openCubeAtScale (z : Vec d)
   have hfin := Corrector.volume_openCubeAtScale_ne_top z m
   have hpos := Corrector.volume_openCubeAtScale_toReal_pos z m
   have hcs := sq_setIntegral_le_volume_mul_setIntegral_sq hfin hpos hg hg2
-  show ((volume (openCubeAtScale z m)).toReal⁻¹ *
+  change ((volume (openCubeAtScale z m)).toReal⁻¹ *
       ∫ x in openCubeAtScale z m, g x ∂volume) ^ 2 ≤
     (volume (openCubeAtScale z m)).toReal⁻¹ *
       ∫ x in openCubeAtScale z m, g x ^ 2 ∂volume

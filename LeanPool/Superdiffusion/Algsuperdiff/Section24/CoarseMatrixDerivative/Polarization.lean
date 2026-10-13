@@ -93,9 +93,10 @@ variable (φ : BlockVec d → BlockVec d → ℝ)
   (hsmul_r : ∀ (c : ℝ) (X Y : BlockVec d), φ X (c • Y) = c * φ X Y)
 
 include hadd_l hsmul_l in
-theorem sum_left {ι : Type*} [DecidableEq ι] (s : Finset ι) (f : ι → ℝ)
+theorem sum_left {ι : Type*} (s : Finset ι) (f : ι → ℝ)
     (g : ι → BlockVec d) (Y : BlockVec d) :
     φ (∑ i ∈ s, f i • g i) Y = ∑ i ∈ s, f i * φ (g i) Y := by
+  classical
   induction s using Finset.induction with
   | empty =>
       simp [show φ (0 : BlockVec d) Y = 0 by
@@ -105,9 +106,10 @@ theorem sum_left {ι : Type*} [DecidableEq ι] (s : Finset ι) (f : ι → ℝ)
       rw [Finset.sum_insert ha, hadd_l, hsmul_l, ih, Finset.sum_insert ha]
 
 include hadd_r hsmul_r in
-theorem sum_right {ι : Type*} [DecidableEq ι] (s : Finset ι) (f : ι → ℝ)
+theorem sum_right {ι : Type*} (s : Finset ι) (f : ι → ℝ)
     (g : ι → BlockVec d) (X : BlockVec d) :
     φ X (∑ i ∈ s, f i • g i) = ∑ i ∈ s, f i * φ X (g i) := by
+  classical
   induction s using Finset.induction with
   | empty =>
       simp [show φ X (0 : BlockVec d) = 0 by

@@ -46,7 +46,7 @@ Nothing about the status of the lemma `l.J.bound.by.Besov` is asserted here.
    energies of the other depth-one children are nonnegative and are added; and
    the summed difference energy is the summed response defect, by the upstream
    partition identity
-   `JUpperBoundWeakNorms.descendantsAverage_additivityDiffHalfEnergyOnDependentFamily_eq_responseJPartitionDefectOnFamilyAtDepth`.
+for the descendant average of the half-difference energy and the response partition defect.
    The last step is where the literal `2` and the literal depth-one sum are
    produced.
 2. *The Caccioppoli step*.  `CentralChildCaccioppoli.lean` bounds the
@@ -807,6 +807,7 @@ private theorem centralChildCaccioppoliEnergy_eq_two_cubeAverage_topHalfEnergy
   rw [hbridge, hdensity, cubeAverage_const_mul]
   ring
 
+omit [NeZero d] in
 /-- The summed difference energy over the depth-one children is the summed response
 defect, with the literal factor `2`. -/
 private theorem sum_two_cubeAverage_diffHalfEnergy_eq_sum_two_responseDefect
@@ -972,7 +973,7 @@ private theorem rpow_three_neg_two_scale (m : ℤ) :
     Real.rpow (3 : ℝ) (-2 * ((((originCube d m).scale : ℤ)) : ℝ)) = ((3 : ℝ) ^ (-m)) ^ 2 := by
   have hscale : ((originCube d m).scale : ℤ) = m := rfl
   rw [hscale, show (-2 * ((m : ℤ) : ℝ)) = (((-2 * m : ℤ)) : ℝ) by push_cast; ring]
-  show (3 : ℝ) ^ ((((-2 * m : ℤ)) : ℝ)) = ((3 : ℝ) ^ (-m)) ^ 2
+  change (3 : ℝ) ^ ((((-2 * m : ℤ)) : ℝ)) = ((3 : ℝ) ^ (-m)) ^ 2
   rw [Real.rpow_intCast, show (-2 * m : ℤ) = -m + -m by ring,
     zpow_add₀ (by norm_num : (3 : ℝ) ≠ 0)]
   ring
@@ -1020,8 +1021,6 @@ theorem exists_responseJ_centralChild_le_jBoundByBesovDisplay (d : ℕ) [NeZero 
   intro a ha m p q s hs hs_quarter
   have hst : s + s < 1 := by linarith
   -- the objects of the display
-  have hCoscNonneg : 0 ≤ oscillationMultiscalePoincareConstant d :=
-    oscillationMultiscalePoincareConstant_nonneg d
   have hLambdaNonneg :
       0 ≤ Ch02.LambdaS (originCube d m) s
         (Ch04.triadicCoeffFamilyOfAELocallyUniformlyEllipticField a ha) :=
@@ -1033,10 +1032,6 @@ theorem exists_responseJ_centralChild_le_jBoundByBesovDisplay (d : ℕ) [NeZero 
         (s / (1 - 2 * s)) :=
     Real.rpow_nonneg (Ch02.ThetaRatio_nonneg (originCube d m)
       (Ch04.triadicCoeffFamilyOfAELocallyUniformlyEllipticField a ha) hs hs) _
-  have hXNonneg :
-      0 ≤ centredMultiscaleAverageSum a ha m p q +
-        Real.sqrt (vecNormSq (coarseScaleSeparation a ha (originCube d m) p q)) :=
-    add_nonneg (centredMultiscaleAverageSum_nonneg a ha m p q) (Real.sqrt_nonneg _)
   have hSumNonneg := sum_cubeBesovCircNorm_maximizerGradient_nonneg a ha m p q
   have hcentring := sum_cubeBesovCircNorm_maximizerGradient_le a ha m p q
   have hprefNonneg :
@@ -1088,38 +1083,7 @@ theorem exists_responseJ_centralChild_le_jBoundByBesovDisplay (d : ℕ) [NeZero 
           (3 / 2 * Real.sqrt 2 * (d : ℝ) * Real.sqrt (d : ℝ)) ^ 2 *
             (centredMultiscaleAverageSum a ha m p q +
               Real.sqrt (vecNormSq (coarseScaleSeparation a ha (originCube d m) p q))) ^ 2 := by
-      have hbase := pow_le_pow_left₀ hscaled hcentring 2
-      calc
-        ((3 : ℝ) ^ (-m)) ^ 2 *
-              (∑ i : Fin d,
-                cubeBesovCircNorm (originCube d m) 1 (2 : ℝ≥0∞) (1 : ℝ≥0∞)
-                  (fun x =>
-                    (canonicalCubeMaximizerSolution a ha (originCube d m) p q).toH1.grad x i)) ^
-                2 =
-            ((3 : ℝ) ^ (-m) *
-              ∑ i : Fin d,
-                cubeBesovCircNorm (originCube d m) 1 (2 : ℝ≥0∞) (1 : ℝ≥0∞)
-                  (fun x =>
-                    (canonicalCubeMaximizerSolution a ha (originCube d m) p q).toH1.grad x i)) ^
-              2 := by ring
-        _ ≤ (3 / 2 * Real.sqrt 2 * (d : ℝ) * Real.sqrt (d : ℝ) *
-              (centredMultiscaleAverageSum a ha m p q +
-                Real.sqrt (vecNormSq (coarseScaleSeparation a ha (originCube d m) p q)))) ^ 2 :=
-            hbase
-        _ = (3 / 2 * Real.sqrt 2 * (d : ℝ) * Real.sqrt (d : ℝ)) ^ 2 *
-              (centredMultiscaleAverageSum a ha m p q +
-                Real.sqrt (vecNormSq (coarseScaleSeparation a ha (originCube d m) p q))) ^ 2 := by
-            ring
-    have hoscBound :
-        interiorCaccioppoliParentOscillationL2Sq (originCube d m)
-            (Ch04.triadicCoeffFamilyOfAELocallyUniformlyEllipticField a ha)
-            (canonicalCubeMaximizerSolution a ha (originCube d m) p q) ≤
-          (oscillationMultiscalePoincareConstant d *
-            ∑ i : Fin d,
-              cubeBesovCircNorm (originCube d m) 1 (2 : ℝ≥0∞) (1 : ℝ≥0∞)
-                (fun x =>
-                  (canonicalCubeMaximizerSolution a ha (originCube d m) p q).toH1.grad x i)) ^ 2 :=
-      hosc
+      simpa only [mul_pow] using pow_le_pow_left₀ hscaled hcentring 2
     have hstep1 := hcaccRHS
     have hstep2 :
         caccioppoliPrefactor C₆ (originCube d m)
@@ -1140,7 +1104,7 @@ theorem exists_responseJ_centralChild_le_jBoundByBesovDisplay (d : ℕ) [NeZero 
                   (fun x =>
                     (canonicalCubeMaximizerSolution a ha (originCube d m) p q).toH1.grad x i)) ^
               2 :=
-      mul_le_mul hpref hoscBound hoscNonneg
+      mul_le_mul hpref hosc hoscNonneg
         (by
           refine mul_nonneg hEpos.le (mul_nonneg (mul_nonneg hThetaNonneg hLambdaNonneg) ?_)
           positivity)

@@ -107,7 +107,7 @@ theorem cubeLpNorm_const_smul_vec (Q : TriadicCube d) (p : ℝ≥0∞) (c : ℝ)
 theorem cubeFluctuationVec_const_smul (Q : TriadicCube d) (c : ℝ) (u : Vec d → Vec d) :
     cubeFluctuationVec Q (fun x => c • u x) = fun x => c • cubeFluctuationVec Q u x := by
   funext x
-  show (fun y => c • u y) x - cubeAverageVec Q (fun y => c • u y) =
+  change (fun y => c • u y) x - cubeAverageVec Q (fun y => c • u y) =
     c • (u x - cubeAverageVec Q u)
   rw [cubeAverageVec_const_smul, smul_sub]
 
@@ -176,10 +176,10 @@ theorem cubeBesovPositiveVectorPartialSeminormTwo_gauged_localizationFz_potentia
     have hpot := congrFun
       (localizationFz_potential_eq_smul_cubeFluctuationVec sigma omega lowScale highScale e'
         R wD wN) x
-    show Real.sqrt sig0 •
+    change Real.sqrt sig0 •
       (localizationFz sigma omega lowScale highScale e' R wD wN).potential x = _
     rw [hpot]
-    show Real.sqrt sig0 • ((Real.sqrt (sigma : ℝ))⁻¹ •
+    change Real.sqrt sig0 • ((Real.sqrt (sigma : ℝ))⁻¹ •
       cubeFluctuationVec R wD.toH1Function.grad x) = _
     rw [smul_smul]
   rw [hleg, cubeBesovPositiveVectorPartialSeminormTwo_const_smul,
@@ -212,10 +212,10 @@ theorem cubeBesovPositiveVectorPartialSeminormTwo_gauged_localizationFz_flux
     have hflux := congrFun
       (localizationFz_flux_eq_smul_cubeFluctuationVec sigma omega lowScale highScale e'
         R wD wN) x
-    show (Real.sqrt sig0)⁻¹ •
+    change (Real.sqrt sig0)⁻¹ •
       (localizationFz sigma omega lowScale highScale e' R wD wN).flux x = _
     rw [hflux]
-    show (Real.sqrt sig0)⁻¹ • (Real.sqrt (sigma : ℝ) •
+    change (Real.sqrt sig0)⁻¹ • (Real.sqrt (sigma : ℝ) •
       cubeFluctuationVec R (neumannFluxField sigma omega lowScale highScale e' wN) x) = _
     rw [smul_smul]
   rw [hleg, cubeBesovPositiveVectorPartialSeminormTwo_const_smul,

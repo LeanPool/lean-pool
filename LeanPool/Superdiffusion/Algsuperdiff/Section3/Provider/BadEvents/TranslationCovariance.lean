@@ -130,7 +130,7 @@ theorem normalizedBlockResponseMax_translateCutoffSample [NeZero d] (M : ABKMode
   rw [Algsuperdiff.Section3.Observable.normalizedBlockResponseMax_cutoff_eq_fromRawCoarseBlock,
     Algsuperdiff.Section3.Observable.normalizedBlockResponseMax_cutoff_eq_fromRawCoarseBlock]
   congr 1
-  show toFullBlockMat (coarseBlockMatrix (cubeSet T)
+  change toFullBlockMat (coarseBlockMatrix (cubeSet T)
       (coefficientCutoff M.nu m omega).toFun) =
     toFullBlockMat (coarseBlockMatrix (cubeSet R)
       (coefficientCutoff M.nu m (translateCutoffSample v omega)).toFun)

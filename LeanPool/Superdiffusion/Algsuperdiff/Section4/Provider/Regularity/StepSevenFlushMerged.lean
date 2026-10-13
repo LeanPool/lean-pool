@@ -66,7 +66,7 @@ theorem mem_goodEventAtHalf_of_stepThree {M : ABKModel d} {delta : ℝ} {j : ℤ
   have hsub : (⟨stepOneSEighth, stepOneSEighth_pos⟩ : {s : ℝ // 0 < s}) =
       (⟨stepOneS / 8, by have := stepOneS_pos; linarith only [this]⟩ : {s : ℝ // 0 < s}) := by
     refine Subtype.ext ?_
-    show stepOneSEighth = stepOneS / 8
+    change stepOneSEighth = stepOneS / 8
     rw [stepOneSEighth_eq, stepOneS]
     norm_num
   have hep := stepOneEp_mem_Ioc hdelta
@@ -264,7 +264,7 @@ theorem ae_shellEpsPin_merged (d : ℕ) :
   have hsub : (⟨stepOneSEighth, stepOneSEighth_pos⟩ : {s : ℝ // 0 < s}) =
       (⟨stepOneS / 8, by have := stepOneS_pos; linarith only [this]⟩ : {s : ℝ // 0 < s}) := by
     refine Subtype.ext ?_
-    show stepOneSEighth = stepOneS / 8
+    change stepOneSEighth = stepOneS / 8
     rw [stepOneSEighth_eq, stepOneS]
     norm_num
   have hpair : ∀ᵐ omega ∂(Cutoff.cutoffSampleLaw M).toMeasure,

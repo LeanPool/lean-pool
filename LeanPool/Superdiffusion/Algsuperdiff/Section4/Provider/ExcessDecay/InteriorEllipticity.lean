@@ -200,17 +200,17 @@ theorem ae_ellipticityRatio_rebased_le_representative [NeZero d] (M : ABKModel d
 /-- Three `Real.rpow` normalizations, in the `Real.sqrt` spelling the bracket
 arithmetic uses. -/
 theorem rpow_half_eq_sqrt (x : ℝ) : Real.rpow x (1 / 2 : ℝ) = Real.sqrt x := by
-  show x ^ (1 / 2 : ℝ) = _
+  change x ^ (1 / 2 : ℝ) = _
   rw [← Real.sqrt_eq_rpow]
 
 theorem rpow_neg_half_eq_sqrt_inv {x : ℝ} (hx : 0 < x) :
     Real.rpow x (-(1 / 2 : ℝ)) = Real.sqrt x⁻¹ := by
-  show x ^ (-(1 / 2 : ℝ)) = _
+  change x ^ (-(1 / 2 : ℝ)) = _
   rw [Real.rpow_neg hx.le, ← Real.inv_rpow hx.le, ← Real.sqrt_eq_rpow]
 
 theorem rpow_neg_one_eq_inv {x : ℝ} (hx : 0 < x) :
     Real.rpow x (-1 : ℝ) = x⁻¹ := by
-  show x ^ (-1 : ℝ) = _
+  change x ^ (-1 : ℝ) = _
   rw [show (-1 : ℝ) = -(1 : ℝ) by norm_num, Real.rpow_neg hx.le, Real.rpow_one]
 
 /-- **The forcing bracket at the child frame, in terms of the anchor's own

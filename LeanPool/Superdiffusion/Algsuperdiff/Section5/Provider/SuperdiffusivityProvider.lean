@@ -46,55 +46,9 @@ def providerComponentConstant (d : ℕ) (CS Cren K C4 C6 : ℝ) : ℝ :=
       (max (C6 + 2 + 2 * ((d : ℝ) * (1 + 2 * Cren)))
         (max (2 * (4 * (d : ℝ))) (2 * C4))))
 
-private theorem componentConstant_le_providerComponentConstant
-    (d : ℕ) (CS Cren K C4 C6 : ℝ) :
-    superdiffusivityV2ComponentConstant CS Cren K ≤
-      providerComponentConstant d CS Cren K C4 C6 :=
-  le_max_left _ _
-
-private theorem stoppedSecondCoefficient_le_providerComponentConstant
-    (d : ℕ) (CS Cren K C4 C6 : ℝ) :
-    (d : ℝ) * 10 ≤ providerComponentConstant d CS Cren K C4 C6 :=
-  (le_max_left _ _).trans (le_max_right _ _)
-
-private theorem secondTailCoefficient_le_providerComponentConstant
-    (d : ℕ) (CS Cren K C4 C6 : ℝ) :
-    C6 + 2 + 2 * ((d : ℝ) * (1 + 2 * Cren)) ≤
-      providerComponentConstant d CS Cren K C4 C6 :=
-  ((le_max_left _ _).trans (le_max_right _ _)).trans (le_max_right _ _)
-
-private theorem stoppedMeanCoefficient_le_providerComponentConstant
-    (d : ℕ) (CS Cren K C4 C6 : ℝ) :
-    2 * (4 * (d : ℝ)) ≤ providerComponentConstant d CS Cren K C4 C6 :=
-  (((le_max_left _ _).trans (le_max_right _ _)).trans (le_max_right _ _)).trans
-    (le_max_right _ _)
-
-private theorem meanTailCoefficient_le_providerComponentConstant
-    (d : ℕ) (CS Cren K C4 C6 : ℝ) :
-    2 * C4 ≤ providerComponentConstant d CS Cren K C4 C6 :=
-  (((le_max_right _ _).trans (le_max_right _ _)).trans (le_max_right _ _)).trans
-    (le_max_right _ _)
-
-private theorem superdiffusivityV2ComponentConstant_mono
-    {CS CS' Cren K K' : ℝ} (hCS0 : 0 ≤ CS) (hCren0 : 0 ≤ Cren) (hK0 : 0 ≤ K)
-    (hCS : CS ≤ CS') (hK : K ≤ K') :
-    superdiffusivityV2ComponentConstant CS Cren K ≤
-      superdiffusivityV2ComponentConstant CS' Cren K' := by
-  unfold superdiffusivityV2ComponentConstant
-  apply max_le_max le_rfl
-  apply max_le_max le_rfl
-  apply max_le_max
-  · exact mul_le_mul_of_nonneg_right
-      (mul_le_mul_of_nonneg_left hCS (by positivity)) hCren0
-  · exact mul_le_mul
-      (mul_le_mul_of_nonneg_left (pow_le_pow_left₀ hCS0 hCS 2) (by positivity)) hK
-      hK0 (by positivity)
-
-/-- The corrected superdiffusivity estimate from the paired removal bounds at the one
-confinement-scale family returned by the model lift. -/
-theorem superdiffusivity_v2_provider_of_removalBounds
-    (d : ℕ) [NeZero d] (cstar : ℝ) (hcstar : 0 < cstar)
-    (hremoval : ∀ _hdim : 2 ≤ d, ∀ (c : ℝ), 0 < c → c ≤ 1 →
+/-- Quantitative control of removing the confinement cutoff from the stream process. -/
+def HasDisplacementRemovalBounds (d : ℕ) [NeZero d] (cstar : ℝ) : Prop :=
+∀ _hdim : 2 ≤ d, ∀ (c : ℝ), 0 < c → c ≤ 1 →
       ∃ gamma4 C4 C6 Kc : ℝ, 0 < gamma4 ∧ gamma4 = 1 / 4 ∧
         0 ≤ C4 ∧ 0 ≤ C6 ∧ 1 ≤ Kc ∧ Kc = 1 ∧
         ∀ M : ABKModel d, Disorder.cstar M = cstar → M.gamma ≤ gamma4 →
@@ -147,7 +101,57 @@ theorem superdiffusivity_v2_provider_of_removalBounds
                   t.toNNReal path))
               ∂((streamExhaustionTailInput M omega).wholeSpaceProcess
                 ((0 : Vec d) : OnePoint (Vec d))))) ≤
-              C6 * M.gamma ^ (50 : ℕ) * ((3 : ℝ) ^ m) ^ (2 : ℕ))) :
+              C6 * M.gamma ^ (50 : ℕ) * ((3 : ℝ) ^ m) ^ (2 : ℕ))
+
+private theorem componentConstant_le_providerComponentConstant
+    (d : ℕ) (CS Cren K C4 C6 : ℝ) :
+    superdiffusivityV2ComponentConstant CS Cren K ≤
+      providerComponentConstant d CS Cren K C4 C6 :=
+  le_max_left _ _
+
+private theorem stoppedSecondCoefficient_le_providerComponentConstant
+    (d : ℕ) (CS Cren K C4 C6 : ℝ) :
+    (d : ℝ) * 10 ≤ providerComponentConstant d CS Cren K C4 C6 :=
+  (le_max_left _ _).trans (le_max_right _ _)
+
+private theorem secondTailCoefficient_le_providerComponentConstant
+    (d : ℕ) (CS Cren K C4 C6 : ℝ) :
+    C6 + 2 + 2 * ((d : ℝ) * (1 + 2 * Cren)) ≤
+      providerComponentConstant d CS Cren K C4 C6 :=
+  ((le_max_left _ _).trans (le_max_right _ _)).trans (le_max_right _ _)
+
+private theorem stoppedMeanCoefficient_le_providerComponentConstant
+    (d : ℕ) (CS Cren K C4 C6 : ℝ) :
+    2 * (4 * (d : ℝ)) ≤ providerComponentConstant d CS Cren K C4 C6 :=
+  (((le_max_left _ _).trans (le_max_right _ _)).trans (le_max_right _ _)).trans
+    (le_max_right _ _)
+
+private theorem meanTailCoefficient_le_providerComponentConstant
+    (d : ℕ) (CS Cren K C4 C6 : ℝ) :
+    2 * C4 ≤ providerComponentConstant d CS Cren K C4 C6 :=
+  (((le_max_right _ _).trans (le_max_right _ _)).trans (le_max_right _ _)).trans
+    (le_max_right _ _)
+
+private theorem superdiffusivityV2ComponentConstant_mono
+    {CS CS' Cren K K' : ℝ} (hCS0 : 0 ≤ CS) (hCren0 : 0 ≤ Cren) (hK0 : 0 ≤ K)
+    (hCS : CS ≤ CS') (hK : K ≤ K') :
+    superdiffusivityV2ComponentConstant CS Cren K ≤
+      superdiffusivityV2ComponentConstant CS' Cren K' := by
+  unfold superdiffusivityV2ComponentConstant
+  apply max_le_max le_rfl
+  apply max_le_max le_rfl
+  apply max_le_max
+  · exact mul_le_mul_of_nonneg_right
+      (mul_le_mul_of_nonneg_left hCS (by positivity)) hCren0
+  · exact mul_le_mul
+      (mul_le_mul_of_nonneg_left (pow_le_pow_left₀ hCS0 hCS 2) (by positivity)) hK
+      hK0 (by positivity)
+
+/-- The corrected superdiffusivity estimate from the paired removal bounds at the one
+confinement-scale family returned by the model lift. -/
+theorem superdiffusivity_v2_provider_of_removalBounds
+    (d : ℕ) [NeZero d] (cstar : ℝ) (hcstar : 0 < cstar)
+    (hremoval : HasDisplacementRemovalBounds d cstar) :
     ∃ gamma0 C : ℝ, 0 < gamma0 ∧ 0 < C ∧
       ∀ M : ABKModel d, Disorder.cstar M = cstar → M.gamma ≤ gamma0 →
       ∀ t : ℝ, 0 < t →
@@ -182,7 +186,7 @@ theorem superdiffusivity_v2_provider_of_removalBounds
     have hdim : 2 ≤ d := M0.shellPrefix.dimension
     obtain ⟨gammaE, Cscale, CSbar, Kbar, cbar, hgammaE, hCscale, hCSbar, hKbar,
       hcbar, hcbar1, hlift⟩ :=
-      measureReal_compl_survivalEvent_confinementScale_le_pow_of_threshold_with_scaleMomentRange
+      measureReal_exitEvent_confinementScale_le_pow_of_threshold
         d hdim cstar hcstar
     obtain ⟨gammaR, Cren, hgammaR, hCren, hren⟩ :=
       exists_renormalizationFamily_corrector d cstar hcstar

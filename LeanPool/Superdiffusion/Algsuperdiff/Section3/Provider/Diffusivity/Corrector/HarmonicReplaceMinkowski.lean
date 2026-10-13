@@ -105,7 +105,7 @@ theorem memVectorL2_finsetSum {ι : Type*} {V : Set (Vec d)}
 theorem meanSquareDeviationVecOn_zero (V : Set (Vec d)) :
     Book.Ch01.meanSquareDeviationVecOn V (fun _ => (0 : Vec d)) 0 = 0 := by
   refine Finset.sum_eq_zero fun k _ => ?_
-  show volumeAverage V (fun _ => ((0 : Vec d) k - (0 : Vec d) k) ^ 2) = 0
+  change volumeAverage V (fun _ => ((0 : Vec d) k - (0 : Vec d) k) ^ 2) = 0
   simp [volumeAverage]
 
 /-- **The two-term triangle inequality for `L^2` fields.**
@@ -162,7 +162,7 @@ theorem sqrt_meanSquareDeviationVecOn_add_le_of_memVectorL2 {V : Set (Vec d)}
             + 2 * ((f x i - a i) * (g x i - b i))) + (g x i - b i) ^ 2 := by
     intro i
     funext x
-    show (f x i + g x i - (a i + b i)) ^ 2 = _
+    change (f x i + g x i - (a i + b i)) ^ 2 = _
     ring
   have hnormC : Book.Ch01.meanSquareDeviationVecOn V (fun x => f x + g x) (a + b)
       = (volume V).toReal⁻¹ * (A + 2 * X + B) := by

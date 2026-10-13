@@ -345,7 +345,7 @@ theorem cubeFluctuationVec_neg (Q : TriadicCube d) (g : Vec d → Vec d) :
   have haverage : cubeAverageVec Q (fun y => -g y) i = -cubeAverageVec Q g i := by
     rw [cubeAverageVec, cubeAverageVec, cubeAverage, cubeAverage]
     simp [MeasureTheory.integral_neg]
-  show (-g x) i - cubeAverageVec Q (fun y => -g y) i = -(g x i - cubeAverageVec Q g i)
+  change (-g x) i - cubeAverageVec Q (fun y => -g y) i = -(g x i - cubeAverageVec Q g i)
   rw [haverage]
   simp only [Pi.neg_apply]
   ring

@@ -113,7 +113,7 @@ theorem besovTranslated_neg_le_holder_gate [NeZero d] {m j : ℤ} {z : Vec d}
     (z := z) (originCube d j) (s := stepSevenCgS) stepSevenCgS_pos hs1 hL2 hW
   have hwin : stepThreeWindow z m j =
       (fun y => z + y) '' openCubeSet (originCube d j) := by
-    show truncatedWindow z m j = _
+    change truncatedWindow z m j = _
     rw [truncatedWindow_eq_translateSet_of_gate hgate, image_add_eq_translateSet]
   have hzm : z ∈ openCubeSet (originCube d m) := mem_openCubeSet_of_gate hgate
   have hgag := normalizedGagliardoESeminormOn_stepThreeWindow_le (z := z) (m := m)
@@ -133,7 +133,7 @@ theorem besovTranslated_neg_le_holder_gate [NeZero d] {m j : ℤ} {z : Vec d}
     have hsc : ((3 : ℝ) ^ (j : ℤ)) = Real.rpow (3 : ℝ) ((j : ℝ)) :=
       (Real.rpow_intCast (3 : ℝ) j).symm
     rw [cubeScaleFactor]
-    show ((3 : ℝ) ^ (j : ℤ)) = Real.rpow (3 : ℝ) ((j : ℝ))
+    change ((3 : ℝ) ^ (j : ℤ)) = Real.rpow (3 : ℝ) ((j : ℝ))
     exact hsc
   have hweight : cubeBesovScaleWeight (-stepSevenCgS) (originCube d j) =
       Real.rpow (3 : ℝ) ((j : ℝ) * stepSevenCgS) := by

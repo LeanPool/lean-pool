@@ -112,7 +112,7 @@ theorem fluxCorrectedCoeffFamily_aeEq_subConstFluxFamily (M : ABKModel d) (L m :
       (subConstFluxFamily M L m omega) := by
   intro Q
   refine Filter.Eventually.of_forall fun x => ?_
-  show (Support.fluxCorrectedRegField M L m (originCube d m) omega).toFun x = _
+  change (Support.fluxCorrectedRegField M L m (originCube d m) omega).toFun x = _
   rw [Support.fluxCorrectedRegField_toFun]
   rfl
 

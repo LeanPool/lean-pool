@@ -82,7 +82,7 @@ theorem vecDot_coordFaceReflection_of_apply_eq_zero {g : Vec d} {i : Fin d}
     (hg : g i = 0) (a : ℝ) (y : Vec d) :
     vecDot g (coordFaceReflection a i y) = vecDot g y := by
   classical
-  show ∑ j : Fin d, g j * (coordFaceReflection a i y) j = ∑ j : Fin d, g j * y j
+  change ∑ j : Fin d, g j * (coordFaceReflection a i y) j = ∑ j : Fin d, g j * y j
   refine Finset.sum_congr rfl fun j _ => ?_
   by_cases hj : j = i
   · subst hj
@@ -162,7 +162,7 @@ theorem faceOdd_sub_oddAffinePart {x : Vec d} {m : ℤ} {i : Fin d} {V : Vec d �
     (fun y => V y - oddAffinePart x m i A y)
         (coordFaceReflection ((1 / 2 : ℝ) * (3 : ℝ) ^ m) i z)
       = -((fun y => V y - oddAffinePart x m i A y) z) := by
-  show V (coordFaceReflection ((1 / 2 : ℝ) * (3 : ℝ) ^ m) i z)
+  change V (coordFaceReflection ((1 / 2 : ℝ) * (3 : ℝ) ^ m) i z)
       - oddAffinePart x m i A (coordFaceReflection ((1 / 2 : ℝ) * (3 : ℝ) ^ m) i z)
     = -(V z - oddAffinePart x m i A z)
   rw [hVodd z, oddAffinePart_coordFaceReflection]
@@ -230,13 +230,13 @@ theorem normalizedL2On_reflectedWindow_sub_affineEval_le {m n : ℤ} {x : Vec d}
   -- `F = f + e` on `U`, and `f = F - e` on `R`
   have hFfe : F = fun y => f y + e y := by
     funext y
-    show V y - oddAffinePart x m i A y
+    change V y - oddAffinePart x m i A y
         = (V y - affineEval (c - vecDot A x) A y) + evenAffinePart x m i c A y
     rw [affineEval_eq_oddAffinePart_add_evenAffinePart x m i c A y]
     ring
   have hfFe : f = fun y => F y + (-e y) := by
     funext y
-    show V y - affineEval (c - vecDot A x) A y
+    change V y - affineEval (c - vecDot A x) A y
         = (V y - oddAffinePart x m i A y) + -evenAffinePart x m i c A y
     rw [affineEval_eq_oddAffinePart_add_evenAffinePart x m i c A y]
     ring

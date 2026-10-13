@@ -53,8 +53,9 @@ manuscript's shape.  Two changes of variable are needed.
 
 * `starredFluctuationMatrix_eq_fullBlockFluctuationMatrixWithNormalizer`
 * `blockJTraceAverageWithNormalizers_blockSwapMat_mul_ae`
-* `starredFluctuationOperatorNormSq_le_two_descendantsAverage_add_eight_blockJTraceAverageSq_ae`
-* `integral_starredFluctuationOperatorNormSq_le_two_descendantsAverage_add_eight_blockJTraceAverageSq_of_integrable`
+* `starredFluctuationNormSq_le_descendantAndResponseBounds_ae`
+*
+`integral_starredFluctuationNormSq_le_descendantAndResponseBounds`
 -/
 
 namespace Algsuperdiff.Section3.Provider.Homogenization
@@ -217,7 +218,7 @@ theorem starredFluctuationMatrix_eq_fullBlockFluctuationMatrixWithNormalizer
             (blockReflect (Ch04.scalarAnnealedBlockMatrixAtScale hP hStruct center)) := by
     rw [blockSwapMat_mul_mul, submatrix_swap_sub, starredInverseCoarseBlockMatrix,
       toFullBlockMat_blockReflect, toFullBlockMat_blockReflect]
-  show _ =
+  change _ =
     Matrix.transpose (blockSwapMat d * CFC.sqrt B) *
         (toFullBlockMat (coarseBlockMatrix U a.toFun) -
           toFullBlockMat (Ch04.scalarAnnealedBlockMatrixAtScale hP hStruct center)) *
@@ -226,7 +227,7 @@ theorem starredFluctuationMatrix_eq_fullBlockFluctuationMatrixWithNormalizer
     starredFluctuationMatrix, ← hswap]
   simp only [Matrix.mul_assoc]
 
-theorem starredDescendantsAverageFluctuationMatrix_eq_descendantsAverageFluctuationMatrixWithNormalizer
+theorem starredFluctuationMatrix_eq_normalizedDescendantAverage
     (hP : Ch04.RestrictionLawCarrier P)
     (hStruct : Ch04.RestrictionStructuralLaw P) (center : ℤ)
     (B : FullBlockMat d) (Q : TriadicCube d) (j : ℕ) (a : RegCoeffField d) :
@@ -262,7 +263,8 @@ theorem starredDescendantsAverageFluctuationOperatorNormSq_eq
       descendantsAverageFluctuationOperatorNormSqWithNormalizer hP hStruct center
         (blockSwapMat d * CFC.sqrt B) Q j a := by
   unfold starredDescendantsAverageFluctuationOperatorNormSq
-  rw [starredDescendantsAverageFluctuationMatrix_eq_descendantsAverageFluctuationMatrixWithNormalizer]
+  rw
+    [starredFluctuationMatrix_eq_normalizedDescendantAverage]
   rfl
 
 /-! ## Reflection transport of the response probes -/
@@ -349,7 +351,7 @@ theorem blockJTraceAverageWithNormalizers_blockSwapMat_mul_ae
 
 /-- A conditional law-generic algebraic helper underlying the reflected
 variance estimate; this declaration makes no source-node claim. -/
-private theorem starredFluctuationOperatorNormSq_le_two_descendantsAverage_add_eight_blockJTraceAverageSq_ae
+private theorem starredFluctuationNormSq_le_descendantAndResponseBounds_ae
     (hP : Ch04.RestrictionLawCarrier P)
     (hStruct : Ch04.RestrictionStructuralLaw P)
     (center : ℤ) (B : FullBlockMat d) (hB : B.PosDef)
@@ -389,7 +391,7 @@ private theorem starredFluctuationOperatorNormSq_le_two_descendantsAverage_add_e
 right-hand observables are explicitly integrable.  This separates the
 algebraic variance estimate from the source-specific moment argument that
 supplies integrability below relative scale zero. -/
-theorem integral_starredFluctuationOperatorNormSq_le_two_descendantsAverage_add_eight_blockJTraceAverageSq_of_integrable
+theorem integral_starredFluctuationNormSq_le_descendantAndResponseBounds
     (hP : Ch04.RestrictionLawCarrier P)
     (hStruct : Ch04.RestrictionStructuralLaw P)
     (center : ℤ) (B : FullBlockMat d) (hB : B.PosDef)
@@ -420,7 +422,7 @@ theorem integral_starredFluctuationOperatorNormSq_le_two_descendantsAverage_add_
           (cubeSet Q) a) ≤ᵐ[P]
       fun a : RegCoeffField d => 2 * F a + 8 * J a := by
     simpa [F, J] using
-      starredFluctuationOperatorNormSq_le_two_descendantsAverage_add_eight_blockJTraceAverageSq_ae
+      starredFluctuationNormSq_le_descendantAndResponseBounds_ae
         hP hStruct center B hB Q j
   have hmono :
       ∫ a, starredFluctuationOperatorNormSq B

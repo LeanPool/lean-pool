@@ -263,7 +263,7 @@ theorem badLoc_ae_le_preimage (M : ABKModel d) (Q : TriadicCube d) :
     ((quarter : ℝ)) Ch02.MultiscaleExponent.infinity
     (Ch02.MultiscaleExponent.finite 2)
     (Observable.isotropicComparatorMatrix (Annealed.sigmaBar M Q.scale)) omega
-  show 1 < Observable.cutoffHomogenizationError M Q.scale quarter
+  change 1 < Observable.cutoffHomogenizationError M Q.scale quarter
     (translateCutoffSample (triadicCubeShift Q) omega)
   rw [h3, ← hcov]
   exact one_lt_cubeHomogenizationErrorLiteral_of_mem_badLoc M Q h1 h2 hmem

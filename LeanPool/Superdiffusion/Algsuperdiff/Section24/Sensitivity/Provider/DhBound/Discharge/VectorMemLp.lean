@@ -43,7 +43,7 @@ theorem memLp_vec_of_components {α : Type*} {m : MeasurableSpace α}
 /-- An a.e. bound gives an `L^∞` cube-norm bound. -/
 theorem cubeLpNorm_infty_le_of_ae_bound {E : Type*} [NormedAddCommGroup E]
     (Q : TriadicCube d) (f : Vec d → E) {M : ℝ} (hM : 0 ≤ M)
-    (h : ∀ᵐ x ∂ normalizedCubeMeasure Q, ‖f x‖ ≤ M) :
+    (h : ∀ᵐ x ∂normalizedCubeMeasure Q, ‖f x‖ ≤ M) :
     cubeLpNorm Q ∞ f ≤ M := by
   by_cases hf : AEStronglyMeasurable f (normalizedCubeMeasure Q)
   swap
@@ -60,7 +60,7 @@ a.e. bound. -/
 theorem sqrt_vecNormSq_cubeAverageVec_le_of_ae_bound (Q : TriadicCube d)
     {F : Vec d → Vec d} {M : ℝ} (hM : 0 ≤ M)
     (hmem : ∀ i : Fin d, MemLp (fun x => F x i) (2 : ℝ≥0∞) (normalizedCubeMeasure Q))
-    (h : ∀ i : Fin d, ∀ᵐ x ∂ normalizedCubeMeasure Q, |F x i| ≤ M) :
+    (h : ∀ i : Fin d, ∀ᵐ x ∂normalizedCubeMeasure Q, |F x i| ≤ M) :
     Real.sqrt (vecNormSq (cubeAverageVec Q F)) ≤ Real.sqrt (d : ℝ) * M := by
   classical
   have hcoord : ∀ i : Fin d, |cubeAverage Q (fun x => F x i)| ≤ M := by

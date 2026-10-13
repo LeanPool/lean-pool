@@ -34,7 +34,7 @@ open scoped BigOperators
 variable {Ω : Type*} [mΩ : MeasurableSpace Ω] {μ : Measure Ω}
 
 /-- Split each index into its left and right local sigma-field. -/
-def refinedSigma {ι : Type*} (a b : ι → MeasurableSpace Ω) :
+abbrev refinedSigma {ι : Type*} (a b : ι → MeasurableSpace Ω) :
     ι × Bool → MeasurableSpace Ω :=
   fun p => cond p.2 (b p.1) (a p.1)
 

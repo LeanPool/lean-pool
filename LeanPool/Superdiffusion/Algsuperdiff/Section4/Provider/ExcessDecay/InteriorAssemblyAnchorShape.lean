@@ -76,7 +76,7 @@ variable {d : ℕ}
 theorem rpow_three_mul_eq_one_add (s : ℝ) (n : ℤ) :
     Real.rpow (3 : ℝ) ((n : ℝ)) * Real.rpow (3 : ℝ) (s * (n : ℝ)) =
       Real.rpow (3 : ℝ) ((1 + s) * (n : ℝ)) := by
-  show (3 : ℝ) ^ ((n : ℝ)) * (3 : ℝ) ^ (s * (n : ℝ)) = (3 : ℝ) ^ ((1 + s) * (n : ℝ))
+  change (3 : ℝ) ^ ((n : ℝ)) * (3 : ℝ) ^ (s * (n : ℝ)) = (3 : ℝ) ^ ((1 + s) * (n : ℝ))
   rw [← Real.rpow_add (by norm_num : (0 : ℝ) < 3)]
   congr 1
   ring

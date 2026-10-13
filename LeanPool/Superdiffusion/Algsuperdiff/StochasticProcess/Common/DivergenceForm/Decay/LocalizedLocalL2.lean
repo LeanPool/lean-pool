@@ -303,7 +303,7 @@ theorem setIntegral_gradSq_le_of_localizedBound {Om : Set (Vec d)}
         ∫ y in W, eta y ^ 2 * vecNormSq (u.grad y) ∂volume := by
       refine setIntegral_congr_fun hW ?_
       intro y hy
-      show vecNormSq (u.grad y) = eta y ^ 2 * vecNormSq (u.grad y)
+      change vecNormSq (u.grad y) = eta y ^ 2 * vecNormSq (u.grad y)
       rw [hWeta y hy]
       ring
     rw [hcongr]

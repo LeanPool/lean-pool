@@ -197,7 +197,7 @@ theorem memVectorL2_blockMatrixField_fst {U : Domain d} (a : CoeffOn U)
     memVectorL2_matVecMul_skewPart_of_isEllipticFieldOn hEll hsnd
   refine MeasureTheory.MemLp.ae_eq ?_ (hs.add hkim)
   filter_upwards [hae] with x hx
-  show matVecMul (symmPart (b.toCoeffField x)) (X.potential x) +
+  change matVecMul (symmPart (b.toCoeffField x)) (X.potential x) +
       matVecMul (skewPart (b.toCoeffField x))
         ((blockMatVecMul (blockMatrixField b x) (X.eval x)).2) = _
   rw [blockMatrixField_eq_blockMatrixOfCoeff,
@@ -238,7 +238,7 @@ theorem memVectorL2_potential_of_isDoubledMuAdmissible {U : Domain d}
     memVectorL2_const P.1
   refine MeasureTheory.MemLp.ae_eq
     (Filter.Eventually.of_forall fun x => ?_) (h1.add h2)
-  show (X.potential x - P.1) + P.1 = X.potential x
+  change (X.potential x - P.1) + P.1 = X.potential x
   abel
 
 /-- The flux component of a `mu`-admissible doubled field is vector `L²`. -/
@@ -252,7 +252,7 @@ theorem memVectorL2_flux_of_isDoubledMuAdmissible {U : Domain d}
     memVectorL2_const P.2
   refine MeasureTheory.MemLp.ae_eq
     (Filter.Eventually.of_forall fun x => ?_) (h1.add h2)
-  show (X.flux x - P.2) + P.2 = X.flux x
+  change (X.flux x - P.2) + P.2 = X.flux x
   abel
 
 /-! ## Integrability of the densities -/

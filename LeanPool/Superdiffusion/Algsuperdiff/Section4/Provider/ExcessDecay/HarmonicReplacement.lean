@@ -319,7 +319,7 @@ theorem isZeroTraceDirichletRhsWeakSolution_of_isConstantCoeffForcedEquation
   simp only [Ch02.cubeDomain_coe] at hbase
   rw [hsplit] at hbase
   rw [hforce]
-  show (∫ x in openCubeSet Q, vecDot (matVecMul a0.matrix (w.toH1Function.grad x))
+  change (∫ x in openCubeSet Q, vecDot (matVecMul a0.matrix (w.toH1Function.grad x))
       (φ.toH1Function.grad x) ∂MeasureTheory.volume) = _
   linarith only [hbase]
 

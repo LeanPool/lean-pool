@@ -225,7 +225,7 @@ theorem isEllipticMatrix_of_symmPart_eq_of_opNorm_le
     have hexpand : vecNormSq (matVecMul A eta) =
         nu ^ 2 * vecNormSq eta + vecNormSq w := by
       rw [hsplit]
-      show vecDot (nu • eta + w) (nu • eta + w) = _
+      change vecDot (nu • eta + w) (nu • eta + w) = _
       simp only [vecDot_add_left, vecDot_add_right, vecDot_smul_left,
         vecDot_smul_right, vecDot_comm w eta, hcross]
       simp only [show ∀ v : Vec d, vecNormSq v = vecDot v v from fun _ => rfl]

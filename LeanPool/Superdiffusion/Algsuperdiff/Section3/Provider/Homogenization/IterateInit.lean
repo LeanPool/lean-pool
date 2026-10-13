@@ -147,7 +147,7 @@ private theorem annealedResponseJAtScale_eq_integral_cutoffSampleLaw
     ((Cutoff.coefficientCutoffLaw_lawCarrier M
         L).aemeasurable_restrictionResponseJObservableCubeSet
       (originCube d n) p q).aestronglyMeasurable
-  show ∫ a, Ch04.restrictionResponseJObservableCubeSet (originCube d n) p q a
+  change ∫ a, Ch04.restrictionResponseJObservableCubeSet (originCube d n) p q a
       ∂(Cutoff.coefficientCutoffLaw M L) = _
   rw [Cutoff.coefficientCutoffLaw_eq_map] at hmeas ⊢
   exact integral_map (Cutoff.measurable_coefficientCutoff M.nu L).aemeasurable hmeas

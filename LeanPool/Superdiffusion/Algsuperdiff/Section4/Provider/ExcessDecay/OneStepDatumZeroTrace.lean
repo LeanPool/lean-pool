@@ -192,7 +192,7 @@ theorem memH10_of_forall_eq_zero {Ω : Set (Vec d)} (hΩ : MeasurableSet Ω)
     have hsupp : Function.support (fun _ : Vec d => (0 : ℝ)) = (∅ : Set (Vec d)) := by
       ext z
       simp
-    show closure (Function.support fun _ : Vec d => (0 : ℝ)) = (∅ : Set (Vec d))
+    change closure (Function.support fun _ : Vec d => (0 : ℝ)) = (∅ : Set (Vec d))
     rw [hsupp, closure_empty]
   have hznorm : eLpNorm (fun y => (0 : ℝ) - f y) 2 (volume.restrict Ω) = 0 := by
     have hcongr : (fun y => (0 : ℝ) - f y)

@@ -70,7 +70,7 @@ This is the inequality `log x ≤ x - 1` read at `x = γ^{-r}`. -/
 theorem abs_log_le_inv_mul_rpow_neg {gamma r : ℝ} (hgamma : 0 < gamma)
     (hgamma1 : gamma ≤ 1) (hr : 0 < r) :
     |Real.log gamma| ≤ r⁻¹ * Real.rpow gamma (-r) := by
-  show |Real.log gamma| ≤ r⁻¹ * gamma ^ (-r)
+  change |Real.log gamma| ≤ r⁻¹ * gamma ^ (-r)
   have hlog : Real.log gamma ≤ 0 := Real.log_nonpos hgamma.le hgamma1
   have hu : (0 : ℝ) < gamma ^ r := Real.rpow_pos_of_pos hgamma r
   have hkey : Real.log ((gamma ^ r)⁻¹) ≤ (gamma ^ r)⁻¹ - 1 :=
@@ -95,7 +95,7 @@ theorem sqrt_mul_abs_log_rpow_le_rpow_quarter {q : ℝ} (hq : 0 ≤ q) {gamma : 
     (hgamma : 0 < gamma) (hgamma1 : gamma ≤ 1) :
     Real.sqrt gamma * Real.rpow |Real.log gamma| q ≤
       Real.rpow (4 * (q + 1)) q * Real.rpow gamma (1 / 4) := by
-  show Real.sqrt gamma * |Real.log gamma| ^ q ≤ (4 * (q + 1)) ^ q * gamma ^ (1 / 4 : ℝ)
+  change Real.sqrt gamma * |Real.log gamma| ^ q ≤ (4 * (q + 1)) ^ q * gamma ^ (1 / 4 : ℝ)
   set r : ℝ := (4 * (q + 1))⁻¹ with hrdef
   have hq1 : (0 : ℝ) < 4 * (q + 1) := by linarith
   have hr : 0 < r := by rw [hrdef]; positivity
@@ -153,7 +153,7 @@ theorem exists_sqrt_mul_abs_log_rpow_le {K q eps : ℝ} (hK : 0 ≤ K) (hq : 0 �
     have h1 : Real.rpow gamma (1 / 4) ≤ Real.rpow ((eps / B) ^ (4 : ℕ)) (1 / 4) :=
       Real.rpow_le_rpow hgamma.le hg4 (by norm_num)
     refine h1.trans (le_of_eq ?_)
-    show ((eps / B) ^ (4 : ℕ)) ^ (1 / 4 : ℝ) = eps / B
+    change ((eps / B) ^ (4 : ℕ)) ^ (1 / 4 : ℝ) = eps / B
     rw [← Real.rpow_natCast (eps / B) 4, ← Real.rpow_mul hepsB]
     norm_num
   have hmain := sqrt_mul_abs_log_rpow_le_rpow_quarter hq hgamma hg1

@@ -300,7 +300,7 @@ def translateCubeEquiv (s : Fin d → ℤ) : TriadicCube d ≃ TriadicCube d whe
     intro R
     cases R with
     | mk scale index =>
-        show (⟨scale, fun i => index i + s i + -(s i)⟩ : TriadicCube d) = ⟨scale, index⟩
+        change (⟨scale, fun i => index i + s i + -(s i)⟩ : TriadicCube d) = ⟨scale, index⟩
         congr 1
         funext i
         ring
@@ -308,7 +308,7 @@ def translateCubeEquiv (s : Fin d → ℤ) : TriadicCube d ≃ TriadicCube d whe
     intro R
     cases R with
     | mk scale index =>
-        show (⟨scale, fun i => index i + -(s i) + s i⟩ : TriadicCube d) = ⟨scale, index⟩
+        change (⟨scale, fun i => index i + -(s i) + s i⟩ : TriadicCube d) = ⟨scale, index⟩
         congr 1
         funext i
         ring

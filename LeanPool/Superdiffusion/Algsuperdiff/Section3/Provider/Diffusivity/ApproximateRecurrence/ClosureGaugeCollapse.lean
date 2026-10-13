@@ -172,7 +172,7 @@ theorem neumannFluxField_zero_direction (sigma : PositiveScalar)
     neumannFluxField sigma omega n m (0 : Vec d) wN
       = fun x => wN.toH1Function.grad x := by
   funext x
-  show wN.toH1Function.grad x
+  change wN.toH1Function.grad x
       + Corrector.streamForcing ((sigma : ℝ))⁻¹ omega n m (0 : Vec d) x = _
   rw [Corrector.streamForcing_zero_direction]
   exact add_zero _

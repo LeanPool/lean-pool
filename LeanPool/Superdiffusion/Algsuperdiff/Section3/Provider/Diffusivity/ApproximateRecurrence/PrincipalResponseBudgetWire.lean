@@ -57,9 +57,10 @@ One bridge and one consumer.
 
    at the manuscript's own mesoscale `n = m - h - a ceil|log_3 cgamma|`.
 
-2. `exists_gamma0_descendantsAverage_integral_principalGoodEventEnergy_le_annealedCube_of_centeringConst`
+2.
+`exists_smallCoupling_principalEnergy_bound_of_centering`
    is the direct successor and consumer of `PrincipalResponseLamWire`'s
-   `exists_const_descendantsAverage_integral_principalGoodEventEnergy_le_annealedCube_of_centeringConst`,
+`exists_constant_principalEnergy_bound_of_centering`,
    with `hbudget` **gone** and every other binder unchanged, in the same order,
    with the same types.  Nothing replaces it: no binder is added, and the two
    binders `W` and `hindep` that the consumer also carries are left exactly as
@@ -129,7 +130,8 @@ bridge unchanged, as the literal factor `(3/2)`.
 ## Main results
 
 * `principalSwitchLoadConst_mul_gridSwitchDiscount_mul_le_half_gamma_pow_six`
-* `exists_gamma0_descendantsAverage_integral_principalGoodEventEnergy_le_annealedCube_of_centeringConst`
+*
+`exists_smallCoupling_principalEnergy_bound_of_centering`
 
 ## References
 
@@ -216,7 +218,7 @@ private theorem principalSwitchLoadConst_mul_gridSwitchDiscount_mul_le_half_gamm
 Young-remainder smallness supplied.**
 
 This is
-`ApproximateRecurrence.PrincipalResponseLamWire.exists_const_descendantsAverage_integral_principalGoodEventEnergy_le_annealedCube_of_centeringConst`
+`ApproximateRecurrence.PrincipalResponseLamWire.exists_constant_principalEnergy_bound_of_centering`
 with its binder `hbudget` removed and nothing put in its place.  Every other
 binder is unchanged, in the same order and at the same type; the two binders
 `W` and `hindep` in particular are untouched.  Because `Cell` occurred only in
@@ -274,7 +276,7 @@ It is a provider A, not a source-facing frozen declaration; it does not derive
 Reaches exactly the one frozen theorem
 `Algsuperdiff.Frozen.External.calderon_zygmund`, a **proved** external,
 inherited from the consumer it re-states. -/
-theorem exists_gamma0_descendantsAverage_integral_principalGoodEventEnergy_le_annealedCube_of_centeringConst
+theorem exists_smallCoupling_principalEnergy_bound_of_centering
     (d : ℕ) (hd : 2 ≤ d) :
     ∃ gamma0 : ℝ, 0 < gamma0 ∧ gamma0 ≤ 1 / 4 ∧
       ∀ (M : ABKModel d), M.gamma ≤ gamma0 →
@@ -374,7 +376,7 @@ theorem exists_gamma0_descendantsAverage_integral_principalGoodEventEnergy_le_an
                         M.gamma ^ (6 : ℕ) / 2 := by
   classical
   obtain ⟨Cell, hCellpos, gamma0, hg0pos, hg0quarter, hmain⟩ :=
-    exists_const_descendantsAverage_integral_principalGoodEventEnergy_le_annealedCube_of_centeringConst
+    exists_constant_principalEnergy_bound_of_centering
       d hd
   have hCs : (0 : ℝ) < principalSwitchLoadConst d :=
     principalSwitchLoadConst_pos hd

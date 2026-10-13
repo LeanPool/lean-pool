@@ -101,14 +101,14 @@ theorem euclideanSqDist_eq_sq_euclideanNorm (x y : Vec d) :
 theorem mem_euclideanBall_iff_euclideanNorm_lt {z x : Vec d} {r : ℝ} (hr : 0 ≤ r) :
     x ∈ euclideanBall z r ↔ euclideanNorm (x - z) < r := by
   have hn := euclideanNorm_nonneg (x - z)
-  show euclideanSqDist x z < r ^ 2 ↔ _
+  change euclideanSqDist x z < r ^ 2 ↔ _
   rw [euclideanSqDist_eq_sq_euclideanNorm]
   constructor <;> intro h <;> nlinarith
 
 theorem mem_euclideanClosedBall_iff_euclideanNorm_le {z x : Vec d} {r : ℝ} (hr : 0 ≤ r) :
     x ∈ euclideanClosedBall z r ↔ euclideanNorm (x - z) ≤ r := by
   have hn := euclideanNorm_nonneg (x - z)
-  show euclideanSqDist x z ≤ r ^ 2 ↔ _
+  change euclideanSqDist x z ≤ r ^ 2 ↔ _
   rw [euclideanSqDist_eq_sq_euclideanNorm]
   constructor <;> intro h <;> nlinarith
 

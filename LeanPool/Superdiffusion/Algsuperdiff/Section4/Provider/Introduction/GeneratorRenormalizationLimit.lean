@@ -121,7 +121,7 @@ theorem abs_integral_vecNormSq_sub_le {U : Set (Vec d)} (hU : MeasurableSet U)
     have e1 : (∫ x in U, (vecNormSq (F x) - vecNormSq (G x)) ∂volume) =
         ∫ x in U, (vecNormSq (F x - G x) + 2 * vecDot (F x - G x) (G x)) ∂volume :=
       integral_congr_ae (Filter.Eventually.of_forall fun x => by
-        show vecNormSq (F x) - vecNormSq (G x) = _
+        change vecNormSq (F x) - vecNormSq (G x) = _
         rw [hid x]; ring)
     rw [e1, integral_add hInt1 hInt2', integral_const_mul]
   have hA0 : (0 : ℝ) ≤ ∫ x in U, vecNormSq (F x - G x) ∂volume :=
@@ -196,7 +196,7 @@ theorem tendsto_sqrt_energy_grad_cutoff_of_h10Diff (M : ABKModel d)
     have hwg : ∀ x, (wL - wv).toH1Function.grad x = (u L).grad x - v.grad x := by
       intro x
       rw [h10Sub_toH1Function, H1Function.sub_grad]
-      show wL.toH1Function.grad x - wv.toH1Function.grad x = _
+      change wL.toH1Function.grad x - wv.toH1Function.grad x = _
       rw [hwLg x, hwvg x]
       abel
     obtain ⟨Lam, hEll⟩ :=
@@ -271,7 +271,7 @@ theorem clauses_stream_of_cutoff (M : ABKModel d) (omega : FullSample d M.gamma)
   have h3pos : (0 : ℝ) < Real.rpow 3 (m : ℝ) := Real.rpow_pos_of_pos (by norm_num) _
   have h3neg : (0 : ℝ) < Real.rpow 3 (-(m : ℝ)) := Real.rpow_pos_of_pos (by norm_num) _
   have hmul : Real.rpow 3 (m : ℝ) * Real.rpow 3 (-(m : ℝ)) = 1 := by
-    show (3 : ℝ) ^ (m : ℝ) * (3 : ℝ) ^ (-(m : ℝ)) = 1
+    change (3 : ℝ) ^ (m : ℝ) * (3 : ℝ) ^ (-(m : ℝ)) = 1
     rw [← Real.rpow_add (by norm_num : (0:ℝ) < 3)]
     simp
   constructor
@@ -301,7 +301,7 @@ theorem clauses_stream_of_cutoff (M : ABKModel d) (omega : FullSample d M.gamma)
           (volume (cubeSetAt (0 : Vec d) m)).toReal⁻¹ * M.nu *
             ∫ x in cubeSetAt (0 : Vec d) m, vecNormSq (F x) ∂volume := by
       intro F
-      show (volume (cubeSetAt (0 : Vec d) m)).toReal⁻¹ *
+      change (volume (cubeSetAt (0 : Vec d) m)).toReal⁻¹ *
           ∫ x in cubeSetAt (0 : Vec d) m, M.nu * vecNormSq (F x) ∂volume = _
       rw [integral_const_mul]
       ring

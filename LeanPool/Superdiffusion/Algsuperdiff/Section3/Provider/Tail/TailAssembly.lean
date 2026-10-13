@@ -446,7 +446,7 @@ theorem sqrt_le_of_le_sq {A B : ℝ} (hB : 0 ≤ B) (h : A ≤ B ^ 2) :
 `q >= 2` branch of `lowerEllipticityProfile`. -/
 theorem lowerEllipticityProfile_exponentTwo (C gamma s : ℝ) :
     lowerEllipticityProfile C gamma s exponentTwo = C * s * (2 * s - gamma)⁻¹ := by
-  show (if (2 : ℝ) < 2 then C * Real.rpow (s / (2 * s - gamma)) (2 / 2)
+  change (if (2 : ℝ) < 2 then C * Real.rpow (s / (2 * s - gamma)) (2 / 2)
       else C * s * (2 * s - gamma)⁻¹) = C * s * (2 * s - gamma)⁻¹
   rw [ite_eq_right (by norm_num : ¬((2 : ℝ) < 2))]
 

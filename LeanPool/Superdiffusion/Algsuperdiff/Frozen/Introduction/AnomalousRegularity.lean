@@ -74,7 +74,8 @@ statements share every token.
   data at the scale `m`.  The tail bound on the minimal scale is a separate,
   annealed clause, and the same random variable `X` carries both.
 * **The minimal scale.** `X` takes values in `ℕ∞`, so its type carries no finiteness
-  assumption; the tail bound is what forces it to be almost surely finite.  The scale clause `X omega ≤ (m - n).toNat` is the printed
+  assumption; the tail bound is what forces it to be almost surely finite.  The scale clause `X
+  omega ≤ (m - n).toNat` is the printed
   `X_m(alpha) ≤ m - n` under the hypothesis `n ≤ m`, where the truncated
   subtraction agrees with the integer one.
 * **The diffusivity.** The comparison amplitude is the named annealed gauge

@@ -180,7 +180,7 @@ theorem cubeSetAtHarmonicPart_eq_partWholeSpaceHarmonicPart_stream (y : Vec d) (
       (A.wholeSpaceResidual mu g.continuous.measurable (abs_apply_le_norm_zeroAtInfty g))
       (cubeSetAt y n) := by
     intro w hw
-    show cubeSetAtC0Datum y n g w -
+    change cubeSetAtC0Datum y n g w -
       (mu : ℝ) * cubeSetAtC0Datum y n (R.toContractiveResolvent.operator mu g) w = _
     rw [cubeSetAtC0Datum_of_mem g hw, cubeSetAtC0Datum_of_mem _ hw]
     show g w - (mu : ℝ) * R.toContractiveResolvent.operator mu g w = _

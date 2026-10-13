@@ -187,7 +187,7 @@ private theorem rpow_three (y : ℝ) : Real.rpow (3 : ℝ) y = (3 : ℝ) ^ y := 
 /-- The manuscript's `c_{2s} = 1 - 3^{-2s}` is `Book.Ch02.geometricDiscount s 2`. -/
 theorem geometricDiscount_two_eq (s : ℝ) :
     Book.Ch02.geometricDiscount s 2 = 1 - (3 : ℝ) ^ (-(2 * s)) := by
-  show 1 - Real.rpow (3 : ℝ) (-s * 2) = 1 - (3 : ℝ) ^ (-(2 * s))
+  change 1 - Real.rpow (3 : ℝ) (-s * 2) = 1 - (3 : ℝ) ^ (-(2 * s))
   rw [rpow_three, show (-s * 2 : ℝ) = -(2 * s) by ring]
 
 /-- `c_{2s}` is nonnegative for `s ≥ 0`.  A `q = 2` specialization of the

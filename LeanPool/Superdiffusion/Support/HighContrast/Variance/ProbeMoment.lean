@@ -51,7 +51,8 @@ variable {d : ℕ}
 fluctuation matrix `H = D·(A_m − Ā_m)·D` equals the centered block quadratic
 form of the diagonally rescaled probe vector `w = ofFullBlockVec (D q)`. -/
 theorem fluctuation_probe_eq_centered_blockQuadratic [NeZero d] {L : RestrictionCoeffLaw d}
-    (hP : RestrictionLawCarrier L) (hStruct : RestrictionStructuralLaw L) (m : ℤ) (q : FullBlockVec d)
+    (hP : RestrictionLawCarrier L) (hStruct : RestrictionStructuralLaw L) (m : ℤ) (q :
+      FullBlockVec d)
     (a : RegCoeffField d) :
     fullBlockQuadratic
         (normalizedFluctuationMatrix hP hStruct m (cubeSet (originCube d m)) a) q
@@ -131,7 +132,8 @@ private theorem mfactor_le [NeZero d] {b c Θ : ℝ}
 theorem probe_sq_integral_le [NeZero d] (hd : 3 ≤ d) :
     ∃ Cd : ℝ, 0 ≤ Cd ∧
       ∀ {m : ℤ} (_hm : 0 ≤ m) {Θ : ℝ} (_hΘ : 1 ≤ Θ) {L : RestrictionCoeffLaw d}
-        [IsProbabilityMeasure L] (hP : RestrictionLawCarrier L) (hStruct : RestrictionStructuralLaw L)
+        [IsProbabilityMeasure L] (hP : RestrictionLawCarrier L) (hStruct :
+          RestrictionStructuralLaw L)
         (_hLaw : ThetaEllipticLaw Θ L) (q : FullBlockVec d) (_hq2 : dotProduct q q ≤ 4),
       (∫ a, (fullBlockQuadratic
           (normalizedFluctuationMatrix hP hStruct m (cubeSet (originCube d m)) a) q)

@@ -250,7 +250,7 @@ theorem wellPlacedCentre_flushSubCentre {n m : ℤ} (hnm : n + 2 ≤ m) {z : Vec
     have hc : flushSubCentre z m n r σ r =
         wellPlacedCentre z m (n + 2) r + σ * (((3 : ℝ) ^ (n + 2) - (3 : ℝ) ^ n) / 2) :=
       flushSubCentre_apply_self z m n r σ
-    show max (-wellPlacedHalfGap m (n + 2))
+    change max (-wellPlacedHalfGap m (n + 2))
         (min (wellPlacedHalfGap m (n + 2)) (flushSubCentre z m n r σ r)) =
       max (-wellPlacedHalfGap m (n + 2))
         (min (wellPlacedHalfGap m (n + 2)) (z r))
@@ -258,7 +258,7 @@ theorem wellPlacedCentre_flushSubCentre {n m : ℤ} (hnm : n + 2 ≤ m) {z : Vec
     · subst h
       rw [one_mul] at hover
       have hz1 : wellPlacedCentre z m (n + 2) r = wellPlacedHalfGap m (n + 2) := by
-        show max (-wellPlacedHalfGap m (n + 2))
+        change max (-wellPlacedHalfGap m (n + 2))
             (min (wellPlacedHalfGap m (n + 2)) (z r)) = _
         rw [min_eq_left hover.le, max_eq_right (by linarith only [hA0])]
       rw [hz1, one_mul] at hc
@@ -270,7 +270,7 @@ theorem wellPlacedCentre_flushSubCentre {n m : ℤ} (hnm : n + 2 ≤ m) {z : Vec
         rw [this] at hover
         linarith only [hover]
       have hz1 : wellPlacedCentre z m (n + 2) r = -wellPlacedHalfGap m (n + 2) := by
-        show max (-wellPlacedHalfGap m (n + 2))
+        change max (-wellPlacedHalfGap m (n + 2))
             (min (wellPlacedHalfGap m (n + 2)) (z r)) = _
         rw [min_eq_right (by linarith only [hzneg, hA0]), max_eq_left hzneg.le]
       rw [hz1] at hc
@@ -280,7 +280,7 @@ theorem wellPlacedCentre_flushSubCentre {n m : ℤ} (hnm : n + 2 ≤ m) {z : Vec
         max_eq_left hzneg.le]
   · have hc : flushSubCentre z m n i σ r = wellPlacedCentre z m (n + 2) r :=
       flushSubCentre_apply_of_ne z m n σ hr
-    show max (-wellPlacedHalfGap m (n + 2))
+    change max (-wellPlacedHalfGap m (n + 2))
         (min (wellPlacedHalfGap m (n + 2)) (flushSubCentre z m n i σ r)) =
       wellPlacedCentre z m (n + 2) r
     rw [hc]

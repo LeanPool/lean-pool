@@ -17,6 +17,9 @@ Module imports, support namespace and local option directives adapted for Lean P
 
 @[expose] public section
 
+open _root_.Algsuperdiff.Section3.Provider.Corrector
+  (hasPotentialZeroTraceClosureRealization_openCubeSet)
+
 
 /-!
 # Sample measurability of the finite-volume correctors of `e.def.w`
@@ -76,6 +79,8 @@ open Algsuperdiff.Section3
 
 noncomputable section
 
+
+
 variable {d : ℕ}
 
 /-! ## The two gradient measurability statements -/
@@ -108,7 +113,7 @@ theorem measurable_freshShellDirichletGradL2 [NeZero d] (Q : TriadicCube d)
     exact gradToHilbertVectorL2_eq_dirichletGradientOfForcingClass
       (memVectorL2_openCubeSet_of_continuous Q
         (continuous_streamForcing sigmaInv omega n m e).neg)
-      (_root_.Algsuperdiff.Section3.Provider.Corrector.hasPotentialZeroTraceClosureRealization_openCubeSet Q)
+      (hasPotentialZeroTraceClosureRealization_openCubeSet Q)
       (_root_.Algsuperdiff.Section3.Provider.Corrector.nonempty_openCubeSet Q)
       (isEllipticFieldOn_const_one_openCubeSet Q) (hwD omega)
   rw [hEq]
@@ -174,7 +179,7 @@ theorem measurable_shellIndexSigma_freshShellDirichletGradL2 [NeZero d] (Q : Tri
     exact gradToHilbertVectorL2_eq_dirichletGradientOfForcingClass
       (memVectorL2_openCubeSet_of_continuous Q
         (continuous_streamForcing sigmaInv omega n m e).neg)
-      (_root_.Algsuperdiff.Section3.Provider.Corrector.hasPotentialZeroTraceClosureRealization_openCubeSet Q)
+      (hasPotentialZeroTraceClosureRealization_openCubeSet Q)
       (_root_.Algsuperdiff.Section3.Provider.Corrector.nonempty_openCubeSet Q)
       (isEllipticFieldOn_const_one_openCubeSet Q) (hwD omega)
   rw [hEq]

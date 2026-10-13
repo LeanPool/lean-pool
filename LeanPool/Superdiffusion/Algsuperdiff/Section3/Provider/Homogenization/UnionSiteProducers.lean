@@ -312,7 +312,7 @@ private theorem continuous_fullBlockReflect_self :
   refine continuous_pi_iff.2 fun alpha => ?_
   refine continuous_pi_iff.2 fun beta => ?_
   cases alpha <;> cases beta <;>
-    simp [Ch04.fullBlockReflect, toFullBlockMat, ofFullBlockMat, blockReflect] <;>
+    dsimp only [Ch04.fullBlockReflect, toFullBlockMat, ofFullBlockMat, blockReflect] <;>
     fun_prop
 
 private theorem continuous_blockJQuadraticFullBlockMat (P Qv : BlockVec d) :
@@ -554,7 +554,7 @@ private theorem isBigOWith_add_const {Omega : Type*} [MeasurableSpace Omega]
   intro omega homega
   have hgt : (A + c) * t < Y omega + c := homega
   have ht0 : (0 : ℝ) ≤ t - 1 := by linarith
-  show A * t < Y omega
+  change A * t < Y omega
   nlinarith
 
 /-- First moment and integrability from a one-sided stretched-exponential tail
@@ -841,7 +841,7 @@ theorem gridAverage_siteCenteredResponseJ_eq_sub_integral (M : ABKModel d)
           ∫ omega', Observable.cutoffResponseJ M n L e omega'
             ∂(cutoffSampleLaw M).toMeasure := by
     intro u _
-    show siteResponseJ M L n u e omega -
+    change siteResponseJ M L n u e omega -
         ∫ omega', siteResponseJ M L n u e omega' ∂(cutoffSampleLaw M).toMeasure = _
     rw [integral_siteResponseJ_eq_integral_cutoffResponseJ M L n u e]
   rw [Finset.sum_congr rfl hpt, Finset.sum_sub_distrib, Finset.sum_const,

@@ -130,7 +130,7 @@ private theorem abs_index_le_cubeRadius_of_mem_descendantsAtDepth {m : ℤ} :
           3 * (Percolation.cubeRadius k : ℤ) + 1 := by
         exact_mod_cast congrArg (fun t : ℕ => (t : ℤ)) (cubeRadius_succ k)
       rw [abs_le] at hS' ⊢
-      show -(Percolation.cubeRadius (k + 1) : ℤ) ≤
+      change -(Percolation.cubeRadius (k + 1) : ℤ) ≤
             3 * S.index i + ((digits i : ℕ) : ℤ) - 1 ∧
           3 * S.index i + ((digits i : ℕ) : ℤ) - 1 ≤
             (Percolation.cubeRadius (k + 1) : ℤ)
@@ -210,7 +210,8 @@ theorem restrictionResponseJObservableCubeSet_originCube_le_gridAverage
             (coefficientCutoff M.nu L omega) := by
   let : NeZero d :=
     ⟨Nat.ne_of_gt (lt_of_lt_of_le (by omega) M.shellPrefix.dimension)⟩
-  have hnn := WeakNormsMaximizer.responseDefectAverageAtScale_nonneg_of_aelocallyUniformlyEllipticField
+  have hnn :=
+    WeakNormsMaximizer.responseDefectAverageAtScale_nonneg_of_aelocallyUniformlyEllipticField
     (coefficientCutoff M.nu L omega)
     (coefficientCutoff_aeLocallyUniformlyEllipticField M L omega) m n p q
   rw [WeakNormsMaximizer.responseDefectAverageAtScale] at hnn

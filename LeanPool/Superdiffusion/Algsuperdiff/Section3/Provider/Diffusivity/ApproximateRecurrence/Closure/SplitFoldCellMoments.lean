@@ -62,7 +62,7 @@ beyond `Closure.ClosureRegime` and the two direction bounds.
   (`LocalizationFluctuationCellIntegrable.meshEnergyCell_rpow_four_eq_sq_volumeAverage`),
   the *square* of the potential energy is dominated by the proved fourth-power
   producer
-  `LocalizationFluctuationCellIntegrable.exists_gamma0_integrable_freshShellDirichlet_meshEnergyCell_rpow_four`.
+`exists_gamma0_integrable_freshShellDirichlet_meshEnergyCell_rpow_four`.
 * **Flux leg.**  `|e + grad w_N + F|^2 <= 2|e|^2 + 4|grad w_N|^2 + 4|F|^2`.
   The middle term is the Neumann mirror of the same producer, read at its first
   moment; the forcing term is bounded by
@@ -78,7 +78,7 @@ The measurability halves of both legs are produced here by one generic device,
 functional is `1`-Lipschitz on `L^2`, so the normalized second energy over a
 measurable window is a continuous functional of the sample's `L^2` class, and
 the two classes are the proved
-`LocalizationFluctuationBackgroundClass.measurable_toHilbertVectorL2OfVecField_freshShellDirichletGrad`
+`measurable_toHilbertVectorL2OfVecField_freshShellDirichletGrad`
 and `..._neumannFluxField`, shifted by a constant vector.
 
 ## Binders
@@ -171,7 +171,7 @@ private theorem lipschitzWith_cellWindowNorm (mu : Measure alpha) (S : Set alpha
       (ENNReal.add_ne_top.mpr ⟨cellWindowNorm_ne_top mu S G, hrestrtop⟩)
       (cellWindow_restrict_sub_le mu S F G)
     rw [ENNReal.toReal_add (cellWindowNorm_ne_top mu S G) hrestrtop] at hmono
-    show (eLpNorm (F : alpha → E) 2 (mu.restrict S)).toReal -
+    change (eLpNorm (F : alpha → E) 2 (mu.restrict S)).toReal -
       (eLpNorm (G : alpha → E) 2 (mu.restrict S)).toReal ≤ _
     linarith
   have h2 : cellWindowNorm mu S G - cellWindowNorm mu S F ≤
@@ -181,7 +181,7 @@ private theorem lipschitzWith_cellWindowNorm (mu : Measure alpha) (S : Set alpha
     have hmono := ENNReal.toReal_mono
       (ENNReal.add_ne_top.mpr ⟨cellWindowNorm_ne_top mu S F, hrestrtop⟩) hbase
     rw [ENNReal.toReal_add (cellWindowNorm_ne_top mu S F) hrestrtop] at hmono
-    show (eLpNorm (G : alpha → E) 2 (mu.restrict S)).toReal -
+    change (eLpNorm (G : alpha → E) 2 (mu.restrict S)).toReal -
       (eLpNorm (F : alpha → E) 2 (mu.restrict S)).toReal ≤ _
     linarith
   have hfin : (eLpNorm ((F : alpha → E) - (G : alpha → E)) 2 (mu.restrict S)).toReal ≤
@@ -587,6 +587,99 @@ theorem integrable_meshCellBackgroundPotentialEnergy_sq_of_meshEnergyCell [NeZer
 
 /-! ## The flux leg's first moment -/
 
+private theorem meshCellBackgroundFluxEnergy_pointwise_bound :
+    ∀ {d : ℕ} (M : ABKModel d) (n : ℤ) (h K : ℕ) (e e' : Vec d)
+      {R : TriadicCube d},
+      let Q : TriadicCube d := originCube d (↑K : ℤ);
+      let sig : PositiveScalar := Annealed.sigmaBar M n;
+      let sinv : ℝ := (↑sig : ℝ)⁻¹;
+      let wN : ShellSeq d → H1MeanZeroFunction (openCubeSet Q) := closureNeumannAlong M n h K e';
+      openCubeSet R ⊆ openCubeSet Q →
+        IsFiniteMeasure (volumeMeasureOn (openCubeSet R)) →
+          ((volume : Set (Vec d) → ℝ≥0∞) (openCubeSet R)).toReal ≠ (0 : ℝ) →
+            (∀ (omega : ShellSeq d), MemLp (wN omega).toH1Function.grad (8 : ℝ≥0∞) (normalizedCubeMeasure Q)) →
+              (∀ (omega : ShellSeq d),
+                  MemLp (streamForcing sinv omega n (n + (↑h : ℤ)) e') (8 : ℝ≥0∞) (normalizedCubeMeasure Q)) →
+                (∀ (omega : ShellSeq d),
+                    MemLp (neumannFluxField sig omega n (n + (↑h : ℤ)) e' (wN omega)) (8 : ℝ≥0∞)
+                      (normalizedCubeMeasure Q)) →
+                  let AN : ShellSeq d → ℝ := fun (omega : ShellSeq d) =>
+                    volumeAverage (openCubeSet R) fun (x : Vec d) => vecNormSq ((wN omega).toH1Function.grad x);
+                  let ratio : ℝ := ((volume : Set (Vec d) → ℝ≥0∞) (openCubeSet R)).toReal⁻¹ * cubeVolume Q;
+                  let L : ShellSeq d → ℝ := fun (omega : ShellSeq d) =>
+                    Stream.streamIncrementLpNorm (8 : ℝ) (↑K : ℤ) n (n + (↑h : ℤ)) omega;
+                  (∀ (omega : ShellSeq d),
+                      (volumeAverage (openCubeSet R) fun (x : Vec d) =>
+                          vecNormSq (streamForcing sinv omega n (n + (↑h : ℤ)) e' x)) ≤
+                        ratio * (sinv * L omega) ^ (2 : ℕ)) →
+                    ∀ (omega : ShellSeq d),
+                      (volumeAverage (openCubeSet R) fun (x : Vec d) =>
+                          vecNormSq (e + neumannFluxField sig omega n (n + (↑h : ℤ)) e' (wN omega) x)) ≤
+                        (2 : ℝ) * vecNormSq e + ((4 : ℝ) * AN omega + (4 : ℝ) * (ratio * (sinv * L omega) ^ (2 : ℕ))) := by
+  intro _ _ n h _ e e' R Q sig sinv wN hsub _ hvol hL8 hL8f hL8nf AN _ L hSFle omega
+  have hintL : IntegrableOn (fun x =>
+      vecNormSq (e + neumannFluxField sig omega n (n + (h : ℤ)) e' (wN omega) x))
+      (openCubeSet R) volume :=
+    (integrableOn_openCubeSet_vecNormSq_of_memLp_eight Q
+      ((memLp_const e).add (hL8nf omega))).mono_set hsub
+  have hintg : IntegrableOn
+      (fun x => vecNormSq ((wN omega).toH1Function.grad x)) (openCubeSet R) volume :=
+    (integrableOn_openCubeSet_vecNormSq_of_memLp_eight Q (hL8 omega)).mono_set hsub
+  have hintf : IntegrableOn
+      (fun x => vecNormSq (streamForcing sinv omega n (n + (h : ℤ)) e' x))
+      (openCubeSet R) volume :=
+    (integrableOn_openCubeSet_vecNormSq_of_memLp_eight Q (hL8f omega)).mono_set hsub
+  have hintsum : IntegrableOn
+      (fun x => 4 * vecNormSq ((wN omega).toH1Function.grad x) +
+        4 * vecNormSq (streamForcing sinv omega n (n + (h : ℤ)) e' x))
+      (openCubeSet R) volume := (hintg.const_mul 4).add (hintf.const_mul 4)
+  have hintR : IntegrableOn
+      (fun x => 2 * vecNormSq e +
+        (4 * vecNormSq ((wN omega).toH1Function.grad x) +
+          4 * vecNormSq (streamForcing sinv omega n (n + (h : ℤ)) e' x)))
+      (openCubeSet R) volume := (integrable_const _).add hintsum
+  have hmono := volumeAverage_le_volumeAverage_of_le_on
+    (U := openCubeSet R) (measurableSet_openCubeSet R) hintL hintR
+    (fun x _ => by
+      have hb1 := vecNormSq_add_le e
+        (neumannFluxField sig omega n (n + (h : ℤ)) e' (wN omega) x)
+      have hb2 : vecNormSq (neumannFluxField sig omega n (n + (h : ℤ)) e'
+            (wN omega) x) ≤
+          2 * (vecNormSq ((wN omega).toH1Function.grad x) +
+            vecNormSq (streamForcing sinv omega n (n + (h : ℤ)) e' x)) :=
+        vecNormSq_add_le ((wN omega).toH1Function.grad x)
+          (streamForcing sinv omega n (n + (h : ℤ)) e' x)
+      linarith)
+  have hval : volumeAverage (openCubeSet R)
+      (fun x => 2 * vecNormSq e +
+        (4 * vecNormSq ((wN omega).toH1Function.grad x) +
+          4 * vecNormSq (streamForcing sinv omega n (n + (h : ℤ)) e' x))) =
+      2 * vecNormSq e +
+        (4 * AN omega +
+          4 * volumeAverage (openCubeSet R)
+            (fun x => vecNormSq (streamForcing sinv omega n (n + (h : ℤ)) e' x))) := by
+    have hstep1 : volumeAverage (openCubeSet R)
+        (fun x => 2 * vecNormSq e +
+          (4 * vecNormSq ((wN omega).toH1Function.grad x) +
+            4 * vecNormSq (streamForcing sinv omega n (n + (h : ℤ)) e' x))) =
+        2 * vecNormSq e +
+          volumeAverage (openCubeSet R)
+            (fun x => 4 * vecNormSq ((wN omega).toH1Function.grad x) +
+              4 * vecNormSq (streamForcing sinv omega n (n + (h : ℤ)) e' x)) :=
+      volumeAverage_const_add hvol _ hintsum
+    have hstep2 : volumeAverage (openCubeSet R)
+        (fun x => 4 * vecNormSq ((wN omega).toH1Function.grad x) +
+          4 * vecNormSq (streamForcing sinv omega n (n + (h : ℤ)) e' x)) =
+        volumeAverage (openCubeSet R)
+            (fun x => 4 * vecNormSq ((wN omega).toH1Function.grad x)) +
+          volumeAverage (openCubeSet R)
+            (fun x => 4 * vecNormSq (streamForcing sinv omega n (n + (h : ℤ)) e' x)) :=
+      volumeAverage_add (hintg.const_mul 4) (hintf.const_mul 4)
+    rw [hstep1, hstep2, volumeAverage_const_mul' (openCubeSet R) 4,
+      volumeAverage_const_mul' (openCubeSet R) 4]
+  have hSF := hSFle omega
+  linarith [hmono, hval]
+
 /-- **The first sample moment of the Step-2 background's flux cell energy**, from
 the fourth-power cell energy of the Neumann corrector and the second moment of
 the fresh-shell `L^8` norm.
@@ -709,73 +802,8 @@ theorem integrable_meshCellBackgroundFluxEnergy_of_legs [NeZero d]
         ratio * (sinv * L omega) ^ (2 : ℕ) := fun omega =>
     volumeAverage_vecNormSq_streamForcing_le hsub hsinv0.le omega n (n + (h : ℤ)) he'
   -- the per-sample cell bound
-  have hcellBound : ∀ omega : ShellSeq d,
-      volumeAverage (openCubeSet R) (fun x =>
-          vecNormSq (e + neumannFluxField sig omega n (n + (h : ℤ)) e' (wN omega) x)) ≤
-        2 * vecNormSq e + (4 * AN omega + 4 * (ratio * (sinv * L omega) ^ (2 : ℕ))) := by
-    intro omega
-    have hintL : IntegrableOn (fun x =>
-        vecNormSq (e + neumannFluxField sig omega n (n + (h : ℤ)) e' (wN omega) x))
-        (openCubeSet R) volume :=
-      (integrableOn_openCubeSet_vecNormSq_of_memLp_eight Q
-        ((memLp_const e).add (hL8nf omega))).mono_set hsub
-    have hintg : IntegrableOn
-        (fun x => vecNormSq ((wN omega).toH1Function.grad x)) (openCubeSet R) volume :=
-      (integrableOn_openCubeSet_vecNormSq_of_memLp_eight Q (hL8 omega)).mono_set hsub
-    have hintf : IntegrableOn
-        (fun x => vecNormSq (streamForcing sinv omega n (n + (h : ℤ)) e' x))
-        (openCubeSet R) volume :=
-      (integrableOn_openCubeSet_vecNormSq_of_memLp_eight Q (hL8f omega)).mono_set hsub
-    have hintsum : IntegrableOn
-        (fun x => 4 * vecNormSq ((wN omega).toH1Function.grad x) +
-          4 * vecNormSq (streamForcing sinv omega n (n + (h : ℤ)) e' x))
-        (openCubeSet R) volume := (hintg.const_mul 4).add (hintf.const_mul 4)
-    have hintR : IntegrableOn
-        (fun x => 2 * vecNormSq e +
-          (4 * vecNormSq ((wN omega).toH1Function.grad x) +
-            4 * vecNormSq (streamForcing sinv omega n (n + (h : ℤ)) e' x)))
-        (openCubeSet R) volume := (integrable_const _).add hintsum
-    have hmono := volumeAverage_le_volumeAverage_of_le_on
-      (U := openCubeSet R) (measurableSet_openCubeSet R) hintL hintR
-      (fun x _ => by
-        have hb1 := vecNormSq_add_le e
-          (neumannFluxField sig omega n (n + (h : ℤ)) e' (wN omega) x)
-        have hb2 : vecNormSq (neumannFluxField sig omega n (n + (h : ℤ)) e'
-              (wN omega) x) ≤
-            2 * (vecNormSq ((wN omega).toH1Function.grad x) +
-              vecNormSq (streamForcing sinv omega n (n + (h : ℤ)) e' x)) :=
-          vecNormSq_add_le ((wN omega).toH1Function.grad x)
-            (streamForcing sinv omega n (n + (h : ℤ)) e' x)
-        linarith)
-    have hval : volumeAverage (openCubeSet R)
-        (fun x => 2 * vecNormSq e +
-          (4 * vecNormSq ((wN omega).toH1Function.grad x) +
-            4 * vecNormSq (streamForcing sinv omega n (n + (h : ℤ)) e' x))) =
-        2 * vecNormSq e +
-          (4 * AN omega +
-            4 * volumeAverage (openCubeSet R)
-              (fun x => vecNormSq (streamForcing sinv omega n (n + (h : ℤ)) e' x))) := by
-      have hstep1 : volumeAverage (openCubeSet R)
-          (fun x => 2 * vecNormSq e +
-            (4 * vecNormSq ((wN omega).toH1Function.grad x) +
-              4 * vecNormSq (streamForcing sinv omega n (n + (h : ℤ)) e' x))) =
-          2 * vecNormSq e +
-            volumeAverage (openCubeSet R)
-              (fun x => 4 * vecNormSq ((wN omega).toH1Function.grad x) +
-                4 * vecNormSq (streamForcing sinv omega n (n + (h : ℤ)) e' x)) :=
-        volumeAverage_const_add hvol _ hintsum
-      have hstep2 : volumeAverage (openCubeSet R)
-          (fun x => 4 * vecNormSq ((wN omega).toH1Function.grad x) +
-            4 * vecNormSq (streamForcing sinv omega n (n + (h : ℤ)) e' x)) =
-          volumeAverage (openCubeSet R)
-              (fun x => 4 * vecNormSq ((wN omega).toH1Function.grad x)) +
-            volumeAverage (openCubeSet R)
-              (fun x => 4 * vecNormSq (streamForcing sinv omega n (n + (h : ℤ)) e' x)) :=
-        volumeAverage_add (hintg.const_mul 4) (hintf.const_mul 4)
-      rw [hstep1, hstep2, volumeAverage_const_mul' (openCubeSet R) 4,
-        volumeAverage_const_mul' (openCubeSet R) 4]
-    have hSF := hSFle omega
-    linarith [hmono, hval]
+  have hcellBound := @meshCellBackgroundFluxEnergy_pointwise_bound (d) (M) (n) (h) (K) (e) (e')
+    (R) (hsub) (this) (hvol) (hL8) (hL8f) (hL8nf) (hSFle)
   -- the observable in closed form
   have hobs : (fun omega : CutoffSample d =>
         meshCellBackgroundFluxEnergy M n h (K : ℤ) e e'

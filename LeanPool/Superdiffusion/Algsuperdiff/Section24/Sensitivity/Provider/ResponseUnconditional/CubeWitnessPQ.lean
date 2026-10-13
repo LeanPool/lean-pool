@@ -214,7 +214,7 @@ theorem cubeBesovNegativeVectorSeminormTwo_pqWitnessGrad_le [NeZero d]
     (hvAdj : IsResponseMaximizer (cubeDomain Q) (F.coeffOn Q).transpose p (-q) vAdj)
     (hv : IsResponseMaximizer (cubeDomain Q) (F.coeffOn Q) p q v)
     (u : H10Function ((cubeDomain Q : Domain d) : Set (Vec d)))
-    (hu : ∀ᵐ x ∂ volumeMeasureOn ((cubeDomain Q : Domain d) : Set (Vec d)),
+    (hu : ∀ᵐ x ∂volumeMeasureOn ((cubeDomain Q : Domain d) : Set (Vec d)),
       u.toH1Function.grad x =
         (2 : ℝ)⁻¹ • (vAdj.toH1.grad x + v.toH1.grad x) + p) :
     cubeBesovNegativeVectorSeminormTwo Q (3 / 8) (fun x => u.toH1Function.grad x) ≤
@@ -249,7 +249,7 @@ theorem cubeBesovNegativeVectorSeminormTwo_pqWitnessGrad_le [NeZero d]
         2 * Real.sqrt 2 * (SJ + ST) - 2 * (SJ + Real.sqrt 2 * ST) := by
       nlinarith [hSJnn, hSTnn, hs2one]
     have hprod := mul_nonneg hbase hgap
-    show PD * SL * (2 * (SJ + Real.sqrt 2 * ST)) ≤ A * Z
+    change PD * SL * (2 * (SJ + Real.sqrt 2 * ST)) ≤ A * Z
     rw [hA, hZ]
     nlinarith [hprod]
   -- the primal half
@@ -259,7 +259,7 @@ theorem cubeBesovNegativeVectorSeminormTwo_pqWitnessGrad_le [NeZero d]
     have hgap : (0 : ℝ) ≤ 2 * Real.sqrt 2 * (SJ + ST) - 2 * SJ := by
       nlinarith [hSJnn, hSTnn, hs2one]
     have hprod := mul_nonneg hbase hgap
-    show PD * SL * (2 * SJ) ≤ A * Z
+    change PD * SL * (2 * SJ) ≤ A * Z
     rw [hA, hZ]
     nlinarith [hprod]
   -- the constant half

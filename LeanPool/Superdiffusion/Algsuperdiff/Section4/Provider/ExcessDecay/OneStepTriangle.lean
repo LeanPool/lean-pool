@@ -90,7 +90,7 @@ theorem affineExcessRaw_add_le_of_memLp {W : Set (Vec d)} {u w : Vec d → ℝ}
         = normalizedL2On W fun y => (u y + w y) - affineEval c g y := rfl
     have hdistu : affineDistOn W u c g = normalizedL2On W fun y => u y - affineEval c g y := rfl
     rw [hdist] at hproj
-    show affineExcessRaw W (fun y => u y + w y) - normalizedL2On W w ≤ affineDistOn W u c g
+    change affineExcessRaw W (fun y => u y + w y) - normalizedL2On W w ≤ affineDistOn W u c g
     rw [hdistu]
     linarith only [hproj, hmink]
   have hcinf := le_csInf (affineDistSet_nonempty W u) hle
@@ -130,7 +130,7 @@ theorem affineExcess_sub_le_truncatedWindow (hd : d ≠ 0) {m k : ℤ} {x : Vec 
   have hlast : ((volume W).toReal) ^ (-(d : ℝ)⁻¹) * normalizedL2On W (fun y => u y - v y)
       ≤ 9 * (3 : ℝ) ^ (-k) * normalizedL2On W (fun y => u y - v y) :=
     mul_le_mul_of_nonneg_right hnorm hL2
-  show ((volume W).toReal) ^ (-(d : ℝ)⁻¹) * affineExcessRaw W u ≤ _
+  change ((volume W).toReal) ^ (-(d : ℝ)⁻¹) * affineExcessRaw W u ≤ _
   have hEv : affineExcess W v = ((volume W).toReal) ^ (-(d : ℝ)⁻¹) * affineExcessRaw W v := rfl
   rw [hEv]
   linarith only [hstep, hlast]

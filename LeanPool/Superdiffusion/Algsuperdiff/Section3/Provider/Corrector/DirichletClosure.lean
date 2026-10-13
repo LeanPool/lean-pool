@@ -32,7 +32,8 @@ zero-trace potential class really is the gradient of an `H¹₀` function.
 
 It does, and the two ingredients are both already in CoarseGraining:
 
-* `Homogenization.PotentialSolenoidalL2Data.hasPotentialZeroTraceClosureRealization_of_isOpenBoundedConvexDomain`
+*
+`hasPotentialZeroTraceClosureRealization_of_isOpenBoundedConvexDomain`
   (`Homogenization/Sobolev/PotentialSolenoidalL2Realization.lean`), proved from
   the closed-range gradient projection on the `H¹₀` graph; and
 * `Homogenization.isOpenBoundedConvexDomain_openCubeSet`

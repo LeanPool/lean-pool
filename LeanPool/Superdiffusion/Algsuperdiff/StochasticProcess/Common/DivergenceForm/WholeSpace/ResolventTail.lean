@@ -62,7 +62,8 @@ structure WholeSpaceVariableExhaustionResolventTailInput
   hasTail : ∀ mu : PositiveShift, 1 ≤ (mu : ℝ) →
     letI := OnePoint.exhaustionMetricSpace rho continuous_rho rho_pos lipschitz_rho
       isCompact_superlevel
-    Algsuperdiff.Process.SubMarkovKernelSemigroup.HasResolventTail R.onePointKernelSemigroup (mu : ℝ)
+    Algsuperdiff.Process.SubMarkovKernelSemigroup.HasResolventTail R.onePointKernelSemigroup (mu :
+      ℝ)
       (phi (mu : ℝ))
   cutoff : ℝ → ℝ
   cutoff_nonneg : ∀ lam, 0 ≤ cutoff lam
@@ -87,7 +88,8 @@ variable {R : PositiveC0ContractiveResolvent (Vec d)}
 data used by the canonical process construction. -/
 def toOnePointRegular (H : WholeSpaceVariableExhaustionResolventTailInput R) :
     R.OnePointRegular :=
-  Algsuperdiff.Process.PositiveC0ContractiveResolvent.OnePointRegular.of_variableResolventTail R H.rho
+  Algsuperdiff.Process.PositiveC0ContractiveResolvent.OnePointRegular.of_variableResolventTail R
+    H.rho
     H.continuous_rho H.rho_pos H.lipschitz_rho H.isCompact_superlevel H.rho_le_one
     H.phi_nonneg H.hasTail H.cutoff_nonneg H.budget_nonneg H.integral_le
     H.one_lt_timeExponent H.timeExponent_le_two H.cutoffGrowth_nonneg H.cutoff_pow_le

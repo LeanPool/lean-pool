@@ -107,8 +107,8 @@ theorem ae_tendsto_convolution_mollifyBump {w : Vec d → ℝ} (hwI : Integrable
       have hk0 : (0 : ℝ) ≤ (k : ℝ) := Nat.cast_nonneg k
       have hk : (0 : ℝ) < (k : ℝ) + 1 := by linarith only [hk0]
       field_simp
-    show (mollifyBump (d := d) k).rOut ≤ 2 * (mollifyBump (d := d) k).rIn
-    show (1 : ℝ) / ((k : ℝ) + 1) ≤ 2 * (1 / (2 * ((k : ℝ) + 1)))
+    change (mollifyBump (d := d) k).rOut ≤ 2 * (mollifyBump (d := d) k).rIn
+    change (1 : ℝ) / ((k : ℝ) + 1) ≤ 2 * (1 / (2 * ((k : ℝ) + 1)))
     rw [heq]
   refine hbase.mono fun x hx => ?_
   have hrw : ∀ k : ℕ, (((mollifyBump (d := d) k).normed volume)

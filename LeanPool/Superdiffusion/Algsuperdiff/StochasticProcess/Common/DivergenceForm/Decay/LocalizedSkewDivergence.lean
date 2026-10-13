@@ -275,7 +275,8 @@ private theorem integral_vecDot_matVecMul_smooth_eq
         -∫ x in U, (dA i j x + dB i j x) * phi.toH1Function.toFun x ∂volume := by
     intro i j
     have hibp :=
-      (contDiffOneH1 hUm hUb (hchiC1 i j)).integral_mul_zeroTrace_gradCoord_eq_neg_integral_gradCoord_mul
+      (contDiffOneH1 hUm hUb (hchiC1 i
+        j)).integral_mul_zeroTrace_gradCoord_eq_neg_integral_gradCoord_mul
         phi i
     refine hibp.trans (congrArg Neg.neg (integral_congr_ae ?_))
     filter_upwards with x

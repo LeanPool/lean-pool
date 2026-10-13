@@ -260,7 +260,7 @@ private theorem measureReal_weightedCubeEvent_le_of_bounds
           (centeredWeightedCubeMassOn P B Γ (smallScales Γ)) (A * t) := by
     intro ω hω
     change r < weightedCubeMassOn B Γ (smallScales Γ) ω at hω
-    rw [weightedCubeMassOn_eq_centered_add_expected] at hω
+    rw [weightedCubeMassOn_eq_centered_add_expected P B Γ (smallScales Γ) ω] at hω
     rw [mem_absTailEvent]
     have hcenterLower : r / 2 <
         centeredWeightedCubeMassOn P B Γ (smallScales Γ) ω := by
@@ -309,6 +309,114 @@ private theorem measureReal_weightedCubeEvent_le_of_bounds
       rw [← Real.exp_add]
       congr 1
       ring
+
+private theorem largeScale_comparisonBounds1 :
+    ∀ {Ω : Type u_1} [inst : MeasurableSpace Ω] {d : ℕ} (P : Measure Ω) (B : ℕ → Site d → Set Ω) (a T lam : ℝ)
+      (hTone : (1 : ℝ) ≤ T) (hlamOne : lam < (1 : ℝ)) (Γ : List (Site d)) (hΓpos : (0 : ℕ) < Γ.length),
+      let b : ℝ := a - (1 : ℝ);
+      let q : ℝ := b * T * lam;
+      let K : ℝ := fixedPathTailScaleConst d;
+      let D : ℝ := pathBoundPrefactorConst d;
+      let n : ℝ := (↑Γ.length : ℝ);
+      let t : ℝ := q * √n * K⁻¹;
+      let s : ℝ := T * √n / (4 : ℝ);
+      ∀ (hTpos : (0 : ℝ) < T) (hKpos : (0 : ℝ) < K) (hDpos : (0 : ℝ) < D) (hnpos : (0 : ℝ) < n) (hsqrtSq : √n ^ (2 : ℕ) = n)
+        (hqpos : (0 : ℝ) < q) (hqScale : (64 : ℝ) * ((↑d : ℝ) + (1 : ℝ)) * K ≤ q)
+        (hqUpper : q ≤ ((↑d : ℝ) + (1 : ℝ)) * (T * lam)) (hD_Tlam : (64 : ℝ) * D ≤ T * lam) (hTlamLt : T * lam < T)
+        (hTeight : (8 : ℝ) ≤ T)
+        (hlargeRaw : P.real (largeScaleOccurrenceEvent B Γ) ≤ D * Real.exp (-(T ^ (2 : ℕ) * n / (4 : ℝ)))),
+        P.real (largeScaleOccurrenceEvent B Γ) ≤ Real.exp (-s ^ (2 : ℕ)) ∧ (2 : ℝ) ≤ t ∧ t ^ (2 : ℕ) ≤ s ^ (2 : ℕ) := by
+  intro Ω instance1 d P B a T lam hTone hlamOne Γ hΓpos b q K D n t s hTpos hKpos hDpos hnpos hsqrtSq hqpos hqScale hqUpper hD_Tlam hTlamLt hTeight hlargeRaw
+  have hDleT : D ≤ T := by
+    have hDle64D : D ≤ 64 * D := by linarith only [hDpos]
+    exact hDle64D.trans (hD_Tlam.trans hTlamLt.le)
+  have hTquad : T ≤ T ^ 2 * n / 8 := by
+    have hnOne : (1 : ℝ) ≤ n := by
+      have hnOneNat : 1 ≤ Γ.length := hΓpos
+      dsimp only [n]
+      exact_mod_cast hnOneNat
+    have hT8 : 8 * T ≤ T ^ 2 := by nlinarith only [hTeight]
+    calc
+      T = 8 * T / 8 := by ring
+      _ ≤ T ^ 2 / 8 := div_le_div_of_nonneg_right hT8 (by norm_num)
+      _ ≤ T ^ 2 * n / 8 := by
+        apply div_le_div_of_nonneg_right _ (by norm_num)
+        simpa only [mul_one] using
+          mul_le_mul_of_nonneg_left hnOne (sq_nonneg T)
+  have hDexp : D ≤ Real.exp (T ^ 2 * n / 8) := by
+    have hexp := Real.add_one_le_exp (T ^ 2 * n / 8)
+    exact hDleT.trans (hTquad.trans (by linarith only [hexp]))
+  have hsSq : s ^ 2 = T ^ 2 * n / 16 := by
+    dsimp only [s]
+    rw [div_pow, mul_pow, hsqrtSq]
+    norm_num
+  have hlarge : P.real (largeScaleOccurrenceEvent B Γ) ≤ Real.exp (-(s ^ 2)) := by
+    apply hlargeRaw.trans
+    calc
+      D * Real.exp (-(T ^ 2 * n / 4)) ≤
+          Real.exp (T ^ 2 * n / 8) *
+            Real.exp (-(T ^ 2 * n / 4)) :=
+        mul_le_mul_of_nonneg_right hDexp (Real.exp_pos _).le
+      _ = Real.exp (-(T ^ 2 * n / 8)) := by
+        rw [← Real.exp_add]
+        congr 1
+        ring
+      _ ≤ Real.exp (-(s ^ 2)) := by
+        rw [Real.exp_le_exp, hsSq]
+        have hnonneg : 0 ≤ T ^ 2 * n := mul_nonneg (sq_nonneg T) hnpos.le
+        linarith only [hnonneg]
+  have htTwo : 2 ≤ t := by
+    have hqK : 64 * ((d : ℝ) + 1) ≤ q * K⁻¹ := by
+      apply (le_mul_inv_iff₀ hKpos).2
+      simpa only [mul_assoc] using hqScale
+    have hsqrtOne : 1 ≤ Real.sqrt n := by
+      have hnOneNat : 1 ≤ Γ.length := hΓpos
+      have hnOne : (1 : ℝ) ≤ n := by
+        dsimp only [n]
+        exact_mod_cast hnOneNat
+      rw [← Real.sqrt_one]
+      exact Real.sqrt_le_sqrt hnOne
+    calc
+      (2 : ℝ) ≤ 64 := by norm_num
+      _ ≤ 64 * ((d : ℝ) + 1) := by
+        have hd0 : (0 : ℝ) ≤ d := Nat.cast_nonneg d
+        linarith only [hd0]
+      _ ≤ q * K⁻¹ := hqK
+      _ = (q * K⁻¹) * 1 := by ring
+      _ ≤ (q * K⁻¹) * Real.sqrt n :=
+        mul_le_mul_of_nonneg_left hsqrtOne
+          (mul_nonneg hqpos.le (inv_nonneg.mpr hKpos.le))
+      _ = t := by dsimp only [t]; ring
+  have htNonneg : 0 ≤ t := zero_le_two.trans htTwo
+  have hsNonneg : 0 ≤ s := by dsimp only [s]; positivity
+  have hqT : q ≤ ((d : ℝ) + 1) * T := by
+    have hTlamLe : T * lam ≤ T := by
+      simpa only [mul_one] using mul_le_mul_of_nonneg_left hlamOne.le hTpos.le
+    exact hqUpper.trans (mul_le_mul_of_nonneg_left hTlamLe (by positivity))
+  have hratio : q * K⁻¹ ≤ T / 8 := by
+    apply (mul_inv_le_iff₀ hKpos).2
+    have hKdim : 8 * ((d : ℝ) + 1) ≤ K := by
+      simpa only [K] using fixedPathTailScale_dimension_le d
+    have h8q : 8 * q ≤ T * K := by
+      calc
+        8 * q ≤ 8 * (((d : ℝ) + 1) * T) :=
+          mul_le_mul_of_nonneg_left hqT (by norm_num)
+        _ = T * (8 * ((d : ℝ) + 1)) := by ring
+        _ ≤ T * K := mul_le_mul_of_nonneg_left hKdim hTpos.le
+    linarith only [h8q]
+  have htLeS : t ≤ s := by
+    dsimp only [t, s]
+    calc
+      q * Real.sqrt n * K⁻¹ = (q * K⁻¹) * Real.sqrt n := by ring
+      _ ≤ (T / 8) * Real.sqrt n :=
+        mul_le_mul_of_nonneg_right hratio (Real.sqrt_nonneg _)
+      _ ≤ (T / 4) * Real.sqrt n := by
+        apply mul_le_mul_of_nonneg_right _ (Real.sqrt_nonneg _)
+        linarith only [hTpos]
+      _ = T * Real.sqrt n / 4 := by ring
+  have hts : t ^ 2 ≤ s ^ 2 := by
+    nlinarith only [htNonneg, hsNonneg, htLeS]
+  exact ⟨hlarge, htTwo, hts⟩
 
 /-- A deterministic path obeys the weighted inflated-cube tail at the
 dimension-only rate used in the path union bound. -/
@@ -484,95 +592,9 @@ theorem measureReal_weightedCubeEvent_le_fixedPath
     dsimp only [D, n, pathBoundPrefactorConst]
     ring
   rw [hlargeRewrite] at hlargeRaw
-  have hDleT : D ≤ T := by
-    have hDle64D : D ≤ 64 * D := by linarith only [hDpos]
-    exact hDle64D.trans (hD_Tlam.trans hTlamLt.le)
-  have hTquad : T ≤ T ^ 2 * n / 8 := by
-    have hnOne : (1 : ℝ) ≤ n := by
-      have hnOneNat : 1 ≤ Γ.length := hΓpos
-      dsimp only [n]
-      exact_mod_cast hnOneNat
-    have hT8 : 8 * T ≤ T ^ 2 := by nlinarith only [hTeight]
-    calc
-      T = 8 * T / 8 := by ring
-      _ ≤ T ^ 2 / 8 := div_le_div_of_nonneg_right hT8 (by norm_num)
-      _ ≤ T ^ 2 * n / 8 := by
-        apply div_le_div_of_nonneg_right _ (by norm_num)
-        simpa only [mul_one] using
-          mul_le_mul_of_nonneg_left hnOne (sq_nonneg T)
-  have hDexp : D ≤ Real.exp (T ^ 2 * n / 8) := by
-    have hexp := Real.add_one_le_exp (T ^ 2 * n / 8)
-    exact hDleT.trans (hTquad.trans (by linarith only [hexp]))
-  have hsSq : s ^ 2 = T ^ 2 * n / 16 := by
-    dsimp only [s]
-    rw [div_pow, mul_pow, hsqrtSq]
-    norm_num
-  have hlarge : P.real (largeScaleOccurrenceEvent B Γ) ≤ Real.exp (-(s ^ 2)) := by
-    apply hlargeRaw.trans
-    calc
-      D * Real.exp (-(T ^ 2 * n / 4)) ≤
-          Real.exp (T ^ 2 * n / 8) *
-            Real.exp (-(T ^ 2 * n / 4)) :=
-        mul_le_mul_of_nonneg_right hDexp (Real.exp_pos _).le
-      _ = Real.exp (-(T ^ 2 * n / 8)) := by
-        rw [← Real.exp_add]
-        congr 1
-        ring
-      _ ≤ Real.exp (-(s ^ 2)) := by
-        rw [Real.exp_le_exp, hsSq]
-        have hnonneg : 0 ≤ T ^ 2 * n := mul_nonneg (sq_nonneg T) hnpos.le
-        linarith only [hnonneg]
-  have htTwo : 2 ≤ t := by
-    have hqK : 64 * ((d : ℝ) + 1) ≤ q * K⁻¹ := by
-      apply (le_mul_inv_iff₀ hKpos).2
-      simpa only [mul_assoc] using hqScale
-    have hsqrtOne : 1 ≤ Real.sqrt n := by
-      have hnOneNat : 1 ≤ Γ.length := hΓpos
-      have hnOne : (1 : ℝ) ≤ n := by
-        dsimp only [n]
-        exact_mod_cast hnOneNat
-      rw [← Real.sqrt_one]
-      exact Real.sqrt_le_sqrt hnOne
-    calc
-      (2 : ℝ) ≤ 64 := by norm_num
-      _ ≤ 64 * ((d : ℝ) + 1) := by
-        have hd0 : (0 : ℝ) ≤ d := Nat.cast_nonneg d
-        linarith only [hd0]
-      _ ≤ q * K⁻¹ := hqK
-      _ = (q * K⁻¹) * 1 := by ring
-      _ ≤ (q * K⁻¹) * Real.sqrt n :=
-        mul_le_mul_of_nonneg_left hsqrtOne
-          (mul_nonneg hqpos.le (inv_nonneg.mpr hKpos.le))
-      _ = t := by dsimp only [t]; ring
-  have htNonneg : 0 ≤ t := zero_le_two.trans htTwo
-  have hsNonneg : 0 ≤ s := by dsimp only [s]; positivity
-  have hqT : q ≤ ((d : ℝ) + 1) * T := by
-    have hTlamLe : T * lam ≤ T := by
-      simpa only [mul_one] using mul_le_mul_of_nonneg_left hlamOne.le hTpos.le
-    exact hqUpper.trans (mul_le_mul_of_nonneg_left hTlamLe (by positivity))
-  have hratio : q * K⁻¹ ≤ T / 8 := by
-    apply (mul_inv_le_iff₀ hKpos).2
-    have hKdim : 8 * ((d : ℝ) + 1) ≤ K := by
-      simpa only [K] using fixedPathTailScale_dimension_le d
-    have h8q : 8 * q ≤ T * K := by
-      calc
-        8 * q ≤ 8 * (((d : ℝ) + 1) * T) :=
-          mul_le_mul_of_nonneg_left hqT (by norm_num)
-        _ = T * (8 * ((d : ℝ) + 1)) := by ring
-        _ ≤ T * K := mul_le_mul_of_nonneg_left hKdim hTpos.le
-    linarith only [h8q]
-  have htLeS : t ≤ s := by
-    dsimp only [t, s]
-    calc
-      q * Real.sqrt n * K⁻¹ = (q * K⁻¹) * Real.sqrt n := by ring
-      _ ≤ (T / 8) * Real.sqrt n :=
-        mul_le_mul_of_nonneg_right hratio (Real.sqrt_nonneg _)
-      _ ≤ (T / 4) * Real.sqrt n := by
-        apply mul_le_mul_of_nonneg_right _ (Real.sqrt_nonneg _)
-        linarith only [hTpos]
-      _ = T * Real.sqrt n / 4 := by ring
-  have hts : t ^ 2 ≤ s ^ 2 := by
-    nlinarith only [htNonneg, hsNonneg, htLeS]
+  obtain ⟨hlarge, htTwo, hts⟩ :=
+    (show (P.real (largeScaleOccurrenceEvent B Γ) ≤ Real.exp (-(s ^ 2))) ∧ (2 ≤ t) ∧ (t ^ 2 ≤ s ^ 2) from
+      @largeScale_comparisonBounds1 (Ω) (by infer_instance) (d) (P) (B) (a) (T) (lam) (hTone) (hlamOne) (Γ) (hΓpos) (hTpos) (hKpos) (hDpos) (hnpos) (hsqrtSq) (hqpos) (hqScale) (hqUpper) (hD_Tlam) (hTlamLt) (hTeight) (hlargeRaw))
   have htail := measureReal_weightedCubeEvent_le_of_bounds
     P B Γ (lam * n / 2)
       (gammaTriangleConst 2 * fixedPathLayerConst d * Real.sqrt n * T⁻¹ *

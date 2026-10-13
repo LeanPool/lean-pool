@@ -105,7 +105,7 @@ theorem responseJ_cutoff_translateCutoffSample (M : ABKModel d) (m : ℤ) (v : V
           (translateCutoffSample v omega)).coeffOn R) p q := by
   rw [HCPolySupport.Internal.Ch02.book_responseJ_eq_ResponseJ,
     HCPolySupport.Internal.Ch02.book_responseJ_eq_ResponseJ]
-  show ResponseJ (openCubeSet T) p q (coefficientCutoff M.nu m omega).toFun =
+  change ResponseJ (openCubeSet T) p q (coefficientCutoff M.nu m omega).toFun =
     ResponseJ (openCubeSet R) p q
       (coefficientCutoff M.nu m (translateCutoffSample v omega)).toFun
   rw [hset, ResponseJ_translateSet_eq_translateCoeffField,

@@ -210,8 +210,8 @@ theorem excessDecay_oneStep_anchored_datumSplit_errorWeighted (d : ℕ) [NeZero 
       (Real.rpow_nonneg (zpow_pos (by norm_num) _).le _)
   rcases hwin with hcube |
     ⟨i, V, v₁, cl, Al, hmet, hv, hvR, hVae, hv₁, hupv, hlowv, hharmclass⟩
-  · have hmain := excessDecay_oneStep_interior_of_weaklyHarmonic_regated hd hk hs hs1 hdelta1 hxm hnm1
-      hcube hu hharmv hmem hB hrep hharm
+  · have hmain := excessDecay_oneStep_interior_of_weaklyHarmonic_regated hd hk hs hs1 hdelta1 hxm
+      hnm1 hcube hu hharmv hmem hB hrep hharm
     refine oneStepConclusionKh_mono d (le_max_left _ _) hE0 hR hKh ?_
     have hpad : (0 : ℝ) ≤ taylorContractionConst d
         * ((3 : ℝ) ^ (n - (k : ℤ))) ^ (1 / 2 : ℝ)

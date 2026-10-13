@@ -226,7 +226,7 @@ theorem vecDot_bCoarse_add_vecDot_sigmaStarInvCoarse_sub_two_le {d : ℕ} [NeZer
       Book.Ch02.normalizedBlockResponseValueSet Q F (scalarMatrix (d := d) σ) := by
     refine ⟨Sum.elim u 0, ?_, ?_⟩
     · rw [fullBlockVecNormSq_eq_add]
-      show vecNormSq u + vecNormSq (0 : Vec d) = 1
+      change vecNormSq u + vecNormSq (0 : Vec d) = 1
       rw [hzero, add_zero]
       exact hu
     · rw [ofFullBlockVec_constantFullBlockMatrixInvSqrt_scalarMatrix hσ,

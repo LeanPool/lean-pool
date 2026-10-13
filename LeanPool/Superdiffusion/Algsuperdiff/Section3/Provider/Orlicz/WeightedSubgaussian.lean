@@ -273,7 +273,7 @@ theorem hasSubgaussianMGF_of_tail {X : Ω → ℝ} (hX : AEMeasurable X μ) {c :
         have := exp_le_add_exp_sq (t * X ω)
         have heq : (t * X ω) ^ 2 = l * W ω := by
           have hWω : l * W ω = t ^ 2 * X ω ^ 2 := by
-            rw [hl]; show cc * t ^ 2 * (X ω ^ 2 / cc) = t ^ 2 * X ω ^ 2
+            rw [hl]; change cc * t ^ 2 * (X ω ^ 2 / cc) = t ^ 2 * X ω ^ 2
             field_simp
           rw [hWω]; ring
         rwa [heq] at this

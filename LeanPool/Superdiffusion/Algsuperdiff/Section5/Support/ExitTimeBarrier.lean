@@ -152,7 +152,7 @@ private theorem euclideanGradient_exitTimeBarrier (y : Vec d) (n : ℤ) (A : ℝ
   have hdiff : DifferentiableAt ℝ
       (fun w : Vec d => referenceBump d (((3 : ℝ) ^ n)⁻¹ • (w - y))) z :=
     (hg.differentiable (by simp)).differentiableAt
-  show (fderiv ℝ (exitTimeBarrier y n A) z) (basisVec i) = _
+  change (fderiv ℝ (exitTimeBarrier y n A) z) (basisVec i) = _
   rw [show exitTimeBarrier y n A =
       fun w : Vec d => A * referenceBump d (((3 : ℝ) ^ n)⁻¹ • (w - y)) from rfl,
     fderiv_const_mul hdiff A]
@@ -272,7 +272,7 @@ theorem exists_exitTimeBarrier (d : ℕ) (y : Vec d) (n : ℤ) {sig : ℝ} (hsig
                 fun _ : Vec d => (0 : ℝ) := funext fun x => sub_self _
               simp [hz] }, hsmooth.continuous, ?_, ?_⟩
   · intro x hx
-    show bar x = A
+    change bar x = A
     have hin : ‖((3 : ℝ) ^ n)⁻¹ • (x - y)‖ ≤ (referenceBump d).rIn := by
       rw [cubeSetAt_eq_ball, Metric.mem_ball, dist_eq_norm] at hx
       rw [norm_smul, Real.norm_eq_abs, abs_of_pos (by positivity)]
@@ -281,7 +281,7 @@ theorem exists_exitTimeBarrier (d : ℕ) (y : Vec d) (n : ℤ) {sig : ℝ} (hsig
         simp
       rw [hsucc] at hx
       have hpos : (0 : ℝ) < ((3 : ℝ) ^ n)⁻¹ := by positivity
-      show ((3 : ℝ) ^ n)⁻¹ * ‖x - y‖ ≤ 1 / 6
+      change ((3 : ℝ) ^ n)⁻¹ * ‖x - y‖ ≤ 1 / 6
       calc ((3 : ℝ) ^ n)⁻¹ * ‖x - y‖ ≤ ((3 : ℝ) ^ n)⁻¹ * ((1 / 2 : ℝ) * ((3 : ℝ) ^ n / 3)) :=
             mul_le_mul_of_nonneg_left hx.le hpos.le
         _ = 1 / 6 := by field_simp; ring

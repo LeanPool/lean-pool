@@ -75,7 +75,8 @@ depth `n`**, which is precisely what the CoarseGraining hypothesis needs.
 * `coarseBlockMatrix_cubeDomain_eq_coarseBlockMatrix_openCubeSet` -- the
   identification of the Chapter-2 coarse block matrix of a cube coefficient
   object with the CoarseGraining coarse block matrix of its underlying field.
-  This is `Ch04.RestrictionLawCarrier.coarseBlockMatrix_cubeSet_eq_ch02_coarseBlockMatrix_of_aelocallyUniformlyEllipticField`
+  This is
+  `coarseBlockMatrix_cubeSet_eq_ch02_coarseBlockMatrix_of_aelocallyUniformlyEllipticField`
   with the a.e.-elliptic-field packaging stripped out; the cutoff family is not
   built through that packaging.
 * `coarseBlockMatrix_coefficientCutoff_translateCube`, and the two norm
@@ -148,7 +149,7 @@ object is the CoarseGraining coarse block matrix of its underlying coefficient
 field on the open cube.
 
 This is the content of
-`Ch04.RestrictionLawCarrier.coarseBlockMatrix_cubeSet_eq_ch02_coarseBlockMatrix_of_aelocallyUniformlyEllipticField`
+`coarseBlockMatrix_cubeSet_eq_ch02_coarseBlockMatrix_of_aelocallyUniformlyEllipticField`
 without its `A packaging: the cutoff family is not built through
 `triadicCoeffFamilyOfA, so that statement does not apply to it. -/
 theorem coarseBlockMatrix_cubeDomain_eq_coarseBlockMatrix_openCubeSet

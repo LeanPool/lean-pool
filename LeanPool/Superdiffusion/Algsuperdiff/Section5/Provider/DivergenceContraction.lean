@@ -133,7 +133,8 @@ the gradient becomes a two-point bound on the divergence at the same cost `d`. -
 theorem norm_matFieldDiv_sub_le {k : Vec d → Mat d} {Dx Dz : Vec d →L[ℝ] Mat d}
     {x z : Vec d} (hx : HasFDerivAt k Dx x) (hz : HasFDerivAt k Dz z) :
     ‖matFieldDiv k x - matFieldDiv k z‖ ≤ (d : ℝ) * ‖Dx - Dz‖ := by
-  have hrw : matFieldDiv k x - matFieldDiv k z = fun j => ∑ i : Fin d, (Dx - Dz) (basisVec i) i j := by
+  have hrw : matFieldDiv k x - matFieldDiv k z = fun j => ∑ i : Fin d, (Dx - Dz) (basisVec i) i j
+    := by
     funext j
     rw [Pi.sub_apply, matFieldDiv_eq_sum_apply hx, matFieldDiv_eq_sum_apply hz,
       ← Finset.sum_sub_distrib]
@@ -169,7 +170,8 @@ theorem norm_matFieldDiv_cutoff_sub_le {M : ABKModel d} {n m : ℤ} {y : Vec d} 
     Real.rpow_pos_of_pos (by norm_num) _
   have hnn : (0 : ℝ) ≤ Real.sqrt d * (theta * Real.rpow 3 ((M.gamma - 1) * (n : ℝ))) := by
     positivity
-  have hsup := (supNormOn_le_ofReal_iff hnn).1 (supNormOn_deriv_shellIncrement_le (m := m) hmem htheta)
+  have hsup := (supNormOn_le_ofReal_iff hnn).1 (supNormOn_deriv_shellIncrement_le (m := m) hmem
+    htheta)
   refine (norm_matFieldDiv_le (hasFDerivAt_perturbation omega hnm x)).trans ?_
   exact mul_le_mul_of_nonneg_left (hsup x hx) (Nat.cast_nonneg d)
 

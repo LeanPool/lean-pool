@@ -267,13 +267,13 @@ theorem rpow_three_neg_mul_sqrt_coveringDifference_le [NeZero d]
 /-- Powers of a fixed positive base add. -/
 theorem rpow_mul_rpow_of_add {b : ℝ} (hb : 0 < b) (p q r : ℝ) (hpq : p + q = r) :
     Real.rpow b p * Real.rpow b q = Real.rpow b r := by
-  show b ^ p * b ^ q = b ^ r
+  change b ^ p * b ^ q = b ^ r
   rw [← Real.rpow_add hb, hpq]
 
 /-- The pin's half-argument, extracted: `(s/2)^e = 2^{-e} · s^e`. -/
 theorem rpow_half_arg {s : ℝ} (hs : 0 ≤ s) (e : ℝ) :
     Real.rpow (s / 2) e = Real.rpow (2 : ℝ) (-e) * Real.rpow s e := by
-  show (s / 2) ^ e = (2 : ℝ) ^ (-e) * s ^ e
+  change (s / 2) ^ e = (2 : ℝ) ^ (-e) * s ^ e
   rw [show s / 2 = s * (2 : ℝ)⁻¹ by ring, Real.mul_rpow hs (by norm_num),
     Real.inv_rpow (by norm_num), ← Real.rpow_neg (by norm_num)]
   ring

@@ -599,7 +599,7 @@ theorem responseJ_mesoscale_cube_sensitivity [NeZero d] (dimension : 2 ≤ d)
       responseJ (cubeDomain R) (F.coeffOn R) p q := by
     refine responseJ_eq_ofAEEq ?_ p q
     refine Filter.Eventually.of_forall fun x => ?_
-    show (F.coeffOn R).toCoeffField x +
+    change (F.coeffOn R).toCoeffField x +
       (0 : ℝ) • (descendantField hk hR h.toLInfSkewMatrixFieldOn).1.1 x =
       (F.coeffOn R).toCoeffField x
     simp

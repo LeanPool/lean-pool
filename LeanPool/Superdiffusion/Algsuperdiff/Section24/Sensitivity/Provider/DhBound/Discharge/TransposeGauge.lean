@@ -82,7 +82,7 @@ theorem responseJ_transpose_zero_left (U : Domain d) (a : CoeffOn U) (w : Vec d)
 theorem sigmaStarInvCoarse_transpose (U : Domain d) (a : CoeffOn U) :
     Ch02.sigmaStarInvCoarse U a.transpose = Ch02.sigmaStarInvCoarse U a := by
   ext i j
-  show Ch02.sigmaStarInvEntry U a.transpose i j = Ch02.sigmaStarInvEntry U a i j
+  change Ch02.sigmaStarInvEntry U a.transpose i j = Ch02.sigmaStarInvEntry U a i j
   unfold Ch02.sigmaStarInvEntry
   by_cases hij : i = j
   · simp only [hij, dite_eq_left, responseJ_transpose_zero_left]
@@ -125,12 +125,12 @@ theorem lambdaSq_transposeCoeffFamily (Q : TriadicCube d) (s : ℝ)
     Ch02.lambdaSq Q s q (transposeCoeffFamily F) = Ch02.lambdaSq Q s q F := by
   cases q with
   | finite qv =>
-      show Ch02.lambdaSqFinite Q s qv (transposeCoeffFamily F) =
+      change Ch02.lambdaSqFinite Q s qv (transposeCoeffFamily F) =
         Ch02.lambdaSqFinite Q s qv F
       unfold Ch02.lambdaSqFinite
       simp only [maxDescendantSigmaStarInvMatrixNormAtScale_transposeCoeffFamily]
   | infinity =>
-      show Ch02.lambdaSqInfinity Q s (transposeCoeffFamily F) =
+      change Ch02.lambdaSqInfinity Q s (transposeCoeffFamily F) =
         Ch02.lambdaSqInfinity Q s F
       unfold Ch02.lambdaSqInfinity
       simp only [maxDescendantSigmaStarInvMatrixNormAtScale_transposeCoeffFamily]

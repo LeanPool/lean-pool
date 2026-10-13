@@ -241,7 +241,8 @@ protected theorem badOrdinarySum_le {cstarInv gam s Ccg0 cc T dR E Q4a Q4b Q4c :
   have hg1 : (0 : ℝ) < gammaTriangleConst 1 := gammaTriangleConst_pos
   have hden : (0 : ℝ) < 2 * (s / 4) - gam := by linarith
   obtain ⟨hPfac0, hPfac⟩ := MultiscaleAbsorptionArith.badProfile_le hCcg0 hgam0 hgam1 hs8
-  have hRemle := MultiscaleAbsorptionArith.badRemainder_le (cstarInv := cstarInv) hCcg0 hcs hgam0 hs8
+  have hRemle := MultiscaleAbsorptionArith.badRemainder_le (cstarInv := cstarInv) hCcg0 hcs hgam0
+    hs8
   have hMid0 : (0 : ℝ) ≤ gammaTriangleConst 1 *
       (20 * s⁻¹ * (16 * dR * s⁻¹ * (cc⁻¹ * cstarInv * T * gam +
         Real.exp (-(cc * (E⁻¹) ^ 2 * gam⁻¹))))) := by positivity
@@ -306,7 +307,8 @@ protected theorem badOrdinaryAmplitude_le {cstarInv eps Cms E gam s Ccg0 cc T p 
   have hQ4a0 : (0 : ℝ) ≤ Q4a := by rw [hQ4a]; positivity
   have hQ4b0 : (0 : ℝ) ≤ Q4b := by rw [hQ4b]; positivity
   have hQ4c0 : (0 : ℝ) ≤ Q4c := by rw [hQ4c]; positivity
-  have hsum := MultiscaleAbsorptionArith.badOrdinarySum_le (E := E) hCcg0 hcc hcs hdR hgam0 hgam1 hs8 hT0
+  have hsum := MultiscaleAbsorptionArith.badOrdinarySum_le (E := E) hCcg0 hcc hcs hdR hgam0 hgam1
+    hs8 hT0
     hQ4a hQ4b hQ4c
   set S : ℝ := (s⁻¹) ^ 2 * (eps ^ 2 * E ^ 2 * gam) with hSdef
   set K4b : ℝ := 2 * Q4b * (cc⁻¹) ^ 2 * (3 / 2 : ℝ) ^ 8 with hK4bdef
@@ -322,15 +324,18 @@ protected theorem badOrdinaryAmplitude_le {cstarInv eps Cms E gam s Ccg0 cc T p 
             mul_le_mul_of_nonneg_right (mul_le_mul_of_nonneg_left hT hcoef) hrest
         _ = Q4a * cstarInv * eps ^ (-p) * gam * (s⁻¹) ^ 2 := by ring
     rw [hSdef]
-    exact hmono.trans (MultiscaleAbsorptionArith.polyTerm_le_ordinaryScale hQ4a0 hcs heps0 heps1 hCmsp
+    exact hmono.trans (MultiscaleAbsorptionArith.polyTerm_le_ordinaryScale hQ4a0 hcs heps0 heps1
+      hCmsp
       (by linarith : Q4a ≤ 1 * E) hwin hgam0.le hs)
   have hp2 : Q4b * Real.exp (-(cc * (E⁻¹) ^ 2 * gam⁻¹)) * (s⁻¹) ^ 2 ≤ K4b * S := by
     rw [hSdef, hK4bdef]
-    exact MultiscaleAbsorptionArith.expTerm_le_ordinaryScale hQ4b0 hcc hE hgam0 heps0 heps1 hgammaE hCms8 hfloor
+    exact MultiscaleAbsorptionArith.expTerm_le_ordinaryScale hQ4b0 hcc hE hgam0 heps0 heps1
+      hgammaE hCms8 hfloor
       le_rfl hs
   have hp3 : Q4c * cstarInv * gam * (s⁻¹) ^ 2 ≤ 1 * S := by
     have hz : eps ^ (-(0 : ℝ)) = 1 := by rw [neg_zero, Real.rpow_zero]
-    have hh := MultiscaleAbsorptionArith.polyTerm_le_ordinaryScale (p := (0 : ℝ)) (K := (1 : ℝ)) hQ4c0 hcs heps0
+    have hh := MultiscaleAbsorptionArith.polyTerm_le_ordinaryScale (p := (0 : ℝ)) (K := (1 : ℝ))
+      hQ4c0 hcs heps0
       heps1 (by linarith : (2 : ℝ) + 0 ≤ Cms) (by linarith : Q4c ≤ 1 * E) hwin
       hgam0.le hs
     rw [hz] at hh
@@ -501,11 +506,14 @@ protected theorem remainderTerm_le {eps Cms E gam s hgapR Q5 K : ℝ} (hQ5 : 0 �
     Q5 * gam ^ 2 * (hgapR ^ 2 + (s ^ 2)⁻¹ + E ^ 4 * |Real.log gam| ^ 4) ≤
       K * ((s⁻¹) ^ 2 * (eps ^ 2 * E ^ 2 * gam)) := by
   have hE : (0 : ℝ) < E := lt_of_lt_of_le zero_lt_one hE1
-  have h1 := MultiscaleAbsorptionArith.remainderGap_le (Cms := Cms) hQ5 hgam0 hs hs1 heps0 heps1 hE1 hgammaE
+  have h1 := MultiscaleAbsorptionArith.remainderGap_le (Cms := Cms) hQ5 hgam0 hs hs1 heps0 heps1
+    hE1 hgammaE
     hhgap0 hhgap hCms10 hfloor
-  have h2 := MultiscaleAbsorptionArith.remainderScale_le (Cms := Cms) hQ5 hgam0 hs heps0 heps1 hE1 hgammaE
+  have h2 := MultiscaleAbsorptionArith.remainderScale_le (Cms := Cms) hQ5 hgam0 hs heps0 heps1 hE1
+    hgammaE
     hCms10 hfloor
-  have h3 := MultiscaleAbsorptionArith.remainderLog_le (Cms := Cms) hQ5 hgam0 hgam1 hs hs1 heps0 heps1 hE1
+  have h3 := MultiscaleAbsorptionArith.remainderLog_le (Cms := Cms) hQ5 hgam0 hgam1 hs hs1 heps0
+    heps1 hE1
     hgammaE hCms3 hfloor
   have hbase : (0 : ℝ) ≤ (s⁻¹) ^ 2 * (eps ^ 2 * E ^ 2 * gam) := by positivity
   have hsplit : Q5 * gam ^ 2 * (hgapR ^ 2 + (s ^ 2)⁻¹ + E ^ 4 * |Real.log gam| ^ 4) =

@@ -128,7 +128,7 @@ theorem lipschitzWith_hilbertVecOcticTrunc (n : ℕ) :
     push_cast
     ring
   rw [Real.dist_eq, hcast]
-  show |A ^ 8 - B ^ 8| ≤ 8 * (n : ℝ) ^ 7 * dist x y
+  change |A ^ 8 - B ^ 8| ≤ 8 * (n : ℝ) ^ 7 * dist x y
   set Sm : ℝ := A ^ 7 + A ^ 6 * B + A ^ 5 * B ^ 2 + A ^ 4 * B ^ 3 + A ^ 3 * B ^ 4 +
     A ^ 2 * B ^ 5 + A * B ^ 6 + B ^ 7 with hSm
   have hfac : A ^ 8 - B ^ 8 = (A - B) * Sm := by

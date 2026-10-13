@@ -104,7 +104,7 @@ theorem abs_setIntegral_vecDot_le (U : Set (Vec d)) {F G : Vec d → Vec d}
         ∫ x in U, ‖H x‖ ^ (2 : ℝ) ∂volume = ∫ x in U, ‖H x‖ ^ (2 : ℕ) ∂volume := by
       intro H
       refine integral_congr_ae (Filter.Eventually.of_forall fun x => ?_)
-      show ‖H x‖ ^ (2 : ℝ) = ‖H x‖ ^ (2 : ℕ)
+      change ‖H x‖ ^ (2 : ℝ) = ‖H x‖ ^ (2 : ℕ)
       rw [← Real.rpow_natCast (‖H x‖) 2]
       norm_num
     rw [hrw F, hrw G] at hhold

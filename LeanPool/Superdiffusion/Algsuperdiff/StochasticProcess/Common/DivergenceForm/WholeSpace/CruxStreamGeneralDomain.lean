@@ -17,6 +17,9 @@ Module imports, support namespace and local option directives adapted for Lean P
 
 @[expose] public section
 
+open Algsuperdiff.Section5.Field
+  (toReal_streamAnalyticPenalizedResolvent_le_next_add_fixedCollarTail_of_subset)
+
 
 /-!
 # S-free crux comparison on bounded part domains
@@ -40,6 +43,8 @@ noncomputable section
 variable {d : ℕ} [NeZero d]
 
 namespace WholeSpaceAnalyticData
+
+
 
 variable (A : WholeSpaceAnalyticData d)
 
@@ -221,7 +226,7 @@ theorem iInf_toReal_analyticPenalizedResolvent_le_utilde_stream {D : ℝ}
     P.hutildeCont.continuousOn P.hutildeRep hx error herror ?_
   filter_upwards [hsqrtEventually] with n hn
   have hnorm :=
-    Algsuperdiff.Section5.Field.toReal_streamAnalyticPenalizedResolvent_le_next_add_fixedCollarTail_of_subset
+    toReal_streamAnalyticPenalizedResolvent_le_next_add_fixedCollarTail_of_subset
       M omega P.hV.isOpen v (subset_wholeSpaceCube_partCubeIndex P.hV) n P.lam
       hg hg0 hg1 hgsupp hn (subset_wholeSpaceCube_partCubeIndex P.hV hx)
   rw [hscaleRes n, hscaleCube n]

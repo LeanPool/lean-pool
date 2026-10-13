@@ -373,7 +373,7 @@ theorem tsum_natShift_gradLayerGauge_eq_deepGradSeries (k : ℤ) (v : Fin d → 
     have hkx : k ≤ x := by
       by_contra hcon
       exact hx (by rw [deepGradTerm, ite_eq_right hcon])
-    exact ⟨(x - k).toNat, by show k + (((x - k).toNat : ℕ) : ℤ) = x; omega⟩
+    exact ⟨(x - k).toNat, by change k + (((x - k).toNat : ℕ) : ℤ) = x; omega⟩
   refine Eq.trans (tsum_congr fun n => ?_) (hinj.tsum_eq hsupp)
   rw [deepGradTerm, ite_eq_left (by omega : k ≤ k + (n : ℤ))]
 
@@ -389,7 +389,7 @@ theorem fullGradSeries_eq_of_summable (k : ℤ) (v : Fin d → ℤ)
       have hab' : k + (a : ℤ) = k + (b : ℤ) := hab
       omega
     refine (hsum.comp_injective hinj).congr fun n => ?_
-    show deepGradTerm k v omega (k + (n : ℤ)) = gradLayerGauge k v omega (k + (n : ℤ))
+    change deepGradTerm k v omega (k + (n : ℤ)) = gradLayerGauge k v omega (k + (n : ℤ))
     rw [deepGradTerm, ite_eq_left (by omega : k ≤ k + (n : ℤ))]
   have hshift : Summable fun n : ℕ => gradLayerGauge k v omega (k - 1 + (n : ℤ)) := by
     refine (summable_nat_add_iff (f := fun n : ℕ =>

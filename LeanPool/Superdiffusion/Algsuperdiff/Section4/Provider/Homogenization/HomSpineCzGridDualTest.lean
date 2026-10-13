@@ -140,7 +140,7 @@ theorem exists_vecSupDual (a : Vec d) :
     set c : ℝ := if 0 ≤ a i then (1 : ℝ) else -1 with hc
     have hcabs : |c| = 1 := by rw [hc]; split_ifs <;> norm_num
     have hns : vecNormSq (Pi.single i c : Vec d) = c * c := by
-      show (∑ j, (Pi.single i c : Vec d) j * (Pi.single i c : Vec d) j) = c * c
+      change (∑ j, (Pi.single i c : Vec d) j * (Pi.single i c : Vec d) j) = c * c
       rw [Finset.sum_eq_single i]
       · rw [Pi.single_eq_same]
       · intro b _ hb
@@ -148,7 +148,7 @@ theorem exists_vecSupDual (a : Vec d) :
       · intro h
         exact absurd (Finset.mem_univ i) h
     have hdot : vecDot a (Pi.single i c : Vec d) = a i * c := by
-      show (∑ j, a j * (Pi.single i c : Vec d) j) = a i * c
+      change (∑ j, a j * (Pi.single i c : Vec d) j) = a i * c
       rw [Finset.sum_eq_single i]
       · rw [Pi.single_eq_same]
       · intro b _ hb
@@ -255,12 +255,12 @@ theorem cubeAverage_vecDot_const {Q : TriadicCube d} (Fv : Vec d → Vec d) (w :
     simp only [vecDot]
     rw [integral_finsetSum Finset.univ fun i _ => (hF i).mul_const (w i)]
     exact Finset.sum_congr rfl fun i _ => integral_mul_const _ _
-  show (cubeVolume Q)⁻¹ * ∫ x in cubeSet Q, vecDot (Fv x) w ∂volume = _
+  change (cubeVolume Q)⁻¹ * ∫ x in cubeSet Q, vecDot (Fv x) w ∂volume = _
   rw [hsum]
-  show _ = ∑ i : Fin d, cubeAverageVec Q Fv i * w i
+  change _ = ∑ i : Fin d, cubeAverageVec Q Fv i * w i
   rw [Finset.mul_sum]
   exact Finset.sum_congr rfl fun i _ => by
-    show (cubeVolume Q)⁻¹ * ((∫ x in cubeSet Q, Fv x i ∂volume) * w i) =
+    change (cubeVolume Q)⁻¹ * ((∫ x in cubeSet Q, Fv x i ∂volume) * w i) =
       ((cubeVolume Q)⁻¹ * ∫ x in cubeSet Q, Fv x i ∂volume) * w i
     ring
 
@@ -268,7 +268,7 @@ theorem cubeAverage_vecDot_const {Q : TriadicCube d} (Fv : Vec d → Vec d) (w :
 theorem descendantsAverage_congr (Q : TriadicCube d) (j : ℕ) {f g : TriadicCube d → ℝ}
     (h : ∀ R ∈ descendantsAtDepth Q j, f R = g R) :
     descendantsAverage Q j f = descendantsAverage Q j g := by
-  show ((descendantsAtDepth Q j).card : ℝ)⁻¹ * ∑ R ∈ descendantsAtDepth Q j, f R =
+  change ((descendantsAtDepth Q j).card : ℝ)⁻¹ * ∑ R ∈ descendantsAtDepth Q j, f R =
     ((descendantsAtDepth Q j).card : ℝ)⁻¹ * ∑ R ∈ descendantsAtDepth Q j, g R
   rw [Finset.sum_congr rfl h]
 
@@ -305,7 +305,7 @@ theorem cubeAverage_vecDot_gridDualDepthTest (Q : TriadicCube d) (j : ℕ)
     setIntegral_congr_fun (measurableSet_cubeSet R) hcongr
   have hFR : ∀ i : Fin d, IntegrableOn (fun x => (F.toField x) i) (cubeSet R) volume :=
     fun i => (hFi i).mono_set (cubeSet_subset_of_mem_descendantsAtDepth hR)
-  show (cubeVolume R)⁻¹ *
+  change (cubeVolume R)⁻¹ *
       ∫ x in cubeSet R, vecDot (F.toField x) (gridDualDepthTest Q j v x) ∂volume = _
   rw [hset]
   exact cubeAverage_vecDot_const (Q := R) F.toField (v R) hFR
@@ -358,7 +358,7 @@ theorem depthEnergy_eq_ofReal (Q : TriadicCube d) (s : FractionalOrder)
     ← ENNReal.ofReal_mul (Real.rpow_nonneg (by norm_num) _),
     ← ENNReal.ofReal_mul (by positivity)]
   congr 1
-  show _ = (3 : ℝ) ^ (s.1 * p.exponent.toReal * (((Q.scale - (j : ℤ) : ℤ)) : ℝ)) *
+  change _ = (3 : ℝ) ^ (s.1 * p.exponent.toReal * (((Q.scale - (j : ℤ) : ℤ)) : ℝ)) *
     ((D.card : ℝ)⁻¹ * ∑ R ∈ D, ‖cubeAverageVec R F.toField‖ ^ p.exponent.toReal)
   ring
 

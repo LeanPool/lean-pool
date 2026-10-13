@@ -154,7 +154,7 @@ theorem fluxCorrectedCoeffFamily_negateCutoffSample_aeEq (M : ABKModel d) (L m :
       (adjointFamily (Support.fluxCorrectedCoeffFamily M L m Q omega)) := by
   intro R
   refine Filter.Eventually.of_forall fun x => ?_
-  show Support.fluxCorrectedRegField M L m Q (Cutoff.negateCutoffSample omega) x =
+  change Support.fluxCorrectedRegField M L m Q (Cutoff.negateCutoffSample omega) x =
     matTranspose (Support.fluxCorrectedRegField M L m Q omega x)
   rw [Support.fluxCorrectedRegField_apply, Support.fluxCorrectedRegField_apply]
   exact fluxCorrectedField_negateCutoffSample M L m Q omega x

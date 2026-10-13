@@ -208,7 +208,7 @@ theorem holderExtend_eq_of_mem {A : Set (Vec d)} {Ksup KHol alpha : ℝ}
     (hhol : HolderSeminormBoundOn A alpha KHol phi)
     {x : Vec d} (hx : x ∈ A) : holderExtend A Ksup KHol alpha phi x = phi x := by
   funext i
-  show clampAbs Ksup (mcShaneInf A KHol alpha (fun y => phi y i) x) = phi x i
+  change clampAbs Ksup (mcShaneInf A KHol alpha (fun y => phi y i) x) = phi x i
   rw [mcShaneInf_eq_of_mem hKHol halpha (abs_coord_le_of_sup hsup i)
     (abs_coord_sub_le_of_holder hhol i) hx]
   exact clampAbs_eq_self (abs_coord_le_of_sup hsup i x hx)

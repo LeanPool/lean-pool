@@ -190,7 +190,7 @@ theorem normalizedGagliardoESeminormOn_translateSet (z : Vec d) (A : Set (Vec d)
             (MeasurableEquiv.addRight z : Vec d ≃ᵐ Vec d)) w)) =
       Gagliardo.gagliardoKernel s 2 (fun x => f (x + z)) := by
     funext w
-    show Gagliardo.gagliardoKernel s 2 f (w.1 + z, w.2 + z) =
+    change Gagliardo.gagliardoKernel s 2 f (w.1 + z, w.2 + z) =
       Gagliardo.gagliardoKernel s 2 (fun x => f (x + z)) w
     rw [Gagliardo.gagliardoKernel_apply, Gagliardo.gagliardoKernel_apply,
       dist_add_right]
@@ -263,7 +263,7 @@ theorem memLp_gagliardoKernel_image_add {z : Vec d} {A : Set (Vec d)} {s : ℝ}
             (MeasurableEquiv.addRight z : Vec d ≃ᵐ Vec d)) w)) =
       Gagliardo.gagliardoKernel s 2 (fun x => f (x + z)) := by
     funext w
-    show Gagliardo.gagliardoKernel s 2 f (w.1 + z, w.2 + z) =
+    change Gagliardo.gagliardoKernel s 2 f (w.1 + z, w.2 + z) =
       Gagliardo.gagliardoKernel s 2 (fun x => f (x + z)) w
     rw [Gagliardo.gagliardoKernel_apply, Gagliardo.gagliardoKernel_apply,
       dist_add_right]

@@ -24,7 +24,8 @@ Module imports, support namespace and local option directives adapted for Lean P
 @[expose] public section
 
 /-!
-# Provider: `X_z = S_z + tilde S_z` and a generic pre-mesh intermediate toward the insertion step, at the actual carriers
+# Provider: `X_z = S_z + tilde S_z` and a generic pre-mesh intermediate toward the insertion step,
+at the actual carriers
 
 Source displays in ABK26:
 

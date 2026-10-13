@@ -83,7 +83,7 @@ private theorem holderHalfConst_nonneg_c1 [NeZero d] {m : ℤ} {K : ℝ}
   have hx0 : (0 : Vec d) ∈ openCubeSet (originCube d m) := by
     rw [mem_openCubeSet_originCube_iff]
     intro i
-    show (-(1 / 2 : ℝ)) * (3 : ℝ) ^ m < (0 : ℝ) ∧ (0 : ℝ) < (1 / 2 : ℝ) * (3 : ℝ) ^ m
+    change (-(1 / 2 : ℝ)) * (3 : ℝ) ^ m < (0 : ℝ) ∧ (0 : ℝ) < (1 / 2 : ℝ) * (3 : ℝ) ^ m
     exact ⟨by linarith only [h3], by linarith only [h3]⟩
   have hy0 : (fun _ => (1 / 4 : ℝ) * (3 : ℝ) ^ m : Vec d) ∈
       openCubeSet (originCube d m) := by

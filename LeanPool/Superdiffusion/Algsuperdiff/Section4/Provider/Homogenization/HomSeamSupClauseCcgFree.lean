@@ -135,7 +135,8 @@ def SeamSupplyFluxAtSupGradBudget (d : ℕ) [NeZero d] (hd1 : 1 ≤ d)
 
 /-- **THE SUPPLY LAYER, FROM THE CLAUSE ALONE.**
 
-The supply layer of `HomSeamSupClauseProvider` at a free `Ccg`, with the flux-corrected parent identification (already unconditional)
+The supply layer of `HomSeamSupClauseProvider` at a free `Ccg`, with the flux-corrected parent
+identification (already unconditional)
 appended so that the output is the `Ccg`-free carrier
 `RecutCoreSupplyFluxAtSupGrad`. -/
 theorem seamSupplyFluxAtSupGradBudget_of_supClauseAt (d : ℕ) [NeZero d] (hd1 : 1 ≤ d)

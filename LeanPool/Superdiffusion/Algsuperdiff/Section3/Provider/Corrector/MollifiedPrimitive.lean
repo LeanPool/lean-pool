@@ -168,10 +168,10 @@ theorem memLp_two_mollifyGrad {κ : Vec d → ℝ} (hκc : HasCompactSupport κ)
       (memLp_two_iff_integrable_sq_norm
         (stronglyMeasurable_mollify (continuous_kernelDeriv hκ i) hφm).aestronglyMeasurable).1
         (hcomp i) |>.congr (Filter.Eventually.of_forall fun ω => by
-          show ‖mollify (kernelDeriv κ i) φ ω‖ ^ 2 = mollify (kernelDeriv κ i) φ ω ^ 2
+          change ‖mollify (kernelDeriv κ i) φ ω‖ ^ 2 = mollify (kernelDeriv κ i) φ ω ^ 2
           rw [Real.norm_eq_abs, sq_abs])
   refine hsum.congr (Filter.Eventually.of_forall fun ω => ?_)
-  show (∑ i : Fin d, mollify (kernelDeriv κ i) φ ω ^ 2) = ‖mollifyGrad κ φ ω‖ ^ 2
+  change (∑ i : Fin d, mollify (kernelDeriv κ i) φ ω ^ 2) = ‖mollifyGrad κ φ ω‖ ^ 2
   rw [HilbertVec.norm_sq_eq_sum_sq]
   exact Finset.sum_congr rfl fun i _ => rfl
 

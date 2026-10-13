@@ -94,7 +94,8 @@ theorem lipschitzOnWith_convexApproxSmoothRepresentative
   have hdB : (0 : ℝ) ≤ (d : ℝ) * B := mul_nonneg (Nat.cast_nonneg d) hB
   have hsmooth : ContDiff ℝ (⊤ : ℕ∞) (convexApproxSmoothRepresentative U ρ u x0 r ε) :=
     contDiff_convexApproxSmoothRepresentative hUmeas hρ one_le_two hu2 hr hε0
-  have hcontFderiv : Continuous fun y => fderiv ℝ (convexApproxSmoothRepresentative U ρ u x0 r ε) y :=
+  have hcontFderiv : Continuous fun y => fderiv ℝ (convexApproxSmoothRepresentative U ρ u x0 r ε)
+    y :=
     hsmooth.continuous_fderiv (by simp)
   have hbound : ∀ x ∈ U,
       ‖fderiv ℝ (convexApproxSmoothRepresentative U ρ u x0 r ε) x‖ ≤ (d : ℝ) * B := by

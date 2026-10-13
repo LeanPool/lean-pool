@@ -297,7 +297,7 @@ theorem le_euclideanNorm_sub_of_notMem_euclideanBall {x y : Vec d} {rho : ℝ}
   by_contra hcon
   push Not at hcon
   refine hy ?_
-  show euclideanSqDist y x < rho ^ 2
+  change euclideanSqDist y x < rho ^ 2
   rw [euclideanSqDist, ← euclideanNorm_sq]
   exact pow_lt_pow_left₀ hcon (euclideanNorm_nonneg _) (by norm_num)
 

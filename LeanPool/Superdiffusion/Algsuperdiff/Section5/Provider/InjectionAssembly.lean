@@ -78,7 +78,7 @@ variable {d : ℕ}
 
 private theorem rpow_three_mul (s t : ℝ) :
     Real.rpow 3 s * Real.rpow 3 t = Real.rpow 3 (s + t) := by
-  show (3 : ℝ) ^ s * (3 : ℝ) ^ t = (3 : ℝ) ^ (s + t)
+  change (3 : ℝ) ^ s * (3 : ℝ) ^ t = (3 : ℝ) ^ (s + t)
   rw [← Real.rpow_add (by norm_num : (0 : ℝ) < 3)]
 
 /-- **From the normalized gauge to a Hölder bound.**  The normalization factor
@@ -111,6 +111,318 @@ theorem holderSeminormBoundOn_of_sigmaBar_mul_le (M : ABKModel d) (n : ℤ) (y :
     (mul_nonneg (mul_nonneg (inv_nonneg.2 hS.le) (rpow_three_pos _).le) hT)).1 hbd
 
 /-! ## 2. The injection estimate -/
+
+private theorem infinityInjection_errorContraction :
+    ∀ (d : ℕ) (cstar Creg : ℝ),
+      (0 : ℝ) < Creg →
+        ∀ (CL : ℝ),
+          (∀ (M : ABKModel d),
+              M.gamma ≤ CL⁻¹ ^ (10 : ℕ) * Disorder.cstar M ^ (10 : ℕ) →
+                ∀ (j : ℤ),
+                  (3 : ℝ) ^ (M.gamma * (↑j : ℝ)) * (↑(Annealed.sigmaBar M (j - (1 : ℤ))) : ℝ)⁻¹ ≤
+                    (16 : ℝ) * ((√(Disorder.cstar M))⁻¹ * √M.gamma)) →
+            ∀ (CIter : ℝ),
+              (0 : ℝ) < CIter →
+                let C : ℝ := (1 : ℝ) + (3 : ℝ) * Creg + (96 : ℝ) * (↑d : ℝ) ^ (2 : ℕ) * CIter * Creg * (√cstar)⁻¹;
+                C = (1 : ℝ) + (3 : ℝ) * Creg + (96 : ℝ) * (↑d : ℝ) ^ (2 : ℕ) * CIter * Creg * (√cstar)⁻¹ →
+                  (0 : ℝ) < C →
+                    ∀ (M : ABKModel d),
+                      Disorder.cstar M = cstar →
+                        M.gamma ≤ CL⁻¹ ^ (10 : ℕ) * cstar ^ (10 : ℕ) →
+                          ∀ (ep : ℝ) (n : ℤ),
+                            (0 : ℝ) < ep →
+                              (0 : ℝ) < M.gamma →
+                                (0 : ℝ) < (↑(Annealed.sigmaBar M n) : ℝ) →
+                                  let theta : ℝ := C⁻¹ * ep * (√M.gamma)⁻¹;
+                                  theta = C⁻¹ * ep * (√M.gamma)⁻¹ →
+                                    (0 : ℝ) < theta →
+                                      let Sk : ℝ :=
+                                        (↑d : ℝ) *
+                                          (√(↑d : ℝ) * (theta * Real.rpow (3 : ℝ) ((M.gamma - (1 : ℝ)) * (↑n : ℝ))));
+                                      Sk =
+                                          (↑d : ℝ) *
+                                            (√(↑d : ℝ) * (theta * Real.rpow (3 : ℝ) ((M.gamma - (1 : ℝ)) * (↑n : ℝ)))) →
+                                        let Kk : ℝ :=
+                                          (↑d : ℝ) *
+                                            (√(2 : ℝ) *
+                                              ((↑d : ℝ) *
+                                                (theta * Real.rpow (3 : ℝ) ((M.gamma - (3 / 2 : ℝ)) * (↑n : ℝ)))));
+                                        Kk =
+                                            (↑d : ℝ) *
+                                              (√(2 : ℝ) *
+                                                ((↑d : ℝ) *
+                                                  (theta * Real.rpow (3 : ℝ) ((M.gamma - (3 / 2 : ℝ)) * (↑n : ℝ))))) →
+                                          (0 : ℝ) ≤ (2 : ℝ) * Creg →
+                                            (2 : ℝ) * Creg * (↑(Annealed.sigmaBar M n) : ℝ)⁻¹ * Real.rpow (3 : ℝ) (↑n : ℝ) *
+                                                  CIter *
+                                                (Sk + Real.rpow (3 : ℝ) ((↑n : ℝ) / (2 : ℝ)) * Kk) ≤
+                                              ep := by
+  intro d cstar Creg _hCreg CL hland CIter hCIter C hCdef hCpos M hcst hgam ep n hep0 hgpos hSpos theta hthetadef hth0 Sk hSkdef Kk hKkdef hCreg2
+  have hR1 : (0 : ℝ) < Real.rpow 3 ((M.gamma - 1) * (n : ℝ)) := rpow_three_pos _
+  have hbase : (0 : ℝ) ≤ (d : ℝ) ^ 2 * (theta * Real.rpow 3 ((M.gamma - 1) * (n : ℝ))) :=
+    mul_nonneg (sq_nonneg _) (mul_nonneg hth0.le hR1.le)
+  have hKkrw : Real.rpow 3 ((n : ℝ) / 2) * Kk =
+      Real.sqrt 2 * ((d : ℝ) ^ 2 * (theta * Real.rpow 3 ((M.gamma - 1) * (n : ℝ)))) := by
+    have h : Real.rpow 3 ((n : ℝ) / 2) * Real.rpow 3 ((M.gamma - 3 / 2) * (n : ℝ)) =
+        Real.rpow 3 ((M.gamma - 1) * (n : ℝ)) := by
+      rw [rpow_three_mul]
+      congr 1
+      ring
+    rw [hKkdef, show Real.rpow 3 ((n : ℝ) / 2) * ((d : ℝ) * (Real.sqrt 2 * ((d : ℝ) *
+        (theta * Real.rpow 3 ((M.gamma - 3 / 2) * (n : ℝ)))))) =
+        Real.sqrt 2 * ((d : ℝ) ^ 2 * (theta *
+          (Real.rpow 3 ((n : ℝ) / 2) * Real.rpow 3 ((M.gamma - 3 / 2) * (n : ℝ))))) from by
+        ring, h]
+  have hSkle : Sk ≤ (d : ℝ) ^ 2 * (theta * Real.rpow 3 ((M.gamma - 1) * (n : ℝ))) := by
+    rw [hSkdef]
+    have hsd : Real.sqrt d ≤ (d : ℝ) := sqrt_dim_le_dim d
+    have hnn : (0 : ℝ) ≤ theta * Real.rpow 3 ((M.gamma - 1) * (n : ℝ)) :=
+      mul_nonneg hth0.le hR1.le
+    calc (d : ℝ) * (Real.sqrt d * (theta * Real.rpow 3 ((M.gamma - 1) * (n : ℝ))))
+        ≤ (d : ℝ) * ((d : ℝ) * (theta * Real.rpow 3 ((M.gamma - 1) * (n : ℝ)))) := by
+          exact mul_le_mul_of_nonneg_left (mul_le_mul_of_nonneg_right hsd hnn)
+            (Nat.cast_nonneg d)
+      _ = (d : ℝ) ^ 2 * (theta * Real.rpow 3 ((M.gamma - 1) * (n : ℝ))) := by ring
+  have hs2 : Real.sqrt 2 ≤ 2 := by
+    have h4 : Real.sqrt 4 = 2 := by
+      rw [show (4 : ℝ) = 2 ^ 2 by norm_num, Real.sqrt_sq (by norm_num : (0 : ℝ) ≤ 2)]
+    calc Real.sqrt 2 ≤ Real.sqrt 4 := Real.sqrt_le_sqrt (by norm_num)
+      _ = 2 := h4
+  have hsum : Sk + Real.rpow 3 ((n : ℝ) / 2) * Kk ≤
+      3 * ((d : ℝ) ^ 2 * (theta * Real.rpow 3 ((M.gamma - 1) * (n : ℝ)))) := by
+    rw [hKkrw]
+    have hmul : Real.sqrt 2 *
+        ((d : ℝ) ^ 2 * (theta * Real.rpow 3 ((M.gamma - 1) * (n : ℝ)))) ≤
+        2 * ((d : ℝ) ^ 2 * (theta * Real.rpow 3 ((M.gamma - 1) * (n : ℝ)))) :=
+      mul_le_mul_of_nonneg_right hs2 hbase
+    linarith only [hSkle, hmul]
+  have hpref : (0 : ℝ) ≤ 2 * Creg * ((Annealed.sigmaBar M n : ℝ))⁻¹ *
+      Real.rpow 3 (n : ℝ) * CIter :=
+    mul_nonneg (mul_nonneg (mul_nonneg hCreg2 (inv_nonneg.2 hSpos.le))
+      (rpow_three_pos _).le) hCIter.le
+  have hstep1 := mul_le_mul_of_nonneg_left hsum hpref
+  have hrw : 2 * Creg * ((Annealed.sigmaBar M n : ℝ))⁻¹ * Real.rpow 3 (n : ℝ) * CIter *
+      (3 * ((d : ℝ) ^ 2 * (theta * Real.rpow 3 ((M.gamma - 1) * (n : ℝ))))) =
+      6 * Creg * CIter * (d : ℝ) ^ 2 * theta *
+        (Real.rpow 3 (M.gamma * (n : ℝ)) * ((Annealed.sigmaBar M n : ℝ))⁻¹) := by
+    have hp : Real.rpow 3 (n : ℝ) * Real.rpow 3 ((M.gamma - 1) * (n : ℝ)) =
+        Real.rpow 3 (M.gamma * (n : ℝ)) := by
+      rw [rpow_three_mul]
+      congr 1
+      ring
+    rw [show 2 * Creg * ((Annealed.sigmaBar M n : ℝ))⁻¹ * Real.rpow 3 (n : ℝ) * CIter *
+        (3 * ((d : ℝ) ^ 2 * (theta * Real.rpow 3 ((M.gamma - 1) * (n : ℝ))))) =
+        6 * Creg * CIter * (d : ℝ) ^ 2 * theta *
+          ((Real.rpow 3 (n : ℝ) * Real.rpow 3 ((M.gamma - 1) * (n : ℝ))) *
+            ((Annealed.sigmaBar M n : ℝ))⁻¹) from by ring, hp]
+  have hlandn : Real.rpow 3 (M.gamma * (n : ℝ)) * ((Annealed.sigmaBar M n : ℝ))⁻¹ ≤
+      16 * ((Real.sqrt cstar)⁻¹ * Real.sqrt M.gamma) := by
+    have hreg : M.gamma ≤ (CL⁻¹) ^ 10 * (Disorder.cstar M) ^ 10 := by
+      rw [hcst]; exact hgam
+    have h := hland M hreg (n + 1)
+    rw [show n + 1 - 1 = n by ring] at h
+    have hcastr : (((n + 1 : ℤ)) : ℝ) = (n : ℝ) + 1 := by push_cast; ring
+    rw [hcastr, hcst] at h
+    have hmono : Real.rpow 3 (M.gamma * (n : ℝ)) ≤ Real.rpow 3 (M.gamma * ((n : ℝ) + 1)) := by
+      change (3 : ℝ) ^ (M.gamma * (n : ℝ)) ≤ (3 : ℝ) ^ (M.gamma * ((n : ℝ) + 1))
+      exact Real.rpow_le_rpow_of_exponent_le (by norm_num)
+        (mul_le_mul_of_nonneg_left (by linarith only []) hgpos.le)
+    have hmono' := mul_le_mul_of_nonneg_right hmono (inv_nonneg.2 hSpos.le)
+    exact hmono'.trans h
+  have hnn6 : (0 : ℝ) ≤ 6 * Creg * CIter * (d : ℝ) ^ 2 * theta :=
+    mul_nonneg (mul_nonneg (mul_nonneg (mul_nonneg (by norm_num) _hCreg.le) hCIter.le)
+      (sq_nonneg _)) hth0.le
+  have hstep2 := mul_le_mul_of_nonneg_left hlandn hnn6
+  have hfinal : 6 * Creg * CIter * (d : ℝ) ^ 2 * theta *
+      (16 * ((Real.sqrt cstar)⁻¹ * Real.sqrt M.gamma)) ≤ ep := by
+    have hts : theta * Real.sqrt M.gamma = C⁻¹ * ep := by
+      rw [hthetadef]
+      field_simp
+    have hAC : 96 * (d : ℝ) ^ 2 * CIter * Creg * (Real.sqrt cstar)⁻¹ ≤ C := by
+      rw [hCdef]; linarith only [_hCreg]
+    have hACinv : (96 * (d : ℝ) ^ 2 * CIter * Creg * (Real.sqrt cstar)⁻¹) * C⁻¹ ≤ 1 := by
+      have h := mul_le_mul_of_nonneg_right hAC (inv_nonneg.2 hCpos.le)
+      rwa [mul_inv_cancel₀ hCpos.ne'] at h
+    rw [show 6 * Creg * CIter * (d : ℝ) ^ 2 * theta *
+        (16 * ((Real.sqrt cstar)⁻¹ * Real.sqrt M.gamma)) =
+        96 * (d : ℝ) ^ 2 * CIter * Creg * (Real.sqrt cstar)⁻¹ *
+          (theta * Real.sqrt M.gamma) from by ring, hts]
+    calc 96 * (d : ℝ) ^ 2 * CIter * Creg * (Real.sqrt cstar)⁻¹ * (C⁻¹ * ep)
+        = 96 * (d : ℝ) ^ 2 * CIter * Creg * (Real.sqrt cstar)⁻¹ * C⁻¹ * ep := by ring
+      _ ≤ 1 * ep := mul_le_mul_of_nonneg_right hACinv hep0.le
+      _ = ep := one_mul ep
+  calc 2 * Creg * ((Annealed.sigmaBar M n : ℝ))⁻¹ * Real.rpow 3 (n : ℝ) * CIter *
+        (Sk + Real.rpow 3 ((n : ℝ) / 2) * Kk)
+      ≤ 2 * Creg * ((Annealed.sigmaBar M n : ℝ))⁻¹ * Real.rpow 3 (n : ℝ) * CIter *
+          (3 * ((d : ℝ) ^ 2 * (theta * Real.rpow 3 ((M.gamma - 1) * (n : ℝ))))) := hstep1
+    _ = 6 * Creg * CIter * (d : ℝ) ^ 2 * theta *
+          (Real.rpow 3 (M.gamma * (n : ℝ)) * ((Annealed.sigmaBar M n : ℝ))⁻¹) := hrw
+    _ ≤ 6 * Creg * CIter * (d : ℝ) ^ 2 * theta *
+          (16 * ((Real.sqrt cstar)⁻¹ * Real.sqrt M.gamma)) := hstep2
+    _ ≤ ep := hfinal
+
+private theorem injectionAssembly_comparisonBounds1 :
+    ∀ (d : ℕ) (cstar Creg : ℝ) (_hCreg : (0 : ℝ) < Creg) (hd : (0 : ℕ) < d) (CL : ℝ)
+      (hland :
+        ∀ (M : ABKModel d),
+          M.gamma ≤ CL⁻¹ ^ (10 : ℕ) * Disorder.cstar M ^ (10 : ℕ) →
+            ∀ (j : ℤ),
+              (3 : ℝ) ^ (M.gamma * (↑j : ℝ)) * (↑(Annealed.sigmaBar M (j - (1 : ℤ))) : ℝ)⁻¹ ≤
+                (16 : ℝ) * ((√(Disorder.cstar M))⁻¹ * √M.gamma))
+      (CIter : ℝ) (hCIter : (0 : ℝ) < CIter)
+      (hseq :
+        ∀ (M : ABKModel d) (Creg : ℝ),
+          (0 : ℝ) ≤ Creg →
+            ∀ (n : ℤ) (y : Vec d) (ep : ℝ),
+              ∀ omega ∈ goodCubeEvent M Creg n y ep,
+                ∀ (k : Vec d → Mat d),
+                  (∀ (p q : Fin d), ContDiff ℝ (1 : WithTop ℕ∞) fun (x : Vec d) => k x p q) →
+                    (∀ (x : Vec d), matTranspose (k x) = -k x) →
+                      ∀ (Kk Sk : ℝ),
+                        HolderSeminormBoundOn (cubeSetAt y n) (1 / 2 : ℝ) Kk (matFieldDiv k) →
+                          (∀ x ∈ cubeSetAt y n, ‖matFieldDiv k x‖ ≤ Sk) →
+                            ∀ (g : Vec d → Vec d) (w0 : H1Function (cubeSetAt y n)) (w0Rep : Vec d → ℝ) (K0 rho : ℝ),
+                              (0 : ℝ) ≤ K0 →
+                                (0 : ℝ) ≤ rho →
+                                  IsDirichletSolutionAt (Cutoff.coefficientCutoff M.nu n omega).toCoeffField y n w0 g →
+                                    IsCubeRepresentative y n w0 w0Rep →
+                                      HolderSeminormBoundOn (cubeSetAt y n) (1 / 2 : ℝ) K0 w0Rep →
+                                        (2 : ℝ) * Creg * (↑(Annealed.sigmaBar M n) : ℝ)⁻¹ * Real.rpow (3 : ℝ) (↑n : ℝ) *
+                                                CIter *
+                                              (Sk + Real.rpow (3 : ℝ) ((↑n : ℝ) / (2 : ℝ)) * Kk) ≤
+                                            rho →
+                                          ∃ (w : ℕ → H1Function (cubeSetAt y n)) (wRep : ℕ → Vec d → ℝ) (lap :
+                                            ℕ → H1Function (cubeSetAt y n)),
+                                            w (0 : ℕ) = w0 ∧
+                                              (∀ (j : ℕ), IsCubeRepresentative y n (w j) (wRep j)) ∧
+                                                (∀ (j : ℕ),
+                                                    ∃ (z : H10Function (cubeSetAt y n)),
+                                                      ∀ (x : Vec d), (w j).toFun x = z.toFun x) ∧
+                                                  (∀ (j : ℕ),
+                                                      HolderSeminormBoundOn (cubeSetAt y n) (1 / 2 : ℝ) (K0 * rho ^ j)
+                                                        (wRep j)) ∧
+                                                    (∀ (j : ℕ),
+                                                        IsDirichletSolutionAt (fun (x : Vec d) => (1 : ℝ) • (1 : Mat d)) y n
+                                                          (lap j) fun (x : Vec d) => -matVecMul (k x) ((w j).grad x)) ∧
+                                                      (∀ (j : ℕ),
+                                                          ∀ x ∈ cubeSetAt y n,
+                                                            ‖(lap j).grad x‖ ≤
+                                                              CIter * Real.rpow (3 : ℝ) ((↑n : ℝ) / (2 : ℝ)) * K0 *
+                                                                  (Sk + Real.rpow (3 : ℝ) ((↑n : ℝ) / (2 : ℝ)) * Kk) *
+                                                                rho ^ j) ∧
+                                                        ∀ (j : ℕ),
+                                                          IsDirichletSolutionAt
+                                                            (Cutoff.coefficientCutoff M.nu n omega).toCoeffField y n
+                                                            (w (j + (1 : ℕ))) (lap j).grad),
+      let C : ℝ := (1 : ℝ) + (3 : ℝ) * Creg + (96 : ℝ) * (↑d : ℝ) ^ (2 : ℕ) * CIter * Creg * (√cstar)⁻¹;
+      ∀ (hCdef : C = (1 : ℝ) + (3 : ℝ) * Creg + (96 : ℝ) * (↑d : ℝ) ^ (2 : ℕ) * CIter * Creg * (√cstar)⁻¹)
+        (hCpos : (0 : ℝ) < C) (M : ABKModel d) (hcst : Disorder.cstar M = cstar)
+        (hgam : M.gamma ≤ CL⁻¹ ^ (10 : ℕ) * cstar ^ (10 : ℕ)) (ep : ℝ) (n : ℤ) (y : Vec d) (g : Vec d → Vec d)
+        (omega : Cutoff.CutoffSample d) (m : ℤ) (hnm : n ≤ m) (u : H1Function (cubeSetAt y n))
+        (hu : IsDirichletSolutionAt (Cutoff.coefficientCutoff M.nu m omega).toCoeffField y n u g) (hep0 : (0 : ℝ) < ep)
+        (hep1 : ep < (1 : ℝ)) (hgpos : (0 : ℝ) < M.gamma) (hSpos : (0 : ℝ) < (↑(Annealed.sigmaBar M n) : ℝ))
+        (hP : (0 : ℝ) < Real.rpow (3 : ℝ) ((↑n : ℝ) / (2 : ℝ))),
+        let theta : ℝ := C⁻¹ * ep * (√M.gamma)⁻¹;
+        ∀ (hthetadef : theta = C⁻¹ * ep * (√M.gamma)⁻¹) (hth0 : (0 : ℝ) < theta)
+          (hmemG : omega ∈ goodCubeEvent M Creg n y ep) (hmemJ : omega ∈ largeScaleEvent M n y theta)
+          (hgne : holderSeminormOn (cubeSetAt y n) (1 / 2 : ℝ) g ≠ ∞),
+          let Kg : ℝ := (holderSeminormOn (cubeSetAt y n) (1 / 2 : ℝ) g).toReal;
+          ∃ (_ : (0 : ℝ) ≤ Kg) (_ : holderSeminormOn (cubeSetAt y n) (1 / 2 : ℝ) g = ENNReal.ofReal Kg) (_ :
+            (↑(Annealed.sigmaBar M n) : ℝ)⁻¹ * Real.rpow (3 : ℝ) ((↑n : ℝ) / (2 : ℝ)) *
+                ((2 : ℝ) * Creg * Real.rpow (3 : ℝ) ((↑n : ℝ) / (2 : ℝ)) * Kg) =
+              (↑(Annealed.sigmaBar M n) : ℝ)⁻¹ * Real.rpow (3 : ℝ) ((↑n : ℝ) / (2 : ℝ)) *
+                ((2 : ℝ) * Creg * Real.rpow (3 : ℝ) ((↑n : ℝ) / (2 : ℝ)) * Kg))
+            (_ :
+            (0 : ℝ) ≤
+              (↑(Annealed.sigmaBar M n) : ℝ)⁻¹ * Real.rpow (3 : ℝ) ((↑n : ℝ) / (2 : ℝ)) *
+                ((2 : ℝ) * Creg * Real.rpow (3 : ℝ) ((↑n : ℝ) / (2 : ℝ)) * Kg))
+            (w : ℕ → H1Function (cubeSetAt y n)) (wRep : ℕ → Vec d → ℝ) (_ :
+            ∀ (j : ℕ), IsCubeRepresentative y n (w j) (wRep j)) (_ :
+            IsDirichletSolutionAt (Cutoff.coefficientCutoff M.nu n omega).toCoeffField y n (w (0 : ℕ)) g) (uRep : Vec d → ℝ)
+            (_ : IsCubeRepresentative y n u uRep) (_ :
+            HolderSeminormBoundOn (cubeSetAt y n) (1 / 2 : ℝ)
+              ((↑(Annealed.sigmaBar M n) : ℝ)⁻¹ * Real.rpow (3 : ℝ) ((↑n : ℝ) / (2 : ℝ)) *
+                  ((2 : ℝ) * Creg * Real.rpow (3 : ℝ) ((↑n : ℝ) / (2 : ℝ)) * Kg) /
+                ((1 : ℝ) - ep))
+              uRep)
+            (_ :
+            HolderSeminormBoundOn (cubeSetAt y n) (1 / 2 : ℝ)
+              ((↑(Annealed.sigmaBar M n) : ℝ)⁻¹ * Real.rpow (3 : ℝ) ((↑n : ℝ) / (2 : ℝ)) *
+                    ((2 : ℝ) * Creg * Real.rpow (3 : ℝ) ((↑n : ℝ) / (2 : ℝ)) * Kg) *
+                  ep /
+                ((1 : ℝ) - ep))
+              fun (x : Vec d) => uRep x - wRep (0 : ℕ) x),
+            True := by
+  classical
+  intro d cstar Creg _hCreg hd CL hland CIter hCIter hseq C hCdef hCpos M hcst hgam ep n y g omega m hnm u hu hep0 hep1 hgpos hSpos hP theta hthetadef hth0 hmemG hmemJ hgne Kg
+  have hKg0 : 0 ≤ Kg := ENNReal.toReal_nonneg
+  have hgeq : holderSeminormOn (cubeSetAt y n) (1 / 2) g = ENNReal.ofReal Kg :=
+    (ENNReal.ofReal_toReal hgne).symm
+  have hKgb : HolderSeminormBoundOn (cubeSetAt y n) (1 / 2) Kg g :=
+    (holderSeminormOn_le_ofReal_iff hKg0).1 (le_of_eq hgeq)
+  have hgL2 : MemVectorL2 (cubeSetAt y n) g :=
+    memVectorL2_of_holderSeminormBoundOn_cubeSetAt hKg0 (by norm_num) hKgb
+  -- the perturbation field and its two sizes on the cube
+  set kap : Vec d → Mat d :=
+    fun z => Cutoff.cutoff m omega z - Cutoff.cutoff n omega z with hkapdef
+  have hkC1 : ∀ p q : Fin d, ContDiff ℝ 1 fun x => kap x p q :=
+    contDiff_one_cutoff_sub_entry omega hnm
+  have hkskew : ∀ x : Vec d, matTranspose (kap x) = -kap x := matTranspose_cutoff_sub omega hnm
+  set Sk : ℝ :=
+    (d : ℝ) * (Real.sqrt d * (theta * Real.rpow 3 ((M.gamma - 1) * (n : ℝ)))) with hSkdef
+  set Kk : ℝ := (d : ℝ) * (Real.sqrt 2 * ((d : ℝ) *
+    (theta * Real.rpow 3 ((M.gamma - 3 / 2) * (n : ℝ))))) with hKkdef
+  have hSk : ∀ x ∈ cubeSetAt y n, ‖matFieldDiv kap x‖ ≤ Sk := fun x hx =>
+    norm_matFieldDiv_cutoff_sub_le hmemJ hth0.le hnm hx
+  have hKk : HolderSeminormBoundOn (cubeSetAt y n) (1 / 2) Kk (matFieldDiv kap) :=
+    holderSeminormBoundOn_matFieldDiv_cutoff_sub hmemJ hth0.le hnm
+  -- the first increment
+  obtain ⟨w0, hw0⟩ := exists_isDirichletSolutionAt_cutoff M n n y omega hKgb
+  obtain ⟨w0Rep, hw0rep⟩ :=
+    exists_isCubeRepresentative_of_mem_goodCubeEvent M Creg n y ep hmemG hgne hw0
+  set K0 : ℝ := ((Annealed.sigmaBar M n : ℝ))⁻¹ * Real.rpow 3 ((n : ℝ) / 2) *
+    (2 * Creg * Real.rpow 3 ((n : ℝ) / 2) * Kg) with hK0def
+  have hCreg2 : (0 : ℝ) ≤ 2 * Creg := by linarith only [_hCreg]
+  have hTnn : (0 : ℝ) ≤ 2 * Creg * Real.rpow 3 ((n : ℝ) / 2) * Kg :=
+    mul_nonneg (mul_nonneg hCreg2 hP.le) hKg0
+  have hK00 : 0 ≤ K0 := by
+    rw [hK0def]
+    exact mul_nonneg (mul_nonneg (inv_nonneg.2 hSpos.le) hP.le) hTnn
+  have hw0K : HolderSeminormBoundOn (cubeSetAt y n) (1 / 2) K0 w0Rep := by
+    refine holderSeminormBoundOn_of_sigmaBar_mul_le M n y hTnn ?_
+    have h := holderSeminormOn_le_of_mem_goodCubeEvent M Creg n y ep hmemG hgne hw0 hw0rep
+    refine h.trans (le_of_eq ?_)
+    rw [hgeq, ← ENNReal.ofReal_mul hCreg2,
+      ← ENNReal.ofReal_mul (mul_nonneg hCreg2 hP.le)]
+  -- the contraction
+  have hcontract := @infinityInjection_errorContraction (d) (cstar) (Creg) (_hCreg) (CL) (hland)
+    (CIter) (hCIter) (hCdef) (hCpos) (M) (hcst) (hgam) (ep) (n) (hep0) (hgpos) (hSpos) (hthetadef)
+      (hth0) (hSkdef) (hKkdef) (hCreg2)
+  -- the iteration
+  obtain ⟨w, wRep, lap, hw0eq, hrep, hzero, hKb, hlapsol, hlapsup, hlapnext⟩ :=
+    hseq M Creg _hCreg.le n y ep omega hmemG kap hkC1 hkskew Kk Sk hKk hSk g w0 w0Rep K0 ep
+      hK00 hep0.le hw0 hw0rep hw0K hcontract
+  have hw0sol : IsDirichletSolutionAt ((Cutoff.coefficientCutoff M.nu n omega).toCoeffField)
+      y n (w 0) g := by rw [hw0eq]; exact hw0
+  have hwsucc : ∀ j, IsDirichletSolutionAt
+      ((Cutoff.coefficientCutoff M.nu n omega).toCoeffField) y n (w (j + 1))
+      fun x => matVecMul (kap x) ((w j).grad x) := fun j =>
+    isDirichletSolutionAt_of_laplacianStep (hlapsol j) (hlapnext j)
+  obtain ⟨Lam, hEll⟩ := exists_isEllipticFieldOn_cutoff M n n y omega
+  have hB0 : (0 : ℝ) ≤ CIter * Real.rpow 3 ((n : ℝ) / 2) * K0 *
+      (Sk + Real.rpow 3 ((n : ℝ) / 2) * Kk) := by
+    have hSk0 : (0 : ℝ) ≤ Sk := le_trans (norm_nonneg _) (hSk y (mem_cubeSetAt_self y n))
+    have hKk0 : (0 : ℝ) ≤ Kk := holderSeminormBoundOn_nonneg_cubeSetAt hd hKk
+    exact mul_nonneg (mul_nonneg (mul_nonneg hCIter.le hP.le) hK00)
+      (add_nonneg hSk0 (mul_nonneg hP.le hKk0))
+  have hlimgrad := tendsto_sqrt_energy_grad_of_sup_bound hEll
+    (G := fun j => (lap j).grad) (fun j => (lap j).grad_memVectorL2) hlapnext
+    hB0 hep0.le hep1 hlapsup
+  have hlimval :=
+    (tendsto_sub_iterationPartialSum_cutoff M m n y omega hgL2 hw0sol hwsucc hu hlimgrad).2
+  obtain ⟨uRep, huRep, huRepK, hutailK⟩ :=
+    exists_isCubeRepresentative_of_tendsto hd hK00 hep0.le hep1 hrep hzero hKb hlimval
+  exact ⟨hKg0, hgeq, hK0def, hK00, w, wRep, hrep, hw0sol, uRep, huRep, huRepK, hutailK, True.intro⟩
 
 /-- **Proposition 5.1.**  On the good cube event and the large-scale event with
 threshold `C⁻¹ ε γ^{-1/2}`, the rough-field solution at any scale `m ≥ n` is
@@ -188,174 +500,16 @@ theorem injection_in_L_infty_v2_provider (d : ℕ) (cstar : ℝ) (_hcstar : 0 < 
     exact ⟨le_top, le_top⟩
   -- the datum, its Hölder constant and its square integrability
   set Kg : ℝ := (holderSeminormOn (cubeSetAt y n) (1 / 2) g).toReal with hKgdef
-  have hKg0 : 0 ≤ Kg := ENNReal.toReal_nonneg
-  have hgeq : holderSeminormOn (cubeSetAt y n) (1 / 2) g = ENNReal.ofReal Kg :=
-    (ENNReal.ofReal_toReal hgne).symm
-  have hKgb : HolderSeminormBoundOn (cubeSetAt y n) (1 / 2) Kg g :=
-    (holderSeminormOn_le_ofReal_iff hKg0).1 (le_of_eq hgeq)
-  have hgL2 : MemVectorL2 (cubeSetAt y n) g :=
-    memVectorL2_of_holderSeminormBoundOn_cubeSetAt hKg0 (by norm_num) hKgb
-  -- the perturbation field and its two sizes on the cube
+  obtain ⟨hKg0, hgeq, hK0def, hK00, w, wRep, hrep, hw0sol, uRep, huRep, huRepK, hutailK, _⟩ :=
+    @injectionAssembly_comparisonBounds1 (d) (cstar) (Creg) (_hCreg) (hd) (CL) (hland) (CIter) (hCIter) (hseq) (hCdef) (hCpos) (M) (hcst) (hgam) (ep) (n) (y) (g) (omega) (m) (hnm) (u) (hu) (hep0) (hep1) (hgpos) (hSpos) (hP) (hthetadef) (hth0) (hmemG) (hmemJ) (hgne)
   set kap : Vec d → Mat d :=
     fun z => Cutoff.cutoff m omega z - Cutoff.cutoff n omega z with hkapdef
-  have hkC1 : ∀ p q : Fin d, ContDiff ℝ 1 fun x => kap x p q :=
-    contDiff_one_cutoff_sub_entry omega hnm
-  have hkskew : ∀ x : Vec d, matTranspose (kap x) = -kap x := matTranspose_cutoff_sub omega hnm
   set Sk : ℝ :=
     (d : ℝ) * (Real.sqrt d * (theta * Real.rpow 3 ((M.gamma - 1) * (n : ℝ)))) with hSkdef
   set Kk : ℝ := (d : ℝ) * (Real.sqrt 2 * ((d : ℝ) *
     (theta * Real.rpow 3 ((M.gamma - 3 / 2) * (n : ℝ))))) with hKkdef
-  have hSk : ∀ x ∈ cubeSetAt y n, ‖matFieldDiv kap x‖ ≤ Sk := fun x hx =>
-    norm_matFieldDiv_cutoff_sub_le hmemJ hth0.le hnm hx
-  have hKk : HolderSeminormBoundOn (cubeSetAt y n) (1 / 2) Kk (matFieldDiv kap) :=
-    holderSeminormBoundOn_matFieldDiv_cutoff_sub hmemJ hth0.le hnm
-  -- the first increment
-  obtain ⟨w0, hw0⟩ := exists_isDirichletSolutionAt_cutoff M n n y omega hKgb
-  obtain ⟨w0Rep, hw0rep⟩ :=
-    exists_isCubeRepresentative_of_mem_goodCubeEvent M Creg n y ep hmemG hgne hw0
   set K0 : ℝ := ((Annealed.sigmaBar M n : ℝ))⁻¹ * Real.rpow 3 ((n : ℝ) / 2) *
     (2 * Creg * Real.rpow 3 ((n : ℝ) / 2) * Kg) with hK0def
-  have hCreg2 : (0 : ℝ) ≤ 2 * Creg := by linarith only [_hCreg]
-  have hTnn : (0 : ℝ) ≤ 2 * Creg * Real.rpow 3 ((n : ℝ) / 2) * Kg :=
-    mul_nonneg (mul_nonneg hCreg2 hP.le) hKg0
-  have hK00 : 0 ≤ K0 := by
-    rw [hK0def]
-    exact mul_nonneg (mul_nonneg (inv_nonneg.2 hSpos.le) hP.le) hTnn
-  have hw0K : HolderSeminormBoundOn (cubeSetAt y n) (1 / 2) K0 w0Rep := by
-    refine holderSeminormBoundOn_of_sigmaBar_mul_le M n y hTnn ?_
-    have h := holderSeminormOn_le_of_mem_goodCubeEvent M Creg n y ep hmemG hgne hw0 hw0rep
-    refine h.trans (le_of_eq ?_)
-    rw [hgeq, ← ENNReal.ofReal_mul hCreg2,
-      ← ENNReal.ofReal_mul (mul_nonneg hCreg2 hP.le)]
-  -- the contraction
-  have hcontract : 2 * Creg * ((Annealed.sigmaBar M n : ℝ))⁻¹ * Real.rpow 3 (n : ℝ) * CIter *
-      (Sk + Real.rpow 3 ((n : ℝ) / 2) * Kk) ≤ ep := by
-    have hR1 : (0 : ℝ) < Real.rpow 3 ((M.gamma - 1) * (n : ℝ)) := rpow_three_pos _
-    have hbase : (0 : ℝ) ≤ (d : ℝ) ^ 2 * (theta * Real.rpow 3 ((M.gamma - 1) * (n : ℝ))) :=
-      mul_nonneg (sq_nonneg _) (mul_nonneg hth0.le hR1.le)
-    have hKkrw : Real.rpow 3 ((n : ℝ) / 2) * Kk =
-        Real.sqrt 2 * ((d : ℝ) ^ 2 * (theta * Real.rpow 3 ((M.gamma - 1) * (n : ℝ)))) := by
-      have h : Real.rpow 3 ((n : ℝ) / 2) * Real.rpow 3 ((M.gamma - 3 / 2) * (n : ℝ)) =
-          Real.rpow 3 ((M.gamma - 1) * (n : ℝ)) := by
-        rw [rpow_three_mul]
-        congr 1
-        ring
-      rw [hKkdef, show Real.rpow 3 ((n : ℝ) / 2) * ((d : ℝ) * (Real.sqrt 2 * ((d : ℝ) *
-          (theta * Real.rpow 3 ((M.gamma - 3 / 2) * (n : ℝ)))))) =
-          Real.sqrt 2 * ((d : ℝ) ^ 2 * (theta *
-            (Real.rpow 3 ((n : ℝ) / 2) * Real.rpow 3 ((M.gamma - 3 / 2) * (n : ℝ))))) from by
-          ring, h]
-    have hSkle : Sk ≤ (d : ℝ) ^ 2 * (theta * Real.rpow 3 ((M.gamma - 1) * (n : ℝ))) := by
-      rw [hSkdef]
-      have hsd : Real.sqrt d ≤ (d : ℝ) := sqrt_dim_le_dim d
-      have hnn : (0 : ℝ) ≤ theta * Real.rpow 3 ((M.gamma - 1) * (n : ℝ)) :=
-        mul_nonneg hth0.le hR1.le
-      calc (d : ℝ) * (Real.sqrt d * (theta * Real.rpow 3 ((M.gamma - 1) * (n : ℝ))))
-          ≤ (d : ℝ) * ((d : ℝ) * (theta * Real.rpow 3 ((M.gamma - 1) * (n : ℝ)))) := by
-            exact mul_le_mul_of_nonneg_left (mul_le_mul_of_nonneg_right hsd hnn)
-              (Nat.cast_nonneg d)
-        _ = (d : ℝ) ^ 2 * (theta * Real.rpow 3 ((M.gamma - 1) * (n : ℝ))) := by ring
-    have hs2 : Real.sqrt 2 ≤ 2 := by
-      have h4 : Real.sqrt 4 = 2 := by
-        rw [show (4 : ℝ) = 2 ^ 2 by norm_num, Real.sqrt_sq (by norm_num : (0 : ℝ) ≤ 2)]
-      calc Real.sqrt 2 ≤ Real.sqrt 4 := Real.sqrt_le_sqrt (by norm_num)
-        _ = 2 := h4
-    have hsum : Sk + Real.rpow 3 ((n : ℝ) / 2) * Kk ≤
-        3 * ((d : ℝ) ^ 2 * (theta * Real.rpow 3 ((M.gamma - 1) * (n : ℝ)))) := by
-      rw [hKkrw]
-      have hmul : Real.sqrt 2 *
-          ((d : ℝ) ^ 2 * (theta * Real.rpow 3 ((M.gamma - 1) * (n : ℝ)))) ≤
-          2 * ((d : ℝ) ^ 2 * (theta * Real.rpow 3 ((M.gamma - 1) * (n : ℝ)))) :=
-        mul_le_mul_of_nonneg_right hs2 hbase
-      linarith only [hSkle, hmul]
-    have hpref : (0 : ℝ) ≤ 2 * Creg * ((Annealed.sigmaBar M n : ℝ))⁻¹ *
-        Real.rpow 3 (n : ℝ) * CIter :=
-      mul_nonneg (mul_nonneg (mul_nonneg hCreg2 (inv_nonneg.2 hSpos.le))
-        (rpow_three_pos _).le) hCIter.le
-    have hstep1 := mul_le_mul_of_nonneg_left hsum hpref
-    have hrw : 2 * Creg * ((Annealed.sigmaBar M n : ℝ))⁻¹ * Real.rpow 3 (n : ℝ) * CIter *
-        (3 * ((d : ℝ) ^ 2 * (theta * Real.rpow 3 ((M.gamma - 1) * (n : ℝ))))) =
-        6 * Creg * CIter * (d : ℝ) ^ 2 * theta *
-          (Real.rpow 3 (M.gamma * (n : ℝ)) * ((Annealed.sigmaBar M n : ℝ))⁻¹) := by
-      have hp : Real.rpow 3 (n : ℝ) * Real.rpow 3 ((M.gamma - 1) * (n : ℝ)) =
-          Real.rpow 3 (M.gamma * (n : ℝ)) := by
-        rw [rpow_three_mul]
-        congr 1
-        ring
-      rw [show 2 * Creg * ((Annealed.sigmaBar M n : ℝ))⁻¹ * Real.rpow 3 (n : ℝ) * CIter *
-          (3 * ((d : ℝ) ^ 2 * (theta * Real.rpow 3 ((M.gamma - 1) * (n : ℝ))))) =
-          6 * Creg * CIter * (d : ℝ) ^ 2 * theta *
-            ((Real.rpow 3 (n : ℝ) * Real.rpow 3 ((M.gamma - 1) * (n : ℝ))) *
-              ((Annealed.sigmaBar M n : ℝ))⁻¹) from by ring, hp]
-    have hlandn : Real.rpow 3 (M.gamma * (n : ℝ)) * ((Annealed.sigmaBar M n : ℝ))⁻¹ ≤
-        16 * ((Real.sqrt cstar)⁻¹ * Real.sqrt M.gamma) := by
-      have hreg : M.gamma ≤ (CL⁻¹) ^ 10 * (Disorder.cstar M) ^ 10 := by
-        rw [hcst]; exact hgam
-      have h := hland M hreg (n + 1)
-      rw [show n + 1 - 1 = n by ring] at h
-      have hcastr : (((n + 1 : ℤ)) : ℝ) = (n : ℝ) + 1 := by push_cast; ring
-      rw [hcastr, hcst] at h
-      have hmono : Real.rpow 3 (M.gamma * (n : ℝ)) ≤ Real.rpow 3 (M.gamma * ((n : ℝ) + 1)) := by
-        show (3 : ℝ) ^ (M.gamma * (n : ℝ)) ≤ (3 : ℝ) ^ (M.gamma * ((n : ℝ) + 1))
-        exact Real.rpow_le_rpow_of_exponent_le (by norm_num)
-          (mul_le_mul_of_nonneg_left (by linarith only []) hgpos.le)
-      have hmono' := mul_le_mul_of_nonneg_right hmono (inv_nonneg.2 hSpos.le)
-      exact hmono'.trans h
-    have hnn6 : (0 : ℝ) ≤ 6 * Creg * CIter * (d : ℝ) ^ 2 * theta :=
-      mul_nonneg (mul_nonneg (mul_nonneg (mul_nonneg (by norm_num) _hCreg.le) hCIter.le)
-        (sq_nonneg _)) hth0.le
-    have hstep2 := mul_le_mul_of_nonneg_left hlandn hnn6
-    have hfinal : 6 * Creg * CIter * (d : ℝ) ^ 2 * theta *
-        (16 * ((Real.sqrt cstar)⁻¹ * Real.sqrt M.gamma)) ≤ ep := by
-      have hts : theta * Real.sqrt M.gamma = C⁻¹ * ep := by
-        rw [hthetadef]
-        field_simp
-      have hAC : 96 * (d : ℝ) ^ 2 * CIter * Creg * (Real.sqrt cstar)⁻¹ ≤ C := by
-        rw [hCdef]; linarith only [_hCreg]
-      have hACinv : (96 * (d : ℝ) ^ 2 * CIter * Creg * (Real.sqrt cstar)⁻¹) * C⁻¹ ≤ 1 := by
-        have h := mul_le_mul_of_nonneg_right hAC (inv_nonneg.2 hCpos.le)
-        rwa [mul_inv_cancel₀ hCpos.ne'] at h
-      rw [show 6 * Creg * CIter * (d : ℝ) ^ 2 * theta *
-          (16 * ((Real.sqrt cstar)⁻¹ * Real.sqrt M.gamma)) =
-          96 * (d : ℝ) ^ 2 * CIter * Creg * (Real.sqrt cstar)⁻¹ *
-            (theta * Real.sqrt M.gamma) from by ring, hts]
-      calc 96 * (d : ℝ) ^ 2 * CIter * Creg * (Real.sqrt cstar)⁻¹ * (C⁻¹ * ep)
-          = 96 * (d : ℝ) ^ 2 * CIter * Creg * (Real.sqrt cstar)⁻¹ * C⁻¹ * ep := by ring
-        _ ≤ 1 * ep := mul_le_mul_of_nonneg_right hACinv hep0.le
-        _ = ep := one_mul ep
-    calc 2 * Creg * ((Annealed.sigmaBar M n : ℝ))⁻¹ * Real.rpow 3 (n : ℝ) * CIter *
-          (Sk + Real.rpow 3 ((n : ℝ) / 2) * Kk)
-        ≤ 2 * Creg * ((Annealed.sigmaBar M n : ℝ))⁻¹ * Real.rpow 3 (n : ℝ) * CIter *
-            (3 * ((d : ℝ) ^ 2 * (theta * Real.rpow 3 ((M.gamma - 1) * (n : ℝ))))) := hstep1
-      _ = 6 * Creg * CIter * (d : ℝ) ^ 2 * theta *
-            (Real.rpow 3 (M.gamma * (n : ℝ)) * ((Annealed.sigmaBar M n : ℝ))⁻¹) := hrw
-      _ ≤ 6 * Creg * CIter * (d : ℝ) ^ 2 * theta *
-            (16 * ((Real.sqrt cstar)⁻¹ * Real.sqrt M.gamma)) := hstep2
-      _ ≤ ep := hfinal
-  -- the iteration
-  obtain ⟨w, wRep, lap, hw0eq, hrep, hzero, hKb, hlapsol, hlapsup, hlapnext⟩ :=
-    hseq M Creg _hCreg.le n y ep omega hmemG kap hkC1 hkskew Kk Sk hKk hSk g w0 w0Rep K0 ep
-      hK00 hep0.le hw0 hw0rep hw0K hcontract
-  have hw0sol : IsDirichletSolutionAt ((Cutoff.coefficientCutoff M.nu n omega).toCoeffField)
-      y n (w 0) g := by rw [hw0eq]; exact hw0
-  have hwsucc : ∀ j, IsDirichletSolutionAt
-      ((Cutoff.coefficientCutoff M.nu n omega).toCoeffField) y n (w (j + 1))
-      fun x => matVecMul (kap x) ((w j).grad x) := fun j =>
-    isDirichletSolutionAt_of_laplacianStep (hlapsol j) (hlapnext j)
-  obtain ⟨Lam, hEll⟩ := exists_isEllipticFieldOn_cutoff M n n y omega
-  have hB0 : (0 : ℝ) ≤ CIter * Real.rpow 3 ((n : ℝ) / 2) * K0 *
-      (Sk + Real.rpow 3 ((n : ℝ) / 2) * Kk) := by
-    have hSk0 : (0 : ℝ) ≤ Sk := le_trans (norm_nonneg _) (hSk y (mem_cubeSetAt_self y n))
-    have hKk0 : (0 : ℝ) ≤ Kk := holderSeminormBoundOn_nonneg_cubeSetAt hd hKk
-    exact mul_nonneg (mul_nonneg (mul_nonneg hCIter.le hP.le) hK00)
-      (add_nonneg hSk0 (mul_nonneg hP.le hKk0))
-  have hlimgrad := tendsto_sqrt_energy_grad_of_sup_bound hEll
-    (G := fun j => (lap j).grad) (fun j => (lap j).grad_memVectorL2) hlapnext
-    hB0 hep0.le hep1 hlapsup
-  have hlimval :=
-    (tendsto_sub_iterationPartialSum_cutoff M m n y omega hgL2 hw0sol hwsucc hu hlimgrad).2
-  obtain ⟨uRep, huRep, huRepK, hutailK⟩ :=
-    exists_isCubeRepresentative_of_tendsto hd hK00 hep0.le hep1 hrep hzero hKb hlimval
   -- the two conclusions
   constructor
   · -- the supremum estimate
@@ -368,7 +522,7 @@ theorem injection_in_L_infty_v2_provider (d : ℕ) (cstar : ℝ) (_hcstar : 0 < 
         rw [H1Function.sub_toFun]
       have h2 : ((z1 - z2).toH1Function).toFun x =
           z1.toH1Function.toFun x - z2.toH1Function.toFun x := by
-        show (z1.toH1Function - z2.toH1Function).toFun x =
+        change (z1.toH1Function - z2.toH1Function).toFun x =
           z1.toH1Function.toFun x - z2.toH1Function.toFun x
         rw [H1Function.sub_toFun]
       rw [h1, h2, hz1, hz2]
@@ -391,7 +545,7 @@ theorem injection_in_L_infty_v2_provider (d : ℕ) (cstar : ℝ) (_hcstar : 0 < 
       have hfun : (fun x => u.toFun x - v.toFun x) =
           (fun x => u.toFun x - (w 0).toFun x) + fun x => (w 0).toFun x - v.toFun x := by
         funext x
-        show u.toFun x - v.toFun x = u.toFun x - (w 0).toFun x + ((w 0).toFun x - v.toFun x)
+        change u.toFun x - v.toFun x = u.toFun x - (w 0).toFun x + ((w 0).toFun x - v.toFun x)
         ring
       rw [hfun]
       exact eLpNorm_add_le (show (1 : ℝ≥0∞) ≤ ⊤ by simp)

@@ -358,7 +358,7 @@ private theorem isBigOWith_gammaSigma_lowPower_descendantAverage
       (measurable_partitionIncrementField (d := d) n m).aemeasurable
       ((hZmeas.sub hYpow_meas) measurableSet_Iic)).2
       (Filter.Eventually.of_forall fun omega => by
-        show Z (F omega) - Y (F omega) ^ r ≤ 0
+        change Z (F omega) - Y (F omega) ^ r ≤ 0
         rw [hZF omega, hYF omega]
         exact sub_nonpos.mpr
           (streamIncrementLpMass_le_streamIncrementLpMass_two_rpow hp0 hp_two l n m omega))

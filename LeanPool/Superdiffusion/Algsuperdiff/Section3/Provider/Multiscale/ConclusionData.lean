@@ -103,7 +103,8 @@ bound actually pays.  `measureReal_exists_cubeSupBound_gt_le`: for every
 `t ≥ 1`,
 
 ```
-P[ ∃ k, ∃ □ ∈ 𝒲(□_m,k) :  the dominating gauge cubeSupBound (≥ ‖k_L − k_{□.scale}‖_{L^∞(□)}; audit #29 F-11) > (1+k)^{1/2} ρ_k A t ]
+P[ ∃ k, ∃ □ ∈ 𝒲(□_m,k) :  the dominating gauge cubeSupBound (≥ ‖k_L − k_{□.scale}‖_{L^∞(□)}; audit
+#29 F-11) > (1+k)^{1/2} ρ_k A t ]
       ≤ 2 e^{−t²} = 2 (Γ₂ t)^{-1} ,
 ```
 
@@ -296,7 +297,8 @@ that SOME Whitney cube of SOME layer violates its own layer envelope at level `t
 most `2 e^{-t²}`:
 
 ```
-P[ ∃ k, ∃ □ ∈ 𝒲(□_m,k),  the dominating gauge cubeSupBound (≥ ‖k_L − k_{□.scale}‖_{L^∞(□)}) > (1+k)^{1/2} ρ_k A t ]
+P[ ∃ k, ∃ □ ∈ 𝒲(□_m,k),  the dominating gauge cubeSupBound (≥ ‖k_L − k_{□.scale}‖_{L^∞(□)}) >
+(1+k)^{1/2} ρ_k A t ]
       ≤ 2 (Γ₂ t)^{-1} ,
 ```
 

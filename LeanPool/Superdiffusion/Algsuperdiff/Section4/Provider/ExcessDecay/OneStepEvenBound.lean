@@ -72,7 +72,7 @@ variable {d : ℕ}
 /-- The normalized seminorm does not see absolute values. -/
 theorem normalizedL2On_abs (W : Set (Vec d)) (f : Vec d → ℝ) :
     normalizedL2On W (fun y => |f y|) = normalizedL2On W f := by
-  show Real.sqrt (HCPolySupport.volumeAverage W fun y => |f y| ^ 2)
+  change Real.sqrt (HCPolySupport.volumeAverage W fun y => |f y| ^ 2)
       = Real.sqrt (HCPolySupport.volumeAverage W fun y => f y ^ 2)
   congr 2
   funext y
@@ -85,11 +85,11 @@ theorem coordFaceReflection_sub_self (a : ℝ) (i : Fin d) (y : Vec d) :
   funext j
   by_cases hj : j = i
   · subst hj
-    show coordFaceReflection a j y j - y j = 2 * (a - y j) * (basisVec j : Vec d) j
+    change coordFaceReflection a j y j - y j = 2 * (a - y j) * (basisVec j : Vec d) j
     rw [HCPolySupport.coordFaceReflection_apply_self, HCPolySupport.basisVec_apply,
       ite_eq_left rfl]
     ring
-  · show coordFaceReflection a i y j - y j = 2 * (a - y i) * (basisVec i : Vec d) j
+  · change coordFaceReflection a i y j - y j = 2 * (a - y i) * (basisVec i : Vec d) j
     rw [HCPolySupport.coordFaceReflection_apply_ne a i j y hj,
       HCPolySupport.basisVec_apply, ite_eq_right hj]
     ring
@@ -98,7 +98,7 @@ theorem coordFaceReflection_sub_self (a : ℝ) (i : Fin d) (y : Vec d) :
 theorem sub_smul_basisVec_sub_self (t : ℝ) (i : Fin d) (y : Vec d) :
     (y - t • (basisVec i : Vec d)) - y = (-t) • (basisVec i : Vec d) := by
   funext j
-  show (y j - t * (basisVec i : Vec d) j) - y j = (-t) * (basisVec i : Vec d) j
+  change (y j - t * (basisVec i : Vec d) j) - y j = (-t) * (basisVec i : Vec d) j
   ring
 
 /-- The `toEuc` image of a normal displacement. -/

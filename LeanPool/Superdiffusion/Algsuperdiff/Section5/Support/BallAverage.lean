@@ -232,7 +232,7 @@ theorem eLpNorm_top_restrict_eq_ballAverageSupNormOn [NeZero d] {U D : Set (Vec 
     have hStoReal : (0 : ℝ) ≤ (ballAverageSupNormOn U D f).toReal := ENNReal.toReal_nonneg
     refine essSup_le_of_ae_le _ ((ae_restrict_iff' hUmeas).2 ?_)
     filter_upwards [ae_tendsto_setAverage_ball hFint] with z hz hzU
-    show ‖f z‖ₑ ≤ ballAverageSupNormOn U D f
+    change ‖f z‖ₑ ≤ ballAverageSupNormOn U D f
     rw [← ofReal_norm, ← ENNReal.ofReal_toReal hS.ne]
     refine ENNReal.ofReal_le_ofReal ?_
     rw [Real.norm_eq_abs]

@@ -86,6 +86,73 @@ private theorem integrable_mul_restrict {W : Set (Vec d)} {f g : Vec d → ℝ}
 
 /-! ## 2. The weak gradient of the odd extension -/
 
+private theorem oddFaceExtension_weakGradient_assembly :
+    ∀ {d : ℕ} {U : Set (Vec d)} {i : Fin d} {a σ : ℝ}
+      (v : H1Function (faceHalf U i a σ)) (j : Fin d) (φ : Vec d → ℝ),
+      MeasurableSet U →
+        let ε : ℝ := if j = i then (-1 : ℝ) else (1 : ℝ);
+        (ε = if j = i then (-1 : ℝ) else (1 : ℝ)) →
+          (∀ (l : Fin d), MemLp (fun (y : Vec d) => zeroExtendGrad (faceHalf U i a σ) v.grad y l) (2 : ℝ≥0∞) volume) →
+            (∀ (l : Fin d),
+                MemLp (fun (y : Vec d) => zeroExtendGrad (faceHalf U i a σ) v.grad (coordFaceReflection a i y) l) (2 : ℝ≥0∞)
+                  volume) →
+              MemLp φ (2 : ℝ≥0∞) volume →
+                -∫ (y : Vec d) in U, oddFaceExtendGrad a i (zeroExtendGrad (faceHalf U i a σ) v.grad) y j * φ y =
+                  (-∫ (y : Vec d) in U, zeroExtendGrad (faceHalf U i a σ) v.grad y j * φ y) +
+                    ε * ∫ (y : Vec d) in U, zeroExtendGrad (faceHalf U i a σ) v.grad (coordFaceReflection a i y) j * φ y := by
+  intro d U i a σ v j φ hUmeas ε hεdef hZG2 hZGr2 hφ2
+  have hcoord : ∀ y : Vec d, oddFaceExtendGrad a i
+      (zeroExtendGrad (faceHalf U i a σ) v.grad) y j
+      = zeroExtendGrad (faceHalf U i a σ) v.grad y j
+        - ε * zeroExtendGrad (faceHalf U i a σ) v.grad
+            (coordFaceReflection a i y) j := by
+    intro y
+    change (zeroExtendGrad (faceHalf U i a σ) v.grad y
+      - coordReflectionLinear i (zeroExtendGrad (faceHalf U i a σ) v.grad
+          (coordFaceReflection a i y))) j = _
+    rw [Pi.sub_apply, coordReflectionLinear_apply_coord, ← hεdef]
+  have hsub : ∫ y in U, oddFaceExtendGrad a i
+        (zeroExtendGrad (faceHalf U i a σ) v.grad) y j * φ y ∂volume
+      = (∫ y in U, zeroExtendGrad (faceHalf U i a σ) v.grad y j * φ y ∂volume)
+        - ε * ∫ y in U, zeroExtendGrad (faceHalf U i a σ) v.grad
+            (coordFaceReflection a i y) j * φ y ∂volume := by
+    rw [← integral_const_mul, ← integral_sub
+      (integrable_mul_restrict ((hZG2 j).restrict U) (hφ2.restrict U))
+      ((integrable_mul_restrict ((hZGr2 j).restrict U) (hφ2.restrict U)).const_mul ε)]
+    refine setIntegral_congr_fun hUmeas fun y _ => ?_
+    rw [hcoord y]
+    ring
+  rw [hsub]
+  ring
+
+private theorem oddFaceExtend_reflectedTestSupport :
+    ∀ {d : ℕ} {U : Set (Vec d)} {i : Fin d} {a : ℝ} (j : Fin d)
+      (φ : Vec d → ℝ),
+      tsupport φ ⊆ U →
+        let ε : ℝ := if j = i then (-1 : ℝ) else (1 : ℝ);
+        (tsupport fun (z : Vec d) => φ (coordFaceReflection a i z)) ⊆ U →
+          let ψ : Vec d → ℝ := fun (z : Vec d) => φ z - ε * φ (coordFaceReflection a i z);
+          (ψ = fun (z : Vec d) => φ z - ε * φ (coordFaceReflection a i z)) → tsupport ψ ⊆ U := by
+  intro _ U i a _ φ hφU ε hφrU ψ hψdef
+  have hsub : Function.support ψ ⊆
+      tsupport φ ∪ tsupport (fun z => φ (coordFaceReflection a i z)) := by
+    intro z hz
+    simp only [Function.mem_support] at hz
+    by_contra hcon
+    simp only [Set.mem_union, not_or] at hcon
+    have h1 : φ z = 0 := image_eq_zero_of_notMem_tsupport hcon.1
+    have h2 : φ (coordFaceReflection a i z) = 0 :=
+      image_eq_zero_of_notMem_tsupport
+        (f := fun z => φ (coordFaceReflection a i z)) hcon.2
+    refine hz ?_
+    rw [hψdef]
+    change φ z - ε * φ (coordFaceReflection a i z) = 0
+    rw [h1, h2, mul_zero, sub_zero]
+  have hclosed : IsClosed
+      (tsupport φ ∪ tsupport fun z => φ (coordFaceReflection a i z)) :=
+    (isClosed_tsupport φ).union (isClosed_tsupport _)
+  exact (closure_minimal hsub hclosed).trans (Set.union_subset hφU hφrU)
+
 /-- **The odd extension is `H¹` across the interface, from face-only zero
 trace.**  `U` is open and invariant under the reflection `r` in `{yᵢ = a}`;
 `v ∈ H¹(faceHalf U i a σ)` has localized zero trace with localization window
@@ -137,25 +204,7 @@ theorem hasWeakGradientOn_oddFaceExtend_of_localizedZeroTrace {U : Set (Vec d)}
   set ψ : Vec d → ℝ := fun z => φ z - ε * φ (coordFaceReflection a i z) with hψdef
   have hψs : ContDiff ℝ (⊤ : ℕ∞) ψ := hφ.sub (contDiff_const.mul hφr)
   have hψc : HasCompactSupport ψ := hφc.sub hφrc.mul_left
-  have hψU : tsupport ψ ⊆ U := by
-    have hsub : Function.support ψ ⊆
-        tsupport φ ∪ tsupport (fun z => φ (coordFaceReflection a i z)) := by
-      intro z hz
-      simp only [Function.mem_support] at hz
-      by_contra hcon
-      simp only [Set.mem_union, not_or] at hcon
-      have h1 : φ z = 0 := image_eq_zero_of_notMem_tsupport hcon.1
-      have h2 : φ (coordFaceReflection a i z) = 0 :=
-        image_eq_zero_of_notMem_tsupport
-          (f := fun z => φ (coordFaceReflection a i z)) hcon.2
-      refine hz ?_
-      rw [hψdef]
-      show φ z - ε * φ (coordFaceReflection a i z) = 0
-      rw [h1, h2, mul_zero, sub_zero]
-    have hclosed : IsClosed
-        (tsupport φ ∪ tsupport fun z => φ (coordFaceReflection a i z)) :=
-      (isClosed_tsupport φ).union (isClosed_tsupport _)
-    exact (closure_minimal hsub hclosed).trans (Set.union_subset hφU hφrU)
+  have hψU := @oddFaceExtend_reflectedTestSupport (d) (U) (i) (a) (j) (φ) (hφU) (hφrU) (hψdef)
   -- the classical derivative of the fold: `∂ⱼψ = ∂ⱼφ - (∂ⱼφ) ∘ r`
   have hDψ : ∀ y : Vec d, (fderiv ℝ ψ y) (basisVec j)
       = (fderiv ℝ φ y) (basisVec j)
@@ -254,7 +303,7 @@ theorem hasWeakGradientOn_oddFaceExtend_of_localizedZeroTrace {U : Set (Vec d)}
       ((integrable_mul_restrict (v.gradMemL2 j) (hφr2.restrict _)).const_mul ε)]
     refine setIntegral_congr_fun hHmeas fun y _ => ?_
     rw [hψdef]
-    show v.grad y j * (φ y - ε * φ (coordFaceReflection a i y)) = _
+    change v.grad y j * (φ y - ε * φ (coordFaceReflection a i y)) = _
     ring
   -- STEP G: de-collapse both gradient terms to `U`
   have hdecoll1 : ∫ y in faceHalf U i a σ, v.grad y j * φ y ∂volume
@@ -290,34 +339,8 @@ theorem hasWeakGradientOn_oddFaceExtend_of_localizedZeroTrace {U : Set (Vec d)}
       _ = ∫ y in U, zeroExtendGrad (faceHalf U i a σ) v.grad
             (coordFaceReflection a i y) j * φ y ∂volume := h
   -- STEP I: assemble the right side
-  have hassemble : -∫ y in U, oddFaceExtendGrad a i
-        (zeroExtendGrad (faceHalf U i a σ) v.grad) y j * φ y ∂volume
-      = -(∫ y in U, zeroExtendGrad (faceHalf U i a σ) v.grad y j * φ y ∂volume)
-        + ε * ∫ y in U, zeroExtendGrad (faceHalf U i a σ) v.grad
-            (coordFaceReflection a i y) j * φ y ∂volume := by
-    have hcoord : ∀ y : Vec d, oddFaceExtendGrad a i
-        (zeroExtendGrad (faceHalf U i a σ) v.grad) y j
-        = zeroExtendGrad (faceHalf U i a σ) v.grad y j
-          - ε * zeroExtendGrad (faceHalf U i a σ) v.grad
-              (coordFaceReflection a i y) j := by
-      intro y
-      show (zeroExtendGrad (faceHalf U i a σ) v.grad y
-        - coordReflectionLinear i (zeroExtendGrad (faceHalf U i a σ) v.grad
-            (coordFaceReflection a i y))) j = _
-      rw [Pi.sub_apply, coordReflectionLinear_apply_coord, ← hεdef]
-    have hsub : ∫ y in U, oddFaceExtendGrad a i
-          (zeroExtendGrad (faceHalf U i a σ) v.grad) y j * φ y ∂volume
-        = (∫ y in U, zeroExtendGrad (faceHalf U i a σ) v.grad y j * φ y ∂volume)
-          - ε * ∫ y in U, zeroExtendGrad (faceHalf U i a σ) v.grad
-              (coordFaceReflection a i y) j * φ y ∂volume := by
-      rw [← integral_const_mul, ← integral_sub
-        (integrable_mul_restrict ((hZG2 j).restrict U) (hφ2.restrict U))
-        ((integrable_mul_restrict ((hZGr2 j).restrict U) (hφ2.restrict U)).const_mul ε)]
-      refine setIntegral_congr_fun hUmeas fun y _ => ?_
-      rw [hcoord y]
-      ring
-    rw [hsub]
-    ring
+  have hassemble := @oddFaceExtension_weakGradient_assembly (d) (U) (i) (a) (σ) (v) (j) (φ)
+    (hUmeas) (hεdef) (hZG2) (hZGr2) (hφ2)
   -- chain everything
   calc ∫ y in U, oddFaceExtend a i Z y * (fderiv ℝ φ y) (basisVec j) ∂volume
       = (∫ y in U, Z y * (fderiv ℝ φ y) (basisVec j) ∂volume)
@@ -384,11 +407,11 @@ theorem exists_h1Function_oddFaceExtend {U : Set (Vec d)}
             - (if l = i then (-1 : ℝ) else 1)
               * zeroExtendGrad (faceHalf U i a σ) v.grad (coordFaceReflection a i y) l := by
       funext y
-      show (zeroExtendGrad (faceHalf U i a σ) v.grad y
+      change (zeroExtendGrad (faceHalf U i a σ) v.grad y
         - coordReflectionLinear i (zeroExtendGrad (faceHalf U i a σ) v.grad
             (coordFaceReflection a i y))) l = _
       rw [Pi.sub_apply, coordReflectionLinear_apply_coord]
-    show MemLp (fun y => oddFaceExtendGrad a i
+    change MemLp (fun y => oddFaceExtendGrad a i
       (zeroExtendGrad (faceHalf U i a σ) v.grad) y l) 2 (volume.restrict U)
     rw [hcoord]
     have hr : MemLp (fun y => zeroExtendGrad (faceHalf U i a σ) v.grad
@@ -449,7 +472,7 @@ theorem localizedZeroTraceFunctionOn_oddFaceExtend {H B V₀ : Set (Vec d)}
       · rw [zeroExtend_of_mem _ hy, zeroExtend_of_mem _ hy,
           coordFaceReflection_involutive]
       · rw [zeroExtend_of_notMem _ hy, zeroExtend_of_notMem _ hy, mul_zero]
-    show η y * (zeroExtend H f y - zeroExtend H f (coordFaceReflection a i y)) = _
+    change η y * (zeroExtend H f y - zeroExtend H f (coordFaceReflection a i y)) = _
     rw [mul_sub, hA, hB']
   rw [hfun]
   exact hsub

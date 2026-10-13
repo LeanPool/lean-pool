@@ -300,7 +300,7 @@ theorem stronglyMeasurable_streamRemainder (Q : TriadicCube d) (L : ℕ)
     {S : Ω → (Fin d → HilbertVec d)} (hSm : StronglyMeasurable S) (ω : Ω) :
     StronglyMeasurable (streamRemainder Q L S ω) := by
   classical
-  show StronglyMeasurable fun x : Vec d => ∑ m : Fin d,
+  change StronglyMeasurable fun x : Vec d => ∑ m : Fin d,
     fderiv ℝ (approxCutoff Q L).toFun x (basisVec m) • realize S ω x m
   refine Finset.stronglyMeasurable_fun_sum _ fun m _ => ?_
   exact ((((approxCutoff Q L).smooth.continuous_fderiv (by simp)).clm_apply
@@ -313,7 +313,7 @@ theorem stronglyMeasurable_uncurry_streamRemainder (Q : TriadicCube d) (L : ℕ)
     {S : Ω → (Fin d → HilbertVec d)} (hSm : StronglyMeasurable S) :
     StronglyMeasurable fun z : Ω × Vec d => streamRemainder Q L S z.1 z.2 := by
   classical
-  show StronglyMeasurable fun z : Ω × Vec d => ∑ m : Fin d,
+  change StronglyMeasurable fun z : Ω × Vec d => ∑ m : Fin d,
     fderiv ℝ (approxCutoff Q L).toFun z.2 (basisVec m) • realize S z.1 z.2 m
   refine Finset.stronglyMeasurable_fun_sum _ fun m _ => ?_
   exact (((((approxCutoff Q L).smooth.continuous_fderiv (by simp)).clm_apply

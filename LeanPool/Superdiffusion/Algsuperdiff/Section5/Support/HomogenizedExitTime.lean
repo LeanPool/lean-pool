@@ -124,7 +124,7 @@ theorem homogenized_exit_time_bounds (d : ℕ) (hdim : 2 ≤ d) :
   have ht : (0 : ℝ) < t := Real.rpow_pos_of_pos (by norm_num) _
   have htt : t * t = (3 : ℝ) ^ n := by
     rw [ht_def]
-    show (3 : ℝ) ^ ((n : ℝ) / 2) * (3 : ℝ) ^ ((n : ℝ) / 2) = (3 : ℝ) ^ n
+    change (3 : ℝ) ^ ((n : ℝ) / 2) * (3 : ℝ) ^ ((n : ℝ) / 2) = (3 : ℝ) ^ n
     rw [← Real.rpow_add (by norm_num : (0 : ℝ) < 3),
       show (n : ℝ) / 2 + (n : ℝ) / 2 = ((n : ℤ) : ℝ) by ring, Real.rpow_intCast]
   constructor
@@ -142,7 +142,7 @@ theorem homogenized_exit_time_bounds (d : ℕ) (hdim : 2 ≤ d) :
       ring
     have hneg : Real.rpow 3 (-((1 / 2 : ℝ) * (n : ℝ))) = t⁻¹ := by
       rw [← hhalf]
-      show (3 : ℝ) ^ (-((1 / 2 : ℝ) * (n : ℝ))) = ((3 : ℝ) ^ ((1 / 2 : ℝ) * (n : ℝ)))⁻¹
+      change (3 : ℝ) ^ (-((1 / 2 : ℝ) * (n : ℝ))) = ((3 : ℝ) ^ ((1 / 2 : ℝ) * (n : ℝ)))⁻¹
       exact Real.rpow_neg (by norm_num) _
     rw [hhalf, hneg] at hest
     have h1 : t⁻¹ * Ksup ≤ Cs * t⁻¹ * ((Annealed.sigmaBar M n : ℝ)⁻¹ * t * t) := by
@@ -187,7 +187,7 @@ theorem homogenized_exit_time_bounds (d : ℕ) (hdim : 2 ≤ d) :
       have h := ((isDirichletSolutionAt_linearAxisDatum_iff i).1 hv).2 phi
       rw [← h, ← integral_const_mul]
       refine integral_congr_ae (Filter.Eventually.of_forall fun x => ?_)
-      show (Annealed.sigmaBar M n : ℝ) * vecDot (v.grad x) (phi.toH1Function.grad x) =
+      change (Annealed.sigmaBar M n : ℝ) * vecDot (v.grad x) (phi.toH1Function.grad x) =
         vecDot (matVecMul ((Annealed.sigmaBar M n : ℝ) • (1 : Mat d)) (v.grad x))
           (phi.toH1Function.grad x)
       rw [vecDot_matVecMul_smul_one_left]

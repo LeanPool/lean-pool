@@ -298,7 +298,7 @@ unit-range-dependent (in the restriction sense) probability measure.  This is
 the shape consumed by the Efron–Stein step: combine
 `pairwise_areUnitSeparated_coreBox` with the unit-range dependence machinery. -/
 theorem iIndepFun_coreBox_observable {ℓ : ℝ} (hℓ : 0 ≤ ℓ) (σ : Vec d)
-    {ι : Type*} [DecidableEq ι] {γ : ι → Type*} [∀ i, MeasurableSpace (γ i)]
+    {ι : Type*} {γ : ι → Type*} [∀ i, MeasurableSpace (γ i)]
     {k : ι → (Fin d → ℤ)} (hk : Function.Injective k)
     {P : MeasureTheory.Measure (CoeffField d)} [MeasureTheory.IsProbabilityMeasure P]
     (hP : IsRestrictionUnitRangeDependent P)

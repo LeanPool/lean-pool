@@ -250,7 +250,7 @@ theorem frozen_matrixSecondDerivativeNorm_eq
       Algsuperdiff.Frozen.Section24.matrixDerivativeNorm (H v.1)) := by
     refine ⟨ShellField.matrixSecondDerivativeNorm H, ?_⟩
     rintro r ⟨v, rfl⟩
-    show Algsuperdiff.Frozen.Section24.matrixDerivativeNorm (H v.1) ≤ _
+    change Algsuperdiff.Frozen.Section24.matrixDerivativeNorm (H v.1) ≤ _
     rw [frozen_matrixDerivativeNorm_eq]
     exact ShellField.matrixDerivativeNorm_apply_le_matrixSecondDerivativeNorm H v.1 v.2
   refine le_antisymm ?_ ?_
@@ -259,7 +259,7 @@ theorem frozen_matrixSecondDerivativeNorm_eq
       ⟨Algsuperdiff.Frozen.Section24.matrixDerivativeNorm (H 0),
         ⟨⟨0, vecNorm_zero_le_one⟩, rfl⟩⟩ ?_
     rintro r ⟨v, rfl⟩
-    show Algsuperdiff.Frozen.Section24.matrixDerivativeNorm (H v.1) ≤ _
+    change Algsuperdiff.Frozen.Section24.matrixDerivativeNorm (H v.1) ≤ _
     rw [frozen_matrixDerivativeNorm_eq]
     exact ShellField.matrixDerivativeNorm_apply_le_matrixSecondDerivativeNorm H v.1 v.2
   · rw [ShellField.matrixSecondDerivativeNorm_le_iff]

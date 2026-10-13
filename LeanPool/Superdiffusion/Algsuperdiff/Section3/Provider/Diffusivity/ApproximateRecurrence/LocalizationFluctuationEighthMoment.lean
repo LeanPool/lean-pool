@@ -129,7 +129,7 @@ theorem sq_volumeAverage_le_volumeAverage_sq {V : Set (Vec d)}
     (hg : IntegrableOn g V volume) (hg2 : IntegrableOn (fun x => g x ^ 2) V volume) :
     (volumeAverage V g) ^ 2 ≤ volumeAverage V (fun x => g x ^ 2) := by
   have hcs := sq_setIntegral_le_volume_mul_setIntegral_sq' hfin hpos hg hg2
-  show ((volume V).toReal⁻¹ * ∫ x in V, g x ∂volume) ^ 2 ≤
+  change ((volume V).toReal⁻¹ * ∫ x in V, g x ∂volume) ^ 2 ≤
     (volume V).toReal⁻¹ * ∫ x in V, g x ^ 2 ∂volume
   rw [mul_pow]
   calc ((volume V).toReal⁻¹) ^ 2 * (∫ x in V, g x ∂volume) ^ 2
@@ -163,13 +163,13 @@ theorem volumeAverage_sub_volumeAverage_sq_le {V : Set (Vec d)}
       integral_const_mul, setIntegral_const, measureReal_def, smul_eq_mul]
     ring
   have hgoal : volumeAverage V (fun x => (g x - t) ^ 2) = m⁻¹ * J - t ^ 2 := by
-    show m⁻¹ * ∫ x in V, (g x - t) ^ 2 ∂volume = m⁻¹ * J - t ^ 2
+    change m⁻¹ * ∫ x in V, (g x - t) ^ 2 ∂volume = m⁻¹ * J - t ^ 2
     rw [hcalc, htdef]
     field_simp
     ring
   rw [ht, hgoal]
   have hsq : (0 : ℝ) ≤ t ^ 2 := sq_nonneg t
-  show m⁻¹ * J - t ^ 2 ≤ m⁻¹ * J
+  change m⁻¹ * J - t ^ 2 ≤ m⁻¹ * J
   linarith
 
 /-! ## The oscillation cell against the window energy -/

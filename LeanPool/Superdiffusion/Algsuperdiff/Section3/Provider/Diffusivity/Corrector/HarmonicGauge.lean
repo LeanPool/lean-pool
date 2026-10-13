@@ -114,7 +114,7 @@ theorem openCubeAtScale_subset_euclideanBall {z : Vec d} {m : ℤ} {r : ℝ}
   have hlt : (d : ℝ) * ((3 : ℝ) ^ m / 2) ^ 2 < r ^ 2 := by
     rw [← hsq]
     nlinarith
-  show euclideanSqDist x z < r ^ 2
+  change euclideanSqDist x z < r ^ 2
   exact lt_of_le_of_lt hb hlt
 
 /-- **The free direction.**

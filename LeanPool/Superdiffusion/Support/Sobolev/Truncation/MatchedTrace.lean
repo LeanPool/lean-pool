@@ -37,6 +37,63 @@ subsequence of `φ_n → h`, both `Ψ_n → T` and `∇Ψ_n → ∇T` in `L²` (
 term vanishes), so the `H¹₀`-limit lemma concludes.
 -/
 
+private theorem matchedTrace_truncationConvergence :
+    ∀ {d : ℕ} {U : Set (Vec d)} (hU : IsOpenBoundedConvexDomain U)
+      (w₁ w₂ : H1Function U) (c : ℝ) (_ : IsFiniteMeasure (volumeMeasureOn U)),
+      let h : H1Function U := w₁ - w₂;
+      ∀ (W : H10Function U) (hφC1 : ∀ (n : ℕ), ContDiff ℝ (1 : WithTop ℕ∞) (W.approx n)),
+        let Φ : ℕ → H1Function U := fun (n : ℕ) => H1Function.ofContDiffOnIsOpenBoundedConvexDomain hU (hφC1 n);
+        let S : ℕ → H1Function U := fun (n : ℕ) => w₂ + Φ n;
+        ∀ (_ : ∀ᵐ (x : Vec d) ∂volumeMeasureOn U, w₁.toFun x = c → w₁.grad x = (0 : Vec d)) (σ : ℕ → ℕ)
+          (_ : ∀ᵐ (x : Vec d) ∂volumeMeasureOn U, Tendsto (fun (i : ℕ) => W.approx (σ i) x) atTop (𝓝 (h.toFun x)))
+          (i : Fin d),
+          let TB : ℕ → Vec d → ℝ := fun (n : ℕ) (x : Vec d) =>
+            ((if c < w₁.toFun x then (1 : ℝ) else (0 : ℝ)) - if c < (S n).toFun x then (1 : ℝ) else (0 : ℝ)) * w₁.grad x i;
+          ∀
+            (_ :
+              TB = fun (n : ℕ) (x : Vec d) =>
+                ((if c < w₁.toFun x then (1 : ℝ) else (0 : ℝ)) - if c < (S n).toFun x then (1 : ℝ) else (0 : ℝ)) *
+                  w₁.grad x i)
+            (_ : ∀ (n : ℕ), AEStronglyMeasurable (TB n) (volumeMeasureOn U)),
+            Tendsto (fun (n : ℕ) => eLpNorm (fun (x : Vec d) => TB (σ n) x) (2 : ℝ≥0∞) (volumeMeasureOn U)) atTop
+              (𝓝 (0 : ℝ≥0∞)) := by
+  intro _ U _ w₁ w₂ c _ h W _ _ S hD2 σ hσ_ae i TB hTB_def haesm_TB
+  have hdom : MemLp (fun x => ‖w₁.grad x i‖) 2 (volumeMeasureOn U) := (w₁.gradMemL2 i).norm
+  have hbnd : ∀ n, ∀ᵐ x ∂(volumeMeasureOn U), ‖TB (σ n) x‖ ≤ ‖w₁.grad x i‖ := by
+    intro n
+    filter_upwards with x
+    simp only [hTB_def]
+    rw [norm_mul]
+    refine mul_le_of_le_one_left (norm_nonneg _) ?_
+    rw [Real.norm_eq_abs]
+    by_cases hA : c < w₁.toFun x <;> by_cases hB : c < (S (σ n)).toFun x <;> simp [hA, hB]
+  have hae : ∀ᵐ x ∂(volumeMeasureOn U), Tendsto (fun n => TB (σ n) x) atTop (nhds 0) := by
+    filter_upwards [hσ_ae, hD2] with x hxconv hxD2
+    have hSconv : Tendsto (fun n => w₂.toFun x + W.approx (σ n) x) atTop
+        (nhds (w₁.toFun x)) := by
+      have hcur := (tendsto_const_nhds (x := w₂.toFun x)).add hxconv
+      rwa [show w₂.toFun x + h.toFun x = w₁.toFun x from by
+        rw [show h.toFun x = w₁.toFun x - w₂.toFun x from
+          congrFun (H1Function.sub_toFun w₁ w₂) x]; ring] at hcur
+    rcases lt_trichotomy c (w₁.toFun x) with hlt | heqc | hgt
+    · have hev : ∀ᶠ n in atTop, c < (S (σ n)).toFun x := by
+        filter_upwards [hSconv.eventually_const_lt hlt] with n hn using hn
+      refine Tendsto.congr' ?_ tendsto_const_nhds
+      filter_upwards [hev] with n hn
+      simp only [hTB_def]; rw [ite_eq_left hlt, ite_eq_left hn]; ring
+    · have hg0 : w₁.grad x i = 0 := by simp [hxD2 heqc.symm]
+      refine Tendsto.congr' ?_ tendsto_const_nhds
+      filter_upwards with n
+      simp only [hTB_def, hg0, mul_zero]
+    · have hev : ∀ᶠ n in atTop, ¬ c < (S (σ n)).toFun x := by
+        filter_upwards [hSconv.eventually_lt_const hgt] with n hn using not_lt.mpr hn.le
+      refine Tendsto.congr' ?_ tendsto_const_nhds
+      filter_upwards [hev] with n hn
+      simp only [hTB_def]; rw [ite_eq_right (not_lt.mpr hgt.le), ite_eq_right hn]; ring
+  have hmain := tendsto_eLpNorm_two_of_tendsto_ae_of_dominated
+    (fun n => haesm_TB (σ n)) (memLp_const (0:ℝ)) hdom hbnd hae
+  simpa using hmain
+
 /-- **Matched-trace truncation.**  If `w₁ − w₂ ∈ H¹₀(U)` then the truncated
 difference `(w₁ − c)₊ − (w₂ − c)₊` is again in `H¹₀(U)`. -/
 theorem memH10_max_sub_matched {d : ℕ} {U : Set (Vec d)}
@@ -69,7 +126,7 @@ theorem memH10_max_sub_matched {d : ℕ} {U : Set (Vec d)}
   have hTtf : T.toFun = fun x => max (w₁.toFun x - c) 0 - max (w₂.toFun x - c) 0 := by
     funext x
     rw [hT_def, H1Function.sub_toFun]
-    show V1'.toFun x - V2.toFun x = _
+    change V1'.toFun x - V2.toFun x = _
     rw [congrFun hV1'f x, congrFun hV2f x]
   rw [show (fun x => max (w₁.toFun x - c) 0 - max (w₂.toFun x - c) 0) = T.toFun from hTtf.symm]
   -- Weak-gradient uniqueness bridge `W.grad =ᵐ h.grad`.
@@ -102,13 +159,13 @@ theorem memH10_max_sub_matched {d : ℕ} {U : Set (Vec d)}
     intro x hx
     have hφ0 : W.approx n x = 0 := image_eq_zero_of_notMem_tsupport hx
     have hSx : (S n).toFun x = w₂.toFun x := by
-      show w₂.toFun x + (Φ n).toFun x = w₂.toFun x
+      change w₂.toFun x + (Φ n).toFun x = w₂.toFun x
       rw [show (Φ n).toFun x = W.approx n x from rfl, hφ0, add_zero]
     have e1 : (V1 n).toFun x = max ((S n).toFun x - c) 0 := congrFun (hV1f n) x
     have e2 : V2.toFun x = max (w₂.toFun x - c) 0 := congrFun hV2f x
-    show (V1 n - V2).toFun x = 0
+    change (V1 n - V2).toFun x = 0
     rw [H1Function.sub_toFun]
-    show (V1 n).toFun x - V2.toFun x = 0
+    change (V1 n).toFun x - V2.toFun x = 0
     rw [e1, e2, hSx]; ring
   -- L² convergence of `φ_n → h` (function side).
   have hWconv : Tendsto
@@ -144,7 +201,7 @@ theorem memH10_max_sub_matched {d : ℕ} {U : Set (Vec d)}
     have hΨx : (V1 (σ n) - V2).toFun x
         = max ((S (σ n)).toFun x - c) 0 - max (w₂.toFun x - c) 0 := by
       rw [H1Function.sub_toFun]
-      show (V1 (σ n)).toFun x - V2.toFun x = _
+      change (V1 (σ n)).toFun x - V2.toFun x = _
       rw [congrFun (hV1f (σ n)) x, congrFun hV2f x]
     rw [hTx, hΨx, Real.norm_eq_abs, Real.norm_eq_abs,
       show max (w₁.toFun x - c) 0 - max (w₂.toFun x - c) 0 -
@@ -226,42 +283,9 @@ theorem memH10_max_sub_matched {d : ℕ} {U : Set (Vec d)}
       by_cases hc : c < (S n).toFun x <;> simp [hc]
     -- `‖TB_{σn}‖ → 0` in L² by dominated convergence.
     have hTB_conv : Tendsto
-        (fun n => eLpNorm (fun x => TB (σ n) x) 2 (volumeMeasureOn U)) atTop (nhds 0) := by
-      have hdom : MemLp (fun x => ‖w₁.grad x i‖) 2 (volumeMeasureOn U) := (w₁.gradMemL2 i).norm
-      have hbnd : ∀ n, ∀ᵐ x ∂(volumeMeasureOn U), ‖TB (σ n) x‖ ≤ ‖w₁.grad x i‖ := by
-        intro n
-        filter_upwards with x
-        simp only [hTB_def]
-        rw [norm_mul]
-        refine mul_le_of_le_one_left (norm_nonneg _) ?_
-        rw [Real.norm_eq_abs]
-        by_cases hA : c < w₁.toFun x <;> by_cases hB : c < (S (σ n)).toFun x <;> simp [hA, hB]
-      have hae : ∀ᵐ x ∂(volumeMeasureOn U), Tendsto (fun n => TB (σ n) x) atTop (nhds 0) := by
-        filter_upwards [hσ_ae, hD2] with x hxconv hxD2
-        have hSconv : Tendsto (fun n => w₂.toFun x + W.approx (σ n) x) atTop
-            (nhds (w₁.toFun x)) := by
-          have hcur := (tendsto_const_nhds (x := w₂.toFun x)).add hxconv
-          rwa [show w₂.toFun x + h.toFun x = w₁.toFun x from by
-            rw [show h.toFun x = w₁.toFun x - w₂.toFun x from
-              congrFun (H1Function.sub_toFun w₁ w₂) x]; ring] at hcur
-        rcases lt_trichotomy c (w₁.toFun x) with hlt | heqc | hgt
-        · have hev : ∀ᶠ n in atTop, c < (S (σ n)).toFun x := by
-            filter_upwards [hSconv.eventually_const_lt hlt] with n hn using hn
-          refine Tendsto.congr' ?_ tendsto_const_nhds
-          filter_upwards [hev] with n hn
-          simp only [hTB_def]; rw [ite_eq_left hlt, ite_eq_left hn]; ring
-        · have hg0 : w₁.grad x i = 0 := by simp [hxD2 heqc.symm]
-          refine Tendsto.congr' ?_ tendsto_const_nhds
-          filter_upwards with n
-          simp only [hTB_def, hg0, mul_zero]
-        · have hev : ∀ᶠ n in atTop, ¬ c < (S (σ n)).toFun x := by
-            filter_upwards [hSconv.eventually_lt_const hgt] with n hn using not_lt.mpr hn.le
-          refine Tendsto.congr' ?_ tendsto_const_nhds
-          filter_upwards [hev] with n hn
-          simp only [hTB_def]; rw [ite_eq_right (not_lt.mpr hgt.le), ite_eq_right hn]; ring
-      have hmain := tendsto_eLpNorm_two_of_tendsto_ae_of_dominated
-        (fun n => haesm_TB (σ n)) (memLp_const (0:ℝ)) hdom hbnd hae
-      simpa using hmain
+        (fun n => eLpNorm (fun x => TB (σ n) x) 2 (volumeMeasureOn U)) atTop (nhds 0)  :=
+          @matchedTrace_truncationConvergence (d) (U) (hU) (w₁) (w₂) (c) (this) (W) (hφC1) (hD2)
+            (σ) (hσ_ae) (i) (hTB_def) (haesm_TB)
     -- Combine.
     have hsum : Tendsto (fun n => eLpNorm (TA (σ n)) 2 (volumeMeasureOn U)
         + eLpNorm (fun x => TB (σ n) x) 2 (volumeMeasureOn U)) atTop (nhds 0) := by

@@ -126,6 +126,413 @@ private theorem mul_four_mono {C C' a b c : ℝ} (h : C ≤ C') (ha : 0 ≤ a) (
     (hc : 0 ≤ c) : C * a * b * c ≤ C' * a * b * c :=
   mul_le_mul_of_nonneg_right (mul_three_mono h ha hb) hc
 
+private theorem harmonicApproximationProvider_comparisonBounds1 :
+    ∀ (d : ℕ) (C0 : ℝ) (_ : (0 : ℝ) < C0) (M : ABKModel d) (s : ℝ) (hs : (0 : ℝ) < s) (L m n : ℤ)
+      (z : Vec d) (omega : Cutoff.CutoffSample d) (h : H1Function (openCubeSet (originCube d m))),
+      (0 : ℝ) ≤ s.rpow (-4 : ℝ) ∧
+        (0 : ℝ) ≤ s.rpow (-6 : ℝ) ∧
+          (0 : ℝ) ≤ s.rpow (-7 : ℝ) ∧
+            (0 : ℝ) ≤ s.rpow (-(19 / 2 : ℝ)) ∧
+              (0 : ℝ) ≤ Real.rpow (3 : ℝ) (↑n : ℝ) ∧
+                (0 : ℝ) ≤ Real.rpow (3 : ℝ) (((1 : ℝ) + s) * (↑n : ℝ)) ∧
+                  (0 : ℝ) ≤ (↑(Annealed.sigmaBar M n) : ℝ)⁻¹ ∧
+                    (0 : ℝ) ≤
+                        Support.fluxCorrectedErrorRepresentative M L (n + (3 : ℤ))
+                          ⟨s / (8 : ℝ),
+                            lt_of_not_ge fun (a : s / (8 : ℝ) ≤ (0 : ℝ)) =>
+                              Mathlib.Tactic.Linarith.lt_irrefl
+                                (Eq.mp
+                                  (congrArg (fun (_a : ℝ) => _a < (0 : ℝ))
+                                    (Mathlib.Tactic.Ring.of_eq
+                                      (Mathlib.Tactic.Ring.Common.add_congr
+                                        (Mathlib.Tactic.Ring.Common.sub_congr
+                                          (Mathlib.Tactic.Ring.Common.mul_congr
+                                            (Mathlib.Tactic.Ring.cast_pos (Mathlib.Meta.NormNum.isNat_ofNat ℝ Nat.cast_one))
+                                            (Mathlib.Tactic.Ring.Common.atom_pf s rfl
+                                              (Eq.mpr
+                                                (id
+                                                  (congrArg
+                                                    (fun (_a : ℝ) =>
+                                                      s ^ Nat.rawCast (nat_lit 1) * Nat.rawCast (nat_lit 1) =
+                                                        s ^ Nat.rawCast (nat_lit 1) * _a)
+                                                    (Eq.symm rfl)))
+                                                (Eq.refl (s ^ Nat.rawCast (nat_lit 1) * Nat.rawCast (nat_lit 1)))))
+                                            (Mathlib.Tactic.Ring.Common.add_mul
+                                              (Mathlib.Tactic.Ring.Common.mul_add
+                                                (Mathlib.Tactic.Ring.Common.mul_pf_right s (Nat.rawCast (nat_lit 1))
+                                                  (Mathlib.Meta.NormNum.IsNat.to_raw_eq
+                                                    (Mathlib.Meta.NormNum.isNat_mul (Eq.refl HMul.hMul)
+                                                      (Mathlib.Meta.NormNum.IsNat.of_raw ℝ (nat_lit 1))
+                                                      (Mathlib.Meta.NormNum.IsNat.of_raw ℝ (nat_lit 1))
+                                                      (Eq.refl (nat_lit 1)))))
+                                                (Mathlib.Tactic.Ring.Common.mul_zero (Nat.rawCast (nat_lit 1)))
+                                                (Mathlib.Tactic.Ring.Common.add_pf_add_zero
+                                                  (s ^ Nat.rawCast (nat_lit 1) * Nat.rawCast (nat_lit 1) + (0 : ℝ))))
+                                              (Mathlib.Tactic.Ring.Common.zero_mul
+                                                (s ^ Nat.rawCast (nat_lit 1) * Nat.rawCast (nat_lit 1) + (0 : ℝ)))
+                                              (Mathlib.Tactic.Ring.Common.add_pf_add_zero
+                                                (s ^ Nat.rawCast (nat_lit 1) * Nat.rawCast (nat_lit 1) + (0 : ℝ)))))
+                                          (Mathlib.Tactic.Ring.Common.mul_congr
+                                            (Mathlib.Tactic.Ring.cast_pos
+                                              (Mathlib.Meta.NormNum.isNat_ofNat ℝ (Eq.refl (8 : ℝ))))
+                                            (Mathlib.Tactic.Ring.cast_zero
+                                              (Mathlib.Meta.NormNum.isNat_ofNat ℝ Nat.cast_zero))
+                                            (Mathlib.Tactic.Ring.Common.add_mul
+                                              (Mathlib.Tactic.Ring.Common.mul_zero (Nat.rawCast (nat_lit 8)))
+                                              (Mathlib.Tactic.Ring.Common.zero_mul (0 : ℝ))
+                                              (Mathlib.Tactic.Ring.Common.add_pf_zero_add (0 : ℝ))))
+                                          (Mathlib.Tactic.Ring.Common.sub_pf Mathlib.Tactic.Ring.Common.neg_zero
+                                            (Mathlib.Tactic.Ring.Common.add_pf_add_zero
+                                              (s ^ Nat.rawCast (nat_lit 1) * Nat.rawCast (nat_lit 1) + (0 : ℝ)))))
+                                        (Mathlib.Tactic.Ring.Common.sub_congr
+                                          (Mathlib.Tactic.Ring.cast_zero (Mathlib.Meta.NormNum.isNat_ofNat ℝ Nat.cast_zero))
+                                          (Mathlib.Tactic.Ring.Common.atom_pf s rfl
+                                            (Eq.mpr
+                                              (id
+                                                (congrArg
+                                                  (fun (_a : ℝ) =>
+                                                    s ^ Nat.rawCast (nat_lit 1) * Nat.rawCast (nat_lit 1) =
+                                                      s ^ Nat.rawCast (nat_lit 1) * _a)
+                                                  (Eq.symm rfl)))
+                                              (Eq.refl (s ^ Nat.rawCast (nat_lit 1) * Nat.rawCast (nat_lit 1)))))
+                                          (Mathlib.Tactic.Ring.Common.sub_pf
+                                            (Mathlib.Tactic.Ring.Common.neg_add
+                                              (Mathlib.Tactic.Ring.Common.neg_mul s (Nat.rawCast (nat_lit 1))
+                                                (Mathlib.Meta.NormNum.IsInt.to_raw_eq
+                                                  (Mathlib.Meta.NormNum.isInt_neg (Eq.refl Neg.neg)
+                                                    (Mathlib.Meta.NormNum.IsNat.to_isInt
+                                                      (Mathlib.Meta.NormNum.IsNat.of_raw ℝ (nat_lit 1)))
+                                                    (Eq.refl (Int.negOfNat (nat_lit 1))))))
+                                              Mathlib.Tactic.Ring.Common.neg_zero)
+                                            (Mathlib.Tactic.Ring.Common.add_pf_zero_add
+                                              (s ^ Nat.rawCast (nat_lit 1) * (Int.negOfNat (nat_lit 1)).rawCast +
+                                                (0 : ℝ)))))
+                                        (Mathlib.Tactic.Ring.Common.add_pf_add_overlap_zero
+                                          (Mathlib.Tactic.Ring.Common.add_overlap_pf_zero s (Nat.rawCast (nat_lit 1))
+                                            (Mathlib.Meta.NormNum.IsInt.to_isNat
+                                              (Mathlib.Meta.NormNum.isInt_add (Eq.refl HAdd.hAdd)
+                                                (Mathlib.Meta.NormNum.IsNat.to_isInt
+                                                  (Mathlib.Meta.NormNum.IsNat.of_raw ℝ (nat_lit 1)))
+                                                (Mathlib.Meta.NormNum.IsInt.of_raw ℝ (Int.negOfNat (nat_lit 1)))
+                                                (Eq.refl (Int.ofNat (nat_lit 0))))))
+                                          (Mathlib.Tactic.Ring.Common.add_pf_zero_add (0 : ℝ))))
+                                      (Mathlib.Tactic.Ring.cast_zero (Mathlib.Meta.NormNum.isNat_ofNat ℝ Nat.cast_zero))))
+                                  (Mathlib.Tactic.Linarith.add_lt_of_le_of_neg
+                                    (Eq.mp
+                                      (congrArg (fun (_a : ℝ) => _a ≤ (0 : ℝ))
+                                        (Mathlib.Tactic.CancelDenoms.sub_subst
+                                          (Mathlib.Tactic.CancelDenoms.div_subst rfl
+                                            (Mathlib.Meta.NormNum.isNat_eq_true
+                                              (Mathlib.Meta.NormNum.IsNNRat.to_isNat
+                                                (Mathlib.Meta.NormNum.isNNRat_div
+                                                  (Mathlib.Meta.NormNum.IsNat.to_isNNRat
+                                                    (Mathlib.Meta.NormNum.IsNNRat.to_isNat
+                                                      (Mathlib.Meta.NormNum.isNNRat_mul (Eq.refl HMul.hMul)
+                                                        (Mathlib.Meta.NormNum.IsNat.to_isNNRat
+                                                          (Mathlib.Meta.NormNum.isNat_ofNat ℝ (Eq.refl (8 : ℝ))))
+                                                        (Mathlib.Meta.NormNum.isNNRat_inv_pos
+                                                          (Mathlib.Meta.NormNum.IsNat.to_isNNRat
+                                                            (Mathlib.Meta.NormNum.isNat_ofNat ℝ (Eq.refl (8 : ℝ)))))
+                                                        (Eq.refl (Nat.mul (nat_lit 8) (nat_lit 1)))
+                                                        (Eq.refl (nat_lit 8)))))))
+                                              (Mathlib.Meta.NormNum.isNat_ofNat ℝ Nat.cast_one))
+                                            (Mathlib.Meta.NormNum.isNat_eq_true
+                                              (Mathlib.Meta.NormNum.isNat_mul (Eq.refl HMul.hMul)
+                                                (Mathlib.Meta.NormNum.isNat_ofNat ℝ Nat.cast_one)
+                                                (Mathlib.Meta.NormNum.isNat_ofNat ℝ (Eq.refl (8 : ℝ)))
+                                                (Eq.refl (nat_lit 8)))
+                                              (Mathlib.Meta.NormNum.isNat_ofNat ℝ (Eq.refl (8 : ℝ)))))
+                                          rfl))
+                                      (Mathlib.Tactic.Linarith.mul_nonpos (Mathlib.Tactic.Linarith.sub_nonpos_of_le a)
+                                        (Mathlib.Meta.NormNum.isNat_lt_true
+                                          (Mathlib.Meta.NormNum.isNat_ofNat ℝ Nat.cast_zero)
+                                          (Mathlib.Meta.NormNum.isNat_ofNat ℝ (Eq.refl (8 : ℝ))) (Eq.refl false))))
+                                    (Mathlib.Tactic.Linarith.sub_neg_of_lt hs)))⟩
+                          (Cutoff.translateCutoffSample z omega) ∧
+                      (0 : ℝ) ≤
+                          Support.fluxCorrectedErrorRepresentative M L (n + (2 : ℤ))
+                            ⟨s / (8 : ℝ),
+                              lt_of_not_ge fun (a : s / (8 : ℝ) ≤ (0 : ℝ)) =>
+                                Mathlib.Tactic.Linarith.lt_irrefl
+                                  (Eq.mp
+                                    (congrArg (fun (_a : ℝ) => _a < (0 : ℝ))
+                                      (Mathlib.Tactic.Ring.of_eq
+                                        (Mathlib.Tactic.Ring.Common.add_congr
+                                          (Mathlib.Tactic.Ring.Common.sub_congr
+                                            (Mathlib.Tactic.Ring.Common.mul_congr
+                                              (Mathlib.Tactic.Ring.cast_pos
+                                                (Mathlib.Meta.NormNum.isNat_ofNat ℝ Nat.cast_one))
+                                              (Mathlib.Tactic.Ring.Common.atom_pf s rfl
+                                                (Eq.mpr
+                                                  (id
+                                                    (congrArg
+                                                      (fun (_a : ℝ) =>
+                                                        s ^ Nat.rawCast (nat_lit 1) * Nat.rawCast (nat_lit 1) =
+                                                          s ^ Nat.rawCast (nat_lit 1) * _a)
+                                                      (Eq.symm rfl)))
+                                                  (Eq.refl (s ^ Nat.rawCast (nat_lit 1) * Nat.rawCast (nat_lit 1)))))
+                                              (Mathlib.Tactic.Ring.Common.add_mul
+                                                (Mathlib.Tactic.Ring.Common.mul_add
+                                                  (Mathlib.Tactic.Ring.Common.mul_pf_right s (Nat.rawCast (nat_lit 1))
+                                                    (Mathlib.Meta.NormNum.IsNat.to_raw_eq
+                                                      (Mathlib.Meta.NormNum.isNat_mul (Eq.refl HMul.hMul)
+                                                        (Mathlib.Meta.NormNum.IsNat.of_raw ℝ (nat_lit 1))
+                                                        (Mathlib.Meta.NormNum.IsNat.of_raw ℝ (nat_lit 1))
+                                                        (Eq.refl (nat_lit 1)))))
+                                                  (Mathlib.Tactic.Ring.Common.mul_zero (Nat.rawCast (nat_lit 1)))
+                                                  (Mathlib.Tactic.Ring.Common.add_pf_add_zero
+                                                    (s ^ Nat.rawCast (nat_lit 1) * Nat.rawCast (nat_lit 1) + (0 : ℝ))))
+                                                (Mathlib.Tactic.Ring.Common.zero_mul
+                                                  (s ^ Nat.rawCast (nat_lit 1) * Nat.rawCast (nat_lit 1) + (0 : ℝ)))
+                                                (Mathlib.Tactic.Ring.Common.add_pf_add_zero
+                                                  (s ^ Nat.rawCast (nat_lit 1) * Nat.rawCast (nat_lit 1) + (0 : ℝ)))))
+                                            (Mathlib.Tactic.Ring.Common.mul_congr
+                                              (Mathlib.Tactic.Ring.cast_pos
+                                                (Mathlib.Meta.NormNum.isNat_ofNat ℝ (Eq.refl (8 : ℝ))))
+                                              (Mathlib.Tactic.Ring.cast_zero
+                                                (Mathlib.Meta.NormNum.isNat_ofNat ℝ Nat.cast_zero))
+                                              (Mathlib.Tactic.Ring.Common.add_mul
+                                                (Mathlib.Tactic.Ring.Common.mul_zero (Nat.rawCast (nat_lit 8)))
+                                                (Mathlib.Tactic.Ring.Common.zero_mul (0 : ℝ))
+                                                (Mathlib.Tactic.Ring.Common.add_pf_zero_add (0 : ℝ))))
+                                            (Mathlib.Tactic.Ring.Common.sub_pf Mathlib.Tactic.Ring.Common.neg_zero
+                                              (Mathlib.Tactic.Ring.Common.add_pf_add_zero
+                                                (s ^ Nat.rawCast (nat_lit 1) * Nat.rawCast (nat_lit 1) + (0 : ℝ)))))
+                                          (Mathlib.Tactic.Ring.Common.sub_congr
+                                            (Mathlib.Tactic.Ring.cast_zero
+                                              (Mathlib.Meta.NormNum.isNat_ofNat ℝ Nat.cast_zero))
+                                            (Mathlib.Tactic.Ring.Common.atom_pf s rfl
+                                              (Eq.mpr
+                                                (id
+                                                  (congrArg
+                                                    (fun (_a : ℝ) =>
+                                                      s ^ Nat.rawCast (nat_lit 1) * Nat.rawCast (nat_lit 1) =
+                                                        s ^ Nat.rawCast (nat_lit 1) * _a)
+                                                    (Eq.symm rfl)))
+                                                (Eq.refl (s ^ Nat.rawCast (nat_lit 1) * Nat.rawCast (nat_lit 1)))))
+                                            (Mathlib.Tactic.Ring.Common.sub_pf
+                                              (Mathlib.Tactic.Ring.Common.neg_add
+                                                (Mathlib.Tactic.Ring.Common.neg_mul s (Nat.rawCast (nat_lit 1))
+                                                  (Mathlib.Meta.NormNum.IsInt.to_raw_eq
+                                                    (Mathlib.Meta.NormNum.isInt_neg (Eq.refl Neg.neg)
+                                                      (Mathlib.Meta.NormNum.IsNat.to_isInt
+                                                        (Mathlib.Meta.NormNum.IsNat.of_raw ℝ (nat_lit 1)))
+                                                      (Eq.refl (Int.negOfNat (nat_lit 1))))))
+                                                Mathlib.Tactic.Ring.Common.neg_zero)
+                                              (Mathlib.Tactic.Ring.Common.add_pf_zero_add
+                                                (s ^ Nat.rawCast (nat_lit 1) * (Int.negOfNat (nat_lit 1)).rawCast +
+                                                  (0 : ℝ)))))
+                                          (Mathlib.Tactic.Ring.Common.add_pf_add_overlap_zero
+                                            (Mathlib.Tactic.Ring.Common.add_overlap_pf_zero s (Nat.rawCast (nat_lit 1))
+                                              (Mathlib.Meta.NormNum.IsInt.to_isNat
+                                                (Mathlib.Meta.NormNum.isInt_add (Eq.refl HAdd.hAdd)
+                                                  (Mathlib.Meta.NormNum.IsNat.to_isInt
+                                                    (Mathlib.Meta.NormNum.IsNat.of_raw ℝ (nat_lit 1)))
+                                                  (Mathlib.Meta.NormNum.IsInt.of_raw ℝ (Int.negOfNat (nat_lit 1)))
+                                                  (Eq.refl (Int.ofNat (nat_lit 0))))))
+                                            (Mathlib.Tactic.Ring.Common.add_pf_zero_add (0 : ℝ))))
+                                        (Mathlib.Tactic.Ring.cast_zero (Mathlib.Meta.NormNum.isNat_ofNat ℝ Nat.cast_zero))))
+                                    (Mathlib.Tactic.Linarith.add_lt_of_le_of_neg
+                                      (Eq.mp
+                                        (congrArg (fun (_a : ℝ) => _a ≤ (0 : ℝ))
+                                          (Mathlib.Tactic.CancelDenoms.sub_subst
+                                            (Mathlib.Tactic.CancelDenoms.div_subst rfl
+                                              (Mathlib.Meta.NormNum.isNat_eq_true
+                                                (Mathlib.Meta.NormNum.IsNNRat.to_isNat
+                                                  (Mathlib.Meta.NormNum.isNNRat_div
+                                                    (Mathlib.Meta.NormNum.IsNat.to_isNNRat
+                                                      (Mathlib.Meta.NormNum.IsNNRat.to_isNat
+                                                        (Mathlib.Meta.NormNum.isNNRat_mul (Eq.refl HMul.hMul)
+                                                          (Mathlib.Meta.NormNum.IsNat.to_isNNRat
+                                                            (Mathlib.Meta.NormNum.isNat_ofNat ℝ (Eq.refl (8 : ℝ))))
+                                                          (Mathlib.Meta.NormNum.isNNRat_inv_pos
+                                                            (Mathlib.Meta.NormNum.IsNat.to_isNNRat
+                                                              (Mathlib.Meta.NormNum.isNat_ofNat ℝ (Eq.refl (8 : ℝ)))))
+                                                          (Eq.refl (Nat.mul (nat_lit 8) (nat_lit 1)))
+                                                          (Eq.refl (nat_lit 8)))))))
+                                                (Mathlib.Meta.NormNum.isNat_ofNat ℝ Nat.cast_one))
+                                              (Mathlib.Meta.NormNum.isNat_eq_true
+                                                (Mathlib.Meta.NormNum.isNat_mul (Eq.refl HMul.hMul)
+                                                  (Mathlib.Meta.NormNum.isNat_ofNat ℝ Nat.cast_one)
+                                                  (Mathlib.Meta.NormNum.isNat_ofNat ℝ (Eq.refl (8 : ℝ)))
+                                                  (Eq.refl (nat_lit 8)))
+                                                (Mathlib.Meta.NormNum.isNat_ofNat ℝ (Eq.refl (8 : ℝ)))))
+                                            rfl))
+                                        (Mathlib.Tactic.Linarith.mul_nonpos (Mathlib.Tactic.Linarith.sub_nonpos_of_le a)
+                                          (Mathlib.Meta.NormNum.isNat_lt_true
+                                            (Mathlib.Meta.NormNum.isNat_ofNat ℝ Nat.cast_zero)
+                                            (Mathlib.Meta.NormNum.isNat_ofNat ℝ (Eq.refl (8 : ℝ))) (Eq.refl false))))
+                                      (Mathlib.Tactic.Linarith.sub_neg_of_lt hs)))⟩
+                            (Cutoff.translateCutoffSample z omega) ∧
+                        (0 : ℝ) ≤
+                            C0 * s.rpow (-6 : ℝ) *
+                                Support.fluxCorrectedErrorRepresentative M L (n + (3 : ℤ))
+                                  ⟨s / (8 : ℝ),
+                                    lt_of_not_ge fun (a : s / (8 : ℝ) ≤ (0 : ℝ)) =>
+                                      Mathlib.Tactic.Linarith.lt_irrefl
+                                        (Eq.mp
+                                          (congrArg (fun (_a : ℝ) => _a < (0 : ℝ))
+                                            (Mathlib.Tactic.Ring.of_eq
+                                              (Mathlib.Tactic.Ring.Common.add_congr
+                                                (Mathlib.Tactic.Ring.Common.sub_congr
+                                                  (Mathlib.Tactic.Ring.Common.mul_congr
+                                                    (Mathlib.Tactic.Ring.cast_pos
+                                                      (Mathlib.Meta.NormNum.isNat_ofNat ℝ Nat.cast_one))
+                                                    (Mathlib.Tactic.Ring.Common.atom_pf s rfl
+                                                      (Eq.mpr
+                                                        (id
+                                                          (congrArg
+                                                            (fun (_a : ℝ) =>
+                                                              s ^ Nat.rawCast (nat_lit 1) * Nat.rawCast (nat_lit 1) =
+                                                                s ^ Nat.rawCast (nat_lit 1) * _a)
+                                                            (Eq.symm rfl)))
+                                                        (Eq.refl (s ^ Nat.rawCast (nat_lit 1) * Nat.rawCast (nat_lit 1)))))
+                                                    (Mathlib.Tactic.Ring.Common.add_mul
+                                                      (Mathlib.Tactic.Ring.Common.mul_add
+                                                        (Mathlib.Tactic.Ring.Common.mul_pf_right s (Nat.rawCast (nat_lit 1))
+                                                          (Mathlib.Meta.NormNum.IsNat.to_raw_eq
+                                                            (Mathlib.Meta.NormNum.isNat_mul (Eq.refl HMul.hMul)
+                                                              (Mathlib.Meta.NormNum.IsNat.of_raw ℝ (nat_lit 1))
+                                                              (Mathlib.Meta.NormNum.IsNat.of_raw ℝ (nat_lit 1))
+                                                              (Eq.refl (nat_lit 1)))))
+                                                        (Mathlib.Tactic.Ring.Common.mul_zero (Nat.rawCast (nat_lit 1)))
+                                                        (Mathlib.Tactic.Ring.Common.add_pf_add_zero
+                                                          (s ^ Nat.rawCast (nat_lit 1) * Nat.rawCast (nat_lit 1) +
+                                                            (0 : ℝ))))
+                                                      (Mathlib.Tactic.Ring.Common.zero_mul
+                                                        (s ^ Nat.rawCast (nat_lit 1) * Nat.rawCast (nat_lit 1) + (0 : ℝ)))
+                                                      (Mathlib.Tactic.Ring.Common.add_pf_add_zero
+                                                        (s ^ Nat.rawCast (nat_lit 1) * Nat.rawCast (nat_lit 1) + (0 : ℝ)))))
+                                                  (Mathlib.Tactic.Ring.Common.mul_congr
+                                                    (Mathlib.Tactic.Ring.cast_pos
+                                                      (Mathlib.Meta.NormNum.isNat_ofNat ℝ (Eq.refl (8 : ℝ))))
+                                                    (Mathlib.Tactic.Ring.cast_zero
+                                                      (Mathlib.Meta.NormNum.isNat_ofNat ℝ Nat.cast_zero))
+                                                    (Mathlib.Tactic.Ring.Common.add_mul
+                                                      (Mathlib.Tactic.Ring.Common.mul_zero (Nat.rawCast (nat_lit 8)))
+                                                      (Mathlib.Tactic.Ring.Common.zero_mul (0 : ℝ))
+                                                      (Mathlib.Tactic.Ring.Common.add_pf_zero_add (0 : ℝ))))
+                                                  (Mathlib.Tactic.Ring.Common.sub_pf Mathlib.Tactic.Ring.Common.neg_zero
+                                                    (Mathlib.Tactic.Ring.Common.add_pf_add_zero
+                                                      (s ^ Nat.rawCast (nat_lit 1) * Nat.rawCast (nat_lit 1) + (0 : ℝ)))))
+                                                (Mathlib.Tactic.Ring.Common.sub_congr
+                                                  (Mathlib.Tactic.Ring.cast_zero
+                                                    (Mathlib.Meta.NormNum.isNat_ofNat ℝ Nat.cast_zero))
+                                                  (Mathlib.Tactic.Ring.Common.atom_pf s rfl
+                                                    (Eq.mpr
+                                                      (id
+                                                        (congrArg
+                                                          (fun (_a : ℝ) =>
+                                                            s ^ Nat.rawCast (nat_lit 1) * Nat.rawCast (nat_lit 1) =
+                                                              s ^ Nat.rawCast (nat_lit 1) * _a)
+                                                          (Eq.symm rfl)))
+                                                      (Eq.refl (s ^ Nat.rawCast (nat_lit 1) * Nat.rawCast (nat_lit 1)))))
+                                                  (Mathlib.Tactic.Ring.Common.sub_pf
+                                                    (Mathlib.Tactic.Ring.Common.neg_add
+                                                      (Mathlib.Tactic.Ring.Common.neg_mul s (Nat.rawCast (nat_lit 1))
+                                                        (Mathlib.Meta.NormNum.IsInt.to_raw_eq
+                                                          (Mathlib.Meta.NormNum.isInt_neg (Eq.refl Neg.neg)
+                                                            (Mathlib.Meta.NormNum.IsNat.to_isInt
+                                                              (Mathlib.Meta.NormNum.IsNat.of_raw ℝ (nat_lit 1)))
+                                                            (Eq.refl (Int.negOfNat (nat_lit 1))))))
+                                                      Mathlib.Tactic.Ring.Common.neg_zero)
+                                                    (Mathlib.Tactic.Ring.Common.add_pf_zero_add
+                                                      (s ^ Nat.rawCast (nat_lit 1) * (Int.negOfNat (nat_lit 1)).rawCast +
+                                                        (0 : ℝ)))))
+                                                (Mathlib.Tactic.Ring.Common.add_pf_add_overlap_zero
+                                                  (Mathlib.Tactic.Ring.Common.add_overlap_pf_zero s
+                                                    (Nat.rawCast (nat_lit 1))
+                                                    (Mathlib.Meta.NormNum.IsInt.to_isNat
+                                                      (Mathlib.Meta.NormNum.isInt_add (Eq.refl HAdd.hAdd)
+                                                        (Mathlib.Meta.NormNum.IsNat.to_isInt
+                                                          (Mathlib.Meta.NormNum.IsNat.of_raw ℝ (nat_lit 1)))
+                                                        (Mathlib.Meta.NormNum.IsInt.of_raw ℝ (Int.negOfNat (nat_lit 1)))
+                                                        (Eq.refl (Int.ofNat (nat_lit 0))))))
+                                                  (Mathlib.Tactic.Ring.Common.add_pf_zero_add (0 : ℝ))))
+                                              (Mathlib.Tactic.Ring.cast_zero
+                                                (Mathlib.Meta.NormNum.isNat_ofNat ℝ Nat.cast_zero))))
+                                          (Mathlib.Tactic.Linarith.add_lt_of_le_of_neg
+                                            (Eq.mp
+                                              (congrArg (fun (_a : ℝ) => _a ≤ (0 : ℝ))
+                                                (Mathlib.Tactic.CancelDenoms.sub_subst
+                                                  (Mathlib.Tactic.CancelDenoms.div_subst rfl
+                                                    (Mathlib.Meta.NormNum.isNat_eq_true
+                                                      (Mathlib.Meta.NormNum.IsNNRat.to_isNat
+                                                        (Mathlib.Meta.NormNum.isNNRat_div
+                                                          (Mathlib.Meta.NormNum.IsNat.to_isNNRat
+                                                            (Mathlib.Meta.NormNum.IsNNRat.to_isNat
+                                                              (Mathlib.Meta.NormNum.isNNRat_mul (Eq.refl HMul.hMul)
+                                                                (Mathlib.Meta.NormNum.IsNat.to_isNNRat
+                                                                  (Mathlib.Meta.NormNum.isNat_ofNat ℝ (Eq.refl (8 : ℝ))))
+                                                                (Mathlib.Meta.NormNum.isNNRat_inv_pos
+                                                                  (Mathlib.Meta.NormNum.IsNat.to_isNNRat
+                                                                    (Mathlib.Meta.NormNum.isNat_ofNat ℝ (Eq.refl (8 : ℝ)))))
+                                                                (Eq.refl (Nat.mul (nat_lit 8) (nat_lit 1)))
+                                                                (Eq.refl (nat_lit 8)))))))
+                                                      (Mathlib.Meta.NormNum.isNat_ofNat ℝ Nat.cast_one))
+                                                    (Mathlib.Meta.NormNum.isNat_eq_true
+                                                      (Mathlib.Meta.NormNum.isNat_mul (Eq.refl HMul.hMul)
+                                                        (Mathlib.Meta.NormNum.isNat_ofNat ℝ Nat.cast_one)
+                                                        (Mathlib.Meta.NormNum.isNat_ofNat ℝ (Eq.refl (8 : ℝ)))
+                                                        (Eq.refl (nat_lit 8)))
+                                                      (Mathlib.Meta.NormNum.isNat_ofNat ℝ (Eq.refl (8 : ℝ)))))
+                                                  rfl))
+                                              (Mathlib.Tactic.Linarith.mul_nonpos
+                                                (Mathlib.Tactic.Linarith.sub_nonpos_of_le a)
+                                                (Mathlib.Meta.NormNum.isNat_lt_true
+                                                  (Mathlib.Meta.NormNum.isNat_ofNat ℝ Nat.cast_zero)
+                                                  (Mathlib.Meta.NormNum.isNat_ofNat ℝ (Eq.refl (8 : ℝ))) (Eq.refl false))))
+                                            (Mathlib.Tactic.Linarith.sub_neg_of_lt hs)))⟩
+                                  (Cutoff.translateCutoffSample z omega) *
+                              Real.rpow (3 : ℝ) (↑n : ℝ) ∧
+                          Integrable h.grad
+                              (volume.restrict
+                                ((fun (y' : Vec d) => z + y') '' openCubeSet (originCube d (n + (3 : ℤ))) ∩
+                                  openCubeSet (originCube d m))) ∧
+                            Real.rpow (3 : ℝ) (↑n : ℝ) * Real.rpow (3 : ℝ) ((↑n : ℝ) * s) =
+                              Real.rpow (3 : ℝ) (((1 : ℝ) + s) * (↑n : ℝ)) := by
+  intro d C0 hC0pos M s hs L m n z omega h
+  have hS4 : (0 : ℝ) ≤ Real.rpow s (-(4 : ℝ)) := Real.rpow_nonneg hs.le _
+  have hS6 : (0 : ℝ) ≤ Real.rpow s (-(6 : ℝ)) := Real.rpow_nonneg hs.le _
+  have hS7 : (0 : ℝ) ≤ Real.rpow s (-(7 : ℝ)) := Real.rpow_nonneg hs.le _
+  have hS19 : (0 : ℝ) ≤ Real.rpow s (-(19 / 2 : ℝ)) := Real.rpow_nonneg hs.le _
+  have hR3n : (0 : ℝ) ≤ Real.rpow (3 : ℝ) (n : ℝ) := Real.rpow_nonneg (by norm_num) _
+  have hQ1s : (0 : ℝ) ≤ Real.rpow (3 : ℝ) ((1 + s) * (n : ℝ)) :=
+    Real.rpow_nonneg (by norm_num) _
+  have hsig : (0 : ℝ) ≤ ((Annealed.sigmaBar M n : ℝ))⁻¹ :=
+    inv_nonneg.mpr (Annealed.sigmaBar M n).2.le
+  have hflux3 : (0 : ℝ) ≤ Support.fluxCorrectedErrorRepresentative M L (n + 3)
+      ⟨s / 8, by linarith only [hs]⟩ (Cutoff.translateCutoffSample z omega) :=
+    Support.fluxCorrectedErrorRepresentative_nonneg _ _ _ _ _
+  have hflux2 : (0 : ℝ) ≤ Support.fluxCorrectedErrorRepresentative M L (n + 2)
+      ⟨s / 8, by linarith only [hs]⟩ (Cutoff.translateCutoffSample z omega) :=
+    Support.fluxCorrectedErrorRepresentative_nonneg _ _ _ _ _
+  have hcoef0 : (0 : ℝ) ≤ C0 * Real.rpow s (-(6 : ℝ)) *
+      Support.fluxCorrectedErrorRepresentative M L (n + 3)
+        ⟨s / 8, by linarith only [hs]⟩ (Cutoff.translateCutoffSample z omega) *
+      Real.rpow (3 : ℝ) (n : ℝ) :=
+    mul_nonneg (mul_nonneg (mul_nonneg hC0pos.le hS6) hflux3) hR3n
+  -- `∇h` is integrable on the `n+3` window
+  have hfin : IsFiniteMeasure (volume.restrict
+      ((((fun y' => z + y') '' openCubeSet (originCube d (n + 3))) ∩
+        openCubeSet (originCube d m)))) := by
+    refine ⟨?_⟩
+    rw [Measure.restrict_apply_univ]
+    exact lt_top_iff_ne_top.mpr (volume_anchorWindow_ne_top (n + 3) m z)
+  have hgradint : Integrable h.grad (volume.restrict
+      ((((fun y' => z + y') '' openCubeSet (originCube d (n + 3))) ∩
+        openCubeSet (originCube d m)))) :=
+    (h.grad_memVectorL2.mono_measure
+      (Measure.restrict_mono Set.inter_subset_right le_rfl)).integrable (by norm_num)
+  -- the `3`-power bookkeeping: `3^n · 3^{ns} = 3^{(1+s)n}`
+  have h3mul : Real.rpow (3 : ℝ) (n : ℝ) * Real.rpow (3 : ℝ) ((n : ℝ) * s) =
+      Real.rpow (3 : ℝ) ((1 + s) * (n : ℝ)) := by
+    have hbase := Real.rpow_add (by norm_num : (0 : ℝ) < 3) ((n : ℝ)) ((n : ℝ) * s)
+    have hexp : (n : ℝ) + (n : ℝ) * s = (1 + s) * (n : ℝ) := by ring
+    rw [hexp] at hbase
+    exact hbase.symm
+  exact ⟨hS4, hS6, hS7, hS19, hR3n, hQ1s, hsig, hflux3, hflux2, hcoef0, hgradint, h3mul⟩
+
 /-- **`l.harmonic.approximation.good.scales`, the provider — unconditional.**
 
 The harmonic-approximation display on good scales, with the general clause's
@@ -346,45 +753,9 @@ theorem harmonic_approximation_provider (d : ℕ) :
     hcapE M s hsIcc hregimeCE hfundHalf hs n z] with omega homega hcapw
   intro u h g hdir hg2 hgG hhG v w hharm hval hgrad
   obtain ⟨hgen, hint⟩ := homega u h g hdir hg2 hgG hhG v w hharm hval hgrad
-  have hS4 : (0 : ℝ) ≤ Real.rpow s (-(4 : ℝ)) := Real.rpow_nonneg hs.le _
-  have hS6 : (0 : ℝ) ≤ Real.rpow s (-(6 : ℝ)) := Real.rpow_nonneg hs.le _
-  have hS7 : (0 : ℝ) ≤ Real.rpow s (-(7 : ℝ)) := Real.rpow_nonneg hs.le _
-  have hS19 : (0 : ℝ) ≤ Real.rpow s (-(19 / 2 : ℝ)) := Real.rpow_nonneg hs.le _
-  have hR3n : (0 : ℝ) ≤ Real.rpow (3 : ℝ) (n : ℝ) := Real.rpow_nonneg (by norm_num) _
-  have hQ1s : (0 : ℝ) ≤ Real.rpow (3 : ℝ) ((1 + s) * (n : ℝ)) :=
-    Real.rpow_nonneg (by norm_num) _
-  have hsig : (0 : ℝ) ≤ ((Annealed.sigmaBar M n : ℝ))⁻¹ :=
-    inv_nonneg.mpr (Annealed.sigmaBar M n).2.le
-  have hflux3 : (0 : ℝ) ≤ Support.fluxCorrectedErrorRepresentative M L (n + 3)
-      ⟨s / 8, by linarith only [hs]⟩ (Cutoff.translateCutoffSample z omega) :=
-    Support.fluxCorrectedErrorRepresentative_nonneg _ _ _ _ _
-  have hflux2 : (0 : ℝ) ≤ Support.fluxCorrectedErrorRepresentative M L (n + 2)
-      ⟨s / 8, by linarith only [hs]⟩ (Cutoff.translateCutoffSample z omega) :=
-    Support.fluxCorrectedErrorRepresentative_nonneg _ _ _ _ _
-  have hcoef0 : (0 : ℝ) ≤ C0 * Real.rpow s (-(6 : ℝ)) *
-      Support.fluxCorrectedErrorRepresentative M L (n + 3)
-        ⟨s / 8, by linarith only [hs]⟩ (Cutoff.translateCutoffSample z omega) *
-      Real.rpow (3 : ℝ) (n : ℝ) :=
-    mul_nonneg (mul_nonneg (mul_nonneg hC0pos.le hS6) hflux3) hR3n
-  -- `∇h` is integrable on the `n+3` window
-  have hfin : IsFiniteMeasure (volume.restrict
-      ((((fun y' => z + y') '' openCubeSet (originCube d (n + 3))) ∩
-        openCubeSet (originCube d m)))) := by
-    refine ⟨?_⟩
-    rw [Measure.restrict_apply_univ]
-    exact lt_top_iff_ne_top.mpr (volume_anchorWindow_ne_top (n + 3) m z)
-  have hgradint : Integrable h.grad (volume.restrict
-      ((((fun y' => z + y') '' openCubeSet (originCube d (n + 3))) ∩
-        openCubeSet (originCube d m)))) :=
-    (h.grad_memVectorL2.mono_measure
-      (Measure.restrict_mono Set.inter_subset_right le_rfl)).integrable (by norm_num)
-  -- the `3`-power bookkeeping: `3^n · 3^{ns} = 3^{(1+s)n}`
-  have h3mul : Real.rpow (3 : ℝ) (n : ℝ) * Real.rpow (3 : ℝ) ((n : ℝ) * s) =
-      Real.rpow (3 : ℝ) ((1 + s) * (n : ℝ)) := by
-    have hbase := Real.rpow_add (by norm_num : (0 : ℝ) < 3) ((n : ℝ)) ((n : ℝ) * s)
-    have hexp : (n : ℝ) + (n : ℝ) * s = (1 + s) * (n : ℝ) := by ring
-    rw [hexp] at hbase
-    exact hbase.symm
+  obtain ⟨hS4, hS6, hS7, hS19, hR3n, hQ1s, hsig, hflux3, hflux2, hcoef0, hgradint, h3mul⟩ :=
+    @harmonicApproximationProvider_comparisonBounds1 (d) (C0) (hC0pos) (M) (s) (hs) (L) (m) (n)
+      (z) (omega) (h)
   refine ⟨?_, ?_⟩
   · refine indicator_le_of_mem ?_
     intro hmemC

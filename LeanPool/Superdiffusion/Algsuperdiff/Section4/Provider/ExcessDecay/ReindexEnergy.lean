@@ -298,7 +298,7 @@ theorem ae_constantDatumEnergy_harmonicSlot_addThree (d : ℕ) [NeZero d] :
   have hgreg' : ForceBesovRegularity (originCube d (n + 2)) (2 * (s / 4)) g :=
     CubeVectorBesovHRegularity.of_exponent_le hgreg (by linarith only [hs])
   have hscale : (originCube d (n + 2)).scale - 1 = n + 1 := by
-    show n + 2 - 1 = n + 1
+    change n + 2 - 1 = n + 1
     ring
   have hpatch' : openCubeAtScale w ((originCube d (n + 2)).scale - 1) ⊆
       openCubeSet (originCube d (n + 2)) := by

@@ -170,6 +170,19 @@ theorem exists_cesaro_dThree_bound (M : ABKModel d) (s : {s : ℝ // 0 < s})
 
 /-! ## 3. The kicking lemma -/
 
+private theorem goodScaleKicking_geometricDecayBound :
+    ∀ (d : ℕ) (CD : ℝ),
+      (0 : ℝ) < CD →
+        ∀ (C1 : ℝ),
+          (0 : ℝ) < C1 →
+            (0 : ℝ) ≤ stepTwoDetConst →
+              (0 : ℝ) < stepThreeDetConst d →
+                (0 : ℝ) ≤ CD * (C1 + (2 : ℝ) * stepTwoDetConst + (2 : ℝ) * stepThreeDetConst d + (1 : ℝ)) := by
+  intro d _ hCD C1 hC1 hs2d hs3d
+  have hb : (0 : ℝ) ≤ C1 + 2 * stepTwoDetConst + 2 * stepThreeDetConst d + 1 := by
+    linarith only [hC1, hs2d, hs3d]
+  exact mul_nonneg hCD.le hb
+
 /-- **`l.minimal.scale.sep` / `e.good.scale.kicking`.**
 
 There is a dimensional constant `C` such that, in the printed regime
@@ -243,10 +256,7 @@ theorem exists_goodScaleKicking (d : ℕ) :
   -- the two constant floors of the output constant
   have hCDle : CD ≤ CD + C1 + CD * (C1 + 2 * stepTwoDetConst + 2 * stepThreeDetConst d + 1) +
       CD * (2 * (C1 + 2 * stepTwoConst + 2 * stepThreeFlucConst d)) := by
-    have h1 : (0 : ℝ) ≤ CD * (C1 + 2 * stepTwoDetConst + 2 * stepThreeDetConst d + 1) := by
-      have hb : (0 : ℝ) ≤ C1 + 2 * stepTwoDetConst + 2 * stepThreeDetConst d + 1 := by
-        linarith only [hC1, hs2d, hs3d]
-      exact mul_nonneg hCD.le hb
+    have h1 := @goodScaleKicking_geometricDecayBound (d) (CD) (hCD) (C1) (hC1) (hs2d) (hs3d)
     have h2 : (0 : ℝ) ≤ CD * (2 * (C1 + 2 * stepTwoConst + 2 * stepThreeFlucConst d)) := by
       have hb : (0 : ℝ) ≤ 2 * (C1 + 2 * stepTwoConst + 2 * stepThreeFlucConst d) := by
         linarith only [hC1, hs2c, hs3f]

@@ -319,7 +319,7 @@ theorem cubeAverage_vecDot_self_le_young (Q : TriadicCube d) {δ : ℝ} (hδ : 0
             + (1 + δ⁻¹) * ‖HilbertVec.ofVec (Jω x) - realize j ω x‖ ^ 2) := by
       refine integral_mono hlhs ((hPint.const_mul _).add (hEint.const_mul _)) ?_
       intro x
-      show vecDot (Jω x - (realize f ω x).toVec) (Jω x - (realize f ω x).toVec)
+      change vecDot (Jω x - (realize f ω x).toVec) (Jω x - (realize f ω x).toVec)
           ≤ (1 + δ) * ‖realize p ω x‖ ^ 2
             + (1 + δ⁻¹) * ‖HilbertVec.ofVec (Jω x) - realize j ω x‖ ^ 2
       rw [hsq x]

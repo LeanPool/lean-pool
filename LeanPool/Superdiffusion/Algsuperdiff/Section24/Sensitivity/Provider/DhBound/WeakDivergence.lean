@@ -176,7 +176,7 @@ theorem hasWeakPartialDerivOn_smooth_mul {U : Set (Vec d)}
       (∫ x in U, (fun x => φ x * f x) x * (fderiv ℝ ψ x) (basisVec i)
           ∂MeasureTheory.volume) = A := by
     refine integral_congr_ae (Filter.Eventually.of_forall fun x => ?_)
-    show φ x * f x * (fderiv ℝ ψ x) (basisVec i) =
+    change φ x * f x * (fderiv ℝ ψ x) (basisVec i) =
       f x * (φ x * euclideanCoordDeriv i ψ x)
     unfold euclideanCoordDeriv
     ring
@@ -268,7 +268,7 @@ The proof pairs the weak Leibniz rule with the second-derivative symmetry of
 theorem sum_integral_skewTestField_mul_deriv_eq_zero {U : Set (Vec d)}
     [IsFiniteMeasure (volumeMeasureOn U)]
     {h : Vec d → Mat d} {Dh : Fin d → Vec d → Mat d}
-    (hskew : ∀ᵐ x ∂ volumeMeasureOn U, symmPart (h x) = 0)
+    (hskew : ∀ᵐ x ∂volumeMeasureOn U, symmPart (h x) = 0)
     (hmem : ∀ i j, MemScalarL2 U fun x => h x i j)
     (hDmem : ∀ k i j, MemScalarL2 U fun x => Dh k x i j)
     (hweak : ∀ k i j,
@@ -389,7 +389,7 @@ theorem sum_integral_skewTestField_mul_deriv_eq_zero {U : Set (Vec d)}
               ∂MeasureTheory.volume := by
             congr 1
             refine integral_congr_ae (Filter.Eventually.of_forall fun x => ?_)
-            show
+            change
               (∑ j, ∑ i, φ x * h x i j * euclideanCoordSecondDeriv j i ψ x) =
                 φ x * ∑ i, ∑ j, h x i j * euclideanCoordSecondDeriv j i ψ x
             rw [Finset.mul_sum, Finset.sum_comm]

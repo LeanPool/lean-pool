@@ -120,7 +120,7 @@ theorem blockVecDot_coarseBlockMatrix_blockGauge_eq_two_responseJ_sub
       ((X.1, X.2 - matVecMul hbar X.1) : BlockVec d) := by
     rw [blockMatVecMul_blockGauge]
     refine Prod.ext rfl ?_
-    show matVecMul (-hbar) X.1 + X.2 = X.2 - matVecMul hbar X.1
+    change matVecMul (-hbar) X.1 + X.2 = X.2 - matVecMul hbar X.1
     rw [neg_matVecMul]
     abel
   have hcross : vecDot X.1 (X.2 - matVecMul hbar X.1) = vecDot X.1 X.2 := by

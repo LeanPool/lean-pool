@@ -31,7 +31,7 @@ ABK26, `l.approximate.recurrence.formula`, Steps 1--3,
 `Closure.ClosureFinal.ClosureSplitInput` is the finite-grid half of Steps 1--3
 at the `cgamma^10` endpoint, read at the closure's own corrector families.  The
 proved structural endpoint
-`LocalizationFluctuationSelectEndpoint.integral_blockVecDot_recurrenceP_le_principalSwitchEnergyAverage_add`
+`integral_blockVecDot_recurrenceP_le_principalSwitchEnergyAverage_add`
 already delivers
 
 ```
@@ -50,8 +50,15 @@ direction pair.
 
 | obligation | content | status |
 |---|---|---|
-| (1) | per-cell sample integrability of the switch energy at `P_z` | **produced** (see the audit correction below): `Closure.SplitObligationsRegime.exists_const_eventually_integrable_switchCubeEnergy_closureFamilies`; its *measurability* half is `Closure.SplitProducerLoad.measurable_principalPz_cutoffSample` |
-| (2) | per-cell sample integrability of the background energy `mu(a_omega; P_z + bfF_z)` | **produced** (see the audit correction below): `Closure.SplitObligationsBackground.integrable_doubledMuValue_meshCellBackground_of_cellMoments`, fed by the cell moments of `Closure.SplitFoldCellMoments`; its *measurability* half is `LocalizationFluctuationBackgroundClass.measurable_doubledMuValue_meshCellBackground` |
+| (1) | per-cell sample integrability of the switch energy at `P_z` | **produced** (see the audit
+correction below):
+`exists_const_eventually_integrable_switchCubeEnergy_closureFamilies`;
+its *measurability* half is `Closure.SplitProducerLoad.measurable_principalPz_cutoffSample` |
+| (2) | per-cell sample integrability of the background energy `mu(a_omega; P_z + bfF_z)` |
+**produced** (see the audit correction below):
+`Closure.SplitObligationsBackground.integrable_doubledMuValue_meshCellBackground_of_cellMoments`,
+fed by the cell moments of `Closure.SplitFoldCellMoments`; its *measurability* half is
+`LocalizationFluctuationBackgroundClass.measurable_doubledMuValue_meshCellBackground` |
 | (3) | `fluctuationEnergyAverage <= cgamma^10` | open: Step 2 itself  |
 
 Both are **obsolete**: the two dominations have since proved, and the two

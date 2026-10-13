@@ -369,7 +369,7 @@ theorem exists_pointwise_of_ae_threeTermSplit
   refine ⟨fun _ => b, fun omega => U1 omega + N.indicator g omega, Uexp, ?_, fun _ => le_rfl,
     hU1meas.add (hgmeas.indicator hNmeas), hUexpmeas, ?_, hexp⟩
   · intro omega
-    show X omega ≤ b + (U1 omega + N.indicator g omega) + Uexp omega
+    change X omega ≤ b + (U1 omega + N.indicator g omega) + Uexp omega
     by_cases hmem : omega ∈ N
     · have hind : N.indicator g omega = g omega := Set.indicator_of_mem hmem g
       have hge : X omega - b - U1 omega - Uexp omega ≤ g omega := le_max_right _ _

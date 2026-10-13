@@ -180,7 +180,7 @@ theorem wellPlacedCentre_wellPlacedCentre {m k : ℤ} (hkm : k ≤ m) (z : Vec d
     neg_wellPlacedHalfGap_le_wellPlacedCentre z m k i
   have hhi : wellPlacedCentre z m k i ≤ wellPlacedHalfGap m k :=
     wellPlacedCentre_le_wellPlacedHalfGap hkm z i
-  show max (-wellPlacedHalfGap m k)
+  change max (-wellPlacedHalfGap m k)
       (min (wellPlacedHalfGap m k) (wellPlacedCentre z m k i)) =
     wellPlacedCentre z m k i
   rw [min_eq_right hhi, max_eq_right hlo]
@@ -349,7 +349,7 @@ theorem truncatedWindow_eq_flushSubCube {n m : ℤ} (hnm : n + 2 ≤ m) (z : Vec
     (i : Fin d) {σ : ℝ} (hσ : σ = 1 ∨ σ = -1) :
     truncatedWindow (flushSubCentre z m n i σ) m n =
       (fun y => flushSubCentre z m n i σ + y) '' openCubeSet (originCube d n) := by
-  show ((fun y => flushSubCentre z m n i σ + y) '' openCubeSet (originCube d n)) ∩
+  change ((fun y => flushSubCentre z m n i σ + y) '' openCubeSet (originCube d n)) ∩
       openCubeSet (originCube d m) =
     (fun y => flushSubCentre z m n i σ + y) '' openCubeSet (originCube d n)
   exact Set.inter_eq_left.mpr (flushSubCube_subset_openCubeSet hnm z i hσ)

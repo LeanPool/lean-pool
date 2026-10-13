@@ -19,6 +19,9 @@ Module imports, support namespace and local option directives adapted for Lean P
 
 @[expose] public section
 
+open HCPolySupport.Book.Ch05.Section54.VarianceBoundGoodScale
+  (annealedBlockMatrixAtScale_eq_scalarAnnealedBlockMatrixAtScale)
+
 /-!
 # Relative descendant fluctuation decomposition
 
@@ -37,6 +40,8 @@ open _root_.HCPolySupport.IndependentSums
 open scoped MatrixOrder
 
 noncomputable section
+
+
 
 private theorem doubledResponseJ_constantNormalizer_le_normSq_mul_error_sq
     {d : ℕ} [NeZero d] (Q : TriadicCube d)
@@ -333,21 +338,25 @@ private theorem relativeNormalizedCutoffLaw_integrable_blockMatEntryAtScale_int
         cases beta with
         | inl j =>
             simpa [f, blockMatEntry] using
-              (Cutoff.relativeNormalizedCutoffLaw_lawCarrier M L).aemeasurable_coarseBlockMatrix_upperLeft_apply_cubeSet
+              (Cutoff.relativeNormalizedCutoffLaw_lawCarrier M
+                L).aemeasurable_coarseBlockMatrix_upperLeft_apply_cubeSet
                 Qrel i j
         | inr j =>
             simpa [f, blockMatEntry] using
-              (Cutoff.relativeNormalizedCutoffLaw_lawCarrier M L).aemeasurable_coarseBlockMatrix_upperRight_apply_cubeSet
+              (Cutoff.relativeNormalizedCutoffLaw_lawCarrier M
+                L).aemeasurable_coarseBlockMatrix_upperRight_apply_cubeSet
                 Qrel i j
     | inr i =>
         cases beta with
         | inl j =>
             simpa [f, blockMatEntry] using
-              (Cutoff.relativeNormalizedCutoffLaw_lawCarrier M L).aemeasurable_coarseBlockMatrix_lowerLeft_apply_cubeSet
+              (Cutoff.relativeNormalizedCutoffLaw_lawCarrier M
+                L).aemeasurable_coarseBlockMatrix_lowerLeft_apply_cubeSet
                 Qrel i j
         | inr j =>
             simpa [f, blockMatEntry] using
-              (Cutoff.relativeNormalizedCutoffLaw_lawCarrier M L).aemeasurable_coarseBlockMatrix_lowerRight_apply_cubeSet
+              (Cutoff.relativeNormalizedCutoffLaw_lawCarrier M
+                L).aemeasurable_coarseBlockMatrix_lowerRight_apply_cubeSet
                 Qrel i j
   have hSourceEntry : Integrable
       (fun a : RegCoeffField d =>
@@ -723,12 +732,12 @@ private theorem constantBlockMatrix_sigmaBar_blockMatLoewnerLE_scalarAnnealed_in
     have hzero : Book.Ch04.annealedBlockMatrixAtScale P 0 =
         Book.Ch04.scalarAnnealedBlockMatrixAtScale hP hStruct 0 := by
       simpa only [P, hP, hStruct] using
-        Book.Ch05.Section54.VarianceBoundGoodScale.annealedBlockMatrixAtScale_eq_scalarAnnealedBlockMatrixAtScale
+        annealedBlockMatrixAtScale_eq_scalarAnnealedBlockMatrixAtScale
           hP hStruct 0
     have hrmat : Book.Ch04.annealedBlockMatrixAtScale P r =
         Book.Ch04.scalarAnnealedBlockMatrixAtScale hP hStruct r := by
       simpa only [P, hP, hStruct] using
-        Book.Ch05.Section54.VarianceBoundGoodScale.annealedBlockMatrixAtScale_eq_scalarAnnealedBlockMatrixAtScale
+        annealedBlockMatrixAtScale_eq_scalarAnnealedBlockMatrixAtScale
           hP hStruct r
     rw [hzero, hrmat] at hmono
     have hbase' : BlockMatLoewnerLE
@@ -823,7 +832,7 @@ private theorem relativeMeanDefect_nonneg_and_le_originMean
     omega
   have hCnActual : Book.Ch04.annealedBlockMatrixAtScale P center = Cn := by
     simpa only [P, hP, hStruct, Cn] using
-      Book.Ch05.Section54.VarianceBoundGoodScale.annealedBlockMatrixAtScale_eq_scalarAnnealedBlockMatrixAtScale
+      annealedBlockMatrixAtScale_eq_scalarAnnealedBlockMatrixAtScale
         hP hStruct center
   have hCnChild : BlockMatLoewnerLE Cn Cchild := by
     rw [← hCnActual]
@@ -845,212 +854,59 @@ private theorem relativeMeanDefect_nonneg_and_le_originMean
   dsimp only
   exact ⟨hnonneg, hleMu⟩
 
-private theorem relativeMeanDefect_sq_le_secondBudget_sq
-    {d : ℕ} [NeZero d] (M : ABKModel d) (L n : ℤ) (hLn : L ≤ n)
-    {s A D : ℝ} (hs : 0 < s)
-    (hLower : Probability.IsTwoTermBigOWith
-      (Cutoff.cutoffSampleLaw M).toMeasure
-      (gammaSigma 2) (gammaSigma (1 / 2))
-      (Observable.cutoffHomogenizationError M L ⟨s, hs⟩) A D)
-    (q : FullBlockVec d) :
-    let c : ℤ := Cutoff.cutoffRelativeNormalizationShift d
-    let P := Cutoff.relativeNormalizedCutoffLaw M L
-    let hP := Cutoff.relativeNormalizedCutoffLaw_lawCarrier M L
-    let hStruct := Cutoff.relativeNormalizedCutoffLaw_structuralLaw M L
-    let center : ℤ := n - L - c
-    let sigma := Annealed.sigmaBar M L
-    let a0 : Mat d := Observable.isotropicComparatorMatrix sigma
-    let B : FullBlockMat d := Book.Ch02.constantFullBlockMatrix a0
-    let C0 : BlockMat d := Book.Ch02.constantBlockMatrix a0
-    let Cn : BlockMat d := Book.Ch04.scalarAnnealedBlockMatrixAtScale hP hStruct center
-    let X : Set (Vec d) → RegCoeffField d → ℝ := fun U a =>
-      fullBlockQuadratic (starredFluctuationMatrix B C0 U a) q
-    let meanDefect : ℝ :=
-      (∫ a, X (cubeSet (originCube d (-c))) a ∂P) +
-        fullBlockQuadratic
-          (CFC.sqrt B *
-            (toFullBlockMat (blockReflect C0) - toFullBlockMat (blockReflect Cn)) *
-              CFC.sqrt B) q
-    let secondBudget : ℝ :=
-      2 *
-        ((gammaMomentConst 2 * (2 : ℝ) ^ ((2 : ℝ)⁻¹) * A) ^ (2 : ℕ) +
-          (gammaMomentConst (1 / 2) *
-            (2 : ℝ) ^ (((1 / 2 : ℝ))⁻¹) * D) ^ (2 : ℕ))
-    meanDefect ^ (2 : ℕ) ≤
-      4 * (dotProduct q q) ^ (2 : ℕ) * secondBudget ^ (2 : ℕ) := by
-  classical
-  let c : ℤ := Cutoff.cutoffRelativeNormalizationShift d
-  let h : ℤ := L + c
-  let mu := (Cutoff.cutoffSampleLaw M).toMeasure
-  let P := Cutoff.relativeNormalizedCutoffLaw M L
-  let hP := Cutoff.relativeNormalizedCutoffLaw_lawCarrier M L
-  let hStruct := Cutoff.relativeNormalizedCutoffLaw_structuralLaw M L
-  let center : ℤ := n - L - c
-  let sigma := Annealed.sigmaBar M L
-  let a0 : Mat d := Observable.isotropicComparatorMatrix sigma
-  let B : FullBlockMat d := Book.Ch02.constantFullBlockMatrix a0
-  let C0 : BlockMat d := Book.Ch02.constantBlockMatrix a0
-  let Cn : BlockMat d := Book.Ch04.scalarAnnealedBlockMatrixAtScale hP hStruct center
-  let Cchild : BlockMat d := Book.Ch04.annealedBlockMatrixAtScale P (-c)
-  let R : TriadicCube d := originCube d (-c)
-  let Afun : RegCoeffField d → BlockMat d := fun a =>
-    coarseBlockMatrix (cubeSet R) a.toFun
-  let Pq : BlockVec d := ofFullBlockVec
-    (Matrix.mulVec (Book.Ch02.constantFullBlockMatrixInvSqrt a0) q)
-  let Qq : BlockVec d := ofFullBlockVec
-    (Matrix.mulVec (Book.Ch02.constantFullBlockMatrixSqrt a0) q)
-  let J : RegCoeffField d → ℝ := fun a =>
-    (1 / 2 : ℝ) * blockVecDot Pq (blockMatVecMul (Afun a) Pq) +
-      (1 / 2 : ℝ) * blockVecDot Qq (blockMatVecMul (blockReflect (Afun a)) Qq) -
-        blockVecDot Pq Qq
-  let X : Set (Vec d) → RegCoeffField d → ℝ := fun U a =>
-    fullBlockQuadratic (starredFluctuationMatrix B C0 U a) q
-  let meanDefect : ℝ :=
-    (∫ a, X (cubeSet R) a ∂P) +
-      fullBlockQuadratic
-        (CFC.sqrt B *
-          (toFullBlockMat (blockReflect C0) - toFullBlockMat (blockReflect Cn)) *
-            CFC.sqrt B) q
-  let X0 := Observable.cutoffHomogenizationError M L ⟨s, hs⟩
-  let secondBudget : ℝ :=
-    2 *
-      ((gammaMomentConst 2 * (2 : ℝ) ^ ((2 : ℝ)⁻¹) * A) ^ (2 : ℕ) +
-        (gammaMomentConst (1 / 2) *
-          (2 : ℝ) ^ (((1 / 2 : ℝ))⁻¹) * D) ^ (2 : ℕ))
-  have hsign := relativeMeanDefect_nonneg_and_le_originMean M L n hLn q
-  have hmeanNonneg : 0 ≤ meanDefect := by
-    simpa only [P, c, hP, hStruct, center, sigma, a0, B, C0, Cn, R, X,
-      meanDefect] using hsign.1
-  have hmeanLeMu : meanDefect ≤ ∫ a, X (cubeSet R) a ∂P := by
-    simpa only [P, c, hP, hStruct, center, sigma, a0, B, C0, Cn, R, X,
-      meanDefect] using hsign.2
-  have hentry : ∀ alpha beta, Integrable
-      (fun a => blockMatEntry (Afun a) alpha beta) P := by
-    simpa only [Afun, R, P] using
-      relativeNormalizedCutoffLaw_integrable_blockMatEntryAtScale_int M L (-c)
-  have hreflectEntry : ∀ alpha beta, Integrable
-      (fun a => blockMatEntry (blockReflect (Afun a)) alpha beta) P := by
-    intro alpha beta
-    cases alpha with
-    | inl i =>
-        cases beta with
-        | inl j => simpa [blockReflect, blockMatEntry] using hentry (Sum.inr i) (Sum.inr j)
-        | inr j => simpa [blockReflect, blockMatEntry] using hentry (Sum.inr i) (Sum.inl j)
-    | inr i =>
-        cases beta with
-        | inl j => simpa [blockReflect, blockMatEntry] using hentry (Sum.inl i) (Sum.inr j)
-        | inr j => simpa [blockReflect, blockMatEntry] using hentry (Sum.inl i) (Sum.inl j)
-  have hprimalInt : Integrable
-      (fun a => blockVecDot Pq (blockMatVecMul (Afun a) Pq)) P :=
-    Book.Ch04.integrable_blockVecDot_blockMatVecMul_of_integrable_entries
-      hentry Pq Pq
-  have hstarInt : Integrable
-      (fun a => blockVecDot Qq (blockMatVecMul (blockReflect (Afun a)) Qq)) P :=
-    Book.Ch04.integrable_blockVecDot_blockMatVecMul_of_integrable_entries
-      hreflectEntry Qq Qq
-  have hJInt : Integrable J P :=
-    ((hprimalInt.const_mul (1 / 2 : ℝ)).add
-      (hstarInt.const_mul (1 / 2 : ℝ))).sub (integrable_const _)
-  have hprimalMean :
-      (∫ a, blockVecDot Pq (blockMatVecMul (Afun a) Pq) ∂P) =
-        blockVecDot Pq (blockMatVecMul Cchild Pq) := by
-    have hmean := Book.Ch04.integral_blockVecDot_blockMatVecMul_eq_of_integrable_entries
-      hentry Pq Pq
-    simpa [Cchild, Book.Ch04.annealedBlockMatrixAtScale,
-      Book.Ch04.annealedBlockMatrix, Afun, R] using hmean
-  have hstarMean :
-      (∫ a, blockVecDot Qq (blockMatVecMul (blockReflect (Afun a)) Qq) ∂P) =
-        blockVecDot Qq (blockMatVecMul (blockReflect Cchild) Qq) := by
-    have hmean := Book.Ch04.integral_blockVecDot_blockMatVecMul_eq_of_integrable_entries
-      hreflectEntry Qq Qq
-    simpa [Cchild, Book.Ch04.annealedBlockMatrixAtScale,
-      Book.Ch04.annealedBlockMatrix, Afun, R, blockReflect] using hmean
-  have hJMean : (∫ a, J a ∂P) =
-      (1 / 2 : ℝ) * blockVecDot Pq (blockMatVecMul Cchild Pq) +
-        (1 / 2 : ℝ) * blockVecDot Qq (blockMatVecMul (blockReflect Cchild) Qq) -
-          blockVecDot Pq Qq := by
-    dsimp only [J]
-    rw [integral_sub, integral_add, integral_const_mul, integral_const_mul,
-      integral_const, hprimalMean, hstarMean]
-    · simp [Measure.real, IsProbabilityMeasure.measure_univ]
-    · exact hprimalInt.const_mul (1 / 2 : ℝ)
-    · exact hstarInt.const_mul (1 / 2 : ℝ)
-    · exact (hprimalInt.const_mul (1 / 2 : ℝ)).add
-        (hstarInt.const_mul (1 / 2 : ℝ))
-    · exact integrable_const _
-  have hQv : blockMatVecMul C0 Pq = Qq := by
-    dsimp only [C0, Pq, Qq, a0]
-    change blockMatVecMul
-      (Book.Ch02.constantBlockMatrix (scalarMatrix (d := d) (sigma : ℝ)))
-      (ofFullBlockVec (Matrix.mulVec
-        (Book.Ch02.constantFullBlockMatrixInvSqrt
-          (scalarMatrix (d := d) (sigma : ℝ))) q)) =
-      ofFullBlockVec (Matrix.mulVec
-        (Book.Ch02.constantFullBlockMatrixSqrt
-          (scalarMatrix (d := d) (sigma : ℝ))) q)
-    rw [Book.Ch02.constantBlockMatrix_scalarMatrix sigma.property]
-    rw [Provider.ErrorComparison.ofFullBlockVec_constantFullBlockMatrixInvSqrt_scalarMatrix
-      sigma.property]
-    rw [Provider.ErrorComparison.ofFullBlockVec_constantFullBlockMatrixSqrt_scalarMatrix
-      sigma.property]
-    ext i <;>
-      simp [blockMatVecMul, zero_matVecMul, matVecMul_scalarMatrix] <;>
-      field_simp [ne_of_gt (Real.sqrt_pos.2 sigma.property)] <;>
-      rw [Real.sq_sqrt sigma.property.le];
-      field_simp [ne_of_gt sigma.property]
-  have hreflectQv : blockMatVecMul (blockReflect C0) Qq = Pq := by
-    dsimp only [C0, Pq, Qq, a0]
-    change blockMatVecMul
-      (blockReflect
-        (Book.Ch02.constantBlockMatrix (scalarMatrix (d := d) (sigma : ℝ))))
-      (ofFullBlockVec (Matrix.mulVec
-        (Book.Ch02.constantFullBlockMatrixSqrt
-          (scalarMatrix (d := d) (sigma : ℝ))) q)) =
-      ofFullBlockVec (Matrix.mulVec
-        (Book.Ch02.constantFullBlockMatrixInvSqrt
-          (scalarMatrix (d := d) (sigma : ℝ))) q)
-    rw [Book.Ch02.constantBlockMatrix_scalarMatrix sigma.property]
-    rw [Provider.ErrorComparison.ofFullBlockVec_constantFullBlockMatrixSqrt_scalarMatrix
-      sigma.property]
-    rw [Provider.ErrorComparison.ofFullBlockVec_constantFullBlockMatrixInvSqrt_scalarMatrix
-      sigma.property]
-    ext i <;>
-      simp [blockReflect, blockMatVecMul, zero_matVecMul, matVecMul_scalarMatrix] <;>
-      field_simp [ne_of_gt (Real.sqrt_pos.2 sigma.property)] <;>
-      rw [Real.sq_sqrt sigma.property.le];
-      field_simp [ne_of_gt sigma.property]
-  have hpair : blockVecDot Pq Qq = dotProduct q q := by
-    have hnormalizers :=
-      Book.Ch05.Section57.blockVecDot_scalarConstantNormalizers_eq_fullBlockVecNormSq
-        sigma.property q
-    simpa [Pq, Qq, a0, Observable.isotropicComparatorMatrix,
-      Book.Ch02.fullBlockVecNormSq, dotProduct, pow_two] using hnormalizers
-  have hC0Child : BlockMatLoewnerLE C0 Cchild := by
-    have hbase :=
-      constantBlockMatrix_sigmaBar_blockMatLoewnerLE_scalarAnnealed_int M L (-c)
-    have hactual : Cchild = Book.Ch04.scalarAnnealedBlockMatrixAtScale hP hStruct (-c) := by
-      simpa only [P, Cchild] using
-        Book.Ch05.Section54.VarianceBoundGoodScale.annealedBlockMatrixAtScale_eq_scalarAnnealedBlockMatrixAtScale
-          hP hStruct (-c)
-    rw [hactual]
-    simpa only [hP, hStruct, sigma, a0, C0] using hbase
-  have hprimalGap : blockVecDot Pq Qq ≤
-      blockVecDot Pq (blockMatVecMul Cchild Pq) := by
-    rw [← hQv]
-    have horder := hC0Child Pq
-    linarith
-  let rdiag := Book.Ch05.Section56.scalarFullBlockSqrtDiag
-    (d := d) (sigma : ℝ) (sigma : ℝ)
-  have hSdiag : CFC.sqrt B = Matrix.diagonal rdiag := by
-    dsimp only [B, a0, rdiag]
-    change Book.Ch02.constantFullBlockMatrixSqrt
-      (scalarMatrix (d := d) (sigma : ℝ)) = _
-    simpa only using
-      (Book.Ch05.Section57.constantFullBlockMatrixSqrt_scalarMatrix_eq_scalarFullBlockSqrt
-        sigma.property)
-  have hQdiag : ofFullBlockVec (Matrix.mulVec (Matrix.diagonal rdiag) q) = Qq := by
-    rw [← hSdiag]
-    rfl
+private theorem combineFiniteQuantitative_comparisonBounds1 :
+    ∀ {d : ℕ} [NeZero d] (M : ABKModel d) (L : ℤ) {s A D : ℝ} (hs : (0 : ℝ) < s)
+      (_ :
+        Probability.IsTwoTermBigOWith (↑(Cutoff.cutoffSampleLaw M) : Measure (Cutoff.CutoffSample d)) (gammaSigma (2 : ℝ))
+          (gammaSigma (1 / 2 : ℝ)) (Observable.cutoffHomogenizationError M L ⟨s, hs⟩) A D)
+      (q : FullBlockVec d),
+      let c : ℤ := (↑(Cutoff.cutoffRelativeNormalizationShift d) : ℤ);
+      let h : ℤ := L + c;
+      let mu : Measure (Cutoff.CutoffSample d) := (↑(Cutoff.cutoffSampleLaw M) : Measure (Cutoff.CutoffSample d));
+      let P : Ch04.RestrictionCoeffLaw d := Cutoff.relativeNormalizedCutoffLaw M L;
+      let sigma : Observable.PositiveScalar := Annealed.sigmaBar M L;
+      let a0 : Mat d := Observable.isotropicComparatorMatrix sigma;
+      let B : FullBlockMat d := Ch02.constantFullBlockMatrix a0;
+      let C0 : BlockMat d := constantBlockMatrix a0;
+      let Cchild : BlockMat d := Ch04.annealedBlockMatrixAtScale P (-c);
+      let R : TriadicCube d := originCube d (-c);
+      let Afun : RegCoeffField d → BlockMat d := fun (a : RegCoeffField d) =>
+        HCPolySupport.coarseBlockMatrix (cubeSet R) a.toFun;
+      let Pq : BlockVec d := ofFullBlockVec (Matrix.mulVec (Ch02.constantFullBlockMatrixInvSqrt a0) q);
+      let Qq : BlockVec d := ofFullBlockVec (Matrix.mulVec (Ch02.constantFullBlockMatrixSqrt a0) q);
+      let J : RegCoeffField d → ℝ := fun (a : RegCoeffField d) =>
+        (1 / 2 : ℝ) * blockVecDot Pq (blockMatVecMul (Afun a) Pq) +
+            (1 / 2 : ℝ) * blockVecDot Qq (blockMatVecMul (blockReflect (Afun a)) Qq) -
+          blockVecDot Pq Qq;
+      let X : Set (Vec d) → RegCoeffField d → ℝ := fun (U : Set (Vec d)) (a : RegCoeffField d) =>
+        fullBlockQuadratic (starredFluctuationMatrix B C0 U a) q;
+      let X0 : Cutoff.CutoffSample d → ℝ := Observable.cutoffHomogenizationError M L ⟨s, hs⟩;
+      let secondBudget : ℝ :=
+        (2 : ℝ) *
+          ((gammaMomentConst (2 : ℝ) * (2 : ℝ) ^ (2 : ℝ)⁻¹ * A) ^ (2 : ℕ) +
+            (gammaMomentConst (1 / 2 : ℝ) * (2 : ℝ) ^ (1 / 2 : ℝ)⁻¹ * D) ^ (2 : ℕ));
+      ∀ (_ : Integrable J P)
+        (_ :
+          ∫ (a : RegCoeffField d), J a ∂P =
+            (1 / 2 : ℝ) * blockVecDot Pq (blockMatVecMul Cchild Pq) +
+                (1 / 2 : ℝ) * blockVecDot Qq (blockMatVecMul (blockReflect Cchild) Qq) -
+              blockVecDot Pq Qq)
+        (_ : blockMatVecMul (blockReflect C0) Qq = Pq)
+        (_ : blockVecDot Pq Qq ≤ blockVecDot Pq (blockMatVecMul Cchild Pq)),
+        let rdiag : BlockCoord d → ℝ := Ch05.Section56.scalarFullBlockSqrtDiag (↑sigma : ℝ) (↑sigma : ℝ);
+        ∀ (_ : CFC.sqrt B = Matrix.diagonal rdiag) (_ : ofFullBlockVec ((Matrix.diagonal rdiag).mulVec q) = Qq),
+          ∫ (a : RegCoeffField d), X (cubeSet R) a ∂P ≤ (2 : ℝ) * ∫ (a : RegCoeffField d), J a ∂P ∧
+            Integrable (fun (omega : Cutoff.CutoffSample d) => X0 omega ^ (2 : ℕ)) mu ∧
+              ∫ (omega : Cutoff.CutoffSample d), X0 omega ^ (2 : ℕ) ∂mu ≤ secondBudget ∧
+                Integrable
+                    (fun (omega : Cutoff.CutoffSample d) => J (dilateReg (-h) (Cutoff.coefficientCutoff M.nu L omega))) mu ∧
+                  ((fun (omega : Cutoff.CutoffSample d) =>
+                        J (dilateReg (-h) (Cutoff.coefficientCutoff M.nu L omega))) ≤ᵐ[mu]
+                      fun (omega : Cutoff.CutoffSample d) => q ⬝ᵥ q * X0 omega ^ (2 : ℕ)) ∧
+                    ∫ (a : RegCoeffField d), J a ∂P =
+                        ∫ (omega : Cutoff.CutoffSample d), J (dilateReg (-h) (Cutoff.coefficientCutoff M.nu L omega)) ∂mu ∧
+                      (0 : ℝ) ≤ q ⬝ᵥ q := by
+  intro d _ M L s _ _ hs hLower q c h mu P sigma a0 B C0 Cchild R Afun Pq Qq J X X0 secondBudget hJInt hJMean hreflectQv _ _ hSdiag hQdiag
   have hmuEq : (∫ a, X (cubeSet R) a ∂P) =
       blockVecDot Qq (blockMatVecMul (blockReflect Cchild) Qq) -
         blockVecDot Pq Qq := by
@@ -1146,6 +1002,257 @@ private theorem relativeMeanDefect_sq_le_secondBudget_sq
         exact MeasureTheory.integral_map
           (Cutoff.measurable_coefficientCutoff M.nu L).aemeasurable hJcoeffMapMeas
   have hqNonneg : 0 ≤ dotProduct q q := dotProduct_self_nonneg q
+  exact ⟨hmuLeJ, hX0sqInt, hX0sqBound, hJsampleInt, hJsamplePoint, hJIntegralSample, hqNonneg⟩
+
+private theorem combineFiniteQuantitative_comparisonBounds2 :
+    ∀ {d : ℕ} [NeZero d] (M : ABKModel d) (L : ℤ) (q : FullBlockVec d),
+      let c : ℤ := (↑(Cutoff.cutoffRelativeNormalizationShift d) : ℤ);
+      let P : Ch04.RestrictionCoeffLaw d := Cutoff.relativeNormalizedCutoffLaw M L;
+      let sigma : Observable.PositiveScalar := Annealed.sigmaBar M L;
+      let a0 : Mat d := Observable.isotropicComparatorMatrix sigma;
+      let C0 : BlockMat d := constantBlockMatrix a0;
+      let Cchild : BlockMat d := Ch04.annealedBlockMatrixAtScale P (-c);
+      let R : TriadicCube d := originCube d (-c);
+      let Afun : RegCoeffField d → BlockMat d := fun (a : RegCoeffField d) =>
+        HCPolySupport.coarseBlockMatrix (cubeSet R) a.toFun;
+      let Pq : BlockVec d := ofFullBlockVec (Matrix.mulVec (Ch02.constantFullBlockMatrixInvSqrt a0) q);
+      let Qq : BlockVec d := ofFullBlockVec (Matrix.mulVec (Ch02.constantFullBlockMatrixSqrt a0) q);
+      let J : RegCoeffField d → ℝ := fun (a : RegCoeffField d) =>
+        (1 / 2 : ℝ) * blockVecDot Pq (blockMatVecMul (Afun a) Pq) +
+            (1 / 2 : ℝ) * blockVecDot Qq (blockMatVecMul (blockReflect (Afun a)) Qq) -
+          blockVecDot Pq Qq;
+      Integrable J P ∧
+        ∫ (a : RegCoeffField d), J a ∂P =
+            (1 / 2 : ℝ) * blockVecDot Pq (blockMatVecMul Cchild Pq) +
+                (1 / 2 : ℝ) * blockVecDot Qq (blockMatVecMul (blockReflect Cchild) Qq) -
+              blockVecDot Pq Qq ∧
+          blockMatVecMul C0 Pq = Qq ∧ blockMatVecMul (blockReflect C0) Qq = Pq := by
+  intro d _ M L q c P sigma a0 C0 Cchild R Afun Pq Qq J
+  have hentry : ∀ alpha beta, Integrable
+      (fun a => blockMatEntry (Afun a) alpha beta) P := by
+    simpa only [Afun, R, P] using
+      relativeNormalizedCutoffLaw_integrable_blockMatEntryAtScale_int M L (-c)
+  have hreflectEntry : ∀ alpha beta, Integrable
+      (fun a => blockMatEntry (blockReflect (Afun a)) alpha beta) P := by
+    intro alpha beta
+    cases alpha with
+    | inl i =>
+        cases beta with
+        | inl j => simpa [blockReflect, blockMatEntry] using hentry (Sum.inr i) (Sum.inr j)
+        | inr j => simpa [blockReflect, blockMatEntry] using hentry (Sum.inr i) (Sum.inl j)
+    | inr i =>
+        cases beta with
+        | inl j => simpa [blockReflect, blockMatEntry] using hentry (Sum.inl i) (Sum.inr j)
+        | inr j => simpa [blockReflect, blockMatEntry] using hentry (Sum.inl i) (Sum.inl j)
+  have hprimalInt : Integrable
+      (fun a => blockVecDot Pq (blockMatVecMul (Afun a) Pq)) P :=
+    Book.Ch04.integrable_blockVecDot_blockMatVecMul_of_integrable_entries
+      hentry Pq Pq
+  have hstarInt : Integrable
+      (fun a => blockVecDot Qq (blockMatVecMul (blockReflect (Afun a)) Qq)) P :=
+    Book.Ch04.integrable_blockVecDot_blockMatVecMul_of_integrable_entries
+      hreflectEntry Qq Qq
+  have hJInt : Integrable J P :=
+    ((hprimalInt.const_mul (1 / 2 : ℝ)).add
+      (hstarInt.const_mul (1 / 2 : ℝ))).sub (integrable_const _)
+  have hprimalMean :
+      (∫ a, blockVecDot Pq (blockMatVecMul (Afun a) Pq) ∂P) =
+        blockVecDot Pq (blockMatVecMul Cchild Pq) := by
+    have hmean := Book.Ch04.integral_blockVecDot_blockMatVecMul_eq_of_integrable_entries
+      hentry Pq Pq
+    simpa [Cchild, Book.Ch04.annealedBlockMatrixAtScale,
+      Book.Ch04.annealedBlockMatrix, Afun, R] using hmean
+  have hstarMean :
+      (∫ a, blockVecDot Qq (blockMatVecMul (blockReflect (Afun a)) Qq) ∂P) =
+        blockVecDot Qq (blockMatVecMul (blockReflect Cchild) Qq) := by
+    have hmean := Book.Ch04.integral_blockVecDot_blockMatVecMul_eq_of_integrable_entries
+      hreflectEntry Qq Qq
+    simpa [Cchild, Book.Ch04.annealedBlockMatrixAtScale,
+      Book.Ch04.annealedBlockMatrix, Afun, R, blockReflect] using hmean
+  have hJMean : (∫ a, J a ∂P) =
+      (1 / 2 : ℝ) * blockVecDot Pq (blockMatVecMul Cchild Pq) +
+        (1 / 2 : ℝ) * blockVecDot Qq (blockMatVecMul (blockReflect Cchild) Qq) -
+          blockVecDot Pq Qq := by
+    dsimp only [J]
+    rw [integral_sub, integral_add, integral_const_mul, integral_const_mul,
+      integral_const, hprimalMean, hstarMean]
+    · simp [Measure.real, IsProbabilityMeasure.measure_univ]
+    · exact hprimalInt.const_mul (1 / 2 : ℝ)
+    · exact hstarInt.const_mul (1 / 2 : ℝ)
+    · exact (hprimalInt.const_mul (1 / 2 : ℝ)).add
+        (hstarInt.const_mul (1 / 2 : ℝ))
+    · exact integrable_const _
+  have hQv : blockMatVecMul C0 Pq = Qq := by
+    dsimp only [C0, Pq, Qq, a0]
+    change blockMatVecMul
+      (Book.Ch02.constantBlockMatrix (scalarMatrix (d := d) (sigma : ℝ)))
+      (ofFullBlockVec (Matrix.mulVec
+        (Book.Ch02.constantFullBlockMatrixInvSqrt
+          (scalarMatrix (d := d) (sigma : ℝ))) q)) =
+      ofFullBlockVec (Matrix.mulVec
+        (Book.Ch02.constantFullBlockMatrixSqrt
+          (scalarMatrix (d := d) (sigma : ℝ))) q)
+    rw [Book.Ch02.constantBlockMatrix_scalarMatrix sigma.property]
+    rw [Provider.ErrorComparison.ofFullBlockVec_constantFullBlockMatrixInvSqrt_scalarMatrix
+      sigma.property]
+    rw [Provider.ErrorComparison.ofFullBlockVec_constantFullBlockMatrixSqrt_scalarMatrix
+      sigma.property]
+    ext i <;>
+      simp [blockMatVecMul, zero_matVecMul, matVecMul_scalarMatrix] <;>
+      field_simp [ne_of_gt (Real.sqrt_pos.2 sigma.property)] <;>
+      rw [Real.sq_sqrt sigma.property.le];
+      field_simp [ne_of_gt sigma.property]
+  have hreflectQv : blockMatVecMul (blockReflect C0) Qq = Pq := by
+    dsimp only [C0, Pq, Qq, a0]
+    change blockMatVecMul
+      (blockReflect
+        (Book.Ch02.constantBlockMatrix (scalarMatrix (d := d) (sigma : ℝ))))
+      (ofFullBlockVec (Matrix.mulVec
+        (Book.Ch02.constantFullBlockMatrixSqrt
+          (scalarMatrix (d := d) (sigma : ℝ))) q)) =
+      ofFullBlockVec (Matrix.mulVec
+        (Book.Ch02.constantFullBlockMatrixInvSqrt
+          (scalarMatrix (d := d) (sigma : ℝ))) q)
+    rw [Book.Ch02.constantBlockMatrix_scalarMatrix sigma.property]
+    rw [Provider.ErrorComparison.ofFullBlockVec_constantFullBlockMatrixSqrt_scalarMatrix
+      sigma.property]
+    rw [Provider.ErrorComparison.ofFullBlockVec_constantFullBlockMatrixInvSqrt_scalarMatrix
+      sigma.property]
+    ext i <;>
+      simp [blockReflect, blockMatVecMul, zero_matVecMul, matVecMul_scalarMatrix] <;>
+      field_simp [ne_of_gt (Real.sqrt_pos.2 sigma.property)] <;>
+      rw [Real.sq_sqrt sigma.property.le];
+      field_simp [ne_of_gt sigma.property]
+  exact ⟨hJInt, hJMean, hQv, hreflectQv⟩
+
+private theorem relativeMeanDefect_sq_le_secondBudget_sq
+    {d : ℕ} [NeZero d] (M : ABKModel d) (L n : ℤ) (hLn : L ≤ n)
+    {s A D : ℝ} (hs : 0 < s)
+    (hLower : Probability.IsTwoTermBigOWith
+      (Cutoff.cutoffSampleLaw M).toMeasure
+      (gammaSigma 2) (gammaSigma (1 / 2))
+      (Observable.cutoffHomogenizationError M L ⟨s, hs⟩) A D)
+    (q : FullBlockVec d) :
+    let c : ℤ := Cutoff.cutoffRelativeNormalizationShift d
+    let P := Cutoff.relativeNormalizedCutoffLaw M L
+    let hP := Cutoff.relativeNormalizedCutoffLaw_lawCarrier M L
+    let hStruct := Cutoff.relativeNormalizedCutoffLaw_structuralLaw M L
+    let center : ℤ := n - L - c
+    let sigma := Annealed.sigmaBar M L
+    let a0 : Mat d := Observable.isotropicComparatorMatrix sigma
+    let B : FullBlockMat d := Book.Ch02.constantFullBlockMatrix a0
+    let C0 : BlockMat d := Book.Ch02.constantBlockMatrix a0
+    let Cn : BlockMat d := Book.Ch04.scalarAnnealedBlockMatrixAtScale hP hStruct center
+    let X : Set (Vec d) → RegCoeffField d → ℝ := fun U a =>
+      fullBlockQuadratic (starredFluctuationMatrix B C0 U a) q
+    let meanDefect : ℝ :=
+      (∫ a, X (cubeSet (originCube d (-c))) a ∂P) +
+        fullBlockQuadratic
+          (CFC.sqrt B *
+            (toFullBlockMat (blockReflect C0) - toFullBlockMat (blockReflect Cn)) *
+              CFC.sqrt B) q
+    let secondBudget : ℝ :=
+      2 *
+        ((gammaMomentConst 2 * (2 : ℝ) ^ ((2 : ℝ)⁻¹) * A) ^ (2 : ℕ) +
+          (gammaMomentConst (1 / 2) *
+            (2 : ℝ) ^ (((1 / 2 : ℝ))⁻¹) * D) ^ (2 : ℕ))
+    meanDefect ^ (2 : ℕ) ≤
+      4 * (dotProduct q q) ^ (2 : ℕ) * secondBudget ^ (2 : ℕ) := by
+  classical
+  let c : ℤ := Cutoff.cutoffRelativeNormalizationShift d
+  let h : ℤ := L + c
+  let mu := (Cutoff.cutoffSampleLaw M).toMeasure
+  let P := Cutoff.relativeNormalizedCutoffLaw M L
+  let hP := Cutoff.relativeNormalizedCutoffLaw_lawCarrier M L
+  let hStruct := Cutoff.relativeNormalizedCutoffLaw_structuralLaw M L
+  let center : ℤ := n - L - c
+  let sigma := Annealed.sigmaBar M L
+  let a0 : Mat d := Observable.isotropicComparatorMatrix sigma
+  let B : FullBlockMat d := Book.Ch02.constantFullBlockMatrix a0
+  let C0 : BlockMat d := Book.Ch02.constantBlockMatrix a0
+  let Cn : BlockMat d := Book.Ch04.scalarAnnealedBlockMatrixAtScale hP hStruct center
+  let Cchild : BlockMat d := Book.Ch04.annealedBlockMatrixAtScale P (-c)
+  let R : TriadicCube d := originCube d (-c)
+  let Afun : RegCoeffField d → BlockMat d := fun a =>
+    coarseBlockMatrix (cubeSet R) a.toFun
+  let Pq : BlockVec d := ofFullBlockVec
+    (Matrix.mulVec (Book.Ch02.constantFullBlockMatrixInvSqrt a0) q)
+  let Qq : BlockVec d := ofFullBlockVec
+    (Matrix.mulVec (Book.Ch02.constantFullBlockMatrixSqrt a0) q)
+  let J : RegCoeffField d → ℝ := fun a =>
+    (1 / 2 : ℝ) * blockVecDot Pq (blockMatVecMul (Afun a) Pq) +
+      (1 / 2 : ℝ) * blockVecDot Qq (blockMatVecMul (blockReflect (Afun a)) Qq) -
+        blockVecDot Pq Qq
+  let X : Set (Vec d) → RegCoeffField d → ℝ := fun U a =>
+    fullBlockQuadratic (starredFluctuationMatrix B C0 U a) q
+  let meanDefect : ℝ :=
+    (∫ a, X (cubeSet R) a ∂P) +
+      fullBlockQuadratic
+        (CFC.sqrt B *
+          (toFullBlockMat (blockReflect C0) - toFullBlockMat (blockReflect Cn)) *
+            CFC.sqrt B) q
+  let X0 := Observable.cutoffHomogenizationError M L ⟨s, hs⟩
+  let secondBudget : ℝ :=
+    2 *
+      ((gammaMomentConst 2 * (2 : ℝ) ^ ((2 : ℝ)⁻¹) * A) ^ (2 : ℕ) +
+        (gammaMomentConst (1 / 2) *
+          (2 : ℝ) ^ (((1 / 2 : ℝ))⁻¹) * D) ^ (2 : ℕ))
+  have hsign := relativeMeanDefect_nonneg_and_le_originMean M L n hLn q
+  have hmeanNonneg : 0 ≤ meanDefect := by
+    simpa only [P, c, hP, hStruct, center, sigma, a0, B, C0, Cn, R, X,
+      meanDefect] using hsign.1
+  have hmeanLeMu : meanDefect ≤ ∫ a, X (cubeSet R) a ∂P := by
+    simpa only [P, c, hP, hStruct, center, sigma, a0, B, C0, Cn, R, X,
+      meanDefect] using hsign.2
+  obtain ⟨hJInt, hJMean, hQv, hreflectQv⟩ :=
+    (show (Integrable J P) ∧ ((∫ a, J a ∂P) =
+      (1 / 2 : ℝ) * blockVecDot Pq (blockMatVecMul Cchild Pq) +
+        (1 / 2 : ℝ) * blockVecDot Qq (blockMatVecMul (blockReflect Cchild) Qq) -
+          blockVecDot Pq Qq) ∧ (blockMatVecMul C0 Pq = Qq) ∧ (blockMatVecMul (blockReflect C0) Qq
+            = Pq) from
+      @combineFiniteQuantitative_comparisonBounds2 (d) (by infer_instance) (M) (L) (q))
+  have hpair : blockVecDot Pq Qq = dotProduct q q := by
+    have hnormalizers :=
+      Book.Ch05.Section57.blockVecDot_scalarConstantNormalizers_eq_fullBlockVecNormSq
+        sigma.property q
+    simpa [Pq, Qq, a0, Observable.isotropicComparatorMatrix,
+      Book.Ch02.fullBlockVecNormSq, dotProduct, pow_two] using hnormalizers
+  have hC0Child : BlockMatLoewnerLE C0 Cchild := by
+    have hbase :=
+      constantBlockMatrix_sigmaBar_blockMatLoewnerLE_scalarAnnealed_int M L (-c)
+    have hactual : Cchild = Book.Ch04.scalarAnnealedBlockMatrixAtScale hP hStruct (-c) := by
+      simpa only [P, Cchild] using
+        annealedBlockMatrixAtScale_eq_scalarAnnealedBlockMatrixAtScale
+          hP hStruct (-c)
+    rw [hactual]
+    simpa only [hP, hStruct, sigma, a0, C0] using hbase
+  have hprimalGap : blockVecDot Pq Qq ≤
+      blockVecDot Pq (blockMatVecMul Cchild Pq) := by
+    rw [← hQv]
+    have horder := hC0Child Pq
+    linarith
+  let rdiag := Book.Ch05.Section56.scalarFullBlockSqrtDiag
+    (d := d) (sigma : ℝ) (sigma : ℝ)
+  have hSdiag : CFC.sqrt B = Matrix.diagonal rdiag := by
+    dsimp only [B, a0, rdiag]
+    change Book.Ch02.constantFullBlockMatrixSqrt
+      (scalarMatrix (d := d) (sigma : ℝ)) = _
+    simpa only using
+      (Book.Ch05.Section57.constantFullBlockMatrixSqrt_scalarMatrix_eq_scalarFullBlockSqrt
+        sigma.property)
+  have hQdiag : ofFullBlockVec (Matrix.mulVec (Matrix.diagonal rdiag) q) = Qq := by
+    rw [← hSdiag]
+    rfl
+  obtain ⟨hmuLeJ, hX0sqInt, hX0sqBound, hJsampleInt, hJsamplePoint, hJIntegralSample, hqNonneg⟩ :=
+    (show ((∫ a, X (cubeSet R) a ∂P) ≤ 2 * ∫ a, J a ∂P) ∧ (Integrable (fun omega => X0 omega ^ (2
+      : ℕ)) mu) ∧ ((∫ omega, X0 omega ^ (2 : ℕ) ∂mu) ≤ secondBudget) ∧ (Integrable
+      (fun omega => J (dilateReg (-h) (Cutoff.coefficientCutoff M.nu L omega))) mu) ∧ ((fun omega
+        => J (dilateReg (-h) (Cutoff.coefficientCutoff M.nu L omega))) ≤ᵐ[mu]
+        fun omega => dotProduct q q * X0 omega ^ (2 : ℕ)) ∧ ((∫ a, J a ∂P) =
+      ∫ omega, J (dilateReg (-h) (Cutoff.coefficientCutoff M.nu L omega)) ∂mu) ∧ (0 ≤ dotProduct q
+        q) from
+      @combineFiniteQuantitative_comparisonBounds1 (d) (by infer_instance) (M) (L) (s) (A) (D)
+        (hs) (hLower) (q) (hJInt) (hJMean) (hreflectQv) (hprimalGap) (hSdiag) (hQdiag))
   have hJBound : (∫ a, J a ∂P) ≤ dotProduct q q * secondBudget := by
     rw [hJIntegralSample]
     calc
@@ -1309,7 +1416,7 @@ theorem relativeStarredDescendantProbe_sq_integrable_and_le
     filter_upwards with a
     dsimp only [Function.comp_apply, g, Y]
     exact congrArg (fun T : FullBlockMat d => fullBlockQuadratic T q)
-      (starredDescendantsAverageFluctuationMatrix_eq_descendantsAverageFluctuationMatrixWithNormalizer
+      (starredFluctuationMatrix_eq_normalizedDescendantAverage
         hP hStruct center B Q j a).symm
   have hdomInt : Integrable
       (fun a => 2 * (Z a) ^ (2 : ℕ) + 2 * meanDefect ^ (2 : ℕ)) P :=

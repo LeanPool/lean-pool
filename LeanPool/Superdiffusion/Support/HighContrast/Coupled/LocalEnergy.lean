@@ -124,7 +124,8 @@ theorem setIntegral_bulkIntegrand_le {a : CoeffField d} {Θ : ℝ} {v vstar : H1
     (∫ x in U, bulkIntegrand a v vstar P η x)
       ≤ 5 * (Θ * vecNormSq P.1 + vecNormSq P.2) * (∫ x in U, sqCutoff η x)
         + (1/8) * (∫ x in U, energyIntegrand a v vstar P η x) := by
-  have hib : IntegrableOn (bulkIntegrand a v vstar P η) U := integrableOn_bulkIntegrand hEllO hη hIcc
+  have hib : IntegrableOn (bulkIntegrand a v vstar P η) U := integrableOn_bulkIntegrand hEllO hη
+    hIcc
   have hisq := integrableOn_sqCutoff (m := m) hη hIcc
   have hie : IntegrableOn (energyIntegrand a v vstar P η) U :=
     integrableOn_energyIntegrand hEllO hη hIcc
@@ -359,7 +360,8 @@ theorem local_block_energy {a : CoeffField d} {Θ : ℝ}
   -- abbreviation for the centered energy density
   set ced : Vec d → ℝ := fun x =>
     vecDot (v.grad x - (1/2:ℝ)•P.1) (matVecMul (symmPart (a x)) (v.grad x - (1/2:ℝ)•P.1))
-      + vecDot (vstar.grad x - (1/2:ℝ)•P.1) (matVecMul (symmPart (a x)) (vstar.grad x - (1/2:ℝ)•P.1))
+      + vecDot (vstar.grad x - (1/2:ℝ)•P.1) (matVecMul (symmPart (a x)) (vstar.grad x -
+        (1/2:ℝ)•P.1))
     with hced
   set gEd : Vec d → ℝ := fun x =>
     2 * vecDot (v.grad x) (matVecMul (symmPart (a x)) (v.grad x))
@@ -582,7 +584,8 @@ theorem local_block_energy_uniform {a : CoeffField d} {Θ : ℝ}
     rw [hM2]; exact add_nonneg (mul_nonneg hΘ0 (vecNormSq_nonneg _)) (vecNormSq_nonneg _)
   set ced : Vec d → ℝ := fun x =>
     vecDot (v.grad x - (1/2:ℝ)•P.1) (matVecMul (symmPart (a x)) (v.grad x - (1/2:ℝ)•P.1))
-      + vecDot (vstar.grad x - (1/2:ℝ)•P.1) (matVecMul (symmPart (a x)) (vstar.grad x - (1/2:ℝ)•P.1))
+      + vecDot (vstar.grad x - (1/2:ℝ)•P.1) (matVecMul (symmPart (a x)) (vstar.grad x -
+        (1/2:ℝ)•P.1))
     with hced
   set gEd : Vec d → ℝ := fun x =>
     2 * vecDot (v.grad x) (matVecMul (symmPart (a x)) (v.grad x))

@@ -29,7 +29,8 @@ at `q = infinity` the coarse-grained ellipticity constant is a *supremum*, not
 a series (`e.coarse.grained.ellipticity.infty`),
 
 ```
-lambda_{s,infinity}(cu_m;a)^{-1} = sup_{n >= 0} 3^{-2 s n} max_{z in 3^{m-n} Zd cap cu_m} |sigma_*^{-1}(z + cu_{m-n}; a)| ,
+lambda_{s,infinity}(cu_m;a)^{-1} = sup_{n >= 0} 3^{-2 s n} max_{z in 3^{m-n} Zd cap cu_m}
+|sigma_*^{-1}(z + cu_{m-n}; a)| ,
 ```
 
 and a supremum of `Cdet + (lane at gap n)` is at most `Cdet + sup_n (lane)`:

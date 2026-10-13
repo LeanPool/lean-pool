@@ -143,16 +143,16 @@ theorem blockCubeFluctuation_blockGaugeUp_eq_self (Q : TriadicCube d) (sig0 : �
     blockCubeFluctuation Q (fun x => blockGaugeUp sig0 (F x)) =
       fun x => blockGaugeUp sig0 (F x) := by
   have h1 : cubeAverageVec Q (fun x => (blockGaugeUp sig0 (F x)).1) = 0 := by
-    show cubeAverageVec Q (fun x => Real.sqrt sig0 • (F x).1) = 0
+    change cubeAverageVec Q (fun x => Real.sqrt sig0 • (F x).1) = 0
     rw [cubeAverageVec_const_smul, hzero1, smul_zero]
   have h2 : cubeAverageVec Q (fun x => (blockGaugeUp sig0 (F x)).2) = 0 := by
-    show cubeAverageVec Q (fun x => (Real.sqrt sig0)⁻¹ • (F x).2) = 0
+    change cubeAverageVec Q (fun x => (Real.sqrt sig0)⁻¹ • (F x).2) = 0
     rw [cubeAverageVec_const_smul, hzero2, smul_zero]
   funext x
   refine Prod.ext ?_ ?_
-  · show cubeFluctuationVec Q (fun y => (blockGaugeUp sig0 (F y)).1) x = _
+  · change cubeFluctuationVec Q (fun y => (blockGaugeUp sig0 (F y)).1) x = _
     rw [cubeFluctuationVec_eq_self_of_cubeAverageVec_eq_zero Q _ h1]
-  · show cubeFluctuationVec Q (fun y => (blockGaugeUp sig0 (F y)).2) x = _
+  · change cubeFluctuationVec Q (fun y => (blockGaugeUp sig0 (F y)).2) x = _
     rw [cubeFluctuationVec_eq_self_of_cubeAverageVec_eq_zero Q _ h2]
 
 /-! ## The pinned duality constant and the gauged pairing bound -/

@@ -79,7 +79,8 @@ theorem IsConservative.measure_exitTime_le_le_rho_pow_hitExit
       ENNReal.ofReal (Real.exp (lam * (t : ℝ))) * rho ^ N := by
   refine (hP.measure_exitTime_le_le P U hU lam hlam.le t x).trans ?_
   refine mul_le_mul_right ?_ _
-  exact IsConservative.lintegral_exp_neg_exitTime_le_rho_pow_hitExit P hP hFeller hK V V' hVmeasurable
+  exact IsConservative.lintegral_exp_neg_exitTime_le_rho_pow_hitExit P hP hFeller hK V V'
+    hVmeasurable
     hDclosed hV'open U lam hlam rho hrho hone K D N x hoverlap hvisits hcount
 
 end

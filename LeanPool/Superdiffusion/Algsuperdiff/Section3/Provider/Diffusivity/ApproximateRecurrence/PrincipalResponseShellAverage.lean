@@ -114,7 +114,7 @@ theorem freshShellCubeAverage_skew (R : TriadicCube d) (omega : Cutoff.ShellSeq 
     simpa only [Matrix.transpose_apply, Matrix.neg_apply] using
       congrFun
         (congrFun (Cutoff.finiteShellIncrement_skew omega lowScale highScale x) i) j
-  show cubeAverage R (fun x =>
+  change cubeAverage R (fun x =>
       Cutoff.finiteShellIncrement omega lowScale highScale x j i) =
     -cubeAverage R fun x =>
       Cutoff.finiteShellIncrement omega lowScale highScale x i j

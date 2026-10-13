@@ -21,6 +21,10 @@ open Algsuperdiff.Frozen.Section24
 open HCPolySupport HCPolySupport.Book.Ch02 MeasureTheory Set
 open scoped BigOperators ENNReal Matrix.Norms.Elementwise
 
+open Algsuperdiff.Section24.Sensitivity.Provider.ResponseUnconditional
+  renaming responseJ_sensitivity_unconditional → provider_responseJ_sensitivity
+
+
 /-- Unconditional four-term sensitivity estimate for the response functional. -/
 -- FROZEN-STATEMENT-BEGIN
 theorem Algsuperdiff.Frozen.Section24.responseJ_sensitivity_unconditional {d : ℕ}
@@ -50,5 +54,6 @@ theorem Algsuperdiff.Frozen.Section24.responseJ_sensitivity_unconditional {d : �
             (unitCubeLambda s (.finite 2) a)⁻¹) ^ 2
 -- FROZEN-STATEMENT-END
     := by
-  exact Algsuperdiff.Section24.Sensitivity.Provider.ResponseUnconditional.responseJ_sensitivity_unconditional
+  exact
+    provider_responseJ_sensitivity
     dimension

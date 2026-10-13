@@ -257,43 +257,15 @@ theorem measureReal_badLoc_le (M : ABKModel d) (Q : TriadicCube d) {m : ℤ}
       _ ≤ Real.sqrt (R / 64) := Real.sqrt_le_sqrt h1
       _ = t1 := ht1def.symm
   -- the exponential lower bound `exp u >= (u/4)^4`
-  have hunn : (0 : ℝ) ≤ u / 4 := by linarith only [hu0]
-  have hulin : u / 4 ≤ Real.exp (u / 4) := by
-    have h := Real.add_one_le_exp (u / 4)
-    linarith only [h]
-  have hexpsplit : Real.exp u = Real.exp (u / 4) ^ 4 := by
-    have hquad : Real.exp (u / 4) ^ 4
-        = Real.exp (u / 4 + (u / 4 + (u / 4 + u / 4))) := by
-      rw [Real.exp_add, Real.exp_add, Real.exp_add]
-      ring
-    rw [hquad]
-    congr 1
-    ring
   have hexplb : (u / 4) ^ 4 ≤ Real.exp u := by
-    have hs1 : (u / 4) ^ 2 ≤ Real.exp (u / 4) ^ 2 := by
-      have hmul := mul_self_le_mul_self hunn hulin
-      calc (u / 4) ^ 2 = u / 4 * (u / 4) := by ring
-        _ ≤ Real.exp (u / 4) * Real.exp (u / 4) := hmul
-        _ = Real.exp (u / 4) ^ 2 := by ring
-    have hs2 : ((u / 4) ^ 2) ^ 2 ≤ (Real.exp (u / 4) ^ 2) ^ 2 := by
-      have hmul := mul_self_le_mul_self (sq_nonneg (u / 4)) hs1
-      calc ((u / 4) ^ 2) ^ 2 = (u / 4) ^ 2 * (u / 4) ^ 2 := by ring
-        _ ≤ Real.exp (u / 4) ^ 2 * Real.exp (u / 4) ^ 2 := hmul
-        _ = (Real.exp (u / 4) ^ 2) ^ 2 := by ring
-    have hl : (u / 4) ^ 4 = ((u / 4) ^ 2) ^ 2 := by ring
-    have hr : (Real.exp (u / 4) ^ 2) ^ 2 = Real.exp (u / 4) ^ 4 := by ring
-    rw [hl, hexpsplit, ← hr]
-    exact hs2
+    have hseries := Real.pow_div_factorial_le_exp u hu0 4
+    norm_num at hseries
+    nlinarith only [hseries, pow_nonneg hu0 4]
   have hu256 : (256 : ℝ) ≤ (u / 4) ^ 4 := by
-    have hq : (4 : ℝ) ≤ u / 4 := by linarith only [hu16]
-    have hq2 : (16 : ℝ) ≤ (u / 4) ^ 2 := by
-      rw [pow_two]
-      have hmul := mul_self_le_mul_self (by norm_num : (0 : ℝ) ≤ 4) hq
-      linarith only [hmul]
-    have hpow : (u / 4) ^ 4 = (u / 4) ^ 2 * (u / 4) ^ 2 := by ring
-    rw [hpow]
-    have hmul := mul_self_le_mul_self (by norm_num : (0 : ℝ) ≤ 16) hq2
-    linarith only [hmul]
+    calc
+      (256 : ℝ) = 4 ^ 4 := by norm_num
+      _ ≤ (u / 4) ^ 4 :=
+        pow_le_pow_left₀ (by norm_num) (by linarith only [hu16]) 4
   have hexp256 : (256 : ℝ) ≤ Real.exp u := le_trans hu256 hexplb
   have ht2pos : (0 : ℝ) < t2 := by
     rw [ht2def]

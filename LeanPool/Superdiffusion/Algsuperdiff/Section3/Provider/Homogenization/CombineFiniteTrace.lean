@@ -41,6 +41,11 @@ open scoped MatrixOrder
 
 noncomputable section
 
+open HCPolySupport.Book.Ch04
+  renaming doubledResponseJ_eq_blockJObservableCubeSetBlockVec_of_aelocallyUniformlyEllipticField →
+    doubledResponseJ_eq_restrictionObservable
+
+
 private theorem descendantsAverage_dilateCube_trace
     {d : ℕ} (k : ℤ) (Q : TriadicCube d) (j : ℕ)
     (F : TriadicCube d → ℝ) :
@@ -200,7 +205,7 @@ private theorem starredBlockJTraceAverage_relativeCutoffSample_eq_physicalDescen
     apply Finset.sum_congr rfl
     intro alpha _halpha
     exact
-      (Book.Ch04.doubledResponseJ_eq_blockJObservableCubeSetBlockVec_of_aelocallyUniformlyEllipticField
+      (doubledResponseJ_eq_restrictionObservable
         haRel R
           (fullBlockMatrixProbe
             (Book.Ch02.constantFullBlockMatrixInvSqrt a0) alpha)
@@ -463,6 +468,54 @@ private theorem cellErrorFour_integral_eq
         ((Observable.measurable_cutoffHomogenizationError
           M L ⟨1 / 16, by norm_num⟩).pow_const 4).aestronglyMeasurable
 
+private theorem relativeStarredTraceAverage_integral_bound :
+    ∀ {d : ℕ} (mu : Measure (Cutoff.CutoffSample d))
+      (Qphys : TriadicCube d) (j : ℕ) (X0 : Cutoff.CutoffSample d → ℝ)
+      (cellErrorFour : TriadicCube d → Cutoff.CutoffSample d → ℝ),
+      (∀ R ∈ descendantsAtDepth Qphys j, Integrable (cellErrorFour R) mu) →
+        (∀ R ∈ descendantsAtDepth Qphys j,
+            ∫ (omega : Cutoff.CutoffSample d), cellErrorFour R omega ∂mu =
+              ∫ (omega : Cutoff.CutoffSample d), X0 omega ^ (4 : ℕ) ∂mu) →
+          ∫ (omega : Cutoff.CutoffSample d),
+              descendantsAverage Qphys j fun (R : TriadicCube d) => cellErrorFour R omega ∂mu =
+            ∫ (omega : Cutoff.CutoffSample d), X0 omega ^ (4 : ℕ) ∂mu := by
+  intro d mu Qphys j X0 cellErrorFour hcell hcellIntegral
+  have hcommute :
+      (∫ omega, descendantsAverage Qphys j (fun R => cellErrorFour R omega) ∂mu) =
+        descendantsAverage Qphys j
+          (fun R => ∫ omega, cellErrorFour R omega ∂mu) := by
+    let descendants : Finset (TriadicCube d) := descendantsAtDepth Qphys j
+    calc
+      _ = ∫ omega, (descendants.card : ℝ)⁻¹ *
+            (∑ R ∈ descendants, cellErrorFour R omega) ∂mu := by rfl
+      _ = (descendants.card : ℝ)⁻¹ *
+            ∫ omega, ∑ R ∈ descendants, cellErrorFour R omega ∂mu := by
+        rw [integral_const_mul]
+      _ = (descendants.card : ℝ)⁻¹ *
+            (∑ R ∈ descendants, ∫ omega, cellErrorFour R omega ∂mu) := by
+        rw [integral_finsetSum descendants
+          (fun R hR => hcell R (by simpa only [descendants] using hR))]
+      _ = descendantsAverage Qphys j
+            (fun R => ∫ omega, cellErrorFour R omega ∂mu) := by
+        simp only [descendantsAverage, descendants]
+  rw [hcommute]
+  have hcongr : descendantsAverage Qphys j
+      (fun R => ∫ omega, cellErrorFour R omega ∂mu) =
+      descendantsAverage Qphys j
+        (fun _ => ∫ omega, X0 omega ^ (4 : ℕ) ∂mu) := by
+    unfold descendantsAverage
+    change ((descendantsAtDepth Qphys j).card : ℝ)⁻¹ *
+        (descendantsAtDepth Qphys j).sum
+          (fun R => ∫ omega, cellErrorFour R omega ∂mu) =
+      ((descendantsAtDepth Qphys j).card : ℝ)⁻¹ *
+        (descendantsAtDepth Qphys j).sum
+          (fun _ => ∫ omega, X0 omega ^ (4 : ℕ) ∂mu)
+    congr 1
+    apply Finset.sum_congr rfl
+    intro R hR
+    exact hcellIntegral R hR
+  rw [hcongr, descendantsAverage_const_eq]
+
 /-- Quantitative fourth-moment control of the starred trace channel at every
 physical observation scale above the cutoff. -/
 theorem eight_mul_integral_relativeStarredBlockJTraceAverageSq_le
@@ -557,44 +610,8 @@ theorem eight_mul_integral_relativeStarredBlockJTraceAverageSq_le
     unfold descendantsAverage
     exact (integrable_finsetSum (descendantsAtDepth Qphys j) hcell).const_mul
       (((descendantsAtDepth Qphys j).card : ℝ)⁻¹)
-  have havgIntegral :
-      (∫ omega, descendantsAverage Qphys j (fun R => cellErrorFour R omega) ∂mu) =
-        ∫ omega, X0 omega ^ (4 : ℕ) ∂mu := by
-    have hcommute :
-        (∫ omega, descendantsAverage Qphys j (fun R => cellErrorFour R omega) ∂mu) =
-          descendantsAverage Qphys j
-            (fun R => ∫ omega, cellErrorFour R omega ∂mu) := by
-      let descendants : Finset (TriadicCube d) := descendantsAtDepth Qphys j
-      calc
-        _ = ∫ omega, (descendants.card : ℝ)⁻¹ *
-              (∑ R ∈ descendants, cellErrorFour R omega) ∂mu := by rfl
-        _ = (descendants.card : ℝ)⁻¹ *
-              ∫ omega, ∑ R ∈ descendants, cellErrorFour R omega ∂mu := by
-          rw [integral_const_mul]
-        _ = (descendants.card : ℝ)⁻¹ *
-              (∑ R ∈ descendants, ∫ omega, cellErrorFour R omega ∂mu) := by
-          rw [integral_finsetSum descendants
-            (fun R hR => hcell R (by simpa only [descendants] using hR))]
-        _ = descendantsAverage Qphys j
-              (fun R => ∫ omega, cellErrorFour R omega ∂mu) := by
-          simp only [descendantsAverage, descendants]
-    rw [hcommute]
-    have hcongr : descendantsAverage Qphys j
-        (fun R => ∫ omega, cellErrorFour R omega ∂mu) =
-        descendantsAverage Qphys j
-          (fun _ => ∫ omega, X0 omega ^ (4 : ℕ) ∂mu) := by
-      unfold descendantsAverage
-      change ((descendantsAtDepth Qphys j).card : ℝ)⁻¹ *
-          (descendantsAtDepth Qphys j).sum
-            (fun R => ∫ omega, cellErrorFour R omega ∂mu) =
-        ((descendantsAtDepth Qphys j).card : ℝ)⁻¹ *
-          (descendantsAtDepth Qphys j).sum
-            (fun _ => ∫ omega, X0 omega ^ (4 : ℕ) ∂mu)
-      congr 1
-      apply Finset.sum_congr rfl
-      intro R hR
-      exact hcellIntegral R hR
-    rw [hcongr, descendantsAverage_const_eq]
+  have havgIntegral := @relativeStarredTraceAverage_integral_bound (d) (mu) (Qphys) (j) (X0)
+    (cellErrorFour) (hcell) (hcellIntegral)
   let J2 : RegCoeffField d → ℝ := starredBlockJTraceAverageSq B Q j
   let G : Cutoff.CutoffSample d → ℝ := fun omega =>
     (Fintype.card (BlockCoord d) : ℝ) ^ 2 *

@@ -134,126 +134,56 @@ private theorem prefactorAbsorb {q P W K V R : ℝ} (hP : 0 ≤ P) (hV : 0 ≤ V
 
 /-! ### The provider theorem -/
 
-/-- **The provider for `Algsuperdiff.Frozen.Section4.iteration_lemma`.**
-
-The frozen theorem's statement verbatim, at the explicit witness `C = iterConst
-d`. -/
-theorem iteration_lemma_provider
-    (d : ℕ) (hd : d ≠ 0) :
-    ∃ C : ℝ, 0 < C ∧
-      ∀ (h : ℕ) (θ : ℝ), θ ∈ Set.Ioo (0 : ℝ) 1 → θ ^ h ∈ Set.Ioo (0 : ℝ) (3 / 5) →
-        ∀ n m : ℤ, n < m →
-          ∀ U : ℤ → Set (HCPolySupport.Vec d),
-            (∀ j : ℤ, j ≤ m → MeasurableSet (U j)) →
-            (∀ j : ℤ, j ≤ m → U (j - 1) ⊆ U j) →
-            (∀ j : ℤ, j ≤ m →
-                ∃ x y : HCPolySupport.Vec d,
-                  (fun v => x + v) ''
-                      HCPolySupport.openCubeSet
-                        (HCPolySupport.originCube d (j - 2)) ⊆ U j ∧
-                    U j ⊆
-                      (fun v => y + v) ''
-                        HCPolySupport.openCubeSet (HCPolySupport.originCube d j)) →
-            ∀ u : HCPolySupport.Vec d → ℝ,
-              MeasureTheory.MemLp u 2 (MeasureTheory.volume.restrict (U m)) →
-              ∀ B : Finset ℤ, B ⊆ Finset.Icc n m →
-                ∀ ε δ : ℤ → ℝ,
-                  (∀ j : ℤ, n ≤ j → j ≤ m → 0 ≤ ε j) →
-                  (∀ j : ℤ, n ≤ j → j ≤ m → 0 ≤ δ j) →
-                  ∀ (c : ℤ → ℝ) (g : ℤ → HCPolySupport.Vec d),
-                    (∀ j : ℤ, j ≤ m →
-                        Algsuperdiff.Section4.Support.IsAffineMinimizer
-                          (U j) u (c j) (g j)) →
-                    (∀ j : ℤ, n ≤ j → j ≤ m → j ∉ B →
-                        Algsuperdiff.Section4.Support.affineExcess
-                            (U (j - (h : ℤ))) u ≤
-                          θ ^ h *
-                              Algsuperdiff.Section4.Support.affineExcess (U j) u +
-                            ε j *
-                              Algsuperdiff.Section4.Support.slopeMagnitude (g j) +
-                            δ j) →
-                    ((3 : ℝ) ^ (-n) *
-                        Algsuperdiff.Section4.Support.normalizedL2On (U n)
-                          (fun x => u x - HCPolySupport.volumeAverage (U n) u) ≤
-                      Real.exp
-                          (C * ((h : ℝ) + 1) * ((B.card : ℝ) + 1) +
-                            C * ∑ j ∈ Finset.Icc n m, ε j) *
-                        ((3 : ℝ) ^ (-m) *
-                            Algsuperdiff.Section4.Support.normalizedL2On (U m)
-                              (fun x => u x - HCPolySupport.volumeAverage (U m) u) +
-                          ∑ j ∈ Finset.Icc n m, δ j)) ∧
-                      ∀ M : ℝ, (∀ j : ℤ, n ≤ j → j ≤ m → ε j ≤ M) →
-                          Algsuperdiff.Section4.Support.affineExcess (U n) u ≤
-                            Real.rpow θ
-                                  (-(C * ((h : ℝ) + 1) * ((B.card : ℝ) + 1))) *
-                                Real.exp
-                                  (C * ((h : ℝ) + 1) * ((B.card : ℝ) + 1) +
-                                    C * ∑ j ∈ Finset.Icc n m, ε j) *
-                              (θ ^ (m - n) *
-                                  Algsuperdiff.Section4.Support.affineExcess (U m) u +
-                                M *
-                                    ((3 : ℝ) ^ (-m) *
-                                      Algsuperdiff.Section4.Support.normalizedL2On (U m)
-                                        (fun x => u x - HCPolySupport.volumeAverage (U m) u)) +
-                                (1 + M) * ∑ j ∈ Finset.Icc n m, δ j)
-    := by
-  classical
-  refine ⟨iterConst d, iterConst_pos d, ?_⟩
-  intro h θ hθ01 hθh n m hnm U hmeas hnest hsand u hu B hB ε δ hε hδ cc gg hmin hdec
-  have hd0 : 0 < d := Nat.pos_of_ne_zero hd
-  have hθ0 : (0 : ℝ) < θ := hθ01.1
-  have hθ1 : θ ≤ 1 := le_of_lt hθ01.2
-  have hθh35 : θ ^ h < 3 / 5 := hθh.2
-  have hh : 1 ≤ h := by
-    rcases Nat.eq_zero_or_pos h with h0 | hpos
-    · rw [h0, pow_zero] at hθh35
-      exact absurd hθh35 (by norm_num)
-    · exact hpos
-  have hnmle : n ≤ m := le_of_lt hnm
-  -- the engine's sign slots are stated for all `k : ℤ`: truncate the error data
-  obtain ⟨εt, hεt0, hεteq⟩ : ∃ f : ℤ → ℝ, (∀ k : ℤ, 0 ≤ f k)
-      ∧ ∀ j : ℤ, n ≤ j → j ≤ m → f j = ε j := by
-    refine ⟨fun j => if n ≤ j ∧ j ≤ m then ε j else 0, fun k => ?_, fun j hj1 hj2 => ?_⟩
-    · show (0 : ℝ) ≤ if n ≤ k ∧ k ≤ m then ε k else 0
-      split_ifs with hcase
-      · exact hε k hcase.1 hcase.2
-      · exact le_rfl
-    · show (if n ≤ j ∧ j ≤ m then ε j else 0) = ε j
-      rw [ite_eq_left (⟨hj1, hj2⟩ : n ≤ j ∧ j ≤ m)]
-  obtain ⟨δt, hδt0, hδteq⟩ : ∃ f : ℤ → ℝ, (∀ k : ℤ, 0 ≤ f k)
-      ∧ ∀ j : ℤ, n ≤ j → j ≤ m → f j = δ j := by
-    refine ⟨fun j => if n ≤ j ∧ j ≤ m then δ j else 0, fun k => ?_, fun j hj1 hj2 => ?_⟩
-    · show (0 : ℝ) ≤ if n ≤ k ∧ k ≤ m then δ k else 0
-      split_ifs with hcase
-      · exact hδ k hcase.1 hcase.2
-      · exact le_rfl
-    · show (if n ≤ j ∧ j ≤ m then δ j else 0) = δ j
-      rw [ite_eq_left (⟨hj1, hj2⟩ : n ≤ j ∧ j ≤ m)]
-  have hSe : ∑ j ∈ Finset.Icc n m, εt j = ∑ j ∈ Finset.Icc n m, ε j :=
-    Finset.sum_congr rfl fun j hj => by
-      rw [Finset.mem_Icc] at hj
-      exact hεteq j hj.1 hj.2
-  have hSd : ∑ j ∈ Finset.Icc n m, δt j = ∑ j ∈ Finset.Icc n m, δ j :=
-    Finset.sum_congr rfl fun j hj => by
-      rw [Finset.mem_Icc] at hj
-      exact hδteq j hj.1 hj.2
-  have hSe0 : (0 : ℝ) ≤ ∑ j ∈ Finset.Icc n m, εt j :=
-    Finset.sum_nonneg fun j _ => hεt0 j
-  have hSd0 : (0 : ℝ) ≤ ∑ j ∈ Finset.Icc n m, δt j :=
-    Finset.sum_nonneg fun j _ => hδt0 j
-  -- the capped window family, with its axis-cube sandwich at every scale
-  have hsandc : ∀ k : ℤ, ∃ z : Vec d × Vec d,
-      axisCube z.1 ((3 : ℝ) ^ (min k m - 2)) ⊆ cappedWindows U m k ∧
-        cappedWindows U m k ⊆ axisCube z.2 ((3 : ℝ) ^ (min k m)) := by
-    intro k
-    obtain ⟨x, y, hin, hout⟩ := hsand (min k m) (min_le_right _ _)
-    obtain ⟨zin, zout, h1, h2⟩ := axisCube_sandwich_of_translateSandwich hin hout
-    exact ⟨(zin, zout), h1, h2⟩
-  choose z hqin hqout using hsandc
-  have hmeasc : ∀ k : ℤ, MeasurableSet (cappedWindows U m k) :=
-    fun k => hmeas (min k m) (min_le_right _ _)
-  have hnestc : ∀ k : ℤ, cappedWindows U m k ⊆ cappedWindows U m (k + 1) :=
-    cappedWindows_nest hnest
+private theorem iterationLemmaProvider_comparisonBounds1 :
+    ∀ (d : ℕ) (_ : d ≠ (0 : ℕ)) (h : ℕ) (θ : ℝ) (n m : ℤ) (U : ℤ → Set (Vec d))
+      (_ : ∀ j ≤ m, U (j - (1 : ℤ)) ⊆ U j) (u : Vec d → ℝ) (_ : MemLp u (2 : ENNReal) (volume.restrict (U m)))
+      (B : Finset ℤ) (ε δ cc : ℤ → ℝ) (gg : ℤ → Vec d) (_ : ∀ j ≤ m, IsAffineMinimizer (U j) u (cc j) (gg j))
+      (_ :
+        ∀ (j : ℤ),
+          n ≤ j →
+            j ≤ m →
+              j ∉ B → affineExcess (U (j - (↑h : ℤ))) u ≤ θ ^ h * affineExcess (U j) u + ε j * slopeMagnitude (gg j) + δ j)
+      (_ : (0 : ℕ) < d) (_ : (1 : ℕ) ≤ h) (_ : n ≤ m) (εt : ℤ → ℝ) (_ : ∀ (j : ℤ), n ≤ j → j ≤ m → εt j = ε j)
+      (δt : ℤ → ℝ) (_ : ∀ (j : ℤ), n ≤ j → j ≤ m → δt j = δ j) (z : (k : ℤ) → Vec d × Vec d)
+      (_ : ∀ (k : ℤ), axisCube (z k).1 ((3 : ℝ) ^ (min k m - (2 : ℤ))) ⊆ cappedWindows U m k)
+      (_ : ∀ (k : ℤ), cappedWindows U m k ⊆ axisCube (z k).2 ((3 : ℝ) ^ min k m))
+      (_ : ∀ (k : ℤ), MeasurableSet (cappedWindows U m k))
+      (_ : ∀ (k : ℤ), cappedWindows U m k ⊆ cappedWindows U m (k + (1 : ℤ))),
+      (∀ (k : ℤ), (0 : ℝ) ≤ affineExcess (cappedWindows U m k) u) ∧
+        (∀ (k : ℤ), (0 : ℝ) ≤ slopeMagnitude (gg (min k m))) ∧
+          (1 : ℝ) ≤ iterKappa d ∧
+            (0 : ℝ) ≤ iterCstab d ∧
+              (1 : ℝ) ≤ iterCi d ∧
+                (0 : ℝ) ≤ iterCi d ∧
+                  (∀ (k : ℤ),
+                      affineExcess (cappedWindows U m k) u ≤
+                        iterKappa d * affineExcess (cappedWindows U m (k + (1 : ℤ))) u) ∧
+                    (∀ (k : ℤ),
+                        |slopeMagnitude (gg (min k m)) - slopeMagnitude (gg (min (k - (1 : ℤ)) m))| ≤
+                          iterCstab d *
+                            (affineExcess (cappedWindows U m k) u + affineExcess (cappedWindows U m (k - (1 : ℤ))) u)) ∧
+                      (∀ (k : ℤ),
+                          oscillationOn (cappedWindows U m k) u ≤
+                              iterCi d * (affineExcess (cappedWindows U m k) u + slopeMagnitude (gg (min k m))) ∧
+                            affineExcess (cappedWindows U m k) u + slopeMagnitude (gg (min k m)) ≤
+                              iterCi d * oscillationOn (cappedWindows U m k) u) ∧
+                        (∀ (j : ℤ),
+                            n ≤ j →
+                              j ≤ m →
+                                j ∉ B →
+                                  affineExcess (cappedWindows U m (j - (↑h : ℤ))) u ≤
+                                    θ ^ h * affineExcess (cappedWindows U m j) u + εt j * slopeMagnitude (gg (min j m)) +
+                                      δt j) ∧
+                          cappedWindows U m n = U n ∧
+                            cappedWindows U m m = U m ∧
+                              oscillationScaled n (U n) u ≤ oscillationOn (U n) u ∧
+                                oscillationOn (U m) u ≤ (9 : ℝ) * oscillationScaled m (U m) u ∧
+                                  (0 : ℝ) ≤ oscillationScaled m (U m) u ∧
+                                    (1 : ℝ) ≤
+                                        goodConst h (iterKappa d) (iterCstab d) * badConst (iterKappa d) (iterCstab d) ∧
+                                      (0 : ℝ) ≤
+                                        goodConst h (iterKappa d) (iterCstab d) * badConst (iterKappa d) (iterCstab d) := by
+  intro d hd h θ n m U hnest u hu B _ _ cc gg hmin hdec hd0 _ hnmle εt hεteq δt hδteq z hqin hqout hmeasc hnestc
   have huc : ∀ k : ℤ, MemLp u 2 (volume.restrict (cappedWindows U m k)) :=
     fun k => memLp_restrict_of_subset (cappedWindows_subset_top hnest k) hu
   have hminc : ∀ k : ℤ,
@@ -353,6 +283,307 @@ theorem iteration_lemma_provider
     linarith only [hm, hg]
   have hgcbc0 : (0 : ℝ) ≤ goodConst h (iterKappa d) (iterCstab d)
       * badConst (iterKappa d) (iterCstab d) := by linarith only [hgcbc1]
+  exact ⟨hEnn, hpnn, hκ1, hCs0, hCi1, hCi0, hmonoE, hstabE, hend, hdecayt, hUn, hUm, hlowN,
+    hhighM, hO0, hgcbc1, hgcbc0⟩
+
+private theorem iterationLemmaProvider_estimate1 :
+    ∀ (d h : ℕ) (n m : ℤ) (U : ℤ → Set (Vec d)) (u : Vec d → ℝ)
+      (B : Finset ℤ) (gg : ℤ → Vec d) (εt : ℤ → ℝ) (hεt0 : ∀ (k : ℤ), (0 : ℝ) ≤ εt k) (δt : ℤ → ℝ)
+      (hδt0 : ∀ (k : ℤ), (0 : ℝ) ≤ δt k) (hEnn : ∀ (k : ℤ), (0 : ℝ) ≤ affineExcess (cappedWindows U m k) u)
+      (hpnn : ∀ (k : ℤ), (0 : ℝ) ≤ slopeMagnitude (gg (min k m))) (hCs0 : (0 : ℝ) ≤ iterCstab d)
+      (hgcbc1 : (1 : ℝ) ≤ goodConst h (iterKappa d) (iterCstab d) * badConst (iterKappa d) (iterCstab d))
+      (hgcbc0 : (0 : ℝ) ≤ goodConst h (iterKappa d) (iterCstab d) * badConst (iterKappa d) (iterCstab d))
+      (hΛ0 :
+        (0 : ℝ) ≤
+          (goodConst h (iterKappa d) (iterCstab d) * badConst (iterKappa d) (iterCstab d)) ^ ((3 : ℕ) * B.card + (3 : ℕ)) *
+            Real.exp (goodRate (iterCstab d) * ∑ j ∈ Finset.Icc n m, εt j))
+      (hEpm :
+        affineExcess (cappedWindows U m m) u + slopeMagnitude (gg (min m m)) ≤
+          (9 : ℝ) * iterCi d * oscillationScaled m (U m) u)
+      (hcbk :
+        ∀ (k : ℤ),
+          n ≤ k →
+            k ≤ m →
+              affineExcess (cappedWindows U m k) u + slopeMagnitude (gg (min k m)) ≤
+                (goodConst h (iterKappa d) (iterCstab d) * badConst (iterKappa d) (iterCstab d)) ^
+                      ((3 : ℕ) * (B ∩ Finset.Icc k m).card + (3 : ℕ)) *
+                    Real.exp (goodRate (iterCstab d) * ∑ j ∈ Finset.Icc k m, εt j) *
+                  (affineExcess (cappedWindows U m m) u + slopeMagnitude (gg (min m m)) + ∑ j ∈ Finset.Icc k m, δt j))
+      (j : ℤ),
+      n ≤ j →
+        j ≤ m →
+          slopeMagnitude (gg (min j m)) ≤
+            (goodConst h (iterKappa d) (iterCstab d) * badConst (iterKappa d) (iterCstab d)) ^
+                  ((3 : ℕ) * B.card + (3 : ℕ)) *
+                Real.exp (goodRate (iterCstab d) * ∑ j ∈ Finset.Icc n m, εt j) *
+              ((9 : ℝ) * iterCi d * oscillationScaled m (U m) u + ∑ j ∈ Finset.Icc n m, δt j) := by
+  intro d h n m U u B gg εt hεt0 δt hδt0 hEnn hpnn hCs0 hgcbc1 hgcbc0 hΛ0 hEpm hcbk j hj1 hj2
+  have hk := hcbk j hj1 hj2
+  have hcard : 3 * (B ∩ Finset.Icc j m).card + 3 ≤ 3 * B.card + 3 := by
+    have hsub : B ∩ Finset.Icc j m ⊆ B := Finset.inter_subset_left
+    have hc := Finset.card_le_card hsub
+    omega
+  have hpowmono : (goodConst h (iterKappa d) (iterCstab d)
+        * badConst (iterKappa d) (iterCstab d)) ^ (3 * (B ∩ Finset.Icc j m).card + 3)
+      ≤ (goodConst h (iterKappa d) (iterCstab d)
+        * badConst (iterKappa d) (iterCstab d)) ^ (3 * B.card + 3) :=
+    pow_le_pow_right₀ hgcbc1 hcard
+  have hsubset : Finset.Icc j m ⊆ Finset.Icc n m := by
+    intro x hx
+    simp only [Finset.mem_Icc] at hx ⊢
+    omega
+  have hεsub : ∑ x ∈ Finset.Icc j m, εt x ≤ ∑ x ∈ Finset.Icc n m, εt x :=
+    Finset.sum_le_sum_of_subset_of_nonneg hsubset fun x _ _ => hεt0 x
+  have hδsub : ∑ x ∈ Finset.Icc j m, δt x ≤ ∑ x ∈ Finset.Icc n m, δt x :=
+    Finset.sum_le_sum_of_subset_of_nonneg hsubset fun x _ _ => hδt0 x
+  have hexpmono : Real.exp (goodRate (iterCstab d) * ∑ x ∈ Finset.Icc j m, εt x)
+      ≤ Real.exp (goodRate (iterCstab d) * ∑ x ∈ Finset.Icc n m, εt x) :=
+    Real.exp_le_exp.mpr (mul_le_mul_of_nonneg_left hεsub (goodRate_nonneg hCs0))
+  have hpref : (goodConst h (iterKappa d) (iterCstab d)
+          * badConst (iterKappa d) (iterCstab d))
+          ^ (3 * (B ∩ Finset.Icc j m).card + 3)
+        * Real.exp (goodRate (iterCstab d) * ∑ x ∈ Finset.Icc j m, εt x)
+      ≤ (goodConst h (iterKappa d) (iterCstab d)
+          * badConst (iterKappa d) (iterCstab d)) ^ (3 * B.card + 3)
+        * Real.exp (goodRate (iterCstab d) * ∑ x ∈ Finset.Icc n m, εt x) :=
+    mul_le_mul hpowmono hexpmono (le_of_lt (Real.exp_pos _)) (pow_nonneg hgcbc0 _)
+  have hbase : affineExcess (cappedWindows U m m) u + slopeMagnitude (gg (min m m))
+        + ∑ x ∈ Finset.Icc j m, δt x
+      ≤ 9 * iterCi d * oscillationScaled m (U m) u
+        + ∑ x ∈ Finset.Icc n m, δt x := by
+    linarith only [hEpm, hδsub]
+  have hbase0 : (0 : ℝ) ≤ affineExcess (cappedWindows U m m) u
+      + slopeMagnitude (gg (min m m)) + ∑ x ∈ Finset.Icc j m, δt x := by
+    have h1 := hEnn m
+    have h2 := hpnn m
+    have h3 : (0 : ℝ) ≤ ∑ x ∈ Finset.Icc j m, δt x :=
+      Finset.sum_nonneg fun x _ => hδt0 x
+    linarith only [h1, h2, h3]
+  calc slopeMagnitude (gg (min j m))
+      ≤ affineExcess (cappedWindows U m j) u + slopeMagnitude (gg (min j m)) := by
+        linarith only [hEnn j]
+    _ ≤ (goodConst h (iterKappa d) (iterCstab d)
+            * badConst (iterKappa d) (iterCstab d))
+            ^ (3 * (B ∩ Finset.Icc j m).card + 3)
+          * Real.exp (goodRate (iterCstab d) * ∑ x ∈ Finset.Icc j m, εt x)
+          * (affineExcess (cappedWindows U m m) u + slopeMagnitude (gg (min m m))
+            + ∑ x ∈ Finset.Icc j m, δt x) := hk
+    _ ≤ ((goodConst h (iterKappa d) (iterCstab d)
+            * badConst (iterKappa d) (iterCstab d)) ^ (3 * B.card + 3)
+          * Real.exp (goodRate (iterCstab d) * ∑ j ∈ Finset.Icc n m, εt j))
+          * (9 * iterCi d * oscillationScaled m (U m) u
+            + ∑ j ∈ Finset.Icc n m, δt j) :=
+        mul_le_mul hpref hbase hbase0 hΛ0
+
+private theorem iterationLemmaProvider_estimate2 :
+    ∀ (d h : ℕ) (n m : ℤ) (U : ℤ → Set (Vec d)) (u : Vec d → ℝ)
+      (B : Finset ℤ) (ε δ : ℤ → ℝ) (hlowN : oscillationScaled n (U n) u ≤ oscillationOn (U n) u)
+      (hhighM : oscillationOn (U m) u ≤ (9 : ℝ) * oscillationScaled m (U m) u)
+      (hcbi :
+        oscillationOn (U n) u ≤
+          iterCi d ^ (2 : ℕ) *
+                (goodConst h (iterKappa d) (iterCstab d) * badConst (iterKappa d) (iterCstab d)) ^
+                  ((3 : ℕ) * B.card + (3 : ℕ)) *
+              Real.exp (goodRate (iterCstab d) * ∑ j ∈ Finset.Icc n m, ε j) *
+            (oscillationOn (U m) u + ∑ j ∈ Finset.Icc n m, δ j))
+      (hQ0 :
+        (0 : ℝ) ≤
+          iterCi d ^ (2 : ℕ) *
+              (goodConst h (iterKappa d) (iterCstab d) * badConst (iterKappa d) (iterCstab d)) ^
+                ((3 : ℕ) * B.card + (3 : ℕ)) *
+            Real.exp (goodRate (iterCstab d) * ∑ j ∈ Finset.Icc n m, ε j))
+      (hSdε0 : (0 : ℝ) ≤ ∑ j ∈ Finset.Icc n m, δ j)
+      (hb1 :
+        (9 : ℝ) * iterCi d ^ (2 : ℕ) *
+            ((goodConst h (iterKappa d) (iterCstab d) * badConst (iterKappa d) (iterCstab d)) ^
+                ((3 : ℕ) * B.card + (3 : ℕ)) *
+              Real.exp (goodRate (iterCstab d) * ∑ j ∈ Finset.Icc n m, ε j)) ≤
+          Real.exp
+            (iterConst d * ((↑h : ℝ) + (1 : ℝ)) * ((↑B.card : ℝ) + (1 : ℝ)) + iterConst d * ∑ j ∈ Finset.Icc n m, ε j))
+      (hV0 : (0 : ℝ) ≤ oscillationScaled m (U m) u + ∑ j ∈ Finset.Icc n m, δ j),
+      oscillationScaled n (U n) u ≤
+        Real.exp
+            (iterConst d * ((↑h : ℝ) + (1 : ℝ)) * ((↑B.card : ℝ) + (1 : ℝ)) + iterConst d * ∑ j ∈ Finset.Icc n m, ε j) *
+          (oscillationScaled m (U m) u + ∑ j ∈ Finset.Icc n m, δ j) := by
+  intro d h n m U u B ε δ hlowN hhighM hcbi hQ0 hSdε0 hb1 hV0
+  calc oscillationScaled n (U n) u ≤ oscillationOn (U n) u := hlowN
+    _ ≤ iterCi d ^ 2
+          * (goodConst h (iterKappa d) (iterCstab d)
+            * badConst (iterKappa d) (iterCstab d)) ^ (3 * B.card + 3)
+          * Real.exp (goodRate (iterCstab d) * ∑ j ∈ Finset.Icc n m, ε j)
+          * (oscillationOn (U m) u + ∑ j ∈ Finset.Icc n m, δ j) := hcbi
+    _ ≤ iterCi d ^ 2
+          * (goodConst h (iterKappa d) (iterCstab d)
+            * badConst (iterKappa d) (iterCstab d)) ^ (3 * B.card + 3)
+          * Real.exp (goodRate (iterCstab d) * ∑ j ∈ Finset.Icc n m, ε j)
+          * (9 * oscillationScaled m (U m) u + ∑ j ∈ Finset.Icc n m, δ j) :=
+        mul_le_mul_of_nonneg_left (by linarith only [hhighM]) hQ0
+    _ ≤ 9 * (iterCi d ^ 2
+          * (goodConst h (iterKappa d) (iterCstab d)
+            * badConst (iterKappa d) (iterCstab d)) ^ (3 * B.card + 3)
+          * Real.exp (goodRate (iterCstab d) * ∑ j ∈ Finset.Icc n m, ε j))
+          * (oscillationScaled m (U m) u + ∑ j ∈ Finset.Icc n m, δ j) :=
+        oscSlotCollapse hQ0 hSdε0
+    _ = 9 * iterCi d ^ 2
+          * ((goodConst h (iterKappa d) (iterCstab d)
+              * badConst (iterKappa d) (iterCstab d)) ^ (3 * B.card + 3)
+            * Real.exp (goodRate (iterCstab d) * ∑ j ∈ Finset.Icc n m, ε j))
+          * (oscillationScaled m (U m) u + ∑ j ∈ Finset.Icc n m, δ j) := by ring
+    _ ≤ Real.exp (iterConst d * ((h : ℝ) + 1) * ((B.card : ℝ) + 1)
+          + iterConst d * ∑ j ∈ Finset.Icc n m, ε j)
+          * (oscillationScaled m (U m) u + ∑ j ∈ Finset.Icc n m, δ j) :=
+        mul_le_mul_of_nonneg_right hb1 hV0
+
+private theorem iterationLemmaProvider_comparisonBounds2 :
+    ∀ (d : ℕ) (hd : d ≠ (0 : ℕ)) (h : ℕ) (θ : ℝ) (hθ01 : θ ∈ Set.Ioo (0 : ℝ) (1 : ℝ))
+      (hθh : θ ^ h ∈ Set.Ioo (0 : ℝ) (3 / 5 : ℝ)) (n m : ℤ) (hnm : n < m) (U : ℤ → Set (Vec d))
+      (hsand :
+        ∀ j ≤ m,
+          ∃ (x : Vec d) (y : Vec d),
+            (fun (v : Vec d) => x + v) '' openCubeSet (originCube d (j - (2 : ℤ))) ⊆ U j ∧
+              U j ⊆ (fun (v : Vec d) => y + v) '' openCubeSet (originCube d j))
+      (ε δ : ℤ → ℝ) (hε : ∀ (j : ℤ), n ≤ j → j ≤ m → (0 : ℝ) ≤ ε j) (hδ : ∀ (j : ℤ), n ≤ j → j ≤ m → (0 : ℝ) ≤ δ j),
+      ∃ (_ : (0 : ℕ) < d) (_ : (0 : ℝ) < θ) (_ : θ ≤ (1 : ℝ)) (_ : θ ^ h < (3 / 5 : ℝ)) (_ : (1 : ℕ) ≤ h) (_ : n ≤ m) (εt :
+        ℤ → ℝ) (_ : ∀ (k : ℤ), (0 : ℝ) ≤ εt k) (_ : ∀ (j : ℤ), n ≤ j → j ≤ m → εt j = ε j) (δt : ℤ → ℝ) (_ :
+        ∀ (k : ℤ), (0 : ℝ) ≤ δt k) (_ : ∀ (j : ℤ), n ≤ j → j ≤ m → δt j = δ j) (_ :
+        ∑ j ∈ Finset.Icc n m, εt j = ∑ j ∈ Finset.Icc n m, ε j) (_ : ∑ j ∈ Finset.Icc n m, δt j = ∑ j ∈ Finset.Icc n m, δ j)
+        (_ : (0 : ℝ) ≤ ∑ j ∈ Finset.Icc n m, εt j) (_ : (0 : ℝ) ≤ ∑ j ∈ Finset.Icc n m, δt j) (_ :
+        ∀ (k : ℤ),
+          ∃ (z : Vec d × Vec d),
+            axisCube z.1 ((3 : ℝ) ^ (min k m - (2 : ℤ))) ⊆ cappedWindows U m k ∧
+              cappedWindows U m k ⊆ axisCube z.2 ((3 : ℝ) ^ min k m)),
+        True := by
+  classical
+  intro d hd h θ hθ01 hθh n m hnm U hsand ε δ hε hδ
+  have hd0 : 0 < d := Nat.pos_of_ne_zero hd
+  have hθ0 : (0 : ℝ) < θ := hθ01.1
+  have hθ1 : θ ≤ 1 := le_of_lt hθ01.2
+  have hθh35 : θ ^ h < 3 / 5 := hθh.2
+  have hh : 1 ≤ h := by
+    rcases Nat.eq_zero_or_pos h with h0 | hpos
+    · rw [h0, pow_zero] at hθh35
+      exact absurd hθh35 (by norm_num)
+    · exact hpos
+  have hnmle : n ≤ m := le_of_lt hnm
+  -- the engine's sign slots are stated for all `k : ℤ`: truncate the error data
+  obtain ⟨εt, hεt0, hεteq⟩ : ∃ f : ℤ → ℝ, (∀ k : ℤ, 0 ≤ f k)
+      ∧ ∀ j : ℤ, n ≤ j → j ≤ m → f j = ε j := by
+    refine ⟨fun j => if n ≤ j ∧ j ≤ m then ε j else 0, fun k => ?_, fun j hj1 hj2 => ?_⟩
+    · change (0 : ℝ) ≤ if n ≤ k ∧ k ≤ m then ε k else 0
+      split_ifs with hcase
+      · exact hε k hcase.1 hcase.2
+      · exact le_rfl
+    · change (if n ≤ j ∧ j ≤ m then ε j else 0) = ε j
+      rw [ite_eq_left (⟨hj1, hj2⟩ : n ≤ j ∧ j ≤ m)]
+  obtain ⟨δt, hδt0, hδteq⟩ : ∃ f : ℤ → ℝ, (∀ k : ℤ, 0 ≤ f k)
+      ∧ ∀ j : ℤ, n ≤ j → j ≤ m → f j = δ j := by
+    refine ⟨fun j => if n ≤ j ∧ j ≤ m then δ j else 0, fun k => ?_, fun j hj1 hj2 => ?_⟩
+    · change (0 : ℝ) ≤ if n ≤ k ∧ k ≤ m then δ k else 0
+      split_ifs with hcase
+      · exact hδ k hcase.1 hcase.2
+      · exact le_rfl
+    · change (if n ≤ j ∧ j ≤ m then δ j else 0) = δ j
+      rw [ite_eq_left (⟨hj1, hj2⟩ : n ≤ j ∧ j ≤ m)]
+  have hSe : ∑ j ∈ Finset.Icc n m, εt j = ∑ j ∈ Finset.Icc n m, ε j :=
+    Finset.sum_congr rfl fun j hj => by
+      rw [Finset.mem_Icc] at hj
+      exact hεteq j hj.1 hj.2
+  have hSd : ∑ j ∈ Finset.Icc n m, δt j = ∑ j ∈ Finset.Icc n m, δ j :=
+    Finset.sum_congr rfl fun j hj => by
+      rw [Finset.mem_Icc] at hj
+      exact hδteq j hj.1 hj.2
+  have hSe0 : (0 : ℝ) ≤ ∑ j ∈ Finset.Icc n m, εt j :=
+    Finset.sum_nonneg fun j _ => hεt0 j
+  have hSd0 : (0 : ℝ) ≤ ∑ j ∈ Finset.Icc n m, δt j :=
+    Finset.sum_nonneg fun j _ => hδt0 j
+  -- the capped window family, with its axis-cube sandwich at every scale
+  have hsandc : ∀ k : ℤ, ∃ z : Vec d × Vec d,
+      axisCube z.1 ((3 : ℝ) ^ (min k m - 2)) ⊆ cappedWindows U m k ∧
+        cappedWindows U m k ⊆ axisCube z.2 ((3 : ℝ) ^ (min k m)) := by
+    intro k
+    obtain ⟨x, y, hin, hout⟩ := hsand (min k m) (min_le_right _ _)
+    obtain ⟨zin, zout, h1, h2⟩ := axisCube_sandwich_of_translateSandwich hin hout
+    exact ⟨(zin, zout), h1, h2⟩
+  exact ⟨hd0, hθ0, hθ1, hθh35, hh, hnmle, εt, hεt0, hεteq, δt, hδt0, hδteq, hSe, hSd, hSe0, hSd0, hsandc, True.intro⟩
+
+/-- **The provider for `Algsuperdiff.Frozen.Section4.iteration_lemma`.**
+
+The frozen theorem's statement verbatim, at the explicit witness `C = iterConst
+d`. -/
+theorem iteration_lemma_provider
+    (d : ℕ) (hd : d ≠ 0) :
+    ∃ C : ℝ, 0 < C ∧
+      ∀ (h : ℕ) (θ : ℝ), θ ∈ Set.Ioo (0 : ℝ) 1 → θ ^ h ∈ Set.Ioo (0 : ℝ) (3 / 5) →
+        ∀ n m : ℤ, n < m →
+          ∀ U : ℤ → Set (HCPolySupport.Vec d),
+            (∀ j : ℤ, j ≤ m → MeasurableSet (U j)) →
+            (∀ j : ℤ, j ≤ m → U (j - 1) ⊆ U j) →
+            (∀ j : ℤ, j ≤ m →
+                ∃ x y : HCPolySupport.Vec d,
+                  (fun v => x + v) ''
+                      HCPolySupport.openCubeSet
+                        (HCPolySupport.originCube d (j - 2)) ⊆ U j ∧
+                    U j ⊆
+                      (fun v => y + v) ''
+                        HCPolySupport.openCubeSet (HCPolySupport.originCube d j)) →
+            ∀ u : HCPolySupport.Vec d → ℝ,
+              MeasureTheory.MemLp u 2 (MeasureTheory.volume.restrict (U m)) →
+              ∀ B : Finset ℤ, B ⊆ Finset.Icc n m →
+                ∀ ε δ : ℤ → ℝ,
+                  (∀ j : ℤ, n ≤ j → j ≤ m → 0 ≤ ε j) →
+                  (∀ j : ℤ, n ≤ j → j ≤ m → 0 ≤ δ j) →
+                  ∀ (c : ℤ → ℝ) (g : ℤ → HCPolySupport.Vec d),
+                    (∀ j : ℤ, j ≤ m →
+                        Algsuperdiff.Section4.Support.IsAffineMinimizer
+                          (U j) u (c j) (g j)) →
+                    (∀ j : ℤ, n ≤ j → j ≤ m → j ∉ B →
+                        Algsuperdiff.Section4.Support.affineExcess
+                            (U (j - (h : ℤ))) u ≤
+                          θ ^ h *
+                              Algsuperdiff.Section4.Support.affineExcess (U j) u +
+                            ε j *
+                              Algsuperdiff.Section4.Support.slopeMagnitude (g j) +
+                            δ j) →
+                    ((3 : ℝ) ^ (-n) *
+                        Algsuperdiff.Section4.Support.normalizedL2On (U n)
+                          (fun x => u x - HCPolySupport.volumeAverage (U n) u) ≤
+                      Real.exp
+                          (C * ((h : ℝ) + 1) * ((B.card : ℝ) + 1) +
+                            C * ∑ j ∈ Finset.Icc n m, ε j) *
+                        ((3 : ℝ) ^ (-m) *
+                            Algsuperdiff.Section4.Support.normalizedL2On (U m)
+                              (fun x => u x - HCPolySupport.volumeAverage (U m) u) +
+                          ∑ j ∈ Finset.Icc n m, δ j)) ∧
+                      ∀ M : ℝ, (∀ j : ℤ, n ≤ j → j ≤ m → ε j ≤ M) →
+                          Algsuperdiff.Section4.Support.affineExcess (U n) u ≤
+                            Real.rpow θ
+                                  (-(C * ((h : ℝ) + 1) * ((B.card : ℝ) + 1))) *
+                                Real.exp
+                                  (C * ((h : ℝ) + 1) * ((B.card : ℝ) + 1) +
+                                    C * ∑ j ∈ Finset.Icc n m, ε j) *
+                              (θ ^ (m - n) *
+                                  Algsuperdiff.Section4.Support.affineExcess (U m) u +
+                                M *
+                                    ((3 : ℝ) ^ (-m) *
+                                      Algsuperdiff.Section4.Support.normalizedL2On (U m)
+                                        (fun x => u x - HCPolySupport.volumeAverage (U m) u)) +
+                                (1 + M) * ∑ j ∈ Finset.Icc n m, δ j)
+    := by
+  classical
+  refine ⟨iterConst d, iterConst_pos d, ?_⟩
+  intro h θ hθ01 hθh n m hnm U hmeas hnest hsand u hu B hB ε δ hε hδ cc gg hmin hdec
+  obtain ⟨hd0, hθ0, hθ1, hθh35, hh, hnmle, εt, hεt0, hεteq, δt, hδt0, hδteq, hSe, hSd, hSe0, hSd0, hsandc, _⟩ :=
+    @iterationLemmaProvider_comparisonBounds2 (d) (hd) (h) (θ) (hθ01) (hθh) (n) (m) (hnm) (U) (hsand) (ε) (δ) (hε) (hδ)
+  choose z hqin hqout using hsandc
+  have hmeasc : ∀ k : ℤ, MeasurableSet (cappedWindows U m k) :=
+    fun k => hmeas (min k m) (min_le_right _ _)
+  have hnestc : ∀ k : ℤ, cappedWindows U m k ⊆ cappedWindows U m (k + 1) :=
+    cappedWindows_nest hnest
+  obtain ⟨hEnn, hpnn, hκ1, hCs0, hCi1, hCi0, hmonoE, hstabE, hend, hdecayt, hUn, hUm, hlowN,
+    hhighM, hO0, hgcbc1, hgcbc0⟩ :=
+    @iterationLemmaProvider_comparisonBounds1 (d) (hd) (h) (θ) (n) (m) (U) (hnest) (u) (hu) (B)
+      (ε) (δ) (cc) (gg) (hmin) (hdec) (hd0) (hh) (hnmle) (εt) (hεteq) (δt) (hδteq) (z) (hqin)
+        (hqout) (hmeasc) (hnestc)
   refine ⟨?_, ?_⟩
   · -- conclusion (i): the engine plus the normalizer bridges and the prefactor budget
     have hcbi : oscillationOn (cappedWindows U m n) u
@@ -389,34 +620,7 @@ theorem iteration_lemma_provider
     have hgoal : oscillationScaled n (U n) u
         ≤ Real.exp (iterConst d * ((h : ℝ) + 1) * ((B.card : ℝ) + 1)
             + iterConst d * ∑ j ∈ Finset.Icc n m, ε j)
-          * (oscillationScaled m (U m) u + ∑ j ∈ Finset.Icc n m, δ j) := by
-      calc oscillationScaled n (U n) u ≤ oscillationOn (U n) u := hlowN
-        _ ≤ iterCi d ^ 2
-              * (goodConst h (iterKappa d) (iterCstab d)
-                * badConst (iterKappa d) (iterCstab d)) ^ (3 * B.card + 3)
-              * Real.exp (goodRate (iterCstab d) * ∑ j ∈ Finset.Icc n m, ε j)
-              * (oscillationOn (U m) u + ∑ j ∈ Finset.Icc n m, δ j) := hcbi
-        _ ≤ iterCi d ^ 2
-              * (goodConst h (iterKappa d) (iterCstab d)
-                * badConst (iterKappa d) (iterCstab d)) ^ (3 * B.card + 3)
-              * Real.exp (goodRate (iterCstab d) * ∑ j ∈ Finset.Icc n m, ε j)
-              * (9 * oscillationScaled m (U m) u + ∑ j ∈ Finset.Icc n m, δ j) :=
-            mul_le_mul_of_nonneg_left (by linarith only [hhighM]) hQ0
-        _ ≤ 9 * (iterCi d ^ 2
-              * (goodConst h (iterKappa d) (iterCstab d)
-                * badConst (iterKappa d) (iterCstab d)) ^ (3 * B.card + 3)
-              * Real.exp (goodRate (iterCstab d) * ∑ j ∈ Finset.Icc n m, ε j))
-              * (oscillationScaled m (U m) u + ∑ j ∈ Finset.Icc n m, δ j) :=
-            oscSlotCollapse hQ0 hSdε0
-        _ = 9 * iterCi d ^ 2
-              * ((goodConst h (iterKappa d) (iterCstab d)
-                  * badConst (iterKappa d) (iterCstab d)) ^ (3 * B.card + 3)
-                * Real.exp (goodRate (iterCstab d) * ∑ j ∈ Finset.Icc n m, ε j))
-              * (oscillationScaled m (U m) u + ∑ j ∈ Finset.Icc n m, δ j) := by ring
-        _ ≤ Real.exp (iterConst d * ((h : ℝ) + 1) * ((B.card : ℝ) + 1)
-              + iterConst d * ∑ j ∈ Finset.Icc n m, ε j)
-              * (oscillationScaled m (U m) u + ∑ j ∈ Finset.Icc n m, δ j) :=
-            mul_le_mul_of_nonneg_right hb1 hV0
+          * (oscillationScaled m (U m) u + ∑ j ∈ Finset.Icc n m, δ j)  := @iterationLemmaProvider_estimate2 (d) (h) (n) (m) (U) (u) (B) (ε) (δ) (hlowN) (hhighM) (hcbi) (hQ0) (hSdε0) (hb1) (hV0)
     exact hgoal
   · -- conclusion (ii): the weighted assembly at the error scale `M · Λ · (9 Ci osc_m + ∑δ)`
     intro M hMle
@@ -465,64 +669,7 @@ theorem iteration_lemma_provider
                 * badConst (iterKappa d) (iterCstab d)) ^ (3 * B.card + 3)
               * Real.exp (goodRate (iterCstab d) * ∑ j ∈ Finset.Icc n m, εt j))
             * (9 * iterCi d * oscillationScaled m (U m) u
-              + ∑ j ∈ Finset.Icc n m, δt j) := by
-      intro j hj1 hj2
-      have hk := hcbk j hj1 hj2
-      have hcard : 3 * (B ∩ Finset.Icc j m).card + 3 ≤ 3 * B.card + 3 := by
-        have hsub : B ∩ Finset.Icc j m ⊆ B := Finset.inter_subset_left
-        have hc := Finset.card_le_card hsub
-        omega
-      have hpowmono : (goodConst h (iterKappa d) (iterCstab d)
-            * badConst (iterKappa d) (iterCstab d)) ^ (3 * (B ∩ Finset.Icc j m).card + 3)
-          ≤ (goodConst h (iterKappa d) (iterCstab d)
-            * badConst (iterKappa d) (iterCstab d)) ^ (3 * B.card + 3) :=
-        pow_le_pow_right₀ hgcbc1 hcard
-      have hsubset : Finset.Icc j m ⊆ Finset.Icc n m := by
-        intro x hx
-        simp only [Finset.mem_Icc] at hx ⊢
-        omega
-      have hεsub : ∑ x ∈ Finset.Icc j m, εt x ≤ ∑ x ∈ Finset.Icc n m, εt x :=
-        Finset.sum_le_sum_of_subset_of_nonneg hsubset fun x _ _ => hεt0 x
-      have hδsub : ∑ x ∈ Finset.Icc j m, δt x ≤ ∑ x ∈ Finset.Icc n m, δt x :=
-        Finset.sum_le_sum_of_subset_of_nonneg hsubset fun x _ _ => hδt0 x
-      have hexpmono : Real.exp (goodRate (iterCstab d) * ∑ x ∈ Finset.Icc j m, εt x)
-          ≤ Real.exp (goodRate (iterCstab d) * ∑ x ∈ Finset.Icc n m, εt x) :=
-        Real.exp_le_exp.mpr (mul_le_mul_of_nonneg_left hεsub (goodRate_nonneg hCs0))
-      have hpref : (goodConst h (iterKappa d) (iterCstab d)
-              * badConst (iterKappa d) (iterCstab d))
-              ^ (3 * (B ∩ Finset.Icc j m).card + 3)
-            * Real.exp (goodRate (iterCstab d) * ∑ x ∈ Finset.Icc j m, εt x)
-          ≤ (goodConst h (iterKappa d) (iterCstab d)
-              * badConst (iterKappa d) (iterCstab d)) ^ (3 * B.card + 3)
-            * Real.exp (goodRate (iterCstab d) * ∑ x ∈ Finset.Icc n m, εt x) :=
-        mul_le_mul hpowmono hexpmono (le_of_lt (Real.exp_pos _)) (pow_nonneg hgcbc0 _)
-      have hbase : affineExcess (cappedWindows U m m) u + slopeMagnitude (gg (min m m))
-            + ∑ x ∈ Finset.Icc j m, δt x
-          ≤ 9 * iterCi d * oscillationScaled m (U m) u
-            + ∑ x ∈ Finset.Icc n m, δt x := by
-        linarith only [hEpm, hδsub]
-      have hbase0 : (0 : ℝ) ≤ affineExcess (cappedWindows U m m) u
-          + slopeMagnitude (gg (min m m)) + ∑ x ∈ Finset.Icc j m, δt x := by
-        have h1 := hEnn m
-        have h2 := hpnn m
-        have h3 : (0 : ℝ) ≤ ∑ x ∈ Finset.Icc j m, δt x :=
-          Finset.sum_nonneg fun x _ => hδt0 x
-        linarith only [h1, h2, h3]
-      calc slopeMagnitude (gg (min j m))
-          ≤ affineExcess (cappedWindows U m j) u + slopeMagnitude (gg (min j m)) := by
-            linarith only [hEnn j]
-        _ ≤ (goodConst h (iterKappa d) (iterCstab d)
-                * badConst (iterKappa d) (iterCstab d))
-                ^ (3 * (B ∩ Finset.Icc j m).card + 3)
-              * Real.exp (goodRate (iterCstab d) * ∑ x ∈ Finset.Icc j m, εt x)
-              * (affineExcess (cappedWindows U m m) u + slopeMagnitude (gg (min m m))
-                + ∑ x ∈ Finset.Icc j m, δt x) := hk
-        _ ≤ ((goodConst h (iterKappa d) (iterCstab d)
-                * badConst (iterKappa d) (iterCstab d)) ^ (3 * B.card + 3)
-              * Real.exp (goodRate (iterCstab d) * ∑ j ∈ Finset.Icc n m, εt j))
-              * (9 * iterCi d * oscillationScaled m (U m) u
-                + ∑ j ∈ Finset.Icc n m, δt j) :=
-            mul_le_mul hpref hbase hbase0 hΛ0
+              + ∑ j ∈ Finset.Icc n m, δt j)  := @iterationLemmaProvider_estimate1 (d) (h) (n) (m) (U) (u) (B) (gg) (εt) (hεt0) (δt) (hδt0) (hEnn) (hpnn) (hCs0) (hgcbc1) (hgcbc0) (hΛ0) (hEpm) (hcbk)
     -- the error scale, and the weighted assembly
     have hwM : ∀ j : ℤ, n ≤ j → j ≤ m →
         εt j * slopeMagnitude (gg (min j m))

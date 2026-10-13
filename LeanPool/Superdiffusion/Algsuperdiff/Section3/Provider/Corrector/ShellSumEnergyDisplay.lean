@@ -27,12 +27,14 @@ This module assembles the four proved halves into the printed display.
 * the **layer decomposition**
   `ShellSumLayerFlip.integral_normSq_shellSumCorrectorRepr_eq_sum` ((J1)
   independence + (J3) negation, per ****);
-* the **`k = 0` value** `ShellSumLayerZeroEnergy.norm_sq_stationaryPotentialProjection_layerForcingL2_zero`
+* the **`k = 0` value**
+`ShellSumLayerZeroEnergy.norm_sq_stationaryPotentialProjection_layerForcingL2_zero`
   ((J4), `a.j.nondeg`);
 * the **per-layer dilation**
   `ShellSumLayerDilation.norm_sq_stationaryPotentialProjection_layerForcingL2`
   (`e.diff.law.shift`, per ****);
-* the **corrector limit** `ShellSumConsumerTransport.tendsto_integral_cutoffSample_cubeAverage_of_weakSolutions`
+* the **corrector limit**
+`ShellSumConsumerTransport.tendsto_integral_cutoffSample_cubeAverage_of_weakSolutions`
   (`l.corrector.limit` at the consumer's carrier).
 
 ## What is supplied
@@ -102,7 +104,7 @@ theorem integral_normSq_shellSumCorrectorRepr_eq_display (M : ABKModel d) {e : V
 private theorem valuePathForcing_smul_direction (c : ℝ) (e : Vec d)
     (f : C(Vec d, Mat d)) :
     valuePathForcing (c • e) f = c • valuePathForcing e f := by
-  show HilbertVec.ofVec (matVecMul (f 0) (c • e)) = _
+  change HilbertVec.ofVec (matVecMul (f 0) (c • e)) = _
   have h : matVecMul (f 0) (c • e) = c • matVecMul (f 0) e := by
     funext i
     simp only [matVecMul, Pi.smul_apply, smul_eq_mul, Finset.mul_sum]

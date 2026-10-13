@@ -142,7 +142,8 @@ theorem maxDescendantSigmaStarInvMatrixNormAtScale_le_cutoffCoercivity
   calc
     Ch02.maxDescendantSigmaStarInvMatrixNormAtScale Q (Q.scale - (n : ℤ)) F ≤
       HCPolySupport.maxDescendantSigmaStarInvNormAtScale Q (Q.scale - (n : ℤ)) A := by
-        exact Ch02.maxDescendantSigmaStarInvMatrixNormAtScale_le_maxDescendantSigmaStarInvNormAtScale
+        exact
+          Ch02.maxDescendantSigmaStarInvMatrixNormAtScale_le_maxDescendantSigmaStarInvNormAtScale
           F Q hk
     _ ≤ 4 * (d : ℝ) * M.nu⁻¹ := by
       simpa [A] using

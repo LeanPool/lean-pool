@@ -55,9 +55,9 @@ The skeletons `upperDisplay_of_junctions` / `lowerDisplay_of_junctions` of
    i.e. at *one fixed descendant depth `j`* and at *every* cube scale `K`.
    Both producers of `hswitch` and `hsplit` --- the proved principal-response
    terminal
-   `PrincipalResponseTerminal.exists_const_descendantsAverage_integral_principalEnergy_le_annealedLimit`
+`exists_const_descendantsAverage_integral_principalEnergy_le_annealedLimit`
    and the proved structural split
-   `LocalizationRecurrenceMesh.exists_localizationRecurrenceMeshSplit_le_descendantsAverage_expanded`
+`LocalizationRecurrenceMesh.exists_localizationRecurrenceMeshSplit_le_descendantsAverage_expanded`
    --- carry the depth-naming identity
 
    ```
@@ -113,10 +113,22 @@ following, each of which is a *named producer's* output:
 
 | premise | content | producer |
 |---|---|---|
-| `hsplit` | Junction 3, `e.lower.bound.basic.split` + `e.lower.bound.localization.terms` at the `cgamma^10` endpoint | **IN**, lane `gamma10-fold`; reduce to one finite grid first with `Closure.AnnealedLimitJunction.annealedSplitEndpoint_of_integral_ch02CoarseBlockMatrix_le` |
-| `hstep4` | Junction 1 at the chosen families | `Closure.JunctionDischargeStepFour.step4GaugeEndpoint_of_correctors`, whose `hD` binder is `isZeroTraceDirichletRhsWeakSolution_alongIncrementPath` below and whose four remaining binders are the analytic side conditions its own docstring table charges to `Corrector.CorrectorMeasurableGradient` and `Corrector.CorrectorLimitNode` |
-| `hstep5` | Junction 2 at the chosen families | `Closure.JunctionDischargeStepFiveDisplay.step5GaugeEndpoint_of_correctors_gauge` (per-cube gauge), whose `hosc` binder is supplied by `Closure.Step5DefectGauge`'s re-sited full-mesh producer and whose remaining binders are that module's own table |
-| `hDm`, `hNm` | `AEStronglyMeasurable` of the two cube energies along the increment path | the path-carrier analogue of `Corrector.CorrectorMeasurableForcing.continuous_contMatrixFieldL2` composed with `Corrector.MeasurablePrereqSolutionOperator`'s continuous solution operators; not built here |
+| `hsplit` | Junction 3, `e.lower.bound.basic.split` + `e.lower.bound.localization.terms` at the
+`cgamma^10` endpoint | **IN**, lane `gamma10-fold`; reduce to one finite grid first with
+`Closure.AnnealedLimitJunction.annealedSplitEndpoint_of_integral_ch02CoarseBlockMatrix_le` |
+| `hstep4` | Junction 1 at the chosen families |
+`Closure.JunctionDischargeStepFour.step4GaugeEndpoint_of_correctors`, whose `hD` binder is
+`isZeroTraceDirichletRhsWeakSolution_alongIncrementPath` below and whose four remaining binders are
+the analytic side conditions its own docstring table charges to
+`Corrector.CorrectorMeasurableGradient` and `Corrector.CorrectorLimitNode` |
+| `hstep5` | Junction 2 at the chosen families |
+`Closure.JunctionDischargeStepFiveDisplay.step5GaugeEndpoint_of_correctors_gauge` (per-cube gauge),
+whose `hosc` binder is supplied by `Closure.Step5DefectGauge`'s re-sited full-mesh producer and
+whose remaining binders are that module's own table |
+| `hDm`, `hNm` | `AEStronglyMeasurable` of the two cube energies along the increment path | the
+path-carrier analogue of `Corrector.CorrectorMeasurableForcing.continuous_contMatrixFieldL2`
+composed with `Corrector.MeasurablePrereqSolutionOperator`'s continuous solution operators; not
+built here |
 
 `hgamma`, `hcap`, `hsmall` are the parameter-regime facts the manuscript grants
 (`e.cgamma.constraints`, `Closure.shellDrift_le_cap`); they are carried as
@@ -422,7 +434,7 @@ theorem eventually_closureMeshDepth_scale (M : ABKModel d) (n : ℤ) (h : ℕ) :
   have hle : recurrenceMesoScale recurrenceGapMultiplier M.gamma
       (n + (h : ℤ)) (h : ℤ) ≤ (K : ℤ) :=
     le_trans (Int.self_le_toNat _) (by exact_mod_cast hK)
-  show ((K : ℤ)) - ((closureMeshDepth M n h K : ℕ) : ℤ) = _
+  change ((K : ℤ)) - ((closureMeshDepth M n h K : ℕ) : ℤ) = _
   rw [closureMeshDepth, Int.toNat_of_nonneg (by omega)]
   ring
 

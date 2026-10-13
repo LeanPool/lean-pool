@@ -376,11 +376,11 @@ private theorem kuhn_edge_telescope (a : Fin (d + 1) → ℝ) (k : Fin (d + 1)) 
     sum_range_reflect_telescope (fun j : ℕ => a ⟨min j d, by omega⟩) d k.val hkd]
   have hk : (⟨min k.val d, by omega⟩ : Fin (d + 1)) = k := by
     refine Fin.ext ?_
-    show min k.val d = k.val
+    change min k.val d = k.val
     omega
   have h0 : (⟨min 0 d, by omega⟩ : Fin (d + 1)) = 0 := by
     refine Fin.ext ?_
-    show min 0 d = (0 : Fin (d + 1)).val
+    change min 0 d = (0 : Fin (d + 1)).val
     simp
   rw [hk, h0]
 
@@ -442,7 +442,7 @@ def kuhnInterpAffine (T : KuhnCell d) (g : Vec d → ℝ) : Vec d →ᵃ[ℝ] �
       map_smul' := fun c a => by exact vecDot_smul_right' (kuhnSlope T g) c a }
   map_vadd' := by
     intro x v
-    show kuhnInterp T g (v + x) = vecDot (kuhnSlope T g) v + kuhnInterp T g x
+    change kuhnInterp T g (v + x) = vecDot (kuhnSlope T g) v + kuhnInterp T g x
     have h := kuhnInterp_sub T g (v + x) x
     rw [add_sub_cancel_right] at h
     linarith

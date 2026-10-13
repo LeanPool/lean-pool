@@ -76,7 +76,7 @@ theorem centreChild_mem_childCubes (d : ℕ) (k : ℤ) :
   have hindex : (fun i : Fin d => 3 * (originCube d k).index i + ((1 : Fin 3) : ℤ) - 1) =
       (originCube d (k - 1)).index := by
     funext i
-    show 3 * (0 : ℤ) + ((1 : Fin 3) : ℤ) - 1 = 0
+    change 3 * (0 : ℤ) + ((1 : Fin 3) : ℤ) - 1 = 0
     norm_num
   exact congrArg (fun idx => (⟨k - 1, idx⟩ : TriadicCube d)) hindex
 
@@ -84,11 +84,11 @@ theorem centreChild_mem_childCubes (d : ℕ) (k : ℤ) :
 theorem centreChild_mem_descendantsAtScale (d : ℕ) (k : ℤ) :
     originCube d (k - 1) ∈ descendantsAtScale (originCube d k) (k - 1) := by
   have hk : k - 1 ≤ (originCube d k).scale := by
-    show k - 1 ≤ k
+    change k - 1 ≤ k
     omega
   rw [descendantsAtScale_eq_descendantsAtDepth (originCube d k) hk]
   have hdepth : Int.toNat ((originCube d k).scale - (k - 1)) = 1 := by
-    show Int.toNat (k - (k - 1)) = 1
+    change Int.toNat (k - (k - 1)) = 1
     omega
   rw [hdepth, descendantsAtDepth_one]
   exact centreChild_mem_childCubes d k
@@ -105,7 +105,7 @@ theorem originCube_add_two_mem_descendantsAtScale (d : ℕ) (n : ℤ) :
 theorem cubeSet_originCube_add_two_subset (d : ℕ) (n : ℤ) :
     cubeSet (originCube d (n + 2)) ⊆ cubeSet (originCube d (n + 3)) := by
   have hk : n + 2 ≤ (originCube d (n + 3)).scale := by
-    show n + 2 ≤ n + 3
+    change n + 2 ≤ n + 3
     omega
   exact cubeSet_subset_of_mem_descendantsAtScale hk
     (originCube_add_two_mem_descendantsAtScale d n)
@@ -181,7 +181,7 @@ theorem ae_errorOn_centreChild_le_harmonicSlot (d : ℕ) [NeZero d] :
     (isotropicComparatorMatrix (Annealed.sigmaBar M (n + 3))) hs8 hu
     (originCube_add_two_mem_descendantsAtScale d n)
   have hdepth : Int.toNat ((originCube d (n + 3)).scale - (n + 2)) = 1 := by
-    show Int.toNat (n + 3 - (n + 2)) = 1
+    change Int.toNat (n + 3 - (n + 2)) = 1
     omega
   rw [hdepth] at hdesc
   have hfac : Real.rpow (3 : ℝ) (s / 8 * ((1 : ℕ) : ℝ)) ≤ Real.rpow (3 : ℝ) (1 / 8 : ℝ) := by

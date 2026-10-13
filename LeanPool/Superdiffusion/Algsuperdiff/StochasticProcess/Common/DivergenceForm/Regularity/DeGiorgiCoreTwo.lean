@@ -40,8 +40,8 @@ noncomputable def fourThirds : FiniteLpExponent where
   exponent := ENNReal.ofReal (4 / 3 : ℝ)
   one_lt := by
     rw [← ENNReal.ofReal_one, ENNReal.ofReal_lt_ofReal_iff]
-    norm_num
-    positivity
+    · norm_num
+    · positivity
   lt_top := ENNReal.ofReal_lt_top
 
 noncomputable def four : FiniteLpExponent where

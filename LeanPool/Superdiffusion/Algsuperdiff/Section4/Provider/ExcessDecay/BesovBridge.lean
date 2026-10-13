@@ -88,7 +88,7 @@ theorem forceSobolevRegularity_of_memWsp (Q : TriadicCube d) (s : ℝ)
   intro i
   refine ⟨?_, ?_⟩
   · exact (ContinuousLinearMap.proj (R := ℝ) i).comp_memLp' hL2
-  · show MemLp (Gagliardo.gagliardoKernel s 2 (fun x => g x i)) 2
+  · change MemLp (Gagliardo.gagliardoKernel s 2 (fun x => g x i)) 2
       (Gagliardo.gagliardoCubeMeasure Q)
     rw [gagliardoKernel_coord s g i]
     exact (ContinuousLinearMap.proj (R := ℝ) i).comp_memLp' hW

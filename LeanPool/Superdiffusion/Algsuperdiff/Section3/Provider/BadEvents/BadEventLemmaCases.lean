@@ -258,7 +258,7 @@ theorem measureReal_coarseEllipticityFailure_le_of_coarseBounds (M : ABKModel d)
           ((Algsuperdiff.Section3.Annealed.sigmaBar M (n - 1) : ℝ)) := by
       have hchain := lt_of_lt_of_le hfail hstep
       nlinarith [hchain, hW, hCcg0]
-    show Ccg < Y omega
+    change Ccg < Y omega
     nlinarith [h2Ccg, hdom, hb, hCcg0]
   -- the weak-Orlicz tail at the level `Ccg`
   have ht1 : (1 : ℝ) ≤ Ccg / Real.exp (-(Ccg⁻¹ * (E⁻¹) ^ 2 * M.gamma⁻¹)) :=

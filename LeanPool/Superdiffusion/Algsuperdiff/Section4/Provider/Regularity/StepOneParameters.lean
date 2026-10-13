@@ -161,8 +161,8 @@ theorem stepOneC1_pos (d : ℕ) (Cedos Cann Citer : ℝ) (k : ℕ) :
 noncomputable def stepOneEp (delta : ℝ) : ℝ := stepOneSEighth * Real.sqrt delta
 
 /-- `⅛ s δ^{1/2} ∈ (0, 1/2]`: the `ε`-range of the annular producer's clause (ii). -/
-theorem stepOneEp_mem_Ioc {delta : ℝ} (hdelta : delta ∈ Set.Ioc (0:ℝ) (1 / 2)) :
-    stepOneEp delta ∈ Set.Ioc (0:ℝ) (1 / 2) := by
+theorem stepOneEp_mem_Ioc {delta : ℝ} (hdelta : delta ∈ Set.Ioc (0 : ℝ) (1 / 2)) :
+    stepOneEp delta ∈ Set.Ioc (0 : ℝ) (1 / 2) := by
   have hpos : 0 < Real.sqrt delta := Real.sqrt_pos.mpr hdelta.1
   have hle : Real.sqrt delta ≤ 1 := by
     have h := Real.sqrt_le_sqrt (le_trans hdelta.2 (by norm_num : (1/2:ℝ) ≤ 1))

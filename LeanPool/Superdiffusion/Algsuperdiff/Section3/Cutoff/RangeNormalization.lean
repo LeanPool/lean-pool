@@ -153,7 +153,8 @@ theorem cutoffNormalization_unitRangeDependentLaw (M : ABKModel d) (m : ℤ) :
     ProbabilityTheory.indep_of_indep_of_le_right
       (ProbabilityTheory.indep_of_indep_of_le_left hlocalSource hA_local_S.comap_le)
       hA_local_T.comap_le
-  have hbridge := Algsuperdiff.Section3.Annealed.indep_restrictionSigmaR_map_of_indep_localSigmaR_thickenings
+  have hbridge :=
+    Algsuperdiff.Section3.Annealed.indep_restrictionSigmaR_map_of_indep_localSigmaR_thickenings
     A hAmeas hAcont U V hU hV cutoffBridgeEpsilon cutoffBridgeEpsilon_pos hlocal
   have hmap : Measure.map A (cutoffSampleLaw M).toMeasure =
       HCPolySupport.Book.Ch04.restrictionScaleNormalizedLaw k

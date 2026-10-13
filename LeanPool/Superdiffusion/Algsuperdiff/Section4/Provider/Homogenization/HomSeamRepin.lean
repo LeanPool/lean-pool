@@ -222,6 +222,7 @@ section Carrier
 
 variable [NeZero d]
 
+omit [NeZero d] in
 /-- **THE `q`-INDEX STEP, AT CONSTANT EXACTLY ONE.**
 
 `𝓔_{t,∞,1}(□,n; a, σ₀) ≤ 𝓔_{t/2,∞,2}(□,n; a, σ₀)`: `CoarseGraining`'s `q = 1`
@@ -247,6 +248,7 @@ theorem parentTruncatedOne_le_parentTruncatedTwo_half (Q : TriadicCube d) (n : �
         (by omega) a sigma0 hsigma0)
     (tsum_geomWeight_eq_one ht)
 
+omit [NeZero d] in
 /-- **THE ORDER STEP AT `q = 2`.**
 
 `𝓔_{s₁,∞,2} ≤ √K · 𝓔_{s₂,∞,2}` whenever `s₂ ≤ s₁` and the normalization ratio

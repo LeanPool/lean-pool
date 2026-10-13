@@ -116,7 +116,7 @@ private theorem exists_ne_pair_originCube [NeZero d] (m : ℤ) :
   refine ⟨(0 : Vec d), (fun _ => (1 / 4 : ℝ) * (3 : ℝ) ^ m), ?_, ?_, ?_⟩
   · rw [mem_openCubeSet_originCube_iff]
     intro i
-    show (-(1 / 2 : ℝ)) * (3 : ℝ) ^ m < (0 : ℝ) ∧ (0 : ℝ) < (1 / 2 : ℝ) * (3 : ℝ) ^ m
+    change (-(1 / 2 : ℝ)) * (3 : ℝ) ^ m < (0 : ℝ) ∧ (0 : ℝ) < (1 / 2 : ℝ) * (3 : ℝ) ^ m
     exact ⟨by linarith only [h3], by linarith only [h3]⟩
   · rw [mem_openCubeSet_originCube_iff]
     exact fun _ => ⟨by linarith only [h3], by linarith only [h3]⟩

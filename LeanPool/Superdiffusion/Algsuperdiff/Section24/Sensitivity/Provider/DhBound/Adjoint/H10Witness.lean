@@ -100,7 +100,7 @@ theorem potential_ae_eq_half_add_canonicalMaximizerGradients
       (canonicalMaximizer (responseExistenceTheory U a.transpose)
         p (-q)).toSolution.toH1.grad x i :=
     congrFun h2 i
-  show X.potential x i = (2 : ℝ)⁻¹ *
+  change X.potential x i = (2 : ℝ)⁻¹ *
     ((canonicalMaximizer (responseExistenceTheory U a.transpose)
         p (-q)).toSolution.toH1.grad x i
       + (canonicalMaximizer (responseExistenceTheory U a)
@@ -152,7 +152,7 @@ theorem exists_h10Function_grad_ae_eq_halfSum_add_const
       p (-q)).toSolution.toH1.grad x i = vAdj.toH1.grad x i := congrFun h2 i
   have e3 : (canonicalMaximizer (responseExistenceTheory U a) p q).toSolution.toH1.grad x i
       = v.toH1.grad x i := congrFun h3 i
-  show u.toH1Function.grad x i =
+  change u.toH1Function.grad x i =
     (2 : ℝ)⁻¹ * (vAdj.toH1.grad x i + v.toH1.grad x i) + p i
   rw [← e2, ← e3, ← e1]
   linarith

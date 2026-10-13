@@ -237,11 +237,11 @@ def innerScaleEquiv (j : ℤ) : ℕ ≃ {n : ℤ // n ≤ j - 1} where
   toFun i := ⟨j - 1 - (i : ℤ), by omega⟩
   invFun n := (j - 1 - n.1).toNat
   left_inv i := by
-    show (j - 1 - (j - 1 - (i : ℤ))).toNat = i
+    change (j - 1 - (j - 1 - (i : ℤ))).toNat = i
     omega
   right_inv n := by
     refine Subtype.ext ?_
-    show j - 1 - (((j - 1 - n.1).toNat : ℕ) : ℤ) = n.1
+    change j - 1 - (((j - 1 - n.1).toNat : ℕ) : ℤ) = n.1
     have hn := n.2
     omega
 
@@ -262,7 +262,7 @@ theorem XcalE_eq_wsumE (M : ABKModel d) (s : {s : ℝ // 0 < s}) (j : ℤ)
   have hsub : j - (j - 1 - (i : ℤ)) = (i : ℤ) + 1 := by ring
   have hnle : j - 1 - (i : ℤ) ≤ j := by omega
   have htn : ((i : ℤ) + 1).toNat = i + 1 := by omega
-  show annularWeight (s : ℝ) (j - (j - 1 - (i : ℤ))) *
+  change annularWeight (s : ℝ) (j - (j - 1 - (i : ℤ))) *
       errorAnnSup M s j (j - 1 - (i : ℤ)) omega = _
   rw [hsub, annularWeight_eq_weightThird (by omega : (0 : ℤ) ≤ (i : ℤ) + 1), htn,
     errorAnnSup_eq_ofReal_errorAnnMax M s hnle omega,

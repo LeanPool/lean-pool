@@ -215,6 +215,7 @@ theorem offGridBlockResponseValueSet_nonempty (w : Vec d) (R : TriadicCube d)
   obtain ⟨e, he⟩ := exists_unit_fullBlockVec (d := d)
   exact ⟨_, ⟨e, he, rfl⟩⟩
 
+omit [NeZero d] in
 theorem offGridBlockResponseMax_nonneg (w : Vec d) (R : TriadicCube d) (g : CoeffField d)
     (a0 : Mat d) : 0 ≤ offGridBlockResponseMax w R g a0 := by
   rw [offGridBlockResponseMax]
@@ -253,10 +254,12 @@ def offGridShellMax (w : Vec d) (P : TriadicCube d) (k : ℤ) (g : CoeffField d)
     (a0 : Mat d) : ℝ :=
   Ch02.finsetSupReal (descendantsAtScale P k) (fun R => offGridBlockResponseMax w R g a0)
 
+omit [NeZero d] in
 theorem offGridShellMax_nonneg (w : Vec d) (P : TriadicCube d) (k : ℤ) (g : CoeffField d)
     (a0 : Mat d) : 0 ≤ offGridShellMax w P k g a0 :=
   Ch02.finsetSupReal_nonneg _ _ fun R _ => offGridBlockResponseMax_nonneg w R g a0
 
+omit [NeZero d] in
 /-- The shell maximum is bounded by any uniform bound on its cubes. -/
 theorem offGridShellMax_le {w : Vec d} {P : TriadicCube d} {k : ℤ} {g : CoeffField d}
     {a0 : Mat d} {C : ℝ} (hk : k ≤ P.scale)

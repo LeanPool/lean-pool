@@ -217,6 +217,7 @@ private theorem mem_descendantsAtScale_of_mem_descendantsAtDepth
 
 variable [NeZero d]
 
+omit [NeZero d] in
 /-- At `p = 2` the squared scale response is the descendant average of the
 one-cube normalized block response. -/
 private theorem scaleResponseAtScale_finite_two_sq
@@ -233,7 +234,7 @@ private theorem scaleResponseAtScale_finite_two_sq
         fun R : TriadicCube d => Ch02.normalizedBlockResponseMax R F a0 := by
     funext R
     norm_num
-  show (Real.rpow
+  change (Real.rpow
       (finsetAverageReal (descendantsAtScale Q (Q.scale - (l : ℤ)))
         (fun R => Real.rpow (Ch02.normalizedBlockResponseMax R F a0) ((2 : ℝ) / 2)))
       (1 / 2)) ^ 2 = _
@@ -242,6 +243,7 @@ private theorem scaleResponseAtScale_finite_two_sq
   rw [← Real.sqrt_eq_rpow]
   exact Real.sq_sqrt hnonneg
 
+omit [NeZero d] in
 /-- **The exact `p = q = 2` aggregation identity for `mathcal E`.**  Squaring
 the homogenization error at `p = q = 2` produces exactly the geometrically
 weighted sum, over all depths, of the descendant averages of the one-cube
@@ -267,7 +269,7 @@ theorem homogenizationErrorOnCube_finite_two_two_sq_eq_tsum
             Ch02.geometricWeight s 2 l *
               descendantsAverage Q l
                 (fun R => Ch02.normalizedBlockResponseMax R F a0)) (1 / 2) := by
-    show Ch02.HomogenizationErrorFinite Q Q.scale s (.finite 2) 2 F a0 = _
+    change Ch02.HomogenizationErrorFinite Q Q.scale s (.finite 2) 2 F a0 = _
     unfold Ch02.HomogenizationErrorFinite
     refine congrArg (fun x : ℝ => Real.rpow x (1 / 2)) ?_
     refine tsum_congr fun l => ?_

@@ -77,7 +77,7 @@ theorem isBigO_posPart_of_isBigOWith {Psi : ℝ → ℝ} {Y : Omega → ℝ} {A 
   have heq : (fun omega => |max (Y omega) 0|) = fun omega => max 0 (Y omega) := by
     funext omega
     rw [abs_of_nonneg (le_max_right _ _), max_comm]
-  show IsBigOWith mu Psi (fun omega => |max (Y omega) 0|) A
+  change IsBigOWith mu Psi (fun omega => |max (Y omega) 0|) A
   rw [heq]
   exact h
 
@@ -116,7 +116,7 @@ theorem isCommonEventTwoTermBigOWith_add_const {I : Type*} [IsFiniteMeasure mu]
     intro omega homega
     have hlt : (A1 + c) * t < Y omega + c := homega
     have hct : c ≤ c * t := le_mul_of_one_le_right hc ht
-    show A1 * t < Y omega
+    change A1 * t < Y omega
     nlinarith
 
 /-- Transfer of a common-event two-term bound along an almost-sure pointwise

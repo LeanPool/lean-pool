@@ -95,7 +95,6 @@ theorem mul_analyticCubeResolvent_cubeBarrier_le (m : ℕ)
     filter_upwards [A.analyticCubeResolvent_ae mu (P.measurable_cubeBarrier m)
         (fun z => P.abs_cubeBarrier_le m z) m, hae, P.cubeBarrier_ae m hVU]
       with y h1 h2 h3
-
     rw [h1, P.boundedMeasurableToScalarL2_cubeBarrier m hVU, h3]
     exact h2
   · have hzero := P.cubeBarrier_of_notMem m hVU hx

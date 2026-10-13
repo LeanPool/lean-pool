@@ -103,7 +103,7 @@ theorem meanSquareDeviationVecOn_neg (V : Set (Vec d)) (f : Vec d → Vec d) :
     have hzero : (0 : Vec d) k = 0 := rfl
     rw [hneg, hzero]
     ring
-  show volumeAverage V (fun y => ((-f y) k - (0 : Vec d) k) ^ 2)
+  change volumeAverage V (fun y => ((-f y) k - (0 : Vec d) k) ^ 2)
     = volumeAverage V (fun y => (f y k - (0 : Vec d) k) ^ 2)
   rw [hfun]
 

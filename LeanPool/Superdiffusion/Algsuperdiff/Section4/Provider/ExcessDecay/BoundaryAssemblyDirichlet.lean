@@ -169,7 +169,7 @@ theorem exists_dirichletForcedCubeSolution_boundaryData (Q : TriadicCube d)
       (h + rho.toH1Function).toFun x - h.toFun x := by
     intro x
     rw [H1Function.add_toFun]
-    show rho.toH1Function.toFun x = h.toFun x + rho.toH1Function.toFun x - h.toFun x
+    change rho.toH1Function.toFun x = h.toFun x + rho.toH1Function.toFun x - h.toFun x
     ring
   exact ⟨⟨h + rho.toH1Function, h, hweak, ⟨rho, Filter.Eventually.of_forall hexact⟩⟩,
     rfl, rho, hexact⟩

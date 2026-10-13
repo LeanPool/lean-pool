@@ -51,7 +51,7 @@ private theorem continuous_fullBlockReflect {d : ℕ} :
   refine continuous_pi_iff.2 fun alpha => ?_
   refine continuous_pi_iff.2 fun beta => ?_
   cases alpha <;> cases beta <;>
-    simp [fullBlockReflect, toFullBlockMat, ofFullBlockMat, blockReflect] <;>
+    dsimp only [fullBlockReflect, toFullBlockMat, ofFullBlockMat, blockReflect] <;>
     fun_prop
 
 private theorem continuous_fullBlockQuadratic {d : ℕ}
@@ -72,7 +72,7 @@ private theorem continuous_toFullBlockVec {d : ℕ} {X : Type*} [TopologicalSpac
     Continuous (fun z => toFullBlockVec (P z)) := by
   rw [continuous_pi_iff]
   intro alpha
-  cases alpha <;> simp [toFullBlockVec] <;> fun_prop
+  cases alpha <;> dsimp only [toFullBlockVec] <;> fun_prop
 
 private theorem continuous_blockJQuadratic {d : ℕ}
     {X : Type*} [TopologicalSpace X] {A : X → FullBlockMat d}

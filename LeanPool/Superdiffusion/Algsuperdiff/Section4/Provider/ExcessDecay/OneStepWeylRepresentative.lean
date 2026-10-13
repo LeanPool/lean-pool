@@ -145,7 +145,7 @@ theorem tendsto_weylBump_rOut {rho : ℝ} (hrho : 0 < rho) :
 
 theorem weylBump_rOut_le_two_mul_rIn {rho : ℝ} (hrho : 0 < rho) (n : ℕ) :
     (weylBump (d := d) hrho n).rOut ≤ 2 * (weylBump (d := d) hrho n).rIn := by
-  show rho / ((n : ℝ) + 1) ≤ 2 * (rho / (2 * ((n : ℝ) + 1)))
+  change rho / ((n : ℝ) + 1) ≤ 2 * (rho / (2 * ((n : ℝ) + 1)))
   have h1 : (0 : ℝ) < (n : ℝ) + 1 := by positivity
   refine le_of_eq ?_
   field_simp

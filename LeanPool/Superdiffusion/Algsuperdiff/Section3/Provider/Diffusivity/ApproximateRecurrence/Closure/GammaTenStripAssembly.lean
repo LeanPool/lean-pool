@@ -297,3 +297,5 @@ theorem fluctuationEnergyAverage_le_of_interior_cell_fold_grid_load [NeZero d]
   linarith [hmax, hmul, hgate]
 
 end
+
+end Algsuperdiff.Section3.Provider.Diffusivity.ApproximateRecurrence.Closure

@@ -249,7 +249,7 @@ theorem slstar_local_perCube_of_sharpSuperposedFluxConclusion_ae
       superposedFluxSharpConst M R.scale (m - 1) eps beta k₀ kp :=
     (superposedFluxSharpConst_pos hd M _ _ eps beta k₀ kp).le
   filter_upwards
-      [cutoffSigmaStarInvBlockFamily_le_sum_superposedConclusionPayload_flux_basis_descendant_ae
+      [descendantInverseBlock_le_superposedFluxBasis_ae
         hd M hR hS hb0 hb hk₀ heps ht0 hbeta0 hbeta9 hbetab hgammaWin hcap]
     with omega hbase hne L hL henv
   have hsum := hbase hne L hL henv

@@ -123,6 +123,64 @@ theorem tendsto_eLpNorm_of_tendsto_sub {α : Type*} [MeasurableSpace α] {μ : M
 
 /-! ## The cube Sobolev embedding -/
 
+private theorem cubeSobolevEmbedding_fourthPowerBound :
+    ∀ (m : ℕ),
+      let Cgns : ℝ≥0∞ := (↑(SNormLESNormFDerivOfEqConst ℝ (volume : Measure (Vec (m + 1))) (2 : ℝ)) : ℝ≥0∞);
+      let Cd : ℝ≥0∞ := ((3 : ℝ≥0∞) ^ (m + (1 : ℕ))) ^ (1 / 2 : ℝ);
+      let C0 : ℝ≥0∞ := Cgns * Cd * (↑((m + (1 : ℕ)) * (32 : ℕ)) : ℝ≥0∞);
+      ∀ (_ : C0 = Cgns * Cd * (↑((m + (1 : ℕ)) * (32 : ℕ)) : ℝ≥0∞)) (z : Vec (m + (1 : ℕ))) (L : ℝ)
+        (u : H1Function (axisCube z L)),
+        let hi : Vec (m + (1 : ℕ)) := fun (k : Fin (m + (1 : ℕ))) => z k + L;
+        ∀ (hU3 : IsOpenBoundedConvexDomain (Box3 z hi)) (Ext : FoldExtension z hi u),
+          let Eu : H1Function (Box3 z hi) := Ext.Eu;
+          let χ : Vec (m + (1 : ℕ)) → ℝ := boxCutoff z hi (L / (2 : ℝ));
+          ∀ (hχ_smooth : ContDiff ℝ ((⊤ : ℕ∞) : WithTop ℕ∞) χ) (hχ_cptsupp : HasCompactSupport χ)
+            (hχ_sub : tsupport χ ⊆ Box3 z hi),
+            let w : H10Function (Box3 z hi) := Eu.mulContDiffHasCompactSupportToH10 hU3 hχ_smooth hχ_cptsupp hχ_sub;
+            let binf : ℝ≥0∞ :=
+              Cgns *
+                ∑ i : Fin (m + (1 : ℕ)),
+                  eLpNorm (fun (x : Vec (m + (1 : ℕ))) => w.grad x i) (2 : ℝ≥0∞) (volume.restrict (Box3 z hi));
+            ∀
+              (_ :
+                binf =
+                  Cgns *
+                    ∑ i : Fin (m + (1 : ℕ)),
+                      eLpNorm (fun (x : Vec (m + (1 : ℕ))) => w.grad x i) (2 : ℝ≥0∞) (volume.restrict (Box3 z hi)))
+              (_ :
+                ∀ (i : Fin (m + (1 : ℕ))),
+                  eLpNorm (fun (x : Vec (m + (1 : ℕ))) => w.grad x i) (2 : ℝ≥0∞) (volume.restrict (Box3 z hi)) ≤
+                    Cd * eLpNorm (fun (x : Vec (m + (1 : ℕ))) => u.grad x i) (2 : ℝ≥0∞) (volume.restrict (Box z hi)) +
+                      ENNReal.ofReal ((32 : ℝ) / L) * (Cd * eLpNorm u.toFun (2 : ℝ≥0∞) (volume.restrict (Box z hi)))),
+              binf ≤
+                C0 *
+                  (∑ i : Fin (m + (1 : ℕ)),
+                      eLpNorm (fun (x : Vec (m + (1 : ℕ))) => u.grad x i) (2 : ℝ≥0∞) (volume.restrict (Box z hi)) +
+                    ENNReal.ofReal L⁻¹ * eLpNorm u.toFun (2 : ℝ≥0∞) (volume.restrict (Box z hi))) := by
+  intro m Cgns Cd _ hC0 z L u hi _ _ _ _ _ _ _ w _ hbinf hwgrad_bound
+  have hsum : ∑ i, eLpNorm (fun x => w.grad x i) 2 (volume.restrict (Box3 z hi))
+      ≤ Cd * (∑ i, eLpNorm (fun x => u.grad x i) 2 (volume.restrict (Box z hi)))
+        + ((m + 1 : ℕ) : ℝ≥0∞) * (ENNReal.ofReal (32 / L)
+            * (Cd * eLpNorm u.toFun 2 (volume.restrict (Box z hi)))) := by
+    refine (Finset.sum_le_sum fun i _ => hwgrad_bound i).trans (le_of_eq ?_)
+    rw [Finset.sum_add_distrib, ← Finset.mul_sum, Finset.sum_const, Finset.card_univ,
+      Fintype.card_fin, nsmul_eq_mul]
+  have hofReal : ENNReal.ofReal (32 / L) = ((32 : ℕ) : ℝ≥0∞) * ENNReal.ofReal L⁻¹ := by
+    rw [show (32 : ℝ) / L = 32 * L⁻¹ by ring, ENNReal.ofReal_mul (by norm_num)]
+    norm_num
+  have hN1 : (1 : ℝ≥0∞) ≤ ((((m + 1) * 32 : ℕ)) : ℝ≥0∞) := by
+    exact_mod_cast Nat.one_le_iff_ne_zero.2 (by positivity)
+  rw [hbinf]
+  refine (mul_le_mul_right hsum Cgns).trans ?_
+  rw [hofReal, hC0]
+  simp only [mul_add]
+  refine add_le_add ?_ (le_of_eq ?_)
+  · rw [show Cgns * (Cd * ∑ i, eLpNorm (fun x => u.grad x i) 2 (volume.restrict (Box z hi)))
+        = (Cgns * Cd) * ∑ i, eLpNorm (fun x => u.grad x i) 2 (volume.restrict (Box z hi)) from by
+      ring]
+    exact mul_le_mul_left (le_mul_of_one_le_right' hN1) _
+  · push_cast; ring
+
 /-- **Cube Sobolev embedding.**  Full statement. -/
 theorem cubeSobolevEmbedding {d : ℕ} (hd : 3 ≤ d) :
     ∃ C : ℝ≥0, 0 < C ∧
@@ -143,13 +201,14 @@ theorem cubeSobolevEmbedding {d : ℕ} (hd : 3 ≤ d) :
   have hCgns_lt : Cgns < ⊤ := by rw [hCgns]; exact ENNReal.coe_lt_top
   set C0 : ℝ≥0∞ := Cgns * Cd * ((((m + 1) * 32 : ℕ)) : ℝ≥0∞) with hC0
   have hC0_lt : C0 < ⊤ := by
-    rw [hC0]; exact ENNReal.mul_lt_top (ENNReal.mul_lt_top hCgns_lt hCd_lt) (ENNReal.natCast_lt_top _)
+    rw [hC0]; exact ENNReal.mul_lt_top (ENNReal.mul_lt_top hCgns_lt hCd_lt)
+      (ENNReal.natCast_lt_top _)
   refine ⟨C0.toNNReal + 1, add_pos_of_nonneg_of_pos (zero_le) one_pos, fun z L hL u => ?_⟩
   -- geometry
   set hi : Vec (m + 1) := fun k => z k + L with hhi
   have hlt : ∀ k, z k < hi k := fun k => by simp only [hhi]; linarith
   have hval : ∀ k, hi k = z k + L := fun k => by simp only [hhi]
-  show eLpNorm u.toFun (twoStar (m + 1)) (volume.restrict (Box z hi))
+  change eLpNorm u.toFun (twoStar (m + 1)) (volume.restrict (Box z hi))
     ≤ (↑(C0.toNNReal + 1) : ℝ≥0∞) *
         ((∑ i, eLpNorm (fun x => u.grad x i) 2 (volume.restrict (Box z hi)))
           + ENNReal.ofReal L⁻¹ * eLpNorm u.toFun 2 (volume.restrict (Box z hi)))
@@ -239,7 +298,7 @@ theorem cubeSobolevEmbedding {d : ℕ} (hd : 3 ≤ d) :
     with hbdef
   have hab : ∀ k, a k ≤ b k := by
     intro k
-    show eLpNorm (ψ k) (twoStar (m + 1)) (volume.restrict (Box3 z hi))
+    change eLpNorm (ψ k) (twoStar (m + 1)) (volume.restrict (Box3 z hi))
       ≤ Cgns * ∑ i, eLpNorm (fun x => fderiv ℝ (ψ k) x (basisVec i)) 2
           (volume.restrict (Box3 z hi))
     rw [hrestr _ _ (w.approx_smooth k).continuous.aestronglyMeasurable (hψ_supp k)]
@@ -327,29 +386,9 @@ theorem cubeSobolevEmbedding {d : ℕ} (hd : 3 ≤ d) :
   -- L4 assembled
   have hL4 : binf ≤ (C0 : ℝ≥0∞)
       * ((∑ i, eLpNorm (fun x => u.grad x i) 2 (volume.restrict (Box z hi)))
-          + ENNReal.ofReal L⁻¹ * eLpNorm u.toFun 2 (volume.restrict (Box z hi))) := by
-    have hsum : ∑ i, eLpNorm (fun x => w.grad x i) 2 (volume.restrict (Box3 z hi))
-        ≤ Cd * (∑ i, eLpNorm (fun x => u.grad x i) 2 (volume.restrict (Box z hi)))
-          + ((m + 1 : ℕ) : ℝ≥0∞) * (ENNReal.ofReal (32 / L)
-              * (Cd * eLpNorm u.toFun 2 (volume.restrict (Box z hi)))) := by
-      refine (Finset.sum_le_sum fun i _ => hwgrad_bound i).trans (le_of_eq ?_)
-      rw [Finset.sum_add_distrib, ← Finset.mul_sum, Finset.sum_const, Finset.card_univ,
-        Fintype.card_fin, nsmul_eq_mul]
-    have hofReal : ENNReal.ofReal (32 / L) = ((32 : ℕ) : ℝ≥0∞) * ENNReal.ofReal L⁻¹ := by
-      rw [show (32 : ℝ) / L = 32 * L⁻¹ by ring, ENNReal.ofReal_mul (by norm_num)]
-      norm_num
-    have hN1 : (1 : ℝ≥0∞) ≤ ((((m + 1) * 32 : ℕ)) : ℝ≥0∞) := by
-      exact_mod_cast Nat.one_le_iff_ne_zero.2 (by positivity)
-    rw [hbinf]
-    refine (mul_le_mul_right hsum Cgns).trans ?_
-    rw [hofReal, hC0]
-    simp only [mul_add]
-    refine add_le_add ?_ (le_of_eq ?_)
-    · rw [show Cgns * (Cd * ∑ i, eLpNorm (fun x => u.grad x i) 2 (volume.restrict (Box z hi)))
-          = (Cgns * Cd) * ∑ i, eLpNorm (fun x => u.grad x i) 2 (volume.restrict (Box z hi)) from by
-        ring]
-      exact mul_le_mul_left (le_mul_of_one_le_right' hN1) _
-    · push_cast; ring
+          + ENNReal.ofReal L⁻¹ * eLpNorm u.toFun 2 (volume.restrict (Box z hi)))  :=
+            @cubeSobolevEmbedding_fourthPowerBound (m) (hC0) (z) (L) (u) (hU3) (Ext) (hχ_smooth)
+              (hχ_cptsupp) (hχ_sub) (hbinf) (hwgrad_bound)
   -- combine
   have hmain : eLpNorm u.toFun (twoStar (m + 1)) (volume.restrict (Box z hi))
       ≤ (C0 : ℝ≥0∞)

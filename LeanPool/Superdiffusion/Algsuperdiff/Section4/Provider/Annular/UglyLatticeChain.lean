@@ -85,12 +85,12 @@ private theorem shellIncrement_eq_sum_two (omega : Cutoff.ShellSeq d) {a b c : �
   have hunion : Finset.Ioc a b ∪ Finset.Ioc b c = Finset.Ioc a c :=
     Finset.Ioc_union_Ioc_eq_Ioc hab hbc
   refine ShellField.ext fun x => ?_
-  show (∑ l ∈ Finset.Ioc a c, omega l x) =
+  change (∑ l ∈ Finset.Ioc a c, omega l x) =
     ∑ i : Fin 2,
       (![Provider.Stream.shellIncrement omega a b,
         Provider.Stream.shellIncrement omega b c] i) x
   simp only [Fin.sum_univ_two, Matrix.cons_val_zero, Matrix.cons_val_one]
-  show (∑ l ∈ Finset.Ioc a c, omega l x) =
+  change (∑ l ∈ Finset.Ioc a c, omega l x) =
     (∑ l ∈ Finset.Ioc a b, omega l x) + ∑ l ∈ Finset.Ioc b c, omega l x
   rw [← Finset.sum_union hdisj, hunion]
 

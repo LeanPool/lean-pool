@@ -73,7 +73,8 @@ theorem pathGauge_nonneg [NeZero d] (a : CoeffOn (cubeDomain (originCube d 0)))
     0 ≤ pathGauge a h t := by
   rw [pathGauge]
   exact le_of_lt (inv_pos.mpr
-    (Algsuperdiff.Section24.Sensitivity.Provider.DhBound.Discharge.unitCubeLambda_sensitivity_pos _))
+    (Algsuperdiff.Section24.Sensitivity.Provider.DhBound.Discharge.unitCubeLambda_sensitivity_pos
+      _))
 
 /-! ## The per-cube Grönwall step -/
 

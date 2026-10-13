@@ -131,14 +131,14 @@ theorem parentRebasedFamily_coeffOn_eq_translateCoeffField (M : ABKModel d) (L k
           (Cutoff.translateCutoffSample z omega)).toFun := by
   funext y
   rw [parentRebasedFamily_coeffOn]
-  show (Cutoff.coefficientCutoff M.nu L (Cutoff.translateCutoffSample x omega)).toCoeffField
+  change (Cutoff.coefficientCutoff M.nu L (Cutoff.translateCutoffSample x omega)).toCoeffField
       y - parentFluxIncrement M L k z omega = _
   have hRHS : translateCoeffField (x - z)
       (Support.fluxCorrectedRegField M L k (originCube d k)
         (Cutoff.translateCutoffSample z omega)).toFun y =
       (Cutoff.coefficientCutoff M.nu L (Cutoff.translateCutoffSample z omega)).toCoeffField
           (y + (x - z)) - parentFluxIncrement M L k z omega := by
-    show (Support.fluxCorrectedRegField M L k (originCube d k)
+    change (Support.fluxCorrectedRegField M L k (originCube d k)
       (Cutoff.translateCutoffSample z omega)).toFun (fun i => y i + (x - z) i) = _
     rw [Support.fluxCorrectedRegField_toFun]
     rfl

@@ -32,7 +32,7 @@ The Step-7d oscillation endpoint carries a second conditional input
 `e.fractional.Sobolev.embedding`, read at `(s,p,q) = (1,2,1)` (the zero-trace
 twin is the wrong one: `u` carries the boundary datum `h`, not `0`).  The
 producer is
-`Algsuperdiff.Section3.Provider.Besov.cubeBesovOscillation_le_oscillationMultiscalePoincareConstant_mul_sum_cubeBesovCircNorm`,
+`cubeBesovOscillation_le_oscillationMultiscalePoincareConstant_mul_sum_cubeBesovCircNorm`,
 whose left side is `‖u - (u)_Q‖_{L²(Q)}`, whose binder is `H1Function` with no
 zero-trace hypothesis, and whose constant is dimension-only.  Two carrier
 residues remain, and both are closed here.

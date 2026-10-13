@@ -463,6 +463,170 @@ private theorem laneB_bound {G Sp SW X Y C s : ℝ} (hG : 0 ≤ G) (hSp : 0 ≤ 
 
 /-! ## 6. The `𝒢₁` proportion tail at the explicit majorant, at base `m₀` -/
 
+private theorem shiftedG1Lane_comparisonBounds1 :
+    ∀ {d : ℕ} {s theta c1 T : ℝ} {r : ℕ} (hs0 : (0 : ℝ) < s) (hs1 : s ≤ (1 : ℝ))
+      (hT : g1Majorant d r s theta c1 ≤ T) (hthne : theta ≠ (0 : ℝ)) (hsne : s ≠ (0 : ℝ)),
+      let Lam : ℝ := Real.log ((6 : ℝ) * (↑r : ℝ)) + c1 * (↑r : ℝ);
+      let V : ℝ := (↑r : ℝ) * Lam / (s * theta);
+      ∀ (hV1 : (1 : ℝ) ≤ V) (hVs : (2 : ℝ) / s ≤ V) (hVst : V * (s * theta) = (↑r : ℝ) * Lam),
+        let p2 : ℝ := (256 : ℝ) * V + (8 : ℝ) / s + (1 : ℝ);
+        ∀ (hp2def : p2 = (256 : ℝ) * V + (8 : ℝ) / s + (1 : ℝ)) (hp2one : (1 : ℝ) ≤ p2) (hp2pos : (0 : ℝ) < p2)
+          (hG1pos : (0 : ℝ) < gammaMomentConst (1 : ℝ)),
+          let D2 : ℝ := gammaMomentConst (1 : ℝ) * p2 ^ (1 : ℝ)⁻¹ * smallWaveScale d s;
+          ∀ (hD2def : D2 = gammaMomentConst (1 : ℝ) * p2 ^ (1 : ℝ)⁻¹ * smallWaveScale d s)
+            (hCpos1 : (0 : ℝ) < (1 : ℝ) + Cstar) (hCst2 : Cstar ^ ((1 : ℝ) / p2) ≤ (1 : ℝ) + Cstar)
+            (hthr3' : (theta / (2 : ℝ)) ^ ((-1 : ℝ) / p2) ≤ (3 : ℝ))
+            (hthrnn2 : (0 : ℝ) ≤ (theta / (2 : ℝ)) ^ ((-1 : ℝ) / p2)),
+            let K1 : ℝ := (192456 : ℝ) * ((1 : ℝ) + Cstar) ^ (2 : ℕ) * gammaMomentConst (2 : ℝ) ^ (2 : ℕ);
+            let K2 : ℝ :=
+              (10865664 : ℝ) * ((1 : ℝ) + Cstar) * gammaMomentConst (1 : ℝ) *
+                  ((1 : ℝ) + (2 : ℝ) * (↑d : ℝ) * Real.log (3 : ℝ)) *
+                atomG1bScale ^ (2 : ℕ);
+            ∀
+              (hK2def :
+                K2 =
+                  (10865664 : ℝ) * ((1 : ℝ) + Cstar) * gammaMomentConst (1 : ℝ) *
+                      ((1 : ℝ) + (2 : ℝ) * (↑d : ℝ) * Real.log (3 : ℝ)) *
+                    atomG1bScale ^ (2 : ℕ)),
+              let Q : ℝ := (↑r : ℝ) * (Real.log ((6 : ℝ) * (↑r : ℝ)) + (↑r : ℝ));
+              ∀ (hKeq : g1ThresholdConst d r = (K1 + K2) * Q)
+                (hbound2 : K2 * ((↑r : ℝ) * Lam) ≤ (K1 + K2) * Q * ((1 : ℝ) + c1)) (hden : (0 : ℝ) < s ^ (4 : ℕ) * theta)
+                (hMajsq :
+                  g1Majorant d r s theta c1 ^ (2 : ℕ) = g1ThresholdConst d r * ((1 : ℝ) + c1) / (s ^ (4 : ℕ) * theta)),
+                let Pc : ℝ := ((1 : ℝ) + (2 : ℝ) * (↑d : ℝ) * Real.log (3 : ℝ)) * atomG1bScale ^ (2 : ℕ);
+                ∀ (hPcdef : Pc = ((1 : ℝ) + (2 : ℝ) * (↑d : ℝ) * Real.log (3 : ℝ)) * atomG1bScale ^ (2 : ℕ)),
+                  let B : ℝ := (216 : ℝ) * ((1 : ℝ) + Cstar) * gammaMomentConst (1 : ℝ) * smallWaveScale d s * p2 / s;
+                  ∀ (hBdef : B = (216 : ℝ) * ((1 : ℝ) + Cstar) * gammaMomentConst (1 : ℝ) * smallWaveScale d s * p2 / s),
+                    D2 * ((9 : ℝ) * (s / (8 : ℝ))⁻¹ * Cstar ^ ((1 : ℝ) / p2) * (theta / (2 : ℝ)) ^ ((-1 : ℝ) / p2)) ≤
+                      T ^ (2 : ℕ) / g1bConst s := by
+  intro d s theta c1 T r hs0 hs1 hT hthne hsne Lam V hV1 hVs hVst p2 hp2def hp2one hp2pos hG1pos D2 hD2def hCpos1 hCst2 hthr3' hthrnn2 K1 K2 hK2def Q hKeq hbound2 hden hMajsq Pc hPcdef B hBdef
+  have hSWpos : (0 : ℝ) < smallWaveScale d s := smallWaveScale_pos d hs0
+  have hlaneb : D2 * (9 * (s / 8)⁻¹ * Cstar ^ (1 / p2) * (theta / 2) ^ (-1 / p2))
+      ≤ B := by
+    have hp2rpow : p2 ^ (1 : ℝ)⁻¹ = p2 := by rw [inv_one, Real.rpow_one]
+    calc D2 * (9 * (s / 8)⁻¹ * Cstar ^ (1 / p2) * (theta / 2) ^ (-1 / p2))
+        ≤ 216 * (1 + Cstar) * gammaMomentConst 1 * smallWaveScale d s
+            * p2 ^ (1 : ℝ)⁻¹ / s := by
+          rw [hD2def]
+          exact laneB_bound hG1pos.le (Real.rpow_nonneg hp2pos.le _) hSWpos.le hthrnn2
+            hCst2 hthr3' hCpos1.le hs0
+      _ = B := by rw [hBdef, hp2rpow]
+  have hB0 : (0 : ℝ) ≤ B := by
+    rw [hBdef]
+    exact div_nonneg (mul_nonneg (mul_nonneg (mul_nonneg (mul_nonneg (by norm_num)
+      hCpos1.le) hG1pos.le) hSWpos.le) hp2pos.le) hs0.le
+  have hSWeq : smallWaveScale d s = 8 * Pc / s := by
+    have h : smallWaveScale d s
+        = 8 / s * (1 + 2 * (d : ℝ) * Real.log 3) * atomG1bScale ^ (2 : ℕ) := rfl
+    rw [h, hPcdef]; ring
+  have hp2V : p2 ≤ 262 * V := by
+    have h12 : 12 / s ≤ 6 * V := by
+      have h := mul_le_mul_of_nonneg_left hVs (by norm_num : (0 : ℝ) ≤ 6)
+      have heq : (6 : ℝ) * (2 / s) = 12 / s := by ring
+      linarith only [h, heq]
+    have h4 : (1 : ℝ) ≤ 4 / s := by rw [le_div_iff₀ hs0]; linarith only [hs1]
+    have heq2 : (8 : ℝ) / s + 4 / s = 12 / s := by ring
+    rw [hp2def]
+    linarith only [h12, h4, heq2]
+  have hFac0 : (0 : ℝ) ≤ 41472 * (1 + Cstar) * gammaMomentConst 1 * Pc / s ^ (3 : ℕ) := by
+    have hPc0 : (0 : ℝ) ≤ Pc := by
+      rw [hPcdef]
+      have hdlog : (0 : ℝ) ≤ 2 * (d : ℝ) * Real.log 3 :=
+        mul_nonneg (mul_nonneg (by norm_num) (Nat.cast_nonneg d))
+          (Real.log_nonneg (by norm_num))
+      exact mul_nonneg (by linarith only [hdlog]) (pow_nonneg atomG1bScale_pos.le 2)
+    exact div_nonneg (mul_nonneg (mul_nonneg (mul_nonneg (by norm_num) hCpos1.le)
+      hG1pos.le) hPc0) (pow_nonneg hs0.le 3)
+  have hstep2 : 24 / s * B ≤ K2 * ((r : ℝ) * Lam) / (s ^ (4 : ℕ) * theta) := by
+    calc 24 / s * B
+        = 41472 * (1 + Cstar) * gammaMomentConst 1 * Pc / s ^ (3 : ℕ) * p2 := by
+          rw [hBdef, hSWeq]; field_simp [hsne, hthne]; ring
+      _ ≤ 41472 * (1 + Cstar) * gammaMomentConst 1 * Pc / s ^ (3 : ℕ) * (262 * V) :=
+          mul_le_mul_of_nonneg_left hp2V hFac0
+      _ = K2 * ((r : ℝ) * Lam) / (s ^ (4 : ℕ) * theta) := by
+          rw [hK2def, hPcdef, ← hVst]; field_simp [hsne, hthne]; ring
+  have hlaneb2 : g1bConst s * B ≤ g1Majorant d r s theta c1 ^ (2 : ℕ) := by
+    refine le_trans (le_trans (mul_le_mul_of_nonneg_right
+      (g1bConst_le_of_le_one hs0 hs1) hB0) hstep2) ?_
+    rw [hMajsq, hKeq]
+    exact div_le_div_right_of_le hbound2 hden
+  have hMajT2 : g1Majorant d r s theta c1 ^ (2 : ℕ) ≤ T ^ 2 :=
+    pow_le_pow_left₀ (g1Majorant_nonneg d r s theta c1) hT 2
+  have hthrb : D2 * (9 * (s / 8)⁻¹ * Cstar ^ (1 / p2) * (theta / 2) ^ (-1 / p2))
+      ≤ T ^ 2 / g1bConst s := by
+    rw [le_div_iff₀ (g1bConst_pos hs0)]
+    have h1 := mul_le_mul_of_nonneg_right hlaneb (g1bConst_pos hs0).le
+    linarith only [h1, hlaneb2, hMajT2]
+  exact hthrb
+
+private theorem shiftedG1Lane_comparisonBounds2 :
+    ∀ {d : ℕ} {s theta c1 T : ℝ} {r : ℕ} (hs0 : (0 : ℝ) < s) (hs1 : s ≤ (1 : ℝ)) (htheta0 : (0 : ℝ) < theta)
+      (hT : g1Majorant d r s theta c1 ≤ T),
+      let Lam : ℝ := Real.log ((6 : ℝ) * (↑r : ℝ)) + c1 * (↑r : ℝ);
+      ∀ (hrLam : (1 : ℝ) ≤ (↑r : ℝ) * Lam),
+        let U : ℝ := (↑r : ℝ) * Lam / theta;
+        ∀ (hUdef : U = (↑r : ℝ) * Lam / theta) (hU1 : (1 : ℝ) ≤ U),
+          let p : ℝ := (64 : ℝ) * U + (2 : ℝ);
+          ∀ (hpdef : p = (64 : ℝ) * U + (2 : ℝ)) (hp0 : (0 : ℝ) < p) (hG2pos : (0 : ℝ) < gammaMomentConst (2 : ℝ)),
+            let D : ℝ := gammaMomentConst (2 : ℝ) * p ^ (2 : ℝ)⁻¹ * (1 : ℝ);
+            ∀ (hDdef : D = gammaMomentConst (2 : ℝ) * p ^ (2 : ℝ)⁻¹ * (1 : ℝ)) (hCpos1 : (0 : ℝ) < (1 : ℝ) + Cstar)
+              (hCst : Cstar ^ ((1 : ℝ) / p) ≤ (1 : ℝ) + Cstar) (hthr3 : (theta / (2 : ℝ)) ^ ((-1 : ℝ) / p) ≤ (3 : ℝ))
+              (hthrnn : (0 : ℝ) ≤ (theta / (2 : ℝ)) ^ ((-1 : ℝ) / p)),
+              let K1 : ℝ := (192456 : ℝ) * ((1 : ℝ) + Cstar) ^ (2 : ℕ) * gammaMomentConst (2 : ℝ) ^ (2 : ℕ);
+              ∀ (hK1def : K1 = (192456 : ℝ) * ((1 : ℝ) + Cstar) ^ (2 : ℕ) * gammaMomentConst (2 : ℝ) ^ (2 : ℕ)),
+                let K2 : ℝ :=
+                  (10865664 : ℝ) * ((1 : ℝ) + Cstar) * gammaMomentConst (1 : ℝ) *
+                      ((1 : ℝ) + (2 : ℝ) * (↑d : ℝ) * Real.log (3 : ℝ)) *
+                    atomG1bScale ^ (2 : ℕ);
+                let Q : ℝ := (↑r : ℝ) * (Real.log ((6 : ℝ) * (↑r : ℝ)) + (↑r : ℝ));
+                ∀ (hKeq : g1ThresholdConst d r = (K1 + K2) * Q) (hK1nn : (0 : ℝ) ≤ K1)
+                  (hbound1 : K1 * ((↑r : ℝ) * Lam) ≤ (K1 + K2) * Q * ((1 : ℝ) + c1)),
+                  let A : ℝ := (54 : ℝ) * ((1 : ℝ) + Cstar) * gammaMomentConst (2 : ℝ) * p ^ (2 : ℝ)⁻¹;
+                  ∀ (hAdef : A = (54 : ℝ) * ((1 : ℝ) + Cstar) * gammaMomentConst (2 : ℝ) * p ^ (2 : ℝ)⁻¹),
+                    D * ((9 : ℝ) * (1 / 2 : ℝ)⁻¹ * Cstar ^ ((1 : ℝ) / p) * (theta / (2 : ℝ)) ^ ((-1 : ℝ) / p)) ≤ T := by
+  intro d s theta c1 T r hs0 hs1 htheta0 hT Lam hrLam U hUdef hU1 p hpdef hp0 hG2pos D hDdef hCpos1 hCst hthr3 hthrnn K1 hK1def K2 Q hKeq hK1nn hbound1 A hAdef
+  have hA0 : (0 : ℝ) ≤ A := by
+    rw [hAdef]
+    exact mul_nonneg (mul_nonneg (mul_nonneg (by norm_num) hCpos1.le) hG2pos.le)
+      (Real.rpow_nonneg hp0.le _)
+  have hlanea : D * (9 * ((1 : ℝ) / 2)⁻¹ * Cstar ^ (1 / p) * (theta / 2) ^ (-1 / p))
+      ≤ A := by
+    rw [hDdef, hAdef]
+    exact laneA_bound hG2pos.le (Real.rpow_nonneg hp0.le _) hthrnn hCst hthr3 hCpos1.le
+  have hsq : (p ^ (2 : ℝ)⁻¹) ^ (2 : ℕ) = p := by
+    have hsqrtp : p ^ (2 : ℝ)⁻¹ = Real.sqrt p := by rw [Real.sqrt_eq_rpow]; norm_num
+    rw [hsqrtp]; exact Real.sq_sqrt hp0.le
+  have hAsq : A ^ (2 : ℕ)
+      = 2916 * (1 + Cstar) ^ (2 : ℕ) * gammaMomentConst 2 ^ (2 : ℕ) * p :=
+    calc A ^ (2 : ℕ)
+        = (54 * (1 + Cstar) * gammaMomentConst 2) ^ (2 : ℕ)
+            * (p ^ (2 : ℝ)⁻¹) ^ (2 : ℕ) := by
+          rw [hAdef, ← mul_pow]
+      _ = (54 * (1 + Cstar) * gammaMomentConst 2) ^ (2 : ℕ) * p := by rw [hsq]
+      _ = 2916 * (1 + Cstar) ^ (2 : ℕ) * gammaMomentConst 2 ^ (2 : ℕ) * p := by ring
+  have hple : p ≤ 66 * U := by rw [hpdef]; linarith only [hU1]
+  have hAsqle : A ^ (2 : ℕ) ≤ K1 * U := by
+    rw [hAsq, hK1def]
+    have hfac : (0 : ℝ) ≤ 2916 * (1 + Cstar) ^ (2 : ℕ) * gammaMomentConst 2 ^ (2 : ℕ) :=
+      mul_nonneg (mul_nonneg (by norm_num) (pow_nonneg hCpos1.le 2))
+        (pow_nonneg hG2pos.le 2)
+    have h := mul_le_mul_of_nonneg_left hple hfac
+    linarith only [h]
+  have hAle : A ≤ g1Majorant d r s theta c1 := by
+    rw [g1Majorant]
+    refine le_sqrt_of_sq_le hA0 ?_
+    rw [hKeq]
+    have hUeq : K1 * U = K1 * ((r : ℝ) * Lam) / theta := by rw [hUdef]; ring
+    have hstep : K1 * ((r : ℝ) * Lam) / theta
+        ≤ (K1 + K2) * Q * (1 + c1) / (s ^ (4 : ℕ) * theta) :=
+      div_le_div_pow_four (mul_nonneg hK1nn (by linarith only [hrLam])) hbound1 hs0 hs1
+        htheta0
+    rw [hUeq] at hAsqle
+    exact le_trans hAsqle hstep
+  have hthra : D * (9 * ((1 : ℝ) / 2)⁻¹ * Cstar ^ (1 / p) * (theta / 2) ^ (-1 / p))
+      ≤ T := le_trans hlanea (le_trans hAle hT)
+  exact hthra
+
 /-- **The `𝒢₁` proportion tail above the explicit majorant, over the window
 `{m₀,…,m₀+n}`.**
 
@@ -480,8 +644,8 @@ theorem ratioTail_eventG1_of_majorant_shift (M : ABKModel d) {s theta c1 T : ℝ
     (Cutoff.cutoffSampleLaw M).toMeasure
         {omega | theta < scaleProp (fun k => (Support.eventG1 M (m0 + k) s T)ᶜ) n omega}
       ≤ ENNReal.ofReal (Real.exp (-c1 * (n : ℝ)) / 3) := by
-  have hrR : (1 : ℝ) ≤ (r : ℝ) := by exact_mod_cast hr1
-  have hr0 : (0 : ℝ) < (r : ℝ) := by linarith only [hrR]
+  have hrR : (1 : ℝ) ≤ (r : ℝ) := Nat.one_le_cast.mpr hr1
+  have hr0 : (0 : ℝ) < (r : ℝ) := lt_of_lt_of_le zero_lt_one hrR
   have hthne : theta ≠ 0 := ne_of_gt htheta0
   have hsne : s ≠ 0 := ne_of_gt hs0
   have hstpos : (0 : ℝ) < s * theta := mul_pos hs0 htheta0
@@ -516,7 +680,7 @@ theorem ratioTail_eventG1_of_majorant_shift (M : ABKModel d) {s theta c1 T : ℝ
     rw [hUdef, le_div_iff₀ htheta0]; linarith only [hrLam, hth12]
   have hUt : 1 / theta ≤ U := by
     rw [hUdef, le_div_iff₀ htheta0]
-    have heq : 1 / theta * theta = 1 := by field_simp
+    have heq : 1 / theta * theta = 1 := div_mul_cancel₀ 1 hthne
     rw [heq]; exact hrLam
   have hV1 : (1 : ℝ) ≤ V := by
     rw [hVdef, le_div_iff₀ hstpos]
@@ -526,14 +690,14 @@ theorem ratioTail_eventG1_of_majorant_shift (M : ABKModel d) {s theta c1 T : ℝ
     linarith only [hrLam, hst]
   have hVt : 1 / theta ≤ V := by
     rw [hVdef, le_div_iff₀ hstpos]
-    have heq : 1 / theta * (s * theta) = s := by field_simp
+    have heq : 1 / theta * (s * theta) = s := by field_simp [hsne, hthne]
     rw [heq]; linarith only [hrLam, hs1]
   have hVs : 2 / s ≤ V := by
     rw [hVdef, le_div_iff₀ hstpos]
-    have heq : 2 / s * (s * theta) = 2 * theta := by field_simp
+    have heq : 2 / s * (s * theta) = 2 * theta := by field_simp [hsne, hthne]
     rw [heq]; linarith only [hrLam, hth12]
-  have hUtheta : U * theta = (r : ℝ) * Lam := by rw [hUdef]; field_simp
-  have hVst : V * (s * theta) = (r : ℝ) * Lam := by rw [hVdef]; field_simp
+  have hUtheta : U * theta = (r : ℝ) * Lam := by rw [hUdef]; field_simp [hsne, hthne]
+  have hVst : V * (s * theta) = (r : ℝ) * Lam := by rw [hVdef]; field_simp [hsne, hthne]
   -- the moment exponents
   set p : ℝ := 64 * U + 2 with hpdef
   set p2 : ℝ := 256 * V + 8 / s + 1 with hp2def
@@ -546,7 +710,7 @@ theorem ratioTail_eventG1_of_majorant_shift (M : ABKModel d) {s theta c1 T : ℝ
   have hp2pos : (0 : ℝ) < p2 := by linarith only [hp2one]
   have hsp2 : (1 : ℝ) ≤ s / 8 * p2 := by
     have heq : s / 8 * p2 = 32 * (s * V) + 1 + s / 8 := by
-      rw [hp2def]; field_simp; ring
+      rw [hp2def]; field_simp [hsne, hthne]; ring
     rw [heq]
     have hsV : (0 : ℝ) ≤ s * V := mul_nonneg hs0.le (by linarith only [hV1])
     linarith only [hsV, hs0]
@@ -573,13 +737,13 @@ theorem ratioTail_eventG1_of_majorant_shift (M : ABKModel d) {s theta c1 T : ℝ
     rw [le_div_iff₀ hr16]
     have hexp : s / 8 * p2 * (theta / 2)
         = 16 * (V * (s * theta)) + theta / 2 + s * theta / 16 := by
-      rw [hp2def]; field_simp; ring
+      rw [hp2def]; field_simp [hsne, hthne]; ring
     rw [hexp, hVst]
     linarith only [htheta0, hstpos]
   -- the transcendental inputs of the two threshold conditions
   have hx0 : (0 : ℝ) < theta / 2 := by linarith only [htheta0]
   have hx1 : theta / 2 ≤ 1 := by linarith only [hth12]
-  have hxinv : 1 / (theta / 2) = 2 / theta := by field_simp
+  have hxinv : 1 / (theta / 2) = 2 / theta := by field_simp [hsne, hthne]
   have hinvp : 1 / (theta / 2) ≤ p := by
     rw [hxinv, hpdef]
     have heq : (2 : ℝ) / theta = 2 * (1 / theta) := by ring
@@ -642,107 +806,16 @@ theorem ratioTail_eventG1_of_majorant_shift (M : ABKModel d) {s theta c1 T : ℝ
       = g1ThresholdConst d r * (1 + c1) / (s ^ (4 : ℕ) * theta) := Real.sq_sqrt harg0
   -- lane: the large-waves threshold
   set A : ℝ := 54 * (1 + Cstar) * gammaMomentConst 2 * p ^ (2 : ℝ)⁻¹ with hAdef
-  have hA0 : (0 : ℝ) ≤ A := by
-    rw [hAdef]
-    exact mul_nonneg (mul_nonneg (mul_nonneg (by norm_num) hCpos1.le) hG2pos.le)
-      (Real.rpow_nonneg hp0.le _)
-  have hlanea : D * (9 * ((1 : ℝ) / 2)⁻¹ * Cstar ^ (1 / p) * (theta / 2) ^ (-1 / p))
-      ≤ A := by
-    rw [hDdef, hAdef]
-    exact laneA_bound hG2pos.le (Real.rpow_nonneg hp0.le _) hthrnn hCst hthr3 hCpos1.le
-  have hsq : (p ^ (2 : ℝ)⁻¹) ^ (2 : ℕ) = p := by
-    have hsqrtp : p ^ (2 : ℝ)⁻¹ = Real.sqrt p := by rw [Real.sqrt_eq_rpow]; norm_num
-    rw [hsqrtp]; exact Real.sq_sqrt hp0.le
-  have hAsq : A ^ (2 : ℕ)
-      = 2916 * (1 + Cstar) ^ (2 : ℕ) * gammaMomentConst 2 ^ (2 : ℕ) * p :=
-    calc A ^ (2 : ℕ)
-        = (54 * (1 + Cstar) * gammaMomentConst 2) ^ (2 : ℕ)
-            * (p ^ (2 : ℝ)⁻¹) ^ (2 : ℕ) := by
-          rw [hAdef, ← mul_pow]
-      _ = (54 * (1 + Cstar) * gammaMomentConst 2) ^ (2 : ℕ) * p := by rw [hsq]
-      _ = 2916 * (1 + Cstar) ^ (2 : ℕ) * gammaMomentConst 2 ^ (2 : ℕ) * p := by ring
-  have hple : p ≤ 66 * U := by rw [hpdef]; linarith only [hU1]
-  have hAsqle : A ^ (2 : ℕ) ≤ K1 * U := by
-    rw [hAsq, hK1def]
-    have hfac : (0 : ℝ) ≤ 2916 * (1 + Cstar) ^ (2 : ℕ) * gammaMomentConst 2 ^ (2 : ℕ) :=
-      mul_nonneg (mul_nonneg (by norm_num) (pow_nonneg hCpos1.le 2))
-        (pow_nonneg hG2pos.le 2)
-    have h := mul_le_mul_of_nonneg_left hple hfac
-    linarith only [h]
-  have hAle : A ≤ g1Majorant d r s theta c1 := by
-    rw [g1Majorant]
-    refine le_sqrt_of_sq_le hA0 ?_
-    rw [hKeq]
-    have hUeq : K1 * U = K1 * ((r : ℝ) * Lam) / theta := by rw [hUdef]; ring
-    have hstep : K1 * ((r : ℝ) * Lam) / theta
-        ≤ (K1 + K2) * Q * (1 + c1) / (s ^ (4 : ℕ) * theta) :=
-      div_le_div_pow_four (mul_nonneg hK1nn (by linarith only [hrLam])) hbound1 hs0 hs1
-        htheta0
-    rw [hUeq] at hAsqle
-    exact le_trans hAsqle hstep
   have hthra : D * (9 * ((1 : ℝ) / 2)⁻¹ * Cstar ^ (1 / p) * (theta / 2) ^ (-1 / p))
-      ≤ T := le_trans hlanea (le_trans hAle hT)
+      ≤ T :=
+    @shiftedG1Lane_comparisonBounds2 (d) (s) (theta) (c1) (T) (r) (hs0) (hs1) (htheta0) (hT) (hrLam) (hUdef) (hU1) (hpdef) (hp0) (hG2pos) (hDdef) (hCpos1) (hCst) (hthr3) (hthrnn) (hK1def) (hKeq) (hK1nn) (hbound1) (hAdef)
   -- lane (b): the small-waves threshold
   set Pc : ℝ := (1 + 2 * (d : ℝ) * Real.log 3) * atomG1bScale ^ (2 : ℕ) with hPcdef
   set B : ℝ := 216 * (1 + Cstar) * gammaMomentConst 1 * smallWaveScale d s * p2 / s
     with hBdef
-  have hSWpos : (0 : ℝ) < smallWaveScale d s := smallWaveScale_pos d hs0
-  have hlaneb : D2 * (9 * (s / 8)⁻¹ * Cstar ^ (1 / p2) * (theta / 2) ^ (-1 / p2))
-      ≤ B := by
-    have hp2rpow : p2 ^ (1 : ℝ)⁻¹ = p2 := by rw [inv_one, Real.rpow_one]
-    calc D2 * (9 * (s / 8)⁻¹ * Cstar ^ (1 / p2) * (theta / 2) ^ (-1 / p2))
-        ≤ 216 * (1 + Cstar) * gammaMomentConst 1 * smallWaveScale d s
-            * p2 ^ (1 : ℝ)⁻¹ / s := by
-          rw [hD2def]
-          exact laneB_bound hG1pos.le (Real.rpow_nonneg hp2pos.le _) hSWpos.le hthrnn2
-            hCst2 hthr3' hCpos1.le hs0
-      _ = B := by rw [hBdef, hp2rpow]
-  have hB0 : (0 : ℝ) ≤ B := by
-    rw [hBdef]
-    exact div_nonneg (mul_nonneg (mul_nonneg (mul_nonneg (mul_nonneg (by norm_num)
-      hCpos1.le) hG1pos.le) hSWpos.le) hp2pos.le) hs0.le
-  have hSWeq : smallWaveScale d s = 8 * Pc / s := by
-    have h : smallWaveScale d s
-        = 8 / s * (1 + 2 * (d : ℝ) * Real.log 3) * atomG1bScale ^ (2 : ℕ) := rfl
-    rw [h, hPcdef]; ring
-  have hp2V : p2 ≤ 262 * V := by
-    have h12 : 12 / s ≤ 6 * V := by
-      have h := mul_le_mul_of_nonneg_left hVs (by norm_num : (0 : ℝ) ≤ 6)
-      have heq : (6 : ℝ) * (2 / s) = 12 / s := by ring
-      linarith only [h, heq]
-    have h4 : (1 : ℝ) ≤ 4 / s := by rw [le_div_iff₀ hs0]; linarith only [hs1]
-    have heq2 : (8 : ℝ) / s + 4 / s = 12 / s := by ring
-    rw [hp2def]
-    linarith only [h12, h4, heq2]
-  have hFac0 : (0 : ℝ) ≤ 41472 * (1 + Cstar) * gammaMomentConst 1 * Pc / s ^ (3 : ℕ) := by
-    have hPc0 : (0 : ℝ) ≤ Pc := by
-      rw [hPcdef]
-      have hdlog : (0 : ℝ) ≤ 2 * (d : ℝ) * Real.log 3 :=
-        mul_nonneg (mul_nonneg (by norm_num) (Nat.cast_nonneg d))
-          (Real.log_nonneg (by norm_num))
-      exact mul_nonneg (by linarith only [hdlog]) (pow_nonneg atomG1bScale_pos.le 2)
-    exact div_nonneg (mul_nonneg (mul_nonneg (mul_nonneg (by norm_num) hCpos1.le)
-      hG1pos.le) hPc0) (pow_nonneg hs0.le 3)
-  have hstep2 : 24 / s * B ≤ K2 * ((r : ℝ) * Lam) / (s ^ (4 : ℕ) * theta) := by
-    calc 24 / s * B
-        = 41472 * (1 + Cstar) * gammaMomentConst 1 * Pc / s ^ (3 : ℕ) * p2 := by
-          rw [hBdef, hSWeq]; field_simp; ring
-      _ ≤ 41472 * (1 + Cstar) * gammaMomentConst 1 * Pc / s ^ (3 : ℕ) * (262 * V) :=
-          mul_le_mul_of_nonneg_left hp2V hFac0
-      _ = K2 * ((r : ℝ) * Lam) / (s ^ (4 : ℕ) * theta) := by
-          rw [hK2def, hPcdef, ← hVst]; field_simp; ring
-  have hlaneb2 : g1bConst s * B ≤ g1Majorant d r s theta c1 ^ (2 : ℕ) := by
-    refine le_trans (le_trans (mul_le_mul_of_nonneg_right
-      (g1bConst_le_of_le_one hs0 hs1) hB0) hstep2) ?_
-    rw [hMajsq, hKeq]
-    exact div_le_div_right_of_le hbound2 hden
-  have hMajT2 : g1Majorant d r s theta c1 ^ (2 : ℕ) ≤ T ^ 2 :=
-    pow_le_pow_left₀ (g1Majorant_nonneg d r s theta c1) hT 2
   have hthrb : D2 * (9 * (s / 8)⁻¹ * Cstar ^ (1 / p2) * (theta / 2) ^ (-1 / p2))
-      ≤ T ^ 2 / g1bConst s := by
-    rw [le_div_iff₀ (g1bConst_pos hs0)]
-    have h1 := mul_le_mul_of_nonneg_right hlaneb (g1bConst_pos hs0).le
-    linarith only [h1, hlaneb2, hMajT2]
+      ≤ T ^ 2 / g1bConst s :=
+    @shiftedG1Lane_comparisonBounds1 (d) (s) (theta) (c1) (T) (r) (hs0) (hs1) (hT) (hthne) (hsne) (hV1) (hVs) (hVst) (hp2def) (hp2one) (hp2pos) (hG1pos) (hD2def) (hCpos1) (hCst2) (hthr3') (hthrnn2) (hK2def) (hKeq) (hbound2) (hden) (hMajsq) (hPcdef) (hBdef)
   exact ratioTail_eventG1_shift M hs0 hs1 hDpos hD2pos hp1 hp2one hsp hsp2 hr1 htheta0
     hthetar2 hc1 hratea hrateb hDdef.ge hD2def.ge hthra hthrb m0 n
 

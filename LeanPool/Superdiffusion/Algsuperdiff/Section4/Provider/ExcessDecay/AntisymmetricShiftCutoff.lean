@@ -62,7 +62,7 @@ theorem matTranspose_fluxIncrementAverage (M : ABKModel d) (L k : ℤ)
     matTranspose (Support.fluxIncrementAverage M L k Q omega) =
       -Support.fluxIncrementAverage M L k Q omega := by
   ext i j
-  show Support.fluxIncrementAverage M L k Q omega j i =
+  change Support.fluxIncrementAverage M L k Q omega j i =
     -Support.fluxIncrementAverage M L k Q omega i j
   exact Support.fluxIncrementAverage_skew M L k Q omega i j
 

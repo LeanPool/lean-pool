@@ -100,10 +100,12 @@ dominating, never nonnegative.
 * `Algsuperdiff.Section3.Provider.MultiscaleEstimate.isBigOWith_gammaSigma_of_le_one`
 * `Algsuperdiff.Section3.Provider.MultiscaleEstimate.boundedMean_isBigOWith_gammaSigma`
 * `Algsuperdiff.Section3.Provider.MultiscaleEstimate.boundedMean_rpow_isBigOWith_gammaOne`
-* `Algsuperdiff.Section3.Provider.MultiscaleEstimate.boundedMean_rpow_isBigOWith_gammaOne_of_two_exp`
+*
+`Algsuperdiff.Section3.Provider.MultiscaleEstimate.boundedMean_rpow_isBigOWith_gammaOne_of_two_exp`
 * `Algsuperdiff.Section3.Provider.MultiscaleEstimate.indicatorAverage_mem_Icc`
 * `Algsuperdiff.Section3.Provider.MultiscaleEstimate.weightedIndicatorAverage_rpow_mem_Icc`
-* `Algsuperdiff.Section3.Provider.MultiscaleEstimate.indicatorAverage_rpow_isBigOWith_gammaOne_of_two_exp`
+*
+`indicatorAverage_rpow_isBigOWith_gammaOne_of_two_exp`
 
 ## In-repo consumed set
 

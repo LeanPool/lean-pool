@@ -158,7 +158,8 @@ theorem abs_center_le_of_holder [NeZero d]
   have hVeq : (volume B).toReal =
       (volume (smallContrastUnitBall d)).toReal * rho ^ d :=
     volume_euclideanBall_toReal_eq_unit_mul_pow x₀ hrho
-  have hVne : (volume B).toReal ≠ 0 := HCPolySupport.Book.Ch01.volume_euclideanBall_toReal_ne_zero x₀ hrho
+  have hVne : (volume B).toReal ≠ 0 := HCPolySupport.Book.Ch01.volume_euclideanBall_toReal_ne_zero
+    x₀ hrho
   have hVpos : 0 < (volume B).toReal :=
     lt_of_le_of_ne ENNReal.toReal_nonneg (Ne.symm hVne)
   have hunivB : (mu Set.univ).toReal = (volume B).toReal := by

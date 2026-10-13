@@ -76,7 +76,7 @@ theorem skewPart_eq_self_of_symmPart_eq_zero {g : Mat d}
 
 /-- The symmetric part is a symmetric matrix. -/
 theorem isSymm_symmPart (A : Mat d) : (symmPart A).IsSymm := by
-  show (symmPart A).transpose = symmPart A
+  change (symmPart A).transpose = symmPart A
   simpa [matTranspose] using matTranspose_symmPart A
 
 /-- A matrix with vanishing symmetric part is antisymmetric. -/
@@ -95,7 +95,7 @@ theorem vecDot_matVecMul_self_eq_zero_of_symmPart_eq_zero {g : Mat d}
   rw [← vecDot_matVecMul_symmPart, hg,
     show matVecMul (0 : Mat d) ξ = 0 by
       funext i
-      show (∑ j : Fin d, (0 : ℝ) * ξ j) = 0
+      change (∑ j : Fin d, (0 : ℝ) * ξ j) = 0
       simp,
     vecDot_zero_right]
 
@@ -121,7 +121,7 @@ theorem blockMatVecMul_blockMatrixOfCoeff_snd (A : Mat d) (X : BlockVec d) :
     (blockMatVecMul (blockMatrixOfCoeff A) X).2 =
       -(matVecMul (symmPart A)⁻¹
         (matVecMul (skewPart A) X.1 - X.2)) := by
-  show matVecMul (-((symmPart A)⁻¹ * skewPart A)) X.1 +
+  change matVecMul (-((symmPart A)⁻¹ * skewPart A)) X.1 +
       matVecMul (symmPart A)⁻¹ X.2 = _
   rw [neg_matVecMul, ← matVecMul_mul, sub_eq_add_neg,
     matVecMul_add, matVecMul_neg]
@@ -134,7 +134,7 @@ theorem blockMatVecMul_blockMatrixOfCoeff_fst (A : Mat d) (X : BlockVec d) :
         matVecMul (skewPart A)
           ((blockMatVecMul (blockMatrixOfCoeff A) X).2) := by
   rw [blockMatVecMul_blockMatrixOfCoeff_snd]
-  show matVecMul (symmPart A + matTranspose (skewPart A) * (symmPart A)⁻¹ *
+  change matVecMul (symmPart A + matTranspose (skewPart A) * (symmPart A)⁻¹ *
         skewPart A) X.1 +
       matVecMul (-(matTranspose (skewPart A) * (symmPart A)⁻¹)) X.2 = _
   have htk : matTranspose (skewPart A) = -skewPart A := by
@@ -156,7 +156,7 @@ theorem blockQuadForm_blockMatrixOfCoeff (A : Mat d) (X : BlockVec d) :
             (matVecMul (skewPart A) X.1 - X.2)) := by
   set s := symmPart A with hs
   set k := skewPart A with hk
-  show vecDot X.1
+  change vecDot X.1
         (matVecMul (s + matTranspose k * s⁻¹ * k) X.1 +
           matVecMul (-(matTranspose k * s⁻¹)) X.2) +
       vecDot X.2
@@ -185,7 +185,7 @@ theorem blockMatVecMul_blockMatrixOfCoeff_transpose_fluxFlip_snd
       ((X.1, -X.2) : BlockVec d),
     blockMatVecMul_blockMatrixOfCoeff_snd A X,
     symmPart_matTranspose, skewPart_matTranspose]
-  show -(matVecMul (symmPart A)⁻¹
+  change -(matVecMul (symmPart A)⁻¹
       (matVecMul (-skewPart A) X.1 - -X.2)) =
     -(-(matVecMul (symmPart A)⁻¹ (matVecMul (skewPart A) X.1 - X.2)))
   rw [neg_matVecMul,
@@ -203,7 +203,7 @@ theorem blockQuadForm_transpose_fluxFlip (A : Mat d) (X : BlockVec d) :
       ((X.1, -X.2) : BlockVec d),
     blockQuadForm_blockMatrixOfCoeff A X,
     symmPart_matTranspose, skewPart_matTranspose]
-  show vecDot X.1 (matVecMul (symmPart A) X.1) +
+  change vecDot X.1 (matVecMul (symmPart A) X.1) +
       vecDot (matVecMul (-skewPart A) X.1 - -X.2)
         (matVecMul (symmPart A)⁻¹ (matVecMul (-skewPart A) X.1 - -X.2)) = _
   rw [neg_matVecMul,

@@ -204,7 +204,7 @@ theorem unitCubeSkewW2InfinityOfAEEq_w1Infinity (h : UnitCubeSkewW2Infinity d)
   refine congrArg₂ max rfl (congrArg ENNReal.toReal ?_)
   refine MeasureTheory.eLpNorm_congr_ae ?_
   filter_upwards [hw] with x hx
-  show matrixNorm (w x) = matrixNorm (h.toLInfSkewMatrixFieldOn.1.1 x)
+  change matrixNorm (w x) = matrixNorm (h.toLInfSkewMatrixFieldOn.1.1 x)
   rw [hx]
 
 /-! ## Subtracting a constant antisymmetric matrix from a shell field -/
@@ -233,7 +233,7 @@ def subConstShell (c : Mat d) (hc : matTranspose c = -c) (g : ShellField d) :
       have hcij : c i j = -c j i := by
         have h := congrFun (congrFun hc j) i
         simpa [matTranspose] using h
-      show g x i j - c i j = -(g x j i - c j i)
+      change g x i j - c i j = -(g x j i - c j i)
       rw [hg, hcij]
       ring⟩
 
@@ -348,7 +348,7 @@ theorem centeredShellUnitCube_shift (M : ABKModel d) (Q : TriadicCube d)
         (centeredShellUnitCube M Q hle omega hbar hskew).toLInfSkewMatrixFieldOn
         1).toCoeffField x =
       (unitRescaledCutoffCoeff M Q highScale omega).toCoeffField x - hbar := by
-  show (unitRescaledCutoffCoeff M Q lowScale omega).toCoeffField x +
+  change (unitRescaledCutoffCoeff M Q lowScale omega).toCoeffField x +
       (1 : ℝ) • ((unitRescaledCutoffCoeff M Q highScale omega).toCoeffField x -
         (unitRescaledCutoffCoeff M Q lowScale omega).toCoeffField x - hbar) =
     (unitRescaledCutoffCoeff M Q highScale omega).toCoeffField x - hbar

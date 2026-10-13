@@ -149,11 +149,11 @@ theorem gate_or_exists_meetsFace (z : Vec d) (m q : ℤ) :
     refine Or.inr ⟨i, ?_⟩
     rcases le_or_gt 0 (z i) with hz | hz
     · left
-      show (1 / 2 : ℝ) * (3 : ℝ) ^ m ≤ z i + (1 / 2 : ℝ) * (3 : ℝ) ^ q
+      change (1 / 2 : ℝ) * (3 : ℝ) ^ m ≤ z i + (1 / 2 : ℝ) * (3 : ℝ) ^ q
       rw [abs_of_nonneg hz] at hi
       linarith only [hi]
     · right
-      show z i - (1 / 2 : ℝ) * (3 : ℝ) ^ q ≤ -(1 / 2 : ℝ) * (3 : ℝ) ^ m
+      change z i - (1 / 2 : ℝ) * (3 : ℝ) ^ q ≤ -(1 / 2 : ℝ) * (3 : ℝ) ^ m
       rw [abs_of_neg hz] at hi
       linarith only [hi]
 

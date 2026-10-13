@@ -152,7 +152,8 @@ theorem tsum_block_comm (w g : ℤ → ℝ≥0∞) (m : ℤ) :
       refine tsum_congr fun k => ?_
       by_cases hk : n - 1 ≤ k ∧ k ≤ m
       · rw [ite_eq_left hk, ite_eq_left ⟨hn, hk.1, hk.2⟩]
-      · rw [ite_eq_right hk, ite_eq_right (fun hc : n ≤ m ∧ n - 1 ≤ k ∧ k ≤ m => hk ⟨hc.2.1, hc.2.2⟩),
+      · rw [ite_eq_right hk, ite_eq_right (fun hc : n ≤ m ∧ n - 1 ≤ k ∧ k ≤ m => hk ⟨hc.2.1,
+        hc.2.2⟩),
           mul_zero]
     · have hz : ∀ k : ℤ, (if n ≤ m ∧ n - 1 ≤ k ∧ k ≤ m then w n * g k else 0)
           = (0 : ℝ≥0∞) := fun k => ite_eq_right (fun hc => hn hc.1)

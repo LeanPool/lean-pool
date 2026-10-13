@@ -112,7 +112,7 @@ theorem exists_h10_isDivFormWeakSolutionOn_add (hU : IsOpenBoundedConvexDomain U
       (fun x => matVecMul (a x) (h.grad x)) x +
         (fun x => matVecMul (a x) (w.toH1Function.grad x)) x := by
     intro x
-    show matVecMul (a x) (h.grad x + w.toH1Function.grad x) = _
+    change matVecMul (a x) (h.grad x + w.toH1Function.grad x) = _
     exact matVecMul_add _ _ _
   rw [integral_vecDot_add_split hAh hAw hsplit φ, hw φ,
     integral_vecDot_sub_split hnAh hg (fun _ => rfl) φ, integral_vecDot_neg_split _ φ]
@@ -199,7 +199,7 @@ theorem exists_streamObservable_of_zeroTraceDifference {U : Set (Vec d)}
     have hae : (u - hd).toFun =ᵐ[volume.restrict U] w.toH1Function.toFun := by
       filter_upwards [ae_restrict_mem hUmeas] with x hx
       rw [H1Function.sub_toFun]
-      show u.toFun x - hd.toFun x = _
+      change u.toFun x - hd.toFun x = _
       rw [hwf x, hdbd x, hhbd x hx]
       ring
     have hmem := memH10_of_ae_eq_h10 hU (u - hd) w hae
@@ -245,7 +245,7 @@ theorem exists_streamObservable_of_zeroTraceDifference {U : Set (Vec d)}
   obtain ⟨Y, hYfun, hYgrad⟩ := exists_h1Function_toFun_eq u hL2 hae
   refine ⟨uObs, Y, hmeas, hN, hoff, hucont, fun z => by rw [hYfun], ?_, ?_, hae⟩
   · refine ⟨MemLp.zero, fun φ => ?_⟩
-    show ∫ x in U, vecDot (matVecMul (streamCoefficient M.nu omega x) (Y.grad x))
+    change ∫ x in U, vecDot (matVecMul (streamCoefficient M.nu omega x) (Y.grad x))
         (φ.toH1Function.grad x) ∂volume = _
     rw [hYgrad, hsol φ]
     simp only [vecDot_zero_left, integral_zero, neg_zero, zero_mul]

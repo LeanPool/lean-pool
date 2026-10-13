@@ -66,14 +66,14 @@ noncomputable section
 variable {d : ℕ}
 
 private theorem rpow_three_neg_eq (n : ℤ) : Real.rpow 3 (-(n : ℝ)) = ((3 : ℝ) ^ n)⁻¹ := by
-  show (3 : ℝ) ^ (-(n : ℝ)) = ((3 : ℝ) ^ n)⁻¹
+  change (3 : ℝ) ^ (-(n : ℝ)) = ((3 : ℝ) ^ n)⁻¹
   rw [Real.rpow_neg (by norm_num : (0 : ℝ) ≤ 3)]
   congr 1
   exact Real.rpow_intCast 3 n
 
 private theorem rpow_three_half_sq (n : ℤ) :
     Real.rpow 3 ((n : ℝ) / 2) * Real.rpow 3 ((n : ℝ) / 2) = (3 : ℝ) ^ n := by
-  show (3 : ℝ) ^ ((n : ℝ) / 2) * (3 : ℝ) ^ ((n : ℝ) / 2) = (3 : ℝ) ^ n
+  change (3 : ℝ) ^ ((n : ℝ) / 2) * (3 : ℝ) ^ ((n : ℝ) / 2) = (3 : ℝ) ^ n
   rw [← Real.rpow_add (by norm_num : (0 : ℝ) < 3),
     show (n : ℝ) / 2 + (n : ℝ) / 2 = ((n : ℤ) : ℝ) by ring, Real.rpow_intCast]
 

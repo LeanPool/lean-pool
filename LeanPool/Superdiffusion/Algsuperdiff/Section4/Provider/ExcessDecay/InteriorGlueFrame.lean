@@ -87,6 +87,7 @@ theorem setDoubledResponseJ_translateSet (w : Vec d) (V : Set (Vec d))
 
 variable [NeZero d]
 
+omit [NeZero d] in
 /-- **The off-grid one-cube maximum is CoarseGraining's, in the translated frame.** -/
 theorem offGridBlockResponseValueSet_eq_translate (w : Vec d) (R : TriadicCube d)
     (A : Ch02.TriadicCoeffFamily d) (g : CoeffField d)
@@ -105,6 +106,7 @@ theorem offGridBlockResponseValueSet_eq_translate (w : Vec d) (R : TriadicCube d
     rw [offGridCube, setDoubledResponseJ_translateSet,
       setDoubledResponseJ_openCubeSet R A _ hg]
 
+omit [NeZero d] in
 theorem offGridBlockResponseMax_eq_translate (w : Vec d) (R : TriadicCube d)
     (A : Ch02.TriadicCoeffFamily d) (g : CoeffField d)
     (hg : (A.coeffOn R).toCoeffField = translateCoeffField w g) (a0 : Mat d) :

@@ -406,7 +406,8 @@ theorem scaleNormalizedPositiveBesovVectorNormTwo_fluxTermBCField_le [NeZero d]
   -- discard the surplus factor `L ≤ 1`
   have hsq : L * ((d : ℝ) ^ 2 * h.gradientW1Infinity) * (L * (fluxZeroTraceConst d * S)) ≤
       (d : ℝ) ^ 2 * h.gradientW1Infinity * (L * (fluxZeroTraceConst d * S)) := by
-    have hbase : (0 : ℝ) ≤ (d : ℝ) ^ 2 * h.gradientW1Infinity * (L * (fluxZeroTraceConst d * S)) := by
+    have hbase : (0 : ℝ) ≤ (d : ℝ) ^ 2 * h.gradientW1Infinity * (L * (fluxZeroTraceConst d * S))
+      := by
       positivity
     nlinarith [hbase, hLnn, hL]
   have hstep2 : besovMultConst (3 / 8) *

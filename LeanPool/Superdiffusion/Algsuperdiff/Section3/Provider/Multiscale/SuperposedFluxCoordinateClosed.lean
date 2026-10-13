@@ -92,7 +92,7 @@ theorem mul_matrixNorm_sigmaStarInvCoarse_le_sum_abs_pureFluxCoordinateQuadratic
 /-- The finite flux-coordinate superposed conclusion after proving both
 Sobolev trace conditions for the full bad family.  It is simultaneous only
 over `j : Fin d`; the separation and literal wave gates are unchanged. -/
-theorem mul_matrixNorm_sigmaStarInvCoarse_le_sum_superposedConclusionPayload_flux_basis_closed_ae
+theorem coarseInverseMatrixNorm_le_superposedFluxBasis_ae
     (hd : 2 ≤ d) (M : ABKModel d) {m0 : ℤ} {E : {E : ℝ // 1 ≤ E}}
     (hS : Algsuperdiff.Frozen.Section3.inductionState M m0 E) (m : ℤ) {b : ℝ}
     (hb0 : 0 < b) (hb : b ≤ 1 / 8) {k₀ : ℕ} (hk₀ : 3 ≤ k₀) {i : ℤ}

@@ -107,7 +107,7 @@ theorem metricBall_subset_image_add_openCubeSet (k : ℤ) (p : Vec d) :
         (-(1 / 2 : ℝ)) * (3 : ℝ) ^ k < q i - p i),
       by simpa using (by linarith only [h.2] : q i - p i < (1 / 2 : ℝ) * (3 : ℝ) ^ k)⟩
   · funext i
-    show p i + (q i - p i) = q i
+    change p i + (q i - p i) = q i
     ring
 
 /-! ## 2. The boundary ball family -/

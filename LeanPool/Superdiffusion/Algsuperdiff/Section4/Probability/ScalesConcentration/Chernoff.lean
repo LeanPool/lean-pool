@@ -271,7 +271,9 @@ theorem full_mgf_bound
     have hmaps : ∀ j ∈ W, g j ∈ Finset.range r := by
       intro j _
       simp only [hg, Finset.mem_range]
-      have h1 : j % (r : ℤ) < (r : ℤ) := Int.emod_lt_of_pos j (by exact_mod_cast hr.trans_lt' Nat.zero_lt_one)
+      have hrPositive : (0 : ℤ) < (r : ℤ) := by
+        exact_mod_cast hr.trans_lt' Nat.zero_lt_one
+      have h1 : j % (r : ℤ) < (r : ℤ) := Int.emod_lt_of_pos j hrPositive
       have h2 : (0 : ℤ) ≤ j % (r : ℤ) := Int.emod_nonneg j hrne
       omega
     have hdvdfib : ∀ b : ℕ, ∀ j ∈ W.filter (fun j => g j = b), (r : ℤ) ∣ (j - (b : ℤ)) := by
@@ -322,16 +324,19 @@ theorem full_mgf_bound
           rw [Finset.sum_const, Finset.card_range, nsmul_eq_mul]
           field_simp
       _ ≤ ∏ b ∈ Finset.range r,
-            (ENNReal.ofReal (Real.exp (∑ j ∈ W.filter (fun j => g j = b), hcoef j))) ^ ((1 : ℝ) / r) := by
+            (ENNReal.ofReal (Real.exp (∑ j ∈ W.filter (fun j => g j = b), hcoef j))) ^ ((1 : ℝ) /
+              r) := by
           refine Finset.prod_le_prod (fun b _ => ?_)
           exact ENNReal.rpow_le_rpow (hGbBound b) (by positivity)
       _ = ∏ b ∈ Finset.range r,
-            ENNReal.ofReal (Real.exp ((1 / (r : ℝ)) * ∑ j ∈ W.filter (fun j => g j = b), hcoef j)) := by
+            ENNReal.ofReal (Real.exp ((1 / (r : ℝ)) * ∑ j ∈ W.filter (fun j => g j = b), hcoef j))
+              := by
           refine Finset.prod_congr rfl (fun b _ => ?_)
           rw [mul_comm (1 / (r : ℝ)) (∑ j ∈ W.filter (fun j => g j = b), hcoef j),
             Real.exp_mul, ENNReal.ofReal_rpow_of_nonneg (Real.exp_nonneg _) (by positivity)]
       _ = ENNReal.ofReal (Real.exp
-            (∑ b ∈ Finset.range r, (1 / (r : ℝ)) * ∑ j ∈ W.filter (fun j => g j = b), hcoef j)) := by
+            (∑ b ∈ Finset.range r, (1 / (r : ℝ)) * ∑ j ∈ W.filter (fun j => g j = b), hcoef j)) :=
+              by
           rw [← ENNReal.ofReal_prod_of_nonneg (fun b _ => (Real.exp_pos _).le), ← Real.exp_sum]
       _ = ENNReal.ofReal (Real.exp ((1 / (r : ℝ)) * ∑ j ∈ W, hcoef j)) := by
           rw [← Finset.mul_sum, Finset.sum_fiberwise_of_maps_to hmaps hcoef]

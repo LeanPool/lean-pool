@@ -54,11 +54,11 @@ theorem isOddAffineData_zero (x : Vec d) (m k : ℤ) :
     IsOddAffineData x m k (0 : ℝ) (0 : Vec d) := by
   have hlift : ∀ y : Vec d, affineLift x (0 : ℝ) (0 : Vec d) y = 0 := by
     intro y
-    show (0 : ℝ) + vecDot (0 : Vec d) (y - x) = 0
+    change (0 : ℝ) + vecDot (0 : Vec d) (y - x) = 0
     have hv0 : vecDot (0 : Vec d) (y - x) = 0 := by
-      show ∑ l, (0 : Vec d) l * (y - x) l = 0
+      change ∑ l, (0 : Vec d) l * (y - x) l = 0
       refine Finset.sum_eq_zero fun l _ => ?_
-      show (0 : ℝ) * (y - x) l = 0
+      change (0 : ℝ) * (y - x) l = 0
       ring
     rw [hv0]
     ring

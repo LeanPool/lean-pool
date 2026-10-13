@@ -30,7 +30,7 @@ ABK26, `e.lower.bound.oscillations`, `e.nablaw.oscillations`, `e.Fz.def`.
 ## The two gaps this module closes
 
 The depth-indexed interior endpoints
-`Closure.GammaTenDepthOscillation.exists_gamma0_freshShell{Dirichlet,Neumann}_meshOscillationDepth_le_gamma_pow_sixteen`
+from `Closure.GammaTenDepthOscillation` for the Dirichlet and Neumann correctors
 bound the oscillation of the corrector **gradient**, on `M.P.toMeasure`.  The
 Besov tower of Step 2 is read
 

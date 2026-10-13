@@ -80,7 +80,7 @@ variable {d : ℕ}
 /-! ## The defect is odd in the direction -/
 
 theorem vecNormSq_neg (e : Vec d) : vecNormSq (-e) = vecNormSq e := by
-  show (∑ i, (-e) i * (-e) i) = ∑ i, e i * e i
+  change (∑ i, (-e) i * (-e) i) = ∑ i, e i * e i
   exact Finset.sum_congr rfl fun i _ => by simp
 
 theorem vecNorm_neg (e : Vec d) : vecNorm (-e) = vecNorm e := by
@@ -88,7 +88,7 @@ theorem vecNorm_neg (e : Vec d) : vecNorm (-e) = vecNorm e := by
 
 theorem cubeAverage_neg (R : TriadicCube d) (f : Vec d → ℝ) :
     cubeAverage R (fun x => -f x) = -cubeAverage R f := by
-  show (cubeVolume R)⁻¹ * ∫ x in cubeSet R, -f x ∂volume
+  change (cubeVolume R)⁻¹ * ∫ x in cubeSet R, -f x ∂volume
       = -((cubeVolume R)⁻¹ * ∫ x in cubeSet R, f x ∂volume)
   rw [integral_neg]
   ring

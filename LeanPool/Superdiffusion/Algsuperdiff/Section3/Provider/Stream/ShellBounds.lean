@@ -190,7 +190,7 @@ theorem isBigOWith_gammaSigma_localCubeControl_shell (M : ABKModel d) (k : ℤ) 
 private theorem zpow_three_mul_rpow_sub_two (gamma : ℝ) (k : ℤ) :
     (3 : ℝ) ^ k * Real.rpow 3 ((gamma - 2) * (k : ℝ)) =
       Real.rpow 3 ((gamma - 1) * (k : ℝ)) := by
-  show (3 : ℝ) ^ k * (3 : ℝ) ^ ((gamma - 2) * (k : ℝ)) =
+  change (3 : ℝ) ^ k * (3 : ℝ) ^ ((gamma - 2) * (k : ℝ)) =
     (3 : ℝ) ^ ((gamma - 1) * (k : ℝ))
   rw [← Real.rpow_intCast (3 : ℝ) k, ← Real.rpow_add (by norm_num : (0 : ℝ) < 3)]
   congr 1

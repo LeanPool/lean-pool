@@ -329,8 +329,7 @@ private theorem exists_centeredCube_gradient_negativeDual_le_rootDefect
           (centeredCubeRootFluxDefectL2Field m a sigma0 u) := by ac_rfl
 
 theorem exists_centeredCubeFluxComparison_cz
-    (d : ℕ) (hd : 2 ≤ d) (p : FiniteLpExponent)
-    (hp : (2 : ℝ≥0∞) ≤ p.exponent) :
+    (d : ℕ) (hd : 2 ≤ d) (p : FiniteLpExponent) :
     letI : NeZero d := ⟨by omega⟩
     ∃ C : ℝ≥0∞, C < ∞ ∧
       ∀ (m n : ℤ) (hnm : n < m)

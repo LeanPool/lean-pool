@@ -46,7 +46,7 @@ is below `cgamma^{15}`.  Two things stand between it and the proved machinery.
    the finite-depth Besov seminorm of the localized field is not known to be.
    The fix is to envelope a **majorant** instead: `oscMajorant`, built from the
    oscillation cells of `e.nablaw.oscillations` through
-   `LocalizationFluctuationOscillationBridge.cubeBesovPositiveVectorDepthAverage_le_descendantsAverage_sq`.
+`cubeBesovPositiveVectorDepthAverage_le_descendantsAverage_sq`.
    It dominates every finite-depth seminorm, is monotone in the depth cutoff,
    and its measurability and integrability reduce to those of
    `meshOscillationCell`, which are proved.
@@ -129,7 +129,7 @@ theorem sq_sum_le_sum_two_pow_mul_sq (n : ℕ) (a : ℕ → ℝ) :
   have hfg : ∀ i : ℕ, f i * g i = a i := by
     intro i
     have hs : (0 : ℝ) < Real.sqrt ((2 : ℝ) ^ (i + 1)) := Real.sqrt_pos.2 (hpos i)
-    show (Real.sqrt ((2 : ℝ) ^ (i + 1)))⁻¹ * (Real.sqrt ((2 : ℝ) ^ (i + 1)) * a i) = a i
+    change (Real.sqrt ((2 : ℝ) ^ (i + 1)))⁻¹ * (Real.sqrt ((2 : ℝ) ^ (i + 1)) * a i) = a i
     exact inv_mul_cancel_left₀ (ne_of_gt hs) (a i)
   have hfsq : ∀ i : ℕ, f i ^ (2 : ℕ) = ((2 : ℝ) ^ (i + 1))⁻¹ := by
     intro i
@@ -472,7 +472,7 @@ theorem cubeFamilyAverage_finsetSum (I : Finset (TriadicCube d)) {iota : Type*}
 theorem rpow_three_pow_four_eq (s : ℝ) (i : ℕ) :
     (Real.rpow (3 : ℝ) (s * (i : ℝ))) ^ (4 : ℕ) = (Real.rpow (3 : ℝ) (4 * s)) ^ i := by
   have h3 : (0 : ℝ) ≤ 3 := by norm_num
-  show ((3 : ℝ) ^ (s * (i : ℝ))) ^ (4 : ℕ) = ((3 : ℝ) ^ (4 * s)) ^ i
+  change ((3 : ℝ) ^ (s * (i : ℝ))) ^ (4 : ℕ) = ((3 : ℝ) ^ (4 * s)) ^ i
   rw [← Real.rpow_natCast ((3 : ℝ) ^ (s * (i : ℝ))) 4, ← Real.rpow_mul h3,
     ← Real.rpow_natCast ((3 : ℝ) ^ (4 * s)) i, ← Real.rpow_mul h3]
   congr 1

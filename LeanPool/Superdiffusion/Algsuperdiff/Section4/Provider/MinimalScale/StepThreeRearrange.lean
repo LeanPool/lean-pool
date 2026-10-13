@@ -80,11 +80,11 @@ def lowerScaleEquiv (k : ℤ) : ℕ ≃ {n : ℤ // n ≤ k} where
   toFun p := ⟨k - (p : ℤ), by omega⟩
   invFun n := (k - n.1).toNat
   left_inv p := by
-    show (k - (k - (p : ℤ))).toNat = p
+    change (k - (k - (p : ℤ))).toNat = p
     omega
   right_inv n := by
     refine Subtype.ext ?_
-    show k - (((k - n.1).toNat : ℕ) : ℤ) = n.1
+    change k - (((k - n.1).toNat : ℕ) : ℤ) = n.1
     have hn := n.2
     omega
 
@@ -155,7 +155,7 @@ theorem hessInnerE_eq_wsumE (M : ABKModel d) (alpha : ℝ) (k : ℤ)
     have hz : k - (k - (p : ℤ)) = (p : ℤ) := by ring
     rw [stepThreeWt, stepThreeWeight, hz]
     norm_num
-  show ENNReal.ofReal (stepThreeWt alpha (k - (k - (p : ℤ)))) *
+  change ENNReal.ofReal (stepThreeWt alpha (k - (k - (p : ℤ)))) *
       ∑ i ∈ Finset.Icc (k - (p : ℤ) - 1) k, ENNReal.ofReal (scoreG1b M k i omega) = _
   rw [hwt, sum_Icc_eq_sum_range_down k p (fun i => ENNReal.ofReal (scoreG1b M k i omega)),
     hessBlock, ENNReal.ofReal_mul (stepThreeWeight_nonneg alpha p),

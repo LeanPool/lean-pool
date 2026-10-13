@@ -2127,17 +2127,7 @@ public import LeanPool.Superdiffusion.Support.Book.Ch03.Theorems.CoarseCaccioppo
 public import LeanPool.Superdiffusion.Support.Book.Ch03.Theorems.CoarseCaccioppoliRHS.PublicRHSScalar
 public import LeanPool.Superdiffusion.Support.Book.Ch03.Theorems.CoarseCaccioppoliRHS.Theory
 public import LeanPool.Superdiffusion.Support.Book.Ch04.Theorems.DilationResponse
-public import LeanPool.Superdiffusion.Support.Book.Ch05.Theorems.Public
-public import LeanPool.Superdiffusion.Support.Book.Ch05.Theorems.Section57.HomogenizationAssemblyEndpoint
-public import LeanPool.Superdiffusion.Support.Book.Ch05.Theorems.Section57.HomogenizationAssemblyOptimized
-public import LeanPool.Superdiffusion.Support.Book.Ch05.Theorems.Section57.UniformEllipticityBridge
-public import LeanPool.Superdiffusion.Support.Book.MainResults
 public import LeanPool.Superdiffusion.Support.CoarseGraining.QuadraticStability.Integral
-public import LeanPool.Superdiffusion.Support.Examples.Periodic.DiracBridge
-public import LeanPool.Superdiffusion.Support.Examples.Periodic.MField
-public import LeanPool.Superdiffusion.Support.Examples.Periodic.PeriodicConcreteComparison
-public import LeanPool.Superdiffusion.Support.Examples.Periodic.PeriodicGeneralComparison
-public import LeanPool.Superdiffusion.Support.Examples.Periodic.PeriodicSmoothComparison
 public import LeanPool.Superdiffusion.Support.HighContrast.Corridor.FixedPhase.CarrierObservable
 public import LeanPool.Superdiffusion.Support.HighContrast.Corridor.FixedPhase.ClampedObservable
 public import LeanPool.Superdiffusion.Support.HighContrast.Corridor.FixedPhase.CorePatchEnergy
@@ -2183,7 +2173,6 @@ public import LeanPool.Superdiffusion.Support.Probability.EfronStein.Fin
 public import LeanPool.Superdiffusion.Support.Probability.EfronStein.ProdDecomp
 public import LeanPool.Superdiffusion.Support.Probability.EfronStein.Transfer
 public import LeanPool.Superdiffusion.Support.Probability.EfronStein.TwoPoint
-public import LeanPool.Superdiffusion.Support.Probability.RegCoeffField.EllipticSupport
 public import LeanPool.Superdiffusion.Support.Sobolev.CubeEmbedding
 public import LeanPool.Superdiffusion.Support.Sobolev.CubeEmbedding.Limit
 public import LeanPool.Superdiffusion.Support.Sobolev.Foundations.CubeCalderonZygmund.CubeTranslationFiniteP

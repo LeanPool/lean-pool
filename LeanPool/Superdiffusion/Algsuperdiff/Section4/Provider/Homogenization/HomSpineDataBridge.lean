@@ -138,7 +138,7 @@ theorem besovSeminormTwo_le_of_holderHalf_of_lt_half [NeZero d] {m : ℤ} {K s :
     (memWsp_of_holderHalf hd hs0 hs hK hg)
   have hweight : cubeBesovScaleWeight (-s) (originCube d m) = (3 : ℝ) ^ ((m : ℝ) * s) := by
     rw [cubeBesovScaleWeight, cubeScaleFactor, neg_neg]
-    show ((3 : ℝ) ^ (m : ℤ)) ^ s = (3 : ℝ) ^ ((m : ℝ) * s)
+    change ((3 : ℝ) ^ (m : ℤ)) ^ s = (3 : ℝ) ^ ((m : ℝ) * s)
     rw [← Real.rpow_intCast (3 : ℝ) m, ← Real.rpow_mul (by norm_num : (0 : ℝ) ≤ 3)]
   have hstep := three_rpow_mul_cubeGagliardoSeminorm_le_of_lt_half (E := Vec d) hd hs0 hs hK hg
   refine hbridge.trans ?_

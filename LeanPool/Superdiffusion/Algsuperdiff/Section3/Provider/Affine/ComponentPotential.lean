@@ -197,11 +197,11 @@ theorem continuous_componentCorrectionPotential
     have hcube_nhds : cubeSet (originCube d m) ∈ 𝓝 x :=
       Filter.mem_of_superset ((isOpen_openCubeSet _).mem_nhds hxU)
         (openCubeSet_subset_cubeSet _)
-    apply (hrawWithin.continuousAt hcube_nhds).congr_of_eventuallyEq
+    refine (hrawWithin.continuousAt hcube_nhds).congr_of_eventuallyEq ?_
     filter_upwards [hcube_nhds] with y hy
     exact componentCorrectionPotential_eqOn_globalCompetitor_sub_linearFn hsm C p hy
   · have hxK : x ∉ K := fun hxK => hxU (hKU hxK)
-    apply continuousAt_const.congr_of_eventuallyEq
+    refine (continuousAt_const (y := (0 : ℝ))).congr_of_eventuallyEq ?_
     filter_upwards [hK.isClosed.isOpen_compl.eventually_mem hxK] with y hy
     exact hzero y hy
 
@@ -270,7 +270,8 @@ noncomputable def componentCorrectionH1Function
             change MemLp (zeroExtendedKuhnAffineCoordDeriv cells datum i) 2
               (volume.restrict (openCubeSet (originCube (n + 1) m)))
             refine MemLp.of_bound
-              (measurable_zeroExtendedKuhnAffineCoordDeriv cells datum hucont i).aestronglyMeasurable
+              (measurable_zeroExtendedKuhnAffineCoordDeriv cells datum hucont
+                i).aestronglyMeasurable
               (zeroExtendedKuhnAffineCoordBound cells datum i) ?_
             exact Eventually.of_forall fun x =>
               norm_zeroExtendedKuhnAffineCoordDeriv_le cells datum hscale hucont i x

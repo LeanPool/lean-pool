@@ -30,7 +30,7 @@ ABK26, Step 2 of `l.approximate.recurrence.formula`, `e.Pz.def`, `e.Fz.def`,
 ## What this module supplies
 
 `Closure.GammaTenStripBound.gammaTenStrip_cell_average_sq_le` and
-`Closure.GammaTenStripRemainder.cubeFamilyAverage_integral_sq_stripCellPotentialDatum_le_of_majorant`
+`cubeFamilyAverage_integral_sq_stripCellPotentialDatum_le_of_majorant`
 both carry a per-cell binder `hDsq` (resp. `hFsq`): *at each cell of the mesh,
 the square of the cell datum is sample-integrable*.  This module discharges both
 binders at the closure's own corrector families
@@ -90,7 +90,7 @@ There is **no** smallness gate, **no** `InductionState`, **no**
 `M.gamma <= gamma0`, **no** direction bound `|e| <= 1` or `|e'| <= 1`, **no**
 `0 < h`, and no recurrence-parameter hypothesis of any kind.  In particular this
 module does **not** route through
-`LocalizationFluctuationCellIntegrable.exists_gamma0_integrable_freshShellDirichlet_meshEnergyCell_rpow_four`,
+`exists_gamma0_integrable_freshShellDirichlet_meshEnergyCell_rpow_four`,
 which carries all of those; the potential-leg mirror
 `Closure.SplitFoldCellMoments.integrable_meshCellBackgroundPotentialEnergy_sq_of_meshEnergyCell`
 is used only as a proof template and is not consumed.

@@ -17,11 +17,16 @@ Module imports, support namespace and local option directives adapted for Lean P
 
 @[expose] public section
 
+open Algsuperdiff.Frozen.Assumptions.ShellField
+  (zeroShellRegLaw_stationary_of_zeroShellLaw_stationary)
+
 open HCPolySupport MeasureTheory
 
 namespace Algsuperdiff.Section3.Disorder
 
 noncomputable section
+
+
 
 variable {d : ℕ}
 
@@ -37,7 +42,7 @@ theorem existsUnique_cstar_raw
       ∀ e : {e : Vec d // HCPolySupport.Book.Ch02.vecNorm e = 1},
         ‖Algsuperdiff.Frozen.Assumptions.ShellField.zeroShellPotentialCorrector
             P
-            (Algsuperdiff.Frozen.Assumptions.ShellField.zeroShellRegLaw_stationary_of_zeroShellLaw_stationary
+            (zeroShellRegLaw_stationary_of_zeroShellLaw_stationary
                 P hJ1.stationary)
             e.1
             (Algsuperdiff.Frozen.Assumptions.ShellField.memLp_originForcing_of_j2_tail
@@ -77,7 +82,7 @@ theorem cstar_characterization (M : ABKModel d) :
       (∀ e : {e : Vec d // HCPolySupport.Book.Ch02.vecNorm e = 1},
         ‖Algsuperdiff.Frozen.Assumptions.ShellField.zeroShellPotentialCorrector
             M.P
-            (Algsuperdiff.Frozen.Assumptions.ShellField.zeroShellRegLaw_stationary_of_zeroShellLaw_stationary
+            (zeroShellRegLaw_stationary_of_zeroShellLaw_stationary
                 M.P M.J1.stationary)
             e.1
             (Algsuperdiff.Frozen.Assumptions.ShellField.memLp_originForcing_of_j2_tail
@@ -88,7 +93,7 @@ theorem cstar_characterization (M : ABKModel d) :
         (∀ e : {e : Vec d // HCPolySupport.Book.Ch02.vecNorm e = 1},
           ‖Algsuperdiff.Frozen.Assumptions.ShellField.zeroShellPotentialCorrector
               M.P
-              (Algsuperdiff.Frozen.Assumptions.ShellField.zeroShellRegLaw_stationary_of_zeroShellLaw_stationary
+              (zeroShellRegLaw_stationary_of_zeroShellLaw_stationary
                   M.P M.J1.stationary)
               e.1
               (Algsuperdiff.Frozen.Assumptions.ShellField.memLp_originForcing_of_j2_tail
@@ -150,7 +155,8 @@ theorem integrable_originFrobeniusMass (M : ABKModel d) :
       calc
         HCPolySupport.Book.Ch02.matrixOperatorNorm ((F 0) 0) ≤
             Algsuperdiff.Frozen.Assumptions.ShellField.unitCubeValueNorm (F 0) :=
-          Algsuperdiff.Frozen.Assumptions.ShellField.matrixOperatorNorm_zero_le_unitCubeValueNorm (F 0)
+          Algsuperdiff.Frozen.Assumptions.ShellField.matrixOperatorNorm_zero_le_unitCubeValueNorm
+            (F 0)
         _ ≤ X F := hunit
     calc
       HCPolySupport.Book.Ch02.matrixFrobeniusNormSq ((F 0) 0) ≤
@@ -241,7 +247,8 @@ private theorem norm_sq_zeroShellForcingL2_eq_raw_integral
           (Algsuperdiff.Frozen.Assumptions.ShellField.forgetShell ∘
             fun F : ℤ → Algsuperdiff.Frozen.Assumptions.ShellField d ↦ F 0) P.toMeasure = _
       exact integral_map
-        (Algsuperdiff.Frozen.Assumptions.ShellField.measurable_zeroShellRegMap (d := d)).aemeasurable
+        (Algsuperdiff.Frozen.Assumptions.ShellField.measurable_zeroShellRegMap (d :=
+          d)).aemeasurable
         hfmeas
     _ = ∫ F : ℤ → Algsuperdiff.Frozen.Assumptions.ShellField d,
         vecNormSq (matVecMul ((F 0) 0) e) ∂P.toMeasure := by
@@ -328,7 +335,7 @@ private theorem cstar_mul_log_le_originDirectionalEnergy
       ∫ F : ℤ → Algsuperdiff.Frozen.Assumptions.ShellField d,
         vecNormSq (matVecMul ((F 0) 0) e) ∂M.P.toMeasure := by
   have hstationary :=
-    Algsuperdiff.Frozen.Assumptions.ShellField.zeroShellRegLaw_stationary_of_zeroShellLaw_stationary
+    zeroShellRegLaw_stationary_of_zeroShellLaw_stationary
       M.P M.J1.stationary
   have hmem : MemLp
       (Algsuperdiff.Frozen.Assumptions.ShellField.originForcing e) 2

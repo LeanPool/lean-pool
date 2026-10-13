@@ -46,7 +46,7 @@ membership of the two corrector gradients:
   `Closure.GammaTenFluxMeasurability.measurable_meshOscillationCell_neumannFluxField_cutoffSample`;
 * the flux leg's fourth-power integrability is the Dirichlet-style one for the
   Neumann *gradient* plus
-  `Closure.GammaTenFluxMeasurability.integrable_meshOscillationCell_pow_four_neumannFluxField_cutoffSample`;
+`integrable_meshOscillationCell_pow_four_neumannFluxField_cutoffSample`;
 * the two `L^2` memberships are the proved
   `Closure.GammaTenAssemblySide.memLp_two_gradH10_normalizedCubeMeasure_of_subset`
   and `..._neumannFluxField_normalizedCubeMeasure`.

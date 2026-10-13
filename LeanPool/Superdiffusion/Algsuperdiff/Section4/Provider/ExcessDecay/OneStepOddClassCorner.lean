@@ -165,7 +165,7 @@ theorem normalizedL2On_evenAffinePart_slab_le {m : ℤ} {x : Vec d} {face : Fin 
       (convex_coordBox loT hiT) hharmT hMT (hPT hy) (hrT y hy) (hpT y hy)
       hyd.1 hyd.2
     rw [hgdef]
-    show |evenAffinePart x m face c' A' y|
+    change |evenAffinePart x m face c' A' y|
         ≤ 2 * |f y| + (|f (y - v0)| + 3 * (M * delta ^ 2))
     have habs : |f (y - v0)| = |V (y - v0) - affineEval (c' - vecDot A' x) A' (y - v0)| :=
       rfl

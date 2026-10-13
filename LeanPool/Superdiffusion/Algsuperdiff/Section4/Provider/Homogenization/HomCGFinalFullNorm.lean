@@ -73,7 +73,7 @@ private theorem cgScaleFactor_rpow (Q : TriadicCube d) (t : ℝ) :
 /-- The test gauge's `L^∞` weight is the side to the power `-α`. -/
 theorem three_rpow_neg_scale_eq (Q : TriadicCube d) (alpha : ℝ) :
     Real.rpow 3 (-(alpha * ((Q.scale : ℤ) : ℝ))) = cubeScaleFactor Q ^ (-alpha) := by
-  show (3 : ℝ) ^ (-(alpha * ((Q.scale : ℤ) : ℝ))) = cubeScaleFactor Q ^ (-alpha)
+  change (3 : ℝ) ^ (-(alpha * ((Q.scale : ℤ) : ℝ))) = cubeScaleFactor Q ^ (-alpha)
   rw [cgScaleFactor_rpow]
   congr 1
   ring

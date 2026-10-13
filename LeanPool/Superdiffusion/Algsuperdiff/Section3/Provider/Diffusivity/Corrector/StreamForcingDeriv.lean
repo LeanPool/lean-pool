@@ -123,7 +123,7 @@ def streamForcingCoordCLM (sigmaInv : ℝ) (e : Vec d) (i : Fin d) :
         exact mul_le_mul_of_nonneg_right (hentry j) (abs_nonneg _)
       have hval : ‖streamForcingCoordLinear sigmaInv e i A‖ =
           |sigmaInv| * |∑ j, A i j * e j| := by
-        show |sigmaInv * matVecMul A e i| = _
+        change |sigmaInv * matVecMul A e i| = _
         rw [abs_mul]
         rfl
       rw [hval, ← Finset.mul_sum] at *
@@ -205,7 +205,7 @@ theorem norm_fderiv_streamForcing_coord_le (sigmaInv : ℝ)
   · intro v
     have hcoord : ‖((streamForcingCoordCLM sigmaInv e i).comp D) v‖ =
         |sigmaInv| * |matVecMul (D v) e i| := by
-      show |sigmaInv * matVecMul (D v) e i| = _
+      change |sigmaInv * matVecMul (D v) e i| = _
       rw [abs_mul]
     have h1 : |matVecMul (D v) e i| ≤ Book.Ch02.vecNorm (matVecMul (D v) e) := by
       have hsup := norm_le_pi_norm (matVecMul (D v) e) i

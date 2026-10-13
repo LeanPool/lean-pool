@@ -427,7 +427,7 @@ theorem eLpNorm_sub_weaklyHarmonic_le_coarseGraining_rebased [NeZero d] (M : ABK
       (eLpNorm (fun y => u.toFun y - v.toFun y) 2
         (Support.normalizedVolumeMeasureOn
           ((fun y => x + y) '' openCubeSet (originCube d n)))).toReal := by
-    show (eLpNorm _ (2 : ℝ≥0∞) (normalizedCubeMeasure (originCube d n))).toReal = _
+    change (eLpNorm _ (2 : ℝ≥0∞) (normalizedCubeMeasure (originCube d n))).toReal = _
     exact congrArg ENNReal.toReal
       (eLpNorm_sub_weaklyHarmonic_eq_harmonicCorrector hsigma0
         (image_add_eq_translateSet x (openCubeSet (originCube d n))) hsub u v w hharm

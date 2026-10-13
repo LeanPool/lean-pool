@@ -58,7 +58,6 @@ namespace Algsuperdiff.Section4.Provider.Regularity
 open Algsuperdiff.Section3
 open HCPolySupport MeasureTheory
 open scoped ENNReal
-open scoped Classical
 
 noncomputable section
 

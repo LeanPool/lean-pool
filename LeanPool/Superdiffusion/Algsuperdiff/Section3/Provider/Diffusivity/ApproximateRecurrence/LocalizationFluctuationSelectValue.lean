@@ -151,7 +151,7 @@ theorem memVectorL2_potential_of_isDoubledMuAdmissibleField' {U : Domain d}
     MemVectorL2 (U : Set (Vec d)) F.potential := by
   have hfun : (X.potential - fun x => X.potential x - F.potential x) = F.potential := by
     funext x
-    show X.potential x - (X.potential x - F.potential x) = F.potential x
+    change X.potential x - (X.potential x - F.potential x) = F.potential x
     abel
   exact hfun ▸ hX.sub hadm.1.1
 
@@ -162,7 +162,7 @@ theorem memVectorL2_flux_of_isDoubledMuAdmissibleField' {U : Domain d}
     MemVectorL2 (U : Set (Vec d)) F.flux := by
   have hfun : (X.flux - fun x => X.flux x - F.flux x) = F.flux := by
     funext x
-    show X.flux x - (X.flux x - F.flux x) = F.flux x
+    change X.flux x - (X.flux x - F.flux x) = F.flux x
     abel
   exact hfun ▸ hX.sub hadm.2.1
 
@@ -224,7 +224,7 @@ theorem localizationFluctuationValue_eq_of_isDoubledMuMinimizerField {U : Domain
       doubledMuValue U a (S + T) :=
     doubledMuField_eq_doubledMuValue_of_isDoubledMuMinimizerField hST
   have hexp := two_mul_doubledMuValue_add_eq a P hS hTresp
-  show 2 * doubledMuField U a (constantDoubledField P + F) -
+  change 2 * doubledMuField U a (constantDoubledField P + F) -
       blockVecDot P (blockMatVecMul (Book.Ch02.coarseBlockMatrix U a) P) = _
   rw [hval]
   linarith

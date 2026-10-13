@@ -125,7 +125,7 @@ theorem isForcedEquation_sub {Q : TriadicCube d} {a : CoeffFamily d}
           (φ.toH1Function.grad x) := by
     intro x
     rw [H1Function.sub_grad]
-    show vecDot (matVecMul ((a.coeffOn Q).toCoeffField x) (u.grad x - v.grad x)) _ = _
+    change vecDot (matVecMul ((a.coeffOn Q).toCoeffField x) (u.grad x - v.grad x)) _ = _
     rw [matVecMul_sub_right]
     simp only [vecDot, Pi.sub_apply]
     rw [← Finset.sum_sub_distrib]

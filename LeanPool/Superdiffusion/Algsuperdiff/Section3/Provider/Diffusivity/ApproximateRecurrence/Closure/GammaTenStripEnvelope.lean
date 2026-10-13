@@ -41,7 +41,7 @@ pieces:
   --- the numerical gate `d 3^{g-p} <= 1/2` the refinement cost needs.
 
 The glue is
-`Closure.GammaTenStripEnvelopeConst.exists_besovEnvelope_interiorMesoCubeGrid_of_depth_gridRoot_const`.
+`exists_besovEnvelope_interiorMesoCubeGrid_of_depth_gridRoot_const`.
 Its per-depth binder `hdepth` is stated in exactly the shape the depth-indexed
 endpoints of `Closure.GammaTenDepthOscillation` conclude in --- a
 `gridFourthMomentRoot` on `interiorMesoCubeGrid d K (n - i) (outer - 1)` below

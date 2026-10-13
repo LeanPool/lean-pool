@@ -59,7 +59,7 @@ theorem volumeAverage_neg {U : Set (Vec d)} (f : Vec d → ℝ) :
 
 theorem abs_volumeAverage_le {U : Set (Vec d)} {f g : Vec d → ℝ}
     (hf : IntegrableOn f U) (hg : IntegrableOn g U)
-    (hfg : ∀ᵐ x ∂ volumeMeasureOn U, |f x| ≤ g x) :
+    (hfg : ∀ᵐ x ∂volumeMeasureOn U, |f x| ≤ g x) :
     |volumeAverage U f| ≤ volumeAverage U g := by
   have hup : volumeAverage U f ≤ volumeAverage U g :=
     volumeAverage_mono_ae hf hg (hfg.mono fun x hx => (le_abs_self (f x)).trans hx)
@@ -142,7 +142,7 @@ theorem blockEnergyDensityAt_nonneg {U : Domain d} (a : CoeffOn U)
     {x : Vec d} (hx : IsEllipticMatrix a.lam a.Lam (a.toCoeffField x))
     (Z : BlockVec d) : 0 ≤ blockEnergyDensityAt a Z x := by
   have h := blockQuadForm_nonneg hx Z
-  show 0 ≤ (1 / 2 : ℝ) * blockVecDot Z (blockMatVecMul (blockMatrixField a x) Z)
+  change 0 ≤ (1 / 2 : ℝ) * blockVecDot Z (blockMatVecMul (blockMatrixField a x) Z)
   rw [blockMatrixField_eq_blockMatrixOfCoeff]
   linarith
 
@@ -274,7 +274,7 @@ theorem pathQuadraticDensity_le {U : Domain d} (a : CoeffOn U)
 /-- The doubled energy value of any doubled field is nonnegative. -/
 theorem doubledMuValue_nonneg {U : Domain d} (a : CoeffOn U) (X : DoubledField d) :
     0 ≤ doubledMuValue U a X := by
-  show 0 ≤ volumeAverage (U : Set (Vec d))
+  change 0 ≤ volumeAverage (U : Set (Vec d))
     (fun x => blockEnergyDensityAt a (X.eval x) x)
   unfold volumeAverage
   refine mul_nonneg (by positivity) ?_

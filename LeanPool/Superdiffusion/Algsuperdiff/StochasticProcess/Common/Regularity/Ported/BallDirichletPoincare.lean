@@ -84,7 +84,7 @@ theorem normalizedL2On_euclideanBall_le_vectorGradient [NeZero d]
   have hraw := scaled_dirichlet_poincare_explicit c (by positivity : 0 < 2 * r) rhoQ
   have hval : eLpNorm rhoQ.toH1Function.toFun 2 (volume.restrict Q) =
       eLpNorm rho.toH1Function.toFun 2 (volume.restrict W) := by
-    show eLpNorm (Set.indicator W rho.toH1Function.toFun) 2 (volume.restrict Q) = _
+    change eLpNorm (Set.indicator W rho.toH1Function.toFun) 2 (volume.restrict Q) = _
     rw [eLpNorm_indicator_eq_eLpNorm_restrict (isOpen_euclideanBall z r).measurableSet,
       Measure.restrict_restrict (isOpen_euclideanBall z r).measurableSet,
       Set.inter_eq_left.mpr hWQ]
@@ -92,7 +92,7 @@ theorem normalizedL2On_euclideanBall_le_vectorGradient [NeZero d]
       eLpNorm (fun x => rhoQ.toH1Function.grad x i) 2 (volume.restrict Q) =
         eLpNorm (fun x => rho.toH1Function.grad x i) 2 (volume.restrict W) := by
     intro i
-    show eLpNorm (fun x => Set.indicator W rho.toH1Function.grad x i) 2
+    change eLpNorm (fun x => Set.indicator W rho.toH1Function.grad x i) 2
         (volume.restrict Q) = _
     rw [show (fun x => Set.indicator W rho.toH1Function.grad x i) =
         Set.indicator W (fun x => rho.toH1Function.grad x i) by

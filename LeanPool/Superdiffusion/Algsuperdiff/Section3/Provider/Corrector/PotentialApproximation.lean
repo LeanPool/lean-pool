@@ -257,7 +257,7 @@ theorem isPotentialZeroTraceOn_localGradApprox (Q : TriadicCube d) (L : ℕ)
     (hη.differentiable (by simp) x).hasFDerivAt
   have h2 : HasFDerivAt (realize (d := d) φ ω) (fderiv ℝ (realize (d := d) φ ω) x) x :=
     (hsmooth.differentiable (by simp) x).hasFDerivAt
-  show fderiv ℝ ((approxCutoff Q L).toFun * realize (d := d) φ ω) x (basisVec i) = _
+  change fderiv ℝ ((approxCutoff Q L).toFun * realize (d := d) φ ω) x (basisVec i) = _
   rw [(h1.mul h2).fderiv]
   simp [localGradApprox, hgrad x i]
 

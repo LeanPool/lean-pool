@@ -271,7 +271,7 @@ theorem isDoubledMuAdmissible_gluedDoubledField {Q : TriadicCube d} {j : ℕ}
           (openCubeSet R).indicator (fun y => (X R).potential y - G.potential y) x)
         + (G.potential x - P.1)
       = (gluedDoubledField Q j X).potential x - P.1
-    show _ = (∑ R ∈ descendantsAtDepth Q j,
+    change _ = (∑ R ∈ descendantsAtDepth Q j,
           (openCubeSet R).indicator (X R).potential x) - P.1
     rw [sum_indicator_split Q j (fun R => (X R).potential) (fun _ => G.potential) x, hx]
     abel
@@ -291,7 +291,7 @@ theorem isDoubledMuAdmissible_gluedDoubledField {Q : TriadicCube d} {j : ℕ}
           (openCubeSet R).indicator (fun y => (X R).flux y - G.flux y) x)
         + (G.flux x - P.2)
       = (gluedDoubledField Q j X).flux x - P.2
-    show _ = (∑ R ∈ descendantsAtDepth Q j,
+    change _ = (∑ R ∈ descendantsAtDepth Q j,
           (openCubeSet R).indicator (X R).flux x) - P.2
     rw [sum_indicator_split Q j (fun R => (X R).flux) (fun _ => G.flux) x, hx]
     abel

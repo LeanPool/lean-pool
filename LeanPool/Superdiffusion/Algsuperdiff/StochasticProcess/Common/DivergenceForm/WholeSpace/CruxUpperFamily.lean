@@ -291,7 +291,7 @@ theorem penalizedComparisonFamily_perturbation {V : Set (Vec d)}
                 (fun y ↦ F (y : OnePoint (Vec d))) hFm hFb y) _ _ x := h2
       rw [onePointKernelResolventReal_coe R hcons lam hF x,
         onePointKernelResolventReal_coe R hcons lam hload x]
-      show A.penalizedComparisonFamily hV n R lam F (x : OnePoint (Vec d)) =
+      change A.penalizedComparisonFamily hV n R lam F (x : OnePoint (Vec d)) =
           R.kernelSemigroup.kernelResolventReal lam
               (fun y : Vec d ↦ F (y : OnePoint (Vec d))) x -
             R.kernelSemigroup.kernelResolventReal lam

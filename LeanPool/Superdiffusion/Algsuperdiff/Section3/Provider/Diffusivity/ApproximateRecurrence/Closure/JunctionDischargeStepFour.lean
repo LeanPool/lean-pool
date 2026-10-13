@@ -83,10 +83,13 @@ The remaining four are analytic side conditions of the displays themselves:
 
 | binder | content | producer |
 |---|---|---|
-| `hmemN` | `grad w_N^{(K)} in L^2` of each descendant cube | `H1MeanZeroFunction` membership, restricted along `openCubeSet_subset_of_mem_descendantsAtDepth` |
+| `hmemN` | `grad w_N^{(K)} in L^2` of each descendant cube | `H1MeanZeroFunction` membership,
+restricted along `openCubeSet_subset_of_mem_descendantsAtDepth` |
 | `hintN` | `|grad w_N^{(K)}|^2` integrable on `cu_K` | the same membership |
-| `hsampR` | the per-cube energy is sample integrable | `Corrector.CorrectorMeasurableGradient` + domination by `hsampK` |
-| `hsampK` | `E[||grad w_N^{(K)}||^2_{L2(cu_K)}]` exists | `Corrector.CorrectorLimitNode.integrable_cubeAverage_neumann_energy` |
+| `hsampR` | the per-cube energy is sample integrable | `Corrector.CorrectorMeasurableGradient` +
+domination by `hsampK` |
+| `hsampK` | `E[||grad w_N^{(K)}||^2_{L2(cu_K)}]` exists |
+`Corrector.CorrectorLimitNode.integrable_cubeAverage_neumann_energy` |
 
 None of them is a mathematical premise of the manuscript's Step 4: each is a
 measurability/finiteness statement about the very objects the display is about,
@@ -129,7 +132,7 @@ theorem cubeAverageVec_streamForcing (R : TriadicCube d) (c : ℝ)
       (fun x => finiteShellIncrement omega n m x i l) (normalizedCubeMeasure R) := fun l =>
     (memLp_normalizedCubeMeasure_of_continuous R 1
       ((continuous_apply l).comp ((continuous_apply i).comp hcont))).integrable le_rfl
-  show cubeAverage R (fun x => c * ∑ l, finiteShellIncrement omega n m x i l * e' l)
+  change cubeAverage R (fun x => c * ∑ l, finiteShellIncrement omega n m x i l * e' l)
     = c * ∑ l, freshShellCubeAverage R omega n m i l * e' l
   rw [cubeAverage_const_mul]
   congr 1
@@ -176,7 +179,7 @@ theorem cubeAverageVec_eq_zero_of_ae_eq_zero_openCubeSet {Q R : TriadicCube d} {
       fun _ : Vec d => (0 : ℝ) := by
     filter_upwards [hae] with x hx
     exact congrFun hx i
-  show cubeAverage R (fun x => g x i) = 0
+  change cubeAverage R (fun x => g x i) = 0
   rw [cubeAverage, integral_congr_ae hcomp]
   simp
 
@@ -218,7 +221,7 @@ theorem descendantsAverage_const_real (Q : TriadicCube d) (j : ℕ) (c : ℝ) :
   classical
   have hcard : ((descendantsAtDepth Q j).card : ℝ) ≠ 0 := by
     exact_mod_cast Finset.card_ne_zero.mpr (descendantsAtDepth_nonempty Q j)
-  show ((descendantsAtDepth Q j).card : ℝ)⁻¹ *
+  change ((descendantsAtDepth Q j).card : ℝ)⁻¹ *
       (descendantsAtDepth Q j).sum (fun _ => c) = c
   rw [Finset.sum_const, nsmul_eq_mul]
   field_simp
@@ -229,7 +232,7 @@ private theorem descendantsAverage_integral_comm {Omega : Type*} [MeasurableSpac
     descendantsAverage Q j (fun R => ∫ w, F R w ∂mu)
       = ∫ w, descendantsAverage Q j (fun R => F R w) ∂mu := by
   classical
-  show ((descendantsAtDepth Q j).card : ℝ)⁻¹ *
+  change ((descendantsAtDepth Q j).card : ℝ)⁻¹ *
       ∑ R ∈ descendantsAtDepth Q j, ∫ w, F R w ∂mu = _
   rw [show (fun w => descendantsAverage Q j (fun R => F R w))
       = fun w => ((descendantsAtDepth Q j).card : ℝ)⁻¹ *
@@ -297,7 +300,7 @@ theorem step4GaugeEndpoint_of_correctors (M : ABKModel d) (n : ℤ) (h : ℕ)
         (fun x => (alongIncrementPath n h wN omega.val).toH1Function.grad x))))
       (cutoffSampleLaw M).toMeasure :=
     (integrable_finsetSum (descendantsAtDepth (originCube d (K : ℤ)) j) hsampR).const_mul _
-  show gaugeEnergyAverage M n h (K : ℤ) j 0 e'
+  change gaugeEnergyAverage M n h (K : ℤ) j 0 e'
       (alongIncrementPath n h wD) (alongIncrementPath n h wN) ≤
     1 + neumannCubeEnergy M n h K wN
   rw [gaugeEnergyAverage, neumannCubeEnergy]

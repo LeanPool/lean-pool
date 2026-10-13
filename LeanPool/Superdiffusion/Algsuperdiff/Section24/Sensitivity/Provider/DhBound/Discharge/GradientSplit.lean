@@ -100,7 +100,7 @@ theorem cubeAverageVec_const_smul (Q : TriadicCube d) (c : ℝ)
     (f : Vec d → Vec d) :
     cubeAverageVec Q (fun x => c • f x) = c • cubeAverageVec Q f := by
   funext i
-  show cubeAverage Q (fun x => (c • f x) i) = c * cubeAverage Q (fun x => f x i)
+  change cubeAverage Q (fun x => (c • f x) i) = c * cubeAverage Q (fun x => f x i)
   simpa [Pi.smul_apply, smul_eq_mul] using
     cubeAverage_const_mul Q c (fun x => f x i)
 
@@ -280,7 +280,7 @@ theorem cubeBesovNegativeVectorSeminormTwo_witnessGrad_le [NeZero d]
       vAdj)
     (hv : IsResponseMaximizer (cubeDomain (originCube d 0)) a p q v)
     (u : H10Function ((cubeDomain (originCube d 0) : Domain d) : Set (Vec d)))
-    (hu : ∀ᵐ x ∂ volumeMeasureOn
+    (hu : ∀ᵐ x ∂volumeMeasureOn
         ((cubeDomain (originCube d 0) : Domain d) : Set (Vec d)),
       u.toH1Function.grad x =
         (2 : ℝ)⁻¹ • (vAdj.toH1.grad x + v.toH1.grad x) + p) :

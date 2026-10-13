@@ -150,6 +150,180 @@ theorem tail_exponent_le {A B C0 C N : ℝ} (hC0 : 0 < C0) (hC : 16 * C0 ≤ C)
 
 /-! ## The provider -/
 
+private theorem localHolder_translationHolderBound :
+    ∀ (d : ℕ) (this : NeZero d) (C0 Cosc Cdata : ℝ) (hC0 : (0 : ℝ) < C0)
+      (hCosc : (0 : ℝ) ≤ Cosc) (hCdata : (0 : ℝ) ≤ Cdata)
+      (hP2nn : (0 : ℝ) ≤ StochasticProcess.Common.Regularity.Ported.ballVolumePrice (2 : ℝ) d)
+      (hUdnn : (0 : ℝ) ≤ Holder.uniformCubeHolderConstant d),
+      let Camp : ℝ :=
+        (6 : ℝ) * Holder.uniformCubeHolderConstant d * Cosc *
+          max (StochasticProcess.Common.Regularity.Ported.ballVolumePrice (2 : ℝ) d) Cdata;
+      ∀ (hCampnn : (0 : ℝ) ≤ Camp),
+        let C : ℝ := max ((16 : ℝ) * C0) Camp;
+        ∀ (hCpos : (0 : ℝ) < C) (hCampC : Camp ≤ C) (M : ABKModel d) (alpha : ℝ) (halpha0 : (0 : ℝ) < alpha) (m : ℤ)
+          (y : Vec d),
+          let beta : ℝ := max alpha (1 / 2 : ℝ);
+          ∀ (hbeta_half : (1 / 2 : ℝ) ≤ beta) (hbeta_ge : alpha ≤ beta) (hbeta0 : (0 : ℝ) < beta) (hbeta1 : beta ≤ (1 : ℝ))
+            (Xe : Cutoff.CutoffSample d → ℕ∞)
+            (hXtail :
+              ∀ (N : ℕ),
+                ((↑(Cutoff.cutoffSampleLaw M) : Measure (Cutoff.CutoffSample d)) : (a : Set (Cutoff.CutoffSample d)) → ℝ≥0∞)
+                    {omega : Cutoff.CutoffSample d | (↑N : ℕ∞) ≤ Xe omega} ≤
+                  ENNReal.ofReal (C0 * Real.exp (-(((1 : ℝ) - beta) ^ (2 : ℕ) * ((↑N : ℝ) - C0)) / (C0 * M.gamma))))
+            (hXae :
+              ∀ᵐ (omega : Cutoff.CutoffSample d) ∂(↑(Cutoff.cutoffSampleLaw M) : Measure (Cutoff.CutoffSample d)),
+                ∀ (Xn : ℕ),
+                  Xe omega ≤ (↑Xn : ℕ∞) →
+                    ∀ (L : ℤ),
+                      m ≤ L →
+                        ∀ (u : H1Function (openCubeSet (originCube d m))) (g : Vec d → Vec d) (Kg : ℝ),
+                          (0 : ℝ) ≤ Kg →
+                            Support.IsDirichletSolutionOn (Cutoff.coefficientCutoff M.nu L omega).toCoeffField
+                                (originCube d m) u (0 : H1Function (openCubeSet (originCube d m))) g →
+                              Support.HolderSeminormBoundOn (openCubeSet (originCube d m)) (1 / 2 : ℝ) Kg g →
+                                StochasticProcess.Common.Regularity.Campanato.HasClipGridOscillationDecay (0 : Vec d)
+                                  ((3 : ℝ) ^ m / (2 : ℝ))
+                                  (StochasticProcess.Common.Regularity.Campanato.centredTriadicGrid (0 : Vec d)
+                                    ((3 : ℝ) ^ m / (2 : ℝ)) ((3 : ℝ) ^ m / (2 : ℝ)))
+                                  ((3 : ℝ) ^ m / (2 : ℝ)) beta
+                                  (Holder.campanatoGridConstant beta m Xn Cosc
+                                    ((3 : ℝ) ^ (-m) *
+                                        (StochasticProcess.Common.Regularity.Ported.ballVolumePrice (2 : ℝ) d *
+                                          Support.normalizedL2On (openCubeSet (originCube d m)) fun (y : Vec d) =>
+                                            u.toFun y - volumeAverage (openCubeSet (originCube d m)) u.toFun) +
+                                      Cdata *
+                                        ((↑(Annealed.sigmaBar M m) : ℝ)⁻¹ * Real.rpow (3 : ℝ) ((↑m : ℝ) / (2 : ℝ)) * Kg)))
+                                  (0 : ℕ) u.toFun)
+            (hBpos : (0 : ℝ) < ((1 : ℝ) - beta) ^ (2 : ℕ)),
+            ∀ᵐ (omega : Cutoff.CutoffSample d) ∂(↑(Cutoff.cutoffSampleLaw M) : Measure (Cutoff.CutoffSample d)),
+              ∀ (L : ℤ),
+                m ≤ L →
+                  ∀ (g : Vec d → Vec d) (u : H1Function (cubeSetAt y m)),
+                    IsDirichletSolutionAt (Cutoff.coefficientCutoff M.nu L omega).toCoeffField y m u g →
+                      ⨅ (uRep : Vec d → ℝ),
+                          ⨅ (_ : IsCubeRepresentative y m u uRep),
+                            ENNReal.ofReal (Real.rpow (3 : ℝ) (alpha * (↑m : ℝ))) *
+                              holderSeminormOn (cubeSetAt y m) alpha uRep ≤
+                        ENNReal.ofReal
+                            (C *
+                              Real.rpow (3 : ℝ)
+                                (((1 : ℝ) - alpha) *
+                                  (↑((fun (omega : Cutoff.CutoffSample d) =>
+                                          (2 : ℕ) * (Xe (Cutoff.translateCutoffSample y omega)).toNat)
+                                        omega) :
+                                    ℝ))) *
+                          (eLpNorm (fun (x : Vec d) => u.toFun x - volumeAverage (cubeSetAt y m) u.toFun) (2 : ℝ≥0∞)
+                              (Support.normalizedVolumeMeasureOn (cubeSetAt y m)) +
+                            ENNReal.ofReal
+                                ((↑(Annealed.sigmaBar M m) : ℝ)⁻¹ * Real.rpow (3 : ℝ) ((3 : ℝ) * (↑m : ℝ) / (2 : ℝ))) *
+                              holderSeminormOn (cubeSetAt y m) (1 / 2 : ℝ) g) := by
+  intro d this C0 Cosc Cdata hC0 hCosc hCdata hP2nn hUdnn Camp hCampnn C hCpos hCampC M alpha halpha0 m y beta hbeta_half hbeta_ge hbeta0 hbeta1 Xe hXtail hXae hBpos
+  have hXfin : ∀ᵐ omega ∂(Cutoff.cutoffSampleLaw M).toMeasure, Xe omega ≠ ⊤ :=
+    ae_ne_top_of_tail hC0 hBpos hXtail
+  have hmp := GoodEvents.measurePreserving_translateCutoffSample M y
+  filter_upwards [hmp.quasiMeasurePreserving.ae hXae,
+    hmp.quasiMeasurePreserving.ae hXfin] with omega hom hfin
+  intro L hmL g u hsol
+  set omega' : Cutoff.CutoffSample d := Cutoff.translateCutoffSample y omega with homega'
+  set Xn : ℕ := (Xe omega').toNat with hXndef
+  have hXnle : Xe omega' ≤ (Xn : ℕ∞) := le_of_eq (ENat.natCast_toNat hfin).symm
+  have hsigpos : (0 : ℝ) < (Annealed.sigmaBar M m : ℝ) := (Annealed.sigmaBar M m).2
+  have hqrpos : (0 : ℝ) < (Annealed.sigmaBar M m : ℝ)⁻¹ *
+      Real.rpow 3 (3 * (m : ℝ) / 2) :=
+    mul_pos (inv_pos.2 hsigpos) (Real.rpow_pos_of_pos (by norm_num) _)
+  have hCrpos : (0 : ℝ) < C * Real.rpow 3 ((1 - alpha) * (((2 * Xn : ℕ)) : ℝ)) :=
+    mul_pos hCpos (Real.rpow_pos_of_pos (by norm_num) _)
+  by_cases hHtop : holderSeminormOn (cubeSetAt y m) (1 / 2) g = ⊤
+  · rw [hHtop, ENNReal.mul_top (ENNReal.ofReal_pos.2 hqrpos).ne', add_top,
+      ENNReal.mul_top (ENNReal.ofReal_pos.2 hCrpos).ne']
+    exact le_top
+  · have hKgnn : (0 : ℝ) ≤ (holderSeminormOn (cubeSetAt y m) (1 / 2) g).toReal :=
+      ENNReal.toReal_nonneg
+    set Kg : ℝ := (holderSeminormOn (cubeSetAt y m) (1 / 2) g).toReal with hKgdef
+    have hKgeq : ENNReal.ofReal Kg = holderSeminormOn (cubeSetAt y m) (1 / 2) g :=
+      ENNReal.ofReal_toReal hHtop
+    have hgHol : Algsuperdiff.Section4.Support.HolderSeminormBoundOn
+        (openCubeSet (originCube d m)) (1 / 2) Kg (fun x => g (y + x)) := by
+      refine (holderSeminormOn_le_ofReal_iff hKgnn).1 ?_
+      rw [← holderSeminormOn_cubeSetAt_eq, hKgeq]
+    have hsol0 : Algsuperdiff.Section4.Support.IsDirichletSolutionOn
+        ((Cutoff.coefficientCutoff M.nu L omega').toCoeffField)
+        (originCube d m) (originPullback y m u) 0 (fun x => g (y + x)) := by
+      have h := (isDirichletSolutionAt_iff_origin _ y m u g).1 hsol
+      rw [coefficientCutoff_add_eq_translateCutoffSample M L y omega] at h
+      exact h
+    have hdec := hom Xn hXnle L hmL (originPullback y m u) (fun x => g (y + x)) Kg
+      hKgnn hsol0 hgHol
+    set S : ℝ := Algsuperdiff.Section4.Support.normalizedL2On
+        (openCubeSet (originCube d m))
+        (fun w => (originPullback y m u).toFun w -
+          volumeAverage (openCubeSet (originCube d m)) (originPullback y m u).toFun)
+      with hSdef
+    have hSnn : (0 : ℝ) ≤ S := Algsuperdiff.Section4.Support.normalizedL2On_nonneg _ _
+    have hqKgnn : (0 : ℝ) ≤ (Annealed.sigmaBar M m : ℝ)⁻¹ *
+        Real.rpow 3 (3 * (m : ℝ) / 2) * Kg := mul_nonneg hqrpos.le hKgnn
+    have hDnn : (0 : ℝ) ≤ (3 : ℝ) ^ (-m) *
+        (StochasticProcess.Common.Regularity.Ported.ballVolumePrice 2 d * S) +
+        Cdata * ((Annealed.sigmaBar M m : ℝ)⁻¹ * Real.rpow 3 ((m : ℝ) / 2) * Kg) := by
+      have h1 : (0 : ℝ) ≤ (3 : ℝ) ^ (-m) *
+          (StochasticProcess.Common.Regularity.Ported.ballVolumePrice 2 d * S) :=
+        mul_nonneg (zpow_nonneg (by norm_num) _) (mul_nonneg hP2nn hSnn)
+      have h2 : (0 : ℝ) ≤ Cdata * ((Annealed.sigmaBar M m : ℝ)⁻¹ *
+          Real.rpow 3 ((m : ℝ) / 2) * Kg) :=
+        mul_nonneg hCdata (mul_nonneg (mul_nonneg (inv_nonneg.2 hsigpos.le)
+          (Real.rpow_nonneg (by norm_num) _)) hKgnn)
+      linarith only [h1, h2]
+    have hKnn : (0 : ℝ) ≤ Holder.campanatoGridConstant beta m Xn Cosc
+        ((3 : ℝ) ^ (-m) *
+          (StochasticProcess.Common.Regularity.Ported.ballVolumePrice 2 d * S) +
+          Cdata * ((Annealed.sigmaBar M m : ℝ)⁻¹ *
+            Real.rpow 3 ((m : ℝ) / 2) * Kg)) :=
+      Holder.campanatoGridConstant_nonneg m Xn hCosc hDnn
+    obtain ⟨uRep, hrep, hsem⟩ :=
+      Holder.exists_cubeRepresentative_of_grid hbeta0 hKnn u hdec
+    have hpull : (fun x : Vec d => u.toFun (x + y)) = (originPullback y m u).toFun := by
+      funext x
+      rw [originPullback_toFun]
+    have hSeq : Algsuperdiff.Section4.Support.normalizedL2On (cubeSetAt y m)
+        (fun x => u.toFun x - volumeAverage (cubeSetAt y m) u.toFun) = S := by
+      rw [Holder.normalizedL2On_cubeSetAt, Holder.volumeAverage_cubeSetAt, hpull, hSdef]
+      congr 1
+      funext x
+      rw [originPullback_toFun]
+    have hSE : ENNReal.ofReal S ≤ eLpNorm
+        (fun x => u.toFun x - volumeAverage (cubeSetAt y m) u.toFun) 2
+        (Algsuperdiff.Section4.Support.normalizedVolumeMeasureOn (cubeSetAt y m)) := by
+      rw [← hSeq]
+      exact Holder.ofReal_normalizedL2On_le_eLpNorm y m
+        (Holder.memLp_sub_volumeAverage_cubeSetAt y m u)
+    have hbetannn : (0 : ℝ) ≤ Real.rpow 3 (beta * (m : ℝ)) :=
+      Real.rpow_nonneg (by norm_num) _
+    have hrnn : (0 : ℝ) ≤ Real.rpow 3 ((1 - alpha) * (((2 * Xn : ℕ)) : ℝ)) :=
+      Real.rpow_nonneg (by norm_num) _
+    refine le_trans (iInf_le_of_le uRep (iInf_le_of_le hrep le_rfl)) ?_
+    refine le_trans (Holder.ofReal_rpow_mul_holderSeminormOn_mono y m hbeta_ge uRep) ?_
+    refine le_trans (mul_le_mul' le_rfl hsem) ?_
+    rw [← ENNReal.ofReal_mul hbetannn]
+    refine le_trans (ENNReal.ofReal_le_ofReal
+      (Holder.rpow_mul_campanatoGridConstant_le (alpha := alpha) (beta := beta)
+        (Cosc := Cosc) (Cdata := Cdata) (S := S) (Kg := Kg)
+        (sigma := (Annealed.sigmaBar M m : ℝ))
+        (G := StochasticProcess.Common.Regularity.Campanato.clipOffGridHolderConstant
+          d beta 18)
+        (Ud := Holder.uniformCubeHolderConstant d)
+        (P2 := StochasticProcess.Common.Regularity.Ported.ballVolumePrice 2 d)
+        (m := m) (Xn := Xn)
+        halpha0 hbeta_ge hbeta1 hCosc hCdata hSnn hKgnn hsigpos hP2nn
+        (StochasticProcess.Common.Regularity.Campanato.clipOffGridHolderConstant_nonneg
+          d hbeta0 18)
+        (Holder.clipOffGridHolderConstant_le_uniform d hbeta_half hbeta1) hUdnn)) ?_
+    rw [ENNReal.ofReal_mul (mul_nonneg hCampnn hrnn), ENNReal.ofReal_add hSnn hqKgnn]
+    refine mul_le_mul' (ENNReal.ofReal_le_ofReal
+      (mul_le_mul_of_nonneg_right hCampC hrnn)) (add_le_add hSE ?_)
+    rw [ENNReal.ofReal_mul hqrpos.le, hKgeq]
+
+
+
 theorem local_holder_estimate_provider
     (d : ℕ) (cstar : ℝ) (hcstar : 0 < cstar) :
     ∃ gamma0 C : ℝ, 0 < gamma0 ∧ 0 < C ∧
@@ -348,110 +522,7 @@ theorem local_holder_estimate_provider
               (-((1 - alpha) ^ (2 : ℕ) * ((N : ℝ) - C)) / (C * M.gamma))) := by
             refine ENNReal.ofReal_le_ofReal ?_
             exact mul_le_mul hC0C (Real.exp_le_exp.2 hexpineq) (Real.exp_pos _).le hCpos.le
-    · have hXfin : ∀ᵐ omega ∂(Cutoff.cutoffSampleLaw M).toMeasure, Xe omega ≠ ⊤ :=
-        ae_ne_top_of_tail hC0 hBpos hXtail
-      have hmp := GoodEvents.measurePreserving_translateCutoffSample M y
-      filter_upwards [hmp.quasiMeasurePreserving.ae hXae,
-        hmp.quasiMeasurePreserving.ae hXfin] with omega hom hfin
-      intro L hmL g u hsol
-      set omega' : Cutoff.CutoffSample d := Cutoff.translateCutoffSample y omega with homega'
-      set Xn : ℕ := (Xe omega').toNat with hXndef
-      have hXnle : Xe omega' ≤ (Xn : ℕ∞) := le_of_eq (ENat.natCast_toNat hfin).symm
-      have hsigpos : (0 : ℝ) < (Annealed.sigmaBar M m : ℝ) := (Annealed.sigmaBar M m).2
-      have hqrpos : (0 : ℝ) < (Annealed.sigmaBar M m : ℝ)⁻¹ *
-          Real.rpow 3 (3 * (m : ℝ) / 2) :=
-        mul_pos (inv_pos.2 hsigpos) (Real.rpow_pos_of_pos (by norm_num) _)
-      have hCrpos : (0 : ℝ) < C * Real.rpow 3 ((1 - alpha) * (((2 * Xn : ℕ)) : ℝ)) :=
-        mul_pos hCpos (Real.rpow_pos_of_pos (by norm_num) _)
-      by_cases hHtop : holderSeminormOn (cubeSetAt y m) (1 / 2) g = ⊤
-      · rw [hHtop, ENNReal.mul_top (ENNReal.ofReal_pos.2 hqrpos).ne', add_top,
-          ENNReal.mul_top (ENNReal.ofReal_pos.2 hCrpos).ne']
-        exact le_top
-      · have hKgnn : (0 : ℝ) ≤ (holderSeminormOn (cubeSetAt y m) (1 / 2) g).toReal :=
-          ENNReal.toReal_nonneg
-        set Kg : ℝ := (holderSeminormOn (cubeSetAt y m) (1 / 2) g).toReal with hKgdef
-        have hKgeq : ENNReal.ofReal Kg = holderSeminormOn (cubeSetAt y m) (1 / 2) g :=
-          ENNReal.ofReal_toReal hHtop
-        have hgHol : Algsuperdiff.Section4.Support.HolderSeminormBoundOn
-            (openCubeSet (originCube d m)) (1 / 2) Kg (fun x => g (y + x)) := by
-          refine (holderSeminormOn_le_ofReal_iff hKgnn).1 ?_
-          rw [← holderSeminormOn_cubeSetAt_eq, hKgeq]
-        have hsol0 : Algsuperdiff.Section4.Support.IsDirichletSolutionOn
-            ((Cutoff.coefficientCutoff M.nu L omega').toCoeffField)
-            (originCube d m) (originPullback y m u) 0 (fun x => g (y + x)) := by
-          have h := (isDirichletSolutionAt_iff_origin _ y m u g).1 hsol
-          rw [coefficientCutoff_add_eq_translateCutoffSample M L y omega] at h
-          exact h
-        have hdec := hom Xn hXnle L hmL (originPullback y m u) (fun x => g (y + x)) Kg
-          hKgnn hsol0 hgHol
-        set S : ℝ := Algsuperdiff.Section4.Support.normalizedL2On
-            (openCubeSet (originCube d m))
-            (fun w => (originPullback y m u).toFun w -
-              volumeAverage (openCubeSet (originCube d m)) (originPullback y m u).toFun)
-          with hSdef
-        have hSnn : (0 : ℝ) ≤ S := Algsuperdiff.Section4.Support.normalizedL2On_nonneg _ _
-        have hqKgnn : (0 : ℝ) ≤ (Annealed.sigmaBar M m : ℝ)⁻¹ *
-            Real.rpow 3 (3 * (m : ℝ) / 2) * Kg := mul_nonneg hqrpos.le hKgnn
-        have hDnn : (0 : ℝ) ≤ (3 : ℝ) ^ (-m) *
-            (StochasticProcess.Common.Regularity.Ported.ballVolumePrice 2 d * S) +
-            Cdata * ((Annealed.sigmaBar M m : ℝ)⁻¹ * Real.rpow 3 ((m : ℝ) / 2) * Kg) := by
-          have h1 : (0 : ℝ) ≤ (3 : ℝ) ^ (-m) *
-              (StochasticProcess.Common.Regularity.Ported.ballVolumePrice 2 d * S) :=
-            mul_nonneg (zpow_nonneg (by norm_num) _) (mul_nonneg hP2nn hSnn)
-          have h2 : (0 : ℝ) ≤ Cdata * ((Annealed.sigmaBar M m : ℝ)⁻¹ *
-              Real.rpow 3 ((m : ℝ) / 2) * Kg) :=
-            mul_nonneg hCdata (mul_nonneg (mul_nonneg (inv_nonneg.2 hsigpos.le)
-              (Real.rpow_nonneg (by norm_num) _)) hKgnn)
-          linarith only [h1, h2]
-        have hKnn : (0 : ℝ) ≤ Holder.campanatoGridConstant beta m Xn Cosc
-            ((3 : ℝ) ^ (-m) *
-              (StochasticProcess.Common.Regularity.Ported.ballVolumePrice 2 d * S) +
-              Cdata * ((Annealed.sigmaBar M m : ℝ)⁻¹ *
-                Real.rpow 3 ((m : ℝ) / 2) * Kg)) :=
-          Holder.campanatoGridConstant_nonneg m Xn hCosc hDnn
-        obtain ⟨uRep, hrep, hsem⟩ :=
-          Holder.exists_cubeRepresentative_of_grid hbeta0 hKnn u hdec
-        have hpull : (fun x : Vec d => u.toFun (x + y)) = (originPullback y m u).toFun := by
-          funext x
-          rw [originPullback_toFun]
-        have hSeq : Algsuperdiff.Section4.Support.normalizedL2On (cubeSetAt y m)
-            (fun x => u.toFun x - volumeAverage (cubeSetAt y m) u.toFun) = S := by
-          rw [Holder.normalizedL2On_cubeSetAt, Holder.volumeAverage_cubeSetAt, hpull, hSdef]
-          congr 1
-          funext x
-          rw [originPullback_toFun]
-        have hSE : ENNReal.ofReal S ≤ eLpNorm
-            (fun x => u.toFun x - volumeAverage (cubeSetAt y m) u.toFun) 2
-            (Algsuperdiff.Section4.Support.normalizedVolumeMeasureOn (cubeSetAt y m)) := by
-          rw [← hSeq]
-          exact Holder.ofReal_normalizedL2On_le_eLpNorm y m
-            (Holder.memLp_sub_volumeAverage_cubeSetAt y m u)
-        have hbetannn : (0 : ℝ) ≤ Real.rpow 3 (beta * (m : ℝ)) :=
-          Real.rpow_nonneg (by norm_num) _
-        have hrnn : (0 : ℝ) ≤ Real.rpow 3 ((1 - alpha) * (((2 * Xn : ℕ)) : ℝ)) :=
-          Real.rpow_nonneg (by norm_num) _
-        refine le_trans (iInf_le_of_le uRep (iInf_le_of_le hrep le_rfl)) ?_
-        refine le_trans (Holder.ofReal_rpow_mul_holderSeminormOn_mono y m hbeta_ge uRep) ?_
-        refine le_trans (mul_le_mul' le_rfl hsem) ?_
-        rw [← ENNReal.ofReal_mul hbetannn]
-        refine le_trans (ENNReal.ofReal_le_ofReal
-          (Holder.rpow_mul_campanatoGridConstant_le (alpha := alpha) (beta := beta)
-            (Cosc := Cosc) (Cdata := Cdata) (S := S) (Kg := Kg)
-            (sigma := (Annealed.sigmaBar M m : ℝ))
-            (G := StochasticProcess.Common.Regularity.Campanato.clipOffGridHolderConstant
-              d beta 18)
-            (Ud := Holder.uniformCubeHolderConstant d)
-            (P2 := StochasticProcess.Common.Regularity.Ported.ballVolumePrice 2 d)
-            (m := m) (Xn := Xn)
-            halpha0 hbeta_ge hbeta1 hCosc hCdata hSnn hKgnn hsigpos hP2nn
-            (StochasticProcess.Common.Regularity.Campanato.clipOffGridHolderConstant_nonneg
-              d hbeta0 18)
-            (Holder.clipOffGridHolderConstant_le_uniform d hbeta_half hbeta1) hUdnn)) ?_
-        rw [ENNReal.ofReal_mul (mul_nonneg hCampnn hrnn), ENNReal.ofReal_add hSnn hqKgnn]
-        refine mul_le_mul' (ENNReal.ofReal_le_ofReal
-          (mul_le_mul_of_nonneg_right hCampC hrnn)) (add_le_add hSE ?_)
-        rw [ENNReal.ofReal_mul hqrpos.le, hKgeq]
-
+    · exact @localHolder_translationHolderBound (d) (by infer_instance) (C0) (Cosc) (Cdata) (hC0) (hCosc) (hCdata) (hP2nn) (hUdnn) (hCampnn) (hCpos) (hCampC) (M) (alpha) (halpha0) (m) (y) (hbeta_half) (hbeta_ge) (hbeta0) (hbeta1) (Xe) (hXtail) (hXae) (hBpos)
 end
 
 end Algsuperdiff.Section4.Provider

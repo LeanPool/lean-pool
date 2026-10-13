@@ -72,7 +72,8 @@ Deviations from the source, all absorbed by its `C(d)`:
 
 ## Main results
 
-* `Algsuperdiff.Section3.Provider.Stream.matrixOperatorNorm_finiteShellIncrement_le_largeCubeSupBound`
+*
+`Algsuperdiff.Section3.Provider.Stream.matrixOperatorNorm_finiteShellIncrement_le_largeCubeSupBound`
 * `Algsuperdiff.Section3.Provider.Stream.isBigOWith_gammaSigma_largeCubeSupBound`
 * `Algsuperdiff.Section3.Provider.Stream.isBigOWith_gammaSigma_one_largeCubeSupBound_sq`
 
@@ -162,7 +163,7 @@ theorem isBigOWith_gammaSigma_incrementAt (M : ABKModel d) {n m : ℤ} (hnm : n 
         fun omega : ShellSeq d => |∑ k ∈ Finset.Ioc n m, (omega k) z p.1 p.2| := by
       funext omega
       exact abs_abs _
-    show IndependentSums.IsBigOWith _ _ _ _
+    change IndependentSums.IsBigOWith _ _ _ _
     rw [habs]
     exact h
   have hmeas : ∀ p : Fin d × Fin d, Measurable (fun omega : ShellSeq d =>
@@ -270,7 +271,7 @@ theorem measurable_matrixOperatorNorm_finiteShellIncrement (n m : ℤ) (z : Vec 
   have hvec : Measurable (fun omega : ShellSeq d =>
       finiteShellIncrement omega n m z) := by
     have hMAdd : MeasurableAdd₂ (Mat d) := by
-      show MeasurableAdd₂ (Fin d → Fin d → ℝ)
+      change MeasurableAdd₂ (Fin d → Fin d → ℝ)
       infer_instance
     have hrw : (fun omega : ShellSeq d => finiteShellIncrement omega n m z) =
         fun omega : ShellSeq d => ∑ k ∈ Finset.Ioc n m, (omega k) z := by

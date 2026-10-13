@@ -208,6 +208,7 @@ private theorem scalarFullBlockSqrtDiag_eq_sum_elim (b : ℝ) :
   funext alpha
   cases alpha <;> rfl
 
+omit [NeZero d] in
 /-- The continuous functional calculus square root of the comparator normalizer is
 the two-scalar block gauge `diag(√σ 𝟙, (√σ)^{-1} 𝟙)`. -/
 private theorem cfcSqrt_cutoffComparatorNormalizer_eq_diagonal (M : ABKModel d)
@@ -230,6 +231,7 @@ private theorem cfcSqrt_cutoffComparatorNormalizer_eq_diagonal (M : ABKModel d)
       (Annealed.sigmaBar M L).property
   rw [h, scalarFullBlockSqrtDiag_eq_sum_elim]
 
+omit [NeZero d] in
 /-- **The gauge instance at the comparator normalizer.**  Conjugating by
 `𝐁(σ_L)^{1/2}` weights the four block operator norms of the reflected
 difference by `σ_L, 1, 1, σ_L^{-1}`; since `blockReflect` swaps the diagonal

@@ -1038,6 +1038,166 @@ private theorem good_head_tuned_rare_output_choice {Cup : ℝ}
   exact htrace
 
 
+private theorem upperHeadSharpSplit_momentBounds1 :
+    ∀ {d : ℕ} (M : ABKModel d) {m : ℤ} {k : ℕ} {R : TriadicCube d},
+    R ∈ descendantsAtScale (originCube d m) (m - (1 : ℤ) - (↑k : ℤ)) →
+    ∀ {E : { E : ℝ // (1 : ℝ) ≤ E }},
+    Frozen.Section3.inductionState M (m - (1 : ℤ)) E →
+    ∀ {sigma : ℝ},
+    (0 : ℝ) < sigma →
+    sigma ≤ (1 / 2 : ℝ) →
+    (↑E : ℝ) ≤ M.gamma ^ (-(1 / 5 : ℝ)) →
+    ∀ (hd : (2 : ℕ) ≤ d),
+    let j₀ : Fin d := ⟨(0 : ℕ), lt_of_lt_of_le Nat.zero_lt_two hd⟩;
+    let shift : Vec d := triadicCubeShift R;
+    let ordinary : CutoffSample d → ℝ := fun (omega : CutoffSample d) =>
+    (↑d : ℝ) *
+    goodHeadTunedOrdinaryCoordinateLane M R.scale (↑E : ℝ) k j₀ (translateCutoffSample shift omega);
+    let rare : CutoffSample d → ℝ := fun (omega : CutoffSample d) =>
+    (↑d : ℝ) *
+    goodHeadTunedRareCoordinateLane M R.scale (↑E : ℝ) k j₀ (translateCutoffSample shift omega);
+    let ordinaryScale : ℝ := (↑d : ℝ) * goodHeadTunedOrdinaryCoordinateScale M (↑E : ℝ) sigma k j₀;
+    max (Real.exp (profileAuxiliaryConst d / sigma)) (Disorder.cstar M)⁻¹ ≤ (↑E : ℝ) →
+    (∀ (j : Fin d) (eta : CutoffSample d),
+    goodHeadTunedOrdinaryCoordinateLane M R.scale (↑E : ℝ) k j eta =
+    goodHeadTunedOrdinaryCoordinateLane M R.scale (↑E : ℝ) k j₀ eta) →
+    (∀ (j : Fin d) (eta : CutoffSample d),
+    goodHeadTunedRareCoordinateLane M R.scale (↑E : ℝ) k j eta =
+    goodHeadTunedRareCoordinateLane M R.scale (↑E : ℝ) k j₀ eta) →
+    (∀ (omega : CutoffSample d), (0 : ℝ) ≤ ordinary omega) →
+    (∀ (omega : CutoffSample d), (0 : ℝ) ≤ rare omega) →
+    (∀ (omega : CutoffSample d),
+    ∑ j : Fin d, goodHeadTunedCoordinateWhitneySum M m R (↑E : ℝ) j omega ≤
+    ordinary omega + rare omega) ∧
+    (∀ (omega : CutoffSample d),
+    ∑ j : Fin d,
+    ∑' (n : ℕ),
+    ENNReal.ofReal
+    (probeSharpFramedGoodWavePart M R.scale (↑E : ℝ) bfaProfileB
+    (collarBandMeanDepth M (↑E : ℝ)) n (m - (1 : ℤ)) (basisVec j)
+    (fun (eta : CutoffSample d) =>
+    waveHeadTerm M R.scale (↑E : ℝ) bfaProfileB
+    (probeSharpLayerAnchor R.scale bfaProfileB
+    (collarBandMeanDepth M (↑E : ℝ)) n)
+    eta ^
+    (2 : ℕ))
+    (translateCutoffSample (triadicCubeShift R) omega)) =
+    ENNReal.ofReal
+    (∑ j : Fin d, goodHeadTunedCoordinateWhitneySum M m R (↑E : ℝ) j omega)) ∧
+    (∀ (omega : CutoffSample d),
+    ∑ j : Fin d,
+    ∑' (n : ℕ),
+    ENNReal.ofReal
+    (probeSharpFramedGoodWavePart M R.scale (↑E : ℝ) bfaProfileB
+    (collarBandMeanDepth M (↑E : ℝ)) n (m - (1 : ℤ)) (basisVec j)
+    (fun (eta : CutoffSample d) =>
+    waveHeadTerm M R.scale (↑E : ℝ) bfaProfileB
+    (probeSharpLayerAnchor R.scale bfaProfileB
+    (collarBandMeanDepth M (↑E : ℝ)) n)
+    eta ^
+    (2 : ℕ))
+    (translateCutoffSample (triadicCubeShift R) omega)) ≤
+    ENNReal.ofReal (ordinary omega) + ENNReal.ofReal (rare omega)) ∧
+    IsBigOWith (↑(cutoffSampleLaw M) : Measure (CutoffSample d)) (gammaSigma (1 : ℝ))
+    ordinary ordinaryScale := by
+  intro d M m k R hR E hstate _ hsigma0 hsigma hEgamma hd j₀ shift ordinary rare ordinaryScale hmaxAux hordinaryEq hrareEq hordinaryNonneg hrareNonneg
+  have hpoint : ∀ omega,
+      (∑ j : Fin d,
+        goodHeadTunedCoordinateWhitneySum M m R (E : ℝ) j omega) ≤
+          ordinary omega + rare omega := by
+    intro omega
+    calc
+      (∑ j : Fin d,
+          goodHeadTunedCoordinateWhitneySum M m R (E : ℝ) j omega) ≤
+          ∑ j : Fin d,
+            (goodHeadTunedOrdinaryCoordinateLane
+                M R.scale (E : ℝ) k j
+                  (translateCutoffSample shift omega) +
+              goodHeadTunedRareCoordinateLane
+                M R.scale (E : ℝ) k j
+                  (translateCutoffSample shift omega)) := by
+        exact Finset.sum_le_sum fun j _ =>
+          good_head_tuned_coordinate_whitney_sum_le_ordinary_add_rare
+            M hR hstate hsigma0 hsigma hmaxAux hEgamma j omega
+      _ = ordinary omega + rare omega := by
+        rw [Finset.sum_add_distrib]
+        simp_rw [hordinaryEq, hrareEq]
+        simp only [Finset.sum_const, Finset.card_univ, Fintype.card_fin,
+          nsmul_eq_mul, ordinary, rare, shift]
+  have hENNRealEq : ∀ omega,
+      (∑ j : Fin d, ∑' n : ℕ, ENNReal.ofReal
+        (probeSharpFramedGoodWavePart M R.scale (E : ℝ) bfaProfileB
+          (collarBandMeanDepth M (E : ℝ)) n (m - 1) (basisVec j)
+          (fun eta => waveHeadTerm M R.scale (E : ℝ) bfaProfileB
+            (probeSharpLayerAnchor R.scale bfaProfileB
+              (collarBandMeanDepth M (E : ℝ)) n) eta ^ 2)
+          (translateCutoffSample (triadicCubeShift R) omega))) =
+        ENNReal.ofReal
+          (∑ j : Fin d,
+            goodHeadTunedCoordinateWhitneySum M m R (E : ℝ) j omega) := by
+    intro omega
+    have hterm0 (j : Fin d) (n : ℕ) : 0 ≤
+        probeSharpFramedGoodWavePart M R.scale (E : ℝ) bfaProfileB
+          (collarBandMeanDepth M (E : ℝ)) n (m - 1) (basisVec j)
+          (fun eta => waveHeadTerm M R.scale (E : ℝ) bfaProfileB
+            (probeSharpLayerAnchor R.scale bfaProfileB
+              (collarBandMeanDepth M (E : ℝ)) n) eta ^ 2)
+          (translateCutoffSample (triadicCubeShift R) omega) :=
+      probeSharpFramedGoodWavePart_nonneg hd M R.scale (E : ℝ) bfaProfileB
+        (collarBandMeanDepth M (E : ℝ)) n (m - 1) (basisVec j)
+        (fun eta => sq_nonneg _) _
+    have htermSum (j : Fin d) : Summable fun n : ℕ =>
+        probeSharpFramedGoodWavePart M R.scale (E : ℝ) bfaProfileB
+          (collarBandMeanDepth M (E : ℝ)) n (m - 1) (basisVec j)
+          (fun eta => waveHeadTerm M R.scale (E : ℝ) bfaProfileB
+            (probeSharpLayerAnchor R.scale bfaProfileB
+              (collarBandMeanDepth M (E : ℝ)) n) eta ^ 2)
+          (translateCutoffSample (triadicCubeShift R) omega) := by
+      let eta := translateCutoffSample (triadicCubeShift R) omega
+      let Cj := probeMeanGoodWaveConst M * vecNormSq (basisVec j)
+      let G := M.gamma * (hsep M R.scale (E : ℝ) bfaProfileB eta : ℝ)
+      let Q := probeSharpAfterBandHsepResidual M R.scale (E : ℝ) eta
+      let B : ℕ → ℝ := fun n => goodHeadTunedBaseTerm M (E : ℝ) k n
+      let O : ℕ → ℝ := fun n => Cj * (2 * (B n * G))
+      let V : ℕ → ℝ := fun n => Cj * (Q * (B n * G))
+      have hBsum : Summable B := by
+        simpa only [B] using summable_good_head_tuned_base_term M (E : ℝ) k
+      have hOsum : Summable O := by
+        simpa only [O, mul_assoc, mul_comm, mul_left_comm] using
+          hBsum.mul_left (2 * Cj * G)
+      have hVsum : Summable V := by
+        simpa only [V, mul_assoc, mul_comm, mul_left_comm] using
+          hBsum.mul_left (Cj * Q * G)
+      exact Summable.of_nonneg_of_le (hterm0 j) (fun n => by
+        have h := probeSharpFramedGoodWavePart_le_good_head_tuned_ordinary_add_rare
+          M hR hstate hsigma0 hsigma hmaxAux hEgamma n j omega
+        simpa only [eta, Cj, G, Q, B, O, V] using h) (hOsum.add hVsum)
+    simp only [goodHeadTunedCoordinateWhitneySum]
+    rw [ENNReal.ofReal_sum_of_nonneg (fun j _ => tsum_nonneg (hterm0 j))]
+    exact Finset.sum_congr rfl fun j _ =>
+      (ENNReal.ofReal_tsum_of_nonneg (hterm0 j) (htermSum j)).symm
+  have hENNRealDom : ∀ omega,
+      (∑ j : Fin d, ∑' n : ℕ, ENNReal.ofReal
+        (probeSharpFramedGoodWavePart M R.scale (E : ℝ) bfaProfileB
+          (collarBandMeanDepth M (E : ℝ)) n (m - 1) (basisVec j)
+          (fun eta => waveHeadTerm M R.scale (E : ℝ) bfaProfileB
+            (probeSharpLayerAnchor R.scale bfaProfileB
+              (collarBandMeanDepth M (E : ℝ)) n) eta ^ 2)
+          (translateCutoffSample (triadicCubeShift R) omega))) ≤
+        ENNReal.ofReal (ordinary omega) + ENNReal.ofReal (rare omega) := by
+    intro omega
+    rw [hENNRealEq omega,
+      ← ENNReal.ofReal_add (hordinaryNonneg omega) (hrareNonneg omega)]
+    exact ENNReal.ofReal_le_ofReal (hpoint omega)
+  have hordinaryOrlicz : IsBigOWith (cutoffSampleLaw M).toMeasure
+      (gammaSigma 1) ordinary ordinaryScale := by
+    have hcoordinate :=
+      isBigOWith_gammaSigma_one_good_head_tuned_ordinary_coordinate_lane_comp
+        M hR hstate hsigma0 hsigma hmaxAux hEgamma j₀
+    have htrace := hcoordinate.const_mul (Nat.cast_nonneg d)
+    simpa only [ordinary, ordinaryScale, shift] using htrace
+  exact ⟨hpoint, hENNRealEq, hENNRealDom, hordinaryOrlicz⟩
+
 /-- Terminal finite-coordinate split for literal summand 2 of the sharp
 per-cube estimate.  The two witnesses are explicit nonnegative measurable
 lanes.  Their scales are paid, respectively, by the saturated ordinary
@@ -1155,101 +1315,9 @@ theorem exists_good_head_tuned_finite_trace_split
     exact ((measurable_good_head_tuned_rare_coordinate_lane
       M R.scale (E : ℝ) k j₀).comp
         (measurable_translateCutoffSample shift)).const_mul _
-  have hpoint : ∀ omega,
-      (∑ j : Fin d,
-        goodHeadTunedCoordinateWhitneySum M m R (E : ℝ) j omega) ≤
-          ordinary omega + rare omega := by
-    intro omega
-    calc
-      (∑ j : Fin d,
-          goodHeadTunedCoordinateWhitneySum M m R (E : ℝ) j omega) ≤
-          ∑ j : Fin d,
-            (goodHeadTunedOrdinaryCoordinateLane
-                M R.scale (E : ℝ) k j
-                  (translateCutoffSample shift omega) +
-              goodHeadTunedRareCoordinateLane
-                M R.scale (E : ℝ) k j
-                  (translateCutoffSample shift omega)) := by
-        exact Finset.sum_le_sum fun j _ =>
-          good_head_tuned_coordinate_whitney_sum_le_ordinary_add_rare
-            M hR hstate hsigma0 hsigma hmaxAux hEgamma j omega
-      _ = ordinary omega + rare omega := by
-        rw [Finset.sum_add_distrib]
-        simp_rw [hordinaryEq, hrareEq]
-        simp only [Finset.sum_const, Finset.card_univ, Fintype.card_fin,
-          nsmul_eq_mul, ordinary, rare, shift]
-  have hENNRealEq : ∀ omega,
-      (∑ j : Fin d, ∑' n : ℕ, ENNReal.ofReal
-        (probeSharpFramedGoodWavePart M R.scale (E : ℝ) bfaProfileB
-          (collarBandMeanDepth M (E : ℝ)) n (m - 1) (basisVec j)
-          (fun eta => waveHeadTerm M R.scale (E : ℝ) bfaProfileB
-            (probeSharpLayerAnchor R.scale bfaProfileB
-              (collarBandMeanDepth M (E : ℝ)) n) eta ^ 2)
-          (translateCutoffSample (triadicCubeShift R) omega))) =
-        ENNReal.ofReal
-          (∑ j : Fin d,
-            goodHeadTunedCoordinateWhitneySum M m R (E : ℝ) j omega) := by
-    intro omega
-    have hterm0 (j : Fin d) (n : ℕ) : 0 ≤
-        probeSharpFramedGoodWavePart M R.scale (E : ℝ) bfaProfileB
-          (collarBandMeanDepth M (E : ℝ)) n (m - 1) (basisVec j)
-          (fun eta => waveHeadTerm M R.scale (E : ℝ) bfaProfileB
-            (probeSharpLayerAnchor R.scale bfaProfileB
-              (collarBandMeanDepth M (E : ℝ)) n) eta ^ 2)
-          (translateCutoffSample (triadicCubeShift R) omega) :=
-      probeSharpFramedGoodWavePart_nonneg hd M R.scale (E : ℝ) bfaProfileB
-        (collarBandMeanDepth M (E : ℝ)) n (m - 1) (basisVec j)
-        (fun eta => sq_nonneg _) _
-    have htermSum (j : Fin d) : Summable fun n : ℕ =>
-        probeSharpFramedGoodWavePart M R.scale (E : ℝ) bfaProfileB
-          (collarBandMeanDepth M (E : ℝ)) n (m - 1) (basisVec j)
-          (fun eta => waveHeadTerm M R.scale (E : ℝ) bfaProfileB
-            (probeSharpLayerAnchor R.scale bfaProfileB
-              (collarBandMeanDepth M (E : ℝ)) n) eta ^ 2)
-          (translateCutoffSample (triadicCubeShift R) omega) := by
-      let eta := translateCutoffSample (triadicCubeShift R) omega
-      let Cj := probeMeanGoodWaveConst M * vecNormSq (basisVec j)
-      let G := M.gamma * (hsep M R.scale (E : ℝ) bfaProfileB eta : ℝ)
-      let Q := probeSharpAfterBandHsepResidual M R.scale (E : ℝ) eta
-      let B : ℕ → ℝ := fun n => goodHeadTunedBaseTerm M (E : ℝ) k n
-      let O : ℕ → ℝ := fun n => Cj * (2 * (B n * G))
-      let V : ℕ → ℝ := fun n => Cj * (Q * (B n * G))
-      have hBsum : Summable B := by
-        simpa only [B] using summable_good_head_tuned_base_term M (E : ℝ) k
-      have hOsum : Summable O := by
-        simpa only [O, mul_assoc, mul_comm, mul_left_comm] using
-          hBsum.mul_left (2 * Cj * G)
-      have hVsum : Summable V := by
-        simpa only [V, mul_assoc, mul_comm, mul_left_comm] using
-          hBsum.mul_left (Cj * Q * G)
-      exact Summable.of_nonneg_of_le (hterm0 j) (fun n => by
-        have h := probeSharpFramedGoodWavePart_le_good_head_tuned_ordinary_add_rare
-          M hR hstate hsigma0 hsigma hmaxAux hEgamma n j omega
-        simpa only [eta, Cj, G, Q, B, O, V] using h) (hOsum.add hVsum)
-    simp only [goodHeadTunedCoordinateWhitneySum]
-    rw [ENNReal.ofReal_sum_of_nonneg (fun j _ => tsum_nonneg (hterm0 j))]
-    exact Finset.sum_congr rfl fun j _ =>
-      (ENNReal.ofReal_tsum_of_nonneg (hterm0 j) (htermSum j)).symm
-  have hENNRealDom : ∀ omega,
-      (∑ j : Fin d, ∑' n : ℕ, ENNReal.ofReal
-        (probeSharpFramedGoodWavePart M R.scale (E : ℝ) bfaProfileB
-          (collarBandMeanDepth M (E : ℝ)) n (m - 1) (basisVec j)
-          (fun eta => waveHeadTerm M R.scale (E : ℝ) bfaProfileB
-            (probeSharpLayerAnchor R.scale bfaProfileB
-              (collarBandMeanDepth M (E : ℝ)) n) eta ^ 2)
-          (translateCutoffSample (triadicCubeShift R) omega))) ≤
-        ENNReal.ofReal (ordinary omega) + ENNReal.ofReal (rare omega) := by
-    intro omega
-    rw [hENNRealEq omega,
-      ← ENNReal.ofReal_add (hordinaryNonneg omega) (hrareNonneg omega)]
-    exact ENNReal.ofReal_le_ofReal (hpoint omega)
-  have hordinaryOrlicz : IsBigOWith (cutoffSampleLaw M).toMeasure
-      (gammaSigma 1) ordinary ordinaryScale := by
-    have hcoordinate :=
-      isBigOWith_gammaSigma_one_good_head_tuned_ordinary_coordinate_lane_comp
-        M hR hstate hsigma0 hsigma hmaxAux hEgamma j₀
-    have htrace := hcoordinate.const_mul (Nat.cast_nonneg d)
-    simpa only [ordinary, ordinaryScale, shift] using htrace
+  obtain ⟨hpoint, hENNRealEq, hENNRealDom, hordinaryOrlicz⟩ :=
+    @upperHeadSharpSplit_momentBounds1 (d) (M) (m) (k) (R) (hR) (E) (hstate) (sigma) (hsigma0)
+      (hsigma) (hEgamma) (hd) (hmaxAux) (hordinaryEq) (hrareEq) (hordinaryNonneg) (hrareNonneg)
   have hrareOrlicz : IsBigOWith (cutoffSampleLaw M).toMeasure
       (gammaSigma ((1 - sigma) / 3)) rare rareScale := by
     have hcoordinate :=

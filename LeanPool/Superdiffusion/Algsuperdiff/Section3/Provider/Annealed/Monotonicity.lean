@@ -42,7 +42,7 @@ Three inputs go into the proof.
   `integrable_LambdaSqCoeffField_pow_cutoffLaw` and
   `integrable_lambdaSqCoeffField_inv_pow_cutoffLaw` hold for the unnormalized cutoff law
   on an *arbitrary* triadic cube, so CoarseGraining's factor-moment route
-  `Ch04.RestrictionLawCarrier.integrable_coarseFullBlockMatrixAtCube_of_integrable_factor_observables`
+`Ch04.RestrictionLawCarrier.integrable_coarseFullBlockMatrixAtCube_of_integrable_factor_observables`
   applies verbatim.  No `(P4)` record and no structural-law hypothesis is needed.
 * The stationary transfer identifying the expectation on a descendant cube with
   the expectation on the origin cube at the descendant scale.  This is the only
@@ -114,7 +114,7 @@ private theorem descendantsAverage_congr {Q : TriadicCube d} {j : ℕ}
     {F G : TriadicCube d → ℝ} (h : ∀ R ∈ descendantsAtDepth Q j, F R = G R) :
     descendantsAverage Q j F = descendantsAverage Q j G := by
   classical
-  show ((descendantsAtDepth Q j).card : ℝ)⁻¹ * (descendantsAtDepth Q j).sum F =
+  change ((descendantsAtDepth Q j).card : ℝ)⁻¹ * (descendantsAtDepth Q j).sum F =
     ((descendantsAtDepth Q j).card : ℝ)⁻¹ * (descendantsAtDepth Q j).sum G
   rw [Finset.sum_congr rfl h]
 
@@ -124,7 +124,7 @@ private theorem descendantsAverage_const (Q : TriadicCube d) (j : ℕ) (c : ℝ)
   classical
   have hcard : ((descendantsAtDepth Q j).card : ℝ) ≠ 0 := by
     exact_mod_cast Finset.card_ne_zero.mpr (descendantsAtDepth_nonempty Q j)
-  show ((descendantsAtDepth Q j).card : ℝ)⁻¹ *
+  change ((descendantsAtDepth Q j).card : ℝ)⁻¹ *
       (descendantsAtDepth Q j).sum (fun _ => c) = c
   rw [Finset.sum_const, nsmul_eq_mul]
   field_simp

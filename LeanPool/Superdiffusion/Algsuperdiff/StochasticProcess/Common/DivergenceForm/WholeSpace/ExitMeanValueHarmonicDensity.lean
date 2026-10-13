@@ -70,7 +70,7 @@ theorem hasExitMeanValueOn_sub {U : Set alpha} (hU : IsOpen U) {h k : alpha → 
   have hint2 : Integrable (fun omega ↦ k (exitPosition U omega)) nu :=
     Integrable.of_bound (hk.comp (measurable_exitPosition hU)).aestronglyMeasurable N
       (Eventually.of_forall fun omega ↦ hN _)
-  show (∫ omega, (h (exitPosition U omega) - k (exitPosition U omega)) ∂nu) = h y - k y
+  change (∫ omega, (h (exitPosition U omega) - k (exitPosition U omega)) ∂nu) = h y - k y
   rw [integral_sub hint1 hint2, hharm y hy, hkharm y hy]
 
 end Process

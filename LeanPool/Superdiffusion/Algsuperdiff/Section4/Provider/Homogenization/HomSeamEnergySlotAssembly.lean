@@ -105,7 +105,7 @@ theorem three_rpow_mul_seamShiftedKh (m : ℤ) (Kh KhInf : ℝ) :
     Real.rpow 3 ((m : ℝ) / 2) * seamShiftedKh m Kh KhInf =
       KhInf + Real.rpow 3 ((m : ℝ) / 2) * Kh := by
   have hcancel : Real.rpow 3 ((m : ℝ) / 2) * Real.rpow 3 (-((m : ℝ) / 2)) = 1 := by
-    show (3 : ℝ) ^ ((m : ℝ) / 2) * (3 : ℝ) ^ (-((m : ℝ) / 2)) = 1
+    change (3 : ℝ) ^ ((m : ℝ) / 2) * (3 : ℝ) ^ (-((m : ℝ) / 2)) = 1
     rw [← Real.rpow_add (by norm_num : (0 : ℝ) < 3)]
     simp
   rw [seamShiftedKh, mul_add, ← mul_assoc, hcancel, one_mul]
@@ -180,7 +180,7 @@ theorem regularityEnergyDisplay_of_regularityDisplayAt [NeZero d] (M : ABKModel 
 /-! ## 4. The pinned top-scale constant -/
 
 private theorem quarter_rpow (c : ℝ) : Real.rpow (1 / 4 : ℝ) c = Real.rpow 2 (-2 * c) := by
-  show ((1 : ℝ) / 4) ^ c = (2 : ℝ) ^ (-2 * c)
+  change ((1 : ℝ) / 4) ^ c = (2 : ℝ) ^ (-2 * c)
   have hb4 : (2 : ℝ) ^ (((2 : ℕ) : ℝ)) = 4 := by rw [Real.rpow_natCast]; norm_num
   have h4 : (1 / 4 : ℝ) = (2 : ℝ) ^ (-(((2 : ℕ) : ℝ))) := by
     rw [Real.rpow_neg (by norm_num : (0 : ℝ) ≤ 2), hb4]
@@ -193,11 +193,11 @@ private theorem quarter_rpow_sum :
   have hb8 : (2 : ℝ) ^ (((3 : ℕ) : ℝ)) = 8 := by rw [Real.rpow_natCast]; norm_num
   have h1 : Real.rpow (1 / 4 : ℝ) (-(3 / 2 : ℝ)) = 8 := by
     rw [quarter_rpow]
-    show (2 : ℝ) ^ (-2 * -(3 / 2 : ℝ)) = 8
+    change (2 : ℝ) ^ (-2 * -(3 / 2 : ℝ)) = 8
     rw [show -2 * -(3 / 2 : ℝ) = (((3 : ℕ) : ℝ)) by push_cast; norm_num, hb8]
   have h2 : Real.rpow (1 / 4 : ℝ) (-(1 / 2 : ℝ)) = 2 := by
     rw [quarter_rpow]
-    show (2 : ℝ) ^ (-2 * -(1 / 2 : ℝ)) = 2
+    change (2 : ℝ) ^ (-2 * -(1 / 2 : ℝ)) = 2
     rw [show -2 * -(1 / 2 : ℝ) = (1 : ℝ) by norm_num, Real.rpow_one]
   rw [h1, h2]; norm_num
 

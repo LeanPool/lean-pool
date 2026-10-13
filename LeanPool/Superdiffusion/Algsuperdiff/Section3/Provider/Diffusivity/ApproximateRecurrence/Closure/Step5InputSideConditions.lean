@@ -173,7 +173,8 @@ theorem integrableOn_cubeSet_vecDot_matVecMul_finiteShellIncrement (Q : TriadicC
       matrixOperatorNorm (finiteShellIncrement omega n m x) :=
     (Algsuperdiff.Frozen.Assumptions.ShellField.continuous_matrixOperatorNorm (d := d)).comp
       (Corrector.continuous_finiteShellIncrement omega n m)
-  obtain ⟨C, hC⟩ := (isCompact_closedBall (cubeCenter Q) (cubeRadius Q)).exists_bound_of_continuousOn
+  obtain ⟨C, hC⟩ := (isCompact_closedBall (cubeCenter Q) (cubeRadius
+    Q)).exists_bound_of_continuousOn
     hcont.continuousOn
   have hCball : ∀ x ∈ cubeSet Q,
       matrixOperatorNorm (finiteShellIncrement omega n m x) ≤ C := by
@@ -190,7 +191,7 @@ theorem integrableOn_cubeSet_vecDot_matVecMul_finiteShellIncrement (Q : TriadicC
         fun x => ∑ i : Fin d, ∑ j : Fin d,
           e i * (finiteShellIncrement omega n m x i j * u x j) := by
       funext x
-      show (∑ i, e i * (∑ j, finiteShellIncrement omega n m x i j * u x j)) = _
+      change (∑ i, e i * (∑ j, finiteShellIncrement omega n m x i j * u x j)) = _
       exact Finset.sum_congr rfl fun i _ => Finset.mul_sum _ _ _
     rw [hEq]
     refine Finset.aestronglyMeasurable_fun_sum _ fun i _ =>

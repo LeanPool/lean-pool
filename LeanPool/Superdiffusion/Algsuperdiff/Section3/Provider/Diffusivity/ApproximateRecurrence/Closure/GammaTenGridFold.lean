@@ -32,7 +32,7 @@ performs the annealed Hoelder fold **at one mesoscopic cell**: it asks for the
 oscillation leg in the per-cell form `E[h^2] <= (Cosc cgamma^{14})^2`.  No such
 per-cell moment is available.  The proved oscillation producers --- the
 full-mesh endpoints
-`LocalizationOscillationFullMesh.exists_gamma0_freshShellDirichlet_step5MeshOscillation_le_gamma_pow_fifteen`
+`exists_gamma0_freshShellDirichlet_step5MeshOscillation_le_gamma_pow_fifteen`
 and its Neumann mirror --- control only the **grid** functional
 
 ```

@@ -132,7 +132,7 @@ theorem mem_stationaryPotentialSubspace_of_intertwine_smul {c : ℝ} (hc : c ≠
         ⟨Sscal ψ, hasHorizontalGradient_of_intertwine_smul hcomm hcoord hψ⟩
     have hrewrite : Svec G = c⁻¹ • (c • Svec G) := by
       rw [smul_smul, inv_mul_cancel₀ hc, one_smul]
-    show Svec G ∈ stationaryPotentialSubspace (μ := ν) (d := d)
+    change Svec G ∈ stationaryPotentialSubspace (μ := ν) (d := d)
     rw [hrewrite]
     exact (stationaryPotentialSubspace (μ := ν) (d := d)).smul_mem _ hmemc
   have hclosed : IsClosed

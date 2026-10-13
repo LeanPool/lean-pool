@@ -262,7 +262,8 @@ theorem cauchySeq_gradToHilbertVectorL2_cubeApproxSolution (v : ℕ) (mu : Posit
   have hgrad := hCbound (v + 1 + k) (v + 1 + m) (Nat.le_add_right (v + 1) k)
     (Nat.le_add_right (v + 1) m)
   have hnormsq : ‖(A.cubeApproxSolution v k mu hf hfD).gradToHilbertVectorL2 -
-      (A.cubeApproxSolution v m mu hf hfD).gradToHilbertVectorL2‖ ^ 2 ≤ C * (2 * a k + 2 * a m) := by
+      (A.cubeApproxSolution v m mu hf hfD).gradToHilbertVectorL2‖ ^ 2 ≤ C * (2 * a k + 2 * a m) :=
+        by
     rw [norm_gradToHilbertVectorL2_sub_sq]
     refine le_trans ?_ (mul_le_mul_of_nonneg_left hcross hC)
     simpa only [A.cubeApproxSolution_grad] using hgrad

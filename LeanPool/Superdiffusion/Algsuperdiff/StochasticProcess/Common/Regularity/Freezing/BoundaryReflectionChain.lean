@@ -80,7 +80,7 @@ private theorem mem_faceHalf_reflection_of_notMem
     · exact hsigma hcase
     · exact hyplane (by linarith only [hcase])
   have hneg : sigma * (c - y i) < 0 := lt_of_le_of_ne (not_lt.1 hle) hnezero
-  show (0 : ℝ) < sigma * (c - coordFaceReflection c i y i)
+  change (0 : ℝ) < sigma * (c - coordFaceReflection c i y i)
   rw [coordFaceReflection_coord]
   have hid : sigma * (c - (2 * c - y i)) = -(sigma * (c - y i)) := by ring
   rw [hid]
@@ -122,6 +122,356 @@ private theorem isMatrixDivFormWeakSolutionZerothOrderOn_h1FunctionOfSetEq
   exact hu
 
 /-! ## 2. The unfolding chain -/
+
+private theorem boundaryReflectionChain_estimate1 :
+    ∀ {d : ℕ} {x₀ : Vec d} {r : ℝ} {S : Finset (Fin d)}
+      {sigma : Fin d → ℝ} (i : Fin d) (T : Finset (Fin d)) (w : H1Function (partialReflectedBallSector x₀ r S sigma T))
+      (b : CoeffField d)
+      (hFluxTL2 :
+        ∀ (k : Fin d),
+          MemLp
+            (fun (y : Vec d) =>
+              zeroExtendGrad (partialReflectedBallSector x₀ r S sigma T) (fun (z : Vec d) => matVecMul (b z) (w.grad z)) y
+                k)
+            (2 : ENNReal) volume)
+      (j : Fin d),
+      MemLp
+        (fun (y : Vec d) =>
+          oddFaceExtendGrad (x₀ i) i
+            (zeroExtendGrad (partialReflectedBallSector x₀ r S sigma T) fun (z : Vec d) => matVecMul (b z) (w.grad z)) y j)
+        (2 : ENNReal) volume := by
+  intro d x₀ r S sigma i T w b hFluxTL2 j
+  have hFTr : MemLp (fun y => zeroExtendGrad
+      (partialReflectedBallSector x₀ r S sigma T)
+      (fun z => matVecMul (b z) (w.grad z))
+      (coordFaceReflection (x₀ i) i y) j) 2 (volume : Measure (Vec d)) :=
+    (hFluxTL2 j).comp_measurePreserving
+      (measurePreserving_coordFaceReflection (x₀ i) i)
+  have hcoord : (fun y => oddFaceExtendGrad (x₀ i) i
+      (zeroExtendGrad (partialReflectedBallSector x₀ r S sigma T)
+        (fun z => matVecMul (b z) (w.grad z))) y j) =
+      fun y => zeroExtendGrad (partialReflectedBallSector x₀ r S sigma T)
+          (fun z => matVecMul (b z) (w.grad z)) y j -
+        (if j = i then (-1 : ℝ) else 1) *
+          zeroExtendGrad (partialReflectedBallSector x₀ r S sigma T)
+            (fun z => matVecMul (b z) (w.grad z))
+            (coordFaceReflection (x₀ i) i y) j := by
+    funext y
+    rw [oddFaceExtendGrad]
+    simp only [Pi.sub_apply]
+    rw [coordReflectionLinear_apply_coord]
+  rw [hcoord]
+  exact (hFluxTL2 j).sub (hFTr.const_mul _)
+
+private theorem boundaryReflectionChain_estimate2 :
+    ∀ {d : ℕ} {x₀ : Vec d} {r : ℝ} {S : Finset (Fin d)}
+      {sigma : Fin d → ℝ} (i : Fin d) (T : Finset (Fin d)) (w : H1Function (partialReflectedBallSector x₀ r S sigma T))
+      (b : CoeffField d)
+      (hset :
+        faceHalf (partialReflectedBallSector x₀ r S sigma (insert i T)) i (x₀ i) (sigma i) =
+          partialReflectedBallSector x₀ r S sigma T)
+      (hPIopen : IsOpen (partialReflectedBallSector x₀ r S sigma (insert i T)))
+      (hsymmB :
+        ∀ (y : Vec d),
+          coordFaceReflection (x₀ i) i y ∈ partialReflectedBallSector x₀ r S sigma (insert i T) ↔
+            y ∈ partialReflectedBallSector x₀ r S sigma (insert i T))
+      (w' : H1Function (partialReflectedBallSector x₀ r S sigma (insert i T)))
+      (hfluxIdentity :
+        ∀ᵐ (y : Vec d) ∂volume.restrict (partialReflectedBallSector x₀ r S sigma (insert i T)),
+          matVecMul (faceReflectedCoeff (x₀ i) i (sigma i) b y) (w'.grad y) =
+            oddFaceExtendGrad (x₀ i) i
+              (zeroExtendGrad (partialReflectedBallSector x₀ r S sigma T) fun (z : Vec d) => matVecMul (b z) (w.grad z)) y)
+      (φ : Vec d → ℝ) (hφ : ContDiff ℝ ((⊤ : ℕ∞) : WithTop ℕ∞) φ) (hφc : HasCompactSupport φ)
+      (hFluxHalf :
+        ∀ (k : Fin d),
+          MemLp
+            (fun (y : Vec d) =>
+              zeroExtendGrad (faceHalf (partialReflectedBallSector x₀ r S sigma (insert i T)) i (x₀ i) (sigma i))
+                (fun (z : Vec d) => matVecMul (b z) (w.grad z)) y k)
+            (2 : ENNReal) volume),
+      ∫ (y : Vec d) in partialReflectedBallSector x₀ r S sigma (insert i T),
+          vecDot (matVecMul (faceReflectedCoeff (x₀ i) i (sigma i) b y) (w'.grad y)) (euclideanGradient φ y) =
+        ∫ (y : Vec d) in partialReflectedBallSector x₀ r S sigma T,
+          vecDot (matVecMul (b y) (w.grad y))
+            (euclideanGradient (fun (z : Vec d) => φ z - φ (coordFaceReflection (x₀ i) i z)) y) := by
+  intro d x₀ r S sigma i T w b hset hPIopen hsymmB w' hfluxIdentity φ hφ hφc hFluxHalf
+  have hcongr : ∫ y in partialReflectedBallSector x₀ r S sigma (insert i T),
+        vecDot (matVecMul (faceReflectedCoeff (x₀ i) i (sigma i) b y)
+          (w'.grad y)) (euclideanGradient φ y) ∂volume =
+      ∫ y in partialReflectedBallSector x₀ r S sigma (insert i T),
+        vecDot (oddFaceExtendGrad (x₀ i) i
+          (zeroExtendGrad (partialReflectedBallSector x₀ r S sigma T)
+            (fun z => matVecMul (b z) (w.grad z))) y)
+          (euclideanGradient φ y) ∂volume := by
+    refine integral_congr_ae ?_
+    filter_upwards [hfluxIdentity] with y hy
+    rw [hy]
+  rw [hcongr]
+  have hmain := integral_vecDot_oddFaceExtendGrad_eq (U :=
+      partialReflectedBallSector x₀ r S sigma (insert i T))
+    hPIopen (i := i) (c := x₀ i) (sigma := sigma i) hsymmB
+    (F := fun z => matVecMul (b z) (w.grad z)) hFluxHalf hφ hφc
+  rw [hset] at hmain
+  exact hmain
+
+private theorem boundaryReflectionChain_estimate3 :
+    ∀ {d : ℕ} {x₀ : Vec d} {r : ℝ} {S : Finset (Fin d)}
+      {sigma : Fin d → ℝ} (i : Fin d) (T : Finset (Fin d)) (φ : Vec d → ℝ)
+      (hφPI : tsupport φ ⊆ partialReflectedBallSector x₀ r S sigma (insert i T))
+      (hφrPI :
+        (tsupport fun (z : Vec d) => φ (coordFaceReflection (x₀ i) i z)) ⊆
+          partialReflectedBallSector x₀ r S sigma (insert i T)),
+      (tsupport fun (z : Vec d) => φ z - φ (coordFaceReflection (x₀ i) i z)) ⊆
+        partialReflectedBallSector x₀ r S sigma (insert i T) := by
+  intro d x₀ r S sigma i T φ hφPI hφrPI
+  have hsupp : Function.support
+      (fun z => φ z - φ (coordFaceReflection (x₀ i) i z)) ⊆
+      tsupport φ ∪ tsupport (fun z => φ (coordFaceReflection (x₀ i) i z)) := by
+    intro q hq
+    simp only [Function.mem_support] at hq
+    by_contra hcon
+    simp only [Set.mem_union, not_or] at hcon
+    have h1 : φ q = 0 := image_eq_zero_of_notMem_tsupport hcon.1
+    have h2 : φ (coordFaceReflection (x₀ i) i q) = 0 :=
+      image_eq_zero_of_notMem_tsupport
+        (f := fun z => φ (coordFaceReflection (x₀ i) i z)) hcon.2
+    exact hq (by rw [h1, h2, sub_self])
+  have hclosed : IsClosed (tsupport φ ∪
+      tsupport (fun z => φ (coordFaceReflection (x₀ i) i z))) :=
+    (isClosed_tsupport φ).union (isClosed_tsupport _)
+  exact (closure_minimal hsupp hclosed).trans (Set.union_subset hφPI hφrPI)
+
+private theorem boundaryReflectionChain_estimate4 :
+    ∀ {d : ℕ} {x₀ : Vec d} {r : ℝ} {S : Finset (Fin d)}
+      {sigma : Fin d → ℝ} (i : Fin d) (T : Finset (Fin d)) (w : H1Function (partialReflectedBallSector x₀ r S sigma T))
+      (b : CoeffField d) (hsigmai0 : sigma i ≠ (0 : ℝ))
+      (hset :
+        faceHalf (partialReflectedBallSector x₀ r S sigma (insert i T)) i (x₀ i) (sigma i) =
+          partialReflectedBallSector x₀ r S sigma T)
+      (hPImeas : MeasurableSet (partialReflectedBallSector x₀ r S sigma (insert i T)))
+      (hsymmB :
+        ∀ (y : Vec d),
+          coordFaceReflection (x₀ i) i y ∈ partialReflectedBallSector x₀ r S sigma (insert i T) ↔
+            y ∈ partialReflectedBallSector x₀ r S sigma (insert i T))
+      (w' : H1Function (partialReflectedBallSector x₀ r S sigma (insert i T)))
+      (hgrad :
+        ∀ (y : Vec d),
+          w'.grad y = oddFaceExtendGrad (x₀ i) i (zeroExtendGrad (partialReflectedBallSector x₀ r S sigma T) w.grad) y)
+      (hplaneAE : ∀ᵐ (y : Vec d), y i ≠ x₀ i),
+      ∀ᵐ (y : Vec d) ∂volume.restrict (partialReflectedBallSector x₀ r S sigma (insert i T)),
+        matVecMul (faceReflectedCoeff (x₀ i) i (sigma i) b y) (w'.grad y) =
+          oddFaceExtendGrad (x₀ i) i
+            (zeroExtendGrad (partialReflectedBallSector x₀ r S sigma T) fun (z : Vec d) => matVecMul (b z) (w.grad z)) y := by
+  intro d x₀ r S sigma i T w b hsigmai0 hset hPImeas hsymmB w' hgrad hplaneAE
+  filter_upwards [ae_restrict_mem hPImeas,
+    (ae_restrict_of_ae hplaneAE :
+      ∀ᵐ y ∂volume.restrict
+        (partialReflectedBallSector x₀ r S sigma (insert i T)), y i ≠ x₀ i)]
+    with y hyPI hyplane
+  rw [hgrad y]
+  have hstep := matVecMul_faceReflectedCoeff_oddFaceExtendGrad hsigmai0 hsymmB b
+    w.grad hyPI hyplane
+  rw [hset] at hstep
+  exact hstep
+
+private theorem oddReflection_testFunctionExtension :
+    ∀ {d : ℕ} {x₀ : Vec d} {r : ℝ} {S : Finset (Fin d)}
+      {sigma : Fin d → ℝ} (i : Fin d) (T : Finset (Fin d)) (w : H1Function (partialReflectedBallSector x₀ r S sigma T))
+      (b : CoeffField d) (h : Vec d → ℝ)
+      (hweq :
+        IsMatrixDivFormWeakSolutionZerothOrderOn b (partialReflectedBallSector x₀ r S sigma T) w h (0 : Vec d → Vec d))
+      (hsigmai : |sigma i| = (1 : ℝ))
+      (hset :
+        faceHalf (partialReflectedBallSector x₀ r S sigma (insert i T)) i (x₀ i) (sigma i) =
+          partialReflectedBallSector x₀ r S sigma T)
+      (hPIdom : IsOpenBoundedConvexDomain (partialReflectedBallSector x₀ r S sigma (insert i T)))
+      (hPIopen : IsOpen (partialReflectedBallSector x₀ r S sigma (insert i T)))
+      (hPTopen : IsOpen (partialReflectedBallSector x₀ r S sigma T))
+      (hPTfinite : IsFiniteMeasure (volume.restrict (partialReflectedBallSector x₀ r S sigma T)))
+      (hsymmB :
+        ∀ (y : Vec d),
+          coordFaceReflection (x₀ i) i y ∈ partialReflectedBallSector x₀ r S sigma (insert i T) ↔
+            y ∈ partialReflectedBallSector x₀ r S sigma (insert i T))
+      (w' : H1Function (partialReflectedBallSector x₀ r S sigma (insert i T)))
+      (hZL2 : MemLp (zeroExtend (partialReflectedBallSector x₀ r S sigma T) h) (2 : ENNReal) volume)
+      (hOddScalarL2 :
+        MemLp (oddFaceExtend (x₀ i) i (zeroExtend (partialReflectedBallSector x₀ r S sigma T) h)) (2 : ENNReal) volume)
+      (hFluxTL2 :
+        ∀ (k : Fin d),
+          MemLp
+            (fun (y : Vec d) =>
+              zeroExtendGrad (partialReflectedBallSector x₀ r S sigma T) (fun (z : Vec d) => matVecMul (b z) (w.grad z)) y
+                k)
+            (2 : ENNReal) volume)
+      (hfluxIdentity :
+        ∀ᵐ (y : Vec d) ∂volume.restrict (partialReflectedBallSector x₀ r S sigma (insert i T)),
+          matVecMul (faceReflectedCoeff (x₀ i) i (sigma i) b y) (w'.grad y) =
+            oddFaceExtendGrad (x₀ i) i
+              (zeroExtendGrad (partialReflectedBallSector x₀ r S sigma T) fun (z : Vec d) => matVecMul (b z) (w.grad z)) y)
+      (hfluxPI :
+        ∀ (j : Fin d),
+          MemLp (fun (y : Vec d) => matVecMul (faceReflectedCoeff (x₀ i) i (sigma i) b y) (w'.grad y) j) (2 : ENNReal)
+            (volume.restrict (partialReflectedBallSector x₀ r S sigma (insert i T)))),
+      IsMatrixDivFormWeakSolutionZerothOrderOn (faceReflectedCoeff (x₀ i) i (sigma i) b)
+        (partialReflectedBallSector x₀ r S sigma (insert i T)) w'
+        (oddFaceExtend (x₀ i) i (zeroExtend (partialReflectedBallSector x₀ r S sigma T) h)) (0 : Vec d → Vec d) := by
+  intro d x₀ r S sigma i T w b h hweq hsigmai hset hPIdom hPIopen hPTopen hPTfinite hsymmB w' hZL2 hOddScalarL2 hFluxTL2 hfluxIdentity hfluxPI
+  refine isMatrixDivFormWeakSolutionZerothOrderOn_of_contDiff_tests hfluxPI
+    (hOddScalarL2.restrict _) ?_
+  intro φ hφ hφc hφPI
+  have hφr : ContDiff ℝ (⊤ : ℕ∞) fun z => φ (coordFaceReflection (x₀ i) i z) := by
+    simpa [Function.comp] using! hφ.comp (contDiff_coordFaceReflection (x₀ i) i)
+  have hφrc : HasCompactSupport fun z => φ (coordFaceReflection (x₀ i) i z) :=
+    hasCompactSupport_comp_coordFaceReflection hφc (x₀ i) i
+  have hφrPI : tsupport (fun z => φ (coordFaceReflection (x₀ i) i z)) ⊆
+      partialReflectedBallSector x₀ r S sigma (insert i T) :=
+    tsupport_comp_coordFaceReflection_subset (x₀ i) i hsymmB hφPI
+  have hψ : ContDiff ℝ (⊤ : ℕ∞)
+      fun z => φ z - φ (coordFaceReflection (x₀ i) i z) := hφ.sub hφr
+  have hψc : HasCompactSupport
+      fun z => φ z - φ (coordFaceReflection (x₀ i) i z) := hφc.sub hφrc
+  have hψPI : tsupport (fun z => φ z - φ (coordFaceReflection (x₀ i) i z)) ⊆
+      partialReflectedBallSector x₀ r S sigma (insert i T)  := @boundaryReflectionChain_estimate3 (d) (x₀) (r) (S) (sigma) (i) (T) (φ) (hφPI) (hφrPI)
+  have hψ0 : ∀ y : Vec d, y i = x₀ i →
+      φ y - φ (coordFaceReflection (x₀ i) i y) = 0 := by
+    intro y hy
+    rw [coordFaceReflection_eq_self hy, sub_self]
+  have hmemH10 : MemH10 (partialReflectedBallSector x₀ r S sigma T)
+      fun z => φ z - φ (coordFaceReflection (x₀ i) i z) := by
+    have h := memH10_faceHalf_of_contDiff_of_vanishing_on_face hPIdom hsigmai
+      hψ hψc hψPI hψ0
+    rwa [hset] at h
+  have hFluxHalf : ∀ k : Fin d, MemLp (fun y => zeroExtendGrad
+      (faceHalf (partialReflectedBallSector x₀ r S sigma (insert i T))
+        i (x₀ i) (sigma i))
+      (fun z => matVecMul (b z) (w.grad z)) y k) 2
+      (volume : Measure (Vec d)) := by
+    rw [hset]
+    exact hFluxTL2
+  have hScalarHalf : MemLp (zeroExtend
+      (faceHalf (partialReflectedBallSector x₀ r S sigma (insert i T))
+        i (x₀ i) (sigma i)) h) 2 (volume : Measure (Vec d)) := by
+    rw [hset]
+    exact hZL2
+  have hleft : ∫ y in partialReflectedBallSector x₀ r S sigma (insert i T),
+        vecDot (matVecMul (faceReflectedCoeff (x₀ i) i (sigma i) b y)
+          (w'.grad y)) (euclideanGradient φ y) ∂volume =
+      ∫ y in partialReflectedBallSector x₀ r S sigma T,
+        vecDot (matVecMul (b y) (w.grad y))
+          (euclideanGradient
+            (fun z => φ z - φ (coordFaceReflection (x₀ i) i z)) y) ∂volume  := @boundaryReflectionChain_estimate2 (d) (x₀) (r) (S) (sigma) (i) (T) (w) (b) (hset) (hPIopen) (hsymmB) (w') (hfluxIdentity) (φ) (hφ) (hφc) (hFluxHalf)
+  have hright : ∫ y in partialReflectedBallSector x₀ r S sigma (insert i T),
+        oddFaceExtend (x₀ i) i
+          (zeroExtend (partialReflectedBallSector x₀ r S sigma T) h) y *
+          φ y ∂volume =
+      ∫ y in partialReflectedBallSector x₀ r S sigma T,
+        h y * (φ y - φ (coordFaceReflection (x₀ i) i y)) ∂volume := by
+    have hmain := integral_mul_oddFaceExtend_eq (U :=
+        partialReflectedBallSector x₀ r S sigma (insert i T))
+      hPIopen (i := i) (c := x₀ i) (sigma := sigma i) hsymmB
+      (h := h) hScalarHalf hφ hφc
+    rw [hset] at hmain
+    exact hmain
+  rw [hleft, hright]
+  exact integral_pairing_eq_of_memH10 hPTopen hweq hψ hmemH10
+
+
+private theorem oddReflection_remainingFaceSymmetry :
+    ∀ {d : ℕ} {x₀ : Vec d} {r : ℝ} {S : Finset (Fin d)}
+      {sigma : Fin d → ℝ} (i : Fin d) (T : Finset (Fin d)) (hiT : i ∉ T) (hsub : insert i T ⊆ S) (hiS : i ∈ S)
+      (w : H1Function (partialReflectedBallSector x₀ r S sigma T)) (b : CoeffField d) (h : Vec d → ℝ)
+      (hwodd : ∀ j ∈ T, ∀ (z : Vec d), w.toFun (coordFaceReflection (x₀ j) j z) = -w.toFun z)
+      (hsigmai : |sigma i| = (1 : ℝ)) (hsigmai0 : sigma i ≠ (0 : ℝ))
+      (hset :
+        faceHalf (partialReflectedBallSector x₀ r S sigma (insert i T)) i (x₀ i) (sigma i) =
+          partialReflectedBallSector x₀ r S sigma T)
+      (hPIdom : IsOpenBoundedConvexDomain (partialReflectedBallSector x₀ r S sigma (insert i T)))
+      (hPIopen : IsOpen (partialReflectedBallSector x₀ r S sigma (insert i T)))
+      (hPImeas : MeasurableSet (partialReflectedBallSector x₀ r S sigma (insert i T)))
+      (hsymmB :
+        ∀ (y : Vec d),
+          coordFaceReflection (x₀ i) i y ∈ partialReflectedBallSector x₀ r S sigma (insert i T) ↔
+            y ∈ partialReflectedBallSector x₀ r S sigma (insert i T))
+      (hsymmBall : ∀ (y : Vec d), coordFaceReflection (x₀ i) i y ∈ euclideanBall x₀ r ↔ y ∈ euclideanBall x₀ r)
+      (hBsub : partialReflectedBallSector x₀ r S sigma (insert i T) ⊆ euclideanBall x₀ r)
+      (hztT :
+        LocalizedZeroTraceFunctionOn (partialReflectedBallSector x₀ r S sigma T)
+          (partialReflectedBallSector x₀ r S sigma (insert i T)) w.toFun)
+      (w' : H1Function (partialReflectedBallSector x₀ r S sigma (insert i T)))
+      (hval' :
+        ∀ (y : Vec d),
+          w'.toFun y =
+            oddFaceExtend (x₀ i) i
+              (zeroExtend (faceHalf (partialReflectedBallSector x₀ r S sigma (insert i T)) i (x₀ i) (sigma i))
+                (h1FunctionOfSetEq (Eq.symm hset) w).toFun)
+              y)
+      (hgrad' :
+        ∀ (y : Vec d),
+          w'.grad y =
+            oddFaceExtendGrad (x₀ i) i
+              (zeroExtendGrad (faceHalf (partialReflectedBallSector x₀ r S sigma (insert i T)) i (x₀ i) (sigma i))
+                (h1FunctionOfSetEq (Eq.symm hset) w).grad)
+              y)
+      (hval :
+        ∀ (y : Vec d),
+          w'.toFun y = oddFaceExtend (x₀ i) i (zeroExtend (partialReflectedBallSector x₀ r S sigma T) w.toFun) y)
+      (hgrad :
+        ∀ (y : Vec d),
+          w'.grad y = oddFaceExtendGrad (x₀ i) i (zeroExtendGrad (partialReflectedBallSector x₀ r S sigma T) w.grad) y)
+      (hplaneAE : ∀ᵐ (y : Vec d), y i ≠ x₀ i)
+      (hZrL2 :
+        MemLp (fun (y : Vec d) => zeroExtend (partialReflectedBallSector x₀ r S sigma T) h (coordFaceReflection (x₀ i) i y))
+          (2 : ENNReal) volume)
+      (hOddScalarL2 :
+        MemLp (oddFaceExtend (x₀ i) i (zeroExtend (partialReflectedBallSector x₀ r S sigma T) h)) (2 : ENNReal) volume)
+      (hOddFluxL2 :
+        ∀ (j : Fin d),
+          MemLp
+            (fun (y : Vec d) =>
+              oddFaceExtendGrad (x₀ i) i
+                (zeroExtendGrad (partialReflectedBallSector x₀ r S sigma T) fun (z : Vec d) => matVecMul (b z) (w.grad z)) y
+                j)
+            (2 : ENNReal) volume)
+      (hfluxIdentity :
+        ∀ᵐ (y : Vec d) ∂volume.restrict (partialReflectedBallSector x₀ r S sigma (insert i T)),
+          matVecMul (faceReflectedCoeff (x₀ i) i (sigma i) b y) (w'.grad y) =
+            oddFaceExtendGrad (x₀ i) i
+              (zeroExtendGrad (partialReflectedBallSector x₀ r S sigma T) fun (z : Vec d) => matVecMul (b z) (w.grad z)) y)
+      (hfluxPI :
+        ∀ (j : Fin d),
+          MemLp (fun (y : Vec d) => matVecMul (faceReflectedCoeff (x₀ i) i (sigma i) b y) (w'.grad y) j) (2 : ENNReal)
+            (volume.restrict (partialReflectedBallSector x₀ r S sigma (insert i T)))),
+      ∀ j ∈ insert i T, ∀ (z : Vec d), w'.toFun (coordFaceReflection (x₀ j) j z) = -w'.toFun z := by
+  intro d x₀ r S sigma i T hiT hsub hiS w b h hwodd hsigmai hsigmai0 hset hPIdom hPIopen hPImeas hsymmB hsymmBall hBsub hztT w' hval' hgrad' hval hgrad hplaneAE hZrL2 hOddScalarL2 hOddFluxL2 hfluxIdentity hfluxPI j hj z
+  rcases Finset.mem_insert.mp hj with hji | hjT
+  · subst hji
+    rw [hval (coordFaceReflection (x₀ j) j z), hval z]
+    exact oddFaceExtend_comp_coordFaceReflection (x₀ j) j _ z
+  · have hji : j ≠ i := fun hcon => hiT (hcon ▸ hjT)
+    have hjinv := mem_partialReflectedBallSector_coordFaceReflection_iff
+      (S := S) (sigma := sigma) (r := r) (x₀ := x₀) hjT
+    have hZodd : ∀ q : Vec d,
+        zeroExtend (partialReflectedBallSector x₀ r S sigma T) w.toFun
+            (coordFaceReflection (x₀ j) j q) =
+          -zeroExtend (partialReflectedBallSector x₀ r S sigma T) w.toFun q := by
+      intro q
+      by_cases hq : q ∈ partialReflectedBallSector x₀ r S sigma T
+      · rw [zeroExtend_of_mem _ ((hjinv q).2 hq), zeroExtend_of_mem _ hq]
+        exact hwodd j hjT q
+      · rw [zeroExtend_of_notMem _ (fun hc => hq ((hjinv q).1 hc)),
+          zeroExtend_of_notMem _ hq, neg_zero]
+    rw [hval (coordFaceReflection (x₀ j) j z), hval z]
+    change zeroExtend (partialReflectedBallSector x₀ r S sigma T) w.toFun
+          (coordFaceReflection (x₀ j) j z)
+        - zeroExtend (partialReflectedBallSector x₀ r S sigma T) w.toFun
+            (coordFaceReflection (x₀ i) i (coordFaceReflection (x₀ j) j z))
+      = -(zeroExtend (partialReflectedBallSector x₀ r S sigma T) w.toFun z
+        - zeroExtend (partialReflectedBallSector x₀ r S sigma T) w.toFun
+            (coordFaceReflection (x₀ i) i z))
+    rw [hZodd z, coordFaceReflection_comm hji.symm _ _ z,
+      hZodd (coordFaceReflection (x₀ i) i z)]
+    ring
+
 
 /-- **Odd unfolding of a sector weak solution.**  At every intermediate ball
 sector the odd extension solves the divergence-form equation for the
@@ -273,45 +623,13 @@ theorem exists_oddReflection_weakSolution_chain
       have hOddFluxL2 : ∀ j : Fin d, MemLp (fun y => oddFaceExtendGrad (x₀ i) i
           (zeroExtendGrad (partialReflectedBallSector x₀ r S sigma T)
             (fun z => matVecMul (b z) (w.grad z))) y j) 2
-          (volume : Measure (Vec d)) := by
-        intro j
-        have hFTr : MemLp (fun y => zeroExtendGrad
-            (partialReflectedBallSector x₀ r S sigma T)
-            (fun z => matVecMul (b z) (w.grad z))
-            (coordFaceReflection (x₀ i) i y) j) 2 (volume : Measure (Vec d)) :=
-          (hFluxTL2 j).comp_measurePreserving
-            (measurePreserving_coordFaceReflection (x₀ i) i)
-        have hcoord : (fun y => oddFaceExtendGrad (x₀ i) i
-            (zeroExtendGrad (partialReflectedBallSector x₀ r S sigma T)
-              (fun z => matVecMul (b z) (w.grad z))) y j) =
-            fun y => zeroExtendGrad (partialReflectedBallSector x₀ r S sigma T)
-                (fun z => matVecMul (b z) (w.grad z)) y j -
-              (if j = i then (-1 : ℝ) else 1) *
-                zeroExtendGrad (partialReflectedBallSector x₀ r S sigma T)
-                  (fun z => matVecMul (b z) (w.grad z))
-                  (coordFaceReflection (x₀ i) i y) j := by
-          funext y
-          rw [oddFaceExtendGrad]
-          simp only [Pi.sub_apply]
-          rw [coordReflectionLinear_apply_coord]
-        rw [hcoord]
-        exact (hFluxTL2 j).sub (hFTr.const_mul _)
+          (volume : Measure (Vec d))  := @boundaryReflectionChain_estimate1 (d) (x₀) (r) (S) (sigma) (i) (T) (w) (b) (hFluxTL2)
       have hfluxIdentity : ∀ᵐ y ∂volume.restrict
           (partialReflectedBallSector x₀ r S sigma (insert i T)),
           matVecMul (faceReflectedCoeff (x₀ i) i (sigma i) b y) (w'.grad y) =
             oddFaceExtendGrad (x₀ i) i
               (zeroExtendGrad (partialReflectedBallSector x₀ r S sigma T)
-                (fun z => matVecMul (b z) (w.grad z))) y := by
-        filter_upwards [ae_restrict_mem hPImeas,
-          (ae_restrict_of_ae hplaneAE :
-            ∀ᵐ y ∂volume.restrict
-              (partialReflectedBallSector x₀ r S sigma (insert i T)), y i ≠ x₀ i)]
-          with y hyPI hyplane
-        rw [hgrad y]
-        have hstep := matVecMul_faceReflectedCoeff_oddFaceExtendGrad hsigmai0 hsymmB b
-          w.grad hyPI hyplane
-        rw [hset] at hstep
-        exact hstep
+                (fun z => matVecMul (b z) (w.grad z))) y  := @boundaryReflectionChain_estimate4 (d) (x₀) (r) (S) (sigma) (i) (T) (w) (b) (hsigmai0) (hset) (hPImeas) (hsymmB) (w') (hgrad) (hplaneAE)
       have hfluxPI : ∀ j : Fin d,
           MemLp (fun y => matVecMul (faceReflectedCoeff (x₀ i) i (sigma i) b y)
             (w'.grad y) j) 2 (volume.restrict
@@ -367,98 +685,7 @@ theorem exists_oddReflection_weakSolution_chain
           _ ≤ 2 ^ T.card * M + 2 ^ T.card * M := add_le_add hy hry
           _ = 2 ^ (T.card + 1) * M := by ring
       · exact hfluxPI
-      · refine isMatrixDivFormWeakSolutionZerothOrderOn_of_contDiff_tests hfluxPI
-          (hOddScalarL2.restrict _) ?_
-        intro φ hφ hφc hφPI
-        have hφr : ContDiff ℝ (⊤ : ℕ∞) fun z => φ (coordFaceReflection (x₀ i) i z) := by
-          simpa [Function.comp] using! hφ.comp (contDiff_coordFaceReflection (x₀ i) i)
-        have hφrc : HasCompactSupport fun z => φ (coordFaceReflection (x₀ i) i z) :=
-          hasCompactSupport_comp_coordFaceReflection hφc (x₀ i) i
-        have hφrPI : tsupport (fun z => φ (coordFaceReflection (x₀ i) i z)) ⊆
-            partialReflectedBallSector x₀ r S sigma (insert i T) :=
-          tsupport_comp_coordFaceReflection_subset (x₀ i) i hsymmB hφPI
-        have hψ : ContDiff ℝ (⊤ : ℕ∞)
-            fun z => φ z - φ (coordFaceReflection (x₀ i) i z) := hφ.sub hφr
-        have hψc : HasCompactSupport
-            fun z => φ z - φ (coordFaceReflection (x₀ i) i z) := hφc.sub hφrc
-        have hψPI : tsupport (fun z => φ z - φ (coordFaceReflection (x₀ i) i z)) ⊆
-            partialReflectedBallSector x₀ r S sigma (insert i T) := by
-          have hsupp : Function.support
-              (fun z => φ z - φ (coordFaceReflection (x₀ i) i z)) ⊆
-              tsupport φ ∪ tsupport (fun z => φ (coordFaceReflection (x₀ i) i z)) := by
-            intro q hq
-            simp only [Function.mem_support] at hq
-            by_contra hcon
-            simp only [Set.mem_union, not_or] at hcon
-            have h1 : φ q = 0 := image_eq_zero_of_notMem_tsupport hcon.1
-            have h2 : φ (coordFaceReflection (x₀ i) i q) = 0 :=
-              image_eq_zero_of_notMem_tsupport
-                (f := fun z => φ (coordFaceReflection (x₀ i) i z)) hcon.2
-            exact hq (by rw [h1, h2, sub_self])
-          have hclosed : IsClosed (tsupport φ ∪
-              tsupport (fun z => φ (coordFaceReflection (x₀ i) i z))) :=
-            (isClosed_tsupport φ).union (isClosed_tsupport _)
-          exact (closure_minimal hsupp hclosed).trans (Set.union_subset hφPI hφrPI)
-        have hψ0 : ∀ y : Vec d, y i = x₀ i →
-            φ y - φ (coordFaceReflection (x₀ i) i y) = 0 := by
-          intro y hy
-          rw [coordFaceReflection_eq_self hy, sub_self]
-        have hmemH10 : MemH10 (partialReflectedBallSector x₀ r S sigma T)
-            fun z => φ z - φ (coordFaceReflection (x₀ i) i z) := by
-          have h := memH10_faceHalf_of_contDiff_of_vanishing_on_face hPIdom hsigmai
-            hψ hψc hψPI hψ0
-          rwa [hset] at h
-        have hFluxHalf : ∀ k : Fin d, MemLp (fun y => zeroExtendGrad
-            (faceHalf (partialReflectedBallSector x₀ r S sigma (insert i T))
-              i (x₀ i) (sigma i))
-            (fun z => matVecMul (b z) (w.grad z)) y k) 2
-            (volume : Measure (Vec d)) := by
-          rw [hset]
-          exact hFluxTL2
-        have hScalarHalf : MemLp (zeroExtend
-            (faceHalf (partialReflectedBallSector x₀ r S sigma (insert i T))
-              i (x₀ i) (sigma i)) h) 2 (volume : Measure (Vec d)) := by
-          rw [hset]
-          exact hZL2
-        have hleft : ∫ y in partialReflectedBallSector x₀ r S sigma (insert i T),
-              vecDot (matVecMul (faceReflectedCoeff (x₀ i) i (sigma i) b y)
-                (w'.grad y)) (euclideanGradient φ y) ∂volume =
-            ∫ y in partialReflectedBallSector x₀ r S sigma T,
-              vecDot (matVecMul (b y) (w.grad y))
-                (euclideanGradient
-                  (fun z => φ z - φ (coordFaceReflection (x₀ i) i z)) y) ∂volume := by
-          have hcongr : ∫ y in partialReflectedBallSector x₀ r S sigma (insert i T),
-                vecDot (matVecMul (faceReflectedCoeff (x₀ i) i (sigma i) b y)
-                  (w'.grad y)) (euclideanGradient φ y) ∂volume =
-              ∫ y in partialReflectedBallSector x₀ r S sigma (insert i T),
-                vecDot (oddFaceExtendGrad (x₀ i) i
-                  (zeroExtendGrad (partialReflectedBallSector x₀ r S sigma T)
-                    (fun z => matVecMul (b z) (w.grad z))) y)
-                  (euclideanGradient φ y) ∂volume := by
-            refine integral_congr_ae ?_
-            filter_upwards [hfluxIdentity] with y hy
-            rw [hy]
-          rw [hcongr]
-          have hmain := integral_vecDot_oddFaceExtendGrad_eq (U :=
-              partialReflectedBallSector x₀ r S sigma (insert i T))
-            hPIopen (i := i) (c := x₀ i) (sigma := sigma i) hsymmB
-            (F := fun z => matVecMul (b z) (w.grad z)) hFluxHalf hφ hφc
-          rw [hset] at hmain
-          exact hmain
-        have hright : ∫ y in partialReflectedBallSector x₀ r S sigma (insert i T),
-              oddFaceExtend (x₀ i) i
-                (zeroExtend (partialReflectedBallSector x₀ r S sigma T) h) y *
-                φ y ∂volume =
-            ∫ y in partialReflectedBallSector x₀ r S sigma T,
-              h y * (φ y - φ (coordFaceReflection (x₀ i) i y)) ∂volume := by
-          have hmain := integral_mul_oddFaceExtend_eq (U :=
-              partialReflectedBallSector x₀ r S sigma (insert i T))
-            hPIopen (i := i) (c := x₀ i) (sigma := sigma i) hsymmB
-            (h := h) hScalarHalf hφ hφc
-          rw [hset] at hmain
-          exact hmain
-        rw [hleft, hright]
-        exact integral_pairing_eq_of_memH10 hPTopen hweq hψ hmemH10
+      · exact @oddReflection_testFunctionExtension (d) (x₀) (r) (S) (sigma) (i) (T) (w) (b) (h) (hweq) (hsigmai) (hset) (hPIdom) (hPIopen) (hPTopen) (by infer_instance) (hsymmB) (w') (hZL2) (hOddScalarL2) (hFluxTL2) (hfluxIdentity) (hfluxPI)
       · intro y hy
         have hyT : y ∈ partialReflectedBallSector x₀ r S sigma T :=
           ballSector_subset_partialReflectedBallSector x₀ r S sigma T hy
@@ -468,35 +695,7 @@ theorem exists_oddReflection_weakSolution_chain
           exact coordFaceReflection_notMem_faceHalf hyT
         rw [hval y, oddFaceExtend_zeroExtend_of_mem w.toFun (x₀ i) i hyT hry]
         exact hwpin y hy
-      · intro j hj z
-        rcases Finset.mem_insert.mp hj with hji | hjT
-        · subst hji
-          rw [hval (coordFaceReflection (x₀ j) j z), hval z]
-          exact oddFaceExtend_comp_coordFaceReflection (x₀ j) j _ z
-        · have hji : j ≠ i := fun hcon => hiT (hcon ▸ hjT)
-          have hjinv := mem_partialReflectedBallSector_coordFaceReflection_iff
-            (S := S) (sigma := sigma) (r := r) (x₀ := x₀) hjT
-          have hZodd : ∀ q : Vec d,
-              zeroExtend (partialReflectedBallSector x₀ r S sigma T) w.toFun
-                  (coordFaceReflection (x₀ j) j q) =
-                -zeroExtend (partialReflectedBallSector x₀ r S sigma T) w.toFun q := by
-            intro q
-            by_cases hq : q ∈ partialReflectedBallSector x₀ r S sigma T
-            · rw [zeroExtend_of_mem _ ((hjinv q).2 hq), zeroExtend_of_mem _ hq]
-              exact hwodd j hjT q
-            · rw [zeroExtend_of_notMem _ (fun hc => hq ((hjinv q).1 hc)),
-                zeroExtend_of_notMem _ hq, neg_zero]
-          rw [hval (coordFaceReflection (x₀ j) j z), hval z]
-          show zeroExtend (partialReflectedBallSector x₀ r S sigma T) w.toFun
-                (coordFaceReflection (x₀ j) j z)
-              - zeroExtend (partialReflectedBallSector x₀ r S sigma T) w.toFun
-                  (coordFaceReflection (x₀ i) i (coordFaceReflection (x₀ j) j z))
-            = -(zeroExtend (partialReflectedBallSector x₀ r S sigma T) w.toFun z
-              - zeroExtend (partialReflectedBallSector x₀ r S sigma T) w.toFun
-                  (coordFaceReflection (x₀ i) i z))
-          rw [hZodd z, coordFaceReflection_comm hji.symm _ _ z,
-            hZodd (coordFaceReflection (x₀ i) i z)]
-          ring
+      · exact @oddReflection_remainingFaceSymmetry (d) (x₀) (r) (S) (sigma) (i) (T) (hiT) (hsub) (hiS) (w) (b) (h) (hwodd) (hsigmai) (hsigmai0) (hset) (hPIdom) (hPIopen) (hPImeas) (hsymmB) (hsymmBall) (hBsub) (hztT) (w') (hval') (hgrad') (hval) (hgrad) (hplaneAE) (hZrL2) (hOddScalarL2) (hOddFluxL2) (hfluxIdentity) (hfluxPI)
       · have htrans := localizedZeroTraceFunctionOn_oddFaceExtend hPTmeas hPIopen
           (by rw [← hset]; exact faceHalf_subset _ _ _ _) hsymmB hsymmBall hwzt
         have hfun : w'.toFun = oddFaceExtend (x₀ i) i

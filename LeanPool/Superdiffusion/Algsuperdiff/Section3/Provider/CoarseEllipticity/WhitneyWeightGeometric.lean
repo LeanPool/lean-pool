@@ -8,7 +8,9 @@ module
 
 public import Mathlib.Analysis.SpecificLimits.Normed
 public import Mathlib.Analysis.SpecialFunctions.Pow.Real
-public import Mathlib.Tactic
+public import Mathlib.Tactic.Linarith
+public import Mathlib.Tactic.NormNum
+public import Mathlib.Tactic.Positivity
 
 /-!
 # WhitneyWeightGeometric

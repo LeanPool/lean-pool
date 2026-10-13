@@ -221,11 +221,11 @@ theorem flipLayer_seqValuePath (k : ℤ) (omega : ShellSeq d) :
   by_cases h : l = k
   · subst h
     rw [flipLayer_self]
-    show -ShellField.valuePath (omega l)
+    change -ShellField.valuePath (omega l)
       = ShellField.valuePath (negateLayerField l l (omega l))
     rw [negateLayerField_self, ShellField.valuePath_negate]
   · rw [flipLayer_of_ne h]
-    show ShellField.valuePath (omega l)
+    change ShellField.valuePath (omega l)
       = ShellField.valuePath (negateLayerField k l (omega l))
     rw [negateLayerField_of_ne h]
 
@@ -242,11 +242,11 @@ theorem flipLayer_vadd (k : ℤ) (z : Vec d) (F : ℤ → C(Vec d, Mat d)) :
   by_cases h : l = k
   · subst h
     rw [flipLayer_self]
-    show -((z +ᵥ F) l) = z +ᵥ flipLayer l F l
+    change -((z +ᵥ F) l) = z +ᵥ flipLayer l F l
     rw [flipLayer_self]
     exact neg_vadd_path z (F l)
   · rw [flipLayer_of_ne h]
-    show (z +ᵥ F) l = z +ᵥ flipLayer k F l
+    change (z +ᵥ F) l = z +ᵥ flipLayer k F l
     rw [flipLayer_of_ne h]
     rfl
 
@@ -309,10 +309,10 @@ theorem flipKoopman_layerForcingL2 (M : ABKModel d) (e : Vec d) (k l : ℤ) :
     have hfun : layerForcing e l ∘ flipLayer (d := d) l
         = fun F => -(layerForcing (d := d) e l F) := by
       funext F
-      show valuePathForcing e (flipLayer l F l)
+      change valuePathForcing e (flipLayer l F l)
         = -HilbertVec.ofVec (matVecMul (F l 0) e)
       rw [flipLayer_self]
-      show HilbertVec.ofVec (matVecMul ((-(F l)) 0) e) = _
+      change HilbertVec.ofVec (matVecMul ((-(F l)) 0) e) = _
       rw [ContinuousMap.neg_apply]
       refine PiLp.ext fun i => ?_
       simp only [PiLp.neg_apply, matVecMul, Matrix.neg_apply]
@@ -328,7 +328,7 @@ theorem flipKoopman_layerForcingL2 (M : ABKModel d) (e : Vec d) (k l : ℤ) :
   · rw [ite_eq_right h]
     have hfun : layerForcing e l ∘ flipLayer (d := d) k = layerForcing (d := d) e l := by
       funext F
-      show valuePathForcing e (flipLayer k F l) = valuePathForcing e (F l)
+      change valuePathForcing e (flipLayer k F l) = valuePathForcing e (F l)
       rw [flipLayer_of_ne h]
     have hstep : flipKoopman M k (layerForcingL2 M e l)
         = ((memLp_two_layerForcing M e l).comp_measurePreserving
@@ -395,9 +395,10 @@ theorem integral_normSq_shellSumCorrectorRepr_eq_norm_sq (M : ABKModel d)
 
 /-- The norm square of a finite sum of pairwise orthogonal vectors. -/
 private theorem norm_sq_finset_sum_of_orthogonal {E : Type*} [NormedAddCommGroup E]
-    [InnerProductSpace ℝ E] {iota : Type*} [DecidableEq iota] (s : Finset iota)
+    [InnerProductSpace ℝ E] {iota : Type*} (s : Finset iota)
     (g : iota → E) (h : ∀ i ∈ s, ∀ j ∈ s, i ≠ j → (inner ℝ (g i) (g j) : ℝ) = 0) :
     ‖∑ i ∈ s, g i‖ ^ 2 = ∑ i ∈ s, ‖g i‖ ^ 2 := by
+  classical
   rw [← real_inner_self_eq_norm_sq, sum_inner]
   refine Finset.sum_congr rfl fun i hi => ?_
   rw [inner_sum, Finset.sum_eq_single_of_mem i hi (fun j hj hji => h i hi j hj (Ne.symm hji)),

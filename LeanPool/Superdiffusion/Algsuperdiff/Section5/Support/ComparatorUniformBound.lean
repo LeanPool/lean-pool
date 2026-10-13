@@ -86,12 +86,12 @@ theorem ksup_le_of_normalized_estimate {C Ksup KHol sigma : ℝ} (n : ℤ) (hKHo
   have h3 : (0 : ℝ) < Real.rpow 3 ((1 / 2 : ℝ) * (n : ℝ)) :=
     Real.rpow_pos_of_pos (by norm_num) _
   have hcancel : Real.rpow 3 ((n : ℝ) / 2) * Real.rpow 3 (-(n : ℝ) / 2) = 1 := by
-    show (3 : ℝ) ^ ((n : ℝ) / 2) * (3 : ℝ) ^ (-(n : ℝ) / 2) = 1
+    change (3 : ℝ) ^ ((n : ℝ) / 2) * (3 : ℝ) ^ (-(n : ℝ) / 2) = 1
     rw [← Real.rpow_add (by norm_num : (0 : ℝ) < 3),
       show ((n : ℝ) / 2 + -(n : ℝ) / 2) = 0 by ring, Real.rpow_zero]
   have hneg : Real.rpow 3 (-((1 / 2 : ℝ) * (n : ℝ))) =
       (Real.rpow 3 ((1 / 2 : ℝ) * (n : ℝ)))⁻¹ := by
-    show (3 : ℝ) ^ (-((1 / 2 : ℝ) * (n : ℝ))) = ((3 : ℝ) ^ ((1 / 2 : ℝ) * (n : ℝ)))⁻¹
+    change (3 : ℝ) ^ (-((1 / 2 : ℝ) * (n : ℝ))) = ((3 : ℝ) ^ ((1 / 2 : ℝ) * (n : ℝ)))⁻¹
     rw [Real.rpow_neg (by norm_num : (0 : ℝ) ≤ 3)]
   rw [hneg] at hest
   have hrw : C * (Real.rpow 3 ((1 / 2 : ℝ) * (n : ℝ)))⁻¹ *
@@ -155,7 +155,7 @@ theorem localizedError_comparator_term_le (d : ℕ) (hdim : 2 ≤ d) :
   have hsig : (0 : ℝ) < (Annealed.sigmaBar M n : ℝ) := Provider.Orlicz.sigmaBar_pos M n
   have h3 : (0 : ℝ) < (3 : ℝ) ^ n := zpow_pos (by norm_num) n
   have hrpow : Real.rpow 3 (-(n : ℝ)) = ((3 : ℝ) ^ n)⁻¹ := by
-    show (3 : ℝ) ^ (-(n : ℝ)) = ((3 : ℝ) ^ n)⁻¹
+    change (3 : ℝ) ^ (-(n : ℝ)) = ((3 : ℝ) ^ n)⁻¹
     rw [Real.rpow_neg (by norm_num : (0 : ℝ) ≤ 3), Real.rpow_intCast]
   have hstep := hbound M n y g hg v hv vRep hvRep
   have hnn : (0 : ℝ) ≤ (Annealed.sigmaBar M n : ℝ) * Real.rpow 3 (-(n : ℝ)) :=

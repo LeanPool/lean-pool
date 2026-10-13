@@ -121,6 +121,7 @@ theorem mem_descendantsAtScale_of_cubeSet_subset {P Q : TriadicCube d}
 
 variable [NeZero d]
 
+omit [NeZero d] in
 /-- Duplicate of `StabilityIndexCube`'s `private shell_nonneg`. -/
 private theorem shell_nonneg' (Q : TriadicCube d) (a : TriadicCoeffFamily d) (a0 : Mat d)
     (l : ℕ) :

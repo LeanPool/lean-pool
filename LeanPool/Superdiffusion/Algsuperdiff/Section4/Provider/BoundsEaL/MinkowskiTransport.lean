@@ -141,6 +141,168 @@ private theorem geometricWeightTwo (t : ℝ) (l : ℕ) :
 
 /-! ## 2. The transport, at an abstract per-cube majorant -/
 
+private theorem minkowski_error_observable_bound :
+    ∀ {d : ℕ} (M : ABKModel d) {m n : ℤ},
+      n ≤ m →
+        ∀ (s : { s : ℝ // (0 : ℝ) < s }) {p : ℝ},
+          (2 : ℝ) * (↑d : ℝ) * (↑s : ℝ)⁻¹ ≤ p →
+            ∀ (Maj : TriadicCube d → Cutoff.CutoffSample d → ℝ),
+              (∀ (R : TriadicCube d),
+                  AEMeasurable (Maj R) (↑(Cutoff.cutoffSampleLaw M) : Measure (Cutoff.CutoffSample d))) →
+                ∀ (G : ℕ → ℝ),
+                  (∀ (l : ℕ), (0 : ℝ) ≤ G l) →
+                    (∀ (l : ℕ),
+                        ∀ R ∈ descendantsAtScale (originCube d m) (n - (↑l : ℤ)),
+                          ∫⁻ (omega : Cutoff.CutoffSample d),
+                              ENNReal.ofReal (Maj R omega) ^
+                                (p / (2 : ℝ)) ∂(↑(Cutoff.cutoffSampleLaw M) : Measure (Cutoff.CutoffSample d)) ≤
+                            ENNReal.ofReal (G l) ^ (p / (2 : ℝ))) →
+                      (0 : ℝ) < (↑s : ℝ) →
+                        (0 : ℝ) < p / (2 : ℝ) →
+                          (0 : ℝ) < (1 : ℝ) / (p / (2 : ℝ)) →
+                            (∀ (l : ℕ), (0 : ℝ) ≤ Ch02.geometricWeight (↑s : ℝ) (2 : ℝ) l) →
+                              (∀ (l : ℕ), n - (↑l : ℤ) ≤ m) →
+                                let F : ℕ → Cutoff.CutoffSample d → ℝ≥0∞ := fun (l : ℕ) (omega : Cutoff.CutoffSample d) =>
+                                  ENNReal.ofReal (Ch02.geometricWeight (↑s : ℝ) (2 : ℝ) l) *
+                                    (∑ R ∈ descendantsAtScale (originCube d m) (n - (↑l : ℤ)),
+                                        ENNReal.ofReal (Maj R omega) ^ (p / (2 : ℝ))) ^
+                                      ((1 : ℝ) / (p / (2 : ℝ)));
+                                (F = fun (l : ℕ) (omega : Cutoff.CutoffSample d) =>
+                                    ENNReal.ofReal (Ch02.geometricWeight (↑s : ℝ) (2 : ℝ) l) *
+                                      (∑ R ∈ descendantsAtScale (originCube d m) (n - (↑l : ℤ)),
+                                          ENNReal.ofReal (Maj R omega) ^ (p / (2 : ℝ))) ^
+                                        ((1 : ℝ) / (p / (2 : ℝ)))) →
+                                  ∀ (l : ℕ),
+                                    (∫⁻ (omega : Cutoff.CutoffSample d),
+                                          F l omega ^
+                                            (p /
+                                              (2 : ℝ)) ∂(↑(Cutoff.cutoffSampleLaw M) : Measure (Cutoff.CutoffSample d))) ^
+                                        ((1 : ℝ) / (p / (2 : ℝ))) ≤
+                                      ENNReal.ofReal (Real.rpow (3 : ℝ) ((↑s : ℝ) * ((↑m : ℝ) - (↑n : ℝ)))) *
+                                        ENNReal.ofReal
+                                          (Ch02.geometricDiscount (↑s : ℝ) (2 : ℝ) *
+                                            (Real.rpow (3 : ℝ) (-(↑s : ℝ) * (↑l : ℝ)) * G l)) := by
+  intro d M m n hnm s p hp Maj hMajMeas G hG hcube hs0 hq0 hqinv hw0 hscale F hF l
+  have hcardR := card_descendantsAtScale_originCube_eq_rpow d (hscale l)
+  -- the integral of the `p/2`-th power
+  have hpow : ∀ omega : Cutoff.CutoffSample d, F l omega ^ (p / 2) =
+      ENNReal.ofReal (Ch02.geometricWeight (s : ℝ) 2 l) ^ (p / 2) *
+        ∑ R ∈ descendantsAtScale (originCube d m) (n - (l : ℤ)),
+          ENNReal.ofReal (Maj R omega) ^ (p / 2) := by
+    intro omega
+    rw [hF, ENNReal.mul_rpow_of_nonneg _ _ hq0.le, ← ENNReal.rpow_mul,
+      one_div_mul_cancel (ne_of_gt hq0), ENNReal.rpow_one]
+  have hmeasR : ∀ R : TriadicCube d,
+      AEMeasurable (fun omega : Cutoff.CutoffSample d =>
+        ENNReal.ofReal (Maj R omega) ^ (p / 2))
+        (Cutoff.cutoffSampleLaw M).toMeasure := fun R =>
+    ENNReal.continuous_rpow_const.measurable.comp_aemeasurable (hMajMeas R).ennreal_ofReal
+  have hconstNeTop : ENNReal.ofReal (Ch02.geometricWeight (s : ℝ) 2 l) ^ (p / 2) ≠ ⊤ :=
+    ENNReal.rpow_ne_top_of_nonneg hq0.le ENNReal.ofReal_ne_top
+  have hint : (∫⁻ omega, F l omega ^ (p / 2) ∂(Cutoff.cutoffSampleLaw M).toMeasure) =
+      ENNReal.ofReal (Ch02.geometricWeight (s : ℝ) 2 l) ^ (p / 2) *
+        ∑ R ∈ descendantsAtScale (originCube d m) (n - (l : ℤ)),
+          ∫⁻ omega, ENNReal.ofReal (Maj R omega) ^ (p / 2)
+            ∂(Cutoff.cutoffSampleLaw M).toMeasure := by
+    rw [lintegral_congr hpow, lintegral_const_mul' _ _ hconstNeTop,
+      lintegral_finsetSum' _ fun R _ => hmeasR R]
+  have hsumle : (∑ R ∈ descendantsAtScale (originCube d m) (n - (l : ℤ)),
+        ∫⁻ omega, ENNReal.ofReal (Maj R omega) ^ (p / 2)
+          ∂(Cutoff.cutoffSampleLaw M).toMeasure) ≤
+      (((descendantsAtScale (originCube d m) (n - (l : ℤ))).card : ℕ) : ℝ≥0∞) *
+        ENNReal.ofReal (G l) ^ (p / 2) := by
+    refine le_trans (Finset.sum_le_card_nsmul _ _ _ fun R hR => hcube l R hR) ?_
+    rw [nsmul_eq_mul]
+  have hbound : (∫⁻ omega, F l omega ^ (p / 2)
+        ∂(Cutoff.cutoffSampleLaw M).toMeasure) ≤
+      (ENNReal.ofReal (Ch02.geometricWeight (s : ℝ) 2 l) *
+        ((((descendantsAtScale (originCube d m) (n - (l : ℤ))).card : ℕ) : ℝ≥0∞) ^
+          (1 / (p / 2)) * ENNReal.ofReal (G l))) ^ (p / 2) := by
+    rw [hint]
+    refine le_trans (mul_le_mul_right hsumle _) (le_of_eq ?_)
+    rw [ENNReal.mul_rpow_of_nonneg _ _ hq0.le, ENNReal.mul_rpow_of_nonneg _ _ hq0.le,
+      ← ENNReal.rpow_mul, one_div_mul_cancel (ne_of_gt hq0), ENNReal.rpow_one]
+  have h3nn : (0 : ℝ) ≤ Real.rpow 3 ((d : ℝ) * ((m : ℝ) - ((n - (l : ℤ) : ℤ) : ℝ))) :=
+    Real.rpow_nonneg (show (0 : ℝ) ≤ 3 by norm_num) _
+  have hXnn : (0 : ℝ) ≤ Real.rpow 3 ((d : ℝ) * ((m : ℝ) - ((n - (l : ℤ) : ℤ) : ℝ))) ^
+      (1 / (p / 2)) := Real.rpow_nonneg h3nn _
+  have hSnn : (0 : ℝ) ≤ Real.rpow 3 ((s : ℝ) * ((m : ℝ) - (n : ℝ))) :=
+    Real.rpow_nonneg (show (0 : ℝ) ≤ 3 by norm_num) _
+  have hcardE : ((((descendantsAtScale (originCube d m) (n - (l : ℤ))).card : ℕ) : ℝ≥0∞)) ^
+      (1 / (p / 2)) =
+      ENNReal.ofReal (Real.rpow 3 ((d : ℝ) * ((m : ℝ) - ((n - (l : ℤ) : ℤ) : ℝ))) ^
+        (1 / (p / 2))) := by
+    rw [← ENNReal.ofReal_natCast, hcardR, ENNReal.ofReal_rpow_of_nonneg h3nn hqinv.le]
+  rw [hcardE] at hbound
+  refine le_trans (ENNReal.rpow_le_rpow hbound hqinv.le) ?_
+  rw [← ENNReal.rpow_mul, mul_one_div_cancel (ne_of_gt hq0), ENNReal.rpow_one,
+    ← ENNReal.ofReal_mul hXnn, ← ENNReal.ofReal_mul (hw0 l),
+    ← ENNReal.ofReal_mul hSnn]
+  -- the real arithmetic: the count is paid by the floor `p ≥ 2ds⁻¹`
+  refine ENNReal.ofReal_le_ofReal ?_
+  have hdl : (0 : ℝ) ≤ ((m : ℝ) - (n : ℝ)) + (l : ℝ) := by
+    have h1 : (n : ℝ) ≤ (m : ℝ) := by exact_mod_cast hnm
+    have h2 : (0 : ℝ) ≤ (l : ℝ) := Nat.cast_nonneg l
+    linarith only [h1, h2]
+  have hshift : (m : ℝ) - ((n - (l : ℤ) : ℤ) : ℝ) = ((m : ℝ) - (n : ℝ)) + (l : ℝ) := by
+    push_cast
+    ring
+  have hexp : (d : ℝ) * (((m : ℝ) - (n : ℝ)) + (l : ℝ)) * (1 / (p / 2)) ≤
+      (s : ℝ) * (((m : ℝ) - (n : ℝ)) + (l : ℝ)) := by
+    have hps : 2 * (d : ℝ) ≤ p * (s : ℝ) := by
+      have h := mul_le_mul_of_nonneg_right hp hs0.le
+      rw [mul_assoc, inv_mul_cancel₀ (ne_of_gt hs0), mul_one] at h
+      exact h
+    have hratio : (d : ℝ) * (1 / (p / 2)) ≤ (s : ℝ) := by
+      rw [one_div, ← div_eq_mul_inv, div_le_iff₀ hq0]
+      linarith only [hps]
+    have hstep := mul_le_mul_of_nonneg_left hratio hdl
+    linarith only [hstep]
+  have hcount : Real.rpow 3 ((d : ℝ) * ((m : ℝ) - ((n - (l : ℤ) : ℤ) : ℝ))) ^
+      (1 / (p / 2)) ≤
+      Real.rpow 3 ((s : ℝ) * ((m : ℝ) - (n : ℝ)) + (s : ℝ) * (l : ℝ)) := by
+    simp only [rpowBridgeMink]
+    rw [hshift, ← Real.rpow_mul (show (0 : ℝ) ≤ 3 by norm_num)]
+    refine Real.rpow_le_rpow_of_exponent_le (by norm_num) ?_
+    have hid : (s : ℝ) * (((m : ℝ) - (n : ℝ)) + (l : ℝ)) =
+        (s : ℝ) * ((m : ℝ) - (n : ℝ)) + (s : ℝ) * (l : ℝ) := by ring
+    linarith only [hexp, hid]
+  have e1 : Real.rpow 3 (-(s : ℝ) * 2 * (l : ℝ)) *
+      Real.rpow 3 ((s : ℝ) * ((m : ℝ) - (n : ℝ)) + (s : ℝ) * (l : ℝ)) =
+      Real.rpow 3 ((s : ℝ) * ((m : ℝ) - (n : ℝ)) + -(s : ℝ) * (l : ℝ)) := by
+    simp only [rpowBridgeMink]
+    rw [← Real.rpow_add (show (0 : ℝ) < 3 by norm_num)]
+    congr 1
+    ring
+  have e2 : Real.rpow 3 ((s : ℝ) * ((m : ℝ) - (n : ℝ))) *
+      Real.rpow 3 (-(s : ℝ) * (l : ℝ)) =
+      Real.rpow 3 ((s : ℝ) * ((m : ℝ) - (n : ℝ)) + -(s : ℝ) * (l : ℝ)) := by
+    simp only [rpowBridgeMink]
+    rw [← Real.rpow_add (show (0 : ℝ) < 3 by norm_num)]
+  have hwid : Ch02.geometricWeight (s : ℝ) 2 l =
+      Ch02.geometricDiscount (s : ℝ) 2 * Real.rpow 3 (-(s : ℝ) * 2 * (l : ℝ)) :=
+    geometricWeightTwo (s : ℝ) l
+  have hkey : Ch02.geometricWeight (s : ℝ) 2 l *
+      Real.rpow 3 ((d : ℝ) * ((m : ℝ) - ((n - (l : ℤ) : ℤ) : ℝ))) ^ (1 / (p / 2)) ≤
+      Real.rpow 3 ((s : ℝ) * ((m : ℝ) - (n : ℝ))) *
+        (Ch02.geometricDiscount (s : ℝ) 2 * Real.rpow 3 (-(s : ℝ) * (l : ℝ))) := by
+    refine le_trans (mul_le_mul_of_nonneg_left hcount (hw0 l)) (le_of_eq ?_)
+    rw [hwid, mul_assoc, e1, ← e2]
+    ring
+  have hGl : (0 : ℝ) ≤ G l := hG l
+  have hfinal := mul_le_mul_of_nonneg_right hkey hGl
+  have hlhs : Ch02.geometricWeight (s : ℝ) 2 l *
+      Real.rpow 3 ((d : ℝ) * ((m : ℝ) - ((n - (l : ℤ) : ℤ) : ℝ))) ^ (1 / (p / 2)) * G l =
+    Ch02.geometricWeight (s : ℝ) 2 l *
+      (Real.rpow 3 ((d : ℝ) * ((m : ℝ) - ((n - (l : ℤ) : ℤ) : ℝ))) ^ (1 / (p / 2)) *
+        G l) := by ring
+  have hrhs : Real.rpow 3 ((s : ℝ) * ((m : ℝ) - (n : ℝ))) *
+      (Ch02.geometricDiscount (s : ℝ) 2 * Real.rpow 3 (-(s : ℝ) * (l : ℝ))) * G l =
+    Real.rpow 3 ((s : ℝ) * ((m : ℝ) - (n : ℝ))) *
+      (Ch02.geometricDiscount (s : ℝ) 2 * (Real.rpow 3 (-(s : ℝ) * (l : ℝ)) * G l)) := by
+    ring
+  linarith only [hfinal, hlhs, hrhs]
+
 /-- **The Minkowski-ordered transport.**
 
 `Maj` is any per-cube majorant of the Step-1 endpoint's per-cube object,
@@ -282,131 +444,8 @@ private theorem observableSup_rpow_le_minkowski_core [NeZero d] (M : ABKModel d)
         ∂(Cutoff.cutoffSampleLaw M).toMeasure) ^ (1 / (p / 2))) ^ (p / 2) :=
     le_trans (lintegral_mono_ae hae) (lintegral_rpow_tsum_le_rpow_tsum hq F hFmeas)
   -- STEP C: the per-scale evaluation, with the count paid against the anchor's floor
-  have hper : ∀ l : ℕ, (∫⁻ omega, F l omega ^ (p / 2)
-        ∂(Cutoff.cutoffSampleLaw M).toMeasure) ^ (1 / (p / 2)) ≤
-      ENNReal.ofReal (Real.rpow 3 ((s : ℝ) * ((m : ℝ) - (n : ℝ)))) *
-        ENNReal.ofReal (Ch02.geometricDiscount (s : ℝ) 2 *
-          (Real.rpow 3 (-(s : ℝ) * (l : ℝ)) * G l)) := by
-    intro l
-    have hcardR := card_descendantsAtScale_originCube_eq_rpow d (hscale l)
-    -- the integral of the `p/2`-th power
-    have hpow : ∀ omega : Cutoff.CutoffSample d, F l omega ^ (p / 2) =
-        ENNReal.ofReal (Ch02.geometricWeight (s : ℝ) 2 l) ^ (p / 2) *
-          ∑ R ∈ descendantsAtScale (originCube d m) (n - (l : ℤ)),
-            ENNReal.ofReal (Maj R omega) ^ (p / 2) := by
-      intro omega
-      rw [hF, ENNReal.mul_rpow_of_nonneg _ _ hq0.le, ← ENNReal.rpow_mul,
-        one_div_mul_cancel (ne_of_gt hq0), ENNReal.rpow_one]
-    have hmeasR : ∀ R : TriadicCube d,
-        AEMeasurable (fun omega : Cutoff.CutoffSample d =>
-          ENNReal.ofReal (Maj R omega) ^ (p / 2))
-          (Cutoff.cutoffSampleLaw M).toMeasure := fun R =>
-      ENNReal.continuous_rpow_const.measurable.comp_aemeasurable (hMajMeas R).ennreal_ofReal
-    have hconstNeTop : ENNReal.ofReal (Ch02.geometricWeight (s : ℝ) 2 l) ^ (p / 2) ≠ ⊤ :=
-      ENNReal.rpow_ne_top_of_nonneg hq0.le ENNReal.ofReal_ne_top
-    have hint : (∫⁻ omega, F l omega ^ (p / 2) ∂(Cutoff.cutoffSampleLaw M).toMeasure) =
-        ENNReal.ofReal (Ch02.geometricWeight (s : ℝ) 2 l) ^ (p / 2) *
-          ∑ R ∈ descendantsAtScale (originCube d m) (n - (l : ℤ)),
-            ∫⁻ omega, ENNReal.ofReal (Maj R omega) ^ (p / 2)
-              ∂(Cutoff.cutoffSampleLaw M).toMeasure := by
-      rw [lintegral_congr hpow, lintegral_const_mul' _ _ hconstNeTop,
-        lintegral_finsetSum' _ fun R _ => hmeasR R]
-    have hsumle : (∑ R ∈ descendantsAtScale (originCube d m) (n - (l : ℤ)),
-          ∫⁻ omega, ENNReal.ofReal (Maj R omega) ^ (p / 2)
-            ∂(Cutoff.cutoffSampleLaw M).toMeasure) ≤
-        (((descendantsAtScale (originCube d m) (n - (l : ℤ))).card : ℕ) : ℝ≥0∞) *
-          ENNReal.ofReal (G l) ^ (p / 2) := by
-      refine le_trans (Finset.sum_le_card_nsmul _ _ _ fun R hR => hcube l R hR) ?_
-      rw [nsmul_eq_mul]
-    have hbound : (∫⁻ omega, F l omega ^ (p / 2)
-          ∂(Cutoff.cutoffSampleLaw M).toMeasure) ≤
-        (ENNReal.ofReal (Ch02.geometricWeight (s : ℝ) 2 l) *
-          ((((descendantsAtScale (originCube d m) (n - (l : ℤ))).card : ℕ) : ℝ≥0∞) ^
-            (1 / (p / 2)) * ENNReal.ofReal (G l))) ^ (p / 2) := by
-      rw [hint]
-      refine le_trans (mul_le_mul_right hsumle _) (le_of_eq ?_)
-      rw [ENNReal.mul_rpow_of_nonneg _ _ hq0.le, ENNReal.mul_rpow_of_nonneg _ _ hq0.le,
-        ← ENNReal.rpow_mul, one_div_mul_cancel (ne_of_gt hq0), ENNReal.rpow_one]
-    have h3nn : (0 : ℝ) ≤ Real.rpow 3 ((d : ℝ) * ((m : ℝ) - ((n - (l : ℤ) : ℤ) : ℝ))) :=
-      Real.rpow_nonneg (show (0 : ℝ) ≤ 3 by norm_num) _
-    have hXnn : (0 : ℝ) ≤ Real.rpow 3 ((d : ℝ) * ((m : ℝ) - ((n - (l : ℤ) : ℤ) : ℝ))) ^
-        (1 / (p / 2)) := Real.rpow_nonneg h3nn _
-    have hSnn : (0 : ℝ) ≤ Real.rpow 3 ((s : ℝ) * ((m : ℝ) - (n : ℝ))) :=
-      Real.rpow_nonneg (show (0 : ℝ) ≤ 3 by norm_num) _
-    have hcardE : ((((descendantsAtScale (originCube d m) (n - (l : ℤ))).card : ℕ) : ℝ≥0∞)) ^
-        (1 / (p / 2)) =
-        ENNReal.ofReal (Real.rpow 3 ((d : ℝ) * ((m : ℝ) - ((n - (l : ℤ) : ℤ) : ℝ))) ^
-          (1 / (p / 2))) := by
-      rw [← ENNReal.ofReal_natCast, hcardR, ENNReal.ofReal_rpow_of_nonneg h3nn hqinv.le]
-    rw [hcardE] at hbound
-    refine le_trans (ENNReal.rpow_le_rpow hbound hqinv.le) ?_
-    rw [← ENNReal.rpow_mul, mul_one_div_cancel (ne_of_gt hq0), ENNReal.rpow_one,
-      ← ENNReal.ofReal_mul hXnn, ← ENNReal.ofReal_mul (hw0 l),
-      ← ENNReal.ofReal_mul hSnn]
-    -- the real arithmetic: the count is paid by the floor `p ≥ 2ds⁻¹`
-    refine ENNReal.ofReal_le_ofReal ?_
-    have hdl : (0 : ℝ) ≤ ((m : ℝ) - (n : ℝ)) + (l : ℝ) := by
-      have h1 : (n : ℝ) ≤ (m : ℝ) := by exact_mod_cast hnm
-      have h2 : (0 : ℝ) ≤ (l : ℝ) := Nat.cast_nonneg l
-      linarith only [h1, h2]
-    have hshift : (m : ℝ) - ((n - (l : ℤ) : ℤ) : ℝ) = ((m : ℝ) - (n : ℝ)) + (l : ℝ) := by
-      push_cast
-      ring
-    have hexp : (d : ℝ) * (((m : ℝ) - (n : ℝ)) + (l : ℝ)) * (1 / (p / 2)) ≤
-        (s : ℝ) * (((m : ℝ) - (n : ℝ)) + (l : ℝ)) := by
-      have hps : 2 * (d : ℝ) ≤ p * (s : ℝ) := by
-        have h := mul_le_mul_of_nonneg_right hp hs0.le
-        rw [mul_assoc, inv_mul_cancel₀ (ne_of_gt hs0), mul_one] at h
-        exact h
-      have hratio : (d : ℝ) * (1 / (p / 2)) ≤ (s : ℝ) := by
-        rw [one_div, ← div_eq_mul_inv, div_le_iff₀ hq0]
-        linarith only [hps]
-      have hstep := mul_le_mul_of_nonneg_left hratio hdl
-      linarith only [hstep]
-    have hcount : Real.rpow 3 ((d : ℝ) * ((m : ℝ) - ((n - (l : ℤ) : ℤ) : ℝ))) ^
-        (1 / (p / 2)) ≤
-        Real.rpow 3 ((s : ℝ) * ((m : ℝ) - (n : ℝ)) + (s : ℝ) * (l : ℝ)) := by
-      simp only [rpowBridgeMink]
-      rw [hshift, ← Real.rpow_mul (show (0 : ℝ) ≤ 3 by norm_num)]
-      refine Real.rpow_le_rpow_of_exponent_le (by norm_num) ?_
-      have hid : (s : ℝ) * (((m : ℝ) - (n : ℝ)) + (l : ℝ)) =
-          (s : ℝ) * ((m : ℝ) - (n : ℝ)) + (s : ℝ) * (l : ℝ) := by ring
-      linarith only [hexp, hid]
-    have e1 : Real.rpow 3 (-(s : ℝ) * 2 * (l : ℝ)) *
-        Real.rpow 3 ((s : ℝ) * ((m : ℝ) - (n : ℝ)) + (s : ℝ) * (l : ℝ)) =
-        Real.rpow 3 ((s : ℝ) * ((m : ℝ) - (n : ℝ)) + -(s : ℝ) * (l : ℝ)) := by
-      simp only [rpowBridgeMink]
-      rw [← Real.rpow_add (show (0 : ℝ) < 3 by norm_num)]
-      congr 1
-      ring
-    have e2 : Real.rpow 3 ((s : ℝ) * ((m : ℝ) - (n : ℝ))) *
-        Real.rpow 3 (-(s : ℝ) * (l : ℝ)) =
-        Real.rpow 3 ((s : ℝ) * ((m : ℝ) - (n : ℝ)) + -(s : ℝ) * (l : ℝ)) := by
-      simp only [rpowBridgeMink]
-      rw [← Real.rpow_add (show (0 : ℝ) < 3 by norm_num)]
-    have hwid : Ch02.geometricWeight (s : ℝ) 2 l =
-        Ch02.geometricDiscount (s : ℝ) 2 * Real.rpow 3 (-(s : ℝ) * 2 * (l : ℝ)) :=
-      geometricWeightTwo (s : ℝ) l
-    have hkey : Ch02.geometricWeight (s : ℝ) 2 l *
-        Real.rpow 3 ((d : ℝ) * ((m : ℝ) - ((n - (l : ℤ) : ℤ) : ℝ))) ^ (1 / (p / 2)) ≤
-        Real.rpow 3 ((s : ℝ) * ((m : ℝ) - (n : ℝ))) *
-          (Ch02.geometricDiscount (s : ℝ) 2 * Real.rpow 3 (-(s : ℝ) * (l : ℝ))) := by
-      refine le_trans (mul_le_mul_of_nonneg_left hcount (hw0 l)) (le_of_eq ?_)
-      rw [hwid, mul_assoc, e1, ← e2]
-      ring
-    have hGl : (0 : ℝ) ≤ G l := hG l
-    have hfinal := mul_le_mul_of_nonneg_right hkey hGl
-    have hlhs : Ch02.geometricWeight (s : ℝ) 2 l *
-        Real.rpow 3 ((d : ℝ) * ((m : ℝ) - ((n - (l : ℤ) : ℤ) : ℝ))) ^ (1 / (p / 2)) * G l =
-      Ch02.geometricWeight (s : ℝ) 2 l *
-        (Real.rpow 3 ((d : ℝ) * ((m : ℝ) - ((n - (l : ℤ) : ℤ) : ℝ))) ^ (1 / (p / 2)) *
-          G l) := by ring
-    have hrhs : Real.rpow 3 ((s : ℝ) * ((m : ℝ) - (n : ℝ))) *
-        (Ch02.geometricDiscount (s : ℝ) 2 * Real.rpow 3 (-(s : ℝ) * (l : ℝ))) * G l =
-      Real.rpow 3 ((s : ℝ) * ((m : ℝ) - (n : ℝ))) *
-        (Ch02.geometricDiscount (s : ℝ) 2 * (Real.rpow 3 (-(s : ℝ) * (l : ℝ)) * G l)) := by
-      ring
-    linarith only [hfinal, hlhs, hrhs]
+  have hper := @minkowski_error_observable_bound (d) (M) (m) (n) (hnm) (s) (p) (hp) (Maj)
+    (hMajMeas) (G) (hG) (hcube) (hs0) (hq0) (hqinv) (hw0) (hscale) (hF)
   -- STEP D: assembly
   refine le_trans hstepB (le_trans (ENNReal.rpow_le_rpow
     (ENNReal.tsum_le_tsum hper) hq0.le) (le_of_eq ?_))

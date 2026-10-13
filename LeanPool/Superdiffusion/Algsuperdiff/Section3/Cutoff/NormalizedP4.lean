@@ -117,13 +117,11 @@ noncomputable def cutoffNormalization_quantitativeCoarseGrainedEllipticity
     dim_div_xi_lt_min := (cutoffP4Params d M.shellPrefix.dimension).dim_div_xi_lt_min
     upper_moment_integrable := ?_
     lower_inv_moment_integrable := ?_ }
-  ·
-    simpa only [cutoffP4Params_sUpper] using
+  · simpa only [cutoffP4Params_sUpper] using
       integrable_scaleNormalized_LambdaSqCoeffField_pow M m
         (cutoffNormalizationDepth d m) (by norm_num : (0 : ℝ) < 1 / 4)
         (cutoffP4Params d M.shellPrefix.dimension).xi
-  ·
-    simpa only [cutoffP4Params_sLower] using
+  · simpa only [cutoffP4Params_sLower] using
       integrable_scaleNormalized_lambdaSqCoeffField_inv_pow M m
         (cutoffNormalizationDepth d m) (by norm_num : (0 : ℝ) < 1 / 4)
         (cutoffP4Params d M.shellPrefix.dimension).xi

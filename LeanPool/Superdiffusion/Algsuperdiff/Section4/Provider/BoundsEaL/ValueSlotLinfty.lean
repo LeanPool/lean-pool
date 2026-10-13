@@ -108,7 +108,7 @@ theorem matrixOperatorNorm_finiteShellIncrement_le_translatedLargeCubeSupBound
   rw [mem_translateSet_iff_sub_mem] at hmem
   have hvec : x + z - (subcubeCenter n p + z) = x - subcubeCenter n p := by
     funext i
-    show x i + z i - (subcubeCenter n p i + z i) = x i - subcubeCenter n p i
+    change x i + z i - (subcubeCenter n p i + z i) = x i - subcubeCenter n p i
     ring
   have hmem' : x + z ∈
       translateSet (subcubeCenter n p + z) (openCubeSet (originCube d n)) := by

@@ -86,83 +86,39 @@ private theorem isScalarForcedWeakSolution_restrict_interior
   have h := zerothOrderOn_restrict_of_isScalarForcedWeakSolution hW hV hVW hu phi
   simpa only [Pi.zero_apply, vecDot_zero_left, integral_zero, sub_zero] using h
 
-/-- Frozen pointwise decay of a bounded homogeneous `H¹` solution.  The
-rough size and smooth divergence are required only on an active set containing
-the topological support of the localization. -/
-theorem interior_abs_center_le_exp_localized [NeZero d]
-    {a : CoeffField d} {ks kl : Vec d → Mat d} {Om : Set (Vec d)}
-    (hOm : IsOpenBoundedConvexDomain Om) {u : H1Function Om}
-    {eta psi : Vec d → ℝ} {L : Set (Vec d)}
-    {nu LamS Ks Kl mass M Ceta volLayer delta alpha tA tx E : ℝ}
-    (hd : 2 ≤ d) (halpha : alpha ∈ Set.Ico (1 / 2 : ℝ) 1)
-    (hdelta0 : 0 ≤ delta) (hdelta : delta ≤ smallContrastThreshold d alpha)
-    (hnu : 0 < nu) (hKs : 0 ≤ Ks) (hKl : 0 ≤ Kl) (hmass : 0 < mass)
-    (hM : 0 ≤ M) (hameas : Measurable a)
-    (hEllS : IsEllipticFieldOn nu LamS Om
-      (fun y => nu • (1 : Mat d) + ks y))
-    (hsplit : ∀ y, a y = nu • (1 : Mat d) + ks y + kl y)
-    (hksSkew : ∀ y, matTranspose (ks y) = -ks y)
-    (hklSkew : ∀ y, matTranspose (kl y) = -kl y)
-    (hklC1 : ∀ p q : Fin d, ContDiff ℝ 1 fun y => kl y p q)
-    (hsol : IsScalarForcedWeakSolution a Om (fun y => -(mass * u.toFun y)) u)
-    (hMbound : ∀ᵐ y ∂volumeMeasureOn Om, |u.toFun y| ≤ M)
-    (heta : ContDiff ℝ (⊤ : ℕ∞) eta) (hetaCompact : HasCompactSupport eta)
-    (hetaOm : tsupport eta ⊆ Om) (hetaL : tsupport eta ⊆ L)
-    (hCeta : 0 ≤ Ceta)
-    (hetaGrad : ∀ y ∈ Om,
-      vecNormSq (fun i => (fderiv ℝ eta y) (basisVec i)) ≤ Ceta)
-    (hlayer : ∀ y ∈ Om, fderiv ℝ eta y ≠ 0 → psi y ≤ tA)
-    (hvolLayer : (volume {y ∈ Om | fderiv ℝ eta y ≠ 0}).toReal ≤ volLayer)
-    (hpsi : ContDiff ℝ (⊤ : ℕ∞) psi)
-    (hpsiGrad : ∀ᵐ y ∂volumeMeasureOn Om,
-      vecNormSq (fun i => (fderiv ℝ psi y) (basisVec i)) ≤ 1)
-    (hksSize : ∀ y ∈ L, ∀ v : Vec d,
-      vecNormSq (matVecMul (ks y) v) ≤ Ks ^ 2 * vecNormSq v)
-    (hklDiv : ∀ y ∈ L, vecNormSq (skewFieldDiv kl y) ≤ Kl ^ 2)
-    {x : Vec d} {r₀ : ℝ} (hr₀ : 0 < r₀) (hball : euclideanBall x r₀ ⊆ Om)
-    (hsmall : CoefficientIdentityDistanceLE (euclideanBall x r₀)
-      (normalizedFrozenCoeff nu a x) delta)
-    (hE : vectorLpSizeOn (euclideanBall x r₀) 2 u.grad ≤ E)
-    (hinner : ∀ y ∈ euclideanBall x (r₀ / 2), eta y = 1)
-    (hphase : ∀ y ∈ euclideanBall x (r₀ / 2), tx ≤ psi y)
-    (hlayerLe : tA ≤ tx) :
-    ∃ v : Vec d → ℝ,
-      ContinuousOn v (euclideanBall x (r₀ / 2)) ∧
-      v =ᵐ[volume.restrict (euclideanBall x r₀)] u.toFun ∧
-      |v x| ≤ localizedInteriorDecayConstant d nu mass Ks Kl M Ceta
-          volLayer alpha E r₀ *
-        Real.exp (-(agmonRate nu (localizedInteriorUpper nu mass Ks Kl) mass *
-          alpha / (alpha + (d : ℝ) / 2) * (tx - tA))) := by
-  classical
-  set Lloc := localizedInteriorUpper nu mass Ks Kl with hLloc_def
-  set kappa := agmonRate nu Lloc mass with hkappa_def
-  have hLloc : 0 < Lloc := localizedInteriorUpper_pos hnu hKs hKl
-  have hkappa0 : 0 ≤ kappa := agmonRate_nonneg hLloc
-  have hkappa : 8 * Lloc ^ 2 * kappa ^ 2 ≤ nu * mass :=
-    agmonRate_admissible' hnu.le hmass.le hLloc
-  have hsign : ∀ᵐ y ∂volumeMeasureOn Om, eta y ≠ 0 →
-      (-(mass * u.toFun y)) * u.toFun y ≤ -(mass * u.toFun y ^ 2) := by
-    filter_upwards with y
-    intro _
-    have heq : (-(mass * u.toFun y)) * u.toFun y =
-        -(mass * u.toFun y ^ 2) := by ring
-    exact heq.le
-  have hagmon := agmonMass_localizedInterior_le hOm hnu hKs hKl hmass hM
-    hEllS hsplit hksSkew hklSkew hklC1 hsol hMbound heta hetaCompact hetaOm
-    hetaL hpsi hpsiGrad hsign hksSize hklDiv (by simpa only [hLloc_def] using hkappa)
-  have hvol0 : (0 : ℝ) ≤ volLayer := le_trans ENNReal.toReal_nonneg hvolLayer
-  let : IsFiniteMeasure (volumeMeasureOn Om) :=
-    hOm.isBoundedDomain.isFiniteMeasure_restrict_volume
-  have hlayerMeas : MeasurableSet {y ∈ Om | fderiv ℝ eta y ≠ 0} := by
-    exact hOm.isOpen.measurableSet.inter
-      (isOpen_ne.preimage (heta.continuous_fderiv (by simp))).measurableSet
-  have hlayerTop : MemLp (fun y => Real.exp (kappa * psi y) ^ 2 *
-      vecNormSq (fun i => (fderiv ℝ eta y) (basisVec i))) ∞
-        (volumeMeasureOn Om) := by
-    refine (Continuous.memLp_of_hasCompactSupport ?_ ?_).restrict Om
-    · exact ((contDiff_exponentialWeight hpsi kappa).continuous.pow 2).mul
-        (continuous_gradSq heta)
-    · exact (hasCompactSupport_gradSq hetaCompact).mul_left
+private theorem localizedInteriorPointwise_comparisonBounds1 :
+    ∀ {d : ℕ} {Om : Set (Vec d)} (hOm : IsOpenBoundedConvexDomain Om) {u : H1Function Om} {eta psi : Vec d → ℝ}
+      {nu Ks Kl mass M Ceta volLayer tA : ℝ} (hnu : (0 : ℝ) < nu) (hmass : (0 : ℝ) < mass) (hM : (0 : ℝ) ≤ M)
+      (hMbound : ∀ᵐ (y : Vec d) ∂volumeMeasureOn Om, |u.toFun y| ≤ M) (hCeta : (0 : ℝ) ≤ Ceta)
+      (hetaGrad : ∀ y ∈ Om, (vecNormSq fun (i : Fin d) => (fderiv ℝ eta y : (a : Vec d) → ℝ) (basisVec i)) ≤ Ceta)
+      (hlayer : ∀ y ∈ Om, fderiv ℝ eta y ≠ (0 : Vec d →L[ℝ] ℝ) → psi y ≤ tA)
+      (hvolLayer :
+        ((volume : (a : Set (Vec d)) → ℝ≥0∞) {y : Vec d | y ∈ Om ∧ fderiv ℝ eta y ≠ (0 : Vec d →L[ℝ] ℝ)}).toReal ≤
+          volLayer),
+      let Lloc : ℝ := localizedInteriorUpper nu mass Ks Kl;
+      ∀ (hLloc_def : Lloc = localizedInteriorUpper nu mass Ks Kl),
+        let kappa : ℝ := agmonRate nu Lloc mass;
+        ∀ (hLloc : (0 : ℝ) < Lloc) (hkappa0 : (0 : ℝ) ≤ kappa)
+          (hagmon :
+            mass / (2 : ℝ) *
+                ∫ (y : Vec d) in Om, u.toFun y ^ (2 : ℕ) * (eta y ^ (2 : ℕ) * Real.exp (kappa * psi y) ^ (2 : ℕ)) ≤
+              (4 : ℝ) * localizedInteriorUpper nu mass Ks Kl ^ (2 : ℕ) / nu *
+                ∫ (y : Vec d) in Om,
+                  u.toFun y ^ (2 : ℕ) *
+                    (Real.exp (kappa * psi y) ^ (2 : ℕ) *
+                      vecNormSq fun (i : Fin d) => (fderiv ℝ eta y : (a : Vec d) → ℝ) (basisVec i))),
+          let this : IsFiniteMeasure (volumeMeasureOn Om) :=
+            IsBoundedDomain.isFiniteMeasure_restrict_volume (IsOpenBoundedConvexDomain.isBoundedDomain hOm);
+          ∀ (hlayerMeas : MeasurableSet {y : Vec d | y ∈ Om ∧ fderiv ℝ eta y ≠ (0 : Vec d →L[ℝ] ℝ)})
+            (hlayerTop :
+              MemLp
+                (fun (y : Vec d) =>
+                  Real.exp (kappa * psi y) ^ (2 : ℕ) *
+                    vecNormSq fun (i : Fin d) => (fderiv ℝ eta y : (a : Vec d) → ℝ) (basisVec i))
+                ∞ (volumeMeasureOn Om)),
+            ∫ (y : Vec d) in Om, u.toFun y ^ (2 : ℕ) * (eta y ^ (2 : ℕ) * Real.exp (kappa * psi y) ^ (2 : ℕ)) ≤
+              (8 : ℝ) * Lloc ^ (2 : ℕ) / (nu * mass) * Ceta * volLayer * M ^ (2 : ℕ) * Real.exp ((2 : ℝ) * (kappa * tA)) := by
+  intro d Om hOm u eta psi nu Ks Kl mass M Ceta volLayer tA hnu hmass hM hMbound hCeta hetaGrad hlayer hvolLayer Lloc hLloc_def kappa hLloc hkappa0 hagmon this hlayerMeas hlayerTop
   have hlayerInt := integrable_sq_mul_memLpTop (u := u) hlayerTop
   have hlayerBound : (∫ y in Om, u.toFun y ^ 2 *
       (Real.exp (kappa * psi y) ^ 2 *
@@ -257,6 +213,90 @@ theorem interior_abs_center_le_exp_localized [NeZero d]
     refine hX.trans (le_of_eq ?_)
     field_simp
     ring
+  exact hweightBound
+
+/-- Frozen pointwise decay of a bounded homogeneous `H¹` solution.  The
+rough size and smooth divergence are required only on an active set containing
+the topological support of the localization. -/
+theorem interior_abs_center_le_exp_localized [NeZero d]
+    {a : CoeffField d} {ks kl : Vec d → Mat d} {Om : Set (Vec d)}
+    (hOm : IsOpenBoundedConvexDomain Om) {u : H1Function Om}
+    {eta psi : Vec d → ℝ} {L : Set (Vec d)}
+    {nu LamS Ks Kl mass M Ceta volLayer delta alpha tA tx E : ℝ}
+    (hd : 2 ≤ d) (halpha : alpha ∈ Set.Ico (1 / 2 : ℝ) 1)
+    (hdelta0 : 0 ≤ delta) (hdelta : delta ≤ smallContrastThreshold d alpha)
+    (hnu : 0 < nu) (hKs : 0 ≤ Ks) (hKl : 0 ≤ Kl) (hmass : 0 < mass)
+    (hM : 0 ≤ M) (hameas : Measurable a)
+    (hEllS : IsEllipticFieldOn nu LamS Om
+      (fun y => nu • (1 : Mat d) + ks y))
+    (hsplit : ∀ y, a y = nu • (1 : Mat d) + ks y + kl y)
+    (hksSkew : ∀ y, matTranspose (ks y) = -ks y)
+    (hklSkew : ∀ y, matTranspose (kl y) = -kl y)
+    (hklC1 : ∀ p q : Fin d, ContDiff ℝ 1 fun y => kl y p q)
+    (hsol : IsScalarForcedWeakSolution a Om (fun y => -(mass * u.toFun y)) u)
+    (hMbound : ∀ᵐ y ∂volumeMeasureOn Om, |u.toFun y| ≤ M)
+    (heta : ContDiff ℝ (⊤ : ℕ∞) eta) (hetaCompact : HasCompactSupport eta)
+    (hetaOm : tsupport eta ⊆ Om) (hetaL : tsupport eta ⊆ L)
+    (hCeta : 0 ≤ Ceta)
+    (hetaGrad : ∀ y ∈ Om,
+      vecNormSq (fun i => (fderiv ℝ eta y) (basisVec i)) ≤ Ceta)
+    (hlayer : ∀ y ∈ Om, fderiv ℝ eta y ≠ 0 → psi y ≤ tA)
+    (hvolLayer : (volume {y ∈ Om | fderiv ℝ eta y ≠ 0}).toReal ≤ volLayer)
+    (hpsi : ContDiff ℝ (⊤ : ℕ∞) psi)
+    (hpsiGrad : ∀ᵐ y ∂volumeMeasureOn Om,
+      vecNormSq (fun i => (fderiv ℝ psi y) (basisVec i)) ≤ 1)
+    (hksSize : ∀ y ∈ L, ∀ v : Vec d,
+      vecNormSq (matVecMul (ks y) v) ≤ Ks ^ 2 * vecNormSq v)
+    (hklDiv : ∀ y ∈ L, vecNormSq (skewFieldDiv kl y) ≤ Kl ^ 2)
+    {x : Vec d} {r₀ : ℝ} (hr₀ : 0 < r₀) (hball : euclideanBall x r₀ ⊆ Om)
+    (hsmall : CoefficientIdentityDistanceLE (euclideanBall x r₀)
+      (normalizedFrozenCoeff nu a x) delta)
+    (hE : vectorLpSizeOn (euclideanBall x r₀) 2 u.grad ≤ E)
+    (hinner : ∀ y ∈ euclideanBall x (r₀ / 2), eta y = 1)
+    (hphase : ∀ y ∈ euclideanBall x (r₀ / 2), tx ≤ psi y)
+    (hlayerLe : tA ≤ tx) :
+    ∃ v : Vec d → ℝ,
+      ContinuousOn v (euclideanBall x (r₀ / 2)) ∧
+      v =ᵐ[volume.restrict (euclideanBall x r₀)] u.toFun ∧
+      |v x| ≤ localizedInteriorDecayConstant d nu mass Ks Kl M Ceta
+          volLayer alpha E r₀ *
+        Real.exp (-(agmonRate nu (localizedInteriorUpper nu mass Ks Kl) mass *
+          alpha / (alpha + (d : ℝ) / 2) * (tx - tA))) := by
+  classical
+  set Lloc := localizedInteriorUpper nu mass Ks Kl with hLloc_def
+  set kappa := agmonRate nu Lloc mass with hkappa_def
+  have hLloc : 0 < Lloc := localizedInteriorUpper_pos hnu hKs hKl
+  have hkappa0 : 0 ≤ kappa := agmonRate_nonneg hLloc
+  have hkappa : 8 * Lloc ^ 2 * kappa ^ 2 ≤ nu * mass :=
+    agmonRate_admissible' hnu.le hmass.le hLloc
+  have hsign : ∀ᵐ y ∂volumeMeasureOn Om, eta y ≠ 0 →
+      (-(mass * u.toFun y)) * u.toFun y ≤ -(mass * u.toFun y ^ 2) := by
+    filter_upwards with y
+    intro _
+    have heq : (-(mass * u.toFun y)) * u.toFun y =
+        -(mass * u.toFun y ^ 2) := by ring
+    exact heq.le
+  have hagmon := agmonMass_localizedInterior_le hOm hnu hKs hKl hmass hM
+    hEllS hsplit hksSkew hklSkew hklC1 hsol hMbound heta hetaCompact hetaOm
+    hetaL hpsi hpsiGrad hsign hksSize hklDiv (by simpa only [hLloc_def] using hkappa)
+  have hvol0 : (0 : ℝ) ≤ volLayer := le_trans ENNReal.toReal_nonneg hvolLayer
+  let : IsFiniteMeasure (volumeMeasureOn Om) :=
+    hOm.isBoundedDomain.isFiniteMeasure_restrict_volume
+  have hlayerMeas : MeasurableSet {y ∈ Om | fderiv ℝ eta y ≠ 0} := by
+    exact hOm.isOpen.measurableSet.inter
+      (isOpen_ne.preimage (heta.continuous_fderiv (by simp))).measurableSet
+  have hlayerTop : MemLp (fun y => Real.exp (kappa * psi y) ^ 2 *
+      vecNormSq (fun i => (fderiv ℝ eta y) (basisVec i))) ∞
+        (volumeMeasureOn Om) := by
+    refine (Continuous.memLp_of_hasCompactSupport ?_ ?_).restrict Om
+    · exact ((contDiff_exponentialWeight hpsi kappa).continuous.pow 2).mul
+        (continuous_gradSq heta)
+    · exact (hasCompactSupport_gradSq hetaCompact).mul_left
+  have hweightBound : (∫ y in Om, u.toFun y ^ 2 *
+      (eta y ^ 2 * Real.exp (kappa * psi y) ^ 2) ∂volume) ≤
+      8 * Lloc ^ 2 / (nu * mass) * Ceta * volLayer * M ^ 2 *
+        Real.exp (2 * (kappa * tA)) :=
+    @localizedInteriorPointwise_comparisonBounds1 (d) (Om) (hOm) (u) (eta) (psi) (nu) (Ks) (Kl) (mass) (M) (Ceta) (volLayer) (tA) (hnu) (hmass) (hM) (hMbound) (hCeta) (hetaGrad) (hlayer) (hvolLayer) (hLloc_def) (hLloc) (hkappa0) (hagmon) (hlayerMeas) (hlayerTop)
   have hweightTop : MemLp (fun y => eta y ^ 2 * Real.exp (kappa * psi y) ^ 2)
       ∞ (volumeMeasureOn Om) := by
     have hetaSq : HasCompactSupport (fun y => eta y ^ 2) := by

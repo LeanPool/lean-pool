@@ -38,9 +38,9 @@ carries and does not prove.  This module discharges it, by the composition the
 `ClosureInteriorSplit` header names:
 
 * the **depth-indexed interior endpoints**
-  `Closure.GammaTenDepthOscillation.exists_gamma0_freshShell{Dirichlet,Neumann}_meshOscillationDepth_le_gamma_pow_sixteen`
+from `Closure.GammaTenDepthOscillation` for the Dirichlet and Neumann correctors
   supply the two per-depth grid roots, the Neumann one through the flux transport
-  `Closure.GammaTenDepthFluxOscillation.gridFourthMomentRoot_meshOscillationCell_neumannFluxField_cutoffSample_le`
+`gridFourthMomentRoot_meshOscillationCell_neumannFluxField_cutoffSample_le`
   (cost: the explicit dimensional factor `2 d`);
 * the **envelope device**
   `Closure.GammaTenStripEnvelopeTwoLeg.exists_besovEnvelope_two_legs_interiorMesoCubeGrid`,
@@ -49,7 +49,7 @@ carries and does not prove.  This module discharges it, by the composition the
   two gauged legs of `bfF_z`;
 * the **cellwise typing data** comes from `Closure.GammaTenInteriorCellInputs` and
   the octic layer
-  `LocalizationFluctuationNumericOctic.exists_gamma0_memLp_two_freshShell{Dirichlet,Neumann}_meshOscillationCell_rpow_four`;
+from `LocalizationFluctuationNumericOctic` for both corrector fields;
 * the **scale bookkeeping** is the closure's own, exactly as
   `Closure.ClosureInteriorSplit.gammaTenBound_of_interiorEnvelope` computes it, and
   the boundary gate is
@@ -144,7 +144,7 @@ theorem integrable_rpow_four_cutoffSample_of_memLp_two_rpow (M : ABKModel d)
 /-- **The octic cell membership at the closure's Dirichlet family.**
 
 The proved
-`LocalizationFluctuationNumericOctic.exists_gamma0_memLp_two_freshShellDirichlet_meshOscillationCell_rpow_four`,
+`exists_gamma0_memLp_two_freshShellDirichlet_meshOscillationCell_rpow_four`,
 with its six spatial side conditions discharged from the single `L^8`
 membership of the closure's corrector gradient.
 
@@ -247,7 +247,8 @@ theorem exists_gamma0_octicCell_closureNeumann (d : ℕ) [NeZero d] (hd : 2 ≤ 
 forcing gauge of the endpoint dropped.
 
 Proved from
-`Closure.GammaTenDepthOscillation.exists_gamma0_freshShellDirichlet_meshOscillationDepth_le_gamma_pow_sixteen`. -/
+`exists_gamma0_freshShellDirichlet_meshOscillationDepth_le_gamma_pow_sixteen`.
+-/
 theorem exists_gamma0_depthRoot_closureDirichlet (d : ℕ) [NeZero d] (hd : 2 ≤ d) :
     ∃ gamma0 : ℝ, 0 < gamma0 ∧
       ∀ (M : ABKModel d), M.gamma ≤ gamma0 →
@@ -296,7 +297,8 @@ flux transport's `hend` binder asks for --- gradient root plus forcing gauge, at
 every base point.
 
 Proved from
-`Closure.GammaTenDepthOscillation.exists_gamma0_freshShellNeumann_meshOscillationDepth_le_gamma_pow_sixteen`. -/
+`exists_gamma0_freshShellNeumann_meshOscillationDepth_le_gamma_pow_sixteen`.
+-/
 theorem exists_gamma0_depthRoot_closureNeumann (d : ℕ) [NeZero d] (hd : 2 ≤ d) :
     ∃ gamma0 : ℝ, 0 < gamma0 ∧
       ∀ (M : ABKModel d), M.gamma ≤ gamma0 →

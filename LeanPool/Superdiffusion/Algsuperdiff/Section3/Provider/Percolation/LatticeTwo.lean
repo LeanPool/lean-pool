@@ -236,7 +236,7 @@ theorem exists_shell_indices₂ {x : ℕ → Fin d → ℤ} {N s M : ℕ}
     simp only [Set.mem_ofPred_eq] at hmem ⊢
     exact le_trans (Nat.mul_le_mul hmm' (le_refl s)) hmem
   · intro m hm
-    show m * s ≤ latDist (x 0) (x (sInf {j | m * s ≤ latDist (x 0) (x j)})) ∧
+    change m * s ≤ latDist (x 0) (x (sInf {j | m * s ≤ latDist (x 0) (x j)})) ∧
       latDist (x 0) (x (sInf {j | m * s ≤ latDist (x 0) (x j)})) ≤ m * s + 1
     have hlow : m * s ≤ latDist (x 0) (x (sInf {j | m * s ≤ latDist (x 0) (x j)})) :=
       Nat.sInf_mem (hne m hm)
@@ -328,7 +328,7 @@ theorem exists_separated_subpaths₂ {x : ℕ → Fin d → ℤ} {N k h : ℕ} {
   · intro m hm
     exact mem_locBox₂_of_two_mul_latDist_le (hM₀loc (i m) (hiN m (by omega)))
   · intro m m' hm hm' hmm'
-    show 3 ^ (k + 1) + 4 ≤ latDist (x (i m)) (x (i m'))
+    change 3 ^ (k + 1) + 4 ≤ latDist (x (i m)) (x (i m'))
     have := latDist_shell_separated₂ hival (M := 3 ^ (h - 3)) (by omega) (by omega) hmm'
     omega
   · intro m hm
@@ -341,7 +341,7 @@ theorem exists_separated_subpaths₂ {x : ℕ → Fin d → ℤ} {N k h : ℕ} {
     · refine (hpath.mono hM₀N).shift (i m) (i (m + 1) - i m) ?_
       rw [hend]
       exact hi1
-    · show x (i m + (i (m + 1) - i m)) ∉ cubeAt k (x (i m))
+    · change x (i m + (i (m + 1) - i m)) ∉ cubeAt k (x (i m))
       rw [hend]
       intro hcon
       rw [mem_cubeAt_iff] at hcon

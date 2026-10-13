@@ -98,7 +98,7 @@ theorem rpow_three_half_sub (s : ℝ) (m : ℤ) :
       = Real.rpow 3 ((m : ℝ) / 2) * (Real.rpow 3 (s * (m : ℝ)))⁻¹ := by
   have h1 : ((3 : ℝ) ^ (s * (m : ℝ)))⁻¹ = (3 : ℝ) ^ (-(s * (m : ℝ))) :=
     (Real.rpow_neg (by norm_num) _).symm
-  show (3 : ℝ) ^ ((1 / 2 - s) * (m : ℝ))
+  change (3 : ℝ) ^ ((1 / 2 - s) * (m : ℝ))
     = (3 : ℝ) ^ ((m : ℝ) / 2) * ((3 : ℝ) ^ (s * (m : ℝ)))⁻¹
   rw [h1, ← Real.rpow_add (by norm_num : (0 : ℝ) < 3)]
   congr 1
@@ -171,7 +171,7 @@ theorem cube_schauder_of_zeroDatumCubeSchauder {C0 : ℝ} (hC0 : 0 ≤ C0)
         ((h + w.toH1Function).grad x)
         = (fun x => sigma • h.grad x) x + (fun x => sigma • w.toH1Function.grad x) x := by
       intro x
-      show matVecMul (sigma • (1 : Mat d)) ((h + w.toH1Function).grad x)
+      change matVecMul (sigma • (1 : Mat d)) ((h + w.toH1Function).grad x)
         = sigma • h.grad x + sigma • w.toH1Function.grad x
       rw [hvgrad x, matVecMul_smul_one, smul_add]
     rw [integral_vecDot_add_split hshL2 hswL2 hflux φ, integral_vecDot_smul_split,
@@ -183,7 +183,7 @@ theorem cube_schauder_of_zeroDatumCubeSchauder {C0 : ℝ} (hC0 : 0 ≤ C0)
         = ∫ x in openCubeSet (originCube d m),
           vecDot (w.toH1Function.grad x) (φ.toH1Function.grad x) ∂volume :=
       integral_congr_ae (Filter.Eventually.of_forall fun x => by
-        show vecDot (matVecMul (1 : Mat d) (w.toH1Function.grad x)) (φ.toH1Function.grad x)
+        change vecDot (matVecMul (1 : Mat d) (w.toH1Function.grad x)) (φ.toH1Function.grad x)
           = vecDot (w.toH1Function.grad x) (φ.toH1Function.grad x)
         rw [matVecMul_one])
     rw [hcongr, integral_vecDot_add_split (F := fun x => sigma⁻¹ • g x) (G := h.grad)

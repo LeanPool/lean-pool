@@ -93,7 +93,8 @@ lemma mgf_series_bound {s p : ℝ} (hsp : 1 ≤ s * p) (N : ℕ) (hN : 1 ≤ N) 
     have hnge : 1 ≤ n := (Finset.mem_Icc.1 hn').1
     have hLexp : Real.exp (mgfRate s p) ^ n * (3 : ℝ) ^ (-(s * p / 4 * max ((n : ℝ) - 2) 0))
         = (3 : ℝ) ^ ((u / 8) * (n : ℝ) - u / 4 * max ((n : ℝ) - 2) 0) := by
-      rw [hb, ← Real.rpow_natCast ((3 : ℝ) ^ (u / 8)) n, ← Real.rpow_mul (by norm_num : (0 : ℝ) ≤ 3),
+      rw [hb, ← Real.rpow_natCast ((3 : ℝ) ^ (u / 8)) n, ← Real.rpow_mul (by norm_num : (0 : ℝ) ≤
+        3),
         ← Real.rpow_add (by norm_num : (0 : ℝ) < 3)]
       congr 1
     have hRexp : (3 : ℝ) ^ (u / 4) * ((3 : ℝ) ^ (-(u / 8))) ^ (n - 2)

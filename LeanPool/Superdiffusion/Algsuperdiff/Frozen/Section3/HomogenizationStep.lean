@@ -23,8 +23,13 @@ Module imports, support namespace and local option directives adapted for Lean P
 
 @[expose] public section
 
+open Algsuperdiff.Section3.Provider.Homogenization
+  (exists_isCommonEventTwoTermBigOWith_cutoffResponseJ_of_iterateMeanBound)
+
 open Algsuperdiff.Section3
 open HCPolySupport MeasureTheory
+
+
 
 /-!
 # The homogenization step — [ABK] `p.homogenization.step`
@@ -77,5 +82,6 @@ theorem Algsuperdiff.Frozen.Section3.homogenization_step
                 (-(2 * ((E : ℝ)⁻¹) ^ 3 * M.gamma⁻¹)))
 -- FROZEN-STATEMENT-END
     := by
-  exact Provider.Homogenization.exists_isCommonEventTwoTermBigOWith_cutoffResponseJ_of_iterateMeanBound _
+  exact
+    exists_isCommonEventTwoTermBigOWith_cutoffResponseJ_of_iterateMeanBound _
     (Provider.Homogenization.exists_iterateMeanBound_integral_cutoffResponseJ _)

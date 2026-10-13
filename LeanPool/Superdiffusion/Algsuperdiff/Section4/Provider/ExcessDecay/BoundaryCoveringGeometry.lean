@@ -83,7 +83,7 @@ theorem mem_image_add_iff {c p : Vec d} {S : Set (Vec d)} :
     rwa [add_sub_cancel_left]
   · intro h
     refine ⟨p - c, h, ?_⟩
-    show c + (p - c) = p
+    change c + (p - c) = p
     abel
 
 /-! ## 2. The well-placed centre -/

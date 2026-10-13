@@ -402,7 +402,8 @@ theorem isBigOWith_gammaSigma_localCubeControl_lowerShell (M : ABKModel d)
       (hasGammaMomentGrowthWith_localCubeControl_zero M q)
   have hscaled : IndependentSums.IsBigOWith
       (ShellField.zeroShellLaw M.P).toMeasure (IndependentSums.gammaSigma 2) g
-      (b * (Real.exp 1 * (IndependentSums.gammaMomentConst 2 * localCubeControlGammaScale d q))) := by
+      (b * (Real.exp 1 * (IndependentSums.gammaMomentConst 2 * localCubeControlGammaScale d q)))
+        := by
     simpa only [g] using hzero.const_mul hbpos.le
   have hf : Measurable f :=
     (measurable_localCubeControl ell).comp (measurable_pi_apply n)
@@ -478,7 +479,7 @@ theorem isBigO_gammaSigma_cutoffLocalControl (M : ABKModel d) (ell m : ℤ) :
     intro r
     have hnonneg : ∀ omega, 0 ≤ X r omega := fun omega =>
       localCubeControl_nonneg ell (omega.1 (m - r))
-    show IndependentSums.IsBigOWith (cutoffSampleLaw M).toMeasure
+    change IndependentSums.IsBigOWith (cutoffSampleLaw M).toMeasure
       (IndependentSums.gammaSigma 2) (fun omega => |X r omega|) (a r)
     simpa only [abs_of_nonneg (hnonneg _)] using
       isBigOWith_gammaSigma_cutoffSample_lowerShell M m ell r

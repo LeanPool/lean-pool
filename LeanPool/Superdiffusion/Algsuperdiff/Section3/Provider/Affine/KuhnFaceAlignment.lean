@@ -238,7 +238,7 @@ private theorem kuhnWeight_rev (T : KuhnCell d) (x : Vec d) (j : Fin (d + 1)) :
 private theorem sum_kuhnWeight (T : KuhnCell d) (x : Vec d) :
     ∑ k : Fin (d + 1), kuhnWeight T x k = 1 := by
   rw [← Equiv.sum_comp Fin.revPerm (kuhnWeight T x)]
-  show (∑ j : Fin (d + 1), kuhnWeight T x (Fin.rev j)) = 1
+  change (∑ j : Fin (d + 1), kuhnWeight T x (Fin.rev j)) = 1
   rw [Finset.sum_congr rfl fun j _ => kuhnWeight_rev T x j,
     Fin.sum_univ_eq_sum_range (fun j : ℕ => kuhnLevel T x (j + 1) - kuhnLevel T x j),
     Finset.sum_range_sub, kuhnLevel_d_succ, kuhnLevel_zero]
@@ -249,7 +249,7 @@ private theorem sum_kuhnWeight_raised (T : KuhnCell d) (x : Vec d) (r : Fin d) :
       normCoord T.supportCube (T.order r) x := by
   rw [← Equiv.sum_comp Fin.revPerm
     (fun k : Fin (d + 1) => if d ≤ r.val + k.val then kuhnWeight T x k else 0)]
-  show (∑ j : Fin (d + 1),
+  change (∑ j : Fin (d + 1),
       if d ≤ r.val + (Fin.rev j).val then kuhnWeight T x (Fin.rev j) else 0) = _
   have hstep : ∀ j : Fin (d + 1),
       (if d ≤ r.val + (Fin.rev j).val then kuhnWeight T x (Fin.rev j) else 0) =

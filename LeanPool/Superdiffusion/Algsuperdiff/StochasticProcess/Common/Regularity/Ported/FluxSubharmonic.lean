@@ -184,7 +184,6 @@ private theorem radialTest_eq_zero_of_ge [NeZero d] {φ : ℝ → ℝ} {x : 𝔼
 /-- **Flux test identity (integration by parts).**  For `u ∈ C²` harmonic on `Metric.ball x R` and a
 radial test `ψ = φ(‖· − x‖²)` (`φ ∈ C^∞`, compactly supported inside
 `Metric.ball x r`, `0 < r < R`),
-
   `∫₀^∞ (2 s φ'(s²)) · (s^{d−1} · sphereFlux x s u) ds = 0`.
 
 This is `RadialLaplacian.hasDerivAt_weighted_radialProfile` integrated by parts against
@@ -364,6 +363,96 @@ theorem integral_Ioi_test_sphereFlux_eq_neg_integral_laplacian [NeZero d]
     simpa [mul_neg] using hIBP
   exact mul_left_cancel₀ hc0 heq
 
+private theorem fluxSubharmonic_comparisonBounds1 :
+    ∀ {d : ℕ} {u : (EuclideanSpace ℝ (Fin d)) → ℝ} {x : (EuclideanSpace ℝ (Fin d))} {ρ : ℝ} (hcont : Continuous fun (s : ℝ) => sphereFlux x s u),
+      let f₀ : ℝ := sphereFlux x ρ u;
+      ∀ (hf₀neg : f₀ < (0 : ℝ)) (δ : ℝ),
+        let ε : ℝ := δ / (2 : ℝ);
+        let a : ℝ := ρ - ε;
+        let b : ℝ := ρ + ε;
+        ∀ (hsamesign : ∀ s ∈ Icc a b, (0 : ℝ) < sphereFlux x s u * f₀) (ha0 : (0 : ℝ) < a) (hb0 : (0 : ℝ) < b),
+          let α : ℝ := a ^ (2 : ℕ);
+          ∀ (hαdef : α = a ^ (2 : ℕ)),
+            let β : ℝ := b ^ (2 : ℕ);
+            ∀ (hβdef : β = b ^ (2 : ℕ)),
+              let L : ℝ → ℝ := fun (t : ℝ) => (t - α) / (β - α);
+              let φ : ℝ → ℝ := fun (t : ℝ) => (1 : ℝ) - (L t).smoothTransition;
+              ∀ (hφ_inf : ContDiff ℝ ∞ φ) (hφ_deriv_np : ∀ (t : ℝ), deriv φ t ≤ (0 : ℝ))
+                (hφ_deriv_out : ∀ (t : ℝ), t < α ∨ β < t → deriv φ t = (0 : ℝ)),
+                let I' : ℝ → ℝ := fun (s : ℝ) =>
+                  (2 : ℝ) * s * deriv φ (s ^ (2 : ℕ)) * (s ^ (d - (1 : ℕ)) * sphereFlux x s u);
+                ∀ (hfluxPair_le : integral (volume.restrict (Ioi (0 : ℝ))) I' ≤ (0 : ℝ))
+                  (hI'def :
+                    I' = fun (s : ℝ) => (2 : ℝ) * s * deriv φ (s ^ (2 : ℕ)) * (s ^ (d - (1 : ℕ)) * sphereFlux x s u)),
+                  let G : ℝ → ℝ := fun (s : ℝ) => -f₀ * I' s;
+                  ∀ (hGdef : G = fun (s : ℝ) => -f₀ * I' s), Continuous I' ∧ G =ᵐ[volume.restrict (Ioi (0 : ℝ))] (0 : ℝ → ℝ) := by
+  intro d u x ρ hcont f₀ hf₀neg δ ε a b hsamesign ha0 hb0 α hαdef β hβdef L φ hφ_inf hφ_deriv_np hφ_deriv_out I' hfluxPair_le hI'def G hGdef
+  have hGintle : ∫ s in Ioi (0 : ℝ), G s ≤ 0 := by
+    simp only [hGdef]
+    rw [integral_const_mul]
+    exact mul_nonpos_of_nonneg_of_nonpos (by linarith only [hf₀neg]) hfluxPair_le
+  have hd1c : Continuous (deriv φ) := hφ_inf.continuous_deriv (by norm_cast)
+  have hI'cont : Continuous I' := by
+    simp only [hI'def]
+    exact (((continuous_const.mul continuous_id).mul (hd1c.comp (continuous_pow 2))).mul
+      ((continuous_pow _).mul hcont))
+  have hGcont : Continuous G := by
+    simp only [hGdef]
+    exact continuous_const.mul hI'cont
+  have hGnn : ∀ s, 0 < s → 0 ≤ G s := by
+    intro s hs
+    by_cases hd : deriv φ (s ^ 2) = 0
+    · have hz : G s = 0 := by simp only [hGdef, hI'def, hd]; ring
+      exact le_of_eq hz.symm
+    · have hmemcc : s ∈ Icc a b := by
+        rw [mem_Icc]
+        by_contra hcon
+        rw [not_and_or, not_le, not_le] at hcon
+        refine hd (hφ_deriv_out (s ^ 2) ?_)
+        rcases hcon with hlt | hlt
+        · left
+          simp only [hαdef]
+          nlinarith only [hlt, hs, ha0]
+        · right
+          simp only [hβdef]
+          nlinarith only [hlt, hb0]
+      have hsf : 0 < sphereFlux x s u * f₀ := hsamesign s hmemcc
+      have hsf' : 0 < f₀ * sphereFlux x s u := by rw [mul_comm]; exact hsf
+      have hEq : G s =
+          (2 * s * s ^ (d - 1)) * (-(deriv φ (s ^ 2))) *
+            (f₀ * sphereFlux x s u) := by
+        simp only [hGdef, hI'def]
+        ring
+      rw [hEq]
+      have h2s : (0 : ℝ) < 2 * s * s ^ (d - 1) := by
+        exact mul_pos (by linarith only [hs]) (pow_pos hs (d - 1))
+      exact mul_nonneg
+        (mul_nonneg (le_of_lt h2s) (by linarith only [hφ_deriv_np (s ^ 2)]))
+        (le_of_lt hsf')
+  have hGsupp : HasCompactSupport G := by
+    apply HasCompactSupport.intro (K := Icc (-b) b) isCompact_Icc
+    intro s hs
+    rw [mem_Icc, not_and_or, not_le, not_le] at hs
+    have hout : β < s ^ 2 := by
+      rcases hs with hlt | hlt
+      · simp only [hβdef]
+        nlinarith only [hlt, hb0]
+      · simp only [hβdef]
+        nlinarith only [hlt, hb0]
+    simp only [hGdef, hI'def, hφ_deriv_out (s ^ 2) (Or.inr hout)]
+    ring
+  have hGint : Integrable G := hGcont.integrable_of_hasCompactSupport hGsupp
+  have hGintnn : 0 ≤ ∫ s in Ioi (0 : ℝ), G s := by
+    apply setIntegral_nonneg measurableSet_Ioi
+    intro s hs
+    exact hGnn s hs
+  have hGint0 : ∫ s in Ioi (0 : ℝ), G s = 0 := le_antisymm hGintle hGintnn
+  have hGae : G =ᵐ[volume.restrict (Ioi 0)] 0 :=
+    (integral_eq_zero_iff_of_nonneg_ae
+      ((ae_restrict_iff' measurableSet_Ioi).mpr
+        (Filter.Eventually.of_forall fun s hs ↦ hGnn s hs)) hGint.integrableOn).mp hGint0
+  exact ⟨hI'cont, hGae⟩
+
 /-- **Outward flux is nonnegative for a subharmonic function.** -/
 theorem sphereFlux_nonneg_of_laplacian_nonneg [NeZero d]
     {u : 𝔼 → ℝ} (hu : ContDiff ℝ 2 u) {x : 𝔼} {R : ℝ}
@@ -495,70 +584,9 @@ theorem sphereFlux_nonneg_of_laplacian_nonneg [NeZero d]
   set I' : ℝ → ℝ :=
     fun s ↦ 2 * s * deriv φ (s ^ 2) * (s ^ (d - 1) * sphereFlux x s u) with hI'def
   set G : ℝ → ℝ := fun s ↦ -f₀ * I' s with hGdef
-  have hGintle : ∫ s in Ioi (0 : ℝ), G s ≤ 0 := by
-    simp only [hGdef]
-    rw [integral_const_mul]
-    exact mul_nonpos_of_nonneg_of_nonpos (by linarith only [hf₀neg]) hfluxPair_le
-  have hd1c : Continuous (deriv φ) := hφ_inf.continuous_deriv (by norm_cast)
-  have hI'cont : Continuous I' := by
-    simp only [hI'def]
-    exact (((continuous_const.mul continuous_id).mul (hd1c.comp (continuous_pow 2))).mul
-      ((continuous_pow _).mul hcont))
-  have hGcont : Continuous G := by
-    simp only [hGdef]
-    exact continuous_const.mul hI'cont
-  have hGnn : ∀ s, 0 < s → 0 ≤ G s := by
-    intro s hs
-    by_cases hd : deriv φ (s ^ 2) = 0
-    · have hz : G s = 0 := by simp only [hGdef, hI'def, hd]; ring
-      exact le_of_eq hz.symm
-    · have hmemcc : s ∈ Icc a b := by
-        rw [mem_Icc]
-        by_contra hcon
-        rw [not_and_or, not_le, not_le] at hcon
-        refine hd (hφ_deriv_out (s ^ 2) ?_)
-        rcases hcon with hlt | hlt
-        · left
-          simp only [hαdef]
-          nlinarith only [hlt, hs, ha0]
-        · right
-          simp only [hβdef]
-          nlinarith only [hlt, hb0]
-      have hsf : 0 < sphereFlux x s u * f₀ := hsamesign s hmemcc
-      have hsf' : 0 < f₀ * sphereFlux x s u := by rw [mul_comm]; exact hsf
-      have hEq : G s =
-          (2 * s * s ^ (d - 1)) * (-(deriv φ (s ^ 2))) *
-            (f₀ * sphereFlux x s u) := by
-        simp only [hGdef, hI'def]
-        ring
-      rw [hEq]
-      have h2s : (0 : ℝ) < 2 * s * s ^ (d - 1) := by
-        exact mul_pos (by linarith only [hs]) (pow_pos hs (d - 1))
-      exact mul_nonneg
-        (mul_nonneg (le_of_lt h2s) (by linarith only [hφ_deriv_np (s ^ 2)]))
-        (le_of_lt hsf')
-  have hGsupp : HasCompactSupport G := by
-    apply HasCompactSupport.intro (K := Icc (-b) b) isCompact_Icc
-    intro s hs
-    rw [mem_Icc, not_and_or, not_le, not_le] at hs
-    have hout : β < s ^ 2 := by
-      rcases hs with hlt | hlt
-      · simp only [hβdef]
-        nlinarith only [hlt, hb0]
-      · simp only [hβdef]
-        nlinarith only [hlt, hb0]
-    simp only [hGdef, hI'def, hφ_deriv_out (s ^ 2) (Or.inr hout)]
-    ring
-  have hGint : Integrable G := hGcont.integrable_of_hasCompactSupport hGsupp
-  have hGintnn : 0 ≤ ∫ s in Ioi (0 : ℝ), G s := by
-    apply setIntegral_nonneg measurableSet_Ioi
-    intro s hs
-    exact hGnn s hs
-  have hGint0 : ∫ s in Ioi (0 : ℝ), G s = 0 := le_antisymm hGintle hGintnn
-  have hGae : G =ᵐ[volume.restrict (Ioi 0)] 0 :=
-    (integral_eq_zero_iff_of_nonneg_ae
-      ((ae_restrict_iff' measurableSet_Ioi).mpr
-        (Filter.Eventually.of_forall fun s hs ↦ hGnn s hs)) hGint.integrableOn).mp hGint0
+  obtain ⟨hI'cont, hGae⟩ :=
+    (show (Continuous I') ∧ (G =ᵐ[volume.restrict (Ioi 0)] 0) from
+      @fluxSubharmonic_comparisonBounds1 (d) (u) (x) (ρ) (hcont) (hf₀neg) (δ) (hsamesign) (ha0) (hb0) (hαdef) (hβdef) (hφ_inf) (hφ_deriv_np) (hφ_deriv_out) (hfluxPair_le) (hI'def) (hGdef))
   have hInull : volume ({s : ℝ | I' s ≠ 0} ∩ Ioi 0) = 0 := by
     have hIae : ∀ᵐ s ∂(volume : Measure ℝ), s ∈ Ioi 0 → I' s = 0 := by
       filter_upwards [(ae_restrict_iff' (μ := volume) measurableSet_Ioi).mp hGae]

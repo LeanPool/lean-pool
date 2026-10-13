@@ -28,7 +28,8 @@ displays, each resumming one of the last three terms of
 `e.mathcalE.annular.decomp.pre.zero`:
 
 The three are produced here at abstract nonnegative fields, in the shapes the
-Step-3 regrouping slots `hgrad`, `hL2` and `hsig` consume.  All the resummation arithmetic (the annulus multiplicity, the
+Step-3 regrouping slots `hgrad`, `hL2` and `hsig` consume.  All the resummation arithmetic (the
+annulus multiplicity, the
 scale-weight collapses, the geometric constants) is discharged by `Step3Arith`.
 What is carried as an explicit caller hypothesis is exactly the manuscript's
 own structural input at each display: the triangle inequality over the layer

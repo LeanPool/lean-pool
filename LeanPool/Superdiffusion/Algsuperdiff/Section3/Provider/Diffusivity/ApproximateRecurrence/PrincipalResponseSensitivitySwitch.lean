@@ -139,7 +139,7 @@ theorem blockVecDot_coarseBlockMatrix_le_gauge_switch_of_sensitivityGate
               (unitCubeLambda (3 / 8) (.finite 2) a)⁻¹ ^ 2)) -
         2 * vecDot X.1 X.2 := by
   have hnormsq : vecNormSq (-X.1) = vecNormSq X.1 := by
-    show vecDot (-X.1) (-X.1) = vecDot X.1 X.1
+    change vecDot (-X.1) (-X.1) = vecDot X.1 X.1
     rw [vecDot_neg_left, vecDot_neg_right, neg_neg]
   have hpair : vecDot (-X.1) (X.2 - matVecMul hbar X.1) = -vecDot X.1 X.2 := by
     rw [vecDot_neg_left, vecDot_sub_right,

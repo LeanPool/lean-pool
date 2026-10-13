@@ -207,7 +207,7 @@ theorem ofReal_gradTailSq_le_clauseOneTermThree (M : ABKModel d) (m : ℤ)
       (3 : ℝ) ^ ((2 - M.gamma) * (m : ℝ))
         * Support.shellW1InfGradNorm m (omega.1 k.1) := tsum_nonneg hnn
   have htail := ofReal_tsum_le hnn
-  show ENNReal.ofReal ((∑' k : {k : ℤ // m ≤ k},
+  change ENNReal.ofReal ((∑' k : {k : ℤ // m ≤ k},
       (3 : ℝ) ^ ((2 - M.gamma) * (m : ℝ))
         * Support.shellW1InfGradNorm m (omega.1 k.1)) ^ (2 : ℕ))
     ≤ (∑' k : {k : ℤ // m ≤ k},
@@ -235,7 +235,7 @@ theorem indicator_observableSqSup_le [NeZero d] (M : ABKModel d) (m : ℤ)
   classical
   by_cases hmem : omega ∈ Event
   · rw [Set.indicator_of_mem hmem]
-    show (⨆ L : {L : ℤ // m ≤ L},
+    change (⨆ L : {L : ℤ // m ≤ L},
         ENNReal.ofReal
           (Support.fluxCorrectedErrorRepresentative M L.1 m s omega ^ 2)) ≤ B
     refine iSup_le fun L => ?_

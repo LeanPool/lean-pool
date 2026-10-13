@@ -110,7 +110,8 @@ theorem contDiff_radial {n : WithTop ℕ∞} {a : ℝ} (ha : 0 < a)
   · subst hy
     have heq : (fun w : Vec d => Φ (euclideanNorm (w - y))) =ᶠ[nhds y] fun _ : Vec d => Φ 0 := by
       refine Filter.eventuallyEq_of_mem
-        (s := euclideanBall y a) ((isOpen_euclideanBall y a).mem_nhds (mem_euclideanBall_self ha)) ?_
+        (s := euclideanBall y a) ((isOpen_euclideanBall y a).mem_nhds (mem_euclideanBall_self ha))
+          ?_
       intro w hw
       exact hconst _ (euclideanNorm_nonneg _)
         ((mem_euclideanBall_iff_euclideanNorm_lt ha.le).mp hw)
@@ -156,7 +157,7 @@ theorem euclideanCoordSecondDeriv_radial
     · simpa using hx
     · intro y hy
       have hyz : y ≠ z := by simpa using hy
-      show euclideanCoordDeriv i (fun w : Vec d => Φ (euclideanNorm (w - z))) y =
+      change euclideanCoordDeriv i (fun w : Vec d => Φ (euclideanNorm (w - z))) y =
         Φ' (euclideanNorm (y - z)) * (y i - z i) * (euclideanNorm (y - z))⁻¹
       rw [euclideanCoordDeriv_comp_euclideanNorm_sub hyz
         (h1 _ (euclideanNorm_pos (sub_ne_zero.mpr hyz))) i]

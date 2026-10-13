@@ -81,7 +81,7 @@ theorem cutoffSigmaStarInvBlockFamily_translateCutoffSample [NeZero d]
 available almost surely and simultaneously for every cutoff index
 `L ≥ m - 1`.  Both remaining local gates are literal predicates of the
 translated sample. -/
-theorem cutoffSigmaStarInvBlockFamily_le_sum_superposedConclusionPayload_flux_basis_descendant_ae
+theorem descendantInverseBlock_le_superposedFluxBasis_ae
     (hd : 2 ≤ d) (M : ABKModel d) {m : ℤ} {k : ℕ} {R : TriadicCube d}
     (hR : R ∈ descendantsAtScale (originCube d m) (m - 1 - (k : ℤ)))
     {E : {E : ℝ // 1 ≤ E}}
@@ -138,7 +138,7 @@ theorem cutoffSigmaStarInvBlockFamily_le_sum_superposedConclusionPayload_flux_ba
     intro L
     by_cases hmL : m - 1 ≤ L
     · filter_upwards
-          [mul_matrixNorm_sigmaStarInvCoarse_le_sum_superposedConclusionPayload_flux_basis_closed_ae
+          [coarseInverseMatrixNorm_le_superposedFluxBasis_ae
             hd M hS R.scale hb0 hb hk₀ hmi le_rfl (hRle.trans hmL) heps ht0
               hbeta0 hbeta9 hbetab hgammaWin hcap]
         with omega hmain _ hne henv

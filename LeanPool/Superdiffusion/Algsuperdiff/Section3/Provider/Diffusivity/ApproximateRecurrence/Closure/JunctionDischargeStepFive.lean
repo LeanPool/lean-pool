@@ -70,7 +70,7 @@ carrier yet:
 * that difference, together with Jensen for `avsum_|(grad w_D)_R|^2 <= E||grad
   w_D||^2`, is the `cgamma^15` oscillation remainder
   `e.lower.bound.oscillations`, whose proved endpoint is
-  `LocalizationOscillationFullMesh.exists_gamma0_freshShellDirichlet_step5MeshOscillation_le_gamma_pow_fifteen`
+`exists_gamma0_freshShellDirichlet_step5MeshOscillation_le_gamma_pow_fifteen`
   (stated as a *fourth-moment* mesh oscillation, so a Cauchy--Schwarz step is
   still needed to feed it in here);
 * the positive term `shom^{-2} avsum_|(h)_R (grad w_D)_R|^2` is bounded by
@@ -205,7 +205,7 @@ theorem step5GaugeEndpoint_of_cellDisplay (M : ABKModel d) (n : ℤ) (h : ℕ)
       (grad_ae_eq_zero_of_isMeanZeroNeumannRhsWeakSolution_streamForcing_zero
         (originCube d (K : ℤ)) ((Annealed.sigmaBar M n : ℝ))⁻¹ omega n (n + (h : ℤ))
         (hN omega))
-  show gaugeEnergyAverage M n h (K : ℤ) j e 0
+  change gaugeEnergyAverage M n h (K : ℤ) j e 0
       (alongIncrementPath n h wD) (alongIncrementPath n h wN) ≤
     1 - dirichletCubeEnergy M n h K wD
       + Fend * ((h : ℝ)) ^ 2 * (((Annealed.sigmaBar M n : ℝ)) ^ 4)⁻¹ *

@@ -281,7 +281,8 @@ noncomputable def cutoffHomogenizationErrorRepresentative {d : ℕ} [NeZero d]
 theorem measurable_cutoffHomogenizationErrorRepresentative {d : ℕ} [NeZero d]
     (M : ABKModel d) (coefficientScale domainScale : ℤ) {s : ℝ} (hs : 0 < s)
     (sigma : PositiveScalar) :
-    Measurable (cutoffHomogenizationErrorRepresentative M coefficientScale domainScale hs sigma) := by
+    Measurable (cutoffHomogenizationErrorRepresentative M coefficientScale domainScale hs sigma)
+      := by
   exact measurable_const.max
     (aemeasurable_cutoffHomogenizationErrorFunctional M coefficientScale domainScale
       hs sigma).measurable_mk

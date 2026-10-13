@@ -183,7 +183,7 @@ theorem sqrt_energy_grad_le_of_isDirichletSolutionAt {y : Vec d} {n : ℤ} {a : 
       ∫ x in cubeSetAt y n, vecDot (matVecMul (a x) (u.grad x)) (u.grad x) ∂volume := by
     refine integral_mono_ae hSqInt hEnergyInt ((ae_restrict_iff' hUmeas).2 ?_)
     refine Filter.Eventually.of_forall fun x hx => ?_
-    show lam * vecNormSq (u.grad x) ≤ vecDot (matVecMul (a x) (u.grad x)) (u.grad x)
+    change lam * vecNormSq (u.grad x) ≤ vecDot (matVecMul (a x) (u.grad x)) (u.grad x)
     rw [vecDot_comm]
     exact (hEll.2 x hx).2.2.1 (u.grad x)
   have hNormInt : IntegrableOn (fun x => ‖u.grad x‖ ^ (2 : ℕ)) (cubeSetAt y n) :=

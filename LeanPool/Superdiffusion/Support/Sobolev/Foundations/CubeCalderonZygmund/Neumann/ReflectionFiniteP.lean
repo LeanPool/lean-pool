@@ -142,7 +142,8 @@ theorem eLpNorm_openCubeSet_succ_originCube_cubeCoordinateFoldReflectedVectorFie
     eLpNorm_openCubeSet_succ_originCube_cubeDirichletOddReflectionVectorField
       G p
 
-private theorem aestronglyMeasurable_openCubeSet_succ_originCube_cubeCoordinateFoldReflectedVectorField
+private theorem
+  aestronglyMeasurable_openCubeSet_succ_originCube_cubeCoordinateFoldReflectedVectorField
     {d : ℕ} {m : ℤ} {G : Vec d → Vec d}
     (hG : AEStronglyMeasurable (fun x ↦ HilbertVec.ofVec (G x))
       (volume.restrict (openCubeSet (originCube d m)))) :
@@ -317,7 +318,7 @@ theorem lintegral_openCubeSet_succ_originCube_cubeCoordinateFoldReflectedVectorF
 
 /-- Square-weighted level tails have the exact `3^d` reflection factor under
 Neumann even reflection. -/
-theorem sqWeightedMeasure_openCubeSet_succ_originCube_cubeCoordinateFoldReflectedVectorField_tail
+theorem sqWeightedMeasure_reflectedGradient_tail
     {d : ℕ} {m : ℤ} (G : Vec d → Vec d) {a : ℝ}
     (hG : AEStronglyMeasurable (fun x ↦ HilbertVec.ofVec (G x))
       (volume.restrict (openCubeSet (originCube d m)))) :

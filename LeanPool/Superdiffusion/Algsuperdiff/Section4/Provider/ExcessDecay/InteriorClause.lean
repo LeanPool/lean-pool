@@ -98,7 +98,7 @@ theorem cubeBesovScaleWeight_neg_originCube_sq (k : ℤ) (s : ℝ) :
   have h3 : (0 : ℝ) ≤ 3 := by norm_num
   have hbase : cubeBesovScaleWeight (-s) (originCube d k) = (3 : ℝ) ^ (s * (k : ℝ)) :=
     cubeBesovScaleWeight_neg_originCube k s
-  show cubeBesovScaleWeight (-s) (originCube d k) ^ (2 : ℕ) =
+  change cubeBesovScaleWeight (-s) (originCube d k) ^ (2 : ℕ) =
     (3 : ℝ) ^ (2 * s * (k : ℝ))
   rw [hbase, ← Real.rpow_natCast ((3 : ℝ) ^ (s * (k : ℝ))) 2, ← Real.rpow_mul h3]
   congr 1

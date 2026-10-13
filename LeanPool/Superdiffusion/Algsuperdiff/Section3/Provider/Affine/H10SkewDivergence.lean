@@ -174,7 +174,8 @@ theorem h10SkewMatrixDiv_apply {U : Set (Vec d)}
             intro j _
             ring
       _ = q k * ∑ i : Fin d, (u i).toH1Function.grad x i := by
-        simp [basisVec_apply]
+        simp only [basisVec_apply, mul_ite, mul_one, mul_zero, Finset.sum_ite_eq,
+          Finset.mem_univ, ↓reduceIte]
         rw [Finset.mul_sum]
         apply Finset.sum_congr rfl
         intro i _

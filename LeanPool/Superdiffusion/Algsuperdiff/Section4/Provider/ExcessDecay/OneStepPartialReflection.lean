@@ -154,6 +154,139 @@ theorem partialReflectedWindow_metSet (x : Vec d) (m k : ℤ) :
 
 /-! ## 4. The chain: the per-stage packaging, constructed -/
 
+private theorem oddReflection_upperFaceExtension :
+    ∀ {d : ℕ} {x : Vec d} {m k : ℤ} (hkm : k < m) {S : Finset (Fin d)}
+      (v : H1Function (truncatedWindow x m k)) (i : Fin d) (T : Finset (Fin d)) (hiT : i ∉ T) (hsub : insert i T ⊆ S)
+      (hiS : i ∈ S) (w : H1Function (partialReflectedWindow x m k T))
+      (hwharm : IsWeaklyHarmonicOn (partialReflectedWindow x m k T) w)
+      (hwpin : ∀ y ∈ truncatedWindow x m k, w.toFun y = v.toFun y)
+      (hwodd :
+        ∀ j ∈ T,
+          (MeetsUpperFace x m k j →
+              ∀ (z : Vec d), w.toFun (coordFaceReflection ((1 / 2 : ℝ) * (3 : ℝ) ^ m) j z) = -w.toFun z) ∧
+            (MeetsLowerFace x m k j →
+              ∀ (z : Vec d), w.toFun (coordFaceReflection (-(1 / 2 : ℝ) * (3 : ℝ) ^ m) j z) = -w.toFun z))
+      (hwzt : LocalizedZeroTraceFunctionOn (partialReflectedWindow x m k T) (partialReflectedWindow x m k S) w.toFun)
+      (hBsub : partialReflectedWindow x m k (insert i T) ⊆ partialReflectedWindow x m k S)
+      (hztT :
+        LocalizedZeroTraceFunctionOn (partialReflectedWindow x m k T) (partialReflectedWindow x m k (insert i T)) w.toFun)
+      (hup : MeetsUpperFace x m k i),
+      ∃ (w : H1Function (partialReflectedWindow x m k (insert i T))),
+        IsWeaklyHarmonicOn (partialReflectedWindow x m k (insert i T)) w ∧
+          (∀ y ∈ truncatedWindow x m k, w.toFun y = v.toFun y) ∧
+            (∀ j ∈ insert i T,
+                (MeetsUpperFace x m k j →
+                    ∀ (z : Vec d), w.toFun (coordFaceReflection ((1 / 2 : ℝ) * (3 : ℝ) ^ m) j z) = -w.toFun z) ∧
+                  (MeetsLowerFace x m k j →
+                    ∀ (z : Vec d), w.toFun (coordFaceReflection (-(1 / 2 : ℝ) * (3 : ℝ) ^ m) j z) = -w.toFun z)) ∧
+              LocalizedZeroTraceFunctionOn (partialReflectedWindow x m k (insert i T)) (partialReflectedWindow x m k S)
+                w.toFun := by
+  intro d x m k hkm S v i T hiT hsub hiS w hwharm hwpin hwodd hwzt hBsub hztT hup
+  -- unfold the upper `i`-face
+  have hset : faceHalf (partialReflectedWindow x m k (insert i T)) i
+      ((1 / 2 : ℝ) * (3 : ℝ) ^ m) 1 = partialReflectedWindow x m k T :=
+    faceHalf_partialReflectedWindow_insert_upper hkm hup hiT
+  have hsymmB := mem_partialReflectedWindow_coordFaceReflection_iff_upper
+    hkm hup (Finset.mem_insert_self i T)
+  have hsymmS := mem_partialReflectedWindow_coordFaceReflection_iff_upper
+    hkm hup hiS
+  obtain ⟨w', hval', hgrad'⟩ := exists_h1Function_oddFaceExtend
+    (isOpenBoundedConvexDomain_partialReflectedWindow x m k (insert i T))
+    hsymmB (h1FunctionOfSetEq hset.symm w)
+    (by rw [h1FunctionOfSetEq_toFun, hset]; exact hztT)
+  have hval : ∀ y, w'.toFun y = oddFaceExtend ((1 / 2 : ℝ) * (3 : ℝ) ^ m) i
+      (zeroExtend (partialReflectedWindow x m k T) w.toFun) y := by
+    intro y
+    rw [hval' y, h1FunctionOfSetEq_toFun, hset]
+  have hgrad : ∀ y, w'.grad y = oddFaceExtendGrad ((1 / 2 : ℝ) * (3 : ℝ) ^ m) i
+      (zeroExtendGrad (partialReflectedWindow x m k T) w.grad) y := by
+    intro y
+    rw [hgrad' y, h1FunctionOfSetEq_grad, hset]
+  refine ⟨w', isWeaklyHarmonicOn_partialReflectedWindow_insert_upper hkm hup hiT
+    w hwharm w' hgrad, ?_, ?_, ?_⟩
+  · -- restriction pinning
+    intro y hy
+    have hyT : y ∈ partialReflectedWindow x m k T :=
+      truncatedWindow_subset_partialReflectedWindow x m k T hy
+    have hry : coordFaceReflection ((1 / 2 : ℝ) * (3 : ℝ) ^ m) i y
+        ∉ partialReflectedWindow x m k T := by
+      rw [← hset] at hyT ⊢
+      exact coordFaceReflection_notMem_faceHalf hyT
+    rw [hval y, oddFaceExtend_zeroExtend_of_mem w.toFun _ i hyT hry]
+    exact hwpin y hy
+  · -- oddness under every unfolded reflection
+    intro j hj
+    rcases Finset.mem_insert.1 hj with hji | hjT
+    · subst hji
+      refine ⟨fun _ z => ?_, fun hlowi => absurd hlowi
+        (not_meetsLowerFace_of_meetsUpperFace hkm hup)⟩
+      rw [hval (coordFaceReflection ((1 / 2 : ℝ) * (3 : ℝ) ^ m) j z), hval z]
+      exact oddFaceExtend_comp_coordFaceReflection _ j _ z
+    · have hji : j ≠ i := fun h => hiT (h ▸ hjT)
+      constructor
+      · intro hjup z
+        have hjinv := mem_partialReflectedWindow_coordFaceReflection_iff_upper
+          (T := T) hkm hjup hjT
+        have hZodd : ∀ u : Vec d,
+            zeroExtend (partialReflectedWindow x m k T) w.toFun
+              (coordFaceReflection ((1 / 2 : ℝ) * (3 : ℝ) ^ m) j u)
+            = -zeroExtend (partialReflectedWindow x m k T) w.toFun u := by
+          intro u
+          by_cases hu : u ∈ partialReflectedWindow x m k T
+          · rw [zeroExtend_of_mem _ ((hjinv u).2 hu), zeroExtend_of_mem _ hu]
+            exact (hwodd j hjT).1 hjup u
+          · rw [zeroExtend_of_notMem _ (fun hc => hu ((hjinv u).1 hc)),
+              zeroExtend_of_notMem _ hu, neg_zero]
+        rw [hval (coordFaceReflection ((1 / 2 : ℝ) * (3 : ℝ) ^ m) j z), hval z]
+        change zeroExtend (partialReflectedWindow x m k T) w.toFun
+              (coordFaceReflection ((1 / 2 : ℝ) * (3 : ℝ) ^ m) j z)
+            - zeroExtend (partialReflectedWindow x m k T) w.toFun
+                (coordFaceReflection ((1 / 2 : ℝ) * (3 : ℝ) ^ m) i
+                  (coordFaceReflection ((1 / 2 : ℝ) * (3 : ℝ) ^ m) j z))
+          = -(zeroExtend (partialReflectedWindow x m k T) w.toFun z
+            - zeroExtend (partialReflectedWindow x m k T) w.toFun
+                (coordFaceReflection ((1 / 2 : ℝ) * (3 : ℝ) ^ m) i z))
+        rw [hZodd z, coordFaceReflection_comm hji.symm _ _ z,
+          hZodd (coordFaceReflection ((1 / 2 : ℝ) * (3 : ℝ) ^ m) i z)]
+        ring
+      · intro hjlow z
+        have hjinv := mem_partialReflectedWindow_coordFaceReflection_iff_lower
+          (T := T) hkm hjlow hjT
+        have hZodd : ∀ u : Vec d,
+            zeroExtend (partialReflectedWindow x m k T) w.toFun
+              (coordFaceReflection (-(1 / 2 : ℝ) * (3 : ℝ) ^ m) j u)
+            = -zeroExtend (partialReflectedWindow x m k T) w.toFun u := by
+          intro u
+          by_cases hu : u ∈ partialReflectedWindow x m k T
+          · rw [zeroExtend_of_mem _ ((hjinv u).2 hu), zeroExtend_of_mem _ hu]
+            exact (hwodd j hjT).2 hjlow u
+          · rw [zeroExtend_of_notMem _ (fun hc => hu ((hjinv u).1 hc)),
+              zeroExtend_of_notMem _ hu, neg_zero]
+        rw [hval (coordFaceReflection (-(1 / 2 : ℝ) * (3 : ℝ) ^ m) j z), hval z]
+        change zeroExtend (partialReflectedWindow x m k T) w.toFun
+              (coordFaceReflection (-(1 / 2 : ℝ) * (3 : ℝ) ^ m) j z)
+            - zeroExtend (partialReflectedWindow x m k T) w.toFun
+                (coordFaceReflection ((1 / 2 : ℝ) * (3 : ℝ) ^ m) i
+                  (coordFaceReflection (-(1 / 2 : ℝ) * (3 : ℝ) ^ m) j z))
+          = -(zeroExtend (partialReflectedWindow x m k T) w.toFun z
+            - zeroExtend (partialReflectedWindow x m k T) w.toFun
+                (coordFaceReflection ((1 / 2 : ℝ) * (3 : ℝ) ^ m) i z))
+        rw [hZodd z, coordFaceReflection_comm hji.symm _ _ z,
+          hZodd (coordFaceReflection ((1 / 2 : ℝ) * (3 : ℝ) ^ m) i z)]
+        ring
+  · -- the transported face-only zero trace
+    have htrans := localizedZeroTraceFunctionOn_oddFaceExtend
+      (isOpen_partialReflectedWindow x m k T).measurableSet
+      (isOpen_partialReflectedWindow x m k (insert i T))
+      (partialReflectedWindow_subset_of_subset x m k
+        (Finset.subset_insert i T))
+      hsymmB hsymmS hwzt
+    have hfun : w'.toFun = oddFaceExtend ((1 / 2 : ℝ) * (3 : ℝ) ^ m) i
+        (zeroExtend (partialReflectedWindow x m k T) w.toFun) := funext hval
+    rw [hfun]
+    exact htrans
+
+
 /-- **The multi-face chain, unconditional.**  From a weakly harmonic
 `v ∈ H¹((x+□_k) ∩ □_m)` with face-only zero trace (localized in `B_S`), every
 intermediate box `B_T`, `T ⊆ S`, carries a weakly harmonic `H¹` function that
@@ -206,109 +339,7 @@ theorem exists_h1_oddReflection_chain {x : Vec d} {m k : ℤ} (hkm : k < m)
           (partialReflectedWindow x m k (insert i T)) w.toFun :=
         localizedZeroTraceFunctionOn_mono_window hBsub hwzt
       by_cases hup : MeetsUpperFace x m k i
-      · -- unfold the upper `i`-face
-        have hset : faceHalf (partialReflectedWindow x m k (insert i T)) i
-            ((1 / 2 : ℝ) * (3 : ℝ) ^ m) 1 = partialReflectedWindow x m k T :=
-          faceHalf_partialReflectedWindow_insert_upper hkm hup hiT
-        have hsymmB := mem_partialReflectedWindow_coordFaceReflection_iff_upper
-          hkm hup (Finset.mem_insert_self i T)
-        have hsymmS := mem_partialReflectedWindow_coordFaceReflection_iff_upper
-          hkm hup hiS
-        obtain ⟨w', hval', hgrad'⟩ := exists_h1Function_oddFaceExtend
-          (isOpenBoundedConvexDomain_partialReflectedWindow x m k (insert i T))
-          hsymmB (h1FunctionOfSetEq hset.symm w)
-          (by rw [h1FunctionOfSetEq_toFun, hset]; exact hztT)
-        have hval : ∀ y, w'.toFun y = oddFaceExtend ((1 / 2 : ℝ) * (3 : ℝ) ^ m) i
-            (zeroExtend (partialReflectedWindow x m k T) w.toFun) y := by
-          intro y
-          rw [hval' y, h1FunctionOfSetEq_toFun, hset]
-        have hgrad : ∀ y, w'.grad y = oddFaceExtendGrad ((1 / 2 : ℝ) * (3 : ℝ) ^ m) i
-            (zeroExtendGrad (partialReflectedWindow x m k T) w.grad) y := by
-          intro y
-          rw [hgrad' y, h1FunctionOfSetEq_grad, hset]
-        refine ⟨w', isWeaklyHarmonicOn_partialReflectedWindow_insert_upper hkm hup hiT
-          w hwharm w' hgrad, ?_, ?_, ?_⟩
-        · -- restriction pinning
-          intro y hy
-          have hyT : y ∈ partialReflectedWindow x m k T :=
-            truncatedWindow_subset_partialReflectedWindow x m k T hy
-          have hry : coordFaceReflection ((1 / 2 : ℝ) * (3 : ℝ) ^ m) i y
-              ∉ partialReflectedWindow x m k T := by
-            rw [← hset] at hyT ⊢
-            exact coordFaceReflection_notMem_faceHalf hyT
-          rw [hval y, oddFaceExtend_zeroExtend_of_mem w.toFun _ i hyT hry]
-          exact hwpin y hy
-        · -- oddness under every unfolded reflection
-          intro j hj
-          rcases Finset.mem_insert.1 hj with hji | hjT
-          · subst hji
-            refine ⟨fun _ z => ?_, fun hlowi => absurd hlowi
-              (not_meetsLowerFace_of_meetsUpperFace hkm hup)⟩
-            rw [hval (coordFaceReflection ((1 / 2 : ℝ) * (3 : ℝ) ^ m) j z), hval z]
-            exact oddFaceExtend_comp_coordFaceReflection _ j _ z
-          · have hji : j ≠ i := fun h => hiT (h ▸ hjT)
-            constructor
-            · intro hjup z
-              have hjinv := mem_partialReflectedWindow_coordFaceReflection_iff_upper
-                (T := T) hkm hjup hjT
-              have hZodd : ∀ u : Vec d,
-                  zeroExtend (partialReflectedWindow x m k T) w.toFun
-                    (coordFaceReflection ((1 / 2 : ℝ) * (3 : ℝ) ^ m) j u)
-                  = -zeroExtend (partialReflectedWindow x m k T) w.toFun u := by
-                intro u
-                by_cases hu : u ∈ partialReflectedWindow x m k T
-                · rw [zeroExtend_of_mem _ ((hjinv u).2 hu), zeroExtend_of_mem _ hu]
-                  exact (hwodd j hjT).1 hjup u
-                · rw [zeroExtend_of_notMem _ (fun hc => hu ((hjinv u).1 hc)),
-                    zeroExtend_of_notMem _ hu, neg_zero]
-              rw [hval (coordFaceReflection ((1 / 2 : ℝ) * (3 : ℝ) ^ m) j z), hval z]
-              show zeroExtend (partialReflectedWindow x m k T) w.toFun
-                    (coordFaceReflection ((1 / 2 : ℝ) * (3 : ℝ) ^ m) j z)
-                  - zeroExtend (partialReflectedWindow x m k T) w.toFun
-                      (coordFaceReflection ((1 / 2 : ℝ) * (3 : ℝ) ^ m) i
-                        (coordFaceReflection ((1 / 2 : ℝ) * (3 : ℝ) ^ m) j z))
-                = -(zeroExtend (partialReflectedWindow x m k T) w.toFun z
-                  - zeroExtend (partialReflectedWindow x m k T) w.toFun
-                      (coordFaceReflection ((1 / 2 : ℝ) * (3 : ℝ) ^ m) i z))
-              rw [hZodd z, coordFaceReflection_comm hji.symm _ _ z,
-                hZodd (coordFaceReflection ((1 / 2 : ℝ) * (3 : ℝ) ^ m) i z)]
-              ring
-            · intro hjlow z
-              have hjinv := mem_partialReflectedWindow_coordFaceReflection_iff_lower
-                (T := T) hkm hjlow hjT
-              have hZodd : ∀ u : Vec d,
-                  zeroExtend (partialReflectedWindow x m k T) w.toFun
-                    (coordFaceReflection (-(1 / 2 : ℝ) * (3 : ℝ) ^ m) j u)
-                  = -zeroExtend (partialReflectedWindow x m k T) w.toFun u := by
-                intro u
-                by_cases hu : u ∈ partialReflectedWindow x m k T
-                · rw [zeroExtend_of_mem _ ((hjinv u).2 hu), zeroExtend_of_mem _ hu]
-                  exact (hwodd j hjT).2 hjlow u
-                · rw [zeroExtend_of_notMem _ (fun hc => hu ((hjinv u).1 hc)),
-                    zeroExtend_of_notMem _ hu, neg_zero]
-              rw [hval (coordFaceReflection (-(1 / 2 : ℝ) * (3 : ℝ) ^ m) j z), hval z]
-              show zeroExtend (partialReflectedWindow x m k T) w.toFun
-                    (coordFaceReflection (-(1 / 2 : ℝ) * (3 : ℝ) ^ m) j z)
-                  - zeroExtend (partialReflectedWindow x m k T) w.toFun
-                      (coordFaceReflection ((1 / 2 : ℝ) * (3 : ℝ) ^ m) i
-                        (coordFaceReflection (-(1 / 2 : ℝ) * (3 : ℝ) ^ m) j z))
-                = -(zeroExtend (partialReflectedWindow x m k T) w.toFun z
-                  - zeroExtend (partialReflectedWindow x m k T) w.toFun
-                      (coordFaceReflection ((1 / 2 : ℝ) * (3 : ℝ) ^ m) i z))
-              rw [hZodd z, coordFaceReflection_comm hji.symm _ _ z,
-                hZodd (coordFaceReflection ((1 / 2 : ℝ) * (3 : ℝ) ^ m) i z)]
-              ring
-        · -- the transported face-only zero trace
-          have htrans := localizedZeroTraceFunctionOn_oddFaceExtend
-            (isOpen_partialReflectedWindow x m k T).measurableSet
-            (isOpen_partialReflectedWindow x m k (insert i T))
-            (partialReflectedWindow_subset_of_subset x m k
-              (Finset.subset_insert i T))
-            hsymmB hsymmS hwzt
-          have hfun : w'.toFun = oddFaceExtend ((1 / 2 : ℝ) * (3 : ℝ) ^ m) i
-              (zeroExtend (partialReflectedWindow x m k T) w.toFun) := funext hval
-          rw [hfun]
-          exact htrans
+      · exact @oddReflection_upperFaceExtension (d) (x) (m) (k) (hkm) (S) (v) (i) (T) (hiT) (hsub) (hiS) (w) (hwharm) (hwpin) (hwodd) (hwzt) (hBsub) (hztT) (hup)
       · -- unfold the lower `i`-face
         have hlow : MeetsLowerFace x m k i := (hSup i hiS).resolve_left hup
         have hset : faceHalf (partialReflectedWindow x m k (insert i T)) i
@@ -364,7 +395,7 @@ theorem exists_h1_oddReflection_chain {x : Vec d} {m k : ℤ} (hkm : k < m)
                 · rw [zeroExtend_of_notMem _ (fun hc => hu ((hjinv u).1 hc)),
                     zeroExtend_of_notMem _ hu, neg_zero]
               rw [hval (coordFaceReflection ((1 / 2 : ℝ) * (3 : ℝ) ^ m) j z), hval z]
-              show zeroExtend (partialReflectedWindow x m k T) w.toFun
+              change zeroExtend (partialReflectedWindow x m k T) w.toFun
                     (coordFaceReflection ((1 / 2 : ℝ) * (3 : ℝ) ^ m) j z)
                   - zeroExtend (partialReflectedWindow x m k T) w.toFun
                       (coordFaceReflection (-(1 / 2 : ℝ) * (3 : ℝ) ^ m) i
@@ -389,7 +420,7 @@ theorem exists_h1_oddReflection_chain {x : Vec d} {m k : ℤ} (hkm : k < m)
                 · rw [zeroExtend_of_notMem _ (fun hc => hu ((hjinv u).1 hc)),
                     zeroExtend_of_notMem _ hu, neg_zero]
               rw [hval (coordFaceReflection (-(1 / 2 : ℝ) * (3 : ℝ) ^ m) j z), hval z]
-              show zeroExtend (partialReflectedWindow x m k T) w.toFun
+              change zeroExtend (partialReflectedWindow x m k T) w.toFun
                     (coordFaceReflection (-(1 / 2 : ℝ) * (3 : ℝ) ^ m) j z)
                   - zeroExtend (partialReflectedWindow x m k T) w.toFun
                       (coordFaceReflection (-(1 / 2 : ℝ) * (3 : ℝ) ^ m) i

@@ -20,6 +20,9 @@ Module imports, support namespace and local option directives adapted for Lean P
 
 @[expose] public section
 
+open Algsuperdiff.Section3.Provider.Homogenization.ObservationScaleFiniteCoverInternal
+  (normalizedBlockResponseMax_le_descendantsAverage)
+
 
 /-!
 # Subadditivity of `𝓔` at the exponent pair `(2,2)`: lifting the domain scale
@@ -86,6 +89,8 @@ open HCPolySupport HCPolySupport.Book HCPolySupport.Book.Ch02
 
 noncomputable section
 
+
+
 variable {d : ℕ} [NeZero d]
 
 /-! ## The shell bridge -/
@@ -120,6 +125,7 @@ private theorem geometricWeight_two_nonneg {s : ℝ} (hs : 0 < s) (l : ℕ) :
     HCPolySupport.geometricWeight_nonneg (s := s) (q := 2) l
       (by linarith only [hs.le])
 
+omit [NeZero d] in
 private theorem scaleResponse_finite_two_nonneg (Q : TriadicCube d) (k : ℤ)
     (F : TriadicCoeffFamily d) (a0 : Mat d) :
     0 ≤ scaleResponseAtScale Q k (.finite 2) F a0 :=
@@ -127,12 +133,14 @@ private theorem scaleResponse_finite_two_nonneg (Q : TriadicCube d) (k : ℤ)
     (Section3.Provider.ErrorComparison.finsetAverageReal_nonneg _
       (fun R _ => Real.rpow_nonneg (normalizedBlockResponseMax_nonneg R F a0) _)) _
 
+omit [NeZero d] in
 private theorem scaleResponse_infinity_nonneg (Q : TriadicCube d) {k : ℤ}
     (hk : k ≤ Q.scale) (F : TriadicCoeffFamily d) (a0 : Mat d) :
     0 ≤ scaleResponseAtScale Q k .infinity F a0 :=
   Real.rpow_nonneg
     (maxDescendantNormalizedBlockResponseAtScale_nonneg Q hk F a0) _
 
+omit [NeZero d] in
 private theorem error_finite_two_nonneg (Q : TriadicCube d) {s : ℝ} (hs : 0 < s)
     (p : Ch02.MultiscaleExponent) (F : TriadicCoeffFamily d) (a0 : Mat d)
     (hp : ∀ l : ℕ, 0 ≤ scaleResponseAtScale Q (Q.scale - (l : ℤ)) p F a0) :
@@ -141,6 +149,7 @@ private theorem error_finite_two_nonneg (Q : TriadicCube d) {s : ℝ} (hs : 0 < 
     (tsum_nonneg fun l => mul_nonneg (geometricWeight_two_nonneg hs l)
       (Real.rpow_nonneg (hp l) _)) _
 
+omit [NeZero d] in
 /-- The `(2,2)` error is nonnegative. -/
 theorem homogenizationErrorOnCube_two_two_nonneg' (Q : TriadicCube d) {s : ℝ}
     (hs : 0 < s) (F : TriadicCoeffFamily d) (a0 : Mat d) :
@@ -148,6 +157,7 @@ theorem homogenizationErrorOnCube_two_two_nonneg' (Q : TriadicCube d) {s : ℝ}
   error_finite_two_nonneg Q hs _ F a0
     (fun _ => scaleResponse_finite_two_nonneg Q _ F a0)
 
+omit [NeZero d] in
 /-- The `(∞,2)` error is nonnegative. -/
 theorem homogenizationErrorOnCube_infinity_two_nonneg' (Q : TriadicCube d) {s : ℝ}
     (hs : 0 < s) (F : TriadicCoeffFamily d) (a0 : Mat d) :
@@ -165,12 +175,14 @@ def shellAvg (Q : TriadicCube d) (F : TriadicCoeffFamily d) (a0 : Mat d)
   finsetAverageReal (descendantsAtScale Q (Q.scale - (l : ℤ)))
     (fun R => normalizedBlockResponseMax R F a0)
 
+omit [NeZero d] in
 private theorem shellAvg_eq_descendantsAverage (Q : TriadicCube d)
     (F : TriadicCoeffFamily d) (a0 : Mat d) (l : ℕ) :
     shellAvg Q F a0 l =
       descendantsAverage Q l (fun R => normalizedBlockResponseMax R F a0) :=
   finsetAverageReal_descendantsAtScale_eq_descendantsAverage Q l _
 
+omit [NeZero d] in
 private theorem shellAvg_two_eq (Q : TriadicCube d) (F : TriadicCoeffFamily d)
     (a0 : Mat d) :
     shellAvg Q F a0 2 =
@@ -178,6 +190,7 @@ private theorem shellAvg_two_eq (Q : TriadicCube d) (F : TriadicCoeffFamily d)
         (fun R => normalizedBlockResponseMax R F a0) := by
   simp only [shellAvg, Nat.cast_ofNat]
 
+omit [NeZero d] in
 private theorem shellAvg_nonneg (Q : TriadicCube d) (F : TriadicCoeffFamily d)
     (a0 : Mat d) (l : ℕ) : 0 ≤ shellAvg Q F a0 l :=
   Section3.Provider.ErrorComparison.finsetAverageReal_nonneg _
@@ -257,7 +270,8 @@ private theorem shellAvg_zero_le_two (Q : TriadicCube d) (F : TriadicCoeffFamily
     (a0 : Mat d) : shellAvg Q F a0 0 ≤ shellAvg Q F a0 2 := by
   rw [shellAvg_eq_descendantsAverage, shellAvg_eq_descendantsAverage,
     descendantsAverage_zero]
-  exact Section3.Provider.Homogenization.ObservationScaleFiniteCoverInternal.normalizedBlockResponseMax_le_descendantsAverage
+  exact
+    normalizedBlockResponseMax_le_descendantsAverage
     Q 2 F a0
 
 /-- Shell `1` sits below shell `2`: `e.subaddJ.nosymm` applied inside the
@@ -274,11 +288,13 @@ private theorem shellAvg_one_le_two (Q : TriadicCube d) (F : TriadicCoeffFamily 
       (fun R => normalizedBlockResponseMax R F a0)
   rw [hsplit]
   refine descendantsAverage_mono Q 1 fun T _ => ?_
-  exact Section3.Provider.Homogenization.ObservationScaleFiniteCoverInternal.normalizedBlockResponseMax_le_descendantsAverage
+  exact
+    normalizedBlockResponseMax_le_descendantsAverage
     T 1 F a0
 
 /-! ## The deep shells -/
 
+omit [NeZero d] in
 /-- **The exact factorization.**  The depth-`(k+2)` shell of `Q` is the depth-`2`
 average of the depth-`k` shells of the depth-`2` descendants.  This is what the
 `p = ∞` gauge does not have. -/

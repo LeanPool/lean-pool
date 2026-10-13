@@ -135,7 +135,7 @@ theorem volumeAverage_sub_volumeAverage_sq_eq {V : Set (Vec d)}
       integral_const_mul, setIntegral_const, measureReal_def, smul_eq_mul]
     ring
   have hgoal : volumeAverage V (fun x => (g x - t) ^ 2) = m⁻¹ * J - t ^ 2 := by
-    show m⁻¹ * ∫ x in V, (g x - t) ^ 2 ∂volume = m⁻¹ * J - t ^ 2
+    change m⁻¹ * ∫ x in V, (g x - t) ^ 2 ∂volume = m⁻¹ * J - t ^ 2
     rw [hcalc, htdef]
     field_simp
     ring
@@ -406,7 +406,7 @@ theorem volumeAverage_vecNormSq_pow_four_le_ratio_mul {K : ℤ} {R : TriadicCube
         ∫ x in openCubeSet (originCube d K), vecNormSq (u x) ^ (4 : ℕ) ∂volume := by
     unfold volumeAverage
     field_simp
-  show (volume (openCubeSet R)).toReal⁻¹ *
+  change (volume (openCubeSet R)).toReal⁻¹ *
       ∫ x in openCubeSet R, vecNormSq (u x) ^ (4 : ℕ) ∂volume ≤ _
   calc (volume (openCubeSet R)).toReal⁻¹ *
         ∫ x in openCubeSet R, vecNormSq (u x) ^ (4 : ℕ) ∂volume

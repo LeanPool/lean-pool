@@ -153,7 +153,8 @@ theorem matrixOperatorNorm_freshShellCubeAverage_le_translatedIncrementSupBound
       integrableOn_cubeSet_of_continuous R (continuous_finiteShellIncrement_entry omega n m i l)
     have hb : ∀ x ∈ openCubeSet R, |finiteShellIncrement omega n m x i l| ≤ T := by
       intro x hx
-      have hop := Provider.Stream.matrixOperatorNorm_finiteShellIncrement_le_translatedIncrementSupBound
+      have hop :=
+        Provider.Stream.matrixOperatorNorm_finiteShellIncrement_le_translatedIncrementSupBound
         (triadicCubeShift R) omega n m
         (openCubeSet_subset_translateSet_openCubeSet_originCube hsc hx)
       exact le_trans (abs_entry_le_matrixOperatorNorm _ i l) hop

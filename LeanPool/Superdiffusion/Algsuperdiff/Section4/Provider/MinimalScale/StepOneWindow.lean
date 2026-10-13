@@ -117,11 +117,11 @@ def outerScaleEquiv (k : ℤ) : ℕ ≃ {j : ℤ // j ≤ k} where
   toFun p := ⟨k - (p : ℤ), by omega⟩
   invFun j := (k - j.1).toNat
   left_inv p := by
-    show (k - (k - (p : ℤ))).toNat = p
+    change (k - (k - (p : ℤ))).toNat = p
     omega
   right_inv j := by
     refine Subtype.ext ?_
-    show k - (((k - j.1).toNat : ℕ) : ℤ) = j.1
+    change k - (((k - j.1).toNat : ℕ) : ℤ) = j.1
     have h := j.2
     omega
 

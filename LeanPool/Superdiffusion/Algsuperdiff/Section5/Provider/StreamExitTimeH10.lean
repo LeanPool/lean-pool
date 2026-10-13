@@ -170,7 +170,7 @@ theorem expectedExitTime_cubeSetAt_eq_streamExitFunction (y : Vec d) (n : ℤ) {
     (continuousOn_streamExitFunction M omega y n)
     (mul_nonneg zero_le_one ((streamWholeSpaceAnalyticData M omega).partTorsionBound_nonneg _))
     (fun z _ => abs_streamExitFunction_le M omega y n z) hx
-  show ∫⁻ path, ContinuousPath.exitTime (((↑) : Vec d → OnePoint (Vec d)) '' cubeSetAt y n) path
+  change ∫⁻ path, ContinuousPath.exitTime (((↑) : Vec d → OnePoint (Vec d)) '' cubeSetAt y n) path
       ∂(IsConservative.continuousProcess R.onePointKernelSemigroup
         R.isConservative_onePointKernelSemigroup (x : OnePoint (Vec d))) = _
   rw [hchain, hpde]

@@ -238,7 +238,7 @@ theorem mem_descendantsAtScale_of_cubeSet_inter_nonempty {m : ℤ} {hn : ℕ →
   obtain ⟨n, hQn⟩ := hQ
   have hQscale : Q.scale = m - (n : ℤ) - (hn n : ℤ) := scale_eq_of_mem_whitneyLayer hQn
   have hsm : s ≤ (originCube d m).scale := by
-    show s ≤ m
+    change s ≤ m
     omega
   have hQdepth : Q ∈ descendantsAtDepth (originCube d m) (n + hn n) :=
     mem_descendantsAtDepth_of_mem_whitneyLayer hQn
@@ -318,7 +318,7 @@ theorem mem_descendantsAtScale_originCube_of_mem_descendantsAtScale {m : ℤ}
   have hBdepth : B ∈ descendantsAtDepth Q (Int.toNat (Q.scale - s)) := by
     rwa [descendantsAtScale_eq_descendantsAtDepth Q hs] at hB
   have hsm : s ≤ (originCube d m).scale := by
-    show s ≤ m
+    change s ≤ m
     omega
   rw [descendantsAtScale_eq_descendantsAtDepth (originCube d m) hsm,
     show (originCube d m).scale = m from rfl,
@@ -345,7 +345,7 @@ theorem globalCompetitorSlope_of_mem_openCarrier {m s : ℤ} (hs : s ≤ m)
   classical
   have hex : ∃ U ∈ rootCoarseMesh (d := d) m s, x ∈ U.openCarrier := ⟨T, hT, hx⟩
   have hspec := hex.choose_spec
-  show (if h : ∃ U ∈ rootCoarseMesh (d := d) m s, x ∈ U.openCarrier then
+  change (if h : ∃ U ∈ rootCoarseMesh (d := d) m s, x ∈ U.openCarrier then
     kuhnSlope h.choose (competitorVertexData C p) else p) = _
   rw [dite_eq_left hex]
   by_cases hne : hex.choose = T
@@ -360,7 +360,7 @@ theorem globalCompetitorSlope_of_forall_notMem {m s : ℤ} (C : Set (TriadicCube
     (p : Vec d) {x : Vec d} (hx : ∀ T ∈ rootCoarseMesh (d := d) m s, x ∉ T.openCarrier) :
     globalCompetitorSlope m s C p x = p := by
   classical
-  show (if h : ∃ U ∈ rootCoarseMesh (d := d) m s, x ∈ U.openCarrier then
+  change (if h : ∃ U ∈ rootCoarseMesh (d := d) m s, x ∈ U.openCarrier then
     kuhnSlope h.choose (competitorVertexData C p) else p) = p
   rw [dite_eq_right (by rintro ⟨T, hT, hxT⟩; exact hx T hT hxT)]
 

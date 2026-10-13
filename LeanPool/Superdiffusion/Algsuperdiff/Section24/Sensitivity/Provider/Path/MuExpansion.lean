@@ -60,7 +60,7 @@ theorem doubledMuValue_perturbCoeffOn {U : Domain d} (a : CoeffOn U)
   have hL := integrableOn_pathLinearDensity a h.1 hpot hflux
   have hQ := integrableOn_pathQuadraticDensity a h.1 hpot
   have hE := integrableOn_blockEnergyDensity a hpot hflux
-  show volumeAverage (U : Set (Vec d))
+  change volumeAverage (U : Set (Vec d))
       (fun x => blockEnergyDensityAt (perturbCoeffOn U a h t) (X.eval x) x) = _
   rw [volumeAverage_congr_ae (blockEnergyDensity_expansion_ae a h t X)]
   rw [show (fun x => blockEnergyDensityAt a (X.eval x) x

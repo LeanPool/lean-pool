@@ -247,7 +247,7 @@ private theorem setLIntegral_comp_cellMap (x : Vec d) (m k : ℤ)
     ext z
     constructor
     · rintro ⟨y, hy, rfl⟩
-      show Φ (Φ y) ∈ B
+      change Φ (Φ y) ∈ B
       rwa [hinv]
     · intro hz
       exact ⟨Φ z, hz, hinv z⟩
@@ -258,7 +258,7 @@ private theorem setLIntegral_comp_cellMap (x : Vec d) (m k : ℤ)
     intro y
     by_cases hy : y ∈ B
     · have hy' : Φ y ∈ Φ ⁻¹' B := by
-        show Φ (Φ y) ∈ B
+        change Φ (Φ y) ∈ B
         rwa [hinv]
       rw [Set.indicator_of_mem hy, Set.indicator_of_mem hy']
     · have hy' : Φ y ∉ Φ ⁻¹' B := by

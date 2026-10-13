@@ -49,7 +49,8 @@ variable {d : ℕ}
 
 /-! ## 1. Auxiliary estimates -/
 
-theorem abs_setIntegral_le_sqrt {U : Set (Vec d)} (hUfin : volume U ≠ ⊤) {f : Vec d → ℝ} (hf : MemLp f 2 (volume.restrict U)) :
+theorem abs_setIntegral_le_sqrt {U : Set (Vec d)} (hUfin : volume U ≠ ⊤) {f : Vec d → ℝ} (hf :
+  MemLp f 2 (volume.restrict U)) :
     |∫ z in U, f z ∂volume| ≤
       Real.sqrt (volume.real U) * Real.sqrt (∫ z in U, f z ^ (2 : ℕ) ∂volume) := by
   have : IsFiniteMeasure (volume.restrict U) := by
@@ -70,7 +71,7 @@ theorem abs_setIntegral_le_sqrt {U : Set (Vec d)} (hUfin : volume U ≠ ⊤) {f 
     (by simpa using hfn) (by simpa using hone)
   have habs2 : ∫ z in U, |f z| ^ (2 : ℝ) ∂volume = ∫ z in U, f z ^ (2 : ℕ) ∂volume := by
     refine integral_congr_ae (Filter.Eventually.of_forall fun z => ?_)
-    show |f z| ^ (2 : ℝ) = f z ^ (2 : ℕ)
+    change |f z| ^ (2 : ℝ) = f z ^ (2 : ℕ)
     rw [← sq_abs (f z), ← Real.rpow_natCast (|f z|) 2]
     norm_num
   have hone2 : ∫ _z in U, (1 : ℝ) ^ (2 : ℝ) ∂volume = volume.real U := by
@@ -168,17 +169,17 @@ theorem continuous_fieldSetIntegral (M : ABKModel d) (y : Vec d) (n : ℤ)
     obtain ⟨w2, h2f, h2g⟩ := hu0.1
     refine ⟨w1 - w2, fun x => ?_, fun x => ?_⟩
     · rw [h1f x, h2f x]
-      show (w1.toH1Function - w2.toH1Function).toFun x = _
+      change (w1.toH1Function - w2.toH1Function).toFun x = _
       simp only [H1Function.sub_toFun]
     · rw [h1g x, h2g x]
-      show (w1.toH1Function - w2.toH1Function).grad x = _
+      change (w1.toH1Function - w2.toH1Function).grad x = _
       simp only [H1Function.sub_grad]
   have hgradEq : (∫ x in cubeSetAt y n, ‖w.toH1Function.grad x‖ ^ (2 : ℕ) ∂volume) =
       ∫ x in cubeSetAt y n,
         ‖(solutionOfField M y n hKg hg A).grad x -
           (solutionOfField M y n hKg hg A0).grad x‖ ^ (2 : ℕ) ∂volume := by
     refine integral_congr_ae (Filter.Eventually.of_forall fun x => ?_)
-    show ‖w.toH1Function.grad x‖ ^ (2 : ℕ) =
+    change ‖w.toH1Function.grad x‖ ^ (2 : ℕ) =
       ‖(solutionOfField M y n hKg hg A).grad x -
         (solutionOfField M y n hKg hg A0).grad x‖ ^ (2 : ℕ)
     rw [hwg x]
@@ -203,7 +204,7 @@ theorem continuous_fieldSetIntegral (M : ABKModel d) (y : Vec d) (n : ℤ)
         (Measure.restrict_mono hBsub le_rfl)).integrable one_le_two
     rw [fieldSetIntegral, fieldSetIntegral, ← integral_sub hintA hintA0]
     refine integral_congr_ae (Filter.Eventually.of_forall fun z => ?_)
-    show (solutionOfField M y n hKg hg A).toFun z -
+    change (solutionOfField M y n hKg hg A).toFun z -
       (solutionOfField M y n hKg hg A0).toFun z = w.toH1Function.toFun z
     rw [hwf z]
   rw [Real.dist_eq, hsplit]

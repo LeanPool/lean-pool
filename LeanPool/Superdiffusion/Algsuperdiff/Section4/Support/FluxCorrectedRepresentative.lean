@@ -708,7 +708,8 @@ theorem ae_forall_fluxCorrectedError_eq_representative (M : ABKModel d) (m : ℤ
     (s : {s : ℝ // 0 < s}) :
     ∀ᵐ omega ∂(Cutoff.cutoffSampleLaw M).toMeasure,
       ∀ L : {L : ℤ // m ≤ L},
-        @fluxCorrectedError d (neZero_of_model_FluxCorrectedRepresentative M) M L.1 m (s : ℝ) omega =
+        @fluxCorrectedError d (neZero_of_model_FluxCorrectedRepresentative M) M L.1 m (s : ℝ)
+          omega =
           fluxCorrectedErrorRepresentative M L.1 m s omega :=
   MeasureTheory.ae_all_iff.2 fun L =>
     fluxCorrectedError_ae_eq_representative M L.1 m s

@@ -272,7 +272,8 @@ private theorem measurableSet_mem_hsepSet (M : ABKModel d) (m : ℤ) (E b : ℝ)
     rw [hset]
     exact MeasurableSet.iInter fun h => MeasurableSet.iInter fun _ =>
       measurableSet_scaleSeparationGood M m E b h
-  · have hset : {omega : CutoffSample d | j ∈ hsepSet M m E b omega} = (∅ : Set (CutoffSample d)) := by
+  · have hset : {omega : CutoffSample d | j ∈ hsepSet M m E b omega} = (∅ : Set (CutoffSample d))
+    := by
       ext omega
       simp only [mem_hsepSet_iff, Set.mem_ofPred_eq, Set.mem_empty_iff_false, iff_false]
       exact fun hmem => hj hmem.1

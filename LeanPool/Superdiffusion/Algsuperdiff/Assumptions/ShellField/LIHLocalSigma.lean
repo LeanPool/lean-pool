@@ -38,7 +38,7 @@ noncomputable section
 variable {d : ℕ}
 
 /-- The shell-field pullback of CoarseGraining's local integral sigma-field. -/
-def lihLocalSigma (U : Set (Vec d)) : MeasurableSpace (ShellField d) :=
+abbrev lihLocalSigma (U : Set (Vec d)) : MeasurableSpace (ShellField d) :=
   MeasurableSpace.comap (forgetShell (d := d)) (LocalSigmaR U)
 
 /-- A supported CoarseGraining entry-test observable, pulled back to shell fields,

@@ -93,7 +93,7 @@ variable {d : ℕ}
 coordinates. -/
 theorem continuous_kuhnInterp (T : KuhnCell d) (g : Vec d → ℝ) :
     Continuous (kuhnInterp T g) := by
-  show Continuous fun x : Vec d =>
+  change Continuous fun x : Vec d =>
     g (T.vertex 0) + ∑ i, kuhnSlope T g i * (x - T.vertex 0) i
   refine continuous_const.add (continuous_finsetSum _ fun i _ => ?_)
   exact continuous_const.mul ((continuous_apply i).comp (continuous_id.sub continuous_const))
@@ -137,7 +137,7 @@ theorem gluedKuhnAffine_eqOn_closedCarrier {S : Finset (KuhnCell d)} {s : ℤ}
   intro x hx
   have hex : ∃ U ∈ S, x ∈ U.closedCarrier := ⟨T, hT, hx⟩
   have hspec := hex.choose_spec
-  show (if h : ∃ U ∈ S, x ∈ U.closedCarrier then kuhnInterp h.choose g x else g x) =
+  change (if h : ∃ U ∈ S, x ∈ U.closedCarrier then kuhnInterp h.choose g x else g x) =
     kuhnInterp T g x
   rw [dite_eq_left hex]
   exact kuhnInterp_eqOn_closedCarrier_inter hex.choose T g

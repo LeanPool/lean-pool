@@ -39,7 +39,7 @@ Both inequalities are proved here at the endpoint `p = ∞`, for every admissibl
 (`MultiscaleExponent.infinity`).  CoarseGraining previously had only the
 special case `(p, q) = (∞, 1)`
 (`Homogenization.Book.Ch02.homogenizationErrorOnCube_infinity_one_le_of_lt` and
-`Homogenization.Book.Ch02.scaleResponseAtScale_infinity_self_le_homogenizationErrorOnCube_infinity_one`).
+`scaleResponseAtScale_infinity_self_le_homogenizationErrorOnCube_infinity_one`).
 
 ## Main results
 

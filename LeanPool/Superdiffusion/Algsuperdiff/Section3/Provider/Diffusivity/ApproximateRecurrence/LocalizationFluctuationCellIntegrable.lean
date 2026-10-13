@@ -153,7 +153,7 @@ private theorem lipschitzWith_lpWindowNorm (mu : Measure alpha) (S : Set alpha) 
       (ENNReal.add_ne_top.mpr ⟨lpWindowNorm_ne_top mu S G, hrestrtop⟩)
       (eLpNorm_restrict_sub_le mu S F G)
     rw [ENNReal.toReal_add (lpWindowNorm_ne_top mu S G) hrestrtop] at hmono
-    show (eLpNorm (F : alpha → E) 2 (mu.restrict S)).toReal -
+    change (eLpNorm (F : alpha → E) 2 (mu.restrict S)).toReal -
       (eLpNorm (G : alpha → E) 2 (mu.restrict S)).toReal ≤ _
     linarith
   have h2 : lpWindowNorm mu S G - lpWindowNorm mu S F ≤
@@ -163,7 +163,7 @@ private theorem lipschitzWith_lpWindowNorm (mu : Measure alpha) (S : Set alpha) 
     have hmono := ENNReal.toReal_mono
       (ENNReal.add_ne_top.mpr ⟨lpWindowNorm_ne_top mu S F, hrestrtop⟩) hbase
     rw [ENNReal.toReal_add (lpWindowNorm_ne_top mu S F) hrestrtop] at hmono
-    show (eLpNorm (G : alpha → E) 2 (mu.restrict S)).toReal -
+    change (eLpNorm (G : alpha → E) 2 (mu.restrict S)).toReal -
       (eLpNorm (F : alpha → E) 2 (mu.restrict S)).toReal ≤ _
     linarith
   have hfin : (eLpNorm ((F : alpha → E) - (G : alpha → E)) 2 (mu.restrict S)).toReal ≤
@@ -339,7 +339,7 @@ theorem mesoWindowFourthEnergy_le_ratio_mul_originCubeFourthEnergy'
         ∫ x in openCubeSet (originCube d K), vecNormSq (u x) ^ 2 ∂volume := by
     unfold originCubeFourthEnergy volumeAverage
     field_simp
-  show (volume (openCubeAtScale (triadicCubeShift R) ell)).toReal⁻¹ *
+  change (volume (openCubeAtScale (triadicCubeShift R) ell)).toReal⁻¹ *
       ∫ x in openCubeAtScale (triadicCubeShift R) ell,
         vecNormSq (u x) ^ 2 ∂volume ≤ _
   calc (volume (openCubeAtScale (triadicCubeShift R) ell)).toReal⁻¹ *

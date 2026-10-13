@@ -130,7 +130,7 @@ not a rescaling of the coefficient field, so the whole file is free of
 ## Inputs
 
 * `e.J.coarse.grained`: CoarseGraining's
-  `Ch04.RestrictionLawCarrier.integral_restrictionResponseJObservableCubeSet_eq_quadratic_annealedBlockMatrix`,
+`integral_restrictionResponseJObservableCubeSet_eq_quadratic_annealedBlockMatrix`,
   whose integrability side condition is discharged here (not assumed) from
   `Provider.Annealed.coefficientCutoffLaw_integrable_coarseFullBlockMatrixAtCube`.
 * `e.annealed.khom.zero`:
@@ -156,8 +156,10 @@ not a rescaling of the coefficient field, so the whole file is free of
 * `coefficientCutoffLaw_annealedResponseJAtScale_eq_scalar`
 * `coefficientCutoffLaw_annealedResponseJAtScale_sub_eq`
 * `coefficientCutoffLaw_annealedSigmaStarInvScalarAtScale_antitone`
-* `coefficientCutoffLaw_annealedSigmaStarInvScalarAtScale_sub_mul_vecNormSq_le_two_mul_annealedResponseJAtScale_sub`
-* `coefficientCutoffLaw_annealedSigmaStarInvScalarAtScale_sub_le_two_mul_inv_vecNormSq_mul_annealedResponseJAtScale_sub`
+*
+`annealedInverseScalar_scaledDefect_le_responseDefect`
+*
+`annealedInverseScalar_defect_le_responseDefect`
 * `coefficientCutoffLaw_annealedResponseJAtScale_nonneg`
 * `coefficientCutoffLaw_annealedResponseJAtScale_antitone`
 * `coefficientCutoffLaw_annealedResponseJAtScale_le_of_moment_bound`
@@ -203,7 +205,7 @@ theorem coefficientCutoffLaw_annealedSigmaStarInvAtScale_eq_smul_one
   obtain ⟨c, hc⟩ :=
     Annealed.coefficientCutoffLaw_isScalarMatrix_annealedSigmaStarInvAtScale M L n
   have hscalar : annealedSigmaStarInvScalarAtScale M L n = c := by
-    show Ch04.annealedSigmaStarInvAtScale (Cutoff.coefficientCutoffLaw M L) n 0 0 = c
+    change Ch04.annealedSigmaStarInvAtScale (Cutoff.coefficientCutoffLaw M L) n 0 0 = c
     rw [hc]
     simp
   rw [hscalar, hc]
@@ -257,7 +259,7 @@ theorem coefficientCutoffLaw_annealedResponseJAtScale_eq_annealedDiagonalBlocks
         (cubeSet (originCube d n))).upperLeft =
         Ch04.annealedBAtScale (Cutoff.coefficientCutoffLaw M L) n := rfl
   rw [hmixed, vecDot_matVecMul_zero, hlowerRight, hupperLeft] at hquad
-  show ∫ a, Ch04.restrictionResponseJObservableCubeSet (originCube d n) p q a
+  change ∫ a, Ch04.restrictionResponseJObservableCubeSet (originCube d n) p q a
       ∂(Cutoff.coefficientCutoffLaw M L) = _
   rw [hquad]
   ring
@@ -316,7 +318,7 @@ scales `n <= m` and every load `(p, q)`,
 
 This is the load-general form of the printed display: no rescaling of the load
 directions is needed, because the annealed coarse-grained identity is exact. -/
-theorem coefficientCutoffLaw_annealedSigmaStarInvScalarAtScale_sub_mul_vecNormSq_le_two_mul_annealedResponseJAtScale_sub
+theorem annealedInverseScalar_scaledDefect_le_responseDefect
     (M : ABKModel d) (L : ℤ) {n m : ℤ} (hnm : n ≤ m) (p q : Vec d) :
     (annealedSigmaStarInvScalarAtScale M L n - annealedSigmaStarInvScalarAtScale M L m) *
         vecNormSq q ≤
@@ -334,7 +336,7 @@ defect obeys
     <= 2 |q|^{-2} E[J(cu_n, p, q; a_L) - J(cu_m, p, q; a_L)]`
 
 for every integer pair of cube scales `n <= m`. -/
-theorem coefficientCutoffLaw_annealedSigmaStarInvScalarAtScale_sub_le_two_mul_inv_vecNormSq_mul_annealedResponseJAtScale_sub
+theorem annealedInverseScalar_defect_le_responseDefect
     (M : ABKModel d) (L : ℤ) {n m : ℤ} (hnm : n ≤ m) (p : Vec d) {q : Vec d}
     (hq : 0 < vecNormSq q) :
     0 ≤ annealedSigmaStarInvScalarAtScale M L n - annealedSigmaStarInvScalarAtScale M L m ∧
@@ -345,7 +347,7 @@ theorem coefficientCutoffLaw_annealedSigmaStarInvScalarAtScale_sub_le_two_mul_in
   refine ⟨by linarith [coefficientCutoffLaw_annealedSigmaStarInvScalarAtScale_antitone M L hnm],
     ?_⟩
   have hmul :=
-    coefficientCutoffLaw_annealedSigmaStarInvScalarAtScale_sub_mul_vecNormSq_le_two_mul_annealedResponseJAtScale_sub
+    annealedInverseScalar_scaledDefect_le_responseDefect
       M L hnm p q
   have hne : vecNormSq q ≠ 0 := ne_of_gt hq
   rw [← sub_nonneg]
@@ -472,7 +474,7 @@ private theorem coefficientCutoffLaw_annealedResponseJAtScale_eq_integral_cutoff
     ((Cutoff.coefficientCutoffLaw_lawCarrier M
         L).aemeasurable_restrictionResponseJObservableCubeSet
       (originCube d n) p q).aestronglyMeasurable
-  show ∫ a, Ch04.restrictionResponseJObservableCubeSet (originCube d n) p q a
+  change ∫ a, Ch04.restrictionResponseJObservableCubeSet (originCube d n) p q a
       ∂(Cutoff.coefficientCutoffLaw M L) = _
   rw [Cutoff.coefficientCutoffLaw_eq_map] at hmeas ⊢
   rw [integral_map (Cutoff.measurable_coefficientCutoff M.nu L).aemeasurable hmeas]
@@ -580,7 +582,7 @@ theorem coefficientCutoffLaw_sq_abs_annealedSigmaStarInvScalarAtScale_sub_le
     rw [hqnorm]
     exact hsigma
   obtain ⟨hnonneg, hgauge⟩ :=
-    coefficientCutoffLaw_annealedSigmaStarInvScalarAtScale_sub_le_two_mul_inv_vecNormSq_mul_annealedResponseJAtScale_sub
+    annealedInverseScalar_defect_le_responseDefect
       M L hnm p hqpos
   rw [hqnorm] at hgauge
   have hinv : (0 : ℝ) < ((Annealed.sigmaBar M L : ℝ))⁻¹ := inv_pos.2 hsigma

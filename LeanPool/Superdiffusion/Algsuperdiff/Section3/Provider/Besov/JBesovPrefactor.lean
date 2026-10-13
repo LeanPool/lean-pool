@@ -117,7 +117,7 @@ theorem caccioppoliScalarFactors_diag_le_jBesovEnvelope {C s : ℝ} (hC : 0 ≤ 
   have hsfactor_eq :
       Real.rpow s (-(2 * s / (1 - 2 * s))) =
         Real.exp (2 / (1 - 2 * s) * Real.negMulLog s) := by
-    show s ^ (-(2 * s / (1 - 2 * s))) = _
+    change s ^ (-(2 * s / (1 - 2 * s))) = _
     rw [Real.rpow_def_of_pos hs]
     simp only [Real.negMulLog]
     congr 1

@@ -51,7 +51,7 @@ theorem integral_vecDot_split_coords {W : Set (Vec d)} (F G : Vec d → Vec d)
     (hG j).integrable_mul (hF j)
   rw [← integral_finsetSum _ fun j _ => hint j]
   refine integral_congr_ae (Eventually.of_forall fun y => ?_)
-  show vecDot (F y) (G y) = ∑ j : Fin d, G y j * F y j
+  change vecDot (F y) (G y) = ∑ j : Fin d, G y j * F y j
   rw [vecDot]
   exact Finset.sum_congr rfl fun j _ => mul_comm _ _
 

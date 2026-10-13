@@ -38,7 +38,7 @@ with a scalar multiplicand `v ∈ L²` and a vector multiplier `ξ ∈ W^{1,∞}
 CoarseGraining already proves the per-cube Hölder step with **no** regularity
 hypothesis (`cubeLpNorm_two_cubeFluctuationVec_scalar_smul_le_note_terms`), and
 it proves the multiscale assembly for a `C^∞` multiplier
-(`cubeBesovPositiveVectorPartialSeminormTwo_scalar_smul_le_cutoff_terms_of_contDiff_component_bound`).
+(the smooth-multiplier cutoff estimate for the positive Besov partial seminorm).
 The sensitivity multiplier `∇ · h` is only `W^{1,∞}`, so the smoothness
 hypothesis is unusable downstream.  This file redoes the assembly with the
 multiplier regularity spelled as the *convex-domain* form of `W^{1,∞}`: a

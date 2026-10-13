@@ -45,15 +45,29 @@ the manuscript.  This module
 
 | leg | content | route |
 |---|---|---|
-| `hCdef` | `0 <= Cdef` at `Cdef = step5CrossDefectConst d` | `Step5DefectGauge.step5CrossDefectConst_nonneg` |
-| `hgate` | `step5CrossDefectConst d * cgamma^15 <= 2` | `step5CrossDefectConst_mul_gamma_pow_fifteen_le_two_of_regime`: the regime's own `C c⋆^{-1} <= E` and `cgamma <= E^{-5}`, at the *d*-dependent threshold `step5GateConst d = 1 + d^3`, exactly the enlargement device of `Closure.ClosureFinalArithmetic` |
-| `hgauge0` | the gauge is nonnegative | discharged inline by `Closure.StepProducers`; also available here as `step5Gauge_nonneg` |
-| `hmemGauge` | the per-cube gauge is `L^4` in the sample | `memLp_four_step5Gauge`: `LocalizationOscillationDisplay.integrable_shellDerivNormSum_rpow_four` on `M.P`, transported to `(cutoffSampleLaw M)` along the measurable embedding `Provider.Stream.measurableEmbedding_cutoffSample_val` and `Cutoff.map_cutoffSampleLaw_val` |
-| `hdefect` | the per-cube step at the closure's grid | `step5CrossDefect_le_step5Gauge`: `Step5DefectGauge.step5CrossDefect_le_meshOscillationCell` at `R.scale = K - j = nmesh <= n` |
+| `hCdef` | `0 <= Cdef` at `Cdef = step5CrossDefectConst d` |
+`Step5DefectGauge.step5CrossDefectConst_nonneg` |
+| `hgate` | `step5CrossDefectConst d * cgamma^15 <= 2` |
+`step5CrossDefectConst_mul_gamma_pow_fifteen_le_two_of_regime`: the regime's own `C c⋆^{-1} <= E`
+and `cgamma <= E^{-5}`, at the *d*-dependent threshold `step5GateConst d = 1 + d^3`, exactly the
+enlargement device of `Closure.ClosureFinalArithmetic` |
+| `hgauge0` | the gauge is nonnegative | discharged inline by `Closure.StepProducers`; also
+available here as `step5Gauge_nonneg` |
+| `hmemGauge` | the per-cube gauge is `L^4` in the sample | `memLp_four_step5Gauge`:
+`LocalizationOscillationDisplay.integrable_shellDerivNormSum_rpow_four` on `M.P`, transported to
+`(cutoffSampleLaw M)` along the measurable embedding
+`Provider.Stream.measurableEmbedding_cutoffSample_val` and `Cutoff.map_cutoffSampleLaw_val` |
+| `hdefect` | the per-cube step at the closure's grid | `step5CrossDefect_le_step5Gauge`:
+`Step5DefectGauge.step5CrossDefect_le_meshOscillationCell` at `R.scale = K - j = nmesh <= n` |
 | `hD`, `hN` | `e.def.w` at the two closure families | `Closure.ClosureAssembly` |
-| `hmemD`, `hintD`, `hsampN`, `hsampG` | the four Dirichlet spatial/sample routes | `Closure.StepProducers` |
-| `hprod`, `hgrad0` | the Hoelder split on the grid | `descendantsAverage_integral_vecNormSq_matVecMul_le`: `|A_R v_R|^2 <= ||A_R||^2 |v_R|^2`, Cauchy--Schwarz in the sample at the second moment, then Cauchy--Schwarz on the finite grid |
-| `hsampX`, `hsampS` | the two remaining per-cube sample integrabilities | `integrable_vecDot_matVecMul_of_memLp_four`, `integrable_vecNormSq_matVecMul_of_memLp_four`, from the same two fourth-moment legs plus measurability |
+| `hmemD`, `hintD`, `hsampN`, `hsampG` | the four Dirichlet spatial/sample routes |
+`Closure.StepProducers` |
+| `hprod`, `hgrad0` | the Hoelder split on the grid |
+`descendantsAverage_integral_vecNormSq_matVecMul_le`: `|A_R v_R|^2 <= ||A_R||^2 |v_R|^2`,
+Cauchy--Schwarz in the sample at the second moment, then Cauchy--Schwarz on the finite grid |
+| `hsampX`, `hsampS` | the two remaining per-cube sample integrabilities |
+`integrable_vecDot_matVecMul_of_memLp_four`, `integrable_vecNormSq_matVecMul_of_memLp_four`, from
+the same two fourth-moment legs plus measurability |
 
 The gate is the same device `Closure.ClosureFinalArithmetic` already uses for
 the two regime facts: `step5CrossDefectConst d` is dimensional and absolute, `E
@@ -81,7 +95,7 @@ exactly the legs that this lane did **not** reach:
   gradient averages;
 * `hmemOsc` --- the `L^4` sample membership of the mesh oscillation cell;
 * `hosc` --- `e.lower.bound.oscillations`, whose re-sited shape is exactly
-  `Step5DefectGauge.exists_gamma0_freshShellDirichlet_step5MeshOscillationResited_le_gamma_pow_fifteen`
+`exists_gamma0_freshShellDirichlet_step5MeshOscillationResited_le_gamma_pow_fifteen`
   and whose own binders (`hmem8`, the octic grid envelope `E`, the recurrence
   gates) are not discharged here;
 * `hshell`, `hgradM` --- the two moment inputs `e.km.kn.Lp` and

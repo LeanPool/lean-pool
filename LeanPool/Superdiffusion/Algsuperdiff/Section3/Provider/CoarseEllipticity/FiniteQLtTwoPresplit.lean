@@ -184,6 +184,144 @@ private theorem rpow_add_le_two_mul_add_rpow {a b q : ℝ}
       mul_le_mul_of_nonneg_right hcoeff
         (add_nonneg (Real.rpow_nonneg ha _) (Real.rpow_nonneg hb _))
 
+private theorem deterministicProfileRoot_le_geometricBound :
+    ∀ {d : ℕ} (M : ABKModel d) (r : { r : ℝ // (1 : ℝ) ≤ r })
+      {s Cprof : ℝ},
+      (0 : ℝ) < s →
+        (0 : ℝ) < (2 : ℝ) * s - M.gamma →
+          (0 : ℝ) ≤ Cprof →
+            let w : ℕ → ℝ := fun (n : ℕ) => Book.Ch02.geometricWeight s (↑r : ℝ) n;
+            let D : ℕ → ℝ := finiteQGeometricProfile Cprof M.gamma;
+            (0 : ℝ) < (↑r : ℝ) →
+              (1 : ℝ) ≤ (↑r : ℝ) →
+                (∑' (n : ℕ), w n * D n ^ ((↑r : ℝ) / (2 : ℝ))) ^ ((2 : ℝ) / (↑r : ℝ)) ≤
+                  (4 : ℝ) * Cprof * (s / ((2 : ℝ) * s - M.gamma)) ^ ((2 : ℝ) / (↑r : ℝ)) := by
+  intro _ M r s Cprof hs hgap hCprof w D hr0 hr1
+  have hx : 0 ≤ s / (2 * s - M.gamma) :=
+    div_nonneg hs.le hgap.le
+  calc
+    (∑' n : ℕ, w n * D n ^ ((r : ℝ) / 2)) ^ (2 / (r : ℝ)) ≤
+        Cprof * (2 * s / (2 * s - M.gamma)) ^ (2 / (r : ℝ)) := by
+      simpa [w, D] using finiteQGeometricProfile_aggregate_le
+        hCprof M.shellPrefix.gamma_pos.le hs hr0 hgap
+    _ = Cprof * (2 * (s / (2 * s - M.gamma))) ^ (2 / (r : ℝ)) := by
+      ring_nf
+    _ ≤ Cprof * (4 * (s / (2 * s - M.gamma)) ^ (2 / (r : ℝ))) :=
+      mul_le_mul_of_nonneg_left (rpow_two_mul_div_le hx hr1) hCprof
+    _ = 4 * Cprof * (s / (2 * s - M.gamma)) ^ (2 / (r : ℝ)) := by
+      ring_nf
+
+private theorem weightedProfileRoot_le_twoTerms :
+    ∀ {d : ℕ} (M : ABKModel d) (r : { r : ℝ // (1 : ℝ) ≤ r }) {s Cprof : ℝ}
+      {V : ℕ → Cutoff.CutoffSample d → ℝ} {a : ℕ → ℝ},
+      let w : ℕ → ℝ := fun (n : ℕ) => Book.Ch02.geometricWeight s (↑r : ℝ) n;
+      let D : ℕ → ℝ := finiteQGeometricProfile Cprof M.gamma;
+      let R : ℕ → Cutoff.CutoffSample d → ℝ := fun (n : ℕ) (omega : Cutoff.CutoffSample d) => a n * V n omega;
+      (1 : ℝ) ≤ (↑r : ℝ) →
+        (↑r : ℝ) ≤ (2 : ℝ) →
+          (0 : ℝ) ≤ (2 : ℝ) / (↑r : ℝ) →
+            (∀ (n : ℕ), (0 : ℝ) ≤ w n) →
+              (∀ (n : ℕ), (0 : ℝ) ≤ D n) →
+                (∀ (n : ℕ) (omega : Cutoff.CutoffSample d), (0 : ℝ) ≤ R n omega) →
+                  ∀ (omega : Cutoff.CutoffSample d),
+                    ∑' (n : ℕ), w n * (D n + R n omega) ^ ((↑r : ℝ) / (2 : ℝ)) ≤
+                        ∑' (n : ℕ), w n * D n ^ ((↑r : ℝ) / (2 : ℝ)) + ∑' (n : ℕ), w n * R n omega ^ ((↑r : ℝ) / (2 : ℝ)) →
+                      (0 : ℝ) ≤ ∑' (n : ℕ), w n * D n ^ ((↑r : ℝ) / (2 : ℝ)) →
+                        (0 : ℝ) ≤ ∑' (n : ℕ), w n * R n omega ^ ((↑r : ℝ) / (2 : ℝ)) →
+                          (∑' (n : ℕ), w n * (D n + R n omega) ^ ((↑r : ℝ) / (2 : ℝ))) ^ ((2 : ℝ) / (↑r : ℝ)) ≤
+                            (2 : ℝ) *
+                              ((∑' (n : ℕ), w n * D n ^ ((↑r : ℝ) / (2 : ℝ))) ^ ((2 : ℝ) / (↑r : ℝ)) +
+                                (∑' (n : ℕ), w n * R n omega ^ ((↑r : ℝ) / (2 : ℝ))) ^ ((2 : ℝ) / (↑r : ℝ))) := by
+  intro _ _ r _ _ _ _ w D R hr1 hr2 hroot0 hw hD hR omega hpresplit hDsum0 hRsum0
+  calc
+    (∑' n : ℕ, w n * (D n + R n omega) ^ ((r : ℝ) / 2)) ^
+          (2 / (r : ℝ)) ≤
+        ((∑' n : ℕ, w n * D n ^ ((r : ℝ) / 2)) +
+          ∑' n : ℕ, w n * R n omega ^ ((r : ℝ) / 2)) ^
+            (2 / (r : ℝ)) :=
+      Real.rpow_le_rpow
+        (tsum_nonneg fun n => mul_nonneg (hw n)
+          (Real.rpow_nonneg (add_nonneg (hD n) (hR n omega)) _))
+        hpresplit hroot0
+    _ ≤ 2 * ((∑' n : ℕ, w n * D n ^ ((r : ℝ) / 2)) ^
+            (2 / (r : ℝ)) +
+          (∑' n : ℕ, w n * R n omega ^ ((r : ℝ) / 2)) ^
+            (2 / (r : ℝ))) :=
+      rpow_add_le_two_mul_add_rpow hDsum0 hRsum0 hr1 hr2
+
+private theorem summable_weighted_sublinearPower :
+    ∀ {d : ℕ} (r : { r : ℝ // (1 : ℝ) ≤ r }) {s : ℝ}
+      {V : ℕ → Cutoff.CutoffSample d → ℝ} {a : ℕ → ℝ},
+      (∀ (n : ℕ) (omega : Cutoff.CutoffSample d), (0 : ℝ) ≤ V n omega) →
+        (∀ (n : ℕ), (0 : ℝ) < a n) →
+          (Summable fun (n : ℕ) => Book.Ch02.geometricWeight s (↑r : ℝ) n * a n ^ ((↑r : ℝ) / (2 : ℝ))) →
+            let w : ℕ → ℝ := fun (n : ℕ) => Book.Ch02.geometricWeight s (↑r : ℝ) n;
+            (0 : ℝ) ≤ (↑r : ℝ) / (2 : ℝ) →
+              (↑r : ℝ) / (2 : ℝ) ≤ (1 : ℝ) →
+                (∀ (n : ℕ), (0 : ℝ) ≤ w n) →
+                  (∀ (omega : Cutoff.CutoffSample d),
+                      Summable fun (n : ℕ) => w n * a n ^ ((↑r : ℝ) / (2 : ℝ)) * V n omega) →
+                    ∀ (omega : Cutoff.CutoffSample d),
+                      Summable fun (n : ℕ) => w n * a n ^ ((↑r : ℝ) / (2 : ℝ)) * V n omega ^ ((↑r : ℝ) / (2 : ℝ)) := by
+  intro _ r _ V a hVnonneg ha hasum w ht0 ht1 hw hVlinsum' omega
+  refine Summable.of_nonneg_of_le
+    (fun n => mul_nonneg
+      (mul_nonneg (hw n) (Real.rpow_nonneg (ha n).le _))
+      (Real.rpow_nonneg (hVnonneg n omega) _))
+    (fun n => ?_) (hasum.add (hVlinsum' omega))
+  have hpower : V n omega ^ ((r : ℝ) / 2) ≤ 1 + V n omega := by
+    by_cases hVone : V n omega ≤ 1
+    · calc
+        V n omega ^ ((r : ℝ) / 2) ≤ (1 : ℝ) ^ ((r : ℝ) / 2) :=
+          Real.rpow_le_rpow (hVnonneg n omega) hVone ht0
+        _ = 1 := Real.one_rpow _
+        _ ≤ 1 + V n omega := by linarith [hVnonneg n omega]
+    · have hle : V n omega ^ ((r : ℝ) / 2) ≤ V n omega :=
+        Real.rpow_le_self_of_one_le (le_of_not_ge hVone) ht1
+      linarith
+  calc
+    w n * a n ^ ((r : ℝ) / 2) * V n omega ^ ((r : ℝ) / 2) ≤
+        w n * a n ^ ((r : ℝ) / 2) * (1 + V n omega) :=
+      mul_le_mul_of_nonneg_left hpower
+        (mul_nonneg (hw n) (Real.rpow_nonneg (ha n).le _))
+    _ = w n * a n ^ ((r : ℝ) / 2) +
+        w n * a n ^ ((r : ℝ) / 2) * V n omega := by ring_nf
+
+private theorem normalized_weightedPowerSeries_eq :
+    ∀ {d : ℕ} (r : { r : ℝ // (1 : ℝ) ≤ r }) {s : ℝ}
+      {V : ℕ → Cutoff.CutoffSample d → ℝ} {a : ℕ → ℝ},
+      (∀ (n : ℕ) (omega : Cutoff.CutoffSample d), (0 : ℝ) ≤ V n omega) →
+        (∀ (n : ℕ), (0 : ℝ) < a n) →
+          let w : ℕ → ℝ := fun (n : ℕ) => Book.Ch02.geometricWeight s (↑r : ℝ) n;
+          let R : ℕ → Cutoff.CutoffSample d → ℝ := fun (n : ℕ) (omega : Cutoff.CutoffSample d) => a n * V n omega;
+          let S : ℝ := ∑' (n : ℕ), w n * a n ^ ((↑r : ℝ) / (2 : ℝ));
+          let c : ℕ → ℝ := fun (n : ℕ) => S⁻¹ * (w n * a n ^ ((↑r : ℝ) / (2 : ℝ)));
+          (0 : ℝ) < S →
+            ∀ (omega : Cutoff.CutoffSample d),
+              ∑' (n : ℕ), w n * R n omega ^ ((↑r : ℝ) / (2 : ℝ)) = S * ∑' (n : ℕ), c n * V n omega ^ ((↑r : ℝ) / (2 : ℝ)) := by
+  intro _ r _ V a hVnonneg ha w R S c hSpos omega
+  calc
+    (∑' n : ℕ, w n * R n omega ^ ((r : ℝ) / 2)) =
+        ∑' n : ℕ,
+          w n * a n ^ ((r : ℝ) / 2) * V n omega ^ ((r : ℝ) / 2) := by
+      refine tsum_congr fun n => ?_
+      change w n * (a n * V n omega) ^ ((r : ℝ) / 2) = _
+      rw [Real.mul_rpow (ha n).le (hVnonneg n omega)]
+      ring_nf
+    _ = S * ∑' n : ℕ, c n * V n omega ^ ((r : ℝ) / 2) := by
+      rw [← tsum_mul_left]
+      refine tsum_congr fun n => ?_
+      dsimp [c]
+      calc
+        w n * a n ^ ((r : ℝ) / 2) * V n omega ^ ((r : ℝ) / 2) =
+            1 * (w n * a n ^ ((r : ℝ) / 2)) *
+              V n omega ^ ((r : ℝ) / 2) := by ring_nf
+        _ = (S * S⁻¹) * (w n * a n ^ ((r : ℝ) / 2)) *
+              V n omega ^ ((r : ℝ) / 2) := by
+          rw [mul_inv_cancel₀ hSpos.ne']
+        _ = S * (S⁻¹ * (w n * a n ^ ((r : ℝ) / 2)) *
+              V n omega ^ ((r : ℝ) / 2)) := by ring_nf
+
 /-- A normalized per-depth finite-`q < 2` split produces the lower
 coarse-ellipticity two-slot payload.  The amplitude profile stays inside the
 exact `ell^(q/2)` aggregate; only its normalized probability weights are
@@ -273,35 +411,9 @@ theorem twoTermFamilySplit_cutoffLowerEllipticityInv_of_finiteQLtTwoPresplit
   have hcsum : Summable c := by
     simpa [c] using hasum.mul_left S⁻¹
   have hctsum : (∑' n : ℕ, c n) = 1 := by
-    change (∑' n : ℕ, S⁻¹ * (w n * a n ^ ((r : ℝ) / 2))) = 1
-    rw [tsum_mul_left]
-    change S⁻¹ * S = 1
-    exact inv_mul_cancel₀ hSpos.ne'
-  have hVqweighted : ∀ omega, Summable fun n : ℕ =>
-      w n * a n ^ ((r : ℝ) / 2) * V n omega ^ ((r : ℝ) / 2) := by
-    intro omega
-    refine Summable.of_nonneg_of_le
-      (fun n => mul_nonneg
-        (mul_nonneg (hw n) (Real.rpow_nonneg (ha n).le _))
-        (Real.rpow_nonneg (hVnonneg n omega) _))
-      (fun n => ?_) (hasum.add (hVlinsum' omega))
-    have hpower : V n omega ^ ((r : ℝ) / 2) ≤ 1 + V n omega := by
-      by_cases hVone : V n omega ≤ 1
-      · calc
-          V n omega ^ ((r : ℝ) / 2) ≤ (1 : ℝ) ^ ((r : ℝ) / 2) :=
-            Real.rpow_le_rpow (hVnonneg n omega) hVone ht0
-          _ = 1 := Real.one_rpow _
-          _ ≤ 1 + V n omega := by linarith [hVnonneg n omega]
-      · have hle : V n omega ^ ((r : ℝ) / 2) ≤ V n omega :=
-          Real.rpow_le_self_of_one_le (le_of_not_ge hVone) ht1
-        linarith
-    calc
-      w n * a n ^ ((r : ℝ) / 2) * V n omega ^ ((r : ℝ) / 2) ≤
-          w n * a n ^ ((r : ℝ) / 2) * (1 + V n omega) :=
-        mul_le_mul_of_nonneg_left hpower
-          (mul_nonneg (hw n) (Real.rpow_nonneg (ha n).le _))
-      _ = w n * a n ^ ((r : ℝ) / 2) +
-          w n * a n ^ ((r : ℝ) / 2) * V n omega := by ring_nf
+    simpa only [c, tsum_mul_left] using inv_mul_cancel₀ hSpos.ne'
+  have hVqweighted := @summable_weighted_sublinearPower (d) (r) (s) (V) (a) (hVnonneg) (ha)
+    (hasum) (ht0) (ht1) (hw) (hVlinsum')
   have hRqsum : ∀ omega, Summable fun n : ℕ =>
       w n * R n omega ^ ((r : ℝ) / 2) := by
     intro omega
@@ -317,31 +429,7 @@ theorem twoTermFamilySplit_cutoffLowerEllipticityInv_of_finiteQLtTwoPresplit
   have hVlinnorm : ∀ omega, Summable fun n : ℕ => c n * V n omega := by
     intro omega
     simpa [c, mul_assoc] using (hVlinsum' omega).mul_left S⁻¹
-  have hRseries : ∀ omega,
-      (∑' n : ℕ, w n * R n omega ^ ((r : ℝ) / 2)) =
-        S * ∑' n : ℕ, c n * V n omega ^ ((r : ℝ) / 2) := by
-    intro omega
-    calc
-      (∑' n : ℕ, w n * R n omega ^ ((r : ℝ) / 2)) =
-          ∑' n : ℕ,
-            w n * a n ^ ((r : ℝ) / 2) * V n omega ^ ((r : ℝ) / 2) := by
-        refine tsum_congr fun n => ?_
-        change w n * (a n * V n omega) ^ ((r : ℝ) / 2) = _
-        rw [Real.mul_rpow (ha n).le (hVnonneg n omega)]
-        ring_nf
-      _ = S * ∑' n : ℕ, c n * V n omega ^ ((r : ℝ) / 2) := by
-        rw [← tsum_mul_left]
-        refine tsum_congr fun n => ?_
-        dsimp [c]
-        calc
-          w n * a n ^ ((r : ℝ) / 2) * V n omega ^ ((r : ℝ) / 2) =
-              1 * (w n * a n ^ ((r : ℝ) / 2)) *
-                V n omega ^ ((r : ℝ) / 2) := by ring_nf
-          _ = (S * S⁻¹) * (w n * a n ^ ((r : ℝ) / 2)) *
-                V n omega ^ ((r : ℝ) / 2) := by
-            rw [mul_inv_cancel₀ hSpos.ne']
-          _ = S * (S⁻¹ * (w n * a n ^ ((r : ℝ) / 2)) *
-                V n omega ^ ((r : ℝ) / 2)) := by ring_nf
+  have hRseries := @normalized_weightedPowerSeries_eq (d) (r) (s) (V) (a) (hVnonneg) (ha) (hSpos)
   have hRroot : ∀ omega,
       (∑' n : ℕ, w n * R n omega ^ ((r : ℝ) / 2)) ^ (2 / (r : ℝ)) ≤
         S ^ (2 / (r : ℝ)) * ∑' n : ℕ, c n * V n omega := by
@@ -355,22 +443,8 @@ theorem twoTermFamilySplit_cutoffLowerEllipticityInv_of_finiteQLtTwoPresplit
     rw [hRseries omega, Real.mul_rpow hSpos.le hqsum0]
     exact mul_le_mul_of_nonneg_left hjensen
       (Real.rpow_nonneg hSpos.le _)
-  have hDroot :
-      (∑' n : ℕ, w n * D n ^ ((r : ℝ) / 2)) ^ (2 / (r : ℝ)) ≤
-        4 * Cprof * (s / (2 * s - M.gamma)) ^ (2 / (r : ℝ)) := by
-    have hx : 0 ≤ s / (2 * s - M.gamma) :=
-      div_nonneg hs.le hgap.le
-    calc
-      (∑' n : ℕ, w n * D n ^ ((r : ℝ) / 2)) ^ (2 / (r : ℝ)) ≤
-          Cprof * (2 * s / (2 * s - M.gamma)) ^ (2 / (r : ℝ)) := by
-        simpa [w, D] using finiteQGeometricProfile_aggregate_le
-          hCprof M.shellPrefix.gamma_pos.le hs hr0 hgap
-      _ = Cprof * (2 * (s / (2 * s - M.gamma))) ^ (2 / (r : ℝ)) := by
-        ring_nf
-      _ ≤ Cprof * (4 * (s / (2 * s - M.gamma)) ^ (2 / (r : ℝ))) :=
-        mul_le_mul_of_nonneg_left (rpow_two_mul_div_le hx hr1) hCprof
-      _ = 4 * Cprof * (s / (2 * s - M.gamma)) ^ (2 / (r : ℝ)) := by
-        ring_nf
+  have hDroot := @deterministicProfileRoot_le_geometricBound (d) (M) (r) (s) (Cprof) (hs) (hgap)
+    (hCprof) (hr0) (hr1)
   have htotalSum : ∀ omega, Summable fun n : ℕ =>
       w n * (D n + R n omega) ^ ((r : ℝ) / 2) := by
     intro omega
@@ -444,28 +518,8 @@ theorem twoTermFamilySplit_cutoffLowerEllipticityInv_of_finiteQLtTwoPresplit
       tsum_nonneg fun n => mul_nonneg (hw n) (Real.rpow_nonneg (hD n) _)
     have hRsum0 : 0 ≤ ∑' n : ℕ, w n * R n omega ^ ((r : ℝ) / 2) :=
       tsum_nonneg fun n => mul_nonneg (hw n) (Real.rpow_nonneg (hR n omega) _)
-    have hcombined :
-        (∑' n : ℕ, w n * (D n + R n omega) ^ ((r : ℝ) / 2)) ^
-              (2 / (r : ℝ)) ≤
-          2 * ((∑' n : ℕ, w n * D n ^ ((r : ℝ) / 2)) ^
-                (2 / (r : ℝ)) +
-              (∑' n : ℕ, w n * R n omega ^ ((r : ℝ) / 2)) ^
-                (2 / (r : ℝ))) := by
-      calc
-        (∑' n : ℕ, w n * (D n + R n omega) ^ ((r : ℝ) / 2)) ^
-              (2 / (r : ℝ)) ≤
-            ((∑' n : ℕ, w n * D n ^ ((r : ℝ) / 2)) +
-              ∑' n : ℕ, w n * R n omega ^ ((r : ℝ) / 2)) ^
-                (2 / (r : ℝ)) :=
-          Real.rpow_le_rpow
-            (tsum_nonneg fun n => mul_nonneg (hw n)
-              (Real.rpow_nonneg (add_nonneg (hD n) (hR n omega)) _))
-            hpresplit hroot0
-        _ ≤ 2 * ((∑' n : ℕ, w n * D n ^ ((r : ℝ) / 2)) ^
-                (2 / (r : ℝ)) +
-              (∑' n : ℕ, w n * R n omega ^ ((r : ℝ) / 2)) ^
-                (2 / (r : ℝ))) :=
-          rpow_add_le_two_mul_add_rpow hDsum0 hRsum0 hr1 hr2
+    have hcombined := @weightedProfileRoot_le_twoTerms (d) (M) (r) (s) (Cprof) (V) (a) (hr1) (hr2)
+      (hroot0) (hw) (hD) (hR) (omega) (hpresplit) (hDsum0) (hRsum0)
     rw [cutoffLowerEllipticityInv_mul_eq_rpow M m L hs rfl hr0 hscaling omega]
     change
       (∑' n : ℕ, w n * Z L omega n ^ ((r : ℝ) / 2)) ^
@@ -496,8 +550,7 @@ theorem twoTermFamilySplit_cutoffLowerEllipticityInv_of_finiteQLtTwoPresplit
       hVlinnorm).const_mul (2 * S ^ (2 / (r : ℝ)))
   · have honesum : Summable fun n : ℕ => c n * (1 : ℝ) := by
       simpa using hcsum
-    have honetsum : (∑' n : ℕ, c n * (1 : ℝ)) = 1 := by
-      simpa using hctsum
+    have honetsum : (∑' n : ℕ, c n * (1 : ℝ)) = 1 := by simpa using hctsum
     have hsumO : IsBigOWith (Cutoff.cutoffSampleLaw M).toMeasure
         (gammaSigma sigmaTail) (fun omega => ∑' n : ℕ, c n * V n omega)
         (gammaTriangleConst sigmaTail) := by

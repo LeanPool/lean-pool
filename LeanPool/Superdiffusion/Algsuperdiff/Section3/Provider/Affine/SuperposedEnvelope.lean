@@ -318,7 +318,7 @@ theorem vecNormSq_globalCompetitorCellSlope_sub_le_diam [NeZero d] {m : ℤ} {hn
   have hbase := vecNormSq_kuhnSlope_competitorVertexData_sub_le_of_forall_touching
     (I := C) (Q := Q) (p := p) hD0 hact hUQ
   have hscale : cubeScaleFactor U.supportCube = componentInterpolationScale m hn C := by
-    show (3 : ℝ) ^ U.supportCube.scale =
+    change (3 : ℝ) ^ U.supportCube.scale =
       (3 : ℝ) ^ simplexScale m hn (componentWindowLayer m hn C)
     rw [supportCube_scale_eq_of_mem_rootCoarseMesh hsm hU]
   rw [hslope, ← hscale]
@@ -451,7 +451,7 @@ theorem vecNormSq_globalCompetitorCellSlope_sub_le_layerEnvelope [NeZero d]
     hC hD0 hdiam
   -- the interpolation scale, in the `3^{m−c}` form the scale core consumes
   have hrho : componentInterpolationScale m hn C = (3 : ℝ) ^ (m - (c : ℤ)) := by
-    show (3 : ℝ) ^ simplexScale m hn (componentWindowLayer m hn C) = _
+    change (3 : ℝ) ^ simplexScale m hn (componentWindowLayer m hn C) = _
     rw [simplexScale, hc]
     congr 1
     push_cast

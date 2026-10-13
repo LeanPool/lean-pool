@@ -116,7 +116,7 @@ Only `L²` control of `h` and `Dh` is used at this stage. -/
 theorem integral_euclideanGradient_dot_matVecMul_grad_eq_neg
     {U : Set (Vec d)} (hU : IsOpenBoundedConvexDomain U) (hUne : U.Nonempty)
     {h : Vec d → Mat d} {Dh : Fin d → Vec d → Mat d}
-    (hskew : ∀ᵐ x ∂ volumeMeasureOn U, symmPart (h x) = 0)
+    (hskew : ∀ᵐ x ∂volumeMeasureOn U, symmPart (h x) = 0)
     (hmem2 : ∀ i j, MemScalarL2 U fun x => h x i j)
     (hDmem2 : ∀ k i j, MemScalarL2 U fun x => Dh k x i j)
     (hweak : ∀ k i j,
@@ -178,7 +178,7 @@ theorem integral_euclideanGradient_dot_matVecMul_grad_eq_neg
       (volumeMeasureOn U) := by
     refine (htotal_int.sub hB_int).congr
       (Filter.Eventually.of_forall fun x => ?_)
-    show vecDot (skewTestField h Dh φ x) (w.grad x) -
+    change vecDot (skewTestField h Dh φ x) (w.grad x) -
         φ x * vecDot (matWeakDiv Dh x) (w.grad x) =
       vecDot (euclideanGradient φ x) (matVecMul (h x) (w.grad x))
     rw [hpt x]
@@ -210,7 +210,7 @@ source display `e.sensitivity.basic.split`; the response combination
 theorem integral_grad_dot_matVecMul_grad_eq_neg_of_hasWeakDeriv
     {U : Set (Vec d)} (hU : IsOpenBoundedConvexDomain U) (hUne : U.Nonempty)
     {h : Vec d → Mat d} {Dh : Fin d → Vec d → Mat d}
-    (hskew : ∀ᵐ x ∂ volumeMeasureOn U, symmPart (h x) = 0)
+    (hskew : ∀ᵐ x ∂volumeMeasureOn U, symmPart (h x) = 0)
     (hmem : ∀ i j, MemLp (fun x => h x i j) ∞ (volumeMeasureOn U))
     (hDmem : ∀ k i j, MemLp (fun x => Dh k x i j) ∞ (volumeMeasureOn U))
     (hweak : ∀ k i j,
@@ -320,7 +320,7 @@ theorem integral_grad_dot_matVecMul_grad_eq_neg_of_hasWeakDeriv
       intro n
       rw [← integral_finsetSum Finset.univ fun i _ => hgrad_int n i]
       refine integral_congr_ae (Filter.Eventually.of_forall fun x => ?_)
-      show (∑ i, matVecMul (h x) (w.grad x) i *
+      change (∑ i, matVecMul (h x) (w.grad x) i *
           euclideanCoordDeriv i (u.approx n) x) =
         vecDot (euclideanGradient (u.approx n) x) (matVecMul (h x) (w.grad x))
       unfold vecDot euclideanGradient
@@ -334,7 +334,7 @@ theorem integral_grad_dot_matVecMul_grad_eq_neg_of_hasWeakDeriv
             ∂MeasureTheory.volume := by
       rw [← integral_finsetSum Finset.univ fun i _ => hgradU_int i]
       refine integral_congr_ae (Filter.Eventually.of_forall fun x => ?_)
-      show (∑ i, matVecMul (h x) (w.grad x) i * u.toH1Function.grad x i) =
+      change (∑ i, matVecMul (h x) (w.grad x) i * u.toH1Function.grad x i) =
         vecDot (u.toH1Function.grad x) (matVecMul (h x) (w.grad x))
       unfold vecDot
       exact Finset.sum_congr rfl fun i _ => mul_comm _ _

@@ -164,9 +164,9 @@ theorem cubeSetAtHarmonicApprox_eq (y : Vec d) (n : ℤ) (mu : PositiveShift) (g
   have hdata : Set.EqOn (fun z ↦ gc z + (-((mu : ℝ) - lam)) * pc z)
       (fun z ↦ res z + lam * pc z) (cubeSetAt y n) := by
     intro z _
-    show gc z + (-((mu : ℝ) - lam)) * pc z = res z + lam * pc z
+    change gc z + (-((mu : ℝ) - lam)) * pc z = res z + lam * pc z
     rw [hresdef]
-    show gc z + (-((mu : ℝ) - lam)) * pc z = (gc z - (mu : ℝ) * pc z) + lam * pc z
+    change gc z + (-((mu : ℝ) - lam)) * pc z = (gc z - (mu : ℝ) * pc z) + lam * pc z
     ring
   have hA := A.partC0Resolvent_add_const_mul hV ⟨lam, hlam⟩ (-((mu : ℝ) - lam))
     hgcmeas hpcmeas hgcD hpcD hleft hleftb x

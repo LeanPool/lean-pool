@@ -127,7 +127,7 @@ theorem exists_contDiff_eq_one_nhds {s : Set (Vec d)} {x : Vec d} (hs : s ∈ �
   refine ⟨fun y => oneNear (f y), {y | 3 / 4 < f y}, contDiff_oneNear.comp hf, ?_,
     htsupp.trans hfs, isOpen_lt continuous_const hf.continuous, ?_, ?_⟩
   · exact IsCompact.of_isClosed_subset hfc isClosed_closure htsupp
-  · show (3 : ℝ) / 4 < f x
+  · change (3 : ℝ) / 4 < f x
     rw [hfx]
     norm_num
   · intro y hy

@@ -266,6 +266,142 @@ private theorem badFamilyPotentialIncrement_integrable
   simpa only [vecNormSq, badFamilyPotentialApproximation] using!
     integrableOn_vecDot_of_memVectorL2 (hN.1.sub hNs.1) (hN.1.sub hNs.1)
 
+private theorem badFamilyPotentialApproximation_layer_estimate
+    [NeZero d] {M : ABKModel d} {m : ℤ} {E b : ℝ} {k₀ : ℕ}
+    {omega : Cutoff.CutoffSample d} (hb0 : 0 < b) (hb : b ≤ 1 / 8)
+    (hk₀ : 3 ≤ k₀) (hne : (hsepSet M m E b omega).Nonempty)
+    (N : ℕ) (p : Vec d) :
+    let hn := whitneyScale M m E b k₀ omega
+    let e : KuhnCell d → ℝ := fun T =>
+      vecNormSq (badFamilyPotentialApproximationCell M m E b k₀ omega N p T -
+        badFamilyPotentialApproximationCell M m E b k₀ omega (N + 1) p T)
+    let A : ℝ := 6 * (d : ℝ) * (2 * superposedGradConst d) ^ 2 *
+      vecNormSq p * (3 : ℝ) ^ (2 * b *
+        ((hsep M m E b omega : ℝ) + (k₀ : ℝ) + 1))
+    let r : ℝ := (3 : ℝ) ^ (-(1 / 2 : ℝ))
+    let g : ℕ → ℝ := fun k => if N ≤ k then A * r ^ k else 0
+    ∀ k : ℕ,
+      ∑ Q ∈ whitneyLayer (d := d) m hn k,
+        ∑ T ∈ whitneySimplexCells m hn k Q, cellWeight m T * e T ≤ g k := by
+  intro hn e A r g
+  have hmono : Monotone hn :=
+    whitneyScaleSeq_mono hb0.le (by linarith) _ _
+  have hstep : ∀ k, hn k ≤ hn (k + 1) + 1 := step_of_monotone hmono
+  have hcellWeight0 : ∀ T : KuhnCell d, 0 ≤ cellWeight m T :=
+    fun T => cellWeight_nonneg m T
+  have hA0 : 0 ≤ A := by
+    dsimp [A]
+    exact mul_nonneg
+      (mul_nonneg
+        (mul_nonneg
+          (mul_nonneg (by norm_num) (Nat.cast_nonneg d))
+          (sq_nonneg _))
+        (vecNormSq_nonneg p))
+      (Real.rpow_nonneg (by norm_num) _)
+  have hr0 : 0 ≤ r := Real.rpow_nonneg (by norm_num) _
+  have hg0 : ∀ k, 0 ≤ g k := by
+    intro k
+    dsimp [g]
+    split_ifs
+    · exact mul_nonneg hA0 (pow_nonneg hr0 _)
+    · exact le_rfl
+  intro k
+  by_cases hk : k < N
+  · have heq0 : ∀ Q ∈ whitneyLayer (d := d) m hn k,
+        ∀ T ∈ whitneySimplexCells m hn k Q, e T = 0 := by
+      intro Q hQ T hT
+      dsimp [e]
+      have heq :
+          badFamilyPotentialApproximationCell M m E b k₀ omega N p T =
+            badFamilyPotentialApproximationCell M m E b k₀ omega (N + 1) p T :=
+        badFamilyPotentialApproximationCell_eq_of_layer_lt
+          hb0 hb hk₀ hne hk (by omega) p hQ hT
+      rw [heq, sub_self]
+      simp [vecNormSq, vecDot]
+    calc
+      ∑ Q ∈ whitneyLayer (d := d) m hn k,
+          ∑ T ∈ whitneySimplexCells m hn k Q, cellWeight m T * e T = 0 := by
+        apply Finset.sum_eq_zero
+        intro Q hQ
+        apply Finset.sum_eq_zero
+        intro T hT
+        rw [heq0 Q hQ T hT, mul_zero]
+      _ ≤ g k := hg0 k
+  · have hkN : N ≤ k := Nat.le_of_not_gt hk
+    let X : ℝ := (2 * superposedGradConst d) ^ 2 *
+      (3 : ℝ) ^ (2 * (b * ((k : ℝ) + (hn k : ℝ)))) * vecNormSq p
+    have hX0 : 0 ≤ X := by
+      dsimp [X]
+      exact mul_nonneg
+        (mul_nonneg (sq_nonneg _)
+          (Real.rpow_nonneg (by norm_num) _))
+        (vecNormSq_nonneg p)
+    have hcell : ∀ Q ∈ whitneyLayer (d := d) m hn k,
+        ∀ T ∈ whitneySimplexCells m hn k Q, e T ≤ X := by
+      intro Q hQ T hT
+      exact vecNormSq_badFamilyPotentialApproximationCell_sub_le_layerEnvelope
+        hb0 hb hk₀ hne N (N + 1) p hQ hT
+    have hsumCell : ∀ Q ∈ whitneyLayer (d := d) m hn k,
+        ∑ T ∈ whitneySimplexCells m hn k Q, cellWeight m T * e T ≤
+          cubeMassRatio (originCube d m) Q * X := by
+      intro Q hQ
+      calc
+        ∑ T ∈ whitneySimplexCells m hn k Q, cellWeight m T * e T ≤
+            ∑ T ∈ whitneySimplexCells m hn k Q, cellWeight m T * X :=
+          Finset.sum_le_sum fun T hT =>
+            mul_le_mul_of_nonneg_left (hcell Q hQ T hT) (hcellWeight0 T)
+        _ = (∑ T ∈ whitneySimplexCells m hn k Q, cellWeight m T) * X := by
+          rw [Finset.sum_mul]
+        _ = cubeMassRatio (originCube d m) Q * X := by
+          rw [sum_cellWeight_whitneySimplexCells_eq (hstep k) hQ]
+    have hmass :
+        ∑ Q ∈ whitneyLayer (d := d) m hn k,
+            cubeMassRatio (originCube d m) Q ≤
+          6 * (d : ℝ) * (3 : ℝ) ^ (-(k : ℝ)) :=
+      sum_cubeMassRatio_whitneyLayer_le m hn k
+    have hdecay := three_rpow_layerQuantity_half_decay
+      hb0 hb (hsep M m E b omega) k₀ k
+    have hquantity : ((k : ℝ) + (hn k : ℝ)) =
+        layerQuantity b (hsep M m E b omega) k₀ k := by
+      rfl
+    calc
+      ∑ Q ∈ whitneyLayer (d := d) m hn k,
+          ∑ T ∈ whitneySimplexCells m hn k Q, cellWeight m T * e T ≤
+          ∑ Q ∈ whitneyLayer (d := d) m hn k,
+            cubeMassRatio (originCube d m) Q * X :=
+        Finset.sum_le_sum hsumCell
+      _ = (∑ Q ∈ whitneyLayer (d := d) m hn k,
+            cubeMassRatio (originCube d m) Q) * X := by
+        rw [Finset.sum_mul]
+      _ ≤ (6 * (d : ℝ) * (3 : ℝ) ^ (-(k : ℝ))) * X :=
+        mul_le_mul_of_nonneg_right hmass hX0
+      _ ≤ A * r ^ k := by
+        let C : ℝ := 6 * (d : ℝ) * (2 * superposedGradConst d) ^ 2 *
+          vecNormSq p
+        have hC0 : 0 ≤ C := by
+          dsimp [C]
+          exact mul_nonneg
+            (mul_nonneg
+              (mul_nonneg (by norm_num) (Nat.cast_nonneg d))
+              (sq_nonneg _))
+            (vecNormSq_nonneg p)
+        calc
+          (6 * (d : ℝ) * (3 : ℝ) ^ (-(k : ℝ))) * X =
+              C * ((3 : ℝ) ^ (-(k : ℝ)) *
+                (3 : ℝ) ^ (2 * b *
+                  layerQuantity b (hsep M m E b omega) k₀ k)) := by
+            dsimp [X, C]
+            rw [hquantity]
+            ring_nf
+          _ ≤ C * ((3 : ℝ) ^ (2 * b *
+                ((hsep M m E b omega : ℝ) + (k₀ : ℝ) + 1)) *
+              ((3 : ℝ) ^ (-(1 / 2 : ℝ))) ^ k) :=
+            mul_le_mul_of_nonneg_left hdecay hC0
+          _ = A * r ^ k := by
+            dsimp [C, A, r]
+            ring_nf
+      _ = g k := by simp [g, hkN]
+
 /-- The squared finite-prefix increment, integrated over the root cube, has a
 geometrically decaying upper bound. -/
 theorem integral_vecNormSq_badFamilyPotentialApproximation_sub_succ_le
@@ -332,102 +468,7 @@ theorem integral_vecNormSq_badFamilyPotentialApproximation_sub_succ_le
   have hlayerReal : ∀ k : ℕ,
       ∑ Q ∈ whitneyLayer (d := d) m hn k,
           ∑ T ∈ whitneySimplexCells m hn k Q, cellWeight m T * e T ≤ g k := by
-    intro k
-    by_cases hk : k < N
-    · have heq0 : ∀ Q ∈ whitneyLayer (d := d) m hn k,
-          ∀ T ∈ whitneySimplexCells m hn k Q, e T = 0 := by
-        intro Q hQ T hT
-        dsimp [e]
-        have heq :
-            badFamilyPotentialApproximationCell M m E b k₀ omega N p T =
-              badFamilyPotentialApproximationCell M m E b k₀ omega (N + 1) p T :=
-          badFamilyPotentialApproximationCell_eq_of_layer_lt
-            hb0 hb hk₀ hne hk (by omega) p hQ hT
-        rw [heq, sub_self]
-        simp [vecNormSq, vecDot]
-      calc
-        ∑ Q ∈ whitneyLayer (d := d) m hn k,
-            ∑ T ∈ whitneySimplexCells m hn k Q, cellWeight m T * e T = 0 := by
-          apply Finset.sum_eq_zero
-          intro Q hQ
-          apply Finset.sum_eq_zero
-          intro T hT
-          rw [heq0 Q hQ T hT, mul_zero]
-        _ ≤ g k := hg0 k
-    · have hkN : N ≤ k := Nat.le_of_not_gt hk
-      let X : ℝ := (2 * superposedGradConst d) ^ 2 *
-        (3 : ℝ) ^ (2 * (b * ((k : ℝ) + (hn k : ℝ)))) * vecNormSq p
-      have hX0 : 0 ≤ X := by
-        dsimp [X]
-        exact mul_nonneg
-          (mul_nonneg (sq_nonneg _)
-            (Real.rpow_nonneg (by norm_num) _))
-          (vecNormSq_nonneg p)
-      have hcell : ∀ Q ∈ whitneyLayer (d := d) m hn k,
-          ∀ T ∈ whitneySimplexCells m hn k Q, e T ≤ X := by
-        intro Q hQ T hT
-        exact vecNormSq_badFamilyPotentialApproximationCell_sub_le_layerEnvelope
-          hb0 hb hk₀ hne N (N + 1) p hQ hT
-      have hsumCell : ∀ Q ∈ whitneyLayer (d := d) m hn k,
-          ∑ T ∈ whitneySimplexCells m hn k Q, cellWeight m T * e T ≤
-            cubeMassRatio (originCube d m) Q * X := by
-        intro Q hQ
-        calc
-          ∑ T ∈ whitneySimplexCells m hn k Q, cellWeight m T * e T ≤
-              ∑ T ∈ whitneySimplexCells m hn k Q, cellWeight m T * X :=
-            Finset.sum_le_sum fun T hT =>
-              mul_le_mul_of_nonneg_left (hcell Q hQ T hT) (hcellWeight0 T)
-          _ = (∑ T ∈ whitneySimplexCells m hn k Q, cellWeight m T) * X := by
-            rw [Finset.sum_mul]
-          _ = cubeMassRatio (originCube d m) Q * X := by
-            rw [sum_cellWeight_whitneySimplexCells_eq (hstep k) hQ]
-      have hmass :
-          ∑ Q ∈ whitneyLayer (d := d) m hn k,
-              cubeMassRatio (originCube d m) Q ≤
-            6 * (d : ℝ) * (3 : ℝ) ^ (-(k : ℝ)) :=
-        sum_cubeMassRatio_whitneyLayer_le m hn k
-      have hdecay := three_rpow_layerQuantity_half_decay
-        hb0 hb (hsep M m E b omega) k₀ k
-      have hquantity : ((k : ℝ) + (hn k : ℝ)) =
-          layerQuantity b (hsep M m E b omega) k₀ k := by
-        rfl
-      calc
-        ∑ Q ∈ whitneyLayer (d := d) m hn k,
-            ∑ T ∈ whitneySimplexCells m hn k Q, cellWeight m T * e T ≤
-            ∑ Q ∈ whitneyLayer (d := d) m hn k,
-              cubeMassRatio (originCube d m) Q * X :=
-          Finset.sum_le_sum hsumCell
-        _ = (∑ Q ∈ whitneyLayer (d := d) m hn k,
-              cubeMassRatio (originCube d m) Q) * X := by
-          rw [Finset.sum_mul]
-        _ ≤ (6 * (d : ℝ) * (3 : ℝ) ^ (-(k : ℝ))) * X :=
-          mul_le_mul_of_nonneg_right hmass hX0
-        _ ≤ A * r ^ k := by
-          let C : ℝ := 6 * (d : ℝ) * (2 * superposedGradConst d) ^ 2 *
-            vecNormSq p
-          have hC0 : 0 ≤ C := by
-            dsimp [C]
-            exact mul_nonneg
-              (mul_nonneg
-                (mul_nonneg (by norm_num) (Nat.cast_nonneg d))
-                (sq_nonneg _))
-              (vecNormSq_nonneg p)
-          calc
-            (6 * (d : ℝ) * (3 : ℝ) ^ (-(k : ℝ))) * X =
-                C * ((3 : ℝ) ^ (-(k : ℝ)) *
-                  (3 : ℝ) ^ (2 * b *
-                    layerQuantity b (hsep M m E b omega) k₀ k)) := by
-              dsimp [X, C]
-              rw [hquantity]
-              ring_nf
-            _ ≤ C * ((3 : ℝ) ^ (2 * b *
-                  ((hsep M m E b omega : ℝ) + (k₀ : ℝ) + 1)) *
-                ((3 : ℝ) ^ (-(1 / 2 : ℝ))) ^ k) :=
-              mul_le_mul_of_nonneg_left hdecay hC0
-            _ = A * r ^ k := by
-              dsimp [C, A, r]
-              ring_nf
-        _ = g k := by simp [g, hkN]
+    exact badFamilyPotentialApproximation_layer_estimate hb0 hb hk₀ hne N p
   have hlayer : ∀ k : ℕ,
       ∑ Q ∈ whitneyLayer (d := d) m hn k,
           ∑ T ∈ whitneySimplexCells m hn k Q, F T ≤ ENNReal.ofReal (g k) := by
@@ -518,13 +559,13 @@ theorem integral_vecNormSq_badFamilyPotentialApproximation_sub_succ_le
       (∑' T : ↑(simplexPartition (d := d) m hn), cellWeight m T.1 * e T.1) =
         (∑' T : ↑(simplexPartition (d := d) m hn), F T.1).toReal := by
     rw [ENNReal.tsum_toReal_eq]
-    apply tsum_congr
-    intro T
-    dsimp [F]
-    rw [ENNReal.toReal_ofReal]
-    exact mul_nonneg (hcellWeight0 T.1) (he0 T.1)
-    intro T
-    exact ENNReal.ofReal_ne_top
+    · apply tsum_congr
+      intro T
+      dsimp [F]
+      rw [ENNReal.toReal_ofReal]
+      exact mul_nonneg (hcellWeight0 T.1) (he0 T.1)
+    · intro T
+      exact ENNReal.ofReal_ne_top
   rw [hIntegralEq, htoReal]
   refine mul_le_mul_of_nonneg_left hweighted (cubeVolume_pos _).le |>.trans_eq ?_
   dsimp [A, r]

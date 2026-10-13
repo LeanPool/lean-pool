@@ -334,7 +334,7 @@ private theorem depthOneDiggingRoom_eq {d : ℕ} [NeZero d] (a : RegCoeffField d
       descendantsAverage (originCube d m) 1
           (fun R => Ch04.restrictionResponseJObservableCubeSet R p q a) -
         Ch04.restrictionResponseJObservableCubeSet (originCube d m) p q a := by
-    show descendantsAverage (originCube d m) (m - (m - 1)).toNat
+    change descendantsAverage (originCube d m) (m - (m - 1)).toNat
         (fun R => Ch04.restrictionResponseJObservableCubeSet R p q a) - _ = _
     rw [hone]
   have havg : descendantsAverage (originCube d m) 1
@@ -359,6 +359,107 @@ private theorem depthOneDiggingRoom_eq {d : ℕ} [NeZero d] (a : RegCoeffField d
   field_simp
 
 /-! ## The good-event branch of Step 1 -/
+
+private theorem goodEvent_comparatorDefect_squareBound :
+    ∀ (d : ℕ) [NeZero d] (C9 : ℝ),
+      (0 : ℝ) < C9 →
+        (1 : ℝ) ≤ (3 : ℝ) ^ d →
+          ∀ (a : RegCoeffField d) (ha : Ch04.AELocallyUniformlyEllipticField a) (m L : ℤ) (sigma : ℝ) (p q : Vec d) (C : ℝ),
+            C * (3 : ℝ) ^ (-(3 / 4 : ℝ) * (↑(m - L) : ℝ)) ≤ (1 / 4 : ℝ) →
+              C = (320 : ℝ) * C9 + (6 : ℝ) * (3 : ℝ) ^ d + (1 : ℝ) →
+                ∀ (lamv Jm : ℝ),
+                  Jm = Ch04.restrictionResponseJObservableCubeSet (originCube d m) p q a →
+                    ∀ (wL : ℝ),
+                      wL = (3 : ℝ) ^ (-((1 : ℝ) - (1 / 4 : ℝ)) * (↑(m - L) : ℝ)) →
+                        ∀ (Ev : ℝ),
+                          Ev = maximizerEnergyL2Norm a ha (originCube d m) p q →
+                            ∀ (T3 : ℝ),
+                              T3 = (2 : ℝ) * √(2 : ℝ) * (wL * √lamv⁻¹ * Ev) →
+                                (0 : ℝ) ≤ Jm →
+                                  (0 : ℝ) ≤ wL →
+                                    wL ≤ (1 : ℝ) →
+                                      sigma * lamv⁻¹ ≤ (2 : ℝ) →
+                                        √lamv⁻¹ ^ (2 : ℕ) = lamv⁻¹ →
+                                          √(2 : ℝ) ^ (2 : ℕ) = (2 : ℝ) →
+                                            (16 : ℝ) * C9 * (sigma * T3 ^ (2 : ℕ)) ≤ (1 / 2 : ℝ) * Jm := by
+  intro _ _ C9 hC9 hdimPow _ _ m L sigma _ _ C hcons hCdef lamv Jm hJm wL hwL Ev hEv T3 hT3 hJm0 hwL0 hwL1 hsiglam hsqlam hsq2
+  have hEsq : Ev ^ 2 = 2 * Jm := by
+    rw [hEv, hJm, sq_maximizerEnergyL2Norm,
+      maximizerEnergyL2NormSq_eq_two_mul_restrictionResponseJObservableCubeSet]
+  have hexp : sigma * T3 ^ 2 = 16 * wL ^ 2 * (sigma * lamv⁻¹) * Jm := by
+    rw [hT3, show (2 * Real.sqrt 2 * (wL * Real.sqrt lamv⁻¹ * Ev)) ^ 2 =
+      4 * Real.sqrt 2 ^ 2 * wL ^ 2 * Real.sqrt lamv⁻¹ ^ 2 * Ev ^ 2 by ring, hsq2, hsqlam,
+      hEsq]
+    ring
+  have hwLcons : C * wL ≤ 1 / 4 := by
+    rw [hwL, show (-(1 - 1 / 4 : ℝ)) * ((m - L : ℤ) : ℝ) =
+      (-(3 / 4 : ℝ)) * ((m - L : ℤ) : ℝ) by ring]
+    exact hcons
+  have h256 : 256 * C9 ≤ C := by
+    rw [hCdef]
+    linarith only [hC9, hdimPow]
+  have hC9wL : C9 * wL ≤ 1 / 1024 := by
+    linarith only [hwLcons,
+      mul_nonneg (by linarith only [h256] : (0 : ℝ) ≤ C - 256 * C9) hwL0]
+  have hwLsq : wL ^ 2 ≤ wL := by nlinarith only [hwL0, hwL1]
+  have hfac : (0 : ℝ) ≤ 256 * C9 * wL ^ 2 * Jm :=
+    mul_nonneg (mul_nonneg (by linarith only [hC9]) (sq_nonneg wL)) hJm0
+  have h1 : 256 * C9 * wL ^ 2 * (sigma * lamv⁻¹) * Jm ≤ 512 * C9 * wL ^ 2 * Jm :=
+    by linarith only [mul_nonneg (by linarith only [hsiglam] :
+      (0 : ℝ) ≤ 2 - sigma * lamv⁻¹) hfac]
+  have h2 : 512 * C9 * wL ^ 2 * Jm ≤ 512 * C9 * wL * Jm :=
+    by linarith only [mul_nonneg (mul_nonneg hC9.le (sub_nonneg.mpr hwLsq)) hJm0]
+  have hstep : 16 * C9 * (sigma * T3 ^ 2) ≤ 512 * (C9 * wL) * Jm := by
+    rw [hexp]
+    linarith only [h1, h2]
+  linarith only [hstep, mul_nonneg (sub_nonneg.mpr hC9wL) hJm0]
+
+private theorem centralChildResponse_secondQuadraticBound :
+    ∀ (d : ℕ) (a : RegCoeffField d)
+      (ha : Ch04.AELocallyUniformlyEllipticField a) (m L : ℤ) (p q : Vec d),
+      L ≤ m →
+        ∀ (Sv : ℝ),
+          Sv =
+              ∑ n ∈ Finset.Icc L m,
+                (3 : ℝ) ^ (-(↑(m - n) : ℝ)) *
+                  descendantsAverage (originCube d m) (m - n).toNat (coarseMatrixVariationSq a ha (originCube d m) p q) →
+            ∀ (Bser : ℝ),
+              Bser =
+                  ∑ n ∈ Finset.Icc L m,
+                    (3 : ℝ) ^ (-(↑(m - n) : ℝ)) *
+                      √(descendantsAverage (originCube d m) (m - n).toNat
+                          (coarseMatrixVariationSq a ha (originCube d m) p q)) →
+                (∀ (n : ℤ),
+                    (0 : ℝ) ≤
+                      descendantsAverage (originCube d m) (m - n).toNat
+                        (coarseMatrixVariationSq a ha (originCube d m) p q)) →
+                  Bser ^ (2 : ℕ) ≤ (3 / 2 : ℝ) * Sv := by
+  intro d a ha m L p q hLm _ hSv _ hBser hvarNonneg
+  rw [hBser, hSv]
+  refine sq_sum_le_of_split _ (fun n => (3 : ℝ) ^ (-(1 / 2 : ℝ) * ((m - n : ℤ) : ℝ)))
+    (fun n => (3 : ℝ) ^ (-(1 / 2 : ℝ) * ((m - n : ℤ) : ℝ)))
+    (fun n => descendantsAverage (originCube d m) (m - n).toNat
+      (coarseMatrixVariationSq a ha (originCube d m) p q))
+    (fun n _ => ?_) (fun n _ => Real.rpow_nonneg (by norm_num) _)
+    (fun n _ => Real.rpow_nonneg (by norm_num) _) (fun n _ => hvarNonneg n)
+    (by norm_num) ?_ ?_
+  · rw [← Real.rpow_add (by norm_num : (0 : ℝ) < 3)]
+    congr 1
+    ring
+  · refine le_trans (le_of_eq (Finset.sum_congr rfl fun n _ => ?_))
+      (sum_Icc_three_neg_le hLm)
+    rw [← Real.rpow_natCast ((3 : ℝ) ^ (-(1 / 2 : ℝ) * ((m - n : ℤ) : ℝ))) 2,
+      ← Real.rpow_mul (by norm_num : (0 : ℝ) ≤ 3)]
+    congr 1
+    push_cast
+    ring
+  · refine le_of_eq (Finset.sum_congr rfl fun n _ => ?_)
+    congr 1
+    rw [← Real.rpow_natCast ((3 : ℝ) ^ (-(1 / 2 : ℝ) * ((m - n : ℤ) : ℝ))) 2,
+      ← Real.rpow_mul (by norm_num : (0 : ℝ) ≤ 3)]
+    congr 1
+    push_cast
+    ring
 
 /-- **The good-event branch of Step 1 of `p.combine.under.S`**, sample by sample
 and on the actual coefficient field.
@@ -469,7 +570,8 @@ theorem exists_goodEvent_restrictionResponseJ_centralChild_le_preVarianceSplitDi
   have hNc0 : 0 ≤ Nc := vecNormSq_nonneg _
   have hJm0 : 0 ≤ Jm := Ch04.restrictionResponseJObservableCubeSet_nonneg _ p q a
   have hdefNonneg : ∀ n : ℤ, 0 ≤ WeakNormsMaximizer.responseDefectAverageAtScale m n p q a :=
-    fun n => WeakNormsMaximizer.responseDefectAverageAtScale_nonneg_of_aelocallyUniformlyEllipticField
+    fun n =>
+      WeakNormsMaximizer.responseDefectAverageAtScale_nonneg_of_aelocallyUniformlyEllipticField
       a ha m n p q
   have hvarNonneg : ∀ n : ℤ, 0 ≤ descendantsAverage (originCube d m) (m - n).toNat
       (coarseMatrixVariationSq a ha (originCube d m) p q) := fun n =>
@@ -536,32 +638,8 @@ theorem exists_goodEvent_restrictionResponseJ_centralChild_le_preVarianceSplitDi
       congr 1
       push_cast
       ring
-  have hBsq : Bser ^ 2 ≤ 3 / 2 * Sv := by
-    rw [hBser, hSv]
-    refine sq_sum_le_of_split _ (fun n => (3 : ℝ) ^ (-(1 / 2 : ℝ) * ((m - n : ℤ) : ℝ)))
-      (fun n => (3 : ℝ) ^ (-(1 / 2 : ℝ) * ((m - n : ℤ) : ℝ)))
-      (fun n => descendantsAverage (originCube d m) (m - n).toNat
-        (coarseMatrixVariationSq a ha (originCube d m) p q))
-      (fun n _ => ?_) (fun n _ => Real.rpow_nonneg (by norm_num) _)
-      (fun n _ => Real.rpow_nonneg (by norm_num) _) (fun n _ => hvarNonneg n)
-      (by norm_num) ?_ ?_
-    · rw [← Real.rpow_add (by norm_num : (0 : ℝ) < 3)]
-      congr 1
-      ring
-    · refine le_trans (le_of_eq (Finset.sum_congr rfl fun n _ => ?_))
-        (sum_Icc_three_neg_le hLm)
-      rw [← Real.rpow_natCast ((3 : ℝ) ^ (-(1 / 2 : ℝ) * ((m - n : ℤ) : ℝ))) 2,
-        ← Real.rpow_mul (by norm_num : (0 : ℝ) ≤ 3)]
-      congr 1
-      push_cast
-      ring
-    · refine le_of_eq (Finset.sum_congr rfl fun n _ => ?_)
-      congr 1
-      rw [← Real.rpow_natCast ((3 : ℝ) ^ (-(1 / 2 : ℝ) * ((m - n : ℤ) : ℝ))) 2,
-        ← Real.rpow_mul (by norm_num : (0 : ℝ) ≤ 3)]
-      congr 1
-      push_cast
-      ring
+  have hBsq := @centralChildResponse_secondQuadraticBound (d) (a) (ha) (m) (L) (p) (q) (hLm) (Sv)
+    (hSv) (Bser) (hBser) (hvarNonneg)
   -- the four squared amplitudes
   have hT1sq : sigma * T1 ^ 2 ≤ 20 * Sd := by
     have hexp : sigma * T1 ^ 2 = 4 * (sigma * lamv⁻¹) * Aser ^ 2 := by
@@ -581,37 +659,9 @@ theorem exists_goodEvent_restrictionResponseJ_centralChild_le_preVarianceSplitDi
   have hT4sq : sigma * T4 ^ 2 ≤ 16 * (sigma * Nc) := by
     rw [hT4, show (4 * Real.sqrt Nc) ^ 2 = 16 * Real.sqrt Nc ^ 2 by ring, hsqNc]
     exact le_of_eq (by ring)
-  have hT3sq : 16 * C9 * (sigma * T3 ^ 2) ≤ 1 / 2 * Jm := by
-    have hEsq : Ev ^ 2 = 2 * Jm := by
-      rw [hEv, hJm, sq_maximizerEnergyL2Norm,
-        maximizerEnergyL2NormSq_eq_two_mul_restrictionResponseJObservableCubeSet]
-    have hexp : sigma * T3 ^ 2 = 16 * wL ^ 2 * (sigma * lamv⁻¹) * Jm := by
-      rw [hT3, show (2 * Real.sqrt 2 * (wL * Real.sqrt lamv⁻¹ * Ev)) ^ 2 =
-        4 * Real.sqrt 2 ^ 2 * wL ^ 2 * Real.sqrt lamv⁻¹ ^ 2 * Ev ^ 2 by ring, hsq2, hsqlam,
-        hEsq]
-      ring
-    have hwLcons : C * wL ≤ 1 / 4 := by
-      rw [hwL, show (-(1 - 1 / 4 : ℝ)) * ((m - L : ℤ) : ℝ) =
-        (-(3 / 4 : ℝ)) * ((m - L : ℤ) : ℝ) by ring]
-      exact hcons
-    have h256 : 256 * C9 ≤ C := by
-      rw [hCdef]
-      linarith only [hC9, hdimPow]
-    have hC9wL : C9 * wL ≤ 1 / 1024 := by
-      linarith only [hwLcons,
-        mul_nonneg (by linarith only [h256] : (0 : ℝ) ≤ C - 256 * C9) hwL0]
-    have hwLsq : wL ^ 2 ≤ wL := by nlinarith only [hwL0, hwL1]
-    have hfac : (0 : ℝ) ≤ 256 * C9 * wL ^ 2 * Jm :=
-      mul_nonneg (mul_nonneg (by linarith only [hC9]) (sq_nonneg wL)) hJm0
-    have h1 : 256 * C9 * wL ^ 2 * (sigma * lamv⁻¹) * Jm ≤ 512 * C9 * wL ^ 2 * Jm :=
-      by linarith only [mul_nonneg (by linarith only [hsiglam] :
-        (0 : ℝ) ≤ 2 - sigma * lamv⁻¹) hfac]
-    have h2 : 512 * C9 * wL ^ 2 * Jm ≤ 512 * C9 * wL * Jm :=
-      by linarith only [mul_nonneg (mul_nonneg hC9.le (sub_nonneg.mpr hwLsq)) hJm0]
-    have hstep : 16 * C9 * (sigma * T3 ^ 2) ≤ 512 * (C9 * wL) * Jm := by
-      rw [hexp]
-      linarith only [h1, h2]
-    linarith only [hstep, mul_nonneg (sub_nonneg.mpr hC9wL) hJm0]
+  have hT3sq := @goodEvent_comparatorDefect_squareBound (d) (by infer_instance) (C9) (hC9)
+    (hdimPow) (a) (ha) (m) (L) (sigma) (p) (q) (C) (hcons) (hCdef) (lamv) (Jm) (hJm) (wL) (hwL)
+      (Ev) (hEv) (T3) (hT3) (hJm0) (hwL0) (hwL1) (hsiglam) (hsqlam) (hsq2)
   -- the digging room
   have hDefectSingle : WeakNormsMaximizer.responseDefectAverageAtScale m (m - 1) p q a ≤
       3 * Sd := by

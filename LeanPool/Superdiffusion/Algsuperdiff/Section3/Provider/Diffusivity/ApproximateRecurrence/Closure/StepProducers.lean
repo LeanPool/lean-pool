@@ -41,10 +41,17 @@ four are analytic side conditions of the display itself:
 
 | binder | content | route |
 |---|---|---|
-| `hmemN` | `grad w_N^{(K)}` is `L^2` of each descendant cube | `memLp_two_grad_normalizedCubeMeasure_descendant`: the `H^1` membership on `cu_K`, restricted along `memLp_normalizedCubeMeasure_of_mem_descendantsAtDepth` |
-| `hintN` | `|grad w_N^{(K)}|^2` is integrable on `cu_K` | `integrableOn_cubeSet_vecNormSq_grad`, the same membership |
-| `hsampR` | the per-cube average is sample integrable | continuity of `f |-> (grad w_N(f))_R` --- the set-integral functional `hilbertVectorL2CoordSetIntegralCLM` composed with `Closure.continuous_gradToHilbertVectorL2_closureNeumannFamily` --- dominated by the `hsampK` integrand through per-cube Jensen and the descendant volume ratio |
-| `hsampK` | `E[||grad w_N^{(K)}||^2_{L2(cu_K)}]` exists | `Corrector.CorrectorLimitNode.integrable_cubeAverage_neumann_energy` at the closure family |
+| `hmemN` | `grad w_N^{(K)}` is `L^2` of each descendant cube |
+`memLp_two_grad_normalizedCubeMeasure_descendant`: the `H^1` membership on `cu_K`, restricted along
+`memLp_normalizedCubeMeasure_of_mem_descendantsAtDepth` |
+| `hintN` | `|grad w_N^{(K)}|^2` is integrable on `cu_K` | `integrableOn_cubeSet_vecNormSq_grad`,
+the same membership |
+| `hsampR` | the per-cube average is sample integrable | continuity of `f |-> (grad w_N(f))_R` ---
+the set-integral functional `hilbertVectorL2CoordSetIntegralCLM` composed with
+`Closure.continuous_gradToHilbertVectorL2_closureNeumannFamily` --- dominated by the `hsampK`
+integrand through per-cube Jensen and the descendant volume ratio |
+| `hsampK` | `E[||grad w_N^{(K)}||^2_{L2(cu_K)}]` exists |
+`Corrector.CorrectorLimitNode.integrable_cubeAverage_neumann_energy` at the closure family |
 
 `closureStep4Input` is the resulting `Closure.ClosureStep4Input d`.  Its
 threshold is `C4 = 1`: the endpoint holds at **every** localization scale `K` and
@@ -175,7 +182,7 @@ theorem cubeAverage_le_of_mem_descendantsAtDepth {Q R : TriadicCube d} {j : ℕ}
   have hEq : (cubeVolume R)⁻¹ * ∫ x in cubeSet Q, f x =
       (cubeVolume Q / cubeVolume R) * ((cubeVolume Q)⁻¹ * ∫ x in cubeSet Q, f x) := by
     field_simp
-  show (cubeVolume R)⁻¹ * ∫ x in cubeSet R, f x ≤
+  change (cubeVolume R)⁻¹ * ∫ x in cubeSet R, f x ≤
     (cubeVolume Q / cubeVolume R) * ((cubeVolume Q)⁻¹ * ∫ x in cubeSet Q, f x)
   rw [← hEq]
   exact hstep
@@ -223,7 +230,7 @@ theorem setIntegral_cubeSet_grad_coord_eq_clm (Q : TriadicCube d)
       = ∫ x in cubeSet R, u.grad x i ∂volumeMeasureOn (openCubeSet Q) :=
     integral_congr_ae (ae_restrict_of_ae hcoord)
   rw [hstep]
-  show ∫ x, u.grad x i ∂((volume.restrict (openCubeSet Q)).restrict (cubeSet R)) = _
+  change ∫ x, u.grad x i ∂((volume.restrict (openCubeSet Q)).restrict (cubeSet R)) = _
   rw [Measure.restrict_restrict (measurableSet_cubeSet R),
     restrict_cubeSet_inter_openCubeSet hR]
 
@@ -246,7 +253,7 @@ theorem continuous_cubeAverageVec_closureNeumannFamily (c : ℝ) (e : Vec d) (K 
           (cubeSet R) (measurableSet_cubeSet R) i
           ((closureNeumannFamily c e K f).gradToHilbertVectorL2)) := by
     funext f
-    show (cubeVolume R)⁻¹ *
+    change (cubeVolume R)⁻¹ *
         ∫ x in cubeSet R, (closureNeumannFamily c e K f).toH1Function.grad x i ∂volume = _
     rw [← setIntegral_cubeSet_grad_coord_eq_clm (originCube d (K : ℤ)) hR i
       (closureNeumannFamily c e K f).toH1Function]
@@ -314,7 +321,7 @@ theorem continuous_vecNormSq_cubeAverageVec_closureNeumannFamily (c : ℝ) (e : 
     Continuous fun f : C(Vec d, Mat d) => vecNormSq (cubeAverageVec R
       (fun x => (closureNeumannFamily c e K f).toH1Function.grad x)) := by
   have hc := continuous_cubeAverageVec_closureNeumannFamily c e K hR
-  show Continuous fun f : C(Vec d, Mat d) => ∑ i : Fin d,
+  change Continuous fun f : C(Vec d, Mat d) => ∑ i : Fin d,
       cubeAverageVec R (fun x => (closureNeumannFamily c e K f).toH1Function.grad x) i *
         cubeAverageVec R (fun x => (closureNeumannFamily c e K f).toH1Function.grad x) i
   exact continuous_finsetSum _ fun i _ =>
@@ -445,7 +452,7 @@ theorem continuous_cubeAverageVec_closureDirichletFamily [NeZero d] (c : ℝ) (e
           (cubeSet R) (measurableSet_cubeSet R) i
           ((closureDirichletFamily c e K f).toH1Function.gradToHilbertVectorL2)) := by
     funext f
-    show (cubeVolume R)⁻¹ *
+    change (cubeVolume R)⁻¹ *
         ∫ x in cubeSet R, (closureDirichletFamily c e K f).toH1Function.grad x i ∂volume = _
     rw [← setIntegral_cubeSet_grad_coord_eq_clm (originCube d (K : ℤ)) hR i
       (closureDirichletFamily c e K f).toH1Function]
@@ -461,7 +468,7 @@ theorem continuous_vecNormSq_cubeAverageVec_closureDirichletFamily [NeZero d] (c
     Continuous fun f : C(Vec d, Mat d) => vecNormSq (cubeAverageVec R
       (fun x => (closureDirichletFamily c e K f).toH1Function.grad x)) := by
   have hc := continuous_cubeAverageVec_closureDirichletFamily c e K hR
-  show Continuous fun f : C(Vec d, Mat d) => ∑ i : Fin d,
+  change Continuous fun f : C(Vec d, Mat d) => ∑ i : Fin d,
       cubeAverageVec R (fun x => (closureDirichletFamily c e K f).toH1Function.grad x) i *
         cubeAverageVec R
           (fun x => (closureDirichletFamily c e K f).toH1Function.grad x) i
@@ -522,38 +529,45 @@ theorem step5GaugeEndpoint_closureFamilies_of_legs [NeZero d] (M : ABKModel d) (
     (hCdef : 0 ≤ Cdef) (hgate : Cdef * M.gamma ^ (15 : ℕ) ≤ 2)
     (hintP : ∀ omega : ShellSeq d, IntegrableOn
       (fun x => vecDot e (matVecMul (finiteShellIncrement omega n (n + (h : ℤ)) x)
-        ((alongIncrementPath n h (closureDirichletFamily ((Annealed.sigmaBar M n : ℝ))⁻¹ e K) omega).toH1Function.grad x)))
+        ((alongIncrementPath n h (closureDirichletFamily ((Annealed.sigmaBar M n : ℝ))⁻¹ e K)
+          omega).toH1Function.grad x)))
       (cubeSet (originCube d (K : ℤ))) volume)
     (hsampX : ∀ R ∈ descendantsAtDepth (originCube d (K : ℤ)) j,
       Integrable
           (fun omega : CutoffSample d =>
             vecDot e (matVecMul (freshShellCubeAverage R omega.val n (n + (h : ℤ)))
         (cubeAverageVec R
-          (fun x => (alongIncrementPath n h (closureDirichletFamily ((Annealed.sigmaBar M n : ℝ))⁻¹ e K) omega.val).toH1Function.grad x))))
+          (fun x => (alongIncrementPath n h (closureDirichletFamily ((Annealed.sigmaBar M n :
+            ℝ))⁻¹ e K) omega.val).toH1Function.grad x))))
           (cutoffSampleLaw M).toMeasure)
     (hsampS : ∀ R ∈ descendantsAtDepth (originCube d (K : ℤ)) j,
       Integrable
           (fun omega : CutoffSample d =>
             vecNormSq (matVecMul (freshShellCubeAverage R omega.val n (n + (h : ℤ)))
         (cubeAverageVec R
-          (fun x => (alongIncrementPath n h (closureDirichletFamily ((Annealed.sigmaBar M n : ℝ))⁻¹ e K) omega.val).toH1Function.grad x))))
+          (fun x => (alongIncrementPath n h (closureDirichletFamily ((Annealed.sigmaBar M n :
+            ℝ))⁻¹ e K) omega.val).toH1Function.grad x))))
           (cutoffSampleLaw M).toMeasure)
     (hsampDef : ∀ R ∈ descendantsAtDepth (originCube d (K : ℤ)) j,
       Integrable
           (fun omega : CutoffSample d =>
             step5CrossDefect R omega.val n (n + (h : ℤ)) e
-          (fun x => (alongIncrementPath n h (closureDirichletFamily ((Annealed.sigmaBar M n : ℝ))⁻¹ e K) omega.val).toH1Function.grad x))
+          (fun x => (alongIncrementPath n h (closureDirichletFamily ((Annealed.sigmaBar M n :
+            ℝ))⁻¹ e K) omega.val).toH1Function.grad x))
           (cutoffSampleLaw M).toMeasure)
     (hdefect : ∀ R ∈ descendantsAtDepth (originCube d (K : ℤ)) j, ∀ omega : CutoffSample d,
       step5CrossDefect R omega.val n (n + (h : ℤ)) e
-          (fun x => (alongIncrementPath n h (closureDirichletFamily ((Annealed.sigmaBar M n : ℝ))⁻¹ e K) omega.val).toH1Function.grad x) ≤ Cdef * ((meshOscillationCell nmesh
-        (fun x => (alongIncrementPath n h (closureDirichletFamily ((Annealed.sigmaBar M n : ℝ))⁻¹ e K) omega.val).toH1Function.grad x) R) * ((3 : ℝ) ^ ((nmesh : ℤ) : ℝ) *
+          (fun x => (alongIncrementPath n h (closureDirichletFamily ((Annealed.sigmaBar M n :
+            ℝ))⁻¹ e K) omega.val).toH1Function.grad x) ≤ Cdef * ((meshOscillationCell nmesh
+        (fun x => (alongIncrementPath n h (closureDirichletFamily ((Annealed.sigmaBar M n : ℝ))⁻¹
+          e K) omega.val).toH1Function.grad x) R) * ((3 : ℝ) ^ ((nmesh : ℤ) : ℝ) *
         shellDerivNormSum n (n + (h : ℤ)) (triadicCubeShift R) omega.val)))
     (hmemOsc : ∀ R ∈ descendantsAtDepth (originCube d (K : ℤ)) j,
       MemLp
           (fun omega : CutoffSample d =>
             meshOscillationCell nmesh
-        (fun x => (alongIncrementPath n h (closureDirichletFamily ((Annealed.sigmaBar M n : ℝ))⁻¹ e K) omega.val).toH1Function.grad x) R) 4
+        (fun x => (alongIncrementPath n h (closureDirichletFamily ((Annealed.sigmaBar M n : ℝ))⁻¹
+          e K) omega.val).toH1Function.grad x) R) 4
           (cutoffSampleLaw M).toMeasure)
     (hmemGauge : ∀ R ∈ descendantsAtDepth (originCube d (K : ℤ)) j,
       MemLp
@@ -561,9 +575,11 @@ theorem step5GaugeEndpoint_closureFamilies_of_legs [NeZero d] (M : ABKModel d) (
             (3 : ℝ) ^ ((nmesh : ℤ) : ℝ) *
         shellDerivNormSum n (n + (h : ℤ)) (triadicCubeShift R) omega.val) 4
           (cutoffSampleLaw M).toMeasure)
-    (hosc : (gridFourthMomentRoot (cutoffSampleLaw M).toMeasure (descendantsAtDepth (originCube d (K : ℤ)) j)
+    (hosc : (gridFourthMomentRoot (cutoffSampleLaw M).toMeasure (descendantsAtDepth (originCube d
+      (K : ℤ)) j)
       (fun R omega => meshOscillationCell nmesh
-        (fun x => (alongIncrementPath n h (closureDirichletFamily ((Annealed.sigmaBar M n : ℝ))⁻¹ e K) omega.val).toH1Function.grad x) R)) + ((Annealed.sigmaBar M n : ℝ))⁻¹ *
+        (fun x => (alongIncrementPath n h (closureDirichletFamily ((Annealed.sigmaBar M n : ℝ))⁻¹
+          e K) omega.val).toH1Function.grad x) R)) + ((Annealed.sigmaBar M n : ℝ))⁻¹ *
       gridFourthMomentRoot (cutoffSampleLaw M).toMeasure
         (descendantsAtDepth (originCube d (K : ℤ)) j)
         (fun (R : TriadicCube d) (omega : CutoffSample d) =>
@@ -575,7 +591,8 @@ theorem step5GaugeEndpoint_closureFamilies_of_legs [NeZero d] (M : ABKModel d) (
           (fun R => ∫ omega : CutoffSample d,
             vecNormSq (matVecMul (freshShellCubeAverage R omega.val n (n + (h : ℤ)))
         (cubeAverageVec R
-          (fun x => (alongIncrementPath n h (closureDirichletFamily ((Annealed.sigmaBar M n : ℝ))⁻¹ e K) omega.val).toH1Function.grad x)))
+          (fun x => (alongIncrementPath n h (closureDirichletFamily ((Annealed.sigmaBar M n :
+            ℝ))⁻¹ e K) omega.val).toH1Function.grad x)))
             ∂(cutoffSampleLaw M).toMeasure)
       ≤ shellMoment * gradMoment)
     (hshell : shellMoment ≤
@@ -583,7 +600,8 @@ theorem step5GaugeEndpoint_closureFamilies_of_legs [NeZero d] (M : ABKModel d) (
     (hgradM : gradMoment ≤
       C2 * (((Annealed.sigmaBar M n : ℝ)) ^ 2)⁻¹ * (h : ℝ) *
         (3 : ℝ) ^ (2 * M.gamma * ((n + (h : ℤ) : ℤ) : ℝ))) :
-    Step5GaugeEndpoint M n h K j e (C1 * C2) (closureDirichletFamily ((Annealed.sigmaBar M n : ℝ))⁻¹ e K) (closureNeumannFamily ((Annealed.sigmaBar M n : ℝ))⁻¹ 0 K) :=
+    Step5GaugeEndpoint M n h K j e (C1 * C2) (closureDirichletFamily ((Annealed.sigmaBar M n :
+      ℝ))⁻¹ e K) (closureNeumannFamily ((Annealed.sigmaBar M n : ℝ))⁻¹ 0 K) :=
   step5GaugeEndpoint_of_correctors_gauge M n h K j he nmesh
     (fun (R : TriadicCube d) (omega : CutoffSample d) =>
       (3 : ℝ) ^ ((nmesh : ℤ) : ℝ) *

@@ -152,7 +152,7 @@ def quadraticH1 (y : Vec d) (n : ℤ) (e : Vec d) : H1Function (cubeSetAt y n) :
 theorem affineH1_grad (y : Vec d) (n : ℤ) (e : Vec d) :
     (affineH1 y n e).grad = affineGradient e := by
   funext x i
-  show (fderiv ℝ (affineObservable e) x) (basisVec i) = affineGradient e x i
+  change (fderiv ℝ (affineObservable e) x) (basisVec i) = affineGradient e x i
   have hder : HasFDerivAt (affineObservable e) (slopeCLM (affineGradient e x)) x :=
     hasFDerivWithinAt_univ.1 (hasGradientOn_affineObservable Set.univ e x (Set.mem_univ x))
   rw [hder.fderiv, slopeCLM_apply, vecDot_basisVec_right]
@@ -160,7 +160,7 @@ theorem affineH1_grad (y : Vec d) (n : ℤ) (e : Vec d) :
 theorem quadraticH1_grad (y : Vec d) (n : ℤ) (e : Vec d) :
     (quadraticH1 y n e).grad = quadraticGradient e := by
   funext x i
-  show (fderiv ℝ (quadraticObservable e) x) (basisVec i) = quadraticGradient e x i
+  change (fderiv ℝ (quadraticObservable e) x) (basisVec i) = quadraticGradient e x i
   have hder : HasFDerivAt (quadraticObservable e) (slopeCLM (quadraticGradient e x)) x :=
     hasFDerivWithinAt_univ.1 (hasGradientOn_quadraticObservable Set.univ e x (Set.mem_univ x))
   rw [hder.fderiv, slopeCLM_apply, vecDot_basisVec_right]
@@ -257,7 +257,7 @@ theorem ae_abs_sub_quadraticObservable_le_stream (M : ABKModel d)
   have hgL2 : MemVectorL2 (cubeSetAt (0 : Vec d) m) (quadraticForcing sigmaBarM e) := by
     have hcont : Continuous (quadraticForcing sigmaBarM e) := by
       refine continuous_pi fun i => ?_
-      show Continuous fun x : Vec d => (-(2 * sigmaBarM) * vecDot e x) * e i
+      change Continuous fun x : Vec d => (-(2 * sigmaBarM) * vecDot e x) * e i
       exact ((continuous_const.mul (continuous_affineObservable e)).mul continuous_const)
     have hbd := isOpenBoundedConvexDomain_cubeSetAt (0 : Vec d) m
     refine MemLp.of_eval fun i => ?_

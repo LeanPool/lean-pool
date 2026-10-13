@@ -161,7 +161,7 @@ theorem localFluxDefect_smoothDualAverage_le [NeZero d] {m n : ℤ} (hnm : n < m
       Real.rpow_nonneg (by norm_num : (0 : ℝ) ≤ 3) _
     have hadd : s.1 * (n : ℝ) + -s.1 * (n : ℝ) = 0 := by ring
     have hprod : Real.rpow 3 (s.1 * (n : ℝ)) * Real.rpow 3 (-s.1 * (n : ℝ)) = 1 := by
-      show (3 : ℝ) ^ (s.1 * (n : ℝ)) * (3 : ℝ) ^ (-s.1 * (n : ℝ)) = 1
+      change (3 : ℝ) ^ (s.1 * (n : ℝ)) * (3 : ℝ) ^ (-s.1 * (n : ℝ)) = 1
       rw [← Real.rpow_add (by norm_num : (0 : ℝ) < 3), hadd, Real.rpow_zero]
     rw [← ENNReal.ofReal_mul h3, hprod, ENNReal.ofReal_one]
   have hfinal : Cd * ENNReal.ofReal (Real.rpow 3 (s.1 * (n : ℝ))) *

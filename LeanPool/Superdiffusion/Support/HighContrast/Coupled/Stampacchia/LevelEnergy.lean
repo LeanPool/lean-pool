@@ -284,7 +284,7 @@ theorem levelEnergy_identity {U : Set (Vec d)} (hU : IsOpenBoundedConvexDomain U
         = (fun x => max (w₁.toFun x - (m₀ + k)) 0 - max (w₂.toFun x - (m₀ + k)) 0) := by
       funext x
       rw [HCPolySupport.H1Function.neg_toFun]
-      show fk.toFun x + -gk.toFun x = _
+      change fk.toFun x + -gk.toFun x = _
       rw [congrFun hfk_tf x, congrFun hgk_tf x]; ring
     rw [heq]; exact hD4
   have hkey := hCWF fk (-gk) hsum
@@ -320,7 +320,7 @@ theorem levelEnergy_identity {U : Set (Vec d)} (hU : IsOpenBoundedConvexDomain U
     refine MeasureTheory.integral_congr_ae ?_
     filter_upwards [hgk_grad, MeasureTheory.ae_restrict_mem hUmeas] with x hgx hxU
     rw [HCPolySupport.H1Function.neg_grad]
-    show vecDot (-gk.grad x) (matVecMul (matTranspose (a x)) (vstar.grad x)) = _
+    change vecDot (-gk.grad x) (matVecMul (matTranspose (a x)) (vstar.grad x)) = _
     rw [hgx, hvsg x]
     by_cases hc : m₀ + k < w₂.toFun x
     · rw [Set.indicator_of_mem (show x ∈ {y | m₀ + k < w₂.toFun y} from hc),
@@ -335,7 +335,8 @@ theorem levelEnergy_identity {U : Set (Vec d)} (hU : IsOpenBoundedConvexDomain U
   have hT2split : (∫ x in U, vecDot ((-gk).grad x)
         (matVecMul (matTranspose (a x)) (vstar.grad x)) ∂volume)
       = (∫ x in A₂, vecDot (w₂.grad x) (matVecMul (symmPart (a x)) (w₂.grad x)) ∂volume)
-        - (1 / 2 : ℝ) * ∫ x in A₂, vecDot (w₂.grad x) (matVecMul (matTranspose (a x)) p) ∂volume := by
+        - (1 / 2 : ℝ) * ∫ x in A₂, vecDot (w₂.grad x) (matVecMul (matTranspose (a x)) p) ∂volume
+          := by
     rw [hT2, MeasureTheory.integral_sub iE2 (iATp.const_mul _),
       MeasureTheory.integral_const_mul]
   -- RHS integral as `∫_{A₁} q·∇w₁`
@@ -362,7 +363,8 @@ theorem levelEnergy_identity {U : Set (Vec d)} (hU : IsOpenBoundedConvexDomain U
       rw [vsubl, vecDot_smul_left, vecDot_comm (matVecMul (a x) p) (w₁.grad x)]
     simp only [hpt]
     rw [MeasureTheory.integral_sub iq (iAp.const_mul _), MeasureTheory.integral_const_mul]
-  have hxi2 : (∫ x in A₂, vecDot ((1 / 2 : ℝ) • matVecMul (matTranspose (a x)) p) (w₂.grad x) ∂volume)
+  have hxi2 : (∫ x in A₂, vecDot ((1 / 2 : ℝ) • matVecMul (matTranspose (a x)) p) (w₂.grad x)
+    ∂volume)
       = (1 / 2 : ℝ) * ∫ x in A₂, vecDot (w₂.grad x) (matVecMul (matTranspose (a x)) p) ∂volume := by
     have hpt : ∀ x, vecDot ((1 / 2 : ℝ) • matVecMul (matTranspose (a x)) p) (w₂.grad x)
         = (1 / 2 : ℝ) * vecDot (w₂.grad x) (matVecMul (matTranspose (a x)) p) := by
@@ -452,7 +454,8 @@ theorem levelEnergy_sq_bound {U : Set (Vec d)} (hU : IsOpenBoundedConvexDomain U
   have iK1 : MeasureTheory.IntegrableOn (fun x => vecDot (q - (1 / 2 : ℝ) • matVecMul (a x) p)
       (matVecMul ((symmPart (a x))⁻¹) (q - (1 / 2 : ℝ) • matVecMul (a x) p))) A₁ :=
     (integrableOn_vecDot_of_memVectorL2 hξ1L2 hsinv1).mono_set hA1U
-  have iK2 : MeasureTheory.IntegrableOn (fun x => vecDot ((1 / 2 : ℝ) • matVecMul (matTranspose (a x)) p)
+  have iK2 : MeasureTheory.IntegrableOn (fun x => vecDot ((1 / 2 : ℝ) • matVecMul (matTranspose (a
+    x)) p)
       (matVecMul ((symmPart (a x))⁻¹) ((1 / 2 : ℝ) • matVecMul (matTranspose (a x)) p))) A₂ :=
     (integrableOn_vecDot_of_memVectorL2 hξ2L2 hsinv2).mono_set hA2U
   set E1 : ℝ := ∫ x in A₁, vecDot (w₁.grad x) (matVecMul (symmPart (a x)) (w₁.grad x)) ∂volume
@@ -461,7 +464,8 @@ theorem levelEnergy_sq_bound {U : Set (Vec d)} (hU : IsOpenBoundedConvexDomain U
     with hE2_def
   set J1 : ℝ := ∫ x in A₁, vecDot (q - (1 / 2 : ℝ) • matVecMul (a x) p) (w₁.grad x) ∂volume
     with hJ1_def
-  set J2 : ℝ := ∫ x in A₂, vecDot ((1 / 2 : ℝ) • matVecMul (matTranspose (a x)) p) (w₂.grad x) ∂volume
+  set J2 : ℝ := ∫ x in A₂, vecDot ((1 / 2 : ℝ) • matVecMul (matTranspose (a x)) p) (w₂.grad x)
+    ∂volume
     with hJ2_def
   set K1 : ℝ := ∫ x in A₁, vecDot (q - (1 / 2 : ℝ) • matVecMul (a x) p)
     (matVecMul ((symmPart (a x))⁻¹) (q - (1 / 2 : ℝ) • matVecMul (a x) p)) ∂volume with hK1_def
@@ -533,7 +537,8 @@ theorem sumCoordNorm_le {U : Set (Vec d)}
   classical
   -- `∑ᵢ ‖1_A ∂ᵢw‖² ≤ ∫_A ∇w·s∇w`
   have key : ∀ (A : Set (Vec d)) (w : H1Function U), MeasurableSet A → A ⊆ U →
-      (∑ i : Fin d, ((eLpNorm (A.indicator (fun x => w.grad x i)) 2 (volumeMeasureOn U)).toReal) ^ 2)
+      (∑ i : Fin d, ((eLpNorm (A.indicator (fun x => w.grad x i)) 2 (volumeMeasureOn U)).toReal) ^
+        2)
         ≤ ∫ x in A, vecDot (w.grad x) (matVecMul (symmPart (a x)) (w.grad x)) ∂volume := by
     intro A w hAm hAU
     have hsq : ∀ i : Fin d,
@@ -546,7 +551,7 @@ theorem sumCoordNorm_le {U : Set (Vec d)}
         funext x
         by_cases h : x ∈ A <;>
           simp [Set.indicator_of_mem, Set.indicator_of_notMem, h]
-      show ∫ x, (A.indicator (fun y => w.grad y i) x) ^ 2 ∂(volumeMeasureOn U) = _
+      change ∫ x, (A.indicator (fun y => w.grad y i) x) ^ 2 ∂(volumeMeasureOn U) = _
       rw [hind]
       exact setIntegral_indicator_subset hAm hAU (fun x => (w.grad x i) ^ 2)
     have hsum : (∑ i : Fin d,
@@ -583,12 +588,14 @@ theorem sumCoordNorm_le {U : Set (Vec d)}
   have hSa0 : 0 ≤ Sa := Finset.sum_nonneg fun i _ => ENNReal.toReal_nonneg
   have hSb0 : 0 ≤ Sb := Finset.sum_nonneg fun i _ => ENNReal.toReal_nonneg
   have hSa2 : Sa ^ 2 ≤ (d : ℝ) *
-      (∑ i : Fin d, ((eLpNorm (A₁.indicator (fun x => w₁.grad x i)) 2 (volumeMeasureOn U)).toReal) ^ 2) := by
+      (∑ i : Fin d, ((eLpNorm (A₁.indicator (fun x => w₁.grad x i)) 2 (volumeMeasureOn U)).toReal)
+        ^ 2) := by
     have h := sq_sum_le_card_mul_sum_sq (s := (Finset.univ : Finset (Fin d)))
       (f := fun i => (eLpNorm (A₁.indicator (fun x => w₁.grad x i)) 2 (volumeMeasureOn U)).toReal)
     simpa [hSa_def, Finset.card_univ, Fintype.card_fin] using h
   have hSb2 : Sb ^ 2 ≤ (d : ℝ) *
-      (∑ i : Fin d, ((eLpNorm (A₂.indicator (fun x => w₂.grad x i)) 2 (volumeMeasureOn U)).toReal) ^ 2) := by
+      (∑ i : Fin d, ((eLpNorm (A₂.indicator (fun x => w₂.grad x i)) 2 (volumeMeasureOn U)).toReal)
+        ^ 2) := by
     have h := sq_sum_le_card_mul_sum_sq (s := (Finset.univ : Finset (Fin d)))
       (f := fun i => (eLpNorm (A₂.indicator (fun x => w₂.grad x i)) 2 (volumeMeasureOn U)).toReal)
     simpa [hSb_def, Finset.card_univ, Fintype.card_fin] using h
@@ -597,7 +604,8 @@ theorem sumCoordNorm_le {U : Set (Vec d)}
   have hcomb : (Sa + Sb) ^ 2 ≤ 4 * (d : ℝ) * M2 * ((volume A₁).toReal + (volume A₂).toReal) := by
     nlinarith [hSa2, hSb2, ha2E, hb2E, hEbound, sq_nonneg (Sa - Sb), hd0, hM2, hV,
       mul_le_mul_of_nonneg_left hEbound hd0]
-  have hstep : Sa + Sb ≤ Real.sqrt (4 * (d : ℝ) * M2 * ((volume A₁).toReal + (volume A₂).toReal)) := by
+  have hstep : Sa + Sb ≤ Real.sqrt (4 * (d : ℝ) * M2 * ((volume A₁).toReal + (volume A₂).toReal))
+    := by
     rw [show Sa + Sb = Real.sqrt ((Sa + Sb) ^ 2) from (Real.sqrt_sq (by linarith)).symm]
     exact Real.sqrt_le_sqrt hcomb
   refine le_trans hstep (le_of_eq ?_)
@@ -648,7 +656,8 @@ theorem coupled_levelEnergy {U : Set (Vec d)} (hU : IsOpenBoundedConvexDomain U)
   have hw1ae' : w₁.toFun =ᵐ[volume.restrict U] fun x => v.toFun x - (1 / 2 : ℝ) * vecDot p x := by
     refine hw1ae.trans (Filter.Eventually.of_forall (fun x => ?_))
     simp only [HCPolySupport.H1Function.sub_toFun, affineHalfOn_toFun]
-  have hw2ae' : w₂.toFun =ᵐ[volume.restrict U] fun x => -vstar.toFun x + (1 / 2 : ℝ) * vecDot p x := by
+  have hw2ae' : w₂.toFun =ᵐ[volume.restrict U] fun x => -vstar.toFun x + (1 / 2 : ℝ) * vecDot p x
+    := by
     refine hw2ae.trans (Filter.Eventually.of_forall (fun x => ?_))
     simp only [HCPolySupport.H1Function.add_toFun, HCPolySupport.H1Function.neg_toFun,
       affineHalfOn_toFun]
@@ -657,7 +666,7 @@ theorem coupled_levelEnergy {U : Set (Vec d)} (hU : IsOpenBoundedConvexDomain U)
     have hae : (w₁ - w₂).toFun =ᵐ[volume.restrict U] W.toH1Function.toFun := by
       filter_upwards [hw1ae', hw2ae'] with x hx1 hx2
       rw [HCPolySupport.H1Function.sub_toFun]
-      show w₁.toFun x - w₂.toFun x = W.toH1Function.toFun x
+      change w₁.toFun x - w₂.toFun x = W.toH1Function.toFun x
       rw [hx1, hx2, congrFun hW x]; ring
     have hmem := memH10_of_ae_eq_h10 hU (w₁ - w₂) W hae
     rwa [HCPolySupport.H1Function.sub_toFun] at hmem

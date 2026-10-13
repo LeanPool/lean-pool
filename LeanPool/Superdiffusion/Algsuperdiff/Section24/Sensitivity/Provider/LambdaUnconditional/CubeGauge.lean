@@ -103,7 +103,7 @@ theorem cubeGauge_zero_eq_of_family [NeZero d]
     (Ch02.lambdaSq R (3 / 8) (.finite 2) F)⁻¹ = cubeGauge R a h 0 := by
   refine cubeGauge_eq_of_family a h 0 hk hR F (hF.trans ?_)
   refine Filter.Eventually.of_forall fun x => ?_
-  show a.toCoeffField x = a.toCoeffField x + (0 : ℝ) • h.1.1 x
+  change a.toCoeffField x = a.toCoeffField x + (0 : ℝ) • h.1.1 x
   simp
 
 /-- **The crude uniform bound for the mesoscopic-cube gauge.**  The microscopic
@@ -239,7 +239,7 @@ theorem cubeGauge_ratio_engine [NeZero d] (dimension : 2 ≤ d)
     rootCoeffFamily (perturbCoeffOn (cubeDomain (originCube d 0)) a g τ₁) with hA₁
   set A₂ : TriadicCoeffFamily d :=
     rootCoeffFamily (perturbCoeffOn (cubeDomain (originCube d 0)) a g τ₂) with hA₂
-  show (Ch02.lambdaSq R (3 / 8) (.finite 2) A₂)⁻¹ ≤
+  change (Ch02.lambdaSq R (3 / 8) (.finite 2) A₂)⁻¹ ≤
     ρ * (Ch02.lambdaSq R (3 / 8) (.finite 2) A₁)⁻¹
   refine lambdaSq_inv_le_of_descendant_ratio R A₁ A₂ hρnn (by norm_num)
     isAdmissible_finite_two ?_

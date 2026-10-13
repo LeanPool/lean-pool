@@ -914,10 +914,10 @@ theorem crossingEvent₂At_eq_crossingEvent₂_shiftFamily
   constructor
   · rintro ⟨z, N, x, hz, h0, hpath, hout, hbad⟩
     refine ⟨z - w, N, fun i => x i - w, mem_cubeAt_sub_zero.mpr hz, ?_, ?_, ?_, ?_⟩
-    · show x 0 - w = z - w
+    · change x 0 - w = z - w
       rw [h0]
     · intro i hi
-      show latDist (x i - w) (x (i + 1) - w) ≤ 2
+      change latDist (x i - w) (x (i + 1) - w) ≤ 2
       rw [latDist_sub_right]
       exact hpath i hi
     · intro hmem
@@ -925,16 +925,16 @@ theorem crossingEvent₂At_eq_crossingEvent₂_shiftFamily
     · intro i hi
       obtain ⟨L, hL⟩ := Set.mem_iUnion.mp (hbad i hi)
       refine Set.mem_iUnion.2 ⟨L, ?_⟩
-      show ω ∈ B L (x i - w + w)
+      change ω ∈ B L (x i - w + w)
       rwa [sub_add_cancel]
   · rintro ⟨z, N, x, hz, h0, hpath, hout, hbad⟩
     refine ⟨z + w, N, fun i => x i + w, ?_, ?_, ?_, ?_, ?_⟩
     · refine mem_cubeAt_sub_zero.mp ?_
       rwa [add_sub_cancel_right]
-    · show x 0 + w = z + w
+    · change x 0 + w = z + w
       rw [h0]
     · intro i hi
-      show latDist (x i + w) (x (i + 1) + w) ≤ 2
+      change latDist (x i + w) (x (i + 1) + w) ≤ 2
       rw [latDist_add_right]
       exact hpath i hi
     · intro hmem

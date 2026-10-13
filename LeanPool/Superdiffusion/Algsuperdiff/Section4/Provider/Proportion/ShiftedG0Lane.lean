@@ -170,6 +170,250 @@ theorem ratioTail_Ycal_shift {d : ℕ} (M : ABKModel d) (Ccg sprime D : ℝ)
 
 /-! ## 4. The level-uniform endpoint on a window based at `m₀` -/
 
+private theorem shiftedG0Lane_comparisonBounds1 :
+    ∀ (d : ℕ) (hCcg0 : (0 : ℝ) < cgEllipLowerConstant d) (hCs0 : (0 : ℝ) < Cstar)
+      (hgmc0 : (0 : ℝ) < gammaMomentConst (1 / 3 : ℝ)) (hgtc0 : (0 : ℝ) < gammaTriangleConst (1 / 3 : ℝ))
+      (hPn0 : (0 : ℝ) < penaltyNormalizer d) (r : ℕ) (L G0d : ℝ)
+      (hG0ddef :
+        G0d =
+          (36 : ℝ) * ((1 : ℝ) + Cstar) * gammaMomentConst (1 / 3 : ℝ) * gammaTriangleConst (1 / 3 : ℝ) *
+            penaltyNormalizer d)
+      (C : ℝ) (hC6 : (6 : ℝ) ≤ C) (M : ABKModel d) (theta : ℝ) (htheta0 : (0 : ℝ) < theta)
+      (hcouple : C ^ (9 : ℕ) * M.gamma ^ (2 : ℕ) ≤ theta * Disorder.cstar M ^ (8 : ℕ)) (hC0 : (0 : ℝ) < C)
+      (hCne : C ≠ (0 : ℝ)) (hflA : (16174080 : ℝ) * cgEllipLowerConstant d ^ (4 : ℕ) ≤ C ^ (12 : ℕ))
+      (hflB : (1990656 : ℝ) * (↑r : ℝ) * L * cgEllipLowerConstant d ^ (4 : ℕ) ≤ C)
+      (hflC : (23224320 : ℝ) * G0d * cgEllipLowerConstant d ^ (8 : ℕ) ≤ C ^ (3 : ℕ)) (Rr : ℝ)
+      (hRrdef : Rr = max (4 : ℝ) ((64 : ℝ) * (↑r : ℝ) * L / theta)) (hcs0 : (0 : ℝ) < Disorder.cstar M)
+      (hcs32 : Disorder.cstar M ≤ (3 / 2 : ℝ)) (hg0 : (0 : ℝ) < M.gamma) (hgne : M.gamma ≠ (0 : ℝ))
+      (hcsne : Disorder.cstar M ≠ (0 : ℝ)) (hCcgne : cgEllipLowerConstant d ≠ (0 : ℝ)) (u : ℝ)
+      (hu' : u = Disorder.cstar M ^ (2 : ℕ) / (cgEllipLowerConstant d * C ^ (2 : ℕ) * M.gamma))
+      (hgammale : M.gamma ≤ Disorder.cstar M ^ (10 : ℕ) / C ^ (10 : ℕ))
+      (hgammasq : M.gamma ^ (2 : ℕ) ≤ Disorder.cstar M ^ (20 : ℕ) / C ^ (20 : ℕ))
+      (hcs2 : Disorder.cstar M ^ (2 : ℕ) ≤ (9 / 4 : ℝ)),
+      (31104 : ℝ) * Rr ≤ M.gamma ^ (2 : ℕ) * u ^ (4 : ℕ) ∧
+        M.gamma ^ (5 : ℕ) * u ^ (8 : ℕ) =
+            Disorder.cstar M ^ (16 : ℕ) / (cgEllipLowerConstant d ^ (8 : ℕ) * C ^ (16 : ℕ) * M.gamma ^ (3 : ℕ)) ∧
+          (0 : ℝ) < cgEllipLowerConstant d ^ (8 : ℕ) * C ^ (16 : ℕ) * M.gamma ^ (3 : ℕ) ∧
+            (10321920 : ℝ) * G0d * (cgEllipLowerConstant d ^ (8 : ℕ) * C ^ (16 : ℕ) * M.gamma ^ (3 : ℕ)) ≤
+              theta * Disorder.cstar M ^ (16 : ℕ) := by
+  intro d hCcg0 hCs0 hgmc0 hgtc0 hPn0 r L G0d hG0ddef C hC6 M theta htheta0 hcouple hC0 hCne hflA hflB hflC Rr hRrdef hcs0 hcs32 hg0 hgne hcsne hCcgne u hu' hgammale hgammasq hcs2
+  have hcs12 : (Disorder.cstar M) ^ (12 : ℕ) ≤ 130 := by
+    calc (Disorder.cstar M) ^ (12 : ℕ) ≤ (3 / 2 : ℝ) ^ (12 : ℕ) :=
+        pow_le_pow_left₀ hcs0.le hcs32 12
+      _ ≤ 130 := by norm_num
+  -- 2: the rate branch, at Taylor order 4
+  have hval4 : M.gamma ^ (2 : ℕ) * u ^ (4 : ℕ) = (Disorder.cstar M) ^ (8 : ℕ) /
+      ((Support.cgEllipLowerConstant d) ^ (4 : ℕ) * C ^ (8 : ℕ) * M.gamma ^ (2 : ℕ)) := by
+    rw [hu']
+    field_simp
+  have hden4 : (0 : ℝ) < (Support.cgEllipLowerConstant d) ^ (4 : ℕ) * C ^ (8 : ℕ) *
+      M.gamma ^ (2 : ℕ) := by positivity
+  have hbranchA : (4 : ℝ) ≤ M.gamma ^ (2 : ℕ) * u ^ (4 : ℕ) / 31104 := by
+    rw [le_div_iff₀ (by norm_num : (0 : ℝ) < 31104), hval4, le_div_iff₀ hden4]
+    have hfrac : 124416 * (Support.cgEllipLowerConstant d) ^ (4 : ℕ) *
+        (Disorder.cstar M) ^ (12 : ℕ) / C ^ (12 : ℕ) ≤ 1 := by
+      rw [div_le_one (pow_pos hC0 12)]
+      calc 124416 * (Support.cgEllipLowerConstant d) ^ (4 : ℕ) * (Disorder.cstar M) ^ (12 : ℕ)
+          ≤ 124416 * (Support.cgEllipLowerConstant d) ^ (4 : ℕ) * 130 :=
+            mul_le_mul_of_nonneg_left hcs12 (by positivity)
+        _ = 16174080 * (Support.cgEllipLowerConstant d) ^ (4 : ℕ) := by ring
+        _ ≤ C ^ (12 : ℕ) := hflA
+    calc (4 : ℝ) * 31104 * ((Support.cgEllipLowerConstant d) ^ (4 : ℕ) * C ^ (8 : ℕ) *
+            M.gamma ^ (2 : ℕ))
+        = 124416 * (Support.cgEllipLowerConstant d) ^ (4 : ℕ) * C ^ (8 : ℕ) *
+            M.gamma ^ (2 : ℕ) := by ring
+      _ ≤ 124416 * (Support.cgEllipLowerConstant d) ^ (4 : ℕ) * C ^ (8 : ℕ) *
+            ((Disorder.cstar M) ^ (20 : ℕ) / C ^ (20 : ℕ)) :=
+          mul_le_mul_of_nonneg_left hgammasq (by positivity)
+      _ = 124416 * (Support.cgEllipLowerConstant d) ^ (4 : ℕ) * (Disorder.cstar M) ^ (12 : ℕ) /
+            C ^ (12 : ℕ) * (Disorder.cstar M) ^ (8 : ℕ) := by
+          field_simp
+      _ ≤ 1 * (Disorder.cstar M) ^ (8 : ℕ) :=
+          mul_le_mul_of_nonneg_right hfrac (by positivity)
+      _ = (Disorder.cstar M) ^ (8 : ℕ) := one_mul _
+  have hbranchB : 64 * (r : ℝ) * L / theta ≤ M.gamma ^ (2 : ℕ) * u ^ (4 : ℕ) / 31104 := by
+    rw [div_le_div_iff₀ htheta0 (by norm_num : (0 : ℝ) < 31104), hval4, div_mul_eq_mul_div,
+      le_div_iff₀ hden4]
+    calc 64 * (r : ℝ) * L * 31104 * ((Support.cgEllipLowerConstant d) ^ (4 : ℕ) * C ^ (8 : ℕ) *
+            M.gamma ^ (2 : ℕ))
+        = (1990656 * (r : ℝ) * L * (Support.cgEllipLowerConstant d) ^ (4 : ℕ)) *
+            (C ^ (8 : ℕ) * M.gamma ^ (2 : ℕ)) := by ring
+      _ ≤ C * (C ^ (8 : ℕ) * M.gamma ^ (2 : ℕ)) :=
+          mul_le_mul_of_nonneg_right hflB (by positivity)
+      _ = C ^ (9 : ℕ) * M.gamma ^ (2 : ℕ) := by ring
+      _ ≤ theta * (Disorder.cstar M) ^ (8 : ℕ) := hcouple
+      _ = (Disorder.cstar M) ^ (8 : ℕ) * theta := by ring
+  have hgu4 : 31104 * Rr ≤ M.gamma ^ (2 : ℕ) * u ^ (4 : ℕ) := by
+    have hRrle : Rr ≤ M.gamma ^ (2 : ℕ) * u ^ (4 : ℕ) / 31104 := by
+      rw [hRrdef]
+      exact max_le hbranchA hbranchB
+    calc 31104 * Rr ≤ 31104 * (M.gamma ^ (2 : ℕ) * u ^ (4 : ℕ) / 31104) := by
+          linarith only [hRrle]
+      _ = M.gamma ^ (2 : ℕ) * u ^ (4 : ℕ) := by ring
+  -- 3: the threshold branch, at Taylor order 8
+  have hval8 : M.gamma ^ (5 : ℕ) * u ^ (8 : ℕ) = (Disorder.cstar M) ^ (16 : ℕ) /
+      ((Support.cgEllipLowerConstant d) ^ (8 : ℕ) * C ^ (16 : ℕ) * M.gamma ^ (3 : ℕ)) := by
+    rw [hu']
+    field_simp
+  have hden8 : (0 : ℝ) < (Support.cgEllipLowerConstant d) ^ (8 : ℕ) * C ^ (16 : ℕ) *
+      M.gamma ^ (3 : ℕ) := by positivity
+  have hinner : 10321920 * G0d * (Support.cgEllipLowerConstant d) ^ (8 : ℕ) * C ^ (7 : ℕ) *
+      M.gamma ≤ (Disorder.cstar M) ^ (8 : ℕ) := by
+    have hG0d0 : 0 < G0d := by
+      rw [hG0ddef]
+      exact mul_pos (mul_pos (mul_pos (by linarith only [hCs0]) hgmc0) hgtc0) hPn0
+    have hfrac : 10321920 * G0d * (Support.cgEllipLowerConstant d) ^ (8 : ℕ) *
+        (Disorder.cstar M) ^ (2 : ℕ) / C ^ (3 : ℕ) ≤ 1 := by
+      rw [div_le_one (pow_pos hC0 3)]
+      calc 10321920 * G0d * (Support.cgEllipLowerConstant d) ^ (8 : ℕ) *
+            (Disorder.cstar M) ^ (2 : ℕ)
+          ≤ 10321920 * G0d * (Support.cgEllipLowerConstant d) ^ (8 : ℕ) * (9 / 4) :=
+            mul_le_mul_of_nonneg_left hcs2 (by positivity)
+        _ = 23224320 * G0d * (Support.cgEllipLowerConstant d) ^ (8 : ℕ) := by ring
+        _ ≤ C ^ (3 : ℕ) := hflC
+    calc 10321920 * G0d * (Support.cgEllipLowerConstant d) ^ (8 : ℕ) * C ^ (7 : ℕ) * M.gamma
+        = (10321920 * G0d * (Support.cgEllipLowerConstant d) ^ (8 : ℕ) * C ^ (7 : ℕ)) *
+            M.gamma := by ring
+      _ ≤ (10321920 * G0d * (Support.cgEllipLowerConstant d) ^ (8 : ℕ) * C ^ (7 : ℕ)) *
+            ((Disorder.cstar M) ^ (10 : ℕ) / C ^ (10 : ℕ)) :=
+          mul_le_mul_of_nonneg_left hgammale (by positivity)
+      _ = 10321920 * G0d * (Support.cgEllipLowerConstant d) ^ (8 : ℕ) *
+            (Disorder.cstar M) ^ (2 : ℕ) / C ^ (3 : ℕ) * (Disorder.cstar M) ^ (8 : ℕ) := by
+          field_simp
+      _ ≤ 1 * (Disorder.cstar M) ^ (8 : ℕ) :=
+          mul_le_mul_of_nonneg_right hfrac (by positivity)
+      _ = (Disorder.cstar M) ^ (8 : ℕ) := one_mul _
+  have hcore8 : 10321920 * G0d * ((Support.cgEllipLowerConstant d) ^ (8 : ℕ) * C ^ (16 : ℕ) *
+      M.gamma ^ (3 : ℕ)) ≤ theta * (Disorder.cstar M) ^ (16 : ℕ) := by
+    calc 10321920 * G0d * ((Support.cgEllipLowerConstant d) ^ (8 : ℕ) * C ^ (16 : ℕ) *
+            M.gamma ^ (3 : ℕ))
+        = (10321920 * G0d * (Support.cgEllipLowerConstant d) ^ (8 : ℕ) * C ^ (7 : ℕ) * M.gamma) *
+            (C ^ (9 : ℕ) * M.gamma ^ (2 : ℕ)) := by ring
+      _ ≤ (Disorder.cstar M) ^ (8 : ℕ) * (C ^ (9 : ℕ) * M.gamma ^ (2 : ℕ)) :=
+          mul_le_mul_of_nonneg_right hinner (by positivity)
+      _ ≤ (Disorder.cstar M) ^ (8 : ℕ) * (theta * (Disorder.cstar M) ^ (8 : ℕ)) :=
+          mul_le_mul_of_nonneg_left hcouple (by positivity)
+      _ = theta * (Disorder.cstar M) ^ (16 : ℕ) := by ring
+  exact ⟨hgu4, hval8, hden8, hcore8⟩
+
+private theorem shiftedG0Lane_comparisonBounds2 :
+    ∀ (d : ℕ) (hCs0 : (0 : ℝ) < Cstar) (hgmc0 : (0 : ℝ) < gammaMomentConst (1 / 3 : ℝ))
+      (hgtc0 : (0 : ℝ) < gammaTriangleConst (1 / 3 : ℝ)) (hPn0 : (0 : ℝ) < penaltyNormalizer d) (r : ℕ) (hr1 : (1 : ℕ) ≤ r)
+      (hrR : (1 : ℝ) ≤ (↑r : ℝ)) (L : ℝ) (hLdef : L = Real.log ((3 : ℝ) * (↑r : ℝ)) + (↑r : ℝ)) (M : ABKModel d) (theta : ℝ)
+      (htheta0 : (0 : ℝ) < theta) (c1 : ℝ) (hc1g : c1 * M.gamma ≤ (1 : ℝ)) (htheta1 : theta ≤ (1 : ℝ))
+      (hthetane : theta ≠ (0 : ℝ)) (Rr : ℝ) (hRr4 : (4 : ℝ) ≤ Rr) (hRrL : (64 : ℝ) * (↑r : ℝ) * L / theta ≤ Rr) (G : ℝ)
+      (hGdef :
+        G =
+          (36 : ℝ) * ((1 : ℝ) + Cstar) * gammaMomentConst (1 / 3 : ℝ) * gammaTriangleConst (1 / 3 : ℝ) *
+              penaltyNormalizer d /
+            theta)
+      (hG0 : (0 : ℝ) < G) (hg0 : (0 : ℝ) < M.gamma) (hg4 : M.gamma ≤ (1 / 4 : ℝ)) (hgne : M.gamma ≠ (0 : ℝ)) (u : ℝ)
+      (hu0 : (0 : ℝ) < u) (hgu4 : (31104 : ℝ) * Rr ≤ M.gamma ^ (2 : ℕ) * u ^ (4 : ℕ))
+      (hgu8 : (10321920 : ℝ) * G ≤ M.gamma ^ (5 : ℕ) * u ^ (8 : ℕ)) (hsprime0 : (0 : ℝ) < M.gamma / (4 : ℝ)) (S0 : ℝ)
+      (hS0def : S0 = ∑' (j : ℕ), weightThird (M.gamma / (4 : ℝ)) j * annulusPenaltyThird d (j + (2 : ℕ))) (p : ℝ)
+      (hp0 : (0 : ℝ) < p) (hp1 : (1 : ℝ) ≤ p) (D : ℝ) (hD0 : (0 : ℝ) < D)
+      (hDval : D = gammaMomentConst (1 / 3 : ℝ) * gammaTriangleConst (1 / 3 : ℝ) * S0 * Real.exp (-(u / (2 : ℝ))))
+      (hplow4 : u ^ (4 : ℕ) / (31104 : ℝ) ≤ p),
+      (1 : ℝ) ≤ M.gamma / (4 : ℝ) * p ∧
+        Real.log ((3 : ℝ) * (↑r : ℝ)) + c1 * (↑r : ℝ) ≤ M.gamma / (4 : ℝ) * p * theta / ((16 : ℝ) * (↑r : ℝ)) ∧
+          (9 : ℝ) * (M.gamma / (4 : ℝ))⁻¹ * Cstar ^ ((1 : ℝ) / p) * theta ^ ((-1 : ℝ) / p) ≤ D⁻¹ := by
+  intro d hCs0 hgmc0 hgtc0 hPn0 r hr1 hrR L hLdef M theta htheta0 c1 hc1g htheta1 hthetane Rr hRr4 hRrL G hGdef hG0 hg0 hg4 hgne u hu0 hgu4 hgu8 hsprime0 S0 hS0def p hp0 hp1 D hD0 hDval hplow4
+  have hg2p : Rr ≤ M.gamma ^ (2 : ℕ) * p := by
+    calc Rr = 31104 * Rr / 31104 := by ring
+      _ ≤ M.gamma ^ (2 : ℕ) * u ^ (4 : ℕ) / 31104 := by
+          exact div_le_div_of_nonneg_right hgu4 (by norm_num)
+      _ = M.gamma ^ (2 : ℕ) * (u ^ (4 : ℕ) / 31104) := by ring
+      _ ≤ M.gamma ^ (2 : ℕ) * p := mul_le_mul_of_nonneg_left hplow4 (by positivity)
+  have hgp : (4 : ℝ) ≤ M.gamma * p := by
+    have hstep : 4 * M.gamma ≤ M.gamma ^ (2 : ℕ) * p := by
+      have h1 : 4 * M.gamma ≤ 4 := by linarith only [hg4]
+      linarith only [h1, hRr4, hg2p]
+    have hstep2 := mul_le_mul_of_nonneg_right hstep (inv_nonneg.2 hg0.le)
+    calc (4 : ℝ) = 4 * M.gamma * M.gamma⁻¹ := by field_simp
+      _ ≤ M.gamma ^ (2 : ℕ) * p * M.gamma⁻¹ := hstep2
+      _ = M.gamma * p := by field_simp
+  have hsp : 1 ≤ M.gamma / 4 * p := by linarith only [hgp]
+  have hrate : Real.log ((3 : ℝ) * (r : ℝ)) + c1 * (r : ℝ)
+      ≤ M.gamma / 4 * p * theta / (16 * (r : ℝ)) := by
+    have hlog3r : (0 : ℝ) ≤ Real.log (3 * (r : ℝ)) :=
+      Real.log_nonneg (by linarith only [hrR])
+    have hrnn : (0 : ℝ) ≤ (r : ℝ) := by linarith only [hrR]
+    have hstepA : (Real.log (3 * (r : ℝ)) + c1 * (r : ℝ)) * M.gamma ≤ L := by
+      rw [hLdef]
+      have h1 : Real.log (3 * (r : ℝ)) * M.gamma ≤ Real.log (3 * (r : ℝ)) :=
+        mul_le_of_le_one_right hlog3r (by linarith only [hg4, hg0])
+      have h2 : c1 * M.gamma * (r : ℝ) ≤ 1 * (r : ℝ) :=
+        mul_le_mul_of_nonneg_right hc1g hrnn
+      linarith only [h1, h2]
+    have h64 : 64 * (r : ℝ) * L ≤ M.gamma ^ (2 : ℕ) * p * theta := by
+      calc 64 * (r : ℝ) * L = 64 * (r : ℝ) * L / theta * theta := by field_simp
+        _ ≤ Rr * theta := mul_le_mul_of_nonneg_right hRrL htheta0.le
+        _ ≤ M.gamma ^ (2 : ℕ) * p * theta := mul_le_mul_of_nonneg_right hg2p htheta0.le
+    have hA : (Real.log (3 * (r : ℝ)) + c1 * (r : ℝ)) * (64 * (r : ℝ)) * M.gamma
+        ≤ M.gamma * p * theta * M.gamma := by
+      calc (Real.log (3 * (r : ℝ)) + c1 * (r : ℝ)) * (64 * (r : ℝ)) * M.gamma
+          = (Real.log (3 * (r : ℝ)) + c1 * (r : ℝ)) * M.gamma * (64 * (r : ℝ)) := by ring
+        _ ≤ L * (64 * (r : ℝ)) :=
+            mul_le_mul_of_nonneg_right hstepA (by linarith only [hrnn])
+        _ = 64 * (r : ℝ) * L := by ring
+        _ ≤ M.gamma ^ (2 : ℕ) * p * theta := h64
+        _ = M.gamma * p * theta * M.gamma := by ring
+    have hB : (Real.log (3 * (r : ℝ)) + c1 * (r : ℝ)) * (64 * (r : ℝ))
+        ≤ M.gamma * p * theta := by
+      calc (Real.log (3 * (r : ℝ)) + c1 * (r : ℝ)) * (64 * (r : ℝ))
+          = (Real.log (3 * (r : ℝ)) + c1 * (r : ℝ)) * (64 * (r : ℝ)) * M.gamma * M.gamma⁻¹ := by
+            field_simp
+        _ ≤ M.gamma * p * theta * M.gamma * M.gamma⁻¹ :=
+            mul_le_mul_of_nonneg_right hA (inv_nonneg.2 hg0.le)
+        _ = M.gamma * p * theta := by field_simp
+    rw [le_div_iff₀ (by linarith only [hrR] : (0 : ℝ) < 16 * (r : ℝ)),
+      show M.gamma / 4 * p * theta = M.gamma * p * theta / 4 by ring,
+      le_div_iff₀ (by norm_num : (0 : ℝ) < 4)]
+    calc (Real.log (3 * (r : ℝ)) + c1 * (r : ℝ)) * (16 * (r : ℝ)) * 4
+        = (Real.log (3 * (r : ℝ)) + c1 * (r : ℝ)) * (64 * (r : ℝ)) := by ring
+      _ ≤ M.gamma * p * theta := hB
+  have hS0le : S0 ≤ penaltyNormalizer d / M.gamma ^ (4 : ℕ) := by
+    rw [hS0def]
+    exact tsum_weightThird_mul_annulusPenaltyThird_le d hg0 hg4
+  have hu20 : (0 : ℝ) < u / 2 := by linarith only [hu0]
+  have hE8 : Real.exp (-(u / 2)) ≤ M.gamma ^ (5 : ℕ) / G := by
+    refine le_trans (exp_neg_le_eight hu20) ?_
+    rw [div_le_div_iff₀ (pow_pos hu20 8) hG0,
+      show M.gamma ^ (5 : ℕ) * (u / 2) ^ (8 : ℕ) = M.gamma ^ (5 : ℕ) * u ^ (8 : ℕ) / 256 by ring,
+      le_div_iff₀ (by norm_num : (0 : ℝ) < 256)]
+    linarith only [hgu8]
+  have hkey : 9 * D * (1 + Cstar) ≤ M.gamma / 4 * theta := by
+    have hprod : S0 * Real.exp (-(u / 2))
+        ≤ penaltyNormalizer d / M.gamma ^ (4 : ℕ) * (M.gamma ^ (5 : ℕ) / G) :=
+      mul_le_mul hS0le hE8 (Real.exp_pos _).le (div_pos hPn0 (pow_pos hg0 4)).le
+    have hc1' : (0 : ℝ) ≤ gammaMomentConst (1 / 3 : ℝ) * gammaTriangleConst (1 / 3 : ℝ) :=
+      (mul_pos hgmc0 hgtc0).le
+    have hc2 : (0 : ℝ) ≤ 1 + Cstar := by linarith only [hCs0]
+    have hstep3 := mul_le_mul_of_nonneg_right
+      (mul_le_mul_of_nonneg_left (mul_le_mul_of_nonneg_left hprod hc1')
+        (by norm_num : (0 : ℝ) ≤ 9)) hc2
+    have hne1 : (1 + Cstar) ≠ 0 := by
+      have : (0 : ℝ) < 1 + Cstar := by linarith only [hCs0]
+      exact ne_of_gt this
+    have hne2 : gammaMomentConst (1 / 3 : ℝ) ≠ 0 := ne_of_gt hgmc0
+    have hne3 : gammaTriangleConst (1 / 3 : ℝ) ≠ 0 := ne_of_gt hgtc0
+    have hne4 : penaltyNormalizer d ≠ 0 := ne_of_gt hPn0
+    have hRHS : 9 * (gammaMomentConst (1 / 3 : ℝ) * gammaTriangleConst (1 / 3 : ℝ) *
+        (penaltyNormalizer d / M.gamma ^ (4 : ℕ) * (M.gamma ^ (5 : ℕ) / G))) * (1 + Cstar)
+        = M.gamma / 4 * theta := by
+      rw [hGdef]
+      field_simp
+      ring
+    have hLHS : 9 * D * (1 + Cstar) = 9 * (gammaMomentConst (1 / 3 : ℝ) *
+        gammaTriangleConst (1 / 3 : ℝ) * (S0 * Real.exp (-(u / 2)))) * (1 + Cstar) := by
+      rw [hDval]
+      ring
+    rw [hLHS, ← hRHS]
+    exact hstep3
+  have hthr : 9 * (M.gamma / 4)⁻¹ * Cstar ^ (1 / p) * theta ^ (-1 / p) ≤ D⁻¹ :=
+    threshold_le_inv hsprime0 htheta0 htheta1 hp1 hD0 hkey
+  exact ⟨hsp, hrate, hthr⟩
+
 /-- The level-uniform `𝒢₀` endpoint, with the proportion read over the window
 based at `m₀`.  The base scale is quantified
 last, after `r`, `C`, the model `M`, the level `θ`, the coupling `C⁹γ² ≤ θc⋆⁸`
@@ -290,103 +534,12 @@ theorem exists_ratioTail_eventG0_uniform_shift (d : ℕ) :
   have hcs2 : (Disorder.cstar M) ^ (2 : ℕ) ≤ 9 / 4 := by
     calc (Disorder.cstar M) ^ (2 : ℕ) ≤ (3 / 2 : ℝ) ^ (2 : ℕ) := pow_le_pow_left₀ hcs0.le hcs32 2
       _ = 9 / 4 := by norm_num
-  have hcs12 : (Disorder.cstar M) ^ (12 : ℕ) ≤ 130 := by
-    calc (Disorder.cstar M) ^ (12 : ℕ) ≤ (3 / 2 : ℝ) ^ (12 : ℕ) :=
-        pow_le_pow_left₀ hcs0.le hcs32 12
-      _ ≤ 130 := by norm_num
-  -- 2: the rate branch, at Taylor order 4
-  have hval4 : M.gamma ^ (2 : ℕ) * u ^ (4 : ℕ) = (Disorder.cstar M) ^ (8 : ℕ) /
-      ((Support.cgEllipLowerConstant d) ^ (4 : ℕ) * C ^ (8 : ℕ) * M.gamma ^ (2 : ℕ)) := by
-    rw [hu']
-    field_simp
-  have hden4 : (0 : ℝ) < (Support.cgEllipLowerConstant d) ^ (4 : ℕ) * C ^ (8 : ℕ) *
-      M.gamma ^ (2 : ℕ) := by positivity
-  have hbranchA : (4 : ℝ) ≤ M.gamma ^ (2 : ℕ) * u ^ (4 : ℕ) / 31104 := by
-    rw [le_div_iff₀ (by norm_num : (0 : ℝ) < 31104), hval4, le_div_iff₀ hden4]
-    have hfrac : 124416 * (Support.cgEllipLowerConstant d) ^ (4 : ℕ) *
-        (Disorder.cstar M) ^ (12 : ℕ) / C ^ (12 : ℕ) ≤ 1 := by
-      rw [div_le_one (pow_pos hC0 12)]
-      calc 124416 * (Support.cgEllipLowerConstant d) ^ (4 : ℕ) * (Disorder.cstar M) ^ (12 : ℕ)
-          ≤ 124416 * (Support.cgEllipLowerConstant d) ^ (4 : ℕ) * 130 :=
-            mul_le_mul_of_nonneg_left hcs12 (by positivity)
-        _ = 16174080 * (Support.cgEllipLowerConstant d) ^ (4 : ℕ) := by ring
-        _ ≤ C ^ (12 : ℕ) := hflA
-    calc (4 : ℝ) * 31104 * ((Support.cgEllipLowerConstant d) ^ (4 : ℕ) * C ^ (8 : ℕ) *
-            M.gamma ^ (2 : ℕ))
-        = 124416 * (Support.cgEllipLowerConstant d) ^ (4 : ℕ) * C ^ (8 : ℕ) *
-            M.gamma ^ (2 : ℕ) := by ring
-      _ ≤ 124416 * (Support.cgEllipLowerConstant d) ^ (4 : ℕ) * C ^ (8 : ℕ) *
-            ((Disorder.cstar M) ^ (20 : ℕ) / C ^ (20 : ℕ)) :=
-          mul_le_mul_of_nonneg_left hgammasq (by positivity)
-      _ = 124416 * (Support.cgEllipLowerConstant d) ^ (4 : ℕ) * (Disorder.cstar M) ^ (12 : ℕ) /
-            C ^ (12 : ℕ) * (Disorder.cstar M) ^ (8 : ℕ) := by
-          field_simp
-      _ ≤ 1 * (Disorder.cstar M) ^ (8 : ℕ) :=
-          mul_le_mul_of_nonneg_right hfrac (by positivity)
-      _ = (Disorder.cstar M) ^ (8 : ℕ) := one_mul _
-  have hbranchB : 64 * (r : ℝ) * L / theta ≤ M.gamma ^ (2 : ℕ) * u ^ (4 : ℕ) / 31104 := by
-    rw [div_le_div_iff₀ htheta0 (by norm_num : (0 : ℝ) < 31104), hval4, div_mul_eq_mul_div,
-      le_div_iff₀ hden4]
-    calc 64 * (r : ℝ) * L * 31104 * ((Support.cgEllipLowerConstant d) ^ (4 : ℕ) * C ^ (8 : ℕ) *
-            M.gamma ^ (2 : ℕ))
-        = (1990656 * (r : ℝ) * L * (Support.cgEllipLowerConstant d) ^ (4 : ℕ)) *
-            (C ^ (8 : ℕ) * M.gamma ^ (2 : ℕ)) := by ring
-      _ ≤ C * (C ^ (8 : ℕ) * M.gamma ^ (2 : ℕ)) :=
-          mul_le_mul_of_nonneg_right hflB (by positivity)
-      _ = C ^ (9 : ℕ) * M.gamma ^ (2 : ℕ) := by ring
-      _ ≤ theta * (Disorder.cstar M) ^ (8 : ℕ) := hcouple
-      _ = (Disorder.cstar M) ^ (8 : ℕ) * theta := by ring
-  have hgu4 : 31104 * Rr ≤ M.gamma ^ (2 : ℕ) * u ^ (4 : ℕ) := by
-    have hRrle : Rr ≤ M.gamma ^ (2 : ℕ) * u ^ (4 : ℕ) / 31104 := by
-      rw [hRrdef]
-      exact max_le hbranchA hbranchB
-    calc 31104 * Rr ≤ 31104 * (M.gamma ^ (2 : ℕ) * u ^ (4 : ℕ) / 31104) := by
-          linarith only [hRrle]
-      _ = M.gamma ^ (2 : ℕ) * u ^ (4 : ℕ) := by ring
-  -- 3: the threshold branch, at Taylor order 8
-  have hval8 : M.gamma ^ (5 : ℕ) * u ^ (8 : ℕ) = (Disorder.cstar M) ^ (16 : ℕ) /
-      ((Support.cgEllipLowerConstant d) ^ (8 : ℕ) * C ^ (16 : ℕ) * M.gamma ^ (3 : ℕ)) := by
-    rw [hu']
-    field_simp
-  have hden8 : (0 : ℝ) < (Support.cgEllipLowerConstant d) ^ (8 : ℕ) * C ^ (16 : ℕ) *
-      M.gamma ^ (3 : ℕ) := by positivity
-  have hinner : 10321920 * G0d * (Support.cgEllipLowerConstant d) ^ (8 : ℕ) * C ^ (7 : ℕ) *
-      M.gamma ≤ (Disorder.cstar M) ^ (8 : ℕ) := by
-    have hG0d0 : 0 < G0d := by
-      rw [hG0ddef]
-      exact mul_pos (mul_pos (mul_pos (by linarith only [hCs0]) hgmc0) hgtc0) hPn0
-    have hfrac : 10321920 * G0d * (Support.cgEllipLowerConstant d) ^ (8 : ℕ) *
-        (Disorder.cstar M) ^ (2 : ℕ) / C ^ (3 : ℕ) ≤ 1 := by
-      rw [div_le_one (pow_pos hC0 3)]
-      calc 10321920 * G0d * (Support.cgEllipLowerConstant d) ^ (8 : ℕ) *
-            (Disorder.cstar M) ^ (2 : ℕ)
-          ≤ 10321920 * G0d * (Support.cgEllipLowerConstant d) ^ (8 : ℕ) * (9 / 4) :=
-            mul_le_mul_of_nonneg_left hcs2 (by positivity)
-        _ = 23224320 * G0d * (Support.cgEllipLowerConstant d) ^ (8 : ℕ) := by ring
-        _ ≤ C ^ (3 : ℕ) := hflC
-    calc 10321920 * G0d * (Support.cgEllipLowerConstant d) ^ (8 : ℕ) * C ^ (7 : ℕ) * M.gamma
-        = (10321920 * G0d * (Support.cgEllipLowerConstant d) ^ (8 : ℕ) * C ^ (7 : ℕ)) *
-            M.gamma := by ring
-      _ ≤ (10321920 * G0d * (Support.cgEllipLowerConstant d) ^ (8 : ℕ) * C ^ (7 : ℕ)) *
-            ((Disorder.cstar M) ^ (10 : ℕ) / C ^ (10 : ℕ)) :=
-          mul_le_mul_of_nonneg_left hgammale (by positivity)
-      _ = 10321920 * G0d * (Support.cgEllipLowerConstant d) ^ (8 : ℕ) *
-            (Disorder.cstar M) ^ (2 : ℕ) / C ^ (3 : ℕ) * (Disorder.cstar M) ^ (8 : ℕ) := by
-          field_simp
-      _ ≤ 1 * (Disorder.cstar M) ^ (8 : ℕ) :=
-          mul_le_mul_of_nonneg_right hfrac (by positivity)
-      _ = (Disorder.cstar M) ^ (8 : ℕ) := one_mul _
-  have hcore8 : 10321920 * G0d * ((Support.cgEllipLowerConstant d) ^ (8 : ℕ) * C ^ (16 : ℕ) *
-      M.gamma ^ (3 : ℕ)) ≤ theta * (Disorder.cstar M) ^ (16 : ℕ) := by
-    calc 10321920 * G0d * ((Support.cgEllipLowerConstant d) ^ (8 : ℕ) * C ^ (16 : ℕ) *
-            M.gamma ^ (3 : ℕ))
-        = (10321920 * G0d * (Support.cgEllipLowerConstant d) ^ (8 : ℕ) * C ^ (7 : ℕ) * M.gamma) *
-            (C ^ (9 : ℕ) * M.gamma ^ (2 : ℕ)) := by ring
-      _ ≤ (Disorder.cstar M) ^ (8 : ℕ) * (C ^ (9 : ℕ) * M.gamma ^ (2 : ℕ)) :=
-          mul_le_mul_of_nonneg_right hinner (by positivity)
-      _ ≤ (Disorder.cstar M) ^ (8 : ℕ) * (theta * (Disorder.cstar M) ^ (8 : ℕ)) :=
-          mul_le_mul_of_nonneg_left hcouple (by positivity)
-      _ = theta * (Disorder.cstar M) ^ (16 : ℕ) := by ring
+  obtain ⟨hgu4, hval8, hden8, hcore8⟩ :=
+    (show (31104 * Rr ≤ M.gamma ^ (2 : ℕ) * u ^ (4 : ℕ)) ∧ (M.gamma ^ (5 : ℕ) * u ^ (8 : ℕ) = (Disorder.cstar M) ^ (16 : ℕ) /
+      ((Support.cgEllipLowerConstant d) ^ (8 : ℕ) * C ^ (16 : ℕ) * M.gamma ^ (3 : ℕ))) ∧ ((0 : ℝ) < (Support.cgEllipLowerConstant d) ^ (8 : ℕ) * C ^ (16 : ℕ) *
+      M.gamma ^ (3 : ℕ)) ∧ (10321920 * G0d * ((Support.cgEllipLowerConstant d) ^ (8 : ℕ) * C ^ (16 : ℕ) *
+      M.gamma ^ (3 : ℕ)) ≤ theta * (Disorder.cstar M) ^ (16 : ℕ)) from
+      @shiftedG0Lane_comparisonBounds1 (d) (hCcg0) (hCs0) (hgmc0) (hgtc0) (hPn0) (r) (L) (G0d) (hG0ddef) (C) (hC6) (M) (theta) (htheta0) (hcouple) (hC0) (hCne) (hflA) (hflB) (hflC) (Rr) (hRrdef) (hcs0) (hcs32) (hg0) (hgne) (hcsne) (hCcgne) (u) (hu') (hgammale) (hgammasq) (hcs2))
   have hgu8 : 10321920 * G ≤ M.gamma ^ (5 : ℕ) * u ^ (8 : ℕ) := by
     rw [hval8, le_div_iff₀ hden8]
     refine le_of_mul_le_mul_right ?_ htheta0
@@ -467,100 +620,10 @@ theorem exists_ratioTail_eventG0_uniform_shift (d : ℕ) :
     rw [hpdef]
     calc u ^ (4 : ℕ) / 31104 = (u / 6) ^ (4 : ℕ) / 24 := by ring
       _ ≤ Real.exp (u / 6) := h
-  have hg2p : Rr ≤ M.gamma ^ (2 : ℕ) * p := by
-    calc Rr = 31104 * Rr / 31104 := by ring
-      _ ≤ M.gamma ^ (2 : ℕ) * u ^ (4 : ℕ) / 31104 := by
-          exact div_le_div_of_nonneg_right hgu4 (by norm_num)
-      _ = M.gamma ^ (2 : ℕ) * (u ^ (4 : ℕ) / 31104) := by ring
-      _ ≤ M.gamma ^ (2 : ℕ) * p := mul_le_mul_of_nonneg_left hplow4 (by positivity)
-  have hgp : (4 : ℝ) ≤ M.gamma * p := by
-    have hstep : 4 * M.gamma ≤ M.gamma ^ (2 : ℕ) * p := by
-      have h1 : 4 * M.gamma ≤ 4 := by linarith only [hg4]
-      linarith only [h1, hRr4, hg2p]
-    have hstep2 := mul_le_mul_of_nonneg_right hstep (inv_nonneg.2 hg0.le)
-    calc (4 : ℝ) = 4 * M.gamma * M.gamma⁻¹ := by field_simp
-      _ ≤ M.gamma ^ (2 : ℕ) * p * M.gamma⁻¹ := hstep2
-      _ = M.gamma * p := by field_simp
-  have hsp : 1 ≤ M.gamma / 4 * p := by linarith only [hgp]
-  have hrate : Real.log ((3 : ℝ) * (r : ℝ)) + c1 * (r : ℝ)
-      ≤ M.gamma / 4 * p * theta / (16 * (r : ℝ)) := by
-    have hlog3r : (0 : ℝ) ≤ Real.log (3 * (r : ℝ)) :=
-      Real.log_nonneg (by linarith only [hrR])
-    have hrnn : (0 : ℝ) ≤ (r : ℝ) := by linarith only [hrR]
-    have hstepA : (Real.log (3 * (r : ℝ)) + c1 * (r : ℝ)) * M.gamma ≤ L := by
-      rw [hLdef]
-      have h1 : Real.log (3 * (r : ℝ)) * M.gamma ≤ Real.log (3 * (r : ℝ)) :=
-        mul_le_of_le_one_right hlog3r (by linarith only [hg4, hg0])
-      have h2 : c1 * M.gamma * (r : ℝ) ≤ 1 * (r : ℝ) :=
-        mul_le_mul_of_nonneg_right hc1g hrnn
-      linarith only [h1, h2]
-    have h64 : 64 * (r : ℝ) * L ≤ M.gamma ^ (2 : ℕ) * p * theta := by
-      calc 64 * (r : ℝ) * L = 64 * (r : ℝ) * L / theta * theta := by field_simp
-        _ ≤ Rr * theta := mul_le_mul_of_nonneg_right hRrL htheta0.le
-        _ ≤ M.gamma ^ (2 : ℕ) * p * theta := mul_le_mul_of_nonneg_right hg2p htheta0.le
-    have hA : (Real.log (3 * (r : ℝ)) + c1 * (r : ℝ)) * (64 * (r : ℝ)) * M.gamma
-        ≤ M.gamma * p * theta * M.gamma := by
-      calc (Real.log (3 * (r : ℝ)) + c1 * (r : ℝ)) * (64 * (r : ℝ)) * M.gamma
-          = (Real.log (3 * (r : ℝ)) + c1 * (r : ℝ)) * M.gamma * (64 * (r : ℝ)) := by ring
-        _ ≤ L * (64 * (r : ℝ)) :=
-            mul_le_mul_of_nonneg_right hstepA (by linarith only [hrnn])
-        _ = 64 * (r : ℝ) * L := by ring
-        _ ≤ M.gamma ^ (2 : ℕ) * p * theta := h64
-        _ = M.gamma * p * theta * M.gamma := by ring
-    have hB : (Real.log (3 * (r : ℝ)) + c1 * (r : ℝ)) * (64 * (r : ℝ))
-        ≤ M.gamma * p * theta := by
-      calc (Real.log (3 * (r : ℝ)) + c1 * (r : ℝ)) * (64 * (r : ℝ))
-          = (Real.log (3 * (r : ℝ)) + c1 * (r : ℝ)) * (64 * (r : ℝ)) * M.gamma * M.gamma⁻¹ := by
-            field_simp
-        _ ≤ M.gamma * p * theta * M.gamma * M.gamma⁻¹ :=
-            mul_le_mul_of_nonneg_right hA (inv_nonneg.2 hg0.le)
-        _ = M.gamma * p * theta := by field_simp
-    rw [le_div_iff₀ (by linarith only [hrR] : (0 : ℝ) < 16 * (r : ℝ)),
-      show M.gamma / 4 * p * theta = M.gamma * p * theta / 4 by ring,
-      le_div_iff₀ (by norm_num : (0 : ℝ) < 4)]
-    calc (Real.log (3 * (r : ℝ)) + c1 * (r : ℝ)) * (16 * (r : ℝ)) * 4
-        = (Real.log (3 * (r : ℝ)) + c1 * (r : ℝ)) * (64 * (r : ℝ)) := by ring
-      _ ≤ M.gamma * p * theta := hB
-  have hS0le : S0 ≤ penaltyNormalizer d / M.gamma ^ (4 : ℕ) := by
-    rw [hS0def]
-    exact tsum_weightThird_mul_annulusPenaltyThird_le d hg0 hg4
-  have hu20 : (0 : ℝ) < u / 2 := by linarith only [hu0]
-  have hE8 : Real.exp (-(u / 2)) ≤ M.gamma ^ (5 : ℕ) / G := by
-    refine le_trans (exp_neg_le_eight hu20) ?_
-    rw [div_le_div_iff₀ (pow_pos hu20 8) hG0,
-      show M.gamma ^ (5 : ℕ) * (u / 2) ^ (8 : ℕ) = M.gamma ^ (5 : ℕ) * u ^ (8 : ℕ) / 256 by ring,
-      le_div_iff₀ (by norm_num : (0 : ℝ) < 256)]
-    linarith only [hgu8]
-  have hkey : 9 * D * (1 + Cstar) ≤ M.gamma / 4 * theta := by
-    have hprod : S0 * Real.exp (-(u / 2))
-        ≤ penaltyNormalizer d / M.gamma ^ (4 : ℕ) * (M.gamma ^ (5 : ℕ) / G) :=
-      mul_le_mul hS0le hE8 (Real.exp_pos _).le (div_pos hPn0 (pow_pos hg0 4)).le
-    have hc1' : (0 : ℝ) ≤ gammaMomentConst (1 / 3 : ℝ) * gammaTriangleConst (1 / 3 : ℝ) :=
-      (mul_pos hgmc0 hgtc0).le
-    have hc2 : (0 : ℝ) ≤ 1 + Cstar := by linarith only [hCs0]
-    have hstep3 := mul_le_mul_of_nonneg_right
-      (mul_le_mul_of_nonneg_left (mul_le_mul_of_nonneg_left hprod hc1')
-        (by norm_num : (0 : ℝ) ≤ 9)) hc2
-    have hne1 : (1 + Cstar) ≠ 0 := by
-      have : (0 : ℝ) < 1 + Cstar := by linarith only [hCs0]
-      exact ne_of_gt this
-    have hne2 : gammaMomentConst (1 / 3 : ℝ) ≠ 0 := ne_of_gt hgmc0
-    have hne3 : gammaTriangleConst (1 / 3 : ℝ) ≠ 0 := ne_of_gt hgtc0
-    have hne4 : penaltyNormalizer d ≠ 0 := ne_of_gt hPn0
-    have hRHS : 9 * (gammaMomentConst (1 / 3 : ℝ) * gammaTriangleConst (1 / 3 : ℝ) *
-        (penaltyNormalizer d / M.gamma ^ (4 : ℕ) * (M.gamma ^ (5 : ℕ) / G))) * (1 + Cstar)
-        = M.gamma / 4 * theta := by
-      rw [hGdef]
-      field_simp
-      ring
-    have hLHS : 9 * D * (1 + Cstar) = 9 * (gammaMomentConst (1 / 3 : ℝ) *
-        gammaTriangleConst (1 / 3 : ℝ) * (S0 * Real.exp (-(u / 2)))) * (1 + Cstar) := by
-      rw [hDval]
-      ring
-    rw [hLHS, ← hRHS]
-    exact hstep3
-  have hthr : 9 * (M.gamma / 4)⁻¹ * Cstar ^ (1 / p) * theta ^ (-1 / p) ≤ D⁻¹ :=
-    threshold_le_inv hsprime0 htheta0 htheta1 hp1 hD0 hkey
+  obtain ⟨hsp, hrate, hthr⟩ :=
+    (show (1 ≤ M.gamma / 4 * p) ∧ (Real.log ((3 : ℝ) * (r : ℝ)) + c1 * (r : ℝ)
+      ≤ M.gamma / 4 * p * theta / (16 * (r : ℝ))) ∧ (9 * (M.gamma / 4)⁻¹ * Cstar ^ (1 / p) * theta ^ (-1 / p) ≤ D⁻¹) from
+      @shiftedG0Lane_comparisonBounds2 (d) (hCs0) (hgmc0) (hgtc0) (hPn0) (r) (hr1) (hrR) (L) (hLdef) (M) (theta) (htheta0) (c1) (hc1g) (htheta1) (hthetane) (Rr) (hRr4) (hRrL) (G) (hGdef) (hG0) (hg0) (hg4) (hgne) (u) (hu0) (hgu4) (hgu8) (hsprime0) (S0) (hS0def) (p) (hp0) (hp1) (D) (hD0) (hDval) (hplow4))
   have hnull : (Cutoff.cutoffSampleLaw M).toMeasure
       (goodRowSet M (Support.cgEllipLowerConstant d) (M.gamma / 4))ᶜ = 0 :=
     measure_compl_goodRowSet M (Support.cgEllipLowerConstant d) (by norm_num) hA0.le hK0

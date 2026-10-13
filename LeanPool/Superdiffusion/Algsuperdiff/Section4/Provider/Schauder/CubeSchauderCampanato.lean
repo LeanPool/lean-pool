@@ -252,7 +252,7 @@ theorem affineExcess_initial_le [NeZero d] (hd : d ≠ 0) {m : ℤ} {x : Vec d}
       have h4 : (0 : ℝ) ≤ (d : ℝ) := Nat.cast_nonneg d
       exact mul_nonneg (Real.sqrt_nonneg _)
         (mul_nonneg (mul_nonneg (mul_nonneg h1 h4) hKG) (mul_nonneg h3.le h2))
-    show ((volume (truncatedWindow x m m)).toReal) ^ (-(d : ℝ)⁻¹) *
+    change ((volume (truncatedWindow x m m)).toReal) ^ (-(d : ℝ)⁻¹) *
       affineExcessRaw (truncatedWindow x m m) u.toFun ≤ _
     exact mul_le_mul hnorm hraw (affineExcessRaw_nonneg _ _) (by positivity)
   refine hchain.trans (le_of_eq ?_)

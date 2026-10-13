@@ -165,7 +165,7 @@ theorem exists_harmonicReplacementPair [NeZero d] {V : Set (Vec d)}
           (rho.toH1Function.grad x)) (phi.toH1Function.grad x) ∂volume =
         ∫ x in V, vecDot (rho.toH1Function.grad x) (phi.toH1Function.grad x) ∂volume :=
       integral_congr_ae (Filter.Eventually.of_forall fun x => by
-        show vecDot (matVecMul (unitCoeffField d x) (rho.toH1Function.grad x))
+        change vecDot (matVecMul (unitCoeffField d x) (rho.toH1Function.grad x))
             (phi.toH1Function.grad x) =
           vecDot (rho.toH1Function.grad x) (phi.toH1Function.grad x)
         rw [matVecMul_unitCoeffField])

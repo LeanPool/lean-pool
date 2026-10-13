@@ -152,7 +152,7 @@ theorem normalizedL2On_doubled_le {i : Fin d} {a : ℝ} {K D : Set (Vec d)}
   have hGrho : ∀ x : Vec d, G (coordFaceReflection a i x) ^ 2 = (G x + 2 * beta) ^ 2 := by
     intro x
     have h := hodd x
-    show (W (coordFaceReflection a i x) - beta) ^ 2 = (W x - beta + 2 * beta) ^ 2
+    change (W (coordFaceReflection a i x) - beta) ^ 2 = (W x - beta + 2 * beta) ^ 2
     rw [h]
     ring
   have hintKshift : IntegrableOn (fun x => (G x + 2 * beta) ^ 2) K volume := by

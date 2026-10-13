@@ -55,7 +55,7 @@ Two things.
    event, so it is supplied here in a strictly stronger unconditional form.
 
 2. **The composed per-cube display.**  The final theorem of this module,
-   `exists_const_descendantsAverage_integral_principalGoodEventEnergy_le_annealedCube_of_centeringConst`,
+`exists_constant_principalEnergy_bound_of_centering`,
    is the display at the manuscript's own load `P_z` of `e.Pz.def`, in which
    none of `hswitch`, `hshell`, `hellip`, `hellipInt`, `hlam0` is a binder:
 
@@ -66,7 +66,7 @@ Two things.
      `ApproximateRecurrence.PrincipalResponseCentre.shell_hypothesis_of_centeringConst_ae`
      at `K = centeringConst d = d^3`;
    * `hellip` is discharged from
-     `ApproximateRecurrence.PrincipalResponseEllipBudget.exists_const_descendantsAverage_integral_switchEllipLoad_principalPz_le`;
+`exists_const_descendantsAverage_integral_switchEllipLoad_principalPz_le`;
    * `hellipInt` is discharged from the pointwise `X <= 1/2 + X^2/2` together
      with the two per-cube data conditions `hmeasR` and `hintR`, exactly as in
      `ApproximateRecurrence.PrincipalResponseEllipBudget`.
@@ -180,7 +180,8 @@ through `hbudget`, unchanged.
 
 * `lambdaSq_coefficientCutoffTriadicCoeffFamily_pos`
 * `shellSizeThreshold_centeringConst_le_sigmaBar`
-* `exists_const_descendantsAverage_integral_principalGoodEventEnergy_le_annealedCube_of_centeringConst`
+*
+`exists_constant_principalEnergy_bound_of_centering`
 
 ## References
 
@@ -479,7 +480,7 @@ It is a provider A, not a source-facing frozen declaration; it does not derive
 
 Reaches exactly the one frozen theorem
 `Algsuperdiff.Frozen.External.calderon_zygmund`, a **proved** external. -/
-theorem exists_const_descendantsAverage_integral_principalGoodEventEnergy_le_annealedCube_of_centeringConst
+theorem exists_constant_principalEnergy_bound_of_centering
     (d : ℕ) (hd : 2 ≤ d) :
     ∃ Cell : ℝ, 0 < Cell ∧
       ∃ gamma0 : ℝ, 0 < gamma0 ∧ gamma0 ≤ 1 / 4 ∧

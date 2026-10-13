@@ -135,7 +135,7 @@ theorem enorm_cubeEuclideanWspKernel_rpow_le_tsum (Q : TriadicCube d) (s : Fract
   · have hzero : cubeEuclideanWspKernel s q g (x, y) = 0 := by
       rw [cubeEuclideanWspKernel_apply]
       have hsub : g (x, y).1 - g (x, y).2 = 0 := by
-        show g x - g y = 0
+        change g x - g y = 0
         rw [hgxy]
         exact sub_self _
       rw [hsub]

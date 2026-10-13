@@ -139,7 +139,8 @@ at the framed loads `(σ_i^{-1/2} p, σ_i^{1/2} q)` at which Step 1 is stated.
 * `Algsuperdiff.Section3.Provider.Multiscale.w1Infinity_incrementUnitCube₂_le`
 * `Algsuperdiff.Section3.Provider.Multiscale.rpow_mul_oscThreshold_sq`
 * `Algsuperdiff.Section3.Provider.Multiscale.w1Infinity_incrementUnitCube₂_le_max_oscThreshold`
-* `Algsuperdiff.Section3.Provider.Multiscale.isBigOWith_gammaSigma_two_layerSup_cubeSupBound_cutoffLaw`
+*
+`isBigOWith_gammaSigma_two_layerSup_cubeSupBound_cutoffLaw`
 * `Algsuperdiff.Section3.Provider.Multiscale.stepOneLayerMajorant_le_ktotConst_mul`
 * `Algsuperdiff.Section3.Provider.Multiscale.ktotConst_nonneg`
 

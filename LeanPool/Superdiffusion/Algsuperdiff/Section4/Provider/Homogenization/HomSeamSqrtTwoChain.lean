@@ -44,7 +44,8 @@ Every theorem below takes the two error slots as BARE nonnegative reals `E1`,
 (the pinned slots at the uncut `a_L`) and equally at the
 print-accurate slots (`HomSeamFluxCoefficient.recutPinnedE1Flux/E2Flux`, at
 `ã_{L,m}`).  The chain deliberately stops before the `a_L` lane's `hlevel`,
-which names the pinned `𝓔₁` slot and so fixes the coefficient: see `HomSeamFluxCoefficient`'s module disclosure for why
+which names the pinned `𝓔₁` slot and so fixes the coefficient: see `HomSeamFluxCoefficient`'s module
+disclosure for why
 the `a_L`-sided domination is not available and what the print-accurate
 re-instantiation costs.
 -/

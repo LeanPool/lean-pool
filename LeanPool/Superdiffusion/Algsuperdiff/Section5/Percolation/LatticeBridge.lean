@@ -131,16 +131,16 @@ theorem exists_isLatticePath_of_isPathFrom {k : ℕ} {Γ : List (Site d)}
       · intro i hi
         have hi1 : i + 1 < (z :: zs).length := by simp; omega
         have hi0 : i < (z :: zs).length := by omega
-        show latDist ((z :: zs).getD i z) ((z :: zs).getD (i + 1) z) ≤ 1
+        change latDist ((z :: zs).getD i z) ((z :: zs).getD (i + 1) z) ≤ 1
         rw [List.getD_eq_getElem _ _ hi0, List.getD_eq_getElem _ _ hi1]
         have := hpath.getElem i hi1
-        show latDist _ _ ≤ 1
+        change latDist _ _ ≤ 1
         rw [← siteDist_eq_latDist]
         exact le_of_eq this
-      · show (z :: zs).getD 0 z ∈ cubeAt k (0 : Site d)
+      · change (z :: zs).getD 0 z ∈ cubeAt k (0 : Site d)
         rw [List.getD_cons_zero]
         exact inCube_iff_mem_cubeAt.mp hz
-      · show (z :: zs).getD zs.length z ∉ cubeAt (k + 1) (0 : Site d)
+      · change (z :: zs).getD zs.length z ∉ cubeAt (k + 1) (0 : Site d)
         have hlen : zs.length < (z :: zs).length := by simp
         rw [List.getD_eq_getElem _ _ hlen]
         have hgl : (z :: zs).getLast (List.cons_ne_nil z zs) = (z :: zs)[zs.length] := by

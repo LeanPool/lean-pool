@@ -246,7 +246,7 @@ theorem weightedLocalSymmetricEnergyLp_le_ofReal [NeZero d]
         descendantsAverage Q (jn + j) fun R => Gen R ^ p.exponent.toReal))
       (fun j _ => ?_)).trans ?_
     · /- one lay -/
-      show _ ≤ ENNReal.ofReal (Real.rpow 3 (-(wgap * p.exponent.toReal * (j : ℝ))) *
+      change _ ≤ ENNReal.ofReal (Real.rpow 3 (-(wgap * p.exponent.toReal * (j : ℝ))) *
         descendantsAverage Q (jn + j) fun R => Gen R ^ p.exponent.toReal)
       have hlayer := attachSum_le a u hGen0 hGen hr.le
         (descendantsAtScale Q (n - (j : ℤ)))

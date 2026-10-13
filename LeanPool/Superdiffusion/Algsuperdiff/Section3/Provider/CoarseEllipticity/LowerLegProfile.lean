@@ -28,8 +28,10 @@ the union explicit, without touching the frozen shape:
 
 | branch | profile value | source status |
 |---|---|---|
-| finite `q < 2` | `C (s (2s-gamma)^{-1})^{2/q}` | --- the printed order-one pole is **false** below `q = 2`; the corrected order is `2/q` |
-| finite `2 <= q` | `C s (2s-gamma)^{-1}` | --- the printed pole's shape is confirmed; the payload remains a conditional input of this module |
+| finite `q < 2` | `C (s (2s-gamma)^{-1})^{2/q}` | --- the printed order-one pole is **false** below
+`q = 2`; the corrected order is `2/q` |
+| finite `2 <= q` | `C s (2s-gamma)^{-1}` | --- the printed pole's shape is confirmed; the payload
+remains a conditional input of this module |
 | `q = infinity` | `C` | `e.coarse.grained.ellipticity.infty`: no pole |
 
 `coarse_ellipticity_lower_payload_of_branchPayloads` recombines three

@@ -220,7 +220,7 @@ theorem setIntegral_axisCube_centered (z : Vec d) {L : ℝ} (hL : 0 < L) (i : Fi
     rw [ite_eq_left rfl]
   rw [hpt, setIntegral_axisCube_prod z L (fun k t => if k = i then t - (z k + L / 2) else 1)]
   refine Finset.prod_eq_zero (Finset.mem_univ i) ?_
-  show (∫ t in Set.Ioo (z i) (z i + L), if i = i then t - (z i + L / 2) else (1 : ℝ)) = 0
+  change (∫ t in Set.Ioo (z i) (z i + L), if i = i then t - (z i + L / 2) else (1 : ℝ)) = 0
   rw [hbody]
   exact integral_Ioo_sub_center (z i) hL.le
 
@@ -275,7 +275,7 @@ theorem setIntegral_axisCube_centered_mul (z : Vec d) {L : ℝ} (hL : 0 < L) (i 
       funext t
       rw [ite_eq_left rfl, ite_eq_right hij, mul_one]
     refine Finset.prod_eq_zero (Finset.mem_univ i) ?_
-    show (∫ t in Set.Ioo (z i) (z i + L),
+    change (∫ t in Set.Ioo (z i) (z i + L),
         (if i = i then t - (z i + L / 2) else 1)
           * (if i = j then t - (z i + L / 2) else (1 : ℝ))) = 0
     rw [hbody]

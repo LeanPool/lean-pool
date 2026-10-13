@@ -337,6 +337,241 @@ private theorem range_scale {k K C gam Lg p : ℝ} (hk : 0 < k) (hK : 0 < K)
 
 /-! ## 6. THE SEAM DISPLAY -/
 
+private theorem homSeamStepOneDisplay_comparisonBounds1 :
+    ∀ (d : ℕ) {Ctop Cgate : ℝ} (A : ℝ) (_ : (1 : ℝ) ≤ homSeamDisplayConst A Ctop Cgate d) (M : ABKModel d)
+      (p : ℝ) (_ : (1 : ℝ) ≤ p) (_ : p ≤ (homSeamDisplayConst A Ctop Cgate d)⁻¹ * M.gamma⁻¹ * |Real.log M.gamma|⁻¹)
+      (_ : (0 : ℝ) < M.gamma) (_ : (0 : ℝ) < √√M.gamma) (_ : √√M.gamma ^ (4 : ℕ) = M.gamma)
+      (_ : √√M.gamma ≤ (1 / 16 : ℝ)) (_ : M.gamma < (1 : ℝ)) (_ : (4 : ℝ) ≤ |Real.log M.gamma|)
+      (_ : |Real.log M.gamma| ≠ (0 : ℝ)) (_ : homS M ≤ (1 / 4 : ℝ))
+      (_ : |Real.log M.gamma| ≤ (4 : ℝ) * (√√M.gamma)⁻¹) (_ : (0 : ℝ) ≤ |Real.log M.gamma|⁻¹)
+      (_ : homS M = |Real.log M.gamma|⁻¹) (_ : (0 : ℝ) < p),
+      let q : ℝ := max ((8 : ℝ) * p) ((64 : ℝ) * (↑d : ℝ) * |Real.log M.gamma|);
+      ∀ (_ : (1 : ℝ) ≤ √p) (_ : (2 : ℝ) ≤ √|Real.log M.gamma|),
+        (3 : ℝ) ≤ √p + √|Real.log M.gamma| ∧
+          √q ≤ homSeamSqrtLoss d * (√p + √|Real.log M.gamma|) ∧
+            (√p + √|Real.log M.gamma|) * √M.gamma ≤ (2 : ℝ) ∧ M.gamma ^ (5 : ℕ) ≤ √M.gamma := by
+  intro d Ctop Cgate A hC0one M p _ hprange hgpos htpos ht4 ht16 hg1 _ _ hs4 hLu hLinv hSeq hp0 q hsqp hsqL
+  have hS3 : (3 : ℝ) ≤ Real.sqrt p + Real.sqrt |Real.log M.gamma| := by
+    linarith only [hsqp, hsqL]
+  have hWDS : Real.sqrt q ≤ homSeamSqrtLoss d *
+      (Real.sqrt p + Real.sqrt |Real.log M.gamma|) := by
+    have hmax := sqrt_max_le (a := 8 * p) (b := 64 * (d : ℝ) * |Real.log M.gamma|)
+      (by linarith only [hp0]) (by positivity)
+    have he1 : Real.sqrt (8 * p) ≤ 3 * Real.sqrt p := by
+      have h8 : Real.sqrt (8 * p) = Real.sqrt 8 * Real.sqrt p :=
+        Real.sqrt_mul (by norm_num) p
+      have h9 : Real.sqrt 8 ≤ 3 := by
+        have h := Real.sqrt_le_sqrt (show (8 : ℝ) ≤ 9 by norm_num)
+        have h3 : Real.sqrt 9 = 3 := by
+          rw [show (9 : ℝ) = 3 ^ (2 : ℕ) from by norm_num,
+            Real.sqrt_sq (by norm_num : (0 : ℝ) ≤ 3)]
+        rwa [h3] at h
+      rw [h8]
+      exact mul_le_mul_of_nonneg_right h9 (Real.sqrt_nonneg _)
+    have he2 : Real.sqrt (64 * (d : ℝ) * |Real.log M.gamma|) =
+        8 * Real.sqrt (d : ℝ) * Real.sqrt |Real.log M.gamma| := by
+      rw [Real.sqrt_mul (by positivity) _, Real.sqrt_mul (by norm_num : (0 : ℝ) ≤ 64) _]
+      have h64 : Real.sqrt 64 = 8 := by
+        rw [show (64 : ℝ) = 8 ^ (2 : ℕ) from by norm_num,
+          Real.sqrt_sq (by norm_num : (0 : ℝ) ≤ 8)]
+      rw [h64]
+    have hexp : homSeamSqrtLoss d * (Real.sqrt p + Real.sqrt |Real.log M.gamma|) =
+        3 * Real.sqrt p + 8 * Real.sqrt (d : ℝ) * Real.sqrt |Real.log M.gamma| +
+          (3 * Real.sqrt |Real.log M.gamma| + 8 * Real.sqrt (d : ℝ) * Real.sqrt p) := by
+      rw [homSeamSqrtLoss]; ring
+    have hslack : (0 : ℝ) ≤ 3 * Real.sqrt |Real.log M.gamma| +
+        8 * Real.sqrt (d : ℝ) * Real.sqrt p := by positivity
+    rw [he2] at hmax
+    rw [hexp]
+    linarith only [hmax, he1, hslack]
+  have hpg : p * M.gamma ≤ 1 := by
+    have h := mul_le_mul_of_nonneg_right hprange hgpos.le
+    have he : (homSeamDisplayConst A Ctop Cgate d)⁻¹ * M.gamma⁻¹ *
+        |Real.log M.gamma|⁻¹ * M.gamma =
+        (homSeamDisplayConst A Ctop Cgate d)⁻¹ * |Real.log M.gamma|⁻¹ := by
+      field_simp
+    rw [he] at h
+    have hCinv : (homSeamDisplayConst A Ctop Cgate d)⁻¹ ≤ 1 :=
+      inv_le_one_of_one_le₀ hC0one
+    have hLq : |Real.log M.gamma|⁻¹ ≤ 1 / 4 := by
+      rw [← hSeq]; exact hs4
+    have hbd : (homSeamDisplayConst A Ctop Cgate d)⁻¹ * |Real.log M.gamma|⁻¹ ≤
+        1 * (1 / 4) := mul_le_mul hCinv hLq hLinv zero_le_one
+    linarith only [h, hbd]
+  have hLg : |Real.log M.gamma| * M.gamma ≤ 1 := by
+    have hstep : |Real.log M.gamma| * M.gamma ≤
+        (4 * (Real.sqrt (Real.sqrt M.gamma))⁻¹) * M.gamma :=
+      mul_le_mul_of_nonneg_right hLu hgpos.le
+    have hne : Real.sqrt (Real.sqrt M.gamma) ≠ 0 := ne_of_gt htpos
+    have he : (4 * (Real.sqrt (Real.sqrt M.gamma))⁻¹) * M.gamma =
+        4 * Real.sqrt (Real.sqrt M.gamma) ^ (3 : ℕ) := by
+      calc (4 * (Real.sqrt (Real.sqrt M.gamma))⁻¹) * M.gamma
+          = (4 * (Real.sqrt (Real.sqrt M.gamma))⁻¹) *
+              Real.sqrt (Real.sqrt M.gamma) ^ (4 : ℕ) := by rw [ht4]
+        _ = 4 * ((Real.sqrt (Real.sqrt M.gamma))⁻¹ * Real.sqrt (Real.sqrt M.gamma)) *
+              Real.sqrt (Real.sqrt M.gamma) ^ (3 : ℕ) := by ring
+        _ = 4 * 1 * Real.sqrt (Real.sqrt M.gamma) ^ (3 : ℕ) := by
+              rw [inv_mul_cancel₀ hne]
+        _ = 4 * Real.sqrt (Real.sqrt M.gamma) ^ (3 : ℕ) := by ring
+    have ht3 : Real.sqrt (Real.sqrt M.gamma) ^ (3 : ℕ) ≤ (1 / 16 : ℝ) ^ (3 : ℕ) :=
+      pow_le_pow_left₀ htpos.le ht16 3
+    have hnum : (1 / 16 : ℝ) ^ (3 : ℕ) = 1 / 4096 := by norm_num
+    rw [hnum] at ht3
+    rw [he] at hstep
+    linarith only [hstep, ht3]
+  have hSG : (Real.sqrt p + Real.sqrt |Real.log M.gamma|) * Real.sqrt M.gamma ≤ 2 := by
+    have e1 : Real.sqrt p * Real.sqrt M.gamma = Real.sqrt (p * M.gamma) :=
+      (Real.sqrt_mul hp0.le M.gamma).symm
+    have e2 : Real.sqrt |Real.log M.gamma| * Real.sqrt M.gamma =
+        Real.sqrt (|Real.log M.gamma| * M.gamma) :=
+      (Real.sqrt_mul (abs_nonneg _) M.gamma).symm
+    have b1 : Real.sqrt (p * M.gamma) ≤ 1 := sqrt_le_one_of_le_one hpg
+    have b2 : Real.sqrt (|Real.log M.gamma| * M.gamma) ≤ 1 := sqrt_le_one_of_le_one hLg
+    have he : (Real.sqrt p + Real.sqrt |Real.log M.gamma|) * Real.sqrt M.gamma =
+        Real.sqrt p * Real.sqrt M.gamma +
+          Real.sqrt |Real.log M.gamma| * Real.sqrt M.gamma := by ring
+    rw [he, e1, e2]
+    linarith only [b1, b2]
+  have hgam5 : M.gamma ^ (5 : ℕ) ≤ Real.sqrt M.gamma := by
+    have h5 : M.gamma ^ (5 : ℕ) ≤ M.gamma :=
+      pow_le_of_le_one hgpos.le hg1.le (by norm_num)
+    have hsq1 : Real.sqrt M.gamma ≤ 1 := sqrt_le_one_of_le_one hg1.le
+    have hself : Real.sqrt M.gamma * Real.sqrt M.gamma = M.gamma :=
+      Real.mul_self_sqrt hgpos.le
+    have hle : M.gamma ≤ Real.sqrt M.gamma := by
+      have hmul : Real.sqrt M.gamma * Real.sqrt M.gamma ≤ Real.sqrt M.gamma * 1 :=
+        mul_le_mul_of_nonneg_left hsq1 (Real.sqrt_nonneg _)
+      rw [hself] at hmul
+      linarith only [hmul]
+    linarith only [h5, hle]
+  exact ⟨hS3, hWDS, hSG, hgam5⟩
+
+private theorem homSeamStepOneDisplay_momentBounds1 :
+    ∀ (d : ℕ) {Ctop Cgate : ℝ} (_ : (0 : ℝ) ≤ Ctop) (_ : (0 : ℝ) < Cgate) (A : ℝ) (_ : (1 : ℝ) ≤ A)
+      (_ : (0 : ℝ) < A) (_ : (0 : ℝ) ≤ homSeamKappa A Ctop d * homSeamCollapseConst A d) (M : ABKModel d)
+      (hs : (0 : ℝ) < homS M) (m : ℤ) (Y0 : Cutoff.CutoffSample d → ℝ≥0∞)
+      (_ : AEMeasurable Y0 (↑(Cutoff.cutoffSampleLaw M) : Measure (Cutoff.CutoffSample d)))
+      (_ :
+        ∀ (p : ℝ),
+          (1 : ℝ) ≤ p →
+            p ≤ Cgate⁻¹ * M.gamma⁻¹ * |Real.log M.gamma|⁻¹ →
+              ∫⁻ (w : Cutoff.CutoffSample d),
+                  Y0 w ^ ((2 : ℝ) * p) ∂(↑(Cutoff.cutoffSampleLaw M) : Measure (Cutoff.CutoffSample d)) ≤
+                ENNReal.ofReal (2 : ℝ) ^ ((2 : ℝ) * p))
+      (Cgap : ℝ) (_ : (0 : ℝ) ≤ Cgap) (p : ℝ) (_ : (1 : ℝ) ≤ p)
+      (_ : p ≤ (homSeamDisplayConst A Ctop Cgate d)⁻¹ * M.gamma⁻¹ * |Real.log M.gamma|⁻¹) (_ : (0 : ℝ) < M.gamma)
+      (_ : (4 : ℝ) ≤ |Real.log M.gamma|) (_ : (0 : ℝ) ≤ M.gamma⁻¹) (_ : (0 : ℝ) ≤ |Real.log M.gamma|⁻¹)
+      (_ : (0 : ℝ) < p),
+      let q : ℝ := max ((8 : ℝ) * p) ((64 : ℝ) * (↑d : ℝ) * |Real.log M.gamma|);
+      ∀ (_ : (8 : ℝ) * p ≤ q) (ht40 : (0 : ℝ) < (1 / 4 : ℝ))
+        (_ :
+          ∫⁻ (omega : Cutoff.CutoffSample d),
+              fluxCorrectedTwoScaleErrorObservableSup M m (homN M m) (homHalf (homSeamBase M hs)) omega ^
+                q ∂(↑(Cutoff.cutoffSampleLaw M) : Measure (Cutoff.CutoffSample d)) ≤
+            ENNReal.ofReal (A * |Real.log M.gamma| * √q * √M.gamma) ^ q)
+        (_ :
+          ∫⁻ (omega : Cutoff.CutoffSample d),
+              fluxCorrectedTwoScaleErrorObservableSup M m m homQuarter omega ^
+                q ∂(↑(Cutoff.cutoffSampleLaw M) : Measure (Cutoff.CutoffSample d)) ≤
+            ENNReal.ofReal (A * √q * √M.gamma) ^ q)
+        (_ :
+          ∫⁻ (omega : Cutoff.CutoffSample d),
+              fluxCorrectedTwoScaleErrorObservableSup M m (homN M m) (homQuarterOf (homSeamBase M hs)) omega ^
+                q ∂(↑(Cutoff.cutoffSampleLaw M) : Measure (Cutoff.CutoffSample d)) ≤
+            ENNReal.ofReal (A * |Real.log M.gamma| * √q * √M.gamma) ^ q)
+        (_ :
+          ∫⁻ (omega : Cutoff.CutoffSample d),
+              fluxCorrectedTwoScaleErrorObservableSup M m m ⟨(1 / 4 : ℝ) / (2 : ℝ), half_pos ht40⟩ omega ^
+                q ∂(↑(Cutoff.cutoffSampleLaw M) : Measure (Cutoff.CutoffSample d)) ≤
+            ENNReal.ofReal (A * (1 / 4 : ℝ)⁻¹ * √q * √M.gamma) ^ q)
+        (_ :
+          ∫⁻ (omega : Cutoff.CutoffSample d),
+              fluxCorrectedTwoScaleErrorObservableSup M m m ⟨(1 / 4 : ℝ), ht40⟩ omega ^
+                q ∂(↑(Cutoff.cutoffSampleLaw M) : Measure (Cutoff.CutoffSample d)) ≤
+            ENNReal.ofReal (A * (1 / 4 : ℝ)⁻¹ * √q * √M.gamma) ^ q),
+        (0 : ℝ) ≤ A * (1 / 4 : ℝ)⁻¹ * √q * √M.gamma ∧
+          ∫⁻ (omega : Cutoff.CutoffSample d),
+              ethmB M Cgap (seamEnlargedY M m Ctop Y0) m (homN M m) (homSeamBase M hs) omega ^
+                p ∂(↑(Cutoff.cutoffSampleLaw M) : Measure (Cutoff.CutoffSample d)) ≤
+            ENNReal.ofReal
+                ((↑(homSeamBase M hs) : ℝ)⁻¹ *
+                    (Ctop *
+                        ((2 : ℝ) *
+                          (((1 : ℝ) + A * (1 / 4 : ℝ)⁻¹ * √q * √M.gamma) * ((1 : ℝ) + A * (1 / 4 : ℝ)⁻¹ * √q * √M.gamma))) *
+                      (A * |Real.log M.gamma| * √q * √M.gamma * ((1 : ℝ) + A * √q * √M.gamma))) +
+                  Cgap * M.gamma ^ (5 : ℕ) * ((1 : ℝ) + (A * |Real.log M.gamma| * √q * √M.gamma) ^ (2 : ℕ))) ^
+              p := by
+  intro _ Ctop Cgate hCtop hCgate A _ hApos hkap0 M hs m Y0 hY0m hY0 _ hCgap p hp hprange _ _ hginv hLinv hp0 q hq8p ht40 hf1 hf2 hf3 hf4 hf5
+  have hnm : homN M m ≤ m := homN_le M m
+  have hm1 : AEMeasurable
+      (fluxCorrectedTwoScaleErrorObservableSup M m (homN M m)
+        (homHalf (homSeamBase M hs))) (Cutoff.cutoffSampleLaw M).toMeasure :=
+    (measurable_fluxCorrectedTwoScaleErrorObservableSup M hnm _).aemeasurable
+  have hm2 : AEMeasurable (fluxCorrectedTwoScaleErrorObservableSup M m m homQuarter)
+      (Cutoff.cutoffSampleLaw M).toMeasure :=
+    (measurable_fluxCorrectedTwoScaleErrorObservableSup M (le_refl m) _).aemeasurable
+  have hm3 : AEMeasurable
+      (fluxCorrectedTwoScaleErrorObservableSup M m (homN M m)
+        (homQuarterOf (homSeamBase M hs))) (Cutoff.cutoffSampleLaw M).toMeasure :=
+    (measurable_fluxCorrectedTwoScaleErrorObservableSup M hnm _).aemeasurable
+  have hm4 : AEMeasurable
+      (fluxCorrectedTwoScaleErrorObservableSup M m m ⟨1 / 4 / 2, half_pos ht40⟩)
+      (Cutoff.cutoffSampleLaw M).toMeasure :=
+    (measurable_fluxCorrectedTwoScaleErrorObservableSup M (le_refl m) _).aemeasurable
+  have hm5 : AEMeasurable
+      (fluxCorrectedTwoScaleErrorObservableSup M m m ⟨1 / 4, ht40⟩)
+      (Cutoff.cutoffSampleLaw M).toMeasure :=
+    (measurable_fluxCorrectedTwoScaleErrorObservableSup M (le_refl m) _).aemeasurable
+  have h2p0 : (0 : ℝ) < 2 * p := by linarith only [hp0]
+  have h4p0 : (0 : ℝ) < 4 * p := by linarith only [hp0]
+  have h8p0 : (0 : ℝ) < 8 * p := by linarith only [hp0]
+  have hq4p : 4 * p ≤ q := by linarith only [hq8p, hp0]
+  have hq2p : 2 * p ≤ q := by linarith only [hq8p, hp0]
+  have hd1 := lintegral_rpow_le_of_exponent_le hm1 h4p0 hq4p hf1
+  have hd2 := lintegral_rpow_le_of_exponent_le hm2 h4p0 hq4p hf2
+  have hd3 := lintegral_rpow_le_of_exponent_le hm3 h2p0 hq2p hf3
+  have hd4 := lintegral_rpow_le_of_exponent_le hm4 h8p0 hq8p hf4
+  have hd5 := lintegral_rpow_le_of_exponent_le hm5 h8p0 hq8p hf5
+  /- ### the Theorem-C edge, read at `4p` -/
+  have hY04p : (∫⁻ w, Y0 w ^ (4 * p) ∂(Cutoff.cutoffSampleLaw M).toMeasure) ≤
+      ENNReal.ofReal 2 ^ (4 * p) := by
+    have hrange2 : 2 * p ≤ Cgate⁻¹ * M.gamma⁻¹ * |Real.log M.gamma|⁻¹ := by
+      refine range_scale (by norm_num) hCgate ?_ hginv hLinv hprange
+      rw [homSeamDisplayConst]
+      have h8A : (0 : ℝ) ≤ 8 * A := by linarith only [hApos]
+      linarith only [hkap0, h8A]
+    have h := hY0 (2 * p) (by linarith only [hp]) hrange2
+    rwa [show (2 : ℝ) * (2 * p) = 4 * p from by ring] at h
+  /- ### the enlarged `Y` and its mome -/
+  have hEm : AEMeasurable (stepTwoEnlargedY M m ht40)
+      (Cutoff.cutoffSampleLaw M).toMeasure :=
+    (aemeasurable_const.add hm4).mul (aemeasurable_const.add hm5)
+  have hYm : AEMeasurable (seamEnlargedY M m Ctop Y0)
+      (Cutoff.cutoffSampleLaw M).toMeasure := (hY0m.mul hEm).const_mul _
+  have hR40 : (0 : ℝ) ≤ A * (1 / 4 : ℝ)⁻¹ * Real.sqrt q * Real.sqrt M.gamma := by
+    have hA0 : (0 : ℝ) ≤ A := hApos.le
+    positivity
+  have hYenl := seamEnlargedY_moment M m ht40 Y0 hY0m hCtop hp hR40 hR40 hY04p hd4 hd5
+  /- ### the Hölder assembly at the re-pinned ba -/
+  have hR1 : (0 : ℝ) ≤ A * |Real.log M.gamma| * Real.sqrt q * Real.sqrt M.gamma := by
+    have hA0 : (0 : ℝ) ≤ A := hApos.le
+    positivity
+  have hR2 : (0 : ℝ) ≤ A * Real.sqrt q * Real.sqrt M.gamma := by
+    have hA0 : (0 : ℝ) ≤ A := hApos.le
+    positivity
+  have hRY : (0 : ℝ) ≤ Ctop * (2 * ((1 + A * (1 / 4 : ℝ)⁻¹ * Real.sqrt q *
+      Real.sqrt M.gamma) * (1 + A * (1 / 4 : ℝ)⁻¹ * Real.sqrt q * Real.sqrt M.gamma))) := by
+    have h1 : (0 : ℝ) ≤ 1 + A * (1 / 4 : ℝ)⁻¹ * Real.sqrt q * Real.sqrt M.gamma := by
+      linarith only [hR40]
+    have := mul_nonneg h1 h1
+    have h2 : (0 : ℝ) ≤ 2 * ((1 + A * (1 / 4 : ℝ)⁻¹ * Real.sqrt q * Real.sqrt M.gamma) *
+        (1 + A * (1 / 4 : ℝ)⁻¹ * Real.sqrt q * Real.sqrt M.gamma)) := by
+      linarith only [this]
+    exact mul_nonneg hCtop h2
+  have hassembly := ethmB_moment_of_factor_moments M hnm (homSeamBase M hs)
+    (seamEnlargedY M m Ctop Y0) hYm hCgap hp hRY hR1 hR2 hR1 hYenl hd1 hd2 hd3
+  exact ⟨hR40, hassembly⟩
+
 /-- **STEP 1's DISPLAY AT THE RE-PINNED BASE AND THE ENLARGED `Y`.**
 
 `HomSeamSpineBase.StepOneDisplayAt` at `sb = s/8` and `Y = seamEnlargedY M m
@@ -458,79 +693,15 @@ theorem exists_ethmB_seam_moment_bound (d : ℕ) (cstar : ℝ) (hcstar : 0 < cst
   have htlo : homS M / 8 ≤ 1 / 4 := by linarith only [hs4, hs]
   obtain ⟨hf1, hf2, hf3, hf4, hf5⟩ :=
     hanchor M hcs hg_g0 hs m (1 / 4) ht40 htlo le_rfl q hqlo hupq
-  have hnm : homN M m ≤ m := homN_le M m
-  have hm1 : AEMeasurable
-      (fluxCorrectedTwoScaleErrorObservableSup M m (homN M m)
-        (homHalf (homSeamBase M hs))) (Cutoff.cutoffSampleLaw M).toMeasure :=
-    (measurable_fluxCorrectedTwoScaleErrorObservableSup M hnm _).aemeasurable
-  have hm2 : AEMeasurable (fluxCorrectedTwoScaleErrorObservableSup M m m homQuarter)
-      (Cutoff.cutoffSampleLaw M).toMeasure :=
-    (measurable_fluxCorrectedTwoScaleErrorObservableSup M (le_refl m) _).aemeasurable
-  have hm3 : AEMeasurable
-      (fluxCorrectedTwoScaleErrorObservableSup M m (homN M m)
-        (homQuarterOf (homSeamBase M hs))) (Cutoff.cutoffSampleLaw M).toMeasure :=
-    (measurable_fluxCorrectedTwoScaleErrorObservableSup M hnm _).aemeasurable
-  have hm4 : AEMeasurable
-      (fluxCorrectedTwoScaleErrorObservableSup M m m ⟨1 / 4 / 2, half_pos ht40⟩)
-      (Cutoff.cutoffSampleLaw M).toMeasure :=
-    (measurable_fluxCorrectedTwoScaleErrorObservableSup M (le_refl m) _).aemeasurable
-  have hm5 : AEMeasurable
-      (fluxCorrectedTwoScaleErrorObservableSup M m m ⟨1 / 4, ht40⟩)
-      (Cutoff.cutoffSampleLaw M).toMeasure :=
-    (measurable_fluxCorrectedTwoScaleErrorObservableSup M (le_refl m) _).aemeasurable
-  have h2p0 : (0 : ℝ) < 2 * p := by linarith only [hp0]
-  have h4p0 : (0 : ℝ) < 4 * p := by linarith only [hp0]
-  have h8p0 : (0 : ℝ) < 8 * p := by linarith only [hp0]
-  have hq4p : 4 * p ≤ q := by linarith only [hq8p, hp0]
-  have hq2p : 2 * p ≤ q := by linarith only [hq8p, hp0]
-  have hd1 := lintegral_rpow_le_of_exponent_le hm1 h4p0 hq4p hf1
-  have hd2 := lintegral_rpow_le_of_exponent_le hm2 h4p0 hq4p hf2
-  have hd3 := lintegral_rpow_le_of_exponent_le hm3 h2p0 hq2p hf3
-  have hd4 := lintegral_rpow_le_of_exponent_le hm4 h8p0 hq8p hf4
-  have hd5 := lintegral_rpow_le_of_exponent_le hm5 h8p0 hq8p hf5
-  /- ### the Theorem-C edge, read at `4p` -/
-  have hY04p : (∫⁻ w, Y0 w ^ (4 * p) ∂(Cutoff.cutoffSampleLaw M).toMeasure) ≤
-      ENNReal.ofReal 2 ^ (4 * p) := by
-    have hrange2 : 2 * p ≤ Cgate⁻¹ * M.gamma⁻¹ * |Real.log M.gamma|⁻¹ := by
-      refine range_scale (by norm_num) hCgate ?_ hginv hLinv hprange
-      rw [homSeamDisplayConst]
-      have h8A : (0 : ℝ) ≤ 8 * A := by linarith only [hApos]
-      linarith only [hkap0, h8A]
-    have h := hY0 (2 * p) (by linarith only [hp]) hrange2
-    rwa [show (2 : ℝ) * (2 * p) = 4 * p from by ring] at h
-  /- ### the enlarged `Y` and its mome -/
-  have hEm : AEMeasurable (stepTwoEnlargedY M m ht40)
-      (Cutoff.cutoffSampleLaw M).toMeasure :=
-    (aemeasurable_const.add hm4).mul (aemeasurable_const.add hm5)
-  have hYm : AEMeasurable (seamEnlargedY M m Ctop Y0)
-      (Cutoff.cutoffSampleLaw M).toMeasure := (hY0m.mul hEm).const_mul _
-  have hR40 : (0 : ℝ) ≤ A * (1 / 4 : ℝ)⁻¹ * Real.sqrt q * Real.sqrt M.gamma := by
-    have hA0 : (0 : ℝ) ≤ A := hApos.le
-    positivity
-  have hYenl := seamEnlargedY_moment M m ht40 Y0 hY0m hCtop hp hR40 hR40 hY04p hd4 hd5
-  /- ### the Hölder assembly at the re-pinned ba -/
-  have hR1 : (0 : ℝ) ≤ A * |Real.log M.gamma| * Real.sqrt q * Real.sqrt M.gamma := by
-    have hA0 : (0 : ℝ) ≤ A := hApos.le
-    positivity
-  have hR2 : (0 : ℝ) ≤ A * Real.sqrt q * Real.sqrt M.gamma := by
-    have hA0 : (0 : ℝ) ≤ A := hApos.le
-    positivity
-  have hRY : (0 : ℝ) ≤ Ctop * (2 * ((1 + A * (1 / 4 : ℝ)⁻¹ * Real.sqrt q *
-      Real.sqrt M.gamma) * (1 + A * (1 / 4 : ℝ)⁻¹ * Real.sqrt q * Real.sqrt M.gamma))) := by
-    have h1 : (0 : ℝ) ≤ 1 + A * (1 / 4 : ℝ)⁻¹ * Real.sqrt q * Real.sqrt M.gamma := by
-      linarith only [hR40]
-    have := mul_nonneg h1 h1
-    have h2 : (0 : ℝ) ≤ 2 * ((1 + A * (1 / 4 : ℝ)⁻¹ * Real.sqrt q * Real.sqrt M.gamma) *
-        (1 + A * (1 / 4 : ℝ)⁻¹ * Real.sqrt q * Real.sqrt M.gamma)) := by
-      linarith only [this]
-    exact mul_nonneg hCtop h2
-  have hassembly := ethmB_moment_of_factor_moments M hnm (homSeamBase M hs)
-    (seamEnlargedY M m Ctop Y0) hYm hCgap hp hRY hR1 hR2 hR1 hYenl hd1 hd2 hd3
+  obtain ⟨stage_hR40, stage_hassembly⟩ :=
+    @homSeamStepOneDisplay_momentBounds1 (d) (Ctop) (Cgate) (hCtop) (hCgate) (A) (hA1) (hApos) (hkap0) (M) (hs) (m) (Y0) (hY0m) (hY0) (Cgap) (hCgap) (p) (hp) (hprange) (hgpos) (hL4) (hginv) (hLinv) (hp0) (hq8p) (ht40) (hf1) (hf2) (hf3) (hf4) (hf5)
+  have hR40 : (0 : ℝ) ≤ A * (1 / 4 : ℝ)⁻¹ * Real.sqrt q * Real.sqrt M.gamma := stage_hR40
+  have hassembly := stage_hassembly
   refine le_trans hassembly (ENNReal.rpow_le_rpow (ENNReal.ofReal_le_ofReal ?_) hp0.le)
   /- ### the numeric collap -/
   have hsinv : ((homSeamBase M hs : {s : ℝ // 0 < s}) : ℝ)⁻¹ =
       8 * |Real.log M.gamma| := by
-    show (homS M / 8)⁻¹ = 8 * |Real.log M.gamma|
+    change (homS M / 8)⁻¹ = 8 * |Real.log M.gamma|
     rw [homS]
     field_simp
   rw [hsinv]
@@ -540,99 +711,10 @@ theorem exists_ethmB_seam_moment_bound (d : ℕ) (cstar : ℝ) (hcstar : 0 < cst
   have hsqL : (2 : ℝ) ≤ Real.sqrt |Real.log M.gamma| := by
     have h := Real.sqrt_le_sqrt hL4
     rwa [sqrt_four] at h
-  have hS3 : (3 : ℝ) ≤ Real.sqrt p + Real.sqrt |Real.log M.gamma| := by
-    linarith only [hsqp, hsqL]
-  have hWDS : Real.sqrt q ≤ homSeamSqrtLoss d *
-      (Real.sqrt p + Real.sqrt |Real.log M.gamma|) := by
-    have hmax := sqrt_max_le (a := 8 * p) (b := 64 * (d : ℝ) * |Real.log M.gamma|)
-      (by linarith only [hp0]) (by positivity)
-    have he1 : Real.sqrt (8 * p) ≤ 3 * Real.sqrt p := by
-      have h8 : Real.sqrt (8 * p) = Real.sqrt 8 * Real.sqrt p :=
-        Real.sqrt_mul (by norm_num) p
-      have h9 : Real.sqrt 8 ≤ 3 := by
-        have h := Real.sqrt_le_sqrt (show (8 : ℝ) ≤ 9 by norm_num)
-        have h3 : Real.sqrt 9 = 3 := by
-          rw [show (9 : ℝ) = 3 ^ (2 : ℕ) from by norm_num,
-            Real.sqrt_sq (by norm_num : (0 : ℝ) ≤ 3)]
-        rwa [h3] at h
-      rw [h8]
-      exact mul_le_mul_of_nonneg_right h9 (Real.sqrt_nonneg _)
-    have he2 : Real.sqrt (64 * (d : ℝ) * |Real.log M.gamma|) =
-        8 * Real.sqrt (d : ℝ) * Real.sqrt |Real.log M.gamma| := by
-      rw [Real.sqrt_mul (by positivity) _, Real.sqrt_mul (by norm_num : (0 : ℝ) ≤ 64) _]
-      have h64 : Real.sqrt 64 = 8 := by
-        rw [show (64 : ℝ) = 8 ^ (2 : ℕ) from by norm_num,
-          Real.sqrt_sq (by norm_num : (0 : ℝ) ≤ 8)]
-      rw [h64]
-    have hexp : homSeamSqrtLoss d * (Real.sqrt p + Real.sqrt |Real.log M.gamma|) =
-        3 * Real.sqrt p + 8 * Real.sqrt (d : ℝ) * Real.sqrt |Real.log M.gamma| +
-          (3 * Real.sqrt |Real.log M.gamma| + 8 * Real.sqrt (d : ℝ) * Real.sqrt p) := by
-      rw [homSeamSqrtLoss]; ring
-    have hslack : (0 : ℝ) ≤ 3 * Real.sqrt |Real.log M.gamma| +
-        8 * Real.sqrt (d : ℝ) * Real.sqrt p := by positivity
-    rw [he2] at hmax
-    rw [hexp]
-    linarith only [hmax, he1, hslack]
-  have hpg : p * M.gamma ≤ 1 := by
-    have h := mul_le_mul_of_nonneg_right hprange hgpos.le
-    have he : (homSeamDisplayConst A Ctop Cgate d)⁻¹ * M.gamma⁻¹ *
-        |Real.log M.gamma|⁻¹ * M.gamma =
-        (homSeamDisplayConst A Ctop Cgate d)⁻¹ * |Real.log M.gamma|⁻¹ := by
-      field_simp
-    rw [he] at h
-    have hCinv : (homSeamDisplayConst A Ctop Cgate d)⁻¹ ≤ 1 :=
-      inv_le_one_of_one_le₀ hC0one
-    have hLq : |Real.log M.gamma|⁻¹ ≤ 1 / 4 := by
-      rw [← hSeq]; exact hs4
-    have hbd : (homSeamDisplayConst A Ctop Cgate d)⁻¹ * |Real.log M.gamma|⁻¹ ≤
-        1 * (1 / 4) := mul_le_mul hCinv hLq hLinv zero_le_one
-    linarith only [h, hbd]
-  have hLg : |Real.log M.gamma| * M.gamma ≤ 1 := by
-    have hstep : |Real.log M.gamma| * M.gamma ≤
-        (4 * (Real.sqrt (Real.sqrt M.gamma))⁻¹) * M.gamma :=
-      mul_le_mul_of_nonneg_right hLu hgpos.le
-    have hne : Real.sqrt (Real.sqrt M.gamma) ≠ 0 := ne_of_gt htpos
-    have he : (4 * (Real.sqrt (Real.sqrt M.gamma))⁻¹) * M.gamma =
-        4 * Real.sqrt (Real.sqrt M.gamma) ^ (3 : ℕ) := by
-      calc (4 * (Real.sqrt (Real.sqrt M.gamma))⁻¹) * M.gamma
-          = (4 * (Real.sqrt (Real.sqrt M.gamma))⁻¹) *
-              Real.sqrt (Real.sqrt M.gamma) ^ (4 : ℕ) := by rw [ht4]
-        _ = 4 * ((Real.sqrt (Real.sqrt M.gamma))⁻¹ * Real.sqrt (Real.sqrt M.gamma)) *
-              Real.sqrt (Real.sqrt M.gamma) ^ (3 : ℕ) := by ring
-        _ = 4 * 1 * Real.sqrt (Real.sqrt M.gamma) ^ (3 : ℕ) := by
-              rw [inv_mul_cancel₀ hne]
-        _ = 4 * Real.sqrt (Real.sqrt M.gamma) ^ (3 : ℕ) := by ring
-    have ht3 : Real.sqrt (Real.sqrt M.gamma) ^ (3 : ℕ) ≤ (1 / 16 : ℝ) ^ (3 : ℕ) :=
-      pow_le_pow_left₀ htpos.le ht16 3
-    have hnum : (1 / 16 : ℝ) ^ (3 : ℕ) = 1 / 4096 := by norm_num
-    rw [hnum] at ht3
-    rw [he] at hstep
-    linarith only [hstep, ht3]
-  have hSG : (Real.sqrt p + Real.sqrt |Real.log M.gamma|) * Real.sqrt M.gamma ≤ 2 := by
-    have e1 : Real.sqrt p * Real.sqrt M.gamma = Real.sqrt (p * M.gamma) :=
-      (Real.sqrt_mul hp0.le M.gamma).symm
-    have e2 : Real.sqrt |Real.log M.gamma| * Real.sqrt M.gamma =
-        Real.sqrt (|Real.log M.gamma| * M.gamma) :=
-      (Real.sqrt_mul (abs_nonneg _) M.gamma).symm
-    have b1 : Real.sqrt (p * M.gamma) ≤ 1 := sqrt_le_one_of_le_one hpg
-    have b2 : Real.sqrt (|Real.log M.gamma| * M.gamma) ≤ 1 := sqrt_le_one_of_le_one hLg
-    have he : (Real.sqrt p + Real.sqrt |Real.log M.gamma|) * Real.sqrt M.gamma =
-        Real.sqrt p * Real.sqrt M.gamma +
-          Real.sqrt |Real.log M.gamma| * Real.sqrt M.gamma := by ring
-    rw [he, e1, e2]
-    linarith only [b1, b2]
-  have hgam5 : M.gamma ^ (5 : ℕ) ≤ Real.sqrt M.gamma := by
-    have h5 : M.gamma ^ (5 : ℕ) ≤ M.gamma :=
-      pow_le_of_le_one hgpos.le hg1.le (by norm_num)
-    have hsq1 : Real.sqrt M.gamma ≤ 1 := sqrt_le_one_of_le_one hg1.le
-    have hself : Real.sqrt M.gamma * Real.sqrt M.gamma = M.gamma :=
-      Real.mul_self_sqrt hgpos.le
-    have hle : M.gamma ≤ Real.sqrt M.gamma := by
-      have hmul : Real.sqrt M.gamma * Real.sqrt M.gamma ≤ Real.sqrt M.gamma * 1 :=
-        mul_le_mul_of_nonneg_left hsq1 (Real.sqrt_nonneg _)
-      rw [hself] at hmul
-      linarith only [hmul]
-    linarith only [h5, hle]
+  obtain ⟨hS3, hWDS, hSG, hgam5⟩ :=
+    @homSeamStepOneDisplay_comparisonBounds1 (d) (Ctop) (Cgate) (A) (hC0one) (M) (p) (hp)
+      (hprange) (hgpos) (htpos) (ht4) (ht16) (hg1) (hL4) (hLne) (hs4) (hLu) (hLinv) (hSeq) (hp0)
+        (hsqp) (hsqL)
   have hWG2D : Real.sqrt q * Real.sqrt M.gamma ≤ 2 * homSeamSqrtLoss d := by
     have hD : (0 : ℝ) ≤ homSeamSqrtLoss d := homSeamSqrtLoss_nonneg d
     have hstep : Real.sqrt q * Real.sqrt M.gamma ≤

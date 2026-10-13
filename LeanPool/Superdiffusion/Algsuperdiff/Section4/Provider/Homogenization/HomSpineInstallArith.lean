@@ -281,10 +281,10 @@ condition is the plain level condition read at the dual order. -/
 theorem cgTestConst_mul_rpow_originCube (d : ℕ) (m : ℤ) (alpha s' t : ℝ) :
     cgTestConst d (originCube d m) alpha s' t * Real.rpow 3 (s' * (m : ℝ)) =
       cgTestConstBase d alpha s' t * Real.rpow 3 (alpha * (m : ℝ)) := by
-  show cgTestConst d (originCube d m) alpha s' t * (3 : ℝ) ^ (s' * (m : ℝ)) =
+  change cgTestConst d (originCube d m) alpha s' t * (3 : ℝ) ^ (s' * (m : ℝ)) =
       cgTestConstBase d alpha s' t * (3 : ℝ) ^ (alpha * (m : ℝ))
   have hscale : cubeScaleFactor (originCube d m) = (3 : ℝ) ^ ((m : ℝ)) := by
-    show ((3 : ℝ) ^ (m : ℤ)) = (3 : ℝ) ^ ((m : ℝ))
+    change ((3 : ℝ) ^ (m : ℤ)) = (3 : ℝ) ^ ((m : ℝ))
     exact (Real.rpow_intCast (3 : ℝ) m).symm
   have hpow : (cubeScaleFactor (originCube d m)) ^ (alpha - s') =
       (3 : ℝ) ^ ((m : ℝ) * (alpha - s')) := by

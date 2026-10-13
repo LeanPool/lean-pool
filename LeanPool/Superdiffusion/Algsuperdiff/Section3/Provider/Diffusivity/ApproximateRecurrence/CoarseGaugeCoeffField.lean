@@ -83,7 +83,7 @@ theorem symmPart_add_of_transpose_eq_neg {H : Mat d}
   have hij : H j i = -H i j := by
     have h := congrFun (congrFun hH i) j
     simpa [matTranspose, Matrix.transpose_apply] using h
-  show ((A + H) i j + (A + H) j i) / 2 = (A i j + A j i) / 2
+  change ((A + H) i j + (A + H) j i) / 2 = (A i j + A j i) / 2
   simp only [Matrix.add_apply, hij]
   ring
 

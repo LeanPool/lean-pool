@@ -30,7 +30,8 @@ weighted rather than uniform in the depth index.
 
 ### (a) The energy slot at the `s₁ = s/4` pin — A MEASURED PRINT DEFECT
 
-The printed `ℓ^p` energy slot is fed from a UNIFORM bound `Gen R ≤ S`.  What Step 2b actually delivers is a
+The printed `ℓ^p` energy slot is fed from a UNIFORM bound `Gen R ≤ S`.  What Step 2b actually
+delivers is a
 WEIGHTED bound: at the §4.5 parameter web the family bound `F j z ≤
 K·3^{(1-α)(m-j)}` (the Step-2b local family) grows
 like `3^{a i}` in the depth index `i = (m-n)+i` with

@@ -397,7 +397,8 @@ theorem exists_freshShellDirichlet_meshOscillation_memLp_and_eighthMoment_le
     refine hsq'.congr (Filter.Eventually.of_forall fun omega => ?_)
     exact sq_meshOscillationCell_rpow_four n (wD omega).toH1Function.grad R
   -- the eighth-moment grid envelope at the model's own amplitude
-  have hcore := cubeFamilyAverage_integral_meshOscillationCell_pow_eight_le_freshShellEighthEnergyConst
+  have hcore :=
+    cubeFamilyAverage_integral_meshOscillationCell_pow_eight_le_freshShellEighthEnergyConst
     (mu := M.P.toMeasure) hn (fun omega => (wD omega).toH1Function.grad)
     hCheadpos.le hApos hTnn hTtail hmem
     (fun omega => hD omega (wD omega) (hsol omega)) hcoord hcoordsq hsq hfour height

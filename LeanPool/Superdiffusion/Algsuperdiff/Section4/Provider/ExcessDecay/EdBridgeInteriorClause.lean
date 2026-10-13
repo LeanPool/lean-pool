@@ -107,7 +107,8 @@ theorem ofReal_mul_add_two_ne_top {c₁ c₂ : ℝ} {X Y : ℝ≥0∞} (hX : X �
 
 /-! ## 2. The event-free interior one-step -/
 
-/-- `OneStepSchauderComposeInterior.excessDecay_oneStep_interior_of_weaklyHarmonic` with its `(hmem, hharm)`
+/-- `OneStepSchauderComposeInterior.excessDecay_oneStep_interior_of_weaklyHarmonic` with its `(hmem,
+hharm)`
 pair replaced by the bound they exist to produce.  The event plays no analytic role in the
 chain; stripping the indicator is the caller's business, and this module's caller does it at the
 interior clause's own (printed) index. -/

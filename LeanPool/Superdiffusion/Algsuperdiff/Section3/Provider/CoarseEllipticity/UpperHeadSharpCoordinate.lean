@@ -153,6 +153,64 @@ theorem collar_head_layer_le
       simp only [A, K, P, G]
       ring
 
+private theorem collarHead_layer_pointwiseBound :
+    ∀ {d : ℕ} (M : ABKModel d) {m : ℤ} {k : ℕ} {R : TriadicCube d},
+      R ∈ descendantsAtScale (originCube d m) (m - (1 : ℤ) - (↑k : ℤ)) →
+        ∀ {E : { E : ℝ // (1 : ℝ) ≤ E }} (j : Fin d),
+          let D₀ : ℝ :=
+            probeMeanGoodWaveConst M * vecNormSq (basisVec j) *
+                ((5 : ℝ) * (↑d : ℝ) ^ (2 : ℕ) * waveL4HeadConst d ^ (2 : ℕ)) *
+              ((4 : ℝ) * superposedGradConst d ^ (2 : ℕ) *
+                      probeSharpCollarBandMeanCapQuarter M (↑E : ℝ) (collarBandMeanDepth M (↑E : ℝ)) *
+                    probeSharpCollarBandMeanMassQuarterConst d *
+                  (3 : ℝ) ^ ((2 : ℝ) * bfaProfileB * (↑(collarBandMeanDepth M (↑E : ℝ)) : ℝ)) *
+                (3 : ℝ) ^ (1 / 16 : ℝ));
+          let D : ℕ → ℝ := fun (n : ℕ) => D₀ * whitneyDecayRatio ^ n;
+          let P : CutoffSample d → ℝ := fun (omega : CutoffSample d) =>
+            slstarPowerTerm M R.scale (↑E : ℝ) bfaProfileB M.gamma (translateCutoffSample (triadicCubeShift R) omega);
+          let G : CutoffSample d → ℝ := fun (omega : CutoffSample d) =>
+            M.gamma * (↑(hsep M R.scale (↑E : ℝ) bfaProfileB (translateCutoffSample (triadicCubeShift R) omega)) : ℝ);
+          Summable D →
+            ∀ (omega : CutoffSample d),
+              ∑' (n : ℕ),
+                  probeSharpFramedCollarWavePart M R.scale (↑E : ℝ) bfaProfileB (collarBandMeanDepth M (↑E : ℝ)) n
+                    (m - (1 : ℤ)) (basisVec j) (superposedGradConst d)
+                    (fun (eta : CutoffSample d) =>
+                      waveHeadTerm M R.scale (↑E : ℝ) bfaProfileB
+                          (probeSharpLayerAnchor R.scale bfaProfileB (collarBandMeanDepth M (↑E : ℝ)) n) eta ^
+                        (2 : ℕ))
+                    (translateCutoffSample (triadicCubeShift R) omega) ≤
+                (∑' (n : ℕ), D n) * (P omega * G omega) := by
+  intro d M m _ R hR E j D₀ D P G hDsum omega
+  let X : ℕ → ℝ := fun n =>
+    probeSharpFramedCollarWavePart M R.scale (E : ℝ) bfaProfileB
+      (collarBandMeanDepth M (E : ℝ)) n (m - 1) (basisVec j)
+      (superposedGradConst d)
+      (fun eta => waveHeadTerm M R.scale (E : ℝ) bfaProfileB
+        (probeSharpLayerAnchor R.scale bfaProfileB
+          (collarBandMeanDepth M (E : ℝ)) n) eta ^ 2)
+      (translateCutoffSample (triadicCubeShift R) omega)
+  have hX0 : ∀ n, 0 ≤ X n := fun n => by
+    dsimp only [X]
+    exact probeSharpFramedCollarWavePart_nonneg M.shellPrefix.dimension
+      M R.scale (E : ℝ) bfaProfileB (collarBandMeanDepth M (E : ℝ))
+      n (m - 1) (basisVec j) (superposedGradConst d)
+      (fun eta => sq_nonneg _) _
+  have hXle : ∀ n, X n ≤ D n * (P omega * G omega) := fun n => by
+    have h := collar_head_layer_le M hR (E : ℝ) n j
+      (translateCutoffSample (triadicCubeShift R) omega)
+    dsimp only [X, D, D₀, P, G]
+    simpa only [mul_assoc] using h
+  have hright : Summable fun n => D n * (P omega * G omega) :=
+    hDsum.mul_right (P omega * G omega)
+  have hXsum : Summable X :=
+    Summable.of_nonneg_of_le hX0 hXle hright
+  calc
+    ∑' n, X n ≤ ∑' n, D n * (P omega * G omega) :=
+      Summable.tsum_le_tsum hXle hXsum hright
+    _ = (∑' n, D n) * (P omega * G omega) := by
+      rw [tsum_mul_right]
+
 theorem collar_head_coordinate_is_big_o_with
     (M : ABKModel d) {m : ℤ} {k : ℕ} {R : TriadicCube d}
     (hR : R ∈ descendantsAtScale (originCube d m) (m - 1 - (k : ℤ)))
@@ -340,45 +398,7 @@ theorem collar_head_coordinate_is_big_o_with
         hsigma0 hsigma (div_nonneg M.shellPrefix.gamma_pos.le (by norm_num))
         bfaProfileB_pos hgammaHalf hAP hAG hP0 hG0 hP hG)
   have hmajor := hproduct.const_mul hDtsum0
-  have hpoint : ∀ omega : CutoffSample d,
-      (∑' n : ℕ,
-        probeSharpFramedCollarWavePart M R.scale (E : ℝ) bfaProfileB
-          (collarBandMeanDepth M (E : ℝ)) n (m - 1) (basisVec j)
-          (superposedGradConst d)
-          (fun eta => waveHeadTerm M R.scale (E : ℝ) bfaProfileB
-            (probeSharpLayerAnchor R.scale bfaProfileB
-              (collarBandMeanDepth M (E : ℝ)) n) eta ^ 2)
-          (translateCutoffSample (triadicCubeShift R) omega)) ≤
-        (∑' n, D n) * (P omega * G omega) := by
-    intro omega
-    let X : ℕ → ℝ := fun n =>
-      probeSharpFramedCollarWavePart M R.scale (E : ℝ) bfaProfileB
-        (collarBandMeanDepth M (E : ℝ)) n (m - 1) (basisVec j)
-        (superposedGradConst d)
-        (fun eta => waveHeadTerm M R.scale (E : ℝ) bfaProfileB
-          (probeSharpLayerAnchor R.scale bfaProfileB
-            (collarBandMeanDepth M (E : ℝ)) n) eta ^ 2)
-        (translateCutoffSample (triadicCubeShift R) omega)
-    have hX0 : ∀ n, 0 ≤ X n := fun n => by
-      dsimp only [X]
-      exact probeSharpFramedCollarWavePart_nonneg M.shellPrefix.dimension
-        M R.scale (E : ℝ) bfaProfileB (collarBandMeanDepth M (E : ℝ))
-        n (m - 1) (basisVec j) (superposedGradConst d)
-        (fun eta => sq_nonneg _) _
-    have hXle : ∀ n, X n ≤ D n * (P omega * G omega) := fun n => by
-      have h := collar_head_layer_le M hR (E : ℝ) n j
-        (translateCutoffSample (triadicCubeShift R) omega)
-      dsimp only [X, D, D₀, P, G]
-      simpa only [mul_assoc] using h
-    have hright : Summable fun n => D n * (P omega * G omega) :=
-      hDsum.mul_right (P omega * G omega)
-    have hXsum : Summable X :=
-      Summable.of_nonneg_of_le hX0 hXle hright
-    calc
-      ∑' n, X n ≤ ∑' n, D n * (P omega * G omega) :=
-        Summable.tsum_le_tsum hXle hXsum hright
-      _ = (∑' n, D n) * (P omega * G omega) := by
-        rw [tsum_mul_right]
+  have hpoint := @collarHead_layer_pointwiseBound (d) (M) (m) (k) (R) (hR) (E) (j) (hDsum)
   exact isBigOWith_gammaSigma_of_le hpoint (by
     simpa only [D, D₀, P, G, alpha, AP, AG] using hmajor)
 

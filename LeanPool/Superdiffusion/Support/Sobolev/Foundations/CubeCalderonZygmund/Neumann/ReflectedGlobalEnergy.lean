@@ -119,7 +119,7 @@ theorem memLp_hilbertify_reflectedParentDatumExtension_two_of_evenReflection
       hH
 
 /-- Exact scalar rescaling of the even-reflected datum energy. -/
-theorem integral_sqNorm_smul_hilbertify_reflectedParentDatumExtension_eq_three_pow_of_evenReflection
+theorem integral_reflectedParentDatum_normSq_eq_scaledSource
     {d : ℕ} {m : ℤ} {sigma0 : ℝ} (hsigma0 : 0 < sigma0)
     (H HP : Vec d → Vec d)
     (hH : MemVectorL2 (openCubeSet (originCube d m)) H)
@@ -162,7 +162,7 @@ theorem reflectedGlobalSquaredEnergy_eq_neumannReflectedSourceSquaredEnergy
   unfold reflectedGlobalSquaredEnergy neumannReflectedSourceSquaredEnergy
   rw [integral_sqNorm_reflectedParentGradientExtension_eq_three_pow_of_evenReflection
       u uP huP,
-    integral_sqNorm_smul_hilbertify_reflectedParentDatumExtension_eq_three_pow_of_evenReflection
+    integral_reflectedParentDatum_normSq_eq_scaledSource
       hsigma0 H HP hH hHP]
   ring
 

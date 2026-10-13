@@ -192,7 +192,8 @@ theorem one_step_laplace_step_of_good_sites_stream_image (d : ℕ) (hdim : 2 ≤
         0 < (C * exitTimeScale M n)⁻¹ ∧
         oneStepLaplaceContraction (Real.toNNReal C) (Real.toNNReal C⁻¹) < 1 ∧
         ∀ j : Fin r, ∀ z ∈ closure (cubeSetAt (rescaleSite (n - 1) (sites j)) (n - 1)),
-          ∫⁻ eta, Algsuperdiff.Process.ContinuousPath.discountedStoppingWeight (C * exitTimeScale M n)⁻¹
+          ∫⁻ eta, Algsuperdiff.Process.ContinuousPath.discountedStoppingWeight (C * exitTimeScale
+            M n)⁻¹
               (ContinuousPath.exitTime
                 (emb '' cubeSetAt (rescaleSite (n - 1) (sites j)) n)) eta
             ∂(hP.continuousProcess P (emb z)) ≤
@@ -237,7 +238,8 @@ theorem one_step_laplace_hone_of_good_sites_stream_image (d : ℕ) (hdim : 2 ≤
         0 < (C * exitTimeScale M n)⁻¹ ∧
         oneStepLaplaceContraction (Real.toNNReal C) (Real.toNNReal C⁻¹) < 1 ∧
         ∀ l : ℕ, ∀ z ∈ emb '' enumeratedClosedCubeFamily (n - 1) sites l,
-          ∫⁻ eta, Algsuperdiff.Process.ContinuousPath.discountedStoppingWeight (C * exitTimeScale M n)⁻¹
+          ∫⁻ eta, Algsuperdiff.Process.ContinuousPath.discountedStoppingWeight (C * exitTimeScale
+            M n)⁻¹
               (ContinuousPath.exitTime
                 (emb '' enumeratedOpenEnlargementFamily (n - 1) sites l)) eta
             ∂(hP.continuousProcess P z) ≤

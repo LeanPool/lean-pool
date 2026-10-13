@@ -162,19 +162,19 @@ theorem isDoubledMuAdmissibleField_add {U : Domain d} {F X Y : DoubledField d}
   have hpsum : (fun x => (X + Y).potential x - F.potential x)
       = (fun x => X.potential x - F.potential x) + Y.potential := by
     funext x
-    show X.potential x + Y.potential x - F.potential x
+    change X.potential x + Y.potential x - F.potential x
       = (X.potential x - F.potential x) + Y.potential x
     abel
   have hfsum : (fun x => (X + Y).flux x - F.flux x)
       = (fun x => X.flux x - F.flux x) + Y.flux := by
     funext x
-    show X.flux x + Y.flux x - F.flux x = (X.flux x - F.flux x) + Y.flux x
+    change X.flux x + Y.flux x - F.flux x = (X.flux x - F.flux x) + Y.flux x
     abel
   constructor
   · rw [hpsum]
     refine ⟨hXpL2.add hYpL2, u + v, ?_⟩
     filter_upwards [hu, hv] with x hx hy
-    show (X.potential x - F.potential x) + Y.potential x = _
+    change (X.potential x - F.potential x) + Y.potential x = _
     rw [hx, hy]
     rfl
   · rw [hfsum]
@@ -186,7 +186,7 @@ theorem isDoubledMuAdmissibleField_add {U : Domain d} {F X Y : DoubledField d}
           = vecDot (X.flux x - F.flux x) (phi.grad x)
             + vecDot (Y.flux x) (phi.grad x) := by
       intro x
-      show vecDot ((X.flux x - F.flux x) + Y.flux x) (phi.grad x) = _
+      change vecDot ((X.flux x - F.flux x) + Y.flux x) (phi.grad x) = _
       simp [vecDot, Finset.sum_add_distrib, add_mul]
     calc
       ∫ x in (U : Set (Vec d)),
@@ -208,7 +208,7 @@ theorem memVectorL2_potential_of_isDoubledMuAdmissibleField {U : Domain d}
     MemVectorL2 (U : Set (Vec d)) X.potential := by
   have hfun : F.potential + (fun x => X.potential x - F.potential x) = X.potential := by
     funext x
-    show F.potential x + (X.potential x - F.potential x) = X.potential x
+    change F.potential x + (X.potential x - F.potential x) = X.potential x
     abel
   exact hfun ▸ hF.add hX.1.1
 
@@ -220,7 +220,7 @@ theorem memVectorL2_flux_of_isDoubledMuAdmissibleField {U : Domain d}
     MemVectorL2 (U : Set (Vec d)) X.flux := by
   have hfun : F.flux + (fun x => X.flux x - F.flux x) = X.flux := by
     funext x
-    show F.flux x + (X.flux x - F.flux x) = X.flux x
+    change F.flux x + (X.flux x - F.flux x) = X.flux x
     abel
   exact hfun ▸ hF.add hX.2.1
 
@@ -246,7 +246,7 @@ private theorem hilbert_eq_add_of_components {U : Set (Vec d)}
          (toHilbertBlockL2OfComponents (U := U) hp hq)]
     with x hWx hFx hCx hsum
   rw [hWx, hsum]
-  show hilbertifyBlockField W x
+  change hilbertifyBlockField W x
       = (toHilbertBlockL2OfBlockField (U := U) hF) x
         + (toHilbertBlockL2OfComponents (U := U) hp hq) x
   rw [hFx, hCx]
@@ -328,13 +328,13 @@ private theorem exists_isDoubledMuMinimizerField_of_isEllipticFieldOn [NeZero d]
         exact Book.Ch01.potentialZeroTraceFieldOn_of_h10 u
       have hfun : (fun x => X.potential x - F.potential x) = Ydat.potential := by
         funext x
-        show F.potential x + Ydat.potential x - F.potential x = Ydat.potential x
+        change F.potential x + Ydat.potential x - F.potential x = Ydat.potential x
         abel
       rw [hfun]
       exact hpz
     · have hfun : (fun x => X.flux x - F.flux x) = Ydat.flux := by
         funext x
-        show F.flux x + Ydat.flux x - F.flux x = Ydat.flux x
+        change F.flux x + Ydat.flux x - F.flux x = Ydat.flux x
         abel
       rw [hfun]
       exact ⟨Ydat.flux_memL2, Ydat.isSolenoidalZeroNormalTrace⟩
@@ -343,7 +343,7 @@ private theorem exists_isDoubledMuMinimizerField_of_isEllipticFieldOn [NeZero d]
   have hsplitX : toHilbertBlockL2OfBlockField hXL2 = affineMinimizerMap K B hB x0 := by
     rw [hilbert_eq_add_of_components hFL2 hXL2 Ydat.potential_memL2 Ydat.flux_memL2
       (fun _ => rfl) (fun _ => rfl)]
-    show x0 + Ydat.toHilbertBlockL2 = affineMinimizerMap K B hB x0
+    change x0 + Ydat.toHilbertBlockL2 = affineMinimizerMap K B hB x0
     rw [hYrepr]
     abel
   have hclassW : ∀ W : DoubledField d, IsDoubledMuAdmissibleField U F W →
@@ -360,10 +360,10 @@ private theorem exists_isDoubledMuMinimizerField_of_isEllipticFieldOn [NeZero d]
     rw [hilbert_eq_add_of_components hFL2 hWL2
       hW.1.1 hW.2.1
       (fun x => by
-        show W.potential x = F.potential x + (W.potential x - F.potential x)
+        change W.potential x = F.potential x + (W.potential x - F.potential x)
         abel)
       (fun x => by
-        show W.flux x = F.flux x + (W.flux x - F.flux x)
+        change W.flux x = F.flux x + (W.flux x - F.flux x)
         abel)]
     have hcancel : x0 + toHilbertBlockL2OfComponents hW.1.1 hW.2.1 - x0
         = toHilbertBlockL2OfComponents hW.1.1 hW.2.1 := by abel
@@ -420,10 +420,10 @@ theorem exists_isDoubledMuMinimizerField (U : Domain d) (a : CoeffOn U)
       intro W
       have hfun : (fun x : Vec 0 => blockEnergyDensityAt a (W.eval x) x) = 0 := by
         funext x
-        show (1 / 2 : ℝ) * blockVecDot (W.eval x)
+        change (1 / 2 : ℝ) * blockVecDot (W.eval x)
           (blockMatVecMul (blockMatrixField a x) (W.eval x)) = 0
         simp [blockVecDot, vecDot]
-      show volumeAverage (U : Set (Vec 0)) (fun x => blockEnergyDensityAt a (W.eval x) x) = 0
+      change volumeAverage (U : Set (Vec 0)) (fun x => blockEnergyDensityAt a (W.eval x) x) = 0
       rw [hfun]
       simp [volumeAverage]
     refine ⟨F, ⟨isDoubledMuAdmissibleField_self U F, ?_⟩, ?_⟩

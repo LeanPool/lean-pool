@@ -79,7 +79,7 @@ variable {d : ℕ}
 /-- The two `s`-powers of the composition add: `s^{-4} · s^{-3} = s^{-7}`. -/
 theorem rpow_s_four_mul_three {s : ℝ} (hs : 0 < s) :
     Real.rpow s (-(4 : ℝ)) * Real.rpow s (-(3 : ℝ)) = Real.rpow s (-(7 : ℝ)) := by
-  show s ^ (-(4 : ℝ)) * s ^ (-(3 : ℝ)) = s ^ (-(7 : ℝ))
+  change s ^ (-(4 : ℝ)) * s ^ (-(3 : ℝ)) = s ^ (-(7 : ℝ))
   rw [← Real.rpow_add hs]
   congr 1
   ring

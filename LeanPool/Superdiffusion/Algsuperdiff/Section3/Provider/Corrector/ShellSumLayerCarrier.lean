@@ -222,7 +222,7 @@ theorem valuePathForcing_comp_seqPathSum (e : Vec d) (n m : ℤ) :
     valuePathForcing e ∘ seqPathSum (d := d) n m
       = fun F => ∑ k ∈ Finset.Ioc n m, layerForcing e k F := by
   funext F
-  show HilbertVec.ofVec (matVecMul ((∑ k ∈ Finset.Ioc n m, F k) 0) e)
+  change HilbertVec.ofVec (matVecMul ((∑ k ∈ Finset.Ioc n m, F k) 0) e)
     = ∑ k ∈ Finset.Ioc n m, HilbertVec.ofVec (matVecMul (F k 0) e)
   rw [ContinuousMap.sum_apply, matVecMul_finset_sum]
   simpa only [HilbertVec.ofVecL_apply] using

@@ -136,6 +136,109 @@ private theorem coarseEllipticity_rawRareScale_le_normalized {d : ℕ} (hd : 2 �
 
 /-! ## 1. The model-free split constructor -/
 
+private theorem finiteEllipticity_weightedTerm_le_infinityBound :
+    ∀ {d : ℕ} (Q : TriadicCube d)
+      (a : Ch02.TriadicCoeffFamily d) {s q : ℝ},
+      let H : ℕ → ℝ := fun (n : ℕ) => Ch02.maxDescendantBMatrixNormAtScale Q (Q.scale - (↑n : ℤ)) a;
+      let V : ℝ := Ch02.LambdaSq Q (s / (2 : ℝ)) Ch02.MultiscaleExponent.infinity a;
+      (0 : ℝ) < q →
+        (0 : ℝ) < s / (2 : ℝ) →
+          (∀ (n : ℕ), (0 : ℝ) ≤ H n) →
+            (∀ (n : ℕ), Real.rpow (3 : ℝ) (-s * (↑n : ℝ)) * H n ≤ V) →
+              Ch02.geometricDiscount s q ≤ (2 : ℝ) * Ch02.geometricDiscount (s / (2 : ℝ)) q →
+                ∀ (n : ℕ),
+                  Ch02.geometricWeight s q n * (H n).rpow (q / (2 : ℝ)) ≤
+                    (2 : ℝ) * Ch02.geometricWeight (s / (2 : ℝ)) q n * V.rpow (q / (2 : ℝ)) := by
+  intro _ _ a s q H V hqpos hhalf hHnonneg hendpoint hdiscount n
+  have hbase0 : 0 ≤ Real.rpow (3 : ℝ) (-s * (n : ℝ)) * H n :=
+    mul_nonneg (Real.rpow_nonneg (by norm_num) _) (hHnonneg n)
+  have hpow :
+      Real.rpow (Real.rpow (3 : ℝ) (-s * (n : ℝ)) * H n) (q / 2) ≤
+        Real.rpow V (q / 2) :=
+    Real.rpow_le_rpow hbase0 (hendpoint n)
+      (div_nonneg hqpos.le (by norm_num))
+  have hdepth :
+      Real.rpow (3 : ℝ) (-s * q * (n : ℝ)) * Real.rpow (H n) (q / 2) =
+        Real.rpow (3 : ℝ) (-(s / 2) * q * (n : ℝ)) *
+          Real.rpow
+            (Real.rpow (3 : ℝ) (-s * (n : ℝ)) * H n) (q / 2) := by
+    symm
+    calc
+      Real.rpow (3 : ℝ) (-(s / 2) * q * (n : ℝ)) *
+          Real.rpow
+            (Real.rpow (3 : ℝ) (-s * (n : ℝ)) * H n) (q / 2) =
+        Real.rpow (3 : ℝ) (-(s / 2) * q * (n : ℝ)) *
+          (Real.rpow (Real.rpow (3 : ℝ) (-s * (n : ℝ))) (q / 2) *
+            Real.rpow (H n) (q / 2)) := by
+              have hraw0 : 0 ≤ Real.rpow (3 : ℝ) (-s * (n : ℝ)) :=
+                Real.rpow_nonneg (by norm_num) _
+              have hmulpow :
+                  Real.rpow
+                      (Real.rpow (3 : ℝ) (-s * (n : ℝ)) * H n) (q / 2) =
+                    Real.rpow (Real.rpow (3 : ℝ) (-s * (n : ℝ))) (q / 2) *
+                      Real.rpow (H n) (q / 2) :=
+                Real.mul_rpow hraw0 (hHnonneg n)
+              exact congrArg
+                (fun z : ℝ => Real.rpow (3 : ℝ) (-(s / 2) * q * (n : ℝ)) * z)
+                hmulpow
+      _ = Real.rpow (3 : ℝ) (-(s / 2) * q * (n : ℝ)) *
+          (Real.rpow (3 : ℝ) ((-s * (n : ℝ)) * (q / 2)) *
+            Real.rpow (H n) (q / 2)) := by
+              have hrpowmul :=
+                (Real.rpow_mul (by norm_num : (0 : ℝ) ≤ 3)
+                  (-s * (n : ℝ)) (q / 2)).symm
+              exact congrArg
+                (fun z : ℝ => Real.rpow (3 : ℝ) (-(s / 2) * q * (n : ℝ)) *
+                  (z * Real.rpow (H n) (q / 2))) hrpowmul
+      _ = (Real.rpow (3 : ℝ) (-(s / 2) * q * (n : ℝ)) *
+            Real.rpow (3 : ℝ) ((-s * (n : ℝ)) * (q / 2))) *
+          Real.rpow (H n) (q / 2) := by ring
+      _ = Real.rpow (3 : ℝ)
+            (-(s / 2) * q * (n : ℝ) + (-s * (n : ℝ)) * (q / 2)) *
+          Real.rpow (H n) (q / 2) := by
+              have hadd :=
+                (Real.rpow_add (by norm_num : (0 : ℝ) < 3)
+                  (-(s / 2) * q * (n : ℝ))
+                  ((-s * (n : ℝ)) * (q / 2))).symm
+              exact congrArg (fun z : ℝ => z * Real.rpow (H n) (q / 2)) hadd
+      _ = Real.rpow (3 : ℝ) (-s * q * (n : ℝ)) *
+          Real.rpow (H n) (q / 2) := by
+              congr 2
+              ring
+  rw [Ch02.geometricWeight, Ch02.geometricWeight]
+  have hweight0 : 0 ≤ Real.rpow (3 : ℝ) (-(s / 2) * q * (n : ℝ)) :=
+    Real.rpow_nonneg (by norm_num) _
+  have hhalfdisc0 : 0 ≤ Ch02.geometricDiscount (s / 2) q := by
+    simpa [Ch02.geometricDiscount_eq_old] using
+      HCPolySupport.geometricDiscount_nonneg (mul_nonneg hhalf.le hqpos.le)
+  calc
+    Ch02.geometricDiscount s q *
+        Real.rpow (3 : ℝ) (-s * q * (n : ℝ)) * Real.rpow (H n) (q / 2) =
+      Ch02.geometricDiscount s q *
+        (Real.rpow (3 : ℝ) (-s * q * (n : ℝ)) *
+          Real.rpow (H n) (q / 2)) := by ring
+    _ = Ch02.geometricDiscount s q *
+        (Real.rpow (3 : ℝ) (-(s / 2) * q * (n : ℝ)) *
+          Real.rpow
+            (Real.rpow (3 : ℝ) (-s * (n : ℝ)) * H n) (q / 2)) := by
+        rw [hdepth]
+    _ ≤ (2 * Ch02.geometricDiscount (s / 2) q) *
+        (Real.rpow (3 : ℝ) (-(s / 2) * q * (n : ℝ)) *
+          Real.rpow
+            (Real.rpow (3 : ℝ) (-s * (n : ℝ)) * H n) (q / 2)) := by
+        exact mul_le_mul_of_nonneg_right hdiscount
+          (mul_nonneg hweight0 (Real.rpow_nonneg hbase0 _))
+    _ ≤ (2 * Ch02.geometricDiscount (s / 2) q) *
+        (Real.rpow (3 : ℝ) (-(s / 2) * q * (n : ℝ)) *
+          Real.rpow V (q / 2)) := by
+        exact mul_le_mul_of_nonneg_left
+          (mul_le_mul_of_nonneg_left hpow hweight0)
+          (mul_nonneg (by norm_num) hhalfdisc0)
+    _ = 2 *
+        (Ch02.geometricDiscount (s / 2) q *
+          Real.rpow (3 : ℝ) (-(s / 2) * q * (n : ℝ))) *
+        Real.rpow V (q / 2) := by ring
+
 /-- A pointwise three-term split with a deterministic first summand is the
 source's `X ≤ b + O_{Gamma_{sigma1}}(A1) + O_{Gamma_{sigma2}}(A2)`.
 
@@ -225,98 +328,8 @@ private theorem LambdaSq_finite_le_four_mul_infinity_half {d : ℕ} [NeZero d]
       2 * Ch02.geometricWeight (s / 2) q n * Real.rpow V (q / 2)) := by
     exact ((HCPolySupport.summable_geometricWeight
       (mul_pos hhalf hqpos)).mul_left 2).mul_right _
-  have hterm : ∀ n : ℕ,
-      Ch02.geometricWeight s q n * Real.rpow (H n) (q / 2) ≤
-        2 * Ch02.geometricWeight (s / 2) q n * Real.rpow V (q / 2) := by
-    intro n
-    have hbase0 : 0 ≤ Real.rpow (3 : ℝ) (-s * (n : ℝ)) * H n :=
-      mul_nonneg (Real.rpow_nonneg (by norm_num) _) (hHnonneg n)
-    have hpow :
-        Real.rpow (Real.rpow (3 : ℝ) (-s * (n : ℝ)) * H n) (q / 2) ≤
-          Real.rpow V (q / 2) :=
-      Real.rpow_le_rpow hbase0 (hendpoint n)
-        (div_nonneg hqpos.le (by norm_num))
-    have hdepth :
-        Real.rpow (3 : ℝ) (-s * q * (n : ℝ)) * Real.rpow (H n) (q / 2) =
-          Real.rpow (3 : ℝ) (-(s / 2) * q * (n : ℝ)) *
-            Real.rpow
-              (Real.rpow (3 : ℝ) (-s * (n : ℝ)) * H n) (q / 2) := by
-      symm
-      calc
-        Real.rpow (3 : ℝ) (-(s / 2) * q * (n : ℝ)) *
-            Real.rpow
-              (Real.rpow (3 : ℝ) (-s * (n : ℝ)) * H n) (q / 2) =
-          Real.rpow (3 : ℝ) (-(s / 2) * q * (n : ℝ)) *
-            (Real.rpow (Real.rpow (3 : ℝ) (-s * (n : ℝ))) (q / 2) *
-              Real.rpow (H n) (q / 2)) := by
-                have hraw0 : 0 ≤ Real.rpow (3 : ℝ) (-s * (n : ℝ)) :=
-                  Real.rpow_nonneg (by norm_num) _
-                have hmulpow :
-                    Real.rpow
-                        (Real.rpow (3 : ℝ) (-s * (n : ℝ)) * H n) (q / 2) =
-                      Real.rpow (Real.rpow (3 : ℝ) (-s * (n : ℝ))) (q / 2) *
-                        Real.rpow (H n) (q / 2) :=
-                  Real.mul_rpow hraw0 (hHnonneg n)
-                exact congrArg
-                  (fun z : ℝ => Real.rpow (3 : ℝ) (-(s / 2) * q * (n : ℝ)) * z)
-                  hmulpow
-        _ = Real.rpow (3 : ℝ) (-(s / 2) * q * (n : ℝ)) *
-            (Real.rpow (3 : ℝ) ((-s * (n : ℝ)) * (q / 2)) *
-              Real.rpow (H n) (q / 2)) := by
-                have hrpowmul :=
-                  (Real.rpow_mul (by norm_num : (0 : ℝ) ≤ 3)
-                    (-s * (n : ℝ)) (q / 2)).symm
-                exact congrArg
-                  (fun z : ℝ => Real.rpow (3 : ℝ) (-(s / 2) * q * (n : ℝ)) *
-                    (z * Real.rpow (H n) (q / 2))) hrpowmul
-        _ = (Real.rpow (3 : ℝ) (-(s / 2) * q * (n : ℝ)) *
-              Real.rpow (3 : ℝ) ((-s * (n : ℝ)) * (q / 2))) *
-            Real.rpow (H n) (q / 2) := by ring
-        _ = Real.rpow (3 : ℝ)
-              (-(s / 2) * q * (n : ℝ) + (-s * (n : ℝ)) * (q / 2)) *
-            Real.rpow (H n) (q / 2) := by
-                have hadd :=
-                  (Real.rpow_add (by norm_num : (0 : ℝ) < 3)
-                    (-(s / 2) * q * (n : ℝ))
-                    ((-s * (n : ℝ)) * (q / 2))).symm
-                exact congrArg (fun z : ℝ => z * Real.rpow (H n) (q / 2)) hadd
-        _ = Real.rpow (3 : ℝ) (-s * q * (n : ℝ)) *
-            Real.rpow (H n) (q / 2) := by
-                congr 2
-                ring
-    rw [Ch02.geometricWeight, Ch02.geometricWeight]
-    have hweight0 : 0 ≤ Real.rpow (3 : ℝ) (-(s / 2) * q * (n : ℝ)) :=
-      Real.rpow_nonneg (by norm_num) _
-    have hhalfdisc0 : 0 ≤ Ch02.geometricDiscount (s / 2) q := by
-      simpa [Ch02.geometricDiscount_eq_old] using
-        HCPolySupport.geometricDiscount_nonneg (mul_nonneg hhalf.le hqpos.le)
-    calc
-      Ch02.geometricDiscount s q *
-          Real.rpow (3 : ℝ) (-s * q * (n : ℝ)) * Real.rpow (H n) (q / 2) =
-        Ch02.geometricDiscount s q *
-          (Real.rpow (3 : ℝ) (-s * q * (n : ℝ)) *
-            Real.rpow (H n) (q / 2)) := by ring
-      _ = Ch02.geometricDiscount s q *
-          (Real.rpow (3 : ℝ) (-(s / 2) * q * (n : ℝ)) *
-            Real.rpow
-              (Real.rpow (3 : ℝ) (-s * (n : ℝ)) * H n) (q / 2)) := by
-          rw [hdepth]
-      _ ≤ (2 * Ch02.geometricDiscount (s / 2) q) *
-          (Real.rpow (3 : ℝ) (-(s / 2) * q * (n : ℝ)) *
-            Real.rpow
-              (Real.rpow (3 : ℝ) (-s * (n : ℝ)) * H n) (q / 2)) := by
-          exact mul_le_mul_of_nonneg_right hdiscount
-            (mul_nonneg hweight0 (Real.rpow_nonneg hbase0 _))
-      _ ≤ (2 * Ch02.geometricDiscount (s / 2) q) *
-          (Real.rpow (3 : ℝ) (-(s / 2) * q * (n : ℝ)) *
-            Real.rpow V (q / 2)) := by
-          exact mul_le_mul_of_nonneg_left
-            (mul_le_mul_of_nonneg_left hpow hweight0)
-            (mul_nonneg (by norm_num) hhalfdisc0)
-      _ = 2 *
-          (Ch02.geometricDiscount (s / 2) q *
-            Real.rpow (3 : ℝ) (-(s / 2) * q * (n : ℝ))) *
-          Real.rpow V (q / 2) := by ring
+  have hterm := @finiteEllipticity_weightedTerm_le_infinityBound (d) (Q) (a) (s) (q) (hqpos)
+    (hhalf) (hHnonneg) (hendpoint) (hdiscount)
   have hseries :
       (∑' n : ℕ,
         Ch02.geometricWeight s q n * Real.rpow (H n) (q / 2)) ≤
@@ -966,81 +979,50 @@ theorem coarse_ellipticity_upper_of_le_mStarStar
 
 /-! ## 3. The complete upper leg -/
 
-/-- The direct upper half of the exact coarse-ellipticity theorem. One
-dimension-only constant is selected before the model and every scale; the
-small-scale branch is handled above, while the large-scale branch constructs
-the twelve-lane per-descendant split and aggregates all finite and infinite
-exponents. -/
-theorem superposedFlux_coarse_ellipticity_upper_leg (d : ℕ) :
-    ∃ Cup : ℝ, 0 < Cup ∧
-      ∀ (M : ABKModel d) (m : ℤ)
-        (E : {E : ℝ // 1 ≤ E}),
-        Algsuperdiff.Frozen.Section3.inductionState M (m - 1) E →
-        ∀ sigma : ℝ, sigma ∈ Set.Ioc 0 (1 / 2) →
-          max (Real.exp (Cup / sigma)) (Disorder.cstar M)⁻¹ ≤ (E : ℝ) →
-          (E : ℝ) ≤ M.gamma ^ (-(1 / 5 : ℝ)) →
-          ∀ q : CoarseEllipticityExponent,
-            ∀ s : ℝ,
-              ∀ hsWindow : s ∈ Set.Icc
-                (M.gamma / 2 +
-                  Real.exp
-                    (-(Cup⁻¹ * ((E : ℝ)⁻¹) ^ 2 * M.gamma⁻¹))) 1,
-              Probability.IsDeterministicShiftTwoTermOneSidedOrlicz
-                (Cutoff.cutoffSampleLaw M).toMeasure
-                (HCPolySupport.IndependentSums.gammaSigma 1)
-                (HCPolySupport.IndependentSums.gammaSigma
-                  ((1 - sigma) / 3))
-                (fun omega =>
-                  Observable.cutoffUpperEllipticity
-                      M m m s
-                      (by
-                        exact
-                          (add_pos
-                            (div_pos M.shellPrefix.gamma_pos (by norm_num))
-                          (Real.exp_pos
-                            (-(Cup⁻¹ * ((E : ℝ)⁻¹) ^ 2 *
-                                M.gamma⁻¹)))).trans_le hsWindow.1)
-                      q omega *
-                    (Annealed.sigmaBar M (m - 1) : ℝ)⁻¹)
-                Cup
-                (Cup * (Disorder.cstar M)⁻¹ * s * M.gamma *
-                  (2 * s - M.gamma)⁻¹ ^ 3)
-                (Real.exp
-                  (-(Cup⁻¹ * ((E : ℝ)⁻¹) ^ 2 * M.gamma⁻¹))) := by
-  let previousLaneOutput : ℝ := max
-    (goodHeadTunedOutputConst d)
-    (max
-      (probeSharpBandMeanTunedOutputConst d)
-      (max
-        (probeSharpDeepBandTailTunedOutputConst d)
-        (max
-          (probeSharpCollarBaseTunedOutputConst d)
-          (max
-            (collarHeadTunedPerDescendantOutputConst d)
-            (max
-              (collarAfterBandTunedOutputConst d)
-              (max
-                (probeSharpWaveTailTunedOutputConst d)
-                (max
-                  (Provider.Multiscale.probeSharpGoodBaseConst d)
-                  (max
-                    (collarBandMeanTunedOutputConst d)
-                    (collarDeepTailTunedOutputConst d)))))))))
-  let laneOutput : ℝ := max previousLaneOutput (max
-    (probeSharpAfterBandTunedOutputConst d)
-    (probeSharpCollarWaveTailTunedOutputConst d))
-  let Clane : ℝ :=
-    max 4 (max
-      (directSmallUpperMassConst d)
-      (max
-        (profileAuxiliaryConst d)
-        (max
-          (collarBandMeanDepthThreshold d)
-          laneOutput)))
-  let Cblock : ℝ :=
-    (12 + 12 * HCPolySupport.IndependentSums.gammaTriangleConst 1) * Clane
-  let Cmerge : ℝ := coarseEllipticityUpperMergeConst d
-  let Cup : ℝ := Cblock * Cmerge
+private theorem upperLeg_comparisonBounds1 :
+    ∀ (d : ℕ),
+      let previousLaneOutput : ℝ :=
+        max (goodHeadTunedOutputConst d)
+          (max (probeSharpBandMeanTunedOutputConst d)
+            (max (probeSharpDeepBandTailTunedOutputConst d)
+              (max (probeSharpCollarBaseTunedOutputConst d)
+                (max (collarHeadTunedPerDescendantOutputConst d)
+                  (max (collarAfterBandTunedOutputConst d)
+                    (max (probeSharpWaveTailTunedOutputConst d)
+                      (max (Multiscale.probeSharpGoodBaseConst d)
+                        (max (collarBandMeanTunedOutputConst d) (collarDeepTailTunedOutputConst d)))))))));
+      let laneOutput : ℝ :=
+        max previousLaneOutput (max (probeSharpAfterBandTunedOutputConst d) (probeSharpCollarWaveTailTunedOutputConst d));
+      let Clane : ℝ :=
+        max (4 : ℝ)
+          (max (directSmallUpperMassConst d)
+            (max (profileAuxiliaryConst d) (max (collarBandMeanDepthThreshold d) laneOutput)));
+      let Cblock : ℝ := ((12 : ℝ) + (12 : ℝ) * IndependentSums.gammaTriangleConst (1 : ℝ)) * Clane;
+      let Cmerge : ℝ := coarseEllipticityUpperMergeConst d;
+      let Cup : ℝ := Cblock * Cmerge;
+      (0 : ℝ) < Clane ∧
+        Clane ≤ Cblock ∧
+          (0 : ℝ) < Cblock ∧
+            (1 : ℝ) ≤ Cmerge ∧
+              Cblock ≤ Cup ∧
+                (4 : ℝ) ≤ Cup ∧
+                  goodHeadTunedOutputConst d ≤ Clane ∧
+                    probeSharpBandMeanTunedOutputConst d ≤ Clane ∧
+                      probeSharpDeepBandTailTunedOutputConst d ≤ Clane ∧
+                        probeSharpCollarBaseTunedOutputConst d ≤ Clane ∧
+                          collarHeadTunedPerDescendantOutputConst d ≤ Clane ∧
+                            collarAfterBandTunedOutputConst d ≤ Clane ∧
+                              probeSharpWaveTailTunedOutputConst d ≤ Clane ∧
+                                Multiscale.probeSharpGoodBaseConst d ≤ Clane ∧
+                                  collarBandMeanTunedOutputConst d ≤ Clane ∧
+                                    collarDeepTailTunedOutputConst d ≤ Clane ∧
+                                      probeSharpAfterBandTunedOutputConst d ≤ Clane ∧
+                                        probeSharpCollarWaveTailTunedOutputConst d ≤ Clane ∧
+                                          profileAuxiliaryConst d ≤ Clane ∧
+                                            collarBandMeanDepthThreshold d ≤ Clane ∧
+                                              directSmallUpperMassConst d ≤ Cup ∧
+                                                collarBandMeanDepthThreshold d ≤ Cup ∧ (0 : ℝ) < Cup := by
+  intro d previousLaneOutput laneOutput Clane Cblock Cmerge Cup
   have hfourLane : 4 ≤ Clane := by
     exact le_max_left _ _
   have hlanePos : 0 < Clane := lt_of_lt_of_le (by norm_num) hfourLane
@@ -1121,6 +1103,178 @@ theorem superposedFlux_coarse_ellipticity_upper_leg (d : ℕ) :
   have hdepthThreshold : collarBandMeanDepthThreshold d ≤ Cup := by
     exact hdepthThresholdLane.trans (hlaneBlock.trans hblockCup)
   have hCup : 0 < Cup := lt_of_lt_of_le (by norm_num) hfour
+  exact ⟨hlanePos, hlaneBlock, hblockPos, hmergeOne, hblockCup, hfour, hgoodHeadOutput,
+    hgoodBandOutput, hgoodDeepOutput, hcollarBaseOutput, hcollarHeadOutput, hcollarAfterOutput,
+      hgoodWaveOutput, hgoodBaseOutput, hcollarBandOutput, hcollarDeepOutput, hgoodAfterOutput,
+        hcollarWaveOutput, hprofileAuxLane, hdepthThresholdLane, hmassConst, hdepthThreshold, hCup⟩
+
+private theorem upperLeg_estimate1 :
+    ∀ (d : ℕ),
+      let previousLaneOutput : ℝ :=
+        max (goodHeadTunedOutputConst d)
+          (max (probeSharpBandMeanTunedOutputConst d)
+            (max (probeSharpDeepBandTailTunedOutputConst d)
+              (max (probeSharpCollarBaseTunedOutputConst d)
+                (max (collarHeadTunedPerDescendantOutputConst d)
+                  (max (collarAfterBandTunedOutputConst d)
+                    (max (probeSharpWaveTailTunedOutputConst d)
+                      (max (Multiscale.probeSharpGoodBaseConst d)
+                        (max (collarBandMeanTunedOutputConst d) (collarDeepTailTunedOutputConst d)))))))));
+      let laneOutput : ℝ :=
+        max previousLaneOutput (max (probeSharpAfterBandTunedOutputConst d) (probeSharpCollarWaveTailTunedOutputConst d));
+      let Clane : ℝ :=
+        max (4 : ℝ)
+          (max (directSmallUpperMassConst d)
+            (max (profileAuxiliaryConst d) (max (collarBandMeanDepthThreshold d) laneOutput)));
+      let Cblock : ℝ := ((12 : ℝ) + (12 : ℝ) * IndependentSums.gammaTriangleConst (1 : ℝ)) * Clane;
+      let Cmerge : ℝ := coarseEllipticityUpperMergeConst d;
+      let Cup : ℝ := Cblock * Cmerge;
+      ∀ (hlanePos : (0 : ℝ) < Clane) (hgoodHeadOutput : goodHeadTunedOutputConst d ≤ Clane)
+        (hgoodBandOutput : probeSharpBandMeanTunedOutputConst d ≤ Clane)
+        (hgoodDeepOutput : probeSharpDeepBandTailTunedOutputConst d ≤ Clane)
+        (hcollarBaseOutput : probeSharpCollarBaseTunedOutputConst d ≤ Clane)
+        (hcollarHeadOutput : collarHeadTunedPerDescendantOutputConst d ≤ Clane)
+        (hcollarAfterOutput : collarAfterBandTunedOutputConst d ≤ Clane)
+        (hgoodWaveOutput : probeSharpWaveTailTunedOutputConst d ≤ Clane)
+        (hgoodBaseOutput : Multiscale.probeSharpGoodBaseConst d ≤ Clane)
+        (hcollarBandOutput : collarBandMeanTunedOutputConst d ≤ Clane)
+        (hcollarDeepOutput : collarDeepTailTunedOutputConst d ≤ Clane)
+        (hgoodAfterOutput : probeSharpAfterBandTunedOutputConst d ≤ Clane)
+        (hcollarWaveOutput : probeSharpCollarWaveTailTunedOutputConst d ≤ Clane)
+        (hprofileAuxLane : profileAuxiliaryConst d ≤ Clane) (hdepthThresholdLane : collarBandMeanDepthThreshold d ≤ Clane)
+        (hCup : (0 : ℝ) < Cup) (M : ABKModel d) (m : ℤ) (E : { E : ℝ // (1 : ℝ) ≤ E })
+        (hstate : Frozen.Section3.inductionState M (m - (1 : ℤ)) E) (sigma : ℝ) (hE2 : (↑E : ℝ) ≤ M.gamma ^ (-(1 / 5 : ℝ)))
+        (hd : (2 : ℕ) ≤ d) (hsigma0 : (0 : ℝ) < sigma) (hsigmaHalf : sigma ≤ (1 / 2 : ℝ))
+        (hX : Cup ≤ (↑E : ℝ)⁻¹ ^ (2 : ℕ) * M.gamma⁻¹) (hk0 : (3 : ℕ) ≤ collarBandMeanDepth M (↑E : ℝ))
+        (hmaxLane : max (Real.exp (Clane / sigma)) (Disorder.cstar M)⁻¹ ≤ (↑E : ℝ))
+        (hrareChoice :
+          (12 : ℝ) * upperAfterBandRareTriangleConst * coarseEllipticityRareBudgetConst d + (15 : ℝ) ≤ Clane⁻¹ * Cup)
+        (k : ℕ),
+        ∀ R ∈ descendantsAtScale (originCube d m) (m - (1 : ℤ) - (↑k : ℤ)),
+          ∃ (Uone : CutoffSample d → ℝ) (Uexp : CutoffSample d → ℝ),
+            (∀ (omega : CutoffSample d), (0 : ℝ) ≤ Uone omega) ∧
+              Measurable Uone ∧
+                (∀ (omega : CutoffSample d), (0 : ℝ) ≤ Uexp omega) ∧
+                  Measurable Uexp ∧
+                    (∀ (omega : CutoffSample d),
+                        cutoffBBlockFamily M m (↑(Annealed.sigmaBar M (m - (1 : ℤ))) : ℝ)⁻¹ R omega ≤
+                          Cblock + Uone omega + Uexp omega) ∧
+                      IndependentSums.IsBigOWith (↑(cutoffSampleLaw M) : Measure (CutoffSample d))
+                          (IndependentSums.gammaSigma (1 : ℝ)) Uone
+                          (upperSaturatedPerCubeAmplitude Cblock (Disorder.cstar M) M.gamma k) ∧
+                        IndependentSums.IsBigOWith (↑(cutoffSampleLaw M) : Measure (CutoffSample d))
+                          (IndependentSums.gammaSigma (((1 : ℝ) - sigma) / (3 : ℝ))) Uexp
+                          ((coarseEllipticityRareBudgetConst d)⁻¹ *
+                            ((3 : ℝ) ^ (M.gamma * ((↑k : ℝ) + (1 : ℝ))) *
+                              Real.exp (-(Cup⁻¹ * ((↑E : ℝ)⁻¹ ^ (2 : ℕ) * M.gamma⁻¹))) ^ (15 : ℕ))) := by
+  intro d previousLaneOutput laneOutput Clane Cblock Cmerge Cup hlanePos hgoodHeadOutput hgoodBandOutput hgoodDeepOutput hcollarBaseOutput hcollarHeadOutput hcollarAfterOutput hgoodWaveOutput hgoodBaseOutput hcollarBandOutput hcollarDeepOutput hgoodAfterOutput hcollarWaveOutput hprofileAuxLane hdepthThresholdLane hCup M m E hstate sigma hE2 hd hsigma0 hsigmaHalf hX hk0 hmaxLane hrareChoice k R hR
+  obtain ⟨Uone, Uexp, hUone0, hUoneM, hUexp0, hUexpM,
+      hdom, hOone, hOexp⟩ :=
+    superposedFlux_upper_per_descendant_split M m E hstate sigma Clane
+      hsigma0 hsigmaHalf hmaxLane hE2 hlanePos
+      hgoodBaseOutput hgoodHeadOutput hgoodBandOutput hgoodDeepOutput
+      hgoodAfterOutput hgoodWaveOutput hcollarBaseOutput hcollarHeadOutput
+      hcollarBandOutput hcollarDeepOutput hcollarAfterOutput hcollarWaveOutput
+      hprofileAuxLane hdepthThresholdLane hk0 k R hR
+  refine ⟨Uone, Uexp, hUone0, hUoneM, hUexp0, hUexpM, hdom, hOone, ?_⟩
+  exact hOexp.mono_scale
+    (coarseEllipticity_rawRareScale_le_normalized
+      hd hlanePos hCup hX hrareChoice k)
+
+/-- The direct upper half of the exact coarse-ellipticity theorem. One
+dimension-only constant is selected before the model and every scale; the
+small-scale branch is handled above, while the large-scale branch constructs
+the twelve-lane per-descendant split and aggregates all finite and infinite
+exponents. -/
+theorem superposedFlux_coarse_ellipticity_upper_leg (d : ℕ) :
+    ∃ Cup : ℝ, 0 < Cup ∧
+      ∀ (M : ABKModel d) (m : ℤ)
+        (E : {E : ℝ // 1 ≤ E}),
+        Algsuperdiff.Frozen.Section3.inductionState M (m - 1) E →
+        ∀ sigma : ℝ, sigma ∈ Set.Ioc 0 (1 / 2) →
+          max (Real.exp (Cup / sigma)) (Disorder.cstar M)⁻¹ ≤ (E : ℝ) →
+          (E : ℝ) ≤ M.gamma ^ (-(1 / 5 : ℝ)) →
+          ∀ q : CoarseEllipticityExponent,
+            ∀ s : ℝ,
+              ∀ hsWindow : s ∈ Set.Icc
+                (M.gamma / 2 +
+                  Real.exp
+                    (-(Cup⁻¹ * ((E : ℝ)⁻¹) ^ 2 * M.gamma⁻¹))) 1,
+              Probability.IsDeterministicShiftTwoTermOneSidedOrlicz
+                (Cutoff.cutoffSampleLaw M).toMeasure
+                (HCPolySupport.IndependentSums.gammaSigma 1)
+                (HCPolySupport.IndependentSums.gammaSigma
+                  ((1 - sigma) / 3))
+                (fun omega =>
+                  Observable.cutoffUpperEllipticity
+                      M m m s
+                      (by
+                        exact
+                          (add_pos
+                            (div_pos M.shellPrefix.gamma_pos (by norm_num))
+                          (Real.exp_pos
+                            (-(Cup⁻¹ * ((E : ℝ)⁻¹) ^ 2 *
+                                M.gamma⁻¹)))).trans_le hsWindow.1)
+                      q omega *
+                    (Annealed.sigmaBar M (m - 1) : ℝ)⁻¹)
+                Cup
+                (Cup * (Disorder.cstar M)⁻¹ * s * M.gamma *
+                  (2 * s - M.gamma)⁻¹ ^ 3)
+                (Real.exp
+                  (-(Cup⁻¹ * ((E : ℝ)⁻¹) ^ 2 * M.gamma⁻¹))) := by
+  let previousLaneOutput : ℝ := max
+    (goodHeadTunedOutputConst d)
+    (max
+      (probeSharpBandMeanTunedOutputConst d)
+      (max
+        (probeSharpDeepBandTailTunedOutputConst d)
+        (max
+          (probeSharpCollarBaseTunedOutputConst d)
+          (max
+            (collarHeadTunedPerDescendantOutputConst d)
+            (max
+              (collarAfterBandTunedOutputConst d)
+              (max
+                (probeSharpWaveTailTunedOutputConst d)
+                (max
+                  (Provider.Multiscale.probeSharpGoodBaseConst d)
+                  (max
+                    (collarBandMeanTunedOutputConst d)
+                    (collarDeepTailTunedOutputConst d)))))))))
+  let laneOutput : ℝ := max previousLaneOutput (max
+    (probeSharpAfterBandTunedOutputConst d)
+    (probeSharpCollarWaveTailTunedOutputConst d))
+  let Clane : ℝ :=
+    max 4 (max
+      (directSmallUpperMassConst d)
+      (max
+        (profileAuxiliaryConst d)
+        (max
+          (collarBandMeanDepthThreshold d)
+          laneOutput)))
+  let Cblock : ℝ :=
+    (12 + 12 * HCPolySupport.IndependentSums.gammaTriangleConst 1) * Clane
+  let Cmerge : ℝ := coarseEllipticityUpperMergeConst d
+  let Cup : ℝ := Cblock * Cmerge
+  obtain ⟨hlanePos, hlaneBlock, hblockPos, hmergeOne, hblockCup, hfour, hgoodHeadOutput,
+    hgoodBandOutput, hgoodDeepOutput, hcollarBaseOutput, hcollarHeadOutput, hcollarAfterOutput,
+      hgoodWaveOutput, hgoodBaseOutput, hcollarBandOutput, hcollarDeepOutput, hgoodAfterOutput,
+        hcollarWaveOutput, hprofileAuxLane, hdepthThresholdLane, hmassConst, hdepthThreshold,
+          hCup⟩ :=
+    (show (0 < Clane) ∧ (Clane ≤ Cblock) ∧ (0 < Cblock) ∧ (1 ≤ Cmerge) ∧ (Cblock ≤ Cup) ∧ (4 ≤
+      Cup) ∧ (goodHeadTunedOutputConst d ≤ Clane) ∧ (probeSharpBandMeanTunedOutputConst d ≤ Clane)
+        ∧ (probeSharpDeepBandTailTunedOutputConst d ≤ Clane) ∧
+          (probeSharpCollarBaseTunedOutputConst d ≤ Clane) ∧
+            (collarHeadTunedPerDescendantOutputConst d ≤ Clane) ∧ (collarAfterBandTunedOutputConst
+              d ≤ Clane) ∧ (probeSharpWaveTailTunedOutputConst d ≤ Clane) ∧
+                (Provider.Multiscale.probeSharpGoodBaseConst d ≤ Clane) ∧
+                  (collarBandMeanTunedOutputConst d ≤ Clane) ∧ (collarDeepTailTunedOutputConst d ≤
+                    Clane) ∧ (probeSharpAfterBandTunedOutputConst d ≤ Clane) ∧
+                      (probeSharpCollarWaveTailTunedOutputConst d ≤ Clane) ∧
+                        (profileAuxiliaryConst d ≤ Clane) ∧ (collarBandMeanDepthThreshold d ≤
+                          Clane) ∧ (directSmallUpperMassConst d ≤ Cup) ∧
+                            (collarBandMeanDepthThreshold d ≤ Cup) ∧ (0 < Cup) from
+      @upperLeg_comparisonBounds1 (d))
   refine ⟨Cup, hCup, ?_⟩
   intro M m E hstate sigma hsigma hE1 hE2 q s hsWindow
   by_cases hm : m ≤ mStarStar M
@@ -1197,20 +1351,7 @@ theorem superposedFlux_coarse_ellipticity_upper_leg (d : ℕ) :
               ((coarseEllipticityRareBudgetConst d)⁻¹ *
                 ((3 : ℝ) ^ (M.gamma * ((k : ℝ) + 1)) *
                   (Real.exp
-                    (-(Cup⁻¹ * ((E : ℝ)⁻¹ ^ 2 * M.gamma⁻¹)))) ^ 15)) := by
-      intro k R hR
-      obtain ⟨Uone, Uexp, hUone0, hUoneM, hUexp0, hUexpM,
-          hdom, hOone, hOexp⟩ :=
-        superposedFlux_upper_per_descendant_split M m E hstate sigma Clane
-          hsigma0 hsigmaHalf hmaxLane hE2 hlanePos
-          hgoodBaseOutput hgoodHeadOutput hgoodBandOutput hgoodDeepOutput
-          hgoodAfterOutput hgoodWaveOutput hcollarBaseOutput hcollarHeadOutput
-          hcollarBandOutput hcollarDeepOutput hcollarAfterOutput hcollarWaveOutput
-          hprofileAuxLane hdepthThresholdLane hk0 k R hR
-      refine ⟨Uone, Uexp, hUone0, hUoneM, hUexp0, hUexpM, hdom, hOone, ?_⟩
-      exact hOexp.mono_scale
-        (coarseEllipticity_rawRareScale_le_normalized
-          hd hlanePos hCup hX hrareChoice k)
+                    (-(Cup⁻¹ * ((E : ℝ)⁻¹ ^ 2 * M.gamma⁻¹)))) ^ 15))  := @upperLeg_estimate1 (d) (hlanePos) (hgoodHeadOutput) (hgoodBandOutput) (hgoodDeepOutput) (hcollarBaseOutput) (hcollarHeadOutput) (hcollarAfterOutput) (hgoodWaveOutput) (hgoodBaseOutput) (hcollarBandOutput) (hcollarDeepOutput) (hgoodAfterOutput) (hcollarWaveOutput) (hprofileAuxLane) (hdepthThresholdLane) (hCup) (M) (m) (E) (hstate) (sigma) (hE2) (hd) (hsigma0) (hsigmaHalf) (hX) (hk0) (hmaxLane) (hrareChoice)
     let eps : ℝ := Real.exp
       (-(Cup⁻¹ * ((E : ℝ)⁻¹) ^ 2 * M.gamma⁻¹))
     have heps : 0 < eps := by

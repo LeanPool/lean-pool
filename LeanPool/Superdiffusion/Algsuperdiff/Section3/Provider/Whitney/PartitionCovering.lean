@@ -358,7 +358,8 @@ private theorem exists_exitCube_of_mem_whitneyLayer {m : ℤ} {hn : ℕ → ℕ}
   refine ⟨C, ?_, hCnt, cubeSet_subset_of_mem_descendantsAtDepth hQC⟩
   have hCA' : C ∈ descendantsAtDepth A 1 := by
     simpa only [HCPolySupport.descendantsAtDepth_one] using hCA
-  simpa only [show n - 1 + 1 = n from by omega] using HCPolySupport.mem_descendantsAtDepth_add hA hCA'
+  simpa only [show n - 1 + 1 = n from by omega] using HCPolySupport.mem_descendantsAtDepth_add hA
+    hCA'
 
 /-- The touching ancestor of a layer-`n` Whitney cube at depth `n - 1`. -/
 private theorem exists_touchingAncestor_of_mem_whitneyLayer {m : ℤ} {hn : ℕ → ℕ} {n : ℕ}

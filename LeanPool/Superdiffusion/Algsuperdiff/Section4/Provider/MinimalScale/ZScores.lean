@@ -204,7 +204,7 @@ theorem measurable_centerDensityScore (M : ABKModel d) (s delta : ℝ) (hs : 0 <
 countable type `Fin d → ℤ`, so the supremum is a countable one. -/
 theorem measurable_cesaroScore (M : ABKModel d) (s delta : ℝ) (hs : 0 < s) (n m : ℤ) :
     Measurable (cesaroScore M s delta hs n m) := by
-  show Measurable fun omega => ⨆ z : ↥(Support.latticeCubeSet d (n - 1) m),
+  change Measurable fun omega => ⨆ z : ↥(Support.latticeCubeSet d (n - 1) m),
     centerCesaroScore M s delta hs (Support.triadicLatticePoint (n - 1) z) n m omega
   exact Measurable.iSup fun z =>
     measurable_centerCesaroScore M s delta hs (Support.triadicLatticePoint (n - 1) z) n m
@@ -212,7 +212,7 @@ theorem measurable_cesaroScore (M : ABKModel d) (s delta : ℝ) (hs : 0 < s) (n 
 /-- **The bad-density score is measurable.** -/
 theorem measurable_densityScore (M : ABKModel d) (s delta : ℝ) (hs : 0 < s) (n m : ℤ) :
     Measurable (densityScore M s delta hs n m) := by
-  show Measurable fun omega => ⨆ z : ↥(Support.latticeCubeSet d (n - 1) m),
+  change Measurable fun omega => ⨆ z : ↥(Support.latticeCubeSet d (n - 1) m),
     centerDensityScore M s delta hs (Support.triadicLatticePoint (n - 1) z) n m omega
   exact Measurable.iSup fun z =>
     measurable_centerDensityScore M s delta hs (Support.triadicLatticePoint (n - 1) z) n m

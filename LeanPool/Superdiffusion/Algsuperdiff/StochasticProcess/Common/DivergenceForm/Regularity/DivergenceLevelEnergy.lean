@@ -42,6 +42,72 @@ open scoped ENNReal BigOperators
 
 noncomputable section
 
+private theorem levelEnergy_coordinatePairingBound :
+    ∀ {d : ℕ} {U : Set (Vec d)} {u : H10Function U} {g : Vec d → Vec d},
+      MemVectorL2 U g →
+        ∀ {M k : ℝ},
+          (0 : ℝ) ≤ M →
+            (∀ᵐ (x : Vec d) ∂volumeMeasureOn U, √(vecNormSq (g x)) ≤ M) →
+              let A : Set (Vec d) := {x : Vec d | x ∈ U ∧ k < u.toFun x};
+              MeasurableSet A →
+                A ⊆ U →
+                  (volume : Set (Vec d) → ℝ≥0∞) A ≠ ∞ →
+                    IntegrableOn (fun (x : Vec d) => vecDot (g x) (u.grad x)) U volume →
+                      let E : ℝ := ∫ (x : Vec d) in A, vecNormSq (u.grad x);
+                      ∫ (x : Vec d) in A, vecDot (g x) (u.grad x) ≤ M * √((volume : Set (Vec d) → ℝ≥0∞) A).toReal * √E := by
+  intro d _ u g hg M _ hM hgBound A hAm hAU hAtop hrhsInt E
+  have hgsqInt : IntegrableOn (fun x => vecNormSq (g x)) A := by
+    simpa only [vecNormSq] using
+      (integrableOn_vecDot_of_memVectorL2 hg hg).mono_set hAU
+  have husqInt : IntegrableOn
+      (fun x => vecNormSq (u.toH1Function.grad x)) A :=
+    (integrableOn_vecNormSq_zeroTraceGrad u).mono_set hAU
+  let : IsFiniteMeasure (volume.restrict A) := ⟨by
+    rw [Measure.restrict_apply_univ]
+    exact hAtop.lt_top⟩
+  have sqrtMemL2 (f : Vec d → ℝ) (hf : IntegrableOn f A)
+      (hf0 : ∀ᵐ x ∂volume.restrict A, 0 ≤ f x) :
+      MemLp (fun x => Real.sqrt (f x)) 2 (volume.restrict A) := by
+    have hsmeas : AEStronglyMeasurable (fun x => Real.sqrt (f x))
+        (volume.restrict A) := Real.continuous_sqrt.comp_aestronglyMeasurable hf.1
+    have hsquare : (fun x => Real.sqrt (f x) ^ 2) =ᵐ[volume.restrict A] f := by
+      filter_upwards [hf0] with x hx
+      rw [Real.sq_sqrt hx]
+    exact (memLp_two_iff_integrable_sq hsmeas).2 (hf.congr hsquare.symm)
+  have hgsqrtMem := sqrtMemL2 _ hgsqInt
+    (Filter.Eventually.of_forall fun _ => vecNormSq_nonneg _)
+  have husqrtMem := sqrtMemL2 _ husqInt
+    (Filter.Eventually.of_forall fun _ => vecNormSq_nonneg _)
+  have hsqrtInt : IntegrableOn
+      (fun x => Real.sqrt (vecNormSq (u.toH1Function.grad x))) A :=
+    husqrtMem.integrable (by norm_num)
+  calc
+    _ ≤ ∫ x in A, Real.sqrt (vecNormSq (g x)) *
+        Real.sqrt (vecNormSq (u.toH1Function.grad x)) ∂volume := by
+      exact setIntegral_mono_ae_restrict (hrhsInt.mono_set hAU)
+        (hgsqrtMem.integrable_mul husqrtMem) (by
+            filter_upwards [ae_restrict_mem hAm] with x _
+            exact le_trans (le_abs_self _) (abs_vecDot_le_sqrt_mul_sqrt _ _))
+    _ ≤ ∫ x in A, M * Real.sqrt (vecNormSq (u.toH1Function.grad x)) ∂volume := by
+      exact setIntegral_mono_ae_restrict
+        (hgsqrtMem.integrable_mul husqrtMem)
+        (hsqrtInt.const_mul M) (by
+          filter_upwards [ae_restrict_mem hAm,
+            ae_mono (Measure.restrict_mono hAU le_rfl) hgBound] with x _ hx
+          exact mul_le_mul_of_nonneg_right hx (Real.sqrt_nonneg _))
+    _ = M * ∫ x in A, Real.sqrt (vecNormSq (u.toH1Function.grad x)) ∂volume := by
+      rw [integral_const_mul]
+    _ ≤ M * (Real.sqrt (volume A).toReal * Real.sqrt E) := by
+      apply mul_le_mul_of_nonneg_left _ hM
+      have honeInt : IntegrableOn (fun _ : Vec d => (1 : ℝ)) A :=
+        integrableOn_const hAtop
+      have hcs := integral_sqrt_mul_sqrt_le honeInt husqInt
+        (Filter.Eventually.of_forall fun _ => zero_le_one)
+        (Filter.Eventually.of_forall fun _ => vecNormSq_nonneg _)
+      rw [setIntegral_one_eq_measureReal] at hcs
+      simpa only [Real.sqrt_one, one_mul, E] using! hcs
+    _ = M * Real.sqrt (volume A).toReal * Real.sqrt E := by ring
+
 /-- Under the displayed positive-sign weak identity, a bounded vector forcing
 controls the coordinate `L²` norms of the gradient on every nonnegative
 superlevel set. -/
@@ -163,60 +229,8 @@ theorem levelEnergy_sumCoordNorm_le
           filter_upwards [ae_restrict_mem hAm] with x hx
           simpa only [vecDot_comm] using
             (hEll.2 x (hAU hx)).2.2.1 (u.toH1Function.grad x))
-  have hpairLe :
-      ∫ x in A, vecDot (g x) (u.toH1Function.grad x) ∂volume ≤
-        M * Real.sqrt (volume A).toReal * Real.sqrt E := by
-    have hgsqInt : IntegrableOn (fun x => vecNormSq (g x)) A := by
-      simpa only [vecNormSq] using
-        (integrableOn_vecDot_of_memVectorL2 hg hg).mono_set hAU
-    have husqInt : IntegrableOn
-        (fun x => vecNormSq (u.toH1Function.grad x)) A :=
-      (integrableOn_vecNormSq_zeroTraceGrad u).mono_set hAU
-    let : IsFiniteMeasure (volume.restrict A) := ⟨by
-      rw [Measure.restrict_apply_univ]
-      exact hAtop.lt_top⟩
-    have sqrtMemL2 (f : Vec d → ℝ) (hf : IntegrableOn f A)
-        (hf0 : ∀ᵐ x ∂volume.restrict A, 0 ≤ f x) :
-        MemLp (fun x => Real.sqrt (f x)) 2 (volume.restrict A) := by
-      have hsmeas : AEStronglyMeasurable (fun x => Real.sqrt (f x))
-          (volume.restrict A) := Real.continuous_sqrt.comp_aestronglyMeasurable hf.1
-      have hsquare : (fun x => Real.sqrt (f x) ^ 2) =ᵐ[volume.restrict A] f := by
-        filter_upwards [hf0] with x hx
-        rw [Real.sq_sqrt hx]
-      exact (memLp_two_iff_integrable_sq hsmeas).2 (hf.congr hsquare.symm)
-    have hgsqrtMem := sqrtMemL2 _ hgsqInt
-      (Filter.Eventually.of_forall fun _ => vecNormSq_nonneg _)
-    have husqrtMem := sqrtMemL2 _ husqInt
-      (Filter.Eventually.of_forall fun _ => vecNormSq_nonneg _)
-    have hsqrtInt : IntegrableOn
-        (fun x => Real.sqrt (vecNormSq (u.toH1Function.grad x))) A :=
-      husqrtMem.integrable (by norm_num)
-    calc
-      _ ≤ ∫ x in A, Real.sqrt (vecNormSq (g x)) *
-          Real.sqrt (vecNormSq (u.toH1Function.grad x)) ∂volume := by
-        exact setIntegral_mono_ae_restrict (hrhsInt.mono_set hAU)
-          (hgsqrtMem.integrable_mul husqrtMem) (by
-              filter_upwards [ae_restrict_mem hAm] with x _
-              exact le_trans (le_abs_self _) (abs_vecDot_le_sqrt_mul_sqrt _ _))
-      _ ≤ ∫ x in A, M * Real.sqrt (vecNormSq (u.toH1Function.grad x)) ∂volume := by
-        exact setIntegral_mono_ae_restrict
-          (hgsqrtMem.integrable_mul husqrtMem)
-          (hsqrtInt.const_mul M) (by
-            filter_upwards [ae_restrict_mem hAm,
-              ae_mono (Measure.restrict_mono hAU le_rfl) hgBound] with x _ hx
-            exact mul_le_mul_of_nonneg_right hx (Real.sqrt_nonneg _))
-      _ = M * ∫ x in A, Real.sqrt (vecNormSq (u.toH1Function.grad x)) ∂volume := by
-        rw [integral_const_mul]
-      _ ≤ M * (Real.sqrt (volume A).toReal * Real.sqrt E) := by
-        apply mul_le_mul_of_nonneg_left _ hM
-        have honeInt : IntegrableOn (fun _ : Vec d => (1 : ℝ)) A :=
-          integrableOn_const hAtop
-        have hcs := integral_sqrt_mul_sqrt_le honeInt husqInt
-          (Filter.Eventually.of_forall fun _ => zero_le_one)
-          (Filter.Eventually.of_forall fun _ => vecNormSq_nonneg _)
-        rw [setIntegral_one_eq_measureReal] at hcs
-        simpa only [Real.sqrt_one, one_mul, E] using! hcs
-      _ = M * Real.sqrt (volume A).toReal * Real.sqrt E := by ring
+  have hpairLe := @levelEnergy_coordinatePairingBound (d) (U) (u) (g) (hg) (M) (k) (hM) (hgBound)
+    (hAm) (hAU) (hAtop) (hrhsInt)
   have hEle : lam * E ≤ M * Real.sqrt (volume A).toReal * Real.sqrt E :=
     hEllLe.trans (hcoeffEq ▸ hpairLe)
   let C : ℝ := M / lam * Real.sqrt (volume A).toReal

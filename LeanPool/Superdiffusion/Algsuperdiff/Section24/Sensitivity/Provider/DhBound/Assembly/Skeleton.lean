@@ -106,7 +106,7 @@ theorem abs_quadForm_coarseMatrixDerivative_le_of_positiveBesov_budgets
     (hvAdj : IsResponseMaximizer (cubeDomain (originCube d 0)) a.transpose p (-q) vAdj)
     (hv : IsResponseMaximizer (cubeDomain (originCube d 0)) a p q v)
     (u : H10Function ((cubeDomain (originCube d 0) : Domain d) : Set (Vec d)))
-    (hu : ∀ᵐ x ∂ volumeMeasureOn
+    (hu : ∀ᵐ x ∂volumeMeasureOn
         ((cubeDomain (originCube d 0) : Domain d) : Set (Vec d)),
       u.toH1Function.grad x =
         (2 : ℝ)⁻¹ • (vAdj.toH1.grad x + v.toH1.grad x) + p)

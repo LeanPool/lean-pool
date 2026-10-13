@@ -98,14 +98,14 @@ theorem average_vecDot_const_eq_vecDot_averageVec {U : Domain d}
   have hdot : vecDot p (Book.Ch02.averageVec U G) =
       ∑ i, p i * Book.Ch02.average U (fun x => G x i) := rfl
   rw [hpt, hdot]
-  show (MeasureTheory.volume ((U : Set (Vec d)))).toReal⁻¹ *
+  change (MeasureTheory.volume ((U : Set (Vec d)))).toReal⁻¹ *
       ∫ x in ((U : Set (Vec d))), (∑ i, p i * G x i) ∂MeasureTheory.volume =
     ∑ i, p i * Book.Ch02.average U (fun x => G x i)
   rw [MeasureTheory.integral_finsetSum Finset.univ
     (fun i _ => (hG i).const_mul (p i)), Finset.mul_sum]
   refine Finset.sum_congr rfl fun i _ => ?_
   rw [MeasureTheory.integral_const_mul]
-  show (MeasureTheory.volume ((U : Set (Vec d)))).toReal⁻¹ *
+  change (MeasureTheory.volume ((U : Set (Vec d)))).toReal⁻¹ *
       (p i * ∫ x in ((U : Set (Vec d))), G x i ∂MeasureTheory.volume) =
     p i * Book.Ch02.average U (fun x => G x i)
   unfold Book.Ch02.average
@@ -151,7 +151,7 @@ theorem quadForm_coarseMatrixDerivative_eq_split
     (hvAdj : IsResponseMaximizer U a.transpose p (-q) vAdj)
     (hv : IsResponseMaximizer U a p q v)
     (u : H10Function ((U : Set (Vec d))))
-    (hu : ∀ᵐ x ∂ volumeMeasureOn ((U : Set (Vec d))),
+    (hu : ∀ᵐ x ∂volumeMeasureOn ((U : Set (Vec d))),
       u.toH1Function.grad x =
         (2 : ℝ)⁻¹ • (vAdj.toH1.grad x + v.toH1.grad x) + p) :
     blockVecDot (p, -q)
@@ -179,7 +179,7 @@ theorem quadForm_coarseMatrixDerivative_eq_split
       have hxi' : u.toH1Function.grad x i =
           2⁻¹ * (vAdj.toH1.grad x i + v.toH1.grad x i) + p i := hxi
       linarith
-    show (∑ i, (vAdj.toH1.grad x i + v.toH1.grad x i) *
+    change (∑ i, (vAdj.toH1.grad x i + v.toH1.grad x i) *
           matVecMul (h.1.1 x) (v.toH1.grad x) i) =
         2 * (∑ i, u.toH1Function.grad x i *
             matVecMul (h.1.1 x) (v.toH1.grad x) i) -
@@ -242,7 +242,7 @@ theorem quadForm_coarseMatrixDerivative_unitCube_eq_split
     (hvAdj : IsResponseMaximizer (cubeDomain (originCube d 0)) a.transpose p (-q) vAdj)
     (hv : IsResponseMaximizer (cubeDomain (originCube d 0)) a p q v)
     (u : H10Function ((cubeDomain (originCube d 0) : Domain d) : Set (Vec d)))
-    (hu : ∀ᵐ x ∂ volumeMeasureOn
+    (hu : ∀ᵐ x ∂volumeMeasureOn
         ((cubeDomain (originCube d 0) : Domain d) : Set (Vec d)),
       u.toH1Function.grad x =
         (2 : ℝ)⁻¹ • (vAdj.toH1.grad x + v.toH1.grad x) + p) :

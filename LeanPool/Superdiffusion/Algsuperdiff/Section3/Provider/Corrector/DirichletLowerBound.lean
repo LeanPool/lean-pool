@@ -33,7 +33,7 @@ the display `e.lower.bound.corrector.limit`.
 This file proves that display.  The only non-elementary input is part (i) of
 `l.approximation.stationary.by.local`, which is available here unconditionally
 as
-`Algsuperdiff.Section3.Provider.Corrector.exists_isPotentialZeroTraceOn_limsup_le_of_mem_stationaryPotentialSubspace`,
+`exists_isPotentialZeroTraceOn_limsup_le_of_mem_stationaryPotentialSubspace`,
 so the results below are *not* conditional on the approximation lemma: they
 consume the proved form of it.
 
@@ -214,7 +214,7 @@ theorem cubeAverage_vecDot_self_ge_young (Q : TriadicCube d) {δ : ℝ} (hδ : 0
             + (1 + δ⁻¹) * ‖HilbertVec.ofVec (vω x) - realize p ω x‖ ^ 2) := by
       refine integral_mono hlhs ((hjint.const_mul _).add (hRint.const_mul _)) ?_
       intro x
-      show vecDot (vω x + (realize f ω x).toVec) (vω x + (realize f ω x).toVec)
+      change vecDot (vω x + (realize f ω x).toVec) (vω x + (realize f ω x).toVec)
           ≤ (1 + δ) * ‖realize (fun ω' => p ω' + f ω') ω x‖ ^ 2
             + (1 + δ⁻¹) * ‖HilbertVec.ofVec (vω x) - realize p ω x‖ ^ 2
       have hrw : vecDot (vω x + (realize f ω x).toVec)

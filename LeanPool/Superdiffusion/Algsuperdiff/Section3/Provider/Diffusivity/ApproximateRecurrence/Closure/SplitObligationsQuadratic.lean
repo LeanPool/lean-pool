@@ -100,7 +100,7 @@ theorem volume_domain_toReal_pos (U : Domain d) :
 constant is below that constant. -/
 theorem average_le_of_ae_le {U : Domain d} {f : Vec d → ℝ} {c : ℝ}
     (hf : MeasureTheory.Integrable f (volumeMeasureOn (U : Set (Vec d))))
-    (hle : ∀ᵐ x ∂ volumeMeasureOn (U : Set (Vec d)), f x ≤ c) :
+    (hle : ∀ᵐ x ∂volumeMeasureOn (U : Set (Vec d)), f x ≤ c) :
     average U f ≤ c := by
   have hvol := volume_domain_toReal_pos U
   have hmono : ∫ x, f x ∂(volumeMeasureOn (U : Set (Vec d))) ≤

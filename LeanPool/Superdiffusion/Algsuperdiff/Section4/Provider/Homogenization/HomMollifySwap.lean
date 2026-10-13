@@ -238,7 +238,7 @@ theorem integral_mul_fderiv_sub_eq_integral_weakGrad {w : Vec d → ℝ} {G : Ve
     intro y hy
     refine image_eq_zero_of_notMem_tsupport ?_
     intro hc
-    exact hy ⟨x - y, hc, by show x - (x - y) = y; rw [sub_sub_cancel]⟩
+    exact hy ⟨x - y, hc, by change x - (x - y) = y; rw [sub_sub_cancel]⟩
   have hderiv : ∀ y : Vec d,
       (fderiv ℝ (fun z : Vec d => Θ (x - z)) y) (basisVec i)
         = -(fderiv ℝ Θ (x - y)) (basisVec i) := by
@@ -263,7 +263,7 @@ theorem integral_mul_fderiv_sub_eq_integral_weakGrad {w : Vec d → ℝ} {G : Ve
       = -∫ y, w y * (fderiv ℝ Θ (x - y)) (basisVec i) := by
     rw [← integral_neg]
     refine integral_congr_ae (Filter.Eventually.of_forall fun y => ?_)
-    show w y * (fderiv ℝ (fun z : Vec d => Θ (x - z)) y) (basisVec i)
+    change w y * (fderiv ℝ (fun z : Vec d => Θ (x - z)) y) (basisVec i)
       = -(w y * (fderiv ℝ Θ (x - y)) (basisVec i))
     rw [hderiv y]
     ring

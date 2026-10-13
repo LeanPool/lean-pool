@@ -229,7 +229,7 @@ theorem abs_index_sub_le_of_mem_descendantsAtDepth {C : TriadicCube d} :
       have hd2 : (0 : ℤ) ≤ ((digits j : ℕ) : ℤ) := Int.natCast_nonneg _
       have hE : extremeIdx (s + 1) = 3 * extremeIdx s + 1 := rfl
       have hp : (3 : ℤ) ^ (s + 1) = 3 * 3 ^ s := by ring
-      show |3 * S.index j + ((digits j : ℕ) : ℤ) - 1 - 3 ^ (s + 1) * C.index j| ≤
+      change |3 * S.index j + ((digits j : ℕ) : ℤ) - 1 - 3 ^ (s + 1) * C.index j| ≤
         extremeIdx (s + 1)
       rw [hE, hp, abs_le]
       constructor <;> nlinarith [hprev.1, hprev.2]

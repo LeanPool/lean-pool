@@ -158,7 +158,7 @@ theorem gridFourthMoment_const_mul {Ω : Type*} [MeasurableSpace Ω] (μ : Measu
   refine congrArg (cubeFamilyAverage I) (funext fun R => ?_)
   rw [← integral_const_mul]
   refine integral_congr_ae (Filter.Eventually.of_forall fun ω => ?_)
-  show (c * F R ω) ^ (4 : ℝ) = c ^ (4 : ℕ) * F R ω ^ (4 : ℝ)
+  change (c * F R ω) ^ (4 : ℝ) = c ^ (4 : ℕ) * F R ω ^ (4 : ℝ)
   rw [rpow_four_eq_pow_four, rpow_four_eq_pow_four]
   ring
 

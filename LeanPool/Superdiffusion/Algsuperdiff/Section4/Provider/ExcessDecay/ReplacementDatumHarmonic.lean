@@ -185,7 +185,7 @@ theorem isZeroTraceDirichletRhsWeakSolution_replacementCorrection
       show -g x = matVecMul a0.matrix (u.grad x) - g x -
         (matVecMul a0.matrix (u.grad x) - (0 : Vec d → Vec d) x)
       funext i
-      show -g x i = _
+      change -g x i = _
       simp) φ
   have hharmWeak : IsZeroTraceDirichletRhsWeakSolution (constantCoeffField a0.matrix)
       (openCubeSet Q) (harmonicCorrector a0 u)

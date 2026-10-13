@@ -304,11 +304,11 @@ translation is absorbed into the coefficient family. -/
 theorem stepSevenCentreChild_mem_descendantsAtScale (d : ℕ) (k : ℤ) :
     originCube d (k - 1) ∈ descendantsAtScale (originCube d k) (k - 1) := by
   have hk : k - 1 ≤ (originCube d k).scale := by
-    show k - 1 ≤ k
+    change k - 1 ≤ k
     omega
   rw [descendantsAtScale_eq_descendantsAtDepth (originCube d k) hk]
   have hdepth : Int.toNat ((originCube d k).scale - (k - 1)) = 1 := by
-    show Int.toNat (k - (k - 1)) = 1
+    change Int.toNat (k - (k - 1)) = 1
     omega
   rw [hdepth, descendantsAtDepth_one]
   refine Finset.mem_image.mpr ⟨fun _ => (1 : Fin 3), Finset.mem_univ _, ?_⟩
@@ -316,7 +316,7 @@ theorem stepSevenCentreChild_mem_descendantsAtScale (d : ℕ) (k : ℤ) :
       (fun i : Fin d => 3 * (originCube d k).index i + ((1 : Fin 3) : ℤ) - 1) =
         (originCube d (k - 1)).index := by
     funext i
-    show 3 * (0 : ℤ) + ((1 : Fin 3) : ℤ) - 1 = 0
+    change 3 * (0 : ℤ) + ((1 : Fin 3) : ℤ) - 1 = 0
     norm_num
   exact congrArg (fun idx => (⟨k - 1, idx⟩ : TriadicCube d)) hindex
 

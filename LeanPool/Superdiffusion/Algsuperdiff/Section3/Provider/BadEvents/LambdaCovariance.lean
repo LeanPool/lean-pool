@@ -48,7 +48,7 @@ and a dilation, each of which is an existing CoarseGraining interface.
   whole descendant tree of `z + square_m` to the *one-cube* covariance of
   `Ch02.coarseSigmaStarInvMatrixNorm`.  That one-cube covariance is obtained
   exactly as in `TranslationCovariance.lean`: the proved CoarseGraining bridge
-  `Ch04.RestrictionLawCarrier.coarseBlockMatrix_cubeSet_eq_ch02_coarseBlockMatrix_of_aelocallyUniformlyEllipticField`
+`coarseBlockMatrix_cubeSet_eq_ch02_coarseBlockMatrix_of_aelocallyUniformlyEllipticField`
   rewrites the Chapter 2 coarse block matrix as the raw `coarseBlockMatrix
   (cubeSet Q) a`, CoarseGraining's
   `coarseBlockMatrix_translateSet_eq_translateCoeffField` is its covariance

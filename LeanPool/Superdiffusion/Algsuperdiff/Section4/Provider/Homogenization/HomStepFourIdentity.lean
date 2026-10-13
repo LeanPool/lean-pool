@@ -111,7 +111,7 @@ theorem vecDot_matVecMul_self_of_symmPart_smul_one {A : Mat d} {nu : ℝ}
 /-- The gradient of an `H¹₀` difference. -/
 private theorem h10_sub_grad {U : Set (Vec d)} (a b : H10Function U) (x : Vec d) :
     (a - b).toH1Function.grad x = a.toH1Function.grad x - b.toH1Function.grad x := by
-  show (a.toH1Function + ((-1 : ℝ) • b.toH1Function)).grad x = _
+  change (a.toH1Function + ((-1 : ℝ) • b.toH1Function)).grad x = _
   rw [H1Function.add_grad, H1Function.smul_grad]
   simp only [neg_smul, one_smul]
   rw [sub_eq_add_neg]

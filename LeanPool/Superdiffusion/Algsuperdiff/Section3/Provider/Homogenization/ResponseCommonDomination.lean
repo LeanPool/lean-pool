@@ -20,6 +20,11 @@ Module imports, support namespace and local option directives adapted for Lean P
 
 @[expose] public section
 
+open Algsuperdiff.Section24.Sensitivity.Provider.HomogBridge
+  (responseJ_scalarLoading_le_normalizedBlockResponseMax)
+open Algsuperdiff.Section3.Provider.ErrorComparison
+  (rpow_half_normalizedBlockResponseMax_le_homogenizationErrorOnCube_infinity_finite)
+
 /-!
 # Simultaneous directional response domination
 
@@ -36,6 +41,8 @@ open MeasureTheory
 open _root_.HCPolySupport _root_.HCPolySupport.Book
 
 noncomputable section
+
+
 
 /-- On one probability-one event, the observation-cube homogenization error
 dominates the actual cutoff response simultaneously in every unit direction.
@@ -82,10 +89,10 @@ theorem ae_forall_cutoffResponseJ_le_observationHomogenizationError_sq
     rw [← hbook]
     simpa only [Observable.inverseSqrtLoad, Observable.sqrtLoad,
       Observable.isotropicComparatorMatrix, scalarMatrix] using
-      Algsuperdiff.Section24.Sensitivity.Provider.HomogBridge.responseJ_scalarLoading_le_normalizedBlockResponseMax
+      responseJ_scalarLoading_le_normalizedBlockResponseMax
           (F omega) Q sigma.property he
   have hhalf :=
-    Algsuperdiff.Section3.Provider.ErrorComparison.rpow_half_normalizedBlockResponseMax_le_homogenizationErrorOnCube_infinity_finite
+    rpow_half_normalizedBlockResponseMax_le_homogenizationErrorOnCube_infinity_finite
         Q (F omega) (Observable.isotropicComparatorMatrix sigma) hs
           (by norm_num : (1 : ℝ) ≤ 2)
   have hmax_nonneg :

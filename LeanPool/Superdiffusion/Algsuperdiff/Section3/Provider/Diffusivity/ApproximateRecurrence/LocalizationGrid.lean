@@ -198,7 +198,7 @@ private theorem originCube_pred_mem_childCubes (d : ℕ) (K : ℤ) :
   have hindex : (fun i : Fin d => 3 * (originCube d K).index i + ((1 : Fin 3) : ℤ) - 1) =
       (originCube d (K - 1)).index := by
     funext i
-    show 3 * (0 : ℤ) + ((1 : Fin 3) : ℤ) - 1 = 0
+    change 3 * (0 : ℤ) + ((1 : Fin 3) : ℤ) - 1 = 0
     norm_num
   exact congrArg (fun idx => (⟨K - 1, idx⟩ : TriadicCube d)) hindex
 
@@ -232,10 +232,10 @@ private theorem triadicCubeShift_mem_cubeSet (R : TriadicCube d) :
   intro i
   have hs : 0 < cubeScaleFactor R := zpow_pos (by norm_num) _
   constructor
-  · show ((R.index i : ℝ) - 1 / 2) * cubeScaleFactor R ≤
+  · change ((R.index i : ℝ) - 1 / 2) * cubeScaleFactor R ≤
       (R.index i : ℝ) * cubeScaleFactor R
     nlinarith [hs]
-  · show (R.index i : ℝ) * cubeScaleFactor R <
+  · change (R.index i : ℝ) * cubeScaleFactor R <
       ((R.index i : ℝ) + 1 / 2) * cubeScaleFactor R
     nlinarith [hs]
 

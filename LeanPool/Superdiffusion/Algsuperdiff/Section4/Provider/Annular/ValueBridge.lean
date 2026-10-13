@@ -95,10 +95,10 @@ private theorem isFiniteMeasure_unitCubeCarrier (d : ℕ) :
 theorem measureReal_univ_unitCubeCarrier (d : ℕ) :
     ((volumeMeasureOn
       ((cubeDomain (originCube d 0) : Domain d) : Set (Vec d))) Set.univ).toReal = 1 := by
-  show ((volume.restrict (openCubeSet (originCube d 0))) Set.univ).toReal = 1
+  change ((volume.restrict (openCubeSet (originCube d 0))) Set.univ).toReal = 1
   rw [Measure.restrict_apply_univ, volume_openCubeSet_eq_volume_cubeSet,
     volume_cubeSet_toReal, cubeVolume_eq_pow_scale]
-  show ((3 : ℝ) ^ (0 : ℤ)) ^ d = 1
+  change ((3 : ℝ) ^ (0 : ℤ)) ^ d = 1
   rw [zpow_zero, one_pow]
 
 /-- The frozen `L²` value norm is nonnegative: it is an `ENNReal.toReal`. -/
@@ -330,7 +330,7 @@ theorem fluxIncrementAverage_eq_cubeAverageMat (M : ABKModel d) {L m : ℤ}
   have hvol : (volume (openCubeSet Q)).toReal = cubeVolume Q := by
     rw [volume_openCubeSet_eq_volume_cubeSet, volume_cubeSet_toReal]
   ext i j
-  show volumeAverage (openCubeSet Q)
+  change volumeAverage (openCubeSet Q)
       (fun x => Cutoff.coefficientCutoff M.nu L omega x i j -
         Cutoff.coefficientCutoff M.nu m omega x i j) =
     cubeAverage Q fun x : Vec d => Provider.Stream.shellIncrement omega.1 m L x i j

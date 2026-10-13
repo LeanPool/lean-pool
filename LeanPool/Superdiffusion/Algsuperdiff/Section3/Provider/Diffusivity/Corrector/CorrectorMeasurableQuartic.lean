@@ -117,7 +117,7 @@ theorem lipschitzWith_hilbertVecQuarticTrunc (n : ℕ) :
     push_cast
     ring
   rw [Real.dist_eq, hcast]
-  show |A ^ 4 - B ^ 4| ≤ 4 * (n : ℝ) ^ 3 * dist x y
+  change |A ^ 4 - B ^ 4| ≤ 4 * (n : ℝ) ^ 3 * dist x y
   have hfac : A ^ 4 - B ^ 4 = (A - B) * (A ^ 3 + A ^ 2 * B + A * B ^ 2 + B ^ 3) := by
     ring
   have hsumnn : 0 ≤ A ^ 3 + A ^ 2 * B + A * B ^ 2 + B ^ 3 := by

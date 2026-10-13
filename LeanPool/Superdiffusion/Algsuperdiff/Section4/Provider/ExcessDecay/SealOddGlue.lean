@@ -400,7 +400,7 @@ theorem exists_oddHarmonic_of_meetsUpperFace [NeZero d] {x' : Vec d} {m k : ℤ}
     (V y - V (coordFaceReflection ((1 / 2 : ℝ) * (3 : ℝ) ^ m) i y)) / 2,
     ?_, ?_, ?_, ?_⟩
   · intro y
-    show (V (coordFaceReflection ((1 / 2 : ℝ) * (3 : ℝ) ^ m) i y) -
+    change (V (coordFaceReflection ((1 / 2 : ℝ) * (3 : ℝ) ^ m) i y) -
         V (coordFaceReflection ((1 / 2 : ℝ) * (3 : ℝ) ^ m) i
           (coordFaceReflection ((1 / 2 : ℝ) * (3 : ℝ) ^ m) i y))) / 2 =
       -((V y - V (coordFaceReflection ((1 / 2 : ℝ) * (3 : ℝ) ^ m) i y)) / 2)
@@ -442,7 +442,7 @@ theorem exists_oddHarmonic_of_meetsUpperFace [NeZero d] {x' : Vec d} {m k : ℤ}
         V ∘ (toEuc.symm : EuclideanSpace ℝ (Fin d) → Vec d) := by
       refine Filter.eventually_of_mem hnhds ?_
       rintro e ⟨p, hp, rfl⟩
-      show (V (toEuc.symm (toEuc p)) - V (coordFaceReflection
+      change (V (toEuc.symm (toEuc p)) - V (coordFaceReflection
           ((1 / 2 : ℝ) * (3 : ℝ) ^ m) i (toEuc.symm (toEuc p)))) / 2 =
         V (toEuc.symm (toEuc p))
       rw [ContinuousLinearEquiv.symm_apply_apply]
@@ -469,7 +469,7 @@ theorem exists_oddHarmonic_of_meetsUpperFace [NeZero d] {x' : Vec d} {m k : ℤ}
       self_mem_ae_restrict (isOpen_truncatedWindow x' m k).measurableSet]
       with y hyae hymem
     have hyR : y ∈ reflectedWindow x' m k := hsub hymem
-    show (V y - V (coordFaceReflection ((1 / 2 : ℝ) * (3 : ℝ) ^ m) i y)) / 2 =
+    change (V y - V (coordFaceReflection ((1 / 2 : ℝ) * (3 : ℝ) ^ m) i y)) / 2 =
       v.toFun y
     rw [hodd_eq' y hyR, hyae, hwv y hymem]
     ring
@@ -555,7 +555,7 @@ theorem exists_oddHarmonic_of_meetsLowerFace [NeZero d] {x' : Vec d} {m k : ℤ}
     (V y - V (coordFaceReflection (-(1 / 2 : ℝ) * (3 : ℝ) ^ m) i y)) / 2,
     ?_, ?_, ?_, ?_⟩
   · intro y
-    show (V (coordFaceReflection (-(1 / 2 : ℝ) * (3 : ℝ) ^ m) i y) -
+    change (V (coordFaceReflection (-(1 / 2 : ℝ) * (3 : ℝ) ^ m) i y) -
         V (coordFaceReflection (-(1 / 2 : ℝ) * (3 : ℝ) ^ m) i
           (coordFaceReflection (-(1 / 2 : ℝ) * (3 : ℝ) ^ m) i y))) / 2 =
       -((V y - V (coordFaceReflection (-(1 / 2 : ℝ) * (3 : ℝ) ^ m) i y)) / 2)
@@ -597,7 +597,7 @@ theorem exists_oddHarmonic_of_meetsLowerFace [NeZero d] {x' : Vec d} {m k : ℤ}
         V ∘ (toEuc.symm : EuclideanSpace ℝ (Fin d) → Vec d) := by
       refine Filter.eventually_of_mem hnhds ?_
       rintro e ⟨p, hp, rfl⟩
-      show (V (toEuc.symm (toEuc p)) - V (coordFaceReflection
+      change (V (toEuc.symm (toEuc p)) - V (coordFaceReflection
           (-(1 / 2 : ℝ) * (3 : ℝ) ^ m) i (toEuc.symm (toEuc p)))) / 2 =
         V (toEuc.symm (toEuc p))
       rw [ContinuousLinearEquiv.symm_apply_apply]
@@ -624,7 +624,7 @@ theorem exists_oddHarmonic_of_meetsLowerFace [NeZero d] {x' : Vec d} {m k : ℤ}
       self_mem_ae_restrict (isOpen_truncatedWindow x' m k).measurableSet]
       with y hyae hymem
     have hyR : y ∈ reflectedWindow x' m k := hsub hymem
-    show (V y - V (coordFaceReflection (-(1 / 2 : ℝ) * (3 : ℝ) ^ m) i y)) / 2 =
+    change (V y - V (coordFaceReflection (-(1 / 2 : ℝ) * (3 : ℝ) ^ m) i y)) / 2 =
       v.toFun y
     rw [hodd_eq' y hyR, hyae, hwv y hymem]
     ring

@@ -120,7 +120,7 @@ theorem fluxDivRep_lipschitz (h : UnitCubeSkewW2Infinity d) (x y : Vec d) :
       = |∑ i : Fin d, (fluxDerivRep h i i j x - fluxDerivRep h i i j y)| := by
         rw [Real.norm_eq_abs]
         congr 1
-        show (∑ i : Fin d, fluxDerivRep h i i j x) -
+        change (∑ i : Fin d, fluxDerivRep h i i j x) -
             ∑ i : Fin d, fluxDerivRep h i i j y =
           ∑ i : Fin d, (fluxDerivRep h i i j x - fluxDerivRep h i i j y)
         rw [← Finset.sum_sub_distrib]
@@ -155,7 +155,7 @@ theorem fluxDivRep_ae_eq_cube (h : UnitCubeSkewW2Infinity d) (R : TriadicCube d)
   refine ae_cubeDomain_iff_normalizedCubeMeasure R ?_
   filter_upwards [hall] with x hx
   funext j
-  show (∑ i : Fin d, fluxDerivRep h i i j x) =
+  change (∑ i : Fin d, fluxDerivRep h i i j x) =
     ∑ i : Fin d, unitCubeDerivData h i x i j
   exact Finset.sum_congr rfl fun i _ => hx i i j
 

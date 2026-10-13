@@ -344,7 +344,7 @@ regime's smallness clause `cgamma <= E^{-5}`,
 ```
 
 This is verbatim the fourth premise of
-`LocalizationFluctuationNumericEllipticity.integral_gaugedEllipticitySum_pow_four_ancestorAtScale_le`.
+`integral_gaugedEllipticitySum_pow_four_ancestorAtScale_le`.
 The threshold is **produced**, not assumed. -/
 theorem exists_gamma_threshold_ellipticityGate {C : ℝ} (hC : 0 < C) :
     ∃ gamma0 : ℝ, 0 < gamma0 ∧ gamma0 ≤ 1 / 4 ∧
@@ -465,7 +465,7 @@ theorem exists_gamma_threshold_ellipticityGate {C : ℝ} (hC : 0 < C) :
 /-- **The Step-2 ellipticity moment, with all four of the proved producer's
 premises replaced by the regime's own two clauses.**
 
-`LocalizationFluctuationNumericEllipticity.integral_gaugedEllipticitySum_pow_four_ancestorAtScale_le`
+`integral_gaugedEllipticitySum_pow_four_ancestorAtScale_le`
 carries four ad-hoc premises (the induction state, a `max` gate, an `rpow`
 smallness bound and an exponential gate).  Under the two clauses
 `Cell * cstar^{-1} <= E` and `cgamma <= E^{-5}` of the closure's own regime, at

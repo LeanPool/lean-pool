@@ -249,6 +249,38 @@ private theorem tunedDeepTailFluct_sq_le
 /- One literal translated collar deep-tail layer has the target upper-profile
 exponent.  Its scale retains the exact grouped-tail fluctuation and the exact
 tuned cap-growth coefficient. -/
+private theorem collarDeepTail_layerAmplitude_nonnegative :
+    ∀ {d : ℕ} (M : ABKModel d) {E : { E : ℝ // (1 : ℝ) ≤ E }}
+      (n : ℕ) (j : Fin d),
+      let k₀ : ℕ := collarBandMeanDepth M (↑E : ℝ);
+      let D : ℝ :=
+        probeMeanGoodWaveConst M * vecNormSq (basisVec j) * ((5 : ℝ) * (↑d : ℝ) ^ (2 : ℕ)) *
+          ((4 : ℝ) * superposedGradConst d ^ (2 : ℕ) * probeSharpCollarBandMeanCapQuarter M (↑E : ℝ) k₀ *
+                  probeSharpCollarBandMeanMassQuarterConst d *
+                (3 : ℝ) ^ ((2 : ℝ) * bfaProfileB * (↑k₀ : ℝ)) *
+              (3 : ℝ) ^ (1 / 16 : ℝ) *
+            whitneyDecayRatio ^ n);
+      (0 : ℝ) ≤ D := by
+  intro d M E n j k₀ D
+  dsimp only [D]
+  exact mul_nonneg
+    (mul_nonneg
+      (mul_nonneg
+        (probeMeanGoodWaveConst_nonneg M.shellPrefix.dimension M)
+        (vecNormSq_nonneg (basisVec j)))
+      (by positivity))
+    (mul_nonneg
+      (mul_nonneg
+        (mul_nonneg
+          (mul_nonneg
+            (mul_nonneg
+              (mul_nonneg (by positivity) (sq_nonneg _))
+              (probeSharpCollarBandMeanCapQuarter_nonneg M (E : ℝ) k₀))
+            (probeSharpCollarBandMeanMassQuarterConst_nonneg d))
+          (Real.rpow_nonneg (by norm_num) _))
+        (Real.rpow_nonneg (by norm_num) _))
+      (pow_nonneg whitneyDecayRatio_nonneg n))
+
 private theorem collarDeepTail_layer_isBigOWith
     (M : ABKModel d) {m : ℤ} {k : ℕ} {R : TriadicCube d}
     (hR : R ∈ descendantsAtScale (originCube d m) (m - 1 - (k : ℤ)))
@@ -435,25 +467,7 @@ private theorem collarDeepTail_layer_isBigOWith
         (sigma := sigma) (gamma := M.gamma / 2) (b := bfaProfileB)
         hsigma0 hsigma (div_nonneg M.shellPrefix.gamma_pos.le (by norm_num))
         bfaProfileB_pos hgammaHalf hAP hAT hP0 hT0 hP hT)
-  have hD : 0 ≤ D := by
-    dsimp only [D]
-    exact mul_nonneg
-      (mul_nonneg
-        (mul_nonneg
-          (probeMeanGoodWaveConst_nonneg M.shellPrefix.dimension M)
-          (vecNormSq_nonneg (basisVec j)))
-        (by positivity))
-      (mul_nonneg
-        (mul_nonneg
-          (mul_nonneg
-            (mul_nonneg
-              (mul_nonneg
-                (mul_nonneg (by positivity) (sq_nonneg _))
-                (probeSharpCollarBandMeanCapQuarter_nonneg M (E : ℝ) k₀))
-              (probeSharpCollarBandMeanMassQuarterConst_nonneg d))
-            (Real.rpow_nonneg (by norm_num) _))
-          (Real.rpow_nonneg (by norm_num) _))
-        (pow_nonneg whitneyDecayRatio_nonneg n))
+  have hD := @collarDeepTail_layerAmplitude_nonnegative (d) (M) (E) (n) (j)
   have hmajor := hproduct.const_mul hD
   have hpoint : ∀ omega : CutoffSample d,
       probeSharpFramedCollarWavePart M R.scale (E : ℝ) bfaProfileB
@@ -559,6 +573,217 @@ def probeSharpFramedCollarDeepTailLayer
     (fun eta => probeDeepBandGaugedTail M (originCube d R.scale)
       (probeSharpLayerAnchor R.scale bfaProfileB k₀ n) k₀ k₀ eta ^ 2)
     (translateCutoffSample (triadicCubeShift R) omega)
+private theorem deepTail_coordinateTerm_orliczBound :
+    ∀ {d : ℕ} (M : ABKModel d) {m : ℤ} {k : ℕ} {R : TriadicCube d},
+      R ∈ descendantsAtScale (originCube d m) (m - (1 : ℤ) - (↑k : ℤ)) →
+        ∀ {E : { E : ℝ // (1 : ℝ) ≤ E }},
+          Frozen.Section3.inductionState M (m - (1 : ℤ)) E →
+            ∀ {sigma Cup : ℝ},
+              (0 : ℝ) < sigma →
+                sigma ≤ (1 / 2 : ℝ) →
+                  max (Real.exp (Cup / sigma)) (Disorder.cstar M)⁻¹ ≤ (↑E : ℝ) →
+                    (↑E : ℝ) ≤ M.gamma ^ (-(1 / 5 : ℝ)) →
+                      max (profileAuxiliaryConst d) (collarBandMeanDepthThreshold d) ≤ Cup →
+                        ∀ (j : Fin d),
+                          let k₀ : ℕ := collarBandMeanDepth M (↑E : ℝ);
+                          let tailA : ℝ := gammaTriangleConst (2 : ℝ) * (probeDeepBandGainRootConst d * (3 : ℝ) * √(2 : ℝ));
+                          let D₀ : ℝ :=
+                            probeMeanGoodWaveConst M * ((5 : ℝ) * (↑d : ℝ) ^ (2 : ℕ)) *
+                              ((4 : ℝ) * superposedGradConst d ^ (2 : ℕ) *
+                                      probeSharpCollarBandMeanCapQuarter M (↑E : ℝ) k₀ *
+                                    probeSharpCollarBandMeanMassQuarterConst d *
+                                  (3 : ℝ) ^ ((2 : ℝ) * bfaProfileB * (↑k₀ : ℝ)) *
+                                (3 : ℝ) ^ (1 / 16 : ℝ));
+                          let B₀ : ℝ :=
+                            D₀ * ((64 : ℝ) * superposedFluxHsepConst ^ (3 : ℝ) * (tailA ^ (2 : ℕ) * (81 : ℝ)) * M.gamma);
+                          let B : ℕ → ℝ := fun (n : ℕ) => B₀ * whitneyDecayRatio ^ n;
+                          let X : ℕ → CutoffSample d → ℝ := fun (n : ℕ) (omega : CutoffSample d) =>
+                            probeSharpFramedCollarDeepTailLayer M m R (↑E : ℝ) j n omega;
+                          let alpha : ℝ :=
+                            upperProfileBaseSigma sigma /
+                              (((2 : ℝ) * (M.gamma / (2 : ℝ)) + (2 : ℝ) * bfaProfileB) / bfaProfileB);
+                          let AP : ℝ := hsepAmplitude (upperProfileSigma sigma) bfaProfileB ^ bfaPower M.gamma bfaProfileB;
+                          let G : ℝ := Ch04.gammaProductConst alpha (1 : ℝ);
+                          (0 : ℝ) ≤ G →
+                            G ≤ (64 : ℝ) →
+                              (0 : ℝ) ≤ AP →
+                                AP ≤ superposedFluxHsepConst ^ (3 : ℝ) →
+                                  (0 : ℝ) ≤ superposedFluxHsepConst ^ (3 : ℝ) →
+                                    (0 : ℝ) < tailA →
+                                      (0 : ℝ) < D₀ →
+                                        (0 : ℝ) ≤ whitneyDecayRatio →
+                                          ∀ (n : ℕ),
+                                            IsBigOWith (↑(cutoffSampleLaw M) : Measure (CutoffSample d))
+                                              (gammaSigma (upperProfileTargetSigma sigma)) (X n) (B n) := by
+  intro _ M _ _ R hR E hS sigma _ hsigma0 hsigma hmax hEgamma hCup j k₀ tailA D₀ B₀ B X alpha AP G hG0 hG hAP0 hAP hHcube0 htailA hD₀0 hr0 n
+  let ell : ℕ → ℤ := fun n => probeSharpLayerAnchor R.scale bfaProfileB k₀ n
+  let AT : ℝ := probeDeepBandGaugedFluct M (ell n) k₀
+    (probeSharpLayerGap bfaProfileB n) ^ 2
+  have hAT0 : 0 ≤ AT := by dsimp only [AT]; positivity
+  have hAT : AT ≤ tailA ^ 2 * M.gamma * 81 := by
+    dsimp only [AT, ell, k₀, tailA]
+    exact tunedDeepTailFluct_sq_le M R.scale E.property hEgamma n
+  have hGAP : G * AP ≤ 64 * superposedFluxHsepConst ^ (3 : ℝ) :=
+    mul_le_mul hG hAP hAP0 (by norm_num)
+  have hGAP0 : 0 ≤ G * AP := mul_nonneg hG0 hAP0
+  have htailBound0 : 0 ≤ tailA ^ 2 * M.gamma * 81 :=
+    (mul_pos (mul_pos (sq_pos_of_pos htailA) M.shellPrefix.gamma_pos)
+      (by norm_num)).le
+  have hfactor : G * AP * AT ≤
+      64 * superposedFluxHsepConst ^ (3 : ℝ) *
+        (tailA ^ 2 * 81) * M.gamma := by
+    calc
+      G * AP * AT ≤
+          (64 * superposedFluxHsepConst ^ (3 : ℝ)) *
+            (tailA ^ 2 * M.gamma * 81) :=
+        mul_le_mul hGAP hAT hAT0
+          (mul_nonneg (by norm_num) hHcube0)
+      _ = 64 * superposedFluxHsepConst ^ (3 : ℝ) *
+          (tailA ^ 2 * 81) * M.gamma := by ring
+  have hDn0 : 0 ≤ D₀ * whitneyDecayRatio ^ n :=
+    mul_nonneg hD₀0.le (pow_nonneg hr0 n)
+  have hscale :
+      (D₀ * whitneyDecayRatio ^ n) * (G * AP * AT) ≤ B n := by
+    calc
+      (D₀ * whitneyDecayRatio ^ n) * (G * AP * AT) ≤
+          (D₀ * whitneyDecayRatio ^ n) *
+            (64 * superposedFluxHsepConst ^ (3 : ℝ) *
+              (tailA ^ 2 * 81) * M.gamma) :=
+        mul_le_mul_of_nonneg_left hfactor hDn0
+      _ = B n := by
+        dsimp only [B, B₀]
+        ring
+  have hraw := collarDeepTail_layer_isBigOWith
+    M hR hS hsigma0 hsigma hmax hEgamma hCup n j
+  have hraw' : IsBigOWith (cutoffSampleLaw M).toMeasure
+      (gammaSigma (upperProfileTargetSigma sigma)) (X n)
+      ((D₀ * whitneyDecayRatio ^ n) * (G * AP * AT)) := by
+    simpa only [X, probeSharpFramedCollarDeepTailLayer, k₀, ell, D₀, G, alpha, AP, AT,
+      vecNormSq_basisVec, one_mul, mul_assoc] using hraw
+  exact hraw'.mono_scale hscale
+
+private theorem upperDeepBandTailConsumption_comparisonBounds1 :
+    ∀ {d : ℕ} (_ : (2 : ℕ) ≤ d) (M : ABKModel d) {E : { E : ℝ // (1 : ℝ) ≤ E }} {sigma Cup : ℝ}
+      (_ : (0 : ℝ) < sigma) (_ : sigma ≤ (1 / 2 : ℝ))
+      (_ : max (Real.exp (Cup / sigma)) (Disorder.cstar M)⁻¹ ≤ (↑E : ℝ)) (_ : (↑E : ℝ) ≤ M.gamma ^ (-(1 / 5 : ℝ))),
+      let X : ℝ := (↑E : ℝ)⁻¹ ^ (2 : ℕ) * M.gamma⁻¹;
+      let Z : ℝ := Real.exp (-(collarBandMeanTunedDecayRate d * X));
+      let k₀ : ℕ := collarBandMeanDepth M (↑E : ℝ);
+      let tailA : ℝ := gammaTriangleConst (2 : ℝ) * (probeDeepBandGainRootConst d * (3 : ℝ) * √(2 : ℝ));
+      let meanD : ℝ := probeMeanGoodWaveDimensionConst d;
+      let fiveD : ℝ := (5 : ℝ) * (↑d : ℝ) ^ (2 : ℕ);
+      let fixed : ℝ :=
+        (4 : ℝ) * superposedGradConst d ^ (2 : ℕ) * probeSharpCollarBandMeanMassQuarterConst d * (3 : ℝ) ^ (1 / 16 : ℝ);
+      let capGrowth : ℝ := probeSharpCollarBandMeanCapQuarter M (↑E : ℝ) k₀ * (3 : ℝ) ^ ((2 : ℝ) * bfaProfileB * (↑k₀ : ℝ));
+      let tailC : ℝ := (64 : ℝ) * superposedFluxHsepConst ^ (3 : ℝ) * (tailA ^ (2 : ℕ) * (81 : ℝ));
+      let rinv : ℝ := ((1 : ℝ) - whitneyDecayRatio)⁻¹;
+      let D₀ : ℝ := probeMeanGoodWaveConst M * fiveD * fixed * capGrowth;
+      let T : ℝ := gammaTriangleConst (upperProfileTargetSigma sigma);
+      let Tbar : ℝ := upperAfterBandRareTriangleConst;
+      let K : ℝ := (↑d : ℝ) * Tbar * (meanD * fiveD * fixed * collarBandMeanTunedCapPrefactor d * tailC * rinv);
+      ∀ (_ : collarBandMeanDepthThreshold d ≤ X) (_ : (0 : ℝ) < (↑E : ℝ)),
+        (0 : ℝ) ≤ Z ∧
+          (↑d : ℝ) * T * (meanD * (Disorder.cstar M)⁻¹ * fiveD * fixed) * capGrowth * (tailC * M.gamma * rinv) ≤
+              (↑d : ℝ) * Tbar * (meanD * (Disorder.cstar M)⁻¹ * fiveD * fixed) * (collarBandMeanTunedCapPrefactor d * Z) *
+                (tailC * M.gamma * rinv) ∧
+            D₀ = meanD * (Disorder.cstar M)⁻¹ * fiveD * fixed * capGrowth ∧
+              (Disorder.cstar M)⁻¹ * M.gamma ≤ (1 : ℝ) ∧ (0 : ℝ) ≤ K := by
+  intro d hd M E _ _ hsigma0 hsigma hmax hEgamma X Z k₀ tailA meanD fiveD fixed capGrowth tailC rinv D₀ T Tbar K hlarge hEpos
+  have hcap : capGrowth ≤ collarBandMeanTunedCapPrefactor d * Z := by
+    dsimp only [capGrowth, k₀, Z, X]
+    exact probeSharpCollarBandMeanTunedCapGrowth_le_exp M hEpos hlarge
+  have hT : T ≤ Tbar := by
+    dsimp only [T, Tbar]
+    exact gammaTriangleConst_upperProfileTarget_le hsigma0 hsigma
+  have hmean0 : 0 ≤ meanD := by
+    dsimp only [meanD]
+    rw [probeMeanGoodWaveDimensionConst]
+    exact mul_nonneg
+      (mul_nonneg (by norm_num)
+        (simplexCrudeConst_nonneg d (s := (1 / 4 : ℝ)) (by norm_num)))
+      (probeSimplexMeanSensitivityConst_nonneg hd)
+  have hcstar0 : 0 ≤
+      (Algsuperdiff.Section3.Disorder.cstar M)⁻¹ :=
+    (inv_pos.mpr
+      (Algsuperdiff.Section3.Disorder.cstar_characterization M).1).le
+  have hfive0 : 0 ≤ fiveD := by dsimp only [fiveD]; positivity
+  have hfixed0 : 0 ≤ fixed := by
+    dsimp only [fixed]
+    exact mul_nonneg
+      (mul_nonneg
+        (mul_nonneg (by positivity) (sq_nonneg _))
+        (probeSharpCollarBandMeanMassQuarterConst_nonneg d))
+      (Real.rpow_nonneg (by norm_num) _)
+  have hcap0 : 0 ≤ capGrowth := by
+    dsimp only [capGrowth]
+    exact mul_nonneg
+      (probeSharpCollarBandMeanCapQuarter_nonneg M (E : ℝ) k₀)
+      (Real.rpow_nonneg (by norm_num) _)
+  have htailC0 : 0 ≤ tailC := by
+    dsimp only [tailC]
+    exact mul_nonneg
+      (mul_nonneg (by norm_num)
+        (Real.rpow_nonneg superposedFluxHsepConst_pos.le _))
+      (mul_nonneg (sq_nonneg tailA) (by norm_num))
+  have hrinv0 : 0 ≤ rinv := by
+    dsimp only [rinv]
+    exact inv_nonneg.mpr (sub_nonneg.mpr whitneyDecayRatio_lt_one.le)
+  have hT0 : 0 ≤ T := gammaTriangleConst_pos.le
+  have hTbar0 : 0 ≤ Tbar := by
+    dsimp only [Tbar]
+    rw [upperAfterBandRareTriangleConst]
+    positivity
+  have hcapBar0 : 0 ≤ collarBandMeanTunedCapPrefactor d :=
+    collarBandMeanTunedCapPrefactor_nonneg d
+  have hZ0 : 0 ≤ Z := (Real.exp_pos _).le
+  have hpre0 : 0 ≤ (d : ℝ) * T *
+      (meanD * (Algsuperdiff.Section3.Disorder.cstar M)⁻¹ *
+        fiveD * fixed) := by positivity
+  have hpreBar0 : 0 ≤ (d : ℝ) * Tbar *
+      (meanD * (Algsuperdiff.Section3.Disorder.cstar M)⁻¹ *
+        fiveD * fixed) := by positivity
+  have hpost0 : 0 ≤ tailC * M.gamma * rinv := by
+    exact mul_nonneg (mul_nonneg htailC0 M.shellPrefix.gamma_pos.le) hrinv0
+  have hpre : (d : ℝ) * T *
+        (meanD * (Algsuperdiff.Section3.Disorder.cstar M)⁻¹ *
+          fiveD * fixed) ≤
+      (d : ℝ) * Tbar *
+        (meanD * (Algsuperdiff.Section3.Disorder.cstar M)⁻¹ *
+          fiveD * fixed) := by
+    gcongr
+  have hraw :
+      ((d : ℝ) * T *
+          (meanD * (Algsuperdiff.Section3.Disorder.cstar M)⁻¹ *
+            fiveD * fixed)) * capGrowth * (tailC * M.gamma * rinv) ≤
+        ((d : ℝ) * Tbar *
+          (meanD * (Algsuperdiff.Section3.Disorder.cstar M)⁻¹ *
+            fiveD * fixed)) *
+          (collarBandMeanTunedCapPrefactor d * Z) *
+          (tailC * M.gamma * rinv) := by
+    exact mul_le_mul_of_nonneg_right
+      (mul_le_mul hpre hcap hcap0 hpreBar0) hpost0
+  have hD₀ : D₀ = meanD *
+      (Algsuperdiff.Section3.Disorder.cstar M)⁻¹ * fiveD * fixed *
+      capGrowth := by
+    dsimp only [D₀]
+    rw [show probeMeanGoodWaveConst M = meanD *
+        (Algsuperdiff.Section3.Disorder.cstar M)⁻¹ by
+      dsimp only [meanD]
+      exact probeMeanGoodWaveConst_eq_dimension_mul_cstarInv M]
+  have hcstarE : (Algsuperdiff.Section3.Disorder.cstar M)⁻¹ ≤ (E : ℝ) :=
+    (le_max_right _ _).trans hmax
+  have hEgammaOne : (E : ℝ) * M.gamma ≤ 1 :=
+    mul_gamma_le_one_of_le_rpow_neg_fifth E.property
+      M.shellPrefix.gamma_pos hEgamma
+  have hcstarGamma :
+      (Algsuperdiff.Section3.Disorder.cstar M)⁻¹ * M.gamma ≤ 1 :=
+    (mul_le_mul_of_nonneg_right hcstarE M.shellPrefix.gamma_pos.le).trans
+      hEgammaOne
+  have hK0 : 0 ≤ K := by
+    dsimp only [K]
+    positivity
+  exact ⟨hZ0, hraw, hD₀, hcstarGamma, hK0⟩
+
 /-- The finite-coordinate real trace of the literal collar deep-tail summand. -/
 def probeSharpFramedCollarDeepTailTraceLane
     (M : ABKModel d) (m : ℤ) (R : TriadicCube d) (E : ℝ) (omega : CutoffSample d) : ℝ :=
@@ -614,7 +839,8 @@ theorem measurable_probeSharpFramedCollarDeepTailLayer (M : ABKModel d) (m : ℤ
     (R : TriadicCube d) (E : ℝ) (j : Fin d) (n : ℕ) :
     Measurable (probeSharpFramedCollarDeepTailLayer M m R E j n) := by
   simpa only [probeSharpFramedCollarDeepTailLayer, Function.comp_apply] using!
-    (measurable_collarDeepTail_layer M R.scale E (collarBandMeanDepth M E) n (m - 1) j).comp (measurable_translateCutoffSample (triadicCubeShift R))
+    (measurable_collarDeepTail_layer M R.scale E (collarBandMeanDepth M E) n (m - 1) j).comp
+      (measurable_translateCutoffSample (triadicCubeShift R))
 /- Whitney summation of the literal tenth lane at one coordinate.  The output
 scale has a single tuned cap-growth factor and a dimension-only deep-tail
 constant times `gamma`; in particular no `E⁻²` ordinary lane appears. -/
@@ -778,53 +1004,9 @@ theorem collarDeepTail_coordinate_isBigOWith_and_ae_summable
   have hXmeas : ∀ n, Measurable (X n) := fun n => by
     dsimp only [X]
     exact measurable_probeSharpFramedCollarDeepTailLayer M m R (E : ℝ) j n
-  have hterm : ∀ n, IsBigOWith (cutoffSampleLaw M).toMeasure
-      (gammaSigma (upperProfileTargetSigma sigma)) (X n) (B n) := by
-    intro n
-    let AT : ℝ := probeDeepBandGaugedFluct M (ell n) k₀
-      (probeSharpLayerGap bfaProfileB n) ^ 2
-    have hAT0 : 0 ≤ AT := by dsimp only [AT]; positivity
-    have hAT : AT ≤ tailA ^ 2 * M.gamma * 81 := by
-      dsimp only [AT, ell, k₀, tailA]
-      exact tunedDeepTailFluct_sq_le M R.scale E.property hEgamma n
-    have hGAP : G * AP ≤ 64 * superposedFluxHsepConst ^ (3 : ℝ) :=
-      mul_le_mul hG hAP hAP0 (by norm_num)
-    have hGAP0 : 0 ≤ G * AP := mul_nonneg hG0 hAP0
-    have htailBound0 : 0 ≤ tailA ^ 2 * M.gamma * 81 :=
-      (mul_pos (mul_pos (sq_pos_of_pos htailA) M.shellPrefix.gamma_pos)
-        (by norm_num)).le
-    have hfactor : G * AP * AT ≤
-        64 * superposedFluxHsepConst ^ (3 : ℝ) *
-          (tailA ^ 2 * 81) * M.gamma := by
-      calc
-        G * AP * AT ≤
-            (64 * superposedFluxHsepConst ^ (3 : ℝ)) *
-              (tailA ^ 2 * M.gamma * 81) :=
-          mul_le_mul hGAP hAT hAT0
-            (mul_nonneg (by norm_num) hHcube0)
-        _ = 64 * superposedFluxHsepConst ^ (3 : ℝ) *
-            (tailA ^ 2 * 81) * M.gamma := by ring
-    have hDn0 : 0 ≤ D₀ * whitneyDecayRatio ^ n :=
-      mul_nonneg hD₀0.le (pow_nonneg hr0 n)
-    have hscale :
-        (D₀ * whitneyDecayRatio ^ n) * (G * AP * AT) ≤ B n := by
-      calc
-        (D₀ * whitneyDecayRatio ^ n) * (G * AP * AT) ≤
-            (D₀ * whitneyDecayRatio ^ n) *
-              (64 * superposedFluxHsepConst ^ (3 : ℝ) *
-                (tailA ^ 2 * 81) * M.gamma) :=
-          mul_le_mul_of_nonneg_left hfactor hDn0
-        _ = B n := by
-          dsimp only [B, B₀]
-          ring
-    have hraw := collarDeepTail_layer_isBigOWith
-      M hR hS hsigma0 hsigma hmax hEgamma hCup n j
-    have hraw' : IsBigOWith (cutoffSampleLaw M).toMeasure
-        (gammaSigma (upperProfileTargetSigma sigma)) (X n)
-        ((D₀ * whitneyDecayRatio ^ n) * (G * AP * AT)) := by
-      simpa only [X, probeSharpFramedCollarDeepTailLayer, k₀, ell, D₀, G, alpha, AP, AT,
-        vecNormSq_basisVec, one_mul, mul_assoc] using hraw
-    exact hraw'.mono_scale hscale
+  have hterm := @deepTail_coordinateTerm_orliczBound (d) (M) (m) (k) (R) (hR) (E) (hS) (sigma)
+    (Cup) (hsigma0) (hsigma) (hmax) (hEgamma) (hCup) (j) (hG0) (hG) (hAP0) (hAP) (hHcube0)
+      (htailA) (hD₀0) (hr0)
   constructor
   · refine Provider.Orlicz.isBigOWith_gammaSigma_tsum_of_tsum_le
       (upperProfileTargetSigma_pos hsigma0 hsigma) hX0 hXmeas hBpos hBsum
@@ -844,7 +1026,8 @@ theorem probeSharpFramedCollarDeepTailTraceLane_nonneg (M : ABKModel d)
 theorem measurable_probeSharpFramedCollarDeepTailTraceLane (M : ABKModel d) (m : ℤ)
     (R : TriadicCube d) (E : ℝ) :
     Measurable (probeSharpFramedCollarDeepTailTraceLane M m R E) := by
-  change Measurable fun omega => ∑ j : Fin d, ∑' n : ℕ, probeSharpFramedCollarDeepTailLayer M m R E j n omega
+  change Measurable fun omega => ∑ j : Fin d, ∑' n : ℕ, probeSharpFramedCollarDeepTailLayer M m R
+    E j n omega
   refine Finset.measurable_fun_sum Finset.univ fun j _ => ?_
   have hnn : Measurable (fun omega : CutoffSample d => ∑' n : ℕ,
       (probeSharpFramedCollarDeepTailLayer M m R E j n omega).toNNReal) :=
@@ -1026,99 +1209,19 @@ theorem collarDeepTail_traceScale_le_exp
   have hlarge : collarBandMeanDepthThreshold d ≤ X :=
     hdepthThreshold.trans hX
   have hEpos : 0 < (E : ℝ) := lt_of_lt_of_le zero_lt_one E.property
-  have hcap : capGrowth ≤ collarBandMeanTunedCapPrefactor d * Z := by
-    dsimp only [capGrowth, k₀, Z, X]
-    exact probeSharpCollarBandMeanTunedCapGrowth_le_exp M hEpos hlarge
-  have hT : T ≤ Tbar := by
-    dsimp only [T, Tbar]
-    exact gammaTriangleConst_upperProfileTarget_le hsigma0 hsigma
-  have hmean0 : 0 ≤ meanD := by
-    dsimp only [meanD]
-    rw [probeMeanGoodWaveDimensionConst]
-    exact mul_nonneg
-      (mul_nonneg (by norm_num)
-        (simplexCrudeConst_nonneg d (s := (1 / 4 : ℝ)) (by norm_num)))
-      (probeSimplexMeanSensitivityConst_nonneg hd)
-  have hcstar0 : 0 ≤
-      (Algsuperdiff.Section3.Disorder.cstar M)⁻¹ :=
-    (inv_pos.mpr
-      (Algsuperdiff.Section3.Disorder.cstar_characterization M).1).le
-  have hfive0 : 0 ≤ fiveD := by dsimp only [fiveD]; positivity
-  have hfixed0 : 0 ≤ fixed := by
-    dsimp only [fixed]
-    exact mul_nonneg
-      (mul_nonneg
-        (mul_nonneg (by positivity) (sq_nonneg _))
-        (probeSharpCollarBandMeanMassQuarterConst_nonneg d))
-      (Real.rpow_nonneg (by norm_num) _)
-  have hcap0 : 0 ≤ capGrowth := by
-    dsimp only [capGrowth]
-    exact mul_nonneg
-      (probeSharpCollarBandMeanCapQuarter_nonneg M (E : ℝ) k₀)
-      (Real.rpow_nonneg (by norm_num) _)
-  have htailC0 : 0 ≤ tailC := by
-    dsimp only [tailC]
-    exact mul_nonneg
-      (mul_nonneg (by norm_num)
-        (Real.rpow_nonneg superposedFluxHsepConst_pos.le _))
-      (mul_nonneg (sq_nonneg tailA) (by norm_num))
-  have hrinv0 : 0 ≤ rinv := by
-    dsimp only [rinv]
-    exact inv_nonneg.mpr (sub_nonneg.mpr whitneyDecayRatio_lt_one.le)
-  have hT0 : 0 ≤ T := gammaTriangleConst_pos.le
-  have hTbar0 : 0 ≤ Tbar := by
-    dsimp only [Tbar]
-    rw [upperAfterBandRareTriangleConst]
-    positivity
-  have hcapBar0 : 0 ≤ collarBandMeanTunedCapPrefactor d :=
-    collarBandMeanTunedCapPrefactor_nonneg d
-  have hZ0 : 0 ≤ Z := (Real.exp_pos _).le
-  have hpre0 : 0 ≤ (d : ℝ) * T *
-      (meanD * (Algsuperdiff.Section3.Disorder.cstar M)⁻¹ *
-        fiveD * fixed) := by positivity
-  have hpreBar0 : 0 ≤ (d : ℝ) * Tbar *
-      (meanD * (Algsuperdiff.Section3.Disorder.cstar M)⁻¹ *
-        fiveD * fixed) := by positivity
-  have hpost0 : 0 ≤ tailC * M.gamma * rinv := by
-    exact mul_nonneg (mul_nonneg htailC0 M.shellPrefix.gamma_pos.le) hrinv0
-  have hpre : (d : ℝ) * T *
-        (meanD * (Algsuperdiff.Section3.Disorder.cstar M)⁻¹ *
-          fiveD * fixed) ≤
-      (d : ℝ) * Tbar *
-        (meanD * (Algsuperdiff.Section3.Disorder.cstar M)⁻¹ *
-          fiveD * fixed) := by
-    gcongr
-  have hraw :
-      ((d : ℝ) * T *
+  obtain ⟨hZ0, hraw, hD₀, hcstarGamma, hK0⟩ :=
+    (show (0 ≤ Z) ∧ (((d : ℝ) * T *
           (meanD * (Algsuperdiff.Section3.Disorder.cstar M)⁻¹ *
             fiveD * fixed)) * capGrowth * (tailC * M.gamma * rinv) ≤
         ((d : ℝ) * Tbar *
           (meanD * (Algsuperdiff.Section3.Disorder.cstar M)⁻¹ *
             fiveD * fixed)) *
           (collarBandMeanTunedCapPrefactor d * Z) *
-          (tailC * M.gamma * rinv) := by
-    exact mul_le_mul_of_nonneg_right
-      (mul_le_mul hpre hcap hcap0 hpreBar0) hpost0
-  have hD₀ : D₀ = meanD *
+          (tailC * M.gamma * rinv)) ∧ (D₀ = meanD *
       (Algsuperdiff.Section3.Disorder.cstar M)⁻¹ * fiveD * fixed *
-      capGrowth := by
-    dsimp only [D₀]
-    rw [show probeMeanGoodWaveConst M = meanD *
-        (Algsuperdiff.Section3.Disorder.cstar M)⁻¹ by
-      dsimp only [meanD]
-      exact probeMeanGoodWaveConst_eq_dimension_mul_cstarInv M]
-  have hcstarE : (Algsuperdiff.Section3.Disorder.cstar M)⁻¹ ≤ (E : ℝ) :=
-    (le_max_right _ _).trans hmax
-  have hEgammaOne : (E : ℝ) * M.gamma ≤ 1 :=
-    mul_gamma_le_one_of_le_rpow_neg_fifth E.property
-      M.shellPrefix.gamma_pos hEgamma
-  have hcstarGamma :
-      (Algsuperdiff.Section3.Disorder.cstar M)⁻¹ * M.gamma ≤ 1 :=
-    (mul_le_mul_of_nonneg_right hcstarE M.shellPrefix.gamma_pos.le).trans
-      hEgammaOne
-  have hK0 : 0 ≤ K := by
-    dsimp only [K]
-    positivity
+      capGrowth) ∧ ((Algsuperdiff.Section3.Disorder.cstar M)⁻¹ * M.gamma ≤ 1) ∧ (0 ≤ K) from
+      @upperDeepBandTailConsumption_comparisonBounds1 (d) (hd) (M) (E) (sigma) (Cup) (hsigma0)
+        (hsigma) (hmax) (hEgamma) (hlarge) (hEpos))
   have hBtarget :
       probeMeanGoodWaveConst M * (5 * (d : ℝ) ^ 2) *
           (4 * superposedGradConst d ^ 2 *

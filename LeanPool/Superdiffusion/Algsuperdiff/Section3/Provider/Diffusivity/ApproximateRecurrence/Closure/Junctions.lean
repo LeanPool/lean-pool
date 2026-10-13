@@ -29,7 +29,7 @@ The two-sided closure of `l.approximate.recurrence.formula` needs three
 things beyond the arithmetic of `Closure.StepSixClosure`:
 
 1. the **principal comparison**, proved:
-   `PrincipalResponseTerminal.exists_const_descendantsAverage_integral_principalEnergy_le_annealedLimit`;
+`exists_const_descendantsAverage_integral_principalEnergy_le_annealedLimit`;
 2. the **gauge endpoints** of Steps 4 and 5 (`e.lower.bound.pre1`, and
    `e.lower.bound.pre2`), whose fresh-shell energy display is produced by the
    lane `shellsum-limit` (Corrector territory);
@@ -257,9 +257,10 @@ below, from the proved convergence.
 
 : `Closure.JunctionDischargeStepFour`, composing
 
-* the gauge collapse `ApproximateRecurrence.ClosureGaugeCollapse.blockVecDot_gaugedPrincipalLoadShell_blockDiag`;
+* the gauge collapse
+`ApproximateRecurrence.ClosureGaugeCollapse.blockVecDot_gaugedPrincipalLoadShell_blockDiag`;
 * the zero-direction vanishing
-  `Provider.Diffusivity.Corrector.FreshShellSumZeroDirection.grad_ae_eq_zero_of_isZeroTraceDirichletRhsWeakSolution_streamForcing_zero`
+`grad_ae_eq_zero_of_isZeroTraceDirichletRhsWeakSolution_streamForcing_zero`
   (the `e = 0` branch of Step 6, where the Dirichlet corrector's forcing
   vanishes identically, so `w_D = 0` and `(grad w_D)_R = 0`);
 * the cube-average/`matVecMul` interchange
@@ -297,11 +298,11 @@ after `K -> infinity`, which the skeletons below perform.
 = 0`
 (`ClosureGaugeCollapse.blockVecDot_gaugedPrincipalLoadShell_blockDiag_flux`),
 the zero-direction vanishing of the Neumann leg
-(`FreshShellSumZeroDirection.grad_ae_eq_zero_of_isMeanZeroNeumannRhsWeakSolution_streamForcing_zero`),
+(`grad_ae_eq_zero_of_isMeanZeroNeumannRhsWeakSolution_streamForcing_zero`),
 the Hoelder product `Closure.shellProduct_le_quadratic_error` (on
 `l.km.kn.Lp` and `e.nablaw.in.L.eight`), and the proved `cgamma^15` oscillation
 endpoint
-(`LocalizationOscillationEndpoint.exists_gamma0_freshShellDirichlet_meshOscillation_le_gamma_pow_fifteen`).
+(`exists_gamma0_freshShellDirichlet_meshOscillation_le_gamma_pow_fifteen`).
 
 `Fend` is the endpoint's own constant for the quadratic `h`-error; it is left
 free here and enters the printed display only through `max`.  The directional
@@ -328,7 +329,7 @@ limit passage.**
 , jointly:
 
 * the proved structural split
-  `LocalizationRecurrenceMesh.exists_localizationRecurrenceMeshSplit_le_descendantsAverage_expanded`;
+`LocalizationRecurrenceMesh.exists_localizationRecurrenceMeshSplit_le_descendantsAverage_expanded`;
 * lane `gamma10-final` --- the `cgamma^10` fluctuation endpoint
   (`e.lower.bound.localization.terms`) at the same `descendantsAverage`
   carrier;
@@ -351,7 +352,7 @@ def AnnealedSplitEndpoint (M : ABKModel d) (n : ℤ) (h : ℕ) (Kc : ℤ) (j : �
 /-- **Junction 4 --- the proved principal comparison, at this indexing.**
 
 : already proved, as
-`PrincipalResponseTerminal.exists_const_descendantsAverage_integral_principalEnergy_le_annealedLimit`;
+`exists_const_descendantsAverage_integral_principalEnergy_le_annealedLimit`;
 this is only its re-indexing from `(m - h, m)` to `(n, n + h)`, at the witness
 pair `wD, wN` that the terminal itself produces.
 

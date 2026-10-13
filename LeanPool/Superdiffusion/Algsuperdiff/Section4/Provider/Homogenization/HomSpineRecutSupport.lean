@@ -147,7 +147,7 @@ def recutExponent (d : ℕ) (hd : 1 ≤ d) : FiniteLpExponent where
 
 @[simp] theorem recutExponent_toReal (d : ℕ) (hd : 1 ≤ d) :
     (recutExponent d hd).exponent.toReal = 4 * (d : ℝ) := by
-  show (((4 * d : ℕ) : ℝ≥0∞)).toReal = 4 * (d : ℝ)
+  change (((4 * d : ℕ) : ℝ≥0∞)).toReal = 4 * (d : ℝ)
   rw [ENNReal.toReal_natCast]
   push_cast
   ring
@@ -156,7 +156,7 @@ def recutExponent (d : ℕ) (hd : 1 ≤ d) : FiniteLpExponent where
 needs. -/
 theorem recutExponent_two_le (d : ℕ) (hd : 1 ≤ d) :
     (2 : ℝ≥0∞) ≤ (recutExponent d hd).exponent := by
-  show (2 : ℝ≥0∞) ≤ ((4 * d : ℕ) : ℝ≥0∞)
+  change (2 : ℝ≥0∞) ≤ ((4 * d : ℕ) : ℝ≥0∞)
   have h : (2 : ℕ) ≤ 4 * d := by omega
   exact_mod_cast (Nat.cast_le (α := ℝ≥0∞)).mpr h
 

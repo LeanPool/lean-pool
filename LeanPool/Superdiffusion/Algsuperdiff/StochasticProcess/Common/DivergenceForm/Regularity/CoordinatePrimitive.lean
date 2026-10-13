@@ -66,9 +66,9 @@ theorem contDiff_one_coordinatePrimitive (f : Vec d → ℝ)
       classical
       by_cases hji : j = i
       · subst j
-        simp [Function.update]
+        simp only [Function.update_self]
         exact contDiff_const.add (ht.mul (hyi.sub contDiff_const))
-      · simp [Function.update, hji]
+      · simp only [Function.update_of_ne hji]
         exact (contDiff_apply ℝ ℝ j).comp contDiff_snd
     exact (hyi.sub contDiff_const).mul (hf.comp harg)
   have hF : Continuous (Function.uncurry F) := by

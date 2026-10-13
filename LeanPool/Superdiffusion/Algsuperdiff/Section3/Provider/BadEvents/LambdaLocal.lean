@@ -19,6 +19,9 @@ Module imports, support namespace and local option directives adapted for Lean P
 
 @[expose] public section
 
+open HCPolySupport.Book.Ch04.RestrictionLawCarrier
+  (maxDescendantSigmaStarInvMatrixNormCoeffFieldAtScale_eq_finsetSupReal_ae)
+
 /-!
 # Integral-local measurability of the multiscale ellipticity of the actual cutoff
 
@@ -91,6 +94,8 @@ open Algsuperdiff.Section3.Cutoff
 open scoped Matrix.Norms.L2Operator
 
 noncomputable section
+
+
 
 variable {d : ℕ}
 
@@ -304,7 +309,8 @@ theorem measurable_maxDescendantSigmaStarInv_cutoffSampleLocal (M : ABKModel d) 
         (fun R' => Ch02.matrixNorm (coarseBlockMatrix (cubeSet R')
           (coefficientCutoff M.nu m omega).toFun).lowerRight) := by
     funext omega
-    exact Ch04.RestrictionLawCarrier.maxDescendantSigmaStarInvMatrixNormCoeffFieldAtScale_eq_finsetSupReal_ae
+    exact
+      maxDescendantSigmaStarInvMatrixNormCoeffFieldAtScale_eq_finsetSupReal_ae
       (coefficientCutoff_aeLocallyUniformlyEllipticField M m omega) R (R.scale - (n : ℤ))
   rw [heq]
   exact hfin
@@ -407,6 +413,7 @@ theorem measurable_weightedBSeries_cutoffSampleLocal (M : ABKModel d) (m : ℤ)
 
 /-! ### The multiscale ellipticity observables of the actual cutoff -/
 
+omit [NeZero d] in
 private theorem lambdaSqCoeffField_finite_inv_eq (R : TriadicCube d) {s q : ℝ}
     (hs : 0 ≤ s) (hq : 1 ≤ q) {a : RegCoeffField d}
     (ha : Ch04.AELocallyUniformlyEllipticField a) :
@@ -428,6 +435,7 @@ private theorem lambdaSqCoeffField_finite_inv_eq (R : TriadicCube d) {s q : ℝ}
   have hneg : Real.rpow S (-(2 / q)) = (Real.rpow S (2 / q))⁻¹ := Real.rpow_neg hS (2 / q)
   rw [hneg, inv_inv]
 
+omit [NeZero d] in
 private theorem LambdaSqCoeffField_finite_eq (R : TriadicCube d) (s q : ℝ)
     {a : RegCoeffField d} (ha : Ch04.AELocallyUniformlyEllipticField a) :
     Ch04.LambdaSqCoeffField R s (.finite q) a =
@@ -437,6 +445,7 @@ private theorem LambdaSqCoeffField_finite_eq (R : TriadicCube d) (s q : ℝ)
   simp [Ch04.LambdaSqCoeffField, Ch02.LambdaSqFinite,
     Ch04.maxDescendantBMatrixNormCoeffFieldAtScale, ha]
 
+omit [NeZero d] in
 private theorem lambdaSqCoeffField_infinity_inv_eq (R : TriadicCube d) (s : ℝ)
     {a : RegCoeffField d} (ha : Ch04.AELocallyUniformlyEllipticField a) :
     (Ch04.lambdaSqCoeffField R s .infinity a)⁻¹ =
@@ -448,6 +457,7 @@ private theorem lambdaSqCoeffField_infinity_inv_eq (R : TriadicCube d) (s : ℝ)
   ext x
   constructor <;> rintro ⟨n, hn⟩ <;> exact ⟨n, hn.symm⟩
 
+omit [NeZero d] in
 private theorem LambdaSqCoeffField_infinity_eq (R : TriadicCube d) (s : ℝ)
     {a : RegCoeffField d} (ha : Ch04.AELocallyUniformlyEllipticField a) :
     Ch04.LambdaSqCoeffField R s .infinity a =

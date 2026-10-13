@@ -142,7 +142,7 @@ variable {d : ℕ}
 private theorem matrixOperatorNorm_sub_comm (X Y : Mat d) :
     Ch02.matrixOperatorNorm (X - Y) = Ch02.matrixOperatorNorm (Y - X) := by
   have h : Y - X = -(X - Y) := by abel
-  show ‖X - Y‖ = ‖Y - X‖
+  change ‖X - Y‖ = ‖Y - X‖
   rw [h, norm_neg]
 
 /-- Triangle inequality for the Chapter 2 Euclidean matrix operator norm, in the
@@ -440,7 +440,7 @@ Under real-translation invariance, every real functional of the coarse block
 matrix on a descendant of an origin cube has the same expectation as the same
 functional on the origin cube at the descendant's scale.  This is the generic
 form of the entrywise
-`Provider.Annealed.integral_blockMatEntry_coarseBlockMatrix_cubeSet_eq_originCube_of_mem_descendantsAtScale`;
+`integral_blockMatEntry_coarseBlockMatrix_cubeSet_eq_originCube_of_mem_descendantsAtScale`;
 both consume the same public real-translation transfer. -/
 theorem integral_coarseBlockObservable_cubeSet_eq_originCube
     {P : Ch04.RestrictionCoeffLaw d} (hstat : Provider.Annealed.IsStationaryRealR P)
@@ -562,7 +562,7 @@ private theorem coarseBlockMatrixVariationSq_le_annealedCentered (M : ABKModel d
         (Ch04.annealedBlockMatrixAtScale (Cutoff.coefficientCutoffLaw M L) n).lowerLeft) ^ 2 =
       0 := by
     rw [hzm, hzn, sub_zero]
-    show ‖(0 : Mat d)‖ ^ 2 = 0
+    change ‖(0 : Mat d)‖ ^ 2 = 0
     simp
   rw [hkappaGap] at hsix
   unfold starInverseCenteredFluctuationSq starInverseKappaCenteredFluctuationSq
@@ -609,7 +609,7 @@ The `κ` mean gap does not appear because both annealed lower-left blocks vanish
 
 The five integrability clauses are conditional A obligations on the caller's
 own observables, in the convention of
-`integral_starredFluctuationOperatorNormSq_le_two_descendantsAverage_add_eight_blockJTraceAverageSq_of_integrable`
+`integral_starredFluctuationNormSq_le_descendantAndResponseBounds`
 (`Provider/Homogenization/VarianceBridge.lean`) — whose own docstring
 records that its integrability is supplied by a source-specific moment
 argument, discharged there at its own use site, whereas nothing yet discharges
@@ -692,12 +692,14 @@ theorem coefficientCutoffLaw_integral_descendantsAverage_coarseBlockMatrixVariat
   refine integral_two_block_eq (P := Cutoff.coefficientCutoffLaw M L) probReal_univ _ _ _ _ _ _ _
     _ _ _ _ hQlr hRlrAvg hQll hRllAvg rfl ?_ rfl ?_
   · rw [Ch04.integral_descendantsAverage_eq_descendantsAverage_integral hRlr,
-      Ch05.Section53.JUpperBoundWeakNorms.descendantsAverage_congr_of_eq_on_descendants _ _ (fun R hRmem =>
+      Ch05.Section53.JUpperBoundWeakNorms.descendantsAverage_congr_of_eq_on_descendants _ _ (fun R
+        hRmem =>
         coefficientCutoffLaw_integral_starInverseCenteredFluctuationSq_eq M L hnm
           (by rwa [descendantsAtDepth_originCube_eq hnm] at hRmem)),
       descendantsAverage_const]
   · rw [Ch04.integral_descendantsAverage_eq_descendantsAverage_integral hRll,
-      Ch05.Section53.JUpperBoundWeakNorms.descendantsAverage_congr_of_eq_on_descendants _ _ (fun R hRmem =>
+      Ch05.Section53.JUpperBoundWeakNorms.descendantsAverage_congr_of_eq_on_descendants _ _ (fun R
+        hRmem =>
         coefficientCutoffLaw_integral_starInverseKappaCenteredFluctuationSq_eq M L hnm
           (by rwa [descendantsAtDepth_originCube_eq hnm] at hRmem)),
       descendantsAverage_const]
@@ -941,7 +943,8 @@ theorem aemeasurable_coarseMatrixVariationCorridor (M : ABKModel d) (m L : ℤ) 
     intro omega
     refine Finset.sum_congr rfl fun n _hn => ?_
     refine congrArg (fun t => (3 : ℝ) ^ (-((m - n : ℤ) : ℝ)) * t) ?_
-    refine Ch05.Section53.JUpperBoundWeakNorms.descendantsAverage_congr_of_eq_on_descendants _ _ fun R _hR => ?_
+    refine Ch05.Section53.JUpperBoundWeakNorms.descendantsAverage_congr_of_eq_on_descendants _ _
+      fun R _hR => ?_
     exact coarseMatrixVariationSq_eq_coarseBlockMatrixVariationSq _ _ _ _ _ R
   simp only [hrewrite]
   refine aemeasurable_comp_coefficientCutoff M L

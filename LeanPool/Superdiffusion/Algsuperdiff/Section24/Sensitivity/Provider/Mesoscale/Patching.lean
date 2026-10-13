@@ -403,7 +403,7 @@ theorem lambdaSqInfinity_inv_le_of_deep_descendant_ratio
       (Ch02.lambdaSq Q t .infinity A)⁻¹ = sSup (S A) := by
     intro A
     rw [Ch02.lambdaSq_infinity]
-    show ((sSup (S A))⁻¹)⁻¹ = sSup (S A)
+    change ((sSup (S A))⁻¹)⁻¹ = sSup (S A)
     exact inv_inv _
   have hbdd0 : BddAbove (S A₀) := lambdaSqInfinity_denominator_valueSet_bddAbove Q A₀ ht.le
   have hne1 : (S A₁).Nonempty := ⟨_, ⟨0, rfl⟩⟩

@@ -186,7 +186,7 @@ theorem annularKickE_eq_wsumE (M : ABKModel d) (s : {s : ℝ // 0 < s}) (j : ℤ
           kickAnnMax M s j i.1 omega)), wsumE]
   refine tsum_congr fun p => ?_
   have htn : (j - (j - 1 - (p : ℤ))).toNat = p + 1 := by omega
-  show ENNReal.ofReal (weightThird ((s : ℝ) / 2) (j - (j - 1 - (p : ℤ))).toNat *
+  change ENNReal.ofReal (weightThird ((s : ℝ) / 2) (j - (j - 1 - (p : ℤ))).toNat *
       kickAnnMax M s j (j - 1 - (p : ℤ)) omega) = _
   rw [htn]
 

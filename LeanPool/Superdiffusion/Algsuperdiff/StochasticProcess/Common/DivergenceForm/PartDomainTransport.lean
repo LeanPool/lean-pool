@@ -211,7 +211,8 @@ theorem extendByZeroToPartSuperset_gradient [NeZero d]
     exact fun _ hxV => hx hxV
   classical
   filter_upwards
-    [(w.extendByZeroToOpenSuperset hV.isOpen.measurableSet hU hVU).toH1Function.coeFn_gradToHilbertVectorL2,
+    [(w.extendByZeroToOpenSuperset hV.isOpen.measurableSet hU
+      hVU).toH1Function.coeFn_gradToHilbertVectorL2,
       hwcoe]
       with x hext hwcoe
   rw [hext]

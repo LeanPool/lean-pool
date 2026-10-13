@@ -151,7 +151,7 @@ def affineLiftH1 {U : Set (Vec d)} [IsFiniteMeasure (volumeMeasureOn U)]
     (affineLiftH1 hU x c A).toFun = affineLift x c A := by
   funext y
   rw [affineLift, affineLiftH1]
-  show (H1Function.affineOnIsSobolevRegularDomain hU A) y + (c - vecDot A x) = _
+  change (H1Function.affineOnIsSobolevRegularDomain hU A) y + (c - vecDot A x) = _
   rw [H1Function.affineOnIsSobolevRegularDomain_apply, vecDot_sub_right]
   show (∑ i : Fin d, A i * y i) + (c - vecDot A x) = c + (vecDot A y - vecDot A x)
   rw [show vecDot A y = ∑ i : Fin d, A i * y i from rfl]
@@ -233,7 +233,7 @@ theorem norm_volumeAverageVec_sub_le {W : Set (Vec d)} {G : Vec d → Vec d}
   rw [hsplit] at hbound
   have hcoord : (volumeAverageVec W G - A) i =
       (volume W).toReal⁻¹ * ((∫ y in W, G y i ∂volume) - (volume W).toReal * A i) := by
-    show volumeAverage W (fun y => G y i) - A i = _
+    change volumeAverage W (fun y => G y i) - A i = _
     rw [volumeAverage]
     field_simp
   rw [hcoord, Real.norm_eq_abs, abs_mul, abs_of_nonneg (le_of_lt (inv_pos.2 hvolreal))]

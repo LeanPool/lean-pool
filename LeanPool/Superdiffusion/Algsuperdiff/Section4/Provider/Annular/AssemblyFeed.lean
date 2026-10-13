@@ -19,6 +19,9 @@ Module imports, support namespace and local option directives adapted for Lean P
 
 @[expose] public section
 
+open Algsuperdiff.Section24.Sensitivity.Provider.HomogBridge
+  (responseJ_scalarLoading_le_normalizedBlockResponseMax)
+
 
 /-!
 # The assembly feed of the clause-(i) composite
@@ -64,6 +67,8 @@ open Algsuperdiff.Section3
 open Algsuperdiff.Section3.Observable
 
 noncomputable section
+
+
 
 /-! ## Part A -- polynomial absorption into the triadic weight -/
 
@@ -384,7 +389,8 @@ theorem scalarResponseSet_bddAbove [NeZero d] (F : TriadicCoeffFamily d)
   refine ⟨normalizedBlockResponseMax R F (isotropicComparatorMatrix sigma), ?_⟩
   intro x hx
   obtain ⟨e, he, rfl⟩ := hx
-  exact Algsuperdiff.Section24.Sensitivity.Provider.HomogBridge.responseJ_scalarLoading_le_normalizedBlockResponseMax
+  exact
+    responseJ_scalarLoading_le_normalizedBlockResponseMax
     F R sigma.2 he
 
 /-- **The transpose-leg value set is bounded above**, by `BlockResponse`'s
@@ -417,7 +423,8 @@ theorem scalarResponseMax_le_normalizedBlockResponseMax [NeZero d]
   refine Real.sSup_le ?_ (normalizedBlockResponseMax_nonneg R F _)
   intro x hx
   obtain ⟨e, he, rfl⟩ := hx
-  exact Algsuperdiff.Section24.Sensitivity.Provider.HomogBridge.responseJ_scalarLoading_le_normalizedBlockResponseMax
+  exact
+    responseJ_scalarLoading_le_normalizedBlockResponseMax
     F R sigma.2 he
 
 theorem scalarResponseMax_transpose_le_normalizedBlockResponseMax [NeZero d]

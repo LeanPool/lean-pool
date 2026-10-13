@@ -103,7 +103,7 @@ B, 0)/kappa)` and dominates.  The two `Gamma_1` lanes are merged by
 It does not assemble `hindep`, and it does not re-state any consumer with
 `hindep` removed.  `hindep` remains a binder of
 `ApproximateRecurrence.PrincipalResponseBudgetWire`
-`exists_gamma0_descendantsAverage_integral_principalGoodEventEnergy_le_annealedCube_of_centeringConst`
+`exists_smallCoupling_principalEnergy_bound_of_centering`
 and of its predecessors, untouched by anything below.  In particular no
 declaration below mentions `gaugedPrincipalLoadShell_val` or any matrix-side
 declaration of `PrincipalResponseLowerShellMeas`: the whole file is on the load
@@ -170,12 +170,12 @@ private theorem abs_toFullBlockVec_mul_le (X : BlockVec d) (alpha beta : BlockCo
     | inl i =>
         have h1 : X.1 i ^ (2 : ℕ) ≤ vecNormSq X.1 := sq_apply_le_vecNormSq X.1 i
         have h2 : (0 : ℝ) ≤ vecNormSq X.2 := vecNormSq_nonneg X.2
-        show X.1 i ^ (2 : ℕ) ≤ _
+        change X.1 i ^ (2 : ℕ) ≤ _
         linarith only [h1, h2]
     | inr i =>
         have h1 : X.2 i ^ (2 : ℕ) ≤ vecNormSq X.2 := sq_apply_le_vecNormSq X.2 i
         have h2 : (0 : ℝ) ≤ vecNormSq X.1 := vecNormSq_nonneg X.1
-        show X.2 i ^ (2 : ℕ) ≤ _
+        change X.2 i ^ (2 : ℕ) ≤ _
         linarith only [h1, h2]
   rw [abs_mul]
   have ha := key alpha
@@ -218,7 +218,7 @@ private theorem abs_toFullBlockVec_gauge_mul_le (sigma : PositiveScalar) (Hm : M
   have hneg : Ch02.matrixFrobeniusNormSq (-Hm) = Ch02.matrixFrobeniusNormSq Hm := by
     simp [Ch02.matrixFrobeniusNormSq]
   rw [hneg] at hfrob
-  show vecNormSq P1 + vecNormSq (matVecMul (-Hm) P1 + P2) ≤ _
+  change vecNormSq P1 + vecNormSq (matVecMul (-Hm) P1 + P2) ≤ _
   rw [hfst] at hfrob ⊢
   rw [hsnd] at hsplit
   linarith only [hsplit, hfrob]
@@ -227,7 +227,7 @@ private theorem matrixFrobeniusNormSq_eq_sum_col (A : Mat d) :
     Ch02.matrixFrobeniusNormSq A = ∑ j, vecNormSq (fun i => A i j) := by
   have hcol : ∀ j : Fin d, vecNormSq (fun i => A i j) = ∑ i, A i j ^ (2 : ℕ) := by
     intro j
-    show ∑ i, A i j * A i j = ∑ i, A i j ^ (2 : ℕ)
+    change ∑ i, A i j * A i j = ∑ i, A i j ^ (2 : ℕ)
     exact Finset.sum_congr rfl fun i _ => (pow_two (A i j)).symm
   rw [Ch02.matrixFrobeniusNormSq]
   simp only [hcol]
@@ -242,10 +242,10 @@ private theorem col_freshShellCubeAverage_eq (R : TriadicCube d)
     (fun i => freshShellCubeAverage R omega L Hi i j) =
       cubeAverageVec R (streamForcing 1 omega L Hi (Pi.single j 1)) := by
   funext i
-  show cubeAverage R (fun x => Cutoff.finiteShellIncrement omega L Hi x i j) =
+  change cubeAverage R (fun x => Cutoff.finiteShellIncrement omega L Hi x i j) =
     cubeAverage R (fun x => streamForcing 1 omega L Hi (Pi.single j 1) x i)
   refine congrArg (cubeAverage R) (funext fun x => ?_)
-  show Cutoff.finiteShellIncrement omega L Hi x i j =
+  change Cutoff.finiteShellIncrement omega L Hi x i j =
     ((1 : ℝ) • matVecMul (Cutoff.finiteShellIncrement omega L Hi x) (Pi.single j 1)) i
   rw [Pi.smul_apply, smul_eq_mul, one_mul,
     matVecMul_single_one (Cutoff.finiteShellIncrement omega L Hi x) i j]
@@ -288,6 +288,89 @@ private theorem mul_le_half_add_of_sq_le {x y C1 C2 W : ℝ}
   have hsq : (0 : ℝ) ≤ (x - y) ^ (2 : ℕ) := sq_nonneg _
   have hexp : (x - y) ^ (2 : ℕ) = x ^ (2 : ℕ) + y ^ (2 : ℕ) - 2 * (x * y) := by ring
   linarith only [h1, h2, hsq, hexp]
+
+private theorem gaugedLoad_coordinate_abs_bound :
+    ∀ {d : ℕ} (K : ℤ) (jd : ℕ) {R : TriadicCube d},
+      R ∈ descendantsAtDepth (originCube d K) jd →
+        ∀ (L Hi : ℤ) (crd : ℝ),
+          crd = (↑(descendantsAtDepth (originCube d K) jd).card : ℝ) →
+            (0 : ℝ) ≤ crd →
+              ∀ (omega : Cutoff.ShellSeq d) (S : ℝ),
+                S = Stream.streamIncrementLpNorm (8 : ℝ) K L Hi omega →
+                  ∀ (Wl : ℝ),
+                    S ^ (4 : ℕ) ≤ Wl ^ (2 : ℕ) →
+                      ∀ (j : Fin d),
+                        (vecNormSq fun (i : Fin d) => freshShellCubeAverage R omega L Hi i j) ^ (2 : ℕ) ≤
+                          (8 : ℝ) * crd * Wl ^ (2 : ℕ) := by
+  intro d K jd R hR L Hi crd hcrd hcrd0 omega S hS Wl hS4 j
+  have hFjmem : MemLp (streamForcing 1 omega L Hi (Pi.single j (1 : ℝ)))
+      (8 : ℝ≥0∞) (normalizedCubeMeasure (originCube d K)) :=
+    memLp_normalizedCubeMeasure_of_continuous _ _ (continuous_streamForcing _ _ _ _ _)
+  have hsingle : Ch02.vecNorm (Pi.single j (1 : ℝ) : Vec d) ≤ 1 := by
+    have hz : vecNormSq (Pi.single j (1 : ℝ) : Vec d) = 1 := by
+      change ∑ i, (Pi.single j (1 : ℝ) : Vec d) i * (Pi.single j (1 : ℝ) : Vec d) i = 1
+      simp [Pi.single_apply]
+    rw [vecNorm_eq_sqrt_vecNormSq, hz, Real.sqrt_one]
+  have hFj0 : (0 : ℝ) ≤ cubeEuclideanLpNorm (originCube d K) 8
+      (streamForcing 1 omega L Hi (Pi.single j (1 : ℝ))) :=
+    cubeEuclideanLpNorm_nonneg _ _ _
+  have hFjnorm : cubeEuclideanLpNorm (originCube d K) 8
+      (streamForcing 1 omega L Hi (Pi.single j (1 : ℝ))) ≤ S := by
+    have hstr := cubeEuclideanLpNorm_streamForcing_le
+      (sigmaInv := (1 : ℝ)) zero_le_one K L Hi omega hsingle
+    rw [← hS] at hstr
+    linarith only [hstr]
+  have hFj4 : cubeEuclideanLpNorm (originCube d K) 8
+      (streamForcing 1 omega L Hi (Pi.single j (1 : ℝ))) ^ (4 : ℕ) ≤
+        Wl ^ (2 : ℕ) := le_trans (pow_le_pow_left₀ hFj0 hFjnorm 4) hS4
+  have h := sq_vecNormSq_add_cubeAverageVec_le_card (originCube d K) jd hR
+    (0 : Vec d) (streamForcing 1 omega L Hi (Pi.single j (1 : ℝ))) hFjmem
+  rw [← hcrd, zero_add] at h
+  have hz0 : vecNormSq (0 : Vec d) = 0 := by
+    change ∑ i, (0 : Vec d) i * (0 : Vec d) i = 0
+    simp
+  rw [hz0] at h
+  rw [col_freshShellCubeAverage_eq R omega L Hi j]
+  calc vecNormSq (cubeAverageVec R
+          (streamForcing 1 omega L Hi (Pi.single j (1 : ℝ)))) ^ (2 : ℕ)
+      ≤ crd * (8 * (0 : ℝ) ^ (2 : ℕ) + 8 * cubeEuclideanLpNorm (originCube d K) 8
+          (streamForcing 1 omega L Hi (Pi.single j (1 : ℝ))) ^ (4 : ℕ)) := h
+    _ ≤ crd * (8 * (0 : ℝ) ^ (2 : ℕ) + 8 * Wl ^ (2 : ℕ)) := by
+        refine mul_le_mul_of_nonneg_left ?_ hcrd0
+        linarith only [hFj4]
+    _ = 8 * crd * Wl ^ (2 : ℕ) := by ring
+
+private theorem gaugedLoad_rescaledForcingBound :
+    ∀ {d : ℕ} {R : TriadicCube d} (L Hi : ℤ) (crd : ℝ)
+      (omega : Cutoff.ShellSeq d) (Wl : ℝ),
+      (∀ (j : Fin d),
+          (vecNormSq fun (i : Fin d) => freshShellCubeAverage R omega L Hi i j) ^ (2 : ℕ) ≤ (8 : ℝ) * crd * Wl ^ (2 : ℕ)) →
+        Ch02.matrixFrobeniusNormSq (freshShellCubeAverage R omega L Hi) ^ (2 : ℕ) ≤
+          (8 : ℝ) * (↑d : ℝ) ^ (2 : ℕ) * crd * Wl ^ (2 : ℕ) := by
+  intro d R L Hi crd omega Wl hcolbd
+  rw [matrixFrobeniusNormSq_eq_sum_col]
+  have hcard : ((Finset.univ : Finset (Fin d)).card : ℝ) = (d : ℝ) := by
+    rw [Finset.card_univ, Fintype.card_fin]
+  have hcs : (∑ j, vecNormSq (fun i => freshShellCubeAverage R omega L Hi i j))
+        ^ (2 : ℕ) ≤
+      ((Finset.univ : Finset (Fin d)).card : ℝ) *
+        ∑ j, vecNormSq (fun i => freshShellCubeAverage R omega L Hi i j) ^ (2 : ℕ) :=
+    sq_sum_le_card_mul_sum_sq
+  rw [hcard] at hcs
+  have hsum : ∑ j, vecNormSq (fun i => freshShellCubeAverage R omega L Hi i j)
+        ^ (2 : ℕ) ≤ (d : ℝ) * (8 * crd * Wl ^ (2 : ℕ)) := by
+    calc ∑ j, vecNormSq (fun i => freshShellCubeAverage R omega L Hi i j) ^ (2 : ℕ)
+        ≤ ∑ _j : Fin d, (8 * crd * Wl ^ (2 : ℕ)) :=
+          Finset.sum_le_sum fun j _ => hcolbd j
+      _ = (d : ℝ) * (8 * crd * Wl ^ (2 : ℕ)) := by
+          rw [Finset.sum_const, Finset.card_univ, Fintype.card_fin, nsmul_eq_mul]
+  have hd0 : (0 : ℝ) ≤ (d : ℝ) := by positivity
+  calc (∑ j, vecNormSq (fun i => freshShellCubeAverage R omega L Hi i j)) ^ (2 : ℕ)
+      ≤ (d : ℝ) * ∑ j,
+          vecNormSq (fun i => freshShellCubeAverage R omega L Hi i j) ^ (2 : ℕ) := hcs
+    _ ≤ (d : ℝ) * ((d : ℝ) * (8 * crd * Wl ^ (2 : ℕ))) :=
+        mul_le_mul_of_nonneg_left hsum hd0
+    _ = 8 * (d : ℝ) ^ (2 : ℕ) * crd * Wl ^ (2 : ℕ) := by ring
 
 private theorem exists_kappa_abs_gaugedLoad_mul_le (K : ℤ) (jd : ℕ)
     {R : TriadicCube d} (hR : R ∈ descendantsAtDepth (originCube d K) jd)
@@ -463,71 +546,9 @@ private theorem exists_kappa_abs_gaugedLoad_mul_le (K : ℤ) (jd : ℕ)
           mul_le_mul_of_nonneg_left h2 hcrd0
       _ = crd * (8 + 8 * CN) * Wl ^ (2 : ℕ) := by ring
   -- the gauge matrix
-  have hcolbd : ∀ j : Fin d,
-      vecNormSq (fun i => freshShellCubeAverage R omega L Hi i j) ^ (2 : ℕ) ≤
-        8 * crd * Wl ^ (2 : ℕ) := by
-    intro j
-    have hFjmem : MemLp (streamForcing 1 omega L Hi (Pi.single j (1 : ℝ)))
-        (8 : ℝ≥0∞) (normalizedCubeMeasure (originCube d K)) :=
-      memLp_normalizedCubeMeasure_of_continuous _ _ (continuous_streamForcing _ _ _ _ _)
-    have hsingle : Ch02.vecNorm (Pi.single j (1 : ℝ) : Vec d) ≤ 1 := by
-      have hz : vecNormSq (Pi.single j (1 : ℝ) : Vec d) = 1 := by
-        show ∑ i, (Pi.single j (1 : ℝ) : Vec d) i * (Pi.single j (1 : ℝ) : Vec d) i = 1
-        simp [Pi.single_apply]
-      rw [vecNorm_eq_sqrt_vecNormSq, hz, Real.sqrt_one]
-    have hFj0 : (0 : ℝ) ≤ cubeEuclideanLpNorm (originCube d K) 8
-        (streamForcing 1 omega L Hi (Pi.single j (1 : ℝ))) :=
-      cubeEuclideanLpNorm_nonneg _ _ _
-    have hFjnorm : cubeEuclideanLpNorm (originCube d K) 8
-        (streamForcing 1 omega L Hi (Pi.single j (1 : ℝ))) ≤ S := by
-      have hstr := cubeEuclideanLpNorm_streamForcing_le
-        (sigmaInv := (1 : ℝ)) zero_le_one K L Hi omega hsingle
-      rw [← hS] at hstr
-      linarith only [hstr]
-    have hFj4 : cubeEuclideanLpNorm (originCube d K) 8
-        (streamForcing 1 omega L Hi (Pi.single j (1 : ℝ))) ^ (4 : ℕ) ≤
-          Wl ^ (2 : ℕ) := le_trans (pow_le_pow_left₀ hFj0 hFjnorm 4) hS4
-    have h := sq_vecNormSq_add_cubeAverageVec_le_card (originCube d K) jd hR
-      (0 : Vec d) (streamForcing 1 omega L Hi (Pi.single j (1 : ℝ))) hFjmem
-    rw [← hcrd, zero_add] at h
-    have hz0 : vecNormSq (0 : Vec d) = 0 := by
-      show ∑ i, (0 : Vec d) i * (0 : Vec d) i = 0
-      simp
-    rw [hz0] at h
-    rw [col_freshShellCubeAverage_eq R omega L Hi j]
-    calc vecNormSq (cubeAverageVec R
-            (streamForcing 1 omega L Hi (Pi.single j (1 : ℝ)))) ^ (2 : ℕ)
-        ≤ crd * (8 * (0 : ℝ) ^ (2 : ℕ) + 8 * cubeEuclideanLpNorm (originCube d K) 8
-            (streamForcing 1 omega L Hi (Pi.single j (1 : ℝ))) ^ (4 : ℕ)) := h
-      _ ≤ crd * (8 * (0 : ℝ) ^ (2 : ℕ) + 8 * Wl ^ (2 : ℕ)) := by
-          refine mul_le_mul_of_nonneg_left ?_ hcrd0
-          linarith only [hFj4]
-      _ = 8 * crd * Wl ^ (2 : ℕ) := by ring
-  have hFrb : Ch02.matrixFrobeniusNormSq (freshShellCubeAverage R omega L Hi) ^ (2 : ℕ) ≤
-      8 * (d : ℝ) ^ (2 : ℕ) * crd * Wl ^ (2 : ℕ) := by
-    rw [matrixFrobeniusNormSq_eq_sum_col]
-    have hcard : ((Finset.univ : Finset (Fin d)).card : ℝ) = (d : ℝ) := by
-      rw [Finset.card_univ, Fintype.card_fin]
-    have hcs : (∑ j, vecNormSq (fun i => freshShellCubeAverage R omega L Hi i j))
-          ^ (2 : ℕ) ≤
-        ((Finset.univ : Finset (Fin d)).card : ℝ) *
-          ∑ j, vecNormSq (fun i => freshShellCubeAverage R omega L Hi i j) ^ (2 : ℕ) :=
-      sq_sum_le_card_mul_sum_sq
-    rw [hcard] at hcs
-    have hsum : ∑ j, vecNormSq (fun i => freshShellCubeAverage R omega L Hi i j)
-          ^ (2 : ℕ) ≤ (d : ℝ) * (8 * crd * Wl ^ (2 : ℕ)) := by
-      calc ∑ j, vecNormSq (fun i => freshShellCubeAverage R omega L Hi i j) ^ (2 : ℕ)
-          ≤ ∑ _j : Fin d, (8 * crd * Wl ^ (2 : ℕ)) :=
-            Finset.sum_le_sum fun j _ => hcolbd j
-        _ = (d : ℝ) * (8 * crd * Wl ^ (2 : ℕ)) := by
-            rw [Finset.sum_const, Finset.card_univ, Fintype.card_fin, nsmul_eq_mul]
-    have hd0 : (0 : ℝ) ≤ (d : ℝ) := by positivity
-    calc (∑ j, vecNormSq (fun i => freshShellCubeAverage R omega L Hi i j)) ^ (2 : ℕ)
-        ≤ (d : ℝ) * ∑ j,
-            vecNormSq (fun i => freshShellCubeAverage R omega L Hi i j) ^ (2 : ℕ) := hcs
-      _ ≤ (d : ℝ) * ((d : ℝ) * (8 * crd * Wl ^ (2 : ℕ))) :=
-          mul_le_mul_of_nonneg_left hsum hd0
-      _ = 8 * (d : ℝ) ^ (2 : ℕ) * crd * Wl ^ (2 : ℕ) := by ring
+  have hcolbd := @gaugedLoad_coordinate_abs_bound (d) (K) (jd) (R) (hR) (L) (Hi) (crd) (hcrd)
+    (hcrd0) (omega) (S) (hS) (Wl) (hS4)
+  have hFrb := @gaugedLoad_rescaledForcingBound (d) (R) (L) (Hi) (crd) (omega) (Wl) (hcolbd)
   -- assembly
   clear hD hN hFmem hGNmem hGNeq hNFle hNF0 hNFsq hNF4 hcolbd hesq hesq' hWl
   refine le_trans (abs_toFullBlockVec_gauge_mul_le sigma

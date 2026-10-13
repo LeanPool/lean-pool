@@ -479,6 +479,61 @@ private theorem probeSharpBandMeanTuned_output_choice {Cup : ℝ}
     field_simp [ne_of_gt upperHsepResidualRate_pos]
   rwa [hcancel] at hmul
 
+private theorem bandMeanTrace_ofReal_eq_layerSum :
+    ∀ {d : ℕ} (M : ABKModel d) {m : ℤ} {k : ℕ} {R : TriadicCube d},
+      R ∈ descendantsAtScale (originCube d m) (m - (1 : ℤ) - (↑k : ℤ)) →
+        ∀ {E : { E : ℝ // (1 : ℝ) ≤ E }},
+          (2 : ℕ) ≤ d →
+            ∀ (omega : CutoffSample d),
+              ∑ j : Fin d,
+                  ∑' (n : ℕ),
+                    ENNReal.ofReal
+                      (probeSharpFramedGoodWavePart M R.scale (↑E : ℝ) bfaProfileB (collarBandMeanDepth M (↑E : ℝ)) n
+                        (m - (1 : ℤ)) (basisVec j)
+                        (fun (_eta : CutoffSample d) =>
+                          waveBandMean (probeDeepBandMeanAmplitude d) M.gamma (collarBandMeanDepth M (↑E : ℝ)) ^ (2 : ℕ))
+                        (translateCutoffSample (triadicCubeShift R) omega)) =
+                ENNReal.ofReal (∑ j : Fin d, probeSharpFramedBandMeanTunedCoordinateWhitneySum M m R (↑E : ℝ) j omega) := by
+  intro d M m k R hR E hd omega
+  let eta := translateCutoffSample (triadicCubeShift R) omega
+  have hterm0 (j : Fin d) (n : ℕ) : 0 ≤
+      probeSharpFramedGoodWavePart M R.scale (E : ℝ) bfaProfileB
+        (collarBandMeanDepth M (E : ℝ)) n (m - 1) (basisVec j)
+        (fun _eta => waveBandMean (probeDeepBandMeanAmplitude d) M.gamma
+          (collarBandMeanDepth M (E : ℝ)) ^ 2) eta :=
+    probeSharpFramedGoodWavePart_nonneg hd M R.scale (E : ℝ) bfaProfileB
+      (collarBandMeanDepth M (E : ℝ)) n (m - 1) (basisVec j)
+      (fun _eta => sq_nonneg _) eta
+  have htermSum (j : Fin d) : Summable fun n : ℕ =>
+      probeSharpFramedGoodWavePart M R.scale (E : ℝ) bfaProfileB
+        (collarBandMeanDepth M (E : ℝ)) n (m - 1) (basisVec j)
+        (fun _eta => waveBandMean (probeDeepBandMeanAmplitude d) M.gamma
+          (collarBandMeanDepth M (E : ℝ)) ^ 2) eta := by
+    have hbase := (summable_probeSharpBandMeanTunedBaseTerm
+      M (E : ℝ) k).mul_left
+        (probeMeanGoodWaveConst M * vecNormSq (basisVec j) *
+          probeSharpAfterBandHsepFactor M R.scale (E : ℝ) eta)
+    have hfun : (fun n : ℕ =>
+        probeSharpFramedGoodWavePart M R.scale (E : ℝ) bfaProfileB
+          (collarBandMeanDepth M (E : ℝ)) n (m - 1) (basisVec j)
+          (fun _eta => waveBandMean (probeDeepBandMeanAmplitude d) M.gamma
+            (collarBandMeanDepth M (E : ℝ)) ^ 2) eta) =
+        fun n : ℕ => (probeMeanGoodWaveConst M * vecNormSq (basisVec j) *
+          probeSharpAfterBandHsepFactor M R.scale (E : ℝ) eta) *
+          probeSharpBandMeanTunedBaseTerm M (E : ℝ) k n := by
+      funext n
+      rw [probeSharpFramedGoodWavePart_bandMean_tuned_eq
+        M hR (E : ℝ) n (basisVec j) eta]
+      ring
+    rw [hfun]
+    exact hbase
+  simp only [probeSharpFramedBandMeanTunedCoordinateWhitneySum]
+  rw [ENNReal.ofReal_sum_of_nonneg (fun j _ => tsum_nonneg fun n => by
+    simpa only [eta] using hterm0 j n)]
+  exact Finset.sum_congr rfl fun j _ => by
+    simpa only [eta] using
+      (ENNReal.ofReal_tsum_of_nonneg (hterm0 j) (htermSum j)).symm
+
 /-- Terminal finite-coordinate split for literal named summand 3 at the common
 tuned depth.  Its ordinary witness is a bounded deterministic shift; only the
 explicit hsep residual occupies the target Orlicz lane. -/
@@ -603,56 +658,7 @@ theorem exists_good_band_mean_tuned_finite_trace_split
         simp only [Finset.sum_const, Finset.card_univ, Fintype.card_fin,
           nsmul_eq_mul, ordinary, rare, D, shift]
         ring
-  have hENNRealEq : ∀ omega,
-      (∑ j : Fin d, ∑' n : ℕ, ENNReal.ofReal
-        (probeSharpFramedGoodWavePart M R.scale (E : ℝ) bfaProfileB
-          (collarBandMeanDepth M (E : ℝ)) n (m - 1) (basisVec j)
-          (fun _eta => waveBandMean (probeDeepBandMeanAmplitude d) M.gamma
-            (collarBandMeanDepth M (E : ℝ)) ^ 2)
-          (translateCutoffSample (triadicCubeShift R) omega))) =
-        ENNReal.ofReal
-          (∑ j : Fin d,
-            probeSharpFramedBandMeanTunedCoordinateWhitneySum
-              M m R (E : ℝ) j omega) := by
-    intro omega
-    let eta := translateCutoffSample (triadicCubeShift R) omega
-    have hterm0 (j : Fin d) (n : ℕ) : 0 ≤
-        probeSharpFramedGoodWavePart M R.scale (E : ℝ) bfaProfileB
-          (collarBandMeanDepth M (E : ℝ)) n (m - 1) (basisVec j)
-          (fun _eta => waveBandMean (probeDeepBandMeanAmplitude d) M.gamma
-            (collarBandMeanDepth M (E : ℝ)) ^ 2) eta :=
-      probeSharpFramedGoodWavePart_nonneg hd M R.scale (E : ℝ) bfaProfileB
-        (collarBandMeanDepth M (E : ℝ)) n (m - 1) (basisVec j)
-        (fun _eta => sq_nonneg _) eta
-    have htermSum (j : Fin d) : Summable fun n : ℕ =>
-        probeSharpFramedGoodWavePart M R.scale (E : ℝ) bfaProfileB
-          (collarBandMeanDepth M (E : ℝ)) n (m - 1) (basisVec j)
-          (fun _eta => waveBandMean (probeDeepBandMeanAmplitude d) M.gamma
-            (collarBandMeanDepth M (E : ℝ)) ^ 2) eta := by
-      have hbase := (summable_probeSharpBandMeanTunedBaseTerm
-        M (E : ℝ) k).mul_left
-          (probeMeanGoodWaveConst M * vecNormSq (basisVec j) *
-            probeSharpAfterBandHsepFactor M R.scale (E : ℝ) eta)
-      have hfun : (fun n : ℕ =>
-          probeSharpFramedGoodWavePart M R.scale (E : ℝ) bfaProfileB
-            (collarBandMeanDepth M (E : ℝ)) n (m - 1) (basisVec j)
-            (fun _eta => waveBandMean (probeDeepBandMeanAmplitude d) M.gamma
-              (collarBandMeanDepth M (E : ℝ)) ^ 2) eta) =
-          fun n : ℕ => (probeMeanGoodWaveConst M * vecNormSq (basisVec j) *
-            probeSharpAfterBandHsepFactor M R.scale (E : ℝ) eta) *
-            probeSharpBandMeanTunedBaseTerm M (E : ℝ) k n := by
-        funext n
-        rw [probeSharpFramedGoodWavePart_bandMean_tuned_eq
-          M hR (E : ℝ) n (basisVec j) eta]
-        ring
-      rw [hfun]
-      exact hbase
-    simp only [probeSharpFramedBandMeanTunedCoordinateWhitneySum]
-    rw [ENNReal.ofReal_sum_of_nonneg (fun j _ => tsum_nonneg fun n => by
-      simpa only [eta] using hterm0 j n)]
-    exact Finset.sum_congr rfl fun j _ => by
-      simpa only [eta] using
-        (ENNReal.ofReal_tsum_of_nonneg (hterm0 j) (htermSum j)).symm
+  have hENNRealEq := @bandMeanTrace_ofReal_eq_layerSum (d) (M) (m) (k) (R) (hR) (E) (hd)
   have hENNRealDom : ∀ omega,
       (∑ j : Fin d, ∑' n : ℕ, ENNReal.ofReal
         (probeSharpFramedGoodWavePart M R.scale (E : ℝ) bfaProfileB

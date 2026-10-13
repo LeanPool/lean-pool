@@ -57,6 +57,184 @@ private theorem le_rpow_neg_fifth_of_gamma_le_inv_pow_ten
       (Real.rpow_mul hgamma.le _ _).symm
     _ = gamma ^ (-(1 / 5 : ℝ)) := by ring_nf
 
+private theorem multiscaleEntropy_bound
+    {d : ℕ} (M : Algsuperdiff.Section3.ABKModel d)
+    {Ccg c H epsilon E : ℝ} {h : ℕ}
+    (hCcg : 1 ≤ Ccg) (hH : 0 ≤ H) (hE : 1 ≤ E)
+    (hepsilon : 0 < epsilon) (hepsilonHalf : epsilon ≤ 1 / 2)
+    (hh : (h : ℝ) ≤ H * |Real.log epsilon| + 1)
+    (hscale : (Algsuperdiff.Section3.Disorder.cstar M)⁻¹ *
+      epsilon ^ (-(1 + 2 * |Real.log c| +
+        (5 * H * Real.log 3 + 2 * (5 * Real.log 3 + |Real.log c|)) +
+        12 * Ccg * (d : ℝ) * (H + 2) * Real.log 3)) ≤ E)
+    (hgammaInv : E ^ (10 : ℕ) ≤ M.gamma⁻¹) :
+    (d : ℝ) * (h : ℝ) * Real.log 3 +
+      Real.exp ((1 / 8 : ℝ) * (Ccg⁻¹ * E⁻¹ ^ 2 * M.gamma⁻¹)) ≤
+        Real.exp ((1 / 4 : ℝ) * (Ccg⁻¹ * E⁻¹ ^ 2 * M.gamma⁻¹)) := by
+  have hlogThree : 0 < Real.log 3 := Real.log_pos (by norm_num)
+  have hCcgPos : 0 < Ccg := zero_lt_one.trans_le hCcg
+  have hcstarPos : 0 < Algsuperdiff.Section3.Disorder.cstar M :=
+    (Algsuperdiff.Section3.Disorder.cstar_characterization M).1
+  have hgammaPos : 0 < M.gamma := M.shellPrefix.gamma_pos
+  have hlogEpsNonpos : Real.log epsilon ≤ 0 := by
+    exact Real.log_nonpos hepsilon.le
+      (hepsilonHalf.trans (by norm_num : (1 / 2 : ℝ) ≤ 1))
+  have habsLogEps : |Real.log epsilon| = -Real.log epsilon :=
+    abs_of_nonpos hlogEpsNonpos
+  have hlogEpsHalf : Real.log epsilon ≤ Real.log (1 / 2 : ℝ) :=
+    Real.log_le_log hepsilon hepsilonHalf
+  have hlogHalf : Real.log (1 / 2 : ℝ) = -Real.log 2 := by
+    rw [show (1 / 2 : ℝ) = (2 : ℝ)⁻¹ by norm_num, Real.log_inv]
+  have hLHalf : (1 / 2 : ℝ) ≤ |Real.log epsilon| := by
+    rw [habsLogEps]
+    rw [hlogHalf] at hlogEpsHalf
+    nlinarith [Real.log_two_gt_d9]
+  have hLNonneg : 0 ≤ |Real.log epsilon| := abs_nonneg _
+  let C : ℝ :=
+    1 + 2 * |Real.log c| +
+      (5 * H * Real.log 3 + 2 * (5 * Real.log 3 + |Real.log c|)) +
+      12 * Ccg * (d : ℝ) * (H + 2) * Real.log 3
+  have hepsPow : epsilon ^ (-C) =
+      Real.exp (C * |Real.log epsilon|) := by
+    rw [Real.rpow_def_of_pos hepsilon, habsLogEps]
+    congr 1
+    ring
+  have hcstarInvLower : (2 / 3 : ℝ) ≤
+      (Algsuperdiff.Section3.Disorder.cstar M)⁻¹ := by
+    have hcstarUpper :=
+      Algsuperdiff.Section3.Provider.Disorder.cstar_le_three_halves M
+    rw [show (2 / 3 : ℝ) = (3 / 2 : ℝ)⁻¹ by norm_num]
+    exact (inv_le_inv₀ (by norm_num : (0 : ℝ) < 3 / 2) hcstarPos).2 hcstarUpper
+  have hExpScale : (2 / 3 : ℝ) * Real.exp (C * |Real.log epsilon|) ≤ E := by
+    rw [← hepsPow]
+    exact (mul_le_mul_of_nonneg_right hcstarInvLower
+      (Real.rpow_pos_of_pos hepsilon _).le).trans hscale
+  have hCEntropy :
+      12 * Ccg * (d : ℝ) * (H + 2) * Real.log 3 ≤ C := by
+    dsimp only [C]
+    have hrest : 0 ≤
+        1 + 2 * |Real.log c| +
+          (5 * H * Real.log 3 + 2 * (5 * Real.log 3 + |Real.log c|)) := by
+      positivity
+    linarith
+  have hhSimple : (h : ℝ) ≤ (H + 2) * |Real.log epsilon| := by
+    have hone : (1 : ℝ) ≤ 2 * |Real.log epsilon| := by
+      calc
+        (1 : ℝ) = 2 * (1 / 2 : ℝ) := by norm_num
+        _ ≤ 2 * |Real.log epsilon| :=
+          mul_le_mul_of_nonneg_left hLHalf (by norm_num)
+    calc
+      (h : ℝ) ≤ H * |Real.log epsilon| + 1 := hh
+      _ ≤ H * |Real.log epsilon| + 2 * |Real.log epsilon| :=
+        add_le_add_right hone _
+      _ = (H + 2) * |Real.log epsilon| := by ring
+  have hEntropyLinear :
+      8 * Ccg * ((d : ℝ) * (h : ℝ) * Real.log 3) ≤
+        (2 / 3 : ℝ) * C * |Real.log epsilon| := by
+    calc
+      8 * Ccg * ((d : ℝ) * (h : ℝ) * Real.log 3) ≤
+          8 * Ccg * ((d : ℝ) * ((H + 2) * |Real.log epsilon|) *
+            Real.log 3) :=
+        mul_le_mul_of_nonneg_left
+          (mul_le_mul_of_nonneg_right
+            (mul_le_mul_of_nonneg_left hhSimple (Nat.cast_nonneg d))
+            hlogThree.le)
+          (mul_nonneg (by norm_num) hCcgPos.le)
+      _ = (2 / 3 : ℝ) *
+          (12 * Ccg * (d : ℝ) * (H + 2) * Real.log 3) *
+            |Real.log epsilon| := by ring
+      _ ≤ (2 / 3 : ℝ) * C * |Real.log epsilon| :=
+        mul_le_mul_of_nonneg_right
+          (mul_le_mul_of_nonneg_left hCEntropy (by norm_num)) hLNonneg
+  have hLinearExp : C * |Real.log epsilon| ≤
+      Real.exp (C * |Real.log epsilon|) := by
+    calc
+      C * |Real.log epsilon| ≤ C * |Real.log epsilon| + 1 :=
+        le_add_of_nonneg_right zero_le_one
+      _ ≤ Real.exp (C * |Real.log epsilon|) :=
+        Real.add_one_le_exp (C * |Real.log epsilon|)
+  have hEntropyE :
+      8 * Ccg * ((d : ℝ) * (h : ℝ) * Real.log 3) ≤ E := by
+    calc
+      8 * Ccg * ((d : ℝ) * (h : ℝ) * Real.log 3) ≤
+          (2 / 3 : ℝ) * C * |Real.log epsilon| := hEntropyLinear
+      _ ≤ (2 / 3 : ℝ) * Real.exp (C * |Real.log epsilon|) := by
+        simpa only [mul_assoc] using
+          mul_le_mul_of_nonneg_left hLinearExp (by norm_num : (0 : ℝ) ≤ 2 / 3)
+      _ ≤ E := hExpScale
+  have hELeE8 : E ≤ E ^ (8 : ℕ) := by
+    simpa only [pow_one] using
+      (pow_le_pow_right₀ hE (by norm_num : (1 : ℕ) ≤ 8))
+  have hEntropyE8 :
+      8 * Ccg * ((d : ℝ) * (h : ℝ) * Real.log 3) ≤ E ^ (8 : ℕ) :=
+    hEntropyE.trans hELeE8
+  have hE8Gamma : E ^ (8 : ℕ) ≤ E⁻¹ ^ 2 * M.gamma⁻¹ := by
+    have hmul := mul_le_mul_of_nonneg_left hgammaInv (sq_nonneg E⁻¹)
+    calc
+      E ^ (8 : ℕ) = E⁻¹ ^ 2 * E ^ (10 : ℕ) := by
+        field_simp
+      _ ≤ E⁻¹ ^ 2 * M.gamma⁻¹ := hmul
+  let X : ℝ := Ccg⁻¹ * E⁻¹ ^ 2 * M.gamma⁻¹
+  have hXNonneg : 0 ≤ X := by
+    dsimp only [X]
+    positivity
+  have hEntropyX :
+      (d : ℝ) * (h : ℝ) * Real.log 3 ≤ (1 / 8 : ℝ) * X := by
+    have hdiv : (d : ℝ) * (h : ℝ) * Real.log 3 ≤
+        (E ^ (8 : ℕ)) / (8 * Ccg) := by
+      rw [le_div_iff₀ (mul_pos (by norm_num) hCcgPos)]
+      have hcomm : (d : ℝ) * (h : ℝ) * Real.log 3 * (8 * Ccg) =
+          8 * Ccg * ((d : ℝ) * (h : ℝ) * Real.log 3) := by ring
+      rw [hcomm]
+      exact hEntropyE8
+    calc
+      (d : ℝ) * (h : ℝ) * Real.log 3 ≤
+          (E ^ (8 : ℕ)) / (8 * Ccg) := hdiv
+      _ ≤ (E⁻¹ ^ 2 * M.gamma⁻¹) / (8 * Ccg) := by
+        exact div_le_div_of_nonneg_right hE8Gamma
+          (mul_nonneg (by norm_num) hCcgPos.le)
+      _ = (1 / 8 : ℝ) * X := by
+        dsimp only [X]
+        field_simp
+  let y : ℝ := (1 / 8 : ℝ) * X
+  have hyNonneg : 0 ≤ y := mul_nonneg (by norm_num) hXNonneg
+  have hyExp : y + 1 ≤ Real.exp y := Real.add_one_le_exp y
+  have hexpOne : 1 ≤ Real.exp y := by
+    simpa only [Real.exp_zero] using Real.exp_monotone hyNonneg
+  have hyMul : y + Real.exp y ≤ y * Real.exp y + Real.exp y := by
+    have hscaled := mul_le_mul_of_nonneg_left hexpOne hyNonneg
+    simpa only [mul_one] using add_le_add_left hscaled (Real.exp y)
+  have hyAbsorb : y + Real.exp y ≤ Real.exp (2 * y) := by
+    calc
+      y + Real.exp y ≤ y * Real.exp y + Real.exp y := hyMul
+      _ = (y + 1) * Real.exp y := by ring
+      _ ≤ Real.exp y * Real.exp y :=
+        mul_le_mul_of_nonneg_right hyExp (Real.exp_pos y).le
+      _ = Real.exp (2 * y) := by
+        rw [← Real.exp_add]
+        congr 1
+        ring
+  have hELLIP :
+      (d : ℝ) * (h : ℝ) * Real.log 3 +
+            Real.exp ((1 / 8 : ℝ) *
+              (Ccg⁻¹ * E⁻¹ ^ 2 * M.gamma⁻¹)) ≤
+          Real.exp ((1 / 4 : ℝ) *
+            (Ccg⁻¹ * E⁻¹ ^ 2 * M.gamma⁻¹)) := by
+    calc
+      (d : ℝ) * (h : ℝ) * Real.log 3 +
+            Real.exp ((1 / 8 : ℝ) *
+              (Ccg⁻¹ * E⁻¹ ^ 2 * M.gamma⁻¹)) ≤
+          y + Real.exp y := by
+        dsimp only [y, X]
+        exact add_le_add_left hEntropyX _
+      _ ≤ Real.exp (2 * y) := hyAbsorb
+      _ = Real.exp ((1 / 4 : ℝ) *
+          (Ccg⁻¹ * E⁻¹ ^ 2 * M.gamma⁻¹)) := by
+        congr 1
+        dsimp only [y, X]
+        ring
+  exact hELLIP
+
 private theorem badEventMultiscaleGates
     {d : ℕ} (M : Algsuperdiff.Section3.ABKModel d)
     {Ccg c H epsilon E : ℝ} {h : ℕ}
@@ -229,141 +407,8 @@ private theorem badEventMultiscaleGates
         exact mul_le_mul_of_nonneg_left
           (mul_le_mul_of_nonneg_right hgammaInv hcstarPos.le) hc.le
       _ = c * Algsuperdiff.Section3.Disorder.cstar M * M.gamma⁻¹ := by ring
-  have hcstarInvLower : (2 / 3 : ℝ) ≤
-      (Algsuperdiff.Section3.Disorder.cstar M)⁻¹ := by
-    have hcstarUpper :=
-      Algsuperdiff.Section3.Provider.Disorder.cstar_le_three_halves M
-    rw [show (2 / 3 : ℝ) = (3 / 2 : ℝ)⁻¹ by norm_num]
-    exact (inv_le_inv₀ (by norm_num : (0 : ℝ) < 3 / 2) hcstarPos).2 hcstarUpper
-  have hExpScale : (2 / 3 : ℝ) * Real.exp (C * |Real.log epsilon|) ≤ E := by
-    rw [← hepsPow]
-    exact (mul_le_mul_of_nonneg_right hcstarInvLower
-      (Real.rpow_pos_of_pos hepsilon _).le).trans hscale
-  have hCEntropy :
-      12 * Ccg * (d : ℝ) * (H + 2) * Real.log 3 ≤ C := by
-    dsimp only [C]
-    have hrest : 0 ≤
-        1 + 2 * |Real.log c| +
-          (5 * H * Real.log 3 + 2 * (5 * Real.log 3 + |Real.log c|)) := by
-      positivity
-    linarith
-  have hhSimple : (h : ℝ) ≤ (H + 2) * |Real.log epsilon| := by
-    have hone : (1 : ℝ) ≤ 2 * |Real.log epsilon| := by
-      calc
-        (1 : ℝ) = 2 * (1 / 2 : ℝ) := by norm_num
-        _ ≤ 2 * |Real.log epsilon| :=
-          mul_le_mul_of_nonneg_left hLHalf (by norm_num)
-    calc
-      (h : ℝ) ≤ H * |Real.log epsilon| + 1 := hh
-      _ ≤ H * |Real.log epsilon| + 2 * |Real.log epsilon| :=
-        add_le_add_right hone _
-      _ = (H + 2) * |Real.log epsilon| := by ring
-  have hEntropyLinear :
-      8 * Ccg * ((d : ℝ) * (h : ℝ) * Real.log 3) ≤
-        (2 / 3 : ℝ) * C * |Real.log epsilon| := by
-    calc
-      8 * Ccg * ((d : ℝ) * (h : ℝ) * Real.log 3) ≤
-          8 * Ccg * ((d : ℝ) * ((H + 2) * |Real.log epsilon|) *
-            Real.log 3) :=
-        mul_le_mul_of_nonneg_left
-          (mul_le_mul_of_nonneg_right
-            (mul_le_mul_of_nonneg_left hhSimple (Nat.cast_nonneg d))
-            hlogThree.le)
-          (mul_nonneg (by norm_num) hCcgPos.le)
-      _ = (2 / 3 : ℝ) *
-          (12 * Ccg * (d : ℝ) * (H + 2) * Real.log 3) *
-            |Real.log epsilon| := by ring
-      _ ≤ (2 / 3 : ℝ) * C * |Real.log epsilon| :=
-        mul_le_mul_of_nonneg_right
-          (mul_le_mul_of_nonneg_left hCEntropy (by norm_num)) hLNonneg
-  have hLinearExp : C * |Real.log epsilon| ≤
-      Real.exp (C * |Real.log epsilon|) := by
-    calc
-      C * |Real.log epsilon| ≤ C * |Real.log epsilon| + 1 :=
-        le_add_of_nonneg_right zero_le_one
-      _ ≤ Real.exp (C * |Real.log epsilon|) :=
-        Real.add_one_le_exp (C * |Real.log epsilon|)
-  have hEntropyE :
-      8 * Ccg * ((d : ℝ) * (h : ℝ) * Real.log 3) ≤ E := by
-    calc
-      8 * Ccg * ((d : ℝ) * (h : ℝ) * Real.log 3) ≤
-          (2 / 3 : ℝ) * C * |Real.log epsilon| := hEntropyLinear
-      _ ≤ (2 / 3 : ℝ) * Real.exp (C * |Real.log epsilon|) := by
-        simpa only [mul_assoc] using
-          mul_le_mul_of_nonneg_left hLinearExp (by norm_num : (0 : ℝ) ≤ 2 / 3)
-      _ ≤ E := hExpScale
-  have hELeE8 : E ≤ E ^ (8 : ℕ) := by
-    simpa only [pow_one] using
-      (pow_le_pow_right₀ hE (by norm_num : (1 : ℕ) ≤ 8))
-  have hEntropyE8 :
-      8 * Ccg * ((d : ℝ) * (h : ℝ) * Real.log 3) ≤ E ^ (8 : ℕ) :=
-    hEntropyE.trans hELeE8
-  have hE8Gamma : E ^ (8 : ℕ) ≤ E⁻¹ ^ 2 * M.gamma⁻¹ := by
-    have hmul := mul_le_mul_of_nonneg_left hgammaInv (sq_nonneg E⁻¹)
-    calc
-      E ^ (8 : ℕ) = E⁻¹ ^ 2 * E ^ (10 : ℕ) := by
-        field_simp
-      _ ≤ E⁻¹ ^ 2 * M.gamma⁻¹ := hmul
-  let X : ℝ := Ccg⁻¹ * E⁻¹ ^ 2 * M.gamma⁻¹
-  have hXNonneg : 0 ≤ X := by
-    dsimp only [X]
-    positivity
-  have hEntropyX :
-      (d : ℝ) * (h : ℝ) * Real.log 3 ≤ (1 / 8 : ℝ) * X := by
-    have hdiv : (d : ℝ) * (h : ℝ) * Real.log 3 ≤
-        (E ^ (8 : ℕ)) / (8 * Ccg) := by
-      rw [le_div_iff₀ (mul_pos (by norm_num) hCcgPos)]
-      have hcomm : (d : ℝ) * (h : ℝ) * Real.log 3 * (8 * Ccg) =
-          8 * Ccg * ((d : ℝ) * (h : ℝ) * Real.log 3) := by ring
-      rw [hcomm]
-      exact hEntropyE8
-    calc
-      (d : ℝ) * (h : ℝ) * Real.log 3 ≤
-          (E ^ (8 : ℕ)) / (8 * Ccg) := hdiv
-      _ ≤ (E⁻¹ ^ 2 * M.gamma⁻¹) / (8 * Ccg) := by
-        exact div_le_div_of_nonneg_right hE8Gamma
-          (mul_nonneg (by norm_num) hCcgPos.le)
-      _ = (1 / 8 : ℝ) * X := by
-        dsimp only [X]
-        field_simp
-  let y : ℝ := (1 / 8 : ℝ) * X
-  have hyNonneg : 0 ≤ y := mul_nonneg (by norm_num) hXNonneg
-  have hyExp : y + 1 ≤ Real.exp y := Real.add_one_le_exp y
-  have hexpOne : 1 ≤ Real.exp y := by
-    simpa only [Real.exp_zero] using Real.exp_monotone hyNonneg
-  have hyMul : y + Real.exp y ≤ y * Real.exp y + Real.exp y := by
-    have hscaled := mul_le_mul_of_nonneg_left hexpOne hyNonneg
-    simpa only [mul_one] using add_le_add_left hscaled (Real.exp y)
-  have hyAbsorb : y + Real.exp y ≤ Real.exp (2 * y) := by
-    calc
-      y + Real.exp y ≤ y * Real.exp y + Real.exp y := hyMul
-      _ = (y + 1) * Real.exp y := by ring
-      _ ≤ Real.exp y * Real.exp y :=
-        mul_le_mul_of_nonneg_right hyExp (Real.exp_pos y).le
-      _ = Real.exp (2 * y) := by
-        rw [← Real.exp_add]
-        congr 1
-        ring
-  have hELLIP :
-      (d : ℝ) * (h : ℝ) * Real.log 3 +
-            Real.exp ((1 / 8 : ℝ) *
-              (Ccg⁻¹ * E⁻¹ ^ 2 * M.gamma⁻¹)) ≤
-          Real.exp ((1 / 4 : ℝ) *
-            (Ccg⁻¹ * E⁻¹ ^ 2 * M.gamma⁻¹)) := by
-    calc
-      (d : ℝ) * (h : ℝ) * Real.log 3 +
-            Real.exp ((1 / 8 : ℝ) *
-              (Ccg⁻¹ * E⁻¹ ^ 2 * M.gamma⁻¹)) ≤
-          y + Real.exp y := by
-        dsimp only [y, X]
-        exact add_le_add_left hEntropyX _
-      _ ≤ Real.exp (2 * y) := hyAbsorb
-      _ = Real.exp ((1 / 4 : ℝ) *
-          (Ccg⁻¹ * E⁻¹ ^ 2 * M.gamma⁻¹)) := by
-        congr 1
-        dsimp only [y, X]
-        ring
-  exact ⟨hadm, hroot, hNLTM, hELLIP⟩
+  exact ⟨hadm, hroot, hNLTM,
+    multiscaleEntropy_bound M hCcg hH hE hepsilon hepsilonHalf hh hscale hgammaInv⟩
 
 /-- Direct use of the frozen bad-event estimate at the multiscale event
 `goodLocalEventAt M _ l (l - h) z`.  The two branch-guard estimates are

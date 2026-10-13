@@ -17,6 +17,9 @@ Module imports, support namespace and local option directives adapted for Lean P
 
 @[expose] public section
 
+open HCPolySupport.Book.Ch05.Section54.VarianceBoundGoodScale
+  (annealedBlockMatrixAtScale_eq_scalarAnnealedBlockMatrixAtScale)
+
 /-!
 # Carrier transport for the finite-corridor two-plus-eight estimate
 
@@ -55,6 +58,8 @@ open _root_.HCPolySupport _root_.HCPolySupport.Book
 open _root_.HCPolySupport.Book.Ch05.Section56
 
 noncomputable section
+
+
 
 variable {d : ℕ}
 
@@ -216,7 +221,8 @@ theorem scalarAnnealedBlockMatrixAtScale_relativeNormalizedCutoffLaw_center_eq
         (Cutoff.relativeNormalizedCutoffLaw_structuralLaw M L)
         (n - L - (Cutoff.cutoffRelativeNormalizationShift d : ℤ)) =
       Ch04.annealedBlockMatrixAtScale (Cutoff.coefficientCutoffLaw M L) n := by
-  rw [← Ch05.Section54.VarianceBoundGoodScale.annealedBlockMatrixAtScale_eq_scalarAnnealedBlockMatrixAtScale
+  rw [←
+    annealedBlockMatrixAtScale_eq_scalarAnnealedBlockMatrixAtScale
     (Cutoff.relativeNormalizedCutoffLaw_lawCarrier M L)
     (Cutoff.relativeNormalizedCutoffLaw_structuralLaw M L)]
   exact annealedBlockMatrixAtScale_relativeNormalizedCutoffLaw_center M L n
@@ -379,7 +385,7 @@ theorem exists_coefficientCutoff_finiteCorridor_starredFluctuationVariance_bound
   have hJ : Integrable (starredBlockJTraceAverageSq B Q j) P := by
     simpa only [c, P, Q, j, B] using htraceInt
   have hbridge :=
-    integral_starredFluctuationOperatorNormSq_le_two_descendantsAverage_add_eight_blockJTraceAverageSq_of_integrable
+    integral_starredFluctuationNormSq_le_descendantAndResponseBounds
       hP hStruct center B hB Q j hdesc hJ
   have htransport :=
     integral_starredFluctuationOperatorNormSq_relativeNormalizedCutoffLaw_originCube

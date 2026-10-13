@@ -179,7 +179,7 @@ theorem integral_grad_sub_slope_mul_cutoff {m j : ℤ} {z : Vec d}
     rw [h2]
     congr 1
     refine integral_congr_ae (Filter.Eventually.of_forall fun y => ?_)
-    show (fderiv ℝ (affineEval c g) y) (basisVec i) * campanatoCutoff z j y
+    change (fderiv ℝ (affineEval c g) y) (basisVec i) * campanatoCutoff z j y
       = g i * campanatoCutoff z j y
     rw [fderiv_affineEval_apply]
   rw [hR, hL, h1, h2']

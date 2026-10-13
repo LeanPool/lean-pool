@@ -333,7 +333,7 @@ theorem goodLocalSensitivity_scaleShift_subset_le (M : ABKModel d) {C : ℝ} (hC
         goodLocalThreshold M (2 * C) (m + 2 * (k : ℤ)) n :=
     mul_le_mul_of_nonneg_left (homega L hL) hpow.le
   have h3 := goodLocalThreshold_scaleShift_le M hC m n k hmn
-  show sensitivityConstMax d * incrementOscGauge₂ (originCube d m) n L omega ≤
+  change sensitivityConstMax d * incrementOscGauge₂ (originCube d m) n L omega ≤
     goodLocalThreshold M (2 * (3 : ℝ) ^ k * C) m n
   linarith [h1, h2, h3]
 

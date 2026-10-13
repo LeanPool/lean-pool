@@ -34,7 +34,8 @@ field and `|c_2|` times that of a second.  The body of
 `Closure.ClosureInteriorSplit.ClosureInteriorBesovEnvelopeInput` asks instead for
 an envelope dominating the towers of the **two gauged legs** of `bfF_z`.  By
 
-* `Closure.GammaTenEnvelopeInputGauge.cubeBesovPositiveVectorPartialSeminormTwo_gauged_localizationFz_potential`
+*
+`cubeBesovPositiveVectorPartialSeminormTwo_gauged_localizationFz_potential`
   and `..._flux` --- each gauged tower **is** the corresponding scalar multiple of
   the raw tower, and
 * `Closure.GammaTenGaugeScalarCap.abs_gaugeScalar_potential_le` / `..._flux_le`

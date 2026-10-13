@@ -130,13 +130,13 @@ theorem responseJ_subConstCutoff_translateCutoffSample (M : ABKModel d) (L : ℤ
           (Cutoff.translateCutoffSample v omega)).coeffOn R) p q := by
   rw [HCPolySupport.Internal.Ch02.book_responseJ_eq_ResponseJ,
     HCPolySupport.Internal.Ch02.book_responseJ_eq_ResponseJ]
-  show ResponseJ (openCubeSet T) p q (subConstCutoffField M L C omega) =
+  change ResponseJ (openCubeSet T) p q (subConstCutoffField M L C omega) =
     ResponseJ (openCubeSet R) p q
       (subConstCutoffField M L C (Cutoff.translateCutoffSample v omega))
   rw [hset, ResponseJ_translateSet_eq_translateCoeffField]
   refine congrArg (fun a : CoeffField d => ResponseJ (openCubeSet R) p q a) ?_
   funext x
-  show Cutoff.coefficientCutoff M.nu L omega (fun i => x i + v i) - C =
+  change Cutoff.coefficientCutoff M.nu L omega (fun i => x i + v i) - C =
     Cutoff.coefficientCutoff M.nu L (Cutoff.translateCutoffSample v omega) x - C
   rw [Cutoff.coefficientCutoff_translateCutoffSample]
   rfl
@@ -278,7 +278,7 @@ theorem matTranspose_fluxIncrementAverage (M : ABKModel d) (L m : ℤ)
     matTranspose (Support.fluxIncrementAverage M L m Q omega) =
       -Support.fluxIncrementAverage M L m Q omega := by
   ext i j
-  show Support.fluxIncrementAverage M L m Q omega j i =
+  change Support.fluxIncrementAverage M L m Q omega j i =
     -Support.fluxIncrementAverage M L m Q omega i j
   exact Support.fluxIncrementAverage_skew M L m Q omega i j
 

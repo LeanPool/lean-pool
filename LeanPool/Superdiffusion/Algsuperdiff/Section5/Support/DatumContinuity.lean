@@ -69,10 +69,10 @@ theorem exists_h10Function_sub {y : Vec d} {n : ℤ} {a : CoeffField d}
   obtain ⟨w2, h2f, h2g⟩ := hu'.1
   refine ⟨w1 - w2, fun x => ?_, fun x => ?_⟩
   · rw [h1f x, h2f x]
-    show (w1.toH1Function - w2.toH1Function).toFun x = _
+    change (w1.toH1Function - w2.toH1Function).toFun x = _
     simp only [H1Function.sub_toFun]
   · rw [h1g x, h2g x]
-    show (w1.toH1Function - w2.toH1Function).grad x = _
+    change (w1.toH1Function - w2.toH1Function).grad x = _
     simp only [H1Function.sub_grad]
 
 /-! ## 2. A uniform bound on the cube is an `L²` bound -/

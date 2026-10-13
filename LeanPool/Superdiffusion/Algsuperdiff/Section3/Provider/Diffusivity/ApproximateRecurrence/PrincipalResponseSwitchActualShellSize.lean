@@ -72,7 +72,8 @@ supplies the other.  Their product carries `Delta^3`, and one power of `Delta
   h||_{L^infinity} diam(Q)`, and the frozen `w1Infinity = max{ ||grad
   h||_infinity, ||h||_infinity }` is then below a dimensional multiple of the
   gauge `osc`, whose second component is exactly `3^{n} ||grad
-  h||_{L^infinity(z+cu_n)}` after the rescaling.  It is **not proved here**: the frozen value gauge is an essential supremum of `matrixNorm`
+  h||_{L^infinity(z+cu_n)}` after the rescaling.  It is **not proved here**: the frozen value gauge
+  is an essential supremum of `matrixNorm`
   and the cube average is CoarseGraining's `cubeAverageMat` at the *unrescaled*
   cube, so a change-of-variables bridge and a mean-value bound at the
   shell-field carrier are still required.  `hcentre` is carried as an explicit

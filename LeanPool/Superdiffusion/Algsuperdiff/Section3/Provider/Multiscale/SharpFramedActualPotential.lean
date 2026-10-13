@@ -90,34 +90,40 @@ theorem probeFramedCollarLayerMeanRhs_nonneg
           (mul_nonneg hwave (vecNormSq_nonneg p)) (Real.sqrt_nonneg _))
         (probeFramedLayerWaveFactor_nonneg M m hn n i L omega)))
 
-theorem probe_ofReal_abs_potentialCoordinate_le_tsum_framedMeanLayers_ae
-    (hd : 2 ≤ d) (M : ABKModel d) {m0 : ℤ} {E : {E : ℝ // 1 ≤ E}}
-    (hS : Algsuperdiff.Frozen.Section3.inductionState M m0 E)
-    (m : ℤ) {b : ℝ} (hb0 : 0 < b) (hb : b ≤ 1 / 8)
-    {k₀ : ℕ} (hk₀ : 3 ≤ k₀) {i : ℤ} (hmi : m - 1 ≤ i) (hi : i ≤ m0)
-    {L : ℤ} (hmL : m ≤ L) (p : Vec d) :
-    ∀ᵐ omega ∂(cutoffSampleLaw M).toMeasure,
-      (Percolation.hsepSet M m (E : ℝ) b omega).Nonempty →
-      ENNReal.ofReal
-          |blockVecDot
-            ((Real.sqrt
-                (Algsuperdiff.Section3.Annealed.sigmaBar M i : ℝ))⁻¹ • p,
-              (0 : Vec d))
-            (blockMatVecMul
-              (Ch02.coarseBlockMatrix (Ch02.cubeDomain (originCube d m))
-                ((coefficientCutoffTriadicCoeffFamily M L omega).coeffOn
-                  (originCube d m)))
-              ((Real.sqrt
-                  (Algsuperdiff.Section3.Annealed.sigmaBar M i : ℝ))⁻¹ • p,
-                (0 : Vec d)))| ≤
-        ∑' n : ℕ, ENNReal.ofReal
-          (probeFramedGoodLayerMeanRhs M m
-              (whitneyScale M m (E : ℝ) b k₀ omega) n i L omega p +
-            probeFramedCollarLayerMeanRhs M m
-              (whitneyScale M m (E : ℝ) b k₀ omega) n i L omega p
-              (superposedGradConst d) b) := by
-  classical
-  have : NeZero d := ⟨by omega⟩
+private theorem sharpFramedActualPotential_comparisonBounds1 :
+    ∀ {d : ℕ} (_ : (2 : ℕ) ≤ d) (M : ABKModel d) {m0 : ℤ} {E : { E : ℝ // (1 : ℝ) ≤ E }}
+      (_ : Frozen.Section3.inductionState M m0 E) (m : ℤ) {b : ℝ} (_ : (0 : ℝ) < b) (_ : b ≤ (1 / 8 : ℝ)) {k₀ : ℕ}
+      {i : ℤ} (_ : m - (1 : ℤ) ≤ i) (_ : i ≤ m0) {L : ℤ} (_ : m ≤ L) (p : Vec d),
+      √(↑(Annealed.sigmaBar M i) : ℝ) ≠ (0 : ℝ) ∧
+        (∀ᵐ (omega : CutoffSample d) ∂(↑(cutoffSampleLaw M) : Measure (CutoffSample d)),
+            ∀ (hs n : ℕ),
+              ∑ Q ∈ whitneyLayer m (whitneyScaleSeq b hs k₀) n,
+                  ∑ T ∈ whitneySimplexCells m (whitneyScaleSeq b hs k₀) n Q,
+                    ENNReal.ofReal
+                      (cellWeight m T *
+                        goodCellForm M m (whitneyScaleSeq b hs k₀) L omega ((√(↑(Annealed.sigmaBar M i) : ℝ))⁻¹ • p)
+                          (0 : Vec d) T) ≤
+                ENNReal.ofReal (probeFramedGoodLayerMeanRhs M m (whitneyScaleSeq b hs k₀) n i L omega p)) ∧
+          ∀ᵐ (omega : CutoffSample d) ∂(↑(cutoffSampleLaw M) : Measure (CutoffSample d)),
+            ∀ (hs n : ℕ) (Fv Gv : KuhnCell d → Vec d) (p' : Vec d),
+              (∀ Q ∈ whitneyLayer m (whitneyScaleSeq b hs k₀) n,
+                  ∀ T ∈ whitneySimplexCells m (whitneyScaleSeq b hs k₀) n Q,
+                    vecNormSq (Fv T - p') ≤
+                      superposedGradConst d ^ (2 : ℕ) *
+                          (3 : ℝ) ^ ((2 : ℝ) * (b * ((↑n : ℝ) + (↑(whitneyScaleSeq b hs k₀ n) : ℝ)))) *
+                        vecNormSq p') →
+                (∀ Q ∈ whitneyLayer m (whitneyScaleSeq b hs k₀) n,
+                    ∀ T ∈ whitneySimplexCells m (whitneyScaleSeq b hs k₀) n Q, vecNormSq (Gv T) ≤ (0 : ℝ)) →
+                  ∑ Q ∈ collarLayer M m (whitneyScaleSeq b hs k₀) n omega,
+                      ∑ T ∈ whitneySimplexCells m (whitneyScaleSeq b hs k₀) n Q,
+                        ENNReal.ofReal
+                          (cellWeight m T *
+                            collarCellForm M m (whitneyScaleSeq b hs k₀) L omega
+                              (fun (U : KuhnCell d) => (√(↑(Annealed.sigmaBar M i) : ℝ))⁻¹ • Fv U)
+                              (fun (U : KuhnCell d) => √(↑(Annealed.sigmaBar M i) : ℝ) • Gv U) T) ≤
+                    ENNReal.ofReal
+                      (probeFramedCollarLayerMeanRhs M m (whitneyScaleSeq b hs k₀) n i L omega p' (superposedGradConst d) b) := by
+  intro d hd M _ _ hS m b hb0 hb k₀ i hmi hi L hmL p
   have hsigma : 0 < (Algsuperdiff.Section3.Annealed.sigmaBar M i : ℝ) :=
     (Algsuperdiff.Section3.Annealed.sigmaBar_characterization M i).1
   have hsqrt : 0 < Real.sqrt
@@ -178,8 +184,31 @@ theorem probe_ofReal_abs_potentialCoordinate_le_tsum_framedMeanLayers_ae
         hd M hS m (whitneyScaleSeq b hs k₀) n
         (step_of_monotone (whitneyScaleSeq_mono hb0.le (by linarith) hs k₀) n)
         (whitneyScaleSeq_succ_le hb0 hb hs k₀ n) hmi hi hmL hCgrad hb0.le
-  filter_upwards [hgoodAll, hcolAll] with omega hgood hcol
-  intro hne
+  exact ⟨hsne, hgoodAll, hcolAll⟩
+
+private theorem sharpFramedActualPotential_comparisonBounds2 :
+    ∀ {d : ℕ} (M : ABKModel d) {E : { E : ℝ // (1 : ℝ) ≤ E }} (m : ℤ) {b : ℝ} (_ : (0 : ℝ) < b)
+      (_ : b ≤ (1 / 8 : ℝ)) {k₀ : ℕ} (_ : (3 : ℕ) ≤ k₀) {i : ℤ} (p : Vec d) (_ : NeZero d)
+      (_ : √(↑(Annealed.sigmaBar M i) : ℝ) ≠ (0 : ℝ)) (omega : CutoffSample d)
+      (_ : (Percolation.hsepSet M m (↑E : ℝ) b omega).Nonempty),
+      Monotone (whitneyScale M m (↑E : ℝ) b k₀ omega) ∧
+        (∀ (n : ℕ),
+            ∀ Q ∈ whitneyLayer m (whitneyScale M m (↑E : ℝ) b k₀ omega) n,
+              ∀ T ∈ whitneySimplexCells m (whitneyScale M m (↑E : ℝ) b k₀ omega) n Q,
+                vecNormSq
+                    (√(↑(Annealed.sigmaBar M i) : ℝ) •
+                        superposedCompetitorCellSlope m (whitneyScale M m (↑E : ℝ) b k₀ omega)
+                          (badFamily M m (whitneyScale M m (↑E : ℝ) b k₀ omega) omega)
+                          ((√(↑(Annealed.sigmaBar M i) : ℝ))⁻¹ • p) T -
+                      p) ≤
+                  superposedGradConst d ^ (2 : ℕ) *
+                      (3 : ℝ) ^ ((2 : ℝ) * (b * ((↑n : ℝ) + (↑(whitneyScale M m (↑E : ℝ) b k₀ omega n) : ℝ)))) *
+                    vecNormSq p) ∧
+          ∀ (n : ℕ),
+            ∀ Q ∈ whitneyLayer m (whitneyScale M m (↑E : ℝ) b k₀ omega) n,
+              ∀ T ∈ whitneySimplexCells m (whitneyScale M m (↑E : ℝ) b k₀ omega) n Q,
+                vecNormSq ((0 : KuhnCell d → Vec d) T) ≤ (0 : ℝ) := by
+  intro d M E m b hb0 hb k₀ hk₀ i p _ hsne omega hne
   have hmono : Monotone (whitneyScale M m (E : ℝ) b k₀ omega) :=
     whitneyScaleSeq_mono hb0.le (by linarith) _ k₀
   have hFv : ∀ (n : ℕ),
@@ -239,32 +268,64 @@ theorem probe_ofReal_abs_potentialCoordinate_le_tsum_framedMeanLayers_ae
         vecNormSq ((0 : KuhnCell d → Vec d) T) ≤ 0 := by
     intro n Q hQ T hT
     simp [vecNormSq, vecDot]
-  have hlayer : ∀ n : ℕ,
-      (∑ Q ∈ whitneyLayer (d := d) m
-          (whitneyScale M m (E : ℝ) b k₀ omega) n,
-        ∑ T ∈ whitneySimplexCells (d := d) m
-            (whitneyScale M m (E : ℝ) b k₀ omega) n Q,
-          (ENNReal.ofReal (cellWeight m T *
-              goodCellForm M m (whitneyScale M m (E : ℝ) b k₀ omega) L omega
-                ((Real.sqrt
-                  (Algsuperdiff.Section3.Annealed.sigmaBar M i : ℝ))⁻¹ • p)
-                (0 : Vec d) T) +
-            ENNReal.ofReal (cellWeight m T *
-              collarCellForm M m (whitneyScale M m (E : ℝ) b k₀ omega) L omega
-                (superposedCompetitorCellSlope m
-                  (whitneyScale M m (E : ℝ) b k₀ omega)
-                  (badFamily M m (whitneyScale M m (E : ℝ) b k₀ omega) omega)
-                  ((Real.sqrt
-                    (Algsuperdiff.Section3.Annealed.sigmaBar M i : ℝ))⁻¹ • p))
-                (superposedCompetitorCellDivergence m
-                  (whitneyScale M m (E : ℝ) b k₀ omega)
-                  (badFamily M m (whitneyScale M m (E : ℝ) b k₀ omega) omega)
-                  (0 : Vec d)) T))) ≤
-        ENNReal.ofReal
+  exact ⟨hmono, hFv, hGv⟩
+
+theorem probe_ofReal_abs_potentialCoordinate_le_tsum_framedMeanLayers_ae
+    (hd : 2 ≤ d) (M : ABKModel d) {m0 : ℤ} {E : {E : ℝ // 1 ≤ E}}
+    (hS : Algsuperdiff.Frozen.Section3.inductionState M m0 E)
+    (m : ℤ) {b : ℝ} (hb0 : 0 < b) (hb : b ≤ 1 / 8)
+    {k₀ : ℕ} (hk₀ : 3 ≤ k₀) {i : ℤ} (hmi : m - 1 ≤ i) (hi : i ≤ m0)
+    {L : ℤ} (hmL : m ≤ L) (p : Vec d) :
+    ∀ᵐ omega ∂(cutoffSampleLaw M).toMeasure,
+      (Percolation.hsepSet M m (E : ℝ) b omega).Nonempty →
+      ENNReal.ofReal
+          |blockVecDot
+            ((Real.sqrt
+                (Algsuperdiff.Section3.Annealed.sigmaBar M i : ℝ))⁻¹ • p,
+              (0 : Vec d))
+            (blockMatVecMul
+              (Ch02.coarseBlockMatrix (Ch02.cubeDomain (originCube d m))
+                ((coefficientCutoffTriadicCoeffFamily M L omega).coeffOn
+                  (originCube d m)))
+              ((Real.sqrt
+                  (Algsuperdiff.Section3.Annealed.sigmaBar M i : ℝ))⁻¹ • p,
+                (0 : Vec d)))| ≤
+        ∑' n : ℕ, ENNReal.ofReal
           (probeFramedGoodLayerMeanRhs M m
               (whitneyScale M m (E : ℝ) b k₀ omega) n i L omega p +
             probeFramedCollarLayerMeanRhs M m
               (whitneyScale M m (E : ℝ) b k₀ omega) n i L omega p
+              (superposedGradConst d) b) := by
+  classical
+  have : NeZero d := ⟨by omega⟩
+  obtain ⟨hsne, hgoodAll, hcolAll⟩ :=
+    @sharpFramedActualPotential_comparisonBounds1 (d) (hd) (M) (m0) (E) (hS) (m) (b) (hb0) (hb)
+      (k₀) (i) (hmi) (hi) (L) (hmL) (p)
+  filter_upwards [hgoodAll, hcolAll] with omega hgood hcol
+  intro hne
+  obtain ⟨hmono, hFv, hGv⟩ :=
+    @sharpFramedActualPotential_comparisonBounds2 (d) (M) (E) (m) (b) (hb0) (hb) (k₀) (hk₀) (i)
+      (p) (this) (hsne) (omega) (hne)
+  let hn := whitneyScale M m (E : ℝ) b k₀ omega
+  let q := (Real.sqrt (Algsuperdiff.Section3.Annealed.sigmaBar M i : ℝ))⁻¹ • p
+  let F : KuhnCell d → ENNReal := fun T =>
+    ENNReal.ofReal (cellWeight m T * goodCellForm M m hn L omega q (0 : Vec d) T)
+  let G : KuhnCell d → ENNReal := fun T =>
+    ENNReal.ofReal (cellWeight m T * collarCellForm M m hn L omega
+      (superposedCompetitorCellSlope m hn (badFamily M m hn omega) q)
+      (superposedCompetitorCellDivergence m hn (badFamily M m hn omega) (0 : Vec d)) T)
+  have hlayer : ∀ n : ℕ,
+      (∑ Q ∈ whitneyLayer (d := d) m
+          hn n,
+        ∑ T ∈ whitneySimplexCells (d := d) m
+            hn n Q,
+          (F T +
+            G T)) ≤
+        ENNReal.ofReal
+          (probeFramedGoodLayerMeanRhs M m
+              hn n i L omega p +
+            probeFramedCollarLayerMeanRhs M m
+              hn n i L omega p
               (superposedGradConst d) b) := by
     intro n
     have hg := hgood (Percolation.hsep M m (E : ℝ) b omega) n
@@ -272,243 +333,118 @@ theorem probe_ofReal_abs_potentialCoordinate_le_tsum_framedMeanLayers_ae
       (fun U => Real.sqrt
         (Algsuperdiff.Section3.Annealed.sigmaBar M i : ℝ) •
           superposedCompetitorCellSlope m
-            (whitneyScale M m (E : ℝ) b k₀ omega)
-            (badFamily M m (whitneyScale M m (E : ℝ) b k₀ omega) omega)
-            ((Real.sqrt
-              (Algsuperdiff.Section3.Annealed.sigmaBar M i : ℝ))⁻¹ • p) U)
+            hn
+            (badFamily M m hn omega)
+            q U)
       (0 : KuhnCell d → Vec d) p
-    have hc := hc0 (by simpa only [whitneyScale] using hFv n)
-      (by simpa only [whitneyScale] using hGv n)
-    have hg' := by simpa only [whitneyScale] using hg
+    have hc := hc0 (by simpa only [hn, q, whitneyScale] using hFv n)
+      (by simpa only [hn, q, whitneyScale] using hGv n)
+    have hg' := by simpa only [hn, q, whitneyScale] using hg
     have hdivzero :
         superposedCompetitorCellDivergence m
-            (whitneyScale M m (E : ℝ) b k₀ omega)
+            hn
             (badFamily M m
-              (whitneyScale M m (E : ℝ) b k₀ omega) omega)
+              hn omega)
             (0 : Vec d) =
           (0 : KuhnCell d → Vec d) := by
       funext T
       exact probe_superposedCompetitorCellDivergence_zero _ _ _ _
     have hc' :
         (∑ Q ∈ collarLayer M m
-            (whitneyScale M m (E : ℝ) b k₀ omega) n omega,
+            hn n omega,
           ∑ T ∈ whitneySimplexCells (d := d) m
-              (whitneyScale M m (E : ℝ) b k₀ omega) n Q,
-            ENNReal.ofReal (cellWeight m T *
-              collarCellForm M m
-                (whitneyScale M m (E : ℝ) b k₀ omega) L omega
-                (superposedCompetitorCellSlope m
-                  (whitneyScale M m (E : ℝ) b k₀ omega)
-                  (badFamily M m
-                    (whitneyScale M m (E : ℝ) b k₀ omega) omega)
-                  ((Real.sqrt
-                    (Algsuperdiff.Section3.Annealed.sigmaBar M i : ℝ))⁻¹ • p))
-                (superposedCompetitorCellDivergence m
-                  (whitneyScale M m (E : ℝ) b k₀ omega)
-                  (badFamily M m
-                    (whitneyScale M m (E : ℝ) b k₀ omega) omega)
-                  (0 : Vec d)) T)) ≤
+              hn n Q,
+            G T) ≤
           ENNReal.ofReal
             (probeFramedCollarLayerMeanRhs M m
-              (whitneyScale M m (E : ℝ) b k₀ omega) n i L omega p
+              hn n i L omega p
               (superposedGradConst d) b) := by
+      dsimp only [G]
       rw [hdivzero]
-      simpa [whitneyScale, inv_smul_smul₀ hsne] using! hc
+      simpa [G, hn, q, whitneyScale, inv_smul_smul₀ hsne] using! hc
     have hcolrestrict :
         (∑ Q ∈ whitneyLayer (d := d) m
-            (whitneyScale M m (E : ℝ) b k₀ omega) n,
+            hn n,
           ∑ T ∈ whitneySimplexCells (d := d) m
-              (whitneyScale M m (E : ℝ) b k₀ omega) n Q,
-            ENNReal.ofReal (cellWeight m T *
-              collarCellForm M m
-                (whitneyScale M m (E : ℝ) b k₀ omega) L omega
-                (superposedCompetitorCellSlope m
-                  (whitneyScale M m (E : ℝ) b k₀ omega)
-                  (badFamily M m
-                    (whitneyScale M m (E : ℝ) b k₀ omega) omega)
-                  ((Real.sqrt
-                    (Algsuperdiff.Section3.Annealed.sigmaBar M i : ℝ))⁻¹ • p))
-                (superposedCompetitorCellDivergence m
-                  (whitneyScale M m (E : ℝ) b k₀ omega)
-                  (badFamily M m
-                    (whitneyScale M m (E : ℝ) b k₀ omega) omega)
-                  (0 : Vec d)) T)) =
+              hn n Q,
+            G T) =
           ∑ Q ∈ collarLayer M m
-              (whitneyScale M m (E : ℝ) b k₀ omega) n omega,
+              hn n omega,
             ∑ T ∈ whitneySimplexCells (d := d) m
-                (whitneyScale M m (E : ℝ) b k₀ omega) n Q,
-              ENNReal.ofReal (cellWeight m T *
-                collarCellForm M m
-                  (whitneyScale M m (E : ℝ) b k₀ omega) L omega
-                  (superposedCompetitorCellSlope m
-                    (whitneyScale M m (E : ℝ) b k₀ omega)
-                    (badFamily M m
-                      (whitneyScale M m (E : ℝ) b k₀ omega) omega)
-                    ((Real.sqrt
-                      (Algsuperdiff.Section3.Annealed.sigmaBar M i : ℝ))⁻¹ • p))
-                  (superposedCompetitorCellDivergence m
-                    (whitneyScale M m (E : ℝ) b k₀ omega)
-                    (badFamily M m
-                      (whitneyScale M m (E : ℝ) b k₀ omega) omega)
-                    (0 : Vec d)) T) := by
+                hn n Q,
+              G T := by
       apply (Finset.sum_subset
         (collarLayer_subset M m
-          (whitneyScale M m (E : ℝ) b k₀ omega) n omega) ?_).symm
+          hn n omega) ?_).symm
       intro Q hQ hQcol
       refine Finset.sum_eq_zero fun T hT => ?_
+      dsimp only [G]
       rw [collarLayer_zero M m
-        (whitneyScale M m (E : ℝ) b k₀ omega) n L omega
+        hn n L omega
         (superposedCompetitorCellSlope m
-          (whitneyScale M m (E : ℝ) b k₀ omega)
+          hn
           (badFamily M m
-            (whitneyScale M m (E : ℝ) b k₀ omega) omega)
-          ((Real.sqrt
-            (Algsuperdiff.Section3.Annealed.sigmaBar M i : ℝ))⁻¹ • p))
+            hn omega)
+          q)
         (superposedCompetitorCellDivergence m
-          (whitneyScale M m (E : ℝ) b k₀ omega)
+          hn
           (badFamily M m
-            (whitneyScale M m (E : ℝ) b k₀ omega) omega)
+            hn omega)
           (0 : Vec d)) Q hQ hQcol T hT,
         mul_zero, ENNReal.ofReal_zero]
     have hsplit :
         (∑ Q ∈ whitneyLayer (d := d) m
-            (whitneyScale M m (E : ℝ) b k₀ omega) n,
+            hn n,
           ∑ T ∈ whitneySimplexCells (d := d) m
-              (whitneyScale M m (E : ℝ) b k₀ omega) n Q,
-            (ENNReal.ofReal (cellWeight m T *
-                goodCellForm M m (whitneyScale M m (E : ℝ) b k₀ omega) L omega
-                  ((Real.sqrt
-                    (Algsuperdiff.Section3.Annealed.sigmaBar M i : ℝ))⁻¹ • p)
-                  (0 : Vec d) T) +
-              ENNReal.ofReal (cellWeight m T *
-                collarCellForm M m (whitneyScale M m (E : ℝ) b k₀ omega) L omega
-                  (superposedCompetitorCellSlope m
-                    (whitneyScale M m (E : ℝ) b k₀ omega)
-                    (badFamily M m
-                      (whitneyScale M m (E : ℝ) b k₀ omega) omega)
-                    ((Real.sqrt
-                      (Algsuperdiff.Section3.Annealed.sigmaBar M i : ℝ))⁻¹ • p))
-                  (superposedCompetitorCellDivergence m
-                    (whitneyScale M m (E : ℝ) b k₀ omega)
-                    (badFamily M m
-                      (whitneyScale M m (E : ℝ) b k₀ omega) omega)
-                    (0 : Vec d)) T))) =
+              hn n Q,
+            (F T +
+              G T)) =
           (∑ Q ∈ whitneyLayer (d := d) m
-              (whitneyScale M m (E : ℝ) b k₀ omega) n,
+              hn n,
             ∑ T ∈ whitneySimplexCells (d := d) m
-                (whitneyScale M m (E : ℝ) b k₀ omega) n Q,
-              ENNReal.ofReal (cellWeight m T *
-                goodCellForm M m (whitneyScale M m (E : ℝ) b k₀ omega) L omega
-                  ((Real.sqrt
-                    (Algsuperdiff.Section3.Annealed.sigmaBar M i : ℝ))⁻¹ • p)
-                  (0 : Vec d) T)) +
+                hn n Q,
+              F T) +
             ∑ Q ∈ whitneyLayer (d := d) m
-                (whitneyScale M m (E : ℝ) b k₀ omega) n,
+                hn n,
               ∑ T ∈ whitneySimplexCells (d := d) m
-                  (whitneyScale M m (E : ℝ) b k₀ omega) n Q,
-                ENNReal.ofReal (cellWeight m T *
-                  collarCellForm M m
-                    (whitneyScale M m (E : ℝ) b k₀ omega) L omega
-                    (superposedCompetitorCellSlope m
-                      (whitneyScale M m (E : ℝ) b k₀ omega)
-                      (badFamily M m
-                        (whitneyScale M m (E : ℝ) b k₀ omega) omega)
-                      ((Real.sqrt
-                        (Algsuperdiff.Section3.Annealed.sigmaBar M i : ℝ))⁻¹ • p))
-                    (superposedCompetitorCellDivergence m
-                      (whitneyScale M m (E : ℝ) b k₀ omega)
-                      (badFamily M m
-                        (whitneyScale M m (E : ℝ) b k₀ omega) omega)
-                      (0 : Vec d)) T) := by
+                  hn n Q,
+                G T := by
       rw [← Finset.sum_add_distrib]
       exact Finset.sum_congr rfl fun Q _ => Finset.sum_add_distrib
     rw [hsplit]
     rw [hcolrestrict]
     refine (add_le_add hg' hc').trans ?_
-    simpa only [whitneyScale] using
+    simpa only [hn, q, whitneyScale] using
       (ENNReal.ofReal_add
         (probeFramedGoodLayerMeanRhs_nonneg hd M m
-          (whitneyScale M m (E : ℝ) b k₀ omega) n i L omega p)
+          hn n i L omega p)
         (probeFramedCollarLayerMeanRhs_nonneg hd M m
-          (whitneyScale M m (E : ℝ) b k₀ omega) n i L omega p
+          hn n i L omega p
           (superposedGradConst d) b)).symm.le
   have hdec :=
     ofReal_abs_blockVecDot_le_tsum_superposedDivergence_of_forall
       hd hb0 hb hk₀ hne L
-      ((Real.sqrt
-        (Algsuperdiff.Section3.Annealed.sigmaBar M i : ℝ))⁻¹ • p)
+      q
       (0 : Vec d)
       (fun r => potentialZeroTraceFieldOn_superposedCompetitorSlope_sub_badFamily
         hb0 hb hk₀ hne r)
   calc
     _ ≤ ∑' T : ↑(simplexPartition (d := d) m
-          (whitneyScale M m (E : ℝ) b k₀ omega)),
-        (ENNReal.ofReal (cellWeight m (T : KuhnCell d) *
-            goodCellForm M m (whitneyScale M m (E : ℝ) b k₀ omega) L omega
-              ((Real.sqrt
-                (Algsuperdiff.Section3.Annealed.sigmaBar M i : ℝ))⁻¹ • p)
-              (0 : Vec d) (T : KuhnCell d)) +
-          ENNReal.ofReal (cellWeight m (T : KuhnCell d) *
-            collarCellForm M m (whitneyScale M m (E : ℝ) b k₀ omega) L omega
-              (superposedCompetitorCellSlope m
-                (whitneyScale M m (E : ℝ) b k₀ omega)
-                (badFamily M m
-                  (whitneyScale M m (E : ℝ) b k₀ omega) omega)
-                ((Real.sqrt
-                  (Algsuperdiff.Section3.Annealed.sigmaBar M i : ℝ))⁻¹ • p))
-              (superposedCompetitorCellDivergence m
-                (whitneyScale M m (E : ℝ) b k₀ omega)
-                (badFamily M m
-                  (whitneyScale M m (E : ℝ) b k₀ omega) omega)
-                (0 : Vec d)) (T : KuhnCell d))) := hdec
+          hn),
+        (F (T : KuhnCell d) +
+          G (T : KuhnCell d)) := hdec
     _ = ∑' n : ℕ,
         ∑ Q ∈ whitneyLayer (d := d) m
-            (whitneyScale M m (E : ℝ) b k₀ omega) n,
+            hn n,
           ∑ T ∈ whitneySimplexCells (d := d) m
-              (whitneyScale M m (E : ℝ) b k₀ omega) n Q,
-            (ENNReal.ofReal (cellWeight m T *
-                goodCellForm M m
-                  (whitneyScale M m (E : ℝ) b k₀ omega) L omega
-                  ((Real.sqrt
-                    (Algsuperdiff.Section3.Annealed.sigmaBar M i : ℝ))⁻¹ • p)
-                  (0 : Vec d) T) +
-              ENNReal.ofReal (cellWeight m T *
-                collarCellForm M m
-                  (whitneyScale M m (E : ℝ) b k₀ omega) L omega
-                  (superposedCompetitorCellSlope m
-                    (whitneyScale M m (E : ℝ) b k₀ omega)
-                    (badFamily M m
-                      (whitneyScale M m (E : ℝ) b k₀ omega) omega)
-                    ((Real.sqrt
-                      (Algsuperdiff.Section3.Annealed.sigmaBar M i : ℝ))⁻¹ • p))
-                  (superposedCompetitorCellDivergence m
-                    (whitneyScale M m (E : ℝ) b k₀ omega)
-                    (badFamily M m
-                      (whitneyScale M m (E : ℝ) b k₀ omega) omega)
-                    (0 : Vec d)) T)) :=
+              hn n Q,
+            (F T +
+              G T) :=
       tsum_simplexPartition_eq_tsum_layer (d := d) (m := m)
-        (hn := whitneyScale M m (E : ℝ) b k₀ omega) hmono
+        (hn := hn) hmono
         (fun T : KuhnCell d =>
-          ENNReal.ofReal (cellWeight m T *
-              goodCellForm M m
-                (whitneyScale M m (E : ℝ) b k₀ omega) L omega
-                ((Real.sqrt
-                  (Algsuperdiff.Section3.Annealed.sigmaBar M i : ℝ))⁻¹ • p)
-                (0 : Vec d) T) +
-            ENNReal.ofReal (cellWeight m T *
-              collarCellForm M m
-                (whitneyScale M m (E : ℝ) b k₀ omega) L omega
-                (superposedCompetitorCellSlope m
-                  (whitneyScale M m (E : ℝ) b k₀ omega)
-                  (badFamily M m
-                    (whitneyScale M m (E : ℝ) b k₀ omega) omega)
-                  ((Real.sqrt
-                    (Algsuperdiff.Section3.Annealed.sigmaBar M i : ℝ))⁻¹ • p))
-                (superposedCompetitorCellDivergence m
-                  (whitneyScale M m (E : ℝ) b k₀ omega)
-                  (badFamily M m
-                    (whitneyScale M m (E : ℝ) b k₀ omega) omega)
-                  (0 : Vec d)) T))
+          F T +
+            G T)
     _ ≤ _ := ENNReal.tsum_le_tsum hlayer
 
 end

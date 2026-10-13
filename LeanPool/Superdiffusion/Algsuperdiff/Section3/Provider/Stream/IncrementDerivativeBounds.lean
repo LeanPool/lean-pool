@@ -91,10 +91,10 @@ one half. -/
 theorem rpow_three_gamma_sub_one_le_half {gamma : ℝ} (hquarter : gamma ≤ 1 / 4) :
     Real.rpow 3 (gamma - 1) ≤ 1 / 2 := by
   have hmono : Real.rpow 3 (gamma - 1) ≤ Real.rpow 3 (-((3 : ℝ) / 4)) := by
-    show (3 : ℝ) ^ (gamma - 1) ≤ (3 : ℝ) ^ (-((3 : ℝ) / 4))
+    change (3 : ℝ) ^ (gamma - 1) ≤ (3 : ℝ) ^ (-((3 : ℝ) / 4))
     exact Real.rpow_le_rpow_of_exponent_le (by norm_num) (by linarith)
   have hneg : Real.rpow 3 (-((3 : ℝ) / 4)) = ((3 : ℝ) ^ ((3 : ℝ) / 4))⁻¹ := by
-    show (3 : ℝ) ^ (-((3 : ℝ) / 4)) = ((3 : ℝ) ^ ((3 : ℝ) / 4))⁻¹
+    change (3 : ℝ) ^ (-((3 : ℝ) / 4)) = ((3 : ℝ) ^ ((3 : ℝ) / 4))⁻¹
     rw [Real.rpow_neg (by norm_num : (0 : ℝ) ≤ 3)]
   have hhalf : ((3 : ℝ) ^ ((3 : ℝ) / 4))⁻¹ ≤ 1 / 2 := by
     have h := one_div_le_one_div_of_le (by norm_num : (0 : ℝ) < 2)
@@ -141,7 +141,7 @@ private theorem sum_Ioc_zpow_le {r : ℝ} (hr0 : 0 < r) (hr : r ≤ 1 / 2) {n m 
 
 private theorem rpow_three_mul_intCast (a : ℝ) (k : ℤ) :
     Real.rpow 3 (a * (k : ℝ)) = (Real.rpow 3 a) ^ k := by
-  show (3 : ℝ) ^ (a * (k : ℝ)) = ((3 : ℝ) ^ a) ^ k
+  change (3 : ℝ) ^ (a * (k : ℝ)) = ((3 : ℝ) ^ a) ^ k
   rw [Real.rpow_mul (by norm_num : (0 : ℝ) ≤ 3), Real.rpow_intCast]
 
 /-- The geometric sum appearing in ABK26's `e.nabla.km.kn.infty`.  Since

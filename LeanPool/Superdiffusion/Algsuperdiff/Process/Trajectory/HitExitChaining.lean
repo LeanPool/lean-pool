@@ -613,7 +613,8 @@ theorem IsConservative.lintegral_exp_neg_exitTime_le_rho_pow_hitExit_of_cover
           (ContinuousPath.hitExitTime V V') omega
         ∂(IsConservative.continuousProcess P hP y) ≤ rho := by
     intro y _
-    exact IsFellerKernelSemigroup.lintegral_discountedStoppingWeight_hitExitTime_le P hP hFeller hK V V'
+    exact IsFellerKernelSemigroup.lintegral_discountedStoppingWeight_hitExitTime_le P hP hFeller
+      hK V V'
       hVmeasurable hDclosed hV'open lam hlam.le rho hone y
   exact IsConservative.lintegral_exp_neg_exitTime_le_rho_pow P hP hFeller hK Set.univ U lam hlam
     (ContinuousPath.hitExitTime V V') hsigma rho hrho hsmall

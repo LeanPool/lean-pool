@@ -141,7 +141,7 @@ private theorem integral_vecDot_split {W : Set (Vec d)} (w : H1Function W)
     (hG j).integrable_mul (w.gradMemL2 j)
   rw [← integral_finsetSum _ fun j _ => hint j]
   refine integral_congr_ae (Eventually.of_forall fun y => ?_)
-  show vecDot (w.grad y) (G y) = ∑ j : Fin d, G y j * w.grad y j
+  change vecDot (w.grad y) (G y) = ∑ j : Fin d, G y j * w.grad y j
   rw [vecDot]
   exact Finset.sum_congr rfl fun j _ => mul_comm _ _
 

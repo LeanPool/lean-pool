@@ -44,7 +44,7 @@ variable {d : ℕ}
 /-- `√(b^{2y}) = b^y` for a positive base. -/
 theorem sqrt_rpow_two_mul {b : ℝ} (hb : 0 < b) (y : ℝ) :
     Real.sqrt (Real.rpow b (2 * y)) = Real.rpow b y := by
-  show Real.sqrt (b ^ (2 * y)) = b ^ y
+  change Real.sqrt (b ^ (2 * y)) = b ^ y
   have hsq : b ^ (2 * y) = (b ^ y) ^ (2 : ℕ) := by
     rw [← Real.rpow_natCast (b ^ y) 2, ← Real.rpow_mul hb.le]
     congr 1
@@ -143,14 +143,14 @@ theorem constantCoeffMatrixNormHalf_scalarComparator_sqrt [NeZero d] {sigma : �
 /-- Dividing by the left-hand weight `3^{-n}` is multiplying by `3^{n}`. -/
 theorem rpow_three_neg_mul_self (n : ℤ) :
     Real.rpow (3 : ℝ) (-(n : ℝ)) * Real.rpow (3 : ℝ) ((n : ℝ)) = 1 := by
-  show (3 : ℝ) ^ (-(n : ℝ)) * (3 : ℝ) ^ ((n : ℝ)) = 1
+  change (3 : ℝ) ^ (-(n : ℝ)) * (3 : ℝ) ^ ((n : ℝ)) = 1
   rw [← Real.rpow_add (by norm_num : (0 : ℝ) < 3)]
   norm_num
 
 /-- The `L²` leg's scale weights: `3^{n} · 3^{-(n+2)} ≤ 1`. -/
 theorem rpow_three_frame_l2_le_one (n : ℤ) :
     Real.rpow (3 : ℝ) ((n : ℝ)) * Real.rpow (3 : ℝ) (-(((n + 2 : ℤ)) : ℝ)) ≤ 1 := by
-  show (3 : ℝ) ^ ((n : ℝ)) * (3 : ℝ) ^ (-(((n + 2 : ℤ)) : ℝ)) ≤ 1
+  change (3 : ℝ) ^ ((n : ℝ)) * (3 : ℝ) ^ (-(((n + 2 : ℤ)) : ℝ)) ≤ 1
   rw [← Real.rpow_add (by norm_num : (0 : ℝ) < 3)]
   have hexp : (n : ℝ) + -(((n + 2 : ℤ)) : ℝ) = -2 := by push_cast; ring
   rw [hexp]
@@ -162,7 +162,7 @@ theorem rpow_three_frame_force_le (n : ℤ) {s : ℝ} (hs1 : s ≤ 1) :
       9 * Real.rpow (3 : ℝ) ((1 + s) * (n : ℝ)) := by
   have hsplit : Real.rpow (3 : ℝ) ((n : ℝ)) * Real.rpow (3 : ℝ) (s * (((n + 2 : ℤ)) : ℝ)) =
       Real.rpow (3 : ℝ) (2 * s) * Real.rpow (3 : ℝ) ((1 + s) * (n : ℝ)) := by
-    show (3 : ℝ) ^ ((n : ℝ)) * (3 : ℝ) ^ (s * (((n + 2 : ℤ)) : ℝ)) =
+    change (3 : ℝ) ^ ((n : ℝ)) * (3 : ℝ) ^ (s * (((n + 2 : ℤ)) : ℝ)) =
       (3 : ℝ) ^ (2 * s) * (3 : ℝ) ^ ((1 + s) * (n : ℝ))
     rw [← Real.rpow_add (by norm_num : (0 : ℝ) < 3),
       ← Real.rpow_add (by norm_num : (0 : ℝ) < 3)]
@@ -185,13 +185,13 @@ theorem rpow_three_frame_force_le (n : ℤ) {s : ℝ} (hs1 : s ≤ 1) :
 /-- `(s⁻¹)^k = s^{-k}` for positive `s` and a natural exponent. -/
 theorem inv_pow_eq_rpow_neg {s : ℝ} (hs : 0 < s) (k : ℕ) :
     (s⁻¹) ^ k = Real.rpow s (-(k : ℝ)) := by
-  show _ = s ^ (-(k : ℝ))
+  change _ = s ^ (-(k : ℝ))
   rw [Real.rpow_neg hs.le, Real.rpow_natCast, inv_pow]
 
 /-- The two `s`-powers of the composition add: `s^{-4} · s^{-11/2} = s^{-19/2}`. -/
 theorem rpow_s_four_mul_eleven_halves {s : ℝ} (hs : 0 < s) :
     Real.rpow s (-(4 : ℝ)) * Real.rpow s (-(11 / 2 : ℝ)) = Real.rpow s (-(19 / 2 : ℝ)) := by
-  show s ^ (-(4 : ℝ)) * s ^ (-(11 / 2 : ℝ)) = s ^ (-(19 / 2 : ℝ))
+  change s ^ (-(4 : ℝ)) * s ^ (-(11 / 2 : ℝ)) = s ^ (-(19 / 2 : ℝ))
   rw [← Real.rpow_add hs]
   congr 1
   ring

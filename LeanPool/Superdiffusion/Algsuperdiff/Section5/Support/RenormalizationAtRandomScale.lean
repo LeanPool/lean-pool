@@ -114,7 +114,8 @@ theorem lintegral_three_zpow_confinementScale_le {Omega : Type*} [MeasurableSpac
     have hK0 : (0 : ℝ) < K := lt_of_lt_of_le zero_lt_one hK
     have hs0 : (0 : ℝ) < Real.sqrt |Real.log gamma| := lt_of_lt_of_le zero_lt_one hlog
     positivity
-  have hmain := lintegral_three_zpow_isConfinementScale_rpow_le mu hmeas hSnn hL hmmeas hm hC hp hmom
+  have hmain := lintegral_three_zpow_isConfinementScale_rpow_le mu hmeas hSnn hL hmmeas hm hC hp
+    hmom
   refine hmain.trans (le_of_eq ?_)
   congr 2
   ring

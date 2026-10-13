@@ -29,7 +29,8 @@ open scoped ENNReal
 /-!
 # Generator renormalization for the coefficient field — [ABK] Theorem B
 
-Source: `algsuperdiff.tex` of arXiv:2601.22142v2, Theorem B of the introduction (`t.homogenization`).
+Source: `algsuperdiff.tex` of arXiv:2601.22142v2, Theorem B of the introduction
+(`t.homogenization`).
 
 At every scale `m` the coarse-grained generator of the coefficient field
 `a = nu I + k` is a constant multiple `sigmaBar` of the identity,

@@ -306,7 +306,7 @@ private theorem sum_Icc_weight_mul_decay_le {L m : ℤ} (hLm : L ≤ m) {b : ℝ
   refine Finset.sum_congr rfl fun n hn => ?_
   simp only [Finset.mem_Icc] at hn
   have hexp : (n - L).toNat = (m - L).toNat - (m - n).toNat := by omega
-  show (3 : ℝ) ^ (-((m - n : ℤ) : ℝ)) * b ^ ((n - L).toNat) =
+  change (3 : ℝ) ^ (-((m - n : ℤ) : ℝ)) * b ^ ((n - L).toNat) =
     (1 / 3 : ℝ) ^ ((m - n).toNat) * b ^ ((m - L).toNat - (m - n).toNat)
   rw [rpow_three_neg_sub_eq_pow hn.2, hexp]
 
@@ -340,7 +340,7 @@ private theorem sum_Icc_weight_defect_eq {L m : ℤ} (hLm : L ≤ m) (g : ℤ �
   · refine Finset.sum_congr rfl fun n hn => ?_
     simp only [Finset.mem_Icc] at hn
     have hidx : L + (((m - L).toNat - (m - n).toNat : ℕ) : ℤ) = n := by omega
-    show (3 : ℝ) ^ (-((m - n : ℤ) : ℝ)) * (g n - g m) =
+    change (3 : ℝ) ^ (-((m - n : ℤ) : ℝ)) * (g n - g m) =
       (1 / 3 : ℝ) ^ ((m - n).toNat) *
         (g (L + (((m - L).toNat - (m - n).toNat : ℕ) : ℤ)) - g m)
     rw [rpow_three_neg_sub_eq_pow hn.2, hidx]
@@ -461,6 +461,100 @@ noncomputable section
 variable {d : ℕ} [NeZero d]
 
 /-! ### `(e.J.bound.by.indyhyp)` at integer scales -/
+
+private theorem cutoffResponse_integral_recurrence :
+    ∀ (d : ℕ) [NeZero d] (Cvar : ℝ),
+      (1 : ℝ) ≤ Cvar →
+        ∀ (M : ABKModel d) (m : ℤ) (E : { E : ℝ // (1 : ℝ) ≤ E }) (L : ℤ),
+          (∀ n ∈ Finset.Icc L m,
+              (↑(Annealed.sigmaBar M L) : ℝ) ^ (2 : ℕ) *
+                  (annealedSigmaStarInvScalarAtScale M L m - annealedSigmaStarInvScalarAtScale M L n) ^ (2 : ℕ) ≤
+                (4 : ℝ) * ((10 : ℝ) ^ (9 : ℕ) * (↑E : ℝ) ^ (2 : ℕ) * M.gamma) ^ (2 : ℕ)) →
+            (∀ n ∈ Finset.Icc L m,
+                (↑(Annealed.sigmaBar M L) : ℝ) ^ (2 : ℕ) * starInverseVarianceAtScale M L n +
+                    starInverseKappaVarianceAtScale M L n ≤
+                  (2 : ℝ) * Cvar *
+                      ((↑E : ℝ) ^ (2 : ℕ) * M.gamma + Real.exp (-((2 : ℝ) * (↑E : ℝ)⁻¹ ^ (3 : ℕ) * M.gamma⁻¹))) *
+                    ((↑E : ℝ) ^ (2 : ℕ) * M.gamma + Real.exp (-((2 : ℝ) * (↑E : ℝ)⁻¹ ^ (3 : ℕ) * M.gamma⁻¹)) +
+                      ((3 : ℝ) ^ (-(↑d : ℝ))) ^ (n - L).toNat)) →
+              ∑ n ∈ Finset.Icc L m, (3 : ℝ) ^ (-(↑(m - n) : ℝ)) ≤ (3 / 2 : ℝ) →
+                ∑ n ∈ Finset.Icc L m, (3 : ℝ) ^ (-(↑(m - n) : ℝ)) * ((3 : ℝ) ^ (-(↑d : ℝ))) ^ (n - L).toNat ≤
+                    (3 / 2 : ℝ) * (1 / 3 : ℝ) ^ (m - L).toNat →
+                  (0 : ℝ) ≤ (1 / 3 : ℝ) ^ (m - L).toNat →
+                    (0 : ℝ) ≤ (↑E : ℝ) ^ (2 : ℕ) * M.gamma + Real.exp (-((2 : ℝ) * (↑E : ℝ)⁻¹ ^ (3 : ℕ) * M.gamma⁻¹)) →
+                      (↑E : ℝ) ^ (2 : ℕ) * M.gamma + Real.exp (-((2 : ℝ) * (↑E : ℝ)⁻¹ ^ (3 : ℕ) * M.gamma⁻¹)) ≤
+                          (10 : ℝ) ^ (9 : ℕ) * (↑E : ℝ) ^ (2 : ℕ) * M.gamma →
+                        (↑(Annealed.sigmaBar M L) : ℝ) ^ (2 : ℕ) *
+                              ∑ n ∈ Finset.Icc L m,
+                                (3 : ℝ) ^ (-(↑(m - n) : ℝ)) *
+                                  (starInverseVarianceAtScale M L n +
+                                    (annealedSigmaStarInvScalarAtScale M L m - annealedSigmaStarInvScalarAtScale M L n) ^
+                                      (2 : ℕ)) +
+                            ∑ n ∈ Finset.Icc L m, (3 : ℝ) ^ (-(↑(m - n) : ℝ)) * starInverseKappaVarianceAtScale M L n ≤
+                          (3 : ℝ) * Cvar * ((10 : ℝ) ^ (9 : ℕ) * (↑E : ℝ) ^ (2 : ℕ) * M.gamma) *
+                              ((10 : ℝ) ^ (9 : ℕ) * (↑E : ℝ) ^ (2 : ℕ) * M.gamma + (1 / 3 : ℝ) ^ (m - L).toNat) +
+                            (6 : ℝ) * ((10 : ℝ) ^ (9 : ℕ) * (↑E : ℝ) ^ (2 : ℕ) * M.gamma) ^ (2 : ℕ) := by
+  intro d _ Cvar _ M m E L hgapn hvarn hWsum hConv hpowNn hdeltaNn hdeltaLe
+  have hexpand : (Annealed.sigmaBar M L : ℝ) ^ 2 *
+        (∑ n ∈ Finset.Icc L m, (3 : ℝ) ^ (-((m - n : ℤ) : ℝ)) *
+          (starInverseVarianceAtScale M L n +
+            (annealedSigmaStarInvScalarAtScale M L m -
+              annealedSigmaStarInvScalarAtScale M L n) ^ 2)) +
+      (∑ n ∈ Finset.Icc L m, (3 : ℝ) ^ (-((m - n : ℤ) : ℝ)) *
+        starInverseKappaVarianceAtScale M L n) =
+      ∑ n ∈ Finset.Icc L m,
+        ((3 : ℝ) ^ (-((m - n : ℤ) : ℝ)) *
+            ((Annealed.sigmaBar M L : ℝ) ^ 2 * starInverseVarianceAtScale M L n +
+              starInverseKappaVarianceAtScale M L n) +
+          (3 : ℝ) ^ (-((m - n : ℤ) : ℝ)) *
+            ((Annealed.sigmaBar M L : ℝ) ^ 2 *
+              (annealedSigmaStarInvScalarAtScale M L m -
+                annealedSigmaStarInvScalarAtScale M L n) ^ 2)) := by
+    rw [Finset.mul_sum, ← Finset.sum_add_distrib]
+    exact Finset.sum_congr rfl fun n _ => by ring
+  rw [hexpand]
+  have hterm : ∀ n ∈ Finset.Icc L m,
+      (3 : ℝ) ^ (-((m - n : ℤ) : ℝ)) *
+            ((Annealed.sigmaBar M L : ℝ) ^ 2 * starInverseVarianceAtScale M L n +
+              starInverseKappaVarianceAtScale M L n) +
+          (3 : ℝ) ^ (-((m - n : ℤ) : ℝ)) *
+            ((Annealed.sigmaBar M L : ℝ) ^ 2 *
+              (annealedSigmaStarInvScalarAtScale M L m -
+                annealedSigmaStarInvScalarAtScale M L n) ^ 2) ≤
+        (3 : ℝ) ^ (-((m - n : ℤ) : ℝ)) *
+            (2 * Cvar *
+              ((E : ℝ) ^ 2 * M.gamma + Real.exp (-(2 * ((E : ℝ)⁻¹) ^ 3 * M.gamma⁻¹))) *
+              (((E : ℝ) ^ 2 * M.gamma +
+                  Real.exp (-(2 * ((E : ℝ)⁻¹) ^ 3 * M.gamma⁻¹))) +
+                ((3 : ℝ) ^ (-(d : ℝ))) ^ ((n - L).toNat))) +
+          (3 : ℝ) ^ (-((m - n : ℤ) : ℝ)) * (4 * (10 ^ 9 * (E : ℝ) ^ 2 * M.gamma) ^ 2) := by
+    intro n hn
+    have hw : (0 : ℝ) ≤ (3 : ℝ) ^ (-((m - n : ℤ) : ℝ)) :=
+      Real.rpow_nonneg (by norm_num) _
+    exact add_le_add (mul_le_mul_of_nonneg_left (hvarn n hn) hw)
+      (mul_le_mul_of_nonneg_left (hgapn n hn) hw)
+  refine (Finset.sum_le_sum hterm).trans ?_
+  have hsplit : ∑ n ∈ Finset.Icc L m,
+      ((3 : ℝ) ^ (-((m - n : ℤ) : ℝ)) *
+            (2 * Cvar *
+              ((E : ℝ) ^ 2 * M.gamma + Real.exp (-(2 * ((E : ℝ)⁻¹) ^ 3 * M.gamma⁻¹))) *
+              (((E : ℝ) ^ 2 * M.gamma +
+                  Real.exp (-(2 * ((E : ℝ)⁻¹) ^ 3 * M.gamma⁻¹))) +
+                ((3 : ℝ) ^ (-(d : ℝ))) ^ ((n - L).toNat))) +
+          (3 : ℝ) ^ (-((m - n : ℤ) : ℝ)) * (4 * (10 ^ 9 * (E : ℝ) ^ 2 * M.gamma) ^ 2)) =
+      (2 * Cvar *
+            ((E : ℝ) ^ 2 * M.gamma + Real.exp (-(2 * ((E : ℝ)⁻¹) ^ 3 * M.gamma⁻¹))) *
+            ((E : ℝ) ^ 2 * M.gamma + Real.exp (-(2 * ((E : ℝ)⁻¹) ^ 3 * M.gamma⁻¹))) +
+          4 * (10 ^ 9 * (E : ℝ) ^ 2 * M.gamma) ^ 2) *
+            (∑ n ∈ Finset.Icc L m, (3 : ℝ) ^ (-((m - n : ℤ) : ℝ))) +
+        (2 * Cvar *
+            ((E : ℝ) ^ 2 * M.gamma + Real.exp (-(2 * ((E : ℝ)⁻¹) ^ 3 * M.gamma⁻¹)))) *
+          (∑ n ∈ Finset.Icc L m, (3 : ℝ) ^ (-((m - n : ℤ) : ℝ)) *
+            ((3 : ℝ) ^ (-(d : ℝ))) ^ ((n - L).toNat)) := by
+    rw [Finset.mul_sum, Finset.mul_sum, ← Finset.sum_add_distrib]
+    exact Finset.sum_congr rfl fun n _ => by ring
+  rw [hsplit]
+  exact corridor_forcing_le (by linarith) hdeltaNn hdeltaLe hpowNn hWsum hConv
 
 /-- At `delta_1 := 10^9 E^2 gamma` the delivered display is
 
@@ -646,76 +740,8 @@ theorem exists_integral_cutoffResponseJ_le_finiteCorridorIndyhypDisplay (d : ℕ
       10 ^ 9 * (E : ℝ) ^ 2 * M.gamma :=
     twoTermAmplitude_le_amplitude hEone hgammaPos hregime
   -- the assembled corridor bound on the variance-and-gap part
-  have hkey : (Annealed.sigmaBar M L : ℝ) ^ 2 *
-        (∑ n ∈ Finset.Icc L m, (3 : ℝ) ^ (-((m - n : ℤ) : ℝ)) *
-          (starInverseVarianceAtScale M L n +
-            (annealedSigmaStarInvScalarAtScale M L m -
-              annealedSigmaStarInvScalarAtScale M L n) ^ 2)) +
-      (∑ n ∈ Finset.Icc L m, (3 : ℝ) ^ (-((m - n : ℤ) : ℝ)) *
-        starInverseKappaVarianceAtScale M L n) ≤
-      3 * Cvar * (10 ^ 9 * (E : ℝ) ^ 2 * M.gamma) *
-          ((10 ^ 9 * (E : ℝ) ^ 2 * M.gamma) + (1 / 3 : ℝ) ^ ((m - L).toNat)) +
-        6 * (10 ^ 9 * (E : ℝ) ^ 2 * M.gamma) ^ 2 := by
-    have hexpand : (Annealed.sigmaBar M L : ℝ) ^ 2 *
-          (∑ n ∈ Finset.Icc L m, (3 : ℝ) ^ (-((m - n : ℤ) : ℝ)) *
-            (starInverseVarianceAtScale M L n +
-              (annealedSigmaStarInvScalarAtScale M L m -
-                annealedSigmaStarInvScalarAtScale M L n) ^ 2)) +
-        (∑ n ∈ Finset.Icc L m, (3 : ℝ) ^ (-((m - n : ℤ) : ℝ)) *
-          starInverseKappaVarianceAtScale M L n) =
-        ∑ n ∈ Finset.Icc L m,
-          ((3 : ℝ) ^ (-((m - n : ℤ) : ℝ)) *
-              ((Annealed.sigmaBar M L : ℝ) ^ 2 * starInverseVarianceAtScale M L n +
-                starInverseKappaVarianceAtScale M L n) +
-            (3 : ℝ) ^ (-((m - n : ℤ) : ℝ)) *
-              ((Annealed.sigmaBar M L : ℝ) ^ 2 *
-                (annealedSigmaStarInvScalarAtScale M L m -
-                  annealedSigmaStarInvScalarAtScale M L n) ^ 2)) := by
-      rw [Finset.mul_sum, ← Finset.sum_add_distrib]
-      exact Finset.sum_congr rfl fun n _ => by ring
-    rw [hexpand]
-    have hterm : ∀ n ∈ Finset.Icc L m,
-        (3 : ℝ) ^ (-((m - n : ℤ) : ℝ)) *
-              ((Annealed.sigmaBar M L : ℝ) ^ 2 * starInverseVarianceAtScale M L n +
-                starInverseKappaVarianceAtScale M L n) +
-            (3 : ℝ) ^ (-((m - n : ℤ) : ℝ)) *
-              ((Annealed.sigmaBar M L : ℝ) ^ 2 *
-                (annealedSigmaStarInvScalarAtScale M L m -
-                  annealedSigmaStarInvScalarAtScale M L n) ^ 2) ≤
-          (3 : ℝ) ^ (-((m - n : ℤ) : ℝ)) *
-              (2 * Cvar *
-                ((E : ℝ) ^ 2 * M.gamma + Real.exp (-(2 * ((E : ℝ)⁻¹) ^ 3 * M.gamma⁻¹))) *
-                (((E : ℝ) ^ 2 * M.gamma +
-                    Real.exp (-(2 * ((E : ℝ)⁻¹) ^ 3 * M.gamma⁻¹))) +
-                  ((3 : ℝ) ^ (-(d : ℝ))) ^ ((n - L).toNat))) +
-            (3 : ℝ) ^ (-((m - n : ℤ) : ℝ)) * (4 * (10 ^ 9 * (E : ℝ) ^ 2 * M.gamma) ^ 2) := by
-      intro n hn
-      have hw : (0 : ℝ) ≤ (3 : ℝ) ^ (-((m - n : ℤ) : ℝ)) :=
-        Real.rpow_nonneg (by norm_num) _
-      exact add_le_add (mul_le_mul_of_nonneg_left (hvarn n hn) hw)
-        (mul_le_mul_of_nonneg_left (hgapn n hn) hw)
-    refine (Finset.sum_le_sum hterm).trans ?_
-    have hsplit : ∑ n ∈ Finset.Icc L m,
-        ((3 : ℝ) ^ (-((m - n : ℤ) : ℝ)) *
-              (2 * Cvar *
-                ((E : ℝ) ^ 2 * M.gamma + Real.exp (-(2 * ((E : ℝ)⁻¹) ^ 3 * M.gamma⁻¹))) *
-                (((E : ℝ) ^ 2 * M.gamma +
-                    Real.exp (-(2 * ((E : ℝ)⁻¹) ^ 3 * M.gamma⁻¹))) +
-                  ((3 : ℝ) ^ (-(d : ℝ))) ^ ((n - L).toNat))) +
-            (3 : ℝ) ^ (-((m - n : ℤ) : ℝ)) * (4 * (10 ^ 9 * (E : ℝ) ^ 2 * M.gamma) ^ 2)) =
-        (2 * Cvar *
-              ((E : ℝ) ^ 2 * M.gamma + Real.exp (-(2 * ((E : ℝ)⁻¹) ^ 3 * M.gamma⁻¹))) *
-              ((E : ℝ) ^ 2 * M.gamma + Real.exp (-(2 * ((E : ℝ)⁻¹) ^ 3 * M.gamma⁻¹))) +
-            4 * (10 ^ 9 * (E : ℝ) ^ 2 * M.gamma) ^ 2) *
-              (∑ n ∈ Finset.Icc L m, (3 : ℝ) ^ (-((m - n : ℤ) : ℝ))) +
-          (2 * Cvar *
-              ((E : ℝ) ^ 2 * M.gamma + Real.exp (-(2 * ((E : ℝ)⁻¹) ^ 3 * M.gamma⁻¹)))) *
-            (∑ n ∈ Finset.Icc L m, (3 : ℝ) ^ (-((m - n : ℤ) : ℝ)) *
-              ((3 : ℝ) ^ (-(d : ℝ))) ^ ((n - L).toNat)) := by
-      rw [Finset.mul_sum, Finset.mul_sum, ← Finset.sum_add_distrib]
-      exact Finset.sum_congr rfl fun n _ => by ring
-    rw [hsplit]
-    exact corridor_forcing_le (by linarith) hdeltaNn hdeltaLe hpowNn hWsum hConv
+  have hkey := @cutoffResponse_integral_recurrence (d) (by infer_instance) (Cvar) (hCvar) (M) (m)
+    (E) (L) (hgapn) (hvarn) (hWsum) (hConv) (hpowNn) (hdeltaNn) (hdeltaLe)
   -- the final absorption of the three pure-square blocks into the `A.4` forcing
   have hforce : (3 : ℝ) ^ (-((m - L : ℤ) : ℝ)) = (1 / 3 : ℝ) ^ ((m - L).toNat) :=
     rpow_three_neg_sub_eq_pow hLm

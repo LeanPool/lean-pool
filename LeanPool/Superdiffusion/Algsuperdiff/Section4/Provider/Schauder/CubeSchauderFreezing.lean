@@ -80,7 +80,7 @@ theorem integral_vecDot_matVecMul_one {U : Set (Vec d)} (F p : Vec d → Vec d) 
     ∫ x in U, vecDot (matVecMul ((fun _ => (1 : Mat d)) x) (F x)) (p x) ∂volume =
       ∫ x in U, vecDot (F x) (p x) ∂volume :=
   integral_congr_ae (Filter.Eventually.of_forall fun x => by
-    show vecDot (matVecMul (1 : Mat d) (F x)) (p x) = vecDot (F x) (p x)
+    change vecDot (matVecMul (1 : Mat d) (F x)) (p x) = vecDot (F x) (p x)
     rw [matVecMul_one])
 
 /-- `-Δ u = ∇·g` in the development's carrier, unfolded at the identity background. -/

@@ -126,7 +126,7 @@ theorem isBigOWith_of_ae_eq {Ψ : ℝ → ℝ} {X Y : Ω → ℝ} {A : ℝ}
   intro t ht
   have hsets : upperTailEvent Y (A * t) =ᵐ[μ] upperTailEvent X (A * t) := by
     filter_upwards [hXY] with ω hω
-    show (A * t < Y ω) = (A * t < X ω)
+    change (A * t < Y ω) = (A * t < X ω)
     rw [hω]
   rw [measureReal_congr hsets]
   exact hX ht

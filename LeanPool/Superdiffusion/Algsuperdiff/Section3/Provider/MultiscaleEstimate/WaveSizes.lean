@@ -448,7 +448,7 @@ private theorem sum_layerAmp_high_le (M : ABKModel d) {l m : ℤ} (hlm : l ≤ m
         (3 : ℝ) ^ ((l : ℝ) + (M.gamma - 1) * (k : ℝ)) :=
       (Real.rpow_add (by norm_num : (0 : ℝ) < 3) _ _).symm
     rw [layerAmp, hweight, hmax, Real.sqrt_one, three_zpow_eq_rpow (l - k)]
-    show (3 : ℝ) ^ (((l - k : ℤ) : ℝ)) *
+    change (3 : ℝ) ^ (((l - k : ℤ) : ℝ)) *
         (shellW1InfConst d * 1 * (3 : ℝ) ^ (M.gamma * (k : ℝ))) =
       shellW1InfConst d * (3 : ℝ) ^ ((l : ℝ)) * (3 : ℝ) ^ ((M.gamma - 1) * (k : ℝ))
     calc (3 : ℝ) ^ (((l - k : ℤ) : ℝ)) *
@@ -468,7 +468,7 @@ private theorem sum_layerAmp_high_le (M : ABKModel d) {l m : ℤ} (hlm : l ≤ m
     have h2 : (0 : ℝ) < (3 : ℝ) ^ ((l : ℝ)) := Real.rpow_pos_of_pos (by norm_num) _
     positivity
   refine (mul_le_mul_of_nonneg_left hgeo hCpos).trans (le_of_eq ?_)
-  show shellW1InfConst d * (3 : ℝ) ^ ((l : ℝ)) * (3 : ℝ) ^ ((M.gamma - 1) * (l : ℝ)) =
+  change shellW1InfConst d * (3 : ℝ) ^ ((l : ℝ)) * (3 : ℝ) ^ ((M.gamma - 1) * (l : ℝ)) =
     shellW1InfConst d * (3 : ℝ) ^ (M.gamma * (l : ℝ))
   rw [mul_assoc, ← Real.rpow_add (by norm_num : (0 : ℝ) < 3)]
   ring_nf
@@ -625,7 +625,7 @@ theorem isBigOWith_gammaSigma_waveGauge (M : ABKModel d) {l m : ℤ} (hlm : l �
 /-- The scale-`m-j` grid of `cu_m` is nonempty. -/
 theorem waveGrid_nonempty (m : ℤ) (j : ℕ) :
     (descendantsAtScale (originCube d m) (m - (j : ℤ))).Nonempty :=
-  descendantsAtScale_nonempty (originCube d m) (by show m - (j : ℤ) ≤ m; omega)
+  descendantsAtScale_nonempty (originCube d m) (by change m - (j : ℤ) ≤ m; omega)
 
 /-- The dimensional constant of the grid maximum, from ABK26's
 `l.maximums.Gamma.s`. -/
@@ -645,11 +645,11 @@ theorem three_mul_max_one_log_card_waveGrid_le (m : ℤ) (j : ℕ) :
     3 * max 1 (Real.log
         (((descendantsAtScale (originCube d m) (m - (j : ℤ))).card : ℕ) : ℝ)) ≤
       waveGridConst d * (1 + (j : ℝ)) := by
-  have hk : m - (j : ℤ) ≤ (originCube d m).scale := by show m - (j : ℤ) ≤ m; omega
+  have hk : m - (j : ℤ) ≤ (originCube d m).scale := by change m - (j : ℤ) ≤ m; omega
   have hcard := ErrorComparison.card_descendantsAtScale_eq_rpow (originCube d m) hk
   have hdepth : Int.toNat ((originCube d m).scale - (m - (j : ℤ))) = j := by
     have hred : (originCube d m).scale - (m - (j : ℤ)) = (j : ℤ) := by
-      show m - (m - (j : ℤ)) = (j : ℤ)
+      change m - (m - (j : ℤ)) = (j : ℤ)
       ring
     rw [hred, Int.toNat_natCast]
   rw [hdepth] at hcard
@@ -657,7 +657,7 @@ theorem three_mul_max_one_log_card_waveGrid_le (m : ℤ) (j : ℕ) :
       (((descendantsAtScale (originCube d m) (m - (j : ℤ))).card : ℕ) : ℝ) =
       (d : ℝ) * (j : ℝ) * Real.log 3 := by
     rw [hcard]
-    show Real.log ((3 : ℝ) ^ ((d : ℝ) * (j : ℝ))) = (d : ℝ) * (j : ℝ) * Real.log 3
+    change Real.log ((3 : ℝ) ^ ((d : ℝ) * (j : ℝ))) = (d : ℝ) * (j : ℝ) * Real.log 3
     rw [Real.log_rpow (by norm_num : (0 : ℝ) < 3)]
   have hlog3 : (0 : ℝ) < Real.log 3 := Real.log_pos (by norm_num)
   have hd : (0 : ℝ) ≤ (d : ℝ) := Nat.cast_nonneg d

@@ -135,7 +135,7 @@ theorem corner_faceApp_le {m n : ℤ} {x : Vec d} {face : Fin d} {V : Vec d → 
     refine volume_toReal_coordBox_ge_of_edges hdelta0 fun l => ?_
     have h := cornerFaceSlab_edge_ge hx (by omega : n - 2 < m)
       (i := face) hdelta16 l
-    show delta ≤ (cornerFaceSlabHi x m (n - 2) face l
+    change delta ≤ (cornerFaceSlabHi x m (n - 2) face l
         - (delta • (basisVec face : Vec d)) l)
       - (cornerFaceSlabLo x m (n - 2) face delta l
         - (delta • (basisVec face : Vec d)) l)
@@ -215,6 +215,64 @@ theorem corner_faceApp_le {m n : ℤ} {x : Vec d} {face : Fin d} {V : Vec d → 
               * normalizedL2On (reflectedWindow x m (n - 2))
                   (fun y => V y - affineEval (c - vecDot A x) A y))) :=
         mul_le_mul_of_nonneg_left hchain (Real.sqrt_nonneg _)
+
+private theorem oddClassCorner_secondCoordinate_bound :
+    ∀ {d : ℕ} {m n : ℤ} {x : Vec d} {i j : Fin d} {V : Vec d → ℝ}
+      {c : ℝ} {A : Vec d} {c' : ℝ} {A' : Vec d} {delta : ℝ},
+      i ≠ j →
+        (∀ (y : Vec d),
+            V y - affineEval (c' - vecDot A' x) A' y = V y - affineEval (c - vecDot A x) A y + oddAffinePart x m i A y) →
+          (0 : ℝ) < delta →
+            MemLp (fun (y : Vec d) => V y - affineEval (c - vecDot A x) A y) (2 : ℝ≥0∞)
+                (volume.restrict (truncatedWindow x m (n - (2 : ℤ)))) →
+              (coordBox (fun (l : Fin d) => cornerPairSlabLo x m (n - (2 : ℤ)) i j delta l - (delta • basisVec j) l)
+                    fun (l : Fin d) => cornerPairSlabHi x m (n - (2 : ℤ)) i j l - (delta • basisVec j) l) ⊆
+                  truncatedWindow x m (n - (2 : ℤ)) →
+                delta ^ d ≤
+                    ((volume : Set (Vec d) → ℝ≥0∞)
+                        (coordBox
+                          (fun (l : Fin d) => cornerPairSlabLo x m (n - (2 : ℤ)) i j delta l - (delta • basisVec j) l)
+                          fun (l : Fin d) => cornerPairSlabHi x m (n - (2 : ℤ)) i j l - (delta • basisVec j) l)).toReal →
+                  (0 : ℝ) < delta ^ d →
+                    MemLp (oddAffinePart x m i A) (2 : ℝ≥0∞)
+                        (volume.restrict
+                          (coordBox
+                            (fun (l : Fin d) => cornerPairSlabLo x m (n - (2 : ℤ)) i j delta l - (delta • basisVec j) l)
+                            fun (l : Fin d) => cornerPairSlabHi x m (n - (2 : ℤ)) i j l - (delta • basisVec j) l)) →
+                      (normalizedL2On
+                          (coordBox
+                            (fun (l : Fin d) => cornerPairSlabLo x m (n - (2 : ℤ)) i j delta l - (delta • basisVec j) l)
+                            fun (l : Fin d) => cornerPairSlabHi x m (n - (2 : ℤ)) i j l - (delta • basisVec j) l)
+                          fun (y : Vec d) => V y - affineEval (c' - vecDot A' x) A' y) ≤
+                        (normalizedL2On
+                            (coordBox
+                              (fun (l : Fin d) => cornerPairSlabLo x m (n - (2 : ℤ)) i j delta l - (delta • basisVec j) l)
+                              fun (l : Fin d) => cornerPairSlabHi x m (n - (2 : ℤ)) i j l - (delta • basisVec j) l)
+                            fun (y : Vec d) => V y - affineEval (c - vecDot A x) A y) +
+                          |A i| * delta := by
+  intro d m n x i j V c A c' A' delta hij hsplit3 hdelta0 hfU hD3U hD3_vol hδd0 hoddD3mem
+  have hcongr : normalizedL2On (coordBox
+      (fun l => cornerPairSlabLo x m (n - 2) i j delta l
+        - (delta • (basisVec j : Vec d)) l)
+      (fun l => cornerPairSlabHi x m (n - 2) i j l
+        - (delta • (basisVec j : Vec d)) l))
+      (fun y => V y - affineEval (c' - vecDot A' x) A' y)
+      = normalizedL2On (coordBox
+        (fun l => cornerPairSlabLo x m (n - 2) i j delta l
+          - (delta • (basisVec j : Vec d)) l)
+        (fun l => cornerPairSlabHi x m (n - 2) i j l
+          - (delta • (basisVec j : Vec d)) l))
+        (fun y => (V y - affineEval (c - vecDot A x) A y)
+          + oddAffinePart x m i A y) := by
+    congr 1
+    funext y
+    exact hsplit3 y
+  rw [hcongr]
+  have hadd := normalizedL2On_add_le
+    (hfU.mono_measure (Measure.restrict_mono hD3U le_rfl)) hoddD3mem
+  have hramp := normalizedL2On_oddRamp_cornerPairSlabPushed_le hij hdelta0
+    (lt_of_lt_of_le hδd0 hD3_vol) (A := A)
+  linarith only [hadd, hramp]
 
 /-- **The corner application** at the face `j`, against the shifted competitor
 `(c', A')` (in the assembly, the even part of the minimizer at `i`, so that
@@ -312,7 +370,7 @@ theorem corner_pairApp_le {m n : ℤ} {x : Vec d} {i j : Fin d} {V : Vec d → �
     refine volume_toReal_coordBox_ge_of_edges hdelta0 fun l => ?_
     have h := cornerPairSlab_edge_ge hx (by omega : n - 2 < m)
       (i := i) (j := j) hdelta16 l
-    show delta ≤ (cornerPairSlabHi x m (n - 2) i j l
+    change delta ≤ (cornerPairSlabHi x m (n - 2) i j l
         - (delta • (basisVec j : Vec d)) l)
       - (cornerPairSlabLo x m (n - 2) i j delta l
         - (delta • (basisVec j : Vec d)) l)
@@ -364,41 +422,8 @@ theorem corner_pairApp_le {m n : ℤ} {x : Vec d} {i j : Fin d} {V : Vec d → �
     have hramp := normalizedL2On_oddRamp_cornerPairSlab_le (j := j) hdelta0
       (lt_of_lt_of_le hδd0 hQ_vol) (A := A)
     linarith only [hadd, hramp]
-  have hsplitD3 : normalizedL2On (coordBox
-      (fun l => cornerPairSlabLo x m (n - 2) i j delta l
-        - (delta • (basisVec j : Vec d)) l)
-      (fun l => cornerPairSlabHi x m (n - 2) i j l
-        - (delta • (basisVec j : Vec d)) l))
-      (fun y => V y - affineEval (c' - vecDot A' x) A' y)
-      ≤ normalizedL2On (coordBox
-          (fun l => cornerPairSlabLo x m (n - 2) i j delta l
-            - (delta • (basisVec j : Vec d)) l)
-          (fun l => cornerPairSlabHi x m (n - 2) i j l
-            - (delta • (basisVec j : Vec d)) l))
-          (fun y => V y - affineEval (c - vecDot A x) A y)
-        + |A i| * delta := by
-    have hcongr : normalizedL2On (coordBox
-        (fun l => cornerPairSlabLo x m (n - 2) i j delta l
-          - (delta • (basisVec j : Vec d)) l)
-        (fun l => cornerPairSlabHi x m (n - 2) i j l
-          - (delta • (basisVec j : Vec d)) l))
-        (fun y => V y - affineEval (c' - vecDot A' x) A' y)
-        = normalizedL2On (coordBox
-          (fun l => cornerPairSlabLo x m (n - 2) i j delta l
-            - (delta • (basisVec j : Vec d)) l)
-          (fun l => cornerPairSlabHi x m (n - 2) i j l
-            - (delta • (basisVec j : Vec d)) l))
-          (fun y => (V y - affineEval (c - vecDot A x) A y)
-            + oddAffinePart x m i A y) := by
-      congr 1
-      funext y
-      exact hsplit3 y
-    rw [hcongr]
-    have hadd := normalizedL2On_add_le
-      (hfU.mono_measure (Measure.restrict_mono hD3U le_rfl)) hoddD3mem
-    have hramp := normalizedL2On_oddRamp_cornerPairSlabPushed_le hij hdelta0
-      (lt_of_lt_of_le hδd0 hD3_vol) (A := A)
-    linarith only [hadd, hramp]
+  have hsplitD3 := @oddClassCorner_secondCoordinate_bound (d) (m) (n) (x) (i) (j) (V) (c) (A) (c')
+    (A') (delta) (hij) (hsplit3) (hdelta0) (hfU) (hD3U) (hD3_vol) (hδd0) (hoddD3mem)
   have htrQ : normalizedL2On (coordBox (cornerPairSlabLo x m (n - 2) i j delta)
       (cornerPairSlabHi x m (n - 2) i j))
       (fun y => V y - affineEval (c - vecDot A x) A y)

@@ -27,7 +27,7 @@ ABK26, Step 2 of `l.approximate.recurrence.formula`,
 
 ## What this module is
 
-`Closure.GammaTenStripCell.cubeFamilyAverage_sq_integral_meshFluctuationCellIntegrand_le_of_majorant`
+`cubeFamilyAverage_sq_integral_meshFluctuationCellIntegrand_le_of_majorant`
 reduced the `hstrip` binder of
 `Closure.GammaTenStripAssembly.fluctuationEnergyAverage_le_of_interior_cell_fold_grid_load`
 to two statements about the **nonnegative** crude elliptic majorant
@@ -295,7 +295,7 @@ theorem stripCellMajorant_le_weight_mul_data (M : ABKModel d) (n : ℤ) (h : ℕ
 /-! ## The sample integrability of the majorant at one cell -/
 
 /-- **The `hint` binder of
-`Closure.GammaTenStripCell.cubeFamilyAverage_sq_integral_meshFluctuationCellIntegrand_le_of_majorant`,
+`cubeFamilyAverage_sq_integral_meshFluctuationCellIntegrand_le_of_majorant`,
 at one cell.**
 
 on the geometric containment `hsub` and on the second sample moments `hDsq`,

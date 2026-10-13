@@ -152,7 +152,7 @@ theorem harmonicOnNhd_comp_coordFaceReflection_zero {S : Set (Vec d)} {V : Vec d
   have hfun : (fun y => V (coordFaceReflection (0 : ℝ) i y)) ∘ (toEuc.symm : 𝔼 → Vec d)
       = (V ∘ (toEuc.symm : 𝔼 → Vec d)) ∘ (negCoordLIE i : 𝔼 → 𝔼) := by
     funext z
-    show V (coordFaceReflection (0 : ℝ) i ((toEuc.symm : 𝔼 → Vec d) z))
+    change V (coordFaceReflection (0 : ℝ) i ((toEuc.symm : 𝔼 → Vec d) z))
       = V ((toEuc.symm : 𝔼 → Vec d) (negCoordLIE i z))
     rw [toEuc_symm_negCoordLIE]
   rw [hfun]

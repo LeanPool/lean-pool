@@ -33,7 +33,7 @@ Source displays in ABK26:
 
 ## What this module does
 
-`LocalizationSelectionVariation.two_mul_doubledMuValue_eq_volumeAverage_of_isDoubledMuMinimizerField`
+`two_mul_doubledMuValue_eq_volumeAverage_of_isDoubledMuMinimizerField`
 proves the identity for an abstract ambient slope field `F`.  This module
 **instantiates it at the manuscript's own data**: the localization cell
 `R = z + cu_n`, the background `localizationFz` of `e.Fz.def`, and the ambient
@@ -123,7 +123,7 @@ theorem cubeAverageVec_localizationFz_potential (sigma : PositiveScalar)
     cubeAverageVec R (localizationFz sigma omega lowScale highScale e' R wD wN).potential =
       0 := by
   rw [localizationFz_potential_eq_smul_cubeFluctuationVec]
-  show cubeAverageVec R
+  change cubeAverageVec R
     (fun x => (Real.sqrt (sigma : ℝ))⁻¹ • cubeFluctuationVec R wD.toH1Function.grad x) = 0
   rw [CoarseEllipticity.cubeAverageVec_const_smul,
     CoarseEllipticity.cubeAverageVec_cubeFluctuationVec R _ hwD, smul_zero]
@@ -137,7 +137,7 @@ theorem cubeAverageVec_localizationFz_flux (sigma : PositiveScalar)
       (normalizedCubeMeasure R)) :
     cubeAverageVec R (localizationFz sigma omega lowScale highScale e' R wD wN).flux = 0 := by
   rw [localizationFz_flux_eq_smul_cubeFluctuationVec]
-  show cubeAverageVec R
+  change cubeAverageVec R
     (fun x => Real.sqrt (sigma : ℝ) •
       cubeFluctuationVec R (neumannFluxField sigma omega lowScale highScale e' wN) x) = 0
   rw [CoarseEllipticity.cubeAverageVec_const_smul,

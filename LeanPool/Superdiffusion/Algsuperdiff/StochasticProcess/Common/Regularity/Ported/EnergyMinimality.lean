@@ -62,13 +62,13 @@ variable {d : ℕ}
 
 theorem vecDot_self_nonneg (p : Vec d) : 0 ≤ vecDot p p := by
   classical
-  show (0 : ℝ) ≤ ∑ i : Fin d, p i * p i
+  change (0 : ℝ) ≤ ∑ i : Fin d, p i * p i
   exact Finset.sum_nonneg fun i _ => mul_self_nonneg (p i)
 
 theorem vecDot_sub_right (a b c : Vec d) :
     vecDot a (b - c) = vecDot a b - vecDot a c := by
   classical
-  show (∑ i : Fin d, a i * (b i - c i))
+  change (∑ i : Fin d, a i * (b i - c i))
     = (∑ i : Fin d, a i * b i) - ∑ i : Fin d, a i * c i
   rw [← Finset.sum_sub_distrib]
   exact Finset.sum_congr rfl fun i _ => by ring
@@ -76,7 +76,7 @@ theorem vecDot_sub_right (a b c : Vec d) :
 theorem vecDot_sub_self_expand (a b : Vec d) :
     vecDot (a - b) (a - b) = vecDot a a - 2 * vecDot a b + vecDot b b := by
   classical
-  show (∑ i : Fin d, (a i - b i) * (a i - b i))
+  change (∑ i : Fin d, (a i - b i) * (a i - b i))
     = (∑ i : Fin d, a i * a i) - 2 * (∑ i : Fin d, a i * b i) + ∑ i : Fin d, b i * b i
   rw [Finset.mul_sum, ← Finset.sum_sub_distrib, ← Finset.sum_add_distrib]
   exact Finset.sum_congr rfl fun i _ => by ring

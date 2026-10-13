@@ -30,7 +30,7 @@ ABK26, `e.nablaw.oscillations`, `e.Fz.def`, `e.def.w`.
 ## The gap this module fills
 
 The interior Besov envelope
-`Closure.GammaTenStripEnvelopeConst.exists_besovEnvelope_interiorMesoCubeGrid_of_depth_gridRoot_const`
+`exists_besovEnvelope_interiorMesoCubeGrid_of_depth_gridRoot_const`
 carries the two cellwise typing binders
 
 ```

@@ -170,7 +170,7 @@ theorem gradTermARep_lipschitz (h : UnitCubeSkewW2Infinity d) (p : Vec d)
       = |∑ j : Fin d, (gradValueRep h j i x - gradValueRep h j i y) * p j| := by
         rw [Real.norm_eq_abs]
         congr 1
-        show (∑ j : Fin d, gradValueRep h j i x * p j) -
+        change (∑ j : Fin d, gradValueRep h j i x * p j) -
             ∑ j : Fin d, gradValueRep h j i y * p j = _
         rw [← Finset.sum_sub_distrib]
         exact Finset.sum_congr rfl fun j _ => by ring
@@ -259,7 +259,7 @@ theorem cubeAverage_matrixNormField_le_sqrt_valueBudget (h : UnitCubeSkewW2Infin
 /-! ## The unit cube: the budget aggregates to the frozen `L²` value norm -/
 
 theorem cubeVolume_originCube_eq_one : cubeVolume (originCube d 0) = (1 : ℝ) := by
-  show (cubeScaleFactor (originCube d 0)) ^ d = (1 : ℝ)
+  change (cubeScaleFactor (originCube d 0)) ^ d = (1 : ℝ)
   rw [cubeScaleFactor_originCube]
   norm_num
 
@@ -292,7 +292,7 @@ theorem integrableOn_matrixNormField_sq (h : UnitCubeSkewW2Infinity d) :
   have hint : Integrable (fun x => matrixNormField h x ^ 2)
       (volumeMeasureOn ((cubeDomain (originCube d 0) : Domain d) : Set (Vec d))) :=
     memLp_one_iff_integrable.mp hmem
-  show Integrable (fun x => matrixNormField h x ^ 2)
+  change Integrable (fun x => matrixNormField h x ^ 2)
     (volume.restrict (cubeSet (originCube d 0)))
   rwa [volume_restrict_cubeSet_eq_volume_restrict_openCubeSet]
 

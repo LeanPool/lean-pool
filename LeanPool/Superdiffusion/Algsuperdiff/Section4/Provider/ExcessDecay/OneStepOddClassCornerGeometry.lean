@@ -552,7 +552,8 @@ theorem pushed_cornerPairSlab_mem_taylor {x : Vec d} {m k : ℤ} {i j : Fin d}
       exact hyl
     · rw [cornerPairSlabLo, ite_eq_right (fun h => h.elim hli hlj)] at hyl
       rw [cornerPairSlabHi, ite_eq_right (fun h => h.elim hli hlj)] at hyl
-      rw [ite_eq_right hli, ite_eq_right hlj, ite_eq_right hli, ite_eq_right hlj, ite_eq_right hlj, sub_zero]
+      rw [ite_eq_right hli, ite_eq_right hlj, ite_eq_right hli, ite_eq_right hlj, ite_eq_right
+        hlj, sub_zero]
       exact hyl
 
 /-! ## 7. Sup-balls around the Taylor boxes inside the doubled window -/

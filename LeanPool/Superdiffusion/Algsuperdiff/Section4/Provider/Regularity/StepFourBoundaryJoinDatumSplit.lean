@@ -96,7 +96,8 @@ theorem stepFourDeltaOutErrorWeighted_add_datumLeg_le_boundaryThreeLegs
         ((stepFourBoundaryDeltaConst Crem Vd Cst s + Cleg) *
             ((3 : ℝ) ^ ((n : ℝ) / 2) * Kh) +
           epsj * (2 * stepFourBoundaryDeltaConst Crem Vd Cst s * Khinf)) := by
-  have h := stepFourDeltaOutErrorWeighted_le_boundaryThreeLegs (Crem := Crem) (Vd := Vd) (Cst := Cst)
+  have h := stepFourDeltaOutErrorWeighted_le_boundaryThreeLegs (Crem := Crem) (Vd := Vd) (Cst :=
+    Cst)
     (s := s) (epsj := epsj) (Khinf := Khinf) (SigInvN := SigInvN) (Kg := Kg) (Kh := Kh)
     (n := n) hCV hCst hs heps0 hKhinf hSig0 hKg0 hKh0
   have hid : (stepFourBoundaryDeltaConst Crem Vd Cst s + Cleg) *

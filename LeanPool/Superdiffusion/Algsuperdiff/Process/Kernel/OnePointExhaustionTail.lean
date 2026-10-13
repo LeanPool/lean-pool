@@ -70,7 +70,7 @@ theorem coe_preimage_compl_ball_subset (rho : X → ℝ) (hrho_cont : Continuous
     rwa [OnePoint.exhaustionMetricSpace_dist_coe_coe rho hrho_cont hrho_pos hrho_lipschitz
       hrho_compact z x] at hz'
   refine ⟨le_trans hdist (min_le_left _ _), ?_⟩
-  show r - rho x ≤ rho z
+  change r - rho x ≤ rho z
   linarith only [le_trans hdist (min_le_right _ _)]
 
 end Algsuperdiff.Process.OnePoint
@@ -101,7 +101,8 @@ theorem hasResolventTail_onePoint_of_amplified (R : PositiveC0ContractiveResolve
           R.kernelSemigroup.resolventPotential lam x (Metric.ball x (amp x r))ᶜ ≤
         ENNReal.ofReal (phi (Real.sqrt lam * r))) :
     letI := OnePoint.exhaustionMetricSpace rho hrho_cont hrho_pos hrho_lipschitz hrho_compact
-    Algsuperdiff.Process.SubMarkovKernelSemigroup.HasResolventTail R.onePointKernelSemigroup lam phi := by
+    Algsuperdiff.Process.SubMarkovKernelSemigroup.HasResolventTail R.onePointKernelSemigroup lam
+      phi := by
   let := OnePoint.exhaustionMetricSpace rho hrho_cont hrho_pos hrho_lipschitz hrho_compact
   intro z r hr
   induction z using OnePoint.rec with

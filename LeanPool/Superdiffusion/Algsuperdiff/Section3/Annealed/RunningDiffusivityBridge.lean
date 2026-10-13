@@ -19,6 +19,9 @@ Module imports, support namespace and local option directives adapted for Lean P
 
 @[expose] public section
 
+open HCPolySupport.Book.Ch05.Section54.VarianceBoundGoodScale
+  (annealedBlockMatrixAtScale_eq_scalarAnnealedBlockMatrixAtScale)
+
 /-!
 # construction of the infinite-volume annealed diffusivity
 
@@ -41,6 +44,8 @@ open HCPolySupport.Book
 open scoped Topology
 
 noncomputable section
+
+
 
 private theorem le_of_forall_le_one_add_mul
     {a b : ℝ} (hb : 0 ≤ b)
@@ -312,7 +317,7 @@ theorem annealedFullBlockMatrixAtScale_tendsto_barSigmaLimit_of_P4
   have hBlock (n : ℕ) :
       Ch04.annealedBlockMatrixAtScale P (n : ℤ) =
         Ch04.scalarAnnealedBlockMatrixAtScale hP hStruct (n : ℤ) :=
-    Ch05.Section54.VarianceBoundGoodScale.annealedBlockMatrixAtScale_eq_scalarAnnealedBlockMatrixAtScale
+    annealedBlockMatrixAtScale_eq_scalarAnnealedBlockMatrixAtScale
       hP hStruct (n : ℤ)
   refine tendsto_pi_nhds.2 fun alpha => ?_
   refine tendsto_pi_nhds.2 fun beta => ?_

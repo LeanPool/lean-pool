@@ -250,7 +250,7 @@ theorem mem_latticeCubeSet_iff {n m : ℤ} (hnm : n ≤ m) (v : Fin d → ℤ) :
       (lattice_coord_iff hA).mp hi
     exact_mod_cast hreal
   · intro hv
-    show triadicLatticePoint n v ∈ openCubeSet (originCube d m)
+    change triadicLatticePoint n v ∈ openCubeSet (originCube d m)
     rw [mem_openCubeSet_originCube_iff]
     intro i
     have hreal : 2 * |((v i : ℤ) : ℝ)| < (3 : ℝ) ^ ((m - n).toNat : ℕ) := by

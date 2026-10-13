@@ -19,6 +19,9 @@ Module imports, support namespace and local option directives adapted for Lean P
 
 @[expose] public section
 
+open _root_.HCPolySupport.Book.Ch05.Section56.SmallContrastAssembly
+  (descendantsAverageFluctuationOperatorNormSqWithNormalizer_le_probeSqBudget_ae)
+
 /-!
 # Quantitative descendant channel
 
@@ -38,6 +41,8 @@ open _root_.HCPolySupport.IndependentSums
 open scoped MatrixOrder
 
 noncomputable section
+
+
 
 /-- The finite-coordinate reconstruction of the relative descendant operator
 norm.  Its right side records the exact probe bounds used by the downstream
@@ -162,7 +167,7 @@ theorem two_mul_integral_relativeStarredDescendantOperatorNormSq_le
     _root_.HCPolySupport.integrable_fullBlockProbeSqBudget
       (P := P) (M := Mdesc) hint
   have hpointRaw :=
-    _root_.HCPolySupport.Book.Ch05.Section56.SmallContrastAssembly.descendantsAverageFluctuationOperatorNormSqWithNormalizer_le_probeSqBudget_ae
+    descendantsAverageFluctuationOperatorNormSqWithNormalizer_le_probeSqBudget_ae
         hP hStruct center S Q j
   have hpoint :
       (fun a => starredDescendantsAverageFluctuationOperatorNormSq
@@ -174,7 +179,8 @@ theorem two_mul_integral_relativeStarredDescendantOperatorNormSq_le
     rw [show Mdesc a =
       Book.Ch05.Section56.descendantsAverageFluctuationMatrixWithNormalizer
         hP hStruct center S Q j a by
-      exact starredDescendantsAverageFluctuationMatrix_eq_descendantsAverageFluctuationMatrixWithNormalizer
+      exact
+        starredFluctuationMatrix_eq_normalizedDescendantAverage
         hP hStruct center B Q j a]
     exact ha
   have hnonneg :

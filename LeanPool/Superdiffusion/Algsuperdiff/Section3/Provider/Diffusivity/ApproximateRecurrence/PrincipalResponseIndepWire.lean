@@ -19,6 +19,9 @@ Module imports, support namespace and local option directives adapted for Lean P
 
 @[expose] public section
 
+open Algsuperdiff.Section3.Provider.Annealed
+  (integral_blockMatEntry_coarseBlockMatrix_cubeSet_eq_originCube_of_mem_descendantsAtScale)
+
 
 /-!
 NOTE: this module is an ordinary Provider helper / conditional A.  The binder
@@ -84,7 +87,7 @@ composes the pushforward with real-translation stationarity to identify the
 two.  No single proved lemma performs this bridge; the four steps used are
 
 1. the two coarse block matrices agree pointwise in the sample -- CoarseGraining's
-   `Ch04.RestrictionLawCarrier.coarseBlockMatrix_cubeSet_eq_ch02_coarseBlockMatrix_of_aelocallyUniformlyEllipticField`
+`coarseBlockMatrix_cubeSet_eq_ch02_coarseBlockMatrix_of_aelocallyUniformlyEllipticField`
    together with `Ch02.coarseBlockMatrix_eq_ofAEEq` and the proved
    `Cutoff.coefficientCutoff_canonicalFamily_aeeq`;
 2. the pushforward, `Cutoff.coefficientCutoffLaw_eq_map` and
@@ -92,7 +95,7 @@ two.  No single proved lemma performs this bridge; the four steps used are
    taken from the proved
    `Provider.Annealed.aestronglyMeasurable_blockMatEntry_coarseBlockMatrix_cubeSet`;
 3. real-translation stationarity,
-   `Provider.Annealed.integral_blockMatEntry_coarseBlockMatrix_cubeSet_eq_originCube_of_mem_descendantsAtScale`,
+`integral_blockMatEntry_coarseBlockMatrix_cubeSet_eq_originCube_of_mem_descendantsAtScale`,
    which moves `z + cu_n` to `cu_n` at every integer scale, positive or negative;
 4. the annealed entry as the origin-cube expectation, definitionally.
 
@@ -110,7 +113,7 @@ there.
 It does **not** produce the independence replacement `hindep`, and it does not
 re-state any consumer with `hindep` removed.  `hindep` remains a binder of
 `ApproximateRecurrence.PrincipalResponseBudgetWire`
-`exists_gamma0_descendantsAverage_integral_principalGoodEventEnergy_le_annealedCube_of_centeringConst`
+`exists_smallCoupling_principalEnergy_bound_of_centering`
 and of its predecessors, untouched by anything below.  The four inputs that are
 *not* supplied in this module are, precisely:
 
@@ -180,6 +183,8 @@ open Algsuperdiff.Section3
 open Algsuperdiff.Section3.Cutoff
 
 noncomputable section
+
+
 
 variable {d : ℕ}
 
@@ -315,7 +320,7 @@ theorem blockMatEntry_annealedBlockMatrixAtScale_eq_integral_switchCubeMatrix
     _ = ∫ a, blockMatEntry
           (HCPolySupport.coarseBlockMatrix (cubeSet R) a.toFun) alpha beta
           ∂(coefficientCutoffLaw M lowScale) :=
-        (Provider.Annealed.integral_blockMatEntry_coarseBlockMatrix_cubeSet_eq_originCube_of_mem_descendantsAtScale
+        (integral_blockMatEntry_coarseBlockMatrix_cubeSet_eq_originCube_of_mem_descendantsAtScale
           (coefficientCutoffLaw_lawCarrier M lowScale)
           (Provider.Annealed.coefficientCutoffLaw_isStationaryRealR M lowScale)
           hnk hRscale alpha beta).symm

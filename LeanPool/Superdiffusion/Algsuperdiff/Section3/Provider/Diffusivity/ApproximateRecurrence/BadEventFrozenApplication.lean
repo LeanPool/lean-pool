@@ -119,6 +119,105 @@ private theorem four_mul_le_sq_five_mul_add {x y : ℝ} (hx : 0 ≤ x) (hy : 0 �
 
 /-! ## The frozen application -/
 
+private theorem badEventFrozenApplication_comparisonBounds1 :
+    ∀ (d : ℕ) (c0 : ℝ) (_ : (0 : ℝ) < c0) (k : ℕ) (M : ABKModel d) (E : { E : ℝ // (1 : ℝ) ≤ E })
+      (R : TriadicCube d) (n : ℤ) (_ : (0 : ℝ) < Disorder.cstar M) (_ : (0 : ℝ) < M.gamma)
+      (_ : (0 : ℝ) < M.gamma⁻¹) (_ : (1 : ℝ) ≤ (↑E : ℝ)) (_ : c0 * ((3 : ℝ) ^ ((12 : ℕ) * k))⁻¹ ≤ c0)
+      (_ : (↑(R.scale + (2 : ℤ) * (↑k : ℤ)) : ℝ) = (↑R.scale : ℝ) + (2 : ℝ) * (↑k : ℝ))
+      (_ : (↑R.scale : ℝ) ≤ (↑n : ℝ)),
+      Real.exp (-(c0 * Disorder.cstar M * M.gamma⁻¹ * (3 : ℝ) ^ ((↑n : ℝ) - (↑R.scale : ℝ)))) +
+            Real.exp (-Real.exp (c0 * (↑E : ℝ)⁻¹ ^ (2 : ℕ) * M.gamma⁻¹)) ≤
+          Real.exp
+              (-(c0 * ((3 : ℝ) ^ ((12 : ℕ) * k))⁻¹ * Disorder.cstar M * M.gamma⁻¹ *
+                  (3 : ℝ) ^ ((↑n : ℝ) - (↑R.scale : ℝ)))) +
+            Real.exp (-Real.exp (c0 * ((3 : ℝ) ^ ((12 : ℕ) * k))⁻¹ * (↑E : ℝ)⁻¹ ^ (2 : ℕ) * M.gamma⁻¹)) ∧
+        Real.exp
+              (-(c0 * Disorder.cstar M * M.gamma⁻¹ * (3 : ℝ) ^ ((-5 : ℝ) * scaleGapPos n (R.scale + (2 : ℤ) * (↑k : ℤ))) *
+                  (3 : ℝ) ^ scaleGapPos (R.scale + (2 : ℤ) * (↑k : ℤ)) n)) +
+            Real.exp (-Real.exp (c0 * (↑E : ℝ)⁻¹ ^ (2 : ℕ) * M.gamma⁻¹)) ≤
+          Real.exp
+              (-(c0 * ((3 : ℝ) ^ ((12 : ℕ) * k))⁻¹ * Disorder.cstar M * M.gamma⁻¹ *
+                  (3 : ℝ) ^ ((↑n : ℝ) - (↑R.scale : ℝ)))) +
+            Real.exp (-Real.exp (c0 * ((3 : ℝ) ^ ((12 : ℕ) * k))⁻¹ * (↑E : ℝ)⁻¹ ^ (2 : ℕ) * M.gamma⁻¹)) := by
+  intro d c0 hc0 k M E R n hcstar0 _ hginv0 _ hcle hm2cast _
+  have h3A : (0 : ℝ) < (3 : ℝ) ^ ((n : ℝ) - (R.scale : ℝ)) :=
+    Real.rpow_pos_of_pos (by norm_num) _
+  have hX0 : (0 : ℝ) ≤ ((E : ℝ)⁻¹) ^ 2 * M.gamma⁻¹ := by positivity
+  -- the second exponential is common to both applications
+  have hexp2 : Real.exp (-Real.exp (c0 * ((E : ℝ)⁻¹) ^ 2 * M.gamma⁻¹)) ≤
+      Real.exp (-Real.exp (c0 * ((3 : ℝ) ^ (12 * k))⁻¹ * ((E : ℝ)⁻¹) ^ 2 * M.gamma⁻¹)) := by
+    refine Real.exp_le_exp.2 (neg_le_neg (Real.exp_le_exp.2 ?_))
+    exact mul_le_mul_of_nonneg_right
+      (mul_le_mul_of_nonneg_right hcle (sq_nonneg ((E : ℝ)⁻¹))) hginv0.le
+  -- the first application
+  have hcmp1 : c0 * ((3 : ℝ) ^ (12 * k))⁻¹ * Algsuperdiff.Section3.Disorder.cstar M *
+        M.gamma⁻¹ * (3 : ℝ) ^ ((n : ℝ) - (R.scale : ℝ)) ≤
+      c0 * Algsuperdiff.Section3.Disorder.cstar M * M.gamma⁻¹ *
+        (3 : ℝ) ^ ((n : ℝ) - (R.scale : ℝ)) := by
+    refine mul_le_mul_of_nonneg_right ?_ h3A.le
+    refine mul_le_mul_of_nonneg_right ?_ hginv0.le
+    exact mul_le_mul_of_nonneg_right hcle hcstar0.le
+  have hT1 : Real.exp (-(c0 * Algsuperdiff.Section3.Disorder.cstar M * M.gamma⁻¹ *
+          (3 : ℝ) ^ ((n : ℝ) - (R.scale : ℝ)))) +
+        Real.exp (-Real.exp (c0 * ((E : ℝ)⁻¹) ^ 2 * M.gamma⁻¹)) ≤
+      Real.exp (-(c0 * ((3 : ℝ) ^ (12 * k))⁻¹ * Algsuperdiff.Section3.Disorder.cstar M *
+          M.gamma⁻¹ * (3 : ℝ) ^ ((n : ℝ) - (R.scale : ℝ)))) +
+        Real.exp (-Real.exp (c0 * ((3 : ℝ) ^ (12 * k))⁻¹ * ((E : ℝ)⁻¹) ^ 2 * M.gamma⁻¹)) :=
+    add_le_add (Real.exp_le_exp.2 (neg_le_neg hcmp1)) hexp2
+  -- the second application, uniformly in the position of `n`
+  have hgapineq : (n : ℝ) - (R.scale : ℝ) + -(12 * (k : ℝ)) ≤
+      -5 * scaleGapPos n (R.scale + 2 * (k : ℤ)) +
+        scaleGapPos (R.scale + 2 * (k : ℤ)) n := by
+    simp only [scaleGapPos, hm2cast]
+    rcases le_or_gt ((R.scale : ℝ) + 2 * (k : ℝ)) (n : ℝ) with hle | hlt
+    · rw [max_eq_right (by linarith), max_eq_left (by linarith)]
+      linarith
+    · rw [max_eq_left (by linarith), max_eq_right (by linarith)]
+      linarith
+  have hnp : (3 : ℝ) ^ (-(12 * (k : ℝ))) = ((3 : ℝ) ^ (12 * k))⁻¹ := by
+    rw [Real.rpow_neg (by norm_num : (0 : ℝ) ≤ 3)]
+    congr 1
+    rw [← Real.rpow_natCast 3 (12 * k)]
+    congr 1
+    push_cast
+    ring
+  have hconv : ((3 : ℝ) ^ (12 * k))⁻¹ * (3 : ℝ) ^ ((n : ℝ) - (R.scale : ℝ)) =
+      (3 : ℝ) ^ ((n : ℝ) - (R.scale : ℝ) + -(12 * (k : ℝ))) := by
+    rw [Real.rpow_add (by norm_num : (0 : ℝ) < 3), hnp]
+    ring
+  have hexpge : ((3 : ℝ) ^ (12 * k))⁻¹ * (3 : ℝ) ^ ((n : ℝ) - (R.scale : ℝ)) ≤
+      (3 : ℝ) ^ (-5 * scaleGapPos n (R.scale + 2 * (k : ℤ))) *
+        (3 : ℝ) ^ (scaleGapPos (R.scale + 2 * (k : ℤ)) n) := by
+    rw [hconv, ← Real.rpow_add (by norm_num : (0 : ℝ) < 3)]
+    exact Real.rpow_le_rpow_of_exponent_le (by norm_num) hgapineq
+  have hbase0 : (0 : ℝ) ≤ c0 * Algsuperdiff.Section3.Disorder.cstar M * M.gamma⁻¹ :=
+    (mul_pos (mul_pos hc0 hcstar0) hginv0).le
+  have hcmp2 : c0 * ((3 : ℝ) ^ (12 * k))⁻¹ * Algsuperdiff.Section3.Disorder.cstar M *
+        M.gamma⁻¹ * (3 : ℝ) ^ ((n : ℝ) - (R.scale : ℝ)) ≤
+      c0 * Algsuperdiff.Section3.Disorder.cstar M * M.gamma⁻¹ *
+          (3 : ℝ) ^ (-5 * scaleGapPos n (R.scale + 2 * (k : ℤ))) *
+          (3 : ℝ) ^ (scaleGapPos (R.scale + 2 * (k : ℤ)) n) := by
+    calc c0 * ((3 : ℝ) ^ (12 * k))⁻¹ * Algsuperdiff.Section3.Disorder.cstar M *
+          M.gamma⁻¹ * (3 : ℝ) ^ ((n : ℝ) - (R.scale : ℝ))
+        = (c0 * Algsuperdiff.Section3.Disorder.cstar M * M.gamma⁻¹) *
+            (((3 : ℝ) ^ (12 * k))⁻¹ * (3 : ℝ) ^ ((n : ℝ) - (R.scale : ℝ))) := by ring
+      _ ≤ (c0 * Algsuperdiff.Section3.Disorder.cstar M * M.gamma⁻¹) *
+            ((3 : ℝ) ^ (-5 * scaleGapPos n (R.scale + 2 * (k : ℤ))) *
+              (3 : ℝ) ^ (scaleGapPos (R.scale + 2 * (k : ℤ)) n)) :=
+          mul_le_mul_of_nonneg_left hexpge hbase0
+      _ = c0 * Algsuperdiff.Section3.Disorder.cstar M * M.gamma⁻¹ *
+            (3 : ℝ) ^ (-5 * scaleGapPos n (R.scale + 2 * (k : ℤ))) *
+            (3 : ℝ) ^ (scaleGapPos (R.scale + 2 * (k : ℤ)) n) := by ring
+  have hT2 : Real.exp (-(c0 * Algsuperdiff.Section3.Disorder.cstar M * M.gamma⁻¹ *
+            (3 : ℝ) ^ (-5 * scaleGapPos n (R.scale + 2 * (k : ℤ))) *
+            (3 : ℝ) ^ (scaleGapPos (R.scale + 2 * (k : ℤ)) n))) +
+        Real.exp (-Real.exp (c0 * ((E : ℝ)⁻¹) ^ 2 * M.gamma⁻¹)) ≤
+      Real.exp (-(c0 * ((3 : ℝ) ^ (12 * k))⁻¹ * Algsuperdiff.Section3.Disorder.cstar M *
+          M.gamma⁻¹ * (3 : ℝ) ^ ((n : ℝ) - (R.scale : ℝ)))) +
+        Real.exp (-Real.exp (c0 * ((3 : ℝ) ^ (12 * k))⁻¹ * ((E : ℝ)⁻¹) ^ 2 * M.gamma⁻¹)) :=
+    add_le_add (Real.exp_le_exp.2 (neg_le_neg hcmp2)) hexp2
+  exact ⟨hT1, hT2⟩
+
 /-- **The per-cube bad-event tail at a floor-normalized constant, derived from
 the frozen `Algsuperdiff.Frozen.Section3.bad_event_estimate`.**
 
@@ -337,82 +436,22 @@ theorem exists_badEventEstimate_perCube_dimFloor_ofFrozen (d : ℕ) :
     exact max_eq_right (by linarith)
   have hg2 : scaleGapPos R.scale n = (n : ℝ) - (R.scale : ℝ) := scaleGapPos_of_le hRn
   simp only [hg1, hg2, mul_zero, Real.rpow_zero, mul_one] at hb1 ⊢
-  have h3A : (0 : ℝ) < (3 : ℝ) ^ ((n : ℝ) - (R.scale : ℝ)) :=
-    Real.rpow_pos_of_pos (by norm_num) _
-  have hX0 : (0 : ℝ) ≤ ((E : ℝ)⁻¹) ^ 2 * M.gamma⁻¹ := by positivity
-  -- the second exponential is common to both applications
-  have hexp2 : Real.exp (-Real.exp (c0 * ((E : ℝ)⁻¹) ^ 2 * M.gamma⁻¹)) ≤
-      Real.exp (-Real.exp (c0 * ((3 : ℝ) ^ (12 * k))⁻¹ * ((E : ℝ)⁻¹) ^ 2 * M.gamma⁻¹)) := by
-    refine Real.exp_le_exp.2 (neg_le_neg (Real.exp_le_exp.2 ?_))
-    exact mul_le_mul_of_nonneg_right
-      (mul_le_mul_of_nonneg_right hcle (sq_nonneg ((E : ℝ)⁻¹))) hginv0.le
-  -- the first application
-  have hcmp1 : c0 * ((3 : ℝ) ^ (12 * k))⁻¹ * Algsuperdiff.Section3.Disorder.cstar M *
-        M.gamma⁻¹ * (3 : ℝ) ^ ((n : ℝ) - (R.scale : ℝ)) ≤
-      c0 * Algsuperdiff.Section3.Disorder.cstar M * M.gamma⁻¹ *
-        (3 : ℝ) ^ ((n : ℝ) - (R.scale : ℝ)) := by
-    refine mul_le_mul_of_nonneg_right ?_ h3A.le
-    refine mul_le_mul_of_nonneg_right ?_ hginv0.le
-    exact mul_le_mul_of_nonneg_right hcle hcstar0.le
-  have hT1 : Real.exp (-(c0 * Algsuperdiff.Section3.Disorder.cstar M * M.gamma⁻¹ *
+  obtain ⟨hT1, hT2⟩ :=
+    (show (Real.exp (-(c0 * Algsuperdiff.Section3.Disorder.cstar M * M.gamma⁻¹ *
           (3 : ℝ) ^ ((n : ℝ) - (R.scale : ℝ)))) +
         Real.exp (-Real.exp (c0 * ((E : ℝ)⁻¹) ^ 2 * M.gamma⁻¹)) ≤
       Real.exp (-(c0 * ((3 : ℝ) ^ (12 * k))⁻¹ * Algsuperdiff.Section3.Disorder.cstar M *
           M.gamma⁻¹ * (3 : ℝ) ^ ((n : ℝ) - (R.scale : ℝ)))) +
-        Real.exp (-Real.exp (c0 * ((3 : ℝ) ^ (12 * k))⁻¹ * ((E : ℝ)⁻¹) ^ 2 * M.gamma⁻¹)) :=
-    add_le_add (Real.exp_le_exp.2 (neg_le_neg hcmp1)) hexp2
-  -- the second application, uniformly in the position of `n`
-  have hgapineq : (n : ℝ) - (R.scale : ℝ) + -(12 * (k : ℝ)) ≤
-      -5 * scaleGapPos n (R.scale + 2 * (k : ℤ)) +
-        scaleGapPos (R.scale + 2 * (k : ℤ)) n := by
-    simp only [scaleGapPos, hm2cast]
-    rcases le_or_gt ((R.scale : ℝ) + 2 * (k : ℝ)) (n : ℝ) with hle | hlt
-    · rw [max_eq_right (by linarith), max_eq_left (by linarith)]
-      linarith
-    · rw [max_eq_left (by linarith), max_eq_right (by linarith)]
-      linarith
-  have hnp : (3 : ℝ) ^ (-(12 * (k : ℝ))) = ((3 : ℝ) ^ (12 * k))⁻¹ := by
-    rw [Real.rpow_neg (by norm_num : (0 : ℝ) ≤ 3)]
-    congr 1
-    rw [← Real.rpow_natCast 3 (12 * k)]
-    congr 1
-    push_cast
-    ring
-  have hconv : ((3 : ℝ) ^ (12 * k))⁻¹ * (3 : ℝ) ^ ((n : ℝ) - (R.scale : ℝ)) =
-      (3 : ℝ) ^ ((n : ℝ) - (R.scale : ℝ) + -(12 * (k : ℝ))) := by
-    rw [Real.rpow_add (by norm_num : (0 : ℝ) < 3), hnp]
-    ring
-  have hexpge : ((3 : ℝ) ^ (12 * k))⁻¹ * (3 : ℝ) ^ ((n : ℝ) - (R.scale : ℝ)) ≤
-      (3 : ℝ) ^ (-5 * scaleGapPos n (R.scale + 2 * (k : ℤ))) *
-        (3 : ℝ) ^ (scaleGapPos (R.scale + 2 * (k : ℤ)) n) := by
-    rw [hconv, ← Real.rpow_add (by norm_num : (0 : ℝ) < 3)]
-    exact Real.rpow_le_rpow_of_exponent_le (by norm_num) hgapineq
-  have hbase0 : (0 : ℝ) ≤ c0 * Algsuperdiff.Section3.Disorder.cstar M * M.gamma⁻¹ :=
-    (mul_pos (mul_pos hc0 hcstar0) hginv0).le
-  have hcmp2 : c0 * ((3 : ℝ) ^ (12 * k))⁻¹ * Algsuperdiff.Section3.Disorder.cstar M *
-        M.gamma⁻¹ * (3 : ℝ) ^ ((n : ℝ) - (R.scale : ℝ)) ≤
-      c0 * Algsuperdiff.Section3.Disorder.cstar M * M.gamma⁻¹ *
-          (3 : ℝ) ^ (-5 * scaleGapPos n (R.scale + 2 * (k : ℤ))) *
-          (3 : ℝ) ^ (scaleGapPos (R.scale + 2 * (k : ℤ)) n) := by
-    calc c0 * ((3 : ℝ) ^ (12 * k))⁻¹ * Algsuperdiff.Section3.Disorder.cstar M *
-          M.gamma⁻¹ * (3 : ℝ) ^ ((n : ℝ) - (R.scale : ℝ))
-        = (c0 * Algsuperdiff.Section3.Disorder.cstar M * M.gamma⁻¹) *
-            (((3 : ℝ) ^ (12 * k))⁻¹ * (3 : ℝ) ^ ((n : ℝ) - (R.scale : ℝ))) := by ring
-      _ ≤ (c0 * Algsuperdiff.Section3.Disorder.cstar M * M.gamma⁻¹) *
-            ((3 : ℝ) ^ (-5 * scaleGapPos n (R.scale + 2 * (k : ℤ))) *
-              (3 : ℝ) ^ (scaleGapPos (R.scale + 2 * (k : ℤ)) n)) :=
-          mul_le_mul_of_nonneg_left hexpge hbase0
-      _ = c0 * Algsuperdiff.Section3.Disorder.cstar M * M.gamma⁻¹ *
-            (3 : ℝ) ^ (-5 * scaleGapPos n (R.scale + 2 * (k : ℤ))) *
-            (3 : ℝ) ^ (scaleGapPos (R.scale + 2 * (k : ℤ)) n) := by ring
-  have hT2 : Real.exp (-(c0 * Algsuperdiff.Section3.Disorder.cstar M * M.gamma⁻¹ *
+        Real.exp (-Real.exp (c0 * ((3 : ℝ) ^ (12 * k))⁻¹ * ((E : ℝ)⁻¹) ^ 2 * M.gamma⁻¹))) ∧
+          (Real.exp (-(c0 * Algsuperdiff.Section3.Disorder.cstar M * M.gamma⁻¹ *
             (3 : ℝ) ^ (-5 * scaleGapPos n (R.scale + 2 * (k : ℤ))) *
             (3 : ℝ) ^ (scaleGapPos (R.scale + 2 * (k : ℤ)) n))) +
         Real.exp (-Real.exp (c0 * ((E : ℝ)⁻¹) ^ 2 * M.gamma⁻¹)) ≤
       Real.exp (-(c0 * ((3 : ℝ) ^ (12 * k))⁻¹ * Algsuperdiff.Section3.Disorder.cstar M *
           M.gamma⁻¹ * (3 : ℝ) ^ ((n : ℝ) - (R.scale : ℝ)))) +
-        Real.exp (-Real.exp (c0 * ((3 : ℝ) ^ (12 * k))⁻¹ * ((E : ℝ)⁻¹) ^ 2 * M.gamma⁻¹)) :=
-    add_le_add (Real.exp_le_exp.2 (neg_le_neg hcmp2)) hexp2
+        Real.exp (-Real.exp (c0 * ((3 : ℝ) ^ (12 * k))⁻¹ * ((E : ℝ)⁻¹) ^ 2 * M.gamma⁻¹))) from
+      @badEventFrozenApplication_comparisonBounds1 (d) (c0) (hc0) (k) (M) (E) (R) (n) (hcstar0)
+        (hgamma0) (hginv0) (hE1) (hcle) (hm2cast) (hRncast))
   linarith [hmeasure, le_trans hb1 hT1, le_trans hb2 hT2]
 
 end

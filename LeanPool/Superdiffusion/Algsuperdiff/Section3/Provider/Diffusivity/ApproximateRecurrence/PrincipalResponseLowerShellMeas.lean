@@ -113,7 +113,7 @@ anywhere below.
 
 It does not remove the independence binder `hindep`: that binder still stands on
 `ApproximateRecurrence.PrincipalResponseBudgetWire`
-`exists_gamma0_descendantsAverage_integral_principalGoodEventEnergy_le_annealedCube_of_centeringConst`
+`exists_smallCoupling_principalEnergy_bound_of_centering`
 and on its predecessors, untouched by anything here.
 
 ## Main results
@@ -306,8 +306,7 @@ private theorem measurable_lowerShellLocalCompletion_extend {beta : Type*}
 field of any observation set `U` containing `cubeSet R`.
 
 : this statement holds under its binders, here the geometric inclusion `hRU`. -/
-private theorem
-    measurable_lowerShellLocalCompletion_blockMatEntry_switchCubeMatrixShell
+private theorem measurable_lowerShellLocalCompletion_blockMatEntry_switchCubeMatrixShell
     [NeZero d] (M : ABKModel d) (lowScale : ℤ) (R : TriadicCube d)
     {U : Set (Vec d)} (hRU : cubeSet R ⊆ U) (alpha beta : BlockCoord d) :
     Measurable[lowerShellLocalCompletion M lowScale U]

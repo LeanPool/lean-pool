@@ -152,6 +152,123 @@ theorem gap_constant_identity (d : ℕ) {S P ω C avg : ℝ}
 
 /-! ### The arbitrary-gap oscillation estimate -/
 
+private theorem correctorGradient_oscillation_pointwise_bound :
+    ∀ {d : ℕ} (C₀ : ℝ),
+      (0 : ℝ) ≤ (8 : ℝ) ^ (d + (1 : ℕ)) * (↑d : ℝ) * C₀ / Book.Ch01.euclideanUnitBallVolume d →
+        ∀ (u : Vec d → ℝ) (z : Vec d) (n : ℤ) (k : ℕ) (c : Vec d) (avg : Fin d → ℝ),
+          (∀ (i : Fin d), (0 : ℝ) ≤ avg i) →
+            (∀ (i : Fin d),
+                ∀ x ∈ openCubeAtScale z n,
+                  |euclideanCoordDeriv i u x - euclideanCoordDeriv i u z| ≤
+                    (8 : ℝ) ^ (d + (1 : ℕ)) * (↑d : ℝ) * C₀ / Book.Ch01.euclideanUnitBallVolume d * (3 : ℝ) ^ (-(↑k : ℤ)) *
+                      avg i) →
+              (∀ (i : Fin d),
+                  avg i ^ (2 : ℕ) ≤
+                    Book.Ch01.meanSquareDeviationOn (openCubeAtScale z (n + (↑k : ℤ)))
+                      (fun (y : Vec d) => euclideanGradient u y i) (c i)) →
+                ∀ x ∈ openCubeAtScale z n,
+                  vecNormSq (euclideanGradient u x - euclideanGradient u z) ≤
+                    ((8 : ℝ) ^ (d + (1 : ℕ)) * (↑d : ℝ) * C₀ / Book.Ch01.euclideanUnitBallVolume d *
+                          (3 : ℝ) ^ (-(↑k : ℤ))) ^
+                        (2 : ℕ) *
+                      Book.Ch01.meanSquareDeviationVecOn (openCubeAtScale z (n + (↑k : ℤ))) (euclideanGradient u) c := by
+  intro d C₀ hKnn u z n k c avg havgnn hlip hcs x hx
+  have hexpand : vecNormSq (euclideanGradient u x - euclideanGradient u z)
+      = ∑ i : Fin d, (euclideanCoordDeriv i u x - euclideanCoordDeriv i u z) ^ 2 := by
+    simp [vecNormSq, vecDot, sq, euclideanGradient]
+  rw [hexpand]
+  have hterm : ∀ i : Fin d,
+      (euclideanCoordDeriv i u x - euclideanCoordDeriv i u z) ^ 2
+        ≤ (8 ^ (d + 1) * (d : ℝ) * C₀ / Book.Ch01.euclideanUnitBallVolume d *
+            (3 : ℝ) ^ (-(k : ℤ))) ^ 2 * avg i ^ 2 := by
+    intro i
+    have hb := hlip i x hx
+    have hnn : (0 : ℝ) ≤ 8 ^ (d + 1) * (d : ℝ) * C₀ /
+        Book.Ch01.euclideanUnitBallVolume d * (3 : ℝ) ^ (-(k : ℤ)) * avg i :=
+      mul_nonneg (mul_nonneg hKnn (by positivity)) (havgnn i)
+    have hsq : (euclideanCoordDeriv i u x - euclideanCoordDeriv i u z) ^ 2
+        ≤ (8 ^ (d + 1) * (d : ℝ) * C₀ / Book.Ch01.euclideanUnitBallVolume d *
+            (3 : ℝ) ^ (-(k : ℤ)) * avg i) ^ 2 := by
+      rw [← sq_abs]
+      exact pow_le_pow_left₀ (abs_nonneg _) hb 2
+    calc (euclideanCoordDeriv i u x - euclideanCoordDeriv i u z) ^ 2
+        ≤ (8 ^ (d + 1) * (d : ℝ) * C₀ / Book.Ch01.euclideanUnitBallVolume d *
+            (3 : ℝ) ^ (-(k : ℤ)) * avg i) ^ 2 := hsq
+      _ = (8 ^ (d + 1) * (d : ℝ) * C₀ / Book.Ch01.euclideanUnitBallVolume d *
+            (3 : ℝ) ^ (-(k : ℤ))) ^ 2 * avg i ^ 2 := by ring
+  calc ∑ i : Fin d, (euclideanCoordDeriv i u x - euclideanCoordDeriv i u z) ^ 2
+      ≤ ∑ i : Fin d, (8 ^ (d + 1) * (d : ℝ) * C₀ /
+            Book.Ch01.euclideanUnitBallVolume d * (3 : ℝ) ^ (-(k : ℤ))) ^ 2 * avg i ^ 2 :=
+        Finset.sum_le_sum fun i _ => hterm i
+    _ = (8 ^ (d + 1) * (d : ℝ) * C₀ / Book.Ch01.euclideanUnitBallVolume d *
+          (3 : ℝ) ^ (-(k : ℤ))) ^ 2 * ∑ i : Fin d, avg i ^ 2 := by
+        rw [Finset.mul_sum]
+    _ ≤ (8 ^ (d + 1) * (d : ℝ) * C₀ / Book.Ch01.euclideanUnitBallVolume d *
+          (3 : ℝ) ^ (-(k : ℤ))) ^ 2 *
+        Book.Ch01.meanSquareDeviationVecOn (openCubeAtScale z (n + (k : ℤ)))
+          (euclideanGradient u) c :=
+        mul_le_mul_of_nonneg_left (Finset.sum_le_sum fun i _ => hcs i) (sq_nonneg _)
+
+private theorem gradientOscillation_affineLipschitzBound :
+    ∀ {d : ℕ},
+      (0 : ℕ) < d →
+        ∀ (C₀ : ℝ),
+          (0 : ℝ) ≤ C₀ →
+            (0 : ℝ) < Book.Ch01.euclideanUnitBallVolume d →
+              ∀ (u : Vec d → ℝ) (z : Vec d) (n : ℤ) (k : ℕ) (avg : Fin d → ℝ),
+                (∀ (i : Fin d), ContDiff ℝ ((⊤ : ℕ∞) : WithTop ℕ∞) (euclideanCoordDeriv i u)) →
+                  (∀ (i : Fin d),
+                      ∀ y ∈ openCubeAtScale z n,
+                        ‖fderiv ℝ (euclideanCoordDeriv i u) y‖ ≤
+                          (↑d : ℝ) *
+                            (C₀ / ((3 : ℝ) ^ (n + (↑k : ℤ)) / (8 : ℝ)) *
+                              (((3 : ℝ) ^ (n + (↑k : ℤ))) ^ d * avg i /
+                                (((3 : ℝ) ^ (n + (↑k : ℤ)) / (8 : ℝ)) ^ d * Book.Ch01.euclideanUnitBallVolume d)))) →
+                    (∀ (i : Fin d),
+                        (↑d : ℝ) *
+                              (C₀ / ((3 : ℝ) ^ (n + (↑k : ℤ)) / (8 : ℝ)) *
+                                (((3 : ℝ) ^ (n + (↑k : ℤ))) ^ d * avg i /
+                                  (((3 : ℝ) ^ (n + (↑k : ℤ)) / (8 : ℝ)) ^ d * Book.Ch01.euclideanUnitBallVolume d))) *
+                            (3 : ℝ) ^ n =
+                          (8 : ℝ) ^ (d + (1 : ℕ)) * (↑d : ℝ) * C₀ / Book.Ch01.euclideanUnitBallVolume d *
+                              (3 : ℝ) ^ (-(↑k : ℤ)) *
+                            avg i) →
+                      (∀ (i : Fin d), (0 : ℝ) ≤ avg i) →
+                        ∀ (i : Fin d),
+                          ∀ x ∈ openCubeAtScale z n,
+                            |euclideanCoordDeriv i u x - euclideanCoordDeriv i u z| ≤
+                              (8 : ℝ) ^ (d + (1 : ℕ)) * (↑d : ℝ) * C₀ / Book.Ch01.euclideanUnitBallVolume d *
+                                  (3 : ℝ) ^ (-(↑k : ℤ)) *
+                                avg i := by
+  intro d _ C₀ _ _ u z n k avg hDsmooth hopnorm hprefac havgnn i x hx
+  have hdiff : ∀ w ∈ openCubeAtScale z n, DifferentiableAt ℝ (euclideanCoordDeriv i u) w :=
+    fun w _ => ((hDsmooth i).differentiable (by simp)) w
+  have hmvt := (convex_openCubeAtScale z n).norm_image_sub_le_of_norm_fderiv_le
+    hdiff (fun w hw => hopnorm i w hw) (mem_openCubeAtScale_self z n) hx
+  have hnorm : ‖x - z‖ ≤ (3 : ℝ) ^ n :=
+    norm_sub_le_of_mem_openCubeAtScale hx (mem_openCubeAtScale_self z n)
+  have hcnn : (0 : ℝ) ≤ (d : ℝ) * (C₀ / ((3 : ℝ) ^ (n + (k : ℤ)) / 8) *
+      (((3 : ℝ) ^ (n + (k : ℤ))) ^ d * avg i
+        / (((3 : ℝ) ^ (n + (k : ℤ)) / 8) ^ d
+            * Book.Ch01.euclideanUnitBallVolume d))) := by
+    have := havgnn i
+    have h1 : (0 : ℝ) ≤ C₀ / ((3 : ℝ) ^ (n + (k : ℤ)) / 8) := by positivity
+    have h2 : (0 : ℝ) ≤ ((3 : ℝ) ^ (n + (k : ℤ))) ^ d * avg i
+        / (((3 : ℝ) ^ (n + (k : ℤ)) / 8) ^ d
+            * Book.Ch01.euclideanUnitBallVolume d) := by positivity
+    positivity
+  calc |euclideanCoordDeriv i u x - euclideanCoordDeriv i u z|
+      ≤ (d : ℝ) * (C₀ / ((3 : ℝ) ^ (n + (k : ℤ)) / 8) *
+          (((3 : ℝ) ^ (n + (k : ℤ))) ^ d * avg i
+            / (((3 : ℝ) ^ (n + (k : ℤ)) / 8) ^ d
+                * Book.Ch01.euclideanUnitBallVolume d))) * ‖x - z‖ := hmvt
+    _ ≤ (d : ℝ) * (C₀ / ((3 : ℝ) ^ (n + (k : ℤ)) / 8) *
+          (((3 : ℝ) ^ (n + (k : ℤ))) ^ d * avg i
+            / (((3 : ℝ) ^ (n + (k : ℤ)) / 8) ^ d
+                * Book.Ch01.euclideanUnitBallVolume d))) * (3 : ℝ) ^ n :=
+        mul_le_mul_of_nonneg_left hnorm hcnn
+    _ = _ := hprefac i
+
 /-- **The arbitrary-gap oscillation decay for a harmonic gradient.**
 
 If `u` is smooth and harmonic on the coarse concentric cube `z + cu_{n+k}` with
@@ -202,18 +319,18 @@ theorem exists_gradient_oscillation_gap_decay {d : ℕ} (hd : 0 < d) :
         = euclideanCoordDeriv p (euclideanCoordDeriv i u) := by
     intro i p
     funext w
-    show fderiv ℝ (fun x => euclideanCoordDeriv i u x - c i) w (basisVec p)
+    change fderiv ℝ (fun x => euclideanCoordDeriv i u x - c i) w (basisVec p)
       = fderiv ℝ (euclideanCoordDeriv i u) w (basisVec p)
     rw [fderiv_sub_const]
   have hglap : ∀ (i : Fin d) (x : Vec d),
       euclideanCoordLaplacian (fun y => euclideanCoordDeriv i u y - c i) x
         = euclideanCoordLaplacian (euclideanCoordDeriv i u) x := by
     intro i x
-    show ∑ p : Fin d, euclideanCoordSecondDeriv p p
+    change ∑ p : Fin d, euclideanCoordSecondDeriv p p
         (fun y => euclideanCoordDeriv i u y - c i) x
       = ∑ p : Fin d, euclideanCoordSecondDeriv p p (euclideanCoordDeriv i u) x
     refine Finset.sum_congr rfl fun p _ => ?_
-    show fderiv ℝ (euclideanCoordDeriv p (fun y => euclideanCoordDeriv i u y - c i)) x
+    change fderiv ℝ (euclideanCoordDeriv p (fun y => euclideanCoordDeriv i u y - c i)) x
         (basisVec p)
       = fderiv ℝ (euclideanCoordDeriv p (euclideanCoordDeriv i u)) x (basisVec p)
     rw [hgderiv i p]
@@ -311,38 +428,8 @@ theorem exists_gradient_oscillation_gap_decay {d : ℕ} (hd : 0 < d) :
     rw [havg i]
     exact mul_nonneg (inv_nonneg.mpr ENNReal.toReal_nonneg)
       (integral_nonneg fun x => abs_nonneg _)
-  have hlip : ∀ (i : Fin d) (x : Vec d), x ∈ openCubeAtScale z n →
-      |euclideanCoordDeriv i u x - euclideanCoordDeriv i u z|
-        ≤ 8 ^ (d + 1) * (d : ℝ) * C₀ / Book.Ch01.euclideanUnitBallVolume d *
-            (3 : ℝ) ^ (-(k : ℤ)) * avg i := by
-    intro i x hx
-    have hdiff : ∀ w ∈ openCubeAtScale z n, DifferentiableAt ℝ (euclideanCoordDeriv i u) w :=
-      fun w _ => ((hDsmooth i).differentiable (by simp)) w
-    have hmvt := (convex_openCubeAtScale z n).norm_image_sub_le_of_norm_fderiv_le
-      hdiff (fun w hw => hopnorm i w hw) (mem_openCubeAtScale_self z n) hx
-    have hnorm : ‖x - z‖ ≤ (3 : ℝ) ^ n :=
-      norm_sub_le_of_mem_openCubeAtScale hx (mem_openCubeAtScale_self z n)
-    have hcnn : (0 : ℝ) ≤ (d : ℝ) * (C₀ / ((3 : ℝ) ^ (n + (k : ℤ)) / 8) *
-        (((3 : ℝ) ^ (n + (k : ℤ))) ^ d * avg i
-          / (((3 : ℝ) ^ (n + (k : ℤ)) / 8) ^ d
-              * Book.Ch01.euclideanUnitBallVolume d))) := by
-      have := havgnn i
-      have h1 : (0 : ℝ) ≤ C₀ / ((3 : ℝ) ^ (n + (k : ℤ)) / 8) := by positivity
-      have h2 : (0 : ℝ) ≤ ((3 : ℝ) ^ (n + (k : ℤ))) ^ d * avg i
-          / (((3 : ℝ) ^ (n + (k : ℤ)) / 8) ^ d
-              * Book.Ch01.euclideanUnitBallVolume d) := by positivity
-      positivity
-    calc |euclideanCoordDeriv i u x - euclideanCoordDeriv i u z|
-        ≤ (d : ℝ) * (C₀ / ((3 : ℝ) ^ (n + (k : ℤ)) / 8) *
-            (((3 : ℝ) ^ (n + (k : ℤ))) ^ d * avg i
-              / (((3 : ℝ) ^ (n + (k : ℤ)) / 8) ^ d
-                  * Book.Ch01.euclideanUnitBallVolume d))) * ‖x - z‖ := hmvt
-      _ ≤ (d : ℝ) * (C₀ / ((3 : ℝ) ^ (n + (k : ℤ)) / 8) *
-            (((3 : ℝ) ^ (n + (k : ℤ))) ^ d * avg i
-              / (((3 : ℝ) ^ (n + (k : ℤ)) / 8) ^ d
-                  * Book.Ch01.euclideanUnitBallVolume d))) * (3 : ℝ) ^ n :=
-          mul_le_mul_of_nonneg_left hnorm hcnn
-      _ = _ := hprefac i
+  have hlip := @gradientOscillation_affineLipschitzBound (d) (hd) (C₀) (hC₀nn) (hω) (u) (z) (n)
+    (k) (avg) (hDsmooth) (hopnorm) (hprefac) (havgnn)
   -- step 4: from the pointwise bound to the mean-square oscillation
   have hcs : ∀ i : Fin d, avg i ^ 2 ≤
       Book.Ch01.meanSquareDeviationOn (openCubeAtScale z (n + (k : ℤ)))
@@ -354,48 +441,8 @@ theorem exists_gradient_oscillation_gap_decay {d : ℕ} (hd : 0 < d) :
       (integrableOn_openCubeAtScale_of_continuous ((hDcont i).sub continuous_const) z _)
       (integrableOn_openCubeAtScale_of_continuous
         (((hDcont i).sub continuous_const).pow 2) z _)
-  have hptw : ∀ x ∈ openCubeAtScale z n,
-      vecNormSq (euclideanGradient u x - euclideanGradient u z)
-        ≤ (8 ^ (d + 1) * (d : ℝ) * C₀ / Book.Ch01.euclideanUnitBallVolume d *
-            (3 : ℝ) ^ (-(k : ℤ))) ^ 2 *
-          Book.Ch01.meanSquareDeviationVecOn (openCubeAtScale z (n + (k : ℤ)))
-            (euclideanGradient u) c := by
-    intro x hx
-    have hexpand : vecNormSq (euclideanGradient u x - euclideanGradient u z)
-        = ∑ i : Fin d, (euclideanCoordDeriv i u x - euclideanCoordDeriv i u z) ^ 2 := by
-      simp [vecNormSq, vecDot, sq, euclideanGradient]
-    rw [hexpand]
-    have hterm : ∀ i : Fin d,
-        (euclideanCoordDeriv i u x - euclideanCoordDeriv i u z) ^ 2
-          ≤ (8 ^ (d + 1) * (d : ℝ) * C₀ / Book.Ch01.euclideanUnitBallVolume d *
-              (3 : ℝ) ^ (-(k : ℤ))) ^ 2 * avg i ^ 2 := by
-      intro i
-      have hb := hlip i x hx
-      have hnn : (0 : ℝ) ≤ 8 ^ (d + 1) * (d : ℝ) * C₀ /
-          Book.Ch01.euclideanUnitBallVolume d * (3 : ℝ) ^ (-(k : ℤ)) * avg i :=
-        mul_nonneg (mul_nonneg hKnn (by positivity)) (havgnn i)
-      have hsq : (euclideanCoordDeriv i u x - euclideanCoordDeriv i u z) ^ 2
-          ≤ (8 ^ (d + 1) * (d : ℝ) * C₀ / Book.Ch01.euclideanUnitBallVolume d *
-              (3 : ℝ) ^ (-(k : ℤ)) * avg i) ^ 2 := by
-        rw [← sq_abs]
-        exact pow_le_pow_left₀ (abs_nonneg _) hb 2
-      calc (euclideanCoordDeriv i u x - euclideanCoordDeriv i u z) ^ 2
-          ≤ (8 ^ (d + 1) * (d : ℝ) * C₀ / Book.Ch01.euclideanUnitBallVolume d *
-              (3 : ℝ) ^ (-(k : ℤ)) * avg i) ^ 2 := hsq
-        _ = (8 ^ (d + 1) * (d : ℝ) * C₀ / Book.Ch01.euclideanUnitBallVolume d *
-              (3 : ℝ) ^ (-(k : ℤ))) ^ 2 * avg i ^ 2 := by ring
-    calc ∑ i : Fin d, (euclideanCoordDeriv i u x - euclideanCoordDeriv i u z) ^ 2
-        ≤ ∑ i : Fin d, (8 ^ (d + 1) * (d : ℝ) * C₀ /
-              Book.Ch01.euclideanUnitBallVolume d * (3 : ℝ) ^ (-(k : ℤ))) ^ 2 * avg i ^ 2 :=
-          Finset.sum_le_sum fun i _ => hterm i
-      _ = (8 ^ (d + 1) * (d : ℝ) * C₀ / Book.Ch01.euclideanUnitBallVolume d *
-            (3 : ℝ) ^ (-(k : ℤ))) ^ 2 * ∑ i : Fin d, avg i ^ 2 := by
-          rw [Finset.mul_sum]
-      _ ≤ (8 ^ (d + 1) * (d : ℝ) * C₀ / Book.Ch01.euclideanUnitBallVolume d *
-            (3 : ℝ) ^ (-(k : ℤ))) ^ 2 *
-          Book.Ch01.meanSquareDeviationVecOn (openCubeAtScale z (n + (k : ℤ)))
-            (euclideanGradient u) c :=
-          mul_le_mul_of_nonneg_left (Finset.sum_le_sum fun i _ => hcs i) (sq_nonneg _)
+  have hptw := @correctorGradient_oscillation_pointwise_bound (d) (C₀) (hKnn) (u) (z) (n) (k) (c)
+    (avg) (havgnn) (hlip) (hcs)
   have hdev : Book.Ch01.meanSquareDeviationVecOn (openCubeAtScale z n)
       (euclideanGradient u) (euclideanGradient u z)
       ≤ (8 ^ (d + 1) * (d : ℝ) * C₀ / Book.Ch01.euclideanUnitBallVolume d *

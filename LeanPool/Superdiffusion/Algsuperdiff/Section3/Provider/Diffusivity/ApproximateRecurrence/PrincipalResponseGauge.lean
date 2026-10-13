@@ -159,7 +159,7 @@ private theorem blockVecDot_blockMatrixOfCoarseMatrices_load
           vecDot (matVecMul M.kappa p)
             (matVecMul M.sigmaStarInv (matVecMul M.kappa p)) -
           vecDot (matVecMul M.kappa p) (matVecMul M.sigmaStarInv q) := by
-    show vecDot p
+    change vecDot p
         (matVecMul (M.sigma + matTranspose M.kappa * M.sigmaStarInv * M.kappa) p +
           matVecMul (-(matTranspose M.kappa * M.sigmaStarInv)) q) = _
     rw [add_matVecMul, neg_matVecMul, vecDot_add_right, vecDot_add_right,
@@ -169,7 +169,7 @@ private theorem blockVecDot_blockMatrixOfCoarseMatrices_load
       vecDot q ((blockMatVecMul (blockMatrixOfCoarseMatrices M) (p, q)).2) =
         -vecDot q (matVecMul M.sigmaStarInv (matVecMul M.kappa p)) +
           vecDot q (matVecMul M.sigmaStarInv q) := by
-    show vecDot q
+    change vecDot q
         (matVecMul (-(M.sigmaStarInv * M.kappa)) p + matVecMul M.sigmaStarInv q) = _
     rw [neg_matVecMul, ← matVecMul_mul, vecDot_add_right, vecDot_neg_right]
   have hsquare :

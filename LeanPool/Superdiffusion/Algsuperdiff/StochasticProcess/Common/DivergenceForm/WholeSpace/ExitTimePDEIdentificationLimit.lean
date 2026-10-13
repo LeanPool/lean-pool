@@ -151,7 +151,7 @@ theorem cubeTorsionRepresentative_ae (v : ℕ) :
       htrunc hmem
     rw [hx, domainExtension_of_mem hmem, hadd, Pi.add_apply, hsmul,
       Pi.smul_apply, smul_eq_mul, hone, htors, unitShift_coe, one_mul]
-    show A.cubeTorsionDatum v x = _
+    change A.cubeTorsionDatum v x = _
     rw [cubeTorsionDatum_apply, cubeOneDatum_of_mem hmem, htrunc]
   have h1 := A.analyticCubeResolvent_ae unitShift
     (A.measurable_cubeTorsionDatum v) (A.abs_cubeTorsionDatum_le v) v

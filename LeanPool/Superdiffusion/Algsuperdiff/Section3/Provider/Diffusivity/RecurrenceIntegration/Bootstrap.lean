@@ -620,7 +620,7 @@ theorem sq_deviation_core_explicit
         ⌊adaptStep δ ν cstar γ k⌋)
           = 2 * recurrenceIncrement cstar γ (k - ⌊adaptStep δ ν cstar γ k⌋) k :=
         recurrenceComparator_sub_eq_two_increment hγ (by omega)
-      show |((s k) ^ 2 - recurrenceComparator ν cstar γ k)
+      change |((s k) ^ 2 - recurrenceComparator ν cstar γ k)
             - ((s (k - ⌊adaptStep δ ν cstar γ k⌋)) ^ 2
               - recurrenceComparator ν cstar γ (k - ⌊adaptStep δ ν cstar γ k⌋))|
           ≤ recurrenceDescentConstant * R * recurrenceComparator ν cstar γ k

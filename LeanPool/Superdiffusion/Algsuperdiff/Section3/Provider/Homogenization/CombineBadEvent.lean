@@ -345,7 +345,7 @@ theorem mem_observationScaleBadEvent_iff [NeZero d] (M : ABKModel d) (L m : ℤ)
   have hle := lambdaSq_le_LambdaSq_oneCube (originCube d m)
     (Cutoff.coefficientCutoffTriadicCoeffFamily M L omega) quarter_pos
     (le_refl (1 : ℝ))
-  show ¬ (_ ∧ _) ↔ _
+  change ¬ (_ ∧ _) ↔ _
   rw [cutoffUpperEllipticity_eq_LambdaSq M m L quarter_pos exponentOne
       (q' := Ch02.MultiscaleExponent.finite 1) rfl,
     cutoffLowerEllipticityInv_eq_lambdaSq_inv M m L quarter_pos exponentOne

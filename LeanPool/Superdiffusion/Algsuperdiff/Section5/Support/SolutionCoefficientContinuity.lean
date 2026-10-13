@@ -110,7 +110,7 @@ theorem abs_setIntegral_vecDot_le_of_norm_le (U : Set (Vec d)) (hU : MeasurableS
         ∫ x in U, ‖K x‖ ^ (2 : ℝ) ∂volume = ∫ x in U, ‖K x‖ ^ (2 : ℕ) ∂volume := by
       intro K
       refine integral_congr_ae (Filter.Eventually.of_forall fun x => ?_)
-      show ‖K x‖ ^ (2 : ℝ) = ‖K x‖ ^ (2 : ℕ)
+      change ‖K x‖ ^ (2 : ℝ) = ‖K x‖ ^ (2 : ℕ)
       rw [← Real.rpow_natCast (‖K x‖) 2]
       norm_num
     rw [hrw H, hrw G, Real.sqrt_eq_rpow, Real.sqrt_eq_rpow] at *
@@ -196,7 +196,7 @@ theorem sqrt_energy_grad_sub_le {y : Vec d} {n : ℤ} {a b : CoeffField d} {lam 
         vecDot (matVecMul (a x) (w.toH1Function.grad x)) (w.toH1Function.grad x) ∂volume := by
     refine integral_mono_ae hSqInt hEnergyInt ((ae_restrict_iff' hUmeas).2 ?_)
     refine Filter.Eventually.of_forall fun x hx => ?_
-    show lam * vecNormSq (w.toH1Function.grad x) ≤
+    change lam * vecNormSq (w.toH1Function.grad x) ≤
       vecDot (matVecMul (a x) (w.toH1Function.grad x)) (w.toH1Function.grad x)
     rw [vecDot_comm]
     exact (hEll.2 x hx).2.2.1 (w.toH1Function.grad x)
@@ -246,7 +246,7 @@ theorem sqrt_energy_grad_sub_le {y : Vec d} {n : ℤ} {a b : CoeffField d} {lam 
   have hgrad : (∫ x in cubeSetAt y n, ‖u.grad x - v.grad x‖ ^ (2 : ℕ) ∂volume) =
       ∫ x in cubeSetAt y n, ‖w.toH1Function.grad x‖ ^ (2 : ℕ) ∂volume := by
     refine integral_congr_ae (Filter.Eventually.of_forall fun x => ?_)
-    show ‖u.grad x - v.grad x‖ ^ (2 : ℕ) = ‖w.toH1Function.grad x‖ ^ (2 : ℕ)
+    change ‖u.grad x - v.grad x‖ ^ (2 : ℕ) = ‖w.toH1Function.grad x‖ ^ (2 : ℕ)
     rw [hwg x]
   rw [hgrad]
   rcases eq_or_lt_of_le hSnn with hzero | hpos

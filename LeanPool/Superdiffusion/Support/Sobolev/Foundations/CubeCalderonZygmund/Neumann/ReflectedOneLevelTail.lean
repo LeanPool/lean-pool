@@ -38,6 +38,253 @@ namespace CubeCalderonZygmund
 
 open MeasureTheory Set
 
+private theorem reflectedOneLevelTail_comparisonBounds1 :
+    ∀ {d : ℕ} {m : ℤ} {sigma0 M level : ℝ} (u : H1MeanZeroFunction (openCubeSet (originCube d m)))
+      (H : Vec d → Vec d),
+      let Q : Set (Vec d) := openCubeSet (originCube d m);
+      let P : Set (Vec d) := openCubeSet (originCube d (m + (1 : ℤ)));
+      let fu : Vec d → HilbertVec d := hilbertifyVecField u.toH1Function.grad;
+      ∀ (uP : H1Function (openCubeSet (originCube d (m + (1 : ℤ)))))
+        (huP_grad :
+          uP.grad = cubeCoordinateFoldReflectedVectorField (originCube d m) fun (y : Vec d) => u.toH1Function.grad y),
+        let HP : Vec d → Vec d := cubeCoordinateFoldReflectedVectorField (originCube d m) H;
+        let F : Vec d → HilbertVec d := reflectedParentGradientExtension m uP;
+        let Hext : Vec d → Vec d := reflectedParentDatumExtension m HP;
+        let gext : Vec d → HilbertVec d := sigma0⁻¹ • hilbertifyVecField Hext;
+        let T : Set (Vec d) := {x : Vec d | M * level < ‖F x‖} ∩ Q;
+        ∀ (D : Set (Vec d)) (hQP : Q ⊆ P) (hQmeas : MeasurableSet Q) (hPmeas : MeasurableSet P)
+          (hFQ : F =ᵐ[volume.restrict Q] fu)
+          (hnuD : (sqWeightedMeasure F volume : (a : Set (Vec d)) → ℝ≥0∞) Dᶜ = (0 : ℝ≥0∞)),
+          (sqWeightedMeasure F volume : (a : Set (Vec d)) → ℝ≥0∞) (T ∩ D) =
+              (sqWeightedMeasure F volume : (a : Set (Vec d)) → ℝ≥0∞) T ∧
+            (∀ (a : ℝ),
+                (sqWeightedMeasure F volume : (a : Set (Vec d)) → ℝ≥0∞) ({x : Vec d | a < ‖F x‖} ∩ P) =
+                  (sqWeightedMeasure fu volume : (a : Set (Vec d)) → ℝ≥0∞) ({x : Vec d | a < ‖fu x‖} ∩ Q) *
+                    (3 : ℝ≥0∞) ^ d) ∧
+              (sqWeightedMeasure F volume : (a : Set (Vec d)) → ℝ≥0∞) T =
+                  (sqWeightedMeasure fu volume : (a : Set (Vec d)) → ℝ≥0∞) ({x : Vec d | M * level < ‖fu x‖} ∩ Q) ∧
+                (fun (x : Vec d) =>
+                      HilbertVec.ofVec (cubeCoordinateFoldReflectedVectorField (originCube d m) (sigma0⁻¹ • H) x)) =
+                    sigma0⁻¹ • hilbertifyVecField HP ∧
+                  gext = P.indicator (sigma0⁻¹ • hilbertifyVecField HP) := by
+  intro d m sigma0 M level u H Q P fu uP huP_grad HP F Hext gext T D hQP hQmeas hPmeas hFQ hnuD
+  have hTD : sqWeightedMeasure F volume (T ∩ D) =
+      sqWeightedMeasure F volume T :=
+    MeasureTheory.measure_inter_conull hnuD
+  have hfu_meas : AEStronglyMeasurable fu (volume.restrict Q) := by
+    simpa only [fu, Q, volumeMeasureOn] using
+      (memHilbertVectorL2_hilbertifyVecField
+        u.toH1Function.grad_memVectorL2).aestronglyMeasurable
+  have hF_tail (a : ℝ) :
+      sqWeightedMeasure F volume ({x | a < ‖F x‖} ∩ P) =
+        sqWeightedMeasure fu volume ({x | a < ‖fu x‖} ∩ Q) *
+          ((3 : ℝ≥0∞) ^ d) := by
+    have hindicator := sqWeightedMeasure_indicator_tail_inter_eq_of_subset
+      (μ := volume) (f := hilbertifyVecField uP.grad) (a := a)
+      hPmeas hPmeas (by rintro x hx; exact hx)
+    have hreflect :
+        sqWeightedMeasure F volume ({x | a < ‖F x‖} ∩ P) =
+          sqWeightedMeasure
+            (fun x ↦ HilbertVec.ofVec
+              (cubeCoordinateFoldReflectedVectorField (originCube d m)
+                (fun y ↦ u.toH1Function.grad y) x)) volume
+            ({x | a < ‖HilbertVec.ofVec
+              (cubeCoordinateFoldReflectedVectorField (originCube d m)
+                (fun y ↦ u.toH1Function.grad y) x)‖} ∩ P) := by
+      simpa only [F, P, reflectedParentGradientExtension, huP_grad] using!
+        hindicator
+    calc
+      sqWeightedMeasure F volume ({x | a < ‖F x‖} ∩ P) =
+          sqWeightedMeasure
+            (fun x ↦ HilbertVec.ofVec
+              (cubeCoordinateFoldReflectedVectorField (originCube d m)
+                (fun y ↦ u.toH1Function.grad y) x)) volume
+            ({x | a < ‖HilbertVec.ofVec
+              (cubeCoordinateFoldReflectedVectorField (originCube d m)
+                (fun y ↦ u.toH1Function.grad y) x)‖} ∩ P) := hreflect
+      _ = ((3 : ℝ≥0∞) ^ d) *
+          sqWeightedMeasure fu volume ({x | a < ‖fu x‖} ∩ Q) := by
+            simpa only [fu, Q, mul_comm] using!
+              sqWeightedMeasure_reflectedGradient_tail
+                (fun y ↦ u.toH1Function.grad y) hfu_meas
+      _ = sqWeightedMeasure fu volume ({x | a < ‖fu x‖} ∩ Q) *
+          ((3 : ℝ≥0∞) ^ d) := by ring
+  have hFQpoint : ∀ x ∈ Q, F x = fu x := by
+    intro x hx
+    change (P.indicator (hilbertifyVecField uP.grad)) x = fu x
+    rw [Set.indicator_of_mem (hQP hx)]
+    change HilbertVec.ofVec (uP.grad x) =
+      HilbertVec.ofVec (u.toH1Function.grad x)
+    rw [huP_grad,
+      cubeCoordinateFoldReflectedVectorField_eq_self_of_mem_openCubeSet
+        (originCube d m) _ hx]
+  have hT_eq : T = {x | M * level < ‖fu x‖} ∩ Q := by
+    ext x
+    simp only [T, Set.mem_inter_iff, Set.mem_ofPred_eq]
+    constructor
+    · intro hx
+      exact ⟨by rw [hFQpoint x hx.2] at hx; exact hx.1, hx.2⟩
+    · intro hx
+      exact ⟨by rw [hFQpoint x hx.2]; exact hx.1, hx.2⟩
+  have hT_source : sqWeightedMeasure F volume T =
+      sqWeightedMeasure fu volume
+        ({x | M * level < ‖fu x‖} ∩ Q) := by
+    rw [hT_eq]
+    exact sqWeightedMeasure_apply_inter_eq_of_ae_eq_restrict hQmeas hFQ
+  have hHP_scalar :
+      (fun x ↦ HilbertVec.ofVec
+        (cubeCoordinateFoldReflectedVectorField (originCube d m)
+          (sigma0⁻¹ • H) x)) =
+        sigma0⁻¹ • hilbertifyVecField HP := by
+    funext x
+    change (HilbertVec.ofVecL d)
+        (cubeCoordinateFoldReflectedVectorField (originCube d m)
+          (sigma0⁻¹ • H) x) =
+      sigma0⁻¹ • (HilbertVec.ofVecL d) (HP x)
+    rw [← (HilbertVec.ofVecL d).map_smul]
+    congr 1
+    funext i
+    simp only [HP, cubeCoordinateFoldReflectedVectorField, Pi.smul_apply,
+      smul_eq_mul]
+    ring
+  have hgext_indicator :
+      gext = P.indicator (sigma0⁻¹ • hilbertifyVecField HP) := by
+    change sigma0⁻¹ • hilbertifyVecField Hext =
+      P.indicator (sigma0⁻¹ • hilbertifyVecField HP)
+    rw [show hilbertifyVecField Hext =
+        P.indicator (hilbertifyVecField HP) by
+      simpa only [Hext] using
+        hilbertifyVecField_reflectedParentDatumExtension m HP]
+    funext x
+    change sigma0⁻¹ • (P.indicator (hilbertifyVecField HP)) x =
+      P.indicator (sigma0⁻¹ • hilbertifyVecField HP) x
+    by_cases hx : x ∈ P
+    · rw [Set.indicator_of_mem hx, Set.indicator_of_mem hx]
+      rfl
+    · rw [Set.indicator_of_notMem hx, Set.indicator_of_notMem hx]
+      exact smul_zero _
+  exact ⟨hTD, hF_tail, hT_source, hHP_scalar, hgext_indicator⟩
+
+private theorem reflectedOneLevelTail_comparisonBounds2 :
+    ∀ {d : ℕ} {m : ℤ} {sigma0 eps M level : ℝ} (u : H1MeanZeroFunction (openCubeSet (originCube d m)))
+      (H : Vec d → Vec d) (hH : MemVectorL2 (openCubeSet (originCube d m)) H),
+      let Q : Set (Vec d) := openCubeSet (originCube d m);
+      let P : Set (Vec d) := openCubeSet (originCube d (m + (1 : ℤ)));
+      let fu : Vec d → HilbertVec d := hilbertifyVecField u.toH1Function.grad;
+      let g : Vec d → HilbertVec d := sigma0⁻¹ • hilbertifyVecField H;
+      ∀ (uP : H1Function (openCubeSet (originCube d (m + (1 : ℤ))))),
+        let HP : Vec d → Vec d := cubeCoordinateFoldReflectedVectorField (originCube d m) H;
+        let F : Vec d → HilbertVec d := reflectedParentGradientExtension m uP;
+        let Hext : Vec d → Vec d := reflectedParentDatumExtension m HP;
+        let gext : Vec d → HilbertVec d := sigma0⁻¹ • hilbertifyVecField Hext;
+        let T : Set (Vec d) := {x : Vec d | M * level < ‖F x‖} ∩ Q;
+        ∀ (D : Set (Vec d)) (hPmeas : MeasurableSet P)
+          (stage_hTD :
+            (sqWeightedMeasure (reflectedParentGradientExtension m uP) volume : (a : Set (Vec d)) → ℝ≥0∞)
+                ({x : Vec d | M * level < ‖reflectedParentGradientExtension m uP x‖} ∩ openCubeSet (originCube d m) ∩ D) =
+              (sqWeightedMeasure (reflectedParentGradientExtension m uP) volume : (a : Set (Vec d)) → ℝ≥0∞)
+                ({x : Vec d | M * level < ‖reflectedParentGradientExtension m uP x‖} ∩ openCubeSet (originCube d m)))
+          (stage_hF_tail :
+            ∀ (a : ℝ),
+              (sqWeightedMeasure (reflectedParentGradientExtension m uP) volume : (a : Set (Vec d)) → ℝ≥0∞)
+                  ({x : Vec d | a < ‖reflectedParentGradientExtension m uP x‖} ∩ openCubeSet (originCube d (m + (1 : ℤ)))) =
+                (sqWeightedMeasure (hilbertifyVecField u.toH1Function.grad) volume : (a : Set (Vec d)) → ℝ≥0∞)
+                    ({x : Vec d | a < ‖hilbertifyVecField u.toH1Function.grad x‖} ∩ openCubeSet (originCube d m)) *
+                  (3 : ℝ≥0∞) ^ d)
+          (stage_hT_source :
+            (sqWeightedMeasure (reflectedParentGradientExtension m uP) volume : (a : Set (Vec d)) → ℝ≥0∞)
+                ({x : Vec d | M * level < ‖reflectedParentGradientExtension m uP x‖} ∩ openCubeSet (originCube d m)) =
+              (sqWeightedMeasure (hilbertifyVecField u.toH1Function.grad) volume : (a : Set (Vec d)) → ℝ≥0∞)
+                ({x : Vec d | M * level < ‖hilbertifyVecField u.toH1Function.grad x‖} ∩ openCubeSet (originCube d m)))
+          (stage_hHP_scalar :
+            (fun (x : Vec d) =>
+                HilbertVec.ofVec (cubeCoordinateFoldReflectedVectorField (originCube d m) (sigma0⁻¹ • H) x)) =
+              sigma0⁻¹ • hilbertifyVecField (cubeCoordinateFoldReflectedVectorField (originCube d m) H))
+          (stage_hgext_indicator :
+            sigma0⁻¹ •
+                hilbertifyVecField
+                  (reflectedParentDatumExtension m (cubeCoordinateFoldReflectedVectorField (originCube d m) H)) =
+              (openCubeSet (originCube d (m + (1 : ℤ)))).indicator
+                (sigma0⁻¹ • hilbertifyVecField (cubeCoordinateFoldReflectedVectorField (originCube d m) H))),
+          (sqWeightedMeasure F volume : (a : Set (Vec d)) → ℝ≥0∞) (T ∩ D) =
+              (sqWeightedMeasure F volume : (a : Set (Vec d)) → ℝ≥0∞) T ∧
+            (∀ (a : ℝ),
+                (sqWeightedMeasure (reflectedParentGradientExtension m uP) volume : (a : Set (Vec d)) → ℝ≥0∞)
+                    ({x : Vec d | a < ‖reflectedParentGradientExtension m uP x‖} ∩
+                      openCubeSet (originCube d (m + (1 : ℤ)))) =
+                  (sqWeightedMeasure (hilbertifyVecField u.toH1Function.grad) volume : (a : Set (Vec d)) → ℝ≥0∞)
+                      ({x : Vec d | a < ‖hilbertifyVecField u.toH1Function.grad x‖} ∩ openCubeSet (originCube d m)) *
+                    (3 : ℝ≥0∞) ^ d) ∧
+              (sqWeightedMeasure F volume : (a : Set (Vec d)) → ℝ≥0∞) T =
+                  (sqWeightedMeasure fu volume : (a : Set (Vec d)) → ℝ≥0∞) ({x : Vec d | M * level < ‖fu x‖} ∩ Q) ∧
+                (∀ (a : ℝ),
+                    (sqWeightedMeasure gext volume : (a : Set (Vec d)) → ℝ≥0∞) ({x : Vec d | a < ‖gext x‖} ∩ P) =
+                      (sqWeightedMeasure g volume : (a : Set (Vec d)) → ℝ≥0∞) ({x : Vec d | a < ‖g x‖} ∩ Q) *
+                        (3 : ℝ≥0∞) ^ d) ∧
+                  (oneStoppingBallTailControl F gext eps level : (a : Set (Vec d)) → ℝ≥0∞) P =
+                    (sqWeightedMeasure F volume : (a : Set (Vec d)) → ℝ≥0∞) ({x : Vec d | level / (2 : ℝ) < ‖F x‖} ∩ P) +
+                      ENNReal.ofReal (eps⁻¹ ^ (2 : ℕ)) *
+                        (sqWeightedMeasure gext volume : (a : Set (Vec d)) → ℝ≥0∞)
+                          ({x : Vec d | eps * level / (2 : ℝ) < ‖gext x‖} ∩ P) := by
+  intro d m sigma0 eps M level u H hH Q P fu g uP HP F Hext gext T D hPmeas stage_hTD stage_hF_tail stage_hT_source stage_hHP_scalar stage_hgext_indicator
+  have hTD : sqWeightedMeasure F volume (T ∩ D) =
+      sqWeightedMeasure F volume T := stage_hTD
+  have hF_tail := stage_hF_tail
+  have hT_source : sqWeightedMeasure F volume T =
+      sqWeightedMeasure fu volume
+        ({x | M * level < ‖fu x‖} ∩ Q) := stage_hT_source
+  have hHP_scalar : (fun x ↦ HilbertVec.ofVec
+        (cubeCoordinateFoldReflectedVectorField (originCube d m)
+          (sigma0⁻¹ • H) x)) =
+        sigma0⁻¹ • hilbertifyVecField HP := stage_hHP_scalar
+  have hgext_indicator : gext = P.indicator (sigma0⁻¹ • hilbertifyVecField HP) := stage_hgext_indicator
+  have hH_source_meas :
+      AEStronglyMeasurable (sigma0⁻¹ • hilbertifyVecField H)
+        (volume.restrict Q) :=
+    (memHilbertVectorL2_hilbertifyVecField hH).const_smul sigma0⁻¹
+      |>.aestronglyMeasurable
+  have hgext_tail (a : ℝ) :
+      sqWeightedMeasure gext volume ({x | a < ‖gext x‖} ∩ P) =
+        sqWeightedMeasure g volume ({x | a < ‖g x‖} ∩ Q) *
+          ((3 : ℝ≥0∞) ^ d) := by
+    have hindicator := sqWeightedMeasure_indicator_tail_inter_eq_of_subset
+      (μ := volume) (f := sigma0⁻¹ • hilbertifyVecField HP) (a := a)
+      hPmeas hPmeas (by rintro x hx; exact hx)
+    have hreflect :
+        sqWeightedMeasure gext volume ({x | a < ‖gext x‖} ∩ P) =
+          sqWeightedMeasure
+            (fun x ↦ HilbertVec.ofVec
+              (cubeCoordinateFoldReflectedVectorField (originCube d m)
+                (sigma0⁻¹ • H) x)) volume
+            ({x | a < ‖HilbertVec.ofVec
+              (cubeCoordinateFoldReflectedVectorField (originCube d m)
+                (sigma0⁻¹ • H) x)‖} ∩ P) := by
+      rw [hgext_indicator, hindicator]
+      rw [← hHP_scalar]
+    calc
+      sqWeightedMeasure gext volume ({x | a < ‖gext x‖} ∩ P) =
+          sqWeightedMeasure
+            (fun x ↦ HilbertVec.ofVec
+              (cubeCoordinateFoldReflectedVectorField (originCube d m)
+                (sigma0⁻¹ • H) x)) volume
+            ({x | a < ‖HilbertVec.ofVec
+              (cubeCoordinateFoldReflectedVectorField (originCube d m)
+                (sigma0⁻¹ • H) x)‖} ∩ P) := hreflect
+      _ = ((3 : ℝ≥0∞) ^ d) *
+          sqWeightedMeasure g volume ({x | a < ‖g x‖} ∩ Q) := by
+            simpa only [g, Q, mul_comm] using!
+              sqWeightedMeasure_reflectedGradient_tail
+                (sigma0⁻¹ • H) hH_source_meas
+      _ = sqWeightedMeasure g volume ({x | a < ‖g x‖} ∩ Q) *
+          ((3 : ℝ≥0∞) ^ d) := by ring
+  have hkappa : oneStoppingBallTailControl F gext eps level P =
+      sqWeightedMeasure F volume ({x | level / 2 < ‖F x‖} ∩ P) +
+        ENNReal.ofReal ((eps⁻¹) ^ (2 : ℕ)) *
+          sqWeightedMeasure gext volume
+            ({x | eps * level / 2 < ‖gext x‖} ∩ P) :=
+    oneStoppingBallTailControl_apply_ambient F gext eps level hPmeas
+  exact ⟨hTD, hF_tail, hT_source, hgext_tail, hkappa⟩
+
 /-- The centered-Neumann one-level good-`lambda` bound obtained from the
 even-reflected parent problem. -/
 theorem sqWeightedMeasure_neumannReflected_oneLevel_tail_originCube
@@ -196,146 +443,22 @@ theorem sqWeightedMeasure_neumannReflected_oneLevel_tail_originCube
             (cubeRadius_pos _).le (by norm_num) hdenom)) hyx
   have hnuD : sqWeightedMeasure F volume Dᶜ = 0 :=
     MeasureTheory.withDensity_absolutelyContinuous volume _ hDnull
+  obtain ⟨stage_hTD, stage_hF_tail, stage_hT_source, stage_hHP_scalar, stage_hgext_indicator⟩ :=
+    @reflectedOneLevelTail_comparisonBounds1 (d) (m) (sigma0) (M) (level) (u) (H) (uP) (huP_grad) (D) (hQP) (hQmeas) (hPmeas) (hFQ) (hnuD)
+  obtain ⟨stage_hTD, stage_hF_tail, stage_hT_source, stage_hgext_tail, stage_hkappa⟩ :=
+    @reflectedOneLevelTail_comparisonBounds2 (d) (m) (sigma0) (eps) (M) (level) (u) (H) (hH) (uP) (D) (hPmeas) (stage_hTD) (stage_hF_tail) (stage_hT_source) (stage_hHP_scalar) (stage_hgext_indicator)
   have hTD : sqWeightedMeasure F volume (T ∩ D) =
-      sqWeightedMeasure F volume T :=
-    MeasureTheory.measure_inter_conull hnuD
-  have hfu_meas : AEStronglyMeasurable fu (volume.restrict Q) := by
-    simpa only [fu, Q, volumeMeasureOn] using
-      (memHilbertVectorL2_hilbertifyVecField
-        u.toH1Function.grad_memVectorL2).aestronglyMeasurable
-  have hF_tail (a : ℝ) :
-      sqWeightedMeasure F volume ({x | a < ‖F x‖} ∩ P) =
-        sqWeightedMeasure fu volume ({x | a < ‖fu x‖} ∩ Q) *
-          ((3 : ℝ≥0∞) ^ d) := by
-    have hindicator := sqWeightedMeasure_indicator_tail_inter_eq_of_subset
-      (μ := volume) (f := hilbertifyVecField uP.grad) (a := a)
-      hPmeas hPmeas (by rintro x hx; exact hx)
-    have hreflect :
-        sqWeightedMeasure F volume ({x | a < ‖F x‖} ∩ P) =
-          sqWeightedMeasure
-            (fun x ↦ HilbertVec.ofVec
-              (cubeCoordinateFoldReflectedVectorField (originCube d m)
-                (fun y ↦ u.toH1Function.grad y) x)) volume
-            ({x | a < ‖HilbertVec.ofVec
-              (cubeCoordinateFoldReflectedVectorField (originCube d m)
-                (fun y ↦ u.toH1Function.grad y) x)‖} ∩ P) := by
-      simpa only [F, P, reflectedParentGradientExtension, huP_grad] using!
-        hindicator
-    calc
-      sqWeightedMeasure F volume ({x | a < ‖F x‖} ∩ P) =
-          sqWeightedMeasure
-            (fun x ↦ HilbertVec.ofVec
-              (cubeCoordinateFoldReflectedVectorField (originCube d m)
-                (fun y ↦ u.toH1Function.grad y) x)) volume
-            ({x | a < ‖HilbertVec.ofVec
-              (cubeCoordinateFoldReflectedVectorField (originCube d m)
-                (fun y ↦ u.toH1Function.grad y) x)‖} ∩ P) := hreflect
-      _ = ((3 : ℝ≥0∞) ^ d) *
-          sqWeightedMeasure fu volume ({x | a < ‖fu x‖} ∩ Q) := by
-            simpa only [fu, Q, mul_comm] using!
-              sqWeightedMeasure_openCubeSet_succ_originCube_cubeCoordinateFoldReflectedVectorField_tail
-                (fun y ↦ u.toH1Function.grad y) hfu_meas
-      _ = sqWeightedMeasure fu volume ({x | a < ‖fu x‖} ∩ Q) *
-          ((3 : ℝ≥0∞) ^ d) := by ring
-  have hFQpoint : ∀ x ∈ Q, F x = fu x := by
-    intro x hx
-    change (P.indicator (hilbertifyVecField uP.grad)) x = fu x
-    rw [Set.indicator_of_mem (hQP hx)]
-    change HilbertVec.ofVec (uP.grad x) =
-      HilbertVec.ofVec (u.toH1Function.grad x)
-    rw [huP_grad,
-      cubeCoordinateFoldReflectedVectorField_eq_self_of_mem_openCubeSet
-        (originCube d m) _ hx]
-  have hT_eq : T = {x | M * level < ‖fu x‖} ∩ Q := by
-    ext x
-    simp only [T, Set.mem_inter_iff, Set.mem_ofPred_eq]
-    constructor
-    · intro hx
-      exact ⟨by rw [hFQpoint x hx.2] at hx; exact hx.1, hx.2⟩
-    · intro hx
-      exact ⟨by rw [hFQpoint x hx.2]; exact hx.1, hx.2⟩
+      sqWeightedMeasure F volume T := stage_hTD
+  have hF_tail := stage_hF_tail
   have hT_source : sqWeightedMeasure F volume T =
       sqWeightedMeasure fu volume
-        ({x | M * level < ‖fu x‖} ∩ Q) := by
-    rw [hT_eq]
-    exact sqWeightedMeasure_apply_inter_eq_of_ae_eq_restrict hQmeas hFQ
-  have hHP_scalar :
-      (fun x ↦ HilbertVec.ofVec
-        (cubeCoordinateFoldReflectedVectorField (originCube d m)
-          (sigma0⁻¹ • H) x)) =
-        sigma0⁻¹ • hilbertifyVecField HP := by
-    funext x
-    change (HilbertVec.ofVecL d)
-        (cubeCoordinateFoldReflectedVectorField (originCube d m)
-          (sigma0⁻¹ • H) x) =
-      sigma0⁻¹ • (HilbertVec.ofVecL d) (HP x)
-    rw [← (HilbertVec.ofVecL d).map_smul]
-    congr 1
-    funext i
-    simp only [HP, cubeCoordinateFoldReflectedVectorField, Pi.smul_apply,
-      smul_eq_mul]
-    ring
-  have hgext_indicator :
-      gext = P.indicator (sigma0⁻¹ • hilbertifyVecField HP) := by
-    change sigma0⁻¹ • hilbertifyVecField Hext =
-      P.indicator (sigma0⁻¹ • hilbertifyVecField HP)
-    rw [show hilbertifyVecField Hext =
-        P.indicator (hilbertifyVecField HP) by
-      simpa only [Hext] using
-        hilbertifyVecField_reflectedParentDatumExtension m HP]
-    funext x
-    change sigma0⁻¹ • (P.indicator (hilbertifyVecField HP)) x =
-      P.indicator (sigma0⁻¹ • hilbertifyVecField HP) x
-    by_cases hx : x ∈ P
-    · rw [Set.indicator_of_mem hx, Set.indicator_of_mem hx]
-      rfl
-    · rw [Set.indicator_of_notMem hx, Set.indicator_of_notMem hx]
-      exact smul_zero _
-  have hH_source_meas :
-      AEStronglyMeasurable (sigma0⁻¹ • hilbertifyVecField H)
-        (volume.restrict Q) :=
-    (memHilbertVectorL2_hilbertifyVecField hH).const_smul sigma0⁻¹
-      |>.aestronglyMeasurable
-  have hgext_tail (a : ℝ) :
-      sqWeightedMeasure gext volume ({x | a < ‖gext x‖} ∩ P) =
-        sqWeightedMeasure g volume ({x | a < ‖g x‖} ∩ Q) *
-          ((3 : ℝ≥0∞) ^ d) := by
-    have hindicator := sqWeightedMeasure_indicator_tail_inter_eq_of_subset
-      (μ := volume) (f := sigma0⁻¹ • hilbertifyVecField HP) (a := a)
-      hPmeas hPmeas (by rintro x hx; exact hx)
-    have hreflect :
-        sqWeightedMeasure gext volume ({x | a < ‖gext x‖} ∩ P) =
-          sqWeightedMeasure
-            (fun x ↦ HilbertVec.ofVec
-              (cubeCoordinateFoldReflectedVectorField (originCube d m)
-                (sigma0⁻¹ • H) x)) volume
-            ({x | a < ‖HilbertVec.ofVec
-              (cubeCoordinateFoldReflectedVectorField (originCube d m)
-                (sigma0⁻¹ • H) x)‖} ∩ P) := by
-      rw [hgext_indicator, hindicator]
-      rw [← hHP_scalar]
-    calc
-      sqWeightedMeasure gext volume ({x | a < ‖gext x‖} ∩ P) =
-          sqWeightedMeasure
-            (fun x ↦ HilbertVec.ofVec
-              (cubeCoordinateFoldReflectedVectorField (originCube d m)
-                (sigma0⁻¹ • H) x)) volume
-            ({x | a < ‖HilbertVec.ofVec
-              (cubeCoordinateFoldReflectedVectorField (originCube d m)
-                (sigma0⁻¹ • H) x)‖} ∩ P) := hreflect
-      _ = ((3 : ℝ≥0∞) ^ d) *
-          sqWeightedMeasure g volume ({x | a < ‖g x‖} ∩ Q) := by
-            simpa only [g, Q, mul_comm] using!
-              sqWeightedMeasure_openCubeSet_succ_originCube_cubeCoordinateFoldReflectedVectorField_tail
-                (sigma0⁻¹ • H) hH_source_meas
-      _ = sqWeightedMeasure g volume ({x | a < ‖g x‖} ∩ Q) *
-          ((3 : ℝ≥0∞) ^ d) := by ring
+        ({x | M * level < ‖fu x‖} ∩ Q) := stage_hT_source
+  have hgext_tail := stage_hgext_tail
   have hkappa : oneStoppingBallTailControl F gext eps level P =
       sqWeightedMeasure F volume ({x | level / 2 < ‖F x‖} ∩ P) +
         ENNReal.ofReal ((eps⁻¹) ^ (2 : ℕ)) *
           sqWeightedMeasure gext volume
-            ({x | eps * level / 2 < ‖gext x‖} ∩ P) :=
-    oneStoppingBallTailControl_apply_ambient F gext eps level hPmeas
+            ({x | eps * level / 2 < ‖gext x‖} ∩ P) := stage_hkappa
   calc
     sqWeightedMeasure fu volume
         ({x | M * level < ‖fu x‖} ∩ Q) =

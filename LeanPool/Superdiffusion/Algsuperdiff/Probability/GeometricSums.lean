@@ -140,7 +140,7 @@ theorem isBigO_iff_isBigOWith_of_nonneg {X : Ω → ℝ} {Ψ : ℝ → ℝ} {A :
   have habs : (fun ω => |X ω|) = X := funext fun ω => abs_of_nonneg (h0 ω)
   constructor
   · intro h; rw [← habs]; exact h
-  · intro h; show IsBigOWith μ Ψ (fun ω => |X ω|) A; rw [habs]; exact h
+  · intro h; change IsBigOWith μ Ψ (fun ω => |X ω|) A; rw [habs]; exact h
 
 theorem isBigO_of_isBigOWith_of_nonneg {X : Ω → ℝ} {Ψ : ℝ → ℝ} {A : ℝ}
     (h0 : ∀ ω, 0 ≤ X ω) (h : IsBigOWith μ Ψ X A) : IsBigO μ Ψ X A :=

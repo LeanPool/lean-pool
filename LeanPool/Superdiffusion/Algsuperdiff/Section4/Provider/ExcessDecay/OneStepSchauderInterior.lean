@@ -204,7 +204,7 @@ theorem euclideanSqDist_self (p : Vec d) : euclideanSqDist p p = 0 := by
   simp [vecNormSq, HCPolySupport.vecDot]
 
 theorem mem_euclideanBall_self {p : Vec d} {rho : ℝ} (h : 0 < rho) : p ∈ euclideanBall p rho := by
-  show euclideanSqDist p p < rho ^ 2
+  change euclideanSqDist p p < rho ^ 2
   rw [euclideanSqDist_self]
   positivity
 
@@ -212,7 +212,7 @@ theorem mem_euclideanBall_self {p : Vec d} {rho : ℝ} (h : 0 < rho) : p ∈ euc
 `√d · s`: the two-sided norm comparison, in ball form. -/
 theorem mem_euclideanBall_of_norm_lt {p q : Vec d} {rho : ℝ}
     (h : Real.sqrt d * ‖q - p‖ < rho) : q ∈ euclideanBall p rho := by
-  show euclideanSqDist q p < rho ^ 2
+  change euclideanSqDist q p < rho ^ 2
   have h0 : (0 : ℝ) ≤ Real.sqrt d * ‖q - p‖ :=
     mul_nonneg (Real.sqrt_nonneg _) (norm_nonneg _)
   have hnorm : ‖(toEuc q : EuclideanSpace ℝ (Fin d)) - toEuc p‖ ≤ Real.sqrt d * ‖q - p‖ := by

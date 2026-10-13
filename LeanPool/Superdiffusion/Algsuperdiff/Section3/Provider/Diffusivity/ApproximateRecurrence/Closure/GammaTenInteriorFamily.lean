@@ -176,7 +176,7 @@ theorem cubeFamilyAverage_descendantsAverage_le {Q : TriadicCube d} {j : ℕ}
   have hdesc : ∀ R : TriadicCube d, descendantsAverage R i f =
       (((3 : ℝ) ^ d) ^ i)⁻¹ * ∑ R' ∈ descendantsAtDepth R i, f R' := by
     intro R
-    show ((descendantsAtDepth R i).card : ℝ)⁻¹ * _ = _
+    change ((descendantsAtDepth R i).card : ℝ)⁻¹ * _ = _
     rw [descendantsAtDepth_card]
     congr 2
     push_cast
@@ -184,12 +184,12 @@ theorem cubeFamilyAverage_descendantsAverage_le {Q : TriadicCube d} {j : ℕ}
   have hLHS : cubeFamilyAverage I (fun R => descendantsAverage R i f) =
       ((I.card : ℝ))⁻¹ * (((3 : ℝ) ^ d) ^ i)⁻¹ *
         ∑ R ∈ I, ∑ R' ∈ descendantsAtDepth R i, f R' := by
-    show ((I.card : ℝ))⁻¹ * ∑ R ∈ I, descendantsAverage R i f = _
+    change ((I.card : ℝ))⁻¹ * ∑ R ∈ I, descendantsAverage R i f = _
     rw [Finset.sum_congr rfl fun R _ => hdesc R, ← Finset.mul_sum]
     ring
   have hRHS : rho * cubeFamilyAverage T f =
       rho * ((T.card : ℝ))⁻¹ * ∑ R' ∈ T, f R' := by
-    show rho * (((T.card : ℝ))⁻¹ * _) = _
+    change rho * (((T.card : ℝ))⁻¹ * _) = _
     ring
   have hTsumnn : (0 : ℝ) ≤ ∑ R' ∈ T, f R' := Finset.sum_nonneg hf
   have hcoef : ((I.card : ℝ))⁻¹ * (((3 : ℝ) ^ d) ^ i)⁻¹ ≤ rho * ((T.card : ℝ))⁻¹ := by

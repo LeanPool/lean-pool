@@ -150,9 +150,9 @@ theorem eLpNorm_le_schauderDirichletPoincare [NeZero d] {W : Set (Vec d)}
     intro j
     obtain ⟨h1, h2⟩ := hWsub y hy j
     refine ⟨?_, ?_⟩
-    · show c j - (1 / 2 : ℝ) * (3 : ℝ) ^ (n + 1) < y j
+    · change c j - (1 / 2 : ℝ) * (3 : ℝ) ^ (n + 1) < y j
       linarith only [h1, hstep, hpos]
-    · show y j < c j - (1 / 2 : ℝ) * (3 : ℝ) ^ (n + 1) + (3 : ℝ) ^ (n + 1)
+    · change y j < c j - (1 / 2 : ℝ) * (3 : ℝ) ^ (n + 1) + (3 : ℝ) ^ (n + 1)
       linarith only [h2, hstep, hpos]
   have hEmeas : MeasurableSet (A ∩ {y | c i + (1 / 2 : ℝ) * (3 : ℝ) ^ n ≤ y i}) :=
     (isOpen_axisCube _ _).measurableSet.inter
@@ -177,13 +177,13 @@ theorem eLpNorm_le_schauderDirichletPoincare [NeZero d] {W : Set (Vec d)}
   have hinter : A ∩ W = W := Set.inter_eq_self_of_subset_right hWA
   have hvalue : eLpNorm (zeroExtendH1 hWmeas sigma A).toFun 2 (volumeMeasureOn A) =
       eLpNorm sigma.toFun 2 (volume.restrict W) := by
-    show eLpNorm (zeroExtend W sigma.toFun) 2 (volume.restrict A) = _
+    change eLpNorm (zeroExtend W sigma.toFun) 2 (volume.restrict A) = _
     rw [eLpNorm_zeroExtend_eq hWmeas, hinter]
   have hgrads : ∀ j : Fin d,
       eLpNorm (fun y => (zeroExtendH1 hWmeas sigma A).grad y j) 2 (volumeMeasureOn A) =
         eLpNorm (fun y => sigma.grad y j) 2 (volume.restrict W) := by
     intro j
-    show eLpNorm (fun y => zeroExtendGrad W sigma.grad y j) 2 (volume.restrict A) = _
+    change eLpNorm (fun y => zeroExtendGrad W sigma.grad y j) 2 (volume.restrict A) = _
     rw [eLpNorm_zeroExtendGrad_eq hWmeas, hinter]
   have hsumeq : (∑ j : Fin d,
       (eLpNorm (fun y => (zeroExtendH1 hWmeas sigma A).grad y j) 2

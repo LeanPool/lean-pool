@@ -18,6 +18,9 @@ Module imports, support namespace and local option directives adapted for Lean P
 
 @[expose] public section
 
+open Algsuperdiff.Process.SubMarkovKernelSemigroup.IsConservative
+  (sq_le_mul_measure_half_le_exitTime_of_lintegral_le)
+
 
 /-!
 # The survival probability and the padded family, on a general carrier
@@ -50,6 +53,8 @@ open scoped ENNReal NNReal
 
 noncomputable section
 
+
+
 /-! ## 1. The survival probability on a carrier -/
 
 section Survival
@@ -79,7 +84,7 @@ theorem survivalProbabilityConstant_le_measure_le_exitTime_on
     rw [ENNReal.coe_div (by norm_num)]
     norm_num
   have hmain :=
-    Algsuperdiff.Process.SubMarkovKernelSemigroup.IsConservative.sq_le_mul_measure_half_le_exitTime_of_lintegral_le
+    sq_le_mul_measure_half_le_exitTime_of_lintegral_le
       P hP hFeller hKol U hU
     (Cup * T) hupper (clow * T) x hlower
   rw [← hhalf] at hmain

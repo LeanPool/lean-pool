@@ -173,7 +173,7 @@ theorem setIntegral_coordBox_centered {lo hi : Fin d → ℝ} (hlt : ∀ i, lo i
   rw [hpt, setIntegral_coordBox_prod lo hi
     (fun k t => if k = i then t - (lo k + hi k) / 2 else 1)]
   refine Finset.prod_eq_zero (Finset.mem_univ i) ?_
-  show (∫ t in Set.Ioo (lo i) (hi i), if i = i then t - (lo i + hi i) / 2 else (1 : ℝ)) = 0
+  change (∫ t in Set.Ioo (lo i) (hi i), if i = i then t - (lo i + hi i) / 2 else (1 : ℝ)) = 0
   rw [hbody]
   exact integral_Ioo_mid (hlt i).le
 
@@ -191,7 +191,8 @@ theorem setIntegral_coordBox_centered_mul {lo hi : Fin d → ℝ} (hlt : ∀ i, 
     rw [Finset.prod_mul_distrib,
       Finset.prod_ite_eq' Finset.univ i (fun k => x k - (lo k + hi k) / 2),
       Finset.prod_ite_eq' Finset.univ j (fun k => x k - (lo k + hi k) / 2),
-      ite_eq_left (Finset.mem_univ i), ite_eq_left (Finset.mem_univ j), boxCenter_apply, boxCenter_apply]
+      ite_eq_left (Finset.mem_univ i), ite_eq_left (Finset.mem_univ j), boxCenter_apply,
+        boxCenter_apply]
   rw [hpt, setIntegral_coordBox_prod lo hi
     (fun k t => (if k = i then t - (lo k + hi k) / 2 else 1)
       * (if k = j then t - (lo k + hi k) / 2 else 1))]
@@ -235,7 +236,7 @@ theorem setIntegral_coordBox_centered_mul {lo hi : Fin d → ℝ} (hlt : ∀ i, 
       funext t
       rw [ite_eq_left rfl, ite_eq_right hij, mul_one]
     refine Finset.prod_eq_zero (Finset.mem_univ i) ?_
-    show (∫ t in Set.Ioo (lo i) (hi i),
+    change (∫ t in Set.Ioo (lo i) (hi i),
         (if i = i then t - (lo i + hi i) / 2 else 1)
           * (if i = j then t - (lo i + hi i) / 2 else (1 : ℝ))) = 0
     rw [hbody]
@@ -473,9 +474,9 @@ theorem image_sub_coordBox (lo hi : Fin d → ℝ) (v : Vec d) :
     intro j
     obtain ⟨h1, h2⟩ := hx j
     refine ⟨?_, ?_⟩
-    · show lo j - v j < x j - v j
+    · change lo j - v j < x j - v j
       linarith only [h1]
-    · show x j - v j < hi j - v j
+    · change x j - v j < hi j - v j
       linarith only [h2]
   · intro hy
     rw [mem_coordBox_iff] at hy
@@ -484,12 +485,12 @@ theorem image_sub_coordBox (lo hi : Fin d → ℝ) (v : Vec d) :
       intro j
       obtain ⟨h1, h2⟩ := hy j
       refine ⟨?_, ?_⟩
-      · show lo j < y j + v j
+      · change lo j < y j + v j
         linarith only [h1]
-      · show y j + v j < hi j
+      · change y j + v j < hi j
         linarith only [h2]
     · funext j
-      show y j + v j - v j = y j
+      change y j + v j - v j = y j
       ring
 
 private theorem image_sub_eq_preimage_add (W : Set (Vec d)) (v : Vec d) :
@@ -497,11 +498,11 @@ private theorem image_sub_eq_preimage_add (W : Set (Vec d)) (v : Vec d) :
   ext y
   constructor
   · rintro ⟨x, hx, rfl⟩
-    show x - v + v ∈ W
+    change x - v + v ∈ W
     rwa [sub_add_cancel]
   · intro hy
     refine ⟨y + v, hy, ?_⟩
-    show y + v - v = y
+    change y + v - v = y
     abel
 
 /-- **Translation invariance of the normalized seminorm.** -/
@@ -513,7 +514,7 @@ theorem normalizedL2On_comp_sub_right (W : Set (Vec d)) (v : Vec d) (f : Vec d �
       = ∫ x in W, f (x - v) ^ 2 :=
     (measurePreserving_sub_right (volume : Measure (Vec d)) v).setIntegral_image_emb
       (measurableEmbedding_subRight v) (fun y => f y ^ 2) W
-  show Real.sqrt (volumeAverage W fun y => f (y - v) ^ 2)
+  change Real.sqrt (volumeAverage W fun y => f (y - v) ^ 2)
       = Real.sqrt (volumeAverage ((fun z : Vec d => z - v) '' W) fun y => f y ^ 2)
   unfold volumeAverage
   rw [hvol, hint]
@@ -542,7 +543,7 @@ theorem normalizedL2On_const_of_toReal_pos {W : Set (Vec d)}
     unfold volumeAverage
     rw [MeasureTheory.setIntegral_const, MeasureTheory.measureReal_def, smul_eq_mul,
       ← mul_assoc, inv_mul_cancel₀ hne, one_mul]
-  show Real.sqrt (volumeAverage W fun _ : Vec d => c ^ 2) = |c|
+  change Real.sqrt (volumeAverage W fun _ : Vec d => c ^ 2) = |c|
   rw [hAvg, Real.sqrt_sq_eq_abs]
 
 end

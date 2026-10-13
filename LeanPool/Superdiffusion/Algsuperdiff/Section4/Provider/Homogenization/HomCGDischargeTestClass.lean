@@ -118,7 +118,7 @@ theorem ofReal_three_rpow_scale_pair (s : ℝ) (m : ℤ) :
   have hnn : (0 : ℝ) ≤ Real.rpow 3 (s * (m : ℝ)) :=
     Real.rpow_nonneg (by norm_num : (0 : ℝ) ≤ 3) _
   have hprod : Real.rpow 3 (s * (m : ℝ)) * Real.rpow 3 (-s * (m : ℝ)) = 1 := by
-    show (3 : ℝ) ^ (s * (m : ℝ)) * (3 : ℝ) ^ (-s * (m : ℝ)) = 1
+    change (3 : ℝ) ^ (s * (m : ℝ)) * (3 : ℝ) ^ (-s * (m : ℝ)) = 1
     rw [← Real.rpow_add (by norm_num : (0 : ℝ) < 3)]
     have hexp : s * (m : ℝ) + -s * (m : ℝ) = 0 := by ring
     rw [hexp, Real.rpow_zero]

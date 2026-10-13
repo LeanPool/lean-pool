@@ -71,6 +71,7 @@ theorem summable_weighted_maxDescendantB_two
     (by norm_num : (0 : ℝ) < 2)).congr (fun n => ?_)
   rw [rpow_two_div_two]
 
+omit [NeZero d] in
 /-- The literal `q = 2` series formula for `lambda_{s,2}^{-1}`. -/
 theorem lambdaSq_two_inv_eq_tsum
     (Q : TriadicCube d) (A : TriadicCoeffFamily d) {s : ℝ} (hs : 0 < s) :
@@ -83,6 +84,7 @@ theorem lambdaSq_two_inv_eq_tsum
   rw [h]
   exact tsum_congr fun n => by rw [rpow_two_div_two]
 
+omit [NeZero d] in
 /-- The literal `q = 2` series formula for `Lambda_{s,2}`. -/
 theorem LambdaSq_two_eq_tsum
     (Q : TriadicCube d) (A : TriadicCoeffFamily d) {s : ℝ} (hs : 0 < s) :

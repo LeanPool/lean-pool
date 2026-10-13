@@ -280,7 +280,7 @@ theorem meshCellBackground_eval (M : ABKModel d) (n : ℤ) (h : ℕ) (Kc : ℤ)
         (e' + (wD omega.val).toH1Function.grad x,
           e + neumannFluxField (Annealed.sigmaBar M n) omega.val n (n + (h : ℤ)) e'
             (wN omega.val) x) := by
-  show meshCellLoad M n h Kc e e' wD wN R omega +
+  change meshCellLoad M n h Kc e e' wD wN R omega +
       principalFz (Annealed.sigmaBar M n) omega.val n (n + (h : ℤ)) e' R
         (wD omega.val) (wN omega.val) x = _
   exact principalPz_add_principalFz (Annealed.sigmaBar M n) omega.val n (n + (h : ℤ))
@@ -555,10 +555,10 @@ theorem measurable_toHilbertBlockL2OfBlockField_meshCellBackground [NeZero d]
     funext omega
     refine toHilbertBlockL2OfBlockField_congr _ _ fun x => ?_
     refine Prod.ext ?_ ?_
-    · show (meshCellBackground M n h Kc e e' wD wN R omega).potential x = _
+    · change (meshCellBackground M n h Kc e e' wD wN R omega).potential x = _
       rw [meshCellBackground_potential]
       rfl
-    · show (meshCellBackground M n h Kc e e' wD wN R omega).flux x = _
+    · change (meshCellBackground M n h Kc e e' wD wN R omega).flux x = _
       rw [meshCellBackground_flux]
       rfl
   rw [hcongr]

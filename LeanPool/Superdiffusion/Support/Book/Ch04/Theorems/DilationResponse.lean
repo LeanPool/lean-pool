@@ -91,7 +91,7 @@ theorem restrictionResponseJObservableCubeSet_rescaleCoeffField_of_aelocallyUnif
 
 /-- Scalar response observables under the dilation defining
 `restrictionScaleNormalizedLaw`, for arbitrary triadic cubes. -/
-theorem restrictionResponseJObservableCubeSet_dilateCoeffField_neg_nat_of_aelocallyUniformlyElliptic
+theorem restrictionResponse_dilateCoeffField_neg_nat
     {d : ℕ} [NeZero d] {a : RegCoeffField d}
     (ha : AELocallyUniformlyEllipticField a) (k : ℕ)
     (Q : TriadicCube d) (p q : Vec d) :

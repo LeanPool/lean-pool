@@ -121,7 +121,7 @@ theorem measureReal_upperTail_of_uniform_partial [IsFiniteMeasure μ]
     obtain ⟨N, hN⟩ := Filter.eventually_atTop.1 (hdom ω hlt)
     refine Set.mem_iUnion.2 ⟨N, ?_⟩
     intro n hNn
-    show c < W n ω
+    change c < W n ω
     have hn : c + g < W n ω + g := hN n hNn
     linarith only [hn]
   have hE_bound : ∀ N, μ (E N) ≤ ENNReal.ofReal (Real.exp (-(t ^ σ))) := by

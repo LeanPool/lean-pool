@@ -42,9 +42,12 @@ i.e. the product observable, evaluated on the diagonal restriction tuple `R a`,
 reproduces the fixed-phase observable exactly.  The chain is
 1. `phaseSplitEnergy compₙ (R a) = blockEnergyAverage U (glued) compₙ`  (split, `CorePatchEnergy`),
 2. `⨅ₙ blockEnergyAverage U (glued) compₙ = Mu U P glued`  (`mu_eq_iInf …`),
-3. `Mu U P glued = ½ P·𝐀(U; glued) P`  (`mu_eq_half_coarseBlockMatrix_cube`, glued is `(1,Θ)`-elliptic),
-4. `𝐀(U; glued) = 𝐀(U; corridorField (corePatch (R a)))`  (`coarseBlockMatrix_congr_of_ae_eq`, truncation a.e.),
-5. `P·𝐀(U; corridorField (corePatch (R a))) P = F_σ(a)`  (landed `phaseObservable_corePatch_restrict_eq`).
+3. `Mu U P glued = ½ P·𝐀(U; glued) P`  (`mu_eq_half_coarseBlockMatrix_cube`, glued is
+`(1,Θ)`-elliptic),
+4. `𝐀(U; glued) = 𝐀(U; corridorField (corePatch (R a)))`  (`coarseBlockMatrix_congr_of_ae_eq`,
+truncation a.e.),
+5. `P·𝐀(U; corridorField (corePatch (R a))) P = F_σ(a)`  (landed
+`phaseObservable_corePatch_restrict_eq`).
 
 The genuine spatial measurability of the underlying field — required for the
 `IsEllipticFieldOn` hypotheses of links 1 and 3 — is exactly the measurability
@@ -208,7 +211,8 @@ theorem rawPhaseObservable_restrict_eq_of_field [NeZero d]
     coarseBlockMatrix_congr_of_ae_eq haeGlued]
   have hland := phaseObservable_corePatch_restrict_eq hℓ P hK b
   rw [phaseObservable]
-  rw [show (fun k : {k // k ∈ K} => restrictCoeffField (coreBox ℓ σ k.val) b) = Ra from rfl] at hland
+  rw [show (fun k : {k // k ∈ K} =>
+    restrictCoeffField (coreBox ℓ σ k.val) b) = Ra from rfl] at hland
   rw [hland]
   ring
 

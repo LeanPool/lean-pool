@@ -44,7 +44,7 @@ stated about a **realization** `tilde S_z` of the split's second `argmin`: its
 left-hand side is `2 P_z . fint bfA tilde S_z + 2 mu(tilde S_z)`.
 
 The two are reconciled exactly as
-`LocalizationFluctuationSelectEndpoint.blockVecDot_recurrenceP_le_descendantsAverage_switch_add_fluctuation`
+`blockVecDot_recurrenceP_le_descendantsAverage_switch_add_fluctuation`
 reconciles them: at each sample point the proved split
 `LocalizationRecurrenceMesh.exists_localizationRecurrenceMeshSplit_le_descendantsAverage_expanded`
 produces a triple `(S, T, response)` on the whole grid, and
@@ -225,7 +225,7 @@ theorem meshFluctuationCellIntegrand_le_of_besovEnvelope [NeZero d]
   -- the canonical number equals the realized pair
   have hval := localizationFluctuationValue_eq_of_isDoubledMuMinimizerField
     (hS R hR) (hT R hR) (hresp R hR)
-  show localizationFluctuationValue (cubeDomain R)
+  change localizationFluctuationValue (cubeDomain R)
       ((coefficientCutoffTriadicCoeffFamily M (n + (h : ℤ)) omega).coeffOn R)
       (principalPz (Annealed.sigmaBar M n) omega.val n (n + (h : ℤ)) e e' R
         (wD omega.val) (wN omega.val))

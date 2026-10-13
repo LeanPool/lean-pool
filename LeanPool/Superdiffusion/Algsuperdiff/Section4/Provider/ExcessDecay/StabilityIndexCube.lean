@@ -116,6 +116,7 @@ variable {d : ℕ} [NeZero d]
 
 /-! ## 1. The shell series of the `(∞,2)` square -/
 
+omit [NeZero d] in
 /-- Every shell of the `(∞,2)` square is nonnegative. -/
 private theorem shell_nonneg (Q : TriadicCube d) (a : TriadicCoeffFamily d) (a0 : Mat d)
     (l : ℕ) :
@@ -146,6 +147,7 @@ private theorem summable_shell (Q : TriadicCube d) (a : TriadicCoeffFamily d) (a
     (fun l => maxDescendantNormalizedBlockResponseAtScale_le_uniform Q
       (sub_le_self _ (Int.natCast_nonneg l)) a a0)
 
+omit [NeZero d] in
 theorem homogenizationErrorOnCube_infinity_two_nonneg (Q : TriadicCube d)
     (a : TriadicCoeffFamily d) (a0 : Mat d) {s : ℝ} (hs : 0 < s) :
     0 ≤ HomogenizationErrorOnCube Q s .infinity (.finite 2) a a0 := by

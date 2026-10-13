@@ -71,7 +71,7 @@ theorem koopman_zero (f : Lp E 2 μ) : koopman (μ := μ) (0 : Vec d) f = f := b
   filter_upwards [Lp.coeFn_compMeasurePreserving (E := E) (p := 2) f
     (measurePreserving_const_vadd (μ := μ) (0 : Vec d))] with ω hω
   refine hω.trans ?_
-  show f ((0 : Vec d) +ᵥ ω) = f ω
+  change f ((0 : Vec d) +ᵥ ω) = f ω
   rw [zero_vadd]
 
 end Koopman
@@ -302,7 +302,7 @@ private theorem ae_tendsto_mollify_diffQuot (ρ : Mollifier d) (i : Fin d)
       = (quotScale n)⁻¹ • (mollify ρ.toFun φ ((quotScale n • basisVec i) +ᵥ ω)
         - mollify ρ.toFun φ ω) := by
     intro n
-    show mollify ρ.toFun (fun ω' =>
+    change mollify ρ.toFun (fun ω' =>
         (quotScale n)⁻¹ • (φ ((quotScale n • basisVec i) +ᵥ ω') - φ ω')) ω = _
     rw [mollify_smul ρ.toFun ((quotScale n)⁻¹ : ℝ)
         (fun ω' => φ ((quotScale n • basisVec i) +ᵥ ω') - φ ω') ω,
@@ -409,7 +409,7 @@ theorem mollify_coordField_eq {κ : Vec d → ℝ} {F : Ω → HilbertVec d} {ω
       = ∫ y, (PiLp.proj (𝕜 := ℝ) (p := 2) (β := fun _ : Fin d => ℝ) i)
           (κ y • F ((-y) +ᵥ ω)) := by
         refine integral_congr_ae (Filter.Eventually.of_forall fun y => ?_)
-        show κ y • coordField F i ((-y) +ᵥ ω)
+        change κ y • coordField F i ((-y) +ᵥ ω)
           = (PiLp.proj (𝕜 := ℝ) (p := 2) (β := fun _ : Fin d => ℝ) i) (κ y • F ((-y) +ᵥ ω))
         rw [map_smul]
         rfl

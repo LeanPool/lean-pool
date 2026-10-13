@@ -37,5 +37,6 @@ theorem Algsuperdiff.Frozen.Section24.lambda_sensitivity_unconditional {d : ℕ}
           (unitCubeLambda t q a)⁻¹
 -- FROZEN-STATEMENT-END
     := by
-  exact Algsuperdiff.Section24.Sensitivity.Provider.LambdaUnconditional.lambda_sensitivity_unconditional
+  exact
+    Algsuperdiff.Section24.Sensitivity.Provider.LambdaUnconditional.lambda_sensitivity_unconditional
     dimension

@@ -53,7 +53,7 @@ theorem isTwoTermBigOWith_of_isOneSidedOrlicz {Omega : Type*} [MeasurableSpace O
     ext omega
     simp only [Set.mem_ofPred_eq, Set.mem_empty_iff_false, iff_false, not_lt]
     exact hpos.le
-  show mu.real (HCPolySupport.IndependentSums.upperTailEvent (fun _ => (0 : ℝ)) (A2 * t))
+  change mu.real (HCPolySupport.IndependentSums.upperTailEvent (fun _ => (0 : ℝ)) (A2 * t))
     ≤ _
   rw [show HCPolySupport.IndependentSums.upperTailEvent (fun _ : Omega => (0 : ℝ)) (A2 * t)
       = {omega : Omega | A2 * t < (0 : ℝ)} from rfl, hempty]

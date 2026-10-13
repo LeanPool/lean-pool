@@ -119,7 +119,7 @@ theorem enatThreeRpow_rpow {c r : ℝ} (hr : 0 < r) (n : ℕ∞) :
   · rw [htop, enatThreeRpow_top, enatThreeRpow_top, ENNReal.top_rpow_of_pos hr]
   · obtain ⟨k, hk⟩ := WithTop.ne_top_iff_exists.mp hfin
     rw [← hk]
-    show ENNReal.ofReal ((3 : ℝ) ^ (c * (k : ℝ))) ^ r =
+    change ENNReal.ofReal ((3 : ℝ) ^ (c * (k : ℝ))) ^ r =
       ENNReal.ofReal ((3 : ℝ) ^ (c * r * (k : ℝ)))
     rw [ENNReal.ofReal_rpow_of_pos (Real.rpow_pos_of_pos (by norm_num) _),
       ← Real.rpow_mul (by norm_num : (0 : ℝ) ≤ 3)]

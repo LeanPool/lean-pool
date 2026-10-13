@@ -616,7 +616,7 @@ theorem iterPrefactorTwo_le (d : ℕ) {h : ℕ} (hh : 1 ≤ h) (c : ℕ) {θ Se 
       ≤ Real.rpow θ (-(iterConst d * ((h : ℝ) + 1) * ((c : ℝ) + 1))) := by
     have hid : (θ⁻¹) ^ ((h + 2) * (c + 1))
         = Real.rpow θ (-(((h + 2) * (c + 1) : ℕ) : ℝ)) := by
-      show (θ⁻¹) ^ ((h + 2) * (c + 1)) = θ ^ (-(((h + 2) * (c + 1) : ℕ) : ℝ))
+      change (θ⁻¹) ^ ((h + 2) * (c + 1)) = θ ^ (-(((h + 2) * (c + 1) : ℕ) : ℝ))
       rw [Real.rpow_neg (le_of_lt hθ0), Real.rpow_natCast, ← inv_pow]
     rw [hid]
     refine Real.rpow_le_rpow_of_exponent_ge hθ0 hθ1 ?_

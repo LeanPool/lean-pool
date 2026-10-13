@@ -50,7 +50,8 @@ ingredients are
 `s ∈ (0,1/2]`; neither carries a `(1-s)^{-1}` factor there.  The blow-up of
 `liftGeomFactor` is at the endpoint `s → 1`, which this development never
 approaches: the §4.5 parameter selection pins
-`s = |log γ|⁻¹`, and Step 3 additionally records `s < 1/10` for small `γ`.  So the lifting's constant is absolutely bounded at the pin and
+`s = |log γ|⁻¹`, and Step 3 additionally records `s < 1/10` for small `γ`.  So the lifting's
+constant is absolutely bounded at the pin and
 nothing has to be absorbed by the `E_{ThmB}(m)` budget.
 
 ## References

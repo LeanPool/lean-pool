@@ -121,7 +121,7 @@ norm. -/
 theorem matrixOperatorNorm_sub_le_add' (X Y : Mat d) :
     Ch02.matrixOperatorNorm (X - Y) ≤
       Ch02.matrixOperatorNorm X + Ch02.matrixOperatorNorm Y := by
-  show ‖X - Y‖ ≤ ‖X‖ + ‖Y‖
+  change ‖X - Y‖ ≤ ‖X‖ + ‖Y‖
   exact norm_sub_le X Y
 
 end Internal

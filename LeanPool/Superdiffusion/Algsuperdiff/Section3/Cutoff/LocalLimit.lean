@@ -44,7 +44,7 @@ variable {d : ℕ}
 
 /-- The local information on the public cutoff carrier induced from the
 completed lower-shell local sigma-field on the canonical shell sequence. -/
-def cutoffSampleLocalSigma (M : ABKModel d) (m : ℤ) (U : Set (Vec d)) :
+abbrev cutoffSampleLocalSigma (M : ABKModel d) (m : ℤ) (U : Set (Vec d)) :
     MeasurableSpace (CutoffSample d) :=
   (lowerShellLocalCompletion M m U).comap Subtype.val
 

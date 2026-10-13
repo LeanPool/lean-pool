@@ -711,6 +711,713 @@ private theorem integrable_blockVecDot_blockDiag_smul_one_of_entries {d : ℕ}
 
 /-! ## The principal-response comparison -/
 
+private theorem principalResponseTerminal_comparisonBounds1 :
+    ∀ (d : ℕ) (Cbase c C : ℝ) (_ : (1 : ℝ) ≤ Cbase) (_ : (↑d : ℝ) ^ (6 : ℕ) ≤ Cbase)
+      (_ : (0 : ℝ) < c) (_ : (0 : ℝ) < C) (Cload : ℝ) (_ : (0 : ℝ) < Cload)
+      (_ : (0 : ℝ) < (3 : ℝ) ^ (22 : ℝ) * ((2 : ℝ) * C) * Cload ^ (2 : ℕ)) (_ : (0 : ℝ) < (24 : ℝ) ^ (9 : ℕ))
+      (Cterm : ℝ) (_ : (2 : ℝ) / c ≤ Cterm) (_ : (12 : ℝ) / c ^ (2 : ℕ) ≤ Cterm)
+      (_ : (12 : ℝ) * C ^ (2 : ℕ) ≤ Cterm)
+      (_ : (3 : ℝ) * ((3 : ℝ) ^ (22 : ℝ) * ((2 : ℝ) * C) * Cload ^ (2 : ℕ)) * (24 : ℝ) ^ (9 : ℕ) ≤ Cterm)
+      (_ : (1 : ℝ) ≤ Cterm) (M : ABKModel d) (m Kc : ℤ) (hgap : ℕ) (E : { E : ℝ // (1 : ℝ) ≤ E })
+      (_ : (0 : ℕ) < hgap) (_ : Cterm * (Disorder.cstar M)⁻¹ ≤ (↑E : ℝ))
+      (_ : M.gamma ≤ (↑E : ℝ) ^ (-5 : ℤ)) (_ : (↑hgap : ℝ) ≤ (6 : ℝ) * Disorder.cstar M * M.gamma⁻¹) (_ : ℕ)
+      (_ : (0 : ℝ) < M.gamma) (_ : (0 : ℝ) < M.gamma⁻¹) (_ : (0 : ℝ) < Disorder.cstar M)
+      (_ : Disorder.cstar M ≤ (3 / 2 : ℝ)) (_ : (0 : ℝ) < (Disorder.cstar M)⁻¹) (_ : (1 : ℝ) ≤ (↑E : ℝ))
+      (_ : ∀ (T : ℝ), (0 : ℝ) ≤ T → T ≤ Cterm → T * (2 / 3 : ℝ) ≤ (↑E : ℝ)) (_ : (↑E : ℝ) ≤ M.gamma⁻¹)
+      (_ : (↑E : ℝ) ^ (5 : ℕ) ≤ M.gamma⁻¹) (_ : M.gamma ≤ (1 / 1089 : ℝ)),
+      (↑E : ℝ) ≤ M.gamma ^ (-(1 / 5 : ℝ)) ∧
+        (Disorder.cstar M)⁻¹ ≤ M.gamma⁻¹ ∧
+          M.gamma ≤ ((2 : ℝ) * ((3 : ℝ) ^ (22 : ℝ) * ((2 : ℝ) * C) * Cload ^ (2 : ℕ)) * (24 : ℝ) ^ (9 : ℕ))⁻¹ ∧
+            M.gamma / (2 : ℝ) + Real.exp (-(C⁻¹ * (↑E : ℝ)⁻¹ ^ (2 : ℕ) * M.gamma⁻¹)) ≤ M.gamma ∧
+              M.gamma⁻¹ + Real.log (2 : ℝ) ≤
+                  c * Disorder.cstar M * M.gamma⁻¹ * (3 : ℝ) ^ (↑(recurrenceGap recurrenceGapMultiplier M.gamma) : ℝ) ∧
+                M.gamma⁻¹ + Real.log (2 : ℝ) ≤ Real.exp (c * (↑E : ℝ)⁻¹ ^ (2 : ℕ) * M.gamma⁻¹) ∧
+                  (0 : ℤ) < (↑hgap : ℤ) ∧
+                    m - (↑hgap : ℤ) ≤ m - (1 : ℤ) ∧
+                      (↑(↑hgap : ℤ) : ℝ) ≤ (6 : ℝ) * Disorder.cstar M * M.gamma⁻¹ ∧
+                        (2 : ℝ) * (↑d : ℝ) ^ (6 : ℕ) ≤ (2 : ℝ) * Cbase * BadEvents.sensitivityConstMax d ^ (2 : ℕ) := by
+  intro d Cbase _ C _ _ hc _ Cload _ hCm0 h24 _ hT2c hT12 hTC2 hTm hTone M m _ hgap E hhpos hthreshold hgammaE hh _ hgamma0 hinv0 hcstar0 hcstar32 hcinv0 hE1 hproj hEinv hE5 _
+  have hEgamma : (E : ℝ) ≤ M.gamma ^ (-(1 / 5 : ℝ)) :=
+    le_rpow_neg_fifth_of_gamma_le_zpow_neg_five' hE1 hgamma0 hgammaE
+  have hcstarE : (Disorder.cstar M)⁻¹ ≤ (E : ℝ) := by
+    have h := mul_le_mul_of_nonneg_right hTone hcinv0.le
+    rw [one_mul] at h
+    exact le_trans h hthreshold
+  have hcstarinv : (Disorder.cstar M)⁻¹ ≤ M.gamma⁻¹ := le_trans hcstarE hEinv
+  have hsmall : M.gamma ≤
+      (2 * ((3 : ℝ) ^ (22 : ℝ) * (2 * C) * Cload ^ (2 : ℕ)) * 24 ^ (9 : ℕ))⁻¹ := by
+    have hX0 : (0 : ℝ) <
+        2 * ((3 : ℝ) ^ (22 : ℝ) * (2 * C) * Cload ^ (2 : ℕ)) * 24 ^ (9 : ℕ) :=
+      mul_pos (mul_pos (by norm_num) hCm0) h24
+    rw [le_inv_comm₀ hgamma0 hX0]
+    have h := hproj (3 * ((3 : ℝ) ^ (22 : ℝ) * (2 * C) * Cload ^ (2 : ℕ)) * 24 ^ (9 : ℕ))
+      (by positivity) hTm
+    have hid : (3 * ((3 : ℝ) ^ (22 : ℝ) * (2 * C) * Cload ^ (2 : ℕ)) * 24 ^ (9 : ℕ)) *
+        (2 / 3) =
+        2 * ((3 : ℝ) ^ (22 : ℝ) * (2 * C) * Cload ^ (2 : ℕ)) * 24 ^ (9 : ℕ) := by ring
+    linarith [hEinv]
+  -- the window of the bad-event tail, an exp-beats-power step at the exponent `C⁻¹`
+  have hwindow : M.gamma / 2 +
+      Real.exp (-(C⁻¹ * ((E : ℝ)⁻¹) ^ 2 * M.gamma⁻¹)) ≤ M.gamma := by
+    have hy0 : (0 : ℝ) ≤ C⁻¹ * ((E : ℝ)⁻¹) ^ 2 * M.gamma⁻¹ := by positivity
+    have h8C : 8 * C ^ 2 ≤ (E : ℝ) := by
+      have h := hproj (12 * C ^ 2) (by positivity) hTC2
+      linarith
+    have hy2 : (C⁻¹ * ((E : ℝ)⁻¹) ^ 2 * M.gamma⁻¹) ^ 2 =
+        M.gamma⁻¹ * M.gamma⁻¹ / (C ^ 2 * (E : ℝ) ^ (4 : ℕ)) := by
+      field_simp
+    have hden : (0 : ℝ) < C ^ 2 * (E : ℝ) ^ (4 : ℕ) := by positivity
+    have hstep : 8 * C ^ 2 * (E : ℝ) ^ (4 : ℕ) ≤ M.gamma⁻¹ := by
+      have h1 : 8 * C ^ 2 * (E : ℝ) ^ (4 : ℕ) ≤ (E : ℝ) * (E : ℝ) ^ (4 : ℕ) :=
+        mul_le_mul_of_nonneg_right h8C (by positivity)
+      have h2 : (E : ℝ) * (E : ℝ) ^ (4 : ℕ) = (E : ℝ) ^ (5 : ℕ) := by ring
+      linarith [hE5]
+    have hkey : 8 * M.gamma⁻¹ ≤ (C⁻¹ * ((E : ℝ)⁻¹) ^ 2 * M.gamma⁻¹) ^ 2 := by
+      rw [hy2, le_div_iff₀ hden]
+      have h3 := mul_le_mul_of_nonneg_left hstep hinv0.le
+      linarith [h3]
+    have hexpy : 2 * M.gamma⁻¹ ≤ Real.exp (C⁻¹ * ((E : ℝ)⁻¹) ^ 2 * M.gamma⁻¹) := by
+      refine le_trans ?_ (sq_div_four_le_exp hy0)
+      linarith [hkey]
+    have hid : M.gamma / 2 = (2 * M.gamma⁻¹)⁻¹ := by
+      field_simp
+    have hexpneg : Real.exp (-(C⁻¹ * ((E : ℝ)⁻¹) ^ 2 * M.gamma⁻¹)) ≤ M.gamma / 2 := by
+      rw [Real.exp_neg, hid,
+        le_inv_comm₀ (inv_pos.2 (Real.exp_pos _))
+          (mul_pos (by norm_num : (0 : ℝ) < 2) hinv0),
+        inv_inv]
+      exact hexpy
+    linarith [hexpneg]
+  have hrate := add_log_two_le_mul_rpow_three_recurrenceGap hc hcstar0 hgamma0 hE1
+    hgammaE hT2c hthreshold
+  have hrateEllip := add_log_two_le_exp_ellipticityRate hc hcstar0 hcstar32 hgamma0 hE1
+    hgammaE hT12 hthreshold
+  -- the scale data
+  have hhZ : (0 : ℤ) < (hgap : ℤ) := by exact_mod_cast hhpos
+  have hm : m - (hgap : ℤ) ≤ m - 1 := by omega
+  have hhcast : (((hgap : ℤ) : ℝ)) ≤ 6 * Disorder.cstar M * M.gamma⁻¹ := by
+    push_cast
+    exact hh
+  -- the two halves at one and the same coarse-ellipticity constant
+  have hccg : 2 * (d : ℝ) ^ 6 ≤
+      2 * Cbase * Provider.BadEvents.sensitivityConstMax d ^ 2 := by
+    have h2 : (1 : ℝ) ≤ Provider.BadEvents.sensitivityConstMax d ^ 2 :=
+      one_le_pow₀ (Provider.BadEvents.one_le_sensitivityConstMax d)
+    have h3 : (0 : ℝ) ≤ 2 * Cbase := by linarith
+    calc 2 * (d : ℝ) ^ 6 ≤ 2 * Cbase := by linarith
+      _ = 2 * Cbase * 1 := (mul_one _).symm
+      _ ≤ 2 * Cbase * Provider.BadEvents.sensitivityConstMax d ^ 2 :=
+          mul_le_mul_of_nonneg_left h2 h3
+  exact ⟨hEgamma, hcstarinv, hsmall, hwindow, hrate, hrateEllip, hhZ, hm, hhcast, hccg⟩
+
+private theorem principalResponseTerminal_comparisonBounds2 :
+    ∀ (d : ℕ) (_ : NeZero d) (Cload g2 : ℝ)
+      (_ :
+        ∀ (M : ABKModel d),
+          M.gamma ≤ g2 →
+            ∀ (m0 : ℤ) (E : { E : ℝ // (1 : ℝ) ≤ E }),
+              Frozen.Section3.inductionState M m0 E →
+                ∀ (m K : ℤ) (h : ℕ),
+                  (0 : ℕ) < h →
+                    m - (↑h : ℤ) ≤ m0 →
+                      m - (1 : ℤ) ≤ m0 →
+                        (↑h : ℝ) ≤ (6 : ℝ) * Disorder.cstar M * M.gamma⁻¹ →
+                          (10 : ℝ) ^ (10 : ℕ) * M.gamma⁻¹ ≤ (↑K : ℝ) - (↑m : ℝ) →
+                            ∀ (e e' : Vec d),
+                              Ch02.vecNorm e ≤ (1 : ℝ) →
+                                Ch02.vecNorm e' ≤ (1 : ℝ) →
+                                  ∀ (j : ℕ) (wD : CutoffSample d → H10Function (openCubeSet (originCube d K)))
+                                    (wN : CutoffSample d → H1MeanZeroFunction (openCubeSet (originCube d K))),
+                                    (∀ (z : CutoffSample d),
+                                        IsZeroTraceDirichletRhsWeakSolution
+                                          (fun (_ : Vec d) => (1 : Matrix (Fin d) (Fin d) ℝ)) (openCubeSet (originCube d K))
+                                          (wD z) fun (x : Vec d) =>
+                                          -streamForcing (↑(Annealed.sigmaBar M (m - (↑h : ℤ))) : ℝ)⁻¹ (↑z : ShellSeq d)
+                                              (m - (↑h : ℤ)) m e x) →
+                                      (∀ (z : CutoffSample d),
+                                          IsMeanZeroNeumannRhsWeakSolution
+                                            (fun (_ : Vec d) => (1 : Matrix (Fin d) (Fin d) ℝ))
+                                            (openCubeSet (originCube d K)) (wN z) fun (x : Vec d) =>
+                                            -streamForcing (↑(Annealed.sigmaBar M (m - (↑h : ℤ))) : ℝ)⁻¹ (↑z : ShellSeq d)
+                                                (m - (↑h : ℤ)) m e' x) →
+                                        (∀ R ∈ descendantsAtDepth (originCube d K) j,
+                                            Measurable fun (z : CutoffSample d) =>
+                                              annealedSqrtNormSq (Annealed.sigmaBar M (m - (1 : ℤ)))
+                                                  (principalPz (Annealed.sigmaBar M (m - (↑h : ℤ))) (↑z : ShellSeq d)
+                                                    (m - (↑h : ℤ)) m e e' R (wD z) (wN z)) ^
+                                                (2 : ℕ)) →
+                                          (∀ R ∈ descendantsAtDepth (originCube d K) j,
+                                              Integrable
+                                                (fun (z : CutoffSample d) =>
+                                                  annealedSqrtNormSq (Annealed.sigmaBar M (m - (1 : ℤ)))
+                                                      (principalPz (Annealed.sigmaBar M (m - (↑h : ℤ))) (↑z : ShellSeq d)
+                                                        (m - (↑h : ℤ)) m e e' R (wD z) (wN z)) ^
+                                                    (2 : ℕ))
+                                                (↑(cutoffSampleLaw M) : Measure (CutoffSample d))) →
+                                            (descendantsAverage (originCube d K) j fun (R : TriadicCube d) =>
+                                                  ∫ (z : CutoffSample d),
+                                                    annealedSqrtNormSq (Annealed.sigmaBar M (m - (1 : ℤ)))
+                                                        (principalPz (Annealed.sigmaBar M (m - (↑h : ℤ))) (↑z : ShellSeq d)
+                                                          (m - (↑h : ℤ)) m e e' R (wD z) (wN z)) ^
+                                                      (2 : ℕ) ∂(↑(cutoffSampleLaw M) : Measure (CutoffSample d))) ^
+                                                (1 / 4 : ℝ) ≤
+                                              Cload)
+      (g3 : ℝ)
+      (_ :
+        ∀ (M : ABKModel d),
+          M.gamma ≤ g3 →
+            ∀ (m0 : ℤ) (Eind : { E : ℝ // (1 : ℝ) ≤ E }),
+              Frozen.Section3.inductionState M m0 Eind →
+                ∀ (m K : ℤ) (hgap : ℕ),
+                  (0 : ℕ) < hgap →
+                    m - (↑hgap : ℤ) ≤ m0 →
+                      (↑hgap : ℝ) ≤ (6 : ℝ) * Disorder.cstar M * M.gamma⁻¹ →
+                        (10 : ℝ) ^ (10 : ℕ) * M.gamma⁻¹ ≤ (↑K : ℝ) - (↑m : ℝ) →
+                          ∀ (e e' : Vec d),
+                            Ch02.vecNorm e ≤ (1 : ℝ) →
+                              Ch02.vecNorm e' ≤ (1 : ℝ) →
+                                ∀ (jd : ℕ),
+                                  ∀ R ∈ descendantsAtDepth (originCube d K) jd,
+                                    ∀ (wD : ShellSeq d → H10Function (openCubeSet (originCube d K)))
+                                      (wN : ShellSeq d → H1MeanZeroFunction (openCubeSet (originCube d K))),
+                                      (∀ (omega : ShellSeq d),
+                                          IsZeroTraceDirichletRhsWeakSolution
+                                            (fun (_ : Vec d) => (1 : Matrix (Fin d) (Fin d) ℝ))
+                                            (openCubeSet (originCube d K)) (wD omega) fun (x : Vec d) =>
+                                            -streamForcing (↑(Annealed.sigmaBar M (m - (↑hgap : ℤ))) : ℝ)⁻¹ omega
+                                                (m - (↑hgap : ℤ)) m e x) →
+                                        (∀ (omega : ShellSeq d),
+                                            IsMeanZeroNeumannRhsWeakSolution
+                                              (fun (_ : Vec d) => (1 : Matrix (Fin d) (Fin d) ℝ))
+                                              (openCubeSet (originCube d K)) (wN omega) fun (x : Vec d) =>
+                                              -streamForcing (↑(Annealed.sigmaBar M (m - (↑hgap : ℤ))) : ℝ)⁻¹ omega
+                                                  (m - (↑hgap : ℤ)) m e' x) →
+                                          Integrable
+                                            (fun (omega : ShellSeq d) =>
+                                              switchEllipLoad (↑(Annealed.sigmaBar M (m - (↑hgap : ℤ))) : ℝ)
+                                                  (principalPz (Annealed.sigmaBar M (m - (↑hgap : ℤ))) omega
+                                                    (m - (↑hgap : ℤ)) m e e' R (wD omega) (wN omega)) ^
+                                                (2 : ℕ))
+                                            (↑M.P : Measure (ℤ → Frozen.Assumptions.ShellField d)))
+      (M : ABKModel d) (m Kc : ℤ) (hgap : ℕ) (E : { E : ℝ // (1 : ℝ) ≤ E })
+      (_ : Frozen.Section3.inductionState M (m - (1 : ℤ)) E) (_ : (0 : ℕ) < hgap)
+      (_ : (↑hgap : ℝ) ≤ (6 : ℝ) * Disorder.cstar M * M.gamma⁻¹)
+      (_ : (10 : ℝ) ^ (10 : ℕ) * M.gamma⁻¹ ≤ (↑Kc : ℝ) - (↑m : ℝ)) (e e' : Vec d) (_ : Ch02.vecNorm e ≤ (1 : ℝ))
+      (_ : Ch02.vecNorm e' ≤ (1 : ℝ)) (j : ℕ) (_ : M.gamma ≤ g2) (_ : M.gamma ≤ g3)
+      (_ : m - (↑hgap : ℤ) ≤ m - (1 : ℤ)) (wD : ShellSeq d → H10Function (openCubeSet (originCube d Kc)))
+      (wN : ShellSeq d → H1MeanZeroFunction (openCubeSet (originCube d Kc)))
+      (_ :
+        ∀ (omega : ShellSeq d),
+          IsZeroTraceDirichletRhsWeakSolution (fun (_ : Vec d) => (1 : Matrix (Fin d) (Fin d) ℝ))
+            (openCubeSet (originCube d Kc)) (wD omega) fun (x : Vec d) =>
+            -streamForcing (↑(Annealed.sigmaBar M (m - (↑hgap : ℤ))) : ℝ)⁻¹ omega (m - (↑hgap : ℤ)) m e x)
+      (_ :
+        ∀ (omega : ShellSeq d),
+          IsMeanZeroNeumannRhsWeakSolution (fun (_ : Vec d) => (1 : Matrix (Fin d) (Fin d) ℝ))
+            (openCubeSet (originCube d Kc)) (wN omega) fun (x : Vec d) =>
+            -streamForcing (↑(Annealed.sigmaBar M (m - (↑hgap : ℤ))) : ℝ)⁻¹ omega (m - (↑hgap : ℤ)) m e' x),
+      MeasurableEmbedding (Subtype.val : CutoffSample d → ShellSeq d) ∧
+        (∀ R ∈ descendantsAtDepth (originCube d Kc) j,
+            Measurable fun (z : CutoffSample d) =>
+              principalPz (Annealed.sigmaBar M (m - (↑hgap : ℤ))) (↑z : ShellSeq d) (m - (↑hgap : ℤ)) m e e' R
+                (wD (↑z : ShellSeq d)) (wN (↑z : ShellSeq d))) ∧
+          (∀ (s : Observable.PositiveScalar) (F : CutoffSample d → BlockVec d),
+              Measurable F → Measurable fun (z : CutoffSample d) => annealedSqrtNormSq s (F z)) ∧
+            (∀ R ∈ descendantsAtDepth (originCube d Kc) j,
+                Integrable
+                  (fun (z : CutoffSample d) =>
+                    annealedSqrtNormSq (Annealed.sigmaBar M (m - (1 : ℤ)))
+                        (principalPz (Annealed.sigmaBar M (m - (↑hgap : ℤ))) (↑z : ShellSeq d) (m - (↑hgap : ℤ)) m e e' R
+                          (wD (↑z : ShellSeq d)) (wN (↑z : ShellSeq d))) ^
+                      (2 : ℕ))
+                  (↑(cutoffSampleLaw M) : Measure (CutoffSample d))) ∧
+              (descendantsAverage (originCube d Kc) j fun (R : TriadicCube d) =>
+                  ∫ (z : CutoffSample d),
+                    annealedSqrtNormSq (Annealed.sigmaBar M (m - (1 : ℤ)))
+                        (principalPz (Annealed.sigmaBar M (m - (↑hgap : ℤ))) (↑z : ShellSeq d) (m - (↑hgap : ℤ)) m e e' R
+                          (wD (↑z : ShellSeq d)) (wN (↑z : ShellSeq d))) ^
+                      (2 : ℕ) ∂(↑(cutoffSampleLaw M) : Measure (CutoffSample d))) ≤
+                Cload ^ (4 : ℕ) := by
+  intro d this Cload _ hdisp2 _ hSqInt M m Kc hgap E hstate hhpos hh hK e e' he he' j hg2 hg3 hm wD wN hwD hwN
+  have hemb : MeasurableEmbedding (Subtype.val : CutoffSample d → ShellSeq d) :=
+    MeasurableEmbedding.subtype_coe (measurableSet_lowerTailGoodSet d)
+  have hPzmeas : ∀ R ∈ descendantsAtDepth (originCube d Kc) j,
+      Measurable (fun z : Cutoff.CutoffSample d =>
+        principalPz (Annealed.sigmaBar M (m - (hgap : ℤ))) z.val (m - (hgap : ℤ)) m
+          e e' R (wD z.val) (wN z.val)) := by
+    intro R hR
+    exact ((measurable_shellIndexSigma_principalPz hR
+      (Annealed.sigmaBar M (m - (hgap : ℤ)))
+      ((Annealed.sigmaBar M (m - (hgap : ℤ)) : ℝ))⁻¹
+      ((Annealed.sigmaBar M (m - (hgap : ℤ)) : ℝ))⁻¹
+      (m - (hgap : ℤ)) m e e' e e' wD wN hwD hwN).mono
+      (Cutoff.shellIndexSigma_le_borel _) le_rfl).comp measurable_subtype_coe
+  have hvns : ∀ f : Cutoff.CutoffSample d → Vec d, Measurable f →
+      Measurable fun z => vecNormSq (f z) := by
+    intro f hf
+    have hEq : (fun z => vecNormSq (f z)) = fun z => ∑ i, f z i * f z i := rfl
+    rw [hEq]
+    exact Finset.measurable_sum _ fun i _ =>
+      ((measurable_pi_apply i).comp hf).mul ((measurable_pi_apply i).comp hf)
+  have hann : ∀ (s : Observable.PositiveScalar) (F : Cutoff.CutoffSample d → BlockVec d),
+      Measurable F → Measurable fun z => annealedSqrtNormSq s (F z) := by
+    intro s F hF
+    have hEq : (fun z => annealedSqrtNormSq s (F z)) =
+        fun z => (s : ℝ) * vecNormSq (F z).1 + ((s : ℝ))⁻¹ * vecNormSq (F z).2 := rfl
+    rw [hEq]
+    exact (measurable_const.mul (hvns _ hF.fst)).add
+      (measurable_const.mul (hvns _ hF.snd))
+  -- the load square at the reading gauge, through the gauge bridge
+  have hVint : ∀ R ∈ descendantsAtDepth (originCube d Kc) j,
+      Integrable (fun z : Cutoff.CutoffSample d =>
+        annealedSqrtNormSq (Annealed.sigmaBar M (m - 1))
+          (principalPz (Annealed.sigmaBar M (m - (hgap : ℤ))) z.val
+            (m - (hgap : ℤ)) m e e' R (wD z.val) (wN z.val)) ^ (2 : ℕ))
+        (Cutoff.cutoffSampleLaw M).toMeasure := by
+    intro R hR
+    have hsh := hSqInt M hg3 (m - 1) E hstate m Kc hgap hhpos hm hh hK e e' he he' j R hR
+      wD wN hwD hwN
+    rw [← map_cutoffSampleLaw_val M, hemb.integrable_map_iff] at hsh
+    have hload : Integrable (fun z : Cutoff.CutoffSample d =>
+        annealedSqrtNormSq (Annealed.sigmaBar M (m - (hgap : ℤ)))
+          (principalPz (Annealed.sigmaBar M (m - (hgap : ℤ))) z.val
+            (m - (hgap : ℤ)) m e e' R (wD z.val) (wN z.val)) ^ (2 : ℕ))
+        (Cutoff.cutoffSampleLaw M).toMeasure := hsh
+    refine Integrable.mono'
+      (hload.const_mul (gaugeRatio (Annealed.sigmaBar M (m - (hgap : ℤ)))
+        (Annealed.sigmaBar M (m - 1)) ^ 2))
+      ((hann _ _ (hPzmeas R hR)).pow_const 2).aestronglyMeasurable
+      (Filter.Eventually.of_forall fun z => ?_)
+    have hb := sq_annealedSqrtNormSq_le_gaugeRatio_sq_mul
+      (Annealed.sigmaBar M (m - (hgap : ℤ))) (Annealed.sigmaBar M (m - 1))
+      (principalPz (Annealed.sigmaBar M (m - (hgap : ℤ))) z.val
+        (m - (hgap : ℤ)) m e e' R (wD z.val) (wN z.val))
+    have h0 : (0 : ℝ) ≤ annealedSqrtNormSq (Annealed.sigmaBar M (m - 1))
+        (principalPz (Annealed.sigmaBar M (m - (hgap : ℤ))) z.val
+          (m - (hgap : ℤ)) m e e' R (wD z.val) (wN z.val)) ^ (2 : ℕ) := by positivity
+    rw [Real.norm_of_nonneg h0]
+    exact hb
+  -- the fourth-moment display, in grid form
+  have hmeasR : ∀ R ∈ descendantsAtDepth (originCube d Kc) j,
+      Measurable (fun z : Cutoff.CutoffSample d =>
+        annealedSqrtNormSq (Annealed.sigmaBar M (m - 1))
+          (principalPz (Annealed.sigmaBar M (m - (hgap : ℤ))) z.val
+            (m - (hgap : ℤ)) m e e' R (wD z.val) (wN z.val)) ^ (2 : ℕ)) :=
+    fun R hR => (hann _ _ (hPzmeas R hR)).pow_const 2
+  have hd2 := hdisp2 M hg2 (m - 1) E hstate m Kc hgap hhpos hm le_rfl hh hK e e' he he' j
+    (fun z : Cutoff.CutoffSample d => wD z.val)
+    (fun z : Cutoff.CutoffSample d => wN z.val)
+    (fun z => hwD z.val) (fun z => hwN z.val) hmeasR hVint
+  have havgnn : (0 : ℝ) ≤ descendantsAverage (originCube d Kc) j
+      (fun R => ∫ z : Cutoff.CutoffSample d,
+        annealedSqrtNormSq (Annealed.sigmaBar M (m - 1))
+          (principalPz (Annealed.sigmaBar M (m - (hgap : ℤ))) z.val
+            (m - (hgap : ℤ)) m e e' R (wD z.val) (wN z.val)) ^ (2 : ℕ)
+        ∂(Cutoff.cutoffSampleLaw M).toMeasure) :=
+    descendantsAverage_nonneg (originCube d Kc) j _ fun R _ =>
+      integral_nonneg fun z => pow_nonneg (annealedSqrtNormSq_nonneg _ _) 2
+  have havg : descendantsAverage (originCube d Kc) j
+      (fun R => ∫ z : Cutoff.CutoffSample d,
+        annealedSqrtNormSq (Annealed.sigmaBar M (m - 1))
+          (principalPz (Annealed.sigmaBar M (m - (hgap : ℤ))) z.val
+            (m - (hgap : ℤ)) m e e' R (wD z.val) (wN z.val)) ^ (2 : ℕ)
+        ∂(Cutoff.cutoffSampleLaw M).toMeasure) ≤ Cload ^ (4 : ℕ) := by
+    have hstep := Real.rpow_le_rpow (Real.rpow_nonneg havgnn _) hd2
+      (by norm_num : (0 : ℝ) ≤ 4)
+    rw [← Real.rpow_mul havgnn] at hstep
+    have h4 : ((1 : ℝ) / 4) * 4 = 1 := by norm_num
+    rw [h4, Real.rpow_one] at hstep
+    have hc4 : Cload ^ (4 : ℝ) = Cload ^ (4 : ℕ) := by
+      rw [← Real.rpow_natCast Cload 4]
+      norm_num
+    rwa [hc4] at hstep
+  exact ⟨hemb, hPzmeas, hann, hVint, havg⟩
+
+private theorem principalResponseTerminal_comparisonBounds3 :
+    ∀ (d : ℕ) (this : NeZero d) (Cbase c C : ℝ)
+      (hbadhalf :
+        ∀ (M : ABKModel d) (E : { E : ℝ // (1 : ℝ) ≤ E }) (m h : ℤ) (Q : TriadicCube d) (j : ℕ)
+          (P : TriadicCube d → CutoffSample d → BlockVec d) (Cv : ℝ),
+          Frozen.Section3.inductionState M (m - (1 : ℤ)) E →
+            (0 : ℤ) < h →
+              Q.scale - (↑j : ℤ) = recurrenceMesoScale recurrenceGapMultiplier M.gamma m h →
+                max (Real.exp ((2 : ℝ) * C)) (Disorder.cstar M)⁻¹ ≤ (↑E : ℝ) →
+                  c⁻¹ * (Disorder.cstar M)⁻¹ ≤ (↑E : ℝ) →
+                    (↑E : ℝ) ≤ M.gamma ^ (-(1 / 5 : ℝ)) →
+                      M.gamma / (2 : ℝ) + Real.exp (-(C⁻¹ * (↑E : ℝ)⁻¹ ^ (2 : ℕ) * M.gamma⁻¹)) ≤ M.gamma →
+                        M.gamma ≤ (1 / 1089 : ℝ) →
+                          (↑h : ℝ) ≤ (6 : ℝ) * Disorder.cstar M * M.gamma⁻¹ →
+                            (0 : ℝ) < Cv →
+                              (∀ R ∈ descendantsAtDepth Q j,
+                                  AEStronglyMeasurable
+                                    (fun (omega : CutoffSample d) => switchCubeEnergy M m R (P R omega) omega)
+                                    (↑(cutoffSampleLaw M) : Measure (CutoffSample d))) →
+                                (∀ R ∈ descendantsAtDepth Q j,
+                                    AEStronglyMeasurable
+                                      (fun (omega : CutoffSample d) =>
+                                        √(annealedSqrtNormSq (Annealed.sigmaBar M (m - (1 : ℤ))) (P R omega)))
+                                      (↑(cutoffSampleLaw M) : Measure (CutoffSample d))) →
+                                  (∀ R ∈ descendantsAtDepth Q j,
+                                      Integrable
+                                        (fun (omega : CutoffSample d) =>
+                                          annealedSqrtNormSq (Annealed.sigmaBar M (m - (1 : ℤ))) (P R omega) ^ (2 : ℕ))
+                                        (↑(cutoffSampleLaw M) : Measure (CutoffSample d))) →
+                                    (descendantsAverage Q j fun (R : TriadicCube d) =>
+                                          ∫ (omega : CutoffSample d),
+                                            annealedSqrtNormSq (Annealed.sigmaBar M (m - (1 : ℤ))) (P R omega) ^
+                                              (2 : ℕ) ∂(↑(cutoffSampleLaw M) : Measure (CutoffSample d))) ≤
+                                        Cv ^ (4 : ℕ) →
+                                      M.gamma⁻¹ + Real.log (2 : ℝ) ≤
+                                          c * Disorder.cstar M * M.gamma⁻¹ *
+                                            (3 : ℝ) ^ (↑(recurrenceGap recurrenceGapMultiplier M.gamma) : ℝ) →
+                                        M.gamma⁻¹ + Real.log (2 : ℝ) ≤ Real.exp (c * (↑E : ℝ)⁻¹ ^ (2 : ℕ) * M.gamma⁻¹) →
+                                          (Disorder.cstar M)⁻¹ ≤ M.gamma⁻¹ →
+                                            M.gamma ≤
+                                                ((2 : ℝ) * ((3 : ℝ) ^ (22 : ℝ) * ((2 : ℝ) * C) * Cv ^ (2 : ℕ)) *
+                                                    (24 : ℝ) ^ (9 : ℕ))⁻¹ →
+                                              (∀ R ∈ descendantsAtDepth Q j,
+                                                  Integrable
+                                                    (fun (omega : CutoffSample d) =>
+                                                      switchCubeEnergy M m R (P R omega) omega *
+                                                        (principalBadEvent M ((2 : ℝ) * Cbase) R (m - h)).indicator
+                                                          (fun (x : CutoffSample d) => (1 : ℝ)) omega)
+                                                    (↑(cutoffSampleLaw M) : Measure (CutoffSample d))) ∧
+                                                (descendantsAverage Q j fun (R : TriadicCube d) =>
+                                                    ∫ (omega : CutoffSample d),
+                                                      switchCubeEnergy M m R (P R omega) omega *
+                                                        (principalBadEvent M ((2 : ℝ) * Cbase) R (m - h)).indicator
+                                                          (fun (x : CutoffSample d) => (1 : ℝ))
+                                                          omega ∂(↑(cutoffSampleLaw M) : Measure (CutoffSample d))) ≤
+                                                  M.gamma ^ (6 : ℕ) / (2 : ℝ))
+      (Cload : ℝ) (hCload0 : (0 : ℝ) < Cload) (g2 : ℝ)
+      (hdisp2 :
+        ∀ (M : ABKModel d),
+          M.gamma ≤ g2 →
+            ∀ (m0 : ℤ) (E : { E : ℝ // (1 : ℝ) ≤ E }),
+              Frozen.Section3.inductionState M m0 E →
+                ∀ (m K : ℤ) (h : ℕ),
+                  (0 : ℕ) < h →
+                    m - (↑h : ℤ) ≤ m0 →
+                      m - (1 : ℤ) ≤ m0 →
+                        (↑h : ℝ) ≤ (6 : ℝ) * Disorder.cstar M * M.gamma⁻¹ →
+                          (10 : ℝ) ^ (10 : ℕ) * M.gamma⁻¹ ≤ (↑K : ℝ) - (↑m : ℝ) →
+                            ∀ (e e' : Vec d),
+                              Ch02.vecNorm e ≤ (1 : ℝ) →
+                                Ch02.vecNorm e' ≤ (1 : ℝ) →
+                                  ∀ (j : ℕ) (wD : CutoffSample d → H10Function (openCubeSet (originCube d K)))
+                                    (wN : CutoffSample d → H1MeanZeroFunction (openCubeSet (originCube d K))),
+                                    (∀ (z : CutoffSample d),
+                                        IsZeroTraceDirichletRhsWeakSolution
+                                          (fun (x : Vec d) => (1 : Matrix (Fin d) (Fin d) ℝ)) (openCubeSet (originCube d K))
+                                          (wD z) fun (x : Vec d) =>
+                                          -streamForcing (↑(Annealed.sigmaBar M (m - (↑h : ℤ))) : ℝ)⁻¹ (↑z : ShellSeq d)
+                                              (m - (↑h : ℤ)) m e x) →
+                                      (∀ (z : CutoffSample d),
+                                          IsMeanZeroNeumannRhsWeakSolution
+                                            (fun (x : Vec d) => (1 : Matrix (Fin d) (Fin d) ℝ))
+                                            (openCubeSet (originCube d K)) (wN z) fun (x : Vec d) =>
+                                            -streamForcing (↑(Annealed.sigmaBar M (m - (↑h : ℤ))) : ℝ)⁻¹ (↑z : ShellSeq d)
+                                                (m - (↑h : ℤ)) m e' x) →
+                                        (∀ R ∈ descendantsAtDepth (originCube d K) j,
+                                            Measurable fun (z : CutoffSample d) =>
+                                              annealedSqrtNormSq (Annealed.sigmaBar M (m - (1 : ℤ)))
+                                                  (principalPz (Annealed.sigmaBar M (m - (↑h : ℤ))) (↑z : ShellSeq d)
+                                                    (m - (↑h : ℤ)) m e e' R (wD z) (wN z)) ^
+                                                (2 : ℕ)) →
+                                          (∀ R ∈ descendantsAtDepth (originCube d K) j,
+                                              Integrable
+                                                (fun (z : CutoffSample d) =>
+                                                  annealedSqrtNormSq (Annealed.sigmaBar M (m - (1 : ℤ)))
+                                                      (principalPz (Annealed.sigmaBar M (m - (↑h : ℤ))) (↑z : ShellSeq d)
+                                                        (m - (↑h : ℤ)) m e e' R (wD z) (wN z)) ^
+                                                    (2 : ℕ))
+                                                (↑(cutoffSampleLaw M) : Measure (CutoffSample d))) →
+                                            (descendantsAverage (originCube d K) j fun (R : TriadicCube d) =>
+                                                  ∫ (z : CutoffSample d),
+                                                    annealedSqrtNormSq (Annealed.sigmaBar M (m - (1 : ℤ)))
+                                                        (principalPz (Annealed.sigmaBar M (m - (↑h : ℤ))) (↑z : ShellSeq d)
+                                                          (m - (↑h : ℤ)) m e e' R (wD z) (wN z)) ^
+                                                      (2 : ℕ) ∂(↑(cutoffSampleLaw M) : Measure (CutoffSample d))) ^
+                                                (1 / 4 : ℝ) ≤
+                                              Cload)
+      (g3 : ℝ)
+      (hSqInt :
+        ∀ (M : ABKModel d),
+          M.gamma ≤ g3 →
+            ∀ (m0 : ℤ) (Eind : { E : ℝ // (1 : ℝ) ≤ E }),
+              Frozen.Section3.inductionState M m0 Eind →
+                ∀ (m K : ℤ) (hgap : ℕ),
+                  (0 : ℕ) < hgap →
+                    m - (↑hgap : ℤ) ≤ m0 →
+                      (↑hgap : ℝ) ≤ (6 : ℝ) * Disorder.cstar M * M.gamma⁻¹ →
+                        (10 : ℝ) ^ (10 : ℕ) * M.gamma⁻¹ ≤ (↑K : ℝ) - (↑m : ℝ) →
+                          ∀ (e e' : Vec d),
+                            Ch02.vecNorm e ≤ (1 : ℝ) →
+                              Ch02.vecNorm e' ≤ (1 : ℝ) →
+                                ∀ (jd : ℕ),
+                                  ∀ R ∈ descendantsAtDepth (originCube d K) jd,
+                                    ∀ (wD : ShellSeq d → H10Function (openCubeSet (originCube d K)))
+                                      (wN : ShellSeq d → H1MeanZeroFunction (openCubeSet (originCube d K))),
+                                      (∀ (omega : ShellSeq d),
+                                          IsZeroTraceDirichletRhsWeakSolution
+                                            (fun (x : Vec d) => (1 : Matrix (Fin d) (Fin d) ℝ))
+                                            (openCubeSet (originCube d K)) (wD omega) fun (x : Vec d) =>
+                                            -streamForcing (↑(Annealed.sigmaBar M (m - (↑hgap : ℤ))) : ℝ)⁻¹ omega
+                                                (m - (↑hgap : ℤ)) m e x) →
+                                        (∀ (omega : ShellSeq d),
+                                            IsMeanZeroNeumannRhsWeakSolution
+                                              (fun (x : Vec d) => (1 : Matrix (Fin d) (Fin d) ℝ))
+                                              (openCubeSet (originCube d K)) (wN omega) fun (x : Vec d) =>
+                                              -streamForcing (↑(Annealed.sigmaBar M (m - (↑hgap : ℤ))) : ℝ)⁻¹ omega
+                                                  (m - (↑hgap : ℤ)) m e' x) →
+                                          Integrable
+                                            (fun (omega : ShellSeq d) =>
+                                              switchEllipLoad (↑(Annealed.sigmaBar M (m - (↑hgap : ℤ))) : ℝ)
+                                                  (principalPz (Annealed.sigmaBar M (m - (↑hgap : ℤ))) omega
+                                                    (m - (↑hgap : ℤ)) m e e' R (wD omega) (wN omega)) ^
+                                                (2 : ℕ))
+                                            (↑M.P : Measure (ℤ → Frozen.Assumptions.ShellField d)))
+      (g4 : ℝ)
+      (hWint :
+        ∀ (M : ABKModel d),
+          M.gamma ≤ g4 →
+            ∀ (m0 : ℤ) (Eind : { E : ℝ // (1 : ℝ) ≤ E }),
+              Frozen.Section3.inductionState M m0 Eind →
+                ∀ (m K : ℤ) (hgap : ℕ),
+                  (0 : ℕ) < hgap →
+                    m - (↑hgap : ℤ) ≤ m0 →
+                      (↑hgap : ℝ) ≤ (6 : ℝ) * Disorder.cstar M * M.gamma⁻¹ →
+                        (10 : ℝ) ^ (10 : ℕ) * M.gamma⁻¹ ≤ (↑K : ℝ) - (↑m : ℝ) →
+                          ∀ (e e' : Vec d),
+                            Ch02.vecNorm e ≤ (1 : ℝ) →
+                              Ch02.vecNorm e' ≤ (1 : ℝ) →
+                                ∀ (jd : ℕ),
+                                  ∀ R ∈ descendantsAtDepth (originCube d K) jd,
+                                    ∀ (wD : ShellSeq d → H10Function (openCubeSet (originCube d K)))
+                                      (wN : ShellSeq d → H1MeanZeroFunction (openCubeSet (originCube d K))),
+                                      (∀ (omega : ShellSeq d),
+                                          IsZeroTraceDirichletRhsWeakSolution
+                                            (fun (x : Vec d) => (1 : Matrix (Fin d) (Fin d) ℝ))
+                                            (openCubeSet (originCube d K)) (wD omega) fun (x : Vec d) =>
+                                            -streamForcing (↑(Annealed.sigmaBar M (m - (↑hgap : ℤ))) : ℝ)⁻¹ omega
+                                                (m - (↑hgap : ℤ)) m e x) →
+                                        (∀ (omega : ShellSeq d),
+                                            IsMeanZeroNeumannRhsWeakSolution
+                                              (fun (x : Vec d) => (1 : Matrix (Fin d) (Fin d) ℝ))
+                                              (openCubeSet (originCube d K)) (wN omega) fun (x : Vec d) =>
+                                              -streamForcing (↑(Annealed.sigmaBar M (m - (↑hgap : ℤ))) : ℝ)⁻¹ omega
+                                                  (m - (↑hgap : ℤ)) m e' x) →
+                                          ∀ (alpha beta : BlockCoord d),
+                                            Integrable
+                                              (fun (omega : ShellSeq d) =>
+                                                toFullBlockVec
+                                                    (gaugedPrincipalLoadShell (Annealed.sigmaBar M (m - (↑hgap : ℤ))) R
+                                                      (m - (↑hgap : ℤ)) m e e' wD wN omega)
+                                                    alpha *
+                                                  toFullBlockVec
+                                                    (gaugedPrincipalLoadShell (Annealed.sigmaBar M (m - (↑hgap : ℤ))) R
+                                                      (m - (↑hgap : ℤ)) m e e' wD wN omega)
+                                                    beta)
+                                              (↑M.P : Measure (ℤ → Frozen.Assumptions.ShellField d)))
+      (Cterm : ℝ) (hTb : (3 / 2 : ℝ) * principalResponseBudgetConst⁻¹ ≤ Cterm) (M : ABKModel d) (m Kc : ℤ) (hgap : ℕ)
+      (E : { E : ℝ // (1 : ℝ) ≤ E }) (hstate : Frozen.Section3.inductionState M (m - (1 : ℤ)) E) (hhpos : (0 : ℕ) < hgap)
+      (hgammaE : M.gamma ≤ (↑E : ℝ) ^ (-5 : ℤ)) (hh : (↑hgap : ℝ) ≤ (6 : ℝ) * Disorder.cstar M * M.gamma⁻¹)
+      (hK : (10 : ℝ) ^ (10 : ℕ) * M.gamma⁻¹ ≤ (↑Kc : ℝ) - (↑m : ℝ)) (e e' : Vec d) (he : Ch02.vecNorm e ≤ (1 : ℝ))
+      (he' : Ch02.vecNorm e' ≤ (1 : ℝ)) (j : ℕ)
+      (hscale : (originCube d Kc).scale - (↑j : ℤ) = recurrenceMesoScale recurrenceGapMultiplier M.gamma m (↑hgap : ℤ))
+      (hgamma0 : (0 : ℝ) < M.gamma) (hE1 : (1 : ℝ) ≤ (↑E : ℝ))
+      (hproj : ∀ (T : ℝ), (0 : ℝ) ≤ T → T ≤ Cterm → T * (2 / 3 : ℝ) ≤ (↑E : ℝ)) (hEinv : (↑E : ℝ) ≤ M.gamma⁻¹)
+      (hg2 : M.gamma ≤ g2) (hg3 : M.gamma ≤ g3) (hg4 : M.gamma ≤ g4) (hgamma1089 : M.gamma ≤ (1 / 1089 : ℝ))
+      (hEexp : max (Real.exp ((2 : ℝ) * C)) (Disorder.cstar M)⁻¹ ≤ (↑E : ℝ)) (hEadm : c⁻¹ * (Disorder.cstar M)⁻¹ ≤ (↑E : ℝ))
+      (hEgamma : (↑E : ℝ) ≤ M.gamma ^ (-(1 / 5 : ℝ))) (hcstarinv : (Disorder.cstar M)⁻¹ ≤ M.gamma⁻¹)
+      (hsmall : M.gamma ≤ ((2 : ℝ) * ((3 : ℝ) ^ (22 : ℝ) * ((2 : ℝ) * C) * Cload ^ (2 : ℕ)) * (24 : ℝ) ^ (9 : ℕ))⁻¹)
+      (hwindow : M.gamma / (2 : ℝ) + Real.exp (-(C⁻¹ * (↑E : ℝ)⁻¹ ^ (2 : ℕ) * M.gamma⁻¹)) ≤ M.gamma)
+      (hrate :
+        M.gamma⁻¹ + Real.log (2 : ℝ) ≤
+          c * Disorder.cstar M * M.gamma⁻¹ * (3 : ℝ) ^ (↑(recurrenceGap recurrenceGapMultiplier M.gamma) : ℝ))
+      (hrateEllip : M.gamma⁻¹ + Real.log (2 : ℝ) ≤ Real.exp (c * (↑E : ℝ)⁻¹ ^ (2 : ℕ) * M.gamma⁻¹))
+      (hhZ : (0 : ℤ) < (↑hgap : ℤ)) (hm : m - (↑hgap : ℤ) ≤ m - (1 : ℤ))
+      (hhcast : (↑(↑hgap : ℤ) : ℝ) ≤ (6 : ℝ) * Disorder.cstar M * M.gamma⁻¹)
+      (wD : ShellSeq d → H10Function (openCubeSet (originCube d Kc)))
+      (wN : ShellSeq d → H1MeanZeroFunction (openCubeSet (originCube d Kc)))
+      (hwD :
+        ∀ (omega : ShellSeq d),
+          IsZeroTraceDirichletRhsWeakSolution (fun (x : Vec d) => (1 : Matrix (Fin d) (Fin d) ℝ))
+            (openCubeSet (originCube d Kc)) (wD omega) fun (x : Vec d) =>
+            -streamForcing (↑(Annealed.sigmaBar M (m - (↑hgap : ℤ))) : ℝ)⁻¹ omega (m - (↑hgap : ℤ)) m e x)
+      (hwN :
+        ∀ (omega : ShellSeq d),
+          IsMeanZeroNeumannRhsWeakSolution (fun (x : Vec d) => (1 : Matrix (Fin d) (Fin d) ℝ))
+            (openCubeSet (originCube d Kc)) (wN omega) fun (x : Vec d) =>
+            -streamForcing (↑(Annealed.sigmaBar M (m - (↑hgap : ℤ))) : ℝ)⁻¹ omega (m - (↑hgap : ℤ)) m e' x),
+      ∃ (_ :
+        ∀ R ∈ descendantsAtDepth (originCube d Kc) j,
+          Integrable
+            (fun (omega : CutoffSample d) =>
+              switchCubeEnergy M m R
+                  (principalPz (Annealed.sigmaBar M (m - (↑hgap : ℤ))) (↑omega : ShellSeq d) (m - (↑hgap : ℤ)) m e e' R
+                    (wD (↑omega : ShellSeq d)) (wN (↑omega : ShellSeq d)))
+                  omega *
+                (principalBadEvent M ((2 : ℝ) * Cbase) R (m - (↑hgap : ℤ))).indicator (fun (x : CutoffSample d) => (1 : ℝ))
+                  omega)
+            (↑(cutoffSampleLaw M) : Measure (CutoffSample d)))
+        (_ :
+        (descendantsAverage (originCube d Kc) j fun (R : TriadicCube d) =>
+            ∫ (omega : CutoffSample d),
+              switchCubeEnergy M m R
+                  (principalPz (Annealed.sigmaBar M (m - (↑hgap : ℤ))) (↑omega : ShellSeq d) (m - (↑hgap : ℤ)) m e e' R
+                    (wD (↑omega : ShellSeq d)) (wN (↑omega : ShellSeq d)))
+                  omega *
+                (principalBadEvent M ((2 : ℝ) * Cbase) R (m - (↑hgap : ℤ))).indicator (fun (x : CutoffSample d) => (1 : ℝ))
+                  omega ∂(↑(cutoffSampleLaw M) : Measure (CutoffSample d))) ≤
+          M.gamma ^ (6 : ℕ) / (2 : ℝ))
+        (_ :
+        ∀ R ∈ descendantsAtDepth (originCube d Kc) j,
+          Integrable
+            (fun (z : CutoffSample d) =>
+              blockVecDot
+                (gaugedPrincipalLoadShell (Annealed.sigmaBar M (m - (↑hgap : ℤ))) R (m - (↑hgap : ℤ)) m e e' wD wN
+                  (↑z : ShellSeq d))
+                (blockMatVecMul
+                  (Ch02.blockDiag ((↑(Annealed.sigmaBar M (m - (↑hgap : ℤ))) : ℝ) • (1 : Mat d))
+                    ((↑(Annealed.sigmaBar M (m - (↑hgap : ℤ))) : ℝ)⁻¹ • (1 : Mat d)))
+                  (gaugedPrincipalLoadShell (Annealed.sigmaBar M (m - (↑hgap : ℤ))) R (m - (↑hgap : ℤ)) m e e' wD wN
+                    (↑z : ShellSeq d))))
+            (↑(cutoffSampleLaw M) : Measure (CutoffSample d)))
+        (_ :
+        ∀ R ∈ descendantsAtDepth (originCube d Kc) j,
+          Integrable
+            (fun (z : CutoffSample d) =>
+              blockVecDot
+                (gaugedPrincipalLoadShell (Annealed.sigmaBar M (m - (↑hgap : ℤ))) R (m - (↑hgap : ℤ)) m e e' wD wN
+                  (↑z : ShellSeq d))
+                (blockMatVecMul
+                  (Ch04.annealedBlockMatrixAtScale (coefficientCutoffLaw M (m - (↑hgap : ℤ)))
+                    ((originCube d Kc).scale - (↑j : ℤ)))
+                  (gaugedPrincipalLoadShell (Annealed.sigmaBar M (m - (↑hgap : ℤ))) R (m - (↑hgap : ℤ)) m e e' wD wN
+                    (↑z : ShellSeq d))))
+            (↑(cutoffSampleLaw M) : Measure (CutoffSample d)))
+        (_ : m - (↑hgap : ℤ) ≤ m - (1 : ℤ)) (_ : (originCube d Kc).scale - (↑j : ℤ) ≤ m - (↑hgap : ℤ)) (_ :
+        M.gamma ≤ ((↑E : ℝ) ^ (5 : ℕ))⁻¹) (_ : |Real.log M.gamma|⁻¹ ∈ Set.Icc ((8 : ℝ) * M.gamma) (1 : ℝ)) (Ev : BlockVec d)
+        (_ : blockVecDot Ev Ev = (1 : ℝ)) (_ :
+        |Real.log M.gamma|⁻¹ * (↑(m - (↑hgap : ℤ) - ((originCube d Kc).scale - (↑j : ℤ))).toNat : ℝ) ≤ (64 : ℝ)) (_ :
+        M.gamma ^ (6 : ℕ) ≤ principalResponseSwitchBudget M E (64 : ℝ)), True := by
+  classical
+  intro d this Cbase c C hbadhalf Cload hCload0 g2 hdisp2 g3 hSqInt g4 hWint Cterm hTb M m Kc hgap E hstate hhpos hgammaE hh hK e e' he he' j hscale hgamma0 hE1 hproj hEinv hg2 hg3 hg4 hgamma1089 hEexp hEadm hEgamma hcstarinv hsmall hwindow hrate hrateEllip hhZ hm hhcast wD wN hwD hwN
+  obtain ⟨hemb, hPzmeas, hann, hVint, havg⟩ :=
+    (show (MeasurableEmbedding (Subtype.val : CutoffSample d → ShellSeq d)) ∧ (∀ R ∈
+      descendantsAtDepth (originCube d Kc) j,
+      Measurable (fun z : Cutoff.CutoffSample d =>
+        principalPz (Annealed.sigmaBar M (m - (hgap : ℤ))) z.val (m - (hgap : ℤ)) m
+          e e' R (wD z.val) (wN z.val))) ∧ (∀ (s : Observable.PositiveScalar) (F :
+            Cutoff.CutoffSample d → BlockVec d),
+      Measurable F → Measurable fun z => annealedSqrtNormSq s (F z)) ∧ (∀ R ∈ descendantsAtDepth
+        (originCube d Kc) j,
+      Integrable (fun z : Cutoff.CutoffSample d =>
+        annealedSqrtNormSq (Annealed.sigmaBar M (m - 1))
+          (principalPz (Annealed.sigmaBar M (m - (hgap : ℤ))) z.val
+            (m - (hgap : ℤ)) m e e' R (wD z.val) (wN z.val)) ^ (2 : ℕ))
+        (Cutoff.cutoffSampleLaw M).toMeasure) ∧ (descendantsAverage (originCube d Kc) j
+      (fun R => ∫ z : Cutoff.CutoffSample d,
+        annealedSqrtNormSq (Annealed.sigmaBar M (m - 1))
+          (principalPz (Annealed.sigmaBar M (m - (hgap : ℤ))) z.val
+            (m - (hgap : ℤ)) m e e' R (wD z.val) (wN z.val)) ^ (2 : ℕ)
+        ∂(Cutoff.cutoffSampleLaw M).toMeasure) ≤ Cload ^ (4 : ℕ)) from
+      @principalResponseTerminal_comparisonBounds2 (d) (this) (Cload) (g2) (hdisp2) (g3) (hSqInt)
+        (M) (m) (Kc) (hgap) (E) (hstate) (hhpos) (hh) (hK) (e) (e') (he) (he') (j) (hg2) (hg3)
+          (hm) (wD) (wN) (hwD) (hwN))
+  -- the bad half, already inside the half budget
+  obtain ⟨hbadInt, hbad⟩ := hbadhalf M E m (hgap : ℤ) (originCube d Kc) j
+    (fun R z => principalPz (Annealed.sigmaBar M (m - (hgap : ℤ))) z.val
+      (m - (hgap : ℤ)) m e e' R (wD z.val) (wN z.val))
+    Cload hstate hhZ hscale hEexp hEadm hEgamma hwindow hgamma1089 hhcast hCload0
+    (fun R hR => aestronglyMeasurable_switchCubeEnergy M m R (hPzmeas R hR))
+    (fun R hR => (Real.continuous_sqrt.measurable.comp
+      (hann _ _ (hPzmeas R hR))).aestronglyMeasurable)
+    hVint havg hrate hrateEllip hcstarinv hsmall
+  -- the two quadratic forms of the recombination
+  have hWentry : ∀ R ∈ descendantsAtDepth (originCube d Kc) j,
+      ∀ alpha beta : BlockCoord d,
+        Integrable (fun z : Cutoff.CutoffSample d =>
+          toFullBlockVec (gaugedPrincipalLoadShell
+              (Annealed.sigmaBar M (m - (hgap : ℤ))) R (m - (hgap : ℤ)) m e e' wD wN
+              z.val) alpha *
+            toFullBlockVec (gaugedPrincipalLoadShell
+              (Annealed.sigmaBar M (m - (hgap : ℤ))) R (m - (hgap : ℤ)) m e e' wD wN
+              z.val) beta)
+          (Cutoff.cutoffSampleLaw M).toMeasure := by
+    intro R hR alpha beta
+    have hsh := hWint M hg4 (m - 1) E hstate m Kc hgap hhpos hm hh hK e e' he he' j R hR
+      wD wN hwD hwN alpha beta
+    rw [← map_cutoffSampleLaw_val M, hemb.integrable_map_iff] at hsh
+    exact hsh
+  have hlimInt : ∀ R ∈ descendantsAtDepth (originCube d Kc) j,
+      Integrable (fun z : Cutoff.CutoffSample d =>
+        blockVecDot
+          (gaugedPrincipalLoadShell (Annealed.sigmaBar M (m - (hgap : ℤ))) R
+            (m - (hgap : ℤ)) m e e' wD wN z.val)
+          (blockMatVecMul
+            (Ch02.blockDiag
+              ((Annealed.sigmaBar M (m - (hgap : ℤ)) : ℝ) • (1 : Mat d))
+              (((Annealed.sigmaBar M (m - (hgap : ℤ)) : ℝ))⁻¹ • (1 : Mat d)))
+            (gaugedPrincipalLoadShell (Annealed.sigmaBar M (m - (hgap : ℤ))) R
+              (m - (hgap : ℤ)) m e e' wD wN z.val)))
+        (Cutoff.cutoffSampleLaw M).toMeasure := fun R hR =>
+    integrable_blockVecDot_blockDiag_smul_one_of_entries _ _ _ (hWentry R hR)
+  obtain ⟨sUp, sLow, hst⟩ :=
+    Provider.Annealed.coefficientCutoffLaw_exists_annealedBlockMatrixAtScale_eq_blockDiag_smul_one
+      M (m - (hgap : ℤ)) (((originCube d Kc).scale : ℤ) - (j : ℤ))
+  have hcubeInt : ∀ R ∈ descendantsAtDepth (originCube d Kc) j,
+      Integrable (fun z : Cutoff.CutoffSample d =>
+        blockVecDot
+          (gaugedPrincipalLoadShell (Annealed.sigmaBar M (m - (hgap : ℤ))) R
+            (m - (hgap : ℤ)) m e e' wD wN z.val)
+          (blockMatVecMul
+            (Ch04.annealedBlockMatrixAtScale
+              (Cutoff.coefficientCutoffLaw M (m - (hgap : ℤ)))
+              (((originCube d Kc).scale : ℤ) - (j : ℤ)))
+            (gaugedPrincipalLoadShell (Annealed.sigmaBar M (m - (hgap : ℤ))) R
+              (m - (hgap : ℤ)) m e e' wD wN z.val)))
+        (Cutoff.cutoffSampleLaw M).toMeasure := by
+    intro R hR
+    rw [hst]
+    exact integrable_blockVecDot_blockDiag_smul_one_of_entries _ sUp sLow (hWentry R hR)
+  -- the gates of the recombination
+  have hL : m - (hgap : ℤ) ≤ m - 1 := hm
+  have hn : ((originCube d Kc).scale : ℤ) - (j : ℤ) ≤ m - (hgap : ℤ) := by
+    rw [hscale]
+    exact recurrenceMesoScale_le _ _ _ _
+  have hgamE : M.gamma ≤ ((E : ℝ) ^ 5)⁻¹ := by
+    have hEpow : (E : ℝ) ^ (-5 : ℤ) = ((E : ℝ) ^ (5 : ℕ))⁻¹ := by
+      rw [zpow_neg]
+      norm_cast
+    rwa [hEpow] at hgammaE
+  have hsw := inv_abs_log_mem_Icc hgamma0 hgamma1089
+  obtain ⟨Ev, hEv⟩ := exists_blockVecDot_self_eq_one (d := d)
+  have hLn : m - (hgap : ℤ) - (((originCube d Kc).scale : ℤ) - (j : ℤ)) =
+      ((recurrenceGap recurrenceGapMultiplier M.gamma : ℕ) : ℤ) := by
+    rw [hscale]
+    exact sub_recurrenceMesoScale _ _ _ _
+  have hgapK : |Real.log M.gamma|⁻¹ *
+      ((Int.toNat (m - (hgap : ℤ) - (((originCube d Kc).scale : ℤ) - (j : ℤ))) : ℕ) : ℝ) ≤
+      64 := by
+    rw [hLn, Int.toNat_natCast]
+    exact windowExponent_recurrenceGap_le_sixtyFour hgamma0 (by linarith)
+  have hCbud : M.gamma ≤ principalResponseBudgetConst := by
+    have hb0 : (0 : ℝ) < principalResponseBudgetConst := principalResponseBudgetConst_pos
+    have hbinv0 : (0 : ℝ) < principalResponseBudgetConst⁻¹ := inv_pos.2 hb0
+    have h := hproj ((3 / 2) * principalResponseBudgetConst⁻¹) (by positivity) hTb
+    have hid : ((3 / 2) * principalResponseBudgetConst⁻¹) * (2 / 3) =
+        principalResponseBudgetConst⁻¹ := by ring
+    have hle : principalResponseBudgetConst⁻¹ ≤ M.gamma⁻¹ := by
+      linarith [hEinv]
+    rw [← inv_inv principalResponseBudgetConst, le_inv_comm₀ hgamma0 hbinv0]
+    exact hle
+  have hrename : M.gamma ^ (6 : ℕ) ≤ principalResponseSwitchBudget M E 64 := by
+    rw [principalResponseSwitchBudget]
+    exact pow_six_le_budget_core hgamma0 (by linarith) hCbud hE1 (by norm_num)
+  exact ⟨hbadInt, hbad, hlimInt, hcubeInt, hL, hn, hgamE, hsw, Ev, hEv, hgapK, hrename, True.intro⟩
+
 /-- **The principal-response comparison of `l.approximate.recurrence.formula`,
 Step 3, at one and the same witness.**
 
@@ -848,7 +1555,7 @@ theorem exists_const_descendantsAverage_integral_principalEnergy_le_annealedLimi
   obtain ⟨Cbase, c, C, hCbase, hCbased, hc, hC0, hbadhalf⟩ :=
     exists_const_descendantsAverage_switchCubeEnergy_badEvent_le_half d
   obtain ⟨g1, hg1p, hg1q, hgoodE⟩ :=
-    exists_gamma0_descendantsAverage_integral_principalGoodEventEnergy_le_annealedCube_of_ccgGate
+    exists_smallCoupling_principalEnergy_bound_of_gate
       d hd
   obtain ⟨Cload, hCload0, g2, hg2p, hg2q, hdisp2⟩ :=
     exists_const_gridAverage_fourthMoment_annealedSqrtNormSq_principalPz_le d hd
@@ -948,200 +1655,35 @@ theorem exists_const_descendantsAverage_integral_principalEnergy_le_annealedLimi
       (E : ℝ) := le_trans (mul_le_mul_of_nonneg_right hT1 hcinv0.le) hthreshold
   obtain ⟨hEexp, hEadm⟩ :=
     admissibility_of_enlarged_const_mul_cstarInv_le hcstar0 hcstar32 hadmE
-  have hEgamma : (E : ℝ) ≤ M.gamma ^ (-(1 / 5 : ℝ)) :=
-    le_rpow_neg_fifth_of_gamma_le_zpow_neg_five' hE1 hgamma0 hgammaE
-  have hcstarE : (Disorder.cstar M)⁻¹ ≤ (E : ℝ) := by
-    have h := mul_le_mul_of_nonneg_right hTone hcinv0.le
-    rw [one_mul] at h
-    exact le_trans h hthreshold
-  have hcstarinv : (Disorder.cstar M)⁻¹ ≤ M.gamma⁻¹ := le_trans hcstarE hEinv
+  obtain ⟨stage_hEgamma, stage_hcstarinv, stage_hsmall, stage_hwindow, stage_hrate,
+    stage_hrateEllip, stage_hhZ, stage_hm, stage_hhcast, stage_hccg⟩ :=
+    @principalResponseTerminal_comparisonBounds1 (d) (Cbase) (c) (C) (hCbase) (hCbased) (hc) (hC0)
+      (Cload) (hCload0) (hCm0) (h24) (Cterm) (hT2c) (hT12) (hTC2) (hTm) (hTone) (M) (m) (Kc)
+        (hgap) (E) (hhpos) (hthreshold) (hgammaE) (hh) (j) (hgamma0) (hinv0) (hcstar0) (hcstar32)
+          (hcinv0) (hE1) (hproj) (hEinv) (hE5) (hgamma1089)
+  have hEgamma : (E : ℝ) ≤ M.gamma ^ (-(1 / 5 : ℝ)) := stage_hEgamma
+  have hcstarinv : (Disorder.cstar M)⁻¹ ≤ M.gamma⁻¹ := stage_hcstarinv
   have hsmall : M.gamma ≤
-      (2 * ((3 : ℝ) ^ (22 : ℝ) * (2 * C) * Cload ^ (2 : ℕ)) * 24 ^ (9 : ℕ))⁻¹ := by
-    have hX0 : (0 : ℝ) <
-        2 * ((3 : ℝ) ^ (22 : ℝ) * (2 * C) * Cload ^ (2 : ℕ)) * 24 ^ (9 : ℕ) :=
-      mul_pos (mul_pos (by norm_num) hCm0) h24
-    rw [le_inv_comm₀ hgamma0 hX0]
-    have h := hproj (3 * ((3 : ℝ) ^ (22 : ℝ) * (2 * C) * Cload ^ (2 : ℕ)) * 24 ^ (9 : ℕ))
-      (by positivity) hTm
-    have hid : (3 * ((3 : ℝ) ^ (22 : ℝ) * (2 * C) * Cload ^ (2 : ℕ)) * 24 ^ (9 : ℕ)) *
-        (2 / 3) =
-        2 * ((3 : ℝ) ^ (22 : ℝ) * (2 * C) * Cload ^ (2 : ℕ)) * 24 ^ (9 : ℕ) := by ring
-    linarith [hEinv]
-  -- the window of the bad-event tail, an exp-beats-power step at the exponent `C⁻¹`
+      (2 * ((3 : ℝ) ^ (22 : ℝ) * (2 * C) * Cload ^ (2 : ℕ)) * 24 ^ (9 : ℕ))⁻¹ := stage_hsmall
   have hwindow : M.gamma / 2 +
-      Real.exp (-(C⁻¹ * ((E : ℝ)⁻¹) ^ 2 * M.gamma⁻¹)) ≤ M.gamma := by
-    have hy0 : (0 : ℝ) ≤ C⁻¹ * ((E : ℝ)⁻¹) ^ 2 * M.gamma⁻¹ := by positivity
-    have h8C : 8 * C ^ 2 ≤ (E : ℝ) := by
-      have h := hproj (12 * C ^ 2) (by positivity) hTC2
-      linarith
-    have hy2 : (C⁻¹ * ((E : ℝ)⁻¹) ^ 2 * M.gamma⁻¹) ^ 2 =
-        M.gamma⁻¹ * M.gamma⁻¹ / (C ^ 2 * (E : ℝ) ^ (4 : ℕ)) := by
-      field_simp
-    have hden : (0 : ℝ) < C ^ 2 * (E : ℝ) ^ (4 : ℕ) := by positivity
-    have hstep : 8 * C ^ 2 * (E : ℝ) ^ (4 : ℕ) ≤ M.gamma⁻¹ := by
-      have h1 : 8 * C ^ 2 * (E : ℝ) ^ (4 : ℕ) ≤ (E : ℝ) * (E : ℝ) ^ (4 : ℕ) :=
-        mul_le_mul_of_nonneg_right h8C (by positivity)
-      have h2 : (E : ℝ) * (E : ℝ) ^ (4 : ℕ) = (E : ℝ) ^ (5 : ℕ) := by ring
-      linarith [hE5]
-    have hkey : 8 * M.gamma⁻¹ ≤ (C⁻¹ * ((E : ℝ)⁻¹) ^ 2 * M.gamma⁻¹) ^ 2 := by
-      rw [hy2, le_div_iff₀ hden]
-      have h3 := mul_le_mul_of_nonneg_left hstep hinv0.le
-      linarith [h3]
-    have hexpy : 2 * M.gamma⁻¹ ≤ Real.exp (C⁻¹ * ((E : ℝ)⁻¹) ^ 2 * M.gamma⁻¹) := by
-      refine le_trans ?_ (sq_div_four_le_exp hy0)
-      linarith [hkey]
-    have hid : M.gamma / 2 = (2 * M.gamma⁻¹)⁻¹ := by
-      field_simp
-    have hexpneg : Real.exp (-(C⁻¹ * ((E : ℝ)⁻¹) ^ 2 * M.gamma⁻¹)) ≤ M.gamma / 2 := by
-      rw [Real.exp_neg, hid,
-        le_inv_comm₀ (inv_pos.2 (Real.exp_pos _))
-          (mul_pos (by norm_num : (0 : ℝ) < 2) hinv0),
-        inv_inv]
-      exact hexpy
-    linarith [hexpneg]
-  have hrate := add_log_two_le_mul_rpow_three_recurrenceGap hc hcstar0 hgamma0 hE1
-    hgammaE hT2c hthreshold
-  have hrateEllip := add_log_two_le_exp_ellipticityRate hc hcstar0 hcstar32 hgamma0 hE1
-    hgammaE hT12 hthreshold
-  -- the scale data
-  have hhZ : (0 : ℤ) < (hgap : ℤ) := by exact_mod_cast hhpos
-  have hm : m - (hgap : ℤ) ≤ m - 1 := by omega
-  have hhcast : (((hgap : ℤ) : ℝ)) ≤ 6 * Disorder.cstar M * M.gamma⁻¹ := by
-    push_cast
-    exact hh
-  -- the two halves at one and the same coarse-ellipticity constant
+      Real.exp (-(C⁻¹ * ((E : ℝ)⁻¹) ^ 2 * M.gamma⁻¹)) ≤ M.gamma := stage_hwindow
+  have hrate := stage_hrate
+  have hrateEllip := stage_hrateEllip
+  have hhZ : (0 : ℤ) < (hgap : ℤ) := stage_hhZ
+  have hm : m - (hgap : ℤ) ≤ m - 1 := stage_hm
+  have hhcast : (((hgap : ℤ) : ℝ)) ≤ 6 * Disorder.cstar M * M.gamma⁻¹ := stage_hhcast
   have hccg : 2 * (d : ℝ) ^ 6 ≤
-      2 * Cbase * Provider.BadEvents.sensitivityConstMax d ^ 2 := by
-    have h2 : (1 : ℝ) ≤ Provider.BadEvents.sensitivityConstMax d ^ 2 :=
-      one_le_pow₀ (Provider.BadEvents.one_le_sensitivityConstMax d)
-    have h3 : (0 : ℝ) ≤ 2 * Cbase := by linarith
-    calc 2 * (d : ℝ) ^ 6 ≤ 2 * Cbase := by linarith
-      _ = 2 * Cbase * 1 := (mul_one _).symm
-      _ ≤ 2 * Cbase * Provider.BadEvents.sensitivityConstMax d ^ 2 :=
-          mul_le_mul_of_nonneg_left h2 h3
+      2 * Cbase * Provider.BadEvents.sensitivityConstMax d ^ 2 := stage_hccg
   obtain ⟨wD, wN, hwD, hwN, hgoodInt, hgood⟩ :=
     hgoodE M hg1 (m - 1) E hstate m Kc hgap hhpos hm hh hK e e' he he' j
       recurrenceGapMultiplier recurrenceGapMultiplierFloor_le_recurrenceGapMultiplier
       hscale (2 * Cbase) hccg
   refine ⟨wD, wN, hwD, hwN, ?_⟩
   -- the transport between the two carriers
-  have hemb : MeasurableEmbedding (Subtype.val : CutoffSample d → ShellSeq d) :=
-    MeasurableEmbedding.subtype_coe (measurableSet_lowerTailGoodSet d)
-  have hPzmeas : ∀ R ∈ descendantsAtDepth (originCube d Kc) j,
-      Measurable (fun z : Cutoff.CutoffSample d =>
-        principalPz (Annealed.sigmaBar M (m - (hgap : ℤ))) z.val (m - (hgap : ℤ)) m
-          e e' R (wD z.val) (wN z.val)) := by
-    intro R hR
-    exact ((measurable_shellIndexSigma_principalPz hR
-      (Annealed.sigmaBar M (m - (hgap : ℤ)))
-      ((Annealed.sigmaBar M (m - (hgap : ℤ)) : ℝ))⁻¹
-      ((Annealed.sigmaBar M (m - (hgap : ℤ)) : ℝ))⁻¹
-      (m - (hgap : ℤ)) m e e' e e' wD wN hwD hwN).mono
-      (Cutoff.shellIndexSigma_le_borel _) le_rfl).comp measurable_subtype_coe
-  have hvns : ∀ f : Cutoff.CutoffSample d → Vec d, Measurable f →
-      Measurable fun z => vecNormSq (f z) := by
-    intro f hf
-    have hEq : (fun z => vecNormSq (f z)) = fun z => ∑ i, f z i * f z i := rfl
-    rw [hEq]
-    exact Finset.measurable_sum _ fun i _ =>
-      ((measurable_pi_apply i).comp hf).mul ((measurable_pi_apply i).comp hf)
-  have hann : ∀ (s : Observable.PositiveScalar) (F : Cutoff.CutoffSample d → BlockVec d),
-      Measurable F → Measurable fun z => annealedSqrtNormSq s (F z) := by
-    intro s F hF
-    have hEq : (fun z => annealedSqrtNormSq s (F z)) =
-        fun z => (s : ℝ) * vecNormSq (F z).1 + ((s : ℝ))⁻¹ * vecNormSq (F z).2 := rfl
-    rw [hEq]
-    exact (measurable_const.mul (hvns _ hF.fst)).add
-      (measurable_const.mul (hvns _ hF.snd))
-  -- the load square at the reading gauge, through the gauge bridge
-  have hVint : ∀ R ∈ descendantsAtDepth (originCube d Kc) j,
-      Integrable (fun z : Cutoff.CutoffSample d =>
-        annealedSqrtNormSq (Annealed.sigmaBar M (m - 1))
-          (principalPz (Annealed.sigmaBar M (m - (hgap : ℤ))) z.val
-            (m - (hgap : ℤ)) m e e' R (wD z.val) (wN z.val)) ^ (2 : ℕ))
-        (Cutoff.cutoffSampleLaw M).toMeasure := by
-    intro R hR
-    have hsh := hSqInt M hg3 (m - 1) E hstate m Kc hgap hhpos hm hh hK e e' he he' j R hR
-      wD wN hwD hwN
-    rw [← map_cutoffSampleLaw_val M, hemb.integrable_map_iff] at hsh
-    have hload : Integrable (fun z : Cutoff.CutoffSample d =>
-        annealedSqrtNormSq (Annealed.sigmaBar M (m - (hgap : ℤ)))
-          (principalPz (Annealed.sigmaBar M (m - (hgap : ℤ))) z.val
-            (m - (hgap : ℤ)) m e e' R (wD z.val) (wN z.val)) ^ (2 : ℕ))
-        (Cutoff.cutoffSampleLaw M).toMeasure := hsh
-    refine Integrable.mono'
-      (hload.const_mul (gaugeRatio (Annealed.sigmaBar M (m - (hgap : ℤ)))
-        (Annealed.sigmaBar M (m - 1)) ^ 2))
-      ((hann _ _ (hPzmeas R hR)).pow_const 2).aestronglyMeasurable
-      (Filter.Eventually.of_forall fun z => ?_)
-    have hb := sq_annealedSqrtNormSq_le_gaugeRatio_sq_mul
-      (Annealed.sigmaBar M (m - (hgap : ℤ))) (Annealed.sigmaBar M (m - 1))
-      (principalPz (Annealed.sigmaBar M (m - (hgap : ℤ))) z.val
-        (m - (hgap : ℤ)) m e e' R (wD z.val) (wN z.val))
-    have h0 : (0 : ℝ) ≤ annealedSqrtNormSq (Annealed.sigmaBar M (m - 1))
-        (principalPz (Annealed.sigmaBar M (m - (hgap : ℤ))) z.val
-          (m - (hgap : ℤ)) m e e' R (wD z.val) (wN z.val)) ^ (2 : ℕ) := by positivity
-    rw [Real.norm_of_nonneg h0]
-    exact hb
-  -- the fourth-moment display, in grid form
-  have hmeasR : ∀ R ∈ descendantsAtDepth (originCube d Kc) j,
-      Measurable (fun z : Cutoff.CutoffSample d =>
-        annealedSqrtNormSq (Annealed.sigmaBar M (m - 1))
-          (principalPz (Annealed.sigmaBar M (m - (hgap : ℤ))) z.val
-            (m - (hgap : ℤ)) m e e' R (wD z.val) (wN z.val)) ^ (2 : ℕ)) :=
-    fun R hR => (hann _ _ (hPzmeas R hR)).pow_const 2
-  have hd2 := hdisp2 M hg2 (m - 1) E hstate m Kc hgap hhpos hm le_rfl hh hK e e' he he' j
-    (fun z : Cutoff.CutoffSample d => wD z.val)
-    (fun z : Cutoff.CutoffSample d => wN z.val)
-    (fun z => hwD z.val) (fun z => hwN z.val) hmeasR hVint
-  have havgnn : (0 : ℝ) ≤ descendantsAverage (originCube d Kc) j
-      (fun R => ∫ z : Cutoff.CutoffSample d,
-        annealedSqrtNormSq (Annealed.sigmaBar M (m - 1))
-          (principalPz (Annealed.sigmaBar M (m - (hgap : ℤ))) z.val
-            (m - (hgap : ℤ)) m e e' R (wD z.val) (wN z.val)) ^ (2 : ℕ)
-        ∂(Cutoff.cutoffSampleLaw M).toMeasure) :=
-    descendantsAverage_nonneg (originCube d Kc) j _ fun R _ =>
-      integral_nonneg fun z => pow_nonneg (annealedSqrtNormSq_nonneg _ _) 2
-  have havg : descendantsAverage (originCube d Kc) j
-      (fun R => ∫ z : Cutoff.CutoffSample d,
-        annealedSqrtNormSq (Annealed.sigmaBar M (m - 1))
-          (principalPz (Annealed.sigmaBar M (m - (hgap : ℤ))) z.val
-            (m - (hgap : ℤ)) m e e' R (wD z.val) (wN z.val)) ^ (2 : ℕ)
-        ∂(Cutoff.cutoffSampleLaw M).toMeasure) ≤ Cload ^ (4 : ℕ) := by
-    have hstep := Real.rpow_le_rpow (Real.rpow_nonneg havgnn _) hd2
-      (by norm_num : (0 : ℝ) ≤ 4)
-    rw [← Real.rpow_mul havgnn] at hstep
-    have h4 : ((1 : ℝ) / 4) * 4 = 1 := by norm_num
-    rw [h4, Real.rpow_one] at hstep
-    have hc4 : Cload ^ (4 : ℝ) = Cload ^ (4 : ℕ) := by
-      rw [← Real.rpow_natCast Cload 4]
-      norm_num
-    rwa [hc4] at hstep
-  -- the bad half, already inside the half budget
-  obtain ⟨hbadInt, hbad⟩ := hbadhalf M E m (hgap : ℤ) (originCube d Kc) j
-    (fun R z => principalPz (Annealed.sigmaBar M (m - (hgap : ℤ))) z.val
-      (m - (hgap : ℤ)) m e e' R (wD z.val) (wN z.val))
-    Cload hstate hhZ hscale hEexp hEadm hEgamma hwindow hgamma1089 hhcast hCload0
-    (fun R hR => aestronglyMeasurable_switchCubeEnergy M m R (hPzmeas R hR))
-    (fun R hR => (Real.continuous_sqrt.measurable.comp
-      (hann _ _ (hPzmeas R hR))).aestronglyMeasurable)
-    hVint havg hrate hrateEllip hcstarinv hsmall
-  -- the two quadratic forms of the recombination
-  have hWentry : ∀ R ∈ descendantsAtDepth (originCube d Kc) j,
-      ∀ alpha beta : BlockCoord d,
-        Integrable (fun z : Cutoff.CutoffSample d =>
-          toFullBlockVec (gaugedPrincipalLoadShell
-              (Annealed.sigmaBar M (m - (hgap : ℤ))) R (m - (hgap : ℤ)) m e e' wD wN
-              z.val) alpha *
-            toFullBlockVec (gaugedPrincipalLoadShell
-              (Annealed.sigmaBar M (m - (hgap : ℤ))) R (m - (hgap : ℤ)) m e e' wD wN
-              z.val) beta)
-          (Cutoff.cutoffSampleLaw M).toMeasure := by
-    intro R hR alpha beta
-    have hsh := hWint M hg4 (m - 1) E hstate m Kc hgap hhpos hm hh hK e e' he he' j R hR
-      wD wN hwD hwN alpha beta
-    rw [← map_cutoffSampleLaw_val M, hemb.integrable_map_iff] at hsh
-    exact hsh
+  obtain ⟨stage_hbadInt, stage_hbad, stage_hlimInt, stage_hcubeInt, stage_hL, stage_hn, stage_hgamE, stage_hsw, stage_Ev, stage_hEv, stage_hgapK, stage_hrename, _⟩ :=
+    @principalResponseTerminal_comparisonBounds3 (d) (by infer_instance) (Cbase) (c) (C) (hbadhalf) (Cload) (hCload0) (g2) (hdisp2) (g3) (hSqInt) (g4) (hWint) (Cterm) (hTb) (M) (m) (Kc) (hgap) (E) (hstate) (hhpos) (hgammaE) (hh) (hK) (e) (e') (he) (he') (j) (hscale) (hgamma0) (hE1) (hproj) (hEinv) (hg2) (hg3) (hg4) (hgamma1089) (hEexp) (hEadm) (hEgamma) (hcstarinv) (hsmall) (hwindow) (hrate) (hrateEllip) (hhZ) (hm) (hhcast) (wD) (wN) (hwD) (hwN)
+  let hbadInt := stage_hbadInt
+  let hbad := stage_hbad
   have hlimInt : ∀ R ∈ descendantsAtDepth (originCube d Kc) j,
       Integrable (fun z : Cutoff.CutoffSample d =>
         blockVecDot
@@ -1153,11 +1695,7 @@ theorem exists_const_descendantsAverage_integral_principalEnergy_le_annealedLimi
               (((Annealed.sigmaBar M (m - (hgap : ℤ)) : ℝ))⁻¹ • (1 : Mat d)))
             (gaugedPrincipalLoadShell (Annealed.sigmaBar M (m - (hgap : ℤ))) R
               (m - (hgap : ℤ)) m e e' wD wN z.val)))
-        (Cutoff.cutoffSampleLaw M).toMeasure := fun R hR =>
-    integrable_blockVecDot_blockDiag_smul_one_of_entries _ _ _ (hWentry R hR)
-  obtain ⟨sUp, sLow, hst⟩ :=
-    Provider.Annealed.coefficientCutoffLaw_exists_annealedBlockMatrixAtScale_eq_blockDiag_smul_one
-      M (m - (hgap : ℤ)) (((originCube d Kc).scale : ℤ) - (j : ℤ))
+        (Cutoff.cutoffSampleLaw M).toMeasure := stage_hlimInt
   have hcubeInt : ∀ R ∈ descendantsAtDepth (originCube d Kc) j,
       Integrable (fun z : Cutoff.CutoffSample d =>
         blockVecDot
@@ -1169,44 +1707,17 @@ theorem exists_const_descendantsAverage_integral_principalEnergy_le_annealedLimi
               (((originCube d Kc).scale : ℤ) - (j : ℤ)))
             (gaugedPrincipalLoadShell (Annealed.sigmaBar M (m - (hgap : ℤ))) R
               (m - (hgap : ℤ)) m e e' wD wN z.val)))
-        (Cutoff.cutoffSampleLaw M).toMeasure := by
-    intro R hR
-    rw [hst]
-    exact integrable_blockVecDot_blockDiag_smul_one_of_entries _ sUp sLow (hWentry R hR)
-  -- the gates of the recombination
-  have hL : m - (hgap : ℤ) ≤ m - 1 := hm
-  have hn : ((originCube d Kc).scale : ℤ) - (j : ℤ) ≤ m - (hgap : ℤ) := by
-    rw [hscale]
-    exact recurrenceMesoScale_le _ _ _ _
-  have hgamE : M.gamma ≤ ((E : ℝ) ^ 5)⁻¹ := by
-    have hEpow : (E : ℝ) ^ (-5 : ℤ) = ((E : ℝ) ^ (5 : ℕ))⁻¹ := by
-      rw [zpow_neg]
-      norm_cast
-    rwa [hEpow] at hgammaE
-  have hsw := inv_abs_log_mem_Icc hgamma0 hgamma1089
-  obtain ⟨Ev, hEv⟩ := exists_blockVecDot_self_eq_one (d := d)
-  have hLn : m - (hgap : ℤ) - (((originCube d Kc).scale : ℤ) - (j : ℤ)) =
-      ((recurrenceGap recurrenceGapMultiplier M.gamma : ℕ) : ℤ) := by
-    rw [hscale]
-    exact sub_recurrenceMesoScale _ _ _ _
+        (Cutoff.cutoffSampleLaw M).toMeasure := stage_hcubeInt
+  have hL : m - (hgap : ℤ) ≤ m - 1 := stage_hL
+  have hn : ((originCube d Kc).scale : ℤ) - (j : ℤ) ≤ m - (hgap : ℤ) := stage_hn
+  have hgamE : M.gamma ≤ ((E : ℝ) ^ 5)⁻¹ := stage_hgamE
+  let hsw := stage_hsw
+  let Ev := stage_Ev
+  let hEv := stage_hEv
   have hgapK : |Real.log M.gamma|⁻¹ *
       ((Int.toNat (m - (hgap : ℤ) - (((originCube d Kc).scale : ℤ) - (j : ℤ))) : ℕ) : ℝ) ≤
-      64 := by
-    rw [hLn, Int.toNat_natCast]
-    exact windowExponent_recurrenceGap_le_sixtyFour hgamma0 (by linarith)
-  have hCbud : M.gamma ≤ principalResponseBudgetConst := by
-    have hb0 : (0 : ℝ) < principalResponseBudgetConst := principalResponseBudgetConst_pos
-    have hbinv0 : (0 : ℝ) < principalResponseBudgetConst⁻¹ := inv_pos.2 hb0
-    have h := hproj ((3 / 2) * principalResponseBudgetConst⁻¹) (by positivity) hTb
-    have hid : ((3 / 2) * principalResponseBudgetConst⁻¹) * (2 / 3) =
-        principalResponseBudgetConst⁻¹ := by ring
-    have hle : principalResponseBudgetConst⁻¹ ≤ M.gamma⁻¹ := by
-      linarith [hEinv]
-    rw [← inv_inv principalResponseBudgetConst, le_inv_comm₀ hgamma0 hbinv0]
-    exact hle
-  have hrename : M.gamma ^ (6 : ℕ) ≤ principalResponseSwitchBudget M E 64 := by
-    rw [principalResponseSwitchBudget]
-    exact pow_six_le_budget_core hgamma0 (by linarith) hCbud hE1 (by norm_num)
+      64 := stage_hgapK
+  have hrename : M.gamma ^ (6 : ℕ) ≤ principalResponseSwitchBudget M E 64 := stage_hrename
   exact descendantsAverage_integral_principalEnergy_le_annealedLimit
     (mu := (Cutoff.cutoffSampleLaw M).toMeasure) M
     (m0 := m - 1) (L := m - (hgap : ℤ))

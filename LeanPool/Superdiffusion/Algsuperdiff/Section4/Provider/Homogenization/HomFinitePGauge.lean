@@ -71,7 +71,8 @@ are load-bearing and are recorded here:
 
 ## References
 
-* ABK26, the general coarse-graining proposition; the negative Besov seminorm definition; the Besov seminorm definition.
+* ABK26, the general coarse-graining proposition; the negative Besov seminorm definition; the Besov
+seminorm definition.
 -/
 
 open HCPolySupport HCPolySupport.Book.Ch03

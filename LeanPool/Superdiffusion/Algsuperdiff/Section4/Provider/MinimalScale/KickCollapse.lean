@@ -190,6 +190,90 @@ theorem triangleConstTwo_le : (1 + Real.log 2) ^ ((2 : ℝ))⁻¹ ≤ 2 := by
 
 /-! ## 4. The endpoint -/
 
+private theorem minimalScale_kickIteration_bound :
+    ∀ (d : ℕ) (C2 : ℝ),
+      (0 : ℝ) < C2 →
+        ∀ (M : ABKModel d) (s : { s : ℝ // (0 : ℝ) < s }) (Mc C : ℝ),
+          (0 : ℝ) < Mc →
+            (4 : ℝ) * C2 ≤ Mc →
+              ∀ (lam : ℝ),
+                (0 : ℝ) ≤ lam →
+                  (∀ (j : ℤ),
+                      IsBigOWith (↑(Cutoff.cutoffSampleLaw M) : Measure (Cutoff.CutoffSample d)) (gammaSigma (2 : ℝ))
+                        (kickLegLow M s lam j) (C2 * (Disorder.cstar M)⁻¹ * (√(↑s : ℝ) ^ (5 : ℕ))⁻¹ * √M.gamma)) →
+                    let F : ℝ := (Disorder.cstar M)⁻¹ * (√(↑s : ℝ) ^ (5 : ℕ))⁻¹ * √M.gamma;
+                    (0 : ℝ) < F →
+                      C2 * (Disorder.cstar M)⁻¹ * (√(↑s : ℝ) ^ (5 : ℕ))⁻¹ * √M.gamma = C2 * F →
+                        let Kc : ℝ := C * (√(↑s : ℝ) ^ (9 : ℕ))⁻¹;
+                        (0 : ℝ) < Kc →
+                          let bb : ℝ := C2⁻¹ * Disorder.cstar M ^ (3 : ℕ) * M.gamma⁻¹;
+                          (∀ (j : ℤ),
+                              IsBigOWith (↑(Cutoff.cutoffSampleLaw M) : Measure (Cutoff.CutoffSample d))
+                                (gammaSigma (1 / 2 : ℝ)) (kickLegHigh M s lam j) (C2 * Real.exp (-bb))) →
+                            bb = C2⁻¹ * Disorder.cstar M ^ (3 : ℕ) * M.gamma⁻¹ →
+                              Kc * (C2 * Real.exp (-bb)) ≤ (Mc / (4 : ℝ) * F) ^ (4 : ℕ) →
+                                ∀ (j : ℤ),
+                                  IsBigOWith (↑(Cutoff.cutoffSampleLaw M) : Measure (Cutoff.CutoffSample d))
+                                    (gammaSigma (2 : ℝ)) (kickCollapsed M s lam Kc j) (Mc * F) := by
+  intro _ C2 hC2 M s Mc C hMcpos h4C2 lam hlam0 hlow F hF0 hC2F Kc hKc0 bb hhigh hbbdef hkey j
+  have hlowj := hlow j
+  rw [hC2F] at hlowj
+  have hhighj := hhigh j
+  have hKmul : IsBigOWith (Cutoff.cutoffSampleLaw M).toMeasure (gammaSigma (1 / 2))
+      (fun omega => Kc * kickLegHigh M s lam j omega)
+      (Kc * (C2 * Real.exp (-bb))) := by
+    have h := IsBigOWith.const_mul (c := Kc) hKc0.le hhighj
+    rw [hbbdef]
+    exact h
+  have hroot := isBigOWith_sqrt_sqrt
+    (mu := (Cutoff.cutoffSampleLaw M).toMeasure)
+    (by exact mul_nonneg hKc0.le (mul_nonneg hC2.le (Real.exp_pos _).le))
+    (fun omega => mul_nonneg hKc0.le (kickLegHigh_nonneg M s lam j omega)) hKmul
+  have hroot' : IsBigOWith (Cutoff.cutoffSampleLaw M).toMeasure (gammaSigma 2)
+      (fun omega => Real.sqrt (Real.sqrt (Kc * kickLegHigh M s lam j omega)))
+      (Mc / 4 * F) :=
+    hroot.mono_scale (sqrt_sqrt_le_of_le_pow_four
+      (by
+        have h1 : (0 : ℝ) < Mc / 4 := by linarith only [hMcpos]
+        exact le_of_lt (mul_pos h1 hF0)) hkey)
+  -- add the two `Γ₂` legs
+  have hlowO : IsBigO
+      (Cutoff.cutoffSampleLaw M).toMeasure (gammaSigma 2)
+      (kickLegLow M s lam j) (C2 * F) := by
+    exact Algsuperdiff.Probability.isBigO_of_isBigOWith_of_nonneg
+      (fun omega => kickLegLow_nonneg M s hlam0 j omega) hlowj
+  have hrootO : IsBigO
+      (Cutoff.cutoffSampleLaw M).toMeasure (gammaSigma 2)
+      (fun omega => Real.sqrt (Real.sqrt (Kc * kickLegHigh M s lam j omega)))
+      (Mc / 4 * F) :=
+    Algsuperdiff.Probability.isBigO_of_isBigOWith_of_nonneg
+      (fun omega => Real.sqrt_nonneg _) hroot'
+  have hsum := Algsuperdiff.Probability.isBigO_gammaSigma_add2'
+    (μ := (Cutoff.cutoffSampleLaw M).toMeasure) (by norm_num : (0 : ℝ) < 2)
+    (mul_nonneg hC2.le hF0.le)
+    (mul_nonneg (by linarith only [hMcpos] : (0 : ℝ) ≤ Mc / 4) hF0.le)
+    hlowO hrootO
+  have hsumW : IsBigOWith (Cutoff.cutoffSampleLaw M).toMeasure (gammaSigma 2)
+      (kickCollapsed M s lam Kc j)
+      ((1 + Real.log 2) ^ ((2 : ℝ))⁻¹ * (C2 * F + Mc / 4 * F)) := by
+    refine Algsuperdiff.Probability.isBigOWith_of_isBigO_of_nonneg
+      (fun omega => kickCollapsed_nonneg M s hlam0 Kc j omega) ?_
+    exact hsum
+  refine hsumW.mono_scale ?_
+  have hT := triangleConstTwo_le
+  have hpos : (0 : ℝ) ≤ C2 * F + Mc / 4 * F :=
+    add_nonneg (mul_nonneg hC2.le hF0.le)
+      (mul_nonneg (by linarith only [hMcpos]) hF0.le)
+  have hstep1 : (1 + Real.log 2) ^ ((2 : ℝ))⁻¹ * (C2 * F + Mc / 4 * F)
+      ≤ 2 * (C2 * F + Mc / 4 * F) := mul_le_mul_of_nonneg_right hT hpos
+  have hstep2 : 2 * (C2 * F + Mc / 4 * F) ≤ Mc * F := by
+    have h1 : 2 * C2 ≤ Mc / 2 := by linarith only [h4C2]
+    have h2 : (2 * C2) * F ≤ (Mc / 2) * F := mul_le_mul_of_nonneg_right h1 hF0.le
+    calc 2 * (C2 * F + Mc / 4 * F) = (2 * C2) * F + (Mc / 2) * F := by ring
+      _ ≤ (Mc / 2) * F + (Mc / 2) * F := by linarith only [h2]
+      _ = Mc * F := by ring
+  exact hstep1.trans hstep2
+
 /-- **TH AND `e.Xj.expectation.upinthere`, UN.**
 
 There is a dimensional constant `C` such that for every model in the regime
@@ -402,67 +486,8 @@ theorem exists_kickCollapse (d : ℕ) :
     rw [hLw]
     exact mul_le_mul_of_nonneg_right hconst hfac0
   -- the per-index assembly
-  have hmain : ∀ j : ℤ,
-      IsBigOWith (Cutoff.cutoffSampleLaw M).toMeasure (gammaSigma 2)
-        (kickCollapsed M s lam Kc j) (Mc * F) := by
-    intro j
-    have hlowj := hlow j
-    rw [hC2F] at hlowj
-    have hhighj := hhigh j
-    have hKmul : IsBigOWith (Cutoff.cutoffSampleLaw M).toMeasure (gammaSigma (1 / 2))
-        (fun omega => Kc * kickLegHigh M s lam j omega)
-        (Kc * (C2 * Real.exp (-bb))) := by
-      have h := IsBigOWith.const_mul (c := Kc) hKc0.le hhighj
-      rw [hbbdef]
-      exact h
-    have hroot := isBigOWith_sqrt_sqrt
-      (mu := (Cutoff.cutoffSampleLaw M).toMeasure)
-      (by exact mul_nonneg hKc0.le (mul_nonneg hC2.le (Real.exp_pos _).le))
-      (fun omega => mul_nonneg hKc0.le (kickLegHigh_nonneg M s lam j omega)) hKmul
-    have hroot' : IsBigOWith (Cutoff.cutoffSampleLaw M).toMeasure (gammaSigma 2)
-        (fun omega => Real.sqrt (Real.sqrt (Kc * kickLegHigh M s lam j omega)))
-        (Mc / 4 * F) :=
-      hroot.mono_scale (sqrt_sqrt_le_of_le_pow_four
-        (by
-          have h1 : (0 : ℝ) < Mc / 4 := by linarith only [hMcpos]
-          exact le_of_lt (mul_pos h1 hF0)) hkey)
-    -- add the two `Γ₂` legs
-    have hlowO : IsBigO
-        (Cutoff.cutoffSampleLaw M).toMeasure (gammaSigma 2)
-        (kickLegLow M s lam j) (C2 * F) := by
-      exact Algsuperdiff.Probability.isBigO_of_isBigOWith_of_nonneg
-        (fun omega => kickLegLow_nonneg M s hlam0 j omega) hlowj
-    have hrootO : IsBigO
-        (Cutoff.cutoffSampleLaw M).toMeasure (gammaSigma 2)
-        (fun omega => Real.sqrt (Real.sqrt (Kc * kickLegHigh M s lam j omega)))
-        (Mc / 4 * F) :=
-      Algsuperdiff.Probability.isBigO_of_isBigOWith_of_nonneg
-        (fun omega => Real.sqrt_nonneg _) hroot'
-    have hsum := Algsuperdiff.Probability.isBigO_gammaSigma_add2'
-      (μ := (Cutoff.cutoffSampleLaw M).toMeasure) (by norm_num : (0 : ℝ) < 2)
-      (mul_nonneg hC2.le hF0.le)
-      (mul_nonneg (by linarith only [hMcpos] : (0 : ℝ) ≤ Mc / 4) hF0.le)
-      hlowO hrootO
-    have hsumW : IsBigOWith (Cutoff.cutoffSampleLaw M).toMeasure (gammaSigma 2)
-        (kickCollapsed M s lam Kc j)
-        ((1 + Real.log 2) ^ ((2 : ℝ))⁻¹ * (C2 * F + Mc / 4 * F)) := by
-      refine Algsuperdiff.Probability.isBigOWith_of_isBigO_of_nonneg
-        (fun omega => kickCollapsed_nonneg M s hlam0 Kc j omega) ?_
-      exact hsum
-    refine hsumW.mono_scale ?_
-    have hT := triangleConstTwo_le
-    have hpos : (0 : ℝ) ≤ C2 * F + Mc / 4 * F :=
-      add_nonneg (mul_nonneg hC2.le hF0.le)
-        (mul_nonneg (by linarith only [hMcpos]) hF0.le)
-    have hstep1 : (1 + Real.log 2) ^ ((2 : ℝ))⁻¹ * (C2 * F + Mc / 4 * F)
-        ≤ 2 * (C2 * F + Mc / 4 * F) := mul_le_mul_of_nonneg_right hT hpos
-    have hstep2 : 2 * (C2 * F + Mc / 4 * F) ≤ Mc * F := by
-      have h1 : 2 * C2 ≤ Mc / 2 := by linarith only [h4C2]
-      have h2 : (2 * C2) * F ≤ (Mc / 2) * F := mul_le_mul_of_nonneg_right h1 hF0.le
-      calc 2 * (C2 * F + Mc / 4 * F) = (2 * C2) * F + (Mc / 2) * F := by ring
-        _ ≤ (Mc / 2) * F + (Mc / 2) * F := by linarith only [h2]
-        _ = Mc * F := by ring
-    exact hstep1.trans hstep2
+  have hmain := @minimalScale_kickIteration_bound (d) (C2) (hC2) (M) (s) (Mc) (C) (hMcpos) (h4C2)
+    (lam) (hlam0) (hlow) (hF0) (hC2F) (hKc0) (hhigh) (hbbdef) (hkey)
   refine ⟨lam, hlam0, fun j omega => kickLegLow_add_kickLegHigh M s lam j omega, ?_, ?_⟩
   · intro j
     rw [hCF]

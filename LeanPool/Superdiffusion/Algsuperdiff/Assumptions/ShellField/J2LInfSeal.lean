@@ -64,7 +64,6 @@ private theorem unitOpenCubeSup_eq_eLpNorm_top
     | some x => f x.1
   let S : ℝ := sSup (Set.range value)
   let E : ℝ≥0∞ := eLpNorm f ∞ (volume.restrict U)
-
   have hU_open : IsOpen U := by
     dsimp only [U]
     rw [← ball_cubeCenter_eq_openCubeSet]

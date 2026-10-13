@@ -80,7 +80,6 @@ theorem offGridCentre_mem_inner {m : ℤ} (n : ℤ) {x : Vec d}
 
 section BoundaryLeg
 
-open scoped Classical
 
 end BoundaryLeg
 

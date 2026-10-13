@@ -206,12 +206,12 @@ theorem exists_poincare_sub_of_isDirichletSolutionAt [NeZero d] (y : Vec d) (n :
   have hval : (∫ x in cubeSetAt y n, (u.toFun x - v.toFun x) ^ (2 : ℕ) ∂volume) =
       ∫ x in cubeSetAt y n, w.toH1Function.toFun x ^ (2 : ℕ) ∂volume := by
     refine integral_congr_ae (Filter.Eventually.of_forall fun x => ?_)
-    show (u.toFun x - v.toFun x) ^ (2 : ℕ) = w.toH1Function.toFun x ^ (2 : ℕ)
+    change (u.toFun x - v.toFun x) ^ (2 : ℕ) = w.toH1Function.toFun x ^ (2 : ℕ)
     rw [hwf x]
   have hgrad : (∫ x in cubeSetAt y n, ‖u.grad x - v.grad x‖ ^ (2 : ℕ) ∂volume) =
       ∫ x in cubeSetAt y n, ‖w.toH1Function.grad x‖ ^ (2 : ℕ) ∂volume := by
     refine integral_congr_ae (Filter.Eventually.of_forall fun x => ?_)
-    show ‖u.grad x - v.grad x‖ ^ (2 : ℕ) = ‖w.toH1Function.grad x‖ ^ (2 : ℕ)
+    change ‖u.grad x - v.grad x‖ ^ (2 : ℕ) = ‖w.toH1Function.grad x‖ ^ (2 : ℕ)
     rw [hwg x]
   rw [hval, hgrad]
   exact hbound w

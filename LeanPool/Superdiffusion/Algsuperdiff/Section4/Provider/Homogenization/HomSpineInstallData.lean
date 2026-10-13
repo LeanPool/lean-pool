@@ -146,7 +146,7 @@ theorem overlapSeminorm_toReal_le [NeZero d] (m : ℤ) (s2 : FractionalOrder)
   refine hreal.trans (le_of_eq ?_)
   /- the scale power, evaluat -/
   have hscale : cubeScaleFactor (originCube d m) = (3 : ℝ) ^ ((m : ℝ)) := by
-    show ((3 : ℝ) ^ (m : ℤ)) = (3 : ℝ) ^ ((m : ℝ))
+    change ((3 : ℝ) ^ (m : ℤ)) = (3 : ℝ) ^ ((m : ℝ))
     exact (Real.rpow_intCast (3 : ℝ) m).symm
   have hpow : cubeScaleFactor (originCube d m) ^ ((1 / 2 : ℝ) - s2.1) =
       (3 : ℝ) ^ ((1 / 2 - s2.1) * (m : ℝ)) := by

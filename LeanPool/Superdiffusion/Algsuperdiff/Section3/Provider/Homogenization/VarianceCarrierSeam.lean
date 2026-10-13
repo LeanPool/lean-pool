@@ -49,7 +49,7 @@ Multiplying `e.means.downscale.by.defect` by `σ_L^2` removes the `σ_L^{-2}`
 gauge, leaving the pure amplitude `4 δ₁^2`, which is the scale on which the
 transported corridor bound `C δ (δ + 3^{-d(n-L)})` is stated.  The premises are
 exactly those of the proved display. -/
-theorem coefficientCutoffLaw_sq_sigmaBar_mul_annealedSigmaStarInvScalarAtScale_sub_le_four_mul_sq
+theorem annealedInverseDiffusivity_defect_bound
     {n m : ℤ} (hLn : L ≤ n) (hnm : n ≤ m)
     {s : ℝ} (hs : 0 < s) {delta1 : ℝ} (hdelta1 : delta1 ∈ Set.Ioc (0 : ℝ) (1 / 2))
     (hmoment : ∫⁻ omega, ENNReal.ofReal

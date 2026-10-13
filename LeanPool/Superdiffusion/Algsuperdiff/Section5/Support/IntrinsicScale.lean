@@ -488,7 +488,8 @@ theorem abs_intrinsicScale_sq_sub_mul_le (hnu : 0 < nu) (hcstar : 0 < cstar)
   have hgamma1 : gamma ≤ 1 := by linarith only [hgamma4]
   have hRpos := intrinsicScale_pos hnu hcstar hgamma ht
   have hrpos : 0 < r := lt_of_lt_of_le hRpos hr
-  have hprof := abs_intrinsicScale_sq_sub_effectiveDiffusivity_mul_le hnu hcstar hgamma hgamma1 ht hr
+  have hprof := abs_intrinsicScale_sq_sub_effectiveDiffusivity_mul_le hnu hcstar hgamma hgamma1 ht
+    hr
   have hEle := effectiveDiffusivity_mul_le_sq hnu hcstar hgamma hgamma1 ht hr
   have hEnn := effectiveDiffusivity_nonneg nu cstar gamma r
   set eps : ℝ := C * Real.sqrt gamma * |Real.log gamma| with heps

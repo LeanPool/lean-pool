@@ -209,7 +209,7 @@ theorem ae_le_of_constantForcingSubsolution {y : Vec d} {n : ℤ} (hd : 0 < d)
           ∫ x in cubeSetAt y n, vecDot (w.grad x) (psi.toH1Function.grad x) ∂volume := by
     rw [← integral_sub hintV hintW]
     refine integral_congr_ae (Filter.Eventually.of_forall fun x => ?_)
-    show vecDot (D.toH1Function.grad x) (psi.toH1Function.grad x) =
+    change vecDot (D.toH1Function.grad x) (psi.toH1Function.grad x) =
       vecDot (v.toH1Function.grad x) (psi.toH1Function.grad x) -
         vecDot (w.grad x) (psi.toH1Function.grad x)
     rw [hDg x]

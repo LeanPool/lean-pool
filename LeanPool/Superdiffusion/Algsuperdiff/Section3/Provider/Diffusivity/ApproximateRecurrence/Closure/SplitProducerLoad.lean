@@ -28,7 +28,7 @@ ABK26, `l.approximate.recurrence.formula`, Step 2, `e.Pz.def`.
 
 `LocalizationFluctuationMuMeasCell.integrable_switchCubeEnergy_of_le` --- the
 producer of the `hintPrincipal` binder of
-`LocalizationFluctuationSelectEndpoint.integral_blockVecDot_recurrenceP_le_principalSwitchEnergyAverage_add`
+`integral_blockVecDot_recurrenceP_le_principalSwitchEnergyAverage_add`
 --- carries two inputs: measurability of the load family, and an almost-sure
 integrable upper bound for the switch energy.  This module supplies the **first**
 one at the endpoint's own load and on the endpoint's own carrier

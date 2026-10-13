@@ -116,7 +116,8 @@ private theorem cutoffLowerEllipticityInvLiteral_nonneg (M : ABKModel d)
   unfold cutoffLowerEllipticityInvLiteral
   exact inv_nonneg.mpr <| by
     rw [Ch04.lambdaSqCoeffField]
-    simp only [dite_eq_left (Cutoff.coefficientCutoff_aeLocallyUniformlyEllipticField M cutoffScale omega)]
+    simp only [dite_eq_left (Cutoff.coefficientCutoff_aeLocallyUniformlyEllipticField M
+      cutoffScale omega)]
     exact Ch02.lambdaSq_nonneg (originCube d domainScale)
       (Ch04.triadicCoeffFamilyOfAELocallyUniformlyEllipticField
         (Cutoff.coefficientCutoff M.nu cutoffScale omega)
@@ -129,7 +130,8 @@ private theorem cutoffUpperEllipticityLiteral_nonneg (M : ABKModel d)
   let : NeZero d := neZero_of_model_CutoffMultiscaleEllipticity M
   unfold cutoffUpperEllipticityLiteral
   rw [Ch04.LambdaSqCoeffField]
-  simp only [dite_eq_left (Cutoff.coefficientCutoff_aeLocallyUniformlyEllipticField M cutoffScale omega)]
+  simp only [dite_eq_left (Cutoff.coefficientCutoff_aeLocallyUniformlyEllipticField M cutoffScale
+    omega)]
   exact Ch02.LambdaSq_nonneg (originCube d domainScale)
     (Ch04.triadicCoeffFamilyOfAELocallyUniformlyEllipticField
       (Cutoff.coefficientCutoff M.nu cutoffScale omega)
@@ -196,7 +198,8 @@ theorem cutoffUpperEllipticity_eq_literal (M : ABKModel d)
 theorem cutoffLowerEllipticityInv_ae_eq_literal (M : ABKModel d)
     (domainScale cutoffScale : ℤ) (s : ℝ) (hs : 0 < s)
     (q : CoarseEllipticityExponent) :
-    cutoffLowerEllipticityInv M domainScale cutoffScale s hs q =ᵐ[(Cutoff.cutoffSampleLaw M).toMeasure]
+    cutoffLowerEllipticityInv M domainScale cutoffScale s hs q =ᵐ[(Cutoff.cutoffSampleLaw
+      M).toMeasure]
       cutoffLowerEllipticityInvLiteral M domainScale cutoffScale s q :=
   (cutoffLowerEllipticityInv_eq_literal M domainScale cutoffScale s hs q) ▸
     Filter.EventuallyEq.rfl

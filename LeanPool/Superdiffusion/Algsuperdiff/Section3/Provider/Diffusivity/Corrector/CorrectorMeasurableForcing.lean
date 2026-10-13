@@ -153,7 +153,7 @@ theorem toHilbertVectorL2OfVecField_eq_zero {G : Vec d → Vec d} (hG : MemVecto
 omit [IsFiniteMeasure (volumeMeasureOn U)] in
 /-- Unconditional: the `L^2` class of a finite sum of fields is the sum of the
 classes. -/
-theorem toHilbertVectorL2OfVecField_finsetSum {iota : Type*} [DecidableEq iota]
+theorem toHilbertVectorL2OfVecField_finsetSum {iota : Type*}
     (F : iota → Vec d → Vec d) (hF : ∀ i, MemVectorL2 U (F i)) (s : Finset iota)
     {G : Vec d → Vec d} (hG : MemVectorL2 U G) (hGeq : ∀ x, G x = ∑ i ∈ s, F i x) :
     toHilbertVectorL2OfVecField hG = ∑ i ∈ s, toHilbertVectorL2OfVecField (hF i) := by

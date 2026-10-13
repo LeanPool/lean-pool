@@ -109,7 +109,7 @@ theorem cubeBesovNegativeVectorSeminormTwo_potWitnessGrad_le [NeZero d]
       (-(0 : Vec d)) vAdj)
     (hv : IsResponseMaximizer (cubeDomain Q) (F.coeffOn Q) p 0 v)
     (u : H10Function ((cubeDomain Q : Domain d) : Set (Vec d)))
-    (hu : ∀ᵐ x ∂ volumeMeasureOn ((cubeDomain Q : Domain d) : Set (Vec d)),
+    (hu : ∀ᵐ x ∂volumeMeasureOn ((cubeDomain Q : Domain d) : Set (Vec d)),
       u.toH1Function.grad x =
         (2 : ℝ)⁻¹ • (vAdj.toH1.grad x + v.toH1.grad x) + p) :
     cubeBesovNegativeVectorSeminormTwo Q (3 / 8) (fun x => u.toH1Function.grad x) ≤

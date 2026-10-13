@@ -413,242 +413,63 @@ noncomputable def finiteCorridorVarianceConst (d : ℕ) : ℝ :=
       8 * (Fintype.card (BlockCoord d) : ℝ) ^ (2 : ℕ) *
         finiteCorridorFourthConst)
 
-/-- Uniform quantitative literal two-plus-eight control along the physical
-integer corridor above the cutoff.  The fixed relative buffer, the
-lower-clause specialization, and both channel bounds are discharged internally.
--/
-theorem exists_relativeCutoff_finiteCorridor_fluctuationVariance_bound
-    (d : ℕ) :
-    ∃ Chom Cvar : ℝ, 64 ≤ Chom ∧
-      2 * ((Cutoff.cutoffRelativeNormalizationShift d : ℝ) + 1) ≤ Chom ∧
-      1 ≤ Cvar ∧
-      ∀ (M : ABKModel d) (m : ℤ) (E : {E : ℝ // 1 ≤ E}),
-        (∀ k : ℤ, k ≤ m - 1 →
-          ∀ s : ℝ, ∀ hsWindow : s ∈ Set.Icc (8 * M.gamma) 1,
-            Probability.IsTwoTermBigOWith
-              (Cutoff.cutoffSampleLaw M).toMeasure
-              (gammaSigma 2) (gammaSigma (1 / 2))
-              (Observable.cutoffHomogenizationError M k
-                ⟨s,
-                  (mul_pos (by norm_num : (0 : ℝ) < 8)
-                    M.shellPrefix.gamma_pos).trans_le hsWindow.1⟩)
-              ((E : ℝ) * s⁻¹ * Real.sqrt M.gamma)
-              ((s⁻¹) ^ 2 *
-                Real.exp (-(((E : ℝ)⁻¹) ^ 3 * M.gamma⁻¹)))) →
-        ∀ epsilon : ℝ, epsilon ∈ Set.Ioc 0 (1 / 2) →
-          M.gamma ≤ Chom⁻¹ * ((E : ℝ)⁻¹) ^ 2 * epsilon →
-          ∀ L : ℤ,
-            (L : ℝ) ≤ (m : ℝ) - Chom * |Real.log epsilon| →
-            ∀ n : ℤ, n ∈ Set.Icc L m →
-              let hd : NeZero d :=
-                ⟨Nat.ne_of_gt
-                  (lt_of_lt_of_le (by omega) M.shellPrefix.dimension)⟩
-              let c : ℤ := Cutoff.cutoffRelativeNormalizationShift d
-              let P := Cutoff.relativeNormalizedCutoffLaw M L
-              let hP := Cutoff.relativeNormalizedCutoffLaw_lawCarrier M L
-              let hStruct := Cutoff.relativeNormalizedCutoffLaw_structuralLaw M L
-              let center : ℤ := n - L - c
-              let Q : TriadicCube d := originCube d (n - (L + c))
-              let B : FullBlockMat d := @Book.Ch02.constantFullBlockMatrix d
-                (Observable.isotropicComparatorMatrix (Annealed.sigmaBar M L))
-              let Cn : BlockMat d :=
-                @Book.Ch04.scalarAnnealedBlockMatrixAtScale d hd _ hP hStruct center
-              let delta : ℝ :=
-                (E : ℝ) ^ 2 * M.gamma +
-                  Real.exp (-(2 * ((E : ℝ)⁻¹) ^ 3 * M.gamma⁻¹))
-              let decay : ℝ := Real.rpow 3
-                (-(d : ℝ) * (((n - L).toNat : ℕ) : ℝ))
-              2 * ∫ a, starredDescendantsAverageFluctuationOperatorNormSq B Cn Q
-                    ((n - L).toNat) a ∂P +
-                  8 * ∫ a, starredBlockJTraceAverageSq B Q ((n - L).toNat) a ∂P ≤
-                Cvar * delta * (delta + decay) := by
-  let shift : ℝ := Cutoff.cutoffRelativeNormalizationShift d
-  let Chom : ℝ := max 64 (2 * (shift + 1))
-  let Cvar : ℝ := finiteCorridorVarianceConst d
-  have hChom64 : (64 : ℝ) ≤ Chom := le_max_left _ _
-  have hChomShift : 2 * (shift + 1) ≤ Chom := le_max_right _ _
-  have hChomOne : (1 : ℝ) ≤ Chom := by linarith only [hChom64]
-  have hCvarOne : (1 : ℝ) ≤ Cvar := by
-    exact le_max_left _ _
-  refine ⟨Chom, Cvar, hChom64, hChomShift, hCvarOne, ?_⟩
-  intro M m E hLower epsilon hepsilon hgamma L hseparation n hn
-  let : NeZero d :=
-    ⟨Nat.ne_of_gt (lt_of_lt_of_le (by omega) M.shellPrefix.dimension)⟩
-  have hepsilonPos : 0 < epsilon := hepsilon.1
-  have hepsilonHalf : epsilon ≤ 1 / 2 := hepsilon.2
-  have hlogNonpos : Real.log epsilon ≤ 0 :=
-    Real.log_nonpos hepsilonPos.le
-      (hepsilonHalf.trans (by norm_num : (1 / 2 : ℝ) ≤ 1))
-  have habsLog : |Real.log epsilon| = -Real.log epsilon :=
-    abs_of_nonpos hlogNonpos
-  have hlogHalf : Real.log epsilon ≤ Real.log (1 / 2 : ℝ) :=
-    Real.log_le_log hepsilonPos hepsilonHalf
-  have hlogTwo : Real.log (1 / 2 : ℝ) = -Real.log 2 := by
-    rw [show (1 / 2 : ℝ) = (2 : ℝ)⁻¹ by norm_num, Real.log_inv]
-  have habsLogHalf : (1 / 2 : ℝ) ≤ |Real.log epsilon| := by
-    rw [habsLog]
-    rw [hlogTwo] at hlogHalf
-    linarith only [hlogHalf, Real.log_two_gt_d9]
-  have hLplusOneReal : (L : ℝ) + 1 ≤ (m : ℝ) := by
-    have hChomLog : 1 ≤ Chom * |Real.log epsilon| := by
-      have hmul := mul_le_mul hChom64 habsLogHalf (by norm_num : (0 : ℝ) ≤ 1 / 2)
-        (by positivity : 0 ≤ Chom)
-      linarith only [hmul]
-    linarith only [hChomLog, hseparation]
-  have hLmOne : L ≤ m - 1 := by
-    have hLplusOne : L + 1 ≤ m := by exact_mod_cast hLplusOneReal
-    omega
-  have hEpos : (0 : ℝ) < (E : ℝ) := zero_lt_one.trans_le E.property
-  have hChomPos : 0 < Chom := zero_lt_one.trans_le hChomOne
-  have hChomInv : Chom⁻¹ ≤ (64 : ℝ)⁻¹ :=
-    (inv_le_inv₀ hChomPos (by norm_num : (0 : ℝ) < 64)).2 hChom64
-  have hEinvSq : ((E : ℝ)⁻¹) ^ 2 ≤ 1 := by
-    have hEinv : (E : ℝ)⁻¹ ≤ 1 := (inv_le_one₀ hEpos).2 E.property
-    have hEinvNonneg : 0 ≤ (E : ℝ)⁻¹ := inv_nonneg.mpr hEpos.le
-    calc ((E : ℝ)⁻¹) ^ 2 = (E : ℝ)⁻¹ * (E : ℝ)⁻¹ := pow_two _
-      _ ≤ 1 * 1 := mul_le_mul hEinv hEinv hEinvNonneg zero_le_one
-      _ = 1 := one_mul 1
-  have hgamma128 : M.gamma ≤ 1 / 128 := by
-    calc
-      M.gamma ≤ Chom⁻¹ * ((E : ℝ)⁻¹) ^ 2 * epsilon := hgamma
-      _ ≤ (64 : ℝ)⁻¹ * 1 * (1 / 2) := by gcongr
-      _ = 1 / 128 := by norm_num
-  have hwindow : (1 / 16 : ℝ) ∈ Set.Icc (8 * M.gamma) 1 := by
-    constructor
-    · linarith only [hgamma128]
-    · norm_num
-  have hEgamma : (E : ℝ) ^ 2 * M.gamma ≤ 1 / 2 := by
-    have hmul := mul_le_mul_of_nonneg_left hgamma (sq_nonneg (E : ℝ))
-    calc
-      (E : ℝ) ^ 2 * M.gamma ≤
-          (E : ℝ) ^ 2 * (Chom⁻¹ * ((E : ℝ)⁻¹) ^ 2 * epsilon) := hmul
-      _ = Chom⁻¹ * epsilon := by field_simp [hEpos.ne']
-      _ ≤ 1 * (1 / 2) := by
-        gcongr
-        exact (inv_le_one₀ hChomPos).2 hChomOne
-      _ = 1 / 2 := one_mul _
-  let x : ℝ := ((E : ℝ)⁻¹) ^ 3 * M.gamma⁻¹
-  let rare : ℝ := Real.exp (-x)
-  let delta : ℝ := (E : ℝ) ^ 2 * M.gamma + Real.exp (-(2 * x))
-  let A : ℝ := 16 * (E : ℝ) * Real.sqrt M.gamma
-  let D : ℝ := 256 * rare
-  have hLowerL0 := hLower L hLmOne (1 / 16) hwindow
-  have hLowerL : Probability.IsTwoTermBigOWith
-      (Cutoff.cutoffSampleLaw M).toMeasure
-      (gammaSigma 2) (gammaSigma (1 / 2))
-      (Observable.cutoffHomogenizationError M L ⟨1 / 16, by norm_num⟩) A D := by
-    have hAeq : (E : ℝ) * 16 * Real.sqrt M.gamma = A := by
-      dsimp only [A]
-      ring
-    have hDeq : (16 : ℝ) ^ (2 : ℕ) *
-        Real.exp (-(((E : ℝ)⁻¹) ^ 3 * M.gamma⁻¹)) = D := by
-      dsimp only [D, rare, x]
-      norm_num
-    simpa only [show (1 / 16 : ℝ)⁻¹ = 16 by norm_num, hAeq, hDeq] using hLowerL0
-  let c : ℤ := Cutoff.cutoffRelativeNormalizationShift d
-  let P := Cutoff.relativeNormalizedCutoffLaw M L
-  let hP := Cutoff.relativeNormalizedCutoffLaw_lawCarrier M L
-  let hStruct := Cutoff.relativeNormalizedCutoffLaw_structuralLaw M L
-  let center : ℤ := n - L - c
-  let Q : TriadicCube d := originCube d (n - (L + c))
-  let j : ℕ := (n - L).toNat
-  let sigma := Annealed.sigmaBar M L
-  let a0 : Mat d := Observable.isotropicComparatorMatrix sigma
-  let B : FullBlockMat d := Book.Ch02.constantFullBlockMatrix a0
-  let Cn : BlockMat d :=
-    Book.Ch04.scalarAnnealedBlockMatrixAtScale hP hStruct center
-  let N : ℝ := ((descendantsAtScale Q (-c)).card : ℝ)
-  let card : ℝ := Fintype.card (BlockCoord d)
-  let geom : ℝ := Real.rpow 3 (-(d : ℝ) * (j : ℝ))
-  let budget : ℝ :=
-    2 *
-        ((gammaMomentConst 2 * (2 : ℝ) ^ ((2 : ℝ)⁻¹) * A) ^ (2 : ℕ) +
-          (gammaMomentConst (1 / 2) *
-            (2 : ℝ) ^ (((1 / 2 : ℝ))⁻¹) * D) ^ (2 : ℕ)) +
-      8 *
-        ((gammaMomentConst 2 * (4 : ℝ) ^ ((2 : ℝ)⁻¹) * A) ^ (4 : ℕ) +
-          (gammaMomentConst (1 / 2) *
-            (4 : ℝ) ^ (((1 / 2 : ℝ))⁻¹) * D) ^ (4 : ℕ))
-  let secondBudget : ℝ :=
-    2 *
-      ((gammaMomentConst 2 * (2 : ℝ) ^ ((2 : ℝ)⁻¹) * A) ^ (2 : ℕ) +
-        (gammaMomentConst (1 / 2) *
-          (2 : ℝ) ^ (((1 / 2 : ℝ))⁻¹) * D) ^ (2 : ℕ))
-  let fourthBudget : ℝ :=
-    8 *
-      ((gammaMomentConst 2 * (4 : ℝ) ^ ((2 : ℝ)⁻¹) * A) ^ (4 : ℕ) +
-        (gammaMomentConst (1 / 2) *
-          (4 : ℝ) ^ (((1 / 2 : ℝ))⁻¹) * D) ^ (4 : ℕ))
-  let probeRhs : FullBlockVec d → ℝ := fun q =>
-    let probeBudget : ℝ := 6 * (dotProduct q q) ^ (2 : ℕ) * budget
-    let meanBudget : ℝ :=
-      4 * (dotProduct q q) ^ (2 : ℕ) * secondBudget ^ (2 : ℕ)
-    let K : ℝ := Real.sqrt probeBudget
-    let rootBound : ℝ :=
-      N⁻¹ *
-        (Book.Ch04.rosenthalDescendantsAtScaleLpConst d (-c) 2 *
-              N ^ (1 / (2 : ℝ)) * K +
-          Book.Ch04.rosenthalDescendantsAtScaleSqrtConst d (-c) 2 *
-              Real.sqrt N * K)
-    2 * rootBound ^ (2 : ℕ) + 2 * meanBudget
-  let descendantRhs : ℝ :=
-    2 * card ^ (2 : ℕ) *
-      (card *
-        ∑ alpha : BlockCoord d, card *
-          ∑ beta : BlockCoord d, 3 *
-            (probeRhs (fullBlockCoordinateProbe alpha) +
-              probeRhs (fullBlockPlusProbe alpha beta) +
-              probeRhs (fullBlockMinusProbe alpha beta)))
-  let traceRhs : ℝ := 8 * (card ^ (2 : ℕ) * fourthBudget)
-  have hLn : L ≤ n := hn.1
-  have hscale : -c ≤ Q.scale := by
-    simp only [Q, originCube]
-    omega
-  have hNcard : (descendantsAtScale Q (-c)).card = (3 ^ d) ^ j := by
-    rw [descendantsAtScale_eq_descendantsAtDepth Q hscale, descendantsAtDepth_card]
-    congr 2
-    simp only [Q, originCube]
-    rw [show n - (L + c) - -c = n - L by ring]
-  have hNpos : 0 < N := by
-    dsimp only [N]
-    exact_mod_cast (descendantsAtScale_nonempty Q hscale).card_pos
-  have hNinv : N⁻¹ = geom := by
-    have hNpow : N = ((3 : ℝ) ^ (d * j)) := by
-      calc
-        N = (((3 ^ d) ^ j : ℕ) : ℝ) := by
-          dsimp only [N]
-          exact_mod_cast hNcard
-        _ = ((3 : ℝ) ^ (d * j)) := by
-          norm_cast
-          rw [pow_mul]
-    have hrpow : Real.rpow (3 : ℝ) ((d * j : ℕ) : ℝ) =
-        (3 : ℝ) ^ (d * j) := Real.rpow_natCast _ _
-    calc
-      N⁻¹ = ((3 : ℝ) ^ (d * j))⁻¹ := by rw [hNpow]
-      _ = (Real.rpow (3 : ℝ) ((d * j : ℕ) : ℝ))⁻¹ := by rw [hrpow]
-      _ = Real.rpow (3 : ℝ) (-((d * j : ℕ) : ℝ)) :=
-        (Real.rpow_neg (by norm_num : 0 ≤ (3 : ℝ)) ((d * j : ℕ) : ℝ)).symm
-      _ = geom := by
-        simp only [geom]
-        rw [Nat.cast_mul, neg_mul]
-  have hMom := finiteCorridor_momentBudgets_le
-    (E : ℝ) M.gamma E.property M.shellPrefix.gamma_pos hEgamma
-  have hdeltaNonneg : 0 ≤ delta := by
-    simpa only [x, rare, delta, A, D, secondBudget, fourthBudget, budget] using hMom.1
-  have hsecondLe : secondBudget ≤ finiteCorridorSecondConst * delta := by
-    simpa only [x, rare, delta, A, D, secondBudget, fourthBudget, budget] using hMom.2.2.1
-  have hfourthLe : fourthBudget ≤ finiteCorridorFourthConst * delta ^ (2 : ℕ) := by
-    simpa only [x, rare, delta, A, D, secondBudget, fourthBudget, budget] using hMom.2.2.2.1
-  have hbudgetLe : budget ≤ finiteCorridorBudgetConst * delta := by
-    simpa only [x, rare, delta, A, D, secondBudget, fourthBudget, budget] using hMom.2.2.2.2
-  have hpow4 : ∀ y : ℝ, (0 : ℝ) ≤ y ^ (4 : ℕ) := fun y =>
-    calc (0 : ℝ) ≤ (y ^ (2 : ℕ)) ^ (2 : ℕ) := sq_nonneg _
-      _ = y ^ (4 : ℕ) := by ring
-  have hbudgetSecond1 : (0 : ℝ) ≤
-      (gammaMomentConst 2 * (2 : ℝ) ^ ((2 : ℝ)⁻¹) * A) ^ (2 : ℕ) := sq_nonneg _
-  have hbudgetSecond2 : (0 : ℝ) ≤
-      (gammaMomentConst (1 / 2) * (2 : ℝ) ^ (((1 / 2 : ℝ))⁻¹) * D) ^ (2 : ℕ) :=
-    sq_nonneg _
+private theorem combineFiniteVariance_comparisonBounds1 :
+    ∀ (d : ℕ) (M : ABKModel d) (E : { E : ℝ // (1 : ℝ) ≤ E }) (L n : ℤ),
+      let this : NeZero d := ⟨by have := M.shellPrefix.dimension; omega⟩;
+      let x : ℝ := (↑E : ℝ)⁻¹ ^ (3 : ℕ) * M.gamma⁻¹;
+      let rare : ℝ := Real.exp (-x);
+      let delta : ℝ := (↑E : ℝ) ^ (2 : ℕ) * M.gamma + Real.exp (-((2 : ℝ) * x));
+      let A : ℝ := (16 : ℝ) * (↑E : ℝ) * √M.gamma;
+      let D : ℝ := (256 : ℝ) * rare;
+      let c : ℤ := (↑(Cutoff.cutoffRelativeNormalizationShift d) : ℤ);
+      let Q : TriadicCube d := originCube d (n - (L + c));
+      let j : ℕ := (n - L).toNat;
+      let N : ℝ := (↑(descendantsAtScale Q (-c)).card : ℝ);
+      let card : ℝ := (↑(Fintype.card (BlockCoord d)) : ℝ);
+      let geom : ℝ := Real.rpow (3 : ℝ) (-(↑d : ℝ) * (↑j : ℝ));
+      let budget : ℝ :=
+        (2 : ℝ) *
+            ((gammaMomentConst (2 : ℝ) * (2 : ℝ) ^ (2 : ℝ)⁻¹ * A) ^ (2 : ℕ) +
+              (gammaMomentConst (1 / 2 : ℝ) * (2 : ℝ) ^ (1 / 2 : ℝ)⁻¹ * D) ^ (2 : ℕ)) +
+          (8 : ℝ) *
+            ((gammaMomentConst (2 : ℝ) * (4 : ℝ) ^ (2 : ℝ)⁻¹ * A) ^ (4 : ℕ) +
+              (gammaMomentConst (1 / 2 : ℝ) * (4 : ℝ) ^ (1 / 2 : ℝ)⁻¹ * D) ^ (4 : ℕ));
+      let secondBudget : ℝ :=
+        (2 : ℝ) *
+          ((gammaMomentConst (2 : ℝ) * (2 : ℝ) ^ (2 : ℝ)⁻¹ * A) ^ (2 : ℕ) +
+            (gammaMomentConst (1 / 2 : ℝ) * (2 : ℝ) ^ (1 / 2 : ℝ)⁻¹ * D) ^ (2 : ℕ));
+      let fourthBudget : ℝ :=
+        (8 : ℝ) *
+          ((gammaMomentConst (2 : ℝ) * (4 : ℝ) ^ (2 : ℝ)⁻¹ * A) ^ (4 : ℕ) +
+            (gammaMomentConst (1 / 2 : ℝ) * (4 : ℝ) ^ (1 / 2 : ℝ)⁻¹ * D) ^ (4 : ℕ));
+      let probeRhs : FullBlockVec d → ℝ := fun (q : FullBlockVec d) =>
+        let probeBudget : ℝ := (6 : ℝ) * (q ⬝ᵥ q) ^ (2 : ℕ) * budget;
+        let meanBudget : ℝ := (4 : ℝ) * (q ⬝ᵥ q) ^ (2 : ℕ) * secondBudget ^ (2 : ℕ);
+        let K : ℝ := √probeBudget;
+        let rootBound : ℝ :=
+          N⁻¹ *
+            (Ch04.rosenthalDescendantsAtScaleLpConst d (-c) (2 : ℕ) * N ^ (1 / 2 : ℝ) * K +
+              Ch04.rosenthalDescendantsAtScaleSqrtConst d (-c) (2 : ℕ) * √N * K);
+        (2 : ℝ) * rootBound ^ (2 : ℕ) + (2 : ℝ) * meanBudget;
+      let descendantRhs : ℝ :=
+        (2 : ℝ) * card ^ (2 : ℕ) *
+          (card *
+            ∑ alpha : BlockCoord d,
+              card *
+                ∑ beta : BlockCoord d,
+                  (3 : ℝ) *
+                    (probeRhs (fullBlockCoordinateProbe alpha) + probeRhs (fullBlockPlusProbe alpha beta) +
+                      probeRhs (fullBlockMinusProbe alpha beta)));
+      let traceRhs : ℝ := (8 : ℝ) * (card ^ (2 : ℕ) * fourthBudget);
+      ∀ (_ : (0 : ℝ) < N) (_ : N⁻¹ = geom) (_ : (0 : ℝ) ≤ delta)
+        (_ : secondBudget ≤ finiteCorridorSecondConst * delta)
+        (_ : fourthBudget ≤ finiteCorridorFourthConst * delta ^ (2 : ℕ))
+        (_ : budget ≤ finiteCorridorBudgetConst * delta) (_ : ∀ (y : ℝ), (0 : ℝ) ≤ y ^ (4 : ℕ))
+        (_ : (0 : ℝ) ≤ (gammaMomentConst (2 : ℝ) * (2 : ℝ) ^ (2 : ℝ)⁻¹ * A) ^ (2 : ℕ))
+        (_ : (0 : ℝ) ≤ (gammaMomentConst (1 / 2 : ℝ) * (2 : ℝ) ^ (1 / 2 : ℝ)⁻¹ * D) ^ (2 : ℕ)),
+        descendantRhs ≤ (18 : ℝ) * card ^ (6 : ℕ) * finiteCorridorProbeConst d * delta * (delta + geom) ∧
+          traceRhs ≤ (8 : ℝ) * card ^ (2 : ℕ) * finiteCorridorFourthConst * delta * (delta + geom) := by
+  intro d _ _ _ _ _ _ _ delta A D c _ _ N card geom budget secondBudget fourthBudget probeRhs descendantRhs traceRhs hNpos hNinv hdeltaNonneg hsecondLe hfourthLe hbudgetLe hpow4 hbudgetSecond1 hbudgetSecond2
   have hbudgetNonneg : 0 ≤ budget := by
     dsimp only [budget]
     have h3 := hpow4 (gammaMomentConst 2 * (4 : ℝ) ^ ((2 : ℝ)⁻¹) * A)
@@ -742,6 +563,321 @@ theorem exists_relativeCutoff_finiteCorridor_fluctuationVariance_bound
           (mul_nonneg (mul_nonneg (by norm_num) hcardSqNonneg) hCFNonneg)
       _ = 8 * card ^ (2 : ℕ) * finiteCorridorFourthConst * delta *
             (delta + geom) := by ring
+  exact ⟨hdescRhs, htraceRhs⟩
+
+private theorem combineFiniteVariance_comparisonBounds2 :
+    ∀ (d : ℕ),
+      let shift : ℝ := (↑(Cutoff.cutoffRelativeNormalizationShift d) : ℝ);
+      let Chom : ℝ := max (64 : ℝ) ((2 : ℝ) * (shift + (1 : ℝ)));
+      ∀ (_ : (64 : ℝ) ≤ Chom) (_ : (1 : ℝ) ≤ Chom) (M : ABKModel d) (m : ℤ) (E : { E : ℝ // (1 : ℝ) ≤ E })
+        (epsilon : ℝ) (_ : epsilon ∈ Set.Ioc (0 : ℝ) (1 / 2 : ℝ))
+        (_ : M.gamma ≤ Chom⁻¹ * (↑E : ℝ)⁻¹ ^ (2 : ℕ) * epsilon) (L : ℤ)
+        (_ : (↑L : ℝ) ≤ (↑m : ℝ) - Chom * |Real.log epsilon|),
+        L ≤ m - (1 : ℤ) ∧ (1 / 16 : ℝ) ∈ Set.Icc ((8 : ℝ) * M.gamma) (1 : ℝ) ∧ (↑E : ℝ) ^ (2 : ℕ) * M.gamma ≤ (1 / 2 : ℝ) := by
+  intro _ _ Chom hChom64 hChomOne M m E epsilon hepsilon hgamma L hseparation
+  have hepsilonPos : 0 < epsilon := hepsilon.1
+  have hepsilonHalf : epsilon ≤ 1 / 2 := hepsilon.2
+  have hlogNonpos : Real.log epsilon ≤ 0 :=
+    Real.log_nonpos hepsilonPos.le
+      (hepsilonHalf.trans (by norm_num : (1 / 2 : ℝ) ≤ 1))
+  have habsLog : |Real.log epsilon| = -Real.log epsilon :=
+    abs_of_nonpos hlogNonpos
+  have hlogHalf : Real.log epsilon ≤ Real.log (1 / 2 : ℝ) :=
+    Real.log_le_log hepsilonPos hepsilonHalf
+  have hlogTwo : Real.log (1 / 2 : ℝ) = -Real.log 2 := by
+    rw [show (1 / 2 : ℝ) = (2 : ℝ)⁻¹ by norm_num, Real.log_inv]
+  have habsLogHalf : (1 / 2 : ℝ) ≤ |Real.log epsilon| := by
+    rw [habsLog]
+    rw [hlogTwo] at hlogHalf
+    linarith only [hlogHalf, Real.log_two_gt_d9]
+  have hLplusOneReal : (L : ℝ) + 1 ≤ (m : ℝ) := by
+    have hChomLog : 1 ≤ Chom * |Real.log epsilon| := by
+      have hmul := mul_le_mul hChom64 habsLogHalf (by norm_num : (0 : ℝ) ≤ 1 / 2)
+        (by positivity : 0 ≤ Chom)
+      linarith only [hmul]
+    linarith only [hChomLog, hseparation]
+  have hLmOne : L ≤ m - 1 := by
+    have hLplusOne : L + 1 ≤ m := by exact_mod_cast hLplusOneReal
+    omega
+  have hEpos : (0 : ℝ) < (E : ℝ) := zero_lt_one.trans_le E.property
+  have hChomPos : 0 < Chom := zero_lt_one.trans_le hChomOne
+  have hChomInv : Chom⁻¹ ≤ (64 : ℝ)⁻¹ :=
+    (inv_le_inv₀ hChomPos (by norm_num : (0 : ℝ) < 64)).2 hChom64
+  have hEinvSq : ((E : ℝ)⁻¹) ^ 2 ≤ 1 := by
+    have hEinv : (E : ℝ)⁻¹ ≤ 1 := (inv_le_one₀ hEpos).2 E.property
+    have hEinvNonneg : 0 ≤ (E : ℝ)⁻¹ := inv_nonneg.mpr hEpos.le
+    calc ((E : ℝ)⁻¹) ^ 2 = (E : ℝ)⁻¹ * (E : ℝ)⁻¹ := pow_two _
+      _ ≤ 1 * 1 := mul_le_mul hEinv hEinv hEinvNonneg zero_le_one
+      _ = 1 := one_mul 1
+  have hgamma128 : M.gamma ≤ 1 / 128 := by
+    calc
+      M.gamma ≤ Chom⁻¹ * ((E : ℝ)⁻¹) ^ 2 * epsilon := hgamma
+      _ ≤ (64 : ℝ)⁻¹ * 1 * (1 / 2) := by gcongr
+      _ = 1 / 128 := by norm_num
+  have hwindow : (1 / 16 : ℝ) ∈ Set.Icc (8 * M.gamma) 1 := by
+    constructor
+    · linarith only [hgamma128]
+    · norm_num
+  have hEgamma : (E : ℝ) ^ 2 * M.gamma ≤ 1 / 2 := by
+    have hmul := mul_le_mul_of_nonneg_left hgamma (sq_nonneg (E : ℝ))
+    calc
+      (E : ℝ) ^ 2 * M.gamma ≤
+          (E : ℝ) ^ 2 * (Chom⁻¹ * ((E : ℝ)⁻¹) ^ 2 * epsilon) := hmul
+      _ = Chom⁻¹ * epsilon := by field_simp [hEpos.ne']
+      _ ≤ 1 * (1 / 2) := by
+        gcongr
+        exact (inv_le_one₀ hChomPos).2 hChomOne
+      _ = 1 / 2 := one_mul _
+  exact ⟨hLmOne, hwindow, hEgamma⟩
+
+private theorem combineFiniteVariance_comparisonBounds3 :
+    ∀ (d : ℕ) (M : ABKModel d) (m : ℤ) (E : { E : ℝ // (1 : ℝ) ≤ E }) (L n : ℤ) (_ : n ∈ Set.Icc L m)
+      (_ : (↑E : ℝ) ^ (2 : ℕ) * M.gamma ≤ (1 / 2 : ℝ)),
+      let x : ℝ := (↑E : ℝ)⁻¹ ^ (3 : ℕ) * M.gamma⁻¹;
+      let rare : ℝ := Real.exp (-x);
+      let delta : ℝ := (↑E : ℝ) ^ (2 : ℕ) * M.gamma + Real.exp (-((2 : ℝ) * x));
+      let A : ℝ := (16 : ℝ) * (↑E : ℝ) * √M.gamma;
+      let D : ℝ := (256 : ℝ) * rare;
+      let c : ℤ := (↑(Cutoff.cutoffRelativeNormalizationShift d) : ℤ);
+      let Q : TriadicCube d := originCube d (n - (L + c));
+      let j : ℕ := (n - L).toNat;
+      let N : ℝ := (↑(descendantsAtScale Q (-c)).card : ℝ);
+      let card : ℝ := (↑(Fintype.card (BlockCoord d)) : ℝ);
+      let geom : ℝ := Real.rpow (3 : ℝ) (-(↑d : ℝ) * (↑j : ℝ));
+      let budget : ℝ :=
+        (2 : ℝ) *
+            ((gammaMomentConst (2 : ℝ) * (2 : ℝ) ^ (2 : ℝ)⁻¹ * A) ^ (2 : ℕ) +
+              (gammaMomentConst (1 / 2 : ℝ) * (2 : ℝ) ^ (1 / 2 : ℝ)⁻¹ * D) ^ (2 : ℕ)) +
+          (8 : ℝ) *
+            ((gammaMomentConst (2 : ℝ) * (4 : ℝ) ^ (2 : ℝ)⁻¹ * A) ^ (4 : ℕ) +
+              (gammaMomentConst (1 / 2 : ℝ) * (4 : ℝ) ^ (1 / 2 : ℝ)⁻¹ * D) ^ (4 : ℕ));
+      let secondBudget : ℝ :=
+        (2 : ℝ) *
+          ((gammaMomentConst (2 : ℝ) * (2 : ℝ) ^ (2 : ℝ)⁻¹ * A) ^ (2 : ℕ) +
+            (gammaMomentConst (1 / 2 : ℝ) * (2 : ℝ) ^ (1 / 2 : ℝ)⁻¹ * D) ^ (2 : ℕ));
+      let fourthBudget : ℝ :=
+        (8 : ℝ) *
+          ((gammaMomentConst (2 : ℝ) * (4 : ℝ) ^ (2 : ℝ)⁻¹ * A) ^ (4 : ℕ) +
+            (gammaMomentConst (1 / 2 : ℝ) * (4 : ℝ) ^ (1 / 2 : ℝ)⁻¹ * D) ^ (4 : ℕ));
+      L ≤ n ∧
+        (0 : ℝ) < N ∧
+          N⁻¹ = geom ∧
+            (0 : ℝ) ≤ delta ∧
+              secondBudget ≤ finiteCorridorSecondConst * delta ∧
+                fourthBudget ≤ finiteCorridorFourthConst * delta ^ (2 : ℕ) ∧
+                  budget ≤ finiteCorridorBudgetConst * delta ∧
+                    (∀ (y : ℝ), (0 : ℝ) ≤ y ^ (4 : ℕ)) ∧
+                      (0 : ℝ) ≤ (gammaMomentConst (2 : ℝ) * (2 : ℝ) ^ (2 : ℝ)⁻¹ * A) ^ (2 : ℕ) ∧
+                        (0 : ℝ) ≤ (gammaMomentConst (1 / 2 : ℝ) * (2 : ℝ) ^ (1 / 2 : ℝ)⁻¹ * D) ^ (2 : ℕ) := by
+  intro d M _ E L n hn hEgamma x rare delta A D c Q j N card geom budget secondBudget fourthBudget
+  have hLn : L ≤ n := hn.1
+  have hscale : -c ≤ Q.scale := by
+    simp only [Q, originCube]
+    omega
+  have hNcard : (descendantsAtScale Q (-c)).card = (3 ^ d) ^ j := by
+    rw [descendantsAtScale_eq_descendantsAtDepth Q hscale, descendantsAtDepth_card]
+    congr 2
+    simp only [Q, originCube]
+    rw [show n - (L + c) - -c = n - L by ring]
+  have hNpos : 0 < N := by
+    dsimp only [N]
+    exact_mod_cast (descendantsAtScale_nonempty Q hscale).card_pos
+  have hNinv : N⁻¹ = geom := by
+    have hNpow : N = ((3 : ℝ) ^ (d * j)) := by
+      calc
+        N = (((3 ^ d) ^ j : ℕ) : ℝ) := by
+          dsimp only [N]
+          exact_mod_cast hNcard
+        _ = ((3 : ℝ) ^ (d * j)) := by
+          norm_cast
+          rw [pow_mul]
+    have hrpow : Real.rpow (3 : ℝ) ((d * j : ℕ) : ℝ) =
+        (3 : ℝ) ^ (d * j) := Real.rpow_natCast _ _
+    calc
+      N⁻¹ = ((3 : ℝ) ^ (d * j))⁻¹ := by rw [hNpow]
+      _ = (Real.rpow (3 : ℝ) ((d * j : ℕ) : ℝ))⁻¹ := by rw [hrpow]
+      _ = Real.rpow (3 : ℝ) (-((d * j : ℕ) : ℝ)) :=
+        (Real.rpow_neg (by norm_num : 0 ≤ (3 : ℝ)) ((d * j : ℕ) : ℝ)).symm
+      _ = geom := by
+        simp only [geom]
+        rw [Nat.cast_mul, neg_mul]
+  have hMom := finiteCorridor_momentBudgets_le
+    (E : ℝ) M.gamma E.property M.shellPrefix.gamma_pos hEgamma
+  have hdeltaNonneg : 0 ≤ delta := by
+    simpa only [x, rare, delta, A, D, secondBudget, fourthBudget, budget] using hMom.1
+  have hsecondLe : secondBudget ≤ finiteCorridorSecondConst * delta := by
+    simpa only [x, rare, delta, A, D, secondBudget, fourthBudget, budget] using hMom.2.2.1
+  have hfourthLe : fourthBudget ≤ finiteCorridorFourthConst * delta ^ (2 : ℕ) := by
+    simpa only [x, rare, delta, A, D, secondBudget, fourthBudget, budget] using hMom.2.2.2.1
+  have hbudgetLe : budget ≤ finiteCorridorBudgetConst * delta := by
+    simpa only [x, rare, delta, A, D, secondBudget, fourthBudget, budget] using hMom.2.2.2.2
+  have hpow4 : ∀ y : ℝ, (0 : ℝ) ≤ y ^ (4 : ℕ) := fun y =>
+    calc (0 : ℝ) ≤ (y ^ (2 : ℕ)) ^ (2 : ℕ) := sq_nonneg _
+      _ = y ^ (4 : ℕ) := by ring
+  have hbudgetSecond1 : (0 : ℝ) ≤
+      (gammaMomentConst 2 * (2 : ℝ) ^ ((2 : ℝ)⁻¹) * A) ^ (2 : ℕ) := sq_nonneg _
+  have hbudgetSecond2 : (0 : ℝ) ≤
+      (gammaMomentConst (1 / 2) * (2 : ℝ) ^ (((1 / 2 : ℝ))⁻¹) * D) ^ (2 : ℕ) :=
+    sq_nonneg _
+  exact ⟨hLn, hNpos, hNinv, hdeltaNonneg, hsecondLe, hfourthLe, hbudgetLe, hpow4, hbudgetSecond1,
+    hbudgetSecond2⟩
+
+/-- Uniform quantitative literal two-plus-eight control along the physical
+integer corridor above the cutoff.  The fixed relative buffer, the
+lower-clause specialization, and both channel bounds are discharged internally.
+-/
+theorem exists_relativeCutoff_finiteCorridor_fluctuationVariance_bound
+    (d : ℕ) :
+    ∃ Chom Cvar : ℝ, 64 ≤ Chom ∧
+      2 * ((Cutoff.cutoffRelativeNormalizationShift d : ℝ) + 1) ≤ Chom ∧
+      1 ≤ Cvar ∧
+      ∀ (M : ABKModel d) (m : ℤ) (E : {E : ℝ // 1 ≤ E}),
+        (∀ k : ℤ, k ≤ m - 1 →
+          ∀ s : ℝ, ∀ hsWindow : s ∈ Set.Icc (8 * M.gamma) 1,
+            Probability.IsTwoTermBigOWith
+              (Cutoff.cutoffSampleLaw M).toMeasure
+              (gammaSigma 2) (gammaSigma (1 / 2))
+              (Observable.cutoffHomogenizationError M k
+                ⟨s,
+                  (mul_pos (by norm_num : (0 : ℝ) < 8)
+                    M.shellPrefix.gamma_pos).trans_le hsWindow.1⟩)
+              ((E : ℝ) * s⁻¹ * Real.sqrt M.gamma)
+              ((s⁻¹) ^ 2 *
+                Real.exp (-(((E : ℝ)⁻¹) ^ 3 * M.gamma⁻¹)))) →
+        ∀ epsilon : ℝ, epsilon ∈ Set.Ioc 0 (1 / 2) →
+          M.gamma ≤ Chom⁻¹ * ((E : ℝ)⁻¹) ^ 2 * epsilon →
+          ∀ L : ℤ,
+            (L : ℝ) ≤ (m : ℝ) - Chom * |Real.log epsilon| →
+            ∀ n : ℤ, n ∈ Set.Icc L m →
+              let hd : NeZero d :=
+                ⟨Nat.ne_of_gt
+                  (lt_of_lt_of_le (by omega) M.shellPrefix.dimension)⟩
+              let c : ℤ := Cutoff.cutoffRelativeNormalizationShift d
+              let P := Cutoff.relativeNormalizedCutoffLaw M L
+              let hP := Cutoff.relativeNormalizedCutoffLaw_lawCarrier M L
+              let hStruct := Cutoff.relativeNormalizedCutoffLaw_structuralLaw M L
+              let center : ℤ := n - L - c
+              let Q : TriadicCube d := originCube d (n - (L + c))
+              let B : FullBlockMat d := @Book.Ch02.constantFullBlockMatrix d
+                (Observable.isotropicComparatorMatrix (Annealed.sigmaBar M L))
+              let Cn : BlockMat d :=
+                @Book.Ch04.scalarAnnealedBlockMatrixAtScale d hd _ hP hStruct center
+              let delta : ℝ :=
+                (E : ℝ) ^ 2 * M.gamma +
+                  Real.exp (-(2 * ((E : ℝ)⁻¹) ^ 3 * M.gamma⁻¹))
+              let decay : ℝ := Real.rpow 3
+                (-(d : ℝ) * (((n - L).toNat : ℕ) : ℝ))
+              2 * ∫ a, starredDescendantsAverageFluctuationOperatorNormSq B Cn Q
+                    ((n - L).toNat) a ∂P +
+                  8 * ∫ a, starredBlockJTraceAverageSq B Q ((n - L).toNat) a ∂P ≤
+                Cvar * delta * (delta + decay) := by
+  let shift : ℝ := Cutoff.cutoffRelativeNormalizationShift d
+  let Chom : ℝ := max 64 (2 * (shift + 1))
+  let Cvar : ℝ := finiteCorridorVarianceConst d
+  have hChom64 : (64 : ℝ) ≤ Chom := le_max_left _ _
+  have hChomShift : 2 * (shift + 1) ≤ Chom := le_max_right _ _
+  have hChomOne : (1 : ℝ) ≤ Chom := by linarith only [hChom64]
+  have hCvarOne : (1 : ℝ) ≤ Cvar := by
+    exact le_max_left _ _
+  refine ⟨Chom, Cvar, hChom64, hChomShift, hCvarOne, ?_⟩
+  intro M m E hLower epsilon hepsilon hgamma L hseparation n hn
+  let : NeZero d :=
+    ⟨Nat.ne_of_gt (lt_of_lt_of_le (by omega) M.shellPrefix.dimension)⟩
+  obtain ⟨hLmOne, hwindow, hEgamma⟩ :=
+    (show (L ≤ m - 1) ∧ ((1 / 16 : ℝ) ∈ Set.Icc (8 * M.gamma) 1) ∧ ((E : ℝ) ^ 2 * M.gamma ≤ 1 / 2)
+      from
+      @combineFiniteVariance_comparisonBounds2 (d) (hChom64) (hChomOne) (M) (m) (E) (epsilon)
+        (hepsilon) (hgamma) (L) (hseparation))
+  let x : ℝ := ((E : ℝ)⁻¹) ^ 3 * M.gamma⁻¹
+  let rare : ℝ := Real.exp (-x)
+  let delta : ℝ := (E : ℝ) ^ 2 * M.gamma + Real.exp (-(2 * x))
+  let A : ℝ := 16 * (E : ℝ) * Real.sqrt M.gamma
+  let D : ℝ := 256 * rare
+  have hLowerL0 := hLower L hLmOne (1 / 16) hwindow
+  have hLowerL : Probability.IsTwoTermBigOWith
+      (Cutoff.cutoffSampleLaw M).toMeasure
+      (gammaSigma 2) (gammaSigma (1 / 2))
+      (Observable.cutoffHomogenizationError M L ⟨1 / 16, by norm_num⟩) A D := by
+    have hAeq : (E : ℝ) * 16 * Real.sqrt M.gamma = A := by
+      dsimp only [A]
+      ring
+    have hDeq : (16 : ℝ) ^ (2 : ℕ) *
+        Real.exp (-(((E : ℝ)⁻¹) ^ 3 * M.gamma⁻¹)) = D := by
+      dsimp only [D, rare, x]
+      norm_num
+    simpa only [show (1 / 16 : ℝ)⁻¹ = 16 by norm_num, hAeq, hDeq] using hLowerL0
+  let c : ℤ := Cutoff.cutoffRelativeNormalizationShift d
+  let P := Cutoff.relativeNormalizedCutoffLaw M L
+  let hP := Cutoff.relativeNormalizedCutoffLaw_lawCarrier M L
+  let hStruct := Cutoff.relativeNormalizedCutoffLaw_structuralLaw M L
+  let center : ℤ := n - L - c
+  let Q : TriadicCube d := originCube d (n - (L + c))
+  let j : ℕ := (n - L).toNat
+  let sigma := Annealed.sigmaBar M L
+  let a0 : Mat d := Observable.isotropicComparatorMatrix sigma
+  let B : FullBlockMat d := Book.Ch02.constantFullBlockMatrix a0
+  let Cn : BlockMat d :=
+    Book.Ch04.scalarAnnealedBlockMatrixAtScale hP hStruct center
+  let N : ℝ := ((descendantsAtScale Q (-c)).card : ℝ)
+  let card : ℝ := Fintype.card (BlockCoord d)
+  let geom : ℝ := Real.rpow 3 (-(d : ℝ) * (j : ℝ))
+  let budget : ℝ :=
+    2 *
+        ((gammaMomentConst 2 * (2 : ℝ) ^ ((2 : ℝ)⁻¹) * A) ^ (2 : ℕ) +
+          (gammaMomentConst (1 / 2) *
+            (2 : ℝ) ^ (((1 / 2 : ℝ))⁻¹) * D) ^ (2 : ℕ)) +
+      8 *
+        ((gammaMomentConst 2 * (4 : ℝ) ^ ((2 : ℝ)⁻¹) * A) ^ (4 : ℕ) +
+          (gammaMomentConst (1 / 2) *
+            (4 : ℝ) ^ (((1 / 2 : ℝ))⁻¹) * D) ^ (4 : ℕ))
+  let secondBudget : ℝ :=
+    2 *
+      ((gammaMomentConst 2 * (2 : ℝ) ^ ((2 : ℝ)⁻¹) * A) ^ (2 : ℕ) +
+        (gammaMomentConst (1 / 2) *
+          (2 : ℝ) ^ (((1 / 2 : ℝ))⁻¹) * D) ^ (2 : ℕ))
+  let fourthBudget : ℝ :=
+    8 *
+      ((gammaMomentConst 2 * (4 : ℝ) ^ ((2 : ℝ)⁻¹) * A) ^ (4 : ℕ) +
+        (gammaMomentConst (1 / 2) *
+          (4 : ℝ) ^ (((1 / 2 : ℝ))⁻¹) * D) ^ (4 : ℕ))
+  let probeRhs : FullBlockVec d → ℝ := fun q =>
+    let probeBudget : ℝ := 6 * (dotProduct q q) ^ (2 : ℕ) * budget
+    let meanBudget : ℝ :=
+      4 * (dotProduct q q) ^ (2 : ℕ) * secondBudget ^ (2 : ℕ)
+    let K : ℝ := Real.sqrt probeBudget
+    let rootBound : ℝ :=
+      N⁻¹ *
+        (Book.Ch04.rosenthalDescendantsAtScaleLpConst d (-c) 2 *
+              N ^ (1 / (2 : ℝ)) * K +
+          Book.Ch04.rosenthalDescendantsAtScaleSqrtConst d (-c) 2 *
+              Real.sqrt N * K)
+    2 * rootBound ^ (2 : ℕ) + 2 * meanBudget
+  let descendantRhs : ℝ :=
+    2 * card ^ (2 : ℕ) *
+      (card *
+        ∑ alpha : BlockCoord d, card *
+          ∑ beta : BlockCoord d, 3 *
+            (probeRhs (fullBlockCoordinateProbe alpha) +
+              probeRhs (fullBlockPlusProbe alpha beta) +
+              probeRhs (fullBlockMinusProbe alpha beta)))
+  let traceRhs : ℝ := 8 * (card ^ (2 : ℕ) * fourthBudget)
+  obtain ⟨hLn, hNpos, hNinv, hdeltaNonneg, hsecondLe, hfourthLe, hbudgetLe, hpow4, hbudgetSecond1,
+    hbudgetSecond2⟩ :=
+    (show (L ≤ n) ∧ (0 < N) ∧ (N⁻¹ = geom) ∧ (0 ≤ delta) ∧ (secondBudget ≤
+      finiteCorridorSecondConst * delta) ∧ (fourthBudget ≤ finiteCorridorFourthConst * delta ^ (2
+        : ℕ)) ∧ (budget ≤ finiteCorridorBudgetConst * delta) ∧ (∀ y : ℝ, (0 : ℝ) ≤ y ^ (4 : ℕ)) ∧
+          ((0 : ℝ) ≤
+      (gammaMomentConst 2 * (2 : ℝ) ^ ((2 : ℝ)⁻¹) * A) ^ (2 : ℕ)) ∧ ((0 : ℝ) ≤
+      (gammaMomentConst (1 / 2) * (2 : ℝ) ^ (((1 / 2 : ℝ))⁻¹) * D) ^ (2 : ℕ)) from
+      @combineFiniteVariance_comparisonBounds3 (d) (M) (m) (E) (L) (n) (hn) (hEgamma))
+  obtain ⟨hdescRhs, htraceRhs⟩ :=
+    (show (descendantRhs ≤
+      18 * card ^ (6 : ℕ) * finiteCorridorProbeConst d * delta *
+        (delta + geom)) ∧ (traceRhs ≤
+      8 * card ^ (2 : ℕ) * finiteCorridorFourthConst * delta *
+        (delta + geom)) from
+      @combineFiniteVariance_comparisonBounds1 (d) (M) (E) (L) (n) (hNpos) (hNinv) (hdeltaNonneg)
+        (hsecondLe) (hfourthLe) (hbudgetLe) (hpow4) (hbudgetSecond1) (hbudgetSecond2))
   have hdesc :=
     two_mul_integral_relativeStarredDescendantOperatorNormSq_le
       M L n hLn (s := (1 / 16 : ℝ)) (by norm_num) hLowerL

@@ -69,7 +69,7 @@ theorem cubeAverageVec_smul (Q : TriadicCube d) (c : ℝ) (F : Vec d → Vec d) 
   have hint : ∫ x in cubeSet Q, c * F x i ∂MeasureTheory.volume =
       c * ∫ x in cubeSet Q, F x i ∂MeasureTheory.volume :=
     MeasureTheory.integral_const_mul c fun x => F x i
-  show (cubeVolume Q)⁻¹ * ∫ x in cubeSet Q, c * F x i ∂MeasureTheory.volume =
+  change (cubeVolume Q)⁻¹ * ∫ x in cubeSet Q, c * F x i ∂MeasureTheory.volume =
     c * ((cubeVolume Q)⁻¹ * ∫ x in cubeSet Q, F x i ∂MeasureTheory.volume)
   rw [hint]
   ring
@@ -79,7 +79,7 @@ theorem descendantsAverage_const_mul (Q : TriadicCube d) (j : ℕ) (c : ℝ)
     (G : TriadicCube d → ℝ) :
     descendantsAverage Q j (fun R => c * G R) = c * descendantsAverage Q j G := by
   classical
-  show ((descendantsAtDepth Q j).card : ℝ)⁻¹ *
+  change ((descendantsAtDepth Q j).card : ℝ)⁻¹ *
       (descendantsAtDepth Q j).sum (fun R => c * G R) =
     c * (((descendantsAtDepth Q j).card : ℝ)⁻¹ * (descendantsAtDepth Q j).sum G)
   rw [← Finset.mul_sum]

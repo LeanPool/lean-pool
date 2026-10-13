@@ -490,7 +490,7 @@ theorem isTwoTermBigOWith_gridAverage_of_twoLane
         ∑ u ∈ cubeFinset (d := d) k, Z u omega := by
     rw [← Finset.sum_add_distrib]
     exact Finset.sum_congr rfl fun u hu => hsplit u hu omega
-  show |((cubeFinset (d := d) k).card : ℝ)⁻¹ *
+  change |((cubeFinset (d := d) k).card : ℝ)⁻¹ *
       ∑ u ∈ cubeFinset (d := d) k, X u omega| ≤
     |((cubeFinset (d := d) k).card : ℝ)⁻¹ *
         ∑ u ∈ cubeFinset (d := d) k, Y u omega| +

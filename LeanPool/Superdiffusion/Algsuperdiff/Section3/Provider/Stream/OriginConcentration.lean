@@ -248,7 +248,7 @@ theorem isBigOWith_gammaSigma_originIncrement (M : ABKModel d) {n m : ℤ}
         fun omega : ShellSeq d => |∑ k ∈ Finset.Ioc n m, (omega k) 0 p.1 p.2| := by
       funext omega
       exact abs_abs _
-    show IndependentSums.IsBigOWith _ _ _ _
+    change IndependentSums.IsBigOWith _ _ _ _
     rw [habs]
     exact h
   have hmeas : ∀ p : Fin d × Fin d, Measurable (fun omega : ShellSeq d =>

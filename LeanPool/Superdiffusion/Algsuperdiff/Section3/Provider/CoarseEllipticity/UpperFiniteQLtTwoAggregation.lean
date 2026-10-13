@@ -114,6 +114,93 @@ private theorem exists_everywhere_summable_ae_eq_of_isBigOWith_gammaSigma
     filter_upwards [hnmem] with omega homega
     simp [V', homega]
 
+private theorem descendantUpperFlux_depthBound :
+    ∀ {d : ℕ} [NeZero d] (M : ABKModel d) (m : ℤ)
+      {scaling Cblock Krare eps sigmaExp : ℝ},
+      (0 : ℝ) ≤ scaling →
+        ∀ (UoneCube UexpCube : ℕ → TriadicCube d → Cutoff.CutoffSample d → ℝ),
+          (∀ (k : ℕ) (R : TriadicCube d) (omega : Cutoff.CutoffSample d), (0 : ℝ) ≤ UoneCube k R omega) →
+            (∀ (k : ℕ) (R : TriadicCube d) (omega : Cutoff.CutoffSample d), (0 : ℝ) ≤ UexpCube k R omega) →
+              (∀ (k : ℕ),
+                  ∀ R ∈ descendantsAtScale (originCube d m) (m - (1 : ℤ) - (↑k : ℤ)),
+                    ∀ (omega : Cutoff.CutoffSample d),
+                      |cutoffBBlockFamily M m scaling R omega| ≤ Cblock + UoneCube k R omega + UexpCube k R omega) →
+                let Gone : ℕ → Cutoff.CutoffSample d → ℝ := fun (k : ℕ) => blockGridSup d m k (UoneCube k);
+                let Gexp : ℕ → Cutoff.CutoffSample d → ℝ := fun (k : ℕ) => blockGridSup d m k (UexpCube k);
+                let a1 : ℕ → ℝ := fun (n : ℕ) =>
+                  gridBlockAmp d (1 : ℝ) (upperSaturatedPerCubeAmplitude Cblock (Disorder.cstar M) M.gamma n.pred) n.pred;
+                let aexp : ℕ → ℝ := fun (n : ℕ) =>
+                  gridBlockAmp d sigmaExp (Krare⁻¹ * (3 : ℝ) ^ (M.gamma * ((↑n.pred : ℝ) + (1 : ℝ))) * eps ^ (15 : ℕ))
+                    n.pred;
+                let VoneRaw : ℕ → Cutoff.CutoffSample d → ℝ := fun (n : ℕ) (omega : Cutoff.CutoffSample d) =>
+                  (a1 n)⁻¹ * Gone n.pred omega;
+                let VexpRaw : ℕ → Cutoff.CutoffSample d → ℝ := fun (n : ℕ) (omega : Cutoff.CutoffSample d) =>
+                  (aexp n)⁻¹ * Gexp n.pred omega;
+                (∀ (n : ℕ), (0 : ℝ) < a1 n) →
+                  (∀ (n : ℕ), (0 : ℝ) < aexp n) →
+                    ∀ (n : ℕ) (omega : Cutoff.CutoffSample d),
+                      scaling *
+                          Book.Ch04.maxDescendantBMatrixNormCoeffFieldAtScale (originCube d m) (m - (↑n : ℤ))
+                            (Cutoff.coefficientCutoff M.nu m omega) ≤
+                        Cblock + a1 n * VoneRaw n omega + aexp n * VexpRaw n omega := by
+  intro d _ M m scaling Cblock _ _ _ hscaling _ _ hUoneCubeNonneg hUexpCubeNonneg hblock Gone Gexp a1 aexp VoneRaw VexpRaw ha1 haexp n omega
+  have hgrid : scaling *
+        Book.Ch04.maxDescendantBMatrixNormCoeffFieldAtScale
+          (originCube d m) (m - (n : ℤ))
+          (Cutoff.coefficientCutoff M.nu m omega) ≤
+      blockGridSup d m n.pred (cutoffBBlockFamily M m scaling) omega := by
+    cases n with
+    | zero =>
+        simpa only [Nat.cast_zero, sub_zero, Nat.pred_zero] using
+          (scaledB_le_blockGridSup M m 0 hscaling
+            (maxDescendantBCoeffField_top_le m
+              (Cutoff.coefficientCutoff M.nu m omega))
+            (fun _ _ => le_rfl))
+    | succ k =>
+        have hscale : m - (((k + 1 : ℕ) : ℤ)) = m - 1 - (k : ℤ) := by
+          push_cast
+          ring
+        rw [hscale]
+        exact scaledB_le_blockGridSup M m k hscaling le_rfl fun _ _ => le_rfl
+  have hsplit := blockGridSup_le_add_add_of_perCube
+    (hUoneCubeNonneg n.pred) (hUexpCubeNonneg n.pred)
+    (hblock n.pred) omega
+  calc
+    scaling *
+        Book.Ch04.maxDescendantBMatrixNormCoeffFieldAtScale
+          (originCube d m) (m - (n : ℤ))
+          (Cutoff.coefficientCutoff M.nu m omega) ≤
+        blockGridSup d m n.pred (cutoffBBlockFamily M m scaling) omega := hgrid
+    _ ≤ Cblock + Gone n.pred omega + Gexp n.pred omega := by
+      simpa only [Gone, Gexp] using hsplit
+    _ = Cblock + a1 n * VoneRaw n omega + aexp n * VexpRaw n omega := by
+      rw [show a1 n * VoneRaw n omega = Gone n.pred omega by
+        simp only [VoneRaw, ← mul_assoc, mul_inv_cancel₀ (ha1 n).ne', one_mul]]
+      rw [show aexp n * VexpRaw n omega = Gexp n.pred omega by
+        simp only [VexpRaw, ← mul_assoc, mul_inv_cancel₀ (haexp n).ne', one_mul]]
+
+private theorem finiteSmallExponent_deterministicBudget :
+    ∀ (r : { r : ℝ // (1 : ℝ) ≤ r }) {s Cblock Bdet : ℝ},
+      (0 : ℝ) < s →
+        (0 : ℝ) < Cblock →
+          (4 : ℝ) * Cblock ≤ Bdet →
+            let D : ℕ → ℝ := fun (_ : ℕ) => Cblock;
+            (4 : ℝ) *
+                (∑' (n : ℕ), Book.Ch02.geometricWeight s (↑r : ℝ) n * D n ^ ((↑r : ℝ) / (2 : ℝ))) ^ ((2 : ℝ) / (↑r : ℝ)) ≤
+              Bdet := by
+  intro r s Cblock _ hs hCblock hdetBudget D
+  have hweights : (∑' n : ℕ, Book.Ch02.geometricWeight s (r : ℝ) n) = 1 :=
+    HCPolySupport.tsum_geometricWeight_eq_one
+      (mul_pos hs (lt_of_lt_of_le zero_lt_one r.property))
+  have hsum : (∑' n : ℕ, Book.Ch02.geometricWeight s (r : ℝ) n *
+      D n ^ ((r : ℝ) / 2)) = Cblock ^ ((r : ℝ) / 2) := by
+    simp only [D]
+    rw [tsum_mul_right, hweights, one_mul]
+  have hcancel : (r : ℝ) / 2 * (2 / (r : ℝ)) = 1 := by
+    field_simp [ne_of_gt (lt_of_lt_of_le zero_lt_one r.property)]
+  rw [hsum, ← Real.rpow_mul hCblock.le, hcancel, Real.rpow_one]
+  exact hdetBudget
+
 /-- The finite-`q < 2` upper payload obtained from a normalized
 per-descendant block split.  The root depth reuses strict row zero, while
 positive source depth `n + 1` uses strict row `n`. -/
@@ -324,47 +411,9 @@ private theorem finiteQLtTwoSplit_of_perDescendantAndBudgets
       | succ k => simpa only [Nat.pred_succ] using hGexpO k
     have hscaled := hgrid.const_mul (inv_nonneg.mpr (haexp n).le)
     simpa only [VexpRaw, inv_mul_cancel₀ (haexp n).ne'] using hscaled
-  have hdepthRaw : ∀ (n : ℕ) omega,
-      scaling *
-          Book.Ch04.maxDescendantBMatrixNormCoeffFieldAtScale
-            (originCube d m) (m - (n : ℤ))
-            (Cutoff.coefficientCutoff M.nu m omega) ≤
-        Cblock + a1 n * VoneRaw n omega + aexp n * VexpRaw n omega := by
-    intro n omega
-    have hgrid : scaling *
-          Book.Ch04.maxDescendantBMatrixNormCoeffFieldAtScale
-            (originCube d m) (m - (n : ℤ))
-            (Cutoff.coefficientCutoff M.nu m omega) ≤
-        blockGridSup d m n.pred (cutoffBBlockFamily M m scaling) omega := by
-      cases n with
-      | zero =>
-          simpa only [Nat.cast_zero, sub_zero, Nat.pred_zero] using
-            (scaledB_le_blockGridSup M m 0 hscaling
-              (maxDescendantBCoeffField_top_le m
-                (Cutoff.coefficientCutoff M.nu m omega))
-              (fun _ _ => le_rfl))
-      | succ k =>
-          have hscale : m - (((k + 1 : ℕ) : ℤ)) = m - 1 - (k : ℤ) := by
-            push_cast
-            ring
-          rw [hscale]
-          exact scaledB_le_blockGridSup M m k hscaling le_rfl fun _ _ => le_rfl
-    have hsplit := blockGridSup_le_add_add_of_perCube
-      (hUoneCubeNonneg n.pred) (hUexpCubeNonneg n.pred)
-      (hblock n.pred) omega
-    calc
-      scaling *
-          Book.Ch04.maxDescendantBMatrixNormCoeffFieldAtScale
-            (originCube d m) (m - (n : ℤ))
-            (Cutoff.coefficientCutoff M.nu m omega) ≤
-          blockGridSup d m n.pred (cutoffBBlockFamily M m scaling) omega := hgrid
-      _ ≤ Cblock + Gone n.pred omega + Gexp n.pred omega := by
-        simpa only [Gone, Gexp] using hsplit
-      _ = Cblock + a1 n * VoneRaw n omega + aexp n * VexpRaw n omega := by
-        rw [show a1 n * VoneRaw n omega = Gone n.pred omega by
-          simp only [VoneRaw, ← mul_assoc, mul_inv_cancel₀ (ha1 n).ne', one_mul]]
-        rw [show aexp n * VexpRaw n omega = Gexp n.pred omega by
-          simp only [VexpRaw, ← mul_assoc, mul_inv_cancel₀ (haexp n).ne', one_mul]]
+  have hdepthRaw := @descendantUpperFlux_depthBound (d) (by infer_instance) (M) (m) (scaling)
+    (Cblock) (Krare) (eps) (sigmaExp) (hscaling) (UoneCube) (UexpCube) (hUoneCubeNonneg)
+      (hUexpCubeNonneg) (hblock) (ha1) (haexp)
   have hwpos : ∀ n, 0 < Book.Ch02.geometricWeight s (r : ℝ) n := fun n =>
     HCPolySupport.geometricWeight_pos n
       (mul_pos hs (lt_of_lt_of_le zero_lt_one r.property))
@@ -384,20 +433,8 @@ private theorem finiteQLtTwoSplit_of_perDescendantAndBudgets
       (HCPolySupport.summable_geometricWeight
         (mul_pos hs (lt_of_lt_of_le zero_lt_one r.property))).mul_right
           (Cblock ^ ((r : ℝ) / 2))
-  have hdetBudget' :
-      4 * (∑' n : ℕ, Book.Ch02.geometricWeight s (r : ℝ) n *
-          D n ^ ((r : ℝ) / 2)) ^ (2 / (r : ℝ)) ≤ Bdet := by
-    have hweights : (∑' n : ℕ, Book.Ch02.geometricWeight s (r : ℝ) n) = 1 :=
-      HCPolySupport.tsum_geometricWeight_eq_one
-        (mul_pos hs (lt_of_lt_of_le zero_lt_one r.property))
-    have hsum : (∑' n : ℕ, Book.Ch02.geometricWeight s (r : ℝ) n *
-        D n ^ ((r : ℝ) / 2)) = Cblock ^ ((r : ℝ) / 2) := by
-      simp only [D]
-      rw [tsum_mul_right, hweights, one_mul]
-    have hcancel : (r : ℝ) / 2 * (2 / (r : ℝ)) = 1 := by
-      field_simp [ne_of_gt (lt_of_lt_of_le zero_lt_one r.property)]
-    rw [hsum, ← Real.rpow_mul hCblock.le, hcancel, Real.rpow_one]
-    exact hdetBudget
+  have hdetBudget' := @finiteSmallExponent_deterministicBudget (r) (s) (Cblock) (Bdet) (hs)
+    (hCblock) (hdetBudget)
   have hdepth : ∀ n : ℕ, ∀ᵐ omega ∂mu,
       scaling *
           Book.Ch04.maxDescendantBMatrixNormCoeffFieldAtScale

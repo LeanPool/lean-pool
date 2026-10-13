@@ -63,7 +63,6 @@ open Algsuperdiff.Section3
 open HCPolySupport MeasureTheory
 open Algsuperdiff.Section4.Provider.ExcessDecay
 open scoped ENNReal
-open scoped Classical
 
 variable {d : ℕ}
 

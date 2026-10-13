@@ -223,7 +223,7 @@ theorem ofReal_three_rpow_scale_triple (s : ℝ) (m n : ℤ) :
     Real.rpow_nonneg (by norm_num : (0 : ℝ) ≤ 3) x
   have hreal : Real.rpow 3 (-s * (m : ℝ)) * Real.rpow 3 (s * (((m - n : ℤ) : ℝ))) *
       Real.rpow 3 (s * (n : ℝ)) = 1 := by
-    show (3 : ℝ) ^ (-s * (m : ℝ)) * (3 : ℝ) ^ (s * (((m - n : ℤ) : ℝ))) *
+    change (3 : ℝ) ^ (-s * (m : ℝ)) * (3 : ℝ) ^ (s * (((m - n : ℤ) : ℝ))) *
       (3 : ℝ) ^ (s * (n : ℝ)) = 1
     rw [← Real.rpow_add h3, ← Real.rpow_add h3]
     have hexp : -s * (m : ℝ) + s * (((m - n : ℤ) : ℝ)) + s * (n : ℝ) = 0 := by
@@ -269,7 +269,7 @@ theorem exists_printedCoarseGrainingFiniteP_smoothDual (d : ℕ) (hd : 2 ≤ d)
           localCoarseGrainingLpRHS C (originCube d m) n
             (by simpa [originCube] using hnm.le) a sigma0 hsigma0 g u s1 s s2 p := by
   let : NeZero d := ⟨by omega⟩
-  obtain ⟨Ccz, hCczTop, hCcz⟩ := exists_centeredCubeFluxComparison_cz d hd p hp
+  obtain ⟨Ccz, hCczTop, hCcz⟩ := exists_centeredCubeFluxComparison_cz d hd p
   obtain ⟨Clc, hClcTop, hClc⟩ := exists_localCoarseGrainingLp d hd
   refine ⟨Ccz * cubeEuclideanNegativeWspSmoothDualBesovConstant d * Clc, ?_, ?_⟩
   · exact ENNReal.mul_lt_top

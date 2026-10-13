@@ -135,11 +135,11 @@ def upperScaleEquiv (k : ℤ) : ℕ ≃ {l : ℤ // k ≤ l} where
   toFun p := ⟨k + (p : ℤ), by omega⟩
   invFun l := (l.1 - k).toNat
   left_inv p := by
-    show (k + (p : ℤ) - k).toNat = p
+    change (k + (p : ℤ) - k).toNat = p
     omega
   right_inv l := by
     refine Subtype.ext ?_
-    show k + (((l.1 - k).toNat : ℕ) : ℤ) = l.1
+    change k + (((l.1 - k).toNat : ℕ) : ℤ) = l.1
     have hl := l.2
     omega
 

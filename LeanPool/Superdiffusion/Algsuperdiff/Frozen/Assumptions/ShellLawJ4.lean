@@ -19,7 +19,12 @@ Module imports, support namespace and local option directives adapted for Lean P
 
 @[expose] public section
 
+open Algsuperdiff.Frozen.Assumptions.ShellField
+  (zeroShellRegLaw_stationary_of_zeroShellLaw_stationary)
+
 open HCPolySupport MeasureTheory
+
+
 
 -- FROZEN-STATEMENT-BEGIN
 /-- ABK26 (J4): one positive non-degeneracy constant, shared
@@ -37,7 +42,7 @@ structure Algsuperdiff.Frozen.Assumptions.ShellLawJ4
     ∀ e : {e : Vec d // HCPolySupport.Book.Ch02.vecNorm e = 1},
       ‖Algsuperdiff.Frozen.Assumptions.ShellField.zeroShellPotentialCorrector
           P
-          (Algsuperdiff.Frozen.Assumptions.ShellField.zeroShellRegLaw_stationary_of_zeroShellLaw_stationary
+          (zeroShellRegLaw_stationary_of_zeroShellLaw_stationary
               P hJ1.stationary)
           e.1
           (Algsuperdiff.Frozen.Assumptions.ShellField.memLp_originForcing_of_j2_tail

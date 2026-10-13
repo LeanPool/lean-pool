@@ -81,11 +81,11 @@ theorem image_sub_eq_preimage_add' (S : Set (Vec d)) (v : Vec d) :
   ext y
   constructor
   · rintro ⟨x, hx, rfl⟩
-    show x - v + v ∈ S
+    change x - v + v ∈ S
     rwa [sub_add_cancel]
   · intro hy
     refine ⟨y + v, hy, ?_⟩
-    show y + v - v = y
+    change y + v - v = y
     abel
 
 /-- The volume of a translated window. -/
@@ -123,7 +123,7 @@ theorem abs_le_slab_of_pointwise {i : Fin d} {w : ℝ} {S : Set (Vec d)}
     refine normalizedL2On_mono_of_abs_le hSm hconstmem.integrable_sq hgmem.integrable_sq ?_
     intro y hy
     have h := hpt y hy
-    show |beta| ≤ 2 * |G y| + (|G (y - v0)| + Mw)
+    change |beta| ≤ 2 * |G y| + (|G (y - v0)| + Mw)
     linarith only [h]
   rw [normalizedL2On_const_of_toReal_pos hSpos] at hdom
   have hsplit : normalizedL2On S g
@@ -246,7 +246,7 @@ theorem exists_abs_le_normalizedL2On_of_faceOdd (d : ℕ) [NeZero d] :
     obtain ⟨hyT, hrT, hpT, hd0, hd1⟩ := hSmem y hy
     have hrefl : G (coordFaceReflection a i y) + G y = -2 * beta := by
       have h := hodd y
-      show (W (coordFaceReflection a i y) - beta) + (W y - beta) = -2 * beta
+      change (W (coordFaceReflection a i y) - beta) + (W y - beta) = -2 * beta
       rw [h]
       ring
     exact abs_le_pointwise_of_reflectionIdentity hTconv hharm' hMb hyT hrT hpT hrefl

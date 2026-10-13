@@ -94,6 +94,7 @@ private theorem weight_two_half_eq (s : ℝ) (l : ℕ) :
   rw [hss] at h
   simpa [Ch02.geometricWeight_eq_old] using h
 
+omit [NeZero d] in
 /-- The shells of `𝓔_{s/2,∞,2}²` are the squares of the `(∞,1)` scale
 responses, and the weights are the `(∞,1)` weights. -/
 private theorem sq_eq_tsum_weight_mul_sq (Q : TriadicCube d) (a : TriadicCoeffFamily d)

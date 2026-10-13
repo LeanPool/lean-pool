@@ -26,7 +26,8 @@ input called `hgrid` --- the domination of the leg's target observable by a
 
 ```
 hgrid : forall omega, X omega <= sum_k mass * gridWeight rho k * G k omega        (upper leg)
-hgrid : forall omega, forall L >= L0, X L omega <= sum_k mass * gridWeight rho k * G k omega  (lower)
+hgrid : forall omega, forall L >= L0, X L omega <= sum_k mass * gridWeight rho k * G k omega
+(lower)
 ```
 
 The deterministic content behind such a binder --- `Lambda_{s,2}` and

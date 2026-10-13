@@ -117,7 +117,7 @@ theorem norm_le_sqrt_dim_mul_matrixDerivativeNorm (D : ShellField.MatrixDerivati
   rcases eq_or_lt_of_le (norm_nonneg v) with hv | hv
   · have hv0 : v = 0 := by rwa [eq_comm, norm_eq_zero] at hv
     subst hv0
-    show ‖D 0‖ ≤ Real.sqrt d * ShellField.matrixDerivativeNorm D * ‖(0 : Vec d)‖
+    change ‖D 0‖ ≤ Real.sqrt d * ShellField.matrixDerivativeNorm D * ‖(0 : Vec d)‖
     have hD0 : D 0 = 0 := map_zero D
     simp only [hD0, norm_zero, mul_zero, le_refl]
   · obtain ⟨hs, hunit⟩ := exists_unit_rescale hv
@@ -162,7 +162,7 @@ theorem norm_le_dim_mul_matrixSecondDerivativeNorm
   rcases eq_or_lt_of_le (norm_nonneg v) with hv | hv
   · have hv0 : v = 0 := by rwa [eq_comm, norm_eq_zero] at hv
     subst hv0
-    show ‖H 0‖ ≤ (d : ℝ) * ShellField.matrixSecondDerivativeNorm H * ‖(0 : Vec d)‖
+    change ‖H 0‖ ≤ (d : ℝ) * ShellField.matrixSecondDerivativeNorm H * ‖(0 : Vec d)‖
     have hH0 : H 0 = 0 := map_zero H
     simp only [hH0, norm_zero, mul_zero, le_refl]
   · obtain ⟨hs, hunit⟩ := exists_unit_rescale hv

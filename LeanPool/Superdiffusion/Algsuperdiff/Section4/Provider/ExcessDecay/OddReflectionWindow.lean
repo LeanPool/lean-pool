@@ -421,7 +421,7 @@ theorem image_add_openCubeSet_subset_reflectedWindow {m n : ℤ} {x p : Vec d}
   rw [mem_openCubeSet_originCube_iff] at hx
   rintro q ⟨z, hz, rfl⟩
   rw [mem_openCubeSet_originCube_iff] at hz
-  show p + z ∈ reflectedWindow x m (n - 2)
+  change p + z ∈ reflectedWindow x m (n - 2)
   rw [mem_reflectedWindow_iff]
   intro i
   have hzi := hz i

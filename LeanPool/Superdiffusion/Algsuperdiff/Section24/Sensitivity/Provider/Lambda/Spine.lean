@@ -82,7 +82,7 @@ theorem perturbCoeffOn_zero_aeeq (a : CoeffOn (cubeDomain (originCube d 0)))
     (h : LInfSkewMatrixFieldOn (cubeDomain (originCube d 0))) :
     CoeffOn.AEEq (perturbCoeffOn (cubeDomain (originCube d 0)) a h 0) a := by
   refine Filter.Eventually.of_forall fun x => ?_
-  show a.toCoeffField x + (0 : ℝ) • h.1.1 x = a.toCoeffField x
+  change a.toCoeffField x + (0 : ℝ) • h.1.1 x = a.toCoeffField x
   simp
 
 @[simp] theorem pathGauge_zero (a : CoeffOn (cubeDomain (originCube d 0)))

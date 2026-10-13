@@ -286,8 +286,7 @@ floor-normalized coarse theorem supplies both ellipticity branches, and the
 selected constant `Cbase` carries `1 ≤ Cbase` together with the dimension floor
 `(d : ℝ) ^ 6 ≤ Cbase`.  The only branch-specific assumptions left to the caller
 are the two non-linear-term implications. -/
-theorem
-    exists_measureReal_compl_goodLocalEvent_originCube_le_of_frozenCoarse_dimFloor
+theorem exists_measureReal_compl_goodLocalEvent_originCube_le_of_frozenCoarse_dimFloor
     (d : ℕ) :
     ∃ Cbase : ℝ, 1 ≤ Cbase ∧ (d : ℝ) ^ 6 ≤ Cbase ∧
       ∀ (M : ABKModel d) (m n m0 : ℤ)

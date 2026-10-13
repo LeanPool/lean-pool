@@ -127,7 +127,7 @@ theorem coarseGraining_scaled_l2_le [NeZero d] {Q : TriadicCube d}
   have hfield : Ch03.homogenizationComparisonConstantGradientField
         (scalarComparator hsigma0) w.u w.v = fun x => sigma0 • z.toH1Function.grad x := by
     funext x
-    show matVecMul (scalarComparator hsigma0).matrix (w.u.grad x - w.v.grad x) =
+    change matVecMul (scalarComparator hsigma0).matrix (w.u.grad x - w.v.grad x) =
       sigma0 • z.toH1Function.grad x
     rw [scalarComparator_matrix, matVecMul_scalarMatrix, hz x]
   have hhom : sigma0 * cubeBesovNegativeVectorSeminormTwo Q (2 * t)

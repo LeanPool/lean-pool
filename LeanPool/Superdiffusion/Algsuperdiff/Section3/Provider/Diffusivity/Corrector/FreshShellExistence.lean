@@ -20,6 +20,9 @@ Module imports, support namespace and local option directives adapted for Lean P
 
 @[expose] public section
 
+open _root_.Algsuperdiff.Section3.Provider.Corrector
+  (exists_isZeroTraceDirichletRhsWeakSolution_openCubeSet)
+
 /-!
 # Existence of the two correctors of `e.def.w`
 
@@ -63,10 +66,11 @@ existence statements take only the cube, the forcing, and its continuity.
 Both legs are the standard variational argument, and CoarseGraining already
 carries it:
 
-* Dirichlet: `Homogenization.exists_isZeroTraceDirichletRhsWeakSolution_of_potentialZeroTraceClosureRealization`,
+* Dirichlet:
+`Homogenization.exists_isZeroTraceDirichletRhsWeakSolution_of_potentialZeroTraceClosureRealization`,
   whose closure-realization hypothesis is discharged on any bounded open convex
   set by
-  `Homogenization.PotentialSolenoidalL2Data.hasPotentialZeroTraceClosureRealization_of_isOpenBoundedConvexDomain`,
+`hasPotentialZeroTraceClosureRealization_of_isOpenBoundedConvexDomain`,
   and an open triadic cube is such a set.
 * Neumann: `Homogenization.exists_isMeanZeroNeumannRhsWeakSolution_of_h1CoerciveEstimate`,
   whose coercivity hypothesis is the Poincare-Wirtinger datum
@@ -91,6 +95,8 @@ namespace Algsuperdiff.Section3.Provider.Diffusivity.Corrector
 open HCPolySupport MeasureTheory
 
 noncomputable section
+
+
 
 variable {d : ℕ}
 
@@ -146,7 +152,7 @@ theorem exists_isZeroTraceDirichletRhsWeakSolution_openCubeSet_of_continuous
       IsZeroTraceDirichletRhsWeakSolution
         (fun _ : Vec d => (1 : Matrix (Fin d) (Fin d) ℝ))
         (openCubeSet Q) wD g :=
-  _root_.Algsuperdiff.Section3.Provider.Corrector.exists_isZeroTraceDirichletRhsWeakSolution_openCubeSet
+  exists_isZeroTraceDirichletRhsWeakSolution_openCubeSet
     Q (memVectorL2_openCubeSet_of_continuous Q hg)
     (isEllipticFieldOn_const_one_openCubeSet Q)
 

@@ -138,7 +138,7 @@ theorem twoLeg_is_hed {s : ℝ} (hs : 0 < s) (C Efl Osc Gsem SigInv2 Crem Vd : �
   have hpow : s ^ (-(7 : ℝ)) * s ^ (-(5 / 2 : ℝ)) = s ^ (-(19 / 2 : ℝ)) := by
     rw [← Real.rpow_add hs]
     norm_num
-  show Crem * ((3 : ℝ) ^ (-n) * (Vd *
+  change Crem * ((3 : ℝ) ^ (-n) * (Vd *
       (C * s ^ (-(4 : ℝ)) * Efl * Osc +
         C * s ^ (-(19 / 2 : ℝ)) * SigInv2 *
           (3 : ℝ) ^ ((1 + s) * ((n - 2 : ℤ) : ℝ)) * Gsem))) = _

@@ -59,7 +59,7 @@ theorem perturbCoeffOn_perturbCoeffOn (U : Domain d) (a : CoeffOn U)
     CoeffOn.AEEq (perturbCoeffOn U (perturbCoeffOn U a h t) h s)
       (perturbCoeffOn U a h (t + s)) := by
   refine Filter.Eventually.of_forall fun x => ?_
-  show (a.toCoeffField x + t • h.1.1 x) + s • h.1.1 x =
+  change (a.toCoeffField x + t • h.1.1 x) + s • h.1.1 x =
     a.toCoeffField x + (t + s) • h.1.1 x
   rw [add_smul, add_assoc]
 

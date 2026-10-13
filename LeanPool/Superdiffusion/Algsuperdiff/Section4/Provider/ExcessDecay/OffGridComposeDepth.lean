@@ -98,7 +98,7 @@ def maximalCubesFiberEquiv (w : Vec d) (R : TriadicCube d) (n : ℕ) :
       TriadicCube d), y.2.1⟩, by
     have hy : ((y : maximalCubesAtScale (offGridCube w R) (R.scale - (n : ℤ))) :
       TriadicCube d).scale = R.scale - (n : ℤ) := y.2.2
-    show (R.scale -
+    change (R.scale -
       ((y : maximalCubesAtScale (offGridCube w R) (R.scale - (n : ℤ))) :
         TriadicCube d).scale).toNat = n
     omega⟩

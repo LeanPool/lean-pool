@@ -26,9 +26,9 @@ Module imports, support namespace and local option directives adapted for Lean P
 ABK26, Step 2 of `l.approximate.recurrence.formula`.  After the per-cube bound
 (`LocalizationFluctuationPerCube.perCube_localizationFluctuation_le`), the
 ellipticity transfer
-(`LocalizationFluctuationEllipticityTransfer.doubledPoincareEllipticityFactor_sq_le_descendant_gaugedEllipticitySum`)
+(`doubledPoincareEllipticityFactor_sq_le_descendant_gaugedEllipticitySum`)
 and the oscillation/Besov bridge
-(`LocalizationFluctuationOscillationBridge.cubeBesovPositiveVectorDepthAverage_le_descendantsAverage_sq`)
+(`cubeBesovPositiveVectorDepthAverage_le_descendantsAverage_sq`)
 have been applied, three purely quantitative folds remain between the proved
 inputs and the display `e.lower.bound.localization.terms`.  This module proves
 all three, each as a standalone, unconditional statement.

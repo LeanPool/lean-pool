@@ -47,7 +47,7 @@ move.  Consequently
   right-hand side `3^d freshShellFourthEnergyConst Chead (cgamma^{100})`, so the
   amplitude `W` is one constant for all depths;
 * the cell integrability
-  `LocalizationFluctuationCellIntegrable.exists_gamma0_integrable_freshShell*_meshEnergyCell_rpow_four`
+`exists_gamma0_integrable_freshShell*_meshEnergyCell_rpow_four`
   applies verbatim, its containment hypothesis being supplied on the finer grid
   by `openCubeAtScale_subset_openCubeSet_of_mem_interiorMesoCubeGrid`;
 * the two `cgamma`-facing gauges `S * P <= shellNormalizationConst` and
@@ -269,6 +269,80 @@ theorem depth_linear_geometric_le {gamma : ℝ} (hgamma0 : 0 < gamma) (Ngap i : 
         mul_le_mul_of_nonneg_right hNrle
           (mul_nonneg hg31 (mul_nonneg hone hthree0.le))
 
+private theorem gammaTenDepthOscillation_comparisonBounds1 :
+    ∀ (d : ℕ) (Ctot : ℝ) (_ : (0 : ℝ) ≤ Ctot) (M : ABKModel d) (m0 : ℤ) (Eind : { E : ℝ // (1 : ℝ) ≤ E })
+      (_ : Frozen.Section3.inductionState M m0 Eind) (m K : ℤ) (h : ℕ) (_ : (0 : ℕ) < h) (_ : m - (↑h : ℤ) ≤ m0)
+      (_ : (↑h : ℝ) ≤ (6 : ℝ) * Disorder.cstar M * M.gamma⁻¹)
+      (_ : (10 : ℝ) ^ (10 : ℕ) * M.gamma⁻¹ ≤ (↑K : ℝ) - (↑m : ℝ)) (_ : M.gamma ≤ (1 / 4 : ℝ))
+      (_ : M.gamma ≤ (3 : ℝ) ^ (-((↑d : ℝ) + (3 : ℝ)))) (_ : M.gamma ≤ (1 : ℝ) / ((1 : ℝ) + Ctot))
+      (_ : (0 : ℝ) < M.gamma) (_ : M.gamma ≤ (1 : ℝ)) (nbuf : ℤ)
+      (_ : nbuf = recurrenceMesoScale recurrenceGapMultiplier M.gamma m (↑h : ℤ)) (Ngap : ℕ)
+      (_ : Ngap = recurrenceGap recurrenceGapMultiplier M.gamma) (_ : nbuf + (↑Ngap : ℤ) = m - (↑h : ℤ))
+      (_ : (↑nbuf : ℝ) + (↑Ngap : ℝ) = (↑(m - (↑h : ℤ)) : ℝ)),
+      (1 : ℝ) ≤ (10 : ℝ) ^ (10 : ℕ) * M.gamma⁻¹ ∧
+        d + (3 : ℕ) ≤ Ngap ∧
+          (3 : ℝ) ^ (-(↑Ngap : ℝ)) ≤ M.gamma ^ (32 : ℕ) ∧
+            (↑Ngap : ℝ) * M.gamma ≤ (96 : ℝ) ∧
+              (0 : ℝ) ≤ (↑(Annealed.sigmaBar M (m - (↑h : ℤ))) : ℝ)⁻¹ ∧
+                (↑(Annealed.sigmaBar M (m - (↑h : ℤ))) : ℝ)⁻¹ * (3 : ℝ) ^ (M.gamma * ((↑nbuf : ℝ) + (↑Ngap : ℝ))) ≤
+                    shellNormalizationConst ∧
+                  Ctot * M.gamma ^ (15 : ℕ) ≤ (1 : ℝ) := by
+  intro d Ctot hCtot0 M _ _ hstate m K h hhpos hm0 hcstar _ _ hdimgate hCgate hgamma0 hgamma1 nbuf _ Ngap hNgap _ hsumR
+  have hKone : (1 : ℝ) ≤ (10 : ℝ) ^ (10 : ℕ) * M.gamma⁻¹ := by
+    have hinv : (1 : ℝ) ≤ M.gamma⁻¹ := by
+      rw [le_inv_comm₀ (by norm_num) hgamma0]
+      linarith
+    have h10 : (1 : ℝ) ≤ (10 : ℝ) ^ (10 : ℕ) := by norm_num
+    exact one_le_mul_of_one_le_of_one_le h10 hinv
+  have hmK1 : m ≤ K - 1 := by
+    have hle : (m : ℝ) + 1 ≤ (K : ℝ) := by linarith
+    have : m + 1 ≤ K := by exact_mod_cast hle
+    omega
+  have hnNle : nbuf + (Ngap : ℤ) ≤ K - 1 := by omega
+  have hdimN : d + 3 ≤ Ngap := by
+    rw [hNgap]
+    refine dim_add_three_le_recurrenceGap (a := recurrenceGapMultiplier) d hgamma0
+      (by norm_num [recurrenceGapMultiplier]) ?_
+    have hpow : (0 : ℝ) < (3 : ℝ) ^ ((d : ℝ) + 3) := Real.rpow_pos_of_pos (by norm_num) _
+    have h2 : M.gamma ≤ ((3 : ℝ) ^ ((d : ℝ) + 3))⁻¹ := by
+      rw [← Real.rpow_neg (by norm_num : (0 : ℝ) ≤ 3)]
+      exact hdimgate
+    exact (le_inv_comm₀ hpow hgamma0).mpr h2
+  have hGle : (3 : ℝ) ^ (-((Ngap : ℕ) : ℝ)) ≤ M.gamma ^ (32 : ℕ) := by
+    have hbase := rpow_three_neg_recurrenceGap_le_gamma_pow recurrenceGapMultiplier
+      (gamma := M.gamma) hgamma0 hgamma1
+    rw [hNgap]
+    simpa [recurrenceGapMultiplier] using hbase
+  have hNrle : ((Ngap : ℕ) : ℝ) * M.gamma ≤ 96 := by
+    have hbase := recurrenceGap_mul_gamma_le recurrenceGapMultiplier
+      (gamma := M.gamma) hgamma0 hgamma1
+    rw [hNgap]
+    calc ((recurrenceGap recurrenceGapMultiplier M.gamma : ℕ) : ℝ) * M.gamma
+        ≤ 3 * ((recurrenceGapMultiplier : ℕ) : ℝ) := hbase
+      _ = 96 := by norm_num [recurrenceGapMultiplier]
+  have hsigma0 : (0 : ℝ) ≤ ((Annealed.sigmaBar M (m - (h : ℤ)) : ℝ))⁻¹ :=
+    (inv_pos.2 (Annealed.sigmaBar_characterization M (m - (h : ℤ))).1).le
+  have hSPle : ((Annealed.sigmaBar M (m - (h : ℤ)) : ℝ))⁻¹ *
+      (3 : ℝ) ^ (M.gamma * (((nbuf : ℤ) : ℝ) + ((Ngap : ℕ) : ℝ))) ≤
+        shellNormalizationConst := by
+    rw [hsumR]
+    exact sigmaBarInv_mul_rpow_gamma_shell_le M hstate hhpos hm0 hcstar
+  have hfinal : Ctot * M.gamma ^ (15 : ℕ) ≤ 1 := by
+    have h15 : M.gamma ^ (15 : ℕ) ≤ M.gamma := by
+      calc M.gamma ^ (15 : ℕ) ≤ M.gamma ^ (1 : ℕ) :=
+            pow_le_pow_of_le_one hgamma0.le hgamma1 (by norm_num)
+        _ = M.gamma := pow_one _
+    have hCg : Ctot * M.gamma ^ (15 : ℕ) ≤ Ctot * M.gamma :=
+      mul_le_mul_of_nonneg_left h15 hCtot0
+    have hCg2 : Ctot * M.gamma ≤ Ctot * (1 / (1 + Ctot)) :=
+      mul_le_mul_of_nonneg_left hCgate hCtot0
+    have hden : (0 : ℝ) < 1 + Ctot := by linarith
+    have hlast : Ctot * (1 / (1 + Ctot)) ≤ 1 := by
+      rw [mul_one_div, div_le_one hden]
+      linarith
+    linarith
+  exact ⟨hKone, hdimN, hGle, hNrle, hsigma0, hSPle, hfinal⟩
+
 theorem exists_gamma0_freshShellDirichlet_meshOscillationDepth_le_gamma_pow_sixteen
     (d : ℕ) (hd : 2 ≤ d) :
     ∃ gamma0 : ℝ, 0 < gamma0 ∧ gamma0 ≤ 1 / 4 ∧
@@ -389,59 +463,16 @@ theorem exists_gamma0_freshShellDirichlet_meshOscillationDepth_le_gamma_pow_sixt
     have hpos : (0 : ℝ) < (10 : ℝ) ^ (10 : ℕ) * M.gamma⁻¹ := by positivity
     have hle : (m : ℝ) ≤ (K : ℝ) := by linarith
     exact_mod_cast hle
-  have hKone : (1 : ℝ) ≤ (10 : ℝ) ^ (10 : ℕ) * M.gamma⁻¹ := by
-    have hinv : (1 : ℝ) ≤ M.gamma⁻¹ := by
-      rw [le_inv_comm₀ (by norm_num) hgamma0]
-      linarith
-    have h10 : (1 : ℝ) ≤ (10 : ℝ) ^ (10 : ℕ) := by norm_num
-    exact one_le_mul_of_one_le_of_one_le h10 hinv
-  have hmK1 : m ≤ K - 1 := by
-    have hle : (m : ℝ) + 1 ≤ (K : ℝ) := by linarith
-    have : m + 1 ≤ K := by exact_mod_cast hle
-    omega
-  have hnNle : nbuf + (Ngap : ℤ) ≤ K - 1 := by omega
-  have hdimN : d + 3 ≤ Ngap := by
-    rw [hNgap]
-    refine dim_add_three_le_recurrenceGap (a := recurrenceGapMultiplier) d hgamma0
-      (by norm_num [recurrenceGapMultiplier]) ?_
-    have hpow : (0 : ℝ) < (3 : ℝ) ^ ((d : ℝ) + 3) := Real.rpow_pos_of_pos (by norm_num) _
-    have h2 : M.gamma ≤ ((3 : ℝ) ^ ((d : ℝ) + 3))⁻¹ := by
-      rw [← Real.rpow_neg (by norm_num : (0 : ℝ) ≤ 3)]
-      exact hdimgate
-    exact (le_inv_comm₀ hpow hgamma0).mpr h2
-  have hGle : (3 : ℝ) ^ (-((Ngap : ℕ) : ℝ)) ≤ M.gamma ^ (32 : ℕ) := by
-    have hbase := rpow_three_neg_recurrenceGap_le_gamma_pow recurrenceGapMultiplier
-      (gamma := M.gamma) hgamma0 hgamma1
-    rw [hNgap]
-    simpa [recurrenceGapMultiplier] using hbase
-  have hNrle : ((Ngap : ℕ) : ℝ) * M.gamma ≤ 96 := by
-    have hbase := recurrenceGap_mul_gamma_le recurrenceGapMultiplier
-      (gamma := M.gamma) hgamma0 hgamma1
-    rw [hNgap]
-    calc ((recurrenceGap recurrenceGapMultiplier M.gamma : ℕ) : ℝ) * M.gamma
-        ≤ 3 * ((recurrenceGapMultiplier : ℕ) : ℝ) := hbase
-      _ = 96 := by norm_num [recurrenceGapMultiplier]
-  have hsigma0 : (0 : ℝ) ≤ ((Annealed.sigmaBar M (m - (h : ℤ)) : ℝ))⁻¹ :=
-    (inv_pos.2 (Annealed.sigmaBar_characterization M (m - (h : ℤ))).1).le
-  have hSPle : ((Annealed.sigmaBar M (m - (h : ℤ)) : ℝ))⁻¹ *
+  obtain ⟨hKone, hdimN, hGle, hNrle, hsigma0, hSPle, hfinal⟩ :=
+    (show ((1 : ℝ) ≤ (10 : ℝ) ^ (10 : ℕ) * M.gamma⁻¹) ∧ (d + 3 ≤ Ngap) ∧ ((3 : ℝ) ^ (-((Ngap : ℕ)
+      : ℝ)) ≤ M.gamma ^ (32 : ℕ)) ∧ (((Ngap : ℕ) : ℝ) * M.gamma ≤ 96) ∧ ((0 : ℝ) ≤
+        ((Annealed.sigmaBar M (m - (h : ℤ)) : ℝ))⁻¹) ∧ (((Annealed.sigmaBar M (m - (h : ℤ)) :
+          ℝ))⁻¹ *
       (3 : ℝ) ^ (M.gamma * (((nbuf : ℤ) : ℝ) + ((Ngap : ℕ) : ℝ))) ≤
-        shellNormalizationConst := by
-    rw [hsumR]
-    exact sigmaBarInv_mul_rpow_gamma_shell_le M hstate hhpos hm0 hcstar
-  have hfinal : Ctot * M.gamma ^ (15 : ℕ) ≤ 1 := by
-    have h15 : M.gamma ^ (15 : ℕ) ≤ M.gamma := by
-      calc M.gamma ^ (15 : ℕ) ≤ M.gamma ^ (1 : ℕ) :=
-            pow_le_pow_of_le_one hgamma0.le hgamma1 (by norm_num)
-        _ = M.gamma := pow_one _
-    have hCg : Ctot * M.gamma ^ (15 : ℕ) ≤ Ctot * M.gamma :=
-      mul_le_mul_of_nonneg_left h15 hCtot0
-    have hCg2 : Ctot * M.gamma ≤ Ctot * (1 / (1 + Ctot)) :=
-      mul_le_mul_of_nonneg_left hCgate hCtot0
-    have hden : (0 : ℝ) < 1 + Ctot := by linarith
-    have hlast : Ctot * (1 / (1 + Ctot)) ≤ 1 := by
-      rw [mul_one_div, div_le_one hden]
-      linarith
-    linarith
+        shellNormalizationConst) ∧ (Ctot * M.gamma ^ (15 : ℕ) ≤ 1) from
+      @gammaTenDepthOscillation_comparisonBounds1 (d) (Ctot) (hCtot0) (M) (m0) (Eind) (hstate) (m)
+        (K) (h) (hhpos) (hm0) (hcstar) (hK) (hq) (hdimgate) (hCgate) (hgamma0) (hgamma1) (nbuf)
+          (hnbuf) (Ngap) (hNgap) (hsum) (hsumR))
   obtain ⟨Aenv, hAenv⟩ : ∃ A : ℝ,
       A = (3 : ℝ) ^ d * freshShellFourthEnergyConst Chead (M.gamma ^ (100 : ℕ)) := ⟨_, rfl⟩
   have hAenv0 : 0 ≤ Aenv := by
@@ -545,6 +576,80 @@ theorem exists_gamma0_freshShellDirichlet_meshOscillationDepth_le_gamma_pow_sixt
   have hgoal := le_trans hmain hbudget
   rw [hsumi] at hgoal
   exact hgoal
+
+private theorem gammaTenDepthOscillation_comparisonBounds2 :
+    ∀ (d : ℕ) (Ctot : ℝ) (_ : (0 : ℝ) ≤ Ctot) (M : ABKModel d) (m0 : ℤ) (Eind : { E : ℝ // (1 : ℝ) ≤ E })
+      (_ : Frozen.Section3.inductionState M m0 Eind) (m K : ℤ) (h : ℕ) (_ : (0 : ℕ) < h) (_ : m - (↑h : ℤ) ≤ m0)
+      (_ : (↑h : ℝ) ≤ (6 : ℝ) * Disorder.cstar M * M.gamma⁻¹)
+      (_ : (10 : ℝ) ^ (10 : ℕ) * M.gamma⁻¹ ≤ (↑K : ℝ) - (↑m : ℝ)) (_ : M.gamma ≤ (1 / 4 : ℝ))
+      (_ : M.gamma ≤ (3 : ℝ) ^ (-((↑d : ℝ) + (3 : ℝ)))) (_ : M.gamma ≤ (1 : ℝ) / ((1 : ℝ) + Ctot))
+      (_ : (0 : ℝ) < M.gamma) (_ : M.gamma ≤ (1 : ℝ)) (nbuf : ℤ)
+      (_ : nbuf = recurrenceMesoScale recurrenceGapMultiplier M.gamma m (↑h : ℤ)) (Ngap : ℕ)
+      (_ : Ngap = recurrenceGap recurrenceGapMultiplier M.gamma) (_ : nbuf + (↑Ngap : ℤ) = m - (↑h : ℤ))
+      (_ : (↑nbuf : ℝ) + (↑Ngap : ℝ) = (↑(m - (↑h : ℤ)) : ℝ)),
+      (1 : ℝ) ≤ (10 : ℝ) ^ (10 : ℕ) * M.gamma⁻¹ ∧
+        d + (3 : ℕ) ≤ Ngap ∧
+          (3 : ℝ) ^ (-(↑Ngap : ℝ)) ≤ M.gamma ^ (32 : ℕ) ∧
+            (↑Ngap : ℝ) * M.gamma ≤ (96 : ℝ) ∧
+              (0 : ℝ) ≤ (↑(Annealed.sigmaBar M (m - (↑h : ℤ))) : ℝ)⁻¹ ∧
+                (↑(Annealed.sigmaBar M (m - (↑h : ℤ))) : ℝ)⁻¹ * (3 : ℝ) ^ (M.gamma * ((↑nbuf : ℝ) + (↑Ngap : ℝ))) ≤
+                    shellNormalizationConst ∧
+                  Ctot * M.gamma ^ (15 : ℕ) ≤ (1 : ℝ) := by
+  intro d Ctot hCtot0 M _ _ hstate m K h hhpos hm0 hcstar _ _ hdimgate hCgate hgamma0 hgamma1 nbuf _ Ngap hNgap _ hsumR
+  have hKone : (1 : ℝ) ≤ (10 : ℝ) ^ (10 : ℕ) * M.gamma⁻¹ := by
+    have hinv : (1 : ℝ) ≤ M.gamma⁻¹ := by
+      rw [le_inv_comm₀ (by norm_num) hgamma0]
+      linarith
+    have h10 : (1 : ℝ) ≤ (10 : ℝ) ^ (10 : ℕ) := by norm_num
+    exact one_le_mul_of_one_le_of_one_le h10 hinv
+  have hmK1 : m ≤ K - 1 := by
+    have hle : (m : ℝ) + 1 ≤ (K : ℝ) := by linarith
+    have : m + 1 ≤ K := by exact_mod_cast hle
+    omega
+  have hnNle : nbuf + (Ngap : ℤ) ≤ K - 1 := by omega
+  have hdimN : d + 3 ≤ Ngap := by
+    rw [hNgap]
+    refine dim_add_three_le_recurrenceGap (a := recurrenceGapMultiplier) d hgamma0
+      (by norm_num [recurrenceGapMultiplier]) ?_
+    have hpow : (0 : ℝ) < (3 : ℝ) ^ ((d : ℝ) + 3) := Real.rpow_pos_of_pos (by norm_num) _
+    have h2 : M.gamma ≤ ((3 : ℝ) ^ ((d : ℝ) + 3))⁻¹ := by
+      rw [← Real.rpow_neg (by norm_num : (0 : ℝ) ≤ 3)]
+      exact hdimgate
+    exact (le_inv_comm₀ hpow hgamma0).mpr h2
+  have hGle : (3 : ℝ) ^ (-((Ngap : ℕ) : ℝ)) ≤ M.gamma ^ (32 : ℕ) := by
+    have hbase := rpow_three_neg_recurrenceGap_le_gamma_pow recurrenceGapMultiplier
+      (gamma := M.gamma) hgamma0 hgamma1
+    rw [hNgap]
+    simpa [recurrenceGapMultiplier] using hbase
+  have hNrle : ((Ngap : ℕ) : ℝ) * M.gamma ≤ 96 := by
+    have hbase := recurrenceGap_mul_gamma_le recurrenceGapMultiplier
+      (gamma := M.gamma) hgamma0 hgamma1
+    rw [hNgap]
+    calc ((recurrenceGap recurrenceGapMultiplier M.gamma : ℕ) : ℝ) * M.gamma
+        ≤ 3 * ((recurrenceGapMultiplier : ℕ) : ℝ) := hbase
+      _ = 96 := by norm_num [recurrenceGapMultiplier]
+  have hsigma0 : (0 : ℝ) ≤ ((Annealed.sigmaBar M (m - (h : ℤ)) : ℝ))⁻¹ :=
+    (inv_pos.2 (Annealed.sigmaBar_characterization M (m - (h : ℤ))).1).le
+  have hSPle : ((Annealed.sigmaBar M (m - (h : ℤ)) : ℝ))⁻¹ *
+      (3 : ℝ) ^ (M.gamma * (((nbuf : ℤ) : ℝ) + ((Ngap : ℕ) : ℝ))) ≤
+        shellNormalizationConst := by
+    rw [hsumR]
+    exact sigmaBarInv_mul_rpow_gamma_shell_le M hstate hhpos hm0 hcstar
+  have hfinal : Ctot * M.gamma ^ (15 : ℕ) ≤ 1 := by
+    have h15 : M.gamma ^ (15 : ℕ) ≤ M.gamma := by
+      calc M.gamma ^ (15 : ℕ) ≤ M.gamma ^ (1 : ℕ) :=
+            pow_le_pow_of_le_one hgamma0.le hgamma1 (by norm_num)
+        _ = M.gamma := pow_one _
+    have hCg : Ctot * M.gamma ^ (15 : ℕ) ≤ Ctot * M.gamma :=
+      mul_le_mul_of_nonneg_left h15 hCtot0
+    have hCg2 : Ctot * M.gamma ≤ Ctot * (1 / (1 + Ctot)) :=
+      mul_le_mul_of_nonneg_left hCgate hCtot0
+    have hden : (0 : ℝ) < 1 + Ctot := by linarith
+    have hlast : Ctot * (1 / (1 + Ctot)) ≤ 1 := by
+      rw [mul_one_div, div_le_one hden]
+      linarith
+    linarith
+  exact ⟨hKone, hdimN, hGle, hNrle, hsigma0, hSPle, hfinal⟩
 
 theorem exists_gamma0_freshShellNeumann_meshOscillationDepth_le_gamma_pow_sixteen
     (d : ℕ) (hd : 2 ≤ d) :
@@ -666,59 +771,16 @@ theorem exists_gamma0_freshShellNeumann_meshOscillationDepth_le_gamma_pow_sixtee
     have hpos : (0 : ℝ) < (10 : ℝ) ^ (10 : ℕ) * M.gamma⁻¹ := by positivity
     have hle : (m : ℝ) ≤ (K : ℝ) := by linarith
     exact_mod_cast hle
-  have hKone : (1 : ℝ) ≤ (10 : ℝ) ^ (10 : ℕ) * M.gamma⁻¹ := by
-    have hinv : (1 : ℝ) ≤ M.gamma⁻¹ := by
-      rw [le_inv_comm₀ (by norm_num) hgamma0]
-      linarith
-    have h10 : (1 : ℝ) ≤ (10 : ℝ) ^ (10 : ℕ) := by norm_num
-    exact one_le_mul_of_one_le_of_one_le h10 hinv
-  have hmK1 : m ≤ K - 1 := by
-    have hle : (m : ℝ) + 1 ≤ (K : ℝ) := by linarith
-    have : m + 1 ≤ K := by exact_mod_cast hle
-    omega
-  have hnNle : nbuf + (Ngap : ℤ) ≤ K - 1 := by omega
-  have hdimN : d + 3 ≤ Ngap := by
-    rw [hNgap]
-    refine dim_add_three_le_recurrenceGap (a := recurrenceGapMultiplier) d hgamma0
-      (by norm_num [recurrenceGapMultiplier]) ?_
-    have hpow : (0 : ℝ) < (3 : ℝ) ^ ((d : ℝ) + 3) := Real.rpow_pos_of_pos (by norm_num) _
-    have h2 : M.gamma ≤ ((3 : ℝ) ^ ((d : ℝ) + 3))⁻¹ := by
-      rw [← Real.rpow_neg (by norm_num : (0 : ℝ) ≤ 3)]
-      exact hdimgate
-    exact (le_inv_comm₀ hpow hgamma0).mpr h2
-  have hGle : (3 : ℝ) ^ (-((Ngap : ℕ) : ℝ)) ≤ M.gamma ^ (32 : ℕ) := by
-    have hbase := rpow_three_neg_recurrenceGap_le_gamma_pow recurrenceGapMultiplier
-      (gamma := M.gamma) hgamma0 hgamma1
-    rw [hNgap]
-    simpa [recurrenceGapMultiplier] using hbase
-  have hNrle : ((Ngap : ℕ) : ℝ) * M.gamma ≤ 96 := by
-    have hbase := recurrenceGap_mul_gamma_le recurrenceGapMultiplier
-      (gamma := M.gamma) hgamma0 hgamma1
-    rw [hNgap]
-    calc ((recurrenceGap recurrenceGapMultiplier M.gamma : ℕ) : ℝ) * M.gamma
-        ≤ 3 * ((recurrenceGapMultiplier : ℕ) : ℝ) := hbase
-      _ = 96 := by norm_num [recurrenceGapMultiplier]
-  have hsigma0 : (0 : ℝ) ≤ ((Annealed.sigmaBar M (m - (h : ℤ)) : ℝ))⁻¹ :=
-    (inv_pos.2 (Annealed.sigmaBar_characterization M (m - (h : ℤ))).1).le
-  have hSPle : ((Annealed.sigmaBar M (m - (h : ℤ)) : ℝ))⁻¹ *
+  obtain ⟨hKone, hdimN, hGle, hNrle, hsigma0, hSPle, hfinal⟩ :=
+    (show ((1 : ℝ) ≤ (10 : ℝ) ^ (10 : ℕ) * M.gamma⁻¹) ∧ (d + 3 ≤ Ngap) ∧ ((3 : ℝ) ^ (-((Ngap : ℕ)
+      : ℝ)) ≤ M.gamma ^ (32 : ℕ)) ∧ (((Ngap : ℕ) : ℝ) * M.gamma ≤ 96) ∧ ((0 : ℝ) ≤
+        ((Annealed.sigmaBar M (m - (h : ℤ)) : ℝ))⁻¹) ∧ (((Annealed.sigmaBar M (m - (h : ℤ)) :
+          ℝ))⁻¹ *
       (3 : ℝ) ^ (M.gamma * (((nbuf : ℤ) : ℝ) + ((Ngap : ℕ) : ℝ))) ≤
-        shellNormalizationConst := by
-    rw [hsumR]
-    exact sigmaBarInv_mul_rpow_gamma_shell_le M hstate hhpos hm0 hcstar
-  have hfinal : Ctot * M.gamma ^ (15 : ℕ) ≤ 1 := by
-    have h15 : M.gamma ^ (15 : ℕ) ≤ M.gamma := by
-      calc M.gamma ^ (15 : ℕ) ≤ M.gamma ^ (1 : ℕ) :=
-            pow_le_pow_of_le_one hgamma0.le hgamma1 (by norm_num)
-        _ = M.gamma := pow_one _
-    have hCg : Ctot * M.gamma ^ (15 : ℕ) ≤ Ctot * M.gamma :=
-      mul_le_mul_of_nonneg_left h15 hCtot0
-    have hCg2 : Ctot * M.gamma ≤ Ctot * (1 / (1 + Ctot)) :=
-      mul_le_mul_of_nonneg_left hCgate hCtot0
-    have hden : (0 : ℝ) < 1 + Ctot := by linarith
-    have hlast : Ctot * (1 / (1 + Ctot)) ≤ 1 := by
-      rw [mul_one_div, div_le_one hden]
-      linarith
-    linarith
+        shellNormalizationConst) ∧ (Ctot * M.gamma ^ (15 : ℕ) ≤ 1) from
+      @gammaTenDepthOscillation_comparisonBounds2 (d) (Ctot) (hCtot0) (M) (m0) (Eind) (hstate) (m)
+        (K) (h) (hhpos) (hm0) (hcstar) (hK) (hq) (hdimgate) (hCgate) (hgamma0) (hgamma1) (nbuf)
+          (hnbuf) (Ngap) (hNgap) (hsum) (hsumR))
   obtain ⟨Aenv, hAenv⟩ : ∃ A : ℝ,
       A = (3 : ℝ) ^ d * freshShellFourthEnergyConst Chead (M.gamma ^ (100 : ℕ)) := ⟨_, rfl⟩
   have hAenv0 : 0 ≤ Aenv := by

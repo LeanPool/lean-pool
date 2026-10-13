@@ -76,7 +76,7 @@ private theorem tsupport_zeroFun' :
   have hsupp : Function.support (fun _ : Vec d => (0 : ℝ)) = (∅ : Set (Vec d)) := by
     ext z
     simp
-  show closure (Function.support fun _ : Vec d => (0 : ℝ)) = (∅ : Set (Vec d))
+  change closure (Function.support fun _ : Vec d => (0 : ℝ)) = (∅ : Set (Vec d))
   rw [hsupp, closure_empty]
 
 /-- **A smooth bump identically one on a neighbourhood of a compact set.**  The
@@ -100,10 +100,10 @@ theorem exists_contDiff_eq_one_on_isCompact {K U : Set (Vec d)} (hK : IsCompact 
     · refine ⟨(fun _ => 0, (∅ : Set (Vec d))), contDiff_const, ?_, ?_,
         isOpen_empty, fun z hz => absurd hz (Set.notMem_empty z),
         fun h => absurd h hy⟩
-      · show IsCompact (tsupport fun _ : Vec d => (0 : ℝ))
+      · change IsCompact (tsupport fun _ : Vec d => (0 : ℝ))
         rw [tsupport_zeroFun']
         exact isCompact_empty
-      · show tsupport (fun _ : Vec d => (0 : ℝ)) ⊆ U
+      · change tsupport (fun _ : Vec d => (0 : ℝ)) ⊆ U
         rw [tsupport_zeroFun']
         exact Set.empty_subset _
   choose p hp1 hp2 hp3 hp4 hp5 hp6 using hex
@@ -132,7 +132,7 @@ theorem exists_contDiff_eq_one_on_isCompact {K U : Set (Vec d)} (hK : IsCompact 
       simpa only [Set.mem_iUnion, exists_prop] using hy
     have hzero : (1 : ℝ) - (p c).1 y = 0 := by
       rw [hp5 c y hyc, sub_self]
-    show 1 - ∏ c ∈ t, (1 - (p c).1 y) = 1
+    change 1 - ∏ c ∈ t, (1 - (p c).1 y) = 1
     rw [Finset.prod_eq_zero (f := fun c => 1 - (p c).1 y) hct hzero, sub_zero]
 
 /-! ## 2. `H¹₀` closure facts -/
@@ -150,7 +150,7 @@ theorem memH10_zeroExtend_of_subset {A B : Set (Vec d)} (hA : MeasurableSet A)
   obtain ⟨u, hu⟩ := hf
   refine ⟨u.extendByZeroToOpenSuperset hA hB hAB, ?_⟩
   rw [H10Function.extendByZeroToOpenSuperset_toFun]
-  show Set.indicator A u.toH1Function.toFun = Set.indicator A f
+  change Set.indicator A u.toH1Function.toFun = Set.indicator A f
   rw [hu]
 
 /-- **The restricted reflection transport.**  The weak gradient transports under
@@ -263,7 +263,7 @@ theorem memH10_comp_coordFaceReflection {Ω : Set (Vec d)} (hΩ : MeasurableSet 
             * u.toH1Function.grad (coordFaceReflection a i y) k := by
       funext y
       rw [coordReflectionLinear_apply_coord]
-    show MemLp (fun y => coordReflectionLinear i
+    change MemLp (fun y => coordReflectionLinear i
       (u.toH1Function.grad (coordFaceReflection a i y)) k) 2 (volume.restrict Ω)
     rw [hk]
     exact ((u.toH1Function.gradMemL2 k).comp_measurePreserving mp).const_mul _
@@ -378,7 +378,7 @@ theorem memH10_comp_coordFaceReflection {Ω : Set (Vec d)} (hΩ : MeasurableSet 
             approx_support_subset := hss,
             tendsto_approx := htend,
             tendsto_approx_grad := htendg }, ?_⟩
-  show (fun y => u.toH1Function.toFun (coordFaceReflection a i y))
+  change (fun y => u.toH1Function.toFun (coordFaceReflection a i y))
     = fun y => f (coordFaceReflection a i y)
   rw [hu]
 

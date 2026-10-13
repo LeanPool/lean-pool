@@ -131,7 +131,7 @@ theorem exists_memBlockL2_toHilbertBlockL2OfBlockField_eq {U : Set (Vec d)}
     have h2 : toHilbertBlockL2 (memHilbertBlockL2_hilbertifyBlockField hF)
         = toHilbertBlockL2 hxi :=
       (toHilbertBlockL2_eq_toHilbertBlockL2_iff _ hxi).2 (Filter.EventuallyEq.of_eq hfun)
-    show toHilbertBlockL2 (memHilbertBlockL2_hilbertifyBlockField hF) = xi
+    change toHilbertBlockL2 (memHilbertBlockL2_hilbertifyBlockField hF) = xi
     rw [h2, h1]
 
 /-! ## The energy as a continuous function of the competitor's class -/

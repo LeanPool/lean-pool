@@ -66,7 +66,8 @@ theorem integrable_LambdaSqCoeffField_pow_cutoffLaw
   apply (integrable_map_measure htarget_ae.aestronglyMeasurable
     (measurable_coefficientCutoff M.nu m).aemeasurable).mpr
   refine Integrable.mono' hdom
-    (htarget_ae.comp_aemeasurable (measurable_coefficientCutoff M.nu m).aemeasurable).aestronglyMeasurable ?_
+    (htarget_ae.comp_aemeasurable (measurable_coefficientCutoff M.nu
+      m).aemeasurable).aestronglyMeasurable ?_
   filter_upwards with omega
   have hLambda_nonneg : 0 ≤ Ch04.LambdaSqCoeffField Q s (.finite 1) (f omega) :=
     Ch04.LambdaSqCoeffField_finite_nonneg Q (f omega) hs (by norm_num)
