@@ -221,13 +221,14 @@ following excess decay holds for every choice of data at the scale `m`.  If
 the cube `□_m` with force `g` and boundary datum `h`, then at every point `x`
 of the cube and every scale `n ≤ m` with `X ≤ m - n`, the normalized energy
 `√ν ‖∇u‖_{Lnormalized²((x + □_n) ∩ □_m)}` is at most `C 3^{(1-α)(m-n)}` times the sum
-of the same energy over the whole cube, of `√(sigmaBar_m⁻¹) 3^{m/2} [g]` and of
-`√(sigmaBar_m) 3^{m/2} [∇h]`, the last term being present only when `x` lies outside
+of the same energy over the whole cube, of `√(sigmaBar_m⁻¹) 3^{m/2} Kg` and of
+`√(sigmaBar_m) 3^{m/2} Kh`, the last term being present only when `x` lies outside
 the smaller cube `□_{m-1}`; that indicator is read here as the conjunction of
 the estimate with the term, valid at every `x`, and the estimate without it,
-valid on `□_{m-1}`.  Here `[·]` is the `1/2`-Hölder seminorm over the cube,
-for which the statement carries the explicit bounds `Kg` and `Kh`, the norms
-are taken against the normalized volume measure of the set, and `sigmaBar_m` is the
+valid on `□_{m-1}`. Here `Kg` bounds the `1/2`-Hölder seminorm of `g`, while `Kh`
+bounds both the `1/2`-Hölder seminorm of `h.grad` and its scaled size:
+`‖h.grad y‖ ≤ 3^{m/2} Kh` throughout the cube. The energy norms are taken against
+the normalized volume measure of the set, and `sigmaBar_m` is the
 annealed diffusivity that Theorem B produces, quoted here by name.  The decay
 `3^{(1-α)(m-n)}` is the one a `C^{0,α}` function has, uniformly in the
 molecular diffusivity `ν`. -/
