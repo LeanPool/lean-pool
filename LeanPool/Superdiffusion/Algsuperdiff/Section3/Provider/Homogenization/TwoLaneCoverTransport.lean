@@ -585,7 +585,7 @@ theorem exists_twoLaneObservationScaleTransport (d : ℕ) :
               (lt_of_lt_of_le (by omega) M.shellPrefix.dimension)⟩
           Probability.IsTwoTermBigOWith (Cutoff.cutoffSampleLaw M).toMeasure
             (gammaSigma 2) (gammaSigma (1 / 2))
-            (@Observable.cutoffHomogenizationErrorRepresentative d hd M L n
+            (@Observable.cutoffHomogenizationErrorRepresentative d M L n
               (1 / 8) (by norm_num : (0 : ℝ) < 1 / 8) (Annealed.sigmaBar M L))
             (Ctwo * ((E : ℝ) * (1 / 16 : ℝ)⁻¹ * Real.sqrt M.gamma))
             (Ctwo *

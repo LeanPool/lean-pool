@@ -53,7 +53,8 @@ def bigLambdaConst (d : ℕ) : ℝ  :=
 theorem bigLambdaConst_pos (d : ℕ) : 0 < bigLambdaConst d  :=
   lt_of_lt_of_le (bigLambdaGateConst_pos d) (le_max_left _ _)
 
-theorem bigLambdaGateConst_le_bigLambdaConst (d : ℕ) : bigLambdaGateConst d ≤ bigLambdaConst d  := le_max_left _ _
+theorem bigLambdaGateConst_le_bigLambdaConst (d : ℕ) : bigLambdaGateConst d ≤ bigLambdaConst d  :=
+  le_max_left _ _
 
 theorem two_mul_potCubeConstA_sq_le_bigLambdaConst (d : ℕ) :
     2 * potCubeConstA d ^ 2 ≤ bigLambdaConst d  :=

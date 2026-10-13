@@ -72,7 +72,8 @@ def streamUniformExhaustionEnvelope (M : ABKModel d) (omega : FullSample d M.gam
 omit [NeZero d] in
 /-- The shift-dependent profile is trivial below its cutoff and equals the
 uniform envelope above it. -/
-def streamUniformExhaustionProfile (M : ABKModel d) (omega : FullSample d M.gamma) (lam s : ℝ) : ℝ  :=
+def streamUniformExhaustionProfile (M : ABKModel d) (omega : FullSample d M.gamma) (lam s : ℝ) :
+  ℝ  :=
   if streamUniformExhaustionCutoff M omega lam < s then
     streamUniformExhaustionEnvelope M omega s
   else 1

@@ -116,7 +116,7 @@ theorem cutoffHomogenizationErrorAtComparatorScale_ae_eq_raw {d : ℕ}
     (M : ABKModel d) (m comparatorScale : ℤ) (s : {s : ℝ // 0 < s}) :
     cutoffHomogenizationErrorAtComparatorScale M m comparatorScale s =ᵐ[
         (Cutoff.cutoffSampleLaw M).toMeasure]
-      @cutoffHomogenizationErrorRaw d (neZero_of_model_CutoffHomogenizationError M) M m m (s : ℝ)
+      @cutoffHomogenizationErrorRaw d M m m (s : ℝ)
         (Annealed.sigmaBar M comparatorScale) := by
   let : NeZero d := neZero_of_model_CutoffHomogenizationError M
   change cutoffHomogenizationErrorRepresentative M m m s.2
@@ -149,7 +149,7 @@ expression with coefficient, cube, and comparator scales all equal to `m`. -/
 theorem cutoffHomogenizationError_ae_eq_raw {d : ℕ} (M : ABKModel d) (m : ℤ)
     (s : {s : ℝ // 0 < s}) :
     cutoffHomogenizationError M m s =ᵐ[(Cutoff.cutoffSampleLaw M).toMeasure]
-      @cutoffHomogenizationErrorRaw d (neZero_of_model_CutoffHomogenizationError M) M m m (s : ℝ)
+      @cutoffHomogenizationErrorRaw d M m m (s : ℝ)
         (Annealed.sigmaBar M m) := by
   simpa only [cutoffHomogenizationError] using
     cutoffHomogenizationErrorAtComparatorScale_ae_eq_raw M m m s

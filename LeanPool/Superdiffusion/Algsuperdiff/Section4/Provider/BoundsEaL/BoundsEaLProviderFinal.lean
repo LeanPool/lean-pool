@@ -364,7 +364,7 @@ theorem exists_perCubeMoments (d : ℕ) [NeZero d] (cstar : ℝ) (hcstar : 0 < c
   intro M hcs hreg m n hnm hwin s hsmem p hpmem l R hR
   have hd2 : (2 : ℕ) ≤ d := M.shellPrefix.dimension
   obtain ⟨hgam0, hgam18, hs, hsinv, hq, hq0, ht, ht0, hm1, hm2, hm3, hR1nn, hwt0⟩ :=
-    @boundsEaLProviderFinal_comparisonBounds1 (d) (by infer_instance) (cstar) (Cd) (hCd) (Cr1)
+    @boundsEaLProviderFinal_comparisonBounds1 (d) (cstar) (Cd) (hCd) (Cr1)
       (A1) (hCr1) (hA1) (hfirst) (Cr2) (A2) (hCr2) (hsecond) (Cr3) (A3) (hCr3) (hthird) (M) (hcs)
         (hreg) (m) (n) (hnm) (s) (hsmem) (p) (hpmem) (l) (R) (hR) (hd2)
   have hR2nn : (0 : ℝ) ≤ Cd * A2 * (p / 2 *

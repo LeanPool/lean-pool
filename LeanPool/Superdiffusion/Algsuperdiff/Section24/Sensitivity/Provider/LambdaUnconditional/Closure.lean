@@ -123,7 +123,8 @@ theorem unconditionalConst_pos (d : ℕ) : 0 < unconditionalConst d  := by
   unfold unconditionalConst
   linarith
 
-theorem fluxCubeConst_le_max (d : ℕ) : fluxCubeConst d ≤ max 1 (fluxCubeConst d)  := le_max_right _ _
+theorem fluxCubeConst_le_max (d : ℕ) : fluxCubeConst d ≤ max 1 (fluxCubeConst d)  := le_max_right
+  _ _
 
 /-- The frozen coarse gauge is nonnegative. -/
 theorem unitCubeLambda_inv_nonneg [NeZero d]

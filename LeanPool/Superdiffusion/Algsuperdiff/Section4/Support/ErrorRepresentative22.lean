@@ -425,7 +425,7 @@ theorem annularErrorObservable_nonneg (M : ABKModel d) (n : ℤ)
 `ErrorAtoms`. -/
 theorem annularErrorAtom_ae_eq_annularErrorObservable (M : ABKModel d) (n : ℤ)
     (s : {s : ℝ // 0 < s}) :
-    @annularErrorAtom d (neZero_of_model_ErrorRepresentative22 M) M n (s : ℝ) =ᵐ[
+    @annularErrorAtom d M n (s : ℝ) =ᵐ[
         (Cutoff.cutoffSampleLaw M).toMeasure]
       annularErrorObservable M n s := by
   let : NeZero d := neZero_of_model_ErrorRepresentative22 M

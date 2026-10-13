@@ -1192,7 +1192,7 @@ theorem observationScaleFiniteCover_sq_isBigOWith_gammaQuarter
           IsBigOWith (Cutoff.cutoffSampleLaw M).toMeasure
             (gammaSigma (1 / 4))
             (fun omega =>
-              (@Observable.cutoffHomogenizationErrorRepresentative d hd M L m
+              (@Observable.cutoffHomogenizationErrorRepresentative d M L m
                 (1 / 8) (by norm_num : (0 : ℝ) < 1 / 8)
                 (Annealed.sigmaBar M L) omega) ^ 2)
             (Cobs *

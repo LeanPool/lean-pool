@@ -79,8 +79,8 @@ theorem generator_renormalization_provider_final_of_supClauseAt (d : ℕ) (cstar
       CcgF M * coarseGrainingGeomFactor
           ((recutExponent d (le_trans (by norm_num) hd)).exponent.toReal) (homS M / 4) ≤
         Cbud * |Real.log M.gamma|)
-    (hclause : ∀ (hd : 2 ≤ d) (inst : NeZero d),
-      @SeamMultiscaleSupClauseSupplyAt d inst (le_trans (by norm_num) hd) cstar gamma0
+    (hclause : ∀ (hd : 2 ≤ d) (_instance : NeZero d),
+      @SeamMultiscaleSupClauseSupplyAt d (le_trans (by norm_num) hd) cstar gamma0
         CcgF) :
     GeneratorRenormalizationShape d cstar := by
   by_cases hd : 2 ≤ d
@@ -142,7 +142,7 @@ SOME model-dependent constant meeting the duality pin and the budget.  This
 is the composition's one remaining input with the `Ccg` slot freed. -/
 def SupClauseProducerAtBudgeted (d : ℕ) (cstar : ℝ) : Prop :=
   ∃ gamma0 : ℝ, 0 < gamma0 ∧
-    ∀ (hd : 2 ≤ d) (inst : NeZero d), ∃ (CcgF : ABKModel d → ℝ) (Cbud : ℝ),
+    ∀ (hd : 2 ≤ d) (_instance : NeZero d), ∃ (CcgF : ABKModel d → ℝ) (Cbud : ℝ),
       0 ≤ Cbud ∧ (∀ M : ABKModel d, 0 ≤ CcgF M) ∧
       (∀ M : ABKModel d,
         cgDualBoundConstFlux d (recutExponent d (le_trans (by norm_num) hd)) ≤
@@ -152,7 +152,7 @@ def SupClauseProducerAtBudgeted (d : ℕ) (cstar : ℝ) : Prop :=
             ((recutExponent d (le_trans (by norm_num) hd)).exponent.toReal)
             (homS M / 4) ≤
           Cbud * |Real.log M.gamma|) ∧
-      @SeamMultiscaleSupClauseSupplyAt d inst (le_trans (by norm_num) hd) cstar gamma0
+      @SeamMultiscaleSupClauseSupplyAt d (le_trans (by norm_num) hd) cstar gamma0
         CcgF
 
 /-! ## 3. THE COMPOSITION -/

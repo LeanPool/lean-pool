@@ -73,7 +73,8 @@ def bigLambdaGateConst (d : ℕ) : ℝ  :=
 theorem bigLambdaGateConst_pos (d : ℕ) : 0 < bigLambdaGateConst d  :=
   lt_of_lt_of_le (gaugeGateConst_pos d) (le_max_left _ _)
 
-theorem gaugeGateConst_le_bigLambdaGateConst (d : ℕ) : gaugeGateConst d ≤ bigLambdaGateConst d  := le_max_left _ _
+theorem gaugeGateConst_le_bigLambdaGateConst (d : ℕ) : gaugeGateConst d ≤ bigLambdaGateConst d  :=
+  le_max_left _ _
 
 theorem four_mul_potCubeConstB_le_bigLambdaGateConst (d : ℕ) :
     4 * potCubeConstB d ≤ bigLambdaGateConst d  := le_max_right _ _

@@ -218,7 +218,8 @@ def streamTailAlgebraicAmplitude (M : ABKModel d) (omega : FullSample d M.gamma)
 
 omit [NeZero d] in
 /-- The explicit profile for item 3 of `PACKET_M2_28b`. -/
-def streamLocalizedTailProfile (M : ABKModel d) (omega : FullSample d M.gamma) (x : Vec d) : ℝ → ℝ  :=
+def streamLocalizedTailProfile (M : ABKModel d) (omega : FullSample d M.gamma) (x : Vec d) : ℝ →
+  ℝ  :=
   logSubexponentialProfile (streamTailAlgebraicAmplitude M omega x)
     (streamTailDecayRate M omega x) (d + 1)
 

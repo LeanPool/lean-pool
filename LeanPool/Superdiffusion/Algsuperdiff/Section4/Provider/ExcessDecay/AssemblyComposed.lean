@@ -1248,7 +1248,7 @@ private theorem assemblyComposed_comparisonBounds5 :
         Q3sn * (gagliardoWindowConst d * windowMoveConst d * Gs)) ≤
       A3 * (S7 * sig⁻¹ * Q1s * Gs)) ∧ ((0 : ℝ) ≤ S4 * Erep * X) ∧ ((0 : ℝ) ≤ S4 * Erep * S) ∧ ((0
         : ℝ) ≤ S7 * sig⁻¹ * Q1s * Gs) ∧ ((0 : ℝ) ≤ S6 * Q1s * Hs) ∧ ((0 : ℝ) ≤ S6 * R3n * Hn) from
-      @assemblyComposed_comparisonBounds3 (d) (by infer_instance) (b0) (cg) (A2) (hA2def) (hA2)
+      @assemblyComposed_comparisonBounds3 (d) (b0) (cg) (A2) (hA2def) (hA2)
         (A3) (hA3def) (hA3) (s) (S) (Erep) (hErep0) (sig) (X) (Gs) (Hs) (Hn) (Q3sn) (Q1s) (R3n)
           (S4) (S7) (S6) (hX0) (hGs0) (hHs0) (hHn0) (hS0) (hQ1s0) (hR3n0) (hS40) (hS70) (hS60)
             (hsiginv0) (hS6eq) (hS6le) (hQScle) (hRQ3sn))
@@ -1896,7 +1896,7 @@ theorem exists_boundaryClauseComposed_honest (d : ℕ) [NeZero d] :
     Sm3 Sm2 A3 A2 A1 cg b0 k0 e0 kappa
   -- (g) the regrouping
   obtain ⟨hT1, hT2, hT3, hXterm, hSterm, hGterm, hHsterm, hHnterm⟩ :=
-    @assemblyComposed_comparisonBounds5 (d) (by infer_instance) (CE) (KE) (kappa) (b0) (cg) (A1)
+    @assemblyComposed_comparisonBounds5 (d) (CE) (KE) (kappa) (b0) (cg) (A1)
       (hA1def) (hA1) (A2) (hA2def) (hA2) (A3) (hA3def) (hA3) (s) (hs) (n) (hs1) (S) (hS0) (Erep)
         (hErepCap) (hErep0) (sig) (hsiginv0) (X) (hX0) (Gs) (hGs0) (Hs) (hHs0) (Hn) (hHn0) (P2)
           (by assumption) (hP2def) (Q3s) (by assumption) (hQ3s0) (hQ3sdef) (Q3sn) (by assumption)

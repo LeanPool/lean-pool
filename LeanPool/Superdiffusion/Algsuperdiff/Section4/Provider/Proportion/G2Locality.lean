@@ -435,7 +435,7 @@ theorem annularErrorObservable_comp_translate_ae_eq_functional (M : ABKModel d)
     (fun omega => Support.annularErrorObservable M n s
         (Cutoff.translateCutoffSample (Support.triadicLatticePoint n v) omega))
       =ᵐ[(Cutoff.cutoffSampleLaw M).toMeasure]
-    @errorFunctionalAtCube d (by exact neZero_of_model M) M (n - 2) (Localize.latticeCube n v)
+    @errorFunctionalAtCube d M (n - 2) (Localize.latticeCube n v)
       (s : ℝ) (Annealed.sigmaBar M (n - 2)) := by
   let : NeZero d := neZero_of_model M
   exact (annularErrorObservable_comp_translate_ae_eq_literal M n s v).trans
