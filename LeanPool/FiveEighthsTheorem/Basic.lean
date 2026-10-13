@@ -132,11 +132,8 @@ private theorem ncard_le_ncard_univ {α : Type*} [Finite α] (p : α → Prop) :
 /-- The commuting probability of `G` counts the commuting pairs of elements. -/
 theorem commProb_eq_ncard_div_sq (G : Type*) [Group G] :
     commProb G = (Set.ncard { (g, h) : G × G | g * h = h * g } : ℚ) / (Nat.card G : ℚ) ^ 2 := by
-  have key : Nat.card { p : G × G // Commute p.1 p.2 }
-      = Set.ncard { (g, h) : G × G | g * h = h * g } := by
-    rw [← Nat.card_coe_set_eq]
-    exact Nat.card_congr (Equiv.subtypeEquivRight fun p => Iff.rfl)
-  rw [commProb_def, key]
+  rw [commProb_def]
+  congr 1
 
 /-- The cardinality of a type, as a rational number (zero if the type is infinite). -/
 noncomputable abbrev typeQCard (G : Type*) : ℚ := Nat.card G
