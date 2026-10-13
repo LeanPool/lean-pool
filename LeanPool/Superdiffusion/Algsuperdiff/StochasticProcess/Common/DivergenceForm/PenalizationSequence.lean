@@ -102,8 +102,7 @@ theorem penalizationPotential_mono (hU : MeasurableSet U)
 
 /-- Penalized resolvents of nonnegative data decrease almost everywhere as
 the exterior penalty increases. -/
-theorem penalizedResolvent_antitone_ae [NeZero d]
-    (a : CoeffField d) (hU : IsOpenBoundedConvexDomain U)
+theorem penalizedResolvent_antitone_ae (a : CoeffField d) (hU : IsOpenBoundedConvexDomain U)
     (hV : IsOpenBoundedConvexDomain V)
     {α lam Lam : ℝ} (hα : 0 < α) (hlam : 0 < lam)
     (hEll : IsEllipticFieldOn lam Lam U a)
@@ -111,7 +110,7 @@ theorem penalizedResolvent_antitone_ae [NeZero d]
     (n m : ℕ) (hnm : n ≤ m) :
     ∀ᵐ x ∂volumeMeasureOn U,
       penalizedResolvent a hU.isOpen hV.isOpen hα hlam hEll m f x ≤
-        penalizedResolvent a hU.isOpen hV.isOpen hα hlam hEll n f x := by
+        penalizedResolvent a hU.isOpen hV.isOpen hα hlam hEll n f x  := by
   exact potentialResolvent_antitone_potential_ae a hU hα hlam hEll
     (penalizationPotential U V n)
     (penalizationPotential U V m)
@@ -123,15 +122,14 @@ theorem penalizedResolvent_antitone_ae [NeZero d]
 
 /-- Penalized resolvents of nonnegative data are nonnegative almost
 everywhere. -/
-theorem penalizedResolvent_nonneg_ae [NeZero d]
-    (a : CoeffField d) (hU : IsOpenBoundedConvexDomain U)
+theorem penalizedResolvent_nonneg_ae (a : CoeffField d) (hU : IsOpenBoundedConvexDomain U)
     (hV : IsOpenBoundedConvexDomain V)
     {α lam Lam : ℝ} (hα : 0 < α) (hlam : 0 < lam)
     (hEll : IsEllipticFieldOn lam Lam U a)
     (f : ScalarL2 U) (hf : ∀ᵐ x ∂volumeMeasureOn U, 0 ≤ f x)
     (n : ℕ) :
     ∀ᵐ x ∂volumeMeasureOn U,
-      0 ≤ penalizedResolvent a hU.isOpen hV.isOpen hα hlam hEll n f x := by
+      0 ≤ penalizedResolvent a hU.isOpen hV.isOpen hα hlam hEll n f x  := by
   exact potentialResolvent_nonneg_ae a hU hα hlam hEll
     (penalizationPotential U V n)
     (penalizationPotential_isBoundedNonnegative
@@ -215,7 +213,7 @@ noncomputable def penalizationPointwiseLimit
 
 /-- The penalized resolvents converge almost everywhere to their pointwise
 infimum. -/
-theorem penalizedResolvent_tendsto_pointwiseLimit_ae [NeZero d]
+theorem penalizedResolvent_tendsto_pointwiseLimit_ae
     (a : CoeffField d) (hU : IsOpenBoundedConvexDomain U)
     (hV : IsOpenBoundedConvexDomain V)
     {α lam Lam : ℝ} (hα : 0 < α) (hlam : 0 < lam)
@@ -225,7 +223,7 @@ theorem penalizedResolvent_tendsto_pointwiseLimit_ae [NeZero d]
       Tendsto
         (fun n => penalizedResolvent a hU.isOpen hV.isOpen hα hlam hEll n f x)
         atTop (nhds (penalizationPointwiseLimit
-          a hU.isOpen hV.isOpen hα hlam hEll f x)) := by
+          a hU.isOpen hV.isOpen hα hlam hEll f x))  := by
   have hnonneg : ∀ n, ∀ᵐ x ∂volumeMeasureOn U,
       0 ≤ penalizedResolvent a hU.isOpen hV.isOpen hα hlam hEll n f x :=
     fun n => penalizedResolvent_nonneg_ae a hU hV hα hlam hEll f hf n
@@ -252,14 +250,13 @@ theorem penalizedResolvent_tendsto_pointwiseLimit_ae [NeZero d]
     exact hx0 n
 
 /-- The pointwise infimum of the penalized resolvents belongs to `L²(U)`. -/
-theorem penalizationPointwiseLimit_memLp [NeZero d]
-    (a : CoeffField d) (hU : IsOpenBoundedConvexDomain U)
+theorem penalizationPointwiseLimit_memLp (a : CoeffField d) (hU : IsOpenBoundedConvexDomain U)
     (hV : IsOpenBoundedConvexDomain V)
     {α lam Lam : ℝ} (hα : 0 < α) (hlam : 0 < lam)
     (hEll : IsEllipticFieldOn lam Lam U a)
     (f : ScalarL2 U) (hf : ∀ᵐ x ∂volumeMeasureOn U, 0 ≤ f x) :
     MemLp (penalizationPointwiseLimit
-      a hU.isOpen hV.isOpen hα hlam hEll f) 2 (volumeMeasureOn U) := by
+      a hU.isOpen hV.isOpen hα hlam hEll f) 2 (volumeMeasureOn U)  := by
   let u : ℕ → ScalarL2 U := fun n =>
     penalizedResolvent a hU.isOpen hV.isOpen hα hlam hEll n f
   let g := penalizationPointwiseLimit
@@ -288,8 +285,7 @@ theorem penalizationPointwiseLimit_memLp [NeZero d]
 
 /-- The monotone penalized resolvents converge strongly in `L²(U)` to their
 almost-everywhere infimum. -/
-theorem penalizedResolvent_tendsto_L2 [NeZero d]
-    (a : CoeffField d) (hU : IsOpenBoundedConvexDomain U)
+theorem penalizedResolvent_tendsto_L2 (a : CoeffField d) (hU : IsOpenBoundedConvexDomain U)
     (hV : IsOpenBoundedConvexDomain V)
     {α lam Lam : ℝ} (hα : 0 < α) (hlam : 0 < lam)
     (hEll : IsEllipticFieldOn lam Lam U a)
@@ -300,7 +296,7 @@ theorem penalizedResolvent_tendsto_L2 [NeZero d]
       (nhds ((penalizationPointwiseLimit_memLp
         a hU hV hα hlam hEll f hf).toLp
           (penalizationPointwiseLimit
-            a hU.isOpen hV.isOpen hα hlam hEll f))) := by
+            a hU.isOpen hV.isOpen hα hlam hEll f)))  := by
   let u : ℕ → ScalarL2 U := fun n =>
     penalizedResolvent a hU.isOpen hV.isOpen hα hlam hEll n f
   let g := penalizationPointwiseLimit

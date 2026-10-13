@@ -570,7 +570,7 @@ private theorem finiteLp_low_term_of_l2_control_neumann
   exact finiteLp_low_term_package_finitePNeumann hq hSq hlamENN le_rfl
 
 private theorem toReal_eLpNorm_two_sq_eq_integral_finitePNeumann
-    {α E : Type*} [MeasurableSpace α] [NormedAddCommGroup E] [MeasurableSpace E]
+    {α E : Type*} [MeasurableSpace α] [NormedAddCommGroup E]
     {μ : Measure α} {f : α → E} (hf : MemLp f 2 μ) :
     (ENNReal.toReal (eLpNorm f 2 μ)) ^ (2 : ℕ) =
       ∫ x, ‖f x‖ ^ (2 : ℕ) ∂μ := by
@@ -686,7 +686,7 @@ private theorem neumannReflectedGoodLambdaCutoff_sq_eq_normalized_energy
           (MeasureTheory.integral_nonneg fun _ ↦ sq_nonneg _)
 
 private theorem neumannReflectedGoodLambdaCutoff_le_normalized_datum_energy
-    {d : ℕ} [NeZero d] {m : ℤ} {q : FiniteLpExponent}
+    {d : ℕ} {m : ℤ} {q : FiniteLpExponent}
     (depth : ℕ) {eps sigma0 : ℝ} (hsigma0 : 0 < sigma0)
     (u : H1MeanZeroFunction (openCubeSet (originCube d m)))
     (h : CubeEuclideanL2LpField (originCube d m) q)
@@ -764,12 +764,12 @@ private theorem neumannReflectedGoodLambdaCutoff_le_normalized_datum_energy
     _ = _ := rfl
 
 private theorem neumannReflectedGoodLambdaCutoff_le_q_datum_norm
-    {d : ℕ} [NeZero d] {m : ℤ} {q : FiniteLpExponent} (depth : ℕ)
+    {d : ℕ} {m : ℤ} {q : FiniteLpExponent} (depth : ℕ)
     {eps sigma0 : ℝ} (hsigma0 : 0 < sigma0)
     (u : H1MeanZeroFunction (openCubeSet (originCube d m)))
     (h : CubeEuclideanL2LpField (originCube d m) q)
     (hsolution : IsMeanZeroNeumannRhsWeakSolution
-      (fun _ : Vec d ↦ scalarMatrix (d := d) sigma0)
+      (fun _ : Vec d ↦ scalarMatrix (d  := d) sigma0)
       (openCubeSet (originCube d m)) u (fun x ↦ -h.toField x))
     (hq : 2 < q.exponent.toReal) :
     neumannReflectedGoodLambdaCutoff m depth eps sigma0 u h.toField ≤

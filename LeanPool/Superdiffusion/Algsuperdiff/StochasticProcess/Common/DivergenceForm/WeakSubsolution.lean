@@ -72,7 +72,7 @@ theorem IsAlphaShiftedWeakSolution.isSupersolution
 
 /-- A weak subsolution is almost everywhere below a weak supersolution when
 their right-hand sides have the same order. -/
-theorem weakSubsolution_le_weakSupersolution_ae [NeZero d]
+theorem weakSubsolution_le_weakSupersolution_ae
     (a : CoeffField d) (hU : IsOpenBoundedConvexDomain U)
     {α lam Lam : ℝ} (hα : 0 < α)
     (hEll : IsEllipticFieldOn lam Lam U a)
@@ -81,7 +81,7 @@ theorem weakSubsolution_le_weakSupersolution_ae [NeZero d]
     (hv : IsAlphaShiftedWeakSupersolution a U α g v)
     (hfg : ∀ᵐ x ∂volumeMeasureOn U, f x ≤ g x) :
     ∀ᵐ x ∂volumeMeasureOn U,
-      ZeroTraceSobolev.toL2 u x ≤ ZeroTraceSobolev.toL2 v x := by
+      ZeroTraceSobolev.toL2 u x ≤ ZeroTraceSobolev.toL2 v x  := by
   let z : ZeroTraceSobolev U := u - v
   obtain ⟨p, hp, -⟩ :=
     ZeroTraceSobolev.existsUnique_positivePartSubConst hU z 0 le_rfl
@@ -166,14 +166,14 @@ theorem weakSubsolution_le_weakSupersolution_ae [NeZero d]
 
 /-- A weak supersolution with nonnegative right-hand side is nonnegative
 almost everywhere. -/
-theorem IsAlphaShiftedWeakSupersolution.nonneg_ae [NeZero d]
+theorem IsAlphaShiftedWeakSupersolution.nonneg_ae
     (a : CoeffField d) (hU : IsOpenBoundedConvexDomain U)
     {α lam Lam : ℝ} (hα : 0 < α) (hlam : 0 < lam)
     (hEll : IsEllipticFieldOn lam Lam U a)
     {g : ScalarL2 U} {v : ZeroTraceSobolev U}
     (hv : IsAlphaShiftedWeakSupersolution a U α g v)
     (hg : ∀ᵐ x ∂volumeMeasureOn U, 0 ≤ g x) :
-    ∀ᵐ x ∂volumeMeasureOn U, 0 ≤ ZeroTraceSobolev.toL2 v x := by
+    ∀ᵐ x ∂volumeMeasureOn U, 0 ≤ ZeroTraceSobolev.toL2 v x  := by
   have hzero : IsAlphaShiftedWeakSolution a U α 0 0 := by
     simpa only [map_zero] using
       alphaShiftedSolution_isAlphaShiftedWeakSolution a hα hlam hEll
@@ -193,8 +193,7 @@ theorem IsAlphaShiftedWeakSupersolution.nonneg_ae [NeZero d]
   rwa [hzero] at hx
 
 /-- Resolvent estimate for a weak α-supersolution when `0 < β` and `α < β`. -/
-theorem resolvent_le_of_weakSupersolution_ae [NeZero d]
-    (a : CoeffField d) (hU : IsOpenBoundedConvexDomain U)
+theorem resolvent_le_of_weakSupersolution_ae (a : CoeffField d) (hU : IsOpenBoundedConvexDomain U)
     {alpha beta lam Lam : ℝ} (hBeta : 0 < beta)
     (hAlphaBeta : alpha < beta) (hlam : 0 < lam)
     (hEll : IsEllipticFieldOn lam Lam U a) (v : ZeroTraceSobolev U)
@@ -202,7 +201,7 @@ theorem resolvent_le_of_weakSupersolution_ae [NeZero d]
     ∀ᵐ x ∂volumeMeasureOn U,
       beta * alphaShiftedResolvent a hBeta hlam hEll
           (ZeroTraceSobolev.toL2 v) x ≤
-        (beta / (beta - alpha)) * ZeroTraceSobolev.toL2 v x := by
+        (beta / (beta - alpha)) * ZeroTraceSobolev.toL2 v x  := by
   have hdiff : 0 < beta - alpha := sub_pos.mpr hAlphaBeta
   let c : ℝ := beta / (beta - alpha)
   let r : ZeroTraceSobolev U :=

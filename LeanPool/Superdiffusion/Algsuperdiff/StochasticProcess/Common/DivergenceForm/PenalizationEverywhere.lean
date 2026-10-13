@@ -112,7 +112,7 @@ continuous.  The limit's own representative is not produced here: it is the one
 named by `hRegV`, at the restricted datum, and the content of the theorem is
 the monotone pointwise convergence to it.  Nothing is asserted on the boundary
 of `V`. -/
-theorem exists_penalization_everywhere_limit_reg [NeZero d]
+theorem exists_penalization_everywhere_limit_reg
     (a : CoeffField d) (hV : IsOpenBoundedConvexDomain V) (hVne : V.Nonempty)
     (hU : IsOpenBoundedConvexDomain U) (hVU : V ⊆ U)
     {α lam Lam : ℝ} (hα : 0 < α) (hlam : 0 < lam)
@@ -130,7 +130,7 @@ theorem exists_penalization_everywhere_limit_reg [NeZero d]
         penalizedResolvent a hU.isOpen hV.isOpen hα hlam hEll n f) ∧
       limit =ᵐ[volumeMeasureOn V] alphaShiftedResolvent a hα hlam
         (hEll.mono hV.isOpen.measurableSet hVU)
-        (restrictScalarL2ToPart (V := V) hU.isOpen.measurableSet f) ∧
+        (restrictScalarL2ToPart (V  := V) hU.isOpen.measurableSet f) ∧
       (∀ x ∈ V, ∀ n, rep (n + 1) x ≤ rep n x) ∧
       (∀ x ∈ V, Tendsto (fun n => rep n x) atTop (nhds (limit x))) ∧
       (∀ x ∈ V, (⨅ n, rep n x) = limit x) := by

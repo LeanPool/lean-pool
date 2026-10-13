@@ -119,7 +119,7 @@ theorem summable_sigmaStarInvSeries [NeZero d] (Q : TriadicCube d)
   Book.Ch02.summable_sigmaStarInv_series_pointwiseCoeffField Q a hs hq
 
 /-- The gauge is the `2/q` power of the series. -/
-theorem inv_lambdaSq_finite_eq_rpow_sigmaStarInvSeries [NeZero d]
+theorem inv_lambdaSq_finite_eq_rpow_sigmaStarInvSeries
     (Q : TriadicCube d) (a : Book.Ch02.TriadicCoeffFamily d) {s q : ℝ}
     (hs : 0 < s) (hq : 0 < q) :
     (Book.Ch02.lambdaSq Q s (.finite q) a)⁻¹ =
@@ -129,11 +129,11 @@ theorem inv_lambdaSq_finite_eq_rpow_sigmaStarInvSeries [NeZero d]
   rw [hdef, rpow_neg' (sigmaStarInvSeries_nonneg Q hs hq a), inv_inv]
 
 /-- The series is the `q/2` power of the gauge. -/
-theorem sigmaStarInvSeries_eq_rpow_inv_lambdaSq [NeZero d]
+theorem sigmaStarInvSeries_eq_rpow_inv_lambdaSq
     (Q : TriadicCube d) (a : Book.Ch02.TriadicCoeffFamily d) {s q : ℝ}
     (hs : 0 < s) (hq : 0 < q) :
     sigmaStarInvSeries Q s q a =
-      Real.rpow ((Book.Ch02.lambdaSq Q s (.finite q) a)⁻¹) (q / 2) := by
+      Real.rpow ((Book.Ch02.lambdaSq Q s (.finite q) a)⁻¹) (q / 2)  := by
   rw [inv_lambdaSq_finite_eq_rpow_sigmaStarInvSeries Q a hs hq,
     rpow_rpow (sigmaStarInvSeries_nonneg Q hs hq a),
     show 2 / q * (q / 2) = 1 by field_simp, rpow_one']

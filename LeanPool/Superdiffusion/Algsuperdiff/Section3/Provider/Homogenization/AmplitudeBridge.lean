@@ -334,6 +334,7 @@ theorem amplitude_mem_Ioc_of_gate (M : ABKModel d) {E Chom epsilon : ℝ}
 
 variable [NeZero d]
 
+omit [NeZero d] in
 /-- **The diagonal fourth moment at `s = 1/4`.**  Under the preceding-error clause
 of the frozen statement and its two regime facts, for every cutoff scale
 `L <= m - 1`,
@@ -368,7 +369,7 @@ theorem lintegral_cutoffHomogenizationErrorRepresentative_pow_four_le
         (Observable.cutoffHomogenizationErrorRepresentative M L L hs
           (Annealed.sigmaBar M L) omega ^ 4)
         ∂(Cutoff.cutoffSampleLaw M).toMeasure ≤
-      ENNReal.ofReal ((10 ^ 9 * (E : ℝ) ^ 2 * M.gamma) ^ 2) := by
+      ENNReal.ofReal ((10 ^ 9 * (E : ℝ) ^ 2 * M.gamma) ^ 2)  := by
   have hE1 : (1 : ℝ) ≤ (E : ℝ) := E.property
   have hEpos : (0 : ℝ) < (E : ℝ) := lt_of_lt_of_le zero_lt_one hE1
   have hgammaPos : 0 < M.gamma := M.shellPrefix.gamma_pos
@@ -430,6 +431,7 @@ theorem lintegral_cutoffHomogenizationErrorRepresentative_pow_four_le
         linarith
     _ ≤ (10 ^ 9 * (E : ℝ) ^ 2 * M.gamma) ^ 2 := by nlinarith [hP]
 
+omit [NeZero d] in
 /-- **The amplitude bridge**, item `(I-1)` of the corrected Section 3.5
 account: the two data the Step-1 display must be instantiated with at
 `delta_1 = 10^9 E^2 gamma`, delivered together and uniformly in the cutoff
@@ -464,7 +466,7 @@ theorem amplitude_mem_Ioc_and_lintegral_pow_four_le
             (Observable.cutoffHomogenizationErrorRepresentative M L L hs
               (Annealed.sigmaBar M L) omega ^ 4)
             ∂(Cutoff.cutoffSampleLaw M).toMeasure ≤
-          ENNReal.ofReal ((10 ^ 9 * (E : ℝ) ^ 2 * M.gamma) ^ 2) :=
+          ENNReal.ofReal ((10 ^ 9 * (E : ℝ) ^ 2 * M.gamma) ^ 2)  :=
   ⟨amplitude_mem_Ioc_of_gate M E.property hChom hepsilon hgate,
     fun _ hL =>
       lintegral_cutoffHomogenizationErrorRepresentative_pow_four_le M hEfloor hregime

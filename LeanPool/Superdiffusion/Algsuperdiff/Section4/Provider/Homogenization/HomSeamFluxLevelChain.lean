@@ -241,7 +241,7 @@ theorem seamLegOf_ofReal_le (M : ABKModel d) {Cgap : ℝ}
 
 `HomSeamSqrtTwoChain`'s budget split with the coarse-graining constant
 freed. -/
-theorem seamSplitOf_of_seam [NeZero d] (M : ABKModel d) {Cgap : ℝ}
+theorem seamSplitOf_of_seam (M : ABKModel d) {Cgap : ℝ}
     (Y : Cutoff.CutoffSample d → ℝ≥0∞) (m : ℤ) (omega : Cutoff.CutoffSample d)
     (p : FiniteLpExponent) (s2 : FractionalOrder)
     {Ccg sbase kappa theta Cen0 E1 E2 Ktest A B : ℝ} (hCcg0 : 0 ≤ Ccg)

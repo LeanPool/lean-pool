@@ -110,7 +110,7 @@ theorem setAverage_ball_sub {f : Vec d → ℝ} (hf : Integrable f volume)
 /-- **A Hölder bound survives averaging.**  Two balls of the same radius are
 translates of each other, so the difference of the averages pairs the values of
 `f` at points a fixed distance apart. -/
-theorem abs_setAverage_ball_sub_le [NeZero d] {U : Set (Vec d)} {f : Vec d → ℝ}
+theorem abs_setAverage_ball_sub_le {U : Set (Vec d)} {f : Vec d → ℝ}
     (hf : Integrable f volume) {H : ℝ} (hH : HolderSeminormBoundOn U (1 / 2) H f)
     {x z : Vec d} {r : ℝ} (hr : 0 < r)
     (hbx : Metric.ball x r ⊆ U) (hbz : Metric.ball z r ⊆ U) :
@@ -176,10 +176,10 @@ private theorem setAverage_congr_of_ae {U : Set (Vec d)} {f g : Vec d → ℝ}
 
 /-- **Where a continuous representative exists, the countable supremum of
 difference quotients of ball averages is exactly its Hölder seminorm.** -/
-theorem ballAverageHolderOn_eq_holderSeminormOn [NeZero d] {U D : Set (Vec d)}
+theorem ballAverageHolderOn_eq_holderSeminormOn {U D : Set (Vec d)}
     (hU : IsOpen U) (hD : Dense D) {f g : Vec d → ℝ} (hf : IntegrableOn f U volume)
     (hae : g =ᵐ[volume.restrict U] f) (hg : ContinuousOn g U) :
-    ballAverageHolderOn U D f = holderSeminormOn U (1 / 2) g := by
+    ballAverageHolderOn U D f = holderSeminormOn U (1 / 2) g  := by
   have hUmeas : MeasurableSet U := hU.measurableSet
   have hgU : IntegrableOn g U volume := hf.congr hae.symm
   have hGint : Integrable (U.indicator g) volume := hgU.integrable_indicator hUmeas

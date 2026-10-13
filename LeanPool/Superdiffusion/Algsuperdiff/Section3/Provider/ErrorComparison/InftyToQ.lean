@@ -134,7 +134,7 @@ theorem finsetAverage_normalizedBlockResponseMax_rpow_nonneg {d : ℕ}
 /-- The one-scale step of the printed proof of `e.mathcalE.infty.to.q`: the
 maximum over the descendants at one scale is bounded by the `p`-average over the
 same scale, at the cost of the number of descendants. -/
-theorem scaleResponseAtScale_infinity_rpow_le_card_mul_finite {d : ℕ} [NeZero d]
+theorem scaleResponseAtScale_infinity_rpow_le_card_mul_finite {d : ℕ}
     (Q : TriadicCube d) {k : ℤ} (hk : k ≤ Q.scale)
     (F : Book.Ch02.TriadicCoeffFamily d) (a0 : Mat d) {p q : ℝ}
     (hp : 0 < p) (hq : 0 < q) :

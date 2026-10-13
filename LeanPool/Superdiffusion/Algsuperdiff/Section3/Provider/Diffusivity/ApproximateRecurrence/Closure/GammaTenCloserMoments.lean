@@ -109,7 +109,7 @@ theorem measurePreserving_translateCutoffSample (M : ABKModel d) (v : Vec d) :
 
 /-- `L^p` membership of the gauged ellipticity sum transports from the origin
 cube to an arbitrary cube of the same scale. -/
-theorem memLp_gaugedEllipticitySum_of_scale [NeZero d] (M : ABKModel d) (L m : ℤ)
+theorem memLp_gaugedEllipticitySum_of_scale (M : ABKModel d) (L m : ℤ)
     {T : TriadicCube d} (hT : T.scale = m) (sigmaBar s : ℝ) (p : ℝ≥0∞)
     (hmem : MemLp (fun omega : CutoffSample d =>
         gaugedEllipticitySum sigmaBar (originCube d m) s
@@ -118,7 +118,7 @@ theorem memLp_gaugedEllipticitySum_of_scale [NeZero d] (M : ABKModel d) (L m : �
     MemLp (fun omega : CutoffSample d =>
         gaugedEllipticitySum sigmaBar T s
           (coefficientCutoffTriadicCoeffFamily M L omega)) p
-      (cutoffSampleLaw M).toMeasure := by
+      (cutoffSampleLaw M).toMeasure  := by
   set v : Vec d :=
     fun i => ((T.index i : ℤ) : ℝ) * cubeScaleFactor (originCube d m) with hv
   have hcomp := hmem.comp_measurePreserving (measurePreserving_translateCutoffSample M v)
@@ -144,7 +144,7 @@ The membership at `cu_m` is the `L^8` conjunct of
 `memLp_gaugedEllipticitySum_of_scale` transports it to the ancestor.
 
 exactly on the four listed premises. -/
-theorem exists_regime_memLp_four_gaugedEllipticitySum_ancestorAtScale (d : ℕ) [NeZero d] :
+theorem exists_regime_memLp_four_gaugedEllipticitySum_ancestorAtScale (d : ℕ) :
     ∃ Cell gamma0 : ℝ, 0 < Cell ∧ 0 < gamma0 ∧ gamma0 ≤ 1 / 4 ∧
       ∀ (M : ABKModel d) (m : ℤ) (Ec : {E : ℝ // 1 ≤ E}),
         M.gamma ≤ gamma0 →
@@ -156,7 +156,7 @@ theorem exists_regime_memLp_four_gaugedEllipticitySum_ancestorAtScale (d : ℕ) 
               gaugedEllipticitySum (Annealed.sigmaBar M (m - 1) : ℝ)
                 (ancestorAtScale R m) M.gamma
                 (coefficientCutoffTriadicCoeffFamily M m omega)) 4
-            (cutoffSampleLaw M).toMeasure := by
+            (cutoffSampleLaw M).toMeasure  := by
   obtain ⟨C, hC0, hmain⟩ := integral_gaugedEllipticitySum_rpow_eight_le d
   obtain ⟨g0, hg00, hg0q, hgate⟩ := exists_gamma_threshold_ellipticityGate hC0
   refine ⟨regimeEllipticityConst C, g0, regimeEllipticityConst_pos C, hg00, hg0q, ?_⟩

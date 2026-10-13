@@ -27,13 +27,12 @@ variable {d : ℕ}
 
 /-- The unique-value proof used by the frozen origin-cube homogenization-error
 anchor. -/
-theorem existsUnique [NeZero d]
-    (s : ℝ) (p q : Book.Ch02.MultiscaleExponent)
+theorem existsUnique (s : ℝ) (p q : Book.Ch02.MultiscaleExponent)
     (a : CoeffOn (cubeDomain (originCube d 0))) (a0 : Mat d) :
     ∃! value : ℝ, ∀ F : TriadicCoeffFamily d,
       CoeffOn.AEEq (F.coeffOn (originCube d 0)) a →
         value = Book.Ch02.HomogenizationErrorOnCube
-          (originCube d 0) s p q F a0 := by
+          (originCube d 0) s p q F a0  := by
   let F₀ := Classical.choose
     (Algsuperdiff.Section24.UnitCubeMultiscale.exists_compatibleTriadicCoeffFamily a)
   have hF₀ : CoeffOn.AEEq (F₀.coeffOn (originCube d 0)) a :=

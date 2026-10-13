@@ -96,7 +96,7 @@ the index
    (`Provider.ExcessDecay.scaleNormalizedPositiveBesovVectorSeminormTwo_le_
    gagliardo`); its two side conditions — `MemLp g 2` and `Gagliardo.MemWsp Q t 2 g`
    from a Hölder bound — do NOT exist and are the exact residue
-   (they are the two Gagliardo-side atoms of the Step-2b family).  Since
+   (they are the two Gagliardo-side atoms of the Step-2b family). Since
    `ForceBesovRegularity` is ALSO a hypothesis of the coarse-graining right-hand side itself, the
    two
    residues are the same two atoms; nothing else is missing.
@@ -191,7 +191,7 @@ theorem poincareUpperEllipticityFactor_le [NeZero d] (Q : TriadicCube d)
   exact Real.sqrt_le_sqrt hup
 
 /-- The envelope in the source's `1 + 𝓔` shape: `√(2d(𝓔² + 1)) ≤ √(2d)(1 + 𝓔)`. -/
-theorem homErrorEnvelope_le_one_add [NeZero d] (Q : TriadicCube d) (A : CoeffFamily d)
+theorem homErrorEnvelope_le_one_add (Q : TriadicCube d) (A : CoeffFamily d)
     {t sigma : ℝ} (ht : 0 < t) :
     homErrorEnvelope d Q A t sigma ≤
       Real.sqrt (2 * (d : ℝ)) *
@@ -382,11 +382,11 @@ theorem exists_sqrt_nu_mul_gradL2_le (d : ℕ) [NeZero d] :
 error observable's representative (`Support.fluxCorrectedError_characterization`,
 plus `isotropicComparatorMatrix σ = scalarMatrix σ` by `rfl`).  Recorded so the
 Step-2a display and `EthmB(m)` speak of the same random variable. -/
-theorem homogenizationErrorOnCube_scalarMatrix_eq_fluxCorrectedError [NeZero d]
+theorem homogenizationErrorOnCube_scalarMatrix_eq_fluxCorrectedError
     (M : ABKModel d) (L m : ℤ) (t : ℝ) (omega : Cutoff.CutoffSample d) :
     Ch02.HomogenizationErrorOnCube (originCube d m) t .infinity (.finite 2)
         (fluxCorrectedCoeffFamily M L m (originCube d m) omega)
-        (scalarMatrix (d := d) ((Annealed.sigmaBar M m : ℝ))) =
+        (scalarMatrix (d  := d) ((Annealed.sigmaBar M m : ℝ))) =
       fluxCorrectedError M L m t omega :=
   (fluxCorrectedError_characterization M L m t omega).symm
 

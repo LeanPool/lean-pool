@@ -189,13 +189,13 @@ theorem measurable_unitCubeLambda_inv_unitRescaledCutoffCoeff [NeZero d] (M : AB
 This is the exact strength available -- as in Section 3, no
 everywhere-measurable realization of the literal `(p,q)` error exists by
 composition. -/
-theorem aemeasurable_unitCubeHomogenizationError22_unitRescaledCutoffCoeff [NeZero d]
+theorem aemeasurable_unitCubeHomogenizationError22_unitRescaledCutoffCoeff
     (M : ABKModel d) (R : TriadicCube d) (s : {s : ℝ // 0 < s}) :
     AEMeasurable (fun omega : Cutoff.CutoffSample d =>
         Algsuperdiff.Frozen.Section24.unitCubeHomogenizationError (s : ℝ)
           (.finite 2) (.finite 2) (unitRescaledCutoffCoeff M R (R.scale - 2) omega)
           (Observable.isotropicComparatorMatrix (Annealed.sigmaBar M (R.scale - 2))))
-      (Cutoff.cutoffSampleLaw M).toMeasure := by
+      (Cutoff.cutoffSampleLaw M).toMeasure  := by
   have hobs : AEMeasurable (fun omega : Cutoff.CutoffSample d =>
       Support.annularErrorObservable M R.scale s
         (Cutoff.translateCutoffSample (Support.triadicLatticePoint R.scale R.index) omega))

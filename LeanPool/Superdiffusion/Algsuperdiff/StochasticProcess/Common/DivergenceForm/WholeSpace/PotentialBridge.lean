@@ -39,7 +39,7 @@ variable {d : ℕ} {U : Set (Vec d)}
 /-- A potential weak solution represented by an `H¹₀` function solves the
 pointwise scalar-forced equation obtained by moving both zeroth-order terms
 to the right-hand side. -/
-theorem isScalarForcedWeakSolution_of_isPotentialWeakSolution [NeZero d]
+theorem isScalarForcedWeakSolution_of_isPotentialWeakSolution
     {a : CoeffField d} {alpha C : ℝ} {q : Vec d → ℝ} {f : ScalarL2 U}
     (u : H10Function U) (hq : IsBoundedNonnegativePotential U q C)
     (hweak : IsPotentialWeakSolution a alpha q U

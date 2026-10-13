@@ -233,7 +233,7 @@ theorem cubeBesovCircNorm_half_grad_originCube_le
   rwa [cubeBesovScaleWeight_originCube_zero, one_mul] at h
 
 /-- **The origin-cube function-from-gradient estimate in the `ℓ²` form.** -/
-theorem cubeBesovPositiveScalarPartialSeminormTwo_h1_originCube_le [NeZero d]
+theorem cubeBesovPositiveScalarPartialSeminormTwo_h1_originCube_le
     (M : ℕ) (u : H1Function (openCubeSet (originCube d 0)))
     (hBdd : BddAbove (Set.range fun N : ℕ =>
       cubeBesovNegativeVectorPartialSeminormTwo (originCube d 0) (3 / 8) N

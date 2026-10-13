@@ -71,7 +71,7 @@ def dhLoadForm (U : Domain d) (a : CoeffOn U) (h : LInfSkewMatrixFieldOn U)
 def pqCubeConstA (d : ℕ) : ℝ := 2 * fluxPairingConst d * termARefinedConst d
 
 /-- The Term BC coefficient of the general-loading sub-cube `D_h` bound. -/
-def pqCubeConstB (d : ℕ) [NeZero d] : ℝ :=
+def pqCubeConstB (d : ℕ) : ℝ  :=
   2 * fluxPairingConst d * fluxTermBCConst d * pqWitnessConst
 
 theorem pqCubeConstA_nonneg (d : ℕ) : 0 ≤ pqCubeConstA d := by
@@ -80,7 +80,7 @@ theorem pqCubeConstA_nonneg (d : ℕ) : 0 ≤ pqCubeConstA d := by
   unfold pqCubeConstA
   positivity
 
-theorem pqCubeConstB_nonneg (d : ℕ) [NeZero d] : 0 ≤ pqCubeConstB d := by
+theorem pqCubeConstB_nonneg (d : ℕ) : 0 ≤ pqCubeConstB d  := by
   have h1 := fluxPairingConst_nonneg d
   have h2 := fluxTermBCConst_nonneg d
   have h3 := pqWitnessConst_nonneg

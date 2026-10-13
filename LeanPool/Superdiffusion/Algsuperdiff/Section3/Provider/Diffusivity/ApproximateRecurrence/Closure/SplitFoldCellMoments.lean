@@ -347,7 +347,7 @@ theorem memLp_eight_grad_closureDirichletAlong [NeZero d] (hd : 2 ≤ d) (M : AB
     (isZeroTraceDirichletRhsWeakSolution_closureDirichletAlong M n h K e omega)
 
 /-- The mean-zero Neumann mirror. -/
-theorem memLp_eight_grad_closureNeumannAlong [NeZero d] (hd : 2 ≤ d) (M : ABKModel d)
+theorem memLp_eight_grad_closureNeumannAlong (hd : 2 ≤ d) (M : ABKModel d)
     (n : ℤ) (h : ℕ) (K : ℕ) (e' : Vec d) (omega : ShellSeq d) :
     MemLp (closureNeumannAlong M n h K e' omega).toH1Function.grad (8 : ℝ≥0∞)
       (normalizedCubeMeasure (originCube d (K : ℤ))) :=

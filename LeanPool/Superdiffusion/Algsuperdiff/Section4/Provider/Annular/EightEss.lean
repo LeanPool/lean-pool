@@ -104,26 +104,26 @@ theorem geometricWeight_two_eq (s : ℝ) (l : ℕ) :
 The squared flux-corrected error is exactly the `c_{2s}`-normalized geometric
 scale sum of the descendant maxima of the normalized block response.  The
 summation index `l` is the manuscript's `m - n`. -/
-theorem fluxCorrectedError_sq_eq_scaleSum [NeZero d] (M : ABKModel d) (L m : ℤ)
+theorem fluxCorrectedError_sq_eq_scaleSum (M : ABKModel d) (L m : ℤ)
     {s : ℝ} (hs : 0 < s) (omega : Cutoff.CutoffSample d) :
     Support.fluxCorrectedError M L m s omega ^ 2
       = ∑' l : ℕ, Ch02.geometricWeight s 2 l
           * maxDescendantNormalizedBlockResponseAtScale (originCube d m) (m - (l : ℤ))
               (Support.fluxCorrectedCoeffFamily M L m (originCube d m) omega)
-              (isotropicComparatorMatrix (Annealed.sigmaBar M m)) := by
+              (isotropicComparatorMatrix (Annealed.sigmaBar M m))  := by
   rw [Support.fluxCorrectedError_characterization,
     homogenizationErrorOnCube_infinity_two_sq_eq_tsum (originCube d m) hs]
   rfl
 
 /-- The same identity with the manuscript's `c_{2s}` pulled out of the sum. -/
-theorem fluxCorrectedError_sq_eq_normalized [NeZero d] (M : ABKModel d) (L m : ℤ)
+theorem fluxCorrectedError_sq_eq_normalized (M : ABKModel d) (L m : ℤ)
     {s : ℝ} (hs : 0 < s) (omega : Cutoff.CutoffSample d) :
     Support.fluxCorrectedError M L m s omega ^ 2
       = (1 - (3 : ℝ) ^ (-(2 * s)))
         * ∑' l : ℕ, (3 : ℝ) ^ (-(2 * s) * (l : ℝ))
             * maxDescendantNormalizedBlockResponseAtScale (originCube d m) (m - (l : ℤ))
                 (Support.fluxCorrectedCoeffFamily M L m (originCube d m) omega)
-                (isotropicComparatorMatrix (Annealed.sigmaBar M m)) := by
+                (isotropicComparatorMatrix (Annealed.sigmaBar M m))  := by
   rw [fluxCorrectedError_sq_eq_scaleSum M L m hs omega, ← tsum_mul_left]
   refine tsum_congr fun l => ?_
   rw [geometricWeight_two_eq]
@@ -140,7 +140,7 @@ term `Jtrn`, at the constant `C` -- the printed two-term display follows, with
 
 `hbfJ` is the graph's `e.bfJ.general` edge together with the descendant-vs-
 lattice identification; both are recorded frontier inputs, not proved here. -/
-theorem eightEss_of_blockResponse_le [NeZero d] (M : ABKModel d) (L m : ℤ)
+theorem eightEss_of_blockResponse_le (M : ABKModel d) (L m : ℤ)
     {s C : ℝ} (hs : 0 < s) (omega : Cutoff.CutoffSample d)
     {Jfld Jtrn : ℕ → ℝ}
     (hbfJ : ∀ l : ℕ,
@@ -154,7 +154,7 @@ theorem eightEss_of_blockResponse_le [NeZero d] (M : ABKModel d) (L m : ℤ)
       ≤ C * (1 - (3 : ℝ) ^ (-(2 * s)))
           * ∑' l : ℕ, (3 : ℝ) ^ (-(2 * s) * (l : ℝ)) * Jfld l
         + C * (1 - (3 : ℝ) ^ (-(2 * s)))
-          * ∑' l : ℕ, (3 : ℝ) ^ (-(2 * s) * (l : ℝ)) * Jtrn l := by
+          * ∑' l : ℕ, (3 : ℝ) ^ (-(2 * s) * (l : ℝ)) * Jtrn l  := by
   classical
   set B : ℕ → ℝ := fun l =>
     maxDescendantNormalizedBlockResponseAtScale (originCube d m) (m - (l : ℤ))

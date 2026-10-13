@@ -60,7 +60,7 @@ theorem IsPotentialWeakSolution.isSupersolution
 
 /-- Potential weak subsolutions lie below potential weak supersolutions when
 their forcing terms have the same order. -/
-theorem potentialWeakSubsolution_le_weakSupersolution_ae [NeZero d]
+theorem potentialWeakSubsolution_le_weakSupersolution_ae
     (a : CoeffField d) (hU : IsOpenBoundedConvexDomain U)
     {α lam Lam C : ℝ} (hα : 0 < α)
     (hEll : IsEllipticFieldOn lam Lam U a) (q : Vec d → ℝ)
@@ -70,7 +70,7 @@ theorem potentialWeakSubsolution_le_weakSupersolution_ae [NeZero d]
     (hv : IsPotentialWeakSupersolution a α q U v g)
     (hfg : ∀ᵐ x ∂volumeMeasureOn U, f x ≤ g x) :
     ∀ᵐ x ∂volumeMeasureOn U,
-      ZeroTraceSobolev.toL2 u x ≤ ZeroTraceSobolev.toL2 v x := by
+      ZeroTraceSobolev.toL2 u x ≤ ZeroTraceSobolev.toL2 v x  := by
   let z : ZeroTraceSobolev U := u - v
   obtain ⟨p, hp, -⟩ :=
     ZeroTraceSobolev.existsUnique_positivePartSubConst hU z 0 le_rfl

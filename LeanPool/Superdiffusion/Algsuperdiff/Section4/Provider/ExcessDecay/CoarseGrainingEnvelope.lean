@@ -107,7 +107,7 @@ def coarseGrainingForceBracket (Q : TriadicCube d) (a : Ch03.CoeffFamily d)
       Real.rpow (Ch02.lambdaSq Q (r / 2) (.finite 2) a) (-1 : ℝ)
 
 /-- The forcing term of `e.homogenization.L2.interior`, at depth `0`. -/
-def coarseGrainingForceTerm [NeZero d] (Q : TriadicCube d) (a : Ch03.CoeffFamily d)
+def coarseGrainingForceTerm (Q : TriadicCube d) (a : Ch03.CoeffFamily d)
     (a0 : Ch03.ConstantCoeffMatrix d) (r r₂ : ℝ) (g : Vec d → Vec d) : ℝ :=
   coarseGrainingForceBracket Q a a0 r *
     Ch03.scaleNormalizedPositiveBesovVectorSeminormTwo Q r₂ g
@@ -154,7 +154,7 @@ theorem poincareUpperEllipticityFactor_nonneg [NeZero d] (Q : TriadicCube d)
   rw [Ch03.poincareUpperEllipticityFactor]
   exact Real.rpow_nonneg (Ch02.LambdaSq_finite_pos Q a ht (by norm_num)).le _
 
-theorem coarseGrainingEnergyTerm_nonneg [NeZero d] (Q : TriadicCube d)
+theorem coarseGrainingEnergyTerm_nonneg (Q : TriadicCube d)
     (a : Ch03.CoeffFamily d) (a0 : Ch03.ConstantCoeffMatrix d) {r : ℝ} (hr : 0 < r)
     (u : H1Function (Ch02.cubeDomain Q : Set (Vec d))) :
     0 ≤ coarseGrainingEnergyTerm Q a a0 r u :=
@@ -202,7 +202,7 @@ theorem coarseGrainingDepthInvWeight_zero (r : ℝ) :
 
 /-- CoarseGraining's right-hand side at depth `0`, with its three forcing summands
 displayed and their individual `r`-powers intact. -/
-theorem generalCoarseGrainingL2TwoExponentRHS_depth_zero_eq [NeZero d]
+theorem generalCoarseGrainingL2TwoExponentRHS_depth_zero_eq
     (Q : TriadicCube d) (a : Ch03.CoeffFamily d) (a0 : Ch03.ConstantCoeffMatrix d)
     (t r r₂ : ℝ) (g : Vec d → Vec d)
     (u : H1Function (Ch02.cubeDomain Q : Set (Vec d))) :

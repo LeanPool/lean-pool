@@ -25,7 +25,7 @@ Module imports, support namespace and local option directives adapted for Lean P
 # Local finite-`p` coarse-graining assembly
 
 This is the source-facing assembly point for the frozen local finite-`p`
-coarse-graining theorem.  The reusable input modules deliberately keep the
+coarse-graining theorem. The reusable input modules deliberately keep the
 negative-series expansion, descendant restriction, response localization, and
 forcing summation separate; this file only combines those literal carriers.
 -/
@@ -59,7 +59,7 @@ private theorem normalizedBlockResponseMax_eq_of_localAEEq
 /-- The endpoint scale response on a root cube needs only a.e. comparison on
 the descendants at that particular scale. -/
 private theorem scaleResponseAtScale_infinity_eq_of_descendantAEEq
-    {d : ℕ} [NeZero d] {A B : Book.Ch02.TriadicCoeffFamily d}
+    {d : ℕ} {A B : Book.Ch02.TriadicCoeffFamily d}
     (R : TriadicCube d) (k : ℤ)
     (h : ∀ S : TriadicCube d, S ∈ descendantsAtScale R k →
       Book.Ch02.CoeffOn.AEEq (A.coeffOn S) (B.coeffOn S))
@@ -80,13 +80,13 @@ private theorem scaleResponseAtScale_infinity_eq_of_descendantAEEq
 /-- An endpoint homogenization error on `R` is invariant under coefficient
 comparison on every descendant of `R`; no global family equality is used. -/
 private theorem homogenizationErrorOnCube_infinity_eq_of_descendantAEEq
-    {d : ℕ} [NeZero d] {A B : Book.Ch02.TriadicCoeffFamily d}
+    {d : ℕ} {A B : Book.Ch02.TriadicCoeffFamily d}
     (R : TriadicCube d)
     (h : ∀ (k : ℤ) (S : TriadicCube d), S ∈ descendantsAtScale R k →
       Book.Ch02.CoeffOn.AEEq (A.coeffOn S) (B.coeffOn S))
     (t : ℝ) (p : Book.Ch02.MultiscaleExponent) (a0 : Mat d) :
     Book.Ch02.HomogenizationErrorOnCube R t .infinity p A a0 =
-      Book.Ch02.HomogenizationErrorOnCube R t .infinity p B a0 := by
+      Book.Ch02.HomogenizationErrorOnCube R t .infinity p B a0  := by
   unfold Book.Ch02.HomogenizationErrorOnCube Book.Ch02.HomogenizationError
   cases p with
   | finite q =>
@@ -116,8 +116,7 @@ private theorem homogenizationErrorOnCube_infinity_eq_of_descendantAEEq
 at its parent agree for all response computations below that descendant.
 The comparison is deliberately local: their representatives need not agree
 outside the descendant. -/
-private theorem rootPointwiseCoeffFamily_on_descendant_eq_parent
-    {d : ℕ} [NeZero d] (Q : TriadicCube d)
+private theorem rootPointwiseCoeffFamily_on_descendant_eq_parent {d : ℕ} (Q : TriadicCube d)
     (a : Book.Ch02.CoeffOn (Book.Ch02.cubeDomain Q))
     {R : TriadicCube d} {k : ℤ} (hk : k ≤ Q.scale)
     (hR : R ∈ descendantsAtScale Q k) (t : ℝ)
@@ -127,7 +126,7 @@ private theorem rootPointwiseCoeffFamily_on_descendant_eq_parent
         (a.restrictToSubcube
           (openCubeSet_subset_of_mem_descendantsAtScale hk hR))) a0 =
       Book.Ch02.HomogenizationErrorOnCube R t .infinity p
-        (rootPointwiseCoeffFamily Q a) a0 := by
+        (rootPointwiseCoeffFamily Q a) a0  := by
   apply homogenizationErrorOnCube_infinity_eq_of_descendantAEEq R _ t p a0
   intro l S hS
   let hRQ : openCubeSet R ⊆ openCubeSet Q :=
@@ -167,8 +166,7 @@ private theorem localCoarseGraining_descendant_source_data
 /-- Re-rooting the coefficient representative on a physical descendant does
 not alter its response error.  This is the local a.e. invariance bridge used
 when the one-cube theorem is inserted in the parent-scale series. -/
-private theorem localCoarseGraining_descendant_response_re_root
-    {d : ℕ} [NeZero d] (Q : TriadicCube d)
+private theorem localCoarseGraining_descendant_response_re_root {d : ℕ} (Q : TriadicCube d)
     (a : Book.Ch02.CoeffOn (Book.Ch02.cubeDomain Q))
     {R : TriadicCube d} {k : ℤ} (hk : k ≤ Q.scale)
     (hR : R ∈ descendantsAtScale Q k)
@@ -178,7 +176,7 @@ private theorem localCoarseGraining_descendant_response_re_root
         (a.restrictToSubcube
           (openCubeSet_subset_of_mem_descendantsAtScale hk hR))) a0 =
       Book.Ch02.HomogenizationErrorOnCube R t .infinity p
-        (rootPointwiseCoeffFamily Q a) a0 :=
+        (rootPointwiseCoeffFamily Q a) a0  :=
   rootPointwiseCoeffFamily_on_descendant_eq_parent Q a hk hR t p a0
 
 /-- The `q = 1` local response contribution is localized at the exact

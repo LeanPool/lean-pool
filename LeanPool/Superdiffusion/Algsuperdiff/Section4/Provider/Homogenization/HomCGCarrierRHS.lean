@@ -186,7 +186,7 @@ theorem coarseGrainingFinitePRHS_nonneg {Ccg s s2 sigma E1 E2 Dg S : ℝ} {n : �
   linarith only [h1, h2]
 
 /-- The real value of the printed right-hand side, from the transferred bound. -/
-theorem localCoarseGrainingLpRHS_toReal_le [NeZero d]
+theorem localCoarseGrainingLpRHS_toReal_le
     {Q : TriadicCube d} {n : ℤ} (hn : n ≤ Q.scale)
     {C : ℝ≥0∞} (a : Book.Ch02.CoeffOn (Book.Ch02.cubeDomain Q))
     {sigma0 : ℝ} (hsigma0 : 0 < sigma0) (g : Vec d → Vec d) (u : H1Function (openCubeSet Q))
@@ -210,7 +210,7 @@ theorem localCoarseGrainingLpRHS_toReal_le [NeZero d]
   rwa [ENNReal.toReal_ofReal hnn] at hstep
 
 /-- The transferred right-hand side is finite. -/
-theorem localCoarseGrainingLpRHS_ne_top [NeZero d]
+theorem localCoarseGrainingLpRHS_ne_top
     {Q : TriadicCube d} {n : ℤ} (hn : n ≤ Q.scale)
     {C : ℝ≥0∞} (a : Book.Ch02.CoeffOn (Book.Ch02.cubeDomain Q))
     {sigma0 : ℝ} (hsigma0 : 0 < sigma0) (g : Vec d → Vec d) (u : H1Function (openCubeSet Q))

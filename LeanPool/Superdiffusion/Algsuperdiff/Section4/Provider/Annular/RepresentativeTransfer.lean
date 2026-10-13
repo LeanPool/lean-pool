@@ -223,7 +223,7 @@ theorem ofReal_gradTailSq_le_clauseOneTermThree (M : ABKModel d) (m : ℤ)
 squared flux-corrected error on the good event bounds the indicator of the
 `[0,infinity]`-valued representative supremum, on the probability-one event where
 literal and representative agree for every `L >= m`. -/
-theorem indicator_observableSqSup_le [NeZero d] (M : ABKModel d) (m : ℤ)
+theorem indicator_observableSqSup_le (M : ABKModel d) (m : ℤ)
     (s : {s : ℝ // 0 < s}) {Event : Set (Cutoff.CutoffSample d)}
     {omega : Cutoff.CutoffSample d} {B : ℝ≥0∞}
     (hall : ∀ L : {L : ℤ // m ≤ L},
@@ -232,7 +232,7 @@ theorem indicator_observableSqSup_le [NeZero d] (M : ABKModel d) (m : ℤ)
     (hb : omega ∈ Event → ∀ L : ℤ, m ≤ L →
       ENNReal.ofReal (Support.fluxCorrectedError M L m (s : ℝ) omega ^ 2) ≤ B) :
     Set.indicator Event (Support.fluxCorrectedErrorObservableSqSup M m s) omega
-      ≤ B := by
+      ≤ B  := by
   classical
   by_cases hmem : omega ∈ Event
   · rw [Set.indicator_of_mem hmem]
@@ -262,7 +262,7 @@ Named slots, with their recorded gaps:
   lattice-annulus supremum;
 * `hG1bdom` -- domination of `ClauseOne`'s single shell sum by the display's
   `n`-then-`k` double block sum. -/
-theorem clauseOne_representative_display [NeZero d] (M : ABKModel d) (m : ℤ)
+theorem clauseOne_representative_display (M : ABKModel d) (m : ℤ)
     (s : {s : ℝ // 0 < s}) (Event : Set (Cutoff.CutoffSample d)) {C : ℝ}
     {E2 : Cutoff.CutoffSample d → ℤ → ℤ → ℝ} {A : Cutoff.CutoffSample d → ℤ → ℝ}
     (hC0 : 0 ≤ C)
@@ -295,7 +295,7 @@ theorem clauseOne_representative_display [NeZero d] (M : ABKModel d) (m : ℤ)
           + ENNReal.ofReal (C * ((s : ℝ)⁻¹ ^ (2 : ℕ)) * (Disorder.cstar M)⁻¹
               * M.gamma) * clauseOneTermThree M m omega
           + ENNReal.ofReal (C * ((s : ℝ)⁻¹ ^ (2 : ℕ)) * (Disorder.cstar M)⁻¹
-              * M.gamma) * clauseOneTermFour M m s omega := by
+              * M.gamma) * clauseOneTermFour M m s omega  := by
   have hgam0 : (0 : ℝ) ≤ M.gamma := M.shellPrefix.gamma_pos.le
   have hcs0 : (0 : ℝ) < Disorder.cstar M := (Disorder.cstar_characterization M).1
   have hcsinv : (0 : ℝ) ≤ (Disorder.cstar M)⁻¹ := inv_nonneg.2 hcs0.le

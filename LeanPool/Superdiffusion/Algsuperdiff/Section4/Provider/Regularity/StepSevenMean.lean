@@ -112,7 +112,7 @@ theorem volume_toReal_image_add_openCubeSet_pos (c : Vec d) (k : ℤ) :
 
 which is the `hmean` slot of the Step-7d chain at `Cmean = √(3^d)` and `Q =
 originCube d k`.  Two proved atoms composed, nothing else. -/
-theorem stepSevenHmean_of_sandwich [NeZero d] {m k : ℤ} {z c : Vec d} {w : Vec d → ℝ}
+theorem stepSevenHmean_of_sandwich {m k : ℤ} {z c : Vec d} {w : Vec d → ℝ}
     (v : H1Function (openCubeSet (originCube d k))) (hv : ∀ y, v.toFun y = w (y + c))
     (hz : z ∈ openCubeSet (originCube d m)) (hkm : k ≤ m)
     (hST : truncatedWindow z m k ⊆ (fun y => c + y) '' openCubeSet (originCube d k))

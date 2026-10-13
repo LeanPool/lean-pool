@@ -45,10 +45,10 @@ variable {d : ℕ} [NeZero d]
 /-- A uniform ambient-norm bound on the next exhaustion cube. -/
 def streamFixedCollarNormBound (v : ℕ) : ℝ := (3 : ℝ) ^ (v + 1)
 
+omit [NeZero d] in
 /-- A uniform amplitude for localized tails whose centers lie in the next
 exhaustion cube. -/
-def streamFixedCollarTailAmplitude (M : ABKModel d)
-    (omega : FullSample d M.gamma) (v : ℕ) : ℝ :=
+def streamFixedCollarTailAmplitude (M : ABKModel d) (omega : FullSample d M.gamma) (v : ℕ) : ℝ  :=
   streamTailAmplitudeConst M omega *
     (1 + streamFixedCollarNormBound v) ^ streamTailAmplitudeExponent M
 
@@ -59,9 +59,9 @@ def streamFixedCollarTailRate (M : ABKModel d)
   streamTailDecayConst M omega /
     (1 + Real.log (1 + streamFixedCollarNormBound v))
 
+omit [NeZero d] in
 /-- The uniform fixed-collar error profile. -/
-def streamFixedCollarTailProfile (M : ABKModel d)
-    (omega : FullSample d M.gamma) (v : ℕ) : ℝ → ℝ :=
+def streamFixedCollarTailProfile (M : ABKModel d) (omega : FullSample d M.gamma) (v : ℕ) : ℝ → ℝ  :=
   logSubexponentialProfile (streamFixedCollarTailAmplitude M omega v)
     (streamFixedCollarTailRate M omega v) (d + 1)
 
@@ -80,9 +80,10 @@ theorem norm_le_streamFixedCollarNormBound {v : ℕ} {x : Vec d}
   simpa only [streamFixedCollarNormBound] using
     (abs_lt.mpr (mem_wholeSpaceCube_iff.mp hx i)).le
 
+omit [NeZero d] in
 theorem streamFixedCollarTailAmplitude_nonneg (M : ABKModel d)
     (omega : FullSample d M.gamma) (v : ℕ) :
-    0 ≤ streamFixedCollarTailAmplitude M omega v := by
+    0 ≤ streamFixedCollarTailAmplitude M omega v  := by
   unfold streamFixedCollarTailAmplitude
   have hbase : 0 ≤ 1 + streamFixedCollarNormBound v := by
     exact add_nonneg zero_le_one (streamFixedCollarNormBound_nonneg v)
@@ -100,13 +101,14 @@ theorem streamFixedCollarTailRate_pos (M : ABKModel d)
       exact le_add_of_nonneg_right (streamFixedCollarNormBound_nonneg v))
   linarith only [hlog]
 
+omit [NeZero d] in
 /-- On the next exhaustion cube the pointwise localized profile is bounded
 by the fixed-collar profile. -/
 theorem streamLocalizedTailProfile_le_fixedCollar
     (M : ABKModel d) (omega : FullSample d M.gamma) (v : ℕ)
     {x : Vec d} (hx : x ∈ wholeSpaceCube d (v + 1)) (s : ℝ) :
     streamLocalizedTailProfile M omega x s ≤
-      streamFixedCollarTailProfile M omega v s := by
+      streamFixedCollarTailProfile M omega v s  := by
   let qx : ℝ := 1 + ‖x‖
   let Q : ℝ := 1 + streamFixedCollarNormBound v
   have hq : 0 < qx := by unfold qx; positivity
@@ -203,10 +205,11 @@ private theorem logWeight_le_five_mul_sqrt_cruxStream {s : ℝ} (hs : 1 ≤ s) :
       _ ≤ 4 * Real.sqrt s := by linarith only [hsqrt]
   linarith only [hlog', hsqrt1]
 
+omit [NeZero d] in
 /-- Every positive-rate fixed-collar profile tends to zero at infinity. -/
 theorem tendsto_streamFixedCollarTailProfile_atTop
     (M : ABKModel d) (omega : FullSample d M.gamma) (v : ℕ) :
-    Tendsto (streamFixedCollarTailProfile M omega v) atTop (nhds 0) := by
+    Tendsto (streamFixedCollarTailProfile M omega v) atTop (nhds 0)  := by
   let C := streamFixedCollarTailAmplitude M omega v
   let c := streamFixedCollarTailRate M omega v
   let n := d + 1

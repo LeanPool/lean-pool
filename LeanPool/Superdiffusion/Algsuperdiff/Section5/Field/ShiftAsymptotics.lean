@@ -86,10 +86,10 @@ theorem tendsto_streamUniformExhaustionCutoff_div_sqrt
 /-- At every fixed positive spatial radius, the uniform envelope on the
 natural square-root scale tends to zero as the mass tends to infinity. -/
 theorem tendsto_streamUniformExhaustionEnvelope_sqrt_mul
-    [NeZero d] (M : ABKModel d) (omega : FullSample d M.gamma) {r : ℝ} (hr : 0 < r) :
+     (M : ABKModel d) (omega : FullSample d M.gamma) {r : ℝ} (hr : 0 < r) :
     Tendsto (fun mu : PositiveShift ↦
       streamUniformExhaustionEnvelope M omega
-        (Real.sqrt (mu : ℝ) * r)) atTop (nhds 0) := by
+        (Real.sqrt (mu : ℝ) * r)) atTop (nhds 0)  := by
   have hsqrt : Tendsto (fun mu : PositiveShift ↦ Real.sqrt (mu : ℝ))
       atTop atTop := by
     simpa only [Real.sqrt_eq_rpow, Function.comp_def] using

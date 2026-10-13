@@ -160,7 +160,7 @@ theorem negativeToL2Factor_le_rpow_neg_half {s : ℝ} (hs : 0 < s) (hs1 : s ≤ 
 
 /-- The `d`-only constant of the composed correction leg:
 `2 C_neg(d) √(3/2) √d · C_BG(d)`. -/
-def interiorCorrectionConst (d : ℕ) [NeZero d] : ℝ :=
+def interiorCorrectionConst (d : ℕ) : ℝ :=
   2 * negNormBaseConst d * Real.sqrt (3 / 2) *
     Real.sqrt (Fintype.card (Fin d) : ℝ) * besovGagliardoConstant d
 
@@ -195,7 +195,7 @@ The correction summand of the harmonic display, read at the translated window
   interiorCorrectionConst d · s^{-1/2} · 3^{s n} · [g]_{H^s(w+□_n)} ,
 ```
 
-the frozen theorem's own Gagliardo object on the right.  The `s`-power is the
+the frozen theorem's own Gagliardo object on the right. The `s`-power is the
 honest `−1/2`; the scale weight `3^{sn}` is the manuscript's own; the constant
 is `d`-only and explicit.  Both hypotheses are the anchor's clause-(iv) data,
 restricted to the window the leg is read at. -/

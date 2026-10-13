@@ -231,7 +231,7 @@ theorem shellW1InfGradNorm_shellIncrement_le_tailLayerSum (omega : Cutoff.Cutoff
 `Annular.valueL2_centeredShellUnitCube_le` at the manuscript's own centering
 constant `(k_L − k_m)_{□_m}`, with the mean-value tail expanded into layers.
 The first summand is `L`-free. -/
-theorem valueL2_step3Shell_le_head_add_tail [NeZero d] (M : ABKModel d) {L m : ℤ}
+theorem valueL2_step3Shell_le_head_add_tail (M : ABKModel d) {L m : ℤ}
     (R : TriadicCube d) (hle : R.scale - 2 ≤ L) (hnm : R.scale ≤ m) (hmL : m ≤ L)
     (hv : R.index ∈ Support.latticeCubeSet d R.scale m) (omega : Cutoff.CutoffSample d) :
     (step3Shell M L m R hle omega).valueL2 ≤
@@ -239,7 +239,7 @@ theorem valueL2_step3Shell_le_head_add_tail [NeZero d] (M : ABKModel d) {L m : �
           (ShellField.translate (Support.triadicLatticePoint R.scale R.index)
             (shellIncrement omega.1 (R.scale - 2) m)) +
         centeringConst d *
-          ((3 : ℝ) ^ (2 * m) * tailLayerSum m m (0 : Fin d → ℤ) omega L) := by
+          ((3 : ℝ) ^ (2 * m) * tailLayerSum m m (0 : Fin d → ℤ) omega L)  := by
   have hCeq := fluxIncrementAverage_eq_cubeAverageMat M hmL (originCube d m) omega
   have hkey := valueL2_centeredShellUnitCube_le M hnm hmL hle hv omega
     (matTranspose_cubeAverageMat_shellIncrement M hmL omega)
@@ -269,7 +269,7 @@ def lFreeValueSlot (m : ℤ) (T : ℤ → (Fin d → ℤ) → Cutoff.CutoffSampl
     centeringConst d * ((3 : ℝ) ^ (2 * m) * T m (0 : Fin d → ℤ) omega)
 
 /-- **The value slot bound, `L`-free.** -/
-theorem valueL2_step3Shell_le_lFreeValueSlot [NeZero d] (M : ABKModel d) {m : ℤ}
+theorem valueL2_step3Shell_le_lFreeValueSlot (M : ABKModel d) {m : ℤ}
     (R : TriadicCube d) (hnm : R.scale ≤ m)
     (hv : R.index ∈ Support.latticeCubeSet d R.scale m)
     (T : ℤ → (Fin d → ℤ) → Cutoff.CutoffSample d → ℝ)
@@ -277,7 +277,7 @@ theorem valueL2_step3Shell_le_lFreeValueSlot [NeZero d] (M : ABKModel d) {m : �
     (hT : ∀ L : ℤ, m ≤ L → tailLayerSum m m (0 : Fin d → ℤ) omega L ≤
       T m (0 : Fin d → ℤ) omega)
     (L : ℤ) (hle : R.scale - 2 ≤ L) (hmL : m ≤ L) :
-    (step3Shell M L m R hle omega).valueL2 ≤ lFreeValueSlot m T R omega := by
+    (step3Shell M L m R hle omega).valueL2 ≤ lFreeValueSlot m T R omega  := by
   refine le_trans (valueL2_step3Shell_le_head_add_tail M R hle hnm hmL hv omega) ?_
   refine add_le_add le_rfl ?_
   have hcc : (0 : ℝ) ≤ centeringConst d := by

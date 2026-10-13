@@ -197,8 +197,7 @@ theorem exists_gamma0_octicCell_closureDirichlet (d : ℕ) [NeZero d] (hd : 2 �
 mirror of the preceding statement.
 
 Proved as above, through `memLp_eight_grad_closureNeumannAlong`. -/
-theorem exists_gamma0_octicCell_closureNeumann (d : ℕ) [NeZero d] (hd : 2 ≤ d) :
-    ∃ gamma0 : ℝ, 0 < gamma0 ∧
+theorem exists_gamma0_octicCell_closureNeumann (d : ℕ) (hd : 2 ≤ d) : ∃ gamma0 : ℝ, 0 < gamma0 ∧
       ∀ (M : ABKModel d), M.gamma ≤ gamma0 →
         ∀ (n : ℤ) (h : ℕ) (Ec : {E : ℝ // 1 ≤ E}),
           Algsuperdiff.Frozen.Section3.inductionState M (n + (h : ℤ) - 1) Ec → 0 < h →
@@ -210,7 +209,7 @@ theorem exists_gamma0_octicCell_closureNeumann (d : ℕ) [NeZero d] (hd : 2 ≤ 
               openCubeSet R ⊆ openCubeSet (originCube d (K : ℤ)) →
               MemLp (fun omega : ShellSeq d => meshOscillationCell nn
                 (closureNeumannAlong M n h K e' omega).toH1Function.grad R ^ (4 : ℝ))
-                2 M.P.toMeasure := by
+                2 M.P.toMeasure  := by
   obtain ⟨gamma0, hg0, -, hmain⟩ :=
     exists_gamma0_memLp_two_freshShellNeumann_meshOscillationCell_rpow_four d hd
   refine ⟨gamma0, hg0, ?_⟩
@@ -299,7 +298,7 @@ every base point.
 Proved from
 `exists_gamma0_freshShellNeumann_meshOscillationDepth_le_gamma_pow_sixteen`.
 -/
-theorem exists_gamma0_depthRoot_closureNeumann (d : ℕ) [NeZero d] (hd : 2 ≤ d) :
+theorem exists_gamma0_depthRoot_closureNeumann (d : ℕ) (hd : 2 ≤ d) :
     ∃ gamma0 : ℝ, 0 < gamma0 ∧
       ∀ (M : ABKModel d), M.gamma ≤ gamma0 →
         ∀ (n : ℤ) (h : ℕ) (Ec : {E : ℝ // 1 ≤ E}),
@@ -368,13 +367,13 @@ theorem measurable_oscCell_closureDirichlet_grid (d : ℕ) [NeZero d] (hd : 2 �
     hsub
 
 /-- `hmeascell` for the flux leg, at every depth-refined interior grid. -/
-theorem measurable_oscCell_closureFlux_grid (d : ℕ) [NeZero d] (hd : 2 ≤ d)
+theorem measurable_oscCell_closureFlux_grid (d : ℕ) (hd : 2 ≤ d)
     (M : ABKModel d) (n : ℤ) (h : ℕ) (K : ℕ) (e' : Vec d) {nmesh : ℤ}
     (hnK : nmesh ≤ (K : ℤ)) :
     ∀ i : ℕ, ∀ R' ∈ interiorMesoCubeGrid d (K : ℤ) (nmesh - (i : ℤ)) (n - 1),
       Measurable fun omega : CutoffSample d => meshOscillationCell (nmesh - (i : ℤ))
         (neumannFluxField (Annealed.sigmaBar M n) omega.val n (n + (h : ℤ)) e'
-          (closureNeumannAlong M n h K e' omega.val)) R' := by
+          (closureNeumannAlong M n h K e' omega.val)) R'  := by
   intro i R' hR'
   obtain ⟨hsc, hsub⟩ :=
     scale_and_subset_of_mem_interiorMesoCubeGrid (by omega : nmesh - (i : ℤ) ≤ (K : ℤ)) hR'
@@ -412,7 +411,7 @@ theorem integrable_oscCell_rpow_four_grid_of_octic (M : ABKModel d) (n : ℤ) (K
   exact integrable_rpow_four_cutoffSample_of_memLp_two_rpow M (hoct _ R' hsc hsub)
 
 /-- `hintcell` for the flux leg, at every depth-refined interior grid. -/
-theorem integrable_oscCell_pow_four_closureFlux_grid (d : ℕ) [NeZero d] (hd : 2 ≤ d)
+theorem integrable_oscCell_pow_four_closureFlux_grid (d : ℕ) (hd : 2 ≤ d)
     (M : ABKModel d) (n : ℤ) (h : ℕ) (K : ℕ) (e' : Vec d) (hhpos : 0 < h) {nmesh : ℤ}
     (hnK : nmesh ≤ (K : ℤ)) (hnmn : nmesh ≤ n)
     (hgrad : ∀ i : ℕ, ∀ R' ∈ interiorMesoCubeGrid d (K : ℤ) (nmesh - (i : ℤ)) (n - 1),
@@ -423,7 +422,7 @@ theorem integrable_oscCell_pow_four_closureFlux_grid (d : ℕ) [NeZero d] (hd : 
       Integrable (fun omega : CutoffSample d => meshOscillationCell (nmesh - (i : ℤ))
         (neumannFluxField (Annealed.sigmaBar M n) omega.val n (n + (h : ℤ)) e'
           (closureNeumannAlong M n h K e' omega.val)) R' ^ (4 : ℕ))
-        (cutoffSampleLaw M).toMeasure := by
+        (cutoffSampleLaw M).toMeasure  := by
   intro i R' hR'
   obtain ⟨hsc, hsub⟩ :=
     scale_and_subset_of_mem_interiorMesoCubeGrid (by omega : nmesh - (i : ℤ) ≤ (K : ℤ)) hR'

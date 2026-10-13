@@ -361,7 +361,7 @@ is the manuscript's own split: the `L^infinity` norm of `k_m - k_{n-2}` on
 
 `C` is free here; the instance at the manuscript's `(k_L - k_m)_{cu_m}` is
 `valueL2_centeredShellUnitCube_fluxConst_le`. -/
-theorem valueL2_centeredShellUnitCube_le [NeZero d] (M : ABKModel d) {n m L : ℤ}
+theorem valueL2_centeredShellUnitCube_le (M : ABKModel d) {n m L : ℤ}
     (hnm : n ≤ m) (hml : m ≤ L) (hle : n - 2 ≤ L) {v : Fin d → ℤ}
     (hv : v ∈ Support.latticeCubeSet d n m) (omega : Cutoff.CutoffSample d)
     (hC : matTranspose (cubeAverageMat (originCube d m)
@@ -465,7 +465,7 @@ private theorem centeredShellUnitCube_congr_const (M : ABKModel d) (Q : TriadicC
 `valueL2_centeredShellUnitCube_le`: the frozen `L²` gauge squared is at most
 twice the squared `L^infinity` content of `k_m - k_{n-2}` on `z + cu_n` plus
 twice the squared mean-value bound, at `Cp = d^3`. -/
-theorem valueL2_sq_centeredShellUnitCube_le [NeZero d] (M : ABKModel d) {n m L : ℤ}
+theorem valueL2_sq_centeredShellUnitCube_le (M : ABKModel d) {n m L : ℤ}
     (hnm : n ≤ m) (hml : m ≤ L) (hle : n - 2 ≤ L) {v : Fin d → ℤ}
     (hv : v ∈ Support.latticeCubeSet d n m) (omega : Cutoff.CutoffSample d) :
     (centeredShellUnitCube M (⟨n, v⟩ : TriadicCube d) hle omega
@@ -478,7 +478,7 @@ theorem valueL2_sq_centeredShellUnitCube_le [NeZero d] (M : ABKModel d) {n m L :
         + 2 * (centeringConst d *
             ((3 : ℝ) ^ (2 * m) *
               Support.shellW1InfGradNorm m
-                (Provider.Stream.shellIncrement omega.1 m L))) ^ 2 := by
+                (Provider.Stream.shellIncrement omega.1 m L))) ^ 2  := by
   have hCeq := fluxIncrementAverage_eq_cubeAverageMat M hml (originCube d m) omega
   have hkey := valueL2_centeredShellUnitCube_le M hnm hml hle hv omega
     (matTranspose_cubeAverageMat_shellIncrement M hml omega)

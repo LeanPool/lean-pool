@@ -33,9 +33,9 @@ exactly that integral by `Cd·Θ⁶·(3^n)^{-(d-2)/(d-1)}` under a
 
 The observable is controlled a.s. by finitely many quadratic probes of the
 normalized fluctuation matrix `H = D·(A_n − Ā_n)·D`
-(`fullBlockNormalizedFluctuationOperatorNormSqAtScale_le_probeSqBudget_ae`).  Each
+(`fullBlockNormalizedFluctuationOperatorNormSqAtScale_le_probeSqBudget_ae`). Each
 probe's second moment is the centered second moment
-(`probe_sq_integral_le`), uniformly `≤ 64·Cd·Θ⁶·(3^n)^{-β}`.  Summing the
+(`probe_sq_integral_le`), uniformly `≤ 64·Cd·Θ⁶·(3^n)^{-β}`. Summing the
 `(2d)`-dimensional finite probe net absorbs the dimensional counting into the
 constant `Cd`.  RestrictionObservable integrability is *not* required: the pointwise budget
 bound is combined through `integral_mono_of_nonneg` since the observable is a
@@ -129,7 +129,7 @@ theorem integral_fullBlockProbeSqBudget_eq {P : RestrictionCoeffLaw d}
 
 /-- The finite probe square budget integral is bounded by a uniform per-probe
 bound `K` (valid on probes of Euclidean square norm `≤ 4`), generic in `M`. -/
-theorem integral_fullBlockProbeSqBudget_le {P : RestrictionCoeffLaw d} [IsProbabilityMeasure P]
+theorem integral_fullBlockProbeSqBudget_le {P : RestrictionCoeffLaw d}
     {M : RegCoeffField d → FullBlockMat d} (K : ℝ)
     (hint : ∀ q : FullBlockVec d,
       Integrable (fun a => (fullBlockQuadratic (M a) q) ^ 2) P)
@@ -156,7 +156,7 @@ theorem integral_fullBlockProbeSqBudget_le {P : RestrictionCoeffLaw d} [IsProbab
 nonnegative and a.s. dominated by the probe square budget, so
 `integral_mono_of_nonneg` gives the bound without observable integrability. -/
 theorem integral_observable_le_of_probeBounds [NeZero d] {P : RestrictionCoeffLaw d}
-    [IsProbabilityMeasure P] (hP : RestrictionLawCarrier P) (hStruct : RestrictionStructuralLaw P)
+     (hP : RestrictionLawCarrier P) (hStruct : RestrictionStructuralLaw P)
     (m : ℤ) (K : ℝ)
     (hint : ∀ q : FullBlockVec d,
       Integrable (fun a : RegCoeffField d => (fullBlockQuadratic
@@ -170,7 +170,7 @@ theorem integral_observable_le_of_probeBounds [NeZero d] {P : RestrictionCoeffLa
       ≤ ((Fintype.card (BlockCoord d) : ℝ) ^ (2 : ℕ)) *
           ((Fintype.card (BlockCoord d) : ℝ) *
             ∑ _α : BlockCoord d, (Fintype.card (BlockCoord d) : ℝ) *
-              ∑ _β : BlockCoord d, 3 * (K + K + K)) := by
+              ∑ _β : BlockCoord d, 3 * (K + K + K))  := by
   have hpoint :=
     fullBlockNormalizedFluctuationOperatorNormSqAtScale_le_probeSqBudget_ae
       hP hStruct m (originCube d m)

@@ -213,8 +213,7 @@ theorem errSlotMajorant_sq_le (d : ℕ) (M : ABKModel d) {C s q : ℝ} (hC : 0 <
 
 `∫⁻ (step3FirstTerm)^q ≤ (ofReal (C_d A q γ s^{-2}))^q`, uniformly in the
 descendant scale: this is the anchor's own first slot. -/
-theorem exists_lintegral_rpow_step3FirstTerm_slot (d : ℕ) [NeZero d] (cstar : ℝ)
-    (hcstar : 0 < cstar) :
+theorem exists_lintegral_rpow_step3FirstTerm_slot (d : ℕ) (cstar : ℝ) (hcstar : 0 < cstar) :
     ∃ Creg A : ℝ, 0 < Creg ∧ 0 < A ∧
       ∀ M : ABKModel d, Disorder.cstar M = cstar →
         M.gamma ≤ (Creg⁻¹) ^ (10 : ℕ) → M.gamma ≤ 1 / 8 → ∀ Cd : ℝ, 0 ≤ Cd →
@@ -225,7 +224,7 @@ theorem exists_lintegral_rpow_step3FirstTerm_slot (d : ℕ) [NeZero d] (cstar : 
                   ENNReal.ofReal (step3FirstTerm Cd M m R omega s
                     (lFreeGradSlot m (tailSeriesGauge m) R omega)) ^ q
                   ∂(Cutoff.cutoffSampleLaw M).toMeasure) ≤
-                ENNReal.ofReal (Cd * A * (q * (M.gamma * (s⁻¹ * s⁻¹)))) ^ q := by
+                ENNReal.ofReal (Cd * A * (q * (M.gamma * (s⁻¹ * s⁻¹)))) ^ q  := by
   classical
   obtain ⟨CB, hCB6, hbrAll⟩ := exists_lintegral_rpow_step3Bracket_le d
   obtain ⟨CE, hCE0, herrAll⟩ := exists_lintegral_rpow_unitCubeHomogenizationError22_le d

@@ -45,7 +45,7 @@ def stepSevenCaccDataM (Q : TriadicCube d) (a : CoeffFamily d)
   Real.sqrt (stepSevenCaccForcingFactor * (Ch02.lambdaS Q stepSevenCaccT a)⁻¹) *
     scaleNormalizedPositiveBesovVectorSeminormTwo Q stepOneS g
 
-theorem stepSevenCaccDataM_nonneg [NeZero d] (Q : TriadicCube d) (a : CoeffFamily d)
+theorem stepSevenCaccDataM_nonneg (Q : TriadicCube d) (a : CoeffFamily d)
     {g : Vec d → Vec d} (hg : ForceBesovRegularity Q stepOneS g) :
     0 ≤ stepSevenCaccDataM Q a g :=
   mul_nonneg (Real.sqrt_nonneg _)
@@ -155,7 +155,7 @@ theorem exists_stepSevenGradientWithShom_interior (d : ℕ) [NeZero d] :
 `hlambda` is row 2 of the derived-slot table
 (`StepSevenLambdaSlots.stepSevenLambdaS_lower_le_of_caps`) at the parent cube
 `□_{n'+1}`: from the clause-(B) record there, `λ_{1/8,1}(□_{n'}) ≤
-(256/63)··σ`.  The only surviving analytic input is `hosc`. -/
+(256/63)··σ`. The only surviving analytic input is `hosc`. -/
 theorem exists_stepSevenGradientWithShom_interior_of_caps (d : ℕ) [NeZero d] :
     ∃ C : ℝ, 0 < C ∧
       ∀ (M : ABKModel d) (L mf m n n' : ℤ) (Qf : TriadicCube d) {z : Vec d}

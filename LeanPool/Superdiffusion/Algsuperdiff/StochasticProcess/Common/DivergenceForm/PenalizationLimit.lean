@@ -253,7 +253,7 @@ private theorem exteriorRestriction_eq_zero_of_weak_limit
   have hTz : T z = 0 := inner_self_eq_zero.mp hself
   exact hTz
 
-private theorem weak_limit_toL2_eq_pointwiseLimit [NeZero d]
+private theorem weak_limit_toL2_eq_pointwiseLimit
     (a : CoeffField d) (hU : IsOpenBoundedConvexDomain U)
     (hV : IsOpenBoundedConvexDomain V)
     {α lam Lam : ℝ} (hα : 0 < α) (hlam : 0 < lam)
@@ -269,7 +269,7 @@ private theorem weak_limit_toL2_eq_pointwiseLimit [NeZero d]
     ZeroTraceSobolev.toL2 z =
       (penalizationPointwiseLimit_memLp a hU hV hα hlam hEll f hf).toLp
         (penalizationPointwiseLimit
-          a hU.isOpen hV.isOpen hα hlam hEll f) := by
+          a hU.isOpen hV.isOpen hα hlam hEll f)  := by
   let g : ScalarL2 U :=
     (penalizationPointwiseLimit_memLp a hU hV hα hlam hEll f hf).toLp
       (penalizationPointwiseLimit
@@ -322,14 +322,13 @@ private theorem weak_limit_ae_zero_off
   intro hxU hxV
   exact hx ⟨hxU, hxV⟩
 
-private theorem extension_value_restrict [NeZero d]
-    (hV : IsOpenBoundedConvexDomain V)
+private theorem extension_value_restrict (hV : IsOpenBoundedConvexDomain V)
     (hU : IsOpenBoundedConvexDomain U) (hVU : V ⊆ U)
     (v : ZeroTraceSobolev V) :
     ZeroTraceSobolev.toL2 v =ᵐ[volumeMeasureOn V]
       ZeroTraceSobolev.toL2
         (ZeroTraceSobolev.extendByZeroToPartSuperset
-          hV hU.isOpen hVU v) := by
+          hV hU.isOpen hVU v)  := by
   have hext := ZeroTraceSobolev.extendByZeroToPartSuperset_toL2
     hV hU.isOpen hVU v
   apply (ae_restrict_iff' hV.isOpen.measurableSet).2
@@ -338,14 +337,13 @@ private theorem extension_value_restrict [NeZero d]
   intro hxV
   rw [hx (hVU hxV), Set.indicator_of_mem hxV]
 
-private theorem extension_gradient_restrict [NeZero d]
-    (hV : IsOpenBoundedConvexDomain V)
+private theorem extension_gradient_restrict (hV : IsOpenBoundedConvexDomain V)
     (hU : IsOpenBoundedConvexDomain U) (hVU : V ⊆ U)
     (v : ZeroTraceSobolev V) :
     ZeroTraceSobolev.gradient v =ᵐ[volumeMeasureOn V]
       ZeroTraceSobolev.gradient
         (ZeroTraceSobolev.extendByZeroToPartSuperset
-          hV hU.isOpen hVU v) := by
+          hV hU.isOpen hVU v)  := by
   have hext := ZeroTraceSobolev.extendByZeroToPartSuperset_gradient
     hV hU.isOpen hVU v
   apply (ae_restrict_iff' hV.isOpen.measurableSet).2
@@ -354,9 +352,7 @@ private theorem extension_gradient_restrict [NeZero d]
   intro hxV
   rw [hx (hVU hxV), Set.indicator_of_mem hxV]
 
-private theorem shiftedBilin_extension_eq [NeZero d]
-    (a : CoeffField d)
-    (hV : IsOpenBoundedConvexDomain V)
+private theorem shiftedBilin_extension_eq (a : CoeffField d) (hV : IsOpenBoundedConvexDomain V)
     (hU : IsOpenBoundedConvexDomain U) (hVU : V ⊆ U)
     {α lam Lam : ℝ} (hEll : IsEllipticFieldOn lam Lam U a)
     (w v : ZeroTraceSobolev V) :
@@ -365,7 +361,7 @@ private theorem shiftedBilin_extension_eq [NeZero d]
         (ZeroTraceSobolev.extendByZeroToPartSuperset hV hU.isOpen hVU v) =
       α * inner ℝ (ZeroTraceSobolev.toL2 w) (ZeroTraceSobolev.toL2 v) +
         coefficientPairing a V (ZeroTraceSobolev.gradient w)
-          (ZeroTraceSobolev.gradient v) := by
+          (ZeroTraceSobolev.gradient v)  := by
   rw [shiftedBilin_apply]
   have hvalue := scalar_inner_zeroExtension_eq_restriction
     hV.isOpen.measurableSet hU.isOpen.measurableSet hVU
@@ -390,14 +386,13 @@ private theorem shiftedBilin_extension_eq [NeZero d]
     (extension_gradient_restrict hV hU hVU v)
   rw [hvalue, hgradient]
 
-private theorem forcing_inner_extension_eq [NeZero d]
-    (hV : IsOpenBoundedConvexDomain V)
+private theorem forcing_inner_extension_eq (hV : IsOpenBoundedConvexDomain V)
     (hU : IsOpenBoundedConvexDomain U) (hVU : V ⊆ U)
     (f : ScalarL2 U) (v : ZeroTraceSobolev V) :
     inner ℝ f
         (ZeroTraceSobolev.toL2
           (ZeroTraceSobolev.extendByZeroToPartSuperset hV hU.isOpen hVU v)) =
-      inner ℝ (restrictScalarL2ToPart (V := V) hU.isOpen.measurableSet f)
+      inner ℝ (restrictScalarL2ToPart (V  := V) hU.isOpen.measurableSet f)
         (ZeroTraceSobolev.toL2 v) := by
   calc
     inner ℝ f
@@ -419,14 +414,13 @@ private theorem forcing_inner_extension_eq [NeZero d]
           hU.isOpen.measurableSet f) (ZeroTraceSobolev.toL2 v) :=
       real_inner_comm _ _
 
-private theorem penalization_integral_extension_eq_zero [NeZero d]
-    (hV : IsOpenBoundedConvexDomain V)
+private theorem penalization_integral_extension_eq_zero (hV : IsOpenBoundedConvexDomain V)
     (hU : IsOpenBoundedConvexDomain U) (hVU : V ⊆ U)
     (u : ZeroTraceSobolev U) (v : ZeroTraceSobolev V) (n : ℕ) :
     (∫ x, penalizationPotential U V n x * ZeroTraceSobolev.toL2 u x *
         ZeroTraceSobolev.toL2
           (ZeroTraceSobolev.extendByZeroToPartSuperset
-            hV hU.isOpen hVU v) x ∂volumeMeasureOn U) = 0 := by
+            hV hU.isOpen hVU v) x ∂volumeMeasureOn U) = 0  := by
   apply integral_eq_zero_of_ae
   filter_upwards
     [ZeroTraceSobolev.extendByZeroToPartSuperset_toL2
@@ -441,8 +435,7 @@ private theorem penalization_integral_extension_eq_zero [NeZero d]
     rw [hext, Set.indicator_of_notMem hxV, mul_zero]
     simp only [Pi.zero_apply]
 
-private theorem pointwiseLimitLp_eq_extendedPartResolvent [NeZero d]
-    (a : CoeffField d)
+private theorem pointwiseLimitLp_eq_extendedPartResolvent (a : CoeffField d)
     (hV : IsOpenBoundedConvexDomain V) (hVne : V.Nonempty)
     (hU : IsOpenBoundedConvexDomain U) (hVU : V ⊆ U)
     {α lam Lam : ℝ} (hα : 0 < α) (hlam : 0 < lam)
@@ -455,7 +448,7 @@ private theorem pointwiseLimitLp_eq_extendedPartResolvent [NeZero d]
         (ZeroTraceSobolev.extendByZeroToPartSuperset hV hU.isOpen hVU
           (alphaShiftedSolution a hα hlam
             (hEll.mono hV.isOpen.measurableSet hVU)
-            (restrictScalarL2ToPart (V := V) hU.isOpen.measurableSet f))) := by
+            (restrictScalarL2ToPart (V  := V) hU.isOpen.measurableSet f))) := by
   obtain ⟨z, φ, hφ, hweak⟩ :=
     exists_penalization_weak_limit a hU hV hα hlam hEll f
   have hzZero := weak_limit_ae_zero_off
@@ -516,8 +509,7 @@ private theorem pointwiseLimitLp_eq_extendedPartResolvent [NeZero d]
 
 /-- The almost-everywhere infimum of the exterior-penalized resolvents is the
 shifted resolvent on the convex part domain. -/
-theorem penalizationPointwiseLimit_eq_partResolvent_ae [NeZero d]
-    (a : CoeffField d)
+theorem penalizationPointwiseLimit_eq_partResolvent_ae (a : CoeffField d)
     (hV : IsOpenBoundedConvexDomain V) (hVne : V.Nonempty)
     (hU : IsOpenBoundedConvexDomain U) (hVU : V ⊆ U)
     {α lam Lam : ℝ} (hα : 0 < α) (hlam : 0 < lam)
@@ -528,7 +520,7 @@ theorem penalizationPointwiseLimit_eq_partResolvent_ae [NeZero d]
           a hU.isOpen hV.isOpen hα hlam hEll f x =
         alphaShiftedResolvent a hα hlam
           (hEll.mono hV.isOpen.measurableSet hVU)
-          (restrictScalarL2ToPart (V := V) hU.isOpen.measurableSet f) x := by
+          (restrictScalarL2ToPart (V  := V) hU.isOpen.measurableSet f) x := by
   let gfun := penalizationPointwiseLimit
     a hU.isOpen hV.isOpen hα hlam hEll f
   let hg := penalizationPointwiseLimit_memLp a hU hV hα hlam hEll f hf
@@ -563,8 +555,7 @@ theorem penalizationPointwiseLimit_eq_partResolvent_ae [NeZero d]
 
 /-- The pointwise infimum of the exterior-penalized resolvents equals the
 part-domain shifted resolvent almost everywhere. -/
-theorem iInf_penalizedResolvent_eq_part_ae [NeZero d]
-    (a : CoeffField d)
+theorem iInf_penalizedResolvent_eq_part_ae (a : CoeffField d)
     (hV : IsOpenBoundedConvexDomain V) (hVne : V.Nonempty)
     (hU : IsOpenBoundedConvexDomain U) (hVU : V ⊆ U)
     {α lam Lam : ℝ} (hα : 0 < α) (hlam : 0 < lam)
@@ -575,7 +566,7 @@ theorem iInf_penalizedResolvent_eq_part_ae [NeZero d]
           a hU.isOpen hV.isOpen hα hlam hEll n f x) =
         alphaShiftedResolvent a hα hlam
           (hEll.mono hV.isOpen.measurableSet hVU)
-          (restrictScalarL2ToPart (V := V) hU.isOpen.measurableSet f) x := by
+          (restrictScalarL2ToPart (V  := V) hU.isOpen.measurableSet f) x := by
   simpa only [penalizationPointwiseLimit] using
     penalizationPointwiseLimit_eq_partResolvent_ae
       a hV hVne hU hVU hα hlam hEll f hf

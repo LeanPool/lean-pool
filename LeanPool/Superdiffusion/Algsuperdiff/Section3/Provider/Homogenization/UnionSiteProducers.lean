@@ -585,8 +585,7 @@ private theorem pos_of_isTwoTermBigOWith {Omega : Type*} [MeasurableSpace Omega]
 nonnegative lanes, one `Gamma_1` at the squared linear amplitude and one
 `Gamma_{1/4}` at the squared rare amplitude, whose sum dominates the square
 everywhere. -/
-private theorem exists_squareLanes [NeZero d] (M : ABKModel d) (L n : ℤ) {s : ℝ}
-    (hs : 0 < s) {A B : ℝ}
+private theorem exists_squareLanes (M : ABKModel d) (L n : ℤ) {s : ℝ} (hs : 0 < s) {A B : ℝ}
     (hErr : Probability.IsTwoTermBigOWith (cutoffSampleLaw M).toMeasure
       (gammaSigma 2) (gammaSigma (1 / 2))
       (Observable.cutoffHomogenizationErrorRepresentative M L n hs
@@ -599,7 +598,7 @@ private theorem exists_squareLanes [NeZero d] (M : ABKModel d) (L n : ℤ) {s : 
               (2 * B ^ 2) ∧
               ∀ omega,
                 Observable.cutoffHomogenizationErrorRepresentative M L n hs
-                    (Annealed.sigmaBar M L) omega ^ 2 ≤ Y1 omega + Z1 omega := by
+                    (Annealed.sigmaBar M L) omega ^ 2 ≤ Y1 omega + Z1 omega  := by
   obtain ⟨Y, Z, -, -, hA, hB, -, hYm, hZm, hdom, hYt, hZt⟩ := hErr
   refine ⟨fun omega => 2 * max 0 (Y omega) ^ 2, fun omega => 2 * max 0 (Z omega) ^ 2,
     ((measurable_const.max hYm).pow_const 2).const_mul 2,
@@ -636,7 +635,7 @@ private theorem exists_squareLanes [NeZero d] (M : ABKModel d) (L n : ℤ) {s : 
 site cube by the sample translation and shifted by the first moment of each
 lane, dominate the absolute recentred site response almost surely and carry the
 two amplitudes of the display. -/
-private theorem exists_siteLanes [NeZero d] (M : ABKModel d) (L n : ℤ) {s : ℝ}
+private theorem exists_siteLanes (M : ABKModel d) (L n : ℤ) {s : ℝ}
     (hs : 0 < s) (u : Fin d → ℤ) {e : Vec d} (he : Ch02.vecNorm e = 1) {A B : ℝ}
     (hErr : Probability.IsTwoTermBigOWith (cutoffSampleLaw M).toMeasure
       (gammaSigma 2) (gammaSigma (1 / 2))
@@ -650,7 +649,7 @@ private theorem exists_siteLanes [NeZero d] (M : ABKModel d) (L n : ℤ) {s : �
             (siteLaneConst (1 / 4) * B ^ 2) ∧
             Integrable (siteResponseJ M L n u e) (cutoffSampleLaw M).toMeasure ∧
               ∀ᵐ omega ∂(cutoffSampleLaw M).toMeasure,
-                |siteCenteredResponseJ M L n u e omega| ≤ W1 omega + W4 omega := by
+                |siteCenteredResponseJ M L n u e omega| ≤ W1 omega + W4 omega  := by
   obtain ⟨hA, hB⟩ := pos_of_isTwoTermBigOWith hErr
   obtain ⟨Y1, Z1, hY1m, hZ1m, hY1nn, hZ1nn, hY1t, hZ1t, hlane⟩ :=
     exists_squareLanes M L n hs hErr

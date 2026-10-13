@@ -70,6 +70,7 @@ private theorem originCube_scale_gap (n : ℤ) :
   rw [h]
   rfl
 
+omit [NeZero d] in
 /-- At the anchor's own root the `F1'` functional **is** the proved representative:
 `fluxCorrectedErrorFunctionalAtRoot` at `root = Q = □_{n+2}` with the
 comparator `σ_{n+2} Id` reduces to `Support.fluxCorrectedErrorRepresentative`,
@@ -78,7 +79,7 @@ theorem fluxCorrectedErrorFunctionalAtRoot_eq_representative (M : ABKModel d)
     (L k : ℤ) (u : {u : ℝ // 0 < u}) :
     fluxCorrectedErrorFunctionalAtRoot M L k (originCube d k) (originCube d k)
         (u : ℝ) (isotropicComparatorMatrix (Annealed.sigmaBar M k)) =
-      fluxCorrectedErrorRepresentative M L k u :=
+      fluxCorrectedErrorRepresentative M L k u  :=
   rfl
 
 /-! ## 2. The cap at the root, at the untranslated sample -/

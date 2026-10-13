@@ -27,7 +27,7 @@ Module imports, support namespace and local option directives adapted for Lean P
 
 This file exposes the strongest representative statement currently supplied by the divergence-form
 foundation.  On an open bounded convex domain, the `L²` resolvent has an honest zero-trace `H¹`
-representative.  The theorem also identifies that representative with the canonical graph-carrier
+representative. The theorem also identifies that representative with the canonical graph-carrier
 weak solution.
 
 No continuity is asserted.  Obtaining a continuous, or boundary-vanishing continuous,
@@ -45,7 +45,7 @@ variable {d : ℕ} {U : Set (Vec d)}
 
 /-- The shifted resolvent has an honest zero-trace Sobolev representative.  Both its `L²` value and
 its gradient are the components of the canonical graph-carrier solution. -/
-theorem exists_h10Function_alphaShiftedResolvent [NeZero d]
+theorem exists_h10Function_alphaShiftedResolvent
     (hU : IsOpenBoundedConvexDomain U) (a : CoeffField d) {alpha lam Lam : ℝ}
     (hAlpha : 0 < alpha) (hLam : 0 < lam) (hEll : IsEllipticFieldOn lam Lam U a)
     (f : ScalarL2 U) :

@@ -455,8 +455,7 @@ private theorem integrable_sq_and_integral_sq_le_of_isBigOWith
 /-- The observation-scale fourth moment of Step 4, at the observation cube `n`
 and the cutoff scale `L`, from `Gamma_{1/4}` control of the squared error at
 scale `theta`. -/
-private theorem fourthMoment_of_cover [NeZero d] {M : ABKModel d} {L n : ℤ}
-    {theta : ℝ} (hthetaPos : 0 < theta)
+private theorem fourthMoment_of_cover {M : ABKModel d} {L n : ℤ} {theta : ℝ} (hthetaPos : 0 < theta)
     (hcov : IsBigOWith (Cutoff.cutoffSampleLaw M).toMeasure (gammaSigma (1 / 4))
       (fun omega =>
         Observable.cutoffHomogenizationErrorRepresentative M L n eighth_pos
@@ -473,7 +472,7 @@ private theorem fourthMoment_of_cover [NeZero d] {M : ABKModel d} {L n : ℤ}
             Observable.cutoffHomogenizationErrorRepresentative M L n eighth_pos
               (Annealed.sigmaBar M L) omega ^ 2
           ∂(Cutoff.cutoffSampleLaw M).toMeasure ≤
-        badEventMomentConst * theta ^ 2 :=
+        badEventMomentConst * theta ^ 2  :=
   integrable_sq_and_integral_sq_le_of_isBigOWith hthetaPos (fun _ => sq_nonneg _)
     ((Observable.measurable_cutoffHomogenizationErrorRepresentative M L n eighth_pos
       (Annealed.sigmaBar M L)).pow_const 2) hcov

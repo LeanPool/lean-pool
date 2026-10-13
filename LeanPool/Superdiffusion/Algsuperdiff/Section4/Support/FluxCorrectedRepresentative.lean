@@ -239,12 +239,12 @@ noncomputable def fluxCorrectedCoeffFamily (M : ABKModel d) (L m : ℤ)
 
 /-- The literal flux-corrected error of `ErrorAtoms` is exactly CoarseGraining's
 homogenization error on the canonical family of the flux-corrected field. -/
-theorem fluxCorrectedError_characterization [NeZero d] (M : ABKModel d) (L k : ℤ)
+theorem fluxCorrectedError_characterization (M : ABKModel d) (L k : ℤ)
     (s : ℝ) (omega : Cutoff.CutoffSample d) :
     fluxCorrectedError M L k s omega =
       Ch02.HomogenizationErrorOnCube (originCube d k) s .infinity (.finite 2)
         (fluxCorrectedCoeffFamily M L k (originCube d k) omega)
-        (isotropicComparatorMatrix (Annealed.sigmaBar M k)) :=
+        (isotropicComparatorMatrix (Annealed.sigmaBar M k))  :=
   homogenizationErrorAtScale_characterization k s
     (fluxCorrectedCoeffOn M L k (originCube d k) omega) (Annealed.sigmaBar M k)
     (fluxCorrectedCoeffFamily M L k (originCube d k) omega)
@@ -343,22 +343,22 @@ theorem fluxCorrectedCoarseFullBlock_ae_eq_representative (M : ABKModel d)
 
 /-- The everywhere-defined normalized response functional of the common
 flux-corrected coarse-block representative. -/
-noncomputable def fluxCorrectedNormalizedBlockResponseRepresentative [NeZero d]
+noncomputable def fluxCorrectedNormalizedBlockResponseRepresentative
     (M : ABKModel d) (L m : ℤ) (Q R : TriadicCube d) (a0 : Mat d) :
-    Cutoff.CutoffSample d → ℝ :=
+    Cutoff.CutoffSample d → ℝ  :=
   fun omega => normalizedBlockResponseMaxRepresentativeFunctional a0
     (fluxCorrectedCoarseFullBlockRepresentative M L m Q R omega)
 
-theorem measurable_fluxCorrectedNormalizedBlockResponseRepresentative [NeZero d]
+theorem measurable_fluxCorrectedNormalizedBlockResponseRepresentative
     (M : ABKModel d) (L m : ℤ) (Q R : TriadicCube d) (a0 : Mat d) :
-    Measurable (fluxCorrectedNormalizedBlockResponseRepresentative M L m Q R a0) :=
+    Measurable (fluxCorrectedNormalizedBlockResponseRepresentative M L m Q R a0)  :=
   (continuous_normalizedBlockResponseMaxRepresentativeFunctional a0).measurable.comp
     (measurable_fluxCorrectedCoarseFullBlockRepresentative M L m Q R)
 
-theorem fluxCorrectedNormalizedBlockResponseRepresentative_nonneg [NeZero d]
+theorem fluxCorrectedNormalizedBlockResponseRepresentative_nonneg
     (M : ABKModel d) (L m : ℤ) (Q R : TriadicCube d) (a0 : Mat d)
     (omega : Cutoff.CutoffSample d) :
-    0 ≤ fluxCorrectedNormalizedBlockResponseRepresentative M L m Q R a0 omega :=
+    0 ≤ fluxCorrectedNormalizedBlockResponseRepresentative M L m Q R a0 omega  :=
   norm_nonneg _
 
 private theorem fluxCorrected_rawCoarseBlock_normalizedQuadratic_nonneg [NeZero d]
@@ -475,16 +475,16 @@ private theorem measurable_finset_sup' {Omega iota : Type*} [MeasurableSpace Ome
 /-- The finite descendant maximum of the flux-corrected coarse-block
 representatives. -/
 noncomputable def fluxCorrectedMaxDescendantNormalizedBlockResponseRepresentative
-    [NeZero d] (M : ABKModel d) (L m : ℤ) (Q : TriadicCube d) (k : ℤ)
-    (a0 : Mat d) : Cutoff.CutoffSample d → ℝ :=
+     (M : ABKModel d) (L m : ℤ) (Q : TriadicCube d) (k : ℤ)
+    (a0 : Mat d) : Cutoff.CutoffSample d → ℝ  :=
   fun omega => Ch02.finsetSupReal (descendantsAtScale Q k)
     (fun R => fluxCorrectedNormalizedBlockResponseRepresentative M L m Q R a0 omega)
 
 theorem measurable_fluxCorrectedMaxDescendantNormalizedBlockResponseRepresentative
-    [NeZero d] (M : ABKModel d) (L m : ℤ) (Q : TriadicCube d) {k : ℤ}
+     (M : ABKModel d) (L m : ℤ) (Q : TriadicCube d) {k : ℤ}
     (hk : k ≤ Q.scale) (a0 : Mat d) :
     Measurable
-      (fluxCorrectedMaxDescendantNormalizedBlockResponseRepresentative M L m Q k a0) := by
+      (fluxCorrectedMaxDescendantNormalizedBlockResponseRepresentative M L m Q k a0)  := by
   classical
   have hS : (descendantsAtScale Q k).Nonempty := descendantsAtScale_nonempty Q hk
   have hsup : Measurable
@@ -503,10 +503,10 @@ theorem measurable_fluxCorrectedMaxDescendantNormalizedBlockResponseRepresentati
   exact hsup
 
 theorem fluxCorrectedMaxDescendantNormalizedBlockResponseRepresentative_nonneg
-    [NeZero d] (M : ABKModel d) (L m : ℤ) (Q : TriadicCube d) (k : ℤ) (a0 : Mat d)
+     (M : ABKModel d) (L m : ℤ) (Q : TriadicCube d) (k : ℤ) (a0 : Mat d)
     (omega : Cutoff.CutoffSample d) :
     0 ≤ fluxCorrectedMaxDescendantNormalizedBlockResponseRepresentative
-      M L m Q k a0 omega := by
+      M L m Q k a0 omega  := by
   apply Ch02.finsetSupReal_nonneg
   intro R _
   exact fluxCorrectedNormalizedBlockResponseRepresentative_nonneg M L m Q R a0 omega
@@ -531,19 +531,19 @@ theorem measurable_tsum_of_nonneg
 Unlike the proved `(∞,2)` cutoff chain, no `A.mk` is needed at this layer:
 every descendant maximum above is *genuinely* measurable, so the geometric
 scale sum is too. -/
-noncomputable def fluxCorrectedErrorFunctional [NeZero d] (M : ABKModel d)
-    (L k : ℤ) (s : ℝ) : Cutoff.CutoffSample d → ℝ :=
+noncomputable def fluxCorrectedErrorFunctional (M : ABKModel d)
+    (L k : ℤ) (s : ℝ) : Cutoff.CutoffSample d → ℝ  :=
   fun omega => Real.sqrt (∑' l : ℕ, Ch02.geometricWeight s 2 l *
     fluxCorrectedMaxDescendantNormalizedBlockResponseRepresentative M L k
       (originCube d k) ((originCube d k).scale - (l : ℤ))
       (isotropicComparatorMatrix (Annealed.sigmaBar M k)) omega)
 
-private theorem fluxCorrectedErrorFunctional_term_nonneg [NeZero d] (M : ABKModel d)
+private theorem fluxCorrectedErrorFunctional_term_nonneg (M : ABKModel d)
     (L k : ℤ) {s : ℝ} (hs : 0 < s) (l : ℕ) (omega : Cutoff.CutoffSample d) :
     0 ≤ Ch02.geometricWeight s 2 l *
       fluxCorrectedMaxDescendantNormalizedBlockResponseRepresentative M L k
         (originCube d k) ((originCube d k).scale - (l : ℤ))
-        (isotropicComparatorMatrix (Annealed.sigmaBar M k)) omega := by
+        (isotropicComparatorMatrix (Annealed.sigmaBar M k)) omega  := by
   refine mul_nonneg ?_ ?_
   · simpa only [Ch02.geometricWeight_eq_old] using
       HCPolySupport.geometricWeight_nonneg l (by positivity : 0 ≤ s * (2 : ℝ))
@@ -551,14 +551,13 @@ private theorem fluxCorrectedErrorFunctional_term_nonneg [NeZero d] (M : ABKMode
       M L k (originCube d k) ((originCube d k).scale - (l : ℤ))
       (isotropicComparatorMatrix (Annealed.sigmaBar M k)) omega
 
-theorem fluxCorrectedErrorFunctional_nonneg [NeZero d] (M : ABKModel d) (L k : ℤ)
+theorem fluxCorrectedErrorFunctional_nonneg (M : ABKModel d) (L k : ℤ)
     (s : ℝ) (omega : Cutoff.CutoffSample d) :
-    0 ≤ fluxCorrectedErrorFunctional M L k s omega :=
+    0 ≤ fluxCorrectedErrorFunctional M L k s omega  :=
   Real.sqrt_nonneg _
 
-theorem measurable_fluxCorrectedErrorFunctional [NeZero d] (M : ABKModel d)
-    (L k : ℤ) {s : ℝ} (hs : 0 < s) :
-    Measurable (fluxCorrectedErrorFunctional M L k s) := by
+theorem measurable_fluxCorrectedErrorFunctional (M : ABKModel d) (L k : ℤ) {s : ℝ} (hs : 0 < s) :
+    Measurable (fluxCorrectedErrorFunctional M L k s)  := by
   have hterm : ∀ l : ℕ, Measurable
       (fun omega => Ch02.geometricWeight s 2 l *
         fluxCorrectedMaxDescendantNormalizedBlockResponseRepresentative M L k

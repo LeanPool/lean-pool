@@ -185,7 +185,7 @@ theorem LambdaSqCoeffField_infinity_eq_sSup (Q : TriadicCube d)
 /-- **The endpoint lower domination.**  Any bound on the individual weighted grid
 maxima bounds `lambda_{s,infinity}^{-1}` itself.  No summability, no fold, and no
 `s`-pole: the gap-`0` scale is one of the elements of the supremum. -/
-theorem lambdaSqCoeffField_inv_infinity_le_of_forall [NeZero d] (Q : TriadicCube d)
+theorem lambdaSqCoeffField_inv_infinity_le_of_forall (Q : TriadicCube d)
     (a : RegCoeffField d) (s : ℝ) {B : ℝ}
     (hB : ∀ n : ℕ, Real.rpow (3 : ℝ) (-2 * s * (n : ℝ)) *
       Book.Ch04.maxDescendantSigmaStarInvMatrixNormCoeffFieldAtScale Q
@@ -197,7 +197,7 @@ theorem lambdaSqCoeffField_inv_infinity_le_of_forall [NeZero d] (Q : TriadicCube
   exact hB n
 
 /-- The scaled form of `lambdaSqCoeffField_inv_infinity_le_of_forall`. -/
-theorem lambdaSqCoeffField_inv_infinity_mul_le_of_forall [NeZero d]
+theorem lambdaSqCoeffField_inv_infinity_mul_le_of_forall
     (Q : TriadicCube d) (a : RegCoeffField d) (s : ℝ) {scaling B : ℝ}
     (hscaling : 0 ≤ scaling)
     (hB : ∀ n : ℕ, scaling * (Real.rpow (3 : ℝ) (-2 * s * (n : ℝ)) *
@@ -213,7 +213,7 @@ theorem lambdaSqCoeffField_inv_infinity_mul_le_of_forall [NeZero d]
 
 /-- The upper endpoint counterpart of
 `lambdaSqCoeffField_inv_infinity_mul_le_of_forall`, in the scaled form. -/
-theorem LambdaSqCoeffField_infinity_mul_le_of_forall [NeZero d] (Q : TriadicCube d)
+theorem LambdaSqCoeffField_infinity_mul_le_of_forall (Q : TriadicCube d)
     (a : RegCoeffField d) (s : ℝ) {scaling B : ℝ} (hscaling : 0 ≤ scaling)
     (hB : ∀ n : ℕ, scaling * (Real.rpow (3 : ℝ) (-2 * s * (n : ℝ)) *
       Book.Ch04.maxDescendantBMatrixNormCoeffFieldAtScale Q (Q.scale - (n : ℤ)) a)
@@ -229,28 +229,28 @@ theorem LambdaSqCoeffField_infinity_mul_le_of_forall [NeZero d] (Q : TriadicCube
 
 /-- The endpoint lower domination at the Section 3 literal observable, at the
 centered cube. -/
-theorem cutoffLowerEllipticityInvLiteral_infinity_mul_le_of_forall [NeZero d]
+theorem cutoffLowerEllipticityInvLiteral_infinity_mul_le_of_forall
     (M : ABKModel d) (m L : ℤ) (s : ℝ) {q : CoarseEllipticityExponent}
     (hqval : q.1 = Book.Ch02.MultiscaleExponent.infinity) {scaling B : ℝ}
     (hscaling : 0 ≤ scaling) (omega : Cutoff.CutoffSample d)
     (hB : ∀ n : ℕ, scaling * (Real.rpow (3 : ℝ) (-2 * s * (n : ℝ)) *
       Book.Ch04.maxDescendantSigmaStarInvMatrixNormCoeffFieldAtScale (originCube d m)
         (m - (n : ℤ)) (Cutoff.coefficientCutoff M.nu L omega)) ≤ B) :
-    Observable.cutoffLowerEllipticityInvLiteral M m L s q omega * scaling ≤ B := by
+    Observable.cutoffLowerEllipticityInvLiteral M m L s q omega * scaling ≤ B  := by
   have hscale : (originCube d m).scale = m := rfl
   rw [cutoffLowerEllipticityInvLiteral_eq_coeffField, hqval]
   exact lambdaSqCoeffField_inv_infinity_mul_le_of_forall (originCube d m)
     (Cutoff.coefficientCutoff M.nu L omega) s hscaling (by rw [hscale]; exact hB)
 
 /-- The endpoint upper domination at the Section 3 literal observable. -/
-theorem cutoffUpperEllipticityLiteral_infinity_mul_le_of_forall [NeZero d]
+theorem cutoffUpperEllipticityLiteral_infinity_mul_le_of_forall
     (M : ABKModel d) (m L : ℤ) (s : ℝ) {q : CoarseEllipticityExponent}
     (hqval : q.1 = Book.Ch02.MultiscaleExponent.infinity) {scaling B : ℝ}
     (hscaling : 0 ≤ scaling) (omega : Cutoff.CutoffSample d)
     (hB : ∀ n : ℕ, scaling * (Real.rpow (3 : ℝ) (-2 * s * (n : ℝ)) *
       Book.Ch04.maxDescendantBMatrixNormCoeffFieldAtScale (originCube d m)
         (m - (n : ℤ)) (Cutoff.coefficientCutoff M.nu L omega)) ≤ B) :
-    Observable.cutoffUpperEllipticityLiteral M m L s q omega * scaling ≤ B := by
+    Observable.cutoffUpperEllipticityLiteral M m L s q omega * scaling ≤ B  := by
   have hscale : (originCube d m).scale = m := rfl
   rw [cutoffUpperEllipticityLiteral_eq_coeffField, hqval]
   exact LambdaSqCoeffField_infinity_mul_le_of_forall (originCube d m)
@@ -267,7 +267,7 @@ The deterministic slot the caller then gets is whatever `V`'s deterministic part
 is: at `V = Cdet + (summed lane)` it is `Cdet` itself, which is exactly the
 frozen endpoint profile `lowerEllipticityProfile Clow gamma s infinity = Clow`.
 No `(2s)^{-1}` appears anywhere, because no series is formed. -/
-theorem cutoffLowerEllipticityInv_infinity_mul_forall_le [NeZero d] (M : ABKModel d)
+theorem cutoffLowerEllipticityInv_infinity_mul_forall_le (M : ABKModel d)
     (m : ℤ) {s : ℝ} (hs : 0 < s) {q : CoarseEllipticityExponent}
     (hqval : q.1 = Book.Ch02.MultiscaleExponent.infinity) {L0 : ℤ} {scaling : ℝ}
     {V : Cutoff.CutoffSample d → ℝ} (hscaling : 0 ≤ scaling)
@@ -277,7 +277,7 @@ theorem cutoffLowerEllipticityInv_infinity_mul_forall_le [NeZero d] (M : ABKMode
           (originCube d m) (m - (n : ℤ)) (Cutoff.coefficientCutoff M.nu L omega))
         ≤ V omega) :
     ∀ (omega : Cutoff.CutoffSample d) (L : ℤ), L0 ≤ L →
-      Observable.cutoffLowerEllipticityInv M m L s hs q omega * scaling ≤ V omega := by
+      Observable.cutoffLowerEllipticityInv M m L s hs q omega * scaling ≤ V omega  := by
   intro omega L hL
   rw [congrFun (Observable.cutoffLowerEllipticityInv_eq_literal M m L s hs q) omega]
   exact cutoffLowerEllipticityInvLiteral_infinity_mul_le_of_forall M m L s hqval
@@ -286,7 +286,7 @@ theorem cutoffLowerEllipticityInv_infinity_mul_forall_le [NeZero d] (M : ABKMode
 /-- **The upper leg's endpoint domination**, at the single cutoff index the upper
 leg reads its target at.  Verbatim the domination slot of the upper payload once
 the caller takes `V omega = Udet omega + Uone omega + Utail omega`. -/
-theorem cutoffUpperEllipticity_infinity_mul_le [NeZero d] (M : ABKModel d)
+theorem cutoffUpperEllipticity_infinity_mul_le (M : ABKModel d)
     (m L : ℤ) {s : ℝ} (hs : 0 < s) {q : CoarseEllipticityExponent}
     (hqval : q.1 = Book.Ch02.MultiscaleExponent.infinity) {scaling : ℝ}
     {V : Cutoff.CutoffSample d → ℝ} (hscaling : 0 ≤ scaling)
@@ -295,7 +295,7 @@ theorem cutoffUpperEllipticity_infinity_mul_le [NeZero d] (M : ABKModel d)
         Book.Ch04.maxDescendantBMatrixNormCoeffFieldAtScale (originCube d m)
           (m - (n : ℤ)) (Cutoff.coefficientCutoff M.nu L omega)) ≤ V omega) :
     ∀ omega : Cutoff.CutoffSample d,
-      Observable.cutoffUpperEllipticity M m L s hs q omega * scaling ≤ V omega := by
+      Observable.cutoffUpperEllipticity M m L s hs q omega * scaling ≤ V omega  := by
   intro omega
   rw [congrFun (Observable.cutoffUpperEllipticity_eq_literal M m L s hs q) omega]
   exact cutoffUpperEllipticityLiteral_infinity_mul_le_of_forall M m L s hqval

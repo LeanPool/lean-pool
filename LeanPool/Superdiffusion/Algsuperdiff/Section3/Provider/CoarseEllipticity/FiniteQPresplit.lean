@@ -45,8 +45,7 @@ variable {d : ℕ}
 /-- A pointwise finite-`q` pre-split at every depth produces the lower
 coarse-ellipticity two-slot payload.  Summability of the combined profile is a
 conclusion inside the proof, not a hypothesis of this theorem. -/
-theorem twoTermFamilySplit_cutoffLowerEllipticityInv_of_finiteQPresplit
-    [NeZero d] (M : ABKModel d) (m : ℤ)
+theorem twoTermFamilySplit_cutoffLowerEllipticityInv_of_finiteQPresplit (M : ABKModel d) (m : ℤ)
     (r : {r : ℝ // 1 ≤ r}) (hr : 2 ≤ (r : ℝ))
     {s Cprof scaling sigmaTail B : ℝ} (hs : 0 < s)
     (hgap : 0 < 2 * s - M.gamma) (hCprof : 0 ≤ Cprof)
@@ -80,7 +79,7 @@ theorem twoTermFamilySplit_cutoffLowerEllipticityInv_of_finiteQPresplit
       (∀ omega, Ydet omega ≤ 4 * Cprof * s * (2 * s - M.gamma)⁻¹) ∧
       Measurable Y ∧
       IsBigOWith (Cutoff.cutoffSampleLaw M).toMeasure
-        (gammaSigma sigmaTail) Y B := by
+        (gammaSigma sigmaTail) Y B  := by
   let w : ℕ → ℝ := fun n => Book.Ch02.geometricWeight s (r : ℝ) n
   let v : ℕ → ℝ := fun n => w n ^ (2 / (r : ℝ))
   let D : ℕ → ℝ := finiteQGeometricProfile Cprof M.gamma
@@ -215,7 +214,7 @@ The constant gate `4 * Cprof <= Clow` absorbs only the dimension-free factor
 two from the pre-split and the factor two in the deterministic geometric
 profile estimate. -/
 theorem coarse_ellipticity_lower_branchPayload_two_le_of_finiteQPresplit
-    (d : ℕ) [NeZero d] {Clow Cprof : ℝ} (hCprof : 0 ≤ Cprof)
+    (d : ℕ) {Clow Cprof : ℝ} (hCprof : 0 ≤ Cprof)
     (habsorb : 4 * Cprof ≤ Clow)
     (finiteQPresplit :
       ∀ (M : ABKModel d) (m : ℤ)
@@ -288,7 +287,7 @@ theorem coarse_ellipticity_lower_branchPayload_two_le_of_finiteQPresplit
                 IsBigOWith (Cutoff.cutoffSampleLaw M).toMeasure
                   (gammaSigma ((1 - sigma) / 2)) Y
                   (Real.exp
-                    (-(Clow⁻¹ * ((E : ℝ)⁻¹) ^ 2 * M.gamma⁻¹))) := by
+                    (-(Clow⁻¹ * ((E : ℝ)⁻¹) ^ 2 * M.gamma⁻¹)))  := by
   intro M m E hstate sigma hsigma hE1 hE2 r hr s hsWindow
   obtain ⟨U, a, hUnonneg, hUmeas, hUqsum, hUlinsum, ha, hasum, hUO,
     hbudget, hdepth⟩ :=

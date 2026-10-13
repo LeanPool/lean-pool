@@ -249,7 +249,7 @@ theorem abs_representative_le_of_holder (G : ScalarL2 U)
 
 /-- The interior equation for the `α`-shifted problem together with the bounds
 on its data. -/
-theorem exists_interior_equation_alphaShifted_with_gradient [NeZero d]
+theorem exists_interior_equation_alphaShifted_with_gradient
     (a : CoeffField d) (hU : IsOpenBoundedConvexDomain U)
     {α lam Lam : ℝ} (hα : 0 < α) (hlam : 0 < lam)
     (hEll : IsEllipticFieldOn lam Lam U a)
@@ -261,7 +261,7 @@ theorem exists_interior_equation_alphaShifted_with_gradient [NeZero d]
       MemScalarLInfOn W g ∧
       scalarLInfSizeOn W g ≤ 2 * M ∧
       vectorLpSizeOn W 2 z.grad ≤ (min α lam)⁻¹ * ‖F‖ ∧
-      IsMatrixDivFormWeakSolutionZerothOrderOn a W z g 0 := by
+      IsMatrixDivFormWeakSolutionZerothOrderOn a W z g 0  := by
   have hq : IsBoundedNonnegativePotential U (fun _ => (0 : ℝ)) 0 :=
     isBoundedNonnegativePotential_zero U
   set u : ZeroTraceSobolev U := alphaShiftedSolution a hα hlam hEll F with hudef
@@ -320,10 +320,10 @@ theorem exists_interior_equation_alphaShifted_with_gradient [NeZero d]
       (isMatrixDivFormWeakSolutionZerothOrderOn_domain_of_isPotentialWeakSolution
         a (fun _ => (0 : ℝ)) hq F hu w hwgrad)
 
-theorem penalizationInteriorHolderConstant_mono_gradient (d : ℕ) [NeZero d]
+theorem penalizationInteriorHolderConstant_mono_gradient (d : ℕ)
     (alpha : ℝ) {r : ℝ} (hr : 0 ≤ r) (M : ℝ) {G G' : ℝ} (h : G ≤ G') :
     penalizationInteriorHolderConstant d alpha r G M ≤
-      penalizationInteriorHolderConstant d alpha r G' M := by
+      penalizationInteriorHolderConstant d alpha r G' M  := by
   have h2r : (0 : ℝ) ≤ 2 * r := by linarith only [hr]
   unfold penalizationInteriorHolderConstant
   exact mul_le_mul_of_nonneg_left
@@ -332,9 +332,9 @@ theorem penalizationInteriorHolderConstant_mono_gradient (d : ℕ) [NeZero d]
 
 /-! ## Continuity of the interior representative along bounded limits -/
 
-theorem penalizationInteriorHolderConstant_nonneg (d : ℕ) [NeZero d]
+theorem penalizationInteriorHolderConstant_nonneg (d : ℕ)
     (alpha : ℝ) {r G M : ℝ} (hr : 0 ≤ r) (hG : 0 ≤ G) (hM : 0 ≤ M) :
-    0 ≤ penalizationInteriorHolderConstant d alpha r G M := by
+    0 ≤ penalizationInteriorHolderConstant d alpha r G M  := by
   have h2r : (0 : ℝ) ≤ 2 * r := by linarith only [hr]
   unfold penalizationInteriorHolderConstant
   have h1 : (0 : ℝ) ≤ (2 * r) ^ (1 - alpha - (d : ℝ) / 2) * G :=
@@ -386,7 +386,7 @@ theorem hasLocalHolderShiftedResolvents_continuousCoeff [NeZero d] (hd : 2 ≤ d
 data, at every point of the domain.**  The `L²` norm controls the mean of the
 difference over a small ball and the quantitative interior witness controls its
 oscillation there, with a constant that stays bounded along the sequence. -/
-theorem tendsto_representative_of_tendsto_norm_reg [NeZero d]
+theorem tendsto_representative_of_tendsto_norm_reg
     (a : CoeffField d) {α lam Lam : ℝ} (hα : 0 < α) (hlam : 0 < lam)
     (hEll : IsEllipticFieldOn lam Lam U a)
     {alpha B : ℝ} (halpha0 : 0 < alpha) (hB : 0 ≤ B)
@@ -401,7 +401,7 @@ theorem tendsto_representative_of_tendsto_norm_reg [NeZero d]
     (hwcont : ContinuousOn w U)
     (hwae : w =ᵐ[volumeMeasureOn U] alphaShiftedResolvent a hα hlam hEll Fl)
     {x : Vec d} (hx : x ∈ U) :
-    Tendsto (fun k => wk k x) atTop (nhds (w x)) := by
+    Tendsto (fun k => wk k x) atTop (nhds (w x))  := by
   have hBM : (0 : ℝ) ≤ B * M := mul_nonneg hB hM
   obtain ⟨r, hr, hballr, hbound⟩ := hReg.2 hα x hx hM
   have hFdiff : ∀ k, ∀ᵐ y ∂volumeMeasureOn U, |(F k - Fl) y| ≤ M := by

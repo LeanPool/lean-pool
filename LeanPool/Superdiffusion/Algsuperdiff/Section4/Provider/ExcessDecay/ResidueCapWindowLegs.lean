@@ -31,7 +31,7 @@ source node.
 **window hinge**
 
 ```text
-  (W)   c + □_{n+2} ⊆ (z + □_{n+3}) ∩ □_m ,   c = wellPlacedCentre x m (n+2) ,
+  (W) c + □_{n+2} ⊆ (z + □_{n+3}) ∩ □_m , c = wellPlacedCentre x m (n+2) ,
 ```
 
 in place of the anchor's geometry binder `hgeom : x + □_n ⊆ (z+□_{n+1}) ∩ □_m`.
@@ -296,7 +296,7 @@ The re-cut of `normalizedL2On_coveringDifference_le_meanControl`: the boundary
 Caccioppoli's parent-`L²` object at the covering cube, priced onto the frozen
 legs and the datum pricing's zero-trace leg, with the open scalar `S` threaded
 additively at coefficient `1`. -/
-theorem normalizedL2On_coveringDifference_le_meanControl_atWindow [NeZero d]
+theorem normalizedL2On_coveringDifference_le_meanControl_atWindow
     {n m : ℤ} {x z : Vec d} {S : ℝ} {a : CoeffFamily d} {g : Vec d → Vec d}
     (hnm : n + 2 ≤ m)
     (hcov : (fun y => wellPlacedCentre x m (n + 2) + y) ''
@@ -378,7 +378,7 @@ The re-cut of `rpow_three_neg_mul_sqrt_coveringDifference_le`: section 2's
 composition multiplied by `3^{-(n+2)}` — the weight the datum pricing's
 left-hand side already carries — so that the datum-difference leg is discharged
 by any bound `R` on the datum pricing's left-hand side. -/
-theorem rpow_three_neg_mul_sqrt_coveringDifference_le_atWindow [NeZero d]
+theorem rpow_three_neg_mul_sqrt_coveringDifference_le_atWindow
     {n m : ℤ} {x z : Vec d} {S R : ℝ} {a : CoeffFamily d} {g : Vec d → Vec d}
     (hnm : n + 2 ≤ m)
     (hcov : (fun y => wellPlacedCentre x m (n + 2) + y) ''
@@ -426,7 +426,7 @@ theorem rpow_three_neg_mul_sqrt_coveringDifference_le_atWindow [NeZero d]
               (Support.normalizedVolumeMeasureOn
                 ((((fun y' => z + y') '' openCubeSet (originCube d (n + 3))) ∩
                   openCubeSet (originCube d m))))).toReal)) +
-        R := by
+        R  := by
   classical
   set w : ℝ := Real.rpow (3 : ℝ) (-(((n + 2 : ℤ)) : ℝ)) with hw
   have hw0 : 0 ≤ w := Real.rpow_nonneg (by norm_num) _

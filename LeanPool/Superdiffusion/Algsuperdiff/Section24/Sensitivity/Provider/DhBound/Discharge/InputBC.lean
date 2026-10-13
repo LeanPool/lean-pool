@@ -255,7 +255,7 @@ def zeroTraceValueConst (d : ℕ) : ℝ :=
         (d : ℝ)) + 2 * (3 : ℝ) ^ ((d : ℝ) + 1)) *
     Real.sqrt ((1 - Real.rpow (3 : ℝ) (-2 * ((1 / 2 : ℝ) - 3 / 16)))⁻¹)
 
-theorem zeroTraceValueConst_nonneg (d : ℕ) [NeZero d] :
+theorem zeroTraceValueConst_nonneg (d : ℕ) :
     0 ≤ zeroTraceValueConst d := by
   have h1 : (0 : ℝ) ≤ Legacy.cubeNeumannW22CalderonZygmundConstant d :=
     Legacy.cubeNeumannW22CalderonZygmundConstant_nonneg d
@@ -299,14 +299,14 @@ theorem memLp_u_two
       (normalizedCubeMeasure (originCube d 0)) :=
   H1Function.memL2_normalizedCubeMeasure u.toH1Function
 
-theorem memLp_termBCField_two [NeZero d] (h : UnitCubeSkewW2Infinity d)
+theorem memLp_termBCField_two (h : UnitCubeSkewW2Infinity d)
     (u : H10Function ((cubeDomain (originCube d 0) : Domain d) : Set (Vec d))) :
     MemLp (termBCField h u) (2 : ℝ≥0∞)
       (normalizedCubeMeasure (originCube d 0)) :=
   MemLp.smul (memLp_u_two u) (memLp_matWeakDiv h ∞)
 
 /-- The finite-depth Besov product estimate for the Term BC field. -/
-theorem cubeBesovPositiveVectorPartialSeminormTwo_termBCField_le [NeZero d]
+theorem cubeBesovPositiveVectorPartialSeminormTwo_termBCField_le
     (h : UnitCubeSkewW2Infinity d)
     (u : H10Function ((cubeDomain (originCube d 0) : Domain d) : Set (Vec d)))
     (N : ℕ) :
@@ -348,13 +348,13 @@ theorem cubeBesovPositiveVectorPartialSeminormTwo_termBCField_le [NeZero d]
 /-! ## The Term BC budget -/
 
 /-- The explicit Term B constant. -/
-def termBCBesovConst (d : ℕ) [NeZero d] : ℝ :=
+def termBCBesovConst (d : ℕ) : ℝ :=
   (Real.sqrt (d : ℝ) * (d : ℝ) * zeroTraceValueConst d +
       besovMultConst (3 / 8) *
         ((d : ℝ) ^ 2 * zeroTraceValueConst d + (d : ℝ) * depthDowngradeConst d)) *
     gradSplitConst
 
-theorem depthDowngradeConst_nonneg (d : ℕ) [NeZero d] :
+theorem depthDowngradeConst_nonneg (d : ℕ) :
     0 ≤ depthDowngradeConst d := by
   have hg : (0 : ℝ) ≤ sensitivityGapConst := sensitivityGapConst_nonneg
   have hp : (0 : ℝ) ≤ Ch01.Legacy.fullVectorPoincareConstant (originCube d 0) :=
@@ -364,7 +364,7 @@ theorem depthDowngradeConst_nonneg (d : ℕ) [NeZero d] :
   unfold depthDowngradeConst
   positivity
 
-theorem termBCBesovConst_nonneg (d : ℕ) [NeZero d] : 0 ≤ termBCBesovConst d := by
+theorem termBCBesovConst_nonneg (d : ℕ) : 0 ≤ termBCBesovConst d  := by
   have h1 : (0 : ℝ) ≤ zeroTraceValueConst d := zeroTraceValueConst_nonneg d
   have h2 : (0 : ℝ) ≤ besovMultConst (3 / 8) :=
     (besovMultConst_pos (s := (3 / 8 : ℝ)) (by norm_num)).le

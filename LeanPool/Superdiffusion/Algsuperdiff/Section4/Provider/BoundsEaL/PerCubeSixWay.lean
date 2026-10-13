@@ -185,7 +185,7 @@ the cutoff sample law; no other constant is spent.  The three moment inputs and
 the three `AEMeasurable` side conditions are conditional API obligations,
 carried as hypotheses rather than instantiated, so that each proved bullet
 keeps its own constant. -/
-theorem lintegral_rpow_lFreeStep3Majorant_le_of_summands [NeZero d] (M : ABKModel d)
+theorem lintegral_rpow_lFreeStep3Majorant_le_of_summands (M : ABKModel d)
     (C : ℝ) (m : ℤ) (R : TriadicCube d) (s : ℝ) {q : ℝ} (hq : 1 ≤ q)
     (GB VB : TriadicCube d → Cutoff.CutoffSample d → ℝ) {R1 R2 R3 : ℝ}
     (hR1 : 0 ≤ R1) (hR2 : 0 ≤ R2) (hR3 : 0 ≤ R3)
@@ -205,7 +205,7 @@ theorem lintegral_rpow_lFreeStep3Majorant_le_of_summands [NeZero d] (M : ABKMode
         ∂(Cutoff.cutoffSampleLaw M).toMeasure) ≤ ENNReal.ofReal R3 ^ q) :
     (∫⁻ omega, ENNReal.ofReal (lFreeStep3Majorant C M m s GB VB R omega) ^ q
         ∂(Cutoff.cutoffSampleLaw M).toMeasure) ≤
-      ENNReal.ofReal (2 * (R1 + R2 + R3)) ^ q := by
+      ENNReal.ofReal (2 * (R1 + R2 + R3)) ^ q  := by
   exact lintegral_rpow_sixWay hq
     (fun omega => step3FirstTerm C M m R omega s (GB R omega))
     (fun omega => step3SecondTerm C M m R omega (GB R omega) (VB R omega))

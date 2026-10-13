@@ -570,7 +570,7 @@ on exactly the four moment binders `hDsq`, `hFsq`, `hpot`, `hflux` of
 `cubeFamilyAverage_sq_integral_stripCellMajorant_le`: the sign of the cell
 integrand is removed by `Closure.GammaTenStripCell`, and no Besov envelope, no
 minimizer, no measurable selection and no interior restriction enters. -/
-theorem gammaTenStrip_cell_average_sq_le [NeZero d] (M : ABKModel d) (n : ℤ) (h : ℕ)
+theorem gammaTenStrip_cell_average_sq_le (M : ABKModel d) (n : ℤ) (h : ℕ)
     (Kc : ℤ) (j : ℕ) (e e' : Vec d)
     (wD : ShellSeq d → H10Function (openCubeSet (originCube d Kc)))
     (wN : ShellSeq d → H1MeanZeroFunction (openCubeSet (originCube d Kc)))
@@ -592,7 +592,7 @@ theorem gammaTenStrip_cell_average_sq_le [NeZero d] (M : ABKModel d) (n : ℤ) (
     cubeFamilyAverage (mesoCubeGrid d Kc (Kc - (j : ℤ)))
         (fun R => (∫ omega, meshFluctuationCellIntegrand M n h Kc e e' wD wN R omega
           ∂(cutoffSampleLaw M).toMeasure) ^ 2) ≤
-      gammaTenStripConst M n h Kc Cpot Cflux := by
+      gammaTenStripConst M n h Kc Cpot Cflux  := by
   classical
   have hjle : Kc - (j : ℤ) ≤ Kc := by omega
   have hmesh : mesoCubeGrid d Kc (Kc - (j : ℤ)) =

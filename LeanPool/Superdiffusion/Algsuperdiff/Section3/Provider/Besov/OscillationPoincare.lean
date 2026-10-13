@@ -130,7 +130,7 @@ noncomputable def oscillationMultiscalePoincareConstant (d : ℕ) : ℝ :=
   (d : ℝ) * HCPolySupport.Legacy.cubeNeumannW22CalderonZygmundConstant d *
     (3 : ℝ) ^ ((d : ℝ) + 1)
 
-theorem oscillationMultiscalePoincareConstant_nonneg (d : ℕ) [NeZero d] :
+theorem oscillationMultiscalePoincareConstant_nonneg (d : ℕ) :
     0 ≤ oscillationMultiscalePoincareConstant d := by
   unfold oscillationMultiscalePoincareConstant
   exact mul_nonneg

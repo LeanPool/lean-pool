@@ -116,15 +116,14 @@ theorem cubeScaleFactor_mul_lambdaSq_inv_le_rpow [NeZero d]
 /-- The constant of the frozen unconditional estimate:
 `C = 4 max{1, C_flux(d)}`, where `C_flux(d)` is the constant of the pure-flux
 `D_h` bound of `Provider.Lambda.CubeBound`. -/
-def unconditionalConst (d : ℕ) [NeZero d] : ℝ := 4 * max 1 (fluxCubeConst d)
+def unconditionalConst (d : ℕ) : ℝ  := 4 * max 1 (fluxCubeConst d)
 
-theorem unconditionalConst_pos (d : ℕ) [NeZero d] : 0 < unconditionalConst d := by
+theorem unconditionalConst_pos (d : ℕ) : 0 < unconditionalConst d  := by
   have : (1 : ℝ) ≤ max 1 (fluxCubeConst d) := le_max_left _ _
   unfold unconditionalConst
   linarith
 
-theorem fluxCubeConst_le_max (d : ℕ) [NeZero d] :
-    fluxCubeConst d ≤ max 1 (fluxCubeConst d) := le_max_right _ _
+theorem fluxCubeConst_le_max (d : ℕ) : fluxCubeConst d ≤ max 1 (fluxCubeConst d)  := le_max_right _ _
 
 /-- The frozen coarse gauge is nonnegative. -/
 theorem unitCubeLambda_inv_nonneg [NeZero d]

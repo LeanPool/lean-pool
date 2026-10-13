@@ -104,7 +104,7 @@ def agmonTailL2Coefficient (d : ℕ) (lam Lam : ℝ) : ℝ :=
 /-- The constant term of the tail function: the Schauder gradient term of the
 pointwise estimate, whose local gradient size is supplied by the Caccioppoli
 bound.  It carries no power of `s` at all. -/
-def agmonTailGradientCoefficient (d : ℕ) [NeZero d] (lam Lam alpha : ℝ) : ℝ :=
+def agmonTailGradientCoefficient (d : ℕ) (lam Lam alpha : ℝ) : ℝ  :=
   16 * smallContrastZerothSchauderConstant d * Real.sqrt ((2 : ℝ) ^ d) *
       (1 / 2 : ℝ) ^ alpha * Lam * smoothTransitionProfile.derivBound *
       ((d : ℝ) * Real.sqrt d) *
@@ -112,7 +112,7 @@ def agmonTailGradientCoefficient (d : ℕ) [NeZero d] (lam Lam alpha : ℝ) : �
 
 /-- The coefficient of the `s ^ 2` term of the tail function: the Schauder
 forcing term of the pointwise estimate, whose forcing bound is one. -/
-def agmonTailForcingCoefficient (d : ℕ) [NeZero d] (alpha : ℝ) : ℝ :=
+def agmonTailForcingCoefficient (d : ℕ) (alpha : ℝ) : ℝ  :=
   smallContrastZerothSchauderConstant d * (1 / 2 : ℝ) ^ alpha / 4
 
 /-- The decay rate of the tail function in `s = sqrt mu * r`: the Agmon rate
@@ -134,9 +134,9 @@ theorem agmonTailL2Coefficient_nonneg (d : ℕ) {lam Lam : ℝ} (hLam : 0 ≤ La
   positivity
 
 /-- The constant coefficient is nonnegative. -/
-theorem agmonTailGradientCoefficient_nonneg (d : ℕ) [NeZero d] {lam Lam alpha : ℝ}
+theorem agmonTailGradientCoefficient_nonneg (d : ℕ) {lam Lam alpha : ℝ}
     (hlam : 0 < lam) (hLam : 0 ≤ Lam) :
-    0 ≤ agmonTailGradientCoefficient d lam Lam alpha := by
+    0 ≤ agmonTailGradientCoefficient d lam Lam alpha  := by
   have hD : (0 : ℝ) ≤ smoothTransitionProfile.derivBound :=
     smoothTransitionProfile.derivBound_nonneg
   have hCS : (0 : ℝ) ≤ smallContrastZerothSchauderConstant d :=
@@ -147,8 +147,8 @@ theorem agmonTailGradientCoefficient_nonneg (d : ℕ) [NeZero d] {lam Lam alpha 
   positivity
 
 /-- The `s ^ 2` coefficient is nonnegative. -/
-theorem agmonTailForcingCoefficient_nonneg (d : ℕ) [NeZero d] (alpha : ℝ) :
-    0 ≤ agmonTailForcingCoefficient d alpha := by
+theorem agmonTailForcingCoefficient_nonneg (d : ℕ) (alpha : ℝ) :
+    0 ≤ agmonTailForcingCoefficient d alpha  := by
   have hCS : (0 : ℝ) ≤ smallContrastZerothSchauderConstant d :=
     smallContrastZerothSchauderConstant_nonneg d
   have hP : (0 : ℝ) < (1 / 2 : ℝ) ^ alpha :=
@@ -191,8 +191,7 @@ private theorem rpow_ratio_frozen {r r₀ : ℝ} (hr : 0 < r) (hr₀ : 0 < r₀)
     Real.mul_rpow (by norm_num) hr₀.le]
 
 /-- The pointwise constant before its dimensional variables are collected. -/
-def agmonFrozenDecayConstant (d : ℕ) [NeZero d]
-    (D alpha E G r₀ : ℝ) : ℝ :=
+def agmonFrozenDecayConstant (d : ℕ) (D alpha E G r₀ : ℝ) : ℝ  :=
   D / Real.sqrt ((volume (smallContrastUnitBall d)).toReal) /
         Real.sqrt ((r₀ / 2) ^ d) +
     smallContrastZerothSchauderConstant d *

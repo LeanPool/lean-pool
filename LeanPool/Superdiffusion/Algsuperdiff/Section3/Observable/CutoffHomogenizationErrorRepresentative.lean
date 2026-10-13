@@ -62,23 +62,23 @@ private theorem aemeasurable_finset_sup'
 measurable full coarse-block representative.  Off the physical event it is
 still a norm of a continuous finite-dimensional functional, not an arbitrary
 replacement. -/
-noncomputable def cutoffNormalizedBlockResponseRepresentative {d : ℕ} [NeZero d]
+noncomputable def cutoffNormalizedBlockResponseRepresentative {d : ℕ}
     (M : ABKModel d) (coefficientScale : ℤ) (Q : TriadicCube d)
-    (a0 : Mat d) : Cutoff.CutoffSample d → ℝ :=
+    (a0 : Mat d) : Cutoff.CutoffSample d → ℝ  :=
   fun omega => normalizedBlockResponseMaxRepresentativeFunctional a0
     (cutoffCoarseFullBlockRepresentative M coefficientScale Q omega)
 
-theorem measurable_cutoffNormalizedBlockResponseRepresentative {d : ℕ} [NeZero d]
+theorem measurable_cutoffNormalizedBlockResponseRepresentative {d : ℕ}
     (M : ABKModel d) (coefficientScale : ℤ) (Q : TriadicCube d)
     (a0 : Mat d) :
-    Measurable (cutoffNormalizedBlockResponseRepresentative M coefficientScale Q a0) :=
+    Measurable (cutoffNormalizedBlockResponseRepresentative M coefficientScale Q a0)  :=
   (continuous_normalizedBlockResponseMaxRepresentativeFunctional a0).measurable.comp
     (measurable_cutoffCoarseFullBlockRepresentative M coefficientScale Q)
 
-theorem cutoffNormalizedBlockResponseRepresentative_nonneg {d : ℕ} [NeZero d]
+theorem cutoffNormalizedBlockResponseRepresentative_nonneg {d : ℕ}
     (M : ABKModel d) (coefficientScale : ℤ) (Q : TriadicCube d)
     (a0 : Mat d) (omega : Cutoff.CutoffSample d) :
-    0 ≤ cutoffNormalizedBlockResponseRepresentative M coefficientScale Q a0 omega := by
+    0 ≤ cutoffNormalizedBlockResponseRepresentative M coefficientScale Q a0 omega  := by
   exact norm_nonneg _
 
 /-- On the physical cutoff coefficient, the raw full coarse matrix has nonnegative
@@ -151,17 +151,17 @@ theorem ae_forall_normalizedBlockResponseMax_cutoff_eq_representative
 /-- The finite descendant maximum formed from the canonical common-block
 representatives. -/
 noncomputable def cutoffMaxDescendantNormalizedBlockResponseRepresentative
-    {d : ℕ} [NeZero d] (M : ABKModel d) (coefficientScale : ℤ)
-    (Q : TriadicCube d) (k : ℤ) (a0 : Mat d) : Cutoff.CutoffSample d → ℝ :=
+    {d : ℕ} (M : ABKModel d) (coefficientScale : ℤ)
+    (Q : TriadicCube d) (k : ℤ) (a0 : Mat d) : Cutoff.CutoffSample d → ℝ  :=
   fun omega => Ch02.finsetSupReal (descendantsAtScale Q k)
     (fun R => cutoffNormalizedBlockResponseRepresentative M coefficientScale R a0 omega)
 
 theorem aemeasurable_cutoffMaxDescendantNormalizedBlockResponseRepresentative
-    {d : ℕ} [NeZero d] (M : ABKModel d) (coefficientScale : ℤ)
+    {d : ℕ} (M : ABKModel d) (coefficientScale : ℤ)
     (Q : TriadicCube d) (k : ℤ) (hk : k ≤ Q.scale) (a0 : Mat d) :
     AEMeasurable
       (cutoffMaxDescendantNormalizedBlockResponseRepresentative M coefficientScale Q k a0)
-      (Cutoff.cutoffSampleLaw M).toMeasure := by
+      (Cutoff.cutoffSampleLaw M).toMeasure  := by
   classical
   let S := descendantsAtScale Q k
   have hS : S.Nonempty := descendantsAtScale_nonempty Q hk
@@ -185,10 +185,10 @@ theorem aemeasurable_cutoffMaxDescendantNormalizedBlockResponseRepresentative
   simpa [cutoffMaxDescendantNormalizedBlockResponseRepresentative, S] using! hfin
 
 theorem cutoffMaxDescendantNormalizedBlockResponseRepresentative_nonneg
-    {d : ℕ} [NeZero d] (M : ABKModel d) (coefficientScale : ℤ)
+    {d : ℕ} (M : ABKModel d) (coefficientScale : ℤ)
     (Q : TriadicCube d) (k : ℤ) (a0 : Mat d) (omega : Cutoff.CutoffSample d) :
     0 ≤ cutoffMaxDescendantNormalizedBlockResponseRepresentative
-      M coefficientScale Q k a0 omega := by
+      M coefficientScale Q k a0 omega  := by
   apply Ch02.finsetSupReal_nonneg
   intro R _
   exact cutoffNormalizedBlockResponseRepresentative_nonneg M coefficientScale R a0 omega
@@ -212,9 +212,9 @@ private theorem aemeasurable_tsum_of_nonneg
 
 /-- The nonnegative everywhere-defined finite-dimensional/countable-sum
 functional before selecting its measurable modification. -/
-noncomputable def cutoffHomogenizationErrorFunctional {d : ℕ} [NeZero d]
+noncomputable def cutoffHomogenizationErrorFunctional {d : ℕ}
     (M : ABKModel d) (coefficientScale domainScale : ℤ) (s : ℝ)
-    (sigma : PositiveScalar) : Cutoff.CutoffSample d → ℝ :=
+    (sigma : PositiveScalar) : Cutoff.CutoffSample d → ℝ  :=
   fun omega => √(∑' l : ℕ,
     Ch02.geometricWeight s 2 l *
       cutoffMaxDescendantNormalizedBlockResponseRepresentative M coefficientScale
@@ -222,14 +222,14 @@ noncomputable def cutoffHomogenizationErrorFunctional {d : ℕ} [NeZero d]
         ((originCube d domainScale).scale - (l : ℤ))
         (isotropicComparatorMatrix sigma) omega)
 
-private theorem cutoffHomogenizationErrorFunctional_term_nonneg {d : ℕ} [NeZero d]
+private theorem cutoffHomogenizationErrorFunctional_term_nonneg {d : ℕ}
     (M : ABKModel d) (coefficientScale domainScale : ℤ) {s : ℝ} (hs : 0 < s)
     (sigma : PositiveScalar) (l : ℕ) (omega : Cutoff.CutoffSample d) :
     0 ≤ Ch02.geometricWeight s 2 l *
       cutoffMaxDescendantNormalizedBlockResponseRepresentative M coefficientScale
         (originCube d domainScale)
         ((originCube d domainScale).scale - (l : ℤ))
-        (isotropicComparatorMatrix sigma) omega := by
+        (isotropicComparatorMatrix sigma) omega  := by
   refine mul_nonneg ?_ ?_
   · simpa [Ch02.geometricWeight_eq_old] using
       HCPolySupport.geometricWeight_nonneg l (by positivity : 0 ≤ s * (2 : ℝ))
@@ -238,17 +238,17 @@ private theorem cutoffHomogenizationErrorFunctional_term_nonneg {d : ℕ} [NeZer
         ((originCube d domainScale).scale - (l : ℤ))
         (isotropicComparatorMatrix sigma) omega
 
-theorem cutoffHomogenizationErrorFunctional_nonneg {d : ℕ} [NeZero d]
+theorem cutoffHomogenizationErrorFunctional_nonneg {d : ℕ}
     (M : ABKModel d) (coefficientScale domainScale : ℤ) (s : ℝ)
     (sigma : PositiveScalar) (omega : Cutoff.CutoffSample d) :
-    0 ≤ cutoffHomogenizationErrorFunctional M coefficientScale domainScale s sigma omega :=
+    0 ≤ cutoffHomogenizationErrorFunctional M coefficientScale domainScale s sigma omega  :=
   Real.sqrt_nonneg _
 
-theorem aemeasurable_cutoffHomogenizationErrorFunctional {d : ℕ} [NeZero d]
+theorem aemeasurable_cutoffHomogenizationErrorFunctional {d : ℕ}
     (M : ABKModel d) (coefficientScale domainScale : ℤ) {s : ℝ} (hs : 0 < s)
     (sigma : PositiveScalar) :
     AEMeasurable (cutoffHomogenizationErrorFunctional M coefficientScale domainScale s sigma)
-      (Cutoff.cutoffSampleLaw M).toMeasure := by
+      (Cutoff.cutoffSampleLaw M).toMeasure  := by
   have hterm : ∀ l : ℕ, AEMeasurable
       (fun omega => Ch02.geometricWeight s 2 l *
         cutoffMaxDescendantNormalizedBlockResponseRepresentative M coefficientScale
@@ -270,27 +270,27 @@ theorem aemeasurable_cutoffHomogenizationErrorFunctional {d : ℕ} [NeZero d]
 homogenization error.  The `max 0` is not a fallback: it makes the canonical
 measurable modification nonnegative everywhere, while the following theorem
 records its precise a.e. identity with the nonnegative raw functional. -/
-noncomputable def cutoffHomogenizationErrorRepresentative {d : ℕ} [NeZero d]
+noncomputable def cutoffHomogenizationErrorRepresentative {d : ℕ}
     (M : ABKModel d) (coefficientScale domainScale : ℤ) {s : ℝ} (hs : 0 < s)
-    (sigma : PositiveScalar) : Cutoff.CutoffSample d → ℝ :=
+    (sigma : PositiveScalar) : Cutoff.CutoffSample d → ℝ  :=
   fun omega => max 0 (AEMeasurable.mk
     (cutoffHomogenizationErrorFunctional M coefficientScale domainScale s sigma)
     (aemeasurable_cutoffHomogenizationErrorFunctional M coefficientScale domainScale
       hs sigma) omega)
 
-theorem measurable_cutoffHomogenizationErrorRepresentative {d : ℕ} [NeZero d]
+theorem measurable_cutoffHomogenizationErrorRepresentative {d : ℕ}
     (M : ABKModel d) (coefficientScale domainScale : ℤ) {s : ℝ} (hs : 0 < s)
     (sigma : PositiveScalar) :
     Measurable (cutoffHomogenizationErrorRepresentative M coefficientScale domainScale hs sigma)
-      := by
+       := by
   exact measurable_const.max
     (aemeasurable_cutoffHomogenizationErrorFunctional M coefficientScale domainScale
       hs sigma).measurable_mk
 
-theorem cutoffHomogenizationErrorRepresentative_nonneg {d : ℕ} [NeZero d]
+theorem cutoffHomogenizationErrorRepresentative_nonneg {d : ℕ}
     (M : ABKModel d) (coefficientScale domainScale : ℤ) {s : ℝ} (hs : 0 < s)
     (sigma : PositiveScalar) (omega : Cutoff.CutoffSample d) :
-    0 ≤ cutoffHomogenizationErrorRepresentative M coefficientScale domainScale hs sigma omega :=
+    0 ≤ cutoffHomogenizationErrorRepresentative M coefficientScale domainScale hs sigma omega  :=
   le_max_left _ _
 
 theorem cutoffHomogenizationErrorFunctional_ae_eq_representative

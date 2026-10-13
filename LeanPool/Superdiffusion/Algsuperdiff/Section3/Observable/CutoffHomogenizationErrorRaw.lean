@@ -51,9 +51,9 @@ noncomputable section
 `coefficientScale` specifies the actual lower-infinite cutoff coefficient
 `a_L`, while `domainScale` specifies the cube `\square_m`; neither scale is
 silently substituted for the other. -/
-noncomputable def cutoffHomogenizationErrorRaw {d : ℕ} [NeZero d]
+noncomputable def cutoffHomogenizationErrorRaw {d : ℕ}
     (M : ABKModel d) (coefficientScale domainScale : ℤ) (s : ℝ)
-    (sigma : PositiveScalar) (omega : Cutoff.CutoffSample d) : ℝ :=
+    (sigma : PositiveScalar) (omega : Cutoff.CutoffSample d) : ℝ  :=
   homogenizationErrorAtScale domainScale s
     (Cutoff.coefficientCutoffCoeffOn M coefficientScale omega
       (originCube d domainScale))
@@ -61,13 +61,13 @@ noncomputable def cutoffHomogenizationErrorRaw {d : ℕ} [NeZero d]
 
 /-- The raw cutoff expression is exactly the manuscript's homogenization
 error on the genuine compatible cutoff family. -/
-theorem cutoffHomogenizationErrorRaw_characterization {d : ℕ} [NeZero d]
+theorem cutoffHomogenizationErrorRaw_characterization {d : ℕ}
     (M : ABKModel d) (coefficientScale domainScale : ℤ) (s : ℝ)
     (sigma : PositiveScalar) (omega : Cutoff.CutoffSample d) :
     cutoffHomogenizationErrorRaw M coefficientScale domainScale s sigma omega =
       HomogenizationErrorOnCube (originCube d domainScale) s .infinity (.finite 2)
         (Cutoff.coefficientCutoffTriadicCoeffFamily M coefficientScale omega)
-        (isotropicComparatorMatrix sigma) := by
+        (isotropicComparatorMatrix sigma)  := by
   exact homogenizationErrorAtScale_characterization domainScale s
     (Cutoff.coefficientCutoffCoeffOn M coefficientScale omega
       (originCube d domainScale)) sigma

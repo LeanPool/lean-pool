@@ -55,7 +55,7 @@ two-argument representative.
 
 Carrier bookkeeping only.  `σ_m` occurs solely as the comparator of the two
 error functionals, and it is the SAME comparator on both sides
-(`isotropicComparatorMatrix (σ_m) = scalarMatrix (σ_m)` definitionally).  No
+(`isotropicComparatorMatrix (σ_m) = scalarMatrix (σ_m)` definitionally). No
 `ν`-division, no `ν ↔ σ` conversion, no flat elliptic estimate.
 -/
 
@@ -110,7 +110,7 @@ theorem fluxCorrectedCoeffFamily_coeffOn_aeeq_rootPointwise
 
 /-- The descendant maximum at one physical scale is the same for CoarseGraining's
 root pointwise family and for the proved canonical flux-corrected family. -/
-theorem maxDescendant_rootPointwise_eq_fluxCorrectedCoeffFamily [NeZero d]
+theorem maxDescendant_rootPointwise_eq_fluxCorrectedCoeffFamily
     (M : ABKModel d) (L m : ℤ) (Q : TriadicCube d) (omega : Cutoff.CutoffSample d)
     {k : ℤ} (hk : k ≤ Q.scale) (a0 : Mat d) :
     Ch02.maxDescendantNormalizedBlockResponseAtScale Q k
@@ -123,12 +123,12 @@ theorem maxDescendant_rootPointwise_eq_fluxCorrectedCoeffFamily [NeZero d]
 
 /-! ## 3. The carrier identity at one sample of the proved event -/
 
-private theorem twoScale_term_nonneg [NeZero d] (M : ABKModel d) (L m n : ℤ)
+private theorem twoScale_term_nonneg (M : ABKModel d) (L m n : ℤ)
     {s : ℝ} (hs : 0 < s) (l : ℕ) (omega : Cutoff.CutoffSample d) :
     0 ≤ Ch02.geometricWeight s 2 l *
       fluxCorrectedMaxDescendantNormalizedBlockResponseRepresentative M L m
         (originCube d m) (n - (l : ℤ))
-        (isotropicComparatorMatrix (Annealed.sigmaBar M m)) omega := by
+        (isotropicComparatorMatrix (Annealed.sigmaBar M m)) omega  := by
   refine mul_nonneg ?_ ?_
   · simpa only [Ch02.geometricWeight_eq_old] using
       HCPolySupport.geometricWeight_nonneg l (by linarith only [hs] : 0 ≤ s * (2 : ℝ))

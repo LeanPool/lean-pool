@@ -39,8 +39,7 @@ variable {d : ℕ} {U : Set (Vec d)}
 
 /-- The scalar residual of an `H¹₀` representative of the shifted resolvent
 is almost everywhere bounded by twice the forcing bound. -/
-theorem abs_sub_alpha_mul_toFun_le_two_mul_ae [NeZero d]
-    (a : CoeffField d) (hU : IsOpenBoundedConvexDomain U)
+theorem abs_sub_alpha_mul_toFun_le_two_mul_ae (a : CoeffField d) (hU : IsOpenBoundedConvexDomain U)
     {alpha lam Lam C : ℝ} (hAlpha : 0 < alpha) (hLam : 0 < lam)
     (hEll : IsEllipticFieldOn lam Lam U a) (f : ScalarL2 U)
     (hC : 0 ≤ C) (hf : ∀ᵐ x ∂volumeMeasureOn U, |f x| ≤ C)
@@ -48,7 +47,7 @@ theorem abs_sub_alpha_mul_toFun_le_two_mul_ae [NeZero d]
     (hu : u.toH1Function.toScalarL2 =
       alphaShiftedResolvent a hAlpha hLam hEll f) :
     ∀ᵐ x ∂volumeMeasureOn U,
-      |f x - alpha * u.toH1Function.toFun x| ≤ 2 * C := by
+      |f x - alpha * u.toH1Function.toFun x| ≤ 2 * C  := by
   have hres := abs_alpha_mul_alphaShiftedResolvent_le_ae
     a hU hAlpha hLam hEll f C hC hf
   have huAe : ∀ᵐ x ∂volumeMeasureOn U,
@@ -67,7 +66,7 @@ theorem abs_sub_alpha_mul_toFun_le_two_mul_ae [NeZero d]
 /-- A bounded forcing admits an `H¹₀` representative of its shifted
 resolvent which solves the unshifted scalar equation with almost everywhere
 bounded residual. -/
-theorem exists_h10Function_scalarForced_residual_bound [NeZero d]
+theorem exists_h10Function_scalarForced_residual_bound
     (hU : IsOpenBoundedConvexDomain U) (a : CoeffField d)
     {alpha lam Lam C : ℝ} (hAlpha : 0 < alpha) (hLam : 0 < lam)
     (hEll : IsEllipticFieldOn lam Lam U a) (f : ScalarL2 U)
@@ -81,7 +80,7 @@ theorem exists_h10Function_scalarForced_residual_bound [NeZero d]
           (fun x => f x - alpha * u.toH1Function.toFun x)
           u.toH1Function ∧
         ∀ᵐ x ∂volumeMeasureOn U,
-          |f x - alpha * u.toH1Function.toFun x| ≤ 2 * C := by
+          |f x - alpha * u.toH1Function.toFun x| ≤ 2 * C  := by
   obtain ⟨u, -, hweak, hu⟩ :=
     exists_h10Function_alphaShiftedResolvent hU a hAlpha hLam hEll f
   refine ⟨u, hu, hweak, ?_, ?_⟩

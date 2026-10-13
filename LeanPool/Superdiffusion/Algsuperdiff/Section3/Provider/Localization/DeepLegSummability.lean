@@ -228,7 +228,7 @@ private theorem blockMatrixOfCoeffNormSqBound_mono {lam L L' : ℝ} (hL : 0 ≤ 
 `k` and the isotropic comparator `sigmaBar_k` is bounded by an explicit
 expression in any upper bound `L` for the cutoff's cube ellipticity constant
 and any upper bound `T` for `sigmaBar_k + sigmaBar_k⁻¹`. -/
-theorem normalizedBlockResponseUniformBound_coefficientCutoff_isotropic_le [NeZero d]
+theorem normalizedBlockResponseUniformBound_coefficientCutoff_isotropic_le
     (M : ABKModel d) (Q : TriadicCube d) (omega : CutoffSample d) (k : ℤ) {L T : ℝ}
     (hL : coefficientCutoffCubeEllipticityUpper M k omega Q ≤ L)
     (hT : (Annealed.sigmaBar M k : ℝ) + ((Annealed.sigmaBar M k : ℝ))⁻¹ ≤ T) :

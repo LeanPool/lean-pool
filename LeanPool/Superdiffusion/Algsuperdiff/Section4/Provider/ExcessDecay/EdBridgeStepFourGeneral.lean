@@ -40,12 +40,12 @@ variable {d : ℕ}
 def edBridgeRemWeightGen (d : ℕ) (Cs : ℝ) (k : ℕ) : ℝ :=
   triangleRemainderConst d Cs k * Real.sqrt (((3 : ℝ) ^ (2 : ℤ)) ^ d)
 
-theorem edBridgeRemWeightGen_nonneg (d : ℕ) [NeZero d] {Cs : ℝ} (hCs : 0 ≤ Cs) (k : ℕ) :
+theorem edBridgeRemWeightGen_nonneg (d : ℕ) {Cs : ℝ} (hCs : 0 ≤ Cs) (k : ℕ) :
     0 ≤ edBridgeRemWeightGen d Cs k :=
   mul_nonneg (triangleRemainderConst_nonneg d hCs k) (Real.sqrt_nonneg _)
 
 /-- The `ε` constant of the bridge at a general Schauder constant `Cs`. -/
-def edBridgeEpsConstGen (d : ℕ) [NeZero d] (Cs C : ℝ) (k : ℕ) : ℝ :=
+def edBridgeEpsConstGen (d : ℕ) (Cs C : ℝ) (k : ℕ) : ℝ :=
   3 * edBridgeRemWeightGen d Cs k * C * endpointConst d (1 / 9 : ℝ)
 
 /-- ** residue 4 at a general Schauder constant.**

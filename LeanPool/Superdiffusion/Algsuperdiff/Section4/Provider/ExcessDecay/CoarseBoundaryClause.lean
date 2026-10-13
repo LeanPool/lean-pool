@@ -339,7 +339,7 @@ threaded additively at coefficient 1:
 `hutr` and `hvdat` are exactly the two frame identities
 `BoundaryEnergyRebase`'s proof already carries (`utr = u(·+c)` by `rfl`,
 `v.boundaryData = h(·+c)` by its own conclusion). -/
-theorem normalizedL2On_coveringDifference_le_meanControl [NeZero d]
+theorem normalizedL2On_coveringDifference_le_meanControl
     {n m : ℤ} {x z : Vec d} {S : ℝ} {a : CoeffFamily d} {g : Vec d → Vec d}
     (hnm : n + 2 ≤ m) (hx : x ∈ openCubeSet (originCube d m))
     (hgeom : (fun y => x + y) '' openCubeSet (originCube d n) ⊆

@@ -191,11 +191,11 @@ lattice cubes of the annulus `□_n ∖ □_{n-1}` -- the manuscript's own index
 and the family `annularResponseMaxPref … n (n−1)` maximizes over exactly them.
 The printed coefficient `1` on the maximum is what `3^{-d}·(3^d − 1) ≤ 1`
 gives. -/
-theorem centreResponseMax_le_annulus_add [NeZero d] (M : ABKModel d) (L m : ℤ)
+theorem centreResponseMax_le_annulus_add (M : ABKModel d) (L m : ℤ)
     (omega : Cutoff.CutoffSample d) (n : ℤ) :
     centreResponseMax M L m omega n
       ≤ annularResponseMaxPref M L m omega n (n - 1)
-        + ((3 : ℝ) ^ d)⁻¹ * centreResponseMax M L m omega (n - 1) := by
+        + ((3 : ℝ) ^ d)⁻¹ * centreResponseMax M L m omega (n - 1)  := by
   classical
   have hJann0 : (0 : ℝ) ≤ annularResponseMaxPref M L m omega n (n - 1) :=
     annularResponseMaxPref_nonneg M L m omega n (n - 1)

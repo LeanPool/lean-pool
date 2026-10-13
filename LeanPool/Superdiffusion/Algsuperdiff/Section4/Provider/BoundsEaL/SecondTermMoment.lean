@@ -197,8 +197,7 @@ private theorem secondTermMomentCore {Omega : Type*} [MeasurableSpace Omega]
 the four-factor Hölder of the module docstring at the proved Step-4 bullets.
 Both budgets are of the printed shape `C c⋆^{-1}`; the standing regime is taken
 at the maximum of the two proved constants. -/
-theorem exists_lintegral_rpow_step3SecondTerm_le (d : ℕ) [NeZero d] :
-    ∃ CL CB : ℝ, 6 ≤ CL ∧ 6 ≤ CB ∧
+theorem exists_lintegral_rpow_step3SecondTerm_le (d : ℕ) : ∃ CL CB : ℝ, 6 ≤ CL ∧ 6 ≤ CB ∧
       ∀ M : ABKModel d,
         M.gamma ≤ ((max CL CB)⁻¹) ^ 10 * (Disorder.cstar M) ^ 10 →
         M.gamma ≤ 1 / 8 → ∀ Cd : ℝ, 0 ≤ Cd →
@@ -209,7 +208,7 @@ theorem exists_lintegral_rpow_step3SecondTerm_le (d : ℕ) [NeZero d] :
                   (lFreeValueSlot m (tailSeriesGauge m) R omega)) ^ q
                 ∂(Cutoff.cutoffSampleLaw M).toMeasure) ≤
               ENNReal.ofReal (secondTermMajorant d M (CL * (Disorder.cstar M)⁻¹)
-                (CB * (Disorder.cstar M)⁻¹) Cd m R.scale q) ^ q := by
+                (CB * (Disorder.cstar M)⁻¹) Cd m R.scale q) ^ q  := by
   obtain ⟨CL, hCL6, hlamAll⟩ := exists_lintegral_rpow_inv_unitCubeLambda_twoGamma_le d
   obtain ⟨CB, hCB6, hbrAll⟩ := exists_lintegral_rpow_step3Bracket_le d
   refine ⟨CL, CB, hCL6, hCB6, ?_⟩

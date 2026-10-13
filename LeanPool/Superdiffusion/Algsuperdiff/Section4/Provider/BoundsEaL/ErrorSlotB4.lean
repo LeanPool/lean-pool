@@ -136,7 +136,7 @@ theorem exists_isTwoTermBigOWith_annularErrorObservable_translate (d : ℕ) :
 the observable of the display above.**  This is the honest interface: the literal
 object is a.e. measurable only, so it can carry the display only through this
 identification. -/
-theorem ae_eq_annularErrorObservable_translate [NeZero d] (M : ABKModel d)
+theorem ae_eq_annularErrorObservable_translate (M : ABKModel d)
     (R : TriadicCube d) (s : {s : ℝ // 0 < s}) :
     (fun omega : Cutoff.CutoffSample d =>
         Algsuperdiff.Frozen.Section24.unitCubeHomogenizationError (s : ℝ)
@@ -147,7 +147,7 @@ theorem ae_eq_annularErrorObservable_translate [NeZero d] (M : ABKModel d)
       fun omega : Cutoff.CutoffSample d =>
         Support.annularErrorObservable M R.scale s
           (Cutoff.translateCutoffSample
-            (Support.triadicLatticePoint R.scale R.index) omega) :=
+            (Support.triadicLatticePoint R.scale R.index) omega)  :=
   unitCubeHomogenizationError22_unitRescaledCutoffCoeff_ae_eq_annularErrorObservable
     M R.scale R.index s
 

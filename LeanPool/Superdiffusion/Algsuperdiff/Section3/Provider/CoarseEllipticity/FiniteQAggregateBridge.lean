@@ -46,12 +46,12 @@ variable {d : ℕ}
 /-- Chapter 4's inverse finite-`q` lower ellipticity is exactly the defining
 weighted `ell^(q/2)` aggregate.  The non-elliptic branch is included: both
 sides are zero there. -/
-theorem lambdaSqCoeffField_inv_eq_rpow [NeZero d] (Q : TriadicCube d)
+theorem lambdaSqCoeffField_inv_eq_rpow (Q : TriadicCube d)
     (a : RegCoeffField d) {s q : ℝ} (hsq : 0 ≤ s * q) (hq : 0 < q) :
     (Book.Ch04.lambdaSqCoeffField Q s (.finite q) a)⁻¹ =
       (∑' n : ℕ, Book.Ch02.geometricWeight s q n *
         Book.Ch04.maxDescendantSigmaStarInvMatrixNormCoeffFieldAtScale Q
-            (Q.scale - (n : ℤ)) a ^ (q / 2)) ^ (2 / q) := by
+            (Q.scale - (n : ℤ)) a ^ (q / 2)) ^ (2 / q)  := by
   classical
   by_cases ha : Book.Ch04.AELocallyUniformlyEllipticField a
   · simp only [Book.Ch04.lambdaSqCoeffField,
@@ -67,7 +67,7 @@ theorem lambdaSqCoeffField_inv_eq_rpow [NeZero d] (Q : TriadicCube d)
 is the same scalar moved inside every depth of its defining finite-`q`
 aggregate.  This is the exact carrier needed to split deterministic and random
 profiles before taking the `2/q` root. -/
-theorem cutoffLowerEllipticityInv_mul_eq_rpow [NeZero d] (M : ABKModel d)
+theorem cutoffLowerEllipticityInv_mul_eq_rpow (M : ABKModel d)
     (m L : ℤ) {s r : ℝ} (hs : 0 < s) {q : CoarseEllipticityExponent}
     (hqval : q.1 = Book.Ch02.MultiscaleExponent.finite r) (hr : 0 < r)
     {scaling : ℝ} (hscaling : 0 ≤ scaling) (omega : Cutoff.CutoffSample d) :
@@ -76,7 +76,7 @@ theorem cutoffLowerEllipticityInv_mul_eq_rpow [NeZero d] (M : ABKModel d)
         (scaling *
           Book.Ch04.maxDescendantSigmaStarInvMatrixNormCoeffFieldAtScale
             (originCube d m) (m - (n : ℤ))
-            (Cutoff.coefficientCutoff M.nu L omega)) ^ (r / 2)) ^ (2 / r) := by
+            (Cutoff.coefficientCutoff M.nu L omega)) ^ (r / 2)) ^ (2 / r)  := by
   let a : RegCoeffField d := Cutoff.coefficientCutoff M.nu L omega
   let H : ℕ → ℝ := fun n =>
     Book.Ch04.maxDescendantSigmaStarInvMatrixNormCoeffFieldAtScale

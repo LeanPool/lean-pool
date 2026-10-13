@@ -74,15 +74,14 @@ def dhPotentialForm (U : Domain d) (a : CoeffOn U) (h : LInfSkewMatrixFieldOn U)
 
 /-! ## Besov regularity of the Term BC field at the pure-potential loading -/
 
-theorem forceBesovRegularity_potTermBCField [NeZero d]
-    (h : UnitCubeSkewW2Infinity d) {R : TriadicCube d}
+theorem forceBesovRegularity_potTermBCField (h : UnitCubeSkewW2Infinity d) {R : TriadicCube d}
     (hsub : ((cubeDomain R : Domain d) : Set (Vec d)) ⊆
       ((cubeDomain (originCube d 0) : Domain d) : Set (Vec d)))
     (u : H10Function ((cubeDomain R : Domain d) : Set (Vec d)))
     (hBdd : BddAbove (Set.range fun N : ℕ =>
       cubeBesovNegativeVectorPartialSeminormTwo R (3 / 8) N
         (fun x => u.toH1Function.grad x))) :
-    Ch03.ForceBesovRegularity R (3 / 8) (fluxTermBCField h u) :=
+    Ch03.ForceBesovRegularity R (3 / 8) (fluxTermBCField h u)  :=
   forceBesovRegularity_fluxTermBCField h hsub u hBdd
 
 /-! ## The explicit constants -/
@@ -91,7 +90,7 @@ theorem forceBesovRegularity_potTermBCField [NeZero d]
 def potCubeConstA (d : ℕ) : ℝ := 2 * fluxPairingConst d * termABesovConst d
 
 /-- The Term BC coefficient of the pure-potential sub-cube `D_h` bound. -/
-def potCubeConstB (d : ℕ) [NeZero d] : ℝ :=
+def potCubeConstB (d : ℕ) : ℝ  :=
   2 * fluxPairingConst d * fluxTermBCConst d * potWitnessConst
 
 theorem potCubeConstA_nonneg (d : ℕ) : 0 ≤ potCubeConstA d := by
@@ -100,7 +99,7 @@ theorem potCubeConstA_nonneg (d : ℕ) : 0 ≤ potCubeConstA d := by
   unfold potCubeConstA
   positivity
 
-theorem potCubeConstB_nonneg (d : ℕ) [NeZero d] : 0 ≤ potCubeConstB d := by
+theorem potCubeConstB_nonneg (d : ℕ) : 0 ≤ potCubeConstB d  := by
   have h1 := fluxPairingConst_nonneg d
   have h2 := fluxTermBCConst_nonneg d
   have h3 := potWitnessConst_nonneg

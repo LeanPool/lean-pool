@@ -135,7 +135,7 @@ private theorem coefficient_truncation_error_le
 
 /-- A nonnegative Sobolev test function truncated against a nonnegative
 zero-trace function. -/
-theorem exists_part_truncation [NeZero d]
+theorem exists_part_truncation
     (hV : IsOpenBoundedConvexDomain V) (φ : H1Function V)
     (u : ZeroTraceSobolev V) (K : ℝ) (hK : 0 ≤ K)
     (hφ : ∀ᵐ x ∂volumeMeasureOn V, 0 ≤ φ.toFun x)
@@ -246,8 +246,7 @@ theorem exists_part_truncation [NeZero d]
       rfl
 
 /-- The weak equation extends to nonnegative ambient Sobolev test functions. -/
-theorem part_solution_test_inequality [NeZero d]
-    (a : CoeffField d) (hV : IsOpenBoundedConvexDomain V)
+theorem part_solution_test_inequality (a : CoeffField d) (hV : IsOpenBoundedConvexDomain V)
     {α lam Lam : ℝ} (hα : 0 < α) (hlam : 0 < lam)
     (hEll : IsEllipticFieldOn lam Lam V a)
     (f : ScalarL2 V) (u : ZeroTraceSobolev V)
@@ -259,7 +258,7 @@ theorem part_solution_test_inequality [NeZero d]
     α * inner ℝ (ZeroTraceSobolev.toL2 u) φ.toScalarL2 +
         coefficientPairing a V (ZeroTraceSobolev.gradient u)
           φ.gradToHilbertVectorL2 ≤
-      inner ℝ f φ.toScalarL2 := by
+      inner ℝ f φ.toScalarL2  := by
   let M : ℝ := max Lam 1
   have hM : 0 < M := lt_of_lt_of_le (by norm_num) (le_max_right Lam 1)
   have hLamM : Lam ≤ M := le_max_left Lam 1

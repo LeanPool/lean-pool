@@ -106,7 +106,7 @@ supplies from the cell's geometric membership alone.
   each cell together with
   ```
     cubeFamilyAverage (mesoCubeGrid d Kc (Kc - j))
-      (fun R => (int_omega stripCellMajorant ... R omega)^2)  <=  Cstrip .
+      (fun R => (int_omega stripCellMajorant ... R omega)^2) <= Cstrip .
   ```
   That residual is **not** proved here.
 
@@ -309,7 +309,7 @@ The left-hand side of
 
 ```
   cubeFamilyAverage (mesoCubeGrid d Kc (Kc - j))
-    (fun R => (int_omega fluct_R)^2)  <=  Cstrip
+    (fun R => (int_omega fluct_R)^2) <= Cstrip
 ```
 
 is below the same average taken at the **crude elliptic majorant** instead of the
@@ -322,7 +322,7 @@ no Besov datum and no interior restriction left in it.
 on the sample integrability of the majorant at each cell of the mesh and on the
 majorant's own grid average `hmaj`.  Neither the integrability nor the
 measurability of the cell integrand itself is assumed. -/
-theorem cubeFamilyAverage_sq_integral_meshFluctuationCellIntegrand_le_of_majorant [NeZero d]
+theorem cubeFamilyAverage_sq_integral_meshFluctuationCellIntegrand_le_of_majorant
     (M : ABKModel d) (n : ℤ) (h : ℕ) (Kc : ℤ) (j : ℕ) (e e' : Vec d)
     (wD : ShellSeq d → H10Function (openCubeSet (originCube d Kc)))
     (wN : ShellSeq d → H1MeanZeroFunction (openCubeSet (originCube d Kc)))

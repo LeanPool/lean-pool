@@ -43,10 +43,11 @@ noncomputable section
 
 variable {d : ℕ} [NeZero d]
 
+omit [NeZero d] in
 /-- The common stretched-exponential envelope tends to zero at infinity. -/
 theorem tendsto_streamUniformExhaustionEnvelope_atTop
     (M : ABKModel d) (omega : FullSample d M.gamma) :
-    Tendsto (streamUniformExhaustionEnvelope M omega) atTop (nhds 0) := by
+    Tendsto (streamUniformExhaustionEnvelope M omega) atTop (nhds 0)  := by
   have hpow : Tendsto (fun s : ℝ ↦ s ^ (1 / 3 : ℝ)) atTop atTop :=
     tendsto_rpow_atTop (by norm_num)
   have hrate : 0 < streamUniformExhaustionRate M omega := by

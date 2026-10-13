@@ -221,7 +221,7 @@ theorem isSolenoidalOn_matVecMul_of_isPotentialOn_of_transpose_eq_neg
 /-- Subtracting a constant skew matrix from the coefficient field does not move
 the harmonic class. -/
 theorem isAHarmonicGradient_sub_const_skew {U : Set (Vec d)}
-    [MeasureTheory.IsFiniteMeasure (volumeMeasureOn U)] (hU : IsOpen U)
+    (hU : IsOpen U)
     {H : Mat d} (hH : matTranspose H = -H) {c : CoeffField d} {f : Vec d → Vec d}
     (hflux : MemVectorL2 U (fun x => matVecMul (c x) (f x)))
     (hf : IsAHarmonicGradient c U f) :

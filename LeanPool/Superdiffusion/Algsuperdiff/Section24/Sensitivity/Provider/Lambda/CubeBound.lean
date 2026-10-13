@@ -63,8 +63,7 @@ variable {d : ℕ}
 
 /-! ## Besov regularity of the Term BC field on a sub-cube -/
 
-theorem forceBesovRegularity_fluxTermBCField [NeZero d]
-    (h : UnitCubeSkewW2Infinity d) {R : TriadicCube d}
+theorem forceBesovRegularity_fluxTermBCField (h : UnitCubeSkewW2Infinity d) {R : TriadicCube d}
     (hsub : ((cubeDomain R : Domain d) : Set (Vec d)) ⊆
       ((cubeDomain (originCube d 0) : Domain d) : Set (Vec d)))
     (u : H10Function ((cubeDomain R : Domain d) : Set (Vec d)))
@@ -72,7 +71,7 @@ theorem forceBesovRegularity_fluxTermBCField [NeZero d]
       cubeBesovNegativeVectorPartialSeminormTwo R (3 / 8) N
         (fun x => u.toH1Function.grad x))) :
     Ch03.ForceBesovRegularity R (3 / 8) (fluxTermBCField h u) where
-  memLp := memLp_fluxTermBCField_two h hsub u
+  memLp  := memLp_fluxTermBCField_two h hsub u
   partialSeminorms_bddAbove := by
     classical
     have hg : 0 ≤ h.gradientW1Infinity := gradientW1Infinity_nonneg h
@@ -110,10 +109,10 @@ theorem fluxPairingConst_nonneg (d : ℕ) : 0 ≤ fluxPairingConst d := by
   exact mul_nonneg h1 h2
 
 /-- The explicit constant of the pure-flux sub-cube `D_h` bound. -/
-def fluxCubeConst (d : ℕ) [NeZero d] : ℝ :=
+def fluxCubeConst (d : ℕ) : ℝ  :=
   2 * fluxPairingConst d * fluxTermBCConst d * fluxWitnessConst
 
-theorem fluxCubeConst_nonneg (d : ℕ) [NeZero d] : 0 ≤ fluxCubeConst d := by
+theorem fluxCubeConst_nonneg (d : ℕ) : 0 ≤ fluxCubeConst d  := by
   have h1 := fluxPairingConst_nonneg d
   have h2 := fluxTermBCConst_nonneg d
   have h3 := fluxWitnessConst_nonneg

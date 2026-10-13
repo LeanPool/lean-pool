@@ -67,17 +67,16 @@ noncomputable section
 variable {d : ℕ}
 
 /-- A common threshold constant for gauge and potential sensitivity estimates. -/
-def bigLambdaGateConst (d : ℕ) [NeZero d] : ℝ :=
+def bigLambdaGateConst (d : ℕ) : ℝ  :=
   max (gaugeGateConst d) (4 * potCubeConstB d)
 
-theorem bigLambdaGateConst_pos (d : ℕ) [NeZero d] : 0 < bigLambdaGateConst d :=
+theorem bigLambdaGateConst_pos (d : ℕ) : 0 < bigLambdaGateConst d  :=
   lt_of_lt_of_le (gaugeGateConst_pos d) (le_max_left _ _)
 
-theorem gaugeGateConst_le_bigLambdaGateConst (d : ℕ) [NeZero d] :
-    gaugeGateConst d ≤ bigLambdaGateConst d := le_max_left _ _
+theorem gaugeGateConst_le_bigLambdaGateConst (d : ℕ) : gaugeGateConst d ≤ bigLambdaGateConst d  := le_max_left _ _
 
-theorem four_mul_potCubeConstB_le_bigLambdaGateConst (d : ℕ) [NeZero d] :
-    4 * potCubeConstB d ≤ bigLambdaGateConst d := le_max_right _ _
+theorem four_mul_potCubeConstB_le_bigLambdaGateConst (d : ℕ) :
+    4 * potCubeConstB d ≤ bigLambdaGateConst d  := le_max_right _ _
 
 theorem gaugeGate_of_bigLambdaGate [NeZero d]
     (a : CoeffOn (cubeDomain (originCube d 0))) (h : UnitCubeSkewW2Infinity d)

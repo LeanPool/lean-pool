@@ -74,7 +74,7 @@ pathwise for the *literal* observables
 (`cutoffUpperEllipticityLiteral_two_eq_top_add_gridSum` and its lower twin;
 names corrected; the current conditional/A inventory describes the headline
 families) and only almost everywhere for the representatives
-(`cutoffUpperEllipticity_ae_le_top_add_gridSum`).  The route suggested by the
+(`cutoffUpperEllipticity_ae_le_top_add_gridSum`). The route suggested by the
 genuine centered-cube `rfl` between the two exported observables did **not**
 extend: that equality identified two *representatives*, not a representative
 with a literal, and two negative controls confirmed it (`cutoffUpperEllipticity
@@ -113,10 +113,10 @@ are written against, and are now provable in one line from the pointwise forms.
   deterministic content of the lower leg's `hgrid` conjunct is now available
   with the quantifier order `∀ omega, ∀ L`.  The analytic content of `hgrid`
   remains an input of the historical consumers (`ScaleSummation.lean`,
-  `LowerLeg.lean`).  The concrete downstream theorem
+  `LowerLeg.lean`). The concrete downstream theorem
   `superposedFlux_coarse_ellipticity_lower_leg` supplies the lower leg through
   a different finite-`q` pre-split route, so this conditional seam is no longer
-  the global lower-leg status.  The separate downstream theorem
+  the global lower-leg status. The separate downstream theorem
   `superposedFlux_coarse_ellipticity_upper_leg` supplies the upper leg.
 
 ## Main results
@@ -289,7 +289,7 @@ theorem maxSigmaStarInv_sub_nonneg (Q : TriadicCube d) (n : ℕ)
 /-- `lambda_{s,q}^{-1}` unfolded: the negative root of the source's series is
 inverted to the positive root, at every coefficient family and with no
 positivity side condition. -/
-theorem lambdaSqFinite_inv_eq_rpow [NeZero d] (Q : TriadicCube d) {s q : ℝ}
+theorem lambdaSqFinite_inv_eq_rpow (Q : TriadicCube d) {s q : ℝ}
     (hsq : 0 ≤ s * q) (a : Book.Ch02.TriadicCoeffFamily d) :
     (Book.Ch02.lambdaSqFinite Q s q a)⁻¹
       = (∑' n : ℕ, Book.Ch02.geometricWeight s q n *

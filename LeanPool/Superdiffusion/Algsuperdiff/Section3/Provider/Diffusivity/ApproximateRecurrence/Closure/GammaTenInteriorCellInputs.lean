@@ -99,11 +99,11 @@ variable {d : ℕ}
 `e.nablaw.in.L.eight`, the stream forcing because it is continuous.
 
 Proved from `memLp_eight_grad_closureNeumannAlong`. -/
-theorem memLp_eight_neumannFluxField_closure [NeZero d] (hd : 2 ≤ d) (M : ABKModel d)
+theorem memLp_eight_neumannFluxField_closure (hd : 2 ≤ d) (M : ABKModel d)
     (n : ℤ) (h : ℕ) (K : ℕ) (e' : Vec d) (omega : ShellSeq d) :
     MemLp (neumannFluxField (Annealed.sigmaBar M n) omega n (n + (h : ℤ)) e'
         (closureNeumannAlong M n h K e' omega)) (8 : ℝ≥0∞)
-      (normalizedCubeMeasure (originCube d (K : ℤ))) :=
+      (normalizedCubeMeasure (originCube d (K : ℤ)))  :=
   (memLp_eight_grad_closureNeumannAlong hd M n h K e' omega).add
     (memLp_normalizedCubeMeasure_of_continuous (originCube d (K : ℤ)) 8
       (continuous_streamForcing ((Annealed.sigmaBar M n : ℝ))⁻¹ omega n (n + (h : ℤ)) e'))
@@ -143,14 +143,14 @@ carrier.**
 Conditional on `hd` and the cell data `hsc`, `hsub`.
 
 Proved from `memLp_eight_grad_closureNeumannAlong`. -/
-theorem measurable_meshOscillationCell_closureFlux_cutoffSample [NeZero d]
+theorem measurable_meshOscillationCell_closureFlux_cutoffSample
     (hd : 2 ≤ d) (M : ABKModel d) (n : ℤ) (h : ℕ) (K : ℕ) (e' : Vec d)
     {nn : ℤ} (R : TriadicCube d) (hsc : R.scale = nn)
     (hsub : openCubeSet R ⊆ openCubeSet (originCube d (K : ℤ))) :
     Measurable fun omega : CutoffSample d =>
       meshOscillationCell nn
         (neumannFluxField (Annealed.sigmaBar M n) omega.val n (n + (h : ℤ)) e'
-          (closureNeumannAlong M n h K e' omega.val)) R := by
+          (closureNeumannAlong M n h K e' omega.val)) R  := by
   have hL8 : ∀ omega : ShellSeq d,
       MemLp (neumannFluxField (Annealed.sigmaBar M n) omega n (n + (h : ℤ)) e'
           (closureNeumannAlong M n h K e' omega)) (8 : ℝ≥0∞)
@@ -173,7 +173,7 @@ Conditional on `hd`, the scale gates `hnn`, `hh`, the cell data `hsc`, `hsub`, a
 Neumann gradient cell's own fourth-power integrability `hoscInt`.
 
 Proved from `memLp_eight_grad_closureNeumannAlong` through the measurability. -/
-theorem integrable_meshOscillationCell_pow_four_closureFlux_cutoffSample [NeZero d]
+theorem integrable_meshOscillationCell_pow_four_closureFlux_cutoffSample
     (hd : 2 ≤ d) (M : ABKModel d) (n : ℤ) (h : ℕ) (K : ℕ) (e' : Vec d)
     (hh : 0 < h) {nn : ℤ} (hnn : nn ≤ n) (R : TriadicCube d) (hsc : R.scale = nn)
     (hsub : openCubeSet R ⊆ openCubeSet (originCube d (K : ℤ)))
@@ -185,7 +185,7 @@ theorem integrable_meshOscillationCell_pow_four_closureFlux_cutoffSample [NeZero
         meshOscillationCell nn
           (neumannFluxField (Annealed.sigmaBar M n) omega.val n (n + (h : ℤ)) e'
             (closureNeumannAlong M n h K e' omega.val)) R ^ (4 : ℕ))
-      (cutoffSampleLaw M).toMeasure := by
+      (cutoffSampleLaw M).toMeasure  := by
   have hlt : n < n + (h : ℤ) := by
     have h1 : (1 : ℤ) ≤ (h : ℤ) := by exact_mod_cast hh
     omega

@@ -70,8 +70,8 @@ variable {d : ℕ}
 
 /-- The summand of `MajorantSlots.step3DisplayAt`: the `(2,2)` homogenization error
 leg. -/
-def step3FirstTerm [NeZero d] (C : ℝ) (M : ABKModel d) (m : ℤ) (R : TriadicCube d)
-    (omega : Cutoff.CutoffSample d) (s grad : ℝ) : ℝ :=
+def step3FirstTerm (C : ℝ) (M : ABKModel d) (m : ℤ) (R : TriadicCube d)
+    (omega : Cutoff.CutoffSample d) (s grad : ℝ) : ℝ  :=
   C * ((Annealed.sigmaBar M m : ℝ)⁻¹ * (Annealed.sigmaBar M (R.scale - 2) : ℝ)) *
       Real.rpow (1 + grad *
           (unitCubeLambda (2 * M.gamma) (.finite 2)
@@ -255,7 +255,7 @@ R.scale` once (B3) is applied at both `σ` indices: `σ_m^{-1}·R_{B6a}` and
 `R_{B5}·R_{B6a}` are both `O(√q √γ)`, so the whole term is `O(q γ)`, which the
 anchor's `(√p (s^{-1}+√(m−n)) √γ)²` dominates.  This is one of the two summands
 Step 5 calls straightforward. -/
-theorem exists_lintegral_rpow_step3ThirdTerm_le (d : ℕ) [NeZero d] :
+theorem exists_lintegral_rpow_step3ThirdTerm_le (d : ℕ) :
     ∃ C : ℝ, 6 ≤ C ∧
       ∀ M : ABKModel d, M.gamma ≤ (C⁻¹) ^ 10 * (Disorder.cstar M) ^ 10 →
         ∀ Cd : ℝ, 0 ≤ Cd → ∀ (m : ℤ) (R : TriadicCube d), R.scale ≤ m →
@@ -358,7 +358,7 @@ Because `R_{B4}(4q)` is the printed `C s^{-1}q^{1/2}γ^{1/2} + Cq²
 e^{-C^{-1}γ^{-1}}` and `R_bracket = 1 + O(√q√γ)`
 (`PerCubeBracket.step3Bracket_majorant_le`), this majorant is `O(q s^{-2} γ)`
 uniformly in the descendant scale — the anchor's own `(√p s^{-1} √γ)²`. -/
-theorem lintegral_rpow_step3FirstTerm_le [NeZero d] (M : ABKModel d) (m : ℤ)
+theorem lintegral_rpow_step3FirstTerm_le (M : ABKModel d) (m : ℤ)
     (R : TriadicCube d) {s Cd q RB RE : ℝ} (hs : 0 < s)
     (hgam : M.gamma ≤ 1 / 8) (hCd : 0 ≤ Cd) (hq : 1 ≤ q) (hRB : 0 ≤ RB) (hRE : 0 ≤ RE)
     (hratio : ((Annealed.sigmaBar M m : ℝ))⁻¹ * (Annealed.sigmaBar M (R.scale - 2) : ℝ) ≤ 4)
@@ -379,7 +379,7 @@ theorem lintegral_rpow_step3FirstTerm_le [NeZero d] (M : ABKModel d) (m : ℤ)
         ENNReal.ofReal (step3FirstTerm Cd M m R omega s
           (lFreeGradSlot m (tailSeriesGauge m) R omega)) ^ q
         ∂(Cutoff.cutoffSampleLaw M).toMeasure) ≤
-      ENNReal.ofReal (4 * Cd * (RB * RE ^ 2)) ^ q := by
+      ENNReal.ofReal (4 * Cd * (RB * RE ^ 2)) ^ q  := by
   have hq0 : (0 : ℝ) < q := lt_of_lt_of_le zero_lt_one hq
   have hgam0 : (0 : ℝ) < M.gamma := M.shellPrefix.gamma_pos
   have hth0 : (0 : ℝ) ≤ 2 * s / (1 - 4 * M.gamma) := by

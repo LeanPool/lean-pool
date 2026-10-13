@@ -53,25 +53,25 @@ theorem neZero_of_model_FluxCorrectedTwoScale (M : ABKModel d) : NeZero d :=
   ⟨Nat.ne_of_gt (lt_of_lt_of_le (by omega) M.shellPrefix.dimension)⟩
 
 /-- The two-argument `(m, n)` flux-corrected `(∞,2)` error functional. -/
-noncomputable def fluxCorrectedTwoScaleErrorFunctional [NeZero d] (M : ABKModel d)
-    (L m n : ℤ) (s : ℝ) : Cutoff.CutoffSample d → ℝ :=
+noncomputable def fluxCorrectedTwoScaleErrorFunctional (M : ABKModel d)
+    (L m n : ℤ) (s : ℝ) : Cutoff.CutoffSample d → ℝ  :=
   fun omega => Real.sqrt (∑' l : ℕ, Ch02.geometricWeight s 2 l *
     fluxCorrectedMaxDescendantNormalizedBlockResponseRepresentative M L m
       (originCube d m) (n - (l : ℤ))
       (isotropicComparatorMatrix (Annealed.sigmaBar M m)) omega)
 
-theorem fluxCorrectedTwoScaleErrorFunctional_nonneg [NeZero d] (M : ABKModel d)
+theorem fluxCorrectedTwoScaleErrorFunctional_nonneg (M : ABKModel d)
     (L m n : ℤ) (s : ℝ) (omega : Cutoff.CutoffSample d) :
-    0 ≤ fluxCorrectedTwoScaleErrorFunctional M L m n s omega :=
+    0 ≤ fluxCorrectedTwoScaleErrorFunctional M L m n s omega  :=
   Real.sqrt_nonneg _
 
-private theorem fluxCorrectedTwoScaleErrorFunctional_term_nonneg [NeZero d]
+private theorem fluxCorrectedTwoScaleErrorFunctional_term_nonneg
     (M : ABKModel d) (L m n : ℤ) {s : ℝ} (hs : 0 < s) (l : ℕ)
     (omega : Cutoff.CutoffSample d) :
     0 ≤ Ch02.geometricWeight s 2 l *
       fluxCorrectedMaxDescendantNormalizedBlockResponseRepresentative M L m
         (originCube d m) (n - (l : ℤ))
-        (isotropicComparatorMatrix (Annealed.sigmaBar M m)) omega := by
+        (isotropicComparatorMatrix (Annealed.sigmaBar M m)) omega  := by
   refine mul_nonneg ?_ ?_
   · simpa only [Ch02.geometricWeight_eq_old] using
       HCPolySupport.geometricWeight_nonneg l (by positivity : 0 ≤ s * (2 : ℝ))
@@ -79,9 +79,9 @@ private theorem fluxCorrectedTwoScaleErrorFunctional_term_nonneg [NeZero d]
       M L m (originCube d m) (n - (l : ℤ))
       (isotropicComparatorMatrix (Annealed.sigmaBar M m)) omega
 
-theorem measurable_fluxCorrectedTwoScaleErrorFunctional [NeZero d] (M : ABKModel d)
+theorem measurable_fluxCorrectedTwoScaleErrorFunctional (M : ABKModel d)
     (L : ℤ) {m n : ℤ} (hnm : n ≤ m) {s : ℝ} (hs : 0 < s) :
-    Measurable (fluxCorrectedTwoScaleErrorFunctional M L m n s) := by
+    Measurable (fluxCorrectedTwoScaleErrorFunctional M L m n s)  := by
   have hterm : ∀ l : ℕ, Measurable
       (fun omega => Ch02.geometricWeight s 2 l *
         fluxCorrectedMaxDescendantNormalizedBlockResponseRepresentative M L m

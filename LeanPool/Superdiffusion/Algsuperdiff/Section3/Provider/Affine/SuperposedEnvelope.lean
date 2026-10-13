@@ -135,7 +135,7 @@ The conclusion is character-for-character the `hFv`/`hGv` binder of
 
 namely `vecNormSq (Fv T − p) ≤ Cgrad² 3^{2(b(n+h_n))} vecNormSq p` quantified
 over `n`, `Q ∈ 𝒲(□_m,n)` and `T ∈ S(□)`, at `Cgrad := superposedGradConst d`
-(`1 ≤ Cgrad` is `one_le_superposedGradConst`).  This module does **not** perform
+(`1 ≤ Cgrad` is `one_le_superposedGradConst`). This module does **not** perform
 that composition and closes no node.
 
 ## References
@@ -402,7 +402,7 @@ This is's summand with the proved local cluster diameter inserted: `diam(𝒞) �
 own touching bad cube), divided by `ρ_𝒞 = 3^{m−(j_𝒞+1)−h_{j_𝒞+1}}`.  The
 constant is the same `648 d` as the single-mesh local envelope; the window
 binder is discharged, not assumed. -/
-theorem vecNormSq_globalCompetitorCellSlope_sub_le_layerEnvelope [NeZero d]
+theorem vecNormSq_globalCompetitorCellSlope_sub_le_layerEnvelope
     {M : ABKModel d} {m : ℤ} {b : ℝ} {hs k₀ : ℕ} {omega : Cutoff.CutoffSample d}
     (hb0 : 0 < b) (hb : b ≤ 1 / 8) (hk₀ : 3 ≤ k₀)
     (havoid : ∀ h : ℕ, hs ≤ h → ∀ u ∈ Percolation.cubeFinset (d := d) h,

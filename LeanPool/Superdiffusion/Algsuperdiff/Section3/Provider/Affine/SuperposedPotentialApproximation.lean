@@ -129,7 +129,7 @@ theorem potentialZeroTraceFieldOn_badFamily_activeComponentPrefix
 /-! ## Cell bounds for arbitrary finite partial sums -/
 
 private theorem badFamily_vecNormSq_componentCellSlope_sub_le_layerEnvelope
-    [NeZero d] {M : ABKModel d} {m : ℤ} {E b : ℝ} {k₀ : ℕ}
+     {M : ABKModel d} {m : ℤ} {E b : ℝ} {k₀ : ℕ}
     {omega : Cutoff.CutoffSample d} (hb0 : 0 < b) (hb : b ≤ 1 / 8)
     (hk₀ : 3 ≤ k₀) (hne : (hsepSet M m E b omega).Nonempty)
     (p : Vec d) {k : ℕ} {Q : TriadicCube d}
@@ -147,7 +147,7 @@ private theorem badFamily_vecNormSq_componentCellSlope_sub_le_layerEnvelope
             (whitneyScale M m E b k₀ omega) C)) C p T - p) ≤
       (648 * (d : ℝ)) ^ 2 *
         (3 : ℝ) ^ (2 * (b * ((k : ℝ) +
-          (whitneyScale M m E b k₀ omega k : ℝ)))) * vecNormSq p :=
+          (whitneyScale M m E b k₀ omega k : ℝ)))) * vecNormSq p  :=
   vecNormSq_globalCompetitorCellSlope_sub_le_layerEnvelope hb0 hb hk₀
     (fun _ hh _ hu => badClusterDiam_lt_of_hsep_le hne hh hu)
     (fun _ hR => hR.1) (fun _ hR => hR.2) p hQ hT hC

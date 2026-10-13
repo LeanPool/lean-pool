@@ -843,8 +843,7 @@ private theorem assemblyComposed_comparisonBounds2 :
   exact ⟨hX0, hGs0, hHs0, hHn0, hS0, hQ3s0, hQ3sn0, hQ1s0, hR3n0, hS40, hS70, hS60, hSm30, hSm20,
     hsiginv0, hEb0, hEbkappa⟩
 
-private theorem assemblyComposed_comparisonBounds3 :
-    ∀ (d : ℕ) [NeZero d] (b0 cg A2 : ℝ)
+private theorem assemblyComposed_comparisonBounds3 : ∀ (d : ℕ) (b0 cg A2 : ℝ)
       (_ : A2 = cg * (1944 : ℝ) * (b0 * (besovGagliardoConstant d * (gagliardoWindowConst d *
         windowMoveConst d))))
       (_ : (0 : ℝ) ≤ A2) (A3 : ℝ) (_ : A3 = interiorCorrectionConst d * (gagliardoWindowConst d *
@@ -868,7 +867,7 @@ private theorem assemblyComposed_comparisonBounds3 :
             A3 * (S7 * sig⁻¹ * Q1s * Gs) ∧
           (0 : ℝ) ≤ S4 * Erep * X ∧
             (0 : ℝ) ≤ S4 * Erep * S ∧ (0 : ℝ) ≤ S7 * sig⁻¹ * Q1s * Gs ∧ (0 : ℝ) ≤ S6 * Q1s * Hs ∧
-              (0 : ℝ) ≤ S6 * R3n * Hn := by
+              (0 : ℝ) ≤ S6 * R3n * Hn  := by
   intro d _ b0 cg A2 hA2def hA2 A3 hA3def hA3 s S Erep hErep0 sig X Gs Hs Hn Q3sn Q1s R3n S4 S7 S6
     hX0 hGs0 hHs0 hHn0 hS0 hQ1s0 hR3n0 hS40 hS70 hS60 hsiginv0 hS6eq hS6le hQScle hRQ3sn
   have hT2 : (sig⁻¹ * R3n) * (cg * (1944 * (s⁻¹) ^ (6 : ℕ) *
@@ -1147,7 +1146,7 @@ private theorem assemblyComposed_comparisonBounds4 :
       hS60, hSm30, hSm20, hsiginv0, hbrkCap, hET, hGbes, hGbes0, hYchild3⟩
 
 private theorem assemblyComposed_comparisonBounds5 :
-    ∀ (d : ℕ) [NeZero d] (CE KE kappa b0 cg A1 : ℝ) (_ : A1 = cg * (216 : ℝ) * (kappa * KE))
+    ∀ (d : ℕ) (CE KE kappa b0 cg A1 : ℝ) (_ : A1 = cg * (216 : ℝ) * (kappa * KE))
       (_ : (0 : ℝ) ≤ A1) (A2 : ℝ)
       (_ : A2 = cg * (1944 : ℝ) * (b0 * (besovGagliardoConstant d * (gagliardoWindowConst d *
         windowMoveConst d))))
@@ -1196,7 +1195,7 @@ private theorem assemblyComposed_comparisonBounds5 :
               A3 * (S7 * sig⁻¹ * Q1s * Gs) ∧
             (0 : ℝ) ≤ S4 * Erep * X ∧
               (0 : ℝ) ≤ S4 * Erep * S ∧ (0 : ℝ) ≤ S7 * sig⁻¹ * Q1s * Gs ∧ (0 : ℝ) ≤ S6 * Q1s * Hs
-                ∧ (0 : ℝ) ≤ S6 * R3n * Hn := by
+                ∧ (0 : ℝ) ≤ S6 * R3n * Hn  := by
   classical
   intro d _ CE KE kappa b0 cg A1 hA1def hA1 A2 hA2def hA2 A3 hA3def hA3 s hs n hs1 S hS0 Erep
     hErepCap hErep0 sig hsiginv0 X hX0 Gs hGs0 Hs hHs0 Hn hHn0 P2 hP2def hP2def Q3s hQ3sdef hQ3s0

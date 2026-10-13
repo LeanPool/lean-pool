@@ -501,7 +501,7 @@ most the product of the square roots of the two grid fourth moments, of the
 operator norms and of the vector norms.  This is the Hoelder step, at the
 closure's grid carrier. -/
 theorem descendantsAverage_integral_vecNormSq_matVecMul_le {Omega : Type*}
-    [MeasurableSpace Omega] (mu : Measure Omega) [IsProbabilityMeasure mu]
+    [MeasurableSpace Omega] (mu : Measure Omega)
     (Q : TriadicCube d) (j : ℕ)
     (A : TriadicCube d → Omega → Mat d) (v : TriadicCube d → Omega → Vec d)
     (hA : ∀ R ∈ descendantsAtDepth Q j,

@@ -303,7 +303,7 @@ square of the Poincare factor is replaced by `32 c_{s,2}^{-1}` times
 `gaugedEllipticitySum`, which is the quantity the ellipticity display then
 transfers from the mesoscopic cell to the recurrence scale by
 `gaugedEllipticitySum_descendant_le`. -/
-theorem doubledPoincareEllipticityFactor_sq_le_gaugedEllipticitySum [NeZero d]
+theorem doubledPoincareEllipticityFactor_sq_le_gaugedEllipticitySum
     (R : TriadicCube d) (af : TriadicCoeffFamily d) {s sig0 : ℝ} (hs : 0 < s)
     (hsig0 : 0 < sig0) :
     doubledPoincareEllipticityFactor sig0 R af s *

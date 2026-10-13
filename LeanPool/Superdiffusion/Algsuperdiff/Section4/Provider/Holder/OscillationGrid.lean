@@ -84,16 +84,15 @@ theorem openCubeAtScale_eq_ball (x : Vec d) (k : ℤ) :
     fun h i => by simpa [Real.dist_eq] using h i⟩
 
 /-- The cube `□_m` is the sup-ball of radius `3 ^ m / 2` about the origin. -/
-theorem openCubeSet_originCube_eq_ball_zero [NeZero d] (m : ℤ) :
+theorem openCubeSet_originCube_eq_ball_zero (m : ℤ) :
     openCubeSet (originCube d m) = Metric.ball (0 : Vec d) ((3 : ℝ) ^ m / 2) := by
   rw [← openCubeAtScale_zero_eq_openCubeSet_originCube, openCubeAtScale_eq_ball]
 
 /-- **The window dictionary.**  The truncated window `(z + □_k) ∩ □_m` is the
 intersection of the sup-ball of radius `3 ^ k / 2` about `z` with the sup-ball of
 radius `3 ^ m / 2` about the origin. -/
-theorem truncatedWindow_eq_ball_inter_ball [NeZero d] (x : Vec d) (m k : ℤ) :
-    truncatedWindow x m k =
-      Metric.ball x ((3 : ℝ) ^ k / 2) ∩ Metric.ball (0 : Vec d) ((3 : ℝ) ^ m / 2) := by
+theorem truncatedWindow_eq_ball_inter_ball (x : Vec d) (m k : ℤ) : truncatedWindow x m k =
+      Metric.ball x ((3 : ℝ) ^ k / 2) ∩ Metric.ball (0 : Vec d) ((3 : ℝ) ^ m / 2)  := by
   rw [truncatedWindow_eq_inter_openCubeAtScale, openCubeAtScale_eq_ball,
     openCubeSet_originCube_eq_ball_zero]
 

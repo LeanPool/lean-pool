@@ -42,13 +42,12 @@ variable {d : ℕ} {U : Set (Vec d)}
 /-- The α-shifted resolvent preserves nonnegativity almost everywhere.
 This is the counterpart of the weak maximum principle, which later recovers
 the same conclusion for weak supersolutions. -/
-theorem alphaShiftedResolvent_nonneg_ae [NeZero d]
-    (a : CoeffField d) (hU : IsOpenBoundedConvexDomain U)
+theorem alphaShiftedResolvent_nonneg_ae (a : CoeffField d) (hU : IsOpenBoundedConvexDomain U)
     {α lam Lam : ℝ} (hα : 0 < α) (hlam : 0 < lam)
     (hEll : IsEllipticFieldOn lam Lam U a) (f : ScalarL2 U)
     (hf : ∀ᵐ x ∂volumeMeasureOn U, 0 ≤ f x) :
     ∀ᵐ x ∂volumeMeasureOn U,
-      0 ≤ alphaShiftedResolvent a hα hlam hEll f x := by
+      0 ≤ alphaShiftedResolvent a hα hlam hEll f x  := by
   have hq := isBoundedNonnegativePotential_zero (d := d) U
   have hnonneg :=
     potentialResolvent_nonneg_ae a hU hα hlam hEll _ hq f hf

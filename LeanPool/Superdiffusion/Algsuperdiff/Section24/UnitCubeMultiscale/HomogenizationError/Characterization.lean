@@ -27,15 +27,14 @@ variable {d : ℕ}
 
 /-- The unique-choice characterization used by the corresponding frozen
 theorem. -/
-theorem characterization [NeZero d]
-    (s : ℝ) (p q : Book.Ch02.MultiscaleExponent)
+theorem characterization (s : ℝ) (p q : Book.Ch02.MultiscaleExponent)
     (a : CoeffOn (cubeDomain (originCube d 0))) (a0 : Mat d) :
     ∀ F : TriadicCoeffFamily d,
       CoeffOn.AEEq (F.coeffOn (originCube d 0)) a →
         Algsuperdiff.Frozen.Section24.unitCubeHomogenizationError
           s p q a a0 =
           Book.Ch02.HomogenizationErrorOnCube
-            (originCube d 0) s p q F a0 :=
+            (originCube d 0) s p q F a0  :=
   (Classical.choose_spec
     (Algsuperdiff.Frozen.Section24.existsUnique_unitCubeHomogenizationError
       s p q a a0)).1

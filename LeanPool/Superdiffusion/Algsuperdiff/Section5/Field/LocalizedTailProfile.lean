@@ -206,25 +206,26 @@ def streamTailDecayRate (M : ABKModel d)
 
 variable [NeZero d]
 
+omit [NeZero d] in
 /-- The explicit algebraic amplitude.  Its two summands respectively control
 the averaged/gradient terms and the bounded-forcing term of the frozen tail. -/
-def streamTailAlgebraicAmplitude (M : ABKModel d)
-    (omega : FullSample d M.gamma) (x : Vec d) : ℝ :=
+def streamTailAlgebraicAmplitude (M : ABKModel d) (omega : FullSample d M.gamma) (x : Vec d) : ℝ  :=
   (agmonTailL2Coefficient d M.nu (streamLocalizedUpperBase M omega x) +
       agmonTailGradientCoefficient d M.nu
         (streamLocalizedUpperBase M omega x) (1 / 2 : ℝ)) /
       streamTailInnerFloor M omega x ^ d +
     4 * agmonTailForcingCoefficient d (1 / 2 : ℝ) / M.nu
 
+omit [NeZero d] in
 /-- The explicit profile for item 3 of `PACKET_M2_28b`. -/
-def streamLocalizedTailProfile (M : ABKModel d)
-    (omega : FullSample d M.gamma) (x : Vec d) : ℝ → ℝ :=
+def streamLocalizedTailProfile (M : ABKModel d) (omega : FullSample d M.gamma) (x : Vec d) : ℝ → ℝ  :=
   logSubexponentialProfile (streamTailAlgebraicAmplitude M omega x)
     (streamTailDecayRate M omega x) (d + 1)
 
+omit [NeZero d] in
 theorem streamTailAlgebraicAmplitude_nonneg (M : ABKModel d)
     (omega : FullSample d M.gamma) (x : Vec d) :
-    0 ≤ streamTailAlgebraicAmplitude M omega x := by
+    0 ≤ streamTailAlgebraicAmplitude M omega x  := by
   have hB := (streamLocalizedUpperBase_pos M omega x).le
   have hb := (streamTailInnerFloor_pos M omega x).le
   have h1 := agmonTailL2Coefficient_nonneg d (lam := M.nu) hB
@@ -305,10 +306,11 @@ private theorem agmonTailL2Coefficient_le_scale {lam L B w : ℝ}
   exact mul_le_mul_of_nonneg_left hLB
     (agmonTailL2Coefficient_nonneg d (lam := lam) (by norm_num))
 
+omit [NeZero d] in
 private theorem agmonTailGradientCoefficient_le_scale
     {lam L B w alpha : ℝ} (hlam : 0 < lam) (hLB : L ≤ B * w) :
     agmonTailGradientCoefficient d lam L alpha ≤
-      agmonTailGradientCoefficient d lam B alpha * w := by
+      agmonTailGradientCoefficient d lam B alpha * w  := by
   have hscale : ∀ T : ℝ, agmonTailGradientCoefficient d lam T alpha =
       agmonTailGradientCoefficient d lam 1 alpha * T := by
     intro T

@@ -222,21 +222,21 @@ theorem measurable_cutoffCoarseFullBlockRepresentative_local (M : ABKModel d)
 
 /-- The normalized block response of the common representative is local: it is a
 continuous finite-dimensional functional of the block matrix. -/
-theorem measurable_cutoffNormalizedBlockResponseRepresentative_local [NeZero d]
+theorem measurable_cutoffNormalizedBlockResponseRepresentative_local
     (M : ABKModel d) (L : ℤ) (Q : TriadicCube d) (a0 : Mat d) {U : Set (Vec d)}
     (hQU : cubeSet Q ⊆ U) :
     Measurable[Cutoff.cutoffSampleLocalSigma M L U]
-      (Observable.cutoffNormalizedBlockResponseRepresentative M L Q a0) :=
+      (Observable.cutoffNormalizedBlockResponseRepresentative M L Q a0)  :=
   (Observable.continuous_normalizedBlockResponseMaxRepresentativeFunctional
     a0).measurable.comp (measurable_cutoffCoarseFullBlockRepresentative_local M L Q hQU)
 
 /-- The descendant average is local: the subcubes of `Q` stay inside `Q`, hence
 inside the observation region. -/
 theorem measurable_cutoffAvgDescendantNormalizedBlockResponseRepresentative_local
-    [NeZero d] (M : ABKModel d) (L : ℤ) (Q : TriadicCube d) {k : ℤ}
+     (M : ABKModel d) (L : ℤ) (Q : TriadicCube d) {k : ℤ}
     (hk : k ≤ Q.scale) (a0 : Mat d) {U : Set (Vec d)} (hQU : cubeSet Q ⊆ U) :
     Measurable[Cutoff.cutoffSampleLocalSigma M L U]
-      (Support.cutoffAvgDescendantNormalizedBlockResponseRepresentative M L Q k a0) := by
+      (Support.cutoffAvgDescendantNormalizedBlockResponseRepresentative M L Q k a0)  := by
   let : MeasurableSpace (Cutoff.CutoffSample d) := Cutoff.cutoffSampleLocalSigma M L U
   have hEq :
       Support.cutoffAvgDescendantNormalizedBlockResponseRepresentative M L Q k a0 =
@@ -269,18 +269,18 @@ private theorem measurable_tsum_of_nonneg {Omega : Type*} [MeasurableSpace Omega
 /-- **The `(2,2)` measurable functional at an A triadic cube.**  At `Q = □_n` this
 is `Support.cutoffHomogenizationError22Functional` verbatim; the generality in
 `Q` is what carries the translated cubes `z + □_n` of the `𝒢₂` lane. -/
-def errorFunctionalAtCube [NeZero d] (M : ABKModel d) (L : ℤ) (Q : TriadicCube d)
-    (s : ℝ) (sigma : Observable.PositiveScalar) : Cutoff.CutoffSample d → ℝ :=
+def errorFunctionalAtCube (M : ABKModel d) (L : ℤ) (Q : TriadicCube d)
+    (s : ℝ) (sigma : Observable.PositiveScalar) : Cutoff.CutoffSample d → ℝ  :=
   fun omega => Real.sqrt (∑' l : ℕ, Ch02.geometricWeight s 2 l *
     Support.cutoffAvgDescendantNormalizedBlockResponseRepresentative M L Q
       (Q.scale - (l : ℤ)) (Observable.isotropicComparatorMatrix sigma) omega)
 
-private theorem errorFunctional_term_nonneg [NeZero d] (M : ABKModel d) (L : ℤ)
+private theorem errorFunctional_term_nonneg (M : ABKModel d) (L : ℤ)
     (Q : TriadicCube d) {s : ℝ} (hs : 0 < s) (sigma : Observable.PositiveScalar)
     (l : ℕ) (omega : Cutoff.CutoffSample d) :
     0 ≤ Ch02.geometricWeight s 2 l *
       Support.cutoffAvgDescendantNormalizedBlockResponseRepresentative M L Q
-        (Q.scale - (l : ℤ)) (Observable.isotropicComparatorMatrix sigma) omega := by
+        (Q.scale - (l : ℤ)) (Observable.isotropicComparatorMatrix sigma) omega  := by
   refine mul_nonneg ?_ ?_
   · simpa only [Ch02.geometricWeight_eq_old] using
       HCPolySupport.geometricWeight_nonneg l (by positivity : 0 ≤ s * (2 : ℝ))
@@ -288,11 +288,11 @@ private theorem errorFunctional_term_nonneg [NeZero d] (M : ABKModel d) (L : ℤ
       M L Q _ _ omega
 
 /-- **The `(2,2)` functional is local.** -/
-theorem measurable_errorFunctionalAtCube_local [NeZero d] (M : ABKModel d) (L : ℤ)
+theorem measurable_errorFunctionalAtCube_local (M : ABKModel d) (L : ℤ)
     (Q : TriadicCube d) {s : ℝ} (hs : 0 < s) (sigma : Observable.PositiveScalar)
     {U : Set (Vec d)} (hQU : cubeSet Q ⊆ U) :
     Measurable[Cutoff.cutoffSampleLocalSigma M L U]
-      (errorFunctionalAtCube M L Q s sigma) := by
+      (errorFunctionalAtCube M L Q s sigma)  := by
   let : MeasurableSpace (Cutoff.CutoffSample d) := Cutoff.cutoffSampleLocalSigma M L U
   refine Real.continuous_sqrt.measurable.comp ?_
   refine measurable_tsum_of_nonneg _ (fun l => ?_)
@@ -313,7 +313,7 @@ private theorem scaleResponse_finite_nonneg (Q : TriadicCube d) (k : ℤ)
       Real.rpow_nonneg (Ch02.normalizedBlockResponseMax_nonneg R F a0) _)
 
 /-- Nonnegativity of the literal `(2,2)` error at an arbitrary cube. -/
-theorem homogenizationErrorOnCube_two_two_nonneg [NeZero d] (Q : TriadicCube d)
+theorem homogenizationErrorOnCube_two_two_nonneg (Q : TriadicCube d)
     {s : ℝ} (hs : 0 < s) (F : Ch02.TriadicCoeffFamily d) (a0 : Mat d) :
     0 ≤ Ch02.HomogenizationErrorOnCube Q s (.finite 2) (.finite 2) F a0 := by
   unfold Ch02.HomogenizationErrorOnCube Ch02.HomogenizationError
@@ -327,7 +327,7 @@ theorem homogenizationErrorOnCube_two_two_nonneg [NeZero d] (Q : TriadicCube d)
 /-- On the probability-one event on which the literal block responses agree with
 their representatives triadic cube, the literal `(2,2)` error at `Q` equals the
 functional at `Q`. -/
-theorem errorFunctionalAtCube_eq_of_common_event [NeZero d] (M : ABKModel d)
+theorem errorFunctionalAtCube_eq_of_common_event (M : ABKModel d)
     (L : ℤ) (Q : TriadicCube d) {s : ℝ} (hs : 0 < s)
     (sigma : Observable.PositiveScalar) (omega : Cutoff.CutoffSample d)
     (hall : ∀ R : TriadicCube d,
@@ -339,7 +339,7 @@ theorem errorFunctionalAtCube_eq_of_common_event [NeZero d] (M : ABKModel d)
     Ch02.HomogenizationErrorOnCube Q s (.finite 2) (.finite 2)
         (Cutoff.coefficientCutoffTriadicCoeffFamily M L omega)
         (Observable.isotropicComparatorMatrix sigma)
-      = errorFunctionalAtCube M L Q s sigma omega := by
+      = errorFunctionalAtCube M L Q s sigma omega  := by
   have hsum : (∑' l : ℕ, Ch02.geometricWeight s 2 l *
       Ch02.finsetAverageReal (descendantsAtScale Q (Q.scale - (l : ℤ)))
         (fun R => Ch02.normalizedBlockResponseMax R

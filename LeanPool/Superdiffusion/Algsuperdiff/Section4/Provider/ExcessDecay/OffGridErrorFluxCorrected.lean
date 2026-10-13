@@ -158,15 +158,15 @@ arbitrary `root` cube, while the flux correction (`Q`, at scale `m`) and the
 comparator `a0` stay at the parent's index.  Compare
 `fluxCorrectedMaxDescendantNormalizedBlockResponseRepresentative`, which forces
 `root = Q`. -/
-def fluxCorrectedMaxDescendantAtRoot [NeZero d] (M : ABKModel d) (L m : ℤ)
-    (Q root : TriadicCube d) (k : ℤ) (a0 : Mat d) : Cutoff.CutoffSample d → ℝ :=
+def fluxCorrectedMaxDescendantAtRoot (M : ABKModel d) (L m : ℤ)
+    (Q root : TriadicCube d) (k : ℤ) (a0 : Mat d) : Cutoff.CutoffSample d → ℝ  :=
   fun omega => Ch02.finsetSupReal (descendantsAtScale root k)
     (fun R => fluxCorrectedNormalizedBlockResponseRepresentative M L m Q R a0 omega)
 
 /-- **The `F1'` error functional.**  `𝓔_{s,∞,2}` at the cube `root`, taken with the
 flux correction and the comparator of the *parent* index. -/
-def fluxCorrectedErrorFunctionalAtRoot [NeZero d] (M : ABKModel d) (L m : ℤ)
-    (Q root : TriadicCube d) (s : ℝ) (a0 : Mat d) : Cutoff.CutoffSample d → ℝ :=
+def fluxCorrectedErrorFunctionalAtRoot (M : ABKModel d) (L m : ℤ)
+    (Q root : TriadicCube d) (s : ℝ) (a0 : Mat d) : Cutoff.CutoffSample d → ℝ  :=
   fun omega => Real.sqrt (∑' l : ℕ, Ch02.geometricWeight s 2 l *
     fluxCorrectedMaxDescendantAtRoot M L m Q root (root.scale - (l : ℤ)) a0 omega)
 

@@ -33,7 +33,7 @@ at the **doubled** carrier `HilbertBlockL2`.  This module is the bridge.
 The pairing map is not treated as a bilinear object at all.  Writing
 
 ```
-  (F, G)  =  iota_1 F  +  iota_2 G ,
+  (F, G) = iota_1 F + iota_2 G ,
 ```
 
 with `iota_1 v = (v, 0)` and `iota_2 v = (0, v)`, each summand is post-composition
@@ -122,7 +122,7 @@ theorem toHilbertBlockL2OfComponents_eq_compLp_add {U : Set (Vec d)}
 
 /-- **A measurable class for each leg gives a measurable doubled class.** -/
 theorem measurable_toHilbertBlockL2OfComponents {Omega : Type*} [MeasurableSpace Omega]
-    {U : Set (Vec d)} [IsFiniteMeasure (volumeMeasureOn U)]
+    {U : Set (Vec d)}
     [MeasurableSpace (HilbertVectorL2 U)] [BorelSpace (HilbertVectorL2 U)]
     [MeasurableSpace (HilbertBlockL2 U)] [BorelSpace (HilbertBlockL2 U)]
     [SecondCountableTopology (HilbertBlockL2 U)]

@@ -240,12 +240,12 @@ theorem bddAbove_partialSeminormTwo_const_smul_sub (Q : TriadicCube d) (s c : �
               cubeBesovNegativeVectorSeminormTwo Q s v) := by ring
 
 /-- The first component of the flux carrier is bounded in the seminorm scale. -/
-theorem bddAbove_doubledFluxField_fst [NeZero d] (Q : TriadicCube d) (a : CoeffFamily d)
+theorem bddAbove_doubledFluxField_fst (Q : TriadicCube d) (a : CoeffFamily d)
     {s : ℝ} (hs : 0 < s) (v : CubeSolution Q a) (vStar : CubeSolution Q (adjointFamily a))
     (sig0 : ℝ) :
     BddAbove (Set.range fun N : ℕ =>
       cubeBesovNegativeVectorPartialSeminormTwo Q s N
-        (fun x => (doubledFluxField sig0 Q a v vStar x).1)) :=
+        (fun x => (doubledFluxField sig0 Q a v vStar x).1))  :=
   bddAbove_partialSeminormTwo_const_smul_add Q s _ (inv_nonneg.mpr (Real.sqrt_nonneg _))
     _ _ (solutionFluxField_memVectorL2 Q a v)
     (solutionFluxField_memVectorL2 Q (adjointFamily a) vStar)

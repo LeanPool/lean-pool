@@ -61,7 +61,7 @@ instantiates the anchor at `q = 1`.  The anchor is quantified over **every**
 admissible `q`, and the corrected lower profile collapses to `Ccg` at `s =
 gamma` for `q = 2` as well -- there through the `q >= 2` branch `Ccg * s * (2s
 - gamma)^{-1}`, whose value at `s = gamma` is `Ccg` exactly
-(`lowerEllipticityProfile_at_gamma_two`).  So the `q = 2` instantiation runs
+(`lowerEllipticityProfile_at_gamma_two`). So the `q = 2` instantiation runs
 verbatim, with the same three lanes and the same constants.
 
 ## From the eighth moment to the fourth
@@ -164,7 +164,7 @@ theorem aeeq_triadicCoeffFamily_coefficientCutoff (M : ABKModel d) (L : ℤ)
 /-- **The upper half of the bridge, an exact identity.**  The Chapter-2 upper
 multiscale ellipticity of the cutoff family at `cu_m` and exponent `q = 2` is
 the anchor's own observable `Observable.cutoffUpperEllipticity`. -/
-theorem LambdaSq_originCube_coefficientCutoffTriadicCoeffFamily_eq [NeZero d]
+theorem LambdaSq_originCube_coefficientCutoffTriadicCoeffFamily_eq
     (M : ABKModel d) (m L : ℤ) {s : ℝ} (hs : 0 < s) (omega : Cutoff.CutoffSample d) :
     Ch02.LambdaSq (originCube d m) s (.finite 2)
         (Cutoff.coefficientCutoffTriadicCoeffFamily M L omega) =
@@ -181,7 +181,7 @@ theorem LambdaSq_originCube_coefficientCutoffTriadicCoeffFamily_eq [NeZero d]
     (originCube d m) s (.finite 2)).symm
 
 /-- **The lower half of the bridge, an exact identity.** -/
-theorem lambdaSq_originCube_coefficientCutoffTriadicCoeffFamily_eq [NeZero d]
+theorem lambdaSq_originCube_coefficientCutoffTriadicCoeffFamily_eq
     (M : ABKModel d) (m L : ℤ) {s : ℝ} (hs : 0 < s) (omega : Cutoff.CutoffSample d) :
     (Ch02.lambdaSq (originCube d m) s (.finite 2)
         (Cutoff.coefficientCutoffTriadicCoeffFamily M L omega))⁻¹ =
@@ -199,13 +199,13 @@ theorem lambdaSq_originCube_coefficientCutoffTriadicCoeffFamily_eq [NeZero d]
 
 /-- **The bridge.**  The gauged ellipticity sum of the cutoff family at `cu_m` is
 the anchor's own gauged sum of observables. -/
-theorem gaugedEllipticitySum_eq_cutoffObservables [NeZero d] (M : ABKModel d) (m L : ℤ)
+theorem gaugedEllipticitySum_eq_cutoffObservables (M : ABKModel d) (m L : ℤ)
     {s : ℝ} (hs : 0 < s) (sigmaBar : ℝ) (omega : Cutoff.CutoffSample d) :
     gaugedEllipticitySum sigmaBar (originCube d m) s
         (Cutoff.coefficientCutoffTriadicCoeffFamily M L omega) =
       Observable.cutoffUpperEllipticity M m L s hs coarseExponentTwo omega * sigmaBar⁻¹ +
         Observable.cutoffLowerEllipticityInv M m L s hs coarseExponentTwo omega *
-          sigmaBar := by
+          sigmaBar  := by
   unfold gaugedEllipticitySum
   rw [LambdaSq_originCube_coefficientCutoffTriadicCoeffFamily_eq M m L hs omega,
     lambdaSq_originCube_coefficientCutoffTriadicCoeffFamily_eq M m L hs omega]
@@ -213,11 +213,11 @@ theorem gaugedEllipticitySum_eq_cutoffObservables [NeZero d] (M : ABKModel d) (m
 
 /-- **The measurability the stationarity transport asks for, as a theorem.**
 The gauged ellipticity sum at `cu_m` is a measurable function of the sample. -/
-theorem measurable_gaugedEllipticitySum_originCube [NeZero d] (M : ABKModel d) (m L : ℤ)
+theorem measurable_gaugedEllipticitySum_originCube (M : ABKModel d) (m L : ℤ)
     {s : ℝ} (hs : 0 < s) (sigmaBar : ℝ) :
     Measurable fun omega : Cutoff.CutoffSample d =>
       gaugedEllipticitySum sigmaBar (originCube d m) s
-        (Cutoff.coefficientCutoffTriadicCoeffFamily M L omega) := by
+        (Cutoff.coefficientCutoffTriadicCoeffFamily M L omega)  := by
   have hEq : (fun omega : Cutoff.CutoffSample d =>
       gaugedEllipticitySum sigmaBar (originCube d m) s
         (Cutoff.coefficientCutoffTriadicCoeffFamily M L omega)) =
@@ -274,8 +274,7 @@ through the carrier bridge, so that the observable is literally
 
 on the permitted frozen theorem `coarse_ellipticity_bounds` and on its own
 premises `hstate`, `hE`, `hEupper`, `hgap`. -/
-theorem integral_gaugedEllipticitySum_rpow_eight_le (d : ℕ) [NeZero d] :
-    ∃ C : ℝ, 0 < C ∧
+theorem integral_gaugedEllipticitySum_rpow_eight_le (d : ℕ) : ∃ C : ℝ, 0 < C ∧
       ∀ (M : ABKModel d) (m : ℤ) (E : {E : ℝ // 1 ≤ E}),
         Algsuperdiff.Frozen.Section3.inductionState M (m - 1) E →
         max (Real.exp (2 * C)) (Disorder.cstar M)⁻¹ ≤ (E : ℝ) →
@@ -292,7 +291,7 @@ theorem integral_gaugedEllipticitySum_rpow_eight_le (d : ℕ) [NeZero d] :
                   (originCube d m) M.gamma
                   (Cutoff.coefficientCutoffTriadicCoeffFamily M m omega) ^ (8 : ℝ)
               ∂(Cutoff.cutoffSampleLaw M).toMeasure ≤
-            (C * (Disorder.cstar M)⁻¹ * M.gamma⁻¹) ^ (8 : ℝ) := by
+            (C * (Disorder.cstar M)⁻¹ * M.gamma⁻¹) ^ (8 : ℝ)  := by
   obtain ⟨Ccg, hCcg0, hCcg⟩ := Algsuperdiff.Frozen.Section3.coarse_ellipticity_bounds d
   have hk10 : 0 < orliczEighthMomentScale 1 :=
     orliczEighthMomentScale_pos (by norm_num)
@@ -448,8 +447,7 @@ theorem integral_gaugedEllipticitySum_rpow_eight_le (d : ℕ) [NeZero d] :
 
 on the permitted frozen theorem `coarse_ellipticity_bounds` and on its own
 premises. -/
-theorem integral_gaugedEllipticitySum_pow_four_le (d : ℕ) [NeZero d] :
-    ∃ C : ℝ, 0 < C ∧
+theorem integral_gaugedEllipticitySum_pow_four_le (d : ℕ) : ∃ C : ℝ, 0 < C ∧
       ∀ (M : ABKModel d) (m : ℤ) (E : {E : ℝ // 1 ≤ E}),
         Algsuperdiff.Frozen.Section3.inductionState M (m - 1) E →
         max (Real.exp (2 * C)) (Disorder.cstar M)⁻¹ ≤ (E : ℝ) →
@@ -460,7 +458,7 @@ theorem integral_gaugedEllipticitySum_pow_four_le (d : ℕ) [NeZero d] :
                 (originCube d m) M.gamma
                 (Cutoff.coefficientCutoffTriadicCoeffFamily M m omega) ^ (4 : ℕ)
             ∂(Cutoff.cutoffSampleLaw M).toMeasure ≤
-          (C * (Disorder.cstar M)⁻¹ * M.gamma⁻¹) ^ (4 : ℕ) := by
+          (C * (Disorder.cstar M)⁻¹ * M.gamma⁻¹) ^ (4 : ℕ)  := by
   obtain ⟨C, hC0, hmain⟩ := integral_gaugedEllipticitySum_rpow_eight_le d
   refine ⟨C, hC0, ?_⟩
   intro M m E hstate hE hEupper hgap
@@ -547,8 +545,7 @@ the number below.  No printed quantifier changes.
 
 on `hm : R.scale <= m` (the ancestor exists) and on the anchor's own premises.
 The measurability that the transport asks for is **produced**, not assumed. -/
-theorem integral_gaugedEllipticitySum_pow_four_ancestorAtScale_le (d : ℕ) [NeZero d] :
-    ∃ C : ℝ, 0 < C ∧
+theorem integral_gaugedEllipticitySum_pow_four_ancestorAtScale_le (d : ℕ) : ∃ C : ℝ, 0 < C ∧
       ∀ (M : ABKModel d) (m : ℤ) (E : {E : ℝ // 1 ≤ E}),
         Algsuperdiff.Frozen.Section3.inductionState M (m - 1) E →
         max (Real.exp (2 * C)) (Disorder.cstar M)⁻¹ ≤ (E : ℝ) →
@@ -560,7 +557,7 @@ theorem integral_gaugedEllipticitySum_pow_four_ancestorAtScale_le (d : ℕ) [NeZ
                   (ancestorAtScale R m) M.gamma
                   (Cutoff.coefficientCutoffTriadicCoeffFamily M m omega) ^ (4 : ℕ)
               ∂(Cutoff.cutoffSampleLaw M).toMeasure ≤
-            (C * (Disorder.cstar M)⁻¹ * M.gamma⁻¹) ^ (4 : ℕ) := by
+            (C * (Disorder.cstar M)⁻¹ * M.gamma⁻¹) ^ (4 : ℕ)  := by
   obtain ⟨C, hC0, hmain⟩ := integral_gaugedEllipticitySum_pow_four_le d
   refine ⟨C, hC0, ?_⟩
   intro M m E hstate hE hEupper hgap R hm

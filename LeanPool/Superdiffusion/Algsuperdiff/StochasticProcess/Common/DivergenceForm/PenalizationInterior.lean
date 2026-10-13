@@ -163,15 +163,14 @@ theorem vectorLpSizeOn_grad_le_norm_gradToHilbertVectorL2
 ball of radius `r` whose double lies inside the part domain.  It depends on
 the data only through the gradient budget `G` and the essential bound `M` on
 the forcing. -/
-def penalizationInteriorHolderConstant (d : ℕ) [NeZero d]
-    (alpha r G M : ℝ) : ℝ :=
+def penalizationInteriorHolderConstant (d : ℕ) (alpha r G M : ℝ) : ℝ  :=
   smallContrastZerothSchauderConstant d *
     ((2 * r) ^ (1 - alpha - (d : ℝ) / 2) * G +
       (2 * r) ^ (2 - alpha) * (2 * M))
 
 /-- The interior equation for the penalized problem together with the
 index-free bounds on its data. -/
-theorem exists_interior_equation_penalized_with_gradient [NeZero d]
+theorem exists_interior_equation_penalized_with_gradient
     (a : CoeffField d) (hU : IsOpenBoundedConvexDomain U) (hV : IsOpen V)
     (hVU : V ⊆ U) {α lam Lam : ℝ} (hα : 0 < α) (hlam : 0 < lam)
     (hEll : IsEllipticFieldOn lam Lam U a)
@@ -184,7 +183,7 @@ theorem exists_interior_equation_penalized_with_gradient [NeZero d]
       MemScalarLInfOn W g ∧
       scalarLInfSizeOn W g ≤ 2 * M ∧
       vectorLpSizeOn W 2 z.grad ≤ (min α lam)⁻¹ * ‖f‖ ∧
-      IsMatrixDivFormWeakSolutionZerothOrderOn a W z g 0 := by
+      IsMatrixDivFormWeakSolutionZerothOrderOn a W z g 0  := by
   have hWU : W ⊆ U := hWV.trans hVU
   set q : Vec d → ℝ := penalizationPotential U V n with hqdef
   have hq : IsBoundedNonnegativePotential U q n :=

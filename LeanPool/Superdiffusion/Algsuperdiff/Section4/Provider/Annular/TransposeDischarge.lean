@@ -28,7 +28,7 @@ same right-hand side.
 
 This module formalizes exactly that argument.  Write `N ω = −ω` for the proved
 negation of the whole shell sequence on the genuine lower-tail carrier
-(`Cutoff.negateCutoffSample`).  Then:
+(`Cutoff.negateCutoffSample`). Then:
 
 1. `a_L(Nω) = a_L(ω)ᵀ` — the proved `(J3)` carrier identity
    `Cutoff.coefficientCutoff_negateCutoffSample_eq_adjoint`, itself a
@@ -187,7 +187,7 @@ theorem jLegField_negateCutoffSample (M : ABKModel d) (L m : ℤ)
 
 /-- Function form of `jLegField_negateCutoffSample`, as the `hpret` slot reads
 it. -/
-theorem jLegField_negateCutoffSample_funext [NeZero d] (M : ABKModel d) (L m : ℤ)
+theorem jLegField_negateCutoffSample_funext (M : ABKModel d) (L m : ℤ)
     (omega : Cutoff.CutoffSample d) :
     jLegField M L m (Cutoff.negateCutoffSample omega) = jLegTranspose M L m omega :=
   funext (jLegField_negateCutoffSample M L m omega)

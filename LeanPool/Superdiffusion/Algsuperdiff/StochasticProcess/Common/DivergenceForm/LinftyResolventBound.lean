@@ -38,14 +38,14 @@ variable {d : ℕ} {U : Set (Vec d)}
 /-- If the forcing is almost everywhere bounded in absolute value by a
 nonnegative constant, then the normalized alpha-shifted resolvent has the same
 almost-everywhere absolute bound. -/
-theorem abs_alpha_mul_alphaShiftedResolvent_le_ae [NeZero d]
+theorem abs_alpha_mul_alphaShiftedResolvent_le_ae
     (a : CoeffField d) (hU : IsOpenBoundedConvexDomain U)
     {α lam Lam : ℝ} (hα : 0 < α) (hlam : 0 < lam)
     (hEll : IsEllipticFieldOn lam Lam U a) (f : ScalarL2 U)
     (C : ℝ) (hC : 0 ≤ C)
     (hf : ∀ᵐ x ∂volumeMeasureOn U, |f x| ≤ C) :
     ∀ᵐ x ∂volumeMeasureOn U,
-      |α * alphaShiftedResolvent a hα hlam hEll f x| ≤ C := by
+      |α * alphaShiftedResolvent a hα hlam hEll f x| ≤ C  := by
   have hq := isBoundedNonnegativePotential_zero (d := d) U
   have hbound :=
     abs_alpha_mul_potentialResolvent_le_ae a hU hα hlam hEll _ hq f C hC hf

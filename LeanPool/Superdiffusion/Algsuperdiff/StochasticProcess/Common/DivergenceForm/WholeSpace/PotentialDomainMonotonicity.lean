@@ -35,8 +35,7 @@ open scoped RealInnerProductSpace
 
 variable {d : ℕ} {V U : Set (Vec d)}
 
-private theorem potential_solution_h1_test [NeZero d]
-    (a : CoeffField d) (hV : IsOpenBoundedConvexDomain V)
+private theorem potential_solution_h1_test (a : CoeffField d) (hV : IsOpenBoundedConvexDomain V)
     {α lam Lam C : ℝ} (hα : 0 < α) (hlam : 0 < lam) (hC : 0 ≤ C)
     (hEll : IsEllipticFieldOn lam Lam V a) (q : Vec d → ℝ)
     (hq : IsBoundedNonnegativePotential V q C) (f : ScalarL2 V)
@@ -49,7 +48,7 @@ private theorem potential_solution_h1_test [NeZero d]
           φ.gradToHilbertVectorL2 +
         ∫ x, q x * ZeroTraceSobolev.toL2 u x * φ.toScalarL2 x
           ∂volumeMeasureOn V ≤
-      inner ℝ f φ.toScalarL2 := by
+      inner ℝ f φ.toScalarL2  := by
   let g : ScalarL2 V :=
     f + C • ZeroTraceSobolev.toL2 u -
       potentialMul q hq (ZeroTraceSobolev.toL2 u)
@@ -84,7 +83,7 @@ private theorem potential_solution_h1_test [NeZero d]
 
 /-- The zero extension of a part-domain potential resolvent is a potential
 weak subsolution on the larger bounded convex domain. -/
-theorem potentialPartDomainZeroExtension_isSubsolution [NeZero d]
+theorem potentialPartDomainZeroExtension_isSubsolution
     (a : CoeffField d) (hV : IsOpenBoundedConvexDomain V)
     (hU : IsOpenBoundedConvexDomain U) (hVU : V ⊆ U)
     {α lam Lam C : ℝ} (hα : 0 < α) (hlam : 0 < lam) (hC : 0 ≤ C)
@@ -97,7 +96,7 @@ theorem potentialPartDomainZeroExtension_isSubsolution [NeZero d]
           (hEll.mono hV.isOpen.measurableSet hVU) q
           ⟨hqU.1, ae_restrict_of_ae_restrict_of_subset hVU hqU.2.1,
             ae_restrict_of_ae_restrict_of_subset hVU hqU.2.2⟩
-          (restrictScalarL2ToPart (V := V) hU.isOpen.measurableSet f))) f := by
+          (restrictScalarL2ToPart (V  := V) hU.isOpen.measurableSet f))) f := by
   classical
   let hEllV := hEll.mono hV.isOpen.measurableSet hVU
   let hqV : IsBoundedNonnegativePotential V q C :=
@@ -209,8 +208,7 @@ theorem potentialPartDomainZeroExtension_isSubsolution [NeZero d]
 
 /-- Potential Dirichlet resolvents increase under inclusion of bounded open
 convex domains for nonnegative forcing. -/
-theorem potentialPartDomainResolvent_le_ae [NeZero d]
-    (a : CoeffField d) (hV : IsOpenBoundedConvexDomain V)
+theorem potentialPartDomainResolvent_le_ae (a : CoeffField d) (hV : IsOpenBoundedConvexDomain V)
     (hU : IsOpenBoundedConvexDomain U) (hVU : V ⊆ U)
     {α lam Lam C : ℝ} (hα : 0 < α) (hlam : 0 < lam) (hC : 0 ≤ C)
     (hEll : IsEllipticFieldOn lam Lam U a) (q : Vec d → ℝ)
@@ -220,7 +218,7 @@ theorem potentialPartDomainResolvent_le_ae [NeZero d]
       potentialResolvent a hα hlam (hEll.mono hV.isOpen.measurableSet hVU) q
           ⟨hqU.1, ae_restrict_of_ae_restrict_of_subset hVU hqU.2.1,
             ae_restrict_of_ae_restrict_of_subset hVU hqU.2.2⟩
-          (restrictScalarL2ToPart (V := V) hU.isOpen.measurableSet f) x ≤
+          (restrictScalarL2ToPart (V  := V) hU.isOpen.measurableSet f) x ≤
         potentialResolvent a hα hlam hEll q hqU f x := by
   let uV := potentialSolution a hα hlam
     (hEll.mono hV.isOpen.measurableSet hVU) q
@@ -249,7 +247,7 @@ theorem potentialPartDomainResolvent_le_ae [NeZero d]
 /-- Potential domain monotonicity with independently supplied ellipticity and
 potential-bound certificates on the two domains.  The weak equation, hence
 the represented resolvent, is independent of those certificates. -/
-theorem potentialPartDomainResolvent_le_ae_of_ellipticityWitness [NeZero d]
+theorem potentialPartDomainResolvent_le_ae_of_ellipticityWitness
     (a : CoeffField d) (hV : IsOpenBoundedConvexDomain V)
     (hU : IsOpenBoundedConvexDomain U) (hVU : V ⊆ U)
     {alpha lamV LamV lamU LamU CV CU : ℝ} (halpha : 0 < alpha)
@@ -261,7 +259,7 @@ theorem potentialPartDomainResolvent_le_ae_of_ellipticityWitness [NeZero d]
     (hf : ∀ᵐ x ∂volumeMeasureOn U, 0 ≤ f x) :
     ∀ᵐ x ∂volumeMeasureOn V,
       potentialResolvent a halpha hlamV hEllV q hqV
-          (restrictScalarL2ToPart (V := V) hU.isOpen.measurableSet f) x ≤
+          (restrictScalarL2ToPart (V  := V) hU.isOpen.measurableSet f) x ≤
         potentialResolvent a halpha hlamU hEllU q hqU f x := by
   let hEllV' := hEllU.mono hV.isOpen.measurableSet hVU
   let hqV' : IsBoundedNonnegativePotential V q CU :=

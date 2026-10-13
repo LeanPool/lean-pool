@@ -169,7 +169,7 @@ theorem solutionGradientField_bddAbove (Q : TriadicCube d) (a : CoeffFamily d)
     (solutionGradientField_memVectorL2 Q a u)
 
 /-- Truncation bound for the flux field. -/
-theorem solutionFluxField_bddAbove [NeZero d] (Q : TriadicCube d) (a : CoeffFamily d)
+theorem solutionFluxField_bddAbove (Q : TriadicCube d) (a : CoeffFamily d)
     {s : ℝ} (hs : 0 < s) (u : CubeSolution Q a) :
     BddAbove (Set.range fun N : ℕ =>
       cubeBesovNegativeVectorPartialSeminormTwo Q s N (solutionFluxField Q a u)) :=

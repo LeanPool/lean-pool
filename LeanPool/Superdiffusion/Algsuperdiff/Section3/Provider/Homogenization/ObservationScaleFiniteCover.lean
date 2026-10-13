@@ -137,30 +137,34 @@ private theorem isBigOWith_gammaQuarter_sq_of_twoTerm
     mul_self_le_mul_self (hXnonneg omega) hXY
   nlinarith [sq_nonneg (Y₀ omega - Z₀ omega)]
 
+omit [NeZero d] in
 /-- The measurable square of the cutoff-scale error at a translated
 scale-`L` cell.  The coefficient and normalizer stay frozen at `L`. -/
 def cutoffCellErrorSq (M : ABKModel d) (L : ℤ)
     {u : ℝ} (hu : 0 < u) (R : HCPolySupport.TriadicCube d) :
-    Cutoff.CutoffSample d → ℝ :=
+    Cutoff.CutoffSample d → ℝ  :=
   fun omega =>
     (Observable.cutoffHomogenizationErrorRepresentative M L L hu
       (Annealed.sigmaBar M L)
       (Cutoff.translateCutoffSample (HCPolySupport.triadicCubeShift R) omega)) ^ 2
 
+omit [NeZero d] in
 private theorem measurable_cutoffCellErrorSq (M : ABKModel d) (L : ℤ)
     {u : ℝ} (hu : 0 < u) (R : HCPolySupport.TriadicCube d) :
-    Measurable (cutoffCellErrorSq M L hu R) := by
+    Measurable (cutoffCellErrorSq M L hu R)  := by
   exact ((Observable.measurable_cutoffHomogenizationErrorRepresentative
     M L L hu (Annealed.sigmaBar M L)).comp
       (Cutoff.measurable_translateCutoffSample
         (HCPolySupport.triadicCubeShift R))).pow_const 2
 
+omit [NeZero d] in
 private theorem cutoffCellErrorSq_nonneg (M : ABKModel d) (L : ℤ)
     {u : ℝ} (hu : 0 < u) (R : HCPolySupport.TriadicCube d)
     (omega : Cutoff.CutoffSample d) :
-    0 ≤ cutoffCellErrorSq M L hu R omega :=
+    0 ≤ cutoffCellErrorSq M L hu R omega  :=
   sq_nonneg _
 
+omit [NeZero d] in
 private theorem cutoffCellErrorSq_isBigOWith_gammaQuarter
     (M : ABKModel d) (L : ℤ) {u : ℝ} (hu : 0 < u)
     (R : HCPolySupport.TriadicCube d) {A B : ℝ}
@@ -170,7 +174,7 @@ private theorem cutoffCellErrorSq_isBigOWith_gammaQuarter
       (Observable.cutoffHomogenizationError M L ⟨u, hu⟩) A B) :
     IsBigOWith (Cutoff.cutoffSampleLaw M).toMeasure
       (gammaSigma (1 / 4)) (cutoffCellErrorSq M L hu R)
-      (twoTermSquareConst * (A ^ 2 + B ^ 2)) := by
+      (twoTermSquareConst * (A ^ 2 + B ^ 2))  := by
   have htranslated := BadEvents.isTwoTermBigOWith_comp_translateCutoffSample
     M (HCPolySupport.triadicCubeShift R) hLower
   apply isBigOWith_gammaQuarter_sq_of_twoTerm
@@ -235,26 +239,26 @@ def observationScaleFineTailRaw (M : ABKModel d) (L m : ℤ)
   ∑' n : ℕ, observationScaleErrorLayerRaw M L m t
     (Int.toNat (m - L) + n) omega
 
+omit [NeZero d] in
 /-- The largest parent-cube average of normalized cutoff-cell errors at one depth. -/
-def observationScaleCoarseParentAverage
-    (M : ABKModel d) (L m : ℤ) {u : ℝ} (hu : 0 < u)
-    (ell : ℕ) (omega : Cutoff.CutoffSample d) : ℝ :=
+def observationScaleCoarseParentAverage (M : ABKModel d) (L m : ℤ) {u : ℝ} (hu : 0 < u)
+    (ell : ℕ) (omega : Cutoff.CutoffSample d) : ℝ  :=
   Ch02.finsetSupReal (descendantsAtScale (originCube d m) (m - (ell : ℤ)))
     (fun P => descendantsAverage P (Int.toNat (m - (ell : ℤ) - L))
       (fun R => cutoffCellErrorSq M L hu R omega))
 
+omit [NeZero d] in
 /-- The finite weighted envelope of coarse parent-cube error averages. -/
-def observationScaleCoarseEnvelope
-    (M : ABKModel d) (L m : ℤ) (t : ℝ) {u : ℝ} (hu : 0 < u)
-    (omega : Cutoff.CutoffSample d) : ℝ :=
+def observationScaleCoarseEnvelope (M : ABKModel d) (L m : ℤ) (t : ℝ) {u : ℝ} (hu : 0 < u)
+    (omega : Cutoff.CutoffSample d) : ℝ  :=
   ∑ ell ∈ Finset.range (Int.toNat (m - L)),
     Ch02.geometricWeight t 2 ell *
       observationScaleCoarseParentAverage M L m hu ell omega
 
+omit [NeZero d] in
 /-- The maximum normalized cutoff-cell error at the cutoff scale. -/
-def observationScaleCellErrorSup
-    (M : ABKModel d) (L m : ℤ) {u : ℝ} (hu : 0 < u)
-    (omega : Cutoff.CutoffSample d) : ℝ :=
+def observationScaleCellErrorSup (M : ABKModel d) (L m : ℤ) {u : ℝ} (hu : 0 < u)
+    (omega : Cutoff.CutoffSample d) : ℝ  :=
   Ch02.finsetSupReal (descendantsAtScale (originCube d m) L)
     (fun R => cutoffCellErrorSq M L hu R omega)
 
@@ -641,9 +645,10 @@ private theorem descendantsAverage_measurable
   unfold descendantsAverage
   exact measurable_const.mul (Finset.measurable_sum _ fun R _ => hX R)
 
+omit [NeZero d] in
 private theorem observationScaleCoarseParentAverage_measurable
     (M : ABKModel d) (L m : ℤ) {u : ℝ} (hu : 0 < u) (ell : ℕ) :
-    Measurable (observationScaleCoarseParentAverage M L m hu ell) := by
+    Measurable (observationScaleCoarseParentAverage M L m hu ell)  := by
   let D := descendantsAtScale (originCube d m) (m - (ell : ℤ))
   have hk : m - (ell : ℤ) ≤ (originCube d m).scale := by
     change m - (ell : ℤ) ≤ m
@@ -663,6 +668,7 @@ private theorem observationScaleCoarseParentAverage_measurable
       (fun P => X P omega)).symm
   rwa [← heq]
 
+omit [NeZero d] in
 private theorem descendantsAverage_isBigOWith_gammaQuarter
     (M : ABKModel d) (L : ℤ) (P : HCPolySupport.TriadicCube d)
     (j : ℕ) {A B : ℝ} (hA : 0 < A) (hB : 0 < B)
@@ -675,7 +681,7 @@ private theorem descendantsAverage_isBigOWith_gammaQuarter
       (fun omega => descendantsAverage P j
         (fun R => cutoffCellErrorSq M L (by norm_num : (0 : ℝ) < 1 / 16) R omega))
       (gammaTriangleConst (1 / 4) *
-        (twoTermSquareConst * (A ^ 2 + B ^ 2))) := by
+        (twoTermSquareConst * (A ^ 2 + B ^ 2)))  := by
   let D := descendantsAtDepth P j
   let delta : ℝ := twoTermSquareConst * (A ^ 2 + B ^ 2)
   have hdelta : 0 < delta := by
@@ -710,8 +716,8 @@ private theorem descendantsAverage_isBigOWith_gammaQuarter
   simpa only [descendantsAverage, D, hscale,
     twoTermSquareConst] using! haverage
 
-private theorem coarseParentAverage_isBigOWith_gammaQuarter
-    (M : ABKModel d) (L m : ℤ) (hLm : L ≤ m)
+omit [NeZero d] in
+private theorem coarseParentAverage_isBigOWith_gammaQuarter (M : ABKModel d) (L m : ℤ) (hLm : L ≤ m)
     (ell : ℕ) (hell : ell < Int.toNat (m - L))
     {A B : ℝ} (hA : 0 < A) (hB : 0 < B)
     (hLower : Probability.IsTwoTermBigOWith
@@ -724,7 +730,7 @@ private theorem coarseParentAverage_isBigOWith_gammaQuarter
         (by norm_num : (0 : ℝ) < 1 / 16) ell)
       ((3 * max 1 (Real.log (((3 ^ d) ^ ell : ℕ) : ℝ))) ^ ((1 / 4 : ℝ)⁻¹) *
         (gammaTriangleConst (1 / 4) *
-          (twoTermSquareConst * (A ^ 2 + B ^ 2)))) := by
+          (twoTermSquareConst * (A ^ 2 + B ^ 2))))  := by
   classical
   let D := descendantsAtScale (originCube d m) (m - (ell : ℤ))
   have hD : D.Nonempty := descendantsAtScale_nonempty _
@@ -978,6 +984,7 @@ private theorem coarseEnvelope_isBigOWith_gammaQuarter
     exact tsum_mul_right
   simpa only [hfun, hscaleEq, delta, mul_assoc] using hsumTail
 
+omit [NeZero d] in
 private theorem observationScaleCellErrorSup_isBigOWith_gammaQuarter
     (M : ABKModel d) (L m : ℤ) (hLm : L ≤ m)
     {A B : ℝ}
@@ -992,7 +999,7 @@ private theorem observationScaleCellErrorSup_isBigOWith_gammaQuarter
       ((3 * max 1
           (Real.log (((3 ^ d) ^ Int.toNat (m - L) : ℕ) : ℝ))) ^
         ((1 / 4 : ℝ)⁻¹) *
-        (twoTermSquareConst * (A ^ 2 + B ^ 2))) := by
+        (twoTermSquareConst * (A ^ 2 + B ^ 2)))  := by
   classical
   let D := descendantsAtScale (originCube d m) L
   have hD : D.Nonempty := descendantsAtScale_nonempty _ hLm
@@ -1073,8 +1080,8 @@ private theorem summable_observationScaleFineDepthFactor (d : ℕ) :
   rw [heq]
   exact (summable_observationDepthScale d).mul_left C
 
-private theorem fineCoverTerm_isBigOWith_gammaQuarter
-    (M : ABKModel d) (L m : ℤ) (hLm : L ≤ m)
+omit [NeZero d] in
+private theorem fineCoverTerm_isBigOWith_gammaQuarter (M : ABKModel d) (L m : ℤ) (hLm : L ≤ m)
     {A B : ℝ}
     (hLower : Probability.IsTwoTermBigOWith
       (Cutoff.cutoffSampleLaw M).toMeasure
@@ -1090,7 +1097,7 @@ private theorem fineCoverTerm_isBigOWith_gammaQuarter
           observationScaleCellErrorSup M L m
             (by norm_num : (0 : ℝ) < 1 / 16) omega)
       (observationScaleFineDepthFactor d (Int.toNat (m - L)) *
-        (twoTermSquareConst * (A ^ 2 + B ^ 2))) := by
+        (twoTermSquareConst * (A ^ 2 + B ^ 2)))  := by
   have hsup := observationScaleCellErrorSup_isBigOWith_gammaQuarter
     M L m hLm hLower
   have hcoef : 0 ≤ Real.rpow 3

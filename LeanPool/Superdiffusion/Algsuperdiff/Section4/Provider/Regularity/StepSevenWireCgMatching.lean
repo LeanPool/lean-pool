@@ -54,13 +54,13 @@ which is the printed `e.cg.Poincare.with.rhs.grad` character for character: the
   own ellipticity factor.  `sqrt_stepSevenCgLamInv_eq` proves that its square
   root is literally the first leg's `poincareLowerEllipticityFactor`, so the two
   legs are weighted by one object — the object a future Step-7b theorem
-  (`e.lambda.stability.applied`) must bound by `C σ_{m'}^{-1}`.  This is the
+  (`e.lambda.stability.applied`) must bound by `C σ_{m'}^{-1}`. This is the
   carrier that the Step-7c and Step-7d `hlambda` slots both consume, so one
   Step-7b theorem discharges both.
 * **`dataLoc`** ⇝ `scaleNormalizedPositiveBesovVectorSeminormTwo Q s g`.
 * **`Ccg`** ⇝ `C · s^{-3}`: the two printed `s`-powers are collapsed to the
   larger one, which is legitimate exactly because `s ≤ 1`
-  (`rpow_neg_three_halves_le_rpow_neg_three`).  Nothing else is enlarged.
+  (`rpow_neg_three_halves_le_rpow_neg_three`). Nothing else is enlarged.
 
 ## Off-grid: the §4.4 window `z'+□_{m'-1}`
 
@@ -110,7 +110,7 @@ noncomputable def stepSevenCgLamInv (Q : TriadicCube d)
 `poincareLowerEllipticityFactor Q a (s/2) (.finite 2) = λ_{s/2,2}^{-1/2}` is
 the square root of the data leg's `stepSevenCgLamInv Q a s = λ_{s/2,2}^{-1}`.
 This is what lets's `hlambda` be a SINGLE scalar inequality. -/
-theorem sqrt_stepSevenCgLamInv_eq [NeZero d] (Q : TriadicCube d)
+theorem sqrt_stepSevenCgLamInv_eq (Q : TriadicCube d)
     (a : CoeffFamily d) {s : ℝ} (hs : 0 < s) :
     Real.sqrt (stepSevenCgLamInv Q a s) =
       poincareLowerEllipticityFactor Q a (s / 2) (Ch02.MultiscaleExponent.finite 2) := by

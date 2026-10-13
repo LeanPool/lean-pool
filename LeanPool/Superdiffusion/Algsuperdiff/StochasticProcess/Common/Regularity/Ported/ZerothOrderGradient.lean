@@ -37,7 +37,7 @@ def smallContrastZerothGradientExtraConstant (d : ℕ) : ℝ :=
   8 * ((1 / 2 : ℝ) ^ (-(d : ℝ) / 2)) ^ 2 *
     unitCubeDirichletPoincareExplicit d * (d : ℝ)
 
-theorem smallContrastZerothGradientExtraConstant_nonneg (d : ℕ) [NeZero d] :
+theorem smallContrastZerothGradientExtraConstant_nonneg (d : ℕ) :
     0 ≤ smallContrastZerothGradientExtraConstant d := by
   exact mul_nonneg
     (mul_nonneg
@@ -45,11 +45,11 @@ theorem smallContrastZerothGradientExtraConstant_nonneg (d : ℕ) [NeZero d] :
       (unitCubeDirichletPoincareExplicit_nonneg d)) (Nat.cast_nonneg d)
 
 /-- A dimension-only coefficient controlling all three data rows. -/
-def smallContrastZerothGradientConstant (d : ℕ) [NeZero d] : ℝ :=
+def smallContrastZerothGradientConstant (d : ℕ) : ℝ :=
   smallContrastGradientConstant d + smallContrastZerothGradientExtraConstant d
 
-theorem smallContrastZerothGradientConstant_nonneg (d : ℕ) [NeZero d] :
-    0 ≤ smallContrastZerothGradientConstant d :=
+theorem smallContrastZerothGradientConstant_nonneg (d : ℕ) :
+    0 ≤ smallContrastZerothGradientConstant d  :=
   add_nonneg (smallContrastGradientConstant_nonneg d)
     (smallContrastZerothGradientExtraConstant_nonneg d)
 

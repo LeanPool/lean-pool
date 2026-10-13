@@ -193,12 +193,12 @@ def recutPinnedE2Flux (M : ABKModel d) (L : ℤ) (omega : Cutoff.CutoffSample d)
       (fluxCorrectedCoeffOn M L m (originCube d m) omega) sigmaBarM hsig
       (fractionalOrderHalf (recutOrderLow s))).toReal
 
-theorem recutPinnedE1Flux_nonneg [NeZero d] (M : ABKModel d) (L : ℤ)
+theorem recutPinnedE1Flux_nonneg (M : ABKModel d) (L : ℤ)
     (omega : Cutoff.CutoffSample d) (m : ℤ) (jn : ℕ) {sigmaBarM : ℝ}
     (hsig : 0 < sigmaBarM) (s : FractionalOrder) :
     0 ≤ recutPinnedE1Flux M L omega m jn hsig s := ENNReal.toReal_nonneg
 
-theorem recutPinnedE2Flux_nonneg [NeZero d] (M : ABKModel d) (L : ℤ)
+theorem recutPinnedE2Flux_nonneg (M : ABKModel d) (L : ℤ)
     (omega : Cutoff.CutoffSample d) (m : ℤ) (jn : ℕ) {sigmaBarM : ℝ}
     (hsig : 0 < sigmaBarM) (s : FractionalOrder) :
     0 ≤ recutPinnedE2Flux M L omega m jn hsig s := ENNReal.toReal_nonneg
@@ -243,7 +243,7 @@ at the flux-corrected field — is below the FIRST `𝓔` factor of `EthmB(m)`
 re-pinned at the base `s' = s/8`, i.e. the factor of order `s/16`.  Constant
 one: the `q`-index step is Cauchy--Schwarz at a probability weight, and it is
 coefficient-agnostic. -/
-theorem seamDom1Flux_of_identification [NeZero d] (M : ABKModel d) (m : ℤ) (jn : ℕ)
+theorem seamDom1Flux_of_identification (M : ABKModel d) (m : ℤ) (jn : ℕ)
     (omega : Cutoff.CutoffSample d)
     (hs : 0 < homS M) (hlog : 4 ≤ |Real.log M.gamma|)
     (hid : FluxCorrectedParentIdentification M m jn omega) (L : ℤ) (hL : m ≤ L) :
@@ -280,7 +280,7 @@ The bundle's `𝓔₂` slot — the `q = 2` parent error at the half display ord
 `s/16`, at the flux-corrected field — is below the `γ⁵` factor of the re-pinned
 `EthmB(m)`, of order `s/32`, times `√2`.  The constant is exactly the ratio of
 the two geometric normalizations. -/
-theorem seamDom2Flux_of_identification [NeZero d] (M : ABKModel d) (m : ℤ) (jn : ℕ)
+theorem seamDom2Flux_of_identification (M : ABKModel d) (m : ℤ) (jn : ℕ)
     (omega : Cutoff.CutoffSample d)
     (hs : 0 < homS M) (hlog : 4 ≤ |Real.log M.gamma|)
     (hid : FluxCorrectedParentIdentification M m jn omega) (L : ℤ) (hL : m ≤ L) :

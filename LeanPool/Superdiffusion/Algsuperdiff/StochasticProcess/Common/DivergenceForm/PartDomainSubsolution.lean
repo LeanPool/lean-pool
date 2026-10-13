@@ -38,8 +38,7 @@ variable {d : ℕ} {V U : Set (Vec d)}
 /-- The zero extension of the part-domain resolvent is a weak subsolution on
 the larger domain for nonnegative forcing.  The general-open case is not
 asserted. -/
-theorem partDomainZeroExtension_isSubsolution [NeZero d]
-    (a : CoeffField d)
+theorem partDomainZeroExtension_isSubsolution (a : CoeffField d)
     (hV : IsOpenBoundedConvexDomain V) (hU : IsOpenBoundedConvexDomain U)
     (hVU : V ⊆ U) {α lam Lam : ℝ} (hα : 0 < α) (hlam : 0 < lam)
     (hEll : IsEllipticFieldOn lam Lam U a) (f : ScalarL2 U)
@@ -48,7 +47,7 @@ theorem partDomainZeroExtension_isSubsolution [NeZero d]
       (ZeroTraceSobolev.extendByZeroToPartSuperset hV hU.isOpen hVU
         (alphaShiftedSolution a hα hlam
           (hEll.mono hV.isOpen.measurableSet hVU)
-          (restrictScalarL2ToPart (V := V) hU.isOpen.measurableSet f))) := by
+          (restrictScalarL2ToPart (V  := V) hU.isOpen.measurableSet f))) := by
   classical
   let hEllV : IsEllipticFieldOn lam Lam V a :=
     hEll.mono hV.isOpen.measurableSet hVU
@@ -147,8 +146,7 @@ theorem partDomainZeroExtension_isSubsolution [NeZero d]
 /-- The difference between the full-domain resolvent solution and the
 zero-extended part-domain solution is nonnegative almost everywhere.  The
 general-open case is not asserted. -/
-theorem partDomainRemainder_nonneg_ae [NeZero d]
-    (a : CoeffField d)
+theorem partDomainRemainder_nonneg_ae (a : CoeffField d)
     (hV : IsOpenBoundedConvexDomain V) (hU : IsOpenBoundedConvexDomain U)
     (hVU : V ⊆ U) {α lam Lam : ℝ} (hα : 0 < α) (hlam : 0 < lam)
     (hEll : IsEllipticFieldOn lam Lam U a) (f : ScalarL2 U)
@@ -159,7 +157,7 @@ theorem partDomainRemainder_nonneg_ae [NeZero d]
           ZeroTraceSobolev.extendByZeroToPartSuperset hV hU.isOpen hVU
             (alphaShiftedSolution a hα hlam
               (hEll.mono hV.isOpen.measurableSet hVU)
-              (restrictScalarL2ToPart (V := V) hU.isOpen.measurableSet f))) x := by
+              (restrictScalarL2ToPart (V  := V) hU.isOpen.measurableSet f))) x := by
   let uU : ZeroTraceSobolev U :=
     ZeroTraceSobolev.extendByZeroToPartSuperset hV hU.isOpen hVU
       (alphaShiftedSolution a hα hlam
@@ -186,8 +184,7 @@ theorem partDomainRemainder_nonneg_ae [NeZero d]
 /-- The full-domain resolvent solution minus the zero-extended part-domain
 solution is a weak supersolution with zero right-hand side.  The general-open
 case is not asserted. -/
-theorem partDomainRemainder_isSupersolution [NeZero d]
-    (a : CoeffField d)
+theorem partDomainRemainder_isSupersolution (a : CoeffField d)
     (hV : IsOpenBoundedConvexDomain V) (hU : IsOpenBoundedConvexDomain U)
     (hVU : V ⊆ U) {α lam Lam : ℝ} (hα : 0 < α) (hlam : 0 < lam)
     (hEll : IsEllipticFieldOn lam Lam U a) (f : ScalarL2 U)
@@ -197,7 +194,7 @@ theorem partDomainRemainder_isSupersolution [NeZero d]
         ZeroTraceSobolev.extendByZeroToPartSuperset hV hU.isOpen hVU
           (alphaShiftedSolution a hα hlam
             (hEll.mono hV.isOpen.measurableSet hVU)
-            (restrictScalarL2ToPart (V := V) hU.isOpen.measurableSet f))) := by
+            (restrictScalarL2ToPart (V  := V) hU.isOpen.measurableSet f))) := by
   let uU : ZeroTraceSobolev U :=
     ZeroTraceSobolev.extendByZeroToPartSuperset hV hU.isOpen hVU
       (alphaShiftedSolution a hα hlam
@@ -229,8 +226,7 @@ theorem partDomainRemainder_isSupersolution [NeZero d]
 /-- Resolvent estimate for the nonnegative supersolution remainder generated
 by nested bounded open convex domains.  The general-open case is not
 asserted. -/
-theorem partDomainRemainder_resolvent_le_ae [NeZero d]
-    (a : CoeffField d)
+theorem partDomainRemainder_resolvent_le_ae (a : CoeffField d)
     (hV : IsOpenBoundedConvexDomain V) (hU : IsOpenBoundedConvexDomain U)
     (hVU : V ⊆ U) {alpha beta lam Lam : ℝ} (hAlpha : 0 < alpha)
     (hAlphaBeta : alpha < beta) (hlam : 0 < lam)
@@ -243,7 +239,7 @@ theorem partDomainRemainder_resolvent_le_ae [NeZero d]
               ZeroTraceSobolev.extendByZeroToPartSuperset hV hU.isOpen hVU
                 (alphaShiftedSolution a hAlpha hlam
                   (hEll.mono hV.isOpen.measurableSet hVU)
-                  (restrictScalarL2ToPart (V := V) hU.isOpen.measurableSet f)))) x ≤
+                  (restrictScalarL2ToPart (V  := V) hU.isOpen.measurableSet f)))) x ≤
         (beta / (beta - alpha)) * ZeroTraceSobolev.toL2
           (alphaShiftedSolution a hAlpha hlam hEll f -
             ZeroTraceSobolev.extendByZeroToPartSuperset hV hU.isOpen hVU

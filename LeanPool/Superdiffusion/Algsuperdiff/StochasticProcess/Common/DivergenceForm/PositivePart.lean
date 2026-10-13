@@ -35,7 +35,7 @@ variable {d : ℕ} {U : Set (Vec d)}
 /-- Positive-part truncation after subtracting a nonnegative constant exists
 uniquely in `ZeroTraceSobolev`, subject to the stated almost-everywhere value
 and gradient characterizations. -/
-theorem existsUnique_positivePartSubConst [NeZero d]
+theorem existsUnique_positivePartSubConst
     (hU : IsOpenBoundedConvexDomain U) (u : ZeroTraceSobolev U) (c : ℝ)
     (hc : 0 ≤ c) :
     ∃! v : ZeroTraceSobolev U,

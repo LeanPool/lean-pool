@@ -160,12 +160,12 @@ Nothing here is specific to the coefficient cutoff, to the exponents, or to an
 isotropic comparator; this is the statement any *other* rescaling layer (for
 instance a flux-corrected one) consumes unchanged, once it exhibits its
 coefficient object as the root of a dilated triadic family. -/
-theorem unitCubeHomogenizationError_dilatedFamily [NeZero d]
+theorem unitCubeHomogenizationError_dilatedFamily
     (F : TriadicCoeffFamily d) (m : ℤ) (s : ℝ) (p q : Ch02.MultiscaleExponent)
     (a0 : Mat d) :
     Algsuperdiff.Frozen.Section24.unitCubeHomogenizationError s p q
         ((TriadicCoeffFamily.dilate (-m) F).coeffOn (originCube d 0)) a0 =
-      HomogenizationErrorOnCube (originCube d m) s p q F a0 := by
+      HomogenizationErrorOnCube (originCube d m) s p q F a0  := by
   rw [Algsuperdiff.Frozen.Section24.unitCubeHomogenizationError_characterization
     s p q _ a0 _ (CoeffOn.AEEq.refl _)]
   have hdil := HomogenizationErrorOnCube_dilate
@@ -182,14 +182,14 @@ literal manuscript error functional on the *centered* cube of the same scale as
 
 This holds at every exponent pair, every comparator matrix, every cube and
 every cutoff level; the `𝒢₂` atom below is one instance. -/
-theorem unitCubeHomogenizationError_unitRescaledCutoffCoeff [NeZero d]
+theorem unitCubeHomogenizationError_unitRescaledCutoffCoeff
     (M : ABKModel d) (Q : TriadicCube d) (cutoffScale : ℤ) (s : ℝ)
     (p q : Ch02.MultiscaleExponent) (a0 : Mat d) (omega : Cutoff.CutoffSample d) :
     Algsuperdiff.Frozen.Section24.unitCubeHomogenizationError s p q
         (unitRescaledCutoffCoeff M Q cutoffScale omega) a0 =
       HomogenizationErrorOnCube (originCube d Q.scale) s p q
         (Cutoff.coefficientCutoffTriadicCoeffFamily M cutoffScale
-          (Cutoff.translateCutoffSample (triadicCubeShift Q) omega)) a0 := by
+          (Cutoff.translateCutoffSample (triadicCubeShift Q) omega)) a0  := by
   rw [unitRescaledCutoffCoeff]
   exact unitCubeHomogenizationError_dilatedFamily
     (Cutoff.coefficientCutoffTriadicCoeffFamily M cutoffScale
@@ -198,14 +198,14 @@ theorem unitCubeHomogenizationError_unitRescaledCutoffCoeff [NeZero d]
 
 /-- The `(2,2)` leg, proved at the Section 4 literal observable
 `Support.cutoffHomogenizationErrorRaw22`. -/
-theorem unitCubeHomogenizationError_unitRescaledCutoffCoeff_eq_cutoffRaw22 [NeZero d]
+theorem unitCubeHomogenizationError_unitRescaledCutoffCoeff_eq_cutoffRaw22
     (M : ABKModel d) (Q : TriadicCube d) (cutoffScale : ℤ) (s : ℝ)
     (sigma : PositiveScalar) (omega : Cutoff.CutoffSample d) :
     Algsuperdiff.Frozen.Section24.unitCubeHomogenizationError s (.finite 2) (.finite 2)
         (unitRescaledCutoffCoeff M Q cutoffScale omega)
         (isotropicComparatorMatrix sigma) =
       Support.cutoffHomogenizationErrorRaw22 M cutoffScale Q.scale s sigma
-        (Cutoff.translateCutoffSample (triadicCubeShift Q) omega) := by
+        (Cutoff.translateCutoffSample (triadicCubeShift Q) omega)  := by
   rw [Support.cutoffHomogenizationErrorRaw22_characterization]
   exact unitCubeHomogenizationError_unitRescaledCutoffCoeff M Q cutoffScale s
     (.finite 2) (.finite 2) (isotropicComparatorMatrix sigma) omega
@@ -220,13 +220,13 @@ the base point of `Q`.
 
 Both sides are the *literal* manuscript quantity, and the equality is exact. -/
 theorem unitCubeHomogenizationError22_unitRescaledCutoffCoeff_eq_annularErrorAtom_cube
-    [NeZero d] (M : ABKModel d) (Q : TriadicCube d) (t : ℝ)
+     (M : ABKModel d) (Q : TriadicCube d) (t : ℝ)
     (omega : Cutoff.CutoffSample d) :
     Algsuperdiff.Frozen.Section24.unitCubeHomogenizationError t (.finite 2) (.finite 2)
         (unitRescaledCutoffCoeff M Q (Q.scale - 2) omega)
         (isotropicComparatorMatrix (Annealed.sigmaBar M (Q.scale - 2))) =
       Support.annularErrorAtom M Q.scale t
-        (Cutoff.translateCutoffSample (triadicCubeShift Q) omega) :=
+        (Cutoff.translateCutoffSample (triadicCubeShift Q) omega)  :=
   unitCubeHomogenizationError_unitRescaledCutoffCoeff_eq_cutoffRaw22 M Q
     (Q.scale - 2) t (Annealed.sigmaBar M (Q.scale - 2)) omega
 
@@ -236,13 +236,13 @@ enumerations, so that the translation is the lattice point
 `Support.triadicLatticePoint n v` in the exact spelling of the good events and
 of the frozen annular decomposition. -/
 theorem unitCubeHomogenizationError22_unitRescaledCutoffCoeff_eq_annularErrorAtom
-    [NeZero d] (M : ABKModel d) (n : ℤ) (v : Fin d → ℤ) (t : ℝ)
+     (M : ABKModel d) (n : ℤ) (v : Fin d → ℤ) (t : ℝ)
     (omega : Cutoff.CutoffSample d) :
     Algsuperdiff.Frozen.Section24.unitCubeHomogenizationError t (.finite 2) (.finite 2)
         (unitRescaledCutoffCoeff M (⟨n, v⟩ : TriadicCube d) (n - 2) omega)
         (isotropicComparatorMatrix (Annealed.sigmaBar M (n - 2))) =
       Support.annularErrorAtom M n t
-        (Cutoff.translateCutoffSample (Support.triadicLatticePoint n v) omega) := by
+        (Cutoff.translateCutoffSample (Support.triadicLatticePoint n v) omega)  := by
   rw [← triadicCubeShift_mk n v]
   exact unitCubeHomogenizationError22_unitRescaledCutoffCoeff_eq_annularErrorAtom_cube
     M (⟨n, v⟩ : TriadicCube d) t omega
@@ -256,7 +256,7 @@ because every real translation preserves the cutoff-sample law.  Consumers that
 need measurability use this form; consumers that stay at the literal manuscript
 quantity use the exact form above. -/
 theorem unitCubeHomogenizationError22_unitRescaledCutoffCoeff_ae_eq_annularErrorObservable
-    [NeZero d] (M : ABKModel d) (n : ℤ) (v : Fin d → ℤ) (t : {t : ℝ // 0 < t}) :
+     (M : ABKModel d) (n : ℤ) (v : Fin d → ℤ) (t : {t : ℝ // 0 < t}) :
     (fun omega : Cutoff.CutoffSample d =>
         Algsuperdiff.Frozen.Section24.unitCubeHomogenizationError (t : ℝ)
           (.finite 2) (.finite 2)
@@ -265,7 +265,7 @@ theorem unitCubeHomogenizationError22_unitRescaledCutoffCoeff_ae_eq_annularError
       =ᵐ[(Cutoff.cutoffSampleLaw M).toMeasure]
       fun omega : Cutoff.CutoffSample d =>
         Support.annularErrorObservable M n t
-          (Cutoff.translateCutoffSample (Support.triadicLatticePoint n v) omega) := by
+          (Cutoff.translateCutoffSample (Support.triadicLatticePoint n v) omega)  := by
   have hcomp :=
     (GoodEvents.measurePreserving_translateCutoffSample M
         (Support.triadicLatticePoint n v)).quasiMeasurePreserving.ae_eq_comp

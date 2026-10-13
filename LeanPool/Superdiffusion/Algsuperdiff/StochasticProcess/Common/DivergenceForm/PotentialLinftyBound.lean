@@ -33,15 +33,14 @@ variable {d : ℕ} {U : Set (Vec d)}
 
 /-- If the forcing is almost everywhere bounded in absolute value, the
 normalized potential resolvent has the same bound. -/
-theorem abs_alpha_mul_potentialResolvent_le_ae [NeZero d]
-    (a : CoeffField d) (hU : IsOpenBoundedConvexDomain U)
+theorem abs_alpha_mul_potentialResolvent_le_ae (a : CoeffField d) (hU : IsOpenBoundedConvexDomain U)
     {α lam Lam Cq : ℝ} (hα : 0 < α) (hlam : 0 < lam)
     (hEll : IsEllipticFieldOn lam Lam U a)
     (q : Vec d → ℝ) (hq : IsBoundedNonnegativePotential U q Cq)
     (f : ScalarL2 U) (C : ℝ) (hC : 0 ≤ C)
     (hf : ∀ᵐ x ∂volumeMeasureOn U, |f x| ≤ C) :
     ∀ᵐ x ∂volumeMeasureOn U,
-      |α * potentialResolvent a hα hlam hEll q hq f x| ≤ C := by
+      |α * potentialResolvent a hα hlam hEll q hq f x| ≤ C  := by
   rcases hC.eq_or_lt with rfl | hCpos
   · have hfzero : f = 0 := by
       apply MeasureTheory.Lp.ext (p := (2 : ENNReal))

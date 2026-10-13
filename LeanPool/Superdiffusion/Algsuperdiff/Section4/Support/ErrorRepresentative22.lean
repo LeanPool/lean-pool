@@ -115,7 +115,7 @@ private theorem finsetAverageReal_normalizedBlockResponseMax_nonneg
 `Ch02.homogenizationErrorOnCube_infinity_two_sq_eq_tsum`: after squaring, the
 `q = 2` root disappears and `𝓔_{s,2,2}` is exactly the geometrically weighted
 sum of the descendant *averages* of the normalized block-response maxima. -/
-theorem homogenizationErrorOnCube_two_two_sq_eq_tsum [NeZero d]
+theorem homogenizationErrorOnCube_two_two_sq_eq_tsum
     (Q : TriadicCube d) {s : ℝ} (hs : 0 < s) (F : TriadicCoeffFamily d)
     (a0 : Mat d) :
     (HomogenizationErrorOnCube Q s (.finite 2) (.finite 2) F a0) ^ 2 =
@@ -154,8 +154,8 @@ theorem homogenizationErrorOnCube_two_two_sq_eq_tsum [NeZero d]
 representatives.  This is the only layer where the `(2,2)` chain differs from
 the proved `(∞,2)` chain, which takes `Ch02.finsetSupReal` here. -/
 noncomputable def cutoffAvgDescendantNormalizedBlockResponseRepresentative
-    [NeZero d] (M : ABKModel d) (coefficientScale : ℤ) (Q : TriadicCube d)
-    (k : ℤ) (a0 : Mat d) : Cutoff.CutoffSample d → ℝ :=
+     (M : ABKModel d) (coefficientScale : ℤ) (Q : TriadicCube d)
+    (k : ℤ) (a0 : Mat d) : Cutoff.CutoffSample d → ℝ  :=
   fun omega => finsetAverageReal (descendantsAtScale Q k)
     (fun R => cutoffNormalizedBlockResponseRepresentative M coefficientScale R a0 omega)
 
@@ -163,10 +163,10 @@ noncomputable def cutoffAvgDescendantNormalizedBlockResponseRepresentative
 measurable: a finite sum needs no `Finset.sup'` induction and no a.e.
 qualification. -/
 theorem measurable_cutoffAvgDescendantNormalizedBlockResponseRepresentative
-    [NeZero d] (M : ABKModel d) (coefficientScale : ℤ) (Q : TriadicCube d)
+     (M : ABKModel d) (coefficientScale : ℤ) (Q : TriadicCube d)
     (k : ℤ) (a0 : Mat d) :
     Measurable
-      (cutoffAvgDescendantNormalizedBlockResponseRepresentative M coefficientScale Q k a0) := by
+      (cutoffAvgDescendantNormalizedBlockResponseRepresentative M coefficientScale Q k a0)  := by
   have hEq :
       cutoffAvgDescendantNormalizedBlockResponseRepresentative M coefficientScale Q k a0 =
         fun omega => ((descendantsAtScale Q k).card : ℝ)⁻¹ *
@@ -178,10 +178,10 @@ theorem measurable_cutoffAvgDescendantNormalizedBlockResponseRepresentative
     measurable_cutoffNormalizedBlockResponseRepresentative M coefficientScale R a0)
 
 theorem cutoffAvgDescendantNormalizedBlockResponseRepresentative_nonneg
-    [NeZero d] (M : ABKModel d) (coefficientScale : ℤ) (Q : TriadicCube d)
+     (M : ABKModel d) (coefficientScale : ℤ) (Q : TriadicCube d)
     (k : ℤ) (a0 : Mat d) (omega : Cutoff.CutoffSample d) :
     0 ≤ cutoffAvgDescendantNormalizedBlockResponseRepresentative
-      M coefficientScale Q k a0 omega :=
+      M coefficientScale Q k a0 omega  :=
   mul_nonneg (inv_nonneg.2 (Nat.cast_nonneg _))
     (Finset.sum_nonneg fun R _ =>
       cutoffNormalizedBlockResponseRepresentative_nonneg M coefficientScale R a0 omega)
@@ -207,23 +207,23 @@ private theorem aemeasurable_tsum_of_nonneg
 
 /-- The nonnegative everywhere-defined countable-sum functional of the `(2,2)`
 error, before selecting its measurable modification. -/
-noncomputable def cutoffHomogenizationError22Functional [NeZero d]
+noncomputable def cutoffHomogenizationError22Functional
     (M : ABKModel d) (coefficientScale domainScale : ℤ) (s : ℝ)
-    (sigma : PositiveScalar) : Cutoff.CutoffSample d → ℝ :=
+    (sigma : PositiveScalar) : Cutoff.CutoffSample d → ℝ  :=
   fun omega => Real.sqrt (∑' l : ℕ, Ch02.geometricWeight s 2 l *
     cutoffAvgDescendantNormalizedBlockResponseRepresentative M coefficientScale
       (originCube d domainScale)
       ((originCube d domainScale).scale - (l : ℤ))
       (isotropicComparatorMatrix sigma) omega)
 
-private theorem cutoffHomogenizationError22Functional_term_nonneg [NeZero d]
+private theorem cutoffHomogenizationError22Functional_term_nonneg
     (M : ABKModel d) (coefficientScale domainScale : ℤ) {s : ℝ} (hs : 0 < s)
     (sigma : PositiveScalar) (l : ℕ) (omega : Cutoff.CutoffSample d) :
     0 ≤ Ch02.geometricWeight s 2 l *
       cutoffAvgDescendantNormalizedBlockResponseRepresentative M coefficientScale
         (originCube d domainScale)
         ((originCube d domainScale).scale - (l : ℤ))
-        (isotropicComparatorMatrix sigma) omega := by
+        (isotropicComparatorMatrix sigma) omega  := by
   refine mul_nonneg ?_ ?_
   · simpa only [Ch02.geometricWeight_eq_old] using
       HCPolySupport.geometricWeight_nonneg l (by positivity : 0 ≤ s * (2 : ℝ))
@@ -232,18 +232,18 @@ private theorem cutoffHomogenizationError22Functional_term_nonneg [NeZero d]
       ((originCube d domainScale).scale - (l : ℤ))
       (isotropicComparatorMatrix sigma) omega
 
-theorem cutoffHomogenizationError22Functional_nonneg [NeZero d]
+theorem cutoffHomogenizationError22Functional_nonneg
     (M : ABKModel d) (coefficientScale domainScale : ℤ) (s : ℝ)
     (sigma : PositiveScalar) (omega : Cutoff.CutoffSample d) :
-    0 ≤ cutoffHomogenizationError22Functional M coefficientScale domainScale s sigma omega :=
+    0 ≤ cutoffHomogenizationError22Functional M coefficientScale domainScale s sigma omega  :=
   Real.sqrt_nonneg _
 
-theorem aemeasurable_cutoffHomogenizationError22Functional [NeZero d]
+theorem aemeasurable_cutoffHomogenizationError22Functional
     (M : ABKModel d) (coefficientScale domainScale : ℤ) {s : ℝ} (hs : 0 < s)
     (sigma : PositiveScalar) :
     AEMeasurable
       (cutoffHomogenizationError22Functional M coefficientScale domainScale s sigma)
-      (Cutoff.cutoffSampleLaw M).toMeasure := by
+      (Cutoff.cutoffSampleLaw M).toMeasure  := by
   have hterm : ∀ l : ℕ, AEMeasurable
       (fun omega => Ch02.geometricWeight s 2 l *
         cutoffAvgDescendantNormalizedBlockResponseRepresentative M coefficientScale
@@ -265,27 +265,27 @@ homogenization error.  The `max 0` is not a fallback: it makes the canonical
 measurable modification nonnegative everywhere, while
 `cutoffHomogenizationErrorRaw22_ae_eq_representative22` records its precise
 a.e. identity with the literal. -/
-noncomputable def cutoffHomogenizationErrorRepresentative22 [NeZero d]
+noncomputable def cutoffHomogenizationErrorRepresentative22
     (M : ABKModel d) (coefficientScale domainScale : ℤ) {s : ℝ} (hs : 0 < s)
-    (sigma : PositiveScalar) : Cutoff.CutoffSample d → ℝ :=
+    (sigma : PositiveScalar) : Cutoff.CutoffSample d → ℝ  :=
   fun omega => max 0 (AEMeasurable.mk
     (cutoffHomogenizationError22Functional M coefficientScale domainScale s sigma)
     (aemeasurable_cutoffHomogenizationError22Functional M coefficientScale domainScale
       hs sigma) omega)
 
-theorem measurable_cutoffHomogenizationErrorRepresentative22 [NeZero d]
+theorem measurable_cutoffHomogenizationErrorRepresentative22
     (M : ABKModel d) (coefficientScale domainScale : ℤ) {s : ℝ} (hs : 0 < s)
     (sigma : PositiveScalar) :
     Measurable
-      (cutoffHomogenizationErrorRepresentative22 M coefficientScale domainScale hs sigma) :=
+      (cutoffHomogenizationErrorRepresentative22 M coefficientScale domainScale hs sigma)  :=
   measurable_const.max
     (aemeasurable_cutoffHomogenizationError22Functional M coefficientScale domainScale
       hs sigma).measurable_mk
 
-theorem cutoffHomogenizationErrorRepresentative22_nonneg [NeZero d]
+theorem cutoffHomogenizationErrorRepresentative22_nonneg
     (M : ABKModel d) (coefficientScale domainScale : ℤ) {s : ℝ} (hs : 0 < s)
     (sigma : PositiveScalar) (omega : Cutoff.CutoffSample d) :
-    0 ≤ cutoffHomogenizationErrorRepresentative22 M coefficientScale domainScale hs sigma omega :=
+    0 ≤ cutoffHomogenizationErrorRepresentative22 M coefficientScale domainScale hs sigma omega  :=
   le_max_left _ _
 
 theorem cutoffHomogenizationError22Functional_ae_eq_representative22 [NeZero d]

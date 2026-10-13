@@ -127,12 +127,11 @@ theorem cubeGauge_le_crude [NeZero d] (R : TriadicCube d)
 
 /-- The constant of the pure-flux `D_h` bound at the mesoscopic cube `R`, in the
 normalization `|D_h| <= 2 (K Psi) J` used by the ratio engine. -/
-def mesoFluxConst (d : ℕ) [NeZero d] (h : UnitCubeSkewW2Infinity d)
-    (R : TriadicCube d) : ℝ :=
+def mesoFluxConst (d : ℕ) (h : UnitCubeSkewW2Infinity d) (R : TriadicCube d) : ℝ  :=
   (1 / 2 : ℝ) * (fluxCubeConst d * h.gradientW1Infinity * cubeScaleFactor R)
 
-theorem mesoFluxConst_nonneg (d : ℕ) [NeZero d] (h : UnitCubeSkewW2Infinity d)
-    (R : TriadicCube d) : 0 ≤ mesoFluxConst d h R := by
+theorem mesoFluxConst_nonneg (d : ℕ) (h : UnitCubeSkewW2Infinity d)
+    (R : TriadicCube d) : 0 ≤ mesoFluxConst d h R  := by
   have h1 : (0 : ℝ) ≤ fluxCubeConst d := fluxCubeConst_nonneg d
   have h2 : (0 : ℝ) ≤ h.gradientW1Infinity :=
     Algsuperdiff.Section24.Sensitivity.Provider.DhBound.Lipschitz.gradientW1Infinity_nonneg h

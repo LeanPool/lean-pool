@@ -88,8 +88,7 @@ theorem gamma_regime_of_cstar_scaled {C cst gam : ℝ}
 `∫⁻ (step3ThirdTerm)^q ≤ (ofReal (C_d A q γ))^q`, uniformly in the descendant
 scale.  The moment range hypothesis `8q ≤ γ^{-1}` is the anchor's own
 `p ≤ C^{-1}γ^{-1}s` read at `q = p/2`; no other restriction on `p` is used. -/
-theorem exists_lintegral_rpow_step3ThirdTerm_slot (d : ℕ) [NeZero d] (cstar : ℝ)
-    (hcstar : 0 < cstar) :
+theorem exists_lintegral_rpow_step3ThirdTerm_slot (d : ℕ) (cstar : ℝ) (hcstar : 0 < cstar) :
     ∃ Creg A : ℝ, 0 < Creg ∧ 0 < A ∧
       ∀ M : ABKModel d, Disorder.cstar M = cstar →
         M.gamma ≤ (Creg⁻¹) ^ (10 : ℕ) → M.gamma ≤ 1 / 8 → ∀ Cd : ℝ, 0 ≤ Cd →
@@ -99,7 +98,7 @@ theorem exists_lintegral_rpow_step3ThirdTerm_slot (d : ℕ) [NeZero d] (cstar : 
                   ENNReal.ofReal (step3ThirdTerm Cd M m R omega
                     (lFreeGradSlot m (tailSeriesGauge m) R omega)) ^ q
                   ∂(Cutoff.cutoffSampleLaw M).toMeasure) ≤
-                ENNReal.ofReal (Cd * A * (q * M.gamma)) ^ q := by
+                ENNReal.ofReal (Cd * A * (q * M.gamma)) ^ q  := by
   classical
   obtain ⟨C3, hC36, hthird⟩ := exists_lintegral_rpow_step3ThirdTerm_le d
   obtain ⟨Cg, hCg0, hgaugeAll⟩ := exists_sigmaBar_gaugePackage d

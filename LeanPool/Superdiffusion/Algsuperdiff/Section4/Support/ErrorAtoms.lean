@@ -75,7 +75,7 @@ theorem: Section 3 obtains a measurable observable by *defining*
 `Observable.cutoffHomogenizationError` to be the selected representative
 `Observable.cutoffHomogenizationErrorRepresentative` and recording its a.e.
 identity with the literal
-(`Observable.cutoffHomogenizationErrorRaw_ae_eq_representative`).  The
+(`Observable.cutoffHomogenizationErrorRaw_ae_eq_representative`). The
 corresponding `(2,2)` representative — and the representative for the
 flux-corrected coefficient, whose constant shift is itself sample-dependent —
 are provider constructions and are not built in this support layer.
@@ -116,7 +116,7 @@ private theorem scaleResponseAtScale_finite_eq
         (1 / p) :=
   rfl
 
-private theorem scaleResponseAtScale_finite_nonneg [NeZero d]
+private theorem scaleResponseAtScale_finite_nonneg
     (Q : TriadicCube d) (k : ℤ) (p : ℝ)
     (F : TriadicCoeffFamily d) (a0 : Mat d) :
     0 ≤ scaleResponseAtScale Q k (.finite p) F a0 := by
@@ -132,9 +132,9 @@ This is the `(p,q) = (2,2)` instance of exactly the same frozen unit-cube
 functional and triadic change of variables that
 `Observable.homogenizationErrorAtScale` uses at `(∞,2)`; no new error family
 and no fallback branch is introduced. -/
-noncomputable def homogenizationErrorAtScale22 [NeZero d]
+noncomputable def homogenizationErrorAtScale22
     (m : ℤ) (s : ℝ) (a : CoeffOn (cubeDomain (originCube d m)))
-    (sigma : PositiveScalar) : ℝ :=
+    (sigma : PositiveScalar) : ℝ  :=
   Algsuperdiff.Frozen.Section24.unitCubeHomogenizationError
     s (.finite 2) (.finite 2) (unitRescaledCoeffOn m a)
     (isotropicComparatorMatrix sigma)
@@ -143,13 +143,13 @@ noncomputable def homogenizationErrorAtScale22 [NeZero d]
 the scalar gauge `σ Id` exhibited.  This mirrors
 `Observable.homogenizationErrorAtScale_characterization` at the new
 exponents. -/
-theorem homogenizationErrorAtScale22_characterization [NeZero d]
+theorem homogenizationErrorAtScale22_characterization
     (m : ℤ) (s : ℝ) (a : CoeffOn (cubeDomain (originCube d m)))
     (sigma : PositiveScalar) (F : TriadicCoeffFamily d)
     (hF : CoeffOn.AEEq (F.coeffOn (originCube d m)) a) :
     homogenizationErrorAtScale22 m s a sigma =
       HomogenizationErrorOnCube (originCube d m) s (.finite 2) (.finite 2) F
-        (isotropicComparatorMatrix sigma) := by
+        (isotropicComparatorMatrix sigma)  := by
   let B := TriadicCoeffFamily.dilate (-m) F
   calc
     homogenizationErrorAtScale22 m s a sigma =
@@ -199,9 +199,9 @@ literal chain, with the spatial exponent moved from `∞` to `2`.  As there,
 `coefficientScale` is the cutoff level `L` of `a_L` and `domainScale` is the
 scale of the observed cube `□_m`; neither is silently substituted for the
 other. -/
-noncomputable def cutoffHomogenizationErrorRaw22 [NeZero d]
+noncomputable def cutoffHomogenizationErrorRaw22
     (M : ABKModel d) (coefficientScale domainScale : ℤ) (s : ℝ)
-    (sigma : PositiveScalar) (omega : Cutoff.CutoffSample d) : ℝ :=
+    (sigma : PositiveScalar) (omega : Cutoff.CutoffSample d) : ℝ  :=
   homogenizationErrorAtScale22 domainScale s
     (Cutoff.coefficientCutoffCoeffOn M coefficientScale omega
       (originCube d domainScale))
@@ -209,13 +209,13 @@ noncomputable def cutoffHomogenizationErrorRaw22 [NeZero d]
 
 /-- The raw `(2,2)` cutoff expression is exactly the manuscript's
 homogenization error on the genuine compatible cutoff family. -/
-theorem cutoffHomogenizationErrorRaw22_characterization [NeZero d]
+theorem cutoffHomogenizationErrorRaw22_characterization
     (M : ABKModel d) (coefficientScale domainScale : ℤ) (s : ℝ)
     (sigma : PositiveScalar) (omega : Cutoff.CutoffSample d) :
     cutoffHomogenizationErrorRaw22 M coefficientScale domainScale s sigma omega =
       HomogenizationErrorOnCube (originCube d domainScale) s (.finite 2) (.finite 2)
         (Cutoff.coefficientCutoffTriadicCoeffFamily M coefficientScale omega)
-        (isotropicComparatorMatrix sigma) :=
+        (isotropicComparatorMatrix sigma)  :=
   homogenizationErrorAtScale22_characterization domainScale s
     (Cutoff.coefficientCutoffCoeffOn M coefficientScale omega
       (originCube d domainScale)) sigma
@@ -237,14 +237,13 @@ theorem cutoffHomogenizationErrorRaw22_nonneg [NeZero d]
 
 The manuscript's translated atom at `z + □_n` is `annularErrorAtom M n s
 (Cutoff.translateCutoffSample z ω)` (resolution A4). -/
-noncomputable def annularErrorAtom [NeZero d]
-    (M : ABKModel d) (n : ℤ) (s : ℝ) (omega : Cutoff.CutoffSample d) : ℝ :=
+noncomputable def annularErrorAtom
+    (M : ABKModel d) (n : ℤ) (s : ℝ) (omega : Cutoff.CutoffSample d) : ℝ  :=
   cutoffHomogenizationErrorRaw22 M (n - 2) n s (Annealed.sigmaBar M (n - 2)) omega
 
-theorem annularErrorAtom_def [NeZero d]
-    (M : ABKModel d) (n : ℤ) (s : ℝ) (omega : Cutoff.CutoffSample d) :
+theorem annularErrorAtom_def (M : ABKModel d) (n : ℤ) (s : ℝ) (omega : Cutoff.CutoffSample d) :
     annularErrorAtom M n s omega =
-      cutoffHomogenizationErrorRaw22 M (n - 2) n s (Annealed.sigmaBar M (n - 2)) omega :=
+      cutoffHomogenizationErrorRaw22 M (n - 2) n s (Annealed.sigmaBar M (n - 2)) omega  :=
   rfl
 
 /-! ## The cube-averaged flux increment `(k_L − k_m)_Q` -/
@@ -517,8 +516,8 @@ The averaged increment is taken over the same cube `□_k` that carries the
 functional, matching the printed `(k_L − k_m)_{□_m}`.  The translated version
 at `z + □_k` is `fluxCorrectedError M L k s (Cutoff.translateCutoffSample z ω)`
 (resolution A4). -/
-noncomputable def fluxCorrectedError [NeZero d] (M : ABKModel d) (L k : ℤ) (s : ℝ)
-    (omega : Cutoff.CutoffSample d) : ℝ :=
+noncomputable def fluxCorrectedError (M : ABKModel d) (L k : ℤ) (s : ℝ)
+    (omega : Cutoff.CutoffSample d) : ℝ  :=
   homogenizationErrorAtScale k s
     (fluxCorrectedCoeffOn M L k (originCube d k) omega) (Annealed.sigmaBar M k)
 

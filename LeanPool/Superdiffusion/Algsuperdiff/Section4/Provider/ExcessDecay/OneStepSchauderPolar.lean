@@ -187,7 +187,7 @@ theorem continuousAt_sphereFlux {u : EuclideanSpace ℝ (Fin d) → ℝ}
 
 /-- **Continuity of the radial flux.**  For `C¹` `u`, the average radial flux is
 continuous in `r`. -/
-theorem continuous_sphereFlux [NeZero d] {u : EuclideanSpace ℝ (Fin d) → ℝ}
+theorem continuous_sphereFlux {u : EuclideanSpace ℝ (Fin d) → ℝ}
     (hu : ContDiff ℝ 1 u) (x : EuclideanSpace ℝ (Fin d)) :
     Continuous (fun r : ℝ => sphereFlux x r u) :=
   continuous_iff_continuousAt.mpr fun r₀ => continuousAt_sphereFlux hu x r₀

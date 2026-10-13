@@ -91,8 +91,7 @@ The printed conversion is `E[𝓔_{s,2,2}^q]^{1/q} ≤ C s^{-1} q^{1/2} γ^{1/2}
 q² exp(−C^{-1}γ^{-1})`: the `√q` is the `Γ₂` lane's `q^{1/σ}` at `σ = 2` and
 the `q²` is the `Γ_{1/2}` lane's at `σ = 1/2`.  Both are carried verbatim by
 `gammaTwoHalfMomentBound`. -/
-theorem exists_lintegral_rpow_unitCubeHomogenizationError22_le (d : ℕ) [NeZero d] :
-    ∃ C : ℝ, 0 < C ∧
+theorem exists_lintegral_rpow_unitCubeHomogenizationError22_le (d : ℕ) : ∃ C : ℝ, 0 < C ∧
       ∀ M : ABKModel d, M.gamma ≤ (C⁻¹) ^ 10 * (Disorder.cstar M) ^ 10 →
         ∀ s : ℝ, ∀ _hsWindow : s ∈ Set.Icc (8 * M.gamma) 1,
           ∀ R : TriadicCube d, ∀ p : ℝ, 1 ≤ p →
@@ -108,7 +107,7 @@ theorem exists_lintegral_rpow_unitCubeHomogenizationError22_le (d : ℕ) [NeZero
                   (Real.sqrt 3 * (Proportion.annulusPenalty d 2 1 *
                     (C * (Disorder.cstar M)⁻¹ * s⁻¹ * Real.sqrt M.gamma)))
                   (Real.sqrt 3 * (Proportion.annulusPenalty d (1 / 2) 1 *
-                    Real.exp (-(C⁻¹ * (Disorder.cstar M) ^ 3 * M.gamma⁻¹))))) ^ p := by
+                    Real.exp (-(C⁻¹ * (Disorder.cstar M) ^ 3 * M.gamma⁻¹))))) ^ p  := by
   obtain ⟨C, hC0, hall⟩ :=
     exists_isTwoTermBigOWith_annularErrorObservable_translate d
   refine ⟨C, hC0, fun M hreg s hsWindow R p hp => ?_⟩

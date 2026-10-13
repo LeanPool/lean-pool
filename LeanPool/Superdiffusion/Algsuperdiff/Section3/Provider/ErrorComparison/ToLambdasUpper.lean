@@ -179,7 +179,7 @@ theorem sq_vecNormSq_le_vecDot_bCoarse_mul_vecDot_sigmaStarInvCoarse {d : ℕ}
 
 /-- The normalized block-response value set of a scalar comparator is bounded
 above, by the one-cube estimate of `ToLambdas.lean`. -/
-theorem normalizedBlockResponseValueSet_scalarMatrix_bddAbove {d : ℕ} [NeZero d]
+theorem normalizedBlockResponseValueSet_scalarMatrix_bddAbove {d : ℕ}
     (Q : TriadicCube d) (F : Book.Ch02.TriadicCoeffFamily d) {σ : ℝ}
     (hσ : 0 < σ) :
     BddAbove
@@ -202,7 +202,7 @@ minus `2` is at most twice the normalized block-response maximum.
 
 The proof evaluates the reflection identity of `ToLambdas.lean` at the
 half-probe `(u, 0)`, whose reflection is itself. -/
-theorem vecDot_bCoarse_add_vecDot_sigmaStarInvCoarse_sub_two_le {d : ℕ} [NeZero d]
+theorem vecDot_bCoarse_add_vecDot_sigmaStarInvCoarse_sub_two_le {d : ℕ}
     (Q : TriadicCube d) (F : Book.Ch02.TriadicCoeffFamily d) {σ : ℝ} (hσ : 0 < σ)
     (u : Vec d) (hu : vecNormSq u = 1) :
     σ⁻¹ * vecDot u
@@ -210,7 +210,7 @@ theorem vecDot_bCoarse_add_vecDot_sigmaStarInvCoarse_sub_two_le {d : ℕ} [NeZer
         σ * vecDot u
           (matVecMul (Book.Ch02.sigmaStarInvCoarse (Book.Ch02.cubeDomain Q)
             (F.coeffOn Q)) u) - 2 ≤
-      2 * Book.Ch02.normalizedBlockResponseMax Q F (scalarMatrix (d := d) σ) := by
+      2 * Book.Ch02.normalizedBlockResponseMax Q F (scalarMatrix (d  := d) σ) := by
   have hcpos : 0 < Real.sqrt σ := Real.sqrt_pos.2 hσ
   have hc : Real.sqrt σ ≠ 0 := ne_of_gt hcpos
   have hcc : Real.sqrt σ * Real.sqrt σ = σ := Real.mul_self_sqrt hσ.le
@@ -243,12 +243,12 @@ theorem vecDot_bCoarse_add_vecDot_sigmaStarInvCoarse_sub_two_le {d : ℕ} [NeZer
 
 /-- The two normalized quadratic forms at a unit vector are each at most
 `1 + D + D^{1/2}`, where `D` is twice the normalized block-response maximum. -/
-private theorem unit_quadraticForms_le {d : ℕ} [NeZero d] (Q : TriadicCube d)
+private theorem unit_quadraticForms_le {d : ℕ} (Q : TriadicCube d)
     (F : Book.Ch02.TriadicCoeffFamily d) {σ : ℝ} (hσ : 0 < σ) (u : Vec d)
     (hu : vecNormSq u = 1) :
     σ⁻¹ * vecDot u
         (matVecMul (Book.Ch02.bCoarse (Book.Ch02.cubeDomain Q) (F.coeffOn Q)) u) ≤
-      1 + 2 * Book.Ch02.normalizedBlockResponseMax Q F (scalarMatrix (d := d) σ) +
+      1 + 2 * Book.Ch02.normalizedBlockResponseMax Q F (scalarMatrix (d  := d) σ) +
         Real.sqrt
           (2 * Book.Ch02.normalizedBlockResponseMax Q F (scalarMatrix (d := d) σ)) ∧
       σ * vecDot u

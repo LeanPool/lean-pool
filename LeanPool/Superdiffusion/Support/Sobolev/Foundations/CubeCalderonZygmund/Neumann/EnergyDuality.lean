@@ -248,7 +248,7 @@ noncomputable def centeredCubeMeanZeroScalarDivergenceSolution
 /-- The canonical mean-zero adjoint satisfies the packaged weak equation with
 the same negative-datum convention as the supplied solution. -/
 theorem centeredCubeMeanZeroScalarDivergenceSolution_isWeakSolution
-    {d : ℕ} [NeZero d] (m : ℤ) {sigma0 : ℝ}
+    {d : ℕ} (m : ℤ) {sigma0 : ℝ}
     (hsigma0 : 0 < sigma0) (G : Vec d → Vec d)
     (hG : MemVectorL2 (openCubeSet (originCube d m)) G) :
     IsMeanZeroNeumannRhsWeakSolution
@@ -265,8 +265,7 @@ theorem centeredCubeMeanZeroScalarDivergenceSolution_isWeakSolution
     (isEllipticFieldOn_scalarMatrix_centeredCube hsigma0)
 
 /-- Raw-volume weak equation for the canonical centered Neumann adjoint. -/
-theorem centeredCubeMeanZeroScalarDivergenceSolution_weak
-    {d : ℕ} [NeZero d] (m : ℤ) {sigma0 : ℝ}
+theorem centeredCubeMeanZeroScalarDivergenceSolution_weak {d : ℕ} (m : ℤ) {sigma0 : ℝ}
     (hsigma0 : 0 < sigma0) (G : Vec d → Vec d)
     (hG : MemVectorL2 (openCubeSet (originCube d m)) G)
     (psi : H1MeanZeroFunction (openCubeSet (originCube d m))) :
@@ -275,14 +274,13 @@ theorem centeredCubeMeanZeroScalarDivergenceSolution_weak
           ((centeredCubeMeanZeroScalarDivergenceSolution m hsigma0 G hG).toH1Function.grad x)
           (psi.toH1Function.grad x) ∂volume =
       -∫ x in openCubeSet (originCube d m),
-        vecDot (G x) (psi.toH1Function.grad x) ∂volume := by
+        vecDot (G x) (psi.toH1Function.grad x) ∂volume  := by
   exact (centeredCubeMeanZeroScalarDivergenceSolution_isWeakSolution
     m hsigma0 G hG).scalarMatrix_neg_weak psi
 
 /-- Normalized-volume weak equation for the canonical centered Neumann
 adjoint. -/
-theorem centeredCubeMeanZeroScalarDivergenceSolution_normalized_weak
-    {d : ℕ} [NeZero d] (m : ℤ) {sigma0 : ℝ}
+theorem centeredCubeMeanZeroScalarDivergenceSolution_normalized_weak {d : ℕ} (m : ℤ) {sigma0 : ℝ}
     (hsigma0 : 0 < sigma0) (G : Vec d → Vec d)
     (hG : MemVectorL2 (openCubeSet (originCube d m)) G)
     (psi : H1MeanZeroFunction (openCubeSet (originCube d m))) :
@@ -292,7 +290,7 @@ theorem centeredCubeMeanZeroScalarDivergenceSolution_normalized_weak
           (psi.toH1Function.grad x)
         ∂(centeredCubeDomain d m).normalizedVolume =
       -∫ x, vecDot (G x) (psi.toH1Function.grad x)
-        ∂(centeredCubeDomain d m).normalizedVolume := by
+        ∂(centeredCubeDomain d m).normalizedVolume  := by
   rw [centeredCube_normalizedVolume_eq_smul_openCubeVolume_neumann,
     integral_smul_measure, integral_smul_measure, smul_eq_mul, smul_eq_mul]
   calc
@@ -423,12 +421,12 @@ theorem centeredCubeMeanZeroScalarDivergence_cross_pairing
 /-- Cross-pair a supplied centered Neumann solution against the canonical
 mean-zero adjoint. -/
 theorem centeredCubeMeanZeroScalarDivergenceSolution_normalized_cross_pairing
-    {d : ℕ} [NeZero d] (m : ℤ) {sigma0 : ℝ}
+    {d : ℕ} (m : ℤ) {sigma0 : ℝ}
     (hsigma0 : 0 < sigma0)
     (u : H1MeanZeroFunction (openCubeSet (originCube d m)))
     (h G : Vec d → Vec d)
     (hu : IsMeanZeroNeumannRhsWeakSolution
-      (fun _ : Vec d ↦ scalarMatrix (d := d) sigma0)
+      (fun _ : Vec d ↦ scalarMatrix (d  := d) sigma0)
       (openCubeSet (originCube d m)) u (fun x ↦ -h x))
     (hG : MemVectorL2 (openCubeSet (originCube d m)) G) :
     ∫ x, vecDot (u.toH1Function.grad x) (G x)

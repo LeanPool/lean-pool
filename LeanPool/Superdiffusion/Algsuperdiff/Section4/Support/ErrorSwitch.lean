@@ -222,6 +222,7 @@ private theorem summable_shellAvg (Q : TriadicCube d) (F : TriadicCoeffFamily d)
     (by linarith only [hs]) (fun l => shellAvg_nonneg Q F a0 l)
     (fun l => shellAvg_le_uniform Q F a0 l)
 
+omit [NeZero d] in
 private theorem sq_eq_tsum_shellAvg (Q : TriadicCube d) {s : ℝ} (hs : 0 < s)
     (F : TriadicCoeffFamily d) (a0 : Mat d) :
     (HomogenizationErrorOnCube Q s (.finite 2) (.finite 2) F a0) ^ 2 =

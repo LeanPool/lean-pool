@@ -320,7 +320,7 @@ theorem gaugedEllipticitySum_translateCube_coefficientCutoff (M : ABKModel d)
 
 /-- **The pathwise covariance, at an arbitrary scale-`m` cube.**  Unconditional
 apart from the scale identification `hT`. -/
-theorem gaugedEllipticitySum_scale_eq_originCube [NeZero d] (M : ABKModel d) (L m : ℤ)
+theorem gaugedEllipticitySum_scale_eq_originCube (M : ABKModel d) (L m : ℤ)
     (omega : CutoffSample d) {T : TriadicCube d} (hT : T.scale = m) (sigmaBar s : ℝ) :
     gaugedEllipticitySum sigmaBar T s
         (coefficientCutoffTriadicCoeffFamily M L omega) =
@@ -361,7 +361,7 @@ ellipticity sum at any scale-`m` cube equals the one at `cu_m`, where
 Conditional on the scale identification `hT` and on `hmeas`, the a.e.-strong measurability
 in the sample of the observable at the **origin cube**.  Nothing about the
 model, the gauge or the exponent is assumed. -/
-theorem integral_gaugedEllipticitySum_pow_eq_originCube [NeZero d] (M : ABKModel d)
+theorem integral_gaugedEllipticitySum_pow_eq_originCube (M : ABKModel d)
     (L m : ℤ) {T : TriadicCube d} (hT : T.scale = m) (sigmaBar s : ℝ) (k : ℕ)
     (hmeas : AEStronglyMeasurable
       (fun omega : CutoffSample d =>
@@ -375,7 +375,7 @@ theorem integral_gaugedEllipticitySum_pow_eq_originCube [NeZero d] (M : ABKModel
       ∫ omega : CutoffSample d,
         gaugedEllipticitySum sigmaBar (originCube d m) s
           (coefficientCutoffTriadicCoeffFamily M L omega) ^ k
-        ∂(cutoffSampleLaw M).toMeasure := by
+        ∂(cutoffSampleLaw M).toMeasure  := by
   set v : Vec d :=
     fun i => ((T.index i : ℤ) : ℝ) * cubeScaleFactor (originCube d m) with hv
   have hpt : ∀ omega : CutoffSample d,
@@ -408,7 +408,7 @@ own scale-`m` ancestor is the one at `cu_m`.  Together with
 this closes the carrier mismatch.
 
 Conditional on `hm : R.scale <= m` (the ancestor exists) and on `hmeas`. -/
-theorem integral_gaugedEllipticitySum_pow_ancestorAtScale_eq_originCube [NeZero d]
+theorem integral_gaugedEllipticitySum_pow_ancestorAtScale_eq_originCube
     (M : ABKModel d) (L m : ℤ) (R : TriadicCube d) (hm : R.scale ≤ m)
     (sigmaBar s : ℝ) (k : ℕ)
     (hmeas : AEStronglyMeasurable
@@ -423,7 +423,7 @@ theorem integral_gaugedEllipticitySum_pow_ancestorAtScale_eq_originCube [NeZero 
       ∫ omega : CutoffSample d,
         gaugedEllipticitySum sigmaBar (originCube d m) s
           (coefficientCutoffTriadicCoeffFamily M L omega) ^ k
-        ∂(cutoffSampleLaw M).toMeasure :=
+        ∂(cutoffSampleLaw M).toMeasure  :=
   integral_gaugedEllipticitySum_pow_eq_originCube M L m
     (ancestorAtScale_scale R hm) sigmaBar s k hmeas
 

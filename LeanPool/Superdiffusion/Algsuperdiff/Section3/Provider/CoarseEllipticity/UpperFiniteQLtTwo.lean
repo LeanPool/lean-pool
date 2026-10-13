@@ -66,7 +66,7 @@ theorem LambdaSqCoeffField_finite_eq_rpow (Q : TriadicCube d)
 
 /-- Multiplication of the exported finite upper observable by a nonnegative
 scalar can be moved inside every depth before taking the outer root. -/
-theorem cutoffUpperEllipticity_mul_eq_rpow [NeZero d] (M : ABKModel d)
+theorem cutoffUpperEllipticity_mul_eq_rpow (M : ABKModel d)
     (m L : ℤ) {s r : ℝ} (hs : 0 < s) {q : CoarseEllipticityExponent}
     (hqval : q.1 = Book.Ch02.MultiscaleExponent.finite r) (hr : 0 < r)
     {scaling : ℝ} (hscaling : 0 ≤ scaling) (omega : Cutoff.CutoffSample d) :
@@ -314,8 +314,7 @@ private theorem rpow_three_le_four_mul_sum {x y z r : ℝ}
 carrier yields the everywhere three-term witness required by the upper leg.
 The factor four is the uniform convexity loss for the three outer-root slots
 when `1 <= q < 2`. -/
-theorem threeTermSplit_cutoffUpperEllipticity_of_finiteQLtTwoPresplit
-    [NeZero d] (M : ABKModel d) (m L : ℤ)
+theorem threeTermSplit_cutoffUpperEllipticity_of_finiteQLtTwoPresplit (M : ABKModel d) (m L : ℤ)
     (r : {r : ℝ // 1 ≤ r}) (hr : (r : ℝ) < 2)
     {s scaling Bdet B1 Bexp sigma1 sigmaExp : ℝ} (hs : 0 < s)
     (hscaling : 0 ≤ scaling) (hsigma1 : 0 < sigma1)
@@ -371,7 +370,7 @@ theorem threeTermSplit_cutoffUpperEllipticity_of_finiteQLtTwoPresplit
       IsBigOWith (Cutoff.cutoffSampleLaw M).toMeasure
         (gammaSigma sigma1) Uone B1 ∧
       IsBigOWith (Cutoff.cutoffSampleLaw M).toMeasure
-        (gammaSigma sigmaExp) Utail Bexp := by
+        (gammaSigma sigmaExp) Utail Bexp  := by
   let w : ℕ → ℝ := fun n => Book.Ch02.geometricWeight s (r : ℝ) n
   let Rone : ℕ → Cutoff.CutoffSample d → ℝ := fun n omega => a1 n * Vone n omega
   let Rexp : ℕ → Cutoff.CutoffSample d → ℝ := fun n omega => aexp n * Vexp n omega

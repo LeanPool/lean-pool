@@ -110,11 +110,10 @@ variable {d : ℕ}
 /-- **The Step-7d embedding constant**: the Section-3 multiscale Poincaré constant
 times the coordinate count `d`.  Both factors are dimension-only — no
 ellipticity object of any kind occurs. -/
-noncomputable def stepSevenEmbeddingConst (d : ℕ) [NeZero d] : ℝ :=
+noncomputable def stepSevenEmbeddingConst (d : ℕ) : ℝ :=
   (d : ℝ) * oscillationMultiscalePoincareConstant d
 
-theorem stepSevenEmbeddingConst_nonneg (d : ℕ) [NeZero d] :
-    0 ≤ stepSevenEmbeddingConst d :=
+theorem stepSevenEmbeddingConst_nonneg (d : ℕ) : 0 ≤ stepSevenEmbeddingConst d  :=
   mul_nonneg (Nat.cast_nonneg d) (oscillationMultiscalePoincareConstant_nonneg d)
 
 /-! ## 2. Residue: the coordinate aggregation -/
@@ -158,11 +157,11 @@ finite-depth vector partial seminorms of `∇u` at index `1`,
 This is the `hembed` slot: `oscLoc ≤ Cemb · besov`, at the scale normalization,
 with a coefficient-free `C(d)`.  Unconditional beyond the printed embedding's
 own binders. -/
-theorem stepSevenEmbedding_of_partialBound [NeZero d] (Q : TriadicCube d)
+theorem stepSevenEmbedding_of_partialBound (Q : TriadicCube d)
     (u : H1Function (openCubeSet Q)) {B : ℝ}
     (hB : ∀ N : ℕ, cubeBesovNegativeVectorPartialSeminorm Q 1 N u.grad ≤ B) :
     (cubeScaleFactor Q)⁻¹ * cubeBesovOscillation Q (2 : ℝ≥0∞) (fun x => u.toFun x) ≤
-      stepSevenEmbeddingConst d * B := by
+      stepSevenEmbeddingConst d * B  := by
   have hQpos : 0 < cubeScaleFactor Q := cubeScaleFactor_pos_aux Q
   have hosc :=
     cubeBesovOscillation_le_oscillationMultiscalePoincareConstant_mul_sum_cubeBesovCircNorm
@@ -189,12 +188,10 @@ theorem stepSevenEmbedding_of_partialBound [NeZero d] (Q : TriadicCube d)
 /-- **`e.fractional.Sobolev.embedding` at the §4.4 cube, at the negative Besov `q =
 1` carrier.**  The `BddAbove` binder is the printed membership `∇u ∈
 B^{-1}_{2,1}(Q)` in the upstream interface's own form. -/
-theorem stepSevenEmbedding [NeZero d] (Q : TriadicCube d)
-    (u : H1Function (openCubeSet Q))
-    (hbdd : BddAbove
+theorem stepSevenEmbedding (Q : TriadicCube d) (u : H1Function (openCubeSet Q)) (hbdd : BddAbove
       (Set.range fun N : ℕ => cubeBesovNegativeVectorPartialSeminorm Q 1 N u.grad)) :
     (cubeScaleFactor Q)⁻¹ * cubeBesovOscillation Q (2 : ℝ≥0∞) (fun x => u.toFun x) ≤
-      stepSevenEmbeddingConst d * cubeBesovNegativeVectorSeminorm Q 1 u.grad := by
+      stepSevenEmbeddingConst d * cubeBesovNegativeVectorSeminorm Q 1 u.grad  := by
   refine stepSevenEmbedding_of_partialBound Q u ?_
   intro N
   exact le_csSup hbdd (Set.mem_range_self N)

@@ -80,6 +80,7 @@ variable {d : ℕ} [NeZero d]
 
 section Generic
 
+omit [NeZero d] in
 /-- **A zero-trace solution of the constant forcing is the shifted resolvent of
 the shifted datum.**  This is the identity `w = R_lam (1 + lam w)`. -/
 theorem toScalarL2_eq_alphaShiftedResolvent_add_smul
@@ -107,6 +108,7 @@ theorem toScalarL2_eq_alphaShiftedResolvent_add_smul
   rw [ZeroTraceSobolev.toL2_ofH10Function] at hval
   exact hval
 
+omit [NeZero d] in
 /-- The gap between the solution and the shifted resolvent of the constant
 datum is the shift times the shifted resolvent of the solution. -/
 theorem toScalarL2_sub_alphaShiftedResolvent
@@ -118,11 +120,12 @@ theorem toScalarL2_sub_alphaShiftedResolvent
     (lam : PositiveShift) :
     w.toH1Function.toScalarL2 - alphaShiftedResolvent a lam.property hnu hEll one =
       (lam : ℝ) • alphaShiftedResolvent a lam.property hnu hEll
-        w.toH1Function.toScalarL2 := by
+        w.toH1Function.toScalarL2  := by
   conv_lhs =>
     rw [toScalarL2_eq_alphaShiftedResolvent_add_smul a hU hnu hEll w hw one hone lam]
   rw [map_add, map_smul, add_sub_cancel_left]
 
+omit [NeZero d] in
 /-- **A bounded zero-trace solution of the constant forcing is nonnegative.**
 At a shift small enough that `1 + lam w` stays nonnegative, the solution is the
 shifted resolvent of a nonnegative datum. -/
@@ -134,7 +137,7 @@ theorem toScalarL2_nonneg_of_isScalarForcedWeakSolution
     (one : ScalarL2 U) (hone : ∀ᵐ x ∂volumeMeasureOn U, one x = 1)
     (hMb : 0 ≤ Mb)
     (hwb : ∀ᵐ x ∂volumeMeasureOn U, |w.toH1Function.toFun x| ≤ Mb) :
-    ∀ᵐ x ∂volumeMeasureOn U, 0 ≤ w.toH1Function.toScalarL2 x := by
+    ∀ᵐ x ∂volumeMeasureOn U, 0 ≤ w.toH1Function.toScalarL2 x  := by
   set c : ℝ := (Mb + 1)⁻¹ with hc
   have hcpos : 0 < c := by
     rw [hc]
@@ -162,6 +165,7 @@ theorem toScalarL2_nonneg_of_isScalarForcedWeakSolution
     at hres
   exact hres
 
+omit [NeZero d] in
 /-- **The lower half of the sandwich.**  The shifted resolvent of the constant
 datum never exceeds a bounded zero-trace solution of the constant forcing. -/
 theorem alphaShiftedResolvent_le_of_isScalarForcedWeakSolution
@@ -175,7 +179,7 @@ theorem alphaShiftedResolvent_le_of_isScalarForcedWeakSolution
     (lam : PositiveShift) :
     ∀ᵐ x ∂volumeMeasureOn U,
       alphaShiftedResolvent a lam.property hnu hEll one x ≤
-        w.toH1Function.toScalarL2 x := by
+        w.toH1Function.toScalarL2 x  := by
   have hpos := alphaShiftedResolvent_nonneg_ae a hU lam.property hnu hEll
     w.toH1Function.toScalarL2
     (toScalarL2_nonneg_of_isScalarForcedWeakSolution a hU hnu hEll w hw one hone
@@ -196,6 +200,7 @@ theorem alphaShiftedResolvent_le_of_isScalarForcedWeakSolution
       w.toH1Function.toScalarL2 x := mul_nonneg lam.property.le hx
   linarith only [hval, hnn]
 
+omit [NeZero d] in
 /-- **The upper half of the sandwich.**  The gap between a bounded zero-trace
 solution of the constant forcing and the shifted resolvent of the constant
 datum is at most the shift times the square of the uniform bound. -/
@@ -211,7 +216,7 @@ theorem sub_alphaShiftedResolvent_le_of_isScalarForcedWeakSolution
     ∀ᵐ x ∂volumeMeasureOn U,
       w.toH1Function.toScalarL2 x -
           alphaShiftedResolvent a lam.property hnu hEll one x ≤
-        (lam : ℝ) * (Mb * Mb) := by
+        (lam : ℝ) * (Mb * Mb)  := by
   have hdiff := toScalarL2_sub_alphaShiftedResolvent a hU hnu hEll w hw one hone lam
   have hle : ∀ᵐ x ∂volumeMeasureOn U,
       w.toH1Function.toScalarL2 x ≤ (Mb • one) x := by

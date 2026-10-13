@@ -65,7 +65,7 @@ variable {d : ℕ}
 
 /-- The gradient-threaded energy residue with the multiscale
 conjunct re-cut at the print's own sup-over-depths aggregation. -/
-def RecutCoreSupplyFluxEnergySupGrad [NeZero d] (M : ABKModel d)
+def RecutCoreSupplyFluxEnergySupGrad (M : ABKModel d)
     (Y : Cutoff.CutoffSample d → ℝ≥0∞) (m : ℤ) (Cen0 : ℝ)
     (hd1 : 1 ≤ d) (hlog : 4 ≤ |Real.log M.gamma|)
     (omega : Cutoff.CutoffSample d) : Prop :=
@@ -105,7 +105,7 @@ def RecutCoreSupplyFluxEnergySupGrad [NeZero d] (M : ABKModel d)
             G Fflux)
 
 /-- The gradient-threaded core supply, at the sup clause. -/
-def RecutCoreSupplyFluxAtSupGrad [NeZero d] (M : ABKModel d)
+def RecutCoreSupplyFluxAtSupGrad (M : ABKModel d)
     (Y : Cutoff.CutoffSample d → ℝ≥0∞) (m : ℤ) (Cen0 Ccg : ℝ)
     (hd1 : 1 ≤ d) (hlog : 4 ≤ |Real.log M.gamma|)
     (omega : Cutoff.CutoffSample d) : Prop :=
@@ -148,7 +148,7 @@ def RecutCoreSupplyFluxAtSupGrad [NeZero d] (M : ABKModel d)
 /-! ## 2. The twelve-conjunct core, at the sup clause -/
 
 /-- The gradient-threaded twelve-conjunct core, at the sup clause. -/
-def SpineDatumRecutCoreFluxAtHalfSupGrad [NeZero d] (M : ABKModel d) (Cgap : ℝ)
+def SpineDatumRecutCoreFluxAtHalfSupGrad (M : ABKModel d) (Cgap : ℝ)
     (Y : Cutoff.CutoffSample d → ℝ≥0∞) (m : ℤ) (sb : {s : ℝ // 0 < s})
     (sigmaBarM : ℝ) (hsig : 0 < sigmaBarM) (Kabs Ccg : ℝ)
     (p : FiniteLpExponent) (s2 : FractionalOrder)

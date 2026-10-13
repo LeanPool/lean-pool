@@ -124,7 +124,7 @@ theorem stepSevenStabilityPrefactor_caccT :
 
 /-- **`stepSevenCgLamInv Q a s = λ_{s/2,2}^{-1}(Q; a)`**, with the `rpow (-1)` of
 the definition read as an honest inverse. -/
-theorem stepSevenCgLamInv_eq_inv [NeZero d] (Q : TriadicCube d)
+theorem stepSevenCgLamInv_eq_inv (Q : TriadicCube d)
     (a : CoeffFamily d) (s : ℝ) :
     stepSevenCgLamInv Q a s =
       (Ch02.lambdaSq Q (s / 2) (Ch02.MultiscaleExponent.finite 2) a)⁻¹ := by

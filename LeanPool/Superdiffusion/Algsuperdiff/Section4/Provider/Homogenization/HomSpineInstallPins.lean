@@ -91,7 +91,7 @@ def recutPinnedDg (m : ℤ) (s2 : FractionalOrder) (p : FiniteLpExponent)
     (g : Vec d → Vec d) : ℝ :=
   (ABK26.cubeEuclideanPositiveBesovOverlapESeminorm (originCube d m) s2 p g).toReal
 
-theorem recutPinnedDg_nonneg [NeZero d] (m : ℤ) (s2 : FractionalOrder)
+theorem recutPinnedDg_nonneg (m : ℤ) (s2 : FractionalOrder)
     (p : FiniteLpExponent) (g : Vec d → Vec d) : 0 ≤ recutPinnedDg m s2 p g :=
   ENNReal.toReal_nonneg
 

@@ -90,10 +90,9 @@ instance instPseudoMetricSpaceMat : PseudoMetricSpace (Mat d) :=
 
 /-- The Borel structure on the continuous matrix fields over a compact carrier. -/
 noncomputable instance continuousMatrixFieldMeasurableSpace (K : Set (Vec d))
-     : MeasurableSpace C(K, Mat d) := borel _
+    : MeasurableSpace C(K, Mat d) := borel _
 
-instance continuousMatrixFieldBorelSpace (K : Set (Vec d)) [CompactSpace K] :
-    BorelSpace C(K, Mat d) := ⟨rfl⟩
+instance continuousMatrixFieldBorelSpace (K : Set (Vec d)) : BorelSpace C(K, Mat d) := ⟨rfl⟩
 
 /-! ## 1. Restricting a shell to a compact carrier -/
 
@@ -110,8 +109,7 @@ theorem continuous_shellRestrict (K : Set (Vec d)) :
     continuous_const
   exact hproj.compCM hincl
 
-theorem measurable_shellRestrict (K : Set (Vec d)) [CompactSpace K] :
-    Measurable (shellRestrict (d := d) K) :=
+theorem measurable_shellRestrict (K : Set (Vec d)) : Measurable (shellRestrict (d  := d) K) :=
   (continuous_shellRestrict K).measurable
 
 /-! ## 2. The coefficient field as a continuous matrix field -/

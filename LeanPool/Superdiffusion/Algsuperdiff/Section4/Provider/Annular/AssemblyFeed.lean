@@ -383,7 +383,7 @@ def scalarResponseMax {U : Domain d} (a : CoeffOn U) (sigma : PositiveScalar) : 
 
 /-- **The field-leg value set is bounded above**, by the Section 2.4 normalized
 loading bridge. -/
-theorem scalarResponseSet_bddAbove [NeZero d] (F : TriadicCoeffFamily d)
+theorem scalarResponseSet_bddAbove (F : TriadicCoeffFamily d)
     (R : TriadicCube d) (sigma : PositiveScalar) :
     BddAbove (scalarResponseSet (F.coeffOn R) sigma) := by
   refine ⟨normalizedBlockResponseMax R F (isotropicComparatorMatrix sigma), ?_⟩
@@ -395,7 +395,7 @@ theorem scalarResponseSet_bddAbove [NeZero d] (F : TriadicCoeffFamily d)
 
 /-- **The transpose-leg value set is bounded above**, by `BlockResponse`'s
 mirror of the same bridge. -/
-theorem scalarResponseSet_transpose_bddAbove [NeZero d] (F : TriadicCoeffFamily d)
+theorem scalarResponseSet_transpose_bddAbove (F : TriadicCoeffFamily d)
     (R : TriadicCube d) (sigma : PositiveScalar) :
     BddAbove (scalarResponseSet (F.coeffOn R).transpose sigma) := by
   refine ⟨normalizedBlockResponseMax R F (isotropicComparatorMatrix sigma), ?_⟩
@@ -403,20 +403,20 @@ theorem scalarResponseSet_transpose_bddAbove [NeZero d] (F : TriadicCoeffFamily 
   obtain ⟨e, he, rfl⟩ := hx
   exact responseJ_transpose_scalarLoading_le_normalizedBlockResponseMax F R sigma.2 he
 
-theorem responseJ_le_scalarResponseMax [NeZero d] (F : TriadicCoeffFamily d)
+theorem responseJ_le_scalarResponseMax (F : TriadicCoeffFamily d)
     (R : TriadicCube d) (sigma : PositiveScalar) {e : Vec d} (he : vecNorm e = 1) :
     responseJ (cubeDomain R) (F.coeffOn R) (inverseSqrtLoad sigma e) (sqrtLoad sigma e)
-      ≤ scalarResponseMax (F.coeffOn R) sigma :=
+      ≤ scalarResponseMax (F.coeffOn R) sigma  :=
   le_csSup (scalarResponseSet_bddAbove F R sigma) ⟨e, he, rfl⟩
 
-theorem responseJ_transpose_le_scalarResponseMax [NeZero d] (F : TriadicCoeffFamily d)
+theorem responseJ_transpose_le_scalarResponseMax (F : TriadicCoeffFamily d)
     (R : TriadicCube d) (sigma : PositiveScalar) {e : Vec d} (he : vecNorm e = 1) :
     responseJ (cubeDomain R) (F.coeffOn R).transpose
         (inverseSqrtLoad sigma e) (sqrtLoad sigma e)
-      ≤ scalarResponseMax (F.coeffOn R).transpose sigma :=
+      ≤ scalarResponseMax (F.coeffOn R).transpose sigma  :=
   le_csSup (scalarResponseSet_transpose_bddAbove F R sigma) ⟨e, he, rfl⟩
 
-theorem scalarResponseMax_le_normalizedBlockResponseMax [NeZero d]
+theorem scalarResponseMax_le_normalizedBlockResponseMax
     (F : TriadicCoeffFamily d) (R : TriadicCube d) (sigma : PositiveScalar) :
     scalarResponseMax (F.coeffOn R) sigma
       ≤ normalizedBlockResponseMax R F (isotropicComparatorMatrix sigma) := by
@@ -427,7 +427,7 @@ theorem scalarResponseMax_le_normalizedBlockResponseMax [NeZero d]
     responseJ_scalarLoading_le_normalizedBlockResponseMax
     F R sigma.2 he
 
-theorem scalarResponseMax_transpose_le_normalizedBlockResponseMax [NeZero d]
+theorem scalarResponseMax_transpose_le_normalizedBlockResponseMax
     (F : TriadicCoeffFamily d) (R : TriadicCube d) (sigma : PositiveScalar) :
     scalarResponseMax (F.coeffOn R).transpose sigma
       ≤ normalizedBlockResponseMax R F (isotropicComparatorMatrix sigma) := by
@@ -468,7 +468,7 @@ theorem jLegTranspose_nonneg (M : ABKModel d) (L m : ℤ)
 
 /-- The `hfld` slot of `ClauseOne.hbfJ_of_lattice_bounds`, by definition of the
 lattice maximum. -/
-theorem responseJ_le_jLegField [NeZero d] (M : ABKModel d) (L m : ℤ)
+theorem responseJ_le_jLegField (M : ABKModel d) (L m : ℤ)
     (omega : Cutoff.CutoffSample d) {n : ℤ} (hnm : n ≤ m) {v : Fin d → ℤ}
     (hv : v ∈ Support.latticeCubeSet d n m) {e : Vec d} (he : vecNorm e = 1) :
     responseJ (cubeDomain (latticeCube n v))
@@ -476,7 +476,7 @@ theorem responseJ_le_jLegField [NeZero d] (M : ABKModel d) (L m : ℤ)
           (latticeCube n v))
         (inverseSqrtLoad (Annealed.sigmaBar M m) e)
         (sqrtLoad (Annealed.sigmaBar M m) e)
-      ≤ jLegField M L m omega n := by
+      ≤ jLegField M L m omega n  := by
   refine le_trans
     (responseJ_le_scalarResponseMax
       (Support.fluxCorrectedCoeffFamily M L m (originCube d m) omega)
@@ -488,7 +488,7 @@ theorem responseJ_le_jLegField [NeZero d] (M : ABKModel d) (L m : ℤ)
     ((mem_latticeCubeFinset_iff hnm v).mpr hv)
 
 /-- The `htrn` slot of `ClauseOne.hbfJ_of_lattice_bounds`. -/
-theorem responseJ_transpose_le_jLegTranspose [NeZero d] (M : ABKModel d) (L m : ℤ)
+theorem responseJ_transpose_le_jLegTranspose (M : ABKModel d) (L m : ℤ)
     (omega : Cutoff.CutoffSample d) {n : ℤ} (hnm : n ≤ m) {v : Fin d → ℤ}
     (hv : v ∈ Support.latticeCubeSet d n m) {e : Vec d} (he : vecNorm e = 1) :
     responseJ (cubeDomain (latticeCube n v))
@@ -496,7 +496,7 @@ theorem responseJ_transpose_le_jLegTranspose [NeZero d] (M : ABKModel d) (L m : 
           (latticeCube n v)).transpose
         (inverseSqrtLoad (Annealed.sigmaBar M m) e)
         (sqrtLoad (Annealed.sigmaBar M m) e)
-      ≤ jLegTranspose M L m omega n := by
+      ≤ jLegTranspose M L m omega n  := by
   refine le_trans
     (responseJ_transpose_le_scalarResponseMax
       (Support.fluxCorrectedCoeffFamily M L m (originCube d m) omega)

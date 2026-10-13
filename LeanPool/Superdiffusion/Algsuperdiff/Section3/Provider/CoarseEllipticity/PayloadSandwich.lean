@@ -367,7 +367,7 @@ noncomputable def cutoffBBlockFamily (M : ABKModel d) (L : ℤ) (scaling : ℝ)
 
 
 /-- **The sandwich, upper leg, one scale.** -/
-theorem scaledB_le_blockGridSup [NeZero d] (M : ABKModel d) (m : ℤ)
+theorem scaledB_le_blockGridSup (M : ABKModel d) (m : ℤ)
     (k : ℕ) {scaling T : ℝ} (hscaling : 0 ≤ scaling)
     {Y : TriadicCube d → Cutoff.CutoffSample d → ℝ} {L : ℤ}
     {omega : Cutoff.CutoffSample d}

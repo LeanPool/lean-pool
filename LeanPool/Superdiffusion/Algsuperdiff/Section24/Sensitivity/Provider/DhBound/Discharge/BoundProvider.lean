@@ -84,10 +84,10 @@ theorem termABesovConst_pos {d : ℕ} (hd : 2 ≤ d) : 0 < termABesovConst d := 
   positivity
 
 /-- The explicit constant of the frozen `D_h` bound. -/
-def dhBoundConst (d : ℕ) [NeZero d] : ℝ :=
+def dhBoundConst (d : ℕ) : ℝ  :=
   2 * dhPairingConst d * (termABesovConst d + termBCBesovConst d)
 
-theorem dhBoundConst_pos {d : ℕ} [NeZero d] (hd : 2 ≤ d) : 0 < dhBoundConst d := by
+theorem dhBoundConst_pos {d : ℕ} (hd : 2 ≤ d) : 0 < dhBoundConst d  := by
   have h1 := dhPairingConst_pos d
   have h2 := termABesovConst_pos hd
   have h3 := termBCBesovConst_nonneg d

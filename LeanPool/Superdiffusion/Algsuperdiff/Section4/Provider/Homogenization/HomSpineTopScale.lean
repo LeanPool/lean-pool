@@ -329,8 +329,8 @@ At `W:= (1 + 𝓔sup_{1/4})` the collapse is exactly what the print asserts and 
 NOT available (see the module docstring); `htop_of_stepTwoA_enlargedY` avoids it
 by carrying `W = (1 + 𝓔sup_{t/2})(1 + 𝓔sup_t)(1 + 𝓔sup_{1/4})` instead, at
 `Kidx = 1`. -/
-def StepTwoIndexBridge [NeZero d] (M : ABKModel d) (L m : ℤ) (t Kidx W : ℝ)
-    (omega : Cutoff.CutoffSample d) : Prop :=
+def StepTwoIndexBridge (M : ABKModel d) (L m : ℤ) (t Kidx W : ℝ)
+    (omega : Cutoff.CutoffSample d) : Prop  :=
   1 + fluxCorrectedError M L m (t / 2) omega ≤ Kidx * W ∧
     1 + fluxCorrectedError M L m t omega ≤ Kidx * W
 
@@ -490,13 +490,13 @@ def stepTwoEnlargedY (M : ABKModel d) (m : ℤ) {t : ℝ} (ht : 0 < t) :
       (1 + fluxCorrectedTwoScaleErrorObservableSup M m m ⟨t, ht⟩ omega)
 
 /-- One factor of the enlarged `Y`, as a real. -/
-private theorem one_add_error_le_toReal [NeZero d] (M : ABKModel d) {L m : ℤ}
+private theorem one_add_error_le_toReal (M : ABKModel d) {L m : ℤ}
     (hL : m ≤ L) {s : ℝ} (hs : 0 < s) (omega : Cutoff.CutoffSample d)
     (hrep : fluxCorrectedError M L m s omega =
       fluxCorrectedErrorRepresentative M L m ⟨s, hs⟩ omega)
     (hfin : fluxCorrectedTwoScaleErrorObservableSup M m m ⟨s, hs⟩ omega ≠ ⊤) :
     1 + fluxCorrectedError M L m s omega ≤
-      (1 + fluxCorrectedTwoScaleErrorObservableSup M m m ⟨s, hs⟩ omega).toReal := by
+      (1 + fluxCorrectedTwoScaleErrorObservableSup M m m ⟨s, hs⟩ omega).toReal  := by
   have hle : ENNReal.ofReal (fluxCorrectedError M L m s omega) ≤
       fluxCorrectedTwoScaleErrorObservableSup M m m ⟨s, hs⟩ omega := by
     rw [hrep]
@@ -532,7 +532,7 @@ its OWN factor of `stepTwoEnlargedY`, and `le_fluxCorrectedTwoScaleError
 ObservableSup` supplies the `sup_{L ≥ m}` step.  The two `hrep` hypotheses are
 the standard a.e. carrier identification
 (`Support.fluxCorrectedError_ae_eq_representative`), not new content. -/
-theorem stepTwoIndexBridge_of_representative [NeZero d] (M : ABKModel d) {L m : ℤ}
+theorem stepTwoIndexBridge_of_representative (M : ABKModel d) {L m : ℤ}
     (hL : m ≤ L) {t : ℝ} (ht : 0 < t) (omega : Cutoff.CutoffSample d)
     (hrep1 : fluxCorrectedError M L m (t / 2) omega =
       fluxCorrectedErrorRepresentative M L m ⟨t / 2, half_pos ht⟩ omega)
@@ -544,7 +544,7 @@ theorem stepTwoIndexBridge_of_representative [NeZero d] (M : ABKModel d) {L m : 
     StepTwoIndexBridge M L m t 1
       ((stepTwoEnlargedY M m ht omega *
         (1 + fluxCorrectedTwoScaleErrorObservableSup M m m homQuarter omega)).toReal)
-      omega := by
+      omega  := by
   have h1 := one_le_toReal_one_add hfin1
   have h2 := one_le_toReal_one_add hfin2
   have h3 := one_le_toReal_one_add hfinE

@@ -143,10 +143,10 @@ def fluxCorrectedEllipticityRatioMaxOn (M : ABKModel d) (L m : ℤ) (Q : Triadic
 
 /-- At the cube that carries the flux correction, the sub-cube functional is the
 proved literal error of `ErrorAtoms`. -/
-theorem fluxCorrectedErrorOn_originCube [NeZero d] (M : ABKModel d) (L m : ℤ) (s : ℝ)
+theorem fluxCorrectedErrorOn_originCube (M : ABKModel d) (L m : ℤ) (s : ℝ)
     (omega : Cutoff.CutoffSample d) :
     fluxCorrectedErrorOn M L m (originCube d m) s omega =
-      Support.fluxCorrectedError M L m s omega :=
+      Support.fluxCorrectedError M L m s omega  :=
   (Support.fluxCorrectedError_characterization M L m s omega).symm
 
 theorem fluxCorrectedEllipticityRatioMaxOn_originCube (M : ABKModel d) (L m : ℤ)

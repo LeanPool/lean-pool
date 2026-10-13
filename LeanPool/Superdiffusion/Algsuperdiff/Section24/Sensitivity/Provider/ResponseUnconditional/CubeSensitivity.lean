@@ -157,25 +157,23 @@ theorem path_ode_le {y y' : ℝ → ℝ} {A₁ B₁ T : ℝ}
 /-- It is large enough both for the mesoscopic pure-flux spine (factor `4 C_flux`)
 and for the Term BC coefficient of the general-loading `D_h` bound (factor `4
 C_BC`). -/
-def jGateConst (d : ℕ) [NeZero d] : ℝ :=
+def jGateConst (d : ℕ) : ℝ  :=
   max 1 (max (4 * fluxCubeConst d) (4 * pqCubeConstB d))
 
-theorem one_le_jGateConst (d : ℕ) [NeZero d] : 1 ≤ jGateConst d := le_max_left _ _
+theorem one_le_jGateConst (d : ℕ) : 1 ≤ jGateConst d  := le_max_left _ _
 
-theorem jGateConst_pos (d : ℕ) [NeZero d] : 0 < jGateConst d :=
+theorem jGateConst_pos (d : ℕ) : 0 < jGateConst d  :=
   lt_of_lt_of_le zero_lt_one (one_le_jGateConst d)
 
-theorem four_mul_fluxCubeConst_le_jGateConst (d : ℕ) [NeZero d] :
-    4 * fluxCubeConst d ≤ jGateConst d :=
+theorem four_mul_fluxCubeConst_le_jGateConst (d : ℕ) : 4 * fluxCubeConst d ≤ jGateConst d  :=
   le_trans (le_max_left _ _) (le_max_right _ _)
 
-theorem four_mul_pqCubeConstB_le_jGateConst (d : ℕ) [NeZero d] :
-    4 * pqCubeConstB d ≤ jGateConst d :=
+theorem four_mul_pqCubeConstB_le_jGateConst (d : ℕ) : 4 * pqCubeConstB d ≤ jGateConst d  :=
   le_trans (le_max_right _ _) (le_max_right _ _)
 
 /-- The mesoscopic depth attached to the base coefficient and the perturbation. -/
-def jDepth (d : ℕ) [NeZero d] (a : CoeffOn (cubeDomain (originCube d 0)))
-    (h : UnitCubeSkewW2Infinity d) (s : ℝ) : ℕ :=
+def jDepth (d : ℕ) (a : CoeffOn (cubeDomain (originCube d 0)))
+    (h : UnitCubeSkewW2Infinity d) (s : ℝ) : ℕ  :=
   Mesoscale.mesoscaleDepth s (1 + jGateConst d *
     (h.gradientW1Infinity * (unitCubeLambda s (.finite 2) a)⁻¹))
 
@@ -310,12 +308,12 @@ def jTermACoeff (d : ℕ) (h : UnitCubeSkewW2Infinity d)
     (Real.sqrt 2 * Real.sqrt ((Ch02.lambdaSq R (3 / 8) (.finite 2) F)⁻¹))
 
 /-- The Term BC coefficient of the path ODE at a mesoscopic cube. -/
-def jTermBCoeff (d : ℕ) [NeZero d] (h : UnitCubeSkewW2Infinity d)
-    (F : TriadicCoeffFamily d) (R : TriadicCube d) : ℝ :=
+def jTermBCoeff (d : ℕ) (h : UnitCubeSkewW2Infinity d)
+    (F : TriadicCoeffFamily d) (R : TriadicCube d) : ℝ  :=
   (1 / 2 : ℝ) * (pqCubeConstB d * (h.gradientW1Infinity * cubeScaleFactor R)) *
     (2 * (Ch02.lambdaSq R (3 / 8) (.finite 2) F)⁻¹)
 
-theorem jTermACoeff_nonneg [NeZero d] (h : UnitCubeSkewW2Infinity d)
+theorem jTermACoeff_nonneg (h : UnitCubeSkewW2Infinity d)
     (F : TriadicCoeffFamily d) (R : TriadicCube d) (p : Vec d) :
     0 ≤ jTermACoeff d h F R p := by
   have h1 := pqCubeConstA_nonneg d
@@ -343,10 +341,10 @@ theorem jTermBCoeff_nonneg [NeZero d] (h : UnitCubeSkewW2Infinity d)
 /-! ## The error constant -/
 
 /-- The error constant of the per-mesoscopic-cube `J`-sensitivity. -/
-def jErrorConst (d : ℕ) [NeZero d] : ℝ :=
+def jErrorConst (d : ℕ) : ℝ  :=
   max (4 * pqCubeConstA d ^ 2) (4 * pqCubeConstB d ^ 2)
 
-theorem jErrorConst_nonneg (d : ℕ) [NeZero d] : 0 ≤ jErrorConst d :=
+theorem jErrorConst_nonneg (d : ℕ) : 0 ≤ jErrorConst d  :=
   le_trans (by positivity) (le_max_left _ _)
 
 theorem four_mul_jTermACoeff_sq_le [NeZero d] (h : UnitCubeSkewW2Infinity d)

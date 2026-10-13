@@ -220,7 +220,7 @@ theorem slotMeasurableTriple (M : ABKModel d) (m : ℤ) (R : TriadicCube d) :
       (fun k v => measurable_tailSeriesGauge m k v) R).aemeasurable⟩
 
 /-- The bracket at an arbitrary nonnegative exponent is a.e. measurable. -/
-theorem aemeasurable_step3Bracket [NeZero d] (M : ABKModel d) (m : ℤ) (R : TriadicCube d)
+theorem aemeasurable_step3Bracket (M : ABKModel d) (m : ℤ) (R : TriadicCube d)
     {theta : ℝ} (hth : 0 ≤ theta) :
     AEMeasurable (fun omega : Cutoff.CutoffSample d =>
         Real.rpow (1 + lFreeGradSlot m (tailSeriesGauge m) R omega *
@@ -232,11 +232,11 @@ theorem aemeasurable_step3Bracket [NeZero d] (M : ABKModel d) (m : ℤ) (R : Tri
     ((hgrad.mul hlam).const_add 1)
 
 /-- **The summand is a.e. measurable.** -/
-theorem aemeasurable_step3FirstTerm [NeZero d] (M : ABKModel d) (Cd : ℝ) (m : ℤ)
+theorem aemeasurable_step3FirstTerm (M : ABKModel d) (Cd : ℝ) (m : ℤ)
     (R : TriadicCube d) {s : ℝ} (hs : 0 < s) (hgam : M.gamma ≤ 1 / 8) :
     AEMeasurable (fun omega : Cutoff.CutoffSample d =>
         step3FirstTerm Cd M m R omega s (lFreeGradSlot m (tailSeriesGauge m) R omega))
-      (Cutoff.cutoffSampleLaw M).toMeasure := by
+      (Cutoff.cutoffSampleLaw M).toMeasure  := by
   have hden : (0 : ℝ) < 1 - 4 * M.gamma := by linarith only [hgam]
   have hth : (0 : ℝ) ≤ 2 * s / (1 - 4 * M.gamma) :=
     div_nonneg (by linarith only [hs]) hden.le
@@ -245,12 +245,12 @@ theorem aemeasurable_step3FirstTerm [NeZero d] (M : ABKModel d) (Cd : ℝ) (m : 
   exact ((hbr.const_mul _).mul (herr.pow_const 2))
 
 /-- **The S summand is a.e. measurable.** -/
-theorem aemeasurable_step3SecondTerm [NeZero d] (M : ABKModel d) (Cd : ℝ) (m : ℤ)
+theorem aemeasurable_step3SecondTerm (M : ABKModel d) (Cd : ℝ) (m : ℤ)
     (R : TriadicCube d) (hgam : M.gamma ≤ 1 / 8) :
     AEMeasurable (fun omega : Cutoff.CutoffSample d =>
         step3SecondTerm Cd M m R omega (lFreeGradSlot m (tailSeriesGauge m) R omega)
           (lFreeValueSlot m (tailSeriesGauge m) R omega))
-      (Cutoff.cutoffSampleLaw M).toMeasure := by
+      (Cutoff.cutoffSampleLaw M).toMeasure  := by
   have hgam0 : (0 : ℝ) < M.gamma := M.shellPrefix.gamma_pos
   have hden : (0 : ℝ) < 1 - 4 * M.gamma := by linarith only [hgam]
   have hth : (0 : ℝ) ≤ 4 * M.gamma / (1 - 4 * M.gamma) :=
@@ -260,7 +260,7 @@ theorem aemeasurable_step3SecondTerm [NeZero d] (M : ABKModel d) (Cd : ℝ) (m :
   exact ((((hlam.const_mul _).mul hbr)).mul (((hval.pow_const 2).const_mul _).add_const _))
 
 /-- **The third summand is a.e. measurable.** -/
-theorem aemeasurable_step3ThirdTerm [NeZero d] (M : ABKModel d) (Cd : ℝ) (m : ℤ)
+theorem aemeasurable_step3ThirdTerm (M : ABKModel d) (Cd : ℝ) (m : ℤ)
     (R : TriadicCube d) :
     AEMeasurable (fun omega : Cutoff.CutoffSample d =>
         step3ThirdTerm Cd M m R omega (lFreeGradSlot m (tailSeriesGauge m) R omega))

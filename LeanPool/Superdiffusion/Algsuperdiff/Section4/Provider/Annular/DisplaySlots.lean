@@ -266,7 +266,7 @@ maximum `shellBlockLatticeReal` over `3^k Z^d ∩ □_m`.  Only the pointwise ch
 
 The remaining hypothesis is a conditional A obligation, not a source premise;
 no source node is claimed, realized or closed. -/
-theorem clauseOne_representative_display_latticeMax [NeZero d] (M : ABKModel d)
+theorem clauseOne_representative_display_latticeMax (M : ABKModel d)
     (m : ℤ) (s : {s : ℝ // 0 < s}) (Event : Set (Cutoff.CutoffSample d)) {C : ℝ}
     (hC0 : 0 ≤ C)
     (hbound : ∀ᵐ omega ∂(Cutoff.cutoffSampleLaw M).toMeasure,
@@ -288,7 +288,7 @@ theorem clauseOne_representative_display_latticeMax [NeZero d] (M : ABKModel d)
           + ENNReal.ofReal (C * ((s : ℝ)⁻¹ ^ (2 : ℕ)) * (Disorder.cstar M)⁻¹
               * M.gamma) * clauseOneTermThree M m omega
           + ENNReal.ofReal (C * ((s : ℝ)⁻¹ ^ (2 : ℕ)) * (Disorder.cstar M)⁻¹
-              * M.gamma) * clauseOneTermFour M m s omega :=
+              * M.gamma) * clauseOneTermFour M m s omega  :=
   clauseOne_representative_display (M := M) (m := m) (s := s) (Event := Event)
     (E2 := fun omega j n => annularErrorLatticeMax M s omega j n)
     (A := fun omega k => shellBlockLatticeReal M m omega k)

@@ -149,7 +149,7 @@ namespace ZeroTraceSobolev
 
 /-- Canonical zero extension of a zero-trace Sobolev element from a bounded
 open convex domain to an open superset. -/
-noncomputable def extendByZeroToPartSuperset [NeZero d]
+noncomputable def extendByZeroToPartSuperset
     (hV : IsOpenBoundedConvexDomain V) (hU : IsOpen U)
     (hVU : V ⊆ U) (u : ZeroTraceSobolev V) : ZeroTraceSobolev U :=
   let w : H10Function V := Classical.choose (exists_h10Function hV u)
@@ -157,11 +157,10 @@ noncomputable def extendByZeroToPartSuperset [NeZero d]
     (w.extendByZeroToOpenSuperset hV.isOpen.measurableSet hU hVU)
 
 /-- The value of the canonical zero extension is the indicator extension. -/
-theorem extendByZeroToPartSuperset_toL2 [NeZero d]
-    (hV : IsOpenBoundedConvexDomain V) (hU : IsOpen U)
+theorem extendByZeroToPartSuperset_toL2 (hV : IsOpenBoundedConvexDomain V) (hU : IsOpen U)
     (hVU : V ⊆ U) (u : ZeroTraceSobolev V) :
     toL2 (extendByZeroToPartSuperset hV hU hVU u) =ᵐ[volumeMeasureOn U]
-      V.indicator fun x => toL2 u x := by
+      V.indicator fun x => toL2 u x  := by
   let w : H10Function V := Classical.choose (exists_h10Function hV u)
   have hw := Classical.choose_spec (exists_h10Function hV u)
   change
@@ -190,11 +189,10 @@ theorem extendByZeroToPartSuperset_toL2 [NeZero d]
 
 /-- The weak gradient of the canonical zero extension is the indicator
 extension of the original weak gradient. -/
-theorem extendByZeroToPartSuperset_gradient [NeZero d]
-    (hV : IsOpenBoundedConvexDomain V) (hU : IsOpen U)
+theorem extendByZeroToPartSuperset_gradient (hV : IsOpenBoundedConvexDomain V) (hU : IsOpen U)
     (hVU : V ⊆ U) (u : ZeroTraceSobolev V) :
     gradient (extendByZeroToPartSuperset hV hU hVU u) =ᵐ[volumeMeasureOn U]
-      V.indicator fun x => gradient u x := by
+      V.indicator fun x => gradient u x  := by
   let w : H10Function V := Classical.choose (exists_h10Function hV u)
   have hw := Classical.choose_spec (exists_h10Function hV u)
   change

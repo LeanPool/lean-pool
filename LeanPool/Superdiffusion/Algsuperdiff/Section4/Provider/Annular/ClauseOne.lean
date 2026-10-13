@@ -441,7 +441,7 @@ theorem gradTailSq_nonneg (M : ABKModel d) (m : ℤ) (omega : Cutoff.CutoffSampl
 The conclusion is the four-term shape at the concrete left-hand carrier, the
 concrete `G_1^a` content `gradTailSq`, and the concrete remainder
 `gamma^2 |log gamma|^4`. -/
-theorem clauseOne_bound [NeZero d] (M : ABKModel d) (L m : ℤ)
+theorem clauseOne_bound (M : ABKModel d) (L m : ℤ)
     {s : ℝ} (hs0 : 0 < s) (hs1 : s ≤ 1) (hsg : 8 * M.gamma ≤ s)
     (omega : Cutoff.CutoffSample d)
     {Jlegf Jlegt : ℤ → ℝ} {Jannf Jannt E2 L2f gradNf : ℤ → ℤ → ℝ}
@@ -505,7 +505,7 @@ theorem clauseOne_bound [NeZero d] (M : ABKModel d) (L m : ℤ)
       (annDouble m (fun j n => (3 : ℝ) ^ (-(s * ((m - n : ℤ) : ℝ))) * E2 j n))
       (M.gamma ^ 2 * |Real.log M.gamma| ^ 4) (gradTailSq M m omega)
       (∑' v : ℕ, (3 : ℝ) ^ (-(s / 2) * (v : ℝ)) * A (m - (v : ℤ)) ^ 2)
-      s (Disorder.cstar M) M.gamma Cout := by
+      s (Disorder.cstar M) M.gamma Cout  := by
   have hgam0 : 0 < M.gamma := M.shellPrefix.gamma_pos
   have hcs0 : 0 < Disorder.cstar M := (Disorder.cstar_characterization M).1
   have hcsinv : (0 : ℝ) ≤ (Disorder.cstar M)⁻¹ := inv_nonneg.2 hcs0.le

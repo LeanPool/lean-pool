@@ -54,15 +54,14 @@ private theorem potentialIntegral_nonpos_of_negativePart
 
 /-- A nonnegative forcing has a nonnegative potential resolvent almost
 everywhere. -/
-theorem potentialResolvent_nonneg_ae [NeZero d]
-    (a : CoeffField d) (hU : IsOpenBoundedConvexDomain U)
+theorem potentialResolvent_nonneg_ae (a : CoeffField d) (hU : IsOpenBoundedConvexDomain U)
     {α lam Lam C : ℝ} (hα : 0 < α) (hlam : 0 < lam)
     (hEll : IsEllipticFieldOn lam Lam U a)
     (q : Vec d → ℝ) (hq : IsBoundedNonnegativePotential U q C)
     (f : ScalarL2 U)
     (hf : ∀ᵐ x ∂volumeMeasureOn U, 0 ≤ f x) :
     ∀ᵐ x ∂volumeMeasureOn U,
-      0 ≤ potentialResolvent a hα hlam hEll q hq f x := by
+      0 ≤ potentialResolvent a hα hlam hEll q hq f x  := by
   let u : ZeroTraceSobolev U := potentialSolution a hα hlam hEll q hq f
   obtain ⟨v, hv, -⟩ :=
     ZeroTraceSobolev.existsUnique_positivePartSubConst hU (-u) 0 le_rfl
@@ -142,8 +141,7 @@ theorem potentialResolvent_nonneg_ae [NeZero d]
 
 /-- The potential resolvent preserves almost-everywhere order for fixed
 coefficients, shift, and potential. -/
-theorem potentialResolvent_mono_ae [NeZero d]
-    (a : CoeffField d) (hU : IsOpenBoundedConvexDomain U)
+theorem potentialResolvent_mono_ae (a : CoeffField d) (hU : IsOpenBoundedConvexDomain U)
     {α lam Lam C : ℝ} (hα : 0 < α) (hlam : 0 < lam)
     (hEll : IsEllipticFieldOn lam Lam U a)
     (q : Vec d → ℝ) (hq : IsBoundedNonnegativePotential U q C)
@@ -151,7 +149,7 @@ theorem potentialResolvent_mono_ae [NeZero d]
     (hfg : ∀ᵐ x ∂volumeMeasureOn U, f x ≤ g x) :
     ∀ᵐ x ∂volumeMeasureOn U,
       potentialResolvent a hα hlam hEll q hq f x ≤
-        potentialResolvent a hα hlam hEll q hq g x := by
+        potentialResolvent a hα hlam hEll q hq g x  := by
   have hgf : ∀ᵐ x ∂volumeMeasureOn U, 0 ≤ (g - f) x := by
     filter_upwards [hfg, MeasureTheory.Lp.coeFn_sub g f] with x hx hsub
     rw [hsub]
@@ -239,14 +237,13 @@ private theorem alpha_mul_inner_eq_integral_add_self_of_ae_eq_max_sub_inv
 
 /-- Multiplication by the shift bounds the potential resolvent by one when the
 forcing is almost everywhere at most one. -/
-theorem alpha_mul_potentialResolvent_le_one_ae [NeZero d]
-    (a : CoeffField d) (hU : IsOpenBoundedConvexDomain U)
+theorem alpha_mul_potentialResolvent_le_one_ae (a : CoeffField d) (hU : IsOpenBoundedConvexDomain U)
     {α lam Lam C : ℝ} (hα : 0 < α) (hlam : 0 < lam)
     (hEll : IsEllipticFieldOn lam Lam U a)
     (q : Vec d → ℝ) (hq : IsBoundedNonnegativePotential U q C)
     (f : ScalarL2 U) (hf : ∀ᵐ x ∂volumeMeasureOn U, f x ≤ 1) :
     ∀ᵐ x ∂volumeMeasureOn U,
-      α * potentialResolvent a hα hlam hEll q hq f x ≤ 1 := by
+      α * potentialResolvent a hα hlam hEll q hq f x ≤ 1  := by
   let : IsFiniteMeasure (volumeMeasureOn U) := by
     simpa only [volumeMeasureOn] using hU.isFiniteMeasure_restrict_volume
   let u : ZeroTraceSobolev U := potentialSolution a hα hlam hEll q hq f
@@ -309,7 +306,7 @@ theorem alpha_mul_potentialResolvent_le_one_ae [NeZero d]
 
 /-- Increasing a bounded nonnegative potential decreases its resolvent on
 nonnegative forcing. -/
-theorem potentialResolvent_antitone_potential_ae [NeZero d]
+theorem potentialResolvent_antitone_potential_ae
     (a : CoeffField d) (hU : IsOpenBoundedConvexDomain U)
     {α lam Lam C₁ C₂ : ℝ} (hα : 0 < α) (hlam : 0 < lam)
     (hEll : IsEllipticFieldOn lam Lam U a)
@@ -320,7 +317,7 @@ theorem potentialResolvent_antitone_potential_ae [NeZero d]
     (f : ScalarL2 U) (hf : ∀ᵐ x ∂volumeMeasureOn U, 0 ≤ f x) :
     ∀ᵐ x ∂volumeMeasureOn U,
       potentialResolvent a hα hlam hEll q₂ hq₂ f x ≤
-        potentialResolvent a hα hlam hEll q₁ hq₁ f x := by
+        potentialResolvent a hα hlam hEll q₁ hq₁ f x  := by
   let u₂ : ZeroTraceSobolev U := potentialSolution a hα hlam hEll q₂ hq₂ f
   let g : ScalarL2 U :=
     f - potentialMul q₂ hq₂ (ZeroTraceSobolev.toL2 u₂) +

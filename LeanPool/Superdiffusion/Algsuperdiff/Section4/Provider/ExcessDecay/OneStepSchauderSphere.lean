@@ -147,7 +147,7 @@ theorem continuousAt_sphereAverage {u : EuclideanSpace ℝ (Fin d) → ℝ}
 
 /-- **Continuity in the radius.**  For continuous `u`, the spherical average is
 continuous in `r`. -/
-theorem continuous_sphereAverage [NeZero d] {u : EuclideanSpace ℝ (Fin d) → ℝ}
+theorem continuous_sphereAverage {u : EuclideanSpace ℝ (Fin d) → ℝ}
     (huc : Continuous u) (x : EuclideanSpace ℝ (Fin d)) :
     Continuous (fun r : ℝ => sphereAverage x r u) :=
   continuous_iff_continuousAt.mpr fun r₀ => continuousAt_sphereAverage huc x r₀
@@ -285,11 +285,11 @@ The derivative of `r ↦ sphereAverage x r u` is `‖S‖⁻¹ • sphereFlux x 
 (`hasDerivAt_sphereAverage`),
 so the hypothesis makes it vanish on `(0, R)`; `constant_of_has_deriv_right_zero` on `[a, b]`
 concludes constancy. -/
-theorem sphereAverage_const_of_flux_zero [NeZero d] {u : EuclideanSpace ℝ (Fin d) → ℝ}
+theorem sphereAverage_const_of_flux_zero {u : EuclideanSpace ℝ (Fin d) → ℝ}
     (hu : ContDiff ℝ 1 u) (x : EuclideanSpace ℝ (Fin d)) {R : ℝ}
     (hflux : ∀ r ∈ Ioo (0 : ℝ) R, sphereFlux x r u = 0)
     {a b : ℝ} (ha : 0 < a) (hab : a ≤ b) (hb : b < R) :
-    sphereAverage x a u = sphereAverage x b u := by
+    sphereAverage x a u = sphereAverage x b u  := by
   set g : ℝ → ℝ := fun r => sphereAverage x r u with hg
   have hcont : ContinuousOn g (Icc a b) :=
     (continuous_sphereAverage hu.continuous x).continuousOn

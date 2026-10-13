@@ -32,7 +32,7 @@ for `u - v ∈ H¹₀(x+□_n)`, whose second inequality the graph records as an
 unexplained "Besov-scale comparison on a cube of side `3^n`".
 
 **Finding: CoarseGraining proves the whole chain in one theorem, and the
-printed scale factor comes out exactly.**  The theorem is
+printed scale factor comes out exactly.** The theorem is
 
 ```text
   cubeBesovScaleWeight 1 Q · ‖u‖_{L²(Q)}
@@ -148,7 +148,7 @@ def negNormBaseConst (d : ℕ) : ℝ :=
   ((d : ℝ) * Legacy.cubeNeumannW22CalderonZygmundConstant d *
       (3 : ℝ) ^ ((d : ℝ) + 1) * (d : ℝ)) + 2 * (3 : ℝ) ^ ((d : ℝ) + 1)
 
-theorem negNormBaseConst_pos (d : ℕ) [NeZero d] : 0 < negNormBaseConst d := by
+theorem negNormBaseConst_pos (d : ℕ) : 0 < negNormBaseConst d := by
   have hcz : 0 ≤ Legacy.cubeNeumannW22CalderonZygmundConstant d :=
     Legacy.cubeNeumannW22CalderonZygmundConstant_nonneg d
   have h3 : (0 : ℝ) < (3 : ℝ) ^ ((d : ℝ) + 1) :=

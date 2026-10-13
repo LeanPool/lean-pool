@@ -21,7 +21,7 @@ open HCPolySupport HCPolySupport.Book.Ch02 MeasureTheory
 
 -- FROZEN-STATEMENT-BEGIN
 theorem Algsuperdiff.Frozen.Section24.unitCubeHomogenizationError_characterization
-    {d : ℕ} [NeZero d] (s : ℝ) (p q : Book.Ch02.MultiscaleExponent)
+    {d : ℕ} (s : ℝ) (p q : Book.Ch02.MultiscaleExponent)
     (a : CoeffOn (cubeDomain (originCube d 0))) (a0 : Mat d) :
     ∀ F : TriadicCoeffFamily d,
       CoeffOn.AEEq (F.coeffOn (originCube d 0)) a →
@@ -30,6 +30,6 @@ theorem Algsuperdiff.Frozen.Section24.unitCubeHomogenizationError_characterizati
           Book.Ch02.HomogenizationErrorOnCube
             (originCube d 0) s p q F a0
 -- FROZEN-STATEMENT-END
-    := by
+     := by
   exact Algsuperdiff.Section24.UnitCubeMultiscale.HomogenizationError.characterization
     s p q a a0

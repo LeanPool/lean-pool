@@ -22,8 +22,8 @@ open HCPolySupport HCPolySupport.Book.Ch02 MeasureTheory
 -- FROZEN-STATEMENT-BEGIN
 /-- The multiscale homogenization error on the origin unit cube. -/
 noncomputable def Algsuperdiff.Frozen.Section24.unitCubeHomogenizationError
-    {d : ℕ} [NeZero d] (s : ℝ) (p q : Book.Ch02.MultiscaleExponent)
-    (a : CoeffOn (cubeDomain (originCube d 0))) (a0 : Mat d) : ℝ :=
+    {d : ℕ} (s : ℝ) (p q : Book.Ch02.MultiscaleExponent)
+    (a : CoeffOn (cubeDomain (originCube d 0))) (a0 : Mat d) : ℝ  :=
   Classical.choose
     (Algsuperdiff.Frozen.Section24.existsUnique_unitCubeHomogenizationError
       s p q a a0)

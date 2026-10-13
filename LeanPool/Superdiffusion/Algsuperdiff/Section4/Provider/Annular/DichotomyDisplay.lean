@@ -145,7 +145,7 @@ positivity the frozen statement already carries.
 
 The remaining hypothesis is a conditional A obligation, not a source premise;
 no source node is claimed, realized or closed. -/
-theorem clauseOne_representative_display_dichotomy [NeZero d] (M : ABKModel d)
+theorem clauseOne_representative_display_dichotomy (M : ABKModel d)
     (m : ℤ) (s : {s : ℝ // 0 < s}) (Event : Set (Cutoff.CutoffSample d)) {C : ℝ}
     (hC0 : 0 < C)
     (hbound : ∀ᵐ omega ∂(Cutoff.cutoffSampleLaw M).toMeasure,
@@ -160,7 +160,7 @@ theorem clauseOne_representative_display_dichotomy [NeZero d] (M : ABKModel d)
           (s : ℝ) (Disorder.cstar M) M.gamma C) :
     ∀ᵐ omega ∂(Cutoff.cutoffSampleLaw M).toMeasure,
       Set.indicator Event (Support.fluxCorrectedErrorObservableSqSup M m s) omega
-        ≤ clauseOneDisplayRhs M m s C omega := by
+        ≤ clauseOneDisplayRhs M m s C omega  := by
   classical
   have hgated : ∀ᵐ omega ∂(Cutoff.cutoffSampleLaw M).toMeasure,
       omega ∈ Event ∩ {omega | clauseOneTermOne M m s omega ≠ ⊤} → ∀ L : ℤ, m ≤ L →

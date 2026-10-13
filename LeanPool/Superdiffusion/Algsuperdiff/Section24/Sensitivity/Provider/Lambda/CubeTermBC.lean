@@ -87,7 +87,7 @@ def fluxZeroTraceConst (d : ℕ) : ℝ :=
         (d : ℝ)) + 2 * (3 : ℝ) ^ ((d : ℝ) + 1)) *
     Real.sqrt ((1 - Real.rpow (3 : ℝ) (-2 * ((1 / 2 : ℝ) - 3 / 16)))⁻¹)
 
-theorem fluxZeroTraceConst_nonneg (d : ℕ) [NeZero d] : 0 ≤ fluxZeroTraceConst d := by
+theorem fluxZeroTraceConst_nonneg (d : ℕ) : 0 ≤ fluxZeroTraceConst d := by
   have h1 : (0 : ℝ) ≤ Legacy.cubeNeumannW22CalderonZygmundConstant d :=
     Legacy.cubeNeumannW22CalderonZygmundConstant_nonneg d
   have h2 : (0 : ℝ) ≤ (3 : ℝ) ^ ((d : ℝ) + 1) := Real.rpow_nonneg (by norm_num) _
@@ -136,7 +136,7 @@ theorem fullVectorPoincareConstant_eq_origin (R : TriadicCube d) :
 
 /-- **The function-from-gradient estimate at an arbitrary triadic cube**, in the
 `ℓ²` form.  The scale factor of the cube appears once. -/
-theorem cubeBesovPositiveScalarPartialSeminormTwo_h1_cube_le [NeZero d]
+theorem cubeBesovPositiveScalarPartialSeminormTwo_h1_cube_le
     (R : TriadicCube d) (M : ℕ) (u : H1Function (openCubeSet R))
     (hBdd : BddAbove (Set.range fun N : ℕ =>
       cubeBesovNegativeVectorPartialSeminormTwo R (3 / 8) N (fun x => u.grad x))) :
@@ -215,7 +215,7 @@ theorem cubeBesovPositiveScalarPartialSeminormTwo_h1_cube_le [NeZero d]
   ring
 
 /-- Nonnegativity of the origin-cube function-from-gradient constant. -/
-theorem depthDowngradeConst_nonneg' (d : ℕ) [NeZero d] :
+theorem depthDowngradeConst_nonneg' (d : ℕ) :
     0 ≤ depthDowngradeConst d := by
   have hg : (0 : ℝ) ≤ sensitivityGapConst := sensitivityGapConst_nonneg
   have hp : (0 : ℝ) ≤ Ch01.Legacy.fullVectorPoincareConstant (originCube d 0) :=
@@ -258,7 +258,7 @@ theorem memLp_u_two_cube {R : TriadicCube d}
     MemLp (fun x => u.toH1Function.toFun x) (2 : ℝ≥0∞) (normalizedCubeMeasure R) :=
   H1Function.memL2_normalizedCubeMeasure u.toH1Function
 
-theorem memLp_fluxTermBCField_two [NeZero d] (h : UnitCubeSkewW2Infinity d)
+theorem memLp_fluxTermBCField_two (h : UnitCubeSkewW2Infinity d)
     {R : TriadicCube d}
     (hsub : ((cubeDomain R : Domain d) : Set (Vec d)) ⊆
       ((cubeDomain (originCube d 0) : Domain d) : Set (Vec d)))
@@ -268,7 +268,7 @@ theorem memLp_fluxTermBCField_two [NeZero d] (h : UnitCubeSkewW2Infinity d)
 
 /-- The finite-depth Besov product estimate for the Term BC field on a
 sub-cube. -/
-theorem cubeBesovPositiveVectorPartialSeminormTwo_fluxTermBCField_le [NeZero d]
+theorem cubeBesovPositiveVectorPartialSeminormTwo_fluxTermBCField_le
     (h : UnitCubeSkewW2Infinity d) {R : TriadicCube d}
     (hsub : ((cubeDomain R : Domain d) : Set (Vec d)) ⊆
       ((cubeDomain (originCube d 0) : Domain d) : Set (Vec d)))
@@ -307,12 +307,12 @@ theorem cubeBesovPositiveVectorPartialSeminormTwo_fluxTermBCField_le [NeZero d]
 /-! ## The Term BC budget -/
 
 /-- The explicit Term B constant at the pure-flux loading. -/
-def fluxTermBCConst (d : ℕ) [NeZero d] : ℝ :=
+def fluxTermBCConst (d : ℕ) : ℝ :=
   Real.sqrt (d : ℝ) * (d : ℝ) * fluxZeroTraceConst d +
     besovMultConst (3 / 8) *
       ((d : ℝ) ^ 2 * fluxZeroTraceConst d + (d : ℝ) * depthDowngradeConst d)
 
-theorem fluxTermBCConst_nonneg (d : ℕ) [NeZero d] : 0 ≤ fluxTermBCConst d := by
+theorem fluxTermBCConst_nonneg (d : ℕ) : 0 ≤ fluxTermBCConst d  := by
   have h1 : (0 : ℝ) ≤ fluxZeroTraceConst d := fluxZeroTraceConst_nonneg d
   have h2 : (0 : ℝ) ≤ besovMultConst (3 / 8) :=
     (besovMultConst_pos (s := (3 / 8 : ℝ)) (by norm_num)).le

@@ -45,7 +45,7 @@ private theorem tendsto_eLpNorm_restrict_of_tendsto_global
 
 /-- On a bounded open convex domain, a zero-trace graph element is determined
 by its scalar `L²` component. -/
-theorem ZeroTraceSobolev.eq_of_toL2_eq [NeZero d]
+theorem ZeroTraceSobolev.eq_of_toL2_eq
     (hU : IsOpenBoundedConvexDomain U) {u v : ZeroTraceSobolev U}
     (huv : ZeroTraceSobolev.toL2 u = ZeroTraceSobolev.toL2 v) :
     u = v := by
@@ -178,7 +178,7 @@ private theorem inwardPartApproximation_properties
     tsupport_inwardMollification_subset hV hρ hsupport hball hr
       (unitConvexApproxScale_pos_local n)⟩
 
-private theorem exists_h10Function_part_of_supported [NeZero d]
+private theorem exists_h10Function_part_of_supported
     (hV : IsOpenBoundedConvexDomain V) (hVne : V.Nonempty)
     (hU : IsOpenBoundedConvexDomain U) (hVU : V ⊆ U)
     (z : ZeroTraceSobolev U)
@@ -188,7 +188,7 @@ private theorem exists_h10Function_part_of_supported [NeZero d]
       ZeroTraceSobolev.toL2
           (ZeroTraceSobolev.extendByZeroToPartSuperset hV hU.isOpen hVU
             (ZeroTraceSobolev.ofH10Function w)) =
-        ZeroTraceSobolev.toL2 z := by
+        ZeroTraceSobolev.toL2 z  := by
   obtain ⟨u, huValue, -⟩ := ZeroTraceSobolev.exists_h10Function hU z
   have huZero : ∀ᵐ x ∂volumeMeasureOn U,
       x ∉ V → u.toH1Function.toFun x = 0 := by
@@ -338,14 +338,14 @@ sequence, so it lies in the same space.  The zero-trace hypothesis also
 suffices for the use made of the conclusion, which is only to rewrite the
 limit as a zero extension from `V` before testing the weak equation against
 zero-trace test functions on `V`. -/
-theorem exists_eq_extendByZeroToPartSuperset_of_ae_zero [NeZero d]
+theorem exists_eq_extendByZeroToPartSuperset_of_ae_zero
     (hV : IsOpenBoundedConvexDomain V) (hVne : V.Nonempty)
     (hU : IsOpenBoundedConvexDomain U) (hVU : V ⊆ U)
     (z : ZeroTraceSobolev U)
     (hzero : ∀ᵐ x ∂volumeMeasureOn U,
       x ∉ V → ZeroTraceSobolev.toL2 z x = 0) :
     ∃ w : ZeroTraceSobolev V,
-      ZeroTraceSobolev.extendByZeroToPartSuperset hV hU.isOpen hVU w = z := by
+      ZeroTraceSobolev.extendByZeroToPartSuperset hV hU.isOpen hVU w = z  := by
   obtain ⟨w, hw⟩ := exists_h10Function_part_of_supported
     hV hVne hU hVU z hzero
   refine ⟨ZeroTraceSobolev.ofH10Function w, ?_⟩

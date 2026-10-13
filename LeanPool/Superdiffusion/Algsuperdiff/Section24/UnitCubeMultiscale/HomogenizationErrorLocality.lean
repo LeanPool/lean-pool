@@ -55,7 +55,7 @@ private theorem normalizedBlockResponseMax_eq_of_root_aeeq
       (coeffOn_aeeq_of_root_aeeq a F G hF hG hk hR)]
 
 private theorem maxDescendantNormalizedBlockResponseAtScale_eq_of_root_aeeq
-    [NeZero d] (a : CoeffOn (cubeDomain (originCube d 0)))
+     (a : CoeffOn (cubeDomain (originCube d 0)))
     (F G : TriadicCoeffFamily d)
     (hF : CoeffOn.AEEq (F.coeffOn (originCube d 0)) a)
     (hG : CoeffOn.AEEq (G.coeffOn (originCube d 0)) a)
@@ -68,15 +68,14 @@ private theorem maxDescendantNormalizedBlockResponseAtScale_eq_of_root_aeeq
   exact finsetSupReal_congr _ fun R hR =>
     normalizedBlockResponseMax_eq_of_root_aeeq a F G hF hG hk hR a0
 
-private theorem scaleResponseAtScale_eq_of_root_aeeq [NeZero d]
-    (a : CoeffOn (cubeDomain (originCube d 0)))
+private theorem scaleResponseAtScale_eq_of_root_aeeq (a : CoeffOn (cubeDomain (originCube d 0)))
     (F G : TriadicCoeffFamily d)
     (hF : CoeffOn.AEEq (F.coeffOn (originCube d 0)) a)
     (hG : CoeffOn.AEEq (G.coeffOn (originCube d 0)) a)
     (k : ℤ) (hk : k ≤ (originCube d 0).scale)
     (p : Book.Ch02.MultiscaleExponent) (a0 : Mat d) :
     Book.Ch02.scaleResponseAtScale (originCube d 0) k p F a0 =
-      Book.Ch02.scaleResponseAtScale (originCube d 0) k p G a0 := by
+      Book.Ch02.scaleResponseAtScale (originCube d 0) k p G a0  := by
   cases p with
   | finite p =>
       unfold Book.Ch02.scaleResponseAtScale Book.Ch02.finsetAverageReal
@@ -103,14 +102,13 @@ private theorem scaleResponseAtScale_eq_of_root_aeeq [NeZero d]
 
 /-- CoarseGraining's raw homogenization error at the origin depends only on the
 origin coefficient. -/
-theorem homogenizationErrorOnCube_eq_of_root_aeeq [NeZero d]
-    (a : CoeffOn (cubeDomain (originCube d 0)))
+theorem homogenizationErrorOnCube_eq_of_root_aeeq (a : CoeffOn (cubeDomain (originCube d 0)))
     (F G : TriadicCoeffFamily d)
     (hF : CoeffOn.AEEq (F.coeffOn (originCube d 0)) a)
     (hG : CoeffOn.AEEq (G.coeffOn (originCube d 0)) a)
     (s : ℝ) (p q : Book.Ch02.MultiscaleExponent) (a0 : Mat d) :
     Book.Ch02.HomogenizationErrorOnCube (originCube d 0) s p q F a0 =
-      Book.Ch02.HomogenizationErrorOnCube (originCube d 0) s p q G a0 := by
+      Book.Ch02.HomogenizationErrorOnCube (originCube d 0) s p q G a0  := by
   unfold Book.Ch02.HomogenizationErrorOnCube
   cases q with
   | finite q =>
