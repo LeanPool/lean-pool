@@ -403,8 +403,8 @@ private theorem openCarrier_child_subset_parent (Q : TriadicCube d)
     (digits : Fin d → Fin 3) (pi : Equiv.Perm (Fin d)) :
     KuhnCell.openCarrier
         ({ supportCube :=
-             { scale := Q.scale - 1
-               index := fun i => 3 * Q.index i + (digits i : ℤ) - 1 }
+             { scale := Q.scale - 1,
+               index := fun i => 3 * Q.index i + (digits i : ℤ) - 1 },
            order := pi } : KuhnCell d) ⊆
       KuhnCell.openCarrier
         ({ supportCube := Q, order := coarsenedChildKuhnOrder digits pi } : KuhnCell d) := by

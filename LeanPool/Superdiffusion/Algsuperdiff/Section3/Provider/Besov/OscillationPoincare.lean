@@ -206,6 +206,7 @@ theorem normalizedL2SqOnSet_openCubeSet_centred_eq_cubeBesovOscillation_sq
   simpa [cubeBesovOscillation, cubeFluctuation] using!
     normalizedL2SqOnSet_openCubeSet_eq_cubeLpNorm_two_sq Q _ hfluc
 
+omit [NeZero d] in
 /-- **The Caccioppoli right-hand side in multiscale form.**  The parent-cube
 oscillation `L²` square that the coarse-grained Caccioppoli estimate leaves on
 the right is bounded by the square of the coordinate-summed multiscale average

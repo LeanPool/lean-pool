@@ -98,6 +98,7 @@ theorem memVectorL2_cubeTorsionField {U : Set (Vec d)}
 
 /-! ## From the scalar equation to the shifted equation -/
 
+omit [NeZero d] in
 /-- **The scalar weak equation is a shifted weak equation with shifted
 forcing.**  On an open bounded convex domain every element of the zero-trace
 graph carrier is an honest zero-trace Sobolev function, so the two test

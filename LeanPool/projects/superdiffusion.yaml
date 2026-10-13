@@ -21,7 +21,7 @@ authors:
   - Tuomo Kuusi
 source:
   arxiv: '2601.22142'
-  url: https://github.com/scottnarmstrong/Superdiffusion/tree/7f20476385d4af418f110303085ad0740c9eba46
+  url: https://github.com/scottnarmstrong/Superdiffusion
   github_repo: scottnarmstrong/Superdiffusion
   commit: 7f20476385d4af418f110303085ad0740c9eba46
   dependency_url: https://github.com/scottnarmstrong/CoarseGraining/tree/c7ddd76c08ade64fed1b8d2ca51be14dfee8deb4
@@ -30,9 +30,14 @@ license: Apache-2.0
 status: verified
 provenance: AI
 main_declarations:
-  - Algsuperdiff.superdiffusivity
-  - Algsuperdiff.anomalous_regularity
+  - Algsuperdiff.superdiffusivity_with_finite_moments
 main_results:
+  - declaration: Algsuperdiff.superdiffusivity_with_finite_moments
+    informal: >-
+      For dimensions at least two, one positive small-coupling threshold
+      simultaneously gives the full quantitative superdiffusivity bounds
+      and almost-sure integrability of both displacement observables at
+      every positive time.
   - declaration: Algsuperdiff.superdiffusivity
     informal: >-
       For each dimension and positive nondegeneracy constant, sufficiently

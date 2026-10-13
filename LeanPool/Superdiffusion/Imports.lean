@@ -2114,6 +2114,7 @@ public import LeanPool.Superdiffusion.Algsuperdiff.StochasticProcess.Common.Regu
 public import LeanPool.Superdiffusion.Algsuperdiff.StochasticProcess.Common.Regularity.SectorReflectionGeometry
 public import LeanPool.Superdiffusion.Algsuperdiff.StochasticProcess.Common.Regularity.UnitCubeDirichletPoincare
 public import LeanPool.Superdiffusion.Algsuperdiff.StochasticProcess.Common.Semigroup.ResolventDenseRange
+public import LeanPool.Superdiffusion.Algsuperdiff.SuperdiffusivityFiniteMoments
 public import LeanPool.Superdiffusion.Support.Book.Ch02.Theorems.BlockMatrixField
 public import LeanPool.Superdiffusion.Support.Book.Ch02.Theorems.GradientLinearity
 public import LeanPool.Superdiffusion.Support.Book.Ch02.Theorems.Quadraticity
