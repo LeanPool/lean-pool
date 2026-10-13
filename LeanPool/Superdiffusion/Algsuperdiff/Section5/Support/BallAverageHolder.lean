@@ -179,7 +179,7 @@ difference quotients of ball averages is exactly its Hölder seminorm.** -/
 theorem ballAverageHolderOn_eq_holderSeminormOn {U D : Set (Vec d)}
     (hU : IsOpen U) (hD : Dense D) {f g : Vec d → ℝ} (hf : IntegrableOn f U volume)
     (hae : g =ᵐ[volume.restrict U] f) (hg : ContinuousOn g U) :
-    ballAverageHolderOn U D f = holderSeminormOn U (1 / 2) g  := by
+    ballAverageHolderOn U D f = holderSeminormOn U (1 / 2) g := by
   have hUmeas : MeasurableSet U := hU.measurableSet
   have hgU : IntegrableOn g U volume := hf.congr hae.symm
   have hGint : Integrable (U.indicator g) volume := hgU.integrable_indicator hUmeas

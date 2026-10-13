@@ -241,7 +241,7 @@ comparator.**  This is the inner quantity of `d.mathcal.E`, so it is the whole
 content at the `(2,2)` error slot. -/
 theorem normalizedBlockResponseMax_adjointFamily
     (F : TriadicCoeffFamily d) (R : TriadicCube d) {σ0 : ℝ} (hσ0 : 0 < σ0) :
-    normalizedBlockResponseMax R (adjointFamily F) (scalarMatrix (d  := d) σ0) =
+    normalizedBlockResponseMax R (adjointFamily F) (scalarMatrix (d := d) σ0) =
       normalizedBlockResponseMax R F (scalarMatrix (d := d) σ0) := by
   refine le_antisymm ?_ ?_
   · refine normalizedBlockResponseMax_le_of_flip F (adjointFamily F) R hσ0 (fun P Q' => ?_)
@@ -257,7 +257,7 @@ theorem normalizedBlockResponseMax_adjointFamily
 theorem maxDescendantNormalizedBlockResponseAtScale_adjointFamily
     (F : TriadicCoeffFamily d) (Q : TriadicCube d) (k : ℤ) {σ0 : ℝ} (hσ0 : 0 < σ0) :
     maxDescendantNormalizedBlockResponseAtScale Q k (adjointFamily F)
-        (scalarMatrix (d  := d) σ0) =
+        (scalarMatrix (d := d) σ0) =
       maxDescendantNormalizedBlockResponseAtScale Q k F (scalarMatrix (d := d) σ0) := by
   unfold Ch02.maxDescendantNormalizedBlockResponseAtScale
   exact congrArg _ (funext fun R => normalizedBlockResponseMax_adjointFamily F R hσ0)
@@ -265,7 +265,7 @@ theorem maxDescendantNormalizedBlockResponseAtScale_adjointFamily
 theorem scaleResponseAtScale_adjointFamily
     (F : TriadicCoeffFamily d) (Q : TriadicCube d) (k : ℤ) (p : Ch02.MultiscaleExponent)
     {σ0 : ℝ} (hσ0 : 0 < σ0) :
-    scaleResponseAtScale Q k p (adjointFamily F) (scalarMatrix (d  := d) σ0) =
+    scaleResponseAtScale Q k p (adjointFamily F) (scalarMatrix (d := d) σ0) =
       scaleResponseAtScale Q k p F (scalarMatrix (d := d) σ0) := by
   cases p with
   | finite pp =>
@@ -287,7 +287,7 @@ theorem scaleResponseAtScale_adjointFamily
 theorem homogenizationError_adjointFamily
     (F : TriadicCoeffFamily d) (Q : TriadicCube d) (n : ℤ) (s : ℝ)
     (p q : Ch02.MultiscaleExponent) {σ0 : ℝ} (hσ0 : 0 < σ0) :
-    HomogenizationError Q n s p q (adjointFamily F) (scalarMatrix (d  := d) σ0) =
+    HomogenizationError Q n s p q (adjointFamily F) (scalarMatrix (d := d) σ0) =
       HomogenizationError Q n s p q F (scalarMatrix (d := d) σ0) := by
   cases q with
   | finite qq =>
@@ -327,7 +327,7 @@ exponents. -/
 theorem homogenizationErrorOnCube_adjointFamily
     (F : TriadicCoeffFamily d) (Q : TriadicCube d) (s : ℝ)
     (p q : Ch02.MultiscaleExponent) {σ0 : ℝ} (hσ0 : 0 < σ0) :
-    HomogenizationErrorOnCube Q s p q (adjointFamily F) (scalarMatrix (d  := d) σ0) =
+    HomogenizationErrorOnCube Q s p q (adjointFamily F) (scalarMatrix (d := d) σ0) =
       HomogenizationErrorOnCube Q s p q F (scalarMatrix (d := d) σ0) :=
   homogenizationError_adjointFamily F Q Q.scale s p q hσ0
 
@@ -351,7 +351,7 @@ pointwise in `ω`: the `(J3)` carrier identity `a_m(−ω) = a_m(ω)ᵀ` compose
 theorem annularErrorAtom_negateCutoffSample (M : ABKModel d) (n : ℤ)
     (s : ℝ) (omega : Cutoff.CutoffSample d) :
     Support.annularErrorAtom M n s (Cutoff.negateCutoffSample omega) =
-      Support.annularErrorAtom M n s omega  := by
+      Support.annularErrorAtom M n s omega := by
   have hchar := Support.cutoffHomogenizationErrorRaw22_characterization M (n - 2) n s
     (Annealed.sigmaBar M (n - 2))
   have hpos : (0 : ℝ) < ((Annealed.sigmaBar M (n - 2) : Observable.PositiveScalar) : ℝ) :=
@@ -370,7 +370,7 @@ with the negation. -/
 theorem annularErrorAtomMax_negateCutoffSample (M : ABKModel d) (s : ℝ)
     (omega : Cutoff.CutoffSample d) (j n : ℤ) :
     annularErrorAtomMax M s (Cutoff.negateCutoffSample omega) j n =
-      annularErrorAtomMax M s omega j n  := by
+      annularErrorAtomMax M s omega j n := by
   unfold annularErrorAtomMax
   refine congrArg _ (funext fun v => ?_)
   rw [translateCutoffSample_negateCutoffSample, annularErrorAtom_negateCutoffSample]

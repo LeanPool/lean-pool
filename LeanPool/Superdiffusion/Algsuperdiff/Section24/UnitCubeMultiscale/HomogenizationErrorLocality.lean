@@ -75,7 +75,7 @@ private theorem scaleResponseAtScale_eq_of_root_aeeq (a : CoeffOn (cubeDomain (o
     (k : ℤ) (hk : k ≤ (originCube d 0).scale)
     (p : Book.Ch02.MultiscaleExponent) (a0 : Mat d) :
     Book.Ch02.scaleResponseAtScale (originCube d 0) k p F a0 =
-      Book.Ch02.scaleResponseAtScale (originCube d 0) k p G a0  := by
+      Book.Ch02.scaleResponseAtScale (originCube d 0) k p G a0 := by
   cases p with
   | finite p =>
       unfold Book.Ch02.scaleResponseAtScale Book.Ch02.finsetAverageReal
@@ -108,7 +108,7 @@ theorem homogenizationErrorOnCube_eq_of_root_aeeq (a : CoeffOn (cubeDomain (orig
     (hG : CoeffOn.AEEq (G.coeffOn (originCube d 0)) a)
     (s : ℝ) (p q : Book.Ch02.MultiscaleExponent) (a0 : Mat d) :
     Book.Ch02.HomogenizationErrorOnCube (originCube d 0) s p q F a0 =
-      Book.Ch02.HomogenizationErrorOnCube (originCube d 0) s p q G a0  := by
+      Book.Ch02.HomogenizationErrorOnCube (originCube d 0) s p q G a0 := by
   unfold Book.Ch02.HomogenizationErrorOnCube
   cases q with
   | finite q =>

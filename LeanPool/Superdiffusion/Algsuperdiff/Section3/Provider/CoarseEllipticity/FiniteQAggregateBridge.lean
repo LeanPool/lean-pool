@@ -51,7 +51,7 @@ theorem lambdaSqCoeffField_inv_eq_rpow (Q : TriadicCube d)
     (Book.Ch04.lambdaSqCoeffField Q s (.finite q) a)⁻¹ =
       (∑' n : ℕ, Book.Ch02.geometricWeight s q n *
         Book.Ch04.maxDescendantSigmaStarInvMatrixNormCoeffFieldAtScale Q
-            (Q.scale - (n : ℤ)) a ^ (q / 2)) ^ (2 / q)  := by
+            (Q.scale - (n : ℤ)) a ^ (q / 2)) ^ (2 / q) := by
   classical
   by_cases ha : Book.Ch04.AELocallyUniformlyEllipticField a
   · simp only [Book.Ch04.lambdaSqCoeffField,
@@ -76,7 +76,7 @@ theorem cutoffLowerEllipticityInv_mul_eq_rpow (M : ABKModel d)
         (scaling *
           Book.Ch04.maxDescendantSigmaStarInvMatrixNormCoeffFieldAtScale
             (originCube d m) (m - (n : ℤ))
-            (Cutoff.coefficientCutoff M.nu L omega)) ^ (r / 2)) ^ (2 / r)  := by
+            (Cutoff.coefficientCutoff M.nu L omega)) ^ (r / 2)) ^ (2 / r) := by
   let a : RegCoeffField d := Cutoff.coefficientCutoff M.nu L omega
   let H : ℕ → ℝ := fun n =>
     Book.Ch04.maxDescendantSigmaStarInvMatrixNormCoeffFieldAtScale

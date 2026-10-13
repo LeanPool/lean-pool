@@ -48,7 +48,7 @@ private theorem potential_solution_h1_test (a : CoeffField d) (hV : IsOpenBounde
           φ.gradToHilbertVectorL2 +
         ∫ x, q x * ZeroTraceSobolev.toL2 u x * φ.toScalarL2 x
           ∂volumeMeasureOn V ≤
-      inner ℝ f φ.toScalarL2  := by
+      inner ℝ f φ.toScalarL2 := by
   let g : ScalarL2 V :=
     f + C • ZeroTraceSobolev.toL2 u -
       potentialMul q hq (ZeroTraceSobolev.toL2 u)
@@ -96,7 +96,7 @@ theorem potentialPartDomainZeroExtension_isSubsolution
           (hEll.mono hV.isOpen.measurableSet hVU) q
           ⟨hqU.1, ae_restrict_of_ae_restrict_of_subset hVU hqU.2.1,
             ae_restrict_of_ae_restrict_of_subset hVU hqU.2.2⟩
-          (restrictScalarL2ToPart (V  := V) hU.isOpen.measurableSet f))) f := by
+          (restrictScalarL2ToPart (V := V) hU.isOpen.measurableSet f))) f := by
   classical
   let hEllV := hEll.mono hV.isOpen.measurableSet hVU
   let hqV : IsBoundedNonnegativePotential V q C :=
@@ -218,7 +218,7 @@ theorem potentialPartDomainResolvent_le_ae (a : CoeffField d) (hV : IsOpenBounde
       potentialResolvent a hα hlam (hEll.mono hV.isOpen.measurableSet hVU) q
           ⟨hqU.1, ae_restrict_of_ae_restrict_of_subset hVU hqU.2.1,
             ae_restrict_of_ae_restrict_of_subset hVU hqU.2.2⟩
-          (restrictScalarL2ToPart (V  := V) hU.isOpen.measurableSet f) x ≤
+          (restrictScalarL2ToPart (V := V) hU.isOpen.measurableSet f) x ≤
         potentialResolvent a hα hlam hEll q hqU f x := by
   let uV := potentialSolution a hα hlam
     (hEll.mono hV.isOpen.measurableSet hVU) q
@@ -259,7 +259,7 @@ theorem potentialPartDomainResolvent_le_ae_of_ellipticityWitness
     (hf : ∀ᵐ x ∂volumeMeasureOn U, 0 ≤ f x) :
     ∀ᵐ x ∂volumeMeasureOn V,
       potentialResolvent a halpha hlamV hEllV q hqV
-          (restrictScalarL2ToPart (V  := V) hU.isOpen.measurableSet f) x ≤
+          (restrictScalarL2ToPart (V := V) hU.isOpen.measurableSet f) x ≤
         potentialResolvent a halpha hlamU hEllU q hqU f x := by
   let hEllV' := hEllU.mono hV.isOpen.measurableSet hVU
   let hqV' : IsBoundedNonnegativePotential V q CU :=

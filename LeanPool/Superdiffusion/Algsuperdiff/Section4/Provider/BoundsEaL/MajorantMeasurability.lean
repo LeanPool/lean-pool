@@ -195,7 +195,7 @@ theorem aemeasurable_unitCubeHomogenizationError22_unitRescaledCutoffCoeff
         Algsuperdiff.Frozen.Section24.unitCubeHomogenizationError (s : ℝ)
           (.finite 2) (.finite 2) (unitRescaledCutoffCoeff M R (R.scale - 2) omega)
           (Observable.isotropicComparatorMatrix (Annealed.sigmaBar M (R.scale - 2))))
-      (Cutoff.cutoffSampleLaw M).toMeasure  := by
+      (Cutoff.cutoffSampleLaw M).toMeasure := by
   have hobs : AEMeasurable (fun omega : Cutoff.CutoffSample d =>
       Support.annularErrorObservable M R.scale s
         (Cutoff.translateCutoffSample (Support.triadicLatticePoint R.scale R.index) omega))

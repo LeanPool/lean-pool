@@ -86,7 +86,7 @@ private theorem homogenizationErrorOnCube_infinity_eq_of_descendantAEEq
       Book.Ch02.CoeffOn.AEEq (A.coeffOn S) (B.coeffOn S))
     (t : ℝ) (p : Book.Ch02.MultiscaleExponent) (a0 : Mat d) :
     Book.Ch02.HomogenizationErrorOnCube R t .infinity p A a0 =
-      Book.Ch02.HomogenizationErrorOnCube R t .infinity p B a0  := by
+      Book.Ch02.HomogenizationErrorOnCube R t .infinity p B a0 := by
   unfold Book.Ch02.HomogenizationErrorOnCube Book.Ch02.HomogenizationError
   cases p with
   | finite q =>
@@ -126,7 +126,7 @@ private theorem rootPointwiseCoeffFamily_on_descendant_eq_parent {d : ℕ} (Q : 
         (a.restrictToSubcube
           (openCubeSet_subset_of_mem_descendantsAtScale hk hR))) a0 =
       Book.Ch02.HomogenizationErrorOnCube R t .infinity p
-        (rootPointwiseCoeffFamily Q a) a0  := by
+        (rootPointwiseCoeffFamily Q a) a0 := by
   apply homogenizationErrorOnCube_infinity_eq_of_descendantAEEq R _ t p a0
   intro l S hS
   let hRQ : openCubeSet R ⊆ openCubeSet Q :=
@@ -176,7 +176,7 @@ private theorem localCoarseGraining_descendant_response_re_root {d : ℕ} (Q : T
         (a.restrictToSubcube
           (openCubeSet_subset_of_mem_descendantsAtScale hk hR))) a0 =
       Book.Ch02.HomogenizationErrorOnCube R t .infinity p
-        (rootPointwiseCoeffFamily Q a) a0  :=
+        (rootPointwiseCoeffFamily Q a) a0 :=
   rootPointwiseCoeffFamily_on_descendant_eq_parent Q a hk hR t p a0
 
 /-- The `q = 1` local response contribution is localized at the exact

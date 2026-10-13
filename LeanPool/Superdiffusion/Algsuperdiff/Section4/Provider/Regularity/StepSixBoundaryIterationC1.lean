@@ -548,7 +548,7 @@ theorem edBoundary_deltaCap_of_c1_floor {C C1 alpha : ℝ} (hC : 0 < C)
   linarith only [hdle, hinv, hval]
 
 theorem edBridgeEpsConstGen_nonneg' (d : ℕ) {Cs C : ℝ} (hCs : 0 ≤ Cs)
-    (hC : 0 ≤ C) (k : ℕ) : 0 ≤ edBridgeEpsConstGen d Cs C k  := by
+    (hC : 0 ≤ C) (k : ℕ) : 0 ≤ edBridgeEpsConstGen d Cs C k := by
   have hrw : (0 : ℝ) ≤ edBridgeRemWeightGen d Cs k := edBridgeRemWeightGen_nonneg d hCs k
   have hep : (1 : ℝ) ≤ endpointConst d (1 / 9 : ℝ) := one_le_endpointConst (by norm_num)
   rw [edBridgeEpsConstGen]

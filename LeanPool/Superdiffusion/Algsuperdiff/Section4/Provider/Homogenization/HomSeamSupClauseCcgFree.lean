@@ -109,7 +109,7 @@ def RecutCoreSupplyFluxSupClauseAt (M : ABKModel d) (m : ℤ)
 /-- The sup-form clause, asked almost surely at every admissible model and
 scale, at a MODEL-DEPENDENT constant `CcgF M`. -/
 def SeamMultiscaleSupClauseSupplyAt (d : ℕ) (hd1 : 1 ≤ d)
-    (cstar gamma0 : ℝ) (CcgF : ABKModel d → ℝ) : Prop  :=
+    (cstar gamma0 : ℝ) (CcgF : ABKModel d → ℝ) : Prop :=
   ∀ M : ABKModel d, Disorder.cstar M = cstar → M.gamma ≤ gamma0 →
     ∀ (hlog : 4 ≤ |Real.log M.gamma|) (m : ℤ),
       ∀ᵐ omega ∂(Cutoff.cutoffSampleLaw M).toMeasure,
@@ -121,7 +121,7 @@ def SeamMultiscaleSupClauseSupplyAt (d : ℕ) (hd1 : 1 ≤ d)
 step further — straight to `RecutCoreSupplyFluxAtSupGrad`, whose `Ccg` slot is
 already free — at a model-dependent clause constant. -/
 def SeamSupplyFluxAtSupGradBudget (d : ℕ) (hd1 : 1 ≤ d)
-    (cstar gamma0 : ℝ) (Cen0F CcgF : ABKModel d → ℝ) (Ctop Creg : ℝ) : Prop  :=
+    (cstar gamma0 : ℝ) (Cen0F CcgF : ABKModel d → ℝ) (Ctop Creg : ℝ) : Prop :=
   ∀ M : ABKModel d, Disorder.cstar M = cstar → M.gamma ≤ gamma0 →
     ∀ (hlog : 4 ≤ |Real.log M.gamma|) (m : ℤ),
       ∀ X : Cutoff.CutoffSample d → ℕ∞, Measurable X →

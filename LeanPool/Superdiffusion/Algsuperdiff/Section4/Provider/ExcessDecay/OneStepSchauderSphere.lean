@@ -289,7 +289,7 @@ theorem sphereAverage_const_of_flux_zero {u : EuclideanSpace ℝ (Fin d) → ℝ
     (hu : ContDiff ℝ 1 u) (x : EuclideanSpace ℝ (Fin d)) {R : ℝ}
     (hflux : ∀ r ∈ Ioo (0 : ℝ) R, sphereFlux x r u = 0)
     {a b : ℝ} (ha : 0 < a) (hab : a ≤ b) (hb : b < R) :
-    sphereAverage x a u = sphereAverage x b u  := by
+    sphereAverage x a u = sphereAverage x b u := by
   set g : ℝ → ℝ := fun r => sphereAverage x r u with hg
   have hcont : ContinuousOn g (Icc a b) :=
     (continuous_sphereAverage hu.continuous x).continuousOn

@@ -210,7 +210,7 @@ theorem vecDot_bCoarse_add_vecDot_sigmaStarInvCoarse_sub_two_le {d : ℕ}
         σ * vecDot u
           (matVecMul (Book.Ch02.sigmaStarInvCoarse (Book.Ch02.cubeDomain Q)
             (F.coeffOn Q)) u) - 2 ≤
-      2 * Book.Ch02.normalizedBlockResponseMax Q F (scalarMatrix (d  := d) σ) := by
+      2 * Book.Ch02.normalizedBlockResponseMax Q F (scalarMatrix (d := d) σ) := by
   have hcpos : 0 < Real.sqrt σ := Real.sqrt_pos.2 hσ
   have hc : Real.sqrt σ ≠ 0 := ne_of_gt hcpos
   have hcc : Real.sqrt σ * Real.sqrt σ = σ := Real.mul_self_sqrt hσ.le
@@ -248,7 +248,7 @@ private theorem unit_quadraticForms_le {d : ℕ} (Q : TriadicCube d)
     (hu : vecNormSq u = 1) :
     σ⁻¹ * vecDot u
         (matVecMul (Book.Ch02.bCoarse (Book.Ch02.cubeDomain Q) (F.coeffOn Q)) u) ≤
-      1 + 2 * Book.Ch02.normalizedBlockResponseMax Q F (scalarMatrix (d  := d) σ) +
+      1 + 2 * Book.Ch02.normalizedBlockResponseMax Q F (scalarMatrix (d := d) σ) +
         Real.sqrt
           (2 * Book.Ch02.normalizedBlockResponseMax Q F (scalarMatrix (d := d) σ)) ∧
       σ * vecDot u

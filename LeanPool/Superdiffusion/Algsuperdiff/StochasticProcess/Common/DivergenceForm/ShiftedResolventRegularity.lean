@@ -107,7 +107,7 @@ constant is increasing in its gradient budget; so the bound is uniform over
 every family of data with a common essential bound. -/
 def HasLocalHolderShiftedResolvents (a : CoeffField d) {lam Lam : ℝ}
     (hlam : 0 < lam) (hEll : IsEllipticFieldOn lam Lam U a) (alpha B : ℝ) :
-    Prop  :=
+    Prop :=
   HasContinuousShiftedResolvents a hlam hEll ∧
     ∀ {mu : ℝ} (hmu : 0 < mu), ∀ x ∈ U, ∀ {M : ℝ}, 0 ≤ M →
       ∃ r > 0, euclideanBall x r ⊆ U ∧
@@ -126,7 +126,7 @@ sequence of a fixed datum at each point of the part domain. -/
 def HasLocalHolderPenalizedResolvents (a : CoeffField d)
     (hU : IsOpenBoundedConvexDomain U) {V : Set (Vec d)} (hV : IsOpen V)
     {lam Lam : ℝ} (hlam : 0 < lam) (hEll : IsEllipticFieldOn lam Lam U a)
-    (alpha B : ℝ) : Prop  :=
+    (alpha B : ℝ) : Prop :=
   ∀ {mu : ℝ} (hmu : 0 < mu) (f : ScalarL2 U) {M : ℝ}, 0 ≤ M →
     (∀ᵐ y ∂volumeMeasureOn U, |f y| ≤ M) →
     ∀ x ∈ V, ∃ r > 0, euclideanBall x r ⊆ V ∧ ∀ n : ℕ,

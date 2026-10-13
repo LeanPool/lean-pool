@@ -98,7 +98,7 @@ theorem exists_lintegral_rpow_step3ThirdTerm_slot (d : ℕ) (cstar : ℝ) (hcsta
                   ENNReal.ofReal (step3ThirdTerm Cd M m R omega
                     (lFreeGradSlot m (tailSeriesGauge m) R omega)) ^ q
                   ∂(Cutoff.cutoffSampleLaw M).toMeasure) ≤
-                ENNReal.ofReal (Cd * A * (q * M.gamma)) ^ q  := by
+                ENNReal.ofReal (Cd * A * (q * M.gamma)) ^ q := by
   classical
   obtain ⟨C3, hC36, hthird⟩ := exists_lintegral_rpow_step3ThirdTerm_le d
   obtain ⟨Cg, hCg0, hgaugeAll⟩ := exists_sigmaBar_gaugePackage d

@@ -118,7 +118,7 @@ theorem memLp_gaugedEllipticitySum_of_scale (M : ABKModel d) (L m : ℤ)
     MemLp (fun omega : CutoffSample d =>
         gaugedEllipticitySum sigmaBar T s
           (coefficientCutoffTriadicCoeffFamily M L omega)) p
-      (cutoffSampleLaw M).toMeasure  := by
+      (cutoffSampleLaw M).toMeasure := by
   set v : Vec d :=
     fun i => ((T.index i : ℤ) : ℝ) * cubeScaleFactor (originCube d m) with hv
   have hcomp := hmem.comp_measurePreserving (measurePreserving_translateCutoffSample M v)
@@ -156,7 +156,7 @@ theorem exists_regime_memLp_four_gaugedEllipticitySum_ancestorAtScale (d : ℕ) 
               gaugedEllipticitySum (Annealed.sigmaBar M (m - 1) : ℝ)
                 (ancestorAtScale R m) M.gamma
                 (coefficientCutoffTriadicCoeffFamily M m omega)) 4
-            (cutoffSampleLaw M).toMeasure  := by
+            (cutoffSampleLaw M).toMeasure := by
   obtain ⟨C, hC0, hmain⟩ := integral_gaugedEllipticitySum_rpow_eight_le d
   obtain ⟨g0, hg00, hg0q, hgate⟩ := exists_gamma_threshold_ellipticityGate hC0
   refine ⟨regimeEllipticityConst C, g0, regimeEllipticityConst_pos C, hg00, hg0q, ?_⟩

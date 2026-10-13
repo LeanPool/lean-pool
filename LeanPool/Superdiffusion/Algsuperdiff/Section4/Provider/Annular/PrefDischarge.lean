@@ -195,7 +195,7 @@ theorem centreResponseMax_le_annulus_add (M : ABKModel d) (L m : ℤ)
     (omega : Cutoff.CutoffSample d) (n : ℤ) :
     centreResponseMax M L m omega n
       ≤ annularResponseMaxPref M L m omega n (n - 1)
-        + ((3 : ℝ) ^ d)⁻¹ * centreResponseMax M L m omega (n - 1)  := by
+        + ((3 : ℝ) ^ d)⁻¹ * centreResponseMax M L m omega (n - 1) := by
   classical
   have hJann0 : (0 : ℝ) ≤ annularResponseMaxPref M L m omega n (n - 1) :=
     annularResponseMaxPref_nonneg M L m omega n (n - 1)

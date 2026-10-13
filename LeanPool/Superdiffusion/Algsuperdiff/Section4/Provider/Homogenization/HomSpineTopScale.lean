@@ -330,7 +330,7 @@ NOT available (see the module docstring); `htop_of_stepTwoA_enlargedY` avoids it
 by carrying `W = (1 + 𝓔sup_{t/2})(1 + 𝓔sup_t)(1 + 𝓔sup_{1/4})` instead, at
 `Kidx = 1`. -/
 def StepTwoIndexBridge (M : ABKModel d) (L m : ℤ) (t Kidx W : ℝ)
-    (omega : Cutoff.CutoffSample d) : Prop  :=
+    (omega : Cutoff.CutoffSample d) : Prop :=
   1 + fluxCorrectedError M L m (t / 2) omega ≤ Kidx * W ∧
     1 + fluxCorrectedError M L m t omega ≤ Kidx * W
 
@@ -496,7 +496,7 @@ private theorem one_add_error_le_toReal (M : ABKModel d) {L m : ℤ}
       fluxCorrectedErrorRepresentative M L m ⟨s, hs⟩ omega)
     (hfin : fluxCorrectedTwoScaleErrorObservableSup M m m ⟨s, hs⟩ omega ≠ ⊤) :
     1 + fluxCorrectedError M L m s omega ≤
-      (1 + fluxCorrectedTwoScaleErrorObservableSup M m m ⟨s, hs⟩ omega).toReal  := by
+      (1 + fluxCorrectedTwoScaleErrorObservableSup M m m ⟨s, hs⟩ omega).toReal := by
   have hle : ENNReal.ofReal (fluxCorrectedError M L m s omega) ≤
       fluxCorrectedTwoScaleErrorObservableSup M m m ⟨s, hs⟩ omega := by
     rw [hrep]
@@ -544,7 +544,7 @@ theorem stepTwoIndexBridge_of_representative (M : ABKModel d) {L m : ℤ}
     StepTwoIndexBridge M L m t 1
       ((stepTwoEnlargedY M m ht omega *
         (1 + fluxCorrectedTwoScaleErrorObservableSup M m m homQuarter omega)).toReal)
-      omega  := by
+      omega := by
   have h1 := one_le_toReal_one_add hfin1
   have h2 := one_le_toReal_one_add hfin2
   have h3 := one_le_toReal_one_add hfinE

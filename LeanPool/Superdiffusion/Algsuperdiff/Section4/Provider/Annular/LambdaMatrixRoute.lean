@@ -133,7 +133,7 @@ theorem sigmaStarInvSeries_eq_rpow_inv_lambdaSq
     (Q : TriadicCube d) (a : Book.Ch02.TriadicCoeffFamily d) {s q : ℝ}
     (hs : 0 < s) (hq : 0 < q) :
     sigmaStarInvSeries Q s q a =
-      Real.rpow ((Book.Ch02.lambdaSq Q s (.finite q) a)⁻¹) (q / 2)  := by
+      Real.rpow ((Book.Ch02.lambdaSq Q s (.finite q) a)⁻¹) (q / 2) := by
   rw [inv_lambdaSq_finite_eq_rpow_sigmaStarInvSeries Q a hs hq,
     rpow_rpow (sigmaStarInvSeries_nonneg Q hs hq a),
     show 2 / q * (q / 2) = 1 by field_simp, rpow_one']

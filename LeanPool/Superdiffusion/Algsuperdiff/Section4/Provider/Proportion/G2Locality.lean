@@ -226,7 +226,7 @@ theorem measurable_cutoffNormalizedBlockResponseRepresentative_local
     (M : ABKModel d) (L : ℤ) (Q : TriadicCube d) (a0 : Mat d) {U : Set (Vec d)}
     (hQU : cubeSet Q ⊆ U) :
     Measurable[Cutoff.cutoffSampleLocalSigma M L U]
-      (Observable.cutoffNormalizedBlockResponseRepresentative M L Q a0)  :=
+      (Observable.cutoffNormalizedBlockResponseRepresentative M L Q a0) :=
   (Observable.continuous_normalizedBlockResponseMaxRepresentativeFunctional
     a0).measurable.comp (measurable_cutoffCoarseFullBlockRepresentative_local M L Q hQU)
 
@@ -236,7 +236,7 @@ theorem measurable_cutoffAvgDescendantNormalizedBlockResponseRepresentative_loca
      (M : ABKModel d) (L : ℤ) (Q : TriadicCube d) {k : ℤ}
     (hk : k ≤ Q.scale) (a0 : Mat d) {U : Set (Vec d)} (hQU : cubeSet Q ⊆ U) :
     Measurable[Cutoff.cutoffSampleLocalSigma M L U]
-      (Support.cutoffAvgDescendantNormalizedBlockResponseRepresentative M L Q k a0)  := by
+      (Support.cutoffAvgDescendantNormalizedBlockResponseRepresentative M L Q k a0) := by
   let : MeasurableSpace (Cutoff.CutoffSample d) := Cutoff.cutoffSampleLocalSigma M L U
   have hEq :
       Support.cutoffAvgDescendantNormalizedBlockResponseRepresentative M L Q k a0 =
@@ -270,7 +270,7 @@ private theorem measurable_tsum_of_nonneg {Omega : Type*} [MeasurableSpace Omega
 is `Support.cutoffHomogenizationError22Functional` verbatim; the generality in
 `Q` is what carries the translated cubes `z + □_n` of the `𝒢₂` lane. -/
 def errorFunctionalAtCube (M : ABKModel d) (L : ℤ) (Q : TriadicCube d)
-    (s : ℝ) (sigma : Observable.PositiveScalar) : Cutoff.CutoffSample d → ℝ  :=
+    (s : ℝ) (sigma : Observable.PositiveScalar) : Cutoff.CutoffSample d → ℝ :=
   fun omega => Real.sqrt (∑' l : ℕ, Ch02.geometricWeight s 2 l *
     Support.cutoffAvgDescendantNormalizedBlockResponseRepresentative M L Q
       (Q.scale - (l : ℤ)) (Observable.isotropicComparatorMatrix sigma) omega)
@@ -280,7 +280,7 @@ private theorem errorFunctional_term_nonneg (M : ABKModel d) (L : ℤ)
     (l : ℕ) (omega : Cutoff.CutoffSample d) :
     0 ≤ Ch02.geometricWeight s 2 l *
       Support.cutoffAvgDescendantNormalizedBlockResponseRepresentative M L Q
-        (Q.scale - (l : ℤ)) (Observable.isotropicComparatorMatrix sigma) omega  := by
+        (Q.scale - (l : ℤ)) (Observable.isotropicComparatorMatrix sigma) omega := by
   refine mul_nonneg ?_ ?_
   · simpa only [Ch02.geometricWeight_eq_old] using
       HCPolySupport.geometricWeight_nonneg l (by positivity : 0 ≤ s * (2 : ℝ))
@@ -292,7 +292,7 @@ theorem measurable_errorFunctionalAtCube_local (M : ABKModel d) (L : ℤ)
     (Q : TriadicCube d) {s : ℝ} (hs : 0 < s) (sigma : Observable.PositiveScalar)
     {U : Set (Vec d)} (hQU : cubeSet Q ⊆ U) :
     Measurable[Cutoff.cutoffSampleLocalSigma M L U]
-      (errorFunctionalAtCube M L Q s sigma)  := by
+      (errorFunctionalAtCube M L Q s sigma) := by
   let : MeasurableSpace (Cutoff.CutoffSample d) := Cutoff.cutoffSampleLocalSigma M L U
   refine Real.continuous_sqrt.measurable.comp ?_
   refine measurable_tsum_of_nonneg _ (fun l => ?_)
@@ -339,7 +339,7 @@ theorem errorFunctionalAtCube_eq_of_common_event (M : ABKModel d)
     Ch02.HomogenizationErrorOnCube Q s (.finite 2) (.finite 2)
         (Cutoff.coefficientCutoffTriadicCoeffFamily M L omega)
         (Observable.isotropicComparatorMatrix sigma)
-      = errorFunctionalAtCube M L Q s sigma omega  := by
+      = errorFunctionalAtCube M L Q s sigma omega := by
   have hsum : (∑' l : ℕ, Ch02.geometricWeight s 2 l *
       Ch02.finsetAverageReal (descendantsAtScale Q (Q.scale - (l : ℤ)))
         (fun R => Ch02.normalizedBlockResponseMax R

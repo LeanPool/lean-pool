@@ -40,7 +40,7 @@ def rootClauseBCg (d : ℕ) (Ccacc Cosc CBc : ℝ) : ℝ :=
 /-- **The clause-(B) prefactor**, the composite constant the outer collapse
 produces: the oscillation half's `C_g√C_cmp·(embedding·bridge·Poincaré·C_tr)`
 plus the data half's `C_g(√C_cmp·C_WG + C_dM)`, at `C_cmp = 4`. -/
-def rootClauseBPrefactor (d : ℕ) (Cch Ccacc Cosc CBc CB Ctr CWG CdM : ℝ) : ℝ  :=
+def rootClauseBPrefactor (d : ℕ) (Cch Ccacc Cosc CBc CB Ctr CWG CdM : ℝ) : ℝ :=
   rootClauseBCg d Ccacc Cosc CBc * Real.sqrt 4 *
       (Real.sqrt ((3 : ℝ) ^ d) * stepSevenEmbeddingConst d *
         stepSevenBridgeConst stepSevenCgS *

@@ -205,7 +205,7 @@ theorem gaugedEllipticitySum_eq_cutoffObservables (M : ABKModel d) (m L : ℤ)
         (Cutoff.coefficientCutoffTriadicCoeffFamily M L omega) =
       Observable.cutoffUpperEllipticity M m L s hs coarseExponentTwo omega * sigmaBar⁻¹ +
         Observable.cutoffLowerEllipticityInv M m L s hs coarseExponentTwo omega *
-          sigmaBar  := by
+          sigmaBar := by
   unfold gaugedEllipticitySum
   rw [LambdaSq_originCube_coefficientCutoffTriadicCoeffFamily_eq M m L hs omega,
     lambdaSq_originCube_coefficientCutoffTriadicCoeffFamily_eq M m L hs omega]
@@ -217,7 +217,7 @@ theorem measurable_gaugedEllipticitySum_originCube (M : ABKModel d) (m L : ℤ)
     {s : ℝ} (hs : 0 < s) (sigmaBar : ℝ) :
     Measurable fun omega : Cutoff.CutoffSample d =>
       gaugedEllipticitySum sigmaBar (originCube d m) s
-        (Cutoff.coefficientCutoffTriadicCoeffFamily M L omega)  := by
+        (Cutoff.coefficientCutoffTriadicCoeffFamily M L omega) := by
   have hEq : (fun omega : Cutoff.CutoffSample d =>
       gaugedEllipticitySum sigmaBar (originCube d m) s
         (Cutoff.coefficientCutoffTriadicCoeffFamily M L omega)) =
@@ -291,7 +291,7 @@ theorem integral_gaugedEllipticitySum_rpow_eight_le (d : ℕ) : ∃ C : ℝ, 0 <
                   (originCube d m) M.gamma
                   (Cutoff.coefficientCutoffTriadicCoeffFamily M m omega) ^ (8 : ℝ)
               ∂(Cutoff.cutoffSampleLaw M).toMeasure ≤
-            (C * (Disorder.cstar M)⁻¹ * M.gamma⁻¹) ^ (8 : ℝ)  := by
+            (C * (Disorder.cstar M)⁻¹ * M.gamma⁻¹) ^ (8 : ℝ) := by
   obtain ⟨Ccg, hCcg0, hCcg⟩ := Algsuperdiff.Frozen.Section3.coarse_ellipticity_bounds d
   have hk10 : 0 < orliczEighthMomentScale 1 :=
     orliczEighthMomentScale_pos (by norm_num)
@@ -458,7 +458,7 @@ theorem integral_gaugedEllipticitySum_pow_four_le (d : ℕ) : ∃ C : ℝ, 0 < C
                 (originCube d m) M.gamma
                 (Cutoff.coefficientCutoffTriadicCoeffFamily M m omega) ^ (4 : ℕ)
             ∂(Cutoff.cutoffSampleLaw M).toMeasure ≤
-          (C * (Disorder.cstar M)⁻¹ * M.gamma⁻¹) ^ (4 : ℕ)  := by
+          (C * (Disorder.cstar M)⁻¹ * M.gamma⁻¹) ^ (4 : ℕ) := by
   obtain ⟨C, hC0, hmain⟩ := integral_gaugedEllipticitySum_rpow_eight_le d
   refine ⟨C, hC0, ?_⟩
   intro M m E hstate hE hEupper hgap
@@ -557,7 +557,7 @@ theorem integral_gaugedEllipticitySum_pow_four_ancestorAtScale_le (d : ℕ) : �
                   (ancestorAtScale R m) M.gamma
                   (Cutoff.coefficientCutoffTriadicCoeffFamily M m omega) ^ (4 : ℕ)
               ∂(Cutoff.cutoffSampleLaw M).toMeasure ≤
-            (C * (Disorder.cstar M)⁻¹ * M.gamma⁻¹) ^ (4 : ℕ)  := by
+            (C * (Disorder.cstar M)⁻¹ * M.gamma⁻¹) ^ (4 : ℕ) := by
   obtain ⟨C, hC0, hmain⟩ := integral_gaugedEllipticitySum_pow_four_le d
   refine ⟨C, hC0, ?_⟩
   intro M m E hstate hE hEupper hgap R hm

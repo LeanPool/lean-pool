@@ -47,7 +47,7 @@ variable {d : ℕ}
 `s = sqrt mu * r` and `s₀ = sqrt mu * r₀`, where `r` is the source-free
 radius and `r₀` is the radius on which the normalized frozen coefficient has
 small contrast. -/
-def agmonTailFunctionFrozen (d : ℕ) (lam Lam nu alpha s s₀ : ℝ) : ℝ  :=
+def agmonTailFunctionFrozen (d : ℕ) (lam Lam nu alpha s s₀ : ℝ) : ℝ :=
   (agmonTailL2Coefficient d lam Lam / |s| *
         (|s| / (2 * |s₀|)) ^ ((d : ℝ) / 2) +
       agmonTailGradientCoefficient d lam Lam alpha *

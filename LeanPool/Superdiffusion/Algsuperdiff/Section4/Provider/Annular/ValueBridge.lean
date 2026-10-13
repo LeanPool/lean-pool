@@ -478,7 +478,7 @@ theorem valueL2_sq_centeredShellUnitCube_le (M : ABKModel d) {n m L : ℤ}
         + 2 * (centeringConst d *
             ((3 : ℝ) ^ (2 * m) *
               Support.shellW1InfGradNorm m
-                (Provider.Stream.shellIncrement omega.1 m L))) ^ 2  := by
+                (Provider.Stream.shellIncrement omega.1 m L))) ^ 2 := by
   have hCeq := fluxIncrementAverage_eq_cubeAverageMat M hml (originCube d m) omega
   have hkey := valueL2_centeredShellUnitCube_le M hnm hml hle hv omega
     (matTranspose_cubeAverageMat_shellIncrement M hml omega)

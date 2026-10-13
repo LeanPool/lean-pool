@@ -236,7 +236,7 @@ theorem cutoffLowerEllipticityInvLiteral_infinity_mul_le_of_forall
     (hB : ∀ n : ℕ, scaling * (Real.rpow (3 : ℝ) (-2 * s * (n : ℝ)) *
       Book.Ch04.maxDescendantSigmaStarInvMatrixNormCoeffFieldAtScale (originCube d m)
         (m - (n : ℤ)) (Cutoff.coefficientCutoff M.nu L omega)) ≤ B) :
-    Observable.cutoffLowerEllipticityInvLiteral M m L s q omega * scaling ≤ B  := by
+    Observable.cutoffLowerEllipticityInvLiteral M m L s q omega * scaling ≤ B := by
   have hscale : (originCube d m).scale = m := rfl
   rw [cutoffLowerEllipticityInvLiteral_eq_coeffField, hqval]
   exact lambdaSqCoeffField_inv_infinity_mul_le_of_forall (originCube d m)
@@ -250,7 +250,7 @@ theorem cutoffUpperEllipticityLiteral_infinity_mul_le_of_forall
     (hB : ∀ n : ℕ, scaling * (Real.rpow (3 : ℝ) (-2 * s * (n : ℝ)) *
       Book.Ch04.maxDescendantBMatrixNormCoeffFieldAtScale (originCube d m)
         (m - (n : ℤ)) (Cutoff.coefficientCutoff M.nu L omega)) ≤ B) :
-    Observable.cutoffUpperEllipticityLiteral M m L s q omega * scaling ≤ B  := by
+    Observable.cutoffUpperEllipticityLiteral M m L s q omega * scaling ≤ B := by
   have hscale : (originCube d m).scale = m := rfl
   rw [cutoffUpperEllipticityLiteral_eq_coeffField, hqval]
   exact LambdaSqCoeffField_infinity_mul_le_of_forall (originCube d m)
@@ -277,7 +277,7 @@ theorem cutoffLowerEllipticityInv_infinity_mul_forall_le (M : ABKModel d)
           (originCube d m) (m - (n : ℤ)) (Cutoff.coefficientCutoff M.nu L omega))
         ≤ V omega) :
     ∀ (omega : Cutoff.CutoffSample d) (L : ℤ), L0 ≤ L →
-      Observable.cutoffLowerEllipticityInv M m L s hs q omega * scaling ≤ V omega  := by
+      Observable.cutoffLowerEllipticityInv M m L s hs q omega * scaling ≤ V omega := by
   intro omega L hL
   rw [congrFun (Observable.cutoffLowerEllipticityInv_eq_literal M m L s hs q) omega]
   exact cutoffLowerEllipticityInvLiteral_infinity_mul_le_of_forall M m L s hqval
@@ -295,7 +295,7 @@ theorem cutoffUpperEllipticity_infinity_mul_le (M : ABKModel d)
         Book.Ch04.maxDescendantBMatrixNormCoeffFieldAtScale (originCube d m)
           (m - (n : ℤ)) (Cutoff.coefficientCutoff M.nu L omega)) ≤ V omega) :
     ∀ omega : Cutoff.CutoffSample d,
-      Observable.cutoffUpperEllipticity M m L s hs q omega * scaling ≤ V omega  := by
+      Observable.cutoffUpperEllipticity M m L s hs q omega * scaling ≤ V omega := by
   intro omega
   rw [congrFun (Observable.cutoffUpperEllipticity_eq_literal M m L s hs q) omega]
   exact cutoffUpperEllipticityLiteral_infinity_mul_le_of_forall M m L s hqval

@@ -128,7 +128,7 @@ private theorem twoScale_term_nonneg (M : ABKModel d) (L m n : ℤ)
     0 ≤ Ch02.geometricWeight s 2 l *
       fluxCorrectedMaxDescendantNormalizedBlockResponseRepresentative M L m
         (originCube d m) (n - (l : ℤ))
-        (isotropicComparatorMatrix (Annealed.sigmaBar M m)) omega  := by
+        (isotropicComparatorMatrix (Annealed.sigmaBar M m)) omega := by
   refine mul_nonneg ?_ ?_
   · simpa only [Ch02.geometricWeight_eq_old] using
       HCPolySupport.geometricWeight_nonneg l (by linarith only [hs] : 0 ≤ s * (2 : ℝ))

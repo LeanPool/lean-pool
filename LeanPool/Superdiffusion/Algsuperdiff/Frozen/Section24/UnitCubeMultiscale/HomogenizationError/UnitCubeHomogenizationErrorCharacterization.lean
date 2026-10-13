@@ -30,6 +30,6 @@ theorem Algsuperdiff.Frozen.Section24.unitCubeHomogenizationError_characterizati
           Book.Ch02.HomogenizationErrorOnCube
             (originCube d 0) s p q F a0
 -- FROZEN-STATEMENT-END
-     := by
+ := by
   exact Algsuperdiff.Section24.UnitCubeMultiscale.HomogenizationError.characterization
     s p q a a0

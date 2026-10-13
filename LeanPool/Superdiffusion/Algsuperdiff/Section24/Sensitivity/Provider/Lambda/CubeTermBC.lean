@@ -312,7 +312,7 @@ def fluxTermBCConst (d : ℕ) : ℝ :=
     besovMultConst (3 / 8) *
       ((d : ℝ) ^ 2 * fluxZeroTraceConst d + (d : ℝ) * depthDowngradeConst d)
 
-theorem fluxTermBCConst_nonneg (d : ℕ) : 0 ≤ fluxTermBCConst d  := by
+theorem fluxTermBCConst_nonneg (d : ℕ) : 0 ≤ fluxTermBCConst d := by
   have h1 : (0 : ℝ) ≤ fluxZeroTraceConst d := fluxZeroTraceConst_nonneg d
   have h2 : (0 : ℝ) ≤ besovMultConst (3 / 8) :=
     (besovMultConst_pos (s := (3 / 8 : ℝ)) (by norm_num)).le

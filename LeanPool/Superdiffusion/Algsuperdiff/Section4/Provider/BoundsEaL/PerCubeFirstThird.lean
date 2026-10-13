@@ -71,7 +71,7 @@ variable {d : ℕ}
 /-- The summand of `MajorantSlots.step3DisplayAt`: the `(2,2)` homogenization error
 leg. -/
 def step3FirstTerm (C : ℝ) (M : ABKModel d) (m : ℤ) (R : TriadicCube d)
-    (omega : Cutoff.CutoffSample d) (s grad : ℝ) : ℝ  :=
+    (omega : Cutoff.CutoffSample d) (s grad : ℝ) : ℝ :=
   C * ((Annealed.sigmaBar M m : ℝ)⁻¹ * (Annealed.sigmaBar M (R.scale - 2) : ℝ)) *
       Real.rpow (1 + grad *
           (unitCubeLambda (2 * M.gamma) (.finite 2)
@@ -379,7 +379,7 @@ theorem lintegral_rpow_step3FirstTerm_le (M : ABKModel d) (m : ℤ)
         ENNReal.ofReal (step3FirstTerm Cd M m R omega s
           (lFreeGradSlot m (tailSeriesGauge m) R omega)) ^ q
         ∂(Cutoff.cutoffSampleLaw M).toMeasure) ≤
-      ENNReal.ofReal (4 * Cd * (RB * RE ^ 2)) ^ q  := by
+      ENNReal.ofReal (4 * Cd * (RB * RE ^ 2)) ^ q := by
   have hq0 : (0 : ℝ) < q := lt_of_lt_of_le zero_lt_one hq
   have hgam0 : (0 : ℝ) < M.gamma := M.shellPrefix.gamma_pos
   have hth0 : (0 : ℝ) ≤ 2 * s / (1 - 4 * M.gamma) := by

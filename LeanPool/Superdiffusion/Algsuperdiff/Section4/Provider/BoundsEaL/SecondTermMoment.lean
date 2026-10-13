@@ -208,7 +208,7 @@ theorem exists_lintegral_rpow_step3SecondTerm_le (d : ℕ) : ∃ CL CB : ℝ, 6 
                   (lFreeValueSlot m (tailSeriesGauge m) R omega)) ^ q
                 ∂(Cutoff.cutoffSampleLaw M).toMeasure) ≤
               ENNReal.ofReal (secondTermMajorant d M (CL * (Disorder.cstar M)⁻¹)
-                (CB * (Disorder.cstar M)⁻¹) Cd m R.scale q) ^ q  := by
+                (CB * (Disorder.cstar M)⁻¹) Cd m R.scale q) ^ q := by
   obtain ⟨CL, hCL6, hlamAll⟩ := exists_lintegral_rpow_inv_unitCubeLambda_twoGamma_le d
   obtain ⟨CB, hCB6, hbrAll⟩ := exists_lintegral_rpow_step3Bracket_le d
   refine ⟨CL, CB, hCL6, hCB6, ?_⟩

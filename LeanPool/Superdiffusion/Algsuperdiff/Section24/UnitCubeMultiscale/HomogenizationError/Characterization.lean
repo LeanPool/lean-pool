@@ -34,7 +34,7 @@ theorem characterization (s : ℝ) (p q : Book.Ch02.MultiscaleExponent)
         Algsuperdiff.Frozen.Section24.unitCubeHomogenizationError
           s p q a a0 =
           Book.Ch02.HomogenizationErrorOnCube
-            (originCube d 0) s p q F a0  :=
+            (originCube d 0) s p q F a0 :=
   (Classical.choose_spec
     (Algsuperdiff.Frozen.Section24.existsUnique_unitCubeHomogenizationError
       s p q a a0)).1

@@ -58,7 +58,7 @@ variable {d : ℕ}
 
 /-- **The well-placed boundary prefactor**: the collapse constant of the display
 below. -/
-def rootClauseBWellPlacedPrefactor (d : ℕ) (Cch Cg CB Ctr CWG CWH CdM : ℝ) : ℝ  :=
+def rootClauseBWellPlacedPrefactor (d : ℕ) (Cch Cg CB Ctr CWG CWH CdM : ℝ) : ℝ :=
   Cg * Real.sqrt 4 *
       (Real.sqrt ((3 : ℝ) ^ d) * stepSevenEmbeddingConst d *
         stepSevenBridgeConst stepSevenCgS *

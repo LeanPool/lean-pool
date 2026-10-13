@@ -120,7 +120,7 @@ theorem toScalarL2_sub_alphaShiftedResolvent
     (lam : PositiveShift) :
     w.toH1Function.toScalarL2 - alphaShiftedResolvent a lam.property hnu hEll one =
       (lam : ℝ) • alphaShiftedResolvent a lam.property hnu hEll
-        w.toH1Function.toScalarL2  := by
+        w.toH1Function.toScalarL2 := by
   conv_lhs =>
     rw [toScalarL2_eq_alphaShiftedResolvent_add_smul a hU hnu hEll w hw one hone lam]
   rw [map_add, map_smul, add_sub_cancel_left]
@@ -137,7 +137,7 @@ theorem toScalarL2_nonneg_of_isScalarForcedWeakSolution
     (one : ScalarL2 U) (hone : ∀ᵐ x ∂volumeMeasureOn U, one x = 1)
     (hMb : 0 ≤ Mb)
     (hwb : ∀ᵐ x ∂volumeMeasureOn U, |w.toH1Function.toFun x| ≤ Mb) :
-    ∀ᵐ x ∂volumeMeasureOn U, 0 ≤ w.toH1Function.toScalarL2 x  := by
+    ∀ᵐ x ∂volumeMeasureOn U, 0 ≤ w.toH1Function.toScalarL2 x := by
   set c : ℝ := (Mb + 1)⁻¹ with hc
   have hcpos : 0 < c := by
     rw [hc]
@@ -179,7 +179,7 @@ theorem alphaShiftedResolvent_le_of_isScalarForcedWeakSolution
     (lam : PositiveShift) :
     ∀ᵐ x ∂volumeMeasureOn U,
       alphaShiftedResolvent a lam.property hnu hEll one x ≤
-        w.toH1Function.toScalarL2 x  := by
+        w.toH1Function.toScalarL2 x := by
   have hpos := alphaShiftedResolvent_nonneg_ae a hU lam.property hnu hEll
     w.toH1Function.toScalarL2
     (toScalarL2_nonneg_of_isScalarForcedWeakSolution a hU hnu hEll w hw one hone
@@ -216,7 +216,7 @@ theorem sub_alphaShiftedResolvent_le_of_isScalarForcedWeakSolution
     ∀ᵐ x ∂volumeMeasureOn U,
       w.toH1Function.toScalarL2 x -
           alphaShiftedResolvent a lam.property hnu hEll one x ≤
-        (lam : ℝ) * (Mb * Mb)  := by
+        (lam : ℝ) * (Mb * Mb) := by
   have hdiff := toScalarL2_sub_alphaShiftedResolvent a hU hnu hEll w hw one hone lam
   have hle : ∀ᵐ x ∂volumeMeasureOn U,
       w.toH1Function.toScalarL2 x ≤ (Mb • one) x := by

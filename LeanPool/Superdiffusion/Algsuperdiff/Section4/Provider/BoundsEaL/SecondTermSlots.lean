@@ -236,7 +236,7 @@ theorem aemeasurable_step3FirstTerm (M : ABKModel d) (Cd : ℝ) (m : ℤ)
     (R : TriadicCube d) {s : ℝ} (hs : 0 < s) (hgam : M.gamma ≤ 1 / 8) :
     AEMeasurable (fun omega : Cutoff.CutoffSample d =>
         step3FirstTerm Cd M m R omega s (lFreeGradSlot m (tailSeriesGauge m) R omega))
-      (Cutoff.cutoffSampleLaw M).toMeasure  := by
+      (Cutoff.cutoffSampleLaw M).toMeasure := by
   have hden : (0 : ℝ) < 1 - 4 * M.gamma := by linarith only [hgam]
   have hth : (0 : ℝ) ≤ 2 * s / (1 - 4 * M.gamma) :=
     div_nonneg (by linarith only [hs]) hden.le
@@ -250,7 +250,7 @@ theorem aemeasurable_step3SecondTerm (M : ABKModel d) (Cd : ℝ) (m : ℤ)
     AEMeasurable (fun omega : Cutoff.CutoffSample d =>
         step3SecondTerm Cd M m R omega (lFreeGradSlot m (tailSeriesGauge m) R omega)
           (lFreeValueSlot m (tailSeriesGauge m) R omega))
-      (Cutoff.cutoffSampleLaw M).toMeasure  := by
+      (Cutoff.cutoffSampleLaw M).toMeasure := by
   have hgam0 : (0 : ℝ) < M.gamma := M.shellPrefix.gamma_pos
   have hden : (0 : ℝ) < 1 - 4 * M.gamma := by linarith only [hgam]
   have hth : (0 : ℝ) ≤ 4 * M.gamma / (1 - 4 * M.gamma) :=

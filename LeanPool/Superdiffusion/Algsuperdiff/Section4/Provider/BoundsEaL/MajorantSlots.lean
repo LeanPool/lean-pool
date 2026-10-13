@@ -89,7 +89,7 @@ variable {d : ℕ}
 hle ω).gradientW1Infinity` and `val = (step3Shell M L m R hle ω).valueL2`;
 nothing else in it mentions `L`. -/
 def step3DisplayAt (C : ℝ) (M : ABKModel d) (m : ℤ) (R : TriadicCube d)
-    (omega : Cutoff.CutoffSample d) (s grad val : ℝ) : ℝ  :=
+    (omega : Cutoff.CutoffSample d) (s grad val : ℝ) : ℝ :=
   C * ((Annealed.sigmaBar M m : ℝ)⁻¹ * (Annealed.sigmaBar M (R.scale - 2) : ℝ)) *
       Real.rpow (1 + grad *
           (unitCubeLambda (2 * M.gamma) (.finite 2)
@@ -118,7 +118,7 @@ theorem step3Display_eq_step3DisplayAt (C : ℝ) (M : ABKModel d) (L m : ℤ)
     (R : TriadicCube d) (hle : R.scale - 2 ≤ L) (omega : Cutoff.CutoffSample d) (s : ℝ) :
     step3Display C M L m R hle omega s =
       step3DisplayAt C M m R omega s (step3Shell M L m R hle omega).gradientW1Infinity
-        (step3Shell M L m R hle omega).valueL2  :=
+        (step3Shell M L m R hle omega).valueL2 :=
   rfl
 
 /-! ## Monotonicity in the two slots -/
@@ -216,7 +216,7 @@ split of `Step3BlockSplit.exists_normalizedBlockResponseMax_step3_split`.
 It does not mention `L`. -/
 def lFreeStep3Majorant (C : ℝ) (M : ABKModel d) (m : ℤ) (s : ℝ)
     (GB VB : TriadicCube d → Cutoff.CutoffSample d → ℝ) (R : TriadicCube d)
-    (omega : Cutoff.CutoffSample d) : ℝ  :=
+    (omega : Cutoff.CutoffSample d) : ℝ :=
   step3DisplayAt C M m R omega s (GB R omega) (VB R omega) +
     step3DisplayAt C M m R (Cutoff.negateCutoffSample omega) s
       (GB R (Cutoff.negateCutoffSample omega)) (VB R (Cutoff.negateCutoffSample omega))

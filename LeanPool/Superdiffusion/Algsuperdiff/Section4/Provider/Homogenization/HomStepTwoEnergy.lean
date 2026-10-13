@@ -386,7 +386,7 @@ theorem homogenizationErrorOnCube_scalarMatrix_eq_fluxCorrectedError
     (M : ABKModel d) (L m : ℤ) (t : ℝ) (omega : Cutoff.CutoffSample d) :
     Ch02.HomogenizationErrorOnCube (originCube d m) t .infinity (.finite 2)
         (fluxCorrectedCoeffFamily M L m (originCube d m) omega)
-        (scalarMatrix (d  := d) ((Annealed.sigmaBar M m : ℝ))) =
+        (scalarMatrix (d := d) ((Annealed.sigmaBar M m : ℝ))) =
       fluxCorrectedError M L m t omega :=
   (fluxCorrectedError_characterization M L m t omega).symm
 

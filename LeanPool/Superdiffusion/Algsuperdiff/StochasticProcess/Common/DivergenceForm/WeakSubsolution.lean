@@ -81,7 +81,7 @@ theorem weakSubsolution_le_weakSupersolution_ae
     (hv : IsAlphaShiftedWeakSupersolution a U α g v)
     (hfg : ∀ᵐ x ∂volumeMeasureOn U, f x ≤ g x) :
     ∀ᵐ x ∂volumeMeasureOn U,
-      ZeroTraceSobolev.toL2 u x ≤ ZeroTraceSobolev.toL2 v x  := by
+      ZeroTraceSobolev.toL2 u x ≤ ZeroTraceSobolev.toL2 v x := by
   let z : ZeroTraceSobolev U := u - v
   obtain ⟨p, hp, -⟩ :=
     ZeroTraceSobolev.existsUnique_positivePartSubConst hU z 0 le_rfl
@@ -173,7 +173,7 @@ theorem IsAlphaShiftedWeakSupersolution.nonneg_ae
     {g : ScalarL2 U} {v : ZeroTraceSobolev U}
     (hv : IsAlphaShiftedWeakSupersolution a U α g v)
     (hg : ∀ᵐ x ∂volumeMeasureOn U, 0 ≤ g x) :
-    ∀ᵐ x ∂volumeMeasureOn U, 0 ≤ ZeroTraceSobolev.toL2 v x  := by
+    ∀ᵐ x ∂volumeMeasureOn U, 0 ≤ ZeroTraceSobolev.toL2 v x := by
   have hzero : IsAlphaShiftedWeakSolution a U α 0 0 := by
     simpa only [map_zero] using
       alphaShiftedSolution_isAlphaShiftedWeakSolution a hα hlam hEll
@@ -201,7 +201,7 @@ theorem resolvent_le_of_weakSupersolution_ae (a : CoeffField d) (hU : IsOpenBoun
     ∀ᵐ x ∂volumeMeasureOn U,
       beta * alphaShiftedResolvent a hBeta hlam hEll
           (ZeroTraceSobolev.toL2 v) x ≤
-        (beta / (beta - alpha)) * ZeroTraceSobolev.toL2 v x  := by
+        (beta / (beta - alpha)) * ZeroTraceSobolev.toL2 v x := by
   have hdiff : 0 < beta - alpha := sub_pos.mpr hAlphaBeta
   let c : ℝ := beta / (beta - alpha)
   let r : ZeroTraceSobolev U :=

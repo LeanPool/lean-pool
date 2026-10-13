@@ -147,7 +147,7 @@ private theorem badFamily_vecNormSq_componentCellSlope_sub_le_layerEnvelope
             (whitneyScale M m E b k₀ omega) C)) C p T - p) ≤
       (648 * (d : ℝ)) ^ 2 *
         (3 : ℝ) ^ (2 * (b * ((k : ℝ) +
-          (whitneyScale M m E b k₀ omega k : ℝ)))) * vecNormSq p  :=
+          (whitneyScale M m E b k₀ omega k : ℝ)))) * vecNormSq p :=
   vecNormSq_globalCompetitorCellSlope_sub_le_layerEnvelope hb0 hb hk₀
     (fun _ hh _ hu => badClusterDiam_lt_of_hsep_le hne hh hu)
     (fun _ hR => hR.1) (fun _ hR => hR.2) p hQ hT hC

@@ -146,7 +146,7 @@ proved literal error of `ErrorAtoms`. -/
 theorem fluxCorrectedErrorOn_originCube (M : ABKModel d) (L m : ℤ) (s : ℝ)
     (omega : Cutoff.CutoffSample d) :
     fluxCorrectedErrorOn M L m (originCube d m) s omega =
-      Support.fluxCorrectedError M L m s omega  :=
+      Support.fluxCorrectedError M L m s omega :=
   (Support.fluxCorrectedError_characterization M L m s omega).symm
 
 theorem fluxCorrectedEllipticityRatioMaxOn_originCube (M : ABKModel d) (L m : ℤ)

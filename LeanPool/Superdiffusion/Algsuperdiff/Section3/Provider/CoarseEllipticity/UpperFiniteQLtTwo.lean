@@ -370,7 +370,7 @@ theorem threeTermSplit_cutoffUpperEllipticity_of_finiteQLtTwoPresplit (M : ABKMo
       IsBigOWith (Cutoff.cutoffSampleLaw M).toMeasure
         (gammaSigma sigma1) Uone B1 ∧
       IsBigOWith (Cutoff.cutoffSampleLaw M).toMeasure
-        (gammaSigma sigmaExp) Utail Bexp  := by
+        (gammaSigma sigmaExp) Utail Bexp := by
   let w : ℕ → ℝ := fun n => Book.Ch02.geometricWeight s (r : ℝ) n
   let Rone : ℕ → Cutoff.CutoffSample d → ℝ := fun n omega => a1 n * Vone n omega
   let Rexp : ℕ → Cutoff.CutoffSample d → ℝ := fun n omega => aexp n * Vexp n omega

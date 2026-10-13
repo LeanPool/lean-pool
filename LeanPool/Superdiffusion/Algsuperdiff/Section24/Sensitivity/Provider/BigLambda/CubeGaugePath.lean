@@ -57,9 +57,9 @@ noncomputable section
 variable {d : ℕ}
 
 /-- The flux-based threshold constant for the cube gauge estimate. -/
-def gaugeGateConst (d : ℕ) : ℝ  := 8 * fluxSpineConst d
+def gaugeGateConst (d : ℕ) : ℝ := 8 * fluxSpineConst d
 
-theorem gaugeGateConst_pos (d : ℕ) : 0 < gaugeGateConst d  := by
+theorem gaugeGateConst_pos (d : ℕ) : 0 < gaugeGateConst d := by
   have := fluxSpineConst_pos d
   unfold gaugeGateConst
   positivity

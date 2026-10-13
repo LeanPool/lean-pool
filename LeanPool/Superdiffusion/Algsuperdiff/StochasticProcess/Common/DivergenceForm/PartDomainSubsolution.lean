@@ -47,7 +47,7 @@ theorem partDomainZeroExtension_isSubsolution (a : CoeffField d)
       (ZeroTraceSobolev.extendByZeroToPartSuperset hV hU.isOpen hVU
         (alphaShiftedSolution a hα hlam
           (hEll.mono hV.isOpen.measurableSet hVU)
-          (restrictScalarL2ToPart (V  := V) hU.isOpen.measurableSet f))) := by
+          (restrictScalarL2ToPart (V := V) hU.isOpen.measurableSet f))) := by
   classical
   let hEllV : IsEllipticFieldOn lam Lam V a :=
     hEll.mono hV.isOpen.measurableSet hVU
@@ -157,7 +157,7 @@ theorem partDomainRemainder_nonneg_ae (a : CoeffField d)
           ZeroTraceSobolev.extendByZeroToPartSuperset hV hU.isOpen hVU
             (alphaShiftedSolution a hα hlam
               (hEll.mono hV.isOpen.measurableSet hVU)
-              (restrictScalarL2ToPart (V  := V) hU.isOpen.measurableSet f))) x := by
+              (restrictScalarL2ToPart (V := V) hU.isOpen.measurableSet f))) x := by
   let uU : ZeroTraceSobolev U :=
     ZeroTraceSobolev.extendByZeroToPartSuperset hV hU.isOpen hVU
       (alphaShiftedSolution a hα hlam
@@ -194,7 +194,7 @@ theorem partDomainRemainder_isSupersolution (a : CoeffField d)
         ZeroTraceSobolev.extendByZeroToPartSuperset hV hU.isOpen hVU
           (alphaShiftedSolution a hα hlam
             (hEll.mono hV.isOpen.measurableSet hVU)
-            (restrictScalarL2ToPart (V  := V) hU.isOpen.measurableSet f))) := by
+            (restrictScalarL2ToPart (V := V) hU.isOpen.measurableSet f))) := by
   let uU : ZeroTraceSobolev U :=
     ZeroTraceSobolev.extendByZeroToPartSuperset hV hU.isOpen hVU
       (alphaShiftedSolution a hα hlam
@@ -239,7 +239,7 @@ theorem partDomainRemainder_resolvent_le_ae (a : CoeffField d)
               ZeroTraceSobolev.extendByZeroToPartSuperset hV hU.isOpen hVU
                 (alphaShiftedSolution a hAlpha hlam
                   (hEll.mono hV.isOpen.measurableSet hVU)
-                  (restrictScalarL2ToPart (V  := V) hU.isOpen.measurableSet f)))) x ≤
+                  (restrictScalarL2ToPart (V := V) hU.isOpen.measurableSet f)))) x ≤
         (beta / (beta - alpha)) * ZeroTraceSobolev.toL2
           (alphaShiftedSolution a hAlpha hlam hEll f -
             ZeroTraceSobolev.extendByZeroToPartSuperset hV hU.isOpen hVU

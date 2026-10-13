@@ -47,7 +47,7 @@ theorem abs_sub_alpha_mul_toFun_le_two_mul_ae (a : CoeffField d) (hU : IsOpenBou
     (hu : u.toH1Function.toScalarL2 =
       alphaShiftedResolvent a hAlpha hLam hEll f) :
     ∀ᵐ x ∂volumeMeasureOn U,
-      |f x - alpha * u.toH1Function.toFun x| ≤ 2 * C  := by
+      |f x - alpha * u.toH1Function.toFun x| ≤ 2 * C := by
   have hres := abs_alpha_mul_alphaShiftedResolvent_le_ae
     a hU hAlpha hLam hEll f C hC hf
   have huAe : ∀ᵐ x ∂volumeMeasureOn U,
@@ -80,7 +80,7 @@ theorem exists_h10Function_scalarForced_residual_bound
           (fun x => f x - alpha * u.toH1Function.toFun x)
           u.toH1Function ∧
         ∀ᵐ x ∂volumeMeasureOn U,
-          |f x - alpha * u.toH1Function.toFun x| ≤ 2 * C  := by
+          |f x - alpha * u.toH1Function.toFun x| ≤ 2 * C := by
   obtain ⟨u, -, hweak, hu⟩ :=
     exists_h10Function_alphaShiftedResolvent hU a hAlpha hLam hEll f
   refine ⟨u, hu, hweak, ?_, ?_⟩

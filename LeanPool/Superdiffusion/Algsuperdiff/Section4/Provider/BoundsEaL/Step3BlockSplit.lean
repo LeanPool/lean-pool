@@ -170,7 +170,7 @@ def step3Shell (M : ABKModel d) (L m : ℤ) (R : TriadicCube d) (hle : R.scale -
 printed summands of `e.apply.sensitivity.J.aL`, in the anchor's unit-cube
 gauges and at the ruled gapped gauge `s = 2γ`.  It does not mention `e`. -/
 def step3Display (C : ℝ) (M : ABKModel d) (L m : ℤ) (R : TriadicCube d)
-    (hle : R.scale - 2 ≤ L) (omega : Cutoff.CutoffSample d) (s : ℝ) : ℝ  :=
+    (hle : R.scale - 2 ≤ L) (omega : Cutoff.CutoffSample d) (s : ℝ) : ℝ :=
   C * ((Annealed.sigmaBar M m : ℝ)⁻¹ * (Annealed.sigmaBar M (R.scale - 2) : ℝ)) *
       Real.rpow (1 + (step3Shell M L m R hle omega).gradientW1Infinity *
           (unitCubeLambda (2 * M.gamma) (.finite 2)

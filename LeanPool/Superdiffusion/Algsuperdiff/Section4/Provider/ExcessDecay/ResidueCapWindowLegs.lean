@@ -426,7 +426,7 @@ theorem rpow_three_neg_mul_sqrt_coveringDifference_le_atWindow
               (Support.normalizedVolumeMeasureOn
                 ((((fun y' => z + y') '' openCubeSet (originCube d (n + 3))) ∩
                   openCubeSet (originCube d m))))).toReal)) +
-        R  := by
+        R := by
   classical
   set w : ℝ := Real.rpow (3 : ℝ) (-(((n + 2 : ℤ)) : ℝ)) with hw
   have hw0 : 0 ≤ w := Real.rpow_nonneg (by norm_num) _

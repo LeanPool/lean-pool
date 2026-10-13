@@ -369,7 +369,7 @@ theorem lintegral_cutoffHomogenizationErrorRepresentative_pow_four_le
         (Observable.cutoffHomogenizationErrorRepresentative M L L hs
           (Annealed.sigmaBar M L) omega ^ 4)
         ∂(Cutoff.cutoffSampleLaw M).toMeasure ≤
-      ENNReal.ofReal ((10 ^ 9 * (E : ℝ) ^ 2 * M.gamma) ^ 2)  := by
+      ENNReal.ofReal ((10 ^ 9 * (E : ℝ) ^ 2 * M.gamma) ^ 2) := by
   have hE1 : (1 : ℝ) ≤ (E : ℝ) := E.property
   have hEpos : (0 : ℝ) < (E : ℝ) := lt_of_lt_of_le zero_lt_one hE1
   have hgammaPos : 0 < M.gamma := M.shellPrefix.gamma_pos
@@ -466,7 +466,7 @@ theorem amplitude_mem_Ioc_and_lintegral_pow_four_le
             (Observable.cutoffHomogenizationErrorRepresentative M L L hs
               (Annealed.sigmaBar M L) omega ^ 4)
             ∂(Cutoff.cutoffSampleLaw M).toMeasure ≤
-          ENNReal.ofReal ((10 ^ 9 * (E : ℝ) ^ 2 * M.gamma) ^ 2)  :=
+          ENNReal.ofReal ((10 ^ 9 * (E : ℝ) ^ 2 * M.gamma) ^ 2) :=
   ⟨amplitude_mem_Ioc_of_gate M E.property hChom hepsilon hgate,
     fun _ hL =>
       lintegral_cutoffHomogenizationErrorRepresentative_pow_four_le M hEfloor hregime

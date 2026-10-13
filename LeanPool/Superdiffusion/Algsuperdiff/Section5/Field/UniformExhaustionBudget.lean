@@ -40,7 +40,7 @@ variable {d : ℕ} [NeZero d]
 
 omit [NeZero d] in
 /-- The uniform cubic layer-cake budget. -/
-def streamUniformExhaustionBudget (M : ABKModel d) (omega : FullSample d M.gamma) : ℝ  :=
+def streamUniformExhaustionBudget (M : ABKModel d) (omega : FullSample d M.gamma) : ℝ :=
   (∫⁻ s in Ioi (1 : ℝ), ENNReal.ofReal
     (streamUniformExhaustionEnvelope M omega s * s ^ 3)).toReal
 
@@ -106,7 +106,7 @@ private theorem one_le_streamUniformShiftWeight (lam : ℝ) :
 omit [NeZero d] in
 private theorem continuous_streamUniformExhaustionEnvelope
     (M : ABKModel d) (omega : FullSample d M.gamma) :
-    Continuous (streamUniformExhaustionEnvelope M omega)  := by
+    Continuous (streamUniformExhaustionEnvelope M omega) := by
   unfold streamUniformExhaustionEnvelope
   have hmax : Continuous (fun s : ℝ ↦ max s 0) :=
     continuous_id.max continuous_const
@@ -122,7 +122,7 @@ private theorem integrableOn_streamUniformExhaustionEnvelope_mul_cube
     (M : ABKModel d) (omega : FullSample d M.gamma) :
     IntegrableOn
       (fun s : ℝ ↦ streamUniformExhaustionEnvelope M omega s * s ^ 3)
-      (Ioi 1)  := by
+      (Ioi 1) := by
   let A := streamTailAmplitudeConst M omega
   let b := streamUniformExhaustionRate M omega
   have hb : 0 < b := streamUniformExhaustionRate_pos M omega
@@ -176,7 +176,7 @@ private theorem integrableOn_streamUniformExhaustionEnvelope_mul_cube
 omit [NeZero d] in
 /-- The displayed uniform budget is nonnegative. -/
 theorem streamUniformExhaustionBudget_nonneg (M : ABKModel d) (omega : FullSample d M.gamma) :
-    0 ≤ streamUniformExhaustionBudget M omega  :=
+    0 ≤ streamUniformExhaustionBudget M omega :=
   ENNReal.toReal_nonneg
 
 omit [NeZero d] in
@@ -187,7 +187,7 @@ theorem lintegral_streamUniformExhaustionProfile_mul_cube_le
     {lam : ℝ} (hlam : 1 ≤ lam) :
     ∫⁻ s in Ioi (streamUniformExhaustionCutoff M omega lam),
         ENNReal.ofReal (streamUniformExhaustionProfile M omega lam s * s ^ 3) ≤
-      ENNReal.ofReal (streamUniformExhaustionBudget M omega)  := by
+      ENNReal.ofReal (streamUniformExhaustionBudget M omega) := by
   have hweight : 1 ≤ streamUniformShiftWeight lam := by
     unfold streamUniformShiftWeight
     rw [max_eq_left hlam]

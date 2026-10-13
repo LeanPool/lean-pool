@@ -92,7 +92,7 @@ theorem openCubeSet_originCube_eq_ball_zero (m : ℤ) :
 intersection of the sup-ball of radius `3 ^ k / 2` about `z` with the sup-ball of
 radius `3 ^ m / 2` about the origin. -/
 theorem truncatedWindow_eq_ball_inter_ball (x : Vec d) (m k : ℤ) : truncatedWindow x m k =
-      Metric.ball x ((3 : ℝ) ^ k / 2) ∩ Metric.ball (0 : Vec d) ((3 : ℝ) ^ m / 2)  := by
+      Metric.ball x ((3 : ℝ) ^ k / 2) ∩ Metric.ball (0 : Vec d) ((3 : ℝ) ^ m / 2) := by
   rw [truncatedWindow_eq_inter_openCubeAtScale, openCubeAtScale_eq_ball,
     openCubeSet_originCube_eq_ball_zero]
 

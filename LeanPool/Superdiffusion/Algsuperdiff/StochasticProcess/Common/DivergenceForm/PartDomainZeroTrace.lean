@@ -188,7 +188,7 @@ private theorem exists_h10Function_part_of_supported
       ZeroTraceSobolev.toL2
           (ZeroTraceSobolev.extendByZeroToPartSuperset hV hU.isOpen hVU
             (ZeroTraceSobolev.ofH10Function w)) =
-        ZeroTraceSobolev.toL2 z  := by
+        ZeroTraceSobolev.toL2 z := by
   obtain ⟨u, huValue, -⟩ := ZeroTraceSobolev.exists_h10Function hU z
   have huZero : ∀ᵐ x ∂volumeMeasureOn U,
       x ∉ V → u.toH1Function.toFun x = 0 := by
@@ -345,7 +345,7 @@ theorem exists_eq_extendByZeroToPartSuperset_of_ae_zero
     (hzero : ∀ᵐ x ∂volumeMeasureOn U,
       x ∉ V → ZeroTraceSobolev.toL2 z x = 0) :
     ∃ w : ZeroTraceSobolev V,
-      ZeroTraceSobolev.extendByZeroToPartSuperset hV hU.isOpen hVU w = z  := by
+      ZeroTraceSobolev.extendByZeroToPartSuperset hV hU.isOpen hVU w = z := by
   obtain ⟨w, hw⟩ := exists_h10Function_part_of_supported
     hV hVne hU hVU z hzero
   refine ⟨ZeroTraceSobolev.ofH10Function w, ?_⟩

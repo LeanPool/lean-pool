@@ -40,7 +40,7 @@ theorem abs_alpha_mul_potentialResolvent_le_ae (a : CoeffField d) (hU : IsOpenBo
     (f : ScalarL2 U) (C : ℝ) (hC : 0 ≤ C)
     (hf : ∀ᵐ x ∂volumeMeasureOn U, |f x| ≤ C) :
     ∀ᵐ x ∂volumeMeasureOn U,
-      |α * potentialResolvent a hα hlam hEll q hq f x| ≤ C  := by
+      |α * potentialResolvent a hα hlam hEll q hq f x| ≤ C := by
   rcases hC.eq_or_lt with rfl | hCpos
   · have hfzero : f = 0 := by
       apply MeasureTheory.Lp.ext (p := (2 : ENNReal))

@@ -375,7 +375,7 @@ theorem integral_gaugedEllipticitySum_pow_eq_originCube (M : ABKModel d)
       ∫ omega : CutoffSample d,
         gaugedEllipticitySum sigmaBar (originCube d m) s
           (coefficientCutoffTriadicCoeffFamily M L omega) ^ k
-        ∂(cutoffSampleLaw M).toMeasure  := by
+        ∂(cutoffSampleLaw M).toMeasure := by
   set v : Vec d :=
     fun i => ((T.index i : ℤ) : ℝ) * cubeScaleFactor (originCube d m) with hv
   have hpt : ∀ omega : CutoffSample d,
@@ -423,7 +423,7 @@ theorem integral_gaugedEllipticitySum_pow_ancestorAtScale_eq_originCube
       ∫ omega : CutoffSample d,
         gaugedEllipticitySum sigmaBar (originCube d m) s
           (coefficientCutoffTriadicCoeffFamily M L omega) ^ k
-        ∂(cutoffSampleLaw M).toMeasure  :=
+        ∂(cutoffSampleLaw M).toMeasure :=
   integral_gaugedEllipticitySum_pow_eq_originCube M L m
     (ancestorAtScale_scale R hm) sigmaBar s k hmeas
 

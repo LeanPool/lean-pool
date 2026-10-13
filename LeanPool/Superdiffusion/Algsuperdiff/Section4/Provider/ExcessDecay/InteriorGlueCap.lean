@@ -79,7 +79,7 @@ theorem fluxCorrectedErrorFunctionalAtRoot_eq_representative (M : ABKModel d)
     (L k : ℤ) (u : {u : ℝ // 0 < u}) :
     fluxCorrectedErrorFunctionalAtRoot M L k (originCube d k) (originCube d k)
         (u : ℝ) (isotropicComparatorMatrix (Annealed.sigmaBar M k)) =
-      fluxCorrectedErrorRepresentative M L k u  :=
+      fluxCorrectedErrorRepresentative M L k u :=
   rfl
 
 /-! ## 2. The cap at the root, at the untranslated sample -/

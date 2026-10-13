@@ -160,7 +160,7 @@ noncomputable def extendByZeroToPartSuperset
 theorem extendByZeroToPartSuperset_toL2 (hV : IsOpenBoundedConvexDomain V) (hU : IsOpen U)
     (hVU : V ⊆ U) (u : ZeroTraceSobolev V) :
     toL2 (extendByZeroToPartSuperset hV hU hVU u) =ᵐ[volumeMeasureOn U]
-      V.indicator fun x => toL2 u x  := by
+      V.indicator fun x => toL2 u x := by
   let w : H10Function V := Classical.choose (exists_h10Function hV u)
   have hw := Classical.choose_spec (exists_h10Function hV u)
   change
@@ -192,7 +192,7 @@ extension of the original weak gradient. -/
 theorem extendByZeroToPartSuperset_gradient (hV : IsOpenBoundedConvexDomain V) (hU : IsOpen U)
     (hVU : V ⊆ U) (u : ZeroTraceSobolev V) :
     gradient (extendByZeroToPartSuperset hV hU hVU u) =ᵐ[volumeMeasureOn U]
-      V.indicator fun x => gradient u x  := by
+      V.indicator fun x => gradient u x := by
   let w : H10Function V := Classical.choose (exists_h10Function hV u)
   have hw := Classical.choose_spec (exists_h10Function hV u)
   change

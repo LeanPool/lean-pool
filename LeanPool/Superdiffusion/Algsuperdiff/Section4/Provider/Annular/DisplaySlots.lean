@@ -288,7 +288,7 @@ theorem clauseOne_representative_display_latticeMax (M : ABKModel d)
           + ENNReal.ofReal (C * ((s : ℝ)⁻¹ ^ (2 : ℕ)) * (Disorder.cstar M)⁻¹
               * M.gamma) * clauseOneTermThree M m omega
           + ENNReal.ofReal (C * ((s : ℝ)⁻¹ ^ (2 : ℕ)) * (Disorder.cstar M)⁻¹
-              * M.gamma) * clauseOneTermFour M m s omega  :=
+              * M.gamma) * clauseOneTermFour M m s omega :=
   clauseOne_representative_display (M := M) (m := m) (s := s) (Event := Event)
     (E2 := fun omega j n => annularErrorLatticeMax M s omega j n)
     (A := fun omega k => shellBlockLatticeReal M m omega k)

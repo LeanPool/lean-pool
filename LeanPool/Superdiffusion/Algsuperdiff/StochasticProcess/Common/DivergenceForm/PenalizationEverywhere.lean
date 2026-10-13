@@ -130,7 +130,7 @@ theorem exists_penalization_everywhere_limit_reg
         penalizedResolvent a hU.isOpen hV.isOpen hα hlam hEll n f) ∧
       limit =ᵐ[volumeMeasureOn V] alphaShiftedResolvent a hα hlam
         (hEll.mono hV.isOpen.measurableSet hVU)
-        (restrictScalarL2ToPart (V  := V) hU.isOpen.measurableSet f) ∧
+        (restrictScalarL2ToPart (V := V) hU.isOpen.measurableSet f) ∧
       (∀ x ∈ V, ∀ n, rep (n + 1) x ≤ rep n x) ∧
       (∀ x ∈ V, Tendsto (fun n => rep n x) atTop (nhds (limit x))) ∧
       (∀ x ∈ V, (⨅ n, rep n x) = limit x) := by

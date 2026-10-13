@@ -269,7 +269,7 @@ private theorem weak_limit_toL2_eq_pointwiseLimit
     ZeroTraceSobolev.toL2 z =
       (penalizationPointwiseLimit_memLp a hU hV hα hlam hEll f hf).toLp
         (penalizationPointwiseLimit
-          a hU.isOpen hV.isOpen hα hlam hEll f)  := by
+          a hU.isOpen hV.isOpen hα hlam hEll f) := by
   let g : ScalarL2 U :=
     (penalizationPointwiseLimit_memLp a hU hV hα hlam hEll f hf).toLp
       (penalizationPointwiseLimit
@@ -328,7 +328,7 @@ private theorem extension_value_restrict (hV : IsOpenBoundedConvexDomain V)
     ZeroTraceSobolev.toL2 v =ᵐ[volumeMeasureOn V]
       ZeroTraceSobolev.toL2
         (ZeroTraceSobolev.extendByZeroToPartSuperset
-          hV hU.isOpen hVU v)  := by
+          hV hU.isOpen hVU v) := by
   have hext := ZeroTraceSobolev.extendByZeroToPartSuperset_toL2
     hV hU.isOpen hVU v
   apply (ae_restrict_iff' hV.isOpen.measurableSet).2
@@ -343,7 +343,7 @@ private theorem extension_gradient_restrict (hV : IsOpenBoundedConvexDomain V)
     ZeroTraceSobolev.gradient v =ᵐ[volumeMeasureOn V]
       ZeroTraceSobolev.gradient
         (ZeroTraceSobolev.extendByZeroToPartSuperset
-          hV hU.isOpen hVU v)  := by
+          hV hU.isOpen hVU v) := by
   have hext := ZeroTraceSobolev.extendByZeroToPartSuperset_gradient
     hV hU.isOpen hVU v
   apply (ae_restrict_iff' hV.isOpen.measurableSet).2
@@ -361,7 +361,7 @@ private theorem shiftedBilin_extension_eq (a : CoeffField d) (hV : IsOpenBounded
         (ZeroTraceSobolev.extendByZeroToPartSuperset hV hU.isOpen hVU v) =
       α * inner ℝ (ZeroTraceSobolev.toL2 w) (ZeroTraceSobolev.toL2 v) +
         coefficientPairing a V (ZeroTraceSobolev.gradient w)
-          (ZeroTraceSobolev.gradient v)  := by
+          (ZeroTraceSobolev.gradient v) := by
   rw [shiftedBilin_apply]
   have hvalue := scalar_inner_zeroExtension_eq_restriction
     hV.isOpen.measurableSet hU.isOpen.measurableSet hVU
@@ -392,7 +392,7 @@ private theorem forcing_inner_extension_eq (hV : IsOpenBoundedConvexDomain V)
     inner ℝ f
         (ZeroTraceSobolev.toL2
           (ZeroTraceSobolev.extendByZeroToPartSuperset hV hU.isOpen hVU v)) =
-      inner ℝ (restrictScalarL2ToPart (V  := V) hU.isOpen.measurableSet f)
+      inner ℝ (restrictScalarL2ToPart (V := V) hU.isOpen.measurableSet f)
         (ZeroTraceSobolev.toL2 v) := by
   calc
     inner ℝ f
@@ -420,7 +420,7 @@ private theorem penalization_integral_extension_eq_zero (hV : IsOpenBoundedConve
     (∫ x, penalizationPotential U V n x * ZeroTraceSobolev.toL2 u x *
         ZeroTraceSobolev.toL2
           (ZeroTraceSobolev.extendByZeroToPartSuperset
-            hV hU.isOpen hVU v) x ∂volumeMeasureOn U) = 0  := by
+            hV hU.isOpen hVU v) x ∂volumeMeasureOn U) = 0 := by
   apply integral_eq_zero_of_ae
   filter_upwards
     [ZeroTraceSobolev.extendByZeroToPartSuperset_toL2
@@ -448,7 +448,7 @@ private theorem pointwiseLimitLp_eq_extendedPartResolvent (a : CoeffField d)
         (ZeroTraceSobolev.extendByZeroToPartSuperset hV hU.isOpen hVU
           (alphaShiftedSolution a hα hlam
             (hEll.mono hV.isOpen.measurableSet hVU)
-            (restrictScalarL2ToPart (V  := V) hU.isOpen.measurableSet f))) := by
+            (restrictScalarL2ToPart (V := V) hU.isOpen.measurableSet f))) := by
   obtain ⟨z, φ, hφ, hweak⟩ :=
     exists_penalization_weak_limit a hU hV hα hlam hEll f
   have hzZero := weak_limit_ae_zero_off
@@ -520,7 +520,7 @@ theorem penalizationPointwiseLimit_eq_partResolvent_ae (a : CoeffField d)
           a hU.isOpen hV.isOpen hα hlam hEll f x =
         alphaShiftedResolvent a hα hlam
           (hEll.mono hV.isOpen.measurableSet hVU)
-          (restrictScalarL2ToPart (V  := V) hU.isOpen.measurableSet f) x := by
+          (restrictScalarL2ToPart (V := V) hU.isOpen.measurableSet f) x := by
   let gfun := penalizationPointwiseLimit
     a hU.isOpen hV.isOpen hα hlam hEll f
   let hg := penalizationPointwiseLimit_memLp a hU hV hα hlam hEll f hf
@@ -566,7 +566,7 @@ theorem iInf_penalizedResolvent_eq_part_ae (a : CoeffField d)
           a hU.isOpen hV.isOpen hα hlam hEll n f x) =
         alphaShiftedResolvent a hα hlam
           (hEll.mono hV.isOpen.measurableSet hVU)
-          (restrictScalarL2ToPart (V  := V) hU.isOpen.measurableSet f) x := by
+          (restrictScalarL2ToPart (V := V) hU.isOpen.measurableSet f) x := by
   simpa only [penalizationPointwiseLimit] using
     penalizationPointwiseLimit_eq_partResolvent_ae
       a hV hVne hU hVU hα hlam hEll f hf

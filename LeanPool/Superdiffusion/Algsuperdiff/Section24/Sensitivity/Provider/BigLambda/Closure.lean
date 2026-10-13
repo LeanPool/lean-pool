@@ -47,20 +47,20 @@ noncomputable section
 /-! ## The frozen constant -/
 
 /-- A common constant for the upper multiscale ellipticity sensitivity estimates. -/
-def bigLambdaConst (d : ℕ) : ℝ  :=
+def bigLambdaConst (d : ℕ) : ℝ :=
   max (bigLambdaGateConst d) (max (2 * potCubeConstA d ^ 2) (2 * potCubeConstB d))
 
-theorem bigLambdaConst_pos (d : ℕ) : 0 < bigLambdaConst d  :=
+theorem bigLambdaConst_pos (d : ℕ) : 0 < bigLambdaConst d :=
   lt_of_lt_of_le (bigLambdaGateConst_pos d) (le_max_left _ _)
 
-theorem bigLambdaGateConst_le_bigLambdaConst (d : ℕ) : bigLambdaGateConst d ≤ bigLambdaConst d  :=
+theorem bigLambdaGateConst_le_bigLambdaConst (d : ℕ) : bigLambdaGateConst d ≤ bigLambdaConst d :=
   le_max_left _ _
 
 theorem two_mul_potCubeConstA_sq_le_bigLambdaConst (d : ℕ) :
-    2 * potCubeConstA d ^ 2 ≤ bigLambdaConst d  :=
+    2 * potCubeConstA d ^ 2 ≤ bigLambdaConst d :=
   le_trans (le_max_left _ _) (le_max_right _ _)
 
-theorem two_mul_potCubeConstB_le_bigLambdaConst (d : ℕ) : 2 * potCubeConstB d ≤ bigLambdaConst d  :=
+theorem two_mul_potCubeConstB_le_bigLambdaConst (d : ℕ) : 2 * potCubeConstB d ≤ bigLambdaConst d :=
   le_trans (le_max_right _ _) (le_max_right _ _)
 
 /-- The frozen gate implies the gate of `BigLambda.CubeJSensitivity`. -/

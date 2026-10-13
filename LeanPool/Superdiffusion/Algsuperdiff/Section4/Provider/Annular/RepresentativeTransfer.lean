@@ -232,7 +232,7 @@ theorem indicator_observableSqSup_le (M : ABKModel d) (m : ℤ)
     (hb : omega ∈ Event → ∀ L : ℤ, m ≤ L →
       ENNReal.ofReal (Support.fluxCorrectedError M L m (s : ℝ) omega ^ 2) ≤ B) :
     Set.indicator Event (Support.fluxCorrectedErrorObservableSqSup M m s) omega
-      ≤ B  := by
+      ≤ B := by
   classical
   by_cases hmem : omega ∈ Event
   · rw [Set.indicator_of_mem hmem]
@@ -295,7 +295,7 @@ theorem clauseOne_representative_display (M : ABKModel d) (m : ℤ)
           + ENNReal.ofReal (C * ((s : ℝ)⁻¹ ^ (2 : ℕ)) * (Disorder.cstar M)⁻¹
               * M.gamma) * clauseOneTermThree M m omega
           + ENNReal.ofReal (C * ((s : ℝ)⁻¹ ^ (2 : ℕ)) * (Disorder.cstar M)⁻¹
-              * M.gamma) * clauseOneTermFour M m s omega  := by
+              * M.gamma) * clauseOneTermFour M m s omega := by
   have hgam0 : (0 : ℝ) ≤ M.gamma := M.shellPrefix.gamma_pos.le
   have hcs0 : (0 : ℝ) < Disorder.cstar M := (Disorder.cstar_characterization M).1
   have hcsinv : (0 : ℝ) ≤ (Disorder.cstar M)⁻¹ := inv_nonneg.2 hcs0.le

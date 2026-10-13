@@ -274,7 +274,7 @@ theorem centeredCubeMeanZeroScalarDivergenceSolution_weak {d : ℕ} (m : ℤ) {s
           ((centeredCubeMeanZeroScalarDivergenceSolution m hsigma0 G hG).toH1Function.grad x)
           (psi.toH1Function.grad x) ∂volume =
       -∫ x in openCubeSet (originCube d m),
-        vecDot (G x) (psi.toH1Function.grad x) ∂volume  := by
+        vecDot (G x) (psi.toH1Function.grad x) ∂volume := by
   exact (centeredCubeMeanZeroScalarDivergenceSolution_isWeakSolution
     m hsigma0 G hG).scalarMatrix_neg_weak psi
 
@@ -290,7 +290,7 @@ theorem centeredCubeMeanZeroScalarDivergenceSolution_normalized_weak {d : ℕ} (
           (psi.toH1Function.grad x)
         ∂(centeredCubeDomain d m).normalizedVolume =
       -∫ x, vecDot (G x) (psi.toH1Function.grad x)
-        ∂(centeredCubeDomain d m).normalizedVolume  := by
+        ∂(centeredCubeDomain d m).normalizedVolume := by
   rw [centeredCube_normalizedVolume_eq_smul_openCubeVolume_neumann,
     integral_smul_measure, integral_smul_measure, smul_eq_mul, smul_eq_mul]
   calc
@@ -426,7 +426,7 @@ theorem centeredCubeMeanZeroScalarDivergenceSolution_normalized_cross_pairing
     (u : H1MeanZeroFunction (openCubeSet (originCube d m)))
     (h G : Vec d → Vec d)
     (hu : IsMeanZeroNeumannRhsWeakSolution
-      (fun _ : Vec d ↦ scalarMatrix (d  := d) sigma0)
+      (fun _ : Vec d ↦ scalarMatrix (d := d) sigma0)
       (openCubeSet (originCube d m)) u (fun x ↦ -h x))
     (hG : MemVectorL2 (openCubeSet (originCube d m)) G) :
     ∫ x, vecDot (u.toH1Function.grad x) (G x)

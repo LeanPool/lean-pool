@@ -72,18 +72,18 @@ variable {d : ℕ}
 window of scale `m - j` about `z`. -/
 theorem clipBall_zero_eq_truncatedWindow (m : ℤ) (z : Vec d) (j : ℕ) :
     clipBall (0 : Vec d) ((3 : ℝ) ^ m / 2) z (triadicRadius ((3 : ℝ) ^ m / 2) j) =
-      truncatedWindow z m (m - (j : ℤ))  := by
+      truncatedWindow z m (m - (j : ℤ)) := by
   rw [truncatedWindow_eq_ball_inter_ball, clipBall, triadicRadius_half_zpow]
 
 /-- The top truncated window is the clipped window of index `0`. -/
 theorem truncatedWindow_top_eq_clipBall (m : ℤ) (z : Vec d) : truncatedWindow z m m =
-      clipBall (0 : Vec d) ((3 : ℝ) ^ m / 2) z ((3 : ℝ) ^ m / 2)  := by
+      clipBall (0 : Vec d) ((3 : ℝ) ^ m / 2) z ((3 : ℝ) ^ m / 2) := by
   rw [truncatedWindow_eq_ball_inter_ball, clipBall]
 
 /-- The clipped window at the centre of the cube is the cube. -/
 theorem clipBall_centre_eq_openCubeSet (m : ℤ) :
     clipBall (0 : Vec d) ((3 : ℝ) ^ m / 2) 0 ((3 : ℝ) ^ m / 2) =
-      openCubeSet (originCube d m)  := by
+      openCubeSet (originCube d m) := by
   rw [clipBall, Set.inter_self, openCubeSet_originCube_eq_ball_zero]
 
 /-- The spacing of the admissible centres at window index `j` is `3 ^ (m-j-1)`. -/
@@ -110,7 +110,7 @@ theorem exists_index_of_mem_centredTriadicGrid (m : ℤ) (j : ℕ) {z : Vec d}
 /-- An admissible centre lies in the cube. -/
 theorem mem_openCubeSet_of_mem_centredTriadicGrid (m : ℤ) (j : ℕ) {z : Vec d}
     (hz : z ∈ centredTriadicGrid (0 : Vec d) ((3 : ℝ) ^ m / 2) ((3 : ℝ) ^ m / 2) j) :
-    z ∈ openCubeSet (originCube d m)  := by
+    z ∈ openCubeSet (originCube d m) := by
   rw [openCubeSet_originCube_eq_ball_zero]
   exact hz.2
 
@@ -125,7 +125,7 @@ theorem normalizedL2On_truncatedWindow_top_le {m : ℤ} {z : Vec d}
         (fun y => f y - volumeAverage (truncatedWindow z m m) f) ≤
       ballVolumePrice 2 d *
         normalizedL2On (openCubeSet (originCube d m))
-          (fun y => f y - volumeAverage (openCubeSet (originCube d m)) f)  := by
+          (fun y => f y - volumeAverage (openCubeSet (originCube d m)) f) := by
   have h3 : (0 : ℝ) < (3 : ℝ) ^ m := zpow_pos (by norm_num) m
   have hR : (0 : ℝ) < (3 : ℝ) ^ m / 2 := by linarith only [h3]
   have hzb : z ∈ Metric.ball (0 : Vec d) ((3 : ℝ) ^ m / 2) := by

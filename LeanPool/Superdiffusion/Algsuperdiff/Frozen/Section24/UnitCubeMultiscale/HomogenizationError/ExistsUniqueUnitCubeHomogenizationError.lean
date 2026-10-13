@@ -28,6 +28,6 @@ theorem Algsuperdiff.Frozen.Section24.existsUnique_unitCubeHomogenizationError
         value = Book.Ch02.HomogenizationErrorOnCube
           (originCube d 0) s p q F a0
 -- FROZEN-STATEMENT-END
-     := by
+ := by
   exact Algsuperdiff.Section24.UnitCubeMultiscale.HomogenizationError.existsUnique
     s p q a a0

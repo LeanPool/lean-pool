@@ -70,7 +70,7 @@ theorem potentialWeakSubsolution_le_weakSupersolution_ae
     (hv : IsPotentialWeakSupersolution a α q U v g)
     (hfg : ∀ᵐ x ∂volumeMeasureOn U, f x ≤ g x) :
     ∀ᵐ x ∂volumeMeasureOn U,
-      ZeroTraceSobolev.toL2 u x ≤ ZeroTraceSobolev.toL2 v x  := by
+      ZeroTraceSobolev.toL2 u x ≤ ZeroTraceSobolev.toL2 v x := by
   let z : ZeroTraceSobolev U := u - v
   obtain ⟨p, hp, -⟩ :=
     ZeroTraceSobolev.existsUnique_positivePartSubConst hU z 0 le_rfl

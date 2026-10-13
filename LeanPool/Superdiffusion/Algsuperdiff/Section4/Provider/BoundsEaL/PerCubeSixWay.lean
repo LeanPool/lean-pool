@@ -205,7 +205,7 @@ theorem lintegral_rpow_lFreeStep3Majorant_le_of_summands (M : ABKModel d)
         ∂(Cutoff.cutoffSampleLaw M).toMeasure) ≤ ENNReal.ofReal R3 ^ q) :
     (∫⁻ omega, ENNReal.ofReal (lFreeStep3Majorant C M m s GB VB R omega) ^ q
         ∂(Cutoff.cutoffSampleLaw M).toMeasure) ≤
-      ENNReal.ofReal (2 * (R1 + R2 + R3)) ^ q  := by
+      ENNReal.ofReal (2 * (R1 + R2 + R3)) ^ q := by
   exact lintegral_rpow_sixWay hq
     (fun omega => step3FirstTerm C M m R omega s (GB R omega))
     (fun omega => step3SecondTerm C M m R omega (GB R omega) (VB R omega))

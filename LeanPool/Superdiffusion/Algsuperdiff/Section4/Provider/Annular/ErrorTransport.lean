@@ -165,7 +165,7 @@ theorem unitCubeHomogenizationError_dilatedFamily
     (a0 : Mat d) :
     Algsuperdiff.Frozen.Section24.unitCubeHomogenizationError s p q
         ((TriadicCoeffFamily.dilate (-m) F).coeffOn (originCube d 0)) a0 =
-      HomogenizationErrorOnCube (originCube d m) s p q F a0  := by
+      HomogenizationErrorOnCube (originCube d m) s p q F a0 := by
   rw [Algsuperdiff.Frozen.Section24.unitCubeHomogenizationError_characterization
     s p q _ a0 _ (CoeffOn.AEEq.refl _)]
   have hdil := HomogenizationErrorOnCube_dilate
@@ -189,7 +189,7 @@ theorem unitCubeHomogenizationError_unitRescaledCutoffCoeff
         (unitRescaledCutoffCoeff M Q cutoffScale omega) a0 =
       HomogenizationErrorOnCube (originCube d Q.scale) s p q
         (Cutoff.coefficientCutoffTriadicCoeffFamily M cutoffScale
-          (Cutoff.translateCutoffSample (triadicCubeShift Q) omega)) a0  := by
+          (Cutoff.translateCutoffSample (triadicCubeShift Q) omega)) a0 := by
   rw [unitRescaledCutoffCoeff]
   exact unitCubeHomogenizationError_dilatedFamily
     (Cutoff.coefficientCutoffTriadicCoeffFamily M cutoffScale
@@ -205,7 +205,7 @@ theorem unitCubeHomogenizationError_unitRescaledCutoffCoeff_eq_cutoffRaw22
         (unitRescaledCutoffCoeff M Q cutoffScale omega)
         (isotropicComparatorMatrix sigma) =
       Support.cutoffHomogenizationErrorRaw22 M cutoffScale Q.scale s sigma
-        (Cutoff.translateCutoffSample (triadicCubeShift Q) omega)  := by
+        (Cutoff.translateCutoffSample (triadicCubeShift Q) omega) := by
   rw [Support.cutoffHomogenizationErrorRaw22_characterization]
   exact unitCubeHomogenizationError_unitRescaledCutoffCoeff M Q cutoffScale s
     (.finite 2) (.finite 2) (isotropicComparatorMatrix sigma) omega
@@ -226,7 +226,7 @@ theorem unitCubeHomogenizationError22_unitRescaledCutoffCoeff_eq_annularErrorAto
         (unitRescaledCutoffCoeff M Q (Q.scale - 2) omega)
         (isotropicComparatorMatrix (Annealed.sigmaBar M (Q.scale - 2))) =
       Support.annularErrorAtom M Q.scale t
-        (Cutoff.translateCutoffSample (triadicCubeShift Q) omega)  :=
+        (Cutoff.translateCutoffSample (triadicCubeShift Q) omega) :=
   unitCubeHomogenizationError_unitRescaledCutoffCoeff_eq_cutoffRaw22 M Q
     (Q.scale - 2) t (Annealed.sigmaBar M (Q.scale - 2)) omega
 
@@ -242,7 +242,7 @@ theorem unitCubeHomogenizationError22_unitRescaledCutoffCoeff_eq_annularErrorAto
         (unitRescaledCutoffCoeff M (⟨n, v⟩ : TriadicCube d) (n - 2) omega)
         (isotropicComparatorMatrix (Annealed.sigmaBar M (n - 2))) =
       Support.annularErrorAtom M n t
-        (Cutoff.translateCutoffSample (Support.triadicLatticePoint n v) omega)  := by
+        (Cutoff.translateCutoffSample (Support.triadicLatticePoint n v) omega) := by
   rw [← triadicCubeShift_mk n v]
   exact unitCubeHomogenizationError22_unitRescaledCutoffCoeff_eq_annularErrorAtom_cube
     M (⟨n, v⟩ : TriadicCube d) t omega
@@ -265,7 +265,7 @@ theorem unitCubeHomogenizationError22_unitRescaledCutoffCoeff_ae_eq_annularError
       =ᵐ[(Cutoff.cutoffSampleLaw M).toMeasure]
       fun omega : Cutoff.CutoffSample d =>
         Support.annularErrorObservable M n t
-          (Cutoff.translateCutoffSample (Support.triadicLatticePoint n v) omega)  := by
+          (Cutoff.translateCutoffSample (Support.triadicLatticePoint n v) omega) := by
   have hcomp :=
     (GoodEvents.measurePreserving_translateCutoffSample M
         (Support.triadicLatticePoint n v)).quasiMeasurePreserving.ae_eq_comp

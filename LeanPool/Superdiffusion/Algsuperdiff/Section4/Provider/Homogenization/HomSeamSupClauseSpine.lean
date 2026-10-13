@@ -217,7 +217,7 @@ theorem homSpineClauseSupplierAtGrad_of_datumRecutFluxHalfSupGrad [NeZero d] (hd
 /-- The budgeted gradient energy supply at the
 sup-form energy residue. -/
 def SeamEnergySupplyOfRegularityGradSupBudget (d : ℕ) (hd1 : 1 ≤ d)
-    (cstar gamma0 : ℝ) (Cen0F : ABKModel d → ℝ) (Ctop Creg : ℝ) : Prop  :=
+    (cstar gamma0 : ℝ) (Cen0F : ABKModel d → ℝ) (Ctop Creg : ℝ) : Prop :=
   ∀ M : ABKModel d, Disorder.cstar M = cstar → M.gamma ≤ gamma0 →
     ∀ (hlog : 4 ≤ |Real.log M.gamma|) (m : ℤ),
       ∀ X : Cutoff.CutoffSample d → ℕ∞, Measurable X →

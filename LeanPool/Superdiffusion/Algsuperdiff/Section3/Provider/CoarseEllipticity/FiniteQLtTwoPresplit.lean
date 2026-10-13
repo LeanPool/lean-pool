@@ -371,7 +371,7 @@ theorem twoTermFamilySplit_cutoffLowerEllipticityInv_of_finiteQLtTwoPresplit
         8 * Cprof * (s / (2 * s - M.gamma)) ^ (2 / (r : ℝ))) ∧
       Measurable Y ∧
       IsBigOWith (Cutoff.cutoffSampleLaw M).toMeasure
-        (gammaSigma sigmaTail) Y B  := by
+        (gammaSigma sigmaTail) Y B := by
   let w : ℕ → ℝ := fun n => Book.Ch02.geometricWeight s (r : ℝ) n
   let D : ℕ → ℝ := finiteQGeometricProfile Cprof M.gamma
   let R : ℕ → Cutoff.CutoffSample d → ℝ := fun n omega => a n * V n omega
@@ -655,7 +655,7 @@ theorem coarse_ellipticity_lower_branchPayload_lt_two_of_finiteQPresplit
                 IsBigOWith (Cutoff.cutoffSampleLaw M).toMeasure
                   (gammaSigma ((1 - sigma) / 2)) Y
                   (Real.exp
-                    (-(Clow⁻¹ * ((E : ℝ)⁻¹) ^ 2 * M.gamma⁻¹)))  := by
+                    (-(Clow⁻¹ * ((E : ℝ)⁻¹) ^ 2 * M.gamma⁻¹))) := by
   intro M m E hstate sigma hsigma hE1 hE2 r hr s hsWindow
   obtain ⟨V, a, hVnonneg, hVmeas, ha, hasum, hVlinsum, hVO, hbudget,
     hdepth⟩ :=

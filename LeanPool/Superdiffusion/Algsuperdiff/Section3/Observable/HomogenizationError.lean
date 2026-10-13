@@ -48,7 +48,7 @@ noncomputable section
 `mathcal E_{s,infinity,2}(square_m; a, sigma Id)`. -/
 noncomputable def homogenizationErrorAtScale {d : ℕ}
     (m : ℤ) (s : ℝ) (a : CoeffOn (cubeDomain (originCube d m)))
-    (sigma : PositiveScalar) : ℝ  :=
+    (sigma : PositiveScalar) : ℝ :=
   Algsuperdiff.Frozen.Section24.unitCubeHomogenizationError
     s .infinity (.finite 2) (unitRescaledCoeffOn m a)
     (isotropicComparatorMatrix sigma)
@@ -62,7 +62,7 @@ theorem homogenizationErrorAtScale_characterization {d : ℕ}
     (hF : CoeffOn.AEEq (F.coeffOn (originCube d m)) a) :
     homogenizationErrorAtScale m s a sigma =
       HomogenizationErrorOnCube (originCube d m) s .infinity (.finite 2) F
-        (isotropicComparatorMatrix sigma)  := by
+        (isotropicComparatorMatrix sigma) := by
   let B := TriadicCoeffFamily.dilate (-m) F
   calc
     homogenizationErrorAtScale m s a sigma =

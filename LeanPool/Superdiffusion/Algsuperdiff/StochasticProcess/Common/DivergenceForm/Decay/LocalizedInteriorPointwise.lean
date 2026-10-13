@@ -40,7 +40,7 @@ open scoped ENNReal
 variable {d : ℕ}
 
 /-- Explicit constant in the localized interior pointwise estimate. -/
-def localizedInteriorDecayConstant (d : ℕ) (nu mass Ks Kl M Ceta volLayer alpha E r₀ : ℝ) : ℝ  :=
+def localizedInteriorDecayConstant (d : ℕ) (nu mass Ks Kl M Ceta volLayer alpha E r₀ : ℝ) : ℝ :=
   let L := localizedInteriorUpper nu mass Ks Kl
   M * Real.sqrt (8 * L ^ 2 / (nu * mass) * Ceta * volLayer) /
         Real.sqrt ((volume (smallContrastUnitBall d)).toReal) /

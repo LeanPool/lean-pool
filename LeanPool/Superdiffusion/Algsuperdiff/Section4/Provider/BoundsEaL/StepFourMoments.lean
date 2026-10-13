@@ -107,7 +107,7 @@ theorem exists_lintegral_rpow_unitCubeHomogenizationError22_le (d : ℕ) : ∃ C
                   (Real.sqrt 3 * (Proportion.annulusPenalty d 2 1 *
                     (C * (Disorder.cstar M)⁻¹ * s⁻¹ * Real.sqrt M.gamma)))
                   (Real.sqrt 3 * (Proportion.annulusPenalty d (1 / 2) 1 *
-                    Real.exp (-(C⁻¹ * (Disorder.cstar M) ^ 3 * M.gamma⁻¹))))) ^ p  := by
+                    Real.exp (-(C⁻¹ * (Disorder.cstar M) ^ 3 * M.gamma⁻¹))))) ^ p := by
   obtain ⟨C, hC0, hall⟩ :=
     exists_isTwoTermBigOWith_annularErrorObservable_translate d
   refine ⟨C, hC0, fun M hreg s hsWindow R p hp => ?_⟩

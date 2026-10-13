@@ -110,7 +110,7 @@ theorem fluxCorrectedError_sq_eq_scaleSum (M : ABKModel d) (L m : ℤ)
       = ∑' l : ℕ, Ch02.geometricWeight s 2 l
           * maxDescendantNormalizedBlockResponseAtScale (originCube d m) (m - (l : ℤ))
               (Support.fluxCorrectedCoeffFamily M L m (originCube d m) omega)
-              (isotropicComparatorMatrix (Annealed.sigmaBar M m))  := by
+              (isotropicComparatorMatrix (Annealed.sigmaBar M m)) := by
   rw [Support.fluxCorrectedError_characterization,
     homogenizationErrorOnCube_infinity_two_sq_eq_tsum (originCube d m) hs]
   rfl
@@ -123,7 +123,7 @@ theorem fluxCorrectedError_sq_eq_normalized (M : ABKModel d) (L m : ℤ)
         * ∑' l : ℕ, (3 : ℝ) ^ (-(2 * s) * (l : ℝ))
             * maxDescendantNormalizedBlockResponseAtScale (originCube d m) (m - (l : ℤ))
                 (Support.fluxCorrectedCoeffFamily M L m (originCube d m) omega)
-                (isotropicComparatorMatrix (Annealed.sigmaBar M m))  := by
+                (isotropicComparatorMatrix (Annealed.sigmaBar M m)) := by
   rw [fluxCorrectedError_sq_eq_scaleSum M L m hs omega, ← tsum_mul_left]
   refine tsum_congr fun l => ?_
   rw [geometricWeight_two_eq]
@@ -154,7 +154,7 @@ theorem eightEss_of_blockResponse_le (M : ABKModel d) (L m : ℤ)
       ≤ C * (1 - (3 : ℝ) ^ (-(2 * s)))
           * ∑' l : ℕ, (3 : ℝ) ^ (-(2 * s) * (l : ℝ)) * Jfld l
         + C * (1 - (3 : ℝ) ^ (-(2 * s)))
-          * ∑' l : ℕ, (3 : ℝ) ^ (-(2 * s) * (l : ℝ)) * Jtrn l  := by
+          * ∑' l : ℕ, (3 : ℝ) ^ (-(2 * s) * (l : ℝ)) * Jtrn l := by
   classical
   set B : ℕ → ℝ := fun l =>
     maxDescendantNormalizedBlockResponseAtScale (originCube d m) (m - (l : ℤ))

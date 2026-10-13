@@ -491,7 +491,7 @@ theorem exists_regime_gaugedEllipticitySum_pow_four_le (d : ℕ) :
               gaugedEllipticitySum (Annealed.sigmaBar M (m - 1) : ℝ)
                   (ancestorAtScale R m) M.gamma
                   (Cutoff.coefficientCutoffTriadicCoeffFamily M m omega) ^ (4 : ℕ)
-              ∂(Cutoff.cutoffSampleLaw M).toMeasure ≤ (M.gamma ^ (8 : ℕ))⁻¹  := by
+              ∂(Cutoff.cutoffSampleLaw M).toMeasure ≤ (M.gamma ^ (8 : ℕ))⁻¹ := by
   obtain ⟨C, hC0, hmain⟩ := integral_gaugedEllipticitySum_pow_four_ancestorAtScale_le d
   obtain ⟨g0, hg00, hg0q, hgate⟩ := exists_gamma_threshold_ellipticityGate hC0
   refine ⟨regimeEllipticityConst C, g0, regimeEllipticityConst_pos C, hg00, hg0q, ?_⟩

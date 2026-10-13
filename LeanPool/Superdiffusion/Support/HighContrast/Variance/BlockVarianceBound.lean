@@ -170,7 +170,7 @@ theorem integral_observable_le_of_probeBounds [NeZero d] {P : RestrictionCoeffLa
       ≤ ((Fintype.card (BlockCoord d) : ℝ) ^ (2 : ℕ)) *
           ((Fintype.card (BlockCoord d) : ℝ) *
             ∑ _α : BlockCoord d, (Fintype.card (BlockCoord d) : ℝ) *
-              ∑ _β : BlockCoord d, 3 * (K + K + K))  := by
+              ∑ _β : BlockCoord d, 3 * (K + K + K)) := by
   have hpoint :=
     fullBlockNormalizedFluctuationOperatorNormSqAtScale_le_probeSqBudget_ae
       hP hStruct m (originCube d m)

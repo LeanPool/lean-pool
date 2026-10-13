@@ -598,7 +598,7 @@ private theorem exists_squareLanes (M : ABKModel d) (L n : ℤ) {s : ℝ} (hs : 
               (2 * B ^ 2) ∧
               ∀ omega,
                 Observable.cutoffHomogenizationErrorRepresentative M L n hs
-                    (Annealed.sigmaBar M L) omega ^ 2 ≤ Y1 omega + Z1 omega  := by
+                    (Annealed.sigmaBar M L) omega ^ 2 ≤ Y1 omega + Z1 omega := by
   obtain ⟨Y, Z, -, -, hA, hB, -, hYm, hZm, hdom, hYt, hZt⟩ := hErr
   refine ⟨fun omega => 2 * max 0 (Y omega) ^ 2, fun omega => 2 * max 0 (Z omega) ^ 2,
     ((measurable_const.max hYm).pow_const 2).const_mul 2,
@@ -649,7 +649,7 @@ private theorem exists_siteLanes (M : ABKModel d) (L n : ℤ) {s : ℝ}
             (siteLaneConst (1 / 4) * B ^ 2) ∧
             Integrable (siteResponseJ M L n u e) (cutoffSampleLaw M).toMeasure ∧
               ∀ᵐ omega ∂(cutoffSampleLaw M).toMeasure,
-                |siteCenteredResponseJ M L n u e omega| ≤ W1 omega + W4 omega  := by
+                |siteCenteredResponseJ M L n u e omega| ≤ W1 omega + W4 omega := by
   obtain ⟨hA, hB⟩ := pos_of_isTwoTermBigOWith hErr
   obtain ⟨Y1, Z1, hY1m, hZ1m, hY1nn, hZ1nn, hY1t, hZ1t, hlane⟩ :=
     exists_squareLanes M L n hs hErr

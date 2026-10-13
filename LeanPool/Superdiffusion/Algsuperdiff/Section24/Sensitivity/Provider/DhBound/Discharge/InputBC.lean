@@ -364,7 +364,7 @@ theorem depthDowngradeConst_nonneg (d : ℕ) :
   unfold depthDowngradeConst
   positivity
 
-theorem termBCBesovConst_nonneg (d : ℕ) : 0 ≤ termBCBesovConst d  := by
+theorem termBCBesovConst_nonneg (d : ℕ) : 0 ≤ termBCBesovConst d := by
   have h1 : (0 : ℝ) ≤ zeroTraceValueConst d := zeroTraceValueConst_nonneg d
   have h2 : (0 : ℝ) ≤ besovMultConst (3 / 8) :=
     (besovMultConst_pos (s := (3 / 8 : ℝ)) (by norm_num)).le

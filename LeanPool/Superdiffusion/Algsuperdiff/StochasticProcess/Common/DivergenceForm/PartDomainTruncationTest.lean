@@ -258,7 +258,7 @@ theorem part_solution_test_inequality (a : CoeffField d) (hV : IsOpenBoundedConv
     α * inner ℝ (ZeroTraceSobolev.toL2 u) φ.toScalarL2 +
         coefficientPairing a V (ZeroTraceSobolev.gradient u)
           φ.gradToHilbertVectorL2 ≤
-      inner ℝ f φ.toScalarL2  := by
+      inner ℝ f φ.toScalarL2 := by
   let M : ℝ := max Lam 1
   have hM : 0 < M := lt_of_lt_of_le (by norm_num) (le_max_right Lam 1)
   have hLamM : Lam ≤ M := le_max_left Lam 1

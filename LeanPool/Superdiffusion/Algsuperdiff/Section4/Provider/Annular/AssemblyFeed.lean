@@ -406,14 +406,14 @@ theorem scalarResponseSet_transpose_bddAbove (F : TriadicCoeffFamily d)
 theorem responseJ_le_scalarResponseMax (F : TriadicCoeffFamily d)
     (R : TriadicCube d) (sigma : PositiveScalar) {e : Vec d} (he : vecNorm e = 1) :
     responseJ (cubeDomain R) (F.coeffOn R) (inverseSqrtLoad sigma e) (sqrtLoad sigma e)
-      ≤ scalarResponseMax (F.coeffOn R) sigma  :=
+      ≤ scalarResponseMax (F.coeffOn R) sigma :=
   le_csSup (scalarResponseSet_bddAbove F R sigma) ⟨e, he, rfl⟩
 
 theorem responseJ_transpose_le_scalarResponseMax (F : TriadicCoeffFamily d)
     (R : TriadicCube d) (sigma : PositiveScalar) {e : Vec d} (he : vecNorm e = 1) :
     responseJ (cubeDomain R) (F.coeffOn R).transpose
         (inverseSqrtLoad sigma e) (sqrtLoad sigma e)
-      ≤ scalarResponseMax (F.coeffOn R).transpose sigma  :=
+      ≤ scalarResponseMax (F.coeffOn R).transpose sigma :=
   le_csSup (scalarResponseSet_transpose_bddAbove F R sigma) ⟨e, he, rfl⟩
 
 theorem scalarResponseMax_le_normalizedBlockResponseMax
@@ -476,7 +476,7 @@ theorem responseJ_le_jLegField (M : ABKModel d) (L m : ℤ)
           (latticeCube n v))
         (inverseSqrtLoad (Annealed.sigmaBar M m) e)
         (sqrtLoad (Annealed.sigmaBar M m) e)
-      ≤ jLegField M L m omega n  := by
+      ≤ jLegField M L m omega n := by
   refine le_trans
     (responseJ_le_scalarResponseMax
       (Support.fluxCorrectedCoeffFamily M L m (originCube d m) omega)
@@ -496,7 +496,7 @@ theorem responseJ_transpose_le_jLegTranspose (M : ABKModel d) (L m : ℤ)
           (latticeCube n v)).transpose
         (inverseSqrtLoad (Annealed.sigmaBar M m) e)
         (sqrtLoad (Annealed.sigmaBar M m) e)
-      ≤ jLegTranspose M L m omega n  := by
+      ≤ jLegTranspose M L m omega n := by
   refine le_trans
     (responseJ_transpose_le_scalarResponseMax
       (Support.fluxCorrectedCoeffFamily M L m (originCube d m) omega)

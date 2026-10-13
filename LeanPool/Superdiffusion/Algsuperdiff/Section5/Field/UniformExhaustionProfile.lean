@@ -64,7 +64,7 @@ def streamUniformExhaustionCutoff (M : ABKModel d)
 
 omit [NeZero d] in
 /-- The common stretched-exponential majorant above the cutting radius. -/
-def streamUniformExhaustionEnvelope (M : ABKModel d) (omega : FullSample d M.gamma) (s : ℝ) : ℝ  :=
+def streamUniformExhaustionEnvelope (M : ABKModel d) (omega : FullSample d M.gamma) (s : ℝ) : ℝ :=
   streamTailAmplitudeConst M omega *
     Real.exp (-(streamUniformExhaustionRate M omega *
       (max s 0) ^ (1 / 3 : ℝ)))
@@ -73,7 +73,7 @@ omit [NeZero d] in
 /-- The shift-dependent profile is trivial below its cutoff and equals the
 uniform envelope above it. -/
 def streamUniformExhaustionProfile (M : ABKModel d) (omega : FullSample d M.gamma) (lam s : ℝ) :
-  ℝ  :=
+  ℝ :=
   if streamUniformExhaustionCutoff M omega lam < s then
     streamUniformExhaustionEnvelope M omega s
   else 1
@@ -145,7 +145,7 @@ theorem one_le_streamUniformExhaustionCutoff (M : ABKModel d)
 omit [NeZero d] in
 theorem streamUniformExhaustionProfile_nonneg (M : ABKModel d)
     (omega : FullSample d M.gamma) (lam s : ℝ) :
-    0 ≤ streamUniformExhaustionProfile M omega lam s  := by
+    0 ≤ streamUniformExhaustionProfile M omega lam s := by
   unfold streamUniformExhaustionProfile streamUniformExhaustionEnvelope
   split_ifs
   · exact mul_nonneg (streamTailAmplitudeConst_nonneg M omega) (Real.exp_pos _).le
@@ -156,7 +156,7 @@ omit [NeZero d] in
 theorem one_le_streamUniformExhaustionProfile_of_le_cutoff
     (M : ABKModel d) (omega : FullSample d M.gamma) {lam s : ℝ}
     (hs : s ≤ streamUniformExhaustionCutoff M omega lam) :
-    1 ≤ streamUniformExhaustionProfile M omega lam s  := by
+    1 ≤ streamUniformExhaustionProfile M omega lam s := by
   unfold streamUniformExhaustionProfile
   rw [ite_eq_right (not_lt_of_ge hs)]
 
@@ -378,7 +378,7 @@ private theorem localizedProfile_le_envelope_of_exponent
             (1 + Real.log (1 + S)) ≤
         -(streamUniformExhaustionRate M omega * s ^ (1 / 3 : ℝ))) :
     streamLocalizedTailProfile M omega x S ≤
-      streamUniformExhaustionEnvelope M omega s  := by
+      streamUniformExhaustionEnvelope M omega s := by
   let p := streamTailAmplitudeExponent M
   let n := d + 1
   let qx : ℝ := 1 + ‖x‖

@@ -209,7 +209,7 @@ theorem exists_gamma0_octicCell_closureNeumann (d : ℕ) (hd : 2 ≤ d) : ∃ ga
               openCubeSet R ⊆ openCubeSet (originCube d (K : ℤ)) →
               MemLp (fun omega : ShellSeq d => meshOscillationCell nn
                 (closureNeumannAlong M n h K e' omega).toH1Function.grad R ^ (4 : ℝ))
-                2 M.P.toMeasure  := by
+                2 M.P.toMeasure := by
   obtain ⟨gamma0, hg0, -, hmain⟩ :=
     exists_gamma0_memLp_two_freshShellNeumann_meshOscillationCell_rpow_four d hd
   refine ⟨gamma0, hg0, ?_⟩
@@ -373,7 +373,7 @@ theorem measurable_oscCell_closureFlux_grid (d : ℕ) (hd : 2 ≤ d)
     ∀ i : ℕ, ∀ R' ∈ interiorMesoCubeGrid d (K : ℤ) (nmesh - (i : ℤ)) (n - 1),
       Measurable fun omega : CutoffSample d => meshOscillationCell (nmesh - (i : ℤ))
         (neumannFluxField (Annealed.sigmaBar M n) omega.val n (n + (h : ℤ)) e'
-          (closureNeumannAlong M n h K e' omega.val)) R'  := by
+          (closureNeumannAlong M n h K e' omega.val)) R' := by
   intro i R' hR'
   obtain ⟨hsc, hsub⟩ :=
     scale_and_subset_of_mem_interiorMesoCubeGrid (by omega : nmesh - (i : ℤ) ≤ (K : ℤ)) hR'
@@ -422,7 +422,7 @@ theorem integrable_oscCell_pow_four_closureFlux_grid (d : ℕ) (hd : 2 ≤ d)
       Integrable (fun omega : CutoffSample d => meshOscillationCell (nmesh - (i : ℤ))
         (neumannFluxField (Annealed.sigmaBar M n) omega.val n (n + (h : ℤ)) e'
           (closureNeumannAlong M n h K e' omega.val)) R' ^ (4 : ℕ))
-        (cutoffSampleLaw M).toMeasure  := by
+        (cutoffSampleLaw M).toMeasure := by
   intro i R' hR'
   obtain ⟨hsc, hsub⟩ :=
     scale_and_subset_of_mem_interiorMesoCubeGrid (by omega : nmesh - (i : ℤ) ≤ (K : ℤ)) hR'

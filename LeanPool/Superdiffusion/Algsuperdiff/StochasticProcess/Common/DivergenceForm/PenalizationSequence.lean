@@ -110,7 +110,7 @@ theorem penalizedResolvent_antitone_ae (a : CoeffField d) (hU : IsOpenBoundedCon
     (n m : ℕ) (hnm : n ≤ m) :
     ∀ᵐ x ∂volumeMeasureOn U,
       penalizedResolvent a hU.isOpen hV.isOpen hα hlam hEll m f x ≤
-        penalizedResolvent a hU.isOpen hV.isOpen hα hlam hEll n f x  := by
+        penalizedResolvent a hU.isOpen hV.isOpen hα hlam hEll n f x := by
   exact potentialResolvent_antitone_potential_ae a hU hα hlam hEll
     (penalizationPotential U V n)
     (penalizationPotential U V m)
@@ -129,7 +129,7 @@ theorem penalizedResolvent_nonneg_ae (a : CoeffField d) (hU : IsOpenBoundedConve
     (f : ScalarL2 U) (hf : ∀ᵐ x ∂volumeMeasureOn U, 0 ≤ f x)
     (n : ℕ) :
     ∀ᵐ x ∂volumeMeasureOn U,
-      0 ≤ penalizedResolvent a hU.isOpen hV.isOpen hα hlam hEll n f x  := by
+      0 ≤ penalizedResolvent a hU.isOpen hV.isOpen hα hlam hEll n f x := by
   exact potentialResolvent_nonneg_ae a hU hα hlam hEll
     (penalizationPotential U V n)
     (penalizationPotential_isBoundedNonnegative
@@ -223,7 +223,7 @@ theorem penalizedResolvent_tendsto_pointwiseLimit_ae
       Tendsto
         (fun n => penalizedResolvent a hU.isOpen hV.isOpen hα hlam hEll n f x)
         atTop (nhds (penalizationPointwiseLimit
-          a hU.isOpen hV.isOpen hα hlam hEll f x))  := by
+          a hU.isOpen hV.isOpen hα hlam hEll f x)) := by
   have hnonneg : ∀ n, ∀ᵐ x ∂volumeMeasureOn U,
       0 ≤ penalizedResolvent a hU.isOpen hV.isOpen hα hlam hEll n f x :=
     fun n => penalizedResolvent_nonneg_ae a hU hV hα hlam hEll f hf n
@@ -256,7 +256,7 @@ theorem penalizationPointwiseLimit_memLp (a : CoeffField d) (hU : IsOpenBoundedC
     (hEll : IsEllipticFieldOn lam Lam U a)
     (f : ScalarL2 U) (hf : ∀ᵐ x ∂volumeMeasureOn U, 0 ≤ f x) :
     MemLp (penalizationPointwiseLimit
-      a hU.isOpen hV.isOpen hα hlam hEll f) 2 (volumeMeasureOn U)  := by
+      a hU.isOpen hV.isOpen hα hlam hEll f) 2 (volumeMeasureOn U) := by
   let u : ℕ → ScalarL2 U := fun n =>
     penalizedResolvent a hU.isOpen hV.isOpen hα hlam hEll n f
   let g := penalizationPointwiseLimit
@@ -296,7 +296,7 @@ theorem penalizedResolvent_tendsto_L2 (a : CoeffField d) (hU : IsOpenBoundedConv
       (nhds ((penalizationPointwiseLimit_memLp
         a hU hV hα hlam hEll f hf).toLp
           (penalizationPointwiseLimit
-            a hU.isOpen hV.isOpen hα hlam hEll f)))  := by
+            a hU.isOpen hV.isOpen hα hlam hEll f))) := by
   let u : ℕ → ScalarL2 U := fun n =>
     penalizedResolvent a hU.isOpen hV.isOpen hα hlam hEll n f
   let g := penalizationPointwiseLimit

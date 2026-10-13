@@ -245,7 +245,7 @@ theorem bddAbove_doubledFluxField_fst (Q : TriadicCube d) (a : CoeffFamily d)
     (sig0 : ℝ) :
     BddAbove (Set.range fun N : ℕ =>
       cubeBesovNegativeVectorPartialSeminormTwo Q s N
-        (fun x => (doubledFluxField sig0 Q a v vStar x).1))  :=
+        (fun x => (doubledFluxField sig0 Q a v vStar x).1)) :=
   bddAbove_partialSeminormTwo_const_smul_add Q s _ (inv_nonneg.mpr (Real.sqrt_nonneg _))
     _ _ (solutionFluxField_memVectorL2 Q a v)
     (solutionFluxField_memVectorL2 Q (adjointFamily a) vStar)

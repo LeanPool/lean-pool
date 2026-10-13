@@ -53,7 +53,7 @@ private theorem coarseStarredInv_comparator_quadratic_sub_one_sq_le {d : ℕ} (R
           (blockMatVecMul
             (Book.Ch02.constantBlockMatrix
               (Observable.isotropicComparatorMatrix sigma)) P) = 1) :
-    let U : Domain d  := Book.Ch02.cubeDomain R
+    let U : Domain d := Book.Ch02.cubeDomain R
     let a : CoeffOn U := F.coeffOn R
     let AstarInv : BlockMat d := Book.Ch02.coarseStarredBlockMatrixInv U a
     let C0 : BlockMat d :=
@@ -197,7 +197,7 @@ private theorem fullBlockQuadratic_starredCoarse_sub_comparator_sq_le_of_unit
     (F : Book.Ch02.TriadicCoeffFamily d)
     (sigma : Observable.PositiveScalar) (q : FullBlockVec d)
     (hq : dotProduct q q = 1) :
-    let a0 : Mat d  := Observable.isotropicComparatorMatrix sigma
+    let a0 : Mat d := Observable.isotropicComparatorMatrix sigma
     let B : FullBlockMat d := Book.Ch02.constantFullBlockMatrix a0
     let C0 : BlockMat d := Book.Ch02.constantBlockMatrix a0
     let A : BlockMat d := Book.Ch02.coarseBlockMatrix
@@ -326,7 +326,7 @@ private theorem fullBlockQuadratic_starredCoarse_sub_comparator_sq_le_of_unit
 private theorem fullBlockQuadratic_starredCoarse_sub_comparator_sq_le {d : ℕ} (R : TriadicCube d)
     (F : Book.Ch02.TriadicCoeffFamily d)
     (sigma : Observable.PositiveScalar) (q : FullBlockVec d) :
-    let a0 : Mat d  := Observable.isotropicComparatorMatrix sigma
+    let a0 : Mat d := Observable.isotropicComparatorMatrix sigma
     let B : FullBlockMat d := Book.Ch02.constantFullBlockMatrix a0
     let C0 : BlockMat d := Book.Ch02.constantBlockMatrix a0
     let A : BlockMat d := Book.Ch02.coarseBlockMatrix

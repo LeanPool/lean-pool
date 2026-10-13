@@ -224,7 +224,7 @@ theorem exists_lintegral_rpow_step3FirstTerm_slot (d : ℕ) (cstar : ℝ) (hcsta
                   ENNReal.ofReal (step3FirstTerm Cd M m R omega s
                     (lFreeGradSlot m (tailSeriesGauge m) R omega)) ^ q
                   ∂(Cutoff.cutoffSampleLaw M).toMeasure) ≤
-                ENNReal.ofReal (Cd * A * (q * (M.gamma * (s⁻¹ * s⁻¹)))) ^ q  := by
+                ENNReal.ofReal (Cd * A * (q * (M.gamma * (s⁻¹ * s⁻¹)))) ^ q := by
   classical
   obtain ⟨CB, hCB6, hbrAll⟩ := exists_lintegral_rpow_step3Bracket_le d
   obtain ⟨CE, hCE0, herrAll⟩ := exists_lintegral_rpow_unitCubeHomogenizationError22_le d

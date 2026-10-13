@@ -45,7 +45,7 @@ theorem alphaShiftedResolvent_mono_ae (a : CoeffField d) (hU : IsOpenBoundedConv
     (hfg : ∀ᵐ x ∂volumeMeasureOn U, f x ≤ g x) :
     ∀ᵐ x ∂volumeMeasureOn U,
       alphaShiftedResolvent a hα hlam hEll f x ≤
-        alphaShiftedResolvent a hα hlam hEll g x  := by
+        alphaShiftedResolvent a hα hlam hEll g x := by
   have hq := isBoundedNonnegativePotential_zero (d := d) U
   have hmono := potentialResolvent_mono_ae a hU hα hlam hEll _ hq f g hfg
   rwa [potentialResolvent_zero_potential a hα hlam hEll hq f,

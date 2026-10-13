@@ -147,7 +147,7 @@ theorem ae_eq_annularErrorObservable_translate (M : ABKModel d)
       fun omega : Cutoff.CutoffSample d =>
         Support.annularErrorObservable M R.scale s
           (Cutoff.translateCutoffSample
-            (Support.triadicLatticePoint R.scale R.index) omega)  :=
+            (Support.triadicLatticePoint R.scale R.index) omega) :=
   unitCubeHomogenizationError22_unitRescaledCutoffCoeff_ae_eq_annularErrorObservable
     M R.scale R.index s
 

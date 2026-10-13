@@ -34,23 +34,23 @@ attribute [local instance] Classical.propDecidable
 variable {d : ℕ}
 
 /-- Dimension coefficient for the Hölder row with scalar forcing. -/
-def smallContrastZerothHolderOutputConstant (d : ℕ) : ℝ  :=
+def smallContrastZerothHolderOutputConstant (d : ℕ) : ℝ :=
   (smallContrastHolderChainLength d : ℝ) *
     smallContrastLocalHolderConstant d * smallContrastZerothGradientConstant d
 
 theorem smallContrastZerothHolderOutputConstant_nonneg (d : ℕ) :
-    0 ≤ smallContrastZerothHolderOutputConstant d  := by
+    0 ≤ smallContrastZerothHolderOutputConstant d := by
   exact mul_nonneg
     (mul_nonneg (Nat.cast_nonneg _) (smallContrastLocalHolderConstant_nonneg d))
     (smallContrastZerothGradientConstant_nonneg d)
 
 /-- The single dimension coefficient in the zeroth-order estimate. -/
-def smallContrastZerothSchauderConstant (d : ℕ) : ℝ  :=
+def smallContrastZerothSchauderConstant (d : ℕ) : ℝ :=
   max (smallContrastZerothGradientConstant d)
     (smallContrastZerothHolderOutputConstant d)
 
 theorem smallContrastZerothSchauderConstant_nonneg (d : ℕ) :
-    0 ≤ smallContrastZerothSchauderConstant d  :=
+    0 ≤ smallContrastZerothSchauderConstant d :=
   (smallContrastZerothGradientConstant_nonneg d).trans (le_max_left _ _)
 
 /-- Full representative and gradient conclusion for a bounded scalar source. -/

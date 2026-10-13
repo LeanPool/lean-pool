@@ -137,16 +137,16 @@ theorem cubeScaleFactor_mul_lambdaSq_inv_le [NeZero d] (G : Ch03.CoeffFamily d)
 
 /-- The constant of the pure-flux descendant `D_h` bound, normalized so that it
 is at least one. -/
-def fluxSpineConst (d : ℕ) : ℝ  := max 1 (fluxCubeConst d / 2)
+def fluxSpineConst (d : ℕ) : ℝ := max 1 (fluxCubeConst d / 2)
 
-theorem one_le_fluxSpineConst (d : ℕ) : 1 ≤ fluxSpineConst d  :=
+theorem one_le_fluxSpineConst (d : ℕ) : 1 ≤ fluxSpineConst d :=
   le_max_left _ _
 
-theorem fluxSpineConst_pos (d : ℕ) : 0 < fluxSpineConst d  :=
+theorem fluxSpineConst_pos (d : ℕ) : 0 < fluxSpineConst d :=
   lt_of_lt_of_le zero_lt_one (one_le_fluxSpineConst d)
 
 theorem fluxCubeConst_le_two_mul_fluxSpineConst (d : ℕ) : fluxCubeConst d ≤ 2 * fluxSpineConst
-  d  := by
+  d := by
   have := le_max_right (1 : ℝ) (fluxCubeConst d / 2)
   unfold fluxSpineConst
   linarith [this]

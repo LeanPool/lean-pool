@@ -769,7 +769,7 @@ private theorem neumannReflectedGoodLambdaCutoff_le_q_datum_norm
     (u : H1MeanZeroFunction (openCubeSet (originCube d m)))
     (h : CubeEuclideanL2LpField (originCube d m) q)
     (hsolution : IsMeanZeroNeumannRhsWeakSolution
-      (fun _ : Vec d ↦ scalarMatrix (d  := d) sigma0)
+      (fun _ : Vec d ↦ scalarMatrix (d := d) sigma0)
       (openCubeSet (originCube d m)) u (fun x ↦ -h.toField x))
     (hq : 2 < q.exponent.toReal) :
     neumannReflectedGoodLambdaCutoff m depth eps sigma0 u h.toField ≤

@@ -62,7 +62,7 @@ def streamTailFloorConst (M : ABKModel d) (omega : FullSample d M.gamma) : ℝ :
 
 /-- The coefficient multiplying the effective upper constant in the two
 non-forcing terms of the tail amplitude. -/
-def streamTailLinearConst (M : ABKModel d) : ℝ  :=
+def streamTailLinearConst (M : ABKModel d) : ℝ :=
   agmonTailL2Coefficient d M.nu 1 +
     agmonTailGradientCoefficient d M.nu 1 (1 / 2 : ℝ)
 
@@ -72,7 +72,7 @@ def streamTailAmplitudeExponent (M : ABKModel d) : ℝ :=
   1 + (d : ℝ) * streamFreezingExponent M
 
 /-- A point-independent polynomial envelope constant for the tail amplitude. -/
-def streamTailAmplitudeConst (M : ABKModel d) (omega : FullSample d M.gamma) : ℝ  :=
+def streamTailAmplitudeConst (M : ABKModel d) (omega : FullSample d M.gamma) : ℝ :=
   streamTailLinearConst M * streamTailUpperConst M omega /
       streamTailFloorConst M omega ^ d +
     4 * agmonTailForcingCoefficient d (1 / 2 : ℝ) / M.nu
@@ -262,7 +262,7 @@ private theorem streamTailInnerFloor_lower (M : ABKModel d)
         mul_le_mul_of_nonneg_left hqpow (streamTailFloorConst_pos M omega).le
       _ ≤ 1 / 2 := by simpa only [mul_one] using! (min_le_right _ _)
 
-private theorem streamTailLinearConst_nonneg (M : ABKModel d) : 0 ≤ streamTailLinearConst M  := by
+private theorem streamTailLinearConst_nonneg (M : ABKModel d) : 0 ≤ streamTailLinearConst M := by
   unfold streamTailLinearConst
   exact add_nonneg
     (agmonTailL2Coefficient_nonneg d (lam := M.nu) (by norm_num))
@@ -272,13 +272,13 @@ private theorem streamTailLinearConst_nonneg (M : ABKModel d) : 0 ≤ streamTail
 private theorem tail_coefficients_eq_mul (M : ABKModel d) (L : ℝ) :
     agmonTailL2Coefficient d M.nu L +
         agmonTailGradientCoefficient d M.nu L (1 / 2 : ℝ) =
-      streamTailLinearConst M * L  := by
+      streamTailLinearConst M * L := by
   unfold streamTailLinearConst agmonTailL2Coefficient agmonTailGradientCoefficient
   ring
 
 /-- The polynomial envelope amplitude is nonnegative. -/
 theorem streamTailAmplitudeConst_nonneg (M : ABKModel d) (omega : FullSample d M.gamma) :
-    0 ≤ streamTailAmplitudeConst M omega  := by
+    0 ≤ streamTailAmplitudeConst M omega := by
   have hU : 0 ≤ streamTailUpperConst M omega := by
     exact (streamTailUpperConst_pos M omega).le
   have hF := (streamTailFloorConst_pos M omega).le
@@ -299,7 +299,7 @@ theorem streamTailAlgebraicAmplitude_le (M : ABKModel d)
     (omega : FullSample d M.gamma) (x : Vec d) :
     streamTailAlgebraicAmplitude M omega x ≤
       streamTailAmplitudeConst M omega *
-        (1 + ‖x‖) ^ streamTailAmplitudeExponent M  := by
+        (1 + ‖x‖) ^ streamTailAmplitudeExponent M := by
   let q : ℝ := 1 + ‖x‖
   let e := streamFreezingExponent M
   let F := streamTailFloorConst M omega

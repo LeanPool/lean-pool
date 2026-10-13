@@ -49,7 +49,7 @@ def smallContrastZerothGradientConstant (d : ℕ) : ℝ :=
   smallContrastGradientConstant d + smallContrastZerothGradientExtraConstant d
 
 theorem smallContrastZerothGradientConstant_nonneg (d : ℕ) :
-    0 ≤ smallContrastZerothGradientConstant d  :=
+    0 ≤ smallContrastZerothGradientConstant d :=
   add_nonneg (smallContrastGradientConstant_nonneg d)
     (smallContrastZerothGradientExtraConstant_nonneg d)
 

@@ -144,7 +144,7 @@ constant of the negative-norm-to-`L²` step and the subadditivity factor `√2`.
 def datumPricingConst (d : ℕ) : ℝ :=
   2 * negNormBaseConst d * Real.sqrt 2
 
-theorem datumPricingConst_pos (d : ℕ) : 0 < datumPricingConst d  := by
+theorem datumPricingConst_pos (d : ℕ) : 0 < datumPricingConst d := by
   have h1 : 0 < negNormBaseConst d := negNormBaseConst_pos d
   have h2 : (0 : ℝ) < Real.sqrt 2 := Real.sqrt_pos.mpr (by norm_num)
   rw [datumPricingConst]

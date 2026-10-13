@@ -592,7 +592,7 @@ theorem gammaTenStrip_cell_average_sq_le (M : ABKModel d) (n : ℤ) (h : ℕ)
     cubeFamilyAverage (mesoCubeGrid d Kc (Kc - (j : ℤ)))
         (fun R => (∫ omega, meshFluctuationCellIntegrand M n h Kc e e' wD wN R omega
           ∂(cutoffSampleLaw M).toMeasure) ^ 2) ≤
-      gammaTenStripConst M n h Kc Cpot Cflux  := by
+      gammaTenStripConst M n h Kc Cpot Cflux := by
   classical
   have hjle : Kc - (j : ℤ) ≤ Kc := by omega
   have hmesh : mesoCubeGrid d Kc (Kc - (j : ℤ)) =

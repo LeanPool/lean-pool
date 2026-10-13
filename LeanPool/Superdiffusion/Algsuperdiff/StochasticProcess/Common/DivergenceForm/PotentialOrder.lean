@@ -61,7 +61,7 @@ theorem potentialResolvent_nonneg_ae (a : CoeffField d) (hU : IsOpenBoundedConve
     (f : ScalarL2 U)
     (hf : ∀ᵐ x ∂volumeMeasureOn U, 0 ≤ f x) :
     ∀ᵐ x ∂volumeMeasureOn U,
-      0 ≤ potentialResolvent a hα hlam hEll q hq f x  := by
+      0 ≤ potentialResolvent a hα hlam hEll q hq f x := by
   let u : ZeroTraceSobolev U := potentialSolution a hα hlam hEll q hq f
   obtain ⟨v, hv, -⟩ :=
     ZeroTraceSobolev.existsUnique_positivePartSubConst hU (-u) 0 le_rfl
@@ -149,7 +149,7 @@ theorem potentialResolvent_mono_ae (a : CoeffField d) (hU : IsOpenBoundedConvexD
     (hfg : ∀ᵐ x ∂volumeMeasureOn U, f x ≤ g x) :
     ∀ᵐ x ∂volumeMeasureOn U,
       potentialResolvent a hα hlam hEll q hq f x ≤
-        potentialResolvent a hα hlam hEll q hq g x  := by
+        potentialResolvent a hα hlam hEll q hq g x := by
   have hgf : ∀ᵐ x ∂volumeMeasureOn U, 0 ≤ (g - f) x := by
     filter_upwards [hfg, MeasureTheory.Lp.coeFn_sub g f] with x hx hsub
     rw [hsub]
@@ -243,7 +243,7 @@ theorem alpha_mul_potentialResolvent_le_one_ae (a : CoeffField d) (hU : IsOpenBo
     (q : Vec d → ℝ) (hq : IsBoundedNonnegativePotential U q C)
     (f : ScalarL2 U) (hf : ∀ᵐ x ∂volumeMeasureOn U, f x ≤ 1) :
     ∀ᵐ x ∂volumeMeasureOn U,
-      α * potentialResolvent a hα hlam hEll q hq f x ≤ 1  := by
+      α * potentialResolvent a hα hlam hEll q hq f x ≤ 1 := by
   let : IsFiniteMeasure (volumeMeasureOn U) := by
     simpa only [volumeMeasureOn] using hU.isFiniteMeasure_restrict_volume
   let u : ZeroTraceSobolev U := potentialSolution a hα hlam hEll q hq f
@@ -317,7 +317,7 @@ theorem potentialResolvent_antitone_potential_ae
     (f : ScalarL2 U) (hf : ∀ᵐ x ∂volumeMeasureOn U, 0 ≤ f x) :
     ∀ᵐ x ∂volumeMeasureOn U,
       potentialResolvent a hα hlam hEll q₂ hq₂ f x ≤
-        potentialResolvent a hα hlam hEll q₁ hq₁ f x  := by
+        potentialResolvent a hα hlam hEll q₁ hq₁ f x := by
   let u₂ : ZeroTraceSobolev U := potentialSolution a hα hlam hEll q₂ hq₂ f
   let g : ScalarL2 U :=
     f - potentialMul q₂ hq₂ (ZeroTraceSobolev.toL2 u₂) +

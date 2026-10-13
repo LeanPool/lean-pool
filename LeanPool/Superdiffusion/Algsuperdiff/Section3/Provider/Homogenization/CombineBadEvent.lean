@@ -472,7 +472,7 @@ private theorem fourthMoment_of_cover {M : ABKModel d} {L n : ℤ} {theta : ℝ}
             Observable.cutoffHomogenizationErrorRepresentative M L n eighth_pos
               (Annealed.sigmaBar M L) omega ^ 2
           ∂(Cutoff.cutoffSampleLaw M).toMeasure ≤
-        badEventMomentConst * theta ^ 2  :=
+        badEventMomentConst * theta ^ 2 :=
   integrable_sq_and_integral_sq_le_of_isBigOWith hthetaPos (fun _ => sq_nonneg _)
     ((Observable.measurable_cutoffHomogenizationErrorRepresentative M L n eighth_pos
       (Annealed.sigmaBar M L)).pow_const 2) hcov

@@ -109,7 +109,7 @@ theorem continuous_shellRestrict (K : Set (Vec d)) :
     continuous_const
   exact hproj.compCM hincl
 
-theorem measurable_shellRestrict (K : Set (Vec d)) : Measurable (shellRestrict (d  := d) K) :=
+theorem measurable_shellRestrict (K : Set (Vec d)) : Measurable (shellRestrict (d := d) K) :=
   (continuous_shellRestrict K).measurable
 
 /-! ## 2. The coefficient field as a continuous matrix field -/

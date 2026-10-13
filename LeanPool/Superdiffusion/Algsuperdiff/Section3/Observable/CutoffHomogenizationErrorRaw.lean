@@ -53,7 +53,7 @@ noncomputable section
 silently substituted for the other. -/
 noncomputable def cutoffHomogenizationErrorRaw {d : ℕ}
     (M : ABKModel d) (coefficientScale domainScale : ℤ) (s : ℝ)
-    (sigma : PositiveScalar) (omega : Cutoff.CutoffSample d) : ℝ  :=
+    (sigma : PositiveScalar) (omega : Cutoff.CutoffSample d) : ℝ :=
   homogenizationErrorAtScale domainScale s
     (Cutoff.coefficientCutoffCoeffOn M coefficientScale omega
       (originCube d domainScale))
@@ -67,7 +67,7 @@ theorem cutoffHomogenizationErrorRaw_characterization {d : ℕ}
     cutoffHomogenizationErrorRaw M coefficientScale domainScale s sigma omega =
       HomogenizationErrorOnCube (originCube d domainScale) s .infinity (.finite 2)
         (Cutoff.coefficientCutoffTriadicCoeffFamily M coefficientScale omega)
-        (isotropicComparatorMatrix sigma)  := by
+        (isotropicComparatorMatrix sigma) := by
   exact homogenizationErrorAtScale_characterization domainScale s
     (Cutoff.coefficientCutoffCoeffOn M coefficientScale omega
       (originCube d domainScale)) sigma

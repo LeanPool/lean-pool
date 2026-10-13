@@ -265,7 +265,7 @@ theorem continuous_normalizedBlockResponseQuadraticOnUnitSphere {d : ℕ}
 /-- The continuous-map packaging of the finite-dimensional quadratic response
 as a function of a compact direction. -/
 noncomputable def normalizedBlockResponseQuadraticMap {d : ℕ}
-    (a0 : Mat d) : C(FullBlockMat d, C(FullBlockUnitSphere d, ℝ))  :=
+    (a0 : Mat d) : C(FullBlockMat d, C(FullBlockUnitSphere d, ℝ)) :=
   ContinuousMap.curry ⟨Function.uncurry
     (normalizedBlockResponseQuadraticOnUnitSphere (d := d) a0),
     continuous_normalizedBlockResponseQuadraticOnUnitSphere a0⟩
@@ -274,20 +274,20 @@ noncomputable def normalizedBlockResponseQuadraticMap {d : ℕ}
 matrix.  Consequently its norm is an everywhere measurable scalar functional
 even off the physical locally elliptic support. -/
 theorem continuous_normalizedBlockResponseQuadraticMap {d : ℕ}
-    (a0 : Mat d) : Continuous (normalizedBlockResponseQuadraticMap a0)  := by
+    (a0 : Mat d) : Continuous (normalizedBlockResponseQuadraticMap a0) := by
   exact (normalizedBlockResponseQuadraticMap a0).continuous
 
 /-- The globally continuous, hence everywhere measurable, finite-dimensional
 candidate for the normalized block-response maximum.  Its equality with the
 literal supremum is asserted only on the locally elliptic physical event. -/
 noncomputable def normalizedBlockResponseMaxRepresentativeFunctional
-    {d : ℕ} (a0 : Mat d) : FullBlockMat d → ℝ  :=
+    {d : ℕ} (a0 : Mat d) : FullBlockMat d → ℝ :=
   fun A => ‖normalizedBlockResponseQuadraticMap a0 A‖
 
 /-- The matrix functional used for a measurable error representative is
 continuous on every full coarse block matrix. -/
 theorem continuous_normalizedBlockResponseMaxRepresentativeFunctional {d : ℕ} (a0 : Mat d) :
-    Continuous (normalizedBlockResponseMaxRepresentativeFunctional a0)  :=
+    Continuous (normalizedBlockResponseMaxRepresentativeFunctional a0) :=
   continuous_norm.comp (continuous_normalizedBlockResponseQuadraticMap a0)
 
 /-- Turn an exactly normalized CoarseGraining full block vector back into the

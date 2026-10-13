@@ -98,7 +98,7 @@ def annularResponseMax (M : ABKModel d) (L m : ℤ) (omega : Cutoff.CutoffSample
 quantity rather than the measurable representative.  The two agree almost
 surely (`Support.annularErrorAtom_ae_eq_annularErrorObservable`); the literal
 family is what the pointwise chain produces. -/
-def annularErrorAtomMax (M : ABKModel d) (s : ℝ) (omega : Cutoff.CutoffSample d) (j n : ℤ) : ℝ  :=
+def annularErrorAtomMax (M : ABKModel d) (s : ℝ) (omega : Cutoff.CutoffSample d) (j n : ℤ) : ℝ :=
   Proportion.fmax (Proportion.latticeAnnulusFinset d n j (j - 1)) fun v =>
     Support.annularErrorAtom M n s
       (Cutoff.translateCutoffSample (Support.triadicLatticePoint n v) omega) ^ 2
@@ -341,7 +341,7 @@ private theorem annularTranslatedGradient_squareBound :
 
 theorem annularErrorAtomMax_nonneg (M : ABKModel d) (s : ℝ)
     (omega : Cutoff.CutoffSample d) (j n : ℤ) :
-    0 ≤ annularErrorAtomMax M s omega j n  :=
+    0 ≤ annularErrorAtomMax M s omega j n :=
   Proportion.fmax_nonneg _ _
 
 /-! ## Part B -- the `huglyf` binder -/
