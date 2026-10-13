@@ -131,6 +131,7 @@ Apache License, Version 2.0, and are redistributed here under the same license.
   LeanPool/GraphColouringMatching    https://github.com/jtraverso/lean-pool
   LeanPool/GrothendieckBessel        https://github.com/lukasliehr/GrothendieckBessel
   LeanPool/HadwigerNelsonBounds      https://github.com/lyfar/hadwiger-nelson-bounds-lean
+  LeanPool/HajnalSzemeredi           https://github.com/jtraverso/hajnal-szemeredi
   LeanPool/HansonWright              https://github.com/Lean-MoDS/StatsMLlib
   LeanPool/HardSphereNBC             https://github.com/ukiyois/hs-virial-nbc-identity
   LeanPool/HasseMinkowski            https://github.com/jayyswan/hasse-minkowski
