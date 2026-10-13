@@ -76,8 +76,8 @@ theorem onePointProcess_spec {R : PositiveC0ContractiveResolvent (Vec d)}
       (IsConservative.continuousProcess R.onePointKernelSemigroup
         R.isConservative_onePointKernelSemigroup)
     infer_instance
-  exact (R.isFellerKernelSemigroup_onePointKernelSemigroup
-    ).continuousProcess_map_finiteEvaluation R.onePointKernelSemigroup
+  exact (R.isFellerKernelSemigroup_onePointKernelSemigroup).continuousProcess_map_finiteEvaluation
+    R.onePointKernelSemigroup
       R.isConservative_onePointKernelSemigroup hreg.kolmogorovRegular
 
 omit [NeZero d] in

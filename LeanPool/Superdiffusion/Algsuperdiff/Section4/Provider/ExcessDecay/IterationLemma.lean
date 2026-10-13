@@ -163,8 +163,9 @@ private theorem assembleStep {q qn G Pn Xl Sl Sn S Tm Pk : ℝ} (hG1 : 1 ≤ G)
 /-! ### The run concatenation -/
 
 private theorem iterationLemma_comparisonBounds1 :
-    ∀ {ε : ℤ → ℝ} {G Bc rate : ℝ} {m : ℤ} (hε : ∀ (k : ℤ), (0 : ℝ) ≤ ε k) (hG : (1 : ℝ) ≤ G) (hBc : (1 : ℝ) ≤ Bc)
-      (hrate : (0 : ℝ) ≤ rate),
+    ∀ {ε : ℤ → ℝ} {G Bc rate : ℝ} {m : ℤ} (_ : ∀ (k : ℤ), (0 : ℝ) ≤ ε k) (_ : (1 : ℝ) ≤ G) (_ : (1
+      : ℝ) ≤ Bc)
+      (_ : (0 : ℝ) ≤ rate),
       (0 : ℝ) ≤ G * Bc ∧
         (∀ (i : ℕ), (1 : ℝ) ≤ (G * Bc) ^ i) ∧
           (∀ (i i' : ℕ), i ≤ i' → (G * Bc) ^ i ≤ (G * Bc) ^ i') ∧
@@ -172,9 +173,11 @@ private theorem iterationLemma_comparisonBounds1 :
               G ≤ G * Bc ∧
                 (∀ (i : ℤ), (1 : ℝ) ≤ Real.exp (rate * ∑ j ∈ Icc i m, ε j)) ∧
                   (∀ (f : ℤ → ℝ),
-                      (∀ (j : ℤ), (0 : ℝ) ≤ f j) → ∀ (i i' : ℤ), i ≤ i' → ∑ j ∈ Icc i' m, f j ≤ ∑ j ∈ Icc i m, f j) ∧
+                      (∀ (j : ℤ), (0 : ℝ) ≤ f j) → ∀ (i i' : ℤ), i ≤ i' → ∑ j ∈ Icc i' m, f j ≤ ∑
+                        j ∈ Icc i m, f j) ∧
                     ∀ (f : ℤ → ℝ),
-                      (∀ (j : ℤ), (0 : ℝ) ≤ f j) → ∀ (a b : ℤ), a ≤ b → b ≤ m → ∑ j ∈ Icc a b, f j ≤ ∑ j ∈ Icc a m, f j := by
+                      (∀ (j : ℤ), (0 : ℝ) ≤ f j) → ∀ (a b : ℤ), a ≤ b → b ≤ m → ∑ j ∈ Icc a b, f j
+                        ≤ ∑ j ∈ Icc a m, f j := by
   classical
   intro ε G Bc rate m hε hG hBc hrate
   have hP1 : 1 ≤ G * Bc := by
@@ -212,12 +215,13 @@ private theorem iterationLemma_comparisonBounds1 :
 
 private theorem iterationLemma_estimate1 :
     ∀ {q ε δ : ℤ → ℝ} {G Bc rate : ℝ} {m : ℤ} (B : Finset ℤ) (b₀ : ℤ)
-      (hcross1 : q (b₀ - (1 : ℤ)) ≤ Bc * q b₀) (hcross2 : q b₀ ≤ Bc * q (b₀ + (1 : ℤ)))
-      (hih :
+      (_ : q (b₀ - (1 : ℤ)) ≤ Bc * q b₀) (_ : q b₀ ≤ Bc * q (b₀ + (1 : ℤ)))
+      (_ :
         q (b₀ + (1 : ℤ)) ≤
-          (G * Bc) ^ ((3 : ℕ) * #(B ∩ Icc (b₀ + (1 : ℤ)) m) + (3 : ℕ)) * Real.exp (rate * ∑ j ∈ Icc (b₀ + (1 : ℤ)) m, ε j) *
+          (G * Bc) ^ ((3 : ℕ) * #(B ∩ Icc (b₀ + (1 : ℤ)) m) + (3 : ℕ)) * Real.exp (rate * ∑ j ∈
+            Icc (b₀ + (1 : ℤ)) m, ε j) *
             (q m + ∑ j ∈ Icc (b₀ + (1 : ℤ)) m, δ j))
-      (hBc0 : (0 : ℝ) ≤ Bc),
+      (_ : (0 : ℝ) ≤ Bc),
       q (b₀ - (1 : ℤ)) ≤
         Bc * Bc *
             ((G * Bc) ^ ((3 : ℕ) * #(B ∩ Icc (b₀ + (1 : ℤ)) m) + (3 : ℕ)) *
@@ -245,12 +249,14 @@ private theorem iterationLemma_estimate1 :
         * (q m + ∑ j ∈ Icc (b₀ + 1) m, δ j) := by ring
 
 private theorem iterationLemma_estimate2 :
-    ∀ {ε : ℤ → ℝ} {G Bc rate : ℝ} {m : ℤ} (B : Finset ℤ) (hBc : (1 : ℝ) ≤ Bc)
-      (hpow : ∀ (i : ℕ), (1 : ℝ) ≤ (G * Bc) ^ i) (hX1 : ∀ (i : ℤ), (1 : ℝ) ≤ Real.exp (rate * ∑ j ∈ Icc i m, ε j)) (b₀ : ℤ)
-      (hBc0 : (0 : ℝ) ≤ Bc),
+    ∀ {ε : ℤ → ℝ} {G Bc rate : ℝ} {m : ℤ} (B : Finset ℤ) (_ : (1 : ℝ) ≤ Bc)
+      (_ : ∀ (i : ℕ), (1 : ℝ) ≤ (G * Bc) ^ i) (_ : ∀ (i : ℤ), (1 : ℝ) ≤ Real.exp (rate * ∑ j ∈ Icc
+        i m, ε j)) (b₀ : ℤ)
+      (_ : (0 : ℝ) ≤ Bc),
       (1 : ℝ) ≤
         Bc * Bc *
-          ((G * Bc) ^ ((3 : ℕ) * #(B ∩ Icc (b₀ + (1 : ℤ)) m) + (3 : ℕ)) * Real.exp (rate * ∑ j ∈ Icc (b₀ + (1 : ℤ)) m, ε j)) := by
+          ((G * Bc) ^ ((3 : ℕ) * #(B ∩ Icc (b₀ + (1 : ℤ)) m) + (3 : ℕ)) * Real.exp (rate * ∑ j ∈
+            Icc (b₀ + (1 : ℤ)) m, ε j)) := by
   intro ε G Bc rate m B hBc hpow hX1 b₀ hBc0
   have hA : (1 : ℝ) ≤ Bc * Bc := by
     have hm := mul_le_mul_of_nonneg_left hBc hBc0
@@ -268,9 +274,9 @@ private theorem iterationLemma_estimate2 :
   linarith only [hm]
 
 private theorem iterationLemma_estimate3 :
-    ∀ {n m : ℤ} (B : Finset ℤ) (t : ℕ) (k b₀ : ℤ) (hb₀mem : b₀ ∈ B ∩ Icc k m)
-      (hbk : k = b₀), #(B ∩ Icc (k + (1 : ℤ)) m) + (1 : ℕ) ≤ #(B ∩ Icc k m) := by
-  intro n m B t k b₀ hb₀mem hbk
+    ∀ {_ m : ℤ} (B : Finset ℤ) (_ : ℕ) (k b₀ : ℤ) (_ : b₀ ∈ B ∩ Icc k m)
+      (_ : k = b₀), #(B ∩ Icc (k + (1 : ℤ)) m) + (1 : ℕ) ≤ #(B ∩ Icc k m) := by
+  intro n m B _ k b₀ hb₀mem _
   have hss : B ∩ Icc (k + 1) m ⊂ B ∩ Icc k m := by
     refine (Finset.ssubset_iff_of_subset ?_).2 ⟨b₀, hb₀mem, ?_⟩
     · intro x hx
@@ -294,9 +300,9 @@ The exponent `3|B ∩ [k,m]| + 3` is what the induction pays: at most one good-r
 factor `G` and two single-scale factors `Bc` per bad scale crossed, plus the initial
 run. -/
 private theorem iterationLemma_estimate4 :
-    ∀ {n m : ℤ} (B : Finset ℤ) (t : ℕ) (k b₀ : ℤ) (hb₀mem : b₀ ∈ B ∩ Icc k m)
-      (hbk : k < b₀), #(B ∩ Icc (b₀ + (1 : ℤ)) m) + (1 : ℕ) ≤ #(B ∩ Icc k m) := by
-  intro n m B t k b₀ hb₀mem hbk
+    ∀ {_ m : ℤ} (B : Finset ℤ) (_ : ℕ) (k b₀ : ℤ) (_ : b₀ ∈ B ∩ Icc k m)
+      (_ : k < b₀), #(B ∩ Icc (b₀ + (1 : ℤ)) m) + (1 : ℕ) ≤ #(B ∩ Icc k m) := by
+  intro _ m B _ k b₀ hb₀mem _
   have hss : B ∩ Icc (b₀ + 1) m ⊂ B ∩ Icc k m := by
     refine (Finset.ssubset_iff_of_subset ?_).2 ⟨b₀, hb₀mem, ?_⟩
     · intro x hx
@@ -308,6 +314,53 @@ private theorem iterationLemma_estimate4 :
   have hlt := Finset.card_lt_card hss
   omega
 
+private theorem iteration_badScalePrefactorBound :
+    ∀ {ε : ℤ → ℝ} {G Bc rate : ℝ} {_ m : ℤ} (B : Finset ℤ)
+      (_ : ∀ (k : ℤ), (0 : ℝ) ≤ ε k) (_ : (0 : ℝ) ≤ rate) (_ : (0 : ℝ) ≤ G * Bc)
+      (_ : ∀ (i i' : ℕ), i ≤ i' → (G * Bc) ^ i ≤ (G * Bc) ^ i') (_ : Bc ≤ G * Bc)
+      (_ :
+        ∀ (f : ℤ → ℝ), (∀ (j : ℤ), (0 : ℝ) ≤ f j) → ∀ (i i' : ℤ), i ≤ i' → ∑ j ∈ Icc i' m, f j ≤ ∑
+          j ∈ Icc i m, f j)
+      (_ : ℕ) (k _ : ℤ) (_ : #(B ∩ Icc (k + (1 : ℤ)) m) + (1 : ℕ) ≤ #(B ∩ Icc k m)),
+      Bc *
+            ((G * Bc) ^ ((3 : ℕ) * #(B ∩ Icc (k + (1 : ℤ)) m) + (3 : ℕ)) *
+              Real.exp (rate * ∑ j ∈ Icc (k + (1 : ℤ)) m, ε j)) *
+          (1 : ℝ) ≤
+        (G * Bc) ^ ((3 : ℕ) * #(B ∩ Icc k m) + (3 : ℕ)) * Real.exp (rate * ∑ j ∈ Icc k m, ε j) := by
+  intro ε G Bc rate _ m B hε hrate hP0 hpowmono hBcG hsumsub _ k _ _
+  have hXX := hsumsub ε hε k (k + 1) (by omega)
+  have hXe : Real.exp (rate * ∑ j ∈ Icc (k + 1) m, ε j)
+      ≤ Real.exp (rate * ∑ j ∈ Icc k m, ε j) :=
+    Real.exp_le_exp.mpr (mul_le_mul_of_nonneg_left hXX hrate)
+  have hA : Bc * (G * Bc) ^ (3 * (B ∩ Icc (k + 1) m).card + 3)
+      ≤ (G * Bc) * (G * Bc)
+        ^ (3 * (B ∩ Icc (k + 1) m).card + 3) :=
+    mul_le_mul_of_nonneg_right hBcG (pow_nonneg hP0 _)
+  have hmm := mul_le_mul hA hXe (le_of_lt (Real.exp_pos _))
+    (mul_nonneg hP0 (pow_nonneg hP0 _))
+  have hstep2 : (G * Bc) * (G * Bc)
+        ^ (3 * (B ∩ Icc (k + 1) m).card + 3)
+      ≤ (G * Bc) ^ (3 * (B ∩ Icc k m).card + 3) := by
+    have hpp := hpowmono (3 * (B ∩ Icc (k + 1) m).card + 3 + 1)
+      (3 * (B ∩ Icc k m).card + 3) (by omega)
+    calc (G * Bc) * (G * Bc)
+          ^ (3 * (B ∩ Icc (k + 1) m).card + 3)
+        = (G * Bc) ^ (3 * (B ∩ Icc (k + 1) m).card + 3 + 1) := by
+          rw [pow_succ]; ring
+      _ ≤ (G * Bc) ^ (3 * (B ∩ Icc k m).card + 3) := hpp
+  have hfin := mul_le_mul_of_nonneg_right hstep2
+    (le_of_lt (Real.exp_pos (rate * ∑ j ∈ Icc k m, ε j)))
+  calc Bc * ((G * Bc) ^ (3 * (B ∩ Icc (k + 1) m).card + 3)
+        * Real.exp (rate * ∑ j ∈ Icc (k + 1) m, ε j)) * 1
+      = (Bc * (G * Bc) ^ (3 * (B ∩ Icc (k + 1) m).card + 3))
+        * Real.exp (rate * ∑ j ∈ Icc (k + 1) m, ε j) := by ring
+    _ ≤ ((G * Bc) * (G * Bc)
+        ^ (3 * (B ∩ Icc (k + 1) m).card + 3))
+        * Real.exp (rate * ∑ j ∈ Icc k m, ε j) := hmm
+    _ ≤ (G * Bc) ^ (3 * (B ∩ Icc k m).card + 3)
+        * Real.exp (rate * ∑ j ∈ Icc k m, ε j) := hfin
+
+
 private theorem assembleRuns {q ε δ : ℤ → ℝ} {G Bc rate : ℝ} {n m : ℤ}
     (B : Finset ℤ) (hq : ∀ k, 0 ≤ q k) (hε : ∀ k, 0 ≤ ε k) (hδ : ∀ k, 0 ≤ δ k)
     (hG : 1 ≤ G) (hBc : 1 ≤ Bc) (hrate : 0 ≤ rate)
@@ -318,8 +371,11 @@ private theorem assembleRuns {q ε δ : ℤ → ℝ} {G Bc rate : ℝ} {n m : �
       q k ≤ (G * Bc) ^ (3 * (B ∩ Icc k m).card + 3)
         * Real.exp (rate * ∑ j ∈ Icc k m, ε j) * (q m + ∑ j ∈ Icc k m, δ j) := by
   obtain ⟨hP0, hpow, hpowmono, hBcG, hGP, hX1, hsumsub, hblock⟩ :=
-    (show ((0 : ℝ) ≤ G * Bc) ∧ (∀ i : ℕ, 1 ≤ (G * Bc) ^ i) ∧ (∀ i i' : ℕ, i ≤ i' → (G * Bc) ^ i ≤ (G * Bc) ^ i') ∧ (Bc ≤ G * Bc) ∧ (G ≤ G * Bc) ∧ (∀ i : ℤ, 1 ≤ Real.exp (rate * ∑ j ∈ Icc i m, ε j)) ∧ (∀ (f : ℤ → ℝ), (∀ j, 0 ≤ f j) → ∀ i i' : ℤ, i ≤ i' →
-      ∑ j ∈ Icc i' m, f j ≤ ∑ j ∈ Icc i m, f j) ∧ (∀ (f : ℤ → ℝ), (∀ j, 0 ≤ f j) → ∀ a b : ℤ, a ≤ b → b ≤ m →
+    (show ((0 : ℝ) ≤ G * Bc) ∧ (∀ i : ℕ, 1 ≤ (G * Bc) ^ i) ∧ (∀ i i' : ℕ, i ≤ i' → (G * Bc) ^ i ≤
+      (G * Bc) ^ i') ∧ (Bc ≤ G * Bc) ∧ (G ≤ G * Bc) ∧ (∀ i : ℤ, 1 ≤ Real.exp (rate * ∑ j ∈ Icc i
+        m, ε j)) ∧ (∀ (f : ℤ → ℝ), (∀ j, 0 ≤ f j) → ∀ i i' : ℤ, i ≤ i' →
+      ∑ j ∈ Icc i' m, f j ≤ ∑ j ∈ Icc i m, f j) ∧ (∀ (f : ℤ → ℝ), (∀ j, 0 ≤ f j) → ∀ a b : ℤ, a ≤
+        b → b ≤ m →
       ∑ j ∈ Icc a b, f j ≤ ∑ j ∈ Icc a m, f j) from
       @iterationLemma_comparisonBounds1 (ε) (G) (Bc) (rate) (m) (hε) (hG) (hBc) (hrate))
   have key : ∀ t : ℕ, ∀ k : ℤ, n ≤ k → k ≤ m → (m - k).toNat ≤ t →
@@ -346,7 +402,8 @@ private theorem assembleRuns {q ε δ : ℤ → ℝ} {G Bc rate : ℝ} {n m : �
             have hb₀m : b₀ ≤ m := (Finset.mem_Icc.1 (Finset.mem_inter.1 hb₀mem).2).2
             rcases eq_or_lt_of_le hb₀k with hbk | hbk
             · -- the bottom scale itself is bad: cross it and recurse
-              have hcard : (B ∩ Icc (k + 1) m).card + 1 ≤ (B ∩ Icc k m).card  := @iterationLemma_estimate3 (n) (m) (B) (t) (k) (b₀) (hb₀mem) (hbk)
+              have hcard : (B ∩ Icc (k + 1) m).card + 1 ≤ (B ∩ Icc k m).card  :=
+                @iterationLemma_estimate3 (n) (m) (B) (t) (k) (b₀) (hb₀mem) (hbk)
               have hcross : q k ≤ Bc * q (k + 1) := by
                 have hb := hbad (k + 1)
                 rwa [add_sub_cancel_right] at hb
@@ -360,37 +417,8 @@ private theorem assembleRuns {q ε δ : ℤ → ℝ} {G Bc rate : ℝ} {n m : �
                 linarith only [hm, hpow (3 * (B ∩ Icc (k + 1) m).card + 3)]
               · have hd := hsumsub δ hδ k (k + 1) (by omega)
                 linarith only [hd]
-              · have hXX := hsumsub ε hε k (k + 1) (by omega)
-                have hXe : Real.exp (rate * ∑ j ∈ Icc (k + 1) m, ε j)
-                    ≤ Real.exp (rate * ∑ j ∈ Icc k m, ε j) :=
-                  Real.exp_le_exp.mpr (mul_le_mul_of_nonneg_left hXX hrate)
-                have hA : Bc * (G * Bc) ^ (3 * (B ∩ Icc (k + 1) m).card + 3)
-                    ≤ (G * Bc) * (G * Bc)
-                      ^ (3 * (B ∩ Icc (k + 1) m).card + 3) :=
-                  mul_le_mul_of_nonneg_right hBcG (pow_nonneg hP0 _)
-                have hmm := mul_le_mul hA hXe (le_of_lt (Real.exp_pos _))
-                  (mul_nonneg hP0 (pow_nonneg hP0 _))
-                have hstep2 : (G * Bc) * (G * Bc)
-                      ^ (3 * (B ∩ Icc (k + 1) m).card + 3)
-                    ≤ (G * Bc) ^ (3 * (B ∩ Icc k m).card + 3) := by
-                  have hpp := hpowmono (3 * (B ∩ Icc (k + 1) m).card + 3 + 1)
-                    (3 * (B ∩ Icc k m).card + 3) (by omega)
-                  calc (G * Bc) * (G * Bc)
-                        ^ (3 * (B ∩ Icc (k + 1) m).card + 3)
-                      = (G * Bc) ^ (3 * (B ∩ Icc (k + 1) m).card + 3 + 1) := by
-                        rw [pow_succ]; ring
-                    _ ≤ (G * Bc) ^ (3 * (B ∩ Icc k m).card + 3) := hpp
-                have hfin := mul_le_mul_of_nonneg_right hstep2
-                  (le_of_lt (Real.exp_pos (rate * ∑ j ∈ Icc k m, ε j)))
-                calc Bc * ((G * Bc) ^ (3 * (B ∩ Icc (k + 1) m).card + 3)
-                      * Real.exp (rate * ∑ j ∈ Icc (k + 1) m, ε j)) * 1
-                    = (Bc * (G * Bc) ^ (3 * (B ∩ Icc (k + 1) m).card + 3))
-                      * Real.exp (rate * ∑ j ∈ Icc (k + 1) m, ε j) := by ring
-                  _ ≤ ((G * Bc) * (G * Bc)
-                      ^ (3 * (B ∩ Icc (k + 1) m).card + 3))
-                      * Real.exp (rate * ∑ j ∈ Icc k m, ε j) := hmm
-                  _ ≤ (G * Bc) ^ (3 * (B ∩ Icc k m).card + 3)
-                      * Real.exp (rate * ∑ j ∈ Icc k m, ε j) := hfin
+              · exact @iteration_badScalePrefactorBound (ε) (G) (Bc) (rate) (n) (m) (B) (hε)
+                  (hrate) (hP0) (hpowmono) (hBcG) (hsumsub) (t) (k) (b₀) (hcard)
             · -- a genuine good run `[k, b₀-1]`, then the bad scale `b₀`
               have hgd : ∀ j, k ≤ j → j ≤ b₀ - 1 → j ∉ B := by
                 intro j hj1 hj2 hjB
@@ -422,7 +450,8 @@ private theorem assembleRuns {q ε δ : ℤ → ℝ} {G Bc rate : ℝ} {n m : �
                     (le_trans hP0 h1)
               · -- cross `b₀` and recurse above it
                 have hcard : (B ∩ Icc (b₀ + 1) m).card + 1
-                    ≤ (B ∩ Icc k m).card  := @iterationLemma_estimate4 (n) (m) (B) (t) (k) (b₀) (hb₀mem) (hbk)
+                    ≤ (B ∩ Icc k m).card  := @iterationLemma_estimate4 (n) (m) (B) (t) (k) (b₀)
+                      (hb₀mem) (hbk)
                 have hcross2 : q b₀ ≤ Bc * q (b₀ + 1) := by
                   have hb := hbad (b₀ + 1)
                   rwa [add_sub_cancel_right] at hb
@@ -432,10 +461,12 @@ private theorem assembleRuns {q ε δ : ℤ → ℝ} {G Bc rate : ℝ} {n m : �
                     ≤ (Bc * Bc * ((G * Bc)
                         ^ (3 * (B ∩ Icc (b₀ + 1) m).card + 3)
                         * Real.exp (rate * ∑ j ∈ Icc (b₀ + 1) m, ε j)))
-                      * (q m + ∑ j ∈ Icc (b₀ + 1) m, δ j)  := @iterationLemma_estimate1 (q) (ε) (δ) (G) (Bc) (rate) (m) (B) (b₀) (hcross1) (hcross2) (hih) (hBc0)
+                      * (q m + ∑ j ∈ Icc (b₀ + 1) m, δ j)  := @iterationLemma_estimate1 (q) (ε)
+                        (δ) (G) (Bc) (rate) (m) (B) (b₀) (hcross1) (hcross2) (hih) (hBc0)
                 have hPn1 : (1 : ℝ) ≤ Bc * Bc * ((G * Bc)
                     ^ (3 * (B ∩ Icc (b₀ + 1) m).card + 3)
-                    * Real.exp (rate * ∑ j ∈ Icc (b₀ + 1) m, ε j))  := @iterationLemma_estimate2 (ε) (G) (Bc) (rate) (m) (B) (hBc) (hpow) (hX1) (b₀) (hBc0)
+                    * Real.exp (rate * ∑ j ∈ Icc (b₀ + 1) m, ε j))  := @iterationLemma_estimate2
+                      (ε) (G) (Bc) (rate) (m) (B) (hBc) (hpow) (hX1) (b₀) (hBc0)
                 refine assembleStep hG hPn1 hXl1
                   (Finset.sum_nonneg fun j _ => hδ j)
                   (Finset.sum_nonneg fun j _ => hδ j) (hq m) hrun hqn ?_ ?_

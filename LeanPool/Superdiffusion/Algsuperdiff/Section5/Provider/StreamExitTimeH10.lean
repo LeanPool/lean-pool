@@ -141,12 +141,10 @@ section Process
 variable {M omega y n}
   (R : PositiveC0ContractiveResolvent (Vec d)) (hreg : R.OnePointRegular)
   (hcons : R.kernelSemigroup.IsConservative)
-  (hid : (streamWholeSpaceAnalyticData M omega
-    ).KernelResolventIdentifiesAnalyticMinimal R)
+  (hid : (streamWholeSpaceAnalyticData M omega).KernelResolventIdentifiesAnalyticMinimal R)
   (hT : ∀ (mu : PositiveShift) (g : C₀(Vec d, ℝ)),
     R.toContractiveResolvent.operator mu g =
-      ((streamWholeSpaceC0BarrierData M omega).resolvent
-        ).toContractiveResolvent.operator mu g)
+      ((streamWholeSpaceC0BarrierData M omega).resolvent).toContractiveResolvent.operator mu g)
 
 include hcons hid hT in
 /-- **The expected exit time from the cube is the exit function**, at every point of the
@@ -162,8 +160,9 @@ theorem expectedExitTime_cubeSetAt_eq_streamExitFunction (y : Vec d) (n : ℤ) {
   let _ := hreg.completeSpace
   have hchain := WholeSpaceAnalyticData.lintegral_exitTime_eq_cubeSetAtExitFunction_stream
     (M := M) (omega := omega) R hreg hcons hid hT y n hx
-  have hpde := (streamWholeSpaceAnalyticData M omega
-    ).cubeSetAtExitFunction_coe_eq_of_isScalarForcedWeakSolution y n (streamExitH10 M omega y n)
+  have hpde := (streamWholeSpaceAnalyticData M
+    omega).cubeSetAtExitFunction_coe_eq_of_isScalarForcedWeakSolution y n (streamExitH10 M omega y
+      n)
     (isScalarForcedWeakSolution_streamExitH10 M omega y n)
     (wRep := streamExitFunction M omega y n)
     (by rw [streamExitH10_toFun])

@@ -420,9 +420,8 @@ theorem lintegral_localizedError_rpow_le_of_rescaled_bound {d : ℕ}
           ∂(Cutoff.cutoffSampleLaw M).toMeasure := by
       refine lintegral_mono_ae (hpoint.mono fun omega homega => ?_)
       refine ENNReal.rpow_le_rpow ?_ (by positivity)
-      rw [ENNReal.ofReal_add (mul_nonneg ht (hEBnn omega))] at homega
+      rw [ENNReal.ofReal_add (mul_nonneg ht (hEBnn omega)) hD] at homega
       exact homega
-      exact hD
     _ ≤ ENNReal.ofReal (t * R + D) ^ p := hadd
 
 /-- The localized error has the generator-renormalization moment profile, with

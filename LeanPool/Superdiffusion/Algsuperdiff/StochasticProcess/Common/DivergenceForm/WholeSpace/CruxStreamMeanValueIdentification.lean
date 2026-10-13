@@ -48,12 +48,10 @@ namespace WholeSpaceAnalyticData
 variable {M : ABKModel d} {omega : FullSample d M.gamma}
   (R : PositiveC0ContractiveResolvent (Vec d)) (hreg : R.OnePointRegular)
   (hcons : R.kernelSemigroup.IsConservative)
-  (hid : (streamWholeSpaceAnalyticData M omega
-    ).KernelResolventIdentifiesAnalyticMinimal R)
+  (hid : (streamWholeSpaceAnalyticData M omega).KernelResolventIdentifiesAnalyticMinimal R)
   (hT : ∀ (mu : PositiveShift) (g : C₀(Vec d, ℝ)),
     R.toContractiveResolvent.operator mu g =
-      ((streamWholeSpaceC0BarrierData M omega).resolvent
-        ).toContractiveResolvent.operator mu g)
+      ((streamWholeSpaceC0BarrierData M omega).resolvent).toContractiveResolvent.operator mu g)
 
 include hT in
 /-- The stream process resolvent agrees pointwise with the analytic minimal
@@ -64,8 +62,7 @@ theorem operator_eq_analyticMinimalResolventReal_stream
       (streamWholeSpaceAnalyticData M omega).analyticMinimalResolventReal
         mu g g.continuous.measurable (abs_apply_le_norm_zeroAtInfty g) y := by
   rw [hT mu g]
-  exact (streamWholeSpaceAnalyticData M omega
-    ).analyticMinimalC0ResolventOfVanishing_apply
+  exact (streamWholeSpaceAnalyticData M omega).analyticMinimalC0ResolventOfVanishing_apply
       (streamWholeSpaceC0BarrierData M omega).vanishing mu g y
 
 end WholeSpaceAnalyticData

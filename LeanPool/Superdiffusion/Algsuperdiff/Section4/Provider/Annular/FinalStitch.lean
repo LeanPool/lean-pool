@@ -107,7 +107,8 @@ def annularErrorAtomMax [NeZero d] (M : ABKModel d) (s : ℝ)
 private abbrev annularResponse_uniformDirectionBound_statement : Prop :=
     ∀ (d : ℕ) (_ : (2 : ℕ) ≤ d) (_ : NeZero d) (Cs : ℝ)
       (_ :
-        ∀ (M : ABKModel d) (m n L : ℤ) (v : Fin d → ℤ) (e : Vec d) (omega : Cutoff.CutoffSample d) (s kap Cl Cr Ash C : ℝ),
+        ∀ (M : ABKModel d) (m n L : ℤ) (v : Fin d → ℤ) (e : Vec d) (omega : Cutoff.CutoffSample d)
+          (s kap Cl Cr Ash C : ℝ),
           n ≤ m →
             m ≤ L →
               v ∈ Support.latticeCubeSet d n m →
@@ -118,36 +119,47 @@ private abbrev annularResponse_uniformDirectionBound_statement : Prop :=
                         (0 : ℝ) ≤ Ash →
                           (0 : ℝ) < kap →
                             M.gamma * kap ^ (2 : ℕ) = Disorder.cstar M →
-                              (1 / 2 : ℝ) * (kap * (3 : ℝ) ^ (M.gamma * (↑m : ℝ))) ≤ (↑(Annealed.sigmaBar M m) : ℝ) →
+                              (1 / 2 : ℝ) * (kap * (3 : ℝ) ^ (M.gamma * (↑m : ℝ))) ≤
+                                (↑(Annealed.sigmaBar M m) : ℝ) →
                                 (1 / 4 : ℝ) * (kap * (3 : ℝ) ^ (M.gamma * (↑n : ℝ))) ≤
                                     (↑(Annealed.sigmaBar M (n - (2 : ℤ))) : ℝ) →
                                   (↑(Annealed.sigmaBar M (n - (2 : ℤ))) : ℝ) *
-                                        (unitCubeLambda ((2 : ℝ) * M.gamma) (Ch02.MultiscaleExponent.finite (2 : ℝ))
-                                            (unitRescaledCutoffCoeff M { scale := n, index := v } (n - (2 : ℤ)) omega))⁻¹ ≤
+                                        (unitCubeLambda ((2 : ℝ) * M.gamma)
+                                          (Ch02.MultiscaleExponent.finite (2 : ℝ))
+                                            (unitRescaledCutoffCoeff M { scale := n, index := v }
+                                              (n - (2 : ℤ)) omega))⁻¹ ≤
                                       Cl * (3 : ℝ) ^ (M.gamma * ((↑m : ℝ) - (↑n : ℝ))) →
                                     (↑(Annealed.sigmaBar M (n - (2 : ℤ))) : ℝ)⁻¹ *
                                           ((3 : ℝ) ^ ((2 : ℝ) * (↑n : ℝ)) *
                                             Support.shellW1InfGradNorm n
-                                              (ShellField.translate (Support.triadicLatticePoint n v)
-                                                (Provider.Stream.shellIncrement (↑omega : Cutoff.ShellSeq d) (n - (2 : ℤ))
+                                              (ShellField.translate (Support.triadicLatticePoint n
+                                                v)
+                                                (Provider.Stream.shellIncrement (↑omega :
+                                                  Cutoff.ShellSeq d) (n - (2 : ℤ))
                                                   L))) ≤
                                         Ash * (3 : ℝ) ^ (s / (4 : ℝ) * ((↑m : ℝ) - (↑n : ℝ))) →
-                                      (↑(Annealed.sigmaBar M m) : ℝ)⁻¹ * (↑(Annealed.sigmaBar M (n - (2 : ℤ))) : ℝ) ≤ Cr →
+                                      (↑(Annealed.sigmaBar M m) : ℝ)⁻¹ * (↑(Annealed.sigmaBar M (n
+                                        - (2 : ℤ))) : ℝ) ≤ Cr →
                                         Cs * ((1 : ℝ) + Ash * Cl) ^ (2 : ℕ) * Cr * ((1 : ℝ) + Cl) +
-                                                (16 : ℝ) * Cs * ((1 : ℝ) + Ash * Cl) ^ (2 : ℕ) * Cl *
+                                                (16 : ℝ) * Cs * ((1 : ℝ) + Ash * Cl) ^ (2 : ℕ) *
+                                                  Cl *
                                                   ((1 : ℝ) + centeringConst d ^ (2 : ℕ)) +
                                               (4 : ℝ) * Cs * ((1 : ℝ) + (4 : ℝ) * Cl ^ (2 : ℕ)) ≤
                                             C →
                                           IsUglyJEstimate
                                             (responseJ (cubeDomain { scale := n, index := v })
                                               ((subConstCutoffTriadicCoeffFamily M L
-                                                    (Support.fluxIncrementAverage M L m (originCube d m) omega) (matTranspose_fluxIncrementAverage M L m (originCube d m) omega)
+                                                    (Support.fluxIncrementAverage M L m
+                                                      (originCube d m) omega)
+                                                        (matTranspose_fluxIncrementAverage M L m
+                                                          (originCube d m) omega)
                                                     omega).coeffOn
                                                 { scale := n, index := v })
                                               (Observable.inverseSqrtLoad (Annealed.sigmaBar M m) e)
                                               (Observable.sqrtLoad (Annealed.sigmaBar M m) e))
                                             (Support.annularErrorAtom M n s
-                                                (Cutoff.translateCutoffSample (Support.triadicLatticePoint n v) omega) ^
+                                                (Cutoff.translateCutoffSample
+                                                  (Support.triadicLatticePoint n v) omega) ^
                                               (2 : ℕ))
                                             (((↑(Annealed.sigmaBar M m) : ℝ) *
                                                   (↑(Annealed.sigmaBar M (n - (2 : ℤ))) : ℝ)⁻¹ -
@@ -155,32 +167,42 @@ private abbrev annularResponse_uniformDirectionBound_statement : Prop :=
                                               (2 : ℕ))
                                             (((3 : ℝ) ^ (-(M.gamma * (↑n : ℝ))) *
                                                 Cutoff.localCubeControl n
-                                                  (ShellField.translate (Support.triadicLatticePoint n v)
-                                                    (Provider.Stream.shellIncrement (↑omega : Cutoff.ShellSeq d)
+                                                  (ShellField.translate
+                                                    (Support.triadicLatticePoint n v)
+                                                    (Provider.Stream.shellIncrement (↑omega :
+                                                      Cutoff.ShellSeq d)
                                                       (n - (2 : ℤ)) m))) ^
                                               (2 : ℕ))
                                             (((3 : ℝ) ^ (((2 : ℝ) - M.gamma) * (↑n : ℝ)) *
                                                 Support.shellW1InfGradNorm n
-                                                  (ShellField.translate (Support.triadicLatticePoint n v)
-                                                    (Provider.Stream.shellIncrement (↑omega : Cutoff.ShellSeq d)
+                                                  (ShellField.translate
+                                                    (Support.triadicLatticePoint n v)
+                                                    (Provider.Stream.shellIncrement (↑omega :
+                                                      Cutoff.ShellSeq d)
                                                       (n - (2 : ℤ)) L))) ^
                                               (2 : ℕ))
                                             (((3 : ℝ) ^ (((2 : ℝ) - M.gamma) * (↑m : ℝ)) *
                                                 Support.shellW1InfGradNorm m
-                                                  (Provider.Stream.shellIncrement (↑omega : Cutoff.ShellSeq d) m L)) ^
+                                                  (Provider.Stream.shellIncrement (↑omega :
+                                                    Cutoff.ShellSeq d) m L)) ^
                                               (2 : ℕ))
-                                            (Disorder.cstar M) M.gamma ((3 : ℝ) ^ (s * ((↑m : ℝ) - (↑n : ℝ))))
+                                            (Disorder.cstar M) M.gamma ((3 : ℝ) ^ (s * ((↑m : ℝ) -
+                                              (↑n : ℝ))))
                                             ((3 : ℝ) ^ ((s + M.gamma) * ((↑m : ℝ) - (↑n : ℝ)))) C)
-      (M : ABKModel d) (m L m0 : ℤ) (E : { E : ℝ // (1 : ℝ) ≤ E }) (omega : Cutoff.CutoffSample d) (s Cl C : ℝ)
-      (_ : Frozen.Section3.inductionState M m0 E) (_ : m ≤ m0) (_ : m ≤ L) (_ : (0 : ℝ) < s) (_ : s ≤ (1 / 4 : ℝ))
-      (_ : (8 : ℝ) * M.gamma ≤ s) (_ : omega ∈ Support.eventG1 M m s (√(Disorder.cstar M) * (√M.gamma)⁻¹))
+      (M : ABKModel d) (m L m0 : ℤ) (E : { E : ℝ // (1 : ℝ) ≤ E }) (omega : Cutoff.CutoffSample d)
+        (s Cl C : ℝ)
+      (_ : Frozen.Section3.inductionState M m0 E) (_ : m ≤ m0) (_ : m ≤ L) (_ : (0 : ℝ) < s) (_ :
+        s ≤ (1 / 4 : ℝ))
+      (_ : (8 : ℝ) * M.gamma ≤ s) (_ : omega ∈ Support.eventG1 M m s (√(Disorder.cstar M) *
+        (√M.gamma)⁻¹))
       (_ :
         ∀ (n : ℤ) (v : Fin d → ℤ),
           n ≤ m - (1 : ℤ) →
             v ∈ Support.latticeAnnulusSet d n m n →
               (↑(Annealed.sigmaBar M (n - (2 : ℤ))) : ℝ) *
                   (unitCubeLambda ((2 : ℝ) * M.gamma) (Ch02.MultiscaleExponent.finite (2 : ℝ))
-                      (unitRescaledCutoffCoeff M { scale := n, index := v } (n - (2 : ℤ)) omega))⁻¹ ≤
+                      (unitRescaledCutoffCoeff M { scale := n, index := v } (n - (2 : ℤ))
+                        omega))⁻¹ ≤
                 Cl * (3 : ℝ) ^ (M.gamma * ((↑m : ℝ) - (↑n : ℝ))))
       (_ :
         ∀ n ≤ m - (1 : ℤ),
@@ -188,11 +210,14 @@ private abbrev annularResponse_uniformDirectionBound_statement : Prop :=
             (↑(Annealed.sigmaBar M (n - (2 : ℤ))) : ℝ))
       (_ :
         Cs * ((1 : ℝ) + (196 : ℝ) * Cl) ^ (2 : ℕ) * (4 : ℝ) * ((1 : ℝ) + Cl) +
-              (16 : ℝ) * Cs * ((1 : ℝ) + (196 : ℝ) * Cl) ^ (2 : ℕ) * Cl * ((1 : ℝ) + centeringConst d ^ (2 : ℕ)) +
+              (16 : ℝ) * Cs * ((1 : ℝ) + (196 : ℝ) * Cl) ^ (2 : ℕ) * Cl * ((1 : ℝ) +
+                centeringConst d ^ (2 : ℕ)) +
             (4 : ℝ) * Cs * ((1 : ℝ) + (4 : ℝ) * Cl ^ (2 : ℕ)) ≤
           C)
-      (j n : ℤ) (_ : j ≤ m) (_ : n ≤ j - (1 : ℤ)) (_ : (0 : ℝ) < M.gamma) (_ : (0 : ℝ) ≤ (Disorder.cstar M)⁻¹)
-      (_ : n ≤ m) (_ : n ≤ m - (1 : ℤ)) (_ : (0 : ℝ) ≤ C) (_ : (0 : ℝ) < √(Disorder.cstar M) * (√M.gamma)⁻¹)
+      (j n : ℤ) (_ : j ≤ m) (_ : n ≤ j - (1 : ℤ)) (_ : (0 : ℝ) < M.gamma) (_ : (0 : ℝ) ≤
+        (Disorder.cstar M)⁻¹)
+      (_ : n ≤ m) (_ : n ≤ m - (1 : ℤ)) (_ : (0 : ℝ) ≤ C) (_ : (0 : ℝ) < √(Disorder.cstar M) *
+        (√M.gamma)⁻¹)
       (_ : M.gamma * (√(Disorder.cstar M) * (√M.gamma)⁻¹) ^ (2 : ℕ) = Disorder.cstar M)
       (_ :
         (1 / 2 : ℝ) * (√(Disorder.cstar M) * (√M.gamma)⁻¹ * (3 : ℝ) ^ (M.gamma * (↑m : ℝ))) ≤
@@ -202,7 +227,8 @@ private abbrev annularResponse_uniformDirectionBound_statement : Prop :=
       (_ : (0 : ℝ) ≤ (3 : ℝ) ^ ((s + M.gamma) * ((↑m : ℝ) - (↑n : ℝ))))
       (_ :
         ((3 : ℝ) ^ (((2 : ℝ) - M.gamma) * (↑m : ℝ)) *
-              Support.shellW1InfGradNorm m (Provider.Stream.shellIncrement (↑omega : Cutoff.ShellSeq d) m L)) ^
+              Support.shellW1InfGradNorm m (Provider.Stream.shellIncrement (↑omega :
+                Cutoff.ShellSeq d) m L)) ^
             (2 : ℕ) ≤
           gradTailSq M m omega),
       ∀ v ∈ Proportion.latticeAnnulusFinset d n j (j - (1 : ℤ)),
@@ -210,14 +236,20 @@ private abbrev annularResponse_uniformDirectionBound_statement : Prop :=
           vecNorm e = (1 : ℝ) →
             IsUglyJEstimate
               (responseJ (cubeDomain { scale := n, index := v })
-                ((subConstCutoffTriadicCoeffFamily M L (Support.fluxIncrementAverage M L m (originCube d m) omega) (matTranspose_fluxIncrementAverage M L m (originCube d m) omega)
+                ((subConstCutoffTriadicCoeffFamily M L (Support.fluxIncrementAverage M L m
+                  (originCube d m) omega) (matTranspose_fluxIncrementAverage M L m (originCube d
+                    m) omega)
                       omega).coeffOn
                   { scale := n, index := v })
-                (Observable.inverseSqrtLoad (Annealed.sigmaBar M m) e) (Observable.sqrtLoad (Annealed.sigmaBar M m) e))
+                (Observable.inverseSqrtLoad (Annealed.sigmaBar M m) e) (Observable.sqrtLoad
+                  (Annealed.sigmaBar M m) e))
               (annularErrorAtomMax M s omega j n)
-              (((↑(Annealed.sigmaBar M m) : ℝ) * (↑(Annealed.sigmaBar M (n - (2 : ℤ))) : ℝ)⁻¹ - (1 : ℝ)) ^ (2 : ℕ))
-              (annularL2Block M m omega j n) ((2 : ℝ) * annularGradBlock M m omega j n + (2 : ℝ) * gradTailSq M m omega)
-              (gradTailSq M m omega) (Disorder.cstar M) M.gamma ((3 : ℝ) ^ (s * ((↑m : ℝ) - (↑n : ℝ))))
+              (((↑(Annealed.sigmaBar M m) : ℝ) * (↑(Annealed.sigmaBar M (n - (2 : ℤ))) : ℝ)⁻¹ - (1
+                : ℝ)) ^ (2 : ℕ))
+              (annularL2Block M m omega j n) ((2 : ℝ) * annularGradBlock M m omega j n + (2 : ℝ) *
+                gradTailSq M m omega)
+              (gradTailSq M m omega) (Disorder.cstar M) M.gamma ((3 : ℝ) ^ (s * ((↑m : ℝ) - (↑n :
+                ℝ))))
               ((3 : ℝ) ^ ((s + M.gamma) * ((↑m : ℝ) - (↑n : ℝ)))) C
 
 /-- The lattice point of index `0` is the origin. -/
@@ -315,8 +347,10 @@ theorem annularErrorAtomMax_nonneg [NeZero d] (M : ABKModel d) (s : ℝ)
 
 /-! ## Part B -- the `huglyf` binder -/
 
-private theorem annularResponse_uniformDirectionBound : annularResponse_uniformDirectionBound_statement := by
-  intro d _ _ _ hchain M m L m0 _ omega s Cl C hS _ hmL hs0 hs14 hsgam homega hlam hsignlow hC j n hjm _ hgam0 hcsinv hnm hnm1 hC0 hkap0 hkap hsigm hratio hw0 hwg0 h5 v hv e he
+private theorem annularResponse_uniformDirectionBound :
+  annularResponse_uniformDirectionBound_statement := by
+  intro d _ _ _ hchain M m L m0 _ omega s Cl C hS _ hmL hs0 hs14 hsgam homega hlam hsignlow hC j n
+    hjm _ hgam0 hcsinv hnm hnm1 hC0 hkap0 hkap hsigm hratio hw0 hwg0 h5 v hv e he
   have hvset : v ∈ Support.latticeAnnulusSet d n j (j - 1) :=
     (Proportion.mem_latticeAnnulusFinset_iff (by omega)).mp hv
   have hvcube : v ∈ Support.latticeCubeSet d n m :=

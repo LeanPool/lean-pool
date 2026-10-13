@@ -132,19 +132,25 @@ theorem normalizedEuclideanL2_datumGrad_coveringCube_atWindow
 /-! ## 2. The boundary energy leg, at the two hinges -/
 
 private theorem residueEnergyLeg_comparisonBounds1 :
-    ∀ (d : ℕ) [NeZero d] (CB1 CB2 CG1 CG2 KP : ℝ) (_ : (0 : ℝ) < KP) (KR : ℝ) (_ : (0 : ℝ) < KR) (Pcap : ℝ)
+    ∀ (d : ℕ) [NeZero d] (CB1 CB2 CG1 CG2 KP : ℝ) (_ : (0 : ℝ) < KP) (KR : ℝ) (_ : (0 : ℝ) < KR)
+      (Pcap : ℝ)
       (_ : (0 : ℝ) ≤ Pcap) (alpha : ℝ) (_ : alpha = √((2 : ℝ) * (3 : ℝ) ^ d * (Pcap * KP)))
-      (_ : (0 : ℝ) ≤ alpha) (beta sK : ℝ) (_ : sK = √KR) (_ : (0 : ℝ) ≤ √(3 / 2 : ℝ)) (M : ABKModel d)
+      (_ : (0 : ℝ) ≤ alpha) (beta sK : ℝ) (_ : sK = √KR) (_ : (0 : ℝ) ≤ √(3 / 2 : ℝ)) (M :
+        ABKModel d)
       (s : ℝ) (_ : (0 : ℝ) < s) (L m n : ℤ) (x z : Vec d)
       (_ :
-        (fun (y : Vec d) => wellPlacedCentre x m (n + (2 : ℤ)) + y) '' openCubeSet (originCube d (n + (2 : ℤ))) ⊆
-          (fun (y : Vec d) => z + y) '' openCubeSet (originCube d (n + (3 : ℤ))) ∩ openCubeSet (originCube d m))
-      (_ : s ≤ (1 : ℝ)) (_ : (0 : ℝ) < (↑(Annealed.sigmaBar M (n + (3 : ℤ))) : ℝ)) (omega : Cutoff.CutoffSample d)
+        (fun (y : Vec d) => wellPlacedCentre x m (n + (2 : ℤ)) + y) '' openCubeSet (originCube d
+          (n + (2 : ℤ))) ⊆
+          (fun (y : Vec d) => z + y) '' openCubeSet (originCube d (n + (3 : ℤ))) ∩ openCubeSet
+            (originCube d m))
+      (_ : s ≤ (1 : ℝ)) (_ : (0 : ℝ) < (↑(Annealed.sigmaBar M (n + (3 : ℤ))) : ℝ)) (omega :
+        Cutoff.CutoffSample d)
       (u hdat : H1Function (openCubeSet (originCube d m))) (g : Vec d → Vec d) (S : ℝ)
       (hsubx : translateSet x (openCubeSet (originCube d n)) ⊆ openCubeSet (originCube d m))
       (_ :
         caccioppoliWithRHSPrefactor CB1 (originCube d (n + (2 : ℤ)))
-            (parentRebasedFamily M L (n + (3 : ℤ)) (wellPlacedCentre x m (n + (2 : ℤ))) z omega) (1 / 2 : ℝ) (s / (3 : ℝ)) ≤
+            (parentRebasedFamily M L (n + (3 : ℤ)) (wellPlacedCentre x m (n + (2 : ℤ))) z omega)
+              (1 / 2 : ℝ) (s / (3 : ℝ)) ≤
           Pcap)
       (_ :
         Ch02.lambdaS (originCube d (n + (2 : ℤ))) (s / (3 : ℝ))
@@ -152,35 +158,45 @@ private theorem residueEnergyLeg_comparisonBounds1 :
           KP * (↑(Annealed.sigmaBar M (n + (3 : ℤ))) : ℝ))
       (_ :
         (↑(Annealed.sigmaBar M (n + (3 : ℤ))) : ℝ) *
-            (Ch02.lambdaSq (originCube d (n + (2 : ℤ))) (s / (4 : ℝ)) (Ch02.MultiscaleExponent.finite (2 : ℝ))
-                (parentRebasedFamily M L (n + (3 : ℤ)) (wellPlacedCentre x m (n + (2 : ℤ))) z omega))⁻¹ ≤
+            (Ch02.lambdaSq (originCube d (n + (2 : ℤ))) (s / (4 : ℝ))
+              (Ch02.MultiscaleExponent.finite (2 : ℝ))
+                (parentRebasedFamily M L (n + (3 : ℤ)) (wellPlacedCentre x m (n + (2 : ℤ))) z
+                  omega))⁻¹ ≤
           KR)
       (_ :
         MemLp hdat.grad (2 : ℝ≥0∞)
           (normalizedVolumeMeasureOn
-            ((fun (y' : Vec d) => z + y') '' openCubeSet (originCube d (n + (3 : ℤ))) ∩ openCubeSet (originCube d m))))
+            ((fun (y' : Vec d) => z + y') '' openCubeSet (originCube d (n + (3 : ℤ))) ∩
+              openCubeSet (originCube d m))))
       (_ :
         MemLp (Gagliardo.gagliardoKernel s (2 : ℝ≥0∞) g) (2 : ℝ≥0∞)
           (normalizedGagliardoMeasureOn
-            ((fun (y' : Vec d) => z + y') '' openCubeSet (originCube d (n + (3 : ℤ))) ∩ openCubeSet (originCube d m))))
+            ((fun (y' : Vec d) => z + y') '' openCubeSet (originCube d (n + (3 : ℤ))) ∩
+              openCubeSet (originCube d m))))
       (_ :
         MemLp g (2 : ℝ≥0∞)
           (normalizedVolumeMeasureOn
-            ((fun (y : Vec d) => wellPlacedCentre x m (n + (2 : ℤ)) + y) '' openCubeSet (originCube d (n + (2 : ℤ))))))
+            ((fun (y : Vec d) => wellPlacedCentre x m (n + (2 : ℤ)) + y) '' openCubeSet
+              (originCube d (n + (2 : ℤ))))))
       (_ :
         MemLp (Gagliardo.gagliardoKernel s (2 : ℝ≥0∞) g) (2 : ℝ≥0∞)
           (normalizedGagliardoMeasureOn
-            ((fun (y : Vec d) => wellPlacedCentre x m (n + (2 : ℤ)) + y) '' openCubeSet (originCube d (n + (2 : ℤ))))))
+            ((fun (y : Vec d) => wellPlacedCentre x m (n + (2 : ℤ)) + y) '' openCubeSet
+              (originCube d (n + (2 : ℤ))))))
       (_ :
-        ForceBesovRegularity (originCube d (n + (2 : ℤ))) s fun (y : Vec d) => -g (y + wellPlacedCentre x m (n + (2 : ℤ))))
+        ForceBesovRegularity (originCube d (n + (2 : ℤ))) s fun (y : Vec d) => -g (y +
+          wellPlacedCentre x m (n + (2 : ℤ))))
       (hsubc :
-        translateSet (wellPlacedCentre x m (n + (2 : ℤ))) (openCubeSet (originCube d (n + (2 : ℤ)))) ⊆
+        translateSet (wellPlacedCentre x m (n + (2 : ℤ))) (openCubeSet (originCube d (n + (2 :
+          ℤ)))) ⊆
           openCubeSet (originCube d m))
       (v :
         DirichletForcedCubeSolution (originCube d (n + (2 : ℤ)))
-          (parentRebasedFamily M L (n + (3 : ℤ)) (wellPlacedCentre x m (n + (2 : ℤ))) z omega) fun (y : Vec d) =>
+          (parentRebasedFamily M L (n + (3 : ℤ)) (wellPlacedCentre x m (n + (2 : ℤ))) z omega) fun
+            (y : Vec d) =>
           -g (y + wellPlacedCentre x m (n + (2 : ℤ))))
-      (_ : dirichletBoundaryGradientField v = fun (y : Vec d) => hdat.grad (y + wellPlacedCentre x m (n + (2 : ℤ))))
+      (_ : dirichletBoundaryGradientField v = fun (y : Vec d) => hdat.grad (y + wellPlacedCentre x
+        m (n + (2 : ℤ))))
       (_ :
         (0 : ℝ) ≤
           Ch02.lambdaS (originCube d (n + (2 : ℤ))) (s / (3 : ℝ))
@@ -191,22 +207,26 @@ private theorem residueEnergyLeg_comparisonBounds1 :
               (H1Function.untranslate x (u.restrict (isOpen_translateSet_openCubeSet x n) hsubx))) ≤
           √((2 : ℝ) * (3 : ℝ) ^ d *
                   (caccioppoliWithRHSPrefactor CB1 (originCube d (n + (2 : ℤ)))
-                      (parentRebasedFamily M L (n + (3 : ℤ)) (wellPlacedCentre x m (n + (2 : ℤ))) z omega) (1 / 2 : ℝ)
+                      (parentRebasedFamily M L (n + (3 : ℤ)) (wellPlacedCentre x m (n + (2 : ℤ)))
+                        z omega) (1 / 2 : ℝ)
                       (s / (3 : ℝ)) *
                     Ch02.lambdaS (originCube d (n + (2 : ℤ))) (s / (3 : ℝ))
-                      (parentRebasedFamily M L (n + (3 : ℤ)) (wellPlacedCentre x m (n + (2 : ℤ))) z omega))) *
+                      (parentRebasedFamily M L (n + (3 : ℤ)) (wellPlacedCentre x m (n + (2 : ℤ)))
+                        z omega))) *
               (Real.rpow (3 : ℝ) (-(↑(n + (2 : ℤ)) : ℝ)) *
                 √(normalizedL2SqOnSet (openCubeSet (originCube d (n + (2 : ℤ)))) fun (y : Vec d) =>
                     u.toFun (y + wellPlacedCentre x m (n + (2 : ℤ))) - v.toH1.toFun y)) +
             beta *
               dirichletEnergyWithRHSRHS CB2 (originCube d (n + (2 : ℤ)))
-                (parentRebasedFamily M L (n + (3 : ℤ)) (wellPlacedCentre x m (n + (2 : ℤ))) z omega) (s / (2 : ℝ))
+                (parentRebasedFamily M L (n + (3 : ℤ)) (wellPlacedCentre x m (n + (2 : ℤ))) z
+                  omega) (s / (2 : ℝ))
                 (fun (y : Vec d) => -g (y + wellPlacedCentre x m (n + (2 : ℤ)))) v)
       (_ :
         Real.rpow (3 : ℝ) (-(↑(n + (2 : ℤ)) : ℝ)) *
             √(normalizedL2SqOnSet (openCubeSet (originCube d (n + (2 : ℤ)))) fun (y : Vec d) =>
                 (H1Function.untranslate (wellPlacedCentre x m (n + (2 : ℤ)))
-                        (u.restrict (isOpen_translateSet_openCubeSet (wellPlacedCentre x m (n + (2 : ℤ))) (n + (2 : ℤ)))
+                        (u.restrict (isOpen_translateSet_openCubeSet (wellPlacedCentre x m (n + (2
+                          : ℤ))) (n + (2 : ℤ)))
                           hsubc)).toFun
                     y -
                   v.toH1.toFun y) ≤
@@ -216,12 +236,14 @@ private theorem residueEnergyLeg_comparisonBounds1 :
                         (fun (y : Vec d) =>
                           u.toFun y -
                             volumeAverage
-                              ((fun (y' : Vec d) => z + y') '' openCubeSet (originCube d (n + (3 : ℤ))) ∩
+                              ((fun (y' : Vec d) => z + y') '' openCubeSet (originCube d (n + (3 :
+                                ℤ))) ∩
                                 openCubeSet (originCube d m))
                               u.toFun)
                         (2 : ℝ≥0∞)
                         (normalizedVolumeMeasureOn
-                          ((fun (y' : Vec d) => z + y') '' openCubeSet (originCube d (n + (3 : ℤ))) ∩
+                          ((fun (y' : Vec d) => z + y') '' openCubeSet (originCube d (n + (3 :
+                            ℤ))) ∩
                             openCubeSet (originCube d m)))).toReal) +
                 Real.rpow (3 : ℝ) (-(↑(n + (2 : ℤ)) : ℝ)) * S +
               unitMeanZeroPoincareConst d *
@@ -229,33 +251,44 @@ private theorem residueEnergyLeg_comparisonBounds1 :
                   ((3 : ℝ) ^ d *
                     (eLpNorm hdat.grad (2 : ℝ≥0∞)
                         (normalizedVolumeMeasureOn
-                          ((fun (y' : Vec d) => z + y') '' openCubeSet (originCube d (n + (3 : ℤ))) ∩
+                          ((fun (y' : Vec d) => z + y') '' openCubeSet (originCube d (n + (3 :
+                            ℤ))) ∩
                             openCubeSet (originCube d m)))).toReal)) +
             CG1 *
               (((s / (2 : ℝ)).rpow (-(3 / 2 : ℝ)) *
                       poincareLowerEllipticityFactor (originCube d (n + (2 : ℤ)))
-                        (parentRebasedFamily M L (n + (3 : ℤ)) (wellPlacedCentre x m (n + (2 : ℤ))) z omega) (s / (4 : ℝ))
+                        (parentRebasedFamily M L (n + (3 : ℤ)) (wellPlacedCentre x m (n + (2 :
+                          ℤ))) z omega) (s / (4 : ℝ))
                         (Ch02.MultiscaleExponent.finite (2 : ℝ)) *
                     dirichletEnergyWithRHSRHS CG2 (originCube d (n + (2 : ℤ)))
-                      (parentRebasedFamily M L (n + (3 : ℤ)) (wellPlacedCentre x m (n + (2 : ℤ))) z omega) (s / (2 : ℝ))
+                      (parentRebasedFamily M L (n + (3 : ℤ)) (wellPlacedCentre x m (n + (2 : ℤ)))
+                        z omega) (s / (2 : ℝ))
                       (fun (y : Vec d) => -g (y + wellPlacedCentre x m (n + (2 : ℤ)))) v +
                   (s / (2 : ℝ)).rpow (-3 : ℝ) *
-                      (Ch02.lambdaSq (originCube d (n + (2 : ℤ))) (s / (4 : ℝ)) (Ch02.MultiscaleExponent.finite (2 : ℝ))
-                            (parentRebasedFamily M L (n + (3 : ℤ)) (wellPlacedCentre x m (n + (2 : ℤ))) z omega)).rpow
+                      (Ch02.lambdaSq (originCube d (n + (2 : ℤ))) (s / (4 : ℝ))
+                        (Ch02.MultiscaleExponent.finite (2 : ℝ))
+                            (parentRebasedFamily M L (n + (3 : ℤ)) (wellPlacedCentre x m (n + (2 :
+                              ℤ))) z omega)).rpow
                         (-1 : ℝ) *
-                    scaleNormalizedPositiveBesovVectorSeminormTwo (originCube d (n + (2 : ℤ))) (s / (2 : ℝ))
+                    scaleNormalizedPositiveBesovVectorSeminormTwo (originCube d (n + (2 : ℤ))) (s
+                      / (2 : ℝ))
                       fun (y : Vec d) => -g (y + wellPlacedCentre x m (n + (2 : ℤ)))) +
                 negativeToL2Factor s *
-                  normalizedEuclideanL2 (originCube d (n + (2 : ℤ))) (dirichletBoundaryGradientField v))),
+                  normalizedEuclideanL2 (originCube d (n + (2 : ℤ)))
+                    (dirichletBoundaryGradientField v))),
       poincareLowerEllipticityFactor (originCube d (n + (2 : ℤ)))
-            (parentRebasedFamily M L (n + (3 : ℤ)) (wellPlacedCentre x m (n + (2 : ℤ))) z omega) (s / (4 : ℝ))
+            (parentRebasedFamily M L (n + (3 : ℤ)) (wellPlacedCentre x m (n + (2 : ℤ))) z omega)
+              (s / (4 : ℝ))
             (Ch02.MultiscaleExponent.finite (2 : ℝ)) ≤
           sK * √(↑(Annealed.sigmaBar M (n + (3 : ℤ))) : ℝ)⁻¹ ∧
-        (Ch02.lambdaSq (originCube d (n + (2 : ℤ))) (s / (4 : ℝ)) (Ch02.MultiscaleExponent.finite (2 : ℝ))
-                  (parentRebasedFamily M L (n + (3 : ℤ)) (wellPlacedCentre x m (n + (2 : ℤ))) z omega)).rpow
+        (Ch02.lambdaSq (originCube d (n + (2 : ℤ))) (s / (4 : ℝ)) (Ch02.MultiscaleExponent.finite
+          (2 : ℝ))
+                  (parentRebasedFamily M L (n + (3 : ℤ)) (wellPlacedCentre x m (n + (2 : ℤ))) z
+                    omega)).rpow
               (-1 : ℝ) ≤
             KR * (↑(Annealed.sigmaBar M (n + (3 : ℤ))) : ℝ)⁻¹ ∧
-          (scaleNormalizedPositiveBesovVectorSeminormTwo (originCube d (n + (2 : ℤ))) (s / (2 : ℝ)) fun (y : Vec d) =>
+          (scaleNormalizedPositiveBesovVectorSeminormTwo (originCube d (n + (2 : ℤ))) (s / (2 :
+            ℝ)) fun (y : Vec d) =>
                 -g (y + wellPlacedCentre x m (n + (2 : ℤ)))) ≤
               besovGagliardoConstant d * Real.rpow (3 : ℝ) (s * (↑(n + (2 : ℤ)) : ℝ)) *
                 (gagliardoWindowConst d *
@@ -272,7 +305,8 @@ private theorem residueEnergyLeg_comparisonBounds1 :
               negativeToL2Factor s ≤ √(3 / 2 : ℝ) * s.rpow (-2 : ℝ) ∧
                 √(localizedCoeffEnergyValue (openCubeSet (originCube d n))
                       ((parentRebasedFamily M L (n + (3 : ℤ)) x z omega).coeffOn (originCube d n))
-                      (H1Function.untranslate x (u.restrict (isOpen_translateSet_openCubeSet x n) hsubx))) ≤
+                      (H1Function.untranslate x (u.restrict (isOpen_translateSet_openCubeSet x n)
+                        hsubx))) ≤
                   alpha * √(↑(Annealed.sigmaBar M (n + (3 : ℤ))) : ℝ) *
                       (Real.rpow (3 : ℝ) (-(↑(n + (2 : ℤ)) : ℝ)) *
                               ((3 : ℝ) ^ d *
@@ -280,12 +314,14 @@ private theorem residueEnergyLeg_comparisonBounds1 :
                                     (fun (y : Vec d) =>
                                       u.toFun y -
                                         volumeAverage
-                                          ((fun (y' : Vec d) => z + y') '' openCubeSet (originCube d (n + (3 : ℤ))) ∩
+                                          ((fun (y' : Vec d) => z + y') '' openCubeSet (originCube
+                                            d (n + (3 : ℤ))) ∩
                                             openCubeSet (originCube d m))
                                           u.toFun)
                                     (2 : ℝ≥0∞)
                                     (normalizedVolumeMeasureOn
-                                      ((fun (y' : Vec d) => z + y') '' openCubeSet (originCube d (n + (3 : ℤ))) ∩
+                                      ((fun (y' : Vec d) => z + y') '' openCubeSet (originCube d
+                                        (n + (3 : ℤ))) ∩
                                         openCubeSet (originCube d m)))).toReal) +
                             Real.rpow (3 : ℝ) (-(↑(n + (2 : ℤ)) : ℝ)) * S +
                           unitMeanZeroPoincareConst d *
@@ -293,31 +329,41 @@ private theorem residueEnergyLeg_comparisonBounds1 :
                               ((3 : ℝ) ^ d *
                                 (eLpNorm hdat.grad (2 : ℝ≥0∞)
                                     (normalizedVolumeMeasureOn
-                                      ((fun (y' : Vec d) => z + y') '' openCubeSet (originCube d (n + (3 : ℤ))) ∩
+                                      ((fun (y' : Vec d) => z + y') '' openCubeSet (originCube d
+                                        (n + (3 : ℤ))) ∩
                                         openCubeSet (originCube d m)))).toReal)) +
                         CG1 *
                           (((s / (2 : ℝ)).rpow (-(3 / 2 : ℝ)) *
                                   poincareLowerEllipticityFactor (originCube d (n + (2 : ℤ)))
-                                    (parentRebasedFamily M L (n + (3 : ℤ)) (wellPlacedCentre x m (n + (2 : ℤ))) z omega)
+                                    (parentRebasedFamily M L (n + (3 : ℤ)) (wellPlacedCentre x m
+                                      (n + (2 : ℤ))) z omega)
                                     (s / (4 : ℝ)) (Ch02.MultiscaleExponent.finite (2 : ℝ)) *
                                 dirichletEnergyWithRHSRHS CG2 (originCube d (n + (2 : ℤ)))
-                                  (parentRebasedFamily M L (n + (3 : ℤ)) (wellPlacedCentre x m (n + (2 : ℤ))) z omega)
-                                  (s / (2 : ℝ)) (fun (y : Vec d) => -g (y + wellPlacedCentre x m (n + (2 : ℤ)))) v +
+                                  (parentRebasedFamily M L (n + (3 : ℤ)) (wellPlacedCentre x m (n
+                                    + (2 : ℤ))) z omega)
+                                  (s / (2 : ℝ)) (fun (y : Vec d) => -g (y + wellPlacedCentre x m
+                                    (n + (2 : ℤ)))) v +
                               (s / (2 : ℝ)).rpow (-3 : ℝ) *
                                   (Ch02.lambdaSq (originCube d (n + (2 : ℤ))) (s / (4 : ℝ))
                                         (Ch02.MultiscaleExponent.finite (2 : ℝ))
-                                        (parentRebasedFamily M L (n + (3 : ℤ)) (wellPlacedCentre x m (n + (2 : ℤ))) z
+                                        (parentRebasedFamily M L (n + (3 : ℤ)) (wellPlacedCentre x
+                                          m (n + (2 : ℤ))) z
                                           omega)).rpow
                                     (-1 : ℝ) *
-                                scaleNormalizedPositiveBesovVectorSeminormTwo (originCube d (n + (2 : ℤ))) (s / (2 : ℝ))
+                                scaleNormalizedPositiveBesovVectorSeminormTwo (originCube d (n +
+                                  (2 : ℤ))) (s / (2 : ℝ))
                                   fun (y : Vec d) => -g (y + wellPlacedCentre x m (n + (2 : ℤ)))) +
                             negativeToL2Factor s *
-                              normalizedEuclideanL2 (originCube d (n + (2 : ℤ))) (dirichletBoundaryGradientField v))) +
+                              normalizedEuclideanL2 (originCube d (n + (2 : ℤ)))
+                                (dirichletBoundaryGradientField v))) +
                     beta *
                       dirichletEnergyWithRHSRHS CB2 (originCube d (n + (2 : ℤ)))
-                        (parentRebasedFamily M L (n + (3 : ℤ)) (wellPlacedCentre x m (n + (2 : ℤ))) z omega) (s / (2 : ℝ))
+                        (parentRebasedFamily M L (n + (3 : ℤ)) (wellPlacedCentre x m (n + (2 :
+                          ℤ))) z omega) (s / (2 : ℝ))
                         (fun (y : Vec d) => -g (y + wellPlacedCentre x m (n + (2 : ℤ)))) v := by
-  intro d _ CB1 _ _ _ KP hKP KR hKR Pcap hPcap0 alpha halphadef halpha0 _ sK hsKdef hnegC0 M s hs L m n x z hcov hs1 hsig omega _ hdat g _ _ hprefcap hlamScap hlam4 hhL2W hgWW hgL2cov hgWcov hgreg hsubc v hbg hLam0 hsqrt hB4
+  intro d _ CB1 _ _ _ KP hKP KR hKR Pcap hPcap0 alpha halphadef halpha0 _ sK hsKdef hnegC0 M s hs
+    L m n x z hcov hs1 hsig omega _ hdat g _ _ hprefcap hlamScap hlam4 hhL2W hgWW hgL2cov hgWcov
+      hgreg hsubc v hbg hLam0 hsqrt hB4
   have hA : Real.sqrt (2 * (3 : ℝ) ^ d *
       (caccioppoliWithRHSPrefactor CB1 (originCube d (n + 2))
           (parentRebasedFamily M L (n + 3) (wellPlacedCentre x m (n + 2)) z omega)
@@ -407,22 +453,27 @@ private theorem residueEnergyLeg_comparisonBounds2 :
       (_ : MemLp hdat.grad (2 : ℝ≥0∞) (normalizedVolumeMeasureOn (openCubeSet (originCube d m))))
       (_ : MemLp u.toFun (2 : ℝ≥0∞) (normalizedVolumeMeasureOn (openCubeSet (originCube d m))))
       (_ :
-        (_ : (_ : Set (Vec d)) → ℝ≥0∞)
-            ((fun (y' : Vec d) => z + y') '' openCubeSet (originCube d (n + (3 : ℤ))) ∩ openCubeSet (originCube d m)) ≠
+        (volume : Set (Vec d) → ENNReal)
+            ((fun (y' : Vec d) => z + y') '' openCubeSet (originCube d (n + (3 : ℤ))) ∩
+              openCubeSet (originCube d m)) ≠
           (0 : ℝ≥0∞))
       (_ :
         IsProbabilityMeasure
           (normalizedVolumeMeasureOn
-            ((fun (y' : Vec d) => z + y') '' openCubeSet (originCube d (n + (3 : ℤ))) ∩ openCubeSet (originCube d m)))),
+            ((fun (y' : Vec d) => z + y') '' openCubeSet (originCube d (n + (3 : ℤ))) ∩
+              openCubeSet (originCube d m)))),
       MemLp hdat.grad (2 : ℝ≥0∞)
           (normalizedVolumeMeasureOn
-            ((fun (y' : Vec d) => z + y') '' openCubeSet (originCube d (n + (3 : ℤ))) ∩ openCubeSet (originCube d m))) ∧
+            ((fun (y' : Vec d) => z + y') '' openCubeSet (originCube d (n + (3 : ℤ))) ∩
+              openCubeSet (originCube d m))) ∧
         MemLp (Gagliardo.gagliardoKernel s (2 : ℝ≥0∞) g) (2 : ℝ≥0∞)
             (normalizedGagliardoMeasureOn
-              ((fun (y' : Vec d) => z + y') '' openCubeSet (originCube d (n + (3 : ℤ))) ∩ openCubeSet (originCube d m))) ∧
+              ((fun (y' : Vec d) => z + y') '' openCubeSet (originCube d (n + (3 : ℤ))) ∩
+                openCubeSet (originCube d m))) ∧
           MemLp (Gagliardo.gagliardoKernel s (2 : ℝ≥0∞) hdat.grad) (2 : ℝ≥0∞)
               (normalizedGagliardoMeasureOn
-                ((fun (y' : Vec d) => z + y') '' openCubeSet (originCube d (n + (3 : ℤ))) ∩ openCubeSet (originCube d m))) ∧
+                ((fun (y' : Vec d) => z + y') '' openCubeSet (originCube d (n + (3 : ℤ))) ∩
+                  openCubeSet (originCube d m))) ∧
             eLpNorm
                   (fun (y : Vec d) =>
                     u.toFun y -
@@ -458,11 +509,13 @@ private theorem residueEnergyLeg_comparisonBounds2 :
                               openCubeSet (originCube d (n + (2 : ℤ))))) ∧
                         (ForceBesovRegularity (originCube d (n + (2 : ℤ))) s fun (y : Vec d) =>
                             -g (y + wellPlacedCentre x m (n + (2 : ℤ)))) ∧
-                          (ForceBesovRegularity (originCube d (n + (2 : ℤ))) (s / (2 : ℝ)) fun (y : Vec d) =>
+                          (ForceBesovRegularity (originCube d (n + (2 : ℤ))) (s / (2 : ℝ)) fun (y
+                            : Vec d) =>
                               -g (y + wellPlacedCentre x m (n + (2 : ℤ)))) ∧
                             (ForceBesovRegularity (originCube d (n + (2 : ℤ))) s fun (y : Vec d) =>
                                 hdat.grad (y + wellPlacedCentre x m (n + (2 : ℤ)))) ∧
-                              (ForceBesovRegularity (originCube d (n + (2 : ℤ))) (s / (2 : ℝ)) fun (y : Vec d) =>
+                              (ForceBesovRegularity (originCube d (n + (2 : ℤ))) (s / (2 : ℝ)) fun
+                                (y : Vec d) =>
                                   hdat.grad (y + wellPlacedCentre x m (n + (2 : ℤ)))) ∧
                                 translateSet (wellPlacedCentre x m (n + (2 : ℤ)))
                                     (openCubeSet (originCube d (n + (2 : ℤ)))) ⊆
@@ -533,9 +586,12 @@ private theorem residueEnergyLeg_comparisonBounds2 :
 
 private theorem residueEnergyLeg_comparisonBounds3 :
     ∀ (d : ℕ) [NeZero d] (CB1 CB2 : ℝ) (_ : (0 : ℝ) < CB1) (_ : (0 : ℝ) < CB2)
-      (_ : (0 : ℝ) ≤ (3 : ℝ) ^ d) (M : ABKModel d) (s : ℝ) (_ : (0 : ℝ) < s) (L m n : ℤ) (x z : Vec d)
-      (_ : s ≤ (1 : ℝ)) (omega : Cutoff.CutoffSample d) (u hdat : H1Function (openCubeSet (originCube d m)))
-      (g : Vec d → Vec d) (hsubx : translateSet x (openCubeSet (originCube d n)) ⊆ openCubeSet (originCube d m))
+      (_ : (0 : ℝ) ≤ (3 : ℝ) ^ d) (M : ABKModel d) (s : ℝ) (_ : (0 : ℝ) < s) (L m n : ℤ) (x z :
+        Vec d)
+      (_ : s ≤ (1 : ℝ)) (omega : Cutoff.CutoffSample d) (u hdat : H1Function (openCubeSet
+        (originCube d m)))
+      (g : Vec d → Vec d) (hsubx : translateSet x (openCubeSet (originCube d n)) ⊆ openCubeSet
+        (originCube d m))
       (_ :
         ForceBesovRegularity (originCube d (n + (2 : ℤ))) (s / (2 : ℝ)) fun (y : Vec d) =>
           -g (y + wellPlacedCentre x m (n + (2 : ℤ))))
@@ -544,9 +600,11 @@ private theorem residueEnergyLeg_comparisonBounds3 :
           hdat.grad (y + wellPlacedCentre x m (n + (2 : ℤ))))
       (v :
         DirichletForcedCubeSolution (originCube d (n + (2 : ℤ)))
-          (parentRebasedFamily M L (n + (3 : ℤ)) (wellPlacedCentre x m (n + (2 : ℤ))) z omega) fun (y : Vec d) =>
+          (parentRebasedFamily M L (n + (3 : ℤ)) (wellPlacedCentre x m (n + (2 : ℤ))) z omega) fun
+            (y : Vec d) =>
           -g (y + wellPlacedCentre x m (n + (2 : ℤ))))
-      (_ : ∀ (y : Vec d), v.boundaryData.grad y = hdat.grad (y + wellPlacedCentre x m (n + (2 : ℤ))))
+      (_ : ∀ (y : Vec d), v.boundaryData.grad y = hdat.grad (y + wellPlacedCentre x m (n + (2 :
+        ℤ))))
       (_ :
         localizedCoeffEnergyValue (openCubeSet (originCube d n))
             ((parentRebasedFamily M L (n + (3 : ℤ)) x z omega).coeffOn (originCube d n))
@@ -554,47 +612,63 @@ private theorem residueEnergyLeg_comparisonBounds3 :
           (3 : ℝ) ^ d *
             ((2 : ℝ) *
                 (caccioppoliWithRHSPrefactor CB1 (originCube d (n + (2 : ℤ)))
-                    (parentRebasedFamily M L (n + (3 : ℤ)) (wellPlacedCentre x m (n + (2 : ℤ))) z omega) (1 / 2 : ℝ)
+                    (parentRebasedFamily M L (n + (3 : ℤ)) (wellPlacedCentre x m (n + (2 : ℤ))) z
+                      omega) (1 / 2 : ℝ)
                     (s / (3 : ℝ)) *
                   (Ch02.lambdaS (originCube d (n + (2 : ℤ))) (s / (3 : ℝ))
-                        (parentRebasedFamily M L (n + (3 : ℤ)) (wellPlacedCentre x m (n + (2 : ℤ))) z omega) *
+                        (parentRebasedFamily M L (n + (3 : ℤ)) (wellPlacedCentre x m (n + (2 :
+                          ℤ))) z omega) *
                       Real.rpow (3 : ℝ) ((-2 : ℝ) * (↑(n + (2 : ℤ)) : ℝ)) *
-                    normalizedL2SqOnSet (openCubeSet (originCube d (n + (2 : ℤ)))) fun (y : Vec d) =>
+                    normalizedL2SqOnSet (openCubeSet (originCube d (n + (2 : ℤ)))) fun (y : Vec d)
+                      =>
                       u.toFun (y + wellPlacedCentre x m (n + (2 : ℤ))) - v.toH1.toFun y)) +
               (2 : ℝ) *
                 ((18 : ℝ) ^ d *
                   dirichletEnergyWithRHSRHS CB2 (originCube d (n + (2 : ℤ)))
-                      (parentRebasedFamily M L (n + (3 : ℤ)) (wellPlacedCentre x m (n + (2 : ℤ))) z omega) (s / (2 : ℝ))
+                      (parentRebasedFamily M L (n + (3 : ℤ)) (wellPlacedCentre x m (n + (2 : ℤ)))
+                        z omega) (s / (2 : ℝ))
                       (fun (y : Vec d) => -g (y + wellPlacedCentre x m (n + (2 : ℤ)))) v ^
                     (2 : ℕ)))),
-      (dirichletBoundaryGradientField v = fun (y : Vec d) => hdat.grad (y + wellPlacedCentre x m (n + (2 : ℤ)))) ∧
-        ForceBesovRegularity (originCube d (n + (2 : ℤ))) (s / (2 : ℝ)) (dirichletBoundaryGradientField v) ∧
+      (dirichletBoundaryGradientField v = fun (y : Vec d) => hdat.grad (y + wellPlacedCentre x m
+        (n + (2 : ℤ)))) ∧
+        ForceBesovRegularity (originCube d (n + (2 : ℤ))) (s / (2 : ℝ))
+          (dirichletBoundaryGradientField v) ∧
           h1EnergyNormOnCube (originCube d n) (parentRebasedFamily M L (n + (3 : ℤ)) x z omega)
-                (H1Function.untranslate x (u.restrict (isOpen_translateSet_openCubeSet x n) hsubx)) =
+                (H1Function.untranslate x (u.restrict (isOpen_translateSet_openCubeSet x n)
+                  hsubx)) =
               √(localizedCoeffEnergyValue (openCubeSet (originCube d n))
                   ((parentRebasedFamily M L (n + (3 : ℤ)) x z omega).coeffOn (originCube d n))
-                  (H1Function.untranslate x (u.restrict (isOpen_translateSet_openCubeSet x n) hsubx))) ∧
+                  (H1Function.untranslate x (u.restrict (isOpen_translateSet_openCubeSet x n)
+                    hsubx))) ∧
             (0 : ℝ) ≤
                 Ch02.lambdaS (originCube d (n + (2 : ℤ))) (s / (3 : ℝ))
-                  (parentRebasedFamily M L (n + (3 : ℤ)) (wellPlacedCentre x m (n + (2 : ℤ))) z omega) ∧
+                  (parentRebasedFamily M L (n + (3 : ℤ)) (wellPlacedCentre x m (n + (2 : ℤ))) z
+                    omega) ∧
               √(localizedCoeffEnergyValue (openCubeSet (originCube d n))
                       ((parentRebasedFamily M L (n + (3 : ℤ)) x z omega).coeffOn (originCube d n))
-                      (H1Function.untranslate x (u.restrict (isOpen_translateSet_openCubeSet x n) hsubx))) ≤
+                      (H1Function.untranslate x (u.restrict (isOpen_translateSet_openCubeSet x n)
+                        hsubx))) ≤
                   √((2 : ℝ) * (3 : ℝ) ^ d *
                           (caccioppoliWithRHSPrefactor CB1 (originCube d (n + (2 : ℤ)))
-                              (parentRebasedFamily M L (n + (3 : ℤ)) (wellPlacedCentre x m (n + (2 : ℤ))) z omega)
+                              (parentRebasedFamily M L (n + (3 : ℤ)) (wellPlacedCentre x m (n + (2
+                                : ℤ))) z omega)
                               (1 / 2 : ℝ) (s / (3 : ℝ)) *
                             Ch02.lambdaS (originCube d (n + (2 : ℤ))) (s / (3 : ℝ))
-                              (parentRebasedFamily M L (n + (3 : ℤ)) (wellPlacedCentre x m (n + (2 : ℤ))) z omega))) *
+                              (parentRebasedFamily M L (n + (3 : ℤ)) (wellPlacedCentre x m (n + (2
+                                : ℤ))) z omega))) *
                       (√(Real.rpow (3 : ℝ) ((-2 : ℝ) * (↑(n + (2 : ℤ)) : ℝ))) *
-                        √(normalizedL2SqOnSet (openCubeSet (originCube d (n + (2 : ℤ)))) fun (y : Vec d) =>
+                        √(normalizedL2SqOnSet (openCubeSet (originCube d (n + (2 : ℤ)))) fun (y :
+                          Vec d) =>
                             u.toFun (y + wellPlacedCentre x m (n + (2 : ℤ))) - v.toH1.toFun y)) +
                     √((2 : ℝ) * (3 : ℝ) ^ d * (18 : ℝ) ^ d) *
                       dirichletEnergyWithRHSRHS CB2 (originCube d (n + (2 : ℤ)))
-                        (parentRebasedFamily M L (n + (3 : ℤ)) (wellPlacedCentre x m (n + (2 : ℤ))) z omega) (s / (2 : ℝ))
+                        (parentRebasedFamily M L (n + (3 : ℤ)) (wellPlacedCentre x m (n + (2 :
+                          ℤ))) z omega) (s / (2 : ℝ))
                         (fun (y : Vec d) => -g (y + wellPlacedCentre x m (n + (2 : ℤ)))) v ∧
-                √(Real.rpow (3 : ℝ) ((-2 : ℝ) * (↑(n + (2 : ℤ)) : ℝ))) = Real.rpow (3 : ℝ) (-(↑(n + (2 : ℤ)) : ℝ)) := by
-  intro d _ CB1 CB2 hCB1 hCB2 h3d0 M s hs L m n x z hs1 omega u hdat g hsubx hgreg2 hhreg2 v hvgrad hB2disp
+                √(Real.rpow (3 : ℝ) ((-2 : ℝ) * (↑(n + (2 : ℤ)) : ℝ))) = Real.rpow (3 : ℝ) (-(↑(n
+                  + (2 : ℤ)) : ℝ)) := by
+  intro d _ CB1 CB2 hCB1 hCB2 h3d0 M s hs L m n x z hs1 omega u hdat g hsubx hgreg2 hhreg2 v
+    hvgrad hB2disp
   have hbg : dirichletBoundaryGradientField v =
       fun y => hdat.grad (y + wellPlacedCentre x m (n + 2)) := by
     funext y

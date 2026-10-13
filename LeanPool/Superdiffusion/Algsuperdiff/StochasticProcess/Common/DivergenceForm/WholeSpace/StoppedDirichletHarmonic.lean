@@ -111,8 +111,8 @@ theorem integral_eval_exitTimeTrunc_eq_of_hasExitMeanValueOn
       h (omega (ContinuousPath.exitTimeTrunc U t omega))) mu :=
     Integrable.of_bound
       ((hh.comp (ContinuousPath.measurable_eval_stoppingTime_borel _
-        (ContinuousPath.isStoppingTime_exitTimeTrunc U hU t))).stronglyMeasurable
-          ).aestronglyMeasurable C (Filter.Eventually.of_forall fun _ ↦ hC _)
+        (ContinuousPath.isStoppingTime_exitTimeTrunc U hU
+          t))).stronglyMeasurable).aestronglyMeasurable C (Filter.Eventually.of_forall fun _ ↦ hC _)
   have haefin : ∀ᵐ omega ∂mu, ContinuousPath.exitTime U omega < ⊤ :=
     ae_lt_top (ContinuousPath.measurable_exitTime U hU) hwfin
   have hsurvival : ∫ omega in S, h (omega (ContinuousPath.exitTimeTrunc U t omega)) ∂mu =
@@ -170,8 +170,8 @@ theorem integral_eval_exitTimeTrunc_eq_add_of_hasExitMeanValueOn
       h (omega (ContinuousPath.exitTimeTrunc U t omega))) mu :=
     Integrable.of_bound
       ((hh.comp (ContinuousPath.measurable_eval_stoppingTime_borel _
-        (ContinuousPath.isStoppingTime_exitTimeTrunc U hU t))).stronglyMeasurable
-          ).aestronglyMeasurable C (Filter.Eventually.of_forall fun _ ↦ hC _)
+        (ContinuousPath.isStoppingTime_exitTimeTrunc U hU
+          t))).stronglyMeasurable).aestronglyMeasurable C (Filter.Eventually.of_forall fun _ ↦ hC _)
   have hwint := integrable_expectedExitTime_eval_exitTimeTrunc P hP hFeller hK hU t hx hwfin
   have hsplit : ∫ omega, u (omega (ContinuousPath.exitTimeTrunc U t omega)) ∂mu =
       (∫ omega, h (omega (ContinuousPath.exitTimeTrunc U t omega)) ∂mu) -

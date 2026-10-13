@@ -300,7 +300,8 @@ private theorem gaugedLoad_coordinate_abs_bound :
                   ∀ (Wl : ℝ),
                     S ^ (4 : ℕ) ≤ Wl ^ (2 : ℕ) →
                       ∀ (j : Fin d),
-                        (vecNormSq fun (i : Fin d) => freshShellCubeAverage R omega L Hi i j) ^ (2 : ℕ) ≤
+                        (vecNormSq fun (i : Fin d) => freshShellCubeAverage R omega L Hi i j) ^ (2
+                          : ℕ) ≤
                           (8 : ℝ) * crd * Wl ^ (2 : ℕ) := by
   intro d K jd R hR L Hi crd hcrd hcrd0 omega S hS Wl hS4 j
   have hFjmem : MemLp (streamForcing 1 omega L Hi (Pi.single j (1 : ℝ)))
@@ -344,7 +345,8 @@ private theorem gaugedLoad_rescaledForcingBound :
     ∀ {d : ℕ} {R : TriadicCube d} (L Hi : ℤ) (crd : ℝ)
       (omega : Cutoff.ShellSeq d) (Wl : ℝ),
       (∀ (j : Fin d),
-          (vecNormSq fun (i : Fin d) => freshShellCubeAverage R omega L Hi i j) ^ (2 : ℕ) ≤ (8 : ℝ) * crd * Wl ^ (2 : ℕ)) →
+          (vecNormSq fun (i : Fin d) => freshShellCubeAverage R omega L Hi i j) ^ (2 : ℕ) ≤ (8 :
+            ℝ) * crd * Wl ^ (2 : ℕ)) →
         Ch02.matrixFrobeniusNormSq (freshShellCubeAverage R omega L Hi) ^ (2 : ℕ) ≤
           (8 : ℝ) * (↑d : ℝ) ^ (2 : ℕ) * crd * Wl ^ (2 : ℕ) := by
   intro d R L Hi crd omega Wl hcolbd

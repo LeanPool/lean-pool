@@ -270,20 +270,25 @@ private theorem smoothMatrixField_componentIntegrationByParts :
                   (∀ (j : Fin d), HasCompactSupport (euclideanCoordDeriv j psi)) →
                     (∀ (j : Fin d), tsupport (euclideanCoordDeriv j psi) ⊆ U) →
                       (∀ (i j : Fin d),
-                          Integrable (fun (x : Vec d) => w.toFun x * (k x i j * euclideanCoordSecondDeriv j i psi x))
+                          Integrable (fun (x : Vec d) => w.toFun x * (k x i j *
+                            euclideanCoordSecondDeriv j i psi x))
                             (volume.restrict U)) →
                         (∀ (i j : Fin d),
                             Integrable
                               (fun (x : Vec d) =>
                                 w.toFun x *
-                                  (euclideanCoordDeriv j psi x * euclideanCoordDeriv i (fun (y : Vec d) => k y i j) x))
+                                  (euclideanCoordDeriv j psi x * euclideanCoordDeriv i (fun (y :
+                                    Vec d) => k y i j) x))
                               (volume.restrict U)) →
                           ∀ (i j : Fin d),
-                            (∫ (x : Vec d) in U, w.toFun x * (k x i j * euclideanCoordSecondDeriv j i psi x)) +
+                            (∫ (x : Vec d) in U, w.toFun x * (k x i j * euclideanCoordSecondDeriv
+                              j i psi x)) +
                                 ∫ (x : Vec d) in U,
                                   w.toFun x *
-                                    (euclideanCoordDeriv j psi x * euclideanCoordDeriv i (fun (y : Vec d) => k y i j) x) =
-                              -∫ (x : Vec d) in U, w.grad x i * (euclideanCoordDeriv j psi x * k x i j) := by
+                                    (euclideanCoordDeriv j psi x * euclideanCoordDeriv i (fun (y :
+                                      Vec d) => k y i j) x) =
+                              -∫ (x : Vec d) in U, w.grad x i * (euclideanCoordDeriv j psi x * k x
+                                i j) := by
   intro d U hU k hk w psi _ hDpsi_smooth hDpsi_cs hDpsi_sub hP_int hQ_int i j
   have hchi : ContDiff ℝ 1 fun x => euclideanCoordDeriv j psi x * k x i j :=
     ((hDpsi_smooth j).of_le (by norm_num)).mul (hk i j)

@@ -645,8 +645,7 @@ at large shifts. -/
 theorem tendsto_smul_streamAnalyticMinimalC0Resolvent
     (M : ABKModel d) (omega : FullSample d M.gamma) (f : C₀(Vec d, ℝ)) :
     Tendsto (fun mu : PositiveShift ↦
-      (mu : ℝ) • (streamWholeSpaceAnalyticData M omega
-        ).analyticMinimalC0ResolventOfVanishing
+      (mu : ℝ) • (streamWholeSpaceAnalyticData M omega).analyticMinimalC0ResolventOfVanishing
           (hasVanishing_streamAnalyticMinimalResolvent M omega) mu f)
       atTop (nhds f) := by
   rw [Metric.tendsto_atTop]
@@ -729,18 +728,16 @@ minimal operator. -/
 noncomputable def streamAnalyticMinimalPositiveC0ContractiveResolvent
     (M : ABKModel d) (omega : FullSample d M.gamma) :
     PositiveC0ContractiveResolvent (Vec d) :=
-  (streamWholeSpaceAnalyticData M omega
-    ).analyticMinimalPositiveC0ContractiveResolventOfVanishing
+  (streamWholeSpaceAnalyticData M omega).analyticMinimalPositiveC0ContractiveResolventOfVanishing
       (hasVanishing_streamAnalyticMinimalResolvent M omega)
       (hasDenseRange_streamAnalyticMinimalC0 M omega)
 
 @[simp] theorem streamAnalyticMinimalPositiveC0ContractiveResolvent_operator
     (M : ABKModel d) (omega : FullSample d M.gamma)
     (mu : PositiveShift) (f : C₀(Vec d, ℝ)) :
-    (streamAnalyticMinimalPositiveC0ContractiveResolvent M omega
-      ).toContractiveResolvent.operator mu f =
-      (streamWholeSpaceAnalyticData M omega
-        ).analyticMinimalC0ResolventOfVanishing
+    (streamAnalyticMinimalPositiveC0ContractiveResolvent M omega).toContractiveResolvent.operator
+      mu f =
+      (streamWholeSpaceAnalyticData M omega).analyticMinimalC0ResolventOfVanishing
           (hasVanishing_streamAnalyticMinimalResolvent M omega) mu f := rfl
 
 end

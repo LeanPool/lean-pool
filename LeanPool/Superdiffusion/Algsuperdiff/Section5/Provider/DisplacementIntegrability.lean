@@ -52,8 +52,8 @@ theorem exists_ae_integrable_streamProcess_norm_rpow
     _hSmeas, _hSnn, _hCS, _hpS, _hCSle, _hKle, _hpSrange, _hSmom, _hconf, _hearly,
     _hdispk, _hdispR, htail⟩ := hlift M hcs hgamma t ht 1
   filter_upwards [htail] with omega homega
-  letI := (streamExhaustionTailInput M omega).toOnePointRegular.metricSpace
-  letI := (streamExhaustionTailInput M omega).toOnePointRegular.completeSpace
+  let := (streamExhaustionTailInput M omega).toOnePointRegular.metricSpace
+  let := (streamExhaustionTailInput M omega).toOnePointRegular.completeSpace
   intro p hp
   exact (integral_norm_onePointRetract_streamProcess_rpow_le_of_triadic_sq_tail
     M omega t.toNNReal
@@ -80,8 +80,8 @@ theorem exists_ae_integrable_streamProcess_displacement
   refine ⟨gammaI, hgammaI, ?_⟩
   intro M hcs hgamma t ht
   filter_upwards [hfinite M hcs hgamma t ht] with omega homega
-  letI := (streamExhaustionTailInput M omega).toOnePointRegular.metricSpace
-  letI := (streamExhaustionTailInput M omega).toOnePointRegular.completeSpace
+  let := (streamExhaustionTailInput M omega).toOnePointRegular.metricSpace
+  let := (streamExhaustionTailInput M omega).toOnePointRegular.completeSpace
   let Q := streamProcess M omega ((0 : Vec d) : OnePoint (Vec d))
   let X : ContinuousPath (OnePoint (Vec d)) → Vec d := fun path =>
     onePointRetract (0 : Vec d) (path t.toNNReal)

@@ -239,10 +239,12 @@ private theorem stripFourthEnergy_calderonZygmund_bound :
             Continuous fD →
               Continuous fN →
                 ∀ (wD : H10Function (openCubeSet Q)),
-                  (IsZeroTraceDirichletRhsWeakSolution (fun (_ : Vec d) => (1 : Matrix (Fin d) (Fin d) ℝ)) (openCubeSet Q)
+                  (IsZeroTraceDirichletRhsWeakSolution (fun (_ : Vec d) => (1 : Matrix (Fin d)
+                    (Fin d) ℝ)) (openCubeSet Q)
                       wD fun (x : Vec d) => -fD x) →
                     ∀ (wN : H1MeanZeroFunction (openCubeSet Q)),
-                      (IsMeanZeroNeumannRhsWeakSolution (fun (_ : Vec d) => (1 : Matrix (Fin d) (Fin d) ℝ)) (openCubeSet Q)
+                      (IsMeanZeroNeumannRhsWeakSolution (fun (_ : Vec d) => (1 : Matrix (Fin d)
+                        (Fin d) ℝ)) (openCubeSet Q)
                           wN fun (x : Vec d) => -fN x) →
                         cubeEuclideanLpNorm Q (8 : ℝ≥0∞) wD.grad ^ (2 : ℕ) +
                             cubeEuclideanLpNorm Q (8 : ℝ≥0∞) wN.toH1Function.grad ^ (2 : ℕ) ≤
@@ -260,11 +262,13 @@ private theorem stripFourthEnergy_calderonZygmund_bound :
                     (∀ (omega : ShellSeq d), (0 : ℝ) ≤ tf omega) →
                       (∀ (omega : ShellSeq d),
                           cubeEuclideanLpNorm (originCube d (↑K : ℤ)) (8 : ℝ≥0∞)
-                              (streamForcing (↑(Annealed.sigmaBar M n) : ℝ)⁻¹ omega n (n + (↑h : ℤ)) e) ≤
+                              (streamForcing (↑(Annealed.sigmaBar M n) : ℝ)⁻¹ omega n (n + (↑h :
+                                ℤ)) e) ≤
                             (↑(Annealed.sigmaBar M n) : ℝ)⁻¹ * ce * tf omega) →
                         (∀ (omega : ShellSeq d),
                             cubeEuclideanLpNorm (originCube d (↑K : ℤ)) (8 : ℝ≥0∞)
-                                (streamForcing (↑(Annealed.sigmaBar M n) : ℝ)⁻¹ omega n (n + (↑h : ℤ)) e') ≤
+                                (streamForcing (↑(Annealed.sigmaBar M n) : ℝ)⁻¹ omega n (n + (↑h :
+                                  ℤ)) e') ≤
                               (↑(Annealed.sigmaBar M n) : ℝ)⁻¹ * ce' * tf omega) →
                           ∀ (omega : ShellSeq d),
                             cubeEuclideanLpNorm (originCube d (↑K : ℤ)) (8 : ℝ≥0∞)

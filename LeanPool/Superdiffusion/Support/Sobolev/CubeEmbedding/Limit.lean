@@ -125,7 +125,8 @@ theorem tendsto_eLpNorm_of_tendsto_sub {α : Type*} [MeasurableSpace α] {μ : M
 
 private theorem cubeSobolevEmbedding_fourthPowerBound :
     ∀ (m : ℕ),
-      let Cgns : ℝ≥0∞ := (↑(SNormLESNormFDerivOfEqConst ℝ (volume : Measure (Vec (m + 1))) (2 : ℝ)) : ℝ≥0∞);
+      let Cgns : ℝ≥0∞ := (↑(SNormLESNormFDerivOfEqConst ℝ (volume : Measure (Vec (m + 1))) (2 :
+        ℝ)) : ℝ≥0∞);
       let Cd : ℝ≥0∞ := ((3 : ℝ≥0∞) ^ (m + (1 : ℕ))) ^ (1 / 2 : ℝ);
       let C0 : ℝ≥0∞ := Cgns * Cd * (↑((m + (1 : ℕ)) * (32 : ℕ)) : ℝ≥0∞);
       ∀ (_ : C0 = Cgns * Cd * (↑((m + (1 : ℕ)) * (32 : ℕ)) : ℝ≥0∞)) (z : Vec (m + (1 : ℕ))) (L : ℝ)
@@ -136,27 +137,35 @@ private theorem cubeSobolevEmbedding_fourthPowerBound :
           let χ : Vec (m + (1 : ℕ)) → ℝ := boxCutoff z hi (L / (2 : ℝ));
           ∀ (hχ_smooth : ContDiff ℝ ((⊤ : ℕ∞) : WithTop ℕ∞) χ) (hχ_cptsupp : HasCompactSupport χ)
             (hχ_sub : tsupport χ ⊆ Box3 z hi),
-            let w : H10Function (Box3 z hi) := Eu.mulContDiffHasCompactSupportToH10 hU3 hχ_smooth hχ_cptsupp hχ_sub;
+            let w : H10Function (Box3 z hi) := Eu.mulContDiffHasCompactSupportToH10 hU3 hχ_smooth
+              hχ_cptsupp hχ_sub;
             let binf : ℝ≥0∞ :=
               Cgns *
                 ∑ i : Fin (m + (1 : ℕ)),
-                  eLpNorm (fun (x : Vec (m + (1 : ℕ))) => w.grad x i) (2 : ℝ≥0∞) (volume.restrict (Box3 z hi));
+                  eLpNorm (fun (x : Vec (m + (1 : ℕ))) => w.grad x i) (2 : ℝ≥0∞) (volume.restrict
+                    (Box3 z hi));
             ∀
               (_ :
                 binf =
                   Cgns *
                     ∑ i : Fin (m + (1 : ℕ)),
-                      eLpNorm (fun (x : Vec (m + (1 : ℕ))) => w.grad x i) (2 : ℝ≥0∞) (volume.restrict (Box3 z hi)))
+                      eLpNorm (fun (x : Vec (m + (1 : ℕ))) => w.grad x i) (2 : ℝ≥0∞)
+                        (volume.restrict (Box3 z hi)))
               (_ :
                 ∀ (i : Fin (m + (1 : ℕ))),
-                  eLpNorm (fun (x : Vec (m + (1 : ℕ))) => w.grad x i) (2 : ℝ≥0∞) (volume.restrict (Box3 z hi)) ≤
-                    Cd * eLpNorm (fun (x : Vec (m + (1 : ℕ))) => u.grad x i) (2 : ℝ≥0∞) (volume.restrict (Box z hi)) +
-                      ENNReal.ofReal ((32 : ℝ) / L) * (Cd * eLpNorm u.toFun (2 : ℝ≥0∞) (volume.restrict (Box z hi)))),
+                  eLpNorm (fun (x : Vec (m + (1 : ℕ))) => w.grad x i) (2 : ℝ≥0∞) (volume.restrict
+                    (Box3 z hi)) ≤
+                    Cd * eLpNorm (fun (x : Vec (m + (1 : ℕ))) => u.grad x i) (2 : ℝ≥0∞)
+                      (volume.restrict (Box z hi)) +
+                      ENNReal.ofReal ((32 : ℝ) / L) * (Cd * eLpNorm u.toFun (2 : ℝ≥0∞)
+                        (volume.restrict (Box z hi)))),
               binf ≤
                 C0 *
                   (∑ i : Fin (m + (1 : ℕ)),
-                      eLpNorm (fun (x : Vec (m + (1 : ℕ))) => u.grad x i) (2 : ℝ≥0∞) (volume.restrict (Box z hi)) +
-                    ENNReal.ofReal L⁻¹ * eLpNorm u.toFun (2 : ℝ≥0∞) (volume.restrict (Box z hi))) := by
+                      eLpNorm (fun (x : Vec (m + (1 : ℕ))) => u.grad x i) (2 : ℝ≥0∞)
+                        (volume.restrict (Box z hi)) +
+                    ENNReal.ofReal L⁻¹ * eLpNorm u.toFun (2 : ℝ≥0∞) (volume.restrict (Box z
+                      hi))) := by
   intro m Cgns Cd _ hC0 z L u hi _ _ _ _ _ _ _ w _ hbinf hwgrad_bound
   have hsum : ∑ i, eLpNorm (fun x => w.grad x i) 2 (volume.restrict (Box3 z hi))
       ≤ Cd * (∑ i, eLpNorm (fun x => u.grad x i) 2 (volume.restrict (Box z hi)))

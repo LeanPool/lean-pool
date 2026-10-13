@@ -61,6 +61,10 @@ admissible exponent range, which is what makes the second item available.
 
 namespace Algsuperdiff.Section4.Provider
 
+open StochasticProcess.Common.Regularity.Campanato
+  (HasClipGridOscillationDecay centredTriadicGrid)
+open StochasticProcess.Common.Regularity.Ported (ballVolumePrice ballVolumePrice_nonneg)
+
 open Algsuperdiff.Section3
 open Algsuperdiff.Section5.Support
 open HCPolySupport MeasureTheory
@@ -151,55 +155,68 @@ theorem tail_exponent_le {A B C0 C N : ℝ} (hC0 : 0 < C0) (hC : 16 * C0 ≤ C)
 /-! ## The provider -/
 
 private theorem localHolder_translationHolderBound :
-    ∀ (d : ℕ) (this : NeZero d) (C0 Cosc Cdata : ℝ) (hC0 : (0 : ℝ) < C0)
-      (hCosc : (0 : ℝ) ≤ Cosc) (hCdata : (0 : ℝ) ≤ Cdata)
-      (hP2nn : (0 : ℝ) ≤ StochasticProcess.Common.Regularity.Ported.ballVolumePrice (2 : ℝ) d)
-      (hUdnn : (0 : ℝ) ≤ Holder.uniformCubeHolderConstant d),
+    ∀ (d : ℕ) (_ : NeZero d) (C0 Cosc Cdata : ℝ) (_ : (0 : ℝ) < C0)
+      (_ : (0 : ℝ) ≤ Cosc) (_ : (0 : ℝ) ≤ Cdata)
+      (_ : (0 : ℝ) ≤ ballVolumePrice (2 : ℝ) d)
+      (_ : (0 : ℝ) ≤ Holder.uniformCubeHolderConstant d),
       let Camp : ℝ :=
         (6 : ℝ) * Holder.uniformCubeHolderConstant d * Cosc *
-          max (StochasticProcess.Common.Regularity.Ported.ballVolumePrice (2 : ℝ) d) Cdata;
-      ∀ (hCampnn : (0 : ℝ) ≤ Camp),
+          max (ballVolumePrice (2 : ℝ) d) Cdata;
+      ∀ (_ : (0 : ℝ) ≤ Camp),
         let C : ℝ := max ((16 : ℝ) * C0) Camp;
-        ∀ (hCpos : (0 : ℝ) < C) (hCampC : Camp ≤ C) (M : ABKModel d) (alpha : ℝ) (halpha0 : (0 : ℝ) < alpha) (m : ℤ)
+        ∀ (_ : (0 : ℝ) < C) (_ : Camp ≤ C) (M : ABKModel d) (alpha : ℝ) (_ : (0 : ℝ) < alpha) (m :
+          ℤ)
           (y : Vec d),
           let beta : ℝ := max alpha (1 / 2 : ℝ);
-          ∀ (hbeta_half : (1 / 2 : ℝ) ≤ beta) (hbeta_ge : alpha ≤ beta) (hbeta0 : (0 : ℝ) < beta) (hbeta1 : beta ≤ (1 : ℝ))
+          ∀ (_ : (1 / 2 : ℝ) ≤ beta) (_ : alpha ≤ beta) (_ : (0 : ℝ) < beta) (_ : beta ≤ (1 : ℝ))
             (Xe : Cutoff.CutoffSample d → ℕ∞)
-            (hXtail :
+            (_ :
               ∀ (N : ℕ),
-                ((↑(Cutoff.cutoffSampleLaw M) : Measure (Cutoff.CutoffSample d)) : (a : Set (Cutoff.CutoffSample d)) → ℝ≥0∞)
+                ((↑(Cutoff.cutoffSampleLaw M) : Measure (Cutoff.CutoffSample d)) : (_ : Set
+                  (Cutoff.CutoffSample d)) → ℝ≥0∞)
                     {omega : Cutoff.CutoffSample d | (↑N : ℕ∞) ≤ Xe omega} ≤
-                  ENNReal.ofReal (C0 * Real.exp (-(((1 : ℝ) - beta) ^ (2 : ℕ) * ((↑N : ℝ) - C0)) / (C0 * M.gamma))))
-            (hXae :
-              ∀ᵐ (omega : Cutoff.CutoffSample d) ∂(↑(Cutoff.cutoffSampleLaw M) : Measure (Cutoff.CutoffSample d)),
+                  ENNReal.ofReal (C0 * Real.exp (-(((1 : ℝ) - beta) ^ (2 : ℕ) * ((↑N : ℝ) - C0)) /
+                    (C0 * M.gamma))))
+            (_ :
+              ∀ᵐ (omega : Cutoff.CutoffSample d) ∂(↑(Cutoff.cutoffSampleLaw M) : Measure
+                (Cutoff.CutoffSample d)),
                 ∀ (Xn : ℕ),
                   Xe omega ≤ (↑Xn : ℕ∞) →
                     ∀ (L : ℤ),
                       m ≤ L →
-                        ∀ (u : H1Function (openCubeSet (originCube d m))) (g : Vec d → Vec d) (Kg : ℝ),
+                        ∀ (u : H1Function (openCubeSet (originCube d m))) (g : Vec d → Vec d) (Kg
+                          : ℝ),
                           (0 : ℝ) ≤ Kg →
-                            Support.IsDirichletSolutionOn (Cutoff.coefficientCutoff M.nu L omega).toCoeffField
-                                (originCube d m) u (0 : H1Function (openCubeSet (originCube d m))) g →
-                              Support.HolderSeminormBoundOn (openCubeSet (originCube d m)) (1 / 2 : ℝ) Kg g →
-                                StochasticProcess.Common.Regularity.Campanato.HasClipGridOscillationDecay (0 : Vec d)
+                            Support.IsDirichletSolutionOn (Cutoff.coefficientCutoff M.nu L
+                              omega).toCoeffField
+                                (originCube d m) u (0 : H1Function (openCubeSet (originCube d m)))
+                                  g →
+                              Support.HolderSeminormBoundOn (openCubeSet (originCube d m)) (1 / 2
+                                : ℝ) Kg g →
+                                HasClipGridOscillationDecay (0 : Vec d)
                                   ((3 : ℝ) ^ m / (2 : ℝ))
-                                  (StochasticProcess.Common.Regularity.Campanato.centredTriadicGrid (0 : Vec d)
+                                  (centredTriadicGrid (0 : Vec d)
                                     ((3 : ℝ) ^ m / (2 : ℝ)) ((3 : ℝ) ^ m / (2 : ℝ)))
                                   ((3 : ℝ) ^ m / (2 : ℝ)) beta
                                   (Holder.campanatoGridConstant beta m Xn Cosc
                                     ((3 : ℝ) ^ (-m) *
-                                        (StochasticProcess.Common.Regularity.Ported.ballVolumePrice (2 : ℝ) d *
-                                          Support.normalizedL2On (openCubeSet (originCube d m)) fun (y : Vec d) =>
-                                            u.toFun y - volumeAverage (openCubeSet (originCube d m)) u.toFun) +
+                                        (ballVolumePrice (2 : ℝ) d *
+                                          Support.normalizedL2On (openCubeSet (originCube d m))
+                                            fun (y : Vec d) =>
+                                            u.toFun y - volumeAverage (openCubeSet (originCube d
+                                              m)) u.toFun) +
                                       Cdata *
-                                        ((↑(Annealed.sigmaBar M m) : ℝ)⁻¹ * Real.rpow (3 : ℝ) ((↑m : ℝ) / (2 : ℝ)) * Kg)))
+                                        ((↑(Annealed.sigmaBar M m) : ℝ)⁻¹ * Real.rpow (3 : ℝ) ((↑m
+                                          : ℝ) / (2 : ℝ)) * Kg)))
                                   (0 : ℕ) u.toFun)
-            (hBpos : (0 : ℝ) < ((1 : ℝ) - beta) ^ (2 : ℕ)),
-            ∀ᵐ (omega : Cutoff.CutoffSample d) ∂(↑(Cutoff.cutoffSampleLaw M) : Measure (Cutoff.CutoffSample d)),
+            (_ : (0 : ℝ) < ((1 : ℝ) - beta) ^ (2 : ℕ)),
+            ∀ᵐ (omega : Cutoff.CutoffSample d) ∂(↑(Cutoff.cutoffSampleLaw M) : Measure
+              (Cutoff.CutoffSample d)),
               ∀ (L : ℤ),
                 m ≤ L →
                   ∀ (g : Vec d → Vec d) (u : H1Function (cubeSetAt y m)),
-                    IsDirichletSolutionAt (Cutoff.coefficientCutoff M.nu L omega).toCoeffField y m u g →
+                    IsDirichletSolutionAt (Cutoff.coefficientCutoff M.nu L omega).toCoeffField y m
+                      u g →
                       ⨅ (uRep : Vec d → ℝ),
                           ⨅ (_ : IsCubeRepresentative y m u uRep),
                             ENNReal.ofReal (Real.rpow (3 : ℝ) (alpha * (↑m : ℝ))) *
@@ -209,15 +226,19 @@ private theorem localHolder_translationHolderBound :
                               Real.rpow (3 : ℝ)
                                 (((1 : ℝ) - alpha) *
                                   (↑((fun (omega : Cutoff.CutoffSample d) =>
-                                          (2 : ℕ) * (Xe (Cutoff.translateCutoffSample y omega)).toNat)
+                                          (2 : ℕ) * (Xe (Cutoff.translateCutoffSample y
+                                            omega)).toNat)
                                         omega) :
                                     ℝ))) *
-                          (eLpNorm (fun (x : Vec d) => u.toFun x - volumeAverage (cubeSetAt y m) u.toFun) (2 : ℝ≥0∞)
+                          (eLpNorm (fun (x : Vec d) => u.toFun x - volumeAverage (cubeSetAt y m)
+                            u.toFun) (2 : ℝ≥0∞)
                               (Support.normalizedVolumeMeasureOn (cubeSetAt y m)) +
                             ENNReal.ofReal
-                                ((↑(Annealed.sigmaBar M m) : ℝ)⁻¹ * Real.rpow (3 : ℝ) ((3 : ℝ) * (↑m : ℝ) / (2 : ℝ))) *
+                                ((↑(Annealed.sigmaBar M m) : ℝ)⁻¹ * Real.rpow (3 : ℝ) ((3 : ℝ) *
+                                  (↑m : ℝ) / (2 : ℝ))) *
                               holderSeminormOn (cubeSetAt y m) (1 / 2 : ℝ) g) := by
-  intro d this C0 Cosc Cdata hC0 hCosc hCdata hP2nn hUdnn Camp hCampnn C hCpos hCampC M alpha halpha0 m y beta hbeta_half hbeta_ge hbeta0 hbeta1 Xe hXtail hXae hBpos
+  intro d _ _ Cosc Cdata hC0 hCosc hCdata hP2nn hUdnn _ hCampnn C hCpos hCampC M alpha halpha0 m y
+    beta hbeta_half hbeta_ge hbeta0 hbeta1 Xe hXtail hXae hBpos
   have hXfin : ∀ᵐ omega ∂(Cutoff.cutoffSampleLaw M).toMeasure, Xe omega ≠ ⊤ :=
     ae_ne_top_of_tail hC0 hBpos hXtail
   have hmp := GoodEvents.measurePreserving_translateCutoffSample M y
@@ -263,10 +284,10 @@ private theorem localHolder_translationHolderBound :
     have hqKgnn : (0 : ℝ) ≤ (Annealed.sigmaBar M m : ℝ)⁻¹ *
         Real.rpow 3 (3 * (m : ℝ) / 2) * Kg := mul_nonneg hqrpos.le hKgnn
     have hDnn : (0 : ℝ) ≤ (3 : ℝ) ^ (-m) *
-        (StochasticProcess.Common.Regularity.Ported.ballVolumePrice 2 d * S) +
+        (ballVolumePrice 2 d * S) +
         Cdata * ((Annealed.sigmaBar M m : ℝ)⁻¹ * Real.rpow 3 ((m : ℝ) / 2) * Kg) := by
       have h1 : (0 : ℝ) ≤ (3 : ℝ) ^ (-m) *
-          (StochasticProcess.Common.Regularity.Ported.ballVolumePrice 2 d * S) :=
+          (ballVolumePrice 2 d * S) :=
         mul_nonneg (zpow_nonneg (by norm_num) _) (mul_nonneg hP2nn hSnn)
       have h2 : (0 : ℝ) ≤ Cdata * ((Annealed.sigmaBar M m : ℝ)⁻¹ *
           Real.rpow 3 ((m : ℝ) / 2) * Kg) :=
@@ -275,7 +296,7 @@ private theorem localHolder_translationHolderBound :
       linarith only [h1, h2]
     have hKnn : (0 : ℝ) ≤ Holder.campanatoGridConstant beta m Xn Cosc
         ((3 : ℝ) ^ (-m) *
-          (StochasticProcess.Common.Regularity.Ported.ballVolumePrice 2 d * S) +
+          (ballVolumePrice 2 d * S) +
           Cdata * ((Annealed.sigmaBar M m : ℝ)⁻¹ *
             Real.rpow 3 ((m : ℝ) / 2) * Kg)) :=
       Holder.campanatoGridConstant_nonneg m Xn hCosc hDnn
@@ -311,7 +332,7 @@ private theorem localHolder_translationHolderBound :
         (G := StochasticProcess.Common.Regularity.Campanato.clipOffGridHolderConstant
           d beta 18)
         (Ud := Holder.uniformCubeHolderConstant d)
-        (P2 := StochasticProcess.Common.Regularity.Ported.ballVolumePrice 2 d)
+        (P2 := ballVolumePrice 2 d)
         (m := m) (Xn := Xn)
         halpha0 hbeta_ge hbeta1 hCosc hCdata hSnn hKgnn hsigpos hP2nn
         (StochasticProcess.Common.Regularity.Campanato.clipOffGridHolderConstant_nonneg
@@ -394,12 +415,12 @@ theorem local_holder_estimate_provider
     obtain ⟨g0, C0, Cosc, Cdata, hg0, hC0, hCosc, hCdata, hfeed⟩ :=
       Holder.hasClipGridOscillationDecay_zeroDatum d hd0 cstar hcstar
     have hP2nn : (0 : ℝ) ≤
-        StochasticProcess.Common.Regularity.Ported.ballVolumePrice 2 d :=
-      StochasticProcess.Common.Regularity.Ported.ballVolumePrice_nonneg 2 d
+        ballVolumePrice 2 d :=
+      ballVolumePrice_nonneg 2 d
     have hUdnn : (0 : ℝ) ≤ Holder.uniformCubeHolderConstant d :=
       Holder.uniformCubeHolderConstant_nonneg d
     set Camp : ℝ := 6 * Holder.uniformCubeHolderConstant d * Cosc *
-      max (StochasticProcess.Common.Regularity.Ported.ballVolumePrice 2 d) Cdata
+      max (ballVolumePrice 2 d) Cdata
       with hCampdef
     have hCampnn : (0 : ℝ) ≤ Camp := by
       rw [hCampdef]
@@ -522,7 +543,9 @@ theorem local_holder_estimate_provider
               (-((1 - alpha) ^ (2 : ℕ) * ((N : ℝ) - C)) / (C * M.gamma))) := by
             refine ENNReal.ofReal_le_ofReal ?_
             exact mul_le_mul hC0C (Real.exp_le_exp.2 hexpineq) (Real.exp_pos _).le hCpos.le
-    · exact @localHolder_translationHolderBound (d) (by infer_instance) (C0) (Cosc) (Cdata) (hC0) (hCosc) (hCdata) (hP2nn) (hUdnn) (hCampnn) (hCpos) (hCampC) (M) (alpha) (halpha0) (m) (y) (hbeta_half) (hbeta_ge) (hbeta0) (hbeta1) (Xe) (hXtail) (hXae) (hBpos)
+    · exact @localHolder_translationHolderBound (d) (by infer_instance) (C0) (Cosc) (Cdata) (hC0)
+        (hCosc) (hCdata) (hP2nn) (hUdnn) (hCampnn) (hCpos) (hCampC) (M) (alpha) (halpha0) (m) (y)
+          (hbeta_half) (hbeta_ge) (hbeta0) (hbeta1) (Xe) (hXtail) (hXae) (hBpos)
 end
 
 end Algsuperdiff.Section4.Provider

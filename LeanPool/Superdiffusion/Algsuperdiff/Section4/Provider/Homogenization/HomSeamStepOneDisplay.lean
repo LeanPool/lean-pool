@@ -338,8 +338,10 @@ private theorem range_scale {k K C gam Lg p : ℝ} (hk : 0 < k) (hK : 0 < K)
 /-! ## 6. THE SEAM DISPLAY -/
 
 private theorem homSeamStepOneDisplay_comparisonBounds1 :
-    ∀ (d : ℕ) {Ctop Cgate : ℝ} (A : ℝ) (_ : (1 : ℝ) ≤ homSeamDisplayConst A Ctop Cgate d) (M : ABKModel d)
-      (p : ℝ) (_ : (1 : ℝ) ≤ p) (_ : p ≤ (homSeamDisplayConst A Ctop Cgate d)⁻¹ * M.gamma⁻¹ * |Real.log M.gamma|⁻¹)
+    ∀ (d : ℕ) {Ctop Cgate : ℝ} (A : ℝ) (_ : (1 : ℝ) ≤ homSeamDisplayConst A Ctop Cgate d) (M :
+      ABKModel d)
+      (p : ℝ) (_ : (1 : ℝ) ≤ p) (_ : p ≤ (homSeamDisplayConst A Ctop Cgate d)⁻¹ * M.gamma⁻¹ *
+        |Real.log M.gamma|⁻¹)
       (_ : (0 : ℝ) < M.gamma) (_ : (0 : ℝ) < √√M.gamma) (_ : √√M.gamma ^ (4 : ℕ) = M.gamma)
       (_ : √√M.gamma ≤ (1 / 16 : ℝ)) (_ : M.gamma < (1 : ℝ)) (_ : (4 : ℝ) ≤ |Real.log M.gamma|)
       (_ : |Real.log M.gamma| ≠ (0 : ℝ)) (_ : homS M ≤ (1 / 4 : ℝ))
@@ -350,7 +352,8 @@ private theorem homSeamStepOneDisplay_comparisonBounds1 :
         (3 : ℝ) ≤ √p + √|Real.log M.gamma| ∧
           √q ≤ homSeamSqrtLoss d * (√p + √|Real.log M.gamma|) ∧
             (√p + √|Real.log M.gamma|) * √M.gamma ≤ (2 : ℝ) ∧ M.gamma ^ (5 : ℕ) ≤ √M.gamma := by
-  intro d Ctop Cgate A hC0one M p _ hprange hgpos htpos ht4 ht16 hg1 _ _ hs4 hLu hLinv hSeq hp0 q hsqp hsqL
+  intro d Ctop Cgate A hC0one M p _ hprange hgpos htpos ht4 ht16 hg1 _ _ hs4 hLu hLinv hSeq hp0 q
+    hsqp hsqL
   have hS3 : (3 : ℝ) ≤ Real.sqrt p + Real.sqrt |Real.log M.gamma| := by
     linarith only [hsqp, hsqL]
   have hWDS : Real.sqrt q ≤ homSeamSqrtLoss d *
@@ -448,7 +451,8 @@ private theorem homSeamStepOneDisplay_comparisonBounds1 :
 
 private theorem homSeamStepOneDisplay_momentBounds1 :
     ∀ (d : ℕ) {Ctop Cgate : ℝ} (_ : (0 : ℝ) ≤ Ctop) (_ : (0 : ℝ) < Cgate) (A : ℝ) (_ : (1 : ℝ) ≤ A)
-      (_ : (0 : ℝ) < A) (_ : (0 : ℝ) ≤ homSeamKappa A Ctop d * homSeamCollapseConst A d) (M : ABKModel d)
+      (_ : (0 : ℝ) < A) (_ : (0 : ℝ) ≤ homSeamKappa A Ctop d * homSeamCollapseConst A d) (M :
+        ABKModel d)
       (hs : (0 : ℝ) < homS M) (m : ℤ) (Y0 : Cutoff.CutoffSample d → ℝ≥0∞)
       (_ : AEMeasurable Y0 (↑(Cutoff.cutoffSampleLaw M) : Measure (Cutoff.CutoffSample d)))
       (_ :
@@ -456,17 +460,21 @@ private theorem homSeamStepOneDisplay_momentBounds1 :
           (1 : ℝ) ≤ p →
             p ≤ Cgate⁻¹ * M.gamma⁻¹ * |Real.log M.gamma|⁻¹ →
               ∫⁻ (w : Cutoff.CutoffSample d),
-                  Y0 w ^ ((2 : ℝ) * p) ∂(↑(Cutoff.cutoffSampleLaw M) : Measure (Cutoff.CutoffSample d)) ≤
+                  Y0 w ^ ((2 : ℝ) * p) ∂(↑(Cutoff.cutoffSampleLaw M) : Measure
+                    (Cutoff.CutoffSample d)) ≤
                 ENNReal.ofReal (2 : ℝ) ^ ((2 : ℝ) * p))
       (Cgap : ℝ) (_ : (0 : ℝ) ≤ Cgap) (p : ℝ) (_ : (1 : ℝ) ≤ p)
-      (_ : p ≤ (homSeamDisplayConst A Ctop Cgate d)⁻¹ * M.gamma⁻¹ * |Real.log M.gamma|⁻¹) (_ : (0 : ℝ) < M.gamma)
-      (_ : (4 : ℝ) ≤ |Real.log M.gamma|) (_ : (0 : ℝ) ≤ M.gamma⁻¹) (_ : (0 : ℝ) ≤ |Real.log M.gamma|⁻¹)
+      (_ : p ≤ (homSeamDisplayConst A Ctop Cgate d)⁻¹ * M.gamma⁻¹ * |Real.log M.gamma|⁻¹) (_ : (0
+        : ℝ) < M.gamma)
+      (_ : (4 : ℝ) ≤ |Real.log M.gamma|) (_ : (0 : ℝ) ≤ M.gamma⁻¹) (_ : (0 : ℝ) ≤ |Real.log
+        M.gamma|⁻¹)
       (_ : (0 : ℝ) < p),
       let q : ℝ := max ((8 : ℝ) * p) ((64 : ℝ) * (↑d : ℝ) * |Real.log M.gamma|);
       ∀ (_ : (8 : ℝ) * p ≤ q) (ht40 : (0 : ℝ) < (1 / 4 : ℝ))
         (_ :
           ∫⁻ (omega : Cutoff.CutoffSample d),
-              fluxCorrectedTwoScaleErrorObservableSup M m (homN M m) (homHalf (homSeamBase M hs)) omega ^
+              fluxCorrectedTwoScaleErrorObservableSup M m (homN M m) (homHalf (homSeamBase M hs))
+                omega ^
                 q ∂(↑(Cutoff.cutoffSampleLaw M) : Measure (Cutoff.CutoffSample d)) ≤
             ENNReal.ofReal (A * |Real.log M.gamma| * √q * √M.gamma) ^ q)
         (_ :
@@ -476,12 +484,14 @@ private theorem homSeamStepOneDisplay_momentBounds1 :
             ENNReal.ofReal (A * √q * √M.gamma) ^ q)
         (_ :
           ∫⁻ (omega : Cutoff.CutoffSample d),
-              fluxCorrectedTwoScaleErrorObservableSup M m (homN M m) (homQuarterOf (homSeamBase M hs)) omega ^
+              fluxCorrectedTwoScaleErrorObservableSup M m (homN M m) (homQuarterOf (homSeamBase M
+                hs)) omega ^
                 q ∂(↑(Cutoff.cutoffSampleLaw M) : Measure (Cutoff.CutoffSample d)) ≤
             ENNReal.ofReal (A * |Real.log M.gamma| * √q * √M.gamma) ^ q)
         (_ :
           ∫⁻ (omega : Cutoff.CutoffSample d),
-              fluxCorrectedTwoScaleErrorObservableSup M m m ⟨(1 / 4 : ℝ) / (2 : ℝ), half_pos ht40⟩ omega ^
+              fluxCorrectedTwoScaleErrorObservableSup M m m ⟨(1 / 4 : ℝ) / (2 : ℝ), half_pos ht40⟩
+                omega ^
                 q ∂(↑(Cutoff.cutoffSampleLaw M) : Measure (Cutoff.CutoffSample d)) ≤
             ENNReal.ofReal (A * (1 / 4 : ℝ)⁻¹ * √q * √M.gamma) ^ q)
         (_ :
@@ -497,11 +507,14 @@ private theorem homSeamStepOneDisplay_momentBounds1 :
                 ((↑(homSeamBase M hs) : ℝ)⁻¹ *
                     (Ctop *
                         ((2 : ℝ) *
-                          (((1 : ℝ) + A * (1 / 4 : ℝ)⁻¹ * √q * √M.gamma) * ((1 : ℝ) + A * (1 / 4 : ℝ)⁻¹ * √q * √M.gamma))) *
+                          (((1 : ℝ) + A * (1 / 4 : ℝ)⁻¹ * √q * √M.gamma) * ((1 : ℝ) + A * (1 / 4 :
+                            ℝ)⁻¹ * √q * √M.gamma))) *
                       (A * |Real.log M.gamma| * √q * √M.gamma * ((1 : ℝ) + A * √q * √M.gamma))) +
-                  Cgap * M.gamma ^ (5 : ℕ) * ((1 : ℝ) + (A * |Real.log M.gamma| * √q * √M.gamma) ^ (2 : ℕ))) ^
+                  Cgap * M.gamma ^ (5 : ℕ) * ((1 : ℝ) + (A * |Real.log M.gamma| * √q * √M.gamma) ^
+                    (2 : ℕ))) ^
               p := by
-  intro _ Ctop Cgate hCtop hCgate A _ hApos hkap0 M hs m Y0 hY0m hY0 _ hCgap p hp hprange _ _ hginv hLinv hp0 q hq8p ht40 hf1 hf2 hf3 hf4 hf5
+  intro _ Ctop Cgate hCtop hCgate A _ hApos hkap0 M hs m Y0 hY0m hY0 _ hCgap p hp hprange _ _
+    hginv hLinv hp0 q hq8p ht40 hf1 hf2 hf3 hf4 hf5
   have hnm : homN M m ≤ m := homN_le M m
   have hm1 : AEMeasurable
       (fluxCorrectedTwoScaleErrorObservableSup M m (homN M m)
@@ -694,7 +707,9 @@ theorem exists_ethmB_seam_moment_bound (d : ℕ) (cstar : ℝ) (hcstar : 0 < cst
   obtain ⟨hf1, hf2, hf3, hf4, hf5⟩ :=
     hanchor M hcs hg_g0 hs m (1 / 4) ht40 htlo le_rfl q hqlo hupq
   obtain ⟨stage_hR40, stage_hassembly⟩ :=
-    @homSeamStepOneDisplay_momentBounds1 (d) (Ctop) (Cgate) (hCtop) (hCgate) (A) (hA1) (hApos) (hkap0) (M) (hs) (m) (Y0) (hY0m) (hY0) (Cgap) (hCgap) (p) (hp) (hprange) (hgpos) (hL4) (hginv) (hLinv) (hp0) (hq8p) (ht40) (hf1) (hf2) (hf3) (hf4) (hf5)
+    @homSeamStepOneDisplay_momentBounds1 (d) (Ctop) (Cgate) (hCtop) (hCgate) (A) (hA1) (hApos)
+      (hkap0) (M) (hs) (m) (Y0) (hY0m) (hY0) (Cgap) (hCgap) (p) (hp) (hprange) (hgpos) (hL4)
+        (hginv) (hLinv) (hp0) (hq8p) (ht40) (hf1) (hf2) (hf3) (hf4) (hf5)
   have hR40 : (0 : ℝ) ≤ A * (1 / 4 : ℝ)⁻¹ * Real.sqrt q * Real.sqrt M.gamma := stage_hR40
   have hassembly := stage_hassembly
   refine le_trans hassembly (ENNReal.rpow_le_rpow (ENNReal.ofReal_le_ofReal ?_) hp0.le)

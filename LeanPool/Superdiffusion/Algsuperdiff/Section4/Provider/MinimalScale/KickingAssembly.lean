@@ -177,7 +177,8 @@ private theorem goodScaleKicking_geometricDecayBound :
           (0 : ℝ) < C1 →
             (0 : ℝ) ≤ stepTwoDetConst →
               (0 : ℝ) < stepThreeDetConst d →
-                (0 : ℝ) ≤ CD * (C1 + (2 : ℝ) * stepTwoDetConst + (2 : ℝ) * stepThreeDetConst d + (1 : ℝ)) := by
+                (0 : ℝ) ≤ CD * (C1 + (2 : ℝ) * stepTwoDetConst + (2 : ℝ) * stepThreeDetConst d +
+                  (1 : ℝ)) := by
   intro d _ hCD C1 hC1 hs2d hs3d
   have hb : (0 : ℝ) ≤ C1 + 2 * stepTwoDetConst + 2 * stepThreeDetConst d + 1 := by
     linarith only [hC1, hs2d, hs3d]

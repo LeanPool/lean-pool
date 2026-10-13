@@ -49,16 +49,19 @@ private theorem summable_normalizedFlux_weightedProfile :
                 (∀ (n : ℕ) (omega : CutoffSample d), (0 : ℝ) ≤ U n omega) →
                   (∀ (n : ℕ) (omega : CutoffSample d), U n omega ≤ superposedFluxCutoffCap M m) →
                     let a : ℕ → ℝ := fun (n : ℕ) => superposedFluxDepthAmpProfile M (↑E : ℝ) n;
-                    let V : ℕ → CutoffSample d → ℝ := fun (n : ℕ) (omega : CutoffSample d) => (a n)⁻¹ * U n omega;
+                    let V : ℕ → CutoffSample d → ℝ := fun (n : ℕ) (omega : CutoffSample d) => (a
+                      n)⁻¹ * U n omega;
                     let X : ℝ := (↑E : ℝ)⁻¹ ^ (2 : ℕ) * M.gamma⁻¹;
-                    let a0 : ℝ := superposedFluxDepthAmpConst d * Real.exp (-(superposedFluxBfaRate d * X));
+                    let a0 : ℝ := superposedFluxDepthAmpConst d * Real.exp
+                      (-(superposedFluxBfaRate d * X));
                     (∀ (n : ℕ), (0 : ℝ) < a n) →
                       (∀ (n : ℕ) (omega : CutoffSample d), (0 : ℝ) ≤ V n omega) →
                         (0 : ℝ) < a0 →
                           (∀ (n : ℕ), a0 ≤ a n) →
                             ∀ (omega : CutoffSample d),
                               Summable fun (n : ℕ) =>
-                                Ch02.geometricWeight s (↑r : ℝ) n * a n ^ ((↑r : ℝ) / (2 : ℝ)) * V n omega := by
+                                Ch02.geometricWeight s (↑r : ℝ) n * a n ^ ((↑r : ℝ) / (2 : ℝ)) * V
+                                  n omega := by
   intro _ M m _ r _ _ hr0 hs U hUnonneg hUcap a V _ a0 ha hVnonneg ha0pos ha0le omega
   let H : ℝ := superposedFluxCutoffCap M m
   let C : ℝ := a0 ^ ((r : ℝ) / 2 - 1) * H

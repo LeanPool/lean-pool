@@ -54,7 +54,8 @@ private theorem levelEnergy_coordinatePairingBound :
                   (volume : Set (Vec d) → ℝ≥0∞) A ≠ ∞ →
                     IntegrableOn (fun (x : Vec d) => vecDot (g x) (u.grad x)) U volume →
                       let E : ℝ := ∫ (x : Vec d) in A, vecNormSq (u.grad x);
-                      ∫ (x : Vec d) in A, vecDot (g x) (u.grad x) ≤ M * √((volume : Set (Vec d) → ℝ≥0∞) A).toReal * √E := by
+                      ∫ (x : Vec d) in A, vecDot (g x) (u.grad x) ≤ M * √((volume : Set (Vec d) →
+                        ℝ≥0∞) A).toReal * √E := by
   intro d _ u g hg M _ hM hgBound A hAm hAU hAtop hrhsInt E
   have hgsqInt : IntegrableOn (fun x => vecNormSq (g x)) A := by
     simpa only [vecNormSq] using

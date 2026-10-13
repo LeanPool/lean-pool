@@ -199,8 +199,10 @@ private theorem minimalScale_kickIteration_bound :
               ∀ (lam : ℝ),
                 (0 : ℝ) ≤ lam →
                   (∀ (j : ℤ),
-                      IsBigOWith (↑(Cutoff.cutoffSampleLaw M) : Measure (Cutoff.CutoffSample d)) (gammaSigma (2 : ℝ))
-                        (kickLegLow M s lam j) (C2 * (Disorder.cstar M)⁻¹ * (√(↑s : ℝ) ^ (5 : ℕ))⁻¹ * √M.gamma)) →
+                      IsBigOWith (↑(Cutoff.cutoffSampleLaw M) : Measure (Cutoff.CutoffSample d))
+                        (gammaSigma (2 : ℝ))
+                        (kickLegLow M s lam j) (C2 * (Disorder.cstar M)⁻¹ * (√(↑s : ℝ) ^ (5 :
+                          ℕ))⁻¹ * √M.gamma)) →
                     let F : ℝ := (Disorder.cstar M)⁻¹ * (√(↑s : ℝ) ^ (5 : ℕ))⁻¹ * √M.gamma;
                     (0 : ℝ) < F →
                       C2 * (Disorder.cstar M)⁻¹ * (√(↑s : ℝ) ^ (5 : ℕ))⁻¹ * √M.gamma = C2 * F →
@@ -208,12 +210,15 @@ private theorem minimalScale_kickIteration_bound :
                         (0 : ℝ) < Kc →
                           let bb : ℝ := C2⁻¹ * Disorder.cstar M ^ (3 : ℕ) * M.gamma⁻¹;
                           (∀ (j : ℤ),
-                              IsBigOWith (↑(Cutoff.cutoffSampleLaw M) : Measure (Cutoff.CutoffSample d))
-                                (gammaSigma (1 / 2 : ℝ)) (kickLegHigh M s lam j) (C2 * Real.exp (-bb))) →
+                              IsBigOWith (↑(Cutoff.cutoffSampleLaw M) : Measure
+                                (Cutoff.CutoffSample d))
+                                (gammaSigma (1 / 2 : ℝ)) (kickLegHigh M s lam j) (C2 * Real.exp
+                                  (-bb))) →
                             bb = C2⁻¹ * Disorder.cstar M ^ (3 : ℕ) * M.gamma⁻¹ →
                               Kc * (C2 * Real.exp (-bb)) ≤ (Mc / (4 : ℝ) * F) ^ (4 : ℕ) →
                                 ∀ (j : ℤ),
-                                  IsBigOWith (↑(Cutoff.cutoffSampleLaw M) : Measure (Cutoff.CutoffSample d))
+                                  IsBigOWith (↑(Cutoff.cutoffSampleLaw M) : Measure
+                                    (Cutoff.CutoffSample d))
                                     (gammaSigma (2 : ℝ)) (kickCollapsed M s lam Kc j) (Mc * F) := by
   intro _ C2 hC2 M s Mc C hMcpos h4C2 lam hlam0 hlow F hF0 hC2F Kc hKc0 bb hhigh hbbdef hkey j
   have hlowj := hlow j

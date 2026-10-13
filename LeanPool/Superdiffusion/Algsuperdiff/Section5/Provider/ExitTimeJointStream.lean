@@ -245,12 +245,11 @@ theorem isCubeExitTimeSolutionDataStream_onePoint_of_chain (M : ABKModel d) (n :
     (omega : Field.FullSample d M.gamma) (i : Fin d) (y : Vec d)
     (R : PositiveC0ContractiveResolvent (Vec d)) (hreg : R.OnePointRegular)
     (hcons : R.kernelSemigroup.IsConservative)
-    (hid : (Field.streamWholeSpaceAnalyticData M omega
-      ).KernelResolventIdentifiesAnalyticMinimal R)
+    (hid : (Field.streamWholeSpaceAnalyticData M omega).KernelResolventIdentifiesAnalyticMinimal R)
     (hT : ∀ (mu : PositiveShift) (g : C₀(Vec d, ℝ)),
       R.toContractiveResolvent.operator mu g =
-        ((Field.streamWholeSpaceC0BarrierData M omega).resolvent
-          ).toContractiveResolvent.operator mu g)
+        ((Field.streamWholeSpaceC0BarrierData M omega).resolvent).toContractiveResolvent.operator
+          mu g)
     (w : H1Function (cubeSetAt y n)) (wRep : Vec d → ℝ)
     (hdata : IsCubeStreamExitTimeData M n omega i y w wRep)
     {Mb : ℝ} (hMb : 0 ≤ Mb) (hb : ∀ z ∈ cubeSetAt y n, |wRep z| ≤ Mb) :
@@ -274,8 +273,8 @@ theorem isCubeExitTimeSolutionDataStream_onePoint_of_chain (M : ABKModel d) (n :
     have hchain :=
       WholeSpaceAnalyticData.lintegral_exitTime_eq_cubeSetAtExitFunction_stream
         (M := M) (omega := omega) R hreg hcons hid hT y n hx
-    have hpde := (Field.streamWholeSpaceAnalyticData M omega
-      ).cubeSetAtExitFunction_coe_eq_of_isScalarForcedWeakSolution y n w0 hw0 hae
+    have hpde := (Field.streamWholeSpaceAnalyticData M
+      omega).cubeSetAtExitFunction_coe_eq_of_isScalarForcedWeakSolution y n w0 hw0 hae
         hdata.2.1.2 hMb hb hx
     change ∫⁻ eta, MarkovProcess.ContinuousPath.exitTime
         (((↑) : Vec d → OnePoint (Vec d)) '' cubeSetAt y n) eta
@@ -297,12 +296,11 @@ theorem isCubeExitTimeSolutionDataStream_onePoint_of_mem_qEvent (d : ℕ) [NeZer
         HasCubeStreamExitTimeData M n omega i y →
       ∀ (R : PositiveC0ContractiveResolvent (Vec d)) (hreg : R.OnePointRegular),
         R.kernelSemigroup.IsConservative →
-        (Field.streamWholeSpaceAnalyticData M omega
-          ).KernelResolventIdentifiesAnalyticMinimal R →
+        (Field.streamWholeSpaceAnalyticData M omega).KernelResolventIdentifiesAnalyticMinimal R →
         (∀ (mu : PositiveShift) (g : C₀(Vec d, ℝ)),
           R.toContractiveResolvent.operator mu g =
-            ((Field.streamWholeSpaceC0BarrierData M omega).resolvent
-              ).toContractiveResolvent.operator mu g) →
+            ((Field.streamWholeSpaceC0BarrierData M
+              omega).resolvent).toContractiveResolvent.operator mu g) →
         letI := hreg.metricSpace
         letI := hreg.completeSpace
         IsCubeExitTimeSolutionDataStream M n omega (OnePoint (Vec d))

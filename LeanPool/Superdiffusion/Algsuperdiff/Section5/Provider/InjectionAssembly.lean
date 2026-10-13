@@ -123,8 +123,10 @@ private theorem infinityInjection_errorContraction :
                     (16 : ℝ) * ((√(Disorder.cstar M))⁻¹ * √M.gamma)) →
             ∀ (CIter : ℝ),
               (0 : ℝ) < CIter →
-                let C : ℝ := (1 : ℝ) + (3 : ℝ) * Creg + (96 : ℝ) * (↑d : ℝ) ^ (2 : ℕ) * CIter * Creg * (√cstar)⁻¹;
-                C = (1 : ℝ) + (3 : ℝ) * Creg + (96 : ℝ) * (↑d : ℝ) ^ (2 : ℕ) * CIter * Creg * (√cstar)⁻¹ →
+                let C : ℝ := (1 : ℝ) + (3 : ℝ) * Creg + (96 : ℝ) * (↑d : ℝ) ^ (2 : ℕ) * CIter *
+                  Creg * (√cstar)⁻¹;
+                C = (1 : ℝ) + (3 : ℝ) * Creg + (96 : ℝ) * (↑d : ℝ) ^ (2 : ℕ) * CIter * Creg *
+                  (√cstar)⁻¹ →
                   (0 : ℝ) < C →
                     ∀ (M : ABKModel d),
                       Disorder.cstar M = cstar →
@@ -138,26 +140,32 @@ private theorem infinityInjection_errorContraction :
                                     (0 : ℝ) < theta →
                                       let Sk : ℝ :=
                                         (↑d : ℝ) *
-                                          (√(↑d : ℝ) * (theta * Real.rpow (3 : ℝ) ((M.gamma - (1 : ℝ)) * (↑n : ℝ))));
+                                          (√(↑d : ℝ) * (theta * Real.rpow (3 : ℝ) ((M.gamma - (1 :
+                                            ℝ)) * (↑n : ℝ))));
                                       Sk =
                                           (↑d : ℝ) *
-                                            (√(↑d : ℝ) * (theta * Real.rpow (3 : ℝ) ((M.gamma - (1 : ℝ)) * (↑n : ℝ)))) →
+                                            (√(↑d : ℝ) * (theta * Real.rpow (3 : ℝ) ((M.gamma - (1
+                                              : ℝ)) * (↑n : ℝ)))) →
                                         let Kk : ℝ :=
                                           (↑d : ℝ) *
                                             (√(2 : ℝ) *
                                               ((↑d : ℝ) *
-                                                (theta * Real.rpow (3 : ℝ) ((M.gamma - (3 / 2 : ℝ)) * (↑n : ℝ)))));
+                                                (theta * Real.rpow (3 : ℝ) ((M.gamma - (3 / 2 :
+                                                  ℝ)) * (↑n : ℝ)))));
                                         Kk =
                                             (↑d : ℝ) *
                                               (√(2 : ℝ) *
                                                 ((↑d : ℝ) *
-                                                  (theta * Real.rpow (3 : ℝ) ((M.gamma - (3 / 2 : ℝ)) * (↑n : ℝ))))) →
+                                                  (theta * Real.rpow (3 : ℝ) ((M.gamma - (3 / 2 :
+                                                    ℝ)) * (↑n : ℝ))))) →
                                           (0 : ℝ) ≤ (2 : ℝ) * Creg →
-                                            (2 : ℝ) * Creg * (↑(Annealed.sigmaBar M n) : ℝ)⁻¹ * Real.rpow (3 : ℝ) (↑n : ℝ) *
+                                            (2 : ℝ) * Creg * (↑(Annealed.sigmaBar M n) : ℝ)⁻¹ *
+                                              Real.rpow (3 : ℝ) (↑n : ℝ) *
                                                   CIter *
                                                 (Sk + Real.rpow (3 : ℝ) ((↑n : ℝ) / (2 : ℝ)) * Kk) ≤
                                               ep := by
-  intro d cstar Creg _hCreg CL hland CIter hCIter C hCdef hCpos M hcst hgam ep n hep0 hgpos hSpos theta hthetadef hth0 Sk hSkdef Kk hKkdef hCreg2
+  intro d cstar Creg _hCreg CL hland CIter hCIter C hCdef hCpos M hcst hgam ep n hep0 hgpos hSpos
+    theta hthetadef hth0 Sk hSkdef Kk hKkdef hCreg2
   have hR1 : (0 : ℝ) < Real.rpow 3 ((M.gamma - 1) * (n : ℝ)) := rpow_three_pos _
   have hbase : (0 : ℝ) ≤ (d : ℝ) ^ 2 * (theta * Real.rpow 3 ((M.gamma - 1) * (n : ℝ))) :=
     mul_nonneg (sq_nonneg _) (mul_nonneg hth0.le hR1.le)
@@ -262,15 +270,15 @@ private theorem infinityInjection_errorContraction :
     _ ≤ ep := hfinal
 
 private theorem injectionAssembly_comparisonBounds1 :
-    ∀ (d : ℕ) (cstar Creg : ℝ) (_hCreg : (0 : ℝ) < Creg) (hd : (0 : ℕ) < d) (CL : ℝ)
-      (hland :
+    ∀ (d : ℕ) (cstar Creg : ℝ) (_hCreg : (0 : ℝ) < Creg) (_ : (0 : ℕ) < d) (CL : ℝ)
+      (_ :
         ∀ (M : ABKModel d),
           M.gamma ≤ CL⁻¹ ^ (10 : ℕ) * Disorder.cstar M ^ (10 : ℕ) →
             ∀ (j : ℤ),
               (3 : ℝ) ^ (M.gamma * (↑j : ℝ)) * (↑(Annealed.sigmaBar M (j - (1 : ℤ))) : ℝ)⁻¹ ≤
                 (16 : ℝ) * ((√(Disorder.cstar M))⁻¹ * √M.gamma))
-      (CIter : ℝ) (hCIter : (0 : ℝ) < CIter)
-      (hseq :
+      (CIter : ℝ) (_ : (0 : ℝ) < CIter)
+      (_ :
         ∀ (M : ABKModel d) (Creg : ℝ),
           (0 : ℝ) ≤ Creg →
             ∀ (n : ℤ) (y : Vec d) (ep : ℝ),
@@ -281,17 +289,21 @@ private theorem injectionAssembly_comparisonBounds1 :
                       ∀ (Kk Sk : ℝ),
                         HolderSeminormBoundOn (cubeSetAt y n) (1 / 2 : ℝ) Kk (matFieldDiv k) →
                           (∀ x ∈ cubeSetAt y n, ‖matFieldDiv k x‖ ≤ Sk) →
-                            ∀ (g : Vec d → Vec d) (w0 : H1Function (cubeSetAt y n)) (w0Rep : Vec d → ℝ) (K0 rho : ℝ),
+                            ∀ (g : Vec d → Vec d) (w0 : H1Function (cubeSetAt y n)) (w0Rep : Vec d
+                              → ℝ) (K0 rho : ℝ),
                               (0 : ℝ) ≤ K0 →
                                 (0 : ℝ) ≤ rho →
-                                  IsDirichletSolutionAt (Cutoff.coefficientCutoff M.nu n omega).toCoeffField y n w0 g →
+                                  IsDirichletSolutionAt (Cutoff.coefficientCutoff M.nu n
+                                    omega).toCoeffField y n w0 g →
                                     IsCubeRepresentative y n w0 w0Rep →
                                       HolderSeminormBoundOn (cubeSetAt y n) (1 / 2 : ℝ) K0 w0Rep →
-                                        (2 : ℝ) * Creg * (↑(Annealed.sigmaBar M n) : ℝ)⁻¹ * Real.rpow (3 : ℝ) (↑n : ℝ) *
+                                        (2 : ℝ) * Creg * (↑(Annealed.sigmaBar M n) : ℝ)⁻¹ *
+                                          Real.rpow (3 : ℝ) (↑n : ℝ) *
                                                 CIter *
                                               (Sk + Real.rpow (3 : ℝ) ((↑n : ℝ) / (2 : ℝ)) * Kk) ≤
                                             rho →
-                                          ∃ (w : ℕ → H1Function (cubeSetAt y n)) (wRep : ℕ → Vec d → ℝ) (lap :
+                                          ∃ (w : ℕ → H1Function (cubeSetAt y n)) (wRep : ℕ → Vec d
+                                            → ℝ) (lap :
                                             ℕ → H1Function (cubeSetAt y n)),
                                             w (0 : ℕ) = w0 ∧
                                               (∀ (j : ℕ), IsCubeRepresentative y n (w j) (wRep j)) ∧
@@ -299,35 +311,46 @@ private theorem injectionAssembly_comparisonBounds1 :
                                                     ∃ (z : H10Function (cubeSetAt y n)),
                                                       ∀ (x : Vec d), (w j).toFun x = z.toFun x) ∧
                                                   (∀ (j : ℕ),
-                                                      HolderSeminormBoundOn (cubeSetAt y n) (1 / 2 : ℝ) (K0 * rho ^ j)
+                                                      HolderSeminormBoundOn (cubeSetAt y n) (1 / 2
+                                                        : ℝ) (K0 * rho ^ j)
                                                         (wRep j)) ∧
                                                     (∀ (j : ℕ),
-                                                        IsDirichletSolutionAt (fun (x : Vec d) => (1 : ℝ) • (1 : Mat d)) y n
-                                                          (lap j) fun (x : Vec d) => -matVecMul (k x) ((w j).grad x)) ∧
+                                                        IsDirichletSolutionAt (fun (_ : Vec d) =>
+                                                          (1 : ℝ) • (1 : Mat d)) y n
+                                                          (lap j) fun (x : Vec d) => -matVecMul (k
+                                                            x) ((w j).grad x)) ∧
                                                       (∀ (j : ℕ),
                                                           ∀ x ∈ cubeSetAt y n,
                                                             ‖(lap j).grad x‖ ≤
-                                                              CIter * Real.rpow (3 : ℝ) ((↑n : ℝ) / (2 : ℝ)) * K0 *
-                                                                  (Sk + Real.rpow (3 : ℝ) ((↑n : ℝ) / (2 : ℝ)) * Kk) *
+                                                              CIter * Real.rpow (3 : ℝ) ((↑n : ℝ)
+                                                                / (2 : ℝ)) * K0 *
+                                                                  (Sk + Real.rpow (3 : ℝ) ((↑n :
+                                                                    ℝ) / (2 : ℝ)) * Kk) *
                                                                 rho ^ j) ∧
                                                         ∀ (j : ℕ),
                                                           IsDirichletSolutionAt
-                                                            (Cutoff.coefficientCutoff M.nu n omega).toCoeffField y n
+                                                            (Cutoff.coefficientCutoff M.nu n
+                                                              omega).toCoeffField y n
                                                             (w (j + (1 : ℕ))) (lap j).grad),
-      let C : ℝ := (1 : ℝ) + (3 : ℝ) * Creg + (96 : ℝ) * (↑d : ℝ) ^ (2 : ℕ) * CIter * Creg * (√cstar)⁻¹;
-      ∀ (hCdef : C = (1 : ℝ) + (3 : ℝ) * Creg + (96 : ℝ) * (↑d : ℝ) ^ (2 : ℕ) * CIter * Creg * (√cstar)⁻¹)
-        (hCpos : (0 : ℝ) < C) (M : ABKModel d) (hcst : Disorder.cstar M = cstar)
-        (hgam : M.gamma ≤ CL⁻¹ ^ (10 : ℕ) * cstar ^ (10 : ℕ)) (ep : ℝ) (n : ℤ) (y : Vec d) (g : Vec d → Vec d)
-        (omega : Cutoff.CutoffSample d) (m : ℤ) (hnm : n ≤ m) (u : H1Function (cubeSetAt y n))
-        (hu : IsDirichletSolutionAt (Cutoff.coefficientCutoff M.nu m omega).toCoeffField y n u g) (hep0 : (0 : ℝ) < ep)
-        (hep1 : ep < (1 : ℝ)) (hgpos : (0 : ℝ) < M.gamma) (hSpos : (0 : ℝ) < (↑(Annealed.sigmaBar M n) : ℝ))
-        (hP : (0 : ℝ) < Real.rpow (3 : ℝ) ((↑n : ℝ) / (2 : ℝ))),
+      let C : ℝ := (1 : ℝ) + (3 : ℝ) * Creg + (96 : ℝ) * (↑d : ℝ) ^ (2 : ℕ) * CIter * Creg *
+        (√cstar)⁻¹;
+      ∀ (_ : C = (1 : ℝ) + (3 : ℝ) * Creg + (96 : ℝ) * (↑d : ℝ) ^ (2 : ℕ) * CIter * Creg *
+        (√cstar)⁻¹)
+        (_ : (0 : ℝ) < C) (M : ABKModel d) (_ : Disorder.cstar M = cstar)
+        (_ : M.gamma ≤ CL⁻¹ ^ (10 : ℕ) * cstar ^ (10 : ℕ)) (ep : ℝ) (n : ℤ) (y : Vec d) (g : Vec d
+          → Vec d)
+        (omega : Cutoff.CutoffSample d) (m : ℤ) (_ : n ≤ m) (u : H1Function (cubeSetAt y n))
+        (_ : IsDirichletSolutionAt (Cutoff.coefficientCutoff M.nu m omega).toCoeffField y n u g)
+          (_ : (0 : ℝ) < ep)
+        (_ : ep < (1 : ℝ)) (_ : (0 : ℝ) < M.gamma) (_ : (0 : ℝ) < (↑(Annealed.sigmaBar M n) : ℝ))
+        (_ : (0 : ℝ) < Real.rpow (3 : ℝ) ((↑n : ℝ) / (2 : ℝ))),
         let theta : ℝ := C⁻¹ * ep * (√M.gamma)⁻¹;
-        ∀ (hthetadef : theta = C⁻¹ * ep * (√M.gamma)⁻¹) (hth0 : (0 : ℝ) < theta)
-          (hmemG : omega ∈ goodCubeEvent M Creg n y ep) (hmemJ : omega ∈ largeScaleEvent M n y theta)
-          (hgne : holderSeminormOn (cubeSetAt y n) (1 / 2 : ℝ) g ≠ ∞),
+        ∀ (_ : theta = C⁻¹ * ep * (√M.gamma)⁻¹) (_ : (0 : ℝ) < theta)
+          (_ : omega ∈ goodCubeEvent M Creg n y ep) (_ : omega ∈ largeScaleEvent M n y theta)
+          (_ : holderSeminormOn (cubeSetAt y n) (1 / 2 : ℝ) g ≠ ∞),
           let Kg : ℝ := (holderSeminormOn (cubeSetAt y n) (1 / 2 : ℝ) g).toReal;
-          ∃ (_ : (0 : ℝ) ≤ Kg) (_ : holderSeminormOn (cubeSetAt y n) (1 / 2 : ℝ) g = ENNReal.ofReal Kg) (_ :
+          ∃ (_ : (0 : ℝ) ≤ Kg) (_ : holderSeminormOn (cubeSetAt y n) (1 / 2 : ℝ) g =
+            ENNReal.ofReal Kg) (_ :
             (↑(Annealed.sigmaBar M n) : ℝ)⁻¹ * Real.rpow (3 : ℝ) ((↑n : ℝ) / (2 : ℝ)) *
                 ((2 : ℝ) * Creg * Real.rpow (3 : ℝ) ((↑n : ℝ) / (2 : ℝ)) * Kg) =
               (↑(Annealed.sigmaBar M n) : ℝ)⁻¹ * Real.rpow (3 : ℝ) ((↑n : ℝ) / (2 : ℝ)) *
@@ -338,7 +361,8 @@ private theorem injectionAssembly_comparisonBounds1 :
                 ((2 : ℝ) * Creg * Real.rpow (3 : ℝ) ((↑n : ℝ) / (2 : ℝ)) * Kg))
             (w : ℕ → H1Function (cubeSetAt y n)) (wRep : ℕ → Vec d → ℝ) (_ :
             ∀ (j : ℕ), IsCubeRepresentative y n (w j) (wRep j)) (_ :
-            IsDirichletSolutionAt (Cutoff.coefficientCutoff M.nu n omega).toCoeffField y n (w (0 : ℕ)) g) (uRep : Vec d → ℝ)
+            IsDirichletSolutionAt (Cutoff.coefficientCutoff M.nu n omega).toCoeffField y n (w (0 :
+              ℕ)) g) (uRep : Vec d → ℝ)
             (_ : IsCubeRepresentative y n u uRep) (_ :
             HolderSeminormBoundOn (cubeSetAt y n) (1 / 2 : ℝ)
               ((↑(Annealed.sigmaBar M n) : ℝ)⁻¹ * Real.rpow (3 : ℝ) ((↑n : ℝ) / (2 : ℝ)) *
@@ -354,7 +378,8 @@ private theorem injectionAssembly_comparisonBounds1 :
               fun (x : Vec d) => uRep x - wRep (0 : ℕ) x),
             True := by
   classical
-  intro d cstar Creg _hCreg hd CL hland CIter hCIter hseq C hCdef hCpos M hcst hgam ep n y g omega m hnm u hu hep0 hep1 hgpos hSpos hP theta hthetadef hth0 hmemG hmemJ hgne Kg
+  intro d cstar Creg _hCreg hd CL hland CIter hCIter hseq C hCdef hCpos M hcst hgam ep n y g omega
+    m hnm _ hu hep0 hep1 hgpos hSpos hP theta hthetadef hth0 hmemG hmemJ hgne Kg
   have hKg0 : 0 ≤ Kg := ENNReal.toReal_nonneg
   have hgeq : holderSeminormOn (cubeSetAt y n) (1 / 2) g = ENNReal.ofReal Kg :=
     (ENNReal.ofReal_toReal hgne).symm
@@ -501,7 +526,9 @@ theorem injection_in_L_infty_v2_provider (d : ℕ) (cstar : ℝ) (_hcstar : 0 < 
   -- the datum, its Hölder constant and its square integrability
   set Kg : ℝ := (holderSeminormOn (cubeSetAt y n) (1 / 2) g).toReal with hKgdef
   obtain ⟨hKg0, hgeq, hK0def, hK00, w, wRep, hrep, hw0sol, uRep, huRep, huRepK, hutailK, _⟩ :=
-    @injectionAssembly_comparisonBounds1 (d) (cstar) (Creg) (_hCreg) (hd) (CL) (hland) (CIter) (hCIter) (hseq) (hCdef) (hCpos) (M) (hcst) (hgam) (ep) (n) (y) (g) (omega) (m) (hnm) (u) (hu) (hep0) (hep1) (hgpos) (hSpos) (hP) (hthetadef) (hth0) (hmemG) (hmemJ) (hgne)
+    @injectionAssembly_comparisonBounds1 (d) (cstar) (Creg) (_hCreg) (hd) (CL) (hland) (CIter)
+      (hCIter) (hseq) (hCdef) (hCpos) (M) (hcst) (hgam) (ep) (n) (y) (g) (omega) (m) (hnm) (u)
+        (hu) (hep0) (hep1) (hgpos) (hSpos) (hP) (hthetadef) (hth0) (hmemG) (hmemJ) (hgne)
   set kap : Vec d → Mat d :=
     fun z => Cutoff.cutoff m omega z - Cutoff.cutoff n omega z with hkapdef
   set Sk : ℝ :=

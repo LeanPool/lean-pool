@@ -33,6 +33,7 @@ namespace Algsuperdiff.Section3.Cutoff
 
 open Filter MeasureTheory Set
 open HCPolySupport HCPolySupport.Book
+open HCPolySupport.Book.Ch04
 open scoped BigOperators
 
 noncomputable section
@@ -275,7 +276,7 @@ theorem lambdaSqCoeffField_inv_le_cutoffCoercivity
       ∑' n : ℕ, Ch02.geometricWeight s 1 n *
         Ch04.maxDescendantSigmaStarInvMatrixNormCoeffFieldAtScale
           Q (Q.scale - (n : ℤ)) (coefficientCutoff M.nu m omega) :=
-      Ch04.lambdaSqCoeffField_finite_one_inv_le_tsum_weighted_maxDescendantSigmaStarInvMatrixNormAtScale
+      lambdaSqCoeffField_finite_one_inv_le_tsum_weighted_maxDescendantSigmaStarInvMatrixNormAtScale
         Q (coefficientCutoff M.nu m omega) hs
     _ ≤ C := tsum_geometricWeight_one_mul_le_const hs hnonneg hbound
 

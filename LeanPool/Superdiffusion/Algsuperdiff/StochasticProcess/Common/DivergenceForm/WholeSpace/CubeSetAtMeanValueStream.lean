@@ -58,12 +58,10 @@ namespace WholeSpaceAnalyticData
 variable {M : ABKModel d} {omega : FullSample d M.gamma}
   (R : PositiveC0ContractiveResolvent (Vec d)) (hreg : R.OnePointRegular)
   (hcons : R.kernelSemigroup.IsConservative)
-  (hid : (streamWholeSpaceAnalyticData M omega
-    ).KernelResolventIdentifiesAnalyticMinimal R)
+  (hid : (streamWholeSpaceAnalyticData M omega).KernelResolventIdentifiesAnalyticMinimal R)
   (hT : ∀ (mu : PositiveShift) (g : C₀(Vec d, ℝ)),
     R.toContractiveResolvent.operator mu g =
-      ((streamWholeSpaceC0BarrierData M omega).resolvent
-        ).toContractiveResolvent.operator mu g)
+      ((streamWholeSpaceC0BarrierData M omega).resolvent).toContractiveResolvent.operator mu g)
 
 include hcons hid hT in
 /-- **The harmonic part of a resolvent datum on a translated triadic cube is represented by the
@@ -75,11 +73,11 @@ theorem hasExitMeanValueOn_cubeSetAtHarmonicPart_stream (y : Vec d) (n : ℤ)
     HasExitMeanValueOn R.onePointKernelSemigroup
       R.isConservative_onePointKernelSemigroup
       (((↑) : Vec d → OnePoint (Vec d)) '' cubeSetAt y n)
-      (onePointRealExtension ((streamWholeSpaceAnalyticData M omega
-        ).cubeSetAtHarmonicPart R y n mu g)) :=
+      (onePointRealExtension ((streamWholeSpaceAnalyticData M omega).cubeSetAtHarmonicPart R y n
+        mu g)) :=
   hasExitMeanValueOn_of_isCubeSetAtResolventHarmonicPart_stream R hreg hcons hid hT y n mu g hg0
-    ((streamWholeSpaceAnalyticData M omega
-      ).isCubeSetAtResolventHarmonicPart_cubeSetAtHarmonicPart R y n mu g)
+    ((streamWholeSpaceAnalyticData M omega).isCubeSetAtResolventHarmonicPart_cubeSetAtHarmonicPart
+      R y n mu g)
     (fun _ hz ↦ expectedExitTime_cubeSetAt_ne_top_stream R hreg hcons hid hT y n hz)
 
 include hcons hid hT in
@@ -206,8 +204,8 @@ theorem exists_h1Function_cubeSetAtHarmonicPart_stream (y : Vec d) (n : ℤ)
     (mu : PositiveShift) (g : C₀(Vec d, ℝ)) :
     ∃ z h : H1Function (cubeSetAt y n),
       (∀ w, z.toFun w = R.toContractiveResolvent.operator mu g w) ∧
-        (∀ w, h.toFun w = (streamWholeSpaceAnalyticData M omega
-          ).cubeSetAtHarmonicPart R y n mu g w) ∧
+        (∀ w, h.toFun w = (streamWholeSpaceAnalyticData M omega).cubeSetAtHarmonicPart R y n mu g
+          w) ∧
           IsScalarForcedWeakSolution (streamWholeSpaceAnalyticData M omega).a (cubeSetAt y n)
               (fun _ ↦ (0 : ℝ)) h ∧
             MemH10 (cubeSetAt y n) fun w ↦ z.toFun w - h.toFun w := by

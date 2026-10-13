@@ -113,24 +113,29 @@ variable {E δ w : ℤ → ℝ} {θ κ Mp : ℝ} {h : ℕ}
 
 private theorem weightedGoodRunAssembly_comparisonBounds1 :
     ∀ {E δ : ℤ → ℝ} {θ κ Mp : ℝ} {h : ℕ} (_ : (0 : ℝ) < θ) (_ : θ ≤ (1 : ℝ))
-      (_ : ∀ (k : ℤ), (0 : ℝ) ≤ E k) (_ : ∀ (k : ℤ), (0 : ℝ) ≤ δ k) (_ : (0 : ℝ) ≤ Mp) (_ : (1 : ℝ) ≤ κ) {m : ℤ},
+      (_ : ∀ (k : ℤ), (0 : ℝ) ≤ E k) (_ : ∀ (k : ℤ), (0 : ℝ) ≤ δ k) (_ : (0 : ℝ) ≤ Mp) (_ : (1 :
+        ℝ) ≤ κ) {m : ℤ},
       (0 : ℝ) ≤ κ ∧
         (0 : ℝ) ≤ θ⁻¹ ∧
           (1 : ℝ) ≤ κ * θ⁻¹ ∧
             (0 : ℝ) ≤ κ * θ⁻¹ ∧
               (∀ (i : ℕ), (1 : ℝ) ≤ ((2 : ℝ) * (κ * θ⁻¹) ^ (h + (2 : ℕ))) ^ i) ∧
                 (∀ (i i' : ℕ),
-                    i ≤ i' → ((2 : ℝ) * (κ * θ⁻¹) ^ (h + (2 : ℕ))) ^ i ≤ ((2 : ℝ) * (κ * θ⁻¹) ^ (h + (2 : ℕ))) ^ i') ∧
+                    i ≤ i' → ((2 : ℝ) * (κ * θ⁻¹) ^ (h + (2 : ℕ))) ^ i ≤ ((2 : ℝ) * (κ * θ⁻¹) ^ (h
+                      + (2 : ℕ))) ^ i') ∧
                   (∀ (i b : ℤ), b ≤ m → ∑ j ∈ Icc i b, δ j ≤ ∑ j ∈ Icc i m, δ j) ∧
                     (∀ (i : ℤ), (0 : ℝ) ≤ ∑ j ∈ Icc i m, δ j) ∧
                       (∀ (i : ℤ), (0 : ℝ) ≤ θ ^ (m - i) * E m) ∧
-                        (∀ (i : ℤ), (0 : ℝ) ≤ θ ^ (m - i) * E m + (5 / 2 : ℝ) * Mp + ∑ j ∈ Icc i m, δ j) ∧
+                        (∀ (i : ℤ), (0 : ℝ) ≤ θ ^ (m - i) * E m + (5 / 2 : ℝ) * Mp + ∑ j ∈ Icc i
+                          m, δ j) ∧
                           ∀ (i i' e : ℤ) (p : ℕ),
                             (0 : ℤ) ≤ e →
                               θ ^ e * θ ^ (m - i') = θ ^ (m - i) * θ⁻¹ ^ p →
                                 i ≤ i' →
-                                  θ ^ e * (θ ^ (m - i') * E m + (5 / 2 : ℝ) * Mp + ∑ j ∈ Icc i' m, δ j) ≤
-                                    θ⁻¹ ^ p * (θ ^ (m - i) * E m + (5 / 2 : ℝ) * Mp + ∑ j ∈ Icc i m, δ j) := by
+                                  θ ^ e * (θ ^ (m - i') * E m + (5 / 2 : ℝ) * Mp + ∑ j ∈ Icc i' m,
+                                    δ j) ≤
+                                    θ⁻¹ ^ p * (θ ^ (m - i) * E m + (5 / 2 : ℝ) * Mp + ∑ j ∈ Icc i
+                                      m, δ j) := by
   intro E δ θ κ Mp h hθpos hθ1 hE hδ hMp hκ m
   have hκ0 : (0 : ℝ) ≤ κ := by linarith only [hκ]
   have hinv : 1 ≤ θ⁻¹ := one_le_inv_of_le_one hθpos hθ1
@@ -200,8 +205,9 @@ private theorem weightedGoodRunAssembly_comparisonBounds1 :
   exact ⟨hκ0, hinv0, hκθ, hκθ0, hLpow, hLmono, hδblk, hδ0, hXnn, hVnn, hVshift⟩
 
 private theorem weightedGoodRunAssembly_estimate1 :
-    ∀ {E : ℤ → ℝ} {θ κ : ℝ} {h : ℕ} (hθpos : (0 : ℝ) < θ)
-      (hmono : ∀ (k : ℤ), E k ≤ κ * E (k + (1 : ℤ))) {m : ℤ} (hinv0 : (0 : ℝ) ≤ θ⁻¹) (k b₀ : ℤ) (hbm : b₀ = m),
+    ∀ {E : ℤ → ℝ} {θ κ : ℝ} {_ : ℕ} (_ : (0 : ℝ) < θ)
+      (_ : ∀ (k : ℤ), E k ≤ κ * E (k + (1 : ℤ))) {m : ℤ} (_ : (0 : ℝ) ≤ θ⁻¹) (k b₀ : ℤ) (_ : b₀ =
+        m),
       θ ^ (b₀ - (1 : ℤ) - k) * E (b₀ - (1 : ℤ)) ≤ κ * θ⁻¹ * (θ ^ (m - k) * E m) := by
   intro E θ κ h hθpos hmono m hinv0 k b₀ hbm
   have hb : E (b₀ - 1) ≤ κ * E b₀ := by
@@ -222,12 +228,13 @@ private theorem weightedGoodRunAssembly_estimate1 :
     _ = κ * θ⁻¹ * (θ ^ (m - k) * E m) := by ring
 
 private theorem weightedGoodRunAssembly_estimate2 :
-    ∀ {θ κ : ℝ} {h : ℕ} {n m : ℤ} (B : Finset ℤ) (hκθ : (1 : ℝ) ≤ κ * θ⁻¹)
-      (hLmono :
-        ∀ (i i' : ℕ), i ≤ i' → ((2 : ℝ) * (κ * θ⁻¹) ^ (h + (2 : ℕ))) ^ i ≤ ((2 : ℝ) * (κ * θ⁻¹) ^ (h + (2 : ℕ))) ^ i')
-      (T : ℕ) (k : ℤ) (hcard0 : #(B ∩ Icc k m) = (0 : ℕ)),
+    ∀ {θ κ : ℝ} {h : ℕ} {_ m : ℤ} (B : Finset ℤ) (_ : (1 : ℝ) ≤ κ * θ⁻¹)
+      (_ :
+        ∀ (i i' : ℕ), i ≤ i' → ((2 : ℝ) * (κ * θ⁻¹) ^ (h + (2 : ℕ))) ^ i ≤ ((2 : ℝ) * (κ * θ⁻¹) ^
+          (h + (2 : ℕ))) ^ i')
+      (_ : ℕ) (k : ℤ) (_ : #(B ∩ Icc k m) = (0 : ℕ)),
       (κ * θ⁻¹) ^ h ≤ ((2 : ℝ) * (κ * θ⁻¹) ^ (h + (2 : ℕ))) ^ (#(B ∩ Icc k m) + (1 : ℕ)) := by
-  intro θ κ h n m B hκθ hLmono T k hcard0
+  intro θ κ h n m B hκθ hLmono _ k _
   have h1 : (κ * θ⁻¹) ^ h ≤ (κ * θ⁻¹) ^ (h + 2) :=
     pow_le_pow_right₀ hκθ (by omega)
   have h2 : (κ * θ⁻¹) ^ (h + 2) ≤ 2 * (κ * θ⁻¹) ^ (h + 2) := by
@@ -240,9 +247,10 @@ private theorem weightedGoodRunAssembly_estimate2 :
   linarith only [h1, h2, h3]
 
 private theorem weightedGoodRunAssembly_estimate3 :
-    ∀ {n m : ℤ} (B : Finset ℤ) (T : ℕ) (k b₀ : ℤ)
-      (hb₀mem : b₀ ∈ B ∩ Icc k m) (hbk : k = b₀), #(B ∩ Icc (k + (1 : ℤ)) m) + (1 : ℕ) ≤ #(B ∩ Icc k m) := by
-  intro n m B T k b₀ hb₀mem hbk
+    ∀ {_ m : ℤ} (B : Finset ℤ) (_ : ℕ) (k b₀ : ℤ)
+      (_ : b₀ ∈ B ∩ Icc k m) (_ : k = b₀), #(B ∩ Icc (k + (1 : ℤ)) m) + (1 : ℕ) ≤ #(B ∩ Icc k
+        m) := by
+  intro n m B _ k b₀ hb₀mem _
   have hss : B ∩ Icc (k + 1) m ⊂ B ∩ Icc k m := by
     refine (Finset.ssubset_iff_of_subset ?_).2 ⟨b₀, hb₀mem, ?_⟩
     · intro x hx
@@ -269,19 +277,22 @@ Both the geometric factor on `E_m` and the length-independence of the error budg
 essential for conclusion (ii): the first is its `θ^{m−n}` slot, the second is what makes
 its middle slot carry a *single* power of `M`. -/
 private theorem weightedGoodRunAssembly_estimate4 :
-    ∀ {E δ : ℤ → ℝ} {θ κ Mp : ℝ} {h : ℕ} (hθpos : (0 : ℝ) < θ) {m : ℤ}
-      (B : Finset ℤ) (hκ0 : (0 : ℝ) ≤ κ) (k b₀ : ℤ)
-      (hih :
+    ∀ {E δ : ℤ → ℝ} {θ κ Mp : ℝ} {h : ℕ} (_ : (0 : ℝ) < θ) {m : ℤ}
+      (B : Finset ℤ) (_ : (0 : ℝ) ≤ κ) (k b₀ : ℤ)
+      (_ :
         E (b₀ + (1 : ℤ)) ≤
           ((2 : ℝ) * (κ * θ⁻¹) ^ (h + (2 : ℕ))) ^ (#(B ∩ Icc (b₀ + (1 : ℤ)) m) + (1 : ℕ)) *
             (θ ^ (m - (b₀ + (1 : ℤ))) * E m + (5 / 2 : ℝ) * Mp + ∑ j ∈ Icc (b₀ + (1 : ℤ)) m, δ j))
-      (hVs :
-        θ ^ (b₀ - (1 : ℤ) - k) * (θ ^ (m - (b₀ + (1 : ℤ))) * E m + (5 / 2 : ℝ) * Mp + ∑ j ∈ Icc (b₀ + (1 : ℤ)) m, δ j) ≤
+      (_ :
+        θ ^ (b₀ - (1 : ℤ) - k) * (θ ^ (m - (b₀ + (1 : ℤ))) * E m + (5 / 2 : ℝ) * Mp + ∑ j ∈ Icc
+          (b₀ + (1 : ℤ)) m, δ j) ≤
           θ⁻¹ ^ (2 : ℕ) * (θ ^ (m - k) * E m + (5 / 2 : ℝ) * Mp + ∑ j ∈ Icc k m, δ j))
-      (hW'0 : (0 : ℝ) ≤ ((2 : ℝ) * (κ * θ⁻¹) ^ (h + (2 : ℕ))) ^ (#(B ∩ Icc (b₀ + (1 : ℤ)) m) + (1 : ℕ)))
-      (hcross2 : E (b₀ - (1 : ℤ)) ≤ κ * (κ * E (b₀ + (1 : ℤ)))),
+      (_ : (0 : ℝ) ≤ ((2 : ℝ) * (κ * θ⁻¹) ^ (h + (2 : ℕ))) ^ (#(B ∩ Icc (b₀ + (1 : ℤ)) m) + (1 :
+        ℕ)))
+      (_ : E (b₀ - (1 : ℤ)) ≤ κ * (κ * E (b₀ + (1 : ℤ)))),
       θ ^ (b₀ - (1 : ℤ) - k) * E (b₀ - (1 : ℤ)) ≤
-        (κ * θ⁻¹) ^ (2 : ℕ) * ((2 : ℝ) * (κ * θ⁻¹) ^ (h + (2 : ℕ))) ^ (#(B ∩ Icc (b₀ + (1 : ℤ)) m) + (1 : ℕ)) *
+        (κ * θ⁻¹) ^ (2 : ℕ) * ((2 : ℝ) * (κ * θ⁻¹) ^ (h + (2 : ℕ))) ^ (#(B ∩ Icc (b₀ + (1 : ℤ)) m)
+          + (1 : ℕ)) *
           (θ ^ (m - k) * E m + (5 / 2 : ℝ) * Mp + ∑ j ∈ Icc k m, δ j) := by
   intro E δ θ κ Mp h hθpos m B hκ0 k b₀ hih hVs hW'0 hcross2
   have hz0 : (0 : ℝ) ≤ θ ^ (b₀ - 1 - k) := le_of_lt (zpow_pos hθpos _)
@@ -370,7 +381,8 @@ theorem weightedAssemble (hθpos : 0 < θ) (hθ1 : θ ≤ 1) (hθh : θ ^ h < 3 
             have hb₀m : b₀ ≤ m := (Finset.mem_Icc.1 (Finset.mem_inter.1 hb₀mem).2).2
             rcases eq_or_lt_of_le hb₀k with hbk | hbk
             · -- the bottom scale is bad: cross it and recurse
-              have hcard : (B ∩ Icc (k + 1) m).card + 1 ≤ (B ∩ Icc k m).card  := @weightedGoodRunAssembly_estimate3 (n) (m) (B) (T) (k) (b₀) (hb₀mem) (hbk)
+              have hcard : (B ∩ Icc (k + 1) m).card + 1 ≤ (B ∩ Icc k m).card  :=
+                @weightedGoodRunAssembly_estimate3 (n) (m) (B) (T) (k) (b₀) (hb₀mem) (hbk)
               have hih := ih (k + 1) (by omega) (by omega) (by omega)
               have hVs := hVshift k (k + 1) 0 1 le_rfl (by
                   rw [zpow_zero, one_mul, show m - (k + 1) = m - k - 1 from by ring,
@@ -417,7 +429,8 @@ theorem weightedAssemble (hθpos : 0 < θ) (hθ1 : θ ≤ 1) (hθh : θ ^ h < 3 
               rcases eq_or_lt_of_le hb₀m with hbm | hbm
               · -- the bad scale is the top scale
                 have hY : θ ^ (b₀ - 1 - k) * E (b₀ - 1)
-                    ≤ κ * θ⁻¹ * (θ ^ (m - k) * E m)  := @weightedGoodRunAssembly_estimate1 (E) (θ) (κ) (h) (hθpos) (hmono) (m) (hinv0) (k) (b₀) (hbm)
+                    ≤ κ * θ⁻¹ * (θ ^ (m - k) * E m)  := @weightedGoodRunAssembly_estimate1 (E) (θ)
+                      (κ) (h) (hθpos) (hmono) (m) (hinv0) (k) (b₀) (hbm)
                 refine weightedRunAbsorb hP0 hκθ (by linarith only [hMp])
                   (Finset.sum_nonneg fun j _ => hδ j) (hVnn k) hrun hY ?_ ?_
                 · have hd := hδblk k (b₀ - 1) (by omega)
@@ -475,7 +488,9 @@ theorem weightedAssemble (hθpos : 0 < θ) (hθ1 : θ ≤ 1) (hθh : θ ^ h < 3 
                 have hY : θ ^ (b₀ - 1 - k) * E (b₀ - 1)
                     ≤ (κ * θ⁻¹) ^ 2
                         * (2 * (κ * θ⁻¹) ^ (h + 2)) ^ ((B ∩ Icc (b₀ + 1) m).card + 1)
-                      * (θ ^ (m - k) * E m + 5 / 2 * Mp + ∑ j ∈ Icc k m, δ j)  := @weightedGoodRunAssembly_estimate4 (E) (δ) (θ) (κ) (Mp) (h) (hθpos) (m) (B) (hκ0) (k) (b₀) (hih) (hVs) (hW'0) (hcross2)
+                      * (θ ^ (m - k) * E m + 5 / 2 * Mp + ∑ j ∈ Icc k m, δ j)  :=
+                        @weightedGoodRunAssembly_estimate4 (E) (δ) (θ) (κ) (Mp) (h) (hθpos) (m)
+                          (B) (hκ0) (k) (b₀) (hih) (hVs) (hW'0) (hcross2)
                 refine weightedRunAbsorbInner hP0 ?_ (hVnn k) hrun hY ?_ ?_
                 · have hm := mul_le_mul_of_nonneg_left hW'1
                     (by linarith only [hκθsq] : (0 : ℝ) ≤ (κ * θ⁻¹) ^ 2)
@@ -511,7 +526,9 @@ theorem weightedAssemble (hθpos : 0 < θ) (hθ1 : θ ≤ 1) (hθh : θ ^ h < 3 
                   simp only [Finset.mem_Icc]
                   exact ⟨hj1, hj2⟩⟩⟩))
             have hpref : (κ * θ⁻¹) ^ h
-                ≤ (2 * (κ * θ⁻¹) ^ (h + 2)) ^ ((B ∩ Icc k m).card + 1)  := @weightedGoodRunAssembly_estimate2 (θ) (κ) (h) (n) (m) (B) (hκθ) (hLmono) (T) (k) (hcard0)
+                ≤ (2 * (κ * θ⁻¹) ^ (h + 2)) ^ ((B ∩ Icc k m).card + 1)  :=
+                  @weightedGoodRunAssembly_estimate2 (θ) (κ) (h) (n) (m) (B) (hκθ) (hLmono) (T)
+                    (k) (hcard0)
             exact le_trans hrun (mul_le_mul_of_nonneg_right hpref (hVnn k))
   intro k hnk hkm
   exact key (m - n).toNat k hnk hkm (by omega)

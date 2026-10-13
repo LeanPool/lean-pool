@@ -142,11 +142,13 @@ private theorem centeredComparatorQuadratic_integral_bound :
             let D : Finset (TriadicCube d) := descendantsAtScale Q child;
             let X : Set (Vec d) → RegCoeffField d → ℝ := starredComparatorQuadratic B C q;
             let mu0 : ℝ := ∫ (a : RegCoeffField d), X (cubeSet (originCube d child)) a ∂P;
-            let Z : TriadicCube d → RegCoeffField d → ℝ := fun (R : TriadicCube d) (a : RegCoeffField d) =>
+            let Z : TriadicCube d → RegCoeffField d → ℝ := fun (R : TriadicCube d) (a :
+              RegCoeffField d) =>
               X (cubeSet R) a - mu0;
             Integrable (X (cubeSet (originCube d child))) P →
               (∀ R ∈ D, R.scale = child) →
-                (∀ R ∈ D, Z R = fun (a : RegCoeffField d) => Z (originCube d child) (translateReg (triadicCubeShift R) a)) →
+                (∀ R ∈ D, Z R = fun (a : RegCoeffField d) => Z (originCube d child) (translateReg
+                  (triadicCubeShift R) a)) →
                   ∀ R ∈ D, ∫ (a : RegCoeffField d), Z R a ∂P = (0 : ℝ) := by
   intro d P hstat B C q child _ _ _ _ X mu0 Z hX0Int hScale hComp R hR
   have hXInt : Integrable (X (cubeSet R)) P := by
@@ -403,15 +405,21 @@ private theorem starredComparatorQuadratic_centeredDescendantSum_root_le
 
 private theorem combineFiniteMean_momentBounds1 :
     ∀ {d : ℕ} (M : ABKModel d) (L : ℤ) {s A D : ℝ} (hs : (0 : ℝ) < s),
-      let mu : Measure (Cutoff.CutoffSample d) := (↑(Cutoff.cutoffSampleLaw M) : Measure (Cutoff.CutoffSample d));
+      let mu : Measure (Cutoff.CutoffSample d) := (↑(Cutoff.cutoffSampleLaw M) : Measure
+        (Cutoff.CutoffSample d));
       let X0 : Cutoff.CutoffSample d → ℝ := Observable.cutoffHomogenizationError M L ⟨s, hs⟩;
       ∀ (Y Z : Cutoff.CutoffSample d → ℝ) (_ : (0 : ℝ) < A) (_ : (0 : ℝ) < D)
         (_ : Measurable (Observable.cutoffHomogenizationError M L ⟨s, hs⟩)) (_ : Measurable Z)
-        (_ : ∀ (ω : Cutoff.CutoffSample d), Observable.cutoffHomogenizationError M L ⟨s, hs⟩ ω ≤ Y ω + Z ω)
-        (_ : IsBigOWith (↑(Cutoff.cutoffSampleLaw M) : Measure (Cutoff.CutoffSample d)) (gammaSigma (2 : ℝ)) Y A)
-        (_ : IsBigOWith (↑(Cutoff.cutoffSampleLaw M) : Measure (Cutoff.CutoffSample d)) (gammaSigma (1 / 2 : ℝ)) Z D),
-        let Y0 : Cutoff.CutoffSample d → ℝ := fun (omega : Cutoff.CutoffSample d) => max (0 : ℝ) (Y omega);
-        let Z0 : Cutoff.CutoffSample d → ℝ := fun (omega : Cutoff.CutoffSample d) => max (0 : ℝ) (Z omega);
+        (_ : ∀ (ω : Cutoff.CutoffSample d), Observable.cutoffHomogenizationError M L ⟨s, hs⟩ ω ≤ Y
+          ω + Z ω)
+        (_ : IsBigOWith (↑(Cutoff.cutoffSampleLaw M) : Measure (Cutoff.CutoffSample d))
+          (gammaSigma (2 : ℝ)) Y A)
+        (_ : IsBigOWith (↑(Cutoff.cutoffSampleLaw M) : Measure (Cutoff.CutoffSample d))
+          (gammaSigma (1 / 2 : ℝ)) Z D),
+        let Y0 : Cutoff.CutoffSample d → ℝ := fun (omega : Cutoff.CutoffSample d) => max (0 : ℝ)
+          (Y omega);
+        let Z0 : Cutoff.CutoffSample d → ℝ := fun (omega : Cutoff.CutoffSample d) => max (0 : ℝ)
+          (Z omega);
         ∀ (_ : ∀ (omega : Cutoff.CutoffSample d), (0 : ℝ) ≤ Y0 omega)
           (_ : ∀ (omega : Cutoff.CutoffSample d), (0 : ℝ) ≤ Z0 omega) (_ : AEMeasurable Y0 mu),
           Integrable (fun (omega : Cutoff.CutoffSample d) => Y0 omega ^ (4 : ℕ)) mu ∧
@@ -427,8 +435,10 @@ private theorem combineFiniteMean_momentBounds1 :
                         ∫ (omega : Cutoff.CutoffSample d), X0 omega ^ (2 : ℕ) ∂mu ≤
                           (2 : ℝ) *
                             ((gammaMomentConst (2 : ℝ) * (2 : ℝ) ^ (2 : ℝ)⁻¹ * A) ^ (2 : ℕ) +
-                              (gammaMomentConst (1 / 2 : ℝ) * (2 : ℝ) ^ (1 / 2 : ℝ)⁻¹ * D) ^ (2 : ℕ)) := by
-  intro _ M L s A D hs mu X0 Y _ hA hD hXmeas hZmeas hdom hYtail hZtail Y0 Z0 hY0nonneg hZ0nonneg hY0meas
+                              (gammaMomentConst (1 / 2 : ℝ) * (2 : ℝ) ^ (1 / 2 : ℝ)⁻¹ * D) ^ (2 :
+                                ℕ)) := by
+  intro _ M L s A D hs mu X0 Y _ hA hD hXmeas hZmeas hdom hYtail hZtail Y0 Z0 hY0nonneg hZ0nonneg
+    hY0meas
   have hZ0meas : AEMeasurable Z0 mu :=
     (measurable_const.max hZmeas).aemeasurable
   have hY0tail : IsBigOWith mu (gammaSigma 2) Y0 A := by

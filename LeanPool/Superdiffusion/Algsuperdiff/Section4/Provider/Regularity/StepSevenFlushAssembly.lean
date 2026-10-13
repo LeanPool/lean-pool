@@ -154,26 +154,36 @@ private theorem flushBracket_secondErrorBound :
         (0 : ℝ) ≤ √sigma →
           (0 : ℝ) ≤ √sigma⁻¹ →
             let oscE : ℝ :=
-              (eLpNorm (fun (y : Vec d) => uglob.toFun y - volumeAverage (truncatedWindow z m (n + (3 : ℤ))) uglob.toFun)
-                  (2 : ℝ≥0∞) (normalizedVolumeMeasureOn (truncatedWindow z m (n + (3 : ℤ))))).toReal;
+              (eLpNorm (fun (y : Vec d) => uglob.toFun y - volumeAverage (truncatedWindow z m (n +
+                (3 : ℤ))) uglob.toFun)
+                  (2 : ℝ≥0∞) (normalizedVolumeMeasureOn (truncatedWindow z m (n + (3 :
+                    ℤ))))).toReal;
             let sumH : ℝ :=
               ∑ i' : Fin d,
                 (eLpNorm (fun (y : Vec d) => hdat.grad y i') (2 : ℝ≥0∞)
                     (normalizedVolumeMeasureOn (truncatedWindow z m (n + (3 : ℤ))))).toReal;
             let flatH : ℝ :=
-              (eLpNorm hdat.grad (2 : ℝ≥0∞) (normalizedVolumeMeasureOn (truncatedWindow z m (n + (3 : ℤ))))).toReal;
-            let gagG : ℝ := (normalizedGagliardoESeminormOn (truncatedWindow z m (n + (3 : ℤ))) stepOneS gsrc).toReal;
-            let gagH : ℝ := (normalizedGagliardoESeminormOn (truncatedWindow z m (n + (3 : ℤ))) stepOneS hdat.grad).toReal;
+              (eLpNorm hdat.grad (2 : ℝ≥0∞) (normalizedVolumeMeasureOn (truncatedWindow z m (n +
+                (3 : ℤ))))).toReal;
+            let gagG : ℝ := (normalizedGagliardoESeminormOn (truncatedWindow z m (n + (3 : ℤ)))
+              stepOneS gsrc).toReal;
+            let gagH : ℝ := (normalizedGagliardoESeminormOn (truncatedWindow z m (n + (3 : ℤ)))
+              stepOneS hdat.grad).toReal;
             √sigma * Real.rpow (3 : ℝ) (-(↑(n + (2 : ℤ)) : ℝ)) * oscE =
                 (3 : ℝ) *
                   (√sigma *
                     ((3 : ℝ) ^ (-(n + (3 : ℤ))) *
                       normalizedL2On (truncatedWindow z m (n + (3 : ℤ))) fun (y : Vec d) =>
-                        uglob.toFun y - volumeAverage (truncatedWindow z m (n + (3 : ℤ))) uglob.toFun)) →
-              Real.rpow (3 : ℝ) (-(↑(n + (2 : ℤ)) : ℝ)) * Real.rpow (3 : ℝ) (((1 : ℝ) + stepOneS) * (↑n : ℝ)) * gagG ≤
-                  Real.rpow (3 : ℝ) ((↑m : ℝ) / (2 : ℝ)) * (Khol * stepFourGagliardoConst d stepOneS) →
-                Real.rpow (3 : ℝ) (-(↑(n + (2 : ℤ)) : ℝ)) * Real.rpow (3 : ℝ) (((1 : ℝ) + stepOneS) * (↑n : ℝ)) * gagH ≤
-                    Real.rpow (3 : ℝ) ((↑m : ℝ) / (2 : ℝ)) * (Kh * stepFourGagliardoConst d stepOneS) →
+                        uglob.toFun y - volumeAverage (truncatedWindow z m (n + (3 : ℤ)))
+                          uglob.toFun)) →
+              Real.rpow (3 : ℝ) (-(↑(n + (2 : ℤ)) : ℝ)) * Real.rpow (3 : ℝ) (((1 : ℝ) + stepOneS)
+                * (↑n : ℝ)) * gagG ≤
+                  Real.rpow (3 : ℝ) ((↑m : ℝ) / (2 : ℝ)) * (Khol * stepFourGagliardoConst d
+                    stepOneS) →
+                Real.rpow (3 : ℝ) (-(↑(n + (2 : ℤ)) : ℝ)) * Real.rpow (3 : ℝ) (((1 : ℝ) +
+                  stepOneS) * (↑n : ℝ)) * gagH ≤
+                    Real.rpow (3 : ℝ) ((↑m : ℝ) / (2 : ℝ)) * (Kh * stepFourGagliardoConst d
+                      stepOneS) →
                   Real.rpow (3 : ℝ) (-(↑(n + (2 : ℤ)) : ℝ)) * Real.rpow (3 : ℝ) (↑n : ℝ) * flatH ≤
                       Real.rpow (3 : ℝ) ((↑m : ℝ) / (2 : ℝ)) * Kh →
                     Real.rpow (3 : ℝ) (-(↑(n + (2 : ℤ)) : ℝ)) * Real.rpow (3 : ℝ) (↑n : ℝ) * sumH ≤
@@ -181,23 +191,33 @@ private theorem flushBracket_secondErrorBound :
                       √sigma * sigma⁻¹ = √sigma⁻¹ →
                         √sigma * Real.rpow (3 : ℝ) (-(↑(n + (2 : ℤ)) : ℝ)) *
                             (K2 *
-                              (oscE + Real.rpow (3 : ℝ) (↑n : ℝ) * sumH + (4096 : ℝ) * Real.rpow (3 : ℝ) (↑n : ℝ) * flatH +
-                                  (4096 : ℝ) * Real.rpow (3 : ℝ) (((1 : ℝ) + stepOneS) * (↑n : ℝ)) * gagH +
-                                (16384 : ℝ) * sigma⁻¹ * Real.rpow (3 : ℝ) (((1 : ℝ) + stepOneS) * (↑n : ℝ)) * gagG)) ≤
+                              (oscE + Real.rpow (3 : ℝ) (↑n : ℝ) * sumH + (4096 : ℝ) * Real.rpow
+                                (3 : ℝ) (↑n : ℝ) * flatH +
+                                  (4096 : ℝ) * Real.rpow (3 : ℝ) (((1 : ℝ) + stepOneS) * (↑n : ℝ))
+                                    * gagH +
+                                (16384 : ℝ) * sigma⁻¹ * Real.rpow (3 : ℝ) (((1 : ℝ) + stepOneS) *
+                                  (↑n : ℝ)) * gagG)) ≤
                           (3 : ℝ) * K2 *
                                     (√sigma *
                                       ((3 : ℝ) ^ (-(n + (3 : ℤ))) *
-                                        normalizedL2On (truncatedWindow z m (n + (3 : ℤ))) fun (y : Vec d) =>
-                                          uglob.toFun y - volumeAverage (truncatedWindow z m (n + (3 : ℤ))) uglob.toFun)) +
-                                  K2 * (↑d : ℝ) * (√sigma * (Real.rpow (3 : ℝ) ((↑m : ℝ) / (2 : ℝ)) * Kh)) +
-                                (4096 : ℝ) * K2 * (√sigma * (Real.rpow (3 : ℝ) ((↑m : ℝ) / (2 : ℝ)) * Kh)) +
+                                        normalizedL2On (truncatedWindow z m (n + (3 : ℤ))) fun (y
+                                          : Vec d) =>
+                                          uglob.toFun y - volumeAverage (truncatedWindow z m (n +
+                                            (3 : ℤ))) uglob.toFun)) +
+                                  K2 * (↑d : ℝ) * (√sigma * (Real.rpow (3 : ℝ) ((↑m : ℝ) / (2 :
+                                    ℝ)) * Kh)) +
+                                (4096 : ℝ) * K2 * (√sigma * (Real.rpow (3 : ℝ) ((↑m : ℝ) / (2 :
+                                  ℝ)) * Kh)) +
                               (4096 : ℝ) * K2 *
                                 (√sigma *
-                                  (Real.rpow (3 : ℝ) ((↑m : ℝ) / (2 : ℝ)) * (Kh * stepFourGagliardoConst d stepOneS))) +
+                                  (Real.rpow (3 : ℝ) ((↑m : ℝ) / (2 : ℝ)) * (Kh *
+                                    stepFourGagliardoConst d stepOneS))) +
                             (16384 : ℝ) * K2 *
                               (√sigma⁻¹ *
-                                (Real.rpow (3 : ℝ) ((↑m : ℝ) / (2 : ℝ)) * (Khol * stepFourGagliardoConst d stepOneS))) := by
-  intro d m n z sigma K2 Khol Kh uglob _ _ hK2 hsq0 hsqi0 oscE sumH flatH gagG gagH hT1 hgagGlow hgagHlow hflatLow hsumLow hsigsplit
+                                (Real.rpow (3 : ℝ) ((↑m : ℝ) / (2 : ℝ)) * (Khol *
+                                  stepFourGagliardoConst d stepOneS))) := by
+  intro d m n z sigma K2 Khol Kh uglob _ _ hK2 hsq0 hsqi0 oscE sumH flatH gagG gagH hT1 hgagGlow
+    hgagHlow hflatLow hsumLow hsigsplit
   have e1 : Real.sqrt sigma * Real.rpow (3 : ℝ) (-(((n + 2 : ℤ)) : ℝ)) *
       (K2 * oscE) = K2 * (Real.sqrt sigma *
         Real.rpow (3 : ℝ) (-(((n + 2 : ℤ)) : ℝ)) * oscE) := by ring
@@ -307,29 +327,37 @@ private theorem flushBracket_secondErrorBound :
   linarith only [p1, p2, p3, p4, p5]
 
 private theorem stepSevenFlushAssembly_comparisonBounds1 :
-    ∀ {d : ℕ} {m n : ℤ} {z : Vec d} {sigma Khol Kh : ℝ} (uglob hdat : H1Function (openCubeSet (originCube d m)))
-      {gsrc : Vec d → Vec d} (hd1 : (1 : ℕ) ≤ d) (hz : z ∈ openCubeSet (originCube d m)) (hnm : n + (3 : ℤ) ≤ m)
-      (hKhol : (0 : ℝ) ≤ Khol) (hKh : (0 : ℝ) ≤ Kh)
-      (hgHol : HolderSeminormBoundOn (openCubeSet (originCube d m)) (1 / 2 : ℝ) Khol gsrc)
-      (hhHol : HolderSeminormBoundOn (openCubeSet (originCube d m)) (1 / 2 : ℝ) Kh hdat.grad)
-      (hsup : ∀ y ∈ openCubeSet (originCube d m), ‖hdat.grad y‖ ≤ Real.rpow (3 : ℝ) ((↑m : ℝ) / (2 : ℝ)) * Kh)
-      (hgag0 : (0 : ℝ) ≤ stepFourGagliardoConst d stepOneS),
+    ∀ {d : ℕ} {m n : ℤ} {z : Vec d} {sigma Khol Kh : ℝ} (uglob hdat : H1Function (openCubeSet
+      (originCube d m)))
+      {gsrc : Vec d → Vec d} (_ : (1 : ℕ) ≤ d) (_ : z ∈ openCubeSet (originCube d m)) (_ : n + (3
+        : ℤ) ≤ m)
+      (_ : (0 : ℝ) ≤ Khol) (_ : (0 : ℝ) ≤ Kh)
+      (_ : HolderSeminormBoundOn (openCubeSet (originCube d m)) (1 / 2 : ℝ) Khol gsrc)
+      (_ : HolderSeminormBoundOn (openCubeSet (originCube d m)) (1 / 2 : ℝ) Kh hdat.grad)
+      (_ : ∀ y ∈ openCubeSet (originCube d m), ‖hdat.grad y‖ ≤ Real.rpow (3 : ℝ) ((↑m : ℝ) / (2 :
+        ℝ)) * Kh)
+      (_ : (0 : ℝ) ≤ stepFourGagliardoConst d stepOneS),
       let oscE : ℝ :=
-        (eLpNorm (fun (y : Vec d) => uglob.toFun y - volumeAverage (truncatedWindow z m (n + (3 : ℤ))) uglob.toFun)
+        (eLpNorm (fun (y : Vec d) => uglob.toFun y - volumeAverage (truncatedWindow z m (n + (3 :
+          ℤ))) uglob.toFun)
             (2 : ℝ≥0∞) (normalizedVolumeMeasureOn (truncatedWindow z m (n + (3 : ℤ))))).toReal;
       ∀
-        (hoscEdef :
+        (_ :
           oscE =
-            (eLpNorm (fun (y : Vec d) => uglob.toFun y - volumeAverage (truncatedWindow z m (n + (3 : ℤ))) uglob.toFun)
+            (eLpNorm (fun (y : Vec d) => uglob.toFun y - volumeAverage (truncatedWindow z m (n +
+              (3 : ℤ))) uglob.toFun)
                 (2 : ℝ≥0∞) (normalizedVolumeMeasureOn (truncatedWindow z m (n + (3 : ℤ))))).toReal),
         let sumH : ℝ :=
           ∑ i' : Fin d,
             (eLpNorm (fun (y : Vec d) => hdat.grad y i') (2 : ℝ≥0∞)
                 (normalizedVolumeMeasureOn (truncatedWindow z m (n + (3 : ℤ))))).toReal;
         let flatH : ℝ :=
-          (eLpNorm hdat.grad (2 : ℝ≥0∞) (normalizedVolumeMeasureOn (truncatedWindow z m (n + (3 : ℤ))))).toReal;
-        let gagG : ℝ := (normalizedGagliardoESeminormOn (truncatedWindow z m (n + (3 : ℤ))) stepOneS gsrc).toReal;
-        let gagH : ℝ := (normalizedGagliardoESeminormOn (truncatedWindow z m (n + (3 : ℤ))) stepOneS hdat.grad).toReal;
+          (eLpNorm hdat.grad (2 : ℝ≥0∞) (normalizedVolumeMeasureOn (truncatedWindow z m (n + (3 :
+            ℤ))))).toReal;
+        let gagG : ℝ := (normalizedGagliardoESeminormOn (truncatedWindow z m (n + (3 : ℤ)))
+          stepOneS gsrc).toReal;
+        let gagH : ℝ := (normalizedGagliardoESeminormOn (truncatedWindow z m (n + (3 : ℤ)))
+          stepOneS hdat.grad).toReal;
         flatH ≤ Real.rpow (3 : ℝ) ((↑m : ℝ) / (2 : ℝ)) * Kh ∧
           sumH ≤ (↑d : ℝ) * (Real.rpow (3 : ℝ) ((↑m : ℝ) / (2 : ℝ)) * Kh) ∧
             √sigma * Real.rpow (3 : ℝ) (-(↑(n + (2 : ℤ)) : ℝ)) * oscE =
@@ -337,16 +365,24 @@ private theorem stepSevenFlushAssembly_comparisonBounds1 :
                   (√sigma *
                     ((3 : ℝ) ^ (-(n + (3 : ℤ))) *
                       normalizedL2On (truncatedWindow z m (n + (3 : ℤ))) fun (y : Vec d) =>
-                        uglob.toFun y - volumeAverage (truncatedWindow z m (n + (3 : ℤ))) uglob.toFun)) ∧
+                        uglob.toFun y - volumeAverage (truncatedWindow z m (n + (3 : ℤ)))
+                          uglob.toFun)) ∧
               Real.rpow (3 : ℝ) (stepOneS * (↑(n + (2 : ℤ)) : ℝ)) * gagG ≤
-                  Real.rpow (3 : ℝ) ((↑m : ℝ) / (2 : ℝ)) * (Khol * stepFourGagliardoConst d stepOneS) ∧
-                Real.rpow (3 : ℝ) (-(↑(n + (2 : ℤ)) : ℝ)) * Real.rpow (3 : ℝ) (((1 : ℝ) + stepOneS) * (↑n : ℝ)) * gagG ≤
-                    Real.rpow (3 : ℝ) ((↑m : ℝ) / (2 : ℝ)) * (Khol * stepFourGagliardoConst d stepOneS) ∧
+                  Real.rpow (3 : ℝ) ((↑m : ℝ) / (2 : ℝ)) * (Khol * stepFourGagliardoConst d
+                    stepOneS) ∧
+                Real.rpow (3 : ℝ) (-(↑(n + (2 : ℤ)) : ℝ)) * Real.rpow (3 : ℝ) (((1 : ℝ) +
+                  stepOneS) * (↑n : ℝ)) * gagG ≤
+                    Real.rpow (3 : ℝ) ((↑m : ℝ) / (2 : ℝ)) * (Khol * stepFourGagliardoConst d
+                      stepOneS) ∧
                   Real.rpow (3 : ℝ) (stepOneS * (↑(n + (2 : ℤ)) : ℝ)) * gagH ≤
-                      Real.rpow (3 : ℝ) ((↑m : ℝ) / (2 : ℝ)) * (Kh * stepFourGagliardoConst d stepOneS) ∧
-                    Real.rpow (3 : ℝ) (-(↑(n + (2 : ℤ)) : ℝ)) * Real.rpow (3 : ℝ) (((1 : ℝ) + stepOneS) * (↑n : ℝ)) * gagH ≤
-                      Real.rpow (3 : ℝ) ((↑m : ℝ) / (2 : ℝ)) * (Kh * stepFourGagliardoConst d stepOneS) := by
-  intro d m n z sigma Khol Kh uglob hdat gsrc hd1 hz hnm hKhol hKh hgHol hhHol hsup hgag0 oscE hoscEdef sumH flatH gagG gagH
+                      Real.rpow (3 : ℝ) ((↑m : ℝ) / (2 : ℝ)) * (Kh * stepFourGagliardoConst d
+                        stepOneS) ∧
+                    Real.rpow (3 : ℝ) (-(↑(n + (2 : ℤ)) : ℝ)) * Real.rpow (3 : ℝ) (((1 : ℝ) +
+                      stepOneS) * (↑n : ℝ)) * gagH ≤
+                      Real.rpow (3 : ℝ) ((↑m : ℝ) / (2 : ℝ)) * (Kh * stepFourGagliardoConst d
+                        stepOneS) := by
+  intro d m n z sigma Khol Kh uglob hdat _ hd1 hz hnm hKhol hKh hgHol hhHol hsup hgag0 oscE
+    hoscEdef sumH flatH gagG gagH
   have hgagGle : gagG ≤ Khol * stepFourGagliardoConst d stepOneS *
       (3 : ℝ) ^ ((((n + 3 : ℤ)) : ℝ) / 4) :=
     gagliardo_window_toReal_le hd1 hz hKhol hgHol
@@ -536,18 +572,24 @@ theorem flushBracket_le {m n : ℤ} {z : Vec d} {sigma K2 Khol Kh : ℝ}
   have hgagH0 : 0 ≤ gagH := ENNReal.toReal_nonneg
   -- the primitive bounds
   obtain ⟨hflatHle, hsumHle, hT1, hgagGm, hgagGlow, hgagHm, hgagHlow⟩ :=
-    (show (flatH ≤ Real.rpow (3 : ℝ) ((m : ℝ) / 2) * Kh) ∧ (sumH ≤ (d : ℝ) * (Real.rpow (3 : ℝ) ((m : ℝ) / 2) * Kh)) ∧ (Real.sqrt sigma * Real.rpow (3 : ℝ) (-(((n + 2 : ℤ)) : ℝ)) * oscE =
+    (show (flatH ≤ Real.rpow (3 : ℝ) ((m : ℝ) / 2) * Kh) ∧ (sumH ≤ (d : ℝ) * (Real.rpow (3 : ℝ)
+      ((m : ℝ) / 2) * Kh)) ∧ (Real.sqrt sigma * Real.rpow (3 : ℝ) (-(((n + 2 : ℤ)) : ℝ)) * oscE =
       3 * (Real.sqrt sigma *
         ((3 : ℝ) ^ (-(n + 3)) * normalizedL2On (truncatedWindow z m (n + 3))
           (fun y => uglob.toFun y -
-            volumeAverage (truncatedWindow z m (n + 3)) uglob.toFun)))) ∧ (Real.rpow (3 : ℝ) (stepOneS * (((n + 2 : ℤ)) : ℝ)) * gagG ≤
-      Real.rpow (3 : ℝ) ((m : ℝ) / 2) * (Khol * stepFourGagliardoConst d stepOneS)) ∧ (Real.rpow (3 : ℝ) (-(((n + 2 : ℤ)) : ℝ)) *
+            volumeAverage (truncatedWindow z m (n + 3)) uglob.toFun)))) ∧ (Real.rpow (3 : ℝ)
+              (stepOneS * (((n + 2 : ℤ)) : ℝ)) * gagG ≤
+      Real.rpow (3 : ℝ) ((m : ℝ) / 2) * (Khol * stepFourGagliardoConst d stepOneS)) ∧ (Real.rpow
+        (3 : ℝ) (-(((n + 2 : ℤ)) : ℝ)) *
       Real.rpow (3 : ℝ) ((1 + stepOneS) * ((n : ℤ) : ℝ)) * gagG ≤
-      Real.rpow (3 : ℝ) ((m : ℝ) / 2) * (Khol * stepFourGagliardoConst d stepOneS)) ∧ (Real.rpow (3 : ℝ) (stepOneS * (((n + 2 : ℤ)) : ℝ)) * gagH ≤
-      Real.rpow (3 : ℝ) ((m : ℝ) / 2) * (Kh * stepFourGagliardoConst d stepOneS)) ∧ (Real.rpow (3 : ℝ) (-(((n + 2 : ℤ)) : ℝ)) *
+      Real.rpow (3 : ℝ) ((m : ℝ) / 2) * (Khol * stepFourGagliardoConst d stepOneS)) ∧ (Real.rpow
+        (3 : ℝ) (stepOneS * (((n + 2 : ℤ)) : ℝ)) * gagH ≤
+      Real.rpow (3 : ℝ) ((m : ℝ) / 2) * (Kh * stepFourGagliardoConst d stepOneS)) ∧ (Real.rpow (3
+        : ℝ) (-(((n + 2 : ℤ)) : ℝ)) *
       Real.rpow (3 : ℝ) ((1 + stepOneS) * ((n : ℤ) : ℝ)) * gagH ≤
       Real.rpow (3 : ℝ) ((m : ℝ) / 2) * (Kh * stepFourGagliardoConst d stepOneS)) from
-      @stepSevenFlushAssembly_comparisonBounds1 (d) (m) (n) (z) (sigma) (Khol) (Kh) (uglob) (hdat) (gsrc) (hd1) (hz) (hnm) (hKhol) (hKh) (hgHol) (hhHol) (hsup) (hgag0) (hoscEdef))
+      @stepSevenFlushAssembly_comparisonBounds1 (d) (m) (n) (z) (sigma) (Khol) (Kh) (uglob) (hdat)
+        (gsrc) (hd1) (hz) (hnm) (hKhol) (hKh) (hgHol) (hhHol) (hsup) (hgag0) (hoscEdef))
   -- the flat legs
   have hflatLow : Real.rpow (3 : ℝ) (-(((n + 2 : ℤ)) : ℝ)) *
       Real.rpow (3 : ℝ) ((n : ℤ) : ℝ) * flatH ≤

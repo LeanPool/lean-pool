@@ -222,8 +222,8 @@ private theorem measurable_setLIntegral_norm_pow_four
         ((volumeMeasureOn U).restrict S) := by
       intro n
       refine ENNReal.measurable_ofReal.comp_aemeasurable ?_
-      exact (((lipschitzWith_hilbertVecQuarticTrunc (d := d) n).continuous
-        ).comp_aestronglyMeasurable hcoe).aemeasurable
+      exact (((lipschitzWith_hilbertVecQuarticTrunc (d := d)
+        n).continuous).comp_aestronglyMeasurable hcoe).aemeasurable
     have hfin : ∀ n : ℕ,
         ∫⁻ x in S, ENNReal.ofReal (hilbertVecQuarticTrunc n
             ((F : Vec d → HilbertVec d) x)) ∂(volumeMeasureOn U) ≠ ⊤ := by
@@ -242,8 +242,8 @@ private theorem measurable_setLIntegral_norm_pow_four
       intro n
       rw [windowQuarticTrunc_eq, integral_eq_lintegral_of_nonneg_ae
         (Filter.Eventually.of_forall fun x => hilbertVecQuarticTrunc_nonneg n _)
-        ((((lipschitzWith_hilbertVecQuarticTrunc (d := d) n).continuous
-          ).comp_aestronglyMeasurable hcoe))]
+        ((((lipschitzWith_hilbertVecQuarticTrunc (d := d) n).continuous).comp_aestronglyMeasurable
+          hcoe))]
       exact ENNReal.ofReal_toReal (hfin n)
     simp_rw [htrunc]
     rw [← lintegral_iSup' haem

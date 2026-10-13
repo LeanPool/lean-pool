@@ -280,6 +280,7 @@ theorem parentTruncatedTwo_le_of_order_le (Q : TriadicCube d) (n : ℤ)
   congr 1
   rw [Real.sqrt_eq_rpow, ENNReal.ofReal_rpow_of_nonneg hK0 (by norm_num)]
 
+omit [NeZero d] in
 /-- The halving instance of the previous theorem: `K = 2` always works, because
 `c_{2s,2} = c_{s,2}(1 + 3^{-2s})` and `3^{-2s} ≤ 1`. -/
 theorem parentTruncatedTwo_le_sqrtTwo_half (Q : TriadicCube d) (n : ℤ)

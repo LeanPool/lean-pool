@@ -256,12 +256,10 @@ section Process
 variable {M : ABKModel d} {omega : FullSample d M.gamma}
   (R : PositiveC0ContractiveResolvent (Vec d)) (hreg : R.OnePointRegular)
   (hcons : R.kernelSemigroup.IsConservative)
-  (hid : (streamWholeSpaceAnalyticData M omega
-    ).KernelResolventIdentifiesAnalyticMinimal R)
+  (hid : (streamWholeSpaceAnalyticData M omega).KernelResolventIdentifiesAnalyticMinimal R)
   (hT : ∀ (mu : PositiveShift) (g : C₀(Vec d, ℝ)),
     R.toContractiveResolvent.operator mu g =
-      ((streamWholeSpaceC0BarrierData M omega).resolvent
-        ).toContractiveResolvent.operator mu g)
+      ((streamWholeSpaceC0BarrierData M omega).resolvent).toContractiveResolvent.operator mu g)
 
 include hcons hid hT in
 /-- **The observable of the cut-off quadratic datum, with the pointwise bound on the corrected

@@ -458,15 +458,19 @@ private theorem twoLaneTransport_cell_ae_bound :
                   ω ≤
                 Yw R ω + Zw R ω) →
             let Ycell : TriadicCube d → Cutoff.CutoffSample d → ℝ :=
-              fun (R : TriadicCube d) (omega : Cutoff.CutoffSample d) => (2 : ℝ) * max (0 : ℝ) (Yw R omega) ^ (2 : ℕ);
+              fun (R : TriadicCube d) (omega : Cutoff.CutoffSample d) => (2 : ℝ) * max (0 : ℝ) (Yw
+                R omega) ^ (2 : ℕ);
             (Ycell = fun (R : TriadicCube d) (omega : Cutoff.CutoffSample d) =>
                 (2 : ℝ) * max (0 : ℝ) (Yw R omega) ^ (2 : ℕ)) →
               let Zcell : TriadicCube d → Cutoff.CutoffSample d → ℝ :=
-                fun (R : TriadicCube d) (omega : Cutoff.CutoffSample d) => (2 : ℝ) * max (0 : ℝ) (Zw R omega) ^ (2 : ℕ);
+                fun (R : TriadicCube d) (omega : Cutoff.CutoffSample d) => (2 : ℝ) * max (0 : ℝ)
+                  (Zw R omega) ^ (2 : ℕ);
               (Zcell = fun (R : TriadicCube d) (omega : Cutoff.CutoffSample d) =>
                   (2 : ℝ) * max (0 : ℝ) (Zw R omega) ^ (2 : ℕ)) →
-                ∀ᵐ (omega : Cutoff.CutoffSample d) ∂(↑(Cutoff.cutoffSampleLaw M) : Measure (Cutoff.CutoffSample d)),
-                  ∀ (R : TriadicCube d), R.scale = L → laneCellErrorRawSq M L R omega ≤ Ycell R omega + Zcell R omega := by
+                ∀ᵐ (omega : Cutoff.CutoffSample d) ∂(↑(Cutoff.cutoffSampleLaw M) : Measure
+                  (Cutoff.CutoffSample d)),
+                  ∀ (R : TriadicCube d), R.scale = L → laneCellErrorRawSq M L R omega ≤ Ycell R
+                    omega + Zcell R omega := by
   intro _ M L _ Yw Zw hdom _ hYcell _ hZcell
   rw [MeasureTheory.ae_all_iff]
   intro R
@@ -496,22 +500,28 @@ private theorem twoLaneTransport_cell_ae_bound :
   · exact Filter.Eventually.of_forall fun _ hcon => (hR hcon).elim
 
 private theorem twoLaneTransport_pointwiseDomination :
-    ∀ (d : ℕ) (M : ABKModel d) (m L n : ℤ),
+    ∀ (d : ℕ) (M : ABKModel d) (_ L n : ℤ),
       let this : NeZero d := ⟨by have := M.shellPrefix.dimension; omega⟩;
       ∀ (Yw Zw : (R : TriadicCube d) → Cutoff.CutoffSample d → ℝ),
-        let Ycell : TriadicCube d → Cutoff.CutoffSample d → ℝ := fun (R : TriadicCube d) (omega : Cutoff.CutoffSample d) =>
+        let Ycell : TriadicCube d → Cutoff.CutoffSample d → ℝ := fun (R : TriadicCube d) (omega :
+          Cutoff.CutoffSample d) =>
           (2 : ℝ) * max (0 : ℝ) (Yw R omega) ^ (2 : ℕ);
-        let Zcell : TriadicCube d → Cutoff.CutoffSample d → ℝ := fun (R : TriadicCube d) (omega : Cutoff.CutoffSample d) =>
+        let Zcell : TriadicCube d → Cutoff.CutoffSample d → ℝ := fun (R : TriadicCube d) (omega :
+          Cutoff.CutoffSample d) =>
           (2 : ℝ) * max (0 : ℝ) (Zw R omega) ^ (2 : ℕ);
         ∀
           (_ :
-            ∀ᵐ (omega : Cutoff.CutoffSample d) ∂(↑(Cutoff.cutoffSampleLaw M) : Measure (Cutoff.CutoffSample d)),
-              Observable.cutoffHomogenizationErrorRepresentative (s := (1 / 8 : ℝ)) M L n (by norm_num) (Annealed.sigmaBar M L) omega ^ (2 : ℕ) ≤
+            ∀ᵐ (omega : Cutoff.CutoffSample d) ∂(↑(Cutoff.cutoffSampleLaw M) : Measure
+              (Cutoff.CutoffSample d)),
+              Observable.cutoffHomogenizationErrorRepresentative (s := (1 / 8 : ℝ)) M L n (by
+                norm_num) (Annealed.sigmaBar M L) omega ^ (2 : ℕ) ≤
                 laneTotal L n Ycell omega + laneTotal L n Zcell omega)
           (_ : ∀ (omega : Cutoff.CutoffSample d), (0 : ℝ) ≤ laneTotal L n Ycell omega)
           (_ : ∀ (omega : Cutoff.CutoffSample d), (0 : ℝ) ≤ laneTotal L n Zcell omega),
-          ∀ᵐ (omega : Cutoff.CutoffSample d) ∂(↑(Cutoff.cutoffSampleLaw M) : Measure (Cutoff.CutoffSample d)),
-            Observable.cutoffHomogenizationErrorRepresentative (s := (1 / 8 : ℝ)) M L n (by norm_num) (Annealed.sigmaBar M L) omega ≤
+          ∀ᵐ (omega : Cutoff.CutoffSample d) ∂(↑(Cutoff.cutoffSampleLaw M) : Measure
+            (Cutoff.CutoffSample d)),
+            Observable.cutoffHomogenizationErrorRepresentative (s := (1 / 8 : ℝ)) M L n (by
+              norm_num) (Annealed.sigmaBar M L) omega ≤
               √(laneTotal L n Ycell omega) + √(laneTotal L n Zcell omega) := by
   intro _ M m L n _ _ _ Ycell Zcell hRepAE hUnonneg hVnonneg
   filter_upwards [hRepAE] with omega homega

@@ -79,8 +79,8 @@ private theorem integrableOn_resolventIntegrand
   · exact (((Real.continuous_exp.comp
       (continuous_const.mul continuous_id)).measurable.mul
       ((P.measurable_kernelIntegral hf).comp
-        (measurable_real_toNNReal.prodMk measurable_const))).stronglyMeasurable
-      ).aestronglyMeasurable.restrict
+        (measurable_real_toNNReal.prodMk
+          measurable_const))).stronglyMeasurable).aestronglyMeasurable.restrict
   · exact Eventually.of_forall fun t ↦ by
       rw [Real.norm_eq_abs, abs_mul, abs_of_pos (Real.exp_pos _)]
       exact mul_le_mul_of_nonneg_left

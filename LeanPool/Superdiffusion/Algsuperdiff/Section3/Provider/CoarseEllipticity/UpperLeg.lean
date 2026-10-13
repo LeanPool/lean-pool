@@ -990,9 +990,11 @@ private theorem upperLeg_comparisonBounds1 :
                   (max (collarAfterBandTunedOutputConst d)
                     (max (probeSharpWaveTailTunedOutputConst d)
                       (max (Multiscale.probeSharpGoodBaseConst d)
-                        (max (collarBandMeanTunedOutputConst d) (collarDeepTailTunedOutputConst d)))))))));
+                        (max (collarBandMeanTunedOutputConst d) (collarDeepTailTunedOutputConst
+                          d)))))))));
       let laneOutput : ℝ :=
-        max previousLaneOutput (max (probeSharpAfterBandTunedOutputConst d) (probeSharpCollarWaveTailTunedOutputConst d));
+        max previousLaneOutput (max (probeSharpAfterBandTunedOutputConst d)
+          (probeSharpCollarWaveTailTunedOutputConst d));
       let Clane : ℝ :=
         max (4 : ℝ)
           (max (directSmallUpperMassConst d)
@@ -1021,7 +1023,8 @@ private theorem upperLeg_comparisonBounds1 :
                                           profileAuxiliaryConst d ≤ Clane ∧
                                             collarBandMeanDepthThreshold d ≤ Clane ∧
                                               directSmallUpperMassConst d ≤ Cup ∧
-                                                collarBandMeanDepthThreshold d ≤ Cup ∧ (0 : ℝ) < Cup := by
+                                                collarBandMeanDepthThreshold d ≤ Cup ∧ (0 : ℝ) <
+                                                  Cup := by
   intro d previousLaneOutput laneOutput Clane Cblock Cmerge Cup
   have hfourLane : 4 ≤ Clane := by
     exact le_max_left _ _
@@ -1119,9 +1122,11 @@ private theorem upperLeg_estimate1 :
                   (max (collarAfterBandTunedOutputConst d)
                     (max (probeSharpWaveTailTunedOutputConst d)
                       (max (Multiscale.probeSharpGoodBaseConst d)
-                        (max (collarBandMeanTunedOutputConst d) (collarDeepTailTunedOutputConst d)))))))));
+                        (max (collarBandMeanTunedOutputConst d) (collarDeepTailTunedOutputConst
+                          d)))))))));
       let laneOutput : ℝ :=
-        max previousLaneOutput (max (probeSharpAfterBandTunedOutputConst d) (probeSharpCollarWaveTailTunedOutputConst d));
+        max previousLaneOutput (max (probeSharpAfterBandTunedOutputConst d)
+          (probeSharpCollarWaveTailTunedOutputConst d));
       let Clane : ℝ :=
         max (4 : ℝ)
           (max (directSmallUpperMassConst d)
@@ -1129,26 +1134,28 @@ private theorem upperLeg_estimate1 :
       let Cblock : ℝ := ((12 : ℝ) + (12 : ℝ) * IndependentSums.gammaTriangleConst (1 : ℝ)) * Clane;
       let Cmerge : ℝ := coarseEllipticityUpperMergeConst d;
       let Cup : ℝ := Cblock * Cmerge;
-      ∀ (hlanePos : (0 : ℝ) < Clane) (hgoodHeadOutput : goodHeadTunedOutputConst d ≤ Clane)
-        (hgoodBandOutput : probeSharpBandMeanTunedOutputConst d ≤ Clane)
-        (hgoodDeepOutput : probeSharpDeepBandTailTunedOutputConst d ≤ Clane)
-        (hcollarBaseOutput : probeSharpCollarBaseTunedOutputConst d ≤ Clane)
-        (hcollarHeadOutput : collarHeadTunedPerDescendantOutputConst d ≤ Clane)
-        (hcollarAfterOutput : collarAfterBandTunedOutputConst d ≤ Clane)
-        (hgoodWaveOutput : probeSharpWaveTailTunedOutputConst d ≤ Clane)
-        (hgoodBaseOutput : Multiscale.probeSharpGoodBaseConst d ≤ Clane)
-        (hcollarBandOutput : collarBandMeanTunedOutputConst d ≤ Clane)
-        (hcollarDeepOutput : collarDeepTailTunedOutputConst d ≤ Clane)
-        (hgoodAfterOutput : probeSharpAfterBandTunedOutputConst d ≤ Clane)
-        (hcollarWaveOutput : probeSharpCollarWaveTailTunedOutputConst d ≤ Clane)
-        (hprofileAuxLane : profileAuxiliaryConst d ≤ Clane) (hdepthThresholdLane : collarBandMeanDepthThreshold d ≤ Clane)
-        (hCup : (0 : ℝ) < Cup) (M : ABKModel d) (m : ℤ) (E : { E : ℝ // (1 : ℝ) ≤ E })
-        (hstate : Frozen.Section3.inductionState M (m - (1 : ℤ)) E) (sigma : ℝ) (hE2 : (↑E : ℝ) ≤ M.gamma ^ (-(1 / 5 : ℝ)))
-        (hd : (2 : ℕ) ≤ d) (hsigma0 : (0 : ℝ) < sigma) (hsigmaHalf : sigma ≤ (1 / 2 : ℝ))
-        (hX : Cup ≤ (↑E : ℝ)⁻¹ ^ (2 : ℕ) * M.gamma⁻¹) (hk0 : (3 : ℕ) ≤ collarBandMeanDepth M (↑E : ℝ))
-        (hmaxLane : max (Real.exp (Clane / sigma)) (Disorder.cstar M)⁻¹ ≤ (↑E : ℝ))
-        (hrareChoice :
-          (12 : ℝ) * upperAfterBandRareTriangleConst * coarseEllipticityRareBudgetConst d + (15 : ℝ) ≤ Clane⁻¹ * Cup)
+      ∀ (_ : (0 : ℝ) < Clane) (_ : goodHeadTunedOutputConst d ≤ Clane)
+        (_ : probeSharpBandMeanTunedOutputConst d ≤ Clane)
+        (_ : probeSharpDeepBandTailTunedOutputConst d ≤ Clane)
+        (_ : probeSharpCollarBaseTunedOutputConst d ≤ Clane)
+        (_ : collarHeadTunedPerDescendantOutputConst d ≤ Clane)
+        (_ : collarAfterBandTunedOutputConst d ≤ Clane)
+        (_ : probeSharpWaveTailTunedOutputConst d ≤ Clane)
+        (_ : Multiscale.probeSharpGoodBaseConst d ≤ Clane)
+        (_ : collarBandMeanTunedOutputConst d ≤ Clane)
+        (_ : collarDeepTailTunedOutputConst d ≤ Clane)
+        (_ : probeSharpAfterBandTunedOutputConst d ≤ Clane)
+        (_ : probeSharpCollarWaveTailTunedOutputConst d ≤ Clane)
+        (_ : profileAuxiliaryConst d ≤ Clane) (_ : collarBandMeanDepthThreshold d ≤ Clane)
+        (_ : (0 : ℝ) < Cup) (M : ABKModel d) (m : ℤ) (E : { E : ℝ // (1 : ℝ) ≤ E })
+        (_ : Frozen.Section3.inductionState M (m - (1 : ℤ)) E) (sigma : ℝ) (_ : (↑E : ℝ) ≤ M.gamma
+          ^ (-(1 / 5 : ℝ)))
+        (_ : (2 : ℕ) ≤ d) (_ : (0 : ℝ) < sigma) (_ : sigma ≤ (1 / 2 : ℝ))
+        (_ : Cup ≤ (↑E : ℝ)⁻¹ ^ (2 : ℕ) * M.gamma⁻¹) (_ : (3 : ℕ) ≤ collarBandMeanDepth M (↑E : ℝ))
+        (_ : max (Real.exp (Clane / sigma)) (Disorder.cstar M)⁻¹ ≤ (↑E : ℝ))
+        (_ :
+          (12 : ℝ) * upperAfterBandRareTriangleConst * coarseEllipticityRareBudgetConst d + (15 :
+            ℝ) ≤ Clane⁻¹ * Cup)
         (k : ℕ),
         ∀ R ∈ descendantsAtScale (originCube d m) (m - (1 : ℤ) - (↑k : ℤ)),
           ∃ (Uone : CutoffSample d → ℝ) (Uexp : CutoffSample d → ℝ),
@@ -1157,7 +1164,8 @@ private theorem upperLeg_estimate1 :
                 (∀ (omega : CutoffSample d), (0 : ℝ) ≤ Uexp omega) ∧
                   Measurable Uexp ∧
                     (∀ (omega : CutoffSample d),
-                        cutoffBBlockFamily M m (↑(Annealed.sigmaBar M (m - (1 : ℤ))) : ℝ)⁻¹ R omega ≤
+                        cutoffBBlockFamily M m (↑(Annealed.sigmaBar M (m - (1 : ℤ))) : ℝ)⁻¹ R
+                          omega ≤
                           Cblock + Uone omega + Uexp omega) ∧
                       IndependentSums.IsBigOWith (↑(cutoffSampleLaw M) : Measure (CutoffSample d))
                           (IndependentSums.gammaSigma (1 : ℝ)) Uone
@@ -1166,8 +1174,13 @@ private theorem upperLeg_estimate1 :
                           (IndependentSums.gammaSigma (((1 : ℝ) - sigma) / (3 : ℝ))) Uexp
                           ((coarseEllipticityRareBudgetConst d)⁻¹ *
                             ((3 : ℝ) ^ (M.gamma * ((↑k : ℝ) + (1 : ℝ))) *
-                              Real.exp (-(Cup⁻¹ * ((↑E : ℝ)⁻¹ ^ (2 : ℕ) * M.gamma⁻¹))) ^ (15 : ℕ))) := by
-  intro d previousLaneOutput laneOutput Clane Cblock Cmerge Cup hlanePos hgoodHeadOutput hgoodBandOutput hgoodDeepOutput hcollarBaseOutput hcollarHeadOutput hcollarAfterOutput hgoodWaveOutput hgoodBaseOutput hcollarBandOutput hcollarDeepOutput hgoodAfterOutput hcollarWaveOutput hprofileAuxLane hdepthThresholdLane hCup M m E hstate sigma hE2 hd hsigma0 hsigmaHalf hX hk0 hmaxLane hrareChoice k R hR
+                              Real.exp (-(Cup⁻¹ * ((↑E : ℝ)⁻¹ ^ (2 : ℕ) * M.gamma⁻¹))) ^ (15 :
+                                ℕ))) := by
+  intro _ _ _ Clane _ _ _ hlanePos hgoodHeadOutput hgoodBandOutput hgoodDeepOutput
+    hcollarBaseOutput hcollarHeadOutput hcollarAfterOutput hgoodWaveOutput hgoodBaseOutput
+      hcollarBandOutput hcollarDeepOutput hgoodAfterOutput hcollarWaveOutput hprofileAuxLane
+        hdepthThresholdLane hCup M m E hstate sigma hE2 hd hsigma0 hsigmaHalf hX hk0 hmaxLane
+          hrareChoice k R hR
   obtain ⟨Uone, Uexp, hUone0, hUoneM, hUexp0, hUexpM,
       hdom, hOone, hOexp⟩ :=
     superposedFlux_upper_per_descendant_split M m E hstate sigma Clane
@@ -1351,7 +1364,14 @@ theorem superposedFlux_coarse_ellipticity_upper_leg (d : ℕ) :
               ((coarseEllipticityRareBudgetConst d)⁻¹ *
                 ((3 : ℝ) ^ (M.gamma * ((k : ℝ) + 1)) *
                   (Real.exp
-                    (-(Cup⁻¹ * ((E : ℝ)⁻¹ ^ 2 * M.gamma⁻¹)))) ^ 15))  := @upperLeg_estimate1 (d) (hlanePos) (hgoodHeadOutput) (hgoodBandOutput) (hgoodDeepOutput) (hcollarBaseOutput) (hcollarHeadOutput) (hcollarAfterOutput) (hgoodWaveOutput) (hgoodBaseOutput) (hcollarBandOutput) (hcollarDeepOutput) (hgoodAfterOutput) (hcollarWaveOutput) (hprofileAuxLane) (hdepthThresholdLane) (hCup) (M) (m) (E) (hstate) (sigma) (hE2) (hd) (hsigma0) (hsigmaHalf) (hX) (hk0) (hmaxLane) (hrareChoice)
+                    (-(Cup⁻¹ * ((E : ℝ)⁻¹ ^ 2 * M.gamma⁻¹)))) ^ 15))  := @upperLeg_estimate1 (d)
+                      (hlanePos) (hgoodHeadOutput) (hgoodBandOutput) (hgoodDeepOutput)
+                        (hcollarBaseOutput) (hcollarHeadOutput) (hcollarAfterOutput)
+                          (hgoodWaveOutput) (hgoodBaseOutput) (hcollarBandOutput)
+                            (hcollarDeepOutput) (hgoodAfterOutput) (hcollarWaveOutput)
+                              (hprofileAuxLane) (hdepthThresholdLane) (hCup) (M) (m) (E) (hstate)
+                                (sigma) (hE2) (hd) (hsigma0) (hsigmaHalf) (hX) (hk0) (hmaxLane)
+                                  (hrareChoice)
     let eps : ℝ := Real.exp
       (-(Cup⁻¹ * ((E : ℝ)⁻¹) ^ 2 * M.gamma⁻¹))
     have heps : 0 < eps := by

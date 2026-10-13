@@ -597,15 +597,19 @@ private theorem meshCellBackgroundFluxEnergy_pointwise_bound :
       openCubeSet R ⊆ openCubeSet Q →
         IsFiniteMeasure (volumeMeasureOn (openCubeSet R)) →
           ((volume : Set (Vec d) → ℝ≥0∞) (openCubeSet R)).toReal ≠ (0 : ℝ) →
-            (∀ (omega : ShellSeq d), MemLp (wN omega).toH1Function.grad (8 : ℝ≥0∞) (normalizedCubeMeasure Q)) →
+            (∀ (omega : ShellSeq d), MemLp (wN omega).toH1Function.grad (8 : ℝ≥0∞)
+              (normalizedCubeMeasure Q)) →
               (∀ (omega : ShellSeq d),
-                  MemLp (streamForcing sinv omega n (n + (↑h : ℤ)) e') (8 : ℝ≥0∞) (normalizedCubeMeasure Q)) →
+                  MemLp (streamForcing sinv omega n (n + (↑h : ℤ)) e') (8 : ℝ≥0∞)
+                    (normalizedCubeMeasure Q)) →
                 (∀ (omega : ShellSeq d),
                     MemLp (neumannFluxField sig omega n (n + (↑h : ℤ)) e' (wN omega)) (8 : ℝ≥0∞)
                       (normalizedCubeMeasure Q)) →
                   let AN : ShellSeq d → ℝ := fun (omega : ShellSeq d) =>
-                    volumeAverage (openCubeSet R) fun (x : Vec d) => vecNormSq ((wN omega).toH1Function.grad x);
-                  let ratio : ℝ := ((volume : Set (Vec d) → ℝ≥0∞) (openCubeSet R)).toReal⁻¹ * cubeVolume Q;
+                    volumeAverage (openCubeSet R) fun (x : Vec d) => vecNormSq ((wN
+                      omega).toH1Function.grad x);
+                  let ratio : ℝ := ((volume : Set (Vec d) → ℝ≥0∞) (openCubeSet R)).toReal⁻¹ *
+                    cubeVolume Q;
                   let L : ShellSeq d → ℝ := fun (omega : ShellSeq d) =>
                     Stream.streamIncrementLpNorm (8 : ℝ) (↑K : ℤ) n (n + (↑h : ℤ)) omega;
                   (∀ (omega : ShellSeq d),
@@ -614,8 +618,10 @@ private theorem meshCellBackgroundFluxEnergy_pointwise_bound :
                         ratio * (sinv * L omega) ^ (2 : ℕ)) →
                     ∀ (omega : ShellSeq d),
                       (volumeAverage (openCubeSet R) fun (x : Vec d) =>
-                          vecNormSq (e + neumannFluxField sig omega n (n + (↑h : ℤ)) e' (wN omega) x)) ≤
-                        (2 : ℝ) * vecNormSq e + ((4 : ℝ) * AN omega + (4 : ℝ) * (ratio * (sinv * L omega) ^ (2 : ℕ))) := by
+                          vecNormSq (e + neumannFluxField sig omega n (n + (↑h : ℤ)) e' (wN omega)
+                            x)) ≤
+                        (2 : ℝ) * vecNormSq e + ((4 : ℝ) * AN omega + (4 : ℝ) * (ratio * (sinv * L
+                          omega) ^ (2 : ℕ))) := by
   intro _ _ n h _ e e' R Q sig sinv wN hsub _ hvol hL8 hL8f hL8nf AN _ L hSFle omega
   have hintL : IntegrableOn (fun x =>
       vecNormSq (e + neumannFluxField sig omega n (n + (h : ℤ)) e' (wN omega) x))

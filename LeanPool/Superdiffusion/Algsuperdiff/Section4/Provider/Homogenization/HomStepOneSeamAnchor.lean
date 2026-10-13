@@ -174,11 +174,15 @@ private theorem factor_majorant_le {A P W Br G L B C : ℝ}
 
 private theorem homStepOneSeamAnchor_comparisonBounds1 :
     ∀ (d : ℕ) (CA : ℝ) (_ : (0 : ℝ) < CA) (M : ABKModel d) (_ : (0 : ℝ) < homS M) (m : ℤ) (t : ℝ)
-      (_ : (0 : ℝ) < t) (_ : homS M / (8 : ℝ) ≤ t) (q : ℝ) (_ : (64 : ℝ) * (↑d : ℝ) * |Real.log M.gamma| ≤ q)
-      (_ : q ≤ (homConst CA)⁻¹ * M.gamma⁻¹ * homS M) (_ : (0 : ℝ) < M.gamma⁻¹) (_ : CA ≤ max CA (1 : ℝ))
-      (_ : (4 : ℝ) ≤ |Real.log M.gamma|) (_ : (0 : ℝ) < |Real.log M.gamma|) (_ : |Real.log M.gamma| ≠ (0 : ℝ))
+      (_ : (0 : ℝ) < t) (_ : homS M / (8 : ℝ) ≤ t) (q : ℝ) (_ : (64 : ℝ) * (↑d : ℝ) * |Real.log
+        M.gamma| ≤ q)
+      (_ : q ≤ (homConst CA)⁻¹ * M.gamma⁻¹ * homS M) (_ : (0 : ℝ) < M.gamma⁻¹) (_ : CA ≤ max CA (1
+        : ℝ))
+      (_ : (4 : ℝ) ≤ |Real.log M.gamma|) (_ : (0 : ℝ) < |Real.log M.gamma|) (_ : |Real.log
+        M.gamma| ≠ (0 : ℝ))
       (_ : homS M ≤ (1 / 4 : ℝ)) (_ : (↑m : ℝ) - (↑(homN M m) : ℝ) = (↑(homK M) : ℝ))
-      (_ : (0 : ℝ) < (32 : ℝ) * |Real.log M.gamma|) (_ : (homS M / (8 : ℝ))⁻¹ = (8 : ℝ) * |Real.log M.gamma|)
+      (_ : (0 : ℝ) < (32 : ℝ) * |Real.log M.gamma|) (_ : (homS M / (8 : ℝ))⁻¹ = (8 : ℝ) *
+        |Real.log M.gamma|)
       (_ : (homS M / (16 : ℝ))⁻¹ = (16 : ℝ) * |Real.log M.gamma|)
       (_ : (homS M / (32 : ℝ))⁻¹ = (32 : ℝ) * |Real.log M.gamma|),
       (0 : ℝ) < t⁻¹ ∧
@@ -195,8 +199,10 @@ private theorem homStepOneSeamAnchor_comparisonBounds1 :
                             q ≤ CA⁻¹ * M.gamma⁻¹ * (t / (2 : ℝ)) ∧
                               q ≤ CA⁻¹ * M.gamma⁻¹ * t ∧
                                 (↑(homK M) : ℝ) ≤ (12 : ℝ) * |Real.log M.gamma| ∧
-                                  (1 / 2 : ℝ) * (homS M / (16 : ℝ)) * ((↑m : ℝ) - (↑(homN M m) : ℝ)) ≤ (1 : ℝ) := by
-  intro d CA hCApos M hs m t ht htlo q hq_lo hq_hi hginv hCAK hL4 hLpos _ hs4 hgap h32L hinv8 hinv16 hinv32
+                                  (1 / 2 : ℝ) * (homS M / (16 : ℝ)) * ((↑m : ℝ) - (↑(homN M m) :
+                                    ℝ)) ≤ (1 : ℝ) := by
+  intro d CA hCApos M hs m t ht htlo q hq_lo hq_hi hginv hCAK hL4 hLpos _ hs4 hgap h32L hinv8
+    hinv16 hinv32
   have htinv : (0 : ℝ) < t⁻¹ := inv_pos.mpr ht
   have hinvhalf : (t / 2)⁻¹ = 2 * t⁻¹ := by
     rw [div_eq_mul_inv, mul_inv, inv_inv]; ring
@@ -295,7 +301,8 @@ private theorem homStepOneSeamAnchor_comparisonBounds1 :
         (homK M : ℝ) / (32 * |Real.log M.gamma|) := by field_simp; ring
     rw [hval, div_le_iff₀ h32L]
     linarith only [hkle, hLpos]
-  exact ⟨htinv, hinvhalf, hqnn, hqlo16, hqlo32, hqloQ, hqloT2, hqloT, hup16, hup32, hupQ, hupT2, hupT, hkle, hexp16⟩
+  exact ⟨htinv, hinvhalf, hqnn, hqlo16, hqlo32, hqloQ, hqloT2, hqloT, hup16, hup32, hupQ, hupT2,
+    hupT, hkle, hexp16⟩
 
 /-- **THE RE-PINNED STEP-1 FACTOR MOMENTS.**
 
@@ -437,9 +444,17 @@ theorem exists_ethmB_seam_factor_moments (d : ℕ) (cstar : ℝ) (hcstar : 0 < c
   have hinv16 : (homS M / 16)⁻¹ = 16 * |Real.log M.gamma| := by rw [homS]; field_simp
   have hinv32 : (homS M / 32)⁻¹ = 32 * |Real.log M.gamma| := by rw [homS]; field_simp
   have htne : t ≠ 0 := ne_of_gt ht
-  obtain ⟨htinv, hinvhalf, hqnn, hqlo16, hqlo32, hqloQ, hqloT2, hqloT, hup16, hup32, hupQ, hupT2, hupT, hkle, hexp16⟩ :=
-    (show ((0 : ℝ) < t⁻¹) ∧ ((t / 2)⁻¹ = 2 * t⁻¹) ∧ ((0 : ℝ) ≤ q) ∧ (2 * (d : ℝ) * (homS M / 16)⁻¹ ≤ q) ∧ (2 * (d : ℝ) * (homS M / 32)⁻¹ ≤ q) ∧ (2 * (d : ℝ) * ((1 : ℝ) / 4)⁻¹ ≤ q) ∧ (2 * (d : ℝ) * (t / 2)⁻¹ ≤ q) ∧ (2 * (d : ℝ) * t⁻¹ ≤ q) ∧ (q ≤ CA⁻¹ * M.gamma⁻¹ * (homS M / 16)) ∧ (q ≤ CA⁻¹ * M.gamma⁻¹ * (homS M / 32)) ∧ (q ≤ CA⁻¹ * M.gamma⁻¹ * (1 / 4)) ∧ (q ≤ CA⁻¹ * M.gamma⁻¹ * (t / 2)) ∧ (q ≤ CA⁻¹ * M.gamma⁻¹ * t) ∧ ((homK M : ℝ) ≤ 12 * |Real.log M.gamma|) ∧ (1 / 2 * (homS M / 16) * ((m : ℝ) - ((homN M m : ℤ) : ℝ)) ≤ 1) from
-      @homStepOneSeamAnchor_comparisonBounds1 (d) (CA) (hCApos) (M) (hs) (m) (t) (ht) (htlo) (q) (hq_lo) (hq_hi) (hginv) (hCAK) (hL4) (hLpos) (hLne) (hs4) (hgap) (h32L) (hinv8) (hinv16) (hinv32))
+  obtain ⟨htinv, hinvhalf, hqnn, hqlo16, hqlo32, hqloQ, hqloT2, hqloT, hup16, hup32, hupQ, hupT2,
+    hupT, hkle, hexp16⟩ :=
+    (show ((0 : ℝ) < t⁻¹) ∧ ((t / 2)⁻¹ = 2 * t⁻¹) ∧ ((0 : ℝ) ≤ q) ∧ (2 * (d : ℝ) * (homS M / 16)⁻¹
+      ≤ q) ∧ (2 * (d : ℝ) * (homS M / 32)⁻¹ ≤ q) ∧ (2 * (d : ℝ) * ((1 : ℝ) / 4)⁻¹ ≤ q) ∧ (2 * (d :
+        ℝ) * (t / 2)⁻¹ ≤ q) ∧ (2 * (d : ℝ) * t⁻¹ ≤ q) ∧ (q ≤ CA⁻¹ * M.gamma⁻¹ * (homS M / 16)) ∧
+          (q ≤ CA⁻¹ * M.gamma⁻¹ * (homS M / 32)) ∧ (q ≤ CA⁻¹ * M.gamma⁻¹ * (1 / 4)) ∧ (q ≤ CA⁻¹ *
+            M.gamma⁻¹ * (t / 2)) ∧ (q ≤ CA⁻¹ * M.gamma⁻¹ * t) ∧ ((homK M : ℝ) ≤ 12 * |Real.log
+              M.gamma|) ∧ (1 / 2 * (homS M / 16) * ((m : ℝ) - ((homN M m : ℤ) : ℝ)) ≤ 1) from
+      @homStepOneSeamAnchor_comparisonBounds1 (d) (CA) (hCApos) (M) (hs) (m) (t) (ht) (htlo) (q)
+        (hq_lo) (hq_hi) (hginv) (hCAK) (hL4) (hLpos) (hLne) (hs4) (hgap) (h32L) (hinv8) (hinv16)
+          (hinv32))
   have hexp32 : 1 / 2 * (homS M / 32) * ((m : ℝ) - ((homN M m : ℤ) : ℝ)) ≤ 1 := by
     rw [hgap, homS]
     have hval : 1 / 2 * (|Real.log M.gamma|⁻¹ / 32) * (homK M : ℝ) =

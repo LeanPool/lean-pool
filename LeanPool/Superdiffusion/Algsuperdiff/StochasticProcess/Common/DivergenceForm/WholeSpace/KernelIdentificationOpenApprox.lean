@@ -136,8 +136,7 @@ private theorem exists_wholeSpaceOpenApprox_eq_one_of_mem (G : Set (Vec d))
     exact fun hxc ↦ hxc hx
   obtain ⟨N, hN⟩ := exists_nat_gt (Metric.infDist x Gᶜ)⁻¹
   have hpow : ∀ᶠ n : ℕ in atTop, 2 * euclideanNorm x + 1 < (3 : ℝ) ^ n :=
-    (tendsto_pow_atTop_atTop_of_one_lt (show (1 : ℝ) < 3 by norm_num)
-      ).eventually_gt_atTop _
+    (tendsto_pow_atTop_atTop_of_one_lt (show (1 : ℝ) < 3 by norm_num)).eventually_gt_atTop _
   obtain ⟨M, hM⟩ := hpow.exists
   let n := max N M
   have hfirstn : min 1 (((n : ℝ) + 1) * Metric.infDist x Gᶜ) = 1 := by

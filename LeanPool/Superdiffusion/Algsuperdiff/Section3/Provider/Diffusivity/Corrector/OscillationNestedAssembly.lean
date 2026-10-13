@@ -212,7 +212,8 @@ private theorem gradientOscillation_incrementDecay :
                   ∀ (c : Vec d),
                     √(Book.Ch01.meanSquareOscillationVecOn (openCubeAtScale z n) h.grad) ≤
                       C₀ * (3 : ℝ) ^ (-(↑k : ℤ)) *
-                        √(Book.Ch01.meanSquareDeviationVecOn (openCubeAtScale z (n + (↑k : ℤ) - (1 : ℤ))) h.grad c)) →
+                        √(Book.Ch01.meanSquareDeviationVecOn (openCubeAtScale z (n + (↑k : ℤ) - (1
+                          : ℤ))) h.grad c)) →
           ∀ (ρ : ℝ),
             √((3 : ℝ) ^ d) = ρ →
               (0 : ℝ) ≤ ρ →
@@ -220,26 +221,35 @@ private theorem gradientOscillation_incrementDecay :
                   ∀ (A : ℝ),
                     C₀ * ρ ≤ A →
                       ((3 : ℝ) * ρ) ^ (d + (2 : ℕ)) ≤ A →
-                        ∀ (z : Vec d) (n : ℤ) (N : ℕ) (w : H1Function (openCubeAtScale z (n + (↑N : ℤ)))) (M : ℝ)
+                        ∀ (z : Vec d) (n : ℤ) (N : ℕ) (w : H1Function (openCubeAtScale z (n + (↑N
+                          : ℤ)))) (M : ℝ)
                           (Φ : (j : ℕ) → H10Function (openCubeAtScale z (n + (↑j : ℤ)))),
                           (∀ j ≤ N,
-                              (IsWeaklyHarmonicOn (openCubeAtScale z (n + (↑j : ℤ))) fun (x : Vec d) =>
+                              (IsWeaklyHarmonicOn (openCubeAtScale z (n + (↑j : ℤ))) fun (x : Vec
+                                d) =>
                                   w.toFun x - (Φ j).toFun x) ∧
-                                √(Book.Ch01.meanSquareDeviationVecOn (openCubeAtScale z (n + (↑j : ℤ))) (Φ j).grad
+                                √(Book.Ch01.meanSquareDeviationVecOn (openCubeAtScale z (n + (↑j :
+                                  ℤ))) (Φ j).grad
                                       (0 : Vec d)) ≤
                                   √(↑d : ℝ) * M * (3 : ℝ) ^ (n + (↑j : ℤ))) →
-                            (∀ (j : ℕ), ∀ m ≤ n + (↑j : ℤ), MemVectorL2 (openCubeAtScale z m) (Φ j).grad) →
+                            (∀ (j : ℕ), ∀ m ≤ n + (↑j : ℤ), MemVectorL2 (openCubeAtScale z m) (Φ
+                              j).grad) →
                               ∀ (E : ℕ → ℝ),
                                 (∀ (j : ℕ), E j = √(↑d : ℝ) * M * (3 : ℝ) ^ (n + (↑j : ℤ))) →
                                   (∀ (j : ℕ), (0 : ℝ) ≤ E j) →
                                     ∀ (F : ℕ → Vec d → Vec d) (S : ℕ → ℝ),
-                                      (∀ j < N, F j = fun (x : Vec d) => (Φ (j + (1 : ℕ))).grad x - (Φ j).grad x) →
-                                        (∀ j ≤ N + (1 : ℕ), MemVectorL2 (openCubeAtScale z n) (F j)) →
+                                      (∀ j < N, F j = fun (x : Vec d) => (Φ (j + (1 : ℕ))).grad x
+                                        - (Φ j).grad x) →
+                                        (∀ j ≤ N + (1 : ℕ), MemVectorL2 (openCubeAtScale z n) (F
+                                          j)) →
                                           (∀ j ≤ N,
-                                              S j = √(Book.Ch01.meanSquareOscillationVecOn (openCubeAtScale z n) (F j))) →
+                                              S j = √(Book.Ch01.meanSquareOscillationVecOn
+                                                (openCubeAtScale z n) (F j))) →
                                             (∀ (k : ℕ), (0 : ℝ) < (3 : ℝ) ^ (-(↑k : ℤ))) →
-                                              ∀ j < N, S j ≤ A * (3 : ℝ) ^ (-(↑j : ℤ)) * (E j + ρ * E (j + (1 : ℕ))) := by
-  intro d C₀ hC₀nn hdec ρ hρdef hρnn hρ1 A hA1 hA2 z n N w _ Φ hΦ hΦL2 E hE hEnn F S hFlow hFL2 hSosc hp j hj
+                                              ∀ j < N, S j ≤ A * (3 : ℝ) ^ (-(↑j : ℤ)) * (E j + ρ
+                                                * E (j + (1 : ℕ))) := by
+  intro d C₀ hC₀nn hdec ρ hρdef hρnn hρ1 A hA1 hA2 z n N w _ Φ hΦ hΦL2 E hE hEnn F S hFlow hFL2
+    hSosc hp j hj
   have hFj : F j = fun x =>
       (Φ (j + 1)).toH1Function.grad x - (Φ j).toH1Function.grad x := hFlow j hj
   by_cases hgap : d + 3 ≤ j
@@ -362,25 +372,34 @@ private theorem oscillationNestedAssembly_comparisonBounds1 :
                 ∀ (c : Vec d),
                   √(Book.Ch01.meanSquareOscillationVecOn (openCubeAtScale z n) h.grad) ≤
                     C₀ * (3 : ℝ) ^ (-(↑k : ℤ)) *
-                      √(Book.Ch01.meanSquareDeviationVecOn (openCubeAtScale z (n + (↑k : ℤ) - (1 : ℤ))) h.grad c))
+                      √(Book.Ch01.meanSquareDeviationVecOn (openCubeAtScale z (n + (↑k : ℤ) - (1 :
+                        ℤ))) h.grad c))
       (ρ : ℝ) (_ : √((3 : ℝ) ^ d) = ρ) (_ : (0 : ℝ) ≤ ρ) (_ : (1 : ℝ) ≤ ρ) (A : ℝ) (_ : (0 : ℝ) ≤ A)
-      (_ : C₀ * ρ ≤ A) (_ : ((3 : ℝ) * ρ) ^ (d + (2 : ℕ)) ≤ A) (z : Vec d) (n : ℤ) (N : ℕ) (_ : d + (3 : ℕ) ≤ N)
+      (_ : C₀ * ρ ≤ A) (_ : ((3 : ℝ) * ρ) ^ (d + (2 : ℕ)) ≤ A) (z : Vec d) (n : ℤ) (N : ℕ) (_ : d
+        + (3 : ℕ) ≤ N)
       (w : H1Function (openCubeAtScale z (n + (↑N : ℤ)))) (M : ℝ)
       (Φ : (j : ℕ) → H10Function (openCubeAtScale z (n + (↑j : ℤ))))
       (_ :
         ∀ j ≤ N,
-          (IsWeaklyHarmonicOn (openCubeAtScale z (n + (↑j : ℤ))) fun (x : Vec d) => w.toFun x - (Φ j).toFun x) ∧
-            √(Book.Ch01.meanSquareDeviationVecOn (openCubeAtScale z (n + (↑j : ℤ))) (Φ j).grad (0 : Vec d)) ≤
+          (IsWeaklyHarmonicOn (openCubeAtScale z (n + (↑j : ℤ))) fun (x : Vec d) => w.toFun x - (Φ
+            j).toFun x) ∧
+            √(Book.Ch01.meanSquareDeviationVecOn (openCubeAtScale z (n + (↑j : ℤ))) (Φ j).grad (0
+              : Vec d)) ≤
               √(↑d : ℝ) * M * (3 : ℝ) ^ (n + (↑j : ℤ)))
       (_ : ∀ (j : ℕ), ∀ m ≤ n + (↑j : ℤ), MemVectorL2 (openCubeAtScale z m) (Φ j).grad)
       (_ : ∀ m ≤ n + (↑N : ℤ), MemVectorL2 (openCubeAtScale z m) w.grad) (E : ℕ → ℝ)
-      (_ : ∀ (j : ℕ), E j = √(↑d : ℝ) * M * (3 : ℝ) ^ (n + (↑j : ℤ))) (_ : ∀ (j : ℕ), (0 : ℝ) ≤ E j) (Ph : ℕ → ℝ)
-      (_ : ∀ (j : ℕ), Ph j = √(Book.Ch01.meanSquareOscillationVecOn (openCubeAtScale z (n + (↑j : ℤ))) w.grad))
+      (_ : ∀ (j : ℕ), E j = √(↑d : ℝ) * M * (3 : ℝ) ^ (n + (↑j : ℤ))) (_ : ∀ (j : ℕ), (0 : ℝ) ≤ E
+        j) (Ph : ℕ → ℝ)
+      (_ : ∀ (j : ℕ), Ph j = √(Book.Ch01.meanSquareOscillationVecOn (openCubeAtScale z (n + (↑j :
+        ℤ))) w.grad))
       (F : ℕ → Vec d → Vec d) (cen : ℕ → Vec d)
-      (_ : ∀ (j : ℕ), cen j = if j = N + (1 : ℕ) then (0 : Vec d) else volumeAverageVec (openCubeAtScale z n) (F j))
-      (S : ℕ → ℝ) (_ : ∀ (j : ℕ), S j = √(Book.Ch01.meanSquareDeviationVecOn (openCubeAtScale z n) (F j) (cen j)))
+      (_ : ∀ (j : ℕ), cen j = if j = N + (1 : ℕ) then (0 : Vec d) else volumeAverageVec
+        (openCubeAtScale z n) (F j))
+      (S : ℕ → ℝ) (_ : ∀ (j : ℕ), S j = √(Book.Ch01.meanSquareDeviationVecOn (openCubeAtScale z n)
+        (F j) (cen j)))
       (_ : ∀ j < N, F j = fun (x : Vec d) => (Φ (j + (1 : ℕ))).grad x - (Φ j).grad x)
-      (_ : F N = fun (x : Vec d) => w.grad x - (Φ N).grad x) (_ : F (N + (1 : ℕ)) = (Φ (0 : ℕ)).grad)
+      (_ : F N = fun (x : Vec d) => w.grad x - (Φ N).grad x) (_ : F (N + (1 : ℕ)) = (Φ (0 :
+        ℕ)).grad)
       (_ : ∀ j ≤ N + (1 : ℕ), MemVectorL2 (openCubeAtScale z n) (F j))
       (_ :
         √(Book.Ch01.meanSquareOscillationVecOn (openCubeAtScale z n) w.grad) ≤
@@ -389,8 +408,10 @@ private theorem oscillationNestedAssembly_comparisonBounds1 :
         Ph (0 : ℕ) = √(Book.Ch01.meanSquareOscillationVecOn (openCubeAtScale z n) w.grad) ∧
           Ph (0 : ℕ) ≤
             A * (3 : ℝ) ^ (-(↑N : ℤ)) * Ph N +
-              (A * ((1 : ℝ) + (3 : ℝ) * ρ) * (↑N : ℝ) + A + (2 : ℝ)) * ((3 : ℝ) ^ n * (√(↑d : ℝ) * M)) := by
-  intro d C₀ hC₀nn hdec ρ hρdef hρnn hρ1 A hAnn hA1 hA2 z n N hN w M Φ hΦ hΦL2 hwL2 E hE hEnn Ph hPh F cen hcen S hS hFlow hFmid hFtop hFL2 htri
+              (A * ((1 : ℝ) + (3 : ℝ) * ρ) * (↑N : ℝ) + A + (2 : ℝ)) * ((3 : ℝ) ^ n * (√(↑d : ℝ) *
+                M)) := by
+  intro d C₀ hC₀nn hdec ρ hρdef hρnn hρ1 A hAnn hA1 hA2 z n N hN w M Φ hΦ hΦL2 hwL2 E hE hEnn Ph
+    hPh F cen hcen S hS hFlow hFmid hFtop hFL2 htri
   have hcenLow : ∀ j : ℕ, j ≤ N → cen j = volumeAverageVec (openCubeAtScale z n) (F j) := by
     intro j hj
     rw [hcen, ite_eq_right (by omega)]

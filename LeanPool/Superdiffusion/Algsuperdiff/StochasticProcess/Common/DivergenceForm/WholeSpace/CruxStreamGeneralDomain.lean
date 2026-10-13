@@ -144,8 +144,8 @@ theorem iInf_toReal_analyticPenalizedResolvent_le_of_isRepresentative_of_error
     rintro y ⟨n, rfl⟩
     exact ENNReal.toReal_nonneg
   have hle : ∀ᶠ n in atTop,
-      (⨅ j : ℕ, (A.analyticPenalizedResolvent hV.isOpen j mu f hf hfD x
-        ).toReal) ≤ A.analyticPenalizedCubeResolvent hV.isOpen n mu f hf hfD
+      (⨅ j : ℕ, (A.analyticPenalizedResolvent hV.isOpen j mu f hf hfD x).toReal) ≤
+        A.analyticPenalizedCubeResolvent hV.isOpen n mu f hf hfD
           (v + 1) x + error n := by
     filter_upwards [hcompare] with n hn
     exact (ciInf_le hbdd n).trans hn
@@ -243,8 +243,7 @@ theorem iInf_toReal_analyticPenalizedResolvent_le_utilde_stream {D : ℝ}
 theorem killedResolvent_le_partResolvent_stream_general
     (R : PositiveC0ContractiveResolvent (Vec d)) (hreg : R.OnePointRegular)
     (hcons : R.kernelSemigroup.IsConservative)
-    (hid : (streamWholeSpaceAnalyticData M omega
-      ).KernelResolventIdentifiesAnalyticMinimal R)
+    (hid : (streamWholeSpaceAnalyticData M omega).KernelResolventIdentifiesAnalyticMinimal R)
     {x : Vec d} (hx : x ∈ P.V) :
     letI := hreg.metricSpace
     letI := hreg.completeSpace
@@ -265,12 +264,10 @@ theorem killedResolvent_le_partResolvent_stream_general
 theorem killedResolvent_eq_partResolvent_stream_general
     (R : PositiveC0ContractiveResolvent (Vec d)) (hreg : R.OnePointRegular)
     (hcons : R.kernelSemigroup.IsConservative)
-    (hid : (streamWholeSpaceAnalyticData M omega
-      ).KernelResolventIdentifiesAnalyticMinimal R)
+    (hid : (streamWholeSpaceAnalyticData M omega).KernelResolventIdentifiesAnalyticMinimal R)
     (hT : ∀ (mu : PositiveShift) (g : C₀(Vec d, ℝ)),
       R.toContractiveResolvent.operator mu g =
-        ((streamWholeSpaceC0BarrierData M omega).resolvent
-          ).toContractiveResolvent.operator mu g)
+        ((streamWholeSpaceC0BarrierData M omega).resolvent).toContractiveResolvent.operator mu g)
     {x : Vec d} (hx : x ∈ P.V) :
     letI := hreg.metricSpace
     letI := hreg.completeSpace

@@ -488,12 +488,15 @@ private theorem bandMeanTrace_ofReal_eq_layerSum :
               ∑ j : Fin d,
                   ∑' (n : ℕ),
                     ENNReal.ofReal
-                      (probeSharpFramedGoodWavePart M R.scale (↑E : ℝ) bfaProfileB (collarBandMeanDepth M (↑E : ℝ)) n
+                      (probeSharpFramedGoodWavePart M R.scale (↑E : ℝ) bfaProfileB
+                        (collarBandMeanDepth M (↑E : ℝ)) n
                         (m - (1 : ℤ)) (basisVec j)
                         (fun (_eta : CutoffSample d) =>
-                          waveBandMean (probeDeepBandMeanAmplitude d) M.gamma (collarBandMeanDepth M (↑E : ℝ)) ^ (2 : ℕ))
+                          waveBandMean (probeDeepBandMeanAmplitude d) M.gamma (collarBandMeanDepth
+                            M (↑E : ℝ)) ^ (2 : ℕ))
                         (translateCutoffSample (triadicCubeShift R) omega)) =
-                ENNReal.ofReal (∑ j : Fin d, probeSharpFramedBandMeanTunedCoordinateWhitneySum M m R (↑E : ℝ) j omega) := by
+                ENNReal.ofReal (∑ j : Fin d, probeSharpFramedBandMeanTunedCoordinateWhitneySum M m
+                  R (↑E : ℝ) j omega) := by
   intro d M m k R hR E hd omega
   let eta := translateCutoffSample (triadicCubeShift R) omega
   have hterm0 (j : Fin d) (n : ℕ) : 0 ≤

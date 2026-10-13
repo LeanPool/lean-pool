@@ -54,12 +54,10 @@ namespace WholeSpaceAnalyticData
 variable {M : ABKModel d} {omega : FullSample d M.gamma}
   (R : PositiveC0ContractiveResolvent (Vec d)) (hreg : R.OnePointRegular)
   (hcons : R.kernelSemigroup.IsConservative)
-  (hid : (streamWholeSpaceAnalyticData M omega
-    ).KernelResolventIdentifiesAnalyticMinimal R)
+  (hid : (streamWholeSpaceAnalyticData M omega).KernelResolventIdentifiesAnalyticMinimal R)
   (hT : ∀ (mu : PositiveShift) (g : C₀(Vec d, ℝ)),
     R.toContractiveResolvent.operator mu g =
-      ((streamWholeSpaceC0BarrierData M omega).resolvent
-        ).toContractiveResolvent.operator mu g)
+      ((streamWholeSpaceC0BarrierData M omega).resolvent).toContractiveResolvent.operator mu g)
 
 include hcons hid hT in
 /-- **The killed resolvent of a continuous datum on a translated triadic cube for the stream
@@ -75,8 +73,7 @@ theorem killedResolvent_eq_cubeSetAtC0Resolvent_stream (y : Vec d) (n : ℤ) {la
         (OnePoint.isOpen_image_coe.mpr (isOpen_cubeSetAt y n)) lam
         (PositiveC0ContractiveResolvent.onePointLiveExtension
           (fun z => ENNReal.ofReal (g z))) (x : OnePoint (Vec d)) =
-      ENNReal.ofReal ((streamWholeSpaceAnalyticData M omega
-        ).cubeSetAtC0Resolvent y n g lam x) := by
+      ENNReal.ofReal ((streamWholeSpaceAnalyticData M omega).cubeSetAtC0Resolvent y n g lam x) := by
   let A := streamWholeSpaceAnalyticData M omega
   let _ := hreg.metricSpace
   let _ := hreg.completeSpace
@@ -195,8 +192,8 @@ theorem discountedExitAverage_eq_sub_add_cubeSetAt_stream
         (x : OnePoint (Vec d)) =
       R.toContractiveResolvent.operator mu g x -
         (streamWholeSpaceAnalyticData M omega).cubeSetAtC0Resolvent y n g lam x +
-        ((mu : ℝ) - lam) * (streamWholeSpaceAnalyticData M omega
-          ).cubeSetAtC0Resolvent y n (R.toContractiveResolvent.operator mu g) lam x := by
+        ((mu : ℝ) - lam) * (streamWholeSpaceAnalyticData M omega).cubeSetAtC0Resolvent y n
+          (R.toContractiveResolvent.operator mu g) lam x := by
   let A := streamWholeSpaceAnalyticData M omega
   let _ := hreg.metricSpace
   let _ := hreg.completeSpace
@@ -280,8 +277,7 @@ by the exit distribution.** -/
 theorem hasExitMeanValueOn_of_isCubeSetAtResolventHarmonicPart_stream
     (y : Vec d) (n : ℤ) (mu : PositiveShift) (g : C₀(Vec d, ℝ)) (hg0 : ∀ z, 0 ≤ g z)
     {h : Vec d → ℝ}
-    (hh : (streamWholeSpaceAnalyticData M omega
-      ).IsCubeSetAtResolventHarmonicPart R y n mu g h)
+    (hh : (streamWholeSpaceAnalyticData M omega).IsCubeSetAtResolventHarmonicPart R y n mu g h)
     (hwfin : letI := hreg.metricSpace
       letI := hreg.completeSpace
       ∀ z ∈ cubeSetAt y n,

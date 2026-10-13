@@ -122,7 +122,8 @@ private theorem four_mul_le_sq_five_mul_add {x y : ℝ} (hx : 0 ≤ x) (hy : 0 �
 private theorem badEventFrozenApplication_comparisonBounds1 :
     ∀ (d : ℕ) (c0 : ℝ) (_ : (0 : ℝ) < c0) (k : ℕ) (M : ABKModel d) (E : { E : ℝ // (1 : ℝ) ≤ E })
       (R : TriadicCube d) (n : ℤ) (_ : (0 : ℝ) < Disorder.cstar M) (_ : (0 : ℝ) < M.gamma)
-      (_ : (0 : ℝ) < M.gamma⁻¹) (_ : (1 : ℝ) ≤ (↑E : ℝ)) (_ : c0 * ((3 : ℝ) ^ ((12 : ℕ) * k))⁻¹ ≤ c0)
+      (_ : (0 : ℝ) < M.gamma⁻¹) (_ : (1 : ℝ) ≤ (↑E : ℝ)) (_ : c0 * ((3 : ℝ) ^ ((12 : ℕ) * k))⁻¹ ≤
+        c0)
       (_ : (↑(R.scale + (2 : ℤ) * (↑k : ℤ)) : ℝ) = (↑R.scale : ℝ) + (2 : ℝ) * (↑k : ℝ))
       (_ : (↑R.scale : ℝ) ≤ (↑n : ℝ)),
       Real.exp (-(c0 * Disorder.cstar M * M.gamma⁻¹ * (3 : ℝ) ^ ((↑n : ℝ) - (↑R.scale : ℝ)))) +
@@ -130,15 +131,18 @@ private theorem badEventFrozenApplication_comparisonBounds1 :
           Real.exp
               (-(c0 * ((3 : ℝ) ^ ((12 : ℕ) * k))⁻¹ * Disorder.cstar M * M.gamma⁻¹ *
                   (3 : ℝ) ^ ((↑n : ℝ) - (↑R.scale : ℝ)))) +
-            Real.exp (-Real.exp (c0 * ((3 : ℝ) ^ ((12 : ℕ) * k))⁻¹ * (↑E : ℝ)⁻¹ ^ (2 : ℕ) * M.gamma⁻¹)) ∧
+            Real.exp (-Real.exp (c0 * ((3 : ℝ) ^ ((12 : ℕ) * k))⁻¹ * (↑E : ℝ)⁻¹ ^ (2 : ℕ) *
+              M.gamma⁻¹)) ∧
         Real.exp
-              (-(c0 * Disorder.cstar M * M.gamma⁻¹ * (3 : ℝ) ^ ((-5 : ℝ) * scaleGapPos n (R.scale + (2 : ℤ) * (↑k : ℤ))) *
+              (-(c0 * Disorder.cstar M * M.gamma⁻¹ * (3 : ℝ) ^ ((-5 : ℝ) * scaleGapPos n (R.scale
+                + (2 : ℤ) * (↑k : ℤ))) *
                   (3 : ℝ) ^ scaleGapPos (R.scale + (2 : ℤ) * (↑k : ℤ)) n)) +
             Real.exp (-Real.exp (c0 * (↑E : ℝ)⁻¹ ^ (2 : ℕ) * M.gamma⁻¹)) ≤
           Real.exp
               (-(c0 * ((3 : ℝ) ^ ((12 : ℕ) * k))⁻¹ * Disorder.cstar M * M.gamma⁻¹ *
                   (3 : ℝ) ^ ((↑n : ℝ) - (↑R.scale : ℝ)))) +
-            Real.exp (-Real.exp (c0 * ((3 : ℝ) ^ ((12 : ℕ) * k))⁻¹ * (↑E : ℝ)⁻¹ ^ (2 : ℕ) * M.gamma⁻¹)) := by
+            Real.exp (-Real.exp (c0 * ((3 : ℝ) ^ ((12 : ℕ) * k))⁻¹ * (↑E : ℝ)⁻¹ ^ (2 : ℕ) *
+              M.gamma⁻¹)) := by
   intro d c0 hc0 k M E R n hcstar0 _ hginv0 _ hcle hm2cast _
   have h3A : (0 : ℝ) < (3 : ℝ) ^ ((n : ℝ) - (R.scale : ℝ)) :=
     Real.rpow_pos_of_pos (by norm_num) _

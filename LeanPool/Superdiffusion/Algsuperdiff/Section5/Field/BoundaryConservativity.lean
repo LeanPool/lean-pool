@@ -162,25 +162,28 @@ private theorem natCast_add_one_le_three_pow (m : ℕ) :
         _ = (3 : ℝ) ^ m * 3 := by ring
 
 private theorem boundaryConservativity_comparisonBounds1 :
-    ∀ {d : ℕ} [inst : NeZero d] (M : ABKModel d) (omega : FullSample d M.gamma) (mu : (↑PositiveShift : Type))
+    ∀ {d : ℕ} [NeZero d] (M : ABKModel d) (omega : FullSample d M.gamma) (mu : (↑PositiveShift :
+      Type))
       (x : Vec d),
-      let L : WholeSpaceLocalizedSplitData (streamWholeSpaceAnalyticData M omega) := streamLocalizedSplitData M omega;
+      let L : WholeSpaceLocalizedSplitData (streamWholeSpaceAnalyticData M omega) :=
+        streamLocalizedSplitData M omega;
       let r₀ : ℝ := L.freezingRadius x;
       let U : ℝ := streamBoundaryLocalizedUpperConst M omega mu;
       let alpha : ℝ := (1 / 2 : ℝ);
       let q : ℝ := alpha / (alpha + (↑d : ℝ) / (2 : ℝ));
       let c : ℝ := √(M.nu * (↑mu : ℝ)) / ((2 : ℝ) * √(2 : ℝ) * U) * q / (4 : ℝ);
-      ∀ (hU : (0 : ℝ) < U) (hq : (0 : ℝ) < q) (m : ℕ)
-        (hm : (4 : ℝ) * (euclideanNorm x + r₀ / (2 : ℝ) + (1 : ℝ)) < (3 : ℝ) ^ m),
+      ∀ (_ : (0 : ℝ) < U) (_ : (0 : ℝ) < q) (m : ℕ)
+        (_ : (4 : ℝ) * (euclideanNorm x + r₀ / (2 : ℝ) + (1 : ℝ)) < (3 : ℝ) ^ m),
         Real.exp
             (-(agmonRate M.nu
                     (localizedInteriorUpper M.nu (↑mu : ℝ) (L.roughBound (0 : Vec d) ((3 : ℝ) ^ m))
                       (L.smoothDivBound (0 : Vec d) ((3 : ℝ) ^ m)))
                     (↑mu : ℝ) *
                   q *
-                (-(euclideanNorm (x - (0 : Vec d)) + r₀ / (2 : ℝ)) - (-cubeBoundaryCutoffInnerRadius m + (1 : ℝ))))) ≤
+                (-(euclideanNorm (x - (0 : Vec d)) + r₀ / (2 : ℝ)) -
+                  (-cubeBoundaryCutoffInnerRadius m + (1 : ℝ))))) ≤
           Real.exp (-(c * (3 : ℝ) ^ m / ((↑m : ℝ) + (1 : ℝ)))) := by
-  intro d instance1 M omega mu x L r₀ U alpha q c hU hq m hm
+  intro _ _ M omega mu x L r₀ U _ q c _ hq m hm
   have hLupper := localizedInteriorUpper_streamBoundary_le M omega mu m
   have hLpos := localizedInteriorUpper_pos (mass := (mu : ℝ)) M.nu_pos
     (L.roughBound_nonneg 0 ((3 : ℝ) ^ m) (pow_nonneg (by norm_num) m))
@@ -249,14 +252,18 @@ private theorem boundaryConservativity_comparisonBounds1 :
   exact hexp
 
 private theorem boundaryConservativity_comparisonBounds2 :
-    ∀ {d : ℕ} [inst : NeZero d] (M : ABKModel d) (omega : FullSample d M.gamma) (x : Vec d),
-      let L : WholeSpaceLocalizedSplitData (streamWholeSpaceAnalyticData M omega) := streamLocalizedSplitData M omega;
+    ∀ {d : ℕ} [NeZero d] (M : ABKModel d) (omega : FullSample d M.gamma) (x : Vec d),
+      let L : WholeSpaceLocalizedSplitData (streamWholeSpaceAnalyticData M omega) :=
+        streamLocalizedSplitData M omega;
       let r₀ : ℝ := L.freezingRadius x;
-      ∀ (hr₀ : (0 : ℝ) < r₀) (m : ℕ) (hm : (4 : ℝ) * (euclideanNorm x + r₀ / (2 : ℝ) + (1 : ℝ)) < (3 : ℝ) ^ m),
+      ∀ (_ : (0 : ℝ) < r₀) (m : ℕ) (_ : (4 : ℝ) * (euclideanNorm x + r₀ / (2 : ℝ) + (1 : ℝ)) < (3
+        : ℝ) ^ m),
         euclideanBall x r₀ ⊆ wholeSpaceCube d m ∧
-          euclideanBall x (r₀ / (2 : ℝ)) ⊆ euclideanBall (0 : Vec d) (cubeBoundaryCutoffInnerRadius m) ∧
-            -cubeBoundaryCutoffInnerRadius m + (1 : ℝ) ≤ -(euclideanNorm (x - (0 : Vec d)) + r₀ / (2 : ℝ)) := by
-  intro d instance1 M omega x L r₀ hr₀ m hm
+          euclideanBall x (r₀ / (2 : ℝ)) ⊆ euclideanBall (0 : Vec d)
+            (cubeBoundaryCutoffInnerRadius m) ∧
+            -cubeBoundaryCutoffInnerRadius m + (1 : ℝ) ≤ -(euclideanNorm (x - (0 : Vec d)) + r₀ /
+              (2 : ℝ)) := by
+  intro d _ _ _ x _ r₀ hr₀ m hm
   have hball : euclideanBall x r₀ ⊆ wholeSpaceCube d m := by
     intro y hy
     rw [mem_wholeSpaceCube_iff]
@@ -300,26 +307,29 @@ private theorem boundaryConservativity_comparisonBounds2 :
 private theorem boundaryConservativity_estimate1 :
     ∀ {d : ℕ} [NeZero d] (M : ABKModel d)
       (omega : FullSample d M.gamma) (mu : (↑PositiveShift : Type)) (x : Vec d),
-      let L : WholeSpaceLocalizedSplitData (streamWholeSpaceAnalyticData M omega) := streamLocalizedSplitData M omega;
+      let L : WholeSpaceLocalizedSplitData (streamWholeSpaceAnalyticData M omega) :=
+        streamLocalizedSplitData M omega;
       let r₀ : ℝ := L.freezingRadius x;
       let alpha : ℝ := (1 / 2 : ℝ);
-      ∀ (hr₀ : (0 : ℝ) < r₀),
+      ∀ (_ : (0 : ℝ) < r₀),
         let V0 : ℝ := (2 : ℝ) ^ d;
         let e : ℝ := (↑mu : ℝ) * (min (↑mu : ℝ) M.nu)⁻¹;
         let C2 : ℝ :=
           smallContrastZerothSchauderConstant d *
-              (r₀ ^ ((1 : ℝ) - alpha - (↑d : ℝ) / (2 : ℝ)) * e * V0 + r₀ ^ ((2 : ℝ) - alpha) * ((↑mu : ℝ) / M.nu)) *
+              (r₀ ^ ((1 : ℝ) - alpha - (↑d : ℝ) / (2 : ℝ)) * e * V0 + r₀ ^ ((2 : ℝ) - alpha) *
+                ((↑mu : ℝ) / M.nu)) *
             (r₀ / (2 : ℝ)) ^ alpha;
-        ∀ (hV0 : (0 : ℝ) ≤ V0) (he : (0 : ℝ) ≤ e) (m : ℕ),
+        ∀ (_ : (0 : ℝ) ≤ V0) (_ : (0 : ℝ) ≤ e) (m : ℕ),
           let t : ℝ := (↑m : ℝ) + (1 : ℝ);
           let B : ℝ := ((3 : ℝ) ^ d) ^ m;
-          let V : ℝ := ((volume : (a : Set (Vec d)) → ℝ≥0∞) (wholeSpaceCube d m)).toReal;
-          ∀ (ht : (1 : ℝ) ≤ t) (hB : (1 : ℝ) ≤ B) (hV : V = V0 * B),
+          let V : ℝ := ((volume : Set (Vec d) → ENNReal) (wholeSpaceCube d m)).toReal;
+          ∀ (_ : (1 : ℝ) ≤ t) (_ : (1 : ℝ) ≤ B) (_ : V = V0 * B),
             smallContrastZerothSchauderConstant d *
-                  (r₀ ^ ((1 : ℝ) - alpha - (↑d : ℝ) / (2 : ℝ)) * (e * V) + r₀ ^ ((2 : ℝ) - alpha) * ((↑mu : ℝ) / M.nu)) *
+                  (r₀ ^ ((1 : ℝ) - alpha - (↑d : ℝ) / (2 : ℝ)) * (e * V) + r₀ ^ ((2 : ℝ) - alpha)
+                    * ((↑mu : ℝ) / M.nu)) *
                 (r₀ / (2 : ℝ)) ^ alpha ≤
               C2 * t ^ (2 : ℕ) * B := by
-  intro d instance1 M omega mu x L r₀ alpha hr₀ V0 e C2 hV0 he m t B V ht hB hV
+  intro d _ M _ mu _ _ r₀ alpha hr₀ V0 e C2 hV0 he _ t B _ ht hB hV
   have htb : 1 ≤ t ^ 2 * B :=
     calc
       (1 : ℝ) = 1 * 1 := by ring
@@ -366,21 +376,25 @@ private theorem boundaryConservativity_estimate1 :
 /-- The analytic boundary defect for the stream coefficient tends pointwise
 to zero along the cubic exhaustion. -/
 private theorem boundaryConservativity_estimate2 :
-    ∀ {d : ℕ} [inst : NeZero d] (M : ABKModel d)
+    ∀ {d : ℕ} [NeZero d] (M : ABKModel d)
       (omega : FullSample d M.gamma) (mu : (↑PositiveShift : Type)) (x : Vec d),
-      let A : WholeSpaceAnalyticData d := streamWholeSpaceAnalyticData M omega;
-      let L : WholeSpaceLocalizedSplitData (streamWholeSpaceAnalyticData M omega) := streamLocalizedSplitData M omega;
+      let _ : WholeSpaceAnalyticData d := streamWholeSpaceAnalyticData M omega;
+      let L : WholeSpaceLocalizedSplitData (streamWholeSpaceAnalyticData M omega) :=
+        streamLocalizedSplitData M omega;
       let r₀ : ℝ := L.freezingRadius x;
-      let U : ℝ := streamBoundaryLocalizedUpperConst M omega mu;
+      let _ : ℝ := streamBoundaryLocalizedUpperConst M omega mu;
       let alpha : ℝ := (1 / 2 : ℝ);
-      ∀ (hr₀ : (0 : ℝ) < r₀),
+      ∀ (_ : (0 : ℝ) < r₀),
         let P : ℕ → ℝ := fun (m : ℕ) =>
           localizedInteriorDecayConstant d M.nu (↑mu : ℝ) (L.roughBound (0 : Vec d) ((3 : ℝ) ^ m))
-            (L.smoothDivBound (0 : Vec d) ((3 : ℝ) ^ m)) (1 : ℝ) (cubeBoundaryCutoffUniformGradientBudget (d := d))
+            (L.smoothDivBound (0 : Vec d) ((3 : ℝ) ^ m)) (1 : ℝ)
+              (cubeBoundaryCutoffUniformGradientBudget (d := d))
             ((volume : (a : Set (Vec d)) → ℝ≥0∞) (wholeSpaceCube d m)).toReal alpha
-            ((↑mu : ℝ) * (min (↑mu : ℝ) M.nu)⁻¹ * ((volume : (a : Set (Vec d)) → ℝ≥0∞) (wholeSpaceCube d m)).toReal) r₀;
-        ∃ (C : ℝ), (0 : ℝ) ≤ C ∧ ∀ (m : ℕ), P m ≤ C * ((↑m : ℝ) + (1 : ℝ)) * ((3 : ℝ) ^ (d + (1 : ℕ))) ^ m := by
-  intro d instance1 M omega mu x A L r₀ U alpha hr₀ P
+            ((↑mu : ℝ) * (min (↑mu : ℝ) M.nu)⁻¹ * ((volume : (a : Set (Vec d)) → ℝ≥0∞)
+              (wholeSpaceCube d m)).toReal) r₀;
+        ∃ (C : ℝ), (0 : ℝ) ≤ C ∧ ∀ (m : ℕ), P m ≤ C * ((↑m : ℝ) + (1 : ℝ)) * ((3 : ℝ) ^ (d + (1 :
+          ℕ))) ^ m := by
+  intro d _ M omega mu x A L r₀ U alpha hr₀ P
   let Ceta := cubeBoundaryCutoffUniformGradientBudget (d := d)
   let V0 : ℝ := (2 : ℝ) ^ d
   let Q : ℝ := 8 * U ^ 2 / (M.nu * (mu : ℝ)) * Ceta * V0
@@ -501,7 +515,8 @@ private theorem boundaryConservativity_estimate2 :
   have hsecond : smallContrastZerothSchauderConstant d *
         (r₀ ^ (1 - alpha - (d : ℝ) / 2) * (e * V) +
           r₀ ^ (2 - alpha) * ((mu : ℝ) / M.nu)) *
-        (r₀ / 2) ^ alpha ≤ C2 * t ^ 2 * B  := @boundaryConservativity_estimate1 (d) (by infer_instance) (M) (omega) (mu) (x) (hr₀) (hV0) (he) (m) (ht) (hB) (hV)
+        (r₀ / 2) ^ alpha ≤ C2 * t ^ 2 * B  := @boundaryConservativity_estimate1 (d) (by
+          infer_instance) (M) (omega) (mu) (x) (hr₀) (hV0) (he) (m) (ht) (hB) (hV)
   have hPquad : P m ≤ C * t ^ 2 * B := by
     calc
       P m ≤ ((Q + 1) / den) * t ^ 2 * B + C2 * t ^ 2 * B := by
@@ -555,7 +570,8 @@ theorem tendsto_abs_streamAnalyticCubeBoundaryRemainder
       ((mu : ℝ) * (min (mu : ℝ) M.nu)⁻¹ *
         (volume (wholeSpaceCube d m)).toReal) r₀
   have hPexists : ∃ C : ℝ, 0 ≤ C ∧ ∀ m : ℕ,
-      P m ≤ C * ((m : ℝ) + 1) * ((3 : ℝ) ^ (d + 1)) ^ m  := @boundaryConservativity_estimate2 (d) (by infer_instance) (M) (omega) (mu) (x) (hr₀)
+      P m ≤ C * ((m : ℝ) + 1) * ((3 : ℝ) ^ (d + 1)) ^ m  := @boundaryConservativity_estimate2 (d)
+        (by infer_instance) (M) (omega) (mu) (x) (hr₀)
   obtain ⟨C, hC, hPC⟩ := hPexists
   have hmajor := tendsto_triadicVolume_mul_exp_neg_triadic_div_linear
     (d + 1) hC hc
@@ -567,7 +583,8 @@ theorem tendsto_abs_streamAnalyticCubeBoundaryRemainder
     (show (euclideanBall x r₀ ⊆ wholeSpaceCube d m) ∧ (euclideanBall x (r₀ / 2) ⊆
       euclideanBall 0 (cubeBoundaryCutoffInnerRadius m)) ∧ (-cubeBoundaryCutoffInnerRadius m + 1 ≤
       -(euclideanNorm (x - 0) + r₀ / 2)) from
-      @boundaryConservativity_comparisonBounds2 (d) (by infer_instance) (M) (omega) (x) (hr₀) (m) (hm))
+      @boundaryConservativity_comparisonBounds2 (d) (by infer_instance) (M) (omega) (x) (hr₀) (m)
+        (hm))
   have hdecay := A.abs_analyticCubeBoundaryRemainder_le_localized L mu m
     (x := x) hball hinner hlayer
   have hexp : Real.exp (-((agmonRate M.nu
@@ -577,7 +594,8 @@ theorem tendsto_abs_streamAnalyticCubeBoundaryRemainder
       (-(euclideanNorm (x - 0) + r₀ / 2) -
         (-cubeBoundaryCutoffInnerRadius m + 1)))) ≤
       Real.exp (-(c * (3 : ℝ) ^ m / ((m : ℝ) + 1))) :=
-    @boundaryConservativity_comparisonBounds1 (d) (by infer_instance) (M) (omega) (mu) (x) (hU) (hq) (m) (hm)
+    @boundaryConservativity_comparisonBounds1 (d) (by infer_instance) (M) (omega) (mu) (x) (hU)
+      (hq) (m) (hm)
   calc
     _ ≤ P m * Real.exp (-((agmonRate M.nu
           (localizedInteriorUpper M.nu (mu : ℝ)

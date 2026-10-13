@@ -884,12 +884,15 @@ private theorem waveTail_trace_ofReal_domination :
                     let rare : CutoffSample d → ℝ := fun (omega : CutoffSample d) =>
                       C * V (translateCutoffSample shift omega);
                     (2 : ℕ) ≤ d →
-                      max (Real.exp (profileAuxiliaryConst d / sigma)) (Disorder.cstar M)⁻¹ ≤ (↑E : ℝ) →
-                        (∀ᵐ (omega : CutoffSample d) ∂(↑(cutoffSampleLaw M) : Measure (CutoffSample d)),
+                      max (Real.exp (profileAuxiliaryConst d / sigma)) (Disorder.cstar M)⁻¹ ≤ (↑E
+                        : ℝ) →
+                        (∀ᵐ (omega : CutoffSample d) ∂(↑(cutoffSampleLaw M) : Measure
+                          (CutoffSample d)),
                             Summable fun (n : ℕ) =>
                               probeSharpWaveTailTunedBoundedLayer M R.scale (↑E : ℝ) k n
                                 (translateCutoffSample shift omega)) →
-                          (∀ᵐ (omega : CutoffSample d) ∂(↑(cutoffSampleLaw M) : Measure (CutoffSample d)),
+                          (∀ᵐ (omega : CutoffSample d) ∂(↑(cutoffSampleLaw M) : Measure
+                            (CutoffSample d)),
                               Summable fun (n : ℕ) =>
                                 probeSharpWaveTailTunedRareLayer M R.scale (↑E : ℝ) k n
                                   (translateCutoffSample shift omega)) →
@@ -901,19 +904,24 @@ private theorem waveTail_trace_ofReal_domination :
                                     (collarBandMeanDepth M (↑E : ℝ)) n (m - (1 : ℤ)) (basisVec j)
                                     (fun (eta : CutoffSample d) =>
                                       waveTailTerm M R.scale (↑E : ℝ) bfaProfileB R.scale
-                                          (probeSharpLayerAnchor R.scale bfaProfileB (collarBandMeanDepth M (↑E : ℝ)) n)
+                                          (probeSharpLayerAnchor R.scale bfaProfileB
+                                            (collarBandMeanDepth M (↑E : ℝ)) n)
                                           eta ^
                                         (2 : ℕ))
                                     (translateCutoffSample shift omega);
                                 let traceR : CutoffSample d → ℝ := fun (omega : CutoffSample d) =>
                                   ∑ j : Fin d, ∑' (n : ℕ), L j n omega;
-                                let traceE : CutoffSample d → ENNReal := fun (omega : CutoffSample d) =>
+                                let traceE : CutoffSample d → ENNReal := fun (omega : CutoffSample
+                                  d) =>
                                   ∑ j : Fin d, ∑' (n : ℕ), ENNReal.ofReal (L j n omega);
-                                ∀ᵐ (omega : CutoffSample d) ∂(↑(cutoffSampleLaw M) : Measure (CutoffSample d)),
+                                ∀ᵐ (omega : CutoffSample d) ∂(↑(cutoffSampleLaw M) : Measure
+                                  (CutoffSample d)),
                                   traceR omega ≤ bounded omega + rare omega ∧
                                     traceE omega = ENNReal.ofReal (traceR omega) ∧
-                                      traceE omega ≤ ENNReal.ofReal (bounded omega) + ENNReal.ofReal (rare omega) := by
-  intro d M m k R hR E hstate _ hsigma0 hsigma hEgamma shift B V C bounded rare hd hmaxAux hBtranslated hVtranslated hbounded0 hrare0 L traceR traceE
+                                      traceE omega ≤ ENNReal.ofReal (bounded omega) +
+                                        ENNReal.ofReal (rare omega) := by
+  intro d M m k R hR E hstate _ hsigma0 hsigma hEgamma shift B V C bounded rare hd hmaxAux
+    hBtranslated hVtranslated hbounded0 hrare0 L traceR traceE
   filter_upwards [hBtranslated, hVtranslated] with omega hBs hVs
   have hterm0 (j : Fin d) (n : ℕ) : 0 ≤ L j n omega := by
     dsimp only [L]
@@ -970,7 +978,8 @@ private theorem waveTail_trace_ofReal_domination :
   exact ⟨hreal, heq, henn⟩
 
 private theorem upperWaveTailE12Consumption_momentBounds1 :
-    ∀ {d : ℕ} (M : ABKModel d) {k : ℕ} {R : TriadicCube d} {E : { E : ℝ // (1 : ℝ) ≤ E }} {sigma : ℝ},
+    ∀ {d : ℕ} (M : ABKModel d) {k : ℕ} {R : TriadicCube d} {E : { E : ℝ // (1 : ℝ) ≤ E }} {sigma :
+      ℝ},
     (0 : ℝ) < sigma →
     sigma ≤ (1 / 2 : ℝ) →
     let shift : Vec d := triadicCubeShift R;
@@ -979,17 +988,21 @@ private theorem upperWaveTailE12Consumption_momentBounds1 :
     let V : CutoffSample d → ℝ := fun (eta : CutoffSample d) =>
     ∑' (n : ℕ), probeSharpWaveTailTunedRareLayer M R.scale (↑E : ℝ) k n eta;
     let C : ℝ := (↑d : ℝ) * probeMeanGoodWaveConst M;
-    let bounded : CutoffSample d → ℝ := fun (omega : CutoffSample d) => C * B (translateCutoffSample shift omega);
-    let rare : CutoffSample d → ℝ := fun (omega : CutoffSample d) => C * V (translateCutoffSample shift omega);
+    let bounded : CutoffSample d → ℝ := fun (omega : CutoffSample d) => C * B
+      (translateCutoffSample shift omega);
+    let rare : CutoffSample d → ℝ := fun (omega : CutoffSample d) => C * V (translateCutoffSample
+      shift omega);
     (2 : ℕ) ≤ d →
     (0 : ℝ) ≤ C →
     (∀ (n : ℕ),
-    IsBigOWith (↑(cutoffSampleLaw M) : Measure (CutoffSample d)) (gammaSigma (upperProfileTailSigma sigma))
+    IsBigOWith (↑(cutoffSampleLaw M) : Measure (CutoffSample d)) (gammaSigma
+      (upperProfileTailSigma sigma))
     (probeSharpWaveTailTunedBoundedLayer M R.scale (↑E : ℝ) k n)
     (probeSharpWaveTailTunedBoundedLayerBound M (↑E : ℝ) sigma n)) →
     (∀ (n : ℕ),
     IsBigOWith (↑(cutoffSampleLaw M) : Measure (CutoffSample d))
-    (gammaSigma (upperProfileTargetSigma sigma)) (probeSharpWaveTailTunedRareLayer M R.scale (↑E : ℝ) k n)
+    (gammaSigma (upperProfileTargetSigma sigma)) (probeSharpWaveTailTunedRareLayer M R.scale (↑E :
+      ℝ) k n)
     (probeSharpWaveTailTunedRareLayerBound M (↑E : ℝ) sigma n)) →
     Measurable B →
     Measurable V →
@@ -1021,7 +1034,8 @@ private theorem upperWaveTailE12Consumption_momentBounds1 :
     probeSharpWaveTailTunedBoundedLayer M R.scale (↑E : ℝ) k n eta) ∧
     ∀ᵐ (eta : CutoffSample d) ∂(↑(cutoffSampleLaw M) : Measure (CutoffSample d)),
     Summable fun (n : ℕ) => probeSharpWaveTailTunedRareLayer M R.scale (↑E : ℝ) k n eta := by
-  intro d M k R E sigma hsigma0 hsigma shift B V C bounded rare hd hC0 hBterm hVterm hBmeas hVmeas hBcenter hVcenter
+  intro d M k R E sigma hsigma0 hsigma shift B V C bounded rare hd hC0 hBterm hVterm hBmeas hVmeas
+    hBcenter hVcenter
   have hpoly0 : 0 ≤ ((Algsuperdiff.Section3.Disorder.cstar M)⁻¹ * sigma⁻¹ ^ 2) *
       Real.exp (-(probeSharpWaveTailTunedRate d * ((E : ℝ)⁻¹ ^ 2 * M.gamma⁻¹))) := by
     exact mul_nonneg

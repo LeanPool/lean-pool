@@ -44,7 +44,7 @@ open MeasureTheory Filter Topology Set
 variable {α : Type*} [MeasurableSpace α] {μ : Measure α}
 
 private theorem twoFunctionMedian_boundedDistribution :
-    ∀ {α : Type u_1} [inst : MeasurableSpace α] {μ : Measure α}
+    ∀ {α : Type u_1} [MeasurableSpace α] {μ : Measure α}
       {f g : α → ℝ},
       (μ : Set α → ENNReal) univ ≠ ⊤ →
         (∀ {s t : ℝ},
@@ -58,7 +58,8 @@ private theorem twoFunctionMedian_boundedDistribution :
                   (μ : Set α → ENNReal) univ};
             (∀ (t : ℝ),
                 t ∈ S ↔
-                  (μ : Set α → ENNReal) {x : α | t < f x} + (μ : Set α → ENNReal) {x : α | t < g x} ≤
+                  (μ : Set α → ENNReal) {x : α | t < f x} + (μ : Set α → ENNReal) {x : α | t < g
+                    x} ≤
                     (μ : Set α → ENNReal) univ) →
               BddBelow S := by
   intro _ _ μ f g hμfin hUanti hpos0 _ hmemS

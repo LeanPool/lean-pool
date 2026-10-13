@@ -43,8 +43,8 @@ theorem integral_streamProcess_eq_transition
       ∂streamProcess M omega (x : OnePoint (Vec d))) =
       ∫ y, G y ∂(streamWholeSpaceResolvent M omega).kernelSemigroup t x := by
   let hreg := (streamExhaustionTailInput M omega).toOnePointRegular
-  letI := hreg.metricSpace
-  letI := hreg.completeSpace
+  let := hreg.metricSpace
+  let := hreg.completeSpace
   let R := streamWholeSpaceResolvent M omega
   have hev : Measurable (fun path : ContinuousPath (OnePoint (Vec d)) => path t) :=
     ContinuousPath.measurable_coordinateProcess t

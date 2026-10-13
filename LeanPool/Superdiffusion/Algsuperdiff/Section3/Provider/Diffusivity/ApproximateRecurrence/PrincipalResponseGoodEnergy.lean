@@ -687,31 +687,39 @@ private theorem principalEnergy_scaleSum_independent_bound :
                                 ∀ (jd : ℕ),
                                   ∀ R ∈ descendantsAtDepth (originCube d K) jd,
                                     ∀ (wD : ShellSeq d → H10Function (openCubeSet (originCube d K)))
-                                      (wN : ShellSeq d → H1MeanZeroFunction (openCubeSet (originCube d K))),
+                                      (wN : ShellSeq d → H1MeanZeroFunction (openCubeSet
+                                        (originCube d K))),
                                       (∀ (omega : ShellSeq d),
                                           IsZeroTraceDirichletRhsWeakSolution
                                             (fun (_ : Vec d) => (1 : Matrix (Fin d) (Fin d) ℝ))
-                                            (openCubeSet (originCube d K)) (wD omega) fun (x : Vec d) =>
-                                            -streamForcing (↑(Annealed.sigmaBar M (m - (↑hgap : ℤ))) : ℝ)⁻¹ omega
+                                            (openCubeSet (originCube d K)) (wD omega) fun (x : Vec
+                                              d) =>
+                                            -streamForcing (↑(Annealed.sigmaBar M (m - (↑hgap :
+                                              ℤ))) : ℝ)⁻¹ omega
                                                 (m - (↑hgap : ℤ)) m e x) →
                                         (∀ (omega : ShellSeq d),
                                             IsMeanZeroNeumannRhsWeakSolution
                                               (fun (_ : Vec d) => (1 : Matrix (Fin d) (Fin d) ℝ))
-                                              (openCubeSet (originCube d K)) (wN omega) fun (x : Vec d) =>
-                                              -streamForcing (↑(Annealed.sigmaBar M (m - (↑hgap : ℤ))) : ℝ)⁻¹ omega
+                                              (openCubeSet (originCube d K)) (wN omega) fun (x :
+                                                Vec d) =>
+                                              -streamForcing (↑(Annealed.sigmaBar M (m - (↑hgap :
+                                                ℤ))) : ℝ)⁻¹ omega
                                                   (m - (↑hgap : ℤ)) m e' x) →
                                           ∀ (alpha beta : BlockCoord d),
                                             Integrable
                                               (fun (omega : ShellSeq d) =>
                                                 toFullBlockVec
-                                                    (gaugedPrincipalLoadShell (Annealed.sigmaBar M (m - (↑hgap : ℤ))) R
+                                                    (gaugedPrincipalLoadShell (Annealed.sigmaBar M
+                                                      (m - (↑hgap : ℤ))) R
                                                       (m - (↑hgap : ℤ)) m e e' wD wN omega)
                                                     alpha *
                                                   toFullBlockVec
-                                                    (gaugedPrincipalLoadShell (Annealed.sigmaBar M (m - (↑hgap : ℤ))) R
+                                                    (gaugedPrincipalLoadShell (Annealed.sigmaBar M
+                                                      (m - (↑hgap : ℤ))) R
                                                       (m - (↑hgap : ℤ)) m e e' wD wN omega)
                                                     beta)
-                                              (↑M.P : Measure (ℤ → Frozen.Assumptions.ShellField d))) →
+                                              (↑M.P : Measure (ℤ → Frozen.Assumptions.ShellField
+                                                d))) →
         ∀ (M : ABKModel d) (m0 : ℤ) (Eind : { E : ℝ // (1 : ℝ) ≤ E }),
           Frozen.Section3.inductionState M m0 Eind →
             ∀ (m K : ℤ) (hgap : ℕ),
@@ -728,36 +736,48 @@ private theorem principalEnergy_scaleSum_independent_bound :
                                   ∀ (wD : ShellSeq d → H10Function (openCubeSet (originCube d K))),
                                     (∀ (omega : ShellSeq d),
                                         IsZeroTraceDirichletRhsWeakSolution
-                                          (fun (_ : Vec d) => (1 : Matrix (Fin d) (Fin d) ℝ)) (openCubeSet (originCube d K))
+                                          (fun (_ : Vec d) => (1 : Matrix (Fin d) (Fin d) ℝ))
+                                            (openCubeSet (originCube d K))
                                           (wD omega) fun (x : Vec d) =>
-                                          -streamForcing (↑(Annealed.sigmaBar M (m - (↑hgap : ℤ))) : ℝ)⁻¹ omega
+                                          -streamForcing (↑(Annealed.sigmaBar M (m - (↑hgap : ℤ)))
+                                            : ℝ)⁻¹ omega
                                               (m - (↑hgap : ℤ)) m e x) →
-                                      ∀ (wN : ShellSeq d → H1MeanZeroFunction (openCubeSet (originCube d K))),
+                                      ∀ (wN : ShellSeq d → H1MeanZeroFunction (openCubeSet
+                                        (originCube d K))),
                                         (∀ (omega : ShellSeq d),
                                             IsMeanZeroNeumannRhsWeakSolution
                                               (fun (_ : Vec d) => (1 : Matrix (Fin d) (Fin d) ℝ))
-                                              (openCubeSet (originCube d K)) (wN omega) fun (x : Vec d) =>
-                                              -streamForcing (↑(Annealed.sigmaBar M (m - (↑hgap : ℤ))) : ℝ)⁻¹ omega
+                                              (openCubeSet (originCube d K)) (wN omega) fun (x :
+                                                Vec d) =>
+                                              -streamForcing (↑(Annealed.sigmaBar M (m - (↑hgap :
+                                                ℤ))) : ℝ)⁻¹ omega
                                                   (m - (↑hgap : ℤ)) m e' x) →
                                           ∀ R ∈ descendantsAtDepth (originCube d K) j,
                                             ∫ (omega : CutoffSample d),
                                                 switchCubeQuad M (m - (↑hgap : ℤ)) m R
-                                                  (principalPz (Annealed.sigmaBar M (m - (↑hgap : ℤ))) (↑omega : ShellSeq d)
-                                                    (m - (↑hgap : ℤ)) m e e' R (wD (↑omega : ShellSeq d))
+                                                  (principalPz (Annealed.sigmaBar M (m - (↑hgap :
+                                                    ℤ))) (↑omega : ShellSeq d)
+                                                    (m - (↑hgap : ℤ)) m e e' R (wD (↑omega :
+                                                      ShellSeq d))
                                                     (wN (↑omega : ShellSeq d)))
-                                                  omega ∂(↑(cutoffSampleLaw M) : Measure (CutoffSample d)) =
+                                                  omega ∂(↑(cutoffSampleLaw M) : Measure
+                                                    (CutoffSample d)) =
                                               ∫ (omega : CutoffSample d),
                                                 blockVecDot
-                                                  (gaugedPrincipalLoadShell (Annealed.sigmaBar M (m - (↑hgap : ℤ))) R
-                                                    (m - (↑hgap : ℤ)) m e e' wD wN (↑omega : ShellSeq d))
+                                                  (gaugedPrincipalLoadShell (Annealed.sigmaBar M
+                                                    (m - (↑hgap : ℤ))) R
+                                                    (m - (↑hgap : ℤ)) m e e' wD wN (↑omega :
+                                                      ShellSeq d))
                                                   (blockMatVecMul
                                                     (Ch04.annealedBlockMatrixAtScale
                                                       (coefficientCutoffLaw M (m - (↑hgap : ℤ)))
                                                       ((originCube d K).scale - (↑j : ℤ)))
-                                                    (gaugedPrincipalLoadShell (Annealed.sigmaBar M (m - (↑hgap : ℤ))) R
+                                                    (gaugedPrincipalLoadShell (Annealed.sigmaBar M
+                                                      (m - (↑hgap : ℤ))) R
                                                       (m - (↑hgap : ℤ)) m e e' wD wN
                                                       (↑omega :
-                                                        ShellSeq d))) ∂(↑(cutoffSampleLaw M) : Measure (CutoffSample d)) := by
+                                                        ShellSeq d))) ∂(↑(cutoffSampleLaw M) :
+                                                          Measure (CutoffSample d)) := by
   intro d _ hWint M m0 Eind hstate m K hgap hhpos hm hh hK e e' he he' j _ h2 wD hwD wN hwN R hR
   obtain ⟨B, hBmeas, hBrep⟩ :=
     exists_measurable_representative_switchCubeMatrix M (m - (hgap : ℤ)) R

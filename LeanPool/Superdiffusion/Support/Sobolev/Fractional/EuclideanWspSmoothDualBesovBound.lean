@@ -75,30 +75,42 @@ private theorem smooth_coordinate_bounded_on_cube {d : ℕ}
 
 private theorem euclideanWspSmoothDualBesovBound_estimate1 :
     ∀ {d : ℕ} (Q : TriadicCube d) (s : (↑FractionalOrder : Type))
-      (p : FiniteLpExponent) (h : CubeEuclideanWspSmoothTest Q s p.conjugate) (i : Fin d) (hd : ¬d = (0 : ℕ))
+      (p : FiniteLpExponent) (h : CubeEuclideanWspSmoothTest Q s p.conjugate) (i : Fin d) (_ : ¬d
+        = (0 : ℕ))
       (hhmemReal :
-        MemLp (fun (x : Vec d) => h.toField x i) (ENNReal.ofReal p.conjugate.exponent.toReal) (normalizedCubeMeasure Q))
+        MemLp (fun (x : Vec d) => h.toField x i) (ENNReal.ofReal p.conjugate.exponent.toReal)
+          (normalizedCubeMeasure Q))
       (hpconj_toReal_one_le : (1 : ℝ) ≤ p.conjugate.exponent.toReal) (n : ℕ)
-      (hover :
+      (_ :
         ENNReal.ofReal
-            (cubeBesovOverlapPartialNorm Q (↑s : ℝ) p.conjugate.exponent p.conjugate.exponent n fun (x : Vec d) =>
+            (cubeBesovOverlapPartialNorm Q (↑s : ℝ) p.conjugate.exponent p.conjugate.exponent n
+              fun (x : Vec d) =>
               h.toField x i) ≤
-          exactOverlapFiniteNorm (exactOverlapScalarPParameters s p.conjugate) Q (fun (x : Vec d) => h.toField x i)
-            (exactDualOverlapIntegrable Q p.conjugate.exponent.toReal hpconj_toReal_one_le hhmemReal))
-      (hfull' :
-        exactOverlapFiniteNorm (exactOverlapScalarPParameters s p.conjugate) Q (fun (x : Vec d) => h.toField x i)
-            (exactDualOverlapIntegrable Q p.conjugate.exponent.toReal hpconj_toReal_one_le hhmemReal) ≤
-          cubeEuclideanWspExactOverlapFullControlConstant d * cubeEuclideanWspFullENorm Q s p.conjugate h.toField)
-      (hpartial :
-        (cubeBesovPartialNorm Q (↑s : ℝ) p.conjugate.exponent p.conjugate.exponent n fun (x : Vec d) => h.toField x i) ≤
+          exactOverlapFiniteNorm (exactOverlapScalarPParameters s p.conjugate) Q (fun (x : Vec d)
+            => h.toField x i)
+            (exactDualOverlapIntegrable Q p.conjugate.exponent.toReal hpconj_toReal_one_le
+              hhmemReal))
+      (_ :
+        exactOverlapFiniteNorm (exactOverlapScalarPParameters s p.conjugate) Q (fun (x : Vec d) =>
+          h.toField x i)
+            (exactDualOverlapIntegrable Q p.conjugate.exponent.toReal hpconj_toReal_one_le
+              hhmemReal) ≤
+          cubeEuclideanWspExactOverlapFullControlConstant d * cubeEuclideanWspFullENorm Q s
+            p.conjugate h.toField)
+      (_ :
+        (cubeBesovPartialNorm Q (↑s : ℝ) p.conjugate.exponent p.conjugate.exponent n fun (x : Vec
+          d) => h.toField x i) ≤
           (3 : ℝ) ^ ((↑d : ℝ) / p.conjugate.exponent.toReal) *
-            cubeBesovOverlapPartialNorm Q (↑s : ℝ) p.conjugate.exponent p.conjugate.exponent n fun (x : Vec d) =>
+            cubeBesovOverlapPartialNorm Q (↑s : ℝ) p.conjugate.exponent p.conjugate.exponent n fun
+              (x : Vec d) =>
               h.toField x i),
       ENNReal.ofReal
-          (cubeBesovPartialNorm Q (↑s : ℝ) p.conjugate.exponent p.conjugate.exponent n fun (x : Vec d) => h.toField x i) ≤
-        (3 : ℝ≥0∞) ^ ((↑d : ℝ) / p.conjugate.exponent.toReal) * cubeEuclideanWspExactOverlapFullControlConstant d *
+          (cubeBesovPartialNorm Q (↑s : ℝ) p.conjugate.exponent p.conjugate.exponent n fun (x :
+            Vec d) => h.toField x i) ≤
+        (3 : ℝ≥0∞) ^ ((↑d : ℝ) / p.conjugate.exponent.toReal) *
+          cubeEuclideanWspExactOverlapFullControlConstant d *
           cubeEuclideanWspFullENorm Q s p.conjugate h.toField := by
-  intro d Q s p h i hd hhmemReal hpconj_toReal_one_le n hover hfull' hpartial
+  intro d Q s p h i _ hhmemReal hpconj_toReal_one_le n _ _ hpartial
   calc
     ENNReal.ofReal
         (cubeBesovPartialNorm Q s.1 p.conjugate.exponent p.conjugate.exponent
@@ -136,29 +148,35 @@ private theorem euclideanWspSmoothDualBesovBound_estimate2 :
     ∀ {d : ℕ} (Q : TriadicCube d) (s : (↑FractionalOrder : Type))
       (p : FiniteLpExponent) (F : CubeEuclideanLpField Q FiniteLpExponent.two)
       (h : CubeEuclideanWspSmoothTest Q s p.conjugate) (i : Fin d) (n : ℕ)
-      (hpair :
+      (_ :
         |cubeBesovPairing Q (fun (x : Vec d) => h.toField x i)
               (cubeProjection Q (n + (1 : ℕ)) fun (x : Vec d) => F.toField x i)| ≤
           (max (1 : ℝ) ((3 : ℝ) ^ (↑s : ℝ)) *
-              cubeBesovPartialNorm Q (↑s : ℝ) p.conjugate.exponent p.conjugate.exponent n fun (x : Vec d) =>
+              cubeBesovPartialNorm Q (↑s : ℝ) p.conjugate.exponent p.conjugate.exponent n fun (x :
+                Vec d) =>
                 h.toField x i) *
             cubeBesovCircPartialNorm Q (↑s : ℝ) (cubeBesovConjExponent p.conjugate.exponent)
-              (cubeBesovConjExponent p.conjugate.exponent) (n + (1 : ℕ)) fun (x : Vec d) => F.toField x i)
-      (hKnonneg : (0 : ℝ) ≤ max (1 : ℝ) ((3 : ℝ) ^ (↑s : ℝ)))
-      (hpartial_nonneg :
+              (cubeBesovConjExponent p.conjugate.exponent) (n + (1 : ℕ)) fun (x : Vec d) =>
+                F.toField x i)
+      (_ : (0 : ℝ) ≤ max (1 : ℝ) ((3 : ℝ) ^ (↑s : ℝ)))
+      (_ :
         (0 : ℝ) ≤
-          cubeBesovPartialNorm Q (↑s : ℝ) p.conjugate.exponent p.conjugate.exponent n fun (x : Vec d) => h.toField x i),
+          cubeBesovPartialNorm Q (↑s : ℝ) p.conjugate.exponent p.conjugate.exponent n fun (x : Vec
+            d) => h.toField x i),
       ENNReal.ofReal
-          |cubeBesovPairing Q (cubeProjection Q (n + (1 : ℕ)) fun (x : Vec d) => F.toField x i) fun (x : Vec d) =>
+          |cubeBesovPairing Q (cubeProjection Q (n + (1 : ℕ)) fun (x : Vec d) =>
+            F.toField x i) fun (x : Vec d) =>
               h.toField x i| ≤
         max (1 : ℝ≥0∞) ((3 : ℝ≥0∞) ^ (↑s : ℝ)) *
             ENNReal.ofReal
-              (cubeBesovPartialNorm Q (↑s : ℝ) p.conjugate.exponent p.conjugate.exponent n fun (x : Vec d) =>
+              (cubeBesovPartialNorm Q (↑s : ℝ) p.conjugate.exponent p.conjugate.exponent n fun (x
+                : Vec d) =>
                 h.toField x i) *
           ENNReal.ofReal
             (cubeBesovCircPartialNorm Q (↑s : ℝ) (cubeBesovConjExponent p.conjugate.exponent)
-              (cubeBesovConjExponent p.conjugate.exponent) (n + (1 : ℕ)) fun (x : Vec d) => F.toField x i) := by
-  intro d Q s p F h i n hpair hKnonneg hpartial_nonneg
+              (cubeBesovConjExponent p.conjugate.exponent) (n + (1 : ℕ)) fun (x : Vec d) =>
+                F.toField x i) := by
+  intro _ Q s p F h i n hpair hKnonneg hpartial_nonneg
   calc
     ENNReal.ofReal
         |cubeBesovPairing Q (cubeProjection Q (n + 1) (fun x => F.toField x i))
@@ -301,7 +319,9 @@ theorem cubeBesovCoordinatePairing_le_negativeBesov_mul_fullSobolevNorm
           n (fun x => h.toField x i)) ≤
           (3 : ℝ≥0∞) ^ ((d : ℝ) / p.conjugate.exponent.toReal) *
             cubeEuclideanWspExactOverlapFullControlConstant d *
-              cubeEuclideanWspFullENorm Q s p.conjugate h.toField  := @euclideanWspSmoothDualBesovBound_estimate1 (d) (Q) (s) (p) (h) (i) (hd) (hhmemReal) (hpconj_toReal_one_le) (n) (hover) (hfull') (hpartial)
+              cubeEuclideanWspFullENorm Q s p.conjugate h.toField  :=
+                @euclideanWspSmoothDualBesovBound_estimate1 (d) (Q) (s) (p) (h) (i) (hd)
+                  (hhmemReal) (hpconj_toReal_one_le) (n) (hover) (hfull') (hpartial)
     have hcirc : ENNReal.ofReal
         (cubeBesovCircPartialNorm Q s.1
           (cubeBesovConjExponent p.conjugate.exponent)
@@ -325,7 +345,8 @@ theorem cubeBesovCoordinatePairing_le_negativeBesov_mul_fullSobolevNorm
           ENNReal.ofReal (cubeBesovCircPartialNorm Q s.1
             (cubeBesovConjExponent p.conjugate.exponent)
             (cubeBesovConjExponent p.conjugate.exponent) (n + 1)
-            (fun x => F.toField x i))  := @euclideanWspSmoothDualBesovBound_estimate2 (d) (Q) (s) (p) (F) (h) (i) (n) (hpair) (hKnonneg) (hpartial_nonneg)
+            (fun x => F.toField x i))  := @euclideanWspSmoothDualBesovBound_estimate2 (d) (Q) (s)
+              (p) (F) (h) (i) (n) (hpair) (hKnonneg) (hpartial_nonneg)
     have hloss := exactCircLossCoefficientENNReal_rpow_le_source d s.1
       p.conjugate.exponent.toReal s.2.1.le hpconj_toReal_one_le
     have hpower : (3 : ℝ≥0∞) ^ ((d : ℝ) + s.1) ≤

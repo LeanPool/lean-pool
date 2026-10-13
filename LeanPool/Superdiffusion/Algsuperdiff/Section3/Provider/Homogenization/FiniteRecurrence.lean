@@ -468,32 +468,42 @@ private theorem cutoffResponse_integral_recurrence :
         ∀ (M : ABKModel d) (m : ℤ) (E : { E : ℝ // (1 : ℝ) ≤ E }) (L : ℤ),
           (∀ n ∈ Finset.Icc L m,
               (↑(Annealed.sigmaBar M L) : ℝ) ^ (2 : ℕ) *
-                  (annealedSigmaStarInvScalarAtScale M L m - annealedSigmaStarInvScalarAtScale M L n) ^ (2 : ℕ) ≤
+                  (annealedSigmaStarInvScalarAtScale M L m - annealedSigmaStarInvScalarAtScale M L
+                    n) ^ (2 : ℕ) ≤
                 (4 : ℝ) * ((10 : ℝ) ^ (9 : ℕ) * (↑E : ℝ) ^ (2 : ℕ) * M.gamma) ^ (2 : ℕ)) →
             (∀ n ∈ Finset.Icc L m,
                 (↑(Annealed.sigmaBar M L) : ℝ) ^ (2 : ℕ) * starInverseVarianceAtScale M L n +
                     starInverseKappaVarianceAtScale M L n ≤
                   (2 : ℝ) * Cvar *
-                      ((↑E : ℝ) ^ (2 : ℕ) * M.gamma + Real.exp (-((2 : ℝ) * (↑E : ℝ)⁻¹ ^ (3 : ℕ) * M.gamma⁻¹))) *
-                    ((↑E : ℝ) ^ (2 : ℕ) * M.gamma + Real.exp (-((2 : ℝ) * (↑E : ℝ)⁻¹ ^ (3 : ℕ) * M.gamma⁻¹)) +
+                      ((↑E : ℝ) ^ (2 : ℕ) * M.gamma + Real.exp (-((2 : ℝ) * (↑E : ℝ)⁻¹ ^ (3 : ℕ) *
+                        M.gamma⁻¹))) *
+                    ((↑E : ℝ) ^ (2 : ℕ) * M.gamma + Real.exp (-((2 : ℝ) * (↑E : ℝ)⁻¹ ^ (3 : ℕ) *
+                      M.gamma⁻¹)) +
                       ((3 : ℝ) ^ (-(↑d : ℝ))) ^ (n - L).toNat)) →
               ∑ n ∈ Finset.Icc L m, (3 : ℝ) ^ (-(↑(m - n) : ℝ)) ≤ (3 / 2 : ℝ) →
-                ∑ n ∈ Finset.Icc L m, (3 : ℝ) ^ (-(↑(m - n) : ℝ)) * ((3 : ℝ) ^ (-(↑d : ℝ))) ^ (n - L).toNat ≤
+                ∑ n ∈ Finset.Icc L m, (3 : ℝ) ^ (-(↑(m - n) : ℝ)) * ((3 : ℝ) ^ (-(↑d : ℝ))) ^ (n -
+                  L).toNat ≤
                     (3 / 2 : ℝ) * (1 / 3 : ℝ) ^ (m - L).toNat →
                   (0 : ℝ) ≤ (1 / 3 : ℝ) ^ (m - L).toNat →
-                    (0 : ℝ) ≤ (↑E : ℝ) ^ (2 : ℕ) * M.gamma + Real.exp (-((2 : ℝ) * (↑E : ℝ)⁻¹ ^ (3 : ℕ) * M.gamma⁻¹)) →
-                      (↑E : ℝ) ^ (2 : ℕ) * M.gamma + Real.exp (-((2 : ℝ) * (↑E : ℝ)⁻¹ ^ (3 : ℕ) * M.gamma⁻¹)) ≤
+                    (0 : ℝ) ≤ (↑E : ℝ) ^ (2 : ℕ) * M.gamma + Real.exp (-((2 : ℝ) * (↑E : ℝ)⁻¹ ^ (3
+                      : ℕ) * M.gamma⁻¹)) →
+                      (↑E : ℝ) ^ (2 : ℕ) * M.gamma + Real.exp (-((2 : ℝ) * (↑E : ℝ)⁻¹ ^ (3 : ℕ) *
+                        M.gamma⁻¹)) ≤
                           (10 : ℝ) ^ (9 : ℕ) * (↑E : ℝ) ^ (2 : ℕ) * M.gamma →
                         (↑(Annealed.sigmaBar M L) : ℝ) ^ (2 : ℕ) *
                               ∑ n ∈ Finset.Icc L m,
                                 (3 : ℝ) ^ (-(↑(m - n) : ℝ)) *
                                   (starInverseVarianceAtScale M L n +
-                                    (annealedSigmaStarInvScalarAtScale M L m - annealedSigmaStarInvScalarAtScale M L n) ^
+                                    (annealedSigmaStarInvScalarAtScale M L m -
+                                      annealedSigmaStarInvScalarAtScale M L n) ^
                                       (2 : ℕ)) +
-                            ∑ n ∈ Finset.Icc L m, (3 : ℝ) ^ (-(↑(m - n) : ℝ)) * starInverseKappaVarianceAtScale M L n ≤
+                            ∑ n ∈ Finset.Icc L m, (3 : ℝ) ^ (-(↑(m - n) : ℝ)) *
+                              starInverseKappaVarianceAtScale M L n ≤
                           (3 : ℝ) * Cvar * ((10 : ℝ) ^ (9 : ℕ) * (↑E : ℝ) ^ (2 : ℕ) * M.gamma) *
-                              ((10 : ℝ) ^ (9 : ℕ) * (↑E : ℝ) ^ (2 : ℕ) * M.gamma + (1 / 3 : ℝ) ^ (m - L).toNat) +
-                            (6 : ℝ) * ((10 : ℝ) ^ (9 : ℕ) * (↑E : ℝ) ^ (2 : ℕ) * M.gamma) ^ (2 : ℕ) := by
+                              ((10 : ℝ) ^ (9 : ℕ) * (↑E : ℝ) ^ (2 : ℕ) * M.gamma + (1 / 3 : ℝ) ^
+                                (m - L).toNat) +
+                            (6 : ℝ) * ((10 : ℝ) ^ (9 : ℕ) * (↑E : ℝ) ^ (2 : ℕ) * M.gamma) ^ (2 :
+                              ℕ) := by
   intro d _ Cvar _ M m E L hgapn hvarn hWsum hConv hpowNn hdeltaNn hdeltaLe
   have hexpand : (Annealed.sigmaBar M L : ℝ) ^ 2 *
         (∑ n ∈ Finset.Icc L m, (3 : ℝ) ^ (-((m - n : ℤ) : ℝ)) *

@@ -77,7 +77,10 @@ probability measure.  The model clause is another matter: this development
 constructs no `ABKModel d`, so each theorem is certified as an implication,
 holding for every model that satisfies the paper's assumptions.  The paper's
 Gaussian example is the construction that would exhibit such a model, and it
-is not formalized here.
+is not formalized here. The shell carrier also requires qualitative C²
+regularity, stronger than the paper's local C^{1,1} assumption. These
+statements preserve the paper's quantitative conclusions under that carrier
+regularity assumption.
 -/
 
 open Algsuperdiff.Section3

@@ -148,21 +148,24 @@ private theorem minkowski_error_observable_bound :
           (2 : ℝ) * (↑d : ℝ) * (↑s : ℝ)⁻¹ ≤ p →
             ∀ (Maj : TriadicCube d → Cutoff.CutoffSample d → ℝ),
               (∀ (R : TriadicCube d),
-                  AEMeasurable (Maj R) (↑(Cutoff.cutoffSampleLaw M) : Measure (Cutoff.CutoffSample d))) →
+                  AEMeasurable (Maj R) (↑(Cutoff.cutoffSampleLaw M) : Measure (Cutoff.CutoffSample
+                    d))) →
                 ∀ (G : ℕ → ℝ),
                   (∀ (l : ℕ), (0 : ℝ) ≤ G l) →
                     (∀ (l : ℕ),
                         ∀ R ∈ descendantsAtScale (originCube d m) (n - (↑l : ℤ)),
                           ∫⁻ (omega : Cutoff.CutoffSample d),
                               ENNReal.ofReal (Maj R omega) ^
-                                (p / (2 : ℝ)) ∂(↑(Cutoff.cutoffSampleLaw M) : Measure (Cutoff.CutoffSample d)) ≤
+                                (p / (2 : ℝ)) ∂(↑(Cutoff.cutoffSampleLaw M) : Measure
+                                  (Cutoff.CutoffSample d)) ≤
                             ENNReal.ofReal (G l) ^ (p / (2 : ℝ))) →
                       (0 : ℝ) < (↑s : ℝ) →
                         (0 : ℝ) < p / (2 : ℝ) →
                           (0 : ℝ) < (1 : ℝ) / (p / (2 : ℝ)) →
                             (∀ (l : ℕ), (0 : ℝ) ≤ Ch02.geometricWeight (↑s : ℝ) (2 : ℝ) l) →
                               (∀ (l : ℕ), n - (↑l : ℤ) ≤ m) →
-                                let F : ℕ → Cutoff.CutoffSample d → ℝ≥0∞ := fun (l : ℕ) (omega : Cutoff.CutoffSample d) =>
+                                let F : ℕ → Cutoff.CutoffSample d → ℝ≥0∞ := fun (l : ℕ) (omega :
+                                  Cutoff.CutoffSample d) =>
                                   ENNReal.ofReal (Ch02.geometricWeight (↑s : ℝ) (2 : ℝ) l) *
                                     (∑ R ∈ descendantsAtScale (originCube d m) (n - (↑l : ℤ)),
                                         ENNReal.ofReal (Maj R omega) ^ (p / (2 : ℝ))) ^
@@ -176,9 +179,11 @@ private theorem minkowski_error_observable_bound :
                                     (∫⁻ (omega : Cutoff.CutoffSample d),
                                           F l omega ^
                                             (p /
-                                              (2 : ℝ)) ∂(↑(Cutoff.cutoffSampleLaw M) : Measure (Cutoff.CutoffSample d))) ^
+                                              (2 : ℝ)) ∂(↑(Cutoff.cutoffSampleLaw M) : Measure
+                                                (Cutoff.CutoffSample d))) ^
                                         ((1 : ℝ) / (p / (2 : ℝ))) ≤
-                                      ENNReal.ofReal (Real.rpow (3 : ℝ) ((↑s : ℝ) * ((↑m : ℝ) - (↑n : ℝ)))) *
+                                      ENNReal.ofReal (Real.rpow (3 : ℝ) ((↑s : ℝ) * ((↑m : ℝ) -
+                                        (↑n : ℝ)))) *
                                         ENNReal.ofReal
                                           (Ch02.geometricDiscount (↑s : ℝ) (2 : ℝ) *
                                             (Real.rpow (3 : ℝ) (-(↑s : ℝ) * (↑l : ℝ)) * G l)) := by

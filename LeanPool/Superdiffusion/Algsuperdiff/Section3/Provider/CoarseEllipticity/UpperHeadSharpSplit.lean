@@ -1100,7 +1100,8 @@ private theorem upperHeadSharpSplit_momentBounds1 :
     ENNReal.ofReal (ordinary omega) + ENNReal.ofReal (rare omega)) ∧
     IsBigOWith (↑(cutoffSampleLaw M) : Measure (CutoffSample d)) (gammaSigma (1 : ℝ))
     ordinary ordinaryScale := by
-  intro d M m k R hR E hstate _ hsigma0 hsigma hEgamma hd j₀ shift ordinary rare ordinaryScale hmaxAux hordinaryEq hrareEq hordinaryNonneg hrareNonneg
+  intro d M m k R hR E hstate _ hsigma0 hsigma hEgamma hd j₀ shift ordinary rare ordinaryScale
+    hmaxAux hordinaryEq hrareEq hordinaryNonneg hrareNonneg
   have hpoint : ∀ omega,
       (∑ j : Fin d,
         goodHeadTunedCoordinateWhitneySum M m R (E : ℝ) j omega) ≤

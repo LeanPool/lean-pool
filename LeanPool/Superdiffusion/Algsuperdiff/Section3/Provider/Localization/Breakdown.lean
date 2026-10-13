@@ -445,6 +445,7 @@ theorem breakdownLegB_le_two_mul_normalizedBlockResponseMax {Q R : TriadicCube d
     (by linarith [Book.Ch02.normalizedBlockResponseMax_nonneg R a a0])
     fun e he => legB_frame_le_two_mul_normalizedBlockResponseMax a a0 hR he
 
+omit [NeZero d] in
 /-- **The per-cube two-leg split.**  The block functional from which
 `𝓔_{s,p,q}` is built is bounded by **half** the sum of the two scalar frame legs,
 because the doubled response splits unconditionally into the primal and adjoint

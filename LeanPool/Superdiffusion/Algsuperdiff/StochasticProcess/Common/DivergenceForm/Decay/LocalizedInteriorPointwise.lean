@@ -87,38 +87,48 @@ private theorem isScalarForcedWeakSolution_restrict_interior
   simpa only [Pi.zero_apply, vecDot_zero_left, integral_zero, sub_zero] using h
 
 private theorem localizedInteriorPointwise_comparisonBounds1 :
-    ∀ {d : ℕ} {Om : Set (Vec d)} (hOm : IsOpenBoundedConvexDomain Om) {u : H1Function Om} {eta psi : Vec d → ℝ}
-      {nu Ks Kl mass M Ceta volLayer tA : ℝ} (hnu : (0 : ℝ) < nu) (hmass : (0 : ℝ) < mass) (hM : (0 : ℝ) ≤ M)
-      (hMbound : ∀ᵐ (y : Vec d) ∂volumeMeasureOn Om, |u.toFun y| ≤ M) (hCeta : (0 : ℝ) ≤ Ceta)
-      (hetaGrad : ∀ y ∈ Om, (vecNormSq fun (i : Fin d) => (fderiv ℝ eta y : (a : Vec d) → ℝ) (basisVec i)) ≤ Ceta)
-      (hlayer : ∀ y ∈ Om, fderiv ℝ eta y ≠ (0 : Vec d →L[ℝ] ℝ) → psi y ≤ tA)
-      (hvolLayer :
-        ((volume : (a : Set (Vec d)) → ℝ≥0∞) {y : Vec d | y ∈ Om ∧ fderiv ℝ eta y ≠ (0 : Vec d →L[ℝ] ℝ)}).toReal ≤
+    ∀ {d : ℕ} {Om : Set (Vec d)} (hOm : IsOpenBoundedConvexDomain Om) {u : H1Function Om} {eta psi
+      : Vec d → ℝ}
+      {nu Ks Kl mass M Ceta volLayer tA : ℝ} (_ : (0 : ℝ) < nu) (_ : (0 : ℝ) < mass) (_ : (0 : ℝ)
+        ≤ M)
+      (_ : ∀ᵐ (y : Vec d) ∂volumeMeasureOn Om, |u.toFun y| ≤ M) (_ : (0 : ℝ) ≤ Ceta)
+      (_ : ∀ y ∈ Om, (vecNormSq fun (i : Fin d) => (fderiv ℝ eta y : (a : Vec d) → ℝ) (basisVec
+        i)) ≤ Ceta)
+      (_ : ∀ y ∈ Om, fderiv ℝ eta y ≠ (0 : Vec d →L[ℝ] ℝ) → psi y ≤ tA)
+      (_ :
+        ((volume : (a : Set (Vec d)) → ℝ≥0∞) {y : Vec d | y ∈ Om ∧ fderiv ℝ eta y ≠ (0 : Vec d →L[ℝ]
+          ℝ)}).toReal ≤
           volLayer),
       let Lloc : ℝ := localizedInteriorUpper nu mass Ks Kl;
-      ∀ (hLloc_def : Lloc = localizedInteriorUpper nu mass Ks Kl),
+      ∀ (_ : Lloc = localizedInteriorUpper nu mass Ks Kl),
         let kappa : ℝ := agmonRate nu Lloc mass;
-        ∀ (hLloc : (0 : ℝ) < Lloc) (hkappa0 : (0 : ℝ) ≤ kappa)
-          (hagmon :
+        ∀ (_ : (0 : ℝ) < Lloc) (_ : (0 : ℝ) ≤ kappa)
+          (_ :
             mass / (2 : ℝ) *
-                ∫ (y : Vec d) in Om, u.toFun y ^ (2 : ℕ) * (eta y ^ (2 : ℕ) * Real.exp (kappa * psi y) ^ (2 : ℕ)) ≤
+                ∫ (y : Vec d) in Om, u.toFun y ^ (2 : ℕ) * (eta y ^ (2 : ℕ) * Real.exp (kappa *
+                  psi y) ^ (2 : ℕ)) ≤
               (4 : ℝ) * localizedInteriorUpper nu mass Ks Kl ^ (2 : ℕ) / nu *
                 ∫ (y : Vec d) in Om,
                   u.toFun y ^ (2 : ℕ) *
                     (Real.exp (kappa * psi y) ^ (2 : ℕ) *
-                      vecNormSq fun (i : Fin d) => (fderiv ℝ eta y : (a : Vec d) → ℝ) (basisVec i))),
-          let this : IsFiniteMeasure (volumeMeasureOn Om) :=
-            IsBoundedDomain.isFiniteMeasure_restrict_volume (IsOpenBoundedConvexDomain.isBoundedDomain hOm);
-          ∀ (hlayerMeas : MeasurableSet {y : Vec d | y ∈ Om ∧ fderiv ℝ eta y ≠ (0 : Vec d →L[ℝ] ℝ)})
-            (hlayerTop :
+                      vecNormSq fun (i : Fin d) => (fderiv ℝ eta y : (a : Vec d) → ℝ) (basisVec
+                        i))),
+          let _ : IsFiniteMeasure (volumeMeasureOn Om) :=
+            IsBoundedDomain.isFiniteMeasure_restrict_volume
+              (IsOpenBoundedConvexDomain.isBoundedDomain hOm);
+          ∀ (_ : MeasurableSet {y : Vec d | y ∈ Om ∧ fderiv ℝ eta y ≠ (0 : Vec d →L[ℝ] ℝ)})
+            (_ :
               MemLp
                 (fun (y : Vec d) =>
                   Real.exp (kappa * psi y) ^ (2 : ℕ) *
                     vecNormSq fun (i : Fin d) => (fderiv ℝ eta y : (a : Vec d) → ℝ) (basisVec i))
                 ∞ (volumeMeasureOn Om)),
-            ∫ (y : Vec d) in Om, u.toFun y ^ (2 : ℕ) * (eta y ^ (2 : ℕ) * Real.exp (kappa * psi y) ^ (2 : ℕ)) ≤
-              (8 : ℝ) * Lloc ^ (2 : ℕ) / (nu * mass) * Ceta * volLayer * M ^ (2 : ℕ) * Real.exp ((2 : ℝ) * (kappa * tA)) := by
-  intro d Om hOm u eta psi nu Ks Kl mass M Ceta volLayer tA hnu hmass hM hMbound hCeta hetaGrad hlayer hvolLayer Lloc hLloc_def kappa hLloc hkappa0 hagmon this hlayerMeas hlayerTop
+            ∫ (y : Vec d) in Om, u.toFun y ^ (2 : ℕ) * (eta y ^ (2 : ℕ) * Real.exp (kappa * psi y)
+              ^ (2 : ℕ)) ≤
+              (8 : ℝ) * Lloc ^ (2 : ℕ) / (nu * mass) * Ceta * volLayer * M ^ (2 : ℕ) * Real.exp
+                ((2 : ℝ) * (kappa * tA)) := by
+  intro d Om hOm u eta psi nu _ _ mass M Ceta volLayer tA _ _ hM hMbound hCeta hetaGrad hlayer
+    hvolLayer Lloc hLloc_def kappa _ hkappa0 hagmon this hlayerMeas hlayerTop
   have hlayerInt := integrable_sq_mul_memLpTop (u := u) hlayerTop
   have hlayerBound : (∫ y in Om, u.toFun y ^ 2 *
       (Real.exp (kappa * psi y) ^ 2 *
@@ -296,7 +306,9 @@ theorem interior_abs_center_le_exp_localized [NeZero d]
       (eta y ^ 2 * Real.exp (kappa * psi y) ^ 2) ∂volume) ≤
       8 * Lloc ^ 2 / (nu * mass) * Ceta * volLayer * M ^ 2 *
         Real.exp (2 * (kappa * tA)) :=
-    @localizedInteriorPointwise_comparisonBounds1 (d) (Om) (hOm) (u) (eta) (psi) (nu) (Ks) (Kl) (mass) (M) (Ceta) (volLayer) (tA) (hnu) (hmass) (hM) (hMbound) (hCeta) (hetaGrad) (hlayer) (hvolLayer) (hLloc_def) (hLloc) (hkappa0) (hagmon) (hlayerMeas) (hlayerTop)
+    @localizedInteriorPointwise_comparisonBounds1 (d) (Om) (hOm) (u) (eta) (psi) (nu) (Ks) (Kl)
+      (mass) (M) (Ceta) (volLayer) (tA) (hnu) (hmass) (hM) (hMbound) (hCeta) (hetaGrad) (hlayer)
+        (hvolLayer) (hLloc_def) (hLloc) (hkappa0) (hagmon) (hlayerMeas) (hlayerTop)
   have hweightTop : MemLp (fun y => eta y ^ 2 * Real.exp (kappa * psi y) ^ 2)
       ∞ (volumeMeasureOn Om) := by
     have hetaSq : HasCompactSupport (fun y => eta y ^ 2) := by

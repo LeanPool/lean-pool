@@ -464,42 +464,51 @@ private theorem laneB_bound {G Sp SW X Y C s : ℝ} (hG : 0 ≤ G) (hSp : 0 ≤ 
 /-! ## 6. The `𝒢₁` proportion tail at the explicit majorant, at base `m₀` -/
 
 private theorem shiftedG1Lane_comparisonBounds1 :
-    ∀ {d : ℕ} {s theta c1 T : ℝ} {r : ℕ} (hs0 : (0 : ℝ) < s) (hs1 : s ≤ (1 : ℝ))
-      (hT : g1Majorant d r s theta c1 ≤ T) (hthne : theta ≠ (0 : ℝ)) (hsne : s ≠ (0 : ℝ)),
+    ∀ {d : ℕ} {s theta c1 T : ℝ} {r : ℕ} (_ : (0 : ℝ) < s) (_ : s ≤ (1 : ℝ))
+      (_ : g1Majorant d r s theta c1 ≤ T) (_ : theta ≠ (0 : ℝ)) (_ : s ≠ (0 : ℝ)),
       let Lam : ℝ := Real.log ((6 : ℝ) * (↑r : ℝ)) + c1 * (↑r : ℝ);
       let V : ℝ := (↑r : ℝ) * Lam / (s * theta);
-      ∀ (hV1 : (1 : ℝ) ≤ V) (hVs : (2 : ℝ) / s ≤ V) (hVst : V * (s * theta) = (↑r : ℝ) * Lam),
+      ∀ (_ : (1 : ℝ) ≤ V) (_ : (2 : ℝ) / s ≤ V) (_ : V * (s * theta) = (↑r : ℝ) * Lam),
         let p2 : ℝ := (256 : ℝ) * V + (8 : ℝ) / s + (1 : ℝ);
-        ∀ (hp2def : p2 = (256 : ℝ) * V + (8 : ℝ) / s + (1 : ℝ)) (hp2one : (1 : ℝ) ≤ p2) (hp2pos : (0 : ℝ) < p2)
-          (hG1pos : (0 : ℝ) < gammaMomentConst (1 : ℝ)),
+        ∀ (_ : p2 = (256 : ℝ) * V + (8 : ℝ) / s + (1 : ℝ)) (_ : (1 : ℝ) ≤ p2) (_ : (0 : ℝ) < p2)
+          (_ : (0 : ℝ) < gammaMomentConst (1 : ℝ)),
           let D2 : ℝ := gammaMomentConst (1 : ℝ) * p2 ^ (1 : ℝ)⁻¹ * smallWaveScale d s;
-          ∀ (hD2def : D2 = gammaMomentConst (1 : ℝ) * p2 ^ (1 : ℝ)⁻¹ * smallWaveScale d s)
-            (hCpos1 : (0 : ℝ) < (1 : ℝ) + Cstar) (hCst2 : Cstar ^ ((1 : ℝ) / p2) ≤ (1 : ℝ) + Cstar)
-            (hthr3' : (theta / (2 : ℝ)) ^ ((-1 : ℝ) / p2) ≤ (3 : ℝ))
-            (hthrnn2 : (0 : ℝ) ≤ (theta / (2 : ℝ)) ^ ((-1 : ℝ) / p2)),
-            let K1 : ℝ := (192456 : ℝ) * ((1 : ℝ) + Cstar) ^ (2 : ℕ) * gammaMomentConst (2 : ℝ) ^ (2 : ℕ);
+          ∀ (_ : D2 = gammaMomentConst (1 : ℝ) * p2 ^ (1 : ℝ)⁻¹ * smallWaveScale d s)
+            (_ : (0 : ℝ) < (1 : ℝ) + Cstar) (_ : Cstar ^ ((1 : ℝ) / p2) ≤ (1 : ℝ) + Cstar)
+            (_ : (theta / (2 : ℝ)) ^ ((-1 : ℝ) / p2) ≤ (3 : ℝ))
+            (_ : (0 : ℝ) ≤ (theta / (2 : ℝ)) ^ ((-1 : ℝ) / p2)),
+            let K1 : ℝ := (192456 : ℝ) * ((1 : ℝ) + Cstar) ^ (2 : ℕ) * gammaMomentConst (2 : ℝ) ^
+              (2 : ℕ);
             let K2 : ℝ :=
               (10865664 : ℝ) * ((1 : ℝ) + Cstar) * gammaMomentConst (1 : ℝ) *
                   ((1 : ℝ) + (2 : ℝ) * (↑d : ℝ) * Real.log (3 : ℝ)) *
                 atomG1bScale ^ (2 : ℕ);
             ∀
-              (hK2def :
+              (_ :
                 K2 =
                   (10865664 : ℝ) * ((1 : ℝ) + Cstar) * gammaMomentConst (1 : ℝ) *
                       ((1 : ℝ) + (2 : ℝ) * (↑d : ℝ) * Real.log (3 : ℝ)) *
                     atomG1bScale ^ (2 : ℕ)),
               let Q : ℝ := (↑r : ℝ) * (Real.log ((6 : ℝ) * (↑r : ℝ)) + (↑r : ℝ));
-              ∀ (hKeq : g1ThresholdConst d r = (K1 + K2) * Q)
-                (hbound2 : K2 * ((↑r : ℝ) * Lam) ≤ (K1 + K2) * Q * ((1 : ℝ) + c1)) (hden : (0 : ℝ) < s ^ (4 : ℕ) * theta)
-                (hMajsq :
-                  g1Majorant d r s theta c1 ^ (2 : ℕ) = g1ThresholdConst d r * ((1 : ℝ) + c1) / (s ^ (4 : ℕ) * theta)),
-                let Pc : ℝ := ((1 : ℝ) + (2 : ℝ) * (↑d : ℝ) * Real.log (3 : ℝ)) * atomG1bScale ^ (2 : ℕ);
-                ∀ (hPcdef : Pc = ((1 : ℝ) + (2 : ℝ) * (↑d : ℝ) * Real.log (3 : ℝ)) * atomG1bScale ^ (2 : ℕ)),
-                  let B : ℝ := (216 : ℝ) * ((1 : ℝ) + Cstar) * gammaMomentConst (1 : ℝ) * smallWaveScale d s * p2 / s;
-                  ∀ (hBdef : B = (216 : ℝ) * ((1 : ℝ) + Cstar) * gammaMomentConst (1 : ℝ) * smallWaveScale d s * p2 / s),
-                    D2 * ((9 : ℝ) * (s / (8 : ℝ))⁻¹ * Cstar ^ ((1 : ℝ) / p2) * (theta / (2 : ℝ)) ^ ((-1 : ℝ) / p2)) ≤
+              ∀ (_ : g1ThresholdConst d r = (K1 + K2) * Q)
+                (_ : K2 * ((↑r : ℝ) * Lam) ≤ (K1 + K2) * Q * ((1 : ℝ) + c1)) (_ : (0 : ℝ) < s ^ (4
+                  : ℕ) * theta)
+                (_ :
+                  g1Majorant d r s theta c1 ^ (2 : ℕ) = g1ThresholdConst d r * ((1 : ℝ) + c1) / (s
+                    ^ (4 : ℕ) * theta)),
+                let Pc : ℝ := ((1 : ℝ) + (2 : ℝ) * (↑d : ℝ) * Real.log (3 : ℝ)) * atomG1bScale ^
+                  (2 : ℕ);
+                ∀ (_ : Pc = ((1 : ℝ) + (2 : ℝ) * (↑d : ℝ) * Real.log (3 : ℝ)) * atomG1bScale ^ (2
+                  : ℕ)),
+                  let B : ℝ := (216 : ℝ) * ((1 : ℝ) + Cstar) * gammaMomentConst (1 : ℝ) *
+                    smallWaveScale d s * p2 / s;
+                  ∀ (_ : B = (216 : ℝ) * ((1 : ℝ) + Cstar) * gammaMomentConst (1 : ℝ) *
+                    smallWaveScale d s * p2 / s),
+                    D2 * ((9 : ℝ) * (s / (8 : ℝ))⁻¹ * Cstar ^ ((1 : ℝ) / p2) * (theta / (2 : ℝ)) ^
+                      ((-1 : ℝ) / p2)) ≤
                       T ^ (2 : ℕ) / g1bConst s := by
-  intro d s theta c1 T r hs0 hs1 hT hthne hsne Lam V hV1 hVs hVst p2 hp2def hp2one hp2pos hG1pos D2 hD2def hCpos1 hCst2 hthr3' hthrnn2 K1 K2 hK2def Q hKeq hbound2 hden hMajsq Pc hPcdef B hBdef
+  intro d s theta c1 T r hs0 hs1 hT hthne hsne Lam V _ hVs hVst p2 hp2def _ hp2pos hG1pos D2
+    hD2def hCpos1 hCst2 hthr3' hthrnn2 _ K2 hK2def _ hKeq hbound2 hden hMajsq Pc hPcdef B hBdef
   have hSWpos : (0 : ℝ) < smallWaveScale d s := smallWaveScale_pos d hs0
   have hlaneb : D2 * (9 * (s / 8)⁻¹ * Cstar ^ (1 / p2) * (theta / 2) ^ (-1 / p2))
       ≤ B := by
@@ -560,31 +569,40 @@ private theorem shiftedG1Lane_comparisonBounds1 :
   exact hthrb
 
 private theorem shiftedG1Lane_comparisonBounds2 :
-    ∀ {d : ℕ} {s theta c1 T : ℝ} {r : ℕ} (hs0 : (0 : ℝ) < s) (hs1 : s ≤ (1 : ℝ)) (htheta0 : (0 : ℝ) < theta)
-      (hT : g1Majorant d r s theta c1 ≤ T),
+    ∀ {d : ℕ} {s theta c1 T : ℝ} {r : ℕ} (_ : (0 : ℝ) < s) (_ : s ≤ (1 : ℝ)) (_ : (0 : ℝ) < theta)
+      (_ : g1Majorant d r s theta c1 ≤ T),
       let Lam : ℝ := Real.log ((6 : ℝ) * (↑r : ℝ)) + c1 * (↑r : ℝ);
-      ∀ (hrLam : (1 : ℝ) ≤ (↑r : ℝ) * Lam),
+      ∀ (_ : (1 : ℝ) ≤ (↑r : ℝ) * Lam),
         let U : ℝ := (↑r : ℝ) * Lam / theta;
-        ∀ (hUdef : U = (↑r : ℝ) * Lam / theta) (hU1 : (1 : ℝ) ≤ U),
+        ∀ (_ : U = (↑r : ℝ) * Lam / theta) (_ : (1 : ℝ) ≤ U),
           let p : ℝ := (64 : ℝ) * U + (2 : ℝ);
-          ∀ (hpdef : p = (64 : ℝ) * U + (2 : ℝ)) (hp0 : (0 : ℝ) < p) (hG2pos : (0 : ℝ) < gammaMomentConst (2 : ℝ)),
+          ∀ (_ : p = (64 : ℝ) * U + (2 : ℝ)) (_ : (0 : ℝ) < p) (_ : (0 : ℝ) < gammaMomentConst (2
+            : ℝ)),
             let D : ℝ := gammaMomentConst (2 : ℝ) * p ^ (2 : ℝ)⁻¹ * (1 : ℝ);
-            ∀ (hDdef : D = gammaMomentConst (2 : ℝ) * p ^ (2 : ℝ)⁻¹ * (1 : ℝ)) (hCpos1 : (0 : ℝ) < (1 : ℝ) + Cstar)
-              (hCst : Cstar ^ ((1 : ℝ) / p) ≤ (1 : ℝ) + Cstar) (hthr3 : (theta / (2 : ℝ)) ^ ((-1 : ℝ) / p) ≤ (3 : ℝ))
-              (hthrnn : (0 : ℝ) ≤ (theta / (2 : ℝ)) ^ ((-1 : ℝ) / p)),
-              let K1 : ℝ := (192456 : ℝ) * ((1 : ℝ) + Cstar) ^ (2 : ℕ) * gammaMomentConst (2 : ℝ) ^ (2 : ℕ);
-              ∀ (hK1def : K1 = (192456 : ℝ) * ((1 : ℝ) + Cstar) ^ (2 : ℕ) * gammaMomentConst (2 : ℝ) ^ (2 : ℕ)),
+            ∀ (_ : D = gammaMomentConst (2 : ℝ) * p ^ (2 : ℝ)⁻¹ * (1 : ℝ)) (_ : (0 : ℝ) < (1 : ℝ)
+              + Cstar)
+              (_ : Cstar ^ ((1 : ℝ) / p) ≤ (1 : ℝ) + Cstar) (_ : (theta / (2 : ℝ)) ^ ((-1 : ℝ) /
+                p) ≤ (3 : ℝ))
+              (_ : (0 : ℝ) ≤ (theta / (2 : ℝ)) ^ ((-1 : ℝ) / p)),
+              let K1 : ℝ := (192456 : ℝ) * ((1 : ℝ) + Cstar) ^ (2 : ℕ) * gammaMomentConst (2 : ℝ)
+                ^ (2 : ℕ);
+              ∀ (_ : K1 = (192456 : ℝ) * ((1 : ℝ) + Cstar) ^ (2 : ℕ) * gammaMomentConst (2 : ℝ) ^
+                (2 : ℕ)),
                 let K2 : ℝ :=
                   (10865664 : ℝ) * ((1 : ℝ) + Cstar) * gammaMomentConst (1 : ℝ) *
                       ((1 : ℝ) + (2 : ℝ) * (↑d : ℝ) * Real.log (3 : ℝ)) *
                     atomG1bScale ^ (2 : ℕ);
                 let Q : ℝ := (↑r : ℝ) * (Real.log ((6 : ℝ) * (↑r : ℝ)) + (↑r : ℝ));
-                ∀ (hKeq : g1ThresholdConst d r = (K1 + K2) * Q) (hK1nn : (0 : ℝ) ≤ K1)
-                  (hbound1 : K1 * ((↑r : ℝ) * Lam) ≤ (K1 + K2) * Q * ((1 : ℝ) + c1)),
-                  let A : ℝ := (54 : ℝ) * ((1 : ℝ) + Cstar) * gammaMomentConst (2 : ℝ) * p ^ (2 : ℝ)⁻¹;
-                  ∀ (hAdef : A = (54 : ℝ) * ((1 : ℝ) + Cstar) * gammaMomentConst (2 : ℝ) * p ^ (2 : ℝ)⁻¹),
-                    D * ((9 : ℝ) * (1 / 2 : ℝ)⁻¹ * Cstar ^ ((1 : ℝ) / p) * (theta / (2 : ℝ)) ^ ((-1 : ℝ) / p)) ≤ T := by
-  intro d s theta c1 T r hs0 hs1 htheta0 hT Lam hrLam U hUdef hU1 p hpdef hp0 hG2pos D hDdef hCpos1 hCst hthr3 hthrnn K1 hK1def K2 Q hKeq hK1nn hbound1 A hAdef
+                ∀ (_ : g1ThresholdConst d r = (K1 + K2) * Q) (_ : (0 : ℝ) ≤ K1)
+                  (_ : K1 * ((↑r : ℝ) * Lam) ≤ (K1 + K2) * Q * ((1 : ℝ) + c1)),
+                  let A : ℝ := (54 : ℝ) * ((1 : ℝ) + Cstar) * gammaMomentConst (2 : ℝ) * p ^ (2 :
+                    ℝ)⁻¹;
+                  ∀ (_ : A = (54 : ℝ) * ((1 : ℝ) + Cstar) * gammaMomentConst (2 : ℝ) * p ^ (2 :
+                    ℝ)⁻¹),
+                    D * ((9 : ℝ) * (1 / 2 : ℝ)⁻¹ * Cstar ^ ((1 : ℝ) / p) * (theta / (2 : ℝ)) ^
+                      ((-1 : ℝ) / p)) ≤ T := by
+  intro d s theta c1 T r hs0 hs1 htheta0 hT Lam hrLam U hUdef hU1 p hpdef hp0 hG2pos D hDdef
+    hCpos1 hCst hthr3 hthrnn K1 hK1def K2 Q hKeq hK1nn hbound1 A hAdef
   have hA0 : (0 : ℝ) ≤ A := by
     rw [hAdef]
     exact mul_nonneg (mul_nonneg (mul_nonneg (by norm_num) hCpos1.le) hG2pos.le)
@@ -808,14 +826,18 @@ theorem ratioTail_eventG1_of_majorant_shift (M : ABKModel d) {s theta c1 T : ℝ
   set A : ℝ := 54 * (1 + Cstar) * gammaMomentConst 2 * p ^ (2 : ℝ)⁻¹ with hAdef
   have hthra : D * (9 * ((1 : ℝ) / 2)⁻¹ * Cstar ^ (1 / p) * (theta / 2) ^ (-1 / p))
       ≤ T :=
-    @shiftedG1Lane_comparisonBounds2 (d) (s) (theta) (c1) (T) (r) (hs0) (hs1) (htheta0) (hT) (hrLam) (hUdef) (hU1) (hpdef) (hp0) (hG2pos) (hDdef) (hCpos1) (hCst) (hthr3) (hthrnn) (hK1def) (hKeq) (hK1nn) (hbound1) (hAdef)
+    @shiftedG1Lane_comparisonBounds2 (d) (s) (theta) (c1) (T) (r) (hs0) (hs1) (htheta0) (hT)
+      (hrLam) (hUdef) (hU1) (hpdef) (hp0) (hG2pos) (hDdef) (hCpos1) (hCst) (hthr3) (hthrnn)
+        (hK1def) (hKeq) (hK1nn) (hbound1) (hAdef)
   -- lane (b): the small-waves threshold
   set Pc : ℝ := (1 + 2 * (d : ℝ) * Real.log 3) * atomG1bScale ^ (2 : ℕ) with hPcdef
   set B : ℝ := 216 * (1 + Cstar) * gammaMomentConst 1 * smallWaveScale d s * p2 / s
     with hBdef
   have hthrb : D2 * (9 * (s / 8)⁻¹ * Cstar ^ (1 / p2) * (theta / 2) ^ (-1 / p2))
       ≤ T ^ 2 / g1bConst s :=
-    @shiftedG1Lane_comparisonBounds1 (d) (s) (theta) (c1) (T) (r) (hs0) (hs1) (hT) (hthne) (hsne) (hV1) (hVs) (hVst) (hp2def) (hp2one) (hp2pos) (hG1pos) (hD2def) (hCpos1) (hCst2) (hthr3') (hthrnn2) (hK2def) (hKeq) (hbound2) (hden) (hMajsq) (hPcdef) (hBdef)
+    @shiftedG1Lane_comparisonBounds1 (d) (s) (theta) (c1) (T) (r) (hs0) (hs1) (hT) (hthne) (hsne)
+      (hV1) (hVs) (hVst) (hp2def) (hp2one) (hp2pos) (hG1pos) (hD2def) (hCpos1) (hCst2) (hthr3')
+        (hthrnn2) (hK2def) (hKeq) (hbound2) (hden) (hMajsq) (hPcdef) (hBdef)
   exact ratioTail_eventG1_shift M hs0 hs1 hDpos hD2pos hp1 hp2one hsp hsp2 hr1 htheta0
     hthetar2 hc1 hratea hrateb hDdef.ge hD2def.ge hthra hthrb m0 n
 

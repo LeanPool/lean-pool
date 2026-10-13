@@ -857,12 +857,14 @@ private theorem relativeMeanDefect_nonneg_and_le_originMean
 private theorem combineFiniteQuantitative_comparisonBounds1 :
     ∀ {d : ℕ} [NeZero d] (M : ABKModel d) (L : ℤ) {s A D : ℝ} (hs : (0 : ℝ) < s)
       (_ :
-        Probability.IsTwoTermBigOWith (↑(Cutoff.cutoffSampleLaw M) : Measure (Cutoff.CutoffSample d)) (gammaSigma (2 : ℝ))
+        Probability.IsTwoTermBigOWith (↑(Cutoff.cutoffSampleLaw M) : Measure (Cutoff.CutoffSample
+          d)) (gammaSigma (2 : ℝ))
           (gammaSigma (1 / 2 : ℝ)) (Observable.cutoffHomogenizationError M L ⟨s, hs⟩) A D)
       (q : FullBlockVec d),
       let c : ℤ := (↑(Cutoff.cutoffRelativeNormalizationShift d) : ℤ);
       let h : ℤ := L + c;
-      let mu : Measure (Cutoff.CutoffSample d) := (↑(Cutoff.cutoffSampleLaw M) : Measure (Cutoff.CutoffSample d));
+      let mu : Measure (Cutoff.CutoffSample d) := (↑(Cutoff.cutoffSampleLaw M) : Measure
+        (Cutoff.CutoffSample d));
       let P : Ch04.RestrictionCoeffLaw d := Cutoff.relativeNormalizedCutoffLaw M L;
       let sigma : Observable.PositiveScalar := Annealed.sigmaBar M L;
       let a0 : Mat d := Observable.isotropicComparatorMatrix sigma;
@@ -872,7 +874,8 @@ private theorem combineFiniteQuantitative_comparisonBounds1 :
       let R : TriadicCube d := originCube d (-c);
       let Afun : RegCoeffField d → BlockMat d := fun (a : RegCoeffField d) =>
         HCPolySupport.coarseBlockMatrix (cubeSet R) a.toFun;
-      let Pq : BlockVec d := ofFullBlockVec (Matrix.mulVec (Ch02.constantFullBlockMatrixInvSqrt a0) q);
+      let Pq : BlockVec d := ofFullBlockVec (Matrix.mulVec (Ch02.constantFullBlockMatrixInvSqrt
+        a0) q);
       let Qq : BlockVec d := ofFullBlockVec (Matrix.mulVec (Ch02.constantFullBlockMatrixSqrt a0) q);
       let J : RegCoeffField d → ℝ := fun (a : RegCoeffField d) =>
         (1 / 2 : ℝ) * blockVecDot Pq (blockMatVecMul (Afun a) Pq) +
@@ -893,20 +896,25 @@ private theorem combineFiniteQuantitative_comparisonBounds1 :
               blockVecDot Pq Qq)
         (_ : blockMatVecMul (blockReflect C0) Qq = Pq)
         (_ : blockVecDot Pq Qq ≤ blockVecDot Pq (blockMatVecMul Cchild Pq)),
-        let rdiag : BlockCoord d → ℝ := Ch05.Section56.scalarFullBlockSqrtDiag (↑sigma : ℝ) (↑sigma : ℝ);
-        ∀ (_ : CFC.sqrt B = Matrix.diagonal rdiag) (_ : ofFullBlockVec ((Matrix.diagonal rdiag).mulVec q) = Qq),
+        let rdiag : BlockCoord d → ℝ := Ch05.Section56.scalarFullBlockSqrtDiag (↑sigma : ℝ)
+          (↑sigma : ℝ);
+        ∀ (_ : CFC.sqrt B = Matrix.diagonal rdiag) (_ : ofFullBlockVec ((Matrix.diagonal
+          rdiag).mulVec q) = Qq),
           ∫ (a : RegCoeffField d), X (cubeSet R) a ∂P ≤ (2 : ℝ) * ∫ (a : RegCoeffField d), J a ∂P ∧
             Integrable (fun (omega : Cutoff.CutoffSample d) => X0 omega ^ (2 : ℕ)) mu ∧
               ∫ (omega : Cutoff.CutoffSample d), X0 omega ^ (2 : ℕ) ∂mu ≤ secondBudget ∧
                 Integrable
-                    (fun (omega : Cutoff.CutoffSample d) => J (dilateReg (-h) (Cutoff.coefficientCutoff M.nu L omega))) mu ∧
+                    (fun (omega : Cutoff.CutoffSample d) => J (dilateReg (-h)
+                      (Cutoff.coefficientCutoff M.nu L omega))) mu ∧
                   ((fun (omega : Cutoff.CutoffSample d) =>
                         J (dilateReg (-h) (Cutoff.coefficientCutoff M.nu L omega))) ≤ᵐ[mu]
                       fun (omega : Cutoff.CutoffSample d) => q ⬝ᵥ q * X0 omega ^ (2 : ℕ)) ∧
                     ∫ (a : RegCoeffField d), J a ∂P =
-                        ∫ (omega : Cutoff.CutoffSample d), J (dilateReg (-h) (Cutoff.coefficientCutoff M.nu L omega)) ∂mu ∧
+                        ∫ (omega : Cutoff.CutoffSample d), J (dilateReg (-h)
+                          (Cutoff.coefficientCutoff M.nu L omega)) ∂mu ∧
                       (0 : ℝ) ≤ q ⬝ᵥ q := by
-  intro d _ M L s _ _ hs hLower q c h mu P sigma a0 B C0 Cchild R Afun Pq Qq J X X0 secondBudget hJInt hJMean hreflectQv _ _ hSdiag hQdiag
+  intro d _ M L s _ _ hs hLower q c h mu P sigma a0 B C0 Cchild R Afun Pq Qq J X X0 secondBudget
+    hJInt hJMean hreflectQv _ _ hSdiag hQdiag
   have hmuEq : (∫ a, X (cubeSet R) a ∂P) =
       blockVecDot Qq (blockMatVecMul (blockReflect Cchild) Qq) -
         blockVecDot Pq Qq := by
@@ -1015,7 +1023,8 @@ private theorem combineFiniteQuantitative_comparisonBounds2 :
       let R : TriadicCube d := originCube d (-c);
       let Afun : RegCoeffField d → BlockMat d := fun (a : RegCoeffField d) =>
         HCPolySupport.coarseBlockMatrix (cubeSet R) a.toFun;
-      let Pq : BlockVec d := ofFullBlockVec (Matrix.mulVec (Ch02.constantFullBlockMatrixInvSqrt a0) q);
+      let Pq : BlockVec d := ofFullBlockVec (Matrix.mulVec (Ch02.constantFullBlockMatrixInvSqrt
+        a0) q);
       let Qq : BlockVec d := ofFullBlockVec (Matrix.mulVec (Ch02.constantFullBlockMatrixSqrt a0) q);
       let J : RegCoeffField d → ℝ := fun (a : RegCoeffField d) =>
         (1 / 2 : ℝ) * blockVecDot Pq (blockMatVecMul (Afun a) Pq) +

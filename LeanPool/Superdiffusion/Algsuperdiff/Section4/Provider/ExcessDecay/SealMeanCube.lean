@@ -445,7 +445,8 @@ private theorem sealMeanCube_comparisonBounds1 :
         ∀ (i : Fin d) (a w r : ℝ) (K D S T : Set (Vec d)) (W : Vec d → ℝ) (beta RK RD : ℝ),
           (∀ (z : Vec d), W (coordFaceReflection a i z) = -W z) →
             MemLp W (2 : ENNReal) (volume.restrict D) →
-              HarmonicOnNhd ((fun (y : Vec d) => W y - beta) ∘ (⇑toEuc.symm : (a : EuclideanSpace ℝ (Fin d)) → Vec d))
+              HarmonicOnNhd ((fun (y : Vec d) => W y - beta) ∘ (⇑toEuc.symm : (a : EuclideanSpace
+                ℝ (Fin d)) → Vec d))
                   ((⇑toEuc : (a : Vec d) → EuclideanSpace ℝ (Fin d)) '' D) →
                 Convex ℝ T →
                   T ⊆ D →
@@ -455,7 +456,8 @@ private theorem sealMeanCube_comparisonBounds1 :
                           (∀ y ∈ S,
                               y ∈ T ∧
                                 coordFaceReflection a i y ∈ T ∧
-                                  y - w • basisVec i ∈ T ∧ (0 : ℝ) < (a - y i) / w ∧ (a - y i) / w ≤ (1 : ℝ)) →
+                                  y - w • basisVec i ∈ T ∧ (0 : ℝ) < (a - y i) / w ∧ (a - y i) / w
+                                    ≤ (1 : ℝ)) →
                             (∀ z ∈ T, Metric.ball z r ⊆ D) →
                               (0 : ℝ) < r →
                                 (∀ y ∈ D, y ∈ K ∨ coordFaceReflection a i y ∈ K ∨ y i = a) →
@@ -463,25 +465,36 @@ private theorem sealMeanCube_comparisonBounds1 :
                                     MeasurableSet K →
                                       MeasurableSet D →
                                         (volume : (a : Set (Vec d)) → ENNReal) D ≠ ⊤ →
-                                          (0 : ℝ) < ((volume : (a : Set (Vec d)) → ENNReal) S).toReal →
-                                            (0 : ℝ) < ((volume : (a : Set (Vec d)) → ENNReal) K).toReal →
-                                              (0 : ℝ) < ((volume : (a : Set (Vec d)) → ENNReal) D).toReal →
+                                          (0 : ℝ) < ((volume : (a : Set (Vec d)) → ENNReal)
+                                            S).toReal →
+                                            (0 : ℝ) < ((volume : (a : Set (Vec d)) → ENNReal)
+                                              K).toReal →
+                                              (0 : ℝ) < ((volume : (a : Set (Vec d)) → ENNReal)
+                                                D).toReal →
                                                 ((volume : (a : Set (Vec d)) → ENNReal) K).toReal ≤
-                                                    ((volume : (a : Set (Vec d)) → ENNReal) D).toReal →
-                                                  √(((volume : (a : Set (Vec d)) → ENNReal) K).toReal /
-                                                          ((volume : (a : Set (Vec d)) → ENNReal) S).toReal) ≤
+                                                    ((volume : (a : Set (Vec d)) → ENNReal)
+                                                      D).toReal →
+                                                  √(((volume : (a : Set (Vec d)) → ENNReal)
+                                                    K).toReal /
+                                                          ((volume : (a : Set (Vec d)) → ENNReal)
+                                                            S).toReal) ≤
                                                       RK →
-                                                    √(((volume : (a : Set (Vec d)) → ENNReal) D).toReal / r ^ d) ≤ RD →
+                                                    √(((volume : (a : Set (Vec d)) → ENNReal)
+                                                      D).toReal / r ^ d) ≤ RD →
                                                       (0 : ℝ) ≤ RD →
-                                                        (9 : ℝ) * (CH * r⁻¹ * r⁻¹ * RD * w ^ (2 : ℕ)) ≤ (1 / 2 : ℝ) →
+                                                        (9 : ℝ) * (CH * r⁻¹ * r⁻¹ * RD * w ^ (2 :
+                                                          ℕ)) ≤ (1 / 2 : ℝ) →
                                                           |beta| ≤
                                                             ((6 : ℝ) * RK +
-                                                                (12 : ℝ) * (CH * r⁻¹ * r⁻¹ * RD * w ^ (2 : ℕ))) *
-                                                              normalizedL2On K fun (y : Vec d) => W y - beta)
-        (_ : (0 : ℝ) ≤ CH * (4 : ℝ) ^ d) (lam : ℝ) (_ : (0 : ℝ) < lam) (_ : (16 : ℝ) * lam ≤ (1 : ℝ)) (_ :
+                                                                (12 : ℝ) * (CH * r⁻¹ * r⁻¹ * RD *
+                                                                  w ^ (2 : ℕ))) *
+                                                              normalizedL2On K fun (y : Vec d) =>
+                                                                W y - beta)
+        (_ : (0 : ℝ) ≤ CH * (4 : ℝ) ^ d) (lam : ℝ) (_ : (0 : ℝ) < lam) (_ : (16 : ℝ) * lam ≤ (1 :
+          ℝ)) (_ :
         (1152 : ℝ) * (CH * (4 : ℝ) ^ d) * lam ^ (2 : ℕ) ≤ (1 : ℝ)), True := by
   classical
-  intro d instance1
+  intro d _
   obtain ⟨CH, hCH0, hCH⟩ := exists_abs_le_normalizedL2On_of_faceOdd d
   have hP0 : (0 : ℝ) ≤ CH * (4 : ℝ) ^ d := mul_nonneg hCH0 (pow_nonneg (by norm_num) d)
   have hQpos : (0 : ℝ) < 16 + 1152 * (CH * (4 : ℝ) ^ d) := by linarith only [hP0]
@@ -533,9 +546,10 @@ private theorem sealMeanCube_estimate1 :
     ∀ (d : ℕ) (i : Fin d) (L : ℝ) (c y : Vec d),
       y ∈ axisBox c i (c i - (3 : ℝ) * L / (2 : ℝ)) (c i + L / (2 : ℝ)) (L / (2 : ℝ)) →
         y ∈ axisBox c i (c i - L / (2 : ℝ)) (c i + L / (2 : ℝ)) (L / (2 : ℝ)) ∨
-          coordFaceReflection (c i - L / (2 : ℝ)) i y ∈ axisBox c i (c i - L / (2 : ℝ)) (c i + L / (2 : ℝ)) (L / (2 : ℝ)) ∨
+          coordFaceReflection (c i - L / (2 : ℝ)) i y ∈ axisBox c i (c i - L / (2 : ℝ)) (c i + L /
+            (2 : ℝ)) (L / (2 : ℝ)) ∨
             y i = c i - L / (2 : ℝ) := by
-  intro d i L c y hy
+  intro _ i L c y hy
   have hy' := mem_axisBox_iff.mp hy
   rcases lt_trichotomy (y i) (c i - L / 2) with hlt | heq | hgt
   · refine Or.inr (Or.inl (mem_axisBox_iff.mpr ⟨⟨?_, ?_⟩, fun j hji => ?_⟩))

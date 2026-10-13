@@ -41,11 +41,13 @@ open Algsuperdiff.Section3
 noncomputable section
 
 private abbrev upperFiniteQGeTwoInfinityAggregation_momentBounds3_statement : Prop :=
-    ∀ {d : ℕ} (hd : (1 : ℕ) ≤ d) (M : ABKModel d) (m : ℤ) {s scaling Cblock Krare eps Bexp sigmaExp : ℝ}
-      (hCblock : (0 : ℝ) < Cblock) (hsigmaExp : (0 : ℝ) < sigmaExp) (hgamma1 : M.gamma ≤ (1 : ℝ))
-      (hp : sigmaExp⁻¹ ≤ (6 : ℝ))
-      (hrareBudget :
-        foldedBlockPole d sigmaExp (Krare⁻¹ * eps ^ (15 : ℕ)) (1 : ℝ) ((2 : ℝ) * s - M.gamma) ((3 : ℝ) ^ ((2 : ℝ) * s))
+    ∀ {d : ℕ} (_ : (1 : ℕ) ≤ d) (M : ABKModel d) (m : ℤ) {s scaling Cblock Krare eps Bexp sigmaExp
+      : ℝ}
+      (_ : (0 : ℝ) < Cblock) (_ : (0 : ℝ) < sigmaExp) (_ : M.gamma ≤ (1 : ℝ))
+      (_ : sigmaExp⁻¹ ≤ (6 : ℝ))
+      (_ :
+        foldedBlockPole d sigmaExp (Krare⁻¹ * eps ^ (15 : ℕ)) (1 : ℝ) ((2 : ℝ) * s - M.gamma) ((3
+          : ℝ) ^ ((2 : ℝ) * s))
             (6 : ℕ) ≤
           Bexp)
       (hper :
@@ -57,80 +59,96 @@ private abbrev upperFiniteQGeTwoInfinityAggregation_momentBounds3_statement : Pr
                   (∀ (omega : Cutoff.CutoffSample d), (0 : ℝ) ≤ Uexp omega) ∧
                     Measurable Uexp ∧
                       (∀ (omega : Cutoff.CutoffSample d),
-                          cutoffBBlockFamily M m scaling R omega ≤ Cblock + Uone omega + Uexp omega) ∧
-                        IsBigOWith (↑(Cutoff.cutoffSampleLaw M) : Measure (Cutoff.CutoffSample d)) (gammaSigma (1 : ℝ)) Uone
+                          cutoffBBlockFamily M m scaling R omega ≤ Cblock + Uone omega + Uexp
+                            omega) ∧
+                        IsBigOWith (↑(Cutoff.cutoffSampleLaw M) : Measure (Cutoff.CutoffSample d))
+                          (gammaSigma (1 : ℝ)) Uone
                             (upperSaturatedPerCubeAmplitude Cblock (Disorder.cstar M) M.gamma k) ∧
-                          IsBigOWith (↑(Cutoff.cutoffSampleLaw M) : Measure (Cutoff.CutoffSample d)) (gammaSigma sigmaExp)
-                            Uexp (Krare⁻¹ * (3 : ℝ) ^ (M.gamma * ((↑k : ℝ) + (1 : ℝ))) * eps ^ (15 : ℕ))),
-      let mu : Measure (Cutoff.CutoffSample d) := (↑(Cutoff.cutoffSampleLaw M) : Measure (Cutoff.CutoffSample d));
+                          IsBigOWith (↑(Cutoff.cutoffSampleLaw M) : Measure (Cutoff.CutoffSample
+                            d)) (gammaSigma sigmaExp)
+                            Uexp (Krare⁻¹ * (3 : ℝ) ^ (M.gamma * ((↑k : ℝ) + (1 : ℝ))) * eps ^ (15
+                              : ℕ))),
+      let mu : Measure (Cutoff.CutoffSample d) := (↑(Cutoff.cutoffSampleLaw M) : Measure
+        (Cutoff.CutoffSample d));
       let gamma : ℝ := M.gamma;
       let rho : ℝ := (2 : ℝ) * s - gamma;
       let abase : ℝ := Krare⁻¹ * eps ^ (15 : ℕ);
       let ctop : ℝ := (3 : ℝ) ^ ((2 : ℝ) * s);
       let A : ℝ := upperOrdinaryJointProfileBound d Cblock (Disorder.cstar M) gamma;
-      ∀ (hrho : (0 : ℝ) < rho) (hcstar : (0 : ℝ) < Disorder.cstar M) (habase : (0 : ℝ) < abase) (hctop : (0 : ℝ) < ctop),
-        let UoneCube : ℕ → TriadicCube d → Cutoff.CutoffSample d → ℝ := fun (k : ℕ) (R : TriadicCube d) =>
-          if hR : R ∈ descendantsAtScale (originCube d m) (m - (1 : ℤ) - (↑k : ℤ)) then Classical.choose (hper k R hR)
-          else fun (x : Cutoff.CutoffSample d) => (0 : ℝ);
-        let UexpCube : ℕ → TriadicCube d → Cutoff.CutoffSample d → ℝ := fun (k : ℕ) (R : TriadicCube d) =>
+      ∀ (_ : (0 : ℝ) < rho) (_ : (0 : ℝ) < Disorder.cstar M) (_ : (0 : ℝ) < abase) (_ : (0 : ℝ) <
+        ctop),
+        let UoneCube : ℕ → TriadicCube d → Cutoff.CutoffSample d → ℝ := fun (k : ℕ) (R :
+          TriadicCube d) =>
+          if hR : R ∈ descendantsAtScale (originCube d m) (m - (1 : ℤ) - (↑k : ℤ)) then
+            Classical.choose (hper k R hR)
+          else fun (_ : Cutoff.CutoffSample d) => (0 : ℝ);
+        let UexpCube : ℕ → TriadicCube d → Cutoff.CutoffSample d → ℝ := fun (k : ℕ) (R :
+          TriadicCube d) =>
           if hR : R ∈ descendantsAtScale (originCube d m) (m - (1 : ℤ) - (↑k : ℤ)) then
             Classical.choose (Classical.choose_spec (hper k R hR))
-          else fun (x : Cutoff.CutoffSample d) => (0 : ℝ);
+          else fun (_ : Cutoff.CutoffSample d) => (0 : ℝ);
         ∀
-          (hUoneCubeNonneg :
+          (_ :
             ∀ (k : ℕ) (R : TriadicCube d) (omega : Cutoff.CutoffSample d),
               (0 : ℝ) ≤
                 (fun (k : ℕ) (R : TriadicCube d) =>
                     if hR : R ∈ descendantsAtScale (originCube d m) (m - (1 : ℤ) - (↑k : ℤ)) then
                       Classical.choose (hper k R hR)
-                    else fun (x : Cutoff.CutoffSample d) => (0 : ℝ))
+                    else fun (_ : Cutoff.CutoffSample d) => (0 : ℝ))
                   k R omega)
-          (hUexpCubeNonneg :
+          (_ :
             ∀ (k : ℕ) (R : TriadicCube d) (omega : Cutoff.CutoffSample d),
               (0 : ℝ) ≤
                 (fun (k : ℕ) (R : TriadicCube d) =>
                     if hR : R ∈ descendantsAtScale (originCube d m) (m - (1 : ℤ) - (↑k : ℤ)) then
                       Classical.choose (Classical.choose_spec (hper k R hR))
-                    else fun (x : Cutoff.CutoffSample d) => (0 : ℝ))
+                    else fun (_ : Cutoff.CutoffSample d) => (0 : ℝ))
                   k R omega)
-          (hUoneCubeMeas :
+          (_ :
             ∀ (k : ℕ) (R : TriadicCube d),
               Measurable
                 ((fun (k : ℕ) (R : TriadicCube d) =>
                     if hR : R ∈ descendantsAtScale (originCube d m) (m - (1 : ℤ) - (↑k : ℤ)) then
                       Classical.choose (hper k R hR)
-                    else fun (x : Cutoff.CutoffSample d) => (0 : ℝ))
+                    else fun (_ : Cutoff.CutoffSample d) => (0 : ℝ))
                   k R))
-          (hUoneCubeO :
+          (_ :
             ∀ (k : ℕ),
               ∀ R ∈ descendantsAtScale (originCube d m) (m - (1 : ℤ) - (↑k : ℤ)),
-                IsBigOWith (↑(Cutoff.cutoffSampleLaw M) : Measure (Cutoff.CutoffSample d)) (gammaSigma (1 : ℝ))
+                IsBigOWith (↑(Cutoff.cutoffSampleLaw M) : Measure (Cutoff.CutoffSample d))
+                  (gammaSigma (1 : ℝ))
                   ((fun (k : ℕ) (R : TriadicCube d) =>
                       if hR : R ∈ descendantsAtScale (originCube d m) (m - (1 : ℤ) - (↑k : ℤ)) then
                         Classical.choose (hper k R hR)
-                      else fun (x : Cutoff.CutoffSample d) => (0 : ℝ))
+                      else fun (_ : Cutoff.CutoffSample d) => (0 : ℝ))
                     k R)
                   (upperSaturatedPerCubeAmplitude Cblock (Disorder.cstar M) M.gamma k))
-          (hUexpCubeO :
+          (_ :
             ∀ (k : ℕ),
               ∀ R ∈ descendantsAtScale (originCube d m) (m - (1 : ℤ) - (↑k : ℤ)),
-                IsBigOWith (↑(Cutoff.cutoffSampleLaw M) : Measure (Cutoff.CutoffSample d)) (gammaSigma sigmaExp)
+                IsBigOWith (↑(Cutoff.cutoffSampleLaw M) : Measure (Cutoff.CutoffSample d))
+                  (gammaSigma sigmaExp)
                   ((fun (k : ℕ) (R : TriadicCube d) =>
                       if hR : R ∈ descendantsAtScale (originCube d m) (m - (1 : ℤ) - (↑k : ℤ)) then
                         Classical.choose (Classical.choose_spec (hper k R hR))
-                      else fun (x : Cutoff.CutoffSample d) => (0 : ℝ))
+                      else fun (_ : Cutoff.CutoffSample d) => (0 : ℝ))
                     k R)
                   ((3 : ℝ) ^ (M.gamma * ((↑k : ℝ) + (1 : ℝ))) * (Krare⁻¹ * eps ^ (15 : ℕ)))),
-          let Gone : ℕ → Cutoff.CutoffSample d → ℝ := fun (k : ℕ) => blockGridSup d m k (UoneCube k);
-          let Gexp : ℕ → Cutoff.CutoffSample d → ℝ := fun (k : ℕ) => blockGridSup d m k (UexpCube k);
-          ∀ (hGexpNonneg : ∀ (k : ℕ) (omega : Cutoff.CutoffSample d), (0 : ℝ) ≤ Gexp k omega)
-            (hGexpMeas : ∀ (k : ℕ), Measurable (Gexp k)),
-            let aone : ℕ → ℝ := fun (k : ℕ) => upperSaturatedPerCubeAmplitude Cblock (Disorder.cstar M) gamma k;
-            ∀ (haone : ∀ (k : ℕ), (0 : ℝ) < aone k),
+          let Gone : ℕ → Cutoff.CutoffSample d → ℝ := fun (k : ℕ) => blockGridSup d m k (UoneCube
+            k);
+          let Gexp : ℕ → Cutoff.CutoffSample d → ℝ := fun (k : ℕ) => blockGridSup d m k (UexpCube
+            k);
+          ∀ (_ : ∀ (k : ℕ) (omega : Cutoff.CutoffSample d), (0 : ℝ) ≤ Gexp k omega)
+            (_ : ∀ (k : ℕ), Measurable (Gexp k)),
+            let aone : ℕ → ℝ := fun (k : ℕ) => upperSaturatedPerCubeAmplitude Cblock
+              (Disorder.cstar M) gamma k;
+            ∀ (_ : ∀ (k : ℕ), (0 : ℝ) < aone k),
               ∃ (_ :
-                (∀ (omega : Cutoff.CutoffSample d), (0 : ℝ) ≤ jointGridDepthEnvelope d m UoneCube aone omega) ∧
+                (∀ (omega : Cutoff.CutoffSample d), (0 : ℝ) ≤ jointGridDepthEnvelope d m UoneCube
+                  aone omega) ∧
                   Measurable (jointGridDepthEnvelope d m UoneCube aone) ∧
-                    IsBigOWith mu (gammaSigma (1 : ℝ)) (jointGridDepthEnvelope d m UoneCube aone) (1 : ℝ) ∧
+                    IsBigOWith mu (gammaSigma (1 : ℝ)) (jointGridDepthEnvelope d m UoneCube aone)
+                      (1 : ℝ) ∧
                       ∀ᵐ (omega : Cutoff.CutoffSample d) ∂mu,
                         ∀ (k : ℕ),
                           ∀ R ∈ descendantsAtScale (originCube d m) (m - (1 : ℤ) - (↑k : ℤ)),
@@ -139,18 +157,22 @@ private abbrev upperFiniteQGeTwoInfinityAggregation_momentBounds3_statement : Pr
                                 jointGridDepthEnvelope d m UoneCube aone omega)
                 (_ :
                 ∀ᵐ (omega : Cutoff.CutoffSample d) ∂mu,
-                  ∀ (k : ℕ), Gone k omega ≤ upperPolyProfile A gamma k * jointGridDepthEnvelope d m UoneCube aone omega)
-                (_ : ∀ (k : ℕ), (0 : ℝ) < (fun (k : ℕ) => (3 : ℝ) ^ (gamma * ((↑k : ℝ) + (1 : ℝ)))) k) (_ :
+                  ∀ (k : ℕ), Gone k omega ≤ upperPolyProfile A gamma k * jointGridDepthEnvelope d
+                    m UoneCube aone omega)
+                (_ : ∀ (k : ℕ), (0 : ℝ) < (fun (k : ℕ) => (3 : ℝ) ^ (gamma * ((↑k : ℝ) + (1 :
+                  ℝ)))) k) (_ :
                 ∀ (k : ℕ) (omega : Cutoff.CutoffSample d),
                   (0 : ℝ) ≤
                     (fun (k : ℕ) (omega : Cutoff.CutoffSample d) =>
-                        ((fun (k : ℕ) => (3 : ℝ) ^ (gamma * ((↑k : ℝ) + (1 : ℝ)))) k)⁻¹ * Gexp k omega)
+                        ((fun (k : ℕ) => (3 : ℝ) ^ (gamma * ((↑k : ℝ) + (1 : ℝ)))) k)⁻¹ * Gexp k
+                          omega)
                       k omega)
                 (_ :
                 ∀ (k : ℕ) (omega : Cutoff.CutoffSample d),
                   (fun (k : ℕ) => (3 : ℝ) ^ (gamma * ((↑k : ℝ) + (1 : ℝ)))) k *
                       (fun (k : ℕ) (omega : Cutoff.CutoffSample d) =>
-                          ((fun (k : ℕ) => (3 : ℝ) ^ (gamma * ((↑k : ℝ) + (1 : ℝ)))) k)⁻¹ * Gexp k omega)
+                          ((fun (k : ℕ) => (3 : ℝ) ^ (gamma * ((↑k : ℝ) + (1 : ℝ)))) k)⁻¹ * Gexp k
+                            omega)
                         k omega =
                     Gexp k omega)
                 (_ :
@@ -161,10 +183,12 @@ private abbrev upperFiniteQGeTwoInfinityAggregation_momentBounds3_statement : Pr
                           (fun (k : ℕ) (omega : Cutoff.CutoffSample d) =>
                               ctop *
                                   (fun (k : ℕ) (omega : Cutoff.CutoffSample d) =>
-                                      ((fun (k : ℕ) => (3 : ℝ) ^ (gamma * ((↑k : ℝ) + (1 : ℝ)))) k)⁻¹ * Gexp k omega)
+                                      ((fun (k : ℕ) => (3 : ℝ) ^ (gamma * ((↑k : ℝ) + (1 : ℝ))))
+                                        k)⁻¹ * Gexp k omega)
                                     (0 : ℕ) omega +
                                 (fun (k : ℕ) (omega : Cutoff.CutoffSample d) =>
-                                    ((fun (k : ℕ) => (3 : ℝ) ^ (gamma * ((↑k : ℝ) + (1 : ℝ)))) k)⁻¹ * Gexp k omega)
+                                    ((fun (k : ℕ) => (3 : ℝ) ^ (gamma * ((↑k : ℝ) + (1 : ℝ))))
+                                      k)⁻¹ * Gexp k omega)
                                   k omega)
                             k omega)
                       k omega)
@@ -177,10 +201,12 @@ private abbrev upperFiniteQGeTwoInfinityAggregation_momentBounds3_statement : Pr
                             (fun (k : ℕ) (omega : Cutoff.CutoffSample d) =>
                                 ctop *
                                     (fun (k : ℕ) (omega : Cutoff.CutoffSample d) =>
-                                        ((fun (k : ℕ) => (3 : ℝ) ^ (gamma * ((↑k : ℝ) + (1 : ℝ)))) k)⁻¹ * Gexp k omega)
+                                        ((fun (k : ℕ) => (3 : ℝ) ^ (gamma * ((↑k : ℝ) + (1 : ℝ))))
+                                          k)⁻¹ * Gexp k omega)
                                       (0 : ℕ) omega +
                                   (fun (k : ℕ) (omega : Cutoff.CutoffSample d) =>
-                                      ((fun (k : ℕ) => (3 : ℝ) ^ (gamma * ((↑k : ℝ) + (1 : ℝ)))) k)⁻¹ * Gexp k omega)
+                                      ((fun (k : ℕ) => (3 : ℝ) ^ (gamma * ((↑k : ℝ) + (1 : ℝ))))
+                                        k)⁻¹ * Gexp k omega)
                                     k omega)
                               k omega)
                         k omega)
@@ -195,10 +221,12 @@ private abbrev upperFiniteQGeTwoInfinityAggregation_momentBounds3_statement : Pr
                               (fun (k : ℕ) (omega : Cutoff.CutoffSample d) =>
                                   ctop *
                                       (fun (k : ℕ) (omega : Cutoff.CutoffSample d) =>
-                                          ((fun (k : ℕ) => (3 : ℝ) ^ (gamma * ((↑k : ℝ) + (1 : ℝ)))) k)⁻¹ * Gexp k omega)
+                                          ((fun (k : ℕ) => (3 : ℝ) ^ (gamma * ((↑k : ℝ) + (1 :
+                                            ℝ)))) k)⁻¹ * Gexp k omega)
                                         (0 : ℕ) omega +
                                     (fun (k : ℕ) (omega : Cutoff.CutoffSample d) =>
-                                        ((fun (k : ℕ) => (3 : ℝ) ^ (gamma * ((↑k : ℝ) + (1 : ℝ)))) k)⁻¹ * Gexp k omega)
+                                        ((fun (k : ℕ) => (3 : ℝ) ^ (gamma * ((↑k : ℝ) + (1 : ℝ))))
+                                          k)⁻¹ * Gexp k omega)
                                       k omega)
                                 k omega)
                           k omega)
@@ -211,10 +239,12 @@ private abbrev upperFiniteQGeTwoInfinityAggregation_momentBounds3_statement : Pr
                             (fun (k : ℕ) (omega : Cutoff.CutoffSample d) =>
                                 ctop *
                                     (fun (k : ℕ) (omega : Cutoff.CutoffSample d) =>
-                                        ((fun (k : ℕ) => (3 : ℝ) ^ (gamma * ((↑k : ℝ) + (1 : ℝ)))) k)⁻¹ * Gexp k omega)
+                                        ((fun (k : ℕ) => (3 : ℝ) ^ (gamma * ((↑k : ℝ) + (1 : ℝ))))
+                                          k)⁻¹ * Gexp k omega)
                                       (0 : ℕ) omega +
                                   (fun (k : ℕ) (omega : Cutoff.CutoffSample d) =>
-                                      ((fun (k : ℕ) => (3 : ℝ) ^ (gamma * ((↑k : ℝ) + (1 : ℝ)))) k)⁻¹ * Gexp k omega)
+                                      ((fun (k : ℕ) => (3 : ℝ) ^ (gamma * ((↑k : ℝ) + (1 : ℝ))))
+                                        k)⁻¹ * Gexp k omega)
                                     k omega)
                               k omega)
                         k omega) =ᵐ[mu]
@@ -226,10 +256,12 @@ private abbrev upperFiniteQGeTwoInfinityAggregation_momentBounds3_statement : Pr
                               (fun (k : ℕ) (omega : Cutoff.CutoffSample d) =>
                                   ctop *
                                       (fun (k : ℕ) (omega : Cutoff.CutoffSample d) =>
-                                          ((fun (k : ℕ) => (3 : ℝ) ^ (gamma * ((↑k : ℝ) + (1 : ℝ)))) k)⁻¹ * Gexp k omega)
+                                          ((fun (k : ℕ) => (3 : ℝ) ^ (gamma * ((↑k : ℝ) + (1 :
+                                            ℝ)))) k)⁻¹ * Gexp k omega)
                                         (0 : ℕ) omega +
                                     (fun (k : ℕ) (omega : Cutoff.CutoffSample d) =>
-                                        ((fun (k : ℕ) => (3 : ℝ) ^ (gamma * ((↑k : ℝ) + (1 : ℝ)))) k)⁻¹ * Gexp k omega)
+                                        ((fun (k : ℕ) => (3 : ℝ) ^ (gamma * ((↑k : ℝ) + (1 : ℝ))))
+                                          k)⁻¹ * Gexp k omega)
                                       k omega)
                                 k omega)
                           k omega)
@@ -244,16 +276,139 @@ private abbrev upperFiniteQGeTwoInfinityAggregation_momentBounds3_statement : Pr
                               (fun (k : ℕ) (omega : Cutoff.CutoffSample d) =>
                                   ctop *
                                       (fun (k : ℕ) (omega : Cutoff.CutoffSample d) =>
-                                          ((fun (k : ℕ) => (3 : ℝ) ^ (gamma * ((↑k : ℝ) + (1 : ℝ)))) k)⁻¹ * Gexp k omega)
+                                          ((fun (k : ℕ) => (3 : ℝ) ^ (gamma * ((↑k : ℝ) + (1 :
+                                            ℝ)))) k)⁻¹ * Gexp k omega)
                                         (0 : ℕ) omega +
                                     (fun (k : ℕ) (omega : Cutoff.CutoffSample d) =>
-                                        ((fun (k : ℕ) => (3 : ℝ) ^ (gamma * ((↑k : ℝ) + (1 : ℝ)))) k)⁻¹ * Gexp k omega)
+                                        ((fun (k : ℕ) => (3 : ℝ) ^ (gamma * ((↑k : ℝ) + (1 : ℝ))))
+                                          k)⁻¹ * Gexp k omega)
                                       k omega)
                                 k omega)
                           k omega)
                     hRrawAE)
                   Bexp),
                 True
+
+private abbrev upperFiniteExponent_pointwiseAggregation_statement : Prop :=
+    ∀ {d : ℕ} [NeZero d] (M : ABKModel d) (m : ℤ)
+      {s scaling Cblock Krare eps sigmaExp : ℝ} (hs : (0 : ℝ) < s),
+      s ≤ (1 : ℝ) →
+        (0 : ℝ) ≤ scaling →
+          (0 : ℝ) < Cblock →
+            (0 : ℝ) < (2 : ℝ) * s - M.gamma →
+              ∀
+                (hper :
+                  ∀ (k : ℕ),
+                    ∀ R ∈ descendantsAtScale (originCube d m) (m - (1 : ℤ) - (↑k : ℤ)),
+                      ∃ (Uone : Cutoff.CutoffSample d → ℝ) (Uexp : Cutoff.CutoffSample d → ℝ),
+                        (∀ (omega : Cutoff.CutoffSample d), (0 : ℝ) ≤ Uone omega) ∧
+                          Measurable Uone ∧
+                            (∀ (omega : Cutoff.CutoffSample d), (0 : ℝ) ≤ Uexp omega) ∧
+                              Measurable Uexp ∧
+                                (∀ (omega : Cutoff.CutoffSample d),
+                                    cutoffBBlockFamily M m scaling R omega ≤ Cblock + Uone omega +
+                                      Uexp omega) ∧
+                                  IsBigOWith (↑(Cutoff.cutoffSampleLaw M) : Measure
+                                    (Cutoff.CutoffSample d))
+                                      (gammaSigma (1 : ℝ)) Uone
+                                      (upperSaturatedPerCubeAmplitude Cblock (Disorder.cstar M)
+                                        M.gamma k) ∧
+                                    IsBigOWith (↑(Cutoff.cutoffSampleLaw M) : Measure
+                                      (Cutoff.CutoffSample d))
+                                      (gammaSigma sigmaExp) Uexp
+                                      (Krare⁻¹ * (3 : ℝ) ^ (M.gamma * ((↑k : ℝ) + (1 : ℝ))) * eps
+                                        ^ (15 : ℕ))),
+                let mu : Measure (Cutoff.CutoffSample d) := (↑(Cutoff.cutoffSampleLaw M) : Measure
+                  (Cutoff.CutoffSample d));
+                let gamma : ℝ := M.gamma;
+                let rho : ℝ := (2 : ℝ) * s - gamma;
+                let ctop : ℝ := (3 : ℝ) ^ ((2 : ℝ) * s);
+                let A : ℝ := upperOrdinaryJointProfileBound d Cblock (Disorder.cstar M) gamma;
+                let Bone : ℝ := (384 : ℝ) * A * s * rho⁻¹ ^ (3 : ℕ);
+                (0 : ℝ) < gamma →
+                  (0 : ℝ) ≤ A →
+                    let UoneCube : ℕ → TriadicCube d → Cutoff.CutoffSample d → ℝ := fun (k : ℕ) (R
+                      : TriadicCube d) =>
+                      if hR : R ∈ descendantsAtScale (originCube d m) (m - (1 : ℤ) - (↑k : ℤ)) then
+                        Classical.choose (hper k R hR)
+                      else fun (_ : Cutoff.CutoffSample d) => (0 : ℝ);
+                    let UexpCube : ℕ → TriadicCube d → Cutoff.CutoffSample d → ℝ := fun (k : ℕ) (R
+                      : TriadicCube d) =>
+                      if hR : R ∈ descendantsAtScale (originCube d m) (m - (1 : ℤ) - (↑k : ℤ)) then
+                        Classical.choose (Classical.choose_spec (hper k R hR))
+                      else fun (_ : Cutoff.CutoffSample d) => (0 : ℝ);
+                    let Gone : ℕ → Cutoff.CutoffSample d → ℝ := fun (k : ℕ) => blockGridSup d m k
+                      (UoneCube k);
+                    let Gexp : ℕ → Cutoff.CutoffSample d → ℝ := fun (k : ℕ) => blockGridSup d m k
+                      (UexpCube k);
+                    let aone : ℕ → ℝ := fun (k : ℕ) => upperSaturatedPerCubeAmplitude Cblock
+                      (Disorder.cstar M) gamma k;
+                    let V : Cutoff.CutoffSample d → ℝ := jointGridDepthEnvelope d m UoneCube aone;
+                    ((∀ (omega : Cutoff.CutoffSample d), (0 : ℝ) ≤ jointGridDepthEnvelope d m
+                      UoneCube aone omega) ∧
+                        Measurable (jointGridDepthEnvelope d m UoneCube aone) ∧
+                          IsBigOWith mu (gammaSigma (1 : ℝ)) (jointGridDepthEnvelope d m UoneCube
+                            aone) (1 : ℝ) ∧
+                            ∀ᵐ (omega : Cutoff.CutoffSample d) ∂mu,
+                              ∀ (k : ℕ),
+                                ∀ R ∈ descendantsAtScale (originCube d m) (m - (1 : ℤ) - (↑k : ℤ)),
+                                  UoneCube k R omega ≤
+                                    triadicJointDepthEntropyConst d * ((↑k : ℝ) + (1 : ℝ)) * aone
+                                      k *
+                                      jointGridDepthEnvelope d m UoneCube aone omega) →
+                      let collar : ℕ → ℝ := fun (k : ℕ) => (3 : ℝ) ^ (gamma * ((↑k : ℝ) + (1 : ℝ)));
+                      let Wexp : ℕ → Cutoff.CutoffSample d → ℝ := fun (k : ℕ) (omega :
+                        Cutoff.CutoffSample d) =>
+                        (collar k)⁻¹ * Gexp k omega;
+                      let Fexp : ℕ → Cutoff.CutoffSample d → ℝ := fun (k : ℕ) (omega :
+                        Cutoff.CutoffSample d) =>
+                        ctop * Wexp (0 : ℕ) omega + Wexp k omega;
+                      let Xexp : ℕ → Cutoff.CutoffSample d → ℝ := fun (k : ℕ) (omega :
+                        Cutoff.CutoffSample d) =>
+                        gridWeight rho k * Fexp k omega;
+                      let Rraw : Cutoff.CutoffSample d → ℝ := fun (omega : Cutoff.CutoffSample d) =>
+                        ∑' (k : ℕ), Xexp k omega;
+                      ∀ (hRrawAE : AEMeasurable Rraw mu),
+                        let Yexp : Cutoff.CutoffSample d → ℝ := AEMeasurable.mk Rraw hRrawAE;
+                        let Odepth : ℕ → Cutoff.CutoffSample d → ℝ := fun (n : ℕ) => Gone n.pred;
+                        let Edepth : ℕ → Cutoff.CutoffSample d → ℝ := fun (n : ℕ) => Gexp n.pred;
+                        let Z : ℕ → Cutoff.CutoffSample d → ℝ := fun (n : ℕ) (omega :
+                          Cutoff.CutoffSample d) =>
+                          scaling *
+                            Book.Ch04.maxDescendantBMatrixNormCoeffFieldAtScale (originCube d m)
+                              (m - (↑n : ℤ))
+                              (Cutoff.coefficientCutoff M.nu m omega);
+                        (∀ (n : ℕ) (omega : Cutoff.CutoffSample d), (0 : ℝ) ≤ Odepth n omega) →
+                          (∀ (n : ℕ) (omega : Cutoff.CutoffSample d), (0 : ℝ) ≤ Edepth n omega) →
+                            (∀ (n : ℕ) (omega : Cutoff.CutoffSample d), (0 : ℝ) ≤ Z n omega) →
+                              (∀ (n : ℕ) (omega : Cutoff.CutoffSample d),
+                                  Z n omega ≤ Cblock + Odepth n omega + Edepth n omega) →
+                                let Yone : Cutoff.CutoffSample d → ℝ := fun (omega :
+                                  Cutoff.CutoffSample d) =>
+                                  Bone * V omega;
+                                (∀ᵐ (omega : Cutoff.CutoffSample d) ∂mu,
+                                    (∀ (n : ℕ), Odepth n omega ≤ upperPolyProfile A gamma n * V
+                                      omega) ∧
+                                      (Summable fun (n : ℕ) => endpointWeight ((2 : ℝ) * s) n *
+                                        Edepth n omega) ∧
+                                        ∑' (n : ℕ), endpointWeight ((2 : ℝ) * s) n * Edepth n
+                                          omega ≤ Yexp omega) →
+                                  ∀ (r : { r : ℝ // (1 : ℝ) ≤ r }),
+                                    (2 : ℝ) ≤ (↑r : ℝ) →
+                                      (0 : ℝ) < (↑r : ℝ) →
+                                        (1 : ℝ) ≤ (↑r : ℝ) / (2 : ℝ) →
+                                          (0 : ℝ) < s * (↑r : ℝ) →
+                                            let w : ℕ → ℝ := fun (n : ℕ) =>
+                                              Book.Ch02.geometricWeight s (↑r : ℝ) n;
+                                            (∀ (n : ℕ), (0 : ℝ) ≤ w n) →
+                                              Summable w →
+                                                ∑' (n : ℕ), w n = (1 : ℝ) →
+                                                  ∀ᵐ (omega : Cutoff.CutoffSample d) ∂mu,
+                                                    Observable.cutoffUpperEllipticity M m m s hs
+                                                          (CoarseEllipticityExponent.finite r)
+                                                            omega *
+                                                        scaling ≤
+                                                      Cblock + Yone omega + Yexp omega
 
 private theorem two_term_one_sided_orlicz_of_pointwise_split {Ω : Type*}
     [MeasurableSpace Ω] {μ : Measure Ω} {sigma1 sigma2 : ℝ}
@@ -465,101 +620,10 @@ private theorem summable_weight_mul_rpow_of_summable_root_mul
     Real.rpow_inv_rpow (hw n) ht0]
 
 private theorem upperFiniteExponent_pointwiseAggregation :
-    ∀ {d : ℕ} [NeZero d] (M : ABKModel d) (m : ℤ)
-      {s scaling Cblock Krare eps sigmaExp : ℝ} (hs : (0 : ℝ) < s),
-      s ≤ (1 : ℝ) →
-        (0 : ℝ) ≤ scaling →
-          (0 : ℝ) < Cblock →
-            (0 : ℝ) < (2 : ℝ) * s - M.gamma →
-              ∀
-                (hper :
-                  ∀ (k : ℕ),
-                    ∀ R ∈ descendantsAtScale (originCube d m) (m - (1 : ℤ) - (↑k : ℤ)),
-                      ∃ (Uone : Cutoff.CutoffSample d → ℝ) (Uexp : Cutoff.CutoffSample d → ℝ),
-                        (∀ (omega : Cutoff.CutoffSample d), (0 : ℝ) ≤ Uone omega) ∧
-                          Measurable Uone ∧
-                            (∀ (omega : Cutoff.CutoffSample d), (0 : ℝ) ≤ Uexp omega) ∧
-                              Measurable Uexp ∧
-                                (∀ (omega : Cutoff.CutoffSample d),
-                                    cutoffBBlockFamily M m scaling R omega ≤ Cblock + Uone omega + Uexp omega) ∧
-                                  IsBigOWith (↑(Cutoff.cutoffSampleLaw M) : Measure (Cutoff.CutoffSample d))
-                                      (gammaSigma (1 : ℝ)) Uone
-                                      (upperSaturatedPerCubeAmplitude Cblock (Disorder.cstar M) M.gamma k) ∧
-                                    IsBigOWith (↑(Cutoff.cutoffSampleLaw M) : Measure (Cutoff.CutoffSample d))
-                                      (gammaSigma sigmaExp) Uexp
-                                      (Krare⁻¹ * (3 : ℝ) ^ (M.gamma * ((↑k : ℝ) + (1 : ℝ))) * eps ^ (15 : ℕ))),
-                let mu : Measure (Cutoff.CutoffSample d) := (↑(Cutoff.cutoffSampleLaw M) : Measure (Cutoff.CutoffSample d));
-                let gamma : ℝ := M.gamma;
-                let rho : ℝ := (2 : ℝ) * s - gamma;
-                let ctop : ℝ := (3 : ℝ) ^ ((2 : ℝ) * s);
-                let A : ℝ := upperOrdinaryJointProfileBound d Cblock (Disorder.cstar M) gamma;
-                let Bone : ℝ := (384 : ℝ) * A * s * rho⁻¹ ^ (3 : ℕ);
-                (0 : ℝ) < gamma →
-                  (0 : ℝ) ≤ A →
-                    let UoneCube : ℕ → TriadicCube d → Cutoff.CutoffSample d → ℝ := fun (k : ℕ) (R : TriadicCube d) =>
-                      if hR : R ∈ descendantsAtScale (originCube d m) (m - (1 : ℤ) - (↑k : ℤ)) then
-                        Classical.choose (hper k R hR)
-                      else fun (x : Cutoff.CutoffSample d) => (0 : ℝ);
-                    let UexpCube : ℕ → TriadicCube d → Cutoff.CutoffSample d → ℝ := fun (k : ℕ) (R : TriadicCube d) =>
-                      if hR : R ∈ descendantsAtScale (originCube d m) (m - (1 : ℤ) - (↑k : ℤ)) then
-                        Classical.choose (Classical.choose_spec (hper k R hR))
-                      else fun (x : Cutoff.CutoffSample d) => (0 : ℝ);
-                    let Gone : ℕ → Cutoff.CutoffSample d → ℝ := fun (k : ℕ) => blockGridSup d m k (UoneCube k);
-                    let Gexp : ℕ → Cutoff.CutoffSample d → ℝ := fun (k : ℕ) => blockGridSup d m k (UexpCube k);
-                    let aone : ℕ → ℝ := fun (k : ℕ) => upperSaturatedPerCubeAmplitude Cblock (Disorder.cstar M) gamma k;
-                    let V : Cutoff.CutoffSample d → ℝ := jointGridDepthEnvelope d m UoneCube aone;
-                    ((∀ (omega : Cutoff.CutoffSample d), (0 : ℝ) ≤ jointGridDepthEnvelope d m UoneCube aone omega) ∧
-                        Measurable (jointGridDepthEnvelope d m UoneCube aone) ∧
-                          IsBigOWith mu (gammaSigma (1 : ℝ)) (jointGridDepthEnvelope d m UoneCube aone) (1 : ℝ) ∧
-                            ∀ᵐ (omega : Cutoff.CutoffSample d) ∂mu,
-                              ∀ (k : ℕ),
-                                ∀ R ∈ descendantsAtScale (originCube d m) (m - (1 : ℤ) - (↑k : ℤ)),
-                                  UoneCube k R omega ≤
-                                    triadicJointDepthEntropyConst d * ((↑k : ℝ) + (1 : ℝ)) * aone k *
-                                      jointGridDepthEnvelope d m UoneCube aone omega) →
-                      let collar : ℕ → ℝ := fun (k : ℕ) => (3 : ℝ) ^ (gamma * ((↑k : ℝ) + (1 : ℝ)));
-                      let Wexp : ℕ → Cutoff.CutoffSample d → ℝ := fun (k : ℕ) (omega : Cutoff.CutoffSample d) =>
-                        (collar k)⁻¹ * Gexp k omega;
-                      let Fexp : ℕ → Cutoff.CutoffSample d → ℝ := fun (k : ℕ) (omega : Cutoff.CutoffSample d) =>
-                        ctop * Wexp (0 : ℕ) omega + Wexp k omega;
-                      let Xexp : ℕ → Cutoff.CutoffSample d → ℝ := fun (k : ℕ) (omega : Cutoff.CutoffSample d) =>
-                        gridWeight rho k * Fexp k omega;
-                      let Rraw : Cutoff.CutoffSample d → ℝ := fun (omega : Cutoff.CutoffSample d) =>
-                        ∑' (k : ℕ), Xexp k omega;
-                      ∀ (hRrawAE : AEMeasurable Rraw mu),
-                        let Yexp : Cutoff.CutoffSample d → ℝ := AEMeasurable.mk Rraw hRrawAE;
-                        let Odepth : ℕ → Cutoff.CutoffSample d → ℝ := fun (n : ℕ) => Gone n.pred;
-                        let Edepth : ℕ → Cutoff.CutoffSample d → ℝ := fun (n : ℕ) => Gexp n.pred;
-                        let Z : ℕ → Cutoff.CutoffSample d → ℝ := fun (n : ℕ) (omega : Cutoff.CutoffSample d) =>
-                          scaling *
-                            Book.Ch04.maxDescendantBMatrixNormCoeffFieldAtScale (originCube d m) (m - (↑n : ℤ))
-                              (Cutoff.coefficientCutoff M.nu m omega);
-                        (∀ (n : ℕ) (omega : Cutoff.CutoffSample d), (0 : ℝ) ≤ Odepth n omega) →
-                          (∀ (n : ℕ) (omega : Cutoff.CutoffSample d), (0 : ℝ) ≤ Edepth n omega) →
-                            (∀ (n : ℕ) (omega : Cutoff.CutoffSample d), (0 : ℝ) ≤ Z n omega) →
-                              (∀ (n : ℕ) (omega : Cutoff.CutoffSample d),
-                                  Z n omega ≤ Cblock + Odepth n omega + Edepth n omega) →
-                                let Yone : Cutoff.CutoffSample d → ℝ := fun (omega : Cutoff.CutoffSample d) =>
-                                  Bone * V omega;
-                                (∀ᵐ (omega : Cutoff.CutoffSample d) ∂mu,
-                                    (∀ (n : ℕ), Odepth n omega ≤ upperPolyProfile A gamma n * V omega) ∧
-                                      (Summable fun (n : ℕ) => endpointWeight ((2 : ℝ) * s) n * Edepth n omega) ∧
-                                        ∑' (n : ℕ), endpointWeight ((2 : ℝ) * s) n * Edepth n omega ≤ Yexp omega) →
-                                  ∀ (r : { r : ℝ // (1 : ℝ) ≤ r }),
-                                    (2 : ℝ) ≤ (↑r : ℝ) →
-                                      (0 : ℝ) < (↑r : ℝ) →
-                                        (1 : ℝ) ≤ (↑r : ℝ) / (2 : ℝ) →
-                                          (0 : ℝ) < s * (↑r : ℝ) →
-                                            let w : ℕ → ℝ := fun (n : ℕ) => Book.Ch02.geometricWeight s (↑r : ℝ) n;
-                                            (∀ (n : ℕ), (0 : ℝ) ≤ w n) →
-                                              Summable w →
-                                                ∑' (n : ℕ), w n = (1 : ℝ) →
-                                                  ∀ᵐ (omega : Cutoff.CutoffSample d) ∂mu,
-                                                    Observable.cutoffUpperEllipticity M m m s hs
-                                                          (CoarseEllipticityExponent.finite r) omega *
-                                                        scaling ≤
-                                                      Cblock + Yone omega + Yexp omega := by
-  intro d instance1 M m s scaling Cblock Krare eps sigmaExp hs hs1 hscaling hCblock hgap hper mu gamma rho ctop A Bone hgamma hA UoneCube UexpCube Gone Gexp aone V hVspec collar Wexp Fexp Xexp Rraw hRrawAE Yexp Odepth Edepth Z hOnonneg hEnonneg hZnonneg hdepth Yone hGood r hr hr0 ht hsr w hw hwsum hwtsum
+  upperFiniteExponent_pointwiseAggregation_statement := by
+  intro _ _ M m s _ Cblock _ _ _ hs hs1 hscaling hCblock hgap _ _ gamma _ _ A Bone hgamma hA _ _ _
+    _ _ V hVspec _ _ _ _ _ _ Yexp Odepth Edepth Z hOnonneg hEnonneg hZnonneg hdepth Yone hGood r
+      hr hr0 ht hsr w hw hwsum hwtsum
   filter_upwards [hGood] with omega hgood
   have hDsum : Summable fun n => w n * Cblock ^ ((r : ℝ) / 2) := by
     simpa only [mul_comm] using hwsum.mul_right (Cblock ^ ((r : ℝ) / 2))
@@ -688,11 +752,13 @@ private theorem upperFiniteQGeTwoInfinityAggregation_momentBounds1 :
     Measurable Uexp ∧
     (∀ (omega : Cutoff.CutoffSample d),
     cutoffBBlockFamily M m scaling R omega ≤ Cblock + Uone omega + Uexp omega) ∧
-    IsBigOWith (↑(Cutoff.cutoffSampleLaw M) : Measure (Cutoff.CutoffSample d)) (gammaSigma (1 : ℝ)) Uone
+    IsBigOWith (↑(Cutoff.cutoffSampleLaw M) : Measure (Cutoff.CutoffSample d)) (gammaSigma (1 :
+      ℝ)) Uone
     (upperSaturatedPerCubeAmplitude Cblock (Disorder.cstar M) M.gamma k) ∧
     IsBigOWith (↑(Cutoff.cutoffSampleLaw M) : Measure (Cutoff.CutoffSample d)) (gammaSigma sigmaExp)
     Uexp (Krare⁻¹ * (3 : ℝ) ^ (M.gamma * ((↑k : ℝ) + (1 : ℝ))) * eps ^ (15 : ℕ))),
-    let mu : Measure (Cutoff.CutoffSample d) := (↑(Cutoff.cutoffSampleLaw M) : Measure (Cutoff.CutoffSample d));
+    let mu : Measure (Cutoff.CutoffSample d) := (↑(Cutoff.cutoffSampleLaw M) : Measure
+      (Cutoff.CutoffSample d));
     let gamma : ℝ := M.gamma;
     let rho : ℝ := (2 : ℝ) * s - gamma;
     let ctop : ℝ := (3 : ℝ) ^ ((2 : ℝ) * s);
@@ -701,16 +767,20 @@ private theorem upperFiniteQGeTwoInfinityAggregation_momentBounds1 :
     (0 : ℝ) < rho →
     (0 : ℝ) < ctop →
     (0 : ℝ) ≤ Bone →
-    let UoneCube : ℕ → TriadicCube d → Cutoff.CutoffSample d → ℝ := fun (k : ℕ) (R : TriadicCube d) =>
-    if hR : R ∈ descendantsAtScale (originCube d m) (m - (1 : ℤ) - (↑k : ℤ)) then Classical.choose (hper k R hR)
-    else fun (x : Cutoff.CutoffSample d) => (0 : ℝ);
-    let UexpCube : ℕ → TriadicCube d → Cutoff.CutoffSample d → ℝ := fun (k : ℕ) (R : TriadicCube d) =>
+    let UoneCube : ℕ → TriadicCube d → Cutoff.CutoffSample d → ℝ := fun (k : ℕ) (R : TriadicCube
+      d) =>
+    if hR : R ∈ descendantsAtScale (originCube d m) (m - (1 : ℤ) - (↑k : ℤ)) then Classical.choose
+      (hper k R hR)
+    else fun (_ : Cutoff.CutoffSample d) => (0 : ℝ);
+    let UexpCube : ℕ → TriadicCube d → Cutoff.CutoffSample d → ℝ := fun (k : ℕ) (R : TriadicCube
+      d) =>
     if hR : R ∈ descendantsAtScale (originCube d m) (m - (1 : ℤ) - (↑k : ℤ)) then
     Classical.choose (Classical.choose_spec (hper k R hR))
-    else fun (x : Cutoff.CutoffSample d) => (0 : ℝ);
+    else fun (_ : Cutoff.CutoffSample d) => (0 : ℝ);
     let Gone : ℕ → Cutoff.CutoffSample d → ℝ := fun (k : ℕ) => blockGridSup d m k (UoneCube k);
     let Gexp : ℕ → Cutoff.CutoffSample d → ℝ := fun (k : ℕ) => blockGridSup d m k (UexpCube k);
-    let aone : ℕ → ℝ := fun (k : ℕ) => upperSaturatedPerCubeAmplitude Cblock (Disorder.cstar M) gamma k;
+    let aone : ℕ → ℝ := fun (k : ℕ) => upperSaturatedPerCubeAmplitude Cblock (Disorder.cstar M)
+      gamma k;
     let V : Cutoff.CutoffSample d → ℝ := jointGridDepthEnvelope d m UoneCube aone;
     ((∀ (omega : Cutoff.CutoffSample d), (0 : ℝ) ≤ jointGridDepthEnvelope d m UoneCube aone omega) ∧
     Measurable (jointGridDepthEnvelope d m UoneCube aone) ∧
@@ -748,7 +818,9 @@ private theorem upperFiniteQGeTwoInfinityAggregation_momentBounds1 :
     (∀ (n : ℕ), Odepth n omega ≤ upperPolyProfile A gamma n * V omega) ∧
     (Summable fun (n : ℕ) => endpointWeight ((2 : ℝ) * s) n * Edepth n omega) ∧
     ∑' (n : ℕ), endpointWeight ((2 : ℝ) * s) n * Edepth n omega ≤ Yexp omega := by
-  intro d M m s scaling Cblock Krare eps sigmaExp hper mu gamma rho ctop A Bone hrho hctop hBone UoneCube UexpCube Gone Gexp aone V hVspec collar hcollar Wexp hWexpNonneg hGexpEq Fexp Xexp hXexpSumAE Rraw hRrawAE Yexp hRrawEqYexp Odepth Edepth hODomAE Yone
+  intro _ _ _ s _ _ _ _ _ _ mu gamma rho ctop A Bone hrho hctop hBone _ _ _ _ _ V hVspec collar
+    hcollar Wexp hWexpNonneg hGexpEq Fexp Xexp hXexpSumAE Rraw _ Yexp hRrawEqYexp Odepth Edepth
+      hODomAE Yone
   have hYoneMeas : Measurable Yone := hVspec.2.1.const_mul Bone
   have hYoneO : IsBigOWith mu (gammaSigma 1) Yone Bone := by
     simpa only [Yone, mul_one] using
@@ -854,16 +926,20 @@ private theorem upperFiniteQGeTwoInfinityAggregation_momentBounds2 :
     IsBigOWith (↑(Cutoff.cutoffSampleLaw M) : Measure (Cutoff.CutoffSample d))
     (gammaSigma sigmaExp) Uexp
     (Krare⁻¹ * (3 : ℝ) ^ (M.gamma * ((↑k : ℝ) + (1 : ℝ))) * eps ^ (15 : ℕ))),
-    let mu : Measure (Cutoff.CutoffSample d) := (↑(Cutoff.cutoffSampleLaw M) : Measure (Cutoff.CutoffSample d));
+    let mu : Measure (Cutoff.CutoffSample d) := (↑(Cutoff.cutoffSampleLaw M) : Measure
+      (Cutoff.CutoffSample d));
     let gamma : ℝ := M.gamma;
     let abase : ℝ := Krare⁻¹ * eps ^ (15 : ℕ);
-    let UoneCube : ℕ → TriadicCube d → Cutoff.CutoffSample d → ℝ := fun (k : ℕ) (R : TriadicCube d) =>
-    if hR : R ∈ descendantsAtScale (originCube d m) (m - (1 : ℤ) - (↑k : ℤ)) then Classical.choose (hper k R hR)
-    else fun (x : Cutoff.CutoffSample d) => (0 : ℝ);
-    let UexpCube : ℕ → TriadicCube d → Cutoff.CutoffSample d → ℝ := fun (k : ℕ) (R : TriadicCube d) =>
+    let UoneCube : ℕ → TriadicCube d → Cutoff.CutoffSample d → ℝ := fun (k : ℕ) (R : TriadicCube
+      d) =>
+    if hR : R ∈ descendantsAtScale (originCube d m) (m - (1 : ℤ) - (↑k : ℤ)) then Classical.choose
+      (hper k R hR)
+    else fun (_ : Cutoff.CutoffSample d) => (0 : ℝ);
+    let UexpCube : ℕ → TriadicCube d → Cutoff.CutoffSample d → ℝ := fun (k : ℕ) (R : TriadicCube
+      d) =>
     if hR : R ∈ descendantsAtScale (originCube d m) (m - (1 : ℤ) - (↑k : ℤ)) then
     Classical.choose (Classical.choose_spec (hper k R hR))
-    else fun (x : Cutoff.CutoffSample d) => (0 : ℝ);
+    else fun (_ : Cutoff.CutoffSample d) => (0 : ℝ);
     (∀ (k : ℕ) (R : TriadicCube d) (omega : Cutoff.CutoffSample d), (0 : ℝ) ≤ UoneCube k R omega) ∧
     (∀ (k : ℕ) (R : TriadicCube d) (omega : Cutoff.CutoffSample d), (0 : ℝ) ≤ UexpCube k R omega) ∧
     (∀ (k : ℕ) (R : TriadicCube d), Measurable (UoneCube k R)) ∧
@@ -879,8 +955,9 @@ private theorem upperFiniteQGeTwoInfinityAggregation_momentBounds2 :
     ∀ (k : ℕ),
     ∀ R ∈ descendantsAtScale (originCube d m) (m - (1 : ℤ) - (↑k : ℤ)),
     ∀ (omega : Cutoff.CutoffSample d),
-    |cutoffBBlockFamily M m scaling R omega| ≤ Cblock + UoneCube k R omega + UexpCube k R omega := by
-  intro d M m scaling Cblock Krare eps sigmaExp hscaling hper mu gamma abase UoneCube UexpCube
+    |cutoffBBlockFamily M m scaling R omega| ≤ Cblock + UoneCube k R omega + UexpCube k R omega :=
+      by
+  intro d M m scaling Cblock _ _ sigmaExp hscaling hper mu gamma abase UoneCube UexpCube
   have hUoneCubeNonneg : ∀ (k : ℕ) (R : TriadicCube d) omega,
       0 ≤ UoneCube k R omega := by
     intro k R omega
@@ -944,11 +1021,12 @@ private theorem upperFiniteQGeTwoInfinityAggregation_momentBounds2 :
       mul_nonneg hscaling (coarseBNormCoeffField_nonneg R _)
     rw [abs_of_nonneg hnonneg]
     simpa only [UoneCube, UexpCube, dite_eq_left hR] using hdom omega
-  exact ⟨hUoneCubeNonneg, hUexpCubeNonneg, hUoneCubeMeas, hUexpCubeMeas, hUoneCubeO, hUexpCubeO, hblock⟩
+  exact ⟨hUoneCubeNonneg, hUexpCubeNonneg, hUoneCubeMeas, hUexpCubeMeas, hUoneCubeO, hUexpCubeO,
+    hblock⟩
 
 private theorem upperGrid_geometricDepthWeight :
     ∀ {d : ℕ} [NeZero d] (M : ABKModel d) (m : ℤ)
-      {scaling Cblock Krare eps sigmaExp : ℝ} (hscaling : (0 : ℝ) ≤ scaling)
+      {scaling Cblock Krare eps sigmaExp : ℝ} (_ : (0 : ℝ) ≤ scaling)
       (hper :
         ∀ (k : ℕ),
           ∀ R ∈ descendantsAtScale (originCube d m) (m - (1 : ℤ) - (↑k : ℤ)),
@@ -958,50 +1036,59 @@ private theorem upperGrid_geometricDepthWeight :
                   (∀ (omega : Cutoff.CutoffSample d), (0 : ℝ) ≤ Uexp omega) ∧
                     Measurable Uexp ∧
                       (∀ (omega : Cutoff.CutoffSample d),
-                          cutoffBBlockFamily M m scaling R omega ≤ Cblock + Uone omega + Uexp omega) ∧
-                        IsBigOWith (↑(Cutoff.cutoffSampleLaw M) : Measure (Cutoff.CutoffSample d)) (gammaSigma (1 : ℝ)) Uone
+                          cutoffBBlockFamily M m scaling R omega ≤ Cblock + Uone omega + Uexp
+                            omega) ∧
+                        IsBigOWith (↑(Cutoff.cutoffSampleLaw M) : Measure (Cutoff.CutoffSample d))
+                          (gammaSigma (1 : ℝ)) Uone
                             (upperSaturatedPerCubeAmplitude Cblock (Disorder.cstar M) M.gamma k) ∧
-                          IsBigOWith (↑(Cutoff.cutoffSampleLaw M) : Measure (Cutoff.CutoffSample d)) (gammaSigma sigmaExp)
-                            Uexp (Krare⁻¹ * (3 : ℝ) ^ (M.gamma * ((↑k : ℝ) + (1 : ℝ))) * eps ^ (15 : ℕ))),
-      let UoneCube : ℕ → TriadicCube d → Cutoff.CutoffSample d → ℝ := fun (k : ℕ) (R : TriadicCube d) =>
-        if hR : R ∈ descendantsAtScale (originCube d m) (m - (1 : ℤ) - (↑k : ℤ)) then Classical.choose (hper k R hR)
-        else fun (x : Cutoff.CutoffSample d) => (0 : ℝ);
-      let UexpCube : ℕ → TriadicCube d → Cutoff.CutoffSample d → ℝ := fun (k : ℕ) (R : TriadicCube d) =>
+                          IsBigOWith (↑(Cutoff.cutoffSampleLaw M) : Measure (Cutoff.CutoffSample
+                            d)) (gammaSigma sigmaExp)
+                            Uexp (Krare⁻¹ * (3 : ℝ) ^ (M.gamma * ((↑k : ℝ) + (1 : ℝ))) * eps ^ (15
+                              : ℕ))),
+      let UoneCube : ℕ → TriadicCube d → Cutoff.CutoffSample d → ℝ := fun (k : ℕ) (R : TriadicCube
+        d) =>
+        if hR : R ∈ descendantsAtScale (originCube d m) (m - (1 : ℤ) - (↑k : ℤ)) then
+          Classical.choose (hper k R hR)
+        else fun (_ : Cutoff.CutoffSample d) => (0 : ℝ);
+      let UexpCube : ℕ → TriadicCube d → Cutoff.CutoffSample d → ℝ := fun (k : ℕ) (R : TriadicCube
+        d) =>
         if hR : R ∈ descendantsAtScale (originCube d m) (m - (1 : ℤ) - (↑k : ℤ)) then
           Classical.choose (Classical.choose_spec (hper k R hR))
-        else fun (x : Cutoff.CutoffSample d) => (0 : ℝ);
+        else fun (_ : Cutoff.CutoffSample d) => (0 : ℝ);
       ∀
-        (hUoneCubeNonneg :
+        (_ :
           ∀ (k : ℕ) (R : TriadicCube d) (omega : Cutoff.CutoffSample d),
             (0 : ℝ) ≤
               (fun (k : ℕ) (R : TriadicCube d) =>
                   if hR : R ∈ descendantsAtScale (originCube d m) (m - (1 : ℤ) - (↑k : ℤ)) then
                     Classical.choose (hper k R hR)
-                  else fun (x : Cutoff.CutoffSample d) => (0 : ℝ))
+                  else fun (_ : Cutoff.CutoffSample d) => (0 : ℝ))
                 k R omega)
-        (hUexpCubeNonneg :
+        (_ :
           ∀ (k : ℕ) (R : TriadicCube d) (omega : Cutoff.CutoffSample d),
             (0 : ℝ) ≤
               (fun (k : ℕ) (R : TriadicCube d) =>
                   if hR : R ∈ descendantsAtScale (originCube d m) (m - (1 : ℤ) - (↑k : ℤ)) then
                     Classical.choose (Classical.choose_spec (hper k R hR))
-                  else fun (x : Cutoff.CutoffSample d) => (0 : ℝ))
+                  else fun (_ : Cutoff.CutoffSample d) => (0 : ℝ))
                 k R omega)
-        (hblock :
+        (_ :
           ∀ (k : ℕ),
             ∀ R ∈ descendantsAtScale (originCube d m) (m - (1 : ℤ) - (↑k : ℤ)),
               ∀ (omega : Cutoff.CutoffSample d),
                 |cutoffBBlockFamily M m scaling R omega| ≤
                   Cblock +
                       (fun (k : ℕ) (R : TriadicCube d) =>
-                          if hR : R ∈ descendantsAtScale (originCube d m) (m - (1 : ℤ) - (↑k : ℤ)) then
+                          if hR : R ∈ descendantsAtScale (originCube d m) (m - (1 : ℤ) - (↑k : ℤ))
+                            then
                             Classical.choose (hper k R hR)
-                          else fun (x : Cutoff.CutoffSample d) => (0 : ℝ))
+                          else fun (_ : Cutoff.CutoffSample d) => (0 : ℝ))
                         k R omega +
                     (fun (k : ℕ) (R : TriadicCube d) =>
-                        if hR : R ∈ descendantsAtScale (originCube d m) (m - (1 : ℤ) - (↑k : ℤ)) then
+                        if hR : R ∈ descendantsAtScale (originCube d m) (m - (1 : ℤ) - (↑k : ℤ))
+                          then
                           Classical.choose (Classical.choose_spec (hper k R hR))
-                        else fun (x : Cutoff.CutoffSample d) => (0 : ℝ))
+                        else fun (_ : Cutoff.CutoffSample d) => (0 : ℝ))
                       k R omega),
         let Gone : ℕ → Cutoff.CutoffSample d → ℝ := fun (k : ℕ) => blockGridSup d m k (UoneCube k);
         let Gexp : ℕ → Cutoff.CutoffSample d → ℝ := fun (k : ℕ) => blockGridSup d m k (UexpCube k);
@@ -1011,8 +1098,10 @@ private theorem upperGrid_geometricDepthWeight :
           scaling *
             Book.Ch04.maxDescendantBMatrixNormCoeffFieldAtScale (originCube d m) (m - (↑n : ℤ))
               (Cutoff.coefficientCutoff M.nu m omega);
-        ∀ (n : ℕ) (omega : Cutoff.CutoffSample d), Z n omega ≤ Cblock + Odepth n omega + Edepth n omega := by
-  intro d instance1 M m scaling Cblock Krare eps sigmaExp hscaling hper UoneCube UexpCube hUoneCubeNonneg hUexpCubeNonneg hblock Gone Gexp Odepth Edepth Z n omega
+        ∀ (n : ℕ) (omega : Cutoff.CutoffSample d), Z n omega ≤ Cblock + Odepth n omega + Edepth n
+          omega := by
+  intro d _ M m scaling _ _ _ _ hscaling _ _ _ hUoneCubeNonneg hUexpCubeNonneg hblock Gone Gexp
+    Odepth Edepth Z n omega
   have hgrid : Z n omega ≤
       blockGridSup d m n.pred (cutoffBBlockFamily M m scaling) omega := by
     cases n with
@@ -1040,7 +1129,7 @@ private theorem upperGrid_geometricDepthWeight :
 
 private theorem upperFiniteQGeTwoInfinityAggregation_estimate1 :
     ∀ {d : ℕ} (M : ABKModel d) (m : ℤ)
-      {scaling Cblock Krare eps sigmaExp : ℝ} (hCblock : (0 : ℝ) < Cblock) (hgamma1 : M.gamma ≤ (1 : ℝ))
+      {scaling Cblock Krare eps sigmaExp : ℝ} (_ : (0 : ℝ) < Cblock) (_ : M.gamma ≤ (1 : ℝ))
       (hper :
         ∀ (k : ℕ),
           ∀ R ∈ descendantsAtScale (originCube d m) (m - (1 : ℤ) - (↑k : ℤ)),
@@ -1050,43 +1139,55 @@ private theorem upperFiniteQGeTwoInfinityAggregation_estimate1 :
                   (∀ (omega : Cutoff.CutoffSample d), (0 : ℝ) ≤ Uexp omega) ∧
                     Measurable Uexp ∧
                       (∀ (omega : Cutoff.CutoffSample d),
-                          cutoffBBlockFamily M m scaling R omega ≤ Cblock + Uone omega + Uexp omega) ∧
-                        IsBigOWith (↑(Cutoff.cutoffSampleLaw M) : Measure (Cutoff.CutoffSample d)) (gammaSigma (1 : ℝ)) Uone
+                          cutoffBBlockFamily M m scaling R omega ≤ Cblock + Uone omega + Uexp
+                            omega) ∧
+                        IsBigOWith (↑(Cutoff.cutoffSampleLaw M) : Measure (Cutoff.CutoffSample d))
+                          (gammaSigma (1 : ℝ)) Uone
                             (upperSaturatedPerCubeAmplitude Cblock (Disorder.cstar M) M.gamma k) ∧
-                          IsBigOWith (↑(Cutoff.cutoffSampleLaw M) : Measure (Cutoff.CutoffSample d)) (gammaSigma sigmaExp)
-                            Uexp (Krare⁻¹ * (3 : ℝ) ^ (M.gamma * ((↑k : ℝ) + (1 : ℝ))) * eps ^ (15 : ℕ))),
-      let mu : Measure (Cutoff.CutoffSample d) := (↑(Cutoff.cutoffSampleLaw M) : Measure (Cutoff.CutoffSample d));
+                          IsBigOWith (↑(Cutoff.cutoffSampleLaw M) : Measure (Cutoff.CutoffSample
+                            d)) (gammaSigma sigmaExp)
+                            Uexp (Krare⁻¹ * (3 : ℝ) ^ (M.gamma * ((↑k : ℝ) + (1 : ℝ))) * eps ^ (15
+                              : ℕ))),
+      let mu : Measure (Cutoff.CutoffSample d) := (↑(Cutoff.cutoffSampleLaw M) : Measure
+        (Cutoff.CutoffSample d));
       let gamma : ℝ := M.gamma;
       let A : ℝ := upperOrdinaryJointProfileBound d Cblock (Disorder.cstar M) gamma;
-      ∀ (hcstar : (0 : ℝ) < Disorder.cstar M),
-        let UoneCube : ℕ → TriadicCube d → Cutoff.CutoffSample d → ℝ := fun (k : ℕ) (R : TriadicCube d) =>
-          if hR : R ∈ descendantsAtScale (originCube d m) (m - (1 : ℤ) - (↑k : ℤ)) then Classical.choose (hper k R hR)
-          else fun (x : Cutoff.CutoffSample d) => (0 : ℝ);
+      ∀ (_ : (0 : ℝ) < Disorder.cstar M),
+        let UoneCube : ℕ → TriadicCube d → Cutoff.CutoffSample d → ℝ := fun (k : ℕ) (R :
+          TriadicCube d) =>
+          if hR : R ∈ descendantsAtScale (originCube d m) (m - (1 : ℤ) - (↑k : ℤ)) then
+            Classical.choose (hper k R hR)
+          else fun (_ : Cutoff.CutoffSample d) => (0 : ℝ);
         ∀
-          (hUoneCubeNonneg :
+          (_ :
             ∀ (k : ℕ) (R : TriadicCube d) (omega : Cutoff.CutoffSample d),
               (0 : ℝ) ≤
                 (fun (k : ℕ) (R : TriadicCube d) =>
                     if hR : R ∈ descendantsAtScale (originCube d m) (m - (1 : ℤ) - (↑k : ℤ)) then
                       Classical.choose (hper k R hR)
-                    else fun (x : Cutoff.CutoffSample d) => (0 : ℝ))
+                    else fun (_ : Cutoff.CutoffSample d) => (0 : ℝ))
                   k R omega),
-          let Gone : ℕ → Cutoff.CutoffSample d → ℝ := fun (k : ℕ) => blockGridSup d m k (UoneCube k);
-          let aone : ℕ → ℝ := fun (k : ℕ) => upperSaturatedPerCubeAmplitude Cblock (Disorder.cstar M) gamma k;
+          let Gone : ℕ → Cutoff.CutoffSample d → ℝ := fun (k : ℕ) => blockGridSup d m k (UoneCube
+            k);
+          let aone : ℕ → ℝ := fun (k : ℕ) => upperSaturatedPerCubeAmplitude Cblock (Disorder.cstar
+            M) gamma k;
           let V : Cutoff.CutoffSample d → ℝ := jointGridDepthEnvelope d m UoneCube aone;
           ∀
-            (hVspec :
-              (∀ (omega : Cutoff.CutoffSample d), (0 : ℝ) ≤ jointGridDepthEnvelope d m UoneCube aone omega) ∧
+            (_ :
+              (∀ (omega : Cutoff.CutoffSample d), (0 : ℝ) ≤ jointGridDepthEnvelope d m UoneCube
+                aone omega) ∧
                 Measurable (jointGridDepthEnvelope d m UoneCube aone) ∧
-                  IsBigOWith mu (gammaSigma (1 : ℝ)) (jointGridDepthEnvelope d m UoneCube aone) (1 : ℝ) ∧
+                  IsBigOWith mu (gammaSigma (1 : ℝ)) (jointGridDepthEnvelope d m UoneCube aone) (1
+                    : ℝ) ∧
                     ∀ᵐ (omega : Cutoff.CutoffSample d) ∂mu,
                       ∀ (k : ℕ),
                         ∀ R ∈ descendantsAtScale (originCube d m) (m - (1 : ℤ) - (↑k : ℤ)),
                           UoneCube k R omega ≤
                             triadicJointDepthEntropyConst d * ((↑k : ℝ) + (1 : ℝ)) * aone k *
                               jointGridDepthEnvelope d m UoneCube aone omega),
-            ∀ᵐ (omega : Cutoff.CutoffSample d) ∂mu, ∀ (k : ℕ), Gone k omega ≤ upperPolyProfile A gamma k * V omega := by
-  intro d M m scaling Cblock Krare eps sigmaExp hCblock hgamma1 hper mu gamma A hcstar UoneCube hUoneCubeNonneg Gone aone V hVspec
+            ∀ᵐ (omega : Cutoff.CutoffSample d) ∂mu, ∀ (k : ℕ), Gone k omega ≤ upperPolyProfile A
+              gamma k * V omega := by
+  intro d M _ _ _ _ _ _ hCblock hgamma1 _ _ gamma A hcstar _ hUoneCubeNonneg Gone aone V hVspec
   filter_upwards [hVspec.2.2.2] with omega homega
   intro k
   have hgrid : Gone k omega ≤
@@ -1109,8 +1210,8 @@ private theorem upperFiniteQGeTwoInfinityAggregation_estimate1 :
 
 private theorem upperFiniteQGeTwoInfinityAggregation_estimate2 :
     ∀ {d : ℕ} (M : ABKModel d) (m : ℤ)
-      {s scaling Cblock Krare eps sigmaExp : ℝ} (hs : (0 : ℝ) < s) (hs1 : s ≤ (1 : ℝ))
-      (hgap : (0 : ℝ) < (2 : ℝ) * s - M.gamma)
+      {s scaling Cblock Krare eps sigmaExp : ℝ} (_ : (0 : ℝ) < s) (_ : s ≤ (1 : ℝ))
+      (_ : (0 : ℝ) < (2 : ℝ) * s - M.gamma)
       (hper :
         ∀ (k : ℕ),
           ∀ R ∈ descendantsAtScale (originCube d m) (m - (1 : ℤ) - (↑k : ℤ)),
@@ -1120,34 +1221,45 @@ private theorem upperFiniteQGeTwoInfinityAggregation_estimate2 :
                   (∀ (omega : Cutoff.CutoffSample d), (0 : ℝ) ≤ Uexp omega) ∧
                     Measurable Uexp ∧
                       (∀ (omega : Cutoff.CutoffSample d),
-                          cutoffBBlockFamily M m scaling R omega ≤ Cblock + Uone omega + Uexp omega) ∧
-                        IsBigOWith (↑(Cutoff.cutoffSampleLaw M) : Measure (Cutoff.CutoffSample d)) (gammaSigma (1 : ℝ)) Uone
+                          cutoffBBlockFamily M m scaling R omega ≤ Cblock + Uone omega + Uexp
+                            omega) ∧
+                        IsBigOWith (↑(Cutoff.cutoffSampleLaw M) : Measure (Cutoff.CutoffSample d))
+                          (gammaSigma (1 : ℝ)) Uone
                             (upperSaturatedPerCubeAmplitude Cblock (Disorder.cstar M) M.gamma k) ∧
-                          IsBigOWith (↑(Cutoff.cutoffSampleLaw M) : Measure (Cutoff.CutoffSample d)) (gammaSigma sigmaExp)
-                            Uexp (Krare⁻¹ * (3 : ℝ) ^ (M.gamma * ((↑k : ℝ) + (1 : ℝ))) * eps ^ (15 : ℕ))),
-      let mu : Measure (Cutoff.CutoffSample d) := (↑(Cutoff.cutoffSampleLaw M) : Measure (Cutoff.CutoffSample d));
+                          IsBigOWith (↑(Cutoff.cutoffSampleLaw M) : Measure (Cutoff.CutoffSample
+                            d)) (gammaSigma sigmaExp)
+                            Uexp (Krare⁻¹ * (3 : ℝ) ^ (M.gamma * ((↑k : ℝ) + (1 : ℝ))) * eps ^ (15
+                              : ℕ))),
+      let mu : Measure (Cutoff.CutoffSample d) := (↑(Cutoff.cutoffSampleLaw M) : Measure
+        (Cutoff.CutoffSample d));
       let gamma : ℝ := M.gamma;
       let rho : ℝ := (2 : ℝ) * s - gamma;
       let ctop : ℝ := (3 : ℝ) ^ ((2 : ℝ) * s);
       let A : ℝ := upperOrdinaryJointProfileBound d Cblock (Disorder.cstar M) gamma;
       let Bone : ℝ := (384 : ℝ) * A * s * rho⁻¹ ^ (3 : ℕ);
-      ∀ (hgamma : (0 : ℝ) < gamma) (hA : (0 : ℝ) ≤ A),
-        let UoneCube : ℕ → TriadicCube d → Cutoff.CutoffSample d → ℝ := fun (k : ℕ) (R : TriadicCube d) =>
-          if hR : R ∈ descendantsAtScale (originCube d m) (m - (1 : ℤ) - (↑k : ℤ)) then Classical.choose (hper k R hR)
-          else fun (x : Cutoff.CutoffSample d) => (0 : ℝ);
-        let UexpCube : ℕ → TriadicCube d → Cutoff.CutoffSample d → ℝ := fun (k : ℕ) (R : TriadicCube d) =>
+      ∀ (_ : (0 : ℝ) < gamma) (_ : (0 : ℝ) ≤ A),
+        let UoneCube : ℕ → TriadicCube d → Cutoff.CutoffSample d → ℝ := fun (k : ℕ) (R :
+          TriadicCube d) =>
+          if hR : R ∈ descendantsAtScale (originCube d m) (m - (1 : ℤ) - (↑k : ℤ)) then
+            Classical.choose (hper k R hR)
+          else fun (_ : Cutoff.CutoffSample d) => (0 : ℝ);
+        let UexpCube : ℕ → TriadicCube d → Cutoff.CutoffSample d → ℝ := fun (k : ℕ) (R :
+          TriadicCube d) =>
           if hR : R ∈ descendantsAtScale (originCube d m) (m - (1 : ℤ) - (↑k : ℤ)) then
             Classical.choose (Classical.choose_spec (hper k R hR))
-          else fun (x : Cutoff.CutoffSample d) => (0 : ℝ);
+          else fun (_ : Cutoff.CutoffSample d) => (0 : ℝ);
         let Gone : ℕ → Cutoff.CutoffSample d → ℝ := fun (k : ℕ) => blockGridSup d m k (UoneCube k);
         let Gexp : ℕ → Cutoff.CutoffSample d → ℝ := fun (k : ℕ) => blockGridSup d m k (UexpCube k);
-        let aone : ℕ → ℝ := fun (k : ℕ) => upperSaturatedPerCubeAmplitude Cblock (Disorder.cstar M) gamma k;
+        let aone : ℕ → ℝ := fun (k : ℕ) => upperSaturatedPerCubeAmplitude Cblock (Disorder.cstar
+          M) gamma k;
         let V : Cutoff.CutoffSample d → ℝ := jointGridDepthEnvelope d m UoneCube aone;
         ∀
-          (hVspec :
-            (∀ (omega : Cutoff.CutoffSample d), (0 : ℝ) ≤ jointGridDepthEnvelope d m UoneCube aone omega) ∧
+          (_ :
+            (∀ (omega : Cutoff.CutoffSample d), (0 : ℝ) ≤ jointGridDepthEnvelope d m UoneCube aone
+              omega) ∧
               Measurable (jointGridDepthEnvelope d m UoneCube aone) ∧
-                IsBigOWith mu (gammaSigma (1 : ℝ)) (jointGridDepthEnvelope d m UoneCube aone) (1 : ℝ) ∧
+                IsBigOWith mu (gammaSigma (1 : ℝ)) (jointGridDepthEnvelope d m UoneCube aone) (1 :
+                  ℝ) ∧
                   ∀ᵐ (omega : Cutoff.CutoffSample d) ∂mu,
                     ∀ (k : ℕ),
                       ∀ R ∈ descendantsAtScale (originCube d m) (m - (1 : ℤ) - (↑k : ℤ)),
@@ -1161,41 +1273,49 @@ private theorem upperFiniteQGeTwoInfinityAggregation_estimate2 :
             ctop * Wexp (0 : ℕ) omega + Wexp k omega;
           let Xexp : ℕ → Cutoff.CutoffSample d → ℝ := fun (k : ℕ) (omega : Cutoff.CutoffSample d) =>
             gridWeight rho k * Fexp k omega;
-          let Rraw : Cutoff.CutoffSample d → ℝ := fun (omega : Cutoff.CutoffSample d) => ∑' (k : ℕ), Xexp k omega;
+          let Rraw : Cutoff.CutoffSample d → ℝ := fun (omega : Cutoff.CutoffSample d) => ∑' (k :
+            ℕ), Xexp k omega;
           ∀ (hRrawAE : AEMeasurable Rraw mu),
             let Odepth : ℕ → Cutoff.CutoffSample d → ℝ := fun (n : ℕ) => Gone n.pred;
-            let Yone : Cutoff.CutoffSample d → ℝ := fun (omega : Cutoff.CutoffSample d) => Bone * V omega;
+            let Yone : Cutoff.CutoffSample d → ℝ := fun (omega : Cutoff.CutoffSample d) => Bone *
+              V omega;
             ∀ (omega : Cutoff.CutoffSample d)
-              (hgood :
+              (_ :
                 (∀ (n : ℕ),
                     blockGridSup d m n.pred
                         (fun (R : TriadicCube d) =>
-                          if hR : R ∈ descendantsAtScale (originCube d m) (m - (1 : ℤ) - (↑n.pred : ℤ)) then
+                          if hR : R ∈ descendantsAtScale (originCube d m) (m - (1 : ℤ) - (↑n.pred
+                            : ℤ)) then
                             Classical.choose (hper n.pred R hR)
-                          else fun (x : Cutoff.CutoffSample d) => (0 : ℝ))
+                          else fun (_ : Cutoff.CutoffSample d) => (0 : ℝ))
                         omega ≤
-                      upperPolyProfile (upperOrdinaryJointProfileBound d Cblock (Disorder.cstar M) M.gamma) M.gamma n *
+                      upperPolyProfile (upperOrdinaryJointProfileBound d Cblock (Disorder.cstar M)
+                        M.gamma) M.gamma n *
                         jointGridDepthEnvelope d m
                           (fun (k : ℕ) (R : TriadicCube d) =>
-                            if hR : R ∈ descendantsAtScale (originCube d m) (m - (1 : ℤ) - (↑k : ℤ)) then
+                            if hR : R ∈ descendantsAtScale (originCube d m) (m - (1 : ℤ) - (↑k :
+                              ℤ)) then
                               Classical.choose (hper k R hR)
-                            else fun (x : Cutoff.CutoffSample d) => (0 : ℝ))
-                          (fun (k : ℕ) => upperSaturatedPerCubeAmplitude Cblock (Disorder.cstar M) M.gamma k) omega) ∧
+                            else fun (_ : Cutoff.CutoffSample d) => (0 : ℝ))
+                          (fun (k : ℕ) => upperSaturatedPerCubeAmplitude Cblock (Disorder.cstar M)
+                            M.gamma k) omega) ∧
                   (Summable fun (n : ℕ) =>
                       endpointWeight ((2 : ℝ) * s) n *
                         blockGridSup d m n.pred
                           (fun (R : TriadicCube d) =>
-                            if hR : R ∈ descendantsAtScale (originCube d m) (m - (1 : ℤ) - (↑n.pred : ℤ)) then
+                            if hR : R ∈ descendantsAtScale (originCube d m) (m - (1 : ℤ) -
+                              (↑n.pred : ℤ)) then
                               Classical.choose (Classical.choose_spec (hper n.pred R hR))
-                            else fun (x : Cutoff.CutoffSample d) => (0 : ℝ))
+                            else fun (_ : Cutoff.CutoffSample d) => (0 : ℝ))
                           omega) ∧
                     ∑' (n : ℕ),
                         endpointWeight ((2 : ℝ) * s) n *
                           blockGridSup d m n.pred
                             (fun (R : TriadicCube d) =>
-                              if hR : R ∈ descendantsAtScale (originCube d m) (m - (1 : ℤ) - (↑n.pred : ℤ)) then
+                              if hR : R ∈ descendantsAtScale (originCube d m) (m - (1 : ℤ) -
+                                (↑n.pred : ℤ)) then
                                 Classical.choose (Classical.choose_spec (hper n.pred R hR))
-                              else fun (x : Cutoff.CutoffSample d) => (0 : ℝ))
+                              else fun (_ : Cutoff.CutoffSample d) => (0 : ℝ))
                             omega ≤
                       AEMeasurable.mk
                         (fun (omega : Cutoff.CutoffSample d) =>
@@ -1205,21 +1325,25 @@ private theorem upperFiniteQGeTwoInfinityAggregation_estimate2 :
                                   (((3 : ℝ) ^ (M.gamma * ((↑(0 : ℕ) : ℝ) + (1 : ℝ))))⁻¹ *
                                     blockGridSup d m (0 : ℕ)
                                       (fun (R : TriadicCube d) =>
-                                        if hR : R ∈ descendantsAtScale (originCube d m) (m - (1 : ℤ) - (↑(0 : ℕ) : ℤ)) then
-                                          Classical.choose (Classical.choose_spec (hper (0 : ℕ) R hR))
-                                        else fun (x : Cutoff.CutoffSample d) => (0 : ℝ))
+                                        if hR : R ∈ descendantsAtScale (originCube d m) (m - (1 :
+                                          ℤ) - (↑(0 : ℕ) : ℤ)) then
+                                          Classical.choose (Classical.choose_spec (hper (0 : ℕ) R
+                                            hR))
+                                        else fun (_ : Cutoff.CutoffSample d) => (0 : ℝ))
                                       omega) +
                                 ((3 : ℝ) ^ (M.gamma * ((↑k : ℝ) + (1 : ℝ))))⁻¹ *
                                   blockGridSup d m k
                                     (fun (R : TriadicCube d) =>
-                                      if hR : R ∈ descendantsAtScale (originCube d m) (m - (1 : ℤ) - (↑k : ℤ)) then
+                                      if hR : R ∈ descendantsAtScale (originCube d m) (m - (1 : ℤ)
+                                        - (↑k : ℤ)) then
                                         Classical.choose (Classical.choose_spec (hper k R hR))
-                                      else fun (x : Cutoff.CutoffSample d) => (0 : ℝ))
+                                      else fun (_ : Cutoff.CutoffSample d) => (0 : ℝ))
                                     omega))
                         hRrawAE omega)
-              (n : ℕ) (hweight0 : (0 : ℝ) ≤ endpointWeight ((2 : ℝ) * s) n),
+              (n : ℕ) (_ : (0 : ℝ) ≤ endpointWeight ((2 : ℝ) * s) n),
               endpointWeight ((2 : ℝ) * s) n * Odepth n omega ≤ Yone omega := by
-  intro d M m s scaling Cblock Krare eps sigmaExp hs hs1 hgap hper mu gamma rho ctop A Bone hgamma hA UoneCube UexpCube Gone Gexp aone V hVspec collar Wexp Fexp Xexp Rraw hRrawAE Odepth Yone omega hgood n hweight0
+  intro _ _ _ s _ _ _ _ _ hs hs1 hgap _ _ gamma rho _ A Bone hgamma hA _ _ _ _ _ V hVspec _ _ _ _
+    _ _ _ Yone omega hgood n hweight0
   have hfirst := mul_le_mul_of_nonneg_left (hgood.1 n) hweight0
   have hprofile := endpointWeight_mul_upperPolyProfile_le hA hgamma.le
     hs hs1 hgap n
@@ -1252,27 +1376,36 @@ private theorem upperFiniteQGeTwoInfinityAggregation_estimate3 :
                   (∀ (omega : Cutoff.CutoffSample d), (0 : ℝ) ≤ Uexp omega) ∧
                     Measurable Uexp ∧
                       (∀ (omega : Cutoff.CutoffSample d),
-                          cutoffBBlockFamily M m scaling R omega ≤ Cblock + Uone omega + Uexp omega) ∧
-                        IsBigOWith (↑(Cutoff.cutoffSampleLaw M) : Measure (Cutoff.CutoffSample d)) (gammaSigma (1 : ℝ)) Uone
+                          cutoffBBlockFamily M m scaling R omega ≤ Cblock + Uone omega + Uexp
+                            omega) ∧
+                        IsBigOWith (↑(Cutoff.cutoffSampleLaw M) : Measure (Cutoff.CutoffSample d))
+                          (gammaSigma (1 : ℝ)) Uone
                             (upperSaturatedPerCubeAmplitude Cblock (Disorder.cstar M) M.gamma k) ∧
-                          IsBigOWith (↑(Cutoff.cutoffSampleLaw M) : Measure (Cutoff.CutoffSample d)) (gammaSigma sigmaExp)
-                            Uexp (Krare⁻¹ * (3 : ℝ) ^ (M.gamma * ((↑k : ℝ) + (1 : ℝ))) * eps ^ (15 : ℕ))),
-      let mu : Measure (Cutoff.CutoffSample d) := (↑(Cutoff.cutoffSampleLaw M) : Measure (Cutoff.CutoffSample d));
+                          IsBigOWith (↑(Cutoff.cutoffSampleLaw M) : Measure (Cutoff.CutoffSample
+                            d)) (gammaSigma sigmaExp)
+                            Uexp (Krare⁻¹ * (3 : ℝ) ^ (M.gamma * ((↑k : ℝ) + (1 : ℝ))) * eps ^ (15
+                              : ℕ))),
+      let mu : Measure (Cutoff.CutoffSample d) := (↑(Cutoff.cutoffSampleLaw M) : Measure
+        (Cutoff.CutoffSample d));
       let gamma : ℝ := M.gamma;
       let rho : ℝ := (2 : ℝ) * s - gamma;
       let ctop : ℝ := (3 : ℝ) ^ ((2 : ℝ) * s);
       let A : ℝ := upperOrdinaryJointProfileBound d Cblock (Disorder.cstar M) gamma;
       let Bone : ℝ := (384 : ℝ) * A * s * rho⁻¹ ^ (3 : ℕ);
-      let UoneCube : ℕ → TriadicCube d → Cutoff.CutoffSample d → ℝ := fun (k : ℕ) (R : TriadicCube d) =>
-        if hR : R ∈ descendantsAtScale (originCube d m) (m - (1 : ℤ) - (↑k : ℤ)) then Classical.choose (hper k R hR)
-        else fun (x : Cutoff.CutoffSample d) => (0 : ℝ);
-      let UexpCube : ℕ → TriadicCube d → Cutoff.CutoffSample d → ℝ := fun (k : ℕ) (R : TriadicCube d) =>
+      let UoneCube : ℕ → TriadicCube d → Cutoff.CutoffSample d → ℝ := fun (k : ℕ) (R : TriadicCube
+        d) =>
+        if hR : R ∈ descendantsAtScale (originCube d m) (m - (1 : ℤ) - (↑k : ℤ)) then
+          Classical.choose (hper k R hR)
+        else fun (_ : Cutoff.CutoffSample d) => (0 : ℝ);
+      let UexpCube : ℕ → TriadicCube d → Cutoff.CutoffSample d → ℝ := fun (k : ℕ) (R : TriadicCube
+        d) =>
         if hR : R ∈ descendantsAtScale (originCube d m) (m - (1 : ℤ) - (↑k : ℤ)) then
           Classical.choose (Classical.choose_spec (hper k R hR))
-        else fun (x : Cutoff.CutoffSample d) => (0 : ℝ);
+        else fun (_ : Cutoff.CutoffSample d) => (0 : ℝ);
       let Gone : ℕ → Cutoff.CutoffSample d → ℝ := fun (k : ℕ) => blockGridSup d m k (UoneCube k);
       let Gexp : ℕ → Cutoff.CutoffSample d → ℝ := fun (k : ℕ) => blockGridSup d m k (UexpCube k);
-      let aone : ℕ → ℝ := fun (k : ℕ) => upperSaturatedPerCubeAmplitude Cblock (Disorder.cstar M) gamma k;
+      let aone : ℕ → ℝ := fun (k : ℕ) => upperSaturatedPerCubeAmplitude Cblock (Disorder.cstar M)
+        gamma k;
       let V : Cutoff.CutoffSample d → ℝ := jointGridDepthEnvelope d m UoneCube aone;
       let collar : ℕ → ℝ := fun (k : ℕ) => (3 : ℝ) ^ (gamma * ((↑k : ℝ) + (1 : ℝ)));
       let Wexp : ℕ → Cutoff.CutoffSample d → ℝ := fun (k : ℕ) (omega : Cutoff.CutoffSample d) =>
@@ -1281,7 +1414,8 @@ private theorem upperFiniteQGeTwoInfinityAggregation_estimate3 :
         ctop * Wexp (0 : ℕ) omega + Wexp k omega;
       let Xexp : ℕ → Cutoff.CutoffSample d → ℝ := fun (k : ℕ) (omega : Cutoff.CutoffSample d) =>
         gridWeight rho k * Fexp k omega;
-      let Rraw : Cutoff.CutoffSample d → ℝ := fun (omega : Cutoff.CutoffSample d) => ∑' (k : ℕ), Xexp k omega;
+      let Rraw : Cutoff.CutoffSample d → ℝ := fun (omega : Cutoff.CutoffSample d) => ∑' (k : ℕ),
+        Xexp k omega;
       ∀ (hRrawAE : AEMeasurable Rraw mu),
         let Yexp : Cutoff.CutoffSample d → ℝ := AEMeasurable.mk Rraw hRrawAE;
         let Odepth : ℕ → Cutoff.CutoffSample d → ℝ := fun (n : ℕ) => Gone n.pred;
@@ -1290,14 +1424,17 @@ private theorem upperFiniteQGeTwoInfinityAggregation_estimate3 :
           scaling *
             Book.Ch04.maxDescendantBMatrixNormCoeffFieldAtScale (originCube d m) (m - (↑n : ℤ))
               (Cutoff.coefficientCutoff M.nu m omega);
-        ∀ (hdepth : ∀ (n : ℕ) (omega : Cutoff.CutoffSample d), Z n omega ≤ Cblock + Odepth n omega + Edepth n omega),
-          let Yone : Cutoff.CutoffSample d → ℝ := fun (omega : Cutoff.CutoffSample d) => Bone * V omega;
-          ∀ (omega : Cutoff.CutoffSample d) (n : ℕ) (hweight0 : (0 : ℝ) ≤ endpointWeight ((2 : ℝ) * s) n)
-            (hdet : endpointWeight ((2 : ℝ) * s) n * Cblock ≤ Cblock)
-            (hordinary : endpointWeight ((2 : ℝ) * s) n * Odepth n omega ≤ Yone omega)
-            (hrareTerm : endpointWeight ((2 : ℝ) * s) n * Edepth n omega ≤ Yexp omega),
+        ∀ (_ : ∀ (n : ℕ) (omega : Cutoff.CutoffSample d), Z n omega ≤ Cblock + Odepth n omega +
+          Edepth n omega),
+          let Yone : Cutoff.CutoffSample d → ℝ := fun (omega : Cutoff.CutoffSample d) => Bone * V
+            omega;
+          ∀ (omega : Cutoff.CutoffSample d) (n : ℕ) (_ : (0 : ℝ) ≤ endpointWeight ((2 : ℝ) * s) n)
+            (_ : endpointWeight ((2 : ℝ) * s) n * Cblock ≤ Cblock)
+            (_ : endpointWeight ((2 : ℝ) * s) n * Odepth n omega ≤ Yone omega)
+            (_ : endpointWeight ((2 : ℝ) * s) n * Edepth n omega ≤ Yexp omega),
             endpointWeight ((2 : ℝ) * s) n * Z n omega ≤ Cblock + Yone omega + Yexp omega := by
-  intro d M m s scaling Cblock Krare eps sigmaExp hper mu gamma rho ctop A Bone UoneCube UexpCube Gone Gexp aone V collar Wexp Fexp Xexp Rraw hRrawAE Yexp Odepth Edepth Z hdepth Yone omega n hweight0 hdet hordinary hrareTerm
+  intro _ _ _ s _ Cblock _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ Yexp Odepth Edepth Z hdepth
+    Yone omega n hweight0 hdet hordinary hrareTerm
   calc
     endpointWeight (2 * s) n * Z n omega ≤
         endpointWeight (2 * s) n *
@@ -1309,16 +1446,21 @@ private theorem upperFiniteQGeTwoInfinityAggregation_estimate3 :
     _ ≤ Cblock + Yone omega + Yexp omega :=
       add_le_add (add_le_add hdet hordinary) hrareTerm
 
-private theorem upperFiniteQGeTwoInfinityAggregation_momentBounds3 : upperFiniteQGeTwoInfinityAggregation_momentBounds3_statement := by
+private theorem upperFiniteQGeTwoInfinityAggregation_momentBounds3 :
+  upperFiniteQGeTwoInfinityAggregation_momentBounds3_statement := by
   classical
-  intro d hd M m s scaling Cblock Krare eps Bexp sigmaExp hCblock hsigmaExp hgamma1 hp hrareBudget hper mu gamma rho abase ctop A hrho hcstar habase hctop UoneCube UexpCube hUoneCubeNonneg hUexpCubeNonneg hUoneCubeMeas hUoneCubeO hUexpCubeO Gone Gexp hGexpNonneg hGexpMeas aone haone
+  intro d hd M m _ scaling Cblock Krare eps Bexp sigmaExp hCblock hsigmaExp hgamma1 hp hrareBudget
+    hper mu gamma rho abase ctop A hrho hcstar habase hctop UoneCube _ hUoneCubeNonneg
+      hUexpCubeNonneg hUoneCubeMeas hUoneCubeO hUexpCubeO Gone Gexp hGexpNonneg hGexpMeas aone haone
   let V : Cutoff.CutoffSample d → ℝ :=
     jointGridDepthEnvelope d m UoneCube aone
   have hVspec := jointGridDepthEnvelope_spec
     (mu := mu) d m UoneCube aone haone
       (fun k R _ => hUoneCubeMeas k R) hUoneCubeO
   have hGoneDomAE : ∀ᵐ omega ∂mu, ∀ k,
-      Gone k omega ≤ upperPolyProfile A gamma k * V omega  := @upperFiniteQGeTwoInfinityAggregation_estimate1 (d) (M) (m) (scaling) (Cblock) (Krare) (eps) (sigmaExp) (hCblock) (hgamma1) (hper) (hcstar) (hUoneCubeNonneg) (hVspec)
+      Gone k omega ≤ upperPolyProfile A gamma k * V omega  :=
+        @upperFiniteQGeTwoInfinityAggregation_estimate1 (d) (M) (m) (scaling) (Cblock) (Krare)
+          (eps) (sigmaExp) (hCblock) (hgamma1) (hper) (hcstar) (hUoneCubeNonneg) (hVspec)
   let collar : ℕ → ℝ := fun k =>
     (3 : ℝ) ^ (gamma * ((k : ℝ) + 1))
   have hcollar : ∀ k, 0 < collar k := fun k => by
@@ -1422,7 +1564,8 @@ private theorem upperFiniteQGeTwoInfinityAggregation_momentBounds3 : upperFinite
     Provider.Tail.isBigOWith_of_ae_eq hRrawEqYexp hRrawO
   let Odepth : ℕ → Cutoff.CutoffSample d → ℝ := fun n => Gone n.pred
   let Edepth : ℕ → Cutoff.CutoffSample d → ℝ := fun n => Gexp n.pred
-  exact ⟨hVspec, hGoneDomAE, hcollar, hWexpNonneg, hGexpEq, hXexpSumAE, hRrawAE, hYexpMeas, hRrawEqYexp, hYexpO, True.intro⟩
+  exact ⟨hVspec, hGoneDomAE, hcollar, hWexpNonneg, hGexpEq, hXexpSumAE, hRrawAE, hYexpMeas,
+    hRrawEqYexp, hYexpO, True.intro⟩
 
 private theorem upper_finite_two_le_and_infinity_split_of_per_descendant
     {d : ℕ} [NeZero d] (hd : 1 ≤ d)
@@ -1518,8 +1661,10 @@ private theorem upper_finite_two_le_and_infinity_split_of_per_descendant
       if hR : R ∈ descendantsAtScale (originCube d m) (m - 1 - (k : ℤ)) then
         Classical.choose (Classical.choose_spec (hper k R hR))
       else fun _ => 0
-  obtain ⟨hUoneCubeNonneg, hUexpCubeNonneg, hUoneCubeMeas, hUexpCubeMeas, hUoneCubeO, hUexpCubeO, hblock⟩ :=
-    @upperFiniteQGeTwoInfinityAggregation_momentBounds2 (d) (M) (m) (scaling) (Cblock) (Krare) (eps) (sigmaExp) (hscaling) (hper)
+  obtain ⟨hUoneCubeNonneg, hUexpCubeNonneg, hUoneCubeMeas, hUexpCubeMeas, hUoneCubeO, hUexpCubeO,
+    hblock⟩ :=
+    @upperFiniteQGeTwoInfinityAggregation_momentBounds2 (d) (M) (m) (scaling) (Cblock) (Krare)
+      (eps) (sigmaExp) (hscaling) (hper)
   let Gone : ℕ → Cutoff.CutoffSample d → ℝ := fun k =>
     blockGridSup d m k (UoneCube k)
   let Gexp : ℕ → Cutoff.CutoffSample d → ℝ := fun k =>
@@ -1538,8 +1683,12 @@ private theorem upper_finite_two_le_and_infinity_split_of_per_descendant
     dsimp [aone, gamma]
     exact upperSaturatedPerCubeAmplitude_pos hCblock hcstar
       M.shellPrefix.gamma_pos k
-  obtain ⟨hVspec, hGoneDomAE, hcollar, hWexpNonneg, hGexpEq, hXexpSumAE, hRrawAE, hYexpMeas, hRrawEqYexp, hYexpO, _⟩ :=
-    @upperFiniteQGeTwoInfinityAggregation_momentBounds3 (d) (hd) (M) (m) (s) (scaling) (Cblock) (Krare) (eps) (Bexp) (sigmaExp) (hCblock) (hsigmaExp) (hgamma1) (hp) (hrareBudget) (hper) (hrho) (hcstar) (habase) (hctop) (hUoneCubeNonneg) (hUexpCubeNonneg) (hUoneCubeMeas) (hUoneCubeO) (hUexpCubeO) (hGexpNonneg) (hGexpMeas) (haone)
+  obtain ⟨hVspec, hGoneDomAE, hcollar, hWexpNonneg, hGexpEq, hXexpSumAE, hRrawAE, hYexpMeas,
+    hRrawEqYexp, hYexpO, _⟩ :=
+    @upperFiniteQGeTwoInfinityAggregation_momentBounds3 (d) (hd) (M) (m) (s) (scaling) (Cblock)
+      (Krare) (eps) (Bexp) (sigmaExp) (hCblock) (hsigmaExp) (hgamma1) (hp) (hrareBudget) (hper)
+        (hrho) (hcstar) (habase) (hctop) (hUoneCubeNonneg) (hUexpCubeNonneg) (hUoneCubeMeas)
+          (hUoneCubeO) (hUexpCubeO) (hGexpNonneg) (hGexpMeas) (haone)
   let V : Cutoff.CutoffSample d → ℝ :=
     jointGridDepthEnvelope d m UoneCube aone
   let collar : ℕ → ℝ := fun k =>
@@ -1572,7 +1721,9 @@ private theorem upper_finite_two_le_and_infinity_split_of_per_descendant
       (originCube d m) (Cutoff.coefficientCutoff M.nu m omega)
         (by rw [show (originCube d m).scale = m from rfl]; omega)
   have hdepth : ∀ n omega,
-      Z n omega ≤ Cblock + Odepth n omega + Edepth n omega  := @upperGrid_geometricDepthWeight (d) (by infer_instance) (M) (m) (scaling) (Cblock) (Krare) (eps) (sigmaExp) (hscaling) (hper) (hUoneCubeNonneg) (hUexpCubeNonneg) (hblock)
+      Z n omega ≤ Cblock + Odepth n omega + Edepth n omega  := @upperGrid_geometricDepthWeight (d)
+        (by infer_instance) (M) (m) (scaling) (Cblock) (Krare) (eps) (sigmaExp) (hscaling) (hper)
+          (hUoneCubeNonneg) (hUexpCubeNonneg) (hblock)
   have hODomAE : ∀ᵐ omega ∂mu, ∀ n,
       Odepth n omega ≤ upperPolyProfile A gamma n * V omega := by
     filter_upwards [hGoneDomAE] with omega homega
@@ -1583,7 +1734,9 @@ private theorem upper_finite_two_le_and_infinity_split_of_per_descendant
       (mul_le_mul_of_nonneg_right hprof (hVspec.1 omega))
   let Yone : Cutoff.CutoffSample d → ℝ := fun omega => Bone * V omega
   obtain ⟨hYoneMeas, hYoneO, hGood⟩ :=
-    @upperFiniteQGeTwoInfinityAggregation_momentBounds1 (d) (M) (m) (s) (scaling) (Cblock) (Krare) (eps) (sigmaExp) (hper) (hrho) (hctop) (hBone) (hVspec) (hcollar) (hWexpNonneg) (hGexpEq) (hXexpSumAE) (hRrawAE) (hRrawEqYexp) (hODomAE)
+    @upperFiniteQGeTwoInfinityAggregation_momentBounds1 (d) (M) (m) (s) (scaling) (Cblock) (Krare)
+      (eps) (sigmaExp) (hper) (hrho) (hctop) (hBone) (hVspec) (hcollar) (hWexpNonneg) (hGexpEq)
+        (hXexpSumAE) (hRrawAE) (hRrawEqYexp) (hODomAE)
   constructor
   · intro r hr
     have hr0 : 0 < (r : ℝ) := lt_of_lt_of_le zero_lt_one r.property
@@ -1596,7 +1749,10 @@ private theorem upper_finite_two_le_and_infinity_split_of_per_descendant
       simpa only [w] using! HCPolySupport.summable_geometricWeight hsr
     have hwtsum : (∑' n, w n) = 1 := by
       simpa only [w] using! HCPolySupport.tsum_geometricWeight_eq_one hsr
-    have hae := @upperFiniteExponent_pointwiseAggregation (d) (by infer_instance) (M) (m) (s) (scaling) (Cblock) (Krare) (eps) (sigmaExp) (hs) (hs1) (hscaling) (hCblock) (hgap) (hper) (hgamma) (hA) (hVspec) (hRrawAE) (hOnonneg) (hEnonneg) (hZnonneg) (hdepth) (hGood) (r) (hr) (hr0) (ht) (hsr) (hw) (hwsum) (hwtsum)
+    have hae := @upperFiniteExponent_pointwiseAggregation (d) (by infer_instance) (M) (m) (s)
+      (scaling) (Cblock) (Krare) (eps) (sigmaExp) (hs) (hs1) (hscaling) (hCblock) (hgap) (hper)
+        (hgamma) (hA) (hVspec) (hRrawAE) (hOnonneg) (hEnonneg) (hZnonneg) (hdepth) (hGood) (r)
+          (hr) (hr0) (ht) (hsr) (hw) (hwsum) (hwtsum)
     simpa only [mu, Bone, A, rho, gamma] using
       (exists_pointwise_of_ae_threeTermSplit
         ((Observable.measurable_cutoffUpperEllipticity M m m s hs
@@ -1616,13 +1772,17 @@ private theorem upper_finite_two_le_and_infinity_split_of_per_descendant
         exact mul_le_of_le_one_left hCblock.le
           (endpointWeight_le_one (by linarith : 0 < 2 * s) n)
       have hordinary : endpointWeight (2 * s) n * Odepth n omega ≤
-          Yone omega  := @upperFiniteQGeTwoInfinityAggregation_estimate2 (d) (M) (m) (s) (scaling) (Cblock) (Krare) (eps) (sigmaExp) (hs) (hs1) (hgap) (hper) (hgamma) (hA) (hVspec) (hRrawAE) (omega) (hgood) (n) (hweight0)
+          Yone omega  := @upperFiniteQGeTwoInfinityAggregation_estimate2 (d) (M) (m) (s) (scaling)
+            (Cblock) (Krare) (eps) (sigmaExp) (hs) (hs1) (hgap) (hper) (hgamma) (hA) (hVspec)
+              (hRrawAE) (omega) (hgood) (n) (hweight0)
       have hrareTerm : endpointWeight (2 * s) n * Edepth n omega ≤ Yexp omega :=
         (hgood.2.1.le_tsum n fun j _ =>
           mul_nonneg (endpointWeight_nonneg _ j) (hEnonneg j omega)).trans
             hgood.2.2
       have hweighted : endpointWeight (2 * s) n * Z n omega ≤
-          Cblock + Yone omega + Yexp omega  := @upperFiniteQGeTwoInfinityAggregation_estimate3 (d) (M) (m) (s) (scaling) (Cblock) (Krare) (eps) (sigmaExp) (hper) (hRrawAE) (hdepth) (omega) (n) (hweight0) (hdet) (hordinary) (hrareTerm)
+          Cblock + Yone omega + Yexp omega  := @upperFiniteQGeTwoInfinityAggregation_estimate3 (d)
+            (M) (m) (s) (scaling) (Cblock) (Krare) (eps) (sigmaExp) (hper) (hRrawAE) (hdepth)
+              (omega) (n) (hweight0) (hdet) (hordinary) (hrareTerm)
       calc
         scaling * (Real.rpow (3 : ℝ) (-2 * s * (n : ℝ)) *
             Book.Ch04.maxDescendantBMatrixNormCoeffFieldAtScale

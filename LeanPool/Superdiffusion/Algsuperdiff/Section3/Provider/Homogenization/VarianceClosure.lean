@@ -235,6 +235,7 @@ private theorem starredFluctuationMatrix_isotropicComparatorMatrix_apply
 
 /-! ## The two row readings -/
 
+omit [NeZero d] in
 /-- **Primal row reading.**  The upper half of `Δ(e,0)` is
 `σ · (𝐀_{lowerRight} - 𝐂_{lowerRight})e`. -/
 private theorem mulVec_starredFluctuationMatrix_primalLoad_inl
@@ -282,6 +283,7 @@ private theorem mulVec_starredFluctuationMatrix_primalLoad_inl
   simp only [Finset.sum_const_zero, add_zero, ← Finset.mul_sum]
   rfl
 
+omit [NeZero d] in
 /-- **Dual row reading.**  The upper half of `Δ(0,e)` is
 `(𝐀_{lowerLeft} - 𝐂_{lowerLeft})e`, with no gauge weight: the two gauge
 factors `σ^{1/2}` and `σ^{-1/2}` cancel on the off-diagonal block. -/
@@ -386,6 +388,7 @@ private theorem matrixOperatorNorm_le_of_vecNormSq_matVecMul_le {N : Mat d} {K :
 
 /-! ## The carrier bridge -/
 
+omit [NeZero d] in
 /-- **The carrier bridge, lower-right channel.**  At the isotropic comparator
 normalizer `𝐁(σ)`, the squared Euclidean operator norm of the `σ_*^{-1}`
 channel of `𝐀(U;a) - 𝐂`, weighted by `σ²`, is below the squared operator norm
@@ -493,6 +496,7 @@ theorem sq_mul_sq_matrixOperatorNorm_lowerRight_sub_le_starredFluctuationOperato
           mul_le_mul_of_nonneg_left hsq hpos.le
     _ = S := by field_simp
 
+omit [NeZero d] in
 /-- **The carrier bridge, lower-left channel.**  The `σ_*^{-1}κ` channel of
 `𝐀(U;a) - 𝐂` carries **no** gauge weight: the load `(0,e)` reads the
 off-diagonal block once through `σ^{-1/2}` and once through `σ^{1/2}`.  This is
@@ -578,6 +582,7 @@ theorem sq_matrixOperatorNorm_lowerLeft_sub_le_starredFluctuationOperatorNormSq
 
 /-! ## The genuine-law instances -/
 
+omit [NeZero d] in
 /-- **The `σ_*^{-1}` variance carrier under the corridor observable.**  The
 variance-split integrand `|σ_*^{-1}(R;a) - σ_{L,*}^{-1}(□_n)|²`, weighted by the
 printed `σ_L²`, is below the Step-3 corridor observable at the same centering
@@ -591,6 +596,7 @@ theorem coefficientCutoffLaw_sq_sigmaBar_mul_starInverseCenteredFluctuationSq_le
   sq_mul_sq_matrixOperatorNorm_lowerRight_sub_le_starredFluctuationOperatorNormSq
     (Annealed.sigmaBar M L) _ _ _
 
+omit [NeZero d] in
 /-- **The `σ_*^{-1}κ` variance carrier under the corridor observable.**  Same
 statement for the lower-left channel, at weight `1`. -/
 theorem coefficientCutoffLaw_starInverseKappaCenteredFluctuationSq_le
@@ -602,6 +608,7 @@ theorem coefficientCutoffLaw_starInverseKappaCenteredFluctuationSq_le
   sq_matrixOperatorNorm_lowerLeft_sub_le_starredFluctuationOperatorNormSq
     (Annealed.sigmaBar M L) _ _ _
 
+omit [NeZero d] in
 /-- **The left side of `(e.var.bound.astar.withS)` under the corridor observable**.
 The printed combination `σ_L² var[σ_{L,*}^{-1}(□_n)] +
 var[σ_{L,*}^{-1}(□_n)κ_L(□_n)]` is at most twice the expectation of the Step-3

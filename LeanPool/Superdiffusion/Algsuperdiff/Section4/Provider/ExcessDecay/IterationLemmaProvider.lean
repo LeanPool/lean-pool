@@ -136,14 +136,18 @@ private theorem prefactorAbsorb {q P W K V R : ℝ} (hP : 0 ≤ P) (hV : 0 ≤ V
 
 private theorem iterationLemmaProvider_comparisonBounds1 :
     ∀ (d : ℕ) (_ : d ≠ (0 : ℕ)) (h : ℕ) (θ : ℝ) (n m : ℤ) (U : ℤ → Set (Vec d))
-      (_ : ∀ j ≤ m, U (j - (1 : ℤ)) ⊆ U j) (u : Vec d → ℝ) (_ : MemLp u (2 : ENNReal) (volume.restrict (U m)))
-      (B : Finset ℤ) (ε δ cc : ℤ → ℝ) (gg : ℤ → Vec d) (_ : ∀ j ≤ m, IsAffineMinimizer (U j) u (cc j) (gg j))
+      (_ : ∀ j ≤ m, U (j - (1 : ℤ)) ⊆ U j) (u : Vec d → ℝ) (_ : MemLp u (2 : ENNReal)
+        (volume.restrict (U m)))
+      (B : Finset ℤ) (ε δ cc : ℤ → ℝ) (gg : ℤ → Vec d) (_ : ∀ j ≤ m, IsAffineMinimizer (U j) u (cc
+        j) (gg j))
       (_ :
         ∀ (j : ℤ),
           n ≤ j →
             j ≤ m →
-              j ∉ B → affineExcess (U (j - (↑h : ℤ))) u ≤ θ ^ h * affineExcess (U j) u + ε j * slopeMagnitude (gg j) + δ j)
-      (_ : (0 : ℕ) < d) (_ : (1 : ℕ) ≤ h) (_ : n ≤ m) (εt : ℤ → ℝ) (_ : ∀ (j : ℤ), n ≤ j → j ≤ m → εt j = ε j)
+              j ∉ B → affineExcess (U (j - (↑h : ℤ))) u ≤ θ ^ h * affineExcess (U j) u + ε j *
+                slopeMagnitude (gg j) + δ j)
+      (_ : (0 : ℕ) < d) (_ : (1 : ℕ) ≤ h) (_ : n ≤ m) (εt : ℤ → ℝ) (_ : ∀ (j : ℤ), n ≤ j → j ≤ m →
+        εt j = ε j)
       (δt : ℤ → ℝ) (_ : ∀ (j : ℤ), n ≤ j → j ≤ m → δt j = δ j) (z : (k : ℤ) → Vec d × Vec d)
       (_ : ∀ (k : ℤ), axisCube (z k).1 ((3 : ℝ) ^ (min k m - (2 : ℤ))) ⊆ cappedWindows U m k)
       (_ : ∀ (k : ℤ), cappedWindows U m k ⊆ axisCube (z k).2 ((3 : ℝ) ^ min k m))
@@ -159,12 +163,15 @@ private theorem iterationLemmaProvider_comparisonBounds1 :
                       affineExcess (cappedWindows U m k) u ≤
                         iterKappa d * affineExcess (cappedWindows U m (k + (1 : ℤ))) u) ∧
                     (∀ (k : ℤ),
-                        |slopeMagnitude (gg (min k m)) - slopeMagnitude (gg (min (k - (1 : ℤ)) m))| ≤
+                        |slopeMagnitude (gg (min k m)) - slopeMagnitude (gg (min (k - (1 : ℤ))
+                          m))| ≤
                           iterCstab d *
-                            (affineExcess (cappedWindows U m k) u + affineExcess (cappedWindows U m (k - (1 : ℤ))) u)) ∧
+                            (affineExcess (cappedWindows U m k) u + affineExcess (cappedWindows U
+                              m (k - (1 : ℤ))) u)) ∧
                       (∀ (k : ℤ),
                           oscillationOn (cappedWindows U m k) u ≤
-                              iterCi d * (affineExcess (cappedWindows U m k) u + slopeMagnitude (gg (min k m))) ∧
+                              iterCi d * (affineExcess (cappedWindows U m k) u + slopeMagnitude
+                                (gg (min k m))) ∧
                             affineExcess (cappedWindows U m k) u + slopeMagnitude (gg (min k m)) ≤
                               iterCi d * oscillationOn (cappedWindows U m k) u) ∧
                         (∀ (j : ℤ),
@@ -172,7 +179,8 @@ private theorem iterationLemmaProvider_comparisonBounds1 :
                               j ≤ m →
                                 j ∉ B →
                                   affineExcess (cappedWindows U m (j - (↑h : ℤ))) u ≤
-                                    θ ^ h * affineExcess (cappedWindows U m j) u + εt j * slopeMagnitude (gg (min j m)) +
+                                    θ ^ h * affineExcess (cappedWindows U m j) u + εt j *
+                                      slopeMagnitude (gg (min j m)) +
                                       δt j) ∧
                           cappedWindows U m n = U n ∧
                             cappedWindows U m m = U m ∧
@@ -180,10 +188,13 @@ private theorem iterationLemmaProvider_comparisonBounds1 :
                                 oscillationOn (U m) u ≤ (9 : ℝ) * oscillationScaled m (U m) u ∧
                                   (0 : ℝ) ≤ oscillationScaled m (U m) u ∧
                                     (1 : ℝ) ≤
-                                        goodConst h (iterKappa d) (iterCstab d) * badConst (iterKappa d) (iterCstab d) ∧
+                                        goodConst h (iterKappa d) (iterCstab d) * badConst
+                                          (iterKappa d) (iterCstab d) ∧
                                       (0 : ℝ) ≤
-                                        goodConst h (iterKappa d) (iterCstab d) * badConst (iterKappa d) (iterCstab d) := by
-  intro d hd h θ n m U hnest u hu B _ _ cc gg hmin hdec hd0 _ hnmle εt hεteq δt hδteq z hqin hqout hmeasc hnestc
+                                        goodConst h (iterKappa d) (iterCstab d) * badConst
+                                          (iterKappa d) (iterCstab d) := by
+  intro d hd h θ n m U hnest u hu B _ _ cc gg hmin hdec hd0 _ hnmle εt hεteq δt hδteq z hqin hqout
+    hmeasc hnestc
   have huc : ∀ k : ℤ, MemLp u 2 (volume.restrict (cappedWindows U m k)) :=
     fun k => memLp_restrict_of_subset (cappedWindows_subset_top hnest k) hu
   have hminc : ∀ k : ℤ,
@@ -288,19 +299,21 @@ private theorem iterationLemmaProvider_comparisonBounds1 :
 
 private theorem iterationLemmaProvider_estimate1 :
     ∀ (d h : ℕ) (n m : ℤ) (U : ℤ → Set (Vec d)) (u : Vec d → ℝ)
-      (B : Finset ℤ) (gg : ℤ → Vec d) (εt : ℤ → ℝ) (hεt0 : ∀ (k : ℤ), (0 : ℝ) ≤ εt k) (δt : ℤ → ℝ)
-      (hδt0 : ∀ (k : ℤ), (0 : ℝ) ≤ δt k) (hEnn : ∀ (k : ℤ), (0 : ℝ) ≤ affineExcess (cappedWindows U m k) u)
-      (hpnn : ∀ (k : ℤ), (0 : ℝ) ≤ slopeMagnitude (gg (min k m))) (hCs0 : (0 : ℝ) ≤ iterCstab d)
-      (hgcbc1 : (1 : ℝ) ≤ goodConst h (iterKappa d) (iterCstab d) * badConst (iterKappa d) (iterCstab d))
-      (hgcbc0 : (0 : ℝ) ≤ goodConst h (iterKappa d) (iterCstab d) * badConst (iterKappa d) (iterCstab d))
-      (hΛ0 :
+      (B : Finset ℤ) (gg : ℤ → Vec d) (εt : ℤ → ℝ) (_ : ∀ (k : ℤ), (0 : ℝ) ≤ εt k) (δt : ℤ → ℝ)
+      (_ : ∀ (k : ℤ), (0 : ℝ) ≤ δt k) (_ : ∀ (k : ℤ), (0 : ℝ) ≤ affineExcess (cappedWindows U m k)
+        u)
+      (_ : ∀ (k : ℤ), (0 : ℝ) ≤ slopeMagnitude (gg (min k m))) (_ : (0 : ℝ) ≤ iterCstab d)
+      (_ : (1 : ℝ) ≤ goodConst h (iterKappa d) (iterCstab d) * badConst (iterKappa d) (iterCstab d))
+      (_ : (0 : ℝ) ≤ goodConst h (iterKappa d) (iterCstab d) * badConst (iterKappa d) (iterCstab d))
+      (_ :
         (0 : ℝ) ≤
-          (goodConst h (iterKappa d) (iterCstab d) * badConst (iterKappa d) (iterCstab d)) ^ ((3 : ℕ) * B.card + (3 : ℕ)) *
+          (goodConst h (iterKappa d) (iterCstab d) * badConst (iterKappa d) (iterCstab d)) ^ ((3 :
+            ℕ) * B.card + (3 : ℕ)) *
             Real.exp (goodRate (iterCstab d) * ∑ j ∈ Finset.Icc n m, εt j))
-      (hEpm :
+      (_ :
         affineExcess (cappedWindows U m m) u + slopeMagnitude (gg (min m m)) ≤
           (9 : ℝ) * iterCi d * oscillationScaled m (U m) u)
-      (hcbk :
+      (_ :
         ∀ (k : ℤ),
           n ≤ k →
             k ≤ m →
@@ -308,7 +321,8 @@ private theorem iterationLemmaProvider_estimate1 :
                 (goodConst h (iterKappa d) (iterCstab d) * badConst (iterKappa d) (iterCstab d)) ^
                       ((3 : ℕ) * (B ∩ Finset.Icc k m).card + (3 : ℕ)) *
                     Real.exp (goodRate (iterCstab d) * ∑ j ∈ Finset.Icc k m, εt j) *
-                  (affineExcess (cappedWindows U m m) u + slopeMagnitude (gg (min m m)) + ∑ j ∈ Finset.Icc k m, δt j))
+                  (affineExcess (cappedWindows U m m) u + slopeMagnitude (gg (min m m)) + ∑ j ∈
+                    Finset.Icc k m, δt j))
       (j : ℤ),
       n ≤ j →
         j ≤ m →
@@ -377,33 +391,35 @@ private theorem iterationLemmaProvider_estimate1 :
 
 private theorem iterationLemmaProvider_estimate2 :
     ∀ (d h : ℕ) (n m : ℤ) (U : ℤ → Set (Vec d)) (u : Vec d → ℝ)
-      (B : Finset ℤ) (ε δ : ℤ → ℝ) (hlowN : oscillationScaled n (U n) u ≤ oscillationOn (U n) u)
-      (hhighM : oscillationOn (U m) u ≤ (9 : ℝ) * oscillationScaled m (U m) u)
-      (hcbi :
+      (B : Finset ℤ) (ε δ : ℤ → ℝ) (_ : oscillationScaled n (U n) u ≤ oscillationOn (U n) u)
+      (_ : oscillationOn (U m) u ≤ (9 : ℝ) * oscillationScaled m (U m) u)
+      (_ :
         oscillationOn (U n) u ≤
           iterCi d ^ (2 : ℕ) *
                 (goodConst h (iterKappa d) (iterCstab d) * badConst (iterKappa d) (iterCstab d)) ^
                   ((3 : ℕ) * B.card + (3 : ℕ)) *
               Real.exp (goodRate (iterCstab d) * ∑ j ∈ Finset.Icc n m, ε j) *
             (oscillationOn (U m) u + ∑ j ∈ Finset.Icc n m, δ j))
-      (hQ0 :
+      (_ :
         (0 : ℝ) ≤
           iterCi d ^ (2 : ℕ) *
               (goodConst h (iterKappa d) (iterCstab d) * badConst (iterKappa d) (iterCstab d)) ^
                 ((3 : ℕ) * B.card + (3 : ℕ)) *
             Real.exp (goodRate (iterCstab d) * ∑ j ∈ Finset.Icc n m, ε j))
-      (hSdε0 : (0 : ℝ) ≤ ∑ j ∈ Finset.Icc n m, δ j)
-      (hb1 :
+      (_ : (0 : ℝ) ≤ ∑ j ∈ Finset.Icc n m, δ j)
+      (_ :
         (9 : ℝ) * iterCi d ^ (2 : ℕ) *
             ((goodConst h (iterKappa d) (iterCstab d) * badConst (iterKappa d) (iterCstab d)) ^
                 ((3 : ℕ) * B.card + (3 : ℕ)) *
               Real.exp (goodRate (iterCstab d) * ∑ j ∈ Finset.Icc n m, ε j)) ≤
           Real.exp
-            (iterConst d * ((↑h : ℝ) + (1 : ℝ)) * ((↑B.card : ℝ) + (1 : ℝ)) + iterConst d * ∑ j ∈ Finset.Icc n m, ε j))
-      (hV0 : (0 : ℝ) ≤ oscillationScaled m (U m) u + ∑ j ∈ Finset.Icc n m, δ j),
+            (iterConst d * ((↑h : ℝ) + (1 : ℝ)) * ((↑B.card : ℝ) + (1 : ℝ)) + iterConst d * ∑ j ∈
+              Finset.Icc n m, ε j))
+      (_ : (0 : ℝ) ≤ oscillationScaled m (U m) u + ∑ j ∈ Finset.Icc n m, δ j),
       oscillationScaled n (U n) u ≤
         Real.exp
-            (iterConst d * ((↑h : ℝ) + (1 : ℝ)) * ((↑B.card : ℝ) + (1 : ℝ)) + iterConst d * ∑ j ∈ Finset.Icc n m, ε j) *
+            (iterConst d * ((↑h : ℝ) + (1 : ℝ)) * ((↑B.card : ℝ) + (1 : ℝ)) + iterConst d * ∑ j ∈
+              Finset.Icc n m, ε j) *
           (oscillationScaled m (U m) u + ∑ j ∈ Finset.Icc n m, δ j) := by
   intro d h n m U u B ε δ hlowN hhighM hcbi hQ0 hSdε0 hb1 hV0
   calc oscillationScaled n (U n) u ≤ oscillationOn (U n) u := hlowN
@@ -435,18 +451,22 @@ private theorem iterationLemmaProvider_estimate2 :
         mul_le_mul_of_nonneg_right hb1 hV0
 
 private theorem iterationLemmaProvider_comparisonBounds2 :
-    ∀ (d : ℕ) (hd : d ≠ (0 : ℕ)) (h : ℕ) (θ : ℝ) (hθ01 : θ ∈ Set.Ioo (0 : ℝ) (1 : ℝ))
-      (hθh : θ ^ h ∈ Set.Ioo (0 : ℝ) (3 / 5 : ℝ)) (n m : ℤ) (hnm : n < m) (U : ℤ → Set (Vec d))
-      (hsand :
+    ∀ (d : ℕ) (_ : d ≠ (0 : ℕ)) (h : ℕ) (θ : ℝ) (_ : θ ∈ Set.Ioo (0 : ℝ) (1 : ℝ))
+      (_ : θ ^ h ∈ Set.Ioo (0 : ℝ) (3 / 5 : ℝ)) (n m : ℤ) (_ : n < m) (U : ℤ → Set (Vec d))
+      (_ :
         ∀ j ≤ m,
           ∃ (x : Vec d) (y : Vec d),
             (fun (v : Vec d) => x + v) '' openCubeSet (originCube d (j - (2 : ℤ))) ⊆ U j ∧
               U j ⊆ (fun (v : Vec d) => y + v) '' openCubeSet (originCube d j))
-      (ε δ : ℤ → ℝ) (hε : ∀ (j : ℤ), n ≤ j → j ≤ m → (0 : ℝ) ≤ ε j) (hδ : ∀ (j : ℤ), n ≤ j → j ≤ m → (0 : ℝ) ≤ δ j),
-      ∃ (_ : (0 : ℕ) < d) (_ : (0 : ℝ) < θ) (_ : θ ≤ (1 : ℝ)) (_ : θ ^ h < (3 / 5 : ℝ)) (_ : (1 : ℕ) ≤ h) (_ : n ≤ m) (εt :
-        ℤ → ℝ) (_ : ∀ (k : ℤ), (0 : ℝ) ≤ εt k) (_ : ∀ (j : ℤ), n ≤ j → j ≤ m → εt j = ε j) (δt : ℤ → ℝ) (_ :
+      (ε δ : ℤ → ℝ) (_ : ∀ (j : ℤ), n ≤ j → j ≤ m → (0 : ℝ) ≤ ε j) (_ : ∀ (j : ℤ), n ≤ j → j ≤ m →
+        (0 : ℝ) ≤ δ j),
+      ∃ (_ : (0 : ℕ) < d) (_ : (0 : ℝ) < θ) (_ : θ ≤ (1 : ℝ)) (_ : θ ^ h < (3 / 5 : ℝ)) (_ : (1 :
+        ℕ) ≤ h) (_ : n ≤ m) (εt :
+        ℤ → ℝ) (_ : ∀ (k : ℤ), (0 : ℝ) ≤ εt k) (_ : ∀ (j : ℤ), n ≤ j → j ≤ m → εt j = ε j) (δt : ℤ
+          → ℝ) (_ :
         ∀ (k : ℤ), (0 : ℝ) ≤ δt k) (_ : ∀ (j : ℤ), n ≤ j → j ≤ m → δt j = δ j) (_ :
-        ∑ j ∈ Finset.Icc n m, εt j = ∑ j ∈ Finset.Icc n m, ε j) (_ : ∑ j ∈ Finset.Icc n m, δt j = ∑ j ∈ Finset.Icc n m, δ j)
+        ∑ j ∈ Finset.Icc n m, εt j = ∑ j ∈ Finset.Icc n m, ε j) (_ : ∑ j ∈ Finset.Icc n m, δt j =
+          ∑ j ∈ Finset.Icc n m, δ j)
         (_ : (0 : ℝ) ≤ ∑ j ∈ Finset.Icc n m, εt j) (_ : (0 : ℝ) ≤ ∑ j ∈ Finset.Icc n m, δt j) (_ :
         ∀ (k : ℤ),
           ∃ (z : Vec d × Vec d),
@@ -504,7 +524,8 @@ private theorem iterationLemmaProvider_comparisonBounds2 :
     obtain ⟨x, y, hin, hout⟩ := hsand (min k m) (min_le_right _ _)
     obtain ⟨zin, zout, h1, h2⟩ := axisCube_sandwich_of_translateSandwich hin hout
     exact ⟨(zin, zout), h1, h2⟩
-  exact ⟨hd0, hθ0, hθ1, hθh35, hh, hnmle, εt, hεt0, hεteq, δt, hδt0, hδteq, hSe, hSd, hSe0, hSd0, hsandc, True.intro⟩
+  exact ⟨hd0, hθ0, hθ1, hθh35, hh, hnmle, εt, hεt0, hεteq, δt, hδt0, hδteq, hSe, hSd, hSe0, hSd0,
+    hsandc, True.intro⟩
 
 /-- **The provider for `Algsuperdiff.Frozen.Section4.iteration_lemma`.**
 
@@ -572,8 +593,10 @@ theorem iteration_lemma_provider
   classical
   refine ⟨iterConst d, iterConst_pos d, ?_⟩
   intro h θ hθ01 hθh n m hnm U hmeas hnest hsand u hu B hB ε δ hε hδ cc gg hmin hdec
-  obtain ⟨hd0, hθ0, hθ1, hθh35, hh, hnmle, εt, hεt0, hεteq, δt, hδt0, hδteq, hSe, hSd, hSe0, hSd0, hsandc, _⟩ :=
-    @iterationLemmaProvider_comparisonBounds2 (d) (hd) (h) (θ) (hθ01) (hθh) (n) (m) (hnm) (U) (hsand) (ε) (δ) (hε) (hδ)
+  obtain ⟨hd0, hθ0, hθ1, hθh35, hh, hnmle, εt, hεt0, hεteq, δt, hδt0, hδteq, hSe, hSd, hSe0, hSd0,
+    hsandc, _⟩ :=
+    @iterationLemmaProvider_comparisonBounds2 (d) (hd) (h) (θ) (hθ01) (hθh) (n) (m) (hnm) (U)
+      (hsand) (ε) (δ) (hε) (hδ)
   choose z hqin hqout using hsandc
   have hmeasc : ∀ k : ℤ, MeasurableSet (cappedWindows U m k) :=
     fun k => hmeas (min k m) (min_le_right _ _)
@@ -620,7 +643,9 @@ theorem iteration_lemma_provider
     have hgoal : oscillationScaled n (U n) u
         ≤ Real.exp (iterConst d * ((h : ℝ) + 1) * ((B.card : ℝ) + 1)
             + iterConst d * ∑ j ∈ Finset.Icc n m, ε j)
-          * (oscillationScaled m (U m) u + ∑ j ∈ Finset.Icc n m, δ j)  := @iterationLemmaProvider_estimate2 (d) (h) (n) (m) (U) (u) (B) (ε) (δ) (hlowN) (hhighM) (hcbi) (hQ0) (hSdε0) (hb1) (hV0)
+          * (oscillationScaled m (U m) u + ∑ j ∈ Finset.Icc n m, δ j)  :=
+            @iterationLemmaProvider_estimate2 (d) (h) (n) (m) (U) (u) (B) (ε) (δ) (hlowN) (hhighM)
+              (hcbi) (hQ0) (hSdε0) (hb1) (hV0)
     exact hgoal
   · -- conclusion (ii): the weighted assembly at the error scale `M · Λ · (9 Ci osc_m + ∑δ)`
     intro M hMle
@@ -669,7 +694,9 @@ theorem iteration_lemma_provider
                 * badConst (iterKappa d) (iterCstab d)) ^ (3 * B.card + 3)
               * Real.exp (goodRate (iterCstab d) * ∑ j ∈ Finset.Icc n m, εt j))
             * (9 * iterCi d * oscillationScaled m (U m) u
-              + ∑ j ∈ Finset.Icc n m, δt j)  := @iterationLemmaProvider_estimate1 (d) (h) (n) (m) (U) (u) (B) (gg) (εt) (hεt0) (δt) (hδt0) (hEnn) (hpnn) (hCs0) (hgcbc1) (hgcbc0) (hΛ0) (hEpm) (hcbk)
+              + ∑ j ∈ Finset.Icc n m, δt j)  := @iterationLemmaProvider_estimate1 (d) (h) (n) (m)
+                (U) (u) (B) (gg) (εt) (hεt0) (δt) (hδt0) (hEnn) (hpnn) (hCs0) (hgcbc1) (hgcbc0)
+                  (hΛ0) (hEpm) (hcbk)
     -- the error scale, and the weighted assembly
     have hwM : ∀ j : ℤ, n ≤ j → j ≤ m →
         εt j * slopeMagnitude (gg (min j m))

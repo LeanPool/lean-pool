@@ -565,8 +565,7 @@ private theorem crossover_scales_le (M : ABKModel d) {h : ℝ} (hh : 0 < h)
         exact Real.rpow_mul (x := 3) (by norm_num) (m : ℝ) M.gamma
       _ ≤ Real.rpow h M.gamma :=
         Real.rpow_le_rpow (Real.rpow_pos_of_pos (by norm_num) _).le hmLow hgamma0
-  ·
-    have hpow := Real.rpow_le_rpow_of_nonpos hh hmHigh.le hgm1
+  · have hpow := Real.rpow_le_rpow_of_nonpos hh hmHigh.le hgm1
     have hscale : Real.rpow 3 ((M.gamma - 1) * ((m : ℝ) + 1)) =
         Real.rpow (Real.rpow 3 ((m : ℝ) + 1)) (M.gamma - 1) := by
       rw [show (M.gamma - 1) * ((m : ℝ) + 1) =

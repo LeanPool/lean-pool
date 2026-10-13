@@ -166,17 +166,20 @@ private theorem weakGradientComposition_gradientConvergence :
               let r : ℝ := r0 / (2 : ℝ);
               let ρ : Vec d → ℝ := unitConvexApproxKernel;
               let e : ℕ → ℝ := fun (n : ℕ) => unitConvexApproxScale (n + (1 : ℕ));
-              let w : ℕ → Vec d → ℝ := fun (n : ℕ) => convexApproxSmoothRepresentative U ρ u.toFun x0 r (e n);
+              let w : ℕ → Vec d → ℝ := fun (n : ℕ) => convexApproxSmoothRepresentative U ρ u.toFun
+                x0 r (e n);
               (∀ (n : ℕ), ContDiff ℝ ((⊤ : ℕ∞) : WithTop ℕ∞) (w n)) →
                 ∀ (i : Fin d),
-                  let Dwn : ℕ → Vec d → ℝ := fun (n : ℕ) (x : Vec d) => (fderiv ℝ (w n) x : Vec d → ℝ) (basisVec i);
+                  let Dwn : ℕ → Vec d → ℝ := fun (n : ℕ) (x : Vec d) => (fderiv ℝ (w n) x : Vec d
+                    → ℝ) (basisVec i);
                   let gn : ℕ → Vec d → ℝ := fun (n : ℕ) (x : Vec d) => deriv G (w n x) * Dwn n x;
                   (gn = fun (n : ℕ) (x : Vec d) => deriv G (w n x) * Dwn n x) →
                     (1 : ℝ≥0∞) ≤ (2 : ℝ≥0∞) →
                       Continuous (deriv G) →
                         (∀ (v : Vec d → ℝ),
                             AEStronglyMeasurable v (volumeMeasureOn U) →
-                              AEStronglyMeasurable (fun (x : Vec d) => deriv G (v x)) (volumeMeasureOn U)) →
+                              AEStronglyMeasurable (fun (x : Vec d) => deriv G (v x))
+                                (volumeMeasureOn U)) →
                           (∀ (n : ℕ), MemLp (Dwn n) (2 : ℝ≥0∞) (volumeMeasureOn U)) →
                             ∀ (σ : ℕ → ℕ),
                               StrictMono σ →
@@ -184,14 +187,17 @@ private theorem weakGradientComposition_gradientConvergence :
                                     Tendsto (fun (i : ℕ) => w (σ i) x) atTop (𝓝 (u.toFun x))) →
                                   Tendsto
                                       (fun (n : ℕ) =>
-                                        eLpNorm (fun (x : Vec d) => Dwn n x - u.grad x i) (2 : ℝ≥0∞) (volumeMeasureOn U))
+                                        eLpNorm (fun (x : Vec d) => Dwn n x - u.grad x i) (2 :
+                                          ℝ≥0∞) (volumeMeasureOn U))
                                       atTop (𝓝 (0 : ℝ≥0∞)) →
                                     Tendsto
                                       (fun (k : ℕ) =>
-                                        eLpNorm (fun (x : Vec d) => gn (σ k) x - deriv G (u.toFun x) * u.grad x i)
+                                        eLpNorm (fun (x : Vec d) => gn (σ k) x - deriv G (u.toFun
+                                          x) * u.grad x i)
                                           (2 : ℝ≥0∞) (volumeMeasureOn U))
                                       atTop (𝓝 (0 : ℝ≥0∞)) := by
-  intro d U u G M hM hderiv this _ _ _ _ _ w hw_smooth i Dwn gn hgn_def h12 hderivG_cont haesm_comp hDwn_memL2 σ hσ_mono hσ_ae hDwn_conv
+  intro d U u G M hM hderiv this _ _ _ _ _ w hw_smooth i Dwn gn hgn_def h12 hderivG_cont
+    haesm_comp hDwn_memL2 σ hσ_mono hσ_ae hDwn_conv
   -- Term B via dominated convergence.
   set TB : ℕ → Vec d → ℝ :=
     fun k x => (deriv G (w (σ k) x) - deriv G (u.toFun x)) * u.grad x i with hTB_def
@@ -276,35 +282,44 @@ private theorem weakGradientComposition_gradientConvergence :
     (fun k => zero_le) hsplit
 
 private theorem approx_comparisonBounds1 :
-    ∀ {d : ℕ} {U : Set (Vec d)} (hU : IsOpenBoundedConvexDomain U) (u : H1Function U) {G : ℝ → ℝ}
-      (hG : ContDiff ℝ (1 : WithTop ℕ∞) G) {M : ℝ} (hGdiff : Differentiable ℝ G) (hGlip : LipschitzWith M.toNNReal G)
-      (this : IsFiniteMeasure (volumeMeasureOn U)) (x0 : Vec d) (r0 : ℝ),
+    ∀ {d : ℕ} {U : Set (Vec d)} (_ : IsOpenBoundedConvexDomain U) (u : H1Function U) {G : ℝ → ℝ}
+      (_ : ContDiff ℝ (1 : WithTop ℕ∞) G) {M : ℝ} (_ : Differentiable ℝ G) (_ : LipschitzWith
+        M.toNNReal G)
+      (_ : IsFiniteMeasure (volumeMeasureOn U)) (x0 : Vec d) (r0 : ℝ),
       let r : ℝ := r0 / (2 : ℝ);
-      ∀ (hr : (0 : ℝ) < r) (hball : Metric.closedBall x0 r ⊆ U),
+      ∀ (_ : (0 : ℝ) < r) (_ : Metric.closedBall x0 r ⊆ U),
         let ρ : Vec d → ℝ := unitConvexApproxKernel;
-        ∀ (hρ_def : ρ = unitConvexApproxKernel) (hρ : IsConvexApproxKernel ρ),
+        ∀ (_ : ρ = unitConvexApproxKernel) (_ : IsConvexApproxKernel ρ),
           let e : ℕ → ℝ := fun (n : ℕ) => unitConvexApproxScale (n + (1 : ℕ));
-          ∀ (he_def : e = fun (n : ℕ) => unitConvexApproxScale (n + (1 : ℕ))) (he_pos : ∀ (n : ℕ), (0 : ℝ) < e n)
-            (he_lt : ∀ (n : ℕ), e n < (1 : ℝ)),
-            let w : ℕ → Vec d → ℝ := fun (n : ℕ) => convexApproxSmoothRepresentative U ρ u.toFun x0 r (e n);
-            ∀ (hw_def : w = fun (n : ℕ) => convexApproxSmoothRepresentative U ρ u.toFun x0 r (e n))
-              (hw_smooth : ∀ (n : ℕ), ContDiff ℝ ((⊤ : ℕ∞) : WithTop ℕ∞) (w n))
-              (hw_eq : ∀ (n : ℕ), ∀ x ∈ U, w n x = unitConvexApproxSequence u.toFun x0 r (n + (1 : ℕ)) x)
-              (huLoc : LocallyIntegrableOn u.toFun U volume)
-              (hDuLoc : ∀ (j : Fin d), LocallyIntegrableOn (fun (x : Vec d) => u.grad x j) U volume)
-              (htransport :
+          ∀ (_ : e = fun (n : ℕ) => unitConvexApproxScale (n + (1 : ℕ))) (_ : ∀ (n : ℕ), (0 : ℝ) <
+            e n)
+            (_ : ∀ (n : ℕ), e n < (1 : ℝ)),
+            let w : ℕ → Vec d → ℝ := fun (n : ℕ) => convexApproxSmoothRepresentative U ρ u.toFun
+              x0 r (e n);
+            ∀ (_ : w = fun (n : ℕ) => convexApproxSmoothRepresentative U ρ u.toFun x0 r (e n))
+              (_ : ∀ (n : ℕ), ContDiff ℝ ((⊤ : ℕ∞) : WithTop ℕ∞) (w n))
+              (_ : ∀ (n : ℕ), ∀ x ∈ U, w n x = unitConvexApproxSequence u.toFun x0 r (n + (1 : ℕ))
+                x)
+              (_ : LocallyIntegrableOn u.toFun U volume)
+              (_ : ∀ (j : Fin d), LocallyIntegrableOn (fun (x : Vec d) => u.grad x j) U volume)
+              (_ :
                 ∀ (i : Fin d) (f g h : Vec d → ℝ),
-                  (∀ x ∈ U, f x = g x) → HasWeakPartialDerivOn U i g h → HasWeakPartialDerivOn U i f h)
+                  (∀ x ∈ U, f x = g x) → HasWeakPartialDerivOn U i g h → HasWeakPartialDerivOn U i
+                    f h)
               (i : Fin d),
-              let Dwn : ℕ → Vec d → ℝ := fun (n : ℕ) (x : Vec d) => (fderiv ℝ (w n) x : (a : Vec d) → ℝ) (basisVec i);
-              ∀ (hDwn_def : Dwn = fun (n : ℕ) (x : Vec d) => (fderiv ℝ (w n) x : (a : Vec d) → ℝ) (basisVec i)),
+              let Dwn : ℕ → Vec d → ℝ := fun (n : ℕ) (x : Vec d) => (fderiv ℝ (w n) x : (a : Vec
+                d) → ℝ) (basisVec i);
+              ∀ (_ : Dwn = fun (n : ℕ) (x : Vec d) => (fderiv ℝ (w n) x : (a : Vec d) → ℝ)
+                (basisVec i)),
                 let un : ℕ → Vec d → ℝ := fun (n : ℕ) (x : Vec d) => G (w n x);
                 let gn : ℕ → Vec d → ℝ := fun (n : ℕ) (x : Vec d) => deriv G (w n x) * Dwn n x;
                 let smi : ℕ → Vec d → ℝ := fun (n : ℕ) =>
                   convexApproxSmoothing ρ (fun (y : Vec d) => u.grad y i) x0 r (e n);
-                ∀ (hsmi_def : smi = fun (n : ℕ) => convexApproxSmoothing ρ (fun (y : Vec d) => u.grad y i) x0 r (e n)),
+                ∀ (_ : smi = fun (n : ℕ) => convexApproxSmoothing ρ (fun (y : Vec d) => u.grad y
+                  i) x0 r (e n)),
                   (∀ (n : ℕ), HasWeakPartialDerivOn U i (un n) (gn n)) ∧
-                    (∀ (n : ℕ), Dwn n =ᵐ[volumeMeasureOn U] fun (x : Vec d) => ((1 : ℝ) - e n) * smi n x) ∧
+                    (∀ (n : ℕ), Dwn n =ᵐ[volumeMeasureOn U] fun (x : Vec d) => ((1 : ℝ) - e n) *
+                      smi n x) ∧
                       (2 : ℝ≥0∞) ≠ ∞ ∧
                         (1 : ℝ≥0∞) ≤ (2 : ℝ≥0∞) ∧
                           (∀ (v : Vec d → ℝ),
@@ -313,10 +328,12 @@ private theorem approx_comparisonBounds1 :
                             Continuous (deriv G) ∧
                               (∀ (v : Vec d → ℝ),
                                   AEStronglyMeasurable v (volumeMeasureOn U) →
-                                    AEStronglyMeasurable (fun (x : Vec d) => deriv G (v x)) (volumeMeasureOn U)) ∧
+                                    AEStronglyMeasurable (fun (x : Vec d) => deriv G (v x))
+                                      (volumeMeasureOn U)) ∧
                                 (∀ (n : ℕ), MemLp (un n) (2 : ℝ≥0∞) (volumeMeasureOn U)) ∧
                                   ∀ (n : ℕ), MemLp (smi n) (2 : ℝ≥0∞) (volumeMeasureOn U) := by
-  intro d U hU u G hG M hGdiff hGlip this x0 r0 r hr hball ρ hρ_def hρ e he_def he_pos he_lt w hw_def hw_smooth hw_eq huLoc hDuLoc htransport i Dwn hDwn_def un gn smi hsmi_def
+  intro d U hU u G hG M hGdiff hGlip _ x0 _ r hr hball ρ hρ_def hρ e he_def he_pos he_lt w hw_def
+    hw_smooth hw_eq huLoc hDuLoc htransport i Dwn hDwn_def un gn smi hsmi_def
   have hweak_n : ∀ n, HasWeakPartialDerivOn U i (un n) (gn n) := by
     intro n
     have hGwn : ContDiff ℝ 1 (fun x => G (w n x)) :=
@@ -471,10 +488,16 @@ theorem hasWeakGradientOn_comp_of_deriv_bounded
     fun n => convexApproxSmoothing ρ (fun y => u.grad y i) x0 r (e n) with hsmi_def
   -- Each `G ∘ w n` is `C¹`, with weak `i`-partial `gn n`.
   obtain ⟨hweak_n, hbridge, h2t, h12, hcompL2, hderivG_cont, haesm_comp, hun_memL2, hsmi_memL2⟩ :=
-    (show (∀ n, HasWeakPartialDerivOn U i (un n) (gn n)) ∧ (∀ n, Dwn n =ᵐ[volumeMeasureOn U] (fun x => (1 - e n) * smi n x)) ∧ ((2 : ℝ≥0∞) ≠ ⊤) ∧ ((1 : ℝ≥0∞) ≤ 2) ∧ (∀ v : Vec d → ℝ, MemLp v 2 (volumeMeasureOn U) →
-      MemLp (fun x => G (v x)) 2 (volumeMeasureOn U)) ∧ (Continuous (deriv G)) ∧ (∀ v : Vec d → ℝ, AEStronglyMeasurable v (volumeMeasureOn U) →
-      AEStronglyMeasurable (fun x => deriv G (v x)) (volumeMeasureOn U)) ∧ (∀ n, MemLp (un n) 2 (volumeMeasureOn U)) ∧ (∀ n, MemLp (smi n) 2 (volumeMeasureOn U)) from
-      @approx_comparisonBounds1 (d) (U) (hU) (u) (G) (hG) (M) (hGdiff) (hGlip) (by infer_instance) (x0) (r0) (hr) (hball) (hρ_def) (hρ) (he_def) (he_pos) (he_lt) (hw_def) (hw_smooth) (hw_eq) (huLoc) (hDuLoc) (htransport) (i) (hDwn_def) (hsmi_def))
+    (show (∀ n, HasWeakPartialDerivOn U i (un n) (gn n)) ∧ (∀ n, Dwn n =ᵐ[volumeMeasureOn U] (fun
+      x => (1 - e n) * smi n x)) ∧ ((2 : ℝ≥0∞) ≠ ⊤) ∧ ((1 : ℝ≥0∞) ≤ 2) ∧ (∀ v : Vec d → ℝ, MemLp v
+        2 (volumeMeasureOn U) →
+      MemLp (fun x => G (v x)) 2 (volumeMeasureOn U)) ∧ (Continuous (deriv G)) ∧ (∀ v : Vec d → ℝ,
+        AEStronglyMeasurable v (volumeMeasureOn U) →
+      AEStronglyMeasurable (fun x => deriv G (v x)) (volumeMeasureOn U)) ∧ (∀ n, MemLp (un n) 2
+        (volumeMeasureOn U)) ∧ (∀ n, MemLp (smi n) 2 (volumeMeasureOn U)) from
+      @approx_comparisonBounds1 (d) (U) (hU) (u) (G) (hG) (M) (hGdiff) (hGlip) (by infer_instance)
+        (x0) (r0) (hr) (hball) (hρ_def) (hρ) (he_def) (he_pos) (he_lt) (hw_def) (hw_smooth)
+          (hw_eq) (huLoc) (hDuLoc) (htransport) (i) (hDwn_def) (hsmi_def))
   have hDwn_memL2 : ∀ n, MemLp (Dwn n) 2 (volumeMeasureOn U) := fun n =>
     ((hsmi_memL2 n).const_mul (1 - e n)).ae_eq (hbridge n).symm
   have hgn_memL2 : ∀ n, MemLp (gn n) 2 (volumeMeasureOn U) := by

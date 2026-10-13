@@ -136,7 +136,6 @@ theorem sphereMeasure_mul_integral_Ioi_weighted_sphereAverage_eq_laplacian [NeZe
 
 /-- A continuous integrable `f` that vanishes for `s > r` (with `0 < r < R`) has the same integral
 over `(0, ∞)` and over the interval `[0, R]`. -/
-
 private theorem intervalIntegral_eq_integral_Ioi_of_zero {f : ℝ → ℝ} {r R : ℝ}
     (hr : 0 < r) (hrR : r < R) (hint : Integrable f)
     (hzero : ∀ s : ℝ, r < s → f s = 0) :
@@ -192,7 +191,6 @@ This is `RadialLaplacian.hasDerivAt_weighted_radialProfile` integrated by parts 
 over `C^∞_c((0, R))` as `φ` ranges over admissible radial profiles, so this is
 the pairing consumed by
 the fundamental lemma. -/
-
 theorem integral_Ioi_test_sphereFlux_eq_neg_integral_laplacian [NeZero d]
     {u : 𝔼 → ℝ} (hu : ContDiff ℝ 2 u) {x : 𝔼} {R : ℝ}
     {φ : ℝ → ℝ} (hφ : ContDiff ℝ ∞ φ)
@@ -364,29 +362,33 @@ theorem integral_Ioi_test_sphereFlux_eq_neg_integral_laplacian [NeZero d]
   exact mul_left_cancel₀ hc0 heq
 
 private theorem fluxSubharmonic_comparisonBounds1 :
-    ∀ {d : ℕ} {u : (EuclideanSpace ℝ (Fin d)) → ℝ} {x : (EuclideanSpace ℝ (Fin d))} {ρ : ℝ} (hcont : Continuous fun (s : ℝ) => sphereFlux x s u),
+    ∀ {d : ℕ} {u : (EuclideanSpace ℝ (Fin d)) → ℝ} {x : (EuclideanSpace ℝ (Fin d))} {ρ : ℝ} (_ :
+      Continuous fun (s : ℝ) => sphereFlux x s u),
       let f₀ : ℝ := sphereFlux x ρ u;
-      ∀ (hf₀neg : f₀ < (0 : ℝ)) (δ : ℝ),
+      ∀ (_ : f₀ < (0 : ℝ)) (δ : ℝ),
         let ε : ℝ := δ / (2 : ℝ);
         let a : ℝ := ρ - ε;
         let b : ℝ := ρ + ε;
-        ∀ (hsamesign : ∀ s ∈ Icc a b, (0 : ℝ) < sphereFlux x s u * f₀) (ha0 : (0 : ℝ) < a) (hb0 : (0 : ℝ) < b),
+        ∀ (_ : ∀ s ∈ Icc a b, (0 : ℝ) < sphereFlux x s u * f₀) (_ : (0 : ℝ) < a) (_ : (0 : ℝ) < b),
           let α : ℝ := a ^ (2 : ℕ);
-          ∀ (hαdef : α = a ^ (2 : ℕ)),
+          ∀ (_ : α = a ^ (2 : ℕ)),
             let β : ℝ := b ^ (2 : ℕ);
-            ∀ (hβdef : β = b ^ (2 : ℕ)),
+            ∀ (_ : β = b ^ (2 : ℕ)),
               let L : ℝ → ℝ := fun (t : ℝ) => (t - α) / (β - α);
               let φ : ℝ → ℝ := fun (t : ℝ) => (1 : ℝ) - (L t).smoothTransition;
-              ∀ (hφ_inf : ContDiff ℝ ∞ φ) (hφ_deriv_np : ∀ (t : ℝ), deriv φ t ≤ (0 : ℝ))
-                (hφ_deriv_out : ∀ (t : ℝ), t < α ∨ β < t → deriv φ t = (0 : ℝ)),
+              ∀ (_ : ContDiff ℝ ∞ φ) (_ : ∀ (t : ℝ), deriv φ t ≤ (0 : ℝ))
+                (_ : ∀ (t : ℝ), t < α ∨ β < t → deriv φ t = (0 : ℝ)),
                 let I' : ℝ → ℝ := fun (s : ℝ) =>
                   (2 : ℝ) * s * deriv φ (s ^ (2 : ℕ)) * (s ^ (d - (1 : ℕ)) * sphereFlux x s u);
-                ∀ (hfluxPair_le : integral (volume.restrict (Ioi (0 : ℝ))) I' ≤ (0 : ℝ))
-                  (hI'def :
-                    I' = fun (s : ℝ) => (2 : ℝ) * s * deriv φ (s ^ (2 : ℕ)) * (s ^ (d - (1 : ℕ)) * sphereFlux x s u)),
+                ∀ (_ : integral (volume.restrict (Ioi (0 : ℝ))) I' ≤ (0 : ℝ))
+                  (_ :
+                    I' = fun (s : ℝ) => (2 : ℝ) * s * deriv φ (s ^ (2 : ℕ)) * (s ^ (d - (1 : ℕ)) *
+                      sphereFlux x s u)),
                   let G : ℝ → ℝ := fun (s : ℝ) => -f₀ * I' s;
-                  ∀ (hGdef : G = fun (s : ℝ) => -f₀ * I' s), Continuous I' ∧ G =ᵐ[volume.restrict (Ioi (0 : ℝ))] (0 : ℝ → ℝ) := by
-  intro d u x ρ hcont f₀ hf₀neg δ ε a b hsamesign ha0 hb0 α hαdef β hβdef L φ hφ_inf hφ_deriv_np hφ_deriv_out I' hfluxPair_le hI'def G hGdef
+                  ∀ (_ : G = fun (s : ℝ) => -f₀ * I' s), Continuous I' ∧ G =ᵐ[volume.restrict (Ioi
+                    (0 : ℝ))] (0 : ℝ → ℝ) := by
+  intro d u x _ hcont f₀ hf₀neg _ _ a b hsamesign ha0 hb0 _ hαdef β hβdef _ φ hφ_inf hφ_deriv_np
+    hφ_deriv_out I' hfluxPair_le hI'def G hGdef
   have hGintle : ∫ s in Ioi (0 : ℝ), G s ≤ 0 := by
     simp only [hGdef]
     rw [integral_const_mul]
@@ -586,7 +588,8 @@ theorem sphereFlux_nonneg_of_laplacian_nonneg [NeZero d]
   set G : ℝ → ℝ := fun s ↦ -f₀ * I' s with hGdef
   obtain ⟨hI'cont, hGae⟩ :=
     (show (Continuous I') ∧ (G =ᵐ[volume.restrict (Ioi 0)] 0) from
-      @fluxSubharmonic_comparisonBounds1 (d) (u) (x) (ρ) (hcont) (hf₀neg) (δ) (hsamesign) (ha0) (hb0) (hαdef) (hβdef) (hφ_inf) (hφ_deriv_np) (hφ_deriv_out) (hfluxPair_le) (hI'def) (hGdef))
+      @fluxSubharmonic_comparisonBounds1 (d) (u) (x) (ρ) (hcont) (hf₀neg) (δ) (hsamesign) (ha0)
+        (hb0) (hαdef) (hβdef) (hφ_inf) (hφ_deriv_np) (hφ_deriv_out) (hfluxPair_le) (hI'def) (hGdef))
   have hInull : volume ({s : ℝ | I' s ≠ 0} ∩ Ioi 0) = 0 := by
     have hIae : ∀ᵐ s ∂(volume : Measure ℝ), s ∈ Ioi 0 → I' s = 0 := by
       filter_upwards [(ae_restrict_iff' (μ := volume) measurableSet_Ioi).mp hGae]
@@ -645,7 +648,6 @@ theorem sphereFlux_nonneg_of_laplacian_nonneg [NeZero d]
 
 /-- Spherical averages of a smooth subharmonic function are nondecreasing in
 the radius. -/
-
 theorem sphereAverage_mono_of_laplacian_nonneg [NeZero d]
     {u : 𝔼 → ℝ} (hu : ContDiff ℝ 2 u) {x : 𝔼} {R : ℝ}
     (hlap : ∀ y ∈ Metric.ball x R, 0 ≤ Δ u y)

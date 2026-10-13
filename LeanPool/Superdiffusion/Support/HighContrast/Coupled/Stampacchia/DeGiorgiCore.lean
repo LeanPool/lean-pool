@@ -43,6 +43,121 @@ namespace HCPolySupport
 open HCPolySupport MeasureTheory Filter Topology
 open scoped ENNReal NNReal BigOperators
 
+private abbrev deGiorgiCore_comparisonBounds1_statement : Prop :=
+    ∀ {d : ℕ} (C_F : ℝ) (_ : (0 : ℝ) ≤ C_F) (CE : ℝ≥0),
+      let p : ℝ≥0∞ := (↑(twoStar d) : ℝ≥0∞);
+      ∀
+        (_ :
+          ∀ (z : Vec d) (L : ℝ),
+            (0 : ℝ) < L →
+              ∀ (f g : H1Function (axisCube z L)),
+                Measurable f.toFun →
+                  Measurable g.toFun →
+                    (MemH10 (axisCube z L) fun (x : Vec d) => f.toFun x - g.toFun x) →
+                      (volume : (a : Set (Vec d)) → ℝ≥0∞) {x : Vec d | x ∈ axisCube z L ∧ f.toFun
+                        x ≠ (0 : ℝ)} +
+                            (volume : (a : Set (Vec d)) → ℝ≥0∞) {x : Vec d | x ∈ axisCube z L ∧
+                              g.toFun x ≠ (0 : ℝ)} ≤
+                          (volume : (a : Set (Vec d)) → ℝ≥0∞) (axisCube z L) →
+                        (eLpNorm f.toFun p (volumeMeasureOn (axisCube z L))).toReal +
+                            (eLpNorm g.toFun p (volumeMeasureOn (axisCube z L))).toReal ≤
+                          C_F *
+                            (∑ i : Fin d,
+                                (eLpNorm (fun (x : Vec d) => f.grad x i) (2 : ℝ≥0∞)
+                                    (volumeMeasureOn (axisCube z L))).toReal +
+                              ∑ i : Fin d,
+                                (eLpNorm (fun (x : Vec d) => g.grad x i) (2 : ℝ≥0∞)
+                                    (volumeMeasureOn (axisCube z L))).toReal))
+        (_ :
+          ∀ (z : Vec d) (L : ℝ),
+            (0 : ℝ) < L →
+              ∀ (u : H1Function (axisCube z L)),
+                eLpNorm u.toFun p (volumeMeasureOn (axisCube z L)) ≤
+                  (↑CE : ℝ≥0∞) *
+                    (∑ i : Fin d, eLpNorm (fun (x : Vec d) => u.grad x i) (2 : ℝ≥0∞)
+                      (volumeMeasureOn (axisCube z L)) +
+                      ENNReal.ofReal L⁻¹ * eLpNorm u.toFun (2 : ℝ≥0∞) (volumeMeasureOn (axisCube z
+                        L))))
+        (_ : p ≠ ∞) (_ : p ≠ (0 : ℝ≥0∞)),
+        let q : ℝ := p.toReal;
+        ∀ (_ : (0 : ℝ) < q) (_ : q = p.toReal),
+          let α : ℝ := q / (2 : ℝ);
+          ∀ (_ : α = q / (2 : ℝ)),
+            let γ : ℝ := (2 : ℝ) / q;
+            ∀ (_ : γ = (2 : ℝ) / q) (_ : (1 : ℝ) < α) (z : Vec d) (L : ℝ) (_ : (0 : ℝ) < L)
+              (w₁ w₂ : H1Function (axisCube z L)) (_ : Measurable w₁.toFun) (_ : Measurable
+                w₂.toFun)
+              (_ : MemH10 (axisCube z L) fun (x : Vec d) => w₁.toFun x - w₂.toFun x) (m₀ E₀ : ℝ)
+                (_ : (0 : ℝ) ≤ E₀)
+              (_ :
+                (volume : (a : Set (Vec d)) → ℝ≥0∞) {x : Vec d | x ∈ axisCube z L ∧ m₀ < w₁.toFun
+                  x} +
+                    (volume : (a : Set (Vec d)) → ℝ≥0∞) {x : Vec d | x ∈ axisCube z L ∧ m₀ <
+                      w₂.toFun x} ≤
+                  (volume : (a : Set (Vec d)) → ℝ≥0∞) (axisCube z L))
+              (_ :
+                ∀ (k : ℝ),
+                  (0 : ℝ) ≤ k →
+                    ∑ i : Fin d,
+                          (eLpNorm
+                              ({x : Vec d | x ∈ axisCube z L ∧ m₀ + k < w₁.toFun x}.indicator fun
+                                (x : Vec d) =>
+                                w₁.grad x i)
+                              (2 : ℝ≥0∞) (volumeMeasureOn (axisCube z L))).toReal +
+                        ∑ i : Fin d,
+                          (eLpNorm
+                              ({x : Vec d | x ∈ axisCube z L ∧ m₀ + k < w₂.toFun x}.indicator fun
+                                (x : Vec d) =>
+                                w₂.grad x i)
+                              (2 : ℝ≥0∞) (volumeMeasureOn (axisCube z L))).toReal ≤
+                      E₀ *
+                        √(((volume : (a : Set (Vec d)) → ℝ≥0∞)
+                                {x : Vec d | x ∈ axisCube z L ∧ m₀ + k < w₁.toFun x}).toReal +
+                            ((volume : (a : Set (Vec d)) → ℝ≥0∞)
+                                {x : Vec d | x ∈ axisCube z L ∧ m₀ + k < w₂.toFun x}).toReal)),
+              MeasurableSet (axisCube z L) ∧
+                (volume : (a : Set (Vec d)) → ℝ≥0∞) (axisCube z L) ≠ ∞ ∧
+                  ((volume : (a : Set (Vec d)) → ℝ≥0∞) (axisCube z L)).toReal = L ^ d ∧
+                    (∀ S ⊆ axisCube z L, (volume : (a : Set (Vec d)) → ℝ≥0∞) S ≠ ∞) ∧
+                      (∀ (u : H1Function (axisCube z L)), eLpNorm u.toFun p (volumeMeasureOn
+                        (axisCube z L)) ≠ ∞) ∧
+                        (∀ (k : ℝ),
+                            (0 : ℝ) ≤ k →
+                              ∃ (fk : H1Function (axisCube z L)) (gk : H1Function (axisCube z L)),
+                                (fk.toFun = fun (x : Vec d) => max (w₁.toFun x - (m₀ + k)) (0 :
+                                  ℝ)) ∧
+                                  (gk.toFun = fun (x : Vec d) => max (w₂.toFun x - (m₀ + k)) (0 :
+                                    ℝ)) ∧
+                                    (eLpNorm fk.toFun (↑(twoStar d) : ℝ≥0∞) (volumeMeasureOn
+                                      (axisCube z L))).toReal +
+                                        (eLpNorm gk.toFun (↑(twoStar d) : ℝ≥0∞) (volumeMeasureOn
+                                          (axisCube z L))).toReal ≤
+                                      C_F * E₀ *
+                                        √(((volume : (a : Set (Vec d)) → ℝ≥0∞)
+                                                {x : Vec d | x ∈ axisCube z L ∧ m₀ + k < w₁.toFun
+                                                  x}).toReal +
+                                            ((volume : (a : Set (Vec d)) → ℝ≥0∞)
+                                                {x : Vec d | x ∈ axisCube z L ∧ m₀ + k < w₂.toFun
+                                                  x}).toReal)) ∧
+                          ∀ (k l : ℝ),
+                            (0 : ℝ) ≤ k →
+                              k < l →
+                                (l - k) ^ (2 : ℕ) *
+                                    (((volume : (a : Set (Vec d)) → ℝ≥0∞)
+                                            {x : Vec d | x ∈ axisCube z L ∧ m₀ + l < w₁.toFun
+                                              x}).toReal +
+                                        ((volume : (a : Set (Vec d)) → ℝ≥0∞)
+                                            {x : Vec d | x ∈ axisCube z L ∧ m₀ + l < w₂.toFun
+                                              x}).toReal) ^
+                                      γ ≤
+                                  C_F ^ (2 : ℕ) * E₀ ^ (2 : ℕ) *
+                                    (((volume : (a : Set (Vec d)) → ℝ≥0∞)
+                                          {x : Vec d | x ∈ axisCube z L ∧ m₀ + k < w₁.toFun
+                                            x}).toReal +
+                                      ((volume : (a : Set (Vec d)) → ℝ≥0∞)
+                                          {x : Vec d | x ∈ axisCube z L ∧ m₀ + k < w₂.toFun
+                                            x}).toReal)
+
 private theorem deGiorgi_oneSidedTruncationBound :
     ∀ {d : ℕ} (C_F : ℝ),
       (0 : ℝ) ≤ C_F →
@@ -53,8 +168,10 @@ private theorem deGiorgi_oneSidedTruncationBound :
                 Measurable f.toFun →
                   Measurable g.toFun →
                     (MemH10 (axisCube z L) fun (x : Vec d) => f.toFun x - g.toFun x) →
-                      (volume : Set (Vec d) → ℝ≥0∞) {x : Vec d | x ∈ axisCube z L ∧ f.toFun x ≠ (0 : ℝ)} +
-                            (volume : Set (Vec d) → ℝ≥0∞) {x : Vec d | x ∈ axisCube z L ∧ g.toFun x ≠ (0 : ℝ)} ≤
+                      (volume : Set (Vec d) → ℝ≥0∞) {x : Vec d | x ∈ axisCube z L ∧ f.toFun x ≠ (0
+                        : ℝ)} +
+                            (volume : Set (Vec d) → ℝ≥0∞) {x : Vec d | x ∈ axisCube z L ∧ g.toFun
+                              x ≠ (0 : ℝ)} ≤
                           (volume : Set (Vec d) → ℝ≥0∞) (axisCube z L) →
                         (eLpNorm f.toFun p (volumeMeasureOn (axisCube z L))).toReal +
                             (eLpNorm g.toFun p (volumeMeasureOn (axisCube z L))).toReal ≤
@@ -72,40 +189,53 @@ private theorem deGiorgi_oneSidedTruncationBound :
                   Measurable w₂.toFun →
                     (MemH10 (axisCube z L) fun (x : Vec d) => w₁.toFun x - w₂.toFun x) →
                       ∀ (m₀ E₀ : ℝ),
-                        (volume : Set (Vec d) → ℝ≥0∞) {x : Vec d | x ∈ axisCube z L ∧ m₀ < w₁.toFun x} +
-                              (volume : Set (Vec d) → ℝ≥0∞) {x : Vec d | x ∈ axisCube z L ∧ m₀ < w₂.toFun x} ≤
+                        (volume : Set (Vec d) → ℝ≥0∞) {x : Vec d | x ∈ axisCube z L ∧ m₀ <
+                          w₁.toFun x} +
+                              (volume : Set (Vec d) → ℝ≥0∞) {x : Vec d | x ∈ axisCube z L ∧ m₀ <
+                                w₂.toFun x} ≤
                             (volume : Set (Vec d) → ℝ≥0∞) (axisCube z L) →
                           (∀ (k : ℝ),
                               (0 : ℝ) ≤ k →
                                 ∑ i : Fin d,
                                       (eLpNorm
-                                          ({x : Vec d | x ∈ axisCube z L ∧ m₀ + k < w₁.toFun x}.indicator fun (x : Vec d) =>
+                                          ({x : Vec d | x ∈ axisCube z L ∧ m₀ + k < w₁.toFun
+                                            x}.indicator fun (x : Vec d) =>
                                             w₁.grad x i)
                                           (2 : ℝ≥0∞) (volumeMeasureOn (axisCube z L))).toReal +
                                     ∑ i : Fin d,
                                       (eLpNorm
-                                          ({x : Vec d | x ∈ axisCube z L ∧ m₀ + k < w₂.toFun x}.indicator fun (x : Vec d) =>
+                                          ({x : Vec d | x ∈ axisCube z L ∧ m₀ + k < w₂.toFun
+                                            x}.indicator fun (x : Vec d) =>
                                             w₂.grad x i)
                                           (2 : ℝ≥0∞) (volumeMeasureOn (axisCube z L))).toReal ≤
                                   E₀ *
                                     √(((volume : Set (Vec d) → ℝ≥0∞)
-                                            {x : Vec d | x ∈ axisCube z L ∧ m₀ + k < w₁.toFun x}).toReal +
+                                            {x : Vec d | x ∈ axisCube z L ∧ m₀ + k < w₁.toFun
+                                              x}).toReal +
                                         ((volume : Set (Vec d) → ℝ≥0∞)
-                                            {x : Vec d | x ∈ axisCube z L ∧ m₀ + k < w₂.toFun x}).toReal)) →
+                                            {x : Vec d | x ∈ axisCube z L ∧ m₀ + k < w₂.toFun
+                                              x}).toReal)) →
                             IsOpenBoundedConvexDomain (axisCube z L) →
                               MeasurableSet (axisCube z L) →
                                 ∀ (k : ℝ),
                                   (0 : ℝ) ≤ k →
-                                    ∃ (fk : H1Function (axisCube z L)) (gk : H1Function (axisCube z L)),
-                                      (fk.toFun = fun (x : Vec d) => max (w₁.toFun x - (m₀ + k)) (0 : ℝ)) ∧
-                                        (gk.toFun = fun (x : Vec d) => max (w₂.toFun x - (m₀ + k)) (0 : ℝ)) ∧
-                                          (eLpNorm fk.toFun p (volumeMeasureOn (axisCube z L))).toReal +
-                                              (eLpNorm gk.toFun p (volumeMeasureOn (axisCube z L))).toReal ≤
+                                    ∃ (fk : H1Function (axisCube z L)) (gk : H1Function (axisCube
+                                      z L)),
+                                      (fk.toFun = fun (x : Vec d) => max (w₁.toFun x - (m₀ + k))
+                                        (0 : ℝ)) ∧
+                                        (gk.toFun = fun (x : Vec d) => max (w₂.toFun x - (m₀ + k))
+                                          (0 : ℝ)) ∧
+                                          (eLpNorm fk.toFun p (volumeMeasureOn (axisCube z
+                                            L))).toReal +
+                                              (eLpNorm gk.toFun p (volumeMeasureOn (axisCube z
+                                                L))).toReal ≤
                                             C_F * E₀ *
                                               √(((volume : Set (Vec d) → ℝ≥0∞)
-                                                      {x : Vec d | x ∈ axisCube z L ∧ m₀ + k < w₁.toFun x}).toReal +
+                                                      {x : Vec d | x ∈ axisCube z L ∧ m₀ + k <
+                                                        w₁.toFun x}).toReal +
                                                   ((volume : Set (Vec d) → ℝ≥0∞)
-                                                      {x : Vec d | x ∈ axisCube z L ∧ m₀ + k < w₂.toFun x}).toReal) := by
+                                                      {x : Vec d | x ∈ axisCube z L ∧ m₀ + k <
+                                                        w₂.toFun x}).toReal) := by
   intro d C_F hC_F0 p hF z L hL w₁ w₂ hw₁meas hw₂meas hmatch m₀ E₀ hmedian hlevel hUdom hUmeas k hk
   obtain ⟨fk, hfk_tf, hfk_grad⟩ := exists_h1_max_sub_const hUdom w₁ (m₀ + k)
   obtain ⟨gk, hgk_tf, hgk_grad⟩ := exists_h1_max_sub_const hUdom w₂ (m₀ + k)
@@ -193,100 +323,9 @@ private theorem deGiorgi_oneSidedTruncationBound :
             ((volume {x | x ∈ axisCube z L ∧ m₀ + k < w₁.toFun x}).toReal
               + (volume {x | x ∈ axisCube z L ∧ m₀ + k < w₂.toFun x}).toReal) := by ring
 
-private theorem deGiorgiCore_comparisonBounds1 :
-    ∀ {d : ℕ} (C_F : ℝ) (hC_F0 : (0 : ℝ) ≤ C_F) (CE : ℝ≥0),
-      let p : ℝ≥0∞ := (↑(twoStar d) : ℝ≥0∞);
-      ∀
-        (hF :
-          ∀ (z : Vec d) (L : ℝ),
-            (0 : ℝ) < L →
-              ∀ (f g : H1Function (axisCube z L)),
-                Measurable f.toFun →
-                  Measurable g.toFun →
-                    (MemH10 (axisCube z L) fun (x : Vec d) => f.toFun x - g.toFun x) →
-                      (volume : (a : Set (Vec d)) → ℝ≥0∞) {x : Vec d | x ∈ axisCube z L ∧ f.toFun x ≠ (0 : ℝ)} +
-                            (volume : (a : Set (Vec d)) → ℝ≥0∞) {x : Vec d | x ∈ axisCube z L ∧ g.toFun x ≠ (0 : ℝ)} ≤
-                          (volume : (a : Set (Vec d)) → ℝ≥0∞) (axisCube z L) →
-                        (eLpNorm f.toFun p (volumeMeasureOn (axisCube z L))).toReal +
-                            (eLpNorm g.toFun p (volumeMeasureOn (axisCube z L))).toReal ≤
-                          C_F *
-                            (∑ i : Fin d,
-                                (eLpNorm (fun (x : Vec d) => f.grad x i) (2 : ℝ≥0∞)
-                                    (volumeMeasureOn (axisCube z L))).toReal +
-                              ∑ i : Fin d,
-                                (eLpNorm (fun (x : Vec d) => g.grad x i) (2 : ℝ≥0∞)
-                                    (volumeMeasureOn (axisCube z L))).toReal))
-        (hEmb :
-          ∀ (z : Vec d) (L : ℝ),
-            (0 : ℝ) < L →
-              ∀ (u : H1Function (axisCube z L)),
-                eLpNorm u.toFun p (volumeMeasureOn (axisCube z L)) ≤
-                  (↑CE : ℝ≥0∞) *
-                    (∑ i : Fin d, eLpNorm (fun (x : Vec d) => u.grad x i) (2 : ℝ≥0∞) (volumeMeasureOn (axisCube z L)) +
-                      ENNReal.ofReal L⁻¹ * eLpNorm u.toFun (2 : ℝ≥0∞) (volumeMeasureOn (axisCube z L))))
-        (hp_ne_top : p ≠ ∞) (hp_ne_zero : p ≠ (0 : ℝ≥0∞)),
-        let q : ℝ := p.toReal;
-        ∀ (hq_pos : (0 : ℝ) < q) (hq_def : q = p.toReal),
-          let α : ℝ := q / (2 : ℝ);
-          ∀ (hα_def : α = q / (2 : ℝ)),
-            let γ : ℝ := (2 : ℝ) / q;
-            ∀ (hγ_def : γ = (2 : ℝ) / q) (hα1 : (1 : ℝ) < α) (z : Vec d) (L : ℝ) (hL : (0 : ℝ) < L)
-              (w₁ w₂ : H1Function (axisCube z L)) (hw₁meas : Measurable w₁.toFun) (hw₂meas : Measurable w₂.toFun)
-              (hmatch : MemH10 (axisCube z L) fun (x : Vec d) => w₁.toFun x - w₂.toFun x) (m₀ E₀ : ℝ) (hE₀ : (0 : ℝ) ≤ E₀)
-              (hmedian :
-                (volume : (a : Set (Vec d)) → ℝ≥0∞) {x : Vec d | x ∈ axisCube z L ∧ m₀ < w₁.toFun x} +
-                    (volume : (a : Set (Vec d)) → ℝ≥0∞) {x : Vec d | x ∈ axisCube z L ∧ m₀ < w₂.toFun x} ≤
-                  (volume : (a : Set (Vec d)) → ℝ≥0∞) (axisCube z L))
-              (hlevel :
-                ∀ (k : ℝ),
-                  (0 : ℝ) ≤ k →
-                    ∑ i : Fin d,
-                          (eLpNorm
-                              ({x : Vec d | x ∈ axisCube z L ∧ m₀ + k < w₁.toFun x}.indicator fun (x : Vec d) =>
-                                w₁.grad x i)
-                              (2 : ℝ≥0∞) (volumeMeasureOn (axisCube z L))).toReal +
-                        ∑ i : Fin d,
-                          (eLpNorm
-                              ({x : Vec d | x ∈ axisCube z L ∧ m₀ + k < w₂.toFun x}.indicator fun (x : Vec d) =>
-                                w₂.grad x i)
-                              (2 : ℝ≥0∞) (volumeMeasureOn (axisCube z L))).toReal ≤
-                      E₀ *
-                        √(((volume : (a : Set (Vec d)) → ℝ≥0∞)
-                                {x : Vec d | x ∈ axisCube z L ∧ m₀ + k < w₁.toFun x}).toReal +
-                            ((volume : (a : Set (Vec d)) → ℝ≥0∞)
-                                {x : Vec d | x ∈ axisCube z L ∧ m₀ + k < w₂.toFun x}).toReal)),
-              MeasurableSet (axisCube z L) ∧
-                (volume : (a : Set (Vec d)) → ℝ≥0∞) (axisCube z L) ≠ ∞ ∧
-                  ((volume : (a : Set (Vec d)) → ℝ≥0∞) (axisCube z L)).toReal = L ^ d ∧
-                    (∀ S ⊆ axisCube z L, (volume : (a : Set (Vec d)) → ℝ≥0∞) S ≠ ∞) ∧
-                      (∀ (u : H1Function (axisCube z L)), eLpNorm u.toFun p (volumeMeasureOn (axisCube z L)) ≠ ∞) ∧
-                        (∀ (k : ℝ),
-                            (0 : ℝ) ≤ k →
-                              ∃ (fk : H1Function (axisCube z L)) (gk : H1Function (axisCube z L)),
-                                (fk.toFun = fun (x : Vec d) => max (w₁.toFun x - (m₀ + k)) (0 : ℝ)) ∧
-                                  (gk.toFun = fun (x : Vec d) => max (w₂.toFun x - (m₀ + k)) (0 : ℝ)) ∧
-                                    (eLpNorm fk.toFun (↑(twoStar d) : ℝ≥0∞) (volumeMeasureOn (axisCube z L))).toReal +
-                                        (eLpNorm gk.toFun (↑(twoStar d) : ℝ≥0∞) (volumeMeasureOn (axisCube z L))).toReal ≤
-                                      C_F * E₀ *
-                                        √(((volume : (a : Set (Vec d)) → ℝ≥0∞)
-                                                {x : Vec d | x ∈ axisCube z L ∧ m₀ + k < w₁.toFun x}).toReal +
-                                            ((volume : (a : Set (Vec d)) → ℝ≥0∞)
-                                                {x : Vec d | x ∈ axisCube z L ∧ m₀ + k < w₂.toFun x}).toReal)) ∧
-                          ∀ (k l : ℝ),
-                            (0 : ℝ) ≤ k →
-                              k < l →
-                                (l - k) ^ (2 : ℕ) *
-                                    (((volume : (a : Set (Vec d)) → ℝ≥0∞)
-                                            {x : Vec d | x ∈ axisCube z L ∧ m₀ + l < w₁.toFun x}).toReal +
-                                        ((volume : (a : Set (Vec d)) → ℝ≥0∞)
-                                            {x : Vec d | x ∈ axisCube z L ∧ m₀ + l < w₂.toFun x}).toReal) ^
-                                      γ ≤
-                                  C_F ^ (2 : ℕ) * E₀ ^ (2 : ℕ) *
-                                    (((volume : (a : Set (Vec d)) → ℝ≥0∞)
-                                          {x : Vec d | x ∈ axisCube z L ∧ m₀ + k < w₁.toFun x}).toReal +
-                                      ((volume : (a : Set (Vec d)) → ℝ≥0∞)
-                                          {x : Vec d | x ∈ axisCube z L ∧ m₀ + k < w₂.toFun x}).toReal) := by
-  intro d C_F hC_F0 CE p hF hEmb hp_ne_top hp_ne_zero q hq_pos hq_def α hα_def γ hγ_def hα1 z L hL w₁ w₂ hw₁meas hw₂meas hmatch m₀ E₀ hE₀ hmedian hlevel
+private theorem deGiorgiCore_comparisonBounds1 : deGiorgiCore_comparisonBounds1_statement := by
+  intro d C_F hC_F0 CE p hF hEmb hp_ne_top hp_ne_zero q hq_pos hq_def _ _ γ hγ_def _ z L hL w₁ w₂
+    hw₁meas hw₂meas hmatch m₀ E₀ _ hmedian hlevel
   have hUdom : IsOpenBoundedConvexDomain (axisCube z L) :=
     isOpenBoundedConvexDomain_axisCube z L
   have hUmeas : MeasurableSet (axisCube z L) := (isOpen_axisCube z L).measurableSet
@@ -454,8 +493,11 @@ theorem deGiorgi_one_sided_core {d : ℕ} (hd : 3 ≤ d) :
   refine ⟨Cd, hCd_pos.le, ?_⟩
   intro z L hL w₁ w₂ hw₁meas hw₂meas hmatch m₀ E₀ hE₀ hmedian hlevel
   -- Domain facts (spelled out to keep defeq with `hF`/`hmatch`).
-  obtain ⟨stage_hUmeas, stage_hVolU_top, stage_hVolU_toReal, stage_hSub_top, stage_hfin_2star, stage_htrunc, stage_hrec⟩ :=
-    @deGiorgiCore_comparisonBounds1 (d) (C_F) (hC_F0) (CE) (hF) (hEmb) (hp_ne_top) (hp_ne_zero) (hq_pos) (hq_def) (hα_def) (hγ_def) (hα1) (z) (L) (hL) (w₁) (w₂) (hw₁meas) (hw₂meas) (hmatch) (m₀) (E₀) (hE₀) (hmedian) (hlevel)
+  obtain ⟨stage_hUmeas, stage_hVolU_top, stage_hVolU_toReal, stage_hSub_top, stage_hfin_2star,
+    stage_htrunc, stage_hrec⟩ :=
+    @deGiorgiCore_comparisonBounds1 (d) (C_F) (hC_F0) (CE) (hF) (hEmb) (hp_ne_top) (hp_ne_zero)
+      (hq_pos) (hq_def) (hα_def) (hγ_def) (hα1) (z) (L) (hL) (w₁) (w₂) (hw₁meas) (hw₂meas)
+        (hmatch) (m₀) (E₀) (hE₀) (hmedian) (hlevel)
   have hUmeas : MeasurableSet (axisCube z L) := stage_hUmeas
   have hVolU_top : volume (axisCube z L) ≠ ⊤ := stage_hVolU_top
   have hVolU_toReal : (volume (axisCube z L)).toReal = L ^ d := stage_hVolU_toReal

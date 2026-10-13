@@ -364,7 +364,8 @@ private theorem goodEvent_comparatorDefect_squareBound :
     ∀ (d : ℕ) [NeZero d] (C9 : ℝ),
       (0 : ℝ) < C9 →
         (1 : ℝ) ≤ (3 : ℝ) ^ d →
-          ∀ (a : RegCoeffField d) (ha : Ch04.AELocallyUniformlyEllipticField a) (m L : ℤ) (sigma : ℝ) (p q : Vec d) (C : ℝ),
+          ∀ (a : RegCoeffField d) (ha : Ch04.AELocallyUniformlyEllipticField a) (m L : ℤ) (sigma :
+            ℝ) (p q : Vec d) (C : ℝ),
             C * (3 : ℝ) ^ (-(3 / 4 : ℝ) * (↑(m - L) : ℝ)) ≤ (1 / 4 : ℝ) →
               C = (320 : ℝ) * C9 + (6 : ℝ) * (3 : ℝ) ^ d + (1 : ℝ) →
                 ∀ (lamv Jm : ℝ),
@@ -381,8 +382,10 @@ private theorem goodEvent_comparatorDefect_squareBound :
                                       sigma * lamv⁻¹ ≤ (2 : ℝ) →
                                         √lamv⁻¹ ^ (2 : ℕ) = lamv⁻¹ →
                                           √(2 : ℝ) ^ (2 : ℕ) = (2 : ℝ) →
-                                            (16 : ℝ) * C9 * (sigma * T3 ^ (2 : ℕ)) ≤ (1 / 2 : ℝ) * Jm := by
-  intro _ _ C9 hC9 hdimPow _ _ m L sigma _ _ C hcons hCdef lamv Jm hJm wL hwL Ev hEv T3 hT3 hJm0 hwL0 hwL1 hsiglam hsqlam hsq2
+                                            (16 : ℝ) * C9 * (sigma * T3 ^ (2 : ℕ)) ≤ (1 / 2 : ℝ) *
+                                              Jm := by
+  intro _ _ C9 hC9 hdimPow _ _ m L sigma _ _ C hcons hCdef lamv Jm hJm wL hwL Ev hEv T3 hT3 hJm0
+    hwL0 hwL1 hsiglam hsqlam hsq2
   have hEsq : Ev ^ 2 = 2 * Jm := by
     rw [hEv, hJm, sq_maximizerEnergyL2Norm,
       maximizerEnergyL2NormSq_eq_two_mul_restrictionResponseJObservableCubeSet]
@@ -422,7 +425,8 @@ private theorem centralChildResponse_secondQuadraticBound :
           Sv =
               ∑ n ∈ Finset.Icc L m,
                 (3 : ℝ) ^ (-(↑(m - n) : ℝ)) *
-                  descendantsAverage (originCube d m) (m - n).toNat (coarseMatrixVariationSq a ha (originCube d m) p q) →
+                  descendantsAverage (originCube d m) (m - n).toNat (coarseMatrixVariationSq a ha
+                    (originCube d m) p q) →
             ∀ (Bser : ℝ),
               Bser =
                   ∑ n ∈ Finset.Icc L m,

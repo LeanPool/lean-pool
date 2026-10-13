@@ -40,6 +40,9 @@ noncomputable section
 open MeasureTheory
 open scoped BigOperators ENNReal
 
+private alias boundaryCorrectorEnergyBound :=
+  boundaryForcedCaccioppoliCorrector_coreEnergy_le_eighteen_pow_mul_zeroDirichletEnergyWithRHSRHS_sq
+
 /-- Coarse-form absorption of the zero-trace corrector parent `L²` term.
 
 This is the scalar bridge matching the LaTeX proof after the corrector parent
@@ -320,7 +323,7 @@ theorem boundaryForcedCaccioppoliCoreEnergy_le_split_homogeneous_zeroDirichlet
           (zeroDirichletEnergyWithRHSRHS ((d : ℝ) * C₀) Q a t g) ^ 2 := by
     dsimp [Eρ, ρOpen]
     exact
-      boundaryForcedCaccioppoliCorrector_coreEnergy_le_eighteen_pow_mul_zeroDirichletEnergyWithRHSRHS_sq
+      boundaryCorrectorEnergyBound
         (C := C₀) hC₀_nonneg hC₀_zero
         (Q := Q) (a := a) (t := t) (x := x) (g := g)
         ρ ht ht_lt hx hg

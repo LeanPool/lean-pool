@@ -415,7 +415,7 @@ noncomputable def finiteCorridorVarianceConst (d : ℕ) : ℝ :=
 
 private theorem combineFiniteVariance_comparisonBounds1 :
     ∀ (d : ℕ) (M : ABKModel d) (E : { E : ℝ // (1 : ℝ) ≤ E }) (L n : ℤ),
-      let this : NeZero d := ⟨by have := M.shellPrefix.dimension; omega⟩;
+      let _ : NeZero d := ⟨by have := M.shellPrefix.dimension; omega⟩;
       let x : ℝ := (↑E : ℝ)⁻¹ ^ (3 : ℕ) * M.gamma⁻¹;
       let rare : ℝ := Real.exp (-x);
       let delta : ℝ := (↑E : ℝ) ^ (2 : ℕ) * M.gamma + Real.exp (-((2 : ℝ) * x));
@@ -458,7 +458,8 @@ private theorem combineFiniteVariance_comparisonBounds1 :
               card *
                 ∑ beta : BlockCoord d,
                   (3 : ℝ) *
-                    (probeRhs (fullBlockCoordinateProbe alpha) + probeRhs (fullBlockPlusProbe alpha beta) +
+                    (probeRhs (fullBlockCoordinateProbe alpha) + probeRhs (fullBlockPlusProbe
+                      alpha beta) +
                       probeRhs (fullBlockMinusProbe alpha beta)));
       let traceRhs : ℝ := (8 : ℝ) * (card ^ (2 : ℕ) * fourthBudget);
       ∀ (_ : (0 : ℝ) < N) (_ : N⁻¹ = geom) (_ : (0 : ℝ) ≤ delta)
@@ -467,9 +468,13 @@ private theorem combineFiniteVariance_comparisonBounds1 :
         (_ : budget ≤ finiteCorridorBudgetConst * delta) (_ : ∀ (y : ℝ), (0 : ℝ) ≤ y ^ (4 : ℕ))
         (_ : (0 : ℝ) ≤ (gammaMomentConst (2 : ℝ) * (2 : ℝ) ^ (2 : ℝ)⁻¹ * A) ^ (2 : ℕ))
         (_ : (0 : ℝ) ≤ (gammaMomentConst (1 / 2 : ℝ) * (2 : ℝ) ^ (1 / 2 : ℝ)⁻¹ * D) ^ (2 : ℕ)),
-        descendantRhs ≤ (18 : ℝ) * card ^ (6 : ℕ) * finiteCorridorProbeConst d * delta * (delta + geom) ∧
-          traceRhs ≤ (8 : ℝ) * card ^ (2 : ℕ) * finiteCorridorFourthConst * delta * (delta + geom) := by
-  intro d _ _ _ _ _ _ _ delta A D c _ _ N card geom budget secondBudget fourthBudget probeRhs descendantRhs traceRhs hNpos hNinv hdeltaNonneg hsecondLe hfourthLe hbudgetLe hpow4 hbudgetSecond1 hbudgetSecond2
+        descendantRhs ≤ (18 : ℝ) * card ^ (6 : ℕ) * finiteCorridorProbeConst d * delta * (delta +
+          geom) ∧
+          traceRhs ≤ (8 : ℝ) * card ^ (2 : ℕ) * finiteCorridorFourthConst * delta * (delta +
+            geom) := by
+  intro d _ _ _ _ _ _ _ delta A D c _ _ N card geom budget secondBudget fourthBudget probeRhs
+    descendantRhs traceRhs hNpos hNinv hdeltaNonneg hsecondLe hfourthLe hbudgetLe hpow4
+      hbudgetSecond1 hbudgetSecond2
   have hbudgetNonneg : 0 ≤ budget := by
     dsimp only [budget]
     have h3 := hpow4 (gammaMomentConst 2 * (4 : ℝ) ^ ((2 : ℝ)⁻¹) * A)
@@ -569,11 +574,13 @@ private theorem combineFiniteVariance_comparisonBounds2 :
     ∀ (d : ℕ),
       let shift : ℝ := (↑(Cutoff.cutoffRelativeNormalizationShift d) : ℝ);
       let Chom : ℝ := max (64 : ℝ) ((2 : ℝ) * (shift + (1 : ℝ)));
-      ∀ (_ : (64 : ℝ) ≤ Chom) (_ : (1 : ℝ) ≤ Chom) (M : ABKModel d) (m : ℤ) (E : { E : ℝ // (1 : ℝ) ≤ E })
+      ∀ (_ : (64 : ℝ) ≤ Chom) (_ : (1 : ℝ) ≤ Chom) (M : ABKModel d) (m : ℤ) (E : { E : ℝ // (1 :
+        ℝ) ≤ E })
         (epsilon : ℝ) (_ : epsilon ∈ Set.Ioc (0 : ℝ) (1 / 2 : ℝ))
         (_ : M.gamma ≤ Chom⁻¹ * (↑E : ℝ)⁻¹ ^ (2 : ℕ) * epsilon) (L : ℤ)
         (_ : (↑L : ℝ) ≤ (↑m : ℝ) - Chom * |Real.log epsilon|),
-        L ≤ m - (1 : ℤ) ∧ (1 / 16 : ℝ) ∈ Set.Icc ((8 : ℝ) * M.gamma) (1 : ℝ) ∧ (↑E : ℝ) ^ (2 : ℕ) * M.gamma ≤ (1 / 2 : ℝ) := by
+        L ≤ m - (1 : ℤ) ∧ (1 / 16 : ℝ) ∈ Set.Icc ((8 : ℝ) * M.gamma) (1 : ℝ) ∧ (↑E : ℝ) ^ (2 : ℕ)
+          * M.gamma ≤ (1 / 2 : ℝ) := by
   intro _ _ Chom hChom64 hChomOne M m E epsilon hepsilon hgamma L hseparation
   have hepsilonPos : 0 < epsilon := hepsilon.1
   have hepsilonHalf : epsilon ≤ 1 / 2 := hepsilon.2
@@ -631,7 +638,8 @@ private theorem combineFiniteVariance_comparisonBounds2 :
   exact ⟨hLmOne, hwindow, hEgamma⟩
 
 private theorem combineFiniteVariance_comparisonBounds3 :
-    ∀ (d : ℕ) (M : ABKModel d) (m : ℤ) (E : { E : ℝ // (1 : ℝ) ≤ E }) (L n : ℤ) (_ : n ∈ Set.Icc L m)
+    ∀ (d : ℕ) (M : ABKModel d) (m : ℤ) (E : { E : ℝ // (1 : ℝ) ≤ E }) (L n : ℤ) (_ : n ∈ Set.Icc L
+      m)
       (_ : (↑E : ℝ) ^ (2 : ℕ) * M.gamma ≤ (1 / 2 : ℝ)),
       let x : ℝ := (↑E : ℝ)⁻¹ ^ (3 : ℕ) * M.gamma⁻¹;
       let rare : ℝ := Real.exp (-x);
@@ -642,7 +650,7 @@ private theorem combineFiniteVariance_comparisonBounds3 :
       let Q : TriadicCube d := originCube d (n - (L + c));
       let j : ℕ := (n - L).toNat;
       let N : ℝ := (↑(descendantsAtScale Q (-c)).card : ℝ);
-      let card : ℝ := (↑(Fintype.card (BlockCoord d)) : ℝ);
+      let _ : ℝ := (↑(Fintype.card (BlockCoord d)) : ℝ);
       let geom : ℝ := Real.rpow (3 : ℝ) (-(↑d : ℝ) * (↑j : ℝ));
       let budget : ℝ :=
         (2 : ℝ) *
@@ -668,7 +676,8 @@ private theorem combineFiniteVariance_comparisonBounds3 :
                   budget ≤ finiteCorridorBudgetConst * delta ∧
                     (∀ (y : ℝ), (0 : ℝ) ≤ y ^ (4 : ℕ)) ∧
                       (0 : ℝ) ≤ (gammaMomentConst (2 : ℝ) * (2 : ℝ) ^ (2 : ℝ)⁻¹ * A) ^ (2 : ℕ) ∧
-                        (0 : ℝ) ≤ (gammaMomentConst (1 / 2 : ℝ) * (2 : ℝ) ^ (1 / 2 : ℝ)⁻¹ * D) ^ (2 : ℕ) := by
+                        (0 : ℝ) ≤ (gammaMomentConst (1 / 2 : ℝ) * (2 : ℝ) ^ (1 / 2 : ℝ)⁻¹ * D) ^
+                          (2 : ℕ) := by
   intro d M _ E L n hn hEgamma x rare delta A D c Q j N card geom budget secondBudget fourthBudget
   have hLn : L ≤ n := hn.1
   have hscale : -c ≤ Q.scale := by

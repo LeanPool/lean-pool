@@ -116,6 +116,7 @@ theorem offGridBlockResponseMax_eq_translate (w : Vec d) (R : TriadicCube d)
 
 /-! ## 4. The shells and the multiscale error -/
 
+omit [NeZero d] in
 theorem offGridShellMax_eq_translate (w : Vec d) (P : TriadicCube d) (k : ℤ)
     (A : Ch02.TriadicCoeffFamily d) (g : CoeffField d)
     (hg : ∀ Q : TriadicCube d, (A.coeffOn Q).toCoeffField = translateCoeffField w g)
@@ -127,6 +128,7 @@ theorem offGridShellMax_eq_translate (w : Vec d) (P : TriadicCube d) (k : ℤ)
   funext R
   exact offGridBlockResponseMax_eq_translate w R A g (hg R) a0
 
+omit [NeZero d] in
 /-- **The frame bridge.**
 
 The multiscale error of the *off-grid* cube `w + P`, taken with the ambient

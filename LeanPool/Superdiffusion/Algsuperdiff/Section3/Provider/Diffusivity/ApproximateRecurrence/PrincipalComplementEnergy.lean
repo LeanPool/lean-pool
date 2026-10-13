@@ -610,7 +610,7 @@ private theorem principalComplementEnergy_comparisonBounds1 :
     ∀ (d : ℕ) (C : ℝ) (M : ABKModel d) (m h : ℤ) (a : ℕ) (R : TriadicCube d) (_ : a ≤ (32 : ℕ))
       (_ : R.scale = recurrenceMesoScale a M.gamma m h) (_ : M.gamma ≤ (1 / 1089 : ℝ))
       (_ : (↑h : ℝ) ≤ (6 : ℝ) * Disorder.cstar M * M.gamma⁻¹),
-      let this : NeZero d := ⟨by have := M.shellPrefix.dimension; omega⟩;
+      let _ : NeZero d := ⟨by have := M.shellPrefix.dimension; omega⟩;
       ∀ (_ : (0 : ℝ) < M.gamma) (_ : (0 : ℝ) ≤ (2 : ℝ) * (C * (Disorder.cstar M)⁻¹ * M.gamma⁻¹))
         (_ : (0 : ℝ) < (3 : ℝ) ^ (22 : ℝ)) (_ : R.scale ≤ m)
         (_ :
@@ -647,7 +647,8 @@ private theorem principalComplementEnergy_comparisonBounds1 :
                   coarseEnvelopeCentred M m (Annealed.sigmaBar M (m - (1 : ℤ))) R.scale M.gamma
                       coarseExponentOne.1 (translateCutoffSample (triadicCubeShift R) omega) ^
                     (8 : ℝ) ∂(↑(cutoffSampleLaw M) : Measure (CutoffSample d)) ≤
-                ((3 : ℝ) ^ (22 : ℝ) * ((2 : ℝ) * (C * (Disorder.cstar M)⁻¹ * M.gamma⁻¹))) ^ (8 : ℝ) := by
+                ((3 : ℝ) ^ (22 : ℝ) * ((2 : ℝ) * (C * (Disorder.cstar M)⁻¹ * M.gamma⁻¹))) ^ (8 :
+                  ℝ) := by
   intro d C M m h _ R ha hRscale hgamma hh _ hgpos hA0 hW0 hRm hGmem hGmom hG0
   have hF0 : ∀ omega : CutoffSample d,
       0 ≤ coarseEnvelopeCentred M m (Annealed.sigmaBar M (m - 1)) R.scale M.gamma
@@ -731,7 +732,8 @@ private theorem principalComplementEnergy_comparisonBounds2 :
                   Kgate ≤ (↑E : ℝ)⁻¹ ^ (2 : ℕ) * M.gamma⁻¹ ∧
                     (0 : ℝ) ≤ (2 : ℝ) * (C * (Disorder.cstar M)⁻¹ * M.gamma⁻¹) ∧
                       (0 : ℝ) < (3 : ℝ) ^ (22 : ℝ) ∧
-                        (0 : ℝ) ≤ (3 : ℝ) ^ (22 : ℝ) * ((2 : ℝ) * (C * (Disorder.cstar M)⁻¹ * M.gamma⁻¹)) ∧
+                        (0 : ℝ) ≤ (3 : ℝ) ^ (22 : ℝ) * ((2 : ℝ) * (C * (Disorder.cstar M)⁻¹ *
+                          M.gamma⁻¹)) ∧
                           R.scale ≤ m ∧ R.scale ≤ m - h := by
   intro _ Kgate C hC0 Cout hCout0 hCleCout hKleCout M E m h a R _ hRscale hEexp hwindow hgamma
   have hgpos : (0 : ℝ) < M.gamma := M.shellPrefix.gamma_pos

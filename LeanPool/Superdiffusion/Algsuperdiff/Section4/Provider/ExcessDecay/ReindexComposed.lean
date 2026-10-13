@@ -96,20 +96,26 @@ private abbrev reindexComposed_comparisonBounds1_statement : Prop :=
           let k0 : ℝ := (2 : ℝ) * (↑d : ℝ) * (e0 ^ (2 : ℕ) + (1 : ℝ));
           ∀ (_ : k0 = (2 : ℝ) * (↑d : ℝ) * (e0 ^ (2 : ℕ) + (1 : ℝ))),
             let b0 : ℝ := √k0 * e0 + (2 : ℝ) * k0;
-            ∀ (_ : b0 = √k0 * e0 + (2 : ℝ) * k0) (M : ABKModel d) (s : ℝ) (_ : (0 : ℝ) < s) (L m n : ℤ) (x z : Vec d)
+            ∀ (_ : b0 = √k0 * e0 + (2 : ℝ) * k0) (M : ABKModel d) (s : ℝ) (_ : (0 : ℝ) < s) (L m n
+              : ℤ) (x z : Vec d)
               (hz : z ∈ openCubeSet (originCube d m))
               (_ :
                 (fun (y : Vec d) => x + y) '' openCubeSet (originCube d n) ⊆
-                  (fun (y : Vec d) => z + y) '' openCubeSet (originCube d (n + (1 : ℤ))) ∩ openCubeSet (originCube d m))
+                  (fun (y : Vec d) => z + y) '' openCubeSet (originCube d (n + (1 : ℤ))) ∩
+                    openCubeSet (originCube d m))
               (hfr :
                 (fun (y : Vec d) => z + y) '' openCubeSet (originCube d (n + (2 : ℤ))) ∩
                     frontier (openCubeSet (originCube d m)) =
                   ∅)
-              (_ : s ≤ (1 : ℝ)) (omega : Cutoff.CutoffSample d) (u : H1Function (openCubeSet (originCube d m)))
-              (g : Vec d → Vec d) (hsubx : translateSet x (openCubeSet (originCube d n)) ⊆ openCubeSet (originCube d m))
-              (hsubz : translateSet z (openCubeSet (originCube d (n + (2 : ℤ)))) ⊆ openCubeSet (originCube d m))
+              (_ : s ≤ (1 : ℝ)) (omega : Cutoff.CutoffSample d) (u : H1Function (openCubeSet
+                (originCube d m)))
+              (g : Vec d → Vec d) (hsubx : translateSet x (openCubeSet (originCube d n)) ⊆
+                openCubeSet (originCube d m))
+              (hsubz : translateSet z (openCubeSet (originCube d (n + (2 : ℤ)))) ⊆ openCubeSet
+                (originCube d m))
               (_ :
-                Ch03.localizedCoeffEnergyValue ((fun (y : Vec d) => x - z + y) '' openCubeSet (originCube d n))
+                Ch03.localizedCoeffEnergyValue ((fun (y : Vec d) => x - z + y) '' openCubeSet
+                  (originCube d n))
                     ((fluxCorrectedCoeffFamily M L (n + (3 : ℤ)) (originCube d (n + (3 : ℤ)))
                           (Cutoff.translateCutoffSample z omega)).coeffOn
                       (originCube d (n + (2 : ℤ))))
@@ -123,24 +129,31 @@ private abbrev reindexComposed_comparisonBounds1_statement : Prop :=
                       u.toFun g)
               (_ :
                 MemLp g (2 : ENNReal)
-                  (normalizedVolumeMeasureOn ((fun (y : Vec d) => x + y) '' openCubeSet (originCube d n))))
+                  (normalizedVolumeMeasureOn ((fun (y : Vec d) => x + y) '' openCubeSet
+                    (originCube d n))))
               (_ :
                 MemLp (Gagliardo.gagliardoKernel s (2 : ENNReal) g) (2 : ENNReal)
-                  (normalizedGagliardoMeasureOn ((fun (y : Vec d) => x + y) '' openCubeSet (originCube d n))))
+                  (normalizedGagliardoMeasureOn ((fun (y : Vec d) => x + y) '' openCubeSet
+                    (originCube d n))))
               (_ :
-                Ch03.h1EnergyNormOnCube (originCube d n) (parentRebasedFamily M L (n + (3 : ℤ)) x z omega)
-                    (H1Function.untranslate x (u.restrict (isOpen_translateSet_openCubeSet x n) hsubx)) =
-                  √(Ch03.localizedCoeffEnergyValue ((fun (y : Vec d) => x - z + y) '' openCubeSet (originCube d n))
+                Ch03.h1EnergyNormOnCube (originCube d n) (parentRebasedFamily M L (n + (3 : ℤ)) x
+                  z omega)
+                    (H1Function.untranslate x (u.restrict (isOpen_translateSet_openCubeSet x n)
+                      hsubx)) =
+                  √(Ch03.localizedCoeffEnergyValue ((fun (y : Vec d) => x - z + y) '' openCubeSet
+                    (originCube d n))
                       ((fluxCorrectedCoeffFamily M L (n + (3 : ℤ)) (originCube d (n + (3 : ℤ)))
                             (Cutoff.translateCutoffSample z omega)).coeffOn
                         (originCube d (n + (2 : ℤ))))
-                      (H1Function.untranslate z (u.restrict (isOpen_translateSet_openCubeSet z (n + (2 : ℤ))) hsubz)))),
+                      (H1Function.untranslate z (u.restrict (isOpen_translateSet_openCubeSet z (n
+                        + (2 : ℤ))) hsubz)))),
               let Erep : ℝ :=
                 fluxCorrectedErrorRepresentative M L (n + (3 : ℤ)) ⟨s / (8 : ℝ), (by positivity)⟩
                   (Cutoff.translateCutoffSample z omega);
               ∀ (_ : Erep ≤ CE * (1 / 2 : ℝ)) (_ : (0 : ℝ) ≤ Erep),
                 let Eb : ℝ :=
-                  √(offGridStabilityConst d (s / (6 : ℝ)) (s / (8 : ℝ))) * ((3 : ℝ) ^ ((3 : ℝ) * (s / (8 : ℝ))) * Erep);
+                  √(offGridStabilityConst d (s / (6 : ℝ)) (s / (8 : ℝ))) * ((3 : ℝ) ^ ((3 : ℝ) *
+                    (s / (8 : ℝ))) * Erep);
                 ∀
                   (_ :
                     ∀ (x : Vec d) (m : ℤ),
@@ -149,15 +162,18 @@ private abbrev reindexComposed_comparisonBounds1_statement : Prop :=
                             openCubeSet (originCube d m) →
                         Ch03.coarseGrainingHomogenizationErrorAtDepth (originCube d n)
                             (parentRebasedFamily M L (n + (3 : ℤ)) x z omega)
-                            (scalarComparator (Annealed.sigmaBar M (n + (3 : ℤ))).property) (s / (3 : ℝ)) (0 : ℕ) ≤
+                            (scalarComparator (Annealed.sigmaBar M (n + (3 : ℤ))).property) (s /
+                              (3 : ℝ)) (0 : ℕ) ≤
                           Eb)
                   (_ :
                     ∀ (x : Vec d) (m : ℤ),
                       (fun (y : Vec d) => x + y) '' openCubeSet (originCube d n) ⊆
                           (fun (y : Vec d) => z + y) '' openCubeSet (originCube d (n + (1 : ℤ))) ∩
                             openCubeSet (originCube d m) →
-                        coarseGrainingForceBracket (originCube d n) (parentRebasedFamily M L (n + (3 : ℤ)) x z omega)
-                            (scalarComparator (Annealed.sigmaBar M (n + (3 : ℤ))).property) (s / (3 : ℝ)) ≤
+                        coarseGrainingForceBracket (originCube d n) (parentRebasedFamily M L (n +
+                          (3 : ℤ)) x z omega)
+                            (scalarComparator (Annealed.sigmaBar M (n + (3 : ℤ))).property) (s /
+                              (3 : ℝ)) ≤
                           √((2 : ℝ) * (↑d : ℝ) * (Eb ^ (2 : ℕ) + (1 : ℝ))) * Eb +
                             (2 : ℝ) * ((2 : ℝ) * (↑d : ℝ) * (Eb ^ (2 : ℕ) + (1 : ℝ))))
                   (_ :
@@ -171,20 +187,24 @@ private abbrev reindexComposed_comparisonBounds1_statement : Prop :=
                           (fun (y : Vec d) =>
                             u.toFun y -
                               volumeAverage
-                                ((fun (y' : Vec d) => z + y') '' openCubeSet (originCube d (n + (2 : ℤ))) ∩
+                                ((fun (y' : Vec d) => z + y') '' openCubeSet (originCube d (n + (2
+                                  : ℤ))) ∩
                                   openCubeSet (originCube d m))
                                 u.toFun)
                           (2 : ENNReal)
                           (normalizedVolumeMeasureOn
-                            ((fun (y' : Vec d) => z + y') '' openCubeSet (originCube d (n + (2 : ℤ))) ∩
+                            ((fun (y' : Vec d) => z + y') '' openCubeSet (originCube d (n + (2 :
+                              ℤ))) ∩
                               openCubeSet (originCube d m)))).toReal;
                     let Y : ℝ :=
                       (normalizedGagliardoESeminormOn
-                          ((fun (y' : Vec d) => z + y') '' openCubeSet (originCube d (n + (2 : ℤ))) ∩
+                          ((fun (y' : Vec d) => z + y') '' openCubeSet (originCube d (n + (2 :
+                            ℤ))) ∩
                             openCubeSet (originCube d m))
                           s g).toReal;
                     let Ychild : ℝ :=
-                      (normalizedGagliardoESeminormOn ((fun (y : Vec d) => x + y) '' openCubeSet (originCube d n)) s
+                      (normalizedGagliardoESeminormOn ((fun (y : Vec d) => x + y) '' openCubeSet
+                        (originCube d n)) s
                           g).toReal;
                     let P2 : ℝ := Real.rpow (3 : ℝ) (-(↑(n + (2 : ℤ)) : ℝ));
                     let QS : ℝ := s.rpow (-3 : ℝ);
@@ -195,134 +215,123 @@ private abbrev reindexComposed_comparisonBounds1_statement : Prop :=
                     (0 : ℝ) ≤ S4 ∧
                       (0 : ℝ) ≤ S7 ∧
                         (0 : ℝ) ≤ sig⁻¹ ∧
-                          coarseGrainingForceBracket (originCube d n) (parentRebasedFamily M L (n + (3 : ℤ)) x z omega)
-                                (scalarComparator (Annealed.sigmaBar M (n + (3 : ℤ))).property) (s / (3 : ℝ)) ≤
+                          coarseGrainingForceBracket (originCube d n) (parentRebasedFamily M L (n
+                            + (3 : ℤ)) x z omega)
+                                (scalarComparator (Annealed.sigmaBar M (n + (3 : ℤ))).property) (s
+                                  / (3 : ℝ)) ≤
                               b0 ∧
-                            coarseGrainingEnergyTerm (originCube d n) (parentRebasedFamily M L (n + (3 : ℤ)) x z omega)
-                                  (scalarComparator (Annealed.sigmaBar M (n + (3 : ℤ))).property) (s / (3 : ℝ))
-                                  (H1Function.untranslate x (u.restrict (isOpen_translateSet_openCubeSet x n) hsubx)) ≤
+                            coarseGrainingEnergyTerm (originCube d n) (parentRebasedFamily M L (n
+                              + (3 : ℤ)) x z omega)
+                                  (scalarComparator (Annealed.sigmaBar M (n + (3 : ℤ))).property)
+                                    (s / (3 : ℝ))
+                                  (H1Function.untranslate x (u.restrict
+                                    (isOpen_translateSet_openCubeSet x n) hsubx)) ≤
                                 kappa * √Cout * Erep * (sig * (P2 * X) + QS * (Q3s * Y)) ∧
-                              (Ch03.scaleNormalizedPositiveBesovVectorSeminormTwo (originCube d n) s fun (y : Vec d) =>
+                              (Ch03.scaleNormalizedPositiveBesovVectorSeminormTwo (originCube d n)
+                                s fun (y : Vec d) =>
                                   -g (y + x)) ≤
                                 besovGagliardoConstant d * Q3sn * Ychild
 
 private abbrev reindexComposed_comparisonBounds3_statement : Prop :=
-    ∀ (d : ℕ) [inst : NeZero d] (CE Cout : ℝ) (hCoutpos : (0 : ℝ) < Cout),
+    ∀ (d : ℕ) [NeZero d] (CE Cout : ℝ) (_ : (0 : ℝ) < Cout),
       let kappa : ℝ := √((192 : ℝ) * (↑d : ℝ)) * (3 : ℝ);
-      ∀ (hkappadef : kappa = √((192 : ℝ) * (↑d : ℝ)) * (3 : ℝ)) (hkappa : (0 : ℝ) ≤ kappa),
+      ∀ (_ : kappa = √((192 : ℝ) * (↑d : ℝ)) * (3 : ℝ)) (_ : (0 : ℝ) ≤ kappa),
         let e0 : ℝ := kappa * (CE * (1 / 2 : ℝ));
-        ∀ (he0def : e0 = kappa * (CE * (1 / 2 : ℝ))),
+        ∀ (_ : e0 = kappa * (CE * (1 / 2 : ℝ))),
           let k0 : ℝ := (2 : ℝ) * (↑d : ℝ) * (e0 ^ (2 : ℕ) + (1 : ℝ));
-          ∀ (hk0def : k0 = (2 : ℝ) * (↑d : ℝ) * (e0 ^ (2 : ℕ) + (1 : ℝ))),
+          ∀ (_ : k0 = (2 : ℝ) * (↑d : ℝ) * (e0 ^ (2 : ℕ) + (1 : ℝ))),
             let b0 : ℝ := √k0 * e0 + (2 : ℝ) * k0;
-            ∀ (hb0def : b0 = √k0 * e0 + (2 : ℝ) * k0) (hb0 : (0 : ℝ) ≤ b0) (M : ABKModel d) (s : ℝ) (hs : (0 : ℝ) < s)
-              (L m n : ℤ) (hmL : m ≤ L) (hnm : n + (3 : ℤ) ≤ m) (x z : Vec d) (hz : z ∈ openCubeSet (originCube d m))
-              (hgeom :
+            ∀ (_ : b0 = √k0 * e0 + (2 : ℝ) * k0) (_ : (0 : ℝ) ≤ b0) (M : ABKModel d) (s : ℝ) (_ :
+              (0 : ℝ) < s)
+              (L m n : ℤ) (_ : m ≤ L) (_ : n + (3 : ℤ) ≤ m) (x z : Vec d) (hz : z ∈ openCubeSet
+                (originCube d m))
+              (_ :
                 (fun (y : Vec d) => x + y) '' openCubeSet (originCube d n) ⊆
-                  (fun (y : Vec d) => z + y) '' openCubeSet (originCube d (n + (1 : ℤ))) ∩ openCubeSet (originCube d m))
+                  (fun (y : Vec d) => z + y) '' openCubeSet (originCube d (n + (1 : ℤ))) ∩
+                    openCubeSet (originCube d m))
               (hfr :
                 (fun (y : Vec d) => z + y) '' openCubeSet (originCube d (n + (2 : ℤ))) ∩
                     frontier (openCubeSet (originCube d m)) =
                   ∅)
-              (hs1 : s ≤ (1 : ℝ)) (omega : Cutoff.CutoffSample d)
-              (hcapE :
+              (_ : s ≤ (1 : ℝ)) (omega : Cutoff.CutoffSample d)
+              (_ :
                 omega ∈
                     Frozen.Section4.goodEventAt M (cgEllipLowerConstant d) (n + (3 : ℤ)) z
                       ⟨s / (8 : ℝ),
-                        (by
-                          solve
-                          | norm_num
-                          | positivity
-                          | assumption
-                          | omega
-                          | linarith)⟩
+                        (by positivity)⟩
                       (1 / 2 : ℝ) →
                   ∀ (L : ℤ),
                     n + (3 : ℤ) ≤ L →
                       fluxCorrectedErrorRepresentative M L (n + (3 : ℤ))
                           ⟨s / (8 : ℝ),
-                            (by
-                              solve
-                              | norm_num
-                              | positivity
-                              | assumption
-                              | omega
-                              | linarith)⟩
+                            (by positivity)⟩
                           (Cutoff.translateCutoffSample z omega) ≤
                         CE * (1 / 2 : ℝ))
-              (hcacc :
+              (_ :
                 omega ∈
                     Frozen.Section4.goodEventAt M (cgEllipLowerConstant d) (n + (3 : ℤ)) z
                       ⟨s / (8 : ℝ),
-                        (by
-                          solve
-                          | norm_num
-                          | positivity
-                          | assumption
-                          | omega
-                          | linarith)⟩
+                        (by positivity)⟩
                       (1 / 2 : ℝ) →
                   ∀ (u hdat : H1Function (openCubeSet (originCube d m))) (g : Vec d → Vec d),
-                    IsDirichletSolutionOn (Cutoff.coefficientCutoff M.nu L omega).toCoeffField (originCube d m) u hdat g →
+                    IsDirichletSolutionOn (Cutoff.coefficientCutoff M.nu L omega).toCoeffField
+                      (originCube d m) u hdat g →
                       MemLp g (2 : ENNReal)
                           (normalizedVolumeMeasureOn
-                            ((fun (y' : Vec d) => z + y') '' openCubeSet (originCube d (n + (2 : ℤ))) ∩
+                            ((fun (y' : Vec d) => z + y') '' openCubeSet (originCube d (n + (2 :
+                              ℤ))) ∩
                               openCubeSet (originCube d m))) →
                         MemLp (Gagliardo.gagliardoKernel s (2 : ENNReal) g) (2 : ENNReal)
                             (normalizedGagliardoMeasureOn
-                              ((fun (y' : Vec d) => z + y') '' openCubeSet (originCube d (n + (2 : ℤ))) ∩
+                              ((fun (y' : Vec d) => z + y') '' openCubeSet (originCube d (n + (2 :
+                                ℤ))) ∩
                                 openCubeSet (originCube d m))) →
-                          Ch03.localizedCoeffEnergyValue ((fun (y : Vec d) => x - z + y) '' openCubeSet (originCube d n))
-                              ((fluxCorrectedCoeffFamily M L (n + (3 : ℤ)) (originCube d (n + (3 : ℤ)))
+                          Ch03.localizedCoeffEnergyValue ((fun (y : Vec d) => x - z + y) ''
+                            openCubeSet (originCube d n))
+                              ((fluxCorrectedCoeffFamily M L (n + (3 : ℤ)) (originCube d (n + (3 :
+                                ℤ)))
                                     (Cutoff.translateCutoffSample z omega)).coeffOn
                                 (originCube d (n + (2 : ℤ))))
                               (H1Function.untranslate z
                                 (u.restrict (isOpen_translateSet_openCubeSet z (n + (2 : ℤ)))
-                                  (translateSet_openCubeSet_subset_of_frontier_inter_empty hz hfr))) ≤
+                                  (translateSet_openCubeSet_subset_of_frontier_inter_empty hz
+                                    hfr))) ≤
                             Cout *
                               constantDatumAnchorEnergyRHSOn_addThree M n s
-                                ((fun (y' : Vec d) => z + y') '' openCubeSet (originCube d (n + (2 : ℤ))) ∩
+                                ((fun (y' : Vec d) => z + y') '' openCubeSet (originCube d (n + (2
+                                  : ℤ))) ∩
                                   openCubeSet (originCube d m))
                                 u.toFun g)
-              (herrD :
+              (_ :
                 ∀ (x : Vec d) (m : ℤ),
                   (fun (y : Vec d) => x + y) '' openCubeSet (originCube d n) ⊆
                       (fun (y : Vec d) => z + y) '' openCubeSet (originCube d (n + (1 : ℤ))) ∩
                         openCubeSet (originCube d m) →
                     Ch03.coarseGrainingHomogenizationErrorAtDepth (originCube d n)
                         (parentRebasedFamily M L (n + (3 : ℤ)) x z omega)
-                        (scalarComparator (Annealed.sigmaBar M (n + (3 : ℤ))).property) (s / (3 : ℝ)) (0 : ℕ) ≤
+                        (scalarComparator (Annealed.sigmaBar M (n + (3 : ℤ))).property) (s / (3 :
+                          ℝ)) (0 : ℕ) ≤
                       √(offGridStabilityConst d (s / (6 : ℝ)) (s / (8 : ℝ))) *
                         ((3 : ℝ) ^ ((3 : ℝ) * (s / (8 : ℝ))) *
                           fluxCorrectedErrorRepresentative M L (n + (3 : ℤ))
                             ⟨s / (8 : ℝ),
-                              (by
-                                solve
-                                | norm_num
-                                | positivity
-                                | assumption
-                                | omega
-                                | linarith)⟩
+                              (by positivity)⟩
                             (Cutoff.translateCutoffSample z omega)))
-              (hbrk :
+              (_ :
                 ∀ (x : Vec d) (m : ℤ),
                   (fun (y : Vec d) => x + y) '' openCubeSet (originCube d n) ⊆
                       (fun (y : Vec d) => z + y) '' openCubeSet (originCube d (n + (1 : ℤ))) ∩
                         openCubeSet (originCube d m) →
-                    coarseGrainingForceBracket (originCube d n) (parentRebasedFamily M L (n + (3 : ℤ)) x z omega)
-                        (scalarComparator (Annealed.sigmaBar M (n + (3 : ℤ))).property) (s / (3 : ℝ)) ≤
+                    coarseGrainingForceBracket (originCube d n) (parentRebasedFamily M L (n + (3 :
+                      ℤ)) x z omega)
+                        (scalarComparator (Annealed.sigmaBar M (n + (3 : ℤ))).property) (s / (3 :
+                          ℝ)) ≤
                       √((2 : ℝ) * (↑d : ℝ) *
                               ((√(offGridStabilityConst d (s / (6 : ℝ)) (s / (8 : ℝ))) *
                                     ((3 : ℝ) ^ ((3 : ℝ) * (s / (8 : ℝ))) *
                                       fluxCorrectedErrorRepresentative M L (n + (3 : ℤ))
                                         ⟨s / (8 : ℝ),
-                                          (by
-                                            solve
-                                            | norm_num
-                                            | positivity
-                                            | assumption
-                                            | omega
-                                            | linarith)⟩
+                                          (by positivity)⟩
                                         (Cutoff.translateCutoffSample z omega))) ^
                                   (2 : ℕ) +
                                 (1 : ℝ))) *
@@ -330,13 +339,7 @@ private abbrev reindexComposed_comparisonBounds3_statement : Prop :=
                             ((3 : ℝ) ^ ((3 : ℝ) * (s / (8 : ℝ))) *
                               fluxCorrectedErrorRepresentative M L (n + (3 : ℤ))
                                 ⟨s / (8 : ℝ),
-                                  (by
-                                    solve
-                                    | norm_num
-                                    | positivity
-                                    | assumption
-                                    | omega
-                                    | linarith)⟩
+                                  (by positivity)⟩
                                 (Cutoff.translateCutoffSample z omega))) +
                         (2 : ℝ) *
                           ((2 : ℝ) * (↑d : ℝ) *
@@ -344,41 +347,32 @@ private abbrev reindexComposed_comparisonBounds3_statement : Prop :=
                                   ((3 : ℝ) ^ ((3 : ℝ) * (s / (8 : ℝ))) *
                                     fluxCorrectedErrorRepresentative M L (n + (3 : ℤ))
                                       ⟨s / (8 : ℝ),
-                                        (by
-                                          solve
-                                          | norm_num
-                                          | positivity
-                                          | assumption
-                                          | omega
-                                          | linarith)⟩
+                                        (by positivity)⟩
                                       (Cutoff.translateCutoffSample z omega))) ^
                                 (2 : ℕ) +
                               (1 : ℝ))))
-              (hmem :
+              (_ :
                 omega ∈
                   Frozen.Section4.goodEventAt M (cgEllipLowerConstant d) (n + (3 : ℤ)) z
                     ⟨s / (8 : ℝ),
-                      (by
-                        solve
-                        | norm_num
-                        | positivity
-                        | assumption
-                        | omega
-                        | linarith)⟩
+                      (by positivity)⟩
                     (1 / 2 : ℝ))
               (u hdat : H1Function (openCubeSet (originCube d m))) (g : Vec d → Vec d)
-              (hsol : IsDirichletSolutionOn (Cutoff.coefficientCutoff M.nu L omega).toCoeffField (originCube d m) u hdat g)
-              (hgL2 : MemLp g (2 : ENNReal) (normalizedVolumeMeasureOn (openCubeSet (originCube d m))))
-              (hgW :
+              (_ : IsDirichletSolutionOn (Cutoff.coefficientCutoff M.nu L omega).toCoeffField
+                (originCube d m) u hdat g)
+              (_ : MemLp g (2 : ENNReal) (normalizedVolumeMeasureOn (openCubeSet (originCube d m))))
+              (_ :
                 MemLp (Gagliardo.gagliardoKernel s (2 : ENNReal) g) (2 : ENNReal)
                   (normalizedGagliardoMeasureOn (openCubeSet (originCube d m))))
               (v : H1Function ((fun (y : Vec d) => x + y) '' openCubeSet (originCube d n)))
               (w : H10Function ((fun (y : Vec d) => x + y) '' openCubeSet (originCube d n)))
-              (hharm : IsWeaklyHarmonicOn ((fun (y : Vec d) => x + y) '' openCubeSet (originCube d n)) v)
-              (hval : ∀ (y : Vec d), v.toFun y = u.toFun y - w.toFun y)
-              (hgrad : ∀ (y : Vec d), v.grad y = u.grad y - w.grad y)
-              (hsig : (0 : ℝ) < (↑(Annealed.sigmaBar M (n + (3 : ℤ))) : ℝ)),
-              ∃ (hsubx : translateSet x (openCubeSet (originCube d n)) ⊆ openCubeSet (originCube d m)) (_ :
+              (_ : IsWeaklyHarmonicOn ((fun (y : Vec d) => x + y) '' openCubeSet (originCube d n))
+                v)
+              (_ : ∀ (y : Vec d), v.toFun y = u.toFun y - w.toFun y)
+              (_ : ∀ (y : Vec d), v.grad y = u.grad y - w.grad y)
+              (_ : (0 : ℝ) < (↑(Annealed.sigmaBar M (n + (3 : ℤ))) : ℝ)),
+              ∃ (hsubx : translateSet x (openCubeSet (originCube d n)) ⊆ openCubeSet (originCube d
+                m)) (_ :
                 fluxCorrectedErrorRepresentative M L (n + (3 : ℤ)) ⟨s / (8 : ℝ), (by positivity)⟩
                     (Cutoff.translateCutoffSample z omega) ≤
                   CE * (1 / 2 : ℝ))
@@ -387,19 +381,24 @@ private abbrev reindexComposed_comparisonBounds3_statement : Prop :=
                   fluxCorrectedErrorRepresentative M L (n + (3 : ℤ)) ⟨s / (8 : ℝ), (by positivity)⟩
                     (Cutoff.translateCutoffSample z omega))
                 (_ : (0 : ℝ) < (↑(Annealed.sigmaBar M (n + (3 : ℤ))) : ℝ)) (_ :
-                Real.rpow (3 : ℝ) (-(↑(n + (2 : ℤ)) : ℝ)) = Real.rpow (3 : ℝ) (-(↑(n + (2 : ℤ)) : ℝ))) (_ :
+                Real.rpow (3 : ℝ) (-(↑(n + (2 : ℤ)) : ℝ)) = Real.rpow (3 : ℝ) (-(↑(n + (2 : ℤ)) :
+                  ℝ))) (_ :
                 s.rpow (-3 : ℝ) = s.rpow (-3 : ℝ)) (_ :
-                Real.rpow (3 : ℝ) (s * (↑(n + (2 : ℤ)) : ℝ)) = Real.rpow (3 : ℝ) (s * (↑(n + (2 : ℤ)) : ℝ))) (_ :
+                Real.rpow (3 : ℝ) (s * (↑(n + (2 : ℤ)) : ℝ)) = Real.rpow (3 : ℝ) (s * (↑(n + (2 :
+                  ℤ)) : ℝ))) (_ :
                 Real.rpow (3 : ℝ) (s * (↑n : ℝ)) = Real.rpow (3 : ℝ) (s * (↑n : ℝ))) (_ :
-                Real.rpow (3 : ℝ) (((1 : ℝ) + s) * (↑n : ℝ)) = Real.rpow (3 : ℝ) (((1 : ℝ) + s) * (↑n : ℝ))) (_ :
-                Real.rpow (3 : ℝ) (↑n : ℝ) = Real.rpow (3 : ℝ) (↑n : ℝ)) (_ : s.rpow (-4 : ℝ) = s.rpow (-4 : ℝ)) (_ :
+                Real.rpow (3 : ℝ) (((1 : ℝ) + s) * (↑n : ℝ)) = Real.rpow (3 : ℝ) (((1 : ℝ) + s) *
+                  (↑n : ℝ))) (_ :
+                Real.rpow (3 : ℝ) (↑n : ℝ) = Real.rpow (3 : ℝ) (↑n : ℝ)) (_ : s.rpow (-4 : ℝ) =
+                  s.rpow (-4 : ℝ)) (_ :
                 s.rpow (-7 : ℝ) = s.rpow (-7 : ℝ)) (_ :
                 (0 : ℝ) ≤
                   (eLpNorm
                       (fun (y : Vec d) =>
                         u.toFun y -
                           volumeAverage
-                            ((fun (y' : Vec d) => z + y') '' openCubeSet (originCube d (n + (2 : ℤ))) ∩
+                            ((fun (y' : Vec d) => z + y') '' openCubeSet (originCube d (n + (2 :
+                              ℤ))) ∩
                               openCubeSet (originCube d m))
                             u.toFun)
                       (2 : ENNReal)
@@ -412,22 +411,29 @@ private abbrev reindexComposed_comparisonBounds3_statement : Prop :=
                       ((fun (y' : Vec d) => z + y') '' openCubeSet (originCube d (n + (2 : ℤ))) ∩
                         openCubeSet (originCube d m))
                       s g).toReal)
-                (_ : (0 : ℝ) ≤ s.rpow (-3 : ℝ)) (_ : (0 : ℝ) ≤ Real.rpow (3 : ℝ) (s * (↑(n + (2 : ℤ)) : ℝ))) (_ :
-                (0 : ℝ) ≤ Real.rpow (3 : ℝ) (s * (↑n : ℝ))) (_ : (0 : ℝ) ≤ Real.rpow (3 : ℝ) (((1 : ℝ) + s) * (↑n : ℝ))) (_
-                : (0 : ℝ) ≤ Real.rpow (3 : ℝ) (↑n : ℝ)) (_ : (0 : ℝ) ≤ s.rpow (-4 : ℝ)) (_ : (0 : ℝ) ≤ s.rpow (-7 : ℝ)) (_ :
+                (_ : (0 : ℝ) ≤ s.rpow (-3 : ℝ)) (_ : (0 : ℝ) ≤ Real.rpow (3 : ℝ) (s * (↑(n + (2 :
+                  ℤ)) : ℝ))) (_ :
+                (0 : ℝ) ≤ Real.rpow (3 : ℝ) (s * (↑n : ℝ))) (_ : (0 : ℝ) ≤ Real.rpow (3 : ℝ) (((1
+                  : ℝ) + s) * (↑n : ℝ))) (_
+                : (0 : ℝ) ≤ Real.rpow (3 : ℝ) (↑n : ℝ)) (_ : (0 : ℝ) ≤ s.rpow (-4 : ℝ)) (_ : (0 :
+                  ℝ) ≤ s.rpow (-7 : ℝ)) (_ :
                 (0 : ℝ) ≤ (↑(Annealed.sigmaBar M (n + (3 : ℤ))) : ℝ)⁻¹) (_ :
-                (normalizedGagliardoESeminormOn ((fun (y : Vec d) => x + y) '' openCubeSet (originCube d n)) s g).toReal ≤
+                (normalizedGagliardoESeminormOn ((fun (y : Vec d) => x + y) '' openCubeSet
+                  (originCube d n)) s g).toReal ≤
                   gagliardoWindowConst d *
                     (normalizedGagliardoESeminormOn
                         ((fun (y' : Vec d) => z + y') '' openCubeSet (originCube d (n + (2 : ℤ))) ∩
                           openCubeSet (originCube d m))
                         s g).toReal)
                 (_ :
-                coarseGrainingEnergyTerm (originCube d n) (parentRebasedFamily M L (n + (3 : ℤ)) x z omega)
+                coarseGrainingEnergyTerm (originCube d n) (parentRebasedFamily M L (n + (3 : ℤ)) x
+                  z omega)
                     (scalarComparator (Annealed.sigmaBar M (n + (3 : ℤ))).property) (s / (3 : ℝ))
-                    (H1Function.untranslate x (u.restrict (isOpen_translateSet_openCubeSet x n) hsubx)) ≤
+                    (H1Function.untranslate x (u.restrict (isOpen_translateSet_openCubeSet x n)
+                      hsubx)) ≤
                   kappa * √Cout *
-                      fluxCorrectedErrorRepresentative M L (n + (3 : ℤ)) ⟨s / (8 : ℝ), (by positivity)⟩
+                      fluxCorrectedErrorRepresentative M L (n + (3 : ℤ)) ⟨s / (8 : ℝ), (by
+                        positivity)⟩
                         (Cutoff.translateCutoffSample z omega) *
                     ((↑(Annealed.sigmaBar M (n + (3 : ℤ))) : ℝ) *
                         (Real.rpow (3 : ℝ) (-(↑(n + (2 : ℤ)) : ℝ)) *
@@ -435,28 +441,34 @@ private abbrev reindexComposed_comparisonBounds3_statement : Prop :=
                               (fun (y : Vec d) =>
                                 u.toFun y -
                                   volumeAverage
-                                    ((fun (y' : Vec d) => z + y') '' openCubeSet (originCube d (n + (2 : ℤ))) ∩
+                                    ((fun (y' : Vec d) => z + y') '' openCubeSet (originCube d (n
+                                      + (2 : ℤ))) ∩
                                       openCubeSet (originCube d m))
                                     u.toFun)
                               (2 : ENNReal)
                               (normalizedVolumeMeasureOn
-                                ((fun (y' : Vec d) => z + y') '' openCubeSet (originCube d (n + (2 : ℤ))) ∩
+                                ((fun (y' : Vec d) => z + y') '' openCubeSet (originCube d (n + (2
+                                  : ℤ))) ∩
                                   openCubeSet (originCube d m)))).toReal) +
                       s.rpow (-3 : ℝ) *
                         (Real.rpow (3 : ℝ) (s * (↑(n + (2 : ℤ)) : ℝ)) *
                           (normalizedGagliardoESeminormOn
-                              ((fun (y' : Vec d) => z + y') '' openCubeSet (originCube d (n + (2 : ℤ))) ∩
+                              ((fun (y' : Vec d) => z + y') '' openCubeSet (originCube d (n + (2 :
+                                ℤ))) ∩
                                 openCubeSet (originCube d m))
                               s g).toReal)))
                 (_ :
-                (coarseGrainingForceTerm (originCube d n) (parentRebasedFamily M L (n + (3 : ℤ)) x z omega)
-                    (scalarComparator (Annealed.sigmaBar M (n + (3 : ℤ))).property) (s / (3 : ℝ)) s fun (y : Vec d) =>
+                (coarseGrainingForceTerm (originCube d n) (parentRebasedFamily M L (n + (3 : ℤ)) x
+                  z omega)
+                    (scalarComparator (Annealed.sigmaBar M (n + (3 : ℤ))).property) (s / (3 : ℝ))
+                      s fun (y : Vec d) =>
                     -g (y + x)) ≤
                   b0 *
                     (besovGagliardoConstant d * Real.rpow (3 : ℝ) (s * (↑n : ℝ)) *
                       (gagliardoWindowConst d *
                         (normalizedGagliardoESeminormOn
-                            ((fun (y' : Vec d) => z + y') '' openCubeSet (originCube d (n + (2 : ℤ))) ∩
+                            ((fun (y' : Vec d) => z + y') '' openCubeSet (originCube d (n + (2 :
+                              ℤ))) ∩
                               openCubeSet (originCube d m))
                             s g).toReal)))
                 (_ :
@@ -467,17 +479,25 @@ private abbrev reindexComposed_comparisonBounds3_statement : Prop :=
                             ((fun (y : Vec d) => x + y) '' openCubeSet (originCube d n)))).toReal) ≤
                   (3 : ℝ) * negNormBaseConst d * coarseGrainingP2Const d *
                       ((216 : ℝ) * s⁻¹ ^ (4 : ℕ) *
-                          coarseGrainingEnergyTerm (originCube d n) (parentRebasedFamily M L (n + (3 : ℤ)) x z omega)
-                            (scalarComparator (Annealed.sigmaBar M (n + (3 : ℤ))).property) (s / (3 : ℝ))
-                            (H1Function.untranslate x (u.restrict (isOpen_translateSet_openCubeSet x n) hsubx)) +
+                          coarseGrainingEnergyTerm (originCube d n) (parentRebasedFamily M L (n +
+                            (3 : ℤ)) x z omega)
+                            (scalarComparator (Annealed.sigmaBar M (n + (3 : ℤ))).property) (s /
+                              (3 : ℝ))
+                            (H1Function.untranslate x (u.restrict (isOpen_translateSet_openCubeSet
+                              x n) hsubx)) +
                         (1944 : ℝ) * s⁻¹ ^ (6 : ℕ) *
-                          coarseGrainingForceTerm (originCube d n) (parentRebasedFamily M L (n + (3 : ℤ)) x z omega)
-                            (scalarComparator (Annealed.sigmaBar M (n + (3 : ℤ))).property) (s / (3 : ℝ)) s
+                          coarseGrainingForceTerm (originCube d n) (parentRebasedFamily M L (n +
+                            (3 : ℤ)) x z omega)
+                            (scalarComparator (Annealed.sigmaBar M (n + (3 : ℤ))).property) (s /
+                              (3 : ℝ)) s
                             fun (y : Vec d) => -g (y + x)) +
-                    interiorCorrectionConst d * s.rpow (-(1 / 2 : ℝ)) * Real.rpow (3 : ℝ) (s * (↑n : ℝ)) *
-                      (normalizedGagliardoESeminormOn ((fun (y : Vec d) => x + y) '' openCubeSet (originCube d n)) s
+                    interiorCorrectionConst d * s.rpow (-(1 / 2 : ℝ)) * Real.rpow (3 : ℝ) (s * (↑n
+                      : ℝ)) *
+                      (normalizedGagliardoESeminormOn ((fun (y : Vec d) => x + y) '' openCubeSet
+                        (originCube d n)) s
                           g).toReal)
-                (_ : cubeBesovScaleWeight (1 : ℝ) (originCube d n) = Real.rpow (3 : ℝ) (-(↑n : ℝ))), True
+                (_ : cubeBesovScaleWeight (1 : ℝ) (originCube d n) = Real.rpow (3 : ℝ) (-(↑n :
+                  ℝ))), True
 
 /-- **The two legs of the `n+3` Caccioppoli right-hand side.**
 
@@ -575,8 +595,11 @@ theorem h1EnergyNormOnCube_parentRebasedFamily_addThree_eq_sqrt_localizedCoeffEn
 
 /-! ## 3. The composed general clause at the slot `n+3` -/
 
-private theorem reindexComposed_comparisonBounds1 : reindexComposed_comparisonBounds1_statement := by
-  intro d _ _ Cout hCoutpos kappa hkappadef hkappa e0 he0def k0 hk0def b0 hb0def M s hs L m n x z _ hgeom _ hs1 omega u g hsubx _ hcaccW hgL2child hgWchild hR3 Erep hErepCap hErep0 Eb herrD hbrk hEbdef sig hsig X Y Ychild P2 QS Q3s Q3sn S4 S7
+private theorem reindexComposed_comparisonBounds1 : reindexComposed_comparisonBounds1_statement :=
+  by
+  intro d _ _ Cout hCoutpos kappa hkappadef hkappa e0 he0def k0 hk0def b0 hb0def M s hs L m n x z
+    _ hgeom _ hs1 omega u g hsubx _ hcaccW hgL2child hgWchild hR3 Erep hErepCap hErep0 Eb herrD
+      hbrk hEbdef sig hsig X Y Ychild P2 QS Q3s Q3sn S4 S7
   have hS40 : 0 ≤ S4 := Real.rpow_nonneg hs.le _
   have hS70 : 0 ≤ S7 := Real.rpow_nonneg hs.le _
   have hsiginv0 : (0 : ℝ) ≤ sig⁻¹ := inv_nonneg.mpr hsig.le
@@ -688,14 +711,18 @@ private theorem reindexComposed_comparisonBounds2 :
       ∀ (_ : (0 : ℝ) ≤ cg),
         let A1 : ℝ := cg * (216 : ℝ) * (kappa * √Cout);
         ∀ (_ : A1 = cg * (216 : ℝ) * (kappa * √Cout)) (_ : (0 : ℝ) ≤ A1),
-          let A2 : ℝ := cg * (1944 : ℝ) * (b0 * (besovGagliardoConstant d * gagliardoWindowConst d));
+          let A2 : ℝ := cg * (1944 : ℝ) * (b0 * (besovGagliardoConstant d * gagliardoWindowConst
+            d));
           ∀ (_ : A2 = cg * (1944 : ℝ) * (b0 * (besovGagliardoConstant d * gagliardoWindowConst d)))
             (_ : (0 : ℝ) ≤ A2),
             let A3 : ℝ := interiorCorrectionConst d * gagliardoWindowConst d;
-            ∀ (_ : A3 = interiorCorrectionConst d * gagliardoWindowConst d) (_ : (0 : ℝ) ≤ A3) (s : ℝ)
+            ∀ (_ : A3 = interiorCorrectionConst d * gagliardoWindowConst d) (_ : (0 : ℝ) ≤ A3) (s
+              : ℝ)
               (_ : (0 : ℝ) < s) (n : ℤ) (_ : s ≤ (1 : ℝ)) (Erep : ℝ) (_ : Erep ≤ CE * (1 / 2 : ℝ))
-              (_ : (0 : ℝ) ≤ Erep) (sig X Y P2 : ℝ) (_ : P2 = Real.rpow (3 : ℝ) (-(↑(n + (2 : ℤ)) : ℝ))) (QS : ℝ)
-              (_ : QS = s.rpow (-3 : ℝ)) (Q3s : ℝ) (_ : Q3s = Real.rpow (3 : ℝ) (s * (↑(n + (2 : ℤ)) : ℝ)))
+              (_ : (0 : ℝ) ≤ Erep) (sig X Y P2 : ℝ) (_ : P2 = Real.rpow (3 : ℝ) (-(↑(n + (2 : ℤ))
+                : ℝ))) (QS : ℝ)
+              (_ : QS = s.rpow (-3 : ℝ)) (Q3s : ℝ) (_ : Q3s = Real.rpow (3 : ℝ) (s * (↑(n + (2 :
+                ℤ)) : ℝ)))
               (Q3sn : ℝ) (_ : Q3sn = Real.rpow (3 : ℝ) (s * (↑n : ℝ))) (Q1s : ℝ)
               (_ : Q1s = Real.rpow (3 : ℝ) (((1 : ℝ) + s) * (↑n : ℝ))) (R3n : ℝ)
               (_ : R3n = Real.rpow (3 : ℝ) (↑n : ℝ)) (S4 : ℝ) (_ : S4 = s.rpow (-4 : ℝ)) (S7 : ℝ)
@@ -703,17 +730,24 @@ private theorem reindexComposed_comparisonBounds2 :
               (_ : (0 : ℝ) ≤ Q3s) (_ : (0 : ℝ) ≤ Q1s) (_ : (0 : ℝ) ≤ R3n) (_ : (0 : ℝ) ≤ S4)
               (_ : (0 : ℝ) ≤ S7) (_ : (0 : ℝ) ≤ sig⁻¹) (_ : sig⁻¹ * sig = (1 : ℝ)),
               sig⁻¹ * R3n *
-                    (cg * ((216 : ℝ) * s⁻¹ ^ (4 : ℕ) * (kappa * √Cout * Erep * (sig * (P2 * X) + QS * (Q3s * Y))))) ≤
-                  A1 * (S4 * Erep * X) + (9 : ℝ) * (CE * (1 / 2 : ℝ)) * A1 * (S7 * sig⁻¹ * Q1s * Y) ∧
+                    (cg * ((216 : ℝ) * s⁻¹ ^ (4 : ℕ) * (kappa * √Cout * Erep * (sig * (P2 * X) +
+                      QS * (Q3s * Y))))) ≤
+                  A1 * (S4 * Erep * X) + (9 : ℝ) * (CE * (1 / 2 : ℝ)) * A1 * (S7 * sig⁻¹ * Q1s *
+                    Y) ∧
                 sig⁻¹ * R3n *
                       (cg *
                         ((1944 : ℝ) * s⁻¹ ^ (6 : ℕ) *
-                          (b0 * (besovGagliardoConstant d * Q3sn * (gagliardoWindowConst d * Y))))) ≤
+                          (b0 * (besovGagliardoConstant d * Q3sn * (gagliardoWindowConst d *
+                            Y))))) ≤
                     A2 * (S7 * sig⁻¹ * Q1s * Y) ∧
-                  sig⁻¹ * R3n * (interiorCorrectionConst d * s.rpow (-(1 / 2 : ℝ)) * Q3sn * (gagliardoWindowConst d * Y)) ≤
+                  sig⁻¹ * R3n * (interiorCorrectionConst d * s.rpow (-(1 / 2 : ℝ)) * Q3sn *
+                    (gagliardoWindowConst d * Y)) ≤
                       A3 * (S7 * sig⁻¹ * Q1s * Y) ∧
-                    (0 : ℝ) ≤ S4 * Erep * X ∧ (0 : ℝ) ≤ S7 * sig⁻¹ * Q1s * Y ∧ (0 : ℝ) ≤ (9 : ℝ) * (CE * (1 / 2 : ℝ)) * A1 := by
-  intro d _ CE _ Cout _ kappa _ _ b0 cg _ A1 hA1def hA1 A2 hA2def hA2 A3 hA3def hA3 s hs n hs1 Erep hErepCap hErep0 sig X Y P2 hP2def QS hQSdef Q3s hQ3sdef Q3sn hQ3sndef Q1s hQ1sdef R3n hR3ndef S4 hS4def S7 hS7def hX0 hY0 hQS0 hQ3s0 hQ1s0 hR3n0 hS40 hS70 hsiginv0 hsinv
+                    (0 : ℝ) ≤ S4 * Erep * X ∧ (0 : ℝ) ≤ S7 * sig⁻¹ * Q1s * Y ∧ (0 : ℝ) ≤ (9 : ℝ) *
+                      (CE * (1 / 2 : ℝ)) * A1 := by
+  intro d _ CE _ Cout _ kappa _ _ b0 cg _ A1 hA1def hA1 A2 hA2def hA2 A3 hA3def hA3 s hs n hs1
+    Erep hErepCap hErep0 sig X Y P2 hP2def QS hQSdef Q3s hQ3sdef Q3sn hQ3sndef Q1s hQ1sdef R3n
+      hR3ndef S4 hS4def S7 hS7def hX0 hY0 hQS0 hQ3s0 hQ1s0 hR3n0 hS40 hS70 hsiginv0 hsinv
   have hS4eq : (s⁻¹) ^ (4 : ℕ) = S4 := by
     rw [hS4def, inv_pow_eq_rpow_neg hs 4]
     congr 1
@@ -805,9 +839,12 @@ private theorem reindexComposed_comparisonBounds2 :
   have hCE2 : (0 : ℝ) ≤ 9 * (CE * (1 / 2)) * A1 := by positivity
   exact ⟨hT1, hT2, hT3, hXterm, hYterm, hCE2⟩
 
-private theorem reindexComposed_comparisonBounds3 : reindexComposed_comparisonBounds3_statement := by
+private theorem reindexComposed_comparisonBounds3 : reindexComposed_comparisonBounds3_statement :=
+  by
   classical
-  intro d instance1 CE Cout hCoutpos kappa hkappadef hkappa e0 he0def k0 hk0def b0 hb0def hb0 M s hs L m n hmL hnm x z hz hgeom hfr hs1 omega hcapE hcacc herrD hbrk hmem u hdat g hsol hgL2 hgW v w hharm hval hgrad hsig
+  intro d _ CE Cout hCoutpos kappa hkappadef hkappa _ he0def _ hk0def b0 hb0def hb0 M s hs L m n
+    hmL hnm x z hz hgeom hfr hs1 omega hcapE hcacc herrD hbrk hmem u hdat g hsol hgL2 hgW v w
+      hharm hval hgrad hsig
   have hsubx : translateSet x (openCubeSet (originCube d n)) ⊆
       openCubeSet (originCube d m) :=
     translateSet_openCubeSet_subset_of_anchorGeometry hgeom
@@ -884,13 +921,18 @@ private theorem reindexComposed_comparisonBounds3 : reindexComposed_comparisonBo
   obtain ⟨hS40, hS70, hsiginv0, hbrkCap, hET, hGbes⟩ :=
     (show (0 ≤ S4) ∧ (0 ≤ S7) ∧ ((0 : ℝ) ≤ sig⁻¹) ∧ (coarseGrainingForceBracket (originCube d n)
       (parentRebasedFamily M L (n + 3) x z omega)
-      (scalarComparator (Annealed.sigmaBar M (n + 3)).2) (s / 3) ≤ b0) ∧ (coarseGrainingEnergyTerm (originCube d n)
+      (scalarComparator (Annealed.sigmaBar M (n + 3)).2) (s / 3) ≤ b0) ∧ (coarseGrainingEnergyTerm
+        (originCube d n)
       (parentRebasedFamily M L (n + 3) x z omega)
       (scalarComparator (Annealed.sigmaBar M (n + 3)).2) (s / 3)
       (H1Function.untranslate x (u.restrict (isOpen_translateSet_openCubeSet x n) hsubx)) ≤
-      kappa * Real.sqrt Cout * Erep * (sig * (P2 * X) + QS * (Q3s * Y))) ∧ (Ch03.scaleNormalizedPositiveBesovVectorSeminormTwo (originCube d n) s
+      kappa * Real.sqrt Cout * Erep * (sig * (P2 * X) + QS * (Q3s * Y))) ∧
+        (Ch03.scaleNormalizedPositiveBesovVectorSeminormTwo (originCube d n) s
       (fun y => -g (y + x)) ≤ besovGagliardoConstant d * Q3sn * Ychild) from
-      @reindexComposed_comparisonBounds1 (d) (by infer_instance) (CE) (Cout) (hCoutpos) (hkappadef) (hkappa) (he0def) (hk0def) (hb0def) (M) (s) (hs) (L) (m) (n) (x) (z) (hz) (hgeom) (hfr) (hs1) (omega) (u) (g) (hsubx) (hsubz) (hcaccW) (hgL2child) (hgWchild) (hR3) (hErepCap) (hErep0) (herrD) (hbrk) (hEbdef) (hsig))
+      @reindexComposed_comparisonBounds1 (d) (by infer_instance) (CE) (Cout) (hCoutpos)
+        (hkappadef) (hkappa) (he0def) (hk0def) (hb0def) (M) (s) (hs) (L) (m) (n) (x) (z) (hz)
+          (hgeom) (hfr) (hs1) (omega) (u) (g) (hsubx) (hsubz) (hcaccW) (hgL2child) (hgWchild)
+            (hR3) (hErepCap) (hErep0) (herrD) (hbrk) (hEbdef) (hsig))
   have hGbes0 : 0 ≤ Ch03.scaleNormalizedPositiveBesovVectorSeminormTwo (originCube d n) s
       (fun y => -g (y + x)) :=
     Ch03.scaleNormalizedPositiveBesovVectorSeminormTwo_nonneg_of_forceBesovRegularity
@@ -922,7 +964,9 @@ private theorem reindexComposed_comparisonBounds3 : reindexComposed_comparisonBo
     rw [h]
     congr 1
     ring
-  exact ⟨hsubx, hErepCap, hErep0, hsig, hP2def, hQSdef, hQ3sdef, hQ3sndef, hQ1sdef, hR3ndef, hS4def, hS7def, hX0, hY0, hQS0, hQ3s0, hQ3sn0, hQ1s0, hR3n0, hS40, hS70, hsiginv0, hYchildle, hET, hFT, hxf, hW1, True.intro⟩
+  exact ⟨hsubx, hErepCap, hErep0, hsig, hP2def, hQSdef, hQ3sdef, hQ3sndef, hQ1sdef, hR3ndef,
+    hS4def, hS7def, hX0, hY0, hQS0, hQ3s0, hQ3sn0, hQ1s0, hR3n0, hS40, hS70, hsiginv0, hYchildle,
+      hET, hFT, hxf, hW1, True.intro⟩
 
 /-- **The general clause at frontier-empty windows, in real form.**
 
@@ -1040,8 +1084,13 @@ theorem exists_generalClauseInterior_honest_addThree (d : ℕ) [NeZero d] :
     ae_forceBracket_rebased_le_addThree M L n z hs hs1] with omega hcapE hcacc herrD hbrk
   intro hmem u hdat g hsol hgL2 hgW v w hharm hval hgrad
   have hsig : (0 : ℝ) < (Annealed.sigmaBar M (n + 3) : ℝ) := (Annealed.sigmaBar M (n + 3)).2
-  obtain ⟨hsubx, hErepCap, hErep0, hsig, hP2def, hQSdef, hQ3sdef, hQ3sndef, hQ1sdef, hR3ndef, hS4def, hS7def, hX0, hY0, hQS0, hQ3s0, hQ3sn0, hQ1s0, hR3n0, hS40, hS70, hsiginv0, hYchildle, hET, hFT, hxf, hW1, _⟩ :=
-    @reindexComposed_comparisonBounds3 (d) (by infer_instance) (CE) (Cout) (hCoutpos) (hkappadef) (hkappa) (he0def) (hk0def) (hb0def) (hb0) (M) (s) (hs) (L) (m) (n) (hmL) (hnm) (x) (z) (hz) (hgeom) (hfr) (hs1) (omega) (hcapE) (hcacc) (herrD) (hbrk) (hmem) (u) (hdat) (g) (hsol) (hgL2) (hgW) (v) (w) (hharm) (hval) (hgrad) (hsig)
+  obtain ⟨hsubx, hErepCap, hErep0, hsig, hP2def, hQSdef, hQ3sdef, hQ3sndef, hQ1sdef, hR3ndef,
+    hS4def, hS7def, hX0, hY0, hQS0, hQ3s0, hQ3sn0, hQ1s0, hR3n0, hS40, hS70, hsiginv0, hYchildle,
+      hET, hFT, hxf, hW1, _⟩ :=
+    @reindexComposed_comparisonBounds3 (d) (by infer_instance) (CE) (Cout) (hCoutpos) (hkappadef)
+      (hkappa) (he0def) (hk0def) (hb0def) (hb0) (M) (s) (hs) (L) (m) (n) (hmL) (hnm) (x) (z) (hz)
+        (hgeom) (hfr) (hs1) (omega) (hcapE) (hcacc) (herrD) (hbrk) (hmem) (u) (hdat) (g) (hsol)
+          (hgL2) (hgW) (v) (w) (hharm) (hval) (hgrad) (hsig)
   set Erep : ℝ := Support.fluxCorrectedErrorRepresentative M L (n + 3)
     ⟨s / 8, by linarith only [hs]⟩ (Cutoff.translateCutoffSample z omega) with hErepdef
   set Eb : ℝ := Real.sqrt (offGridStabilityConst d (s / 6) (s / 8)) *
@@ -1116,11 +1165,18 @@ theorem exists_generalClauseInterior_honest_addThree (d : ℕ) [NeZero d] :
   obtain ⟨hT1, hT2, hT3, hXterm, hYterm, hCE2⟩ :=
     (show ((sig⁻¹ * R3n) * (cg * (216 * (s⁻¹) ^ (4 : ℕ) *
         (kappa * Real.sqrt Cout * Erep * (sig * (P2 * X) + QS * (Q3s * Y))))) ≤
-      A1 * (S4 * Erep * X) + (9 * (CE * (1 / 2)) * A1) * (S7 * sig⁻¹ * Q1s * Y)) ∧ ((sig⁻¹ * R3n) * (cg * (1944 * (s⁻¹) ^ (6 : ℕ) *
+      A1 * (S4 * Erep * X) + (9 * (CE * (1 / 2)) * A1) * (S7 * sig⁻¹ * Q1s * Y)) ∧ ((sig⁻¹ * R3n)
+        * (cg * (1944 * (s⁻¹) ^ (6 : ℕ) *
         (b0 * (besovGagliardoConstant d * Q3sn * (gagliardoWindowConst d * Y))))) ≤
-      A2 * (S7 * sig⁻¹ * Q1s * Y)) ∧ ((sig⁻¹ * R3n) * (interiorCorrectionConst d * Real.rpow s (-(1 / 2 : ℝ)) * Q3sn *
-        (gagliardoWindowConst d * Y)) ≤ A3 * (S7 * sig⁻¹ * Q1s * Y)) ∧ ((0 : ℝ) ≤ S4 * Erep * X) ∧ ((0 : ℝ) ≤ S7 * sig⁻¹ * Q1s * Y) ∧ ((0 : ℝ) ≤ 9 * (CE * (1 / 2)) * A1) from
-      @reindexComposed_comparisonBounds2 (d) (by infer_instance) (CE) (hCEpos) (Cout) (hCoutpos) (hcg) (hA1def) (hA1) (hA2def) (hA2) (hA3def) (hA3) (s) (hs) (n) (hs1) (Erep) (hErepCap) (hErep0) (sig) (X) (Y) (P2) (hP2def) (QS) (hQSdef) (Q3s) (hQ3sdef) (Q3sn) (hQ3sndef) (Q1s) (hQ1sdef) (R3n) (hR3ndef) (S4) (hS4def) (S7) (hS7def) (hX0) (hY0) (hQS0) (hQ3s0) (hQ1s0) (hR3n0) (hS40) (hS70) (hsiginv0) (hsinv))
+      A2 * (S7 * sig⁻¹ * Q1s * Y)) ∧ ((sig⁻¹ * R3n) * (interiorCorrectionConst d * Real.rpow s
+        (-(1 / 2 : ℝ)) * Q3sn *
+        (gagliardoWindowConst d * Y)) ≤ A3 * (S7 * sig⁻¹ * Q1s * Y)) ∧ ((0 : ℝ) ≤ S4 * Erep * X) ∧
+          ((0 : ℝ) ≤ S7 * sig⁻¹ * Q1s * Y) ∧ ((0 : ℝ) ≤ 9 * (CE * (1 / 2)) * A1) from
+      @reindexComposed_comparisonBounds2 (d) (by infer_instance) (CE) (hCEpos) (Cout) (hCoutpos)
+        (hcg) (hA1def) (hA1) (hA2def) (hA2) (hA3def) (hA3) (s) (hs) (n) (hs1) (Erep) (hErepCap)
+          (hErep0) (sig) (X) (Y) (P2) (hP2def) (QS) (hQSdef) (Q3s) (hQ3sdef) (Q3sn) (hQ3sndef)
+            (Q1s) (hQ1sdef) (R3n) (hR3ndef) (S4) (hS4def) (S7) (hS7def) (hX0) (hY0) (hQS0) (hQ3s0)
+              (hQ1s0) (hR3n0) (hS40) (hS70) (hsiginv0) (hsinv))
   refine hstep.trans ?_
   refine le_trans (mul_le_mul_of_nonneg_left hmono hfac0) ?_
   have hdistrib : (sig⁻¹ * R3n) *

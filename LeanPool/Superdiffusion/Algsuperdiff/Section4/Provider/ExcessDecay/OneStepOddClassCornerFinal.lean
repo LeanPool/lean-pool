@@ -78,39 +78,51 @@ private theorem oneStepOddClassCornerFinal_comparisonBounds1 :
         ∀ (_ : (0 : ℝ) ≤ Caff),
           let Crefl : ℝ := √(((24 : ℝ) * (↑d : ℝ) + (1 : ℝ)) * (2 : ℝ) ^ (2 : ℕ) + (2 : ℝ));
           let CFold : ℝ := (2 : ℝ) ^ d + Crefl;
-          let Lam : ℝ := (3 : ℝ) * Caff * CHc * CFold + (21 : ℝ) * Caff + (3 : ℝ) * Caff * CHc * Crefl + (1 : ℝ);
-          ∀ (_ : Lam = (3 : ℝ) * Caff * CHc * CFold + (21 : ℝ) * Caff + (3 : ℝ) * Caff * CHc * Crefl + (1 : ℝ))
-            (_ : (0 : ℝ) ≤ (3 : ℝ) * Caff * CHc * CFold) (_ : (0 : ℝ) ≤ (3 : ℝ) * Caff * CHc * Crefl),
+          let Lam : ℝ := (3 : ℝ) * Caff * CHc * CFold + (21 : ℝ) * Caff + (3 : ℝ) * Caff * CHc *
+            Crefl + (1 : ℝ);
+          ∀ (_ : Lam = (3 : ℝ) * Caff * CHc * CFold + (21 : ℝ) * Caff + (3 : ℝ) * Caff * CHc *
+            Crefl + (1 : ℝ))
+            (_ : (0 : ℝ) ≤ (3 : ℝ) * Caff * CHc * CFold) (_ : (0 : ℝ) ≤ (3 : ℝ) * Caff * CHc *
+              Crefl),
             let tt : ℝ := min (1 / 16 : ℝ) ((1 : ℝ) / ((8 : ℝ) * Lam));
-            ∀ (_ : (0 : ℝ) < tt) (m n : ℤ) (x : Vec d) (i : Fin d) (V : Vec d → ℝ) (c : ℝ) (A : Vec d),
+            ∀ (_ : (0 : ℝ) < tt) (m n : ℤ) (x : Vec d) (i : Fin d) (V : Vec d → ℝ) (c : ℝ) (A :
+              Vec d),
               let delta : ℝ := tt * (3 : ℝ) ^ (n - (2 : ℤ));
               ∀
                 (_ :
                   (0 : ℝ) ≤
                     normalizedL2On (truncatedWindow x m (n - (2 : ℤ))) fun (y : Vec d) =>
                       V y - affineEval (c - vecDot A x) A y)
-                (_ : (0 : ℝ) ≤ normalizedL2On (truncatedWindow x m (n - (2 : ℤ))) (affineEval (c - vecDot A x) A))
-                (_ : (0 : ℝ) ≤ normalizedL2On (truncatedWindow x m (n - (2 : ℤ))) (evenAffinePart x m i c A))
+                (_ : (0 : ℝ) ≤ normalizedL2On (truncatedWindow x m (n - (2 : ℤ))) (affineEval (c -
+                  vecDot A x) A))
+                (_ : (0 : ℝ) ≤ normalizedL2On (truncatedWindow x m (n - (2 : ℤ))) (evenAffinePart
+                  x m i c A))
                 (_ :
                   (normalizedL2On (reflectedWindow x m (n - (2 : ℤ))) fun (y : Vec d) =>
                       V y - affineEval (c - vecDot A x) A y) ≤
                     CFold *
                       ((normalizedL2On (truncatedWindow x m (n - (2 : ℤ))) fun (y : Vec d) =>
                           V y - affineEval (c - vecDot A x) A y) +
-                        normalizedL2On (truncatedWindow x m (n - (2 : ℤ))) (affineEval (c - vecDot A x) A)))
+                        normalizedL2On (truncatedWindow x m (n - (2 : ℤ))) (affineEval (c - vecDot
+                          A x) A)))
                 (_ :
                   |A i| * delta ≤
                     (7 : ℝ) * tt *
-                      (normalizedL2On (truncatedWindow x m (n - (2 : ℤ))) (affineEval (c - vecDot A x) A) +
-                        normalizedL2On (truncatedWindow x m (n - (2 : ℤ))) (evenAffinePart x m i c A)))
+                      (normalizedL2On (truncatedWindow x m (n - (2 : ℤ))) (affineEval (c - vecDot
+                        A x) A) +
+                        normalizedL2On (truncatedWindow x m (n - (2 : ℤ))) (evenAffinePart x m i c
+                          A)))
                 (_ : (3 : ℝ) * Caff * CHc * CFold * tt ^ (2 : ℕ) ≤ Lam * tt),
                 (0 : ℝ) ≤
                     (normalizedL2On (truncatedWindow x m (n - (2 : ℤ))) fun (y : Vec d) =>
                         V y - affineEval (c - vecDot A x) A y) +
-                      normalizedL2On (truncatedWindow x m (n - (2 : ℤ))) (affineEval (c - vecDot A x) A) ∧
+                      normalizedL2On (truncatedWindow x m (n - (2 : ℤ))) (affineEval (c - vecDot A
+                        x) A) ∧
                   (0 : ℝ) ≤
-                      normalizedL2On (truncatedWindow x m (n - (2 : ℤ))) (affineEval (c - vecDot A x) A) +
-                        normalizedL2On (truncatedWindow x m (n - (2 : ℤ))) (evenAffinePart x m i c A) ∧
+                      normalizedL2On (truncatedWindow x m (n - (2 : ℤ))) (affineEval (c - vecDot A
+                        x) A) +
+                        normalizedL2On (truncatedWindow x m (n - (2 : ℤ))) (evenAffinePart x m i c
+                          A) ∧
                     Caff *
                           ((3 : ℝ) *
                             (CHc * tt ^ (2 : ℕ) *
@@ -119,12 +131,16 @@ private theorem oneStepOddClassCornerFinal_comparisonBounds1 :
                         Lam * tt *
                           ((normalizedL2On (truncatedWindow x m (n - (2 : ℤ))) fun (y : Vec d) =>
                               V y - affineEval (c - vecDot A x) A y) +
-                            normalizedL2On (truncatedWindow x m (n - (2 : ℤ))) (affineEval (c - vecDot A x) A)) ∧
+                            normalizedL2On (truncatedWindow x m (n - (2 : ℤ))) (affineEval (c -
+                              vecDot A x) A)) ∧
                       Caff * ((3 : ℝ) * (|A i| * delta)) ≤
                         Lam * tt *
-                          (normalizedL2On (truncatedWindow x m (n - (2 : ℤ))) (affineEval (c - vecDot A x) A) +
-                            normalizedL2On (truncatedWindow x m (n - (2 : ℤ))) (evenAffinePart x m i c A)) := by
-  intro _ _ CHc hCHc0 Caff hCaff0 _ CFold Lam hLamdef hpart1 hpart3 tt htt0 m n x i V c A delta hE0 hP0 hNi0 hFRle hq2 hco1
+                          (normalizedL2On (truncatedWindow x m (n - (2 : ℤ))) (affineEval (c -
+                            vecDot A x) A) +
+                            normalizedL2On (truncatedWindow x m (n - (2 : ℤ))) (evenAffinePart x m
+                              i c A)) := by
+  intro _ _ CHc hCHc0 Caff hCaff0 _ CFold Lam hLamdef hpart1 hpart3 tt htt0 m n x i V c A delta
+    hE0 hP0 hNi0 hFRle hq2 hco1
   have h21 : 21 * Caff ≤ Lam := by
     rw [hLamdef]
     linarith only [hpart1, hpart3]
@@ -230,7 +246,8 @@ private theorem oneStepOddClassCornerFinal_comparisonBounds2 :
       let Crefl : ℝ := √(((24 : ℝ) * (↑d : ℝ) + (1 : ℝ)) * (2 : ℝ) ^ (2 : ℕ) + (2 : ℝ));
       ∀ (_ : (0 : ℝ) ≤ Crefl),
         let CFold : ℝ := (2 : ℝ) ^ d + Crefl;
-        let Lam : ℝ := (3 : ℝ) * Caff * CHc * CFold + (21 : ℝ) * Caff + (3 : ℝ) * Caff * CHc * Crefl + (1 : ℝ);
+        let Lam : ℝ := (3 : ℝ) * Caff * CHc * CFold + (21 : ℝ) * Caff + (3 : ℝ) * Caff * CHc *
+          Crefl + (1 : ℝ);
         let tt : ℝ := min (1 / 16 : ℝ) ((1 : ℝ) / ((8 : ℝ) * Lam));
         ∀ (_ : (0 : ℝ) < tt) (m n : ℤ) (x : Vec d) (i j : Fin d) (V : Vec d → ℝ) (c : ℝ) (A : Vec d)
           (_ : x ∈ openCubeSet (originCube d m)) (_ : n - (2 : ℤ) < m),
@@ -242,7 +259,8 @@ private theorem oneStepOddClassCornerFinal_comparisonBounds2 :
               (_ :
                 ∀ (y : Vec d),
                   affineEval (c - vecDot A x) A y =
-                    evenAffinePart x m i c A y + evenAffinePart x m j c A y - evenAffinePart x m j c3 A3 y)
+                    evenAffinePart x m i c A y + evenAffinePart x m j c A y - evenAffinePart x m j
+                      c3 A3 y)
               (_ :
                 ∀ (y : Vec d),
                   V y - affineEval (c3 - vecDot A3 x) A3 y =
@@ -253,43 +271,61 @@ private theorem oneStepOddClassCornerFinal_comparisonBounds2 :
               (_ :
                 MemLp (fun (y : Vec d) => V y - affineEval (c - vecDot A x) A y) (2 : ℝ≥0∞)
                   (volume.restrict (truncatedWindow x m (n - (2 : ℤ)))))
-              (_ : MemLp (affineEval (c - vecDot A x) A) (2 : ℝ≥0∞) (volume.restrict (truncatedWindow x m (n - (2 : ℤ)))))
-              (_ : MemLp (evenAffinePart x m i c A) (2 : ℝ≥0∞) (volume.restrict (truncatedWindow x m (n - (2 : ℤ)))))
-              (_ : MemLp (evenAffinePart x m j c A) (2 : ℝ≥0∞) (volume.restrict (truncatedWindow x m (n - (2 : ℤ)))))
-              (_ : MemLp (evenAffinePart x m j c3 A3) (2 : ℝ≥0∞) (volume.restrict (truncatedWindow x m (n - (2 : ℤ)))))
-              (_ : MemLp (oddAffinePart x m i A) (2 : ℝ≥0∞) (volume.restrict (reflectedWindow x m (n - (2 : ℤ)))))
+              (_ : MemLp (affineEval (c - vecDot A x) A) (2 : ℝ≥0∞) (volume.restrict
+                (truncatedWindow x m (n - (2 : ℤ)))))
+              (_ : MemLp (evenAffinePart x m i c A) (2 : ℝ≥0∞) (volume.restrict (truncatedWindow x
+                m (n - (2 : ℤ)))))
+              (_ : MemLp (evenAffinePart x m j c A) (2 : ℝ≥0∞) (volume.restrict (truncatedWindow x
+                m (n - (2 : ℤ)))))
+              (_ : MemLp (evenAffinePart x m j c3 A3) (2 : ℝ≥0∞) (volume.restrict (truncatedWindow
+                x m (n - (2 : ℤ)))))
+              (_ : MemLp (oddAffinePart x m i A) (2 : ℝ≥0∞) (volume.restrict (reflectedWindow x m
+                (n - (2 : ℤ)))))
               (_ :
                 (normalizedL2On (reflectedWindow x m (n - (2 : ℤ))) fun (y : Vec d) =>
                     V y - affineEval (c - vecDot A x) A y) ≤
                   CFold *
                     ((normalizedL2On (truncatedWindow x m (n - (2 : ℤ))) fun (y : Vec d) =>
                         V y - affineEval (c - vecDot A x) A y) +
-                      normalizedL2On (truncatedWindow x m (n - (2 : ℤ))) (affineEval (c - vecDot A x) A)))
+                      normalizedL2On (truncatedWindow x m (n - (2 : ℤ))) (affineEval (c - vecDot A
+                        x) A)))
               (_ :
                 normalizedL2On (reflectedWindow x m (n - (2 : ℤ))) (oddAffinePart x m i A) ≤
-                  Crefl * normalizedL2On (truncatedWindow x m (n - (2 : ℤ))) (oddAffinePart x m i A)),
+                  Crefl * normalizedL2On (truncatedWindow x m (n - (2 : ℤ))) (oddAffinePart x m i
+                    A)),
               (normalizedL2On (reflectedWindow x m (n - (2 : ℤ))) fun (y : Vec d) =>
                     V y - affineEval (c3 - vecDot A3 x) A3 y) ≤
                   CFold *
                       ((normalizedL2On (truncatedWindow x m (n - (2 : ℤ))) fun (y : Vec d) =>
                           V y - affineEval (c - vecDot A x) A y) +
-                        normalizedL2On (truncatedWindow x m (n - (2 : ℤ))) (affineEval (c - vecDot A x) A)) +
+                        normalizedL2On (truncatedWindow x m (n - (2 : ℤ))) (affineEval (c - vecDot
+                          A x) A)) +
                     Crefl *
-                      (normalizedL2On (truncatedWindow x m (n - (2 : ℤ))) (affineEval (c - vecDot A x) A) +
-                        normalizedL2On (truncatedWindow x m (n - (2 : ℤ))) (evenAffinePart x m i c A)) ∧
+                      (normalizedL2On (truncatedWindow x m (n - (2 : ℤ))) (affineEval (c - vecDot
+                        A x) A) +
+                        normalizedL2On (truncatedWindow x m (n - (2 : ℤ))) (evenAffinePart x m i c
+                          A)) ∧
                 |A i| * delta ≤
                     (7 : ℝ) * tt *
-                      (normalizedL2On (truncatedWindow x m (n - (2 : ℤ))) (affineEval (c - vecDot A x) A) +
-                        normalizedL2On (truncatedWindow x m (n - (2 : ℤ))) (evenAffinePart x m i c A)) ∧
-                  normalizedL2On (truncatedWindow x m (n - (2 : ℤ))) (affineEval (c - vecDot A x) A) ≤
-                      normalizedL2On (truncatedWindow x m (n - (2 : ℤ))) (evenAffinePart x m i c A) +
-                          normalizedL2On (truncatedWindow x m (n - (2 : ℤ))) (evenAffinePart x m j c A) +
-                        normalizedL2On (truncatedWindow x m (n - (2 : ℤ))) (evenAffinePart x m j c3 A3) ∧
+                      (normalizedL2On (truncatedWindow x m (n - (2 : ℤ))) (affineEval (c - vecDot
+                        A x) A) +
+                        normalizedL2On (truncatedWindow x m (n - (2 : ℤ))) (evenAffinePart x m i c
+                          A)) ∧
+                  normalizedL2On (truncatedWindow x m (n - (2 : ℤ))) (affineEval (c - vecDot A x)
+                    A) ≤
+                      normalizedL2On (truncatedWindow x m (n - (2 : ℤ))) (evenAffinePart x m i c
+                        A) +
+                          normalizedL2On (truncatedWindow x m (n - (2 : ℤ))) (evenAffinePart x m j
+                            c A) +
+                        normalizedL2On (truncatedWindow x m (n - (2 : ℤ))) (evenAffinePart x m j
+                          c3 A3) ∧
                     normalizedL2On (truncatedWindow x m (n - (2 : ℤ))) V ≤
                       (normalizedL2On (truncatedWindow x m (n - (2 : ℤ))) fun (y : Vec d) =>
                           V y - affineEval (c - vecDot A x) A y) +
-                        normalizedL2On (truncatedWindow x m (n - (2 : ℤ))) (affineEval (c - vecDot A x) A) := by
-  intro _ _ _ _ _ Crefl hCrefl0 CFold _ tt htt0 m n x i j V c A hx hmn delta hdeltadef A3 c3 hLsplit hf3split hfR hfU hlU heiU hejU heijU hoddRmem hFRle hoddRle
+                        normalizedL2On (truncatedWindow x m (n - (2 : ℤ))) (affineEval (c - vecDot
+                          A x) A) := by
+  intro _ _ _ _ _ Crefl hCrefl0 CFold _ tt htt0 m n x i j V c A hx hmn delta hdeltadef A3 c3
+    hLsplit hf3split hfR hfU hlU heiU hejU heijU hoddRmem hFRle hoddRle
   have hoddU_le : normalizedL2On (truncatedWindow x m (n - 2))
       (oddAffinePart x m i A)
       ≤ normalizedL2On (truncatedWindow x m (n - 2)) (affineEval (c - vecDot A x) A)
@@ -396,7 +432,8 @@ private theorem oneStepOddClassCornerFinal_comparisonBounds3 :
         ∀ (_ : (0 : ℝ) ≤ Caff),
           let Crefl : ℝ := √(((24 : ℝ) * (↑d : ℝ) + (1 : ℝ)) * (2 : ℝ) ^ (2 : ℕ) + (2 : ℝ));
           let CFold : ℝ := (2 : ℝ) ^ d + Crefl;
-          let Lam : ℝ := (3 : ℝ) * Caff * CHc * CFold + (21 : ℝ) * Caff + (3 : ℝ) * Caff * CHc * Crefl + (1 : ℝ);
+          let Lam : ℝ := (3 : ℝ) * Caff * CHc * CFold + (21 : ℝ) * Caff + (3 : ℝ) * Caff * CHc *
+            Crefl + (1 : ℝ);
           let tt : ℝ := min (1 / 16 : ℝ) ((1 : ℝ) / ((8 : ℝ) * Lam));
           let Vr : ℝ := √(((1 : ℝ) / tt) ^ d);
           ∀ (m n : ℤ) (x : Vec d) (i : Fin d) (V : Vec d → ℝ) (c : ℝ) (A : Vec d),
@@ -420,20 +457,25 @@ private theorem oneStepOddClassCornerFinal_comparisonBounds3 :
                   CFold *
                       ((normalizedL2On (truncatedWindow x m (n - (2 : ℤ))) fun (y : Vec d) =>
                           V y - affineEval (c - vecDot A x) A y) +
-                        normalizedL2On (truncatedWindow x m (n - (2 : ℤ))) (affineEval (c - vecDot A x) A)) +
+                        normalizedL2On (truncatedWindow x m (n - (2 : ℤ))) (affineEval (c - vecDot
+                          A x) A)) +
                     Crefl *
-                      (normalizedL2On (truncatedWindow x m (n - (2 : ℤ))) (affineEval (c - vecDot A x) A) +
-                        normalizedL2On (truncatedWindow x m (n - (2 : ℤ))) (evenAffinePart x m i c A)))
+                      (normalizedL2On (truncatedWindow x m (n - (2 : ℤ))) (affineEval (c - vecDot
+                        A x) A) +
+                        normalizedL2On (truncatedWindow x m (n - (2 : ℤ))) (evenAffinePart x m i c
+                          A)))
               (_ : (3 : ℝ) * Caff * CHc * CFold * tt ^ (2 : ℕ) ≤ Lam * tt)
               (_ : (3 : ℝ) * Caff * CHc * Crefl * tt ^ (2 : ℕ) ≤ Lam * tt)
               (_ :
                 (0 : ℝ) ≤
                   (normalizedL2On (truncatedWindow x m (n - (2 : ℤ))) fun (y : Vec d) =>
                       V y - affineEval (c - vecDot A x) A y) +
-                    normalizedL2On (truncatedWindow x m (n - (2 : ℤ))) (affineEval (c - vecDot A x) A))
+                    normalizedL2On (truncatedWindow x m (n - (2 : ℤ))) (affineEval (c - vecDot A
+                      x) A))
               (_ :
                 (0 : ℝ) ≤
-                  normalizedL2On (truncatedWindow x m (n - (2 : ℤ))) (affineEval (c - vecDot A x) A) +
+                  normalizedL2On (truncatedWindow x m (n - (2 : ℤ))) (affineEval (c - vecDot A x)
+                    A) +
                     normalizedL2On (truncatedWindow x m (n - (2 : ℤ))) (evenAffinePart x m i c A))
               (_ :
                 Caff *
@@ -444,7 +486,8 @@ private theorem oneStepOddClassCornerFinal_comparisonBounds3 :
                   Lam * tt *
                     ((normalizedL2On (truncatedWindow x m (n - (2 : ℤ))) fun (y : Vec d) =>
                         V y - affineEval (c - vecDot A x) A y) +
-                      normalizedL2On (truncatedWindow x m (n - (2 : ℤ))) (affineEval (c - vecDot A x) A))),
+                      normalizedL2On (truncatedWindow x m (n - (2 : ℤ))) (affineEval (c - vecDot A
+                        x) A))),
               Caff *
                     ((3 : ℝ) *
                       (CHc * tt ^ (2 : ℕ) *
@@ -453,10 +496,13 @@ private theorem oneStepOddClassCornerFinal_comparisonBounds3 :
                   Lam * tt *
                       ((normalizedL2On (truncatedWindow x m (n - (2 : ℤ))) fun (y : Vec d) =>
                           V y - affineEval (c - vecDot A x) A y) +
-                        normalizedL2On (truncatedWindow x m (n - (2 : ℤ))) (affineEval (c - vecDot A x) A)) +
+                        normalizedL2On (truncatedWindow x m (n - (2 : ℤ))) (affineEval (c - vecDot
+                          A x) A)) +
                     Lam * tt *
-                      (normalizedL2On (truncatedWindow x m (n - (2 : ℤ))) (affineEval (c - vecDot A x) A) +
-                        normalizedL2On (truncatedWindow x m (n - (2 : ℤ))) (evenAffinePart x m i c A)) ∧
+                      (normalizedL2On (truncatedWindow x m (n - (2 : ℤ))) (affineEval (c - vecDot
+                        A x) A) +
+                        normalizedL2On (truncatedWindow x m (n - (2 : ℤ))) (evenAffinePart x m i c
+                          A)) ∧
                 normalizedL2On (truncatedWindow x m (n - (2 : ℤ))) (evenAffinePart x m i c A) ≤
                   (3 : ℝ) * Caff *
                       (Vr *
@@ -465,8 +511,10 @@ private theorem oneStepOddClassCornerFinal_comparisonBounds3 :
                     Lam * tt *
                       ((normalizedL2On (truncatedWindow x m (n - (2 : ℤ))) fun (y : Vec d) =>
                           V y - affineEval (c - vecDot A x) A y) +
-                        normalizedL2On (truncatedWindow x m (n - (2 : ℤ))) (affineEval (c - vecDot A x) A)) := by
-  intro _ _ CHc hCHc0 Caff hCaff0 Crefl CFold Lam tt Vr m n x i V c A A3 c3 h_i hF3R hco1 hco3 hEP0 hPNi0 p1
+                        normalizedL2On (truncatedWindow x m (n - (2 : ℤ))) (affineEval (c - vecDot
+                          A x) A)) := by
+  intro _ _ CHc hCHc0 Caff hCaff0 Crefl CFold Lam tt Vr m n x i V c A A3 c3 h_i hF3R hco1 hco3
+    hEP0 hPNi0 p1
   have p3 : Caff * (3 * (CHc * tt ^ 2
         * normalizedL2On (reflectedWindow x m (n - 2))
             (fun y => V y - affineEval (c3 - vecDot A3 x) A3 y)))
@@ -563,7 +611,8 @@ private theorem oneStepOddClassCornerFinal_comparisonBounds4 :
       let Caff : ℝ := √(((24 : ℝ) * (↑d : ℝ) + (1 : ℝ)) * (4 : ℝ) ^ (2 : ℕ) + (2 : ℝ));
       let Crefl : ℝ := √(((24 : ℝ) * (↑d : ℝ) + (1 : ℝ)) * (2 : ℝ) ^ (2 : ℕ) + (2 : ℝ));
       let CFold : ℝ := (2 : ℝ) ^ d + Crefl;
-      let Lam : ℝ := (3 : ℝ) * Caff * CHc * CFold + (21 : ℝ) * Caff + (3 : ℝ) * Caff * CHc * Crefl + (1 : ℝ);
+      let Lam : ℝ := (3 : ℝ) * Caff * CHc * CFold + (21 : ℝ) * Caff + (3 : ℝ) * Caff * CHc * Crefl
+        + (1 : ℝ);
       let tt : ℝ := min (1 / 16 : ℝ) ((1 : ℝ) / ((8 : ℝ) * Lam));
       ∀ (_ : Lam * tt ≤ (1 / 8 : ℝ)),
         let Vr : ℝ := √(((1 : ℝ) / tt) ^ d);
@@ -575,9 +624,12 @@ private theorem oneStepOddClassCornerFinal_comparisonBounds4 :
           ∀
             (_ :
               (0 : ℝ) ≤
-                normalizedL2On (truncatedWindow x m (n - (2 : ℤ))) fun (y : Vec d) => V y - affineEval (c - vecDot A x) A y)
-            (_ : (0 : ℝ) ≤ normalizedL2On (truncatedWindow x m (n - (2 : ℤ))) (affineEval (c - vecDot A x) A))
-            (_ : (0 : ℝ) ≤ normalizedL2On (truncatedWindow x m (n - (2 : ℤ))) (evenAffinePart x m i c A))
+                normalizedL2On (truncatedWindow x m (n - (2 : ℤ))) fun (y : Vec d) => V y -
+                  affineEval (c - vecDot A x) A y)
+            (_ : (0 : ℝ) ≤ normalizedL2On (truncatedWindow x m (n - (2 : ℤ))) (affineEval (c -
+              vecDot A x) A))
+            (_ : (0 : ℝ) ≤ normalizedL2On (truncatedWindow x m (n - (2 : ℤ))) (evenAffinePart x m
+              i c A))
             (_ :
               normalizedL2On (truncatedWindow x m (n - (2 : ℤ))) (evenAffinePart x m j c A) ≤
                 Caff *
@@ -610,7 +662,8 @@ private theorem oneStepOddClassCornerFinal_comparisonBounds4 :
               (0 : ℝ) ≤
                 (normalizedL2On (truncatedWindow x m (n - (2 : ℤ))) fun (y : Vec d) =>
                     V y - affineEval (c - vecDot A x) A y) +
-                  normalizedL2On (truncatedWindow x m (n - (2 : ℤ))) (affineEval (c - vecDot A x) A))
+                  normalizedL2On (truncatedWindow x m (n - (2 : ℤ))) (affineEval (c - vecDot A x)
+                    A))
             (_ :
               (0 : ℝ) ≤
                 normalizedL2On (truncatedWindow x m (n - (2 : ℤ))) (affineEval (c - vecDot A x) A) +
@@ -624,11 +677,13 @@ private theorem oneStepOddClassCornerFinal_comparisonBounds4 :
                 Lam * tt *
                   ((normalizedL2On (truncatedWindow x m (n - (2 : ℤ))) fun (y : Vec d) =>
                       V y - affineEval (c - vecDot A x) A y) +
-                    normalizedL2On (truncatedWindow x m (n - (2 : ℤ))) (affineEval (c - vecDot A x) A)))
+                    normalizedL2On (truncatedWindow x m (n - (2 : ℤ))) (affineEval (c - vecDot A
+                      x) A)))
             (_ :
               Caff * ((3 : ℝ) * (|A i| * delta)) ≤
                 Lam * tt *
-                  (normalizedL2On (truncatedWindow x m (n - (2 : ℤ))) (affineEval (c - vecDot A x) A) +
+                  (normalizedL2On (truncatedWindow x m (n - (2 : ℤ))) (affineEval (c - vecDot A x)
+                    A) +
                     normalizedL2On (truncatedWindow x m (n - (2 : ℤ))) (evenAffinePart x m i c A)))
             (_ :
               Caff *
@@ -639,10 +694,13 @@ private theorem oneStepOddClassCornerFinal_comparisonBounds4 :
                 Lam * tt *
                     ((normalizedL2On (truncatedWindow x m (n - (2 : ℤ))) fun (y : Vec d) =>
                         V y - affineEval (c - vecDot A x) A y) +
-                      normalizedL2On (truncatedWindow x m (n - (2 : ℤ))) (affineEval (c - vecDot A x) A)) +
+                      normalizedL2On (truncatedWindow x m (n - (2 : ℤ))) (affineEval (c - vecDot A
+                        x) A)) +
                   Lam * tt *
-                    (normalizedL2On (truncatedWindow x m (n - (2 : ℤ))) (affineEval (c - vecDot A x) A) +
-                      normalizedL2On (truncatedWindow x m (n - (2 : ℤ))) (evenAffinePart x m i c A)))
+                    (normalizedL2On (truncatedWindow x m (n - (2 : ℤ))) (affineEval (c - vecDot A
+                      x) A) +
+                      normalizedL2On (truncatedWindow x m (n - (2 : ℤ))) (evenAffinePart x m i c
+                        A)))
             (_ :
               normalizedL2On (truncatedWindow x m (n - (2 : ℤ))) (evenAffinePart x m i c A) ≤
                 (3 : ℝ) * Caff *
@@ -652,7 +710,8 @@ private theorem oneStepOddClassCornerFinal_comparisonBounds4 :
                   Lam * tt *
                     ((normalizedL2On (truncatedWindow x m (n - (2 : ℤ))) fun (y : Vec d) =>
                         V y - affineEval (c - vecDot A x) A y) +
-                      normalizedL2On (truncatedWindow x m (n - (2 : ℤ))) (affineEval (c - vecDot A x) A))),
+                      normalizedL2On (truncatedWindow x m (n - (2 : ℤ))) (affineEval (c - vecDot A
+                        x) A))),
             (normalizedL2On (truncatedWindow x m (n - (2 : ℤ))) (affineEval (c - vecDot A x) A) ≤
                 (104 / 11 : ℝ) *
                     ((3 : ℝ) * Caff *
@@ -665,7 +724,8 @@ private theorem oneStepOddClassCornerFinal_comparisonBounds4 :
               (normalizedL2On (truncatedWindow x m (n - (2 : ℤ))) fun (y : Vec d) =>
                   V y - affineEval (c - vecDot A x) A y) =
                 affineExcessRaw (truncatedWindow x m (n - (2 : ℤ))) V := by
-  intro _ _ CHc Caff _ _ Lam tt heps8 Vr m n x i j V c A hmin delta A3 c3 hE0 hP0 hNi0 h_j h_3 hPsum hEP0 hPNi0 p1 p2 p3 hNi2
+  intro _ _ CHc Caff _ _ Lam tt heps8 Vr m n x i j V c A hmin delta A3 c3 hE0 hP0 hNi0 h_j h_3
+    hPsum hEP0 hPNi0 p1 p2 p3 hNi2
   have hNj2 : normalizedL2On (truncatedWindow x m (n - 2)) (evenAffinePart x m j c A)
       ≤ 3 * Caff * (Vr * normalizedL2On (truncatedWindow x m (n - 2))
             (fun y => V y - affineEval (c - vecDot A x) A y))
@@ -750,16 +810,20 @@ private theorem oneStepOddClassCornerFinal_comparisonBounds5 :
                 IntegrableOn (fun (y : Vec d) => V y ^ (2 : ℕ)) W volume →
                   (0 : ℝ) < r →
                     Metric.ball p r ⊆ W →
-                      ‖fderiv ℝ (fderiv ℝ (V ∘ (⇑toEuc.symm : (a : EuclideanSpace ℝ (Fin d)) → Vec d)))
+                      ‖fderiv ℝ (fderiv ℝ (V ∘ (⇑toEuc.symm : (a : EuclideanSpace ℝ (Fin d)) → Vec
+                        d)))
                             ((toEuc : (a : Vec d) → EuclideanSpace ℝ (Fin d)) p)‖ ≤
-                        CH * r⁻¹ * r⁻¹ * √(((volume : (a : Set (Vec d)) → ℝ≥0∞) W).toReal / r ^ d) * normalizedL2On W V),
+                        CH * r⁻¹ * r⁻¹ * √(((volume : (a : Set (Vec d)) → ℝ≥0∞) W).toReal / r ^ d)
+                          * normalizedL2On W V),
       let CHc : ℝ := CH * (256 : ℝ) * √((32 : ℝ) ^ d);
       let Caff : ℝ := √(((24 : ℝ) * (↑d : ℝ) + (1 : ℝ)) * (4 : ℝ) ^ (2 : ℕ) + (2 : ℝ));
       let Crefl : ℝ := √(((24 : ℝ) * (↑d : ℝ) + (1 : ℝ)) * (2 : ℝ) ^ (2 : ℕ) + (2 : ℝ));
       let CFold : ℝ := (2 : ℝ) ^ d + Crefl;
-      let Lam : ℝ := (3 : ℝ) * Caff * CHc * CFold + (21 : ℝ) * Caff + (3 : ℝ) * Caff * CHc * Crefl + (1 : ℝ);
+      let Lam : ℝ := (3 : ℝ) * Caff * CHc * CFold + (21 : ℝ) * Caff + (3 : ℝ) * Caff * CHc * Crefl
+        + (1 : ℝ);
       let tt : ℝ := min (1 / 16 : ℝ) ((1 : ℝ) / ((8 : ℝ) * Lam));
-      ∀ (_ : (0 : ℝ) < tt) (_ : tt ≤ (1 / 16 : ℝ)) (m n : ℤ) (x : Vec d) (i j : Fin d) (V : Vec d → ℝ) (c : ℝ)
+      ∀ (_ : (0 : ℝ) < tt) (_ : tt ≤ (1 / 16 : ℝ)) (m n : ℤ) (x : Vec d) (i j : Fin d) (V : Vec d
+        → ℝ) (c : ℝ)
         (A : Vec d) (_ : x ∈ openCubeSet (originCube d m)) (_ : n - (2 : ℤ) < m) (_ : i ≠ j)
         (_ : MeetsUpperFace x m (n - (2 : ℤ)) i) (_ : MeetsUpperFace x m (n - (2 : ℤ)) j)
         (_ :
@@ -768,7 +832,8 @@ private theorem oneStepOddClassCornerFinal_comparisonBounds5 :
               ∀ (z : Vec d), V (coordFaceReflection ((1 / 2 : ℝ) * (3 : ℝ) ^ m) l z) = -V z)
         (_ :
           HarmonicOnNhd (V ∘ (⇑toEuc.symm : (a : EuclideanSpace ℝ (Fin d)) → Vec d))
-            ((⇑toEuc : (a : Vec d) → EuclideanSpace ℝ (Fin d)) '' reflectedWindow x m (n - (2 : ℤ))))
+            ((⇑toEuc : (a : Vec d) → EuclideanSpace ℝ (Fin d)) '' reflectedWindow x m (n - (2 :
+              ℤ))))
         (_ : MemLp V (2 : ℝ≥0∞) (volume.restrict (reflectedWindow x m (n - (2 : ℤ))))) (_ : j ≠ i),
         let delta : ℝ := tt * (3 : ℝ) ^ (n - (2 : ℤ));
         ∀ (_ : delta = tt * (3 : ℝ) ^ (n - (2 : ℤ))),
@@ -778,7 +843,8 @@ private theorem oneStepOddClassCornerFinal_comparisonBounds5 :
             ∀ (_ : c3 = evenAffineIntercept x m i c A + vecDot A3 x),
               (∀ (y : Vec d),
                   affineEval (c - vecDot A x) A y =
-                    evenAffinePart x m i c A y + evenAffinePart x m j c A y - evenAffinePart x m j c3 A3 y) ∧
+                    evenAffinePart x m i c A y + evenAffinePart x m j c A y - evenAffinePart x m j
+                      c3 A3 y) ∧
                 (∀ (y : Vec d),
                     V y - affineEval (c3 - vecDot A3 x) A3 y =
                       V y - affineEval (c - vecDot A x) A y + oddAffinePart x m i A y) ∧
@@ -788,7 +854,8 @@ private theorem oneStepOddClassCornerFinal_comparisonBounds5 :
                         (volume.restrict (truncatedWindow x m (n - (2 : ℤ)))) ∧
                       MemLp (affineEval (c - vecDot A x) A) (2 : ℝ≥0∞)
                           (volume.restrict (truncatedWindow x m (n - (2 : ℤ)))) ∧
-                        MemLp (evenAffinePart x m i c A) (2 : ℝ≥0∞) (volume.restrict (truncatedWindow x m (n - (2 : ℤ)))) ∧
+                        MemLp (evenAffinePart x m i c A) (2 : ℝ≥0∞) (volume.restrict
+                          (truncatedWindow x m (n - (2 : ℤ)))) ∧
                           MemLp (evenAffinePart x m j c A) (2 : ℝ≥0∞)
                               (volume.restrict (truncatedWindow x m (n - (2 : ℤ)))) ∧
                             MemLp (evenAffinePart x m j c3 A3) (2 : ℝ≥0∞)
@@ -796,44 +863,61 @@ private theorem oneStepOddClassCornerFinal_comparisonBounds5 :
                               MemLp (oddAffinePart x m i A) (2 : ℝ≥0∞)
                                   (volume.restrict (reflectedWindow x m (n - (2 : ℤ)))) ∧
                                 ((0 : ℝ) ≤
-                                    normalizedL2On (truncatedWindow x m (n - (2 : ℤ))) fun (y : Vec d) =>
+                                    normalizedL2On (truncatedWindow x m (n - (2 : ℤ))) fun (y :
+                                      Vec d) =>
                                       V y - affineEval (c - vecDot A x) A y) ∧
                                   (0 : ℝ) ≤
-                                      normalizedL2On (truncatedWindow x m (n - (2 : ℤ))) (affineEval (c - vecDot A x) A) ∧
+                                      normalizedL2On (truncatedWindow x m (n - (2 : ℤ)))
+                                        (affineEval (c - vecDot A x) A) ∧
                                     (0 : ℝ) ≤
-                                        normalizedL2On (truncatedWindow x m (n - (2 : ℤ))) (evenAffinePart x m i c A) ∧
-                                      normalizedL2On (truncatedWindow x m (n - (2 : ℤ))) (evenAffinePart x m i c A) ≤
-                                          √(((24 : ℝ) * (↑d : ℝ) + (1 : ℝ)) * (4 : ℝ) ^ (2 : ℕ) + (2 : ℝ)) *
+                                        normalizedL2On (truncatedWindow x m (n - (2 : ℤ)))
+                                          (evenAffinePart x m i c A) ∧
+                                      normalizedL2On (truncatedWindow x m (n - (2 : ℤ)))
+                                        (evenAffinePart x m i c A) ≤
+                                          √(((24 : ℝ) * (↑d : ℝ) + (1 : ℝ)) * (4 : ℝ) ^ (2 : ℕ) +
+                                            (2 : ℝ)) *
                                             ((3 : ℝ) *
                                                 (√(((1 : ℝ) / tt) ^ d) *
-                                                  normalizedL2On (truncatedWindow x m (n - (2 : ℤ))) fun (y : Vec d) =>
+                                                  normalizedL2On (truncatedWindow x m (n - (2 :
+                                                    ℤ))) fun (y : Vec d) =>
                                                     V y - affineEval (c - vecDot A x) A y) +
                                               (3 : ℝ) *
                                                 (CH * (256 : ℝ) * √((32 : ℝ) ^ d) * tt ^ (2 : ℕ) *
-                                                  normalizedL2On (reflectedWindow x m (n - (2 : ℤ))) fun (y : Vec d) =>
+                                                  normalizedL2On (reflectedWindow x m (n - (2 :
+                                                    ℤ))) fun (y : Vec d) =>
                                                     V y - affineEval (c - vecDot A x) A y)) ∧
-                                        normalizedL2On (truncatedWindow x m (n - (2 : ℤ))) (evenAffinePart x m j c A) ≤
-                                            √(((24 : ℝ) * (↑d : ℝ) + (1 : ℝ)) * (4 : ℝ) ^ (2 : ℕ) + (2 : ℝ)) *
+                                        normalizedL2On (truncatedWindow x m (n - (2 : ℤ)))
+                                          (evenAffinePart x m j c A) ≤
+                                            √(((24 : ℝ) * (↑d : ℝ) + (1 : ℝ)) * (4 : ℝ) ^ (2 : ℕ)
+                                              + (2 : ℝ)) *
                                               ((3 : ℝ) *
                                                   (√(((1 : ℝ) / tt) ^ d) *
-                                                    normalizedL2On (truncatedWindow x m (n - (2 : ℤ))) fun (y : Vec d) =>
+                                                    normalizedL2On (truncatedWindow x m (n - (2 :
+                                                      ℤ))) fun (y : Vec d) =>
                                                       V y - affineEval (c - vecDot A x) A y) +
                                                 (3 : ℝ) *
                                                   (CH * (256 : ℝ) * √((32 : ℝ) ^ d) * tt ^ (2 : ℕ) *
-                                                    normalizedL2On (reflectedWindow x m (n - (2 : ℤ))) fun (y : Vec d) =>
+                                                    normalizedL2On (reflectedWindow x m (n - (2 :
+                                                      ℤ))) fun (y : Vec d) =>
                                                       V y - affineEval (c - vecDot A x) A y)) ∧
-                                          normalizedL2On (truncatedWindow x m (n - (2 : ℤ))) (evenAffinePart x m j c3 A3) ≤
-                                            √(((24 : ℝ) * (↑d : ℝ) + (1 : ℝ)) * (4 : ℝ) ^ (2 : ℕ) + (2 : ℝ)) *
+                                          normalizedL2On (truncatedWindow x m (n - (2 : ℤ)))
+                                            (evenAffinePart x m j c3 A3) ≤
+                                            √(((24 : ℝ) * (↑d : ℝ) + (1 : ℝ)) * (4 : ℝ) ^ (2 : ℕ)
+                                              + (2 : ℝ)) *
                                               ((3 : ℝ) *
                                                     (√(((1 : ℝ) / tt) ^ d) *
-                                                      normalizedL2On (truncatedWindow x m (n - (2 : ℤ))) fun (y : Vec d) =>
+                                                      normalizedL2On (truncatedWindow x m (n - (2
+                                                        : ℤ))) fun (y : Vec d) =>
                                                         V y - affineEval (c - vecDot A x) A y) +
                                                   (3 : ℝ) * (|A i| * delta) +
                                                 (3 : ℝ) *
                                                   (CH * (256 : ℝ) * √((32 : ℝ) ^ d) * tt ^ (2 : ℕ) *
-                                                    normalizedL2On (reflectedWindow x m (n - (2 : ℤ))) fun (y : Vec d) =>
-                                                      V y - affineEval (c3 - vecDot A3 x) A3 y)) := by
-  intro _ _ hCH0 hCH _ _ _ _ _ _ htt0 htt16 m n x i j V c A hx hmn hij hupi hupj hupV hharm hVR hji _ hdeltadef A3 hA3def c3 hc3def
+                                                    normalizedL2On (reflectedWindow x m (n - (2 :
+                                                      ℤ))) fun (y : Vec d) =>
+                                                      V y - affineEval (c3 - vecDot A3 x) A3
+                                                        y)) := by
+  intro _ _ hCH0 hCH _ _ _ _ _ _ htt0 htt16 m n x i j V c A hx hmn hij hupi hupj hupV hharm hVR
+    hji _ hdeltadef A3 hA3def c3 hc3def
   have hc3sub : c3 - vecDot A3 x = evenAffineIntercept x m i c A := by
     rw [hc3def]; ring
   have he3 : ∀ y, affineEval (c3 - vecDot A3 x) A3 y
@@ -907,10 +991,67 @@ private theorem oneStepOddClassCornerFinal_comparisonBounds5 :
     (hupV j hupj) hharm hVR htt0 htt16 hdeltadef hCH0 hCH
   have h_3 := corner_pairApp_le (c' := c3) (A' := A3) hx hmn hij hupi hupj
     (hupV j hupj) hharm hVR htt0 htt16 hdeltadef hf3split hgij_i hCH0 hCH
-  exact ⟨hLsplit, hf3split, hfR, hfU, hlU, heiU, hejU, heijU, hoddRmem, hE0, hP0, hNi0, h_i, h_j, h_3⟩
+  exact ⟨hLsplit, hf3split, hfR, hfU, hlU, heiU, hejU, heijU, hoddRmem, hE0, hP0, hNi0, h_i, h_j,
+    h_3⟩
 
 /-- **`(★★)`: the corner competitor's window seminorm is priced by the
 excess.**  See the module docstring. -/
+private theorem oneStepOddClassCornerFinal_estimate1 :
+    ∀ (d : ℕ) (CH : ℝ),
+      let CHc : ℝ := CH * (256 : ℝ) * √((32 : ℝ) ^ d);
+      let Caff : ℝ := √(((24 : ℝ) * (↑d : ℝ) + (1 : ℝ)) * (4 : ℝ) ^ (2 : ℕ) + (2 : ℝ));
+      let Crefl : ℝ := √(((24 : ℝ) * (↑d : ℝ) + (1 : ℝ)) * (2 : ℝ) ^ (2 : ℕ) + (2 : ℝ));
+      let CFold : ℝ := (2 : ℝ) ^ d + Crefl;
+      let Lam : ℝ := (3 : ℝ) * Caff * CHc * CFold + (21 : ℝ) * Caff + (3 : ℝ) * Caff * CHc * Crefl
+        + (1 : ℝ);
+      ∀ (_ : Lam = (3 : ℝ) * Caff * CHc * CFold + (21 : ℝ) * Caff + (3 : ℝ) * Caff * CHc *
+        Crefl + (1 : ℝ))
+        (_ : (0 : ℝ) ≤ (3 : ℝ) * Caff * CHc * CFold) (_ : (0 : ℝ) ≤ (21 : ℝ) * Caff)
+        (_ : (0 : ℝ) ≤ (3 : ℝ) * Caff * CHc * Crefl),
+        let tt : ℝ := min (1 / 16 : ℝ) ((1 : ℝ) / ((8 : ℝ) * Lam));
+        ∀ (_ : (0 : ℝ) < tt) (_ : tt ≤ (1 : ℝ)), (3 : ℝ) * Caff * CHc * Crefl * tt ^ (2 : ℕ)
+          ≤ Lam * tt := by
+  intro _ _ CHc Caff Crefl _ Lam hLamdef hpart1 hpart2 hpart3 tt htt0 htt1
+  have ha : 3 * Caff * CHc * Crefl ≤ Lam := by
+    rw [hLamdef]
+    linarith only [hpart1, hpart2]
+  have hb : 3 * Caff * CHc * Crefl * tt ≤ Lam := by
+    have h1 : 3 * Caff * CHc * Crefl * tt ≤ 3 * Caff * CHc * Crefl * 1 :=
+      mul_le_mul_of_nonneg_left htt1 hpart3
+    rw [mul_one] at h1
+    linarith only [h1, ha]
+  calc 3 * Caff * CHc * Crefl * tt ^ 2
+      = (3 * Caff * CHc * Crefl * tt) * tt := by ring
+    _ ≤ Lam * tt := mul_le_mul_of_nonneg_right hb htt0.le
+
+private theorem oneStepCorner_firstCoefficientBound :
+    ∀ (d : ℕ) (CH : ℝ),
+      let CHc : ℝ := CH * (256 : ℝ) * √((32 : ℝ) ^ d);
+      let Caff : ℝ := √(((24 : ℝ) * (↑d : ℝ) + (1 : ℝ)) * (4 : ℝ) ^ (2 : ℕ) + (2 : ℝ));
+      let Crefl : ℝ := √(((24 : ℝ) * (↑d : ℝ) + (1 : ℝ)) * (2 : ℝ) ^ (2 : ℕ) + (2 : ℝ));
+      let CFold : ℝ := (2 : ℝ) ^ d + Crefl;
+      let Lam : ℝ := (3 : ℝ) * Caff * CHc * CFold + (21 : ℝ) * Caff + (3 : ℝ) * Caff * CHc * Crefl
+        + (1 : ℝ);
+      ∀ (_ : Lam = (3 : ℝ) * Caff * CHc * CFold + (21 : ℝ) * Caff + (3 : ℝ) * Caff * CHc *
+        Crefl + (1 : ℝ))
+        (_ : (0 : ℝ) ≤ (3 : ℝ) * Caff * CHc * CFold) (_ : (0 : ℝ) ≤ (21 : ℝ) * Caff)
+        (_ : (0 : ℝ) ≤ (3 : ℝ) * Caff * CHc * Crefl),
+        let tt : ℝ := min (1 / 16 : ℝ) ((1 : ℝ) / ((8 : ℝ) * Lam));
+        ∀ (_ : (0 : ℝ) < tt) (_ : tt ≤ (1 : ℝ)), (3 : ℝ) * Caff * CHc * CFold * tt ^ (2 : ℕ)
+          ≤ Lam * tt := by
+  intro _ _ CHc Caff _ CFold Lam hLamdef hpart1 hpart2 hpart3 tt htt0 htt1
+  have ha : 3 * Caff * CHc * CFold ≤ Lam := by
+    rw [hLamdef]
+    linarith only [hpart2, hpart3]
+  have hb : 3 * Caff * CHc * CFold * tt ≤ Lam := by
+    have h1 : 3 * Caff * CHc * CFold * tt ≤ 3 * Caff * CHc * CFold * 1 :=
+      mul_le_mul_of_nonneg_left htt1 hpart1
+    rw [mul_one] at h1
+    linarith only [h1, ha]
+  calc 3 * Caff * CHc * CFold * tt ^ 2
+      = (3 * Caff * CHc * CFold * tt) * tt := by ring
+    _ ≤ Lam * tt := mul_le_mul_of_nonneg_right hb htt0.le
+
 theorem exists_normalizedL2On_le_affineExcessRaw_corner (d : ℕ) [NeZero d] :
     ∃ C : ℝ, 0 ≤ C ∧ ∀ (m n : ℤ) (x : Vec d) (i j : Fin d) (V : Vec d → ℝ)
       (c : ℝ) (A : Vec d),
@@ -976,8 +1117,12 @@ theorem exists_normalizedL2On_le_affineExcessRaw_corner (d : ℕ) [NeZero d] :
   -- the third-application affine pair
   set A3 : Vec d := evenAffineSlope i A with hA3def
   set c3 : ℝ := evenAffineIntercept x m i c A + vecDot A3 x with hc3def
-  obtain ⟨stage_hLsplit, stage_hf3split, stage_hfR, stage_hfU, stage_hlU, stage_heiU, stage_hejU, stage_heijU, stage_hoddRmem, stage_hE0, stage_hP0, stage_hNi0, stage_h_i, stage_h_j, stage_h_3⟩ :=
-    @oneStepOddClassCornerFinal_comparisonBounds5 (d) (CH) (hCH0) (hCH) (htt0) (htt16) (m) (n) (x) (i) (j) (V) (c) (A) (hx) (hmn) (hij) (hupi) (hupj) (hupV) (hharm) (hVR) (hji) (hdeltadef) (hA3def) (hc3def)
+  obtain ⟨stage_hLsplit, stage_hf3split, stage_hfR, stage_hfU, stage_hlU, stage_heiU, stage_hejU,
+    stage_heijU, stage_hoddRmem, stage_hE0, stage_hP0, stage_hNi0, stage_h_i, stage_h_j,
+      stage_h_3⟩ :=
+    @oneStepOddClassCornerFinal_comparisonBounds5 (d) (CH) (hCH0) (hCH) (htt0) (htt16) (m) (n) (x)
+      (i) (j) (V) (c) (A) (hx) (hmn) (hij) (hupi) (hupj) (hupV) (hharm) (hVR) (hji) (hdeltadef)
+        (hA3def) (hc3def)
   have hLsplit : ∀ y, affineEval (c - vecDot A x) A y
       = evenAffinePart x m i c A y + evenAffinePart x m j c A y
         - evenAffinePart x m j c3 A3 y := stage_hLsplit
@@ -1045,32 +1190,14 @@ theorem exists_normalizedL2On_le_affineExcessRaw_corner (d : ℕ) [NeZero d] :
           (fun y => V y - affineEval (c - vecDot A x) A y)
         + normalizedL2On (truncatedWindow x m (n - 2))
             (affineEval (c - vecDot A x) A)) from
-      @oneStepOddClassCornerFinal_comparisonBounds2 (d) (CH) (hCH0) (hCrefl0) (htt0) (m) (n) (x) (i) (j) (V) (c) (A) (hx) (hmn) (hdeltadef) (hLsplit) (hf3split) (hfR) (hfU) (hlU) (heiU) (hejU) (heijU) (hoddRmem) (hFRle) (hoddRle))
+      @oneStepOddClassCornerFinal_comparisonBounds2 (d) (CH) (hCH0) (hCrefl0) (htt0) (m) (n) (x)
+        (i) (j) (V) (c) (A) (hx) (hmn) (hdeltadef) (hLsplit) (hf3split) (hfR) (hfU) (hlU) (heiU)
+          (hejU) (heijU) (hoddRmem) (hFRle) (hoddRle))
   -- coefficient smallness
-  have hco1 : 3 * Caff * CHc * CFold * tt ^ 2 ≤ Lam * tt := by
-    have ha : 3 * Caff * CHc * CFold ≤ Lam := by
-      rw [hLamdef]
-      linarith only [hpart2, hpart3]
-    have hb : 3 * Caff * CHc * CFold * tt ≤ Lam := by
-      have h1 : 3 * Caff * CHc * CFold * tt ≤ 3 * Caff * CHc * CFold * 1 :=
-        mul_le_mul_of_nonneg_left htt1 hpart1
-      rw [mul_one] at h1
-      linarith only [h1, ha]
-    calc 3 * Caff * CHc * CFold * tt ^ 2
-        = (3 * Caff * CHc * CFold * tt) * tt := by ring
-      _ ≤ Lam * tt := mul_le_mul_of_nonneg_right hb htt0.le
-  have hco3 : 3 * Caff * CHc * Crefl * tt ^ 2 ≤ Lam * tt := by
-    have ha : 3 * Caff * CHc * Crefl ≤ Lam := by
-      rw [hLamdef]
-      linarith only [hpart1, hpart2]
-    have hb : 3 * Caff * CHc * Crefl * tt ≤ Lam := by
-      have h1 : 3 * Caff * CHc * Crefl * tt ≤ 3 * Caff * CHc * Crefl * 1 :=
-        mul_le_mul_of_nonneg_left htt1 hpart3
-      rw [mul_one] at h1
-      linarith only [h1, ha]
-    calc 3 * Caff * CHc * Crefl * tt ^ 2
-        = (3 * Caff * CHc * Crefl * tt) * tt := by ring
-      _ ≤ Lam * tt := mul_le_mul_of_nonneg_right hb htt0.le
+  have hco1 : 3 * Caff * CHc * CFold * tt ^ 2 ≤ Lam * tt  := @oneStepCorner_firstCoefficientBound
+    (d) (CH) (hLamdef) (hpart1) (hpart2) (hpart3) (htt0) (htt1)
+  have hco3 : 3 * Caff * CHc * Crefl * tt ^ 2 ≤ Lam * tt  := @oneStepOddClassCornerFinal_estimate1
+    (d) (CH) (hLamdef) (hpart1) (hpart2) (hpart3) (htt0) (htt1)
   obtain ⟨hEP0, hPNi0, p1, p2⟩ :=
     (show (0 ≤ normalizedL2On (truncatedWindow x m (n - 2))
         (fun y => V y - affineEval (c - vecDot A x) A y)
@@ -1089,7 +1216,8 @@ theorem exists_normalizedL2On_le_affineExcessRaw_corner (d : ℕ) [NeZero d] :
             (affineEval (c - vecDot A x) A)
           + normalizedL2On (truncatedWindow x m (n - 2))
               (evenAffinePart x m i c A))) from
-      @oneStepOddClassCornerFinal_comparisonBounds1 (d) (CH) (hCHc0) (hCaff0) (hLamdef) (hpart1) (hpart3) (htt0) (m) (n) (x) (i) (V) (c) (A) (hE0) (hP0) (hNi0) (hFRle) (hq2) (hco1))
+      @oneStepOddClassCornerFinal_comparisonBounds1 (d) (CH) (hCHc0) (hCaff0) (hLamdef) (hpart1)
+        (hpart3) (htt0) (m) (n) (x) (i) (V) (c) (A) (hE0) (hP0) (hNi0) (hFRle) (hq2) (hco1))
   obtain ⟨p3, hNi2⟩ :=
     (show (Caff * (3 * (CHc * tt ^ 2
         * normalizedL2On (reflectedWindow x m (n - 2))
@@ -1101,24 +1229,28 @@ theorem exists_normalizedL2On_le_affineExcessRaw_corner (d : ℕ) [NeZero d] :
         + Lam * tt * (normalizedL2On (truncatedWindow x m (n - 2))
             (affineEval (c - vecDot A x) A)
           + normalizedL2On (truncatedWindow x m (n - 2))
-              (evenAffinePart x m i c A))) ∧ (normalizedL2On (truncatedWindow x m (n - 2)) (evenAffinePart x m i c A)
+              (evenAffinePart x m i c A))) ∧ (normalizedL2On (truncatedWindow x m (n - 2))
+                (evenAffinePart x m i c A)
       ≤ 3 * Caff * (Vr * normalizedL2On (truncatedWindow x m (n - 2))
             (fun y => V y - affineEval (c - vecDot A x) A y))
         + Lam * tt * (normalizedL2On (truncatedWindow x m (n - 2))
               (fun y => V y - affineEval (c - vecDot A x) A y)
             + normalizedL2On (truncatedWindow x m (n - 2))
                 (affineEval (c - vecDot A x) A))) from
-      @oneStepOddClassCornerFinal_comparisonBounds3 (d) (CH) (hCHc0) (hCaff0) (m) (n) (x) (i) (V) (c) (A) (h_i) (hF3R) (hco1) (hco3) (hEP0) (hPNi0) (p1))
+      @oneStepOddClassCornerFinal_comparisonBounds3 (d) (CH) (hCHc0) (hCaff0) (m) (n) (x) (i) (V)
+        (c) (A) (h_i) (hF3R) (hco1) (hco3) (hEP0) (hPNi0) (p1))
   obtain ⟨hPfin, hEeq⟩ :=
     (show (normalizedL2On (truncatedWindow x m (n - 2))
       (affineEval (c - vecDot A x) A)
       ≤ (104 / 11) * (3 * Caff * (Vr * normalizedL2On (truncatedWindow x m (n - 2))
             (fun y => V y - affineEval (c - vecDot A x) A y)))
         + (13 / 11) * normalizedL2On (truncatedWindow x m (n - 2))
-            (fun y => V y - affineEval (c - vecDot A x) A y)) ∧ (normalizedL2On (truncatedWindow x m (n - 2))
+            (fun y => V y - affineEval (c - vecDot A x) A y)) ∧ (normalizedL2On (truncatedWindow x
+              m (n - 2))
       (fun y => V y - affineEval (c - vecDot A x) A y)
       = affineExcessRaw (truncatedWindow x m (n - 2)) V) from
-      @oneStepOddClassCornerFinal_comparisonBounds4 (d) (CH) (heps8) (m) (n) (x) (i) (j) (V) (c) (A) (hmin) (hE0) (hP0) (hNi0) (h_j) (h_3) (hPsum) (hEP0) (hPNi0) (p1) (p2) (p3) (hNi2))
+      @oneStepOddClassCornerFinal_comparisonBounds4 (d) (CH) (heps8) (m) (n) (x) (i) (j) (V) (c)
+        (A) (hmin) (hE0) (hP0) (hNi0) (h_j) (h_3) (hPsum) (hEP0) (hPNi0) (p1) (p2) (p3) (hNi2))
   rw [← hEeq]
   have hexp : ((104 / 11) * (3 * Caff * Vr) + 24 / 11)
         * normalizedL2On (truncatedWindow x m (n - 2))

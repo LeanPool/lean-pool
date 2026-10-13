@@ -99,32 +99,40 @@ def probeSharpAfterBandTunedOutputConst (d : ℕ) : ℝ :=
 
 private abbrev upperAfterBandOrdinaryProfile_momentBounds1_statement : Prop :=
     ∀ {d : ℕ} (M : ABKModel d) {m : ℤ} {k : ℕ} {R : TriadicCube d}
-      (_ : R ∈ descendantsAtScale (originCube d m) (m - (1 : ℤ) - (↑k : ℤ))) {E : { E : ℝ // (1 : ℝ) ≤ E }}
+      (_ : R ∈ descendantsAtScale (originCube d m) (m - (1 : ℤ) - (↑k : ℤ))) {E : { E : ℝ // (1 :
+        ℝ) ≤ E }}
       (_ : Frozen.Section3.inductionState M (m - (1 : ℤ)) E) {sigma : ℝ} (_ : (0 : ℝ) < sigma)
       (_ : sigma ≤ (1 / 2 : ℝ)) (_ : (↑E : ℝ) ≤ M.gamma ^ (-(1 / 5 : ℝ))) (_ : (2 : ℕ) ≤ d),
       let shift : Vec d := triadicCubeShift R;
       let j₀ : Fin d := ⟨(0 : ℕ), (by positivity)⟩;
       let B : ℕ → CutoffSample d → ℝ := fun (n : ℕ) (eta : CutoffSample d) =>
         probeSharpAfterBandTunedBaseTerm M R.scale m (↑E : ℝ) k n eta;
-      let Q : CutoffSample d → ℝ := fun (eta : CutoffSample d) => probeSharpAfterBandHsepResidual M R.scale (↑E : ℝ) eta;
+      let Q : CutoffSample d → ℝ := fun (eta : CutoffSample d) => probeSharpAfterBandHsepResidual
+        M R.scale (↑E : ℝ) eta;
       let O : ℕ → CutoffSample d → ℝ := fun (n : ℕ) (omega : CutoffSample d) =>
         (2 : ℝ) * B n (translateCutoffSample shift omega);
       let V : ℕ → CutoffSample d → ℝ := fun (n : ℕ) (omega : CutoffSample d) =>
         Q (translateCutoffSample shift omega) * B n (translateCutoffSample shift omega);
       let C : ℝ := probeMeanGoodWaveConst M * vecNormSq (basisVec j₀);
-      let target : ℝ := min (1 : ℝ) (M.gamma * (↑(k + (1 : ℕ)) : ℝ)) * (3 : ℝ) ^ (M.gamma * (↑(k + (1 : ℕ)) : ℝ));
-      let ordinary : CutoffSample d → ℝ := fun (omega : CutoffSample d) => (↑d : ℝ) * (C * ∑' (n : ℕ), O n omega);
-      let rare : CutoffSample d → ℝ := fun (omega : CutoffSample d) => (↑d : ℝ) * (C * ∑' (n : ℕ), V n omega);
+      let target : ℝ := min (1 : ℝ) (M.gamma * (↑(k + (1 : ℕ)) : ℝ)) * (3 : ℝ) ^ (M.gamma * (↑(k +
+        (1 : ℕ)) : ℝ));
+      let ordinary : CutoffSample d → ℝ := fun (omega : CutoffSample d) => (↑d : ℝ) * (C * ∑' (n :
+        ℕ), O n omega);
+      let rare : CutoffSample d → ℝ := fun (omega : CutoffSample d) => (↑d : ℝ) * (C * ∑' (n : ℕ),
+        V n omega);
       let AO : ℝ := gammaTriangleConst (1 : ℝ) * (probeSharpAfterBandOrdinarySumConst d * target);
       let Z : ℝ := Real.exp (-(upperHsepResidualRate * ((↑E : ℝ)⁻¹ ^ (2 : ℕ) * M.gamma⁻¹)));
-      let AV : ℝ := gammaTriangleConst (upperProfileTargetSigma sigma) * (probeSharpAfterBandRareSumConst d * target * Z);
+      let AV : ℝ := gammaTriangleConst (upperProfileTargetSigma sigma) *
+        (probeSharpAfterBandRareSumConst d * target * Z);
       ∀ (_ : max (Real.exp (profileAuxiliaryConst d / sigma)) (Disorder.cstar M)⁻¹ ≤ (↑E : ℝ))
         (_ : M.gamma ≤ (1 / 20 : ℝ)) (_ : ∀ (n : ℕ) (omega : CutoffSample d), (0 : ℝ) ≤ O n omega)
-        (_ : ∀ (n : ℕ) (omega : CutoffSample d), (0 : ℝ) ≤ V n omega) (_ : ∀ (n : ℕ), Measurable (O n))
+        (_ : ∀ (n : ℕ) (omega : CutoffSample d), (0 : ℝ) ≤ V n omega) (_ : ∀ (n : ℕ), Measurable
+          (O n))
         (_ : ∀ (n : ℕ), Measurable (V n)),
         IsBigOWith (↑(cutoffSampleLaw M) : Measure (CutoffSample d)) (gammaSigma (1 : ℝ))
             (fun (omega : CutoffSample d) => ∑' (n : ℕ), O n omega) AO ∧
-          IsBigOWith (↑(cutoffSampleLaw M) : Measure (CutoffSample d)) (gammaSigma (upperProfileTargetSigma sigma))
+          IsBigOWith (↑(cutoffSampleLaw M) : Measure (CutoffSample d)) (gammaSigma
+            (upperProfileTargetSigma sigma))
               (fun (omega : CutoffSample d) => ∑' (n : ℕ), V n omega) AV ∧
             (∀ᵐ (omega : CutoffSample d) ∂(↑(cutoffSampleLaw M) : Measure (CutoffSample d)),
                 Summable fun (n : ℕ) => O n omega) ∧
@@ -137,25 +145,31 @@ private abbrev upperAfterBandOrdinaryProfile_momentBounds1_statement : Prop :=
 
 private abbrev upperAfterBandOrdinaryProfile_momentBounds2_statement : Prop :=
     ∀ {d : ℕ} (M : ABKModel d) {m : ℤ} {k : ℕ} {R : TriadicCube d}
-      (_ : R ∈ descendantsAtScale (originCube d m) (m - (1 : ℤ) - (↑k : ℤ))) {E : { E : ℝ // (1 : ℝ) ≤ E }} {sigma : ℝ}
+      (_ : R ∈ descendantsAtScale (originCube d m) (m - (1 : ℤ) - (↑k : ℤ))) {E : { E : ℝ // (1 :
+        ℝ) ≤ E }} {sigma : ℝ}
       (_ : (2 : ℕ) ≤ d),
       let k₀ : ℕ := collarBandMeanDepth M (↑E : ℝ);
       let shift : Vec d := triadicCubeShift R;
       let j₀ : Fin d := ⟨(0 : ℕ), (by positivity)⟩;
       let B : ℕ → CutoffSample d → ℝ := fun (n : ℕ) (eta : CutoffSample d) =>
         probeSharpAfterBandTunedBaseTerm M R.scale m (↑E : ℝ) k n eta;
-      let Q : CutoffSample d → ℝ := fun (eta : CutoffSample d) => probeSharpAfterBandHsepResidual M R.scale (↑E : ℝ) eta;
+      let Q : CutoffSample d → ℝ := fun (eta : CutoffSample d) => probeSharpAfterBandHsepResidual
+        M R.scale (↑E : ℝ) eta;
       let O : ℕ → CutoffSample d → ℝ := fun (n : ℕ) (omega : CutoffSample d) =>
         (2 : ℝ) * B n (translateCutoffSample shift omega);
       let V : ℕ → CutoffSample d → ℝ := fun (n : ℕ) (omega : CutoffSample d) =>
         Q (translateCutoffSample shift omega) * B n (translateCutoffSample shift omega);
       let C : ℝ := probeMeanGoodWaveConst M * vecNormSq (basisVec j₀);
-      let target : ℝ := min (1 : ℝ) (M.gamma * (↑(k + (1 : ℕ)) : ℝ)) * (3 : ℝ) ^ (M.gamma * (↑(k + (1 : ℕ)) : ℝ));
-      let ordinary : CutoffSample d → ℝ := fun (omega : CutoffSample d) => (↑d : ℝ) * (C * ∑' (n : ℕ), O n omega);
-      let rare : CutoffSample d → ℝ := fun (omega : CutoffSample d) => (↑d : ℝ) * (C * ∑' (n : ℕ), V n omega);
+      let target : ℝ := min (1 : ℝ) (M.gamma * (↑(k + (1 : ℕ)) : ℝ)) * (3 : ℝ) ^ (M.gamma * (↑(k +
+        (1 : ℕ)) : ℝ));
+      let ordinary : CutoffSample d → ℝ := fun (omega : CutoffSample d) => (↑d : ℝ) * (C * ∑' (n :
+        ℕ), O n omega);
+      let rare : CutoffSample d → ℝ := fun (omega : CutoffSample d) => (↑d : ℝ) * (C * ∑' (n : ℕ),
+        V n omega);
       let AO : ℝ := gammaTriangleConst (1 : ℝ) * (probeSharpAfterBandOrdinarySumConst d * target);
       let Z : ℝ := Real.exp (-(upperHsepResidualRate * ((↑E : ℝ)⁻¹ ^ (2 : ℕ) * M.gamma⁻¹)));
-      let AV : ℝ := gammaTriangleConst (upperProfileTargetSigma sigma) * (probeSharpAfterBandRareSumConst d * target * Z);
+      let AV : ℝ := gammaTriangleConst (upperProfileTargetSigma sigma) *
+        (probeSharpAfterBandRareSumConst d * target * Z);
       let ordinaryScale : ℝ := (↑d : ℝ) * (C * AO);
       let rareScale : ℝ := (↑d : ℝ) * (C * AV);
       ∀
@@ -163,12 +177,15 @@ private abbrev upperAfterBandOrdinaryProfile_momentBounds2_statement : Prop :=
           IsBigOWith (↑(cutoffSampleLaw M) : Measure (CutoffSample d)) (gammaSigma (1 : ℝ))
             (fun (omega : CutoffSample d) => ∑' (n : ℕ), O n omega) AO)
         (_ :
-          IsBigOWith (↑(cutoffSampleLaw M) : Measure (CutoffSample d)) (gammaSigma (upperProfileTargetSigma sigma))
+          IsBigOWith (↑(cutoffSampleLaw M) : Measure (CutoffSample d)) (gammaSigma
+            (upperProfileTargetSigma sigma))
             (fun (omega : CutoffSample d) => ∑' (n : ℕ), V n omega) AV)
         (_ :
-          ∀ᵐ (omega : CutoffSample d) ∂(↑(cutoffSampleLaw M) : Measure (CutoffSample d)), Summable fun (n : ℕ) => O n omega)
+          ∀ᵐ (omega : CutoffSample d) ∂(↑(cutoffSampleLaw M) : Measure (CutoffSample d)), Summable
+            fun (n : ℕ) => O n omega)
         (_ :
-          ∀ᵐ (omega : CutoffSample d) ∂(↑(cutoffSampleLaw M) : Measure (CutoffSample d)), Summable fun (n : ℕ) => V n omega)
+          ∀ᵐ (omega : CutoffSample d) ∂(↑(cutoffSampleLaw M) : Measure (CutoffSample d)), Summable
+            fun (n : ℕ) => V n omega)
         (_ : (0 : ℝ) ≤ C) (_ : ∀ (omega : CutoffSample d), (0 : ℝ) ≤ ordinary omega)
         (_ : ∀ (omega : CutoffSample d), (0 : ℝ) ≤ rare omega)
         (_ :
@@ -179,11 +196,13 @@ private abbrev upperAfterBandOrdinaryProfile_momentBounds2_statement : Prop :=
           ∀ᵐ (omega : CutoffSample d) ∂(↑(cutoffSampleLaw M) : Measure (CutoffSample d)),
             ∑ j : Fin d,
                 ∑' (n : ℕ),
-                  probeSharpFramedGoodWavePart M R.scale (↑E : ℝ) bfaProfileB (collarBandMeanDepth M (↑E : ℝ)) n
+                  probeSharpFramedGoodWavePart M R.scale (↑E : ℝ) bfaProfileB (collarBandMeanDepth
+                    M (↑E : ℝ)) n
                     (m - (1 : ℤ)) (basisVec j)
                     (fun (eta : CutoffSample d) =>
                       probeSharpAfterBandTerm M R.scale
-                          (probeSharpLayerAnchor R.scale bfaProfileB (collarBandMeanDepth M (↑E : ℝ)) n)
+                          (probeSharpLayerAnchor R.scale bfaProfileB (collarBandMeanDepth M (↑E :
+                            ℝ)) n)
                           (collarBandMeanDepth M (↑E : ℝ)) m eta ^
                         (2 : ℕ))
                     (translateCutoffSample (triadicCubeShift R) omega) ≤
@@ -203,7 +222,8 @@ private abbrev upperAfterBandOrdinaryProfile_momentBounds2_statement : Prop :=
                       (probeMeanGoodWaveConst M * vecNormSq (basisVec j₀) *
                         ∑' (n : ℕ),
                           (fun (n : ℕ) (omega : CutoffSample d) =>
-                              (fun (eta : CutoffSample d) => probeSharpAfterBandHsepResidual M R.scale (↑E : ℝ) eta)
+                              (fun (eta : CutoffSample d) => probeSharpAfterBandHsepResidual M
+                                R.scale (↑E : ℝ) eta)
                                   (translateCutoffSample (triadicCubeShift R) omega) *
                                 (fun (n : ℕ) (eta : CutoffSample d) =>
                                     probeSharpAfterBandTunedBaseTerm M R.scale m (↑E : ℝ) k n eta)
@@ -214,31 +234,39 @@ private abbrev upperAfterBandOrdinaryProfile_momentBounds2_statement : Prop :=
             ∑ j : Fin d,
                 ∑' (n : ℕ),
                   ENNReal.ofReal
-                    (probeSharpFramedGoodWavePart M R.scale (↑E : ℝ) bfaProfileB k₀ n (m - (1 : ℤ)) (basisVec j)
+                    (probeSharpFramedGoodWavePart M R.scale (↑E : ℝ) bfaProfileB k₀ n (m - (1 :
+                      ℤ)) (basisVec j)
                       (fun (eta : CutoffSample d) =>
-                        probeSharpAfterBandTerm M R.scale (probeSharpLayerAnchor R.scale bfaProfileB k₀ n) k₀ m eta ^
+                        probeSharpAfterBandTerm M R.scale (probeSharpLayerAnchor R.scale
+                          bfaProfileB k₀ n) k₀ m eta ^
                           (2 : ℕ))
                       (translateCutoffSample shift omega)) =
               ENNReal.ofReal
                 (∑ j : Fin d,
                   ∑' (n : ℕ),
-                    probeSharpFramedGoodWavePart M R.scale (↑E : ℝ) bfaProfileB k₀ n (m - (1 : ℤ)) (basisVec j)
+                    probeSharpFramedGoodWavePart M R.scale (↑E : ℝ) bfaProfileB k₀ n (m - (1 : ℤ))
+                      (basisVec j)
                       (fun (eta : CutoffSample d) =>
-                        probeSharpAfterBandTerm M R.scale (probeSharpLayerAnchor R.scale bfaProfileB k₀ n) k₀ m eta ^
+                        probeSharpAfterBandTerm M R.scale (probeSharpLayerAnchor R.scale
+                          bfaProfileB k₀ n) k₀ m eta ^
                           (2 : ℕ))
                       (translateCutoffSample shift omega))) ∧
           (∀ᵐ (omega : CutoffSample d) ∂(↑(cutoffSampleLaw M) : Measure (CutoffSample d)),
               ∑ j : Fin d,
                   ∑' (n : ℕ),
                     ENNReal.ofReal
-                      (probeSharpFramedGoodWavePart M R.scale (↑E : ℝ) bfaProfileB k₀ n (m - (1 : ℤ)) (basisVec j)
+                      (probeSharpFramedGoodWavePart M R.scale (↑E : ℝ) bfaProfileB k₀ n (m - (1 :
+                        ℤ)) (basisVec j)
                         (fun (eta : CutoffSample d) =>
-                          probeSharpAfterBandTerm M R.scale (probeSharpLayerAnchor R.scale bfaProfileB k₀ n) k₀ m eta ^
+                          probeSharpAfterBandTerm M R.scale (probeSharpLayerAnchor R.scale
+                            bfaProfileB k₀ n) k₀ m eta ^
                             (2 : ℕ))
                         (translateCutoffSample shift omega)) ≤
                 ENNReal.ofReal (ordinary omega) + ENNReal.ofReal (rare omega)) ∧
-            IsBigOWith (↑(cutoffSampleLaw M) : Measure (CutoffSample d)) (gammaSigma (1 : ℝ)) ordinary ordinaryScale ∧
-              IsBigOWith (↑(cutoffSampleLaw M) : Measure (CutoffSample d)) (gammaSigma (((1 : ℝ) - sigma) / (3 : ℝ))) rare
+            IsBigOWith (↑(cutoffSampleLaw M) : Measure (CutoffSample d)) (gammaSigma (1 : ℝ))
+              ordinary ordinaryScale ∧
+              IsBigOWith (↑(cutoffSampleLaw M) : Measure (CutoffSample d)) (gammaSigma (((1 : ℝ) -
+                sigma) / (3 : ℝ))) rare
                   rareScale ∧
                 (0 : ℝ) ≤ target ∧ (0 : ℝ) ≤ ordinaryScale
 
@@ -708,8 +736,10 @@ private theorem afterBandGoodTrace_pointwiseSplit :
               let V : ℕ → CutoffSample d → ℝ := fun (n : ℕ) (omega : CutoffSample d) =>
                 Q (translateCutoffSample shift omega) * B n (translateCutoffSample shift omega);
               let C : ℝ := probeMeanGoodWaveConst M * vecNormSq (basisVec j₀);
-              let ordinary : CutoffSample d → ℝ := fun (omega : CutoffSample d) => (↑d : ℝ) * (C * ∑' (n : ℕ), O n omega);
-              let rare : CutoffSample d → ℝ := fun (omega : CutoffSample d) => (↑d : ℝ) * (C * ∑' (n : ℕ), V n omega);
+              let ordinary : CutoffSample d → ℝ := fun (omega : CutoffSample d) => (↑d : ℝ) * (C *
+                ∑' (n : ℕ), O n omega);
+              let rare : CutoffSample d → ℝ := fun (omega : CutoffSample d) => (↑d : ℝ) * (C * ∑'
+                (n : ℕ), V n omega);
               (∀ᵐ (omega : CutoffSample d) ∂(↑(cutoffSampleLaw M) : Measure (CutoffSample d)),
                   Summable fun (n : ℕ) => O n omega) →
                 (∀ᵐ (omega : CutoffSample d) ∂(↑(cutoffSampleLaw M) : Measure (CutoffSample d)),
@@ -720,9 +750,11 @@ private theorem afterBandGoodTrace_pointwiseSplit :
                     ∀ᵐ (omega : CutoffSample d) ∂(↑(cutoffSampleLaw M) : Measure (CutoffSample d)),
                       ∑ j : Fin d,
                           ∑' (n : ℕ),
-                            probeSharpFramedGoodWavePart M R.scale (↑E : ℝ) bfaProfileB k₀ n (m - (1 : ℤ)) (basisVec j)
+                            probeSharpFramedGoodWavePart M R.scale (↑E : ℝ) bfaProfileB k₀ n (m -
+                              (1 : ℤ)) (basisVec j)
                               (fun (eta : CutoffSample d) =>
-                                probeSharpAfterBandTerm M R.scale (probeSharpLayerAnchor R.scale bfaProfileB k₀ n) k₀ m
+                                probeSharpAfterBandTerm M R.scale (probeSharpLayerAnchor R.scale
+                                  bfaProfileB k₀ n) k₀ m
                                     eta ^
                                   (2 : ℕ))
                               (translateCutoffSample shift omega) ≤
@@ -787,20 +819,23 @@ private theorem afterBandGoodTrace_pointwiseSplit :
 
 private theorem upperAfterBandOrdinaryProfile_estimate1 :
     ∀ {d : ℕ} (M : ABKModel d) {m : ℤ} {k : ℕ} {R : TriadicCube d}
-      (hR : R ∈ descendantsAtScale (originCube d m) (m - (1 : ℤ) - (↑k : ℤ))) {E : { E : ℝ // (1 : ℝ) ≤ E }}
-      (hS : Frozen.Section3.inductionState M (m - (1 : ℤ)) E) {sigma : ℝ} (hsigma0 : (0 : ℝ) < sigma)
-      (hsigma : sigma ≤ (1 / 2 : ℝ)) (hEgamma : (↑E : ℝ) ≤ M.gamma ^ (-(1 / 5 : ℝ))),
+      (_ : R ∈ descendantsAtScale (originCube d m) (m - (1 : ℤ) - (↑k : ℤ))) {E : { E : ℝ // (1 :
+        ℝ) ≤ E }}
+      (_ : Frozen.Section3.inductionState M (m - (1 : ℤ)) E) {sigma : ℝ} (_ : (0 : ℝ) < sigma)
+      (_ : sigma ≤ (1 / 2 : ℝ)) (_ : (↑E : ℝ) ≤ M.gamma ^ (-(1 / 5 : ℝ))),
       let shift : Vec d := triadicCubeShift R;
       let B : ℕ → CutoffSample d → ℝ := fun (n : ℕ) (eta : CutoffSample d) =>
         probeSharpAfterBandTunedBaseTerm M R.scale m (↑E : ℝ) k n eta;
-      let Q : CutoffSample d → ℝ := fun (eta : CutoffSample d) => probeSharpAfterBandHsepResidual M R.scale (↑E : ℝ) eta;
+      let Q : CutoffSample d → ℝ := fun (eta : CutoffSample d) => probeSharpAfterBandHsepResidual
+        M R.scale (↑E : ℝ) eta;
       let V : ℕ → CutoffSample d → ℝ := fun (n : ℕ) (omega : CutoffSample d) =>
         Q (translateCutoffSample shift omega) * B n (translateCutoffSample shift omega);
-      ∀ (hmaxAux : max (Real.exp (profileAuxiliaryConst d / sigma)) (Disorder.cstar M)⁻¹ ≤ (↑E : ℝ))
-        (hgamma20 : M.gamma ≤ (1 / 20 : ℝ)) (n : ℕ),
-        IsBigOWith (↑(cutoffSampleLaw M) : Measure (CutoffSample d)) (gammaSigma (upperProfileTargetSigma sigma)) (V n)
+      ∀ (_ : max (Real.exp (profileAuxiliaryConst d / sigma)) (Disorder.cstar M)⁻¹ ≤ (↑E : ℝ))
+        (_ : M.gamma ≤ (1 / 20 : ℝ)) (n : ℕ),
+        IsBigOWith (↑(cutoffSampleLaw M) : Measure (CutoffSample d)) (gammaSigma
+          (upperProfileTargetSigma sigma)) (V n)
           (probeSharpAfterBandRareGoodMassLayerBound M (↑E : ℝ) k n) := by
-  intro d M m k R hR E hS sigma hsigma0 hsigma hEgamma shift B instance14 V hmaxAux hgamma20 n
+  intro _ M m k R hR E hS _ hsigma0 hsigma hEgamma shift _ _ _ hmaxAux hgamma20 n
   have hcenter := isBigOWith_upperProfileTarget_tunedAfterBandRareLayer
     M hR hS hsigma0 hsigma hmaxAux hEgamma hgamma20 n
   exact Algsuperdiff.Section3.Provider.Stream.isBigOWith_comp_translateCutoffSample
@@ -813,8 +848,10 @@ private theorem upperAfterBandOrdinaryProfile_estimate1 :
           M R.scale m (E : ℝ) k n))
     hcenter
 
-private theorem upperAfterBandOrdinaryProfile_momentBounds1 : upperAfterBandOrdinaryProfile_momentBounds1_statement := by
-  intro d M m k R hR E hS sigma hsigma0 hsigma hEgamma hd shift j₀ B _ O V C target ordinary rare AO Z AV hmaxAux hgamma20 hO0 hV0 hOmeas hVmeas
+private theorem upperAfterBandOrdinaryProfile_momentBounds1 :
+  upperAfterBandOrdinaryProfile_momentBounds1_statement := by
+  intro d M m k R hR E hS sigma hsigma0 hsigma hEgamma hd shift j₀ B _ O V C target ordinary rare
+    AO Z AV hmaxAux hgamma20 hO0 hV0 hOmeas hVmeas
   have hOterm : ∀ n, IsBigOWith (cutoffSampleLaw M).toMeasure
       (gammaSigma 1) (O n)
       (probeSharpAfterBandOrdinaryGoodMassLayer M (E : ℝ) k n) := by
@@ -829,7 +866,9 @@ private theorem upperAfterBandOrdinaryProfile_momentBounds1 : upperAfterBandOrdi
       (by simpa only [O, B, shift] using hcenter)
   have hVterm : ∀ n, IsBigOWith (cutoffSampleLaw M).toMeasure
       (gammaSigma (upperProfileTargetSigma sigma)) (V n)
-      (probeSharpAfterBandRareGoodMassLayerBound M (E : ℝ) k n)  := @upperAfterBandOrdinaryProfile_estimate1 (d) (M) (m) (k) (R) (hR) (E) (hS) (sigma) (hsigma0) (hsigma) (hEgamma) (hmaxAux) (hgamma20)
+      (probeSharpAfterBandRareGoodMassLayerBound M (E : ℝ) k n)  :=
+        @upperAfterBandOrdinaryProfile_estimate1 (d) (M) (m) (k) (R) (hR) (E) (hS) (sigma)
+          (hsigma0) (hsigma) (hEgamma) (hmaxAux) (hgamma20)
   have hObig : IsBigOWith (cutoffSampleLaw M).toMeasure
       (gammaSigma 1) (fun omega => ∑' n, O n omega) AO := by
     have h := Algsuperdiff.Section3.Provider.Orlicz.isBigOWith_gammaSigma_tsum_of_tsum_le
@@ -897,8 +936,10 @@ private theorem upperAfterBandOrdinaryProfile_momentBounds1 : upperAfterBandOrdi
       rfl
   exact ⟨hObig, hVbig, hOsumAE, hVsumAE, hC0, hordinary0, hrare0, hOsumMeas⟩
 
-private theorem upperAfterBandOrdinaryProfile_momentBounds2 : upperAfterBandOrdinaryProfile_momentBounds2_statement := by
-  intro d M m k R hR E sigma hd k₀ shift _ B Q O V _ target ordinary rare AO _ _ ordinaryScale rareScale hObig hVbig hOsumAE hVsumAE hC0 hordinary0 hrare0 hsepPoint hpoint
+private theorem upperAfterBandOrdinaryProfile_momentBounds2 :
+  upperAfterBandOrdinaryProfile_momentBounds2_statement := by
+  intro d M m k R hR E sigma hd k₀ shift _ B Q O V _ target ordinary rare AO _ _ ordinaryScale
+    rareScale hObig hVbig hOsumAE hVsumAE hC0 hordinary0 hrare0 hsepPoint hpoint
   have hENNRealEq : ∀ᵐ omega ∂(cutoffSampleLaw M).toMeasure,
       (∑ j : Fin d, ∑' n : ℕ, ENNReal.ofReal
         (probeSharpFramedGoodWavePart M R.scale (E : ℝ) bfaProfileB
@@ -997,13 +1038,16 @@ private theorem upperAfterBandOrdinaryProfile_momentBounds2 : upperAfterBandOrdi
   exact ⟨hENNRealEq, hENNRealDom, hordinaryOrlicz, hrareOrlicz, htarget0, hordinaryScale0⟩
 
 private theorem upperAfterBandOrdinaryProfile_comparisonBounds1 :
-    ∀ {d : ℕ} (M : ABKModel d) {k : ℕ} {E : { E : ℝ // (1 : ℝ) ≤ E }} {sigma Cup : ℝ} (_ : (0 : ℝ) < sigma)
+    ∀ {d : ℕ} (M : ABKModel d) {k : ℕ} {E : { E : ℝ // (1 : ℝ) ≤ E }} {sigma Cup : ℝ} (_ : (0 : ℝ)
+      < sigma)
       (_ : sigma ≤ (1 / 2 : ℝ)) (_ : (2 : ℕ) ≤ d),
       let j₀ : Fin d := ⟨(0 : ℕ), (by positivity)⟩;
       let C : ℝ := probeMeanGoodWaveConst M * vecNormSq (basisVec j₀);
-      let target : ℝ := min (1 : ℝ) (M.gamma * (↑(k + (1 : ℕ)) : ℝ)) * (3 : ℝ) ^ (M.gamma * (↑(k + (1 : ℕ)) : ℝ));
+      let target : ℝ := min (1 : ℝ) (M.gamma * (↑(k + (1 : ℕ)) : ℝ)) * (3 : ℝ) ^ (M.gamma * (↑(k +
+        (1 : ℕ)) : ℝ));
       let Z : ℝ := Real.exp (-(upperHsepResidualRate * ((↑E : ℝ)⁻¹ ^ (2 : ℕ) * M.gamma⁻¹)));
-      let AV : ℝ := gammaTriangleConst (upperProfileTargetSigma sigma) * (probeSharpAfterBandRareSumConst d * target * Z);
+      let AV : ℝ := gammaTriangleConst (upperProfileTargetSigma sigma) *
+        (probeSharpAfterBandRareSumConst d * target * Z);
       let rareScale : ℝ := (↑d : ℝ) * (C * AV);
       ∀ (_ : (0 : ℝ) ≤ target) (_ : (0 : ℝ) ≤ (Disorder.cstar M)⁻¹),
         let K : ℝ := probeSharpAfterBandTunedRareTracePrefactor d;
@@ -1012,7 +1056,8 @@ private theorem upperAfterBandOrdinaryProfile_comparisonBounds1 :
         ∀ (_ : (0 : ℝ) ≤ K) (_ : K * ((Disorder.cstar M)⁻¹ * Z) ≤ eps ^ (8 : ℕ)),
           let profilePow : ℝ := (3 : ℝ) ^ (M.gamma * (↑(k + (1 : ℕ)) : ℝ));
           rareScale ≤ profilePow * eps ^ (8 : ℕ) := by
-  intro d M k _ sigma _ hsigma0 hsigma hd _ C target Z AV rareScale htarget0 hcstar0 K _ eps hK0 hKreserve profilePow
+  intro d M k _ sigma _ hsigma0 hsigma hd _ C target Z AV rareScale htarget0 hcstar0 K _ eps hK0
+    hKreserve profilePow
   have hprofilePow0 : 0 ≤ profilePow := by
     dsimp only [profilePow]
     exact Real.rpow_nonneg (by norm_num) _

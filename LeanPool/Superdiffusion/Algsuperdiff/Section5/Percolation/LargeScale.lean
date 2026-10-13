@@ -311,8 +311,9 @@ private theorem measureReal_weightedCubeEvent_le_of_bounds
       ring
 
 private theorem largeScale_comparisonBounds1 :
-    ∀ {Ω : Type u_1} [inst : MeasurableSpace Ω] {d : ℕ} (P : Measure Ω) (B : ℕ → Site d → Set Ω) (a T lam : ℝ)
-      (hTone : (1 : ℝ) ≤ T) (hlamOne : lam < (1 : ℝ)) (Γ : List (Site d)) (hΓpos : (0 : ℕ) < Γ.length),
+    ∀ {Ω : Type u_1} [MeasurableSpace Ω] {d : ℕ} (P : Measure Ω) (B : ℕ → Site d → Set Ω)
+      (a T lam : ℝ)
+      (_ : (1 : ℝ) ≤ T) (_ : lam < (1 : ℝ)) (Γ : List (Site d)) (_ : (0 : ℕ) < Γ.length),
       let b : ℝ := a - (1 : ℝ);
       let q : ℝ := b * T * lam;
       let K : ℝ := fixedPathTailScaleConst d;
@@ -320,13 +321,16 @@ private theorem largeScale_comparisonBounds1 :
       let n : ℝ := (↑Γ.length : ℝ);
       let t : ℝ := q * √n * K⁻¹;
       let s : ℝ := T * √n / (4 : ℝ);
-      ∀ (hTpos : (0 : ℝ) < T) (hKpos : (0 : ℝ) < K) (hDpos : (0 : ℝ) < D) (hnpos : (0 : ℝ) < n) (hsqrtSq : √n ^ (2 : ℕ) = n)
-        (hqpos : (0 : ℝ) < q) (hqScale : (64 : ℝ) * ((↑d : ℝ) + (1 : ℝ)) * K ≤ q)
-        (hqUpper : q ≤ ((↑d : ℝ) + (1 : ℝ)) * (T * lam)) (hD_Tlam : (64 : ℝ) * D ≤ T * lam) (hTlamLt : T * lam < T)
-        (hTeight : (8 : ℝ) ≤ T)
-        (hlargeRaw : P.real (largeScaleOccurrenceEvent B Γ) ≤ D * Real.exp (-(T ^ (2 : ℕ) * n / (4 : ℝ)))),
-        P.real (largeScaleOccurrenceEvent B Γ) ≤ Real.exp (-s ^ (2 : ℕ)) ∧ (2 : ℝ) ≤ t ∧ t ^ (2 : ℕ) ≤ s ^ (2 : ℕ) := by
-  intro Ω instance1 d P B a T lam hTone hlamOne Γ hΓpos b q K D n t s hTpos hKpos hDpos hnpos hsqrtSq hqpos hqScale hqUpper hD_Tlam hTlamLt hTeight hlargeRaw
+      ∀ (_ : (0 : ℝ) < T) (_ : (0 : ℝ) < K) (_ : (0 : ℝ) < D) (_ : (0 : ℝ) < n) (_ : √n ^ (2 : ℕ)
+        = n)
+        (_ : (0 : ℝ) < q) (_ : (64 : ℝ) * ((↑d : ℝ) + (1 : ℝ)) * K ≤ q)
+        (_ : q ≤ ((↑d : ℝ) + (1 : ℝ)) * (T * lam)) (_ : (64 : ℝ) * D ≤ T * lam) (_ : T * lam < T)
+        (_ : (8 : ℝ) ≤ T)
+        (_ : P.real (largeScaleOccurrenceEvent B Γ) ≤ D * Real.exp (-(T ^ (2 : ℕ) * n / (4 : ℝ)))),
+        P.real (largeScaleOccurrenceEvent B Γ) ≤ Real.exp (-s ^ (2 : ℕ)) ∧ (2 : ℝ) ≤ t ∧ t ^ (2 :
+          ℕ) ≤ s ^ (2 : ℕ) := by
+  intro _ _ d P B _ T lam _ hlamOne Γ hΓpos _ q K D n t s hTpos hKpos hDpos hnpos hsqrtSq hqpos
+    hqScale hqUpper hD_Tlam hTlamLt hTeight hlargeRaw
   have hDleT : D ≤ T := by
     have hDle64D : D ≤ 64 * D := by linarith only [hDpos]
     exact hDle64D.trans (hD_Tlam.trans hTlamLt.le)
@@ -593,8 +597,11 @@ theorem measureReal_weightedCubeEvent_le_fixedPath
     ring
   rw [hlargeRewrite] at hlargeRaw
   obtain ⟨hlarge, htTwo, hts⟩ :=
-    (show (P.real (largeScaleOccurrenceEvent B Γ) ≤ Real.exp (-(s ^ 2))) ∧ (2 ≤ t) ∧ (t ^ 2 ≤ s ^ 2) from
-      @largeScale_comparisonBounds1 (Ω) (by infer_instance) (d) (P) (B) (a) (T) (lam) (hTone) (hlamOne) (Γ) (hΓpos) (hTpos) (hKpos) (hDpos) (hnpos) (hsqrtSq) (hqpos) (hqScale) (hqUpper) (hD_Tlam) (hTlamLt) (hTeight) (hlargeRaw))
+    (show (P.real (largeScaleOccurrenceEvent B Γ) ≤ Real.exp (-(s ^ 2))) ∧ (2 ≤ t) ∧ (t ^ 2 ≤ s ^
+      2) from
+      @largeScale_comparisonBounds1 (Ω) (by infer_instance) (d) (P) (B) (a) (T) (lam) (hTone)
+        (hlamOne) (Γ) (hΓpos) (hTpos) (hKpos) (hDpos) (hnpos) (hsqrtSq) (hqpos) (hqScale)
+          (hqUpper) (hD_Tlam) (hTlamLt) (hTeight) (hlargeRaw))
   have htail := measureReal_weightedCubeEvent_le_of_bounds
     P B Γ (lam * n / 2)
       (gammaTriangleConst 2 * fixedPathLayerConst d * Real.sqrt n * T⁻¹ *

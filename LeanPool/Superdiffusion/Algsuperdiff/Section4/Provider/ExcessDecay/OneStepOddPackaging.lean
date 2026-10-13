@@ -92,14 +92,18 @@ private theorem oddFaceExtension_weakGradient_assembly :
       MeasurableSet U →
         let ε : ℝ := if j = i then (-1 : ℝ) else (1 : ℝ);
         (ε = if j = i then (-1 : ℝ) else (1 : ℝ)) →
-          (∀ (l : Fin d), MemLp (fun (y : Vec d) => zeroExtendGrad (faceHalf U i a σ) v.grad y l) (2 : ℝ≥0∞) volume) →
+          (∀ (l : Fin d), MemLp (fun (y : Vec d) => zeroExtendGrad (faceHalf U i a σ) v.grad y l)
+            (2 : ℝ≥0∞) volume) →
             (∀ (l : Fin d),
-                MemLp (fun (y : Vec d) => zeroExtendGrad (faceHalf U i a σ) v.grad (coordFaceReflection a i y) l) (2 : ℝ≥0∞)
+                MemLp (fun (y : Vec d) => zeroExtendGrad (faceHalf U i a σ) v.grad
+                  (coordFaceReflection a i y) l) (2 : ℝ≥0∞)
                   volume) →
               MemLp φ (2 : ℝ≥0∞) volume →
-                -∫ (y : Vec d) in U, oddFaceExtendGrad a i (zeroExtendGrad (faceHalf U i a σ) v.grad) y j * φ y =
+                -∫ (y : Vec d) in U, oddFaceExtendGrad a i (zeroExtendGrad (faceHalf U i a σ)
+                  v.grad) y j * φ y =
                   (-∫ (y : Vec d) in U, zeroExtendGrad (faceHalf U i a σ) v.grad y j * φ y) +
-                    ε * ∫ (y : Vec d) in U, zeroExtendGrad (faceHalf U i a σ) v.grad (coordFaceReflection a i y) j * φ y := by
+                    ε * ∫ (y : Vec d) in U, zeroExtendGrad (faceHalf U i a σ) v.grad
+                      (coordFaceReflection a i y) j * φ y := by
   intro d U i a σ v j φ hUmeas ε hεdef hZG2 hZGr2 hφ2
   have hcoord : ∀ y : Vec d, oddFaceExtendGrad a i
       (zeroExtendGrad (faceHalf U i a σ) v.grad) y j

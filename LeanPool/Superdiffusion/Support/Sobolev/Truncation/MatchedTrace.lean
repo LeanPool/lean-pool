@@ -42,20 +42,26 @@ private theorem matchedTrace_truncationConvergence :
       (w₁ w₂ : H1Function U) (c : ℝ) (_ : IsFiniteMeasure (volumeMeasureOn U)),
       let h : H1Function U := w₁ - w₂;
       ∀ (W : H10Function U) (hφC1 : ∀ (n : ℕ), ContDiff ℝ (1 : WithTop ℕ∞) (W.approx n)),
-        let Φ : ℕ → H1Function U := fun (n : ℕ) => H1Function.ofContDiffOnIsOpenBoundedConvexDomain hU (hφC1 n);
+        let Φ : ℕ → H1Function U := fun (n : ℕ) =>
+          H1Function.ofContDiffOnIsOpenBoundedConvexDomain hU (hφC1 n);
         let S : ℕ → H1Function U := fun (n : ℕ) => w₂ + Φ n;
-        ∀ (_ : ∀ᵐ (x : Vec d) ∂volumeMeasureOn U, w₁.toFun x = c → w₁.grad x = (0 : Vec d)) (σ : ℕ → ℕ)
-          (_ : ∀ᵐ (x : Vec d) ∂volumeMeasureOn U, Tendsto (fun (i : ℕ) => W.approx (σ i) x) atTop (𝓝 (h.toFun x)))
+        ∀ (_ : ∀ᵐ (x : Vec d) ∂volumeMeasureOn U, w₁.toFun x = c → w₁.grad x = (0 : Vec d)) (σ : ℕ
+          → ℕ)
+          (_ : ∀ᵐ (x : Vec d) ∂volumeMeasureOn U, Tendsto (fun (i : ℕ) => W.approx (σ i) x) atTop
+            (𝓝 (h.toFun x)))
           (i : Fin d),
           let TB : ℕ → Vec d → ℝ := fun (n : ℕ) (x : Vec d) =>
-            ((if c < w₁.toFun x then (1 : ℝ) else (0 : ℝ)) - if c < (S n).toFun x then (1 : ℝ) else (0 : ℝ)) * w₁.grad x i;
+            ((if c < w₁.toFun x then (1 : ℝ) else (0 : ℝ)) - if c < (S n).toFun x then (1 : ℝ)
+              else (0 : ℝ)) * w₁.grad x i;
           ∀
             (_ :
               TB = fun (n : ℕ) (x : Vec d) =>
-                ((if c < w₁.toFun x then (1 : ℝ) else (0 : ℝ)) - if c < (S n).toFun x then (1 : ℝ) else (0 : ℝ)) *
+                ((if c < w₁.toFun x then (1 : ℝ) else (0 : ℝ)) - if c < (S n).toFun x then (1 : ℝ)
+                  else (0 : ℝ)) *
                   w₁.grad x i)
             (_ : ∀ (n : ℕ), AEStronglyMeasurable (TB n) (volumeMeasureOn U)),
-            Tendsto (fun (n : ℕ) => eLpNorm (fun (x : Vec d) => TB (σ n) x) (2 : ℝ≥0∞) (volumeMeasureOn U)) atTop
+            Tendsto (fun (n : ℕ) => eLpNorm (fun (x : Vec d) => TB (σ n) x) (2 : ℝ≥0∞)
+              (volumeMeasureOn U)) atTop
               (𝓝 (0 : ℝ≥0∞)) := by
   intro _ U _ w₁ w₂ c _ h W _ _ S hD2 σ hσ_ae i TB hTB_def haesm_TB
   have hdom : MemLp (fun x => ‖w₁.grad x i‖) 2 (volumeMeasureOn U) := (w₁.gradMemL2 i).norm

@@ -270,24 +270,29 @@ theorem depth_linear_geometric_le {gamma : ℝ} (hgamma0 : 0 < gamma) (Ngap i : 
           (mul_nonneg hg31 (mul_nonneg hone hthree0.le))
 
 private theorem gammaTenDepthOscillation_comparisonBounds1 :
-    ∀ (d : ℕ) (Ctot : ℝ) (_ : (0 : ℝ) ≤ Ctot) (M : ABKModel d) (m0 : ℤ) (Eind : { E : ℝ // (1 : ℝ) ≤ E })
-      (_ : Frozen.Section3.inductionState M m0 Eind) (m K : ℤ) (h : ℕ) (_ : (0 : ℕ) < h) (_ : m - (↑h : ℤ) ≤ m0)
+    ∀ (d : ℕ) (Ctot : ℝ) (_ : (0 : ℝ) ≤ Ctot) (M : ABKModel d) (m0 : ℤ) (Eind : { E : ℝ // (1 : ℝ)
+      ≤ E })
+      (_ : Frozen.Section3.inductionState M m0 Eind) (m K : ℤ) (h : ℕ) (_ : (0 : ℕ) < h) (_ : m -
+        (↑h : ℤ) ≤ m0)
       (_ : (↑h : ℝ) ≤ (6 : ℝ) * Disorder.cstar M * M.gamma⁻¹)
       (_ : (10 : ℝ) ^ (10 : ℕ) * M.gamma⁻¹ ≤ (↑K : ℝ) - (↑m : ℝ)) (_ : M.gamma ≤ (1 / 4 : ℝ))
       (_ : M.gamma ≤ (3 : ℝ) ^ (-((↑d : ℝ) + (3 : ℝ)))) (_ : M.gamma ≤ (1 : ℝ) / ((1 : ℝ) + Ctot))
       (_ : (0 : ℝ) < M.gamma) (_ : M.gamma ≤ (1 : ℝ)) (nbuf : ℤ)
       (_ : nbuf = recurrenceMesoScale recurrenceGapMultiplier M.gamma m (↑h : ℤ)) (Ngap : ℕ)
-      (_ : Ngap = recurrenceGap recurrenceGapMultiplier M.gamma) (_ : nbuf + (↑Ngap : ℤ) = m - (↑h : ℤ))
+      (_ : Ngap = recurrenceGap recurrenceGapMultiplier M.gamma) (_ : nbuf + (↑Ngap : ℤ) = m - (↑h
+        : ℤ))
       (_ : (↑nbuf : ℝ) + (↑Ngap : ℝ) = (↑(m - (↑h : ℤ)) : ℝ)),
       (1 : ℝ) ≤ (10 : ℝ) ^ (10 : ℕ) * M.gamma⁻¹ ∧
         d + (3 : ℕ) ≤ Ngap ∧
           (3 : ℝ) ^ (-(↑Ngap : ℝ)) ≤ M.gamma ^ (32 : ℕ) ∧
             (↑Ngap : ℝ) * M.gamma ≤ (96 : ℝ) ∧
               (0 : ℝ) ≤ (↑(Annealed.sigmaBar M (m - (↑h : ℤ))) : ℝ)⁻¹ ∧
-                (↑(Annealed.sigmaBar M (m - (↑h : ℤ))) : ℝ)⁻¹ * (3 : ℝ) ^ (M.gamma * ((↑nbuf : ℝ) + (↑Ngap : ℝ))) ≤
+                (↑(Annealed.sigmaBar M (m - (↑h : ℤ))) : ℝ)⁻¹ * (3 : ℝ) ^ (M.gamma * ((↑nbuf : ℝ)
+                  + (↑Ngap : ℝ))) ≤
                     shellNormalizationConst ∧
                   Ctot * M.gamma ^ (15 : ℕ) ≤ (1 : ℝ) := by
-  intro d Ctot hCtot0 M _ _ hstate m K h hhpos hm0 hcstar _ _ hdimgate hCgate hgamma0 hgamma1 nbuf _ Ngap hNgap _ hsumR
+  intro d Ctot hCtot0 M _ _ hstate m K h hhpos hm0 hcstar _ _ hdimgate hCgate hgamma0 hgamma1 nbuf
+    _ Ngap hNgap _ hsumR
   have hKone : (1 : ℝ) ≤ (10 : ℝ) ^ (10 : ℕ) * M.gamma⁻¹ := by
     have hinv : (1 : ℝ) ≤ M.gamma⁻¹ := by
       rw [le_inv_comm₀ (by norm_num) hgamma0]
@@ -578,24 +583,29 @@ theorem exists_gamma0_freshShellDirichlet_meshOscillationDepth_le_gamma_pow_sixt
   exact hgoal
 
 private theorem gammaTenDepthOscillation_comparisonBounds2 :
-    ∀ (d : ℕ) (Ctot : ℝ) (_ : (0 : ℝ) ≤ Ctot) (M : ABKModel d) (m0 : ℤ) (Eind : { E : ℝ // (1 : ℝ) ≤ E })
-      (_ : Frozen.Section3.inductionState M m0 Eind) (m K : ℤ) (h : ℕ) (_ : (0 : ℕ) < h) (_ : m - (↑h : ℤ) ≤ m0)
+    ∀ (d : ℕ) (Ctot : ℝ) (_ : (0 : ℝ) ≤ Ctot) (M : ABKModel d) (m0 : ℤ) (Eind : { E : ℝ // (1 : ℝ)
+      ≤ E })
+      (_ : Frozen.Section3.inductionState M m0 Eind) (m K : ℤ) (h : ℕ) (_ : (0 : ℕ) < h) (_ : m -
+        (↑h : ℤ) ≤ m0)
       (_ : (↑h : ℝ) ≤ (6 : ℝ) * Disorder.cstar M * M.gamma⁻¹)
       (_ : (10 : ℝ) ^ (10 : ℕ) * M.gamma⁻¹ ≤ (↑K : ℝ) - (↑m : ℝ)) (_ : M.gamma ≤ (1 / 4 : ℝ))
       (_ : M.gamma ≤ (3 : ℝ) ^ (-((↑d : ℝ) + (3 : ℝ)))) (_ : M.gamma ≤ (1 : ℝ) / ((1 : ℝ) + Ctot))
       (_ : (0 : ℝ) < M.gamma) (_ : M.gamma ≤ (1 : ℝ)) (nbuf : ℤ)
       (_ : nbuf = recurrenceMesoScale recurrenceGapMultiplier M.gamma m (↑h : ℤ)) (Ngap : ℕ)
-      (_ : Ngap = recurrenceGap recurrenceGapMultiplier M.gamma) (_ : nbuf + (↑Ngap : ℤ) = m - (↑h : ℤ))
+      (_ : Ngap = recurrenceGap recurrenceGapMultiplier M.gamma) (_ : nbuf + (↑Ngap : ℤ) = m - (↑h
+        : ℤ))
       (_ : (↑nbuf : ℝ) + (↑Ngap : ℝ) = (↑(m - (↑h : ℤ)) : ℝ)),
       (1 : ℝ) ≤ (10 : ℝ) ^ (10 : ℕ) * M.gamma⁻¹ ∧
         d + (3 : ℕ) ≤ Ngap ∧
           (3 : ℝ) ^ (-(↑Ngap : ℝ)) ≤ M.gamma ^ (32 : ℕ) ∧
             (↑Ngap : ℝ) * M.gamma ≤ (96 : ℝ) ∧
               (0 : ℝ) ≤ (↑(Annealed.sigmaBar M (m - (↑h : ℤ))) : ℝ)⁻¹ ∧
-                (↑(Annealed.sigmaBar M (m - (↑h : ℤ))) : ℝ)⁻¹ * (3 : ℝ) ^ (M.gamma * ((↑nbuf : ℝ) + (↑Ngap : ℝ))) ≤
+                (↑(Annealed.sigmaBar M (m - (↑h : ℤ))) : ℝ)⁻¹ * (3 : ℝ) ^ (M.gamma * ((↑nbuf : ℝ)
+                  + (↑Ngap : ℝ))) ≤
                     shellNormalizationConst ∧
                   Ctot * M.gamma ^ (15 : ℕ) ≤ (1 : ℝ) := by
-  intro d Ctot hCtot0 M _ _ hstate m K h hhpos hm0 hcstar _ _ hdimgate hCgate hgamma0 hgamma1 nbuf _ Ngap hNgap _ hsumR
+  intro d Ctot hCtot0 M _ _ hstate m K h hhpos hm0 hcstar _ _ hdimgate hCgate hgamma0 hgamma1 nbuf
+    _ Ngap hNgap _ hsumR
   have hKone : (1 : ℝ) ≤ (10 : ℝ) ^ (10 : ℕ) * M.gamma⁻¹ := by
     have hinv : (1 : ℝ) ≤ M.gamma⁻¹ := by
       rw [le_inv_comm₀ (by norm_num) hgamma0]

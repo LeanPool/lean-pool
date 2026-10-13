@@ -221,33 +221,44 @@ private theorem oddClassCorner_secondCoordinate_bound :
       {c : ℝ} {A : Vec d} {c' : ℝ} {A' : Vec d} {delta : ℝ},
       i ≠ j →
         (∀ (y : Vec d),
-            V y - affineEval (c' - vecDot A' x) A' y = V y - affineEval (c - vecDot A x) A y + oddAffinePart x m i A y) →
+            V y - affineEval (c' - vecDot A' x) A' y = V y - affineEval (c - vecDot A x) A y +
+              oddAffinePart x m i A y) →
           (0 : ℝ) < delta →
             MemLp (fun (y : Vec d) => V y - affineEval (c - vecDot A x) A y) (2 : ℝ≥0∞)
                 (volume.restrict (truncatedWindow x m (n - (2 : ℤ)))) →
-              (coordBox (fun (l : Fin d) => cornerPairSlabLo x m (n - (2 : ℤ)) i j delta l - (delta • basisVec j) l)
-                    fun (l : Fin d) => cornerPairSlabHi x m (n - (2 : ℤ)) i j l - (delta • basisVec j) l) ⊆
+              (coordBox (fun (l : Fin d) => cornerPairSlabLo x m (n - (2 : ℤ)) i j delta l -
+                (delta • basisVec j) l)
+                    fun (l : Fin d) => cornerPairSlabHi x m (n - (2 : ℤ)) i j l - (delta •
+                      basisVec j) l) ⊆
                   truncatedWindow x m (n - (2 : ℤ)) →
                 delta ^ d ≤
                     ((volume : Set (Vec d) → ℝ≥0∞)
                         (coordBox
-                          (fun (l : Fin d) => cornerPairSlabLo x m (n - (2 : ℤ)) i j delta l - (delta • basisVec j) l)
-                          fun (l : Fin d) => cornerPairSlabHi x m (n - (2 : ℤ)) i j l - (delta • basisVec j) l)).toReal →
+                          (fun (l : Fin d) => cornerPairSlabLo x m (n - (2 : ℤ)) i j delta l -
+                            (delta • basisVec j) l)
+                          fun (l : Fin d) => cornerPairSlabHi x m (n - (2 : ℤ)) i j l - (delta •
+                            basisVec j) l)).toReal →
                   (0 : ℝ) < delta ^ d →
                     MemLp (oddAffinePart x m i A) (2 : ℝ≥0∞)
                         (volume.restrict
                           (coordBox
-                            (fun (l : Fin d) => cornerPairSlabLo x m (n - (2 : ℤ)) i j delta l - (delta • basisVec j) l)
-                            fun (l : Fin d) => cornerPairSlabHi x m (n - (2 : ℤ)) i j l - (delta • basisVec j) l)) →
+                            (fun (l : Fin d) => cornerPairSlabLo x m (n - (2 : ℤ)) i j delta l -
+                              (delta • basisVec j) l)
+                            fun (l : Fin d) => cornerPairSlabHi x m (n - (2 : ℤ)) i j l - (delta •
+                              basisVec j) l)) →
                       (normalizedL2On
                           (coordBox
-                            (fun (l : Fin d) => cornerPairSlabLo x m (n - (2 : ℤ)) i j delta l - (delta • basisVec j) l)
-                            fun (l : Fin d) => cornerPairSlabHi x m (n - (2 : ℤ)) i j l - (delta • basisVec j) l)
+                            (fun (l : Fin d) => cornerPairSlabLo x m (n - (2 : ℤ)) i j delta l -
+                              (delta • basisVec j) l)
+                            fun (l : Fin d) => cornerPairSlabHi x m (n - (2 : ℤ)) i j l - (delta •
+                              basisVec j) l)
                           fun (y : Vec d) => V y - affineEval (c' - vecDot A' x) A' y) ≤
                         (normalizedL2On
                             (coordBox
-                              (fun (l : Fin d) => cornerPairSlabLo x m (n - (2 : ℤ)) i j delta l - (delta • basisVec j) l)
-                              fun (l : Fin d) => cornerPairSlabHi x m (n - (2 : ℤ)) i j l - (delta • basisVec j) l)
+                              (fun (l : Fin d) => cornerPairSlabLo x m (n - (2 : ℤ)) i j delta l -
+                                (delta • basisVec j) l)
+                              fun (l : Fin d) => cornerPairSlabHi x m (n - (2 : ℤ)) i j l - (delta
+                                • basisVec j) l)
                             fun (y : Vec d) => V y - affineEval (c - vecDot A x) A y) +
                           |A i| * delta := by
   intro d m n x i j V c A c' A' delta hij hsplit3 hdelta0 hfU hD3U hD3_vol hδd0 hoddD3mem

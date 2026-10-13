@@ -171,32 +171,36 @@ theorem ratioTail_Ycal_shift {d : ℕ} (M : ABKModel d) (Ccg sprime D : ℝ)
 /-! ## 4. The level-uniform endpoint on a window based at `m₀` -/
 
 private theorem shiftedG0Lane_comparisonBounds1 :
-    ∀ (d : ℕ) (hCcg0 : (0 : ℝ) < cgEllipLowerConstant d) (hCs0 : (0 : ℝ) < Cstar)
-      (hgmc0 : (0 : ℝ) < gammaMomentConst (1 / 3 : ℝ)) (hgtc0 : (0 : ℝ) < gammaTriangleConst (1 / 3 : ℝ))
-      (hPn0 : (0 : ℝ) < penaltyNormalizer d) (r : ℕ) (L G0d : ℝ)
-      (hG0ddef :
+    ∀ (d : ℕ) (_ : (0 : ℝ) < cgEllipLowerConstant d) (_ : (0 : ℝ) < Cstar)
+      (_ : (0 : ℝ) < gammaMomentConst (1 / 3 : ℝ)) (_ : (0 : ℝ) < gammaTriangleConst (1 / 3 : ℝ))
+      (_ : (0 : ℝ) < penaltyNormalizer d) (r : ℕ) (L G0d : ℝ)
+      (_ :
         G0d =
-          (36 : ℝ) * ((1 : ℝ) + Cstar) * gammaMomentConst (1 / 3 : ℝ) * gammaTriangleConst (1 / 3 : ℝ) *
+          (36 : ℝ) * ((1 : ℝ) + Cstar) * gammaMomentConst (1 / 3 : ℝ) * gammaTriangleConst (1 / 3
+            : ℝ) *
             penaltyNormalizer d)
-      (C : ℝ) (hC6 : (6 : ℝ) ≤ C) (M : ABKModel d) (theta : ℝ) (htheta0 : (0 : ℝ) < theta)
-      (hcouple : C ^ (9 : ℕ) * M.gamma ^ (2 : ℕ) ≤ theta * Disorder.cstar M ^ (8 : ℕ)) (hC0 : (0 : ℝ) < C)
-      (hCne : C ≠ (0 : ℝ)) (hflA : (16174080 : ℝ) * cgEllipLowerConstant d ^ (4 : ℕ) ≤ C ^ (12 : ℕ))
-      (hflB : (1990656 : ℝ) * (↑r : ℝ) * L * cgEllipLowerConstant d ^ (4 : ℕ) ≤ C)
-      (hflC : (23224320 : ℝ) * G0d * cgEllipLowerConstant d ^ (8 : ℕ) ≤ C ^ (3 : ℕ)) (Rr : ℝ)
-      (hRrdef : Rr = max (4 : ℝ) ((64 : ℝ) * (↑r : ℝ) * L / theta)) (hcs0 : (0 : ℝ) < Disorder.cstar M)
-      (hcs32 : Disorder.cstar M ≤ (3 / 2 : ℝ)) (hg0 : (0 : ℝ) < M.gamma) (hgne : M.gamma ≠ (0 : ℝ))
-      (hcsne : Disorder.cstar M ≠ (0 : ℝ)) (hCcgne : cgEllipLowerConstant d ≠ (0 : ℝ)) (u : ℝ)
-      (hu' : u = Disorder.cstar M ^ (2 : ℕ) / (cgEllipLowerConstant d * C ^ (2 : ℕ) * M.gamma))
-      (hgammale : M.gamma ≤ Disorder.cstar M ^ (10 : ℕ) / C ^ (10 : ℕ))
-      (hgammasq : M.gamma ^ (2 : ℕ) ≤ Disorder.cstar M ^ (20 : ℕ) / C ^ (20 : ℕ))
-      (hcs2 : Disorder.cstar M ^ (2 : ℕ) ≤ (9 / 4 : ℝ)),
+      (C : ℝ) (_ : (6 : ℝ) ≤ C) (M : ABKModel d) (theta : ℝ) (_ : (0 : ℝ) < theta)
+      (_ : C ^ (9 : ℕ) * M.gamma ^ (2 : ℕ) ≤ theta * Disorder.cstar M ^ (8 : ℕ)) (_ : (0 : ℝ) < C)
+      (_ : C ≠ (0 : ℝ)) (_ : (16174080 : ℝ) * cgEllipLowerConstant d ^ (4 : ℕ) ≤ C ^ (12 : ℕ))
+      (_ : (1990656 : ℝ) * (↑r : ℝ) * L * cgEllipLowerConstant d ^ (4 : ℕ) ≤ C)
+      (_ : (23224320 : ℝ) * G0d * cgEllipLowerConstant d ^ (8 : ℕ) ≤ C ^ (3 : ℕ)) (Rr : ℝ)
+      (_ : Rr = max (4 : ℝ) ((64 : ℝ) * (↑r : ℝ) * L / theta)) (_ : (0 : ℝ) < Disorder.cstar M)
+      (_ : Disorder.cstar M ≤ (3 / 2 : ℝ)) (_ : (0 : ℝ) < M.gamma) (_ : M.gamma ≠ (0 : ℝ))
+      (_ : Disorder.cstar M ≠ (0 : ℝ)) (_ : cgEllipLowerConstant d ≠ (0 : ℝ)) (u : ℝ)
+      (_ : u = Disorder.cstar M ^ (2 : ℕ) / (cgEllipLowerConstant d * C ^ (2 : ℕ) * M.gamma))
+      (_ : M.gamma ≤ Disorder.cstar M ^ (10 : ℕ) / C ^ (10 : ℕ))
+      (_ : M.gamma ^ (2 : ℕ) ≤ Disorder.cstar M ^ (20 : ℕ) / C ^ (20 : ℕ))
+      (_ : Disorder.cstar M ^ (2 : ℕ) ≤ (9 / 4 : ℝ)),
       (31104 : ℝ) * Rr ≤ M.gamma ^ (2 : ℕ) * u ^ (4 : ℕ) ∧
         M.gamma ^ (5 : ℕ) * u ^ (8 : ℕ) =
-            Disorder.cstar M ^ (16 : ℕ) / (cgEllipLowerConstant d ^ (8 : ℕ) * C ^ (16 : ℕ) * M.gamma ^ (3 : ℕ)) ∧
+            Disorder.cstar M ^ (16 : ℕ) / (cgEllipLowerConstant d ^ (8 : ℕ) * C ^ (16 : ℕ) *
+              M.gamma ^ (3 : ℕ)) ∧
           (0 : ℝ) < cgEllipLowerConstant d ^ (8 : ℕ) * C ^ (16 : ℕ) * M.gamma ^ (3 : ℕ) ∧
-            (10321920 : ℝ) * G0d * (cgEllipLowerConstant d ^ (8 : ℕ) * C ^ (16 : ℕ) * M.gamma ^ (3 : ℕ)) ≤
+            (10321920 : ℝ) * G0d * (cgEllipLowerConstant d ^ (8 : ℕ) * C ^ (16 : ℕ) * M.gamma ^ (3
+              : ℕ)) ≤
               theta * Disorder.cstar M ^ (16 : ℕ) := by
-  intro d hCcg0 hCs0 hgmc0 hgtc0 hPn0 r L G0d hG0ddef C hC6 M theta htheta0 hcouple hC0 hCne hflA hflB hflC Rr hRrdef hcs0 hcs32 hg0 hgne hcsne hCcgne u hu' hgammale hgammasq hcs2
+  intro d _ hCs0 hgmc0 hgtc0 hPn0 r L G0d hG0ddef C _ M theta htheta0 hcouple hC0 _ hflA hflB hflC
+    Rr hRrdef hcs0 hcs32 _ _ _ _ u hu' hgammale hgammasq hcs2
   have hcs12 : (Disorder.cstar M) ^ (12 : ℕ) ≤ 130 := by
     calc (Disorder.cstar M) ^ (12 : ℕ) ≤ (3 / 2 : ℝ) ^ (12 : ℕ) :=
         pow_le_pow_left₀ hcs0.le hcs32 12
@@ -297,27 +301,38 @@ private theorem shiftedG0Lane_comparisonBounds1 :
   exact ⟨hgu4, hval8, hden8, hcore8⟩
 
 private theorem shiftedG0Lane_comparisonBounds2 :
-    ∀ (d : ℕ) (hCs0 : (0 : ℝ) < Cstar) (hgmc0 : (0 : ℝ) < gammaMomentConst (1 / 3 : ℝ))
-      (hgtc0 : (0 : ℝ) < gammaTriangleConst (1 / 3 : ℝ)) (hPn0 : (0 : ℝ) < penaltyNormalizer d) (r : ℕ) (hr1 : (1 : ℕ) ≤ r)
-      (hrR : (1 : ℝ) ≤ (↑r : ℝ)) (L : ℝ) (hLdef : L = Real.log ((3 : ℝ) * (↑r : ℝ)) + (↑r : ℝ)) (M : ABKModel d) (theta : ℝ)
-      (htheta0 : (0 : ℝ) < theta) (c1 : ℝ) (hc1g : c1 * M.gamma ≤ (1 : ℝ)) (htheta1 : theta ≤ (1 : ℝ))
-      (hthetane : theta ≠ (0 : ℝ)) (Rr : ℝ) (hRr4 : (4 : ℝ) ≤ Rr) (hRrL : (64 : ℝ) * (↑r : ℝ) * L / theta ≤ Rr) (G : ℝ)
-      (hGdef :
+    ∀ (d : ℕ) (_ : (0 : ℝ) < Cstar) (_ : (0 : ℝ) < gammaMomentConst (1 / 3 : ℝ))
+      (_ : (0 : ℝ) < gammaTriangleConst (1 / 3 : ℝ)) (_ : (0 : ℝ) < penaltyNormalizer d) (r : ℕ)
+        (_ : (1 : ℕ) ≤ r)
+      (_ : (1 : ℝ) ≤ (↑r : ℝ)) (L : ℝ) (_ : L = Real.log ((3 : ℝ) * (↑r : ℝ)) + (↑r : ℝ)) (M :
+        ABKModel d) (theta : ℝ)
+      (_ : (0 : ℝ) < theta) (c1 : ℝ) (_ : c1 * M.gamma ≤ (1 : ℝ)) (_ : theta ≤ (1 : ℝ))
+      (_ : theta ≠ (0 : ℝ)) (Rr : ℝ) (_ : (4 : ℝ) ≤ Rr) (_ : (64 : ℝ) * (↑r : ℝ) * L / theta ≤ Rr)
+        (G : ℝ)
+      (_ :
         G =
-          (36 : ℝ) * ((1 : ℝ) + Cstar) * gammaMomentConst (1 / 3 : ℝ) * gammaTriangleConst (1 / 3 : ℝ) *
+          (36 : ℝ) * ((1 : ℝ) + Cstar) * gammaMomentConst (1 / 3 : ℝ) * gammaTriangleConst (1 / 3
+            : ℝ) *
               penaltyNormalizer d /
             theta)
-      (hG0 : (0 : ℝ) < G) (hg0 : (0 : ℝ) < M.gamma) (hg4 : M.gamma ≤ (1 / 4 : ℝ)) (hgne : M.gamma ≠ (0 : ℝ)) (u : ℝ)
-      (hu0 : (0 : ℝ) < u) (hgu4 : (31104 : ℝ) * Rr ≤ M.gamma ^ (2 : ℕ) * u ^ (4 : ℕ))
-      (hgu8 : (10321920 : ℝ) * G ≤ M.gamma ^ (5 : ℕ) * u ^ (8 : ℕ)) (hsprime0 : (0 : ℝ) < M.gamma / (4 : ℝ)) (S0 : ℝ)
-      (hS0def : S0 = ∑' (j : ℕ), weightThird (M.gamma / (4 : ℝ)) j * annulusPenaltyThird d (j + (2 : ℕ))) (p : ℝ)
-      (hp0 : (0 : ℝ) < p) (hp1 : (1 : ℝ) ≤ p) (D : ℝ) (hD0 : (0 : ℝ) < D)
-      (hDval : D = gammaMomentConst (1 / 3 : ℝ) * gammaTriangleConst (1 / 3 : ℝ) * S0 * Real.exp (-(u / (2 : ℝ))))
-      (hplow4 : u ^ (4 : ℕ) / (31104 : ℝ) ≤ p),
+      (_ : (0 : ℝ) < G) (_ : (0 : ℝ) < M.gamma) (_ : M.gamma ≤ (1 / 4 : ℝ)) (_ : M.gamma ≠ (0 :
+        ℝ)) (u : ℝ)
+      (_ : (0 : ℝ) < u) (_ : (31104 : ℝ) * Rr ≤ M.gamma ^ (2 : ℕ) * u ^ (4 : ℕ))
+      (_ : (10321920 : ℝ) * G ≤ M.gamma ^ (5 : ℕ) * u ^ (8 : ℕ)) (_ : (0 : ℝ) < M.gamma / (4 : ℝ))
+        (S0 : ℝ)
+      (_ : S0 = ∑' (j : ℕ), weightThird (M.gamma / (4 : ℝ)) j * annulusPenaltyThird d (j + (2 :
+        ℕ))) (p : ℝ)
+      (_ : (0 : ℝ) < p) (_ : (1 : ℝ) ≤ p) (D : ℝ) (_ : (0 : ℝ) < D)
+      (_ : D = gammaMomentConst (1 / 3 : ℝ) * gammaTriangleConst (1 / 3 : ℝ) * S0 * Real.exp (-(u
+        / (2 : ℝ))))
+      (_ : u ^ (4 : ℕ) / (31104 : ℝ) ≤ p),
       (1 : ℝ) ≤ M.gamma / (4 : ℝ) * p ∧
-        Real.log ((3 : ℝ) * (↑r : ℝ)) + c1 * (↑r : ℝ) ≤ M.gamma / (4 : ℝ) * p * theta / ((16 : ℝ) * (↑r : ℝ)) ∧
-          (9 : ℝ) * (M.gamma / (4 : ℝ))⁻¹ * Cstar ^ ((1 : ℝ) / p) * theta ^ ((-1 : ℝ) / p) ≤ D⁻¹ := by
-  intro d hCs0 hgmc0 hgtc0 hPn0 r hr1 hrR L hLdef M theta htheta0 c1 hc1g htheta1 hthetane Rr hRr4 hRrL G hGdef hG0 hg0 hg4 hgne u hu0 hgu4 hgu8 hsprime0 S0 hS0def p hp0 hp1 D hD0 hDval hplow4
+        Real.log ((3 : ℝ) * (↑r : ℝ)) + c1 * (↑r : ℝ) ≤ M.gamma / (4 : ℝ) * p * theta / ((16 : ℝ)
+          * (↑r : ℝ)) ∧
+          (9 : ℝ) * (M.gamma / (4 : ℝ))⁻¹ * Cstar ^ ((1 : ℝ) / p) * theta ^ ((-1 : ℝ) / p) ≤
+            D⁻¹ := by
+  intro d hCs0 hgmc0 hgtc0 hPn0 r _ hrR L hLdef M theta htheta0 c1 hc1g htheta1 _ Rr hRr4 hRrL G
+    hGdef hG0 hg0 hg4 _ u hu0 hgu4 hgu8 hsprime0 S0 hS0def p _ hp1 D hD0 hDval hplow4
   have hg2p : Rr ≤ M.gamma ^ (2 : ℕ) * p := by
     calc Rr = 31104 * Rr / 31104 := by ring
       _ ≤ M.gamma ^ (2 : ℕ) * u ^ (4 : ℕ) / 31104 := by
@@ -433,6 +448,31 @@ with `L = log(3r) + r` and
 Only the final step differs from the base-`0` proof: the engine is
 `ratioTail_Ycal_shift` and the reduction is `hreduce_eventG0_all`, neither of
 which restricts the scale to `m ≥ 0`. -/
+private theorem shiftedG0Lane_estimate1 :
+    ∀ (d : ℕ) (G0d C : ℝ) (M : ABKModel d) (theta : ℝ) (_ : (0 : ℝ) < theta)
+      (G : ℝ) (_ : G * theta = G0d) (u : ℝ)
+      (_ :
+        M.gamma ^ (5 : ℕ) * u ^ (8 : ℕ) =
+          Disorder.cstar M ^ (16 : ℕ) / (cgEllipLowerConstant d ^ (8 : ℕ) * C ^ (16 : ℕ) * M.gamma
+            ^ (3 : ℕ)))
+      (_ : (0 : ℝ) < cgEllipLowerConstant d ^ (8 : ℕ) * C ^ (16 : ℕ) * M.gamma ^ (3 : ℕ))
+      (_ :
+        (10321920 : ℝ) * G0d * (cgEllipLowerConstant d ^ (8 : ℕ) * C ^ (16 : ℕ) * M.gamma ^ (3 :
+          ℕ)) ≤
+          theta * Disorder.cstar M ^ (16 : ℕ)),
+      (10321920 : ℝ) * G ≤ M.gamma ^ (5 : ℕ) * u ^ (8 : ℕ) := by
+  intro d G0d C M theta htheta0 G hGtheta _ hval8 hden8 hcore8
+  rw [hval8, le_div_iff₀ hden8]
+  refine le_of_mul_le_mul_right ?_ htheta0
+  calc 10321920 * G * ((Support.cgEllipLowerConstant d) ^ (8 : ℕ) * C ^ (16 : ℕ) *
+          M.gamma ^ (3 : ℕ)) * theta
+      = 10321920 * (G * theta) * ((Support.cgEllipLowerConstant d) ^ (8 : ℕ) * C ^ (16 : ℕ) *
+          M.gamma ^ (3 : ℕ)) := by ring
+    _ = 10321920 * G0d * ((Support.cgEllipLowerConstant d) ^ (8 : ℕ) * C ^ (16 : ℕ) *
+          M.gamma ^ (3 : ℕ)) := by rw [hGtheta]
+    _ ≤ theta * (Disorder.cstar M) ^ (16 : ℕ) := hcore8
+    _ = (Disorder.cstar M) ^ (16 : ℕ) * theta := by ring
+
 theorem exists_ratioTail_eventG0_uniform_shift (d : ℕ) :
     ∃ r : ℕ, 1 ≤ r ∧ ∃ C : ℝ, 6 ≤ C ∧
       ∀ M : ABKModel d, M.gamma ≤ (C⁻¹) ^ 10 * (Disorder.cstar M) ^ 10 →
@@ -535,22 +575,19 @@ theorem exists_ratioTail_eventG0_uniform_shift (d : ℕ) :
     calc (Disorder.cstar M) ^ (2 : ℕ) ≤ (3 / 2 : ℝ) ^ (2 : ℕ) := pow_le_pow_left₀ hcs0.le hcs32 2
       _ = 9 / 4 := by norm_num
   obtain ⟨hgu4, hval8, hden8, hcore8⟩ :=
-    (show (31104 * Rr ≤ M.gamma ^ (2 : ℕ) * u ^ (4 : ℕ)) ∧ (M.gamma ^ (5 : ℕ) * u ^ (8 : ℕ) = (Disorder.cstar M) ^ (16 : ℕ) /
-      ((Support.cgEllipLowerConstant d) ^ (8 : ℕ) * C ^ (16 : ℕ) * M.gamma ^ (3 : ℕ))) ∧ ((0 : ℝ) < (Support.cgEllipLowerConstant d) ^ (8 : ℕ) * C ^ (16 : ℕ) *
-      M.gamma ^ (3 : ℕ)) ∧ (10321920 * G0d * ((Support.cgEllipLowerConstant d) ^ (8 : ℕ) * C ^ (16 : ℕ) *
+    (show (31104 * Rr ≤ M.gamma ^ (2 : ℕ) * u ^ (4 : ℕ)) ∧ (M.gamma ^ (5 : ℕ) * u ^ (8 : ℕ) =
+      (Disorder.cstar M) ^ (16 : ℕ) /
+      ((Support.cgEllipLowerConstant d) ^ (8 : ℕ) * C ^ (16 : ℕ) * M.gamma ^ (3 : ℕ))) ∧ ((0 : ℝ)
+        < (Support.cgEllipLowerConstant d) ^ (8 : ℕ) * C ^ (16 : ℕ) *
+      M.gamma ^ (3 : ℕ)) ∧ (10321920 * G0d * ((Support.cgEllipLowerConstant d) ^ (8 : ℕ) * C ^ (16
+        : ℕ) *
       M.gamma ^ (3 : ℕ)) ≤ theta * (Disorder.cstar M) ^ (16 : ℕ)) from
-      @shiftedG0Lane_comparisonBounds1 (d) (hCcg0) (hCs0) (hgmc0) (hgtc0) (hPn0) (r) (L) (G0d) (hG0ddef) (C) (hC6) (M) (theta) (htheta0) (hcouple) (hC0) (hCne) (hflA) (hflB) (hflC) (Rr) (hRrdef) (hcs0) (hcs32) (hg0) (hgne) (hcsne) (hCcgne) (u) (hu') (hgammale) (hgammasq) (hcs2))
-  have hgu8 : 10321920 * G ≤ M.gamma ^ (5 : ℕ) * u ^ (8 : ℕ) := by
-    rw [hval8, le_div_iff₀ hden8]
-    refine le_of_mul_le_mul_right ?_ htheta0
-    calc 10321920 * G * ((Support.cgEllipLowerConstant d) ^ (8 : ℕ) * C ^ (16 : ℕ) *
-            M.gamma ^ (3 : ℕ)) * theta
-        = 10321920 * (G * theta) * ((Support.cgEllipLowerConstant d) ^ (8 : ℕ) * C ^ (16 : ℕ) *
-            M.gamma ^ (3 : ℕ)) := by ring
-      _ = 10321920 * G0d * ((Support.cgEllipLowerConstant d) ^ (8 : ℕ) * C ^ (16 : ℕ) *
-            M.gamma ^ (3 : ℕ)) := by rw [hGtheta]
-      _ ≤ theta * (Disorder.cstar M) ^ (16 : ℕ) := hcore8
-      _ = (Disorder.cstar M) ^ (16 : ℕ) * theta := by ring
+      @shiftedG0Lane_comparisonBounds1 (d) (hCcg0) (hCs0) (hgmc0) (hgtc0) (hPn0) (r) (L) (G0d)
+        (hG0ddef) (C) (hC6) (M) (theta) (htheta0) (hcouple) (hC0) (hCne) (hflA) (hflB) (hflC) (Rr)
+          (hRrdef) (hcs0) (hcs32) (hg0) (hgne) (hcsne) (hCcgne) (u) (hu') (hgammale) (hgammasq)
+            (hcs2))
+  have hgu8 : 10321920 * G ≤ M.gamma ^ (5 : ℕ) * u ^ (8 : ℕ)  := @shiftedG0Lane_estimate1 (d)
+    (G0d) (C) (M) (theta) (htheta0) (G) (hGtheta) (u) (hval8) (hden8) (hcore8)
   -- from here the proved proof, verbatim
   have hA0 : 0 < cgTailScale M (E : ℝ) := cgTailScale_pos M (E : ℝ)
   have hsprime0 : (0 : ℝ) < M.gamma / 4 := by linarith only [hg0]
@@ -622,8 +659,12 @@ theorem exists_ratioTail_eventG0_uniform_shift (d : ℕ) :
       _ ≤ Real.exp (u / 6) := h
   obtain ⟨hsp, hrate, hthr⟩ :=
     (show (1 ≤ M.gamma / 4 * p) ∧ (Real.log ((3 : ℝ) * (r : ℝ)) + c1 * (r : ℝ)
-      ≤ M.gamma / 4 * p * theta / (16 * (r : ℝ))) ∧ (9 * (M.gamma / 4)⁻¹ * Cstar ^ (1 / p) * theta ^ (-1 / p) ≤ D⁻¹) from
-      @shiftedG0Lane_comparisonBounds2 (d) (hCs0) (hgmc0) (hgtc0) (hPn0) (r) (hr1) (hrR) (L) (hLdef) (M) (theta) (htheta0) (c1) (hc1g) (htheta1) (hthetane) (Rr) (hRr4) (hRrL) (G) (hGdef) (hG0) (hg0) (hg4) (hgne) (u) (hu0) (hgu4) (hgu8) (hsprime0) (S0) (hS0def) (p) (hp0) (hp1) (D) (hD0) (hDval) (hplow4))
+      ≤ M.gamma / 4 * p * theta / (16 * (r : ℝ))) ∧ (9 * (M.gamma / 4)⁻¹ * Cstar ^ (1 / p) * theta
+        ^ (-1 / p) ≤ D⁻¹) from
+      @shiftedG0Lane_comparisonBounds2 (d) (hCs0) (hgmc0) (hgtc0) (hPn0) (r) (hr1) (hrR) (L)
+        (hLdef) (M) (theta) (htheta0) (c1) (hc1g) (htheta1) (hthetane) (Rr) (hRr4) (hRrL) (G)
+          (hGdef) (hG0) (hg0) (hg4) (hgne) (u) (hu0) (hgu4) (hgu8) (hsprime0) (S0) (hS0def) (p)
+            (hp0) (hp1) (D) (hD0) (hDval) (hplow4))
   have hnull : (Cutoff.cutoffSampleLaw M).toMeasure
       (goodRowSet M (Support.cgEllipLowerConstant d) (M.gamma / 4))ᶜ = 0 :=
     measure_compl_goodRowSet M (Support.cgEllipLowerConstant d) (by norm_num) hA0.le hK0

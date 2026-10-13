@@ -92,7 +92,8 @@ theorem probeFramedCollarLayerMeanRhs_nonneg
 
 private theorem sharpFramedActualPotential_comparisonBounds1 :
     ∀ {d : ℕ} (_ : (2 : ℕ) ≤ d) (M : ABKModel d) {m0 : ℤ} {E : { E : ℝ // (1 : ℝ) ≤ E }}
-      (_ : Frozen.Section3.inductionState M m0 E) (m : ℤ) {b : ℝ} (_ : (0 : ℝ) < b) (_ : b ≤ (1 / 8 : ℝ)) {k₀ : ℕ}
+      (_ : Frozen.Section3.inductionState M m0 E) (m : ℤ) {b : ℝ} (_ : (0 : ℝ) < b) (_ : b ≤ (1 /
+        8 : ℝ)) {k₀ : ℕ}
       {i : ℤ} (_ : m - (1 : ℤ) ≤ i) (_ : i ≤ m0) {L : ℤ} (_ : m ≤ L) (p : Vec d),
       √(↑(Annealed.sigmaBar M i) : ℝ) ≠ (0 : ℝ) ∧
         (∀ᵐ (omega : CutoffSample d) ∂(↑(cutoffSampleLaw M) : Measure (CutoffSample d)),
@@ -101,19 +102,23 @@ private theorem sharpFramedActualPotential_comparisonBounds1 :
                   ∑ T ∈ whitneySimplexCells m (whitneyScaleSeq b hs k₀) n Q,
                     ENNReal.ofReal
                       (cellWeight m T *
-                        goodCellForm M m (whitneyScaleSeq b hs k₀) L omega ((√(↑(Annealed.sigmaBar M i) : ℝ))⁻¹ • p)
+                        goodCellForm M m (whitneyScaleSeq b hs k₀) L omega ((√(↑(Annealed.sigmaBar
+                          M i) : ℝ))⁻¹ • p)
                           (0 : Vec d) T) ≤
-                ENNReal.ofReal (probeFramedGoodLayerMeanRhs M m (whitneyScaleSeq b hs k₀) n i L omega p)) ∧
+                ENNReal.ofReal (probeFramedGoodLayerMeanRhs M m (whitneyScaleSeq b hs k₀) n i L
+                  omega p)) ∧
           ∀ᵐ (omega : CutoffSample d) ∂(↑(cutoffSampleLaw M) : Measure (CutoffSample d)),
             ∀ (hs n : ℕ) (Fv Gv : KuhnCell d → Vec d) (p' : Vec d),
               (∀ Q ∈ whitneyLayer m (whitneyScaleSeq b hs k₀) n,
                   ∀ T ∈ whitneySimplexCells m (whitneyScaleSeq b hs k₀) n Q,
                     vecNormSq (Fv T - p') ≤
                       superposedGradConst d ^ (2 : ℕ) *
-                          (3 : ℝ) ^ ((2 : ℝ) * (b * ((↑n : ℝ) + (↑(whitneyScaleSeq b hs k₀ n) : ℝ)))) *
+                          (3 : ℝ) ^ ((2 : ℝ) * (b * ((↑n : ℝ) + (↑(whitneyScaleSeq b hs k₀ n) :
+                            ℝ)))) *
                         vecNormSq p') →
                 (∀ Q ∈ whitneyLayer m (whitneyScaleSeq b hs k₀) n,
-                    ∀ T ∈ whitneySimplexCells m (whitneyScaleSeq b hs k₀) n Q, vecNormSq (Gv T) ≤ (0 : ℝ)) →
+                    ∀ T ∈ whitneySimplexCells m (whitneyScaleSeq b hs k₀) n Q, vecNormSq (Gv T) ≤
+                      (0 : ℝ)) →
                   ∑ Q ∈ collarLayer M m (whitneyScaleSeq b hs k₀) n omega,
                       ∑ T ∈ whitneySimplexCells m (whitneyScaleSeq b hs k₀) n Q,
                         ENNReal.ofReal
@@ -122,7 +127,8 @@ private theorem sharpFramedActualPotential_comparisonBounds1 :
                               (fun (U : KuhnCell d) => (√(↑(Annealed.sigmaBar M i) : ℝ))⁻¹ • Fv U)
                               (fun (U : KuhnCell d) => √(↑(Annealed.sigmaBar M i) : ℝ) • Gv U) T) ≤
                     ENNReal.ofReal
-                      (probeFramedCollarLayerMeanRhs M m (whitneyScaleSeq b hs k₀) n i L omega p' (superposedGradConst d) b) := by
+                      (probeFramedCollarLayerMeanRhs M m (whitneyScaleSeq b hs k₀) n i L omega p'
+                        (superposedGradConst d) b) := by
   intro d hd M _ _ hS m b hb0 hb k₀ i hmi hi L hmL p
   have hsigma : 0 < (Algsuperdiff.Section3.Annealed.sigmaBar M i : ℝ) :=
     (Algsuperdiff.Section3.Annealed.sigmaBar_characterization M i).1
@@ -202,7 +208,8 @@ private theorem sharpFramedActualPotential_comparisonBounds2 :
                           ((√(↑(Annealed.sigmaBar M i) : ℝ))⁻¹ • p) T -
                       p) ≤
                   superposedGradConst d ^ (2 : ℕ) *
-                      (3 : ℝ) ^ ((2 : ℝ) * (b * ((↑n : ℝ) + (↑(whitneyScale M m (↑E : ℝ) b k₀ omega n) : ℝ)))) *
+                      (3 : ℝ) ^ ((2 : ℝ) * (b * ((↑n : ℝ) + (↑(whitneyScale M m (↑E : ℝ) b k₀
+                        omega n) : ℝ)))) *
                     vecNormSq p) ∧
           ∀ (n : ℕ),
             ∀ Q ∈ whitneyLayer m (whitneyScale M m (↑E : ℝ) b k₀ omega) n,

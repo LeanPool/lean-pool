@@ -244,8 +244,8 @@ noncomputable def analyticMinimalPositiveC0ContractiveResolventOfVanishing
     (hVanish : A.HasVanishingAnalyticMinimalResolvent)
     (hDense : A.HasDenseRangeAnalyticMinimalC0OfVanishing hVanish)
     (mu : PositiveShift) (f : C₀(Vec d, ℝ)) :
-    (A.analyticMinimalPositiveC0ContractiveResolventOfVanishing hVanish hDense
-        ).toContractiveResolvent.operator mu f =
+    (A.analyticMinimalPositiveC0ContractiveResolventOfVanishing hVanish
+      hDense).toContractiveResolvent.operator mu f =
       A.analyticMinimalC0ResolventOfVanishing hVanish mu f := rfl
 
 end WholeSpaceAnalyticData

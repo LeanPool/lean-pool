@@ -67,8 +67,8 @@ theorem streamAnalyticMinimalResolvent_one_le_kernelResolvent
     (streamWholeSpaceAnalyticData M omega).analyticMinimalResolvent mu
         (fun _ : Vec d ↦ (1 : ℝ)) measurable_const
         (D := 1) (fun _ ↦ by norm_num) x ≤
-      (streamAnalyticMinimalPositiveC0ContractiveResolvent M omega
-        ).kernelSemigroup.kernelResolvent (mu : ℝ) (fun _ ↦ 1) x := by
+      (streamAnalyticMinimalPositiveC0ContractiveResolvent M
+        omega).kernelSemigroup.kernelResolvent (mu : ℝ) (fun _ ↦ 1) x := by
   let A := streamWholeSpaceAnalyticData M omega
   let R := streamAnalyticMinimalPositiveC0ContractiveResolvent M omega
   rw [DivergenceFormProcess.Form.WholeSpaceAnalyticData.analyticMinimalResolvent]
@@ -133,8 +133,8 @@ theorem ofReal_mul_streamKernelResolvent_one
     (M : ABKModel d) (omega : FullSample d M.gamma)
     (mu : PositiveShift) (x : Vec d) :
     ENNReal.ofReal (mu : ℝ) *
-      (streamAnalyticMinimalPositiveC0ContractiveResolvent M omega
-        ).kernelSemigroup.kernelResolvent (mu : ℝ) (fun _ ↦ 1) x = 1 := by
+      (streamAnalyticMinimalPositiveC0ContractiveResolvent M
+        omega).kernelSemigroup.kernelResolvent (mu : ℝ) (fun _ ↦ 1) x = 1 := by
   let A := streamWholeSpaceAnalyticData M omega
   let R := streamAnalyticMinimalPositiveC0ContractiveResolvent M omega
   apply le_antisymm
@@ -160,8 +160,8 @@ theorem ofReal_mul_streamKernelResolvent_one
 resolvent is conservative. -/
 theorem isConservative_streamKernelSemigroup
     (M : ABKModel d) (omega : FullSample d M.gamma) :
-    (streamAnalyticMinimalPositiveC0ContractiveResolvent M omega
-      ).kernelSemigroup.IsConservative := by
+    (streamAnalyticMinimalPositiveC0ContractiveResolvent M
+      omega).kernelSemigroup.IsConservative := by
   apply SubMarkovKernelSemigroup.isConservative_of_kernelResolvent_one _ one_pos
   intro x
   exact ofReal_mul_streamKernelResolvent_one M omega ⟨(1 : ℝ), by norm_num⟩ x

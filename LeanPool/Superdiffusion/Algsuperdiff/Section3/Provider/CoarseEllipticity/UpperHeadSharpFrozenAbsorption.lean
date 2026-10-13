@@ -56,9 +56,11 @@ def collarHeadTunedPerDescendantOutputConst (d : ℕ) : ℝ :=
   max (profileAuxiliaryConst d) (collarHeadTunedOutputConst d)
 
 private abbrev upperHeadSharpFrozenAbsorption_momentBounds1_statement : Prop :=
-    ∀ {d : ℕ} (M : ABKModel d) {m : ℤ} {R : TriadicCube d} {E : { E : ℝ // (1 : ℝ) ≤ E }} {sigma Cup : ℝ}
+    ∀ {d : ℕ} (M : ABKModel d) {m : ℤ} {R : TriadicCube d} {E : { E : ℝ // (1 : ℝ) ≤ E }} {sigma
+      Cup : ℝ}
       (_ : (0 : ℝ) < sigma) (_ : sigma ≤ (1 / 2 : ℝ))
-      (_ : max (Real.exp (Cup / sigma)) (Disorder.cstar M)⁻¹ ≤ (↑E : ℝ)) (_ : (↑E : ℝ) ≤ M.gamma ^ (-(1 / 5 : ℝ)))
+      (_ : max (Real.exp (Cup / sigma)) (Disorder.cstar M)⁻¹ ≤ (↑E : ℝ)) (_ : (↑E : ℝ) ≤ M.gamma ^
+        (-(1 / 5 : ℝ)))
       (_ : (2 : ℕ) ≤ d),
       let j₀ : Fin d := ⟨(0 : ℕ), (by positivity)⟩;
       let D₀ : ℝ :=
@@ -69,7 +71,8 @@ private abbrev upperHeadSharpFrozenAbsorption_momentBounds1_statement : Prop :=
               (3 : ℝ) ^ ((2 : ℝ) * bfaProfileB * (↑(collarBandMeanDepth M (↑E : ℝ)) : ℝ)) *
             (3 : ℝ) ^ (1 / 16 : ℝ));
       let Y : ℕ → CutoffSample d → ℝ := fun (n : ℕ) (omega : CutoffSample d) =>
-        probeSharpFramedCollarWavePart M R.scale (↑E : ℝ) bfaProfileB (collarBandMeanDepth M (↑E : ℝ)) n (m - (1 : ℤ))
+        probeSharpFramedCollarWavePart M R.scale (↑E : ℝ) bfaProfileB (collarBandMeanDepth M (↑E :
+          ℝ)) n (m - (1 : ℤ))
           (basisVec j₀) (superposedGradConst d)
           (fun (eta : CutoffSample d) =>
             waveHeadTerm M R.scale (↑E : ℝ) bfaProfileB
@@ -77,8 +80,10 @@ private abbrev upperHeadSharpFrozenAbsorption_momentBounds1_statement : Prop :=
               (2 : ℕ))
           (translateCutoffSample (triadicCubeShift R) omega);
       let alpha : ℝ :=
-        upperProfileBaseSigma sigma / (((2 : ℝ) * (M.gamma / (2 : ℝ)) + (2 : ℝ) * bfaProfileB) / bfaProfileB);
-      let AP : ℝ := hsepAmplitude (upperProfileSigma sigma) bfaProfileB ^ bfaPower M.gamma bfaProfileB;
+        upperProfileBaseSigma sigma / (((2 : ℝ) * (M.gamma / (2 : ℝ)) + (2 : ℝ) * bfaProfileB) /
+          bfaProfileB);
+      let AP : ℝ := hsepAmplitude (upperProfileSigma sigma) bfaProfileB ^ bfaPower M.gamma
+        bfaProfileB;
       let AG : ℝ := upperHeadHsepOneScale sigma M.gamma;
       let X : ℝ := (↑E : ℝ)⁻¹ ^ (2 : ℕ) * M.gamma⁻¹;
       let Z : ℝ := Real.exp (-(collarBandMeanTunedDecayRate d * X));
@@ -86,82 +91,102 @@ private abbrev upperHeadSharpFrozenAbsorption_momentBounds1_statement : Prop :=
       ∀ (_ : collarHeadTunedOutputConst d ≤ Cup) (_ : (0 : ℝ) < Cup)
         (_ : max (Real.exp (profileAuxiliaryConst d / sigma)) (Disorder.cstar M)⁻¹ ≤ (↑E : ℝ))
         (_ :
-          IsBigOWith (↑(cutoffSampleLaw M) : Measure (CutoffSample d)) (gammaSigma (upperProfileTargetSigma sigma))
+          IsBigOWith (↑(cutoffSampleLaw M) : Measure (CutoffSample d)) (gammaSigma
+            (upperProfileTargetSigma sigma))
             (fun (omega : CutoffSample d) =>
               ∑' (n : ℕ),
-                probeSharpFramedCollarWavePart M R.scale (↑E : ℝ) bfaProfileB (collarBandMeanDepth M (↑E : ℝ)) n
+                probeSharpFramedCollarWavePart M R.scale (↑E : ℝ) bfaProfileB (collarBandMeanDepth
+                  M (↑E : ℝ)) n
                   (m - (1 : ℤ)) (basisVec ⟨(0 : ℕ), (by positivity)⟩) (superposedGradConst d)
                   (fun (eta : CutoffSample d) =>
                     waveHeadTerm M R.scale (↑E : ℝ) bfaProfileB
-                        (probeSharpLayerAnchor R.scale bfaProfileB (collarBandMeanDepth M (↑E : ℝ)) n) eta ^
+                        (probeSharpLayerAnchor R.scale bfaProfileB (collarBandMeanDepth M (↑E :
+                          ℝ)) n) eta ^
                       (2 : ℕ))
                   (translateCutoffSample (triadicCubeShift R) omega))
             ((∑' (n : ℕ),
                 probeMeanGoodWaveConst M * vecNormSq (basisVec ⟨(0 : ℕ), (by positivity)⟩) *
                       ((5 : ℝ) * (↑d : ℝ) ^ (2 : ℕ) * waveL4HeadConst d ^ (2 : ℕ)) *
                     ((4 : ℝ) * superposedGradConst d ^ (2 : ℕ) *
-                            probeSharpCollarBandMeanCapQuarter M (↑E : ℝ) (collarBandMeanDepth M (↑E : ℝ)) *
+                            probeSharpCollarBandMeanCapQuarter M (↑E : ℝ) (collarBandMeanDepth M
+                              (↑E : ℝ)) *
                           probeSharpCollarBandMeanMassQuarterConst d *
-                        (3 : ℝ) ^ ((2 : ℝ) * bfaProfileB * (↑(collarBandMeanDepth M (↑E : ℝ)) : ℝ)) *
+                        (3 : ℝ) ^ ((2 : ℝ) * bfaProfileB * (↑(collarBandMeanDepth M (↑E : ℝ)) :
+                          ℝ)) *
                       (3 : ℝ) ^ (1 / 16 : ℝ)) *
                   whitneyDecayRatio ^ n) *
               (Ch04.gammaProductConst
-                    (upperProfileBaseSigma sigma / (((2 : ℝ) * (M.gamma / (2 : ℝ)) + (2 : ℝ) * bfaProfileB) / bfaProfileB))
+                    (upperProfileBaseSigma sigma / (((2 : ℝ) * (M.gamma / (2 : ℝ)) + (2 : ℝ) *
+                      bfaProfileB) / bfaProfileB))
                     (1 : ℝ) *
-                  hsepAmplitude (upperProfileSigma sigma) bfaProfileB ^ bfaPower M.gamma bfaProfileB *
+                  hsepAmplitude (upperProfileSigma sigma) bfaProfileB ^ bfaPower M.gamma
+                    bfaProfileB *
                 upperHeadHsepOneScale sigma M.gamma)))
         (_ :
           (fun (omega : CutoffSample d) =>
               ∑ j : Fin d,
                 ∑' (n : ℕ),
-                  probeSharpFramedCollarWavePart M R.scale (↑E : ℝ) bfaProfileB (collarBandMeanDepth M (↑E : ℝ)) n
+                  probeSharpFramedCollarWavePart M R.scale (↑E : ℝ) bfaProfileB
+                    (collarBandMeanDepth M (↑E : ℝ)) n
                     (m - (1 : ℤ)) (basisVec j) (superposedGradConst d)
                     (fun (eta : CutoffSample d) =>
                       waveHeadTerm M R.scale (↑E : ℝ) bfaProfileB
-                          (probeSharpLayerAnchor R.scale bfaProfileB (collarBandMeanDepth M (↑E : ℝ)) n) eta ^
+                          (probeSharpLayerAnchor R.scale bfaProfileB (collarBandMeanDepth M (↑E :
+                            ℝ)) n) eta ^
                         (2 : ℕ))
                     (translateCutoffSample (triadicCubeShift R) omega)) =
             fun (omega : CutoffSample d) =>
             (↑d : ℝ) *
               ∑' (n : ℕ),
-                probeSharpFramedCollarWavePart M R.scale (↑E : ℝ) bfaProfileB (collarBandMeanDepth M (↑E : ℝ)) n
+                probeSharpFramedCollarWavePart M R.scale (↑E : ℝ) bfaProfileB (collarBandMeanDepth
+                  M (↑E : ℝ)) n
                   (m - (1 : ℤ)) (basisVec j₀) (superposedGradConst d)
                   (fun (eta : CutoffSample d) =>
                     waveHeadTerm M R.scale (↑E : ℝ) bfaProfileB
-                        (probeSharpLayerAnchor R.scale bfaProfileB (collarBandMeanDepth M (↑E : ℝ)) n) eta ^
+                        (probeSharpLayerAnchor R.scale bfaProfileB (collarBandMeanDepth M (↑E :
+                          ℝ)) n) eta ^
                       (2 : ℕ))
                   (translateCutoffSample (triadicCubeShift R) omega))
         (_ : Measurable fun (omega : CutoffSample d) => ∑' (n : ℕ), Y n omega),
         (Measurable fun (omega : CutoffSample d) =>
             ∑ j : Fin d,
               ∑' (n : ℕ),
-                probeSharpFramedCollarWavePart M R.scale (↑E : ℝ) bfaProfileB (collarBandMeanDepth M (↑E : ℝ)) n
+                probeSharpFramedCollarWavePart M R.scale (↑E : ℝ) bfaProfileB (collarBandMeanDepth
+                  M (↑E : ℝ)) n
                   (m - (1 : ℤ)) (basisVec j) (superposedGradConst d)
                   (fun (eta : CutoffSample d) =>
                     waveHeadTerm M R.scale (↑E : ℝ) bfaProfileB
-                        (probeSharpLayerAnchor R.scale bfaProfileB (collarBandMeanDepth M (↑E : ℝ)) n) eta ^
+                        (probeSharpLayerAnchor R.scale bfaProfileB (collarBandMeanDepth M (↑E :
+                          ℝ)) n) eta ^
                       (2 : ℕ))
                   (translateCutoffSample (triadicCubeShift R) omega)) ∧
-          IsBigOWith (↑(cutoffSampleLaw M) : Measure (CutoffSample d)) (gammaSigma (upperProfileTargetSigma sigma))
+          IsBigOWith (↑(cutoffSampleLaw M) : Measure (CutoffSample d)) (gammaSigma
+            (upperProfileTargetSigma sigma))
               (fun (omega : CutoffSample d) =>
                 ∑ j : Fin d,
                   ∑' (n : ℕ),
-                    probeSharpFramedCollarWavePart M R.scale (↑E : ℝ) bfaProfileB (collarBandMeanDepth M (↑E : ℝ)) n
+                    probeSharpFramedCollarWavePart M R.scale (↑E : ℝ) bfaProfileB
+                      (collarBandMeanDepth M (↑E : ℝ)) n
                       (m - (1 : ℤ)) (basisVec j) (superposedGradConst d)
                       (fun (eta : CutoffSample d) =>
                         waveHeadTerm M R.scale (↑E : ℝ) bfaProfileB
-                            (probeSharpLayerAnchor R.scale bfaProfileB (collarBandMeanDepth M (↑E : ℝ)) n) eta ^
+                            (probeSharpLayerAnchor R.scale bfaProfileB (collarBandMeanDepth M (↑E
+                              : ℝ)) n) eta ^
                           (2 : ℕ))
                       (translateCutoffSample (triadicCubeShift R) omega))
-              ((↑d : ℝ) * ((∑' (n : ℕ), D₀ * whitneyDecayRatio ^ n) * (Ch04.gammaProductConst alpha (1 : ℝ) * AP * AG))) ∧
+              ((↑d : ℝ) * ((∑' (n : ℕ), D₀ * whitneyDecayRatio ^ n) * (Ch04.gammaProductConst
+                alpha (1 : ℝ) * AP * AG))) ∧
             Cup ≤ X ∧
               (0 : ℝ) ≤ K ∧
-                (↑d : ℝ) * ((∑' (n : ℕ), D₀ * whitneyDecayRatio ^ n) * (Ch04.gammaProductConst alpha (1 : ℝ) * AP * AG)) ≤
+                (↑d : ℝ) * ((∑' (n : ℕ), D₀ * whitneyDecayRatio ^ n) * (Ch04.gammaProductConst
+                  alpha (1 : ℝ) * AP * AG)) ≤
                     K * Z ∧
                   K + (8 : ℝ) ≤ collarBandMeanTunedDecayRate d * Cup
 
-private theorem upperHeadSharpFrozenAbsorption_momentBounds1 : upperHeadSharpFrozenAbsorption_momentBounds1_statement := by
-  intro d M m R E sigma Cup hsigma0 hsigma hmax hEgamma hd _ D₀ Y alpha AP AG X Z K htuned hCup0 hmaxAux hcoordinate htraceEq hXsumMeas
+private theorem upperHeadSharpFrozenAbsorption_momentBounds1 :
+  upperHeadSharpFrozenAbsorption_momentBounds1_statement := by
+  intro d M m R E sigma Cup hsigma0 hsigma hmax hEgamma hd _ D₀ Y alpha AP AG X Z K htuned hCup0
+    hmaxAux hcoordinate htraceEq hXsumMeas
   have htraceMeas : Measurable (fun omega => ∑ j : Fin d, ∑' n : ℕ,
       probeSharpFramedCollarWavePart M R.scale (E : ℝ) bfaProfileB
         (collarBandMeanDepth M (E : ℝ)) n (m - 1) (basisVec j)
@@ -261,10 +286,11 @@ private theorem upperHeadSharpFrozenAbsorption_momentBounds1 : upperHeadSharpFro
 
 private theorem upperHeadSharpFrozenAbsorption_comparisonBounds1 :
     ∀ {d : ℕ} (M : ABKModel d) {m : ℤ} {k : ℕ} {R : TriadicCube d}
-      (_ : R ∈ descendantsAtScale (originCube d m) (m - (1 : ℤ) - (↑k : ℤ))) {E : { E : ℝ // (1 : ℝ) ≤ E }}
+      (_ : R ∈ descendantsAtScale (originCube d m) (m - (1 : ℤ) - (↑k : ℤ))) {E : { E : ℝ // (1 :
+        ℝ) ≤ E }}
       (_ : (2 : ℕ) ≤ d),
       let j₀ : Fin d := ⟨(0 : ℕ), (by positivity)⟩;
-      let D₀ : ℝ :=
+      let _ : ℝ :=
         probeMeanGoodWaveConst M * ((5 : ℝ) * (↑d : ℝ) ^ (2 : ℕ) * waveL4HeadConst d ^ (2 : ℕ)) *
           ((4 : ℝ) * superposedGradConst d ^ (2 : ℕ) *
                   probeSharpCollarBandMeanCapQuarter M (↑E : ℝ) (collarBandMeanDepth M (↑E : ℝ)) *
@@ -272,7 +298,8 @@ private theorem upperHeadSharpFrozenAbsorption_comparisonBounds1 :
               (3 : ℝ) ^ ((2 : ℝ) * bfaProfileB * (↑(collarBandMeanDepth M (↑E : ℝ)) : ℝ)) *
             (3 : ℝ) ^ (1 / 16 : ℝ));
       let Y : ℕ → CutoffSample d → ℝ := fun (n : ℕ) (omega : CutoffSample d) =>
-        probeSharpFramedCollarWavePart M R.scale (↑E : ℝ) bfaProfileB (collarBandMeanDepth M (↑E : ℝ)) n (m - (1 : ℤ))
+        probeSharpFramedCollarWavePart M R.scale (↑E : ℝ) bfaProfileB (collarBandMeanDepth M (↑E :
+          ℝ)) n (m - (1 : ℤ))
           (basisVec j₀) (superposedGradConst d)
           (fun (eta : CutoffSample d) =>
             waveHeadTerm M R.scale (↑E : ℝ) bfaProfileB
@@ -280,42 +307,51 @@ private theorem upperHeadSharpFrozenAbsorption_comparisonBounds1 :
               (2 : ℕ))
           (translateCutoffSample (triadicCubeShift R) omega);
       (∀ (j : Fin d) (n : ℕ) (omega : CutoffSample d),
-          probeSharpFramedCollarWavePart M R.scale (↑E : ℝ) bfaProfileB (collarBandMeanDepth M (↑E : ℝ)) n (m - (1 : ℤ))
+          probeSharpFramedCollarWavePart M R.scale (↑E : ℝ) bfaProfileB (collarBandMeanDepth M (↑E
+            : ℝ)) n (m - (1 : ℤ))
               (basisVec j) (superposedGradConst d)
               (fun (eta : CutoffSample d) =>
                 waveHeadTerm M R.scale (↑E : ℝ) bfaProfileB
-                    (probeSharpLayerAnchor R.scale bfaProfileB (collarBandMeanDepth M (↑E : ℝ)) n) eta ^
+                    (probeSharpLayerAnchor R.scale bfaProfileB (collarBandMeanDepth M (↑E : ℝ)) n)
+                      eta ^
                   (2 : ℕ))
               (translateCutoffSample (triadicCubeShift R) omega) =
-            probeSharpFramedCollarWavePart M R.scale (↑E : ℝ) bfaProfileB (collarBandMeanDepth M (↑E : ℝ)) n (m - (1 : ℤ))
+            probeSharpFramedCollarWavePart M R.scale (↑E : ℝ) bfaProfileB (collarBandMeanDepth M
+              (↑E : ℝ)) n (m - (1 : ℤ))
               (basisVec j₀) (superposedGradConst d)
               (fun (eta : CutoffSample d) =>
                 waveHeadTerm M R.scale (↑E : ℝ) bfaProfileB
-                    (probeSharpLayerAnchor R.scale bfaProfileB (collarBandMeanDepth M (↑E : ℝ)) n) eta ^
+                    (probeSharpLayerAnchor R.scale bfaProfileB (collarBandMeanDepth M (↑E : ℝ)) n)
+                      eta ^
                   (2 : ℕ))
               (translateCutoffSample (triadicCubeShift R) omega)) ∧
         ((fun (omega : CutoffSample d) =>
               ∑ j : Fin d,
                 ∑' (n : ℕ),
-                  probeSharpFramedCollarWavePart M R.scale (↑E : ℝ) bfaProfileB (collarBandMeanDepth M (↑E : ℝ)) n
+                  probeSharpFramedCollarWavePart M R.scale (↑E : ℝ) bfaProfileB
+                    (collarBandMeanDepth M (↑E : ℝ)) n
                     (m - (1 : ℤ)) (basisVec j) (superposedGradConst d)
                     (fun (eta : CutoffSample d) =>
                       waveHeadTerm M R.scale (↑E : ℝ) bfaProfileB
-                          (probeSharpLayerAnchor R.scale bfaProfileB (collarBandMeanDepth M (↑E : ℝ)) n) eta ^
+                          (probeSharpLayerAnchor R.scale bfaProfileB (collarBandMeanDepth M (↑E :
+                            ℝ)) n) eta ^
                         (2 : ℕ))
                     (translateCutoffSample (triadicCubeShift R) omega)) =
             fun (omega : CutoffSample d) =>
             (↑d : ℝ) *
               ∑' (n : ℕ),
-                probeSharpFramedCollarWavePart M R.scale (↑E : ℝ) bfaProfileB (collarBandMeanDepth M (↑E : ℝ)) n
+                probeSharpFramedCollarWavePart M R.scale (↑E : ℝ) bfaProfileB (collarBandMeanDepth
+                  M (↑E : ℝ)) n
                   (m - (1 : ℤ)) (basisVec j₀) (superposedGradConst d)
                   (fun (eta : CutoffSample d) =>
                     waveHeadTerm M R.scale (↑E : ℝ) bfaProfileB
-                        (probeSharpLayerAnchor R.scale bfaProfileB (collarBandMeanDepth M (↑E : ℝ)) n) eta ^
+                        (probeSharpLayerAnchor R.scale bfaProfileB (collarBandMeanDepth M (↑E :
+                          ℝ)) n) eta ^
                       (2 : ℕ))
                   (translateCutoffSample (triadicCubeShift R) omega)) ∧
           (∀ (n : ℕ) (omega : CutoffSample d), (0 : ℝ) ≤ Y n omega) ∧
-            (∀ (n : ℕ), Measurable (Y n)) ∧ ∀ (omega : CutoffSample d), Summable fun (n : ℕ) => Y n omega := by
+            (∀ (n : ℕ), Measurable (Y n)) ∧ ∀ (omega : CutoffSample d), Summable fun (n : ℕ) => Y
+              n omega := by
   intro d M m _ R hR E hd j₀ D₀ Y
   have hlayerEq : ∀ (j : Fin d) (n : ℕ) (omega : CutoffSample d),
       probeSharpFramedCollarWavePart M R.scale (E : ℝ) bfaProfileB

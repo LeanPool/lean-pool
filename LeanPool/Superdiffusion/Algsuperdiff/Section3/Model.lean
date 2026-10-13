@@ -43,7 +43,8 @@ open MeasureTheory
 The dimension is an external parameter.  Its lower bound and the complete
 admissible range for `gamma` belong exactly to `prefix`; this aggregate adds
 only molecular diffusivity positivity and the four separately frozen shell-law
-assumptions. -/
+assumptions. The shell carrier enforces qualitative C² regularity, which
+strengthens the paper's local C^{1,1} assumption. -/
 structure ABKModel (d : ℕ) where
   /-- The molecular diffusivity from ABK26. -/
   nu : ℝ
@@ -57,7 +58,7 @@ structure ABKModel (d : ℕ) where
   shellPrefix : Algsuperdiff.Frozen.Assumptions.ShellLawPrefix d gamma P
   /-- The exact mean-zero, stationarity, and finite-range assumption (J1). -/
   J1 : Algsuperdiff.Frozen.Assumptions.ShellLawJ1 d P
-  /-- The exact local regularity and Gaussian-tail assumption (J2). -/
+  /-- The Gaussian-tail assumption (J2), with C² regularity in the shell carrier. -/
   J2 : Algsuperdiff.Frozen.Assumptions.ShellLawJ2 d P
   /-- The exact joint hyperoctahedral and negation invariance assumption (J3). -/
   J3 : Algsuperdiff.Frozen.Assumptions.ShellLawJ3 d P

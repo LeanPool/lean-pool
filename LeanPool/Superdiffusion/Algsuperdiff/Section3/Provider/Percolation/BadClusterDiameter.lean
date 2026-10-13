@@ -395,7 +395,8 @@ private theorem largeBadCluster_event_subset_pathCover :
         ∀ (k : ℕ),
           (↑k : ℝ) + (1 : ℝ) ≤ b * (↑h : ℝ) →
             {omega : CutoffSample d |
-                ∃ u ∈ cubeFinset h, (3 : ℝ) ^ (b * (↑h : ℝ)) ≤ (↑(badClusterDiam M m h omega u) : ℝ)} ⊆
+                ∃ u ∈ cubeFinset h, (3 : ℝ) ^ (b * (↑h : ℝ)) ≤ (↑(badClusterDiam M m h omega u) :
+                  ℝ)} ⊆
               badClusterCrossingEvent₂ M m h k := by
   intro d M m h b hcase k hk1
   rintro omega ⟨u, -, hu⟩

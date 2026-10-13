@@ -255,7 +255,8 @@ private theorem collarDeepTail_layerAmplitude_nonnegative :
       let k₀ : ℕ := collarBandMeanDepth M (↑E : ℝ);
       let D : ℝ :=
         probeMeanGoodWaveConst M * vecNormSq (basisVec j) * ((5 : ℝ) * (↑d : ℝ) ^ (2 : ℕ)) *
-          ((4 : ℝ) * superposedGradConst d ^ (2 : ℕ) * probeSharpCollarBandMeanCapQuarter M (↑E : ℝ) k₀ *
+          ((4 : ℝ) * superposedGradConst d ^ (2 : ℕ) * probeSharpCollarBandMeanCapQuarter M (↑E :
+            ℝ) k₀ *
                   probeSharpCollarBandMeanMassQuarterConst d *
                 (3 : ℝ) ^ ((2 : ℝ) * bfaProfileB * (↑k₀ : ℝ)) *
               (3 : ℝ) ^ (1 / 16 : ℝ) *
@@ -586,7 +587,8 @@ private theorem deepTail_coordinateTerm_orliczBound :
                       max (profileAuxiliaryConst d) (collarBandMeanDepthThreshold d) ≤ Cup →
                         ∀ (j : Fin d),
                           let k₀ : ℕ := collarBandMeanDepth M (↑E : ℝ);
-                          let tailA : ℝ := gammaTriangleConst (2 : ℝ) * (probeDeepBandGainRootConst d * (3 : ℝ) * √(2 : ℝ));
+                          let tailA : ℝ := gammaTriangleConst (2 : ℝ) *
+                            (probeDeepBandGainRootConst d * (3 : ℝ) * √(2 : ℝ));
                           let D₀ : ℝ :=
                             probeMeanGoodWaveConst M * ((5 : ℝ) * (↑d : ℝ) ^ (2 : ℕ)) *
                               ((4 : ℝ) * superposedGradConst d ^ (2 : ℕ) *
@@ -595,14 +597,17 @@ private theorem deepTail_coordinateTerm_orliczBound :
                                   (3 : ℝ) ^ ((2 : ℝ) * bfaProfileB * (↑k₀ : ℝ)) *
                                 (3 : ℝ) ^ (1 / 16 : ℝ));
                           let B₀ : ℝ :=
-                            D₀ * ((64 : ℝ) * superposedFluxHsepConst ^ (3 : ℝ) * (tailA ^ (2 : ℕ) * (81 : ℝ)) * M.gamma);
+                            D₀ * ((64 : ℝ) * superposedFluxHsepConst ^ (3 : ℝ) * (tailA ^ (2 : ℕ)
+                              * (81 : ℝ)) * M.gamma);
                           let B : ℕ → ℝ := fun (n : ℕ) => B₀ * whitneyDecayRatio ^ n;
                           let X : ℕ → CutoffSample d → ℝ := fun (n : ℕ) (omega : CutoffSample d) =>
                             probeSharpFramedCollarDeepTailLayer M m R (↑E : ℝ) j n omega;
                           let alpha : ℝ :=
                             upperProfileBaseSigma sigma /
-                              (((2 : ℝ) * (M.gamma / (2 : ℝ)) + (2 : ℝ) * bfaProfileB) / bfaProfileB);
-                          let AP : ℝ := hsepAmplitude (upperProfileSigma sigma) bfaProfileB ^ bfaPower M.gamma bfaProfileB;
+                              (((2 : ℝ) * (M.gamma / (2 : ℝ)) + (2 : ℝ) * bfaProfileB) /
+                                bfaProfileB);
+                          let AP : ℝ := hsepAmplitude (upperProfileSigma sigma) bfaProfileB ^
+                            bfaPower M.gamma bfaProfileB;
                           let G : ℝ := Ch04.gammaProductConst alpha (1 : ℝ);
                           (0 : ℝ) ≤ G →
                             G ≤ (64 : ℝ) →
@@ -613,9 +618,12 @@ private theorem deepTail_coordinateTerm_orliczBound :
                                       (0 : ℝ) < D₀ →
                                         (0 : ℝ) ≤ whitneyDecayRatio →
                                           ∀ (n : ℕ),
-                                            IsBigOWith (↑(cutoffSampleLaw M) : Measure (CutoffSample d))
-                                              (gammaSigma (upperProfileTargetSigma sigma)) (X n) (B n) := by
-  intro _ M _ _ R hR E hS sigma _ hsigma0 hsigma hmax hEgamma hCup j k₀ tailA D₀ B₀ B X alpha AP G hG0 hG hAP0 hAP hHcube0 htailA hD₀0 hr0 n
+                                            IsBigOWith (↑(cutoffSampleLaw M) : Measure
+                                              (CutoffSample d))
+                                              (gammaSigma (upperProfileTargetSigma sigma)) (X n)
+                                                (B n) := by
+  intro _ M _ _ R hR E hS sigma _ hsigma0 hsigma hmax hEgamma hCup j k₀ tailA D₀ B₀ B X alpha AP G
+    hG0 hG hAP0 hAP hHcube0 htailA hD₀0 hr0 n
   let ell : ℕ → ℤ := fun n => probeSharpLayerAnchor R.scale bfaProfileB k₀ n
   let AT : ℝ := probeDeepBandGaugedFluct M (ell n) k₀
     (probeSharpLayerGap bfaProfileB n) ^ 2
@@ -665,30 +673,38 @@ private theorem deepTail_coordinateTerm_orliczBound :
 private theorem upperDeepBandTailConsumption_comparisonBounds1 :
     ∀ {d : ℕ} (_ : (2 : ℕ) ≤ d) (M : ABKModel d) {E : { E : ℝ // (1 : ℝ) ≤ E }} {sigma Cup : ℝ}
       (_ : (0 : ℝ) < sigma) (_ : sigma ≤ (1 / 2 : ℝ))
-      (_ : max (Real.exp (Cup / sigma)) (Disorder.cstar M)⁻¹ ≤ (↑E : ℝ)) (_ : (↑E : ℝ) ≤ M.gamma ^ (-(1 / 5 : ℝ))),
+      (_ : max (Real.exp (Cup / sigma)) (Disorder.cstar M)⁻¹ ≤ (↑E : ℝ)) (_ : (↑E : ℝ) ≤ M.gamma ^
+        (-(1 / 5 : ℝ))),
       let X : ℝ := (↑E : ℝ)⁻¹ ^ (2 : ℕ) * M.gamma⁻¹;
       let Z : ℝ := Real.exp (-(collarBandMeanTunedDecayRate d * X));
       let k₀ : ℕ := collarBandMeanDepth M (↑E : ℝ);
-      let tailA : ℝ := gammaTriangleConst (2 : ℝ) * (probeDeepBandGainRootConst d * (3 : ℝ) * √(2 : ℝ));
+      let tailA : ℝ := gammaTriangleConst (2 : ℝ) * (probeDeepBandGainRootConst d * (3 : ℝ) * √(2
+        : ℝ));
       let meanD : ℝ := probeMeanGoodWaveDimensionConst d;
       let fiveD : ℝ := (5 : ℝ) * (↑d : ℝ) ^ (2 : ℕ);
       let fixed : ℝ :=
-        (4 : ℝ) * superposedGradConst d ^ (2 : ℕ) * probeSharpCollarBandMeanMassQuarterConst d * (3 : ℝ) ^ (1 / 16 : ℝ);
-      let capGrowth : ℝ := probeSharpCollarBandMeanCapQuarter M (↑E : ℝ) k₀ * (3 : ℝ) ^ ((2 : ℝ) * bfaProfileB * (↑k₀ : ℝ));
+        (4 : ℝ) * superposedGradConst d ^ (2 : ℕ) * probeSharpCollarBandMeanMassQuarterConst d *
+          (3 : ℝ) ^ (1 / 16 : ℝ);
+      let capGrowth : ℝ := probeSharpCollarBandMeanCapQuarter M (↑E : ℝ) k₀ * (3 : ℝ) ^ ((2 : ℝ) *
+        bfaProfileB * (↑k₀ : ℝ));
       let tailC : ℝ := (64 : ℝ) * superposedFluxHsepConst ^ (3 : ℝ) * (tailA ^ (2 : ℕ) * (81 : ℝ));
       let rinv : ℝ := ((1 : ℝ) - whitneyDecayRatio)⁻¹;
       let D₀ : ℝ := probeMeanGoodWaveConst M * fiveD * fixed * capGrowth;
       let T : ℝ := gammaTriangleConst (upperProfileTargetSigma sigma);
       let Tbar : ℝ := upperAfterBandRareTriangleConst;
-      let K : ℝ := (↑d : ℝ) * Tbar * (meanD * fiveD * fixed * collarBandMeanTunedCapPrefactor d * tailC * rinv);
+      let K : ℝ := (↑d : ℝ) * Tbar * (meanD * fiveD * fixed * collarBandMeanTunedCapPrefactor d *
+        tailC * rinv);
       ∀ (_ : collarBandMeanDepthThreshold d ≤ X) (_ : (0 : ℝ) < (↑E : ℝ)),
         (0 : ℝ) ≤ Z ∧
-          (↑d : ℝ) * T * (meanD * (Disorder.cstar M)⁻¹ * fiveD * fixed) * capGrowth * (tailC * M.gamma * rinv) ≤
-              (↑d : ℝ) * Tbar * (meanD * (Disorder.cstar M)⁻¹ * fiveD * fixed) * (collarBandMeanTunedCapPrefactor d * Z) *
+          (↑d : ℝ) * T * (meanD * (Disorder.cstar M)⁻¹ * fiveD * fixed) * capGrowth * (tailC *
+            M.gamma * rinv) ≤
+              (↑d : ℝ) * Tbar * (meanD * (Disorder.cstar M)⁻¹ * fiveD * fixed) *
+                (collarBandMeanTunedCapPrefactor d * Z) *
                 (tailC * M.gamma * rinv) ∧
             D₀ = meanD * (Disorder.cstar M)⁻¹ * fiveD * fixed * capGrowth ∧
               (Disorder.cstar M)⁻¹ * M.gamma ≤ (1 : ℝ) ∧ (0 : ℝ) ≤ K := by
-  intro d hd M E _ _ hsigma0 hsigma hmax hEgamma X Z k₀ tailA meanD fiveD fixed capGrowth tailC rinv D₀ T Tbar K hlarge hEpos
+  intro d hd M E _ _ hsigma0 hsigma hmax hEgamma X Z k₀ tailA meanD fiveD fixed capGrowth tailC
+    rinv D₀ T Tbar K hlarge hEpos
   have hcap : capGrowth ≤ collarBandMeanTunedCapPrefactor d * Z := by
     dsimp only [capGrowth, k₀, Z, X]
     exact probeSharpCollarBandMeanTunedCapGrowth_le_exp M hEpos hlarge

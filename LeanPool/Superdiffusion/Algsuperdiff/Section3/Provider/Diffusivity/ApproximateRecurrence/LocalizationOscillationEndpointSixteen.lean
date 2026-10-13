@@ -203,58 +203,74 @@ private theorem localizationOscillationEndpointSixteen_comparisonBounds1 :
                   (0 : ℝ) ≤ sigmaInv →
                     ∀ (e z₀ : Vec d) (wD : ShellSeq d → H10Function (openCubeSet (originCube d K))),
                       (∀ (omega : ShellSeq d),
-                          IsZeroTraceDirichletRhsWeakSolution (fun (_ : Vec d) => (1 : Matrix (Fin d) (Fin d) ℝ))
+                          IsZeroTraceDirichletRhsWeakSolution (fun (_ : Vec d) => (1 : Matrix (Fin
+                            d) (Fin d) ℝ))
                             (openCubeSet (originCube d K)) (wD omega) fun (x : Vec d) =>
                             -Corrector.streamForcing sigmaInv omega (n + (↑N : ℤ)) highScale e x) →
                         ∀ (W : ℝ),
                           (0 : ℝ) ≤ W →
                             (gridFourthMoment (↑M.P : Measure (ℤ → Frozen.Assumptions.ShellField d))
                                   (interiorMesoCubeGrid d K n (n + (↑N : ℤ) - (1 : ℤ)))
-                                  fun (R : TriadicCube d) (omega : ℤ → Frozen.Assumptions.ShellField d) =>
+                                  fun (R : TriadicCube d) (omega : ℤ →
+                                    Frozen.Assumptions.ShellField d) =>
                                   meshEnergyCell (n + (↑N : ℤ)) (wD omega).grad R) ≤
                                 W ^ (4 : ℕ) →
                               (∀ R ∈ interiorMesoCubeGrid d K n (n + (↑N : ℤ) - (1 : ℤ)),
                                   Integrable
-                                    (fun (omega : ShellSeq d) => meshEnergyCell (n + (↑N : ℤ)) (wD omega).grad R ^ (4 : ℝ))
+                                    (fun (omega : ShellSeq d) => meshEnergyCell (n + (↑N : ℤ)) (wD
+                                      omega).grad R ^ (4 : ℝ))
                                     (↑M.P : Measure (ℤ → Frozen.Assumptions.ShellField d))) →
-                                (gridFourthMomentRoot (↑M.P : Measure (ℤ → Frozen.Assumptions.ShellField d))
+                                (gridFourthMomentRoot (↑M.P : Measure (ℤ →
+                                  Frozen.Assumptions.ShellField d))
                                       (interiorMesoCubeGrid d K n (n + (↑N : ℤ) - (1 : ℤ)))
-                                      fun (R : TriadicCube d) (omega : ℤ → Frozen.Assumptions.ShellField d) =>
+                                      fun (R : TriadicCube d) (omega : ℤ →
+                                        Frozen.Assumptions.ShellField d) =>
                                       meshOscillationCell n (wD omega).grad R) +
                                     sigmaInv *
                                       ((3 : ℝ) ^ (↑n : ℝ) *
                                         (∫ (omega : ShellSeq d),
                                             shellDerivNormSum (n + (↑N : ℤ)) highScale z₀ omega ^
-                                              (4 : ℝ) ∂(↑M.P : Measure (ℤ → Frozen.Assumptions.ShellField d))) ^
+                                              (4 : ℝ) ∂(↑M.P : Measure (ℤ →
+                                                Frozen.Assumptions.ShellField d))) ^
                                           (4 : ℝ)⁻¹) ≤
                                   Cdisp * ((3 : ℝ) ^ (-(↑N : ℝ)) * W) +
                                       Cdisp * ((↑N : ℝ) * (sigmaInv * √(↑d : ℝ) * vecNorm e)) *
-                                        ((3 : ℝ) ^ (-(↑N : ℝ)) * (3 : ℝ) ^ (M.gamma * ((↑n : ℝ) + (↑N : ℝ)))) +
+                                        ((3 : ℝ) ^ (-(↑N : ℝ)) * (3 : ℝ) ^ (M.gamma * ((↑n : ℝ) +
+                                          (↑N : ℝ)))) +
                                     Cdisp * sigmaInv *
-                                      ((3 : ℝ) ^ (-(↑N : ℝ)) * (3 : ℝ) ^ (M.gamma * ((↑n : ℝ) + (↑N : ℝ)))))
-      (Chead W0 : ℝ) (_ : W0 = ((3 : ℝ) ^ d * freshShellFourthEnergyConst Chead (1 : ℝ)) ^ (4 : ℝ)⁻¹) (Ctot : ℝ)
+                                      ((3 : ℝ) ^ (-(↑N : ℝ)) * (3 : ℝ) ^ (M.gamma * ((↑n : ℝ) +
+                                        (↑N : ℝ)))))
+      (Chead W0 : ℝ) (_ : W0 = ((3 : ℝ) ^ d * freshShellFourthEnergyConst Chead (1 : ℝ)) ^ (4 :
+        ℝ)⁻¹) (Ctot : ℝ)
       (_ :
-        Ctot = Cdisp * W0 + (96 : ℝ) * (Cdisp * √(↑d : ℝ) * shellNormalizationConst) + Cdisp * shellNormalizationConst)
+        Ctot = Cdisp * W0 + (96 : ℝ) * (Cdisp * √(↑d : ℝ) * shellNormalizationConst) + Cdisp *
+          shellNormalizationConst)
       (_ : (0 : ℝ) ≤ Ctot) (M : ABKModel d) (m0 : ℤ) (Eind : { E : ℝ // (1 : ℝ) ≤ E })
-      (_ : Frozen.Section3.inductionState M m0 Eind) (m K : ℤ) (h : ℕ) (_ : (0 : ℕ) < h) (_ : m - (↑h : ℤ) ≤ m0)
-      (_ : (↑h : ℝ) ≤ (6 : ℝ) * Disorder.cstar M * M.gamma⁻¹) (e : Vec d) (_ : vecNorm e ≤ (1 : ℝ)) (z₀ : Vec d)
+      (_ : Frozen.Section3.inductionState M m0 Eind) (m K : ℤ) (h : ℕ) (_ : (0 : ℕ) < h) (_ : m -
+        (↑h : ℤ) ≤ m0)
+      (_ : (↑h : ℝ) ≤ (6 : ℝ) * Disorder.cstar M * M.gamma⁻¹) (e : Vec d) (_ : vecNorm e ≤ (1 :
+        ℝ)) (z₀ : Vec d)
       (wD : ShellSeq d → H10Function (openCubeSet (originCube d K)))
       (_ :
         ∀ (omega : ShellSeq d),
           IsZeroTraceDirichletRhsWeakSolution (fun (_ : Vec d) => (1 : Matrix (Fin d) (Fin d) ℝ))
             (openCubeSet (originCube d K)) (wD omega) fun (x : Vec d) =>
-            -Corrector.streamForcing (↑(Annealed.sigmaBar M (m - (↑h : ℤ))) : ℝ)⁻¹ omega (m - (↑h : ℤ)) m e x)
+            -Corrector.streamForcing (↑(Annealed.sigmaBar M (m - (↑h : ℤ))) : ℝ)⁻¹ omega (m - (↑h
+              : ℤ)) m e x)
       (_ : M.gamma ≤ (1 : ℝ) / ((1 : ℝ) + Ctot))
       (_ :
         ∀ (omega : ShellSeq d),
-          IntegrableOn (fun (x : Vec d) => vecNormSq ((wD omega).grad x)) (openCubeSet (originCube d K)) volume)
+          IntegrableOn (fun (x : Vec d) => vecNormSq ((wD omega).grad x)) (openCubeSet (originCube
+            d K)) volume)
       (_ : (0 : ℝ) < M.gamma) (_ : M.gamma ≤ (1 : ℝ)) (nbuf : ℤ) (Ngap : ℕ)
-      (_ : Ngap = recurrenceGap recurrenceGapMultiplier M.gamma) (_ : nbuf + (↑Ngap : ℤ) = m - (↑h : ℤ))
+      (_ : Ngap = recurrenceGap recurrenceGapMultiplier M.gamma) (_ : nbuf + (↑Ngap : ℤ) = m - (↑h
+        : ℤ))
       (_ : (↑nbuf : ℝ) + (↑Ngap : ℝ) = (↑(m - (↑h : ℤ)) : ℝ)) (_ : d + (3 : ℕ) ≤ Ngap)
       (_ : nbuf + (↑Ngap : ℤ) < m)
       (_ :
         ∀ R ∈ interiorMesoCubeGrid d K nbuf (nbuf + (↑Ngap : ℤ) - (1 : ℤ)),
-          Integrable (fun (omega : ShellSeq d) => meshEnergyCell (nbuf + (↑Ngap : ℤ)) (wD omega).grad R ^ (4 : ℝ))
+          Integrable (fun (omega : ShellSeq d) => meshEnergyCell (nbuf + (↑Ngap : ℤ)) (wD
+            omega).grad R ^ (4 : ℝ))
             (↑M.P : Measure (ℤ → Frozen.Assumptions.ShellField d)))
       (Aenv : ℝ)
       (_ :
@@ -263,7 +279,8 @@ private theorem localizationOscillationEndpointSixteen_comparisonBounds1 :
             fun (R : TriadicCube d) (omega : ℤ → Frozen.Assumptions.ShellField d) =>
             mesoWindowEnergy (nbuf + (↑Ngap : ℤ)) (wD omega).grad R) ≤
           Aenv)
-      (_ : Aenv = (3 : ℝ) ^ d * freshShellFourthEnergyConst Chead (M.gamma ^ (100 : ℕ))) (_ : (0 : ℝ) ≤ Aenv)
+      (_ : Aenv = (3 : ℝ) ^ d * freshShellFourthEnergyConst Chead (M.gamma ^ (100 : ℕ))) (_ : (0 :
+        ℝ) ≤ Aenv)
       (W : ℝ) (_ : W = Aenv ^ (4 : ℝ)⁻¹),
       (gridFourthMomentRoot (↑M.P : Measure (ℤ → Frozen.Assumptions.ShellField d))
             (interiorMesoCubeGrid d K nbuf (nbuf + (↑Ngap : ℤ) - (1 : ℤ)))
@@ -276,7 +293,9 @@ private theorem localizationOscillationEndpointSixteen_comparisonBounds1 :
                     (4 : ℝ) ∂(↑M.P : Measure (ℤ → Frozen.Assumptions.ShellField d))) ^
                 (4 : ℝ)⁻¹) ≤
         M.gamma ^ (16 : ℕ) := by
-  intro d Cdisp hCdisp0 hdisp Chead W0 hW0 Ctot hCtot hCtot0 M _ _ hstate m K h hhpos hm0 hcstar e he z₀ wD hsol hCgate hsq hgamma0 hgamma1 nbuf Ngap hNgap hsum hsumR hdimN hlt hcellInt Aenv henvD hAenv hAenv0 W hW
+  intro d Cdisp hCdisp0 hdisp Chead W0 hW0 Ctot hCtot hCtot0 M _ _ hstate m K h hhpos hm0 hcstar e
+    he z₀ wD hsol hCgate hsq hgamma0 hgamma1 nbuf Ngap hNgap hsum hsumR hdimN hlt hcellInt Aenv
+      henvD hAenv hAenv0 W hW
   have hW0nn : 0 ≤ W := by rw [hW]; exact Real.rpow_nonneg hAenv0 _
   have hWpow : W ^ (4 : ℕ) = Aenv := by
     rw [hW, ← Real.rpow_natCast (Aenv ^ ((4 : ℝ)⁻¹)) 4, ← Real.rpow_mul hAenv0,

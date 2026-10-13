@@ -58,8 +58,7 @@ theorem killedResolvent_eq_partResolvent_stream
       (streamWholeSpaceAnalyticData M omega) R)
     (hT : ∀ (mu : PositiveShift) (g : C₀(Vec d, ℝ)),
       R.toContractiveResolvent.operator mu g =
-        ((streamWholeSpaceC0BarrierData M omega).resolvent
-          ).toContractiveResolvent.operator mu g)
+        ((streamWholeSpaceC0BarrierData M omega).resolvent).toContractiveResolvent.operator mu g)
     (v : ℕ) (hVcube : P.V = wholeSpaceCube d v)
     {x : Vec d} (hx : x ∈ P.V) :
     letI := hreg.metricSpace

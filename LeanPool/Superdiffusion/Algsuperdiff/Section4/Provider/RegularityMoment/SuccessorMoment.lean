@@ -163,7 +163,8 @@ private theorem regularityMoment_squareRootBound :
                 (0 : ℝ) < M.gamma →
                   (1 : ℝ) ≤ |Real.log M.gamma| →
                     let p : ℝ := c * M.gamma⁻¹ * |Real.log M.gamma| ^ (-6 : ℤ);
-                    CE * √((2 : ℝ) * p) * √M.gamma * |Real.log M.gamma| ^ (3 : ℕ) = CE * √((2 : ℝ) * c) := by
+                    CE * √((2 : ℝ) * p) * √M.gamma * |Real.log M.gamma| ^ (3 : ℕ) = CE * √((2 : ℝ)
+                      * c) := by
   intro _ _ _ CE _ c _ M hgam _ p
   have hlogpos := abs_log_gamma_pos M
   have hsqrtid : Real.sqrt (2 * p) * Real.sqrt M.gamma =

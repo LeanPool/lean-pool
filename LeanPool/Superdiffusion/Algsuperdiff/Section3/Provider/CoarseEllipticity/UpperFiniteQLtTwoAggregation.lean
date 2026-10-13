@@ -119,31 +119,42 @@ private theorem descendantUpperFlux_depthBound :
       {scaling Cblock Krare eps sigmaExp : ℝ},
       (0 : ℝ) ≤ scaling →
         ∀ (UoneCube UexpCube : ℕ → TriadicCube d → Cutoff.CutoffSample d → ℝ),
-          (∀ (k : ℕ) (R : TriadicCube d) (omega : Cutoff.CutoffSample d), (0 : ℝ) ≤ UoneCube k R omega) →
-            (∀ (k : ℕ) (R : TriadicCube d) (omega : Cutoff.CutoffSample d), (0 : ℝ) ≤ UexpCube k R omega) →
+          (∀ (k : ℕ) (R : TriadicCube d) (omega : Cutoff.CutoffSample d), (0 : ℝ) ≤ UoneCube k R
+            omega) →
+            (∀ (k : ℕ) (R : TriadicCube d) (omega : Cutoff.CutoffSample d), (0 : ℝ) ≤ UexpCube k R
+              omega) →
               (∀ (k : ℕ),
                   ∀ R ∈ descendantsAtScale (originCube d m) (m - (1 : ℤ) - (↑k : ℤ)),
                     ∀ (omega : Cutoff.CutoffSample d),
-                      |cutoffBBlockFamily M m scaling R omega| ≤ Cblock + UoneCube k R omega + UexpCube k R omega) →
-                let Gone : ℕ → Cutoff.CutoffSample d → ℝ := fun (k : ℕ) => blockGridSup d m k (UoneCube k);
-                let Gexp : ℕ → Cutoff.CutoffSample d → ℝ := fun (k : ℕ) => blockGridSup d m k (UexpCube k);
+                      |cutoffBBlockFamily M m scaling R omega| ≤ Cblock + UoneCube k R omega +
+                        UexpCube k R omega) →
+                let Gone : ℕ → Cutoff.CutoffSample d → ℝ := fun (k : ℕ) => blockGridSup d m k
+                  (UoneCube k);
+                let Gexp : ℕ → Cutoff.CutoffSample d → ℝ := fun (k : ℕ) => blockGridSup d m k
+                  (UexpCube k);
                 let a1 : ℕ → ℝ := fun (n : ℕ) =>
-                  gridBlockAmp d (1 : ℝ) (upperSaturatedPerCubeAmplitude Cblock (Disorder.cstar M) M.gamma n.pred) n.pred;
+                  gridBlockAmp d (1 : ℝ) (upperSaturatedPerCubeAmplitude Cblock (Disorder.cstar M)
+                    M.gamma n.pred) n.pred;
                 let aexp : ℕ → ℝ := fun (n : ℕ) =>
-                  gridBlockAmp d sigmaExp (Krare⁻¹ * (3 : ℝ) ^ (M.gamma * ((↑n.pred : ℝ) + (1 : ℝ))) * eps ^ (15 : ℕ))
+                  gridBlockAmp d sigmaExp (Krare⁻¹ * (3 : ℝ) ^ (M.gamma * ((↑n.pred : ℝ) + (1 :
+                    ℝ))) * eps ^ (15 : ℕ))
                     n.pred;
-                let VoneRaw : ℕ → Cutoff.CutoffSample d → ℝ := fun (n : ℕ) (omega : Cutoff.CutoffSample d) =>
+                let VoneRaw : ℕ → Cutoff.CutoffSample d → ℝ := fun (n : ℕ) (omega :
+                  Cutoff.CutoffSample d) =>
                   (a1 n)⁻¹ * Gone n.pred omega;
-                let VexpRaw : ℕ → Cutoff.CutoffSample d → ℝ := fun (n : ℕ) (omega : Cutoff.CutoffSample d) =>
+                let VexpRaw : ℕ → Cutoff.CutoffSample d → ℝ := fun (n : ℕ) (omega :
+                  Cutoff.CutoffSample d) =>
                   (aexp n)⁻¹ * Gexp n.pred omega;
                 (∀ (n : ℕ), (0 : ℝ) < a1 n) →
                   (∀ (n : ℕ), (0 : ℝ) < aexp n) →
                     ∀ (n : ℕ) (omega : Cutoff.CutoffSample d),
                       scaling *
-                          Book.Ch04.maxDescendantBMatrixNormCoeffFieldAtScale (originCube d m) (m - (↑n : ℤ))
+                          Book.Ch04.maxDescendantBMatrixNormCoeffFieldAtScale (originCube d m) (m
+                            - (↑n : ℤ))
                             (Cutoff.coefficientCutoff M.nu m omega) ≤
                         Cblock + a1 n * VoneRaw n omega + aexp n * VexpRaw n omega := by
-  intro d _ M m scaling Cblock _ _ _ hscaling _ _ hUoneCubeNonneg hUexpCubeNonneg hblock Gone Gexp a1 aexp VoneRaw VexpRaw ha1 haexp n omega
+  intro d _ M m scaling Cblock _ _ _ hscaling _ _ hUoneCubeNonneg hUexpCubeNonneg hblock Gone Gexp
+    a1 aexp VoneRaw VexpRaw ha1 haexp n omega
   have hgrid : scaling *
         Book.Ch04.maxDescendantBMatrixNormCoeffFieldAtScale
           (originCube d m) (m - (n : ℤ))
@@ -186,7 +197,8 @@ private theorem finiteSmallExponent_deterministicBudget :
           (4 : ℝ) * Cblock ≤ Bdet →
             let D : ℕ → ℝ := fun (_ : ℕ) => Cblock;
             (4 : ℝ) *
-                (∑' (n : ℕ), Book.Ch02.geometricWeight s (↑r : ℝ) n * D n ^ ((↑r : ℝ) / (2 : ℝ))) ^ ((2 : ℝ) / (↑r : ℝ)) ≤
+                (∑' (n : ℕ), Book.Ch02.geometricWeight s (↑r : ℝ) n * D n ^ ((↑r : ℝ) / (2 : ℝ)))
+                  ^ ((2 : ℝ) / (↑r : ℝ)) ≤
               Bdet := by
   intro r s Cblock _ hs hCblock hdetBudget D
   have hweights : (∑' n : ℕ, Book.Ch02.geometricWeight s (r : ℝ) n) = 1 :=

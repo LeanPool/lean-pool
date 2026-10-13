@@ -249,7 +249,6 @@ theorem sum_three_rpow_decay_le (M : ABKModel d) {n m : ℤ} (hnm : n ≤ m) :
     have hid2 : (1 : ℝ) + -((3 : ℝ) / 4) * (u : ℝ) = 1 - (3 : ℝ) / 4 * (u : ℝ) := by
       ring
     rw [hid, hid2]
-
     linarith only [hprod, hg0]
   refine (Finset.sum_le_sum hterm).trans ?_
   rw [← Finset.mul_sum]

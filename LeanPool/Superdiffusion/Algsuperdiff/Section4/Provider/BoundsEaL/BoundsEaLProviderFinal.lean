@@ -65,7 +65,8 @@ private theorem perCubeMoments_admissibleExponent :
     ∀ (d : ℕ) (Cd Cr1 A1 Cr2 A2 Cr3 A3 : ℝ) (M : ABKModel d) (s p : ℝ),
       p ∈
           Set.Icc ((2 : ℝ) * (↑d : ℝ) * s⁻¹)
-            ((max (max (max Cr1 Cr2) (max Cr3 (3 : ℝ))) (max (Cd * (A1 + A3)) (Cd * A2)))⁻¹ * M.gamma⁻¹ * s) →
+            ((max (max (max Cr1 Cr2) (max Cr3 (3 : ℝ))) (max (Cd * (A1 + A3)) (Cd * A2)))⁻¹ *
+              M.gamma⁻¹ * s) →
         (0 : ℝ) < M.gamma →
           (3 : ℝ) ≤ max (max (max Cr1 Cr2) (max Cr3 (3 : ℝ))) (max (Cd * (A1 + A3)) (Cd * A2)) →
             s ≤ (1 / 4 : ℝ) → (0 : ℝ) < s → (8 : ℝ) * (p / (2 : ℝ)) ≤ M.gamma⁻¹ := by
@@ -116,8 +117,10 @@ private theorem boundsEaLProviderFinal_comparisonBounds1 :
                                           ENNReal.ofReal
                                               (step3FirstTerm Cd M m R omega s
                                                 (lFreeGradSlot m (tailSeriesGauge m) R omega)) ^
-                                            q ∂(↑(Cutoff.cutoffSampleLaw M) : Measure (Cutoff.CutoffSample d)) ≤
-                                        ENNReal.ofReal (Cd * A1 * (q * (M.gamma * (s⁻¹ * s⁻¹)))) ^ q)
+                                            q ∂(↑(Cutoff.cutoffSampleLaw M) : Measure
+                                              (Cutoff.CutoffSample d)) ≤
+                                        ENNReal.ofReal (Cd * A1 * (q * (M.gamma * (s⁻¹ * s⁻¹)))) ^
+                                          q)
       (Cr2 A2 : ℝ) (_ : (0 : ℝ) < Cr2)
       (_ :
         ∀ (M : ABKModel d),
@@ -133,14 +136,17 @@ private theorem boundsEaLProviderFinal_comparisonBounds1 :
                             (8 : ℝ) * q ≤ M.gamma⁻¹ →
                               ∫⁻ (omega : Cutoff.CutoffSample d),
                                   ENNReal.ofReal
-                                      (step3SecondTerm Cd M m R omega (lFreeGradSlot m (tailSeriesGauge m) R omega)
+                                      (step3SecondTerm Cd M m R omega (lFreeGradSlot m
+                                        (tailSeriesGauge m) R omega)
                                         (lFreeValueSlot m (tailSeriesGauge m) R omega)) ^
-                                    q ∂(↑(Cutoff.cutoffSampleLaw M) : Measure (Cutoff.CutoffSample d)) ≤
+                                    q ∂(↑(Cutoff.cutoffSampleLaw M) : Measure (Cutoff.CutoffSample
+                                      d)) ≤
                                 ENNReal.ofReal
                                     (Cd * A2 *
                                       (q *
                                         ((M.gamma * ((↑m : ℝ) - (↑R.scale : ℝ)) + M.gamma) *
-                                          (3 : ℝ) ^ ((2 : ℝ) * (M.gamma * ((↑m : ℝ) - (↑R.scale : ℝ))))))) ^
+                                          (3 : ℝ) ^ ((2 : ℝ) * (M.gamma * ((↑m : ℝ) - (↑R.scale :
+                                            ℝ))))))) ^
                                   q)
       (Cr3 A3 : ℝ) (_ : (0 : ℝ) < Cr3)
       (_ :
@@ -157,22 +163,28 @@ private theorem boundsEaLProviderFinal_comparisonBounds1 :
                             (8 : ℝ) * q ≤ M.gamma⁻¹ →
                               ∫⁻ (omega : Cutoff.CutoffSample d),
                                   ENNReal.ofReal
-                                      (step3ThirdTerm Cd M m R omega (lFreeGradSlot m (tailSeriesGauge m) R omega)) ^
-                                    q ∂(↑(Cutoff.cutoffSampleLaw M) : Measure (Cutoff.CutoffSample d)) ≤
+                                      (step3ThirdTerm Cd M m R omega (lFreeGradSlot m
+                                        (tailSeriesGauge m) R omega)) ^
+                                    q ∂(↑(Cutoff.cutoffSampleLaw M) : Measure (Cutoff.CutoffSample
+                                      d)) ≤
                                 ENNReal.ofReal (Cd * A3 * (q * M.gamma)) ^ q)
       (M : ABKModel d) (_ : Disorder.cstar M = cstar)
-      (_ : M.gamma ≤ (max (max (max Cr1 Cr2) (max Cr3 (3 : ℝ))) (max (Cd * (A1 + A3)) (Cd * A2)))⁻¹ ^ (10 : ℕ)) (m n : ℤ)
+      (_ : M.gamma ≤ (max (max (max Cr1 Cr2) (max Cr3 (3 : ℝ))) (max (Cd * (A1 + A3)) (Cd *
+        A2)))⁻¹ ^ (10 : ℕ)) (m n : ℤ)
       (_ : n ≤ m) (s : ℝ)
       (_ :
         s ∈
-          Set.Icc (max (max (max Cr1 Cr2) (max Cr3 (3 : ℝ))) (max (Cd * (A1 + A3)) (Cd * A2)) ^ (2 : ℕ) * √M.gamma)
+          Set.Icc (max (max (max Cr1 Cr2) (max Cr3 (3 : ℝ))) (max (Cd * (A1 + A3)) (Cd * A2)) ^ (2
+            : ℕ) * √M.gamma)
             (1 / 4 : ℝ))
       (p : ℝ)
       (_ :
         p ∈
           Set.Icc ((2 : ℝ) * (↑d : ℝ) * s⁻¹)
-            ((max (max (max Cr1 Cr2) (max Cr3 (3 : ℝ))) (max (Cd * (A1 + A3)) (Cd * A2)))⁻¹ * M.gamma⁻¹ * s))
-      (l : ℕ) (R : TriadicCube d) (_ : R ∈ descendantsAtScale (originCube d m) (n - (↑l : ℤ))) (_ : (2 : ℕ) ≤ d),
+            ((max (max (max Cr1 Cr2) (max Cr3 (3 : ℝ))) (max (Cd * (A1 + A3)) (Cd * A2)))⁻¹ *
+              M.gamma⁻¹ * s))
+      (l : ℕ) (R : TriadicCube d) (_ : R ∈ descendantsAtScale (originCube d m) (n - (↑l : ℤ))) (_
+        : (2 : ℕ) ≤ d),
       (0 : ℝ) < M.gamma ∧
         M.gamma ≤ (1 / 8 : ℝ) ∧
           (0 : ℝ) < s ∧
@@ -182,28 +194,38 @@ private theorem boundsEaLProviderFinal_comparisonBounds1 :
                   (↑m : ℝ) - (↑R.scale : ℝ) = (↑m : ℝ) - (↑n : ℝ) + (↑l : ℝ) ∧
                     (0 : ℝ) ≤ (↑m : ℝ) - (↑R.scale : ℝ) ∧
                       ∫⁻ (omega : Cutoff.CutoffSample d),
-                            ENNReal.ofReal (step3FirstTerm Cd M m R omega s (lFreeGradSlot m (tailSeriesGauge m) R omega)) ^
-                              (p / (2 : ℝ)) ∂(↑(Cutoff.cutoffSampleLaw M) : Measure (Cutoff.CutoffSample d)) ≤
-                          ENNReal.ofReal (Cd * A1 * (p / (2 : ℝ) * (M.gamma * (s⁻¹ * s⁻¹)))) ^ (p / (2 : ℝ)) ∧
+                            ENNReal.ofReal (step3FirstTerm Cd M m R omega s (lFreeGradSlot m
+                              (tailSeriesGauge m) R omega)) ^
+                              (p / (2 : ℝ)) ∂(↑(Cutoff.cutoffSampleLaw M) : Measure
+                                (Cutoff.CutoffSample d)) ≤
+                          ENNReal.ofReal (Cd * A1 * (p / (2 : ℝ) * (M.gamma * (s⁻¹ * s⁻¹)))) ^ (p
+                            / (2 : ℝ)) ∧
                         ∫⁻ (omega : Cutoff.CutoffSample d),
                               ENNReal.ofReal
-                                  (step3SecondTerm Cd M m R omega (lFreeGradSlot m (tailSeriesGauge m) R omega)
+                                  (step3SecondTerm Cd M m R omega (lFreeGradSlot m
+                                    (tailSeriesGauge m) R omega)
                                     (lFreeValueSlot m (tailSeriesGauge m) R omega)) ^
-                                (p / (2 : ℝ)) ∂(↑(Cutoff.cutoffSampleLaw M) : Measure (Cutoff.CutoffSample d)) ≤
+                                (p / (2 : ℝ)) ∂(↑(Cutoff.cutoffSampleLaw M) : Measure
+                                  (Cutoff.CutoffSample d)) ≤
                             ENNReal.ofReal
                                 (Cd * A2 *
                                   (p / (2 : ℝ) *
                                     ((M.gamma * ((↑m : ℝ) - (↑R.scale : ℝ)) + M.gamma) *
-                                      (3 : ℝ) ^ ((2 : ℝ) * (M.gamma * ((↑m : ℝ) - (↑R.scale : ℝ))))))) ^
+                                      (3 : ℝ) ^ ((2 : ℝ) * (M.gamma * ((↑m : ℝ) - (↑R.scale :
+                                        ℝ))))))) ^
                               (p / (2 : ℝ)) ∧
                           ∫⁻ (omega : Cutoff.CutoffSample d),
                                 ENNReal.ofReal
-                                    (step3ThirdTerm Cd M m R omega (lFreeGradSlot m (tailSeriesGauge m) R omega)) ^
-                                  (p / (2 : ℝ)) ∂(↑(Cutoff.cutoffSampleLaw M) : Measure (Cutoff.CutoffSample d)) ≤
+                                    (step3ThirdTerm Cd M m R omega (lFreeGradSlot m
+                                      (tailSeriesGauge m) R omega)) ^
+                                  (p / (2 : ℝ)) ∂(↑(Cutoff.cutoffSampleLaw M) : Measure
+                                    (Cutoff.CutoffSample d)) ≤
                               ENNReal.ofReal (Cd * A3 * (p / (2 : ℝ) * M.gamma)) ^ (p / (2 : ℝ)) ∧
                             (0 : ℝ) ≤ Cd * A1 * (p / (2 : ℝ) * (M.gamma * (s⁻¹ * s⁻¹))) ∧
-                              (0 : ℝ) ≤ (3 : ℝ) ^ ((2 : ℝ) * (M.gamma * ((↑m : ℝ) - (↑R.scale : ℝ)))) := by
-  intro d _ _ Cd hCd Cr1 A1 hCr1 hA1 hfirst Cr2 A2 hCr2 hsecond Cr3 A3 hCr3 hthird M hcs hreg m n _ s hsmem p hpmem l R hR hd2
+                              (0 : ℝ) ≤ (3 : ℝ) ^ ((2 : ℝ) * (M.gamma * ((↑m : ℝ) - (↑R.scale :
+                                ℝ)))) := by
+  intro d _ _ Cd hCd Cr1 A1 hCr1 hA1 hfirst Cr2 A2 hCr2 hsecond Cr3 A3 hCr3 hthird M hcs hreg m n
+    _ s hsmem p hpmem l R hR hd2
   have hgam0 : (0 : ℝ) < M.gamma := M.shellPrefix.gamma_pos
   have h3le : (3 : ℝ) ≤ max (max (max Cr1 Cr2) (max Cr3 3))
       (max (Cd * (A1 + A3)) (Cd * A2)) :=

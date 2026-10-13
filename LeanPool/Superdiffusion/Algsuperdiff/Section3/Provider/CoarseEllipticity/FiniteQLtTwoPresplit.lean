@@ -216,7 +216,8 @@ private theorem weightedProfileRoot_le_twoTerms :
       {V : ℕ → Cutoff.CutoffSample d → ℝ} {a : ℕ → ℝ},
       let w : ℕ → ℝ := fun (n : ℕ) => Book.Ch02.geometricWeight s (↑r : ℝ) n;
       let D : ℕ → ℝ := finiteQGeometricProfile Cprof M.gamma;
-      let R : ℕ → Cutoff.CutoffSample d → ℝ := fun (n : ℕ) (omega : Cutoff.CutoffSample d) => a n * V n omega;
+      let R : ℕ → Cutoff.CutoffSample d → ℝ := fun (n : ℕ) (omega : Cutoff.CutoffSample d) => a n
+        * V n omega;
       (1 : ℝ) ≤ (↑r : ℝ) →
         (↑r : ℝ) ≤ (2 : ℝ) →
           (0 : ℝ) ≤ (2 : ℝ) / (↑r : ℝ) →
@@ -225,13 +226,17 @@ private theorem weightedProfileRoot_le_twoTerms :
                 (∀ (n : ℕ) (omega : Cutoff.CutoffSample d), (0 : ℝ) ≤ R n omega) →
                   ∀ (omega : Cutoff.CutoffSample d),
                     ∑' (n : ℕ), w n * (D n + R n omega) ^ ((↑r : ℝ) / (2 : ℝ)) ≤
-                        ∑' (n : ℕ), w n * D n ^ ((↑r : ℝ) / (2 : ℝ)) + ∑' (n : ℕ), w n * R n omega ^ ((↑r : ℝ) / (2 : ℝ)) →
+                        ∑' (n : ℕ), w n * D n ^ ((↑r : ℝ) / (2 : ℝ)) + ∑' (n : ℕ), w n * R n omega
+                          ^ ((↑r : ℝ) / (2 : ℝ)) →
                       (0 : ℝ) ≤ ∑' (n : ℕ), w n * D n ^ ((↑r : ℝ) / (2 : ℝ)) →
                         (0 : ℝ) ≤ ∑' (n : ℕ), w n * R n omega ^ ((↑r : ℝ) / (2 : ℝ)) →
-                          (∑' (n : ℕ), w n * (D n + R n omega) ^ ((↑r : ℝ) / (2 : ℝ))) ^ ((2 : ℝ) / (↑r : ℝ)) ≤
+                          (∑' (n : ℕ), w n * (D n + R n omega) ^ ((↑r : ℝ) / (2 : ℝ))) ^ ((2 : ℝ)
+                            / (↑r : ℝ)) ≤
                             (2 : ℝ) *
-                              ((∑' (n : ℕ), w n * D n ^ ((↑r : ℝ) / (2 : ℝ))) ^ ((2 : ℝ) / (↑r : ℝ)) +
-                                (∑' (n : ℕ), w n * R n omega ^ ((↑r : ℝ) / (2 : ℝ))) ^ ((2 : ℝ) / (↑r : ℝ))) := by
+                              ((∑' (n : ℕ), w n * D n ^ ((↑r : ℝ) / (2 : ℝ))) ^ ((2 : ℝ) / (↑r :
+                                ℝ)) +
+                                (∑' (n : ℕ), w n * R n omega ^ ((↑r : ℝ) / (2 : ℝ))) ^ ((2 : ℝ) /
+                                  (↑r : ℝ))) := by
   intro _ _ r _ _ _ _ w D R hr1 hr2 hroot0 hw hD hR omega hpresplit hDsum0 hRsum0
   calc
     (∑' n : ℕ, w n * (D n + R n omega) ^ ((r : ℝ) / 2)) ^
@@ -254,7 +259,8 @@ private theorem summable_weighted_sublinearPower :
       {V : ℕ → Cutoff.CutoffSample d → ℝ} {a : ℕ → ℝ},
       (∀ (n : ℕ) (omega : Cutoff.CutoffSample d), (0 : ℝ) ≤ V n omega) →
         (∀ (n : ℕ), (0 : ℝ) < a n) →
-          (Summable fun (n : ℕ) => Book.Ch02.geometricWeight s (↑r : ℝ) n * a n ^ ((↑r : ℝ) / (2 : ℝ))) →
+          (Summable fun (n : ℕ) => Book.Ch02.geometricWeight s (↑r : ℝ) n * a n ^ ((↑r : ℝ) / (2 :
+            ℝ))) →
             let w : ℕ → ℝ := fun (n : ℕ) => Book.Ch02.geometricWeight s (↑r : ℝ) n;
             (0 : ℝ) ≤ (↑r : ℝ) / (2 : ℝ) →
               (↑r : ℝ) / (2 : ℝ) ≤ (1 : ℝ) →
@@ -262,7 +268,8 @@ private theorem summable_weighted_sublinearPower :
                   (∀ (omega : Cutoff.CutoffSample d),
                       Summable fun (n : ℕ) => w n * a n ^ ((↑r : ℝ) / (2 : ℝ)) * V n omega) →
                     ∀ (omega : Cutoff.CutoffSample d),
-                      Summable fun (n : ℕ) => w n * a n ^ ((↑r : ℝ) / (2 : ℝ)) * V n omega ^ ((↑r : ℝ) / (2 : ℝ)) := by
+                      Summable fun (n : ℕ) => w n * a n ^ ((↑r : ℝ) / (2 : ℝ)) * V n omega ^ ((↑r
+                        : ℝ) / (2 : ℝ)) := by
   intro _ r _ V a hVnonneg ha hasum w ht0 ht1 hw hVlinsum' omega
   refine Summable.of_nonneg_of_le
     (fun n => mul_nonneg
@@ -293,12 +300,14 @@ private theorem normalized_weightedPowerSeries_eq :
       (∀ (n : ℕ) (omega : Cutoff.CutoffSample d), (0 : ℝ) ≤ V n omega) →
         (∀ (n : ℕ), (0 : ℝ) < a n) →
           let w : ℕ → ℝ := fun (n : ℕ) => Book.Ch02.geometricWeight s (↑r : ℝ) n;
-          let R : ℕ → Cutoff.CutoffSample d → ℝ := fun (n : ℕ) (omega : Cutoff.CutoffSample d) => a n * V n omega;
+          let R : ℕ → Cutoff.CutoffSample d → ℝ := fun (n : ℕ) (omega : Cutoff.CutoffSample d) =>
+            a n * V n omega;
           let S : ℝ := ∑' (n : ℕ), w n * a n ^ ((↑r : ℝ) / (2 : ℝ));
           let c : ℕ → ℝ := fun (n : ℕ) => S⁻¹ * (w n * a n ^ ((↑r : ℝ) / (2 : ℝ)));
           (0 : ℝ) < S →
             ∀ (omega : Cutoff.CutoffSample d),
-              ∑' (n : ℕ), w n * R n omega ^ ((↑r : ℝ) / (2 : ℝ)) = S * ∑' (n : ℕ), c n * V n omega ^ ((↑r : ℝ) / (2 : ℝ)) := by
+              ∑' (n : ℕ), w n * R n omega ^ ((↑r : ℝ) / (2 : ℝ)) = S * ∑' (n : ℕ), c n * V n omega
+                ^ ((↑r : ℝ) / (2 : ℝ)) := by
   intro _ r _ V a hVnonneg ha w R S c hSpos omega
   calc
     (∑' n : ℕ, w n * R n omega ^ ((r : ℝ) / 2)) =

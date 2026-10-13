@@ -489,30 +489,38 @@ private theorem collarAfterBand_coordinateTermBound :
                   let rho : ℝ := (3 : ℝ) ^ (-(1 / 40 : ℝ));
                   let F : ℝ :=
                     probeMeanGoodWaveConst M * ((5 : ℝ) * (↑d : ℝ) ^ (2 : ℕ)) *
-                      ((4 : ℝ) * superposedGradConst d ^ (2 : ℕ) * probeSharpCollarBandMeanCapQuarter M (↑E : ℝ) k₀ *
+                      ((4 : ℝ) * superposedGradConst d ^ (2 : ℕ) *
+                        probeSharpCollarBandMeanCapQuarter M (↑E : ℝ) k₀ *
                             probeSharpCollarBandMeanMassQuarterConst d *
                           (3 : ℝ) ^ ((2 : ℝ) * bfaProfileB * (↑k₀ : ℝ)) *
                         (3 : ℝ) ^ (1 / 16 : ℝ));
                   let A₀ : ℝ :=
-                    F * ((64 : ℝ) * superposedFluxHsepConst ^ (3 : ℝ) * ((54 : ℝ) * waveSharpUpperConst d ^ (2 : ℕ)));
+                    F * ((64 : ℝ) * superposedFluxHsepConst ^ (3 : ℝ) * ((54 : ℝ) *
+                      waveSharpUpperConst d ^ (2 : ℕ)));
                   let target : ℝ :=
-                    min (1 : ℝ) (M.gamma * (↑(k + (1 : ℕ)) : ℝ)) * (3 : ℝ) ^ (M.gamma * (↑(k + (1 : ℕ)) : ℝ));
+                    min (1 : ℝ) (M.gamma * (↑(k + (1 : ℕ)) : ℝ)) * (3 : ℝ) ^ (M.gamma * (↑(k + (1
+                      : ℕ)) : ℝ));
                   let ell : ℕ → ℤ := fun (n : ℕ) => probeSharpLayerAnchor R.scale bfaProfileB k₀ n;
                   let P : CutoffSample d → ℝ := fun (omega : CutoffSample d) =>
                     slstarPowerTerm M R.scale (↑E : ℝ) bfaProfileB M.gamma
                       (translateCutoffSample (triadicCubeShift R) omega);
-                  let T : ℕ → CutoffSample d → ℝ := fun (n : ℕ) (omega : CutoffSample d) =>
-                    probeSharpAfterBandTerm M R.scale (ell n) k₀ m (translateCutoffSample (triadicCubeShift R) omega) ^
+                  let _ : ℕ → CutoffSample d → ℝ := fun (n : ℕ) (omega : CutoffSample d) =>
+                    probeSharpAfterBandTerm M R.scale (ell n) k₀ m (translateCutoffSample
+                      (triadicCubeShift R) omega) ^
                       (2 : ℕ);
-                  let AT : ℕ → ℝ := fun (n : ℕ) => probeSharpAfterBandExactScale M (ell n) k₀ m ^ (2 : ℕ);
-                  let D : ℕ → ℝ := fun (n : ℕ) =>
+                  let _ : ℕ → ℝ := fun (n : ℕ) => probeSharpAfterBandExactScale M (ell n) k₀ m ^
+                    (2 : ℕ);
+                  let _ : ℕ → ℝ := fun (n : ℕ) =>
                     F * whitneyDecayRatio ^ n *
-                      (3 : ℝ) ^ (M.gamma * -((↑k : ℝ) + (↑n : ℝ) + (↑(bfaAfterBandLayerCeil n) : ℝ) + (↑k₀ : ℝ)));
+                      (3 : ℝ) ^ (M.gamma * -((↑k : ℝ) + (↑n : ℝ) + (↑(bfaAfterBandLayerCeil n) :
+                        ℝ) + (↑k₀ : ℝ)));
                   let B : ℕ → ℝ := fun (n : ℕ) => A₀ * ((↑(n + (1 : ℕ)) : ℝ) * rho ^ n) * target;
                   let X : ℕ → CutoffSample d → ℝ := fun (n : ℕ) (omega : CutoffSample d) =>
-                    probeSharpFramedCollarWavePart M R.scale (↑E : ℝ) bfaProfileB k₀ n (m - (1 : ℤ)) (basisVec j₀)
+                    probeSharpFramedCollarWavePart M R.scale (↑E : ℝ) bfaProfileB k₀ n (m - (1 :
+                      ℤ)) (basisVec j₀)
                       (superposedGradConst d)
-                      (fun (eta : CutoffSample d) => probeSharpAfterBandTerm M R.scale (ell n) k₀ m eta ^ (2 : ℕ))
+                      (fun (eta : CutoffSample d) => probeSharpAfterBandTerm M R.scale (ell n) k₀
+                        m eta ^ (2 : ℕ))
                       (translateCutoffSample (triadicCubeShift R) omega);
                   R.scale = m - (1 : ℤ) - (↑k : ℤ) →
                     M.gamma ≤ (1 / 20 : ℝ) →
@@ -520,9 +528,11 @@ private theorem collarAfterBand_coordinateTermBound :
                         let alpha : ℝ :=
                           upperProfileBaseSigma sigma /
                             (((2 : ℝ) * (M.gamma / (2 : ℝ)) + (2 : ℝ) * bfaProfileB) / bfaProfileB);
-                        let AP : ℝ := hsepAmplitude (upperProfileSigma sigma) bfaProfileB ^ bfaPower M.gamma bfaProfileB;
+                        let AP : ℝ := hsepAmplitude (upperProfileSigma sigma) bfaProfileB ^
+                          bfaPower M.gamma bfaProfileB;
                         let G : ℝ := Ch04.gammaProductConst alpha (1 : ℝ);
-                        IsBigOWith (↑(cutoffSampleLaw M) : Measure (CutoffSample d)) (gammaSigma alpha)
+                        IsBigOWith (↑(cutoffSampleLaw M) : Measure (CutoffSample d)) (gammaSigma
+                          alpha)
                             (fun (omega : CutoffSample d) =>
                               slstarPowerTerm M R.scale (↑E : ℝ) bfaProfileB M.gamma
                                 (translateCutoffSample (triadicCubeShift R) omega))
@@ -534,8 +544,10 @@ private theorem collarAfterBand_coordinateTermBound :
                                   (0 : ℝ) < F →
                                     ∀ (n : ℕ),
                                       IsBigOWith (↑(cutoffSampleLaw M) : Measure (CutoffSample d))
-                                        (gammaSigma (upperProfileTargetSigma sigma)) (X n) (B n) := by
-  intro d M m k R hR E sigma hsigma0 hsigma _ j₀ k₀ rho F A₀ target ell P T AT D B X hscale hgamma20 hgammaHalf alpha AP G hP hP0 hAP0 hGAP hmean hF n
+                                        (gammaSigma (upperProfileTargetSigma sigma)) (X n) (B
+                                          n) := by
+  intro d M m k R hR E sigma hsigma0 hsigma _ j₀ k₀ rho F A₀ target ell P T AT D B X hscale
+    hgamma20 hgammaHalf alpha AP G hP hP0 hAP0 hGAP hmean hF n
   have hL : ell n + (k₀ : ℤ) < m := by
     dsimp only [ell]
     rw [probeSharpLayerAnchor, hscale]
@@ -653,16 +665,20 @@ private theorem upperAfterBandConsumption_momentBounds1 :
     probeSharpCollarBandMeanMassQuarterConst d *
     (3 : ℝ) ^ ((2 : ℝ) * bfaProfileB * (↑k₀ : ℝ)) *
     (3 : ℝ) ^ (1 / 16 : ℝ));
-    let A₀ : ℝ := F * ((64 : ℝ) * superposedFluxHsepConst ^ (3 : ℝ) * ((54 : ℝ) * waveSharpUpperConst d ^ (2 : ℕ)));
+    let A₀ : ℝ := F * ((64 : ℝ) * superposedFluxHsepConst ^ (3 : ℝ) * ((54 : ℝ) *
+      waveSharpUpperConst d ^ (2 : ℕ)));
     let P : CutoffSample d → ℝ := fun (omega : CutoffSample d) =>
-    slstarPowerTerm M R.scale (↑E : ℝ) bfaProfileB M.gamma (translateCutoffSample (triadicCubeShift R) omega);
+    slstarPowerTerm M R.scale (↑E : ℝ) bfaProfileB M.gamma (translateCutoffSample
+      (triadicCubeShift R) omega);
     (0 : ℝ) < upperProfileSigma sigma →
     upperProfileSigma sigma ≤ (1 / 8 : ℝ) →
     M.gamma / (2 : ℝ) ≤ bfaProfileB * sigma →
     M.gamma ≤ bfaProfileB →
     let alpha : ℝ :=
-    upperProfileBaseSigma sigma / (((2 : ℝ) * (M.gamma / (2 : ℝ)) + (2 : ℝ) * bfaProfileB) / bfaProfileB);
-    let AP : ℝ := hsepAmplitude (upperProfileSigma sigma) bfaProfileB ^ bfaPower M.gamma bfaProfileB;
+    upperProfileBaseSigma sigma / (((2 : ℝ) * (M.gamma / (2 : ℝ)) + (2 : ℝ) * bfaProfileB) /
+      bfaProfileB);
+    let AP : ℝ := hsepAmplitude (upperProfileSigma sigma) bfaProfileB ^ bfaPower M.gamma
+      bfaProfileB;
     let G : ℝ := Ch04.gammaProductConst alpha (1 : ℝ);
     IsBigOWith (↑(cutoffSampleLaw M) : Measure (CutoffSample d))
     (gammaSigma (bfaTau (upperProfileSigma sigma) M.gamma bfaProfileB))
@@ -678,7 +694,8 @@ private theorem upperAfterBandConsumption_momentBounds1 :
     (0 : ℝ) ≤ AP ∧
     G * AP ≤ (64 : ℝ) * superposedFluxHsepConst ^ (3 : ℝ) ∧
     (0 : ℝ) < probeMeanGoodWaveConst M ∧ (0 : ℝ) < F ∧ (0 : ℝ) < A₀ := by
-  intro d M R E _ hsigma0 hsigma hd k₀ F A₀ P hsigmaProfile0 hsigmaProfileEighth hgammaHalf hgammaB alpha AP G hrawP halpha
+  intro d M R E _ hsigma0 hsigma hd k₀ F A₀ P hsigmaProfile0 hsigmaProfileEighth hgammaHalf
+    hgammaB alpha AP G hrawP halpha
   have hrawP' : IsBigOWith (cutoffSampleLaw M).toMeasure
       (gammaSigma alpha)
       (slstarPowerTerm M R.scale (E : ℝ) bfaProfileB M.gamma) AP := by
@@ -778,45 +795,56 @@ private theorem upperAfterBandConsumption_momentBounds1 :
 
 private theorem upperAfterBandConsumption_momentBounds2 :
     ∀ {d : ℕ} (M : ABKModel d) {m : ℤ} {k : ℕ} {R : TriadicCube d}
-      (_ : R ∈ descendantsAtScale (originCube d m) (m - (1 : ℤ) - (↑k : ℤ))) {E : { E : ℝ // (1 : ℝ) ≤ E }} {sigma : ℝ}
+      (_ : R ∈ descendantsAtScale (originCube d m) (m - (1 : ℤ) - (↑k : ℤ))) {E : { E : ℝ // (1 :
+        ℝ) ≤ E }} {sigma : ℝ}
       (_ : (0 : ℝ) < sigma) (_ : sigma ≤ (1 / 2 : ℝ)) (_ : (2 : ℕ) ≤ d),
-      let j₀ : Fin d := ⟨(0 : ℕ), (by first | assumption | infer_instance | positivity | norm_num)⟩;
+      let j₀ : Fin d := ⟨(0 : ℕ), (by first | assumption | infer_instance | positivity)⟩;
       let k₀ : ℕ := collarBandMeanDepth M (↑E : ℝ);
       let rho : ℝ := (3 : ℝ) ^ (-(1 / 40 : ℝ));
       let F : ℝ :=
         probeMeanGoodWaveConst M * ((5 : ℝ) * (↑d : ℝ) ^ (2 : ℕ)) *
-          ((4 : ℝ) * superposedGradConst d ^ (2 : ℕ) * probeSharpCollarBandMeanCapQuarter M (↑E : ℝ) k₀ *
+          ((4 : ℝ) * superposedGradConst d ^ (2 : ℕ) * probeSharpCollarBandMeanCapQuarter M (↑E :
+            ℝ) k₀ *
                 probeSharpCollarBandMeanMassQuarterConst d *
               (3 : ℝ) ^ ((2 : ℝ) * bfaProfileB * (↑k₀ : ℝ)) *
             (3 : ℝ) ^ (1 / 16 : ℝ));
-      let A₀ : ℝ := F * ((64 : ℝ) * superposedFluxHsepConst ^ (3 : ℝ) * ((54 : ℝ) * waveSharpUpperConst d ^ (2 : ℕ)));
-      let target : ℝ := min (1 : ℝ) (M.gamma * (↑(k + (1 : ℕ)) : ℝ)) * (3 : ℝ) ^ (M.gamma * (↑(k + (1 : ℕ)) : ℝ));
+      let A₀ : ℝ := F * ((64 : ℝ) * superposedFluxHsepConst ^ (3 : ℝ) * ((54 : ℝ) *
+        waveSharpUpperConst d ^ (2 : ℕ)));
+      let target : ℝ := min (1 : ℝ) (M.gamma * (↑(k + (1 : ℕ)) : ℝ)) * (3 : ℝ) ^ (M.gamma * (↑(k +
+        (1 : ℕ)) : ℝ));
       let ell : ℕ → ℤ := fun (n : ℕ) => probeSharpLayerAnchor R.scale bfaProfileB k₀ n;
-      let B : ℕ → ℝ := fun (n : ℕ) => A₀ * ((↑(n + (1 : ℕ)) : ℝ) * rho ^ n) * target;
-      let X : ℕ → CutoffSample d → ℝ := fun (n : ℕ) (omega : CutoffSample d) =>
-        probeSharpFramedCollarWavePart M R.scale (↑E : ℝ) bfaProfileB k₀ n (m - (1 : ℤ)) (basisVec j₀)
+      let _ : ℕ → ℝ := fun (n : ℕ) => A₀ * ((↑(n + (1 : ℕ)) : ℝ) * rho ^ n) * target;
+      let _ : ℕ → CutoffSample d → ℝ := fun (n : ℕ) (omega : CutoffSample d) =>
+        probeSharpFramedCollarWavePart M R.scale (↑E : ℝ) bfaProfileB k₀ n (m - (1 : ℤ)) (basisVec
+          j₀)
           (superposedGradConst d)
-          (fun (eta : CutoffSample d) => probeSharpAfterBandTerm M R.scale (ell n) k₀ m eta ^ (2 : ℕ))
+          (fun (eta : CutoffSample d) => probeSharpAfterBandTerm M R.scale (ell n) k₀ m eta ^ (2 :
+            ℕ))
           (translateCutoffSample (triadicCubeShift R) omega);
       ∀ (_ : R.scale = m - (1 : ℤ) - (↑k : ℤ)) (_ : M.gamma ≤ (1 / 20 : ℝ))
         (_ : M.gamma / (2 : ℝ) ≤ bfaProfileB * sigma)
         (_ :
           IsBigOWith (↑(cutoffSampleLaw M) : Measure (CutoffSample d))
             (gammaSigma
-              (upperProfileBaseSigma sigma / (((2 : ℝ) * (M.gamma / (2 : ℝ)) + (2 : ℝ) * bfaProfileB) / bfaProfileB)))
+              (upperProfileBaseSigma sigma / (((2 : ℝ) * (M.gamma / (2 : ℝ)) + (2 : ℝ) *
+                bfaProfileB) / bfaProfileB)))
             (fun (omega : CutoffSample d) =>
-              slstarPowerTerm M R.scale (↑E : ℝ) bfaProfileB M.gamma (translateCutoffSample (triadicCubeShift R) omega))
+              slstarPowerTerm M R.scale (↑E : ℝ) bfaProfileB M.gamma (translateCutoffSample
+                (triadicCubeShift R) omega))
             (hsepAmplitude (upperProfileSigma sigma) bfaProfileB ^ bfaPower M.gamma bfaProfileB))
         (_ :
           ∀ (omega : CutoffSample d),
             (0 : ℝ) ≤
               (fun (omega : CutoffSample d) =>
-                  slstarPowerTerm M R.scale (↑E : ℝ) bfaProfileB M.gamma (translateCutoffSample (triadicCubeShift R) omega))
+                  slstarPowerTerm M R.scale (↑E : ℝ) bfaProfileB M.gamma (translateCutoffSample
+                    (triadicCubeShift R) omega))
                 omega)
-        (_ : (0 : ℝ) ≤ hsepAmplitude (upperProfileSigma sigma) bfaProfileB ^ bfaPower M.gamma bfaProfileB)
+        (_ : (0 : ℝ) ≤ hsepAmplitude (upperProfileSigma sigma) bfaProfileB ^ bfaPower M.gamma
+          bfaProfileB)
         (_ :
           Ch04.gammaProductConst
-                (upperProfileBaseSigma sigma / (((2 : ℝ) * (M.gamma / (2 : ℝ)) + (2 : ℝ) * bfaProfileB) / bfaProfileB))
+                (upperProfileBaseSigma sigma / (((2 : ℝ) * (M.gamma / (2 : ℝ)) + (2 : ℝ) *
+                  bfaProfileB) / bfaProfileB))
                 (1 : ℝ) *
               hsepAmplitude (upperProfileSigma sigma) bfaProfileB ^ bfaPower M.gamma bfaProfileB ≤
             (64 : ℝ) * superposedFluxHsepConst ^ (3 : ℝ))
@@ -825,7 +853,8 @@ private theorem upperAfterBandConsumption_momentBounds2 :
           (0 : ℝ) <
             probeMeanGoodWaveConst M * ((5 : ℝ) * (↑d : ℝ) ^ (2 : ℕ)) *
               ((4 : ℝ) * superposedGradConst d ^ (2 : ℕ) *
-                      probeSharpCollarBandMeanCapQuarter M (↑E : ℝ) (collarBandMeanDepth M (↑E : ℝ)) *
+                      probeSharpCollarBandMeanCapQuarter M (↑E : ℝ) (collarBandMeanDepth M (↑E :
+                        ℝ)) *
                     probeSharpCollarBandMeanMassQuarterConst d *
                   (3 : ℝ) ^ ((2 : ℝ) * bfaProfileB * (↑(collarBandMeanDepth M (↑E : ℝ)) : ℝ)) *
                 (3 : ℝ) ^ (1 / 16 : ℝ)))
@@ -833,26 +862,33 @@ private theorem upperAfterBandConsumption_momentBounds2 :
           (0 : ℝ) <
             probeMeanGoodWaveConst M * ((5 : ℝ) * (↑d : ℝ) ^ (2 : ℕ)) *
                 ((4 : ℝ) * superposedGradConst d ^ (2 : ℕ) *
-                        probeSharpCollarBandMeanCapQuarter M (↑E : ℝ) (collarBandMeanDepth M (↑E : ℝ)) *
+                        probeSharpCollarBandMeanCapQuarter M (↑E : ℝ) (collarBandMeanDepth M (↑E :
+                          ℝ)) *
                       probeSharpCollarBandMeanMassQuarterConst d *
                     (3 : ℝ) ^ ((2 : ℝ) * bfaProfileB * (↑(collarBandMeanDepth M (↑E : ℝ)) : ℝ)) *
                   (3 : ℝ) ^ (1 / 16 : ℝ)) *
-              ((64 : ℝ) * superposedFluxHsepConst ^ (3 : ℝ) * ((54 : ℝ) * waveSharpUpperConst d ^ (2 : ℕ)))),
+              ((64 : ℝ) * superposedFluxHsepConst ^ (3 : ℝ) * ((54 : ℝ) * waveSharpUpperConst d ^
+                (2 : ℕ)))),
         (∀ᵐ (omega : CutoffSample d) ∂(↑(cutoffSampleLaw M) : Measure (CutoffSample d)),
             ENNReal.ofReal (probeSharpFramedCollarAfterBandTraceLane M m R (↑E : ℝ) omega) =
               ∑ j : Fin d,
                 ∑' (n : ℕ),
                   ENNReal.ofReal
-                    (probeSharpFramedCollarWavePart M R.scale (↑E : ℝ) bfaProfileB k₀ n (m - (1 : ℤ)) (basisVec j)
+                    (probeSharpFramedCollarWavePart M R.scale (↑E : ℝ) bfaProfileB k₀ n (m - (1 :
+                      ℤ)) (basisVec j)
                       (superposedGradConst d)
-                      (fun (eta : CutoffSample d) => probeSharpAfterBandTerm M R.scale (ell n) k₀ m eta ^ (2 : ℕ))
+                      (fun (eta : CutoffSample d) => probeSharpAfterBandTerm M R.scale (ell n) k₀
+                        m eta ^ (2 : ℕ))
                       (translateCutoffSample (triadicCubeShift R) omega))) ∧
-          IsBigOWith (↑(cutoffSampleLaw M) : Measure (CutoffSample d)) (gammaSigma (upperProfileTargetSigma sigma))
-            (fun (ω : CutoffSample d) => (↑d : ℝ) * probeSharpFramedCollarAfterBandCoordinateLane M m R (↑E : ℝ) j₀ ω)
+          IsBigOWith (↑(cutoffSampleLaw M) : Measure (CutoffSample d)) (gammaSigma
+            (upperProfileTargetSigma sigma))
+            (fun (ω : CutoffSample d) => (↑d : ℝ) * probeSharpFramedCollarAfterBandCoordinateLane
+              M m R (↑E : ℝ) j₀ ω)
             ((↑d : ℝ) *
               (gammaTriangleConst (upperProfileTargetSigma sigma) *
                 ((A₀ * ∑' (n : ℕ), (↑(n + (1 : ℕ)) : ℝ) * rho ^ n) * target))) := by
-  intro d M m k R hR E sigma hsigma0 hsigma hd j₀ k₀ rho _ A₀ target ell B X hscale hgamma20 hgammaHalf hP hP0 hAP0 hGAP hmean hF hA₀
+  intro d M m k R hR E sigma hsigma0 hsigma hd j₀ k₀ rho _ A₀ target ell B X hscale hgamma20
+    hgammaHalf hP hP0 hAP0 hGAP hmean hF hA₀
   have htarget : 0 < target := by
     dsimp only [target]
     have hgap0 : 0 < M.gamma * ((k + 1 : ℕ) : ℝ) :=
@@ -1144,25 +1180,32 @@ private theorem afterBandDepth_baseScale_le_reserve :
         (↑d : ℝ) * gammaTriangleConst (upperProfileTargetSigma sigma) *
           (probeMeanGoodWaveConst M * ((5 : ℝ) * (↑d : ℝ) ^ (2 : ℕ)) *
                 ((4 : ℝ) * superposedGradConst d ^ (2 : ℕ) *
-                        probeSharpCollarBandMeanCapQuarter M (↑E : ℝ) (collarBandMeanDepth M (↑E : ℝ)) *
+                        probeSharpCollarBandMeanCapQuarter M (↑E : ℝ) (collarBandMeanDepth M (↑E :
+                          ℝ)) *
                       probeSharpCollarBandMeanMassQuarterConst d *
                     (3 : ℝ) ^ ((2 : ℝ) * bfaProfileB * (↑(collarBandMeanDepth M (↑E : ℝ)) : ℝ)) *
                   (3 : ℝ) ^ (1 / 16 : ℝ)) *
-              ((64 : ℝ) * superposedFluxHsepConst ^ (3 : ℝ) * ((54 : ℝ) * waveSharpUpperConst d ^ (2 : ℕ))) *
+              ((64 : ℝ) * superposedFluxHsepConst ^ (3 : ℝ) * ((54 : ℝ) * waveSharpUpperConst d ^
+                (2 : ℕ))) *
             ∑' (n : ℕ), (↑(n + (1 : ℕ)) : ℝ) * ((3 : ℝ) ^ (-(1 / 40 : ℝ))) ^ n);
       (0 : ℝ) ≤ upperAfterBandRareTriangleConst →
         (0 : ℝ) ≤ probeMeanGoodWaveDimensionConst d →
           (0 : ℝ) ≤ (5 : ℝ) * (↑d : ℝ) ^ (2 : ℕ) →
             (0 : ℝ) ≤
-                (4 : ℝ) * superposedGradConst d ^ (2 : ℕ) * probeSharpCollarBandMeanMassQuarterConst d *
+                (4 : ℝ) * superposedGradConst d ^ (2 : ℕ) *
+                  probeSharpCollarBandMeanMassQuarterConst d *
                   (3 : ℝ) ^ (1 / 16 : ℝ) →
-              (0 : ℝ) ≤ (64 : ℝ) * superposedFluxHsepConst ^ (3 : ℝ) * ((54 : ℝ) * waveSharpUpperConst d ^ (2 : ℕ)) →
+              (0 : ℝ) ≤ (64 : ℝ) * superposedFluxHsepConst ^ (3 : ℝ) * ((54 : ℝ) *
+                waveSharpUpperConst d ^ (2 : ℕ)) →
                 (0 : ℝ) ≤ ∑' (n : ℕ), (↑(n + (1 : ℕ)) : ℝ) * ((3 : ℝ) ^ (-(1 / 40 : ℝ))) ^ n →
                   probeSharpCollarBandMeanCapQuarter M (↑E : ℝ) (collarBandMeanDepth M (↑E : ℝ)) *
-                        (3 : ℝ) ^ ((2 : ℝ) * bfaProfileB * (↑(collarBandMeanDepth M (↑E : ℝ)) : ℝ)) ≤
+                        (3 : ℝ) ^ ((2 : ℝ) * bfaProfileB * (↑(collarBandMeanDepth M (↑E : ℝ)) :
+                          ℝ)) ≤
                       collarBandMeanTunedCapPrefactor d *
-                        Real.exp (-(collarBandMeanTunedDecayRate d * ((↑E : ℝ)⁻¹ ^ (2 : ℕ) * M.gamma⁻¹))) →
-                    gammaTriangleConst (upperProfileTargetSigma sigma) ≤ upperAfterBandRareTriangleConst →
+                        Real.exp (-(collarBandMeanTunedDecayRate d * ((↑E : ℝ)⁻¹ ^ (2 : ℕ) *
+                          M.gamma⁻¹))) →
+                    gammaTriangleConst (upperProfileTargetSigma sigma) ≤
+                      upperAfterBandRareTriangleConst →
                       B ≤ K * (Disorder.cstar M)⁻¹ * Real.exp (-(rate * X)) := by
   intro d M E sigma X rate K B hTbar0 hmeanD0 hfive0 hfixed0 hrest0 hsum0 hcap hT
   dsimp only [B]

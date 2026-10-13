@@ -161,23 +161,28 @@ private theorem collarHead_layer_pointwiseBound :
             probeMeanGoodWaveConst M * vecNormSq (basisVec j) *
                 ((5 : ℝ) * (↑d : ℝ) ^ (2 : ℕ) * waveL4HeadConst d ^ (2 : ℕ)) *
               ((4 : ℝ) * superposedGradConst d ^ (2 : ℕ) *
-                      probeSharpCollarBandMeanCapQuarter M (↑E : ℝ) (collarBandMeanDepth M (↑E : ℝ)) *
+                      probeSharpCollarBandMeanCapQuarter M (↑E : ℝ) (collarBandMeanDepth M (↑E :
+                        ℝ)) *
                     probeSharpCollarBandMeanMassQuarterConst d *
                   (3 : ℝ) ^ ((2 : ℝ) * bfaProfileB * (↑(collarBandMeanDepth M (↑E : ℝ)) : ℝ)) *
                 (3 : ℝ) ^ (1 / 16 : ℝ));
           let D : ℕ → ℝ := fun (n : ℕ) => D₀ * whitneyDecayRatio ^ n;
           let P : CutoffSample d → ℝ := fun (omega : CutoffSample d) =>
-            slstarPowerTerm M R.scale (↑E : ℝ) bfaProfileB M.gamma (translateCutoffSample (triadicCubeShift R) omega);
+            slstarPowerTerm M R.scale (↑E : ℝ) bfaProfileB M.gamma (translateCutoffSample
+              (triadicCubeShift R) omega);
           let G : CutoffSample d → ℝ := fun (omega : CutoffSample d) =>
-            M.gamma * (↑(hsep M R.scale (↑E : ℝ) bfaProfileB (translateCutoffSample (triadicCubeShift R) omega)) : ℝ);
+            M.gamma * (↑(hsep M R.scale (↑E : ℝ) bfaProfileB (translateCutoffSample
+              (triadicCubeShift R) omega)) : ℝ);
           Summable D →
             ∀ (omega : CutoffSample d),
               ∑' (n : ℕ),
-                  probeSharpFramedCollarWavePart M R.scale (↑E : ℝ) bfaProfileB (collarBandMeanDepth M (↑E : ℝ)) n
+                  probeSharpFramedCollarWavePart M R.scale (↑E : ℝ) bfaProfileB
+                    (collarBandMeanDepth M (↑E : ℝ)) n
                     (m - (1 : ℤ)) (basisVec j) (superposedGradConst d)
                     (fun (eta : CutoffSample d) =>
                       waveHeadTerm M R.scale (↑E : ℝ) bfaProfileB
-                          (probeSharpLayerAnchor R.scale bfaProfileB (collarBandMeanDepth M (↑E : ℝ)) n) eta ^
+                          (probeSharpLayerAnchor R.scale bfaProfileB (collarBandMeanDepth M (↑E :
+                            ℝ)) n) eta ^
                         (2 : ℕ))
                     (translateCutoffSample (triadicCubeShift R) omega) ≤
                 (∑' (n : ℕ), D n) * (P omega * G omega) := by

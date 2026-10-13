@@ -9,6 +9,14 @@ module
 public import LeanPool.Superdiffusion.Algsuperdiff.Section5.Field.FreezingRadius
 public import LeanPool.Superdiffusion.Algsuperdiff.Section5.Support.CoefficientMeasurable
 
+/-!
+# Measurable stream coefficients
+
+Coefficient-field evaluations depend measurably on the environment.
+Ported from the Apache-2.0 Superdiffusion source at
+`7f20476385d4af418f110303085ad0740c9eba46`.
+-/
+
 @[expose] public section
 
 namespace Algsuperdiff.Section5.Measurability

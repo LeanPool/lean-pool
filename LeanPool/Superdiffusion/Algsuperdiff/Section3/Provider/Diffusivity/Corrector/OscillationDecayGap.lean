@@ -160,7 +160,8 @@ private theorem correctorGradient_oscillation_pointwise_bound :
             (∀ (i : Fin d),
                 ∀ x ∈ openCubeAtScale z n,
                   |euclideanCoordDeriv i u x - euclideanCoordDeriv i u z| ≤
-                    (8 : ℝ) ^ (d + (1 : ℕ)) * (↑d : ℝ) * C₀ / Book.Ch01.euclideanUnitBallVolume d * (3 : ℝ) ^ (-(↑k : ℤ)) *
+                    (8 : ℝ) ^ (d + (1 : ℕ)) * (↑d : ℝ) * C₀ / Book.Ch01.euclideanUnitBallVolume d
+                      * (3 : ℝ) ^ (-(↑k : ℤ)) *
                       avg i) →
               (∀ (i : Fin d),
                   avg i ^ (2 : ℕ) ≤
@@ -171,7 +172,8 @@ private theorem correctorGradient_oscillation_pointwise_bound :
                     ((8 : ℝ) ^ (d + (1 : ℕ)) * (↑d : ℝ) * C₀ / Book.Ch01.euclideanUnitBallVolume d *
                           (3 : ℝ) ^ (-(↑k : ℤ))) ^
                         (2 : ℕ) *
-                      Book.Ch01.meanSquareDeviationVecOn (openCubeAtScale z (n + (↑k : ℤ))) (euclideanGradient u) c := by
+                      Book.Ch01.meanSquareDeviationVecOn (openCubeAtScale z (n + (↑k : ℤ)))
+                        (euclideanGradient u) c := by
   intro d C₀ hKnn u z n k c avg havgnn hlip hcs x hx
   have hexpand : vecNormSq (euclideanGradient u x - euclideanGradient u z)
       = ∑ i : Fin d, (euclideanCoordDeriv i u x - euclideanCoordDeriv i u z) ^ 2 := by
@@ -223,21 +225,25 @@ private theorem gradientOscillation_affineLipschitzBound :
                           (↑d : ℝ) *
                             (C₀ / ((3 : ℝ) ^ (n + (↑k : ℤ)) / (8 : ℝ)) *
                               (((3 : ℝ) ^ (n + (↑k : ℤ))) ^ d * avg i /
-                                (((3 : ℝ) ^ (n + (↑k : ℤ)) / (8 : ℝ)) ^ d * Book.Ch01.euclideanUnitBallVolume d)))) →
+                                (((3 : ℝ) ^ (n + (↑k : ℤ)) / (8 : ℝ)) ^ d *
+                                  Book.Ch01.euclideanUnitBallVolume d)))) →
                     (∀ (i : Fin d),
                         (↑d : ℝ) *
                               (C₀ / ((3 : ℝ) ^ (n + (↑k : ℤ)) / (8 : ℝ)) *
                                 (((3 : ℝ) ^ (n + (↑k : ℤ))) ^ d * avg i /
-                                  (((3 : ℝ) ^ (n + (↑k : ℤ)) / (8 : ℝ)) ^ d * Book.Ch01.euclideanUnitBallVolume d))) *
+                                  (((3 : ℝ) ^ (n + (↑k : ℤ)) / (8 : ℝ)) ^ d *
+                                    Book.Ch01.euclideanUnitBallVolume d))) *
                             (3 : ℝ) ^ n =
-                          (8 : ℝ) ^ (d + (1 : ℕ)) * (↑d : ℝ) * C₀ / Book.Ch01.euclideanUnitBallVolume d *
+                          (8 : ℝ) ^ (d + (1 : ℕ)) * (↑d : ℝ) * C₀ /
+                            Book.Ch01.euclideanUnitBallVolume d *
                               (3 : ℝ) ^ (-(↑k : ℤ)) *
                             avg i) →
                       (∀ (i : Fin d), (0 : ℝ) ≤ avg i) →
                         ∀ (i : Fin d),
                           ∀ x ∈ openCubeAtScale z n,
                             |euclideanCoordDeriv i u x - euclideanCoordDeriv i u z| ≤
-                              (8 : ℝ) ^ (d + (1 : ℕ)) * (↑d : ℝ) * C₀ / Book.Ch01.euclideanUnitBallVolume d *
+                              (8 : ℝ) ^ (d + (1 : ℕ)) * (↑d : ℝ) * C₀ /
+                                Book.Ch01.euclideanUnitBallVolume d *
                                   (3 : ℝ) ^ (-(↑k : ℤ)) *
                                 avg i := by
   intro d _ C₀ _ _ u z n k avg hDsmooth hopnorm hprefac havgnn i x hx

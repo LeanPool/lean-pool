@@ -227,8 +227,8 @@ private theorem zero_at_infty_toReal_streamAnalyticMinimalResolvent_of_compact_a
     (mu : PositiveShift) {f : Vec d → ℝ} (hf : Measurable f)
     (hf0 : ∀ x, 0 ≤ f x) {D : ℝ} (hfD : ∀ x, |f x| ≤ D)
     (hfcompact : HasCompactSupport f) :
-    Tendsto (fun x ↦ ((streamWholeSpaceAnalyticData M omega
-      ).analyticMinimalResolvent mu f hf hfD x).toReal)
+    Tendsto (fun x ↦ ((streamWholeSpaceAnalyticData M omega).analyticMinimalResolvent mu f hf hfD
+      x).toReal)
       (cocompact (Vec d)) (nhds 0) := by
   by_cases hmu : 1 ≤ (mu : ℝ)
   · exact zero_at_infty_toReal_streamAnalyticMinimalResolvent_of_compact

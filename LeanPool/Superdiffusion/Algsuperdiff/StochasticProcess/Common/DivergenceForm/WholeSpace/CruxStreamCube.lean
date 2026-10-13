@@ -44,12 +44,10 @@ continuous Dirichlet resolvent. -/
 theorem killedResolvent_one_eq_cubeSetAtOneResolvent_stream
     (R : PositiveC0ContractiveResolvent (Vec d)) (hreg : R.OnePointRegular)
     (hcons : R.kernelSemigroup.IsConservative)
-    (hid : (streamWholeSpaceAnalyticData M omega
-      ).KernelResolventIdentifiesAnalyticMinimal R)
+    (hid : (streamWholeSpaceAnalyticData M omega).KernelResolventIdentifiesAnalyticMinimal R)
     (hT : ∀ (mu : PositiveShift) (g : C₀(Vec d, ℝ)),
       R.toContractiveResolvent.operator mu g =
-        ((streamWholeSpaceC0BarrierData M omega).resolvent
-          ).toContractiveResolvent.operator mu g)
+        ((streamWholeSpaceC0BarrierData M omega).resolvent).toContractiveResolvent.operator mu g)
     (y : Vec d) (n : ℤ) {lam : ℝ} (hlam : 0 < lam)
     {x : Vec d} (hx : x ∈ cubeSetAt y n) :
     letI := hreg.metricSpace
@@ -59,8 +57,8 @@ theorem killedResolvent_one_eq_cubeSetAtOneResolvent_stream
         (((↑) : Vec d → OnePoint (Vec d)) '' cubeSetAt y n)
         (OnePoint.isOpen_image_coe.mpr (isOpen_cubeSetAt y n)) lam
         (fun _ => 1) (x : OnePoint (Vec d)) =
-      ENNReal.ofReal ((streamWholeSpaceAnalyticData M omega
-        ).cubeSetAtOneResolvent y n ⟨lam, hlam⟩ x) := by
+      ENNReal.ofReal ((streamWholeSpaceAnalyticData M omega).cubeSetAtOneResolvent y n ⟨lam, hlam⟩
+        x) := by
   let A := streamWholeSpaceAnalyticData M omega
   let _ := hreg.metricSpace
   let _ := hreg.completeSpace
@@ -82,12 +80,10 @@ limit of its Dirichlet resolvents of one. -/
 theorem lintegral_exitTime_eq_cubeSetAtExitFunction_stream
     (R : PositiveC0ContractiveResolvent (Vec d)) (hreg : R.OnePointRegular)
     (hcons : R.kernelSemigroup.IsConservative)
-    (hid : (streamWholeSpaceAnalyticData M omega
-      ).KernelResolventIdentifiesAnalyticMinimal R)
+    (hid : (streamWholeSpaceAnalyticData M omega).KernelResolventIdentifiesAnalyticMinimal R)
     (hT : ∀ (mu : PositiveShift) (g : C₀(Vec d, ℝ)),
       R.toContractiveResolvent.operator mu g =
-        ((streamWholeSpaceC0BarrierData M omega).resolvent
-          ).toContractiveResolvent.operator mu g)
+        ((streamWholeSpaceC0BarrierData M omega).resolvent).toContractiveResolvent.operator mu g)
     (y : Vec d) (n : ℤ) {x : Vec d} (hx : x ∈ cubeSetAt y n) :
     letI := hreg.metricSpace
     letI := hreg.completeSpace
@@ -95,8 +91,7 @@ theorem lintegral_exitTime_eq_cubeSetAtExitFunction_stream
         (((↑) : Vec d → OnePoint (Vec d)) '' cubeSetAt y n) path
         ∂(IsConservative.continuousProcess R.onePointKernelSemigroup
           R.isConservative_onePointKernelSemigroup (x : OnePoint (Vec d))) =
-      (streamWholeSpaceAnalyticData M omega
-        ).cubeSetAtExitFunction y n (x : OnePoint (Vec d)) := by
+      (streamWholeSpaceAnalyticData M omega).cubeSetAtExitFunction y n (x : OnePoint (Vec d)) := by
   let A := streamWholeSpaceAnalyticData M omega
   let _ := hreg.metricSpace
   let _ := hreg.completeSpace

@@ -54,17 +54,20 @@ variable {d : ℕ}
 /-! ## 1. Prefactor monotonicity -/
 
 private abbrev rootClauseBWellPlacedFloor_comparisonBounds3_statement : Prop :=
-    ∀ (d : ℕ) (cstar Crg : ℝ) (hCrg : (0 : ℝ) < Crg) (C Ccap Cann Citer : ℝ) (kb : ℕ) (hC : (0 : ℝ) < C)
-      (hCcap : (0 : ℝ) < Ccap) (Ccaps : ℝ) (hCcaps : (0 : ℝ) < Ccaps) (Clam : ℝ) (hClam : (0 : ℝ) < Clam) (Cflu : ℝ)
-      (hCflu : (0 : ℝ) < Cflu) (CannP : ℝ) (hCannP : (0 : ℝ) < CannP) (Cind : ℝ),
+    ∀ (d : ℕ) (cstar Crg : ℝ) (_ : (0 : ℝ) < Crg) (C Ccap Cann Citer : ℝ) (kb : ℕ) (_ : (0 : ℝ) < C)
+      (_ : (0 : ℝ) < Ccap) (Ccaps : ℝ) (_ : (0 : ℝ) < Ccaps) (Clam : ℝ) (_ : (0 : ℝ) < Clam) (Cflu
+        : ℝ)
+      (_ : (0 : ℝ) < Cflu) (CannP : ℝ) (_ : (0 : ℝ) < CannP) (Cind : ℝ),
       let Cmax : ℝ := max (max (max C Ccap) (max Ccaps Clam)) (max (max Cflu CannP) (1 : ℝ));
       ∀ (Cedos : ℝ),
         let C1 : ℝ := stepOneC1 d Cedos (1 : ℝ) Citer (kb + (1 : ℕ));
         ∀ (gamma0 : ℝ)
-          (hfacts :
-            ∀ (M : ABKModel d), Disorder.cstar M = cstar → M.gamma ≤ gamma0 → RootClauseBGammaFacts M Cmax Cann Cind C1 Crg)
-          (M : ABKModel d) (hcs : Disorder.cstar M = cstar) (hgammale : M.gamma ≤ min gamma0 ((Crg / (2 : ℝ)) ^ (2 : ℕ)))
-          (alpha : ℝ) (halpha0 : (0 : ℝ) < alpha) (halpha : alpha ≤ (1 : ℝ) - Crg * √M.gamma),
+          (_ :
+            ∀ (M : ABKModel d), Disorder.cstar M = cstar → M.gamma ≤ gamma0 →
+              RootClauseBGammaFacts M Cmax Cann Cind C1 Crg)
+          (M : ABKModel d) (_ : Disorder.cstar M = cstar) (_ : M.gamma ≤ min gamma0 ((Crg / (2 :
+            ℝ)) ^ (2 : ℕ)))
+          (alpha : ℝ) (_ : (0 : ℝ) < alpha) (_ : alpha ≤ (1 : ℝ) - Crg * √M.gamma),
           M.gamma ≤ (Crg / (2 : ℝ)) ^ (2 : ℕ) ∧
             RootClauseBGammaFacts M Cmax Cann Cind C1 Crg ∧
               (0 : ℝ) < M.gamma ∧
@@ -80,262 +83,309 @@ private abbrev rootClauseBWellPlacedFloor_comparisonBounds3_statement : Prop :=
                                   stepOneEp (stepOneDelta C1 alpha)
 
 private abbrev rootClauseB_energyWindowBound_statement : Prop :=
-    ∀ (d : ℕ) [inst : NeZero d] (Crg C Ccap Cann Cb Citer Cosc : ℝ) (kb : ℕ)
-      (hCosc : (0 : ℝ) ≤ Cosc) (Ccaps Clam Klam : ℝ) (hKlam : (0 : ℝ) < Klam) (Cflu Afl K1 K2 : ℝ) (hK1 : (0 : ℝ) < K1)
-      (hK2 : (0 : ℝ) ≤ K2) (CannP Cind Cch : ℝ) (hCch : (0 : ℝ) < Cch)
-      (hend :
-        ∀ (M : ABKModel d) (m0 : ℤ) (Ecap : { E : ℝ // (1 : ℝ) ≤ E }),
-          Frozen.Section3.inductionState M m0 Ecap →
-            M.gamma < (1 / 2 : ℝ) →
-              ∀ (L : ℤ) {alpha : ℝ} {n m kc np : ℤ} {z : Vec d} (omega : Cutoff.CutoffSample d)
-                (uglob hdat : H1Function (openCubeSet (originCube d m))) {gsrc : Vec d → Vec d}
-                {Khol Kh Kd CB Cg Cdel CdM CWH C1 delta Cest dataH dataM : ℝ} {B : ℕ},
-                z ∈ openCubeSet (originCube d m) →
-                  m ≤ m0 →
-                    n ≤ m →
-                      kc ≤ m - (1 : ℤ) →
-                        np + (1 : ℤ) ≤ m →
-                          m - (kc + (1 : ℤ)) ≤ (↑B : ℤ) + (1 : ℤ) →
-                            IsDirichletSolutionOn (Cutoff.coefficientCutoff M.nu L omega).toCoeffField (originCube d m)
-                                uglob hdat gsrc →
-                              MemLp gsrc (2 : ENNReal) (normalizedVolumeMeasureOn (openCubeSet (originCube d m))) →
-                                MemLp (Gagliardo.gagliardoKernel stepOneS (2 : ENNReal) gsrc) (2 : ENNReal)
-                                    (normalizedGagliardoMeasureOn (openCubeSet (originCube d m))) →
-                                  (0 : ℝ) ≤ Khol →
-                                    (0 : ℝ) ≤ Kh →
-                                      (0 : ℝ) ≤ Kd →
-                                        (0 : ℝ) ≤ CB →
-                                          (0 : ℝ) ≤ Cg →
-                                            (0 : ℝ) ≤ Cdel →
-                                              (0 : ℝ) ≤ CdM →
-                                                (0 : ℝ) ≤ CWH →
-                                                  (0 : ℝ) ≤ dataH →
-                                                    (0 : ℝ) ≤ dataM →
-                                                      (2 : ℝ) * (↑d : ℝ) + (2 : ℝ) ≤ C1 →
-                                                        (0 : ℝ) ≤ alpha →
-                                                          alpha ≤ (1 : ℝ) →
-                                                            delta ≤ C1⁻¹ * ((1 : ℝ) - alpha) →
-                                                              (↑B : ℝ) ≤ delta * ((↑(m - n).toNat : ℝ) + (1 : ℝ)) →
-                                                                stepSevenCgLamInv (originCube d kc)
-                                                                      (parentRebasedFamily M L (kc + (1 : ℤ))
-                                                                        (wellPlacedCentre z m kc) z omega)
-                                                                      stepSevenCgS ≤
-                                                                    CB * (↑(Annealed.sigmaBar M (kc + (1 : ℤ))) : ℝ)⁻¹ →
-                                                                  (scaleNormalizedPositiveBesovVectorSeminormTwo
-                                                                        (originCube d kc) stepSevenCgS fun (x : Vec d) =>
-                                                                        -gsrc (x + wellPlacedCentre z m kc)) ≤
-                                                                      Kd * edFinalDataOscG Khol m →
-                                                                    dataM ≤
-                                                                        CdM *
-                                                                          (√(↑(Annealed.sigmaBar M m) : ℝ)⁻¹ *
-                                                                            edFinalDataOscG Khol m) →
-                                                                      dataH ≤ CWH * edFinalDataOscG Kh m →
-                                                                        stepSevenNuGradNorm M.nu
-                                                                              (truncatedWindow z m (n + (1 : ℤ)))
-                                                                              uglob.grad ≤
-                                                                            Cg *
-                                                                                    √(↑(Annealed.sigmaBar M
-                                                                                            (np + (1 : ℤ))) :
-                                                                                        ℝ) *
-                                                                                  Real.rpow (3 : ℝ)
-                                                                                    ((3 / 4 : ℝ) *
-                                                                                      stepSixExponent alpha n m) *
-                                                                                ((cubeScaleFactor (originCube d kc))⁻¹ *
-                                                                                  normalizedL2On (truncatedWindow z m kc)
-                                                                                    fun (x : Vec d) =>
-                                                                                    uglob.toFun x -
-                                                                                      volumeAverage (truncatedWindow z m kc)
-                                                                                        uglob.toFun) +
-                                                                              Cg *
-                                                                                  Real.rpow (3 : ℝ)
-                                                                                    ((3 / 4 : ℝ) *
-                                                                                      stepSixExponent alpha n m) *
-                                                                                (√(↑(Annealed.sigmaBar M (np + (1 : ℤ))) :
-                                                                                        ℝ) *
-                                                                                    ((1 : ℝ) *
-                                                                                      ((↑(Annealed.sigmaBar M m) : ℝ)⁻¹ *
-                                                                                          ((↑(Annealed.sigmaBar M m) : ℝ) *
-                                                                                            edFinalDataG M Cdel
-                                                                                              (Khol *
-                                                                                                stepFourGagliardoConst d
-                                                                                                  stepOneS)
-                                                                                              m) +
-                                                                                        dataH)) +
-                                                                                  dataM) →
-                                                                          rootClauseBWellPlacedPrefactor d Cch Cg CB
-                                                                                (rootClauseBTopCtr d Kd)
-                                                                                (edFinalDataOscW M Cdel *
-                                                                                  stepFourGagliardoConst d stepOneS)
-                                                                                CWH CdM ≤
-                                                                              Cest →
-                                                                            (√M.nu *
-                                                                                normalizedL2On
-                                                                                  (truncatedWindow z m (n + (1 : ℤ)))
-                                                                                  fun (y : Vec d) =>
-                                                                                  √(vecNormSq (uglob.grad y))) ≤
-                                                                              Cest *
-                                                                                  Real.rpow (3 : ℝ)
-                                                                                    (((1 : ℝ) - alpha) *
-                                                                                      ((↑m : ℝ) - (↑n : ℝ))) *
-                                                                                ((√M.nu *
-                                                                                      normalizedL2On
-                                                                                        (openCubeSet (originCube d m))
-                                                                                        fun (y : Vec d) =>
-                                                                                        √(vecNormSq (uglob.grad y))) +
-                                                                                    √(↑(Annealed.sigmaBar M m) : ℝ)⁻¹ *
-                                                                                        Real.rpow (3 : ℝ)
-                                                                                          ((↑m : ℝ) / (2 : ℝ)) *
-                                                                                      Khol +
-                                                                                  √(↑(Annealed.sigmaBar M m) : ℝ) *
-                                                                                      Real.rpow (3 : ℝ)
-                                                                                        ((↑m : ℝ) / (2 : ℝ)) *
-                                                                                    Kh))
-      (CdispC : ℝ) (hCbd : (0 : ℝ) ≤ edBoundaryCbd d Cb C kb) (hCWH : (0 : ℝ) ≤ boundaryCWH d Cb C kb) (hd1 : (1 : ℕ) ≤ d),
-      let CBu : ℝ := rootClauseBCapsUniform d Ccaps;
-      let CWGu : ℝ := rootClauseBOscWUniform (edBoundaryCbd d Cb C kb) * stepFourGagliardoConst d stepOneS;
-      let Ctru : ℝ := rootClauseBTopCtr d (rootClauseBDataBConst d);
-      ∀ (hCtru0 : (0 : ℝ) ≤ Ctru),
-        let PG : ℝ :=
-          rootClauseBWellPlacedPrefactor d Cch (rootClauseBCg d (rootClauseBCaccUniform CdispC CBu) Cosc CBu) Klam Ctru CWGu
-            (boundaryCWH d Cb C kb) (rootClauseBDataMConst d CBu);
-        let PF : ℝ :=
-          rootClauseBWellPlacedPrefactor d Cch (stepSevenFlushCg d K1 K2 Cosc) Klam Ctru CWGu
-            (boundaryCWH d Cb C kb + (1 : ℝ)) (1 : ℝ);
-        ∀ (Cedos : ℝ),
-          let C1 : ℝ := stepOneC1 d Cedos (1 : ℝ) Citer (kb + (1 : ℕ));
-          ∀ (M : ABKModel d) (alpha : ℝ) (halpha0 : (0 : ℝ) < alpha) (m : ℤ)
-            (hfact :
-              RootClauseBGammaFacts M (max (max (max C Ccap) (max Ccaps Clam)) (max (max Cflu CannP) (1 : ℝ))) Cann Cind
-                (stepOneC1 d Cedos (1 : ℝ) Citer (kb + (1 : ℕ))) Crg)
-            (halpha1 : alpha < (1 : ℝ)) (Ecap : { E : ℝ // (1 : ℝ) ≤ E })
-            (hstate : ∀ (m : ℤ), Frozen.Section3.inductionState M m Ecap) (h2gamma : (2 : ℝ) * M.gamma ≤ (1 : ℝ) - alpha)
-            (omega : Cutoff.CutoffSample d)
-            (hFlush :
-              ∀ (L m n nl : ℤ) (v : Fin d → ℤ) (i : Fin d) (sigma : ℝ),
-                sigma = (1 : ℝ) ∨ sigma = (-1 : ℝ) →
-                  m ≤ L →
-                    n + (3 : ℤ) ≤ m →
-                      triadicLatticePoint nl v ∈ openCubeSet (originCube d m) →
-                        wellPlacedHalfGap m (n + (2 : ℤ)) < sigma * triadicLatticePoint nl v i →
-                          omega ∈
-                              Frozen.Section4.goodEventAt M (cgEllipLowerConstant d) (n + (3 : ℤ))
-                                (triadicLatticePoint nl v)
-                                ⟨stepOneS / (8 : ℝ),
-                                  (by
-                                    solve
-                                    | norm_num [Algsuperdiff.Section4.Provider.Regularity.stepOneS]
-                                    | positivity
-                                    | assumption
-                                    | omega
-                                    | linarith)⟩
-                                (1 / 2 : ℝ) →
-                            Afl *
-                                  fluxCorrectedErrorRepresentative M L (n + (3 : ℤ))
-                                    ⟨stepOneS / (8 : ℝ),
-                                      (by
-                                        solve
-                                        | norm_num [Algsuperdiff.Section4.Provider.Regularity.stepOneS]
-                                        | positivity
-                                        | assumption
-                                        | omega
-                                        | linarith)⟩
-                                    (Cutoff.translateCutoffSample (triadicLatticePoint nl v) omega) ≤
-                                stepOneS ^ (4 : ℕ) →
-                              StepSevenFlushBound M K1 K2 L m n (triadicLatticePoint nl v) omega)
-            (hPin :
-              ∀ (j nl : ℤ) (v : Fin d → ℤ),
-                omega ∈
-                    stepThreeGoodEvent M (stepOneDelta (stepOneC1 d Cedos (1 : ℝ) Citer (kb + (1 : ℕ))) alpha) j
-                      (triadicLatticePoint nl v) →
-                  ∀ (L : ℤ),
-                    j ≤ L →
-                      Afl *
-                          fluxCorrectedErrorRepresentative M L j
-                            ⟨stepOneS / (8 : ℝ),
-                              (by
-                                solve
-                                | norm_num [Algsuperdiff.Section4.Provider.Regularity.stepOneS]
-                                | positivity
-                                | assumption
-                                | omega
-                                | linarith)⟩
-                            (Cutoff.translateCutoffSample (triadicLatticePoint nl v) omega) ≤
-                        stepOneS ^ (4 : ℕ))
-            (n L : ℤ) (hnm : n ≤ m) (hmL : m ≤ L) (u h : H1Function (openCubeSet (originCube d m))) (g : Vec d → Vec d)
-            (Kg Kh : ℝ)
-            (hsol : IsDirichletSolutionOn (Cutoff.coefficientCutoff M.nu L omega).toCoeffField (originCube d m) u h g)
-            (hgHol : HolderSeminormBoundOn (openCubeSet (originCube d m)) (1 / 2 : ℝ) Kg g)
-            (hhHol : HolderSeminormBoundOn (openCubeSet (originCube d m)) (1 / 2 : ℝ) Kh h.grad)
-            (hsup : ∀ y ∈ openCubeSet (originCube d m), ‖h.grad y‖ ≤ Real.rpow (3 : ℝ) ((↑m : ℝ) / (2 : ℝ)) * Kh)
-            (x : Vec d) (hKg : (0 : ℝ) ≤ Kg) (hKh : (0 : ℝ) ≤ Kh)
-            (hzm : triadicLatticePoint n (offGridLatticeIndex n x) ∈ openCubeSet (originCube d m))
-            (hgL2 : MemLp g (2 : ENNReal) (normalizedVolumeMeasureOn (openCubeSet (originCube d m))))
-            (hgW :
-              MemLp (Gagliardo.gagliardoKernel stepOneS (2 : ENNReal) g) (2 : ENNReal)
-                (normalizedGagliardoMeasureOn (openCubeSet (originCube d m))))
-            (hhW :
-              MemLp (Gagliardo.gagliardoKernel stepOneS (2 : ENNReal) h.grad) (2 : ENNReal)
-                (normalizedGagliardoMeasureOn (openCubeSet (originCube d m))))
-            (hoscfun :
-              ∀ (n' kc : ℤ),
-                n ≤ n' →
-                  n' ≤ kc →
-                    kc ≤ m →
-                      ((3 : ℝ) ^ (-n') *
-                          normalizedL2On (truncatedWindow (triadicLatticePoint n (offGridLatticeIndex n x)) m n')
-                            fun (y : Vec d) =>
-                            u.toFun y -
-                              volumeAverage (truncatedWindow (triadicLatticePoint n (offGridLatticeIndex n x)) m n')
-                                u.toFun) ≤
-                        Cosc * Real.rpow (3 : ℝ) ((1 / 2 : ℝ) * stepSixExponent alpha n m) *
-                            ((3 : ℝ) ^ (-kc) *
-                              normalizedL2On (truncatedWindow (triadicLatticePoint n (offGridLatticeIndex n x)) m kc)
-                                fun (y : Vec d) =>
-                                u.toFun y -
-                                  volumeAverage (truncatedWindow (triadicLatticePoint n (offGridLatticeIndex n x)) m kc)
-                                    u.toFun) +
-                          Cosc * Real.rpow (3 : ℝ) ((1 / 2 : ℝ) * stepSixExponent alpha n m) *
-                            (edFinalDataG M (edBoundaryCbd d Cb C kb) (Kg * stepFourGagliardoConst d stepOneS) m +
-                              edBoundaryDataHPrinted d Cb C kb Kh m))
-            (kc : ℤ) (hkhi : kc + (1 : ℤ) ≤ m - (1 : ℤ)) (np : ℤ) (hjlo : n + (4 : ℤ) ≤ np + (1 : ℤ))
-            (hgoodj :
-              omega ∈
-                stepThreeGoodEvent M (stepOneDelta C1 alpha) (np + (1 : ℤ))
-                  (triadicLatticePoint n (offGridLatticeIndex n x))),
-            let B : ℕ :=
-              (stepThreeBadSet M (stepOneDelta C1 alpha) n m (triadicLatticePoint n (offGridLatticeIndex n x)) omega).card;
-            ∀ (hcard : (↑B : ℝ) ≤ stepOneDelta C1 alpha * ((↑(m - n).toNat : ℝ) + (1 : ℝ)))
-              (hgapHi : m - (kc + (1 : ℤ)) ≤ (↑B : ℤ) + (1 : ℤ)) (hgapLo : np + (1 : ℤ) - n ≤ (↑B : ℤ) + (4 : ℤ))
-              (hgapStrict : np + (2 : ℤ) ≤ kc) (hδIoc : stepOneDelta C1 alpha ∈ Set.Ioc (0 : ℝ) (1 / 2 : ℝ))
-              (hlamkc :
-                stepSevenCgLamInv (originCube d kc)
-                    (parentRebasedFamily M L (kc + (1 : ℤ))
-                      (wellPlacedCentre (triadicLatticePoint n (offGridLatticeIndex n x)) m kc)
-                      (triadicLatticePoint n (offGridLatticeIndex n x)) omega)
-                    stepSevenCgS ≤
-                  Klam * (↑(Annealed.sigmaBar M (kc + (1 : ℤ))) : ℝ)⁻¹)
-              (hCWGle : edFinalDataOscW M (edBoundaryCbd d Cb C kb) * stepFourGagliardoConst d stepOneS ≤ CWGu)
-              (hCWG0 : (0 : ℝ) ≤ edFinalDataOscW M (edBoundaryCbd d Cb C kb) * stepFourGagliardoConst d stepOneS)
-              (hdataHP0 : (0 : ℝ) ≤ edBoundaryDataHPrinted d Cb C kb Kh m) (hC1dim : (2 : ℝ) * (↑d : ℝ) + (2 : ℝ) ≤ C1)
-              (hdeltaEq : stepOneDelta C1 alpha ≤ C1⁻¹ * ((1 : ℝ) - alpha))
-              (hoscHi0 :
-                (0 : ℝ) ≤
-                  (cubeScaleFactor (originCube d kc))⁻¹ *
-                    normalizedL2On (truncatedWindow (triadicLatticePoint n (offGridLatticeIndex n x)) m kc)
-                      fun (y : Vec d) =>
-                      u.toFun y -
-                        volumeAverage (truncatedWindow (triadicLatticePoint n (offGridLatticeIndex n x)) m kc) u.toFun)
-              (hedG0 : (0 : ℝ) ≤ edFinalDataG M (edBoundaryCbd d Cb C kb) (Kg * stepFourGagliardoConst d stepOneS) m)
-              (hgate :
-                ¬(fun (y : Vec d) => triadicLatticePoint n (offGridLatticeIndex n x) + y) '' openCubeSet (originCube d np) ⊆
-                    openCubeSet (originCube d m)),
-              (√M.nu *
-                  normalizedL2On (truncatedWindow (offGridCentre n x) m (n + (1 : ℤ))) fun (y : Vec d) =>
-                    √(vecNormSq (u.grad y))) ≤
-                max PG PF * Real.rpow (3 : ℝ) (((1 : ℝ) - alpha) * ((↑m : ℝ) - (↑n : ℝ))) *
-                  ((√M.nu * normalizedL2On (openCubeSet (originCube d m)) fun (y : Vec d) => √(vecNormSq (u.grad y))) +
-                      √(↑(Annealed.sigmaBar M m) : ℝ)⁻¹ * Real.rpow (3 : ℝ) ((↑m : ℝ) / (2 : ℝ)) * Kg +
-                    √(↑(Annealed.sigmaBar M m) : ℝ) * Real.rpow (3 : ℝ) ((↑m : ℝ) / (2 : ℝ)) * Kh)
+  ∀ (d : ℕ) [NeZero d] (Crg C Ccap Cann Cb Citer Cosc : ℝ) (kb : ℕ)
+   (_ : (0 : ℝ) ≤ Cosc) (Ccaps Clam Klam : ℝ) (_ : (0 : ℝ) < Klam) (Cflu Afl K1 K2 : ℝ) (_ : (0
+    : ℝ) < K1)
+   (_ : (0 : ℝ) ≤ K2) (CannP Cind Cch : ℝ) (_ : (0 : ℝ) < Cch)
+   (_ :
+    ∀ (M : ABKModel d) (m0 : ℤ) (Ecap : { E : ℝ // (1 : ℝ) ≤ E }),
+     Frozen.Section3.inductionState M m0 Ecap →
+      M.gamma < (1 / 2 : ℝ) →
+       ∀ (L : ℤ) {alpha : ℝ} {n m kc np : ℤ} {z : Vec d} (omega : Cutoff.CutoffSample d)
+        (uglob hdat : H1Function (openCubeSet (originCube d m))) {gsrc : Vec d → Vec d}
+        {Khol Kh Kd CB Cg Cdel CdM CWH C1 delta Cest dataH dataM : ℝ} {B : ℕ},
+        z ∈ openCubeSet (originCube d m) →
+         m ≤ m0 →
+          n ≤ m →
+           kc ≤ m - (1 : ℤ) →
+            np + (1 : ℤ) ≤ m →
+             m - (kc + (1 : ℤ)) ≤ (↑B : ℤ) + (1 : ℤ) →
+              IsDirichletSolutionOn (Cutoff.coefficientCutoff M.nu L
+               omega).toCoeffField (originCube d m)
+                uglob hdat gsrc →
+               MemLp gsrc (2 : ENNReal) (normalizedVolumeMeasureOn (openCubeSet
+                (originCube d m))) →
+                MemLp (Gagliardo.gagliardoKernel stepOneS (2 : ENNReal) gsrc) (2 :
+                 ENNReal)
+                  (normalizedGagliardoMeasureOn (openCubeSet (originCube d m))) →
+                 (0 : ℝ) ≤ Khol →
+                  (0 : ℝ) ≤ Kh →
+                   (0 : ℝ) ≤ Kd →
+                    (0 : ℝ) ≤ CB →
+                     (0 : ℝ) ≤ Cg →
+                      (0 : ℝ) ≤ Cdel →
+                       (0 : ℝ) ≤ CdM →
+                        (0 : ℝ) ≤ CWH →
+                         (0 : ℝ) ≤ dataH →
+                          (0 : ℝ) ≤ dataM →
+                           (2 : ℝ) * (↑d : ℝ) + (2 : ℝ) ≤ C1 →
+                            (0 : ℝ) ≤ alpha →
+                             alpha ≤ (1 : ℝ) →
+                              delta ≤ C1⁻¹ * ((1 : ℝ) - alpha) →
+                               (↑B : ℝ) ≤ delta * ((↑(m - n).toNat
+                                : ℝ) + (1 : ℝ)) →
+                                stepSevenCgLamInv (originCube d kc)
+                                   (parentRebasedFamily M L (kc
+                                    + (1 : ℤ))
+                                    (wellPlacedCentre z m kc)
+                                     z omega)
+                                   stepSevenCgS ≤
+                                  CB * (↑(Annealed.sigmaBar M
+                                   (kc + (1 : ℤ))) : ℝ)⁻¹ →
+                                 (scaleNormalizedPositiveBesovVectorSeminormTwo
+                                    (originCube d kc)
+                                     stepSevenCgS fun (x :
+                                      Vec d) =>
+                                    -gsrc (x +
+                                     wellPlacedCentre z m
+                                      kc)) ≤
+                                   Kd * edFinalDataOscG Khol m →
+                                  dataM ≤
+                                    CdM *
+                                     (√(↑(Annealed.sigmaBar M
+                                      m) : ℝ)⁻¹ *
+                                      edFinalDataOscG Khol
+                                       m) →
+                                   dataH ≤ CWH *
+                                    edFinalDataOscG Kh m →
+                                    stepSevenNuGradNorm M.nu
+                                       (truncatedWindow z m
+                                        (n + (1 : ℤ)))
+                                       uglob.grad ≤
+                                      Cg *
+                                          √(↑(Annealed.sigmaBar M
+                                              (np +
+                                               (1 :
+                                                ℤ))) :
+                                            ℝ) *
+                                         Real.rpow (3 : ℝ)
+                                          ((3 / 4 : ℝ) *
+                                           stepSixExponent alpha n m) *
+                                        ((cubeScaleFactor
+                                         (originCube d
+                                          kc))⁻¹ *
+                                         normalizedL2On
+                                          (truncatedWindow z m kc)
+                                          fun (x : Vec
+                                           d) =>
+                                          uglob.toFun x -
+                                           volumeAverage (truncatedWindow z m kc)
+                                            uglob.toFun) +
+                                       Cg *
+                                         Real.rpow (3 : ℝ)
+                                          ((3 / 4 : ℝ) *
+                                           stepSixExponent alpha n m) *
+                                        (√(↑(Annealed.sigmaBar M (np + (1 : ℤ))) :
+                                            ℝ) *
+                                          ((1 : ℝ) *
+                                           ((↑(Annealed.sigmaBar M m) : ℝ)⁻¹ *
+                                             ((↑(Annealed.sigmaBar M m) : ℝ) *
+                                              edFinalDataG M Cdel
+                                               (Khol *
+                                                stepFourGagliardoConst d
+                                                 stepOneS)
+                                               m) +
+                                            dataH)) +
+                                         dataM) →
+                                     rootClauseBWellPlacedPrefactor d Cch Cg CB
+                                        (rootClauseBTopCtr
+                                         d Kd)
+                                        (edFinalDataOscW M
+                                         Cdel *
+                                         stepFourGagliardoConst d stepOneS)
+                                        CWH CdM ≤
+                                       Cest →
+                                      (√M.nu *
+                                        normalizedL2On
+                                         (truncatedWindow
+                                          z m (n + (1 :
+                                           ℤ)))
+                                         fun (y : Vec d) =>
+                                         √(vecNormSq
+                                          (uglob.grad
+                                           y))) ≤
+                                       Cest *
+                                         Real.rpow (3 : ℝ)
+                                          (((1 : ℝ) -
+                                           alpha) *
+                                           ((↑m : ℝ) -
+                                            (↑n : ℝ))) *
+                                        ((√M.nu *
+                                           normalizedL2On
+                                            (openCubeSet (originCube d m))
+                                            fun (y :
+                                             Vec d) =>
+                                            √(vecNormSq (uglob.grad y))) +
+                                          √(↑(Annealed.sigmaBar M m) : ℝ)⁻¹ *
+                                            Real.rpow
+                                             (3 : ℝ)
+                                             ((↑m :
+                                              ℝ) /
+                                               (2 :
+                                                ℝ)) *
+                                           Khol +
+                                         √(↑(Annealed.sigmaBar M m) : ℝ) *
+                                           Real.rpow (3
+                                            : ℝ)
+                                            ((↑m : ℝ)
+                                             / (2 :
+                                              ℝ)) *
+                                          Kh))
+   (CdispC : ℝ) (_ : (0 : ℝ) ≤ edBoundaryCbd d Cb C kb) (_ : (0 : ℝ) ≤ boundaryCWH d Cb C kb)
+    (_ : (1 : ℕ) ≤ d),
+   let CBu : ℝ := rootClauseBCapsUniform d Ccaps;
+   let CWGu : ℝ := rootClauseBOscWUniform (edBoundaryCbd d Cb C kb) * stepFourGagliardoConst d
+    stepOneS;
+   let Ctru : ℝ := rootClauseBTopCtr d (rootClauseBDataBConst d);
+   ∀ (_ : (0 : ℝ) ≤ Ctru),
+    let PG : ℝ :=
+     rootClauseBWellPlacedPrefactor d Cch (rootClauseBCg d (rootClauseBCaccUniform CdispC
+      CBu) Cosc CBu) Klam Ctru CWGu
+      (boundaryCWH d Cb C kb) (rootClauseBDataMConst d CBu);
+    let PF : ℝ :=
+     rootClauseBWellPlacedPrefactor d Cch (stepSevenFlushCg d K1 K2 Cosc) Klam Ctru CWGu
+      (boundaryCWH d Cb C kb + (1 : ℝ)) (1 : ℝ);
+    ∀ (Cedos : ℝ),
+     let C1 : ℝ := stepOneC1 d Cedos (1 : ℝ) Citer (kb + (1 : ℕ));
+     ∀ (M : ABKModel d) (alpha : ℝ) (_ : (0 : ℝ) < alpha) (m : ℤ)
+      (_ :
+       RootClauseBGammaFacts M (max (max (max C Ccap) (max Ccaps Clam)) (max (max Cflu
+        CannP) (1 : ℝ))) Cann Cind
+        (stepOneC1 d Cedos (1 : ℝ) Citer (kb + (1 : ℕ))) Crg)
+      (_ : alpha < (1 : ℝ)) (Ecap : { E : ℝ // (1 : ℝ) ≤ E })
+      (_ : ∀ (m : ℤ), Frozen.Section3.inductionState M m Ecap) (_ : (2 : ℝ) * M.gamma ≤ (1 :
+       ℝ) - alpha)
+      (omega : Cutoff.CutoffSample d)
+      (_ :
+       ∀ (L m n nl : ℤ) (v : Fin d → ℤ) (i : Fin d) (sigma : ℝ),
+        sigma = (1 : ℝ) ∨ sigma = (-1 : ℝ) →
+         m ≤ L →
+          n + (3 : ℤ) ≤ m →
+           triadicLatticePoint nl v ∈ openCubeSet (originCube d m) →
+            wellPlacedHalfGap m (n + (2 : ℤ)) < sigma * triadicLatticePoint nl v i →
+             omega ∈
+               Frozen.Section4.goodEventAt M (cgEllipLowerConstant d) (n + (3 : ℤ))
+                (triadicLatticePoint nl v)
+                ⟨stepOneS / (8 : ℝ),
+                 (by norm_num [Algsuperdiff.Section4.Provider.Regularity.stepOneS])⟩
+                (1 / 2 : ℝ) →
+              Afl *
+                 fluxCorrectedErrorRepresentative M L (n + (3 : ℤ))
+                  ⟨stepOneS / (8 : ℝ),
+                   (by norm_num [Algsuperdiff.Section4.Provider.Regularity.stepOneS])⟩
+                  (Cutoff.translateCutoffSample (triadicLatticePoint nl v)
+                   omega) ≤
+                stepOneS ^ (4 : ℕ) →
+               StepSevenFlushBound M K1 K2 L m n (triadicLatticePoint nl v) omega)
+      (_ :
+       ∀ (j nl : ℤ) (v : Fin d → ℤ),
+        omega ∈
+          stepThreeGoodEvent M (stepOneDelta (stepOneC1 d Cedos (1 : ℝ) Citer (kb + (1 :
+           ℕ))) alpha) j
+           (triadicLatticePoint nl v) →
+         ∀ (L : ℤ),
+          j ≤ L →
+           Afl *
+             fluxCorrectedErrorRepresentative M L j
+              ⟨stepOneS / (8 : ℝ),
+               (by norm_num [Algsuperdiff.Section4.Provider.Regularity.stepOneS])⟩
+              (Cutoff.translateCutoffSample (triadicLatticePoint nl v) omega) ≤
+            stepOneS ^ (4 : ℕ))
+      (n L : ℤ) (_ : n ≤ m) (_ : m ≤ L) (u h : H1Function (openCubeSet (originCube d m))) (g
+       : Vec d → Vec d)
+      (Kg Kh : ℝ)
+      (_ : IsDirichletSolutionOn (Cutoff.coefficientCutoff M.nu L omega).toCoeffField
+       (originCube d m) u h g)
+      (_ : HolderSeminormBoundOn (openCubeSet (originCube d m)) (1 / 2 : ℝ) Kg g)
+      (_ : HolderSeminormBoundOn (openCubeSet (originCube d m)) (1 / 2 : ℝ) Kh h.grad)
+      (_ : ∀ y ∈ openCubeSet (originCube d m), ‖h.grad y‖ ≤ Real.rpow (3 : ℝ) ((↑m : ℝ) / (2
+       : ℝ)) * Kh)
+      (x : Vec d) (_ : (0 : ℝ) ≤ Kg) (_ : (0 : ℝ) ≤ Kh)
+      (_ : triadicLatticePoint n (offGridLatticeIndex n x) ∈ openCubeSet (originCube d m))
+      (_ : MemLp g (2 : ENNReal) (normalizedVolumeMeasureOn (openCubeSet (originCube d m))))
+      (_ :
+       MemLp (Gagliardo.gagliardoKernel stepOneS (2 : ENNReal) g) (2 : ENNReal)
+        (normalizedGagliardoMeasureOn (openCubeSet (originCube d m))))
+      (_ :
+       MemLp (Gagliardo.gagliardoKernel stepOneS (2 : ENNReal) h.grad) (2 : ENNReal)
+        (normalizedGagliardoMeasureOn (openCubeSet (originCube d m))))
+      (_ :
+       ∀ (n' kc : ℤ),
+        n ≤ n' →
+         n' ≤ kc →
+          kc ≤ m →
+           ((3 : ℝ) ^ (-n') *
+             normalizedL2On (truncatedWindow (triadicLatticePoint n
+              (offGridLatticeIndex n x)) m n')
+              fun (y : Vec d) =>
+              u.toFun y -
+               volumeAverage (truncatedWindow (triadicLatticePoint n
+                (offGridLatticeIndex n x)) m n')
+                u.toFun) ≤
+            Cosc * Real.rpow (3 : ℝ) ((1 / 2 : ℝ) * stepSixExponent alpha n m) *
+              ((3 : ℝ) ^ (-kc) *
+               normalizedL2On (truncatedWindow (triadicLatticePoint n
+                (offGridLatticeIndex n x)) m kc)
+                fun (y : Vec d) =>
+                u.toFun y -
+                 volumeAverage (truncatedWindow (triadicLatticePoint n
+                  (offGridLatticeIndex n x)) m kc)
+                  u.toFun) +
+             Cosc * Real.rpow (3 : ℝ) ((1 / 2 : ℝ) * stepSixExponent alpha n m) *
+              (edFinalDataG M (edBoundaryCbd d Cb C kb) (Kg * stepFourGagliardoConst
+               d stepOneS) m +
+               edBoundaryDataHPrinted d Cb C kb Kh m))
+      (kc : ℤ) (_ : kc + (1 : ℤ) ≤ m - (1 : ℤ)) (np : ℤ) (_ : n + (4 : ℤ) ≤ np + (1 : ℤ))
+      (_ :
+       omega ∈
+        stepThreeGoodEvent M (stepOneDelta C1 alpha) (np + (1 : ℤ))
+         (triadicLatticePoint n (offGridLatticeIndex n x))),
+      let B : ℕ :=
+       (stepThreeBadSet M (stepOneDelta C1 alpha) n m (triadicLatticePoint n
+        (offGridLatticeIndex n x)) omega).card;
+      ∀ (_ : (↑B : ℝ) ≤ stepOneDelta C1 alpha * ((↑(m - n).toNat : ℝ) + (1 : ℝ)))
+       (_ : m - (kc + (1 : ℤ)) ≤ (↑B : ℤ) + (1 : ℤ)) (_ : np + (1 : ℤ) - n ≤ (↑B : ℤ) + (4
+        : ℤ))
+       (_ : np + (2 : ℤ) ≤ kc) (_ : stepOneDelta C1 alpha ∈ Set.Ioc (0 : ℝ) (1 / 2 : ℝ))
+       (_ :
+        stepSevenCgLamInv (originCube d kc)
+          (parentRebasedFamily M L (kc + (1 : ℤ))
+           (wellPlacedCentre (triadicLatticePoint n (offGridLatticeIndex n x)) m kc)
+           (triadicLatticePoint n (offGridLatticeIndex n x)) omega)
+          stepSevenCgS ≤
+         Klam * (↑(Annealed.sigmaBar M (kc + (1 : ℤ))) : ℝ)⁻¹)
+       (_ : edFinalDataOscW M (edBoundaryCbd d Cb C kb) * stepFourGagliardoConst d stepOneS
+        ≤ CWGu)
+       (_ : (0 : ℝ) ≤ edFinalDataOscW M (edBoundaryCbd d Cb C kb) * stepFourGagliardoConst
+        d stepOneS)
+       (_ : (0 : ℝ) ≤ edBoundaryDataHPrinted d Cb C kb Kh m) (_ : (2 : ℝ) * (↑d : ℝ) + (2 :
+        ℝ) ≤ C1)
+       (_ : stepOneDelta C1 alpha ≤ C1⁻¹ * ((1 : ℝ) - alpha))
+       (_ :
+        (0 : ℝ) ≤
+         (cubeScaleFactor (originCube d kc))⁻¹ *
+          normalizedL2On (truncatedWindow (triadicLatticePoint n (offGridLatticeIndex n
+           x)) m kc)
+           fun (y : Vec d) =>
+           u.toFun y -
+            volumeAverage (truncatedWindow (triadicLatticePoint n (offGridLatticeIndex
+             n x)) m kc) u.toFun)
+       (_ : (0 : ℝ) ≤ edFinalDataG M (edBoundaryCbd d Cb C kb) (Kg * stepFourGagliardoConst
+        d stepOneS) m)
+       (_ :
+        ¬(fun (y : Vec d) => triadicLatticePoint n (offGridLatticeIndex n x) + y) ''
+         openCubeSet (originCube d np) ⊆
+          openCubeSet (originCube d m)),
+       (√M.nu *
+         normalizedL2On (truncatedWindow (offGridCentre n x) m (n + (1 : ℤ))) fun (y :
+          Vec d) =>
+          √(vecNormSq (u.grad y))) ≤
+        max PG PF * Real.rpow (3 : ℝ) (((1 : ℝ) - alpha) * ((↑m : ℝ) - (↑n : ℝ))) *
+         ((√M.nu * normalizedL2On (openCubeSet (originCube d m)) fun (y : Vec d) =>
+          √(vecNormSq (u.grad y))) +
+           √(↑(Annealed.sigmaBar M m) : ℝ)⁻¹ * Real.rpow (3 : ℝ) ((↑m : ℝ) / (2 : ℝ)) *
+            Kg +
+          √(↑(Annealed.sigmaBar M m) : ℝ) * Real.rpow (3 : ℝ) ((↑m : ℝ) / (2 : ℝ)) * Kh)
 
 /-- The well-placed prefactor is monotone in its four data slots. -/
 theorem rootClauseBWellPlacedPrefactor_mono (d : ℕ) [NeZero d]
@@ -414,213 +464,263 @@ theorem gateBranchCg_le_uniform (d : ℕ) [NeZero d] {Cc sigma CBraw CBu Cosc : 
 /-! ## 2. The floor -/
 
 private theorem rootClauseBWellPlacedFloor_comparisonBounds1 :
-    ∀ (d : ℕ) [inst : NeZero d] (cstar Crg : ℝ) (hCrg : (0 : ℝ) < Crg) (C Ccap Cann Cb Cflo Citer Cosc : ℝ)
-      (kb : ℕ)
-      (hoscprod :
-        ∀ (Cedos : ℝ),
-          Cflo ≤ Cedos →
-            ∀ (M : ABKModel d) (m0 : ℤ) (Ecap : { E : ℝ // (1 : ℝ) ≤ E }),
-              Frozen.Section3.inductionState M m0 Ecap →
-                M.gamma < (1 / 2 : ℝ) →
-                  M.gamma ≤ C⁻¹ * Disorder.cstar M ^ (10 : ℕ) →
-                    M.gamma ≤ Ccap⁻¹ * Disorder.cstar M ^ (10 : ℕ) →
-                      M.gamma ≤ Cann⁻¹ * Disorder.cstar M ^ (10 : ℕ) →
-                        M.gamma ≤ (1 / 256 : ℝ) →
-                          ∀ (alpha : ℝ),
-                            (0 : ℝ) < alpha →
-                              alpha < (1 : ℝ) →
-                                M.gamma * |Real.log M.gamma| ^ (2 : ℕ) ≤
-                                    stepOneSEighth.rpow (3 / 2 : ℝ) * Disorder.cstar M ^ (2 : ℕ) *
-                                      stepOneEp (stepOneDelta (stepOneC1 d Cedos (1 : ℝ) Citer (kb + (1 : ℕ))) alpha) →
-                                  ∀ m ≤ m0,
-                                    ∀ᵐ (omega :
-                                      Cutoff.CutoffSample
-                                        d) ∂(↑(Cutoff.cutoffSampleLaw M) : Measure (Cutoff.CutoffSample d)),
-                                      ∀ (L n : ℤ) (v : Fin d → ℤ),
-                                        m ≤ L →
-                                          (14 : ℤ) ≤ m - n →
-                                            v ∈ latticeCubeSet d n m →
-                                              RootWindowPayload M (stepOneC1 d Cedos (1 : ℝ) Citer (kb + (1 : ℕ))) alpha n m
-                                                  omega →
-                                                ∀ (uglob hdat : H1Function (openCubeSet (originCube d m)))
-                                                  (gsrc : Vec d → Vec d) (Khol Kh : ℝ),
-                                                  (0 : ℝ) ≤ Khol →
-                                                    (0 : ℝ) ≤ Kh →
-                                                      IsDirichletSolutionOn
-                                                          (Cutoff.coefficientCutoff M.nu L omega).toCoeffField
-                                                          (originCube d m) uglob hdat gsrc →
-                                                        HolderSeminormBoundOn (openCubeSet (originCube d m)) (1 / 2 : ℝ)
-                                                            Khol gsrc →
-                                                          HolderSeminormBoundOn (openCubeSet (originCube d m)) (1 / 2 : ℝ)
-                                                              Kh hdat.grad →
-                                                            (∀ y ∈ openCubeSet (originCube d m),
-                                                                ‖hdat.grad y‖ ≤
-                                                                  Real.rpow (3 : ℝ) ((↑m : ℝ) / (2 : ℝ)) * Kh) →
-                                                              HasGradientOn (openCubeSet (originCube d m)) hdat.toFun
-                                                                  hdat.grad →
-                                                                ∀ (n' kc : ℤ),
-                                                                  n ≤ n' →
-                                                                    n' ≤ kc →
-                                                                      kc ≤ m →
-                                                                        ((3 : ℝ) ^ (-n') *
-                                                                            normalizedL2On
-                                                                              (truncatedWindow (triadicLatticePoint n v) m
-                                                                                n')
-                                                                              fun (y : Vec d) =>
-                                                                              uglob.toFun y -
-                                                                                volumeAverage
-                                                                                  (truncatedWindow (triadicLatticePoint n v)
-                                                                                    m n')
-                                                                                  uglob.toFun) ≤
-                                                                          Cosc *
-                                                                                Real.rpow (3 : ℝ)
-                                                                                  ((1 / 2 : ℝ) *
-                                                                                    stepSixExponent alpha n m) *
-                                                                              ((3 : ℝ) ^ (-kc) *
-                                                                                normalizedL2On
-                                                                                  (truncatedWindow (triadicLatticePoint n v)
-                                                                                    m kc)
-                                                                                  fun (y : Vec d) =>
-                                                                                  uglob.toFun y -
-                                                                                    volumeAverage
-                                                                                      (truncatedWindow
-                                                                                        (triadicLatticePoint n v) m kc)
-                                                                                      uglob.toFun) +
-                                                                            Cosc *
-                                                                                Real.rpow (3 : ℝ)
-                                                                                  ((1 / 2 : ℝ) *
-                                                                                    stepSixExponent alpha n m) *
-                                                                              (edFinalDataG M (edBoundaryCbd d Cb C kb)
-                                                                                  (Khol * stepFourGagliardoConst d stepOneS)
-                                                                                  m +
-                                                                                edBoundaryDataHPrinted d Cb C kb Kh m))
-      (Ccaps : ℝ)
-      (hcapsprod :
-        ∀ (M : ABKModel d),
-          M.gamma ≤ Ccaps⁻¹ * Disorder.cstar M ^ (10 : ℕ) →
-            ∀ delta ∈ Set.Ioc (0 : ℝ) (1 / 2 : ℝ),
-              (8 : ℝ) * M.gamma ≤ stepOneSEighth →
+  ∀ (d : ℕ) [NeZero d] (_ Crg : ℝ) (_ : (0 : ℝ) < Crg) (C Ccap Cann Cb Cflo Citer Cosc : ℝ)
+   (kb : ℕ)
+   (_ :
+    ∀ (Cedos : ℝ),
+     Cflo ≤ Cedos →
+      ∀ (M : ABKModel d) (m0 : ℤ) (Ecap : { E : ℝ // (1 : ℝ) ≤ E }),
+       Frozen.Section3.inductionState M m0 Ecap →
+        M.gamma < (1 / 2 : ℝ) →
+         M.gamma ≤ C⁻¹ * Disorder.cstar M ^ (10 : ℕ) →
+          M.gamma ≤ Ccap⁻¹ * Disorder.cstar M ^ (10 : ℕ) →
+           M.gamma ≤ Cann⁻¹ * Disorder.cstar M ^ (10 : ℕ) →
+            M.gamma ≤ (1 / 256 : ℝ) →
+             ∀ (alpha : ℝ),
+              (0 : ℝ) < alpha →
+               alpha < (1 : ℝ) →
                 M.gamma * |Real.log M.gamma| ^ (2 : ℕ) ≤
-                    stepOneSEighth.rpow (3 / 2 : ℝ) * Disorder.cstar M ^ (2 : ℕ) * stepOneEp delta →
-                  ∀ᵐ (omega : Cutoff.CutoffSample d) ∂(↑(Cutoff.cutoffSampleLaw M) : Measure (Cutoff.CutoffSample d)),
-                    ∀ (k n : ℤ) (v : Fin d → ℤ),
-                      omega ∈ stepThreeGoodEvent M delta k (triadicLatticePoint n v) →
-                        ∀ (L : ℤ),
-                          k ≤ L →
-                            StepSevenLambdaCaps (originCube d k)
-                              (fluxCorrectedCoeffFamily M L k (originCube d k)
-                                (Cutoff.translateCutoffSample (triadicLatticePoint n v) omega))
-                              (↑(Annealed.sigmaBar M k) : ℝ)
-                              ((2 : ℝ) * (↑d : ℝ) * ((Ccaps * stepOneEp delta) ^ (2 : ℕ) + (1 : ℝ))))
-      (Clam Klam : ℝ)
-      (hlamprod :
-        ∀ (M : ABKModel d),
-          M.gamma ≤ Clam⁻¹ * Disorder.cstar M ^ (10 : ℕ) →
-            ∀ delta ∈ Set.Ioc (0 : ℝ) (1 / 2 : ℝ),
-              (8 : ℝ) * M.gamma ≤ stepOneSEighth →
-                M.gamma * |Real.log M.gamma| ^ (2 : ℕ) ≤
-                    stepOneSEighth.rpow (3 / 2 : ℝ) * Disorder.cstar M ^ (2 : ℕ) * stepOneEp delta →
-                  ∀ᵐ (omega : Cutoff.CutoffSample d) ∂(↑(Cutoff.cutoffSampleLaw M) : Measure (Cutoff.CutoffSample d)),
-                    ∀ (j nl : ℤ) (v : Fin d → ℤ),
-                      omega ∈ stepThreeGoodEvent M delta j (triadicLatticePoint nl v) →
-                        ∀ (L m : ℤ),
-                          j ≤ L →
-                            j - (1 : ℤ) ≤ m →
-                              triadicLatticePoint nl v ∈ openCubeSet (originCube d m) →
-                                stepSevenCgLamInv (originCube d (j - (1 : ℤ)))
-                                    (parentRebasedFamily M L j (wellPlacedCentre (triadicLatticePoint nl v) m (j - (1 : ℤ)))
-                                      (triadicLatticePoint nl v) omega)
-                                    stepSevenCgS ≤
-                                  Klam * (↑(Annealed.sigmaBar M j) : ℝ)⁻¹)
-      (Cflu CannP Cind : ℝ),
-      let Cmax : ℝ := max (max (max C Ccap) (max Ccaps Clam)) (max (max Cflu CannP) (1 : ℝ));
-      ∀ (Cedos : ℝ) (hfloorO : Cflo ≤ Cedos),
-        let C1 : ℝ := stepOneC1 d Cedos (1 : ℝ) Citer (kb + (1 : ℕ));
-        ∀ (hC1two : (2 : ℝ) ≤ C1) (M : ABKModel d) (alpha : ℝ) (halpha0 : (0 : ℝ) < alpha)
-          (halpha : alpha ≤ (1 : ℝ) - Crg * √M.gamma) (m : ℤ) (hgammaCrg : M.gamma ≤ (Crg / (2 : ℝ)) ^ (2 : ℕ))
-          (hfact : RootClauseBGammaFacts M Cmax Cann Cind C1 Crg) (hg0 : (0 : ℝ) < M.gamma) (halpha1 : alpha < (1 : ℝ))
-          (hregC : M.gamma ≤ C⁻¹ * Disorder.cstar M ^ (10 : ℕ)) (hregCap : M.gamma ≤ Ccap⁻¹ * Disorder.cstar M ^ (10 : ℕ))
-          (hregCaps : M.gamma ≤ Ccaps⁻¹ * Disorder.cstar M ^ (10 : ℕ))
-          (hregLam : M.gamma ≤ Clam⁻¹ * Disorder.cstar M ^ (10 : ℕ))
-          (hsmall :
-            M.gamma * |Real.log M.gamma| ^ (2 : ℕ) ≤
-              stepOneSEighth.rpow (3 / 2 : ℝ) * Disorder.cstar M ^ (2 : ℕ) * stepOneEp (stepOneDelta C1 alpha))
-          (Ecap : { E : ℝ // (1 : ℝ) ≤ E }) (hstate : ∀ (m : ℤ), Frozen.Section3.inductionState M m Ecap),
-          stepOneDelta C1 alpha ∈ Set.Ioc (0 : ℝ) (1 / 2 : ℝ) ∧
-            (2 : ℝ) * M.gamma ≤ (1 : ℝ) - alpha ∧
-              stepOneS ∈ Set.Icc ((64 : ℝ) * M.gamma) (1 : ℝ) ∧
-                M.gamma * |Real.log M.gamma| ^ (2 : ℕ) ≤
-                    (stepOneS / (8 : ℝ)).rpow (3 / 2 : ℝ) * Disorder.cstar M ^ (2 : ℕ) * (1 / 2 : ℝ) ∧
-                  (∀ᵐ (omega : Cutoff.CutoffSample d) ∂(↑(Cutoff.cutoffSampleLaw M) : Measure (Cutoff.CutoffSample d)),
-                      ∀ (L n : ℤ) (v : Fin d → ℤ),
-                        m ≤ L →
-                          (14 : ℤ) ≤ m - n →
-                            v ∈ latticeCubeSet d n m →
-                              RootWindowPayload M (stepOneC1 d Cedos (1 : ℝ) Citer (kb + (1 : ℕ))) alpha n m omega →
-                                ∀ (uglob hdat : H1Function (openCubeSet (originCube d m))) (gsrc : Vec d → Vec d)
-                                  (Khol Kh : ℝ),
-                                  (0 : ℝ) ≤ Khol →
-                                    (0 : ℝ) ≤ Kh →
-                                      IsDirichletSolutionOn (Cutoff.coefficientCutoff M.nu L omega).toCoeffField
-                                          (originCube d m) uglob hdat gsrc →
-                                        HolderSeminormBoundOn (openCubeSet (originCube d m)) (1 / 2 : ℝ) Khol gsrc →
-                                          HolderSeminormBoundOn (openCubeSet (originCube d m)) (1 / 2 : ℝ) Kh hdat.grad →
-                                            (∀ y ∈ openCubeSet (originCube d m),
-                                                ‖hdat.grad y‖ ≤ Real.rpow (3 : ℝ) ((↑m : ℝ) / (2 : ℝ)) * Kh) →
-                                              HasGradientOn (openCubeSet (originCube d m)) hdat.toFun hdat.grad →
-                                                ∀ (n' kc : ℤ),
-                                                  n ≤ n' →
-                                                    n' ≤ kc →
-                                                      kc ≤ m →
-                                                        ((3 : ℝ) ^ (-n') *
-                                                            normalizedL2On (truncatedWindow (triadicLatticePoint n v) m n')
-                                                              fun (y : Vec d) =>
-                                                              uglob.toFun y -
-                                                                volumeAverage
-                                                                  (truncatedWindow (triadicLatticePoint n v) m n')
-                                                                  uglob.toFun) ≤
-                                                          Cosc *
-                                                                Real.rpow (3 : ℝ)
-                                                                  ((1 / 2 : ℝ) * stepSixExponent alpha n m) *
-                                                              ((3 : ℝ) ^ (-kc) *
-                                                                normalizedL2On
-                                                                  (truncatedWindow (triadicLatticePoint n v) m kc)
-                                                                  fun (y : Vec d) =>
-                                                                  uglob.toFun y -
-                                                                    volumeAverage
-                                                                      (truncatedWindow (triadicLatticePoint n v) m kc)
-                                                                      uglob.toFun) +
-                                                            Cosc *
-                                                                Real.rpow (3 : ℝ)
-                                                                  ((1 / 2 : ℝ) * stepSixExponent alpha n m) *
-                                                              (edFinalDataG M (edBoundaryCbd d Cb C kb)
-                                                                  (Khol * stepFourGagliardoConst d stepOneS) m +
-                                                                edBoundaryDataHPrinted d Cb C kb Kh m)) ∧
-                    (∀ᵐ (omega : Cutoff.CutoffSample d) ∂(↑(Cutoff.cutoffSampleLaw M) : Measure (Cutoff.CutoffSample d)),
-                        ∀ (k n : ℤ) (v : Fin d → ℤ),
-                          omega ∈ stepThreeGoodEvent M (stepOneDelta C1 alpha) k (triadicLatticePoint n v) →
-                            ∀ (L : ℤ),
-                              k ≤ L →
-                                StepSevenLambdaCaps (originCube d k)
-                                  (fluxCorrectedCoeffFamily M L k (originCube d k)
-                                    (Cutoff.translateCutoffSample (triadicLatticePoint n v) omega))
-                                  (↑(Annealed.sigmaBar M k) : ℝ)
-                                  ((2 : ℝ) * (↑d : ℝ) *
-                                    ((Ccaps * stepOneEp (stepOneDelta C1 alpha)) ^ (2 : ℕ) + (1 : ℝ)))) ∧
-                      ∀ᵐ (omega : Cutoff.CutoffSample d) ∂(↑(Cutoff.cutoffSampleLaw M) : Measure (Cutoff.CutoffSample d)),
-                        ∀ (j nl : ℤ) (v : Fin d → ℤ),
-                          omega ∈ stepThreeGoodEvent M (stepOneDelta C1 alpha) j (triadicLatticePoint nl v) →
-                            ∀ (L m : ℤ),
-                              j ≤ L →
-                                j - (1 : ℤ) ≤ m →
-                                  triadicLatticePoint nl v ∈ openCubeSet (originCube d m) →
-                                    stepSevenCgLamInv (originCube d (j - (1 : ℤ)))
-                                        (parentRebasedFamily M L j
-                                          (wellPlacedCentre (triadicLatticePoint nl v) m (j - (1 : ℤ)))
-                                          (triadicLatticePoint nl v) omega)
-                                        stepSevenCgS ≤
-                                      Klam * (↑(Annealed.sigmaBar M j) : ℝ)⁻¹ := by
-  intro d instance1 cstar Crg hCrg C Ccap Cann Cb Cflo Citer Cosc kb hoscprod Ccaps hcapsprod Clam Klam hlamprod Cflu CannP Cind Cmax Cedos hfloorO C1 hC1two M alpha halpha0 halpha m hgammaCrg hfact hg0 halpha1 hregC hregCap hregCaps hregLam hsmall Ecap hstate
+                  stepOneSEighth.rpow (3 / 2 : ℝ) * Disorder.cstar M ^ (2 : ℕ) *
+                   stepOneEp (stepOneDelta (stepOneC1 d Cedos (1 : ℝ) Citer (kb
+                    + (1 : ℕ))) alpha) →
+                 ∀ m ≤ m0,
+                  ∀ᵐ (omega :
+                   Cutoff.CutoffSample
+                    d) ∂(↑(Cutoff.cutoffSampleLaw M) : Measure
+                     (Cutoff.CutoffSample d)),
+                   ∀ (L n : ℤ) (v : Fin d → ℤ),
+                    m ≤ L →
+                     (14 : ℤ) ≤ m - n →
+                      v ∈ latticeCubeSet d n m →
+                       RootWindowPayload M (stepOneC1 d Cedos (1 : ℝ) Citer
+                        (kb + (1 : ℕ))) alpha n m
+                         omega →
+                        ∀ (uglob hdat : H1Function (openCubeSet
+                         (originCube d m)))
+                         (gsrc : Vec d → Vec d) (Khol Kh : ℝ),
+                         (0 : ℝ) ≤ Khol →
+                          (0 : ℝ) ≤ Kh →
+                           IsDirichletSolutionOn
+                             (Cutoff.coefficientCutoff M.nu L
+                              omega).toCoeffField
+                             (originCube d m) uglob hdat gsrc →
+                            HolderSeminormBoundOn (openCubeSet
+                             (originCube d m)) (1 / 2 : ℝ)
+                              Khol gsrc →
+                             HolderSeminormBoundOn (openCubeSet
+                              (originCube d m)) (1 / 2 : ℝ)
+                               Kh hdat.grad →
+                              (∀ y ∈ openCubeSet (originCube d m),
+                                ‖hdat.grad y‖ ≤
+                                 Real.rpow (3 : ℝ) ((↑m : ℝ) / (2
+                                  : ℝ)) * Kh) →
+                               HasGradientOn (openCubeSet
+                                (originCube d m)) hdat.toFun
+                                 hdat.grad →
+                                ∀ (n' kc : ℤ),
+                                 n ≤ n' →
+                                  n' ≤ kc →
+                                   kc ≤ m →
+                                    ((3 : ℝ) ^ (-n') *
+                                      normalizedL2On
+                                       (truncatedWindow
+                                        (triadicLatticePoint n v) m
+                                        n')
+                                       fun (y : Vec d) =>
+                                       uglob.toFun y -
+                                        volumeAverage
+                                         (truncatedWindow
+                                          (triadicLatticePoint n v)
+                                          m n')
+                                         uglob.toFun) ≤
+                                     Cosc *
+                                        Real.rpow (3 : ℝ)
+                                         ((1 / 2 : ℝ) *
+                                          stepSixExponent alpha n m) *
+                                       ((3 : ℝ) ^ (-kc) *
+                                        normalizedL2On
+                                         (truncatedWindow
+                                          (triadicLatticePoint n v)
+                                          m kc)
+                                         fun (y : Vec d) =>
+                                         uglob.toFun y -
+                                          volumeAverage
+                                           (truncatedWindow
+                                            (triadicLatticePoint n v) m kc)
+                                           uglob.toFun) +
+                                      Cosc *
+                                        Real.rpow (3 : ℝ)
+                                         ((1 / 2 : ℝ) *
+                                          stepSixExponent alpha n m) *
+                                       (edFinalDataG M
+                                        (edBoundaryCbd d
+                                         Cb C kb)
+                                         (Khol *
+                                          stepFourGagliardoConst d stepOneS)
+                                         m +
+                                        edBoundaryDataHPrinted d Cb C kb Kh m))
+   (Ccaps : ℝ)
+   (_ :
+    ∀ (M : ABKModel d),
+     M.gamma ≤ Ccaps⁻¹ * Disorder.cstar M ^ (10 : ℕ) →
+      ∀ delta ∈ Set.Ioc (0 : ℝ) (1 / 2 : ℝ),
+       (8 : ℝ) * M.gamma ≤ stepOneSEighth →
+        M.gamma * |Real.log M.gamma| ^ (2 : ℕ) ≤
+          stepOneSEighth.rpow (3 / 2 : ℝ) * Disorder.cstar M ^ (2 : ℕ) * stepOneEp delta →
+         ∀ᵐ (omega : Cutoff.CutoffSample d) ∂(↑(Cutoff.cutoffSampleLaw M) : Measure
+          (Cutoff.CutoffSample d)),
+          ∀ (k n : ℤ) (v : Fin d → ℤ),
+           omega ∈ stepThreeGoodEvent M delta k (triadicLatticePoint n v) →
+            ∀ (L : ℤ),
+             k ≤ L →
+              StepSevenLambdaCaps (originCube d k)
+               (fluxCorrectedCoeffFamily M L k (originCube d k)
+                (Cutoff.translateCutoffSample (triadicLatticePoint n v) omega))
+               (↑(Annealed.sigmaBar M k) : ℝ)
+               ((2 : ℝ) * (↑d : ℝ) * ((Ccaps * stepOneEp delta) ^ (2 : ℕ) + (1 :
+                ℝ))))
+   (Clam Klam : ℝ)
+   (_ :
+    ∀ (M : ABKModel d),
+     M.gamma ≤ Clam⁻¹ * Disorder.cstar M ^ (10 : ℕ) →
+      ∀ delta ∈ Set.Ioc (0 : ℝ) (1 / 2 : ℝ),
+       (8 : ℝ) * M.gamma ≤ stepOneSEighth →
+        M.gamma * |Real.log M.gamma| ^ (2 : ℕ) ≤
+          stepOneSEighth.rpow (3 / 2 : ℝ) * Disorder.cstar M ^ (2 : ℕ) * stepOneEp delta →
+         ∀ᵐ (omega : Cutoff.CutoffSample d) ∂(↑(Cutoff.cutoffSampleLaw M) : Measure
+          (Cutoff.CutoffSample d)),
+          ∀ (j nl : ℤ) (v : Fin d → ℤ),
+           omega ∈ stepThreeGoodEvent M delta j (triadicLatticePoint nl v) →
+            ∀ (L m : ℤ),
+             j ≤ L →
+              j - (1 : ℤ) ≤ m →
+               triadicLatticePoint nl v ∈ openCubeSet (originCube d m) →
+                stepSevenCgLamInv (originCube d (j - (1 : ℤ)))
+                  (parentRebasedFamily M L j (wellPlacedCentre
+                   (triadicLatticePoint nl v) m (j - (1 : ℤ)))
+                   (triadicLatticePoint nl v) omega)
+                  stepSevenCgS ≤
+                 Klam * (↑(Annealed.sigmaBar M j) : ℝ)⁻¹)
+   (Cflu CannP Cind : ℝ),
+   let Cmax : ℝ := max (max (max C Ccap) (max Ccaps Clam)) (max (max Cflu CannP) (1 : ℝ));
+   ∀ (Cedos : ℝ) (_ : Cflo ≤ Cedos),
+    let C1 : ℝ := stepOneC1 d Cedos (1 : ℝ) Citer (kb + (1 : ℕ));
+    ∀ (_ : (2 : ℝ) ≤ C1) (M : ABKModel d) (alpha : ℝ) (_ : (0 : ℝ) < alpha)
+     (_ : alpha ≤ (1 : ℝ) - Crg * √M.gamma) (m : ℤ) (_ : M.gamma ≤ (Crg / (2 : ℝ)) ^ (2 : ℕ))
+     (_ : RootClauseBGammaFacts M Cmax Cann Cind C1 Crg) (_ : (0 : ℝ) < M.gamma) (_ : alpha <
+      (1 : ℝ))
+     (_ : M.gamma ≤ C⁻¹ * Disorder.cstar M ^ (10 : ℕ)) (_ : M.gamma ≤ Ccap⁻¹ * Disorder.cstar
+      M ^ (10 : ℕ))
+     (_ : M.gamma ≤ Ccaps⁻¹ * Disorder.cstar M ^ (10 : ℕ))
+     (_ : M.gamma ≤ Clam⁻¹ * Disorder.cstar M ^ (10 : ℕ))
+     (_ :
+      M.gamma * |Real.log M.gamma| ^ (2 : ℕ) ≤
+       stepOneSEighth.rpow (3 / 2 : ℝ) * Disorder.cstar M ^ (2 : ℕ) * stepOneEp
+        (stepOneDelta C1 alpha))
+     (Ecap : { E : ℝ // (1 : ℝ) ≤ E }) (_ : ∀ (m : ℤ), Frozen.Section3.inductionState M m
+      Ecap),
+     stepOneDelta C1 alpha ∈ Set.Ioc (0 : ℝ) (1 / 2 : ℝ) ∧
+      (2 : ℝ) * M.gamma ≤ (1 : ℝ) - alpha ∧
+       stepOneS ∈ Set.Icc ((64 : ℝ) * M.gamma) (1 : ℝ) ∧
+        M.gamma * |Real.log M.gamma| ^ (2 : ℕ) ≤
+          (stepOneS / (8 : ℝ)).rpow (3 / 2 : ℝ) * Disorder.cstar M ^ (2 : ℕ) * (1 / 2 :
+           ℝ) ∧
+         (∀ᵐ (omega : Cutoff.CutoffSample d) ∂(↑(Cutoff.cutoffSampleLaw M) : Measure
+          (Cutoff.CutoffSample d)),
+           ∀ (L n : ℤ) (v : Fin d → ℤ),
+            m ≤ L →
+             (14 : ℤ) ≤ m - n →
+              v ∈ latticeCubeSet d n m →
+               RootWindowPayload M (stepOneC1 d Cedos (1 : ℝ) Citer (kb + (1 : ℕ)))
+                alpha n m omega →
+                ∀ (uglob hdat : H1Function (openCubeSet (originCube d m))) (gsrc :
+                 Vec d → Vec d)
+                 (Khol Kh : ℝ),
+                 (0 : ℝ) ≤ Khol →
+                  (0 : ℝ) ≤ Kh →
+                   IsDirichletSolutionOn (Cutoff.coefficientCutoff M.nu L
+                    omega).toCoeffField
+                     (originCube d m) uglob hdat gsrc →
+                    HolderSeminormBoundOn (openCubeSet (originCube d m)) (1 /
+                     2 : ℝ) Khol gsrc →
+                     HolderSeminormBoundOn (openCubeSet (originCube d m)) (1
+                      / 2 : ℝ) Kh hdat.grad →
+                      (∀ y ∈ openCubeSet (originCube d m),
+                        ‖hdat.grad y‖ ≤ Real.rpow (3 : ℝ) ((↑m : ℝ) / (2 :
+                         ℝ)) * Kh) →
+                       HasGradientOn (openCubeSet (originCube d m))
+                        hdat.toFun hdat.grad →
+                        ∀ (n' kc : ℤ),
+                         n ≤ n' →
+                          n' ≤ kc →
+                           kc ≤ m →
+                            ((3 : ℝ) ^ (-n') *
+                              normalizedL2On (truncatedWindow
+                               (triadicLatticePoint n v) m n')
+                               fun (y : Vec d) =>
+                               uglob.toFun y -
+                                volumeAverage
+                                 (truncatedWindow
+                                  (triadicLatticePoint n v) m n')
+                                 uglob.toFun) ≤
+                             Cosc *
+                                Real.rpow (3 : ℝ)
+                                 ((1 / 2 : ℝ) * stepSixExponent
+                                  alpha n m) *
+                               ((3 : ℝ) ^ (-kc) *
+                                normalizedL2On
+                                 (truncatedWindow
+                                  (triadicLatticePoint n v) m kc)
+                                 fun (y : Vec d) =>
+                                 uglob.toFun y -
+                                  volumeAverage
+                                   (truncatedWindow
+                                    (triadicLatticePoint n v)
+                                     m kc)
+                                   uglob.toFun) +
+                              Cosc *
+                                Real.rpow (3 : ℝ)
+                                 ((1 / 2 : ℝ) * stepSixExponent
+                                  alpha n m) *
+                               (edFinalDataG M (edBoundaryCbd d Cb
+                                C kb)
+                                 (Khol * stepFourGagliardoConst d
+                                  stepOneS) m +
+                                edBoundaryDataHPrinted d Cb C kb
+                                 Kh m)) ∧
+          (∀ᵐ (omega : Cutoff.CutoffSample d) ∂(↑(Cutoff.cutoffSampleLaw M) : Measure
+           (Cutoff.CutoffSample d)),
+            ∀ (k n : ℤ) (v : Fin d → ℤ),
+             omega ∈ stepThreeGoodEvent M (stepOneDelta C1 alpha) k
+              (triadicLatticePoint n v) →
+              ∀ (L : ℤ),
+               k ≤ L →
+                StepSevenLambdaCaps (originCube d k)
+                 (fluxCorrectedCoeffFamily M L k (originCube d k)
+                  (Cutoff.translateCutoffSample (triadicLatticePoint n v) omega))
+                 (↑(Annealed.sigmaBar M k) : ℝ)
+                 ((2 : ℝ) * (↑d : ℝ) *
+                  ((Ccaps * stepOneEp (stepOneDelta C1 alpha)) ^ (2 : ℕ) + (1 :
+                   ℝ)))) ∧
+           ∀ᵐ (omega : Cutoff.CutoffSample d) ∂(↑(Cutoff.cutoffSampleLaw M) : Measure
+            (Cutoff.CutoffSample d)),
+            ∀ (j nl : ℤ) (v : Fin d → ℤ),
+             omega ∈ stepThreeGoodEvent M (stepOneDelta C1 alpha) j
+              (triadicLatticePoint nl v) →
+              ∀ (L m : ℤ),
+               j ≤ L →
+                j - (1 : ℤ) ≤ m →
+                 triadicLatticePoint nl v ∈ openCubeSet (originCube d m) →
+                  stepSevenCgLamInv (originCube d (j - (1 : ℤ)))
+                    (parentRebasedFamily M L j
+                     (wellPlacedCentre (triadicLatticePoint nl v) m (j - (1 :
+                      ℤ)))
+                     (triadicLatticePoint nl v) omega)
+                    stepSevenCgS ≤
+                   Klam * (↑(Annealed.sigmaBar M j) : ℝ)⁻¹  := by
+  intro _ _ cstar Crg hCrg _ _ _ _ _ _ _ _ hoscprod _ hcapsprod _ _ hlamprod Cflu CannP _ Cmax
+    Cedos hfloorO C1 hC1two M alpha halpha0 halpha m hgammaCrg hfact hg0 halpha1 hregC hregCap
+      hregCaps hregLam hsmall Ecap hstate
   have hdeltamem := stepOneDelta_mem hC1two halpha0 halpha1
   -- the `2γ ≤ 1-α` regime
   have h2gamma : 2 * M.gamma ≤ 1 - alpha := by
@@ -676,44 +776,59 @@ private theorem rootClauseBWellPlacedFloor_comparisonBounds1 :
   exact ⟨hdeltamem, h2gamma, hsrange, hsmallFlu, haeOsc, haeCaps, haeLam⟩
 
 private theorem rootClauseBWellPlacedFloor_comparisonBounds2 :
-    ∀ (d : ℕ) [inst : NeZero d] (Crg C Ccap Cann Cb Citer : ℝ) (kb : ℕ) (Ccaps : ℝ) (hCcaps : (0 : ℝ) < Ccaps)
-      (Clam Cflu CannP Cind : ℝ) (hCbd : (0 : ℝ) ≤ edBoundaryCbd d Cb C kb) (hCWH : (0 : ℝ) ≤ boundaryCWH d Cb C kb),
+    ∀ (d : ℕ) [NeZero d] (Crg C Ccap Cann Cb Citer : ℝ) (kb : ℕ) (Ccaps : ℝ) (_ : (0 : ℝ) < Ccaps)
+      (Clam Cflu CannP Cind : ℝ) (_ : (0 : ℝ) ≤ edBoundaryCbd d Cb C kb) (_ : (0 : ℝ) ≤
+        boundaryCWH d Cb C kb),
       let Cmax : ℝ := max (max (max C Ccap) (max Ccaps Clam)) (max (max Cflu CannP) (1 : ℝ));
       let CBu : ℝ := rootClauseBCapsUniform d Ccaps;
-      ∀ (hCBuDef : CBu = rootClauseBCapsUniform d Ccaps),
-        let CWGu : ℝ := rootClauseBOscWUniform (edBoundaryCbd d Cb C kb) * stepFourGagliardoConst d stepOneS;
-        ∀ (hCWGuDef : CWGu = rootClauseBOscWUniform (edBoundaryCbd d Cb C kb) * stepFourGagliardoConst d stepOneS)
+      ∀ (_ : CBu = rootClauseBCapsUniform d Ccaps),
+        let CWGu : ℝ := rootClauseBOscWUniform (edBoundaryCbd d Cb C kb) * stepFourGagliardoConst
+          d stepOneS;
+        ∀ (_ : CWGu = rootClauseBOscWUniform (edBoundaryCbd d Cb C kb) * stepFourGagliardoConst d
+          stepOneS)
           (Cedos : ℝ),
           let C1 : ℝ := stepOneC1 d Cedos (1 : ℝ) Citer (kb + (1 : ℕ));
-          ∀ (M : ABKModel d) (alpha : ℝ) (m : ℤ) (hfact : RootClauseBGammaFacts M Cmax Cann Cind C1 Crg) (n : ℤ)
-            (u : H1Function (openCubeSet (originCube d m))) (Kg Kh : ℝ) (x : Vec d) (hKg : (0 : ℝ) ≤ Kg)
-            (hKh : (0 : ℝ) ≤ Kh) (kc np : ℤ) (hδIoc : stepOneDelta C1 alpha ∈ Set.Ioc (0 : ℝ) (1 / 2 : ℝ)),
-            let CBraw : ℝ := (2 : ℝ) * (↑d : ℝ) * ((Ccaps * stepOneEp (stepOneDelta C1 alpha)) ^ (2 : ℕ) + (1 : ℝ));
-            ∀ (hCBrawDef : CBraw = (2 : ℝ) * (↑d : ℝ) * ((Ccaps * stepOneEp (stepOneDelta C1 alpha)) ^ (2 : ℕ) + (1 : ℝ))),
+          ∀ (M : ABKModel d) (alpha : ℝ) (m : ℤ) (_ : RootClauseBGammaFacts M Cmax Cann Cind C1
+            Crg) (n : ℤ)
+            (u : H1Function (openCubeSet (originCube d m))) (Kg Kh : ℝ) (x : Vec d) (_ : (0 : ℝ) ≤
+              Kg)
+            (_ : (0 : ℝ) ≤ Kh) (kc np : ℤ) (_ : stepOneDelta C1 alpha ∈ Set.Ioc (0 : ℝ) (1 / 2 :
+              ℝ)),
+            let CBraw : ℝ := (2 : ℝ) * (↑d : ℝ) * ((Ccaps * stepOneEp (stepOneDelta C1 alpha)) ^
+              (2 : ℕ) + (1 : ℝ));
+            ∀ (_ : CBraw = (2 : ℝ) * (↑d : ℝ) * ((Ccaps * stepOneEp (stepOneDelta C1 alpha)) ^ (2
+              : ℕ) + (1 : ℝ))),
               (0 : ℝ) ≤ CBraw ∧
                 CBraw ≤ CBu ∧
-                  edFinalDataOscW M (edBoundaryCbd d Cb C kb) * stepFourGagliardoConst d stepOneS ≤ CWGu ∧
-                    (0 : ℝ) ≤ edFinalDataOscW M (edBoundaryCbd d Cb C kb) * stepFourGagliardoConst d stepOneS ∧
+                  edFinalDataOscW M (edBoundaryCbd d Cb C kb) * stepFourGagliardoConst d stepOneS
+                    ≤ CWGu ∧
+                    (0 : ℝ) ≤ edFinalDataOscW M (edBoundaryCbd d Cb C kb) * stepFourGagliardoConst
+                      d stepOneS ∧
                       (0 : ℝ) < (↑(Annealed.sigmaBar M (np + (1 : ℤ))) : ℝ) ∧
                         (0 : ℝ) ≤ edBoundaryDataHPrinted d Cb C kb Kh m ∧
                           (2 : ℝ) * (↑d : ℝ) + (2 : ℝ) ≤ C1 ∧
                             stepOneDelta C1 alpha ≤ C1⁻¹ * ((1 : ℝ) - alpha) ∧
                               ((0 : ℝ) ≤
                                   (cubeScaleFactor (originCube d kc))⁻¹ *
-                                    normalizedL2On (truncatedWindow (triadicLatticePoint n (offGridLatticeIndex n x)) m kc)
+                                    normalizedL2On (truncatedWindow (triadicLatticePoint n
+                                      (offGridLatticeIndex n x)) m kc)
                                       fun (y : Vec d) =>
                                       u.toFun y -
                                         volumeAverage
-                                          (truncatedWindow (triadicLatticePoint n (offGridLatticeIndex n x)) m kc)
+                                          (truncatedWindow (triadicLatticePoint n
+                                            (offGridLatticeIndex n x)) m kc)
                                           u.toFun) ∧
                                 (0 : ℝ) < (↑(Annealed.sigmaBar M m) : ℝ) ∧
                                   (0 : ℝ) ≤
                                       (↑(Annealed.sigmaBar M m) : ℝ) *
-                                        edFinalDataG M (edBoundaryCbd d Cb C kb) (Kg * stepFourGagliardoConst d stepOneS)
+                                        edFinalDataG M (edBoundaryCbd d Cb C kb) (Kg *
+                                          stepFourGagliardoConst d stepOneS)
                                           m ∧
                                     (0 : ℝ) ≤
-                                      edFinalDataG M (edBoundaryCbd d Cb C kb) (Kg * stepFourGagliardoConst d stepOneS) m := by
-  intro d instance1 Crg C Ccap Cann Cb Citer kb Ccaps hCcaps Clam Cflu CannP Cind hCbd hCWH Cmax CBu hCBuDef CWGu hCWGuDef Cedos C1 M alpha m hfact n u Kg Kh x hKg hKh kc np hδIoc CBraw hCBrawDef
+                                      edFinalDataG M (edBoundaryCbd d Cb C kb) (Kg *
+                                        stepFourGagliardoConst d stepOneS) m := by
+  intro d _ _ C _ _ Cb Citer kb Ccaps hCcaps _ _ _ _ hCbd hCWH _ CBu hCBuDef CWGu hCWGuDef Cedos
+    C1 M alpha m hfact n u Kg Kh x hKg hKh kc np hδIoc CBraw hCBrawDef
   have hCBraw0 : (0 : ℝ) ≤ CBraw := by
     have hsq : (0 : ℝ) ≤ (Ccaps * stepOneEp (stepOneDelta C1 alpha)) ^ 2 := sq_nonneg _
     have hdd : (0 : ℝ) ≤ 2 * (d : ℝ) := by
@@ -764,10 +879,13 @@ private theorem rootClauseBWellPlacedFloor_comparisonBounds2 :
   have hedG0 : (0 : ℝ) ≤ edFinalDataG M (edBoundaryCbd d Cb C kb)
       (Kg * stepFourGagliardoConst d stepOneS) m :=
     (mul_nonneg_iff_of_pos_left hsigmaPos).mp hGpres
-  exact ⟨hCBraw0, hCBle, hCWGle, hCWG0, hsigmaJ, hdataHP0, hC1dim, hdeltaEq, hoscHi0, hsigmaPos, hGpres, hedG0⟩
+  exact ⟨hCBraw0, hCBle, hCWGle, hCWG0, hsigmaJ, hdataHP0, hC1dim, hdeltaEq, hoscHi0, hsigmaPos,
+    hGpres, hedG0⟩
 
-private theorem rootClauseBWellPlacedFloor_comparisonBounds3 : rootClauseBWellPlacedFloor_comparisonBounds3_statement := by
-  intro d cstar Crg hCrg C Ccap Cann Citer kb hC hCcap Ccaps hCcaps Clam hClam Cflu hCflu CannP hCannP Cind Cmax Cedos C1 gamma0 hfacts M hcs hgammale alpha halpha0 halpha
+private theorem rootClauseBWellPlacedFloor_comparisonBounds3 :
+  rootClauseBWellPlacedFloor_comparisonBounds3_statement := by
+  intro _ cstar Crg hCrg C Ccap _ _ _ hC hCcap Ccaps hCcaps Clam hClam Cflu hCflu CannP hCannP _ _
+    _ _ gamma0 hfacts M hcs hgammale alpha halpha0 halpha
   have hgammag0 : M.gamma ≤ gamma0 := le_trans hgammale (min_le_left _ _)
   have hgammaCrg : M.gamma ≤ (Crg / 2) ^ (2 : ℕ) :=
     le_trans hgammale (min_le_right _ _)
@@ -804,10 +922,15 @@ private theorem rootClauseBWellPlacedFloor_comparisonBounds3 : rootClauseBWellPl
       (inv_anti₀ hCannP (le_trans (le_max_right _ _)
         (le_trans (le_max_left _ _) (le_max_right _ _)))) hcs10)
   have hsmall := hfact.smallEp alpha halpha0 halpha
-  exact ⟨hgammaCrg, hfact, hg0, halpha1, hregC, hregCap, hregCaps, hregLam, hregFlu, hregAnnP, hsmall⟩
+  exact ⟨hgammaCrg, hfact, hg0, halpha1, hregC, hregCap, hregCaps, hregLam, hregFlu, hregAnnP,
+    hsmall⟩
 
 private theorem rootClauseB_energyWindowBound : rootClauseB_energyWindowBound_statement := by
-  intro d instance1 Crg C Ccap Cann Cb Citer Cosc kb hCosc Ccaps Clam Klam hKlam Cflu Afl K1 K2 hK1 hK2 CannP Cind Cch hCch hend CdispC hCbd hCWH hd1 CBu CWGu Ctru hCtru0 PG PF Cedos C1 M alpha halpha0 m hfact halpha1 Ecap hstate h2gamma omega hFlush hPin n L hnm hmL u h g Kg Kh hsol hgHol hhHol hsup x hKg hKh hzm hgL2 hgW hhW hoscfun kc hkhi np hjlo hgoodj B hcard hgapHi hgapLo hgapStrict hδIoc hlamkc hCWGle hCWG0 hdataHP0 hC1dim hdeltaEq hoscHi0 hedG0 hgate
+  intro d _ _ C _ _ Cb _ Cosc kb hCosc _ _ Klam hKlam _ Afl K1 K2 hK1 hK2 _ _ Cch hCch hend _ hCbd
+    hCWH hd1 _ _ Ctru hCtru0 PG PF _ _ M _ halpha0 m hfact halpha1 Ecap hstate h2gamma omega
+      hFlush hPin n L hnm hmL u h g Kg Kh hsol hgHol hhHol hsup x hKg hKh hzm hgL2 hgW hhW hoscfun
+        kc _ np _ hgoodj _ hcard _ _ _ hδIoc hlamkc hCWGle hCWG0 hdataHP0 hC1dim hdeltaEq hoscHi0
+          hedG0 hgate
   -- branch: the `S`-killed window energy under the `ε`-pin
   have hnogate : ¬ (∀ (i : Fin d) (sigma : ℝ), (sigma = 1 ∨ sigma = -1) →
       ¬ (wellPlacedHalfGap m np <
@@ -916,267 +1039,356 @@ private theorem rootClauseB_energyWindowBound : rootClauseB_energyWindowBound_st
 
 
 private theorem rootClauseB_gatedCaccioppoliBound :
-    ∀ (d : ℕ) [inst : NeZero d] (Crg C Ccap Cann Cb Citer Cosc : ℝ)
-      (kb : ℕ) (hCosc : (0 : ℝ) ≤ Cosc) (Ccaps Clam Klam : ℝ) (hKlam : (0 : ℝ) < Klam) (Cflu K1 K2 CannP Cind Cch : ℝ)
-      (hCch : (0 : ℝ) < Cch)
-      (hend :
-        ∀ (M : ABKModel d) (m0 : ℤ) (Ecap : { E : ℝ // (1 : ℝ) ≤ E }),
-          Frozen.Section3.inductionState M m0 Ecap →
-            M.gamma < (1 / 2 : ℝ) →
-              ∀ (L : ℤ) {alpha : ℝ} {n m kc np : ℤ} {z : Vec d} (omega : Cutoff.CutoffSample d)
-                (uglob hdat : H1Function (openCubeSet (originCube d m))) {gsrc : Vec d → Vec d}
-                {Khol Kh Kd CB Cg Cdel CdM CWH C1 delta Cest dataH dataM : ℝ} {B : ℕ},
-                z ∈ openCubeSet (originCube d m) →
-                  m ≤ m0 →
-                    n ≤ m →
-                      kc ≤ m - (1 : ℤ) →
-                        np + (1 : ℤ) ≤ m →
-                          m - (kc + (1 : ℤ)) ≤ (↑B : ℤ) + (1 : ℤ) →
-                            IsDirichletSolutionOn (Cutoff.coefficientCutoff M.nu L omega).toCoeffField (originCube d m)
-                                uglob hdat gsrc →
-                              MemLp gsrc (2 : ENNReal) (normalizedVolumeMeasureOn (openCubeSet (originCube d m))) →
-                                MemLp (Gagliardo.gagliardoKernel stepOneS (2 : ENNReal) gsrc) (2 : ENNReal)
-                                    (normalizedGagliardoMeasureOn (openCubeSet (originCube d m))) →
-                                  (0 : ℝ) ≤ Khol →
-                                    (0 : ℝ) ≤ Kh →
-                                      (0 : ℝ) ≤ Kd →
-                                        (0 : ℝ) ≤ CB →
-                                          (0 : ℝ) ≤ Cg →
-                                            (0 : ℝ) ≤ Cdel →
-                                              (0 : ℝ) ≤ CdM →
-                                                (0 : ℝ) ≤ CWH →
-                                                  (0 : ℝ) ≤ dataH →
-                                                    (0 : ℝ) ≤ dataM →
-                                                      (2 : ℝ) * (↑d : ℝ) + (2 : ℝ) ≤ C1 →
-                                                        (0 : ℝ) ≤ alpha →
-                                                          alpha ≤ (1 : ℝ) →
-                                                            delta ≤ C1⁻¹ * ((1 : ℝ) - alpha) →
-                                                              (↑B : ℝ) ≤ delta * ((↑(m - n).toNat : ℝ) + (1 : ℝ)) →
-                                                                stepSevenCgLamInv (originCube d kc)
-                                                                      (parentRebasedFamily M L (kc + (1 : ℤ))
-                                                                        (wellPlacedCentre z m kc) z omega)
-                                                                      stepSevenCgS ≤
-                                                                    CB * (↑(Annealed.sigmaBar M (kc + (1 : ℤ))) : ℝ)⁻¹ →
-                                                                  (scaleNormalizedPositiveBesovVectorSeminormTwo
-                                                                        (originCube d kc) stepSevenCgS fun (x : Vec d) =>
-                                                                        -gsrc (x + wellPlacedCentre z m kc)) ≤
-                                                                      Kd * edFinalDataOscG Khol m →
-                                                                    dataM ≤
-                                                                        CdM *
-                                                                          (√(↑(Annealed.sigmaBar M m) : ℝ)⁻¹ *
-                                                                            edFinalDataOscG Khol m) →
-                                                                      dataH ≤ CWH * edFinalDataOscG Kh m →
-                                                                        stepSevenNuGradNorm M.nu
-                                                                              (truncatedWindow z m (n + (1 : ℤ)))
-                                                                              uglob.grad ≤
-                                                                            Cg *
-                                                                                    √(↑(Annealed.sigmaBar M
-                                                                                            (np + (1 : ℤ))) :
-                                                                                        ℝ) *
-                                                                                  Real.rpow (3 : ℝ)
-                                                                                    ((3 / 4 : ℝ) *
-                                                                                      stepSixExponent alpha n m) *
-                                                                                ((cubeScaleFactor (originCube d kc))⁻¹ *
-                                                                                  normalizedL2On (truncatedWindow z m kc)
-                                                                                    fun (x : Vec d) =>
-                                                                                    uglob.toFun x -
-                                                                                      volumeAverage (truncatedWindow z m kc)
-                                                                                        uglob.toFun) +
-                                                                              Cg *
-                                                                                  Real.rpow (3 : ℝ)
-                                                                                    ((3 / 4 : ℝ) *
-                                                                                      stepSixExponent alpha n m) *
-                                                                                (√(↑(Annealed.sigmaBar M (np + (1 : ℤ))) :
-                                                                                        ℝ) *
-                                                                                    ((1 : ℝ) *
-                                                                                      ((↑(Annealed.sigmaBar M m) : ℝ)⁻¹ *
-                                                                                          ((↑(Annealed.sigmaBar M m) : ℝ) *
-                                                                                            edFinalDataG M Cdel
-                                                                                              (Khol *
-                                                                                                stepFourGagliardoConst d
-                                                                                                  stepOneS)
-                                                                                              m) +
-                                                                                        dataH)) +
-                                                                                  dataM) →
-                                                                          rootClauseBWellPlacedPrefactor d Cch Cg CB
-                                                                                (rootClauseBTopCtr d Kd)
-                                                                                (edFinalDataOscW M Cdel *
-                                                                                  stepFourGagliardoConst d stepOneS)
-                                                                                CWH CdM ≤
-                                                                              Cest →
-                                                                            (√M.nu *
-                                                                                normalizedL2On
-                                                                                  (truncatedWindow z m (n + (1 : ℤ)))
-                                                                                  fun (y : Vec d) =>
-                                                                                  √(vecNormSq (uglob.grad y))) ≤
-                                                                              Cest *
-                                                                                  Real.rpow (3 : ℝ)
-                                                                                    (((1 : ℝ) - alpha) *
-                                                                                      ((↑m : ℝ) - (↑n : ℝ))) *
-                                                                                ((√M.nu *
-                                                                                      normalizedL2On
-                                                                                        (openCubeSet (originCube d m))
-                                                                                        fun (y : Vec d) =>
-                                                                                        √(vecNormSq (uglob.grad y))) +
-                                                                                    √(↑(Annealed.sigmaBar M m) : ℝ)⁻¹ *
-                                                                                        Real.rpow (3 : ℝ)
-                                                                                          ((↑m : ℝ) / (2 : ℝ)) *
-                                                                                      Khol +
-                                                                                  √(↑(Annealed.sigmaBar M m) : ℝ) *
-                                                                                      Real.rpow (3 : ℝ)
-                                                                                        ((↑m : ℝ) / (2 : ℝ)) *
-                                                                                    Kh))
-      (CdispC : ℝ) (hCdispC : (0 : ℝ) < CdispC)
-      (hdisp :
-        ∀ (M : ABKModel d) (L mf m n n' : ℤ) (Qf : TriadicCube d) {z : Vec d} (omega : Cutoff.CutoffSample d)
-          (u : H1Function (openCubeSet (originCube d m))) (v : H1Function (Ch02.cubeDomain (originCube d n')).carrier)
-          {g : Vec d → Vec d} {C1 alpha delta : ℝ} {B : ℕ} {Cosc CB sigma oscHi dataOsc : ℝ},
-          (∀ (y : Vec d), v.toFun y = u.toFun (y + z)) →
-            (∀ (y : Vec d), v.grad y = u.grad (y + z)) →
-              (fun (y : Vec d) => z + y) '' openCubeSet (originCube d n') ⊆ openCubeSet (originCube d m) →
-                n + (1 : ℤ) ≤ n' - (2 : ℤ) →
-                  IsForcedEquation (originCube d n')
-                      (fluxCorrectedCoeffFamily M L mf Qf (Cutoff.translateCutoffSample z omega)) v g →
-                    ForceBesovRegularity (originCube d n') stepOneS g →
-                      (2 : ℝ) * (↑d : ℝ) + (2 : ℝ) ≤ C1 →
-                        (0 : ℝ) ≤ alpha →
-                          alpha ≤ (1 : ℝ) →
-                            n ≤ m →
+  ∀ (d : ℕ) [NeZero d] (Crg C Ccap Cann Cb Citer Cosc : ℝ)
+   (kb : ℕ) (_ : (0 : ℝ) ≤ Cosc) (Ccaps Clam Klam : ℝ) (_ : (0 : ℝ) < Klam) (Cflu K1 K2 CannP
+    Cind Cch : ℝ)
+   (_ : (0 : ℝ) < Cch)
+   (_ :
+    ∀ (M : ABKModel d) (m0 : ℤ) (Ecap : { E : ℝ // (1 : ℝ) ≤ E }),
+     Frozen.Section3.inductionState M m0 Ecap →
+      M.gamma < (1 / 2 : ℝ) →
+       ∀ (L : ℤ) {alpha : ℝ} {n m kc np : ℤ} {z : Vec d} (omega : Cutoff.CutoffSample d)
+        (uglob hdat : H1Function (openCubeSet (originCube d m))) {gsrc : Vec d → Vec d}
+        {Khol Kh Kd CB Cg Cdel CdM CWH C1 delta Cest dataH dataM : ℝ} {B : ℕ},
+        z ∈ openCubeSet (originCube d m) →
+         m ≤ m0 →
+          n ≤ m →
+           kc ≤ m - (1 : ℤ) →
+            np + (1 : ℤ) ≤ m →
+             m - (kc + (1 : ℤ)) ≤ (↑B : ℤ) + (1 : ℤ) →
+              IsDirichletSolutionOn (Cutoff.coefficientCutoff M.nu L
+               omega).toCoeffField (originCube d m)
+                uglob hdat gsrc →
+               MemLp gsrc (2 : ENNReal) (normalizedVolumeMeasureOn (openCubeSet
+                (originCube d m))) →
+                MemLp (Gagliardo.gagliardoKernel stepOneS (2 : ENNReal) gsrc) (2 :
+                 ENNReal)
+                  (normalizedGagliardoMeasureOn (openCubeSet (originCube d m))) →
+                 (0 : ℝ) ≤ Khol →
+                  (0 : ℝ) ≤ Kh →
+                   (0 : ℝ) ≤ Kd →
+                    (0 : ℝ) ≤ CB →
+                     (0 : ℝ) ≤ Cg →
+                      (0 : ℝ) ≤ Cdel →
+                       (0 : ℝ) ≤ CdM →
+                        (0 : ℝ) ≤ CWH →
+                         (0 : ℝ) ≤ dataH →
+                          (0 : ℝ) ≤ dataM →
+                           (2 : ℝ) * (↑d : ℝ) + (2 : ℝ) ≤ C1 →
+                            (0 : ℝ) ≤ alpha →
+                             alpha ≤ (1 : ℝ) →
                               delta ≤ C1⁻¹ * ((1 : ℝ) - alpha) →
-                                n' - n ≤ (↑B : ℤ) + (6 : ℤ) →
-                                  (↑B : ℝ) ≤ delta * ((↑(m - n).toNat : ℝ) + (1 : ℝ)) →
-                                    (0 : ℝ) ≤ Cosc →
-                                      (0 : ℝ) ≤ CB →
-                                        (0 : ℝ) ≤ oscHi →
-                                          (0 : ℝ) ≤ dataOsc →
-                                            StepSevenLambdaCaps (originCube d (n' + (1 : ℤ)))
-                                                (fluxCorrectedCoeffFamily M L mf Qf (Cutoff.translateCutoffSample z omega))
-                                                sigma CB →
-                                              ((3 : ℝ) ^ (-n') *
-                                                    normalizedL2On (truncatedWindow z m n') fun (x : Vec d) =>
-                                                      u.toFun x - volumeAverage (truncatedWindow z m n') u.toFun) ≤
-                                                  Cosc * Real.rpow (3 : ℝ) ((1 / 2 : ℝ) * stepSixExponent alpha n m) *
-                                                      oscHi +
-                                                    Cosc * Real.rpow (3 : ℝ) ((1 / 2 : ℝ) * stepSixExponent alpha n m) *
-                                                      dataOsc →
-                                                stepSevenNuGradNorm M.nu (truncatedWindow z m (n + (1 : ℤ))) u.grad ≤
-                                                  Real.rpow (3 : ℝ) ((3 : ℝ) * (↑d : ℝ) + (1 / 4 : ℝ)) *
-                                                              stepSevenCaccConst CdispC (originCube d n')
-                                                                (fluxCorrectedCoeffFamily M L mf Qf
-                                                                  (Cutoff.translateCutoffSample z omega)) *
-                                                            (Cosc * √((256 / 63 : ℝ) * CB) + (1 : ℝ)) *
-                                                          √sigma *
-                                                        Real.rpow (3 : ℝ) ((3 / 4 : ℝ) * stepSixExponent alpha n m) *
-                                                      oscHi +
-                                                    Real.rpow (3 : ℝ) ((3 : ℝ) * (↑d : ℝ) + (1 / 4 : ℝ)) *
-                                                            stepSevenCaccConst CdispC (originCube d n')
-                                                              (fluxCorrectedCoeffFamily M L mf Qf
-                                                                (Cutoff.translateCutoffSample z omega)) *
-                                                          (Cosc * √((256 / 63 : ℝ) * CB) + (1 : ℝ)) *
-                                                        Real.rpow (3 : ℝ) ((3 / 4 : ℝ) * stepSixExponent alpha n m) *
-                                                      (√sigma * dataOsc +
-                                                        stepSevenCaccDataM (originCube d n')
-                                                          (fluxCorrectedCoeffFamily M L mf Qf
-                                                            (Cutoff.translateCutoffSample z omega))
-                                                          g))
-      (hCbd : (0 : ℝ) ≤ edBoundaryCbd d Cb C kb) (hCWH : (0 : ℝ) ≤ boundaryCWH d Cb C kb),
-      let CBu : ℝ := rootClauseBCapsUniform d Ccaps;
-      let CWGu : ℝ := rootClauseBOscWUniform (edBoundaryCbd d Cb C kb) * stepFourGagliardoConst d stepOneS;
-      let Ctru : ℝ := rootClauseBTopCtr d (rootClauseBDataBConst d);
-      ∀ (hCtru0 : (0 : ℝ) ≤ Ctru),
-        let PG : ℝ :=
-          rootClauseBWellPlacedPrefactor d Cch (rootClauseBCg d (rootClauseBCaccUniform CdispC CBu) Cosc CBu) Klam Ctru CWGu
-            (boundaryCWH d Cb C kb) (rootClauseBDataMConst d CBu);
-        let PF : ℝ :=
-          rootClauseBWellPlacedPrefactor d Cch (stepSevenFlushCg d K1 K2 Cosc) Klam Ctru CWGu
-            (boundaryCWH d Cb C kb + (1 : ℝ)) (1 : ℝ);
-        ∀ (Cedos : ℝ),
-          let C1 : ℝ := stepOneC1 d Cedos (1 : ℝ) Citer (kb + (1 : ℕ));
-          ∀ (M : ABKModel d) (alpha : ℝ) (halpha0 : (0 : ℝ) < alpha) (m : ℤ)
-            (hfact :
-              RootClauseBGammaFacts M (max (max (max C Ccap) (max Ccaps Clam)) (max (max Cflu CannP) (1 : ℝ))) Cann Cind
-                (stepOneC1 d Cedos (1 : ℝ) Citer (kb + (1 : ℕ))) Crg)
-            (halpha1 : alpha < (1 : ℝ)) (Ecap : { E : ℝ // (1 : ℝ) ≤ E })
-            (hstate : ∀ (m : ℤ), Frozen.Section3.inductionState M m Ecap) (omega : Cutoff.CutoffSample d) (n L : ℤ)
-            (hnm : n ≤ m) (u h : H1Function (openCubeSet (originCube d m))) (g : Vec d → Vec d) (Kg Kh : ℝ)
-            (hsol : IsDirichletSolutionOn (Cutoff.coefficientCutoff M.nu L omega).toCoeffField (originCube d m) u h g)
-            (hgHol : HolderSeminormBoundOn (openCubeSet (originCube d m)) (1 / 2 : ℝ) Kg g) (x : Vec d) (hKg : (0 : ℝ) ≤ Kg)
-            (hKh : (0 : ℝ) ≤ Kh) (hzm : triadicLatticePoint n (offGridLatticeIndex n x) ∈ openCubeSet (originCube d m))
-            (hgL2 : MemLp g (2 : ENNReal) (normalizedVolumeMeasureOn (openCubeSet (originCube d m))))
-            (hgW :
-              MemLp (Gagliardo.gagliardoKernel stepOneS (2 : ENNReal) g) (2 : ENNReal)
-                (normalizedGagliardoMeasureOn (openCubeSet (originCube d m))))
-            (hoscfun :
-              ∀ (n' kc : ℤ),
-                n ≤ n' →
-                  n' ≤ kc →
-                    kc ≤ m →
-                      ((3 : ℝ) ^ (-n') *
-                          normalizedL2On (truncatedWindow (triadicLatticePoint n (offGridLatticeIndex n x)) m n')
-                            fun (y : Vec d) =>
-                            u.toFun y -
-                              volumeAverage (truncatedWindow (triadicLatticePoint n (offGridLatticeIndex n x)) m n')
-                                u.toFun) ≤
-                        Cosc * Real.rpow (3 : ℝ) ((1 / 2 : ℝ) * stepSixExponent alpha n m) *
-                            ((3 : ℝ) ^ (-kc) *
-                              normalizedL2On (truncatedWindow (triadicLatticePoint n (offGridLatticeIndex n x)) m kc)
-                                fun (y : Vec d) =>
-                                u.toFun y -
-                                  volumeAverage (truncatedWindow (triadicLatticePoint n (offGridLatticeIndex n x)) m kc)
-                                    u.toFun) +
-                          Cosc * Real.rpow (3 : ℝ) ((1 / 2 : ℝ) * stepSixExponent alpha n m) *
-                            (edFinalDataG M (edBoundaryCbd d Cb C kb) (Kg * stepFourGagliardoConst d stepOneS) m +
-                              edBoundaryDataHPrinted d Cb C kb Kh m))
-            (kc : ℤ) (hkhi : kc + (1 : ℤ) ≤ m - (1 : ℤ)) (np : ℤ) (hjlo : n + (4 : ℤ) ≤ np + (1 : ℤ)),
-            let B : ℕ :=
-              (stepThreeBadSet M (stepOneDelta C1 alpha) n m (triadicLatticePoint n (offGridLatticeIndex n x)) omega).card;
-            ∀ (hcard : (↑B : ℝ) ≤ stepOneDelta C1 alpha * ((↑(m - n).toNat : ℝ) + (1 : ℝ)))
-              (hgapHi : m - (kc + (1 : ℤ)) ≤ (↑B : ℤ) + (1 : ℤ)) (hgapLo : np + (1 : ℤ) - n ≤ (↑B : ℤ) + (4 : ℤ))
-              (hgapStrict : np + (2 : ℤ) ≤ kc)
-              (hlamkc :
-                stepSevenCgLamInv (originCube d kc)
-                    (parentRebasedFamily M L (kc + (1 : ℤ))
-                      (wellPlacedCentre (triadicLatticePoint n (offGridLatticeIndex n x)) m kc)
-                      (triadicLatticePoint n (offGridLatticeIndex n x)) omega)
-                    stepSevenCgS ≤
-                  Klam * (↑(Annealed.sigmaBar M (kc + (1 : ℤ))) : ℝ)⁻¹),
-              let CBraw : ℝ := (2 : ℝ) * (↑d : ℝ) * ((Ccaps * stepOneEp (stepOneDelta C1 alpha)) ^ (2 : ℕ) + (1 : ℝ));
-              ∀
-                (hcapsj :
-                  StepSevenLambdaCaps (originCube d (np + (1 : ℤ)))
-                    (fluxCorrectedCoeffFamily M L (np + (1 : ℤ)) (originCube d (np + (1 : ℤ)))
-                      (Cutoff.translateCutoffSample (triadicLatticePoint n (offGridLatticeIndex n x)) omega))
-                    (↑(Annealed.sigmaBar M (np + (1 : ℤ))) : ℝ) CBraw)
-                (hCBraw0 : (0 : ℝ) ≤ CBraw) (hCBle : CBraw ≤ CBu)
-                (hCWGle : edFinalDataOscW M (edBoundaryCbd d Cb C kb) * stepFourGagliardoConst d stepOneS ≤ CWGu)
-                (hCWG0 : (0 : ℝ) ≤ edFinalDataOscW M (edBoundaryCbd d Cb C kb) * stepFourGagliardoConst d stepOneS)
-                (hsigmaJ : (0 : ℝ) < (↑(Annealed.sigmaBar M (np + (1 : ℤ))) : ℝ))
-                (hdataHP0 : (0 : ℝ) ≤ edBoundaryDataHPrinted d Cb C kb Kh m) (hC1dim : (2 : ℝ) * (↑d : ℝ) + (2 : ℝ) ≤ C1)
-                (hdeltaEq : stepOneDelta C1 alpha ≤ C1⁻¹ * ((1 : ℝ) - alpha))
-                (hoscHi0 :
-                  (0 : ℝ) ≤
-                    (cubeScaleFactor (originCube d kc))⁻¹ *
-                      normalizedL2On (truncatedWindow (triadicLatticePoint n (offGridLatticeIndex n x)) m kc)
-                        fun (y : Vec d) =>
-                        u.toFun y -
-                          volumeAverage (truncatedWindow (triadicLatticePoint n (offGridLatticeIndex n x)) m kc) u.toFun)
-                (hsigmaPos : (0 : ℝ) < (↑(Annealed.sigmaBar M m) : ℝ))
-                (hGpres :
-                  (0 : ℝ) ≤
-                    (↑(Annealed.sigmaBar M m) : ℝ) *
-                      edFinalDataG M (edBoundaryCbd d Cb C kb) (Kg * stepFourGagliardoConst d stepOneS) m)
-                (hgate :
-                  (fun (y : Vec d) => triadicLatticePoint n (offGridLatticeIndex n x) + y) ''
-                      openCubeSet (originCube d np) ⊆
-                    openCubeSet (originCube d m)),
-                (√M.nu *
-                    normalizedL2On (truncatedWindow (offGridCentre n x) m (n + (1 : ℤ))) fun (y : Vec d) =>
-                      √(vecNormSq (u.grad y))) ≤
-                  max PG PF * Real.rpow (3 : ℝ) (((1 : ℝ) - alpha) * ((↑m : ℝ) - (↑n : ℝ))) *
-                    ((√M.nu * normalizedL2On (openCubeSet (originCube d m)) fun (y : Vec d) => √(vecNormSq (u.grad y))) +
-                        √(↑(Annealed.sigmaBar M m) : ℝ)⁻¹ * Real.rpow (3 : ℝ) ((↑m : ℝ) / (2 : ℝ)) * Kg +
-                      √(↑(Annealed.sigmaBar M m) : ℝ) * Real.rpow (3 : ℝ) ((↑m : ℝ) / (2 : ℝ)) * Kh) := by
-  intro d instance1 Crg C Ccap Cann Cb Citer Cosc kb hCosc Ccaps Clam Klam hKlam Cflu K1 K2 CannP Cind Cch hCch hend CdispC hCdispC hdisp hCbd hCWH CBu CWGu Ctru hCtru0 PG PF Cedos C1 M alpha halpha0 m hfact halpha1 Ecap hstate omega n L hnm u h g Kg Kh hsol hgHol x hKg hKh hzm hgL2 hgW hoscfun kc hkhi np hjlo B hcard hgapHi hgapLo hgapStrict hlamkc CBraw hcapsj hCBraw0 hCBle hCWGle hCWG0 hsigmaJ hdataHP0 hC1dim hdeltaEq hoscHi0 hsigmaPos hGpres hgate
+                               (↑B : ℝ) ≤ delta * ((↑(m - n).toNat
+                                : ℝ) + (1 : ℝ)) →
+                                stepSevenCgLamInv (originCube d kc)
+                                   (parentRebasedFamily M L (kc
+                                    + (1 : ℤ))
+                                    (wellPlacedCentre z m kc)
+                                     z omega)
+                                   stepSevenCgS ≤
+                                  CB * (↑(Annealed.sigmaBar M
+                                   (kc + (1 : ℤ))) : ℝ)⁻¹ →
+                                 (scaleNormalizedPositiveBesovVectorSeminormTwo
+                                    (originCube d kc)
+                                     stepSevenCgS fun (x :
+                                      Vec d) =>
+                                    -gsrc (x +
+                                     wellPlacedCentre z m
+                                      kc)) ≤
+                                   Kd * edFinalDataOscG Khol m →
+                                  dataM ≤
+                                    CdM *
+                                     (√(↑(Annealed.sigmaBar M
+                                      m) : ℝ)⁻¹ *
+                                      edFinalDataOscG Khol
+                                       m) →
+                                   dataH ≤ CWH *
+                                    edFinalDataOscG Kh m →
+                                    stepSevenNuGradNorm M.nu
+                                       (truncatedWindow z m
+                                        (n + (1 : ℤ)))
+                                       uglob.grad ≤
+                                      Cg *
+                                          √(↑(Annealed.sigmaBar M
+                                              (np +
+                                               (1 :
+                                                ℤ))) :
+                                            ℝ) *
+                                         Real.rpow (3 : ℝ)
+                                          ((3 / 4 : ℝ) *
+                                           stepSixExponent alpha n m) *
+                                        ((cubeScaleFactor
+                                         (originCube d
+                                          kc))⁻¹ *
+                                         normalizedL2On
+                                          (truncatedWindow z m kc)
+                                          fun (x : Vec
+                                           d) =>
+                                          uglob.toFun x -
+                                           volumeAverage (truncatedWindow z m kc)
+                                            uglob.toFun) +
+                                       Cg *
+                                         Real.rpow (3 : ℝ)
+                                          ((3 / 4 : ℝ) *
+                                           stepSixExponent alpha n m) *
+                                        (√(↑(Annealed.sigmaBar M (np + (1 : ℤ))) :
+                                            ℝ) *
+                                          ((1 : ℝ) *
+                                           ((↑(Annealed.sigmaBar M m) : ℝ)⁻¹ *
+                                             ((↑(Annealed.sigmaBar M m) : ℝ) *
+                                              edFinalDataG M Cdel
+                                               (Khol *
+                                                stepFourGagliardoConst d
+                                                 stepOneS)
+                                               m) +
+                                            dataH)) +
+                                         dataM) →
+                                     rootClauseBWellPlacedPrefactor d Cch Cg CB
+                                        (rootClauseBTopCtr
+                                         d Kd)
+                                        (edFinalDataOscW M
+                                         Cdel *
+                                         stepFourGagliardoConst d stepOneS)
+                                        CWH CdM ≤
+                                       Cest →
+                                      (√M.nu *
+                                        normalizedL2On
+                                         (truncatedWindow
+                                          z m (n + (1 :
+                                           ℤ)))
+                                         fun (y : Vec d) =>
+                                         √(vecNormSq
+                                          (uglob.grad
+                                           y))) ≤
+                                       Cest *
+                                         Real.rpow (3 : ℝ)
+                                          (((1 : ℝ) -
+                                           alpha) *
+                                           ((↑m : ℝ) -
+                                            (↑n : ℝ))) *
+                                        ((√M.nu *
+                                           normalizedL2On
+                                            (openCubeSet (originCube d m))
+                                            fun (y :
+                                             Vec d) =>
+                                            √(vecNormSq (uglob.grad y))) +
+                                          √(↑(Annealed.sigmaBar M m) : ℝ)⁻¹ *
+                                            Real.rpow
+                                             (3 : ℝ)
+                                             ((↑m :
+                                              ℝ) /
+                                               (2 :
+                                                ℝ)) *
+                                           Khol +
+                                         √(↑(Annealed.sigmaBar M m) : ℝ) *
+                                           Real.rpow (3
+                                            : ℝ)
+                                            ((↑m : ℝ)
+                                             / (2 :
+                                              ℝ)) *
+                                          Kh))
+   (CdispC : ℝ) (_ : (0 : ℝ) < CdispC)
+   (_ :
+    ∀ (M : ABKModel d) (L mf m n n' : ℤ) (Qf : TriadicCube d) {z : Vec d} (omega :
+     Cutoff.CutoffSample d)
+     (u : H1Function (openCubeSet (originCube d m))) (v : H1Function (Ch02.cubeDomain
+      (originCube d n')).carrier)
+     {g : Vec d → Vec d} {C1 alpha delta : ℝ} {B : ℕ} {Cosc CB sigma oscHi dataOsc : ℝ},
+     (∀ (y : Vec d), v.toFun y = u.toFun (y + z)) →
+      (∀ (y : Vec d), v.grad y = u.grad (y + z)) →
+       (fun (y : Vec d) => z + y) '' openCubeSet (originCube d n') ⊆ openCubeSet
+        (originCube d m) →
+        n + (1 : ℤ) ≤ n' - (2 : ℤ) →
+         IsForcedEquation (originCube d n')
+           (fluxCorrectedCoeffFamily M L mf Qf (Cutoff.translateCutoffSample z omega))
+            v g →
+          ForceBesovRegularity (originCube d n') stepOneS g →
+           (2 : ℝ) * (↑d : ℝ) + (2 : ℝ) ≤ C1 →
+            (0 : ℝ) ≤ alpha →
+             alpha ≤ (1 : ℝ) →
+              n ≤ m →
+               delta ≤ C1⁻¹ * ((1 : ℝ) - alpha) →
+                n' - n ≤ (↑B : ℤ) + (6 : ℤ) →
+                 (↑B : ℝ) ≤ delta * ((↑(m - n).toNat : ℝ) + (1 : ℝ)) →
+                  (0 : ℝ) ≤ Cosc →
+                   (0 : ℝ) ≤ CB →
+                    (0 : ℝ) ≤ oscHi →
+                     (0 : ℝ) ≤ dataOsc →
+                      StepSevenLambdaCaps (originCube d (n' + (1 : ℤ)))
+                        (fluxCorrectedCoeffFamily M L mf Qf
+                         (Cutoff.translateCutoffSample z omega))
+                        sigma CB →
+                       ((3 : ℝ) ^ (-n') *
+                          normalizedL2On (truncatedWindow z m n') fun (x
+                           : Vec d) =>
+                           u.toFun x - volumeAverage (truncatedWindow z
+                            m n') u.toFun) ≤
+                         Cosc * Real.rpow (3 : ℝ) ((1 / 2 : ℝ) *
+                          stepSixExponent alpha n m) *
+                           oscHi +
+                          Cosc * Real.rpow (3 : ℝ) ((1 / 2 : ℝ) *
+                           stepSixExponent alpha n m) *
+                           dataOsc →
+                        stepSevenNuGradNorm M.nu (truncatedWindow z m (n +
+                         (1 : ℤ))) u.grad ≤
+                         Real.rpow (3 : ℝ) ((3 : ℝ) * (↑d : ℝ) + (1 / 4 :
+                          ℝ)) *
+                               stepSevenCaccConst CdispC
+                                (originCube d n')
+                                (fluxCorrectedCoeffFamily M L mf Qf
+                                 (Cutoff.translateCutoffSample z
+                                  omega)) *
+                              (Cosc * √((256 / 63 : ℝ) * CB) + (1 :
+                               ℝ)) *
+                             √sigma *
+                            Real.rpow (3 : ℝ) ((3 / 4 : ℝ) *
+                             stepSixExponent alpha n m) *
+                           oscHi +
+                          Real.rpow (3 : ℝ) ((3 : ℝ) * (↑d : ℝ) + (1 / 4
+                           : ℝ)) *
+                              stepSevenCaccConst CdispC (originCube
+                               d n')
+                               (fluxCorrectedCoeffFamily M L mf Qf
+                                (Cutoff.translateCutoffSample z
+                                 omega)) *
+                             (Cosc * √((256 / 63 : ℝ) * CB) + (1 :
+                              ℝ)) *
+                            Real.rpow (3 : ℝ) ((3 / 4 : ℝ) *
+                             stepSixExponent alpha n m) *
+                           (√sigma * dataOsc +
+                            stepSevenCaccDataM (originCube d n')
+                             (fluxCorrectedCoeffFamily M L mf Qf
+                              (Cutoff.translateCutoffSample z omega))
+                             g))
+   (_ : (0 : ℝ) ≤ edBoundaryCbd d Cb C kb) (_ : (0 : ℝ) ≤ boundaryCWH d Cb C kb),
+   let CBu : ℝ := rootClauseBCapsUniform d Ccaps;
+   let CWGu : ℝ := rootClauseBOscWUniform (edBoundaryCbd d Cb C kb) * stepFourGagliardoConst d
+    stepOneS;
+   let Ctru : ℝ := rootClauseBTopCtr d (rootClauseBDataBConst d);
+   ∀ (_ : (0 : ℝ) ≤ Ctru),
+    let PG : ℝ :=
+     rootClauseBWellPlacedPrefactor d Cch (rootClauseBCg d (rootClauseBCaccUniform CdispC
+      CBu) Cosc CBu) Klam Ctru CWGu
+      (boundaryCWH d Cb C kb) (rootClauseBDataMConst d CBu);
+    let PF : ℝ :=
+     rootClauseBWellPlacedPrefactor d Cch (stepSevenFlushCg d K1 K2 Cosc) Klam Ctru CWGu
+      (boundaryCWH d Cb C kb + (1 : ℝ)) (1 : ℝ);
+    ∀ (Cedos : ℝ),
+     let C1 : ℝ := stepOneC1 d Cedos (1 : ℝ) Citer (kb + (1 : ℕ));
+     ∀ (M : ABKModel d) (alpha : ℝ) (_ : (0 : ℝ) < alpha) (m : ℤ)
+      (_ :
+       RootClauseBGammaFacts M (max (max (max C Ccap) (max Ccaps Clam)) (max (max Cflu
+        CannP) (1 : ℝ))) Cann Cind
+        (stepOneC1 d Cedos (1 : ℝ) Citer (kb + (1 : ℕ))) Crg)
+      (_ : alpha < (1 : ℝ)) (Ecap : { E : ℝ // (1 : ℝ) ≤ E })
+      (_ : ∀ (m : ℤ), Frozen.Section3.inductionState M m Ecap) (omega : Cutoff.CutoffSample
+       d) (n L : ℤ)
+      (_ : n ≤ m) (u h : H1Function (openCubeSet (originCube d m))) (g : Vec d → Vec d) (Kg
+       Kh : ℝ)
+      (_ : IsDirichletSolutionOn (Cutoff.coefficientCutoff M.nu L omega).toCoeffField
+       (originCube d m) u h g)
+      (_ : HolderSeminormBoundOn (openCubeSet (originCube d m)) (1 / 2 : ℝ) Kg g) (x : Vec
+       d) (_ : (0 : ℝ) ≤ Kg)
+      (_ : (0 : ℝ) ≤ Kh) (_ : triadicLatticePoint n (offGridLatticeIndex n x) ∈ openCubeSet
+       (originCube d m))
+      (_ : MemLp g (2 : ENNReal) (normalizedVolumeMeasureOn (openCubeSet (originCube d m))))
+      (_ :
+       MemLp (Gagliardo.gagliardoKernel stepOneS (2 : ENNReal) g) (2 : ENNReal)
+        (normalizedGagliardoMeasureOn (openCubeSet (originCube d m))))
+      (_ :
+       ∀ (n' kc : ℤ),
+        n ≤ n' →
+         n' ≤ kc →
+          kc ≤ m →
+           ((3 : ℝ) ^ (-n') *
+             normalizedL2On (truncatedWindow (triadicLatticePoint n
+              (offGridLatticeIndex n x)) m n')
+              fun (y : Vec d) =>
+              u.toFun y -
+               volumeAverage (truncatedWindow (triadicLatticePoint n
+                (offGridLatticeIndex n x)) m n')
+                u.toFun) ≤
+            Cosc * Real.rpow (3 : ℝ) ((1 / 2 : ℝ) * stepSixExponent alpha n m) *
+              ((3 : ℝ) ^ (-kc) *
+               normalizedL2On (truncatedWindow (triadicLatticePoint n
+                (offGridLatticeIndex n x)) m kc)
+                fun (y : Vec d) =>
+                u.toFun y -
+                 volumeAverage (truncatedWindow (triadicLatticePoint n
+                  (offGridLatticeIndex n x)) m kc)
+                  u.toFun) +
+             Cosc * Real.rpow (3 : ℝ) ((1 / 2 : ℝ) * stepSixExponent alpha n m) *
+              (edFinalDataG M (edBoundaryCbd d Cb C kb) (Kg * stepFourGagliardoConst
+               d stepOneS) m +
+               edBoundaryDataHPrinted d Cb C kb Kh m))
+      (kc : ℤ) (_ : kc + (1 : ℤ) ≤ m - (1 : ℤ)) (np : ℤ) (_ : n + (4 : ℤ) ≤ np + (1 : ℤ)),
+      let B : ℕ :=
+       (stepThreeBadSet M (stepOneDelta C1 alpha) n m (triadicLatticePoint n
+        (offGridLatticeIndex n x)) omega).card;
+      ∀ (_ : (↑B : ℝ) ≤ stepOneDelta C1 alpha * ((↑(m - n).toNat : ℝ) + (1 : ℝ)))
+       (_ : m - (kc + (1 : ℤ)) ≤ (↑B : ℤ) + (1 : ℤ)) (_ : np + (1 : ℤ) - n ≤ (↑B : ℤ) + (4
+        : ℤ))
+       (_ : np + (2 : ℤ) ≤ kc)
+       (_ :
+        stepSevenCgLamInv (originCube d kc)
+          (parentRebasedFamily M L (kc + (1 : ℤ))
+           (wellPlacedCentre (triadicLatticePoint n (offGridLatticeIndex n x)) m kc)
+           (triadicLatticePoint n (offGridLatticeIndex n x)) omega)
+          stepSevenCgS ≤
+         Klam * (↑(Annealed.sigmaBar M (kc + (1 : ℤ))) : ℝ)⁻¹),
+       let CBraw : ℝ := (2 : ℝ) * (↑d : ℝ) * ((Ccaps * stepOneEp (stepOneDelta C1 alpha)) ^
+        (2 : ℕ) + (1 : ℝ));
+       ∀
+        (_ :
+         StepSevenLambdaCaps (originCube d (np + (1 : ℤ)))
+          (fluxCorrectedCoeffFamily M L (np + (1 : ℤ)) (originCube d (np + (1 : ℤ)))
+           (Cutoff.translateCutoffSample (triadicLatticePoint n (offGridLatticeIndex n
+            x)) omega))
+          (↑(Annealed.sigmaBar M (np + (1 : ℤ))) : ℝ) CBraw)
+        (_ : (0 : ℝ) ≤ CBraw) (_ : CBraw ≤ CBu)
+        (_ : edFinalDataOscW M (edBoundaryCbd d Cb C kb) * stepFourGagliardoConst d
+         stepOneS ≤ CWGu)
+        (_ : (0 : ℝ) ≤ edFinalDataOscW M (edBoundaryCbd d Cb C kb) *
+         stepFourGagliardoConst d stepOneS)
+        (_ : (0 : ℝ) < (↑(Annealed.sigmaBar M (np + (1 : ℤ))) : ℝ))
+        (_ : (0 : ℝ) ≤ edBoundaryDataHPrinted d Cb C kb Kh m) (_ : (2 : ℝ) * (↑d : ℝ) + (2
+         : ℝ) ≤ C1)
+        (_ : stepOneDelta C1 alpha ≤ C1⁻¹ * ((1 : ℝ) - alpha))
+        (_ :
+         (0 : ℝ) ≤
+          (cubeScaleFactor (originCube d kc))⁻¹ *
+           normalizedL2On (truncatedWindow (triadicLatticePoint n (offGridLatticeIndex
+            n x)) m kc)
+            fun (y : Vec d) =>
+            u.toFun y -
+             volumeAverage (truncatedWindow (triadicLatticePoint n
+              (offGridLatticeIndex n x)) m kc) u.toFun)
+        (_ : (0 : ℝ) < (↑(Annealed.sigmaBar M m) : ℝ))
+        (_ :
+         (0 : ℝ) ≤
+          (↑(Annealed.sigmaBar M m) : ℝ) *
+           edFinalDataG M (edBoundaryCbd d Cb C kb) (Kg * stepFourGagliardoConst d
+            stepOneS) m)
+        (_ :
+         (fun (y : Vec d) => triadicLatticePoint n (offGridLatticeIndex n x) + y) ''
+           openCubeSet (originCube d np) ⊆
+          openCubeSet (originCube d m)),
+        (√M.nu *
+          normalizedL2On (truncatedWindow (offGridCentre n x) m (n + (1 : ℤ))) fun (y :
+           Vec d) =>
+           √(vecNormSq (u.grad y))) ≤
+         max PG PF * Real.rpow (3 : ℝ) (((1 : ℝ) - alpha) * ((↑m : ℝ) - (↑n : ℝ))) *
+          ((√M.nu * normalizedL2On (openCubeSet (originCube d m)) fun (y : Vec d) =>
+           √(vecNormSq (u.grad y))) +
+            √(↑(Annealed.sigmaBar M m) : ℝ)⁻¹ * Real.rpow (3 : ℝ) ((↑m : ℝ) / (2 : ℝ))
+             * Kg +
+           √(↑(Annealed.sigmaBar M m) : ℝ) * Real.rpow (3 : ℝ) ((↑m : ℝ) / (2 : ℝ)) *
+            Kh)  := by
+  intro d _ _ C _ _ Cb _ Cosc kb hCosc _ _ Klam hKlam _ _ _ _ _ Cch hCch hend CdispC hCdispC hdisp
+    hCbd hCWH _ _ Ctru hCtru0 PG PF _ _ M _ halpha0 m hfact halpha1 Ecap hstate omega n L hnm u h
+      _ Kg Kh hsol hgHol x hKg hKh hzm hgL2 hgW hoscfun kc _ np _ _ hcard _ _ _ hlamkc CBraw
+        hcapsj hCBraw0 hCBle hCWGle hCWG0 hsigmaJ hdataHP0 hC1dim hdeltaEq hoscHi0 hsigmaPos
+          hGpres hgate
   -- GATE branch: the gated Caccioppoli, no `S`
   obtain ⟨v, hval, hgradv, heqv⟩ :=
     exists_stepSevenCaccGateSolution (n' := np) (mf := np + 1) M L
@@ -1247,6 +1459,40 @@ private theorem rootClauseB_gatedCaccioppoliBound :
     (le_of_eq (edBoundaryDataHPrinted_eq_boundaryCWH_mul d Cb C kb Kh m))
     hgradG hCestG
 
+
+private theorem rootClauseB_gapGeometry :
+    ∀ (d : ℕ) (Citer : ℝ) (kb : ℕ) (Cedos : ℝ),
+      let C1 : ℝ := stepOneC1 d Cedos (1 : ℝ) Citer (kb + (1 : ℕ));
+      ∀ (M : ABKModel d) (alpha : ℝ) (m : ℤ) (omega : Cutoff.CutoffSample d) (n _ : ℤ) (_ : n ≤
+        m) (x : Vec d)
+        (_ : (14 : ℤ) ≤ m - n) (kc np : ℤ),
+        let B : ℕ :=
+          (stepThreeBadSet M (stepOneDelta C1 alpha) n m (triadicLatticePoint n
+            (offGridLatticeIndex n x)) omega).card;
+        ∀ (_ : (↑B : ℝ) ≤ stepOneDelta C1 alpha * ((↑(m - n).toNat : ℝ) + (1 : ℝ)))
+          (_ : m - (kc + (1 : ℤ)) ≤ (↑B : ℤ) + (1 : ℤ)) (_ : np + (1 : ℤ) - n ≤ (↑B : ℤ)
+            + (4 : ℤ))
+          (_ : stepOneDelta C1 alpha ≤ (1 / 4 : ℝ)), np + (2 : ℤ) ≤ kc := by
+  intro _ _ _ _ C1 _ alpha m omega n _ hnm _ hwin kc np B hcard hgapHi hgapLo hdelta4
+  have hTn : (((m - n).toNat : ℕ) : ℝ) = (m : ℝ) - (n : ℝ) :=
+    toNat_sub_cast_real hnm
+  have hcardR : (B : ℝ) ≤ (1 / 4) * (((m : ℝ) - (n : ℝ)) + 1) := by
+    have h1 := hcard
+    rw [hTn] at h1
+    have hmn0 : (0 : ℝ) ≤ ((m : ℝ) - (n : ℝ)) + 1 := by
+      have : (n : ℝ) ≤ (m : ℝ) := by exact_mod_cast hnm
+      linarith only [this]
+    calc (B : ℝ) ≤ stepOneDelta C1 alpha * (((m : ℝ) - (n : ℝ)) + 1) := h1
+      _ ≤ (1 / 4) * (((m : ℝ) - (n : ℝ)) + 1) :=
+          mul_le_mul_of_nonneg_right hdelta4 hmn0
+  have hlo : ((np + 1 - n : ℤ) : ℝ) ≤ (B : ℝ) + 4 := by exact_mod_cast hgapLo
+  have hhi : ((m - (kc + 1) : ℤ) : ℝ) ≤ (B : ℝ) + 1 := by exact_mod_cast hgapHi
+  have hwinR : (14 : ℝ) ≤ (m : ℝ) - (n : ℝ) := by exact_mod_cast hwin
+  have hgapR : (1 : ℝ) < ((kc - np : ℤ) : ℝ) := by
+    push_cast at hlo hhi ⊢
+    linarith only [hlo, hhi, hwinR, hcardR]
+  have : (1 : ℤ) < kc - np := by exact_mod_cast hgapR
+  omega
 
 /-- **The boundary three-leg display centre, almost surely** — the fine-scale
 dichotomy executed; no gate, no shell, no region hypothesis.  See the module
@@ -1351,8 +1597,11 @@ theorem rootClauseB_display_wellPlaced_final_floor (d : ℕ) [NeZero d] (hd : d 
       (C1 := C1) (Crg := Crg) hcstar hCmaxpos hCann hCindpos hC1pos hCrg
   refine ⟨min gamma0 ((Crg / 2) ^ (2 : ℕ)), lt_min hgamma0 (by positivity), ?_⟩
   intro M hcs hgammale alpha halpha0 halpha m
-  obtain ⟨stage_hgammaCrg, stage_hfact, stage_hg0, stage_halpha1, stage_hregC, stage_hregCap, stage_hregCaps, stage_hregLam, stage_hregFlu, stage_hregAnnP, stage_hsmall⟩ :=
-    @rootClauseBWellPlacedFloor_comparisonBounds3 (d) (cstar) (Crg) (hCrg) (C) (Ccap) (Cann) (Citer) (kb) (hC) (hCcap) (Ccaps) (hCcaps) (Clam) (hClam) (Cflu) (hCflu) (CannP) (hCannP) (Cind) (Cedos) (gamma0) (hfacts) (M) (hcs) (hgammale) (alpha) (halpha0) (halpha)
+  obtain ⟨stage_hgammaCrg, stage_hfact, stage_hg0, stage_halpha1, stage_hregC, stage_hregCap,
+    stage_hregCaps, stage_hregLam, stage_hregFlu, stage_hregAnnP, stage_hsmall⟩ :=
+    @rootClauseBWellPlacedFloor_comparisonBounds3 (d) (cstar) (Crg) (hCrg) (C) (Ccap) (Cann)
+      (Citer) (kb) (hC) (hCcap) (Ccaps) (hCcaps) (Clam) (hClam) (Cflu) (hCflu) (CannP) (hCannP)
+        (Cind) (Cedos) (gamma0) (hfacts) (M) (hcs) (hgammale) (alpha) (halpha0) (halpha)
   have hgammaCrg : M.gamma ≤ (Crg / 2) ^ (2 : ℕ) := stage_hgammaCrg
   have hfact := stage_hfact
   have hg0 : 0 < M.gamma := stage_hg0
@@ -1365,8 +1614,13 @@ theorem rootClauseB_display_wellPlaced_final_floor (d : ℕ) [NeZero d] (hd : d 
   have hregAnnP : M.gamma ≤ CannP⁻¹ * Disorder.cstar M ^ (10 : ℕ) := stage_hregAnnP
   have hsmall := stage_hsmall
   obtain ⟨Ecap, -, -, hstate⟩ := hind M hfact.regimeInd
-  obtain ⟨stage_hdeltamem, stage_h2gamma, stage_hsrange, stage_hsmallFlu, stage_haeOsc, stage_haeCaps, stage_haeLam⟩ :=
-    @rootClauseBWellPlacedFloor_comparisonBounds1 (d) (by infer_instance) (cstar) (Crg) (hCrg) (C) (Ccap) (Cann) (Cb) (Cflo) (Citer) (Cosc) (kb) (hoscprod) (Ccaps) (hcapsprod) (Clam) (Klam) (hlamprod) (Cflu) (CannP) (Cind) (Cedos) (hfloorO) (hC1two) (M) (alpha) (halpha0) (halpha) (m) (hgammaCrg) (hfact) (hg0) (halpha1) (hregC) (hregCap) (hregCaps) (hregLam) (hsmall) (Ecap) (hstate)
+  obtain ⟨stage_hdeltamem, stage_h2gamma, stage_hsrange, stage_hsmallFlu, stage_haeOsc,
+    stage_haeCaps, stage_haeLam⟩ :=
+    @rootClauseBWellPlacedFloor_comparisonBounds1 (d) (by infer_instance) (cstar) (Crg) (hCrg) (C)
+      (Ccap) (Cann) (Cb) (Cflo) (Citer) (Cosc) (kb) (hoscprod) (Ccaps) (hcapsprod) (Clam) (Klam)
+        (hlamprod) (Cflu) (CannP) (Cind) (Cedos) (hfloorO) (hC1two) (M) (alpha) (halpha0) (halpha)
+          (m) (hgammaCrg) (hfact) (hg0) (halpha1) (hregC) (hregCap) (hregCaps) (hregLam) (hsmall)
+            (Ecap) (hstate)
   have hdeltamem := stage_hdeltamem
   have h2gamma : 2 * M.gamma ≤ 1 - alpha := stage_h2gamma
   have hsrange : stepOneS ∈ Set.Icc (64 * M.gamma) 1 := stage_hsrange
@@ -1420,26 +1674,8 @@ theorem rootClauseB_display_wellPlaced_final_floor (d : ℕ) [NeZero d] (hd : d 
           mul_le_mul_of_nonneg_left (by linarith only [halpha0]) hinv0
       _ = C1⁻¹ := mul_one _
       _ ≤ 1 / 4 := hinv
-  have hgapStrict : np + 2 ≤ kc := by
-    have hTn : (((m - n).toNat : ℕ) : ℝ) = (m : ℝ) - (n : ℝ) :=
-      toNat_sub_cast_real hnm
-    have hcardR : (B : ℝ) ≤ (1 / 4) * (((m : ℝ) - (n : ℝ)) + 1) := by
-      have h1 := hcard
-      rw [hTn] at h1
-      have hmn0 : (0 : ℝ) ≤ ((m : ℝ) - (n : ℝ)) + 1 := by
-        have : (n : ℝ) ≤ (m : ℝ) := by exact_mod_cast hnm
-        linarith only [this]
-      calc (B : ℝ) ≤ stepOneDelta C1 alpha * (((m : ℝ) - (n : ℝ)) + 1) := h1
-        _ ≤ (1 / 4) * (((m : ℝ) - (n : ℝ)) + 1) :=
-            mul_le_mul_of_nonneg_right hdelta4 hmn0
-    have hlo : ((np + 1 - n : ℤ) : ℝ) ≤ (B : ℝ) + 4 := by exact_mod_cast hgapLo
-    have hhi : ((m - (kc + 1) : ℤ) : ℝ) ≤ (B : ℝ) + 1 := by exact_mod_cast hgapHi
-    have hwinR : (14 : ℝ) ≤ (m : ℝ) - (n : ℝ) := by exact_mod_cast hwin
-    have hgapR : (1 : ℝ) < ((kc - np : ℤ) : ℝ) := by
-      push_cast at hlo hhi ⊢
-      linarith only [hlo, hhi, hwinR, hcardR]
-    have : (1 : ℤ) < kc - np := by exact_mod_cast hgapR
-    omega
+  have hgapStrict : np + 2 ≤ kc  := @rootClauseB_gapGeometry (d) (Citer) (kb) (Cedos) (M) (alpha)
+    (m) (omega) (n) (L) (hnm) (x) (hwin) (kc) (np) (hcard) (hgapHi) (hgapLo) (hdelta4)
   -- shared per-branch data
   have hδIoc : stepOneDelta C1 alpha ∈ Set.Ioc (0 : ℝ) (1 / 2) := hdeltamem
   have hcapsj := hCap (np + 1) n (offGridLatticeIndex n x) hgoodj L (by omega)
@@ -1448,10 +1684,14 @@ theorem rootClauseB_display_wellPlaced_final_floor (d : ℕ) [NeZero d] (hd : d 
   rw [show (kc + 1 - 1 : ℤ) = kc by ring] at hlamkc
   set CBraw : ℝ :=
     2 * (d : ℝ) * ((Ccaps * stepOneEp (stepOneDelta C1 alpha)) ^ 2 + 1) with hCBrawDef
-  obtain ⟨hCBraw0, hCBle, hCWGle, hCWG0, hsigmaJ, hdataHP0, hC1dim, hdeltaEq, hoscHi0, hsigmaPos, hGpres, hedG0⟩ :=
+  obtain ⟨hCBraw0, hCBle, hCWGle, hCWG0, hsigmaJ, hdataHP0, hC1dim, hdeltaEq, hoscHi0, hsigmaPos,
+    hGpres, hedG0⟩ :=
     (show ((0 : ℝ) ≤ CBraw) ∧ (CBraw ≤ CBu) ∧ (edFinalDataOscW M (edBoundaryCbd d Cb C kb) *
-      stepFourGagliardoConst d stepOneS ≤ CWGu) ∧ ((0 : ℝ) ≤ edFinalDataOscW M (edBoundaryCbd d Cb C kb) *
-      stepFourGagliardoConst d stepOneS) ∧ ((0 : ℝ) < (Annealed.sigmaBar M (np + 1) : ℝ)) ∧ ((0 : ℝ) ≤ edBoundaryDataHPrinted d Cb C kb Kh m) ∧ (2 * (d : ℝ) + 2 ≤ C1) ∧ (stepOneDelta C1 alpha ≤ C1⁻¹ * (1 - alpha)) ∧ ((0 : ℝ) ≤ (cubeScaleFactor (originCube d kc))⁻¹ *
+      stepFourGagliardoConst d stepOneS ≤ CWGu) ∧ ((0 : ℝ) ≤ edFinalDataOscW M (edBoundaryCbd d Cb
+        C kb) *
+      stepFourGagliardoConst d stepOneS) ∧ ((0 : ℝ) < (Annealed.sigmaBar M (np + 1) : ℝ)) ∧ ((0 :
+        ℝ) ≤ edBoundaryDataHPrinted d Cb C kb Kh m) ∧ (2 * (d : ℝ) + 2 ≤ C1) ∧ (stepOneDelta C1
+          alpha ≤ C1⁻¹ * (1 - alpha)) ∧ ((0 : ℝ) ≤ (cubeScaleFactor (originCube d kc))⁻¹ *
       normalizedL2On
         (truncatedWindow (Support.triadicLatticePoint n (offGridLatticeIndex n x))
           m kc)
@@ -1459,15 +1699,34 @@ theorem rootClauseB_display_wellPlaced_final_floor (d : ℕ) [NeZero d] (hd : d 
           volumeAverage
             (truncatedWindow
               (Support.triadicLatticePoint n (offGridLatticeIndex n x)) m kc)
-            u.toFun)) ∧ ((0 : ℝ) < (Annealed.sigmaBar M m : ℝ)) ∧ ((0 : ℝ) ≤ (Annealed.sigmaBar M m : ℝ) *
+            u.toFun)) ∧ ((0 : ℝ) < (Annealed.sigmaBar M m : ℝ)) ∧ ((0 : ℝ) ≤ (Annealed.sigmaBar M
+              m : ℝ) *
       edFinalDataG M (edBoundaryCbd d Cb C kb)
-        (Kg * stepFourGagliardoConst d stepOneS) m) ∧ ((0 : ℝ) ≤ edFinalDataG M (edBoundaryCbd d Cb C kb)
+        (Kg * stepFourGagliardoConst d stepOneS) m) ∧ ((0 : ℝ) ≤ edFinalDataG M (edBoundaryCbd d
+          Cb C kb)
       (Kg * stepFourGagliardoConst d stepOneS) m) from
-      @rootClauseBWellPlacedFloor_comparisonBounds2 (d) (by infer_instance) (Crg) (C) (Ccap) (Cann) (Cb) (Citer) (kb) (Ccaps) (hCcaps) (Clam) (Cflu) (CannP) (Cind) (hCbd) (hCWH) (hCBuDef) (hCWGuDef) (Cedos) (M) (alpha) (m) (hfact) (n) (u) (Kg) (Kh) (x) (hKg) (hKh) (kc) (np) (hδIoc) (hCBrawDef))
+      @rootClauseBWellPlacedFloor_comparisonBounds2 (d) (by infer_instance) (Crg) (C) (Ccap)
+        (Cann) (Cb) (Citer) (kb) (Ccaps) (hCcaps) (Clam) (Cflu) (CannP) (Cind) (hCbd) (hCWH)
+          (hCBuDef) (hCWGuDef) (Cedos) (M) (alpha) (m) (hfact) (n) (u) (Kg) (Kh) (x) (hKg) (hKh)
+            (kc) (np) (hδIoc) (hCBrawDef))
   by_cases hgate : (fun y => Support.triadicLatticePoint n (offGridLatticeIndex n x) +
       y) '' openCubeSet (originCube d np) ⊆ openCubeSet (originCube d m)
-  · exact @rootClauseB_gatedCaccioppoliBound (d) (by infer_instance) (Crg) (C) (Ccap) (Cann) (Cb) (Citer) (Cosc) (kb) (hCosc) (Ccaps) (Clam) (Klam) (hKlam) (Cflu) (K1) (K2) (CannP) (Cind) (Cch) (hCch) (hend) (CdispC) (hCdispC) (hdisp) (hCbd) (hCWH) (hCtru0) (Cedos) (M) (alpha) (halpha0) (m) (hfact) (halpha1) (Ecap) (hstate) (omega) (n) (L) (hnm) (u) (h) (g) (Kg) (Kh) (hsol) (hgHol) (x) (hKg) (hKh) (hzm) (hgL2) (hgW) (hoscfun) (kc) (hkhi) (np) (hjlo) (hcard) (hgapHi) (hgapLo) (hgapStrict) (hlamkc) (hcapsj) (hCBraw0) (hCBle) (hCWGle) (hCWG0) (hsigmaJ) (hdataHP0) (hC1dim) (hdeltaEq) (hoscHi0) (hsigmaPos) (hGpres) (hgate)
-  · exact @rootClauseB_energyWindowBound (d) (by infer_instance) (Crg) (C) (Ccap) (Cann) (Cb) (Citer) (Cosc) (kb) (hCosc) (Ccaps) (Clam) (Klam) (hKlam) (Cflu) (Afl) (K1) (K2) (hK1) (hK2) (CannP) (Cind) (Cch) (hCch) (hend) (CdispC) (hCbd) (hCWH) (hd1) (hCtru0) (Cedos) (M) (alpha) (halpha0) (m) (hfact) (halpha1) (Ecap) (hstate) (h2gamma) (omega) (hFlush) (hPin) (n) (L) (hnm) (hmL) (u) (h) (g) (Kg) (Kh) (hsol) (hgHol) (hhHol) (hsup) (x) (hKg) (hKh) (hzm) (hgL2) (hgW) (hhW) (hoscfun) (kc) (hkhi) (np) (hjlo) (hgoodj) (hcard) (hgapHi) (hgapLo) (hgapStrict) (hδIoc) (hlamkc) (hCWGle) (hCWG0) (hdataHP0) (hC1dim) (hdeltaEq) (hoscHi0) (hedG0) (hgate)
+  · exact @rootClauseB_gatedCaccioppoliBound (d) (by infer_instance) (Crg) (C) (Ccap) (Cann) (Cb)
+      (Citer) (Cosc) (kb) (hCosc) (Ccaps) (Clam) (Klam) (hKlam) (Cflu) (K1) (K2) (CannP) (Cind)
+        (Cch) (hCch) (hend) (CdispC) (hCdispC) (hdisp) (hCbd) (hCWH) (hCtru0) (Cedos) (M) (alpha)
+          (halpha0) (m) (hfact) (halpha1) (Ecap) (hstate) (omega) (n) (L) (hnm) (u) (h) (g) (Kg)
+            (Kh) (hsol) (hgHol) (x) (hKg) (hKh) (hzm) (hgL2) (hgW) (hoscfun) (kc) (hkhi) (np) (hjlo)
+              (hcard) (hgapHi) (hgapLo) (hgapStrict) (hlamkc) (hcapsj) (hCBraw0) (hCBle) (hCWGle)
+                (hCWG0) (hsigmaJ) (hdataHP0) (hC1dim) (hdeltaEq) (hoscHi0) (hsigmaPos) (hGpres)
+                  (hgate)
+  · exact @rootClauseB_energyWindowBound (d) (by infer_instance) (Crg) (C) (Ccap) (Cann) (Cb)
+      (Citer) (Cosc) (kb) (hCosc) (Ccaps) (Clam) (Klam) (hKlam) (Cflu) (Afl) (K1) (K2) (hK1) (hK2)
+        (CannP) (Cind) (Cch) (hCch) (hend) (CdispC) (hCbd) (hCWH) (hd1) (hCtru0) (Cedos) (M) (alpha)
+          (halpha0) (m) (hfact) (halpha1) (Ecap) (hstate) (h2gamma) (omega) (hFlush) (hPin) (n) (L)
+            (hnm) (hmL) (u) (h) (g) (Kg) (Kh) (hsol) (hgHol) (hhHol) (hsup) (x) (hKg) (hKh) (hzm)
+              (hgL2) (hgW) (hhW) (hoscfun) (kc) (hkhi) (np) (hjlo) (hgoodj) (hcard) (hgapHi)
+                (hgapLo) (hgapStrict) (hδIoc) (hlamkc) (hCWGle) (hCWG0) (hdataHP0) (hC1dim)
+                  (hdeltaEq) (hoscHi0) (hedG0) (hgate)
 end
 
 end Algsuperdiff.Section4.Provider.Regularity

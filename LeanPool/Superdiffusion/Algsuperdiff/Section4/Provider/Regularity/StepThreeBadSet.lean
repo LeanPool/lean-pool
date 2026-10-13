@@ -61,7 +61,6 @@ namespace Algsuperdiff.Section4.Provider.Regularity
 open Algsuperdiff.Section3
 open HCPolySupport MeasureTheory
 open scoped ENNReal
-open scoped Classical
 
 variable {d : ℕ}
 
@@ -84,6 +83,7 @@ theorem stepThreeGoodEvent_eq_goodEventAt (M : ABKModel d) (delta : ℝ) (j : �
 
 /-! ## 2. The bad-scale set -/
 
+open Classical in
 /-- **The bad-scale set** `𝓑_z`: the scales of the window `[n, m-1]` at which the
 Step-3 good event fails. -/
 noncomputable def stepThreeBadSet (M : ABKModel d) (delta : ℝ) (n m : ℤ)
@@ -95,13 +95,15 @@ theorem mem_stepThreeBadSet_iff (M : ABKModel d) (delta : ℝ) (n m : ℤ) (z : 
     (omega : Cutoff.CutoffSample d) (j : ℤ) :
     j ∈ stepThreeBadSet M delta n m z omega ↔
       (n ≤ j ∧ j ≤ m - 1) ∧ omega ∉ stepThreeGoodEvent M delta j z := by
+  classical
   rw [stepThreeBadSet, Finset.mem_filter, Finset.mem_Icc]
 
 /-- `𝓑_z ⊆ [n, m-1]`. -/
 theorem stepThreeBadSet_subset (M : ABKModel d) (delta : ℝ) (n m : ℤ) (z : Vec d)
     (omega : Cutoff.CutoffSample d) :
-    stepThreeBadSet M delta n m z omega ⊆ Finset.Icc n (m - 1) :=
-  Finset.filter_subset _ _
+    stepThreeBadSet M delta n m z omega ⊆ Finset.Icc n (m - 1) := by
+  classical
+  exact Finset.filter_subset _ _
 
 /-- `𝓑_z ⊆ [n, m]`, the counting window of `e.bad.scale.proportion.bound`, and the
 form the iteration lemma's binder `B ⊆ Finset.Icc n m` wants. -/
@@ -120,6 +122,7 @@ theorem stepThreeBadSet_card_eq_sum (M : ABKModel d) (delta : ℝ) (n m : ℤ) (
     ((stepThreeBadSet M delta n m z omega).card : ℝ≥0∞) =
       ∑ j ∈ Finset.Icc n (m - 1),
         Set.indicator ((stepThreeGoodEvent M delta j z)ᶜ) (fun _ => (1 : ℝ≥0∞)) omega := by
+  classical
   rw [stepThreeBadSet, Finset.card_filter]
   push_cast
   refine Finset.sum_congr rfl ?_
@@ -135,6 +138,7 @@ theorem stepThreeBadSet_card_le_sum_Icc (M : ABKModel d) (delta : ℝ) (n m : �
     ((stepThreeBadSet M delta n m z omega).card : ℝ≥0∞) ≤
       ∑ j ∈ Finset.Icc n m,
         Set.indicator ((stepThreeGoodEvent M delta j z)ᶜ) (fun _ => (1 : ℝ≥0∞)) omega := by
+  classical
   rw [stepThreeBadSet_card_eq_sum]
   refine Finset.sum_le_sum_of_subset_of_nonneg
     (Finset.Icc_subset_Icc_right (by linarith only [] : m - 1 ≤ m)) ?_

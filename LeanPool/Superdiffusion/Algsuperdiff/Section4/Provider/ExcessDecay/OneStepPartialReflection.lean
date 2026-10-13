@@ -155,33 +155,41 @@ theorem partialReflectedWindow_metSet (x : Vec d) (m k : ℤ) :
 /-! ## 4. The chain: the per-stage packaging, constructed -/
 
 private theorem oddReflection_upperFaceExtension :
-    ∀ {d : ℕ} {x : Vec d} {m k : ℤ} (hkm : k < m) {S : Finset (Fin d)}
-      (v : H1Function (truncatedWindow x m k)) (i : Fin d) (T : Finset (Fin d)) (hiT : i ∉ T) (hsub : insert i T ⊆ S)
-      (hiS : i ∈ S) (w : H1Function (partialReflectedWindow x m k T))
-      (hwharm : IsWeaklyHarmonicOn (partialReflectedWindow x m k T) w)
-      (hwpin : ∀ y ∈ truncatedWindow x m k, w.toFun y = v.toFun y)
-      (hwodd :
+    ∀ {d : ℕ} {x : Vec d} {m k : ℤ} (_ : k < m) {S : Finset (Fin d)}
+      (v : H1Function (truncatedWindow x m k)) (i : Fin d) (T : Finset (Fin d)) (_ : i ∉ T) (_ :
+        insert i T ⊆ S)
+      (_ : i ∈ S) (w : H1Function (partialReflectedWindow x m k T))
+      (_ : IsWeaklyHarmonicOn (partialReflectedWindow x m k T) w)
+      (_ : ∀ y ∈ truncatedWindow x m k, w.toFun y = v.toFun y)
+      (_ :
         ∀ j ∈ T,
           (MeetsUpperFace x m k j →
-              ∀ (z : Vec d), w.toFun (coordFaceReflection ((1 / 2 : ℝ) * (3 : ℝ) ^ m) j z) = -w.toFun z) ∧
+              ∀ (z : Vec d), w.toFun (coordFaceReflection ((1 / 2 : ℝ) * (3 : ℝ) ^ m) j z) =
+                -w.toFun z) ∧
             (MeetsLowerFace x m k j →
-              ∀ (z : Vec d), w.toFun (coordFaceReflection (-(1 / 2 : ℝ) * (3 : ℝ) ^ m) j z) = -w.toFun z))
-      (hwzt : LocalizedZeroTraceFunctionOn (partialReflectedWindow x m k T) (partialReflectedWindow x m k S) w.toFun)
-      (hBsub : partialReflectedWindow x m k (insert i T) ⊆ partialReflectedWindow x m k S)
-      (hztT :
-        LocalizedZeroTraceFunctionOn (partialReflectedWindow x m k T) (partialReflectedWindow x m k (insert i T)) w.toFun)
-      (hup : MeetsUpperFace x m k i),
+              ∀ (z : Vec d), w.toFun (coordFaceReflection (-(1 / 2 : ℝ) * (3 : ℝ) ^ m) j z) =
+                -w.toFun z))
+      (_ : LocalizedZeroTraceFunctionOn (partialReflectedWindow x m k T) (partialReflectedWindow x
+        m k S) w.toFun)
+      (_ : partialReflectedWindow x m k (insert i T) ⊆ partialReflectedWindow x m k S)
+      (_ :
+        LocalizedZeroTraceFunctionOn (partialReflectedWindow x m k T) (partialReflectedWindow x m
+          k (insert i T)) w.toFun)
+      (_ : MeetsUpperFace x m k i),
       ∃ (w : H1Function (partialReflectedWindow x m k (insert i T))),
         IsWeaklyHarmonicOn (partialReflectedWindow x m k (insert i T)) w ∧
           (∀ y ∈ truncatedWindow x m k, w.toFun y = v.toFun y) ∧
             (∀ j ∈ insert i T,
                 (MeetsUpperFace x m k j →
-                    ∀ (z : Vec d), w.toFun (coordFaceReflection ((1 / 2 : ℝ) * (3 : ℝ) ^ m) j z) = -w.toFun z) ∧
+                    ∀ (z : Vec d), w.toFun (coordFaceReflection ((1 / 2 : ℝ) * (3 : ℝ) ^ m) j z) =
+                      -w.toFun z) ∧
                   (MeetsLowerFace x m k j →
-                    ∀ (z : Vec d), w.toFun (coordFaceReflection (-(1 / 2 : ℝ) * (3 : ℝ) ^ m) j z) = -w.toFun z)) ∧
-              LocalizedZeroTraceFunctionOn (partialReflectedWindow x m k (insert i T)) (partialReflectedWindow x m k S)
+                    ∀ (z : Vec d), w.toFun (coordFaceReflection (-(1 / 2 : ℝ) * (3 : ℝ) ^ m) j z)
+                      = -w.toFun z)) ∧
+              LocalizedZeroTraceFunctionOn (partialReflectedWindow x m k (insert i T))
+                (partialReflectedWindow x m k S)
                 w.toFun := by
-  intro d x m k hkm S v i T hiT hsub hiS w hwharm hwpin hwodd hwzt hBsub hztT hup
+  intro d x m k hkm S v i T hiT _ hiS w hwharm hwpin hwodd hwzt _ hztT hup
   -- unfold the upper `i`-face
   have hset : faceHalf (partialReflectedWindow x m k (insert i T)) i
       ((1 / 2 : ℝ) * (3 : ℝ) ^ m) 1 = partialReflectedWindow x m k T :=
@@ -339,7 +347,8 @@ theorem exists_h1_oddReflection_chain {x : Vec d} {m k : ℤ} (hkm : k < m)
           (partialReflectedWindow x m k (insert i T)) w.toFun :=
         localizedZeroTraceFunctionOn_mono_window hBsub hwzt
       by_cases hup : MeetsUpperFace x m k i
-      · exact @oddReflection_upperFaceExtension (d) (x) (m) (k) (hkm) (S) (v) (i) (T) (hiT) (hsub) (hiS) (w) (hwharm) (hwpin) (hwodd) (hwzt) (hBsub) (hztT) (hup)
+      · exact @oddReflection_upperFaceExtension (d) (x) (m) (k) (hkm) (S) (v) (i) (T) (hiT) (hsub)
+          (hiS) (w) (hwharm) (hwpin) (hwodd) (hwzt) (hBsub) (hztT) (hup)
       · -- unfold the lower `i`-face
         have hlow : MeetsLowerFace x m k i := (hSup i hiS).resolve_left hup
         have hset : faceHalf (partialReflectedWindow x m k (insert i T)) i

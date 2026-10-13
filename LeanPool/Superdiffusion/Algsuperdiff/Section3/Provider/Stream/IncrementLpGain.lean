@@ -83,6 +83,7 @@ namespace Algsuperdiff.Section3.Provider.Stream
 open MeasureTheory Filter
 open scoped ENNReal Pointwise
 open HCPolySupport
+open HCPolySupport.Book.Ch04
 open Algsuperdiff.Frozen.Assumptions
 open Algsuperdiff.Section3.Cutoff
 
@@ -316,7 +317,7 @@ theorem isBigO_gammaSigma_centeredDescendantAverage_regFieldLpMassRep
       (Book.Ch04.gammaSigmaDescendantsAtScaleConst d 0 sigma *
         Book.Ch04.partitionCardinalityScale (d := d) 0
           (l - (m + (incrementPartitionShift d : ℤ))) * K) :=
-  Book.Ch04.isBigO_gammaSigma_restrictionCenteredDescendantAverage_of_restrictionUnitRangeDependentLaw
+  isBigO_gammaSigma_restrictionCenteredDescendantAverage_of_restrictionUnitRangeDependentLaw
     (le_refl (0 : ℤ)) (by omega)
     (partitionStreamIncrementLaw_stationary M n m)
     (partitionStreamIncrementLaw_unitRangeDependent M n m) (regFieldLpMassRep p)

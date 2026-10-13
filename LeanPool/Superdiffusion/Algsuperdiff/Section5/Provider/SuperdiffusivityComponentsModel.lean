@@ -211,7 +211,8 @@ private theorem sqrt_four_mul_add_le_two_mul_add {p L : ℝ} :
   have hsqrt : Real.sqrt (4 * p) = 2 * Real.sqrt p := by
     calc
       Real.sqrt (4 * p) = Real.sqrt 4 * Real.sqrt p := Real.sqrt_mul (by norm_num) p
-      _ = 2 * Real.sqrt p := by norm_num
+      _ = 2 * Real.sqrt p := by
+        rw [show (4 : ℝ) = (2 : ℝ) ^ 2 by norm_num, Real.sqrt_sq (by norm_num)]
   rw [hsqrt]
   rw [mul_add]
   exact add_le_add le_rfl
