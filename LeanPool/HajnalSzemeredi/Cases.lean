@@ -250,7 +250,7 @@ theorem case1 {S : Finset V} {P : Finset ℕ} {c g : V → ℕ} {r s lo hi U : �
       · subst hvz; simpa [hc1] using hXacc
       · rw [hc1, Function.update_of_ne hvz]; exact (mem_filter.mp hvA).2
   have hclsW : cls SA φ (c z) = insert y₁ ((cls S c (c z)).erase z) := by
-    rw [hSA, hφ, cls_insert_update_self, hc1, cls_update_old hzA hXW.symm, cls_part hWacc]
+    rw [hSA, hφ, cls_insert_update_self, hc1, cls_update_old hXW.symm, cls_part hWacc]
   have hclsWcard : (cls SA φ (c z)).card = s := by
     rw [hclsW, card_insert_of_notMem, card_erase_of_mem (mem_cls.mpr ⟨hzS, rfl⟩), hWcard]
     · have : 0 < s := hWcard ▸ card_pos.mpr ⟨z, mem_cls.mpr ⟨hzS, rfl⟩⟩

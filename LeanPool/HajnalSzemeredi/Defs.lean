@@ -147,7 +147,7 @@ lemma cls_update_self (hv : v ∈ S) :
   · simp [hw]
 
 open Classical in
-lemma cls_update_old (hv : v ∈ S) (hj : c v ≠ j) :
+lemma cls_update_old (hj : c v ≠ j) :
     cls S (Function.update c v j) (c v) = (cls S c (c v)).erase v := by
   ext w
   by_cases hw : w = v
@@ -171,7 +171,7 @@ lemma card_cls_update_self (hv : v ∈ S) (hj : c v ≠ j) :
 open Classical in
 lemma card_cls_update_old (hv : v ∈ S) (hj : c v ≠ j) :
     (cls S (Function.update c v j) (c v)).card + 1 = (cls S c (c v)).card := by
-  rw [cls_update_old hv hj, card_erase_add_one]
+  rw [cls_update_old hj, card_erase_add_one]
   simp [hv]
 
 open Classical in
