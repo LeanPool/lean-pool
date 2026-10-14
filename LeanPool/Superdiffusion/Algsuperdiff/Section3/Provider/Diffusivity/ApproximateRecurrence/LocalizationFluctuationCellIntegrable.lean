@@ -128,7 +128,7 @@ theorem eLpNorm_restrict_sub_le (mu : Measure alpha) (S : Set alpha)
 
 /-- **The window `L^2` functional is `1`-Lipschitz on `L^2`.**  Restriction only
 decreases the seminorm, so the ambient `L^2` distance controls the window one. -/
-private theorem lipschitzWith_lpWindowNorm (mu : Measure alpha) (S : Set alpha) :
+theorem lipschitzWith_lpWindowNorm (mu : Measure alpha) (S : Set alpha) :
     LipschitzWith 1 (lpWindowNorm (E := E) mu S) := by
   refine LipschitzWith.of_dist_le_mul fun F G => ?_
   have hdiff : eLpNorm ((F : alpha → E) - (G : alpha → E)) 2 mu =
@@ -173,7 +173,7 @@ private theorem lipschitzWith_lpWindowNorm (mu : Measure alpha) (S : Set alpha) 
   refine ⟨?_, ?_⟩ <;> simp only [NNReal.coe_one, one_mul] <;> rw [hdist] <;> linarith
 
 /-- The square of the window functional is the window integral of `‖F‖^2`. -/
-private theorem lpWindowNorm_sq (mu : Measure alpha) (S : Set alpha) (F : Lp E 2 mu) :
+theorem lpWindowNorm_sq (mu : Measure alpha) (S : Set alpha) (F : Lp E 2 mu) :
     lpWindowNorm mu S F ^ 2 = ∫ x in S, ‖(F : alpha → E) x‖ ^ 2 ∂mu := by
   have hmem : MemLp (F : alpha → E) 2 (mu.restrict S) := (Lp.memLp F).restrict S
   have hnn : (0 : ℝ) ≤ ∫ x in S, ‖(F : alpha → E) x‖ ^ (2 : ℝ) ∂mu :=

@@ -22,7 +22,7 @@ open MeasureTheory
 
 -- FROZEN-STATEMENT-BEGIN
 /-- ABK26 (J2): the exact strict Gaussian tail for the three
-weighted essential-`L∞` cube norms.  The author-approved qualitative `C^2`
+weighted essential-`L∞` cube norms.  The qualitative `C^2`
 regularity is already enforced by the shell carrier and is not repeated as a
 hypothesis. -/
 structure Algsuperdiff.Frozen.Assumptions.ShellLawJ2

@@ -121,83 +121,17 @@ variable {alpha E : Type*} [MeasurableSpace alpha] [NormedAddCommGroup E]
 /-- The `L^2` size of an `L^2` class over a window, read through the seminorm of
 the restricted measure. -/
 def cellWindowNorm (mu : Measure alpha) (S : Set alpha) (F : Lp E 2 mu) : ℝ :=
-  (eLpNorm (F : alpha → E) 2 (mu.restrict S)).toReal
+  lpWindowNorm mu S F
 
-private theorem cellWindowNorm_ne_top (mu : Measure alpha) (S : Set alpha)
-    (F : Lp E 2 mu) : eLpNorm (F : alpha → E) 2 (mu.restrict S) ≠ ⊤ :=
-  ne_top_of_le_ne_top (Lp.memLp F).eLpNorm_ne_top
-    (eLpNorm_mono_measure _ Measure.restrict_le_self)
-
-private theorem cellWindow_restrict_sub_le (mu : Measure alpha) (S : Set alpha)
-    (F G : Lp E 2 mu) :
-    eLpNorm (F : alpha → E) 2 (mu.restrict S) ≤
-      eLpNorm (G : alpha → E) 2 (mu.restrict S) +
-        eLpNorm ((F : alpha → E) - (G : alpha → E)) 2 (mu.restrict S) := by
-  exact ApproximateRecurrence.eLpNorm_restrict_sub_le
-    mu S F G
-
-/-- **The window `L^2` functional is `1`-Lipschitz on `L^2`.**  Restriction only
-decreases the seminorm, so the ambient `L^2` distance controls the window one. -/
+/-- The window `L^2` functional is `1`-Lipschitz on `L^2`. -/
 private theorem lipschitzWith_cellWindowNorm (mu : Measure alpha) (S : Set alpha) :
-    LipschitzWith 1 (cellWindowNorm (E := E) mu S) := by
-  refine LipschitzWith.of_dist_le_mul fun F G => ?_
-  have hdiff : eLpNorm ((F : alpha → E) - (G : alpha → E)) 2 mu =
-      eLpNorm ((F - G : Lp E 2 mu) : alpha → E) 2 mu :=
-    eLpNorm_congr_ae (Lp.coeFn_sub F G).symm
-  have hdifftop : eLpNorm ((F : alpha → E) - (G : alpha → E)) 2 mu ≠ ⊤ := by
-    rw [hdiff]; exact (Lp.memLp (F - G)).eLpNorm_ne_top
-  have hrestr : eLpNorm ((F : alpha → E) - (G : alpha → E)) 2 (mu.restrict S) ≤
-      eLpNorm ((F : alpha → E) - (G : alpha → E)) 2 mu :=
-    eLpNorm_mono_measure _ Measure.restrict_le_self
-  have hrestrtop : eLpNorm ((F : alpha → E) - (G : alpha → E)) 2 (mu.restrict S) ≠ ⊤ :=
-    ne_top_of_le_ne_top hdifftop hrestr
-  have hdist : dist F G =
-      (eLpNorm ((F : alpha → E) - (G : alpha → E)) 2 mu).toReal := by
-    rw [hdiff, dist_eq_norm, Lp.norm_def]
-  have hsym : eLpNorm ((G : alpha → E) - (F : alpha → E)) 2 (mu.restrict S) =
-      eLpNorm ((F : alpha → E) - (G : alpha → E)) 2 (mu.restrict S) :=
-    eLpNorm_sub_comm _ _ _ _
-  have h1 : cellWindowNorm mu S F - cellWindowNorm mu S G ≤
-      (eLpNorm ((F : alpha → E) - (G : alpha → E)) 2 (mu.restrict S)).toReal := by
-    have hmono := ENNReal.toReal_mono
-      (ENNReal.add_ne_top.mpr ⟨cellWindowNorm_ne_top mu S G, hrestrtop⟩)
-      (cellWindow_restrict_sub_le mu S F G)
-    rw [ENNReal.toReal_add (cellWindowNorm_ne_top mu S G) hrestrtop] at hmono
-    change (eLpNorm (F : alpha → E) 2 (mu.restrict S)).toReal -
-      (eLpNorm (G : alpha → E) 2 (mu.restrict S)).toReal ≤ _
-    linarith
-  have h2 : cellWindowNorm mu S G - cellWindowNorm mu S F ≤
-      (eLpNorm ((F : alpha → E) - (G : alpha → E)) 2 (mu.restrict S)).toReal := by
-    have hbase := cellWindow_restrict_sub_le mu S G F
-    rw [hsym] at hbase
-    have hmono := ENNReal.toReal_mono
-      (ENNReal.add_ne_top.mpr ⟨cellWindowNorm_ne_top mu S F, hrestrtop⟩) hbase
-    rw [ENNReal.toReal_add (cellWindowNorm_ne_top mu S F) hrestrtop] at hmono
-    change (eLpNorm (G : alpha → E) 2 (mu.restrict S)).toReal -
-      (eLpNorm (F : alpha → E) 2 (mu.restrict S)).toReal ≤ _
-    linarith
-  have hfin : (eLpNorm ((F : alpha → E) - (G : alpha → E)) 2 (mu.restrict S)).toReal ≤
-      (eLpNorm ((F : alpha → E) - (G : alpha → E)) 2 mu).toReal :=
-    ENNReal.toReal_mono hdifftop hrestr
-  rw [Real.dist_eq, abs_le]
-  refine ⟨?_, ?_⟩ <;> simp only [NNReal.coe_one, one_mul] <;> rw [hdist] <;> linarith
+    LipschitzWith 1 (cellWindowNorm (E := E) mu S) :=
+  lipschitzWith_lpWindowNorm mu S
 
 /-- The square of the window functional is the window integral of `‖F‖^2`. -/
 private theorem cellWindowNorm_sq (mu : Measure alpha) (S : Set alpha) (F : Lp E 2 mu) :
-    cellWindowNorm mu S F ^ 2 = ∫ x in S, ‖(F : alpha → E) x‖ ^ 2 ∂mu := by
-  have hmem : MemLp (F : alpha → E) 2 (mu.restrict S) := (Lp.memLp F).restrict S
-  have hnn : (0 : ℝ) ≤ ∫ x in S, ‖(F : alpha → E) x‖ ^ (2 : ℝ) ∂mu :=
-    integral_nonneg fun x => Real.rpow_nonneg (norm_nonneg _) _
-  have hrw : ∫ x in S, ‖(F : alpha → E) x‖ ^ (2 : ℝ) ∂mu =
-      ∫ x in S, ‖(F : alpha → E) x‖ ^ (2 : ℕ) ∂mu := by
-    refine integral_congr_ae (Filter.Eventually.of_forall fun x => ?_)
-    simp
-  rw [cellWindowNorm, hmem.eLpNorm_eq_integral_rpow_norm (by norm_num) (by norm_num)]
-  have hto : (2 : ℝ≥0∞).toReal = 2 := by norm_num
-  rw [hto, ENNReal.toReal_ofReal (Real.rpow_nonneg hnn _),
-    ← Real.rpow_natCast ((∫ x in S, ‖(F : alpha → E) x‖ ^ (2 : ℝ) ∂mu) ^ (2 : ℝ)⁻¹) 2,
-    ← Real.rpow_mul hnn,
-    show ((2 : ℝ)⁻¹ * ((2 : ℕ) : ℝ)) = 1 by norm_num, Real.rpow_one, hrw]
+    cellWindowNorm mu S F ^ 2 = ∫ x in S, ‖(F : alpha → E) x‖ ^ 2 ∂mu :=
+  lpWindowNorm_sq mu S F
 
 end Window
 

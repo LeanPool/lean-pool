@@ -25,7 +25,7 @@ open MeasureTheory ProbabilityTheory
 the paper-wide dimension and scaling parameters, mutual independence of all
 shells, and the exact marginal scaling law under the canonical sequence law.
 Molecular diffusivity `nu > 0` is deferred to the
-cutoff/coefficient parameter surface.  Antisymmetry and the author-approved
+cutoff/coefficient parameter surface.  Antisymmetry and
 qualitative `C^2` regularity hold by the `ShellField` carrier itself. -/
 structure Algsuperdiff.Frozen.Assumptions.ShellLawPrefix
     (d : ℕ) (gamma : ℝ)

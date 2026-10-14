@@ -29,8 +29,8 @@ probability measure `P` on the honest-fields carrier `RegCoeffField d`,
 resampled through a family of restriction endomorphisms.
 
 Fix a `Fintype ι` and a family of pairwise `AreUnitSeparated` measurable regions
-`C : ι → Set (Vec d)` (the `MeasurableSet` side-conditions are the D7-approved
-refinement making the carrier restriction σ-algebra `RestrictionSigmaR` well
+`C : ι → Set (Vec d)` (the `MeasurableSet` side-conditions make the
+carrier restriction σ-algebra `RestrictionSigmaR` well
 defined).  Writing `R a i := restrictReg (C i) (hC i) a` for the joint
 restriction map, each coordinate is a restriction-local random variable for
 `RestrictionSigmaR (C i) (hC i)`, so the family is independent under a
