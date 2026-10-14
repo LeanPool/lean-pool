@@ -230,7 +230,7 @@ discharged from `lambdaSq_coefficientCutoffTriadicCoeffFamily_pos`.
 
 This is the proved `switchCubeEnergy_indicator_le_ae` with one binder removed
 and one binder weakened; the conclusion is unchanged. -/
-private theorem switchCubeEnergy_indicator_le_ae_of_shell_ae (dimension : 2 ≤ d)
+theorem switchCubeEnergy_indicator_le_ae_of_shell_ae (dimension : 2 ≤ d)
     [NeZero d] (M : ABKModel d) (Ccg : ℝ) (Q : TriadicCube d) (j : ℕ)
     {lowScale highScale : ℤ} (hle : lowScale ≤ highScale)
     (P : TriadicCube d → CutoffSample d → BlockVec d) {S : ℝ} (hS0 : 0 < S)

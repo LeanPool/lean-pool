@@ -48,24 +48,16 @@ def normalizedFrozenCoeff (nu : ℝ) (a : CoeffField d) (z : Vec d) : CoeffField
 
 /-- Matrix action on the Euclidean realization, as a linear map into bounded
 operators. -/
-noncomputable def matrixToHilbertOperatorLinear :
-    Mat d →ₗ[ℝ] (HilbertVec d →L[ℝ] HilbertVec d) where
-  toFun := HilbertVec.applyMat
-  map_add' := by
-    intro A B
-    ext x i
-    simp [HilbertVec.applyMat_apply, matVecMul, Finset.sum_add_distrib, add_mul]
-  map_smul' := by
-    intro c A
-    ext x i
-    simp [HilbertVec.applyMat_apply, matVecMul, Finset.mul_sum, mul_assoc]
+noncomputable abbrev matrixToHilbertOperatorLinear :
+    Mat d →ₗ[ℝ] (HilbertVec d →L[ℝ] HilbertVec d) :=
+  Algsuperdiff.StochasticProcess.Common.Regularity.Ported.matrixToHilbertOperatorLinear
+    (d := d)
 
 /-- Matrix action on the Euclidean realization is continuous in the matrix,
 by finite-dimensionality. -/
-noncomputable def matrixToHilbertOperator :
+noncomputable abbrev matrixToHilbertOperator :
     Mat d →L[ℝ] (HilbertVec d →L[ℝ] HilbertVec d) :=
-  ⟨matrixToHilbertOperatorLinear,
-    matrixToHilbertOperatorLinear.continuous_of_finiteDimensional⟩
+  Algsuperdiff.StochasticProcess.Common.Regularity.Ported.matrixToHilbertOperator (d := d)
 
 /-- The normalized skew coefficient represented as an operator on Euclidean Hilbert space. -/
 def normalizedSkewOperator (nu : ℝ) (a : CoeffField d) :

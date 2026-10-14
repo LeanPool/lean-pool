@@ -6,6 +6,7 @@ Authors: Scott Armstrong
 
 module
 
+public import LeanPool.Superdiffusion.Algsuperdiff.Section4.Provider.Annular.CarrierIdentification
 public import LeanPool.Superdiffusion.Algsuperdiff.Section4.Provider.Annular.SigmaBarBudget
 
 /-!
@@ -84,15 +85,9 @@ This is the same carrier shape as `AssemblyFeed.jLegField` (a lattice maximum of
 `scalarResponseMax`), which is what makes the `hpref` slot
 `IsAnnularDecompPre s m (jLegField …) (annularResponseMax …) C₁` a comparison of
 like with like. -/
-def annularResponseMax (M : ABKModel d) (L m : ℤ) (omega : Cutoff.CutoffSample d)
+abbrev annularResponseMax (M : ABKModel d) (L m : ℤ) (omega : Cutoff.CutoffSample d)
     (j n : ℤ) : ℝ :=
-  Proportion.fmax (Proportion.latticeAnnulusFinset d n j (j - 1)) fun v =>
-    scalarResponseMax
-      ((subConstCutoffTriadicCoeffFamily M L
-        (Support.fluxIncrementAverage M L m (originCube d m) omega)
-        (matTranspose_fluxIncrementAverage M L m (originCube d m) omega)
-        omega).coeffOn (⟨n, v⟩ : TriadicCube d))
-      (Annealed.sigmaBar M m)
+  annularResponseMaxPref M L m omega j n
 
 /-- The family at the **literal** `(2,2)` annular error atom, i.e. the manuscript
 quantity rather than the measurable representative.  The two agree almost
@@ -578,7 +573,7 @@ theorem exists_uglyJEstimate_annulus_of_eventG1 (d : ℕ) (dimension : 2 ≤ d) 
         (gradTailSq_nonneg M m omega)
     linarith only [t1, t2, t3, t4, t5]
   unfold IsUglyJEstimate
-  rw [annularResponseMax]
+  rw [annularResponseMax, annularResponseMaxPref]
   refine Proportion.fmax_le hRHS0 ?_
   intro v hv
   rw [scalarResponseMax]

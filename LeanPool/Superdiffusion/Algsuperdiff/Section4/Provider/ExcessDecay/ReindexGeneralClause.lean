@@ -67,7 +67,7 @@ noncomputable section
 composed two-summand bound is absorbed into the four-summand frozen right-hand
 side, with the window factor `K` paid on both surviving legs and the `σ` gap-3
 factor `4` on the force leg. -/
-private theorem general_absorb_window {Cf C K A A' B B' T3 T4 : ℝ} (hK : 0 ≤ K)
+theorem general_absorb_window {Cf C K A A' B B' T3 T4 : ℝ} (hK : 0 ≤ K)
     (hAA' : A ≤ K * A') (hA' : 0 ≤ A') (hBB' : B ≤ 4 * K * B') (hB' : 0 ≤ B')
     (hT3 : 0 ≤ T3) (hT4 : 0 ≤ T4) (hCf : 0 ≤ Cf)
     (h1 : K * Cf ≤ C) (h4 : 4 * K * Cf ≤ C) :
@@ -93,7 +93,7 @@ private theorem general_absorb_window {Cf C K A A' B B' T3 T4 : ℝ} (hK : 0 ≤
   linarith only [hstep1, hstep2, h3, h4', hexp, hexp2]
 
 /-- Absorbing a window factor through a nonnegative prefactor. -/
-private theorem prefactor_window_move {a X Y K : ℝ} (ha : 0 ≤ a)
+theorem prefactor_window_move {a X Y K : ℝ} (ha : 0 ≤ a)
     (hXY : X ≤ K * Y) : a * X ≤ K * (a * Y) := by
   have h := mul_le_mul_of_nonneg_left hXY ha
   have hrw : a * (K * Y) = K * (a * Y) := by ring
@@ -102,7 +102,7 @@ private theorem prefactor_window_move {a X Y K : ℝ} (ha : 0 ≤ a)
 
 /-- Absorbing the `σ`-index factor and the window factor through the force leg's
 three nonnegative prefactors. -/
-private theorem sigma_window_move {p q q' r Y Y' K : ℝ} (hp : 0 ≤ p) (hq : 0 ≤ q)
+theorem sigma_window_move {p q q' r Y Y' K : ℝ} (hp : 0 ≤ p) (hq : 0 ≤ q)
     (hr : 0 ≤ r) (hK : 0 ≤ K) (hY' : 0 ≤ Y') (hqq' : q ≤ 4 * q')
     (hYY' : Y ≤ K * Y') :
     p * q * r * Y ≤ 4 * K * (p * q' * r * Y') := by

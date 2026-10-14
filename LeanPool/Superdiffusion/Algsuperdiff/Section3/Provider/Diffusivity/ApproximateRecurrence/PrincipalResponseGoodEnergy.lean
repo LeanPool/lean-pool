@@ -590,70 +590,7 @@ private theorem switchCubeEnergy_nonneg' (M : ABKModel d) (scale : ℤ)
     0 ≤ switchCubeEnergy M scale R X w :=
   blockVecDot_coarseBlockMatrix_nonneg _ _ _
 
-/-! ## The per-cube switch with the shell size taken almost surely -/
-
-private theorem switchCubeEnergy_indicator_le_ae' (dimension : 2 ≤ d) [NeZero d]
-    (M : ABKModel d) (Ccg : ℝ) (Q : TriadicCube d) (jj : ℕ)
-    {lowScale highScale : ℤ} (hle : lowScale ≤ highScale)
-    (P : TriadicCube d → CutoffSample d → BlockVec d) {S : ℝ} (hS0 : 0 < S)
-    (hshell : ∀ R ∈ descendantsAtDepth Q jj,
-      ∀ᵐ omega ∂(cutoffSampleLaw M).toMeasure,
-        omega ∈ Provider.BadEvents.goodLocalEvent M Ccg R lowScale →
-          (centeredFreshShellUnitCube M R hle omega).w1Infinity ^ 2 ≤
-            gridSwitchDiscount Q jj lowScale ^ 2 * S *
-              Ch02.lambdaSq R (3 / 8) (.finite 2)
-                (coefficientCutoffTriadicCoeffFamily M lowScale omega)) :
-    ∀ R ∈ descendantsAtDepth Q jj,
-      ∀ᵐ omega ∂(cutoffSampleLaw M).toMeasure,
-        switchCubeEnergy M highScale R (P R omega) omega *
-            (principalBadEvent M Ccg R lowScale)ᶜ.indicator
-              (fun _ => (1 : ℝ)) omega ≤
-          (1 + (3 / 2 : ℝ) * gridSwitchDiscount Q jj lowScale) *
-              switchCubeQuad M lowScale highScale R (P R omega) omega +
-            principalSwitchLoadConst d *
-                ((3 / 2 : ℝ) * gridSwitchDiscount Q jj lowScale) *
-              switchEllipLoad S (P R omega) := by
-  classical
-  intro R hR
-  filter_upwards
-    [responseSensitivityConst_mul_gradientW1Infinity_centeredFreshShell_le_ae
-      M Ccg R hle (highScale := highScale), hshell R hR] with omega hgate hsh
-  have hquad0 : (0 : ℝ) ≤ switchCubeQuad M lowScale highScale R (P R omega) omega :=
-    switchCubeQuad_nonneg M lowScale highScale R (P R omega) omega
-  have hload0 : (0 : ℝ) ≤ switchEllipLoad S (P R omega) :=
-    switchEllipLoad_nonneg hS0 (P R omega)
-  have hCload : 0 < principalSwitchLoadConst d :=
-    principalSwitchLoadConst_pos dimension
-  have hD0 : 0 < gridSwitchDiscount Q jj lowScale := gridSwitchDiscount_pos Q jj lowScale
-  by_cases hmem : omega ∈ Provider.BadEvents.goodLocalEvent M Ccg R lowScale
-  · have hmem' : omega ∈ (principalBadEvent M Ccg R lowScale)ᶜ := by
-      rwa [compl_principalBadEvent]
-    rw [Set.indicator_of_mem hmem', mul_one]
-    have hgrad : Provider.BadEvents.responseSensitivityConst d *
-        (centeredFreshShellUnitCube M R hle omega).gradientW1Infinity ≤
-        gridSwitchDiscount Q jj lowScale *
-          Ch02.lambdaSq R (3 / 8) (.finite 2)
-            (coefficientCutoffTriadicCoeffFamily M lowScale omega) := by
-      have h := hgate hmem
-      rwa [gridSwitchDiscount_eq_of_mem Q jj lowScale hR] at h
-    exact blockVecDot_coarseBlockMatrix_le_switch_absorbed_cube dimension M R
-      lowScale highScale omega (centeredFreshShellUnitCube M R hle omega)
-      (freshShellCubeAverage_skew R omega.1 lowScale highScale)
-      (centeredFreshShellUnitCube_shift M R hle omega)
-      hD0 (gridSwitchDiscount_le_one Q jj lowScale) hS0
-      (lambdaSq_coefficientCutoffTriadicCoeffFamily_pos M R lowScale omega) hgrad
-      (hsh hmem) (P R omega)
-  · have hmem' : omega ∉ (principalBadEvent M Ccg R lowScale)ᶜ := by
-      rwa [compl_principalBadEvent]
-    rw [Set.indicator_of_notMem hmem', mul_zero]
-    have h1 : (0 : ℝ) ≤ (1 + (3 / 2 : ℝ) * gridSwitchDiscount Q jj lowScale) *
-        switchCubeQuad M lowScale highScale R (P R omega) omega :=
-      mul_nonneg (by linarith) hquad0
-    have h2 : (0 : ℝ) ≤ principalSwitchLoadConst d *
-        ((3 / 2 : ℝ) * gridSwitchDiscount Q jj lowScale) *
-          switchEllipLoad S (P R omega) :=
-      mul_nonneg (mul_nonneg hCload.le (by linarith)) hload0
-    linarith
+/-! The shell-a.e. per-cube switch estimate is supplied by `PrincipalResponseLamWire`. -/
 
 private theorem ccg_pos_of_gate' [NeZero d] {Ccg : ℝ}
     (hccg : 2 * (d : ℝ) ^ 6 ≤ Ccg * Provider.BadEvents.sensitivityConstMax d ^ 2) :
@@ -1018,7 +955,7 @@ theorem exists_smallCoupling_principalEnergy_bound_of_gate
   have hshell := shell_hypothesis_of_centeringConst_ae M (ccg_pos_of_gate' hccg)
     (originCube d K) j hle
     (shellSizeThreshold_centeringConst_le_sigmaBar M hstate hm hccg)
-  have hdom := switchCubeEnergy_indicator_le_ae' hd M Ccg (originCube d K) j hle
+  have hdom := switchCubeEnergy_indicator_le_ae_of_shell_ae hd M Ccg (originCube d K) j hle
     (fun R z => principalPz (Annealed.sigmaBar M (m - (hgap : ℤ))) z.val
       (m - (hgap : ℤ)) m e e' R (wD z.val) (wN z.val))
     (Annealed.sigmaBar M (m - (hgap : ℤ))).2 hshell

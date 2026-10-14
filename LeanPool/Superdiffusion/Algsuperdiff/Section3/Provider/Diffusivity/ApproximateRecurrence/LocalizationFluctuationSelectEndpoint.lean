@@ -6,6 +6,8 @@ Authors: Scott Armstrong
 
 module
 
+public import LeanPool.Superdiffusion.Algsuperdiff.Section3.Provider.Diffusivity.ApproximateRecurrence.PrincipalEnergyAverage
+
 public import LeanPool.Superdiffusion.Algsuperdiff.Section3.Provider.Diffusivity.ApproximateRecurrence.LocalizationFluctuationSelectValue
 public import LeanPool.Superdiffusion.Algsuperdiff.Section3.Provider.Diffusivity.ApproximateRecurrence.LocalizationRecurrenceMesh
 public import LeanPool.Superdiffusion.Algsuperdiff.Section3.Provider.Diffusivity.ApproximateRecurrence.PrincipalResponseSwitchActualPerCube
@@ -286,19 +288,14 @@ def meshFluctuationCellIntegrand (M : ABKModel d) (n : ℤ) (h : ℕ) (Kc : ℤ)
       (wD omega.val) (wN omega.val))
 
 /-- **The principal half of the endpoint, at the terminal's carrier.**  This is
-`Closure.Junctions.principalEnergyAverage M n h Kc j e e' wD wN` with its
-definition unfolded; that module is a live lane and is deliberately not imported
-here, so the equality is left as a syntactic one for the consumer. -/
-def principalSwitchEnergyAverage (M : ABKModel d) (n : ℤ) (h : ℕ) (Kc : ℤ) (j : ℕ)
+A compatibility name for the lower shared `principalEnergyAverage` carrier.
+The closure and localization consumer lanes both import that carrier directly. -/
+abbrev principalSwitchEnergyAverage (M : ABKModel d) (n : ℤ) (h : ℕ) (Kc : ℤ) (j : ℕ)
     (e e' : Vec d)
     (wD : ShellSeq d → H10Function (openCubeSet (originCube d Kc)))
     (wN : ShellSeq d → H1MeanZeroFunction (openCubeSet (originCube d Kc))) : ℝ :=
-  descendantsAverage (originCube d Kc) j
-    (fun R => ∫ omega : CutoffSample d,
-      switchCubeEnergy M (n + (h : ℤ)) R
-        (principalPz (Annealed.sigmaBar M n) omega.val n (n + (h : ℤ)) e e' R
-          (wD omega.val) (wN omega.val)) omega
-      ∂(cutoffSampleLaw M).toMeasure)
+  Algsuperdiff.Section3.Provider.Diffusivity.ApproximateRecurrence.principalEnergyAverage
+    M n h Kc j e e' wD wN
 
 /-- **The fluctuation half of the endpoint: the quantity Step 2 must bound by
 `cgamma^{10}`** (target `e.lower.bound.localization.terms`).
@@ -432,7 +429,7 @@ theorem integral_blockVecDot_recurrenceP_le_principalSwitchEnergyAverage_add
         integral_descendantsAverage (originCube d Kc) j cell hcellint
     _ = principalSwitchEnergyAverage M n h Kc j e e' wD wN +
           fluctuationEnergyAverage M n h Kc j e e' wD wN := by
-        unfold principalSwitchEnergyAverage fluctuationEnergyAverage
+        unfold principalSwitchEnergyAverage principalEnergyAverage fluctuationEnergyAverage
         rw [← descendantsAverage_add]
         refine descendantsAverage_congr _ _ fun R hR => ?_
         exact integral_add (hintPrincipal R hR) (hintFluctuation R hR)

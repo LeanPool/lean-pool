@@ -7,6 +7,7 @@ Authors: Scott Armstrong, Tuomo Kuusi
 module
 
 public import LeanPool.Superdiffusion.Algsuperdiff.Section3.Provider.CoarseEllipticity.ProfileConstants
+public import LeanPool.Superdiffusion.Algsuperdiff.Section3.Provider.CoarseEllipticity.UpperCollarBandMeanConsumption
 public import LeanPool.Superdiffusion.Algsuperdiff.Section3.Provider.CoarseEllipticity.UpperCollarBandMeanTunedProfile
 public import LeanPool.Superdiffusion.Algsuperdiff.Section3.Provider.Stream.IncrementTranslation
 
@@ -50,15 +51,6 @@ noncomputable section
 
 variable {d : ℕ}
 
-private theorem inductionState_mono_collarBandMean
-    (M : ABKModel d) (E : {E : ℝ // 1 ≤ E}) {m₁ m₂ : ℤ}
-    (hm : m₁ ≤ m₂)
-    (hS : Algsuperdiff.Frozen.Section3.inductionState M m₂ E) :
-    Algsuperdiff.Frozen.Section3.inductionState M m₁ E := by
-  rw [Algsuperdiff.Frozen.Section3.inductionState] at hS ⊢
-  exact ⟨fun i hi => hS.1 i (hi.trans hm),
-    fun i hi => hS.2 i (hi.trans hm)⟩
-
 /-- The real-valued literal collar band-mean coordinate lane at one translated
 strict descendant. -/
 def probeSharpFramedCollarBandMeanTunedCoordinateLane
@@ -85,10 +77,9 @@ def probeSharpFramedCollarBandMeanTunedCoordinateENNRealLane
       (translateCutoffSample (triadicCubeShift R) omega))
 
 /-- The exact hsep-power scale furnished by `e.hsep.tails`. -/
-def probeSharpCollarBandMeanTunedPowerScale
+abbrev probeSharpCollarBandMeanTunedPowerScale
     (M : ABKModel d) (sigma : ℝ) : ℝ :=
-  hsepAmplitude (upperProfileSigma sigma) bfaProfileB ^
-    bfaPower M.gamma bfaProfileB
+  probeSharpCollarBandMeanPowerScale M sigma
 
 /-- The deterministic Whitney sum times the exact collar-power scale. -/
 def probeSharpCollarBandMeanTunedCoordinateScale
@@ -167,8 +158,7 @@ private theorem measurable_probeSharpFramedCollarBandMeanLayer
 theorem probeSharpCollarBandMeanTunedPowerScale_nonneg
     (M : ABKModel d) (sigma : ℝ) :
     0 ≤ probeSharpCollarBandMeanTunedPowerScale M sigma := by
-  rw [probeSharpCollarBandMeanTunedPowerScale]
-  exact Real.rpow_nonneg (hsepAmplitude_pos _ _).le _
+  exact probeSharpCollarBandMeanPowerScale_nonneg M sigma
 
 
 /-- The literal real Whitney family is summable at every sample point. -/
@@ -303,76 +293,8 @@ theorem isBigOWith_upperProfileTarget_slstarPowerTerm_tuned
       (gammaSigma (upperProfileTargetSigma sigma))
       (slstarPowerTerm M R.scale (E : ℝ) bfaProfileB M.gamma)
       (probeSharpCollarBandMeanTunedPowerScale M sigma) := by
-  have hscale : R.scale = m - 1 - (k : ℤ) :=
-    scale_eq_of_mem_descendantsAtScale hR
-  have hroot : R.scale - 1 ≤ m - 1 := by
-    rw [hscale]
-    omega
-  have hSroot : Algsuperdiff.Frozen.Section3.inductionState
-      M (R.scale - 1) E :=
-    inductionState_mono_collarBandMean M E hroot hS
-  have hexp : Real.exp (profileAuxiliaryConst d / sigma) ≤ (E : ℝ) :=
-    (le_max_left _ _).trans hmax
-  have hsigmaProfile0 : 0 < upperProfileSigma sigma := by
-    rw [upperProfileSigma]
-    positivity
-  have hsigmaProfileHalf : upperProfileSigma sigma ≤ 1 / 2 := by
-    rw [upperProfileSigma]
-    linarith
-  have hEexp : Real.exp
-      (badClustersConst d / upperProfileSigma sigma) ≤ (E : ℝ) := by
-    simpa only [upperProfileSigma, bfaProfileSigma] using
-      exp_badClustersConst_div_bfaProfileSigma_le_of_profileAuxiliaryGate
-        hsigma0 hexp
-  have hEb : badClustersConst d / bfaProfileB ≤ (E : ℝ) :=
-    badClustersConst_div_bfaProfileB_le_of_profileAuxiliaryGate
-      hsigma0 hsigma hexp
-  obtain ⟨hE4, hunit, hgamma20, hinvSq, hgammaZ⟩ :=
-    badEventGates_of_profileAuxiliaryMaxGate M E.property hsigma0 hsigma
-      hmax hEgamma
-  have hgammaProfile :
-      M.gamma ≤ (3 / 2 : ℝ) * bfaProfileB * sigma := by
-    exact hgammaZ.trans
-      (zpow_neg_five_le_three_halves_mul_bfaProfileB_of_profileAuxiliaryGate
-        hsigma0 hexp)
-  have hgammaHalf : M.gamma / 2 ≤ bfaProfileB * sigma := by
-    have hbs : 0 ≤ bfaProfileB * sigma :=
-      mul_nonneg bfaProfileB_pos.le hsigma0.le
-    nlinarith
-  have hraw := isBigOWith_gammaSigma_slstarPowerTerm_of_gates
-    (m := R.scale) (E := (E : ℝ))
-    (sigma := upperProfileSigma sigma) (b := bfaProfileB) (gam := M.gamma)
-    M M.shellPrefix.dimension E.property hSroot
-    hsigmaProfile0 hsigmaProfileHalf bfaProfileB_pos
-    bfaProfileB_le_one_eighth hEexp hE4 hunit hgamma20 hinvSq hEb
-    hgammaZ M.shellPrefix.gamma_pos
-  have htau0 : 0 < upperProfileHsepTau sigma :=
-    upperProfileHsepTau_pos hsigma0 hsigma
-  have htargetHsep : upperProfileTargetSigma sigma ≤
-      upperProfileHsepTau sigma := by
-    refine (upperProfileTargetSigma_le_hsep_mul_one hsigma0 hsigma).trans ?_
-    rw [div_le_iff₀ (add_pos htau0 one_pos)]
-    nlinarith [sq_nonneg (upperProfileHsepTau sigma)]
-  have hcollar : upperProfileHsepTau sigma ≤
-      upperProfileBaseSigma sigma /
-        ((M.gamma + 2 * bfaProfileB) / bfaProfileB) := by
-    convert upperProfileHsepTau_le_collarPowerSigma
-      hsigma0 hsigma (div_nonneg M.shellPrefix.gamma_pos.le (by norm_num))
-      bfaProfileB_pos hgammaHalf using 1
-    ring
-  have hbfa :
-      bfaTau (upperProfileSigma sigma) M.gamma bfaProfileB =
-        upperProfileBaseSigma sigma /
-          ((M.gamma + 2 * bfaProfileB) / bfaProfileB) := by
-    rw [bfaTau, bfaPower, upperProfileBaseSigma]
-  have htarget : upperProfileTargetSigma sigma ≤
-      bfaTau (upperProfileSigma sigma) M.gamma bfaProfileB := by
-    rw [hbfa]
-    exact htargetHsep.trans hcollar
-  have hweakened :=
-    HCPolySupport.Book.Ch04.IsBigOWith.gammaSigma_mono_exponent
-      htarget hraw
-  simpa only [probeSharpCollarBandMeanTunedPowerScale] using hweakened
+  simpa only [probeSharpCollarBandMeanTunedPowerScale] using
+    isBigOWith_upperProfileTarget_slstarPowerTerm M hR hS hsigma0 hsigma hmax hEgamma
 
 private theorem measurable_slstarPowerTerm
     (M : ABKModel d) (root : ℤ) (E b gam : ℝ) :

@@ -6,6 +6,8 @@ Authors: Scott Armstrong
 
 module
 
+public import LeanPool.Superdiffusion.Algsuperdiff.Section3.Provider.Diffusivity.ApproximateRecurrence.PrincipalEnergyAverage
+
 public import LeanPool.Superdiffusion.Algsuperdiff.Section3.Provider.Corrector.ShellSumCarrierLaw
 public import LeanPool.Superdiffusion.Algsuperdiff.Section3.Provider.Diffusivity.ApproximateRecurrence.Closure.StepSixClosure
 public import LeanPool.Superdiffusion.Algsuperdiff.Section3.Provider.Diffusivity.ApproximateRecurrence.PrincipalResponseComposeAssembly
@@ -133,16 +135,12 @@ variable {d : ℕ}
 /-- The left-hand side of the proved principal-response terminal, at the recurrence
 pair `(n, n+h)`: the depth-`j` descendant average of the annealed localized
 principal energy. -/
-def principalEnergyAverage (M : ABKModel d) (n : ℤ) (h : ℕ) (Kc : ℤ) (j : ℕ)
+abbrev principalEnergyAverage (M : ABKModel d) (n : ℤ) (h : ℕ) (Kc : ℤ) (j : ℕ)
     (e e' : Vec d)
     (wD : ShellSeq d → H10Function (openCubeSet (originCube d Kc)))
     (wN : ShellSeq d → H1MeanZeroFunction (openCubeSet (originCube d Kc))) : ℝ :=
-  descendantsAverage (originCube d Kc) j
-    (fun R => ∫ omega : CutoffSample d,
-      switchCubeEnergy M (n + (h : ℤ)) R
-        (principalPz (Annealed.sigmaBar M n) omega.val n (n + (h : ℤ)) e e' R
-          (wD omega.val) (wN omega.val)) omega
-      ∂(cutoffSampleLaw M).toMeasure)
+  Algsuperdiff.Section3.Provider.Diffusivity.ApproximateRecurrence.principalEnergyAverage
+    M n h Kc j e e' wD wN
 
 /-- The right-hand side of the proved principal-response terminal, at the
 recurrence pair `(n, n+h)`: the depth-`j` descendant average of the annealed

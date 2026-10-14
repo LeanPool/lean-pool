@@ -6,6 +6,7 @@ Authors: Scott Armstrong
 
 module
 
+public import LeanPool.Superdiffusion.Algsuperdiff.Section4.Provider.ExcessDecay.ReindexGeneralClause
 public import LeanPool.Superdiffusion.Algsuperdiff.Section4.Provider.ExcessDecay.RecutAtoms
 public import LeanPool.Superdiffusion.Algsuperdiff.Section4.Provider.ExcessDecay.ReindexComposed
 
@@ -67,62 +68,7 @@ open HCPolySupport MeasureTheory
 
 noncomputable section
 
-/-! ## 1. The re-cut absorption, on abstract reals -/
-
-/-- The re-cut absorption at the anchor window: the
-composed two-summand bound is absorbed into the four-summand frozen right-hand
-side, with the window factor `K` paid on both surviving legs and the `σ` gap-3
-factor `4` on the force leg. -/
-private theorem general_absorb_window {Cf C K A A' B B' T3 T4 : ℝ} (hK : 0 ≤ K)
-    (hAA' : A ≤ K * A') (hA' : 0 ≤ A') (hBB' : B ≤ 4 * K * B') (hB' : 0 ≤ B')
-    (hT3 : 0 ≤ T3) (hT4 : 0 ≤ T4) (hCf : 0 ≤ Cf)
-    (h1 : K * Cf ≤ C) (h4 : 4 * K * Cf ≤ C) :
-    Cf * (A + B) ≤ C * (A' + B' + T3 + T4) := by
-  have hKCf : 0 ≤ K * Cf := mul_nonneg hK hCf
-  have hC0 : 0 ≤ C := le_trans hKCf h1
-  have hstep1 : Cf * A ≤ C * A' := by
-    have ha := mul_le_mul_of_nonneg_left hAA' hCf
-    have hb := mul_le_mul_of_nonneg_right h1 hA'
-    have hc : Cf * (K * A') = K * Cf * A' := by ring
-    rw [hc] at ha
-    linarith only [ha, hb]
-  have hstep2 : Cf * B ≤ C * B' := by
-    have ha := mul_le_mul_of_nonneg_left hBB' hCf
-    have hb := mul_le_mul_of_nonneg_right h4 hB'
-    have hc : Cf * (4 * K * B') = 4 * K * Cf * B' := by ring
-    rw [hc] at ha
-    linarith only [ha, hb]
-  have h3 : 0 ≤ C * T3 := mul_nonneg hC0 hT3
-  have h4' : 0 ≤ C * T4 := mul_nonneg hC0 hT4
-  have hexp : C * (A' + B' + T3 + T4) = C * A' + C * B' + C * T3 + C * T4 := by ring
-  have hexp2 : Cf * (A + B) = Cf * A + Cf * B := by ring
-  linarith only [hstep1, hstep2, h3, h4', hexp, hexp2]
-
-/-- Absorbing a window factor through a nonnegative prefactor. -/
-private theorem prefactor_window_move {a X Y K : ℝ} (ha : 0 ≤ a)
-    (hXY : X ≤ K * Y) : a * X ≤ K * (a * Y) := by
-  have h := mul_le_mul_of_nonneg_left hXY ha
-  have hrw : a * (K * Y) = K * (a * Y) := by ring
-  rw [hrw] at h
-  exact h
-
-/-- Absorbing the `σ`-index factor and the window factor through the force leg's
-three nonnegative prefactors. -/
-private theorem sigma_window_move {p q q' r Y Y' K : ℝ} (hp : 0 ≤ p) (hq : 0 ≤ q)
-    (hr : 0 ≤ r) (hK : 0 ≤ K) (hY' : 0 ≤ Y') (hqq' : q ≤ 4 * q')
-    (hYY' : Y ≤ K * Y') :
-    p * q * r * Y ≤ 4 * K * (p * q' * r * Y') := by
-  have hpqr : 0 ≤ p * q * r := mul_nonneg (mul_nonneg hp hq) hr
-  have hs1 : p * q * r * Y ≤ p * q * r * (K * Y') :=
-    mul_le_mul_of_nonneg_left hYY' hpqr
-  have hrest : 0 ≤ p * r * (K * Y') :=
-    mul_nonneg (mul_nonneg hp hr) (mul_nonneg hK hY')
-  have hs2 := mul_le_mul_of_nonneg_right hqq' hrest
-  have hrw1 : p * q * r * (K * Y') = q * (p * r * (K * Y')) := by ring
-  have hrw2 : 4 * q' * (p * r * (K * Y')) = 4 * K * (p * q' * r * Y') := by ring
-  rw [hrw1] at hs1
-  rw [hrw2] at hs2
-  exact le_trans hs1 hs2
+/-! The three window-absorption helpers are shared with `ReindexGeneralClause`. -/
 
 /-! ## 2. The error-weighted general clause in real form, gated at the interior
 regime -/

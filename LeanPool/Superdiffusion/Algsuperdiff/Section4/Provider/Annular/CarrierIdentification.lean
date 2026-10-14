@@ -55,12 +55,9 @@ this is a definitional unfolding on both sides.
 
 ## Ownership note
 
-`annularResponseMaxPref` below is the *same* definition as
-`FinalStitch.annularResponseMax` — character for character in its body.  It is
-restated here only because `FinalStitch.lean` was under concurrent edit while
-this module was written, so it could not be imported.  The two are definitionally
-equal (`rfl`), so a consumer that imports both discharges either from the other
-with `exact`.  Merging the two definitions is a queued cleanup item.
+`annularResponseMaxPref` is the canonical annulus response family.
+`FinalStitch.annularResponseMax` reuses it through an abbreviation, so both
+names reduce to the same lattice maximum.
 
 ## References
 
@@ -146,8 +143,7 @@ theorem scalarResponseMax_fluxCorrected_eq_subConstCutoff (M : ABKModel d)
 scale-`n` lattice cubes of the annulus `□_j ∖ □_{j−1}`, of the scalar response
 maximum of `ã_{L,m}`.
 
-This is `FinalStitch.annularResponseMax` verbatim; see the module docstring for
-why it is restated. -/
+`FinalStitch.annularResponseMax` is a compatibility name for this family. -/
 def annularResponseMaxPref (M : ABKModel d) (L m : ℤ)
     (omega : Cutoff.CutoffSample d) (j n : ℤ) : ℝ :=
   Proportion.fmax (Proportion.latticeAnnulusFinset d n j (j - 1)) fun v =>
