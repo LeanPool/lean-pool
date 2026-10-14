@@ -10,6 +10,7 @@ public import LeanPool.Superdiffusion.Algsuperdiff.Section24.Sensitivity.Provide
 public import LeanPool.Superdiffusion.Algsuperdiff.Section24.Sensitivity.Provider.DhBound.Discharge.InputBC
 public import LeanPool.Superdiffusion.Algsuperdiff.Section24.Sensitivity.Provider.DhBound.Assembly.Skeleton
 public import LeanPool.Superdiffusion.Algsuperdiff.Section24.Sensitivity.Provider.DhBound.Adjoint.H10Witness
+public import LeanPool.Superdiffusion.Algsuperdiff.Section24.Sensitivity.Provider.PairingConstants
 
 /-!
 # BoundProvider
@@ -59,19 +60,10 @@ noncomputable section
 
 /-- The Besov pairing constant of the `D_h` assembly. -/
 def dhPairingConst (d : ℕ) : ℝ :=
-  (1 + (d : ℝ) * Real.rpow (3 : ℝ) ((d : ℝ) + 1)) *
-    (2 * Ch03.poincareDiscountFactor (3 / 8) (.finite 2))
+  PairingConstants.besovPairingConstant d
 
-theorem dhPairingConst_pos (d : ℕ) : 0 < dhPairingConst d := by
-  have h1 : (0 : ℝ) < 1 + (d : ℝ) * Real.rpow (3 : ℝ) ((d : ℝ) + 1) := by
-    have : (0 : ℝ) < Real.rpow (3 : ℝ) ((d : ℝ) + 1) :=
-      Real.rpow_pos_of_pos (by norm_num) _
-    have hd : (0 : ℝ) ≤ (d : ℝ) := Nat.cast_nonneg d
-    nlinarith
-  have h2 : (0 : ℝ) < 2 * Ch03.poincareDiscountFactor (3 / 8) (.finite 2) := by
-    have := poincareDiscountFactor_sensitivity_pos
-    linarith
-  exact mul_pos h1 h2
+theorem dhPairingConst_pos (d : ℕ) : 0 < dhPairingConst d :=
+  PairingConstants.besovPairingConstant_pos d
 
 theorem termABesovConst_pos {d : ℕ} (hd : 2 ≤ d) : 0 < termABesovConst d := by
   have hdpos : (0 : ℝ) < (d : ℝ) := by

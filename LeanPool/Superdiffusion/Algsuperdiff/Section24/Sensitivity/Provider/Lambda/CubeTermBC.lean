@@ -10,6 +10,7 @@ public import LeanPool.Superdiffusion.Algsuperdiff.Section24.Sensitivity.Provide
 public import LeanPool.Superdiffusion.Algsuperdiff.Section24.Sensitivity.Provider.DhBound.Discharge.DepthDowngrade
 public import LeanPool.Superdiffusion.Algsuperdiff.Section24.Sensitivity.Provider.DhBound.Besov.Product
 public import LeanPool.HighContrastHomogenization.Support.Book.Ch03.Theorems.PublicInternalBridges.H1Transport
+public import LeanPool.Superdiffusion.Algsuperdiff.Section24.Sensitivity.Provider.PairingConstants
 
 /-!
 # CubeTermBC
@@ -83,19 +84,10 @@ theorem cubeBesovScaleWeight_neg_half_sq (R : TriadicCube d) :
 
 /-- The constant of the zero-trace `L²` estimate at the gauge exponent. -/
 def fluxZeroTraceConst (d : ℕ) : ℝ :=
-  (((d : ℝ) * Legacy.cubeNeumannW22CalderonZygmundConstant d * (3 : ℝ) ^ ((d : ℝ) + 1) *
-        (d : ℝ)) + 2 * (3 : ℝ) ^ ((d : ℝ) + 1)) *
-    Real.sqrt ((1 - Real.rpow (3 : ℝ) (-2 * ((1 / 2 : ℝ) - 3 / 16)))⁻¹)
+  PairingConstants.zeroTraceValueConst d
 
-theorem fluxZeroTraceConst_nonneg (d : ℕ) : 0 ≤ fluxZeroTraceConst d := by
-  have h1 : (0 : ℝ) ≤ Legacy.cubeNeumannW22CalderonZygmundConstant d :=
-    Legacy.cubeNeumannW22CalderonZygmundConstant_nonneg d
-  have h2 : (0 : ℝ) ≤ (3 : ℝ) ^ ((d : ℝ) + 1) := Real.rpow_nonneg (by norm_num) _
-  have h3 : (0 : ℝ) ≤
-      Real.sqrt ((1 - Real.rpow (3 : ℝ) (-2 * ((1 / 2 : ℝ) - 3 / 16)))⁻¹) :=
-    Real.sqrt_nonneg _
-  unfold fluxZeroTraceConst
-  positivity
+theorem fluxZeroTraceConst_nonneg (d : ℕ) : 0 ≤ fluxZeroTraceConst d :=
+  PairingConstants.zeroTraceValueConst_nonneg d
 
 /-- **The zero-trace `L²` estimate at an arbitrary triadic cube.**  The scale
 factor of the cube appears once. -/
@@ -123,7 +115,7 @@ theorem cubeLpNorm_two_h10_cube_le [NeZero d] (R : TriadicCube d)
   rw [hcancel] at hstep
   refine hstep.trans (le_of_eq ?_)
   rw [cubeBesovScaleWeight_neg_one_eq]
-  unfold fluxZeroTraceConst
+  unfold fluxZeroTraceConst PairingConstants.zeroTraceValueConst
   ring
 
 /-! ## The function-from-gradient estimate at a general cube -/

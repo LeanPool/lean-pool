@@ -67,26 +67,8 @@ variable {d : ℕ}
 
 /-- Triadic dilation of the coefficient carrier, packaged as a measurable
 equivalence; its inverse is the opposite dilation. -/
-def dilateRegEquiv (k : ℤ) : RegCoeffField d ≃ᵐ RegCoeffField d where
-  toEquiv :=
-    { toFun := dilateReg k
-      invFun := dilateReg (-k)
-      left_inv := by
-        intro a
-        apply RegCoeffField.ext
-        intro x
-        simp only [dilateReg_apply, smul_smul, zpow_neg]
-        rw [inv_inv,
-          inv_mul_cancel₀ (zpow_ne_zero k (by norm_num : (3 : ℝ) ≠ 0)), one_smul]
-      right_inv := by
-        intro a
-        apply RegCoeffField.ext
-        intro x
-        simp only [dilateReg_apply, smul_smul, zpow_neg]
-        rw [inv_inv,
-          mul_inv_cancel₀ (zpow_ne_zero k (by norm_num : (3 : ℝ) ≠ 0)), one_smul] }
-  measurable_toFun := measurable_dilateReg k
-  measurable_invFun := measurable_dilateReg (-k)
+def dilateRegEquiv (k : ℤ) : RegCoeffField d ≃ᵐ RegCoeffField d :=
+  Cutoff.dilateRegMeasurableEquiv k
 
 private theorem measurableEmbedding_dilateReg (k : ℤ) :
     MeasurableEmbedding (dilateReg (d := d) k) :=

@@ -75,24 +75,6 @@ variable {d : ℕ}
 
 /-! ## Part A -- the scalar response maximum respects a.e. equality -/
 
-/-- **The scalar response maximum only sees the coefficient a.e.**  Every element
-of `scalarResponseSet` is a `responseJ` value, and `Ch02.responseJ_eq_ofAEEq`
-identifies those; the two value sets are therefore equal, hence so are their
-suprema.
-
-(`TransposeDischarge.scalarResponseMax_congr_aeeq` is the same statement; it is
-re-derived here because that module was under concurrent edit. -/
-theorem scalarResponseMax_eq_of_coeffOn_aeeq {U : Domain d} {a b : CoeffOn U}
-    (h : CoeffOn.AEEq a b) (sigma : Observable.PositiveScalar) :
-    scalarResponseMax a sigma = scalarResponseMax b sigma := by
-  unfold scalarResponseMax scalarResponseSet
-  refine congrArg sSup (Set.ext fun x => ?_)
-  constructor
-  · rintro ⟨e, he, rfl⟩
-    exact ⟨e, he, responseJ_eq_ofAEEq h _ _⟩
-  · rintro ⟨e, he, rfl⟩
-    exact ⟨e, he, responseJ_eq_ofAEEq h.symm _ _⟩
-
 /-! ## Part B -- the two `ã_{L,m}` families agree on every lattice cube -/
 
 /-- **A6c finding (f), closed.**  The Chapter 4 dependent family of the

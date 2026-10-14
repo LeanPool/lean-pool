@@ -11,6 +11,7 @@ public import LeanPool.Superdiffusion.Algsuperdiff.Section24.Sensitivity.Provide
 public import LeanPool.Superdiffusion.Algsuperdiff.Section24.Sensitivity.Provider.DhBound.Assembly.Skeleton
 public import LeanPool.Superdiffusion.Algsuperdiff.Section24.Sensitivity.Provider.DhBound.Adjoint.H10Witness
 public import LeanPool.Superdiffusion.Algsuperdiff.Section24.Sensitivity.Provider.Multiscale.UnitCubeTransfer
+public import LeanPool.Superdiffusion.Algsuperdiff.Section24.Sensitivity.Provider.PairingConstants
 
 /-!
 # CubeBound
@@ -94,19 +95,10 @@ theorem forceBesovRegularity_fluxTermBCField (h : UnitCubeSkewW2Infinity d) {R :
 
 /-- The Besov pairing constant. -/
 def fluxPairingConst (d : ℕ) : ℝ :=
-  (1 + (d : ℝ) * Real.rpow (3 : ℝ) ((d : ℝ) + 1)) *
-    (2 * Ch03.poincareDiscountFactor (3 / 8) (.finite 2))
+  PairingConstants.besovPairingConstant d
 
-theorem fluxPairingConst_nonneg (d : ℕ) : 0 ≤ fluxPairingConst d := by
-  have h1 : (0 : ℝ) ≤ 1 + (d : ℝ) * Real.rpow (3 : ℝ) ((d : ℝ) + 1) := by
-    have : (0 : ℝ) ≤ Real.rpow (3 : ℝ) ((d : ℝ) + 1) :=
-      (Real.rpow_pos_of_pos (by norm_num) _).le
-    have hd : (0 : ℝ) ≤ (d : ℝ) := Nat.cast_nonneg d
-    positivity
-  have h2 : (0 : ℝ) ≤ 2 * Ch03.poincareDiscountFactor (3 / 8) (.finite 2) := by
-    have := poincareDiscountFactor_sensitivity_pos
-    linarith
-  exact mul_nonneg h1 h2
+theorem fluxPairingConst_nonneg (d : ℕ) : 0 ≤ fluxPairingConst d :=
+  (PairingConstants.besovPairingConstant_pos d).le
 
 /-- The explicit constant of the pure-flux sub-cube `D_h` bound. -/
 def fluxCubeConst (d : ℕ) : ℝ :=
@@ -218,7 +210,7 @@ theorem abs_dhFluxForm_cube_le [NeZero d]
   have hpair' : |cubeAverage R (fun x => vecDot (v.toH1.grad x) (fluxTermBCField h u x))| ≤
       fluxPairingConst d * B * X := by
     refine hpair.trans (le_of_eq ?_)
-    rw [fluxPairingConst, hX]
+    rw [fluxPairingConst, PairingConstants.besovPairingConstant, hX]
   have habs : |dhFluxForm (cubeDomain R) b g w| =
       2 * |cubeAverage R (fun x => vecDot (v.toH1.grad x) (fluxTermBCField h u x))| := by
     rw [hdh, abs_mul]

@@ -13,6 +13,7 @@ public import LeanPool.Superdiffusion.Algsuperdiff.Section24.Sensitivity.Provide
 public import LeanPool.Superdiffusion.Algsuperdiff.Section24.Sensitivity.Provider.DhBound.Besov.Product
 public import LeanPool.Superdiffusion.Algsuperdiff.Section24.Sensitivity.Provider.DhBound.UnitCubeWeakIBP
 public import LeanPool.HighContrastHomogenization.Support.Book.Ch03.Theorems.PublicInternalBridges.H1Transport
+public import LeanPool.Superdiffusion.Algsuperdiff.Section24.Sensitivity.Provider.PairingConstants
 
 /-!
 # InputBC
@@ -251,21 +252,11 @@ theorem sqrt_vecNormSq_le_sqrt_card_mul_norm (w : Vec d) :
 
 /-- The constant of the zero-trace `L²` estimate at the gauge exponent. -/
 def zeroTraceValueConst (d : ℕ) : ℝ :=
-  (((d : ℝ) * Legacy.cubeNeumannW22CalderonZygmundConstant d * (3 : ℝ) ^ ((d : ℝ) + 1) *
-        (d : ℝ)) + 2 * (3 : ℝ) ^ ((d : ℝ) + 1)) *
-    Real.sqrt ((1 - Real.rpow (3 : ℝ) (-2 * ((1 / 2 : ℝ) - 3 / 16)))⁻¹)
+  PairingConstants.zeroTraceValueConst d
 
 theorem zeroTraceValueConst_nonneg (d : ℕ) :
-    0 ≤ zeroTraceValueConst d := by
-  have h1 : (0 : ℝ) ≤ Legacy.cubeNeumannW22CalderonZygmundConstant d :=
-    Legacy.cubeNeumannW22CalderonZygmundConstant_nonneg d
-  have h2 : (0 : ℝ) ≤ (3 : ℝ) ^ ((d : ℝ) + 1) :=
-    Real.rpow_nonneg (by norm_num) _
-  have h3 : (0 : ℝ) ≤
-      Real.sqrt ((1 - Real.rpow (3 : ℝ) (-2 * ((1 / 2 : ℝ) - 3 / 16)))⁻¹) :=
-    Real.sqrt_nonneg _
-  unfold zeroTraceValueConst
-  positivity
+    0 ≤ zeroTraceValueConst d :=
+  PairingConstants.zeroTraceValueConst_nonneg d
 
 /-- The zero-trace `L²` estimate at the gauge exponent `2t = 3/8`. -/
 theorem cubeLpNorm_two_h10_originCube_le [NeZero d]
@@ -282,7 +273,7 @@ theorem cubeLpNorm_two_h10_originCube_le [NeZero d]
     Ch03.publicH10ToCubeSet_toH1Function_grad,
     cubeBesovScaleWeight_originCube_zero, one_mul,
     show (2 : ℝ) * (3 / 16) = 3 / 8 by norm_num] at h
-  unfold zeroTraceValueConst
+  unfold zeroTraceValueConst PairingConstants.zeroTraceValueConst
   exact h
 
 /-! ## The Term BC field -/

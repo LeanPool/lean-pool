@@ -12,6 +12,7 @@ public import LeanPool.Superdiffusion.Algsuperdiff.Section24.UnitCubeMultiscale.
 public import LeanPool.HighContrastHomogenization.Support.Book.Ch02.Theorems.MultiscaleEllipticity.Public
 public import LeanPool.HighContrastHomogenization.Support.Book.Ch02.Theorems.MultiscaleEllipticity.Localization
 public import LeanPool.HighContrastHomogenization.Support.Book.Ch03.Theorems.CoarsePoincare
+public import LeanPool.Superdiffusion.Algsuperdiff.Section24.Sensitivity.Provider.PairingConstants
 
 /-!
 # GaugeBridge
@@ -63,14 +64,8 @@ theorem sensitivityExponent_isAdmissible :
 /-- The scale-free discount factor of the coarse Poincaré right-hand side at the
 sensitivity gauge is positive. -/
 theorem poincareDiscountFactor_sensitivity_pos :
-    0 < Ch03.poincareDiscountFactor (3 / 8) (.finite 2) := by
-  have hbase : 0 < Ch02.geometricDiscount (3 / 8 : ℝ) 2 := by
-    have h3 : Real.rpow (3 : ℝ) (-(3 / 8 : ℝ) * 2) < 1 := by
-      simp only [rpow_eq_pow]
-      exact Real.rpow_lt_one_of_one_lt_of_neg (by norm_num) (by norm_num)
-    simpa [Ch02.geometricDiscount] using sub_pos.2 h3
-  simpa [Ch03.poincareDiscountFactor, rpow_eq_pow] using
-    Real.rpow_pos_of_pos hbase (-(1 / 2 : ℝ))
+    0 < Ch03.poincareDiscountFactor (3 / 8) (.finite 2) :=
+  PairingConstants.poincareDiscountFactor_sensitivity_pos
 
 /-- **General coarse Poincaré at the sensitivity gauge.**  At an arbitrary
 triadic cube and an arbitrary coefficient family, the concrete negative Besov

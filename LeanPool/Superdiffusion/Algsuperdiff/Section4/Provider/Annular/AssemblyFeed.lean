@@ -381,6 +381,21 @@ below). -/
 def scalarResponseMax {U : Domain d} (a : CoeffOn U) (sigma : PositiveScalar) : ℝ :=
   sSup (scalarResponseSet a sigma)
 
+/-- **The scalar response maximum only sees the coefficient a.e.**  Every element
+of `scalarResponseSet` is a `responseJ` value, and `Ch02.responseJ_eq_ofAEEq`
+identifies those; the two value sets are therefore equal, hence so are their
+suprema. -/
+theorem scalarResponseMax_eq_of_coeffOn_aeeq {U : Domain d} {a b : CoeffOn U}
+    (h : CoeffOn.AEEq a b) (sigma : Observable.PositiveScalar) :
+    scalarResponseMax a sigma = scalarResponseMax b sigma := by
+  unfold scalarResponseMax scalarResponseSet
+  refine congrArg sSup (Set.ext fun x => ?_)
+  constructor
+  · rintro ⟨e, he, rfl⟩
+    exact ⟨e, he, responseJ_eq_ofAEEq h _ _⟩
+  · rintro ⟨e, he, rfl⟩
+    exact ⟨e, he, responseJ_eq_ofAEEq h.symm _ _⟩
+
 /-- **The field-leg value set is bounded above**, by the Section 2.4 normalized
 loading bridge. -/
 theorem scalarResponseSet_bddAbove (F : TriadicCoeffFamily d)

@@ -163,7 +163,7 @@ def deepHi (x : Vec d) (m k : ℤ) (i : Fin d) (delta : ℝ) : Fin d → ℝ :=
 
 /-- The lower corner of the **Taylor box**. -/
 def taylorLo (x : Vec d) (m k : ℤ) (i : Fin d) (delta : ℝ) : Fin d → ℝ :=
-  fun j => if j = i then (1 / 2 : ℝ) * (3 : ℝ) ^ m - 2 * delta else x j - (3 : ℝ) ^ k / 4
+  deepLo x m k i delta
 
 /-- The upper corner of the Taylor box. -/
 def taylorHi (x : Vec d) (m k : ℤ) (i : Fin d) (delta : ℝ) : Fin d → ℝ :=

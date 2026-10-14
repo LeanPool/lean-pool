@@ -75,12 +75,11 @@ the three legs are:
    whenever it holds at `ω`, with no extra input.
 3. **The subadditivity is at depth one and constant one**, exactly as printed.
 
-## Ownership note
+## Shared carrier
 
-The annulus family used here is `CarrierIdentification.annularResponseMaxPref`,
-which is `FinalStitch.annularResponseMax` verbatim; that module was under
-concurrent edit and could not be imported.  The two are definitionally equal, so
-the endpoint's `hpref` slot is discharged from the theorem below by `exact`.
+The annulus family used here is the canonical `annularResponseMaxPref` from
+`CarrierIdentification`. The `annularResponseMax` name in `FinalStitch` aliases
+that family, so the endpoint's `hpref` slot uses the same object.
 
 ## References
 

@@ -261,9 +261,7 @@ theorem sq_integral_le_integral_sq_of_isProbabilityMeasure {Omega : Type*}
 /-- The aggregate lane constant of the display at `sigma = 1/2`: the two
 deterministic shifts plus the three class constants of the lanes. -/
 def gaugeEighthLaneConst (Ccg : ℝ) : ℝ :=
-  4 * (2 * Ccg + orliczEighthMomentScale 1 * Ccg +
-    orliczEighthMomentScale ((1 - (1 : ℝ) / 2) / 3) +
-    orliczEighthMomentScale ((1 - (1 : ℝ) / 2) / 2))
+  eighthLaneConst Ccg
 
 /-- **The eighth moment of the gauged ellipticity sum at `cu_m`, at the
 Chapter-2 exponent `q = 2`.**
@@ -433,7 +431,7 @@ theorem integral_gaugedEllipticitySum_rpow_eight_le (d : ℕ) : ∃ C : ℝ, 0 <
         orliczEighthMomentScale ((1 - (1 : ℝ) / 2) / 2) *
           Real.exp (-(Ccg⁻¹ * ((E : ℝ)⁻¹) ^ 2 * M.gamma⁻¹))) ≤
         gaugeEighthLaneConst Ccg * ((Disorder.cstar M)⁻¹ * M.gamma⁻¹) := by
-      rw [gaugeEighthLaneConst]
+      rw [gaugeEighthLaneConst, eighthLaneConst]
       linarith
     refine hkey.trans ?_
     calc gaugeEighthLaneConst Ccg * ((Disorder.cstar M)⁻¹ * M.gamma⁻¹)

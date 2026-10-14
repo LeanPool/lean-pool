@@ -182,6 +182,7 @@ public import LeanPool.Superdiffusion.Algsuperdiff.Section24.Sensitivity.Provide
 public import LeanPool.Superdiffusion.Algsuperdiff.Section24.Sensitivity.Provider.Multiscale.DiscreteCompounding
 public import LeanPool.Superdiffusion.Algsuperdiff.Section24.Sensitivity.Provider.Multiscale.GeometricResummation
 public import LeanPool.Superdiffusion.Algsuperdiff.Section24.Sensitivity.Provider.Multiscale.UnitCubeTransfer
+public import LeanPool.Superdiffusion.Algsuperdiff.Section24.Sensitivity.Provider.PairingConstants
 public import LeanPool.Superdiffusion.Algsuperdiff.Section24.Sensitivity.Provider.Path.Bounds
 public import LeanPool.Superdiffusion.Algsuperdiff.Section24.Sensitivity.Provider.Path.Closure
 public import LeanPool.Superdiffusion.Algsuperdiff.Section24.Sensitivity.Provider.Path.Continuity
