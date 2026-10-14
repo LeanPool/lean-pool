@@ -1139,6 +1139,7 @@ public import LeanPool.Superdiffusion.Algsuperdiff.Section4.Provider.ExcessDecay
 public import LeanPool.Superdiffusion.Algsuperdiff.Section4.Provider.ExcessDecay.CoarseMeanComparison
 public import LeanPool.Superdiffusion.Algsuperdiff.Section4.Provider.ExcessDecay.ConstantDatumCoreEnergy
 public import LeanPool.Superdiffusion.Algsuperdiff.Section4.Provider.ExcessDecay.ConstantDatumCorrector
+public import LeanPool.Superdiffusion.Algsuperdiff.Section4.Provider.ExcessDecay.ConstantDatumH1
 public import LeanPool.Superdiffusion.Algsuperdiff.Section4.Provider.ExcessDecay.CorrectorComposed
 public import LeanPool.Superdiffusion.Algsuperdiff.Section4.Provider.ExcessDecay.CoveringSlotObstruction
 public import LeanPool.Superdiffusion.Algsuperdiff.Section4.Provider.ExcessDecay.CubeMoments

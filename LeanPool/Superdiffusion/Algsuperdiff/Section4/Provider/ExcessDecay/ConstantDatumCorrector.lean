@@ -6,6 +6,7 @@ Authors: Scott Armstrong
 
 module
 
+public import LeanPool.Superdiffusion.Algsuperdiff.Section4.Provider.ExcessDecay.ConstantDatumH1
 public import LeanPool.Superdiffusion.Algsuperdiff.Section4.Provider.ExcessDecay.NegNormToL2
 public import LeanPool.Superdiffusion.Algsuperdiff.Section4.Provider.ExcessDecay.L2Bridge
 public import LeanPool.Superdiffusion.Algsuperdiff.Section4.Provider.ExcessDecay.BoundaryAssemblyEnergy
@@ -70,43 +71,6 @@ open HCPolySupport HCPolySupport.Book HCPolySupport.Book.Ch03 MeasureTheory
 noncomputable section
 
 variable {d : ℕ}
-
-/-! ## 1. The constant datum -/
-
-/-- The constant function as an `H¹` function of a cube. -/
-def constantDatumH1 (Q : TriadicCube d) (c : ℝ) :
-    H1Function (Ch02.cubeDomain Q : Set (Vec d)) :=
-  H1Function.ofContDiffOnIsOpenBoundedConvexDomain
-    (by
-      rw [Ch02.cubeDomain_coe]
-      exact isOpenBoundedConvexDomain_openCubeSet Q)
-    (contDiff_const : ContDiff ℝ 1 fun _ : Vec d => c)
-
-theorem constantDatumH1_toFun (Q : TriadicCube d) (c : ℝ) :
-    (constantDatumH1 Q c).toFun = fun _ => c := rfl
-
-theorem constantDatumH1_grad (Q : TriadicCube d) (c : ℝ) :
-    (constantDatumH1 Q c).grad = fun _ => (0 : Vec d) := by
-  funext y
-  funext i
-  change (fderiv ℝ (fun _ : Vec d => c) y) (basisVec i) = 0
-  rw [fderiv_fun_const]
-  rfl
-
-/-- The gradient of a constant-shifted `H¹` function. -/
-theorem sub_constantDatumH1_grad (Q : TriadicCube d)
-    (u : H1Function (Ch02.cubeDomain Q : Set (Vec d))) (c : ℝ) :
-    (u - constantDatumH1 Q c).grad = u.grad := by
-  rw [H1Function.sub_grad, constantDatumH1_grad]
-  funext y
-  exact sub_zero (u.grad y)
-
-/-- The values of a constant-shifted `H¹` function. -/
-theorem sub_constantDatumH1_toFun (Q : TriadicCube d)
-    (u : H1Function (Ch02.cubeDomain Q : Set (Vec d))) (c : ℝ) :
-    (u - constantDatumH1 Q c).toFun = fun y => u.toFun y - c := by
-  funext y
-  rw [H1Function.sub_toFun, constantDatumH1_toFun]
 
 /-! ## 2. The corrector exists at the cube's own coefficient family -/
 

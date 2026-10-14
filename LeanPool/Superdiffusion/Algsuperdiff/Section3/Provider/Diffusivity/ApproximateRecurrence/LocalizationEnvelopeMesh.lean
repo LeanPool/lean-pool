@@ -149,7 +149,7 @@ theorem originCubeFourthEnergy_nonneg (K : ℤ) (u : Vec d → Vec d) :
 
 : the caller supplies `hfin : volume V ≠ ⊤`, `hpos : 0 < (volume V).toReal`,
 and the two integrability hypotheses `hg`, `hg2`. -/
-private theorem sq_setIntegral_le_volume_mul_setIntegral_sq {V : Set (Vec d)}
+theorem sq_setIntegral_le_volume_mul_setIntegral_sq {V : Set (Vec d)}
     (hfin : volume V ≠ ⊤) (hpos : 0 < (volume V).toReal) {g : Vec d → ℝ}
     (hg : IntegrableOn g V volume) (hg2 : IntegrableOn (fun x => g x ^ 2) V volume) :
     (∫ x in V, g x ∂volume) ^ 2 ≤

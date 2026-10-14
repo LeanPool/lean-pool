@@ -246,25 +246,8 @@ theorem measureReal_preimage_translateCutoffSample (M : ABKModel d) (z : Vec d)
 /-! ## Measurability of the transported observables -/
 
 private theorem measurable_mass {p : ℝ} (hp : 0 < p) (l n m : ℤ) :
-    Measurable (streamIncrementLpMass (d := d) p l n m) := by
-  have hswap : (fun q : ShellSeq d × Vec d => streamIncrementLpDensity p n m q.1 q.2) =
-      Function.uncurry (fun (x : Vec d) (w : ShellSeq d) =>
-        streamIncrementLpDensity p n m w x) ∘ Prod.swap := rfl
-  have hjoint : Measurable fun q : ShellSeq d × Vec d =>
-      streamIncrementLpDensity p n m q.1 q.2 := by
-    rw [hswap]
-    exact (measurable_uncurry_streamIncrementLpDensity hp n m).comp measurable_swap
-  have hSM := MeasureTheory.StronglyMeasurable.integral_prod_right
-      (ν := volume.restrict (openCubeSet (originCube d l)))
-      (f := fun (w : ShellSeq d) (x : Vec d) => streamIncrementLpDensity p n m w x)
-      hjoint.stronglyMeasurable
-  have hrw : streamIncrementLpMass (d := d) p l n m = fun omega : ShellSeq d =>
-      (volume (openCubeSet (originCube d l))).toReal⁻¹ *
-        ∫ x in openCubeSet (originCube d l), streamIncrementLpDensity p n m omega x := by
-    funext omega
-    rw [streamIncrementLpMass, Book.Ch02.average, Book.Ch02.cubeDomain_coe]
-  rw [hrw]
-  exact measurable_const.mul hSM.measurable
+    Measurable (streamIncrementLpMass (d := d) p l n m) :=
+  Algsuperdiff.Section3.Provider.Stream.measurable_streamIncrementLpMass hp l n m
 
 private theorem measurable_norm {p : ℝ} (hp : 0 < p) (l n m : ℤ) :
     Measurable (streamIncrementLpNorm (d := d) p l n m) :=

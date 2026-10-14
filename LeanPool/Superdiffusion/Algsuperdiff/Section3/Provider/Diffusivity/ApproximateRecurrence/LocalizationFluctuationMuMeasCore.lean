@@ -101,7 +101,7 @@ theorem isDoubledTestField_zero (U : Domain d) : IsDoubledTestField U (0 : Doubl
     simp [hz]
 
 /-- The `L²` class of a pointwise sum of block fields is the sum of the classes. -/
-private theorem toHilbertBlockL2OfBlockField_add {U : Set (Vec d)}
+theorem toHilbertBlockL2OfBlockField_add {U : Set (Vec d)}
     {F G H : Vec d → BlockVec d} (hF : MemBlockL2 U F) (hG : MemBlockL2 U G)
     (hH : MemBlockL2 U H) (hpt : ∀ x, H x = F x + G x) :
     toHilbertBlockL2OfBlockField hH =

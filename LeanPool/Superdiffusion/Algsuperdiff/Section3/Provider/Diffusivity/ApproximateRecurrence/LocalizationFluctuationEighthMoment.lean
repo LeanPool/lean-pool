@@ -92,33 +92,7 @@ theorem sq_setIntegral_le_volume_mul_setIntegral_sq' {V : Set (Vec d)}
     (hg : IntegrableOn g V volume) (hg2 : IntegrableOn (fun x => g x ^ 2) V volume) :
     (∫ x in V, g x ∂volume) ^ 2 ≤
       (volume V).toReal * ∫ x in V, g x ^ 2 ∂volume := by
-  set m : ℝ := (volume V).toReal with hmdef
-  set I : ℝ := ∫ x in V, g x ∂volume with hIdef
-  set J : ℝ := ∫ x in V, g x ^ 2 ∂volume with hJdef
-  set t : ℝ := I / m with htdef
-  have hmne : m ≠ 0 := ne_of_gt hpos
-  have hconst : IntegrableOn (fun _ : Vec d => t ^ 2) V volume := integrableOn_const hfin
-  have hexp : (fun x => (g x - t) ^ 2)
-      = fun x => g x ^ 2 + (-(2 * t) * g x + t ^ 2) := by
-    funext x
-    ring
-  have hint2 : IntegrableOn (fun x => -(2 * t) * g x + t ^ 2) V volume :=
-    (hg.const_mul (-(2 * t))).add hconst
-  have hcalc : ∫ x in V, (g x - t) ^ 2 ∂volume = J + (-(2 * t) * I + t ^ 2 * m) := by
-    rw [hexp, integral_add hg2 hint2, integral_add (hg.const_mul (-(2 * t))) hconst,
-      integral_const_mul, setIntegral_const, measureReal_def, smul_eq_mul]
-    ring
-  have hnn : (0 : ℝ) ≤ ∫ x in V, (g x - t) ^ 2 ∂volume :=
-    integral_nonneg fun _ => sq_nonneg _
-  rw [hcalc] at hnn
-  have ht : t * m = I := by
-    rw [htdef]
-    field_simp
-  have hexpand : m * (J + (-(2 * t) * I + t ^ 2 * m)) = m * J - I ^ 2 := by
-    linear_combination (t * m - I) * ht
-  have hmul : (0 : ℝ) ≤ m * (J + (-(2 * t) * I + t ^ 2 * m)) := mul_nonneg hpos.le hnn
-  rw [hexpand] at hmul
-  linarith
+  exact sq_setIntegral_le_volume_mul_setIntegral_sq hfin hpos hg hg2
 
 /-- **Normalized Cauchy--Schwarz on a general window.**  The square of the window
 average is below the window average of the square; the constant is `1`.  Stated

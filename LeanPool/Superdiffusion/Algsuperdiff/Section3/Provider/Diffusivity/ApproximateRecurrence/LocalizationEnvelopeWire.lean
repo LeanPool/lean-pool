@@ -136,7 +136,7 @@ fourth energy, for any window contained in `cu_K`.
 
 : the caller supplies `hsub` (the containment) and `hfour` (integrability of
 `|u|^4` on `cu_K`). -/
-private theorem mesoWindowFourthEnergy_le_ratio_mul_originCubeFourthEnergy
+theorem mesoWindowFourthEnergy_le_ratio_mul_originCubeFourthEnergy
     {K ell : ℤ} {R : TriadicCube d} (u : Vec d → Vec d)
     (hsub : openCubeAtScale (triadicCubeShift R) ell ⊆ openCubeSet (originCube d K))
     (hfour : IntegrableOn (fun x => vecNormSq (u x) ^ 2)

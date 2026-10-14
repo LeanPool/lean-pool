@@ -154,6 +154,28 @@ noncomputable section
 
 variable {d : ℕ}
 
+/-- The volume-normalized cube `L^p` mass is a measurable shell observable. -/
+theorem measurable_streamIncrementLpMass {p : ℝ} (hp : 0 < p) (l n m : ℤ) :
+    Measurable (streamIncrementLpMass (d := d) p l n m) := by
+  have hswap : (fun q : ShellSeq d × Vec d => streamIncrementLpDensity p n m q.1 q.2) =
+      Function.uncurry (fun (x : Vec d) (w : ShellSeq d) =>
+        streamIncrementLpDensity p n m w x) ∘ Prod.swap := rfl
+  have hjoint : Measurable fun q : ShellSeq d × Vec d =>
+      streamIncrementLpDensity p n m q.1 q.2 := by
+    rw [hswap]
+    exact (measurable_uncurry_streamIncrementLpDensity hp n m).comp measurable_swap
+  have hSM := MeasureTheory.StronglyMeasurable.integral_prod_right
+      (ν := volume.restrict (openCubeSet (originCube d l)))
+      (f := fun (w : ShellSeq d) (x : Vec d) => streamIncrementLpDensity p n m w x)
+      hjoint.stronglyMeasurable
+  have hrw : streamIncrementLpMass (d := d) p l n m = fun omega : ShellSeq d =>
+      (volume (openCubeSet (originCube d l))).toReal⁻¹ *
+        ∫ x in openCubeSet (originCube d l), streamIncrementLpDensity p n m omega x := by
+    funext omega
+    rw [streamIncrementLpMass, Book.Ch02.average, Book.Ch02.cubeDomain_coe]
+  rw [hrw]
+  exact measurable_const.mul hSM.measurable
+
 /-! ## Centering a nonnegative weak-Orlicz observable -/
 
 /-- **The centering bookkeeping, at constant `1`.**  Subtracting a constant

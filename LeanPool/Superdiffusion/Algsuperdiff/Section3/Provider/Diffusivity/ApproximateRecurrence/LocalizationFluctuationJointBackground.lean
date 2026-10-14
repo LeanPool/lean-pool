@@ -95,34 +95,6 @@ variable {d : ℕ}
 
 /-! ## The class map is additive -/
 
-/-- The `L^2` class of a pointwise sum of block fields is the sum of the
-classes.  A re-proof of the `private` lemma of the same name in
-`LocalizationFluctuationMuMeasCore`. -/
-theorem toHilbertBlockL2OfBlockField_add {U : Set (Vec d)}
-    {F G H : Vec d → BlockVec d} (hF : MemBlockL2 U F) (hG : MemBlockL2 U G)
-    (hH : MemBlockL2 U H) (hpt : ∀ x, H x = F x + G x) :
-    toHilbertBlockL2OfBlockField hH =
-      toHilbertBlockL2OfBlockField hF + toHilbertBlockL2OfBlockField hG := by
-  apply MeasureTheory.Lp.ext
-  filter_upwards
-      [coeFn_toHilbertBlockL2OfBlockField (U := U) (F := H) hH,
-       coeFn_toHilbertBlockL2OfBlockField (U := U) (F := F) hF,
-       coeFn_toHilbertBlockL2OfBlockField (U := U) (F := G) hG,
-       MeasureTheory.Lp.coeFn_add
-         (toHilbertBlockL2OfBlockField (U := U) hF)
-         (toHilbertBlockL2OfBlockField (U := U) hG)]
-    with x hHx hFx hGx hsum
-  rw [hHx, hsum]
-  change hilbertifyBlockField H x
-      = (toHilbertBlockL2OfBlockField (U := U) hF) x
-        + (toHilbertBlockL2OfBlockField (U := U) hG) x
-  rw [hFx, hGx]
-  apply HilbertBlockVec.ext
-  · ext i
-    simp [hilbertifyBlockField, hpt x]
-  · ext i
-    simp [hilbertifyBlockField, hpt x]
-
 /-- Adding a fixed test field translates the `L^2` class of the background by a
 constant, hence preserves measurability of the class. -/
 theorem measurable_toHilbertBlockL2OfBlockField_add_const {Omega : Type*}

@@ -6,6 +6,7 @@ Authors: Scott Armstrong
 
 module
 
+public import LeanPool.Superdiffusion.Algsuperdiff.Section4.Provider.ExcessDecay.ConstantDatumH1
 public import LeanPool.Superdiffusion.Algsuperdiff.Section4.Provider.ExcessDecay.CaccioppoliInteriorGeometry
 public import LeanPool.Superdiffusion.Support.Book.Ch03.Theorems.CoarseCaccioppoliRHS.Theory
 
@@ -98,37 +99,27 @@ theorem mem_openCubeAtScale_self (x : Vec d) (m : ℤ) :
 /-- The constant function as an `H¹` function of a cube. -/
 def constH1 (Q : TriadicCube d) (c : ℝ) :
     H1Function (Ch02.cubeDomain Q : Set (Vec d)) :=
-  H1Function.ofContDiffOnIsOpenBoundedConvexDomain
-    (by
-      rw [Ch02.cubeDomain_coe]
-      exact isOpenBoundedConvexDomain_openCubeSet Q)
-    (contDiff_const : ContDiff ℝ 1 fun _ : Vec d => c)
+  constantDatumH1 Q c
 
 private theorem constH1_toFun (Q : TriadicCube d) (c : ℝ) :
-    (constH1 Q c).toFun = fun _ => c := rfl
+    (constH1 Q c).toFun = fun _ => c :=
+  constantDatumH1_toFun Q c
 
 private theorem constH1_grad (Q : TriadicCube d) (c : ℝ) :
-    (constH1 Q c).grad = fun _ => (0 : Vec d) := by
-  funext y
-  funext i
-  change (fderiv ℝ (fun _ : Vec d => c) y) (basisVec i) = 0
-  rw [fderiv_fun_const]
-  rfl
+    (constH1 Q c).grad = fun _ => (0 : Vec d) :=
+  constantDatumH1_grad Q c
 
 /-- The gradient of a constant-shifted `H¹` function. -/
 theorem sub_constH1_grad (Q : TriadicCube d)
     (u : H1Function (Ch02.cubeDomain Q : Set (Vec d))) (c : ℝ) :
-    (u - constH1 Q c).grad = u.grad := by
-  rw [H1Function.sub_grad, constH1_grad]
-  funext y
-  exact sub_zero (u.grad y)
+    (u - constH1 Q c).grad = u.grad :=
+  sub_constantDatumH1_grad Q u c
 
 /-- The values of a constant-shifted `H¹` function. -/
 private theorem sub_constH1_toFun (Q : TriadicCube d)
     (u : H1Function (Ch02.cubeDomain Q : Set (Vec d))) (c : ℝ) :
-    (u - constH1 Q c).toFun = fun y => u.toFun y - c := by
-  funext y
-  rw [H1Function.sub_toFun, constH1_toFun]
+    (u - constH1 Q c).toFun = fun y => u.toFun y - c :=
+  sub_constantDatumH1_toFun Q u c
 
 /-- **The interior forced Caccioppoli datum with a constant subtracted.**
 

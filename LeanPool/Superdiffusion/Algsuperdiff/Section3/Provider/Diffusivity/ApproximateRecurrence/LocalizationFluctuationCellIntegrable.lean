@@ -324,32 +324,7 @@ theorem mesoWindowFourthEnergy_le_ratio_mul_originCubeFourthEnergy'
       (volume (openCubeAtScale (triadicCubeShift R) ell)).toReal⁻¹ *
           (volume (openCubeSet (originCube d K))).toReal *
         originCubeFourthEnergy K u := by
-  have hWpos : (0 : ℝ) < (volume (openCubeSet (originCube d K))).toReal := by
-    rw [volume_openCubeSet_toReal]
-    exact cubeVolume_pos _
-  have hVnn : (0 : ℝ) ≤
-      (volume (openCubeAtScale (triadicCubeShift R) ell)).toReal⁻¹ := by positivity
-  have hmono : ∫ x in openCubeAtScale (triadicCubeShift R) ell,
-        vecNormSq (u x) ^ 2 ∂volume ≤
-      ∫ x in openCubeSet (originCube d K), vecNormSq (u x) ^ 2 ∂volume :=
-    setIntegral_mono_set hfour
-      (Filter.Eventually.of_forall fun _ => sq_nonneg _) hsub.eventuallyLE
-  have hcancel : (volume (openCubeSet (originCube d K))).toReal *
-      originCubeFourthEnergy K u =
-        ∫ x in openCubeSet (originCube d K), vecNormSq (u x) ^ 2 ∂volume := by
-    unfold originCubeFourthEnergy volumeAverage
-    field_simp
-  change (volume (openCubeAtScale (triadicCubeShift R) ell)).toReal⁻¹ *
-      ∫ x in openCubeAtScale (triadicCubeShift R) ell,
-        vecNormSq (u x) ^ 2 ∂volume ≤ _
-  calc (volume (openCubeAtScale (triadicCubeShift R) ell)).toReal⁻¹ *
-        ∫ x in openCubeAtScale (triadicCubeShift R) ell, vecNormSq (u x) ^ 2 ∂volume
-      ≤ (volume (openCubeAtScale (triadicCubeShift R) ell)).toReal⁻¹ *
-          ∫ x in openCubeSet (originCube d K), vecNormSq (u x) ^ 2 ∂volume :=
-        mul_le_mul_of_nonneg_left hmono hVnn
-    _ = (volume (openCubeAtScale (triadicCubeShift R) ell)).toReal⁻¹ *
-          (volume (openCubeSet (originCube d K))).toReal *
-            originCubeFourthEnergy K u := by rw [← hcancel]; ring
+  exact mesoWindowFourthEnergy_le_ratio_mul_originCubeFourthEnergy u hsub hfour
 
 /-! ## The integrability core -/
 

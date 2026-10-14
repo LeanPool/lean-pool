@@ -453,7 +453,8 @@ private theorem assemblyEnergyLeg_comparisonBounds1 :
     (mul_nonneg halpha0 (Real.sqrt_nonneg _))) le_rfl)
   exact ⟨hlow, hlamInv, hBg, hHn, hnegf, hmain⟩
 
-private theorem assemblyEnergyLeg_comparisonBounds2 :
+/-- Window and covering-cube regularity from the parent datum's L² hypotheses. -/
+theorem boundaryWindowAndCoveringRegularity :
     ∀ (d : ℕ) [NeZero d] (s : ℝ) (_ : (0 : ℝ) < s) (m n : ℤ) (x z : Vec d) (_ : s ≤ (1 : ℝ))
       (_ : n + (2 : ℤ) ≤ m) (u hdat : H1Function (openCubeSet (originCube d m))) (g : Vec d → Vec d)
       (_ : MemLp g (2 : ℝ≥0∞) (normalizedVolumeMeasureOn (openCubeSet (originCube d m))))
@@ -466,7 +467,7 @@ private theorem assemblyEnergyLeg_comparisonBounds2 :
       (_ : MemLp hdat.grad (2 : ℝ≥0∞) (normalizedVolumeMeasureOn (openCubeSet (originCube d m))))
       (_ : MemLp u.toFun (2 : ℝ≥0∞) (normalizedVolumeMeasureOn (openCubeSet (originCube d m))))
       (_ :
-        (volume : Set (Vec d) → ℝ≥0∞)
+        (volume : Set (Vec d) → ENNReal)
             ((fun (y' : Vec d) => z + y') '' openCubeSet (originCube d (n + (3 : ℤ))) ∩
               openCubeSet (originCube d m)) ≠
           (0 : ℝ≥0∞))
@@ -909,7 +910,7 @@ theorem ae_h1EnergyNormOnCube_boundary_le_anchorLegs (d : ℕ) [NeZero d] :
   have := isProbabilityMeasure_normalizedVolumeMeasureOn hW30 hW3top
   obtain ⟨hhL2W, hgWW, hhWW, hXfin, hHfin, hgL2cov, hgWcov, hhL2cov, hhWcov, hgreg, hgreg2, hhreg,
     hhreg2, hsubc⟩ :=
-    @assemblyEnergyLeg_comparisonBounds2 (d) (by infer_instance) (s) (hs) (m) (n) (x) (z) (hs1)
+    @boundaryWindowAndCoveringRegularity (d) (by infer_instance) (s) (hs) (m) (n) (x) (z) (hs1)
       (hnm2) (u) (hdat) (g) (hgL2) (hgW) (hhW) (hhL2m) (huL2m) (hW30) (this)
   -- the boundary Caccioppoli at `(1/2, s/3)` and the pin `r = s/2`
   obtain ⟨v, hvval, hvgrad, hB2disp⟩ :=
