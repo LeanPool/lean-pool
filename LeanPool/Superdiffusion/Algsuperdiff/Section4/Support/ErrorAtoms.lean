@@ -223,7 +223,7 @@ theorem cutoffHomogenizationErrorRaw22_characterization
     (Cutoff.coefficientCutoffTriadicCoeffFamily_coeffOn_aeeq M coefficientScale omega
       (originCube d domainScale))
 
-theorem cutoffHomogenizationErrorRaw22_nonneg [NeZero d]
+theorem cutoffHomogenizationErrorRaw22_nonneg
     (M : ABKModel d) (coefficientScale domainScale : ℤ) {s : ℝ}
     (hs : 0 < s) (sigma : PositiveScalar) (omega : Cutoff.CutoffSample d) :
     0 ≤ cutoffHomogenizationErrorRaw22 M coefficientScale domainScale s sigma omega :=
@@ -521,7 +521,7 @@ noncomputable def fluxCorrectedError (M : ABKModel d) (L k : ℤ) (s : ℝ)
   homogenizationErrorAtScale k s
     (fluxCorrectedCoeffOn M L k (originCube d k) omega) (Annealed.sigmaBar M k)
 
-theorem fluxCorrectedError_nonneg [NeZero d] (M : ABKModel d) (L k : ℤ) {s : ℝ}
+theorem fluxCorrectedError_nonneg (M : ABKModel d) (L k : ℤ) {s : ℝ}
     (hs : 0 < s) (omega : Cutoff.CutoffSample d) :
     0 ≤ fluxCorrectedError M L k s omega :=
   homogenizationErrorAtScale_nonneg k hs

@@ -76,7 +76,7 @@ theorem cutoffHomogenizationErrorRaw_characterization {d : ℕ}
       (originCube d domainScale))
 
 /-- The literal cutoff homogenization error is nonnegative. -/
-theorem cutoffHomogenizationErrorRaw_nonneg {d : ℕ} [NeZero d]
+theorem cutoffHomogenizationErrorRaw_nonneg {d : ℕ}
     (M : ABKModel d) (coefficientScale domainScale : ℤ) {s : ℝ}
     (hs : 0 < s) (sigma : PositiveScalar) (omega : Cutoff.CutoffSample d) :
     0 ≤ cutoffHomogenizationErrorRaw M coefficientScale domainScale s sigma omega :=

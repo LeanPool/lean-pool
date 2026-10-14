@@ -597,7 +597,7 @@ theorem fluxCorrectedErrorRepresentative_nonneg (M : ABKModel d) (L k : ℤ)
   change 0 ≤ fluxCorrectedErrorFunctional M L k (s : ℝ) omega
   exact fluxCorrectedErrorFunctional_nonneg M L k (s : ℝ) omega
 
-private theorem fluxCorrectedError_eq_functional_on_common_event [NeZero d]
+private theorem fluxCorrectedError_eq_functional_on_common_event
     (M : ABKModel d) (L k : ℤ) {s : ℝ} (hs : 0 < s)
     (omega : Cutoff.CutoffSample d)
     (hall : ∀ R : TriadicCube d,

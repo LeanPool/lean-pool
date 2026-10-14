@@ -2032,7 +2032,7 @@ private abbrev superposedFluxUpperPerDescendant_comparisonBounds3_statement : Pr
                                                      ((↑E : ℝ)⁻¹ ^
                                                        (2 : ℕ) *
                                                       M.gamma⁻¹))) ^
-                                                  (8 : ℕ))
+                                                   (8 : ℕ))
 
 
 private theorem named_layer_ennreal_bound

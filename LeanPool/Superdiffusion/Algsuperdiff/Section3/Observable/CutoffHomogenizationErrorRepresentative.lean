@@ -311,7 +311,7 @@ error and the pre-selection finite-dimensional functional agree exactly.  The
 proof uses CoarseGraining's squared `p = infinity`, `q = 2` identity and the
 fact that both sides are nonnegative. -/
 private theorem cutoffHomogenizationErrorRaw_eq_functional_on_common_event
-    {d : ℕ} [NeZero d] (M : ABKModel d) (coefficientScale domainScale : ℤ)
+    {d : ℕ} (M : ABKModel d) (coefficientScale domainScale : ℤ)
     {s : ℝ} (hs : 0 < s) (sigma : PositiveScalar) (omega : Cutoff.CutoffSample d)
     (hall : ∀ R : TriadicCube d,
       Ch02.normalizedBlockResponseMax R

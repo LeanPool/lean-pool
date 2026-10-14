@@ -304,7 +304,7 @@ theorem cutoffHomogenizationError22Functional_ae_eq_representative22
 /-- On the countable common event for all triadic cubes, the literal `(2,2)`
 error and the pre-selection functional agree exactly.  Both sides are
 nonnegative and have the same square, by the `(2,2)` identity above. -/
-private theorem cutoffHomogenizationErrorRaw22_eq_functional_on_common_event [NeZero d]
+private theorem cutoffHomogenizationErrorRaw22_eq_functional_on_common_event
     (M : ABKModel d) (coefficientScale domainScale : ℤ) {s : ℝ} (hs : 0 < s)
     (sigma : PositiveScalar) (omega : Cutoff.CutoffSample d)
     (hall : ∀ R : TriadicCube d,
