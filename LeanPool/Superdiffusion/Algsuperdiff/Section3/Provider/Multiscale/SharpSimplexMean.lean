@@ -273,16 +273,7 @@ private theorem probe_toReal_eLpNorm_le {f : Vec d → ℝ} {C : ℝ}
     (eLpNorm f ∞
       (volumeMeasureOn
         ((cubeDomain (originCube d 0) : Domain d) : Set (Vec d)))).toReal ≤ C := by
-  by_cases hf : AEStronglyMeasurable f
-      (volumeMeasureOn ((cubeDomain (originCube d 0) : Domain d) : Set (Vec d)))
-  swap
-  · rw [eLpNorm_of_not_aestronglyMeasurable hf, ENNReal.toReal_top]
-    exact hC
-  rw [eLpNorm_exponent_top hf]
-  refine ENNReal.toReal_le_of_le_ofReal hC ?_
-  exact eLpNormEssSup_le_of_ae_bound
-    (ae_restrict_of_forall_mem
-      (isOpen_openCubeSet (originCube d 0)).measurableSet hbound)
+  exact Algsuperdiff.Section3.Provider.BadEvents.toReal_eLpNorm_unitCube_le hC hbound
 
 theorem probe_w1Infinity_incrementUnitCube₂_le_simplexMean_add_cubeOscGauge
     (Q : TriadicCube d) (n L : ℤ) (omega : CutoffSample d) (T : KuhnCell d)

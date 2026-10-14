@@ -282,7 +282,8 @@ theorem frozen_matrixSecondDerivativeNorm_eq
 
 /-! ## The gate quantity of a shell field's unit-cube package -/
 
-private theorem toReal_eLpNorm_le {f : Vec d → ℝ} {C : ℝ} (hC : 0 ≤ C)
+/-- A pointwise unit-cube bound controls the real-valued essential-supremum norm. -/
+theorem toReal_eLpNorm_unitCube_le {f : Vec d → ℝ} {C : ℝ} (hC : 0 ≤ C)
     (hbound : ∀ x ∈ openCubeSet (originCube d 0), ‖f x‖ ≤ C) :
     (eLpNorm f ∞
       (volumeMeasureOn
@@ -307,7 +308,7 @@ theorem gradientW1Infinity_shellFieldUnitCube_le (g : ShellField d) :
   rw [UnitCubeSkewW2Infinity.gradientW1Infinity]
   refine max_le ?_ ?_
   · refine le_trans ?_ (le_max_left _ _)
-    refine toReal_eLpNorm_le (ShellField.unitCubeSecondDerivNorm_nonneg g)
+    refine toReal_eLpNorm_unitCube_le (ShellField.unitCubeSecondDerivNorm_nonneg g)
       fun x hx => ?_
     have hval : Algsuperdiff.Frozen.Section24.matrixSecondDerivativeNorm
         ((shellFieldUnitCube g).secondDeriv x) =
@@ -317,7 +318,7 @@ theorem gradientW1Infinity_shellFieldUnitCube_le (g : ShellField d) :
       abs_of_nonneg (ShellField.matrixSecondDerivativeNorm_nonneg _)]
     exact matrixSecondDerivativeNorm_secondDeriv_le_unitCubeSecondDerivNorm g hx
   · refine le_trans ?_ (le_max_right _ _)
-    refine toReal_eLpNorm_le (ShellField.unitCubeDerivNorm_nonneg g) fun x hx => ?_
+    refine toReal_eLpNorm_unitCube_le (ShellField.unitCubeDerivNorm_nonneg g) fun x hx => ?_
     have hval : Algsuperdiff.Frozen.Section24.matrixDerivativeNorm
         ((shellFieldUnitCube g).firstDeriv x) =
         ShellField.matrixDerivativeNorm (ShellField.deriv g x) := by

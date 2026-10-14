@@ -150,8 +150,6 @@ theorem exists_lipschitzWith_ae_eq_of_tendsto_eLpNorm
     {U : Set (Vec d)} (hUmeas : MeasurableSet U) {u : Vec d → ℝ} {K : ℝ≥0}
     {W : ℕ → Vec d → ℝ}
     (hlip : ∀ n, LipschitzOnWith K (W n) U)
-    (_hmeas : ∀ n, AEStronglyMeasurable (W n) (volume.restrict U))
-    (_humeas : AEStronglyMeasurable u (volume.restrict U))
     (htend : Filter.Tendsto (fun n => eLpNorm (W n - u) 2 (volume.restrict U))
       Filter.atTop (nhds 0)) :
     ∃ v : Vec d → ℝ, LipschitzWith K v ∧ v =ᵐ[volume.restrict U] u := by
@@ -233,10 +231,6 @@ theorem exists_lipschitzWith_ae_eq_of_hasWeakPartialDeriv_bound
         (unitConvexApproxScale (n + 1))) U := fun n =>
     lipschitzOnWith_convexApproxSmoothRepresentative hU hρ hB hu2 hg'top hg'2 hg'bd hweak'
       hball hr (hε0 n) (hε1 n)
-  have hsmooth : ∀ n : ℕ, ContDiff ℝ (⊤ : ℕ∞)
-      (convexApproxSmoothRepresentative U (unitConvexApproxKernel (d := d)) u z (r0 / 2)
-        (unitConvexApproxScale (n + 1))) := fun n =>
-    contDiff_convexApproxSmoothRepresentative hUmeas hρ one_le_two hu2 hr (hε0 n)
   -- step 3: L² convergence of the mollifications
   have hconv0 := tendsto_eLpNorm_sub_zero_unitConvexApproxSequence_of_memLpOn
     (p := 2) hU one_le_two (by simp) hu2 hball hr
@@ -261,9 +255,7 @@ theorem exists_lipschitzWith_ae_eq_of_hasWeakPartialDeriv_bound
       Filter.atTop (nhds 0) := by
     refine hconv1.congr fun n => ?_
     exact (MeasureTheory.eLpNorm_congr_ae (hrep n)).symm
-  exact exists_lipschitzWith_ae_eq_of_tendsto_eLpNorm hUmeas hlip
-    (fun n => ((hsmooth n).continuous).aestronglyMeasurable)
-    hu2.aestronglyMeasurable hconv2
+  exact exists_lipschitzWith_ae_eq_of_tendsto_eLpNorm hUmeas hlip hconv2
 
 /-- Unbundled form of the bridge: the representative is stated through its
 pointwise oscillation bound, which is the form consumed by the Besov

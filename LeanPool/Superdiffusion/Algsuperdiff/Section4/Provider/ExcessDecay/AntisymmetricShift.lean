@@ -6,6 +6,8 @@ Authors: Scott Armstrong
 
 module
 
+public import LeanPool.Superdiffusion.Algsuperdiff.StochasticProcess.Common.DivergenceForm.SkewIdentities
+
 public import LeanPool.Superdiffusion.Algsuperdiff.Section4.Support.Dirichlet
 public import LeanPool.HighContrastHomogenization.Support.Sobolev.Foundations.EuclideanL2CZ
 public import LeanPool.HighContrastHomogenization.Support.Sobolev.Foundations.CubeNeumannW22CZ.WeakInteriorDQ.SmoothLimit
@@ -114,20 +116,7 @@ private theorem sum_sum_mul_eq_zero_of_skew_of_symm {C : Mat d}
     (hC : ∀ i j : Fin d, C j i = -C i j) {T : Fin d → Fin d → ℝ}
     (hT : ∀ i j : Fin d, T i j = T j i) :
     ∑ i : Fin d, ∑ j : Fin d, C i j * T i j = 0 := by
-  have hpoint : ∀ i j : Fin d, C j i * T j i = -(C i j * T i j) := by
-    intro i j
-    rw [hC i j, ← hT i j]
-    ring
-  have hswap : ∑ i : Fin d, ∑ j : Fin d, C i j * T i j =
-      ∑ i : Fin d, ∑ j : Fin d, C j i * T j i := Finset.sum_comm
-  have hneg : ∑ i : Fin d, ∑ j : Fin d, C j i * T j i =
-      -∑ i : Fin d, ∑ j : Fin d, C i j * T i j := by
-    rw [show (∑ i : Fin d, ∑ j : Fin d, C j i * T j i) =
-        ∑ i : Fin d, ∑ j : Fin d, -(C i j * T i j) from
-      Finset.sum_congr rfl fun i _ => Finset.sum_congr rfl fun j _ => hpoint i j]
-    simp only [Finset.sum_neg_distrib]
-  have h2 := hswap.trans hneg
-  linarith only [h2]
+  exact StochasticProcess.Common.DivergenceForm.sum_sum_mul_eq_zero_of_skew_of_symm hC hT
 
 /-- Subtracting a function of vanishing integral does not change an integral,
 whether or not the minuend is integrable: if it is, this is additivity; if it is
