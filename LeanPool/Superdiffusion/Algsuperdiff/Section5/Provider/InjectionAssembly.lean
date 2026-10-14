@@ -368,15 +368,13 @@ private theorem injectionAssembly_comparisonBounds1 :
               ((↑(Annealed.sigmaBar M n) : ℝ)⁻¹ * Real.rpow (3 : ℝ) ((↑n : ℝ) / (2 : ℝ)) *
                   ((2 : ℝ) * Creg * Real.rpow (3 : ℝ) ((↑n : ℝ) / (2 : ℝ)) * Kg) /
                 ((1 : ℝ) - ep))
-              uRep)
-            (_ :
+              uRep),
             HolderSeminormBoundOn (cubeSetAt y n) (1 / 2 : ℝ)
               ((↑(Annealed.sigmaBar M n) : ℝ)⁻¹ * Real.rpow (3 : ℝ) ((↑n : ℝ) / (2 : ℝ)) *
                     ((2 : ℝ) * Creg * Real.rpow (3 : ℝ) ((↑n : ℝ) / (2 : ℝ)) * Kg) *
                   ep /
                 ((1 : ℝ) - ep))
-              fun (x : Vec d) => uRep x - wRep (0 : ℕ) x),
-            True := by
+              fun (x : Vec d) => uRep x - wRep (0 : ℕ) x := by
   classical
   intro d cstar Creg _hCreg hd CL hland CIter hCIter hseq C hCdef hCpos M hcst hgam ep n y g omega
     m hnm _ hu hep0 hep1 hgpos hSpos hP theta hthetadef hth0 hmemG hmemJ hgne Kg
@@ -447,7 +445,7 @@ private theorem injectionAssembly_comparisonBounds1 :
     (tendsto_sub_iterationPartialSum_cutoff M m n y omega hgL2 hw0sol hwsucc hu hlimgrad).2
   obtain ⟨uRep, huRep, huRepK, hutailK⟩ :=
     exists_isCubeRepresentative_of_tendsto hd hK00 hep0.le hep1 hrep hzero hKb hlimval
-  exact ⟨hKg0, hgeq, hK0def, hK00, w, wRep, hrep, hw0sol, uRep, huRep, huRepK, hutailK, True.intro⟩
+  exact ⟨hKg0, hgeq, hK0def, hK00, w, wRep, hrep, hw0sol, uRep, huRep, huRepK, hutailK⟩
 
 /-- **Proposition 5.1.**  On the good cube event and the large-scale event with
 threshold `C⁻¹ ε γ^{-1/2}`, the rough-field solution at any scale `m ≥ n` is
@@ -525,7 +523,7 @@ theorem injection_in_L_infty_v2_provider (d : ℕ) (cstar : ℝ) (_hcstar : 0 < 
     exact ⟨le_top, le_top⟩
   -- the datum, its Hölder constant and its square integrability
   set Kg : ℝ := (holderSeminormOn (cubeSetAt y n) (1 / 2) g).toReal with hKgdef
-  obtain ⟨hKg0, hgeq, hK0def, hK00, w, wRep, hrep, hw0sol, uRep, huRep, huRepK, hutailK, _⟩ :=
+  obtain ⟨hKg0, hgeq, hK0def, hK00, w, wRep, hrep, hw0sol, uRep, huRep, huRepK, hutailK⟩ :=
     @injectionAssembly_comparisonBounds1 (d) (cstar) (Creg) (_hCreg) (hd) (CL) (hland) (CIter)
       (hCIter) (hseq) (hCdef) (hCpos) (M) (hcst) (hgam) (ep) (n) (y) (g) (omega) (m) (hnm) (u)
         (hu) (hep0) (hep1) (hgpos) (hSpos) (hP) (hthetadef) (hth0) (hmemG) (hmemJ) (hgne)

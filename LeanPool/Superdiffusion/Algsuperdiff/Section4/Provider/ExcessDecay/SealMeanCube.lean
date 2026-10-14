@@ -491,8 +491,8 @@ private theorem sealMeanCube_comparisonBounds1 :
                                                               normalizedL2On K fun (y : Vec d) =>
                                                                 W y - beta)
         (_ : (0 : ℝ) ≤ CH * (4 : ℝ) ^ d) (lam : ℝ) (_ : (0 : ℝ) < lam) (_ : (16 : ℝ) * lam ≤ (1 :
-          ℝ)) (_ :
-        (1152 : ℝ) * (CH * (4 : ℝ) ^ d) * lam ^ (2 : ℕ) ≤ (1 : ℝ)), True := by
+          ℝ)),
+        (1152 : ℝ) * (CH * (4 : ℝ) ^ d) * lam ^ (2 : ℕ) ≤ (1 : ℝ) := by
   classical
   intro d _
   obtain ⟨CH, hCH0, hCH⟩ := exists_abs_le_normalizedL2On_of_faceOdd d
@@ -527,7 +527,7 @@ private theorem sealMeanCube_comparisonBounds1 :
       rw [mul_comm]
       exact hsq
     linarith only [hmul, heq]
-  exact ⟨CH, hCH, hP0, lam, hlampos, hlam16, hroom, True.intro⟩
+  exact ⟨CH, hCH, hP0, lam, hlampos, hlam16, hroom⟩
 
 /-- **`(A)` at a flush cube.**
 
@@ -573,7 +573,7 @@ theorem exists_abs_le_normalizedL2On_sealCube (d : ℕ) [NeZero d] :
           ((toEuc : Vec d → EuclideanSpace ℝ (Fin d)) '' sealDouble c L i sg) →
         |beta| ≤ C * normalizedL2On (sealCube c L) (fun y => W y - beta) := by
   classical
-  obtain ⟨CH, hCH, hP0, lam, hlampos, hlam16, hroom, _⟩ :=
+  obtain ⟨CH, hCH, hP0, lam, hlampos, hlam16, hroom⟩ :=
     @sealMeanCube_comparisonBounds1 (d) (by infer_instance)
   refine ⟨6 * Real.sqrt (lam⁻¹ ^ d) + 12 * (64 * (CH * (4 : ℝ) ^ d) * lam ^ 2), ?_, ?_⟩
   · have h1 : 0 ≤ Real.sqrt (lam⁻¹ ^ d) := Real.sqrt_nonneg _

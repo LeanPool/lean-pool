@@ -1400,8 +1400,8 @@ private theorem principalResponseTerminal_comparisonBounds3 :
           (1 : ℝ)) (Ev : BlockVec d)
         (_ : blockVecDot Ev Ev = (1 : ℝ)) (_ :
         |Real.log M.gamma|⁻¹ * (↑(m - (↑hgap : ℤ) - ((originCube d Kc).scale - (↑j : ℤ))).toNat :
-          ℝ) ≤ (64 : ℝ)) (_ :
-        M.gamma ^ (6 : ℕ) ≤ principalResponseSwitchBudget M E (64 : ℝ)), True := by
+          ℝ) ≤ (64 : ℝ)),
+        M.gamma ^ (6 : ℕ) ≤ principalResponseSwitchBudget M E (64 : ℝ) := by
   classical
   intro d this Cbase _ C hbadhalf Cload hCload0 g2 hdisp2 g3 hSqInt _ hWint Cterm hTb M m Kc hgap
     E hstate hhpos hgammaE hh hK e e' he he' j hscale hgamma0 hE1 hproj hEinv hg2 hg3 hg4
@@ -1519,7 +1519,7 @@ private theorem principalResponseTerminal_comparisonBounds3 :
   have hrename : M.gamma ^ (6 : ℕ) ≤ principalResponseSwitchBudget M E 64 := by
     rw [principalResponseSwitchBudget]
     exact pow_six_le_budget_core hgamma0 (by linarith) hCbud hE1 (by norm_num)
-  exact ⟨hbadInt, hbad, hlimInt, hcubeInt, hL, hn, hgamE, hsw, Ev, hEv, hgapK, hrename, True.intro⟩
+  exact ⟨hbadInt, hbad, hlimInt, hcubeInt, hL, hn, hgamE, hsw, Ev, hEv, hgapK, hrename⟩
 
 /-- **The principal-response comparison of `l.approximate.recurrence.formula`,
 Step 3, at one and the same witness.**
@@ -1784,7 +1784,7 @@ theorem exists_const_descendantsAverage_integral_principalEnergy_le_annealedLimi
   refine ⟨wD, wN, hwD, hwN, ?_⟩
   -- the transport between the two carriers
   obtain ⟨stage_hbadInt, stage_hbad, stage_hlimInt, stage_hcubeInt, stage_hL, stage_hn,
-    stage_hgamE, stage_hsw, stage_Ev, stage_hEv, stage_hgapK, stage_hrename, _⟩ :=
+    stage_hgamE, stage_hsw, stage_Ev, stage_hEv, stage_hgapK, stage_hrename⟩ :=
     @principalResponseTerminal_comparisonBounds3 (d) (by infer_instance) (Cbase) (c) (C)
       (hbadhalf) (Cload) (hCload0) (g2) (hdisp2) (g3) (hSqInt) (g4) (hWint) (Cterm) (hTb) (M) (m)
         (Kc) (hgap) (E) (hstate) (hhpos) (hgammaE) (hh) (hK) (e) (e') (he) (he') (j) (hscale)

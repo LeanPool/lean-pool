@@ -88,7 +88,7 @@ open Algsuperdiff.Section4.Support
 
 noncomputable section
 
-private abbrev residueRouteOne_comparisonBounds4_statement : Prop :=
+abbrev residueRouteOne_comparisonBounds4_statement : Prop :=
     ∀ (d : ℕ) [NeZero d] (CE KE : ℝ),
       let kappa : ℝ := √((192 : ℝ) * (↑d : ℝ)) * (3 : ℝ);
       ∀ (_ : kappa = √((192 : ℝ) * (↑d : ℝ)) * (3 : ℝ)) (_ : (0 : ℝ) ≤ kappa),
@@ -445,7 +445,7 @@ private abbrev residueRouteOne_comparisonBounds4_statement : Prop :=
                           openCubeSet (originCube d m))
                         s g).toReal
 
-private abbrev residueRouteOne_comparisonBounds1_statement : Prop :=
+abbrev residueRouteOne_comparisonBounds1_statement : Prop :=
     ∀ (d : ℕ) [NeZero d] (CE KE : ℝ),
       let kappa : ℝ := √((192 : ℝ) * (↑d : ℝ)) * (3 : ℝ);
       ∀ (_ : kappa = √((192 : ℝ) * (↑d : ℝ)) * (3 : ℝ)) (_ : (0 : ℝ) ≤ kappa),
@@ -567,7 +567,7 @@ private abbrev residueRouteOne_comparisonBounds1_statement : Prop :=
                                 (Q3s * Hs)) +
                                 Sm2 * (sig * Hn))
 
-private theorem residueRouteOne_comparisonBounds1 : residueRouteOne_comparisonBounds1_statement :=
+theorem residueRouteOne_comparisonBounds1 : residueRouteOne_comparisonBounds1_statement :=
   by
   intro d _ _ KE kappa hkappadef hkappa e0 he0def k0 hk0def b0 hb0def M s hs L m n z i sigma hs1
     hChinge omega u _ _ S hsubx Erep hErepCap hErep0 Eb herrD hbrk hEbdef sig hsig X Gs Hs Hn P2
@@ -875,7 +875,7 @@ private theorem residueRouteOne_comparisonBounds3 :
     linarith only [hi, hii, hiii, hiv, hv]
   exact ⟨hS6le, hQScle, hRQ3sn, hT1⟩
 
-private theorem residueRouteOne_comparisonBounds4 : residueRouteOne_comparisonBounds4_statement :=
+theorem residueRouteOne_comparisonBounds4 : residueRouteOne_comparisonBounds4_statement :=
   by
   classical
   intro d _ CE KE kappa hkappadef hkappa _ he0def _ hk0def b0 hb0def M s hs L m n hmL hnm z hz i
@@ -1002,7 +1002,7 @@ private theorem residueRouteOne_comparisonBounds4 : residueRouteOne_comparisonBo
     hS7def, hS6def, hSm3def, hSm2def, hX0, hGs0, hHs0, hHn0, hS0, hQ3s0, hQ3sn0, hQ1s0, hR3n0,
       hS40, hS70, hS60, hSm30, hSm20, hsiginv0, hbrkCap, hET, hGbes, hGbes0, hYchild3⟩
 
-private theorem residueRouteOne_comparisonBounds5 :
+theorem residueRouteOne_comparisonBounds5 :
     ∀ (d : ℕ) [NeZero d] (CE KE : ℝ),
       let kappa : ℝ := √((192 : ℝ) * (↑d : ℝ)) * (3 : ℝ);
       let e0 : ℝ := kappa * (CE * (1 / 2 : ℝ));
@@ -1155,7 +1155,7 @@ private theorem residueRouteOne_comparisonBounds5 :
     mul_le_mul_of_nonneg_left hYchild3 hccorr0
   exact ⟨hfac0, hsinv, hstep, hleg1, hleg2, hleg3⟩
 
-private theorem residueRouteOne_comparisonBounds6 :
+theorem residueRouteOne_comparisonBounds6 :
     ∀ (d : ℕ) [NeZero d],
       ∃ (CE : ℝ) (_ : (0 : ℝ) < CE) (_ :
         ∀ (M : ABKModel d),
@@ -1364,13 +1364,11 @@ private theorem residueRouteOne_comparisonBounds6 :
         (0 : ℝ) ≤
           (9 : ℝ) * (CE * (1 / 2 : ℝ)) *
             ((3 : ℝ) * negNormBaseConst d * coarseGrainingP2Const d * (216 : ℝ) * (√((192 : ℝ) *
-              (↑d : ℝ)) * (3 : ℝ) * KE)))
-        (_ :
+              (↑d : ℝ)) * (3 : ℝ) * KE))),
         (0 : ℝ) ≤
           CE * (1 / 2 : ℝ) *
             ((3 : ℝ) * negNormBaseConst d * coarseGrainingP2Const d * (216 : ℝ) *
-              (√((192 : ℝ) * (↑d : ℝ)) * (3 : ℝ) * KE))),
-        True := by
+              (√((192 : ℝ) * (↑d : ℝ)) * (3 : ℝ) * KE)) := by
   classical
   intro d _
   obtain ⟨CE, hCEpos, hCE⟩ := ae_errorRepresentative_le_harmonicSlot_addThree d
@@ -1414,7 +1412,7 @@ private theorem residueRouteOne_comparisonBounds6 :
   have hCE3 : (0 : ℝ) ≤ CE * (1 / 2) * A1 :=
     mul_nonneg (mul_nonneg hCEpos.le (by norm_num)) hA1
   exact ⟨CE, hCEpos, hCE, CB, KE, hCBpos, hEnergyLeg, hkappadef, hkappa, he0def, hk0def, hb0def,
-    hb0, hcg, hA1def, hA1, hA2def, hA2, hA3def, hA3, hCE2, hCE3, True.intro⟩
+    hb0, hcg, hA1def, hA1, hA2def, hA2, hA3def, hA3, hCE2, hCE3⟩
 
 private theorem residueRouteOne_comparisonBounds7 :
     ∀ (d : ℕ) (CE KE kappa b0 cg A1 : ℝ) (_ : (0 : ℝ) ≤ A1)
@@ -1591,7 +1589,7 @@ theorem exists_flushResidue_route1_composed (d : ℕ) [NeZero d] :
                                 (Cutoff.translateCutoffSample z omega) * S) := by
   classical
   obtain ⟨CE, hCEpos, hCE, CB, KE, hCBpos, hEnergyLeg, hkappadef, hkappa, he0def, hk0def, hb0def,
-    hb0, hcg, hA1def, hA1, hA2def, hA2, hA3def, hA3, hCE2, hCE3, _⟩ :=
+    hb0, hcg, hA1def, hA1, hA2def, hA2, hA3def, hA3, hCE2, hCE3⟩ :=
     @residueRouteOne_comparisonBounds6 (d) (by infer_instance)
   set kappa : ℝ := Real.sqrt (192 * (d : ℝ)) * 3 with hkappadef
   set e0 : ℝ := kappa * (CE * (1 / 2)) with he0def

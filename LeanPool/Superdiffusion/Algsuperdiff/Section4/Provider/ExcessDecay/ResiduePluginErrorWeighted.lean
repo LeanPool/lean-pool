@@ -6,6 +6,8 @@ Authors: Scott Armstrong
 
 module
 
+public import LeanPool.Superdiffusion.Algsuperdiff.Section4.Provider.ExcessDecay.ResiduePlugin
+
 public import LeanPool.Superdiffusion.Algsuperdiff.Section4.Provider.ExcessDecay.ResidueRouteOneErrorWeighted
 public import LeanPool.Superdiffusion.Algsuperdiff.Section4.Provider.ExcessDecay.ResidueScalarFlush
 public import LeanPool.Superdiffusion.Algsuperdiff.Section4.Provider.ExcessDecay.ResidueAbsorption
@@ -94,187 +96,6 @@ noncomputable section
 variable {d : ℕ}
 
 /-! ## 1. The plug-in corollary -/
-
-private theorem residuePluginErrorWeighted_comparisonBounds1 :
-    ∀ (d : ℕ) (CS : ℝ)
-      (_ :
-        ∀ {n m : ℤ} {z : Vec d} {i : Fin d} {σ : ℝ},
-          n + (2 : ℤ) ≤ m →
-            z ∈ openCubeSet (originCube d m) →
-              σ = (1 : ℝ) ∨ σ = (-1 : ℝ) →
-                wellPlacedHalfGap m (n + (2 : ℤ)) < σ * z i →
-                  ∀ (u h : H1Function (openCubeSet (originCube d m))),
-                    HasZeroTraceDifferenceOn (openCubeSet (originCube d m)) u h →
-                      ∀ (R : ℝ),
-                        (∀ (w : H1Function (translateSet (flushSubCentre z m n i σ) (openCubeSet
-                          (originCube d n))))
-                            (rho : H10Function (translateSet (flushSubCentre z m n i σ)
-                              (openCubeSet (originCube d n)))),
-                            IsWeaklyHarmonicOn (translateSet (flushSubCentre z m n i σ)
-                              (openCubeSet (originCube d n))) w →
-                              (∀ (y : Vec d), w.toFun y = u.toFun y + rho.toFun y) →
-                                (∀ (y : Vec d), w.grad y = u.grad y + rho.grad y) →
-                                  (normalizedL2On
-                                      ((fun (y : Vec d) => flushSubCentre z m n i σ + y) ''
-                                        openCubeSet (originCube d n))
-                                      fun (y : Vec d) => u.toFun y - w.toFun y) ≤
-                                    R) →
-                          |volumeAverage
-                                ((fun (y : Vec d) => wellPlacedCentre z m (n + (2 : ℤ)) + y) ''
-                                  openCubeSet (originCube d (n + (2 : ℤ))))
-                                fun (y : Vec d) => u.toFun y - h.toFun y| ≤
-                            CS *
-                              ((eLpNorm
-                                      (fun (y : Vec d) =>
-                                        u.toFun y -
-                                          volumeAverage
-                                            ((fun (y' : Vec d) => z + y') '' openCubeSet
-                                              (originCube d (n + (3 : ℤ))) ∩
-                                              openCubeSet (originCube d m))
-                                            u.toFun)
-                                      (2 : ENNReal)
-                                      (normalizedVolumeMeasureOn
-                                        ((fun (y' : Vec d) => z + y') '' openCubeSet (originCube d
-                                          (n + (3 : ℤ))) ∩
-                                          openCubeSet (originCube d m)))).toReal +
-                                  (3 : ℝ) ^ n *
-                                    ∑ i' : Fin d,
-                                      (eLpNorm (fun (y : Vec d) => h.grad y i') (2 : ENNReal)
-                                          (normalizedVolumeMeasureOn
-                                            ((fun (y' : Vec d) => z + y') '' openCubeSet
-                                              (originCube d (n + (3 : ℤ))) ∩
-                                              openCubeSet (originCube d m)))).toReal +
-                                R))
-      (M : ABKModel d) (L m n : ℤ) (z : Vec d) (_ : z ∈ openCubeSet (originCube d m)) (i : Fin d)
-        (sigma : ℝ)
-      (_ : sigma = (1 : ℝ) ∨ sigma = (-1 : ℝ)) (_ : wellPlacedHalfGap m (n + (2 : ℤ)) < sigma * z i)
-      (_ : n + (2 : ℤ) ≤ m) (omega : Cutoff.CutoffSample d) (u hdat : H1Function (openCubeSet
-        (originCube d m)))
-      (g : Vec d → Vec d)
-      (_ : IsDirichletSolutionOn (Cutoff.coefficientCutoff M.nu L omega).toCoeffField (originCube
-        d m) u hdat g),
-      (∀ (Rarg : ℝ),
-          (∀ (w' : H1Function (translateSet (flushSubCentre z m n i sigma) (openCubeSet
-            (originCube d n))))
-              (rho' : H10Function (translateSet (flushSubCentre z m n i sigma) (openCubeSet
-                (originCube d n)))),
-              IsWeaklyHarmonicOn (translateSet (flushSubCentre z m n i sigma) (openCubeSet
-                (originCube d n))) w' →
-                (∀ (y : Vec d), w'.toFun y = u.toFun y + rho'.toFun y) →
-                  (∀ (y : Vec d), w'.grad y = u.grad y + rho'.grad y) →
-                    (normalizedL2On ((fun (y : Vec d) => flushSubCentre z m n i sigma + y) ''
-                      openCubeSet (originCube d n))
-                        fun (y : Vec d) => u.toFun y - w'.toFun y) ≤
-                      Rarg) →
-            |volumeAverage
-                  ((fun (y : Vec d) => wellPlacedCentre z m (n + (2 : ℤ)) + y) '' openCubeSet
-                    (originCube d (n + (2 : ℤ))))
-                  fun (y : Vec d) => u.toFun y - hdat.toFun y| ≤
-              CS *
-                ((eLpNorm
-                        (fun (y : Vec d) =>
-                          u.toFun y -
-                            volumeAverage
-                              ((fun (y' : Vec d) => z + y') '' openCubeSet (originCube d (n + (3 :
-                                ℤ))) ∩
-                                openCubeSet (originCube d m))
-                              u.toFun)
-                        (2 : ENNReal)
-                        (normalizedVolumeMeasureOn
-                          ((fun (y' : Vec d) => z + y') '' openCubeSet (originCube d (n + (3 :
-                            ℤ))) ∩
-                            openCubeSet (originCube d m)))).toReal +
-                    (3 : ℝ) ^ n *
-                      ∑ i' : Fin d,
-                        (eLpNorm (fun (y : Vec d) => hdat.grad y i') (2 : ENNReal)
-                            (normalizedVolumeMeasureOn
-                              ((fun (y' : Vec d) => z + y') '' openCubeSet (originCube d (n + (3 :
-                                ℤ))) ∩
-                                openCubeSet (originCube d m)))).toReal +
-                  Rarg)) ∧
-        ∑ i' : Fin d,
-              (eLpNorm (fun (y : Vec d) => hdat.grad y i') (2 : ENNReal)
-                  (normalizedVolumeMeasureOn
-                    ((fun (y' : Vec d) => z + y') '' openCubeSet (originCube d (n + (3 : ℤ))) ∩
-                      openCubeSet (originCube d m)))).toReal ≤
-            (↑d : ℝ) *
-              (eLpNorm hdat.grad (2 : ENNReal)
-                  (normalizedVolumeMeasureOn
-                    ((fun (y' : Vec d) => z + y') '' openCubeSet (originCube d (n + (3 : ℤ))) ∩
-                      openCubeSet (originCube d m)))).toReal ∧
-          (3 : ℝ) ^ n = Real.rpow (3 : ℝ) (↑n : ℝ) := by
-  intro d CS hScal _ _ m n z hz i sigma hsigma hover hnm2 _ u hdat _ hsol
-  have hscal0 : ∀ Rarg : ℝ,
-      (∀ (w' : H1Function (translateSet (flushSubCentre z m n i sigma)
-            (openCubeSet (originCube d n))))
-        (rho' : H10Function (translateSet (flushSubCentre z m n i sigma)
-            (openCubeSet (originCube d n)))),
-        Support.IsWeaklyHarmonicOn
-            (translateSet (flushSubCentre z m n i sigma)
-              (openCubeSet (originCube d n))) w' →
-        (∀ y, w'.toFun y = u.toFun y + rho'.toH1Function.toFun y) →
-        (∀ y, w'.grad y = u.grad y + rho'.toH1Function.grad y) →
-        normalizedL2On ((fun y => flushSubCentre z m n i sigma + y) ''
-            openCubeSet (originCube d n))
-          (fun y => u.toFun y - w'.toFun y) ≤ Rarg) →
-      |volumeAverage ((fun y => wellPlacedCentre z m (n + 2) + y) ''
-          openCubeSet (originCube d (n + 2)))
-          (fun y => u.toFun y - hdat.toFun y)| ≤
-        CS * ((eLpNorm (fun y => u.toFun y -
-              volumeAverage ((((fun y' => z + y') ''
-                  openCubeSet (originCube d (n + 3))) ∩
-                openCubeSet (originCube d m))) u.toFun) 2
-            (Support.normalizedVolumeMeasureOn
-              ((((fun y' => z + y') '' openCubeSet (originCube d (n + 3))) ∩
-                openCubeSet (originCube d m))))).toReal +
-          (3 : ℝ) ^ n *
-            ∑ i' : Fin d,
-              (eLpNorm (fun y => hdat.grad y i') 2
-                (Support.normalizedVolumeMeasureOn
-                  ((((fun y' => z + y') ''
-                      openCubeSet (originCube d (n + 3))) ∩
-                    openCubeSet (originCube d m))))).toReal + Rarg) :=
-    fun Rarg hR => hScal hnm2 hz hsigma hover u hdat hsol.1 Rarg hR
-  -- (3) the coordinate sum against the vector norm
-  have hW30 : volume ((((fun y' => z + y') '' openCubeSet (originCube d (n + 3))) ∩
-      openCubeSet (originCube d m))) ≠ 0 :=
-    volume_anchorWindow_ne_zero_of_flushSubCube hnm2 hz i hsigma
-  have hvecfin : eLpNorm hdat.grad 2
-      (Support.normalizedVolumeMeasureOn
-        ((((fun y' => z + y') '' openCubeSet (originCube d (n + 3))) ∩
-          openCubeSet (originCube d m)))) ≠ ⊤ :=
-    (memLp_normalizedVolumeMeasureOn_of_restrict hW30
-      (hdat.grad_memVectorL2.mono_measure
-        (Measure.restrict_mono Set.inter_subset_right le_rfl))).eLpNorm_ne_top
-  have hsumb : (∑ i' : Fin d,
-      (eLpNorm (fun y => hdat.grad y i') 2
-        (Support.normalizedVolumeMeasureOn
-          ((((fun y' => z + y') '' openCubeSet (originCube d (n + 3))) ∩
-            openCubeSet (originCube d m))))).toReal) ≤
-      (d : ℝ) * (eLpNorm hdat.grad 2
-        (Support.normalizedVolumeMeasureOn
-          ((((fun y' => z + y') '' openCubeSet (originCube d (n + 3))) ∩
-            openCubeSet (originCube d m))))).toReal := by
-    calc (∑ i' : Fin d,
-        (eLpNorm (fun y => hdat.grad y i') 2
-          (Support.normalizedVolumeMeasureOn
-            ((((fun y' => z + y') '' openCubeSet (originCube d (n + 3))) ∩
-              openCubeSet (originCube d m))))).toReal)
-        ≤ ∑ _i' : Fin d, (eLpNorm hdat.grad 2
-            (Support.normalizedVolumeMeasureOn
-              ((((fun y' => z + y') '' openCubeSet (originCube d (n + 3))) ∩
-                openCubeSet (originCube d m))))).toReal :=
-          Finset.sum_le_sum fun i' _ => ENNReal.toReal_mono hvecfin
-            (eLpNorm_mono ((continuous_apply i').comp_aestronglyMeasurable
-              (aestronglyMeasurable_of_eLpNorm_ne_top hvecfin))
-              fun y => norm_le_pi_norm (hdat.grad y) i')
-      _ = (d : ℝ) * (eLpNorm hdat.grad 2
-            (Support.normalizedVolumeMeasureOn
-              ((((fun y' => z + y') '' openCubeSet (originCube d (n + 3))) ∩
-                openCubeSet (originCube d m))))).toReal := by
-          rw [Finset.sum_const, Finset.card_univ, Fintype.card_fin, nsmul_eq_mul]
-  have hzr : (3 : ℝ) ^ n = Real.rpow (3 : ℝ) (n : ℝ) := (Real.rpow_intCast 3 n).symm
-  exact ⟨hscal0, hsumb, hzr⟩
 
 private theorem residuePluginErrorWeighted_comparisonBounds2 :
     ∀ (d : ℕ) (Cfin : ℝ) (_ : (0 : ℝ) < Cfin) (CS : ℝ) (_ : (0 : ℝ) ≤ CS) (_ : (0 : ℝ) ≤ (↑d : ℝ))
@@ -842,7 +663,7 @@ theorem exists_flushResidue_le_displayLegs_of_epsPin_errorWeighted (d : ℕ) [Ne
                         (hgW) (hhW) (hK'top) (hK'volpos) (hKT) (hmemU)
   -- (2) the scalar control at an abstract budget
   obtain ⟨hscal0, hsumb, hzr⟩ :=
-    @residuePluginErrorWeighted_comparisonBounds1 (d) (CS) (hScal) (M) (L) (m) (n) (z) (hz) (i)
+    @residuePlugin_comparisonBounds1 (d) (CS) (hScal) (M) (L) (m) (n) (z) (hz) (i)
       (sigma) (hsigma) (hover) (hnm2) (omega) (u) (hdat) (g) (hsol)
   rw [hzr] at hscal0
   -- (4) the pin

@@ -597,7 +597,8 @@ private theorem assemblyEnergyLeg_comparisonBounds2 :
   exact ⟨hhL2W, hgWW, hhWW, hXfin, hHfin, hgL2cov, hgWcov, hhL2cov, hhWcov, hgreg, hgreg2, hhreg,
     hhreg2, hsubc⟩
 
-private theorem assemblyEnergyLeg_comparisonBounds3 :
+/-- Boundary-gradient identification and square-root bounds for the energy display. -/
+theorem boundaryEnergyDisplayComparison :
     ∀ (d : ℕ) [NeZero d] (CB1 CB2 : ℝ) (_ : (0 : ℝ) < CB1) (_ : (0 : ℝ) < CB2)
       (_ : (0 : ℝ) ≤ (3 : ℝ) ^ d) (M : ABKModel d) (s : ℝ) (_ : (0 : ℝ) < s) (L m n : ℤ) (x z :
         Vec d)
@@ -917,7 +918,7 @@ theorem ae_h1EnergyNormOnCube_boundary_le_anchorLegs (d : ℕ) [NeZero d] :
       (by linarith only [hs1]) (by linarith only [hs]) (by linarith only [hs1])
       hgreg2 hhreg2
   obtain ⟨hbg, hbgreg2, hLHS, hLam0, hsqrt, hT2sqrt⟩ :=
-    @assemblyEnergyLeg_comparisonBounds3 (d) (by infer_instance) (CB1) (CB2) (hCB1) (hCB2) (h3d0)
+    @boundaryEnergyDisplayComparison (d) (by infer_instance) (CB1) (CB2) (hCB1) (hCB2) (h3d0)
       (M) (s) (hs) (L) (m) (n) (x) (z) (hs1) (omega) (u) (hdat) (g) (hsubx) (hgreg2) (hhreg2) (v)
         (hvgrad) (hB2disp)
   rw [hT2sqrt, ← hbetadef] at hsqrt

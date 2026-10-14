@@ -271,8 +271,7 @@ private theorem stepOneAssembly_momentBounds1 :
                   (2 : ℝ)) Xf
                   (rDepEngineConst (d + (2 : ℕ)) * (CK * (Disorder.cstar M)⁻¹ * (√(↑s : ℝ) ^ (5 :
                     ℕ))⁻¹ * √M.gamma) *
-                    (↑(m - n + (1 : ℤ)) : ℝ) ^ (-1 / 2 : ℝ)))
-                (_ :
+                    (↑(m - n + (1 : ℤ)) : ℝ) ^ (-1 / 2 : ℝ))),
                 IsBigO (↑(Cutoff.cutoffSampleLaw M) : Measure (Cutoff.CutoffSample d)) (gammaSigma
                   (2 : ℝ))
                   (fun (omega : Cutoff.CutoffSample d) =>
@@ -282,8 +281,7 @@ private theorem stepOneAssembly_momentBounds1 :
                           ℤ)) omega)
                   (Ct *
                     (geomTailConst ((↑s : ℝ) / (4 : ℝ)) *
-                      (CK * (Disorder.cstar M)⁻¹ * (√(↑s : ℝ) ^ (5 : ℕ))⁻¹ * √M.gamma)))),
-                True := by
+                      (CK * (Disorder.cstar M)⁻¹ * (√(↑s : ℝ) ^ (5 : ℕ))⁻¹ * √M.gamma))) := by
   classical
   intro d CK hCK hcol M s hs8 hs4 n m hnm rho hrho0 Ce hCe0 Ct hCt0 hCtdef Cout hreg hCoutdef hgam
   have hcs : (0 : ℝ) < Disorder.cstar M := (Disorder.cstar_characterization M).1
@@ -403,7 +401,7 @@ private theorem stepOneAssembly_momentBounds1 :
         kickCollapsed M s lam K0 (n - 1 - (p : ℤ)) omega) (Ct * (G * A1)) :=
     isBigO_of_isBigOWith_of_nonneg hHead0 hHeadW
   exact ⟨hs0, hs1, hsq0, hsq1, lam, hlam0, hE0, hK00, hK0K1, hK1ge, hratioeq, hA10, hX0, hG0,
-    hGle, hGA1, Xf, hXfpt, hXfbig, hHead, True.intro⟩
+    hGle, hGA1, Xf, hXfpt, hXfbig, hHead⟩
 
 /-- **The `D₁` half of `e.kick.Dees.Dees`.**
 
@@ -557,7 +555,7 @@ theorem exists_stepOne_d1_bound (d : ℕ) :
   -- standing quantities
   have hgam : (0 : ℝ) < M.gamma := M.shellPrefix.gamma_pos
   obtain ⟨hs0, hs1, hsq0, hsq1, lam, hlam0, hE0, hK00, hK0K1, hK1ge, hratioeq, hA10, hX0, hG0,
-    hGle, hGA1, Xf, hXfpt, hXfbig, hHead, _⟩ :=
+    hGle, hGA1, Xf, hXfpt, hXfbig, hHead⟩ :=
     @stepOneAssembly_momentBounds1 (d) (CK) (hCK) (hcol) (M) (s) (hs8) (hs4) (n) (m) (hnm) (hrho0)
       (hCe0) (hCt0) (hCtdef) (hreg) (hCoutdef) (hgam)
   set K0 : ℝ := CK * ((Real.sqrt (s : ℝ)) ^ 9)⁻¹ with hK0def

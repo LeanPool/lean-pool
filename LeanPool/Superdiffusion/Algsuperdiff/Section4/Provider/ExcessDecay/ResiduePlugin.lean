@@ -88,7 +88,7 @@ variable {d : ℕ}
 
 /-! ## 2. The plug-in corollary -/
 
-private theorem residuePlugin_comparisonBounds1 :
+theorem residuePlugin_comparisonBounds1 :
     ∀ (d : ℕ) (CS : ℝ)
       (_ :
         ∀ {n m : ℤ} {z : Vec d} {i : Fin d} {σ : ℝ},

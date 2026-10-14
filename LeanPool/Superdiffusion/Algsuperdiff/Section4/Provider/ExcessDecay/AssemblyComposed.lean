@@ -6,6 +6,7 @@ Authors: Scott Armstrong
 
 module
 
+public import LeanPool.Superdiffusion.Algsuperdiff.Section4.Provider.ExcessDecay.AssemblyBoundaryConstants
 public import LeanPool.Superdiffusion.Algsuperdiff.Section4.Provider.ExcessDecay.AssemblyEnergyLeg
 public import LeanPool.Superdiffusion.Algsuperdiff.Section4.Provider.ExcessDecay.ReindexComposed
 public import LeanPool.Superdiffusion.Algsuperdiff.Section4.Provider.ExcessDecay.RecutAtoms
@@ -1157,20 +1158,17 @@ private theorem assemblyComposed_comparisonBounds5 :
       (_ : Erep ≤ CE * (1 / 2 : ℝ)) (_ : (0 : ℝ) ≤ Erep) (sig : ℝ) (_ : (0 : ℝ) ≤ sig⁻¹) (X : ℝ)
       (_ : (0 : ℝ) ≤ X) (Gs : ℝ) (_ : (0 : ℝ) ≤ Gs) (Hs : ℝ) (_ : (0 : ℝ) ≤ Hs) (Hn : ℝ) (_ : (0 :
         ℝ) ≤ Hn)
-      (P2 : ℝ) (_ : P2 = P2) (_ : P2 = Real.rpow (3 : ℝ) (-(↑(n + (2 : ℤ)) : ℝ))) (Q3s :
-        ℝ) (_ : Q3s = Q3s)
+      (P2 : ℝ) (_ : P2 = Real.rpow (3 : ℝ) (-(↑(n + (2 : ℤ)) : ℝ))) (Q3s :
+        ℝ)
       (_ : (0 : ℝ) ≤ Q3s) (_ : Q3s = Real.rpow (3 : ℝ) (s * (↑(n + (2 : ℤ)) : ℝ))) (Q3sn : ℝ)
-      (_ : Q3sn = Q3sn) (_ : Q3sn = Real.rpow (3 : ℝ) (s * (↑n : ℝ))) (Q1s : ℝ)
-        (_ : Q1s = Q1s)
+      (_ : Q3sn = Real.rpow (3 : ℝ) (s * (↑n : ℝ))) (Q1s : ℝ)
       (_ : (0 : ℝ) ≤ Q1s) (_ : Q1s = Real.rpow (3 : ℝ) (((1 : ℝ) + s) * (↑n : ℝ))) (R3n : ℝ)
-        (_ : R3n = R3n)
-      (_ : (0 : ℝ) ≤ R3n) (_ : R3n = Real.rpow (3 : ℝ) (↑n : ℝ)) (S4 : ℝ) (_ : S4 = S4)
+      (_ : (0 : ℝ) ≤ R3n) (_ : R3n = Real.rpow (3 : ℝ) (↑n : ℝ)) (S4 : ℝ)
         (_ : (0 : ℝ) ≤ S4)
-      (_ : S4 = s.rpow (-4 : ℝ)) (S7 : ℝ) (_ : S7 = S7) (_ : (0 : ℝ) ≤ S7) (_ : S7
+      (_ : S4 = s.rpow (-4 : ℝ)) (S7 : ℝ) (_ : (0 : ℝ) ≤ S7) (_ : S7
         = s.rpow (-7 : ℝ))
-      (S6 : ℝ) (_ : S6 = S6) (_ : (0 : ℝ) ≤ S6) (_ : S6 = s.rpow (-6 : ℝ)) (Sm3 : ℝ)
-        (_ : Sm3 = Sm3)
-      (_ : (0 : ℝ) ≤ Sm3) (_ : Sm3 = s.rpow (-3 : ℝ)) (Sm2 : ℝ) (_ : Sm2 = Sm2) (_ :
+      (S6 : ℝ) (_ : (0 : ℝ) ≤ S6) (_ : S6 = s.rpow (-6 : ℝ)) (Sm3 : ℝ)
+      (_ : (0 : ℝ) ≤ Sm3) (_ : Sm3 = s.rpow (-3 : ℝ)) (Sm2 : ℝ) (_ :
         (0 : ℝ) ≤ Sm2)
       (_ : Sm2 = s.rpow (-2 : ℝ)) (_ : sig⁻¹ * sig = (1 : ℝ)),
       sig⁻¹ * R3n *
@@ -1198,10 +1196,10 @@ private theorem assemblyComposed_comparisonBounds5 :
                 ∧ (0 : ℝ) ≤ S6 * R3n * Hn := by
   classical
   intro d CE KE kappa b0 cg A1 hA1def hA1 A2 hA2def hA2 A3 hA3def hA3 s hs n hs1 S hS0 Erep
-    hErepCap hErep0 sig hsiginv0 X hX0 Gs hGs0 Hs hHs0 Hn hHn0 P2 hP2def hP2def Q3s hQ3sdef hQ3s0
-      hQ3sdef Q3sn hQ3sndef hQ3sndef Q1s hQ1sdef hQ1s0 hQ1sdef R3n hR3ndef hR3n0 hR3ndef S4 hS4def
-        hS40 hS4def S7 hS7def hS70 hS7def S6 hS6def hS60 hS6def Sm3 hSm3def hSm30 hSm3def Sm2
-          hSm2def hSm20 hSm2def hsinv
+    hErepCap hErep0 sig hsiginv0 X hX0 Gs hGs0 Hs hHs0 Hn hHn0 P2 hP2def Q3s hQ3s0
+      hQ3sdef Q3sn hQ3sndef Q1s hQ1s0 hQ1sdef R3n hR3n0 hR3ndef S4
+        hS40 hS4def S7 hS70 hS7def S6 hS60 hS6def Sm3 hSm30 hSm3def Sm2
+          hSm20 hSm2def hsinv
   have hS4eq : (s⁻¹) ^ (4 : ℕ) = S4 := by
     rw [hS4def, inv_pow_eq_rpow_neg hs 4]
     congr 1
@@ -1405,268 +1403,6 @@ private theorem assemblyComposed_comparisonBounds6 :
     mul_le_mul_of_nonneg_left hYchild3 hccorr0
   exact ⟨hfac0, hsinv, hstep, hleg1, hleg2, hleg3⟩
 
-private theorem assemblyComposed_comparisonBounds7 :
-    ∀ (d : ℕ) [inst : NeZero d],
-      ∃ (CE : ℝ) (_ : (0 : ℝ) < CE) (_ :
-        ∀ (M : ABKModel d),
-          ∀ s ∈ Set.Icc ((64 : ℝ) * M.gamma) (1 : ℝ),
-            M.gamma ≤ CE⁻¹ * Disorder.cstar M ^ (10 : ℕ) →
-              M.gamma * |Real.log M.gamma| ^ (2 : ℕ) ≤
-                  (s / (8 : ℝ)).rpow (3 / 2 : ℝ) * Disorder.cstar M ^ (2 : ℕ) * (1 / 2 : ℝ) →
-                ∀ (hs : (0 : ℝ) < s) (n : ℤ) (z : Vec d),
-                  ∀ᵐ (omega : Cutoff.CutoffSample d) ∂(↑(Cutoff.cutoffSampleLaw M) : Measure
-                    (Cutoff.CutoffSample d)),
-                    omega ∈
-                        Frozen.Section4.goodEventAt M (cgEllipLowerConstant d) (n + (3 : ℤ)) z
-                          ⟨s / (8 : ℝ),
-                            (by positivity)⟩
-                          (1 / 2 : ℝ) →
-                      ∀ (L : ℤ),
-                        n + (3 : ℤ) ≤ L →
-                          fluxCorrectedErrorRepresentative M L (n + (3 : ℤ))
-                              ⟨s / (8 : ℝ),
-                                (by positivity)⟩
-                              (Cutoff.translateCutoffSample z omega) ≤
-                            CE * (1 / 2 : ℝ))
-        (CB : ℝ) (KE : ℝ) (_ : (0 : ℝ) < CB) (_ :
-        ∀ (M : ABKModel d),
-          ∀ s ∈ Set.Icc ((64 : ℝ) * M.gamma) (1 : ℝ),
-            M.gamma ≤ CB⁻¹ * Disorder.cstar M ^ (10 : ℕ) →
-              M.gamma * |Real.log M.gamma| ^ (2 : ℕ) ≤
-                  (s / (8 : ℝ)).rpow (3 / 2 : ℝ) * Disorder.cstar M ^ (2 : ℕ) * (1 / 2 : ℝ) →
-                ∀ (hs : (0 : ℝ) < s) (L m n : ℤ),
-                  m ≤ L →
-                    n + (3 : ℤ) ≤ m →
-                      ∀ (x z : Vec d),
-                        x ∈ openCubeSet (originCube d m) →
-                          (fun (y : Vec d) => x + y) '' openCubeSet (originCube d n) ⊆
-                              (fun (y : Vec d) => z + y) '' openCubeSet (originCube d (n + (1 :
-                                ℤ))) ∩
-                                openCubeSet (originCube d m) →
-                            ∀ᵐ (omega :
-                              Cutoff.CutoffSample d) ∂(↑(Cutoff.cutoffSampleLaw M) : Measure
-                                (Cutoff.CutoffSample d)),
-                              omega ∈
-                                  Frozen.Section4.goodEventAt M (cgEllipLowerConstant d) (n + (3 :
-                                    ℤ)) z
-                                    ⟨s / (8 : ℝ),
-                                      (by positivity)⟩
-                                    (1 / 2 : ℝ) →
-                                ∀ (u hdat : H1Function (openCubeSet (originCube d m))) (g : Vec d
-                                  → Vec d) (S : ℝ),
-                                  IsDirichletSolutionOn (Cutoff.coefficientCutoff M.nu L
-                                    omega).toCoeffField
-                                      (originCube d m) u hdat g →
-                                    MemLp g (2 : ENNReal) (normalizedVolumeMeasureOn (openCubeSet
-                                      (originCube d m))) →
-                                      MemLp (Gagliardo.gagliardoKernel s (2 : ENNReal) g) (2 :
-                                        ENNReal)
-                                          (normalizedGagliardoMeasureOn (openCubeSet (originCube d
-                                            m))) →
-                                        MemLp (Gagliardo.gagliardoKernel s (2 : ENNReal)
-                                          hdat.grad) (2 : ENNReal)
-                                            (normalizedGagliardoMeasureOn (openCubeSet (originCube
-                                              d m))) →
-                                          |volumeAverage
-                                                  ((fun (y : Vec d) => wellPlacedCentre x m (n +
-                                                    (2 : ℤ)) + y) ''
-                                                    openCubeSet (originCube d (n + (2 : ℤ))))
-                                                  fun (y : Vec d) => u.toFun y - hdat.toFun y| ≤
-                                              S →
-                                            ∀
-                                              (hsubx :
-                                                translateSet x (openCubeSet (originCube d n)) ⊆
-                                                  openCubeSet (originCube d m)),
-                                              Ch03.h1EnergyNormOnCube (originCube d n)
-                                                  (parentRebasedFamily M L (n + (3 : ℤ)) x z omega)
-                                                  (H1Function.untranslate x
-                                                    (u.restrict (isOpen_translateSet_openCubeSet x
-                                                      n) hsubx)) ≤
-                                                KE *
-                                                  (√(↑(Annealed.sigmaBar M (n + (3 : ℤ))) : ℝ) *
-                                                              Real.rpow (3 : ℝ) (-(↑(n + (2 : ℤ))
-                                                                : ℝ)) *
-                                                            (eLpNorm
-                                                                (fun (y : Vec d) =>
-                                                                  u.toFun y -
-                                                                    volumeAverage
-                                                                      ((fun (y' : Vec d) => z +
-                                                                        y') ''
-                                                                          openCubeSet (originCube
-                                                                            d (n + (3 : ℤ))) ∩
-                                                                        openCubeSet (originCube d
-                                                                          m))
-                                                                      u.toFun)
-                                                                (2 : ENNReal)
-                                                                (normalizedVolumeMeasureOn
-                                                                  ((fun (y' : Vec d) => z + y') ''
-                                                                      openCubeSet (originCube d (n
-                                                                        + (3 : ℤ))) ∩
-                                                                    openCubeSet (originCube d
-                                                                      m)))).toReal +
-                                                          √(↑(Annealed.sigmaBar M (n + (3 : ℤ))) :
-                                                            ℝ) *
-                                                              Real.rpow (3 : ℝ) (-(↑(n + (2 : ℤ))
-                                                                : ℝ)) *
-                                                            S +
-                                                        s.rpow (-3 : ℝ) * √(↑(Annealed.sigmaBar M
-                                                          (n + (3 : ℤ))) : ℝ)⁻¹ *
-                                                            Real.rpow (3 : ℝ) (s * (↑(n + (2 : ℤ))
-                                                              : ℝ)) *
-                                                          (normalizedGagliardoESeminormOn
-                                                              ((fun (y' : Vec d) => z + y') ''
-                                                                  openCubeSet (originCube d (n +
-                                                                    (3 : ℤ))) ∩
-                                                                openCubeSet (originCube d m))
-                                                              s g).toReal +
-                                                      s.rpow (-2 : ℝ) * √(↑(Annealed.sigmaBar M (n
-                                                        + (3 : ℤ))) : ℝ) *
-                                                          Real.rpow (3 : ℝ) (s * (↑(n + (2 : ℤ)) :
-                                                            ℝ)) *
-                                                        (normalizedGagliardoESeminormOn
-                                                            ((fun (y' : Vec d) => z + y') ''
-                                                                openCubeSet (originCube d (n + (3
-                                                                  : ℤ))) ∩
-                                                              openCubeSet (originCube d m))
-                                                            s hdat.grad).toReal +
-                                                    s.rpow (-2 : ℝ) * √(↑(Annealed.sigmaBar M (n +
-                                                      (3 : ℤ))) : ℝ) *
-                                                      (eLpNorm hdat.grad (2 : ENNReal)
-                                                          (normalizedVolumeMeasureOn
-                                                            ((fun (y' : Vec d) => z + y') ''
-                                                                openCubeSet (originCube d (n + (3
-                                                                  : ℤ))) ∩
-                                                              openCubeSet (originCube d
-                                                                m)))).toReal))
-        (_ : √((192 : ℝ) * (↑d : ℝ)) * (3 : ℝ) = √((192 : ℝ) * (↑d : ℝ)) * (3 : ℝ)) (_ :
-        (0 : ℝ) ≤ √((192 : ℝ) * (↑d : ℝ)) * (3 : ℝ)) (_ :
-        √((192 : ℝ) * (↑d : ℝ)) * (3 : ℝ) * (CE * (1 / 2 : ℝ)) = √((192 : ℝ) * (↑d : ℝ)) * (3 : ℝ)
-          * (CE * (1 / 2 : ℝ))) (_
-        :
-        (2 : ℝ) * (↑d : ℝ) * ((√((192 : ℝ) * (↑d : ℝ)) * (3 : ℝ) * (CE * (1 / 2 : ℝ))) ^ (2 : ℕ) +
-          (1 : ℝ)) =
-          (2 : ℝ) * (↑d : ℝ) * ((√((192 : ℝ) * (↑d : ℝ)) * (3 : ℝ) * (CE * (1 / 2 : ℝ))) ^ (2 : ℕ)
-            + (1 : ℝ)))
-        (_ :
-        √((2 : ℝ) * (↑d : ℝ) * ((√((192 : ℝ) * (↑d : ℝ)) * (3 : ℝ) * (CE * (1 / 2 : ℝ))) ^ (2 : ℕ)
-          + (1 : ℝ))) *
-              (√((192 : ℝ) * (↑d : ℝ)) * (3 : ℝ) * (CE * (1 / 2 : ℝ))) +
-            (2 : ℝ) *
-              ((2 : ℝ) * (↑d : ℝ) * ((√((192 : ℝ) * (↑d : ℝ)) * (3 : ℝ) * (CE * (1 / 2 : ℝ))) ^ (2
-                : ℕ) + (1 : ℝ))) =
-          √((2 : ℝ) * (↑d : ℝ) * ((√((192 : ℝ) * (↑d : ℝ)) * (3 : ℝ) * (CE * (1 / 2 : ℝ))) ^ (2 :
-            ℕ) + (1 : ℝ))) *
-              (√((192 : ℝ) * (↑d : ℝ)) * (3 : ℝ) * (CE * (1 / 2 : ℝ))) +
-            (2 : ℝ) * ((2 : ℝ) * (↑d : ℝ) * ((√((192 : ℝ) * (↑d : ℝ)) * (3 : ℝ) * (CE * (1 / 2 :
-              ℝ))) ^ (2 : ℕ) + (1 : ℝ))))
-        (_ :
-        (0 : ℝ) ≤
-          √((2 : ℝ) * (↑d : ℝ) * ((√((192 : ℝ) * (↑d : ℝ)) * (3 : ℝ) * (CE * (1 / 2 : ℝ))) ^ (2 :
-            ℕ) + (1 : ℝ))) *
-              (√((192 : ℝ) * (↑d : ℝ)) * (3 : ℝ) * (CE * (1 / 2 : ℝ))) +
-            (2 : ℝ) * ((2 : ℝ) * (↑d : ℝ) * ((√((192 : ℝ) * (↑d : ℝ)) * (3 : ℝ) * (CE * (1 / 2 :
-              ℝ))) ^ (2 : ℕ) + (1 : ℝ))))
-        (_ : (0 : ℝ) ≤ (3 : ℝ) * negNormBaseConst d * coarseGrainingP2Const d) (_ :
-        (3 : ℝ) * negNormBaseConst d * coarseGrainingP2Const d * (216 : ℝ) * (√((192 : ℝ) * (↑d :
-          ℝ)) * (3 : ℝ) * KE) =
-          (3 : ℝ) * negNormBaseConst d * coarseGrainingP2Const d * (216 : ℝ) * (√((192 : ℝ) * (↑d
-            : ℝ)) * (3 : ℝ) * KE))
-        (_ :
-        (0 : ℝ) ≤
-          (3 : ℝ) * negNormBaseConst d * coarseGrainingP2Const d * (216 : ℝ) * (√((192 : ℝ) * (↑d
-            : ℝ)) * (3 : ℝ) * KE))
-        (_ :
-        (3 : ℝ) * negNormBaseConst d * coarseGrainingP2Const d * (1944 : ℝ) *
-            ((√((2 : ℝ) * (↑d : ℝ) * ((√((192 : ℝ) * (↑d : ℝ)) * (3 : ℝ) * (CE * (1 / 2 : ℝ))) ^
-              (2 : ℕ) + (1 : ℝ))) *
-                  (√((192 : ℝ) * (↑d : ℝ)) * (3 : ℝ) * (CE * (1 / 2 : ℝ))) +
-                (2 : ℝ) *
-                  ((2 : ℝ) * (↑d : ℝ) * ((√((192 : ℝ) * (↑d : ℝ)) * (3 : ℝ) * (CE * (1 / 2 : ℝ)))
-                    ^ (2 : ℕ) + (1 : ℝ)))) *
-              (besovGagliardoConstant d * (gagliardoWindowConst d * windowMoveConst d))) =
-          (3 : ℝ) * negNormBaseConst d * coarseGrainingP2Const d * (1944 : ℝ) *
-            ((√((2 : ℝ) * (↑d : ℝ) * ((√((192 : ℝ) * (↑d : ℝ)) * (3 : ℝ) * (CE * (1 / 2 : ℝ))) ^
-              (2 : ℕ) + (1 : ℝ))) *
-                  (√((192 : ℝ) * (↑d : ℝ)) * (3 : ℝ) * (CE * (1 / 2 : ℝ))) +
-                (2 : ℝ) *
-                  ((2 : ℝ) * (↑d : ℝ) * ((√((192 : ℝ) * (↑d : ℝ)) * (3 : ℝ) * (CE * (1 / 2 : ℝ)))
-                    ^ (2 : ℕ) + (1 : ℝ)))) *
-              (besovGagliardoConstant d * (gagliardoWindowConst d * windowMoveConst d))))
-        (_ :
-        (0 : ℝ) ≤
-          (3 : ℝ) * negNormBaseConst d * coarseGrainingP2Const d * (1944 : ℝ) *
-            ((√((2 : ℝ) * (↑d : ℝ) * ((√((192 : ℝ) * (↑d : ℝ)) * (3 : ℝ) * (CE * (1 / 2 : ℝ))) ^
-              (2 : ℕ) + (1 : ℝ))) *
-                  (√((192 : ℝ) * (↑d : ℝ)) * (3 : ℝ) * (CE * (1 / 2 : ℝ))) +
-                (2 : ℝ) *
-                  ((2 : ℝ) * (↑d : ℝ) * ((√((192 : ℝ) * (↑d : ℝ)) * (3 : ℝ) * (CE * (1 / 2 : ℝ)))
-                    ^ (2 : ℕ) + (1 : ℝ)))) *
-              (besovGagliardoConstant d * (gagliardoWindowConst d * windowMoveConst d))))
-        (_ :
-        interiorCorrectionConst d * (gagliardoWindowConst d * windowMoveConst d) =
-          interiorCorrectionConst d * (gagliardoWindowConst d * windowMoveConst d))
-        (_ : (0 : ℝ) ≤ interiorCorrectionConst d * (gagliardoWindowConst d * windowMoveConst d))
-          (_ :
-        (0 : ℝ) ≤
-          (9 : ℝ) * (CE * (1 / 2 : ℝ)) *
-            ((3 : ℝ) * negNormBaseConst d * coarseGrainingP2Const d * (216 : ℝ) * (√((192 : ℝ) *
-              (↑d : ℝ)) * (3 : ℝ) * KE)))
-        (_ :
-        (0 : ℝ) ≤
-          CE * (1 / 2 : ℝ) *
-            ((3 : ℝ) * negNormBaseConst d * coarseGrainingP2Const d * (216 : ℝ) *
-              (√((192 : ℝ) * (↑d : ℝ)) * (3 : ℝ) * KE))),
-        True := by
-  classical
-  intro d _
-  obtain ⟨CE, hCEpos, hCE⟩ := ae_errorRepresentative_le_harmonicSlot_addThree d
-  obtain ⟨CB, KE, hCBpos, hKEpos, hEnergyLeg⟩ :=
-    ae_h1EnergyNormOnCube_boundary_le_anchorLegs d
-  -- the explicit constants, exactly as in the interior composition
-  set kappa : ℝ := Real.sqrt (192 * (d : ℝ)) * 3 with hkappadef
-  have hkappa : 0 ≤ kappa := mul_nonneg (Real.sqrt_nonneg _) (by norm_num)
-  set e0 : ℝ := kappa * (CE * (1 / 2)) with he0def
-  have he0 : 0 ≤ e0 := mul_nonneg hkappa (mul_nonneg hCEpos.le (by norm_num))
-  set k0 : ℝ := 2 * (d : ℝ) * (e0 ^ 2 + 1) with hk0def
-  have hk0 : 0 ≤ k0 :=
-    mul_nonneg (mul_nonneg zero_le_two (Nat.cast_nonneg d))
-      (add_nonneg (sq_nonneg e0) zero_le_one)
-  set b0 : ℝ := Real.sqrt k0 * e0 + 2 * k0 with hb0def
-  have hb0 : 0 ≤ b0 :=
-    add_nonneg (mul_nonneg (Real.sqrt_nonneg _) he0) (mul_nonneg zero_le_two hk0)
-  set cg : ℝ := 3 * negNormBaseConst d * coarseGrainingP2Const d with hcgdef
-  have hcg : 0 ≤ cg :=
-    mul_nonneg (mul_nonneg (by norm_num) (negNormBaseConst_pos d).le)
-      (coarseGrainingP2Const_pos d).le
-  set A1 : ℝ := cg * 216 * (kappa * KE) with hA1def
-  have hA1 : 0 ≤ A1 := by
-    rw [hA1def]
-    exact mul_nonneg (mul_nonneg hcg (by norm_num)) (mul_nonneg hkappa hKEpos.le)
-  set A2 : ℝ := cg * 1944 *
-    (b0 * (besovGagliardoConstant d * (gagliardoWindowConst d * windowMoveConst d)))
-    with hA2def
-  have hA2 : 0 ≤ A2 := by
-    have h1 : 0 ≤ besovGagliardoConstant d := besovGagliardoConstant_nonneg d
-    have h2 : 0 < gagliardoWindowConst d := gagliardoWindowConst_pos d
-    have h3 : 0 < windowMoveConst d := windowMoveConst_pos d
-    rw [hA2def]
-    exact mul_nonneg (mul_nonneg hcg (by norm_num))
-      (mul_nonneg hb0 (mul_nonneg h1 (mul_nonneg h2.le h3.le)))
-  set A3 : ℝ := interiorCorrectionConst d * (gagliardoWindowConst d * windowMoveConst d)
-    with hA3def
-  have hA3 : 0 ≤ A3 := by
-    have h1 : 0 < interiorCorrectionConst d := interiorCorrectionConst_pos d
-    have h2 : 0 < gagliardoWindowConst d := gagliardoWindowConst_pos d
-    have h3 : 0 < windowMoveConst d := windowMoveConst_pos d
-    rw [hA3def]
-    exact mul_nonneg h1.le (mul_nonneg h2.le h3.le)
-  have hCE2 : (0 : ℝ) ≤ 9 * (CE * (1 / 2)) * A1 :=
-    mul_nonneg (mul_nonneg (by norm_num) (mul_nonneg hCEpos.le (by norm_num))) hA1
-  have hCE3 : (0 : ℝ) ≤ CE * (1 / 2) * A1 :=
-    mul_nonneg (mul_nonneg hCEpos.le (by norm_num)) hA1
-  exact ⟨CE, hCEpos, hCE, CB, KE, hCBpos, hEnergyLeg, hkappadef, hkappa, he0def, hk0def, hb0def,
-    hb0, hcg, hA1def, hA1, hA2def, hA2, hA3def, hA3, hCE2, hCE3, True.intro⟩
-
 /-- **The boundary branch of the general clause, composed.**
 
 The deterministic `x`-frame envelope with the boundary energy leg substituted:
@@ -1752,8 +1488,8 @@ theorem exists_boundaryClauseComposed_honest (d : ℕ) [NeZero d] :
                                 (Cutoff.translateCutoffSample z omega) * S) := by
   classical
   obtain ⟨CE, hCEpos, hCE, CB, KE, hCBpos, hEnergyLeg, hkappadef, hkappa, he0def, hk0def, hb0def,
-    hb0, hcg, hA1def, hA1, hA2def, hA2, hA3def, hA3, hCE2, hCE3, _⟩ :=
-    @assemblyComposed_comparisonBounds7 (d) (by infer_instance)
+    hb0, hcg, hA1def, hA1, hA2def, hA2, hA3def, hA3, hCE2, hCE3⟩ :=
+    @assemblyBoundaryConstants (d) (by infer_instance)
   set kappa : ℝ := Real.sqrt (192 * (d : ℝ)) * 3 with hkappadef
   set e0 : ℝ := kappa * (CE * (1 / 2)) with he0def
   set k0 : ℝ := 2 * (d : ℝ) * (e0 ^ 2 + 1) with hk0def
@@ -1899,11 +1635,10 @@ theorem exists_boundaryClauseComposed_honest (d : ℕ) [NeZero d] :
     @assemblyComposed_comparisonBounds5 (d) (CE) (KE) (kappa) (b0) (cg) (A1)
       (hA1def) (hA1) (A2) (hA2def) (hA2) (A3) (hA3def) (hA3) (s) (hs) (n) (hs1) (S) (hS0) (Erep)
         (hErepCap) (hErep0) (sig) (hsiginv0) (X) (hX0) (Gs) (hGs0) (Hs) (hHs0) (Hn) (hHn0) (P2)
-          (by assumption) (hP2def) (Q3s) (by assumption) (hQ3s0) (hQ3sdef) (Q3sn) (by assumption)
-            (hQ3sndef) (Q1s) (by assumption) (hQ1s0) (hQ1sdef) (R3n) (by assumption) (hR3n0)
-              (hR3ndef) (S4) (by assumption) (hS40) (hS4def) (S7) (by assumption) (hS70) (hS7def)
-                (S6) (by assumption) (hS60) (hS6def) (Sm3) (by assumption) (hSm30) (hSm3def) (Sm2)
-                  (by assumption) (hSm20) (hSm2def) (hsinv)
+          (hP2def) (Q3s) (hQ3s0) (hQ3sdef) (Q3sn)
+            (hQ3sndef) (Q1s) (hQ1s0) (hQ1sdef) (R3n) (hR3n0)
+              (hR3ndef) (S4) (hS40) (hS4def) (S7) (hS70) (hS7def)
+                (S6) (hS60) (hS6def) (Sm3) (hSm30) (hSm3def) (Sm2) (hSm20) (hSm2def) (hsinv)
   refine hstep.trans (le_trans (mul_le_mul_of_nonneg_left hmono hfac0) ?_)
   have hdistrib : (sig⁻¹ * R3n) *
       (cg * (216 * (s⁻¹) ^ (4 : ℕ) *

@@ -455,7 +455,8 @@ private abbrev residueInterface_comparisonBounds2_statement : Prop :=
                           n)) fun (y' : Vec d) =>
                           wu.toFun y' - wh.toFun y'
 
-private theorem residueInterface_comparisonBounds1 :
+/-- Comparator oscillation and mean bounds from finite local L² data. -/
+theorem boundaryComparatorOscillationAndMeanBounds :
     ∀ (d : ℕ) {n m : ℤ} {z : Vec d} {i : Fin d} {σ : ℝ} (u h : H1Function (openCubeSet (originCube
       d m))),
       let c' : Vec d := flushSubCentre z m n i σ;
@@ -1470,7 +1471,7 @@ theorem exists_scalarControl_boundaryBranch_comparator (d : ℕ) [NeZero d] :
         HH  := @residueInterface_estimate1 (d) (humz0) (n) (m) (z) (i) (σ) (h) (hK'pos) (hK'top)
           (by infer_instance) (hK'm) (by infer_instance) (hmemH_K) (hHHdef) (h3n0) (hgradHtrans)
   obtain ⟨hosc, hsplit⟩ :=
-    @residueInterface_comparisonBounds1 (d) (n) (m) (z) (i) (σ) (u) (h) (hK'meas) (hK'pos)
+    @boundaryComparatorOscillationAndMeanBounds (d) (n) (m) (z) (i) (σ) (u) (h) (hK'meas) (hK'pos)
       (hK'top) (wu) (wh) (this) (hmemU_K) (hmemH_K) (hWU_K) (hWH_K) (hUWU) (hHWH)
   -- ------------------------------------------------------------ the assembly
   set A1 : ℝ := volumeAverage ((fun y => wellPlacedCentre x m (n + 2) + y) ''

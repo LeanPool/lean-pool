@@ -662,129 +662,6 @@ private abbrev residueScalarFlush_comparisonBounds6_statement : Prop :=
                                       openCubeSet (originCube d n))
                                     fun (x : Vec d) => wu.toFun x - wh.toFun x|
 
-private theorem residueScalarFlush_comparisonBounds1 :
-    ∀ (d : ℕ) {n m : ℤ} {z : Vec d} {i : Fin d} {σ : ℝ} (u h : H1Function (openCubeSet (originCube
-      d m))),
-      let c' : Vec d := flushSubCentre z m n i σ;
-      ∀ (_ : MeasurableSet ((fun (y : Vec d) => c' + y) '' openCubeSet (originCube d n)))
-        (_ :
-          (0 : ℝ) <
-            ((volume : (a : Set (Vec d)) → ℝ≥0∞) ((fun (y : Vec d) => c' + y) '' openCubeSet
-              (originCube d n))).toReal)
-        (_ : (volume : (a : Set (Vec d)) → ℝ≥0∞) ((fun (y : Vec d) => c' + y) '' openCubeSet
-          (originCube d n)) ≠ ∞)
-        (wu wh : H1Function (translateSet c' (openCubeSet (originCube d n))))
-        (_ : IsFiniteMeasure (volume.restrict ((fun (y : Vec d) => c' + y) '' openCubeSet
-          (originCube d n))))
-        (_ : MemLp u.toFun (2 : ℝ≥0∞) (volume.restrict ((fun (y : Vec d) => c' + y) '' openCubeSet
-          (originCube d n))))
-        (_ : MemLp h.toFun (2 : ℝ≥0∞) (volume.restrict ((fun (y : Vec d) => c' + y) '' openCubeSet
-          (originCube d n))))
-        (_ :
-          MemLp (fun (y : Vec d) => wu.toFun y) (2 : ℝ≥0∞)
-            (volume.restrict ((fun (y : Vec d) => c' + y) '' openCubeSet (originCube d n))))
-        (_ :
-          MemLp (fun (y : Vec d) => wh.toFun y) (2 : ℝ≥0∞)
-            (volume.restrict ((fun (y : Vec d) => c' + y) '' openCubeSet (originCube d n))))
-        (_ :
-          MemLp (fun (y : Vec d) => u.toFun y - wu.toFun y) (2 : ℝ≥0∞)
-            (volume.restrict ((fun (y : Vec d) => c' + y) '' openCubeSet (originCube d n))))
-        (_ :
-          MemLp (fun (y : Vec d) => h.toFun y - wh.toFun y) (2 : ℝ≥0∞)
-            (volume.restrict ((fun (y : Vec d) => c' + y) '' openCubeSet (originCube d n)))),
-        ((normalizedL2On ((fun (y : Vec d) => c' + y) '' openCubeSet (originCube d n)) fun (x :
-          Vec d) =>
-              wu.toFun x - wh.toFun x -
-                volumeAverage ((fun (y : Vec d) => c' + y) '' openCubeSet (originCube d n)) fun (y
-                  : Vec d) =>
-                  wu.toFun y - wh.toFun y) ≤
-            ((((2 : ℝ) *
-                    normalizedL2On ((fun (y : Vec d) => c' + y) '' openCubeSet (originCube d n))
-                      fun (x : Vec d) =>
-                      u.toFun x - wu.toFun x) +
-                  (2 : ℝ) *
-                    normalizedL2On ((fun (y : Vec d) => c' + y) '' openCubeSet (originCube d n))
-                      fun (x : Vec d) =>
-                      h.toFun x - wh.toFun x) +
-                normalizedL2On ((fun (y : Vec d) => c' + y) '' openCubeSet (originCube d n)) fun
-                  (x : Vec d) =>
-                  u.toFun x - volumeAverage ((fun (y : Vec d) => c' + y) '' openCubeSet
-                    (originCube d n)) u.toFun) +
-              normalizedL2On ((fun (y : Vec d) => c' + y) '' openCubeSet (originCube d n)) fun (x
-                : Vec d) =>
-                h.toFun x - volumeAverage ((fun (y : Vec d) => c' + y) '' openCubeSet (originCube
-                  d n)) h.toFun) ∧
-          |volumeAverage ((fun (y : Vec d) =>
-            c' + y) '' openCubeSet (originCube d n)) fun (x : Vec d) =>
-                u.toFun x - h.toFun x| ≤
-            ((normalizedL2On ((fun (y : Vec d) => c' + y) '' openCubeSet (originCube d n)) fun (x
-              : Vec d) =>
-                  u.toFun x - wu.toFun x) +
-                normalizedL2On ((fun (y : Vec d) => c' + y) '' openCubeSet (originCube d n)) fun
-                  (x : Vec d) =>
-                  wh.toFun x - h.toFun x) +
-              |volumeAverage ((fun (y : Vec d) =>
-                c' + y) '' openCubeSet (originCube d n)) fun (x : Vec d) =>
-                  wu.toFun x - wh.toFun x| := by
-  intro d n _ _ _ _ u h c' hK'meas hK'pos hK'top wu wh _ hmemU_K hmemH_K hWU_K hWH_K hUWU hHWH
-  have hosc := oscillation_comparatorDifference_le
-    (V := (fun y => c' + y) '' openCubeSet (originCube d n))
-    hK'meas hK'pos hK'top
-    (integrableOn_of_memLp_two hK'top hmemU_K)
-    (integrableOn_of_memLp_two hK'top hmemH_K)
-    (integrableOn_of_memLp_two hK'top hWU_K)
-    (integrableOn_of_memLp_two hK'top hWH_K)
-    (by
-      have h1 := hUWU.integrable_sq
-      simpa only [IntegrableOn] using h1)
-    (by
-      have h1 := hHWH.integrable_sq
-      simpa only [IntegrableOn] using h1)
-    (by
-      have hfun : (fun y => wu.toFun y - u.toFun y) =
-          fun y => -(u.toFun y - wu.toFun y) := by
-        funext y
-        ring
-      rw [hfun]
-      exact hUWU.neg)
-    (by
-      have hfun : (fun y => wh.toFun y - h.toFun y) =
-          fun y => -(h.toFun y - wh.toFun y) := by
-        funext y
-        ring
-      rw [hfun]
-      exact hHWH.neg)
-    (hmemU_K.sub (memLp_const _))
-    (hmemH_K.sub (memLp_const _))
-    (hWU_K.sub (memLp_const _))
-    ((hWH_K.sub (memLp_const _)).neg)
-  -- L D1: the comparator split at the flush sub-cube
-  have hsplit := abs_volumeAverage_sub_le_comparatorSplit
-    (V := (fun y => c' + y) '' openCubeSet (originCube d n))
-    hK'meas hK'pos
-    (u := u.toFun) (h := h.toFun) (vbar := wu.toFun) (hbar := wh.toFun)
-    (integrableOn_of_memLp_two hK'top hUWU)
-    (by
-      have hfun : (fun y => wh.toFun y - h.toFun y) =
-          fun y => -(h.toFun y - wh.toFun y) := by
-        funext y
-        ring
-      rw [hfun]
-      exact (integrableOn_of_memLp_two hK'top hHWH).neg)
-    (integrableOn_of_memLp_two hK'top (hWU_K.sub hWH_K))
-    (by
-      have h1 := hUWU.integrable_sq
-      simpa only [IntegrableOn] using h1)
-    (by
-      have hfun : (fun y => (wh.toFun y - h.toFun y) ^ 2) =
-          fun y => (h.toFun y - wh.toFun y) ^ 2 := by
-        funext y
-        ring
-      rw [hfun]
-      have h1 := hHWH.integrable_sq
-      simpa only [IntegrableOn] using h1)
-  exact ⟨hosc, hsplit⟩
-
 private theorem residueScalarFlush_comparisonBounds2 :
   residueScalarFlush_comparisonBounds2_statement := by
   intro d hCP0 n m z i _ hnm hz hσ u h c' hc' cz hcz hKW' hW'm hW'pos hK'pos hK'top this hK'm wh
@@ -1401,7 +1278,7 @@ private theorem residueScalarFlush_comparisonBounds6 :
       _ = unitMeanZeroPoincareConst d * Real.sqrt ((27 : ℝ) ^ d) * (3 : ℝ) ^ n *
             HH := by ring
   obtain ⟨hosc, hsplit⟩ :=
-    @residueScalarFlush_comparisonBounds1 (d) (n) (m) (z) (i) (σ) (u) (h) (hK'meas) (hK'pos)
+    @boundaryComparatorOscillationAndMeanBounds (d) (n) (m) (z) (i) (σ) (u) (h) (hK'meas) (hK'pos)
       (hK'top) (wu) (wh) (this) (hmemU_K) (hmemH_K) (hWU_K) (hWH_K) (hUWU) (hHWH)
   exact ⟨hlegB, hlegC, hlegD3, hlegA, hoscU, hoscH, hosc, hsplit⟩
 
