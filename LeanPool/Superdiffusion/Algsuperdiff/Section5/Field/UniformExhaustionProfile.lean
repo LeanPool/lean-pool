@@ -460,6 +460,7 @@ private theorem localizedProfile_le_envelope_of_exponent
     simpa only [p, n, qx, c, Nat.cast_add, Nat.cast_one] using hexp))
     (streamTailAmplitudeConst_nonneg M omega)
 
+omit [NeZero d] in
 /-- The per-point localized profile at the amplified radius is dominated by
 the shift-uniform profile above the cubic-log cutoff. -/
 theorem streamLocalizedTailProfile_amp_le_uniform
