@@ -311,27 +311,46 @@ theorem measurableSet_lt_hsep (M : ABKModel d) (m : ℤ) (E b : ℝ) (i : ℕ) :
 
 /-! ## The per-layer wave gauge -/
 
-
 /-! ## The deterministic domination -/
-
 
 /-! ## Numeric preliminaries
 
 Isolated real-analytic steps, kept away from the probabilistic statements so
 that no elaboration mixes `Real.rpow` algebra with weak-Orlicz unfolding. -/
 
-
 /-! ## The per-layer `Gamma_2` scale -/
-
 
 /-! ## Summability of the truncated-sum scale series -/
 
-
 /-! ## The two legs of `e.wave.influence.bound` -/
-
 
 /-! ## The corrected display -/
 
+/-- The scale-separation depth is measurable in the cutoff sample. -/
+theorem measurable_hsep (M : ABKModel d) (m : ℤ) (E b : ℝ) :
+    Measurable (hsep M m E b) := by
+  refine measurable_to_countable' fun k => ?_
+  cases k with
+  | zero =>
+      have hset : hsep M m E b ⁻¹' {0} =
+          {omega : CutoffSample d | 0 < hsep M m E b omega}ᶜ := by
+        ext omega
+        simp only [Set.mem_preimage, Set.mem_singleton_iff, Set.mem_compl_iff,
+          Set.mem_ofPred_eq]
+        omega
+      rw [hset]
+      exact (measurableSet_lt_hsep M m E b 0).compl
+  | succ j =>
+      have hset : hsep M m E b ⁻¹' {j + 1} =
+          {omega : CutoffSample d | j < hsep M m E b omega} ∩
+            {omega : CutoffSample d | j + 1 < hsep M m E b omega}ᶜ := by
+        ext omega
+        simp only [Set.mem_preimage, Set.mem_singleton_iff, Set.mem_inter_iff,
+          Set.mem_compl_iff, Set.mem_ofPred_eq]
+        omega
+      rw [hset]
+      exact (measurableSet_lt_hsep M m E b j).inter
+        (measurableSet_lt_hsep M m E b (j + 1)).compl
 
 end
 

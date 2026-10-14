@@ -21,7 +21,6 @@ Module imports, support namespace and local option directives adapted for Lean P
 
 @[expose] public section
 
-
 /-!
 # The energy leg of `hstrip`: the exact tiling fold of the cell second moments
 
@@ -120,7 +119,7 @@ variable {d : ℕ}
 /-! ## Membership bookkeeping -/
 
 /-- `|u|^2` is square-integrable on a cube whose `L^8` membership is known. -/
-private theorem memLp_vecNormSq_two_of_memLp_eight (Q : TriadicCube d) {u : Vec d → Vec d}
+theorem memLp_vecNormSq_two_of_memLp_eight (Q : TriadicCube d) {u : Vec d → Vec d}
     (hu : MemLp u (8 : ℝ≥0∞) (normalizedCubeMeasure Q)) :
     MemLp (fun x => vecNormSq (u x)) (2 : ℝ≥0∞) (normalizedCubeMeasure Q) := by
   have huE : MemLp (fun x => Book.Ch02.vecNorm (u x)) (8 : ℝ≥0∞)

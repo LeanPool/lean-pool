@@ -17,7 +17,6 @@ Module imports, support namespace and local option directives adapted for Lean P
 
 @[expose] public section
 
-
 /-!
 # Exponential moments of the minimal scale at a fixed Hölder exponent
 
@@ -66,22 +65,7 @@ noncomputable section
 /-- The geometric series of a ratio at most one half, in `ℝ≥0∞`. -/
 private theorem tsum_ofReal_geometric_le_two {rho : ℝ} (h : rho ≤ 1 / 2) :
     ∑' _N : ℕ, ENNReal.ofReal rho ^ _N ≤ 2 := by
-  have hhalf : ENNReal.ofReal (1 / 2 : ℝ) = (2 : ℝ≥0∞)⁻¹ := by
-    rw [show (1 / 2 : ℝ) = (2 : ℝ)⁻¹ by norm_num,
-      ENNReal.ofReal_inv_of_pos (by norm_num)]
-    norm_num
-  have hle : ENNReal.ofReal rho ≤ (2 : ℝ≥0∞)⁻¹ := by
-    rw [← hhalf]
-    exact ENNReal.ofReal_le_ofReal h
-  have hgeom : ((1 : ℝ≥0∞) - (2 : ℝ≥0∞)⁻¹)⁻¹ = 2 := by
-    have hsub : (1 : ℝ≥0∞) - (2 : ℝ≥0∞)⁻¹ = (2 : ℝ≥0∞)⁻¹ := by
-      refine ENNReal.sub_eq_of_eq_add (by simp) ?_
-      rw [ENNReal.inv_two_add_inv_two]
-    rw [hsub, inv_inv]
-  calc ∑' _N : ℕ, ENNReal.ofReal rho ^ _N ≤ ∑' _N : ℕ, ((2 : ℝ≥0∞)⁻¹) ^ _N :=
-        ENNReal.tsum_le_tsum fun N => pow_le_pow_left' hle N
-    _ = ((1 : ℝ≥0∞) - (2 : ℝ≥0∞)⁻¹)⁻¹ := ENNReal.tsum_geometric _
-    _ = 2 := hgeom
+  exact _root_.Algsuperdiff.Section4.Provider.Homogenization.tsum_ofReal_pow_le_two h
 
 private theorem three_rpow_mul_exp_pow' (c theta : ℝ) (K : ℕ) :
     (3 : ℝ) ^ (c * (K : ℝ)) * Real.exp (-(theta * (K : ℝ))) =

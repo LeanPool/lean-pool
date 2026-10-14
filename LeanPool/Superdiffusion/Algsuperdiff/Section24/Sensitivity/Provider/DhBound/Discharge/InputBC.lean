@@ -231,22 +231,7 @@ theorem cubeLpNorm_infty_divRep_le (h : UnitCubeSkewW2Infinity d) :
 
 theorem sqrt_vecNormSq_le_sqrt_card_mul_norm (w : Vec d) :
     Real.sqrt (vecNormSq w) ≤ Real.sqrt (d : ℝ) * ‖w‖ := by
-  classical
-  have hsum : vecNormSq w ≤ (d : ℝ) * ‖w‖ ^ 2 := by
-    have hrw : vecNormSq w = ∑ i : Fin d, (w i) ^ 2 := by
-      simp [vecNormSq, vecDot, sq]
-    rw [hrw]
-    calc (∑ i : Fin d, (w i) ^ 2) ≤ ∑ _i : Fin d, ‖w‖ ^ 2 := by
-          refine Finset.sum_le_sum fun i _ => ?_
-          have h1 : |w i| ≤ ‖w‖ := by
-            simpa [Real.norm_eq_abs] using norm_le_pi_norm w i
-          nlinarith [abs_nonneg (w i), sq_abs (w i)]
-      _ = (d : ℝ) * ‖w‖ ^ 2 := by
-          simp only [Finset.sum_const, Finset.card_univ, Fintype.card_fin, nsmul_eq_mul]
-  calc Real.sqrt (vecNormSq w) ≤ Real.sqrt ((d : ℝ) * ‖w‖ ^ 2) :=
-        Real.sqrt_le_sqrt hsum
-    _ = Real.sqrt (d : ℝ) * ‖w‖ := by
-        rw [Real.sqrt_mul (by positivity), Real.sqrt_sq (norm_nonneg w)]
+  exact PairingConstants.sqrt_vecNormSq_le_sqrt_dimension_mul_norm w
 
 /-! ## The two `u`-estimates -/
 

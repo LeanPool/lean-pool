@@ -17,7 +17,6 @@ Module imports, support namespace and local option directives adapted for Lean P
 
 @[expose] public section
 
-
 /-!
 # The parameter arithmetic of the `𝒢₀` proportion tail
 
@@ -166,20 +165,7 @@ theorem penaltyNormalizer_pos (d : ℕ) : 0 < penaltyNormalizer d := by
 private theorem annulusPenaltyThird_le_cube (d : ℕ) (j : ℕ) :
     annulusPenaltyThird d (j + 2)
       ≤ (1 + 3 * (d : ℝ) * Real.log 3) ^ (3 : ℕ) * (((j : ℝ) + 1) ^ (3 : ℕ)) := by
-  have hlog : (0 : ℝ) ≤ Real.log 3 := Real.log_nonneg (by norm_num)
-  have hbase : 1 + (d : ℝ) * (((j + 2 : ℕ) : ℝ) + 1) * Real.log 3
-      ≤ (1 + 3 * (d : ℝ) * Real.log 3) * ((j : ℝ) + 1) := by
-    have hj : (0 : ℝ) ≤ (j : ℝ) := Nat.cast_nonneg j
-    have hcast : ((j + 2 : ℕ) : ℝ) = (j : ℝ) + 2 := by push_cast; ring
-    rw [hcast]
-    have hprod : (0 : ℝ) ≤ (d : ℝ) * Real.log 3 * (j : ℝ) := by positivity
-    linarith only [hprod, hj]
-  have hnn : (0 : ℝ) ≤ 1 + (d : ℝ) * (((j + 2 : ℕ) : ℝ) + 1) * Real.log 3 := by positivity
-  calc annulusPenaltyThird d (j + 2)
-      ≤ ((1 + 3 * (d : ℝ) * Real.log 3) * ((j : ℝ) + 1)) ^ (3 : ℕ) :=
-        pow_le_pow_left₀ hnn hbase 3
-    _ = (1 + 3 * (d : ℝ) * Real.log 3) ^ (3 : ℕ) * (((j : ℝ) + 1) ^ (3 : ℕ)) := by
-        rw [mul_pow]
+  exact _root_.Algsuperdiff.Section4.Provider.Proportion.annulusPenaltyThird_le d j
 
 private theorem cube_le_choose (j : ℕ) :
     (((j : ℝ) + 1) ^ (3 : ℕ)) ≤ 6 * ((((j + 3).choose 3 : ℕ)) : ℝ) := by
@@ -375,7 +361,6 @@ theorem exists_dependence_range (d : ℕ) :
     (3 + 2 * (3 : ℝ) ^ (1 - (2 : ℤ)) * Real.sqrt (d : ℝ)) (by norm_num : (1 : ℝ) < 3)
   refine ⟨max r0 1, le_max_right _ _, hr0.le.trans ?_⟩
   exact pow_le_pow_right₀ (by norm_num) (le_max_left _ _)
-
 
 end
 

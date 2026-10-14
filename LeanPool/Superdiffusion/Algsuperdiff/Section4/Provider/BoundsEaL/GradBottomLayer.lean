@@ -19,7 +19,6 @@ Module imports, support namespace and local option directives adapted for Lean P
 
 @[expose] public section
 
-
 /-!
 # B6, first half completed: the bottom layer of the `L`-free gradient slot
 
@@ -363,19 +362,7 @@ theorem isBigOWith_gammaSigma_weightedFullGradSeries (M : ABKModel d) (k : ℤ)
 theorem tsum_natShift_gradLayerGauge_eq_deepGradSeries (k : ℤ) (v : Fin d → ℤ)
     (omega : Cutoff.CutoffSample d) :
     ∑' n : ℕ, gradLayerGauge k v omega (k + (n : ℤ)) = deepGradSeries k v omega := by
-  have hinj : Function.Injective fun n : ℕ => k + (n : ℤ) := by
-    intro a b hab
-    have hab' : k + (a : ℤ) = k + (b : ℤ) := hab
-    omega
-  have hsupp : Function.support (deepGradTerm k v omega) ⊆
-      Set.range fun n : ℕ => k + (n : ℤ) := by
-    intro x hx
-    have hkx : k ≤ x := by
-      by_contra hcon
-      exact hx (by rw [deepGradTerm, ite_eq_right hcon])
-    exact ⟨(x - k).toNat, by change k + (((x - k).toNat : ℕ) : ℤ) = x; omega⟩
-  refine Eq.trans (tsum_congr fun n => ?_) (hinj.tsum_eq hsupp)
-  rw [deepGradTerm, ite_eq_left (by omega : k ≤ k + (n : ℤ))]
+  exact _root_.Algsuperdiff.Section4.Provider.BoundsEaL.tsum_deepGradTerm_eq k v omega
 
 /-- Where the deep block is summable, the full series really is the bottom layer
 plus the deep block. -/

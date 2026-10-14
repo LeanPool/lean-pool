@@ -402,6 +402,26 @@ theorem isMeanZeroNeumannRhsWeakSolution_untranslateH1MeanZeroToOrigin
     _ = ∫ x in openCubeSet Q₀,
           vecDot (-(pullbackToOrigin Q F x)) (φ.toH1Function.grad x) ∂volume := by
           simp [Q₀, U₀, z, pullbackToOrigin]
+/-- The Hilbert realization has Lp norm bounded by dimension times the coordinate norm. -/
+theorem eLpNorm_hilbertify_le_dimension_mul_vec
+    {d : ℕ} {p : ℝ≥0∞} {Q : TriadicCube d} (F : Vec d → Vec d)
+    (hF : AEStronglyMeasurable F (normalizedCubeMeasure Q)) :
+    eLpNorm (fun x ↦ HilbertVec.ofVec (F x)) p (normalizedCubeMeasure Q) ≤
+      ENNReal.ofReal (d : ℝ) * eLpNorm F p (normalizedCubeMeasure Q) := by
+  calc
+    eLpNorm (fun x ↦ HilbertVec.ofVec (F x)) p (normalizedCubeMeasure Q) ≤
+        eLpNorm (fun x ↦ (d : ℝ) • F x) p (normalizedCubeMeasure Q) := by
+      apply eLpNorm_mono_ae (f := fun x ↦ HilbertVec.ofVec (F x))
+        ((HilbertVec.ofVecL d).continuous.comp_aestronglyMeasurable hF)
+      filter_upwards [] with x
+      simpa only [norm_smul, Real.norm_natCast] using
+        HilbertVec.norm_ofVec_le_mul_norm (F x)
+    _ = ENNReal.ofReal (d : ℝ) *
+        eLpNorm F p (normalizedCubeMeasure Q) := by
+      rw [show (fun x ↦ (d : ℝ) • F x) = (d : ℝ) • F by rfl,
+        eLpNorm_const_smul]
+      rw [Real.enorm_eq_ofReal]
+      norm_num
 
 end CubeCalderonZygmund
 

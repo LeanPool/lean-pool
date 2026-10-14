@@ -65,19 +65,7 @@ private theorem eLpNorm_hilbertify_le_dimension_mul_vec_neumannEndpoint
     (hF : AEStronglyMeasurable F (normalizedCubeMeasure Q)) :
     eLpNorm (fun x ↦ HilbertVec.ofVec (F x)) p (normalizedCubeMeasure Q) ≤
       ENNReal.ofReal (d : ℝ) * eLpNorm F p (normalizedCubeMeasure Q) := by
-  calc
-    eLpNorm (fun x ↦ HilbertVec.ofVec (F x)) p (normalizedCubeMeasure Q) ≤
-        eLpNorm (fun x ↦ (d : ℝ) • F x) p (normalizedCubeMeasure Q) := by
-      apply eLpNorm_mono_ae (f := fun x ↦ HilbertVec.ofVec (F x))
-        ((HilbertVec.ofVecL d).continuous.comp_aestronglyMeasurable hF)
-      filter_upwards [] with x
-      simpa only [norm_smul, Real.norm_natCast] using
-        HilbertVec.norm_ofVec_le_mul_norm (F x)
-    _ = ENNReal.ofReal (d : ℝ) * eLpNorm F p (normalizedCubeMeasure Q) := by
-      rw [show (fun x ↦ (d : ℝ) • F x) = (d : ℝ) • F by rfl,
-        eLpNorm_const_smul]
-      rw [Real.enorm_eq_ofReal]
-      norm_num
+  exact _root_.HCPolySupport.CubeCalderonZygmund.eLpNorm_hilbertify_le_dimension_mul_vec F hF
 
 private theorem centeredCubeNeumannDivergence_eLpNorm_le
     (d : ℕ) [NeZero d] (q : FiniteLpExponent) :

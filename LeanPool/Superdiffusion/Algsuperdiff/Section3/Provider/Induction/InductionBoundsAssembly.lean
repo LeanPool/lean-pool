@@ -20,7 +20,6 @@ Module imports, support namespace and local option directives adapted for Lean P
 
 @[expose] public section
 
-
 /-!
 # The self-similar coarse-graining estimate: the Section 3 root
 
@@ -154,18 +153,6 @@ private theorem regime_at_inductionConst {gamma K cst : ℝ} (hK : 6 ≤ K)
   have hpow : ((2 * K ^ 3)⁻¹) ^ 10 ≤ (K⁻¹) ^ 10 :=
     pow_le_pow_left₀ (inv_nonneg.mpr hCp0.le) hinv 10
   exact hreg.trans (mul_le_mul_of_nonneg_right hpow (pow_nonneg hcs 10))
-
-/-- **The terminal budget is admissible.**  `1 ≤ K c_star^{-1}` from `6 ≤ K` and
-the proved `c_star ≤ 3/2`: the budget is at least `6 * (3/2)^{-1} = 4`. -/
-private theorem one_le_terminalBudget {K cst : ℝ} (hK : 6 ≤ K) (hcs0 : 0 < cst)
-    (hcs : cst ≤ 3 / 2) : (1 : ℝ) ≤ K * cst⁻¹ := by
-  have hK0 : (0 : ℝ) < K := lt_of_lt_of_le (by norm_num) hK
-  have ha : (6 : ℝ) * (3 / 2 : ℝ)⁻¹ ≤ K * (3 / 2 : ℝ)⁻¹ :=
-    mul_le_mul_of_nonneg_right hK (by norm_num)
-  have hb : K * (3 / 2 : ℝ)⁻¹ ≤ K * cst⁻¹ :=
-    mul_le_mul_of_nonneg_left (inv_anti₀ hcs0 hcs) hK0.le
-  have hnum : (4 : ℝ) = 6 * (3 / 2 : ℝ)⁻¹ := by norm_num
-  linarith only [ha, hb, hnum]
 
 /-! ## 9. The sharp `sigmaBar` formula at every scale
 

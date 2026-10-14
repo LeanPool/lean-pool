@@ -7,6 +7,7 @@ Authors: Scott Armstrong
 module
 
 public import LeanPool.Superdiffusion.Algsuperdiff.StochasticProcess.Common.DivergenceForm.Regularity.CaccioppoliAbsorbed
+public import LeanPool.Superdiffusion.Algsuperdiff.StochasticProcess.Common.DivergenceForm.SkewIdentities
 
 /-!
 # LocalizedSkewAlgebra
@@ -16,7 +17,6 @@ Module imports, support namespace and local option directives adapted for Lean P
 -/
 
 @[expose] public section
-
 
 /-!
 # Pointwise algebra of an antisymmetric coefficient
@@ -95,20 +95,8 @@ theorem sum_sum_mul_eq_zero_of_skew_of_symm {K : Mat d}
     (hK : ∀ i j : Fin d, K j i = -K i j) {T : Fin d → Fin d → ℝ}
     (hT : ∀ i j : Fin d, T i j = T j i) :
     ∑ i : Fin d, ∑ j : Fin d, K i j * T i j = 0 := by
-  have hpoint : ∀ i j : Fin d, K j i * T j i = -(K i j * T i j) := by
-    intro i j
-    rw [hK i j, ← hT i j]
-    ring
-  have hswap : ∑ i : Fin d, ∑ j : Fin d, K i j * T i j =
-      ∑ i : Fin d, ∑ j : Fin d, K j i * T j i := Finset.sum_comm
-  have hneg : ∑ i : Fin d, ∑ j : Fin d, K j i * T j i =
-      -∑ i : Fin d, ∑ j : Fin d, K i j * T i j := by
-    rw [show (∑ i : Fin d, ∑ j : Fin d, K j i * T j i) =
-        ∑ i : Fin d, ∑ j : Fin d, -(K i j * T i j) from
-      Finset.sum_congr rfl fun i _ => Finset.sum_congr rfl fun j _ => hpoint i j]
-    simp only [Finset.sum_neg_distrib]
-  have h2 := hswap.trans hneg
-  linarith only [h2]
+  exact Algsuperdiff.StochasticProcess.Common.DivergenceForm.sum_sum_mul_eq_zero_of_skew_of_symm
+    hK hT
 
 /-! ### The size of a coefficient with scalar symmetric part -/
 

@@ -10,6 +10,7 @@ public import LeanPool.Superdiffusion.Algsuperdiff.StochasticProcess.Common.Dive
 public import LeanPool.Superdiffusion.Algsuperdiff.StochasticProcess.Common.DivergenceForm.Decay.LocalizedSkewAlgebra
 public import LeanPool.HighContrastHomogenization.Support.Deterministic.ConstantCoefficientDirichletBesov.Basic
 public import LeanPool.HighContrastHomogenization.Support.Sobolev.Foundations.CubeNeumannW22CZ.WeakInteriorDQ.SmoothLimit
+public import LeanPool.Superdiffusion.Algsuperdiff.StochasticProcess.Common.DivergenceForm.SkewIdentities
 
 /-!
 # LocalizedSkewDivergence
@@ -19,7 +20,6 @@ Module imports, support namespace and local option directives adapted for Lean P
 -/
 
 @[expose] public section
-
 
 /-!
 # The weak divergence of a `C¹` antisymmetric coefficient field
@@ -157,37 +157,8 @@ private theorem integral_vecDot_congr_of_forall_smooth {P Q : Vec d → Vec d}
     (phi : H10Function U) :
     ∫ x in U, vecDot (P x) (phi.toH1Function.grad x) ∂volume =
       ∫ x in U, vecDot (Q x) (phi.toH1Function.grad x) ∂volume := by
-  set Dn : ℕ → Vec d → Vec d := fun n => euclideanGradient (phi.approx n) with hDn_def
-  have hDn : ∀ (n : ℕ) (i : Fin d), MemScalarL2 U fun x => Dn n x i := by
-    intro n i
-    exact memScalarL2_coord_of_memVectorL2
-      (memVectorL2_euclideanGradient_of_contDiff_hasCompactSupport
-        (phi.approx_smooth n) (phi.approx_hasCompactSupport n)) i
-  have hDlim : ∀ i : Fin d, MemScalarL2 U fun x => phi.toH1Function.grad x i :=
-    fun i => phi.toH1Function.gradMemL2 i
-  have hconv : ∀ i : Fin d, Tendsto (fun n => toScalarL2 (hDn n i)) atTop
-      (nhds (toScalarL2 (hDlim i))) := by
-    intro i
-    refine tendsto_toScalarL2_of_tendsto_eLpNorm (fun n => hDn n i) (hDlim i) ?_
-    simpa only [hDn_def, euclideanGradient, euclideanCoordDeriv, volumeMeasureOn]
-      using phi.tendsto_approx_grad i
-  have hPconv : Tendsto (fun n => ∑ i : Fin d, ∫ x in U, P x i * Dn n x i ∂volume) atTop
-      (nhds (∑ i : Fin d, ∫ x in U, P x i * phi.toH1Function.grad x i ∂volume)) :=
-    tendsto_finsetSum Finset.univ fun i _ =>
-      tendsto_integral_mul_of_tendsto_toScalarL2 (hP i) (fun n => hDn n i) (hDlim i) (hconv i)
-  have hQconv : Tendsto (fun n => ∑ i : Fin d, ∫ x in U, Q x i * Dn n x i ∂volume) atTop
-      (nhds (∑ i : Fin d, ∫ x in U, Q x i * phi.toH1Function.grad x i ∂volume)) :=
-    tendsto_finsetSum Finset.univ fun i _ =>
-      tendsto_integral_mul_of_tendsto_toScalarL2 (hQ i) (fun n => hDn n i) (hDlim i) (hconv i)
-  have heq : ∀ n : ℕ, (∑ i : Fin d, ∫ x in U, P x i * Dn n x i ∂volume) =
-      ∑ i : Fin d, ∫ x in U, Q x i * Dn n x i ∂volume := by
-    intro n
-    rw [← integral_vecDot_eq_sum_coord hP (hDn n), ← integral_vecDot_eq_sum_coord hQ (hDn n)]
-    exact hsmooth (phi.approx n) (phi.approx_smooth n) (phi.approx_hasCompactSupport n)
-      (phi.approx_support_subset n)
-  rw [integral_vecDot_eq_sum_coord hP hDlim, integral_vecDot_eq_sum_coord hQ hDlim]
-  exact tendsto_nhds_unique (hPconv.congr' (EventuallyEq.of_eq (funext heq))) hQconv
-
+  exact Algsuperdiff.StochasticProcess.Common.DivergenceForm.integral_vecDot_congr_of_forall_smooth
+    hP hQ hsmooth phi
 
 /-! ### The transfer identity against smooth tests -/
 
@@ -377,7 +348,6 @@ private theorem integral_vecDot_matVecMul_smooth_eq
     refine Finset.sum_congr rfl fun j _ => ?_
     rw [key i j, hsplit i j]
   rw [hkey, hsumA, hsumB, add_zero]
-
 
 /-! ### `L²` control of the two flux fields -/
 

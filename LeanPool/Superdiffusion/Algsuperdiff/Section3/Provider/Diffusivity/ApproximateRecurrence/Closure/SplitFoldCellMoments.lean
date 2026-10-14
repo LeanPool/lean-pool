@@ -22,7 +22,6 @@ Module imports, support namespace and local option directives adapted for Lean P
 
 @[expose] public section
 
-
 /-!
 # The two cell-energy moments `hmom` of the Step-1--3 split, produced
 
@@ -134,15 +133,8 @@ private theorem cellWindow_restrict_sub_le (mu : Measure alpha) (S : Set alpha)
     eLpNorm (F : alpha → E) 2 (mu.restrict S) ≤
       eLpNorm (G : alpha → E) 2 (mu.restrict S) +
         eLpNorm ((F : alpha → E) - (G : alpha → E)) 2 (mu.restrict S) := by
-  have hsplit : (F : alpha → E) =
-      (G : alpha → E) + ((F : alpha → E) - (G : alpha → E)) := by
-    funext x; simp
-  calc eLpNorm (F : alpha → E) 2 (mu.restrict S)
-      = eLpNorm ((G : alpha → E) + ((F : alpha → E) - (G : alpha → E))) 2
-          (mu.restrict S) := by rw [← hsplit]
-    _ ≤ eLpNorm (G : alpha → E) 2 (mu.restrict S) +
-          eLpNorm ((F : alpha → E) - (G : alpha → E)) 2 (mu.restrict S) :=
-        eLpNorm_add_le (by norm_num)
+  exact ApproximateRecurrence.eLpNorm_restrict_sub_le
+    mu S F G
 
 /-- **The window `L^2` functional is `1`-Lipschitz on `L^2`.**  Restriction only
 decreases the seminorm, so the ambient `L^2` distance controls the window one. -/

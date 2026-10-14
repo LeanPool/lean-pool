@@ -18,7 +18,6 @@ Module imports, support namespace and local option directives adapted for Lean P
 
 @[expose] public section
 
-
 /-!
 # The `𝒢₀` score field `𝒴_n` and its `Γ_{1/3}` tail
 
@@ -163,7 +162,8 @@ private theorem summable_cubic_geometric {r : ℝ} (hr0 : 0 ≤ r) (hr1 : r < 1)
   refine hs.congr fun j => ?_
   ring
 
-private theorem annulusPenaltyThird_le (d : ℕ) (j : ℕ) :
+/-- The annular penalty at a shifted index is bounded by a cubic polynomial. -/
+theorem annulusPenaltyThird_le (d : ℕ) (j : ℕ) :
     annulusPenaltyThird d (j + 2)
       ≤ (1 + 3 * (d : ℝ) * Real.log 3) ^ (3 : ℕ) * (((j : ℝ) + 1) ^ (3 : ℕ)) := by
   have hlog : (0 : ℝ) ≤ Real.log 3 := Real.log_nonneg (by norm_num)

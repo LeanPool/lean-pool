@@ -389,6 +389,85 @@ private theorem residuePlugin_comparisonBounds2 :
   have hfin := hres1 w rho hharm hval hgrad
   exact ⟨hRb4, hA1, hA2, hA3, hfin⟩
 
+/-- A subtraction-form harmonic budget also controls the additive zero-trace split. -/
+theorem harmonic_budget_of_setEq {d : ℕ} {U V : Set (Vec d)}
+    (hUV : U = V) (f : Vec d → ℝ) (F : Vec d → Vec d) {B : ℝ}
+    (hUpos : 0 < volume U) (hUtop : volume U ≠ ⊤)
+    (hf : MemLp f 2 (volume.restrict U))
+    (hcomp : ∀ (v : H1Function U) (w : H10Function U),
+      Support.IsWeaklyHarmonicOn U v →
+      (∀ y, v.toFun y = f y - w.toH1Function.toFun y) →
+      (∀ y, v.grad y = F y - w.toH1Function.grad y) →
+      (eLpNorm (fun y => f y - v.toFun y) 2
+        (Support.normalizedVolumeMeasureOn U)).toReal ≤ B)
+    (w' : H1Function V) (rho' : H10Function V)
+    (hharm' : Support.IsWeaklyHarmonicOn V w')
+    (hval' : ∀ y, w'.toFun y = f y + rho'.toH1Function.toFun y)
+    (hgrad' : ∀ y, w'.grad y = F y + rho'.toH1Function.grad y) :
+    normalizedL2On U (fun y => f y - w'.toFun y) ≤ B := by
+  set v : H1Function U := h1FunctionOfSetEq hUV.symm w' with hvdef
+  set wneg : H10Function U :=
+    h10FunctionOfSetEq hUV.symm (-rho') with hwnegdef
+  have hvfun : ∀ y, v.toFun y = w'.toFun y := by
+    intro y
+    rw [hvdef]
+    exact congrFun (h1FunctionOfSetEq_toFun hUV.symm w') y
+  have hvgradfun : ∀ y, v.grad y = w'.grad y := by
+    intro y
+    rw [hvdef]
+    exact congrFun (h1FunctionOfSetEq_grad hUV.symm w') y
+  have hnegfun : ∀ y, wneg.toH1Function.toFun y = -(rho'.toH1Function.toFun y) := by
+    intro y
+    rw [hwnegdef]
+    have h1 : (h10FunctionOfSetEq hUV.symm (-rho')).toH1Function.toFun =
+        (-rho').toH1Function.toFun := h10FunctionOfSetEq_toFun hUV.symm (-rho')
+    rw [h1]
+    change ((-1 : ℝ) • rho'.toH1Function).toFun y = -(rho'.toH1Function.toFun y)
+    rw [H1Function.smul_toFun]
+    ring
+  have hneggrad : ∀ y, wneg.toH1Function.grad y = -(rho'.toH1Function.grad y) := by
+    intro y
+    rw [hwnegdef]
+    have h1 : (h10FunctionOfSetEq hUV.symm (-rho')).toH1Function.grad =
+        (-rho').toH1Function.grad := h10FunctionOfSetEq_grad hUV.symm (-rho')
+    rw [h1]
+    change ((-1 : ℝ) • rho'.toH1Function).grad y = -(rho'.toH1Function.grad y)
+    rw [H1Function.smul_grad]
+    funext r
+    change (-1 : ℝ) * rho'.toH1Function.grad y r = -(rho'.toH1Function.grad y r)
+    ring
+  have hharmv : Support.IsWeaklyHarmonicOn
+      U v := by
+    rw [hvdef]
+    exact isWeaklyHarmonicOn_h1FunctionOfSetEq hUV.symm hharm'
+  have hvalv : ∀ y, v.toFun y = f y - wneg.toH1Function.toFun y := by
+    intro y
+    rw [hvfun y, hval' y, hnegfun y]
+    ring
+  have hgradv : ∀ y, v.grad y = F y - wneg.toH1Function.grad y := by
+    intro y
+    rw [hvgradfun y, hgrad' y, hneggrad y]
+    funext r
+    change F y r + rho'.toH1Function.grad y r =
+      F y r - -(rho'.toH1Function.grad y r)
+    ring
+  have hbound := hcomp v wneg hharmv hvalv hgradv
+  have hWmem : MemLp w'.toFun 2 (volume.restrict U) := by
+    rw [hUV]
+    exact w'.memL2
+  have hbridge : normalizedL2On U (fun y => f y - w'.toFun y) =
+      (eLpNorm (fun y => f y - w'.toFun y) 2
+        (Support.normalizedVolumeMeasureOn U)).toReal :=
+    Support.normalizedL2On_eq_toReal_eLpNorm_normalizedVolumeMeasureOn hUpos
+      hUtop (hf.sub hWmem)
+  have hfun : (fun y => f y - v.toFun y) =
+      fun y => f y - w'.toFun y := by
+    funext y
+    rw [hvfun y]
+  rw [hfun] at hbound
+  rw [hbridge]
+  exact hbound
+
 /-- **Route 1, closed at the `ε`-pin.**
 
 The harmonic-approximation residue at the flush sub-cube `K'`, priced on the
@@ -574,86 +653,10 @@ private theorem residuePlugin_fluxCancellation :
                         Sarg) := by
   intro d _ _ _ _ _ m n z i sigma _ hcompw hmem u hdat g hsol hgL2 hgW hhW hK'top hK'volpos hKT
     hmemU Sarg hmeanS w' rho' hharm' hval' hgrad'
-  set v : H1Function ((fun y => flushSubCentre z m n i sigma + y) ''
-      openCubeSet (originCube d n)) := h1FunctionOfSetEq hKT.symm w' with hvdef
-  set wneg : H10Function ((fun y => flushSubCentre z m n i sigma + y) ''
-      openCubeSet (originCube d n)) :=
-    h10FunctionOfSetEq hKT.symm (-rho') with hwnegdef
-  have hvfun : ∀ y, v.toFun y = w'.toFun y := by
-    intro y
-    rw [hvdef]
-    exact congrFun (h1FunctionOfSetEq_toFun hKT.symm w') y
-  have hvgradfun : ∀ y, v.grad y = w'.grad y := by
-    intro y
-    rw [hvdef]
-    exact congrFun (h1FunctionOfSetEq_grad hKT.symm w') y
-  have hnegfun : ∀ y, wneg.toH1Function.toFun y = -(rho'.toH1Function.toFun y) := by
-    intro y
-    rw [hwnegdef]
-    have h1 : (h10FunctionOfSetEq hKT.symm (-rho')).toH1Function.toFun =
-        (-rho').toH1Function.toFun := h10FunctionOfSetEq_toFun hKT.symm (-rho')
-    rw [h1]
-    change ((-1 : ℝ) • rho'.toH1Function).toFun y = -(rho'.toH1Function.toFun y)
-    rw [H1Function.smul_toFun]
-    ring
-  have hneggrad : ∀ y, wneg.toH1Function.grad y = -(rho'.toH1Function.grad y) := by
-    intro y
-    rw [hwnegdef]
-    have h1 : (h10FunctionOfSetEq hKT.symm (-rho')).toH1Function.grad =
-        (-rho').toH1Function.grad := h10FunctionOfSetEq_grad hKT.symm (-rho')
-    rw [h1]
-    change ((-1 : ℝ) • rho'.toH1Function).grad y = -(rho'.toH1Function.grad y)
-    rw [H1Function.smul_grad]
-    funext r
-    change (-1 : ℝ) * rho'.toH1Function.grad y r = -(rho'.toH1Function.grad y r)
-    ring
-  have hharmv : Support.IsWeaklyHarmonicOn
-      ((fun y => flushSubCentre z m n i sigma + y) ''
-        openCubeSet (originCube d n)) v := by
-    rw [hvdef]
-    exact isWeaklyHarmonicOn_h1FunctionOfSetEq hKT.symm hharm'
-  have hvalv : ∀ y, v.toFun y = u.toFun y - wneg.toH1Function.toFun y := by
-    intro y
-    rw [hvfun y, hval' y, hnegfun y]
-    ring
-  have hgradv : ∀ y, v.grad y = u.grad y - wneg.toH1Function.grad y := by
-    intro y
-    rw [hvgradfun y, hgrad' y, hneggrad y]
-    funext r
-    change u.grad y r + rho'.toH1Function.grad y r =
-      u.grad y r - -(rho'.toH1Function.grad y r)
-    ring
-  have hbound := hcompw hmem u hdat g Sarg hsol hgL2 hgW hhW hmeanS
-    v wneg hharmv hvalv hgradv
-  have hRho : MemLp (fun y => rho'.toH1Function.toFun y) 2
-      (volume.restrict ((fun y => flushSubCentre z m n i sigma + y) ''
-        openCubeSet (originCube d n))) := by
-    rw [hKT]
-    exact rho'.toH1Function.memL2
-  have hWmem : MemLp (fun y => w'.toFun y) 2
-      (volume.restrict ((fun y => flushSubCentre z m n i sigma + y) ''
-        openCubeSet (originCube d n))) := by
-    have hfun : (fun y => w'.toFun y) =
-        fun y => u.toFun y + rho'.toH1Function.toFun y := by
-      funext y
-      exact hval' y
-    rw [hfun]
-    exact hmemU.add hRho
-  have hbridge : normalizedL2On ((fun y => flushSubCentre z m n i sigma + y) ''
-      openCubeSet (originCube d n)) (fun y => u.toFun y - w'.toFun y) =
-      (eLpNorm (fun y => u.toFun y - w'.toFun y) 2
-        (Support.normalizedVolumeMeasureOn
-          ((fun y => flushSubCentre z m n i sigma + y) ''
-            openCubeSet (originCube d n)))).toReal :=
-    Support.normalizedL2On_eq_toReal_eLpNorm_normalizedVolumeMeasureOn hK'volpos
-      hK'top (hmemU.sub hWmem)
-  have hfun : (fun y => u.toFun y - v.toFun y) =
-      fun y => u.toFun y - w'.toFun y := by
-    funext y
-    rw [hvfun y]
-  rw [hfun] at hbound
-  rw [hbridge]
-  exact hbound
+  exact harmonic_budget_of_setEq hKT u.toFun u.grad hK'volpos hK'top hmemU
+    (fun v w hharm hval hgrad =>
+      hcompw hmem u hdat g Sarg hsol hgL2 hgW hhW hmeanS v w hharm hval hgrad)
+    w' rho' hharm' hval' hgrad'
 
 theorem exists_flushResidue_le_displayLegs_of_epsPin (d : ℕ) [NeZero d] :
     ∃ C A K : ℝ, 0 < C ∧ 0 < A ∧ 0 ≤ K ∧

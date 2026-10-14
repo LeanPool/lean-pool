@@ -172,7 +172,8 @@ theorem tsum_three_rpow_neg_half_mul_nat_le {s : ℝ} (hs : 0 < s) (hs1 : s ≤ 
 `gridScaleSeries` writes the first, the `Real.rpow` A the second. -/
 private theorem rpow_three_eq (e : ℝ) : Real.rpow (3 : ℝ) e = (3 : ℝ) ^ e := rfl
 
-private theorem pow_mul_exp_neg_le (k : ℕ) {x : ℝ} (hx : 0 ≤ x) :
+/-- A polynomial times exponential decay is bounded by the factorial. -/
+theorem pow_mul_exp_neg_le (k : ℕ) {x : ℝ} (hx : 0 ≤ x) :
     x ^ k * Real.exp (-x) ≤ (Nat.factorial k : ℝ) := by
   have hfac : (0 : ℝ) < (Nat.factorial k : ℝ) := by
     exact_mod_cast Nat.factorial_pos k

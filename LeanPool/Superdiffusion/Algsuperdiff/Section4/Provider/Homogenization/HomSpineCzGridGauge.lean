@@ -19,7 +19,6 @@ Module imports, support namespace and local option directives adapted for Lean P
 
 @[expose] public section
 
-
 /-!
 # The grid gauge against `CoarseGraining`'s negative Besov seminorm
 
@@ -102,23 +101,8 @@ gauge of this repository is built on the Euclidean magnitude.  This is the only 
 the identification of the two gauges costs. -/
 theorem sqrt_vecNormSq_le_sqrt_dim_mul_norm (x : Vec d) :
     Real.sqrt (vecNormSq x) ≤ Real.sqrt d * ‖x‖ := by
-  have hb : ∀ i : Fin d, x i * x i ≤ ‖x‖ * ‖x‖ := by
-    intro i
-    have h1 : |x i| ≤ ‖x‖ := by
-      simpa only [Real.norm_eq_abs] using norm_le_pi_norm x i
-    have h2 := mul_self_le_mul_self (abs_nonneg (x i)) h1
-    rwa [abs_mul_abs_self] at h2
-  have hsum : vecNormSq x ≤ (d : ℝ) * (‖x‖ * ‖x‖) := by
-    have hrw : vecNormSq x = ∑ i : Fin d, x i * x i := rfl
-    rw [hrw]
-    calc ∑ i : Fin d, x i * x i ≤ ∑ _i : Fin d, ‖x‖ * ‖x‖ :=
-          Finset.sum_le_sum fun i _ => hb i
-      _ = (d : ℝ) * (‖x‖ * ‖x‖) := by
-          simp only [Finset.sum_const, Finset.card_univ, Fintype.card_fin, nsmul_eq_mul]
-  calc Real.sqrt (vecNormSq x) ≤ Real.sqrt ((d : ℝ) * (‖x‖ * ‖x‖)) :=
-        Real.sqrt_le_sqrt hsum
-    _ = Real.sqrt d * ‖x‖ := by
-        rw [Real.sqrt_mul (by positivity), Real.sqrt_mul_self (norm_nonneg x)]
+  exact Section24.Sensitivity.Provider.PairingConstants.sqrt_vecNormSq_le_sqrt_dimension_mul_norm
+    x
 
 /-! ## 2. This repository's gauge against `CoarseGraining`'s grid seminorm -/
 

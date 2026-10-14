@@ -18,7 +18,6 @@ Module imports, support namespace and local option directives adapted for Lean P
 
 @[expose] public section
 
-
 /-!
 # Provider: the absorption calculus of `p.multiscale.estimate`
 
@@ -404,19 +403,7 @@ section Absorption
 mathlib's `Real.pow_div_factorial_le_exp` is the same. -/
 theorem pow_mul_exp_neg_le' (k : ℕ) {x : ℝ} (hx : 0 ≤ x) :
     x ^ k * Real.exp (-x) ≤ (Nat.factorial k : ℝ) := by
-  have hfac : (0 : ℝ) < (Nat.factorial k : ℝ) := by
-    exact_mod_cast Nat.factorial_pos k
-  have hterm : x ^ k / (Nat.factorial k : ℝ) ≤ Real.exp x :=
-    Real.pow_div_factorial_le_exp (x := x) hx k
-  have hxk : x ^ k ≤ (Nat.factorial k : ℝ) * Real.exp x := by
-    rw [div_le_iff₀ hfac] at hterm
-    linarith
-  calc x ^ k * Real.exp (-x)
-      ≤ ((Nat.factorial k : ℝ) * Real.exp x) * Real.exp (-x) :=
-        mul_le_mul_of_nonneg_right hxk (Real.exp_pos _).le
-    _ = (Nat.factorial k : ℝ) := by
-        rw [mul_assoc, ← Real.exp_add]
-        simp
+  exact _root_.Algsuperdiff.Section3.Provider.MultiscaleEstimate.pow_mul_exp_neg_le k hx
 
 /-- The quadratic decay of the exponential, in the form the two exponential
 lanes consume.
@@ -702,7 +689,6 @@ theorem le_rpow_neg_fifth {Ev gam : ℝ} (hE : 1 ≤ Ev) (hgam : 0 < gam)
     _ = gam ^ ((-1 : ℝ) * (1 / 5 : ℝ)) := (Real.rpow_mul hgam.le _ _).symm
     _ = gam ^ (-(1 / 5 : ℝ)) := by norm_num
 
-
 /-- Measurability of a nonnegative countable sum, through
 `Measurable.nnreal_tsum`.  `HomogenizationLanes.measurable_tsum_of_nonneg` is
 `private`, and `Provider.CoarseEllipticity.measurable_tsum_of_nonneg` demands
@@ -722,7 +708,6 @@ theorem measurable_tsum_of_nonneg' {Omega : Type*} [MeasurableSpace Omega]
   refine tsum_congr fun k => ?_
   rw [Real.toNNReal_of_nonneg (hX0 k omega)]
   rfl
-
 
 end Absorption
 

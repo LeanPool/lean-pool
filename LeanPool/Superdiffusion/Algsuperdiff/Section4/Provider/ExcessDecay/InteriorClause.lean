@@ -20,7 +20,6 @@ Module imports, support namespace and local option directives adapted for Lean P
 
 @[expose] public section
 
-
 /-!
 # The interior clause's Caccioppoli input, in the frozen theorem's own carriers
 
@@ -140,7 +139,7 @@ theorem interiorAnchorEnergyRHSOn_def (M : ABKModel d) (n : ℤ) (s : ℝ)
 /-! ## 3. The arithmetic stitch -/
 
 /-- Abstract in every quantity, so no analytic content hides here. -/
-private theorem anchor_stitch {A L2 B Bes K W G : ℝ} (hA : 0 ≤ A) (hB : 0 ≤ B)
+theorem anchor_stitch {A L2 B Bes K W G : ℝ} (hA : 0 ≤ A) (hB : 0 ≤ B)
     (hL2 : 0 ≤ L2) (hBes : 0 ≤ Bes) (hK : 0 ≤ K) (hW : 0 ≤ W) (hG : 0 ≤ G)
     (hbes : Bes ≤ K * W * G) :
     A * L2 + B * Bes ^ (2 : ℕ) ≤

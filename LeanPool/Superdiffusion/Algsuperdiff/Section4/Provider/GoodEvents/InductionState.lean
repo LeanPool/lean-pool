@@ -19,7 +19,6 @@ Module imports, support namespace and local option directives adapted for Lean P
 
 @[expose] public section
 
-
 /-!
 # The all-scales induction state `𝒮(m, C c⋆⁻¹)`
 
@@ -95,13 +94,7 @@ private theorem exists_budgetConst (a b c : ℝ) :
 proved `c⋆ ≤ 3/2`: the budget is at least `6 · (3/2)⁻¹ = 4`. -/
 private theorem one_le_budget {K cst : ℝ} (hK : 6 ≤ K) (hcs0 : 0 < cst)
     (hcs : cst ≤ 3 / 2) : (1 : ℝ) ≤ K * cst⁻¹ := by
-  have hK0 : (0 : ℝ) < K := lt_of_lt_of_le (by norm_num) hK
-  have ha : (6 : ℝ) * (3 / 2 : ℝ)⁻¹ ≤ K * (3 / 2 : ℝ)⁻¹ :=
-    mul_le_mul_of_nonneg_right hK (by norm_num)
-  have hb : K * (3 / 2 : ℝ)⁻¹ ≤ K * cst⁻¹ :=
-    mul_le_mul_of_nonneg_left (inv_anti₀ hcs0 hcs) hK0.le
-  have hnum : (4 : ℝ) = 6 * (3 / 2 : ℝ)⁻¹ := by norm_num
-  linarith only [ha, hb, hnum]
+  exact _root_.Algsuperdiff.Section3.Provider.Induction.one_le_terminalBudget hK hcs0 hcs
 
 /-- The regime `γ ≤ C⁻¹¹⁰ c⋆¹⁰` is exactly `γ ≤ (E⁻¹)¹⁰` at the terminal budget
 `E = C c⋆⁻¹`.  No tenth power is ever expanded. -/

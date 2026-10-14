@@ -18,7 +18,6 @@ Module imports, support namespace and local option directives adapted for Lean P
 
 @[expose] public section
 
-
 /-!
 # `a.s.` finiteness of the `𝒴` row sum, and the Appendix-D reduction of `𝒢₀`
 
@@ -374,7 +373,8 @@ theorem measure_compl_goodRowSet (M : ABKModel d) (Ccg : ℝ) {sigma sprime A K 
 
 /-! ## 5. The reduction -/
 
-private theorem weightThird_eq_wt {sprime : ℝ} {m n : ℤ} (hn : n ≤ m) :
+/-- The natural-index row weight agrees with the integer-distance weight. -/
+theorem weightThird_eq_wt {sprime : ℝ} {m n : ℤ} (hn : n ≤ m) :
     weightThird sprime (m - n).toNat = wt sprime m n := by
   have h1 : (((m - n).toNat : ℕ) : ℤ) = m - n := Int.toNat_of_nonneg (by omega)
   have h2 : (((m - n).toNat : ℕ) : ℝ) = ((m - n : ℤ) : ℝ) := by exact_mod_cast h1

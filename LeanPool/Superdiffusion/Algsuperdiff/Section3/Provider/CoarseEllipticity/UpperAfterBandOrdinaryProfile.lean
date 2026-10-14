@@ -285,7 +285,6 @@ theorem probeSharpAfterBandOrdinaryPerCubeConst_nonneg
         (probeSharpAfterBandOrdinaryLayerConst_nonneg d)
         (sq_nonneg _))
 
-
 /-! ## The literal good after-band lane at the common tuned depth -/
 
 private theorem probeSharpAfterBandTunedBaseTerm_nonneg
@@ -688,7 +687,8 @@ theorem probeSharpAfterBandTunedOutputConst_pos
       1 + probeSharpAfterBandTunedOrdinaryTracePerCubeConst d)
     ((le_max_left _ _).trans (le_max_right _ _))
 
-private theorem cstarInv_mul_exp_neg_afterBandRate_le_halfRate
+/-- Absorb an inverse-prefactor bound using the cubic after-band depth margin. -/
+theorem cstarInv_mul_exp_neg_afterBandRate_le_halfRate
     {cstarInv rate E X : ℝ} (hrate : 0 < rate)
     (hE : 1 ≤ E) (hlarge : 2 * rate⁻¹ ≤ E)
     (hX : E ^ 3 ≤ X) (hcstarInvE : cstarInv ≤ E) :

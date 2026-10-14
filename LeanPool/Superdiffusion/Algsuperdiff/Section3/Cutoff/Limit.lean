@@ -308,6 +308,32 @@ theorem symmPart_coefficientCutoff (nu : ℝ) (m : ℤ) (omega : CutoffSample d)
   · have hji : j ≠ i := Ne.symm hij
     simp only [Matrix.one_apply, ite_eq_right hij, ite_eq_right hji]
     ring
+/-- A compact observation region is contained in some open origin cube. -/
+theorem exists_openOriginCube_of_isCompact {K : Set (Vec d)}
+    (hK : IsCompact K) :
+    ∃ ell : ℤ, K ⊆ openCubeSet (originCube d ell) := by
+  let g : Vec d → ℝ := fun x => 2 * ∑ i : Fin d, |x i|
+  have hg : Continuous g := by
+    exact continuous_const.mul
+      (continuous_finsetSum Finset.univ (fun i _ => (continuous_apply i).abs))
+  obtain ⟨C, hC⟩ := hK.exists_bound_of_continuousOn hg.continuousOn
+  obtain ⟨n, hn⟩ := pow_unbounded_of_one_lt C (by norm_num : (1 : ℝ) < 3)
+  refine ⟨(n : ℤ), ?_⟩
+  intro x hx
+  rw [mem_openCubeSet_originCube_iff]
+  intro i
+  have hxi : |x i| ≤ ∑ j : Fin d, |x j| :=
+    Finset.single_le_sum (fun j _ => abs_nonneg (x j)) (Finset.mem_univ i)
+  have hgx : |g x| ≤ C := hC x hx
+  have hsum_nn : 0 ≤ ∑ j : Fin d, |x j| :=
+    Finset.sum_nonneg fun j _ => abs_nonneg (x j)
+  have hsum : 2 * ∑ j : Fin d, |x j| ≤ C := by
+    simpa [g, abs_of_nonneg hsum_nn] using hgx
+  have hpow : (3 : ℝ) ^ (n : ℤ) = (3 : ℝ) ^ n := by simp
+  rw [hpow]
+  have hb : |x i| < (1 / 2 : ℝ) * (3 : ℝ) ^ n := by linarith
+  rw [abs_lt] at hb
+  exact ⟨by linarith [hb.1], hb.2⟩
 
 end
 

@@ -18,7 +18,6 @@ Module imports, support namespace and local option directives adapted for Lean P
 
 @[expose] public section
 
-
 /-!
 # The Schauder gradient-Hölder estimate, boundary branch: the producer
 
@@ -98,15 +97,7 @@ theorem boundarySchauderConst_nonneg (d : ℕ) [NeZero d] : 0 ≤ boundarySchaud
 private theorem sqrt_zpow_div_self_boundary (n : ℤ) :
     Real.sqrt ((3 : ℝ) ^ (n - 3)) / (3 : ℝ) ^ (n - 3)
       = (3 : ℝ) ^ (3 / 2 : ℝ) * ((3 : ℝ) ^ (-n)) ^ (1 / 2 : ℝ) := by
-  have h3 : (0 : ℝ) < 3 := by norm_num
-  have hcast : ((3 : ℝ) ^ (n - 3)) = (3 : ℝ) ^ (((n : ℝ) - 3)) := by
-    rw [show ((n : ℝ) - 3) = (((n - 3 : ℤ) : ℝ)) by push_cast; ring, Real.rpow_intCast]
-  have hcastn : ((3 : ℝ) ^ (-n)) = (3 : ℝ) ^ ((-(n : ℝ))) := by
-    rw [show (-(n : ℝ)) = (((-n : ℤ) : ℝ)) by push_cast; ring, Real.rpow_intCast]
-  rw [Real.sqrt_eq_rpow, hcast, hcastn, ← Real.rpow_mul h3.le, ← Real.rpow_mul h3.le,
-    ← Real.rpow_sub h3, ← Real.rpow_add h3]
-  congr 1
-  ring
+  exact _root_.Algsuperdiff.Section4.Provider.ExcessDecay.Schauder.sqrt_zpow_div_self n
 
 /-! ## 3. The producer, raw form -/
 

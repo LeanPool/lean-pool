@@ -1146,30 +1146,9 @@ private theorem cstarInv_mul_exp_neg_collarRate_le_halfRate
     (hX : E ^ 3 ≤ X) (hcstarInvE : cstarInv ≤ E) :
     cstarInv * Real.exp (-(rate * X)) ≤
       Real.exp (-((rate / 2) * X)) := by
-  have hE0 : 0 ≤ E := le_trans zero_le_one hE
-  have hrateE : 2 ≤ rate * E := by
-    have hmul := mul_le_mul_of_nonneg_left hlarge hrate.le
-    have hcancel : rate * (2 * rate⁻¹) = 2 := by
-      field_simp [ne_of_gt hrate]
-    rw [hcancel] at hmul
-    simpa [mul_comm] using hmul
-  have hEsq : E ≤ E ^ 2 := by
-    linarith only [mul_nonneg hE0 (sub_nonneg.mpr hE)]
-  have hrateCube : 2 * E ^ 2 ≤ rate * E ^ 3 := by
-    have hmul := mul_le_mul_of_nonneg_right hrateE (sq_nonneg E)
-    linarith only [hmul]
-  have hEhalfCube : E ≤ (rate / 2) * E ^ 3 := by
-    linarith only [hrateCube, hEsq]
-  have hhalf0 : 0 ≤ rate / 2 := div_nonneg hrate.le (by norm_num)
-  have hEhalfX : E ≤ (rate / 2) * X :=
-    hEhalfCube.trans (mul_le_mul_of_nonneg_left hX hhalf0)
-  have hcstarExp : cstarInv ≤ Real.exp ((rate / 2) * X) :=
-    hcstarInvE.trans (hEhalfX.trans (by
-      linarith [Real.add_one_le_exp ((rate / 2) * X)]))
-  calc
-    _ ≤ Real.exp ((rate / 2) * X) * Real.exp (-(rate * X)) :=
-      mul_le_mul_of_nonneg_right hcstarExp (Real.exp_pos _).le
-    _ = _ := by rw [← Real.exp_add]; exact congrArg Real.exp (by ring)
+  exact cstarInv_mul_exp_neg_afterBandRate_le_halfRate
+    hrate hE hlarge hX hcstarInvE
+
 private theorem afterBandDepth_baseScale_le_reserve :
     ∀ {d : ℕ} (M : ABKModel d) {E : { E : ℝ // (1 : ℝ) ≤ E }}
       {sigma : ℝ},

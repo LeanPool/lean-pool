@@ -18,7 +18,6 @@ Module imports, support namespace and local option directives adapted for Lean P
 
 @[expose] public section
 
-
 /-!
 # The `𝒢₂` row: from the manuscript's one-sided `ℝ≥0∞` sum to Appendix D's
 # two-sided real sum
@@ -94,12 +93,7 @@ private theorem measure_eq_top_eq_zero_g2 {f : Cutoff.CutoffSample d → ℝ≥0
 `ℕ`-indexed weight of `SeriesTail` and Appendix D's `ℤ`-indexed row weight. -/
 private theorem weightThird_toNat_eq_wt {sprime : ℝ} {m n : ℤ} (hn : n ≤ m) :
     weightThird sprime (m - n).toNat = wt sprime m n := by
-  have h1 : (((m - n).toNat : ℕ) : ℤ) = m - n := Int.toNat_of_nonneg (by omega)
-  have h2 : (((m - n).toNat : ℕ) : ℝ) = ((m - n : ℤ) : ℝ) := by exact_mod_cast h1
-  have h3 : idist m n = (((m - n).toNat : ℕ) : ℝ) := by
-    rw [idist, h2, ← Int.cast_sub]
-    exact abs_of_nonneg (by exact_mod_cast (by omega : (0 : ℤ) ≤ m - n))
-  rw [weightThird_eq, wt, h3]
+  exact _root_.Algsuperdiff.Section4.Provider.Proportion.weightThird_eq_wt hn
 
 /-! ## 2. Measurability of the `𝒢₂` atom in both readings -/
 

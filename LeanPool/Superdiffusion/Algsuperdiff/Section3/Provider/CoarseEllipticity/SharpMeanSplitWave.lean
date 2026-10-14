@@ -169,7 +169,7 @@ theorem measurable_probeSharpAfterBandTerm (M : ABKModel d) (m ell : ℤ)
     (k₀ : ℕ) (L : ℤ) : Measurable (probeSharpAfterBandTerm M m ell k₀ L) := by
   unfold probeSharpAfterBandTerm waveSharpUpperTerm
   have hnorm : Measurable (streamIncrementLpNorm (d := d) 4 m (ell + (k₀ : ℤ)) L) :=
-    (measurable_streamIncrementLpMass (d := d) (p := 4) (by norm_num)
+    (Multiscale.measurable_streamIncrementLpMass (d := d) (p := 4) (by norm_num)
       m (ell + (k₀ : ℤ)) L).pow_const _
   exact measurable_const.mul (measurable_const.mul (hnorm.comp measurable_subtype_coe))
 

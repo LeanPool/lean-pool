@@ -9,6 +9,7 @@ module
 public import LeanPool.Superdiffusion.Algsuperdiff.Section3.Provider.Percolation.Coloring
 public import LeanPool.Superdiffusion.Algsuperdiff.Section3.Provider.Percolation.IndepChain
 public import LeanPool.HighContrastHomogenization.Support.Book.Ch04.Theorems.PartitionAverages
+public import LeanPool.Superdiffusion.Algsuperdiff.Probability.ColoredAverage
 
 /-!
 # ColoredConcentration
@@ -72,28 +73,10 @@ noncomputable section
 variable {d : ℕ} {Ω : Type*} [MeasurableSpace Ω] {μ : Measure Ω}
 
 /-- Positivity of CoarseGraining's public constant for the centered independent-sum
-`Γ_σ` concentration inequality.  CoarseGraining keeps this fact private, so it
-is reproved here from CoarseGraining's public constants. -/
+`Γ_σ` concentration inequality, through the shared abstract probability estimate. -/
 theorem gammaSigmaIndependentSumConst_pos {σ : ℝ} (hσ : 0 < σ) :
     0 < HCPolySupport.Book.Ch04.gammaSigmaIndependentSumConst σ := by
-  dsimp [HCPolySupport.Book.Ch04.gammaSigmaIndependentSumConst]
-  by_cases hσ_lt : σ < 1
-  · simpa [hσ_lt, HCPolySupport.Book.Ch04.gammaSigmaHeavyTailEndpointConst,
-      gammaSigmaHeavyTailEndpointConst] using
-      mul_pos (Real.rpow_pos_of_pos (by norm_num : (0 : ℝ) < 2) _)
-        (gammaSigmaHeavyTailConst_pos hσ)
-  · by_cases hσ_eq : σ = 1
-    · subst hσ_eq
-      simpa [hσ_lt, HCPolySupport.Book.Ch04.gammaSigmaExpRegimeEndpointConst,
-        gammaSigmaExpRegimeEndpointConst] using
-        mul_pos (by norm_num : (0 : ℝ) < 2) gammaOneExpRegimeConst_pos
-    · have hExpConst_pos : 0 < gammaSigmaExpRegimeConst σ := by
-        dsimp [gammaSigmaExpRegimeConst]
-        exact lt_of_lt_of_le (mul_pos (by positivity) (gammaMomentConst_pos hσ))
-          (le_max_left _ _)
-      simpa [hσ_lt, hσ_eq, HCPolySupport.Book.Ch04.gammaSigmaExpRegimeEndpointConst,
-        gammaSigmaExpRegimeEndpointConst] using
-        mul_pos (by norm_num : (0 : ℝ) < 2) hExpConst_pos
+  exact _root_.Algsuperdiff.Probability.gammaSigmaIndependentSumConst_pos hσ
 
 /-- **Concentration on a pairwise-separated site set.**
 

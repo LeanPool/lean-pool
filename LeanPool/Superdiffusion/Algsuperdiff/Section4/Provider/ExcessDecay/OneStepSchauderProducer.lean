@@ -17,7 +17,6 @@ Module imports, support namespace and local option directives adapted for Lean P
 
 @[expose] public section
 
-
 /-!
 # The Schauder gradient-Hölder estimate, interior branch: the producer
 
@@ -81,7 +80,7 @@ theorem schauderWindowConst_nonneg (d : ℕ) [NeZero d] : 0 ≤ schauderWindowCo
 
 /-! ## 2. The scale arithmetic -/
 
-private theorem sqrt_zpow_div_self (n : ℤ) :
+theorem sqrt_zpow_div_self (n : ℤ) :
     Real.sqrt ((3 : ℝ) ^ (n - 3)) / (3 : ℝ) ^ (n - 3)
       = (3 : ℝ) ^ (3 / 2 : ℝ) * ((3 : ℝ) ^ (-n)) ^ (1 / 2 : ℝ) := by
   have h3 : (0 : ℝ) < 3 := by norm_num

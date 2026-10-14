@@ -20,7 +20,6 @@ Module imports, support namespace and local option directives adapted for Lean P
 
 @[expose] public section
 
-
 /-!
 # The state calculus of the Section 3.6 induction
 
@@ -430,6 +429,16 @@ theorem startBudget_le_of_sqrt {cst Cstart C : ℝ} (hcs0 : 0 < cst)
     le_trans (mul_le_mul_of_nonneg_left (Real.sqrt_le_sqrt hcs) hCstart) hC
   have h := startBudget_core hr hkey
   rwa [hrsq] at h
+/-- The terminal budget is at least one in the induction parameter regime. -/
+theorem one_le_terminalBudget {K cst : ℝ} (hK : 6 ≤ K) (hcs0 : 0 < cst)
+    (hcs : cst ≤ 3 / 2) : (1 : ℝ) ≤ K * cst⁻¹ := by
+  have hK0 : (0 : ℝ) < K := lt_of_lt_of_le (by norm_num) hK
+  have ha : (6 : ℝ) * (3 / 2 : ℝ)⁻¹ ≤ K * (3 / 2 : ℝ)⁻¹ :=
+    mul_le_mul_of_nonneg_right hK (by norm_num)
+  have hb : K * (3 / 2 : ℝ)⁻¹ ≤ K * cst⁻¹ :=
+    mul_le_mul_of_nonneg_left (inv_anti₀ hcs0 hcs) hK0.le
+  have hnum : (4 : ℝ) = 6 * (3 / 2 : ℝ)⁻¹ := by norm_num
+  linarith only [ha, hb, hnum]
 
 end
 

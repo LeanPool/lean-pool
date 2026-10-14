@@ -20,7 +20,6 @@ Module imports, support namespace and local option directives adapted for Lean P
 
 @[expose] public section
 
-
 /-!
 # The two per-cell second moments of the strip data, regime-free
 
@@ -121,30 +120,12 @@ noncomputable section
 
 /-- `|u|^2` is square-integrable on a cube whose `L^8` membership is known.
 
-This is the local copy of the private helper of `Closure.GammaTenStripEnergy`
-(same proof); it is needed here because that one is `private`. -/
+This applies the shared estimate from `Closure.GammaTenStripEnergy`. -/
 private theorem memLp_two_vecNormSq_of_memLp_eight' {d : ℕ} (Q : TriadicCube d)
     {u : Vec d → Vec d} (hu : MemLp u (8 : ℝ≥0∞) (normalizedCubeMeasure Q)) :
     MemLp (fun x => vecNormSq (u x)) (2 : ℝ≥0∞) (normalizedCubeMeasure Q) := by
-  have huE : MemLp (fun x => Book.Ch02.vecNorm (u x)) (8 : ℝ≥0∞)
-      (normalizedCubeMeasure Q) := memLp_vecNorm_of_memLp Q hu
-  have huE4 : MemLp (fun x => Book.Ch02.vecNorm (u x)) (4 : ℝ≥0∞)
-      (normalizedCubeMeasure Q) := huE.mono_exponent (by norm_num)
-  have h := (memLp_norm_rpow_iff (μ := normalizedCubeMeasure Q)
-      (f := fun x => Book.Ch02.vecNorm (u x)) (p := (4 : ℝ≥0∞)) (q := (2 : ℝ≥0∞))
-      huE4.aestronglyMeasurable (by norm_num) (by norm_num)).2 huE4
-  have hdiv : (4 : ℝ≥0∞) / 2 = 2 := by
-    rw [show (4 : ℝ≥0∞) = 2 * 2 by norm_num]
-    rw [mul_div_assoc, ENNReal.div_self (by norm_num) (by norm_num), mul_one]
-  rw [hdiv] at h
-  have hfun : (fun x => ‖Book.Ch02.vecNorm (u x)‖ ^ ((2 : ℝ≥0∞).toReal)) =
-      fun x => vecNormSq (u x) := by
-    funext x
-    rw [show ((2 : ℝ≥0∞).toReal) = ((2 : ℕ) : ℝ) by norm_num, Real.rpow_natCast,
-      Real.norm_eq_abs, ← abs_pow,
-      abs_of_nonneg (by positivity : (0 : ℝ) ≤ Book.Ch02.vecNorm (u x) ^ (2 : ℕ)),
-      Book.Ch02.vecNorm_sq_eq_vecNormSq]
-  rwa [hfun] at h
+  exact memLp_vecNormSq_two_of_memLp_eight
+    Q hu
 
 /-- The squared Euclidean length of a measurable vector family is measurable.
 

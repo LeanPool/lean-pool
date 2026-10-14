@@ -62,18 +62,13 @@ variable {d : ℕ}
 
 /-! ## The per-layer wave gauge at an arbitrary cube -/
 
-
 /-! ## The deterministic domination at an arbitrary cube -/
-
 
 /-! ## The per-layer `Gamma_2` display at an arbitrary cube -/
 
-
 /-! ## The macroscopic leg at an arbitrary cube -/
 
-
 /-! ## The tail leg at an arbitrary cube -/
-
 
 /-! ## Measurability of the truncated tail sum -/
 
@@ -97,31 +92,6 @@ private theorem measurable_sum_range {Omega : Type*} [MeasurableSpace Omega]
   exact (hN (measurableSet_singleton k)).inter
     ((Finset.measurable_sum (Finset.range k) fun i _ => hY i) hs)
 
-private theorem measurable_hsep (M : ABKModel d) (m : ℤ) (E b : ℝ) :
-    Measurable (hsep M m E b) := by
-  refine measurable_to_countable' fun k => ?_
-  cases k with
-  | zero =>
-      have hset : hsep M m E b ⁻¹' {0} =
-          {omega : CutoffSample d | 0 < hsep M m E b omega}ᶜ := by
-        ext omega
-        simp only [Set.mem_preimage, Set.mem_singleton_iff, Set.mem_compl_iff,
-          Set.mem_ofPred_eq]
-        omega
-      rw [hset]
-      exact (measurableSet_lt_hsep M m E b 0).compl
-  | succ j =>
-      have hset : hsep M m E b ⁻¹' {j + 1} =
-          {omega : CutoffSample d | j < hsep M m E b omega} ∩
-            {omega : CutoffSample d | j + 1 < hsep M m E b omega}ᶜ := by
-        ext omega
-        simp only [Set.mem_preimage, Set.mem_singleton_iff, Set.mem_inter_iff,
-          Set.mem_compl_iff, Set.mem_ofPred_eq]
-        omega
-      rw [hset]
-      exact (measurableSet_lt_hsep M m E b j).inter
-        (measurableSet_lt_hsep M m E b (j + 1)).compl
-
 /-- The origin tail leg is a random variable.  This is the measurability datum
 the abstract transport consumes; the truncation depth `hsep` is a measurable
 `Nat`-valued observable by `measurableSet_lt_hsep`. -/
@@ -137,7 +107,6 @@ theorem measurable_waveTailTerm (M : ABKModel d) (m : ℤ) (E b : ℝ) (lout ell
       fun i => measurable_waveL4Tail M lout ell (i + 1))
 
 /-! ## The tail leg at an arbitrary cube -/
-
 
 end
 

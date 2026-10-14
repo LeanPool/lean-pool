@@ -57,20 +57,8 @@ def superposedFluxLowerConst (d : ℕ) : ℝ :=
     max 0 ((superposedFluxInfinityBudgetConst d + 6) /
       superposedFluxBfaRate d)
 
-theorem superposedFluxLowerConst_pos (d : ℕ) :
-    0 < superposedFluxLowerConst d := by
-  unfold superposedFluxLowerConst
-  have h1 : 0 ≤ max 0 (profileAuxiliaryConst d) := le_max_left _ _
-  have h2 : 0 ≤ max 0 (16 * superposedFluxSharpDetConst d) := le_max_left _ _
-  have h3 : 0 ≤ max 0 ((superposedFluxTwoLeBudgetConst d + 6) /
-      superposedFluxBfaRate d) := le_max_left _ _
-  have h4 : 0 ≤ max 0 ((superposedFluxLtTwoBudgetConst d + 6) /
-      (superposedFluxBfaRate d / 2)) := le_max_left _ _
-  have h5 : 0 ≤ max 0 ((superposedFluxInfinityBudgetConst d + 6) /
-      superposedFluxBfaRate d) := le_max_left _ _
-  linarith
-
-private theorem eight_le_superposedFluxLowerConst (d : ℕ) :
+/-- The assembled lower-profile budget includes the fixed margin eight. -/
+theorem eight_le_superposedFluxLowerConst (d : ℕ) :
     8 ≤ superposedFluxLowerConst d := by
   unfold superposedFluxLowerConst
   have h1 : 0 ≤ max 0 (profileAuxiliaryConst d) := le_max_left _ _
@@ -82,6 +70,9 @@ private theorem eight_le_superposedFluxLowerConst (d : ℕ) :
   have h5 : 0 ≤ max 0 ((superposedFluxInfinityBudgetConst d + 6) /
       superposedFluxBfaRate d) := le_max_left _ _
   linarith
+theorem superposedFluxLowerConst_pos (d : ℕ) :
+    0 < superposedFluxLowerConst d := by
+  exact lt_of_lt_of_le (by norm_num : (0 : ℝ) < 8) (eight_le_superposedFluxLowerConst d)
 
 private theorem profileAuxiliaryConst_le_superposedFluxLowerConst (d : ℕ) :
     profileAuxiliaryConst d ≤ superposedFluxLowerConst d := by

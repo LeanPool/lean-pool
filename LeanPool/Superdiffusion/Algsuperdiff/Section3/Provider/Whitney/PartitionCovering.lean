@@ -372,7 +372,7 @@ private theorem exists_touchingAncestor_of_mem_whitneyLayer {m : ℤ} {hn : ℕ 
 
 /-- Two triadic descendants of `□_m` sharing a point, the first not deeper than
 the second, are nested. -/
-private theorem mem_descendantsAtDepth_of_mem_cubeSet_inter {m : ℤ} {p q : ℕ}
+theorem mem_descendantsAtDepth_of_mem_cubeSet_inter {m : ℤ} {p q : ℕ}
     {U V : TriadicCube d} (hU : U ∈ descendantsAtDepth (originCube d m) p)
     (hV : V ∈ descendantsAtDepth (originCube d m) q) (hpq : p ≤ q)
     {x : Vec d} (hxU : x ∈ cubeSet U) (hxV : x ∈ cubeSet V) :

@@ -18,7 +18,6 @@ Module imports, support namespace and local option directives adapted for Lean P
 
 @[expose] public section
 
-
 /-!
 # Sample integrability of the per-cell coarse energies of `e.def.w`
 
@@ -111,7 +110,8 @@ private theorem lpWindowNorm_ne_top (mu : Measure alpha) (S : Set alpha) (F : Lp
   ne_top_of_le_ne_top (Lp.memLp F).eLpNorm_ne_top
     (eLpNorm_mono_measure _ Measure.restrict_le_self)
 
-private theorem eLpNorm_restrict_sub_le (mu : Measure alpha) (S : Set alpha)
+/-- The restricted norm is controlled by a comparison field and their difference. -/
+theorem eLpNorm_restrict_sub_le (mu : Measure alpha) (S : Set alpha)
     (F G : Lp E 2 mu) :
     eLpNorm (F : alpha → E) 2 (mu.restrict S) ≤
       eLpNorm (G : alpha → E) 2 (mu.restrict S) +

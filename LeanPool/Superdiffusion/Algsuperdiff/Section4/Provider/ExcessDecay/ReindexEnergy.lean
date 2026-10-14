@@ -18,7 +18,6 @@ Module imports, support namespace and local option directives adapted for Lean P
 
 @[expose] public section
 
-
 /-!
 # The interior Caccioppoli energy at the slot `n+3`: the `(n+3)` family on `□_{n+2}`
 
@@ -404,31 +403,6 @@ def constantDatumAnchorEnergyRHSOnAddThree (M : ABKModel d) (n : ℤ) (s : ℝ) 
     Real.rpow s (-6 : ℝ) * (Annealed.sigmaBar M (n + 3) : ℝ)⁻¹ *
       Real.rpow (3 : ℝ) (2 * s * (((n + 2 : ℤ)) : ℝ)) *
       (Support.normalizedGagliardoESeminormOn W s g).toReal ^ (2 : ℕ)
-
-/-- The arithmetic of the carrier conversion. -/
-private theorem anchor_stitch {A L2 B Bes K W G : ℝ} (hA : 0 ≤ A) (hB : 0 ≤ B)
-    (hL2 : 0 ≤ L2) (hBes : 0 ≤ Bes) (hK : 0 ≤ K) (hW : 0 ≤ W) (hG : 0 ≤ G)
-    (hbes : Bes ≤ K * W * G) :
-    A * L2 + B * Bes ^ (2 : ℕ) ≤
-      (K ^ (2 : ℕ) + 1) * (A * L2 + B * W ^ (2 : ℕ) * G ^ (2 : ℕ)) := by
-  have hsq : Bes ^ (2 : ℕ) ≤ K ^ (2 : ℕ) * (W ^ (2 : ℕ) * G ^ (2 : ℕ)) := by
-    calc Bes ^ (2 : ℕ) ≤ (K * W * G) ^ (2 : ℕ) := pow_le_pow_left₀ hBes hbes 2
-      _ = K ^ (2 : ℕ) * (W ^ (2 : ℕ) * G ^ (2 : ℕ)) := by ring
-  have hAL2 : 0 ≤ A * L2 := mul_nonneg hA hL2
-  have hWG : (0 : ℝ) ≤ W ^ (2 : ℕ) * G ^ (2 : ℕ) :=
-    mul_nonneg (pow_nonneg hW 2) (pow_nonneg hG 2)
-  have hK2 : (0 : ℝ) ≤ K ^ (2 : ℕ) := pow_nonneg hK 2
-  have hBWG : 0 ≤ B * (W ^ (2 : ℕ) * G ^ (2 : ℕ)) := mul_nonneg hB hWG
-  have hterm : B * Bes ^ (2 : ℕ) ≤ K ^ (2 : ℕ) * (B * (W ^ (2 : ℕ) * G ^ (2 : ℕ))) := by
-    calc B * Bes ^ (2 : ℕ) ≤ B * (K ^ (2 : ℕ) * (W ^ (2 : ℕ) * G ^ (2 : ℕ))) :=
-          mul_le_mul_of_nonneg_left hsq hB
-      _ = K ^ (2 : ℕ) * (B * (W ^ (2 : ℕ) * G ^ (2 : ℕ))) := by ring
-  have hexp : (K ^ (2 : ℕ) + 1) * (A * L2 + B * W ^ (2 : ℕ) * G ^ (2 : ℕ)) =
-      K ^ (2 : ℕ) * (A * L2) + K ^ (2 : ℕ) * (B * (W ^ (2 : ℕ) * G ^ (2 : ℕ))) +
-        (A * L2 + B * (W ^ (2 : ℕ) * G ^ (2 : ℕ))) := by ring
-  have hpos1 : 0 ≤ K ^ (2 : ℕ) * (A * L2) := mul_nonneg hK2 hAL2
-  rw [hexp]
-  linarith only [hterm, hpos1, hBWG]
 
 /-- **The carrier conversion of the `n+3` display.** -/
 theorem constantDatumEnergyRHS_le_anchorRHS_addThree [NeZero d] (M : ABKModel d) (n : ℤ)

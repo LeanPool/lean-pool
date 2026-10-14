@@ -124,9 +124,7 @@ the `forall L` form itself supplies.  Nothing anywhere in this file introduces
 an unbounded supremum: Lean's `sSup` of an unbounded set is a junk value, and
 the only direction used downstream is the one that needs no boundedness. -/
 
-
 /-! ## 2. The two per-cube payload families -/
-
 
 /-! ## 3. The `sup_L` collapse: `hLunif` and `hblock` from one `forall L` bound
 
@@ -136,41 +134,12 @@ source supplies both at once, because the right-hand side it prints is already
 `L`-free: take `Xc` to BE that right-hand side.  `hblock` then becomes
 `abs_of_nonneg` and the entire content is the `forall L` bound. -/
 
-
 /-! ## 4. Measurability of the `hsep`-driven observables
 
 Every lane below is a fixed function of the integer `hsep`, so a single
 measurability statement covers all of them.
 `Percolation.MinimalScaleSeparation` leaves this to the consumer  and
 `WaveOscillations.measurableSet_lt_hsep` supplies the only input needed. -/
-
-/-- `hsep` is a random variable.  (`WaveTermTranslation` carries the same
-statement as a private helper; it is re-derived here rather than exported from
-there, so that this module does not depend on the wave lane.) -/
-theorem measurable_hsep (M : ABKModel d) (m : ℤ) (E b : ℝ) :
-    Measurable (hsep M m E b) := by
-  refine measurable_to_countable' fun k => ?_
-  cases k with
-  | zero =>
-      have hset : hsep M m E b ⁻¹' {0} =
-          {omega : CutoffSample d | 0 < hsep M m E b omega}ᶜ := by
-        ext omega
-        simp only [Set.mem_preimage, Set.mem_singleton_iff, Set.mem_compl_iff,
-          Set.mem_ofPred_eq]
-        omega
-      rw [hset]
-      exact (measurableSet_lt_hsep M m E b 0).compl
-  | succ j =>
-      have hset : hsep M m E b ⁻¹' {j + 1} =
-          {omega : CutoffSample d | j < hsep M m E b omega} ∩
-            {omega : CutoffSample d | j + 1 < hsep M m E b omega}ᶜ := by
-        ext omega
-        simp only [Set.mem_preimage, Set.mem_singleton_iff, Set.mem_inter_iff,
-          Set.mem_compl_iff, Set.mem_ofPred_eq]
-        omega
-      rw [hset]
-      exact (measurableSet_lt_hsep M m E b j).inter
-        (measurableSet_lt_hsep M m E b (j + 1)).compl
 
 /-- Any postcomposition of `hsep` is measurable: `ℕ` is countable. -/
 theorem measurable_comp_hsep (M : ABKModel d) (m : ℤ) (E b : ℝ) (g : ℕ → ℝ) :
@@ -197,7 +166,6 @@ def bfaSigmaTwo (sigma gam b : ℝ) : ℝ := (1 - sigma) / (bfaPower gam b - 1)
 
 /-- The common exponent of the two lanes, `tau = (1-sigma) b / (gamma + 2b)`. -/
 def bfaTau (sigma gam b : ℝ) : ℝ := (1 - sigma) / bfaPower gam b
-
 
 theorem one_lt_bfaPower {gam b : ℝ} (hgam : 0 < gam) (hb : 0 < b) :
     1 < bfaPower gam b := by
@@ -237,7 +205,6 @@ theorem prodSigma_bfaSigmaTwo_eq_bfaTau {sigma gam b : ℝ} (hsigma : sigma < 1)
   rw [bfaSigmaTwo, bfaTau]
   field_simp
   rw [sub_add_cancel, div_self hp0]
-
 
 /-- The truncated prefactor, `3^{gamma hsep} 1_{gamma hsep > 3^{-4}}`. -/
 def slstarCollapseTerm (M : ABKModel d) (m : ℤ) (E b gam : ℝ)
@@ -354,7 +321,6 @@ theorem isBigOWith_gammaSigma_slstarPowerTerm_of_gates (M : ABKModel d) {m : ℤ
   congr 1
   field_simp
 
-
 /-- The explicit scale of the Orlicz lane: `e.multGammasig`'s constant times
 `e.hsep.tails`' amplitude times `e.indc.O.sigma`'s `exp(-c gamma^{-1})`-sized
 scale, plus `eps` times the collar power's amplitude, all through the two-term
@@ -439,7 +405,6 @@ theorem isBigOWith_gammaSigma_bfaLane_of_gates (M : ABKModel d) {m : ℤ}
     (mul_pos (mul_pos hCpre heps) (Real.rpow_pos_of_pos hKpos _))
     h1 h2
 
-
 /-! ## 6. Generic composed-leg adapters
 
 The following theorems conditionally adapt explicitly supplied
@@ -448,7 +413,6 @@ only the abstract majorant plumbing; they neither establish the source per-cube
 estimate nor reduce O1/O2 to a root `hpay`.  The faithful local,
 almost-everywhere shape needed to produce such data is recorded separately in
 `BfaLocalLane.lean`. -/
-
 
 end
 

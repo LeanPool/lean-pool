@@ -17,7 +17,6 @@ Module imports, support namespace and local option directives adapted for Lean P
 
 @[expose] public section
 
-
 /-!
 # Theorem B, §4.5, Step 1: the missing glue `hY`
 
@@ -245,7 +244,8 @@ private theorem three_rpow_mul_exp_pow (c theta : ℝ) (M : ℕ) :
     ring
   rw [mul_pow, h1, h2]
 
-private theorem tsum_ofReal_pow_le_two {rho : ℝ} (h : rho ≤ 1 / 2) :
+/-- The extended-nonnegative geometric series is at most two for ratio at most one half. -/
+theorem tsum_ofReal_pow_le_two {rho : ℝ} (h : rho ≤ 1 / 2) :
     ∑' _N : ℕ, ENNReal.ofReal rho ^ _N ≤ 2 := by
   have hhalf : ENNReal.ofReal (1 / 2 : ℝ) = (2 : ℝ≥0∞)⁻¹ := by
     rw [show (1 / 2 : ℝ) = (2 : ℝ)⁻¹ by norm_num,

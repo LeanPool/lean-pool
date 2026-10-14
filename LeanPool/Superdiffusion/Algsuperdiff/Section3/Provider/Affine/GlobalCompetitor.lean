@@ -218,15 +218,7 @@ private theorem mem_descendantsAtDepth_of_mem_cubeSet_inter' {m : ℤ} {p q : �
     (hV : V ∈ descendantsAtDepth (originCube d m) q) (hpq : p ≤ q)
     {x : Vec d} (hxU : x ∈ cubeSet U) (hxV : x ∈ cubeSet V) :
     V ∈ descendantsAtDepth U (q - p) := by
-  have hV' : V ∈ descendantsAtDepth (originCube d m) (p + (q - p)) := by
-    simpa only [show p + (q - p) = q from by omega] using hV
-  obtain ⟨W, hW, hVW⟩ := exists_descendant_ancestor_at_depth p (q - p) hV'
-  have hxW : x ∈ cubeSet W := cubeSet_subset_of_mem_descendantsAtDepth hVW hxV
-  have hWU : W = U := by
-    by_contra hne
-    exact (pairwiseDisjoint_descendantsAtDepth (originCube d m) p (Finset.mem_coe.mpr hW)
-      (Finset.mem_coe.mpr hU) hne).le_bot ⟨hxW, hxU⟩
-  exact hWU ▸ hVW
+  exact Whitney.mem_descendantsAtDepth_of_mem_cubeSet_inter hU hV hpq hxU hxV
 
 /-- A scale-`s` triadic cube of the root that meets a Whitney cube of scale at
 least `s` is a descendant of it. -/

@@ -18,7 +18,6 @@ Module imports, support namespace and local option directives adapted for Lean P
 
 @[expose] public section
 
-
 /-!
 # B6, first half: the `Γ₂` display of the `L`-free gradient slot
 
@@ -167,7 +166,7 @@ private theorem tsum_deepAmp (M : ABKModel d) (k : ℤ) :
 /-! ## 4. The deep block's `Γ₂` display -/
 
 /-- The `ℕ`-indexed reading of the deep block. -/
-private theorem tsum_deepGradTerm_eq (k : ℤ) (v : Fin d → ℤ)
+theorem tsum_deepGradTerm_eq (k : ℤ) (v : Fin d → ℤ)
     (omega : Cutoff.CutoffSample d) :
     ∑' n : ℕ, gradLayerGauge k v omega (k + (n : ℤ)) = deepGradSeries k v omega := by
   have hinj : Function.Injective fun n : ℕ => k + (n : ℤ) := by
