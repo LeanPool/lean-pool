@@ -371,9 +371,7 @@ private theorem fluxSubharmonic_comparisonBounds1 :
         let b : ℝ := ρ + ε;
         ∀ (_ : ∀ s ∈ Icc a b, (0 : ℝ) < sphereFlux x s u * f₀) (_ : (0 : ℝ) < a) (_ : (0 : ℝ) < b),
           let α : ℝ := a ^ (2 : ℕ);
-          ∀ (_ : α = a ^ (2 : ℕ)),
             let β : ℝ := b ^ (2 : ℕ);
-            ∀ (_ : β = b ^ (2 : ℕ)),
               let L : ℝ → ℝ := fun (t : ℝ) => (t - α) / (β - α);
               let φ : ℝ → ℝ := fun (t : ℝ) => (1 : ℝ) - (L t).smoothTransition;
               ∀ (_ : ContDiff ℝ ∞ φ) (_ : ∀ (t : ℝ), deriv φ t ≤ (0 : ℝ))
@@ -381,14 +379,17 @@ private theorem fluxSubharmonic_comparisonBounds1 :
                 let I' : ℝ → ℝ := fun (s : ℝ) =>
                   (2 : ℝ) * s * deriv φ (s ^ (2 : ℕ)) * (s ^ (d - (1 : ℕ)) * sphereFlux x s u);
                 ∀ (_ : integral (volume.restrict (Ioi (0 : ℝ))) I' ≤ (0 : ℝ))
-                  (_ :
-                    I' = fun (s : ℝ) => (2 : ℝ) * s * deriv φ (s ^ (2 : ℕ)) * (s ^ (d - (1 : ℕ)) *
-                      sphereFlux x s u)),
+                  ,
                   let G : ℝ → ℝ := fun (s : ℝ) => -f₀ * I' s;
-                  ∀ (_ : G = fun (s : ℝ) => -f₀ * I' s), Continuous I' ∧ G =ᵐ[volume.restrict (Ioi
+                   Continuous I' ∧ G =ᵐ[volume.restrict (Ioi
                     (0 : ℝ))] (0 : ℝ → ℝ) := by
-  intro d u x _ hcont f₀ hf₀neg _ _ a b hsamesign ha0 hb0 _ hαdef β hβdef _ φ hφ_inf hφ_deriv_np
-    hφ_deriv_out I' hfluxPair_le hI'def G hGdef
+  intro d u x _ hcont f₀ hf₀neg _ _ a b hsamesign ha0 hb0 calculationΑ β _ φ hφ_inf hφ_deriv_np
+    hφ_deriv_out I' hfluxPair_le G
+  have hαdef : calculationΑ = a ^ (2 : ℕ) := rfl
+  have hβdef : β = b ^ (2 : ℕ) := rfl
+  have hI'def : I' = fun (s : ℝ) => (2 : ℝ) * s * deriv φ (s ^ (2 : ℕ)) * (s ^ (d - (1 : ℕ)) *
+                      sphereFlux x s u) := rfl
+  have hGdef : G = fun (s : ℝ) => -f₀ * I' s := rfl
   have hGintle : ∫ s in Ioi (0 : ℝ), G s ≤ 0 := by
     simp only [hGdef]
     rw [integral_const_mul]
@@ -589,7 +590,7 @@ theorem sphereFlux_nonneg_of_laplacian_nonneg [NeZero d]
   obtain ⟨hI'cont, hGae⟩ :=
     (show (Continuous I') ∧ (G =ᵐ[volume.restrict (Ioi 0)] 0) from
       @fluxSubharmonic_comparisonBounds1 (d) (u) (x) (ρ) (hcont) (hf₀neg) (δ) (hsamesign) (ha0)
-        (hb0) (hαdef) (hβdef) (hφ_inf) (hφ_deriv_np) (hφ_deriv_out) (hfluxPair_le) (hI'def) (hGdef))
+        (hb0)   (hφ_inf) (hφ_deriv_np) (hφ_deriv_out) (hfluxPair_le)  )
   have hInull : volume ({s : ℝ | I' s ≠ 0} ∩ Ioi 0) = 0 := by
     have hIae : ∀ᵐ s ∂(volume : Measure ℝ), s ∈ Ioi 0 → I' s = 0 := by
       filter_upwards [(ae_restrict_iff' (μ := volume) measurableSet_Ioi).mp hGae]

@@ -289,14 +289,14 @@ private theorem approx_comparisonBounds1 :
       let r : ℝ := r0 / (2 : ℝ);
       ∀ (_ : (0 : ℝ) < r) (_ : Metric.closedBall x0 r ⊆ U),
         let ρ : Vec d → ℝ := unitConvexApproxKernel;
-        ∀ (_ : ρ = unitConvexApproxKernel) (_ : IsConvexApproxKernel ρ),
+        ∀  (_ : IsConvexApproxKernel ρ),
           let e : ℕ → ℝ := fun (n : ℕ) => unitConvexApproxScale (n + (1 : ℕ));
-          ∀ (_ : e = fun (n : ℕ) => unitConvexApproxScale (n + (1 : ℕ))) (_ : ∀ (n : ℕ), (0 : ℝ) <
+          ∀  (_ : ∀ (n : ℕ), (0 : ℝ) <
             e n)
             (_ : ∀ (n : ℕ), e n < (1 : ℝ)),
             let w : ℕ → Vec d → ℝ := fun (n : ℕ) => convexApproxSmoothRepresentative U ρ u.toFun
               x0 r (e n);
-            ∀ (_ : w = fun (n : ℕ) => convexApproxSmoothRepresentative U ρ u.toFun x0 r (e n))
+            ∀
               (_ : ∀ (n : ℕ), ContDiff ℝ ((⊤ : ℕ∞) : WithTop ℕ∞) (w n))
               (_ : ∀ (n : ℕ), ∀ x ∈ U, w n x = unitConvexApproxSequence u.toFun x0 r (n + (1 : ℕ))
                 x)
@@ -309,14 +309,10 @@ private theorem approx_comparisonBounds1 :
               (i : Fin d),
               let Dwn : ℕ → Vec d → ℝ := fun (n : ℕ) (x : Vec d) => (fderiv ℝ (w n) x : (a : Vec
                 d) → ℝ) (basisVec i);
-              ∀ (_ : Dwn = fun (n : ℕ) (x : Vec d) => (fderiv ℝ (w n) x : (a : Vec d) → ℝ)
-                (basisVec i)),
                 let un : ℕ → Vec d → ℝ := fun (n : ℕ) (x : Vec d) => G (w n x);
                 let gn : ℕ → Vec d → ℝ := fun (n : ℕ) (x : Vec d) => deriv G (w n x) * Dwn n x;
                 let smi : ℕ → Vec d → ℝ := fun (n : ℕ) =>
                   convexApproxSmoothing ρ (fun (y : Vec d) => u.grad y i) x0 r (e n);
-                ∀ (_ : smi = fun (n : ℕ) => convexApproxSmoothing ρ (fun (y : Vec d) => u.grad y
-                  i) x0 r (e n)),
                   (∀ (n : ℕ), HasWeakPartialDerivOn U i (un n) (gn n)) ∧
                     (∀ (n : ℕ), Dwn n =ᵐ[volumeMeasureOn U] fun (x : Vec d) => ((1 : ℝ) - e n) *
                       smi n x) ∧
@@ -332,8 +328,15 @@ private theorem approx_comparisonBounds1 :
                                       (volumeMeasureOn U)) ∧
                                 (∀ (n : ℕ), MemLp (un n) (2 : ℝ≥0∞) (volumeMeasureOn U)) ∧
                                   ∀ (n : ℕ), MemLp (smi n) (2 : ℝ≥0∞) (volumeMeasureOn U) := by
-  intro d U hU u G hG M hGdiff hGlip _ x0 _ r hr hball ρ hρ_def hρ e he_def he_pos he_lt w hw_def
-    hw_smooth hw_eq huLoc hDuLoc htransport i Dwn hDwn_def un gn smi hsmi_def
+  intro d U hU u G hG M hGdiff hGlip _ x0 _ r hr hball ρ hρ e he_pos he_lt w hw_smooth hw_eq
+    huLoc hDuLoc htransport i Dwn un gn smi
+  have hρ_def : ρ = unitConvexApproxKernel := rfl
+  have he_def : e = fun (n : ℕ) => unitConvexApproxScale (n + (1 : ℕ)) := rfl
+  have hw_def : w = fun (n : ℕ) => convexApproxSmoothRepresentative U ρ u.toFun x0 r (e n) := rfl
+  have hDwn_def : Dwn = fun (n : ℕ) (x : Vec d) => (fderiv ℝ (w n) x : (a : Vec d) → ℝ)
+                (basisVec i) := rfl
+  have hsmi_def : smi = fun (n : ℕ) => convexApproxSmoothing ρ (fun (y : Vec d) => u.grad y
+                  i) x0 r (e n) := rfl
   have hweak_n : ∀ n, HasWeakPartialDerivOn U i (un n) (gn n) := by
     intro n
     have hGwn : ContDiff ℝ 1 (fun x => G (w n x)) :=
@@ -496,8 +499,8 @@ theorem hasWeakGradientOn_comp_of_deriv_bounded
       AEStronglyMeasurable (fun x => deriv G (v x)) (volumeMeasureOn U)) ∧ (∀ n, MemLp (un n) 2
         (volumeMeasureOn U)) ∧ (∀ n, MemLp (smi n) 2 (volumeMeasureOn U)) from
       @approx_comparisonBounds1 (d) (U) (hU) (u) (G) (hG) (M) (hGdiff) (hGlip) (by infer_instance)
-        (x0) (r0) (hr) (hball) (hρ_def) (hρ) (he_def) (he_pos) (he_lt) (hw_def) (hw_smooth)
-          (hw_eq) (huLoc) (hDuLoc) (htransport) (i) (hDwn_def) (hsmi_def))
+        (x0) (r0) (hr) (hball)  (hρ)  (he_pos) (he_lt)  (hw_smooth)
+          (hw_eq) (huLoc) (hDuLoc) (htransport) (i)  )
   have hDwn_memL2 : ∀ n, MemLp (Dwn n) 2 (volumeMeasureOn U) := fun n =>
     ((hsmi_memL2 n).const_mul (1 - e n)).ae_eq (hbridge n).symm
   have hgn_memL2 : ∀ n, MemLp (gn n) 2 (volumeMeasureOn U) := by

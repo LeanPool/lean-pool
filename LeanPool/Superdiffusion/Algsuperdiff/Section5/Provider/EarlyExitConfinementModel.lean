@@ -801,14 +801,12 @@ private theorem earlyExitConfinementModel_momentBounds1 :
                             {omegaFull : FullSample d M.gamma | N ≤ Yfam m (↑omegaFull :
                               Cutoff.CutoffSample d)} ≤
                           ENNReal.ofReal (Real.exp (-(a * (3 : ℝ) ^ N))))
-                  (_ : a = ctail * ep ^ (2 : ℕ) * M.gamma⁻¹ * |Real.log M.gamma| ^ (-6 : ℤ))
                   (_ : (16 : ℝ) * Real.log (3 : ℝ) ≤ a) (_ : (0 : ℝ) < a),
                   let Cmom : ℝ := delta ^ (-((1 : ℝ) - M.gamma)⁻¹) * ((1 : ℝ) - Real.exp (-(a / (2
                     : ℝ))))⁻¹;
                   let CS : ℝ := max (1 : ℝ) Cmom;
                   ∀ (_ : (1 : ℝ) ≤ CS),
                     let pS : ℝ := a / ((16 : ℝ) * Real.log (3 : ℝ));
-                    ∀ (_ : pS = a / ((16 : ℝ) * Real.log (3 : ℝ))),
                       (1 : ℝ) ≤ pS ∧
                         Cscale⁻¹ * M.gamma⁻¹ * |Real.log M.gamma| ^ (-6 : ℤ) ≤ pS ∧
                           (∀ (p : ℝ),
@@ -832,8 +830,10 @@ private theorem earlyExitConfinementModel_momentBounds1 :
                                 (fun (n : ℤ) => widenedScale (fun (k : ℤ) => S k (↑omega :
                                   Cutoff.CutoffSample d)) n) L
                                 (confinementScale S L (↑omega : Cutoff.CutoffSample d)) := by
-  intro d _ _ ctail _ _ _ hlog3 ep _ Cscale _ _ _ hdelta _ M _ _ _ _ _ _ hL Yfam hYmeas S hSmeas a
-    hYtail hadef ha16 ha _ CS hCS pS hpSdef
+  intro d _ _ ctail _ _ _ hlog3 ep _ Cscale _ _ _ hdelta _ M _ _ _ _ _ _ hL Yfam hYmeas S hSmeas
+    a hYtail ha16 ha _ CS hCS pS
+  have hadef : a = ctail * ep ^ (2 : ℕ) * M.gamma⁻¹ * |Real.log M.gamma| ^ (-6 : ℤ) := rfl
+  have hpSdef : pS = a / ((16 : ℝ) * Real.log (3 : ℝ)) := rfl
   have hpS1 : (1 : ℝ) ≤ pS := by
     rw [hpSdef, le_div_iff₀ (by positivity : (0 : ℝ) < 16 * Real.log 3)]
     linarith only [ha16]
@@ -1041,7 +1041,7 @@ private theorem earlyExitConfinementModel_comparisonBounds1 :
   obtain ⟨stage_hpS1, stage_hpSrange, stage_hSmom, stage_hconf⟩ :=
     @earlyExitConfinementModel_momentBounds1 (d) (cstar) (Cchain) (ctail) (csmall) (hctail)
       (hcsmall) (hlog3) (heppos) (hdelta) (M) (t) (Kmin) (hgamma) (hL) (Yfam) (hYmeas) (hSmeas)
-        (hYtail) (hadef) (ha16) (ha) (hCS) (hpSdef)
+        (hYtail)  (ha16) (ha) (hCS)
   have hpS1 : (1 : ℝ) ≤ pS := stage_hpS1
   have hpSrange : Cscale⁻¹ * M.gamma⁻¹ * |Real.log M.gamma| ^ (-6 : ℤ) ≤ pS := stage_hpSrange
   have hSmom : ∀ p : ℝ, 1 ≤ p → p ≤ pS →

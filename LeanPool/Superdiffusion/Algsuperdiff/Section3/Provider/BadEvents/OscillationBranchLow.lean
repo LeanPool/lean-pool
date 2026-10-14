@@ -112,27 +112,6 @@ variable {d : ℕ}
 
 /-! ## Elementary numerics -/
 
-private theorem three_rpow_posL (x : ℝ) : (0 : ℝ) < (3 : ℝ) ^ x :=
-  Real.rpow_pos_of_pos (by norm_num) x
-
-private theorem three_rpow_addL (x y : ℝ) :
-    (3 : ℝ) ^ x * (3 : ℝ) ^ y = (3 : ℝ) ^ (x + y) :=
-  (Real.rpow_add (by norm_num) x y).symm
-
-private theorem three_rpow_half_sqL (x : ℝ) :
-    ((3 : ℝ) ^ ((1 / 2 : ℝ) * x)) ^ 2 = (3 : ℝ) ^ x := by
-  rw [← Real.rpow_natCast ((3 : ℝ) ^ ((1 / 2 : ℝ) * x)) 2,
-    ← Real.rpow_mul (by norm_num : (0 : ℝ) ≤ 3)]
-  congr 1
-  push_cast
-  ring
-
-private theorem one_le_mul_one_leL {a b : ℝ} (ha : 1 ≤ a) (hb : 1 ≤ b) :
-    1 ≤ a * b := by nlinarith
-
-private theorem one_le_of_one_le_sqL {B : ℝ} (hB : 0 < B) (h : 1 ≤ B ^ 2) :
-    1 ≤ B := by nlinarith
-
 private theorem sqrt_le_self_of_one_leL {a : ℝ} (h : 1 ≤ a) :
     Real.sqrt a ≤ a := by
   have h0 : (0 : ℝ) ≤ a := le_trans zero_le_one h
@@ -162,147 +141,6 @@ private theorem self_le_three_rpow_halfL {x : ℝ} (hx : 0 ≤ x) :
     exact Real.exp_le_exp.2 (by nlinarith [hlog, hx])
   linarith
 
-private theorem exp_pow_eqL (x : ℝ) (w : ℕ) :
-    Real.exp x ^ w = Real.exp ((w : ℝ) * x) := by
-  induction w with
-  | zero => simp
-  | succ k ih =>
-      have hcast : ((k + 1 : ℕ) : ℝ) * x = (k : ℝ) * x + x := by push_cast; ring
-      rw [pow_succ, ih, hcast, Real.exp_add]
-
-private theorem two_le_exp_oneL : (2 : ℝ) ≤ Real.exp 1 := by
-  linarith [Real.add_one_le_exp (1 : ℝ)]
-
-private theorem three_mul_succ_le_three_powL (w : ℕ) : 3 * (w + 1) ≤ 3 ^ (w + 1) := by
-  induction w with
-  | zero => norm_num
-  | succ k ih =>
-      have h3 : (3 : ℕ) ^ (k + 1 + 1) = 3 * 3 ^ (k + 1) := by ring
-      omega
-
-/-- The geometric summation `sum_{i >= 1} exp(-3 kappa)^i <= exp(-kappa)` for
-`kappa >= 1`. -/
-private theorem tsum_exp_pow_leL {kappa : ℝ} (hk : 1 ≤ kappa) :
-    ∑' w : ℕ, Real.exp (-(3 * kappa)) ^ (w + 1) ≤ Real.exp (-kappa) := by
-  have ha0 : (0 : ℝ) < Real.exp (-kappa) := Real.exp_pos _
-  have hahalf : Real.exp (-kappa) ≤ 1 / 2 := by
-    have h1 : Real.exp 1 ≤ Real.exp kappa := Real.exp_le_exp.2 hk
-    have h2 : (2 : ℝ) ≤ Real.exp kappa := le_trans two_le_exp_oneL h1
-    rw [Real.exp_neg, inv_le_iff_one_le_mul₀ (Real.exp_pos kappa)]
-    linarith
-  have hcube : Real.exp (-(3 * kappa)) = Real.exp (-kappa) ^ 3 := by
-    rw [exp_pow_eqL]
-    congr 1
-    push_cast
-    ring
-  have hq0 : (0 : ℝ) ≤ Real.exp (-(3 * kappa)) := (Real.exp_pos _).le
-  have hq1 : Real.exp (-(3 * kappa)) < 1 := by
-    have hlt : Real.exp (-(3 * kappa)) < Real.exp 0 := Real.exp_lt_exp.2 (by linarith)
-    simpa using hlt
-  have hsum : ∑' w : ℕ, Real.exp (-(3 * kappa)) ^ (w + 1) =
-      (1 - Real.exp (-(3 * kappa)))⁻¹ * Real.exp (-(3 * kappa)) := by
-    have hpow : ∀ w : ℕ, Real.exp (-(3 * kappa)) ^ (w + 1) =
-        Real.exp (-(3 * kappa)) ^ w * Real.exp (-(3 * kappa)) := fun w => pow_succ _ w
-    rw [tsum_congr hpow, tsum_mul_right, tsum_geometric_of_lt_one hq0 hq1]
-  have hden : (0 : ℝ) < 1 - Real.exp (-kappa) ^ 3 := by
-    rw [hcube] at hq1
-    linarith
-  have ha2 : Real.exp (-kappa) ^ 2 ≤ 1 / 4 := by nlinarith [ha0, hahalf]
-  have ha3 : Real.exp (-kappa) ^ 3 ≤ 1 / 8 := by nlinarith [ha0, hahalf, ha2]
-  rw [hsum, hcube, inv_mul_eq_div, div_le_iff₀ hden]
-  nlinarith [ha0, ha2, ha3, mul_le_mul_of_nonneg_left ha2 ha0.le,
-    mul_le_mul_of_nonneg_left ha3 ha0.le]
-
-/-- The weak-Orlicz tail, read at the threshold-to-amplitude ratio. -/
-private theorem measureReal_upperTail_le_expL {Omega : Type*}
-    [MeasurableSpace Omega] {mu : Measure Omega} {X : Omega → ℝ}
-    {A B thr rate : ℝ} (hA : 0 < A) (hB : 0 < B) (hBA : B * A ≤ thr)
-    (hBsq : B ^ 2 = rate) (hrate : 1 ≤ rate)
-    (htail : HCPolySupport.IndependentSums.IsBigOWith mu
-      (HCPolySupport.IndependentSums.gammaSigma 2) X A) :
-    mu.real {omega | thr < X omega} ≤ Real.exp (-rate) := by
-  have hB1 : 1 ≤ B := one_le_of_one_le_sqL hB (by rw [hBsq]; exact hrate)
-  have hBt : B ≤ thr / A := (le_div_iff₀ hA).2 hBA
-  have ht1 : (1 : ℝ) ≤ thr / A := le_trans hB1 hBt
-  have h := htail ht1
-  have hAt : A * (thr / A) = thr := by field_simp
-  rw [hAt] at h
-  refine le_trans h ?_
-  rw [HCPolySupport.IndependentSums.gammaSigma_inv]
-  refine Real.exp_le_exp.2 (neg_le_neg ?_)
-  have htt : (thr / A) ^ (2 : ℝ) = (thr / A) ^ (2 : ℕ) := by
-    rw [← Real.rpow_natCast (thr / A) 2]
-    norm_num
-  rw [htt, ← hBsq]
-  nlinarith [hBt, hB]
-
-/-- The geometric union bound. -/
-private theorem measureReal_le_exp_of_iUnionL {Omega : Type*}
-    [MeasurableSpace Omega] (mu : Measure Omega) [IsFiniteMeasure mu]
-    {S : Set Omega} {T : ℕ → Set Omega} {kappa : ℝ} (hk : 1 ≤ kappa)
-    (hsub : S ⊆ ⋃ w : ℕ, T w)
-    (hterm : ∀ w : ℕ,
-      mu.real (T w) ≤ Real.exp (-(kappa * (3 : ℝ) ^ ((w : ℝ) + 1)))) :
-    mu.real S ≤ Real.exp (-kappa) := by
-  classical
-  have hk0 : (0 : ℝ) < kappa := lt_of_lt_of_le zero_lt_one hk
-  have hgeom : ∀ w : ℕ,
-      mu.real (T w) ≤ Real.exp (-(3 * kappa)) ^ (w + 1) := by
-    intro w
-    refine le_trans (hterm w) ?_
-    rw [exp_pow_eqL]
-    refine Real.exp_le_exp.2 ?_
-    have hN : (3 * (w + 1) : ℕ) ≤ 3 ^ (w + 1) := three_mul_succ_le_three_powL w
-    have hR : ((3 * (w + 1) : ℕ) : ℝ) ≤ ((3 ^ (w + 1) : ℕ) : ℝ) := by
-      exact_mod_cast hN
-    have hid : (3 : ℝ) ^ ((w : ℝ) + 1) = (3 : ℝ) ^ (w + 1 : ℕ) := by
-      rw [show ((w : ℝ) + 1) = ((w + 1 : ℕ) : ℝ) by push_cast; ring,
-        Real.rpow_natCast]
-    have hpow : (3 : ℝ) * ((w : ℝ) + 1) ≤ (3 : ℝ) ^ ((w : ℝ) + 1) := by
-      rw [hid]
-      push_cast at hR
-      linarith
-    have hmul : 3 * kappa * ((w : ℝ) + 1) ≤ kappa * (3 : ℝ) ^ ((w : ℝ) + 1) := by
-      calc 3 * kappa * ((w : ℝ) + 1) = kappa * (3 * ((w : ℝ) + 1)) := by ring
-        _ ≤ kappa * (3 : ℝ) ^ ((w : ℝ) + 1) :=
-            mul_le_mul_of_nonneg_left hpow hk0.le
-    push_cast
-    linarith
-  have hsummable : Summable fun w : ℕ => Real.exp (-(3 * kappa)) ^ (w + 1) := by
-    have hq1 : Real.exp (-(3 * kappa)) < 1 := by
-      have hlt : Real.exp (-(3 * kappa)) < Real.exp 0 :=
-        Real.exp_lt_exp.2 (by linarith)
-      simpa using hlt
-    exact ((summable_geometric_of_lt_one (Real.exp_pos _).le hq1).mul_right _).congr
-      fun w => (pow_succ _ w).symm
-  have hbound : mu S ≤
-      ENNReal.ofReal (∑' w : ℕ, Real.exp (-(3 * kappa)) ^ (w + 1)) := by
-    rw [ENNReal.ofReal_tsum_of_nonneg
-      (fun w => pow_nonneg (Real.exp_pos _).le _) hsummable]
-    refine le_trans (measure_mono hsub) ?_
-    refine le_trans (measure_iUnion_le _) (ENNReal.tsum_le_tsum fun w => ?_)
-    have hfin : mu (T w) ≠ ⊤ := measure_ne_top _ _
-    rw [← ENNReal.ofReal_toReal hfin]
-    exact ENNReal.ofReal_le_ofReal (hgeom w)
-  calc mu.real S = (mu S).toReal := rfl
-    _ ≤ (ENNReal.ofReal (∑' w : ℕ, Real.exp (-(3 * kappa)) ^ (w + 1))).toReal :=
-        ENNReal.toReal_mono ENNReal.ofReal_ne_top hbound
-    _ = ∑' w : ℕ, Real.exp (-(3 * kappa)) ^ (w + 1) :=
-        ENNReal.toReal_ofReal
-          (tsum_nonneg fun w => pow_nonneg (Real.exp_pos _).le _)
-    _ ≤ Real.exp (-kappa) := tsum_exp_pow_leL hk
-
-/-! ## The weight conversion (`e.BoscL.def` gauge versus the `e.W.1.inf.bound`
-summand) -/
-
-/-- **The weight conversion.**  For a shell at or below the cube scale, the
-`e.BoscL.def` gauge `3^{2m} ||grad j_k||_{W^{1,infinity}(z+square_m)}` is
-dominated by `3^{2(m-k)}` times the summand
-`3^k ||grad j_k||_{L^infinity(z+square_m)} + 3^{2k} ||grad^2 j_k||_{L^infinity(z+square_m)}`
-of `e.W.1.inf.bound` on the *same* (translated) cube.
-
-This is the intrinsic factor identified: the oscillation gauge is normalized at
-the cube scale `m`, the stream summand at the shell scale `k`. -/
 theorem shellOscGauge_le_translatedLargeCubeDerivGauge (Q : TriadicCube d) {k : ℤ}
     (hk : k ≤ Q.scale) (omega : CutoffSample d) :
     shellOscGauge Q k omega ≤
@@ -419,7 +257,7 @@ theorem badEventOscFullRate_le_badEventOscRate (M : ABKModel d) {Ccg : ℝ}
     rw [scaleGapPos]
     exact max_eq_right hle
   have hcst := badEventOscLowConst_le_badEventOscConst hCcg d
-  have hpow : (0 : ℝ) < (3 : ℝ) ^ scaleGapPos Q.scale n := three_rpow_posL _
+  have hpow : (0 : ℝ) < (3 : ℝ) ^ scaleGapPos Q.scale n := three_rpow_pos _
   rw [badEventOscFullRate, badEventOscRate, hzero]
   rw [show scaleGapPos Q.scale n - 5 * (0 : ℝ) = scaleGapPos Q.scale n by ring]
   have hprod : badEventOscLowConst d Ccg *
@@ -459,25 +297,25 @@ private theorem high_threshold_comparisonL {kap w pm pn pk gamma : ℝ}
       ((3 : ℝ) ^ pm * (3 : ℝ) ^ ((gamma - 1) * pk)) =
       (3 : ℝ) ^ ((1 / 2 : ℝ) * (-(5 : ℝ) * (pm - pn)) + (1 / 2 : ℝ) * (pk - pn) +
         pm + (gamma - 1) * pk) := by
-    simp only [three_rpow_addL]
+    simp only [three_rpow_add]
     congr 1
     ring
   have hR : (3 : ℝ) ^ (gamma * (pn - 1)) * (3 : ℝ) ^ (-(1 / 5 : ℝ) * (pk - pn)) =
-      (3 : ℝ) ^ (gamma * (pn - 1) + -(1 / 5 : ℝ) * (pk - pn)) := three_rpow_addL _ _
+      (3 : ℝ) ^ (gamma * (pn - 1) + -(1 / 5 : ℝ) * (pk - pn)) := three_rpow_add _ _
   have hstep : (3 : ℝ) ^ ((1 / 2 : ℝ) * (-(5 : ℝ) * (pm - pn)) +
         (1 / 2 : ℝ) * (pk - pn) + pm + (gamma - 1) * pk) ≤
       3 * (3 : ℝ) ^ (gamma * (pn - 1) + -(1 / 5 : ℝ) * (pk - pn)) := by
     have hmerge : (3 : ℝ) *
         (3 : ℝ) ^ (gamma * (pn - 1) + -(1 / 5 : ℝ) * (pk - pn)) =
         (3 : ℝ) ^ (1 + (gamma * (pn - 1) + -(1 / 5 : ℝ) * (pk - pn))) := by
-      have hone := three_rpow_addL (1 : ℝ)
+      have hone := three_rpow_add (1 : ℝ)
         (gamma * (pn - 1) + -(1 / 5 : ℝ) * (pk - pn))
       rwa [Real.rpow_one] at hone
     rw [hmerge]
     exact Real.rpow_le_rpow_of_exponent_le (by norm_num)
       (high_exponent_leL hgq hnk hnm)
   have hRpos : (0 : ℝ) <
-      (3 : ℝ) ^ (gamma * (pn - 1) + -(1 / 5 : ℝ) * (pk - pn)) := three_rpow_posL _
+      (3 : ℝ) ^ (gamma * (pn - 1) + -(1 / 5 : ℝ) * (pk - pn)) := three_rpow_pos _
   calc (1 / 60 : ℝ) * kap * w *
         (3 : ℝ) ^ ((1 / 2 : ℝ) * (-(5 : ℝ) * (pm - pn))) *
         (3 : ℝ) ^ ((1 / 2 : ℝ) * (pk - pn)) *
@@ -522,9 +360,9 @@ private theorem wave_threshold_comparisonL {kap w cw sq pm pn pk gamma : ℝ}
   have hz1 : sq * (3 : ℝ) ^ (-((pm - pn) / 2)) ≤ 1 := by
     calc sq * (3 : ℝ) ^ (-((pm - pn) / 2))
         ≤ (3 : ℝ) ^ ((pm - pn) / 2) * (3 : ℝ) ^ (-((pm - pn) / 2)) :=
-          mul_le_mul_of_nonneg_right hsqle (three_rpow_posL _).le
+          mul_le_mul_of_nonneg_right hsqle (three_rpow_pos _).le
       _ = 1 := by
-          rw [three_rpow_addL,
+          rw [three_rpow_add,
             show (pm - pn) / 2 + -((pm - pn) / 2) = (0 : ℝ) by ring,
             Real.rpow_zero]
   have hz2 : (3 : ℝ) ^ ((pk - pn) * (gamma - 13 / 10) + gamma) ≤ 1 := by
@@ -538,18 +376,18 @@ private theorem wave_threshold_comparisonL {kap w cw sq pm pn pk gamma : ℝ}
           (3 : ℝ) ^ ((pk - pn) * (gamma - 13 / 10) + gamma)) *
         ((3 : ℝ) ^ (gamma * (pn - 1)) *
           (3 : ℝ) ^ (-(1 / 5 : ℝ) * (pk - pn))) := by
-    simp only [three_rpow_addL]
+    simp only [three_rpow_add]
     congr 1
     ring
   have hXpos : (0 : ℝ) < (3 : ℝ) ^ (gamma * (pn - 1)) *
       (3 : ℝ) ^ (-(1 / 5 : ℝ) * (pk - pn)) :=
-    mul_pos (three_rpow_posL _) (three_rpow_posL _)
+    mul_pos (three_rpow_pos _) (three_rpow_pos _)
   have hbc : (sq * (3 : ℝ) ^ (-((pm - pn) / 2))) *
       (3 : ℝ) ^ ((pk - pn) * (gamma - 13 / 10) + gamma) ≤ 1 := by
     calc (sq * (3 : ℝ) ^ (-((pm - pn) / 2))) *
           (3 : ℝ) ^ ((pk - pn) * (gamma - 13 / 10) + gamma)
         ≤ 1 * (3 : ℝ) ^ ((pk - pn) * (gamma - 13 / 10) + gamma) :=
-          mul_le_mul_of_nonneg_right hz1 (three_rpow_posL _).le
+          mul_le_mul_of_nonneg_right hz1 (three_rpow_pos _).le
       _ = (3 : ℝ) ^ ((pk - pn) * (gamma - 13 / 10) + gamma) := one_mul _
       _ ≤ 1 := hz2
   have habc : (cw * w) * ((sq * (3 : ℝ) ^ (-((pm - pn) / 2))) *
@@ -648,9 +486,9 @@ theorem measureReal_shellSensitivityFailure_le_low (M : ABKModel d) {Ccg : ℝ}
       (max 1 (shellW1InfSmallerConst d))⁻¹ *
       (3 : ℝ) ^ ((1 / 2 : ℝ) * (-(5 : ℝ) * ((Q.scale : ℝ) - (n : ℝ)))) *
       (3 : ℝ) ^ ((1 / 2 : ℝ) * ((k : ℝ) - (n : ℝ))) := by
-    have h1 := three_rpow_posL
+    have h1 := three_rpow_pos
       ((1 / 2 : ℝ) * (-(5 : ℝ) * ((Q.scale : ℝ) - (n : ℝ))))
-    have h2 := three_rpow_posL ((1 / 2 : ℝ) * ((k : ℝ) - (n : ℝ)))
+    have h2 := three_rpow_pos ((1 / 2 : ℝ) * ((k : ℝ) - (n : ℝ)))
     positivity
   have hBsq : ((1 / 60 : ℝ) *
       ((sensitivityConstMax d)⁻¹ * Ccg⁻¹ *
@@ -679,11 +517,11 @@ theorem measureReal_shellSensitivityFailure_le_low (M : ABKModel d) {Ccg : ℝ}
           (((3 : ℝ) ^ ((1 / 2 : ℝ) * ((k : ℝ) - (n : ℝ)))) ^ 2) := by
       rw [← inv_pow]
       ring
-    rw [hexpand, hcs, hgs, three_rpow_half_sqL, three_rpow_half_sqL,
+    rw [hexpand, hcs, hgs, three_rpow_half_sq, three_rpow_half_sq,
       badEventOscFullRate_of_lt M Ccg Q hmn, badEventOscLowConst]
   have hrate3 : (1 : ℝ) ≤
       badEventOscFullRate M Ccg Q n * (3 : ℝ) ^ ((k : ℝ) - (n : ℝ)) :=
-    one_le_mul_one_leL hrestrict
+    one_le_mul_one_le hrestrict
       (Real.one_le_rpow (by norm_num) (by linarith))
   -- the shell threshold, relaxed through the induction state
   have hgapzero : scaleGapPos Q.scale n = 0 := scaleGapPos_of_lt hmn
@@ -700,7 +538,7 @@ theorem measureReal_shellSensitivityFailure_le_low (M : ABKModel d) {Ccg : ℝ}
       shellSensitivityThreshold M Ccg Q.scale n k := by
     have hfacpos : (0 : ℝ) ≤ (1 / 20 : ℝ) * ((sensitivityConstMax d)⁻¹ * Ccg⁻¹) *
         (3 : ℝ) ^ (-(1 / 5 : ℝ) * ((k : ℝ) - (n : ℝ))) := by
-      have h1 := three_rpow_posL (-(1 / 5 : ℝ) * ((k : ℝ) - (n : ℝ)))
+      have h1 := three_rpow_pos (-(1 / 5 : ℝ) * ((k : ℝ) - (n : ℝ)))
       have h3 : (0 : ℝ) < (sensitivityConstMax d)⁻¹ * Ccg⁻¹ := by positivity
       positivity
     rw [shellSensitivityThreshold, goodLocalThreshold, hgapzero, mul_zero,
@@ -746,8 +584,8 @@ theorem measureReal_shellSensitivityFailure_le_low (M : ABKModel d) {Ccg : ℝ}
     have hApos : (0 : ℝ) < (3 : ℝ) ^ ((2 : ℝ) * ((Q.scale : ℝ) - (k : ℝ))) *
         (shellW1InfSmallerConst d * Real.sqrt ((Q.scale : ℝ) - (k : ℝ)) *
           (3 : ℝ) ^ (M.gamma * (k : ℝ))) := by
-      have h1 := three_rpow_posL ((2 : ℝ) * ((Q.scale : ℝ) - (k : ℝ)))
-      have h2 := three_rpow_posL (M.gamma * (k : ℝ))
+      have h1 := three_rpow_pos ((2 : ℝ) * ((Q.scale : ℝ) - (k : ℝ)))
+      have h2 := three_rpow_pos (M.gamma * (k : ℝ))
       positivity
     have hsqle : Real.sqrt ((Q.scale : ℝ) - (k : ℝ)) ≤
         (3 : ℝ) ^ (((Q.scale : ℝ) - (n : ℝ)) / 2) := by
@@ -778,16 +616,16 @@ theorem measureReal_shellSensitivityFailure_le_low (M : ABKModel d) {Ccg : ℝ}
         ring
       rw [hz]
       exact shellOscGauge_le_translatedLargeCubeDerivGauge Q hkm.le omega
-    refine measureReal_upperTail_le_expL hApos hBpos ?_ hBsq hrate3 htail
+    refine measureReal_upperTail_le_exp hApos hBpos ?_ hBsq hrate3 htail
     refine le_trans ?_ hthrlow
     exact wave_threshold_comparisonL hkappos.le hwpos.le hCW.le hwcw
       hsqle hg hgq hnkR
   · -- the own-scale regime: a shell at or above the cube scale
     have hApos : (0 : ℝ) < (3 : ℝ) ^ ((Q.scale : ℝ)) *
         (3 : ℝ) ^ ((M.gamma - 1) * (k : ℝ)) :=
-      mul_pos (three_rpow_posL _) (three_rpow_posL _)
+      mul_pos (three_rpow_pos _) (three_rpow_pos _)
     have htail := isBigOWith_gammaSigma_shellOscGauge M Q hmk
-    refine measureReal_upperTail_le_expL hApos hBpos ?_ hBsq hrate3 htail
+    refine measureReal_upperTail_le_exp hApos hBpos ?_ hBsq hrate3 htail
     refine le_trans ?_ hthrlow
     exact high_threshold_comparisonL hkappos.le hwpos.le hw1 hgq hnkR hnmR
 
@@ -813,7 +651,7 @@ theorem measureReal_goodLocalSensitivityFailure_le_low (M : ABKModel d)
     (hrestrict : 1 ≤ badEventOscFullRate M Ccg Q n) :
     (cutoffSampleLaw M).toMeasure.real (goodLocalSensitivityFailure M Ccg Q n) ≤
       Real.exp (-(badEventOscFullRate M Ccg Q n)) := by
-  refine measureReal_le_exp_of_iUnionL _ hrestrict
+  refine measureReal_le_exp_of_iUnion _ hrestrict
     (goodLocalSensitivityFailure_subset_iUnion M hCcg Q n) fun w => ?_
   have hle := measureReal_shellSensitivityFailure_le_low M hCcg Q hS hn hmn
     (k := n + 1 + (w : ℤ)) (by omega) hrestrict

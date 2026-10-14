@@ -362,17 +362,15 @@ private theorem principalResponseDisplayTwo_estimate1 :
           cubeEuclideanLpNorm Q (8 : ℝ≥0∞) wD.grad ^ (2 : ℕ) +
               (2 : ℝ) * cubeEuclideanLpNorm Q (8 : ℝ≥0∞) wN.toH1Function.grad ^ (2 : ℕ) +
             (2 : ℝ) * cubeEuclideanLpNorm Q (8 : ℝ≥0∞) F ^ (2 : ℕ);
-        ∀
-          (_ :
-            S =
-              cubeEuclideanLpNorm Q (8 : ℝ≥0∞) wD.grad ^ (2 : ℕ) +
-                  (2 : ℝ) * cubeEuclideanLpNorm Q (8 : ℝ≥0∞) wN.toH1Function.grad ^ (2 : ℕ) +
-                (2 : ℝ) * cubeEuclideanLpNorm Q (8 : ℝ≥0∞) F ^ (2 : ℕ)),
           cubeEuclideanLpNorm Q (8 : ℝ≥0∞) wD.grad ^ (4 : ℕ) +
               cubeEuclideanLpNorm Q (8 : ℝ≥0∞) (neumannFluxField sigmaLow omega lowScale highScale
                 e' wN) ^ (4 : ℕ) ≤
             S ^ (2 : ℕ) := by
-  intro _ sigmaLow omega lowScale highScale e' Q wD wN F hnnN hnnF hnnGN hnnD hGNsq _ hSdef
+  intro _ sigmaLow omega lowScale highScale e' Q wD wN F hnnN hnnF hnnGN hnnD hGNsq calculationS
+  have hSdef : calculationS =
+              cubeEuclideanLpNorm Q (8 : ℝ≥0∞) wD.grad ^ (2 : ℕ) +
+                  (2 : ℝ) * cubeEuclideanLpNorm Q (8 : ℝ≥0∞) wN.toH1Function.grad ^ (2 : ℕ) +
+                (2 : ℝ) * cubeEuclideanLpNorm Q (8 : ℝ≥0∞) F ^ (2 : ℕ) := rfl
   have h1 : cubeEuclideanLpNorm Q 8 wD.toH1Function.grad ^ (4 : ℕ) =
       (cubeEuclideanLpNorm Q 8 wD.toH1Function.grad ^ (2 : ℕ)) ^ (2 : ℕ) := by ring
   have h2 : cubeEuclideanLpNorm Q 8
@@ -484,7 +482,7 @@ theorem pathwise_descendantsAverage_sq_annealedSqrtNormSq_le
       cubeEuclideanLpNorm Q 8
         (neumannFluxField sigmaLow omega lowScale highScale e' wN) ^ (4 : ℕ) ≤
       S ^ (2 : ℕ)  := @principalResponseDisplayTwo_estimate1 (d) (sigmaLow) (omega) (lowScale)
-        (highScale) (e') (Q) (wD) (wN) (hnnN) (hnnF) (hnnGN) (hnnD) (hGNsq) (hSdef)
+        (highScale) (e') (Q) (wD) (wN) (hnnN) (hnnF) (hnnGN) (hnnD) (hGNsq)
   have hrho : (0 : ℝ) < gaugeRatio sigmaLow sigmaTop := gaugeRatio_pos _ _
   have hrhosq : (0 : ℝ) ≤ 2 * gaugeRatio sigmaLow sigmaTop ^ (2 : ℕ) := by positivity
   have hstep : 2 * gaugeRatio sigmaLow sigmaTop ^ (2 : ℕ) *

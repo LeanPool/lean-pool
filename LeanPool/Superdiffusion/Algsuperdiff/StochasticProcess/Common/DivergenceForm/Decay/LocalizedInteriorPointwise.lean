@@ -99,7 +99,6 @@ private theorem localizedInteriorPointwise_comparisonBounds1 :
           ℝ)}).toReal ≤
           volLayer),
       let Lloc : ℝ := localizedInteriorUpper nu mass Ks Kl;
-      ∀ (_ : Lloc = localizedInteriorUpper nu mass Ks Kl),
         let kappa : ℝ := agmonRate nu Lloc mass;
         ∀ (_ : (0 : ℝ) < Lloc) (_ : (0 : ℝ) ≤ kappa)
           (_ :
@@ -126,8 +125,9 @@ private theorem localizedInteriorPointwise_comparisonBounds1 :
               ^ (2 : ℕ)) ≤
               (8 : ℝ) * Lloc ^ (2 : ℕ) / (nu * mass) * Ceta * volLayer * M ^ (2 : ℕ) * Real.exp
                 ((2 : ℝ) * (kappa * tA)) := by
-  intro d Om hOm u eta psi nu _ _ mass M Ceta volLayer tA _ _ hM hMbound hCeta hetaGrad hlayer
-    hvolLayer Lloc hLloc_def kappa _ hkappa0 hagmon this hlayerMeas hlayerTop
+  intro d Om hOm u eta psi nu calculationKs calculationKl mass M Ceta volLayer tA _ _ hM hMbound
+    hCeta hetaGrad hlayer hvolLayer Lloc kappa _ hkappa0 hagmon this hlayerMeas hlayerTop
+  have hLloc_def : Lloc = localizedInteriorUpper nu mass calculationKs calculationKl := rfl
   have hlayerInt := integrable_sq_mul_memLpTop (u := u) hlayerTop
   have hlayerBound : (∫ y in Om, u.toFun y ^ 2 *
       (Real.exp (kappa * psi y) ^ 2 *
@@ -307,7 +307,7 @@ theorem interior_abs_center_le_exp_localized [NeZero d]
         Real.exp (2 * (kappa * tA)) :=
     @localizedInteriorPointwise_comparisonBounds1 (d) (Om) (hOm) (u) (eta) (psi) (nu) (Ks) (Kl)
       (mass) (M) (Ceta) (volLayer) (tA) (hnu) (hmass) (hM) (hMbound) (hCeta) (hetaGrad) (hlayer)
-        (hvolLayer) (hLloc_def) (hLloc) (hkappa0) (hagmon) (hlayerMeas) (hlayerTop)
+        (hvolLayer)  (hLloc) (hkappa0) (hagmon) (hlayerMeas) (hlayerTop)
   have hweightTop : MemLp (fun y => eta y ^ 2 * Real.exp (kappa * psi y) ^ 2)
       ∞ (volumeMeasureOn Om) := by
     have hetaSq : HasCompactSupport (fun y => eta y ^ 2) := by

@@ -789,11 +789,10 @@ private theorem assemblyComposedErrorWeighted_comparisonBounds2 :
 private theorem assemblyComposedErrorWeighted_comparisonBounds3 :
     ∀ (d : ℕ) (CE : ℝ),
       let kappa : ℝ := √((192 : ℝ) * (↑d : ℝ)) * (3 : ℝ);
-      ∀ (_ : kappa = √((192 : ℝ) * (↑d : ℝ)) * (3 : ℝ)) (_ : (0 : ℝ) ≤ kappa),
+      ∀  (_ : (0 : ℝ) ≤ kappa),
         let e0 : ℝ := kappa * (CE * (1 / 2 : ℝ));
-        ∀ (_ : e0 = kappa * (CE * (1 / 2 : ℝ))),
           let k0 : ℝ := (2 : ℝ) * (↑d : ℝ) * (e0 ^ (2 : ℕ) + (1 : ℝ));
-          ∀ (_ : k0 = (2 : ℝ) * (↑d : ℝ) * (e0 ^ (2 : ℕ) + (1 : ℝ))) (M : ABKModel d) (s : ℝ) (_ :
+          ∀  (M : ABKModel d) (s : ℝ) (_ :
             (0 : ℝ) < s)
             (L m n : ℤ) (x z : Vec d) (_ : s ≤ (1 : ℝ)) (omega : Cutoff.CutoffSample d)
             (u hdat : H1Function (openCubeSet (originCube d m))) (g : Vec d → Vec d) (S : ℝ)
@@ -810,11 +809,6 @@ private theorem assemblyComposedErrorWeighted_comparisonBounds3 :
               let Eb : ℝ :=
                 √(offGridStabilityConst d (s / (6 : ℝ)) (s / (8 : ℝ))) * ((3 : ℝ) ^ ((3 : ℝ) * (s
                   / (8 : ℝ))) * Erep);
-              ∀
-                (_ :
-                  Eb =
-                    √(offGridStabilityConst d (s / (6 : ℝ)) (s / (8 : ℝ))) * ((3 : ℝ) ^ ((3 : ℝ) *
-                      (s / (8 : ℝ))) * Erep)),
                 let sig : ℝ := (↑(Annealed.sigmaBar M (n + (3 : ℤ))) : ℝ);
                 ∀ (_ : (0 : ℝ) < sig),
                   let X : ℝ :=
@@ -856,7 +850,6 @@ private theorem assemblyComposedErrorWeighted_comparisonBounds3 :
                     (normalizedGagliardoESeminormOn ((fun (y : Vec d) => x + y) '' openCubeSet
                       (originCube d n)) s
                         g).toReal;
-                  let _ : ℝ := Real.rpow (3 : ℝ) (-(↑(n + (2 : ℤ)) : ℝ));
                   let Q3s : ℝ := Real.rpow (3 : ℝ) (s * (↑(n + (2 : ℤ)) : ℝ));
                   let Q3sn : ℝ := Real.rpow (3 : ℝ) (s * (↑n : ℝ));
                   let Q1s : ℝ := Real.rpow (3 : ℝ) (((1 : ℝ) + s) * (↑n : ℝ));
@@ -885,8 +878,15 @@ private theorem assemblyComposedErrorWeighted_comparisonBounds3 :
                                                   Eb ≤ kappa * Erep ∧
                                                     Eb ≤ e0 ∧ (2 : ℝ) * (↑d : ℝ) * (Eb ^ (2 : ℕ) +
                                                       (1 : ℝ)) ≤ k0 := by
-  intro d _ kappa hkappadef hkappa e0 he0def k0 hk0def _ s hs _ _ _ _ _ hs1 _ _ _ _ S hmean Erep
-    hErepCap hErep0 Eb hEbdef sig hsig X Gs Hs Hn Y2 Ychild P2 Q3s Q3sn Q1s R3n S4 S7 S6 Sm3 Sm2
+  intro d calculationCE kappa hkappa e0 k0 _ s hs _ _ n _ _ hs1 _ _ _ _ S hmean Erep hErepCap
+    hErep0 Eb sig hsig X Gs Hs Hn Y2 Ychild Q3s Q3sn Q1s R3n S4 S7 S6 Sm3 Sm2
+  let P2 : ℝ := Real.rpow (3 : ℝ) (-(↑(n + (2 : ℤ)) : ℝ))
+  have hkappadef : kappa = √((192 : ℝ) * (↑d : ℝ)) * (3 : ℝ) := rfl
+  have he0def : e0 = kappa * (calculationCE * (1 / 2 : ℝ)) := rfl
+  have hk0def : k0 = (2 : ℝ) * (↑d : ℝ) * (e0 ^ (2 : ℕ) + (1 : ℝ)) := rfl
+  have hEbdef : Eb =
+                    √(offGridStabilityConst d (s / (6 : ℝ)) (s / (8 : ℝ))) * ((3 : ℝ) ^ ((3 : ℝ) *
+                      (s / (8 : ℝ))) * Erep) := rfl
   have hX0 : 0 ≤ X := ENNReal.toReal_nonneg
   have hGs0 : 0 ≤ Gs := ENNReal.toReal_nonneg
   have hHs0 : 0 ≤ Hs := ENNReal.toReal_nonneg
@@ -1103,9 +1103,9 @@ private theorem assemblyComposedErrorWeighted_comparisonBounds5 :
     (show (0 ≤ X) ∧ (0 ≤ Gs) ∧ (0 ≤ Hs) ∧ (0 ≤ Hn) ∧ (0 ≤ S) ∧ (0 ≤ Q3s) ∧ (0 ≤ Q3sn) ∧ (0 ≤ Q1s)
       ∧ (0 ≤ R3n) ∧ (0 ≤ S4) ∧ (0 ≤ S7) ∧ (0 ≤ S6) ∧ (0 ≤ Sm3) ∧ (0 ≤ Sm2) ∧ ((0 : ℝ) ≤ sig⁻¹) ∧
         (0 ≤ Eb) ∧ (Eb ≤ kappa * Erep) ∧ (Eb ≤ e0) ∧ (2 * (d : ℝ) * (Eb ^ 2 + 1) ≤ k0) from
-      @assemblyComposedErrorWeighted_comparisonBounds3 (d) (CE) (hkappadef) (hkappa) (he0def)
-        (hk0def) (M) (s) (hs) (L) (m) (n) (x) (z) (hs1) (omega) (u) (hdat) (g) (S) (hmean)
-          (hErepCap) (hErep0) (hEbdef) (hsig))
+      @assemblyComposedErrorWeighted_comparisonBounds3 (d) (CE)  (hkappa)
+         (M) (s) (hs) (L) (m) (n) (x) (z) (hs1) (omega) (u) (hdat) (g) (S) (hmean)
+          (hErepCap) (hErep0)  (hsig))
   obtain ⟨hbrkCap, hET, hGbes, hGbes0, hYchild3⟩ :=
     (show (coarseGrainingForceBracket (originCube d n)
       (parentRebasedFamily M L (n + 3) x z omega)

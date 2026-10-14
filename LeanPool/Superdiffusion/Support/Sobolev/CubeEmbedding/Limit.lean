@@ -129,7 +129,7 @@ private theorem cubeSobolevEmbedding_fourthPowerBound :
         ℝ)) : ℝ≥0∞);
       let Cd : ℝ≥0∞ := ((3 : ℝ≥0∞) ^ (m + (1 : ℕ))) ^ (1 / 2 : ℝ);
       let C0 : ℝ≥0∞ := Cgns * Cd * (↑((m + (1 : ℕ)) * (32 : ℕ)) : ℝ≥0∞);
-      ∀ (_ : C0 = Cgns * Cd * (↑((m + (1 : ℕ)) * (32 : ℕ)) : ℝ≥0∞)) (z : Vec (m + (1 : ℕ))) (L : ℝ)
+      ∀  (z : Vec (m + (1 : ℕ))) (L : ℝ)
         (u : H1Function (axisCube z L)),
         let hi : Vec (m + (1 : ℕ)) := fun (k : Fin (m + (1 : ℕ))) => z k + L;
         ∀ (hU3 : IsOpenBoundedConvexDomain (Box3 z hi)) (Ext : FoldExtension z hi u),
@@ -146,12 +146,6 @@ private theorem cubeSobolevEmbedding_fourthPowerBound :
                     (Box3 z hi));
             ∀
               (_ :
-                binf =
-                  Cgns *
-                    ∑ i : Fin (m + (1 : ℕ)),
-                      eLpNorm (fun (x : Vec (m + (1 : ℕ))) => w.grad x i) (2 : ℝ≥0∞)
-                        (volume.restrict (Box3 z hi)))
-              (_ :
                 ∀ (i : Fin (m + (1 : ℕ))),
                   eLpNorm (fun (x : Vec (m + (1 : ℕ))) => w.grad x i) (2 : ℝ≥0∞) (volume.restrict
                     (Box3 z hi)) ≤
@@ -166,7 +160,13 @@ private theorem cubeSobolevEmbedding_fourthPowerBound :
                         (volume.restrict (Box z hi)) +
                     ENNReal.ofReal L⁻¹ * eLpNorm u.toFun (2 : ℝ≥0∞) (volume.restrict (Box z
                       hi))) := by
-  intro m Cgns Cd _ hC0 z L u hi _ _ _ _ _ _ _ w _ hbinf hwgrad_bound
+  intro m Cgns Cd calculationC0 z L u hi _ _ _ _ _ _ _ w calculationBinf hwgrad_bound
+  have hC0 : calculationC0 = Cgns * Cd * (↑((m + (1 : ℕ)) * (32 : ℕ)) : ℝ≥0∞) := rfl
+  have hbinf : calculationBinf =
+                  Cgns *
+                    ∑ i : Fin (m + (1 : ℕ)),
+                      eLpNorm (fun (x : Vec (m + (1 : ℕ))) => w.grad x i) (2 : ℝ≥0∞)
+                        (volume.restrict (Box3 z hi)) := rfl
   have hsum : ∑ i, eLpNorm (fun x => w.grad x i) 2 (volume.restrict (Box3 z hi))
       ≤ Cd * (∑ i, eLpNorm (fun x => u.grad x i) 2 (volume.restrict (Box z hi)))
         + ((m + 1 : ℕ) : ℝ≥0∞) * (ENNReal.ofReal (32 / L)
@@ -396,8 +396,8 @@ theorem cubeSobolevEmbedding {d : ℕ} (hd : 3 ≤ d) :
   have hL4 : binf ≤ (C0 : ℝ≥0∞)
       * ((∑ i, eLpNorm (fun x => u.grad x i) 2 (volume.restrict (Box z hi)))
           + ENNReal.ofReal L⁻¹ * eLpNorm u.toFun 2 (volume.restrict (Box z hi)))  :=
-            @cubeSobolevEmbedding_fourthPowerBound (m) (hC0) (z) (L) (u) (hU3) (Ext) (hχ_smooth)
-              (hχ_cptsupp) (hχ_sub) (hbinf) (hwgrad_bound)
+            @cubeSobolevEmbedding_fourthPowerBound (m)  (z) (L) (u) (hU3) (Ext) (hχ_smooth)
+              (hχ_cptsupp) (hχ_sub)  (hwgrad_bound)
   -- combine
   have hmain : eLpNorm u.toFun (twoStar (m + 1)) (volume.restrict (Box z hi))
       ≤ (C0 : ℝ≥0∞)

@@ -500,13 +500,13 @@ private theorem interiorComposed_comparisonBounds1 :
       let cg : ℝ := (3 : ℝ) * negNormBaseConst d * coarseGrainingP2Const d;
       ∀ (_ : (0 : ℝ) ≤ cg),
         let A1 : ℝ := cg * (216 : ℝ) * (kappa * √Cout);
-        ∀ (_ : A1 = cg * (216 : ℝ) * (kappa * √Cout)) (_ : (0 : ℝ) ≤ A1),
+        ∀  (_ : (0 : ℝ) ≤ A1),
           let A2 : ℝ := cg * (1944 : ℝ) * (b0 * (besovGagliardoConstant d * gagliardoWindowConst
             d));
-          ∀ (_ : A2 = cg * (1944 : ℝ) * (b0 * (besovGagliardoConstant d * gagliardoWindowConst d)))
+          ∀
             (_ : (0 : ℝ) ≤ A2),
             let A3 : ℝ := interiorCorrectionConst d * gagliardoWindowConst d;
-            ∀ (_ : A3 = interiorCorrectionConst d * gagliardoWindowConst d) (_ : (0 : ℝ) ≤ A3) (s
+            ∀  (_ : (0 : ℝ) ≤ A3) (s
               : ℝ)
               (_ : (0 : ℝ) < s) (n : ℤ) (_ : s ≤ (1 : ℝ)) (Erep : ℝ) (_ : Erep ≤ CE * (1 / 2 : ℝ))
               (_ : (0 : ℝ) ≤ Erep) (sig X Y P2 : ℝ) (_ : P2 = Real.rpow (3 : ℝ) (-(↑(n + (2 : ℤ))
@@ -536,9 +536,13 @@ private theorem interiorComposed_comparisonBounds1 :
                       A3 * (S192 * sig⁻¹ * Q1s * Y) ∧
                     (0 : ℝ) ≤ S4 * Erep * X ∧ (0 : ℝ) ≤ S192 * sig⁻¹ * Q1s * Y ∧ (0 : ℝ) ≤ (9 : ℝ)
                       * (CE * (1 / 2 : ℝ)) * A1 := by
-  intro d _ CE _ Cout _ kappa _ _ b0 cg _ A1 hA1def hA1 A2 hA2def hA2 A3 hA3def hA3 s hs n hs1
-    Erep hErepCap hErep0 sig X Y P2 hP2def QS hQSdef Q3s hQ3sdef Q3sn hQ3sndef Q1s hQ1sdef R3n
-      hR3ndef S4 hS4def S192 hS192def hX0 hY0 hQS0 hQ3s0 hQ1s0 hR3n0 hS40 hS1920 hsiginv0 hsinv
+  intro d _ CE _ Cout _ kappa _ _ b0 cg _ A1 hA1 A2 hA2 A3 hA3 s hs n hs1 Erep hErepCap hErep0
+    sig X Y P2 hP2def QS hQSdef Q3s hQ3sdef Q3sn hQ3sndef Q1s hQ1sdef R3n hR3ndef S4 hS4def S192
+    hS192def hX0 hY0 hQS0 hQ3s0 hQ1s0 hR3n0 hS40 hS1920 hsiginv0 hsinv
+  have hA1def : A1 = cg * (216 : ℝ) * (kappa * √Cout) := rfl
+  have hA2def : A2 = cg * (1944 : ℝ) * (b0 * (besovGagliardoConstant d * gagliardoWindowConst
+    d)) := rfl
+  have hA3def : A3 = interiorCorrectionConst d * gagliardoWindowConst d := rfl
   have hS4eq : (s⁻¹) ^ (4 : ℕ) = S4 := by
     rw [hS4def, inv_pow_eq_rpow_neg hs 4]
     congr 1
@@ -1067,7 +1071,7 @@ theorem exists_interiorClause_honest (d : ℕ) [NeZero d] :
         (gagliardoWindowConst d * Y)) ≤ A3 * (S192 * sig⁻¹ * Q1s * Y)) ∧ ((0 : ℝ) ≤ S4 * Erep * X)
           ∧ ((0 : ℝ) ≤ S192 * sig⁻¹ * Q1s * Y) ∧ ((0 : ℝ) ≤ 9 * (CE * (1 / 2)) * A1) from
       @interiorComposed_comparisonBounds1 (d) (by infer_instance) (CE) (hCEpos) (Cout) (hCoutpos)
-        (hcg) (hA1def) (hA1) (hA2def) (hA2) (hA3def) (hA3) (s) (hs) (n) (hs1) (Erep) (hErepCap)
+        (hcg)  (hA1)  (hA2)  (hA3) (s) (hs) (n) (hs1) (Erep) (hErepCap)
           (hErep0) (sig) (X) (Y) (P2) (hP2def) (QS) (hQSdef) (Q3s) (hQ3sdef) (Q3sn) (hQ3sndef)
             (Q1s) (hQ1sdef) (R3n) (hR3ndef) (S4) (hS4def) (S192) (hS192def) (hX0) (hY0) (hQS0)
               (hQ3s0) (hQ1s0) (hR3n0) (hS40) (hS1920) (hsiginv0) (hsinv))

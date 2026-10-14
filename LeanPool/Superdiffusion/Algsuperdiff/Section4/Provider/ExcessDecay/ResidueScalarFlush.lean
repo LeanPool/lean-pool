@@ -1017,17 +1017,6 @@ private theorem residueScalarFlush_comparisonBounds5 :
                   openCubeSet (originCube d m))
                 u.toFun;
         ∀
-          (_ :
-            XX =
-              normalizedL2On
-                ((fun (y' : Vec d) => z + y') '' openCubeSet (originCube d (n + (3 : ℤ))) ∩
-                  openCubeSet (originCube d m))
-                fun (y : Vec d) =>
-                u.toFun y -
-                  volumeAverage
-                    ((fun (y' : Vec d) => z + y') '' openCubeSet (originCube d (n + (3 : ℤ))) ∩
-                      openCubeSet (originCube d m))
-                    u.toFun)
           (_ : truncatedWindow c' m n = translateSet c' (openCubeSet (originCube d n)))
           (w0 : H10Function (openCubeSet (originCube d m))) (_ : ∀ (x : Vec d), u.toFun x =
             h.toFun x + w0.toFun x),
@@ -1048,7 +1037,17 @@ private theorem residueScalarFlush_comparisonBounds5 :
               (2 : ℝ) * √((27 : ℝ) ^ d) * XX := by
   classical
   intro d CA hCA n m z _ _ hnm hσ hover u _ c' hKW' hW'm hW'pos hW'top hK'meas hK'pos hK'top wu
-    rhou hharmu hvalu wh rhoh hharmh hvalh _ hmemU_K hmemU_W XX hXXdef hTWts w0 hw0val
+    rhou hharmu hvalu wh rhoh hharmh hvalh _ hmemU_K hmemU_W XX hTWts w0 hw0val
+  have hXXdef : XX =
+              normalizedL2On
+                ((fun (y' : Vec d) => z + y') '' openCubeSet (originCube d (n + (3 : ℤ))) ∩
+                  openCubeSet (originCube d m))
+                fun (y : Vec d) =>
+                u.toFun y -
+                  volumeAverage
+                    ((fun (y' : Vec d) => z + y') '' openCubeSet (originCube d (n + (3 : ℤ))) ∩
+                      openCubeSet (originCube d m))
+                    u.toFun := rfl
   have hlegA : |volumeAverage ((fun y => c' + y) '' openCubeSet (originCube d n))
       (fun y => wu.toFun y - wh.toFun y)| ≤
       CA * normalizedL2On ((fun y => c' + y) '' openCubeSet (originCube d n))
@@ -1210,7 +1209,7 @@ private theorem residueScalarFlush_comparisonBounds6 :
           u.toFun) ≤ 2 * Real.sqrt ((27 : ℝ) ^ d) * XX) from
       @residueScalarFlush_comparisonBounds5 (d) (CA) (hCA) (n) (m) (z) (i) (σ) (hnm) (hσ) (hover)
         (u) (h) (hKW') (hW'm) (hW'pos) (hW'top) (hK'meas) (hK'pos) (hK'top) (wu) (rhou) (hharmu)
-          (hvalu) (wh) (rhoh) (hharmh) (hvalh) (by infer_instance) (hmemU_K) (hmemU_W) (hXXdef)
+          (hvalu) (wh) (rhoh) (hharmh) (hvalh) (by infer_instance) (hmemU_K) (hmemU_W)
             (hTWts) (w0) (hw0val))
   have hoscH : normalizedL2On ((fun y => c' + y) '' openCubeSet (originCube d n))
       (fun y => h.toFun y -

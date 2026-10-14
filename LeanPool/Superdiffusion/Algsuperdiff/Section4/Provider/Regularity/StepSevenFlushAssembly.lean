@@ -341,12 +341,6 @@ private theorem stepSevenFlushAssembly_comparisonBounds1 :
         (eLpNorm (fun (y : Vec d) => uglob.toFun y - volumeAverage (truncatedWindow z m (n + (3 :
           ℤ))) uglob.toFun)
             (2 : ℝ≥0∞) (normalizedVolumeMeasureOn (truncatedWindow z m (n + (3 : ℤ))))).toReal;
-      ∀
-        (_ :
-          oscE =
-            (eLpNorm (fun (y : Vec d) => uglob.toFun y - volumeAverage (truncatedWindow z m (n +
-              (3 : ℤ))) uglob.toFun)
-                (2 : ℝ≥0∞) (normalizedVolumeMeasureOn (truncatedWindow z m (n + (3 : ℤ))))).toReal),
         let sumH : ℝ :=
           ∑ i' : Fin d,
             (eLpNorm (fun (y : Vec d) => hdat.grad y i') (2 : ℝ≥0∞)
@@ -381,8 +375,13 @@ private theorem stepSevenFlushAssembly_comparisonBounds1 :
                       stepOneS) * (↑n : ℝ)) * gagH ≤
                       Real.rpow (3 : ℝ) ((↑m : ℝ) / (2 : ℝ)) * (Kh * stepFourGagliardoConst d
                         stepOneS) := by
-  intro d m n z sigma Khol Kh uglob hdat _ hd1 hz hnm hKhol hKh hgHol hhHol hsup hgag0 oscE
-    hoscEdef sumH flatH gagG gagH
+  intro d m n z sigma Khol Kh uglob hdat _ hd1 hz hnm hKhol hKh hgHol hhHol hsup hgag0 oscE sumH
+    flatH gagG gagH
+  have hoscEdef : oscE =
+            (eLpNorm (fun (y : Vec d) => uglob.toFun y - volumeAverage (truncatedWindow z m (n +
+              (3 : ℤ))) uglob.toFun)
+                (2 : ℝ≥0∞) (normalizedVolumeMeasureOn (truncatedWindow z m (n + (3 :
+                  ℤ))))).toReal := rfl
   have hgagGle : gagG ≤ Khol * stepFourGagliardoConst d stepOneS *
       (3 : ℝ) ^ ((((n + 3 : ℤ)) : ℝ) / 4) :=
     gagliardo_window_toReal_le hd1 hz hKhol hgHol
@@ -589,7 +588,7 @@ theorem flushBracket_le {m n : ℤ} {z : Vec d} {sigma K2 Khol Kh : ℝ}
       Real.rpow (3 : ℝ) ((1 + stepOneS) * ((n : ℤ) : ℝ)) * gagH ≤
       Real.rpow (3 : ℝ) ((m : ℝ) / 2) * (Kh * stepFourGagliardoConst d stepOneS)) from
       @stepSevenFlushAssembly_comparisonBounds1 (d) (m) (n) (z) (sigma) (Khol) (Kh) (uglob) (hdat)
-        (gsrc) (hd1) (hz) (hnm) (hKhol) (hKh) (hgHol) (hhHol) (hsup) (hgag0) (hoscEdef))
+        (gsrc) (hd1) (hz) (hnm) (hKhol) (hKh) (hgHol) (hhHol) (hsup) (hgag0) )
   -- the flat legs
   have hflatLow : Real.rpow (3 : ℝ) (-(((n + 2 : ℤ)) : ℝ)) *
       Real.rpow (3 : ℝ) ((n : ℤ) : ℝ) * flatH ≤

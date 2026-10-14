@@ -134,14 +134,17 @@ variable {d : ℕ}
 
 /-! ## Elementary numerics -/
 
-private theorem three_rpow_pos (x : ℝ) : (0 : ℝ) < (3 : ℝ) ^ x :=
+/-- Shared support for the high- and low-shell oscillation probability bounds. -/
+theorem three_rpow_pos (x : ℝ) : (0 : ℝ) < (3 : ℝ) ^ x :=
   Real.rpow_pos_of_pos (by norm_num) x
 
-private theorem three_rpow_add (x y : ℝ) :
+/-- Shared support for the high- and low-shell oscillation probability bounds. -/
+theorem three_rpow_add (x y : ℝ) :
     (3 : ℝ) ^ x * (3 : ℝ) ^ y = (3 : ℝ) ^ (x + y) :=
   (Real.rpow_add (by norm_num) x y).symm
 
-private theorem three_rpow_half_sq (x : ℝ) :
+/-- Shared support for the high- and low-shell oscillation probability bounds. -/
+theorem three_rpow_half_sq (x : ℝ) :
     ((3 : ℝ) ^ ((1 / 2 : ℝ) * x)) ^ 2 = (3 : ℝ) ^ x := by
   rw [← Real.rpow_natCast ((3 : ℝ) ^ ((1 / 2 : ℝ) * x)) 2,
     ← Real.rpow_mul (by norm_num : (0 : ℝ) ≤ 3)]
@@ -242,14 +245,16 @@ private theorem ioc_eq_range_map_asc {n L : ℤ} (hnL : n ≤ L) :
     rw [Int.toNat_of_nonneg h2] at hw'
     omega
 
-private theorem three_mul_succ_le_three_pow (w : ℕ) : 3 * (w + 1) ≤ 3 ^ (w + 1) := by
+/-- Shared support for the high- and low-shell oscillation probability bounds. -/
+theorem three_mul_succ_le_three_pow (w : ℕ) : 3 * (w + 1) ≤ 3 ^ (w + 1) := by
   induction w with
   | zero => norm_num
   | succ k ih =>
       have h3 : (3 : ℕ) ^ (k + 1 + 1) = 3 * 3 ^ (k + 1) := by ring
       omega
 
-private theorem exp_pow_eq (x : ℝ) (w : ℕ) :
+/-- Shared support for the high- and low-shell oscillation probability bounds. -/
+theorem exp_pow_eq (x : ℝ) (w : ℕ) :
     Real.exp x ^ w = Real.exp ((w : ℝ) * x) := by
   induction w with
   | zero => simp
@@ -257,12 +262,13 @@ private theorem exp_pow_eq (x : ℝ) (w : ℕ) :
       have hcast : ((k + 1 : ℕ) : ℝ) * x = (k : ℝ) * x + x := by push_cast; ring
       rw [pow_succ, ih, hcast, Real.exp_add]
 
-private theorem two_le_exp_one : (2 : ℝ) ≤ Real.exp 1 := by
+/-- Shared support for the high- and low-shell oscillation probability bounds. -/
+theorem two_le_exp_one : (2 : ℝ) ≤ Real.exp 1 := by
   linarith [Real.add_one_le_exp (1 : ℝ)]
 
 /-- The geometric summation `sum_{i >= 1} exp(-3 kappa)^i <= exp(-kappa)` for
 `kappa >= 1`. -/
-private theorem tsum_exp_pow_le {kappa : ℝ} (hk : 1 ≤ kappa) :
+theorem tsum_exp_pow_le {kappa : ℝ} (hk : 1 ≤ kappa) :
     ∑' w : ℕ, Real.exp (-(3 * kappa)) ^ (w + 1) ≤ Real.exp (-kappa) := by
   have ha0 : (0 : ℝ) < Real.exp (-kappa) := Real.exp_pos _
   have hahalf : Real.exp (-kappa) ≤ 1 / 2 := by
@@ -391,16 +397,18 @@ def badEventOscRate (M : ABKModel d) (Ccg : ℝ) (Q : TriadicCube d) (n : ℤ) :
 Both probabilistic endgames are stated over abstract reals so that no
 arithmetic tactic ever meets a power of three or an exponential. -/
 
-private theorem one_le_mul_one_le {a b : ℝ} (ha : 1 ≤ a) (hb : 1 ≤ b) :
+/-- Shared support for the high- and low-shell oscillation probability bounds. -/
+theorem one_le_mul_one_le {a b : ℝ} (ha : 1 ≤ a) (hb : 1 ≤ b) :
     1 ≤ a * b := by nlinarith
 
-private theorem one_le_of_one_le_sq {B : ℝ} (hB : 0 < B) (h : 1 ≤ B ^ 2) :
+/-- Shared support for the high- and low-shell oscillation probability bounds. -/
+theorem one_le_of_one_le_sq {B : ℝ} (hB : 0 < B) (h : 1 ≤ B ^ 2) :
     1 ≤ B := by nlinarith
 
 /-- The weak-Orlicz tail, read at the threshold-to-amplitude ratio: if the
 threshold dominates `B` times the amplitude and `B^2` is the claimed rate, then
 the upper-tail event at the threshold has probability at most `exp(-rate)`. -/
-private theorem measureReal_upperTail_le_exp {Omega : Type*}
+theorem measureReal_upperTail_le_exp {Omega : Type*}
     [MeasurableSpace Omega] {mu : Measure Omega} {X : Omega → ℝ}
     {A B thr rate : ℝ} (hA : 0 < A) (hB : 0 < B) (hBA : B * A ≤ thr)
     (hBsq : B ^ 2 = rate) (hrate : 1 ≤ rate)
@@ -425,7 +433,7 @@ private theorem measureReal_upperTail_le_exp {Omega : Type*}
 
 /-- The geometric union bound: a set covered by events whose probabilities decay
 like `exp(-kappa 3^{i})` has probability at most `exp(-kappa)`, for `kappa >= 1`. -/
-private theorem measureReal_le_exp_of_iUnion {Omega : Type*}
+theorem measureReal_le_exp_of_iUnion {Omega : Type*}
     [MeasurableSpace Omega] (mu : Measure Omega) [IsFiniteMeasure mu]
     {S : Set Omega} {T : ℕ → Set Omega} {kappa : ℝ} (hk : 1 ≤ kappa)
     (hsub : S ⊆ ⋃ w : ℕ, T w)

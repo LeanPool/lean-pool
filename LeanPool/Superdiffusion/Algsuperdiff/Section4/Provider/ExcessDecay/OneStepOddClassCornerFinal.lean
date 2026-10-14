@@ -80,8 +80,7 @@ private theorem oneStepOddClassCornerFinal_comparisonBounds1 :
           let CFold : ℝ := (2 : ℝ) ^ d + Crefl;
           let Lam : ℝ := (3 : ℝ) * Caff * CHc * CFold + (21 : ℝ) * Caff + (3 : ℝ) * Caff * CHc *
             Crefl + (1 : ℝ);
-          ∀ (_ : Lam = (3 : ℝ) * Caff * CHc * CFold + (21 : ℝ) * Caff + (3 : ℝ) * Caff * CHc *
-            Crefl + (1 : ℝ))
+          ∀
             (_ : (0 : ℝ) ≤ (3 : ℝ) * Caff * CHc * CFold) (_ : (0 : ℝ) ≤ (3 : ℝ) * Caff * CHc *
               Crefl),
             let tt : ℝ := min (1 / 16 : ℝ) ((1 : ℝ) / ((8 : ℝ) * Lam));
@@ -139,8 +138,10 @@ private theorem oneStepOddClassCornerFinal_comparisonBounds1 :
                             vecDot A x) A) +
                             normalizedL2On (truncatedWindow x m (n - (2 : ℤ))) (evenAffinePart x m
                               i c A)) := by
-  intro _ _ CHc hCHc0 Caff hCaff0 _ CFold Lam hLamdef hpart1 hpart3 tt htt0 m n x i V c A delta
-    hE0 hP0 hNi0 hFRle hq2 hco1
+  intro _ _ CHc hCHc0 Caff hCaff0 calculationCrefl CFold Lam hpart1 hpart3 tt htt0 m n x i V c A
+    delta hE0 hP0 hNi0 hFRle hq2 hco1
+  have hLamdef : Lam = (3 : ℝ) * Caff * CHc * CFold + (21 : ℝ) * Caff + (3 : ℝ) * Caff * CHc *
+            calculationCrefl + (1 : ℝ) := rfl
   have h21 : 21 * Caff ≤ Lam := by
     rw [hLamdef]
     linarith only [hpart1, hpart3]
@@ -238,7 +239,6 @@ private theorem oneStepOddClassCornerFinal_comparisonBounds1 :
           + normalizedL2On (truncatedWindow x m (n - 2))
               (evenAffinePart x m i c A)) := by ring
   exact ⟨hEP0, hPNi0, p1, p2⟩
-
 private theorem oneStepOddClassCornerFinal_comparisonBounds2 :
     ∀ (d : ℕ) (CH : ℝ) (_ : (0 : ℝ) ≤ CH),
       let CHc : ℝ := CH * (256 : ℝ) * √((32 : ℝ) ^ d);
@@ -252,7 +252,6 @@ private theorem oneStepOddClassCornerFinal_comparisonBounds2 :
         ∀ (_ : (0 : ℝ) < tt) (m n : ℤ) (x : Vec d) (i j : Fin d) (V : Vec d → ℝ) (c : ℝ) (A : Vec d)
           (_ : x ∈ openCubeSet (originCube d m)) (_ : n - (2 : ℤ) < m),
           let delta : ℝ := tt * (3 : ℝ) ^ (n - (2 : ℤ));
-          ∀ (_ : delta = tt * (3 : ℝ) ^ (n - (2 : ℤ))),
             let A3 : Vec d := evenAffineSlope i A;
             let c3 : ℝ := evenAffineIntercept x m i c A + vecDot A3 x;
             ∀
@@ -324,8 +323,9 @@ private theorem oneStepOddClassCornerFinal_comparisonBounds2 :
                           V y - affineEval (c - vecDot A x) A y) +
                         normalizedL2On (truncatedWindow x m (n - (2 : ℤ))) (affineEval (c - vecDot
                           A x) A) := by
-  intro _ _ _ _ _ Crefl hCrefl0 CFold _ tt htt0 m n x i j V c A hx hmn delta hdeltadef A3 c3
-    hLsplit hf3split hfR hfU hlU heiU hejU heijU hoddRmem hFRle hoddRle
+  intro _ _ _ _ _ Crefl hCrefl0 CFold _ tt htt0 m n x i j V c A hx hmn delta A3 c3 hLsplit
+    hf3split hfR hfU hlU heiU hejU heijU hoddRmem hFRle hoddRle
+  have hdeltadef : delta = tt * (3 : ℝ) ^ (n - (2 : ℤ)) := rfl
   have hoddU_le : normalizedL2On (truncatedWindow x m (n - 2))
       (oddAffinePart x m i A)
       ≤ normalizedL2On (truncatedWindow x m (n - 2)) (affineEval (c - vecDot A x) A)
@@ -423,7 +423,6 @@ private theorem oneStepOddClassCornerFinal_comparisonBounds2 :
     rw [hcongr]
     exact normalizedL2On_add_le hfU hlU
   exact ⟨hF3R, hq2, hPsum, hVsplit⟩
-
 private theorem oneStepOddClassCornerFinal_comparisonBounds3 :
     ∀ (d : ℕ) (CH : ℝ),
       let CHc : ℝ := CH * (256 : ℝ) * √((32 : ℝ) ^ d);
@@ -604,7 +603,6 @@ private theorem oneStepOddClassCornerFinal_comparisonBounds3 :
                 (fun y => V y - affineEval (c - vecDot A x) A y))) := by ring
     linarith only [h_i, hsplit, p1]
   exact ⟨p3, hNi2⟩
-
 private theorem oneStepOddClassCornerFinal_comparisonBounds4 :
     ∀ (d : ℕ) (CH : ℝ),
       let CHc : ℝ := CH * (256 : ℝ) * √((32 : ℝ) ^ d);
@@ -798,7 +796,6 @@ private theorem oneStepOddClassCornerFinal_comparisonBounds4 :
       (fun y => V y - affineEval (c - vecDot A x) A y)
       = affineExcessRaw (truncatedWindow x m (n - 2)) V := hmin
   exact ⟨hPfin, hEeq⟩
-
 private theorem oneStepOddClassCornerFinal_comparisonBounds5 :
     ∀ (d : ℕ) (CH : ℝ) (_ : (0 : ℝ) ≤ CH)
       (_ :
@@ -836,11 +833,8 @@ private theorem oneStepOddClassCornerFinal_comparisonBounds5 :
               ℤ))))
         (_ : MemLp V (2 : ℝ≥0∞) (volume.restrict (reflectedWindow x m (n - (2 : ℤ))))) (_ : j ≠ i),
         let delta : ℝ := tt * (3 : ℝ) ^ (n - (2 : ℤ));
-        ∀ (_ : delta = tt * (3 : ℝ) ^ (n - (2 : ℤ))),
           let A3 : Vec d := evenAffineSlope i A;
-          ∀ (_ : A3 = evenAffineSlope i A),
             let c3 : ℝ := evenAffineIntercept x m i c A + vecDot A3 x;
-            ∀ (_ : c3 = evenAffineIntercept x m i c A + vecDot A3 x),
               (∀ (y : Vec d),
                   affineEval (c - vecDot A x) A y =
                     evenAffinePart x m i c A y + evenAffinePart x m j c A y - evenAffinePart x m j
@@ -916,8 +910,11 @@ private theorem oneStepOddClassCornerFinal_comparisonBounds5 :
                                                       ℤ))) fun (y : Vec d) =>
                                                       V y - affineEval (c3 - vecDot A3 x) A3
                                                         y)) := by
-  intro _ _ hCH0 hCH _ _ _ _ _ _ htt0 htt16 m n x i j V c A hx hmn hij hupi hupj hupV hharm hVR
-    hji _ hdeltadef A3 hA3def c3 hc3def
+  intro _ _ hCH0 hCH _ _ _ _ _ calculationTt htt0 htt16 m n x i j V c A hx hmn hij hupi hupj
+    hupV hharm hVR hji calculationDelta A3 c3
+  have hdeltadef : calculationDelta = calculationTt * (3 : ℝ) ^ (n - (2 : ℤ)) := rfl
+  have hA3def : A3 = evenAffineSlope i A := rfl
+  have hc3def : c3 = evenAffineIntercept x m i c A + vecDot A3 x := rfl
   have hc3sub : c3 - vecDot A3 x = evenAffineIntercept x m i c A := by
     rw [hc3def]; ring
   have he3 : ∀ y, affineEval (c3 - vecDot A3 x) A3 y
@@ -993,7 +990,6 @@ private theorem oneStepOddClassCornerFinal_comparisonBounds5 :
     (hupV j hupj) hharm hVR htt0 htt16 hdeltadef hf3split hgij_i hCH0 hCH
   exact ⟨hLsplit, hf3split, hfR, hfU, hlU, heiU, hejU, heijU, hoddRmem, hE0, hP0, hNi0, h_i, h_j,
     h_3⟩
-
 /-- **`(★★)`: the corner competitor's window seminorm is priced by the
 excess.**  See the module docstring. -/
 private theorem oneStepOddClassCornerFinal_estimate1 :
@@ -1004,14 +1000,16 @@ private theorem oneStepOddClassCornerFinal_estimate1 :
       let CFold : ℝ := (2 : ℝ) ^ d + Crefl;
       let Lam : ℝ := (3 : ℝ) * Caff * CHc * CFold + (21 : ℝ) * Caff + (3 : ℝ) * Caff * CHc * Crefl
         + (1 : ℝ);
-      ∀ (_ : Lam = (3 : ℝ) * Caff * CHc * CFold + (21 : ℝ) * Caff + (3 : ℝ) * Caff * CHc *
-        Crefl + (1 : ℝ))
+      ∀
         (_ : (0 : ℝ) ≤ (3 : ℝ) * Caff * CHc * CFold) (_ : (0 : ℝ) ≤ (21 : ℝ) * Caff)
         (_ : (0 : ℝ) ≤ (3 : ℝ) * Caff * CHc * Crefl),
         let tt : ℝ := min (1 / 16 : ℝ) ((1 : ℝ) / ((8 : ℝ) * Lam));
         ∀ (_ : (0 : ℝ) < tt) (_ : tt ≤ (1 : ℝ)), (3 : ℝ) * Caff * CHc * Crefl * tt ^ (2 : ℕ)
           ≤ Lam * tt := by
-  intro _ _ CHc Caff Crefl _ Lam hLamdef hpart1 hpart2 hpart3 tt htt0 htt1
+  intro _ _ CHc Caff Crefl calculationCFold Lam hpart1 hpart2 hpart3 tt htt0 htt1
+  have hLamdef : Lam = (3 : ℝ) * Caff * CHc * calculationCFold + (21 : ℝ) * Caff + (3 : ℝ) *
+    Caff * CHc *
+        Crefl + (1 : ℝ) := rfl
   have ha : 3 * Caff * CHc * Crefl ≤ Lam := by
     rw [hLamdef]
     linarith only [hpart1, hpart2]
@@ -1023,7 +1021,6 @@ private theorem oneStepOddClassCornerFinal_estimate1 :
   calc 3 * Caff * CHc * Crefl * tt ^ 2
       = (3 * Caff * CHc * Crefl * tt) * tt := by ring
     _ ≤ Lam * tt := mul_le_mul_of_nonneg_right hb htt0.le
-
 private theorem oneStepCorner_firstCoefficientBound :
     ∀ (d : ℕ) (CH : ℝ),
       let CHc : ℝ := CH * (256 : ℝ) * √((32 : ℝ) ^ d);
@@ -1032,14 +1029,15 @@ private theorem oneStepCorner_firstCoefficientBound :
       let CFold : ℝ := (2 : ℝ) ^ d + Crefl;
       let Lam : ℝ := (3 : ℝ) * Caff * CHc * CFold + (21 : ℝ) * Caff + (3 : ℝ) * Caff * CHc * Crefl
         + (1 : ℝ);
-      ∀ (_ : Lam = (3 : ℝ) * Caff * CHc * CFold + (21 : ℝ) * Caff + (3 : ℝ) * Caff * CHc *
-        Crefl + (1 : ℝ))
+      ∀
         (_ : (0 : ℝ) ≤ (3 : ℝ) * Caff * CHc * CFold) (_ : (0 : ℝ) ≤ (21 : ℝ) * Caff)
         (_ : (0 : ℝ) ≤ (3 : ℝ) * Caff * CHc * Crefl),
         let tt : ℝ := min (1 / 16 : ℝ) ((1 : ℝ) / ((8 : ℝ) * Lam));
         ∀ (_ : (0 : ℝ) < tt) (_ : tt ≤ (1 : ℝ)), (3 : ℝ) * Caff * CHc * CFold * tt ^ (2 : ℕ)
           ≤ Lam * tt := by
-  intro _ _ CHc Caff _ CFold Lam hLamdef hpart1 hpart2 hpart3 tt htt0 htt1
+  intro _ _ CHc Caff calculationCrefl CFold Lam hpart1 hpart2 hpart3 tt htt0 htt1
+  have hLamdef : Lam = (3 : ℝ) * Caff * CHc * CFold + (21 : ℝ) * Caff + (3 : ℝ) * Caff * CHc *
+        calculationCrefl + (1 : ℝ) := rfl
   have ha : 3 * Caff * CHc * CFold ≤ Lam := by
     rw [hLamdef]
     linarith only [hpart2, hpart3]
@@ -1051,7 +1049,6 @@ private theorem oneStepCorner_firstCoefficientBound :
   calc 3 * Caff * CHc * CFold * tt ^ 2
       = (3 * Caff * CHc * CFold * tt) * tt := by ring
     _ ≤ Lam * tt := mul_le_mul_of_nonneg_right hb htt0.le
-
 theorem exists_normalizedL2On_le_affineExcessRaw_corner (d : ℕ) [NeZero d] :
     ∃ C : ℝ, 0 ≤ C ∧ ∀ (m n : ℤ) (x : Vec d) (i j : Fin d) (V : Vec d → ℝ)
       (c : ℝ) (A : Vec d),
@@ -1121,8 +1118,7 @@ theorem exists_normalizedL2On_le_affineExcessRaw_corner (d : ℕ) [NeZero d] :
     stage_heijU, stage_hoddRmem, stage_hE0, stage_hP0, stage_hNi0, stage_h_i, stage_h_j,
       stage_h_3⟩ :=
     @oneStepOddClassCornerFinal_comparisonBounds5 (d) (CH) (hCH0) (hCH) (htt0) (htt16) (m) (n) (x)
-      (i) (j) (V) (c) (A) (hx) (hmn) (hij) (hupi) (hupj) (hupV) (hharm) (hVR) (hji) (hdeltadef)
-        (hA3def) (hc3def)
+      (i) (j) (V) (c) (A) (hx) (hmn) (hij) (hupi) (hupj) (hupV) (hharm) (hVR) (hji)
   have hLsplit : ∀ y, affineEval (c - vecDot A x) A y
       = evenAffinePart x m i c A y + evenAffinePart x m j c A y
         - evenAffinePart x m j c3 A3 y := stage_hLsplit
@@ -1191,13 +1187,13 @@ theorem exists_normalizedL2On_le_affineExcessRaw_corner (d : ℕ) [NeZero d] :
         + normalizedL2On (truncatedWindow x m (n - 2))
             (affineEval (c - vecDot A x) A)) from
       @oneStepOddClassCornerFinal_comparisonBounds2 (d) (CH) (hCH0) (hCrefl0) (htt0) (m) (n) (x)
-        (i) (j) (V) (c) (A) (hx) (hmn) (hdeltadef) (hLsplit) (hf3split) (hfR) (hfU) (hlU) (heiU)
+        (i) (j) (V) (c) (A) (hx) (hmn)  (hLsplit) (hf3split) (hfR) (hfU) (hlU) (heiU)
           (hejU) (heijU) (hoddRmem) (hFRle) (hoddRle))
   -- coefficient smallness
   have hco1 : 3 * Caff * CHc * CFold * tt ^ 2 ≤ Lam * tt  := @oneStepCorner_firstCoefficientBound
-    (d) (CH) (hLamdef) (hpart1) (hpart2) (hpart3) (htt0) (htt1)
+    (d) (CH)  (hpart1) (hpart2) (hpart3) (htt0) (htt1)
   have hco3 : 3 * Caff * CHc * Crefl * tt ^ 2 ≤ Lam * tt  := @oneStepOddClassCornerFinal_estimate1
-    (d) (CH) (hLamdef) (hpart1) (hpart2) (hpart3) (htt0) (htt1)
+    (d) (CH)  (hpart1) (hpart2) (hpart3) (htt0) (htt1)
   obtain ⟨hEP0, hPNi0, p1, p2⟩ :=
     (show (0 ≤ normalizedL2On (truncatedWindow x m (n - 2))
         (fun y => V y - affineEval (c - vecDot A x) A y)
@@ -1216,7 +1212,7 @@ theorem exists_normalizedL2On_le_affineExcessRaw_corner (d : ℕ) [NeZero d] :
             (affineEval (c - vecDot A x) A)
           + normalizedL2On (truncatedWindow x m (n - 2))
               (evenAffinePart x m i c A))) from
-      @oneStepOddClassCornerFinal_comparisonBounds1 (d) (CH) (hCHc0) (hCaff0) (hLamdef) (hpart1)
+      @oneStepOddClassCornerFinal_comparisonBounds1 (d) (CH) (hCHc0) (hCaff0)  (hpart1)
         (hpart3) (htt0) (m) (n) (x) (i) (V) (c) (A) (hE0) (hP0) (hNi0) (hFRle) (hq2) (hco1))
   obtain ⟨p3, hNi2⟩ :=
     (show (Caff * (3 * (CHc * tt ^ 2
@@ -1260,7 +1256,6 @@ theorem exists_normalizedL2On_le_affineExcessRaw_corner (d : ℕ) [NeZero d] :
         + (24 / 11) * normalizedL2On (truncatedWindow x m (n - 2))
             (fun y => V y - affineEval (c - vecDot A x) A y) := by ring
   linarith only [hVsplit, hPfin, hexp]
-
 /-- **The corner defect pricing** —'s residue (2), the consumer shape.  At the
 corner datum `(0,0)` (the only member of the collapsed odd class), the
 odd-class defect is priced by the excess itself. -/
@@ -1305,7 +1300,6 @@ theorem exists_oddClassDefect_le_affineExcessRaw_corner (d : ℕ) [NeZero d] :
     affineExcessRaw_nonneg _ _
   rw [oddClassDefect, hdist]
   linarith only [hmain, hEnn]
-
 end
 
 end Algsuperdiff.Section4.Provider.ExcessDecay.Schauder

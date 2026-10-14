@@ -54,16 +54,15 @@ private theorem matchedTrace_truncationConvergence :
             ((if c < w₁.toFun x then (1 : ℝ) else (0 : ℝ)) - if c < (S n).toFun x then (1 : ℝ)
               else (0 : ℝ)) * w₁.grad x i;
           ∀
-            (_ :
-              TB = fun (n : ℕ) (x : Vec d) =>
-                ((if c < w₁.toFun x then (1 : ℝ) else (0 : ℝ)) - if c < (S n).toFun x then (1 : ℝ)
-                  else (0 : ℝ)) *
-                  w₁.grad x i)
             (_ : ∀ (n : ℕ), AEStronglyMeasurable (TB n) (volumeMeasureOn U)),
             Tendsto (fun (n : ℕ) => eLpNorm (fun (x : Vec d) => TB (σ n) x) (2 : ℝ≥0∞)
               (volumeMeasureOn U)) atTop
               (𝓝 (0 : ℝ≥0∞)) := by
-  intro _ U _ w₁ w₂ c _ h W _ _ S hD2 σ hσ_ae i TB hTB_def haesm_TB
+  intro calculationD U _ w₁ w₂ c _ h W _ _ S hD2 σ hσ_ae i TB haesm_TB
+  have hTB_def : TB = fun (n : ℕ) (x : Vec calculationD) =>
+                ((if c < w₁.toFun x then (1 : ℝ) else (0 : ℝ)) - if c < (S n).toFun x then (1 : ℝ)
+                  else (0 : ℝ)) *
+                  w₁.grad x i := rfl
   have hdom : MemLp (fun x => ‖w₁.grad x i‖) 2 (volumeMeasureOn U) := (w₁.gradMemL2 i).norm
   have hbnd : ∀ n, ∀ᵐ x ∂(volumeMeasureOn U), ‖TB (σ n) x‖ ≤ ‖w₁.grad x i‖ := by
     intro n
@@ -291,7 +290,7 @@ theorem memH10_max_sub_matched {d : ℕ} {U : Set (Vec d)}
     have hTB_conv : Tendsto
         (fun n => eLpNorm (fun x => TB (σ n) x) 2 (volumeMeasureOn U)) atTop (nhds 0)  :=
           @matchedTrace_truncationConvergence (d) (U) (hU) (w₁) (w₂) (c) (this) (W) (hφC1) (hD2)
-            (σ) (hσ_ae) (i) (hTB_def) (haesm_TB)
+            (σ) (hσ_ae) (i)  (haesm_TB)
     -- Combine.
     have hsum : Tendsto (fun n => eLpNorm (TA (σ n)) 2 (volumeMeasureOn U)
         + eLpNorm (fun x => TB (σ n) x) 2 (volumeMeasureOn U)) atTop (nhds 0) := by

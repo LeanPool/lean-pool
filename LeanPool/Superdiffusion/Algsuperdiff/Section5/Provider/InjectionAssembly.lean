@@ -334,8 +334,7 @@ private theorem injectionAssembly_comparisonBounds1 :
                                                             (w (j + (1 : ℕ))) (lap j).grad),
       let C : ℝ := (1 : ℝ) + (3 : ℝ) * Creg + (96 : ℝ) * (↑d : ℝ) ^ (2 : ℕ) * CIter * Creg *
         (√cstar)⁻¹;
-      ∀ (_ : C = (1 : ℝ) + (3 : ℝ) * Creg + (96 : ℝ) * (↑d : ℝ) ^ (2 : ℕ) * CIter * Creg *
-        (√cstar)⁻¹)
+      ∀
         (_ : (0 : ℝ) < C) (M : ABKModel d) (_ : Disorder.cstar M = cstar)
         (_ : M.gamma ≤ CL⁻¹ ^ (10 : ℕ) * cstar ^ (10 : ℕ)) (ep : ℝ) (n : ℤ) (y : Vec d) (g : Vec d
           → Vec d)
@@ -345,7 +344,7 @@ private theorem injectionAssembly_comparisonBounds1 :
         (_ : ep < (1 : ℝ)) (_ : (0 : ℝ) < M.gamma) (_ : (0 : ℝ) < (↑(Annealed.sigmaBar M n) : ℝ))
         (_ : (0 : ℝ) < Real.rpow (3 : ℝ) ((↑n : ℝ) / (2 : ℝ))),
         let theta : ℝ := C⁻¹ * ep * (√M.gamma)⁻¹;
-        ∀ (_ : theta = C⁻¹ * ep * (√M.gamma)⁻¹) (_ : (0 : ℝ) < theta)
+        ∀  (_ : (0 : ℝ) < theta)
           (_ : omega ∈ goodCubeEvent M Creg n y ep) (_ : omega ∈ largeScaleEvent M n y theta)
           (_ : holderSeminormOn (cubeSetAt y n) (1 / 2 : ℝ) g ≠ ∞),
           let Kg : ℝ := (holderSeminormOn (cubeSetAt y n) (1 / 2 : ℝ) g).toReal;
@@ -376,8 +375,11 @@ private theorem injectionAssembly_comparisonBounds1 :
                 ((1 : ℝ) - ep))
               fun (x : Vec d) => uRep x - wRep (0 : ℕ) x := by
   classical
-  intro d cstar Creg _hCreg hd CL hland CIter hCIter hseq C hCdef hCpos M hcst hgam ep n y g omega
-    m hnm _ hu hep0 hep1 hgpos hSpos hP theta hthetadef hth0 hmemG hmemJ hgne Kg
+  intro d cstar Creg _hCreg hd CL hland CIter hCIter hseq C hCpos M hcst hgam ep n y g omega m
+    hnm _ hu hep0 hep1 hgpos hSpos hP theta hth0 hmemG hmemJ hgne Kg
+  have hCdef : C = (1 : ℝ) + (3 : ℝ) * Creg + (96 : ℝ) * (↑d : ℝ) ^ (2 : ℕ) * CIter * Creg *
+        (√cstar)⁻¹ := rfl
+  have hthetadef : theta = C⁻¹ * ep * (√M.gamma)⁻¹ := rfl
   have hKg0 : 0 ≤ Kg := ENNReal.toReal_nonneg
   have hgeq : holderSeminormOn (cubeSetAt y n) (1 / 2) g = ENNReal.ofReal Kg :=
     (ENNReal.ofReal_toReal hgne).symm
@@ -525,8 +527,8 @@ theorem injection_in_L_infty_v2_provider (d : ℕ) (cstar : ℝ) (_hcstar : 0 < 
   set Kg : ℝ := (holderSeminormOn (cubeSetAt y n) (1 / 2) g).toReal with hKgdef
   obtain ⟨hKg0, hgeq, hK0def, hK00, w, wRep, hrep, hw0sol, uRep, huRep, huRepK, hutailK⟩ :=
     @injectionAssembly_comparisonBounds1 (d) (cstar) (Creg) (_hCreg) (hd) (CL) (hland) (CIter)
-      (hCIter) (hseq) (hCdef) (hCpos) (M) (hcst) (hgam) (ep) (n) (y) (g) (omega) (m) (hnm) (u)
-        (hu) (hep0) (hep1) (hgpos) (hSpos) (hP) (hthetadef) (hth0) (hmemG) (hmemJ) (hgne)
+      (hCIter) (hseq)  (hCpos) (M) (hcst) (hgam) (ep) (n) (y) (g) (omega) (m) (hnm) (u)
+        (hu) (hep0) (hep1) (hgpos) (hSpos) (hP)  (hth0) (hmemG) (hmemJ) (hgne)
   set kap : Vec d → Mat d :=
     fun z => Cutoff.cutoff m omega z - Cutoff.cutoff n omega z with hkapdef
   set Sk : ℝ :=

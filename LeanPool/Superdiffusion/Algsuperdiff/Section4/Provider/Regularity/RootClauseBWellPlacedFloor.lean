@@ -781,11 +781,9 @@ private theorem rootClauseBWellPlacedFloor_comparisonBounds2 :
         boundaryCWH d Cb C kb),
       let Cmax : ℝ := max (max (max C Ccap) (max Ccaps Clam)) (max (max Cflu CannP) (1 : ℝ));
       let CBu : ℝ := rootClauseBCapsUniform d Ccaps;
-      ∀ (_ : CBu = rootClauseBCapsUniform d Ccaps),
         let CWGu : ℝ := rootClauseBOscWUniform (edBoundaryCbd d Cb C kb) * stepFourGagliardoConst
           d stepOneS;
-        ∀ (_ : CWGu = rootClauseBOscWUniform (edBoundaryCbd d Cb C kb) * stepFourGagliardoConst d
-          stepOneS)
+        ∀
           (Cedos : ℝ),
           let C1 : ℝ := stepOneC1 d Cedos (1 : ℝ) Citer (kb + (1 : ℕ));
           ∀ (M : ABKModel d) (alpha : ℝ) (m : ℤ) (_ : RootClauseBGammaFacts M Cmax Cann Cind C1
@@ -796,8 +794,6 @@ private theorem rootClauseBWellPlacedFloor_comparisonBounds2 :
               ℝ)),
             let CBraw : ℝ := (2 : ℝ) * (↑d : ℝ) * ((Ccaps * stepOneEp (stepOneDelta C1 alpha)) ^
               (2 : ℕ) + (1 : ℝ));
-            ∀ (_ : CBraw = (2 : ℝ) * (↑d : ℝ) * ((Ccaps * stepOneEp (stepOneDelta C1 alpha)) ^ (2
-              : ℕ) + (1 : ℝ))),
               (0 : ℝ) ≤ CBraw ∧
                 CBraw ≤ CBu ∧
                   edFinalDataOscW M (edBoundaryCbd d Cb C kb) * stepFourGagliardoConst d stepOneS
@@ -827,8 +823,13 @@ private theorem rootClauseBWellPlacedFloor_comparisonBounds2 :
                                     (0 : ℝ) ≤
                                       edFinalDataG M (edBoundaryCbd d Cb C kb) (Kg *
                                         stepFourGagliardoConst d stepOneS) m := by
-  intro d _ _ C _ _ Cb Citer kb Ccaps hCcaps _ _ _ _ hCbd hCWH _ CBu hCBuDef CWGu hCWGuDef Cedos
-    C1 M alpha m hfact n u Kg Kh x hKg hKh kc np hδIoc CBraw hCBrawDef
+  intro d _ _ C _ _ Cb Citer kb Ccaps hCcaps _ _ _ _ hCbd hCWH _ CBu CWGu Cedos C1 M alpha m
+    hfact n u Kg Kh x hKg hKh kc np hδIoc CBraw
+  have hCBuDef : CBu = rootClauseBCapsUniform d Ccaps := rfl
+  have hCWGuDef : CWGu = rootClauseBOscWUniform (edBoundaryCbd d Cb C kb) * stepFourGagliardoConst d
+          stepOneS := rfl
+  have hCBrawDef : CBraw = (2 : ℝ) * (↑d : ℝ) * ((Ccaps * stepOneEp (stepOneDelta C1 alpha)) ^ (2
+              : ℕ) + (1 : ℝ)) := rfl
   have hCBraw0 : (0 : ℝ) ≤ CBraw := by
     have hsq : (0 : ℝ) ≤ (Ccaps * stepOneEp (stepOneDelta C1 alpha)) ^ 2 := sq_nonneg _
     have hdd : (0 : ℝ) ≤ 2 * (d : ℝ) := by
@@ -1707,8 +1708,8 @@ theorem rootClauseB_display_wellPlaced_final_floor (d : ℕ) [NeZero d] (hd : d 
       (Kg * stepFourGagliardoConst d stepOneS) m) from
       @rootClauseBWellPlacedFloor_comparisonBounds2 (d) (by infer_instance) (Crg) (C) (Ccap)
         (Cann) (Cb) (Citer) (kb) (Ccaps) (hCcaps) (Clam) (Cflu) (CannP) (Cind) (hCbd) (hCWH)
-          (hCBuDef) (hCWGuDef) (Cedos) (M) (alpha) (m) (hfact) (n) (u) (Kg) (Kh) (x) (hKg) (hKh)
-            (kc) (np) (hδIoc) (hCBrawDef))
+            (Cedos) (M) (alpha) (m) (hfact) (n) (u) (Kg) (Kh) (x) (hKg) (hKh)
+            (kc) (np) (hδIoc) )
   by_cases hgate : (fun y => Support.triadicLatticePoint n (offGridLatticeIndex n x) +
       y) '' openCubeSet (originCube d np) ⊆ openCubeSet (originCube d m)
   · exact @rootClauseB_gatedCaccioppoliBound (d) (by infer_instance) (Crg) (C) (Ccap) (Cann) (Cb)

@@ -120,7 +120,7 @@ private theorem stepOneAssembly_comparisonBounds1 :
     ∀ (d : ℕ) (CK : ℝ) (M : ABKModel d) (s : { s : ℝ // (0 : ℝ) < s }) (Ccg : ℝ) (n m : ℤ) (_ : n
       ≤ m),
       let rho : ℝ := √√(max (216 : ℝ) CK / CK);
-      ∀ (_ : (0 : ℝ) ≤ rho) (_ : rho = √√(max (216 : ℝ) CK / CK)) (_ : (0 : ℝ) < (↑s : ℝ))
+      ∀ (_ : (0 : ℝ) ≤ rho)  (_ : (0 : ℝ) < (↑s : ℝ))
         (_ : (↑s : ℝ) ≤ (1 : ℝ)) (lam : ℝ) (_ : (0 : ℝ) ≤ lam),
         let K0 : ℝ := CK * (√(↑s : ℝ) ^ (9 : ℕ))⁻¹;
         let K1c : ℝ := max (216 : ℝ) CK * (√(↑s : ℝ) ^ (9 : ℕ))⁻¹;
@@ -133,9 +133,7 @@ private theorem stepOneAssembly_comparisonBounds1 :
             let N : ℝ := (↑(m - n + (1 : ℤ)) : ℝ);
             ∀ (_ : (0 : ℝ) < N),
               let aw : ℝ := √(↑s : ℝ) * rho * G;
-              ∀ (_ : aw = √(↑s : ℝ) * rho * G),
                 let ah : ℝ := √(↑s : ℝ) * rho * ((1 : ℝ) / N * min N G);
-                ∀ (_ : ah = √(↑s : ℝ) * rho * ((1 : ℝ) / N * min N G)),
                   (0 : ℝ) ≤ aw ∧
                     (0 : ℝ) ≤ ah ∧
                       ∀ (omega : Cutoff.CutoffSample d),
@@ -145,8 +143,11 @@ private theorem stepOneAssembly_comparisonBounds1 :
                               ∑' (p : ℕ),
                                 (3 : ℝ) ^ (-((↑s : ℝ) / (4 : ℝ) * (↑p : ℝ))) *
                                   kickCollapsed M s lam K0 (n - (1 : ℤ) - (↑p : ℤ)) omega := by
-  intro d _ M s Ccg n m hnm rho hrho0 hrhodef hs0 hs1 lam hlam0 K0 _ hK00 hK0K1 hK1ge hratioeq hX0
-    G hG0 N hN0 aw hawdef ah hahdef
+  intro d calculationCK M s Ccg n m hnm rho hrho0 hs0 hs1 lam hlam0 K0 _ hK00 hK0K1 hK1ge
+    hratioeq hX0 G hG0 N hN0 aw ah
+  have hrhodef : rho = √√(max (216 : ℝ) calculationCK / calculationCK) := rfl
+  have hawdef : aw = √(↑s : ℝ) * rho * G := rfl
+  have hahdef : ah = √(↑s : ℝ) * rho * ((1 : ℝ) / N * min N G) := rfl
   have haw0 : (0 : ℝ) ≤ aw :=
     mul_nonneg (mul_nonneg (Real.sqrt_nonneg _) hrho0) hG0.le
   have hah0 : (0 : ℝ) ≤ ah := by
@@ -236,12 +237,10 @@ private theorem stepOneAssembly_momentBounds1 :
         let Ce : ℝ := rDepEngineConst (d + (2 : ℕ));
         ∀ (_ : (0 : ℝ) < Ce),
           let Ct : ℝ := gammaTriangleConst (2 : ℝ);
-          ∀ (_ : (0 : ℝ) < Ct) (_ : Ct = gammaTriangleConst (2 : ℝ)),
+          ∀ (_ : (0 : ℝ) < Ct) ,
             let Cout : ℝ := CK + (8 : ℝ) * rho * CK + (2 : ℝ) * ((8 : ℝ) * rho * CK * Ce + (24 :
               ℝ) * rho * Ct * CK);
             ∀ (_ : M.gamma ≤ Cout⁻¹ ^ (10 : ℕ) * Disorder.cstar M ^ (10 : ℕ))
-              (_ : Cout = CK + (8 : ℝ) * rho * CK + (2 : ℝ) * ((8 : ℝ) * rho * CK * Ce + (24 : ℝ)
-                * rho * Ct * CK))
               (_ : (0 : ℝ) < M.gamma),
               ∃ (_ : (0 : ℝ) < (↑s : ℝ)) (_ : (↑s : ℝ) ≤ (1 : ℝ)) (_ : (0 : ℝ) < √(↑s : ℝ)) (_ :
                 √(↑s : ℝ) ≤ (1 : ℝ)) (lam :
@@ -283,7 +282,10 @@ private theorem stepOneAssembly_momentBounds1 :
                     (geomTailConst ((↑s : ℝ) / (4 : ℝ)) *
                       (CK * (Disorder.cstar M)⁻¹ * (√(↑s : ℝ) ^ (5 : ℕ))⁻¹ * √M.gamma))) := by
   classical
-  intro d CK hCK hcol M s hs8 hs4 n m hnm rho hrho0 Ce hCe0 Ct hCt0 hCtdef Cout hreg hCoutdef hgam
+  intro d CK hCK hcol M s hs8 hs4 n m hnm rho hrho0 Ce hCe0 Ct hCt0 Cout hreg hgam
+  have hCtdef : Ct = gammaTriangleConst (2 : ℝ) := rfl
+  have hCoutdef : Cout = CK + (8 : ℝ) * rho * CK + (2 : ℝ) * ((8 : ℝ) * rho * CK * Ce + (24 : ℝ)
+                * rho * Ct * CK) := rfl
   have hcs : (0 : ℝ) < Disorder.cstar M := (Disorder.cstar_characterization M).1
   have hs0 : (0 : ℝ) < (s : ℝ) := s.2
   have hs1 : (s : ℝ) ≤ 1 := by linarith only [hs4]
@@ -449,7 +451,7 @@ private theorem stepOneAssembly_estimate1 :
               let N : ℝ := (↑(m - n + (1 : ℤ)) : ℝ);
               ∀ (_ : (0 : ℝ) < N),
                 let ah : ℝ := √(↑s : ℝ) * rho * ((1 : ℝ) / N * min N G);
-                ∀ (_ : ah = √(↑s : ℝ) * rho * ((1 : ℝ) / N * min N G)) (_ : (0 : ℝ) ≤ ah),
+                ∀  (_ : (0 : ℝ) ≤ ah),
                   IsBigO (↑(Cutoff.cutoffSampleLaw M) : Measure (Cutoff.CutoffSample d))
                     (gammaSigma (2 : ℝ))
                     (fun (omega : Cutoff.CutoffSample d) =>
@@ -458,8 +460,8 @@ private theorem stepOneAssembly_estimate1 :
                           (3 : ℝ) ^ (-((↑s : ℝ) / (4 : ℝ) * (↑p : ℝ))) *
                             kickCollapsed M s lam K0 (n - (1 : ℤ) - (↑p : ℤ)) omega)
                     ((24 : ℝ) * rho * Ct * CK * E * N ^ (-1 / 2 : ℝ)) := by
-  intro _ CK M s n _ rho hrho0 Ct hCt0 hsq0 lam K0 E A1 hA10 G hG0 hGle hHead hGA1 N hN0 ah hahdef
-    hah0
+  intro _ CK M s n _ rho hrho0 Ct hCt0 hsq0 lam K0 E A1 hA10 G hG0 hGle hHead hGA1 N hN0 ah hah0
+  have hahdef : ah = √(↑s : ℝ) * rho * ((1 : ℝ) / N * min N G) := rfl
   have hbig0 : IsBigO (Cutoff.cutoffSampleLaw M).toMeasure (gammaSigma 2)
       (fun omega => ah * ∑' p : ℕ, (3 : ℝ) ^ (-(((s : ℝ) / 4) * (p : ℝ))) *
         kickCollapsed M s lam K0 (n - 1 - (p : ℤ)) omega) (ah * (Ct * (G * A1))) :=
@@ -557,7 +559,7 @@ theorem exists_stepOne_d1_bound (d : ℕ) :
   obtain ⟨hs0, hs1, hsq0, hsq1, lam, hlam0, hE0, hK00, hK0K1, hK1ge, hratioeq, hA10, hX0, hG0,
     hGle, hGA1, Xf, hXfpt, hXfbig, hHead⟩ :=
     @stepOneAssembly_momentBounds1 (d) (CK) (hCK) (hcol) (M) (s) (hs8) (hs4) (n) (m) (hnm) (hrho0)
-      (hCe0) (hCt0) (hCtdef) (hreg) (hCoutdef) (hgam)
+      (hCe0) (hCt0)  (hreg)  (hgam)
   set K0 : ℝ := CK * ((Real.sqrt (s : ℝ)) ^ 9)⁻¹ with hK0def
   set K1c : ℝ := max 216 CK * ((Real.sqrt (s : ℝ)) ^ 9)⁻¹ with hK1def
   set E : ℝ := (Disorder.cstar M)⁻¹ * ((Real.sqrt (s : ℝ)) ^ 7)⁻¹ * Real.sqrt M.gamma
@@ -578,9 +580,9 @@ theorem exists_stepOne_d1_bound (d : ℕ) :
         ≤ aw * cesaroAvg (fun j => kickCollapsed M s lam K0 j omega) n m +
           ah * ∑' p : ℕ, (3 : ℝ) ^ (-(((s : ℝ) / 4) * (p : ℝ))) *
             kickCollapsed M s lam K0 (n - 1 - (p : ℤ)) omega) from
-      @stepOneAssembly_comparisonBounds1 (d) (CK) (M) (s) (Ccg) (n) (m) (hnm) (hrho0) (hrhodef)
-        (hs0) (hs1) (lam) (hlam0) (hK00) (hK0K1) (hK1ge) (hratioeq) (hX0) (hG0) (hN0) (hawdef)
-          (hahdef))
+      @stepOneAssembly_comparisonBounds1 (d) (CK) (M) (s) (Ccg) (n) (m) (hnm) (hrho0)
+        (hs0) (hs1) (lam) (hlam0) (hK00) (hK0K1) (hK1ge) (hratioeq) (hX0) (hG0) (hN0)
+          )
   -- assemble
   refine ⟨fun _ => aw * A1, fun omega => aw * Xf omega +
     ah * ∑' p : ℕ, (3 : ℝ) ^ (-(((s : ℝ) / 4) * (p : ℝ))) *
@@ -652,7 +654,7 @@ theorem exists_stepOne_d1_bound (d : ℕ) :
           kickCollapsed M s lam K0 (n - 1 - (p : ℤ)) omega)
         (24 * rho * Ct * CK * E * N ^ (-(1 : ℝ) / 2))  := @stepOneAssembly_estimate1 (d) (CK) (M)
           (s) (n) (m) (hrho0) (hCt0) (hsq0) (lam) (hA10) (hG0) (hGle) (hHead) (hGA1) (hN0)
-            (hahdef) (hah0)
+             (hah0)
     have hA1nn : (0 : ℝ) ≤ 8 * rho * CK * Ce * E * N ^ (-(1 : ℝ) / 2) := by
       refine mul_nonneg (mul_nonneg ?_ hE0.le) (Real.rpow_nonneg hN0.le _)
       exact mul_nonneg (mul_nonneg (mul_nonneg (by norm_num) hrho0) hCK.le) hCe0.le
