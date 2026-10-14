@@ -294,7 +294,7 @@ theorem cutoffHomogenizationErrorRepresentative_nonneg {d : ℕ}
   le_max_left _ _
 
 theorem cutoffHomogenizationErrorFunctional_ae_eq_representative
-    {d : ℕ} [NeZero d] (M : ABKModel d) (coefficientScale domainScale : ℤ)
+    {d : ℕ} (M : ABKModel d) (coefficientScale domainScale : ℤ)
     {s : ℝ} (hs : 0 < s) (sigma : PositiveScalar) :
     cutoffHomogenizationErrorFunctional M coefficientScale domainScale s sigma =ᵐ[
         (Cutoff.cutoffSampleLaw M).toMeasure]

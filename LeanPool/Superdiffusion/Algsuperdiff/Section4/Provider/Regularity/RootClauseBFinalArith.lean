@@ -147,7 +147,7 @@ theorem rootClauseBCg_nonneg (d : ℕ) {Ccacc Cosc CBc : ℝ} (hCcacc : 0 ≤ Cc
 monotone at the endpoint's own nonnegativity binders.  This is what lets the
 `M`-uniform `C_WG` of §1 and the `α`-uniform `C_B` of §2 be substituted into
 the funding hypothesis. -/
-theorem rootClauseBPrefactor_mono_data (d : ℕ) [NeZero d]
+theorem rootClauseBPrefactor_mono_data (d : ℕ)
     {Cch Ccacc Cosc CBc CBc' CB CB' Ctr CWG CWG' CdM CdM' : ℝ} (hCch : 0 ≤ Cch)
     (hCcacc : 0 ≤ Ccacc) (hCosc : 0 ≤ Cosc) (hCB : 0 ≤ CB) (hCtr : 0 ≤ Ctr)
     (hCWG : 0 ≤ CWG) (hCdM : 0 ≤ CdM) (hBc : CBc ≤ CBc') (hB : CB ≤ CB')

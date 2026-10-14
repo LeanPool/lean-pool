@@ -288,7 +288,7 @@ theorem cutoffHomogenizationErrorRepresentative22_nonneg
     0 ≤ cutoffHomogenizationErrorRepresentative22 M coefficientScale domainScale hs sigma omega :=
   le_max_left _ _
 
-theorem cutoffHomogenizationError22Functional_ae_eq_representative22 [NeZero d]
+theorem cutoffHomogenizationError22Functional_ae_eq_representative22
     (M : ABKModel d) (coefficientScale domainScale : ℤ) {s : ℝ} (hs : 0 < s)
     (sigma : PositiveScalar) :
     cutoffHomogenizationError22Functional M coefficientScale domainScale s sigma =ᵐ[

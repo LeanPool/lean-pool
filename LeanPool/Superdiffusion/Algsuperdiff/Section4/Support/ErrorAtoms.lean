@@ -166,7 +166,7 @@ theorem homogenizationErrorAtScale22_characterization
           (TriadicCoeffFamily.isDilation_dilate (-m) F) (originCube d m)
           s (.finite 2) (.finite 2) (isotropicComparatorMatrix sigma))
 
-theorem homogenizationErrorAtScale22_nonneg [NeZero d]
+theorem homogenizationErrorAtScale22_nonneg
     (m : ℤ) {s : ℝ} (hs : 0 < s)
     (a : CoeffOn (cubeDomain (originCube d m)))
     (sigma : PositiveScalar) :

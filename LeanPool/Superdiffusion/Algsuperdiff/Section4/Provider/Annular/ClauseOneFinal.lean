@@ -72,7 +72,7 @@ variable {d : ℕ}
 atom is almost surely below the annulus maximum of the measurable observable —
 indeed the two agree a.s.  The null set is the representative-choice set of
 the `𝒢₂` lane, taken over the countable family of scales and lattice indices. -/
-theorem annularErrorAtomMax_ae_le_annularErrorLatticeMax [NeZero d] (M : ABKModel d)
+theorem annularErrorAtomMax_ae_le_annularErrorLatticeMax (M : ABKModel d)
     (s : {s : ℝ // 0 < s}) :
     ∀ᵐ omega ∂(Cutoff.cutoffSampleLaw M).toMeasure,
       ∀ j n : ℤ, n ≤ j - 1 →

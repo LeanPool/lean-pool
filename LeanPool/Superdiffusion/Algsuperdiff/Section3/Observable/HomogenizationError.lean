@@ -82,7 +82,7 @@ theorem homogenizationErrorAtScale_characterization {d : ℕ}
 
 /-- The Section 3 homogenization error is nonnegative.  This follows directly from
 the finite-`q` `Real.rpow` branch of CoarseGraining's literal definition. -/
-theorem homogenizationErrorAtScale_nonneg {d : ℕ} [NeZero d]
+theorem homogenizationErrorAtScale_nonneg {d : ℕ}
     (m : ℤ) {s : ℝ} (hs : 0 < s)
     (a : CoeffOn (cubeDomain (originCube d m)))
     (sigma : PositiveScalar) :

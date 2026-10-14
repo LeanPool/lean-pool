@@ -85,7 +85,7 @@ theorem rootClauseBCg_mono_ccacc (d : ℕ) {Ccacc Ccacc' Cosc CBc : ℝ}
 /-- **The composite clause-(B) prefactor is monotone in `C_cacc`.**  The two sign
 conditions on the brackets are exactly the endpoint's own nonnegativity
 binders. -/
-theorem rootClauseBPrefactor_mono_ccacc (d : ℕ) [NeZero d]
+theorem rootClauseBPrefactor_mono_ccacc (d : ℕ)
     {Cch Ccacc Ccacc' Cosc CBc CB Ctr CWG CdM : ℝ} (hCch : 0 ≤ Cch)
     (hCosc : 0 ≤ Cosc) (hCB : 0 ≤ CB) (hCtr : 0 ≤ Ctr) (hCWG : 0 ≤ CWG)
     (hCdM : 0 ≤ CdM) (h : Ccacc ≤ Ccacc') :

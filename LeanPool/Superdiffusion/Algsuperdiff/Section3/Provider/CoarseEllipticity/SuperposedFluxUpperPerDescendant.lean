@@ -1016,8 +1016,7 @@ private abbrev superposedFluxUpperPerDescendant_comparisonBounds4_statement : Pr
                                eta ^
                               (2 : ℕ))
                             (Cutoff.translateCutoffSample
-                             (triadicCubeShift R) omega)))) ∧
-                     True
+                             (triadicCubeShift R) omega))))
 
 private abbrev superposedFluxUpperPerDescendant_comparisonBounds5_statement : Prop :=
     ∀ {d : ℕ} (M : ABKModel d) (m : ℤ) (E : { E : ℝ // (1 : ℝ) ≤ E }) (Clane : ℝ),
@@ -2033,8 +2032,7 @@ private abbrev superposedFluxUpperPerDescendant_comparisonBounds3_statement : Pr
                                                      ((↑E : ℝ)⁻¹ ^
                                                        (2 : ℕ) *
                                                       M.gamma⁻¹))) ^
-                                                  (8 : ℕ)) ∧
-                                               True
+                                                  (8 : ℕ))
 
 
 private theorem named_layer_ennreal_bound
@@ -3140,7 +3138,7 @@ private theorem superposedFluxUpperPerDescendant_comparisonBounds3 :
                     hafterOrdinaryMeasurable, hafterRareNonneg, hafterRareMeasurable,
                       hafterENNRealDom, hafterOrdinaryO, hafterOrdinaryScaleLe, hafterRareO,
                         hafterRareScaleLe, hcollarBase, hcollarHeadNonneg, hcollarHeadMeasurable,
-                          hcollarHeadENNRealEq, hcollarHead, True.intro⟩
+                          hcollarHeadENNRealEq, hcollarHead⟩
 
 private theorem superposedFluxUpperPerDescendant_comparisonBounds4 :
   superposedFluxUpperPerDescendant_comparisonBounds4_statement := by
@@ -3230,8 +3228,7 @@ private theorem superposedFluxUpperPerDescendant_comparisonBounds4 :
         named_layer_ennreal_bound M m (E : ℝ) R j n omega
   exact ⟨hcollarWaveENNRealEq, waveBounded, waveRare, hwaveENNRealDom, hordinaryLaneNonneg,
     hUoneNonneg, hUoneMeasurable, hUone, hrareLaneNonneg, hUexpNonneg, hUexpMeasurable, hUexp,
-      hgoodBaseENNReal, hcollarBaseENNReal, hcollarBandENNReal, hcollarDeepENNReal, hEnvelope,
-        True.intro⟩
+      hgoodBaseENNReal, hcollarBaseENNReal, hcollarBandENNReal, hcollarDeepENNReal, hEnvelope⟩
 
 private theorem superposedFluxUpperPerDescendant_comparisonBounds5 :
   superposedFluxUpperPerDescendant_comparisonBounds5_statement := by
@@ -3372,7 +3369,7 @@ theorem superposedFlux_upper_per_descendant_split
                     hafterOrdinaryMeasurable, hafterRareNonneg, hafterRareMeasurable,
                       hafterENNRealDom, hafterOrdinaryO, hafterOrdinaryScaleLe, hafterRareO,
                         hafterRareScaleLe, hcollarBase, hcollarHeadNonneg, hcollarHeadMeasurable,
-                          hcollarHeadENNRealEq, hcollarHead, _⟩ :=
+                          hcollarHeadENNRealEq, hcollarHead⟩ :=
     @superposedFluxUpperPerDescendant_comparisonBounds3 (d) (M) (m) (E) (hstate) (sigma) (Clane)
       (hsigma0) (hsigmaHalf) (hmaxLane) (hE2) (hgoodHeadOutput) (hgoodBandOutput)
         (hgoodDeepOutput) (hgoodAfterOutput) (hcollarBaseOutput) (hcollarHeadOutput)
@@ -3451,7 +3448,7 @@ theorem superposedFlux_upper_per_descendant_split
   change (∀ omega, 0 ≤ collarWave omega) ∧ Measurable collarWave ∧ _ ∧ _ at hcollarWaveRaw
   obtain ⟨hcollarWaveENNRealEq, waveBounded, waveRare, hwaveENNRealDom, hordinaryLaneNonneg,
     hUoneNonneg, hUoneMeasurable, hUone, hrareLaneNonneg, hUexpNonneg, hUexpMeasurable, hUexp,
-      hgoodBaseENNReal, hcollarBaseENNReal, hcollarBandENNReal, hcollarDeepENNReal, hEnvelope, _⟩ :=
+      hgoodBaseENNReal, hcollarBaseENNReal, hcollarBandENNReal, hcollarDeepENNReal, hEnvelope⟩ :=
     @superposedFluxUpperPerDescendant_comparisonBounds4 (d) (M) (m) (E) (hstate) (sigma) (Clane)
       (hsigma0) (hsigmaHalf) (hmaxLane) (hE2) (hlanePos) (hgoodWaveOutput) (hprofileAuxLane)
         (hdepthThresholdLane) (k) (R) (hR) (hd) (headOrdinary) (headRare) (headOrdinaryScale)

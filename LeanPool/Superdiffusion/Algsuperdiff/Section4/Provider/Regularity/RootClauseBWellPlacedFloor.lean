@@ -388,7 +388,7 @@ private abbrev rootClauseB_energyWindowBound_statement : Prop :=
           √(↑(Annealed.sigmaBar M m) : ℝ) * Real.rpow (3 : ℝ) ((↑m : ℝ) / (2 : ℝ)) * Kh)
 
 /-- The well-placed prefactor is monotone in its four data slots. -/
-theorem rootClauseBWellPlacedPrefactor_mono (d : ℕ) [NeZero d]
+theorem rootClauseBWellPlacedPrefactor_mono (d : ℕ)
     {Cch Cg Cg' CB Ctr CWG CWG' CWH CWH' CdM CdM' : ℝ}
     (hCch : 0 ≤ Cch) (hCg : 0 ≤ Cg) (hCB : 0 ≤ CB) (hCtr : 0 ≤ Ctr)
     (hCWG : 0 ≤ CWG) (hCWH : 0 ≤ CWH) (hCdM : 0 ≤ CdM)

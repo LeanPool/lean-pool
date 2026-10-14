@@ -66,7 +66,7 @@ def rootClauseBWellPlacedPrefactor (d : ℕ) (Cch Cg CB Ctr CWG CWH CdM : ℝ) :
     Cg * (Real.sqrt 4 * CWG + Real.sqrt 4 * CWH + CdM)
 
 /-- The well-placed prefactor at nonnegative data. -/
-theorem rootClauseBWellPlacedPrefactor_nonneg (d : ℕ) [NeZero d]
+theorem rootClauseBWellPlacedPrefactor_nonneg (d : ℕ)
     {Cch Cg CB Ctr CWG CWH CdM : ℝ} (hCch : 0 ≤ Cch) (hCg : 0 ≤ Cg)
     (hCB : 0 ≤ CB) (hCtr : 0 ≤ Ctr) (hCWG : 0 ≤ CWG) (hCWH : 0 ≤ CWH)
     (hCdM : 0 ≤ CdM) :

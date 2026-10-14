@@ -77,26 +77,6 @@ theorem ae_abs_le_toReal_eLpNorm_top {μ : Measure (Vec d)} {F : Vec d → ℝ}
 
 /-! ## Measurability of the frozen derivative norms -/
 
-/-- Local copies of the `ContinuousLinearMap` normed-group/space instances on the
-`Vec`/`Mat` abbreviations (see `Lipschitz.MatrixNorms`): typeclass search does not
-find them unaided. -/
-noncomputable instance instNormedAddCommGroupVecMatCLMUnitCube :
-    NormedAddCommGroup (Vec d →L[ℝ] Mat d) :=
-  ContinuousLinearMap.toNormedAddCommGroup
-
-noncomputable instance instNormedSpaceVecMatCLMUnitCube :
-    NormedSpace ℝ (Vec d →L[ℝ] Mat d) :=
-  ContinuousLinearMap.toNormedSpace
-
-noncomputable instance instNormedAddCommGroupVecVecMatCLMUnitCube :
-    NormedAddCommGroup (Vec d →L[ℝ] (Vec d →L[ℝ] Mat d)) :=
-  ContinuousLinearMap.toNormedAddCommGroup
-
-noncomputable instance instNormedSpaceVecVecMatCLMUnitCube :
-    NormedSpace ℝ (Vec d →L[ℝ] (Vec d →L[ℝ] Mat d)) :=
-  @ContinuousLinearMap.toNormedSpace ℝ ℝ (Vec d) (Vec d →L[ℝ] Mat d)
-    _ _ _ _ _ _ (RingHom.id ℝ) _ ℝ _ _ (smulCommClass_self ℝ _)
-
 private theorem matrixNorm_add_le (A B : Mat d) :
     matrixNorm (A + B) ≤ matrixNorm A + matrixNorm B := by
   rw [matrixNorm_eq_matrixOperatorNorm, matrixNorm_eq_matrixOperatorNorm,
