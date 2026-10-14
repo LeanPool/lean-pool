@@ -1562,8 +1562,6 @@ private theorem upperFiniteQGeTwoInfinityAggregation_momentBounds3 :
     exact hsumO.mono_scale hfoldBudget
   have hYexpO : IsBigOWith mu (gammaSigma sigmaExp) Yexp Bexp :=
     Provider.Tail.isBigOWith_of_ae_eq hRrawEqYexp hRrawO
-  let Odepth : ℕ → Cutoff.CutoffSample d → ℝ := fun n => Gone n.pred
-  let Edepth : ℕ → Cutoff.CutoffSample d → ℝ := fun n => Gexp n.pred
   exact ⟨hVspec, hGoneDomAE, hcollar, hWexpNonneg, hGexpEq, hXexpSumAE, hRrawAE, hYexpMeas,
     hRrawEqYexp, hYexpO, True.intro⟩
 

@@ -467,12 +467,11 @@ private theorem iterationLemmaProvider_comparisonBounds2 :
         ∀ (k : ℤ), (0 : ℝ) ≤ δt k) (_ : ∀ (j : ℤ), n ≤ j → j ≤ m → δt j = δ j) (_ :
         ∑ j ∈ Finset.Icc n m, εt j = ∑ j ∈ Finset.Icc n m, ε j) (_ : ∑ j ∈ Finset.Icc n m, δt j =
           ∑ j ∈ Finset.Icc n m, δ j)
-        (_ : (0 : ℝ) ≤ ∑ j ∈ Finset.Icc n m, εt j) (_ : (0 : ℝ) ≤ ∑ j ∈ Finset.Icc n m, δt j) (_ :
+        (_ : (0 : ℝ) ≤ ∑ j ∈ Finset.Icc n m, εt j) (_ : (0 : ℝ) ≤ ∑ j ∈ Finset.Icc n m, δt j),
         ∀ (k : ℤ),
           ∃ (z : Vec d × Vec d),
             axisCube z.1 ((3 : ℝ) ^ (min k m - (2 : ℤ))) ⊆ cappedWindows U m k ∧
-              cappedWindows U m k ⊆ axisCube z.2 ((3 : ℝ) ^ min k m)),
-        True := by
+              cappedWindows U m k ⊆ axisCube z.2 ((3 : ℝ) ^ min k m) := by
   classical
   intro d hd h θ hθ01 hθh n m hnm U hsand ε δ hε hδ
   have hd0 : 0 < d := Nat.pos_of_ne_zero hd
@@ -525,7 +524,7 @@ private theorem iterationLemmaProvider_comparisonBounds2 :
     obtain ⟨zin, zout, h1, h2⟩ := axisCube_sandwich_of_translateSandwich hin hout
     exact ⟨(zin, zout), h1, h2⟩
   exact ⟨hd0, hθ0, hθ1, hθh35, hh, hnmle, εt, hεt0, hεteq, δt, hδt0, hδteq, hSe, hSd, hSe0, hSd0,
-    hsandc, True.intro⟩
+    hsandc⟩
 
 /-- **The provider for `Algsuperdiff.Frozen.Section4.iteration_lemma`.**
 
@@ -594,7 +593,7 @@ theorem iteration_lemma_provider
   refine ⟨iterConst d, iterConst_pos d, ?_⟩
   intro h θ hθ01 hθh n m hnm U hmeas hnest hsand u hu B hB ε δ hε hδ cc gg hmin hdec
   obtain ⟨hd0, hθ0, hθ1, hθh35, hh, hnmle, εt, hεt0, hεteq, δt, hδt0, hδteq, hSe, hSd, hSe0, hSd0,
-    hsandc, _⟩ :=
+    hsandc⟩ :=
     @iterationLemmaProvider_comparisonBounds2 (d) (hd) (h) (θ) (hθ01) (hθh) (n) (m) (hnm) (U)
       (hsand) (ε) (δ) (hε) (hδ)
   choose z hqin hqout using hsandc
