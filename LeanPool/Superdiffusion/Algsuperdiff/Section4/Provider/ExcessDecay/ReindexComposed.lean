@@ -495,9 +495,9 @@ private abbrev reindexComposed_comparisonBounds3_statement : Prop :=
                       : ℝ)) *
                       (normalizedGagliardoESeminormOn ((fun (y : Vec d) => x + y) '' openCubeSet
                         (originCube d n)) s
-                          g).toReal)
-                (_ : cubeBesovScaleWeight (1 : ℝ) (originCube d n) = Real.rpow (3 : ℝ) (-(↑n :
-                  ℝ))), True
+                          g).toReal),
+                cubeBesovScaleWeight (1 : ℝ) (originCube d n) = Real.rpow (3 : ℝ) (-(↑n :
+                  ℝ))
 
 /-- **The two legs of the `n+3` Caccioppoli right-hand side.**
 
@@ -966,7 +966,7 @@ private theorem reindexComposed_comparisonBounds3 : reindexComposed_comparisonBo
     ring
   exact ⟨hsubx, hErepCap, hErep0, hsig, hP2def, hQSdef, hQ3sdef, hQ3sndef, hQ1sdef, hR3ndef,
     hS4def, hS7def, hX0, hY0, hQS0, hQ3s0, hQ3sn0, hQ1s0, hR3n0, hS40, hS70, hsiginv0, hYchildle,
-      hET, hFT, hxf, hW1, True.intro⟩
+      hET, hFT, hxf, hW1⟩
 
 /-- **The general clause at frontier-empty windows, in real form.**
 
@@ -1086,7 +1086,7 @@ theorem exists_generalClauseInterior_honest_addThree (d : ℕ) [NeZero d] :
   have hsig : (0 : ℝ) < (Annealed.sigmaBar M (n + 3) : ℝ) := (Annealed.sigmaBar M (n + 3)).2
   obtain ⟨hsubx, hErepCap, hErep0, hsig, hP2def, hQSdef, hQ3sdef, hQ3sndef, hQ1sdef, hR3ndef,
     hS4def, hS7def, hX0, hY0, hQS0, hQ3s0, hQ3sn0, hQ1s0, hR3n0, hS40, hS70, hsiginv0, hYchildle,
-      hET, hFT, hxf, hW1, _⟩ :=
+      hET, hFT, hxf, hW1⟩ :=
     @reindexComposed_comparisonBounds3 (d) (by infer_instance) (CE) (Cout) (hCoutpos) (hkappadef)
       (hkappa) (he0def) (hk0def) (hb0def) (hb0) (M) (s) (hs) (L) (m) (n) (hmL) (hnm) (x) (z) (hz)
         (hgeom) (hfr) (hs1) (omega) (hcapE) (hcacc) (herrD) (hbrk) (hmem) (u) (hdat) (g) (hsol)

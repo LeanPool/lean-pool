@@ -265,8 +265,7 @@ private abbrev upperFiniteQGeTwoInfinityAggregation_momentBounds3_statement : Pr
                                       k omega)
                                 k omega)
                           k omega)
-                    hRrawAE)
-                (_ :
+                    hRrawAE),
                 IsBigOWith mu (gammaSigma sigmaExp)
                   (AEMeasurable.mk
                     (fun (omega : Cutoff.CutoffSample d) =>
@@ -286,8 +285,7 @@ private abbrev upperFiniteQGeTwoInfinityAggregation_momentBounds3_statement : Pr
                                 k omega)
                           k omega)
                     hRrawAE)
-                  Bexp),
-                True
+                  Bexp
 
 private abbrev upperFiniteExponent_pointwiseAggregation_statement : Prop :=
     ∀ {d : ℕ} [NeZero d] (M : ABKModel d) (m : ℤ)
@@ -1563,7 +1561,7 @@ private theorem upperFiniteQGeTwoInfinityAggregation_momentBounds3 :
   have hYexpO : IsBigOWith mu (gammaSigma sigmaExp) Yexp Bexp :=
     Provider.Tail.isBigOWith_of_ae_eq hRrawEqYexp hRrawO
   exact ⟨hVspec, hGoneDomAE, hcollar, hWexpNonneg, hGexpEq, hXexpSumAE, hRrawAE, hYexpMeas,
-    hRrawEqYexp, hYexpO, True.intro⟩
+    hRrawEqYexp, hYexpO⟩
 
 private theorem upper_finite_two_le_and_infinity_split_of_per_descendant
     {d : ℕ} [NeZero d] (hd : 1 ≤ d)
@@ -1682,7 +1680,7 @@ private theorem upper_finite_two_le_and_infinity_split_of_per_descendant
     exact upperSaturatedPerCubeAmplitude_pos hCblock hcstar
       M.shellPrefix.gamma_pos k
   obtain ⟨hVspec, hGoneDomAE, hcollar, hWexpNonneg, hGexpEq, hXexpSumAE, hRrawAE, hYexpMeas,
-    hRrawEqYexp, hYexpO, _⟩ :=
+    hRrawEqYexp, hYexpO⟩ :=
     @upperFiniteQGeTwoInfinityAggregation_momentBounds3 (d) (hd) (M) (m) (s) (scaling) (Cblock)
       (Krare) (eps) (Bexp) (sigmaExp) (hCblock) (hsigmaExp) (hgamma1) (hp) (hrareBudget) (hper)
         (hrho) (hcstar) (habase) (hctop) (hUoneCubeNonneg) (hUexpCubeNonneg) (hUoneCubeMeas)

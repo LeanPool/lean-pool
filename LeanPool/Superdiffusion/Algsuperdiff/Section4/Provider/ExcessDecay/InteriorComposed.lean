@@ -487,9 +487,9 @@ private abbrev interiorComposed_comparisonBounds3_statement : Prop :=
                       : ℝ)) *
                       (normalizedGagliardoESeminormOn ((fun (y : Vec d) => x + y) '' openCubeSet
                         (originCube d n)) s
-                          g).toReal)
-                (_ : cubeBesovScaleWeight (1 : ℝ) (originCube d n) = Real.rpow (3 : ℝ) (-(↑n :
-                  ℝ))), True
+                          g).toReal),
+                cubeBesovScaleWeight (1 : ℝ) (originCube d n) = Real.rpow (3 : ℝ) (-(↑n :
+                  ℝ))
 
 private theorem interiorComposed_comparisonBounds1 :
     ∀ (d : ℕ) [NeZero d] (CE : ℝ) (_ : (0 : ℝ) < CE) (Cout : ℝ) (_ : (0 : ℝ) < Cout),
@@ -863,7 +863,7 @@ private theorem interiorComposed_comparisonBounds3 :
     ring
   exact ⟨hsubx, hErepCap, hErep0, hsig, hP2def, hQSdef, hQ3sdef, hQ3sndef, hQ1sdef, hR3ndef,
     hS4def, hS192def, hX0, hY0, hQS0, hQ3s0, hQ3sn0, hQ1s0, hR3n0, hS40, hS1920, hsiginv0,
-      hYchildle, hET, hFT, hxf, hW1, True.intro⟩
+      hYchildle, hET, hFT, hxf, hW1⟩
 
 /-- **The interior clause at the honest exponents.**
 
@@ -980,7 +980,7 @@ theorem exists_interiorClause_honest (d : ℕ) [NeZero d] :
   intro hmem u hdat g hsol hgL2 hgW v w hharm hval hgrad
   obtain ⟨hsubx, hErepCap, hErep0, hsig, hP2def, hQSdef, hQ3sdef, hQ3sndef, hQ1sdef, hR3ndef,
     hS4def, hS192def, hX0, hY0, hQS0, hQ3s0, hQ3sn0, hQ1s0, hR3n0, hS40, hS1920, hsiginv0,
-      hYchildle, hET, hFT, hxf, hW1, _⟩ :=
+      hYchildle, hET, hFT, hxf, hW1⟩ :=
     @interiorComposed_comparisonBounds3 (d) (by infer_instance) (CE) (Cout) (hCoutpos) (hkappadef)
       (hkappa) (he0def) (hk0def) (hb0def) (hb0) (M) (s) (hs) (L) (m) (n) (hmL) (hnm) (x) (z) (hz)
         (hgeom) (hfr) (hs1) (omega) (hcapE) (hcacc) (herrD) (hbrk) (hmem) (u) (hdat) (g) (hsol)

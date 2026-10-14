@@ -435,8 +435,7 @@ private abbrev residueRouteOne_comparisonBounds4_statement : Prop :=
                 (0 : ℝ) ≤
                   Ch03.scaleNormalizedPositiveBesovVectorSeminormTwo (originCube d n) s fun (y :
                     Vec d) =>
-                    -g (y + flushSubCentre z m n i sigma))
-                (_ :
+                    -g (y + flushSubCentre z m n i sigma)),
                 (normalizedGagliardoESeminormOn
                       ((fun (y : Vec d) => flushSubCentre z m n i sigma + y) '' openCubeSet
                         (originCube d n)) s g).toReal ≤
@@ -444,8 +443,7 @@ private abbrev residueRouteOne_comparisonBounds4_statement : Prop :=
                     (normalizedGagliardoESeminormOn
                         ((fun (y' : Vec d) => z + y') '' openCubeSet (originCube d (n + (3 : ℤ))) ∩
                           openCubeSet (originCube d m))
-                        s g).toReal),
-                True
+                        s g).toReal
 
 private abbrev residueRouteOne_comparisonBounds1_statement : Prop :=
     ∀ (d : ℕ) [NeZero d] (CE KE : ℝ),
@@ -1002,7 +1000,7 @@ private theorem residueRouteOne_comparisonBounds4 : residueRouteOne_comparisonBo
     exact normalizedGagliardoESeminormOn_flushSubCube_toReal_le hnm2 hz i hsigma g hgWW3
   exact ⟨hsubx, hErepCap, hErep0, hsig, hP2def, hQ3sdef, hxf, hQ3sndef, hQ1sdef, hR3ndef, hS4def,
     hS7def, hS6def, hSm3def, hSm2def, hX0, hGs0, hHs0, hHn0, hS0, hQ3s0, hQ3sn0, hQ1s0, hR3n0,
-      hS40, hS70, hS60, hSm30, hSm20, hsiginv0, hbrkCap, hET, hGbes, hGbes0, hYchild3, True.intro⟩
+      hS40, hS70, hS60, hSm30, hSm20, hsiginv0, hbrkCap, hET, hGbes, hGbes0, hYchild3⟩
 
 private theorem residueRouteOne_comparisonBounds5 :
     ∀ (d : ℕ) [NeZero d] (CE KE : ℝ),
@@ -1419,10 +1417,10 @@ private theorem residueRouteOne_comparisonBounds6 :
     hb0, hcg, hA1def, hA1, hA2def, hA2, hA3def, hA3, hCE2, hCE3, True.intro⟩
 
 private theorem residueRouteOne_comparisonBounds7 :
-    ∀ (d : ℕ) (CE KE kappa b0 cg A1 : ℝ) (_ : A1 = A1) (_ : (0 : ℝ) ≤ A1)
-      (_ : A1 = cg * (216 : ℝ) * (kappa * KE)) (A2 : ℝ) (_ : A2 = A2) (_ : (0 : ℝ) ≤ A2)
+    ∀ (d : ℕ) (CE KE kappa b0 cg A1 : ℝ) (_ : (0 : ℝ) ≤ A1)
+      (_ : A1 = cg * (216 : ℝ) * (kappa * KE)) (A2 : ℝ) (_ : (0 : ℝ) ≤ A2)
       (_ : A2 = cg * (1944 : ℝ) * (b0 * (besovGagliardoConstant d * flushWindowConst d))) (A3
-        : ℝ) (_ : A3 = A3)
+        : ℝ)
       (_ : (0 : ℝ) ≤ A3) (_ : A3 = interiorCorrectionConst d * flushWindowConst d) (s : ℝ)
         (_ : (0 : ℝ) < s) (n : ℤ)
       (_ : s ≤ (1 : ℝ)) (S : ℝ) (_ : (0 : ℝ) ≤ S) (Erep : ℝ) (_ : Erep ≤ CE * (1 / 2 :
@@ -1430,21 +1428,17 @@ private theorem residueRouteOne_comparisonBounds7 :
       (_ : (0 : ℝ) ≤ Erep) (sig : ℝ) (_ : (0 : ℝ) ≤ sig⁻¹) (X : ℝ) (_ : (0 : ℝ) ≤ X)
         (Gs : ℝ)
       (_ : (0 : ℝ) ≤ Gs) (Hs : ℝ) (_ : (0 : ℝ) ≤ Hs) (Hn : ℝ) (_ : (0 : ℝ) ≤ Hn) (P2 : ℝ)
-        (_ : P2 = P2)
-      (_ : P2 = Real.rpow (3 : ℝ) (-(↑(n + (2 : ℤ)) : ℝ))) (Q3s : ℝ) (_ : Q3s = Q3s)
+      (_ : P2 = Real.rpow (3 : ℝ) (-(↑(n + (2 : ℤ)) : ℝ))) (Q3s : ℝ)
         (_ : (0 : ℝ) ≤ Q3s)
-      (_ : Q3s = Real.rpow (3 : ℝ) (s * (↑(n + (2 : ℤ)) : ℝ))) (Q3sn : ℝ) (_ : Q3sn =
-        Q3sn)
-      (_ : Q3sn = Real.rpow (3 : ℝ) (s * (↑n : ℝ))) (Q1s : ℝ) (_ : Q1s = Q1s) (_
+      (_ : Q3s = Real.rpow (3 : ℝ) (s * (↑(n + (2 : ℤ)) : ℝ))) (Q3sn : ℝ)
+      (_ : Q3sn = Real.rpow (3 : ℝ) (s * (↑n : ℝ))) (Q1s : ℝ) (_
         : (0 : ℝ) ≤ Q1s)
-      (_ : Q1s = Real.rpow (3 : ℝ) (((1 : ℝ) + s) * (↑n : ℝ))) (R3n : ℝ) (_ : R3n =
-        R3n) (_ : (0 : ℝ) ≤ R3n)
-      (_ : R3n = Real.rpow (3 : ℝ) (↑n : ℝ)) (S4 : ℝ) (_ : S4 = S4) (_ : (0 : ℝ) ≤ S4)
-      (_ : S4 = s.rpow (-4 : ℝ)) (S7 : ℝ) (_ : S7 = S7) (_ : (0 : ℝ) ≤ S7) (_ :
+      (_ : Q1s = Real.rpow (3 : ℝ) (((1 : ℝ) + s) * (↑n : ℝ))) (R3n : ℝ) (_ : (0 : ℝ) ≤ R3n)
+      (_ : R3n = Real.rpow (3 : ℝ) (↑n : ℝ)) (S4 : ℝ) (_ : (0 : ℝ) ≤ S4)
+      (_ : S4 = s.rpow (-4 : ℝ)) (S7 : ℝ) (_ : (0 : ℝ) ≤ S7) (_ :
         S7 = s.rpow (-7 : ℝ))
-      (S6 : ℝ) (_ : S6 = S6) (_ : (0 : ℝ) ≤ S6) (_ : S6 = s.rpow (-6 : ℝ)) (Sm3 : ℝ)
-        (_ : Sm3 = Sm3)
-      (_ : (0 : ℝ) ≤ Sm3) (_ : Sm3 = s.rpow (-3 : ℝ)) (Sm2 : ℝ) (_ : Sm2 = Sm2)
+      (S6 : ℝ) (_ : (0 : ℝ) ≤ S6) (_ : S6 = s.rpow (-6 : ℝ)) (Sm3 : ℝ)
+      (_ : (0 : ℝ) ≤ Sm3) (_ : Sm3 = s.rpow (-3 : ℝ)) (Sm2 : ℝ)
         (_ : (0 : ℝ) ≤ Sm2)
       (_ : Sm2 = s.rpow (-2 : ℝ)) (_ : sig⁻¹ * sig = (1 : ℝ)),
       sig⁻¹ * R3n *
@@ -1468,11 +1462,11 @@ private theorem residueRouteOne_comparisonBounds7 :
               (0 : ℝ) ≤ S4 * Erep * S ∧ (0 : ℝ) ≤ S7 * sig⁻¹ * Q1s * Gs ∧ (0 : ℝ) ≤ S6 * Q1s * Hs
                 ∧ (0 : ℝ) ≤ S6 * R3n * Hn := by
   classical
-  intro d CE KE kappa b0 cg A1 hA1def hA1 hA1def A2 hA2def hA2 hA2def A3 hA3def hA3 hA3def s hs
-    n hs1 S hS0 Erep hErepCap hErep0 sig hsiginv0 X hX0 Gs hGs0 Hs hHs0 Hn hHn0 P2 hP2def hP2def
-      Q3s hQ3sdef hQ3s0 hQ3sdef Q3sn hQ3sndef hQ3sndef Q1s hQ1sdef hQ1s0 hQ1sdef R3n hR3ndef hR3n0
-        hR3ndef S4 hS4def hS40 hS4def S7 hS7def hS70 hS7def S6 hS6def hS60 hS6def Sm3 hSm3def
-          hSm30 hSm3def Sm2 hSm2def hSm20 hSm2def hsinv
+  intro d CE KE kappa b0 cg A1 hA1 hA1def A2 hA2 hA2def A3 hA3 hA3def s hs
+    n hs1 S hS0 Erep hErepCap hErep0 sig hsiginv0 X hX0 Gs hGs0 Hs hHs0 Hn hHn0 P2 hP2def
+      Q3s hQ3s0 hQ3sdef Q3sn hQ3sndef Q1s hQ1s0 hQ1sdef R3n hR3n0
+        hR3ndef S4 hS40 hS4def S7 hS70 hS7def S6 hS60 hS6def Sm3
+          hSm30 hSm3def Sm2 hSm20 hSm2def hsinv
   have hS4eq : (s⁻¹) ^ (4 : ℕ) = S4 := by
     rw [hS4def, inv_pow_eq_rpow_neg hs 4]
     congr 1
@@ -1651,7 +1645,7 @@ theorem exists_flushResidue_route1_composed (d : ℕ) [NeZero d] :
   intro hmem u hdat g S hsol hgL2 hgW hhW hmean v w hharm hval hgrad
   obtain ⟨hsubx, hErepCap, hErep0, hsig, hP2def, hQ3sdef, hxf, hQ3sndef, hQ1sdef, hR3ndef, hS4def,
     hS7def, hS6def, hSm3def, hSm2def, hX0, hGs0, hHs0, hHn0, hS0, hQ3s0, hQ3sn0, hQ1s0, hR3n0,
-      hS40, hS70, hS60, hSm30, hSm20, hsiginv0, hbrkCap, hET, hGbes, hGbes0, hYchild3, _⟩ :=
+      hS40, hS70, hS60, hSm30, hSm20, hsiginv0, hbrkCap, hET, hGbes, hGbes0, hYchild3⟩ :=
     @residueRouteOne_comparisonBounds4 (d) (by infer_instance) (CE) (KE) (hkappadef) (hkappa)
       (he0def) (hk0def) (hb0def) (M) (s) (hs) (L) (m) (n) (hmL) (hnm) (z) (hz) (i) (sigma)
         (hsigma) (hover) (hs1) (hnm2) (hChinge) (omega) (hcapE) (hEnLeg) (herrD) (hbrk) (hmem) (u)
@@ -1747,13 +1741,13 @@ theorem exists_flushResidue_route1_composed (d : ℕ) [NeZero d] :
   -- (g) the regrouping
   obtain ⟨hT1, hT2, hT3, hXterm, hSterm, hGterm, hHsterm, hHnterm⟩ :=
     @residueRouteOne_comparisonBounds7 (d) (CE) (KE) (kappa) (b0) (cg) (A1)
-      (by assumption) (hA1) (hA1def) (A2) (by assumption) (hA2) (hA2def) (A3) (by assumption)
+      (hA1) (hA1def) (A2) (hA2) (hA2def) (A3)
         (hA3) (hA3def) (s) (hs) (n) (hs1) (S) (hS0) (Erep) (hErepCap) (hErep0) (sig) (hsiginv0)
-          (X) (hX0) (Gs) (hGs0) (Hs) (hHs0) (Hn) (hHn0) (P2) (by assumption) (hP2def) (Q3s) (by
-            assumption) (hQ3s0) (hQ3sdef) (Q3sn) (by assumption) (hQ3sndef) (Q1s) (by assumption)
-              (hQ1s0) (hQ1sdef) (R3n) (by assumption) (hR3n0) (hR3ndef) (S4) (by assumption)
-                (hS40) (hS4def) (S7) (by assumption) (hS70) (hS7def) (S6) (by assumption) (hS60)
-                  (hS6def) (Sm3) (by assumption) (hSm30) (hSm3def) (Sm2) (by assumption) (hSm20)
+          (X) (hX0) (Gs) (hGs0) (Hs) (hHs0) (Hn) (hHn0) (P2) (hP2def)
+            (Q3s) (hQ3s0) (hQ3sdef) (Q3sn) (hQ3sndef) (Q1s)
+              (hQ1s0) (hQ1sdef) (R3n) (hR3n0) (hR3ndef) (S4)
+                (hS40) (hS4def) (S7) (hS70) (hS7def) (S6) (hS60)
+                  (hS6def) (Sm3) (hSm30) (hSm3def) (Sm2) (hSm20)
                     (hSm2def) (hsinv)
   refine hstep.trans (le_trans (mul_le_mul_of_nonneg_left hmono hfac0) ?_)
   have hdistrib : (sig⁻¹ * R3n) *

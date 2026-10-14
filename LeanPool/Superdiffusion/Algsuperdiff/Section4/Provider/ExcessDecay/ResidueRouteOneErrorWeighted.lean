@@ -438,8 +438,7 @@ private abbrev residueRouteOneErrorWeighted_comparisonBounds4_statement : Prop :
                 (0 : ℝ) ≤
                   Ch03.scaleNormalizedPositiveBesovVectorSeminormTwo (originCube d n) s fun (y :
                     Vec d) =>
-                    -g (y + flushSubCentre z m n i sigma))
-                (_ :
+                    -g (y + flushSubCentre z m n i sigma)),
                 (normalizedGagliardoESeminormOn
                       ((fun (y : Vec d) => flushSubCentre z m n i sigma + y) '' openCubeSet
                         (originCube d n)) s g).toReal ≤
@@ -447,8 +446,7 @@ private abbrev residueRouteOneErrorWeighted_comparisonBounds4_statement : Prop :
                     (normalizedGagliardoESeminormOn
                         ((fun (y' : Vec d) => z + y') '' openCubeSet (originCube d (n + (3 : ℤ))) ∩
                           openCubeSet (originCube d m))
-                        s g).toReal),
-                True
+                        s g).toReal
 
 private abbrev residueRouteOneErrorWeighted_comparisonBounds1_statement : Prop :=
     ∀ (d : ℕ) [NeZero d] (CE KE : ℝ),
@@ -988,7 +986,7 @@ private theorem residueRouteOneErrorWeighted_comparisonBounds4 :
     exact normalizedGagliardoESeminormOn_flushSubCube_toReal_le hnm2 hz i hsigma g hgWW3
   exact ⟨hsubx, hErepCap, hErep0, hsig, hP2def, hQ3sdef, hxf, hQ3sndef, hQ1sdef, hR3ndef, hS4def,
     hS7def, hS6def, hSm3def, hSm2def, hX0, hGs0, hHs0, hHn0, hS0, hQ3s0, hQ3sn0, hQ1s0, hR3n0,
-      hS40, hS70, hS60, hSm30, hSm20, hsiginv0, hbrkCap, hET, hGbes, hGbes0, hYchild3, True.intro⟩
+      hS40, hS70, hS60, hSm30, hSm20, hsiginv0, hbrkCap, hET, hGbes, hGbes0, hYchild3⟩
 
 private theorem residueRouteOneErrorWeighted_comparisonBounds5 :
     ∀ (d : ℕ) [NeZero d] (CE KE : ℝ),
@@ -1688,7 +1686,7 @@ theorem exists_flushResidue_route1_composed_errorWeighted (d : ℕ) [NeZero d] :
   intro hmem u hdat g S hsol hgL2 hgW hhW hmean v w hharm hval hgrad
   obtain ⟨hsubx, hErepCap, hErep0, hsig, hP2def, hQ3sdef, hxf, hQ3sndef, hQ1sdef, hR3ndef, hS4def,
     hS7def, hS6def, hSm3def, hSm2def, hX0, hGs0, hHs0, hHn0, hS0, hQ3s0, hQ3sn0, hQ1s0, hR3n0,
-      hS40, hS70, hS60, hSm30, hSm20, hsiginv0, hbrkCap, hET, hGbes, hGbes0, hYchild3, _⟩ :=
+      hS40, hS70, hS60, hSm30, hSm20, hsiginv0, hbrkCap, hET, hGbes, hGbes0, hYchild3⟩ :=
     @residueRouteOneErrorWeighted_comparisonBounds4 (d) (by infer_instance) (CE) (KE) (hkappadef)
       (hkappa) (he0def) (hk0def) (hb0def) (M) (s) (hs) (L) (m) (n) (hmL) (hnm) (z) (hz) (i)
         (sigma) (hsigma) (hover) (hs1) (hnm2) (hChinge) (omega) (hcapE) (hEnLeg) (herrD) (hbrk)

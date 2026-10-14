@@ -523,8 +523,7 @@ private abbrev assemblyComposedErrorWeighted_comparisonBounds5_statement : Prop 
                     (normalizedGagliardoESeminormOn
                         ((fun (y' : Vec d) => z + y') '' openCubeSet (originCube d (n + (3 : ℤ))) ∩
                           openCubeSet (originCube d m))
-                        s g).toReal)
-                (_ :
+                        s g).toReal),
                 (coarseGrainingForceTerm (originCube d n) (parentRebasedFamily M L (n + (3 : ℤ)) x
                   z omega)
                     (scalarComparator (Annealed.sigmaBar M (n + (3 : ℤ))).property) (s / (3 : ℝ))
@@ -537,8 +536,7 @@ private abbrev assemblyComposedErrorWeighted_comparisonBounds5_statement : Prop 
                             ((fun (y' : Vec d) => z + y') '' openCubeSet (originCube d (n + (3 :
                               ℤ))) ∩
                               openCubeSet (originCube d m))
-                            s g).toReal))),
-                True
+                            s g).toReal))
 
 private theorem assemblyComposedErrorWeighted_estimate1 :
     ∀ (CE KE kappa cg A1 : ℝ)
@@ -1141,7 +1139,7 @@ private theorem assemblyComposedErrorWeighted_comparisonBounds5 :
       (mul_nonneg (besovGagliardoConstant_nonneg d) hQ3sn0)
   exact ⟨hsubx, hErepCap, hErep0, hsig, hP2def, hQ3sdef, hxf, hQ3sndef, hQ1sdef, hR3ndef, hS4def,
     hS7def, hS6def, hSm3def, hSm2def, hX0, hGs0, hHs0, hHn0, hS0, hQ3s0, hQ3sn0, hQ1s0, hR3n0,
-      hS40, hS70, hS60, hSm30, hSm20, hsiginv0, hET, hYchild3, hFT, True.intro⟩
+      hS40, hS70, hS60, hSm30, hSm20, hsiginv0, hET, hYchild3, hFT⟩
 
 private theorem assemblyComposedErrorWeighted_comparisonBounds6 :
     ∀ (d : ℕ) [NeZero d] (CE KE : ℝ),
@@ -1802,7 +1800,7 @@ theorem exists_boundaryClauseComposed_honest_errorWeighted (d : ℕ) [NeZero d] 
   intro hmem u hdat g S hsol hgL2 hgW hhW hmean v w hharm hval hgrad
   obtain ⟨hsubx, hErepCap, hErep0, hsig, hP2def, hQ3sdef, hxf, hQ3sndef, hQ1sdef, hR3ndef, hS4def,
     hS7def, hS6def, hSm3def, hSm2def, hX0, hGs0, hHs0, hHn0, hS0, hQ3s0, hQ3sn0, hQ1s0, hR3n0,
-      hS40, hS70, hS60, hSm30, hSm20, hsiginv0, hET, hYchild3, hFT, _⟩ :=
+      hS40, hS70, hS60, hSm30, hSm20, hsiginv0, hET, hYchild3, hFT⟩ :=
     @assemblyComposedErrorWeighted_comparisonBounds5 (d) (by infer_instance) (CE) (KE) (hkappadef)
       (hkappa) (he0def) (hk0def) (hb0def) (hb0) (M) (s) (hs) (L) (m) (n) (hmL) (hnm) (x) (z)
         (hgeom) (hs1) (omega) (hcapE) (hEnLeg) (herrD) (hbrk) (hmem) (u) (hdat) (g) (S) (hsol)
