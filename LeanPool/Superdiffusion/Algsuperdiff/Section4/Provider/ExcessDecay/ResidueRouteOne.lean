@@ -88,7 +88,8 @@ open Algsuperdiff.Section4.Support
 
 noncomputable section
 
-abbrev residueRouteOne_comparisonBounds4_statement : Prop :=
+/-- Child-cube geometry and transport facts shared by the two boundary routes. -/
+abbrev boundaryRouteGeometryComparison : Prop :=
     ∀ (d : ℕ) [NeZero d] (CE KE : ℝ),
       let kappa : ℝ := √((192 : ℝ) * (↑d : ℝ)) * (3 : ℝ);
       ∀ (_ : kappa = √((192 : ℝ) * (↑d : ℝ)) * (3 : ℝ)) (_ : (0 : ℝ) ≤ kappa),
@@ -445,7 +446,8 @@ abbrev residueRouteOne_comparisonBounds4_statement : Prop :=
                           openCubeSet (originCube d m))
                         s g).toReal
 
-abbrev residueRouteOne_comparisonBounds1_statement : Prop :=
+/-- The energy comparison contract shared by the two boundary routes. -/
+abbrev boundaryRouteEnergyComparison : Prop :=
     ∀ (d : ℕ) [NeZero d] (CE KE : ℝ),
       let kappa : ℝ := √((192 : ℝ) * (↑d : ℝ)) * (3 : ℝ);
       ∀ (_ : kappa = √((192 : ℝ) * (↑d : ℝ)) * (3 : ℝ)) (_ : (0 : ℝ) ≤ kappa),
@@ -567,7 +569,7 @@ abbrev residueRouteOne_comparisonBounds1_statement : Prop :=
                                 (Q3s * Hs)) +
                                 Sm2 * (sig * Hn))
 
-theorem residueRouteOne_comparisonBounds1 : residueRouteOne_comparisonBounds1_statement :=
+theorem residueRouteOne_comparisonBounds1 : boundaryRouteEnergyComparison :=
   by
   intro d _ _ KE kappa hkappadef hkappa e0 he0def k0 hk0def b0 hb0def M s hs L m n z i sigma hs1
     hChinge omega u _ _ S hsubx Erep hErepCap hErep0 Eb herrD hbrk hEbdef sig hsig X Gs Hs Hn P2
@@ -875,7 +877,7 @@ private theorem residueRouteOne_comparisonBounds3 :
     linarith only [hi, hii, hiii, hiv, hv]
   exact ⟨hS6le, hQScle, hRQ3sn, hT1⟩
 
-theorem residueRouteOne_comparisonBounds4 : residueRouteOne_comparisonBounds4_statement :=
+theorem residueRouteOne_comparisonBounds4 : boundaryRouteGeometryComparison :=
   by
   classical
   intro d _ CE KE kappa hkappadef hkappa _ he0def _ hk0def b0 hb0def M s hs L m n hmL hnm z hz i
