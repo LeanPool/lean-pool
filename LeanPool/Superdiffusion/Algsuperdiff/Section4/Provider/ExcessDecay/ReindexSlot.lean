@@ -64,6 +64,34 @@ open Algsuperdiff.Section3.Observable
 
 noncomputable section
 
+
+/-- A common threshold for a source clause, the sigma conversion, and absorption. -/
+theorem exists_clause_absorption_constant {CI CS Cfin K : ℝ}
+    (hCI : 0 < CI) (hCfin : 0 ≤ Cfin) (hK : 0 ≤ K) :
+    ∃ C : ℝ, 0 < C ∧ CI ≤ C ∧ CS ≤ C ∧ K * Cfin ≤ C ∧ 4 * K * Cfin ≤ C := by
+  refine ⟨max (max CI CS) (4 * K * Cfin), ?_, ?_, ?_, ?_, le_max_right _ _⟩
+  · exact hCI.trans_le ((le_max_left CI CS).trans (le_max_left _ _))
+  · exact (le_max_left CI CS).trans (le_max_left _ _)
+  · exact (le_max_right CI CS).trans (le_max_left _ _)
+  · have hnonneg : 0 ≤ K * Cfin := mul_nonneg hK hCfin
+    have hle := le_max_right (max CI CS) (4 * K * Cfin)
+    linarith only [hnonneg, hle]
+
+/-- Decreasing the positive threshold constant relaxes an inverse-scaled bound. -/
+theorem inverse_mul_le_of_constant_le {a b x : ℝ}
+    (ha : 0 < a) (hab : a ≤ b) (hx : 0 ≤ x) : b⁻¹ * x ≤ a⁻¹ * x := by
+  have h := one_div_le_one_div_of_le ha hab
+  rw [one_div, one_div] at h
+  exact mul_le_mul_of_nonneg_right h hx
+
+/-- Transport a nonnegative sigma leg across the gap-three ratio. -/
+theorem sigma_leg_move {p q X a b : ℝ} (hp : 0 ≤ p) (hq : 0 ≤ q) (hX : 0 ≤ X)
+    (hratio : a ≤ 4 * b) : p * a * q * X ≤ 4 * (p * b * q * X) := by
+  have h := mul_le_mul_of_nonneg_left hratio (mul_nonneg (mul_nonneg hp hq) hX)
+  calc p * a * q * X = (p * q * X) * a := by ring
+    _ ≤ (p * q * X) * (4 * b) := h
+    _ = 4 * (p * b * q * X) := by ring
+
 variable {d : ℕ}
 
 /-! ## 1. The centre child, and the two geometric consequences -/

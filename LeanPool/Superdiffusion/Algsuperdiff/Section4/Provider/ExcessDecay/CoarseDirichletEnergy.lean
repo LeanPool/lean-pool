@@ -7,7 +7,7 @@ Authors: Scott Armstrong
 module
 
 public import LeanPool.Superdiffusion.Algsuperdiff.Section4.Provider.ExcessDecay.CoarseIndexBridges
-public import LeanPool.Superdiffusion.Algsuperdiff.Section4.Provider.ExcessDecay.BoundaryGradH
+public import LeanPool.Superdiffusion.Algsuperdiff.Section4.Provider.ExcessDecay.ResidueCapWindow
 
 /-!
 # CoarseDirichletEnergy
@@ -105,20 +105,14 @@ theorem rpow_half_le_of_upper_cap {Lam sigma K : ℝ} (hLam : 0 ≤ Lam)
 
 /-! ## 2. The Dirichlet energy right-hand side, priced -/
 
-/-- CoarseGraining's `dirichletEnergyWithRHSRHS` on the boundary covering
-cube at the pin `r = s/2`, priced onto the frozen clause's three legs.
-
-`hlam` and `hLam` are the two `q = 2` ratio caps of
-`CoarseIndexBridges.ae_coveringCubeRatioCap_le` at the indices `s/4` and
-`s/2`; `hvgrad` is the boundary-gradient identity carried by the produced
-Dirichlet comparison of `BoundaryEnergyRebase`. -/
-theorem dirichletEnergyWithRHSRHS_coveringCube_le_anchorLegs [NeZero d]
+/-- Dirichlet energy bound from covering-cube containment in the anchor window. -/
+theorem dirichletEnergyWithRHSRHS_coveringCube_le_anchorLegs_atWindow [NeZero d]
     {n m : ℤ} {x z c : Vec d} {s C₂ K sigma : ℝ} {g : Vec d → Vec d}
     {a : CoeffFamily d} (hcdef : c = wellPlacedCentre x m (n + 2))
-    (hnm : n + 2 ≤ m) (hx : x ∈ openCubeSet (originCube d m))
-    (hgeom : (fun y => x + y) '' openCubeSet (originCube d n) ⊆
-      ((fun y => z + y) '' openCubeSet (originCube d (n + 1))) ∩
-        openCubeSet (originCube d m))
+    (hcov : (fun y => wellPlacedCentre x m (n + 2) + y) ''
+        openCubeSet (originCube d (n + 2)) ⊆
+      (((fun y => z + y) '' openCubeSet (originCube d (n + 3))) ∩
+        openCubeSet (originCube d m)))
     (hs : 0 < s) (hs1 : s ≤ 1) (hC₂ : 0 ≤ C₂) (hsigma : 0 < sigma) (hK : 0 ≤ K)
     (hdat : H1Function (openCubeSet (originCube d m)))
     (v : DirichletForcedCubeSolution (originCube d (n + 2)) a
@@ -208,8 +202,8 @@ theorem dirichletEnergyWithRHSRHS_coveringCube_le_anchorLegs [NeZero d]
         (fun y => -g (y + c)) :=
     scaleNormalizedPositiveBesovVectorSeminormTwo_le_of_exponent_le (originCube d (n + 2)) _
       (by linarith only [hs]) hgreg
-  have hgTrans := besovVectorSeminormTwo_coveringCube_le_anchorWindow
-    (x := x) (z := z) (g := g) hnm hx hgeom hs hs1 (hcdef ▸ hgL2cov)
+  have hgTrans := besovVectorSeminormTwo_coveringCube_atWindow
+    (x := x) (z := z) (g := g) hcov hs hs1 (hcdef ▸ hgL2cov)
     (hcdef ▸ hgWcov) hgW
   rw [← hcdef] at hgTrans
   have hgLeg : scaleNormalizedPositiveBesovVectorSeminormTwo (originCube d (n + 2)) (s / 2)
@@ -228,12 +222,12 @@ theorem dirichletEnergyWithRHSRHS_coveringCube_le_anchorLegs [NeZero d]
         (fun y => hdat.grad (y + c)) :=
     scaleNormalizedPositiveBesovVectorSeminormTwo_le_of_exponent_le (originCube d (n + 2)) _
       (by linarith only [hs]) hhreg
-  have hhTrans := besovVectorSeminormTwo_datumGrad_coveringCube_le_anchorWindow
-    (x := x) (z := z) (H := hdat.grad) hnm hx hgeom hs hs1 (hcdef ▸ hhL2cov)
+  have hhTrans := besovVectorSeminormTwo_datumGrad_coveringCube_atWindow
+    (x := x) (z := z) (H := hdat.grad) hcov hs hs1 (hcdef ▸ hhL2cov)
     (hcdef ▸ hhWcov) hhW
   rw [← hcdef] at hhTrans
-  have hhAvg := sqrt_vecNormSq_cubeAverageVec_coveringCube_le_anchorWindow
-    (x := x) (z := z) (H := hdat.grad) hnm hx hgeom hhL2W
+  have hhAvg := sqrt_vecNormSq_cubeAverageVec_coveringCube_atWindow
+    (x := x) (z := z) (H := hdat.grad) hcov hhL2W
   rw [← hcdef] at hhAvg
   have hhNorm : scaleNormalizedPositiveBesovVectorNormTwo (originCube d (n + 2)) (s / 2)
       (dirichletBoundaryGradientField v) ≤
@@ -346,6 +340,90 @@ theorem dirichletEnergyWithRHSRHS_coveringCube_le_anchorLegs [NeZero d]
                 (gagliardoWindowConst d *
                   (Support.normalizedGagliardoESeminormOn W s hdat.grad).toReal)) := by
           ring
+
+/-- CoarseGraining's `dirichletEnergyWithRHSRHS` on the boundary covering
+cube at the pin `r = s/2`, priced onto the frozen clause's three legs.
+
+`hlam` and `hLam` are the two `q = 2` ratio caps of
+`CoarseIndexBridges.ae_coveringCubeRatioCap_le` at the indices `s/4` and
+`s/2`; `hvgrad` is the boundary-gradient identity carried by the produced
+Dirichlet comparison of `BoundaryEnergyRebase`. -/
+theorem dirichletEnergyWithRHSRHS_coveringCube_le_anchorLegs [NeZero d]
+    {n m : ℤ} {x z c : Vec d} {s C₂ K sigma : ℝ} {g : Vec d → Vec d}
+    {a : CoeffFamily d} (hcdef : c = wellPlacedCentre x m (n + 2))
+    (hnm : n + 2 ≤ m) (hx : x ∈ openCubeSet (originCube d m))
+    (hgeom : (fun y => x + y) '' openCubeSet (originCube d n) ⊆
+      ((fun y => z + y) '' openCubeSet (originCube d (n + 1))) ∩
+        openCubeSet (originCube d m))
+    (hs : 0 < s) (hs1 : s ≤ 1) (hC₂ : 0 ≤ C₂) (hsigma : 0 < sigma) (hK : 0 ≤ K)
+    (hdat : H1Function (openCubeSet (originCube d m)))
+    (v : DirichletForcedCubeSolution (originCube d (n + 2)) a
+      (fun y => -g (y + c)))
+    (hvgrad : ∀ y, v.boundaryData.grad y =
+      hdat.grad (y + c))
+    (hlam : sigma *
+      (Ch02.lambdaSq (originCube d (n + 2)) (s / 4)
+        (Ch02.MultiscaleExponent.finite 2) a)⁻¹ ≤ K)
+    (hLam : sigma⁻¹ *
+      Ch02.LambdaSq (originCube d (n + 2)) (s / 2)
+        (Ch02.MultiscaleExponent.finite 2) a ≤ K)
+    (hgreg : ForceBesovRegularity (originCube d (n + 2)) s
+      (fun y => -g (y + c)))
+    (hhreg : ForceBesovRegularity (originCube d (n + 2)) s
+      (fun y => hdat.grad (y + c)))
+    (hgL2cov : MemLp g 2
+      (Support.normalizedVolumeMeasureOn
+        ((fun y => c + y) ''
+          openCubeSet (originCube d (n + 2)))))
+    (hgWcov : MemLp (Gagliardo.gagliardoKernel s 2 g) 2
+      (Support.normalizedGagliardoMeasureOn
+        ((fun y => c + y) ''
+          openCubeSet (originCube d (n + 2)))))
+    (hgW : MemLp (Gagliardo.gagliardoKernel s 2 g) 2
+      (Support.normalizedGagliardoMeasureOn
+        ((((fun y' => z + y') '' openCubeSet (originCube d (n + 3))) ∩
+          openCubeSet (originCube d m)))))
+    (hhL2cov : MemLp hdat.grad 2
+      (Support.normalizedVolumeMeasureOn
+        ((fun y => c + y) ''
+          openCubeSet (originCube d (n + 2)))))
+    (hhWcov : MemLp (Gagliardo.gagliardoKernel s 2 hdat.grad) 2
+      (Support.normalizedGagliardoMeasureOn
+        ((fun y => c + y) ''
+          openCubeSet (originCube d (n + 2)))))
+    (hhW : MemLp (Gagliardo.gagliardoKernel s 2 hdat.grad) 2
+      (Support.normalizedGagliardoMeasureOn
+        ((((fun y' => z + y') '' openCubeSet (originCube d (n + 3))) ∩
+          openCubeSet (originCube d m)))))
+    (hhL2W : MemLp hdat.grad 2
+      (Support.normalizedVolumeMeasureOn
+        ((((fun y' => z + y') '' openCubeSet (originCube d (n + 3))) ∩
+          openCubeSet (originCube d m))))) :
+    dirichletEnergyWithRHSRHS C₂ (originCube d (n + 2)) a (s / 2)
+        (fun y => -g (y + c)) v ≤
+      C₂ * Real.rpow (s / 2) (-(3 / 2 : ℝ)) *
+          (Real.sqrt K * Real.sqrt sigma⁻¹) *
+          (besovGagliardoConstant d * Real.rpow (3 : ℝ) (s * ((n + 2 : ℤ) : ℝ)) *
+            (gagliardoWindowConst d *
+              (Support.normalizedGagliardoESeminormOn
+                ((((fun y' => z + y') '' openCubeSet (originCube d (n + 3))) ∩
+                  openCubeSet (originCube d m))) s g).toReal)) +
+        C₂ * Real.rpow (s / 2) (-(1 / 2 : ℝ)) *
+          (Real.sqrt K * Real.sqrt sigma) *
+          (Real.sqrt (d : ℝ) * (3 : ℝ) ^ d *
+              (eLpNorm hdat.grad 2
+                (Support.normalizedVolumeMeasureOn
+                  ((((fun y' => z + y') '' openCubeSet (originCube d (n + 3))) ∩
+                    openCubeSet (originCube d m))))).toReal +
+            besovGagliardoConstant d * Real.rpow (3 : ℝ) (s * ((n + 2 : ℤ) : ℝ)) *
+              (gagliardoWindowConst d *
+                (Support.normalizedGagliardoESeminormOn
+                  ((((fun y' => z + y') '' openCubeSet (originCube d (n + 3))) ∩
+                    openCubeSet (originCube d m))) s hdat.grad).toReal)) := by
+  exact dirichletEnergyWithRHSRHS_coveringCube_le_anchorLegs_atWindow hcdef
+    (image_add_wellPlacedCentre_subset_anchorWindow hnm hx hgeom)
+    hs hs1 hC₂ hsigma hK hdat v hvgrad hlam hLam hgreg hhreg
+    hgL2cov hgWcov hgW hhL2cov hhWcov hhW hhL2W
 
 end
 

@@ -25,7 +25,7 @@ Module imports, support namespace and local option directives adapted for Lean P
 # windows
 
 This is `ReindexGeneralClause.exists_generalClauseReal_frontierEmpty`'s
-script with the two slack `∇h` legs re-typed at the error-weighted shapes — the
+interface with the two slack `∇h` legs re-typed at the error-weighted shapes — the
 Gagliardo one at `s^{-6}` and the flat one at `s^{-6}·𝓔·3^n·‖∇h‖_{L²}`.  Both
 are **pure nonnegative slack** on this branch, so the change is statement-only;
 the frontier-empty modules at the unweighted shapes are untouched.  The
@@ -82,8 +82,8 @@ moves and the three nonnegative `∇h` legs, in one absorption.
 On this branch the three `∇h` legs are **pure slack** — `general_absorb_window`
 consumes nothing about them but their sign — so re-typing the flat one at
 `s^{-6}·𝓔·3^n·‖∇h‖_{L²}` (and the Gagliardo one at the power `s^{-6}` rather
-than `s^{-9/2}`) is a statement-only change: the script is
-`ReindexGeneralClause`'s, verbatim but for the two sign obligations.  The
+than `s^{-9/2}`) uses the shared `exists_generalClauseReal_frontierEmpty_with_slack` estimate
+and discharges its two nonnegativity obligations.  The
 `ε`-re-gating to the threshold `C⁻¹s⁴` is performed by the consumer
 `RebaseSealDistanceErrorWeighted`, exactly as `RebaseGeneralClauseRegated` does
 it at the unweighted shapes. -/
@@ -199,166 +199,18 @@ theorem exists_generalClauseReal_frontierEmpty_half_errorWeighted (d : ℕ) :
                                           (HCPolySupport.originCube d (n + 3))) ∩
                                       HCPolySupport.openCubeSet
                                         (HCPolySupport.originCube d m)))).toReal) := by
-  classical
-  by_cases hd : d = 0
-  · refine ⟨1, one_pos, ?_⟩
-    intro M
-    exact absurd M.shellPrefix.dimension (by omega)
-  have : NeZero d := ⟨hd⟩
-  obtain ⟨CI, Cfin, hCI, hCfin, hI⟩ := exists_generalClauseInterior_honest_addThree d
-  obtain ⟨CS, hCS, hS⟩ := exists_inv_sigmaBar_add_three_le d
-  have hKpos : (0 : ℝ) < 2 * windowMoveConst d := by
-    have := windowMoveConst_pos d
-    linarith only [this]
-  have hleI : CI ≤ max (max CI CS) (4 * (2 * windowMoveConst d) * Cfin) :=
-    le_trans (le_max_left CI CS) (le_max_left _ _)
-  have hleS : CS ≤ max (max CI CS) (4 * (2 * windowMoveConst d) * Cfin) :=
-    le_trans (le_max_right CI CS) (le_max_left _ _)
-  have hle4 : 4 * (2 * windowMoveConst d) * Cfin ≤
-      max (max CI CS) (4 * (2 * windowMoveConst d) * Cfin) := le_max_right _ _
-  have hCpos : (0 : ℝ) < max (max CI CS) (4 * (2 * windowMoveConst d) * Cfin) :=
-    lt_of_lt_of_le hCI hleI
-  have hle1 : (2 * windowMoveConst d) * Cfin ≤
-      max (max CI CS) (4 * (2 * windowMoveConst d) * Cfin) := by
-    have hmul : (2 * windowMoveConst d) * Cfin ≤ 4 * (2 * windowMoveConst d) * Cfin := by
-      have hprod : 0 ≤ (2 * windowMoveConst d) * Cfin :=
-        mul_nonneg hKpos.le hCfin.le
-      linarith only [hprod]
-    linarith only [hmul, hle4]
-  refine ⟨max (max CI CS) (4 * (2 * windowMoveConst d) * Cfin), hCpos, ?_⟩
-  intro M s hsrange hregime hsmall hs L m n hmL hnm x z _hx hz hgeom hfr
-  have hregimeI : M.gamma ≤ CI⁻¹ * Disorder.cstar M ^ (10 : ℕ) := by
-    refine hregime.trans (mul_le_mul_of_nonneg_right ?_ (by positivity))
-    have h1 := one_div_le_one_div_of_le hCI hleI
-    rw [one_div, one_div] at h1
-    exact h1
-  have hregimeS : M.gamma ≤ CS⁻¹ * Disorder.cstar M ^ (10 : ℕ) := by
-    refine hregime.trans (mul_le_mul_of_nonneg_right ?_ (by positivity))
-    have h1 := one_div_le_one_div_of_le hCS hleS
-    rw [one_div, one_div] at h1
-    exact h1
-  have hratio := hS M hregimeS n
-  filter_upwards [hI M s hsrange hregimeI hsmall hs L m n hmL hnm x z hz hgeom hfr]
+  obtain ⟨C, hC, hcore⟩ := exists_generalClauseReal_frontierEmpty_with_slack d
+  refine ⟨C, hC, ?_⟩
+  intro M s hsrange hregime hsmall hs L m n hmL hnm x z hx hz hgeom hfr
+  filter_upwards [hcore M s hsrange hregime hsmall hs L m n hmL hnm x z hx hz hgeom hfr]
     with omega hom
-  intro hmem u h g hsol hgL2 hgW _hhW v w hharm hval hgrad
-  have hreal := hom hmem u h g hsol hgL2 hgW v w hharm hval hgrad
-  -- the two windows and their volumes
-  have hW20 : volume ((((fun y' => z + y') '' openCubeSet (originCube d (n + 2))) ∩
-      openCubeSet (originCube d m))) ≠ 0 := volume_anchorWindowInner_ne_zero hgeom
-  have hW3top := volume_anchorWindow_ne_top (n + 3) m z
-  have hW30 : volume ((((fun y' => z + y') '' openCubeSet (originCube d (n + 3))) ∩
-      openCubeSet (originCube d m))) ≠ 0 := by
-    intro hzero
-    have hmono := measure_mono (μ := (volume : Measure (Vec d)))
-      (anchorWindowInner_subset_anchorWindow (d := d) n m z)
-    rw [hzero, le_zero_iff] at hmono
-    exact hW20 hmono
-  have := isProbabilityMeasure_normalizedVolumeMeasureOn hW30 hW3top
-  -- the anchor's own `L²` datum for `u`, read on the two windows
-  have hum : MemLp u.toFun 2
-      (Support.normalizedVolumeMeasureOn (openCubeSet (originCube d m))) :=
-    memLp_normalizedVolumeMeasureOn_of_restrict
-      (volume_openCubeSet_ne_zero (originCube d m)) u.memL2
-  have hu2 : MemLp u.toFun 2
-      (Support.normalizedVolumeMeasureOn
-        ((((fun y' => z + y') '' openCubeSet (originCube d (n + 2))) ∩
-          openCubeSet (originCube d m)))) :=
-    memLp_normalizedVolumeMeasureOn_subset Set.inter_subset_right
-      (volume_openCubeSet_ne_zero (originCube d m))
-      (volume_openCubeSet_ne_top (originCube d m)) hW20 hum
-  have hu3 : MemLp u.toFun 2
-      (Support.normalizedVolumeMeasureOn
-        ((((fun y' => z + y') '' openCubeSet (originCube d (n + 3))) ∩
-          openCubeSet (originCube d m)))) :=
-    memLp_normalizedVolumeMeasureOn_subset Set.inter_subset_right
-      (volume_openCubeSet_ne_zero (originCube d m))
-      (volume_openCubeSet_ne_top (originCube d m)) hW30 hum
-  have hfin3 : eLpNorm (fun y => u.toFun y -
-      volumeAverage ((((fun y' => z + y') '' openCubeSet (originCube d (n + 3))) ∩
-        openCubeSet (originCube d m))) u.toFun) 2
-      (Support.normalizedVolumeMeasureOn
-        ((((fun y' => z + y') '' openCubeSet (originCube d (n + 3))) ∩
-          openCubeSet (originCube d m)))) ≠ ⊤ :=
-    (hu3.sub (memLp_const _)).eLpNorm_ne_top
-  -- the anchor's clause-(iv) Gagliardo datum, read on the anchor window
-  have hgag3 : Support.normalizedGagliardoESeminormOn
-      ((((fun y' => z + y') '' openCubeSet (originCube d (n + 3))) ∩
-        openCubeSet (originCube d m))) s g ≠ ⊤ :=
-    (memLp_normalizedGagliardoMeasureOn_subset Set.inter_subset_right
-      (volume_openCubeSet_ne_zero (originCube d m))
-      (volume_openCubeSet_ne_top (originCube d m)) hW30 hgW).eLpNorm_ne_top
-  -- the two window moves, in real form
-  have hAmoveE := eLpNorm_sub_volumeAverage_anchorWindow_le hgeom
-    (f := u.toFun) hu2.aestronglyMeasurable
-  have hAmove : (eLpNorm (fun y => u.toFun y -
-        volumeAverage ((((fun y' => z + y') '' openCubeSet (originCube d (n + 2))) ∩
-          openCubeSet (originCube d m))) u.toFun) 2
-        (Support.normalizedVolumeMeasureOn
-          ((((fun y' => z + y') '' openCubeSet (originCube d (n + 2))) ∩
-            openCubeSet (originCube d m))))).toReal ≤
-      (2 * windowMoveConst d) *
-        (eLpNorm (fun y => u.toFun y -
-          volumeAverage ((((fun y' => z + y') '' openCubeSet (originCube d (n + 3))) ∩
-            openCubeSet (originCube d m))) u.toFun) 2
-          (Support.normalizedVolumeMeasureOn
-            ((((fun y' => z + y') '' openCubeSet (originCube d (n + 3))) ∩
-              openCubeSet (originCube d m))))).toReal := by
-    have hrhs : ENNReal.ofReal (2 * windowMoveConst d) *
-        eLpNorm (fun y => u.toFun y -
-          volumeAverage ((((fun y' => z + y') '' openCubeSet (originCube d (n + 3))) ∩
-            openCubeSet (originCube d m))) u.toFun) 2
-          (Support.normalizedVolumeMeasureOn
-            ((((fun y' => z + y') '' openCubeSet (originCube d (n + 3))) ∩
-              openCubeSet (originCube d m)))) ≠ ⊤ :=
-      ENNReal.mul_ne_top ENNReal.ofReal_ne_top hfin3
-    have hstep := ENNReal.toReal_mono hrhs hAmoveE
-    rwa [ENNReal.toReal_mul, ENNReal.toReal_ofReal hKpos.le] at hstep
-  have hBmoveE := normalizedGagliardoESeminormOn_anchorWindow_le hgeom s g
-  have hBmove : (Support.normalizedGagliardoESeminormOn
-        ((((fun y' => z + y') '' openCubeSet (originCube d (n + 2))) ∩
-          openCubeSet (originCube d m))) s g).toReal ≤
-      (2 * windowMoveConst d) *
-        (Support.normalizedGagliardoESeminormOn
-          ((((fun y' => z + y') '' openCubeSet (originCube d (n + 3))) ∩
-            openCubeSet (originCube d m))) s g).toReal := by
-    have hrhs : ENNReal.ofReal (windowMoveConst d) *
-        Support.normalizedGagliardoESeminormOn
-          ((((fun y' => z + y') '' openCubeSet (originCube d (n + 3))) ∩
-            openCubeSet (originCube d m))) s g ≠ ⊤ :=
-      ENNReal.mul_ne_top ENNReal.ofReal_ne_top hgag3
-    have hstep := ENNReal.toReal_mono hrhs hBmoveE
-    rw [ENNReal.toReal_mul, ENNReal.toReal_ofReal (windowMoveConst_pos d).le] at hstep
-    refine hstep.trans (mul_le_mul_of_nonneg_right ?_ ENNReal.toReal_nonneg)
-    have hv := windowMoveConst_pos d
-    linarith only [hv]
-  -- the sign data
-  have hErep : (0 : ℝ) ≤ Support.fluxCorrectedErrorRepresentative
-      M L (n + 3) ⟨s / 8, by linarith only [hs]⟩ (Cutoff.translateCutoffSample z omega) :=
-    Support.fluxCorrectedErrorRepresentative_nonneg _ _ _ _ _
-  have hS4 : (0 : ℝ) ≤ Real.rpow s (-(4 : ℝ)) := Real.rpow_nonneg hs.le _
-  have hS7 : (0 : ℝ) ≤ Real.rpow s (-(7 : ℝ)) := Real.rpow_nonneg hs.le _
-  have hS6 : (0 : ℝ) ≤ Real.rpow s (-(6 : ℝ)) := Real.rpow_nonneg hs.le _
-  have hS32 : (0 : ℝ) ≤ Real.rpow s (-(3 / 2 : ℝ)) := Real.rpow_nonneg hs.le _
-  have h3n : (0 : ℝ) ≤ Real.rpow (3 : ℝ) (n : ℝ) := Real.rpow_nonneg (by norm_num) _
-  have h3sn : (0 : ℝ) ≤ Real.rpow (3 : ℝ) ((1 + s) * (n : ℝ)) :=
-    Real.rpow_nonneg (by norm_num) _
-  have hsgn : (0 : ℝ) ≤ ((Annealed.sigmaBar M n : ℝ))⁻¹ :=
-    inv_nonneg.mpr (Annealed.sigmaBar M n).2.le
-  have hsgn3 : (0 : ℝ) ≤ ((Annealed.sigmaBar M (n + 3) : ℝ))⁻¹ :=
-    inv_nonneg.mpr (Annealed.sigmaBar M (n + 3)).2.le
-  have hcomp : (0 : ℝ) ≤ Real.rpow s (-(3 / 2 : ℝ)) * Real.rpow (3 : ℝ) (n : ℝ) *
-      ‖volumeAverageVec
-        ((((fun y' => z + y') '' openCubeSet (originCube d (n + 2))) ∩
-          openCubeSet (originCube d m))) h.grad‖ :=
-    mul_nonneg (mul_nonneg hS32 h3n) (norm_nonneg _)
-  refine hreal.trans (general_absorb_window hKpos.le ?_ ?_ ?_ ?_ ?_ ?_ hCfin.le hle1 hle4)
-  · refine prefactor_window_move (mul_nonneg hS4 hErep) ?_
-    exact hAmove.trans (mul_le_mul_of_nonneg_left (le_add_of_nonneg_right hcomp) hKpos.le)
-  · refine mul_nonneg (mul_nonneg hS4 hErep) (add_nonneg ENNReal.toReal_nonneg hcomp)
-  · exact sigma_window_move hS7 hsgn3 h3sn hKpos.le ENNReal.toReal_nonneg hratio hBmove
-  · exact mul_nonneg (mul_nonneg (mul_nonneg hS7 hsgn) h3sn) ENNReal.toReal_nonneg
-  · exact mul_nonneg (mul_nonneg hS6 h3sn) ENNReal.toReal_nonneg
-  · exact mul_nonneg (mul_nonneg (mul_nonneg hS6 hErep) h3n) ENNReal.toReal_nonneg
+  intro hmem u h g hsol hgL2 hgW hhW v w hharm hval hgrad
+  refine hom hmem u h g hsol hgL2 hgW hhW _ _ ?_ ?_ v w hharm hval hgrad
+  · exact mul_nonneg (mul_nonneg (Real.rpow_nonneg hs.le _)
+      (Real.rpow_nonneg (by norm_num) _)) ENNReal.toReal_nonneg
+  · exact mul_nonneg (mul_nonneg (mul_nonneg (Real.rpow_nonneg hs.le _)
+      (Support.fluxCorrectedErrorRepresentative_nonneg _ _ _ _ _))
+      (Real.rpow_nonneg (by norm_num) _)) ENNReal.toReal_nonneg
 
 end
 

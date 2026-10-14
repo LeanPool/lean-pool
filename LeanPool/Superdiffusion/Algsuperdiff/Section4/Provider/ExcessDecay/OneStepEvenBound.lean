@@ -113,52 +113,37 @@ theorem norm_toEuc_smul_basisVec (t : ℝ) (i : Fin d) :
   rw [toEuc_smul_basisVec, norm_smul, PiLp.norm_single, Real.norm_eq_abs]
   norm_num
 
-/-! ## 2. The pointwise estimate on the core slab -/
-
-/-- **The two-point Taylor estimate at a near-face point.**
-
-For `f = V - ℓ*` harmonic on the Taylor box with Hessian bounded by `M`, and `y`
-in the core slab of depth `delta` under the met face, comparing `f` at `y` with
-its values at the reflected point `ρ y` and at the pushed point `y - delta·eᵢ`
-eliminates the unknown normal derivative and prices the even part pointwise. -/
-theorem abs_evenAffinePart_le_pointwise {m n : ℤ} {x : Vec d} {i : Fin d} {V : Vec d → ℝ}
+/-- Two-point Taylor elimination on a convex set containing both comparison points. -/
+theorem abs_evenAffinePart_le_pointwise_of_mem {m : ℤ} {x : Vec d} {i : Fin d}
+    {V : Vec d → ℝ}
     (hVodd : ∀ z, V (coordFaceReflection ((1 / 2 : ℝ) * (3 : ℝ) ^ m) i z) = -V z)
     {c : ℝ} {A : Vec d} {delta M : ℝ} (hdelta : 0 < delta) (hM : 0 ≤ M)
-    (hharm : ∀ z ∈ coordBox (taylorLo x m (n - 2) i delta) (taylorHi x m (n - 2) i delta),
-      HarmonicAt ((fun y => V y - affineEval (c - vecDot A x) A y)
-        ∘ (toEuc.symm : EuclideanSpace ℝ (Fin d) → Vec d)) (toEuc z))
-    (hMbound : ∀ z ∈ coordBox (taylorLo x m (n - 2) i delta) (taylorHi x m (n - 2) i delta),
-      ‖fderiv ℝ (fderiv ℝ ((fun y => V y - affineEval (c - vecDot A x) A y)
-        ∘ (toEuc.symm : EuclideanSpace ℝ (Fin d) → Vec d))) (toEuc z)‖ ≤ M)
-    {y : Vec d} (hy : y ∈ coordBox (slabLo x m (n - 2) i delta) (slabHi x m (n - 2) i))
-    (hyD : y - delta • (basisVec i : Vec d)
-      ∈ coordBox (taylorLo x m (n - 2) i delta) (taylorHi x m (n - 2) i delta)) :
+    {T : Set (Vec d)} (hT : Convex ℝ T)
+    (hharm : ∀ z ∈ T, HarmonicAt ((fun y => V y - affineEval (c - vecDot A x) A y)
+      ∘ (toEuc.symm : EuclideanSpace ℝ (Fin d) → Vec d)) (toEuc z))
+    (hMbound : ∀ z ∈ T, ‖fderiv ℝ (fderiv ℝ ((fun y => V y
+        - affineEval (c - vecDot A x) A y)
+      ∘ (toEuc.symm : EuclideanSpace ℝ (Fin d) → Vec d))) (toEuc z)‖ ≤ M)
+    {y : Vec d} (hyT : y ∈ T)
+    (hrT : coordFaceReflection ((1 / 2 : ℝ) * (3 : ℝ) ^ m) i y ∈ T)
+    (hyD : y - delta • (basisVec i : Vec d) ∈ T)
+    (hylo : (1 / 2 : ℝ) * (3 : ℝ) ^ m - delta < y i)
+    (hyhi : y i < (1 / 2 : ℝ) * (3 : ℝ) ^ m) :
     |evenAffinePart x m i c A y|
       ≤ 2 * |V y - affineEval (c - vecDot A x) A y|
         + |V (y - delta • (basisVec i : Vec d))
             - affineEval (c - vecDot A x) A (y - delta • (basisVec i : Vec d))|
         + 3 * M * delta ^ 2 := by
   classical
-  have hdne : delta ≠ 0 := ne_of_gt hdelta
   set f : Vec d → ℝ := fun z => V z - affineEval (c - vecDot A x) A z with hfdef
-  set T : Set (Vec d) :=
-    coordBox (taylorLo x m (n - 2) i delta) (taylorHi x m (n - 2) i delta) with hTdef
-  have hyT : y ∈ T := coordBox_slab_subset_taylor hdelta hy
-  have hrT : coordFaceReflection ((1 / 2 : ℝ) * (3 : ℝ) ^ m) i y ∈ T :=
-    reflection_mem_taylor hy hdelta
   set beta : ℝ := fderiv ℝ (f ∘ (toEuc.symm : EuclideanSpace ℝ (Fin d) → Vec d)) (toEuc y)
       (EuclideanSpace.single i (1 : ℝ)) with hbetadef
-  -- the slab's depth parameter
-  have hyi : (1 / 2 : ℝ) * (3 : ℝ) ^ m - delta < y i
-      ∧ y i < (1 / 2 : ℝ) * (3 : ℝ) ^ m := by
-    have h := (mem_coordBox_iff.1 hy) i
-    rwa [slabLo_self, slabHi_self] at h
   set s : ℝ := (1 / 2 : ℝ) * (3 : ℝ) ^ m - y i with hsdef
-  have hs0 : 0 < s := by rw [hsdef]; linarith only [hyi.2]
-  have hsd : s ≤ delta := by rw [hsdef]; linarith only [hyi.1]
+  have hs0 : 0 < s := by rw [hsdef]; linarith only [hyhi]
+  have hsd : s ≤ delta := by rw [hsdef]; linarith only [hylo]
   -- Taylor towards the reflected point
   have htay1 := abs_sub_fderiv_apply_le_of_hessian_bound_vec (V := f) (S := T)
-    (convex_coordBox _ _) hharm hMbound hyT hrT
+    hT hharm hMbound hyT hrT
   have hdisp1 : (toEuc : Vec d → EuclideanSpace ℝ (Fin d))
         (coordFaceReflection ((1 / 2 : ℝ) * (3 : ℝ) ^ m) i y) - toEuc y
       = toEuc ((2 * s) • (basisVec i : Vec d)) := by
@@ -174,7 +159,7 @@ theorem abs_evenAffinePart_le_pointwise {m n : ℤ} {x : Vec d} {i : Fin d} {V :
   rw [hnorm1, happ1] at htay1
   -- Taylor towards the pushed point
   have htay2 := abs_sub_fderiv_apply_le_of_hessian_bound_vec (V := f) (S := T)
-    (convex_coordBox _ _) hharm hMbound hyT hyD
+    hT hharm hMbound hyT hyD
   have hdisp2 : (toEuc : Vec d → EuclideanSpace ℝ (Fin d))
         (y - delta • (basisVec i : Vec d)) - toEuc y
       = toEuc ((-delta) • (basisVec i : Vec d)) := by
@@ -254,6 +239,39 @@ theorem abs_evenAffinePart_le_pointwise {m n : ℤ} {x : Vec d} {i : Fin d} {V :
   have hPr : P ≤ |P| := le_abs_self P
   refine abs_le.2 ⟨?_, ?_⟩ <;> rw [hid] <;>
     linarith only [h1l, h1r, h2l, h2r, hQ1, hQ2, hP1, hP2, hPl, hPr, hMd]
+
+/-! ## 2. The pointwise estimate on the core slab -/
+
+/-- **The two-point Taylor estimate at a near-face point.**
+
+For `f = V - ℓ*` harmonic on the Taylor box with Hessian bounded by `M`, and `y`
+in the core slab of depth `delta` under the met face, comparing `f` at `y` with
+its values at the reflected point `ρ y` and at the pushed point `y - delta·eᵢ`
+eliminates the unknown normal derivative and prices the even part pointwise. -/
+theorem abs_evenAffinePart_le_pointwise {m n : ℤ} {x : Vec d} {i : Fin d} {V : Vec d → ℝ}
+    (hVodd : ∀ z, V (coordFaceReflection ((1 / 2 : ℝ) * (3 : ℝ) ^ m) i z) = -V z)
+    {c : ℝ} {A : Vec d} {delta M : ℝ} (hdelta : 0 < delta) (hM : 0 ≤ M)
+    (hharm : ∀ z ∈ coordBox (taylorLo x m (n - 2) i delta) (taylorHi x m (n - 2) i delta),
+      HarmonicAt ((fun y => V y - affineEval (c - vecDot A x) A y)
+        ∘ (toEuc.symm : EuclideanSpace ℝ (Fin d) → Vec d)) (toEuc z))
+    (hMbound : ∀ z ∈ coordBox (taylorLo x m (n - 2) i delta) (taylorHi x m (n - 2) i delta),
+      ‖fderiv ℝ (fderiv ℝ ((fun y => V y - affineEval (c - vecDot A x) A y)
+        ∘ (toEuc.symm : EuclideanSpace ℝ (Fin d) → Vec d))) (toEuc z)‖ ≤ M)
+    {y : Vec d} (hy : y ∈ coordBox (slabLo x m (n - 2) i delta) (slabHi x m (n - 2) i))
+    (hyD : y - delta • (basisVec i : Vec d)
+      ∈ coordBox (taylorLo x m (n - 2) i delta) (taylorHi x m (n - 2) i delta)) :
+    |evenAffinePart x m i c A y|
+      ≤ 2 * |V y - affineEval (c - vecDot A x) A y|
+        + |V (y - delta • (basisVec i : Vec d))
+            - affineEval (c - vecDot A x) A (y - delta • (basisVec i : Vec d))|
+        + 3 * M * delta ^ 2 := by
+  have hyi : (1 / 2 : ℝ) * (3 : ℝ) ^ m - delta < y i
+      ∧ y i < (1 / 2 : ℝ) * (3 : ℝ) ^ m := by
+    have h := (mem_coordBox_iff.1 hy) i
+    rwa [slabLo_self, slabHi_self] at h
+  exact abs_evenAffinePart_le_pointwise_of_mem hVodd hdelta hM
+    (convex_coordBox _ _) hharm hMbound (coordBox_slab_subset_taylor hdelta hy)
+    (reflection_mem_taylor hy hdelta) hyD hyi.1 hyi.2
 
 end
 

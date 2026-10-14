@@ -73,6 +73,26 @@ noncomputable section
 
 variable {d : ℕ}
 
+/-- The sum of coordinate L² norms is bounded by dimension times the vector L² norm. -/
+theorem sum_coordinate_eLpNorm_toReal_le {μ : Measure (Vec d)} {H : Vec d → Vec d}
+    (hfin : eLpNorm H 2 μ ≠ ⊤) :
+    (∑ i : Fin d, (eLpNorm (fun y => H y i) 2 μ).toReal) ≤
+      (d : ℝ) * (eLpNorm H 2 μ).toReal := by
+  calc (∑ i : Fin d, (eLpNorm (fun y => H y i) 2 μ).toReal)
+      ≤ ∑ _i : Fin d, (eLpNorm H 2 μ).toReal :=
+        Finset.sum_le_sum fun i _ => ENNReal.toReal_mono hfin
+          (eLpNorm_mono ((continuous_apply i).comp_aestronglyMeasurable
+            (aestronglyMeasurable_of_eLpNorm_ne_top hfin))
+            fun y => norm_le_pi_norm (H y) i)
+    _ = (d : ℝ) * (eLpNorm H 2 μ).toReal := by
+      rw [Finset.sum_const, Finset.card_univ, Fintype.card_fin, nsmul_eq_mul]
+
+/-- A pin at the successor constant implies the source pin. -/
+theorem error_pin_of_successor_constant {A E s : ℝ}
+    (hE : 0 ≤ E) (hpin : (A + 1) * E ≤ s ^ (4 : ℕ)) : A * E ≤ s ^ (4 : ℕ) := by
+  nlinarith only [hE, hpin]
+
+
 /-! ## 1. The `∀`-budget form -/
 
 /-- **The boundary scalar at an abstract residue budget.**

@@ -138,27 +138,15 @@ theorem hbdryOfScalarCoarse (d : ℕ) :
   have : NeZero d := ⟨hd⟩
   obtain ⟨CC, Cfin, hCC, hCfin, hcomp⟩ := exists_boundaryClauseComposed_honest d
   obtain ⟨CS, hCS, hS⟩ := exists_inv_sigmaBar_add_three_le d
-  have hleC : CC ≤ max (max CC CS) (4 * Cfin) :=
-    le_trans (le_max_left CC CS) (le_max_left _ _)
-  have hleS : CS ≤ max (max CC CS) (4 * Cfin) :=
-    le_trans (le_max_right CC CS) (le_max_left _ _)
-  have hle4 : 4 * Cfin ≤ max (max CC CS) (4 * Cfin) := le_max_right _ _
-  have hCpos : (0 : ℝ) < max (max CC CS) (4 * Cfin) := lt_of_lt_of_le hCC hleC
-  have hle1 : Cfin ≤ max (max CC CS) (4 * Cfin) := by
-    have h : Cfin ≤ 4 * Cfin := by linarith only [hCfin]
-    linarith only [h, hle4]
-  refine ⟨max (max CC CS) (4 * Cfin), hCpos, ?_⟩
+  obtain ⟨C, hCpos, hleC, hleS, hle1, hle4⟩ :=
+    exists_clause_absorption_constant (CS := CS) (K := 1) hCC hCfin.le zero_le_one
+  simp only [mul_one, one_mul] at hle1 hle4
+  refine ⟨C, hCpos, ?_⟩
   intro M s hsrange hregime hsmall hs L m n hmL hnm x z hx _hz hgeom _hgate
-  have hregimeC : M.gamma ≤ CC⁻¹ * Disorder.cstar M ^ (10 : ℕ) := by
-    refine hregime.trans (mul_le_mul_of_nonneg_right ?_ (by positivity))
-    have h1 := one_div_le_one_div_of_le hCC hleC
-    rw [one_div, one_div] at h1
-    exact h1
-  have hregimeS : M.gamma ≤ CS⁻¹ * Disorder.cstar M ^ (10 : ℕ) := by
-    refine hregime.trans (mul_le_mul_of_nonneg_right ?_ (by positivity))
-    have h1 := one_div_le_one_div_of_le hCS hleS
-    rw [one_div, one_div] at h1
-    exact h1
+  have hregimeC : M.gamma ≤ CC⁻¹ * Disorder.cstar M ^ (10 : ℕ) :=
+    hregime.trans (inverse_mul_le_of_constant_le hCC hleC (by positivity))
+  have hregimeS : M.gamma ≤ CS⁻¹ * Disorder.cstar M ^ (10 : ℕ) :=
+    hregime.trans (inverse_mul_le_of_constant_le hCS hleS (by positivity))
   have hsigconv := hS M hregimeS n
   filter_upwards [hcomp M s hsrange hregimeC hsmall hs L m n hmL hnm x z hx hgeom]
     with omega hom
@@ -187,33 +175,7 @@ theorem hbdryOfScalarCoarse (d : ℕ) :
       (mul_nonneg hS4 hErep0)
   · exact mul_nonneg (mul_nonneg hS4 hErep0)
       (add_nonneg ENNReal.toReal_nonneg hcompanion)
-  · have hnn : (0 : ℝ) ≤ Real.rpow s (-(7 : ℝ)) *
-        Real.rpow (3 : ℝ) ((1 + s) * (n : ℝ)) *
-        (Support.normalizedGagliardoESeminormOn
-          ((((fun y' => z + y') '' openCubeSet (originCube d (n + 3))) ∩
-            openCubeSet (originCube d m))) s g).toReal :=
-      mul_nonneg (mul_nonneg hS7 h3sn) ENNReal.toReal_nonneg
-    calc Real.rpow s (-(7 : ℝ)) * ((Annealed.sigmaBar M (n + 3) : ℝ))⁻¹ *
-          Real.rpow (3 : ℝ) ((1 + s) * (n : ℝ)) *
-          (Support.normalizedGagliardoESeminormOn
-            ((((fun y' => z + y') '' openCubeSet (originCube d (n + 3))) ∩
-              openCubeSet (originCube d m))) s g).toReal
-        = (Real.rpow s (-(7 : ℝ)) * Real.rpow (3 : ℝ) ((1 + s) * (n : ℝ)) *
-            (Support.normalizedGagliardoESeminormOn
-              ((((fun y' => z + y') '' openCubeSet (originCube d (n + 3))) ∩
-                openCubeSet (originCube d m))) s g).toReal) *
-          ((Annealed.sigmaBar M (n + 3) : ℝ))⁻¹ := by ring
-      _ ≤ (Real.rpow s (-(7 : ℝ)) * Real.rpow (3 : ℝ) ((1 + s) * (n : ℝ)) *
-            (Support.normalizedGagliardoESeminormOn
-              ((((fun y' => z + y') '' openCubeSet (originCube d (n + 3))) ∩
-                openCubeSet (originCube d m))) s g).toReal) *
-            (4 * ((Annealed.sigmaBar M n : ℝ))⁻¹) :=
-          mul_le_mul_of_nonneg_left hsigconv hnn
-      _ = 4 * (Real.rpow s (-(7 : ℝ)) * ((Annealed.sigmaBar M n : ℝ))⁻¹ *
-            Real.rpow (3 : ℝ) ((1 + s) * (n : ℝ)) *
-            (Support.normalizedGagliardoESeminormOn
-              ((((fun y' => z + y') '' openCubeSet (originCube d (n + 3))) ∩
-                openCubeSet (originCube d m))) s g).toReal) := by ring
+  · exact sigma_leg_move hS7 h3sn ENNReal.toReal_nonneg hsigconv
   · exact mul_nonneg (mul_nonneg (mul_nonneg hS7 hsgn) h3sn) ENNReal.toReal_nonneg
   · exact mul_nonneg (mul_nonneg hS6 h3sn) ENNReal.toReal_nonneg
   · exact mul_nonneg (mul_nonneg hS6 h3n) ENNReal.toReal_nonneg

@@ -200,28 +200,13 @@ theorem exists_boundaryClauseReal_errorWeighted (d : ℕ) :
     exists_scalarLeg_le_displayLegs_of_epsPin_errorWeighted d
   obtain ⟨C0, hC0, hcaps⟩ := ae_errorRepresentative_le_of_mem_goodEventAt d
   obtain ⟨CS, hCS, hsig⟩ := exists_inv_sigmaBar_add_three_le d
-  obtain ⟨Ct, hleA, hleD, hle0, hleS, hle2, hlepin, hleout⟩ :
-      ∃ Ct : ℝ, CA ≤ Ct ∧ CD ≤ Ct ∧ C0 ≤ Ct ∧ CS ≤ Ct ∧ (2 : ℝ) ≤ Ct ∧
-        A * C0 ≤ Ct ∧ CA * (1 + 4 * Cout) ≤ Ct := by
-    refine ⟨max (max (max CA CD) (max C0 CS))
-      (max (max 2 (A * C0)) (CA * (1 + 4 * Cout))), ?_, ?_, ?_, ?_, ?_, ?_, ?_⟩
-    · exact ((le_max_left CA CD).trans (le_max_left _ _)).trans (le_max_left _ _)
-    · exact ((le_max_right CA CD).trans (le_max_left _ _)).trans (le_max_left _ _)
-    · exact ((le_max_left C0 CS).trans (le_max_right _ _)).trans (le_max_left _ _)
-    · exact ((le_max_right C0 CS).trans (le_max_right _ _)).trans (le_max_left _ _)
-    · exact ((le_max_left 2 (A * C0)).trans (le_max_left _ _)).trans (le_max_right _ _)
-    · exact ((le_max_right 2 (A * C0)).trans (le_max_left _ _)).trans (le_max_right _ _)
-    · exact (le_max_right _ _).trans (le_max_right _ _)
+  obtain ⟨Ct, hleA, hleD, hle0, hleS, hle2, hlepin, hleout⟩ :=
+    exists_boundary_provider_constant CA CD C0 CS A Cout
   have hCtpos : (0 : ℝ) < Ct := lt_of_lt_of_le (by norm_num) hle2
   refine ⟨Ct, hCtpos, ?_⟩
   intro M s hsrange hregime hfund hs L m n hmL hnm x z hx hz hgeom hgate
   have hs1 : s ≤ 1 := hsrange.2
-  have hep0 : (0 : ℝ) < Ct⁻¹ * s ^ (4 : ℕ) :=
-    mul_pos (inv_pos.mpr hCtpos) (pow_pos hs 4)
-  have hephalf : Ct⁻¹ * s ^ (4 : ℕ) ≤ 1 / 2 := clauseEpsilon_le_half hle2 hs.le hs1
-  have hfund2 : M.gamma * |Real.log M.gamma| ^ (2 : ℕ) ≤
-      Real.rpow (s / 8) (3 / 2 : ℝ) * Disorder.cstar M ^ (2 : ℕ) * (1 / 2) :=
-    funding_le_of_epsilon_le hs hephalf hfund
+  obtain ⟨hep0, hephalf, hfund2⟩ := boundary_clause_epsilon_data hs hs1 hle2 hfund
   obtain ⟨i, sigma, hsigma, hover⟩ := overhang_of_boundaryBranch hgate
   have hsigconv := hsig M (regime_le_of_const_le hCS hleS hregime) n
   filter_upwards [hasm M s hsrange (regime_le_of_const_le hCA hleA hregime) hfund2 hs
@@ -270,34 +255,8 @@ theorem exists_boundaryClauseReal_errorWeighted (d : ℕ) :
         Real.rpow (3 : ℝ) ((1 + s) * (n : ℝ)) *
         (Support.normalizedGagliardoESeminormOn
           ((((fun y' => z + y') '' openCubeSet (originCube d (n + 3))) ∩
-            openCubeSet (originCube d m))) s g).toReal) := by
-    have hnn : (0 : ℝ) ≤ Real.rpow s (-(7 : ℝ)) *
-        Real.rpow (3 : ℝ) ((1 + s) * (n : ℝ)) *
-        (Support.normalizedGagliardoESeminormOn
-          ((((fun y' => z + y') '' openCubeSet (originCube d (n + 3))) ∩
-            openCubeSet (originCube d m))) s g).toReal :=
-      mul_nonneg (mul_nonneg hS7 h3sn) ENNReal.toReal_nonneg
-    calc Real.rpow s (-(7 : ℝ)) * ((Annealed.sigmaBar M (n + 3) : ℝ))⁻¹ *
-          Real.rpow (3 : ℝ) ((1 + s) * (n : ℝ)) *
-          (Support.normalizedGagliardoESeminormOn
-            ((((fun y' => z + y') '' openCubeSet (originCube d (n + 3))) ∩
-              openCubeSet (originCube d m))) s g).toReal
-        = (Real.rpow s (-(7 : ℝ)) * Real.rpow (3 : ℝ) ((1 + s) * (n : ℝ)) *
-            (Support.normalizedGagliardoESeminormOn
-              ((((fun y' => z + y') '' openCubeSet (originCube d (n + 3))) ∩
-                openCubeSet (originCube d m))) s g).toReal) *
-          ((Annealed.sigmaBar M (n + 3) : ℝ))⁻¹ := by ring
-      _ ≤ (Real.rpow s (-(7 : ℝ)) * Real.rpow (3 : ℝ) ((1 + s) * (n : ℝ)) *
-            (Support.normalizedGagliardoESeminormOn
-              ((((fun y' => z + y') '' openCubeSet (originCube d (n + 3))) ∩
-                openCubeSet (originCube d m))) s g).toReal) *
-            (4 * ((Annealed.sigmaBar M n : ℝ))⁻¹) :=
-          mul_le_mul_of_nonneg_left hsigconv hnn
-      _ = 4 * (Real.rpow s (-(7 : ℝ)) * ((Annealed.sigmaBar M n : ℝ))⁻¹ *
-            Real.rpow (3 : ℝ) ((1 + s) * (n : ℝ)) *
-            (Support.normalizedGagliardoESeminormOn
-              ((((fun y' => z + y') '' openCubeSet (originCube d (n + 3))) ∩
-                openCubeSet (originCube d m))) s g).toReal) := by ring
+            openCubeSet (originCube d m))) s g).toReal) :=
+    sigma_leg_move hS7 h3sn ENNReal.toReal_nonneg hsigconv
   exact boundaryScalarLeg_absorb hmain hpriced
     (mul_le_mul_of_nonneg_left (le_add_of_nonneg_right hcompanion)
       (mul_nonneg hS4 hErep0)) hforce hCA.le hCout
