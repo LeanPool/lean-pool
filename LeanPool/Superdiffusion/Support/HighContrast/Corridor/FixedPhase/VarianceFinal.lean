@@ -140,39 +140,36 @@ theorem aestronglyMeasurable_phaseObservable_patchCore [NeZero d]
 
 /-! ## The fixed-phase variance (Proposition 4.3) -/
 
-/-- **`p.fixed.phase.variance` (Proposition 4.3).**  Under a
-restriction-unit-range-dependent, `Θ`-elliptic probability law, the variance
-of the fixed-phase observable obeys the `O((ℓ/3^m)^{d−2})` bound with a single
-dimensional constant. -/
-theorem fixed_phase_variance [NeZero d] (hd : 3 ≤ d) {m : ℤ} {ℓ Θ : ℝ} {σ : Vec d}
-    (hℓ4 : 4 ≤ ℓ) (hℓL : ℓ ≤ (3 : ℝ) ^ m) (hΘ : 1 ≤ Θ) (P : BlockVec d)
-    {L : Measure (RegCoeffField d)} [IsProbabilityMeasure L]
-    (hURD : IsRestrictionUnitRangeDependentR L) (hLaw : ThetaEllipticLaw Θ L) :
+/-- **Uniform-constant fixed-phase variance.**  The constant `Cd = B/2` is
+independent of `m, ℓ, Θ, σ, P, L`. -/
+theorem fixed_phase_variance_uniform [NeZero d] (hd : 3 ≤ d) :
     ∃ Cd : ℝ, 0 ≤ Cd ∧
+      ∀ {m : ℤ} {ℓ Θ : ℝ} {σ : Vec d} (_hℓ4 : 4 ≤ ℓ) (_hℓL : ℓ ≤ (3 : ℝ) ^ m)
+        (_hΘ : 1 ≤ Θ) (P : BlockVec d) {L : Measure (RegCoeffField d)}
+        [IsProbabilityMeasure L] (_hURD : IsRestrictionUnitRangeDependentR L)
+        (_hLaw : ThetaEllipticLaw Θ L),
       Var[fun a => phaseObservable ℓ σ m P a.toFun; L]
         ≤ Cd * Θ ^ 3 * (ℓ / (3 : ℝ) ^ m) ^ (d - 2)
             * (Θ * vecNormSq P.1 + vecNormSq P.2) ^ 2 := by
   classical
+  obtain ⟨B, hB0, hsummedU⟩ := summed_sq_le_of_ellipticFieldOn_uniform (d := d) hd
+  refine ⟨B / 2, by linarith, ?_⟩
+  intro m ℓ Θ σ hℓ4 hℓL hΘ P L _ hURD hLaw
   have hℓ0 : (0 : ℝ) < ℓ := by linarith
   have hU : MeasurableSet (cubeSet (originCube d m)) := measurableSet_cubeSet (originCube d m)
-  -- the finite core family meeting the cube, and its covering property
   set K : Finset (Fin d → ℤ) :=
     coreMeetsFinset hℓ0 σ (isBounded_cubeSet (originCube d m)) with hKdef
   have hK : ∀ k : Fin d → ℤ,
       (coreBox ℓ σ k ∩ cubeSet (originCube d m)).Nonempty → k ∈ K := by
     intro k hne
     rw [hKdef, mem_coreMeetsFinset]; exact hne
-  -- the uniform deterministic bound
-  obtain ⟨B, hB0, hsummedU⟩ := summed_sq_le_of_ellipticFieldOn_uniform (d := d) hd
   set Bterm : ℝ := B * Θ ^ 3 * (ℓ / (3 : ℝ) ^ m) ^ (d - 2)
       * (Θ * vecNormSq P.1 + vecNormSq P.2) ^ 2 with hBtermdef
   have hBterm0 : (0 : ℝ) ≤ Bterm := by
     rw [hBtermdef]; positivity
-  -- the two-field resampled squared deviation as a product-space function
   set g : {k // k ∈ K} → RegCoeffField d × RegCoeffField d → ℝ :=
     fun k p => (phaseObservable ℓ σ m P (patchCore ℓ σ k.val p.1.toFun p.2.toFun)
       - phaseObservable ℓ σ m P p.1.toFun) ^ 2 with hgdef
-  -- a.e. (over L ⊗ L) summed bound, via the C2 bridge to everywhere-elliptic reps
   have haeBound : ∀ᵐ p ∂(L.prod L), ∑ k : {k // k ∈ K}, g k p ≤ Bterm := by
     have hL1 : ∀ᵐ p ∂(L.prod L),
         ∀ᵐ x ∂(volume : Measure (Vec d)), IsEllipticMatrix 1 Θ (p.1 x) :=
@@ -181,7 +178,6 @@ theorem fixed_phase_variance [NeZero d] (hd : 3 ≤ d) {m : ℤ} {ℓ Θ : ℝ} 
         ∀ᵐ x ∂(volume : Measure (Vec d)), IsEllipticMatrix 1 Θ (p.2 x) :=
       (Measure.quasiMeasurePreserving_snd).ae hLaw
     filter_upwards [hL1, hL2] with p hp1 hp2
-    -- bridge each draw to an everywhere-elliptic representative on the cube
     have hmeasA1 : Measurable (fun x => fun i j => if x ∈ cubeSet (originCube d m)
         then p.1 x i j else 0) := by
       refine measurable_pi_iff.2 fun i => measurable_pi_iff.2 fun j => ?_
@@ -194,7 +190,6 @@ theorem fixed_phase_variance [NeZero d] (hd : 3 ≤ d) {m : ℤ} {ℓ Θ : ℝ} 
       exists_ellipticFieldOn_ae_eq hU hΘ hmeasA1 (ae_restrict_of_ae hp1)
     obtain ⟨ā2, hEll2, hā2ae, _, _⟩ :=
       exists_ellipticFieldOn_ae_eq hU hΘ hmeasA2 (ae_restrict_of_ae hp2)
-    -- the fixed-phase observable is unchanged under the bridge
     have hphase_a : phaseObservable ℓ σ m P p.1.toFun = phaseObservable ℓ σ m P ā1 :=
       (phaseObservable_congr_ae hā1ae.symm)
     have hpatch_ae : ∀ k : Fin d → ℤ, (patchCore ℓ σ k p.1.toFun p.2.toFun)
@@ -215,7 +210,6 @@ theorem fixed_phase_variance [NeZero d] (hd : 3 ≤ d) {m : ℤ} {ℓ Θ : ℝ} 
       rw [hgdef]; simp only [hphase_patch k, hphase_a]
     rw [hsum_eq, hBtermdef]
     exact hsummedU hΘ hℓ4 hℓL σ P hEll1 hEll2 K
-  -- AESM of each product-space term
   have hAESM_diag : AEStronglyMeasurable
       (fun p : RegCoeffField d × RegCoeffField d =>
         phaseObservable ℓ σ m P p.1.toFun) (L.prod L) :=
@@ -228,7 +222,6 @@ theorem fixed_phase_variance [NeZero d] (hd : 3 ≤ d) {m : ℤ} {ℓ Θ : ℝ} 
     have hsub := hpatch.sub hAESM_diag
     rw [hgdef]
     simpa only [pow_two] using! hsub.mul hsub
-  -- integrability of each product-space term
   have hg_int : ∀ k : {k // k ∈ K}, Integrable (g k) (L.prod L) := by
     intro k
     refine (integrable_const Bterm).mono' (hAESM_g k) ?_
@@ -238,7 +231,6 @@ theorem fixed_phase_variance [NeZero d] (hd : 3 ≤ d) {m : ℤ} {ℓ Θ : ℝ} 
       Finset.single_le_sum (f := fun k' => g k' p)
         (fun k' _ => by rw [hgdef]; exact sq_nonneg _) (Finset.mem_univ k)
     linarith [hle, hp]
-  -- the sum/integral exchange and bound
   have hexchange : (∑ k : {k // k ∈ K}, ∫ p, g k p ∂(L.prod L))
       = ∫ p, ∑ k : {k // k ∈ K}, g k p ∂(L.prod L) :=
     (integral_finsetSum Finset.univ (fun k _ => hg_int k)).symm
@@ -248,7 +240,6 @@ theorem fixed_phase_variance [NeZero d] (hd : 3 ≤ d) {m : ℤ} {ℓ Θ : ℝ} 
           integral_mono_ae (integrable_finsetSum _ (fun k _ => hg_int k))
             (integrable_const _) haeBound
       _ = Bterm := by rw [integral_const]; simp
-  -- relate the Efron–Stein iterated integrals to the product integrals
   have hRHS_eq : (∑ k : {k // k ∈ K},
         ∫ a, ∫ a', (phaseObservable ℓ σ m P (patchCore ℓ σ k.val a.toFun a'.toFun)
           - phaseObservable ℓ σ m P a.toFun) ^ 2 ∂L ∂L)
@@ -256,8 +247,6 @@ theorem fixed_phase_variance [NeZero d] (hd : 3 ≤ d) {m : ℤ} {ℓ Θ : ℝ} 
     refine Finset.sum_congr rfl (fun k _ => ?_)
     rw [hgdef]
     exact (integral_prod _ (hg_int k)).symm
-  -- assemble
-  refine ⟨B / 2, by linarith [hB0], ?_⟩
   calc Var[fun a => phaseObservable ℓ σ m P a.toFun; L]
       ≤ (1 / 2) * ∑ k : {k // k ∈ K},
           ∫ a, ∫ a', (phaseObservable ℓ σ m P (patchCore ℓ σ k.val a.toFun a'.toFun)
@@ -269,5 +258,20 @@ theorem fixed_phase_variance [NeZero d] (hd : 3 ≤ d) {m : ℤ} {ℓ Θ : ℝ} 
         mul_le_mul_of_nonneg_left hint_le (by norm_num)
     _ = B / 2 * Θ ^ 3 * (ℓ / (3 : ℝ) ^ m) ^ (d - 2)
           * (Θ * vecNormSq P.1 + vecNormSq P.2) ^ 2 := by rw [hBtermdef]; ring
+
+/-- **`p.fixed.phase.variance` (Proposition 4.3).**  Under a
+restriction-unit-range-dependent, `Θ`-elliptic probability law, the variance
+of the fixed-phase observable obeys the `O((ℓ/3^m)^{d−2})` bound with a single
+dimensional constant. -/
+theorem fixed_phase_variance [NeZero d] (hd : 3 ≤ d) {m : ℤ} {ℓ Θ : ℝ} {σ : Vec d}
+    (hℓ4 : 4 ≤ ℓ) (hℓL : ℓ ≤ (3 : ℝ) ^ m) (hΘ : 1 ≤ Θ) (P : BlockVec d)
+    {L : Measure (RegCoeffField d)} [IsProbabilityMeasure L]
+    (hURD : IsRestrictionUnitRangeDependentR L) (hLaw : ThetaEllipticLaw Θ L) :
+    ∃ Cd : ℝ, 0 ≤ Cd ∧
+      Var[fun a => phaseObservable ℓ σ m P a.toFun; L]
+        ≤ Cd * Θ ^ 3 * (ℓ / (3 : ℝ) ^ m) ^ (d - 2)
+            * (Θ * vecNormSq P.1 + vecNormSq P.2) ^ 2 := by
+  obtain ⟨Cd, hCd, hbound⟩ := fixed_phase_variance_uniform hd
+  exact ⟨Cd, hCd, hbound hℓ4 hℓL hΘ P hURD hLaw⟩
 
 end HCPolySupport

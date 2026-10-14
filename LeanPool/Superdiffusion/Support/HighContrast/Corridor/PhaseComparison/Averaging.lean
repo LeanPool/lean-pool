@@ -265,27 +265,26 @@ theorem gridPhase_summed_sq_le_of_realization [NeZero d] {Θ : ℝ} (hΘ : 1 ≤
         mul_le_mul_of_nonneg_left hFa'le hcoef2
     _ = 576 * (d : ℝ) * Θ * (N : ℝ) ^ d * Msq ^ 2 / ℓ := by ring
 
-/-- **M3 (averaging + choice).**  Under a `RestrictionLawCarrier` `Θ`-elliptic law and
-`4 ≤ ℓ ≤ N`, there is a deterministic grid phase `σ_*` whose mean-square coarse
-deviation is `O(ℓ⁻¹)`, with an explicit dimensional constant `Cd = 576 d`.  The
-per-realization summed bound `gridPhase_summed_sq_le_of_realization` is averaged
-over the probability law and a below-average phase is selected. -/
-theorem exists_gridPhase_meanSq_le [NeZero d] {Θ : ℝ} (hΘ : 1 ≤ Θ)
-    {L : RestrictionCoeffLaw d} (hP : RestrictionLawCarrier L) (hell : ThetaEllipticLaw Θ L)
-    {m : ℤ} {ℓ : ℝ} (hℓ : 4 ≤ ℓ) {N : ℕ} (hN : (ℓ : ℝ) ≤ (N : ℝ))
-    (P : BlockVec d) :
+/-- **Uniform-constant grid-phase averaging.**  The constant `Cd = 576·d` is
+independent of `Θ, L, m, ℓ, N, P`. -/
+theorem exists_gridPhase_meanSq_le_uniform [NeZero d] :
     ∃ Cd : ℝ, 0 ≤ Cd ∧
-      ∃ σ ∈ (Finset.univ : Finset (Fin d → Fin N)),
-        ∫ a,
-            |blockVecDot P
-                  (blockMatVecMul
-                    (coarseBlockMatrix (cubeSet (originCube d m))
-                      (corridorField ℓ (gridPhase ℓ N σ) a.toFun)) P) -
-                blockVecDot P
-                  (blockMatVecMul (coarseBlockMatrix (cubeSet (originCube d m)) a.toFun) P)| ^ 2
-                    ∂L ≤
-          Cd * Θ * ℓ⁻¹ * (Θ * vecNormSq P.1 + vecNormSq P.2) ^ 2 := by
+      ∀ {Θ : ℝ} (_hΘ : 1 ≤ Θ) {L : RestrictionCoeffLaw d} (_hP : RestrictionLawCarrier L)
+        (_hell : ThetaEllipticLaw Θ L) {m : ℤ} {ℓ : ℝ} (_hℓ : 4 ≤ ℓ) {N : ℕ}
+        (_hN : (ℓ : ℝ) ≤ (N : ℝ)) (P : BlockVec d),
+        ∃ σ ∈ (Finset.univ : Finset (Fin d → Fin N)),
+          ∫ a,
+              |blockVecDot P
+                    (blockMatVecMul
+                      (coarseBlockMatrix (cubeSet (originCube d m))
+                        (corridorField ℓ (gridPhase ℓ N σ) a.toFun)) P) -
+                  blockVecDot P
+                    (blockMatVecMul (coarseBlockMatrix (cubeSet (originCube d m)) a.toFun) P)| ^ 2
+                      ∂L ≤
+            Cd * Θ * ℓ⁻¹ * (Θ * vecNormSq P.1 + vecNormSq P.2) ^ 2 := by
   classical
+  refine ⟨576 * (d : ℝ), by positivity, ?_⟩
+  intro Θ hΘ L hP hell m ℓ hℓ N hN P
   have : IsProbabilityMeasure L := hP.isProbability
   set Msq := Θ * vecNormSq P.1 + vecNormSq P.2 with hMsqdef
   have hΘpos : (0 : ℝ) < Θ := lt_of_lt_of_le one_pos hΘ
@@ -293,7 +292,6 @@ theorem exists_gridPhase_meanSq_le [NeZero d] {Θ : ℝ} (hΘ : 1 ≤ Θ)
   have hN0 : (0 : ℝ) < (N : ℝ) := lt_of_lt_of_le hℓ0 hN
   have hNpow0 : (0 : ℝ) < (N : ℝ) ^ d := by positivity
   set B := 576 * (d : ℝ) * Θ * (N : ℝ) ^ d * Msq ^ 2 / ℓ with hBdef
-  -- a.e. per-realization bounds
   have hAE : ∀ᵐ a ∂L,
       (∀ σ : Fin d → Fin N,
           |blockVecDot P (blockMatVecMul (coarseBlockMatrix (cubeSet (originCube d m))
@@ -310,7 +308,6 @@ theorem exists_gridPhase_meanSq_le [NeZero d] {Θ : ℝ} (hΘ : 1 ≤ Θ)
     filter_upwards [hell] with a ha
     exact gridPhase_summed_sq_le_of_realization hΘ hℓ hN P
       (fun i j => a.entry_measurable i j) ha
-  -- integrability of each squared deviation
   have hInt : ∀ σ : Fin d → Fin N,
       Integrable (fun a =>
         |blockVecDot P (blockMatVecMul (coarseBlockMatrix (cubeSet (originCube d m))
@@ -343,7 +340,6 @@ theorem exists_gridPhase_meanSq_le [NeZero d] {Θ : ℝ} (hΘ : 1 ≤ Θ)
         blockVecDot P (blockMatVecMul (coarseBlockMatrix (cubeSet (originCube d m)) a.toFun) P))
     rw [Real.norm_eq_abs, abs_of_nonneg (by positivity)]
     nlinarith [h1, h0]
-  -- exchange the finite sum with the integral, bound by the constant `B`
   have hsum : ∑ σ : Fin d → Fin N,
       ∫ a, |blockVecDot P (blockMatVecMul (coarseBlockMatrix (cubeSet (originCube d m))
             (corridorField ℓ (gridPhase ℓ N σ) a.toFun)) P) -
@@ -360,14 +356,12 @@ theorem exists_gridPhase_meanSq_le [NeZero d] {Θ : ℝ} (hΘ : 1 ≤ Θ)
           integral_mono_ae (integrable_finsetSum _ (fun σ _ => hInt σ)) (integrable_const B)
             (by filter_upwards [hAE] with a ha; exact ha.2)
       _ = B := by rw [integral_const]; simp
-  -- choose a below-average phase
   have hcard : (Finset.univ : Finset (Fin d → Fin N)).card = N ^ d := by
     rw [Finset.card_univ, Fintype.card_fun, Fintype.card_fin, Fintype.card_fin]
   have hne : (Finset.univ : Finset (Fin d → Fin N)).Nonempty := by
     have hNpos : 0 < N := by exact_mod_cast hN0
     have : Nonempty (Fin N) := ⟨⟨0, hNpos⟩⟩
     exact Finset.univ_nonempty
-  refine ⟨576 * (d : ℝ), by positivity, ?_⟩
   have hgsum : (∑ _σ : Fin d → Fin N, B / (N : ℝ) ^ d) = B := by
     rw [Finset.sum_const, hcard, nsmul_eq_mul]
     push_cast
@@ -383,5 +377,28 @@ theorem exists_gridPhase_meanSq_le [NeZero d] {Θ : ℝ} (hΘ : 1 ≤ Θ)
   have hBdiv : B / (N : ℝ) ^ d = 576 * (d : ℝ) * Θ * ℓ⁻¹ * Msq ^ 2 := by
     rw [hBdef]; field_simp
   rw [← hBdiv]; exact hσ
+
+/-- **M3 (averaging + choice).**  Under a `RestrictionLawCarrier` `Θ`-elliptic law and
+`4 ≤ ℓ ≤ N`, there is a deterministic grid phase `σ_*` whose mean-square coarse
+deviation is `O(ℓ⁻¹)`, with an explicit dimensional constant `Cd = 576 d`.  The
+per-realization summed bound `gridPhase_summed_sq_le_of_realization` is averaged
+over the probability law and a below-average phase is selected. -/
+theorem exists_gridPhase_meanSq_le [NeZero d] {Θ : ℝ} (hΘ : 1 ≤ Θ)
+    {L : RestrictionCoeffLaw d} (hP : RestrictionLawCarrier L) (hell : ThetaEllipticLaw Θ L)
+    {m : ℤ} {ℓ : ℝ} (hℓ : 4 ≤ ℓ) {N : ℕ} (hN : (ℓ : ℝ) ≤ (N : ℝ))
+    (P : BlockVec d) :
+    ∃ Cd : ℝ, 0 ≤ Cd ∧
+      ∃ σ ∈ (Finset.univ : Finset (Fin d → Fin N)),
+        ∫ a,
+            |blockVecDot P
+                  (blockMatVecMul
+                    (coarseBlockMatrix (cubeSet (originCube d m))
+                      (corridorField ℓ (gridPhase ℓ N σ) a.toFun)) P) -
+                blockVecDot P
+                  (blockMatVecMul (coarseBlockMatrix (cubeSet (originCube d m)) a.toFun) P)| ^ 2
+                    ∂L ≤
+          Cd * Θ * ℓ⁻¹ * (Θ * vecNormSq P.1 + vecNormSq P.2) ^ 2 := by
+  obtain ⟨Cd, hCd, hbound⟩ := exists_gridPhase_meanSq_le_uniform (d := d)
+  exact ⟨Cd, hCd, hbound hΘ hP hell hℓ hN P⟩
 
 end HCPolySupport

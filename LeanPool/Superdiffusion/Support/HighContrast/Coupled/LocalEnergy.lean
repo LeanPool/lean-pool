@@ -222,263 +222,6 @@ theorem theta_nonneg_of_isEllipticFieldOn {a : CoeffField d} {Θ : ℝ}
 /-! ## T1 — the centered energy bound -/
 
 omit [NeZero d] in
-/-- **T1 — `centered_local_block_energy`.**  The `𝓔`-level bound of `p.local.block.energy`. -/
-theorem centered_local_block_energy {a : CoeffField d} {Θ : ℝ}
-    {v vstar : H1Function U} {P : BlockVec d} {η : Vec d → ℝ} {Gη c Kinf : ℝ}
-    (hEllO : IsEllipticFieldOn 1 Θ U a)
-    (hWeak : CoupledWeakForm a U P.2 v vstar)
-    (hTrace : MemH10 U (fun x => v.toFun x + vstar.toFun x - vecDot P.1 x))
-    (hKv : ∀ᵐ x ∂(volumeMeasureOn U), |(centeredPotential m v P.1 c).toFun x| ≤ Kinf)
-    (hKvs : ∀ᵐ x ∂(volumeMeasureOn U), |(centeredPotential m vstar P.1 (-c)).toFun x| ≤ Kinf)
-    (hη : ContDiff ℝ (⊤ : ℕ∞) η) (hIcc : ∀ x, η x ∈ Set.Icc (0 : ℝ) 1)
-    (hGη : ∀ x i, |fderiv ℝ η x (basisVec i)| ≤ Gη) :
-    ∃ Cd : ℝ, 0 ≤ Cd ∧
-      (∫ x in U, (η x) ^ 2
-          * (vecDot ((centeredPotential m v P.1 c).grad x)
-                (matVecMul (symmPart (a x)) ((centeredPotential m v P.1 c).grad x))
-            + vecDot ((centeredPotential m vstar P.1 (-c)).grad x)
-                (matVecMul (symmPart (a x)) ((centeredPotential m vstar P.1 (-c)).grad x))))
-        ≤ Cd * ((Θ * vecNormSq P.1 + vecNormSq P.2)
-              * (volume (Function.support η ∩ U)).toReal
-            + Θ * Kinf ^ 2 * (∫ x in U, ∑ i, (fderiv ℝ η x (basisVec i)) ^ 2)) := by
-  -- rewrite the `𝓔`-integrand to `energyIntegrand`
-  have hEeq : (∫ x in U, (η x) ^ 2
-        * (vecDot ((centeredPotential m v P.1 c).grad x)
-              (matVecMul (symmPart (a x)) ((centeredPotential m v P.1 c).grad x))
-          + vecDot ((centeredPotential m vstar P.1 (-c)).grad x)
-              (matVecMul (symmPart (a x)) ((centeredPotential m vstar P.1 (-c)).grad x))))
-      = ∫ x in U, energyIntegrand a v vstar P η x := by
-    refine setIntegral_congr_fun (measurableSet_openCubeSet _) (fun x _ => ?_)
-    simp only [energyIntegrand, centeredPotential_grad, sqCutoff_apply]
-  -- rewrite the gradient-squared integral to `vecNormSq`
-  have hIGeq : (∫ x in U, ∑ i, (fderiv ℝ η x (basisVec i)) ^ 2)
-      = ∫ x in U, vecNormSq (fun i => fderiv ℝ η x (basisVec i)) := by
-    refine setIntegral_congr_fun (measurableSet_openCubeSet _) (fun x _ => ?_)
-    exact gradEtaSq_eq_vecNormSq x
-  rw [hEeq, hIGeq]
-  -- abbreviations
-  set 𝓔 := ∫ x in U, energyIntegrand a v vstar P η x with h𝓔
-  set Isq := ∫ x in U, sqCutoff η x with hIsq
-  set IG := ∫ x in U, vecNormSq (fun i => fderiv ℝ η x (basisVec i)) with hIG
-  set M2 := Θ * vecNormSq P.1 + vecNormSq P.2 with hM2
-  have hΘ0 : 0 ≤ Θ := theta_nonneg_of_isEllipticFieldOn (m := m) hEllO
-  have hM20 : 0 ≤ M2 := by
-    rw [hM2]; exact add_nonneg (mul_nonneg hΘ0 (vecNormSq_nonneg _)) (vecNormSq_nonneg _)
-  have hvol0 : 0 ≤ (volume (Function.support η ∩ U)).toReal := ENNReal.toReal_nonneg
-  have hIG0 : 0 ≤ IG := by
-    rw [hIG]
-    exact setIntegral_nonneg (measurableSet_openCubeSet _) (fun x _ => vecNormSq_nonneg _)
-  have hIsqvol : Isq ≤ (volume (Function.support η ∩ U)).toReal := by
-    rw [hIsq]; exact setIntegral_sqCutoff_le hη hIcc
-  -- the test identity and the two integral estimates
-  have hsplit : 𝓔 = (∫ x in U, bulkIntegrand a v vstar P η x)
-      + (∫ x in U, cutoffIntegrand a v vstar P c η x) := by
-    rw [h𝓔]; exact energyIntegral_eq_bulk_add_cutoff hEllO hη hIcc hGη hWeak hTrace
-  have hbulk : (∫ x in U, bulkIntegrand a v vstar P η x) ≤ 5 * M2 * Isq + (1/8) * 𝓔 := by
-    rw [hM2, hIsq, h𝓔]; exact setIntegral_bulkIntegrand_le hEllO hη hIcc
-  have hcut : (∫ x in U, cutoffIntegrand a v vstar P c η x)
-      ≤ (1/16) * 𝓔 + 2 * M2 * Isq + 67 * Θ * Kinf ^ 2 * IG := by
-    rw [hM2, hIsq, h𝓔, hIG]; exact setIntegral_cutoffIntegrand_le hEllO hη hIcc hGη hKv hKvs
-  -- combine and absorb
-  have hKinf2 : 0 ≤ Kinf ^ 2 := sq_nonneg _
-  have hMsqvol : 5 * M2 * Isq ≤ 5 * M2 * (volume (Function.support η ∩ U)).toReal :=
-    mul_le_mul_of_nonneg_left hIsqvol (by positivity)
-  have hMsqvol2 : 2 * M2 * Isq ≤ 2 * M2 * (volume (Function.support η ∩ U)).toReal :=
-    mul_le_mul_of_nonneg_left hIsqvol (by positivity)
-  refine ⟨128, by norm_num, ?_⟩
-  have hΘKIG : 0 ≤ Θ * Kinf ^ 2 * IG :=
-    mul_nonneg (mul_nonneg hΘ0 hKinf2) hIG0
-  have hMvol0 : 0 ≤ M2 * (volume (Function.support η ∩ U)).toReal :=
-    mul_nonneg hM20 hvol0
-  nlinarith [hsplit, hbulk, hcut, hMsqvol, hMsqvol2, hΘKIG, hMvol0]
-
-/-! ## T2 — the consumer shape -/
-
-omit [NeZero d] in
-/-- Adding back the affine part: `2∇v·s∇v ≤ 4V·sV + Θ|p|²` with `V = ∇v − ½p`. -/
-theorem two_symmPart_grad_le {Θ : ℝ} {A : Mat d} (hA : IsThetaElliptic Θ A) (gv p : Vec d) :
-    2 * vecDot gv (matVecMul (symmPart A) gv)
-      ≤ 4 * vecDot (gv - (1/2:ℝ)•p) (matVecMul (symmPart A) (gv - (1/2:ℝ)•p))
-        + Θ * vecNormSq p := by
-  set s := symmPart A with hs
-  set V := gv - (1/2:ℝ)•p with hVd
-  set b := (1/2:ℝ)•p with hbd
-  have hgvVb : gv = V + b := by rw [hVd, hbd]; abel
-  have hpsd : 0 ≤ vecDot (V - b) (matVecMul s (V - b)) :=
-    vecDot_matVecMul_symmPart_nonneg hA _
-  have hpar : vecDot (V + b) (matVecMul s (V + b)) + vecDot (V - b) (matVecMul s (V - b))
-      = 2 * vecDot V (matVecMul s V) + 2 * vecDot b (matVecMul s b) := by
-    have e2 : matVecMul s (V - b) = matVecMul s V - matVecMul s b := by
-      rw [sub_eq_add_neg, matVecMul_add, matVecMul_neg, ← sub_eq_add_neg]
-    rw [matVecMul_add, e2]
-    simp only [sub_eq_add_neg, vecDot_add_left, vecDot_add_right, vecDot_neg_left,
-      vecDot_neg_right]
-    ring
-  have hbsb : vecDot b (matVecMul s b) = (1/4) * vecDot p (matVecMul s p) := by
-    rw [hbd, matVecMul_smul, vecDot_smul_left, vecDot_smul_right]; ring
-  have hupper : vecDot p (matVecMul s p) ≤ Θ * vecNormSq p :=
-    upperBound_symmPart_of_isEllipticMatrix hA p
-  rw [hgvVb]
-  nlinarith [hpar, hpsd, hbsb, hupper]
-
-omit [NeZero d] in
-/-- **T2 — `local_block_energy`.**  The consumer shape of `p.local.block.energy`:
-the block energy on `C` is controlled by `M²·|supp η ∩ U| + Θ·K∞²·∫_U Σᵢ(∂ᵢη)²`. -/
-theorem local_block_energy {a : CoeffField d} {Θ : ℝ}
-    {v vstar : H1Function U} {P : BlockVec d} {η : Vec d → ℝ} {Gη c Kinf : ℝ}
-    {Z : BlockState d} {C : Set (Vec d)}
-    (hEllO : IsEllipticFieldOn 1 Θ U a)
-    (hWeak : CoupledWeakForm a U P.2 v vstar)
-    (hTrace : MemH10 U (fun x => v.toFun x + vstar.toFun x - vecDot P.1 x))
-    (hKv : ∀ᵐ x ∂(volumeMeasureOn U), |(centeredPotential m v P.1 c).toFun x| ≤ Kinf)
-    (hKvs : ∀ᵐ x ∂(volumeMeasureOn U), |(centeredPotential m vstar P.1 (-c)).toFun x| ≤ Kinf)
-    (hη : ContDiff ℝ (⊤ : ℕ∞) η) (hIcc : ∀ x, η x ∈ Set.Icc (0 : ℝ) 1)
-    (hGη : ∀ x i, |fderiv ℝ η x (basisVec i)| ≤ Gη)
-    (hEnergyId :
-      (fun x => blockVecDot (Z.eval x) (blockMatVecMul (blockCoeffField a x) (Z.eval x)))
-        =ᵐ[volumeMeasureOn U]
-      (fun x => 2 * vecDot (v.grad x) (matVecMul (symmPart (a x)) (v.grad x))
-        + 2 * vecDot (vstar.grad x) (matVecMul (symmPart (a x)) (vstar.grad x))))
-    (hCmeas : MeasurableSet C) (hCU : C ⊆ (openCubeSet (originCube d m) : Set (Vec d)))
-    (hηC : ∀ᵐ x ∂(volumeMeasureOn C), η x = 1) :
-    ∃ Cd : ℝ, 0 ≤ Cd ∧
-      (∫ x in C, blockVecDot (Z.eval x) (blockMatVecMul (blockCoeffField a x) (Z.eval x)))
-        ≤ Cd * ((Θ * vecNormSq P.1 + vecNormSq P.2)
-              * (volume (Function.support η ∩ U)).toReal
-            + Θ * Kinf ^ 2 * (∫ x in U, ∑ i, (fderiv ℝ η x (basisVec i)) ^ 2)) := by
-  let := isFiniteMeasure_openCubeSet_originCube (d := d) m
-  have hUfin : volume (openCubeSet (originCube d m)) ≠ (⊤ : ENNReal) :=
-    (volume_openCubeSet_originCube_lt_top m).ne
-  have hCfin : volume C ≠ (⊤ : ENNReal) :=
-    (lt_of_le_of_lt (measure_mono hCU) (volume_openCubeSet_originCube_lt_top m)).ne
-  set M2 := Θ * vecNormSq P.1 + vecNormSq P.2 with hM2
-  set vol := (volume (Function.support η ∩ U)).toReal with hvoldef
-  set IG := ∫ x in U, ∑ i, (fderiv ℝ η x (basisVec i)) ^ 2 with hIGdef
-  have hΘ0 : 0 ≤ Θ := theta_nonneg_of_isEllipticFieldOn (m := m) hEllO
-  have hM20 : 0 ≤ M2 := by
-    rw [hM2]; exact add_nonneg (mul_nonneg hΘ0 (vecNormSq_nonneg _)) (vecNormSq_nonneg _)
-  -- abbreviation for the centered energy density
-  set ced : Vec d → ℝ := fun x =>
-    vecDot (v.grad x - (1/2:ℝ)•P.1) (matVecMul (symmPart (a x)) (v.grad x - (1/2:ℝ)•P.1))
-      + vecDot (vstar.grad x - (1/2:ℝ)•P.1) (matVecMul (symmPart (a x)) (vstar.grad x -
-        (1/2:ℝ)•P.1))
-    with hced
-  set gEd : Vec d → ℝ := fun x =>
-    2 * vecDot (v.grad x) (matVecMul (symmPart (a x)) (v.grad x))
-      + 2 * vecDot (vstar.grad x) (matVecMul (symmPart (a x)) (vstar.grad x)) with hgEd
-  -- L² integrability facts on `U`
-  have hVL2 : MemVectorL2 U (fun x => v.grad x - (1/2:ℝ)•P.1) := memVectorL2_centeredGrad v P
-  have hVsL2 : MemVectorL2 U (fun x => vstar.grad x - (1/2:ℝ)•P.1) :=
-    memVectorL2_centeredGrad vstar P
-  have hced_int : IntegrableOn ced U := by
-    refine (integrableOn_vecDot_of_memVectorL2 hVL2
-      (memVectorL2_matVecMul_symmPart_of_isEllipticFieldOn hEllO hVL2)).add
-      (integrableOn_vecDot_of_memVectorL2 hVsL2
-        (memVectorL2_matVecMul_symmPart_of_isEllipticFieldOn hEllO hVsL2))
-  have hgEd_int : IntegrableOn gEd U := by
-    refine (Integrable.const_mul (integrableOn_vecDot_of_memVectorL2 v.grad_memVectorL2
-        (memVectorL2_matVecMul_symmPart_of_isEllipticFieldOn hEllO v.grad_memVectorL2)) 2).add
-      (Integrable.const_mul (integrableOn_vecDot_of_memVectorL2 vstar.grad_memVectorL2
-        (memVectorL2_matVecMul_symmPart_of_isEllipticFieldOn hEllO vstar.grad_memVectorL2)) 2)
-  have hbnd_int : IntegrableOn (fun x => 4 * ced x + 2 * M2) U :=
-    (hced_int.const_mul 4).add (integrableOn_const hUfin)
-  -- Step 1: block energy = grad energy on `C`
-  have hstep1 : (∫ x in C, blockVecDot (Z.eval x) (blockMatVecMul (blockCoeffField a x) (Z.eval x)))
-      = ∫ x in C, gEd x := by
-    refine integral_congr_ae ?_
-    exact hEnergyId.filter_mono (ae_mono (Measure.restrict_mono hCU le_rfl))
-  -- Step 2: grad energy ≤ 4·ced + 2M²  a.e. on `C`
-  have hstep2 : (∫ x in C, gEd x) ≤ ∫ x in C, (4 * ced x + 2 * M2) := by
-    refine setIntegral_mono_ae_restrict (hgEd_int.mono_set hCU) (hbnd_int.mono_set hCU) ?_
-    have hmem : ∀ᵐ x ∂(volumeMeasureOn C), x ∈ (openCubeSet (originCube d m) : Set (Vec d)) :=
-      (ae_restrict_mem hCmeas).mono (fun x hx => hCU hx)
-    filter_upwards [hmem] with x hx
-    have hA : IsThetaElliptic Θ (a x) := hEllO.2 x hx
-    have h1 := two_symmPart_grad_le hA (v.grad x) P.1
-    have h2 := two_symmPart_grad_le hA (vstar.grad x) P.1
-    have hup : Θ * vecNormSq P.1 ≤ M2 := by
-      rw [hM2]; nlinarith [vecNormSq_nonneg P.2]
-    simp only [hgEd, hced]
-    nlinarith [h1, h2, hup]
-  -- Step 3: `∫_C (4ced + 2M²) = 4·∫_C ced + 2M²·|C|`
-  have hcst : (∫ _x in C, (2 * M2 : ℝ)) = 2 * M2 * (volume C).toReal := by
-    rw [setIntegral_const, smul_eq_mul, mul_comm]; rfl
-  have hstep3 : (∫ x in C, (4 * ced x + 2 * M2))
-      = 4 * (∫ x in C, ced x) + 2 * M2 * (volume C).toReal := by
-    rw [integral_add ((hced_int.mono_set hCU).const_mul 4) (integrableOn_const hCfin),
-      integral_const_mul, hcst]
-  -- Step 4: `∫_C ced = ∫_C energyIntegrand ≤ 𝓔`
-  have hcedC : (∫ x in C, ced x) = ∫ x in C, energyIntegrand a v vstar P η x := by
-    refine integral_congr_ae ?_
-    filter_upwards [hηC] with x hx
-    simp only [hced, energyIntegrand, sqCutoff_apply, hx]; ring
-  have hEnonneg : 0 ≤ᵐ[volumeMeasureOn U] energyIntegrand a v vstar P η := by
-    have hmem : ∀ᵐ x ∂(volumeMeasureOn U), x ∈ (openCubeSet (originCube d m) : Set (Vec d)) :=
-      ae_restrict_mem (measurableSet_openCubeSet _)
-    filter_upwards [hmem] with x hx
-    have hA : IsThetaElliptic Θ (a x) := hEllO.2 x hx
-    have hnn1 := vecDot_matVecMul_symmPart_nonneg hA (v.grad x - (1/2:ℝ)•P.1)
-    have hnn2 := vecDot_matVecMul_symmPart_nonneg hA (vstar.grad x - (1/2:ℝ)•P.1)
-    have hη2 := sqCutoff_nonneg η x
-    simp only [energyIntegrand]
-    exact mul_nonneg hη2 (add_nonneg hnn1 hnn2)
-  have hie : IntegrableOn (energyIntegrand a v vstar P η) U :=
-    integrableOn_energyIntegrand hEllO hη hIcc
-  have hcedle : (∫ x in C, ced x) ≤ ∫ x in U, energyIntegrand a v vstar P η x := by
-    rw [hcedC]
-    exact setIntegral_mono_set hie hEnonneg (LE.le.eventuallyLE hCU)
-  -- T1 bound on `𝓔`
-  obtain ⟨Cd1, hCd1, hT1⟩ :=
-    centered_local_block_energy (m := m) (c := c) hEllO hWeak hTrace hKv hKvs hη hIcc hGη
-  have hEeq : (∫ x in U, (η x) ^ 2
-        * (vecDot ((centeredPotential m v P.1 c).grad x)
-              (matVecMul (symmPart (a x)) ((centeredPotential m v P.1 c).grad x))
-          + vecDot ((centeredPotential m vstar P.1 (-c)).grad x)
-              (matVecMul (symmPart (a x)) ((centeredPotential m vstar P.1 (-c)).grad x))))
-      = ∫ x in U, energyIntegrand a v vstar P η x := by
-    refine setIntegral_congr_fun (measurableSet_openCubeSet _) (fun x _ => ?_)
-    simp only [energyIntegrand, centeredPotential_grad, sqCutoff_apply]
-  rw [hEeq] at hT1
-  -- volume of `C`
-  have hvolC : (volume C).toReal ≤ vol := by
-    rw [hvoldef]
-    have hsub : ∀ᵐ x ∂volume, x ∈ C →
-        x ∈ (Function.support η ∩ (openCubeSet (originCube d m)) : Set (Vec d)) := by
-      have hη1 : ∀ᵐ x ∂volume, x ∈ C → η x = 1 := by
-        rw [← ae_restrict_iff' hCmeas]; exact hηC
-      filter_upwards [hη1] with x hx hxC
-      refine ⟨?_, hCU hxC⟩
-      rw [Function.mem_support, hx hxC]; norm_num
-    have hSUfin : volume (Function.support η ∩ (openCubeSet (originCube d m) : Set (Vec d)))
-        ≠ (⊤ : ENNReal) :=
-      (lt_of_le_of_lt (measure_mono Set.inter_subset_right)
-        (volume_openCubeSet_originCube_lt_top m)).ne
-    exact ENNReal.toReal_mono hSUfin (measure_mono_ae hsub)
-  -- assemble
-  refine ⟨4 * Cd1 + 2, by linarith [hCd1], ?_⟩
-  have hIG0 : 0 ≤ IG := by
-    rw [hIGdef]
-    refine setIntegral_nonneg (measurableSet_openCubeSet _) (fun x _ => ?_)
-    exact Finset.sum_nonneg (fun i _ => sq_nonneg _)
-  have hΘKIG : 0 ≤ Θ * Kinf ^ 2 * IG := mul_nonneg (mul_nonneg hΘ0 (sq_nonneg _)) hIG0
-  have hvol0 : 0 ≤ vol := by rw [hvoldef]; exact ENNReal.toReal_nonneg
-  have hMvol0 : 0 ≤ M2 * vol := mul_nonneg hM20 hvol0
-  have hMvolC : 2 * M2 * (volume C).toReal ≤ 2 * M2 * vol :=
-    mul_le_mul_of_nonneg_left hvolC (by linarith [hM20])
-  have hfinal : (∫ x in C, blockVecDot (Z.eval x)
-      (blockMatVecMul (blockCoeffField a x) (Z.eval x)))
-      ≤ 4 * (∫ x in U, energyIntegrand a v vstar P η x) + 2 * M2 * (volume C).toReal := by
-    rw [hstep1]
-    calc (∫ x in C, gEd x) ≤ ∫ x in C, (4 * ced x + 2 * M2) := hstep2
-      _ = 4 * (∫ x in C, ced x) + 2 * M2 * (volume C).toReal := hstep3
-      _ ≤ 4 * (∫ x in U, energyIntegrand a v vstar P η x) + 2 * M2 * (volume C).toReal := by
-          have := mul_le_mul_of_nonneg_left hcedle (by norm_num : (0:ℝ) ≤ 4)
-          linarith [this]
-  nlinarith [hfinal, hT1, hMvolC, hΘKIG, hMvol0, hCd1]
-
-/-! ## T1 and T2 — explicit-numeral (uniform-constant) restatements -/
-
-omit [NeZero d] in
 /-- **T1 with the explicit numeral `128`.**  The witness of
 `centered_local_block_energy` is the fixed dimensional constant `128`; this is the
 same bound stated with that literal so the consumer can see a field-independent
@@ -544,6 +287,58 @@ theorem centered_local_block_energy_num {a : CoeffField d} {Θ : ℝ}
   have hMvol0 : 0 ≤ M2 * (volume (Function.support η ∩ U)).toReal :=
     mul_nonneg hM20 hvol0
   nlinarith [hsplit, hbulk, hcut, hMsqvol, hMsqvol2, hΘKIG, hMvol0]
+
+omit [NeZero d] in
+/-- **T1 — `centered_local_block_energy`.**  The `𝓔`-level bound of `p.local.block.energy`. -/
+theorem centered_local_block_energy {a : CoeffField d} {Θ : ℝ}
+    {v vstar : H1Function U} {P : BlockVec d} {η : Vec d → ℝ} {Gη c Kinf : ℝ}
+    (hEllO : IsEllipticFieldOn 1 Θ U a)
+    (hWeak : CoupledWeakForm a U P.2 v vstar)
+    (hTrace : MemH10 U (fun x => v.toFun x + vstar.toFun x - vecDot P.1 x))
+    (hKv : ∀ᵐ x ∂(volumeMeasureOn U), |(centeredPotential m v P.1 c).toFun x| ≤ Kinf)
+    (hKvs : ∀ᵐ x ∂(volumeMeasureOn U), |(centeredPotential m vstar P.1 (-c)).toFun x| ≤ Kinf)
+    (hη : ContDiff ℝ (⊤ : ℕ∞) η) (hIcc : ∀ x, η x ∈ Set.Icc (0 : ℝ) 1)
+    (hGη : ∀ x i, |fderiv ℝ η x (basisVec i)| ≤ Gη) :
+    ∃ Cd : ℝ, 0 ≤ Cd ∧
+      (∫ x in U, (η x) ^ 2
+          * (vecDot ((centeredPotential m v P.1 c).grad x)
+                (matVecMul (symmPart (a x)) ((centeredPotential m v P.1 c).grad x))
+            + vecDot ((centeredPotential m vstar P.1 (-c)).grad x)
+                (matVecMul (symmPart (a x)) ((centeredPotential m vstar P.1 (-c)).grad x))))
+        ≤ Cd * ((Θ * vecNormSq P.1 + vecNormSq P.2)
+              * (volume (Function.support η ∩ U)).toReal
+            + Θ * Kinf ^ 2 * (∫ x in U, ∑ i, (fderiv ℝ η x (basisVec i)) ^ 2)) := by
+  refine ⟨128, by norm_num, ?_⟩
+  exact centered_local_block_energy_num hEllO hWeak hTrace hKv hKvs hη hIcc hGη
+
+/-! ## T2 — the consumer shape -/
+
+omit [NeZero d] in
+/-- Adding back the affine part: `2∇v·s∇v ≤ 4V·sV + Θ|p|²` with `V = ∇v − ½p`. -/
+theorem two_symmPart_grad_le {Θ : ℝ} {A : Mat d} (hA : IsThetaElliptic Θ A) (gv p : Vec d) :
+    2 * vecDot gv (matVecMul (symmPart A) gv)
+      ≤ 4 * vecDot (gv - (1/2:ℝ)•p) (matVecMul (symmPart A) (gv - (1/2:ℝ)•p))
+        + Θ * vecNormSq p := by
+  set s := symmPart A with hs
+  set V := gv - (1/2:ℝ)•p with hVd
+  set b := (1/2:ℝ)•p with hbd
+  have hgvVb : gv = V + b := by rw [hVd, hbd]; abel
+  have hpsd : 0 ≤ vecDot (V - b) (matVecMul s (V - b)) :=
+    vecDot_matVecMul_symmPart_nonneg hA _
+  have hpar : vecDot (V + b) (matVecMul s (V + b)) + vecDot (V - b) (matVecMul s (V - b))
+      = 2 * vecDot V (matVecMul s V) + 2 * vecDot b (matVecMul s b) := by
+    have e2 : matVecMul s (V - b) = matVecMul s V - matVecMul s b := by
+      rw [sub_eq_add_neg, matVecMul_add, matVecMul_neg, ← sub_eq_add_neg]
+    rw [matVecMul_add, e2]
+    simp only [sub_eq_add_neg, vecDot_add_left, vecDot_add_right, vecDot_neg_left,
+      vecDot_neg_right]
+    ring
+  have hbsb : vecDot b (matVecMul s b) = (1/4) * vecDot p (matVecMul s p) := by
+    rw [hbd, matVecMul_smul, vecDot_smul_left, vecDot_smul_right]; ring
+  have hupper : vecDot p (matVecMul s p) ≤ Θ * vecNormSq p :=
+    upperBound_symmPart_of_isEllipticMatrix hA p
+  rw [hgvVb]
+  nlinarith [hpar, hpsd, hbsb, hupper]
 
 omit [NeZero d] in
 /-- **T2 with the explicit numeral `514 = 4·128 + 2`.**  The uniform-constant
@@ -690,6 +485,35 @@ theorem local_block_energy_uniform {a : CoeffField d} {Θ : ℝ}
           have := mul_le_mul_of_nonneg_left hcedle (by norm_num : (0:ℝ) ≤ 4)
           linarith [this]
   nlinarith [hfinal, hT1, hMvolC, hΘKIG, hMvol0]
+
+omit [NeZero d] in
+/-- **T2 — `local_block_energy`.**  The consumer shape of `p.local.block.energy`:
+the block energy on `C` is controlled by `M²·|supp η ∩ U| + Θ·K∞²·∫_U Σᵢ(∂ᵢη)²`. -/
+theorem local_block_energy {a : CoeffField d} {Θ : ℝ}
+    {v vstar : H1Function U} {P : BlockVec d} {η : Vec d → ℝ} {Gη c Kinf : ℝ}
+    {Z : BlockState d} {C : Set (Vec d)}
+    (hEllO : IsEllipticFieldOn 1 Θ U a)
+    (hWeak : CoupledWeakForm a U P.2 v vstar)
+    (hTrace : MemH10 U (fun x => v.toFun x + vstar.toFun x - vecDot P.1 x))
+    (hKv : ∀ᵐ x ∂(volumeMeasureOn U), |(centeredPotential m v P.1 c).toFun x| ≤ Kinf)
+    (hKvs : ∀ᵐ x ∂(volumeMeasureOn U), |(centeredPotential m vstar P.1 (-c)).toFun x| ≤ Kinf)
+    (hη : ContDiff ℝ (⊤ : ℕ∞) η) (hIcc : ∀ x, η x ∈ Set.Icc (0 : ℝ) 1)
+    (hGη : ∀ x i, |fderiv ℝ η x (basisVec i)| ≤ Gη)
+    (hEnergyId :
+      (fun x => blockVecDot (Z.eval x) (blockMatVecMul (blockCoeffField a x) (Z.eval x)))
+        =ᵐ[volumeMeasureOn U]
+      (fun x => 2 * vecDot (v.grad x) (matVecMul (symmPart (a x)) (v.grad x))
+        + 2 * vecDot (vstar.grad x) (matVecMul (symmPart (a x)) (vstar.grad x))))
+    (hCmeas : MeasurableSet C) (hCU : C ⊆ (openCubeSet (originCube d m) : Set (Vec d)))
+    (hηC : ∀ᵐ x ∂(volumeMeasureOn C), η x = 1) :
+    ∃ Cd : ℝ, 0 ≤ Cd ∧
+      (∫ x in C, blockVecDot (Z.eval x) (blockMatVecMul (blockCoeffField a x) (Z.eval x)))
+        ≤ Cd * ((Θ * vecNormSq P.1 + vecNormSq P.2)
+              * (volume (Function.support η ∩ U)).toReal
+            + Θ * Kinf ^ 2 * (∫ x in U, ∑ i, (fderiv ℝ η x (basisVec i)) ^ 2)) := by
+  refine ⟨514, by norm_num, ?_⟩
+  exact local_block_energy_uniform hEllO hWeak hTrace hKv hKvs hη hIcc hGη
+    hEnergyId hCmeas hCU hηC
 
 end
 

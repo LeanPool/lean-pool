@@ -125,110 +125,6 @@ theorem setIntegral_coreBox_inter_cubeSet_eq_openCubeSet {m : ℤ}
 
 /-! ## The per-core minimizer energy bound -/
 
-/-- **Per-core energy bound (`e.fixed.phase.max.energy`).**  For `c` elliptic on
-the closed cube there is a block minimizer `Z` for `(c, P)` and a
-dimensional constant `Cd ≥ 0` such that every core meeting `K` has normalized
-energy `≤ Cd · Θ · (3^m)² · ℓ^{d−2} · (Θ|p|² + |q|²)`. -/
-theorem exists_perCore_minimizer_energy_le [NeZero d] (hd : 3 ≤ d) {m : ℤ} {Θ : ℝ}
-    (hΘ : 1 ≤ Θ) {ℓ : ℝ} (hℓ4 : 4 ≤ ℓ) (hℓL : ℓ ≤ (3 : ℝ) ^ m) (σ : Vec d) (P : BlockVec d)
-    {c : CoeffField d} (hEll : IsEllipticFieldOn 1 Θ (cubeSet (originCube d m)) c)
-    (K : Finset (Fin d → ℤ)) :
-    ∃ (Z : BlockState d) (Cd : ℝ), 0 ≤ Cd ∧
-      IsBlockMuAdmissible (cubeSet (originCube d m)) P Z ∧
-      BlockResponseSpace c (cubeSet (originCube d m)) Z ∧
-      Mu (cubeSet (originCube d m)) P c = blockEnergyAverage (cubeSet (originCube d m)) c Z ∧
-      ∀ k ∈ K,
-        (∫ x in coreBox ℓ σ k ∩ cubeSet (originCube d m),
-            blockVecDot (Z.eval x) (blockMatVecMul (blockCoeffField c x) (Z.eval x)))
-          ≤ Cd * Θ * ((3 : ℝ) ^ m) ^ 2 * ℓ ^ (d - 2) * (Θ * vecNormSq P.1 + vecNormSq P.2) := by
-  classical
-  let := isFiniteMeasure_openCubeSet_originCube (d := d) m
-  have hℓ0 : (0 : ℝ) < ℓ := by linarith
-  have hΘ0 : (0 : ℝ) < Θ := lt_of_lt_of_le one_pos hΘ
-  set R : ℝ := (3 : ℝ) ^ m with hRdef
-  set Msq : ℝ := Θ * vecNormSq P.1 + vecNormSq P.2 with hMsqdef
-  have hMsq0 : (0 : ℝ) ≤ Msq :=
-    add_nonneg (mul_nonneg hΘ0.le (vecNormSq_nonneg _)) (vecNormSq_nonneg _)
-  have hUmeasO : MeasurableSet (openCubeSet (originCube d m)) := measurableSet_openCubeSet _
-  have hEllO : IsEllipticFieldOn 1 Θ (openCubeSet (originCube d m)) c :=
-    hEll.mono hUmeasO (openCubeSet_subset_cubeSet (originCube d m))
-  -- the coupled representation
-  obtain ⟨Z, v, vstar, hAdmO, hEngO, hRespO, hTrace, _hgp, _hgf, hWeak, hEnergyId⟩ :=
-    exists_coupledRepresentation hEll P
-  -- the coupled Stampacchia estimate
-  obtain ⟨CdS, cval, hCdS0, hvb, hvsb⟩ := coupled_stampacchia hd hEll hWeak hTrace
-  set Kinf : ℝ := CdS * R * Real.sqrt Msq with hKinfdef
-  -- the two sup-norm bounds in `centeredPotential` form
-  have hKv : ∀ᵐ x ∂(volumeMeasureOn (openCubeSet (originCube d m))),
-      |(centeredPotential m v P.1 cval).toFun x| ≤ Kinf := by
-    filter_upwards [hvb] with x hx
-    rw [centeredPotential_toFun]; exact hx
-  have hKvs : ∀ᵐ x ∂(volumeMeasureOn (openCubeSet (originCube d m))),
-      |(centeredPotential m vstar P.1 (-cval)).toFun x| ≤ Kinf := by
-    filter_upwards [hvsb] with x hx
-    rw [centeredPotential_toFun]
-    simpa using hx
-  set W : ℝ := Θ * R ^ 2 * ℓ ^ (d - 2) * Msq with hWdef
-  have hW0 : (0 : ℝ) ≤ W := by
-    rw [hWdef]; positivity
-  -- per-core existential bound
-  have hperk : ∀ k : Fin d → ℤ, ∃ e : ℝ, 0 ≤ e ∧
-      (∫ x in coreBox ℓ σ k ∩ cubeSet (originCube d m),
-          blockVecDot (Z.eval x) (blockMatVecMul (blockCoeffField c x) (Z.eval x)))
-        ≤ e * W := by
-    intro k
-    set C : Set (Vec d) := coreBox ℓ σ k ∩ openCubeSet (originCube d m) with hCdef
-    have hCmeas : MeasurableSet C :=
-      (measurableSet_coreBox ℓ σ k).inter hUmeasO
-    have hCU : C ⊆ (openCubeSet (originCube d m) : Set (Vec d)) := Set.inter_subset_right
-    have hηC : ∀ᵐ x ∂(volumeMeasureOn C), coreCutoff ℓ σ k x = 1 := by
-      refine (ae_restrict_iff' hCmeas).2 (Filter.Eventually.of_forall (fun x hx => ?_))
-      exact coreCutoff_eq_one_of_mem_coreBox hℓ0 σ k hx.1
-    -- T2
-    obtain ⟨CdT, hCdT0, hbound⟩ :=
-      local_block_energy hEllO hWeak hTrace hKv hKvs (coreCutoff_contDiff ℓ σ k)
-        (coreCutoff_mem_Icc ℓ σ k) (fun x i => coreCutoff_deriv_bound hℓ0 σ k x i)
-        hEnergyId hCmeas hCU hηC
-    -- the two uniform cutoff estimates
-    have hsupp : (volume (Function.support (coreCutoff ℓ σ k) ∩
-          openCubeSet (originCube d m))).toReal ≤ (3 * ℓ) ^ d :=
-      coreCutoff_support_volume_le hℓ4 σ k _
-    have hgrad : (∫ x in openCubeSet (originCube d m),
-          ∑ i, (fderiv ℝ (coreCutoff ℓ σ k) x (basisVec i)) ^ 2)
-        ≤ (d : ℝ) * (16 / ℓ) ^ 2 * (3 * ℓ) ^ d :=
-      coreCutoff_sqGrad_integral_le hℓ4 σ k _
-    refine ⟨CdT * 3 ^ d + CdT * CdS ^ 2 * (d : ℝ) * 256 * 3 ^ d, by positivity, ?_⟩
-    rw [setIntegral_coreBox_inter_cubeSet_eq_openCubeSet]
-    calc (∫ x in C, blockVecDot (Z.eval x) (blockMatVecMul (blockCoeffField c x) (Z.eval x)))
-        ≤ CdT * ((Θ * vecNormSq P.1 + vecNormSq P.2) *
-              (volume (Function.support (coreCutoff ℓ σ k) ∩
-                openCubeSet (originCube d m))).toReal
-            + Θ * Kinf ^ 2 * (∫ x in openCubeSet (originCube d m),
-                ∑ i, (fderiv ℝ (coreCutoff ℓ σ k) x (basisVec i)) ^ 2)) := hbound
-      _ ≤ (CdT * 3 ^ d + CdT * CdS ^ 2 * (d : ℝ) * 256 * 3 ^ d) * Θ * R ^ 2 * ℓ ^ (d - 2) * Msq :=
-          perCore_numeric hd hΘ hℓ4 hℓL hMsq0 hCdT0 hsupp hgrad hKinfdef
-      _ = (CdT * 3 ^ d + CdT * CdS ^ 2 * (d : ℝ) * 256 * 3 ^ d) * W := by rw [hWdef]; ring
-  choose f hf0 hfb using hperk
-  -- uniform constant over the finite `K`
-  refine ⟨Z, ∑ k ∈ K, |f k|,
-    Finset.sum_nonneg (fun k _ => abs_nonneg _),
-    (isBlockMuAdmissible_cubeSet_originCube_iff_openCubeSet).2 hAdmO,
-    (blockResponseSpace_cubeSet_originCube_iff_openCubeSet).2 hRespO, ?_, ?_⟩
-  · rw [Mu_cubeSet_originCube_eq_openCubeSet (d := d) m P c, hEngO]
-    unfold blockEnergyAverage
-    exact (volumeAverage_cubeSet_originCube_eq_openCubeSet (d := d) m
-      (blockEnergyDensity c Z)).symm
-  · intro k hk
-    have hfkle : f k ≤ ∑ k' ∈ K, |f k'| :=
-      le_trans (le_abs_self _)
-        (Finset.single_le_sum (f := fun k' => |f k'|) (fun k' _ => abs_nonneg _) hk)
-    calc (∫ x in coreBox ℓ σ k ∩ cubeSet (originCube d m),
-            blockVecDot (Z.eval x) (blockMatVecMul (blockCoeffField c x) (Z.eval x)))
-        ≤ f k * W := hfb k
-      _ ≤ (∑ k' ∈ K, |f k'|) * W := mul_le_mul_of_nonneg_right hfkle hW0
-      _ = (∑ k' ∈ K, |f k'|) * Θ * ((3 : ℝ) ^ m) ^ 2 * ℓ ^ (d - 2)
-            * (Θ * vecNormSq P.1 + vecNormSq P.2) := by rw [hWdef, hRdef, hMsqdef]; ring
-
 /-- **Uniform per-core energy bound.**  The constant-outside form of
 `exists_perCore_minimizer_energy_le`: a single dimensional constant `Cd`,
 independent of the realization `c` and the core family `K`, bounds every per-core
@@ -308,5 +204,25 @@ theorem exists_perCore_minimizer_energy_le_uniform [NeZero d] (hd : 3 ≤ d) :
       _ ≤ (514 * 3 ^ d + 514 * CdS ^ 2 * (d : ℝ) * 256 * 3 ^ d) * Θ
             * ((3 : ℝ) ^ m) ^ 2 * ℓ ^ (d - 2) * (Θ * vecNormSq P.1 + vecNormSq P.2) :=
           perCore_numeric hd hΘ hℓ4 hℓL hMsq0 (by norm_num) hsupp hgrad hKinfdef
+
+/-- **Per-core energy bound (`e.fixed.phase.max.energy`).**  For `c` elliptic on
+the closed cube there is a block minimizer `Z` for `(c, P)` and a
+dimensional constant `Cd ≥ 0` such that every core meeting `K` has normalized
+energy `≤ Cd · Θ · (3^m)² · ℓ^{d−2} · (Θ|p|² + |q|²)`. -/
+theorem exists_perCore_minimizer_energy_le [NeZero d] (hd : 3 ≤ d) {m : ℤ} {Θ : ℝ}
+    (hΘ : 1 ≤ Θ) {ℓ : ℝ} (hℓ4 : 4 ≤ ℓ) (hℓL : ℓ ≤ (3 : ℝ) ^ m) (σ : Vec d) (P : BlockVec d)
+    {c : CoeffField d} (hEll : IsEllipticFieldOn 1 Θ (cubeSet (originCube d m)) c)
+    (K : Finset (Fin d → ℤ)) :
+    ∃ (Z : BlockState d) (Cd : ℝ), 0 ≤ Cd ∧
+      IsBlockMuAdmissible (cubeSet (originCube d m)) P Z ∧
+      BlockResponseSpace c (cubeSet (originCube d m)) Z ∧
+      Mu (cubeSet (originCube d m)) P c = blockEnergyAverage (cubeSet (originCube d m)) c Z ∧
+      ∀ k ∈ K,
+        (∫ x in coreBox ℓ σ k ∩ cubeSet (originCube d m),
+            blockVecDot (Z.eval x) (blockMatVecMul (blockCoeffField c x) (Z.eval x)))
+          ≤ Cd * Θ * ((3 : ℝ) ^ m) ^ 2 * ℓ ^ (d - 2) * (Θ * vecNormSq P.1 + vecNormSq P.2) := by
+  obtain ⟨Cd, hCd, hbound⟩ := exists_perCore_minimizer_energy_le_uniform hd
+  obtain ⟨Z, hAdm, hResp, hEnergy, hcores⟩ := hbound hΘ hℓ4 hℓL σ P hEll K
+  exact ⟨Z, Cd, hCd, hAdm, hResp, hEnergy, hcores⟩
 
 end HCPolySupport
