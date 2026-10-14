@@ -25,8 +25,8 @@ symbol. Mathlib's `List.sections` enumerates these ordered Cartesian products;
 filtering the child families by root makes every generated node valid.
 
 The result includes open trees, unused declared symbols and empty productions.
-Duplicate input productions may produce duplicate output trees; the accepted
-interface requires exact membership, not a repetition-free list.
+Duplicate input productions are removed before expansion. The accepted interface
+requires exact membership, without prescribing duplicate multiplicities.
 
 Source: `lem:finite`, `sec:effective`.
 -/
@@ -118,7 +118,7 @@ Explicit natural-number recursion supplies a computable implementation. -/
   Nat.rec (motive := fun _ =>
       List (ParseTree (Fin g.terminalCount) (Fin (g.extraNonterminalCount + 1))))
     g.leaves
-    (fun _ smaller => g.leaves ++ g.rules.flatMap (fun r =>
+    (fun _ smaller => g.leaves ++ g.rules.dedup.flatMap (fun r =>
       ((r.output.map (fun s => smaller.filter (fun t => decide (t.root = s)))).sections).map
         (ParseTree.node r))) H
 
@@ -132,7 +132,7 @@ theorem enumerateTrees_correct (g : EncodedGrammar) (H : ℕ)
     change t ∈ g.leaves ↔ _
     simpa only [Nat.le_zero_eq] using g.leaves_correct t
   | succ H ih =>
-    change t ∈ g.leaves ++ g.rules.flatMap (fun r =>
+    change t ∈ g.leaves ++ g.rules.dedup.flatMap (fun r =>
       ((r.output.map (fun s => (g.enumerateTrees H).filter (fun c => decide (c.root =
         s)))).sections).map
         (ParseTree.node r)) ↔ _
@@ -148,7 +148,7 @@ theorem enumerateTrees_correct (g : EncodedGrammar) (H : ℕ)
           fun c hc => (ih c).mp (h.1 c hc)
         refine ⟨Valid.node (g := g.decode) r cs ?_ (fun c hc => (hchildren c hc).1) h.2, ?_⟩
         · change r ∈ g.rules.toFinset
-          exact List.mem_toFinset.mpr hr
+          exact List.mem_toFinset.mpr (List.mem_dedup.mp hr)
         · exact (ParseTree.height_node_le_iff r cs H).mpr (fun c hc => (hchildren c hc).2)
     · rintro ⟨hv, hh⟩
       cases t with
@@ -163,7 +163,8 @@ theorem enumerateTrees_correct (g : EncodedGrammar) (H : ℕ)
         change r ∈ g.rules.toFinset at hr
         apply List.mem_append_right
         apply List.mem_flatMap.mpr
-        refine ⟨r, List.mem_toFinset.mp hr, List.mem_map.mpr ⟨cs, ?_, rfl⟩⟩
+        refine ⟨r, List.mem_dedup.mpr (List.mem_toFinset.mp hr),
+          List.mem_map.mpr ⟨cs, ?_, rfl⟩⟩
         apply (ParseTree.mem_root_sections _ _ _).mpr
         refine ⟨?_, roots⟩
         have hheight := (ParseTree.height_node_le_iff r cs H).mp hh

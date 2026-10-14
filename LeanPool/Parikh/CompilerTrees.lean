@@ -92,17 +92,17 @@ theorem cycleTest_correct (g : EncodedGrammar)
   · rintro ⟨⟨A, ⟨_, hh⟩, hr, hp⟩, hheight⟩
     exact ⟨⟨A, hh, hr, hp⟩, hheight⟩
 
-/-- Duplicate-free syntax lists, keeping distinct trees even at equal weights. -/
+/-- Duplicate-free base trees, searched only through the active-label height bound. -/
 @[expose] def baseTrees (g : EncodedGrammar) :
     List (ParseTree (Fin g.terminalCount) (Fin (g.extraNonterminalCount + 1))) :=
   letI := ParseTree.decEq (T := Fin g.terminalCount) (N := Fin (g.extraNonterminalCount + 1))
-  ((boundedEnumeration.enumerate g (g.size.nonterminals + 1)).filter g.baseTest).dedup
+  ((boundedEnumeration.enumerate g (g.activeLabels.card + 1)).filter g.baseTest).dedup
 
-/-- Enumerate bounded cycle contexts, retaining one copy of each syntax tree. -/
+/-- Enumerate bounded cycle contexts at the active-label height, retaining their identities. -/
 @[expose] def cycleTrees (g : EncodedGrammar) :
     List (ParseTree (Fin g.terminalCount) (Fin (g.extraNonterminalCount + 1))) :=
   letI := ParseTree.decEq (T := Fin g.terminalCount) (N := Fin (g.extraNonterminalCount + 1))
-  ((boundedEnumeration.enumerate g (g.size.nonterminals + 1)).filter g.cycleTest).dedup
+  ((boundedEnumeration.enumerate g (g.activeLabels.card + 1)).filter g.cycleTest).dedup
 
 theorem baseTrees_nodup (g : EncodedGrammar) : g.baseTrees.Nodup := by
   let _ := ParseTree.decEq (T := Fin g.terminalCount) (N := Fin (g.extraNonterminalCount + 1))
@@ -119,15 +119,16 @@ theorem mem_baseTrees (g : EncodedGrammar)
     (B : ParseTree (Fin g.terminalCount) (Fin (g.extraNonterminalCount + 1))) :
     B ∈ g.baseTrees ↔ IsBase g.decode B := by
   let _ := ParseTree.decEq (T := Fin g.terminalCount) (N := Fin (g.extraNonterminalCount + 1))
-  change B ∈ ((boundedEnumeration.enumerate g (g.size.nonterminals + 1)).filter
+  change B ∈ ((boundedEnumeration.enumerate g (g.activeLabels.card + 1)).filter
     g.baseTest).dedup ↔ _
   rw [List.mem_dedup, List.mem_filter]
   constructor
   · rintro ⟨hm, ht⟩
     exact (g.baseTest_correct B ((boundedEnumeration.correct g _ B).mp hm).1).mp ht
   · intro hb
-    have hh : B.height ≤ g.size.nonterminals :=
-      (simple_height g.decode B hb.1 hb.2.2).trans g.active_card_le
+    have hh : B.height ≤ g.activeLabels.card := by
+      rw [g.activeLabels_eq]
+      exact simple_height g.decode B hb.1 hb.2.2
     exact ⟨(boundedEnumeration.correct g _ B).mpr ⟨hb.1.1, hh.trans (Nat.le_succ _)⟩,
       (g.baseTest_correct B hb.1.1).mpr hb⟩
 
@@ -136,7 +137,7 @@ theorem mem_cycleTrees (g : EncodedGrammar)
     (C : ParseTree (Fin g.terminalCount) (Fin (g.extraNonterminalCount + 1))) :
     C ∈ g.cycleTrees ↔ IsBoundedCycle g.decode C := by
   let _ := ParseTree.decEq (T := Fin g.terminalCount) (N := Fin (g.extraNonterminalCount + 1))
-  change C ∈ ((boundedEnumeration.enumerate g (g.size.nonterminals + 1)).filter
+  change C ∈ ((boundedEnumeration.enumerate g (g.activeLabels.card + 1)).filter
     g.cycleTest).dedup ↔ _
   rw [List.mem_dedup, List.mem_filter]
   constructor
@@ -144,7 +145,9 @@ theorem mem_cycleTrees (g : EncodedGrammar)
     exact (g.cycleTest_correct C ((boundedEnumeration.correct g _ C).mp hm).1).mp ht
   · intro hc
     obtain ⟨A, ha⟩ := hc.1
-    have hh := hc.2.trans (Nat.add_le_add_right g.active_card_le 1)
+    have hh : C.height ≤ g.activeLabels.card + 1 := by
+      rw [g.activeLabels_eq]
+      exact hc.2
     exact ⟨(boundedEnumeration.correct g _ C).mpr ⟨ha.1.1, hh⟩,
       (g.cycleTest_correct C ha.1.1).mpr hc⟩
 
