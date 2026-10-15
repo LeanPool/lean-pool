@@ -263,38 +263,14 @@ theorem exists_normalized_finite_q_lt_two_lane
     dsimp [Y]
     simpa [mul_assoc] using mul_le_mul_of_nonneg_left (hRroot omega) hK
 
-private theorem rpow_add_le_two_mul_add_rpow_upper {x y r : ℝ}
-    (hx : 0 ≤ x) (hy : 0 ≤ y) (hr1 : 1 ≤ r) (hr2 : r ≤ 2) :
-    (x + y) ^ (2 / r) ≤ 2 * (x ^ (2 / r) + y ^ (2 / r)) := by
-  have hr0 : 0 < r := lt_of_lt_of_le zero_lt_one hr1
-  have hp1 : 1 ≤ 2 / r := by
-    rw [le_div_iff₀ hr0]
-    simpa using hr2
-  have hp2 : 2 / r ≤ 2 := by
-    rw [div_le_iff₀ hr0]
-    linarith
-  have hcoeff : (2 : ℝ) ^ (2 / r - 1) ≤ 2 := by
-    calc
-      (2 : ℝ) ^ (2 / r - 1) ≤ (2 : ℝ) ^ (1 : ℝ) := by
-        refine Real.rpow_le_rpow_of_exponent_le (by norm_num) ?_
-        linarith
-      _ = 2 := Real.rpow_one 2
-  calc
-    (x + y) ^ (2 / r) ≤
-        (2 : ℝ) ^ (2 / r - 1) * (x ^ (2 / r) + y ^ (2 / r)) :=
-      rpow_add_le_mul_rpow_add_rpow hx hy hp1
-    _ ≤ 2 * (x ^ (2 / r) + y ^ (2 / r)) :=
-      mul_le_mul_of_nonneg_right hcoeff
-        (add_nonneg (Real.rpow_nonneg hx _) (Real.rpow_nonneg hy _))
-
 private theorem rpow_three_le_four_mul_sum {x y z r : ℝ}
     (hx : 0 ≤ x) (hy : 0 ≤ y) (hz : 0 ≤ z)
     (hr1 : 1 ≤ r) (hr2 : r ≤ 2) :
     (x + y + z) ^ (2 / r) ≤
       4 * (x ^ (2 / r) + y ^ (2 / r) + z ^ (2 / r)) := by
   have hxy : 0 ≤ x + y := add_nonneg hx hy
-  have hfirst := rpow_add_le_two_mul_add_rpow_upper hxy hz hr1 hr2
-  have hsecond := rpow_add_le_two_mul_add_rpow_upper hx hy hr1 hr2
+  have hfirst := rpow_add_le_two_mul_add_rpow hxy hz hr1 hr2
+  have hsecond := rpow_add_le_two_mul_add_rpow hx hy hr1 hr2
   calc
     (x + y + z) ^ (2 / r) ≤
         2 * ((x + y) ^ (2 / r) + z ^ (2 / r)) := hfirst

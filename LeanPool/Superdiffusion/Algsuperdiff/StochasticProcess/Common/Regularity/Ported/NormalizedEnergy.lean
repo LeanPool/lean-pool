@@ -33,6 +33,18 @@ noncomputable section
 
 variable {d : ℕ}
 
+/-- One coordinate is controlled by the normalized energy of any square-integrable vector field.
+No measurability, volume or positivity assumption on the domain is needed. -/
+theorem normalizedL2On_coord_le_vectorNormalizedL2On
+    {W : Set (Vec d)} {F : Vec d → Vec d} (hF : MemVectorL2 W F) (i : Fin d) :
+    normalizedL2On W (fun x => F x i) ≤ vectorNormalizedL2On W F := by
+  unfold normalizedL2On vectorNormalizedL2On volumeAverage
+  apply Real.sqrt_le_sqrt
+  apply mul_le_mul_of_nonneg_left _ (by positivity)
+  simpa only [Real.norm_eq_abs, Real.rpow_two, sq_abs, euclideanNorm_sq] using
+    (WeakPoissonEquationOn.integral_coord_norm_rpow_two_le_integral_vecNormSq_of_memVectorL2
+      (U := W) hF i)
+
 /-- Dictionary from the vector normalized energy to the Hilbert realization's
 ordinary `L²` norm. -/
 theorem vectorNormalizedL2On_eq_toReal_eLpNorm_div

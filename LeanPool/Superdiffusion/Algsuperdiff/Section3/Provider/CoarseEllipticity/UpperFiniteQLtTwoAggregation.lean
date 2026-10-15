@@ -649,19 +649,6 @@ private theorem upperFiniteQLtTwoRareBudgetConst_pos
     upperAfterBandRareTriangleConst, upperAfterBandRareGridNetConst]
   positivity
 
-private theorem finiteQLtTwo_rpow_add_le_two_mul_add_rpow
-    {x y p : ℝ} (hx : 0 ≤ x) (hy : 0 ≤ y) (hp1 : 1 ≤ p) (hp2 : p ≤ 2) :
-    (x + y) ^ p ≤ 2 * (x ^ p + y ^ p) := by
-  have hcoeff : (2 : ℝ) ^ (p - 1) ≤ 2 := by
-    calc
-      (2 : ℝ) ^ (p - 1) ≤ (2 : ℝ) ^ (1 : ℝ) := by
-        refine Real.rpow_le_rpow_of_exponent_le (by norm_num) ?_
-        linarith
-      _ = 2 := Real.rpow_one 2
-  exact (rpow_add_le_mul_rpow_add_rpow hx hy hp1).trans
-    (mul_le_mul_of_nonneg_right hcoeff
-      (add_nonneg (Real.rpow_nonneg hx _) (Real.rpow_nonneg hy _)))
-
 private theorem finiteQLtTwo_rare_strict_weighted_term_le
     (d : ℕ) {s q sigma K eps gamma : ℝ}
     (hs : 0 < s) (hq1 : 1 ≤ q) (hq2 : q ≤ 2)
@@ -1035,7 +1022,7 @@ private theorem finiteQLtTwo_rareGridProfile_pred_budget
   calc
     (F 0 + ∑' k, F (k + 1)) ^ (2 / q) ≤
         2 * ((F 0) ^ (2 / q) + (∑' k, F (k + 1)) ^ (2 / q)) :=
-      finiteQLtTwo_rpow_add_le_two_mul_add_rpow (hF0 0) htailTsum0 hp1 hp2
+      rpow_add_le_two_mul_add_rpow_of_one_le_of_le_two (hF0 0) htailTsum0 hp1 hp2
     _ ≤ 2 * (3 * common + (92160 : ℝ) ^ 2 * common) := by
       refine mul_le_mul_of_nonneg_left (add_le_add ?_ ?_) (by norm_num)
       · simpa only [common, mul_assoc] using hzeroRoot

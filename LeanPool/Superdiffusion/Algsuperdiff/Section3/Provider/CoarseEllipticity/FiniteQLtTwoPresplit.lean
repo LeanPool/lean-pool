@@ -158,9 +158,23 @@ theorem tsum_weighted_rpow_root_le_of_one_le_of_le_two
       Real.rpow_le_rpow hsum0 hsumle hp0
     _ = B := by rw [← Real.rpow_mul hB, hcancel, Real.rpow_one]
 
+/-- Two nonnegative terms incur at most a factor two for exponents between one and two. -/
+theorem rpow_add_le_two_mul_add_rpow_of_one_le_of_le_two
+    {x y p : ℝ} (hx : 0 ≤ x) (hy : 0 ≤ y) (hp1 : 1 ≤ p) (hp2 : p ≤ 2) :
+    (x + y) ^ p ≤ 2 * (x ^ p + y ^ p) := by
+  have hcoeff : (2 : ℝ) ^ (p - 1) ≤ 2 := by
+    calc
+      (2 : ℝ) ^ (p - 1) ≤ (2 : ℝ) ^ (1 : ℝ) := by
+        refine Real.rpow_le_rpow_of_exponent_le (by norm_num) ?_
+        linarith
+      _ = 2 := Real.rpow_one 2
+  exact (rpow_add_le_mul_rpow_add_rpow hx hy hp1).trans
+    (mul_le_mul_of_nonneg_right hcoeff
+      (add_nonneg (Real.rpow_nonneg hx _) (Real.rpow_nonneg hy _)))
+
 /-- The root exponent `2 / q` is at most two when `1 <= q`; hence its
 two-term convexity loss is bounded by the fixed factor two. -/
-private theorem rpow_add_le_two_mul_add_rpow {a b q : ℝ}
+theorem rpow_add_le_two_mul_add_rpow {a b q : ℝ}
     (ha : 0 ≤ a) (hb : 0 ≤ b) (hq1 : 1 ≤ q) (hq2 : q ≤ 2) :
     (a + b) ^ (2 / q) ≤ 2 * (a ^ (2 / q) + b ^ (2 / q)) := by
   have hq0 : 0 < q := lt_of_lt_of_le zero_lt_one hq1
@@ -170,19 +184,7 @@ private theorem rpow_add_le_two_mul_add_rpow {a b q : ℝ}
   have hp2 : 2 / q ≤ 2 := by
     rw [div_le_iff₀ hq0]
     linarith
-  have hcoeff : (2 : ℝ) ^ (2 / q - 1) ≤ 2 := by
-    calc
-      (2 : ℝ) ^ (2 / q - 1) ≤ (2 : ℝ) ^ (1 : ℝ) := by
-        refine Real.rpow_le_rpow_of_exponent_le (by norm_num) ?_
-        linarith
-      _ = 2 := Real.rpow_one 2
-  calc
-    (a + b) ^ (2 / q) ≤
-        (2 : ℝ) ^ (2 / q - 1) * (a ^ (2 / q) + b ^ (2 / q)) :=
-      rpow_add_le_mul_rpow_add_rpow ha hb hp1
-    _ ≤ 2 * (a ^ (2 / q) + b ^ (2 / q)) :=
-      mul_le_mul_of_nonneg_right hcoeff
-        (add_nonneg (Real.rpow_nonneg ha _) (Real.rpow_nonneg hb _))
+  exact rpow_add_le_two_mul_add_rpow_of_one_le_of_le_two ha hb hp1 hp2
 
 private theorem deterministicProfileRoot_le_geometricBound :
     ∀ {d : ℕ} (M : ABKModel d) (r : { r : ℝ // (1 : ℝ) ≤ r })

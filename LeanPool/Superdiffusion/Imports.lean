@@ -81,6 +81,7 @@ public import LeanPool.Superdiffusion.Algsuperdiff.Frozen.Section5.InjectionInLI
 public import LeanPool.Superdiffusion.Algsuperdiff.Frozen.Section5.PercolationGFv2
 public import LeanPool.Superdiffusion.Algsuperdiff.Frozen.Section5.SuperdiffusivityV2
 public import LeanPool.Superdiffusion.Algsuperdiff.MainTheorems
+public import LeanPool.Superdiffusion.Algsuperdiff.Probability.Average
 public import LeanPool.Superdiffusion.Algsuperdiff.Probability.CesaroAlgebra
 public import LeanPool.Superdiffusion.Algsuperdiff.Probability.CesaroEngine
 public import LeanPool.Superdiffusion.Algsuperdiff.Probability.CesaroWindow

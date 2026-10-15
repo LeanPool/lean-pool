@@ -8,6 +8,7 @@ module
 
 public import LeanPool.Superdiffusion.Algsuperdiff.StochasticProcess.Common.DivergenceForm.BoundedMeasurableResolvent
 public import LeanPool.Superdiffusion.Algsuperdiff.StochasticProcess.Common.Regularity.Freezing.InteriorHolderConstant
+public import LeanPool.Superdiffusion.Algsuperdiff.Probability.Average
 
 /-!
 # BoundedMeasurableLimit
@@ -108,33 +109,6 @@ theorem tendsto_norm_scalarL2_sub_of_bounded_ae_tendsto
 
 /-! ## The mean-plus-oscillation bound -/
 
-private theorem abs_average_sub_const_le_of_ae {mu : Measure (Vec d)}
-    [IsFiniteMeasure mu] (hmu : mu ≠ 0) {f : Vec d → ℝ} (hf : Integrable f mu)
-    {c C : ℝ} (hC : ∀ᵐ y ∂mu, |f y - c| ≤ C) :
-    |(⨍ y, f y ∂mu) - c| ≤ C := by
-  have : NeZero mu := ⟨hmu⟩
-  have huniv : mu Set.univ ≠ 0 := by
-    simpa [Measure.measure_univ_eq_zero] using hmu
-  have hpos : 0 < mu.real Set.univ := by
-    rw [Measure.real]
-    exact ENNReal.toReal_pos huniv (measure_ne_top mu Set.univ)
-  have hconst : (⨍ _y : Vec d, c ∂mu) = c := average_const mu c
-  have hsub : (⨍ y, f y ∂mu) - c = ⨍ y, (f y - c) ∂mu := by
-    conv_lhs => rw [← hconst]
-    rw [average_eq, average_eq, average_eq, ← smul_sub,
-      ← integral_sub hf (integrable_const c)]
-  have hbd : ‖∫ y, (f y - c) ∂mu‖ ≤ C * mu.real Set.univ := by
-    refine norm_integral_le_of_norm_le_const ?_
-    filter_upwards [hC] with y hy
-    simpa using hy
-  rw [hsub, average_eq, smul_eq_mul, abs_mul,
-    abs_of_nonneg (inv_nonneg.mpr hpos.le)]
-  calc
-    (mu.real Set.univ)⁻¹ * |∫ y, (f y - c) ∂mu|
-        ≤ (mu.real Set.univ)⁻¹ * (C * mu.real Set.univ) :=
-          mul_le_mul_of_nonneg_left hbd (inv_nonneg.mpr hpos.le)
-    _ = C := by field_simp
-
 /-- Cauchy–Schwarz: the integral of an `L²` class over a subset of the domain
 is controlled by its norm times the square root of the volume. -/
 theorem abs_setIntegral_le_norm_mul_sqrt
@@ -202,7 +176,7 @@ theorem abs_representative_le_of_holder (G : ScalarL2 U)
     rw [Measure.restrict_apply_self] at hval
     exact (hBopen.measure_pos volume hBne).ne' hval
   have hosc : |(⨍ y in B, w y ∂volume) - w x₀| ≤ K * rho ^ alpha := by
-    refine abs_average_sub_const_le_of_ae hnezero hintB ?_
+    refine Algsuperdiff.Probability.abs_average_sub_const_le_of_ae hnezero hintB ?_
     filter_upwards [ae_restrict_mem hBmeas] with y hy
     refine (hholder y hy x₀ (center_mem_euclideanBall x₀ hrho)).trans ?_
     refine mul_le_mul_of_nonneg_left ?_ hK

@@ -41,23 +41,6 @@ noncomputable section
 
 variable {d : ℕ}
 
-private theorem normalizedL2On_gradCoord_le_vectorNormalizedL2On
-    {W : Set (Vec d)} (hWm : MeasurableSet W)
-    {u : H1Function W} (i : Fin d) :
-    normalizedL2On W (fun x => u.grad x i) ≤
-      vectorNormalizedL2On W u.grad := by
-  unfold normalizedL2On vectorNormalizedL2On volumeAverage
-  apply Real.sqrt_le_sqrt
-  apply mul_le_mul_of_nonneg_left _ (by positivity)
-  apply setIntegral_mono_on
-  · exact (u.gradMemL2 i).integrable_sq
-  · simpa only [euclideanNorm_sq] using
-      (integrableOn_vecNormSq_of_memVectorL2 u.grad_memVectorL2)
-  · exact hWm
-  · intro x _
-    simpa only [euclideanNorm_sq] using
-      (WeakPoissonEquationOn.coord_sq_le_vecNormSq (u.grad x) i)
-
 /-- Normalized mean-zero Poincare on an arbitrary positive axis cube, with
 the gradient already aggregated in the Euclidean vector carrier. -/
 theorem normalizedL2On_axisCube_sub_average_le_vectorGradient
@@ -124,8 +107,7 @@ theorem normalizedL2On_axisCube_sub_average_le_vectorGradient
       ∑ i : Fin d, normalizedL2On W (fun x => u.grad x i) ≤
           ∑ _i : Fin d, vectorNormalizedL2On W u.grad :=
         Finset.sum_le_sum fun i _ =>
-          normalizedL2On_gradCoord_le_vectorNormalizedL2On
-            (measurableSet_axisCube z L) i
+          normalizedL2On_coord_le_vectorNormalizedL2On u.grad_memVectorL2 i
       _ = (d : ℝ) * vectorNormalizedL2On W u.grad := by
         simp only [Finset.sum_const, Finset.card_univ, Fintype.card_fin,
           nsmul_eq_mul]

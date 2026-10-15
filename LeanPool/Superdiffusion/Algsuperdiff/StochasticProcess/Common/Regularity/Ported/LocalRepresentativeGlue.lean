@@ -7,7 +7,7 @@ Authors: Scott Armstrong, Tuomo Kuusi
 module
 
 public import LeanPool.Superdiffusion.Algsuperdiff.StochasticProcess.Common.Regularity.Ported.ZerothOrderSchauderBall
-public import Mathlib.MeasureTheory.Integral.Average
+public import LeanPool.Superdiffusion.Algsuperdiff.Probability.Average
 
 /-!
 # LocalRepresentativeGlue
@@ -65,33 +65,6 @@ def shrinkingBallAverage (u : Vec d → ℝ) (x : Vec d) (n : ℕ) : ℝ :=
 averages of `u`. -/
 def shrinkingAverageLimit (u : Vec d → ℝ) (x : Vec d) : ℝ :=
   limUnder atTop (shrinkingBallAverage u x)
-
-private theorem abs_average_sub_const_le {μ : Measure (Vec d)} [IsFiniteMeasure μ]
-    (hmu : μ ≠ 0) {f : Vec d → ℝ} (hf : Integrable f μ) {c C : ℝ}
-    (hC : ∀ᵐ y ∂μ, |f y - c| ≤ C) :
-    |(⨍ y, f y ∂μ) - c| ≤ C := by
-  have : NeZero μ := ⟨hmu⟩
-  have huniv : μ Set.univ ≠ 0 := by
-    simpa [Measure.measure_univ_eq_zero] using hmu
-  have hpos : 0 < μ.real Set.univ := by
-    rw [Measure.real]
-    exact ENNReal.toReal_pos huniv (measure_ne_top μ Set.univ)
-  have hconst : (⨍ _y : Vec d, c ∂μ) = c := average_const μ c
-  have hsub : (⨍ y, f y ∂μ) - c = ⨍ y, (f y - c) ∂μ := by
-    conv_lhs => rw [← hconst]
-    rw [average_eq, average_eq, average_eq, ← smul_sub,
-      ← integral_sub hf (integrable_const c)]
-  have hbd : ‖∫ y, (f y - c) ∂μ‖ ≤ C * μ.real Set.univ := by
-    refine norm_integral_le_of_norm_le_const ?_
-    filter_upwards [hC] with y hy
-    simpa using hy
-  rw [hsub, average_eq, smul_eq_mul, abs_mul,
-    abs_of_nonneg (inv_nonneg.mpr hpos.le)]
-  calc
-    (μ.real Set.univ)⁻¹ * |∫ y, (f y - c) ∂μ|
-        ≤ (μ.real Set.univ)⁻¹ * (C * μ.real Set.univ) :=
-          mul_le_mul_of_nonneg_left hbd (inv_nonneg.mpr hpos.le)
-    _ = C := by field_simp
 
 /-- Where `u` agrees almost everywhere with a function continuous on a ball
 about `x`, the shrinking ball averages of `u` converge to the value of that
@@ -165,7 +138,7 @@ theorem tendsto_shrinkingBallAverage {x : Vec d} {r : ℝ} (hr : 0 < r)
   have hae : ∀ᵐ y ∂volume.restrict B, |v y - v x| ≤ eps / 2 := by
     filter_upwards [ae_restrict_mem hBmeas] with y hy
     exact hbound y hy
-  have hfinal := abs_average_sub_const_le hBpos hvint hae
+  have hfinal := Algsuperdiff.Probability.abs_average_sub_const_le_of_ae hBpos hvint hae
   rw [Real.dist_eq, hcongr]
   calc |(⨍ y in B, v y ∂volume) - v x| ≤ eps / 2 := hfinal
     _ < eps := by linarith only [heps]

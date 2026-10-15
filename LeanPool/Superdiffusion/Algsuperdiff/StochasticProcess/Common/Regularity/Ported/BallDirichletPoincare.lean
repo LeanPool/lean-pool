@@ -43,22 +43,6 @@ noncomputable section
 
 variable {d : ℕ}
 
-private theorem normalizedL2On_gradCoord_le_vectorNormalizedL2On'
-    {W : Set (Vec d)} (hWm : MeasurableSet W)
-    {u : H1Function W} (i : Fin d) :
-    normalizedL2On W (fun x => u.grad x i) ≤ vectorNormalizedL2On W u.grad := by
-  unfold normalizedL2On vectorNormalizedL2On volumeAverage
-  apply Real.sqrt_le_sqrt
-  apply mul_le_mul_of_nonneg_left _ (by positivity)
-  apply setIntegral_mono_on
-  · exact (u.gradMemL2 i).integrable_sq
-  · simpa only [euclideanNorm_sq] using
-      (integrableOn_vecNormSq_of_memVectorL2 u.grad_memVectorL2)
-  · exact hWm
-  · intro x _
-    simpa only [euclideanNorm_sq] using
-      (WeakPoissonEquationOn.coord_sq_le_vecNormSq (u.grad x) i)
-
 /-- Normalized Dirichlet Poincaré on a Euclidean ball, with an explicit
 dimension-only constant inherited from the unit axis cube. -/
 theorem normalizedL2On_euclideanBall_le_vectorGradient [NeZero d]
@@ -134,8 +118,7 @@ theorem normalizedL2On_euclideanBall_le_vectorGradient [NeZero d]
         ∑ i : Fin d, normalizedL2On W (fun x => rho.toH1Function.grad x i) ≤
             ∑ _i : Fin d, vectorNormalizedL2On W rho.toH1Function.grad :=
           Finset.sum_le_sum fun i _ =>
-            normalizedL2On_gradCoord_le_vectorNormalizedL2On'
-              (isOpen_euclideanBall z r).measurableSet i
+            normalizedL2On_coord_le_vectorNormalizedL2On rho.toH1Function.grad_memVectorL2 i
         _ = (d : ℝ) * vectorNormalizedL2On W rho.toH1Function.grad := by
           simp only [Finset.sum_const, Finset.card_univ, Fintype.card_fin, nsmul_eq_mul]
     _ = _ := by ring
