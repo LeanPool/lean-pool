@@ -7,6 +7,7 @@ Authors: Scott Armstrong
 module
 
 public import LeanPool.Superdiffusion.Algsuperdiff.Section4.Provider.ExcessDecay.RebaseJoinErrorWeighted
+public import LeanPool.Superdiffusion.Algsuperdiff.Section4.Provider.ExcessDecay.RebaseSealDistance
 public import LeanPool.Superdiffusion.Algsuperdiff.Section4.Provider.ExcessDecay.RebaseGeneralClauseErrorWeighted
 
 /-!
@@ -330,66 +331,12 @@ theorem exists_harmonicApproximation_provider_of_boundaryClauseReal_errorWeighte
                                     (HCPolySupport.originCube d (n + 2))) ∩
                                 HCPolySupport.openCubeSet (HCPolySupport.originCube d m)) s g)
     := by
-  classical
-  refine exists_harmonicApproximation_provider_of_generalClauseReal_errorWeighted d ?_
-  obtain ⟨CB, hCB, hB⟩ := hbdry
-  obtain ⟨CG, hCG, hG⟩ := exists_generalClauseReal_frontierEmpty_half_errorWeighted d
-  have hleB : CB ≤ max (max CB CG) 2 := le_trans (le_max_left _ _) (le_max_left _ _)
-  have hleG : CG ≤ max (max CB CG) 2 := le_trans (le_max_right _ _) (le_max_left _ _)
-  have hle2 : (2 : ℝ) ≤ max (max CB CG) 2 := le_max_right _ _
-  have hCpos : (0 : ℝ) < max (max CB CG) 2 := lt_of_lt_of_le (by norm_num) hle2
-  refine ⟨max (max CB CG) 2, hCpos, ?_⟩
-  intro M s hsrange hregime hfund hs L m n hmL hnm x z hx hz hgeom
-  have hs1 : s ≤ 1 := hsrange.2
-  have hep0 : (0 : ℝ) ≤ (max (max CB CG) 2)⁻¹ * s ^ (4 : ℕ) :=
-    clauseEpsilon_nonneg hCpos hs.le
-  have hepB : (max (max CB CG) 2)⁻¹ * s ^ (4 : ℕ) ≤ CB⁻¹ * s ^ (4 : ℕ) :=
-    clauseEpsilon_anti hCB hleB hs.le
-  have hepG : (max (max CB CG) 2)⁻¹ * s ^ (4 : ℕ) ≤ 1 / 2 :=
-    clauseEpsilon_le_half hle2 hs.le hs1
-  have hS4 : (0 : ℝ) ≤ Real.rpow s (-(4 : ℝ)) := Real.rpow_nonneg hs.le _
-  have hS7 : (0 : ℝ) ≤ Real.rpow s (-(7 : ℝ)) := Real.rpow_nonneg hs.le _
-  have hS6 : (0 : ℝ) ≤ Real.rpow s (-(6 : ℝ)) := Real.rpow_nonneg hs.le _
-  have hS32 : (0 : ℝ) ≤ Real.rpow s (-(3 / 2 : ℝ)) := Real.rpow_nonneg hs.le _
-  have h3n : (0 : ℝ) ≤ Real.rpow (3 : ℝ) (n : ℝ) := Real.rpow_nonneg (by norm_num) _
-  have h3sn : (0 : ℝ) ≤ Real.rpow (3 : ℝ) ((1 + s) * (n : ℝ)) :=
-    Real.rpow_nonneg (by norm_num) _
-  have hsgn : (0 : ℝ) ≤ ((Annealed.sigmaBar M n : ℝ))⁻¹ :=
-    inv_nonneg.mpr (Annealed.sigmaBar M n).2.le
-  by_cases hfr : (((fun y' => z + y') '' openCubeSet (originCube d (n + 2))) ∩
-      frontier (openCubeSet (originCube d m))) = ∅
-  · filter_upwards [hG M s hsrange (regime_le_of_const_le hCG hleG hregime)
-      (funding_le_of_epsilon_le hs hepG hfund) hs L m n hmL hnm x z hx hz hgeom hfr]
-      with omega hom
-    intro hmem u h g hsol hgL2 hgW hhW v w hharm hval hgrad
-    have hmemG := Algsuperdiff.Section4.Provider.GoodEvents.goodEventAt_mono_ep M
-      (Algsuperdiff.Section4.Support.cgEllipLowerConstant d) (n + 3) z
-      ⟨s / 8, by linarith only [hs]⟩ hep0 hepG hmem
-    refine (hom hmemG u h g hsol hgL2 hgW hhW v w hharm hval hgrad).trans
-      (mul_le_mul_of_nonneg_right hleG (fourSummandBracket_nonneg
-        (mul_nonneg hS4 (Support.fluxCorrectedErrorRepresentative_nonneg _ _ _ _ _))
-        (mul_nonneg (mul_nonneg hS7 hsgn) h3sn) (mul_nonneg hS6 h3sn)
-        (mul_nonneg (mul_nonneg hS6
-          (Support.fluxCorrectedErrorRepresentative_nonneg _ _ _ _ _)) h3n)
-        ENNReal.toReal_nonneg
-        (mul_nonneg (mul_nonneg hS32 h3n) (norm_nonneg _)) ENNReal.toReal_nonneg
-        ENNReal.toReal_nonneg ENNReal.toReal_nonneg))
-  · filter_upwards [hB M s hsrange (regime_le_of_const_le hCB hleB hregime)
-      (funding_le_of_epsilon_le hs hepB hfund) hs L m n hmL hnm x z hx hz hgeom hfr]
-      with omega hom
-    intro hmem u h g hsol hgL2 hgW hhW v w hharm hval hgrad
-    have hmemB := Algsuperdiff.Section4.Provider.GoodEvents.goodEventAt_mono_ep M
-      (Algsuperdiff.Section4.Support.cgEllipLowerConstant d) (n + 3) z
-      ⟨s / 8, by linarith only [hs]⟩ hep0 hepB hmem
-    refine (hom hmemB u h g hsol hgL2 hgW hhW v w hharm hval hgrad).trans
-      (mul_le_mul_of_nonneg_right hleB (fourSummandBracket_nonneg
-        (mul_nonneg hS4 (Support.fluxCorrectedErrorRepresentative_nonneg _ _ _ _ _))
-        (mul_nonneg (mul_nonneg hS7 hsgn) h3sn) (mul_nonneg hS6 h3sn)
-        (mul_nonneg (mul_nonneg hS6
-          (Support.fluxCorrectedErrorRepresentative_nonneg _ _ _ _ _)) h3n)
-        ENNReal.toReal_nonneg
-        (mul_nonneg (mul_nonneg hS32 h3n) (norm_nonneg _)) ENNReal.toReal_nonneg
-        ENNReal.toReal_nonneg ENNReal.toReal_nonneg))
+  apply exists_harmonicApproximation_provider_of_generalClauseReal_errorWeighted d
+  exact exists_generalClauseReal_of_boundary_frontierEmpty_with_gradientWeight d
+    (fun M L j t z omega => Support.fluxCorrectedErrorRepresentative M L j t
+      (Cutoff.translateCutoffSample z omega))
+    (fun _ _ _ _ _ _ => Support.fluxCorrectedErrorRepresentative_nonneg _ _ _ _ _)
+    hbdry (exists_generalClauseReal_frontierEmpty_half_errorWeighted d)
 
 end
 

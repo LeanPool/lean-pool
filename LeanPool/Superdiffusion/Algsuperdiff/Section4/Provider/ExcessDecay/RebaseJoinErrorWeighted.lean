@@ -9,6 +9,7 @@ module
 public import LeanPool.Superdiffusion.Algsuperdiff.Section4.Provider.ExcessDecay.HarmonicProviderFinalInterior
 public import LeanPool.Superdiffusion.Algsuperdiff.Section4.Provider.ExcessDecay.RebaseEpsilon
 public import LeanPool.Superdiffusion.Algsuperdiff.Section4.Provider.ExcessDecay.RebaseWeakening
+public import LeanPool.Superdiffusion.Algsuperdiff.Section4.Provider.ExcessDecay.RebaseJoinRegated
 
 /-!
 # RebaseJoinErrorWeighted
@@ -374,83 +375,10 @@ theorem exists_harmonicApproximation_provider_of_generalClauseReal_errorWeighted
                                     (HCPolySupport.originCube d (n + 2))) ∩
                                 HCPolySupport.openCubeSet (HCPolySupport.originCube d m)) s g)
     := by
-  classical
-  obtain ⟨CG, hCG, hG⟩ := hgen
-  obtain ⟨CI, hCI, hI⟩ := exists_interiorClause_anchorShape d
-  have hleG : CG ≤ max (max CG CI) 2 :=
-    le_trans (le_max_left _ _) (le_max_left _ _)
-  have hleI : CI ≤ max (max CG CI) 2 :=
-    le_trans (le_max_right _ _) (le_max_left _ _)
-  have hle2 : (2 : ℝ) ≤ max (max CG CI) 2 := le_max_right _ _
-  have hCpos : (0 : ℝ) < max (max CG CI) 2 := lt_of_lt_of_le (by norm_num) hle2
-  refine ⟨max (max CG CI) 2, hCpos, ?_⟩
-  intro M s hsrange hregime hfund hs L m n hmL hnm x z hx hz hgeom
-  have hnm2 : n + 2 ≤ m := by omega
-  have hs1 : s ≤ 1 := hsrange.2
-  have hep0 : (0 : ℝ) ≤ (max (max CG CI) 2)⁻¹ * s ^ (4 : ℕ) :=
-    clauseEpsilon_nonneg hCpos hs.le
-  have hephalf : (max (max CG CI) 2)⁻¹ * s ^ (4 : ℕ) ≤ 1 / 2 :=
-    clauseEpsilon_le_half hle2 hs.le hs1
-  have hepG : (max (max CG CI) 2)⁻¹ * s ^ (4 : ℕ) ≤ CG⁻¹ * s ^ (4 : ℕ) :=
-    clauseEpsilon_anti hCG hleG hs.le
-  filter_upwards [hG M s hsrange (regime_le_of_const_le hCG hleG hregime)
-      (funding_le_of_epsilon_le hs hepG hfund) hs L m n hmL hnm x z hx hz hgeom,
-    hI M s hsrange (regime_le_of_const_le hCI hleI hregime)
-      (funding_le_of_epsilon_le hs hephalf hfund) hs L m n hmL hnm2 x z hx hz hgeom]
-    with omega hgen' hint'
-  intro u hdat g hsol hgL2 hgW hhW v w hharm hval hgrad
-  have hEr : (0 : ℝ) ≤ Algsuperdiff.Section4.Support.fluxCorrectedErrorRepresentative M L
-      (n + 3) ⟨s / 8, by linarith only [hs]⟩ (Cutoff.translateCutoffSample z omega) :=
-    Algsuperdiff.Section4.Support.fluxCorrectedErrorRepresentative_nonneg _ _ _ _ _
-  have hEr2 : (0 : ℝ) ≤ Algsuperdiff.Section4.Support.fluxCorrectedErrorRepresentative M L
-      (n + 2) ⟨s / 8, by linarith only [hs]⟩ (Cutoff.translateCutoffSample z omega) :=
-    Algsuperdiff.Section4.Support.fluxCorrectedErrorRepresentative_nonneg _ _ _ _ _
-  have hsg : (0 : ℝ) ≤ ((Annealed.sigmaBar M n : ℝ))⁻¹ :=
-    inv_nonneg.mpr (Annealed.sigmaBar M n).2.le
-  have hne : eLpNorm (fun y => u.toFun y - v.toFun y) 2
-      (Algsuperdiff.Section4.Support.normalizedVolumeMeasureOn
-        ((fun y => x + y) '' openCubeSet (originCube d n))) ≠ ⊤ :=
-    eLpNorm_ne_top_of_eq_h10 (volume_image_add_openCubeSet_ne_zero x (originCube d n)) w
-      (fun y => by rw [hval y]; ring)
-  refine ⟨?_, ?_⟩
-  · refine indicator_le_of_mem ?_
-    intro hmem
-    have hmemG := Algsuperdiff.Section4.Provider.GoodEvents.goodEventAt_mono_ep M
-      (Algsuperdiff.Section4.Support.cgEllipLowerConstant d) (n + 3) z
-      ⟨s / 8, by linarith only [hs]⟩ hep0 hepG hmem
-    have hreal := hgen' hmemG u hdat g hsol hgL2 hgW hhW v w hharm hval hgrad
-    have hb : (0 : ℝ) ≤ Real.rpow s (-(3 / 2 : ℝ)) * Real.rpow (3 : ℝ) (n : ℝ) *
-        ‖HCPolySupport.volumeAverageVec
-            ((((fun y' => z + y') '' openCubeSet (originCube d (n + 2)))) ∩
-              openCubeSet (originCube d m)) hdat.grad‖ :=
-      mul_nonneg (mul_nonneg (Real.rpow_nonneg hs.le _) (Real.rpow_nonneg (by norm_num) _))
-        (norm_nonneg _)
-    refine le_ofReal_mul_bracket_add_three hne
-      (mul_nonneg (mul_nonneg hCpos.le (Real.rpow_nonneg hs.le _)) hEr) hb
-      (mul_nonneg (mul_nonneg (mul_nonneg hCpos.le (Real.rpow_nonneg hs.le _)) hsg)
-        (Real.rpow_nonneg (by norm_num) _))
-      (mul_nonneg (mul_nonneg hCpos.le (Real.rpow_nonneg hs.le _))
-        (Real.rpow_nonneg (by norm_num) _))
-      (mul_nonneg (mul_nonneg (mul_nonneg hCpos.le (Real.rpow_nonneg hs.le _)) hEr)
-        (Real.rpow_nonneg (by norm_num) _)) ?_
-    refine hreal.trans ?_
-    refine le_trans (fourSummandBracket_absorb hleG ?_ ?_ ?_ ?_) (le_of_eq (by ring))
-    · exact mul_nonneg (mul_nonneg (Real.rpow_nonneg hs.le _) hEr)
-        (add_nonneg ENNReal.toReal_nonneg hb)
-    · exact mul_nonneg (mul_nonneg (mul_nonneg (Real.rpow_nonneg hs.le _) hsg)
-        (Real.rpow_nonneg (by norm_num) _)) ENNReal.toReal_nonneg
-    · exact mul_nonneg (mul_nonneg (Real.rpow_nonneg hs.le _)
-        (Real.rpow_nonneg (by norm_num) _)) ENNReal.toReal_nonneg
-    · exact mul_nonneg (mul_nonneg (mul_nonneg (Real.rpow_nonneg hs.le _) hEr)
-        (Real.rpow_nonneg (by norm_num) _)) ENNReal.toReal_nonneg
-  · intro hgate
-    refine le_trans (hint' u hdat g hsol hgL2 hgW hhW v w hharm hval hgrad hgate) ?_
-    refine two_summand_coeff_mono ?_ ?_
-    · exact mul_le_mul_of_nonneg_right
-        (mul_le_mul_of_nonneg_right hleI (Real.rpow_nonneg hs.le _)) hEr2
-    · exact mul_le_mul_of_nonneg_right (mul_le_mul_of_nonneg_right
-        (mul_le_mul_of_nonneg_right hleI (Real.rpow_nonneg hs.le _)) hsg)
-        (Real.rpow_nonneg (by norm_num) _)
+  exact exists_harmonicApproximation_provider_of_generalClauseReal_with_gradientWeight d
+    (fun M L j t z omega => Support.fluxCorrectedErrorRepresentative M L j t
+      (Cutoff.translateCutoffSample z omega))
+    (fun _ _ _ _ _ _ => Support.fluxCorrectedErrorRepresentative_nonneg _ _ _ _ _) hgen
 
 end
 

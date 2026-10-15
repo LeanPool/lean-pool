@@ -93,14 +93,8 @@ theorem offGridStabilityConst_quarter_le (d : ℕ) {s : ℝ} (_hs0 : 0 < s)
 
 /-! ## 2. The coarse-grained caps at the boundary pair -/
 
-/-- **The covering cube's `q = 1` ingredients at the boundary Caccioppoli
-pair.**
-
-On the frozen general clause's own good event `𝒢(n+3, z; s/8, 1/2)`, the
-coarse-grained ellipticity data of the `(n+3)` re-based family on the covering
-cube — the upper constant at `1/2`, the lower constant at `s/3`, and their
-contrast — are all controlled by one `d`-only constant `K` against `σ_{n+3}`. -/
-theorem ae_coveringCubeCapsPair_le (d : ℕ) [NeZero d] :
+/-- Covering-cube caps under explicit half-open parent containment. -/
+theorem ae_coveringCubeCapsPair_le_gapThree (d : ℕ) [NeZero d] :
     ∃ C K : ℝ, 0 < C ∧ 0 < K ∧
       ∀ (M : ABKModel d) (s : ℝ), s ∈ Set.Icc (64 * M.gamma) 1 →
         M.gamma ≤ C⁻¹ * Disorder.cstar M ^ (10 : ℕ) →
@@ -111,10 +105,10 @@ theorem ae_coveringCubeCapsPair_le (d : ℕ) [NeZero d] :
             omega ∈ Algsuperdiff.Frozen.Section4.goodEventAt M
                 (Support.cgEllipLowerConstant d) (n + 3) z
                 ⟨s / 8, by linarith only [hs]⟩ (1 / 2) →
-              ∀ x : Vec d, x ∈ openCubeSet (originCube d m) →
-                (fun y => x + y) '' openCubeSet (originCube d n) ⊆
-                    ((fun y => z + y) '' openCubeSet (originCube d (n + 1))) ∩
-                      openCubeSet (originCube d m) →
+              ∀ x : Vec d,
+                translateSet (wellPlacedCentre x m (n + 2) - z)
+                    (cubeSet (originCube d (n + 2))) ⊆
+                  cubeSet (originCube d (n + 3)) →
                 Ch02.LambdaS (originCube d (n + 2)) (1 / 2)
                       (parentRebasedFamily M L (n + 3)
                         (wellPlacedCentre x m (n + 2)) z omega) ≤
@@ -134,7 +128,6 @@ theorem ae_coveringCubeCapsPair_le (d : ℕ) [NeZero d] :
   have hd : (0 : ℝ) < (d : ℝ) := by
     exact_mod_cast Nat.pos_of_ne_zero (NeZero.ne d)
   set kappa : ℝ := Real.sqrt (192 * (d : ℝ)) * 3 with hkappadef
-  have hkappa : 0 ≤ kappa := by positivity
   refine ⟨C, 2 * (d : ℝ) * ((kappa * (C * (1 / 2))) ^ 2 + 1), hCpos, ?_, ?_⟩
   · have h1 : (0 : ℝ) < (kappa * (C * (1 / 2))) ^ 2 + 1 := by positivity
     have h2 : (0 : ℝ) < 2 * (d : ℝ) := by linarith only [hd]
@@ -145,12 +138,12 @@ theorem ae_coveringCubeCapsPair_le (d : ℕ) [NeZero d] :
   have hs3 : (0 : ℝ) < s / 3 := by linarith only [hs]
   have hsig : (0 : ℝ) < (Annealed.sigmaBar M (n + 3) : ℝ) := (Annealed.sigmaBar M (n + 3)).2
   filter_upwards [hC M s hsrange hregime hsmall hs n z,
-    ae_coveringCubeError_le_representative M L n m z hs
+    ae_coveringCubeError_le_representative_gapThree M L n m z hs
       (by linarith only [hs] : s / 8 < s / 6) (by linarith only [hs1] : s / 6 ≤ 1 / 2),
-    ae_coveringCubeError_le_representative M L n m z hs
+    ae_coveringCubeError_le_representative_gapThree M L n m z hs
       (by linarith only [hs1] : s / 8 < 1 / 4) (by norm_num : (1 : ℝ) / 4 ≤ 1 / 2)]
     with omega hcap herr6 herr4
-  intro hmem x hx hgeom
+  intro hmem x hhinge
   have hErep0 : (0 : ℝ) ≤ fluxCorrectedErrorRepresentative M L (n + 3)
       ⟨s / 8, by linarith only [hs]⟩ (Cutoff.translateCutoffSample z omega) :=
     fluxCorrectedErrorRepresentative_nonneg _ _ _ _ _
@@ -178,7 +171,7 @@ theorem ae_coveringCubeCapsPair_le (d : ℕ) [NeZero d] :
       (parentRebasedFamily M L (n + 3) (wellPlacedCentre x m (n + 2)) z omega)
       (isotropicComparatorMatrix (Annealed.sigmaBar M (n + 3))) ≤
       kappa * (C * (1 / 2)) := by
-    refine (herr6 x (by omega) hx hgeom).trans ?_
+    refine (herr6 x hhinge).trans ?_
     have h1 : Real.sqrt (offGridStabilityConst d (s / 6) (s / 8)) ≤
         Real.sqrt (192 * (d : ℝ)) :=
       Real.sqrt_le_sqrt (offGridStabilityConst_slot_le hs hs1)
@@ -194,7 +187,7 @@ theorem ae_coveringCubeCapsPair_le (d : ℕ) [NeZero d] :
       (parentRebasedFamily M L (n + 3) (wellPlacedCentre x m (n + 2)) z omega)
       (isotropicComparatorMatrix (Annealed.sigmaBar M (n + 3))) ≤
       kappa * (C * (1 / 2)) := by
-    refine (herr4 x (by omega) hx hgeom).trans ?_
+    refine (herr4 x hhinge).trans ?_
     have h1 : Real.sqrt (offGridStabilityConst d (1 / 4) (s / 8)) ≤
         Real.sqrt (192 * (d : ℝ)) := by
       refine Real.sqrt_le_sqrt ?_
@@ -269,6 +262,50 @@ theorem ae_coveringCubeCapsPair_le (d : ℕ) [NeZero d] :
     _ = 2 * (d : ℝ) * ((kappa * (C * (1 / 2))) ^ 2 + 1) *
           (2 * (d : ℝ) * ((kappa * (C * (1 / 2))) ^ 2 + 1)) := by
         rw [mul_inv_cancel₀ hsne, mul_one]
+
+/-- **The covering cube's `q = 1` ingredients at the boundary Caccioppoli
+pair.**
+
+On the frozen general clause's own good event `𝒢(n+3, z; s/8, 1/2)`, the
+coarse-grained ellipticity data of the `(n+3)` re-based family on the covering
+cube — the upper constant at `1/2`, the lower constant at `s/3`, and their
+contrast — are all controlled by one `d`-only constant `K` against `σ_{n+3}`. -/
+theorem ae_coveringCubeCapsPair_le (d : ℕ) [NeZero d] :
+    ∃ C K : ℝ, 0 < C ∧ 0 < K ∧
+      ∀ (M : ABKModel d) (s : ℝ), s ∈ Set.Icc (64 * M.gamma) 1 →
+        M.gamma ≤ C⁻¹ * Disorder.cstar M ^ (10 : ℕ) →
+        M.gamma * |Real.log M.gamma| ^ (2 : ℕ) ≤
+            Real.rpow (s / 8) (3 / 2 : ℝ) * Disorder.cstar M ^ (2 : ℕ) * (1 / 2) →
+        ∀ hs : 0 < s, ∀ L m n : ℤ, m ≤ L → n + 3 ≤ m → ∀ z : Vec d,
+          ∀ᵐ omega ∂(Cutoff.cutoffSampleLaw M).toMeasure,
+            omega ∈ Algsuperdiff.Frozen.Section4.goodEventAt M
+                (Support.cgEllipLowerConstant d) (n + 3) z
+                ⟨s / 8, by linarith only [hs]⟩ (1 / 2) →
+              ∀ x : Vec d, x ∈ openCubeSet (originCube d m) →
+                (fun y => x + y) '' openCubeSet (originCube d n) ⊆
+                    ((fun y => z + y) '' openCubeSet (originCube d (n + 1))) ∩
+                      openCubeSet (originCube d m) →
+                Ch02.LambdaS (originCube d (n + 2)) (1 / 2)
+                      (parentRebasedFamily M L (n + 3)
+                        (wellPlacedCentre x m (n + 2)) z omega) ≤
+                    K * (Annealed.sigmaBar M (n + 3) : ℝ) ∧
+                  (Ch02.lambdaS (originCube d (n + 2)) (s / 3)
+                        (parentRebasedFamily M L (n + 3)
+                          (wellPlacedCentre x m (n + 2)) z omega))⁻¹ ≤
+                      K * ((Annealed.sigmaBar M (n + 3) : ℝ))⁻¹ ∧
+                  Ch02.lambdaS (originCube d (n + 2)) (s / 3)
+                        (parentRebasedFamily M L (n + 3)
+                          (wellPlacedCentre x m (n + 2)) z omega) ≤
+                      K * (Annealed.sigmaBar M (n + 3) : ℝ) ∧
+                  Ch02.ThetaRatio (originCube d (n + 2)) (1 / 2) (s / 3)
+                        (parentRebasedFamily M L (n + 3)
+                          (wellPlacedCentre x m (n + 2)) z omega) ≤ K * K := by
+  obtain ⟨C, K, hCpos, hKpos, hcaps⟩ := ae_coveringCubeCapsPair_le_gapThree d
+  refine ⟨C, K, hCpos, hKpos, ?_⟩
+  intro M s hsrange hregime hsmall hs L m n hmL hnm z
+  filter_upwards [hcaps M s hsrange hregime hsmall hs L m n hmL hnm z] with omega hall
+  intro hmem x hx hgeom
+  exact hall hmem x (translateSet_cubeSet_coveringCube_subset_anchorParent (by omega) hx hgeom)
 
 /-! ## 3. The prefactor at the boundary pair -/
 
@@ -368,6 +405,40 @@ theorem caccioppoliWithRHSPrefactor_boundaryPair_le [NeZero d] {Q : TriadicCube 
 
 /-! ## 4. The coarse-grained prefactor on the covering cube -/
 
+/-- The boundary prefactor under explicit half-open parent containment. -/
+theorem ae_coveringCubePrefactor_le_gapThree (d : ℕ) [NeZero d] :
+    ∃ C K : ℝ, 0 < C ∧ 0 < K ∧
+      ∀ (M : ABKModel d) (s : ℝ), s ∈ Set.Icc (64 * M.gamma) 1 →
+        M.gamma ≤ C⁻¹ * Disorder.cstar M ^ (10 : ℕ) →
+        M.gamma * |Real.log M.gamma| ^ (2 : ℕ) ≤
+            Real.rpow (s / 8) (3 / 2 : ℝ) * Disorder.cstar M ^ (2 : ℕ) * (1 / 2) →
+        ∀ hs : 0 < s, ∀ L m n : ℤ, m ≤ L → n + 3 ≤ m → ∀ z : Vec d,
+          ∀ᵐ omega ∂(Cutoff.cutoffSampleLaw M).toMeasure,
+            omega ∈ Algsuperdiff.Frozen.Section4.goodEventAt M
+                (Support.cgEllipLowerConstant d) (n + 3) z
+                ⟨s / 8, by linarith only [hs]⟩ (1 / 2) →
+              ∀ x : Vec d,
+                translateSet (wellPlacedCentre x m (n + 2) - z)
+                    (cubeSet (originCube d (n + 2))) ⊆
+                  cubeSet (originCube d (n + 3)) →
+                ∀ C₁ : ℝ, 0 < C₁ →
+                  caccioppoliWithRHSPrefactor C₁ (originCube d (n + 2))
+                      (parentRebasedFamily M L (n + 3)
+                        (wellPlacedCentre x m (n + 2)) z omega) (1 / 2) (s / 3) ≤
+                    (6 * max 1 C₁) ^ (14 : ℕ) * 64 * (K * K) ^ (6 : ℕ) ∧
+                  Ch02.lambdaS (originCube d (n + 2)) (s / 3)
+                      (parentRebasedFamily M L (n + 3)
+                        (wellPlacedCentre x m (n + 2)) z omega) ≤
+                    K * (Annealed.sigmaBar M (n + 3) : ℝ) := by
+  obtain ⟨C, K, hCpos, hKpos, hcaps⟩ := ae_coveringCubeCapsPair_le_gapThree d
+  refine ⟨C, K, hCpos, hKpos, ?_⟩
+  intro M s hsrange hregime hsmall hs L m n hmL hnm z
+  have hs1 : s ≤ 1 := hsrange.2
+  filter_upwards [hcaps M s hsrange hregime hsmall hs L m n hmL hnm z] with omega hall
+  intro hmem x hhinge C₁ hC₁
+  obtain ⟨_, _, hlam, hTheta⟩ := hall hmem x hhinge
+  exact ⟨caccioppoliWithRHSPrefactor_boundaryPair_le hC₁ hs hs1 hTheta, hlam⟩
+
 /-- **The boundary Caccioppoli's two coarse-grained factors, capped.**
 
 On the frozen good event, the boundary Caccioppoli's prefactor at the pair
@@ -400,14 +471,13 @@ theorem ae_coveringCubePrefactor_le (d : ℕ) [NeZero d] :
                       (parentRebasedFamily M L (n + 3)
                         (wellPlacedCentre x m (n + 2)) z omega) ≤
                     K * (Annealed.sigmaBar M (n + 3) : ℝ) := by
-  obtain ⟨C, K, hCpos, hKpos, hcaps⟩ := ae_coveringCubeCapsPair_le d
+  obtain ⟨C, K, hCpos, hKpos, hpref⟩ := ae_coveringCubePrefactor_le_gapThree d
   refine ⟨C, K, hCpos, hKpos, ?_⟩
   intro M s hsrange hregime hsmall hs L m n hmL hnm z
-  have hs1 : s ≤ 1 := hsrange.2
-  filter_upwards [hcaps M s hsrange hregime hsmall hs L m n hmL hnm z] with omega hall
+  filter_upwards [hpref M s hsrange hregime hsmall hs L m n hmL hnm z] with omega hall
   intro hmem x hx hgeom C₁ hC₁
-  obtain ⟨_, _, hlam, hTheta⟩ := hall hmem x hx hgeom
-  exact ⟨caccioppoliWithRHSPrefactor_boundaryPair_le hC₁ hs hs1 hTheta, hlam⟩
+  exact hall hmem x (translateSet_cubeSet_coveringCube_subset_anchorParent (by omega) hx hgeom)
+    C₁ hC₁
 
 end
 
