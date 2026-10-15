@@ -115,33 +115,40 @@ theorem quartic_coefficients_zero (a b c d e : ℝ)
   · linarith
   constructor <;> linarith
 
+/-- Five samples determine whether the coordinate obstruction vanishes identically. -/
+theorem kernel_of_five_arrayObstruction_zero (c : Coeff) (z : DerivativeArray)
+    (htest : ∀ j : Fin 5, arrayObstruction c z (vec (j : ℝ) 1) = 0) :
+    Algebra.Kernel (c 0) (c 1) (c 2) (c 3) z := by
+  apply (kernel_iff_rows c z).mpr
+  have h0 : ∀ j : Fin 5,
+      rows c z 0 * (j : ℝ) ^ 4 + rows c z 1 * (j : ℝ) ^ 3 + rows c z 2 * (j : ℝ) ^ 2 + rows c z
+          3 * (j : ℝ) + rows c z 4 = 0 := by
+    intro j
+    simpa [arrayObstruction_component_0, vec] using
+      congrArg (fun v : E => v 0) (htest j)
+  have h1 : ∀ j : Fin 5,
+      rows c z 5 * (j : ℝ) ^ 4 + rows c z 6 * (j : ℝ) ^ 3 + rows c z 7 * (j : ℝ) ^ 2 + rows c z
+          8 * (j : ℝ) + rows c z 9 = 0 := by
+    intro j
+    simpa [arrayObstruction_component_1, vec] using
+      congrArg (fun v : E => v 1) (htest j)
+  have hs0 := quartic_coefficients_zero _ _ _ _ _ h0
+  have hs1 := quartic_coefficients_zero _ _ _ _ _ h1
+  obtain ⟨h0, h1, h2, h3, h4⟩ := hs0
+  obtain ⟨h5, h6, h7, h8, h9⟩ := hs1
+  intro i
+  fin_cases i <;> assumption
+
 theorem kernel_iff_arrayObstruction_zero (c : Coeff) (z : DerivativeArray) :
     Algebra.Kernel (c 0) (c 1) (c 2) (c 3) z ↔ ∀ h, arrayObstruction c z h = 0 := by
-  rw [kernel_iff_rows]
   constructor
-  · intro hz h
+  · intro hk h
+    have hz := (kernel_iff_rows c z).mp hk
     apply vec_ext
     · simp [arrayObstruction_component_0, hz]
     · simp [arrayObstruction_component_1, hz]
   · intro hz
-    have h0 : ∀ j : Fin 5,
-        rows c z 0 * (j : ℝ) ^ 4 + rows c z 1 * (j : ℝ) ^ 3 + rows c z 2 * (j : ℝ) ^ 2 + rows c z
-            3 * (j : ℝ) + rows c z 4 = 0 := by
-      intro j
-      simpa [arrayObstruction_component_0, vec] using
-        congrArg (fun v : E => v 0) (hz (vec (j : ℝ) 1))
-    have h1 : ∀ j : Fin 5,
-        rows c z 5 * (j : ℝ) ^ 4 + rows c z 6 * (j : ℝ) ^ 3 + rows c z 7 * (j : ℝ) ^ 2 + rows c z
-            8 * (j : ℝ) + rows c z 9 = 0 := by
-      intro j
-      simpa [arrayObstruction_component_1, vec] using
-        congrArg (fun v : E => v 1) (hz (vec (j : ℝ) 1))
-    have hs0 := quartic_coefficients_zero _ _ _ _ _ h0
-    have hs1 := quartic_coefficients_zero _ _ _ _ _ h1
-    obtain ⟨h0, h1, h2, h3, h4⟩ := hs0
-    obtain ⟨h5, h6, h7, h8, h9⟩ := hs1
-    intro i
-    fin_cases i <;> assumption
+    exact kernel_of_five_arrayObstruction_zero c z (fun j ↦ hz (vec (j : ℝ) 1))
 
 theorem kernel_of_obstruction_zero (c : Coeff) (J : E →L[ℝ] Coeff)
     (h : ∀ v, obstruction c J v = 0) :
