@@ -957,6 +957,7 @@ public import LeanPool.Superdiffusion.Algsuperdiff.Section3.Provider.Stream.Mome
 public import LeanPool.Superdiffusion.Algsuperdiff.Section3.Provider.Stream.MomentBoostedLowPowerColoring
 public import LeanPool.Superdiffusion.Algsuperdiff.Section3.Provider.Stream.MomentBoostedLowPowerProvider
 public import LeanPool.Superdiffusion.Algsuperdiff.Section3.Provider.Stream.MomentBoostedLowPowerTransport
+public import LeanPool.Superdiffusion.Algsuperdiff.Section3.Provider.Stream.MomentBoostedTransport
 public import LeanPool.Superdiffusion.Algsuperdiff.Section3.Provider.Stream.MomentBoostedTruncation
 public import LeanPool.Superdiffusion.Algsuperdiff.Section3.Provider.Stream.OriginConcentration
 public import LeanPool.Superdiffusion.Algsuperdiff.Section3.Provider.Stream.ShellBounds

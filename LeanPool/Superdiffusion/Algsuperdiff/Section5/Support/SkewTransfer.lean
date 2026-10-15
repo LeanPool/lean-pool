@@ -410,24 +410,7 @@ private theorem integral_smul_matFieldDiv_eq_of_smooth
     exact Finset.sum_congr rfl fun j _ => key i j
   rw [hLHS, hRHS, ← hsum, hPzero, zero_add]
 
-/-! ## 6. `L²` control of the two forcing fields -/
-
-private theorem memScalarL2_mul_of_continuous_left {U : Set (Vec d)} (hUm : MeasurableSet U)
-    (hUb : IsBoundedDomain U) {g f : Vec d → ℝ} (hg : Continuous g) (hf : MemScalarL2 U f) :
-    MemScalarL2 U fun x => g x * f x := by
-  obtain ⟨C, hC⟩ := exists_bound_of_continuous hUb hg
-  refine MemLp.of_le (hf.const_mul |C|)
-    (hg.aestronglyMeasurable.mul hf.aestronglyMeasurable) ?_
-  filter_upwards [ae_restrict_mem hUm] with x hx
-  have h1 : |g x| ≤ |C| := (hC x hx).trans (le_abs_self C)
-  simp only [Real.norm_eq_abs, abs_mul, abs_abs]
-  exact mul_le_mul_of_nonneg_right h1 (abs_nonneg _)
-
-private theorem memScalarL2_mul_of_continuous_right {U : Set (Vec d)} (hUm : MeasurableSet U)
-    (hUb : IsBoundedDomain U) {f g : Vec d → ℝ} (hf : MemScalarL2 U f) (hg : Continuous g) :
-    MemScalarL2 U fun x => f x * g x := by
-  rw [show (fun x => f x * g x) = fun x => g x * f x from funext fun x => mul_comm _ _]
-  exact memScalarL2_mul_of_continuous_left hUm hUb hg hf
+/-! ## 6. Integral identities for the forcing fields -/
 
 private theorem integral_vecDot_neg_left {U : Set (Vec d)} (F G : Vec d → Vec d) :
     ∫ x in U, vecDot (-F x) (G x) ∂volume = -∫ x in U, vecDot (F x) (G x) ∂volume := by

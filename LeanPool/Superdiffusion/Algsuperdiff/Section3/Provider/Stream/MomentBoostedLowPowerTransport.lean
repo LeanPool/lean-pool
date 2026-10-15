@@ -8,7 +8,7 @@ module
 
 public import LeanPool.Superdiffusion.Algsuperdiff.Section3.Provider.Stream.MomentBoostedLowPowerColoring
 public import LeanPool.Superdiffusion.Algsuperdiff.Section3.Provider.Stream.IncrementLpLarge
-public import LeanPool.HighContrastHomogenization.Support.Book.Ch04.Theorems.StationaryExpectations
+public import LeanPool.Superdiffusion.Algsuperdiff.Section3.Provider.Stream.MomentBoostedTransport
 
 /-!
 # MomentBoostedLowPowerTransport
@@ -74,26 +74,18 @@ theorem streamIncrementLpMass_le_streamIncrementLpMass_two_rpow {p : ℝ}
 scale.  It is internal data for the low-power coloring application. -/
 def normalizedLowPowerLpMassRep (P : Book.Ch04.RestrictionCoeffLaw d) (V : ℝ)
     (R : TriadicCube d) : RegCoeffField d → ℝ :=
-  fun a => V⁻¹ *
-    (regFieldLpMassRep 2 (cubeSet R) a -
-      ∫ b, regFieldLpMassRep 2 (cubeSet (originCube d 0)) b ∂P)
+  normalizedCenteredLpMassRep P 2 V R
 
 theorem measurable_normalizedLowPowerLpMassRep (P : Book.Ch04.RestrictionCoeffLaw d)
     (V : ℝ) (R : TriadicCube d) :
     Measurable (normalizedLowPowerLpMassRep P V R) := by
-  unfold normalizedLowPowerLpMassRep
-  exact measurable_const.mul ((measurable_regFieldLpMassRep 2 _).sub measurable_const)
+  exact measurable_normalizedCenteredLpMassRep P 2 V R
 
 theorem local_normalizedLowPowerLpMassRep (P : Book.Ch04.RestrictionCoeffLaw d)
     (V : ℝ) (R : TriadicCube d) :
     Book.Ch04.IsRestrictionLocalRandomVariable (cubeSet R) (measurableSet_cubeSet R)
       (normalizedLowPowerLpMassRep P V R) := by
-  unfold normalizedLowPowerLpMassRep
-  exact Book.Ch04.IsRestrictionLocalRandomVariable.mul
-    (Book.Ch04.IsRestrictionLocalRandomVariable.const _ _ V⁻¹)
-    (Book.Ch04.IsRestrictionLocalRandomVariable.sub
-      (isLocalRandomVariable_regFieldLpMassRep 2 (measurableSet_cubeSet R))
-      (Book.Ch04.IsRestrictionLocalRandomVariable.const _ _ _))
+  exact local_normalizedCenteredLpMassRep P 2 V R
 
 /-- Stationarity makes every scale-zero descendant have the origin law for
 the normalized scale-two summand. -/
@@ -106,24 +98,7 @@ theorem map_normalizedLowPowerLpMassRep_descendant_eq_origin
         (normalizedLowPowerLpMassRep (partitionStreamIncrementLaw M n m) V
           (originCube d 0))
         (partitionStreamIncrementLaw M n m) := by
-  let P : Book.Ch04.RestrictionCoeffLaw d := partitionStreamIncrementLaw M n m
-  let mu0 : ℝ := ∫ b, regFieldLpMassRep 2 (cubeSet (originCube d 0)) b ∂P
-  let Y : Set (Vec d) → RegCoeffField d → ℝ := fun U a =>
-    V⁻¹ * (regFieldLpMassRep 2 U a - mu0)
-  have hY_cov : Book.Ch04.IsRestrictionTranslationCovariant Y := by
-    intro U z a
-    simpa [Y] using congrArg (fun x : ℝ => V⁻¹ * (x - mu0))
-      (isTranslationCovariantR_regFieldLpMassRep 2 U z a)
-  have hY_meas : Measurable (Y (cubeSet (originCube d 0))) := by
-    exact measurable_const.mul ((measurable_regFieldLpMassRep 2 _).sub measurable_const)
-  have hshift := Book.Ch04.cubeSet_eq_translateSet_originCube_of_mem_descendantsAtScale_originCube
-    (d := d) (by omega : (0 : ℤ) ≤ 0) hj hR
-  have hmap := Book.Ch04.map_eq_map_translateReg_of_isRestrictionTranslationCovariant
-    (P := P) (partitionStreamIncrementLaw_stationary M n m)
-    (U := cubeSet (originCube d 0)) hY_meas hY_cov (Book.Ch04.scaleTranslationShift 0 R)
-  change Measure.map (Y (cubeSet R)) P = Measure.map (Y (cubeSet (originCube d 0))) P
-  rw [hshift]
-  exact hmap
+  exact map_normalizedCenteredLpMassRep_descendant_eq_origin M 2 V n m j hj R hR
 
 private theorem lowPower_isBigO_of_map_eq
     {Omega Omega' : Type*} [MeasurableSpace Omega] [MeasurableSpace Omega']
@@ -148,23 +123,6 @@ private theorem lowPower_isBigO_of_map_eq
       simpa [E, absTailEvent] using! h
     _ ≤ (Psi t)⁻¹ := hg_tail ht
 
-private theorem lowPower_integral_eq_of_map_eq
-    {Omega : Type*} [MeasurableSpace Omega] {mu : Measure Omega}
-    {f g : Omega → ℝ} (hf : Measurable f) (hg : Measurable g)
-    (hmap : Measure.map f mu = Measure.map g mu) :
-    ∫ omega, f omega ∂mu = ∫ omega, g omega ∂mu := by
-  calc
-    ∫ omega, f omega ∂mu = ∫ x, x ∂Measure.map f mu := by
-      symm
-      change ∫ x, id x ∂Measure.map f mu = _
-      rw [integral_map hf.aemeasurable aestronglyMeasurable_id]
-      rfl
-    _ = ∫ x, x ∂Measure.map g mu := by rw [hmap]
-    _ = ∫ omega, g omega ∂mu := by
-      change ∫ x, id x ∂Measure.map g mu = _
-      rw [integral_map hg.aemeasurable aestronglyMeasurable_id]
-      rfl
-
 private theorem isBigOWith_normalizedLowPowerLpMassRep_origin
     (M : ABKModel d) {n m : ℤ} (hnm : n < m) :
     let P : Book.Ch04.RestrictionCoeffLaw d := partitionStreamIncrementLaw M n m
@@ -183,7 +141,8 @@ private theorem isBigOWith_normalizedLowPowerLpMassRep_origin
         V⁻¹ * Book.Ch04.restrictionCenteredOriginObservable P 0 (regFieldLpMassRep 2) a) =
         normalizedLowPowerLpMassRep P V (originCube d 0) := by
     funext a
-    simp only [normalizedLowPowerLpMassRep, Book.Ch04.restrictionCenteredOriginObservable]
+    simp only [normalizedLowPowerLpMassRep, normalizedCenteredLpMassRep,
+      Book.Ch04.restrictionCenteredOriginObservable]
   rw [hfun] at hscaled
   simpa [P, V, hV.ne', inv_mul_cancel₀] using hscaled
 
@@ -221,7 +180,7 @@ private theorem integral_normalizedLowPowerLpMassRep_origin_eq_zero
       simpa only [Function.comp_apply] using! hUcomp
     rw [hcomp]
     exact hmass_int
-  unfold normalizedLowPowerLpMassRep
+  unfold normalizedLowPowerLpMassRep normalizedCenteredLpMassRep
   change ∫ a, V⁻¹ * (U a - mu0) ∂P = 0
   rw [integral_const_mul, integral_sub hU_int (integrable_const _)]
   simp [mu0]
@@ -282,7 +241,7 @@ private theorem isBigOWith_gammaSigma_lowPower_descendantAverage
     intro R hR
     calc
       ∫ a, X R a ∂P = ∫ a, X (originCube d 0) a ∂P :=
-        lowPower_integral_eq_of_map_eq (hX_meas R) (hX_meas (originCube d 0))
+        integral_eq_of_map_eq (hX_meas R) (hX_meas (originCube d 0))
           (hmap R hR)
       _ = 0 := by simpa [P, K, X] using hX_mean
   have h_indep : ∀ c ∈ S.image color,
@@ -303,7 +262,7 @@ private theorem isBigOWith_gammaSigma_lowPower_descendantAverage
   have hY_decomp : ∀ a,
       Y a = mu0 + (K / (S.card : ℝ)) * ∑ R ∈ S, X R a := by
     intro a
-    dsimp [Y, X, normalizedLowPowerLpMassRep, mu0]
+    dsimp [Y, X, normalizedLowPowerLpMassRep, normalizedCenteredLpMassRep, mu0]
     unfold Book.Ch04.restrictionDescendantAverage
     change ((S.card : ℝ)⁻¹ *
         ∑ R ∈ S, regFieldLpMassRep 2 (cubeSet R) a) =
@@ -369,22 +328,6 @@ private theorem isBigOWith_gammaSigma_lowPower_descendantAverage
     hr_half hr_one hK hK le_rfl hY_nonneg hZY hYsum
   simpa [P, K, j, S, color, Y, Z, r] using hmain
 
-private theorem lowPower_isBigOWith_comp_of_map
-    {Omega : Type*} [MeasurableSpace Omega] {mu : Measure Omega}
-    {F : Omega → RegCoeffField d} (hF : Measurable F)
-    {g : RegCoeffField d → ℝ} (hg : Measurable g) {Psi : ℝ → ℝ} {A : ℝ}
-    (h : IsBigOWith (Measure.map F mu) Psi g A) :
-    IsBigOWith mu Psi (fun omega => g (F omega)) A := by
-  intro t ht
-  have hset : MeasurableSet (upperTailEvent g (A * t)) :=
-    measurableSet_lt measurable_const hg
-  calc
-    mu.real (upperTailEvent (fun omega => g (F omega)) (A * t)) =
-        (Measure.map F mu).real (upperTailEvent g (A * t)) := by
-          rw [Measure.real, Measure.real, Measure.map_apply hF hset]
-          rfl
-    _ ≤ (Psi t)⁻¹ := h ht
-
 /-- The low-power two-regime colored concentration bound, transported to the
 actual stream mass in the genuine large-partition regime. -/
 theorem isBigOWith_gammaSigma_streamIncrementLpMass_lowPower_partition
@@ -416,7 +359,7 @@ theorem isBigOWith_gammaSigma_streamIncrementLpMass_lowPower_partition
     exact (measurable_const.mul
       (Finset.measurable_sum _ fun R _ => measurable_regFieldLpMassRep p _)).sub
         measurable_const
-  have htrans := lowPower_isBigOWith_comp_of_map
+  have htrans := isBigOWith_comp_of_map
     (mu := M.P.toMeasure) (F := F) (g := g)
     (show Measurable F by exact measurable_partitionIncrementField (d := d) n m) hg
     (by simpa [P, K, j, S, color, g] using! hmain)
