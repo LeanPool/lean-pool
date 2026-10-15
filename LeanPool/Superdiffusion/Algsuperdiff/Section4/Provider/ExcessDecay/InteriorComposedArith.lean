@@ -355,17 +355,20 @@ theorem rpow_le_rpow_neg_nineteen_halves {s a : ℝ} (hs : 0 < s) (hs1 : s ≤ 1
   Real.rpow_le_rpow_of_exponent_ge hs hs1 ha
 
 
-/-- Positivity of the common constants in the two composed scale estimates. -/
-theorem composed_constants_nonneg (d : ℕ) [NeZero d] (CE Cout : ℝ) (hCE : 0 ≤ CE) :
+/-- Nonnegativity of composed constants for supplied energy and window factors. -/
+theorem comparison_constants_nonneg (d : ℕ) [NeZero d]
+    (CE energyFactor windowFactor : ℝ)
+    (hCE : 0 ≤ CE) (henergy : 0 ≤ energyFactor) (hwindow : 0 ≤ windowFactor) :
     let kappa : ℝ := Real.sqrt (192 * (d : ℝ)) * 3
     let e0 : ℝ := kappa * (CE * (1 / 2 : ℝ))
     let k0 : ℝ := 2 * (d : ℝ) * (e0 ^ 2 + 1)
     let b0 : ℝ := Real.sqrt k0 * e0 + 2 * k0
     let cg : ℝ := 3 * negNormBaseConst d * coarseGrainingP2Const d
-    let A1 : ℝ := cg * 216 * (kappa * Real.sqrt Cout)
-    let A2 : ℝ := cg * 1944 * (b0 * (besovGagliardoConstant d * gagliardoWindowConst d))
-    let A3 : ℝ := interiorCorrectionConst d * gagliardoWindowConst d
-    0 ≤ kappa ∧ 0 ≤ b0 ∧ 0 ≤ cg ∧ 0 ≤ A1 ∧ 0 ≤ A2 ∧ 0 ≤ A3 := by
+    let A1 : ℝ := cg * 216 * (kappa * energyFactor)
+    let A2 : ℝ := cg * 1944 * (b0 * (besovGagliardoConstant d * windowFactor))
+    let A3 : ℝ := interiorCorrectionConst d * windowFactor
+    0 ≤ kappa ∧ 0 ≤ b0 ∧ 0 ≤ cg ∧ 0 ≤ A1 ∧ 0 ≤ A2 ∧ 0 ≤ A3 ∧
+      0 ≤ 9 * (CE * (1 / 2 : ℝ)) * A1 ∧ 0 ≤ CE * (1 / 2 : ℝ) * A1 := by
   intro kappa e0 k0 b0 cg A1 A2 A3
   have hkappa : 0 ≤ kappa := by positivity
   have he0 : 0 ≤ e0 := mul_nonneg hkappa (by positivity)
@@ -378,12 +381,28 @@ theorem composed_constants_nonneg (d : ℕ) [NeZero d] (CE Cout : ℝ) (hCE : 0 
   have hA1 : 0 ≤ A1 := by positivity
   have hA2 : 0 ≤ A2 := by
     have h1 := besovGagliardoConstant_nonneg d
-    have h2 := gagliardoWindowConst_pos d
     positivity
   have hA3 : 0 ≤ A3 := by
     have h1 := interiorCorrectionConst_pos d
-    have h2 := gagliardoWindowConst_pos d
     positivity
+  have hCE2 : 0 ≤ 9 * (CE * (1 / 2 : ℝ)) * A1 := by positivity
+  have hCE3 : 0 ≤ CE * (1 / 2 : ℝ) * A1 := by positivity
+  exact ⟨hkappa, hb0, hcg, hA1, hA2, hA3, hCE2, hCE3⟩
+
+/-- Positivity of the common constants in the two composed scale estimates. -/
+theorem composed_constants_nonneg (d : ℕ) [NeZero d] (CE Cout : ℝ) (hCE : 0 ≤ CE) :
+    let kappa : ℝ := Real.sqrt (192 * (d : ℝ)) * 3
+    let e0 : ℝ := kappa * (CE * (1 / 2 : ℝ))
+    let k0 : ℝ := 2 * (d : ℝ) * (e0 ^ 2 + 1)
+    let b0 : ℝ := Real.sqrt k0 * e0 + 2 * k0
+    let cg : ℝ := 3 * negNormBaseConst d * coarseGrainingP2Const d
+    let A1 : ℝ := cg * 216 * (kappa * Real.sqrt Cout)
+    let A2 : ℝ := cg * 1944 * (b0 * (besovGagliardoConstant d * gagliardoWindowConst d))
+    let A3 : ℝ := interiorCorrectionConst d * gagliardoWindowConst d
+    0 ≤ kappa ∧ 0 ≤ b0 ∧ 0 ≤ cg ∧ 0 ≤ A1 ∧ 0 ≤ A2 ∧ 0 ≤ A3 := by
+  obtain ⟨hkappa, hb0, hcg, hA1, hA2, hA3, -, -⟩ :=
+    comparison_constants_nonneg d CE (Real.sqrt Cout) (gagliardoWindowConst d)
+      hCE (Real.sqrt_nonneg _) (gagliardoWindowConst_pos d).le
   exact ⟨hkappa, hb0, hcg, hA1, hA2, hA3⟩
 
 /-- Cancel a positive scalar and an inverse pair of frame weights. -/

@@ -177,29 +177,9 @@ theorem bddAbove_partialSeminormTwo_const_smul_add (Q : TriadicCube d) (s c : �
     (cubeBesovNegativeVectorSeminormTwo Q s u +
       cubeBesovNegativeVectorSeminormTwo Q s v)) ?_
   intro N
-  rw [cubeBesovNegativeVectorPartialSeminormTwo_const_smul Q s N c hc (fun y => u y + v y)]
-  have hpad :=
-    cubeBesovNegativeVectorPartialSeminormTwo_add_le_sqrtTwo_mul_add Q s u v hu hv N
-  have hu' : cubeBesovNegativeVectorPartialSeminormTwo Q s N u ≤
-      cubeBesovNegativeVectorSeminormTwo Q s u := le_csSup hbu ⟨N, rfl⟩
-  have hv' : cubeBesovNegativeVectorPartialSeminormTwo Q s N v ≤
-      cubeBesovNegativeVectorSeminormTwo Q s v := le_csSup hbv ⟨N, rfl⟩
-  have hnn2 : (0 : ℝ) ≤ Real.sqrt 2 := Real.sqrt_nonneg _
-  calc
-    c * cubeBesovNegativeVectorPartialSeminormTwo Q s N (fun y => u y + v y)
-        ≤ c * (Real.sqrt 2 *
-            (cubeBesovNegativeVectorPartialSeminormTwo Q s N u +
-              cubeBesovNegativeVectorPartialSeminormTwo Q s N v)) :=
-          mul_le_mul_of_nonneg_left hpad hc
-    _ ≤ c * (Real.sqrt 2 *
-            (cubeBesovNegativeVectorSeminormTwo Q s u +
-              cubeBesovNegativeVectorSeminormTwo Q s v)) := by
-          refine mul_le_mul_of_nonneg_left ?_ hc
-          refine mul_le_mul_of_nonneg_left ?_ hnn2
-          linarith
-    _ = c * Real.sqrt 2 *
-            (cubeBesovNegativeVectorSeminormTwo Q s u +
-              cubeBesovNegativeVectorSeminormTwo Q s v) := by ring
+  exact cubeBesovNegativeVectorPartialSeminormTwo_const_smul_le_of_triangle Q s c hc u v
+    (fun y => u y + v y) hbu hbv N
+    (cubeBesovNegativeVectorPartialSeminormTwo_add_le_sqrtTwo_mul_add Q s u v hu hv N)
 
 /-- Boundedness of the finite-depth negative seminorms of a scaled difference. -/
 theorem bddAbove_partialSeminormTwo_const_smul_sub (Q : TriadicCube d) (s c : ℝ)
@@ -215,29 +195,9 @@ theorem bddAbove_partialSeminormTwo_const_smul_sub (Q : TriadicCube d) (s c : �
     (cubeBesovNegativeVectorSeminormTwo Q s u +
       cubeBesovNegativeVectorSeminormTwo Q s v)) ?_
   intro N
-  rw [cubeBesovNegativeVectorPartialSeminormTwo_const_smul Q s N c hc (fun y => u y - v y)]
-  have hpsub :=
-    cubeBesovNegativeVectorPartialSeminormTwo_sub_le_sqrtTwo_mul_add Q s u v hu hv N
-  have hu' : cubeBesovNegativeVectorPartialSeminormTwo Q s N u ≤
-      cubeBesovNegativeVectorSeminormTwo Q s u := le_csSup hbu ⟨N, rfl⟩
-  have hv' : cubeBesovNegativeVectorPartialSeminormTwo Q s N v ≤
-      cubeBesovNegativeVectorSeminormTwo Q s v := le_csSup hbv ⟨N, rfl⟩
-  have hnn2 : (0 : ℝ) ≤ Real.sqrt 2 := Real.sqrt_nonneg _
-  calc
-    c * cubeBesovNegativeVectorPartialSeminormTwo Q s N (fun y => u y - v y)
-        ≤ c * (Real.sqrt 2 *
-            (cubeBesovNegativeVectorPartialSeminormTwo Q s N u +
-              cubeBesovNegativeVectorPartialSeminormTwo Q s N v)) :=
-          mul_le_mul_of_nonneg_left hpsub hc
-    _ ≤ c * (Real.sqrt 2 *
-            (cubeBesovNegativeVectorSeminormTwo Q s u +
-              cubeBesovNegativeVectorSeminormTwo Q s v)) := by
-          refine mul_le_mul_of_nonneg_left ?_ hc
-          refine mul_le_mul_of_nonneg_left ?_ hnn2
-          linarith
-    _ = c * Real.sqrt 2 *
-            (cubeBesovNegativeVectorSeminormTwo Q s u +
-              cubeBesovNegativeVectorSeminormTwo Q s v) := by ring
+  exact cubeBesovNegativeVectorPartialSeminormTwo_const_smul_le_of_triangle Q s c hc u v
+    (fun y => u y - v y) hbu hbv N
+    (cubeBesovNegativeVectorPartialSeminormTwo_sub_le_sqrtTwo_mul_add Q s u v hu hv N)
 
 /-- The first component of the flux carrier is bounded in the seminorm scale. -/
 theorem bddAbove_doubledFluxField_fst (Q : TriadicCube d) (a : CoeffFamily d)

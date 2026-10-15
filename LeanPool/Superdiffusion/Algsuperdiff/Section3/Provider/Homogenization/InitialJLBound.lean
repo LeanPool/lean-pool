@@ -481,86 +481,6 @@ theorem sigmaBar_mul_integral_coarseMatrixVariationBlock_le (M : ABKModel d) (m 
       _ ≤ _ := mul_le_mul_of_nonneg_left hbase hw0
   · exact absurd (Finset.mem_Icc.mp _hn).2 hnm
 
-/-- A truncated geometric series with ratio in `[0,1)` is below the full
-series. -/
-private theorem geom_sum_le_inv_one_sub' {r : ℝ} (hr0 : 0 ≤ r) (hr1 : r < 1) (K : ℕ) :
-    ∑ j ∈ Finset.range K, r ^ j ≤ (1 - r)⁻¹ := by
-  have hpos : (0 : ℝ) < 1 - r := by linarith
-  have hmul := geom_sum_mul r K
-  have hpow : (0 : ℝ) ≤ r ^ K := pow_nonneg hr0 K
-  have hval : (∑ j ∈ Finset.range K, r ^ j) * (1 - r) = 1 - r ^ K := by
-    linear_combination -hmul
-  rw [← one_div, le_div_iff₀ hpos, hval]
-  linarith
-
-/-- The nonnegative integer cast of a nonnegative integer difference. -/
-private theorem toNat_sub_cast' {m n : ℤ} (h : n ≤ m) :
-    (((m - n).toNat : ℕ) : ℝ) = ((m - n : ℤ) : ℝ) := by
-  have h0 : (0 : ℤ) ≤ m - n := by omega
-  exact_mod_cast congrArg (fun z : ℤ => (z : ℝ)) (Int.toNat_of_nonneg h0)
-
-/-- A geometrically weighted power of `3` on the corridor is the corresponding
-power of the one-step ratio. -/
-private theorem rpow_three_mul_eq_pow' (c : ℝ) {m n : ℤ} (h : n ≤ m) :
-    (3 : ℝ) ^ (c * ((m - n : ℤ) : ℝ)) = ((3 : ℝ) ^ c) ^ (m - n).toNat := by
-  rw [← toNat_sub_cast' h, ← Real.rpow_natCast ((3 : ℝ) ^ c) ((m - n).toNat),
-    ← Real.rpow_mul (by norm_num : (0 : ℝ) ≤ 3)]
-
-/-- A geometric weight on the finite corridor `[L,m]` sums below the value of the
-full geometric series. -/
-private theorem sum_Icc_le_of_geometric' {L m : ℤ} (hLm : L ≤ m) {r : ℝ}
-    (hr0 : 0 ≤ r) (hr1 : r < 1) (w : ℤ → ℝ)
-    (hw : ∀ n ∈ Finset.Icc L m, w n = r ^ (m - n).toNat) :
-    ∑ n ∈ Finset.Icc L m, w n ≤ (1 - r)⁻¹ := by
-  have hreindex :
-      ∑ j ∈ Finset.range ((m - L).toNat + 1), r ^ j = ∑ n ∈ Finset.Icc L m, w n := by
-    refine Finset.sum_nbij' (fun j : ℕ => m - (j : ℤ)) (fun n : ℤ => (m - n).toNat) ?_ ?_ ?_ ?_ ?_
-    · intro j hj
-      simp only [Finset.mem_range] at hj
-      simp only [Finset.mem_Icc]
-      omega
-    · intro n hn
-      simp only [Finset.mem_Icc] at hn
-      simp only [Finset.mem_range]
-      omega
-    · intro j hj
-      simp only [Finset.mem_range] at hj
-      show (m - (m - (j : ℤ))).toNat = j
-      omega
-    · intro n hn
-      simp only [Finset.mem_Icc] at hn
-      show m - (((m - n).toNat : ℕ) : ℤ) = n
-      omega
-    · intro j hj
-      simp only [Finset.mem_range] at hj
-      have hmem : m - (j : ℤ) ∈ Finset.Icc L m := by
-        simp only [Finset.mem_Icc]
-        omega
-      rw [hw _ hmem]
-      congr 1
-      omega
-  rw [← hreindex]
-  exact geom_sum_le_inv_one_sub' hr0 hr1 _
-
-/-- The printed corridor weight `3^{-(m-n)}` sums to at most `3/2`. -/
-private theorem sum_Icc_three_neg_le' {L m : ℤ} (hLm : L ≤ m) :
-    ∑ n ∈ Finset.Icc L m, (3 : ℝ) ^ (-((m - n : ℤ) : ℝ)) ≤ 3 / 2 := by
-  have hrv : (3 : ℝ) ^ (-1 : ℝ) = 3⁻¹ := by
-    rw [show (-1 : ℝ) = ((-1 : ℤ) : ℝ) by norm_num, Real.rpow_intCast]
-    norm_num
-  have hbound :
-      ∑ n ∈ Finset.Icc L m, (3 : ℝ) ^ (-((m - n : ℤ) : ℝ)) ≤ (1 - (3 : ℝ) ^ (-1 : ℝ))⁻¹ := by
-    refine sum_Icc_le_of_geometric' hLm (Real.rpow_nonneg (by norm_num) _) ?_ _ ?_
-    · rw [hrv]; norm_num
-    · intro n hn
-      simp only [Finset.mem_Icc] at hn
-      rw [show -((m - n : ℤ) : ℝ) = (-1 : ℝ) * ((m - n : ℤ) : ℝ) by ring]
-      exact rpow_three_mul_eq_pow' (-1 : ℝ) hn.2
-  have hval : ((1 : ℝ) - (3 : ℝ) ^ (-1 : ℝ))⁻¹ = 3 / 2 := by
-    rw [hrv]; norm_num
-  rw [hval] at hbound
-  exact hbound
-
 omit [NeZero d] in
 /-- The manuscript variance `var[sigma_{L,*}^{-1}(cu_n)]` is nonnegative. -/
 theorem starInverseVarianceAtScale_nonneg (M : ABKModel d) (L n : ℤ) :
@@ -722,7 +642,7 @@ theorem exists_integral_cutoffResponseJ_le_initialJLBoundDisplay (d : ℕ) [NeZe
         (fun n _ => mul_nonneg (hAnn n) (starInverseKappaVarianceAtScale_nonneg M L n)) hmem)
     simp
   -- second block
-  have hW := sum_Icc_three_neg_le' (L := L) (m := m) hLm
+  have hW := sum_Icc_three_neg_le (L := L) (m := m) hLm
   have hvarblock :
       (Annealed.sigmaBar M L : ℝ) *
         ∫ omega, coarseMatrixVariationBlock M m L e omega

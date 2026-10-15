@@ -163,27 +163,8 @@ theorem assemblyBoundaryConstants :
                                                                   : ℤ))) ∩
                                                               openCubeSet (originCube d
                                                                 m)))).toReal))
-        (_ : √((192 : ℝ) * (↑d : ℝ)) * (3 : ℝ) = √((192 : ℝ) * (↑d : ℝ)) * (3 : ℝ)) (_ :
-        (0 : ℝ) ≤ √((192 : ℝ) * (↑d : ℝ)) * (3 : ℝ)) (_ :
-        √((192 : ℝ) * (↑d : ℝ)) * (3 : ℝ) * (CE * (1 / 2 : ℝ)) = √((192 : ℝ) * (↑d : ℝ)) * (3 : ℝ)
-          * (CE * (1 / 2 : ℝ))) (_
-        :
-        (2 : ℝ) * (↑d : ℝ) * ((√((192 : ℝ) * (↑d : ℝ)) * (3 : ℝ) * (CE * (1 / 2 : ℝ))) ^ (2 : ℕ) +
-          (1 : ℝ)) =
-          (2 : ℝ) * (↑d : ℝ) * ((√((192 : ℝ) * (↑d : ℝ)) * (3 : ℝ) * (CE * (1 / 2 : ℝ))) ^ (2 : ℕ)
-            + (1 : ℝ)))
-        (_ :
-        √((2 : ℝ) * (↑d : ℝ) * ((√((192 : ℝ) * (↑d : ℝ)) * (3 : ℝ) * (CE * (1 / 2 : ℝ))) ^ (2 : ℕ)
-          + (1 : ℝ))) *
-              (√((192 : ℝ) * (↑d : ℝ)) * (3 : ℝ) * (CE * (1 / 2 : ℝ))) +
-            (2 : ℝ) *
-              ((2 : ℝ) * (↑d : ℝ) * ((√((192 : ℝ) * (↑d : ℝ)) * (3 : ℝ) * (CE * (1 / 2 : ℝ))) ^ (2
-                : ℕ) + (1 : ℝ))) =
-          √((2 : ℝ) * (↑d : ℝ) * ((√((192 : ℝ) * (↑d : ℝ)) * (3 : ℝ) * (CE * (1 / 2 : ℝ))) ^ (2 :
-            ℕ) + (1 : ℝ))) *
-              (√((192 : ℝ) * (↑d : ℝ)) * (3 : ℝ) * (CE * (1 / 2 : ℝ))) +
-            (2 : ℝ) * ((2 : ℝ) * (↑d : ℝ) * ((√((192 : ℝ) * (↑d : ℝ)) * (3 : ℝ) * (CE * (1 / 2 :
-              ℝ))) ^ (2 : ℕ) + (1 : ℝ))))
+         (_ :
+        (0 : ℝ) ≤ √((192 : ℝ) * (↑d : ℝ)) * (3 : ℝ))
         (_ :
         (0 : ℝ) ≤
           √((2 : ℝ) * (↑d : ℝ) * ((√((192 : ℝ) * (↑d : ℝ)) * (3 : ℝ) * (CE * (1 / 2 : ℝ))) ^ (2 :
@@ -191,32 +172,11 @@ theorem assemblyBoundaryConstants :
               (√((192 : ℝ) * (↑d : ℝ)) * (3 : ℝ) * (CE * (1 / 2 : ℝ))) +
             (2 : ℝ) * ((2 : ℝ) * (↑d : ℝ) * ((√((192 : ℝ) * (↑d : ℝ)) * (3 : ℝ) * (CE * (1 / 2 :
               ℝ))) ^ (2 : ℕ) + (1 : ℝ))))
-        (_ : (0 : ℝ) ≤ (3 : ℝ) * negNormBaseConst d * coarseGrainingP2Const d) (_ :
-        (3 : ℝ) * negNormBaseConst d * coarseGrainingP2Const d * (216 : ℝ) * (√((192 : ℝ) * (↑d :
-          ℝ)) * (3 : ℝ) * KE) =
-          (3 : ℝ) * negNormBaseConst d * coarseGrainingP2Const d * (216 : ℝ) * (√((192 : ℝ) * (↑d
-            : ℝ)) * (3 : ℝ) * KE))
+        (_ : (0 : ℝ) ≤ (3 : ℝ) * negNormBaseConst d * coarseGrainingP2Const d)
         (_ :
         (0 : ℝ) ≤
           (3 : ℝ) * negNormBaseConst d * coarseGrainingP2Const d * (216 : ℝ) * (√((192 : ℝ) * (↑d
             : ℝ)) * (3 : ℝ) * KE))
-        (_ :
-        (3 : ℝ) * negNormBaseConst d * coarseGrainingP2Const d * (1944 : ℝ) *
-            ((√((2 : ℝ) * (↑d : ℝ) * ((√((192 : ℝ) * (↑d : ℝ)) * (3 : ℝ) * (CE * (1 / 2 : ℝ))) ^
-              (2 : ℕ) + (1 : ℝ))) *
-                  (√((192 : ℝ) * (↑d : ℝ)) * (3 : ℝ) * (CE * (1 / 2 : ℝ))) +
-                (2 : ℝ) *
-                  ((2 : ℝ) * (↑d : ℝ) * ((√((192 : ℝ) * (↑d : ℝ)) * (3 : ℝ) * (CE * (1 / 2 : ℝ)))
-                    ^ (2 : ℕ) + (1 : ℝ)))) *
-              (besovGagliardoConstant d * (gagliardoWindowConst d * windowMoveConst d))) =
-          (3 : ℝ) * negNormBaseConst d * coarseGrainingP2Const d * (1944 : ℝ) *
-            ((√((2 : ℝ) * (↑d : ℝ) * ((√((192 : ℝ) * (↑d : ℝ)) * (3 : ℝ) * (CE * (1 / 2 : ℝ))) ^
-              (2 : ℕ) + (1 : ℝ))) *
-                  (√((192 : ℝ) * (↑d : ℝ)) * (3 : ℝ) * (CE * (1 / 2 : ℝ))) +
-                (2 : ℝ) *
-                  ((2 : ℝ) * (↑d : ℝ) * ((√((192 : ℝ) * (↑d : ℝ)) * (3 : ℝ) * (CE * (1 / 2 : ℝ)))
-                    ^ (2 : ℕ) + (1 : ℝ)))) *
-              (besovGagliardoConstant d * (gagliardoWindowConst d * windowMoveConst d))))
         (_ :
         (0 : ℝ) ≤
           (3 : ℝ) * negNormBaseConst d * coarseGrainingP2Const d * (1944 : ℝ) *
@@ -227,9 +187,6 @@ theorem assemblyBoundaryConstants :
                   ((2 : ℝ) * (↑d : ℝ) * ((√((192 : ℝ) * (↑d : ℝ)) * (3 : ℝ) * (CE * (1 / 2 : ℝ)))
                     ^ (2 : ℕ) + (1 : ℝ)))) *
               (besovGagliardoConstant d * (gagliardoWindowConst d * windowMoveConst d))))
-        (_ :
-        interiorCorrectionConst d * (gagliardoWindowConst d * windowMoveConst d) =
-          interiorCorrectionConst d * (gagliardoWindowConst d * windowMoveConst d))
         (_ : (0 : ℝ) ≤ interiorCorrectionConst d * (gagliardoWindowConst d * windowMoveConst d))
           (_ :
         (0 : ℝ) ≤
@@ -245,50 +202,12 @@ theorem assemblyBoundaryConstants :
   obtain ⟨CE, hCEpos, hCE⟩ := ae_errorRepresentative_le_harmonicSlot_addThree d
   obtain ⟨CB, KE, hCBpos, hKEpos, hEnergyLeg⟩ :=
     ae_h1EnergyNormOnCube_boundary_le_anchorLegs d
-  -- the explicit constants, exactly as in the interior composition
-  set kappa : ℝ := Real.sqrt (192 * (d : ℝ)) * 3 with hkappadef
-  have hkappa : 0 ≤ kappa := mul_nonneg (Real.sqrt_nonneg _) (by norm_num)
-  set e0 : ℝ := kappa * (CE * (1 / 2)) with he0def
-  have he0 : 0 ≤ e0 := mul_nonneg hkappa (mul_nonneg hCEpos.le (by norm_num))
-  set k0 : ℝ := 2 * (d : ℝ) * (e0 ^ 2 + 1) with hk0def
-  have hk0 : 0 ≤ k0 :=
-    mul_nonneg (mul_nonneg zero_le_two (Nat.cast_nonneg d))
-      (add_nonneg (sq_nonneg e0) zero_le_one)
-  set b0 : ℝ := Real.sqrt k0 * e0 + 2 * k0 with hb0def
-  have hb0 : 0 ≤ b0 :=
-    add_nonneg (mul_nonneg (Real.sqrt_nonneg _) he0) (mul_nonneg zero_le_two hk0)
-  set cg : ℝ := 3 * negNormBaseConst d * coarseGrainingP2Const d with hcgdef
-  have hcg : 0 ≤ cg :=
-    mul_nonneg (mul_nonneg (by norm_num) (negNormBaseConst_pos d).le)
-      (coarseGrainingP2Const_pos d).le
-  set A1 : ℝ := cg * 216 * (kappa * KE) with hA1def
-  have hA1 : 0 ≤ A1 := by
-    rw [hA1def]
-    exact mul_nonneg (mul_nonneg hcg (by norm_num)) (mul_nonneg hkappa hKEpos.le)
-  set A2 : ℝ := cg * 1944 *
-    (b0 * (besovGagliardoConstant d * (gagliardoWindowConst d * windowMoveConst d)))
-    with hA2def
-  have hA2 : 0 ≤ A2 := by
-    have h1 : 0 ≤ besovGagliardoConstant d := besovGagliardoConstant_nonneg d
-    have h2 : 0 < gagliardoWindowConst d := gagliardoWindowConst_pos d
-    have h3 : 0 < windowMoveConst d := windowMoveConst_pos d
-    rw [hA2def]
-    exact mul_nonneg (mul_nonneg hcg (by norm_num))
-      (mul_nonneg hb0 (mul_nonneg h1 (mul_nonneg h2.le h3.le)))
-  set A3 : ℝ := interiorCorrectionConst d * (gagliardoWindowConst d * windowMoveConst d)
-    with hA3def
-  have hA3 : 0 ≤ A3 := by
-    have h1 : 0 < interiorCorrectionConst d := interiorCorrectionConst_pos d
-    have h2 : 0 < gagliardoWindowConst d := gagliardoWindowConst_pos d
-    have h3 : 0 < windowMoveConst d := windowMoveConst_pos d
-    rw [hA3def]
-    exact mul_nonneg h1.le (mul_nonneg h2.le h3.le)
-  have hCE2 : (0 : ℝ) ≤ 9 * (CE * (1 / 2)) * A1 :=
-    mul_nonneg (mul_nonneg (by norm_num) (mul_nonneg hCEpos.le (by norm_num))) hA1
-  have hCE3 : (0 : ℝ) ≤ CE * (1 / 2) * A1 :=
-    mul_nonneg (mul_nonneg hCEpos.le (by norm_num)) hA1
-  exact ⟨CE, hCEpos, hCE, CB, KE, hCBpos, hEnergyLeg, hkappadef, hkappa, he0def, hk0def, hb0def,
-    hb0, hcg, hA1def, hA1, hA2def, hA2, hA3def, hA3, hCE2, hCE3⟩
+  obtain ⟨hkappa, hb0, hcg, hA1, hA2, hA3, hCE2, hCE3⟩ :=
+    comparison_constants_nonneg d CE KE
+      (gagliardoWindowConst d * windowMoveConst d) hCEpos.le hKEpos.le
+      (mul_nonneg (gagliardoWindowConst_pos d).le (windowMoveConst_pos d).le)
+  exact ⟨CE, hCEpos, hCE, CB, KE, hCBpos, hEnergyLeg, hkappa, hb0, hcg, hA1, hA2, hA3,
+    hCE2, hCE3⟩
 
 end
 

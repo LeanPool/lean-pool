@@ -291,10 +291,6 @@ abbrev boundaryRouteGeometryComparison : Prop :=
                   fluxCorrectedErrorRepresentative M L (n + (3 : ℤ)) ⟨s / (8 : ℝ), (by positivity)⟩
                     (Cutoff.translateCutoffSample z omega))
                 (_ : (0 : ℝ) < (↑(Annealed.sigmaBar M (n + (3 : ℤ))) : ℝ)) (_ :
-                Real.rpow (3 : ℝ) (-(↑(n + (2 : ℤ)) : ℝ)) = Real.rpow (3 : ℝ) (-(↑(n + (2 : ℤ)) :
-                  ℝ))) (_ :
-                Real.rpow (3 : ℝ) (s * (↑(n + (2 : ℤ)) : ℝ)) = Real.rpow (3 : ℝ) (s * (↑(n + (2 :
-                  ℤ)) : ℝ))) (_ :
                 (↑(Annealed.sigmaBar M (n + (3 : ℤ))) : ℝ) *
                     (cubeBesovScaleWeight (1 : ℝ) (originCube d n) *
                       (eLpNorm (fun (y : Vec d) => u.toFun y - v.toFun y) (2 : ENNReal)
@@ -324,13 +320,7 @@ abbrev boundaryRouteGeometryComparison : Prop :=
                           ((fun (y : Vec d) => flushSubCentre z m n i sigma + y) '' openCubeSet
                             (originCube d n)) s
                           g).toReal)
-                (_ : Real.rpow (3 : ℝ) (s * (↑n : ℝ)) = Real.rpow (3 : ℝ) (s * (↑n : ℝ))) (_ :
-                Real.rpow (3 : ℝ) (((1 : ℝ) + s) * (↑n : ℝ)) = Real.rpow (3 : ℝ) (((1 : ℝ) + s) *
-                  (↑n : ℝ))) (_ :
-                Real.rpow (3 : ℝ) (↑n : ℝ) = Real.rpow (3 : ℝ) (↑n : ℝ)) (_ : s.rpow (-4 : ℝ) =
-                  s.rpow (-4 : ℝ)) (_ :
-                s.rpow (-7 : ℝ) = s.rpow (-7 : ℝ)) (_ : s.rpow (-6 : ℝ) = s.rpow (-6 : ℝ)) (_ :
-                s.rpow (-3 : ℝ) = s.rpow (-3 : ℝ)) (_ : s.rpow (-2 : ℝ) = s.rpow (-2 : ℝ)) (_ :
+                        (_ :
                 (0 : ℝ) ≤
                   (eLpNorm
                       (fun (y : Vec d) =>
@@ -740,16 +730,16 @@ theorem residueRouteOne_comparisonBounds4 : boundaryRouteGeometryComparison :=
       (Support.normalizedVolumeMeasureOn
         ((fun y => flushSubCentre z m n i sigma + y) ''
           openCubeSet (originCube d n)))).toReal with hLhsdef
-  set P2 : ℝ := Real.rpow (3 : ℝ) (-(((n + 2 : ℤ)) : ℝ)) with hP2def
-  set Q3s : ℝ := Real.rpow (3 : ℝ) (s * (((n + 2 : ℤ)) : ℝ)) with hQ3sdef
-  set Q3sn : ℝ := Real.rpow (3 : ℝ) (s * (n : ℝ)) with hQ3sndef
-  set Q1s : ℝ := Real.rpow (3 : ℝ) ((1 + s) * (n : ℝ)) with hQ1sdef
-  set R3n : ℝ := Real.rpow (3 : ℝ) ((n : ℝ)) with hR3ndef
-  set S4 : ℝ := Real.rpow s (-(4 : ℝ)) with hS4def
-  set S7 : ℝ := Real.rpow s (-(7 : ℝ)) with hS7def
-  set S6 : ℝ := Real.rpow s (-(6 : ℝ)) with hS6def
-  set Sm3 : ℝ := Real.rpow s (-(3 : ℝ)) with hSm3def
-  set Sm2 : ℝ := Real.rpow s (-(2 : ℝ)) with hSm2def
+  set P2 : ℝ := Real.rpow (3 : ℝ) (-(((n + 2 : ℤ)) : ℝ))
+  set Q3s : ℝ := Real.rpow (3 : ℝ) (s * (((n + 2 : ℤ)) : ℝ))
+  set Q3sn : ℝ := Real.rpow (3 : ℝ) (s * (n : ℝ))
+  set Q1s : ℝ := Real.rpow (3 : ℝ) ((1 + s) * (n : ℝ))
+  set R3n : ℝ := Real.rpow (3 : ℝ) ((n : ℝ))
+  set S4 : ℝ := Real.rpow s (-(4 : ℝ))
+  set S7 : ℝ := Real.rpow s (-(7 : ℝ))
+  set S6 : ℝ := Real.rpow s (-(6 : ℝ))
+  set Sm3 : ℝ := Real.rpow s (-(3 : ℝ))
+  set Sm2 : ℝ := Real.rpow s (-(2 : ℝ))
   have hX0 : 0 ≤ X := ENNReal.toReal_nonneg
   have hGs0 : 0 ≤ Gs := ENNReal.toReal_nonneg
   have hHs0 : 0 ≤ Hs := ENNReal.toReal_nonneg
@@ -797,9 +787,9 @@ theorem residueRouteOne_comparisonBounds4 : boundaryRouteGeometryComparison :=
   have hYchild3 : Ychild ≤ flushWindowConst d * Gs := by
     rw [hYchilddef, hGsdef]
     exact normalizedGagliardoESeminormOn_flushSubCube_toReal_le hnm2 hz i hsigma g hgWW3
-  exact ⟨hsubx, hErepCap, hErep0, hsig, hP2def, hQ3sdef, hxf, hQ3sndef, hQ1sdef, hR3ndef, hS4def,
-    hS7def, hS6def, hSm3def, hSm2def, hX0, hGs0, hHs0, hHn0, hS0, hQ3s0, hQ3sn0, hQ1s0, hR3n0,
-      hS40, hS70, hS60, hSm30, hSm20, hsiginv0, hbrkCap, hET, hGbes, hGbes0, hYchild3⟩
+  exact ⟨hsubx, hErepCap, hErep0, hsig, hxf, hX0, hGs0, hHs0, hHn0, hS0, hQ3s0, hQ3sn0,
+    hQ1s0, hR3n0, hS40, hS70, hS60, hSm30, hSm20, hsiginv0, hbrkCap, hET, hGbes,
+    hGbes0, hYchild3⟩
 
 theorem residueRouteOne_comparisonBounds5 :
     ∀ (d : ℕ) [NeZero d] (CE KE : ℝ),
@@ -1093,27 +1083,8 @@ theorem residueRouteOne_comparisonBounds6 :
                                                                     (3 : ℤ))) ∩
                                                                 openCubeSet (originCube d
                                                                   m)))).toReal))
-        (_ : √((192 : ℝ) * (↑d : ℝ)) * (3 : ℝ) = √((192 : ℝ) * (↑d : ℝ)) * (3 : ℝ)) (_ :
-        (0 : ℝ) ≤ √((192 : ℝ) * (↑d : ℝ)) * (3 : ℝ)) (_ :
-        √((192 : ℝ) * (↑d : ℝ)) * (3 : ℝ) * (CE * (1 / 2 : ℝ)) = √((192 : ℝ) * (↑d : ℝ)) * (3 : ℝ)
-          * (CE * (1 / 2 : ℝ))) (_
-        :
-        (2 : ℝ) * (↑d : ℝ) * ((√((192 : ℝ) * (↑d : ℝ)) * (3 : ℝ) * (CE * (1 / 2 : ℝ))) ^ (2 : ℕ) +
-          (1 : ℝ)) =
-          (2 : ℝ) * (↑d : ℝ) * ((√((192 : ℝ) * (↑d : ℝ)) * (3 : ℝ) * (CE * (1 / 2 : ℝ))) ^ (2 : ℕ)
-            + (1 : ℝ)))
-        (_ :
-        √((2 : ℝ) * (↑d : ℝ) * ((√((192 : ℝ) * (↑d : ℝ)) * (3 : ℝ) * (CE * (1 / 2 : ℝ))) ^ (2 : ℕ)
-          + (1 : ℝ))) *
-              (√((192 : ℝ) * (↑d : ℝ)) * (3 : ℝ) * (CE * (1 / 2 : ℝ))) +
-            (2 : ℝ) *
-              ((2 : ℝ) * (↑d : ℝ) * ((√((192 : ℝ) * (↑d : ℝ)) * (3 : ℝ) * (CE * (1 / 2 : ℝ))) ^ (2
-                : ℕ) + (1 : ℝ))) =
-          √((2 : ℝ) * (↑d : ℝ) * ((√((192 : ℝ) * (↑d : ℝ)) * (3 : ℝ) * (CE * (1 / 2 : ℝ))) ^ (2 :
-            ℕ) + (1 : ℝ))) *
-              (√((192 : ℝ) * (↑d : ℝ)) * (3 : ℝ) * (CE * (1 / 2 : ℝ))) +
-            (2 : ℝ) * ((2 : ℝ) * (↑d : ℝ) * ((√((192 : ℝ) * (↑d : ℝ)) * (3 : ℝ) * (CE * (1 / 2 :
-              ℝ))) ^ (2 : ℕ) + (1 : ℝ))))
+         (_ :
+        (0 : ℝ) ≤ √((192 : ℝ) * (↑d : ℝ)) * (3 : ℝ))
         (_ :
         (0 : ℝ) ≤
           √((2 : ℝ) * (↑d : ℝ) * ((√((192 : ℝ) * (↑d : ℝ)) * (3 : ℝ) * (CE * (1 / 2 : ℝ))) ^ (2 :
@@ -1121,32 +1092,11 @@ theorem residueRouteOne_comparisonBounds6 :
               (√((192 : ℝ) * (↑d : ℝ)) * (3 : ℝ) * (CE * (1 / 2 : ℝ))) +
             (2 : ℝ) * ((2 : ℝ) * (↑d : ℝ) * ((√((192 : ℝ) * (↑d : ℝ)) * (3 : ℝ) * (CE * (1 / 2 :
               ℝ))) ^ (2 : ℕ) + (1 : ℝ))))
-        (_ : (0 : ℝ) ≤ (3 : ℝ) * negNormBaseConst d * coarseGrainingP2Const d) (_ :
-        (3 : ℝ) * negNormBaseConst d * coarseGrainingP2Const d * (216 : ℝ) * (√((192 : ℝ) * (↑d :
-          ℝ)) * (3 : ℝ) * KE) =
-          (3 : ℝ) * negNormBaseConst d * coarseGrainingP2Const d * (216 : ℝ) * (√((192 : ℝ) * (↑d
-            : ℝ)) * (3 : ℝ) * KE))
+        (_ : (0 : ℝ) ≤ (3 : ℝ) * negNormBaseConst d * coarseGrainingP2Const d)
         (_ :
         (0 : ℝ) ≤
           (3 : ℝ) * negNormBaseConst d * coarseGrainingP2Const d * (216 : ℝ) * (√((192 : ℝ) * (↑d
             : ℝ)) * (3 : ℝ) * KE))
-        (_ :
-        (3 : ℝ) * negNormBaseConst d * coarseGrainingP2Const d * (1944 : ℝ) *
-            ((√((2 : ℝ) * (↑d : ℝ) * ((√((192 : ℝ) * (↑d : ℝ)) * (3 : ℝ) * (CE * (1 / 2 : ℝ))) ^
-              (2 : ℕ) + (1 : ℝ))) *
-                  (√((192 : ℝ) * (↑d : ℝ)) * (3 : ℝ) * (CE * (1 / 2 : ℝ))) +
-                (2 : ℝ) *
-                  ((2 : ℝ) * (↑d : ℝ) * ((√((192 : ℝ) * (↑d : ℝ)) * (3 : ℝ) * (CE * (1 / 2 : ℝ)))
-                    ^ (2 : ℕ) + (1 : ℝ)))) *
-              (besovGagliardoConstant d * flushWindowConst d)) =
-          (3 : ℝ) * negNormBaseConst d * coarseGrainingP2Const d * (1944 : ℝ) *
-            ((√((2 : ℝ) * (↑d : ℝ) * ((√((192 : ℝ) * (↑d : ℝ)) * (3 : ℝ) * (CE * (1 / 2 : ℝ))) ^
-              (2 : ℕ) + (1 : ℝ))) *
-                  (√((192 : ℝ) * (↑d : ℝ)) * (3 : ℝ) * (CE * (1 / 2 : ℝ))) +
-                (2 : ℝ) *
-                  ((2 : ℝ) * (↑d : ℝ) * ((√((192 : ℝ) * (↑d : ℝ)) * (3 : ℝ) * (CE * (1 / 2 : ℝ)))
-                    ^ (2 : ℕ) + (1 : ℝ)))) *
-              (besovGagliardoConstant d * flushWindowConst d)))
         (_ :
         (0 : ℝ) ≤
           (3 : ℝ) * negNormBaseConst d * coarseGrainingP2Const d * (1944 : ℝ) *
@@ -1157,8 +1107,7 @@ theorem residueRouteOne_comparisonBounds6 :
                   ((2 : ℝ) * (↑d : ℝ) * ((√((192 : ℝ) * (↑d : ℝ)) * (3 : ℝ) * (CE * (1 / 2 : ℝ)))
                     ^ (2 : ℕ) + (1 : ℝ)))) *
               (besovGagliardoConstant d * flushWindowConst d)))
-        (_ : interiorCorrectionConst d * flushWindowConst d = interiorCorrectionConst d *
-          flushWindowConst d) (_ :
+         (_ :
         (0 : ℝ) ≤ interiorCorrectionConst d * flushWindowConst d) (_ :
         (0 : ℝ) ≤
           (9 : ℝ) * (CE * (1 / 2 : ℝ)) *
@@ -1173,45 +1122,12 @@ theorem residueRouteOne_comparisonBounds6 :
   obtain ⟨CE, hCEpos, hCE⟩ := ae_errorRepresentative_le_harmonicSlot_addThree d
   obtain ⟨CB, KE, hCBpos, hKEpos, hEnergyLeg⟩ :=
     ae_h1EnergyNormOnCube_boundary_le_anchorLegs_atHinges d
-  set kappa : ℝ := Real.sqrt (192 * (d : ℝ)) * 3 with hkappadef
-  have hkappa : 0 ≤ kappa := mul_nonneg (Real.sqrt_nonneg _) (by norm_num)
-  set e0 : ℝ := kappa * (CE * (1 / 2)) with he0def
-  have he0 : 0 ≤ e0 := mul_nonneg hkappa (mul_nonneg hCEpos.le (by norm_num))
-  set k0 : ℝ := 2 * (d : ℝ) * (e0 ^ 2 + 1) with hk0def
-  have hk0 : 0 ≤ k0 :=
-    mul_nonneg (mul_nonneg zero_le_two (Nat.cast_nonneg d))
-      (add_nonneg (sq_nonneg e0) zero_le_one)
-  set b0 : ℝ := Real.sqrt k0 * e0 + 2 * k0 with hb0def
-  have hb0 : 0 ≤ b0 :=
-    add_nonneg (mul_nonneg (Real.sqrt_nonneg _) he0) (mul_nonneg zero_le_two hk0)
-  set cg : ℝ := 3 * negNormBaseConst d * coarseGrainingP2Const d with hcgdef
-  have hcg : 0 ≤ cg :=
-    mul_nonneg (mul_nonneg (by norm_num) (negNormBaseConst_pos d).le)
-      (coarseGrainingP2Const_pos d).le
-  set A1 : ℝ := cg * 216 * (kappa * KE) with hA1def
-  have hA1 : 0 ≤ A1 := by
-    rw [hA1def]
-    exact mul_nonneg (mul_nonneg hcg (by norm_num)) (mul_nonneg hkappa hKEpos.le)
-  set A2 : ℝ := cg * 1944 * (b0 * (besovGagliardoConstant d * flushWindowConst d))
-    with hA2def
-  have hA2 : 0 ≤ A2 := by
-    have h1 : 0 ≤ besovGagliardoConstant d := besovGagliardoConstant_nonneg d
-    have h3 : 0 < flushWindowConst d := flushWindowConst_pos d
-    rw [hA2def]
-    exact mul_nonneg (mul_nonneg hcg (by norm_num))
-      (mul_nonneg hb0 (mul_nonneg h1 h3.le))
-  set A3 : ℝ := interiorCorrectionConst d * flushWindowConst d with hA3def
-  have hA3 : 0 ≤ A3 := by
-    have h1 : 0 < interiorCorrectionConst d := interiorCorrectionConst_pos d
-    have h3 : 0 < flushWindowConst d := flushWindowConst_pos d
-    rw [hA3def]
-    exact mul_nonneg h1.le h3.le
-  have hCE2 : (0 : ℝ) ≤ 9 * (CE * (1 / 2)) * A1 :=
-    mul_nonneg (mul_nonneg (by norm_num) (mul_nonneg hCEpos.le (by norm_num))) hA1
-  have hCE3 : (0 : ℝ) ≤ CE * (1 / 2) * A1 :=
-    mul_nonneg (mul_nonneg hCEpos.le (by norm_num)) hA1
-  exact ⟨CE, hCEpos, hCE, CB, KE, hCBpos, hEnergyLeg, hkappadef, hkappa, he0def, hk0def, hb0def,
-    hb0, hcg, hA1def, hA1, hA2def, hA2, hA3def, hA3, hCE2, hCE3⟩
+  obtain ⟨hkappa, hb0, hcg, hA1, hA2, hA3, hCE2, hCE3⟩ :=
+    comparison_constants_nonneg d CE KE
+      (flushWindowConst d) hCEpos.le hKEpos.le
+      (flushWindowConst_pos d).le
+  exact ⟨CE, hCEpos, hCE, CB, KE, hCBpos, hEnergyLeg, hkappa, hb0, hcg, hA1, hA2, hA3,
+    hCE2, hCE3⟩
 
 /-- **Route 1, composed at the flush sub-cube.**
 
@@ -1567,8 +1483,8 @@ theorem exists_flushResidue_route1_composed_errorWeighted (d : ℕ) [NeZero d] :
                                 ⟨s / 8, by linarith only [hs]⟩
                                 (Cutoff.translateCutoffSample z omega) * S) := by
   classical
-  obtain ⟨CE, hCEpos, hCE, CB, KE, hCBpos, hEnergyLeg, hkappadef, hkappa, he0def, hk0def, hb0def,
-    hb0, hcg, hA1def, hA1, hA2def, hA2, hA3def, hA3, hCE2, hCE3⟩ :=
+  obtain ⟨CE, hCEpos, hCE, CB, KE, hCBpos, hEnergyLeg, hkappa, hb0, hcg, hA1, hA2, hA3, hCE2,
+    hCE3⟩ :=
     @residueRouteOne_comparisonBounds6 (d) (by infer_instance)
   set kappa : ℝ := Real.sqrt (192 * (d : ℝ)) * 3 with hkappadef
   set e0 : ℝ := kappa * (CE * (1 / 2)) with he0def
@@ -1605,9 +1521,9 @@ theorem exists_flushResidue_route1_composed_errorWeighted (d : ℕ) [NeZero d] :
     ae_coarseGrainingErrorAtDepth_rebased_le_representative_gapThree M L n z hs hs1,
     ae_forceBracket_rebased_le_gapThree M L n z hs hs1] with omega hcapE hEnLeg herrD hbrk
   intro hmem u hdat g S hsol hgL2 hgW hhW hmean v w hharm hval hgrad
-  obtain ⟨hsubx, hErepCap, hErep0, hsig, hP2def, hQ3sdef, hxf, hQ3sndef, hQ1sdef, hR3ndef, hS4def,
-    hS7def, hS6def, hSm3def, hSm2def, hX0, hGs0, hHs0, hHn0, hS0, hQ3s0, hQ3sn0, hQ1s0, hR3n0,
-      hS40, hS70, hS60, hSm30, hSm20, hsiginv0, hbrkCap, hET, hGbes, hGbes0, hYchild3⟩ :=
+  obtain ⟨hsubx, hErepCap, hErep0, hsig, hxf, hX0, hGs0, hHs0, hHn0, hS0, hQ3s0, hQ3sn0,
+    hQ1s0, hR3n0, hS40, hS70, hS60, hSm30, hSm20, hsiginv0, hbrkCap, hET, hGbes,
+    hGbes0, hYchild3⟩ :=
     @residueRouteOne_comparisonBounds4 (d) (by infer_instance) (CE) (KE) (hkappadef)
       (hkappa) (he0def) (hk0def) (hb0def) (M) (s) (hs) (L) (m) (n) (hmL) (hnm) (z) (hz) (i)
         (sigma) (hsigma) (hover) (hs1) (hnm2) (hChinge) (omega) (hcapE) (hEnLeg) (herrD) (hbrk)

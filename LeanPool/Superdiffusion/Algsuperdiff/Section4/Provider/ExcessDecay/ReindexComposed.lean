@@ -374,17 +374,6 @@ private abbrev reindexComposed_comparisonBounds3_statement : Prop :=
                   fluxCorrectedErrorRepresentative M L (n + (3 : ℤ)) ⟨s / (8 : ℝ), (by positivity)⟩
                     (Cutoff.translateCutoffSample z omega))
                 (_ : (0 : ℝ) < (↑(Annealed.sigmaBar M (n + (3 : ℤ))) : ℝ)) (_ :
-                Real.rpow (3 : ℝ) (-(↑(n + (2 : ℤ)) : ℝ)) = Real.rpow (3 : ℝ) (-(↑(n + (2 : ℤ)) :
-                  ℝ))) (_ :
-                s.rpow (-3 : ℝ) = s.rpow (-3 : ℝ)) (_ :
-                Real.rpow (3 : ℝ) (s * (↑(n + (2 : ℤ)) : ℝ)) = Real.rpow (3 : ℝ) (s * (↑(n + (2 :
-                  ℤ)) : ℝ))) (_ :
-                Real.rpow (3 : ℝ) (s * (↑n : ℝ)) = Real.rpow (3 : ℝ) (s * (↑n : ℝ))) (_ :
-                Real.rpow (3 : ℝ) (((1 : ℝ) + s) * (↑n : ℝ)) = Real.rpow (3 : ℝ) (((1 : ℝ) + s) *
-                  (↑n : ℝ))) (_ :
-                Real.rpow (3 : ℝ) (↑n : ℝ) = Real.rpow (3 : ℝ) (↑n : ℝ)) (_ : s.rpow (-4 : ℝ) =
-                  s.rpow (-4 : ℝ)) (_ :
-                s.rpow (-7 : ℝ) = s.rpow (-7 : ℝ)) (_ :
                 (0 : ℝ) ≤
                   (eLpNorm
                       (fun (y : Vec d) =>
@@ -790,14 +779,14 @@ private theorem reindexComposed_comparisonBounds3 : reindexComposed_comparisonBo
   set Lhs : ℝ := (eLpNorm (fun y => u.toFun y - v.toFun y) 2
       (Support.normalizedVolumeMeasureOn
         ((fun y => x + y) '' openCubeSet (originCube d n)))).toReal with hLhsdef
-  set P2 : ℝ := Real.rpow (3 : ℝ) (-(((n + 2 : ℤ)) : ℝ)) with hP2def
-  set QS : ℝ := Real.rpow s (-(3 : ℝ)) with hQSdef
-  set Q3s : ℝ := Real.rpow (3 : ℝ) (s * (((n + 2 : ℤ)) : ℝ)) with hQ3sdef
-  set Q3sn : ℝ := Real.rpow (3 : ℝ) (s * (n : ℝ)) with hQ3sndef
-  set Q1s : ℝ := Real.rpow (3 : ℝ) ((1 + s) * (n : ℝ)) with hQ1sdef
-  set R3n : ℝ := Real.rpow (3 : ℝ) ((n : ℝ)) with hR3ndef
-  set S4 : ℝ := Real.rpow s (-(4 : ℝ)) with hS4def
-  set S7 : ℝ := Real.rpow s (-(7 : ℝ)) with hS7def
+  set P2 : ℝ := Real.rpow (3 : ℝ) (-(((n + 2 : ℤ)) : ℝ))
+  set QS : ℝ := Real.rpow s (-(3 : ℝ))
+  set Q3s : ℝ := Real.rpow (3 : ℝ) (s * (((n + 2 : ℤ)) : ℝ))
+  set Q3sn : ℝ := Real.rpow (3 : ℝ) (s * (n : ℝ))
+  set Q1s : ℝ := Real.rpow (3 : ℝ) ((1 + s) * (n : ℝ))
+  set R3n : ℝ := Real.rpow (3 : ℝ) ((n : ℝ))
+  set S4 : ℝ := Real.rpow s (-(4 : ℝ))
+  set S7 : ℝ := Real.rpow s (-(7 : ℝ))
   have hX0 : 0 ≤ X := ENNReal.toReal_nonneg
   have hY0 : 0 ≤ Y := ENNReal.toReal_nonneg
   have hYchild0 : 0 ≤ Ychild := ENNReal.toReal_nonneg
@@ -852,9 +841,8 @@ private theorem reindexComposed_comparisonBounds3 : reindexComposed_comparisonBo
     rw [h]
     congr 1
     ring
-  exact ⟨hsubx, hErepCap, hErep0, hsig, hP2def, hQSdef, hQ3sdef, hQ3sndef, hQ1sdef, hR3ndef,
-    hS4def, hS7def, hX0, hY0, hQS0, hQ3s0, hQ3sn0, hQ1s0, hR3n0, hS40, hS70, hsiginv0, hYchildle,
-      hET, hFT, hxf, hW1⟩
+  exact ⟨hsubx, hErepCap, hErep0, hsig, hX0, hY0, hQS0, hQ3s0, hQ3sn0, hQ1s0, hR3n0, hS40,
+    hS70, hsiginv0, hYchildle, hET, hFT, hxf, hW1⟩
 
 /-- **The general clause at frontier-empty windows, in real form.**
 
@@ -956,9 +944,8 @@ theorem exists_generalClauseInterior_honest_addThree (d : ℕ) [NeZero d] :
     ae_forceBracket_rebased_le_addThree M L n z hs hs1] with omega hcapE hcacc herrD hbrk
   intro hmem u hdat g hsol hgL2 hgW v w hharm hval hgrad
   have hsig : (0 : ℝ) < (Annealed.sigmaBar M (n + 3) : ℝ) := (Annealed.sigmaBar M (n + 3)).2
-  obtain ⟨hsubx, hErepCap, hErep0, hsig, hP2def, hQSdef, hQ3sdef, hQ3sndef, hQ1sdef, hR3ndef,
-    hS4def, hS7def, hX0, hY0, hQS0, hQ3s0, hQ3sn0, hQ1s0, hR3n0, hS40, hS70, hsiginv0, hYchildle,
-      hET, hFT, hxf, hW1⟩ :=
+  obtain ⟨hsubx, hErepCap, hErep0, hsig, hX0, hY0, hQS0, hQ3s0, hQ3sn0, hQ1s0, hR3n0, hS40,
+    hS70, hsiginv0, hYchildle, hET, hFT, hxf, hW1⟩ :=
     @reindexComposed_comparisonBounds3 (d) (by infer_instance) (CE) (Cout) (hCoutpos) (hkappa)
       (hb0) (M) (s) (hs) (L) (m) (n) (hmL) (hnm) (x) (z) (hz) (hgeom) (hfr) (hs1) (omega) (hcapE)
       (hcacc) (herrD) (hbrk) (hmem) (u) (hdat) (g) (hsol) (hgL2) (hgW) (v) (w) (hharm) (hval)

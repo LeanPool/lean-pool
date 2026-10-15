@@ -344,16 +344,12 @@ private theorem injectionAssembly_comparisonBounds1 :
         (_ : ep < (1 : ℝ)) (_ : (0 : ℝ) < M.gamma) (_ : (0 : ℝ) < (↑(Annealed.sigmaBar M n) : ℝ))
         (_ : (0 : ℝ) < Real.rpow (3 : ℝ) ((↑n : ℝ) / (2 : ℝ))),
         let theta : ℝ := C⁻¹ * ep * (√M.gamma)⁻¹;
-        ∀  (_ : (0 : ℝ) < theta)
+        ∀ (_ : (0 : ℝ) < theta)
           (_ : omega ∈ goodCubeEvent M Creg n y ep) (_ : omega ∈ largeScaleEvent M n y theta)
           (_ : holderSeminormOn (cubeSetAt y n) (1 / 2 : ℝ) g ≠ ∞),
           let Kg : ℝ := (holderSeminormOn (cubeSetAt y n) (1 / 2 : ℝ) g).toReal;
           ∃ (_ : (0 : ℝ) ≤ Kg) (_ : holderSeminormOn (cubeSetAt y n) (1 / 2 : ℝ) g =
-            ENNReal.ofReal Kg) (_ :
-            (↑(Annealed.sigmaBar M n) : ℝ)⁻¹ * Real.rpow (3 : ℝ) ((↑n : ℝ) / (2 : ℝ)) *
-                ((2 : ℝ) * Creg * Real.rpow (3 : ℝ) ((↑n : ℝ) / (2 : ℝ)) * Kg) =
-              (↑(Annealed.sigmaBar M n) : ℝ)⁻¹ * Real.rpow (3 : ℝ) ((↑n : ℝ) / (2 : ℝ)) *
-                ((2 : ℝ) * Creg * Real.rpow (3 : ℝ) ((↑n : ℝ) / (2 : ℝ)) * Kg))
+            ENNReal.ofReal Kg)
             (_ :
             (0 : ℝ) ≤
               (↑(Annealed.sigmaBar M n) : ℝ)⁻¹ * Real.rpow (3 : ℝ) ((↑n : ℝ) / (2 : ℝ)) *
@@ -447,7 +443,7 @@ private theorem injectionAssembly_comparisonBounds1 :
     (tendsto_sub_iterationPartialSum_cutoff M m n y omega hgL2 hw0sol hwsucc hu hlimgrad).2
   obtain ⟨uRep, huRep, huRepK, hutailK⟩ :=
     exists_isCubeRepresentative_of_tendsto hd hK00 hep0.le hep1 hrep hzero hKb hlimval
-  exact ⟨hKg0, hgeq, hK0def, hK00, w, wRep, hrep, hw0sol, uRep, huRep, huRepK, hutailK⟩
+  exact ⟨hKg0, hgeq, hK00, w, wRep, hrep, hw0sol, uRep, huRep, huRepK, hutailK⟩
 
 /-- **Proposition 5.1.**  On the good cube event and the large-scale event with
 threshold `C⁻¹ ε γ^{-1/2}`, the rough-field solution at any scale `m ≥ n` is
@@ -525,7 +521,7 @@ theorem injection_in_L_infty_v2_provider (d : ℕ) (cstar : ℝ) (_hcstar : 0 < 
     exact ⟨le_top, le_top⟩
   -- the datum, its Hölder constant and its square integrability
   set Kg : ℝ := (holderSeminormOn (cubeSetAt y n) (1 / 2) g).toReal with hKgdef
-  obtain ⟨hKg0, hgeq, hK0def, hK00, w, wRep, hrep, hw0sol, uRep, huRep, huRepK, hutailK⟩ :=
+  obtain ⟨hKg0, hgeq, hK00, w, wRep, hrep, hw0sol, uRep, huRep, huRepK, hutailK⟩ :=
     @injectionAssembly_comparisonBounds1 (d) (cstar) (Creg) (_hCreg) (hd) (CL) (hland) (CIter)
       (hCIter) (hseq)  (hCpos) (M) (hcst) (hgam) (ep) (n) (y) (g) (omega) (m) (hnm) (u)
         (hu) (hep0) (hep1) (hgpos) (hSpos) (hP)  (hth0) (hmemG) (hmemJ) (hgne)

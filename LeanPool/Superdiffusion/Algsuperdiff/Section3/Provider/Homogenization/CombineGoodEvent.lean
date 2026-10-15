@@ -200,7 +200,7 @@ private theorem sum_Icc_le_of_geometric {L m : ℤ} (hLm : L ≤ m) {r : ℝ}
   exact geom_sum_le_inv_one_sub hr0 hr1 _
 
 /-- The printed weight `3^{-(m-n)}` sums to at most `3/2` on the corridor. -/
-private theorem sum_Icc_three_neg_le {L m : ℤ} (hLm : L ≤ m) :
+theorem sum_Icc_three_neg_le {L m : ℤ} (hLm : L ≤ m) :
     ∑ n ∈ Finset.Icc L m, (3 : ℝ) ^ (-((m - n : ℤ) : ℝ)) ≤ 3 / 2 := by
   have hrv : (3 : ℝ) ^ (-1 : ℝ) = 3⁻¹ := by
     rw [show (-1 : ℝ) = ((-1 : ℤ) : ℝ) by norm_num, Real.rpow_intCast]

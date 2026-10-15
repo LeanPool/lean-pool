@@ -393,10 +393,6 @@ private abbrev assemblyComposedErrorWeighted_comparisonBounds5_statement : Prop 
                   fluxCorrectedErrorRepresentative M L (n + (3 : ℤ)) ⟨s / (8 : ℝ), (by positivity)⟩
                     (Cutoff.translateCutoffSample z omega))
                 (_ : (0 : ℝ) < (↑(Annealed.sigmaBar M (n + (3 : ℤ))) : ℝ)) (_ :
-                Real.rpow (3 : ℝ) (-(↑(n + (2 : ℤ)) : ℝ)) = Real.rpow (3 : ℝ) (-(↑(n + (2 : ℤ)) :
-                  ℝ))) (_ :
-                Real.rpow (3 : ℝ) (s * (↑(n + (2 : ℤ)) : ℝ)) = Real.rpow (3 : ℝ) (s * (↑(n + (2 :
-                  ℤ)) : ℝ))) (_ :
                 (↑(Annealed.sigmaBar M (n + (3 : ℤ))) : ℝ) *
                     (cubeBesovScaleWeight (1 : ℝ) (originCube d n) *
                       (eLpNorm (fun (y : Vec d) => u.toFun y - v.toFun y) (2 : ENNReal)
@@ -421,13 +417,7 @@ private abbrev assemblyComposedErrorWeighted_comparisonBounds5_statement : Prop 
                       (normalizedGagliardoESeminormOn ((fun (y : Vec d) => x + y) '' openCubeSet
                         (originCube d n)) s
                           g).toReal)
-                (_ : Real.rpow (3 : ℝ) (s * (↑n : ℝ)) = Real.rpow (3 : ℝ) (s * (↑n : ℝ))) (_ :
-                Real.rpow (3 : ℝ) (((1 : ℝ) + s) * (↑n : ℝ)) = Real.rpow (3 : ℝ) (((1 : ℝ) + s) *
-                  (↑n : ℝ))) (_ :
-                Real.rpow (3 : ℝ) (↑n : ℝ) = Real.rpow (3 : ℝ) (↑n : ℝ)) (_ : s.rpow (-4 : ℝ) =
-                  s.rpow (-4 : ℝ)) (_ :
-                s.rpow (-7 : ℝ) = s.rpow (-7 : ℝ)) (_ : s.rpow (-6 : ℝ) = s.rpow (-6 : ℝ)) (_ :
-                s.rpow (-3 : ℝ) = s.rpow (-3 : ℝ)) (_ : s.rpow (-2 : ℝ) = s.rpow (-2 : ℝ)) (_ :
+                        (_ :
                 (0 : ℝ) ≤
                   (eLpNorm
                       (fun (y : Vec d) =>
@@ -1020,16 +1010,16 @@ private theorem assemblyComposedErrorWeighted_comparisonBounds5 :
   set Lhs : ℝ := (eLpNorm (fun y => u.toFun y - v.toFun y) 2
       (Support.normalizedVolumeMeasureOn
         ((fun y => x + y) '' openCubeSet (originCube d n)))).toReal with hLhsdef
-  set P2 : ℝ := Real.rpow (3 : ℝ) (-(((n + 2 : ℤ)) : ℝ)) with hP2def
-  set Q3s : ℝ := Real.rpow (3 : ℝ) (s * (((n + 2 : ℤ)) : ℝ)) with hQ3sdef
-  set Q3sn : ℝ := Real.rpow (3 : ℝ) (s * (n : ℝ)) with hQ3sndef
-  set Q1s : ℝ := Real.rpow (3 : ℝ) ((1 + s) * (n : ℝ)) with hQ1sdef
-  set R3n : ℝ := Real.rpow (3 : ℝ) ((n : ℝ)) with hR3ndef
-  set S4 : ℝ := Real.rpow s (-(4 : ℝ)) with hS4def
-  set S7 : ℝ := Real.rpow s (-(7 : ℝ)) with hS7def
-  set S6 : ℝ := Real.rpow s (-(6 : ℝ)) with hS6def
-  set Sm3 : ℝ := Real.rpow s (-(3 : ℝ)) with hSm3def
-  set Sm2 : ℝ := Real.rpow s (-(2 : ℝ)) with hSm2def
+  set P2 : ℝ := Real.rpow (3 : ℝ) (-(((n + 2 : ℤ)) : ℝ))
+  set Q3s : ℝ := Real.rpow (3 : ℝ) (s * (((n + 2 : ℤ)) : ℝ))
+  set Q3sn : ℝ := Real.rpow (3 : ℝ) (s * (n : ℝ))
+  set Q1s : ℝ := Real.rpow (3 : ℝ) ((1 + s) * (n : ℝ))
+  set R3n : ℝ := Real.rpow (3 : ℝ) ((n : ℝ))
+  set S4 : ℝ := Real.rpow s (-(4 : ℝ))
+  set S7 : ℝ := Real.rpow s (-(7 : ℝ))
+  set S6 : ℝ := Real.rpow s (-(6 : ℝ))
+  set Sm3 : ℝ := Real.rpow s (-(3 : ℝ))
+  set Sm2 : ℝ := Real.rpow s (-(2 : ℝ))
   obtain ⟨hX0, hGs0, hHs0, hHn0, hS0, hQ3s0, hQ3sn0, hQ1s0, hR3n0, hS40, hS70, hS60, hSm30, hSm20,
     hsiginv0, hEb0, hEbkappa, hEbe0, hKble⟩ :=
     (show (0 ≤ X) ∧ (0 ≤ Gs) ∧ (0 ≤ Hs) ∧ (0 ≤ Hn) ∧ (0 ≤ S) ∧ (0 ≤ Q3s) ∧ (0 ≤ Q3sn) ∧ (0 ≤ Q1s)
@@ -1070,9 +1060,8 @@ private theorem assemblyComposedErrorWeighted_comparisonBounds5 :
     refine hGbes.trans ?_
     exact mul_le_mul_of_nonneg_left hYchild3
       (mul_nonneg (besovGagliardoConstant_nonneg d) hQ3sn0)
-  exact ⟨hsubx, hErepCap, hErep0, hsig, hP2def, hQ3sdef, hxf, hQ3sndef, hQ1sdef, hR3ndef, hS4def,
-    hS7def, hS6def, hSm3def, hSm2def, hX0, hGs0, hHs0, hHn0, hS0, hQ3s0, hQ3sn0, hQ1s0, hR3n0,
-      hS40, hS70, hS60, hSm30, hSm20, hsiginv0, hET, hYchild3, hFT⟩
+  exact ⟨hsubx, hErepCap, hErep0, hsig, hxf, hX0, hGs0, hHs0, hHn0, hS0, hQ3s0, hQ3sn0,
+    hQ1s0, hR3n0, hS40, hS70, hS60, hSm30, hSm20, hsiginv0, hET, hYchild3, hFT⟩
 
 private theorem assemblyComposedErrorWeighted_comparisonBounds6 :
     ∀ (d : ℕ) [NeZero d] (CE KE : ℝ),
@@ -1426,8 +1415,8 @@ theorem exists_boundaryClauseComposed_honest_errorWeighted (d : ℕ) [NeZero d] 
                                 ⟨s / 8, by linarith only [hs]⟩
                                 (Cutoff.translateCutoffSample z omega) * S) := by
   classical
-  obtain ⟨CE, hCEpos, hCE, CB, KE, hCBpos, hEnergyLeg, hkappadef, hkappa, he0def, hk0def, hb0def,
-    hb0, hcg, hA1def, hA1, hA2def, hA2, hA3def, hA3, hCE2, hCE3⟩ :=
+  obtain ⟨CE, hCEpos, hCE, CB, KE, hCBpos, hEnergyLeg, hkappa, hb0, hcg, hA1, hA2, hA3, hCE2,
+    hCE3⟩ :=
     @assemblyBoundaryConstants (d) (by infer_instance)
   set kappa : ℝ := Real.sqrt (192 * (d : ℝ)) * 3 with hkappadef
   set e0 : ℝ := kappa * (CE * (1 / 2)) with he0def
@@ -1465,9 +1454,8 @@ theorem exists_boundaryClauseComposed_honest_errorWeighted (d : ℕ) [NeZero d] 
     ae_coarseGrainingErrorAtDepth_rebased_le_representative_addThree M L n z hs hs1,
     ae_forceBracket_rebased_le_addThree M L n z hs hs1] with omega hcapE hEnLeg herrD hbrk
   intro hmem u hdat g S hsol hgL2 hgW hhW hmean v w hharm hval hgrad
-  obtain ⟨hsubx, hErepCap, hErep0, hsig, hP2def, hQ3sdef, hxf, hQ3sndef, hQ1sdef, hR3ndef, hS4def,
-    hS7def, hS6def, hSm3def, hSm2def, hX0, hGs0, hHs0, hHn0, hS0, hQ3s0, hQ3sn0, hQ1s0, hR3n0,
-      hS40, hS70, hS60, hSm30, hSm20, hsiginv0, hET, hYchild3, hFT⟩ :=
+  obtain ⟨hsubx, hErepCap, hErep0, hsig, hxf, hX0, hGs0, hHs0, hHn0, hS0, hQ3s0, hQ3sn0,
+    hQ1s0, hR3n0, hS40, hS70, hS60, hSm30, hSm20, hsiginv0, hET, hYchild3, hFT⟩ :=
     @assemblyComposedErrorWeighted_comparisonBounds5 (d) (by infer_instance) (CE) (KE)
       (hkappa)    (hb0) (M) (s) (hs) (L) (m) (n) (hmL) (hnm) (x) (z)
         (hgeom) (hs1) (omega) (hcapE) (hEnLeg) (herrD) (hbrk) (hmem) (u) (hdat) (g) (S) (hsol)

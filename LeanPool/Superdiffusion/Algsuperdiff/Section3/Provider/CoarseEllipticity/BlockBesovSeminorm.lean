@@ -130,6 +130,43 @@ theorem cubeBesovNegativeVectorPartialSeminormTwo_const_smul (Q : TriadicCube d)
     ring
   rw [hsum, Real.sqrt_mul (sq_nonneg c), Real.sqrt_sq_eq_abs, abs_of_nonneg hc]
 
+/-- Lift a finite-depth triangle estimate to a bound by the full seminorms after scaling. -/
+theorem cubeBesovNegativeVectorPartialSeminormTwo_const_smul_le_of_triangle
+    (Q : TriadicCube d) (s c : ℝ)
+    (hc : 0 ≤ c) (u v w : Vec d → Vec d)
+    (hbu : BddAbove (Set.range fun N : ℕ =>
+      cubeBesovNegativeVectorPartialSeminormTwo Q s N u))
+    (hbv : BddAbove (Set.range fun N : ℕ =>
+      cubeBesovNegativeVectorPartialSeminormTwo Q s N v)) (N : ℕ)
+    (htriangle : cubeBesovNegativeVectorPartialSeminormTwo Q s N w ≤
+      Real.sqrt 2 * (cubeBesovNegativeVectorPartialSeminormTwo Q s N u +
+        cubeBesovNegativeVectorPartialSeminormTwo Q s N v)) :
+    cubeBesovNegativeVectorPartialSeminormTwo Q s N (fun x => c • w x) ≤
+      c * Real.sqrt 2 *
+        (cubeBesovNegativeVectorSeminormTwo Q s u +
+          cubeBesovNegativeVectorSeminormTwo Q s v) := by
+  rw [cubeBesovNegativeVectorPartialSeminormTwo_const_smul Q s N c hc w]
+  have hu' : cubeBesovNegativeVectorPartialSeminormTwo Q s N u ≤
+      cubeBesovNegativeVectorSeminormTwo Q s u := le_csSup hbu ⟨N, rfl⟩
+  have hv' : cubeBesovNegativeVectorPartialSeminormTwo Q s N v ≤
+      cubeBesovNegativeVectorSeminormTwo Q s v := le_csSup hbv ⟨N, rfl⟩
+  have hnn2 : (0 : ℝ) ≤ Real.sqrt 2 := Real.sqrt_nonneg _
+  calc
+    c * cubeBesovNegativeVectorPartialSeminormTwo Q s N w
+        ≤ c * (Real.sqrt 2 *
+            (cubeBesovNegativeVectorPartialSeminormTwo Q s N u +
+              cubeBesovNegativeVectorPartialSeminormTwo Q s N v)) :=
+          mul_le_mul_of_nonneg_left htriangle hc
+    _ ≤ c * (Real.sqrt 2 *
+            (cubeBesovNegativeVectorSeminormTwo Q s u +
+              cubeBesovNegativeVectorSeminormTwo Q s v)) := by
+          refine mul_le_mul_of_nonneg_left ?_ hc
+          refine mul_le_mul_of_nonneg_left ?_ hnn2
+          linarith
+    _ = c * Real.sqrt 2 *
+            (cubeBesovNegativeVectorSeminormTwo Q s u +
+              cubeBesovNegativeVectorSeminormTwo Q s v) := by ring
+
 /-! ## The two scaled triangle steps -/
 
 /-- `[c (u + v)] <= c sqrt 2 ([u] + [v])`: homogeneity pulls `c` out,
@@ -147,30 +184,9 @@ theorem cubeBesovNegativeVectorSeminormTwo_const_smul_add_le (Q : TriadicCube d)
           cubeBesovNegativeVectorSeminormTwo Q s v) := by
   refine csSup_le (Set.range_nonempty _) ?_
   rintro x ⟨N, rfl⟩
-  dsimp only
-  rw [cubeBesovNegativeVectorPartialSeminormTwo_const_smul Q s N c hc (fun y => u y + v y)]
-  have hpad :=
-    cubeBesovNegativeVectorPartialSeminormTwo_add_le_sqrtTwo_mul_add Q s u v hu hv N
-  have hu' : cubeBesovNegativeVectorPartialSeminormTwo Q s N u ≤
-      cubeBesovNegativeVectorSeminormTwo Q s u := le_csSup hbu ⟨N, rfl⟩
-  have hv' : cubeBesovNegativeVectorPartialSeminormTwo Q s N v ≤
-      cubeBesovNegativeVectorSeminormTwo Q s v := le_csSup hbv ⟨N, rfl⟩
-  have hnn2 : (0 : ℝ) ≤ Real.sqrt 2 := Real.sqrt_nonneg _
-  calc
-    c * cubeBesovNegativeVectorPartialSeminormTwo Q s N (fun y => u y + v y)
-        ≤ c * (Real.sqrt 2 *
-            (cubeBesovNegativeVectorPartialSeminormTwo Q s N u +
-              cubeBesovNegativeVectorPartialSeminormTwo Q s N v)) :=
-          mul_le_mul_of_nonneg_left hpad hc
-    _ ≤ c * (Real.sqrt 2 *
-            (cubeBesovNegativeVectorSeminormTwo Q s u +
-              cubeBesovNegativeVectorSeminormTwo Q s v)) := by
-          refine mul_le_mul_of_nonneg_left ?_ hc
-          refine mul_le_mul_of_nonneg_left ?_ hnn2
-          linarith
-    _ = c * Real.sqrt 2 *
-            (cubeBesovNegativeVectorSeminormTwo Q s u +
-              cubeBesovNegativeVectorSeminormTwo Q s v) := by ring
+  exact cubeBesovNegativeVectorPartialSeminormTwo_const_smul_le_of_triangle Q s c hc u v
+    (fun y => u y + v y) hbu hbv N
+    (cubeBesovNegativeVectorPartialSeminormTwo_add_le_sqrtTwo_mul_add Q s u v hu hv N)
 
 /-- `[c (u - v)] <= c sqrt 2 ([u] + [v])`. -/
 theorem cubeBesovNegativeVectorSeminormTwo_const_smul_sub_le (Q : TriadicCube d) (s c : ℝ)
@@ -186,30 +202,9 @@ theorem cubeBesovNegativeVectorSeminormTwo_const_smul_sub_le (Q : TriadicCube d)
           cubeBesovNegativeVectorSeminormTwo Q s v) := by
   refine csSup_le (Set.range_nonempty _) ?_
   rintro x ⟨N, rfl⟩
-  dsimp only
-  rw [cubeBesovNegativeVectorPartialSeminormTwo_const_smul Q s N c hc (fun y => u y - v y)]
-  have hpsub :=
-    cubeBesovNegativeVectorPartialSeminormTwo_sub_le_sqrtTwo_mul_add Q s u v hu hv N
-  have hu' : cubeBesovNegativeVectorPartialSeminormTwo Q s N u ≤
-      cubeBesovNegativeVectorSeminormTwo Q s u := le_csSup hbu ⟨N, rfl⟩
-  have hv' : cubeBesovNegativeVectorPartialSeminormTwo Q s N v ≤
-      cubeBesovNegativeVectorSeminormTwo Q s v := le_csSup hbv ⟨N, rfl⟩
-  have hnn2 : (0 : ℝ) ≤ Real.sqrt 2 := Real.sqrt_nonneg _
-  calc
-    c * cubeBesovNegativeVectorPartialSeminormTwo Q s N (fun y => u y - v y)
-        ≤ c * (Real.sqrt 2 *
-            (cubeBesovNegativeVectorPartialSeminormTwo Q s N u +
-              cubeBesovNegativeVectorPartialSeminormTwo Q s N v)) :=
-          mul_le_mul_of_nonneg_left hpsub hc
-    _ ≤ c * (Real.sqrt 2 *
-            (cubeBesovNegativeVectorSeminormTwo Q s u +
-              cubeBesovNegativeVectorSeminormTwo Q s v)) := by
-          refine mul_le_mul_of_nonneg_left ?_ hc
-          refine mul_le_mul_of_nonneg_left ?_ hnn2
-          linarith
-    _ = c * Real.sqrt 2 *
-            (cubeBesovNegativeVectorSeminormTwo Q s u +
-              cubeBesovNegativeVectorSeminormTwo Q s v) := by ring
+  exact cubeBesovNegativeVectorPartialSeminormTwo_const_smul_le_of_triangle Q s c hc u v
+    (fun y => u y - v y) hbu hbv N
+    (cubeBesovNegativeVectorPartialSeminormTwo_sub_le_sqrtTwo_mul_add Q s u v hu hv N)
 
 /-! ## The block seminorm -/
 
