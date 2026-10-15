@@ -83,13 +83,11 @@ variable {d : ℕ}
 private abbrev interiorComposed_comparisonBounds2_statement : Prop :=
     ∀ (d : ℕ) [NeZero d] (CE Cout : ℝ) (_ : (0 : ℝ) < Cout),
       let kappa : ℝ := √((192 : ℝ) * (↑d : ℝ)) * (3 : ℝ);
-      ∀ (_ : kappa = √((192 : ℝ) * (↑d : ℝ)) * (3 : ℝ)) (_ : (0 : ℝ) ≤ kappa),
+      ∀ (_ : (0 : ℝ) ≤ kappa),
         let e0 : ℝ := kappa * (CE * (1 / 2 : ℝ));
-        ∀ (_ : e0 = kappa * (CE * (1 / 2 : ℝ))),
           let k0 : ℝ := (2 : ℝ) * (↑d : ℝ) * (e0 ^ (2 : ℕ) + (1 : ℝ));
-          ∀ (_ : k0 = (2 : ℝ) * (↑d : ℝ) * (e0 ^ (2 : ℕ) + (1 : ℝ))),
             let b0 : ℝ := √k0 * e0 + (2 : ℝ) * k0;
-            ∀ (_ : b0 = √k0 * e0 + (2 : ℝ) * k0) (M : ABKModel d) (s : ℝ) (_ : (0 : ℝ) < s) (L m n
+            ∀ (M : ABKModel d) (s : ℝ) (_ : (0 : ℝ) < s) (L m n
               : ℤ) (x z : Vec d)
               (hz : z ∈ openCubeSet (originCube d m))
               (_ :
@@ -169,10 +167,7 @@ private abbrev interiorComposed_comparisonBounds2_statement : Prop :=
                               (3 : ℝ)) ≤
                           √((2 : ℝ) * (↑d : ℝ) * (Eb ^ (2 : ℕ) + (1 : ℝ))) * Eb +
                             (2 : ℝ) * ((2 : ℝ) * (↑d : ℝ) * (Eb ^ (2 : ℕ) + (1 : ℝ))))
-                  (_ :
-                    Eb =
-                      √(offGridStabilityConst d (s / (6 : ℝ)) (s / (8 : ℝ))) *
-                        ((3 : ℝ) ^ ((2 : ℝ) * (s / (8 : ℝ))) * Erep)),
+                  ,
                   let sig : ℝ := (↑(Annealed.sigmaBar M (n + (2 : ℤ))) : ℝ);
                   ∀ (_ : (0 : ℝ) < sig),
                     let X : ℝ :=
@@ -228,13 +223,11 @@ private abbrev interiorComposed_comparisonBounds2_statement : Prop :=
 private abbrev interiorComposed_comparisonBounds3_statement : Prop :=
     ∀ (d : ℕ) [NeZero d] (CE Cout : ℝ) (_ : (0 : ℝ) < Cout),
       let kappa : ℝ := √((192 : ℝ) * (↑d : ℝ)) * (3 : ℝ);
-      ∀ (_ : kappa = √((192 : ℝ) * (↑d : ℝ)) * (3 : ℝ)) (_ : (0 : ℝ) ≤ kappa),
+      ∀ (_ : (0 : ℝ) ≤ kappa),
         let e0 : ℝ := kappa * (CE * (1 / 2 : ℝ));
-        ∀ (_ : e0 = kappa * (CE * (1 / 2 : ℝ))),
           let k0 : ℝ := (2 : ℝ) * (↑d : ℝ) * (e0 ^ (2 : ℕ) + (1 : ℝ));
-          ∀ (_ : k0 = (2 : ℝ) * (↑d : ℝ) * (e0 ^ (2 : ℕ) + (1 : ℝ))),
             let b0 : ℝ := √k0 * e0 + (2 : ℝ) * k0;
-            ∀ (_ : b0 = √k0 * e0 + (2 : ℝ) * k0) (_ : (0 : ℝ) ≤ b0) (M : ABKModel d) (s : ℝ) (_ :
+            ∀ (_ : (0 : ℝ) ≤ b0) (M : ABKModel d) (s : ℝ) (_ :
               (0 : ℝ) < s)
               (L m n : ℤ) (_ : m ≤ L) (_ : n + (2 : ℤ) ≤ m) (x z : Vec d) (hz : z ∈ openCubeSet
                 (originCube d m))
@@ -636,9 +629,26 @@ private theorem interiorComposed_comparisonBounds1 :
 
 private theorem interiorComposed_comparisonBounds2 :
   interiorComposed_comparisonBounds2_statement := by
-  intro d _ _ Cout hCoutpos kappa hkappadef hkappa e0 he0def k0 hk0def b0 hb0def M s hs L m n x z
-    _ hgeom _ hs1 omega u g hsubx _ hcaccW hgL2child hgWchild hR3 Erep hErepCap hErep0 Eb herrD
-      hbrk hEbdef sig hsig X Y Ychild P2 QS Q3s Q3sn S4 S192
+  intro d _ _CE Cout hCoutpos kappa hkappa e0 k0 b0 M s hs L m n x z _ hgeom _ hs1 omega u g hsubx
+    _ hcaccW hgL2child hgWchild hR3 Erep hErepCap hErep0 Eb herrD hbrk sig hsig X Y Ychild P2 QS
+    Q3s Q3sn S4 S192
+  have hkappadef :
+    kappa = √((192 : ℝ) * (↑d : ℝ)) * (3 : ℝ)
+    := rfl
+  have he0def :
+    e0 = kappa * (_CE * (1 / 2 : ℝ))
+    := rfl
+  have hk0def :
+    k0 = (2 : ℝ) * (↑d : ℝ) * (e0 ^ (2 : ℕ) + (1 : ℝ))
+    := rfl
+  have hb0def :
+    b0 = √k0 * e0 + (2 : ℝ) * k0
+    := rfl
+  have hEbdef :
+    Eb =
+                      √(offGridStabilityConst d (s / (6 : ℝ)) (s / (8 : ℝ))) *
+                        ((3 : ℝ) ^ ((2 : ℝ) * (s / (8 : ℝ))) * Erep)
+    := rfl
   have hS40 : 0 ≤ S4 := Real.rpow_nonneg hs.le _
   have hS1920 : 0 ≤ S192 := Real.rpow_nonneg hs.le _
   have hsiginv0 : (0 : ℝ) ≤ sig⁻¹ := inv_nonneg.mpr hsig.le
@@ -743,9 +753,20 @@ private theorem interiorComposed_comparisonBounds2 :
 private theorem interiorComposed_comparisonBounds3 :
   interiorComposed_comparisonBounds3_statement := by
   classical
-  intro d _ CE Cout hCoutpos kappa hkappadef hkappa _ he0def _ hk0def b0 hb0def hb0 M s hs L m n
-    hmL hnm x z hz hgeom hfr hs1 omega hcapE hcacc herrD hbrk hmem u hdat g hsol hgL2 hgW v w
-      hharm hval hgrad
+  intro d _ CE Cout hCoutpos kappa hkappa _e0 _k0 b0 hb0 M s hs L m n hmL hnm x z hz hgeom hfr hs1
+    omega hcapE hcacc herrD hbrk hmem u hdat g hsol hgL2 hgW v w hharm hval hgrad
+  have hkappadef :
+    kappa = √((192 : ℝ) * (↑d : ℝ)) * (3 : ℝ)
+    := rfl
+  have he0def :
+    _e0 = kappa * (CE * (1 / 2 : ℝ))
+    := rfl
+  have hk0def :
+    _k0 = (2 : ℝ) * (↑d : ℝ) * (_e0 ^ (2 : ℕ) + (1 : ℝ))
+    := rfl
+  have hb0def :
+    b0 = √_k0 * _e0 + (2 : ℝ) * _k0
+    := rfl
   have hsig : (0 : ℝ) < (Annealed.sigmaBar M (n + 2) : ℝ) := (Annealed.sigmaBar M (n + 2)).2
   have hsubx : translateSet x (openCubeSet (originCube d n)) ⊆
       openCubeSet (originCube d m) :=
@@ -831,9 +852,9 @@ private theorem interiorComposed_comparisonBounds3 :
         (Ch03.scaleNormalizedPositiveBesovVectorSeminormTwo (originCube d n) s
       (fun y => -g (y + x)) ≤ besovGagliardoConstant d * Q3sn * Ychild) from
       @interiorComposed_comparisonBounds2 (d) (by infer_instance) (CE) (Cout) (hCoutpos)
-        (hkappadef) (hkappa) (he0def) (hk0def) (hb0def) (M) (s) (hs) (L) (m) (n) (x) (z) (hz)
+         (hkappa)    (M) (s) (hs) (L) (m) (n) (x) (z) (hz)
           (hgeom) (hfr) (hs1) (omega) (u) (g) (hsubx) (hsubz) (hcaccW) (hgL2child) (hgWchild)
-            (hR3) (hErepCap) (hErep0) (herrD) (hbrk) (hEbdef) (hsig))
+            (hR3) (hErepCap) (hErep0) (herrD) (hbrk)  (hsig))
   have hGbes0 : 0 ≤ Ch03.scaleNormalizedPositiveBesovVectorSeminormTwo (originCube d n) s
       (fun y => -g (y + x)) :=
     Ch03.scaleNormalizedPositiveBesovVectorSeminormTwo_nonneg_of_forceBesovRegularity
@@ -985,8 +1006,8 @@ theorem exists_interiorClause_honest (d : ℕ) [NeZero d] :
   obtain ⟨hsubx, hErepCap, hErep0, hsig, hP2def, hQSdef, hQ3sdef, hQ3sndef, hQ1sdef, hR3ndef,
     hS4def, hS192def, hX0, hY0, hQS0, hQ3s0, hQ3sn0, hQ1s0, hR3n0, hS40, hS1920, hsiginv0,
       hYchildle, hET, hFT, hxf, hW1⟩ :=
-    @interiorComposed_comparisonBounds3 (d) (by infer_instance) (CE) (Cout) (hCoutpos) (hkappadef)
-      (hkappa) (he0def) (hk0def) (hb0def) (hb0) (M) (s) (hs) (L) (m) (n) (hmL) (hnm) (x) (z) (hz)
+    @interiorComposed_comparisonBounds3 (d) (by infer_instance) (CE) (Cout) (hCoutpos)
+      (hkappa)    (hb0) (M) (s) (hs) (L) (m) (n) (hmL) (hnm) (x) (z) (hz)
         (hgeom) (hfr) (hs1) (omega) (hcapE) (hcacc) (herrD) (hbrk) (hmem) (u) (hdat) (g) (hsol)
           (hgL2) (hgW) (v) (w) (hharm) (hval) (hgrad)
   set Erep : ℝ := Support.fluxCorrectedErrorRepresentative M L (n + 2)

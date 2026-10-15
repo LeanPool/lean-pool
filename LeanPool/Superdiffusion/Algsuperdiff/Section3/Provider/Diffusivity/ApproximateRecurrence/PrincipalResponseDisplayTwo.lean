@@ -166,15 +166,6 @@ private abbrev principalResponseDisplayTwo_momentBounds1_statement : Prop :=
                   (↑h : ℤ)) m e e' R (wD z)
                   (wN z)) ^
               (2 : ℕ);
-        ∀
-          (_ :
-            Xz = fun (z : Cutoff.CutoffSample d) =>
-              descendantsAverage (originCube d K) j fun (R : TriadicCube d) =>
-                annealedSqrtNormSq sigmaTop
-                    (principalPz (Annealed.sigmaBar M (m - (↑h : ℤ))) (↑z : Cutoff.ShellSeq d) (m
-                      - (↑h : ℤ)) m e e' R
-                      (wD z) (wN z)) ^
-                  (2 : ℕ)),
           let Wz : Cutoff.CutoffSample d → ℝ := fun (z : Cutoff.CutoffSample d) =>
             cubeEuclideanLpNorm (originCube d K) (8 : ℝ≥0∞) (wD z).grad ^ (2 : ℕ) +
                 (2 : ℝ) * cubeEuclideanLpNorm (originCube d K) (8 : ℝ≥0∞) (wN z).toH1Function.grad
@@ -185,26 +176,9 @@ private abbrev principalResponseDisplayTwo_momentBounds1_statement : Prop :=
                       Cutoff.ShellSeq d) (m - (↑h : ℤ)) m
                       e') ^
                   (2 : ℕ);
-          ∀
-            (_ :
-              Wz = fun (z : Cutoff.CutoffSample d) =>
-                cubeEuclideanLpNorm (originCube d K) (8 : ℝ≥0∞) (wD z).grad ^ (2 : ℕ) +
-                    (2 : ℝ) * cubeEuclideanLpNorm (originCube d K) (8 : ℝ≥0∞) (wN
-                      z).toH1Function.grad ^ (2 : ℕ) +
-                  (2 : ℝ) *
-                    cubeEuclideanLpNorm (originCube d K) (8 : ℝ≥0∞)
-                        (streamForcing (↑(Annealed.sigmaBar M (m - (↑h : ℤ))) : ℝ)⁻¹ (↑z :
-                          Cutoff.ShellSeq d) (m - (↑h : ℤ))
-                          m e') ^
-                      (2 : ℕ)),
             let Ysh : Cutoff.ShellSeq d → ℝ := fun (omega : Cutoff.ShellSeq d) =>
               (2 : ℝ) * Tf omega + (2 : ℝ) * (↑(Annealed.sigmaBar M (m - (↑h : ℤ))) : ℝ)⁻¹ ^ (2 :
                 ℕ) * T omega;
-            ∀
-              (_ :
-                Ysh = fun (omega : Cutoff.ShellSeq d) =>
-                  (2 : ℝ) * Tf omega + (2 : ℝ) * (↑(Annealed.sigmaBar M (m - (↑h : ℤ))) : ℝ)⁻¹ ^
-                    (2 : ℕ) * T omega),
               (∀ (z : Cutoff.CutoffSample d), (0 : ℝ) ≤ Xz z) ∧
                 (∀ (z : Cutoff.CutoffSample d), (0 : ℝ) ≤ Wz z) ∧
                   (∀ (z : Cutoff.CutoffSample d),
@@ -249,14 +223,7 @@ private abbrev principalResponseDisplayTwo_momentBounds2_statement : Prop :=
                     Cutoff.ShellSeq d) (m - (↑h : ℤ)) m
                     e') ^
                 (2 : ℕ);
-        let Ysh : Cutoff.ShellSeq d → ℝ := fun (omega : Cutoff.ShellSeq d) =>
-          (2 : ℝ) * Tf omega + (2 : ℝ) * (↑(Annealed.sigmaBar M (m - (↑h : ℤ))) : ℝ)⁻¹ ^ (2 : ℕ) *
-            T omega;
         ∀
-          (_ :
-            Ysh = fun (omega : Cutoff.ShellSeq d) =>
-              (2 : ℝ) * Tf omega + (2 : ℝ) * (↑(Annealed.sigmaBar M (m - (↑h : ℤ))) : ℝ)⁻¹ ^ (2 :
-                ℕ) * T omega)
           (_ : (0 : ℝ) < gaugeRatio (Annealed.sigmaBar M (m - (↑h : ℤ))) sigmaTop)
           (_ :
             ∀ (z : Cutoff.CutoffSample d),
@@ -515,9 +482,34 @@ theorem pathwise_descendantsAverage_sq_annealedSqrtNormSq_le
 
 private theorem principalResponseDisplayTwo_momentBounds1 :
   principalResponseDisplayTwo_momentBounds1_statement := by
-  intro d hd Chead _ Clp hClppos _ hg0b M hMgamma m K h hK _ e' he' j _ wD wN hwD hwN hgamma
-    hquarter _ hsigInvnn Tf hTftail hTfbound T A0 hTle hTtail hnormalized Xz hXzdef Wz hWzdef Ysh
-      hYshdef
+  intro d hd Chead _ Clp hClppos _ hg0b M hMgamma m K h hK _e e' he' j _sigmaTop wD wN hwD hwN
+    hgamma hquarter _ hsigInvnn Tf hTftail hTfbound T A0 hTle hTtail hnormalized Xz Wz Ysh
+  have hXzdef :
+    Xz = fun (z : Cutoff.CutoffSample d) =>
+              descendantsAverage (originCube d K) j fun (R : TriadicCube d) =>
+                annealedSqrtNormSq _sigmaTop
+                    (principalPz (Annealed.sigmaBar M (m - (↑h : ℤ))) (↑z : Cutoff.ShellSeq d) (m
+                      - (↑h : ℤ)) m _e e' R
+                      (wD z) (wN z)) ^
+                  (2 : ℕ)
+    := rfl
+  have hWzdef :
+    Wz = fun (z : Cutoff.CutoffSample d) =>
+                cubeEuclideanLpNorm (originCube d K) (8 : ℝ≥0∞) (wD z).grad ^ (2 : ℕ) +
+                    (2 : ℝ) * cubeEuclideanLpNorm (originCube d K) (8 : ℝ≥0∞) (wN
+                      z).toH1Function.grad ^ (2 : ℕ) +
+                  (2 : ℝ) *
+                    cubeEuclideanLpNorm (originCube d K) (8 : ℝ≥0∞)
+                        (streamForcing (↑(Annealed.sigmaBar M (m - (↑h : ℤ))) : ℝ)⁻¹ (↑z :
+                          Cutoff.ShellSeq d) (m - (↑h : ℤ))
+                          m e') ^
+                      (2 : ℕ)
+    := rfl
+  have hYshdef :
+    Ysh = fun (omega : Cutoff.ShellSeq d) =>
+                  (2 : ℝ) * Tf omega + (2 : ℝ) * (↑(Annealed.sigmaBar M (m - (↑h : ℤ))) : ℝ)⁻¹ ^
+                    (2 : ℕ) * T omega
+    := rfl
   have hX0 : ∀ z, 0 ≤ Xz z := by
     intro z
     simp only [hXzdef]
@@ -617,8 +609,17 @@ private theorem principalResponseDisplayTwo_momentBounds1 :
 
 private theorem principalResponseDisplayTwo_momentBounds2 :
   principalResponseDisplayTwo_momentBounds2_statement := by
-  intro d Chead hCheadpos Clp _ _ M m _ h e e' he he' j sigmaTop _ _ hgamma hquarter _ _ Xz hmeasX
-    Wz Ysh hYshdef hrho hXle hX0 hWnn hWY hmerge
+  intro d Chead hCheadpos Clp _ _ M m _ h e e' he he' j sigmaTop _ _ hgamma hquarter _Tf _T Xz
+    hmeasX Wz hrho hXle hX0 hWnn hWY hmerge
+  let Ysh : Cutoff.ShellSeq d → ℝ :=
+    fun (omega : Cutoff.ShellSeq d) =>
+      (2 : ℝ) * _Tf omega + (2 : ℝ) * (↑(Annealed.sigmaBar M (m - (↑h : ℤ))) : ℝ)⁻¹ ^ (2 : ℕ) *
+        _T omega
+  have hYshdef :
+    Ysh = fun (omega : Cutoff.ShellSeq d) =>
+              (2 : ℝ) * _Tf omega + (2 : ℝ) * (↑(Annealed.sigmaBar M (m - (↑h : ℤ))) : ℝ)⁻¹ ^ (2 :
+                ℕ) * _T omega
+    := rfl
   have hmergeY : IndependentSums.IsBigOWith M.P.toMeasure
       (IndependentSums.gammaSigma 1) Ysh (6 * M.gamma ^ (100 : ℕ)) := by
     rw [hYshdef]
@@ -898,12 +899,12 @@ theorem exists_const_fourthMoment_annealedSqrtNormSq_principalPz_le
     @principalResponseDisplayTwo_momentBounds1 (d) (hd) (Chead) (g0a) (Clp) (hClppos) (g0b) (hg0b)
       (M) (hMgamma) (m) (K) (h) (hK) (e) (e') (he') (j) (sigmaTop) (wD) (wN) (hwD) (hwN) (hgamma)
         (hquarter) (hsigpos) (hsigInvnn) (Tf) (hTftail) (hTfbound) (T) (hTle) (hTtail)
-          (hnormalized) (hXzdef) (hWzdef) (hYshdef)
+          (hnormalized)
   rw [hsix] at hmerge
   obtain ⟨hfinal, hIntnn, hroot⟩ :=
     @principalResponseDisplayTwo_momentBounds2 (d) (Chead) (hCheadpos) (Clp) (hClppos) (hc2pos)
       (M) (m) (K) (h) (e) (e') (he) (he') (j) (sigmaTop) (wD) (wN) (hgamma) (hquarter) (Tf) (T)
-        (hmeasX) (hYshdef) (hrho) (hXle) (hX0) (hWnn) (hWY) (hmerge)
+        (hmeasX)  (hrho) (hXle) (hX0) (hWnn) (hWY) (hmerge)
   calc (∫ z : Cutoff.CutoffSample d, Xz z
         ∂(Cutoff.cutoffSampleLaw M).toMeasure) ^ ((1 : ℝ) / 4)
       ≤ (gaugeRatio (Annealed.sigmaBar M (m - (h : ℤ))) sigmaTop ^ (2 : ℕ) *

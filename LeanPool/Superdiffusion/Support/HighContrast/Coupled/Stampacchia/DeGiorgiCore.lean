@@ -80,11 +80,10 @@ private abbrev deGiorgiCore_comparisonBounds1_statement : Prop :=
                         L))))
         (_ : p ≠ ∞) (_ : p ≠ (0 : ℝ≥0∞)),
         let q : ℝ := p.toReal;
-        ∀ (_ : (0 : ℝ) < q) (_ : q = p.toReal),
+        ∀ (_ : (0 : ℝ) < q) ,
           let α : ℝ := q / (2 : ℝ);
-          ∀ (_ : α = q / (2 : ℝ)),
             let γ : ℝ := (2 : ℝ) / q;
-            ∀ (_ : γ = (2 : ℝ) / q) (_ : (1 : ℝ) < α) (z : Vec d) (L : ℝ) (_ : (0 : ℝ) < L)
+            ∀ (_ : (1 : ℝ) < α) (z : Vec d) (L : ℝ) (_ : (0 : ℝ) < L)
               (w₁ w₂ : H1Function (axisCube z L)) (_ : Measurable w₁.toFun) (_ : Measurable
                 w₂.toFun)
               (_ : MemH10 (axisCube z L) fun (x : Vec d) => w₁.toFun x - w₂.toFun x) (m₀ E₀ : ℝ)
@@ -324,8 +323,17 @@ private theorem deGiorgi_oneSidedTruncationBound :
               + (volume {x | x ∈ axisCube z L ∧ m₀ + k < w₂.toFun x}).toReal) := by ring
 
 private theorem deGiorgiCore_comparisonBounds1 : deGiorgiCore_comparisonBounds1_statement := by
-  intro d C_F hC_F0 CE p hF hEmb hp_ne_top hp_ne_zero q hq_pos hq_def _ _ γ hγ_def _ z L hL w₁ w₂
-    hw₁meas hw₂meas hmatch m₀ E₀ _ hmedian hlevel
+  intro d C_F hC_F0 CE p hF hEmb hp_ne_top hp_ne_zero q hq_pos _α γ _ z L hL w₁ w₂ hw₁meas hw₂meas
+    hmatch m₀ E₀ _ hmedian hlevel
+  have hq_def :
+    q = p.toReal
+    := rfl
+  have _definition_α :
+    _α = q / (2 : ℝ)
+    := rfl
+  have hγ_def :
+    γ = (2 : ℝ) / q
+    := rfl
   have hUdom : IsOpenBoundedConvexDomain (axisCube z L) :=
     isOpenBoundedConvexDomain_axisCube z L
   have hUmeas : MeasurableSet (axisCube z L) := (isOpen_axisCube z L).measurableSet
@@ -496,7 +504,7 @@ theorem deGiorgi_one_sided_core {d : ℕ} (hd : 3 ≤ d) :
   obtain ⟨stage_hUmeas, stage_hVolU_top, stage_hVolU_toReal, stage_hSub_top, stage_hfin_2star,
     stage_htrunc, stage_hrec⟩ :=
     @deGiorgiCore_comparisonBounds1 (d) (C_F) (hC_F0) (CE) (hF) (hEmb) (hp_ne_top) (hp_ne_zero)
-      (hq_pos) (hq_def) (hα_def) (hγ_def) (hα1) (z) (L) (hL) (w₁) (w₂) (hw₁meas) (hw₂meas)
+      (hq_pos)    (hα1) (z) (L) (hL) (w₁) (w₂) (hw₁meas) (hw₂meas)
         (hmatch) (m₀) (E₀) (hE₀) (hmedian) (hlevel)
   have hUmeas : MeasurableSet (axisCube z L) := stage_hUmeas
   have hVolU_top : volume (axisCube z L) ≠ ⊤ := stage_hVolU_top

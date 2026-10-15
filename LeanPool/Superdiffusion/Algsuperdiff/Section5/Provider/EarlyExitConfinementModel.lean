@@ -78,11 +78,9 @@ private abbrev earlyExitConfinementModel_rates_statement : Prop :=
   ∀ (d : ℕ) [NeZero d] (_ : (2 : ℕ) ≤ d) (cstar : ℝ) (_ : (0 : ℝ) < cstar)
    (gammaT Cev Cfloor Cchain ctail csmall Creg : ℝ) (_ : (0 : ℝ) < Cchain) (gammaL gammaR : ℝ),
    let ep : ℝ := min (1 / 4 : ℝ) csmall;
-   ∀ (_ : ep = min (1 / 4 : ℝ) csmall),
     let kappa : ℝ := earlyExitKappa Cchain.toNNReal Cchain⁻¹.toNNReal;
     ∀ (_ : (0 : ℝ) < kappa) (_ : kappa ≤ (1 : ℝ)),
      let costBar : ℝ := (3 : ℝ) + (3 : ℝ) * (max (1 : ℝ) √cstar * Real.exp (1 / 2 : ℝ));
-     ∀ (_ : costBar = (3 : ℝ) + (3 : ℝ) * (max (1 : ℝ) √cstar * Real.exp (1 / 2 : ℝ))),
       let delta : ℝ := min (1 : ℝ) (Cchain * kappa / ((128 : ℝ) * (3 : ℝ) ^ d * costBar));
       ∀ (_ : delta ≤ (1 : ℝ)) (_ : (0 : ℝ) < delta)
        (_ : (128 : ℝ) * (3 : ℝ) ^ d * delta * costBar ≤ Cchain * kappa),
@@ -176,10 +174,10 @@ private abbrev earlyExitConfinementModel_rates_statement : Prop :=
                                         M)
                                        M.gamma (↑t : ℝ) m))),
         let cbar : ℝ := kappa * delta ^ (2 : ℕ) / ((192 : ℝ) * (3 : ℝ) ^ d);
-        ∀ (_ : cbar = kappa * delta ^ (2 : ℕ) / ((192 : ℝ) * (3 : ℝ) ^ d)) (_ : (0 : ℝ) <
+        ∀ (_ : (0 : ℝ) <
          cbar),
          let Kbar : ℝ := max (max (1 : ℝ) √((100 : ℝ) / cbar)) √((3 : ℝ) ^ jbase);
-         ∀ (_ : Kbar = max (max (1 : ℝ) √((100 : ℝ) / cbar)) √((3 : ℝ) ^ jbase)) (M :
+         ∀ (M :
           ABKModel d)
           (_ : Disorder.cstar M = cstar) (_ : M.gamma ≤ min (min gammaT gammaL) (min
            gammaR cstar))
@@ -376,7 +374,7 @@ private abbrev earlyExitConfinementModel_comparisonBounds1_statement : Prop :=
           ∀ (_ : delta ≤ (1 : ℝ)) (_ : (0 : ℝ) < delta),
             let jbase : ℕ := earlyExitBaseScale d;
             let CSbar : ℝ := max (1 : ℝ) ((2 : ℝ) * delta⁻¹ ^ (2 : ℕ));
-            ∀ (_ : CSbar = max (1 : ℝ) ((2 : ℝ) * delta⁻¹ ^ (2 : ℕ))) (M : ABKModel d) (t Kmin : ℝ)
+            ∀ (M : ABKModel d) (t Kmin : ℝ)
               (_ : M.gamma ≤ gammaR) (_ : (0 : ℝ) < M.gamma) (_ : M.gamma ≤ (1 / 4 : ℝ))
               (_ : Cfloor * √M.gamma * |Real.log M.gamma|.rpow (7 / 2 : ℝ) ≤ min (1 / 4 : ℝ) csmall)
               (_ : ((1 : ℝ) - M.gamma)⁻¹ ≤ (2 : ℝ)),
@@ -894,9 +892,20 @@ private theorem earlyExitConfinementModel_momentBounds1 :
 
 private theorem earlyExitConfinementModel_rates : earlyExitConfinementModel_rates_statement := by
   classical
-  intro d _ hdim cstar hcstar gammaT _ Cfloor Cchain _ csmall _ _ gammaL gammaR ep hepdef kappa
-    hkappa hkappa1 costBar hcostBardef delta hdelta1 hdelta hdeltaBar jbase htail cbar hcbardef
-      hcbarpos Kbar hKbardef M hcs hgam Kmin
+  intro d _ hdim cstar hcstar gammaT _ Cfloor Cchain _ csmall _ _ gammaL gammaR ep kappa hkappa
+    hkappa1 costBar delta hdelta1 hdelta hdeltaBar jbase htail cbar hcbarpos Kbar M hcs hgam Kmin
+  have hepdef :
+    ep = min (1 / 4 : ℝ) csmall
+    := rfl
+  have hcostBardef :
+    costBar = (3 : ℝ) + (3 : ℝ) * (max (1 : ℝ) √cstar * Real.exp (1 / 2 : ℝ))
+    := rfl
+  have hcbardef :
+    cbar = kappa * delta ^ (2 : ℕ) / ((192 : ℝ) * (3 : ℝ) ^ d)
+    := rfl
+  have hKbardef :
+    Kbar = max (max (1 : ℝ) √((100 : ℝ) / cbar)) √((3 : ℝ) ^ jbase)
+    := rfl
   have hgamT : M.gamma ≤ gammaT :=
     hgam.trans (le_trans (min_le_left _ _) (min_le_left _ _))
   have hgamL : M.gamma ≤ gammaL :=
@@ -988,8 +997,11 @@ private theorem earlyExitConfinementModel_comparisonBounds1 :
   earlyExitConfinementModel_comparisonBounds1_statement := by
   classical
   intro d cstar _ Cchain ctail csmall hCfloor _ hctail hcsmall _ hgrate hlog3 ep heppos Cscale _ _
-    _ delta hdelta1 hdelta _ CSbar hCSbardef M t Kmin hgamR hgamma hgamma4 hwindow hexple c K _ hL
-      Yfam hYmeas hYtail S
+    _ delta hdelta1 hdelta _ CSbar M t Kmin hgamR hgamma hgamma4 hwindow hexple c K _ hL Yfam
+    hYmeas hYtail S
+  have hCSbardef :
+    CSbar = max (1 : ℝ) ((2 : ℝ) * delta⁻¹ ^ (2 : ℕ))
+    := rfl
   have hSmeas : ∀ i, Measurable (S i) := fun i =>
     measurable_displacementScale (hYmeas i) delta M.gamma
   have hSnn : ∀ (i : ℤ) (omega : Cutoff.CutoffSample d), 0 ≤ S i omega := fun i omega =>
@@ -1195,9 +1207,9 @@ theorem exists_ae_confinement_exitTime_bound_of_threshold
   obtain ⟨hgamL, hgamR, hgc, hgamma, hgamma4, hgamma1, hi, hwindow, hmain, hepIcc, hepsmall,
     hdeltaSmall, hcdef, hexple, hcpos, hc1, hcbarle, hK, hKmin, hcK, hkK, hKle⟩ :=
     @earlyExitConfinementModel_rates (d) (by infer_instance) (hdim) (cstar) (hcstar) (gammaT)
-      (Cev) (Cfloor) (Cchain) (ctail) (csmall) (Creg) (hCchain) (gammaL) (gammaR) (hepdef)
-        (hkappa) (hkappa1) (hcostBardef) (hdelta1) (hdelta) (hdeltaBar) (htail) (hcbardef)
-          (hcbarpos) (hKbardef) (M) (hcs) (hgam) (Kmin)
+      (Cev) (Cfloor) (Cchain) (ctail) (csmall) (Creg) (hCchain) (gammaL) (gammaR)
+        (hkappa) (hkappa1)  (hdelta1) (hdelta) (hdeltaBar) (htail)
+          (hcbarpos)  (M) (hcs) (hgam) (Kmin)
   set c : ℝ := earlyExitDecayConstant d M.gamma delta kappa with hcdef
   set K : ℝ :=
     max (max (max 1 (Real.sqrt (100 / c))) (Real.sqrt ((3 : ℝ) ^ jbase))) Kmin with hKdef
@@ -1215,7 +1227,7 @@ theorem exists_ae_confinement_exitTime_bound_of_threshold
   obtain ⟨hSmeas, hSnn, hCS, hCSle, hpS1, hpSrange, hSmom, hconf⟩ :=
     @earlyExitConfinementModel_comparisonBounds1 (d) (cstar) (Cfloor) (Cchain) (ctail) (csmall)
       (hCfloor) (hCchain) (hctail) (hcsmall) (gammaR) (hgrate) (hlog3) (heppos) (hkappa) (hdelta1)
-        (hdelta) (hCSbardef) (M) (t) (Kmin) (hgamR) (hgamma) (hgamma4) (hwindow) (hexple) (hL)
+        (hdelta)  (M) (t) (Kmin) (hgamR) (hgamma) (hgamma4) (hwindow) (hexple) (hL)
           (Yfam) (hYmeas) (hYtail)
   set a : ℝ := ctail * ep ^ (2 : ℕ) * M.gamma⁻¹ * |Real.log M.gamma| ^ (-6 : ℤ) with hadef
   set Cmom : ℝ := delta ^ (-(1 - M.gamma)⁻¹) * (1 - Real.exp (-(a / 2)))⁻¹ with hCmomdef

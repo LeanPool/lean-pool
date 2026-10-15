@@ -77,20 +77,12 @@ variable {d : ℕ}
 private abbrev residueInterface_comparisonBounds3_statement : Prop :=
     ∀ (d : ℕ) (CA : ℝ) (_ : (0 : ℝ) ≤ CA),
       let c1 : ℝ := √((3 : ℝ) ^ d) + √((27 : ℝ) ^ d) + CA * ((2 : ℝ) * √((27 : ℝ) ^ d));
-      ∀ (_ : c1 = √((3 : ℝ) ^ d) + √((27 : ℝ) ^ d) + CA * ((2 : ℝ) * √((27 : ℝ) ^ d))),
         let c2 : ℝ :=
           datumStepConst d + comparatorPoincareConst d * √((27 : ℝ) ^ d) +
             CA * ((2 : ℝ) * (comparatorPoincareConst d * √((27 : ℝ) ^ d)) +
               unitMeanZeroPoincareConst d * √((27 : ℝ) ^ d));
-        ∀
-          (_ :
-            c2 =
-              datumStepConst d + comparatorPoincareConst d * √((27 : ℝ) ^ d) +
-                CA *
-                  ((2 : ℝ) * (comparatorPoincareConst d * √((27 : ℝ) ^ d)) +
-                    unitMeanZeroPoincareConst d * √((27 : ℝ) ^ d))),
           let c3 : ℝ := (1 : ℝ) + CA * (2 : ℝ);
-          ∀ (_ : c3 = (1 : ℝ) + CA * (2 : ℝ)) (_ : (0 : ℝ) ≤ c1) (_ : (0 : ℝ) ≤ c2) (_ : (0 : ℝ) ≤
+          ∀ (_ : (0 : ℝ) ≤ c1) (_ : (0 : ℝ) ≤ c2) (_ : (0 : ℝ) ≤
             c3) {n m : ℤ}
             {x z : Vec d} {i : Fin d} {σ : ℝ} (u h : H1Function (openCubeSet (originCube d m))),
             let c' : Vec d := flushSubCentre z m n i σ;
@@ -152,19 +144,6 @@ private abbrev residueInterface_comparisonBounds3_statement : Prop :=
                       ((fun (y' : Vec d) => z + y') '' openCubeSet (originCube d (n + (3 : ℤ))) ∩
                         openCubeSet (originCube d m))
                       u.toFun;
-              ∀
-                (_ :
-                  XX =
-                    normalizedL2On
-                      ((fun (y' : Vec d) => z + y') '' openCubeSet (originCube d (n + (3 : ℤ))) ∩
-                        openCubeSet (originCube d m))
-                      fun (y : Vec d) =>
-                      u.toFun y -
-                        volumeAverage
-                          ((fun (y' : Vec d) => z + y') '' openCubeSet (originCube d (n + (3 :
-                            ℤ))) ∩
-                            openCubeSet (originCube d m))
-                          u.toFun),
                 let HH : ℝ :=
                   ∑ i' : Fin d,
                     (eLpNorm (fun (y : Vec d) => h.grad y i') (2 : ℝ≥0∞)
@@ -207,25 +186,11 @@ private abbrev residueInterface_comparisonBounds3_statement : Prop :=
                       ((fun (y : Vec d) => wellPlacedCentre x m (n + (2 : ℤ)) + y) ''
                         openCubeSet (originCube d (n + (2 : ℤ))))
                       u.toFun;
-                  ∀
-                    (_ :
-                      A1 =
-                        volumeAverage
-                          ((fun (y : Vec d) => wellPlacedCentre x m (n + (2 : ℤ)) + y) ''
-                            openCubeSet (originCube d (n + (2 : ℤ))))
-                          u.toFun),
                     let A2 : ℝ :=
                       volumeAverage
                         ((fun (y : Vec d) => wellPlacedCentre x m (n + (2 : ℤ)) + y) ''
                           openCubeSet (originCube d (n + (2 : ℤ))))
                         h.toFun;
-                    ∀
-                      (_ :
-                        A2 =
-                          volumeAverage
-                            ((fun (y : Vec d) => wellPlacedCentre x m (n + (2 : ℤ)) + y) ''
-                              openCubeSet (originCube d (n + (2 : ℤ))))
-                            h.toFun),
                       let B1 : ℝ := volumeAverage ((fun (y : Vec d) => c' + y) '' openCubeSet
                         (originCube d n)) u.toFun;
                       ∀
@@ -235,8 +200,7 @@ private abbrev residueInterface_comparisonBounds3_statement : Prop :=
                               u.toFun y - B1) ≤
                             (2 : ℝ) * √((27 : ℝ) ^ d) * XX)
                         (_ : |A1 - B1| ≤ (√((3 : ℝ) ^ d) + √((27 : ℝ) ^ d)) * XX)
-                        (_ : B1 = volumeAverage ((fun (y : Vec d) => c' + y) '' openCubeSet
-                          (originCube d n)) u.toFun),
+                        ,
                         let B2 : ℝ := volumeAverage ((fun (y : Vec d) => c' + y) '' openCubeSet
                           (originCube d n)) h.toFun;
                         ∀
@@ -282,8 +246,7 @@ private abbrev residueInterface_comparisonBounds3_statement : Prop :=
                                   ((fun (y : Vec d) => flushSubCentre z m n i σ + y) ''
                                     openCubeSet (originCube d n))
                                   fun (x : Vec d) => h.toFun x - B2)
-                          (_ : B2 = volumeAverage ((fun (y : Vec d) => c' + y) '' openCubeSet
-                            (originCube d n)) h.toFun),
+                          ,
                           (|volumeAverage
                                   ((fun (y : Vec d) => wellPlacedCentre x m (n + (2 : ℤ)) + y) ''
                                     openCubeSet (originCube d (n + (2 : ℤ))))
@@ -354,7 +317,7 @@ private abbrev residueInterface_comparisonBounds2_statement : Prop :=
       (u h : H1Function (openCubeSet (originCube d m))) (_ : HasZeroTraceDifferenceOn (openCubeSet
         (originCube d m)) u h),
       let c' : Vec d := flushSubCentre z m n i σ;
-      ∀ (_ : c' = flushSubCentre z m n i σ)
+      ∀
         (_ :
           (fun (y : Vec d) => c' + y) '' openCubeSet (originCube d n) ⊆
             (fun (y' : Vec d) => z + y') '' openCubeSet (originCube d (n + (3 : ℤ))) ∩ openCubeSet
@@ -410,13 +373,6 @@ private abbrev residueInterface_comparisonBounds2_statement : Prop :=
                   ((fun (y' : Vec d) => z + y') '' openCubeSet (originCube d (n + (3 : ℤ))) ∩
                     openCubeSet (originCube d m)))).toReal;
         ∀
-          (_ :
-            HH =
-              ∑ i' : Fin d,
-                (eLpNorm (fun (y : Vec d) => h.grad y i') (2 : ℝ≥0∞)
-                    (normalizedVolumeMeasureOn
-                      ((fun (y' : Vec d) => z + y') '' openCubeSet (originCube d (n + (3 : ℤ))) ∩
-                        openCubeSet (originCube d m)))).toReal)
           (_ : (0 : ℝ) ≤ (3 : ℝ) ^ n),
           |volumeAverage
                     ((fun (y : Vec d) => wellPlacedCentre x m (n + (2 : ℤ)) + y) ''
@@ -582,9 +538,19 @@ theorem boundaryComparatorOscillationAndMeanBounds :
 private theorem residueInterface_comparisonBounds2 :
   residueInterface_comparisonBounds2_statement := by
   classical
-  intro d CA hCA hCP0 n m _ z i _ hnm hx hz hgeom hσ hover _ h hzt c' hc' hKW' hW'm hW'pos hK'pos
-    hK'top this hK'm wu rhou hharmu hvalu wh rhoh hharmh hvalh hboundh hKT hNormSet this HH hHHdef
-      h3n0
+  intro d CA hCA hCP0 n m _ z i _σ hnm hx hz hgeom hσ hover _ h hzt c' hKW' hW'm hW'pos hK'pos
+    hK'top this hK'm wu rhou hharmu hvalu wh rhoh hharmh hvalh hboundh hKT hNormSet this HH h3n0
+  have hc' :
+    c' = flushSubCentre z m n i _σ
+    := rfl
+  have hHHdef :
+    HH =
+              ∑ i' : Fin d,
+                (eLpNorm (fun (y : Vec d) => h.grad y i') (2 : ℝ≥0∞)
+                    (normalizedVolumeMeasureOn
+                      ((fun (y' : Vec d) => z + y') '' openCubeSet (originCube d (n + (3 : ℤ))) ∩
+                        openCubeSet (originCube d m)))).toReal
+    := rfl
   have hlegC := abs_volumeAverage_datum_sub_le_datumStep (c' := c') hnm hx hz hgeom
     (by rw [hc']; exact flushSubCube_subset_flushCube z i hσ) h
   -- L D3: the h-comparator error, transported to the window
@@ -697,9 +663,57 @@ private theorem residueInterface_comparisonBounds2 :
 private theorem residueInterface_comparisonBounds3 :
   residueInterface_comparisonBounds3_statement := by
   classical
-  intro d CA hCA0 c1 hc1 c2 hc2 c3 hc3 hc10 hc20 hc30 n m x z _ _ u h c' hW'pos hW'top hK'top this
-    hV1top wu wh this hmemU_K hmemH_K hmemU_V1 hmemH_V1 hmemU_W XX hXXdef HH hXX0 hHH0 h3n0 hlegD3
-      hlegA hsplit A1 hA1 A2 hA2 B1 hoscU hlegB hB1' B2 hoscH hlegC hosc hB2'
+  intro d CA hCA0 c1 c2 c3 hc10 hc20 hc30 n m x z _ _ u h c' hW'pos hW'top hK'top this hV1top wu
+    wh this hmemU_K hmemH_K hmemU_V1 hmemH_V1 hmemU_W XX HH hXX0 hHH0 h3n0 hlegD3 hlegA hsplit A1
+    A2 B1 hoscU hlegB B2 hoscH hlegC hosc
+  have hc1 :
+    c1 = √((3 : ℝ) ^ d) + √((27 : ℝ) ^ d) + CA * ((2 : ℝ) * √((27 : ℝ) ^ d))
+    := rfl
+  have hc2 :
+    c2 =
+              datumStepConst d + comparatorPoincareConst d * √((27 : ℝ) ^ d) +
+                CA *
+                  ((2 : ℝ) * (comparatorPoincareConst d * √((27 : ℝ) ^ d)) +
+                    unitMeanZeroPoincareConst d * √((27 : ℝ) ^ d))
+    := rfl
+  have hc3 :
+    c3 = (1 : ℝ) + CA * (2 : ℝ)
+    := rfl
+  have hXXdef :
+    XX =
+                    normalizedL2On
+                      ((fun (y' : Vec d) => z + y') '' openCubeSet (originCube d (n + (3 : ℤ))) ∩
+                        openCubeSet (originCube d m))
+                      fun (y : Vec d) =>
+                      u.toFun y -
+                        volumeAverage
+                          ((fun (y' : Vec d) => z + y') '' openCubeSet (originCube d (n + (3 :
+                            ℤ))) ∩
+                            openCubeSet (originCube d m))
+                          u.toFun
+    := rfl
+  have hA1 :
+    A1 =
+                        volumeAverage
+                          ((fun (y : Vec d) => wellPlacedCentre x m (n + (2 : ℤ)) + y) ''
+                            openCubeSet (originCube d (n + (2 : ℤ))))
+                          u.toFun
+    := rfl
+  have hA2 :
+    A2 =
+                          volumeAverage
+                            ((fun (y : Vec d) => wellPlacedCentre x m (n + (2 : ℤ)) + y) ''
+                              openCubeSet (originCube d (n + (2 : ℤ))))
+                            h.toFun
+    := rfl
+  have hB1' :
+    B1 = volumeAverage ((fun (y : Vec d) => c' + y) '' openCubeSet
+                          (originCube d n)) u.toFun
+    := rfl
+  have hB2' :
+    B2 = volumeAverage ((fun (y : Vec d) => c' + y) '' openCubeSet
+                            (originCube d n)) h.toFun
+    := rfl
   have hmeanV1 : volumeAverage ((fun y => wellPlacedCentre x m (n + 2) + y) ''
       openCubeSet (originCube d (n + 2))) (fun y => u.toFun y - h.toFun y) =
       A1 - A2 := by
@@ -1432,9 +1446,9 @@ theorem exists_scalarControl_boundaryBranch_comparator (d : ℕ) [NeZero d] :
   -- L C: the datum step (proved)
   obtain ⟨stage_hlegC, stage_hgradHtrans, stage_hlegD3, stage_hlegA⟩ :=
     @residueInterface_comparisonBounds2 (d) (CA) (hCA) (hCP0) (n) (m) (x) (z) (i) (σ) (hnm) (hx)
-      (hz) (hgeom) (hσ) (hover) (u) (h) (hzt) (hc') (hKW') (hW'm) (hW'pos) (hK'pos) (hK'top) (by
+      (hz) (hgeom) (hσ) (hover) (u) (h) (hzt)  (hKW') (hW'm) (hW'pos) (hK'pos) (hK'top) (by
         infer_instance) (hK'm) (wu) (rhou) (hharmu) (hvalu) (wh) (rhoh) (hharmh) (hvalh) (hboundh)
-          (hKT) (hNormSet) (by infer_instance) (hHHdef) (h3n0)
+          (hKT) (hNormSet) (by infer_instance)  (h3n0)
   let hlegC := stage_hlegC
   have hgradHtrans : ∀ i' : Fin d,
       normalizedL2On ((fun y => c' + y) '' openCubeSet (originCube d n))
@@ -1480,11 +1494,11 @@ theorem exists_scalarControl_boundaryBranch_comparator (d : ℕ) [NeZero d] :
   set B2 : ℝ := volumeAverage ((fun y => c' + y) ''
     openCubeSet (originCube d n)) h.toFun with hB2'
   obtain ⟨htotal, hXXe, hfinal⟩ :=
-    @residueInterface_comparisonBounds3 (d) (CA) (hCA0) (hc1) (hc2) (hc3) (hc10) (hc20) (hc30) (n)
+    @residueInterface_comparisonBounds3 (d) (CA) (hCA0)    (hc10) (hc20) (hc30) (n)
       (m) (x) (z) (i) (σ) (u) (h) (hW'pos) (hW'top) (hK'top) (by infer_instance) (hV1top) (wu)
-        (wh) (by infer_instance) (hmemU_K) (hmemH_K) (hmemU_V1) (hmemH_V1) (hmemU_W) (hXXdef)
-          (hXX0) (hHH0) (h3n0) (hlegD3) (hlegA) (hsplit) (hA1) (hA2) (hoscU) (hlegB) (hB1')
-            (hoscH) (hlegC) (hosc) (hB2')
+        (wh) (by infer_instance) (hmemU_K) (hmemH_K) (hmemU_V1) (hmemH_V1) (hmemU_W)
+          (hXX0) (hHH0) (h3n0) (hlegD3) (hlegA) (hsplit)   (hoscU) (hlegB)
+            (hoscH) (hlegC) (hosc)
   set NU : ℝ := normalizedL2On ((fun y => c' + y) '' openCubeSet (originCube d n))
     (fun y => u.toFun y - wu.toFun y) with hNU
   set NH : ℝ := normalizedL2On ((fun y => c' + y) '' openCubeSet (originCube d n))

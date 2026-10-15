@@ -33,13 +33,11 @@ noncomputable section
 private abbrev assemblyComposed_comparisonBounds4_statement : Prop :=
   ∀ (d : ℕ) [NeZero d] (CE KE : ℝ),
    let kappa : ℝ := √((192 : ℝ) * (↑d : ℝ)) * (3 : ℝ);
-   ∀ (_ : kappa = √((192 : ℝ) * (↑d : ℝ)) * (3 : ℝ)) (_ : (0 : ℝ) ≤ kappa),
+   ∀ (_ : (0 : ℝ) ≤ kappa),
     let e0 : ℝ := kappa * (CE * (1 / 2 : ℝ));
-    ∀ (_ : e0 = kappa * (CE * (1 / 2 : ℝ))),
      let k0 : ℝ := (2 : ℝ) * (↑d : ℝ) * (e0 ^ (2 : ℕ) + (1 : ℝ));
-     ∀ (_ : k0 = (2 : ℝ) * (↑d : ℝ) * (e0 ^ (2 : ℕ) + (1 : ℝ))),
       let b0 : ℝ := √k0 * e0 + (2 : ℝ) * k0;
-      ∀ (_ : b0 = √k0 * e0 + (2 : ℝ) * k0) (M : ABKModel d) (s : ℝ) (_ : (0 : ℝ) < s) (L m n
+      ∀ (M : ABKModel d) (s : ℝ) (_ : (0 : ℝ) < s) (L m n
        : ℤ) (_ : m ≤ L)
        (_ : n + (3 : ℤ) ≤ m) (x z : Vec d)
        (_ :
@@ -481,11 +479,9 @@ private abbrev assemblyComposed_comparisonBounds1_statement : Prop :=
       let kappa : ℝ := √((192 : ℝ) * (↑d : ℝ)) * (3 : ℝ);
       ∀ (_ : (0 : ℝ) ≤ kappa),
         let e0 : ℝ := kappa * (CE * (1 / 2 : ℝ));
-        ∀ (_ : e0 = kappa * (CE * (1 / 2 : ℝ))),
           let k0 : ℝ := (2 : ℝ) * (↑d : ℝ) * (e0 ^ (2 : ℕ) + (1 : ℝ));
-          ∀ (_ : k0 = (2 : ℝ) * (↑d : ℝ) * (e0 ^ (2 : ℕ) + (1 : ℝ))),
             let b0 : ℝ := √k0 * e0 + (2 : ℝ) * k0;
-            ∀ (_ : b0 = √k0 * e0 + (2 : ℝ) * k0) (M : ABKModel d) (s : ℝ) (_ : (0 : ℝ) < s) (L m n
+            ∀ (M : ABKModel d) (s : ℝ) (_ : (0 : ℝ) < s) (L m n
               : ℤ) (x z : Vec d)
               (_ :
                 (fun (y : Vec d) => x + y) '' openCubeSet (originCube d n) ⊆
@@ -624,9 +620,18 @@ private abbrev assemblyComposed_comparisonBounds1_statement : Prop :=
 
 private theorem assemblyComposed_comparisonBounds1 :
   assemblyComposed_comparisonBounds1_statement := by
-  intro d _ _ KE kappa hkappa e0 he0def k0 hk0def b0 hb0def M s hs L m n x z hgeom hs1 omega u _ g
-    S hsubx hgWW2 hgL2child hgWchild Erep hErepCap hErep0 Eb herrD hbrk sig hsig X Gs Hs Hn Y2
-      Ychild P2 Q3s Q3sn Sm3 Sm2 hEn hEb0 hEbkappa
+  intro d _ _CE KE kappa hkappa e0 k0 b0 M s hs L m n x z hgeom hs1 omega u _ g S hsubx hgWW2
+    hgL2child hgWchild Erep hErepCap hErep0 Eb herrD hbrk sig hsig X Gs Hs Hn Y2 Ychild P2 Q3s
+    Q3sn Sm3 Sm2 hEn hEb0 hEbkappa
+  have he0def :
+    e0 = kappa * (_CE * (1 / 2 : ℝ))
+    := rfl
+  have hk0def :
+    k0 = (2 : ℝ) * (↑d : ℝ) * (e0 ^ (2 : ℕ) + (1 : ℝ))
+    := rfl
+  have hb0def :
+    b0 = √k0 * e0 + (2 : ℝ) * k0
+    := rfl
   have hEbe0 : Eb ≤ e0 := by
     refine hEbkappa.trans ?_
     rw [he0def]
@@ -1024,9 +1029,21 @@ private theorem assemblyComposed_estimate1 :
 private theorem assemblyComposed_comparisonBounds4 :
   assemblyComposed_comparisonBounds4_statement := by
   classical
-  intro d _ CE KE kappa hkappadef hkappa _ he0def _ hk0def b0 hb0def M s hs L m n hmL hnm x z
-    hgeom hs1 omega hcapE hEnLeg herrD hbrk hmem u hdat g S hsol hgL2 hgW hhW hmean v w hharm hval
-      hgrad hsig hsubx hsubimg hW20
+  intro d _ CE KE kappa hkappa _e0 _k0 b0 M s hs L m n hmL hnm x z hgeom hs1 omega hcapE hEnLeg
+    herrD hbrk hmem u hdat g S hsol hgL2 hgW hhW hmean v w hharm hval hgrad hsig hsubx hsubimg
+    hW20
+  have hkappadef :
+    kappa = √((192 : ℝ) * (↑d : ℝ)) * (3 : ℝ)
+    := rfl
+  have he0def :
+    _e0 = kappa * (CE * (1 / 2 : ℝ))
+    := rfl
+  have hk0def :
+    _k0 = (2 : ℝ) * (↑d : ℝ) * (_e0 ^ (2 : ℕ) + (1 : ℝ))
+    := rfl
+  have hb0def :
+    b0 = √_k0 * _e0 + (2 : ℝ) * _k0
+    := rfl
   have hW3top := volume_anchorWindow_ne_top (n + 3) m z
   have hW30 : volume ((((fun y' => z + y') '' openCubeSet (originCube d (n + 3))) ∩
       openCubeSet (originCube d m))) ≠ 0 := by
@@ -1122,8 +1139,8 @@ private theorem assemblyComposed_comparisonBounds4 :
       (fun y => -g (y + x)) ≤ besovGagliardoConstant d * Q3sn * Ychild) ∧ (0 ≤
         Ch03.scaleNormalizedPositiveBesovVectorSeminormTwo
       (originCube d n) s (fun y => -g (y + x))) ∧ (Ychild ≤ gagliardoWindowConst d * Y2) from
-      @assemblyComposed_comparisonBounds1 (d) (by infer_instance) (CE) (KE) (hkappa) (he0def)
-        (hk0def) (hb0def) (M) (s) (hs) (L) (m) (n) (x) (z) (hgeom) (hs1) (omega) (u) (hdat) (g)
+      @assemblyComposed_comparisonBounds1 (d) (by infer_instance) (CE) (KE) (hkappa)
+          (M) (s) (hs) (L) (m) (n) (x) (z) (hgeom) (hs1) (omega) (u) (hdat) (g)
           (S) (hsubx) (hgWW2) (hgL2child) (hgWchild) (hErepCap) (hErep0) (herrD) (hbrk) (hsig)
             (hEn) (hEb0) (hEbkappa))
   have hY23 : Y2 ≤ windowMoveConst d * Gs := by
@@ -1537,8 +1554,8 @@ theorem exists_boundaryClauseComposed_honest (d : ℕ) [NeZero d] :
   obtain ⟨hErepCap, hErep0, hsig, hP2def, hQ3sdef, hxf, hQ3sndef, hQ1sdef, hR3ndef, hS4def,
     hS7def, hS6def, hSm3def, hSm2def, hX0, hGs0, hHs0, hHn0, hS0, hQ3s0, hQ3sn0, hQ1s0, hR3n0,
       hS40, hS70, hS60, hSm30, hSm20, hsiginv0, hbrkCap, hET, hGbes, hGbes0, hYchild3⟩ :=
-    @assemblyComposed_comparisonBounds4 (d) (by infer_instance) (CE) (KE) (hkappadef) (hkappa)
-      (he0def) (hk0def) (hb0def) (M) (s) (hs) (L) (m) (n) (hmL) (hnm) (x) (z) (hgeom) (hs1)
+    @assemblyComposed_comparisonBounds4 (d) (by infer_instance) (CE) (KE)  (hkappa)
+         (M) (s) (hs) (L) (m) (n) (hmL) (hnm) (x) (z) (hgeom) (hs1)
         (omega) (hcapE) (hEnLeg) (herrD) (hbrk) (hmem) (u) (hdat) (g) (S) (hsol) (hgL2) (hgW)
           (hhW) (hmean) (v) (w) (hharm) (hval) (hgrad) (hsig) (hsubx) (hsubimg) (hW20)
   set Erep : ℝ := Support.fluxCorrectedErrorRepresentative M L (n + 3)
