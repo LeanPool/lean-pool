@@ -7,6 +7,7 @@ Authors: Scott Armstrong, Tuomo Kuusi
 module
 
 public import LeanPool.Superdiffusion.Algsuperdiff.StochasticProcess.Common.DivergenceForm.Positivity
+public import LeanPool.Superdiffusion.Algsuperdiff.StochasticProcess.Common.DivergenceForm.PotentialOrder
 
 /-!
 # WeakSubsolution
@@ -82,87 +83,12 @@ theorem weakSubsolution_le_weakSupersolution_ae
     (hfg : ∀ᵐ x ∂volumeMeasureOn U, f x ≤ g x) :
     ∀ᵐ x ∂volumeMeasureOn U,
       ZeroTraceSobolev.toL2 u x ≤ ZeroTraceSobolev.toL2 v x := by
-  let z : ZeroTraceSobolev U := u - v
-  obtain ⟨p, hp, -⟩ :=
-    ZeroTraceSobolev.existsUnique_positivePartSubConst hU z 0 le_rfl
-  have hpnonneg : ∀ᵐ x ∂volumeMeasureOn U,
-      0 ≤ ZeroTraceSobolev.toL2 p x := by
-    filter_upwards [hp.1] with x hx
-    rw [hx]
-    exact le_max_right _ _
-  have hform_le :
-      shiftedBilin hEll α z p ≤
-        inner ℝ (f - g) (ZeroTraceSobolev.toL2 p) := by
-    calc
-      shiftedBilin hEll α z p =
-          shiftedBilin hEll α u p - shiftedBilin hEll α v p := by
-        simp only [z, map_sub, sub_apply]
-      _ ≤ inner ℝ f (ZeroTraceSobolev.toL2 p) -
-          inner ℝ g (ZeroTraceSobolev.toL2 p) := by
-        have hup : shiftedBilin hEll α u p ≤
-            inner ℝ f (ZeroTraceSobolev.toL2 p) := by
-          rw [shiftedBilin_apply]
-          exact hu p hpnonneg
-        have hvp : inner ℝ g (ZeroTraceSobolev.toL2 p) ≤
-            shiftedBilin hEll α v p := by
-          rw [shiftedBilin_apply]
-          exact hv p hpnonneg
-        exact sub_le_sub hup hvp
-      _ = inner ℝ (f - g) (ZeroTraceSobolev.toL2 p) := by
-        rw [inner_sub_left]
-  have hforcing_nonpos :
-      inner ℝ (f - g) (ZeroTraceSobolev.toL2 p) ≤ 0 :=
-    Internal.scalarL2_inner_sub_nonpos_of_ae_le f g _ hfg hpnonneg
-  have hpvalue : ∀ᵐ x ∂volumeMeasureOn U,
-      ZeroTraceSobolev.toL2 p x = max (ZeroTraceSobolev.toL2 z x) 0 := by
-    filter_upwards [hp.1] with x hx
-    simpa only [sub_zero] using hx
-  have hmass : inner ℝ (ZeroTraceSobolev.toL2 z)
-      (ZeroTraceSobolev.toL2 p) =
-        inner ℝ (ZeroTraceSobolev.toL2 p) (ZeroTraceSobolev.toL2 p) :=
-    Internal.scalarL2_inner_eq_self_of_ae_eq_max _ _ hpvalue
-  have hpair : 0 ≤ coefficientPairing a U
-      (ZeroTraceSobolev.gradient z) (ZeroTraceSobolev.gradient p) :=
-    coefficientPairing_nonneg_of_ae_eq_indicator hEll _ _
-      {x | 0 < ZeroTraceSobolev.toL2 z x} hp.2
-  have hself_nonpos :
-      α * inner ℝ (ZeroTraceSobolev.toL2 p)
-        (ZeroTraceSobolev.toL2 p) ≤ 0 := by
-    calc
-      α * inner ℝ (ZeroTraceSobolev.toL2 p)
-          (ZeroTraceSobolev.toL2 p) ≤
-          α * inner ℝ (ZeroTraceSobolev.toL2 p)
-              (ZeroTraceSobolev.toL2 p) +
-            coefficientPairing a U (ZeroTraceSobolev.gradient z)
-              (ZeroTraceSobolev.gradient p) := le_add_of_nonneg_right hpair
-      _ = shiftedBilin hEll α z p := by rw [shiftedBilin_apply, hmass]
-      _ ≤ inner ℝ (f - g) (ZeroTraceSobolev.toL2 p) := hform_le
-      _ ≤ 0 := hforcing_nonpos
-  have hpzero : ZeroTraceSobolev.toL2 p = 0 := by
-    have hself : inner ℝ (ZeroTraceSobolev.toL2 p)
-        (ZeroTraceSobolev.toL2 p) = 0 := by
-      have hprod : α * inner ℝ (ZeroTraceSobolev.toL2 p)
-          (ZeroTraceSobolev.toL2 p) = 0 :=
-        le_antisymm hself_nonpos
-          (mul_nonneg hα.le real_inner_self_nonneg)
-      exact (mul_eq_zero.mp hprod).resolve_left hα.ne'
-    exact inner_self_eq_zero.mp hself
-  have hpzero_ae : ∀ᵐ x ∂volumeMeasureOn U,
-      ZeroTraceSobolev.toL2 p x = 0 := by
-    rw [hpzero]
-    exact MeasureTheory.Lp.coeFn_zero (p := (2 : ENNReal))
-      (μ := volumeMeasureOn U) ℝ
-  have hzvalue : ∀ᵐ x ∂volumeMeasureOn U,
-      ZeroTraceSobolev.toL2 z x =
-        ZeroTraceSobolev.toL2 u x - ZeroTraceSobolev.toL2 v x := by
-    filter_upwards [MeasureTheory.Lp.coeFn_sub (ZeroTraceSobolev.toL2 u)
-      (ZeroTraceSobolev.toL2 v)] with x hsub
-    change (ZeroTraceSobolev.toL2 (u - v)) x = _
-    rw [map_sub]
-    simpa only [Pi.sub_apply] using hsub
-  filter_upwards [hpvalue, hpzero_ae, hzvalue] with x hpx hp0 hz
-  rw [hpx, hz] at hp0
-  exact sub_nonpos.mp (max_eq_right_iff.mp hp0)
+  refine potentialWeakSubsolution_le_weakSupersolution_ae a hU hα hEll
+    (fun _ => 0) (isBoundedNonnegativePotential_zero U) ?_ ?_ hfg
+  · intro φ hφ
+    simpa only [shiftedPotentialBilin, zero_mul, integral_zero, add_zero] using hu φ hφ
+  · intro φ hφ
+    simpa only [shiftedPotentialBilin, zero_mul, integral_zero, add_zero] using hv φ hφ
 
 /-- A weak supersolution with nonnegative right-hand side is nonnegative
 almost everywhere. -/

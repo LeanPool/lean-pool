@@ -127,6 +127,83 @@ def eighthLaneConst (Ccg : ℝ) : ℝ :=
 
 variable {d : ℕ}
 
+/-- Absorb the common deterministic and Orlicz lanes into the eighth-moment constant. -/
+theorem eighthLane_rpow_absorption (M : ABKModel d) (E Ccg C : ℝ)
+    (hCcg0 : 0 < Ccg) (hLaneC : eighthLaneConst Ccg ≤ C) :
+    (4 * (2 * Ccg + orliczEighthMomentScale 1 *
+      (Ccg * (Disorder.cstar M)⁻¹ * M.gamma⁻¹) +
+      orliczEighthMomentScale ((1 - (1 : ℝ) / 2) / 3) *
+        Real.exp (-(Ccg⁻¹ * E⁻¹ ^ 2 * M.gamma⁻¹)) +
+      orliczEighthMomentScale ((1 - (1 : ℝ) / 2) / 2) *
+        Real.exp (-(Ccg⁻¹ * E⁻¹ ^ 2 * M.gamma⁻¹)))) ^ (8 : ℝ) ≤
+      (C * (Disorder.cstar M)⁻¹ * M.gamma⁻¹) ^ (8 : ℝ) := by
+  have hcstarPos : 0 < Disorder.cstar M := (Disorder.cstar_characterization M).1
+  have hgammaPos : 0 < M.gamma := M.shellPrefix.gamma_pos
+  have hk10 : 0 < orliczEighthMomentScale 1 :=
+    orliczEighthMomentScale_pos (by norm_num)
+  have hk20 : 0 < orliczEighthMomentScale ((1 - (1 : ℝ) / 2) / 3) :=
+    orliczEighthMomentScale_pos (by norm_num)
+  have hk30 : 0 < orliczEighthMomentScale ((1 - (1 : ℝ) / 2) / 2) :=
+    orliczEighthMomentScale_pos (by norm_num)
+  have hcinvPos : (0 : ℝ) < (Disorder.cstar M)⁻¹ := inv_pos.2 hcstarPos
+  have hginvPos : (0 : ℝ) < M.gamma⁻¹ := inv_pos.2 hgammaPos
+  have hcinv : (2 : ℝ) / 3 ≤ (Disorder.cstar M)⁻¹ := by
+    calc (2 : ℝ) / 3 = ((3 : ℝ) / 2)⁻¹ := by norm_num
+      _ ≤ (Disorder.cstar M)⁻¹ :=
+          inv_anti₀ hcstarPos (Provider.Disorder.cstar_le_three_halves M)
+  have hginv : (4 : ℝ) ≤ M.gamma⁻¹ := by
+    calc (4 : ℝ) = ((1 : ℝ) / 4)⁻¹ := by norm_num
+      _ ≤ M.gamma⁻¹ := inv_anti₀ hgammaPos M.shellPrefix.gamma_le_quarter
+  have ht1 : (1 : ℝ) ≤ (Disorder.cstar M)⁻¹ * M.gamma⁻¹ := by
+    have h := mul_le_mul hcinv hginv (by norm_num : (0 : ℝ) ≤ 4) hcinvPos.le
+    linarith
+  have ht0 : (0 : ℝ) ≤ (Disorder.cstar M)⁻¹ * M.gamma⁻¹ := by linarith
+  have hAnn : (0 : ℝ) ≤ Ccg * (Disorder.cstar M)⁻¹ * M.gamma⁻¹ :=
+    (mul_pos (mul_pos hCcg0 hcinvPos) hginvPos).le
+  have hsmall : Real.exp (-(Ccg⁻¹ * ((E : ℝ)⁻¹) ^ 2 * M.gamma⁻¹)) ≤ 1 := by
+    refine Real.exp_le_one_iff.2 ?_
+    have hnn : (0 : ℝ) ≤ Ccg⁻¹ * ((E : ℝ)⁻¹) ^ 2 * M.gamma⁻¹ := by positivity
+    linarith
+  have hexpT : Real.exp (-(Ccg⁻¹ * ((E : ℝ)⁻¹) ^ 2 * M.gamma⁻¹)) ≤
+      (Disorder.cstar M)⁻¹ * M.gamma⁻¹ := hsmall.trans ht1
+  refine Real.rpow_le_rpow ?_ ?_ (by norm_num)
+  · have h1 : (0 : ℝ) ≤ orliczEighthMomentScale 1 *
+        (Ccg * (Disorder.cstar M)⁻¹ * M.gamma⁻¹) := mul_nonneg hk10.le hAnn
+    have h2 : (0 : ℝ) ≤ orliczEighthMomentScale ((1 - (1 : ℝ) / 2) / 3) *
+        Real.exp (-(Ccg⁻¹ * ((E : ℝ)⁻¹) ^ 2 * M.gamma⁻¹)) :=
+      mul_nonneg hk20.le (Real.exp_pos _).le
+    have h3 : (0 : ℝ) ≤ orliczEighthMomentScale ((1 - (1 : ℝ) / 2) / 2) *
+        Real.exp (-(Ccg⁻¹ * ((E : ℝ)⁻¹) ^ 2 * M.gamma⁻¹)) :=
+      mul_nonneg hk30.le (Real.exp_pos _).le
+    linarith
+  · have h0 : 2 * Ccg ≤ 2 * Ccg * ((Disorder.cstar M)⁻¹ * M.gamma⁻¹) :=
+      le_mul_of_one_le_right (by linarith) ht1
+    have h2 : orliczEighthMomentScale ((1 - (1 : ℝ) / 2) / 3) *
+          Real.exp (-(Ccg⁻¹ * ((E : ℝ)⁻¹) ^ 2 * M.gamma⁻¹)) ≤
+        orliczEighthMomentScale ((1 - (1 : ℝ) / 2) / 3) *
+          ((Disorder.cstar M)⁻¹ * M.gamma⁻¹) :=
+      mul_le_mul_of_nonneg_left hexpT hk20.le
+    have h3 : orliczEighthMomentScale ((1 - (1 : ℝ) / 2) / 2) *
+          Real.exp (-(Ccg⁻¹ * ((E : ℝ)⁻¹) ^ 2 * M.gamma⁻¹)) ≤
+        orliczEighthMomentScale ((1 - (1 : ℝ) / 2) / 2) *
+          ((Disorder.cstar M)⁻¹ * M.gamma⁻¹) :=
+      mul_le_mul_of_nonneg_left hexpT hk30.le
+    have hkey : 4 * (2 * Ccg + orliczEighthMomentScale 1 *
+          (Ccg * (Disorder.cstar M)⁻¹ * M.gamma⁻¹) +
+        orliczEighthMomentScale ((1 - (1 : ℝ) / 2) / 3) *
+          Real.exp (-(Ccg⁻¹ * ((E : ℝ)⁻¹) ^ 2 * M.gamma⁻¹)) +
+        orliczEighthMomentScale ((1 - (1 : ℝ) / 2) / 2) *
+          Real.exp (-(Ccg⁻¹ * ((E : ℝ)⁻¹) ^ 2 * M.gamma⁻¹))) ≤
+        eighthLaneConst Ccg * ((Disorder.cstar M)⁻¹ * M.gamma⁻¹) := by
+      rw [eighthLaneConst]
+      linarith
+    refine hkey.trans ?_
+    calc eighthLaneConst Ccg * ((Disorder.cstar M)⁻¹ * M.gamma⁻¹)
+        ≤ C * ((Disorder.cstar M)⁻¹ * M.gamma⁻¹) :=
+          mul_le_mul_of_nonneg_right hLaneC ht0
+      _ = C * (Disorder.cstar M)⁻¹ * M.gamma⁻¹ := by ring
+
+
 /-! ## The eighth moment of the gauged ellipticity sum -/
 
 /-- **The second inequality of the moment display at ABK26.**
@@ -164,12 +241,6 @@ theorem integral_coarseEllipticityGauge_rpow_eight_le (d : ℕ) :
                 ∂(Cutoff.cutoffSampleLaw M).toMeasure ≤
               (C * (Disorder.cstar M)⁻¹ * M.gamma⁻¹) ^ (8 : ℝ) := by
   obtain ⟨Ccg, hCcg0, hCcg⟩ := Algsuperdiff.Frozen.Section3.coarse_ellipticity_bounds d
-  have hk10 : 0 < orliczEighthMomentScale 1 :=
-    orliczEighthMomentScale_pos (by norm_num)
-  have hk20 : 0 < orliczEighthMomentScale ((1 - (1 : ℝ) / 2) / 3) :=
-    orliczEighthMomentScale_pos (by norm_num)
-  have hk30 : 0 < orliczEighthMomentScale ((1 - (1 : ℝ) / 2) / 2) :=
-    orliczEighthMomentScale_pos (by norm_num)
   refine ⟨max Ccg (eighthLaneConst Ccg), lt_of_lt_of_le hCcg0 (le_max_left _ _), ?_⟩
   intro M m E hstate hE hEupper hgap L hL
   set C : ℝ := max Ccg (eighthLaneConst Ccg) with hC
@@ -266,63 +337,7 @@ theorem integral_coarseEllipticityGauge_rpow_eight_le (d : ℕ) :
     (by linarith) hYm hZm hW.measurable_witness hYt hZt hW.tail hXm hX0 hdom
   refine ⟨hmain.1, hmain.2.trans ?_⟩
   rw [hA1eq]
-  have hcinvPos : (0 : ℝ) < (Disorder.cstar M)⁻¹ := inv_pos.2 hcstarPos
-  have hginvPos : (0 : ℝ) < M.gamma⁻¹ := inv_pos.2 hgammaPos
-  have hcinv : (2 : ℝ) / 3 ≤ (Disorder.cstar M)⁻¹ := by
-    calc (2 : ℝ) / 3 = ((3 : ℝ) / 2)⁻¹ := by norm_num
-      _ ≤ (Disorder.cstar M)⁻¹ :=
-          inv_anti₀ hcstarPos (Provider.Disorder.cstar_le_three_halves M)
-  have hginv : (4 : ℝ) ≤ M.gamma⁻¹ := by
-    calc (4 : ℝ) = ((1 : ℝ) / 4)⁻¹ := by norm_num
-      _ ≤ M.gamma⁻¹ := inv_anti₀ hgammaPos M.shellPrefix.gamma_le_quarter
-  have ht1 : (1 : ℝ) ≤ (Disorder.cstar M)⁻¹ * M.gamma⁻¹ := by
-    have h := mul_le_mul hcinv hginv (by norm_num : (0 : ℝ) ≤ 4) hcinvPos.le
-    linarith
-  have ht0 : (0 : ℝ) ≤ (Disorder.cstar M)⁻¹ * M.gamma⁻¹ := by linarith
-  have hAnn : (0 : ℝ) ≤ Ccg * (Disorder.cstar M)⁻¹ * M.gamma⁻¹ :=
-    (mul_pos (mul_pos hCcg0 hcinvPos) hginvPos).le
-  have hsmall : Real.exp (-(Ccg⁻¹ * ((E : ℝ)⁻¹) ^ 2 * M.gamma⁻¹)) ≤ 1 := by
-    refine Real.exp_le_one_iff.2 ?_
-    have hnn : (0 : ℝ) ≤ Ccg⁻¹ * ((E : ℝ)⁻¹) ^ 2 * M.gamma⁻¹ := by positivity
-    linarith
-  have hexpT : Real.exp (-(Ccg⁻¹ * ((E : ℝ)⁻¹) ^ 2 * M.gamma⁻¹)) ≤
-      (Disorder.cstar M)⁻¹ * M.gamma⁻¹ := hsmall.trans ht1
-  refine Real.rpow_le_rpow ?_ ?_ (by norm_num)
-  · have h1 : (0 : ℝ) ≤ orliczEighthMomentScale 1 *
-        (Ccg * (Disorder.cstar M)⁻¹ * M.gamma⁻¹) := mul_nonneg hk10.le hAnn
-    have h2 : (0 : ℝ) ≤ orliczEighthMomentScale ((1 - (1 : ℝ) / 2) / 3) *
-        Real.exp (-(Ccg⁻¹ * ((E : ℝ)⁻¹) ^ 2 * M.gamma⁻¹)) :=
-      mul_nonneg hk20.le (Real.exp_pos _).le
-    have h3 : (0 : ℝ) ≤ orliczEighthMomentScale ((1 - (1 : ℝ) / 2) / 2) *
-        Real.exp (-(Ccg⁻¹ * ((E : ℝ)⁻¹) ^ 2 * M.gamma⁻¹)) :=
-      mul_nonneg hk30.le (Real.exp_pos _).le
-    linarith
-  · have h0 : 2 * Ccg ≤ 2 * Ccg * ((Disorder.cstar M)⁻¹ * M.gamma⁻¹) :=
-      le_mul_of_one_le_right (by linarith) ht1
-    have h2 : orliczEighthMomentScale ((1 - (1 : ℝ) / 2) / 3) *
-          Real.exp (-(Ccg⁻¹ * ((E : ℝ)⁻¹) ^ 2 * M.gamma⁻¹)) ≤
-        orliczEighthMomentScale ((1 - (1 : ℝ) / 2) / 3) *
-          ((Disorder.cstar M)⁻¹ * M.gamma⁻¹) :=
-      mul_le_mul_of_nonneg_left hexpT hk20.le
-    have h3 : orliczEighthMomentScale ((1 - (1 : ℝ) / 2) / 2) *
-          Real.exp (-(Ccg⁻¹ * ((E : ℝ)⁻¹) ^ 2 * M.gamma⁻¹)) ≤
-        orliczEighthMomentScale ((1 - (1 : ℝ) / 2) / 2) *
-          ((Disorder.cstar M)⁻¹ * M.gamma⁻¹) :=
-      mul_le_mul_of_nonneg_left hexpT hk30.le
-    have hkey : 4 * (2 * Ccg + orliczEighthMomentScale 1 *
-          (Ccg * (Disorder.cstar M)⁻¹ * M.gamma⁻¹) +
-        orliczEighthMomentScale ((1 - (1 : ℝ) / 2) / 3) *
-          Real.exp (-(Ccg⁻¹ * ((E : ℝ)⁻¹) ^ 2 * M.gamma⁻¹)) +
-        orliczEighthMomentScale ((1 - (1 : ℝ) / 2) / 2) *
-          Real.exp (-(Ccg⁻¹ * ((E : ℝ)⁻¹) ^ 2 * M.gamma⁻¹))) ≤
-        eighthLaneConst Ccg * ((Disorder.cstar M)⁻¹ * M.gamma⁻¹) := by
-      rw [eighthLaneConst]
-      linarith
-    refine hkey.trans ?_
-    calc eighthLaneConst Ccg * ((Disorder.cstar M)⁻¹ * M.gamma⁻¹)
-        ≤ C * ((Disorder.cstar M)⁻¹ * M.gamma⁻¹) :=
-          mul_le_mul_of_nonneg_right hLaneC ht0
-      _ = C * (Disorder.cstar M)⁻¹ * M.gamma⁻¹ := by ring
+  exact eighthLane_rpow_absorption M (E : ℝ) Ccg C hCcg0 hLaneC
 
 end
 

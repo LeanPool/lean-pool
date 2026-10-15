@@ -33,24 +33,157 @@ open scoped RealInnerProductSpace
 
 variable {d : ℕ} {U : Set (Vec d)}
 
-private theorem potentialIntegral_nonpos_of_negativePart
-    {C : ℝ} {q : Vec d → ℝ}
+/-- A weak subsolution of the shifted equation with potential. -/
+def IsPotentialWeakSubsolution (a : CoeffField d) (α : ℝ)
+    (q : Vec d → ℝ) (U : Set (Vec d)) (u : ZeroTraceSobolev U)
+    (f : ScalarL2 U) : Prop :=
+  ∀ φ : ZeroTraceSobolev U,
+    (∀ᵐ x ∂volumeMeasureOn U, 0 ≤ ZeroTraceSobolev.toL2 φ x) →
+      shiftedPotentialBilin a α q U u φ ≤
+        inner ℝ f (ZeroTraceSobolev.toL2 φ)
+
+/-- A weak supersolution of the shifted equation with potential. -/
+def IsPotentialWeakSupersolution (a : CoeffField d) (α : ℝ)
+    (q : Vec d → ℝ) (U : Set (Vec d)) (u : ZeroTraceSobolev U)
+    (f : ScalarL2 U) : Prop :=
+  ∀ φ : ZeroTraceSobolev U,
+    (∀ᵐ x ∂volumeMeasureOn U, 0 ≤ ZeroTraceSobolev.toL2 φ x) →
+      inner ℝ f (ZeroTraceSobolev.toL2 φ) ≤
+        shiftedPotentialBilin a α q U u φ
+
+/-- A potential weak solution is a potential weak subsolution. -/
+theorem IsPotentialWeakSolution.isSubsolution
+    {a : CoeffField d} {α : ℝ} {q : Vec d → ℝ} {f : ScalarL2 U}
+    {u : ZeroTraceSobolev U} (hu : IsPotentialWeakSolution a α q U u f) :
+    IsPotentialWeakSubsolution a α q U u f := by
+  intro φ _
+  exact (hu φ).le
+
+/-- A potential weak solution is a potential weak supersolution. -/
+theorem IsPotentialWeakSolution.isSupersolution
+    {a : CoeffField d} {α : ℝ} {q : Vec d → ℝ} {f : ScalarL2 U}
+    {u : ZeroTraceSobolev U} (hu : IsPotentialWeakSolution a α q U u f) :
+    IsPotentialWeakSupersolution a α q U u f := by
+  intro φ _
+  exact (hu φ).ge
+
+/-- Potential weak subsolutions lie below potential weak supersolutions when
+their forcing terms have the same order. -/
+theorem potentialWeakSubsolution_le_weakSupersolution_ae
+    (a : CoeffField d) (hU : IsOpenBoundedConvexDomain U)
+    {α lam Lam C : ℝ} (hα : 0 < α)
+    (hEll : IsEllipticFieldOn lam Lam U a) (q : Vec d → ℝ)
     (hq : IsBoundedNonnegativePotential U q C)
-    (u v : ZeroTraceSobolev U)
-    (hv : ∀ᵐ x ∂volumeMeasureOn U,
-      ZeroTraceSobolev.toL2 v x =
-        max (-ZeroTraceSobolev.toL2 u x) 0) :
-    (∫ x, q x * ZeroTraceSobolev.toL2 u x *
-        ZeroTraceSobolev.toL2 v x ∂volumeMeasureOn U) ≤ 0 := by
-  apply integral_nonpos_of_ae
-  filter_upwards [hq.2.1, hv] with x hqx hvx
-  rw [hvx]
-  by_cases hux : ZeroTraceSobolev.toL2 u x < 0
-  · exact mul_nonpos_of_nonpos_of_nonneg
-      (mul_nonpos_of_nonneg_of_nonpos hqx hux.le) (le_max_right _ _)
-  · rw [max_eq_right]
-    · simpa only [mul_zero, Pi.zero_apply] using (le_refl (0 : ℝ))
-    · exact neg_nonpos.mpr (le_of_not_gt hux)
+    {f g : ScalarL2 U} {u v : ZeroTraceSobolev U}
+    (hu : IsPotentialWeakSubsolution a α q U u f)
+    (hv : IsPotentialWeakSupersolution a α q U v g)
+    (hfg : ∀ᵐ x ∂volumeMeasureOn U, f x ≤ g x) :
+    ∀ᵐ x ∂volumeMeasureOn U,
+      ZeroTraceSobolev.toL2 u x ≤ ZeroTraceSobolev.toL2 v x := by
+  let z : ZeroTraceSobolev U := u - v
+  obtain ⟨p, hp, -⟩ :=
+    ZeroTraceSobolev.existsUnique_positivePartSubConst hU z 0 le_rfl
+  have hpnonneg : ∀ᵐ x ∂volumeMeasureOn U,
+      0 ≤ ZeroTraceSobolev.toL2 p x := by
+    filter_upwards [hp.1] with x hx
+    rw [hx]
+    exact le_max_right _ _
+  have hform_le :
+      potentialBilin (α := α) hEll q hq z p ≤
+        inner ℝ (f - g) (ZeroTraceSobolev.toL2 p) := by
+    calc
+      potentialBilin (α := α) hEll q hq z p =
+          potentialBilin (α := α) hEll q hq u p -
+            potentialBilin (α := α) hEll q hq v p := by
+        simp only [z, map_sub, sub_apply]
+      _ ≤ inner ℝ f (ZeroTraceSobolev.toL2 p) -
+          inner ℝ g (ZeroTraceSobolev.toL2 p) := by
+        have hup : potentialBilin (α := α) hEll q hq u p ≤
+            inner ℝ f (ZeroTraceSobolev.toL2 p) := by
+          rw [potentialBilin_apply]
+          exact hu p hpnonneg
+        have hvp : inner ℝ g (ZeroTraceSobolev.toL2 p) ≤
+            potentialBilin (α := α) hEll q hq v p := by
+          rw [potentialBilin_apply]
+          exact hv p hpnonneg
+        exact sub_le_sub hup hvp
+      _ = inner ℝ (f - g) (ZeroTraceSobolev.toL2 p) := by
+        rw [inner_sub_left]
+  have hforcing_nonpos :
+      inner ℝ (f - g) (ZeroTraceSobolev.toL2 p) ≤ 0 :=
+    Internal.scalarL2_inner_sub_nonpos_of_ae_le f g _ hfg hpnonneg
+  have hpvalue : ∀ᵐ x ∂volumeMeasureOn U,
+      ZeroTraceSobolev.toL2 p x = max (ZeroTraceSobolev.toL2 z x) 0 := by
+    filter_upwards [hp.1] with x hx
+    simpa only [sub_zero] using hx
+  have hmass : inner ℝ (ZeroTraceSobolev.toL2 z)
+      (ZeroTraceSobolev.toL2 p) =
+        inner ℝ (ZeroTraceSobolev.toL2 p) (ZeroTraceSobolev.toL2 p) :=
+    Internal.scalarL2_inner_eq_self_of_ae_eq_max _ _ hpvalue
+  have hpair : 0 ≤ coefficientPairing a U
+      (ZeroTraceSobolev.gradient z) (ZeroTraceSobolev.gradient p) :=
+    coefficientPairing_nonneg_of_ae_eq_indicator hEll _ _
+      {x | 0 < ZeroTraceSobolev.toL2 z x} hp.2
+  have hpotential : 0 ≤
+      ∫ x, q x * ZeroTraceSobolev.toL2 z x *
+        ZeroTraceSobolev.toL2 p x ∂volumeMeasureOn U := by
+    apply integral_nonneg_of_ae
+    filter_upwards [hq.2.1, hpvalue] with x hqx hpx
+    rw [hpx]
+    by_cases hx : 0 ≤ ZeroTraceSobolev.toL2 z x
+    · rw [max_eq_left hx]
+      exact mul_nonneg (mul_nonneg hqx hx) hx
+    · rw [max_eq_right (le_of_not_ge hx)]
+      simpa only [Pi.zero_apply, mul_zero] using (le_refl (0 : ℝ))
+  have hself_nonpos :
+      α * inner ℝ (ZeroTraceSobolev.toL2 p)
+        (ZeroTraceSobolev.toL2 p) ≤ 0 := by
+    calc
+      α * inner ℝ (ZeroTraceSobolev.toL2 p)
+          (ZeroTraceSobolev.toL2 p) ≤
+          α * inner ℝ (ZeroTraceSobolev.toL2 p)
+              (ZeroTraceSobolev.toL2 p) +
+            coefficientPairing a U (ZeroTraceSobolev.gradient z)
+              (ZeroTraceSobolev.gradient p) := le_add_of_nonneg_right hpair
+      _ ≤ α * inner ℝ (ZeroTraceSobolev.toL2 p)
+              (ZeroTraceSobolev.toL2 p) +
+            coefficientPairing a U (ZeroTraceSobolev.gradient z)
+              (ZeroTraceSobolev.gradient p) +
+            ∫ x, q x * ZeroTraceSobolev.toL2 z x *
+              ZeroTraceSobolev.toL2 p x ∂volumeMeasureOn U :=
+        le_add_of_nonneg_right hpotential
+      _ = potentialBilin (α := α) hEll q hq z p := by
+        rw [potentialBilin_apply]
+        unfold shiftedPotentialBilin
+        rw [hmass]
+      _ ≤ inner ℝ (f - g) (ZeroTraceSobolev.toL2 p) := hform_le
+      _ ≤ 0 := hforcing_nonpos
+  have hpzero : ZeroTraceSobolev.toL2 p = 0 := by
+    have hself : inner ℝ (ZeroTraceSobolev.toL2 p)
+        (ZeroTraceSobolev.toL2 p) = 0 := by
+      have hprod : α * inner ℝ (ZeroTraceSobolev.toL2 p)
+          (ZeroTraceSobolev.toL2 p) = 0 :=
+        le_antisymm hself_nonpos
+          (mul_nonneg hα.le real_inner_self_nonneg)
+      exact (mul_eq_zero.mp hprod).resolve_left hα.ne'
+    exact inner_self_eq_zero.mp hself
+  have hpzero_ae : ∀ᵐ x ∂volumeMeasureOn U,
+      ZeroTraceSobolev.toL2 p x = 0 := by
+    rw [hpzero]
+    exact MeasureTheory.Lp.coeFn_zero (p := (2 : ENNReal))
+      (μ := volumeMeasureOn U) ℝ
+  have hzvalue : ∀ᵐ x ∂volumeMeasureOn U,
+      ZeroTraceSobolev.toL2 z x =
+        ZeroTraceSobolev.toL2 u x - ZeroTraceSobolev.toL2 v x := by
+    filter_upwards [MeasureTheory.Lp.coeFn_sub (ZeroTraceSobolev.toL2 u)
+      (ZeroTraceSobolev.toL2 v)] with x hsub
+    change (ZeroTraceSobolev.toL2 (u - v)) x = _
+    rw [map_sub]
+    simpa only [Pi.sub_apply] using hsub
+  filter_upwards [hpvalue, hpzero_ae, hzvalue] with x hpx hp0 hz
+  rw [hpx, hz] at hp0
+  exact sub_nonpos.mp (max_eq_right_iff.mp hp0)
+
 
 /-- A nonnegative forcing has a nonnegative potential resolvent almost
 everywhere. -/
@@ -63,81 +196,24 @@ theorem potentialResolvent_nonneg_ae (a : CoeffField d) (hU : IsOpenBoundedConve
     ∀ᵐ x ∂volumeMeasureOn U,
       0 ≤ potentialResolvent a hα hlam hEll q hq f x := by
   let u : ZeroTraceSobolev U := potentialSolution a hα hlam hEll q hq f
-  obtain ⟨v, hv, -⟩ :=
-    ZeroTraceSobolev.existsUnique_positivePartSubConst hU (-u) 0 le_rfl
-  have hv' := hv
-  simp only [map_neg] at hv'
-  have hvvalue : ∀ᵐ x ∂volumeMeasureOn U,
-      ZeroTraceSobolev.toL2 v x =
-        max (-ZeroTraceSobolev.toL2 u x) 0 := by
-    filter_upwards [hv'.1, MeasureTheory.Lp.coeFn_neg
-      (ZeroTraceSobolev.toL2 u)] with x hx hneg
-    rw [hneg] at hx
-    simpa only [sub_zero] using! hx
-  have hvnonneg : ∀ᵐ x ∂volumeMeasureOn U,
-      0 ≤ ZeroTraceSobolev.toL2 v x := by
-    filter_upwards [hvvalue] with x hx
-    rw [hx]
-    exact le_max_right _ _
-  have hvgradient : ∀ᵐ x ∂volumeMeasureOn U,
-      ZeroTraceSobolev.gradient v x =
-        {y | ZeroTraceSobolev.toL2 u y < 0}.indicator
-          (fun y => -ZeroTraceSobolev.gradient u y) x := by
-    filter_upwards [hv'.2, MeasureTheory.Lp.coeFn_neg
-      (ZeroTraceSobolev.toL2 u), MeasureTheory.Lp.coeFn_neg
-      (ZeroTraceSobolev.gradient u)] with x hx hnegValue hnegGradient
-    rw [Set.indicator_apply] at hx ⊢
-    simpa only [Set.mem_ofPred_eq, hnegValue, hnegGradient, Pi.neg_apply,
-      neg_pos] using hx
-  have hpair : coefficientPairing a U
-      (ZeroTraceSobolev.gradient u) (ZeroTraceSobolev.gradient v) ≤ 0 :=
-    coefficientPairing_nonpos_of_ae_eq_neg_indicator hEll _ _ _ hvgradient
-  have hpotential :
-      (∫ x, q x * ZeroTraceSobolev.toL2 u x *
-          ZeroTraceSobolev.toL2 v x ∂volumeMeasureOn U) ≤ 0 :=
-    potentialIntegral_nonpos_of_negativePart hq u v hvvalue
-  have hrhs : 0 ≤ inner ℝ f (ZeroTraceSobolev.toL2 v) :=
-    Internal.scalarL2_inner_nonneg_of_ae_nonneg f _ hf hvnonneg
-  have hinner : inner ℝ (ZeroTraceSobolev.toL2 u)
-      (ZeroTraceSobolev.toL2 v) =
-        -inner ℝ (ZeroTraceSobolev.toL2 v) (ZeroTraceSobolev.toL2 v) :=
-    Internal.scalarL2_inner_eq_neg_self_of_ae_eq_max_neg _ _ hvvalue
-  have hweak : IsPotentialWeakSolution a α q U u f := by
-    simpa only [u] using
-      potentialSolution_isPotentialWeakSolution a hα hlam hEll q hq f
-  have hself_nonpos :
-      α * inner ℝ (ZeroTraceSobolev.toL2 v)
-        (ZeroTraceSobolev.toL2 v) ≤ 0 := by
-    have hweakAtV := hweak v
-    dsimp only [shiftedPotentialBilin] at hweakAtV
-    rw [hinner, mul_neg] at hweakAtV
-    linarith only [hpair, hpotential, hrhs, hweakAtV]
-  have hself_nonneg :
-      0 ≤ α * inner ℝ (ZeroTraceSobolev.toL2 v)
-        (ZeroTraceSobolev.toL2 v) :=
-    mul_nonneg hα.le real_inner_self_nonneg
-  have hself : inner ℝ (ZeroTraceSobolev.toL2 v)
-      (ZeroTraceSobolev.toL2 v) = 0 := by
-    have hprod : α * inner ℝ (ZeroTraceSobolev.toL2 v)
-        (ZeroTraceSobolev.toL2 v) = 0 :=
-      le_antisymm hself_nonpos hself_nonneg
-    exact (mul_eq_zero.mp hprod).resolve_left hα.ne'
-  have hvzero : ZeroTraceSobolev.toL2 v = 0 :=
-    inner_self_eq_zero.mp hself
-  have hvzero_ae : ∀ᵐ x ∂volumeMeasureOn U,
-      ZeroTraceSobolev.toL2 v x = 0 := by
-    filter_upwards [MeasureTheory.Lp.coeFn_zero (E := ℝ)
-      (p := (2 : ENNReal)) (volumeMeasureOn U)] with x hzero
-    rw [hvzero, hzero]
-    rfl
-  have hunonneg : ∀ᵐ x ∂volumeMeasureOn U,
-      0 ≤ ZeroTraceSobolev.toL2 u x := by
-    filter_upwards [hvvalue, hvzero_ae] with x hvx hzx
-    rw [hvx] at hzx
-    by_contra hx
-    have hxneg : ZeroTraceSobolev.toL2 u x < 0 := lt_of_not_ge hx
-    exact (ne_of_gt (lt_max_of_lt_left (neg_pos.mpr hxneg))) hzx
-  simpa only [potentialResolvent_apply, u] using hunonneg
+  have hweak : IsPotentialWeakSolution a α q U u f :=
+    potentialSolution_isPotentialWeakSolution a hα hlam hEll q hq f
+  have hzero : IsPotentialWeakSubsolution a α q U 0 0 := by
+    intro φ _
+    rw [← potentialBilin_apply (hEll := hEll) (hq := hq)]
+    simp only [map_zero, zero_apply, inner_zero_left, le_refl]
+  have hzeroForcing : ∀ᵐ x ∂volumeMeasureOn U, (0 : ScalarL2 U) x ≤ f x := by
+    filter_upwards [hf, MeasureTheory.Lp.coeFn_zero (E := ℝ)
+      (p := (2 : ENNReal)) (volumeMeasureOn U)] with x hfx hx
+    simpa only [hx, Pi.zero_apply] using hfx
+  have hle := potentialWeakSubsolution_le_weakSupersolution_ae a hU hα hEll q hq
+    hzero hweak.isSupersolution hzeroForcing
+  have hzeroValue : ∀ᵐ x ∂volumeMeasureOn U,
+      ZeroTraceSobolev.toL2 (0 : ZeroTraceSobolev U) x = 0 := by
+    rw [map_zero]
+    exact MeasureTheory.Lp.coeFn_zero (E := ℝ) (p := (2 : ENNReal)) (volumeMeasureOn U)
+  filter_upwards [hle, hzeroValue] with x hx hzero
+  simpa only [hzero, potentialResolvent_apply, u] using hx
 
 /-- The potential resolvent preserves almost-everywhere order for fixed
 coefficients, shift, and potential. -/
@@ -150,21 +226,11 @@ theorem potentialResolvent_mono_ae (a : CoeffField d) (hU : IsOpenBoundedConvexD
     ∀ᵐ x ∂volumeMeasureOn U,
       potentialResolvent a hα hlam hEll q hq f x ≤
         potentialResolvent a hα hlam hEll q hq g x := by
-  have hgf : ∀ᵐ x ∂volumeMeasureOn U, 0 ≤ (g - f) x := by
-    filter_upwards [hfg, MeasureTheory.Lp.coeFn_sub g f] with x hx hsub
-    rw [hsub]
-    exact sub_nonneg.mpr hx
-  have hpos := potentialResolvent_nonneg_ae
-    a hU hα hlam hEll q hq (g - f) hgf
-  have hmap : potentialResolvent a hα hlam hEll q hq (g - f) =
-      potentialResolvent a hα hlam hEll q hq g -
-        potentialResolvent a hα hlam hEll q hq f :=
-    map_sub (potentialResolvent a hα hlam hEll q hq) g f
-  filter_upwards [hpos, MeasureTheory.Lp.coeFn_sub
-      (potentialResolvent a hα hlam hEll q hq g)
-      (potentialResolvent a hα hlam hEll q hq f)] with x hx hsub
-  rw [hmap, hsub] at hx
-  exact sub_nonneg.mp hx
+  have hf := potentialSolution_isPotentialWeakSolution a hα hlam hEll q hq f
+  have hg := potentialSolution_isPotentialWeakSolution a hα hlam hEll q hq g
+  simpa only [potentialResolvent_apply] using
+    potentialWeakSubsolution_le_weakSupersolution_ae a hU hα hEll q hq
+      hf.isSubsolution hg.isSupersolution hfg
 
 private theorem potentialIntegral_nonneg_of_upperPart
     {α C : ℝ} (hα : 0 < α) {q : Vec d → ℝ}
