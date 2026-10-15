@@ -76,35 +76,6 @@ private theorem cutoffFrobeniusMass_eq_translateCutoffSample
     Ch01.volumeAverage_translateSet_eq_comp_addRight]
   congr 1
 
-/-- The upper-left extraction of the direct cutoff coarse-block covariance. -/
-private theorem coarseBMatrixNorm_cutoff_translateCutoffSample [NeZero d]
-    (M : ABKModel d) (m : ℤ) (v : Vec d) {R T : TriadicCube d}
-    (hset : cubeSet T = translateSet v (cubeSet R))
-    (omega : CutoffSample d) :
-    Ch02.coarseBMatrixNorm T (coefficientCutoffTriadicCoeffFamily M m omega) =
-      Ch02.coarseBMatrixNorm R
-        (coefficientCutoffTriadicCoeffFamily M m
-          (translateCutoffSample v omega)) := by
-  have hleft : Ch02.TriadicCoeffFamily.AEEq
-      (coefficientCutoffTriadicCoeffFamily M m omega)
-      (Ch04.triadicCoeffFamilyOfAELocallyUniformlyEllipticField
-        (coefficientCutoff M.nu m omega)
-        (coefficientCutoff_aeLocallyUniformlyEllipticField M m omega)) :=
-    fun _ => Filter.EventuallyEq.rfl
-  have hright : Ch02.TriadicCoeffFamily.AEEq
-      (coefficientCutoffTriadicCoeffFamily M m (translateCutoffSample v omega))
-      (Ch04.triadicCoeffFamilyOfAELocallyUniformlyEllipticField
-        (coefficientCutoff M.nu m (translateCutoffSample v omega))
-        (coefficientCutoff_aeLocallyUniformlyEllipticField M m
-          (translateCutoffSample v omega))) :=
-    fun _ => Filter.EventuallyEq.rfl
-  rw [Ch02.coarseBMatrixNorm_eq_ofAEEq hleft T,
-    Ch02.coarseBMatrixNorm_eq_ofAEEq hright R]
-  have hmat := BadEvents.coarseBlockMatrix_cutoff_translateCutoffSample
-    M m v hset omega
-  have hupper := congrArg (fun A : BlockMat d => Ch02.matrixNorm A.upperLeft) hmat
-  simpa [Ch02.coarseBMatrixNorm] using hupper
-
 private theorem matrixNorm_smul_one_eq_of_nonneg [NeZero d]
     {c : ℝ} (hc : 0 ≤ c) :
     Ch02.matrixNorm (c • (1 : Mat d)) = c := by
@@ -161,7 +132,7 @@ theorem coarseBMatrixNorm_coefficientCutoff_le
       (coefficientCutoffTriadicCoeffFamily M m omega) ≤
       M.nu + M.nu⁻¹ * Stream.cutoffFrobeniusMass Q m omega := by
   let : NeZero d := neZero_of_model M
-  rw [coarseBMatrixNorm_cutoff_translateCutoffSample M m
+  rw [BadEvents.coarseBMatrixNorm_cutoff_translateCutoffSample M m
     (triadicCubeShift Q)
     (cubeSet_eq_translateSet_originCube_of_triadicCube Q) omega,
     cutoffFrobeniusMass_eq_translateCutoffSample Q m omega]

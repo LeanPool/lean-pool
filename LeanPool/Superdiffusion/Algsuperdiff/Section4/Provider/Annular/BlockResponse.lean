@@ -12,6 +12,7 @@ public import LeanPool.HighContrastHomogenization.Support.Book.Ch02.Theorems.Hom
 public import LeanPool.HighContrastHomogenization.Support.Book.Ch02.Theorems.HomogenizationError.ResponseBounds
 public import LeanPool.HighContrastHomogenization.Support.Book.Ch02.Theorems.MatrixPositivity
 public import LeanPool.Superdiffusion.Support.Book.Ch02.Theorems.Quadraticity
+public import LeanPool.Superdiffusion.Algsuperdiff.Section5.Support.VecGauge
 
 /-!
 # BlockResponse
@@ -123,11 +124,6 @@ private theorem vecNorm_eq_sqrt_vecNormSq (x : Vec d) :
     vecNorm x = Real.sqrt (vecNormSq x) := by
   rw [← vecNorm_sq_eq_vecNormSq, Real.sqrt_sq (vecNorm_nonneg x)]
 
-private theorem vecNorm_smul (c : ℝ) (x : Vec d) :
-    vecNorm (c • x) = |c| * vecNorm x := by
-  rw [vecNorm_eq_sqrt_vecNormSq, vecNorm_eq_sqrt_vecNormSq, vecNormSq_smul,
-    Real.sqrt_mul (sq_nonneg c), Real.sqrt_sq_eq_abs]
-
 private theorem eq_zero_of_vecNorm_eq_zero {x : Vec d} (hx : vecNorm x = 0) :
     x = 0 := by
   have hsq : vecNormSq x = 0 := by
@@ -193,7 +189,8 @@ theorem responseJ_scalarLoad_le_of_unit_bound {U : Domain d} (a : CoeffOn U)
   · have hcne : c ≠ 0 := ne_of_gt hcpos
     set eu : Vec d := c⁻¹ • f with heudef
     have heu : vecNorm eu = 1 := by
-      rw [heudef, vecNorm_smul, abs_of_pos (inv_pos.mpr hcpos), ← hcdef,
+      rw [heudef, Algsuperdiff.Section5.Support.vecNorm_smul,
+        abs_of_pos (inv_pos.mpr hcpos), ← hcdef,
         inv_mul_cancel₀ hcne]
     have hu : u = c • ((s : ℝ)⁻¹ • eu) := by
       rw [heudef, smul_smul, smul_smul, show c * s⁻¹ * c⁻¹ = s⁻¹ by field_simp]

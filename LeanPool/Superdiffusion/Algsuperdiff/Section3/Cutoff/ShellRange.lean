@@ -9,6 +9,7 @@ module
 public import LeanPool.Superdiffusion.Algsuperdiff.Section3.Cutoff.LocalScaling
 public import LeanPool.Superdiffusion.Algsuperdiff.Section3.Model
 public import LeanPool.Superdiffusion.Algsuperdiff.Probability.IndependenceMap
+public import LeanPool.Superdiffusion.Algsuperdiff.Section5.Support.VecGauge
 
 /-!
 # ShellRange
@@ -35,17 +36,6 @@ open scoped Pointwise
 noncomputable section
 
 variable {d : ℕ}
-
-private theorem vecNorm_smul (c : ℝ) (v : Vec d) :
-    HCPolySupport.Book.Ch02.vecNorm (c • v) =
-      |c| * HCPolySupport.Book.Ch02.vecNorm v := by
-  change ‖(WithLp.toLp 2 (c • v) : EuclideanSpace ℝ (Fin d))‖ =
-    |c| * ‖(WithLp.toLp 2 v : EuclideanSpace ℝ (Fin d))‖
-  have h : (WithLp.toLp 2 (c • v) : EuclideanSpace ℝ (Fin d)) =
-      c • (WithLp.toLp 2 v : EuclideanSpace ℝ (Fin d)) := by
-    ext i
-    rfl
-  rw [h, norm_smul, Real.norm_eq_abs]
 
 private theorem scaled_sets_measurable (r : ℝ) (hr : r ≠ 0)
     {U : Set (Vec d)} (hU : MeasurableSet U) : MeasurableSet (r • U) :=
@@ -74,7 +64,7 @@ private theorem scaled_separation_of_le (m n : ℤ) (hnm : n ≤ m)
     _ ≤ ((3 : ℝ) ^ n)⁻¹ * HCPolySupport.Book.Ch02.vecNorm (x0 - y0) := hscaled
     _ = HCPolySupport.Book.Ch02.vecNorm (((3 : ℝ) ^ n)⁻¹ • x0 -
         ((3 : ℝ) ^ n)⁻¹ • y0) := by
-      rw [← smul_sub, vecNorm_smul,
+      rw [← smul_sub, Algsuperdiff.Section5.Support.vecNorm_smul,
         abs_of_pos (inv_pos.mpr hthree)]
 
 /-- A shell at index `n ≤ m` has integral-local range at most the cutoff's

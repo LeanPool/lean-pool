@@ -121,24 +121,7 @@ theorem coarseBMatrixNorm_cutoff_translateCutoffSample [NeZero d] (M : ABKModel 
       Ch02.coarseBMatrixNorm R
         (coefficientCutoffTriadicCoeffFamily M m
           (translateCutoffSample v omega)) := by
-  have hleft : Ch02.TriadicCoeffFamily.AEEq
-      (coefficientCutoffTriadicCoeffFamily M m omega)
-      (Ch04.triadicCoeffFamilyOfAELocallyUniformlyEllipticField
-        (coefficientCutoff M.nu m omega)
-        (coefficientCutoff_aeLocallyUniformlyEllipticField M m omega)) :=
-    fun _ => Filter.EventuallyEq.rfl
-  have hright : Ch02.TriadicCoeffFamily.AEEq
-      (coefficientCutoffTriadicCoeffFamily M m (translateCutoffSample v omega))
-      (Ch04.triadicCoeffFamilyOfAELocallyUniformlyEllipticField
-        (coefficientCutoff M.nu m (translateCutoffSample v omega))
-        (coefficientCutoff_aeLocallyUniformlyEllipticField M m
-          (translateCutoffSample v omega))) :=
-    fun _ => Filter.EventuallyEq.rfl
-  rw [Ch02.coarseBMatrixNorm_eq_ofAEEq hleft T,
-    Ch02.coarseBMatrixNorm_eq_ofAEEq hright R]
-  have hmat := coarseBlockMatrix_cutoff_translateCutoffSample M m v hset omega
-  have hupper := congrArg (fun A : BlockMat d => Ch02.matrixNorm A.upperLeft) hmat
-  simpa [Ch02.coarseBMatrixNorm] using hupper
+  exact BadEvents.coarseBMatrixNorm_cutoff_translateCutoffSample M m v hset omega
 
 /-! ## Translation covariance of the multiscale upper ellipticity -/
 

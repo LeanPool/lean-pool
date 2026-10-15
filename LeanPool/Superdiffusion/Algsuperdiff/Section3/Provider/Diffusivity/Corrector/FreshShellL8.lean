@@ -11,6 +11,7 @@ public import LeanPool.Superdiffusion.Algsuperdiff.Section3.Provider.Stream.Incr
 public import LeanPool.Superdiffusion.Algsuperdiff.Section3.Provider.Diffusivity.Corrector.FreshShellCZ
 public import LeanPool.Superdiffusion.Algsuperdiff.Section3.Provider.Diffusivity.Corrector.ShellNormalization
 import LeanPool.Superdiffusion.Algsuperdiff.Section3.Probability.OneSidedOrlicz
+public import LeanPool.Superdiffusion.Algsuperdiff.Section5.Support.VecGauge
 
 /-!
 # FreshShellL8
@@ -199,11 +200,7 @@ def streamForcing (sigmaInv : ℝ) (omega : Cutoff.ShellSeq d) (n m : ℤ)
 /-- The Euclidean length is homogeneous. -/
 theorem vecNorm_smul (c : ℝ) (v : Vec d) :
     Book.Ch02.vecNorm (c • v) = |c| * Book.Ch02.vecNorm v := by
-  rw [vecNorm_eq_sqrt_vecNormSq, vecNorm_eq_sqrt_vecNormSq]
-  have h : vecNormSq (c • v) = c ^ 2 * vecNormSq v := by
-    simp only [vecNormSq, vecDot, Pi.smul_apply, smul_eq_mul, Finset.mul_sum]
-    exact Finset.sum_congr rfl fun i _ => by ring
-  rw [h, Real.sqrt_mul (sq_nonneg c), Real.sqrt_sq_eq_abs]
+  exact Algsuperdiff.Section5.Support.vecNorm_smul c v
 
 /-- The stream increment is continuous in the space variable. -/
 theorem continuous_finiteShellIncrement (omega : Cutoff.ShellSeq d) (n m : ℤ) :

@@ -260,34 +260,6 @@ theorem measureReal_not_randomHsepAllLWaveEnvelope_le
     exact add_le_add hsum htail)
 
 
-/-- Measurability of `hsep`, re-derived from the measurable strict upper
-level sets exported by `WaveOscillations`. -/
-private theorem measurable_hsep_for_allLWave
-    (M : ABKModel d) (n : ℤ) (E b : ℝ) :
-    Measurable (hsep M n E b) := by
-  refine measurable_to_countable' fun k => ?_
-  cases k with
-  | zero =>
-      have hset : hsep M n E b ⁻¹' {0} =
-          {omega : CutoffSample d | 0 < hsep M n E b omega}ᶜ := by
-        ext omega
-        simp only [Set.mem_preimage, Set.mem_singleton_iff, Set.mem_compl_iff,
-          Set.mem_ofPred_eq]
-        omega
-      rw [hset]
-      exact (measurableSet_lt_hsep M n E b 0).compl
-  | succ j =>
-      have hset : hsep M n E b ⁻¹' {j + 1} =
-          {omega : CutoffSample d | j < hsep M n E b omega} ∩
-            {omega : CutoffSample d | j + 1 < hsep M n E b omega}ᶜ := by
-        ext omega
-        simp only [Set.mem_preimage, Set.mem_singleton_iff, Set.mem_inter_iff,
-          Set.mem_compl_iff, Set.mem_ofPred_eq]
-        omega
-      rw [hset]
-      exact (measurableSet_lt_hsep M n E b j).inter
-        (measurableSet_lt_hsep M n E b (j + 1)).compl
-
 /-- The all-cutoff random-profile wave event is measurable, so stationarity
 can transport its exact probability rather than only an outer bound. -/
 theorem measurableSet_randomHsepAllLWaveEnvelope
@@ -344,7 +316,7 @@ theorem measurableSet_randomHsepAllLWaveEnvelope
           using! hgood
   rw [hset]
   refine MeasurableSet.iInter fun h => MeasurableSet.union ?_ (hD h)
-  exact ((measurable_hsep_for_allLWave M n E b)
+  exact ((measurable_hsep M n E b)
     (measurableSet_singleton h)).compl
 
 

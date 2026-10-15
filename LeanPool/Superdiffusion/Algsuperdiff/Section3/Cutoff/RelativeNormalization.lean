@@ -125,34 +125,6 @@ theorem scaledCoefficientCutoffLaw_adjoint_invariant (M : ABKModel d) (m : ℤ)
     ← Measure.map_map (measurable_smulReg r hr) (measurable_adjointReg (d := d)),
     coefficientCutoffLaw_adjoint_invariant M m]
 
-private theorem vecNorm_smul (c : ℝ) (v : Vec d) :
-    HCPolySupport.Book.Ch02.vecNorm (c • v) =
-      |c| * HCPolySupport.Book.Ch02.vecNorm v := by
-  change ‖(WithLp.toLp 2 (c • v) : EuclideanSpace ℝ (Fin d))‖ =
-    |c| * ‖(WithLp.toLp 2 v : EuclideanSpace ℝ (Fin d))‖
-  have h : (WithLp.toLp 2 (c • v) : EuclideanSpace ℝ (Fin d)) =
-      c • (WithLp.toLp 2 v : EuclideanSpace ℝ (Fin d)) := by
-    ext i
-    rfl
-  rw [h, norm_smul, Real.norm_eq_abs]
-
-private theorem cutoff_range_on_scaled_thickenings (d : ℕ) (m : ℤ) {r : ℝ}
-    (hrpos : 0 < r) (U V : Set (Vec d)) (hUV : AreUnitSeparated U V)
-    (hslack : cutoffNaturalRange d m < r * (1 - 2 * cutoffBridgeEpsilon)) :
-    ∀ ⦃x y : Vec d⦄,
-      x ∈ r • thickening cutoffBridgeEpsilon U →
-      y ∈ r • thickening cutoffBridgeEpsilon V →
-      cutoffNaturalRange d m ≤ HCPolySupport.Book.Ch02.vecNorm (x - y) := by
-  rintro x y ⟨x0, hx0, rfl⟩ ⟨y0, hy0, rfl⟩
-  have hgap :=
-    Algsuperdiff.Section3.Annealed.one_sub_two_mul_lt_vecNorm_sub_of_mem_thickenings
-      (d := d) hUV (epsilon := cutoffBridgeEpsilon) hx0 hy0
-  have hstrict : cutoffNaturalRange d m <
-      HCPolySupport.Book.Ch02.vecNorm (r • x0 - r • y0) := by
-    rw [← smul_sub, vecNorm_smul, abs_of_pos hrpos]
-    exact hslack.trans (mul_lt_mul_of_pos_left hgap hrpos)
-  exact hstrict.le
-
 private theorem continuous_coefficientCutoff_entry (nu : ℝ) (m : ℤ)
     (omega : CutoffSample d) (i j : Fin d) :
     Continuous (fun x : Vec d => coefficientCutoff nu m omega x i j) := by
@@ -175,8 +147,9 @@ theorem scaledCoefficientCutoffLaw_unitRangeDependent (M : ABKModel d) (m : ℤ)
   have hrT : MeasurableSet (r • T) := hT.const_smul_of_ne_zero hr
   have hsep : ∀ ⦃x y : Vec d⦄, x ∈ r • S → y ∈ r • T →
       cutoffNaturalRange d m ≤ HCPolySupport.Book.Ch02.vecNorm (x - y) := by
-    simpa only [S, T] using
-      cutoff_range_on_scaled_thickenings d m hrpos U V hUV hslack
+    intro x y hx hy
+    exact (Algsuperdiff.Section3.Annealed.lt_vecNorm_sub_of_mem_scaled_thickenings
+      hrpos hUV hslack hx hy).le
   let A : CutoffSample d → RegCoeffField d :=
     fun omega => smulReg r hr (coefficientCutoff M.nu m omega)
   have hAmeas : Measurable A :=

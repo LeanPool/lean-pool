@@ -12,6 +12,7 @@ public import LeanPool.HighContrastHomogenization.Support.Probability.RegCoeffFi
 public import LeanPool.HighContrastHomogenization.Support.Probability.RegCoeffField.SliceMeasurability
 public import Mathlib.Analysis.Calculus.BumpFunction.Convolution
 public import Mathlib.Topology.UniformSpace.UniformApproximation
+public import LeanPool.Superdiffusion.Algsuperdiff.Section5.Support.VecGauge
 
 /-!
 # RestrictionBridge
@@ -48,7 +49,7 @@ strict slack supplied by open thickenings.
 namespace Algsuperdiff.Section3.Annealed
 
 open Filter Function HCPolySupport MeasureTheory Metric Set Topology
-open scoped Convolution
+open scoped Convolution Pointwise
 
 noncomputable section
 
@@ -296,6 +297,21 @@ theorem one_sub_two_mul_lt_vecNorm_sub_of_mem_thickenings
     1 - 2 * epsilon < HCPolySupport.Book.Ch02.vecNorm (x - y) := by
   apply rho_lt_vecNorm_sub_of_mem_thickenings hUV (epsilon := epsilon)
     (rho := 1 - 2 * epsilon) (by linarith) hx hy
+
+/-- Positive rescaling transports the strict gap between open thickenings.
+The scale, thickening radius and requested separation are arbitrary. -/
+theorem lt_vecNorm_sub_of_mem_scaled_thickenings
+    {r epsilon range : ℝ} (hrpos : 0 < r)
+    {U V : Set (Vec d)} (hUV : AreUnitSeparated U V)
+    (hslack : range < r * (1 - 2 * epsilon))
+    {x y : Vec d} (hx : x ∈ r • thickening epsilon U)
+    (hy : y ∈ r • thickening epsilon V) :
+    range < HCPolySupport.Book.Ch02.vecNorm (x - y) := by
+  rcases hx with ⟨x0, hx0, rfl⟩
+  rcases hy with ⟨y0, hy0, rfl⟩
+  have hgap := one_sub_two_mul_lt_vecNorm_sub_of_mem_thickenings hUV hx0 hy0
+  rw [← smul_sub, Algsuperdiff.Section5.Support.vecNorm_smul, abs_of_pos hrpos]
+  exact hslack.trans (mul_lt_mul_of_pos_left hgap hrpos)
 
 end
 

@@ -10,6 +10,7 @@ public import LeanPool.Superdiffusion.Algsuperdiff.Section3.Provider.Stream.Orig
 public import LeanPool.Superdiffusion.Algsuperdiff.Section3.Provider.Stream.IncrementDerivativeBounds
 public import LeanPool.Superdiffusion.Algsuperdiff.Section3.Provider.Orlicz.ProductPower
 public import Mathlib.Analysis.Calculus.MeanValue
+public import LeanPool.Superdiffusion.Algsuperdiff.Section5.Support.VecGauge
 
 /-!
 # IncrementLinfty
@@ -95,12 +96,7 @@ theorem matrixOperatorNorm_smul_real (c : ℝ) (A : Mat d) :
 /-- The exact Euclidean vector norm is absolutely homogeneous. -/
 theorem vecNorm_smul_real (c : ℝ) (x : Vec d) :
     vecNorm (c • x) = |c| * vecNorm x := by
-  have hsq : vecNorm (c • x) ^ 2 = (|c| * vecNorm x) ^ 2 := by
-    rw [vecNorm_sq_eq_vecNormSq, vecNormSq_smul, mul_pow, sq_abs,
-      vecNorm_sq_eq_vecNormSq]
-  have h := congrArg Real.sqrt hsq
-  rwa [Real.sqrt_sq (vecNorm_nonneg _),
-    Real.sqrt_sq (mul_nonneg (abs_nonneg c) (vecNorm_nonneg x))] at h
+  exact Algsuperdiff.Section5.Support.vecNorm_smul c x
 
 /-- The exact induced first-derivative norm controls the matrix values at
 every input, with the Euclidean vector norm of the input as the factor. -/

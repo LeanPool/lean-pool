@@ -138,16 +138,15 @@ theorem coarseBlockMatrix_cutoff_translateCutoffSample [NeZero d] (M : ABKModel 
     coefficientCutoff_translateCutoffSample]
   rfl
 
-/-- One-cube translation covariance of `|sigma_*^{-1}(Q; a)|` for the actual
-coefficient cutoff. -/
-theorem coarseSigmaStarInvMatrixNorm_cutoff_translateCutoffSample [NeZero d]
-    (M : ABKModel d) (m : ℤ) (v : Vec d) {R T : TriadicCube d}
+/-- Translation covariance of the actual cutoff family's full coarse matrix. -/
+theorem coarseBlockMatrix_cutoffFamily_translateCutoffSample [NeZero d] (M : ABKModel d)
+    (m : ℤ) (v : Vec d) {R T : TriadicCube d}
     (hset : cubeSet T = translateSet v (cubeSet R)) (omega : CutoffSample d) :
-    Ch02.coarseSigmaStarInvMatrixNorm T
-        (coefficientCutoffTriadicCoeffFamily M m omega) =
-      Ch02.coarseSigmaStarInvMatrixNorm R
-        (coefficientCutoffTriadicCoeffFamily M m
-          (translateCutoffSample v omega)) := by
+    Ch02.coarseBlockMatrix (Ch02.cubeDomain T)
+        ((coefficientCutoffTriadicCoeffFamily M m omega).coeffOn T) =
+      Ch02.coarseBlockMatrix (Ch02.cubeDomain R)
+        ((coefficientCutoffTriadicCoeffFamily M m
+          (translateCutoffSample v omega)).coeffOn R) := by
   have hleft : Ch02.TriadicCoeffFamily.AEEq
       (coefficientCutoffTriadicCoeffFamily M m omega)
       (Ch04.triadicCoeffFamilyOfAELocallyUniformlyEllipticField
@@ -161,11 +160,35 @@ theorem coarseSigmaStarInvMatrixNorm_cutoff_translateCutoffSample [NeZero d]
         (coefficientCutoff_aeLocallyUniformlyEllipticField M m
           (translateCutoffSample v omega))) :=
     fun _ => Filter.EventuallyEq.rfl
-  rw [Ch02.coarseSigmaStarInvMatrixNorm_eq_ofAEEq hleft T,
-    Ch02.coarseSigmaStarInvMatrixNorm_eq_ofAEEq hright R]
-  have hmat := coarseBlockMatrix_cutoff_translateCutoffSample M m v hset omega
-  have hlower := congrArg (fun A : BlockMat d => Ch02.matrixNorm A.lowerRight) hmat
-  simpa [Ch02.coarseSigmaStarInvMatrixNorm] using hlower
+  rw [Ch02.coarseBlockMatrix_eq_ofAEEq (hleft T),
+    Ch02.coarseBlockMatrix_eq_ofAEEq (hright R)]
+  exact coarseBlockMatrix_cutoff_translateCutoffSample M m v hset omega
+
+/-- The upper-left block of the cutoff coarse matrix has the same translation covariance. -/
+theorem coarseBMatrixNorm_cutoff_translateCutoffSample [NeZero d] (M : ABKModel d)
+    (m : ℤ) (v : Vec d) {R T : TriadicCube d}
+    (hset : cubeSet T = translateSet v (cubeSet R)) (omega : CutoffSample d) :
+    Ch02.coarseBMatrixNorm T (coefficientCutoffTriadicCoeffFamily M m omega) =
+      Ch02.coarseBMatrixNorm R
+        (coefficientCutoffTriadicCoeffFamily M m
+          (translateCutoffSample v omega)) := by
+  have hmat := coarseBlockMatrix_cutoffFamily_translateCutoffSample M m v hset omega
+  simpa [Ch02.coarseBMatrixNorm] using
+    congrArg (fun A : BlockMat d => Ch02.matrixNorm A.upperLeft) hmat
+
+/-- One-cube translation covariance of `|sigma_*^{-1}(Q; a)|` for the actual
+coefficient cutoff. -/
+theorem coarseSigmaStarInvMatrixNorm_cutoff_translateCutoffSample [NeZero d]
+    (M : ABKModel d) (m : ℤ) (v : Vec d) {R T : TriadicCube d}
+    (hset : cubeSet T = translateSet v (cubeSet R)) (omega : CutoffSample d) :
+    Ch02.coarseSigmaStarInvMatrixNorm T
+        (coefficientCutoffTriadicCoeffFamily M m omega) =
+      Ch02.coarseSigmaStarInvMatrixNorm R
+        (coefficientCutoffTriadicCoeffFamily M m
+          (translateCutoffSample v omega)) := by
+  have hmat := coarseBlockMatrix_cutoffFamily_translateCutoffSample M m v hset omega
+  simpa [Ch02.coarseSigmaStarInvMatrixNorm] using
+    congrArg (fun A : BlockMat d => Ch02.matrixNorm A.lowerRight) hmat
 
 /-! ## Translation covariance of the multiscale lower ellipticity -/
 

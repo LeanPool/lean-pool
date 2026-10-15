@@ -72,35 +72,6 @@ theorem cutoffNormalizationDepth_strict_slack (d : ℕ) (m : ℤ) :
   rw [one_sub_two_mul_cutoffBridgeEpsilon]
   nlinarith [cutoffNormalizationDepth_spec d m]
 
-private theorem vecNorm_smul (c : ℝ) (v : Vec d) :
-    HCPolySupport.Book.Ch02.vecNorm (c • v) =
-      |c| * HCPolySupport.Book.Ch02.vecNorm v := by
-  change ‖(WithLp.toLp 2 (c • v) : EuclideanSpace ℝ (Fin d))‖ =
-    |c| * ‖(WithLp.toLp 2 v : EuclideanSpace ℝ (Fin d))‖
-  have h : (WithLp.toLp 2 (c • v) : EuclideanSpace ℝ (Fin d)) =
-      c • (WithLp.toLp 2 v : EuclideanSpace ℝ (Fin d)) := by
-    ext i
-    rfl
-  rw [h, norm_smul, Real.norm_eq_abs]
-
-private theorem cutoff_range_on_scaled_thickenings (d : ℕ) (m : ℤ)
-    (k : ℕ) (U V : Set (Vec d)) (hUV : AreUnitSeparated U V)
-    (hslack : cutoffNaturalRange d m < (3 : ℝ) ^ k *
-      (1 - 2 * cutoffBridgeEpsilon)) :
-    ∀ ⦃x y : Vec d⦄,
-      x ∈ ((3 : ℝ) ^ k) • thickening cutoffBridgeEpsilon U →
-      y ∈ ((3 : ℝ) ^ k) • thickening cutoffBridgeEpsilon V →
-      cutoffNaturalRange d m ≤ HCPolySupport.Book.Ch02.vecNorm (x - y) := by
-  rintro x y ⟨x0, hx0, rfl⟩ ⟨y0, hy0, rfl⟩
-  have hscale : 0 < (3 : ℝ) ^ k := by positivity
-  have hgap := Algsuperdiff.Section3.Annealed.one_sub_two_mul_lt_vecNorm_sub_of_mem_thickenings
-    (d := d) hUV (epsilon := cutoffBridgeEpsilon) hx0 hy0
-  have hstrict : cutoffNaturalRange d m <
-      HCPolySupport.Book.Ch02.vecNorm (((3 : ℝ) ^ k) • x0 - (3 : ℝ) ^ k • y0) := by
-    rw [← smul_sub, vecNorm_smul, abs_of_pos hscale]
-    exact hslack.trans (mul_lt_mul_of_pos_left hgap hscale)
-  exact hstrict.le
-
 private theorem continuous_coefficientCutoff_entry (nu : ℝ) (m : ℤ)
     (omega : CutoffSample d) (i j : Fin d) :
     Continuous (fun x : Vec d => coefficientCutoff nu m omega x i j) := by
@@ -128,8 +99,10 @@ theorem cutoffNormalization_unitRangeDependentLaw (M : ABKModel d) (m : ℤ) :
   have hrT : MeasurableSet (r • T) := hT.const_smul_of_ne_zero hr
   have hsep : ∀ ⦃x y : Vec d⦄, x ∈ r • S → y ∈ r • T →
       cutoffNaturalRange d m ≤ HCPolySupport.Book.Ch02.vecNorm (x - y) := by
-    simpa only [r, S, T] using cutoff_range_on_scaled_thickenings d m k U V hUV
-      (by simpa [k] using cutoffNormalizationDepth_strict_slack d m)
+    intro x y hx hy
+    have hrpos : 0 < r := by dsimp [r]; positivity
+    exact (Algsuperdiff.Section3.Annealed.lt_vecNorm_sub_of_mem_scaled_thickenings hrpos hUV
+      (by simpa [r, k] using cutoffNormalizationDepth_strict_slack d m) hx hy).le
   let A : CutoffSample d → RegCoeffField d :=
     fun omega => rescaleReg k (coefficientCutoff M.nu m omega)
   have hAmeas : Measurable A :=

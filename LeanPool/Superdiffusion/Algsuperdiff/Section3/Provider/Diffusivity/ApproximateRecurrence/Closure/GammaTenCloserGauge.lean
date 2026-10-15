@@ -10,6 +10,7 @@ public import LeanPool.Superdiffusion.Algsuperdiff.Section3.Provider.Diffusivity
 public import LeanPool.Superdiffusion.Algsuperdiff.Section3.Provider.Diffusivity.ApproximateRecurrence.Closure.GammaTenAssemblyMoments
 public import LeanPool.Superdiffusion.Algsuperdiff.Section3.Provider.Diffusivity.ApproximateRecurrence.Closure.GammaTenLoad
 public import LeanPool.Superdiffusion.Algsuperdiff.Section3.Provider.Diffusivity.ApproximateRecurrence.Closure.SplitFoldIntegrability
+public import LeanPool.Superdiffusion.Algsuperdiff.Section5.Support.VecGauge
 
 /-!
 # GammaTenCloserGauge
@@ -171,8 +172,7 @@ theorem gammaTenQuadConst_nonneg (d : ℕ) : 0 ≤ gammaTenQuadConst d := by
 /-- The Euclidean vector norm of a nonnegative scalar multiple. -/
 theorem vecNorm_smul_of_nonneg {c : ℝ} (hc : 0 ≤ c) (v : Vec d) :
     vecNorm (c • v) = c * vecNorm v := by
-  rw [vecNorm_eq_sqrt_vecNormSq, vecNorm_eq_sqrt_vecNormSq, vecNormSq_smul,
-    Real.sqrt_mul (sq_nonneg c), Real.sqrt_sq hc]
+  rw [Algsuperdiff.Section5.Support.vecNorm_smul, abs_of_nonneg hc]
 
 /-- **The two gauge readings of one load.**
 
