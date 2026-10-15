@@ -223,28 +223,7 @@ private theorem enorm_cubeEuclideanWspKernel_rpow_le {A : Set (Vec d)}
 private theorem continuousOn_of_holderSeminormBoundOn {U : Set (Vec d)} {alpha K : ℝ}
     {f : Vec d → Vec d} (hK : 0 ≤ K) (halpha : 0 < alpha)
     (hf : HolderSeminormBoundOn U alpha K f) : ContinuousOn f U := by
-  rw [Metric.continuousOn_iff]
-  intro b hb eps heps
-  have hK1 : (0 : ℝ) < K + 1 := by linarith only [hK]
-  have hq : (0 : ℝ) < eps / (K + 1) := div_pos heps hK1
-  refine ⟨(eps / (K + 1)) ^ alpha⁻¹, Real.rpow_pos_of_pos hq _, fun a ha hab => ?_⟩
-  have hstep : ‖a - b‖ ^ alpha < ((eps / (K + 1)) ^ alpha⁻¹) ^ alpha := by
-    refine Real.rpow_lt_rpow (norm_nonneg _) ?_ halpha
-    rwa [dist_eq_norm] at hab
-  have hpow : ((eps / (K + 1)) ^ alpha⁻¹) ^ alpha = eps / (K + 1) := by
-    rw [← Real.rpow_mul hq.le, inv_mul_cancel₀ (ne_of_gt halpha), Real.rpow_one]
-  have hmul : K * ‖a - b‖ ^ alpha ≤ K * (eps / (K + 1)) := by
-    rw [← hpow]
-    exact mul_le_mul_of_nonneg_left hstep.le hK
-  have hlt : K * (eps / (K + 1)) < eps := by
-    have hid : K * (eps / (K + 1)) = (K / (K + 1)) * eps := by field_simp
-    have hfrac : K / (K + 1) < 1 := (div_lt_one hK1).2 (by linarith only [])
-    rw [hid]
-    calc (K / (K + 1)) * eps < 1 * eps := mul_lt_mul_of_pos_right hfrac heps
-      _ = eps := one_mul eps
-  have hbd := hf a ha b hb
-  rw [dist_eq_norm]
-  linarith only [hbd, hmul, hlt]
+  exact hf.continuousOn hK halpha
 
 /-- The `W^{s′,q}` kernel of a `C^{0,α}` field is a.e. strongly measurable for the
 Gagliardo cube measure: the scalar factor is globally measurable, and the vector factor

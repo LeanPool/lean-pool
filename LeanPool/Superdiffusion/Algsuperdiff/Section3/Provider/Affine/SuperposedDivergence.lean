@@ -223,7 +223,7 @@ any family `S` of vectors (the roles: `S i = ∇ℓ̂_{e_i}(𝔰)`),
 The `d` produced by `∑_i (e_i)_i` and the `q_j` produced by `∑_i q_i (e_j)_i`
 cancel against the `(d−1)` of `e.dq`; this is the display `∇·D_q = q` in its
 cellwise form, and it is what makes the left-hand side a deviation. -/
-private theorem divergence_sub_eq (hd : 2 ≤ d) (q : Vec d) (S : Fin d → Vec d) :
+theorem divergence_sub_eq (hd : 2 ≤ d) (q : Vec d) (S : Fin d → Vec d) :
     (fun j => ∑ i, ((d : ℝ) - 1)⁻¹ * (q j * S i i - q i * S j i)) - q =
       fun j => ((d : ℝ) - 1)⁻¹ *
         ((∑ i, (S i - basisVec i) i) * q j - ∑ i, q i * (S j - basisVec j) i) := by

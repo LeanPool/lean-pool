@@ -200,33 +200,6 @@ theorem hasGammaMomentGrowthWith_localCubeControl_zero (M : ABKModel d) (q : ℤ
       (by norm_num) hscale_pos (fun j => localCubeControl_nonneg q j)
       (measurable_localCubeControl q).aemeasurable htail
 
-/-- Transport a one-sided stretched-exponential estimate through an exact
-push-forward identity.  This is stated locally because the cutoff carrier is
-a subtype with a deliberately nontrivial induced law. -/
-private theorem isBigOWith_gammaSigma_of_map_eq
-    {Ω Ω' : Type*} [MeasurableSpace Ω] [MeasurableSpace Ω']
-    {μ : Measure Ω} {μ' : Measure Ω'} {X : Ω → ℝ} {Y : Ω' → ℝ}
-    {σ A : ℝ}
-    (hX : Measurable X) (hY : Measurable Y)
-    (hmap : Measure.map X μ = Measure.map Y μ')
-    (hYtail : IndependentSums.IsBigOWith μ' (IndependentSums.gammaSigma σ) Y A) :
-    IndependentSums.IsBigOWith μ (IndependentSums.gammaSigma σ) X A := by
-  rw [IndependentSums.isBigOWith_gammaSigma_iff] at hYtail ⊢
-  intro t ht
-  let E : Set ℝ := {x | A * t < x}
-  have hE : MeasurableSet E := measurableSet_lt measurable_const measurable_id
-  calc
-    μ.real {omega | A * t < X omega} = (Measure.map X μ).real E := by
-      have h := congrArg ENNReal.toReal
-        (Measure.map_apply_of_aemeasurable (μ := μ) hX.aemeasurable hE)
-      simpa only [E, Set.preimage_ofPred_eq] using! h.symm
-    _ = (Measure.map Y μ').real E := by rw [hmap]
-    _ = μ'.real {omega | A * t < Y omega} := by
-      have h := congrArg ENNReal.toReal
-        (Measure.map_apply_of_aemeasurable (μ := μ') hY.aemeasurable hE)
-      simpa only [E, Set.preimage_ofPred_eq] using! h
-    _ ≤ Real.exp (-(t ^ σ)) := hYtail ht
-
 /-- Countable `Γ_σ` aggregation for an everywhere convergent family.  The
 proof passes uniform finite-sum tails to the exact pointwise sum by Fatou;
 it requires no independence between the summands. -/
@@ -411,7 +384,8 @@ theorem isBigOWith_gammaSigma_localCubeControl_lowerShell (M : ABKModel d)
   have hmap : Measure.map f M.P.toMeasure =
       Measure.map g (ShellField.zeroShellLaw M.P).toMeasure := by
     simpa only [f, g, b, q] using map_localCubeControl_shell_eq_zero M ell n
-  have htransport := isBigOWith_gammaSigma_of_map_eq hf hg hmap hscaled
+  have htransport :=
+    Algsuperdiff.Probability.isBigOWith_gammaSigma_of_map_eq hf hg hmap hscaled
   have hscale : b * (Real.exp 1 *
       (IndependentSums.gammaMomentConst 2 * localCubeControlGammaScale d q)) =
       cutoffGammaMajorant d M.gamma m ell r := by
@@ -453,7 +427,7 @@ private theorem isBigOWith_gammaSigma_cutoffSample_lowerShell (M : ABKModel d)
           (Measure.map_map hf
             (MeasurableEmbedding.subtype_coe (measurableSet_lowerTailGoodSet d)).measurable).symm
       _ = Measure.map f M.P.toMeasure := by rw [map_cutoffSampleLaw_val]
-  exact isBigOWith_gammaSigma_of_map_eq hF hf hmap
+  exact Algsuperdiff.Probability.isBigOWith_gammaSigma_of_map_eq hF hf hmap
     (isBigOWith_gammaSigma_localCubeControl_lowerShell M m ell r)
 
 /-- The actual lower-infinite cutoff local control has a scale-summable

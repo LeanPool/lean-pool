@@ -50,41 +50,6 @@ def localizedInteriorDecayConstant (d : ℕ) (nu mass Ks Kl M Ceta volLayer alph
             r₀ ^ (2 - alpha) * (mass * M / nu)) *
         (r₀ / 2) ^ alpha
 
-private theorem isScalarForcedWeakSolution_const_smul_interior
-    {W : Set (Vec d)} {c : ℝ} {a : CoeffField d}
-    {u : H1Function W} {g : Vec d → ℝ}
-    (hu : IsScalarForcedWeakSolution a W g u) :
-    IsScalarForcedWeakSolution (fun x => c • a x) W (fun x => c * g x) u := by
-  refine ⟨?_, fun phi => ?_⟩
-  · simpa only [Pi.smul_apply, smul_eq_mul] using! hu.1.const_smul c
-  · have h := hu.2 phi
-    have hleft :
-        (∫ x in W, vecDot (matVecMul (c • a x) (u.grad x))
-            (phi.toH1Function.grad x) ∂volume) =
-          c * ∫ x in W, vecDot (matVecMul (a x) (u.grad x))
-            (phi.toH1Function.grad x) ∂volume := by
-      rw [← integral_const_mul]
-      apply integral_congr_ae
-      filter_upwards with x
-      simp only [smul_matVecMul, vecDot_smul_left]
-    have hright :
-        (∫ x in W, (c * g x) * phi.toH1Function.toFun x ∂volume) =
-          c * ∫ x in W, g x * phi.toH1Function.toFun x ∂volume := by
-      rw [← integral_const_mul]
-      apply integral_congr_ae
-      filter_upwards with x
-      ring
-    rw [hleft, hright, h]
-
-private theorem isScalarForcedWeakSolution_restrict_interior
-    {W V : Set (Vec d)} (hW : IsOpen W) (hV : IsOpen V) (hVW : V ⊆ W)
-    {a : CoeffField d} {u : H1Function W} {g : Vec d → ℝ}
-    (hu : IsScalarForcedWeakSolution a W g u) :
-    IsScalarForcedWeakSolution a V g (u.restrict hV hVW) := by
-  refine ⟨hu.1.mono_measure (Measure.restrict_mono hVW le_rfl), fun phi => ?_⟩
-  have h := zerothOrderOn_restrict_of_isScalarForcedWeakSolution hW hV hVW hu phi
-  simpa only [Pi.zero_apply, vecDot_zero_left, integral_zero, sub_zero] using h
-
 private theorem localizedInteriorPointwise_comparisonBounds1 :
     ∀ {d : ℕ} {Om : Set (Vec d)} (hOm : IsOpenBoundedConvexDomain Om) {u : H1Function Om} {eta psi
       : Vec d → ℝ}
@@ -368,7 +333,7 @@ theorem interior_abs_center_le_exp_localized [NeZero d]
   have hBopen : IsOpen B := isOpen_euclideanBall x r₀
   let uB := u.restrict hBopen hball
   have hsolB : IsScalarForcedWeakSolution a B (fun y => -(mass * u.toFun y)) uB :=
-    isScalarForcedWeakSolution_restrict_interior hOm.isOpen hBopen hball hsol
+    IsScalarForcedWeakSolution.restrictSubset hBopen hball hsol
   have hsymmx : symmPart (a x) = nu • (1 : Mat d) :=
     symmPart_eq_of_splitSkew (hsplit x) (hksSkew x) (hklSkew x)
   have hk : matTranspose (a x - nu • (1 : Mat d)) =
@@ -377,7 +342,7 @@ theorem interior_abs_center_le_exp_localized [NeZero d]
   have hnormalized : IsScalarForcedWeakSolution (normalizedFrozenCoeff nu a x) B
       (fun y => nu⁻¹ * (-(mass * u.toFun y))) uB := by
     simpa only [normalizedFrozenCoeff] using!
-      isScalarForcedWeakSolution_const_smul_interior (c := nu⁻¹) hfrozen
+      IsScalarForcedWeakSolution.const_smul_coefficient (c := nu⁻¹) hfrozen
   have hnormalizedMeas : Measurable (normalizedFrozenCoeff nu a x) := by
     refine Measurable.of_eval fun i => Measurable.of_eval fun j => ?_
     change Measurable fun y => nu⁻¹ *

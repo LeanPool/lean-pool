@@ -18,7 +18,7 @@ Module imports, support namespace and local option directives adapted for Lean P
 @[expose] public section
 
 /-!
-# Finite maxima with one-sided Gaussian tails
+# Tail-law transport and finite maxima with one-sided Gaussian tails
 
 This module packages the finite-maximum estimate needed for the cutoff
 argument.  It assumes neither independence nor identically distributed
@@ -32,6 +32,31 @@ open MeasureTheory
 open HCPolySupport IndependentSums
 
 noncomputable section
+
+/-- A one-sided Gamma tail depends only on the pushforward law of the observable. -/
+theorem isBigOWith_gammaSigma_of_map_eq
+    {Ω Ω' : Type*} [MeasurableSpace Ω] [MeasurableSpace Ω']
+    {μ : Measure Ω} {μ' : Measure Ω'} {X : Ω → ℝ} {Y : Ω' → ℝ}
+    {σ A : ℝ}
+    (hX : Measurable X) (hY : Measurable Y)
+    (hmap : Measure.map X μ = Measure.map Y μ')
+    (hYtail : IndependentSums.IsBigOWith μ' (IndependentSums.gammaSigma σ) Y A) :
+    IndependentSums.IsBigOWith μ (IndependentSums.gammaSigma σ) X A := by
+  rw [IndependentSums.isBigOWith_gammaSigma_iff] at hYtail ⊢
+  intro t ht
+  have hE : MeasurableSet {x : ℝ | A * t < x} :=
+    measurableSet_lt measurable_const measurable_id
+  calc
+    μ.real {omega | A * t < X omega} = (Measure.map X μ).real {x : ℝ | A * t < x} := by
+      have h := congrArg ENNReal.toReal
+        (Measure.map_apply_of_aemeasurable (μ := μ) hX.aemeasurable hE)
+      simpa only [Set.preimage_ofPred_eq] using! h.symm
+    _ = (Measure.map Y μ').real {x : ℝ | A * t < x} := by rw [hmap]
+    _ = μ'.real {omega | A * t < Y omega} := by
+      have h := congrArg ENNReal.toReal
+        (Measure.map_apply_of_aemeasurable (μ := μ') hY.aemeasurable hE)
+      simpa only [Set.preimage_ofPred_eq] using! h
+    _ ≤ Real.exp (-(t ^ σ)) := hYtail ht
 
 variable {Ω ι : Type*} [MeasurableSpace Ω] {μ : Measure Ω}
 

@@ -228,33 +228,6 @@ theorem abs_analyticMinimalResolventReal_sub_le (mu : PositiveShift)
       A.abs_analyticMinimalResolventReal_le mu (hf.sub hg) hclose x
 
 omit [NeZero d] in
-private theorem matrixWeak_const_smul
-    {W : Set (Vec d)} {c : ℝ} {a : CoeffField d}
-    {u : H1Function W} {g : Vec d → ℝ}
-    (hu : IsMatrixDivFormWeakSolutionZerothOrderOn a W u g 0) :
-    IsMatrixDivFormWeakSolutionZerothOrderOn
-      (fun x ↦ c • a x) W u (fun x ↦ c * g x) 0 := by
-  intro phi
-  have h := hu phi
-  have hl : (∫ x in W, vecDot (matVecMul (c • a x) (u.grad x))
-      (phi.toH1Function.grad x) ∂volume) =
-      c * ∫ x in W, vecDot (matVecMul (a x) (u.grad x))
-        (phi.toH1Function.grad x) ∂volume := by
-    rw [← integral_const_mul]
-    apply integral_congr_ae
-    filter_upwards with y
-    simp [smul_matVecMul, vecDot_smul_left]
-  have hr : (∫ x in W, (c * g x) * phi.toH1Function.toFun x ∂volume) =
-      c * ∫ x in W, g x * phi.toH1Function.toFun x ∂volume := by
-    rw [← integral_const_mul]
-    apply integral_congr_ae
-    filter_upwards with y
-    ring
-  rw [hl, hr]
-  simpa only [Pi.zero_apply, vecDot_zero_left, integral_zero, sub_zero]
-    using congrArg (c * ·) h
-
-omit [NeZero d] in
 private theorem scalarLInfSizeOn_const_mul
     {W : Set (Vec d)} {c : ℝ} {g : Vec d → ℝ} :
     scalarLInfSizeOn W (fun x ↦ c * g x) =
@@ -317,7 +290,7 @@ theorem exists_holderBound_cubeResolvent_tail (mu : PositiveShift)
       (normalizedFrozenCoeff A.nu A.a x) (euclideanBall x R) z
       (fun y ↦ A.nu⁻¹ * g y) 0 := by
     simpa only [normalizedFrozenCoeff] using!
-      matrixWeak_const_smul (c := A.nu⁻¹) hfrozen
+      isMatrixDivFormWeakSolutionZerothOrderOn_const_smul_zero (c := A.nu⁻¹) hfrozen
   have hgscaled : MemScalarLInfOn (euclideanBall x R)
       (fun y ↦ A.nu⁻¹ * g y) := by
     have := hgmem.const_smul A.nu⁻¹

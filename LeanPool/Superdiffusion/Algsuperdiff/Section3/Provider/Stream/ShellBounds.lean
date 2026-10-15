@@ -68,32 +68,6 @@ noncomputable section
 
 variable {d : ℕ}
 
-/-- Transport a one-sided stretched-exponential estimate through an exact
-push-forward identity. -/
-private theorem isBigOWith_gammaSigma_of_map_eq
-    {Ω Ω' : Type*} [MeasurableSpace Ω] [MeasurableSpace Ω']
-    {μ : Measure Ω} {μ' : Measure Ω'} {X : Ω → ℝ} {Y : Ω' → ℝ}
-    {σ A : ℝ}
-    (hX : Measurable X) (hY : Measurable Y)
-    (hmap : Measure.map X μ = Measure.map Y μ')
-    (hYtail : IndependentSums.IsBigOWith μ' (IndependentSums.gammaSigma σ) Y A) :
-    IndependentSums.IsBigOWith μ (IndependentSums.gammaSigma σ) X A := by
-  rw [IndependentSums.isBigOWith_gammaSigma_iff] at hYtail ⊢
-  intro t ht
-  have hE : MeasurableSet {x : ℝ | A * t < x} :=
-    measurableSet_lt measurable_const measurable_id
-  calc
-    μ.real {omega | A * t < X omega} = (Measure.map X μ).real {x : ℝ | A * t < x} := by
-      have h := congrArg ENNReal.toReal
-        (Measure.map_apply_of_aemeasurable (μ := μ) hX.aemeasurable hE)
-      simpa only [Set.preimage_ofPred_eq] using! h.symm
-    _ = (Measure.map Y μ').real {x : ℝ | A * t < x} := by rw [hmap]
-    _ = μ'.real {omega | A * t < Y omega} := by
-      have h := congrArg ENNReal.toReal
-        (Measure.map_apply_of_aemeasurable (μ := μ') hY.aemeasurable hE)
-      simpa only [Set.preimage_ofPred_eq] using! h
-    _ ≤ Real.exp (-(t ^ σ)) := hYtail ht
-
 /-! ## The J2 tail under the zero-shell marginal law -/
 
 /-- The frozen (J2) Gaussian tail, read under the exact zero-shell marginal
@@ -176,7 +150,7 @@ theorem isBigOWith_gammaSigma_localCubeControl_shell (M : ABKModel d) (k : ℤ) 
     IndependentSums.IsBigOWith.const_mul (Real.rpow_nonneg (by norm_num) _)
       (isBigOWith_gammaSigma_zeroShell_unitCubeValueNorm M)
   rw [mul_one] at hzero
-  refine isBigOWith_gammaSigma_of_map_eq
+  refine Algsuperdiff.Probability.isBigOWith_gammaSigma_of_map_eq
     ((measurable_localCubeControl k).comp (measurable_pi_apply k))
     (measurable_const.mul ShellField.unitCubeValueNorm_measurable) ?_ hzero
   rw [map_localCubeControl_shell_eq_zero M k k]
@@ -245,7 +219,7 @@ theorem isBigOWith_gammaSigma_shellDerivGauge (M : ABKModel d) (k : ℤ) :
     IndependentSums.IsBigOWith.const_mul (Real.rpow_nonneg (by norm_num) _)
       (isBigOWith_gammaSigma_zeroShell_unitCubeDerivSum M)
   rw [mul_one] at hzero
-  refine isBigOWith_gammaSigma_of_map_eq
+  refine Algsuperdiff.Probability.isBigOWith_gammaSigma_of_map_eq
     ((measurable_shellDerivGauge k).comp (measurable_pi_apply k))
     (measurable_const.mul
       (ShellField.unitCubeDerivNorm_measurable.add

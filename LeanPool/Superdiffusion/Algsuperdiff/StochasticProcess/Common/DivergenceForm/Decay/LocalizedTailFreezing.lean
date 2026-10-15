@@ -8,6 +8,7 @@ module
 
 public import LeanPool.Superdiffusion.Algsuperdiff.StochasticProcess.Common.DivergenceForm.Decay.LocalizedSplitMass
 public import LeanPool.Superdiffusion.Algsuperdiff.StochasticProcess.Common.DivergenceForm.Decay.TailFreezing
+public import LeanPool.Superdiffusion.Algsuperdiff.StochasticProcess.Common.DivergenceForm.ScalarWeakSolutionRestriction
 
 /-!
 # LocalizedTailFreezing
@@ -68,42 +69,6 @@ theorem symmPart_eq_of_splitSkew {nu : ℝ} {A K1 K2 : Mat d}
   · rw [show matTranspose (K1 + K2) = matTranspose K1 + matTranspose K2 from
       Matrix.transpose_add K1 K2, hK1, hK2]
     exact (neg_add K1 K2).symm
-
-private theorem isScalarForcedWeakSolution_const_smul_localized
-    {W : Set (Vec d)} {c : ℝ} {a : CoeffField d}
-    {u : H1Function W} {g : Vec d → ℝ}
-    (hu : IsScalarForcedWeakSolution a W g u) :
-    IsScalarForcedWeakSolution (fun x => c • a x) W (fun x => c * g x) u := by
-  refine ⟨?_, fun phi => ?_⟩
-  · have h := hu.1.const_smul c
-    simpa only [Pi.smul_apply, smul_eq_mul] using! h
-  · have h := hu.2 phi
-    have hleft :
-        (∫ x in W, vecDot (matVecMul (c • a x) (u.grad x))
-            (phi.toH1Function.grad x) ∂volume) =
-          c * ∫ x in W, vecDot (matVecMul (a x) (u.grad x))
-            (phi.toH1Function.grad x) ∂volume := by
-      rw [← integral_const_mul]
-      apply integral_congr_ae
-      filter_upwards with x
-      simp only [smul_matVecMul, vecDot_smul_left]
-    have hright :
-        (∫ x in W, (c * g x) * phi.toH1Function.toFun x ∂volume) =
-          c * ∫ x in W, g x * phi.toH1Function.toFun x ∂volume := by
-      rw [← integral_const_mul]
-      apply integral_congr_ae
-      filter_upwards with x
-      ring
-    rw [hleft, hright, h]
-
-private theorem isScalarForcedWeakSolution_restrict_localized
-    {W V : Set (Vec d)} (hW : IsOpen W) (hV : IsOpen V) (hVW : V ⊆ W)
-    {a : CoeffField d} {u : H1Function W} {g : Vec d → ℝ}
-    (hu : IsScalarForcedWeakSolution a W g u) :
-    IsScalarForcedWeakSolution a V (fun x => g x) (u.restrict hV hVW) := by
-  refine ⟨hu.1.mono_measure (Measure.restrict_mono hVW le_rfl), fun phi => ?_⟩
-  have h := zerothOrderOn_restrict_of_isScalarForcedWeakSolution hW hV hVW hu phi
-  simpa only [Pi.zero_apply, vecDot_zero_left, integral_zero, sub_zero] using h
 
 private theorem vectorLpSizeOn_mono_localized {V W : Set (Vec d)} (hVW : V ⊆ W)
     {f : Vec d → Vec d} {E : ℝ}
@@ -238,7 +203,7 @@ theorem resolventTail_localized [NeZero d]
   let zB : H1Function B := z.toH1Function.restrict hBopen hBOm
   let q : Vec d → ℝ := fun y => g y - mu * z.toH1Function.toFun y
   have hsolB : IsScalarForcedWeakSolution a B q zB :=
-    isScalarForcedWeakSolution_restrict_localized hOmOpen hBopen hBOm hsol
+    IsScalarForcedWeakSolution.restrictSubset hBopen hBOm hsol
   have hsymmx : symmPart (a x) = nu • (1 : Mat d) :=
     symmPart_eq_of_splitSkew (hsplit x) (hksSkew x) (hklSkew x)
   have hk : matTranspose (a x - nu • (1 : Mat d)) =
@@ -250,7 +215,7 @@ theorem resolventTail_localized [NeZero d]
   have hnormalized : IsScalarForcedWeakSolution
       (normalizedFrozenCoeff nu a x) B (fun y => nu⁻¹ * q y) zB := by
     simpa only [normalizedFrozenCoeff] using!
-      (isScalarForcedWeakSolution_const_smul_localized (c := nu⁻¹) hfrozen)
+      (IsScalarForcedWeakSolution.const_smul_coefficient (c := nu⁻¹) hfrozen)
   have hnormalizedMeas : Measurable (normalizedFrozenCoeff nu a x) := by
     refine Measurable.of_eval fun i => Measurable.of_eval fun j => ?_
     change Measurable fun y => nu⁻¹ *

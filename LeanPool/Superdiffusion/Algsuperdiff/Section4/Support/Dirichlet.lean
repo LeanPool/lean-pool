@@ -223,6 +223,35 @@ theorem holderSeminormBoundOn_def {U : Set (Vec d)} {alpha K : ℝ} {f : Vec d �
       ∀ x ∈ U, ∀ y ∈ U, ‖f x - f y‖ ≤ K * ‖x - y‖ ^ alpha :=
   Iff.rfl
 
+/-- A positive-exponent Hölder bound implies continuity for any normed additive codomain. -/
+theorem HolderSeminormBoundOn.continuousOn {U : Set (Vec d)} {alpha K : ℝ}
+    {f : Vec d → E} (hf : HolderSeminormBoundOn U alpha K f)
+    (hK : 0 ≤ K) (halpha : 0 < alpha) : ContinuousOn f U := by
+  rw [Metric.continuousOn_iff]
+  intro b hb eps heps
+  have hK1 : (0 : ℝ) < K + 1 := by linarith
+  have hq : (0 : ℝ) < eps / (K + 1) := div_pos heps hK1
+  refine ⟨(eps / (K + 1)) ^ (1 / alpha), by positivity, fun a ha hab => ?_⟩
+  have hnorm : ‖a - b‖ < (eps / (K + 1)) ^ (1 / alpha) := by
+    rwa [← dist_eq_norm]
+  have hpow : ‖a - b‖ ^ alpha ≤ eps / (K + 1) := by
+    refine le_of_lt ?_
+    calc ‖a - b‖ ^ alpha < ((eps / (K + 1)) ^ (1 / alpha)) ^ alpha :=
+          Real.rpow_lt_rpow (norm_nonneg _) hnorm halpha
+      _ = eps / (K + 1) := by
+          rw [← Real.rpow_mul hq.le, one_div_mul_cancel halpha.ne', Real.rpow_one]
+  have hbd := hf a ha b hb
+  have hstep : K * ‖a - b‖ ^ alpha ≤ K * (eps / (K + 1)) :=
+    mul_le_mul_of_nonneg_left hpow hK
+  have hfrac : K * (eps / (K + 1)) < eps := by
+    have hle : K / (K + 1) < 1 := (div_lt_one hK1).2 (by linarith)
+    calc K * (eps / (K + 1)) = eps * (K / (K + 1)) := by ring
+      _ < eps * 1 := by
+          exact mul_lt_mul_of_pos_left hle heps
+      _ = eps := mul_one eps
+  rw [dist_eq_norm]
+  linarith [hbd, hstep, hfrac]
+
 /-- The bound is monotone in the constant. -/
 theorem HolderSeminormBoundOn.mono_const {U : Set (Vec d)} {alpha K K' : ℝ} {f : Vec d → E}
     (hf : HolderSeminormBoundOn U alpha K f) (hKK : K ≤ K') :

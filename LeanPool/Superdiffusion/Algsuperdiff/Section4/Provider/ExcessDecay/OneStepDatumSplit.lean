@@ -88,28 +88,7 @@ explicit modulus of continuity. -/
 theorem continuousOn_of_holderSeminormBoundOn {U : Set (Vec d)} {K : ℝ}
     {G : Vec d → Vec d} (hK : 0 ≤ K)
     (hG : HolderSeminormBoundOn U (1 / 2 : ℝ) K G) : ContinuousOn G U := by
-  rw [Metric.continuousOn_iff]
-  intro p hp ε hε
-  have hK1 : (0 : ℝ) < K + 1 := by linarith only [hK]
-  have hquot : (0 : ℝ) < ε / (K + 1) := div_pos hε hK1
-  refine ⟨(ε / (K + 1)) ^ 2, by positivity, ?_⟩
-  intro q hq hd
-  have hnorm : ‖q - p‖ < (ε / (K + 1)) ^ 2 := by
-    rwa [← dist_eq_norm]
-  have hroot : ‖q - p‖ ^ (1 / 2 : ℝ) ≤ ((ε / (K + 1)) ^ 2) ^ (1 / 2 : ℝ) :=
-    Real.rpow_le_rpow (norm_nonneg _) hnorm.le (by norm_num)
-  have hcollapse : ((ε / (K + 1)) ^ 2) ^ (1 / 2 : ℝ) = ε / (K + 1) := by
-    rw [← Real.rpow_natCast (ε / (K + 1)) 2, ← Real.rpow_mul hquot.le]
-    norm_num
-  rw [hcollapse] at hroot
-  have hmain : ‖G q - G p‖ ≤ K * (ε / (K + 1)) :=
-    le_trans (hG q hq p hp) (mul_le_mul_of_nonneg_left hroot hK)
-  have hlt : K * (ε / (K + 1)) < ε := by
-    rw [mul_div_assoc'] at hmain ⊢
-    rw [div_lt_iff₀ hK1]
-    linarith only [hε, hK]
-  rw [dist_eq_norm]
-  exact lt_of_le_of_lt hmain hlt
+  exact hG.continuousOn hK (by norm_num)
 
 /-- **A Hölder field is integrable on a bounded window**, coordinatewise.  This
 is the integrability slot of `AffineSplitLift.abs_sub_affineLift_volumeAverage_le`

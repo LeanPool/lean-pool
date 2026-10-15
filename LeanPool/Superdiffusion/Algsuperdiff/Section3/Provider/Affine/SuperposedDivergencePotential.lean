@@ -43,52 +43,6 @@ variable {d : ℕ}
 
 /-! ## Pointwise algebra -/
 
-private theorem antisymmetricDivergence_sub_eq (hd : 2 ≤ d) (q : Vec d)
-    (S : Fin d → Vec d) :
-    (fun j => ∑ i, ((d : ℝ) - 1)⁻¹ * (q j * S i i - q i * S j i)) - q =
-      fun j => ((d : ℝ) - 1)⁻¹ *
-        ((∑ i, (S i - basisVec i) i) * q j -
-          ∑ i, q i * (S j - basisVec j) i) := by
-  have hdReal : (2 : ℝ) ≤ (d : ℝ) := by
-    exact_mod_cast hd
-  have hdenom : ((d : ℝ) - 1) ≠ 0 := by
-    intro h
-    linarith
-  have hdiag : ∑ i : Fin d, basisVec (d := d) i i = (d : ℝ) := by
-    simp [basisVec_apply]
-  have hrow : ∀ j : Fin d, ∑ i, q i * basisVec (d := d) j i = q j := by
-    intro j
-    rw [Finset.sum_eq_single j]
-    · simp [basisVec_apply]
-    · intro i _ hij
-      simp [basisVec_apply, hij]
-    · intro h
-      exact absurd (Finset.mem_univ j) h
-  funext j
-  have hleft :
-      ∑ i, ((d : ℝ) - 1)⁻¹ * (q j * S i i - q i * S j i) =
-        ((d : ℝ) - 1)⁻¹ *
-          (q j * (∑ i, S i i) - ∑ i, q i * S j i) := by
-    have hterm : ∀ i : Fin d,
-        ((d : ℝ) - 1)⁻¹ * (q j * S i i - q i * S j i) =
-          ((d : ℝ) - 1)⁻¹ * q j * S i i -
-            ((d : ℝ) - 1)⁻¹ * (q i * S j i) :=
-      fun i => by ring
-    rw [Finset.sum_congr rfl (fun i (_ : i ∈ Finset.univ) => hterm i),
-      Finset.sum_sub_distrib, ← Finset.mul_sum, ← Finset.mul_sum]
-    ring
-  have hslope :
-      ∑ i, (S i - basisVec i) i = (∑ i, S i i) - (d : ℝ) := by
-    simp only [Pi.sub_apply]
-    rw [Finset.sum_sub_distrib, hdiag]
-  have hweighted :
-      ∑ i, q i * (S j - basisVec j) i = (∑ i, q i * S j i) - q j := by
-    simp only [Pi.sub_apply, mul_sub]
-    rw [Finset.sum_sub_distrib, hrow j]
-  rw [Pi.sub_apply, hleft, hslope, hweighted]
-  field_simp
-  ring
-
 /-- Pointwise deviation identity for the superposed divergence field.  With
 `u_i = ∇ℓ̂_{e_i} - e_i`, it reads
 
@@ -108,7 +62,7 @@ theorem superposedCompetitorDivergence_sub_eq (hd : 2 ≤ d) (m : ℤ)
     (fun j => ∑ i, ((d : ℝ) - 1)⁻¹ *
       (q j * superposedCompetitorSlope m hn I (basisVec i) x i -
         q i * superposedCompetitorSlope m hn I (basisVec j) x i)) - q = _
-  exact antisymmetricDivergence_sub_eq hd q fun i =>
+  exact divergence_sub_eq hd q fun i =>
     superposedCompetitorSlope m hn I (basisVec i) x
 
 /-! ## Conditional local `G`-leg A -/

@@ -31,7 +31,7 @@ The forcing is an honest pointwise scalar field with an explicit local `L^2` wit
 
 namespace DivergenceFormProcess.Form
 
-open HCPolySupport
+open HCPolySupport MeasureTheory
 open scoped RealInnerProductSpace
 
 variable {d : ℕ} {U : Set (Vec d)}
@@ -48,6 +48,34 @@ def IsScalarForcedWeakSolution (a : CoeffField d) (U : Set (Vec d))
       (∫ x in U, vecDot (matVecMul (a x) (u.grad x))
           (v.toH1Function.grad x) ∂MeasureTheory.volume) =
         ∫ x in U, g x * v.toH1Function.toFun x ∂MeasureTheory.volume
+
+/-- Scaling the coefficient and scalar forcing by the same real constant preserves the equation. -/
+theorem IsScalarForcedWeakSolution.const_smul_coefficient
+    {W : Set (Vec d)} {c : ℝ} {a : CoeffField d}
+    {u : H1Function W} {g : Vec d → ℝ}
+    (hu : IsScalarForcedWeakSolution a W g u) :
+    IsScalarForcedWeakSolution (fun x => c • a x) W (fun x => c * g x) u := by
+  refine ⟨?_, fun phi => ?_⟩
+  · have h := hu.1.const_smul c
+    simpa only [Pi.smul_apply, smul_eq_mul] using! h
+  · have h := hu.2 phi
+    have hleft :
+        (∫ x in W, vecDot (matVecMul (c • a x) (u.grad x))
+            (phi.toH1Function.grad x) ∂volume) =
+          c * ∫ x in W, vecDot (matVecMul (a x) (u.grad x))
+            (phi.toH1Function.grad x) ∂volume := by
+      rw [← integral_const_mul]
+      apply integral_congr_ae
+      filter_upwards with x
+      simp only [smul_matVecMul, vecDot_smul_left]
+    have hright :
+        (∫ x in W, (c * g x) * phi.toH1Function.toFun x ∂volume) =
+          c * ∫ x in W, g x * phi.toH1Function.toFun x ∂volume := by
+      rw [← integral_const_mul]
+      apply integral_congr_ae
+      filter_upwards with x
+      ring
+    rw [hleft, hright, h]
 
 /-- The alpha-shifted graph-carrier equation gives the pointwise equation
 `-div (a grad u) = f - alpha * u` for every honest `H10Function` representative.
