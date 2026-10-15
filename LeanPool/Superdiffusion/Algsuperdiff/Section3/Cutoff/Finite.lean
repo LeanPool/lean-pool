@@ -24,7 +24,7 @@ Module imports, support namespace and local option directives adapted for Lean P
 This module contains only the finite part of the infrared construction.  The
 lower-infinite cutoff is not defined here: `finiteLowerCutoff m q` is the
 honest truncation over `(m - q, m]` and will later be sent to the lower
-infinite limit on the approved full-measure carrier.
+infinite limit on the full-measure carrier.
 -/
 
 namespace Algsuperdiff.Section3.Cutoff

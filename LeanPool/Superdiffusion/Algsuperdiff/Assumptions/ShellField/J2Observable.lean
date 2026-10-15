@@ -25,7 +25,7 @@ Module imports, support namespace and local option directives adapted for Lean P
 
 This module defines the three quantitative norms in ABK26 assumption J2 on the
 literal open cube `cu₀ = (-1/2, 1/2)^d` and proves that their weighted sum is
-Borel measurable on the approved compact-open `ShellField` carrier.
+Borel measurable on the compact-open `ShellField` carrier.
 
 The matrix value norm is
 `Homogenization.Book.Ch02.matrixOperatorNorm`.  Derivative inputs use

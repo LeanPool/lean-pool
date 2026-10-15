@@ -50,7 +50,7 @@ is proved here, unconditionally:
    `L²` finiteness that the `.toReal` step needs is the `H¹` structure's own
    `memL2` field, not a new hypothesis.
 
-**NOTE (this file's instruction to mine first).**  Both ingredients
+Both ingredients
 were already in the repository and nothing analytic is added here: the testing
 mechanism is `HomStepFourIdentity`'s and the Poincaré
 inequality is the Schauder cone's

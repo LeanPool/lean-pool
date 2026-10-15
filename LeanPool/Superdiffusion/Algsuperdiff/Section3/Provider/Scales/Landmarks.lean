@@ -30,7 +30,7 @@ This file proves exactly those characterizations for the repository's
 with the floor estimate that they imply and the ordering
 `mStarStar ≤ mStar`.
 
-The approved Lean surface uses the normalized Frobenius origin-mass constant
+The Lean definitions use the normalized Frobenius origin-mass constant
 `Algsuperdiff.Section3.Disorder.cstarPlus` where the paper prints `cstar`.
 That substitution is already part of the frozen definitions and is not
 revisited here.

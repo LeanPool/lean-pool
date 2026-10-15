@@ -340,7 +340,7 @@ theorem oscThreshold_le_two_pow_neg_nine_mul_inv_bigLambdaSensitivityConst_mul_s
 `Lambda`-sensitivity constant.  Almost surely, on `not B_osc(z + square_j)` and
 `not B_loc(z + square_j)` and under the induction state, the frozen gate
 quantity of the rescaled increment `k_L - k_j` satisfies the manuscript's
-`e.J.sensitivity.smallness.condition` at the approved gauge `lambda_{3/8,2}` of
+`e.J.sensitivity.smallness.condition` at the gauge `lambda_{3/8,2}` of
 the rescaled `a_j`, for every `L >= j`. -/
 theorem gradientW1Infinity_incrementUnitCube_le_bigLambdaGate_notMem_bad_ae
     (hd : 2 ≤ d) (M : ABKModel d) {m0 : ℤ} {E : {E : ℝ // 1 ≤ E}}
