@@ -11,6 +11,7 @@ public import LeanPool.Superdiffusion.Algsuperdiff.StochasticProcess.Common.Dive
 public import LeanPool.HighContrastHomogenization.Support.Deterministic.ConstantCoefficientDirichletBesov.Basic
 public import LeanPool.HighContrastHomogenization.Support.Sobolev.Foundations.CubeNeumannW22CZ.WeakInteriorDQ.SmoothLimit
 public import LeanPool.Superdiffusion.Algsuperdiff.StochasticProcess.Common.DivergenceForm.SkewIdentities
+public import LeanPool.Superdiffusion.Algsuperdiff.Section5.Support.FieldDivergenceTest
 
 /-!
 # LocalizedSkewDivergence
@@ -73,6 +74,7 @@ namespace DivergenceFormProcess.Decay
 
 open Filter HCPolySupport MeasureTheory
 open DivergenceFormProcess.Form
+open Algsuperdiff.Section5.Support
 open scoped ENNReal
 
 variable {d : ℕ} {U : Set (Vec d)}
@@ -81,7 +83,7 @@ variable {d : ℕ} {U : Set (Vec d)}
 
 /-- The divergence of a matrix field, contracting the first index. -/
 def skewFieldDiv (k : Vec d → Mat d) : Vec d → Vec d :=
-  fun x j => ∑ i : Fin d, euclideanCoordDeriv i (fun y => k y i j) x
+  Algsuperdiff.Section5.Support.matFieldDiv k
 
 theorem skewFieldDiv_apply (k : Vec d → Mat d) (x : Vec d) (j : Fin d) :
     skewFieldDiv k x j = ∑ i : Fin d, euclideanCoordDeriv i (fun y => k y i j) x :=
@@ -91,37 +93,14 @@ theorem skewFieldDiv_apply (k : Vec d → Mat d) (x : Vec d) (j : Fin d) :
 theorem continuous_skewFieldDiv_apply {k : Vec d → Mat d}
     (hk : ∀ p q : Fin d, ContDiff ℝ 1 fun x => k x p q) (j : Fin d) :
     Continuous fun x => skewFieldDiv k x j := by
-  refine continuous_finsetSum _ fun i _ => ?_
-  exact ((hk i j).continuous_fderiv (by simp)).clm_apply continuous_const
+  exact Algsuperdiff.Section5.Support.continuous_matFieldDiv_apply hk j
 
 /-! ### `L²` membership on a bounded domain -/
-
-private theorem exists_bound_of_continuousOn {V : Set (Vec d)}
-    (hV : IsBoundedDomain V) {f : Vec d → ℝ} (hf : Continuous f) :
-    ∃ C : ℝ, ∀ x ∈ V, |f x| ≤ C := by
-  have hclos : IsCompact (closure V) :=
-    Metric.isCompact_of_isClosed_isBounded isClosed_closure hV.isBounded.closure
-  obtain ⟨C, hC⟩ := hclos.exists_bound_of_continuousOn hf.continuousOn
-  exact ⟨C, fun x hx => by simpa only [Real.norm_eq_abs] using hC x (subset_closure hx)⟩
 
 theorem memScalarL2_of_continuous_bounded (hUm : MeasurableSet U)
     (hU : IsBoundedDomain U) {f : Vec d → ℝ} (hf : Continuous f) :
     MemScalarL2 U f := by
-  have := hU.isFiniteMeasure_restrict_volume
-  obtain ⟨C, hC⟩ := exists_bound_of_continuousOn hU hf
-  refine MemLp.of_bound hf.aestronglyMeasurable C ?_
-  filter_upwards [ae_restrict_mem hUm] with x hx
-  simpa only [Real.norm_eq_abs] using hC x hx
-
-private theorem memScalarL2_of_continuous_compactSupport {f : Vec d → ℝ}
-    (hf : Continuous f) (hfc : HasCompactSupport f) : MemScalarL2 U f := by
-  simpa only [MemScalarL2, volumeMeasureOn] using
-    (hf.memLp_of_hasCompactSupport (p := (2 : ℝ≥0∞)) hfc).restrict U
-
-private theorem integrable_mul_of_memScalarL2 {f g : Vec d → ℝ}
-    (hf : MemScalarL2 U f) (hg : MemScalarL2 U g) :
-    Integrable (fun x => f x * g x) (volume.restrict U) := by
-  simpa only [Pi.mul_apply] using! hf.integrable_mul hg
+  exact memScalarL2_of_continuous_of_isBoundedDomain hUm hU hf
 
 /-- A `C¹` function on a bounded measurable domain, packaged with its
 classical gradient. -/
@@ -136,16 +115,6 @@ def contDiffOneH1 (hUm : MeasurableSet U) (hU : IsBoundedDomain U)
   hasWeakGradient := HasWeakGradientOn.of_contDiff hf
 
 /-! ### From smooth tests to zero-trace tests -/
-
-private theorem integral_vecDot_eq_sum_coord {F G : Vec d → Vec d}
-    (hF : ∀ i : Fin d, MemScalarL2 U fun x => F x i)
-    (hG : ∀ i : Fin d, MemScalarL2 U fun x => G x i) :
-    ∫ x in U, vecDot (F x) (G x) ∂volume =
-      ∑ i : Fin d, ∫ x in U, F x i * G x i ∂volume := by
-  rw [show (fun x : Vec d => vecDot (F x) (G x)) =
-      fun x : Vec d => ∑ i : Fin d, F x i * G x i from funext fun _ => rfl]
-  exact integral_finsetSum Finset.univ fun i _ =>
-    integrable_mul_of_memScalarL2 (hF i) (hG i)
 
 private theorem integral_vecDot_congr_of_forall_smooth {P Q : Vec d → Vec d}
     (hP : ∀ i : Fin d, MemScalarL2 U fun x => P x i)
@@ -195,18 +164,18 @@ private theorem integral_vecDot_matVecMul_smooth_eq
     (hk i j).mul ((hDpsi j).of_le (by norm_num))
   have hchiL2 : ∀ i j : Fin d, MemScalarL2 U (chi i j) := by
     intro i j
-    refine memScalarL2_of_continuous_compactSupport ((hchiC1 i j).continuous) ?_
+    refine memScalarL2_of_continuous_hasCompactSupport ((hchiC1 i j).continuous) ?_
     simpa only [hchi_def, Pi.mul_apply] using!
       (hDpsic j).mul_left (f := fun x : Vec d => k x i j)
   have hdAL2 : ∀ i j : Fin d, MemScalarL2 U (dA i j) := by
     intro i j
-    refine memScalarL2_of_continuous_compactSupport
+    refine memScalarL2_of_continuous_hasCompactSupport
       ((hDkcont i j).mul ((hDpsi j).continuous)) ?_
     simpa only [hdA_def, Pi.mul_apply] using!
       (hDpsic j).mul_left (f := euclideanCoordDeriv i fun y : Vec d => k y i j)
   have hdBL2 : ∀ i j : Fin d, MemScalarL2 U (dB i j) := by
     intro i j
-    refine memScalarL2_of_continuous_compactSupport
+    refine memScalarL2_of_continuous_hasCompactSupport
       ((hk i j).continuous.mul (hD2cont i j)) ?_
     simpa only [hdB_def, Pi.mul_apply] using!
       (hD2c i j).mul_left (f := fun x : Vec d => k x i j)
@@ -354,7 +323,7 @@ private theorem integral_vecDot_matVecMul_smooth_eq
 private theorem memScalarL2_mul_of_continuous_left (hUm : MeasurableSet U)
     (hUb : IsBoundedDomain U) {g f : Vec d → ℝ} (hg : Continuous g)
     (hf : MemScalarL2 U f) : MemScalarL2 U fun x => g x * f x := by
-  obtain ⟨C, hC⟩ := exists_bound_of_continuousOn hUb hg
+  obtain ⟨C, hC⟩ := exists_bound_of_continuous hUb hg
   refine MemLp.of_le (hf.const_mul |C|)
     (hg.aestronglyMeasurable.mul hf.aestronglyMeasurable) ?_
   filter_upwards [ae_restrict_mem hUm] with x hx

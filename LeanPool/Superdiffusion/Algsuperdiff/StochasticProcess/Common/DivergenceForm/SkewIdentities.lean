@@ -8,6 +8,7 @@ module
 
 public import LeanPool.HighContrastHomogenization.Support.Deterministic.ConstantCoefficientDirichletBesov.Basic
 public import LeanPool.HighContrastHomogenization.Support.Sobolev.H1.Algebra.Membership
+public import LeanPool.Superdiffusion.Algsuperdiff.Section5.Support.FieldDivergenceTest
 
 /-!
 # Shared skew-field identities
@@ -21,25 +22,12 @@ scottnarmstrong/Superdiffusion at 7f20476385d4af418f110303085ad0740c9eba46.
 namespace Algsuperdiff.StochasticProcess.Common.DivergenceForm
 
 open HCPolySupport MeasureTheory Filter
+open Algsuperdiff.Section5.Support
 open scoped BigOperators ENNReal
 
 noncomputable section
 
 variable {d : ℕ}
-
-private theorem integrable_mul_of_memScalarL2 {U : Set (Vec d)} {f g : Vec d → ℝ}
-    (hf : MemScalarL2 U f) (hg : MemScalarL2 U g) :
-    Integrable (fun x => f x * g x) (volume.restrict U) := by
-  simpa only [Pi.mul_apply] using! hf.integrable_mul hg
-
-private theorem integral_vecDot_eq_sum_coord {U : Set (Vec d)} {F G : Vec d → Vec d}
-    (hF : ∀ i : Fin d, MemScalarL2 U fun x => F x i)
-    (hG : ∀ i : Fin d, MemScalarL2 U fun x => G x i) :
-    ∫ x in U, vecDot (F x) (G x) ∂volume =
-      ∑ i : Fin d, ∫ x in U, F x i * G x i ∂volume := by
-  rw [show (fun x : Vec d => vecDot (F x) (G x)) =
-      fun x : Vec d => ∑ i : Fin d, F x i * G x i from funext fun _ => rfl]
-  exact integral_finsetSum Finset.univ fun i _ => integrable_mul_of_memScalarL2 (hF i) (hG i)
 
 /-- Smooth compact tests determine the zero-trace gradient pairing. -/
 theorem integral_vecDot_congr_of_forall_smooth {U : Set (Vec d)} {P Q : Vec d → Vec d}

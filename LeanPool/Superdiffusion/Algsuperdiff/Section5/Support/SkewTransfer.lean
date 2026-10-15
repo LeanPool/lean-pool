@@ -13,6 +13,7 @@ public import LeanPool.HighContrastHomogenization.Support.Deterministic.Constant
 public import LeanPool.HighContrastHomogenization.Support.Sobolev.H1.Algebra.Membership
 public import LeanPool.HighContrastHomogenization.Support.Sobolev.W1p.BasicLemmas
 public import LeanPool.Superdiffusion.Algsuperdiff.StochasticProcess.Common.DivergenceForm.SkewIdentities
+public import LeanPool.Superdiffusion.Algsuperdiff.Section5.Support.FieldDivergenceTest
 
 /-!
 # SkewTransfer
@@ -115,30 +116,9 @@ noncomputable section
 
 variable {d : ℕ}
 
-/-! ## 1. The divergence of a matrix field -/
+/-! ## 1. Shared divergence convention
 
-/-- **The divergence of a matrix field**, contracting the *first* index:
-
-```text
-  (∇ · k)_j (x) = ∑_i ∂_i k_{i j}(x) .
-```
-
-This is the contraction that sends `a ∇u` to `∇ · a ∇u`, and the one under which
-the manuscript's antisymmetry display has the printed signs. -/
-def matFieldDiv (k : Vec d → Mat d) : Vec d → Vec d :=
-  fun x j => ∑ i : Fin d, euclideanCoordDeriv i (fun y => k y i j) x
-
-/-- The defining coordinate formula of `matFieldDiv`. -/
-theorem matFieldDiv_apply (k : Vec d → Mat d) (x : Vec d) (j : Fin d) :
-    matFieldDiv k x j = ∑ i : Fin d, euclideanCoordDeriv i (fun y => k y i j) x :=
-  rfl
-
-/-- Each coordinate of the divergence of a `C¹` matrix field is continuous. -/
-theorem continuous_matFieldDiv_apply {k : Vec d → Mat d}
-    (hk : ∀ a b : Fin d, ContDiff ℝ 1 fun x => k x a b) (j : Fin d) :
-    Continuous fun x => matFieldDiv k x j := by
-  refine continuous_finsetSum _ fun i _ => ?_
-  exact ((hk i j).continuous_fderiv (by simp)).clm_apply continuous_const
+The generic divergence and analytic support are imported from `FieldDivergenceTest`. -/
 
 /-- Entrywise antisymmetry, read off the matrix identity. -/
 private theorem skew_entry_of_matTranspose {A : Mat d} (h : matTranspose A = -A)
@@ -158,51 +138,18 @@ private theorem sum_sum_mul_eq_zero_of_skew_of_symm {K : Mat d}
 
 /-! ## 3. `L²` membership on a bounded domain -/
 
-private theorem exists_bound_of_continuous {U : Set (Vec d)} (hU : IsBoundedDomain U)
-    {f : Vec d → ℝ} (hf : Continuous f) : ∃ C : ℝ, ∀ x ∈ U, |f x| ≤ C := by
-  have hclos : IsCompact (closure U) :=
-    Metric.isCompact_of_isClosed_isBounded isClosed_closure hU.isBounded.closure
-  obtain ⟨C, hC⟩ := hclos.exists_bound_of_continuousOn hf.continuousOn
-  exact ⟨C, fun x hx => by simpa only [Real.norm_eq_abs] using hC x (subset_closure hx)⟩
-
-private theorem memScalarL2_of_continuous {U : Set (Vec d)} (hUm : MeasurableSet U)
-    (hU : IsBoundedDomain U) {f : Vec d → ℝ} (hf : Continuous f) : MemScalarL2 U f := by
-  have := hU.isFiniteMeasure_restrict_volume
-  obtain ⟨C, hC⟩ := exists_bound_of_continuous hU hf
-  refine MemLp.of_bound hf.aestronglyMeasurable C ?_
-  filter_upwards [ae_restrict_mem hUm] with x hx
-  simpa only [Real.norm_eq_abs] using hC x hx
-
-private theorem memScalarL2_of_continuous_hasCompactSupport {U : Set (Vec d)} {f : Vec d → ℝ}
-    (hf : Continuous f) (hfc : HasCompactSupport f) : MemScalarL2 U f := by
-  simpa only [MemScalarL2, volumeMeasureOn] using
-    (hf.memLp_of_hasCompactSupport (p := (2 : ℝ≥0∞)) hfc).restrict U
-
 private theorem memH1_of_contDiff_one {U : Set (Vec d)} (hUm : MeasurableSet U)
     (hU : IsBoundedDomain U) {f : Vec d → ℝ} (hf : ContDiff ℝ 1 f) : MemH1 U f :=
   ⟨{ toFun := f
      grad := fun x i => (fderiv ℝ f x) (basisVec i)
-     memL2 := memScalarL2_of_continuous hUm hU hf.continuous
-     gradMemL2 := fun i => memScalarL2_of_continuous
+     memL2 := memScalarL2_of_continuous_of_isBoundedDomain hUm hU hf.continuous
+     gradMemL2 := fun i =>
+       memScalarL2_of_continuous_of_isBoundedDomain
        (f := fun x => (fderiv ℝ f x) (basisVec i)) hUm hU
        ((hf.continuous_fderiv (by simp)).clm_apply continuous_const)
      hasWeakGradient := HasWeakGradientOn.of_contDiff hf }, rfl⟩
 
-private theorem integrable_mul_of_memScalarL2 {U : Set (Vec d)} {f g : Vec d → ℝ}
-    (hf : MemScalarL2 U f) (hg : MemScalarL2 U g) :
-    Integrable (fun x => f x * g x) (volume.restrict U) := by
-  simpa only [Pi.mul_apply] using! hf.integrable_mul hg
-
 /-! ## 4. From smooth tests to zero-trace tests -/
-
-private theorem integral_vecDot_eq_sum_coord {U : Set (Vec d)} {F G : Vec d → Vec d}
-    (hF : ∀ i : Fin d, MemScalarL2 U fun x => F x i)
-    (hG : ∀ i : Fin d, MemScalarL2 U fun x => G x i) :
-    ∫ x in U, vecDot (F x) (G x) ∂volume =
-      ∑ i : Fin d, ∫ x in U, F x i * G x i ∂volume := by
-  rw [show (fun x : Vec d => vecDot (F x) (G x)) =
-      fun x : Vec d => ∑ i : Fin d, F x i * G x i from funext fun _ => rfl]
-  exact integral_finsetSum Finset.univ fun i _ => integrable_mul_of_memScalarL2 (hF i) (hG i)
 
 private theorem integral_vecDot_congr_of_forall_smooth {U : Set (Vec d)} {P Q : Vec d → Vec d}
     (hP : ∀ i : Fin d, MemScalarL2 U fun x => P x i)

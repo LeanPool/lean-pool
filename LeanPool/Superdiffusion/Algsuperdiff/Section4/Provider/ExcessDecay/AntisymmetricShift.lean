@@ -240,18 +240,6 @@ private theorem integral_vecDot_matVecMul_skew_smooth {U : Set (Vec d)} {C : Mat
 
 /-! ## 4. The primitive: the skew pairing against every `H¹₀` test -/
 
-/-- The set integral of a dot product of two `L²` vector fields splits into
-coordinates. -/
-private theorem integral_vecDot_eq_sum_coord {U : Set (Vec d)} {F G : Vec d → Vec d}
-    (hF : ∀ i : Fin d, MemScalarL2 U (fun x => F x i))
-    (hG : ∀ i : Fin d, MemScalarL2 U (fun x => G x i)) :
-    ∫ x in U, vecDot (F x) (G x) ∂volume =
-      ∑ i : Fin d, ∫ x in U, F x i * G x i ∂volume := by
-  rw [show (fun x : Vec d => vecDot (F x) (G x)) =
-      fun x : Vec d => ∑ i : Fin d, F x i * G x i from funext fun _ => rfl]
-  refine integral_finsetSum Finset.univ fun i _ => ?_
-  simpa only [Pi.mul_apply] using! (hF i).integrable_mul (hG i)
-
 /-- **The skew-divergence integration by parts on an arbitrary set.**
 
 For a constant *skew* matrix `C`, every `u ∈ H¹(U)` and every `φ ∈ H¹₀(U)`,
@@ -260,48 +248,18 @@ For a constant *skew* matrix `C`, every `u ∈ H¹(U)` and every `φ ∈ H¹₀(
   ∫_U (C ∇u) · ∇φ = 0 .
 ```
 
-This is the Support-grade primitive behind and behind the prose invariance;
-CoarseGraining contains no such statement. -/
+This is the primitive for invariance under a constant skew coefficient shift. -/
 theorem integral_vecDot_matVecMul_skew_h10 {U : Set (Vec d)} {C : Mat d}
     (hC : matTranspose C = -C) (u : H1Function U) (phi : H10Function U) :
     ∫ x in U, vecDot (matVecMul C (u.grad x)) (phi.toH1Function.grad x) ∂volume = 0 := by
-  set F : Vec d → Vec d := fun x => matVecMul C (u.grad x) with hFdef
-  have hF : ∀ i : Fin d, MemScalarL2 U (fun x => F x i) := fun i =>
-    memScalarL2_matVecMul_const C u i
-  set Dn : ℕ → Vec d → Vec d := fun n => euclideanGradient (phi.approx n) with hDndef
-  have hDn : ∀ (n : ℕ) (i : Fin d), MemScalarL2 U (fun x => Dn n x i) := by
-    intro n i
-    exact memScalarL2_coord_of_memVectorL2
-      (memVectorL2_euclideanGradient_of_contDiff_hasCompactSupport
-        (phi.approx_smooth n) (phi.approx_hasCompactSupport n)) i
-  have hDlim : ∀ i : Fin d, MemScalarL2 U (fun x => phi.toH1Function.grad x i) :=
-    fun i => phi.toH1Function.gradMemL2 i
-  have hconv : ∀ i : Fin d, Tendsto
-      (fun n => toScalarL2 (hDn n i)) atTop (nhds (toScalarL2 (hDlim i))) := by
-    intro i
-    refine tendsto_toScalarL2_of_tendsto_eLpNorm (fun n => hDn n i) (hDlim i) ?_
-    simpa only [hDndef, euclideanGradient, euclideanCoordDeriv, volumeMeasureOn]
-      using phi.tendsto_approx_grad i
-  have hpair : ∀ i : Fin d, Tendsto
-      (fun n => ∫ x in U, F x i * Dn n x i ∂volume) atTop
-      (nhds (∫ x in U, F x i * phi.toH1Function.grad x i ∂volume)) := fun i =>
-    tendsto_integral_mul_of_tendsto_toScalarL2 (hF i) (fun n => hDn n i) (hDlim i)
-      (hconv i)
-  have hsum : Tendsto
-      (fun n => ∑ i : Fin d, ∫ x in U, F x i * Dn n x i ∂volume) atTop
-      (nhds (∑ i : Fin d, ∫ x in U, F x i * phi.toH1Function.grad x i ∂volume)) :=
-    tendsto_finsetSum Finset.univ fun i _ => hpair i
-  have hzero : ∀ n : ℕ, (∑ i : Fin d, ∫ x in U, F x i * Dn n x i ∂volume) = 0 := by
-    intro n
-    rw [← integral_vecDot_eq_sum_coord hF (fun i => hDn n i)]
-    exact integral_vecDot_matVecMul_skew_smooth hC u (phi.approx_smooth n)
-      (phi.approx_hasCompactSupport n) (phi.approx_support_subset n)
-  have hlimzero : (∑ i : Fin d,
-      ∫ x in U, F x i * phi.toH1Function.grad x i ∂volume) = 0 :=
-    tendsto_nhds_unique (hsum.congr' (EventuallyEq.of_eq (funext hzero)))
-      tendsto_const_nhds
-  rw [integral_vecDot_eq_sum_coord hF hDlim]
-  exact hlimzero
+  have hpair :=
+    StochasticProcess.Common.DivergenceForm.integral_vecDot_congr_of_forall_smooth
+      (P := fun x => matVecMul C (u.grad x)) (Q := fun _ => 0)
+      (fun i => memScalarL2_matVecMul_const C u i) (fun _ => MemLp.zero)
+      (fun psi hpsi hpsic hpsiU => by
+        simpa only [vecDot_zero_left, integral_zero] using
+          integral_vecDot_matVecMul_skew_smooth hC u hpsi hpsic hpsiU) phi
+  simpa only [vecDot_zero_left, integral_zero] using hpair
 
 /-- The skew pairing is integrable: both factors are `L²`. -/
 private theorem integrable_vecDot_matVecMul_const {U : Set (Vec d)} (C : Mat d)

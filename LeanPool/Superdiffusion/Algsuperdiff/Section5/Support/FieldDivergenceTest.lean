@@ -39,6 +39,7 @@ the `L²` limit along the approximating sequence carried by `H¹₀`.
 
 ## Main definitions
 
+* `matFieldDiv k` — the matrix-field divergence, contracting its first index.
 * `vecFieldDiv F` — the divergence `(∇·F)(x) = ∑_i ∂_i F_i(x)` of a vector
   field, contracting the index of the field against the direction of
   differentiation.
@@ -62,6 +63,29 @@ noncomputable section
 
 variable {d : ℕ}
 
+/-- **The divergence of a matrix field**, contracting the *first* index:
+
+```text
+  (∇ · k)_j (x) = ∑_i ∂_i k_{i j}(x) .
+```
+
+This is the contraction that sends `a ∇u` to `∇ · a ∇u`, and the one under which
+the manuscript's antisymmetry display has the printed signs. -/
+def matFieldDiv (k : Vec d → Mat d) : Vec d → Vec d :=
+  fun x j => ∑ i : Fin d, euclideanCoordDeriv i (fun y => k y i j) x
+
+/-- The defining coordinate formula of `matFieldDiv`. -/
+theorem matFieldDiv_apply (k : Vec d → Mat d) (x : Vec d) (j : Fin d) :
+    matFieldDiv k x j = ∑ i : Fin d, euclideanCoordDeriv i (fun y => k y i j) x :=
+  rfl
+
+/-- Each coordinate of the divergence of a `C¹` matrix field is continuous. -/
+theorem continuous_matFieldDiv_apply {k : Vec d → Mat d}
+    (hk : ∀ a b : Fin d, ContDiff ℝ 1 fun x => k x a b) (j : Fin d) :
+    Continuous fun x => matFieldDiv k x j := by
+  refine continuous_finsetSum _ fun i _ => ?_
+  exact ((hk i j).continuous_fderiv (by simp)).clm_apply continuous_const
+
 /-- **The divergence of a vector field**, `(∇·F)(x) = ∑_i ∂_i F_i(x)`. -/
 def vecFieldDiv (F : Vec d → Vec d) : Vec d → ℝ :=
   fun x => ∑ i : Fin d, (fderiv ℝ (fun z => F z i) x) (basisVec i)
@@ -72,7 +96,8 @@ theorem vecFieldDiv_apply (F : Vec d → Vec d) (x : Vec d) :
 
 /-! ## 1. Square integrability on a bounded set -/
 
-private theorem exists_bound_of_continuous {U : Set (Vec d)} (hU : IsBoundedDomain U)
+/-- A continuous function is bounded on a bounded domain. -/
+theorem exists_bound_of_continuous {U : Set (Vec d)} (hU : IsBoundedDomain U)
     {f : Vec d → ℝ} (hf : Continuous f) : ∃ C : ℝ, ∀ x ∈ U, |f x| ≤ C := by
   have hclos : IsCompact (closure U) :=
     Metric.isCompact_of_isClosed_isBounded isClosed_closure hU.isBounded.closure
@@ -89,17 +114,20 @@ theorem memScalarL2_of_continuous_of_isBoundedDomain {U : Set (Vec d)}
   filter_upwards [ae_restrict_mem hUm] with x hx
   simpa only [Real.norm_eq_abs] using hC x hx
 
-private theorem memScalarL2_of_continuous_hasCompactSupport {U : Set (Vec d)} {f : Vec d → ℝ}
+/-- A continuous compactly supported function is square integrable on any set. -/
+theorem memScalarL2_of_continuous_hasCompactSupport {U : Set (Vec d)} {f : Vec d → ℝ}
     (hf : Continuous f) (hfc : HasCompactSupport f) : MemScalarL2 U f := by
   simpa only [MemScalarL2, volumeMeasureOn] using
     (hf.memLp_of_hasCompactSupport (p := (2 : ℝ≥0∞)) hfc).restrict U
 
-private theorem integrable_mul_of_memScalarL2 {U : Set (Vec d)} {f g : Vec d → ℝ}
+/-- The product of two square-integrable scalar fields is integrable. -/
+theorem integrable_mul_of_memScalarL2 {U : Set (Vec d)} {f g : Vec d → ℝ}
     (hf : MemScalarL2 U f) (hg : MemScalarL2 U g) :
     Integrable (fun x => f x * g x) (volume.restrict U) := by
   simpa only [Pi.mul_apply] using! hf.integrable_mul hg
 
-private theorem integral_vecDot_eq_sum_coord {U : Set (Vec d)} {P G : Vec d → Vec d}
+/-- The integral of an L² dot product is the sum of its coordinate integrals. -/
+theorem integral_vecDot_eq_sum_coord {U : Set (Vec d)} {P G : Vec d → Vec d}
     (hP : ∀ i : Fin d, MemScalarL2 U fun x => P x i)
     (hG : ∀ i : Fin d, MemScalarL2 U fun x => G x i) :
     ∫ x in U, vecDot (P x) (G x) ∂volume =
