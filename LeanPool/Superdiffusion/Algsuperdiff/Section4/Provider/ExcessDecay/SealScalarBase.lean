@@ -133,77 +133,7 @@ theorem isWeaklyHarmonicOn_sub_h1 {V : Set (Vec d)} {v₁ v₂ : H1Function V}
 
 /-! ## 3. The mean-zero Poincaré at a general translated cube -/
 
-/-- **The equal-sides mean-zero cube Poincaré on `c + □_j ⊆ □_m`.**
-
-The `c`-and-scale-generic form of `BoundaryClauseSkeleton`'s covering-cube
-instance: any translated origin cube inside `□_m` is an axis cube of side
-`3^j`, and CoarseGraining's scale-uniform mean-zero Poincaré applies verbatim;
-the normalization cancels because the same cube carries both sides. -/
-theorem eLpNorm_sub_average_translatedCube_le_meanZeroPoincare {j m : ℤ}
-    {c : Vec d}
-    (hsub : (fun y' => c + y') '' openCubeSet (originCube d j) ⊆
-      openCubeSet (originCube d m))
-    (h : H1Function (openCubeSet (originCube d m))) :
-    (eLpNorm (fun y => h.toFun y -
-          volumeAverage ((fun y' => c + y') '' openCubeSet (originCube d j))
-            h.toFun) 2
-        (Support.normalizedVolumeMeasureOn
-          ((fun y' => c + y') '' openCubeSet (originCube d j)))).toReal ≤
-      unitMeanZeroPoincareConst d * (3 : ℝ) ^ j *
-        ∑ i : Fin d,
-          (eLpNorm (fun y => h.grad y i) 2
-            (Support.normalizedVolumeMeasureOn
-              ((fun y' => c + y') '' openCubeSet (originCube d j)))).toReal := by
-  classical
-  set cc : Set (Vec d) :=
-    (fun y' => c + y') '' openCubeSet (originCube d j) with hcc
-  set Lc : ℝ := (3 : ℝ) ^ j with hLc
-  set A : Vec d := fun i => c i - (1 / 2 : ℝ) * (3 : ℝ) ^ j with hA
-  have hLpos : (0 : ℝ) < Lc := zpow_pos (by norm_num) _
-  have hcube : cc = axisCube A Lc := by
-    rw [hcc, hA, hLc]
-    exact image_add_openCubeSet_eq_axisCube c j
-  have hccsub : cc ⊆ openCubeSet (originCube d m) := by
-    rw [hcc]
-    exact hsub
-  have hsubA : axisCube A Lc ⊆ openCubeSet (originCube d m) := by
-    rw [← hcube]
-    exact hccsub
-  have hraw : (eLpNorm (fun y => h.toFun y - integralAverage cc h.toFun) 2
-        (volumeMeasureOn cc)).toReal ≤
-      unitMeanZeroPoincareConst d * Lc *
-        ∑ i : Fin d,
-          (eLpNorm (fun y => h.grad y i) 2 (volumeMeasureOn cc)).toReal := by
-    rw [hcube]
-    have hpo := scaled_meanZero_poincare A hLpos
-      (h.restrict (isOpen_axisCube A Lc) hsubA)
-    have hfun : ((h.restrict (isOpen_axisCube A Lc) hsubA).subAverage).toFun =
-        fun y => h.toFun y - integralAverage (axisCube A Lc) h.toFun := by
-      funext y
-      exact H1Function.subAverage_apply _ y
-    rwa [hfun] at hpo
-  have hiv : integralAverage cc h.toFun = volumeAverage cc h.toFun := rfl
-  rw [hiv] at hraw
-  have hrestrict : volumeMeasureOn cc = volume.restrict cc := rfl
-  rw [hrestrict] at hraw
-  simp only [eLpNorm_normalizedVolumeMeasureOn_eq, ENNReal.toReal_mul]
-  have hr : (0 : ℝ) ≤ (((volume cc)⁻¹) ^ (1 / 2 : ℝ)).toReal := ENNReal.toReal_nonneg
-  calc (((volume cc)⁻¹) ^ (1 / 2 : ℝ)).toReal *
-        (eLpNorm (fun y => h.toFun y - volumeAverage cc h.toFun) 2
-          (volume.restrict cc)).toReal
-      ≤ (((volume cc)⁻¹) ^ (1 / 2 : ℝ)).toReal *
-          (unitMeanZeroPoincareConst d * Lc *
-            ∑ i : Fin d,
-              (eLpNorm (fun y => h.grad y i) 2 (volume.restrict cc)).toReal) :=
-        mul_le_mul_of_nonneg_left hraw hr
-    _ = unitMeanZeroPoincareConst d * Lc *
-          ∑ i : Fin d,
-            (((volume cc)⁻¹) ^ (1 / 2 : ℝ)).toReal *
-              (eLpNorm (fun y => h.grad y i) 2 (volume.restrict cc)).toReal := by
-        rw [Finset.mul_sum, Finset.mul_sum, Finset.mul_sum]
-        refine Finset.sum_congr rfl ?_
-        intro i _
-        ring
+/-! The general translated-cube Poincaré proof is provided by `BoundaryClauseSkeleton`. -/
 
 /-! ## 4. The scale-`n` window transport -/
 

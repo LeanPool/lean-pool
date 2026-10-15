@@ -301,38 +301,25 @@ theorem cubeEuclideanWspScalePowerWeight_eq_ofReal (Q : TriadicCube d) (s : Frac
     ← Real.rpow_mul (by norm_num : (0 : ℝ) ≤ 3)]
   ring_nf
 
-/-- **THE SINGLE-DEPTH FLAT HALF IS FREE.**
-
-```text
-  3^{-s·m·p'} · ‖g_j‖_{L^{p'}(Q)}^{p'}  ≤  cubeEuclideanNegativeBesovDepthEnergy Q s p F j
-```
-
-at constant ONE, uniformly in `s`, `j`, `Q`, `F` — no band, no `s₀`, no
-`(1-3^{-s·p})^{-1/p}`.  (The true value of the left side is `3^{-s·j·p'}` times the
-right side; the spare factor is discarded.)  This is the display the multi-depth
-aggregate cannot have: there the same computation is followed by a Minkowski sum
-and a discrete Hölder over the depths, and THAT is what buys the geometric
-factor the necessity record of `HomSpineCzGridGaugeRefuted` shows sharp. -/
-theorem weight_mul_flat_rpow_le_depthEnergy (Q : TriadicCube d) (s : FractionalOrder)
+/-- The normalized finite-cell mass shared by the flat and cell-weighted grid estimates. -/
+theorem gridDualTestCoeff_mass_bound (Q : TriadicCube d) (s : FractionalOrder)
     (p : FiniteLpExponent) (F : CubeEuclideanLpField Q FiniteLpExponent.two) (j : ℕ) :
-    cubeEuclideanWspScalePowerWeight Q s p.conjugate *
-        ((cubeBoundedMeasurableDomain Q).normalizedEuclideanLpENorm p.conjugate.exponent
-            (gridDualDepthTest Q j
-              (gridDualTestCoeff Q s.1 p.exponent.toReal F.toField j)))
-          ^ p.conjugate.exponent.toReal ≤
-      cubeEuclideanNegativeBesovDepthEnergy Q s p F j := by
+    (∑ R ∈ descendantsAtDepth Q j, (((descendantsAtDepth Q j).card : ℝ≥0∞))⁻¹ *
+      ‖euclideanNorm (gridDualTestCoeff Q s.1 p.exponent.toReal F.toField j R)‖ₑ ^
+        p.conjugate.exponent.toReal) ≤
+      ENNReal.ofReal ((3 : ℝ) ^
+        (s.1 * p.exponent.toReal * (((Q.scale - (j : ℤ) : ℤ)) : ℝ) *
+          p.conjugate.exponent.toReal) *
+        descendantsAverage Q j (fun R => ‖cubeAverageVec R F.toField‖ ^ p.exponent.toReal)) := by
   classical
   set t : ℝ := p.exponent.toReal with hts
   set r : ℝ := p.conjugate.exponent.toReal with hrs
-  have ht : 0 < t := finiteLpExponent_toReal_pos p
   have hr : 0 < r := finiteLpExponent_toReal_pos p.conjugate
   have hconj : t.HolderConjugate r := holderConjugate_toReal p
   set D : Finset (TriadicCube d) := descendantsAtDepth Q j with hD
   have hcardpos : (0 : ℝ) < ((D.card : ℝ)) := descendantsAtDepth_card_pos Q j
   set M : ℝ := (((Q.scale - (j : ℤ) : ℤ)) : ℝ) with hM
   set A : ℝ := descendantsAverage Q j (fun R => ‖cubeAverageVec R F.toField‖ ^ t) with hA
-  have hA0 : 0 ≤ A :=
-    descendantsAverage_nonneg Q j _ fun R _ => Real.rpow_nonneg (norm_nonneg _) _
   /- the flat mass, term by te -/
   have hterm : ∀ R ∈ D,
       ((D.card : ℝ≥0∞))⁻¹ *
@@ -385,12 +372,46 @@ theorem weight_mul_flat_rpow_le_depthEnergy (Q : TriadicCube d) (s : FractionalO
       (3 : ℝ) ^ (s.1 * t * M * r) *
         (((D.card : ℝ))⁻¹ * ∑ R ∈ D, ‖cubeAverageVec R F.toField‖ ^ t)
     ring
+  exact (Finset.sum_le_sum hterm).trans (le_of_eq hsum)
+
+/-- **THE SINGLE-DEPTH FLAT HALF IS FREE.**
+
+```text
+  3^{-s·m·p'} · ‖g_j‖_{L^{p'}(Q)}^{p'}  ≤  cubeEuclideanNegativeBesovDepthEnergy Q s p F j
+```
+
+at constant ONE, uniformly in `s`, `j`, `Q`, `F` — no band, no `s₀`, no
+`(1-3^{-s·p})^{-1/p}`.  (The true value of the left side is `3^{-s·j·p'}` times the
+right side; the spare factor is discarded.)  This is the display the multi-depth
+aggregate cannot have: there the same computation is followed by a Minkowski sum
+and a discrete Hölder over the depths, and THAT is what buys the geometric
+factor the necessity record of `HomSpineCzGridGaugeRefuted` shows sharp. -/
+theorem weight_mul_flat_rpow_le_depthEnergy (Q : TriadicCube d) (s : FractionalOrder)
+    (p : FiniteLpExponent) (F : CubeEuclideanLpField Q FiniteLpExponent.two) (j : ℕ) :
+    cubeEuclideanWspScalePowerWeight Q s p.conjugate *
+        ((cubeBoundedMeasurableDomain Q).normalizedEuclideanLpENorm p.conjugate.exponent
+            (gridDualDepthTest Q j
+              (gridDualTestCoeff Q s.1 p.exponent.toReal F.toField j)))
+          ^ p.conjugate.exponent.toReal ≤
+      cubeEuclideanNegativeBesovDepthEnergy Q s p F j := by
+  classical
+  set t : ℝ := p.exponent.toReal with hts
+  set r : ℝ := p.conjugate.exponent.toReal with hrs
+  have ht : 0 < t := finiteLpExponent_toReal_pos p
+  have hr : 0 < r := finiteLpExponent_toReal_pos p.conjugate
+  have hconj : t.HolderConjugate r := holderConjugate_toReal p
+  set D : Finset (TriadicCube d) := descendantsAtDepth Q j with hD
+  have hcardpos : (0 : ℝ) < ((D.card : ℝ)) := descendantsAtDepth_card_pos Q j
+  set M : ℝ := (((Q.scale - (j : ℤ) : ℤ)) : ℝ) with hM
+  set A : ℝ := descendantsAverage Q j (fun R => ‖cubeAverageVec R F.toField‖ ^ t) with hA
+  have hA0 : 0 ≤ A :=
+    descendantsAverage_nonneg Q j _ fun R _ => Real.rpow_nonneg (norm_nonneg _) _
   /- assemb -/
   rw [normalizedEuclideanLpENorm_gridDualDepthTest Q j _ p.conjugate, ← hrs, one_div,
     ← ENNReal.rpow_mul, inv_mul_cancel₀ hr.ne', ENNReal.rpow_one,
     cubeEuclideanWspScalePowerWeight_eq_ofReal Q s p.conjugate, ← hrs,
     depthEnergy_eq_ofReal Q s p F j]
-  refine le_trans (mul_le_mul' le_rfl ((Finset.sum_le_sum hterm).trans (le_of_eq hsum))) ?_
+  refine le_trans (mul_le_mul' le_rfl (gridDualTestCoeff_mass_bound Q s p F j)) ?_
   rw [← ENNReal.ofReal_mul (Real.rpow_nonneg (by norm_num) _)]
   refine ENNReal.ofReal_le_ofReal ?_
   have hexp : (3 : ℝ) ^ (-(s.1 * r) * ((Q.scale : ℤ) : ℝ)) * (3 : ℝ) ^ (s.1 * t * M * r) ≤

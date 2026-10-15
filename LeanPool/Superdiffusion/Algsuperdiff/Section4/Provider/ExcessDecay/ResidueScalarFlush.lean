@@ -740,16 +740,8 @@ private theorem residueScalarFlush_comparisonBounds3 :
         ((((fun y' => z + y') '' openCubeSet (originCube d (n + 3))) ∩
           openCubeSet (originCube d m))))).toReal := by
     rw [hXXdef]
-    refine Support.normalizedL2On_eq_toReal_eLpNorm_normalizedVolumeMeasureOn
-      ?_ hW'top (hmemU_W.sub (memLp_const _))
-    by_contra hcon
-    push Not at hcon
-    have h0 : volume ((((fun y' => z + y') '' openCubeSet (originCube d (n + 3))) ∩
-        openCubeSet (originCube d m))) = 0 := le_antisymm hcon zero_le
-    have := hW'pos
-    rw [h0] at this
-    simp only [ENNReal.toReal_zero] at this
-    exact lt_irrefl _ this
+    exact Support.normalizedL2On_eq_toReal_eLpNorm_normalizedVolumeMeasureOn
+      (ENNReal.toReal_pos_iff.mp hW'pos).1 hW'top (hmemU_W.sub (memLp_const _))
   have hfinal : c1 * XX + c2 * ((3 : ℝ) ^ n * HH) + c3 * NU ≤
       (c1 + c2 + c3) * (XX + (3 : ℝ) ^ n * HH + NU) := by
     have t1 : 0 ≤ (3 : ℝ) ^ n * HH := mul_nonneg h3n0 hHH0

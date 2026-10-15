@@ -354,6 +354,78 @@ theorem rpow_le_rpow_neg_nineteen_halves {s a : ℝ} (hs : 0 < s) (hs1 : s ≤ 1
     (ha : -(19 / 2 : ℝ) ≤ a) : Real.rpow s a ≤ Real.rpow s (-(19 / 2 : ℝ)) :=
   Real.rpow_le_rpow_of_exponent_ge hs hs1 ha
 
+
+/-- Positivity of the common constants in the two composed scale estimates. -/
+theorem composed_constants_nonneg (d : ℕ) [NeZero d] (CE Cout : ℝ) (hCE : 0 ≤ CE) :
+    let kappa : ℝ := Real.sqrt (192 * (d : ℝ)) * 3
+    let e0 : ℝ := kappa * (CE * (1 / 2 : ℝ))
+    let k0 : ℝ := 2 * (d : ℝ) * (e0 ^ 2 + 1)
+    let b0 : ℝ := Real.sqrt k0 * e0 + 2 * k0
+    let cg : ℝ := 3 * negNormBaseConst d * coarseGrainingP2Const d
+    let A1 : ℝ := cg * 216 * (kappa * Real.sqrt Cout)
+    let A2 : ℝ := cg * 1944 * (b0 * (besovGagliardoConstant d * gagliardoWindowConst d))
+    let A3 : ℝ := interiorCorrectionConst d * gagliardoWindowConst d
+    0 ≤ kappa ∧ 0 ≤ b0 ∧ 0 ≤ cg ∧ 0 ≤ A1 ∧ 0 ≤ A2 ∧ 0 ≤ A3 := by
+  intro kappa e0 k0 b0 cg A1 A2 A3
+  have hkappa : 0 ≤ kappa := by positivity
+  have he0 : 0 ≤ e0 := mul_nonneg hkappa (by positivity)
+  have hk0 : 0 ≤ k0 := by positivity
+  have hb0 : 0 ≤ b0 := by positivity
+  have hcg : 0 ≤ cg := by
+    have h1 := negNormBaseConst_pos d
+    have h2 := coarseGrainingP2Const_pos d
+    positivity
+  have hA1 : 0 ≤ A1 := by positivity
+  have hA2 : 0 ≤ A2 := by
+    have h1 := besovGagliardoConstant_nonneg d
+    have h2 := gagliardoWindowConst_pos d
+    positivity
+  have hA3 : 0 ≤ A3 := by
+    have h1 := interiorCorrectionConst_pos d
+    have h2 := gagliardoWindowConst_pos d
+    positivity
+  exact ⟨hkappa, hb0, hcg, hA1, hA2, hA3⟩
+
+/-- Cancel a positive scalar and an inverse pair of frame weights. -/
+theorem scalar_frame_cancel_le {sig P R lhs rhs : ℝ} (hsig : 0 < sig)
+    (hR : 0 ≤ R) (hPR : P * R = 1) (h : sig * (P * lhs) ≤ rhs) :
+    lhs ≤ (sig⁻¹ * R) * rhs := by
+  have hcancel : (sig⁻¹ * R) * (sig * (P * lhs)) = lhs := by
+    calc
+      (sig⁻¹ * R) * (sig * (P * lhs)) = (sig⁻¹ * sig) * ((P * R) * lhs) := by ring
+      _ = lhs := by rw [inv_mul_cancel₀ hsig.ne', hPR]; ring
+  rw [← hcancel]
+  exact mul_le_mul_of_nonneg_left h (mul_nonneg (inv_nonneg.mpr hsig.le) hR)
+
+/-- Replace three comparison legs and collect their two nonnegative output quantities. -/
+theorem three_leg_comparison_close
+    {w cg a b c energy forcing child E F Y A1 B A2 A3 X Z lhs : ℝ}
+    (hw : 0 ≤ w) (hcg : 0 ≤ cg) (ha : 0 ≤ a) (hb : 0 ≤ b) (hc : 0 ≤ c)
+    (henergy : energy ≤ E) (hforcing : forcing ≤ F) (hchild : child ≤ Y)
+    (hstep : lhs ≤ w * (cg * (a * energy + b * forcing) + c * child))
+    (hfirst : w * (cg * (a * E)) ≤ A1 * X + B * Z)
+    (hsecond : w * (cg * (b * F)) ≤ A2 * Z)
+    (hthird : w * (c * Y) ≤ A3 * Z)
+    (hA1 : 0 ≤ A1) (hB : 0 ≤ B) (hA2 : 0 ≤ A2) (hA3 : 0 ≤ A3)
+    (hX : 0 ≤ X) (hZ : 0 ≤ Z) :
+    lhs ≤ (A1 + B + A2 + A3 + 1) * (X + Z) := by
+  have hmono := mul_le_mul_of_nonneg_left
+    (add_le_add (mul_le_mul_of_nonneg_left
+      (add_le_add (mul_le_mul_of_nonneg_left henergy ha)
+        (mul_le_mul_of_nonneg_left hforcing hb)) hcg)
+      (mul_le_mul_of_nonneg_left hchild hc)) hw
+  have hC1 : A1 ≤ A1 + B + A2 + A3 + 1 := by linarith only [hB, hA2, hA3]
+  have hC2 : B + A2 + A3 ≤ A1 + B + A2 + A3 + 1 := by linarith only [hA1]
+  calc
+    lhs ≤ w * (cg * (a * E + b * F) + c * Y) := hstep.trans hmono
+    _ = w * (cg * (a * E)) + w * (cg * (b * F)) + w * (c * Y) := by ring
+    _ ≤ (A1 * X + B * Z) + A2 * Z + A3 * Z :=
+      add_le_add (add_le_add hfirst hsecond) hthird
+    _ = A1 * X + (B + A2 + A3) * Z := by ring
+    _ ≤ (A1 + B + A2 + A3 + 1) * X + (A1 + B + A2 + A3 + 1) * Z :=
+      add_le_add (mul_le_mul_of_nonneg_right hC1 hX) (mul_le_mul_of_nonneg_right hC2 hZ)
+    _ = (A1 + B + A2 + A3 + 1) * (X + Z) := by ring
+
 end
 
 end Algsuperdiff.Section4.Provider.ExcessDecay

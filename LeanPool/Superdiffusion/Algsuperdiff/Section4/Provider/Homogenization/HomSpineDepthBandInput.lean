@@ -127,51 +127,6 @@ theorem lintegral_normalized_enorm_gridDualTestCoeff_le (Q : TriadicCube d)
     ring
   have hcellpow : (cubeScaleFactor Q / (3 : ℝ) ^ j) ^ (s.1 * r) = (3 : ℝ) ^ (M * (s.1 * r)) := by
     rw [hcell, ← Real.rpow_mul (by norm_num : (0 : ℝ) ≤ 3)]
-  /- the mass, cell by cell (verbatim from the flat displa -/
-  have hterm : ∀ R ∈ D,
-      ((D.card : ℝ≥0∞))⁻¹ *
-          ‖euclideanNorm (gridDualTestCoeff Q s.1 t F.toField j R)‖ₑ ^ r ≤
-        ((D.card : ℝ≥0∞))⁻¹ *
-          ENNReal.ofReal ((3 : ℝ) ^ (s.1 * t * M * r) *
-            ‖cubeAverageVec R F.toField‖ ^ t) := by
-    intro R _
-    refine mul_le_mul' le_rfl ?_
-    have h1 : ‖euclideanNorm (gridDualTestCoeff Q s.1 t F.toField j R)‖ₑ ^ r ≤
-        (ENNReal.ofReal ((3 : ℝ) ^ (s.1 * t * M) *
-          ‖cubeAverageVec R F.toField‖ ^ (t - 1))) ^ r :=
-      ENNReal.rpow_le_rpow (enorm_euclideanNorm_gridDualTestCoeff_le Q s.1 t F.toField j R) hr.le
-    refine h1.trans (le_of_eq ?_)
-    have hnn : (0 : ℝ) ≤ (3 : ℝ) ^ (s.1 * t * M) * ‖cubeAverageVec R F.toField‖ ^ (t - 1) :=
-      mul_nonneg (Real.rpow_nonneg (by norm_num) _) (Real.rpow_nonneg (norm_nonneg _) _)
-    have hreal : ((3 : ℝ) ^ (s.1 * t * M) * ‖cubeAverageVec R F.toField‖ ^ (t - 1)) ^ r =
-        (3 : ℝ) ^ (s.1 * t * M * r) * ‖cubeAverageVec R F.toField‖ ^ t := by
-      rw [Real.mul_rpow (Real.rpow_nonneg (by norm_num) _) (Real.rpow_nonneg (norm_nonneg _) _),
-        ← Real.rpow_mul (by norm_num : (0 : ℝ) ≤ 3),
-        ← Real.rpow_mul (norm_nonneg _), hconj.sub_one_mul_conj]
-    rw [ENNReal.ofReal_rpow_of_nonneg hnn hr.le, hreal]
-  have hsum : (∑ R ∈ D, ((D.card : ℝ≥0∞))⁻¹ *
-      ENNReal.ofReal ((3 : ℝ) ^ (s.1 * t * M * r) * ‖cubeAverageVec R F.toField‖ ^ t)) =
-      ENNReal.ofReal ((3 : ℝ) ^ (s.1 * t * M * r) * A) := by
-    have hinv : ((D.card : ℝ≥0∞))⁻¹ = ENNReal.ofReal ((D.card : ℝ)⁻¹) := by
-      rw [ENNReal.ofReal_inv_of_pos hcardpos, ENNReal.ofReal_natCast]
-    have hstep : ∀ R ∈ D, ((D.card : ℝ≥0∞))⁻¹ *
-        ENNReal.ofReal ((3 : ℝ) ^ (s.1 * t * M * r) * ‖cubeAverageVec R F.toField‖ ^ t) =
-        ENNReal.ofReal ((D.card : ℝ)⁻¹ *
-          ((3 : ℝ) ^ (s.1 * t * M * r) * ‖cubeAverageVec R F.toField‖ ^ t)) := by
-      intro R _
-      rw [hinv, ← ENNReal.ofReal_mul (le_of_lt (inv_pos.mpr hcardpos))]
-    rw [Finset.sum_congr rfl hstep,
-      ← ENNReal.ofReal_sum_of_nonneg fun R _ =>
-        mul_nonneg (le_of_lt (inv_pos.mpr hcardpos))
-          (mul_nonneg (Real.rpow_nonneg (by norm_num) _)
-            (Real.rpow_nonneg (norm_nonneg _) _))]
-    congr 1
-    rw [← Finset.mul_sum, ← Finset.mul_sum]
-    change ((D.card : ℝ))⁻¹ * ((3 : ℝ) ^ (s.1 * t * M * r) *
-        ∑ R ∈ D, ‖cubeAverageVec R F.toField‖ ^ t) =
-      (3 : ℝ) ^ (s.1 * t * M * r) *
-        (((D.card : ℝ))⁻¹ * ∑ R ∈ D, ‖cubeAverageVec R F.toField‖ ^ t)
-    ring
   /- the exponent bookkeeping: `s·t·M·r = M·(s·r) + s·t·M` -/
   have hexp : s.1 * t * M * r = M * (s.1 * r) + s.1 * t * M := by
     have hmul : t * r = t + r := hconj.mul_eq_add
@@ -180,7 +135,7 @@ theorem lintegral_normalized_enorm_gridDualTestCoeff_le (Q : TriadicCube d)
       _ = M * (s.1 * r) + s.1 * t * M := by ring
   rw [lintegral_enorm_euclideanNorm_gridDualDepthTest_rpow Q j _ hr,
     depthEnergy_eq_ofReal Q s p F j, hcellpow]
-  refine le_trans ((Finset.sum_le_sum hterm).trans (le_of_eq hsum)) (le_of_eq ?_)
+  refine le_trans (gridDualTestCoeff_mass_bound Q s p F j) (le_of_eq ?_)
   rw [← ENNReal.ofReal_mul (Real.rpow_nonneg (by norm_num) _)]
   congr 1
   rw [hexp, Real.rpow_add (by norm_num : (0 : ℝ) < 3)]

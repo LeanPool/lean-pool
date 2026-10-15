@@ -164,63 +164,24 @@ theorem measure_tail_badDensity_le_half (C : ℝ) (hC : 2 * zTwoConst d ≤ C)
   have hcs0 : (0 : ℝ) < Disorder.cstar M := Provider.Orlicz.cstar_pos M
   have hnum0 : (0 : ℝ) ≤ s ^ (9 : ℕ) * Disorder.cstar M ^ (2 : ℕ) * delta ^ (2 : ℕ) :=
     mul_nonneg (mul_nonneg (pow_nonneg hs.le 9) (pow_nonneg hcs0.le 2)) (pow_nonneg hd0.le 2)
-  rcases Nat.eq_zero_or_pos N with rfl | hN
-  · -- the length-`0` window is free
-    have huniv : {omega : Cutoff.CutoffSample d |
-        (((0 : ℕ) : ℕ∞)) ≤ Probability.minimalScaleEN (badDensity M s delta hs m) omega}
-        = Set.univ :=
-      Set.eq_univ_of_forall fun omega => by
-        simp only [Set.mem_ofPred_eq, Nat.cast_zero]
-        exact zero_le
-    rw [huniv, measure_univ,
-      show (1 : ℝ≥0∞) = ENNReal.ofReal 1 from ENNReal.ofReal_one.symm]
-    refine ENNReal.ofReal_le_ofReal ?_
-    have hexpnn : (0 : ℝ) ≤
-        -((((0 : ℕ) : ℝ) - 1) * s ^ (9 : ℕ) * Disorder.cstar M ^ (2 : ℕ) *
-            delta ^ (2 : ℕ)) / (C * M.gamma) := by
-      rw [Nat.cast_zero,
-        show -(((0 : ℝ) - 1) * s ^ (9 : ℕ) * Disorder.cstar M ^ (2 : ℕ) * delta ^ (2 : ℕ))
-            = s ^ (9 : ℕ) * Disorder.cstar M ^ (2 : ℕ) * delta ^ (2 : ℕ) from by ring]
-      exact div_nonneg hnum0 (mul_pos hC0 hgam0).le
-    have hexp1 : (1 : ℝ) ≤
-        Real.exp
-          (-((((0 : ℕ) : ℝ) - 1) * s ^ (9 : ℕ) * Disorder.cstar M ^ (2 : ℕ) *
-              delta ^ (2 : ℕ)) / (C * M.gamma)) := Real.one_le_exp hexpnn
-    have hmul := mul_le_mul_of_nonneg_left hexp1 (by linarith only [hC1] : (0 : ℝ) ≤ C / 2)
-    rw [mul_one] at hmul
-    linarith only [hmul, hC1]
-  · -- the substantive window lengths
-    have hgamhalf : M.gamma ≤ (C / 2)⁻¹ ^ (10 : ℕ) *
-        min (Disorder.cstar M ^ (10 : ℕ))
-          (delta ^ (2 : ℕ) * Disorder.cstar M ^ (2 : ℕ) * s ^ (9 : ℕ)) := by
-      refine le_trans hgam (mul_le_mul_of_nonneg_right ?_ ?_)
-      · exact pow_le_pow_left₀ (inv_nonneg.2 hC0.le)
-          (inv_anti₀ (by linarith only [hC1]) (by linarith only [hC1])) 10
-      · exact le_min (pow_nonneg hcs0.le 10)
-          (mul_nonneg (mul_nonneg (pow_nonneg hd0.le 2) (pow_nonneg hcs0.le 2))
-            (pow_nonneg hs.le 9))
-    refine le_trans
-      (measure_tail_badDensity_le (C / 2) hhalf M s delta hs hs4 hd0 hd2 hgamhalf hwin m N) ?_
-    refine ENNReal.ofReal_le_ofReal (mul_le_mul_of_nonneg_left (Real.exp_le_exp.2 ?_)
-      (by linarith only [hC1] : (0 : ℝ) ≤ C / 2))
-    have hNge : (1 : ℝ) ≤ (N : ℝ) := by
-      exact_mod_cast Nat.one_le_cast.2 hN
-    have hfac : (0 : ℝ) ≤ ((N : ℝ) - 1) * (s ^ (9 : ℕ) * Disorder.cstar M ^ (2 : ℕ) *
-        delta ^ (2 : ℕ)) := mul_nonneg (by linarith only [hNge]) hnum0
-    have hd1 : (0 : ℝ) < C / 2 * M.gamma := mul_pos (by linarith only [hC1]) hgam0
-    have hd2' : C / 2 * M.gamma ≤ C * M.gamma :=
-      mul_le_mul_of_nonneg_right (by linarith only [hC1]) hgam0.le
-    have hkey : ((N : ℝ) - 1) * (s ^ (9 : ℕ) * Disorder.cstar M ^ (2 : ℕ) *
-          delta ^ (2 : ℕ)) / (C * M.gamma)
-        ≤ ((N : ℝ) - 1) * (s ^ (9 : ℕ) * Disorder.cstar M ^ (2 : ℕ) *
-          delta ^ (2 : ℕ)) / (C / 2 * M.gamma) :=
-      div_le_div_of_nonneg_left hfac hd1 hd2'
-    rw [neg_div, neg_div]
-    have hrw1 : ((N : ℝ) - 1) * s ^ (9 : ℕ) * Disorder.cstar M ^ (2 : ℕ) * delta ^ (2 : ℕ)
-        = ((N : ℝ) - 1) * (s ^ (9 : ℕ) * Disorder.cstar M ^ (2 : ℕ) * delta ^ (2 : ℕ)) := by
-      ring
-    rw [hrw1]
-    linarith only [hkey]
+  have hgamhalf : M.gamma ≤ (C / 2)⁻¹ ^ (10 : ℕ) *
+      min (Disorder.cstar M ^ (10 : ℕ))
+        (delta ^ (2 : ℕ) * Disorder.cstar M ^ (2 : ℕ) * s ^ (9 : ℕ)) := by
+    refine le_trans hgam (mul_le_mul_of_nonneg_right ?_ ?_)
+    · exact pow_le_pow_left₀ (inv_nonneg.2 hC0.le)
+        (inv_anti₀ (by linarith only [hC1]) (by linarith only [hC1])) 10
+    · exact le_min (pow_nonneg hcs0.le 10)
+        (mul_nonneg (mul_nonneg (pow_nonneg hd0.le 2) (pow_nonneg hcs0.le 2))
+          (pow_nonneg hs.le 9))
+  simpa only [mul_assoc] using
+    Probability.measure_exponential_tail_weaken_rate (Cutoff.cutoffSampleLaw M).toMeasure
+      (fun k => {omega | (k : ℕ∞) ≤
+        Probability.minimalScaleEN (badDensity M s delta hs m) omega})
+      (A := C / 2) (C := C) (gamma := M.gamma)
+      (numerator := s ^ (9 : ℕ) * Disorder.cstar M ^ (2 : ℕ) * delta ^ (2 : ℕ))
+      hC1 (by linarith only [hC1]) hgam0 hnum0
+      (fun k _ => by simpa only [mul_assoc] using
+        measure_tail_badDensity_le (C / 2) hhalf M s delta hs hs4 hd0 hd2 hgamhalf hwin m k) N
 
 /-! ## 4. The max tail at the frozen display -/
 

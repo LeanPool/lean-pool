@@ -498,25 +498,9 @@ theorem measure_tail_badCesaro_le (C : ℝ) (hC : zOneConst d ≤ C)
             (delta ^ (2 : ℕ) * Disorder.cstar M ^ (2 : ℕ) * s ^ (9 : ℕ)) := by ring
       _ = delta ^ (2 : ℕ) * Disorder.cstar M ^ (2 : ℕ) * s ^ (9 : ℕ) := by
           rw [hcancelC, one_mul]
-  have hAlow : C ≤ A := by
-    rw [hAdef, le_div_iff₀ hKgam]
-    refine le_trans ?_ hX
-    have h1 : C * (4 * kickConst d ^ (2 : ℕ)) ≤ C ^ (10 : ℕ) := by
-      calc C * (4 * kickConst d ^ (2 : ℕ)) ≤ C * C :=
-            mul_le_mul_of_nonneg_left hCb hC0.le
-        _ = C ^ (2 : ℕ) := by ring
-        _ ≤ C ^ (10 : ℕ) := pow_le_pow_right₀ hC1 (by norm_num)
-    calc C * ((4 * kickConst d ^ (2 : ℕ)) * M.gamma)
-        = (C * (4 * kickConst d ^ (2 : ℕ))) * M.gamma := by ring
-      _ ≤ C ^ (10 : ℕ) * M.gamma := mul_le_mul_of_nonneg_right h1 hgam0.le
-  have hc0low : 1 ≤ c0 := by
-    rw [hc0def, le_div_iff₀ hCgam]
-    refine le_trans ?_ hX
-    have h1 : C ≤ C ^ (10 : ℕ) := by
-      calc C = C ^ (1 : ℕ) := (pow_one C).symm
-        _ ≤ C ^ (10 : ℕ) := pow_le_pow_right₀ hC1 (by norm_num)
-    calc (1 : ℝ) * (C * M.gamma) = C * M.gamma := one_mul _
-      _ ≤ C ^ (10 : ℕ) * M.gamma := mul_le_mul_of_nonneg_right h1 hgam0.le
+  have hrates := Probability.rates_ge_of_large_power hC1 hK0 hCb hgam0 hX
+  have hAlow : C ≤ A := hrates.1
+  have hc0low : 1 ≤ c0 := hrates.2
   have hc0pos : (0 : ℝ) < c0 := lt_of_lt_of_le zero_lt_one hc0low
   have h2c0A : 2 * c0 ≤ A := by
     have hstep : 2 * c0 =
@@ -554,22 +538,6 @@ theorem measure_tail_badCesaro_le (C : ℝ) (hC : zOneConst d ≤ C)
     (fun j omega h => exists_center_finset_of_badCesaro M s delta hs m j omega h)
     hcenter N
   -- the prefactor, absorbed by the `(N − 1)` shift
-  have hexpneg : Real.exp (-c0) ≤ 1 / 2 := by
-    have h2 : (2 : ℝ) ≤ Real.exp 1 := by linarith only [Real.add_one_le_exp (1 : ℝ)]
-    have hc : Real.exp (-1 : ℝ) * Real.exp 1 = 1 := by
-      rw [← Real.exp_add, neg_add_cancel, Real.exp_zero]
-    have h3 : Real.exp (-c0) ≤ Real.exp (-1 : ℝ) :=
-      Real.exp_le_exp.2 (by linarith only [hc0low])
-    have h4 : Real.exp (-1 : ℝ) * 2 ≤ Real.exp (-1 : ℝ) * Real.exp 1 :=
-      mul_le_mul_of_nonneg_left h2 (Real.exp_pos _).le
-    linarith only [h3, h4, hc]
-  have hg : (0 : ℝ) < 1 - Real.exp (-c0) := by linarith only [hexpneg]
-  have hfrac : (3 : ℝ) ^ (2 * d) / (1 - Real.exp (-c0)) ≤ C := by
-    rw [div_le_iff₀ hg]
-    have h1 : (1 / 2 : ℝ) ≤ 1 - Real.exp (-c0) := by linarith only [hexpneg]
-    have h2 : C * (1 / 2 : ℝ) ≤ C * (1 - Real.exp (-c0)) :=
-      mul_le_mul_of_nonneg_left h1 hC0.le
-    linarith only [h2, h3dC]
   have hfrozen : -c0 * ((N : ℝ) - 1)
       = -(((N : ℝ) - 1) * s ^ (9 : ℕ) * Disorder.cstar M ^ (2 : ℕ) * delta ^ (2 : ℕ)) /
         (C * M.gamma) := by
@@ -579,21 +547,8 @@ theorem measure_tail_badCesaro_le (C : ℝ) (hC : zOneConst d ≤ C)
         Real.exp
           (-(((N : ℝ) - 1) * s ^ (9 : ℕ) * Disorder.cstar M ^ (2 : ℕ) * delta ^ (2 : ℕ)) /
             (C * M.gamma)) := by
-    have hcomb : Real.exp c0 * Real.exp (-c0 * (N : ℝ)) = Real.exp (-c0 * ((N : ℝ) - 1)) := by
-      rw [← Real.exp_add]; congr 1; ring
-    calc Probability.windowTailConst (2 * d) c0 * Real.exp (-c0 * (N : ℝ))
-        = ((3 : ℝ) ^ (2 * d) / (1 - Real.exp (-c0))) *
-            (Real.exp c0 * Real.exp (-c0 * (N : ℝ))) := by
-          rw [Probability.windowTailConst_eq]; ring
-      _ = ((3 : ℝ) ^ (2 * d) / (1 - Real.exp (-c0))) * Real.exp (-c0 * ((N : ℝ) - 1)) := by
-          rw [hcomb]
-      _ ≤ C * Real.exp (-c0 * ((N : ℝ) - 1)) :=
-          mul_le_mul_of_nonneg_right hfrac (Real.exp_pos _).le
-      _ = C *
-            Real.exp
-              (-(((N : ℝ) - 1) * s ^ (9 : ℕ) * Disorder.cstar M ^ (2 : ℕ) *
-                    delta ^ (2 : ℕ)) /
-                (C * M.gamma)) := by rw [hfrozen]
+    rw [← hfrozen]
+    exact Probability.windowTailConst_mul_exp_le_shift (2 * d) hc0low h3dC (N : ℝ)
   have hmeas : (Cutoff.cutoffSampleLaw M).toMeasure
         {omega | (N : ℕ∞) ≤ Probability.minimalScaleEN (badCesaro M s delta hs m) omega}
       = ENNReal.ofReal (((Cutoff.cutoffSampleLaw M).toMeasure).real
@@ -635,63 +590,25 @@ theorem measure_tail_badCesaro_le_half (C : ℝ) (hC : 2 * zOneConst d ≤ C)
   have hcs0 : (0 : ℝ) < Disorder.cstar M := (Disorder.cstar_characterization M).1
   have hnum0 : (0 : ℝ) ≤ s ^ (9 : ℕ) * Disorder.cstar M ^ (2 : ℕ) * delta ^ (2 : ℕ) :=
     mul_nonneg (mul_nonneg (pow_nonneg hs.le 9) (pow_nonneg hcs0.le 2)) (pow_nonneg hd0.le 2)
-  rcases Nat.eq_zero_or_pos N with rfl | hN
-  · -- the length-`0` window is free
-    have huniv : {omega : Cutoff.CutoffSample d |
-        (((0 : ℕ) : ℕ∞)) ≤ Probability.minimalScaleEN (badCesaro M s delta hs m) omega}
-        = Set.univ :=
-      Set.eq_univ_of_forall fun omega => by
-        simp only [Set.mem_ofPred_eq, Nat.cast_zero]
-        exact zero_le
-    rw [huniv, measure_univ,
-      show (1 : ℝ≥0∞) = ENNReal.ofReal 1 from ENNReal.ofReal_one.symm]
-    refine ENNReal.ofReal_le_ofReal ?_
-    have hexpnn : (0 : ℝ) ≤
-        -((((0 : ℕ) : ℝ) - 1) * s ^ (9 : ℕ) * Disorder.cstar M ^ (2 : ℕ) *
-            delta ^ (2 : ℕ)) / (C * M.gamma) := by
-      rw [Nat.cast_zero,
-        show -(((0 : ℝ) - 1) * s ^ (9 : ℕ) * Disorder.cstar M ^ (2 : ℕ) * delta ^ (2 : ℕ))
-            = s ^ (9 : ℕ) * Disorder.cstar M ^ (2 : ℕ) * delta ^ (2 : ℕ) from by ring]
-      exact div_nonneg hnum0 (mul_pos hC0 hgam0).le
-    have hexp1 : (1 : ℝ) ≤
-        Real.exp
-          (-((((0 : ℕ) : ℝ) - 1) * s ^ (9 : ℕ) * Disorder.cstar M ^ (2 : ℕ) *
-              delta ^ (2 : ℕ)) / (C * M.gamma)) := Real.one_le_exp hexpnn
-    have hmul := mul_le_mul_of_nonneg_left hexp1 (by linarith only [hC1] : (0 : ℝ) ≤ C / 2)
-    rw [mul_one] at hmul
-    linarith only [hmul, hC1]
-  · -- the substantive window lengths
-    have hgamhalf : M.gamma ≤ (C / 2)⁻¹ ^ (10 : ℕ) *
-        min (Disorder.cstar M ^ (10 : ℕ))
-          (delta ^ (2 : ℕ) * Disorder.cstar M ^ (2 : ℕ) * s ^ (9 : ℕ)) := by
-      refine le_trans hgam (mul_le_mul_of_nonneg_right ?_ ?_)
-      · exact pow_le_pow_left₀ (inv_nonneg.2 hC0.le)
-          (inv_anti₀ (by linarith only [hC1]) (by linarith only [hC1])) 10
-      · exact le_min (pow_nonneg hcs0.le 10)
-          (mul_nonneg (mul_nonneg (pow_nonneg hd0.le 2) (pow_nonneg hcs0.le 2))
-            (pow_nonneg hs.le 9))
-    refine le_trans
-      (measure_tail_badCesaro_le (C / 2) hhalf M s delta hs hs4 hd0 hd2 hgamhalf hwin m N) ?_
-    refine ENNReal.ofReal_le_ofReal (mul_le_mul_of_nonneg_left (Real.exp_le_exp.2 ?_)
-      (by linarith only [hC1] : (0 : ℝ) ≤ C / 2))
-    have hNge : (1 : ℝ) ≤ (N : ℝ) := by
-      exact_mod_cast Nat.one_le_cast.2 hN
-    have hfac : (0 : ℝ) ≤ ((N : ℝ) - 1) * (s ^ (9 : ℕ) * Disorder.cstar M ^ (2 : ℕ) *
-        delta ^ (2 : ℕ)) := mul_nonneg (by linarith only [hNge]) hnum0
-    have hd1 : (0 : ℝ) < C / 2 * M.gamma := mul_pos (by linarith only [hC1]) hgam0
-    have hd2' : C / 2 * M.gamma ≤ C * M.gamma :=
-      mul_le_mul_of_nonneg_right (by linarith only [hC1]) hgam0.le
-    have hkey : ((N : ℝ) - 1) * (s ^ (9 : ℕ) * Disorder.cstar M ^ (2 : ℕ) *
-          delta ^ (2 : ℕ)) / (C * M.gamma)
-        ≤ ((N : ℝ) - 1) * (s ^ (9 : ℕ) * Disorder.cstar M ^ (2 : ℕ) *
-          delta ^ (2 : ℕ)) / (C / 2 * M.gamma) :=
-      div_le_div_of_nonneg_left hfac hd1 hd2'
-    rw [neg_div, neg_div]
-    have hrw1 : ((N : ℝ) - 1) * s ^ (9 : ℕ) * Disorder.cstar M ^ (2 : ℕ) * delta ^ (2 : ℕ)
-        = ((N : ℝ) - 1) * (s ^ (9 : ℕ) * Disorder.cstar M ^ (2 : ℕ) * delta ^ (2 : ℕ)) := by
-      ring
-    rw [hrw1]
-    linarith only [hkey]
+  have hgamhalf : M.gamma ≤ (C / 2)⁻¹ ^ (10 : ℕ) *
+      min (Disorder.cstar M ^ (10 : ℕ))
+        (delta ^ (2 : ℕ) * Disorder.cstar M ^ (2 : ℕ) * s ^ (9 : ℕ)) := by
+    refine le_trans hgam (mul_le_mul_of_nonneg_right ?_ ?_)
+    · exact pow_le_pow_left₀ (inv_nonneg.2 hC0.le)
+        (inv_anti₀ (by linarith only [hC1]) (by linarith only [hC1])) 10
+    · exact le_min (pow_nonneg hcs0.le 10)
+        (mul_nonneg (mul_nonneg (pow_nonneg hd0.le 2) (pow_nonneg hcs0.le 2))
+          (pow_nonneg hs.le 9))
+  simpa only [mul_assoc] using
+    Probability.measure_exponential_tail_weaken_rate (Cutoff.cutoffSampleLaw M).toMeasure
+      (fun k => {omega | (k : ℕ∞) ≤
+        Probability.minimalScaleEN (badCesaro M s delta hs m) omega})
+      (A := C / 2) (C := C) (gamma := M.gamma)
+      (numerator := s ^ (9 : ℕ) * Disorder.cstar M ^ (2 : ℕ) * delta ^ (2 : ℕ))
+      hC1 (by linarith only [hC1]) hgam0 hnum0
+      (fun k _ => by simpa only [mul_assoc] using
+        measure_tail_badCesaro_le (C / 2) hhalf M s delta hs hs4 hd0 hd2 hgamhalf hwin m k) N
+
 
 end
 

@@ -76,42 +76,42 @@ variable {d : ℕ}
 
 /-! ## 2. The mean-zero Poincaré on the boundary covering cube -/
 
-/-- **The mean-subtracted `L²` Poincaré inequality on the covering cube.**
+/-- **The equal-sides mean-zero cube Poincaré on `c + □_j ⊆ □_m`.**
 
-The covering cube `c + □_{n+2}` is an axis cube of side `3^{n+2}`, so
-CoarseGraining's scaled mean-zero Poincaré applies verbatim; the normalization
-cancels between the two sides because the same cube carries both. -/
-theorem eLpNorm_sub_average_coveringCube_le_meanZeroPoincare {n m : ℤ} {x : Vec d}
-    (hnm : n + 2 ≤ m) (h : H1Function (openCubeSet (originCube d m))) :
+The `c`-and-scale-generic form of `BoundaryClauseSkeleton`'s covering-cube
+instance: any translated origin cube inside `□_m` is an axis cube of side
+`3^j`, and CoarseGraining's scale-uniform mean-zero Poincaré applies verbatim;
+the normalization cancels because the same cube carries both sides. -/
+theorem eLpNorm_sub_average_translatedCube_le_meanZeroPoincare {j m : ℤ}
+    {c : Vec d}
+    (hsub : (fun y' => c + y') '' openCubeSet (originCube d j) ⊆
+      openCubeSet (originCube d m))
+    (h : H1Function (openCubeSet (originCube d m))) :
     (eLpNorm (fun y => h.toFun y -
-          volumeAverage ((fun y' => wellPlacedCentre x m (n + 2) + y') ''
-            openCubeSet (originCube d (n + 2))) h.toFun) 2
+          volumeAverage ((fun y' => c + y') '' openCubeSet (originCube d j))
+            h.toFun) 2
         (Support.normalizedVolumeMeasureOn
-          ((fun y' => wellPlacedCentre x m (n + 2) + y') ''
-            openCubeSet (originCube d (n + 2))))).toReal ≤
-      unitMeanZeroPoincareConst d * (3 : ℝ) ^ (n + 2) *
+          ((fun y' => c + y') '' openCubeSet (originCube d j)))).toReal ≤
+      unitMeanZeroPoincareConst d * (3 : ℝ) ^ j *
         ∑ i : Fin d,
           (eLpNorm (fun y => h.grad y i) 2
             (Support.normalizedVolumeMeasureOn
-              ((fun y' => wellPlacedCentre x m (n + 2) + y') ''
-                openCubeSet (originCube d (n + 2))))).toReal := by
+              ((fun y' => c + y') '' openCubeSet (originCube d j)))).toReal := by
   classical
-  set c : Vec d := wellPlacedCentre x m (n + 2) with hc
   set cc : Set (Vec d) :=
-    (fun y' => c + y') '' openCubeSet (originCube d (n + 2)) with hcc
-  set Lc : ℝ := (3 : ℝ) ^ (n + 2) with hLc
-  set A : Vec d := fun i => c i - (1 / 2 : ℝ) * (3 : ℝ) ^ (n + 2) with hA
+    (fun y' => c + y') '' openCubeSet (originCube d j) with hcc
+  set Lc : ℝ := (3 : ℝ) ^ j with hLc
+  set A : Vec d := fun i => c i - (1 / 2 : ℝ) * (3 : ℝ) ^ j with hA
   have hLpos : (0 : ℝ) < Lc := zpow_pos (by norm_num) _
   have hcube : cc = axisCube A Lc := by
     rw [hcc, hA, hLc]
-    exact image_add_openCubeSet_eq_axisCube c (n + 2)
+    exact image_add_openCubeSet_eq_axisCube c j
   have hccsub : cc ⊆ openCubeSet (originCube d m) := by
     rw [hcc]
-    exact image_add_wellPlacedCentre_subset_openCubeSet x hnm
+    exact hsub
   have hsubA : axisCube A Lc ⊆ openCubeSet (originCube d m) := by
     rw [← hcube]
     exact hccsub
-  -- CoarseGraining's scaled mean-zero Poincaré on the axis realization
   have hraw : (eLpNorm (fun y => h.toFun y - integralAverage cc h.toFun) 2
         (volumeMeasureOn cc)).toReal ≤
       unitMeanZeroPoincareConst d * Lc *
@@ -125,7 +125,6 @@ theorem eLpNorm_sub_average_coveringCube_le_meanZeroPoincare {n m : ℤ} {x : Ve
       funext y
       exact H1Function.subAverage_apply _ y
     rwa [hfun] at hpo
-  -- the normalization cancels
   have hiv : integralAverage cc h.toFun = volumeAverage cc h.toFun := rfl
   rw [hiv] at hraw
   have hrestrict : volumeMeasureOn cc = volume.restrict cc := rfl
@@ -148,6 +147,28 @@ theorem eLpNorm_sub_average_coveringCube_le_meanZeroPoincare {n m : ℤ} {x : Ve
         refine Finset.sum_congr rfl ?_
         intro i _
         ring
+
+/-- **The mean-subtracted `L²` Poincaré inequality on the covering cube.**
+
+The covering cube `c + □_{n+2}` is an axis cube of side `3^{n+2}`, so
+CoarseGraining's scaled mean-zero Poincaré applies verbatim; the normalization
+cancels between the two sides because the same cube carries both. -/
+theorem eLpNorm_sub_average_coveringCube_le_meanZeroPoincare {n m : ℤ} {x : Vec d}
+    (hnm : n + 2 ≤ m) (h : H1Function (openCubeSet (originCube d m))) :
+    (eLpNorm (fun y => h.toFun y -
+          volumeAverage ((fun y' => wellPlacedCentre x m (n + 2) + y') ''
+            openCubeSet (originCube d (n + 2))) h.toFun) 2
+        (Support.normalizedVolumeMeasureOn
+          ((fun y' => wellPlacedCentre x m (n + 2) + y') ''
+            openCubeSet (originCube d (n + 2))))).toReal ≤
+      unitMeanZeroPoincareConst d * (3 : ℝ) ^ (n + 2) *
+        ∑ i : Fin d,
+          (eLpNorm (fun y => h.grad y i) 2
+            (Support.normalizedVolumeMeasureOn
+              ((fun y' => wellPlacedCentre x m (n + 2) + y') ''
+                openCubeSet (originCube d (n + 2))))).toReal := by
+  exact eLpNorm_sub_average_translatedCube_le_meanZeroPoincare
+    (image_add_wellPlacedCentre_subset_openCubeSet x hnm) h
 
 /-! ## 3. The covering-cube transport, in real form -/
 

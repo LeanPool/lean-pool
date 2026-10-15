@@ -294,6 +294,92 @@ def windowTailConst (D : ℕ) (c₀ : ℝ) : ℝ :=
 theorem windowTailConst_eq (D : ℕ) (c₀ : ℝ) :
     windowTailConst D c₀ = (3 : ℝ) ^ D * Real.exp c₀ / (1 - Real.exp (-c₀)) := rfl
 
+
+/-- A large-power regime supplies the two rates used in window-tail absorption. -/
+theorem rates_ge_of_large_power {C K gamma numerator : ℝ}
+    (hC : 1 ≤ C) (hK : 0 < K) (hKC : K ≤ C) (hgamma : 0 < gamma)
+    (hregime : C ^ (10 : ℕ) * gamma ≤ numerator) :
+    C ≤ numerator / (K * gamma) ∧ 1 ≤ numerator / (C * gamma) := by
+  have hCpos : 0 < C := zero_lt_one.trans_le hC
+  have hpower : C ≤ C ^ (10 : ℕ) := by
+    calc C = C ^ (1 : ℕ) := (pow_one C).symm
+      _ ≤ C ^ (10 : ℕ) := pow_le_pow_right₀ hC (by norm_num)
+  refine ⟨?_, ?_⟩
+  · rw [le_div_iff₀ (mul_pos hK hgamma)]
+    refine le_trans ?_ hregime
+    have hfactor : C * K ≤ C ^ (10 : ℕ) := by
+      calc C * K ≤ C * C := mul_le_mul_of_nonneg_left hKC hCpos.le
+        _ = C ^ (2 : ℕ) := by ring
+        _ ≤ C ^ (10 : ℕ) := pow_le_pow_right₀ hC (by norm_num)
+    calc C * (K * gamma) = (C * K) * gamma := by ring
+      _ ≤ C ^ (10 : ℕ) * gamma := mul_le_mul_of_nonneg_right hfactor hgamma.le
+  · rw [le_div_iff₀ (mul_pos hCpos hgamma), one_mul]
+    exact (mul_le_mul_of_nonneg_right hpower hgamma.le).trans hregime
+
+/-- A rate of at least one absorbs the geometric prefactor after shifting the tail by one. -/
+theorem windowTailConst_mul_exp_le_shift (D : ℕ) {rate C : ℝ}
+    (hrate : 1 ≤ rate) (hC : 2 * (3 : ℝ) ^ D ≤ C) (N : ℝ) :
+    windowTailConst D rate * Real.exp (-rate * N) ≤
+      C * Real.exp (-rate * (N - 1)) := by
+  have hCnn : 0 ≤ C := (by positivity : (0 : ℝ) ≤ 2 * (3 : ℝ) ^ D).trans hC
+  have hexpneg : Real.exp (-rate) ≤ 1 / 2 := by
+    have htwo : (2 : ℝ) ≤ Real.exp 1 := by linarith only [Real.add_one_le_exp (1 : ℝ)]
+    have hcancel : Real.exp (-1 : ℝ) * Real.exp 1 = 1 := by
+      rw [← Real.exp_add, neg_add_cancel, Real.exp_zero]
+    have hmono : Real.exp (-rate) ≤ Real.exp (-1 : ℝ) :=
+      Real.exp_le_exp.2 (by linarith only [hrate])
+    have hmul := mul_le_mul_of_nonneg_left htwo (Real.exp_pos (-1 : ℝ)).le
+    linarith only [hmono, hmul, hcancel]
+  have hdenominator : 0 < 1 - Real.exp (-rate) := by linarith only [hexpneg]
+  have hfrac : (3 : ℝ) ^ D / (1 - Real.exp (-rate)) ≤ C := by
+    rw [div_le_iff₀ hdenominator]
+    have hhalf : (1 / 2 : ℝ) ≤ 1 - Real.exp (-rate) := by linarith only [hexpneg]
+    have hmul := mul_le_mul_of_nonneg_left hhalf hCnn
+    linarith only [hmul, hC]
+  have hcombine : Real.exp rate * Real.exp (-rate * N) = Real.exp (-rate * (N - 1)) := by
+    rw [← Real.exp_add]
+    congr 1
+    ring
+  calc
+    windowTailConst D rate * Real.exp (-rate * N) =
+        ((3 : ℝ) ^ D / (1 - Real.exp (-rate))) *
+          (Real.exp rate * Real.exp (-rate * N)) := by rw [windowTailConst_eq]; ring
+    _ = ((3 : ℝ) ^ D / (1 - Real.exp (-rate))) * Real.exp (-rate * (N - 1)) := by
+      rw [hcombine]
+    _ ≤ C * Real.exp (-rate * (N - 1)) :=
+      mul_le_mul_of_nonneg_right hfrac (Real.exp_pos _).le
+
+/-- Weaken the rate of a probability tail, retaining its prefactor and handling length zero. -/
+theorem measure_exponential_tail_weaken_rate [MeasurableSpace Ω] (P : Measure Ω)
+    [IsProbabilityMeasure P] (events : ℕ → Set Ω) {A C gamma numerator : ℝ}
+    (hA : 1 ≤ A) (hAC : A ≤ C) (hgamma : 0 < gamma) (hnumerator : 0 ≤ numerator)
+    (htail : ∀ N : ℕ, 0 < N → P (events N) ≤
+      ENNReal.ofReal (A * Real.exp (-(((N : ℝ) - 1) * numerator) / (A * gamma))))
+    (N : ℕ) :
+    P (events N) ≤
+      ENNReal.ofReal (A * Real.exp (-(((N : ℝ) - 1) * numerator) / (C * gamma))) := by
+  have hApos : 0 < A := zero_lt_one.trans_le hA
+  have hCpos : 0 < C := hApos.trans_le hAC
+  rcases Nat.eq_zero_or_pos N with rfl | hN
+  · have hmeasure : P (events 0) ≤ ENNReal.ofReal 1 := by
+      simpa only [measure_univ, ENNReal.ofReal_one] using
+        (measure_mono (Set.subset_univ (events 0)) : P (events 0) ≤ P Set.univ)
+    refine hmeasure.trans (ENNReal.ofReal_le_ofReal ?_)
+    have hexponent : 0 ≤ -(((0 : ℝ) - 1) * numerator) / (C * gamma) :=
+      div_nonneg (by linarith only [hnumerator]) (mul_pos hCpos hgamma).le
+    have hmul := mul_le_mul_of_nonneg_left (Real.one_le_exp hexponent) hApos.le
+    simp only [mul_one] at hmul
+    simpa only [Nat.cast_zero] using hA.trans hmul
+  · refine (htail N hN).trans (ENNReal.ofReal_le_ofReal
+      (mul_le_mul_of_nonneg_left (Real.exp_le_exp.2 ?_) hApos.le))
+    have hNreal : (1 : ℝ) ≤ (N : ℝ) := by exact_mod_cast Nat.one_le_iff_ne_zero.mpr hN.ne'
+    have hfactor : 0 ≤ ((N : ℝ) - 1) * numerator :=
+      mul_nonneg (by linarith only [hNreal]) hnumerator
+    have hquotient := div_le_div_of_nonneg_left hfactor (mul_pos hApos hgamma)
+      (mul_le_mul_of_nonneg_right hAC hgamma.le)
+    rw [neg_div, neg_div]
+    exact neg_le_neg hquotient
+
 /-! ### The assembled producers -/
 
 /-- **The minimal-scale tail from per-centre window tails, prefactor form.**

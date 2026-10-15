@@ -925,33 +925,17 @@ theorem exists_generalClauseInterior_honest_addThree (d : ℕ) [NeZero d] :
   classical
   obtain ⟨CE, hCEpos, hCE⟩ := ae_errorRepresentative_le_harmonicSlot_addThree d
   obtain ⟨CC, Cout, hCCpos, hCoutpos, hCC⟩ := ae_constantDatumEnergy_anchorWindow_addThree d
-  -- the explicit constants
   set kappa : ℝ := Real.sqrt (192 * (d : ℝ)) * 3 with hkappadef
-  have hkappa : 0 ≤ kappa := by positivity
   set e0 : ℝ := kappa * (CE * (1 / 2)) with he0def
-  have he0 : 0 ≤ e0 := mul_nonneg hkappa (by positivity)
   set k0 : ℝ := 2 * (d : ℝ) * (e0 ^ 2 + 1) with hk0def
-  have hk0 : 0 ≤ k0 := by positivity
   set b0 : ℝ := Real.sqrt k0 * e0 + 2 * k0 with hb0def
-  have hb0 : 0 ≤ b0 := by positivity
   set cg : ℝ := 3 * negNormBaseConst d * coarseGrainingP2Const d with hcgdef
-  have hcg : 0 ≤ cg := by
-    have h1 : 0 < negNormBaseConst d := negNormBaseConst_pos d
-    have h2 : 0 < coarseGrainingP2Const d := coarseGrainingP2Const_pos d
-    positivity
   set A1 : ℝ := cg * 216 * (kappa * Real.sqrt Cout) with hA1def
-  have hA1 : 0 ≤ A1 := by positivity
   set A2 : ℝ := cg * 1944 * (b0 * (besovGagliardoConstant d * gagliardoWindowConst d))
     with hA2def
-  have hA2 : 0 ≤ A2 := by
-    have h1 : 0 ≤ besovGagliardoConstant d := besovGagliardoConstant_nonneg d
-    have h2 : 0 < gagliardoWindowConst d := gagliardoWindowConst_pos d
-    positivity
   set A3 : ℝ := interiorCorrectionConst d * gagliardoWindowConst d with hA3def
-  have hA3 : 0 ≤ A3 := by
-    have h1 : 0 < interiorCorrectionConst d := interiorCorrectionConst_pos d
-    have h2 : 0 < gagliardoWindowConst d := gagliardoWindowConst_pos d
-    positivity
+  obtain ⟨hkappa, hb0, hcg, hA1, hA2, hA3⟩ :=
+    composed_constants_nonneg d CE Cout hCEpos.le
   refine ⟨max CE CC, A1 + 9 * (CE * (1 / 2)) * A1 + A2 + A3 + 1, ?_, by positivity, ?_⟩
   · exact lt_of_lt_of_le hCEpos (le_max_left _ _)
   intro M s hsrange hregime hsmall hs L m n hmL hnm x z hz hgeom hfr
@@ -1021,34 +1005,10 @@ theorem exists_generalClauseInterior_honest_addThree (d : ℕ) [NeZero d] :
         interiorCorrectionConst d * Real.rpow s (-(1 / 2 : ℝ)) * Q3sn * Ychild := hxf
   have hfac0 : (0 : ℝ) ≤ sig⁻¹ * R3n := mul_nonneg hsiginv0 hR3n0
   have hsinv : sig⁻¹ * sig = 1 := inv_mul_cancel₀ hsig.ne'
-  have hid : sig⁻¹ * R3n * (sig * (Real.rpow (3 : ℝ) (-(n : ℝ)) * Lhs)) = Lhs := by
-    have h2 : Real.rpow (3 : ℝ) (-(n : ℝ)) * R3n = 1 := rpow_three_neg_mul_self n
-    calc sig⁻¹ * R3n * (sig * (Real.rpow (3 : ℝ) (-(n : ℝ)) * Lhs))
-        = (sig⁻¹ * sig) * ((Real.rpow (3 : ℝ) (-(n : ℝ)) * R3n) * Lhs) := by ring
-      _ = 1 * (1 * Lhs) := by rw [hsinv, h2]
-      _ = Lhs := by ring
-  have hstep : Lhs ≤ (sig⁻¹ * R3n) *
-      (cg * (216 * (s⁻¹) ^ (4 : ℕ) * ET + 1944 * (s⁻¹) ^ (6 : ℕ) * FT) +
-        interiorCorrectionConst d * Real.rpow s (-(1 / 2 : ℝ)) * Q3sn * Ychild) := by
-    rw [← hid]
-    exact mul_le_mul_of_nonneg_left hxfr hfac0
+  have hstep := scalar_frame_cancel_le hsig hR3n0 (rpow_three_neg_mul_self n) hxfr
   -- (f) the monotone replacement of the three legs
   have hccorr0 : (0 : ℝ) ≤ interiorCorrectionConst d * Real.rpow s (-(1 / 2 : ℝ)) * Q3sn :=
     mul_nonneg (mul_nonneg (interiorCorrectionConst_pos d).le (Real.rpow_nonneg hs.le _)) hQ3sn0
-  have hleg1 : 216 * (s⁻¹) ^ (4 : ℕ) * ET ≤
-      216 * (s⁻¹) ^ (4 : ℕ) *
-        (kappa * Real.sqrt Cout * Erep * (sig * (P2 * X) + QS * (Q3s * Y))) :=
-    mul_le_mul_of_nonneg_left hET (by positivity)
-  have hleg2 : 1944 * (s⁻¹) ^ (6 : ℕ) * FT ≤
-      1944 * (s⁻¹) ^ (6 : ℕ) *
-        (b0 * (besovGagliardoConstant d * Q3sn * (gagliardoWindowConst d * Y))) :=
-    mul_le_mul_of_nonneg_left hFT (by positivity)
-  have hleg3 : interiorCorrectionConst d * Real.rpow s (-(1 / 2 : ℝ)) * Q3sn * Ychild ≤
-      interiorCorrectionConst d * Real.rpow s (-(1 / 2 : ℝ)) * Q3sn *
-        (gagliardoWindowConst d * Y) :=
-    mul_le_mul_of_nonneg_left hYchildle hccorr0
-  have hmono := add_le_add (mul_le_mul_of_nonneg_left (add_le_add hleg1 hleg2) hcg) hleg3
-  clear_value Lhs X Y Ychild ET FT Erep Eb sig P2 QS Q3s Q3sn Q1s R3n S4 S7
   -- (g) the regrouping
   obtain ⟨hT1, hT2, hT3, hXterm, hYterm, hCE2⟩ :=
     (show ((sig⁻¹ * R3n) * (cg * (216 * (s⁻¹) ^ (4 : ℕ) *
@@ -1065,40 +1025,8 @@ theorem exists_generalClauseInterior_honest_addThree (d : ℕ) [NeZero d] :
           (hErep0) (sig) (X) (Y) (P2) (hP2def) (QS) (hQSdef) (Q3s) (hQ3sdef) (Q3sn) (hQ3sndef)
             (Q1s) (hQ1sdef) (R3n) (hR3ndef) (S4) (hS4def) (S7) (hS7def) (hX0) (hY0) (hQS0) (hQ3s0)
               (hQ1s0) (hR3n0) (hS40) (hS70) (hsiginv0) (hsinv))
-  refine hstep.trans ?_
-  refine le_trans (mul_le_mul_of_nonneg_left hmono hfac0) ?_
-  have hdistrib : (sig⁻¹ * R3n) *
-      (cg * (216 * (s⁻¹) ^ (4 : ℕ) *
-              (kappa * Real.sqrt Cout * Erep * (sig * (P2 * X) + QS * (Q3s * Y))) +
-            1944 * (s⁻¹) ^ (6 : ℕ) *
-              (b0 * (besovGagliardoConstant d * Q3sn * (gagliardoWindowConst d * Y)))) +
-        interiorCorrectionConst d * Real.rpow s (-(1 / 2 : ℝ)) * Q3sn *
-          (gagliardoWindowConst d * Y)) =
-      (sig⁻¹ * R3n) * (cg * (216 * (s⁻¹) ^ (4 : ℕ) *
-            (kappa * Real.sqrt Cout * Erep * (sig * (P2 * X) + QS * (Q3s * Y))))) +
-        (sig⁻¹ * R3n) * (cg * (1944 * (s⁻¹) ^ (6 : ℕ) *
-            (b0 * (besovGagliardoConstant d * Q3sn * (gagliardoWindowConst d * Y))))) +
-        (sig⁻¹ * R3n) * (interiorCorrectionConst d * Real.rpow s (-(1 / 2 : ℝ)) * Q3sn *
-          (gagliardoWindowConst d * Y)) := by ring
-  rw [hdistrib]
-  have hsum : A1 * (S4 * Erep * X) + (9 * (CE * (1 / 2)) * A1) * (S7 * sig⁻¹ * Q1s * Y) +
-      A2 * (S7 * sig⁻¹ * Q1s * Y) + A3 * (S7 * sig⁻¹ * Q1s * Y) ≤
-      (A1 + 9 * (CE * (1 / 2)) * A1 + A2 + A3 + 1) * (S4 * Erep * X + S7 * sig⁻¹ * Q1s * Y) := by
-    have hC1 : A1 ≤ A1 + 9 * (CE * (1 / 2)) * A1 + A2 + A3 + 1 := by
-      linarith only [hCE2, hA2, hA3]
-    have hC2 : 9 * (CE * (1 / 2)) * A1 + A2 + A3 ≤
-        A1 + 9 * (CE * (1 / 2)) * A1 + A2 + A3 + 1 := by linarith only [hA1]
-    calc A1 * (S4 * Erep * X) + (9 * (CE * (1 / 2)) * A1) * (S7 * sig⁻¹ * Q1s * Y) +
-          A2 * (S7 * sig⁻¹ * Q1s * Y) + A3 * (S7 * sig⁻¹ * Q1s * Y)
-        = A1 * (S4 * Erep * X) +
-            (9 * (CE * (1 / 2)) * A1 + A2 + A3) * (S7 * sig⁻¹ * Q1s * Y) := by ring
-      _ ≤ (A1 + 9 * (CE * (1 / 2)) * A1 + A2 + A3 + 1) * (S4 * Erep * X) +
-            (A1 + 9 * (CE * (1 / 2)) * A1 + A2 + A3 + 1) * (S7 * sig⁻¹ * Q1s * Y) :=
-          add_le_add (mul_le_mul_of_nonneg_right hC1 hXterm)
-            (mul_le_mul_of_nonneg_right hC2 hYterm)
-      _ = (A1 + 9 * (CE * (1 / 2)) * A1 + A2 + A3 + 1) *
-            (S4 * Erep * X + S7 * sig⁻¹ * Q1s * Y) := by ring
-  linarith only [hT1, hT2, hT3, hsum]
+  exact three_leg_comparison_close hfac0 hcg (by positivity) (by positivity) hccorr0
+    hET hFT hYchildle hstep hT1 hT2 hT3 hA1 hCE2 hA2 hA3 hXterm hYterm
 
 end
 
