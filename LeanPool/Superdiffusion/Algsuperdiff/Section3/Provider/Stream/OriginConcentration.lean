@@ -202,6 +202,43 @@ theorem matrixOperatorNorm_le_sum_univ_abs_entry (A : Mat d) :
   exact (matrixOperatorNorm_le_matrixFrobeniusNorm A).trans
     (matrixFrobeniusNorm_le_sum_abs_entries A)
 
+/-- Entrywise Gaussian concentration controls the exact matrix operator norm. -/
+theorem isBigOWith_gammaSigma_matrixOperatorNorm {Omega : Type*} [MeasurableSpace Omega]
+    {mu : Measure Omega} [IsFiniteMeasure mu] (hd : 0 < d) {X : Omega → Mat d} {A : ℝ}
+    (hA : 0 < A)
+    (hentry : ∀ i l, IndependentSums.IsBigO mu (IndependentSums.gammaSigma 2)
+      (fun omega => X omega i l) A)
+    (hmeas : ∀ i l, Measurable (fun omega => X omega i l)) :
+    IndependentSums.IsBigOWith mu (IndependentSums.gammaSigma 2)
+      (fun omega => matrixOperatorNorm (X omega))
+      (IndependentSums.gammaTriangleConst 2 * ((d : ℝ) ^ 2 * A)) := by
+  have hne : (Finset.univ : Finset (Fin d × Fin d)).Nonempty :=
+    ⟨(⟨0, hd⟩, ⟨0, hd⟩), Finset.mem_univ _⟩
+  have hentryAbs : ∀ p : Fin d × Fin d,
+      IndependentSums.IsBigO mu (IndependentSums.gammaSigma 2)
+        (fun omega => |X omega p.1 p.2|) A := by
+    intro p
+    have h := hentry p.1 p.2
+    change IndependentSums.IsBigOWith _ _ (fun omega => |X omega p.1 p.2|) _ at h
+    change IndependentSums.IsBigOWith _ _ _ _
+    simpa only [abs_abs] using h
+  have hmeasAbs : ∀ p : Fin d × Fin d, Measurable (fun omega => |X omega p.1 p.2|) := by
+    intro p
+    simpa only [Real.norm_eq_abs] using (hmeas p.1 p.2).norm
+  have htriangle := IndependentSums.isBigO_finset_sum_of_isBigO_gammaSigma
+    (μ := mu) (Finset.univ : Finset (Fin d × Fin d))
+    (X := fun p omega => |X omega p.1 p.2|) (a := fun _ => A)
+    (σ := 2) (by norm_num) hne (fun _ _ => hA) (fun p _ => hentryAbs p)
+    (fun p _ => hmeasAbs p)
+  have hcard : ∑ _p : Fin d × Fin d, A = (d : ℝ) ^ 2 * A := by
+    rw [Finset.sum_const, nsmul_eq_mul, Finset.card_univ, Fintype.card_prod,
+      Fintype.card_fin]
+    push_cast
+    ring
+  rw [hcard] at htriangle
+  exact htriangle.of_le fun omega =>
+    (matrixOperatorNorm_le_sum_univ_abs_entry (X omega)).trans (le_abs_self _)
+
 /-- ABK26's `e.k.ell.upscales`:
 
 `|(k_m - k_n)(0)| ≤ O_{Γ₂}(C min{γ^{-1/2}, (m-n)^{1/2}} 3^{γm})`,
@@ -231,64 +268,14 @@ theorem isBigOWith_gammaSigma_originIncrement (M : ABKModel d) {n m : ℤ}
       linarith
     exact mul_pos (mul_pos geometricConcentrationConst_pos hmin)
       (Real.rpow_pos_of_pos (by norm_num) _)
-  have hne : (Finset.univ : Finset (Fin d × Fin d)).Nonempty := by
-    refine ⟨(⟨0, hd⟩, ⟨0, hd⟩), Finset.mem_univ _⟩
-  have hentry : ∀ p : Fin d × Fin d,
-      IndependentSums.IsBigO M.P.toMeasure (IndependentSums.gammaSigma 2)
-        (fun omega : ShellSeq d =>
-          |∑ k ∈ Finset.Ioc n m, (omega k) 0 p.1 p.2|)
-        (geometricConcentrationConst *
-          min (Real.sqrt M.gamma⁻¹) (Real.sqrt ((m : ℝ) - (n : ℝ))) *
-          (3 : ℝ) ^ (M.gamma * (m : ℝ))) := by
-    intro p
-    have h := isBigO_gammaSigma_originIncrement_entry M hnm p.1 p.2
-    have habs : (fun omega : ShellSeq d =>
-        |(fun omega : ShellSeq d => |∑ k ∈ Finset.Ioc n m, (omega k) 0 p.1 p.2|)
-          omega|) =
-        fun omega : ShellSeq d => |∑ k ∈ Finset.Ioc n m, (omega k) 0 p.1 p.2| := by
-      funext omega
-      exact abs_abs _
-    change IndependentSums.IsBigOWith _ _ _ _
-    rw [habs]
-    exact h
-  have hmeas : ∀ p : Fin d × Fin d, Measurable (fun omega : ShellSeq d =>
-      |∑ k ∈ Finset.Ioc n m, (omega k) 0 p.1 p.2|) := by
-    intro p
-    have hsummeas : Measurable (fun omega : ShellSeq d =>
-        ∑ k ∈ Finset.Ioc n m, (omega k) 0 p.1 p.2) :=
-      Finset.measurable_sum (Finset.Ioc n m) fun k _ =>
-        (ShellField.measurable_eval_entry 0 p.1 p.2).comp (measurable_pi_apply k)
-    have habs : (fun omega : ShellSeq d =>
-        |∑ k ∈ Finset.Ioc n m, (omega k) 0 p.1 p.2|) =
-        fun omega : ShellSeq d => ‖∑ k ∈ Finset.Ioc n m, (omega k) 0 p.1 p.2‖ := by
-      funext omega
-      exact (Real.norm_eq_abs _).symm
-    rw [habs]
-    exact Measurable.norm hsummeas
-  have htriangle := IndependentSums.isBigO_finset_sum_of_isBigO_gammaSigma
-    (μ := M.P.toMeasure) (Finset.univ : Finset (Fin d × Fin d))
-    (X := fun p omega => |∑ k ∈ Finset.Ioc n m, (omega k) 0 p.1 p.2|)
-    (a := fun _ : Fin d × Fin d => geometricConcentrationConst *
-      min (Real.sqrt M.gamma⁻¹) (Real.sqrt ((m : ℝ) - (n : ℝ))) *
-      (3 : ℝ) ^ (M.gamma * (m : ℝ)))
-    (σ := 2) (by norm_num) hne (fun p _ => hAmp) (fun p _ => hentry p)
-    (fun p _ => hmeas p)
-  have hcard : ∑ _p : Fin d × Fin d, (geometricConcentrationConst *
-      min (Real.sqrt M.gamma⁻¹) (Real.sqrt ((m : ℝ) - (n : ℝ))) *
-      (3 : ℝ) ^ (M.gamma * (m : ℝ))) =
-      (d : ℝ) ^ 2 * (geometricConcentrationConst *
-        min (Real.sqrt M.gamma⁻¹) (Real.sqrt ((m : ℝ) - (n : ℝ))) *
-        (3 : ℝ) ^ (M.gamma * (m : ℝ))) := by
-    rw [Finset.sum_const, nsmul_eq_mul, Finset.card_univ, Fintype.card_prod,
-      Fintype.card_fin]
-    push_cast
-    ring
-  rw [hcard] at htriangle
-  refine htriangle.of_le fun omega => ?_
-  refine (matrixOperatorNorm_le_sum_univ_abs_entry _).trans ?_
-  refine le_trans (le_of_eq ?_) (le_abs_self _)
-  exact Finset.sum_congr rfl fun p _ => by
-    rw [finiteShellIncrement_apply_entry]
+  refine isBigOWith_gammaSigma_matrixOperatorNorm hd hAmp ?_ ?_
+  · intro i l
+    simpa only [finiteShellIncrement_apply_entry] using
+      isBigO_gammaSigma_originIncrement_entry M hnm i l
+  · intro i l
+    simp only [finiteShellIncrement_apply_entry]
+    exact Finset.measurable_sum (Finset.Ioc n m) fun k _ =>
+      (ShellField.measurable_eval_entry 0 i l).comp (measurable_pi_apply k)
 
 end
 

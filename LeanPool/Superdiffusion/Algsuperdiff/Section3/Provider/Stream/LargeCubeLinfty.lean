@@ -147,62 +147,14 @@ theorem isBigOWith_gammaSigma_incrementAt (M : ABKModel d) {n m : ℤ} (hnm : n 
       linarith
     exact mul_pos (mul_pos geometricConcentrationConst_pos hmin)
       (Real.rpow_pos_of_pos (by norm_num) _)
-  have hne : (Finset.univ : Finset (Fin d × Fin d)).Nonempty :=
-    ⟨(⟨0, hd⟩, ⟨0, hd⟩), Finset.mem_univ _⟩
-  have hentry : ∀ p : Fin d × Fin d,
-      IndependentSums.IsBigO M.P.toMeasure (IndependentSums.gammaSigma 2)
-        (fun omega : ShellSeq d => |∑ k ∈ Finset.Ioc n m, (omega k) z p.1 p.2|)
-        (geometricConcentrationConst *
-          min (Real.sqrt M.gamma⁻¹) (Real.sqrt ((m : ℝ) - (n : ℝ))) *
-          (3 : ℝ) ^ (M.gamma * (m : ℝ))) := by
-    intro p
-    have h := isBigO_gammaSigma_incrementAt_entry M hnm z p.1 p.2
-    have habs : (fun omega : ShellSeq d =>
-        |(fun omega : ShellSeq d => |∑ k ∈ Finset.Ioc n m, (omega k) z p.1 p.2|)
-          omega|) =
-        fun omega : ShellSeq d => |∑ k ∈ Finset.Ioc n m, (omega k) z p.1 p.2| := by
-      funext omega
-      exact abs_abs _
-    change IndependentSums.IsBigOWith _ _ _ _
-    rw [habs]
-    exact h
-  have hmeas : ∀ p : Fin d × Fin d, Measurable (fun omega : ShellSeq d =>
-      |∑ k ∈ Finset.Ioc n m, (omega k) z p.1 p.2|) := by
-    intro p
-    have hsummeas : Measurable (fun omega : ShellSeq d =>
-        ∑ k ∈ Finset.Ioc n m, (omega k) z p.1 p.2) :=
-      Finset.measurable_sum (Finset.Ioc n m) fun k _ =>
-        (ShellField.measurable_eval_entry z p.1 p.2).comp (measurable_pi_apply k)
-    have habs : (fun omega : ShellSeq d =>
-        |∑ k ∈ Finset.Ioc n m, (omega k) z p.1 p.2|) =
-        fun omega : ShellSeq d => ‖∑ k ∈ Finset.Ioc n m, (omega k) z p.1 p.2‖ := by
-      funext omega
-      exact (Real.norm_eq_abs _).symm
-    rw [habs]
-    exact Measurable.norm hsummeas
-  have htriangle := IndependentSums.isBigO_finset_sum_of_isBigO_gammaSigma
-    (μ := M.P.toMeasure) (Finset.univ : Finset (Fin d × Fin d))
-    (X := fun p omega => |∑ k ∈ Finset.Ioc n m, (omega k) z p.1 p.2|)
-    (a := fun _ : Fin d × Fin d => geometricConcentrationConst *
-      min (Real.sqrt M.gamma⁻¹) (Real.sqrt ((m : ℝ) - (n : ℝ))) *
-      (3 : ℝ) ^ (M.gamma * (m : ℝ)))
-    (σ := 2) (by norm_num) hne (fun _ _ => hAmp) (fun p _ => hentry p)
-    (fun p _ => hmeas p)
-  have hcard : ∑ _p : Fin d × Fin d, (geometricConcentrationConst *
-      min (Real.sqrt M.gamma⁻¹) (Real.sqrt ((m : ℝ) - (n : ℝ))) *
-      (3 : ℝ) ^ (M.gamma * (m : ℝ))) =
-      (d : ℝ) ^ 2 * (geometricConcentrationConst *
-        min (Real.sqrt M.gamma⁻¹) (Real.sqrt ((m : ℝ) - (n : ℝ))) *
-        (3 : ℝ) ^ (M.gamma * (m : ℝ))) := by
-    rw [Finset.sum_const, nsmul_eq_mul, Finset.card_univ, Fintype.card_prod,
-      Fintype.card_fin]
-    push_cast
-    ring
-  rw [hcard] at htriangle
-  refine htriangle.of_le fun omega => ?_
-  refine (matrixOperatorNorm_le_sum_univ_abs_entry _).trans ?_
-  refine le_trans (le_of_eq ?_) (le_abs_self _)
-  exact Finset.sum_congr rfl fun p _ => by rw [finiteShellIncrement_apply_entry]
+  refine isBigOWith_gammaSigma_matrixOperatorNorm hd hAmp ?_ ?_
+  · intro i l
+    simpa only [finiteShellIncrement_apply_entry] using
+      isBigO_gammaSigma_incrementAt_entry M hnm z i l
+  · intro i l
+    simp only [finiteShellIncrement_apply_entry]
+    exact Finset.measurable_sum (Finset.Ioc n m) fun k _ =>
+      (ShellField.measurable_eval_entry z i l).comp (measurable_pi_apply k)
 
 /-! ## The small-cube bound on a translated cube -/
 
@@ -291,114 +243,19 @@ theorem isBigOWith_gammaSigma_translatedIncrementSupBound (M : ABKModel d)
       (streamLinftyConst d *
         min (Real.sqrt M.gamma⁻¹) (Real.sqrt ((m : ℝ) - (n : ℝ))) *
         (3 : ℝ) ^ (M.gamma * (m : ℝ))) := by
-  have hd : 0 < d := lt_of_lt_of_le (by norm_num) M.shellPrefix.dimension
-  have hdR : (0 : ℝ) < (d : ℝ) := by exact_mod_cast hd
-  have hCT : (0 : ℝ) < IndependentSums.gammaTriangleConst 2 :=
-    IndependentSums.gammaTriangleConst_pos
-  have hKm : (0 : ℝ) < (3 : ℝ) ^ (M.gamma * (m : ℝ)) :=
-    Real.rpow_pos_of_pos (by norm_num) _
-  have h3n : (0 : ℝ) < (3 : ℝ) ^ n := zpow_pos (by norm_num) n
-  have hmn_real : (n : ℝ) < (m : ℝ) := by exact_mod_cast hnm
-  have hmin_pos : 0 < min (Real.sqrt M.gamma⁻¹) (Real.sqrt ((m : ℝ) - (n : ℝ))) :=
-    lt_min (Real.sqrt_pos.2 (inv_pos.2 M.shellPrefix.gamma_pos))
-      (Real.sqrt_pos.2 (by linarith))
-  have hsd : (0 : ℝ) < Real.sqrt d := Real.sqrt_pos.2 hdR
-  have hr : (0 : ℝ) < (3 : ℝ) ^ ((M.gamma - 1) * (n : ℝ)) :=
-    Real.rpow_pos_of_pos (by norm_num) _
-  have hgeo : (0 : ℝ) ≤ (d : ℝ) ^ 2 * Real.sqrt d * ((3 : ℝ) ^ n / 2) := by positivity
-  have hA : (0 : ℝ) < geometricConcentrationConst *
-      min (Real.sqrt M.gamma⁻¹) (Real.sqrt ((m : ℝ) - (n : ℝ))) *
-      (3 : ℝ) ^ (M.gamma * (m : ℝ)) :=
-    mul_pos (mul_pos geometricConcentrationConst_pos hmin_pos) hKm
-  have ha0 : (0 : ℝ) < IndependentSums.gammaTriangleConst 2 *
-      ((d : ℝ) ^ 2 * (geometricConcentrationConst *
-        min (Real.sqrt M.gamma⁻¹) (Real.sqrt ((m : ℝ) - (n : ℝ))) *
-        (3 : ℝ) ^ (M.gamma * (m : ℝ)))) :=
-    mul_pos hCT (mul_pos (by positivity) hA)
-  have ha1 : (0 : ℝ) < (d : ℝ) ^ 2 * Real.sqrt d * ((3 : ℝ) ^ n / 2) *
-      (IndependentSums.gammaTriangleConst 2 *
-        (3 : ℝ) ^ ((M.gamma - 1) * (n : ℝ))) := by positivity
-  have hY0 : IndependentSums.IsBigO M.P.toMeasure (IndependentSums.gammaSigma 2)
-      (fun omega : ShellSeq d =>
-        matrixOperatorNorm (finiteShellIncrement omega n m z))
-      (IndependentSums.gammaTriangleConst 2 *
-        ((d : ℝ) ^ 2 * (geometricConcentrationConst *
-          min (Real.sqrt M.gamma⁻¹) (Real.sqrt ((m : ℝ) - (n : ℝ))) *
-          (3 : ℝ) ^ (M.gamma * (m : ℝ))))) :=
-    (Orlicz.isBigOWith_iff_isBigO_of_nonneg
-      (fun omega => matrixOperatorNorm_nonneg (finiteShellIncrement omega n m z))).1
-      (isBigOWith_gammaSigma_incrementAt M hnm z)
-  have hY1 : IndependentSums.IsBigO M.P.toMeasure (IndependentSums.gammaSigma 2)
-      (fun omega : ShellSeq d => (d : ℝ) ^ 2 * Real.sqrt d * ((3 : ℝ) ^ n / 2) *
-        ∑ k ∈ Finset.Ioc n m,
-          localCubeDerivNorm n (ShellField.translate z (omega k)))
-      ((d : ℝ) ^ 2 * Real.sqrt d * ((3 : ℝ) ^ n / 2) *
-        (IndependentSums.gammaTriangleConst 2 *
-          (3 : ℝ) ^ ((M.gamma - 1) * (n : ℝ)))) := by
-    refine (Orlicz.isBigOWith_iff_isBigO_of_nonneg (fun omega => ?_)).1
-      ((isBigOWith_gammaSigma_shellDerivNormSum_Ioc_translate M hnm z).const_mul hgeo)
-    exact mul_nonneg hgeo (Finset.sum_nonneg fun k _ =>
+  have h := isBigOWith_gammaSigma_streamEnvelope M hnm
+    (fun omega => matrixOperatorNorm_nonneg (finiteShellIncrement omega n m z))
+    (fun omega => Finset.sum_nonneg fun k _ =>
       localCubeDerivNorm_nonneg n (ShellField.translate z (omega k)))
-  have hcomb := isBigO_gammaSigma_add_of_isBigO (by norm_num : (0 : ℝ) < 2)
-    ha0 ha1 hY0 hY1
     (measurable_matrixOperatorNorm_finiteShellIncrement n m z)
-    (Measurable.const_mul
-      (Finset.measurable_sum (Finset.Ioc n m) fun k _ =>
-        ((measurable_localCubeDerivNorm n).comp
-          (ShellField.measurable_translate z)).comp (measurable_pi_apply k)) _)
-  have hnonneg : ∀ omega : ShellSeq d,
-      0 ≤ translatedIncrementSupBound z n m omega :=
-    fun omega => translatedIncrementSupBound_nonneg z n m omega
-  have hrw : translatedIncrementSupBound z n m =
-      fun omega : ShellSeq d =>
-        matrixOperatorNorm (finiteShellIncrement omega n m z) +
-          (d : ℝ) ^ 2 * Real.sqrt d * ((3 : ℝ) ^ n / 2) *
-            ∑ k ∈ Finset.Ioc n m,
-              localCubeDerivNorm n (ShellField.translate z (omega k)) :=
+    (Finset.measurable_sum (Finset.Ioc n m) fun k _ =>
+      ((measurable_localCubeDerivNorm n).comp
+        (ShellField.measurable_translate z)).comp (measurable_pi_apply k))
+    (isBigOWith_gammaSigma_incrementAt M hnm z)
+    (isBigOWith_gammaSigma_shellDerivNormSum_Ioc_translate M hnm z)
+  have hrw : translatedIncrementSupBound z n m = _ :=
     funext fun omega => translatedIncrementSupBound_eq z n m omega
-  refine (Orlicz.isBigOWith_iff_isBigO_of_nonneg hnonneg).2 ?_
-  rw [hrw]
-  refine hcomb.mono_scale ?_
-  have hpow := zpow_mul_rpow_gamma_sub_one M.gamma n
-  have hbound := rpow_gamma_mul_le_min_mul M hnm
-  have hc : (0 : ℝ) ≤ IndependentSums.gammaTriangleConst 2 ^ 2 *
-      ((d : ℝ) ^ 2 * (Real.sqrt d / 2)) := by positivity
-  rw [streamLinftyConst]
-  calc IndependentSums.gammaTriangleConst 2 *
-        (IndependentSums.gammaTriangleConst 2 *
-          ((d : ℝ) ^ 2 * (geometricConcentrationConst *
-            min (Real.sqrt M.gamma⁻¹) (Real.sqrt ((m : ℝ) - (n : ℝ))) *
-            (3 : ℝ) ^ (M.gamma * (m : ℝ)))) +
-          (d : ℝ) ^ 2 * Real.sqrt d * ((3 : ℝ) ^ n / 2) *
-            (IndependentSums.gammaTriangleConst 2 *
-              (3 : ℝ) ^ ((M.gamma - 1) * (n : ℝ))))
-      = IndependentSums.gammaTriangleConst 2 ^ 2 * (d : ℝ) ^ 2 *
-            geometricConcentrationConst *
-            min (Real.sqrt M.gamma⁻¹) (Real.sqrt ((m : ℝ) - (n : ℝ))) *
-            (3 : ℝ) ^ (M.gamma * (m : ℝ)) +
-          IndependentSums.gammaTriangleConst 2 ^ 2 *
-            ((d : ℝ) ^ 2 * (Real.sqrt d / 2)) *
-            ((3 : ℝ) ^ n * (3 : ℝ) ^ ((M.gamma - 1) * (n : ℝ))) := by ring
-    _ = IndependentSums.gammaTriangleConst 2 ^ 2 * (d : ℝ) ^ 2 *
-            geometricConcentrationConst *
-            min (Real.sqrt M.gamma⁻¹) (Real.sqrt ((m : ℝ) - (n : ℝ))) *
-            (3 : ℝ) ^ (M.gamma * (m : ℝ)) +
-          IndependentSums.gammaTriangleConst 2 ^ 2 *
-            ((d : ℝ) ^ 2 * (Real.sqrt d / 2)) *
-            (3 : ℝ) ^ (M.gamma * (n : ℝ)) := by rw [hpow]
-    _ ≤ IndependentSums.gammaTriangleConst 2 ^ 2 * (d : ℝ) ^ 2 *
-            geometricConcentrationConst *
-            min (Real.sqrt M.gamma⁻¹) (Real.sqrt ((m : ℝ) - (n : ℝ))) *
-            (3 : ℝ) ^ (M.gamma * (m : ℝ)) +
-          IndependentSums.gammaTriangleConst 2 ^ 2 *
-            ((d : ℝ) ^ 2 * (Real.sqrt d / 2)) *
-            (min (Real.sqrt M.gamma⁻¹) (Real.sqrt ((m : ℝ) - (n : ℝ))) *
-              (3 : ℝ) ^ (M.gamma * (m : ℝ))) :=
-        add_le_add (le_refl _) (mul_le_mul_of_nonneg_left hbound hc)
-    _ = IndependentSums.gammaTriangleConst 2 ^ 2 * (d : ℝ) ^ 2 *
-          (geometricConcentrationConst + Real.sqrt d / 2) *
-          min (Real.sqrt M.gamma⁻¹) (Real.sqrt ((m : ℝ) - (n : ℝ))) *
-          (3 : ℝ) ^ (M.gamma * (m : ℝ)) := by ring
+  rwa [hrw]
 
 /-! ## A finite cover of the large cube by translated small cubes -/
 

@@ -535,6 +535,97 @@ theorem boundaryComparatorOscillationAndMeanBounds :
       simpa only [IntegrableOn] using h1)
   exact ⟨hosc, hsplit⟩
 
+/-- Transport each gradient coordinate from a contained cube to its anchor window. -/
+theorem normalizedL2On_grad_le_anchorWindow {n m : ℤ} {z c : Vec d}
+    (h : H1Function (openCubeSet (originCube d m)))
+    (hsub : (fun y => c + y) '' openCubeSet (originCube d n) ⊆
+      ((fun y => z + y) '' openCubeSet (originCube d (n + 3))) ∩
+        openCubeSet (originCube d m))
+    (hWpos : 0 < (volume (((fun y => z + y) '' openCubeSet (originCube d (n + 3))) ∩
+      openCubeSet (originCube d m))).toReal)
+    (hKpos : 0 < (volume ((fun y => c + y) '' openCubeSet (originCube d n))).toReal)
+    (hKtop : volume ((fun y => c + y) '' openCubeSet (originCube d n)) ≠ ⊤) (i : Fin d) :
+    normalizedL2On ((fun y => c + y) '' openCubeSet (originCube d n))
+      (fun y => h.grad y i) ≤ Real.sqrt ((27 : ℝ) ^ d) *
+        (eLpNorm (fun y => h.grad y i) 2 (Support.normalizedVolumeMeasureOn
+          (((fun y => z + y) '' openCubeSet (originCube d (n + 3))) ∩
+            openCubeSet (originCube d m)))).toReal := by
+  have hKne : volume ((fun y => c + y) '' openCubeSet (originCube d n)) ≠ 0 := by
+    intro heq
+    simp only [heq, ENNReal.toReal_zero, lt_self_iff_false] at hKpos
+  have hWne : volume (((fun y => z + y) '' openCubeSet (originCube d (n + 3))) ∩
+      openCubeSet (originCube d m)) ≠ 0 := by
+    intro heq
+    simp only [heq, ENNReal.toReal_zero, lt_self_iff_false] at hWpos
+  rw [Support.normalizedL2On_eq_toReal_eLpNorm_normalizedVolumeMeasureOn
+    (pos_iff_ne_zero.mpr hKne) hKtop (memLp_grad_of_subset h (hsub.trans Set.inter_subset_right) i)]
+  exact toReal_eLpNorm_scaleN_cube_le_anchorWindow hsub
+    (memLp_normalizedVolumeMeasureOn_of_restrict hWne
+      (memLp_grad_of_subset h Set.inter_subset_right i)).eLpNorm_ne_top
+
+/-- Sum transported gradients in the comparator Poincaré estimate. -/
+theorem normalizedL2On_sub_comparator_le_of_gradient_transport {n : ℤ} {c : Vec d}
+    {u w : Vec d → ℝ} {g : Fin d → Vec d → ℝ} {K : ℝ} {B : Fin d → ℝ}
+    (hbound : normalizedL2On ((fun y => c + y) '' openCubeSet (originCube d n))
+      (fun y => u y - w y) ≤ comparatorPoincareConst d * (3 : ℝ) ^ n *
+        ∑ i, normalizedL2On ((fun y => c + y) '' openCubeSet (originCube d n)) (g i))
+    (hgrad : ∀ i, normalizedL2On ((fun y => c + y) '' openCubeSet (originCube d n))
+      (g i) ≤ K * B i) :
+    normalizedL2On ((fun y => c + y) '' openCubeSet (originCube d n)) (fun y => u y - w y) ≤
+      comparatorPoincareConst d * K * (3 : ℝ) ^ n * ∑ i, B i := by
+  have hsum : ∑ i, normalizedL2On ((fun y => c + y) '' openCubeSet (originCube d n))
+      (g i) ≤ K * ∑ i, B i := by
+    rw [Finset.mul_sum]
+    exact Finset.sum_le_sum fun i _ => hgrad i
+  have hnonneg : 0 ≤ comparatorPoincareConst d * (3 : ℝ) ^ n :=
+    mul_nonneg (comparatorPoincareConst_nonneg d) (le_of_lt (zpow_pos (by norm_num) n))
+  refine hbound.trans ((mul_le_mul_of_nonneg_left hsum hnonneg).trans_eq ?_)
+  ring
+
+/-- Transport a harmonic comparator difference before applying a mean estimate. -/
+theorem abs_volumeAverage_comparator_sub_le_of_setEq {U V W A : Set (Vec d)}
+    {CA : ℝ} (hUV : U = V) (w0 : H10Function W)
+    (hmean : ∀ v : H1Function U, IsWeaklyHarmonicOn U v →
+      ∀ ru rh : H10Function U,
+        (∀ y, v.toFun y = w0.toFun y + ru.toFun y - rh.toFun y) →
+        |volumeAverage A v.toFun| ≤ CA * normalizedL2On A
+          (fun y => v.toFun y - volumeAverage A v.toFun))
+    (wu wh : H1Function V) (ru rh : H10Function V)
+    (hu : IsWeaklyHarmonicOn V wu) (hh : IsWeaklyHarmonicOn V wh)
+    (hsplit : ∀ y, wu.toFun y - wh.toFun y = w0.toFun y + ru.toFun y - rh.toFun y) :
+    |volumeAverage A (fun y => wu.toFun y - wh.toFun y)| ≤ CA * normalizedL2On A
+      (fun y => (wu.toFun y - wh.toFun y) -
+        volumeAverage A (fun x => wu.toFun x - wh.toFun x)) := by
+  let vd : H1Function U := h1FunctionOfSetEq hUV.symm (wu - wh)
+  have hvdval : vd.toFun = fun y => wu.toFun y - wh.toFun y := by
+    dsimp only [vd]
+    rw [h1FunctionOfSetEq_toFun, H1Function.sub_toFun]
+  have hharm : IsWeaklyHarmonicOn U vd :=
+    isWeaklyHarmonicOn_h1FunctionOfSetEq hUV.symm (isWeaklyHarmonicOn_sub_h1 hu hh)
+  have hval : ∀ y, vd.toFun y = w0.toFun y +
+      (h10FunctionOfSetEq hUV.symm ru).toFun y -
+      (h10FunctionOfSetEq hUV.symm rh).toFun y := by
+    intro y
+    rw [hvdval, h10FunctionOfSetEq_toFun, h10FunctionOfSetEq_toFun]
+    exact hsplit y
+  simpa only [hvdval] using hmean vd hharm
+    (h10FunctionOfSetEq hUV.symm ru) (h10FunctionOfSetEq hUV.symm rh) hval
+
+/-- Assemble comparator oscillation, approximation, and parent-to-child mean bounds. -/
+theorem comparator_mean_bound_of_legs
+    {CA a b c p q X H NU NH P A B child comp osc oscU oscH : ℝ} (hCA : 0 ≤ CA)
+    (htri : P ≤ A + B + child) (hA : A ≤ a * X) (hB : B ≤ b * H)
+    (hsplit : child ≤ NU + NH + comp) (hcomp : comp ≤ CA * osc)
+    (hosc : osc ≤ 2 * NU + 2 * NH + oscU + oscH)
+    (hoscU : oscU ≤ 2 * q * X) (hoscH : oscH ≤ p * H) (hNH : NH ≤ c * H) :
+    P ≤ (a + CA * (2 * q)) * X + (b + c + CA * (2 * c + p)) * H +
+      (1 + CA * 2) * NU := by
+  have hosc' : osc ≤ 2 * NU + 2 * NH + 2 * q * X + p * H := by
+    linarith only [hosc, hoscU, hoscH]
+  have hcomp' := hcomp.trans (mul_le_mul_of_nonneg_left hosc' hCA)
+  have hCAmul := mul_le_mul_of_nonneg_left hNH (mul_nonneg hCA (by norm_num : (0 : ℝ) ≤ 2))
+  nlinarith only [htri, hA, hB, hsplit, hcomp', hNH, hCAmul]
+
 private theorem residueInterface_comparisonBounds2 :
   residueInterface_comparisonBounds2_statement := by
   classical
@@ -543,72 +634,15 @@ private theorem residueInterface_comparisonBounds2 :
   have hc' :
     c' = flushSubCentre z m n i _σ
     := rfl
-  have hHHdef :
-    HH =
-              ∑ i' : Fin d,
-                (eLpNorm (fun (y : Vec d) => h.grad y i') (2 : ℝ≥0∞)
-                    (normalizedVolumeMeasureOn
-                      ((fun (y' : Vec d) => z + y') '' openCubeSet (originCube d (n + (3 : ℤ))) ∩
-                        openCubeSet (originCube d m)))).toReal
-    := rfl
   have hlegC := abs_volumeAverage_datum_sub_le_datumStep (c' := c') hnm hx hz hgeom
     (by rw [hc']; exact flushSubCube_subset_flushCube z i hσ) h
   -- L D3: the h-comparator error, transported to the window
-  have hgradHtrans : ∀ i' : Fin d,
-      normalizedL2On ((fun y => c' + y) '' openCubeSet (originCube d n))
-        (fun y => h.grad y i') ≤
-      Real.sqrt ((27 : ℝ) ^ d) *
-        (eLpNorm (fun y => h.grad y i') 2
-          (Support.normalizedVolumeMeasureOn
-            ((((fun y' => z + y') '' openCubeSet (originCube d (n + 3))) ∩
-              openCubeSet (originCube d m))))).toReal := by
-    intro i'
-    have hmemK := memLp_grad_of_subset h hK'm i'
-    have hmemW := memLp_grad_of_subset h hW'm i'
-    have hbridge : normalizedL2On ((fun y => c' + y) ''
-        openCubeSet (originCube d n)) (fun y => h.grad y i') =
-        (eLpNorm (fun y => h.grad y i') 2
-          (Support.normalizedVolumeMeasureOn
-            ((fun y => c' + y) '' openCubeSet (originCube d n)))).toReal := by
-      refine Support.normalizedL2On_eq_toReal_eLpNorm_normalizedVolumeMeasureOn
-        ?_ hK'top hmemK
-      have := hK'pos
-      by_contra hcon
-      push Not at hcon
-      have h0 : volume ((fun y => c' + y) '' openCubeSet (originCube d n)) = 0 :=
-        le_antisymm hcon zero_le
-      rw [h0] at this
-      simp only [ENNReal.toReal_zero] at this
-      exact lt_irrefl _ this
-    rw [hbridge]
-    refine toReal_eLpNorm_scaleN_cube_le_anchorWindow hKW' ?_
-    exact (memLp_normalizedVolumeMeasureOn_of_restrict
-      (by
-        intro hcon
-        rw [hcon] at hW'pos
-        simp only [ENNReal.toReal_zero] at hW'pos
-        exact lt_irrefl _ hW'pos) hmemW).eLpNorm_ne_top
+  have hgradHtrans := normalizedL2On_grad_le_anchorWindow h hKW' hW'pos hK'pos hK'top
   have hlegD3 : normalizedL2On ((fun y => c' + y) '' openCubeSet (originCube d n))
       (fun y => h.toFun y - wh.toFun y) ≤
       comparatorPoincareConst d * Real.sqrt ((27 : ℝ) ^ d) * (3 : ℝ) ^ n * HH := by
-    rw [hNormSet]
-    refine hboundh.trans ?_
-    have hsum : ∑ i' : Fin d,
-        normalizedL2On (translateSet c' (openCubeSet (originCube d n)))
-          (fun y => h.grad y i') ≤ Real.sqrt ((27 : ℝ) ^ d) * HH := by
-      rw [hHHdef, Finset.mul_sum]
-      refine Finset.sum_le_sum fun i' _ => ?_
-      rw [← hNormSet]
-      exact hgradHtrans i'
-    calc comparatorPoincareConst d * (3 : ℝ) ^ n *
-        ∑ i' : Fin d,
-          normalizedL2On (translateSet c' (openCubeSet (originCube d n)))
-            (fun y => h.grad y i')
-        ≤ comparatorPoincareConst d * (3 : ℝ) ^ n *
-            (Real.sqrt ((27 : ℝ) ^ d) * HH) :=
-          mul_le_mul_of_nonneg_left hsum (mul_nonneg hCP0 h3n0)
-      _ = comparatorPoincareConst d * Real.sqrt ((27 : ℝ) ^ d) * (3 : ℝ) ^ n *
-            HH := by ring
+    exact normalizedL2On_sub_comparator_le_of_gradient_transport
+      (by simpa only [← hNormSet] using hboundh) hgradHtrans
   -- L A: the comparator-difference mean, through the odd-harmonic glue
   have hTW : truncatedWindow c' m n =
       (fun y => c' + y) '' openCubeSet (originCube d n) := by
@@ -624,40 +658,14 @@ private theorem residueInterface_comparisonBounds2 :
         (fun y => (wu.toFun y - wh.toFun y) -
           volumeAverage ((fun y => c' + y) '' openCubeSet (originCube d n))
             (fun y' => wu.toFun y' - wh.toFun y')) := by
-    set vd : H1Function (truncatedWindow c' m n) :=
-      h1FunctionOfSetEq hTWts.symm (wu - wh) with hvd
-    have hvdval : ∀ y, vd.toFun y = wu.toFun y - wh.toFun y := by
-      intro y
-      rw [hvd]
-      have h1 : (h1FunctionOfSetEq hTWts.symm (wu - wh)).toFun = (wu - wh).toFun :=
-        h1FunctionOfSetEq_toFun hTWts.symm (wu - wh)
-      rw [h1, H1Function.sub_toFun]
-    have hharmd : IsWeaklyHarmonicOn (truncatedWindow c' m n) vd := by
-      rw [hvd]
-      exact isWeaklyHarmonicOn_h1FunctionOfSetEq hTWts.symm
-        (isWeaklyHarmonicOn_sub_h1 hharmu hharmh)
-    have hvald : ∀ y, vd.toFun y = w0.toH1Function.toFun y +
-        (h10FunctionOfSetEq hTWts.symm rhou).toH1Function.toFun y -
-        (h10FunctionOfSetEq hTWts.symm rhoh).toH1Function.toFun y := by
-      intro y
-      rw [hvdval y]
-      have h1 : (h10FunctionOfSetEq hTWts.symm rhou).toH1Function.toFun =
-          rhou.toH1Function.toFun := h10FunctionOfSetEq_toFun hTWts.symm rhou
-      have h2 : (h10FunctionOfSetEq hTWts.symm rhoh).toH1Function.toFun =
-          rhoh.toH1Function.toFun := h10FunctionOfSetEq_toFun hTWts.symm rhoh
-      rw [h1, h2]
-      have hu := hvalu y
-      have hh := hvalh y
-      have hw0 := hw0val y
-      linarith only [hu, hh, hw0]
-    have hA := hCA hnm hσ hover vd hharmd w0
-      (h10FunctionOfSetEq hTWts.symm rhou) (h10FunctionOfSetEq hTWts.symm rhoh)
-      hvald
-    have hfun : vd.toFun = fun y => wu.toFun y - wh.toFun y := by
-      funext y
-      exact hvdval y
-    simp only [hfun] at hA
-    exact hA
+    refine abs_volumeAverage_comparator_sub_le_of_setEq hTWts w0
+      (fun v hv ru rh hval => hCA hnm hσ hover v hv w0 ru rh hval)
+      wu wh rhou rhoh hharmu hharmh ?_
+    intro y
+    have hu := hvalu y
+    have hh := hvalh y
+    have hw0 := hw0val y
+    linarith only [hu, hh, hw0]
   exact ⟨hlegC, hgradHtrans, hlegD3, hlegA⟩
 
 private theorem residueInterface_comparisonBounds3 :
@@ -746,7 +754,6 @@ private theorem residueInterface_comparisonBounds3 :
   set NH : ℝ := normalizedL2On ((fun y => c' + y) '' openCubeSet (originCube d n))
     (fun y => h.toFun y - wh.toFun y) with hNH
   have hNU0 : 0 ≤ NU := normalizedL2On_nonneg _ _
-  have hNH0 : 0 ≤ NH := normalizedL2On_nonneg _ _
   have hsplit' : |volumeAverage ((fun y => c' + y) ''
       openCubeSet (originCube d n)) (fun y => u.toFun y - h.toFun y)| ≤
       NU + NH +
@@ -760,47 +767,14 @@ private theorem residueInterface_comparisonBounds3 :
     rw [hcomm] at h1
     rw [hNU]
     exact h1
-  have hoscbound : normalizedL2On ((fun y => c' + y) ''
-      openCubeSet (originCube d n))
-      (fun y => (wu.toFun y - wh.toFun y) -
-        volumeAverage ((fun y => c' + y) '' openCubeSet (originCube d n))
-          (fun y' => wu.toFun y' - wh.toFun y')) ≤
-      2 * NU + 2 * NH + 2 * Real.sqrt ((27 : ℝ) ^ d) * XX +
-        unitMeanZeroPoincareConst d * Real.sqrt ((27 : ℝ) ^ d) * (3 : ℝ) ^ n *
-          HH := by
-    have h1 := hosc
-    have h2 : normalizedL2On ((fun y => c' + y) '' openCubeSet (originCube d n))
-        (fun y => u.toFun y -
-          volumeAverage ((fun y => c' + y) '' openCubeSet (originCube d n))
-            u.toFun) ≤ 2 * Real.sqrt ((27 : ℝ) ^ d) * XX := hoscU
-    have h3 := hoscH
-    linarith only [h1, h2, h3]
-  have hlegAfull : |volumeAverage ((fun y => c' + y) ''
-      openCubeSet (originCube d n)) (fun y => wu.toFun y - wh.toFun y)| ≤
-      CA * (2 * NU + 2 * NH + 2 * Real.sqrt ((27 : ℝ) ^ d) * XX +
-        unitMeanZeroPoincareConst d * Real.sqrt ((27 : ℝ) ^ d) * (3 : ℝ) ^ n *
-          HH) := by
-    refine hlegA.trans ?_
-    exact mul_le_mul_of_nonneg_left hoscbound hCA0
-  -- putting the legs together
-  have hNHb : NH ≤ comparatorPoincareConst d * Real.sqrt ((27 : ℝ) ^ d) *
-      (3 : ℝ) ^ n * HH := hlegD3
-  have hAB1 : |A1 - B1| ≤
-      (Real.sqrt ((3 : ℝ) ^ d) + Real.sqrt ((27 : ℝ) ^ d)) * XX := hlegB
-  have hAB2 : |A2 - B2| ≤ datumStepConst d * (3 : ℝ) ^ n * HH := hlegC
   have htotal : |volumeAverage ((fun y => wellPlacedCentre x m (n + 2) + y) ''
       openCubeSet (originCube d (n + 2))) (fun y => u.toFun y - h.toFun y)| ≤
       c1 * XX + c2 * ((3 : ℝ) ^ n * HH) + c3 * NU := by
-    have hCAmul2 : CA * (2 * NH) ≤ CA * (2 * (comparatorPoincareConst d *
-        Real.sqrt ((27 : ℝ) ^ d) * (3 : ℝ) ^ n * HH)) := by
-      refine mul_le_mul_of_nonneg_left ?_ hCA0
-      linarith only [hNHb]
     rw [hc1, hc2, hc3]
-    have hx1 := htri0
-    have hx2 := hsplit'
-    have hx3 := hlegAfull
-    nlinarith only [hx1, hx2, hx3, hAB1, hAB2, hNHb, hCAmul2,
-      hCA0, hNU0, hNH0]
+    exact comparator_mean_bound_of_legs hCA0 htri0 hlegB
+      (by simpa only [mul_assoc] using hlegC) hsplit' hlegA hosc hoscU
+      (by simpa only [mul_assoc] using hoscH)
+      (by simpa only [mul_assoc] using hlegD3)
   -- the final constant regrouping and the `eLpNorm` spelling of `XX`
   have hXXe : XX = (eLpNorm (fun y => u.toFun y -
       volumeAverage ((((fun y' => z + y') '' openCubeSet (originCube d (n + 3))) ∩

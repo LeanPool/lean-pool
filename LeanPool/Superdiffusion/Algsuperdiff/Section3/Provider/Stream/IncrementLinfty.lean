@@ -394,17 +394,20 @@ theorem rpow_gamma_mul_le_min_mul (M : ABKModel d) {n m : ℤ} (hnm : n < m) :
     Real.rpow_pos_of_pos (by norm_num) _
   nlinarith [hmono, hone_le_min, hKm]
 
-/-- The probabilistic half of ABK26's `e.k.ell.upscales.infty`:
-
-`incrementSupBound ≤ O_{Γ₂}(C(d) min{γ^{-1/2}, (m-n)^{1/2}} 3^{γm})`.
-
-Combined with `matrixOperatorNorm_finiteShellIncrement_le_incrementSupBound`,
-this is the source's `‖k_m - k_n‖_{L∞(cu_n)} ≤ O_{Γ₂}(C min{γ^{-1/2},
-(m-n)^{1/2}} 3^{γm})`, that is, `e.km.kn.Linfty.smallcube` before squaring. -/
-theorem isBigOWith_gammaSigma_incrementSupBound (M : ABKModel d) {n m : ℤ}
-    (hnm : n < m) :
+/-- Combine measurable value and derivative envelopes at the stream scale. -/
+theorem isBigOWith_gammaSigma_streamEnvelope (M : ABKModel d) {n m : ℤ}
+    (hnm : n < m) {X D : ShellSeq d → ℝ}
+    (hX0 : ∀ omega, 0 ≤ X omega) (hD0 : ∀ omega, 0 ≤ D omega)
+    (hXm : Measurable X) (hDm : Measurable D)
+    (hX : IndependentSums.IsBigOWith M.P.toMeasure (IndependentSums.gammaSigma 2) X
+      (IndependentSums.gammaTriangleConst 2 * ((d : ℝ) ^ 2 *
+        (geometricConcentrationConst *
+          min (Real.sqrt M.gamma⁻¹) (Real.sqrt ((m : ℝ) - (n : ℝ))) *
+          (3 : ℝ) ^ (M.gamma * (m : ℝ))))))
+    (hD : IndependentSums.IsBigOWith M.P.toMeasure (IndependentSums.gammaSigma 2) D
+      (IndependentSums.gammaTriangleConst 2 * (3 : ℝ) ^ ((M.gamma - 1) * (n : ℝ)))) :
     IndependentSums.IsBigOWith M.P.toMeasure (IndependentSums.gammaSigma 2)
-      (incrementSupBound n m)
+      (fun omega => X omega + (d : ℝ) ^ 2 * Real.sqrt d * ((3 : ℝ) ^ n / 2) * D omega)
       (streamLinftyConst d *
         min (Real.sqrt M.gamma⁻¹) (Real.sqrt ((m : ℝ) - (n : ℝ))) *
         (3 : ℝ) ^ (M.gamma * (m : ℝ))) := by
@@ -435,38 +438,14 @@ theorem isBigOWith_gammaSigma_incrementSupBound (M : ABKModel d) {n m : ℤ}
   have ha1 : (0 : ℝ) < (d : ℝ) ^ 2 * Real.sqrt d * ((3 : ℝ) ^ n / 2) *
       (IndependentSums.gammaTriangleConst 2 *
         (3 : ℝ) ^ ((M.gamma - 1) * (n : ℝ))) := by positivity
-  have hY0 : IndependentSums.IsBigO M.P.toMeasure (IndependentSums.gammaSigma 2)
-      (fun omega : ShellSeq d =>
-        matrixOperatorNorm (finiteShellIncrement omega n m 0))
-      (IndependentSums.gammaTriangleConst 2 *
-        ((d : ℝ) ^ 2 * (geometricConcentrationConst *
-          min (Real.sqrt M.gamma⁻¹) (Real.sqrt ((m : ℝ) - (n : ℝ))) *
-          (3 : ℝ) ^ (M.gamma * (m : ℝ))))) :=
-    (Orlicz.isBigOWith_iff_isBigO_of_nonneg
-      (fun omega => matrixOperatorNorm_nonneg (finiteShellIncrement omega n m 0))).1
-      (isBigOWith_gammaSigma_originIncrement M hnm)
-  have hY1 : IndependentSums.IsBigO M.P.toMeasure (IndependentSums.gammaSigma 2)
-      (fun omega : ShellSeq d => (d : ℝ) ^ 2 * Real.sqrt d * ((3 : ℝ) ^ n / 2) *
-        ∑ k ∈ Finset.Ioc n m, localCubeDerivNorm n (omega k))
-      ((d : ℝ) ^ 2 * Real.sqrt d * ((3 : ℝ) ^ n / 2) *
-        (IndependentSums.gammaTriangleConst 2 *
-          (3 : ℝ) ^ ((M.gamma - 1) * (n : ℝ)))) := by
-    refine (Orlicz.isBigOWith_iff_isBigO_of_nonneg (fun omega => ?_)).1
-      ((isBigOWith_gammaSigma_shellDerivNormSum_Ioc M hnm).const_mul hgeo)
-    exact mul_nonneg hgeo
-      (Finset.sum_nonneg fun k _ => localCubeDerivNorm_nonneg n (omega k))
+  have hY0 := (Orlicz.isBigOWith_iff_isBigO_of_nonneg hX0).1 hX
+  have hY1 := (Orlicz.isBigOWith_iff_isBigO_of_nonneg
+    (fun omega => mul_nonneg hgeo (hD0 omega))).1 (hD.const_mul hgeo)
   have hcomb := isBigO_gammaSigma_add_of_isBigO (by norm_num : (0 : ℝ) < 2)
-    ha0 ha1 hY0 hY1
-    (measurable_matrixOperatorNorm_finiteShellIncrement_origin n m)
-    (Measurable.const_mul
-      (Finset.measurable_sum (Finset.Ioc n m) fun k _ =>
-        (measurable_localCubeDerivNorm n).comp (measurable_pi_apply k)) _)
-  have hnonneg : ∀ omega : ShellSeq d, 0 ≤ incrementSupBound n m omega := by
-    intro omega
-    refine add_nonneg (matrixOperatorNorm_nonneg _) ?_
-    exact mul_nonneg hgeo
-      (Finset.sum_nonneg fun k _ => localCubeDerivNorm_nonneg n (omega k))
-  refine (Orlicz.isBigOWith_iff_isBigO_of_nonneg hnonneg).2 (hcomb.mono_scale ?_)
+    ha0 ha1 hY0 hY1 hXm (hDm.const_mul _)
+  refine (Orlicz.isBigOWith_iff_isBigO_of_nonneg
+    (fun omega => add_nonneg (hX0 omega) (mul_nonneg hgeo (hD0 omega)))).2
+    (hcomb.mono_scale ?_)
   have hpow := zpow_mul_rpow_gamma_sub_one M.gamma n
   have hbound := rpow_gamma_mul_le_min_mul M hnm
   have hc : (0 : ℝ) ≤ IndependentSums.gammaTriangleConst 2 ^ 2 *
@@ -507,6 +486,29 @@ theorem isBigOWith_gammaSigma_incrementSupBound (M : ABKModel d) {n m : ℤ}
           (geometricConcentrationConst + Real.sqrt d / 2) *
           min (Real.sqrt M.gamma⁻¹) (Real.sqrt ((m : ℝ) - (n : ℝ))) *
           (3 : ℝ) ^ (M.gamma * (m : ℝ)) := by ring
+
+/-- The probabilistic half of ABK26's `e.k.ell.upscales.infty`:
+
+`incrementSupBound ≤ O_{Γ₂}(C(d) min{γ^{-1/2}, (m-n)^{1/2}} 3^{γm})`.
+
+Combined with `matrixOperatorNorm_finiteShellIncrement_le_incrementSupBound`,
+this is the source's `‖k_m - k_n‖_{L∞(cu_n)} ≤ O_{Γ₂}(C min{γ^{-1/2},
+(m-n)^{1/2}} 3^{γm})`, that is, `e.km.kn.Linfty.smallcube` before squaring. -/
+theorem isBigOWith_gammaSigma_incrementSupBound (M : ABKModel d) {n m : ℤ}
+    (hnm : n < m) :
+    IndependentSums.IsBigOWith M.P.toMeasure (IndependentSums.gammaSigma 2)
+      (incrementSupBound n m)
+      (streamLinftyConst d *
+        min (Real.sqrt M.gamma⁻¹) (Real.sqrt ((m : ℝ) - (n : ℝ))) *
+        (3 : ℝ) ^ (M.gamma * (m : ℝ))) := by
+  exact isBigOWith_gammaSigma_streamEnvelope M hnm
+    (fun omega => matrixOperatorNorm_nonneg (finiteShellIncrement omega n m 0))
+    (fun omega => Finset.sum_nonneg fun k _ => localCubeDerivNorm_nonneg n (omega k))
+    (measurable_matrixOperatorNorm_finiteShellIncrement_origin n m)
+    (Finset.measurable_sum (Finset.Ioc n m) fun k _ =>
+      (measurable_localCubeDerivNorm n).comp (measurable_pi_apply k))
+    (isBigOWith_gammaSigma_originIncrement M hnm)
+    (isBigOWith_gammaSigma_shellDerivNormSum_Ioc M hnm)
 
 /-- ABK26's `e.km.kn.Linfty.smallcube`:
 
