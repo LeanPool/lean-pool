@@ -683,6 +683,7 @@ public import LeanPool.Superdiffusion.Algsuperdiff.Section3.Provider.Diffusivity
 public import LeanPool.Superdiffusion.Algsuperdiff.Section3.Provider.Diffusivity.AsymptoticsAssembly
 public import LeanPool.Superdiffusion.Algsuperdiff.Section3.Provider.Diffusivity.Corrector.CorrectorMeasurableForcing
 public import LeanPool.Superdiffusion.Algsuperdiff.Section3.Provider.Diffusivity.Corrector.CorrectorMeasurableGradient
+public import LeanPool.Superdiffusion.Algsuperdiff.Section3.Provider.Diffusivity.Corrector.CorrectorMeasurableMoments
 public import LeanPool.Superdiffusion.Algsuperdiff.Section3.Provider.Diffusivity.Corrector.CorrectorMeasurableOctic
 public import LeanPool.Superdiffusion.Algsuperdiff.Section3.Provider.Diffusivity.Corrector.CorrectorMeasurableQuartic
 public import LeanPool.Superdiffusion.Algsuperdiff.Section3.Provider.Diffusivity.Corrector.CubeEuclideanL8

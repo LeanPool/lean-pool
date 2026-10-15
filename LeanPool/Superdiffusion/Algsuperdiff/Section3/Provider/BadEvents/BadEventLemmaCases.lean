@@ -108,16 +108,34 @@ noncomputable section
 
 variable {d : ℕ}
 
-/-! ## The frozen deterministic profile at `s = 1/8`, `q = 2` -/
+/-! ## Deterministic profiles at `q = 2` -/
+
+/-- The frozen lower profile at `q = 2` and an arbitrary exponent:
+`lowerEllipticityProfile Ccg gamma s 2 = Ccg s (2 s - gamma)^{-1}`. -/
+theorem lowerEllipticityProfile_exponentTwo_eq (Ccg gamma s : ℝ) :
+    Algsuperdiff.Section3.lowerEllipticityProfile Ccg gamma s exponentTwo =
+      Ccg * s * (2 * s - gamma)⁻¹ := by
+  simp only [Algsuperdiff.Section3.lowerEllipticityProfile, exponentTwo,
+    Algsuperdiff.Section3.CoarseEllipticityExponent.finite]
+  norm_num
+
+/-- A positive exponent at least `gamma` bounds the deterministic profile by
+its coarse-graining constant. -/
+theorem lowerEllipticityProfile_exponentTwo_le_of_gamma_le {Ccg gamma s : ℝ}
+    (hCcg : 0 ≤ Ccg) (hs : 0 < s) (hgamma : gamma ≤ s) :
+    Algsuperdiff.Section3.lowerEllipticityProfile Ccg gamma s exponentTwo ≤ Ccg := by
+  rw [lowerEllipticityProfile_exponentTwo_eq]
+  calc Ccg * s * (2 * s - gamma)⁻¹
+      ≤ Ccg * s * s⁻¹ := mul_le_mul_of_nonneg_left
+        (inv_anti₀ hs (by linarith)) (mul_nonneg hCcg hs.le)
+    _ = Ccg := by field_simp
 
 /-- The frozen lower profile at the parameters of `e.good.local.events`:
 `lowerEllipticityProfile Ccg gamma (1/8) 2 = Ccg (1/8) (1/4 - gamma)^{-1}`. -/
 theorem lowerEllipticityProfile_exponentTwo (Ccg gamma : ℝ) :
     Algsuperdiff.Section3.lowerEllipticityProfile Ccg gamma (1 / 8) exponentTwo =
-      Ccg * (1 / 8) * (2 * (1 / 8) - gamma)⁻¹ := by
-  simp only [Algsuperdiff.Section3.lowerEllipticityProfile, exponentTwo,
-    Algsuperdiff.Section3.CoarseEllipticityExponent.finite]
-  norm_num
+      Ccg * (1 / 8) * (2 * (1 / 8) - gamma)⁻¹ :=
+  lowerEllipticityProfile_exponentTwo_eq Ccg gamma (1 / 8)
 
 /-- At `gamma <= 1/8` the frozen deterministic profile is below the frozen
 constant itself, which is what the manuscript's threshold
@@ -125,26 +143,17 @@ constant itself, which is what the manuscript's threshold
 theorem lowerEllipticityProfile_exponentTwo_le {Ccg gamma : ℝ} (hCcg : 0 < Ccg)
     (hgamma : gamma ≤ 1 / 8) :
     Algsuperdiff.Section3.lowerEllipticityProfile Ccg gamma (1 / 8) exponentTwo ≤
-      Ccg := by
-  have hgap : (0 : ℝ) < 2 * (1 / 8 : ℝ) - gamma := by linarith
-  have heighth : (1 / 8 : ℝ) ≤ 2 * (1 / 8 : ℝ) - gamma := by linarith
-  have hinv : (2 * (1 / 8 : ℝ) - gamma)⁻¹ ≤ (1 / 8 : ℝ)⁻¹ :=
-    inv_anti₀ (by norm_num) heighth
-  rw [lowerEllipticityProfile_exponentTwo]
-  have h8 : ((1 : ℝ) / 8)⁻¹ = 8 := by norm_num
-  rw [h8] at hinv
-  nlinarith [hinv, hCcg, inv_pos.2 hgap]
+      Ccg :=
+  lowerEllipticityProfile_exponentTwo_le_of_gamma_le hCcg.le (by norm_num) hgamma
 
 /-- The manuscript's own admissibility `e.bad.event.admissibility`, at the
-dimension-only constant `badEventOscAdmissibleConst`, implies `gamma <= 1/8`
-(indeed `gamma <= 1/32`). -/
-theorem gamma_le_one_eighth_of_admissible (M : ABKModel d) {Ccg E : ℝ}
+dimension-only constant `badEventOscAdmissibleConst`, implies `gamma <= 1/32`. -/
+theorem gamma_le_one_thirtysecond_of_admissible (M : ABKModel d) {Ccg E : ℝ}
     (hadm : badEventOscAdmissibleConst d Ccg ≤
       E * Algsuperdiff.Section3.Disorder.cstar M)
-    (hgammaE : M.gamma ≤ E ^ (-5 : ℤ)) : M.gamma ≤ 1 / 8 := by
+    (hgammaE : M.gamma ≤ E ^ (-5 : ℤ)) : M.gamma ≤ 1 / 32 := by
   have hc : (0 : ℝ) < Algsuperdiff.Section3.Disorder.cstar M :=
     (Algsuperdiff.Section3.Disorder.cstar_characterization M).1
-  have hg : (0 : ℝ) < M.gamma := M.shellPrefix.gamma_pos
   have hchalf : Algsuperdiff.Section3.Disorder.cstar M ≤ 3 / 2 :=
     Algsuperdiff.Section3.Provider.Disorder.cstar_le_three_halves M
   have h3 : (3 : ℝ) ≤ E * Algsuperdiff.Section3.Disorder.cstar M :=
@@ -156,19 +165,49 @@ theorem gamma_le_one_eighth_of_admissible (M : ABKModel d) {Ccg E : ℝ}
         2 * Algsuperdiff.Section3.Disorder.cstar M :=
       mul_lt_mul_of_pos_right hlt hc
     linarith
-  have hE5 : (0 : ℝ) < E ^ (5 : ℕ) := by positivity
   have hEpow : E ^ (-5 : ℤ) = (E ^ (5 : ℕ))⁻¹ := by
     rw [zpow_neg]
     norm_cast
-  have hsq : (4 : ℝ) ≤ E ^ 2 := by nlinarith
-  have hquart : (16 : ℝ) ≤ E ^ 4 := by nlinarith
-  have h32 : (32 : ℝ) ≤ E ^ (5 : ℕ) := by nlinarith
+  have h32 : (32 : ℝ) ≤ E ^ (5 : ℕ) := by
+    calc (32 : ℝ) = 2 ^ 5 := by norm_num
+      _ ≤ E ^ (5 : ℕ) := pow_le_pow_left₀ (by norm_num) hE2 5
   have hle : M.gamma ≤ (E ^ (5 : ℕ))⁻¹ := by
     rw [← hEpow]
     exact hgammaE
   have hinv : (E ^ (5 : ℕ))⁻¹ ≤ (32 : ℝ)⁻¹ := inv_anti₀ (by norm_num) h32
-  have h132 : ((32 : ℝ))⁻¹ ≤ 1 / 8 := by norm_num
-  linarith
+  exact hle.trans (by simpa using hinv)
+
+/-- The original one-eighth specialization of admissibility. -/
+theorem gamma_le_one_eighth_of_admissible (M : ABKModel d) {Ccg E : ℝ}
+    (hadm : badEventOscAdmissibleConst d Ccg ≤
+      E * Algsuperdiff.Section3.Disorder.cstar M)
+    (hgammaE : M.gamma ≤ E ^ (-5 : ℤ)) : M.gamma ≤ 1 / 8 := by
+  exact (gamma_le_one_thirtysecond_of_admissible M hadm hgammaE).trans (by norm_num)
+
+/-- A Weibull tail with exponentially small scale gives a double-exponential
+bound at any level at least one. No measurability or finiteness is added to the
+supplied real-measure tail estimate. -/
+theorem measureReal_upperTail_le_double_exp {Omega : Type*} [MeasurableSpace Omega]
+    (mu : Measure Omega) (Y : Omega → ℝ) {C X a : ℝ} (hC : 1 ≤ C)
+    (hX : 0 ≤ X) (ha : 0 ≤ a)
+    (htail : ∀ t : ℝ, 1 ≤ t →
+      mu.real (HCPolySupport.IndependentSums.upperTailEvent Y (Real.exp (-X) * t)) ≤
+        Real.exp (-t ^ a)) :
+    mu.real (HCPolySupport.IndependentSums.upperTailEvent Y C) ≤
+      Real.exp (-Real.exp (a * X)) := by
+  have hApos : 0 < Real.exp (-X) := Real.exp_pos _
+  have hAle : Real.exp (-X) ≤ 1 := Real.exp_le_one_iff.mpr (by linarith)
+  have ht := htail (C / Real.exp (-X)) ((one_le_div hApos).mpr (hAle.trans hC))
+  rw [mul_div_cancel₀ C hApos.ne'] at ht
+  refine ht.trans (Real.exp_le_exp.mpr (neg_le_neg ?_))
+  have hquotient : C / Real.exp (-X) = C * Real.exp X := by
+    rw [Real.exp_neg, div_inv_eq_mul]
+  have hge : Real.exp X ≤ C / Real.exp (-X) := by
+    rw [hquotient]
+    exact le_mul_of_one_le_left (Real.exp_pos X).le hC
+  have hp := Real.rpow_le_rpow (Real.exp_pos X).le hge ha
+  rw [← Real.exp_mul, mul_comm X a] at hp
+  exact hp
 
 /-! ## The coarse-ellipticity branch, case `n >= m` -/
 
@@ -210,11 +249,6 @@ theorem measureReal_coarseEllipticityFailure_le_of_coarseBounds (M : ABKModel d)
     have h2 : (0 : ℝ) ≤ (E⁻¹) ^ 2 := sq_nonneg _
     have h3 : (0 : ℝ) ≤ M.gamma⁻¹ := (inv_pos.2 hg).le
     positivity
-  have hApos : (0 : ℝ) < Real.exp (-(Ccg⁻¹ * (E⁻¹) ^ 2 * M.gamma⁻¹)) :=
-    Real.exp_pos _
-  have hAle : Real.exp (-(Ccg⁻¹ * (E⁻¹) ^ 2 * M.gamma⁻¹)) ≤ 1 := by
-    rw [Real.exp_le_one_iff]
-    linarith
   -- the deterministic profile is below the frozen constant
   have hb : Algsuperdiff.Section3.lowerEllipticityProfile Ccg M.gamma (1 / 8)
       exponentTwo ≤ Ccg :=
@@ -258,38 +292,11 @@ theorem measureReal_coarseEllipticityFailure_le_of_coarseBounds (M : ABKModel d)
       nlinarith [hchain, hW, hCcg0]
     change Ccg < Y omega
     nlinarith [h2Ccg, hdom, hb, hCcg0]
-  -- the weak-Orlicz tail at the level `Ccg`
-  have ht1 : (1 : ℝ) ≤ Ccg / Real.exp (-(Ccg⁻¹ * (E⁻¹) ^ 2 * M.gamma⁻¹)) :=
-    (one_le_div hApos).2 (le_trans hAle hCcg)
-  have htail := hY.tail ht1
-  have hlevel : Real.exp (-(Ccg⁻¹ * (E⁻¹) ^ 2 * M.gamma⁻¹)) *
-      (Ccg / Real.exp (-(Ccg⁻¹ * (E⁻¹) ^ 2 * M.gamma⁻¹))) = Ccg := by
-    field_simp
-  rw [hlevel] at htail
-  refine le_trans (le_trans (measureReal_mono hsub) htail) ?_
-  rw [HCPolySupport.IndependentSums.gammaSigma_inv]
-  refine Real.exp_le_exp.2 (neg_le_neg ?_)
-  -- the tail level is at least the manuscript's double exponential
-  have hquotient : Ccg / Real.exp (-(Ccg⁻¹ * (E⁻¹) ^ 2 * M.gamma⁻¹)) =
-      Ccg * Real.exp (Ccg⁻¹ * (E⁻¹) ^ 2 * M.gamma⁻¹) := by
-    rw [Real.exp_neg]
-    field_simp
-  have hge : Real.exp (Ccg⁻¹ * (E⁻¹) ^ 2 * M.gamma⁻¹) ≤
-      Ccg / Real.exp (-(Ccg⁻¹ * (E⁻¹) ^ 2 * M.gamma⁻¹)) := by
-    rw [hquotient]
-    nlinarith [Real.exp_pos (Ccg⁻¹ * (E⁻¹) ^ 2 * M.gamma⁻¹), hCcg]
-  have hquarter : ((1 : ℝ) - 1 / 2) / 2 = 1 / 4 := by norm_num
-  rw [hquarter]
-  have hrpow : Real.exp (Ccg⁻¹ * (E⁻¹) ^ 2 * M.gamma⁻¹) ^ ((1 : ℝ) / 4) ≤
-      (Ccg / Real.exp (-(Ccg⁻¹ * (E⁻¹) ^ 2 * M.gamma⁻¹))) ^ ((1 : ℝ) / 4) :=
-    Real.rpow_le_rpow (Real.exp_pos _).le hge (by norm_num)
-  have hexpid : Real.exp (Ccg⁻¹ * (E⁻¹) ^ 2 * M.gamma⁻¹) ^ ((1 : ℝ) / 4) =
-      Real.exp ((1 / 4 : ℝ) * (Ccg⁻¹ * (E⁻¹) ^ 2 * M.gamma⁻¹)) := by
-    rw [← Real.exp_mul]
-    congr 1
-    ring
-  rw [hexpid] at hrpow
-  exact hrpow
+  refine (measureReal_mono hsub).trans
+    (measureReal_upperTail_le_double_exp _ Y hCcg hXnn (by norm_num) ?_)
+  intro t ht
+  simpa only [HCPolySupport.IndependentSums.gammaSigma_inv,
+    show ((1 : ℝ) - 1 / 2) / 2 = 1 / 4 by norm_num] using hY.tail ht
 
 end
 
