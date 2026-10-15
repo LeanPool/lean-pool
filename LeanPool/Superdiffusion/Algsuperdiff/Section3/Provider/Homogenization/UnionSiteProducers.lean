@@ -194,7 +194,7 @@ theorem ae_forall_cutoffResponseJFromCommonCoarseBlock_eq_responseJ
 /-- The function form of the almost-everywhere absorption of the cutoff-sample
 local sigma-field: a modification on a null set of a locally measurable map is
 locally measurable, in every codomain. -/
-private theorem measurable_cutoffSampleLocalSigma_of_ae_eq {alpha : Type*}
+theorem measurable_cutoffSampleLocalSigma_of_ae_eq {alpha : Type*}
     [MeasurableSpace alpha] (M : ABKModel d) (m : ℤ) (U : Set (Vec d))
     {f g : CutoffSample d → alpha}
     (hf : Measurable[cutoffSampleLocalSigma M m U] f)
@@ -208,7 +208,7 @@ private theorem measurable_cutoffSampleLocalSigma_of_ae_eq {alpha : Type*}
 integral-local.**  The four block-entry formulas of CoarseGraining express each
 entry through the coarse energy `Mu`, whose locality on the closed cube is
 proved. -/
-private theorem measurable_cutoffCoarseFullBlockRaw_cutoffSampleLocal
+theorem measurable_cutoffCoarseFullBlockRaw_cutoffSampleLocal
     (M : ABKModel d) (L : ℤ) (Q : TriadicCube d) {U : Set (Vec d)}
     (hQU : cubeSet Q ⊆ U) :
     Measurable[cutoffSampleLocalSigma M L U]

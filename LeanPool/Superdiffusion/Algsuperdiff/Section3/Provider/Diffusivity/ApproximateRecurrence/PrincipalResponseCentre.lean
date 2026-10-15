@@ -126,7 +126,7 @@ variable {d : ℕ}
 
 /-- The ambient entrywise supremum norm of a matrix is below its Euclidean
 matrix norm. -/
-private theorem norm_mat_le_matrixNorm (A : Mat d) : ‖A‖ ≤ matrixNorm A := by
+theorem norm_mat_le_matrixNorm (A : Mat d) : ‖A‖ ≤ matrixNorm A := by
   rw [Matrix.norm_le_iff (matrixNorm_nonneg A), matrixNorm_eq_matrixOperatorNorm]
   intro i j
   rw [Real.norm_eq_abs]
@@ -135,7 +135,7 @@ private theorem norm_mat_le_matrixNorm (A : Mat d) : ‖A‖ ≤ matrixNorm A :=
 /-- The ambient operator norm of a matrix-valued derivative, from the sup norm
 of `Vec d` to the entrywise norm of `Mat d`, is below `d` times the exact
 induced derivative norm. -/
-private theorem norm_clm_le_card_mul_matrixDerivativeNorm
+theorem norm_clm_le_card_mul_matrixDerivativeNorm
     (D : ShellField.MatrixDerivative d) :
     ‖D‖ ≤ (d : ℝ) * ShellField.matrixDerivativeNorm D := by
   refine (norm_le_sum_basisVec_apply D).trans ?_

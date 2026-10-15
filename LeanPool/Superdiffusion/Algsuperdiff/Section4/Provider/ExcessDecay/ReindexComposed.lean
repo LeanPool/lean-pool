@@ -781,72 +781,20 @@ private theorem reindexComposed_comparisonBounds2 :
   have hRQ3sn : R3n * Q3sn = Q1s := by
     rw [hR3ndef, hQ3sndef, hQ1sdef]
     exact rpow_three_mul_eq_one_add s n
-  have hT1 : (sig⁻¹ * R3n) * (cg * (216 * (s⁻¹) ^ (4 : ℕ) *
-        (kappa * Real.sqrt Cout * Erep * (sig * (P2 * X) + QS * (Q3s * Y))))) ≤
-      A1 * (S4 * Erep * X) + (9 * (CE * (1 / 2)) * A1) * (S7 * sig⁻¹ * Q1s * Y) := by
-    have hsplit : (sig⁻¹ * R3n) * (cg * (216 * (s⁻¹) ^ (4 : ℕ) *
-          (kappa * Real.sqrt Cout * Erep * (sig * (P2 * X) + QS * (Q3s * Y))))) =
-        A1 * ((s⁻¹) ^ (4 : ℕ) * (Erep * ((sig⁻¹ * sig) * ((R3n * P2) * X)))) +
-          A1 * ((s⁻¹) ^ (4 : ℕ) * (Erep * (sig⁻¹ * ((R3n * Q3s) * (QS * Y))))) := by
-      rw [hA1def]; ring
-    rw [hsplit, hsinv]
-    refine add_le_add ?_ ?_
-    · have h1 : (R3n * P2) * X ≤ X := by
-        have := mul_le_mul_of_nonneg_right hRP2 hX0
-        linarith only [this]
-      calc A1 * ((s⁻¹) ^ (4 : ℕ) * (Erep * (1 * ((R3n * P2) * X))))
-          = A1 * ((s⁻¹) ^ (4 : ℕ) * (Erep * ((R3n * P2) * X))) := by ring
-        _ ≤ A1 * ((s⁻¹) ^ (4 : ℕ) * (Erep * X)) := by
-            refine mul_le_mul_of_nonneg_left ?_ hA1
-            refine mul_le_mul_of_nonneg_left ?_ (by positivity)
-            exact mul_le_mul_of_nonneg_left h1 hErep0
-        _ = A1 * (S4 * Erep * X) := by rw [hS4eq]; ring
-    · have h2 : (R3n * Q3s) * (QS * Y) ≤ (9 * Q1s) * (QS * Y) :=
-        mul_le_mul_of_nonneg_right hRQ3s (mul_nonneg hQS0 hY0)
-      have h2nn : (0 : ℝ) ≤ sig⁻¹ * ((R3n * Q3s) * (QS * Y)) :=
-        mul_nonneg hsiginv0 (mul_nonneg (mul_nonneg hR3n0 hQ3s0) (mul_nonneg hQS0 hY0))
-      have hinner : Erep * (sig⁻¹ * ((R3n * Q3s) * (QS * Y))) ≤
-          (CE * (1 / 2)) * (sig⁻¹ * ((9 * Q1s) * (QS * Y))) :=
-        mul_le_mul hErepCap (mul_le_mul_of_nonneg_left h2 hsiginv0) h2nn
-          (le_trans hErep0 hErepCap)
-      calc A1 * ((s⁻¹) ^ (4 : ℕ) * (Erep * (sig⁻¹ * ((R3n * Q3s) * (QS * Y)))))
-          ≤ A1 * ((s⁻¹) ^ (4 : ℕ) * ((CE * (1 / 2)) * (sig⁻¹ * ((9 * Q1s) * (QS * Y))))) :=
-            mul_le_mul_of_nonneg_left
-              (mul_le_mul_of_nonneg_left hinner (by positivity)) hA1
-        _ = (9 * (CE * (1 / 2)) * A1) * (((s⁻¹) ^ (4 : ℕ) * QS) * sig⁻¹ * Q1s * Y) := by ring
-        _ = (9 * (CE * (1 / 2)) * A1) * (S7 * sig⁻¹ * Q1s * Y) := by
-            rw [hS4eq, hS4QS]
-  have hT2 : (sig⁻¹ * R3n) * (cg * (1944 * (s⁻¹) ^ (6 : ℕ) *
-        (b0 * (besovGagliardoConstant d * Q3sn * (gagliardoWindowConst d * Y))))) ≤
-      A2 * (S7 * sig⁻¹ * Q1s * Y) := by
-    have hrw : (sig⁻¹ * R3n) * (cg * (1944 * (s⁻¹) ^ (6 : ℕ) *
-          (b0 * (besovGagliardoConstant d * Q3sn * (gagliardoWindowConst d * Y))))) =
-        A2 * ((s⁻¹) ^ (6 : ℕ) * (sig⁻¹ * ((R3n * Q3sn) * Y))) := by
-      rw [hA2def]; ring
-    rw [hrw, hRQ3sn, hS6eq]
-    have hnn : (0 : ℝ) ≤ sig⁻¹ * (Q1s * Y) := mul_nonneg hsiginv0 (mul_nonneg hQ1s0 hY0)
-    calc A2 * (Real.rpow s (-(6 : ℝ)) * (sig⁻¹ * (Q1s * Y)))
-        ≤ A2 * (S7 * (sig⁻¹ * (Q1s * Y))) :=
-          mul_le_mul_of_nonneg_left (mul_le_mul_of_nonneg_right hS6le hnn) hA2
-      _ = A2 * (S7 * sig⁻¹ * Q1s * Y) := by ring
-  have hT3 : (sig⁻¹ * R3n) * (interiorCorrectionConst d * Real.rpow s (-(1 / 2 : ℝ)) * Q3sn *
-        (gagliardoWindowConst d * Y)) ≤ A3 * (S7 * sig⁻¹ * Q1s * Y) := by
-    have hrw : (sig⁻¹ * R3n) * (interiorCorrectionConst d * Real.rpow s (-(1 / 2 : ℝ)) * Q3sn *
-          (gagliardoWindowConst d * Y)) =
-        A3 * (Real.rpow s (-(1 / 2 : ℝ)) * (sig⁻¹ * ((R3n * Q3sn) * Y))) := by
-      rw [hA3def]; ring
-    rw [hrw, hRQ3sn]
-    have hnn : (0 : ℝ) ≤ sig⁻¹ * (Q1s * Y) := mul_nonneg hsiginv0 (mul_nonneg hQ1s0 hY0)
-    calc A3 * (Real.rpow s (-(1 / 2 : ℝ)) * (sig⁻¹ * (Q1s * Y)))
-        ≤ A3 * (S7 * (sig⁻¹ * (Q1s * Y))) :=
-          mul_le_mul_of_nonneg_left (mul_le_mul_of_nonneg_right hQScle hnn) hA3
-      _ = A3 * (S7 * sig⁻¹ * Q1s * Y) := by ring
-  -- (h) the conclusion
-  have hXterm : (0 : ℝ) ≤ S4 * Erep * X := mul_nonneg (mul_nonneg hS40 hErep0) hX0
-  have hYterm : (0 : ℝ) ≤ S7 * sig⁻¹ * Q1s * Y :=
-    mul_nonneg (mul_nonneg (mul_nonneg hS70 hsiginv0) hQ1s0) hY0
-  have hCE2 : (0 : ℝ) ≤ 9 * (CE * (1 / 2)) * A1 := by positivity
-  exact ⟨hT1, hT2, hT3, hXterm, hYterm, hCE2⟩
+  have hshared := scalar_frame_three_term_bounds A1 A2 A3 (CE * (1 / 2)) Erep sig
+    R3n P2 QS Q3s Q3sn Q1s S4 S7 (Real.rpow s (-6)) (Real.rpow s (-(1 / 2)))
+    9 X Y hA1 hA2 hA3 hErep0 hErepCap hX0 hY0 hQS0 hQ3s0 hQ1s0 hR3n0 hS40
+    hS70 hsiginv0 hsinv hRP2 hRQ3s hRQ3sn hS4QS hS6le hQScle (by norm_num)
+  refine ⟨?_, ?_, ?_, hshared.2.2.2.1, hshared.2.2.2.2.1, hshared.2.2.2.2.2⟩
+  · convert hshared.1 using 1
+    simp only [hA1def, hS4eq]
+    ring
+  · convert hshared.2.1 using 1
+    simp only [hA2def, hS6eq]
+    ring
+  · convert hshared.2.2.1 using 1
+    simp only [hA3def]
+    ring
 
 private theorem reindexComposed_comparisonBounds3 : reindexComposed_comparisonBounds3_statement :=
   by

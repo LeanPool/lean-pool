@@ -56,10 +56,9 @@ Mu-locality (Section 3)
   → the annular maximum and the atom `X_j`
 ```
 
-The only step that is not a proved in-repo statement is the coarse-block
-locality, which is proved in Section 3 but is `private` there; it is re-derived
-below from the *public* `Mu`-locality and CoarseGraining's four block-entry
-formulas.
+The coarse-block locality and a.e.-stability calculations use their common
+Section 3 producers, while this module supplies the representative-level
+and translated-observable applications.
 
 ## The centres are lattice points
 
@@ -79,6 +78,7 @@ Provider material: proved local helpers.
 namespace Algsuperdiff.Section4.Provider.Proportion
 
 open Algsuperdiff.Section3
+open Algsuperdiff.Section3.Provider
 open HCPolySupport HCPolySupport.Book MeasureTheory
 open Algsuperdiff.Section4.Support
 open Algsuperdiff.Section4.Probability
@@ -100,10 +100,9 @@ theorem measurable_cutoffSampleLocalSigma_of_ae_eq {alpha : Type*}
     {f g : Cutoff.CutoffSample d → alpha}
     (hf : Measurable[Cutoff.cutoffSampleLocalSigma M m U] f)
     (hfg : g =ᵐ[(Cutoff.cutoffSampleLaw M).toMeasure] f) :
-    Measurable[Cutoff.cutoffSampleLocalSigma M m U] g := by
-  intro S hS
-  exact Provider.BadEvents.measurableSet_cutoffSampleLocalSigma_of_ae_eq M m U
-    (hf hS) (hfg.fun_comp (· ∈ S))
+    Measurable[Cutoff.cutoffSampleLocalSigma M m U] g :=
+  Homogenization.measurable_cutoffSampleLocalSigma_of_ae_eq
+    M m U hf hfg
 
 /-! ## 2. The coarse-block chain -/
 
@@ -114,101 +113,8 @@ proved. -/
 theorem measurable_cutoffCoarseFullBlockRaw_local (M : ABKModel d) (L : ℤ)
     (Q : TriadicCube d) {U : Set (Vec d)} (hQU : cubeSet Q ⊆ U) :
     Measurable[Cutoff.cutoffSampleLocalSigma M L U]
-      (Observable.cutoffCoarseFullBlockRaw M L Q) := by
-  let : MeasurableSpace (Cutoff.CutoffSample d) := Cutoff.cutoffSampleLocalSigma M L U
-  have hMu : ∀ P0 : BlockVec d, Measurable fun omega : Cutoff.CutoffSample d =>
-      Mu (cubeSet Q) P0 (Cutoff.coefficientCutoff M.nu L omega).toFun :=
-    fun P0 => Provider.BadEvents.measurable_Mu_coefficientCutoff_cutoffSampleLocal
-      M L Q hQU P0
-  change Measurable fun omega : Cutoff.CutoffSample d =>
-    (toFullBlockMat (coarseBlockMatrix (cubeSet Q)
-      (Cutoff.coefficientCutoff M.nu L omega).toFun) : BlockCoord d → BlockCoord d → ℝ)
-  refine Measurable.of_eval fun alpha => Measurable.of_eval fun beta => ?_
-  cases alpha with
-  | inl i =>
-      cases beta with
-      | inl j =>
-          have hEq : (fun omega : Cutoff.CutoffSample d =>
-              toFullBlockMat (coarseBlockMatrix (cubeSet Q)
-                (Cutoff.coefficientCutoff M.nu L omega).toFun) (Sum.inl i) (Sum.inl j)) =
-              fun omega : Cutoff.CutoffSample d =>
-                if i = j then
-                  2 * Mu (cubeSet Q) (Pi.single i 1, 0)
-                    (Cutoff.coefficientCutoff M.nu L omega).toFun
-                else
-                  Mu (cubeSet Q) ((Pi.single i 1, 0) + (Pi.single j 1, 0))
-                      (Cutoff.coefficientCutoff M.nu L omega).toFun -
-                    Mu (cubeSet Q) (Pi.single i 1, 0)
-                      (Cutoff.coefficientCutoff M.nu L omega).toFun -
-                    Mu (cubeSet Q) (Pi.single j 1, 0)
-                      (Cutoff.coefficientCutoff M.nu L omega).toFun := by
-            funext omega
-            exact coarseBlockMatrix_upperLeft_apply (cubeSet Q)
-              (Cutoff.coefficientCutoff M.nu L omega).toFun i j
-          rw [hEq]
-          by_cases hij : i = j
-          · simp only [ite_eq_left hij]
-            exact (hMu _).const_mul 2
-          · simp only [ite_eq_right hij]
-            exact ((hMu _).sub (hMu _)).sub (hMu _)
-      | inr j =>
-          have hEq : (fun omega : Cutoff.CutoffSample d =>
-              toFullBlockMat (coarseBlockMatrix (cubeSet Q)
-                (Cutoff.coefficientCutoff M.nu L omega).toFun) (Sum.inl i) (Sum.inr j)) =
-              fun omega : Cutoff.CutoffSample d =>
-                Mu (cubeSet Q) ((Pi.single i 1, 0) + (0, Pi.single j 1))
-                    (Cutoff.coefficientCutoff M.nu L omega).toFun -
-                  Mu (cubeSet Q) (Pi.single i 1, 0)
-                    (Cutoff.coefficientCutoff M.nu L omega).toFun -
-                  Mu (cubeSet Q) (0, Pi.single j 1)
-                    (Cutoff.coefficientCutoff M.nu L omega).toFun := by
-            funext omega
-            exact coarseBlockMatrix_upperRight_apply (cubeSet Q)
-              (Cutoff.coefficientCutoff M.nu L omega).toFun i j
-          rw [hEq]
-          exact ((hMu _).sub (hMu _)).sub (hMu _)
-  | inr i =>
-      cases beta with
-      | inl j =>
-          have hEq : (fun omega : Cutoff.CutoffSample d =>
-              toFullBlockMat (coarseBlockMatrix (cubeSet Q)
-                (Cutoff.coefficientCutoff M.nu L omega).toFun) (Sum.inr i) (Sum.inl j)) =
-              fun omega : Cutoff.CutoffSample d =>
-                Mu (cubeSet Q) ((0, Pi.single i 1) + (Pi.single j 1, 0))
-                    (Cutoff.coefficientCutoff M.nu L omega).toFun -
-                  Mu (cubeSet Q) (0, Pi.single i 1)
-                    (Cutoff.coefficientCutoff M.nu L omega).toFun -
-                  Mu (cubeSet Q) (Pi.single j 1, 0)
-                    (Cutoff.coefficientCutoff M.nu L omega).toFun := by
-            funext omega
-            exact coarseBlockMatrix_lowerLeft_apply (cubeSet Q)
-              (Cutoff.coefficientCutoff M.nu L omega).toFun i j
-          rw [hEq]
-          exact ((hMu _).sub (hMu _)).sub (hMu _)
-      | inr j =>
-          have hEq : (fun omega : Cutoff.CutoffSample d =>
-              toFullBlockMat (coarseBlockMatrix (cubeSet Q)
-                (Cutoff.coefficientCutoff M.nu L omega).toFun) (Sum.inr i) (Sum.inr j)) =
-              fun omega : Cutoff.CutoffSample d =>
-                if i = j then
-                  2 * Mu (cubeSet Q) (0, Pi.single i 1)
-                    (Cutoff.coefficientCutoff M.nu L omega).toFun
-                else
-                  Mu (cubeSet Q) ((0, Pi.single i 1) + (0, Pi.single j 1))
-                      (Cutoff.coefficientCutoff M.nu L omega).toFun -
-                    Mu (cubeSet Q) (0, Pi.single i 1)
-                      (Cutoff.coefficientCutoff M.nu L omega).toFun -
-                    Mu (cubeSet Q) (0, Pi.single j 1)
-                      (Cutoff.coefficientCutoff M.nu L omega).toFun := by
-            funext omega
-            exact coarseBlockMatrix_lowerRight_apply (cubeSet Q)
-              (Cutoff.coefficientCutoff M.nu L omega).toFun i j
-          rw [hEq]
-          by_cases hij : i = j
-          · simp only [ite_eq_left hij]
-            exact (hMu _).const_mul 2
-          · simp only [ite_eq_right hij]
-            exact ((hMu _).sub (hMu _)).sub (hMu _)
+      (Observable.cutoffCoarseFullBlockRaw M L Q) :=
+  Homogenization.measurable_cutoffCoarseFullBlockRaw_cutoffSampleLocal M L Q hQU
 
 /-- **The common coarse-block is local** — the first genuine use of a.e. stability:
 the representative differs from the literal only on a null set. -/

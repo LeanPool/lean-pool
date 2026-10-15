@@ -54,11 +54,9 @@ What is proved here is that mean-value bound, at the explicit constant `d^3`.
 estimate, but (i) file-privately and (ii) only at the *same* cube for the
 average, the supremum and the gauge.  Here the average is over `cu_m`, the
 supremum over `z + cu_n`, and the gauge over `cu_m`, so the statement is a
-genuinely different one and the proof is written fresh; the shared elementary
-steps (the entrywise/Euclidean norm comparisons, the sup-norm diameter of a
-triadic cube, the average-against-a-value bound on the open cube) are
-re-derived because they are unreachable.  Its public constant `centeringConst`
-is reused unchanged.
+different estimate. The entrywise/Euclidean norm comparisons use the common
+Section 3 producers; the cube diameter and average estimates are proved below.
+The public constant `centeringConst` is reused unchanged.
 -/
 
 namespace Algsuperdiff.Section4.Provider.Annular
@@ -135,35 +133,6 @@ theorem valueL2_le_of_ae_bound (h : UnitCubeSkewW2Infinity d) {B : ℝ} (hB : 0 
     have := pow_lt_pow_left₀ hcon hB (n := 2) (by norm_num)
     exact this
   linarith only [hsq, hlt]
-
-/-! ## Part B -- elementary norm comparisons (re-derived; see the header) -/
-
-/-- The ambient entrywise supremum norm of a matrix is below its Euclidean
-matrix norm. -/
-private theorem norm_mat_le_matrixNorm (A : Mat d) : ‖A‖ ≤ matrixNorm A := by
-  rw [Matrix.norm_le_iff (matrixNorm_nonneg A), matrixNorm_eq_matrixOperatorNorm]
-  intro i j
-  rw [Real.norm_eq_abs]
-  exact abs_entry_le_matrixOperatorNorm A i j
-
-/-- The ambient operator norm of a matrix-valued derivative is below `d` times
-the exact induced derivative norm. -/
-private theorem norm_clm_le_card_mul_matrixDerivativeNorm
-    (D : ShellField.MatrixDerivative d) :
-    ‖D‖ ≤ (d : ℝ) * ShellField.matrixDerivativeNorm D := by
-  refine (norm_le_sum_basisVec_apply D).trans ?_
-  have hterm : ∀ k : Fin d,
-      ‖D (basisVec k)‖ ≤ ShellField.matrixDerivativeNorm D := by
-    intro k
-    refine (norm_mat_le_matrixNorm (D (basisVec k))).trans ?_
-    rw [matrixNorm_eq_matrixOperatorNorm]
-    exact ShellField.matrixOperatorNorm_apply_le_matrixDerivativeNorm D _
-      (vecNorm_basisVec_le_one k)
-  calc ∑ k : Fin d, ‖D (basisVec k)‖
-      ≤ ∑ _k : Fin d, ShellField.matrixDerivativeNorm D :=
-        Finset.sum_le_sum fun k _ => hterm k
-    _ = (d : ℝ) * ShellField.matrixDerivativeNorm D := by
-        simp only [Finset.sum_const, Finset.card_univ, Fintype.card_fin, nsmul_eq_mul]
 
 /-- The sup-norm diameter of an open origin cube is its side length. -/
 private theorem norm_sub_le_of_mem_openCubeSet_originCube {m : ℤ} {x x' : Vec d}

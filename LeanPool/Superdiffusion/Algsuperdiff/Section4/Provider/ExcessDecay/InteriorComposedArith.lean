@@ -39,6 +39,79 @@ noncomputable section
 
 variable {d : ℕ}
 
+
+/-- A frame comparison separates the normalized energy and forcing legs. -/
+theorem scalar_frame_main_le
+    (A cap E sig R P QS Qf Q1 S4 T factor X Y : ℝ)
+    (hA : 0 ≤ A) (hE : 0 ≤ E) (hcap : E ≤ cap) (hX : 0 ≤ X) (hY : 0 ≤ Y)
+    (hQS : 0 ≤ QS) (hQf : 0 ≤ Qf) (hR : 0 ≤ R)
+    (hS4 : 0 ≤ S4) (hinv : 0 ≤ sig⁻¹) (hcancel : sig⁻¹ * sig = 1)
+    (hRP : R * P ≤ 1) (hforce : R * Qf ≤ factor * Q1) (hproduct : S4 * QS = T) :
+    A * (sig⁻¹ * R * S4 * E * (sig * (P * X) + QS * (Qf * Y))) ≤
+      A * (S4 * E * X) + (factor * cap * A) * (T * sig⁻¹ * Q1 * Y) := by
+  have hfirst : (R * P) * X ≤ X := by
+    simpa only [one_mul] using mul_le_mul_of_nonneg_right hRP hX
+  have hforceScaled : (R * Qf) * (QS * Y) ≤ (factor * Q1) * (QS * Y) :=
+    mul_le_mul_of_nonneg_right hforce (mul_nonneg hQS hY)
+  have hsecond : E * (sig⁻¹ * ((R * Qf) * (QS * Y))) ≤
+      cap * (sig⁻¹ * ((factor * Q1) * (QS * Y))) :=
+    mul_le_mul hcap (mul_le_mul_of_nonneg_left hforceScaled hinv)
+      (mul_nonneg hinv (mul_nonneg (mul_nonneg hR hQf) (mul_nonneg hQS hY)))
+      (hE.trans hcap)
+  calc
+    A * (sig⁻¹ * R * S4 * E * (sig * (P * X) + QS * (Qf * Y))) =
+        A * (S4 * (E * ((sig⁻¹ * sig) * ((R * P) * X)))) +
+          A * (S4 * (E * (sig⁻¹ * ((R * Qf) * (QS * Y))))) := by ring
+    _ = A * (S4 * (E * ((R * P) * X))) +
+        A * (S4 * (E * (sig⁻¹ * ((R * Qf) * (QS * Y))))) := by rw [hcancel]; ring
+    _ ≤ A * (S4 * (E * X)) +
+        A * (S4 * (cap * (sig⁻¹ * ((factor * Q1) * (QS * Y))))) :=
+      add_le_add
+        (mul_le_mul_of_nonneg_left
+          (mul_le_mul_of_nonneg_left (mul_le_mul_of_nonneg_left hfirst hE) hS4) hA)
+        (mul_le_mul_of_nonneg_left (mul_le_mul_of_nonneg_left hsecond hS4) hA)
+    _ = A * (S4 * E * X) + (factor * cap * A) * (T * sig⁻¹ * Q1 * Y) := by
+      rw [← hproduct]
+      ring
+
+/-- A dominated decay factor controls a frame-normalized forcing term. -/
+theorem scalar_frame_decay_le
+    (A sig R Q Q1 decay T Y : ℝ) (hA : 0 ≤ A) (hinv : 0 ≤ sig⁻¹)
+    (hQ1 : 0 ≤ Q1) (hY : 0 ≤ Y) (hdecay : decay ≤ T) (hframe : R * Q = Q1) :
+    A * (sig⁻¹ * R * decay * Q * Y) ≤ A * (T * sig⁻¹ * Q1 * Y) := by
+  calc
+    A * (sig⁻¹ * R * decay * Q * Y) =
+        A * (decay * (sig⁻¹ * ((R * Q) * Y))) := by ring
+    _ = A * (decay * (sig⁻¹ * (Q1 * Y))) := by rw [hframe]
+    _ ≤ A * (T * (sig⁻¹ * (Q1 * Y))) :=
+      mul_le_mul_of_nonneg_left
+        (mul_le_mul_of_nonneg_right hdecay (mul_nonneg hinv (mul_nonneg hQ1 hY))) hA
+    _ = A * (T * sig⁻¹ * Q1 * Y) := by ring
+
+/-- Product and domination identities assemble the three scalar comparison legs,
+independently of the exponents used to obtain those identities. -/
+theorem scalar_frame_three_term_bounds
+    (A1 A2 A3 cap E sig R P QS Qf Qshift Q1 S4 T sixth half factor X Y : ℝ)
+    (hA1 : 0 ≤ A1) (hA2 : 0 ≤ A2) (hA3 : 0 ≤ A3) (hE : 0 ≤ E) (hcap : E ≤ cap)
+    (hX : 0 ≤ X) (hY : 0 ≤ Y) (hQS : 0 ≤ QS) (hQf : 0 ≤ Qf) (hQ1 : 0 ≤ Q1)
+    (hR : 0 ≤ R) (hS4 : 0 ≤ S4) (hT : 0 ≤ T) (hinv : 0 ≤ sig⁻¹)
+    (hcancel : sig⁻¹ * sig = 1) (hRP : R * P ≤ 1)
+    (hforce : R * Qf ≤ factor * Q1) (hframe : R * Qshift = Q1)
+    (hproduct : S4 * QS = T) (hsixth : sixth ≤ T) (hhalf : half ≤ T)
+    (hfactor : 0 ≤ factor) :
+    A1 * (sig⁻¹ * R * S4 * E * (sig * (P * X) + QS * (Qf * Y))) ≤
+        A1 * (S4 * E * X) + (factor * cap * A1) * (T * sig⁻¹ * Q1 * Y) ∧
+      A2 * (sig⁻¹ * R * sixth * Qshift * Y) ≤ A2 * (T * sig⁻¹ * Q1 * Y) ∧
+      A3 * (sig⁻¹ * R * half * Qshift * Y) ≤ A3 * (T * sig⁻¹ * Q1 * Y) ∧
+      0 ≤ S4 * E * X ∧ 0 ≤ T * sig⁻¹ * Q1 * Y ∧ 0 ≤ factor * cap * A1 := by
+  refine ⟨scalar_frame_main_le A1 cap E sig R P QS Qf Q1 S4 T factor X Y
+      hA1 hE hcap hX hY hQS hQf hR hS4 hinv hcancel hRP hforce hproduct,
+    scalar_frame_decay_le A2 sig R Qshift Q1 sixth T Y hA2 hinv hQ1 hY hsixth hframe,
+    scalar_frame_decay_le A3 sig R Qshift Q1 half T Y hA3 hinv hQ1 hY hhalf hframe,
+    mul_nonneg (mul_nonneg hS4 hE) hX,
+    mul_nonneg (mul_nonneg (mul_nonneg hT hinv) hQ1) hY,
+    mul_nonneg (mul_nonneg hfactor (hE.trans hcap)) hA1⟩
+
 /-! ## 1. Square roots of powers -/
 
 /-- `√(b^{2y}) = b^y` for a positive base. -/
