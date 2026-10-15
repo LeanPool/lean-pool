@@ -364,9 +364,9 @@ theorem lintegral_cutoffHomogenizationErrorRepresentative_pow_four_le
           ((E : ℝ) * s⁻¹ * Real.sqrt M.gamma)
           ((s⁻¹) ^ 2 *
             Real.exp (-(((E : ℝ)⁻¹) ^ 3 * M.gamma⁻¹))))
-    {L : ℤ} (hL : L ≤ m - 1) (hs : (0 : ℝ) < 1 / 4) :
+    {L : ℤ} (hL : L ≤ m - 1) :
     ∫⁻ omega, ENNReal.ofReal
-        (Observable.cutoffHomogenizationErrorRepresentative M L L hs
+        (Observable.cutoffHomogenizationErrorRepresentative M L L (1 / 4 : ℝ)
           (Annealed.sigmaBar M L) omega ^ 4)
         ∂(Cutoff.cutoffSampleLaw M).toMeasure ≤
       ENNReal.ofReal ((10 ^ 9 * (E : ℝ) ^ 2 * M.gamma) ^ 2) := by
@@ -389,13 +389,13 @@ theorem lintegral_cutoffHomogenizationErrorRepresentative_pow_four_le
       ⟨1 / 4,
         (mul_pos (by norm_num : (0 : ℝ) < 8)
           M.shellPrefix.gamma_pos).trans_le hwindow.1⟩ =
-      Observable.cutoffHomogenizationErrorRepresentative M L L hs
+      Observable.cutoffHomogenizationErrorRepresentative M L L (1 / 4 : ℝ)
         (Annealed.sigmaBar M L) := rfl
   rw [hcarrier] at hclause
   have hXnonneg : ∀ omega,
-      0 ≤ Observable.cutoffHomogenizationErrorRepresentative M L L hs
+      0 ≤ Observable.cutoffHomogenizationErrorRepresentative M L L (1 / 4 : ℝ)
         (Annealed.sigmaBar M L) omega := fun omega =>
-    Observable.cutoffHomogenizationErrorRepresentative_nonneg M L L hs
+    Observable.cutoffHomogenizationErrorRepresentative_nonneg M L L (1 / 4 : ℝ)
       (Annealed.sigmaBar M L) omega
   refine (lintegral_ofReal_pow_four_le_of_twoTerm hXnonneg hclause).trans ?_
   refine ENNReal.ofReal_le_ofReal ?_
@@ -458,19 +458,18 @@ theorem amplitude_mem_Ioc_and_lintegral_pow_four_le
           ((s⁻¹) ^ 2 *
             Real.exp (-(((E : ℝ)⁻¹) ^ 3 * M.gamma⁻¹))))
     (hepsilon : epsilon ∈ Set.Ioc (0 : ℝ) (1 / 2))
-    (hgate : M.gamma ≤ Chom⁻¹ * ((E : ℝ)⁻¹) ^ 2 * epsilon)
-    (hs : (0 : ℝ) < 1 / 4) :
+    (hgate : M.gamma ≤ Chom⁻¹ * ((E : ℝ)⁻¹) ^ 2 * epsilon) :
     10 ^ 9 * (E : ℝ) ^ 2 * M.gamma ∈ Set.Ioc (0 : ℝ) (1 / 2) ∧
       ∀ L : ℤ, L ≤ m - 1 →
         ∫⁻ omega, ENNReal.ofReal
-            (Observable.cutoffHomogenizationErrorRepresentative M L L hs
+            (Observable.cutoffHomogenizationErrorRepresentative M L L (1 / 4 : ℝ)
               (Annealed.sigmaBar M L) omega ^ 4)
             ∂(Cutoff.cutoffSampleLaw M).toMeasure ≤
           ENNReal.ofReal ((10 ^ 9 * (E : ℝ) ^ 2 * M.gamma) ^ 2) :=
   ⟨amplitude_mem_Ioc_of_gate M E.property hChom hepsilon hgate,
     fun _ hL =>
       lintegral_cutoffHomogenizationErrorRepresentative_pow_four_le M hEfloor hregime
-        hLower hL hs⟩
+        hLower hL⟩
 
 end
 

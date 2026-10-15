@@ -1538,8 +1538,7 @@ private theorem upperFiniteQGeTwoInfinityAggregation_momentBounds3 :
   let Rraw : Cutoff.CutoffSample d → ℝ := fun omega => ∑' k, Xexp k omega
   have hRrawAE : AEMeasurable Rraw mu := by
     dsimp [Rraw]
-    exact Algsuperdiff.Section3.Provider.Orlicz.aemeasurable_tsum_of_nonneg
-      hXexpMeas hXexpNonneg
+    exact AEMeasurable.tsum (L := SummationFilter.unconditional ℕ) hXexpMeas
   let Yexp : Cutoff.CutoffSample d → ℝ := hRrawAE.mk Rraw
   have hYexpMeas : Measurable Yexp := hRrawAE.measurable_mk
   have hRrawEqYexp : Rraw =ᵐ[mu] Yexp := hRrawAE.ae_eq_mk

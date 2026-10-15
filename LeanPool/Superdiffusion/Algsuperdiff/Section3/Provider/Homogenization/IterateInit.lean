@@ -202,7 +202,7 @@ theorem integral_cutoffResponseJ_le_of_lintegral_pow_four_le (M : ABKModel d)
     {L n : ℤ} (hLn : L ≤ n) {s : ℝ} (hs : 0 < s) {delta1 : ℝ}
     (hdelta1 : delta1 ∈ Set.Ioc (0 : ℝ) (1 / 2))
     (hmoment : ∫⁻ omega, ENNReal.ofReal
-        (Observable.cutoffHomogenizationErrorRepresentative M L L hs
+        (Observable.cutoffHomogenizationErrorRepresentative M L L s
           (Annealed.sigmaBar M L) omega ^ 4)
         ∂(Cutoff.cutoffSampleLaw M).toMeasure ≤ ENNReal.ofReal (delta1 ^ 2))
     {e : Vec d} (he : Ch02.vecNorm e = 1) :
@@ -269,7 +269,7 @@ theorem integral_cutoffResponseJ_le_amplitude_of_precedingError (M : ABKModel d)
   have hs : (0 : ℝ) < 1 / 4 := by norm_num
   obtain ⟨hrange, hmoment⟩ :=
     amplitude_mem_Ioc_and_lintegral_pow_four_le M hChom hEfloor hregime hLower
-      hepsilon hgate hs
+      hepsilon hgate
   exact integral_cutoffResponseJ_le_of_lintegral_pow_four_le M hLn hs hrange
     (hmoment L hL) he
 

@@ -521,7 +521,7 @@ theorem coefficientCutoffLaw_annealedResponseJAtScale_le_of_moment_bound
     (M : ABKModel d) (L : ℤ) {s : ℝ} (hs : 0 < s) {delta1 : ℝ}
     (hdelta1 : delta1 ∈ Set.Ioc (0 : ℝ) (1 / 2))
     (hmoment : ∫⁻ omega, ENNReal.ofReal
-        (Observable.cutoffHomogenizationErrorRepresentative M L L hs
+        (Observable.cutoffHomogenizationErrorRepresentative M L L s
           (Annealed.sigmaBar M L) omega ^ 4)
         ∂(Cutoff.cutoffSampleLaw M).toMeasure ≤ ENNReal.ofReal (delta1 ^ 2))
     {p q : Vec d} (hpq : q = (Annealed.sigmaBar M L : ℝ) • p)
@@ -531,7 +531,7 @@ theorem coefficientCutoffLaw_annealedResponseJAtScale_le_of_moment_bound
   obtain ⟨hint2, hbound⟩ :=
     integral_sq_le_of_lintegral_ofReal_pow_four_le
       (mu := (Cutoff.cutoffSampleLaw M).toMeasure)
-      (Observable.measurable_cutoffHomogenizationErrorRepresentative M L L hs
+      (Observable.measurable_cutoffHomogenizationErrorRepresentative M L L s
         (Annealed.sigmaBar M L)) hdelta1.1.le hmoment
   rw [coefficientCutoffLaw_annealedResponseJAtScale_eq_integral_cutoffSampleLaw M L L]
   refine le_trans (integral_mono_of_nonneg ?_ hint2 ?_) hbound
@@ -564,7 +564,7 @@ theorem coefficientCutoffLaw_sq_abs_annealedSigmaStarInvScalarAtScale_sub_le
     (M : ABKModel d) {L n m : ℤ} (hLn : L ≤ n) (hnm : n ≤ m)
     {s : ℝ} (hs : 0 < s) {delta1 : ℝ} (hdelta1 : delta1 ∈ Set.Ioc (0 : ℝ) (1 / 2))
     (hmoment : ∫⁻ omega, ENNReal.ofReal
-        (Observable.cutoffHomogenizationErrorRepresentative M L L hs
+        (Observable.cutoffHomogenizationErrorRepresentative M L L s
           (Annealed.sigmaBar M L) omega ^ 4)
         ∂(Cutoff.cutoffSampleLaw M).toMeasure ≤ ENNReal.ofReal (delta1 ^ 2))
     {p q : Vec d} (hpq : q = (Annealed.sigmaBar M L : ℝ) • p)

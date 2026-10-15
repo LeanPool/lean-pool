@@ -8,6 +8,7 @@ module
 
 public import LeanPool.Superdiffusion.Algsuperdiff.Section4.Support.ErrorAtoms
 public import LeanPool.Superdiffusion.Algsuperdiff.Section3.Observable.CutoffHomogenizationErrorRepresentative
+public import LeanPool.Superdiffusion.Support.HighContrast.LocalEllipticity
 
 /-!
 # FluxCorrectedRepresentative
@@ -253,41 +254,6 @@ theorem fluxCorrectedError_characterization (M : ABKModel d) (L k : ℤ)
 
 /-! ## The Chapter 4 law carrier of the flux-corrected law -/
 
-/-- The set of locally a.e.-uniformly elliptic carrier fields is measurable: it is
-the countable `⋂_Q ⋃_k` of the A quantitative-slice sets, each genuinely
-`LocalSigmaR`-measurable.  This mirrors the same private lemma of
-`Section3/Cutoff/LawCarrier.lean`, kept local for the same reason: so that the
-flux-corrected construction does not depend on the unrelated high-contrast
-development where the general lemma also occurs. -/
-private theorem measurableSet_aeLocallyUniformlyEllipticField :
-    MeasurableSet {a : RegCoeffField d | AELocallyUniformlyEllipticField a} := by
-  classical
-  have hEq : {a : RegCoeffField d | AELocallyUniformlyEllipticField a}
-      = ⋂ Q : TriadicCube d, ⋃ k : ℕ,
-          {a : RegCoeffField d |
-            AEEQuantitativeEllipticSlice (cubeSet Q) k a.toFun} := by
-    ext a
-    simp only [Set.mem_ofPred_eq, Set.mem_iInter, Set.mem_iUnion]
-    constructor
-    · intro ha Q
-      exact ha.exists_aeeQuantitativeEllipticSlice_cubeSet Q
-    · intro ha Q
-      obtain ⟨k, hk⟩ := ha Q
-      have hkpos : (0 : ℝ) < ((k : ℝ) + 1)⁻¹ := by positivity
-      have h1le : (1 : ℝ) ≤ (k : ℝ) + 1 := by
-        have hk_nonneg : (0 : ℝ) ≤ (k : ℝ) := by positivity
-        linarith only [hk_nonneg]
-      have hle : ((k : ℝ) + 1)⁻¹ ≤ (k : ℝ) + 1 :=
-        le_trans ((inv_le_one₀ (by positivity)).2 h1le) h1le
-      refine ⟨((k : ℝ) + 1)⁻¹, (k : ℝ) + 1, hkpos, hle, ?_⟩
-      have hslice : IsAEEllipticFieldOn ((k : ℝ) + 1)⁻¹ ((k : ℝ) + 1)
-          (cubeSet Q) a.toFun := hk
-      exact hslice.mono (measurableSet_openCubeSet Q) (openCubeSet_subset_cubeSet Q)
-  rw [hEq]
-  refine MeasurableSet.iInter fun Q => MeasurableSet.iUnion fun k => ?_
-  exact LocalSigmaR_le (cubeSet Q) _
-    (measurableSet_localSigmaR_aeeQuantitativeEllipticSlice Q k)
-
 /-- The pushforward of the cutoff-sample law along the flux-corrected carrier
 map is a Chapter 4 `RestrictionLawCarrier`. -/
 theorem lawCarrier_map_fluxCorrectedRegField (M : ABKModel d) (L m : ℤ)
@@ -511,22 +477,6 @@ theorem fluxCorrectedMaxDescendantNormalizedBlockResponseRepresentative_nonneg
   intro R _
   exact fluxCorrectedNormalizedBlockResponseRepresentative_nonneg M L m Q R a0 omega
 
-theorem measurable_tsum_of_nonneg
-    {Omega : Type*} [MeasurableSpace Omega] (term : ℕ → Omega → ℝ)
-    (hmeas : ∀ n, Measurable (term n)) (hnonneg : ∀ n omega, 0 ≤ term n omega) :
-    Measurable (fun omega => ∑' n, term n omega) := by
-  have hnn : Measurable (fun omega => ∑' n, (term n omega).toNNReal) :=
-    Measurable.tsum (L := SummationFilter.unconditional ℕ) fun n =>
-      (hmeas n).real_toNNReal
-  have hnn := hnn.coe_nnreal_real
-  convert hnn using 1
-  funext omega
-  rw [NNReal.coe_tsum]
-  apply tsum_congr
-  intro n
-  rw [Real.toNNReal_of_nonneg (hnonneg n omega)]
-  rfl
-
 /-- The nonnegative everywhere-defined functional of the flux-corrected error.
 Unlike the proved `(∞,2)` cutoff chain, no `A.mk` is needed at this layer:
 every descendant maximum above is *genuinely* measurable, so the geometric
@@ -556,7 +506,7 @@ theorem fluxCorrectedErrorFunctional_nonneg (M : ABKModel d) (L k : ℤ)
     0 ≤ fluxCorrectedErrorFunctional M L k s omega :=
   Real.sqrt_nonneg _
 
-theorem measurable_fluxCorrectedErrorFunctional (M : ABKModel d) (L k : ℤ) {s : ℝ} (hs : 0 < s) :
+theorem measurable_fluxCorrectedErrorFunctional (M : ABKModel d) (L k : ℤ) {s : ℝ} :
     Measurable (fluxCorrectedErrorFunctional M L k s) := by
   have hterm : ∀ l : ℕ, Measurable
       (fun omega => Ch02.geometricWeight s 2 l *
@@ -568,8 +518,7 @@ theorem measurable_fluxCorrectedErrorFunctional (M : ABKModel d) (L k : ℤ) {s 
       (sub_le_self _ (by exact_mod_cast Nat.zero_le l))
       (isotropicComparatorMatrix (Annealed.sigmaBar M k))).const_mul _
   exact Real.continuous_sqrt.measurable.comp
-    (measurable_tsum_of_nonneg _ hterm
-      (fluxCorrectedErrorFunctional_term_nonneg M L k hs))
+    (Measurable.tsum (L := SummationFilter.unconditional ℕ) hterm)
 
 /-- The paper-wide assumption `2 ≤ d`, stored in the model, supplies the
 nonzero-dimension instance required by CoarseGraining's doubled-response A. -/
@@ -588,7 +537,7 @@ theorem measurable_fluxCorrectedErrorRepresentative (M : ABKModel d) (L k : ℤ)
     Measurable (fluxCorrectedErrorRepresentative M L k s) := by
   let : NeZero d := neZero_of_model_FluxCorrectedRepresentative M
   change Measurable (fluxCorrectedErrorFunctional M L k (s : ℝ))
-  exact measurable_fluxCorrectedErrorFunctional M L k s.2
+  exact measurable_fluxCorrectedErrorFunctional (s := (s : ℝ)) M L k
 
 theorem fluxCorrectedErrorRepresentative_nonneg (M : ABKModel d) (L k : ℤ)
     (s : {s : ℝ // 0 < s}) (omega : Cutoff.CutoffSample d) :

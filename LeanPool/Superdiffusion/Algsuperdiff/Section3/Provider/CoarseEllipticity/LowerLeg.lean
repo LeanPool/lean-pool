@@ -59,10 +59,9 @@ the U leg only --- `e.cg.ellip.lower` has no ordinary lane, so every
 lower-leg-only consumer is untouched a fortiori").  The lower leg's summation
 is therefore a **two**-slot statement, not an instance of the three-slot one.
 It is not carried in this module: the payload binder below is exactly its
-output, and the two ingredients such a summation rests on
-(`ScaleSummation.measurable_tsum_of_nonneg`,
-`ScaleSummation.isBigOWith_gammaSigma_tsum_weighted`) are proved in
-`ScaleSummation.lean`.
+output. The two ingredients for that summation
+are Mathlib's `Measurable.tsum` and
+`ScaleSummation.isBigOWith_gammaSigma_tsum_weighted`.
 
 ## What is proved here
 

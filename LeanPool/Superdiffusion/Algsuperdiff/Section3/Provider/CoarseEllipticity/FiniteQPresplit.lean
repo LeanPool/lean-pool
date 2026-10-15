@@ -194,10 +194,8 @@ theorem twoTermFamilySplit_cutoffLowerEllipticityInv_of_finiteQPresplit (M : ABK
         mul_le_mul_of_nonneg_left (add_le_add hDroot hUroot) (by norm_num)
       _ = 4 * Cprof * s * (2 * s - M.gamma)⁻¹ +
           2 * ∑' n : ℕ, v n * U n omega := by ring
-  · exact (measurable_tsum_of_nonneg
-      (fun n => (hUmeas n).const_mul (v n))
-      (fun n omega => mul_nonneg (hvpos n).le (hUnonneg n omega))
-      (by simpa [v, w] using hUlinsum)).const_mul 2
+  · exact (Measurable.tsum (L := SummationFilter.unconditional ℕ)
+      (fun n => (hUmeas n).const_mul (v n))).const_mul 2
   · have hsumO : IsBigOWith (Cutoff.cutoffSampleLaw M).toMeasure
         (gammaSigma sigmaTail) (fun omega => ∑' n : ℕ, v n * U n omega)
         (gammaTriangleConst sigmaTail * ∑' n : ℕ, v n * a n) :=

@@ -97,7 +97,7 @@ theorem coefficientCutoffLaw_sq_sigmaBar_mul_annealedSigmaStarInvScalarAtScale_s
     (M : ABKModel d) {L m : ℤ} (hLm : L ≤ m)
     {s : ℝ} (hs : 0 < s) {delta1 : ℝ} (hdelta1 : delta1 ∈ Set.Ioc (0 : ℝ) (1 / 2))
     (hmoment : ∫⁻ omega, ENNReal.ofReal
-        (Observable.cutoffHomogenizationErrorRepresentative M L L hs
+        (Observable.cutoffHomogenizationErrorRepresentative M L L s
           (Annealed.sigmaBar M L) omega ^ 4)
         ∂(Cutoff.cutoffSampleLaw M).toMeasure ≤ ENNReal.ofReal (delta1 ^ 2))
     {p q : Vec d} (hpq : q = (Annealed.sigmaBar M L : ℝ) • p)

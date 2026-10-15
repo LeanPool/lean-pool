@@ -157,21 +157,6 @@ theorem measurable_cutoffAvgDescendantNormalizedBlockResponseRepresentative_loca
 
 /-! ## 3. The `(2,2)` functional at an arbitrary cube -/
 
-private theorem measurable_tsum_of_nonneg {Omega : Type*} [MeasurableSpace Omega]
-    (T : ℕ → Omega → ℝ) (hmeas : ∀ n, Measurable (T n))
-    (hnonneg : ∀ n omega, 0 ≤ T n omega) :
-    Measurable fun omega => ∑' n, T n omega := by
-  have hnn : Measurable (fun omega => ∑' n, (T n omega).toNNReal) :=
-    Measurable.tsum (L := SummationFilter.unconditional ℕ) fun n =>
-      (hmeas n).real_toNNReal
-  have hnn := hnn.coe_nnreal_real
-  convert hnn using 1
-  funext omega
-  rw [NNReal.coe_tsum]
-  refine tsum_congr fun n => ?_
-  rw [Real.toNNReal_of_nonneg (hnonneg n omega)]
-  rfl
-
 /-- **The `(2,2)` measurable functional at an A triadic cube.**  At `Q = □_n` this
 is `Support.cutoffHomogenizationError22Functional` verbatim; the generality in
 `Q` is what carries the translated cubes `z + □_n` of the `𝒢₂` lane. -/
@@ -195,14 +180,13 @@ private theorem errorFunctional_term_nonneg (M : ABKModel d) (L : ℤ)
 
 /-- **The `(2,2)` functional is local.** -/
 theorem measurable_errorFunctionalAtCube_local (M : ABKModel d) (L : ℤ)
-    (Q : TriadicCube d) {s : ℝ} (hs : 0 < s) (sigma : Observable.PositiveScalar)
+    (Q : TriadicCube d) {s : ℝ} (sigma : Observable.PositiveScalar)
     {U : Set (Vec d)} (hQU : cubeSet Q ⊆ U) :
     Measurable[Cutoff.cutoffSampleLocalSigma M L U]
       (errorFunctionalAtCube M L Q s sigma) := by
   let : MeasurableSpace (Cutoff.CutoffSample d) := Cutoff.cutoffSampleLocalSigma M L U
   refine Real.continuous_sqrt.measurable.comp ?_
-  refine measurable_tsum_of_nonneg _ (fun l => ?_)
-    (fun l omega => errorFunctional_term_nonneg M L Q hs sigma l omega)
+  refine Measurable.tsum (L := SummationFilter.unconditional ℕ) (fun l => ?_)
   exact (measurable_cutoffAvgDescendantNormalizedBlockResponseRepresentative_local
     M L Q (by omega) _ hQU).const_mul _
 
@@ -365,7 +349,7 @@ theorem measurable_errorAtomSq_local (M : ABKModel d) (n : ℤ)
         (Cutoff.translateCutoffSample (Support.triadicLatticePoint n v) omega)) :=
     measurable_cutoffSampleLocalSigma_of_ae_eq M (n - 2) U
       (measurable_errorFunctionalAtCube_local M (n - 2) (Localize.latticeCube n v)
-        s.2 (Annealed.sigmaBar M (n - 2)) hQU)
+        (Annealed.sigmaBar M (n - 2)) hQU)
       (annularErrorObservable_comp_translate_ae_eq_functional M n s v)
   have hmono := Provider.BadEvents.cutoffSampleLocalSigma_mono M hm
     (Set.Subset.refl U)

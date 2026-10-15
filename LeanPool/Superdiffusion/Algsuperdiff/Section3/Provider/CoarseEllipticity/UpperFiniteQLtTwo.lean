@@ -242,10 +242,8 @@ theorem exists_normalized_finite_q_lt_two_lane
   let Y : Omega → ℝ := fun omega =>
     (K * S ^ (2 / r)) * ∑' n : ℕ, c n * V n omega
   refine ⟨Y, hRqsum, ?_, ?_, ?_⟩
-  · exact (measurable_tsum_of_nonneg
-      (fun n => (hVmeas n).const_mul (c n))
-      (fun n omega => mul_nonneg (hc n) (hVnonneg n omega))
-      hVlinnorm).const_mul (K * S ^ (2 / r))
+  · exact (Measurable.tsum (L := SummationFilter.unconditional ℕ)
+      (fun n => (hVmeas n).const_mul (c n))).const_mul (K * S ^ (2 / r))
   · have honesum : Summable fun n : ℕ => c n * (1 : ℝ) := by
       simpa using hcsum
     have honetsum : (∑' n : ℕ, c n * (1 : ℝ)) = 1 := by

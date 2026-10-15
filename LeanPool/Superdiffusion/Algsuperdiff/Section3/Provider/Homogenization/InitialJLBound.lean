@@ -538,7 +538,7 @@ theorem exists_integral_cutoffResponseJ_le_initialJLBoundDisplay (d : ℕ) [NeZe
               ∀ sMoment : ℝ, ∀ hsMoment : 0 < sMoment, ∀ delta1 : ℝ,
                 delta1 ∈ Set.Ioc (0 : ℝ) (1 / 2) →
                 ∫⁻ omega, ENNReal.ofReal
-                    (Observable.cutoffHomogenizationErrorRepresentative M L L hsMoment
+                    (Observable.cutoffHomogenizationErrorRepresentative M L L sMoment
                       (Annealed.sigmaBar M L) omega ^ 4)
                     ∂(Cutoff.cutoffSampleLaw M).toMeasure ≤ ENNReal.ofReal (delta1 ^ 2) →
                 ∫ omega, Observable.cutoffResponseJ M m L e omega

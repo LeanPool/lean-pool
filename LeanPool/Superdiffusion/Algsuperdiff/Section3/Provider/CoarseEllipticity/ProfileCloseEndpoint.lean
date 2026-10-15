@@ -178,7 +178,6 @@ theorem twoTermFamilySplit_of_endpointMajorant [MeasurableSpace Omega]
     {Cdet Bexp sigmaExp : ℝ}
     (hsigmaExp : 0 < sigmaExp) (hw : ∀ n, 0 < w n)
     (hVnonneg : ∀ n omega, 0 ≤ V n omega) (hVmeas : ∀ n, Measurable (V n))
-    (hVsum : ∀ omega, Summable fun n : ℕ => w n * V n omega)
     (ha : ∀ n, 0 < a n) (hasum : Summable fun n : ℕ => w n * a n)
     (hVO : ∀ n, IsBigOWith mu (gammaSigma sigmaExp) (V n) (a n))
     (hBexp : gammaTriangleConst sigmaExp * ∑' n : ℕ, w n * a n ≤ Bexp)
@@ -191,8 +190,8 @@ theorem twoTermFamilySplit_of_endpointMajorant [MeasurableSpace Omega]
       IsBigOWith mu (gammaSigma sigmaExp) Y Bexp := by
   refine ⟨fun _ => Cdet, fun omega => ∑' n : ℕ, w n * V n omega, hdom,
     fun _ => le_rfl, ?_, ?_⟩
-  · exact measurable_tsum_of_nonneg (fun n => (hVmeas n).const_mul (w n))
-      (fun n omega => mul_nonneg (hw n).le (hVnonneg n omega)) hVsum
+  · exact Measurable.tsum (L := SummationFilter.unconditional ℕ)
+      (fun n => (hVmeas n).const_mul (w n))
   · exact isBigOWith_gammaSigma_tsum_weighted hsigmaExp hw hVnonneg hVmeas ha hasum
       hVO hBexp
 

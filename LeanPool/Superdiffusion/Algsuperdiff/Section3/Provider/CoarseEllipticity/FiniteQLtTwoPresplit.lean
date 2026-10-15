@@ -553,10 +553,8 @@ theorem twoTermFamilySplit_cutoffLowerEllipticityInv_of_finiteQLtTwoPresplit
             (s / (2 * s - M.gamma)) ^ (2 / (r : ℝ)) +
           (2 * S ^ (2 / (r : ℝ))) * ∑' n : ℕ, c n * V n omega := by
         ring_nf
-  · exact (measurable_tsum_of_nonneg
-      (fun n => (hVmeas n).const_mul (c n))
-      (fun n omega => mul_nonneg (hc n) (hVnonneg n omega))
-      hVlinnorm).const_mul (2 * S ^ (2 / (r : ℝ)))
+  · exact (Measurable.tsum (L := SummationFilter.unconditional ℕ)
+      (fun n => (hVmeas n).const_mul (c n))).const_mul (2 * S ^ (2 / (r : ℝ)))
   · have honesum : Summable fun n : ℕ => c n * (1 : ℝ) := by
       simpa using hcsum
     have honetsum : (∑' n : ℕ, c n * (1 : ℝ)) = 1 := by simpa using hctsum

@@ -57,8 +57,6 @@ printed `C s gamma (2s - gamma)^{-3}` --- is the caller's, and is supplied by
 
 ## Main results
 
-* `measurable_tsum_of_nonneg` --- a pointwise-summable series of nonnegative
-  measurable functions is measurable.
 * `isBigOWith_gammaSigma_tsum_weighted` --- the weighted countable
   `Gamma_sigma` triangle inequality.
 
@@ -89,25 +87,6 @@ open HCPolySupport HCPolySupport.IndependentSums
 noncomputable section
 
 variable {Omega : Type*} [MeasurableSpace Omega] {mu : Measure Omega}
-
-/-! ## 1. Measurability of the summed lanes -/
-
-/-- A pointwise-summable series of nonnegative measurable functions is measurable.
-The series is routed through, where countable sums of measurable functions are
-unconditionally measurable. -/
-theorem measurable_tsum_of_nonneg {f : ℕ → Omega → ℝ}
-    (hmeas : ∀ k, Measurable (f k)) (hnonneg : ∀ k omega, 0 ≤ f k omega)
-    (hsum : ∀ omega, Summable fun k => f k omega) :
-    Measurable fun omega => ∑' k, f k omega := by
-  have hrepr : (fun omega => ∑' k, f k omega)
-      = fun omega => (∑' k, ENNReal.ofReal (f k omega)).toReal := by
-    funext omega
-    rw [← ENNReal.ofReal_tsum_of_nonneg (fun k => hnonneg k omega) (hsum omega),
-      ENNReal.toReal_ofReal (tsum_nonneg fun k => hnonneg k omega)]
-  rw [hrepr]
-  exact (Measurable.tsum fun k => (hmeas k).ennreal_ofReal).ennreal_toReal
-
-/-! ## 2. The weighted countable `Gamma_sigma` triangle inequality -/
 
 /-- The weighted form of `l.Gamma.sigma.triangle`: a nonnegative family with
 individual `Gamma_sigma` scales, summed against nonnegative weights, is

@@ -57,7 +57,7 @@ theorem ae_forall_cutoffResponseJ_le_observationHomogenizationError_sq
       ∀ e : Vec d, Ch02.vecNorm e = 1 →
         Observable.cutoffResponseJ M cubeScale coefficientScale e omega ≤
           Observable.cutoffHomogenizationErrorRepresentative M coefficientScale
-            cubeScale hs (Annealed.sigmaBar M coefficientScale) omega ^ 2 := by
+            cubeScale s (Annealed.sigmaBar M coefficientScale) omega ^ 2 := by
   let : NeZero d :=
     ⟨Nat.ne_of_gt (lt_of_lt_of_le (by omega) M.shellPrefix.dimension)⟩
   let sigma := Annealed.sigmaBar M coefficientScale
@@ -145,7 +145,7 @@ theorem ae_forall_cutoffResponseJ_le_observationHomogenizationError_sq
           sigma omega ^ 2 := by
       rw [Observable.cutoffHomogenizationErrorRaw_characterization]
     _ = Observable.cutoffHomogenizationErrorRepresentative M coefficientScale
-          cubeScale hs sigma omega ^ 2 := by rw [herror]
+          cubeScale s sigma omega ^ 2 := by rw [herror]
 
 end
 

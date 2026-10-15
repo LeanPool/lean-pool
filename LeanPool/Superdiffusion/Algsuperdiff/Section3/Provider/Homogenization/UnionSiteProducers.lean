@@ -585,10 +585,10 @@ private theorem pos_of_isTwoTermBigOWith {Omega : Type*} [MeasurableSpace Omega]
 nonnegative lanes, one `Gamma_1` at the squared linear amplitude and one
 `Gamma_{1/4}` at the squared rare amplitude, whose sum dominates the square
 everywhere. -/
-private theorem exists_squareLanes (M : ABKModel d) (L n : ℤ) {s : ℝ} (hs : 0 < s) {A B : ℝ}
+private theorem exists_squareLanes (M : ABKModel d) (L n : ℤ) {s : ℝ} {A B : ℝ}
     (hErr : Probability.IsTwoTermBigOWith (cutoffSampleLaw M).toMeasure
       (gammaSigma 2) (gammaSigma (1 / 2))
-      (Observable.cutoffHomogenizationErrorRepresentative M L n hs
+      (Observable.cutoffHomogenizationErrorRepresentative M L n s
         (Annealed.sigmaBar M L)) A B) :
     ∃ Y1 Z1 : CutoffSample d → ℝ,
       Measurable Y1 ∧ Measurable Z1 ∧ (∀ omega, 0 ≤ Y1 omega) ∧
@@ -597,7 +597,7 @@ private theorem exists_squareLanes (M : ABKModel d) (L n : ℤ) {s : ℝ} (hs : 
             IsBigOWith (cutoffSampleLaw M).toMeasure (gammaSigma (1 / 4)) Z1
               (2 * B ^ 2) ∧
               ∀ omega,
-                Observable.cutoffHomogenizationErrorRepresentative M L n hs
+                Observable.cutoffHomogenizationErrorRepresentative M L n s
                     (Annealed.sigmaBar M L) omega ^ 2 ≤ Y1 omega + Z1 omega := by
   obtain ⟨Y, Z, -, -, hA, hB, -, hYm, hZm, hdom, hYt, hZt⟩ := hErr
   refine ⟨fun omega => 2 * max 0 (Y omega) ^ 2, fun omega => 2 * max 0 (Z omega) ^ 2,
@@ -621,11 +621,11 @@ private theorem exists_squareLanes (M : ABKModel d) (L n : ℤ) {s : ℝ} (hs : 
       simpa only [show (1 / 2 : ℝ) / 2 = 1 / 4 by norm_num] using h
     exact IsBigOWith.const_mul (by norm_num) hsq
   · intro omega
-    have hErrnn : 0 ≤ Observable.cutoffHomogenizationErrorRepresentative M L n hs
+    have hErrnn : 0 ≤ Observable.cutoffHomogenizationErrorRepresentative M L n s
         (Annealed.sigmaBar M L) omega :=
-      Observable.cutoffHomogenizationErrorRepresentative_nonneg M L n hs
+      Observable.cutoffHomogenizationErrorRepresentative_nonneg M L n s
         (Annealed.sigmaBar M L) omega
-    have hle : Observable.cutoffHomogenizationErrorRepresentative M L n hs
+    have hle : Observable.cutoffHomogenizationErrorRepresentative M L n s
         (Annealed.sigmaBar M L) omega ≤ max 0 (Y omega) + max 0 (Z omega) :=
       (hdom omega).trans (add_le_add (le_max_right _ _) (le_max_right _ _))
     have hsq := pow_le_pow_left₀ hErrnn hle 2
@@ -639,7 +639,7 @@ private theorem exists_siteLanes (M : ABKModel d) (L n : ℤ) {s : ℝ}
     (hs : 0 < s) (u : Fin d → ℤ) {e : Vec d} (he : Ch02.vecNorm e = 1) {A B : ℝ}
     (hErr : Probability.IsTwoTermBigOWith (cutoffSampleLaw M).toMeasure
       (gammaSigma 2) (gammaSigma (1 / 2))
-      (Observable.cutoffHomogenizationErrorRepresentative M L n hs
+      (Observable.cutoffHomogenizationErrorRepresentative M L n s
         (Annealed.sigmaBar M L)) A B) :
     ∃ W1 W4 : CutoffSample d → ℝ,
       Measurable W1 ∧ Measurable W4 ∧
@@ -652,7 +652,7 @@ private theorem exists_siteLanes (M : ABKModel d) (L n : ℤ) {s : ℝ}
                 |siteCenteredResponseJ M L n u e omega| ≤ W1 omega + W4 omega := by
   obtain ⟨hA, hB⟩ := pos_of_isTwoTermBigOWith hErr
   obtain ⟨Y1, Z1, hY1m, hZ1m, hY1nn, hZ1nn, hY1t, hZ1t, hlane⟩ :=
-    exists_squareLanes M L n hs hErr
+    exists_squareLanes M L n hErr
   set z : Vec d := triadicCubeShift (siteCube n u) with hzdef
   have hmp : MeasurePreserving (translateCutoffSample z)
       (cutoffSampleLaw M).toMeasure (cutoffSampleLaw M).toMeasure :=
@@ -755,7 +755,7 @@ theorem integrable_siteResponseJ (M : ABKModel d) (L n : ℤ) {s : ℝ} (hs : 0 
       ⟨Nat.ne_of_gt (lt_of_lt_of_le (by omega) M.shellPrefix.dimension)⟩
     Probability.IsTwoTermBigOWith (cutoffSampleLaw M).toMeasure
         (gammaSigma 2) (gammaSigma (1 / 2))
-        (Observable.cutoffHomogenizationErrorRepresentative M L n hs
+        (Observable.cutoffHomogenizationErrorRepresentative M L n s
           (Annealed.sigmaBar M L)) A B →
       Integrable (siteResponseJ M L n u e) (cutoffSampleLaw M).toMeasure := by
   let : NeZero d :=
@@ -777,7 +777,7 @@ theorem isTwoTermBigOWith_abs_siteCenteredResponseJ (M : ABKModel d) (L n : ℤ)
       ⟨Nat.ne_of_gt (lt_of_lt_of_le (by omega) M.shellPrefix.dimension)⟩
     Probability.IsTwoTermBigOWith (cutoffSampleLaw M).toMeasure
         (gammaSigma 2) (gammaSigma (1 / 2))
-        (Observable.cutoffHomogenizationErrorRepresentative M L n hs
+        (Observable.cutoffHomogenizationErrorRepresentative M L n s
           (Annealed.sigmaBar M L)) A B →
       Probability.IsTwoTermBigOWith (cutoffSampleLaw M).toMeasure
         (gammaSigma 1) (gammaSigma (1 / 4))
@@ -806,7 +806,7 @@ theorem integral_siteCenteredResponseJ_eq_zero_of_twoTerm (M : ABKModel d)
       ⟨Nat.ne_of_gt (lt_of_lt_of_le (by omega) M.shellPrefix.dimension)⟩
     Probability.IsTwoTermBigOWith (cutoffSampleLaw M).toMeasure
         (gammaSigma 2) (gammaSigma (1 / 2))
-        (Observable.cutoffHomogenizationErrorRepresentative M L n hs
+        (Observable.cutoffHomogenizationErrorRepresentative M L n s
           (Annealed.sigmaBar M L)) A B →
       ∫ omega, siteCenteredResponseJ M L n u e omega
         ∂(cutoffSampleLaw M).toMeasure = 0 := by
@@ -869,7 +869,7 @@ theorem isTwoTermBigOWith_gridAverage_siteCenteredResponseJ (M : ABKModel d)
       ⟨Nat.ne_of_gt (lt_of_lt_of_le (by omega) M.shellPrefix.dimension)⟩
     Probability.IsTwoTermBigOWith (cutoffSampleLaw M).toMeasure
         (gammaSigma 2) (gammaSigma (1 / 2))
-        (Observable.cutoffHomogenizationErrorRepresentative M L n hs
+        (Observable.cutoffHomogenizationErrorRepresentative M L n s
           (Annealed.sigmaBar M L)) A B →
       Probability.IsTwoTermBigOWith (cutoffSampleLaw M).toMeasure
         (gammaSigma 1) (gammaSigma (1 / 4))

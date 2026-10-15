@@ -430,10 +430,8 @@ private theorem measurable_waveSizesTotalW2 (M : ABKModel d) (m : ℤ) (h : ℕ)
   have hterm : Measurable (fun omega : ShellSeq d => ∑' j : ℕ, (3 : ℝ) ^ (-s * (j : ℝ)) *
       Localization.legScaleAverage (originCube d m) (m - (j : ℤ)) s
         (fun R => waveSizeW2 M m h R omega ^ 2)) :=
-    measurable_tsum_of_nonneg'
+    Measurable.tsum (L := SummationFilter.unconditional ℕ)
       (fun j => (measurable_waveScaleAverageW2 M m h j hs).const_mul _)
-      (fun j omega => mul_nonneg (Real.rpow_nonneg (by norm_num) _)
-        (Localization.legScaleAverage_nonneg _ _ _ (fun R _ => by positivity)))
   exact hterm.const_mul s
 
 /-- **The wave term** `32 Cinj cstar^{-1} cgamma . waveSizesTotalW2`, at the

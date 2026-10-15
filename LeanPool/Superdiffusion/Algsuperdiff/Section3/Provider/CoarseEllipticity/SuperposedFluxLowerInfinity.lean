@@ -233,7 +233,7 @@ theorem superposedFlux_lower_branchPayload_infinity [NeZero d]
   obtain ⟨Ydet, Y, hYdom, hYdet, hYmeas, hYO⟩ :=
     twoTermFamilySplit_of_endpointMajorant
       (by linarith [hsigma.2] : 0 < (1 - sigma) / 2) hw hUnonneg hUmeas
-      hUsum ha hasum hUO hbudget hdom
+      ha hasum hUO hbudget hdom
   exact ⟨Ydet, Y, hYdom, fun omega => (hYdet omega).trans hdet, hYmeas,
     by simpa [rare] using hYO⟩
 

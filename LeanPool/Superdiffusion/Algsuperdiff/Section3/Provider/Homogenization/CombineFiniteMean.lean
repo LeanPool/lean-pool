@@ -643,7 +643,7 @@ private theorem relativeOrigin_centeredStarredComparatorQuadratic_sq_integrable_
     have hpoint := fullBlockQuadratic_starredFluctuation_relativeOrigin_sq_le_error
       M L hs omega q
     have hX0eq : X0 omega =
-        Observable.cutoffHomogenizationErrorRepresentative M L L hs sigma omega := by
+        Observable.cutoffHomogenizationErrorRepresentative M L L s sigma omega := by
       rfl
     dsimp only [c, h, sigma, a0, B, C0, R, X, Xrel] at hpoint ⊢
     rw [hrawOmega] at hpoint

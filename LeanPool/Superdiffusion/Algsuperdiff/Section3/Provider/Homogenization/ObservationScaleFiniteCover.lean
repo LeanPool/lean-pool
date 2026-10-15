@@ -141,27 +141,27 @@ omit [NeZero d] in
 /-- The measurable square of the cutoff-scale error at a translated
 scale-`L` cell.  The coefficient and normalizer stay frozen at `L`. -/
 def cutoffCellErrorSq (M : ABKModel d) (L : ℤ)
-    {u : ℝ} (hu : 0 < u) (R : HCPolySupport.TriadicCube d) :
+    (u : ℝ) (R : HCPolySupport.TriadicCube d) :
     Cutoff.CutoffSample d → ℝ :=
   fun omega =>
-    (Observable.cutoffHomogenizationErrorRepresentative M L L hu
+    (Observable.cutoffHomogenizationErrorRepresentative M L L u
       (Annealed.sigmaBar M L)
       (Cutoff.translateCutoffSample (HCPolySupport.triadicCubeShift R) omega)) ^ 2
 
 omit [NeZero d] in
 private theorem measurable_cutoffCellErrorSq (M : ABKModel d) (L : ℤ)
-    {u : ℝ} (hu : 0 < u) (R : HCPolySupport.TriadicCube d) :
-    Measurable (cutoffCellErrorSq M L hu R) := by
+    (u : ℝ) (R : HCPolySupport.TriadicCube d) :
+    Measurable (cutoffCellErrorSq M L u R) := by
   exact ((Observable.measurable_cutoffHomogenizationErrorRepresentative
-    M L L hu (Annealed.sigmaBar M L)).comp
+    M L L u (Annealed.sigmaBar M L)).comp
       (Cutoff.measurable_translateCutoffSample
         (HCPolySupport.triadicCubeShift R))).pow_const 2
 
 omit [NeZero d] in
 private theorem cutoffCellErrorSq_nonneg (M : ABKModel d) (L : ℤ)
-    {u : ℝ} (hu : 0 < u) (R : HCPolySupport.TriadicCube d)
+    (u : ℝ) (R : HCPolySupport.TriadicCube d)
     (omega : Cutoff.CutoffSample d) :
-    0 ≤ cutoffCellErrorSq M L hu R omega :=
+    0 ≤ cutoffCellErrorSq M L u R omega :=
   sq_nonneg _
 
 omit [NeZero d] in
@@ -173,7 +173,7 @@ private theorem cutoffCellErrorSq_isBigOWith_gammaQuarter
       (gammaSigma 2) (gammaSigma (1 / 2))
       (Observable.cutoffHomogenizationError M L ⟨u, hu⟩) A B) :
     IsBigOWith (Cutoff.cutoffSampleLaw M).toMeasure
-      (gammaSigma (1 / 4)) (cutoffCellErrorSq M L hu R)
+      (gammaSigma (1 / 4)) (cutoffCellErrorSq M L u R)
       (twoTermSquareConst * (A ^ 2 + B ^ 2)) := by
   have htranslated := BadEvents.isTwoTermBigOWith_comp_translateCutoffSample
     M (HCPolySupport.triadicCubeShift R) hLower
@@ -200,7 +200,7 @@ private theorem cutoffCellErrorRawSq_ae_eq_cutoffCellErrorSq
     (M : ABKModel d) (L : ℤ) {u : ℝ} (hu : 0 < u)
     (R : HCPolySupport.TriadicCube d) (hRscale : R.scale = L) :
     cutoffCellErrorRawSq M L u R =ᵐ[(Cutoff.cutoffSampleLaw M).toMeasure]
-      cutoffCellErrorSq M L hu R := by
+      cutoffCellErrorSq M L u R := by
   let μ := (Cutoff.cutoffSampleLaw M).toMeasure
   let τ := Cutoff.translateCutoffSample (HCPolySupport.triadicCubeShift R)
   have hτ : MeasurePreserving τ μ μ := by
@@ -241,26 +241,26 @@ def observationScaleFineTailRaw (M : ABKModel d) (L m : ℤ)
 
 omit [NeZero d] in
 /-- The largest parent-cube average of normalized cutoff-cell errors at one depth. -/
-def observationScaleCoarseParentAverage (M : ABKModel d) (L m : ℤ) {u : ℝ} (hu : 0 < u)
+def observationScaleCoarseParentAverage (M : ABKModel d) (L m : ℤ) (u : ℝ)
     (ell : ℕ) (omega : Cutoff.CutoffSample d) : ℝ :=
   Ch02.finsetSupReal (descendantsAtScale (originCube d m) (m - (ell : ℤ)))
     (fun P => descendantsAverage P (Int.toNat (m - (ell : ℤ) - L))
-      (fun R => cutoffCellErrorSq M L hu R omega))
+      (fun R => cutoffCellErrorSq M L u R omega))
 
 omit [NeZero d] in
 /-- The finite weighted envelope of coarse parent-cube error averages. -/
-def observationScaleCoarseEnvelope (M : ABKModel d) (L m : ℤ) (t : ℝ) {u : ℝ} (hu : 0 < u)
+def observationScaleCoarseEnvelope (M : ABKModel d) (L m : ℤ) (t : ℝ) (u : ℝ)
     (omega : Cutoff.CutoffSample d) : ℝ :=
   ∑ ell ∈ Finset.range (Int.toNat (m - L)),
     Ch02.geometricWeight t 2 ell *
-      observationScaleCoarseParentAverage M L m hu ell omega
+      observationScaleCoarseParentAverage M L m u ell omega
 
 omit [NeZero d] in
 /-- The maximum normalized cutoff-cell error at the cutoff scale. -/
-def observationScaleCellErrorSup (M : ABKModel d) (L m : ℤ) {u : ℝ} (hu : 0 < u)
+def observationScaleCellErrorSup (M : ABKModel d) (L m : ℤ) (u : ℝ)
     (omega : Cutoff.CutoffSample d) : ℝ :=
   Ch02.finsetSupReal (descendantsAtScale (originCube d m) L)
-    (fun R => cutoffCellErrorSq M L hu R omega)
+    (fun R => cutoffCellErrorSq M L u R omega)
 
 private theorem normalizedBlockResponseMax_le_cutoffCellErrorRawSq
     (M : ABKModel d) (L : ℤ) (R : HCPolySupport.TriadicCube d)
@@ -287,10 +287,10 @@ private theorem observationScaleErrorLayerRaw_coarse_le_parentAverage
     (ell : ℕ) (hell : ell < Int.toNat (m - L))
     (omega : Cutoff.CutoffSample d)
     (hcell : ∀ R : HCPolySupport.TriadicCube d, R.scale = L →
-      cutoffCellErrorRawSq M L u R omega ≤ cutoffCellErrorSq M L hu R omega) :
+      cutoffCellErrorRawSq M L u R omega ≤ cutoffCellErrorSq M L u R omega) :
     observationScaleErrorLayerRaw M L m t ell omega ≤
       Ch02.geometricWeight t 2 ell *
-        observationScaleCoarseParentAverage M L m hu ell omega := by
+        observationScaleCoarseParentAverage M L m u ell omega := by
   classical
   let Q := originCube d m
   let a := Cutoff.coefficientCutoffTriadicCoeffFamily M L omega
@@ -312,7 +312,7 @@ private theorem observationScaleErrorLayerRaw_coarse_le_parentAverage
         (by positivity : 0 ≤ t * (2 : ℝ))
   have hmax :
       Ch02.maxDescendantNormalizedBlockResponseAtScale Q (m - (ell : ℤ)) a a0 ≤
-        observationScaleCoarseParentAverage M L m hu ell omega := by
+        observationScaleCoarseParentAverage M L m u ell omega := by
     unfold Ch02.maxDescendantNormalizedBlockResponseAtScale
     refine Ch02.finsetSupReal_le _ (descendantsAtScale_nonempty Q hscale) ?_
     intro P hP
@@ -326,7 +326,7 @@ private theorem observationScaleErrorLayerRaw_coarse_le_parentAverage
     have hPavg := normalizedBlockResponseMax_le_descendantsAverage P j a a0
     have hdesc : descendantsAverage P j
         (fun R => Ch02.normalizedBlockResponseMax R a a0) ≤
-        descendantsAverage P j (fun R => cutoffCellErrorSq M L hu R omega) := by
+        descendantsAverage P j (fun R => cutoffCellErrorSq M L u R omega) := by
       apply descendantsAverage_le_descendantsAverage
       intro R hR
       have hRscale : R.scale = L := by
@@ -335,15 +335,15 @@ private theorem observationScaleErrorLayerRaw_coarse_le_parentAverage
       exact (normalizedBlockResponseMax_le_cutoffCellErrorRawSq
         M L R hu omega).trans (hcell R hRscale)
     have hbound : Ch02.normalizedBlockResponseMax P a a0 ≤
-        descendantsAverage P j (fun R => cutoffCellErrorSq M L hu R omega) :=
+        descendantsAverage P j (fun R => cutoffCellErrorSq M L u R omega) :=
       hPavg.trans hdesc
     have hsup : descendantsAverage P j
-        (fun R => cutoffCellErrorSq M L hu R omega) ≤
-        observationScaleCoarseParentAverage M L m hu ell omega := by
+        (fun R => cutoffCellErrorSq M L u R omega) ≤
+        observationScaleCoarseParentAverage M L m u ell omega := by
       apply le_csSup
       · exact ((Set.toFinite _).image fun S => descendantsAverage S
           (Int.toNat (m - (ell : ℤ) - L))
-          (fun R => cutoffCellErrorSq M L hu R omega)).bddAbove
+          (fun R => cutoffCellErrorSq M L u R omega)).bddAbove
       · refine ⟨P, ?_, ?_⟩
         · simpa only [observationScaleCoarseParentAverage, Q] using! hP
         · rw [show j = Int.toNat (m - (ell : ℤ) - L) by rfl]
@@ -356,11 +356,11 @@ private theorem observationScaleErrorLayerRaw_fine_le_cellSup
     {t u : ℝ} (ht : 0 < t) (hu : 0 < u)
     (n : ℕ) (omega : Cutoff.CutoffSample d)
     (hcell : ∀ R : HCPolySupport.TriadicCube d, R.scale = L →
-      cutoffCellErrorRawSq M L u R omega ≤ cutoffCellErrorSq M L hu R omega) :
+      cutoffCellErrorRawSq M L u R omega ≤ cutoffCellErrorSq M L u R omega) :
     observationScaleErrorLayerRaw M L m t (Int.toNat (m - L) + n) omega ≤
       Ch02.geometricWeight t 2 (Int.toNat (m - L) + n) *
         Real.rpow 3 (2 * u * (n : ℝ)) *
-          observationScaleCellErrorSup M L m hu omega := by
+          observationScaleCellErrorSup M L m u omega := by
   classical
   let Q := originCube d m
   let a := Cutoff.coefficientCutoffTriadicCoeffFamily M L omega
@@ -381,7 +381,7 @@ private theorem observationScaleErrorLayerRaw_fine_le_cellSup
     exact descendantsAtScale_nonempty (originCube d m) hLm
   have hpoint : ∀ R ∈ D,
       Ch02.maxDescendantNormalizedBlockResponseAtScale R (L - (n : ℤ)) a a0 ≤
-        Real.rpow 3 (2 * u * (n : ℝ)) * cutoffCellErrorSq M L hu R omega := by
+        Real.rpow 3 (2 * u * (n : ℝ)) * cutoffCellErrorSq M L u R omega := by
     intro R hR
     have hRscale : R.scale = L := descendant_scale_eq_of_mem_descendantsAtScale hR
     have hraw := maxDescendantNormalizedBlockResponseAtDepth_le_error_sq
@@ -393,7 +393,7 @@ private theorem observationScaleErrorLayerRaw_fine_le_cellSup
     exact hraw'.trans (mul_le_mul_of_nonneg_left (hcell R hRscale)
       (Real.rpow_nonneg (by norm_num) _))
   have hroot : H ≤ Real.rpow 3 (2 * u * (n : ℝ)) *
-      observationScaleCellErrorSup M L m hu omega := by
+      observationScaleCellErrorSup M L m u omega := by
     dsimp [H]
     have hscale' : m - ((r : ℤ) + (n : ℤ)) = L - (n : ℤ) := by
       simpa only [Nat.cast_add] using hscale
@@ -411,10 +411,10 @@ private theorem observationScaleErrorLayerRaw_fine_le_cellSup
       Ch02.normalizedBlockResponseMax_le_maxDescendantNormalizedBlockResponseAtScale
         a a0 hSR
     have hRle := hpoint R (by simpa [D] using hR)
-    have hsup : cutoffCellErrorSq M L hu R omega ≤
-        observationScaleCellErrorSup M L m hu omega := by
+    have hsup : cutoffCellErrorSq M L u R omega ≤
+        observationScaleCellErrorSup M L m u omega := by
       apply le_csSup
-      · exact ((Set.toFinite _).image fun T => cutoffCellErrorSq M L hu T omega).bddAbove
+      · exact ((Set.toFinite _).image fun T => cutoffCellErrorSq M L u T omega).bddAbove
       · exact ⟨R, by simpa [observationScaleCellErrorSup, D, Q] using hR, rfl⟩
     exact hSRle.trans (hRle.trans (mul_le_mul_of_nonneg_left hsup
       (Real.rpow_nonneg (by norm_num) _)))
@@ -468,18 +468,18 @@ private theorem observationScaleFineTailRaw_le_cellErrorSup
     {t u : ℝ} (hu : 0 < u) (hut : u < t)
     (omega : Cutoff.CutoffSample d)
     (hcell : ∀ R : HCPolySupport.TriadicCube d, R.scale = L →
-      cutoffCellErrorRawSq M L u R omega ≤ cutoffCellErrorSq M L hu R omega) :
+      cutoffCellErrorRawSq M L u R omega ≤ cutoffCellErrorSq M L u R omega) :
     observationScaleFineTailRaw M L m t omega ≤
       Real.rpow 3 (-(2 * t * (Int.toNat (m - L) : ℝ))) *
         (Ch02.geometricDiscount t 2 *
           (1 - (3 : ℝ) ^ (-((t - u) * 2)))⁻¹) *
-        observationScaleCellErrorSup M L m hu omega := by
+        observationScaleCellErrorSup M L m u omega := by
   let Q := originCube d m
   let a := Cutoff.coefficientCutoffTriadicCoeffFamily M L omega
   let a0 : HCPolySupport.Mat d :=
     Observable.isotropicComparatorMatrix (Annealed.sigmaBar M L)
   let r : ℕ := Int.toNat (m - L)
-  let B : ℝ := observationScaleCellErrorSup M L m hu omega
+  let B : ℝ := observationScaleCellErrorSup M L m u omega
   let g : ℕ → ℝ := fun n => observationScaleErrorLayerRaw M L m t (r + n) omega
   have ht : 0 < t := hu.trans hut
   have hfull := Ch02.summable_geometricWeight_two_mul_maxDescendantNormalizedBlockResponseAtScale
@@ -559,14 +559,14 @@ private theorem cutoffHomogenizationErrorRaw_sq_le_finiteCover
     {t u : ℝ} (ht : 0 < t) (hu : 0 < u) (hut : u < t)
     (omega : Cutoff.CutoffSample d)
     (hcell : ∀ R : HCPolySupport.TriadicCube d, R.scale = L →
-      cutoffCellErrorRawSq M L u R omega ≤ cutoffCellErrorSq M L hu R omega) :
+      cutoffCellErrorRawSq M L u R omega ≤ cutoffCellErrorSq M L u R omega) :
     (Observable.cutoffHomogenizationErrorRaw M L m t
       (Annealed.sigmaBar M L) omega) ^ 2 ≤
-      observationScaleCoarseEnvelope M L m t hu omega +
+      observationScaleCoarseEnvelope M L m t u omega +
         Real.rpow 3 (-(2 * t * (Int.toNat (m - L) : ℝ))) *
           (Ch02.geometricDiscount t 2 *
             (1 - (3 : ℝ) ^ (-((t - u) * 2)))⁻¹) *
-          observationScaleCellErrorSup M L m hu omega := by
+          observationScaleCellErrorSup M L m u omega := by
   let r : ℕ := Int.toNat (m - L)
   let f : ℕ → ℝ := fun ell => observationScaleErrorLayerRaw M L m t ell omega
   let Q := originCube d m
@@ -592,7 +592,7 @@ private theorem cutoffHomogenizationErrorRaw_sq_le_finiteCover
     simpa only [r, f, observationScaleFineTailRaw, Nat.add_comm] using
       hsum.sum_add_tsum_nat_add r
   have hprefix : (∑ ell ∈ Finset.range r, f ell) ≤
-      observationScaleCoarseEnvelope M L m t hu omega := by
+      observationScaleCoarseEnvelope M L m t u omega := by
     unfold observationScaleCoarseEnvelope
     refine Finset.sum_le_sum fun ell hell => ?_
     exact observationScaleErrorLayerRaw_coarse_le_parentAverage
@@ -606,17 +606,17 @@ private theorem cutoffHomogenizationErrorRepresentative_sq_ae_le_finiteCover
     (M : ABKModel d) (L m : ℤ) (hLm : L ≤ m) :
     ∀ᵐ omega ∂(Cutoff.cutoffSampleLaw M).toMeasure,
       (Observable.cutoffHomogenizationErrorRepresentative M L m
-        (by norm_num : (0 : ℝ) < 1 / 8) (Annealed.sigmaBar M L) omega) ^ 2 ≤
-        observationScaleCoarseEnvelope M L m (1 / 8) (by norm_num : (0 : ℝ) < 1 / 16)
+        (1 / 8 : ℝ) (Annealed.sigmaBar M L) omega) ^ 2 ≤
+        observationScaleCoarseEnvelope M L m (1 / 8) (1 / 16 : ℝ)
             omega +
           Real.rpow 3 (-(2 * (1 / 8 : ℝ) * (Int.toNat (m - L) : ℝ))) *
             (Ch02.geometricDiscount (1 / 8 : ℝ) 2 *
               (1 - (3 : ℝ) ^ (-(((1 / 8 : ℝ) - (1 / 16 : ℝ)) * 2)))⁻¹) *
-            observationScaleCellErrorSup M L m (by norm_num : (0 : ℝ) < 1 / 16) omega := by
+            observationScaleCellErrorSup M L m (1 / 16 : ℝ) omega := by
   have hall : ∀ᵐ omega ∂(Cutoff.cutoffSampleLaw M).toMeasure,
       ∀ R : HCPolySupport.TriadicCube d, R.scale = L →
         cutoffCellErrorRawSq M L (1 / 16) R omega =
-          cutoffCellErrorSq M L (by norm_num : (0 : ℝ) < 1 / 16) R omega := by
+          cutoffCellErrorSq M L (1 / 16 : ℝ) R omega := by
     rw [MeasureTheory.ae_all_iff]
     intro R
     by_cases hR : R.scale = L
@@ -647,8 +647,8 @@ private theorem descendantsAverage_measurable
 
 omit [NeZero d] in
 private theorem observationScaleCoarseParentAverage_measurable
-    (M : ABKModel d) (L m : ℤ) {u : ℝ} (hu : 0 < u) (ell : ℕ) :
-    Measurable (observationScaleCoarseParentAverage M L m hu ell) := by
+    (M : ABKModel d) (L m : ℤ) (u : ℝ) (ell : ℕ) :
+    Measurable (observationScaleCoarseParentAverage M L m u ell) := by
   let D := descendantsAtScale (originCube d m) (m - (ell : ℤ))
   have hk : m - (ell : ℤ) ≤ (originCube d m).scale := by
     change m - (ell : ℤ) ≤ m
@@ -656,13 +656,13 @@ private theorem observationScaleCoarseParentAverage_measurable
   have hD : D.Nonempty := descendantsAtScale_nonempty _ hk
   let X : HCPolySupport.TriadicCube d → Cutoff.CutoffSample d → ℝ := fun P omega =>
     descendantsAverage P (Int.toNat (m - (ell : ℤ) - L))
-      (fun R => cutoffCellErrorSq M L hu R omega)
+      (fun R => cutoffCellErrorSq M L u R omega)
   have hsup : Measurable (fun omega => D.sup' hD (fun P => X P omega)) :=
     Probability.measurable_finset_sup' hD fun P _ =>
       descendantsAverage_measurable P _ _ fun R =>
-        measurable_cutoffCellErrorSq M L hu R
+        measurable_cutoffCellErrorSq M L u R
   have heq : (fun omega => D.sup' hD (fun P => X P omega)) =
-      observationScaleCoarseParentAverage M L m hu ell := by
+      observationScaleCoarseParentAverage M L m u ell := by
     funext omega
     exact (Ch04.RestrictionLawCarrier.finsetSupReal_eq_sup' D hD
       (fun P => X P omega)).symm
@@ -679,7 +679,7 @@ private theorem descendantsAverage_isBigOWith_gammaQuarter
         ⟨(1 / 16 : ℝ), by norm_num⟩) A B) :
     IsBigOWith (Cutoff.cutoffSampleLaw M).toMeasure (gammaSigma (1 / 4))
       (fun omega => descendantsAverage P j
-        (fun R => cutoffCellErrorSq M L (by norm_num : (0 : ℝ) < 1 / 16) R omega))
+        (fun R => cutoffCellErrorSq M L (1 / 16 : ℝ) R omega))
       (gammaTriangleConst (1 / 4) *
         (twoTermSquareConst * (A ^ 2 + B ^ 2))) := by
   let D := descendantsAtDepth P j
@@ -689,29 +689,29 @@ private theorem descendantsAverage_isBigOWith_gammaQuarter
       (add_pos (sq_pos_of_pos hA) (sq_pos_of_pos hB))
   have htail : ∀ R ∈ D, IsBigO (Cutoff.cutoffSampleLaw M).toMeasure
       (gammaSigma (1 / 4))
-      (cutoffCellErrorSq M L (by norm_num : (0 : ℝ) < 1 / 16) R) delta := by
+      (cutoffCellErrorSq M L (1 / 16 : ℝ) R) delta := by
     intro R _
     rw [← Orlicz.isBigOWith_iff_isBigO_of_nonneg
-      (cutoffCellErrorSq_nonneg M L (by norm_num : (0 : ℝ) < 1 / 16) R)]
+      (cutoffCellErrorSq_nonneg M L (1 / 16 : ℝ) R)]
     exact cutoffCellErrorSq_isBigOWith_gammaQuarter
       M L (by norm_num : (0 : ℝ) < 1 / 16) R hLower
   have haverage := Ch04.isBigO_finsetAverage_of_isBigO_gammaSigma_aemeasurable
     (μ := (Cutoff.cutoffSampleLaw M).toMeasure) D
-    (X := fun R => cutoffCellErrorSq M L (by norm_num : (0 : ℝ) < 1 / 16) R)
+    (X := fun R => cutoffCellErrorSq M L (1 / 16 : ℝ) R)
     (a := fun _ => delta) (σ := (1 / 4 : ℝ))
     (by norm_num) (descendantsAtDepth_nonempty P j)
     (fun _ _ => hdelta) htail
     (fun R => (measurable_cutoffCellErrorSq M L
-      (by norm_num : (0 : ℝ) < 1 / 16) R).aemeasurable)
+      (1 / 16 : ℝ) R).aemeasurable)
   have hscale : ((D.card : ℝ)⁻¹) * ∑ _ ∈ D, delta = delta := by
     have hcard : (D.card : ℝ) ≠ 0 := by
       exact_mod_cast (descendantsAtDepth_nonempty P j).card_ne_zero
     rw [Finset.sum_const, nsmul_eq_mul]
     field_simp
   have hnonneg : ∀ omega, 0 ≤ descendantsAverage P j
-      (fun R => cutoffCellErrorSq M L (by norm_num : (0 : ℝ) < 1 / 16) R omega) :=
+      (fun R => cutoffCellErrorSq M L (1 / 16 : ℝ) R omega) :=
     fun omega => descendantsAverage_nonneg P j _ fun R _ =>
-      cutoffCellErrorSq_nonneg M L (by norm_num : (0 : ℝ) < 1 / 16) R omega
+      cutoffCellErrorSq_nonneg M L (1 / 16 : ℝ) R omega
   apply (Orlicz.isBigOWith_iff_isBigO_of_nonneg hnonneg).2
   simpa only [descendantsAverage, D, hscale,
     twoTermSquareConst] using! haverage
@@ -727,7 +727,7 @@ private theorem coarseParentAverage_isBigOWith_gammaQuarter (M : ABKModel d) (L 
         ⟨(1 / 16 : ℝ), by norm_num⟩) A B) :
     IsBigOWith (Cutoff.cutoffSampleLaw M).toMeasure (gammaSigma (1 / 4))
       (observationScaleCoarseParentAverage M L m
-        (by norm_num : (0 : ℝ) < 1 / 16) ell)
+        (1 / 16 : ℝ) ell)
       ((3 * max 1 (Real.log (((3 ^ d) ^ ell : ℕ) : ℝ))) ^ ((1 / 4 : ℝ)⁻¹) *
         (gammaTriangleConst (1 / 4) *
           (twoTermSquareConst * (A ^ 2 + B ^ 2)))) := by
@@ -751,7 +751,7 @@ private theorem coarseParentAverage_isBigOWith_gammaQuarter (M : ABKModel d) (L 
     exact_mod_cast hell
   let X : HCPolySupport.TriadicCube d → Cutoff.CutoffSample d → ℝ := fun P omega =>
     descendantsAverage P (Int.toNat (m - (ell : ℤ) - L))
-      (fun R => cutoffCellErrorSq M L (by norm_num : (0 : ℝ) < 1 / 16) R omega)
+      (fun R => cutoffCellErrorSq M L (1 / 16 : ℝ) R omega)
   have hX : ∀ P ∈ D, IsBigOWith (Cutoff.cutoffSampleLaw M).toMeasure
       (gammaSigma (1 / 4)) (X P)
       (gammaTriangleConst (1 / 4) *
@@ -771,7 +771,7 @@ private theorem coarseParentAverage_isBigOWith_gammaQuarter (M : ABKModel d) (L 
     (σ := (1 / 4 : ℝ)) (by norm_num) hscaleNonneg hX
   have hfun : (fun omega => D.sup' hD (fun P => X P omega)) =
       observationScaleCoarseParentAverage M L m
-        (by norm_num : (0 : ℝ) < 1 / 16) ell := by
+        (1 / 16 : ℝ) ell := by
     funext omega
     change D.sup' hD (fun P => X P omega) = Ch02.finsetSupReal D (fun P => X P omega)
     exact (Ch04.RestrictionLawCarrier.finsetSupReal_eq_sup' D hD
@@ -880,7 +880,7 @@ private theorem coarseEnvelope_isBigOWith_gammaQuarter
         ⟨(1 / 16 : ℝ), by norm_num⟩) A B) :
     IsBigOWith (Cutoff.cutoffSampleLaw M).toMeasure (gammaSigma (1 / 4))
       (observationScaleCoarseEnvelope M L m (1 / 8)
-        (by norm_num : (0 : ℝ) < 1 / 16))
+        (1 / 16 : ℝ))
       (gammaTriangleConst (1 / 4) *
         ((∑' ell : ℕ, observationDepthScale d ell) *
           (twoTermSquareConst * (A ^ 2 + B ^ 2)))) := by
@@ -889,7 +889,7 @@ private theorem coarseEnvelope_isBigOWith_gammaQuarter
     if ell < r then
       Ch02.geometricWeight (1 / 8) 2 ell *
         observationScaleCoarseParentAverage M L m
-          (by norm_num : (0 : ℝ) < 1 / 16) ell omega
+          (1 / 16 : ℝ) ell omega
     else 0
   let delta : ℝ := twoTermSquareConst * (A ^ 2 + B ^ 2)
   let scale : ℕ → ℝ := fun ell => observationDepthScale d ell * delta
@@ -908,7 +908,7 @@ private theorem coarseEnvelope_isBigOWith_gammaQuarter
         intro P _
         exact descendantsAverage_nonneg P _ _ fun R _ =>
           cutoffCellErrorSq_nonneg M L
-            (by norm_num : (0 : ℝ) < 1 / 16) R omega)
+            (1 / 16 : ℝ) R omega)
     · norm_num
   have hXmeas : ∀ ell, Measurable (X ell) := by
     intro ell
@@ -916,7 +916,7 @@ private theorem coarseEnvelope_isBigOWith_gammaQuarter
     split_ifs with hell
     · exact measurable_const.mul
         (observationScaleCoarseParentAverage_measurable M L m
-          (by norm_num : (0 : ℝ) < 1 / 16) ell)
+          (1 / 16 : ℝ) ell)
     · exact measurable_const
   have hscalePos : ∀ ell, 0 < scale ell := fun ell =>
     mul_pos (observationDepthScale_pos d ell) hdelta
@@ -969,7 +969,7 @@ private theorem coarseEnvelope_isBigOWith_gammaQuarter
     (σ := (1 / 4 : ℝ)) (by norm_num) hXnonneg hXmeas hscalePos hscaleSum hXtail
   have hfun : (fun omega => ∑' ell, X ell omega) =
       observationScaleCoarseEnvelope M L m (1 / 8)
-        (by norm_num : (0 : ℝ) < 1 / 16) := by
+        (1 / 16 : ℝ) := by
     funext omega
     have hfinite : (∑' ell, X ell omega) = ∑ ell ∈ Finset.range r, X ell omega := by
       exact tsum_eq_sum (s := Finset.range r) fun ell hell => by
@@ -996,7 +996,7 @@ private theorem observationScaleCellErrorSup_isBigOWith_gammaQuarter
         ⟨(1 / 16 : ℝ), by norm_num⟩) A B) :
     IsBigOWith (Cutoff.cutoffSampleLaw M).toMeasure (gammaSigma (1 / 4))
       (observationScaleCellErrorSup M L m
-        (by norm_num : (0 : ℝ) < 1 / 16))
+        (1 / 16 : ℝ))
       ((3 * max 1
           (Real.log (((3 ^ d) ^ Int.toNat (m - L) : ℕ) : ℝ))) ^
         ((1 / 4 : ℝ)⁻¹) *
@@ -1011,7 +1011,7 @@ private theorem observationScaleCellErrorSup_isBigOWith_gammaQuarter
     rfl
   have htail : ∀ R ∈ D, IsBigOWith (Cutoff.cutoffSampleLaw M).toMeasure
       (gammaSigma (1 / 4))
-      (cutoffCellErrorSq M L (by norm_num : (0 : ℝ) < 1 / 16) R)
+      (cutoffCellErrorSq M L (1 / 16 : ℝ) R)
       (twoTermSquareConst * (A ^ 2 + B ^ 2)) := by
     intro R _
     exact cutoffCellErrorSq_isBigOWith_gammaQuarter
@@ -1022,17 +1022,17 @@ private theorem observationScaleCellErrorSup_isBigOWith_gammaQuarter
   have hmax := Orlicz.isBigOWith_gammaSigma_finset_sup'_of_nonempty
     (μ := (Cutoff.cutoffSampleLaw M).toMeasure) D hD
     (X := fun R => cutoffCellErrorSq M L
-      (by norm_num : (0 : ℝ) < 1 / 16) R)
+      (1 / 16 : ℝ) R)
     (A := twoTermSquareConst * (A ^ 2 + B ^ 2))
     (σ := (1 / 4 : ℝ)) (by norm_num) hscale htail
   have hfun : (fun omega => D.sup' hD (fun R =>
-      cutoffCellErrorSq M L (by norm_num : (0 : ℝ) < 1 / 16) R omega)) =
+      cutoffCellErrorSq M L (1 / 16 : ℝ) R omega)) =
       observationScaleCellErrorSup M L m
-        (by norm_num : (0 : ℝ) < 1 / 16) := by
+        (1 / 16 : ℝ) := by
     funext omega
     exact (Ch04.RestrictionLawCarrier.finsetSupReal_eq_sup' D hD
       (fun R => cutoffCellErrorSq M L
-        (by norm_num : (0 : ℝ) < 1 / 16) R omega)).symm
+        (1 / 16 : ℝ) R omega)).symm
   simpa only [hfun, hDcard] using hmax
 
 /-- The geometric depth factor bounding the fine part of the observation error. -/
@@ -1096,7 +1096,7 @@ private theorem fineCoverTerm_isBigOWith_gammaQuarter (M : ABKModel d) (L m : �
             (1 - (3 : ℝ) ^
               (-(((1 / 8 : ℝ) - (1 / 16 : ℝ)) * 2)))⁻¹) *
           observationScaleCellErrorSup M L m
-            (by norm_num : (0 : ℝ) < 1 / 16) omega)
+            (1 / 16 : ℝ) omega)
       (observationScaleFineDepthFactor d (Int.toNat (m - L)) *
         (twoTermSquareConst * (A ^ 2 + B ^ 2))) := by
   have hsup := observationScaleCellErrorSup_isBigOWith_gammaQuarter
@@ -1191,7 +1191,7 @@ theorem observationScaleFiniteCover_sq_isBigOWith_gammaQuarter
             (gammaSigma (1 / 4))
             (fun omega =>
               (@Observable.cutoffHomogenizationErrorRepresentative d M L m
-                (1 / 8) (by norm_num : (0 : ℝ) < 1 / 8)
+                (1 / 8)
                 (Annealed.sigmaBar M L) omega) ^ 2)
             (Cobs *
               (((E : ℝ) * (1 / 16 : ℝ)⁻¹ * Real.sqrt M.gamma) ^ 2 +

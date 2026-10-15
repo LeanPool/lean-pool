@@ -65,7 +65,7 @@ noncomputable def cutoffHomogenizationErrorAtComparatorScale {d : ℕ}
     (M : ABKModel d) (m comparatorScale : ℤ) (s : {s : ℝ // 0 < s}) :
     Cutoff.CutoffSample d → ℝ := by
   letI : NeZero d := neZero_of_model_CutoffHomogenizationError M
-  exact cutoffHomogenizationErrorRepresentative M m m s.2
+  exact cutoffHomogenizationErrorRepresentative M m m (s : ℝ)
     (Annealed.sigmaBar M comparatorScale)
 
 /-- The actual Section 3 homogenization error
@@ -80,9 +80,9 @@ theorem measurable_cutoffHomogenizationErrorAtComparatorScale {d : ℕ}
     (M : ABKModel d) (m comparatorScale : ℤ) (s : {s : ℝ // 0 < s}) :
     Measurable (cutoffHomogenizationErrorAtComparatorScale M m comparatorScale s) := by
   let : NeZero d := neZero_of_model_CutoffHomogenizationError M
-  change Measurable (cutoffHomogenizationErrorRepresentative M m m s.2
+  change Measurable (cutoffHomogenizationErrorRepresentative M m m (s : ℝ)
     (Annealed.sigmaBar M comparatorScale))
-  exact measurable_cutoffHomogenizationErrorRepresentative M m m s.2
+  exact measurable_cutoffHomogenizationErrorRepresentative M m m (s : ℝ)
     (Annealed.sigmaBar M comparatorScale)
 
 /-- The actual Section 3 cutoff homogenization error is measurable. -/
@@ -98,9 +98,9 @@ theorem cutoffHomogenizationErrorAtComparatorScale_nonneg {d : ℕ}
     (omega : Cutoff.CutoffSample d) :
     0 ≤ cutoffHomogenizationErrorAtComparatorScale M m comparatorScale s omega := by
   let : NeZero d := neZero_of_model_CutoffHomogenizationError M
-  change 0 ≤ cutoffHomogenizationErrorRepresentative M m m s.2
+  change 0 ≤ cutoffHomogenizationErrorRepresentative M m m (s : ℝ)
     (Annealed.sigmaBar M comparatorScale) omega
-  exact cutoffHomogenizationErrorRepresentative_nonneg M m m s.2
+  exact cutoffHomogenizationErrorRepresentative_nonneg M m m (s : ℝ)
     (Annealed.sigmaBar M comparatorScale) omega
 
 /-- The actual Section 3 cutoff homogenization error is pointwise
@@ -119,7 +119,7 @@ theorem cutoffHomogenizationErrorAtComparatorScale_ae_eq_raw {d : ℕ}
       @cutoffHomogenizationErrorRaw d M m m (s : ℝ)
         (Annealed.sigmaBar M comparatorScale) := by
   let : NeZero d := neZero_of_model_CutoffHomogenizationError M
-  change cutoffHomogenizationErrorRepresentative M m m s.2
+  change cutoffHomogenizationErrorRepresentative M m m (s : ℝ)
       (Annealed.sigmaBar M comparatorScale) =ᵐ[(Cutoff.cutoffSampleLaw M).toMeasure]
     cutoffHomogenizationErrorRaw M m m (s : ℝ)
       (Annealed.sigmaBar M comparatorScale)

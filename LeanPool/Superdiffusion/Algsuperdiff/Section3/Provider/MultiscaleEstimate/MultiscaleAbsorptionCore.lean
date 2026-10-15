@@ -112,12 +112,10 @@ cgamma . E^2 <= (3/2)^3 eps^2`) and `sqrt_mul_abs_log_pow_four_le` (`sqrt x .
 |log x|^4 <= 384`, the `k = 4` case of the elementary `x^k e^{-x} <= k!`), the
 last two consumed by `remainderLog_le`.
 
-Two further siblings close the section.  `le_rpow_neg_fifth` turns the frozen
-root's `cgamma <= (E^{-1})^{10}` into the bad-event producer's own fifth-root
-gate `E <= cgamma^{-1/5}`, and `measurable_tsum_of_nonneg'` is the measurability
-of a nonnegative countable sum.  Both, like the section's own
-`pow_mul_exp_neg_le'`, re-derive facts whose only other copies in this
-development are `private`.
+Finally, `le_rpow_neg_fifth` turns the frozen root's
+`cgamma <= (E^{-1})^{10}` into the bad-event producer's fifth-root gate
+`E <= cgamma^{-1/5}`.  Countable-series measurability in the consumer uses
+Mathlib's `Measurable.tsum`, without nonnegativity or summability premises.
 -/
 
 namespace Algsuperdiff.Section3.Provider.MultiscaleEstimate
@@ -677,26 +675,6 @@ theorem le_rpow_neg_fifth {Ev gam : ℝ} (hE : 1 ≤ Ev) (hgam : 0 < gam)
     _ = (gam ^ (-1 : ℝ)) ^ (1 / 5 : ℝ) := by rw [Real.rpow_neg_one]
     _ = gam ^ ((-1 : ℝ) * (1 / 5 : ℝ)) := (Real.rpow_mul hgam.le _ _).symm
     _ = gam ^ (-(1 / 5 : ℝ)) := by norm_num
-
-/-- Measurability of a nonnegative countable sum, through
-`Measurable.nnreal_tsum`.  `HomogenizationLanes.measurable_tsum_of_nonneg` is
-`private`, and `Provider.CoarseEllipticity.measurable_tsum_of_nonneg` demands
-the extra hypothesis `forall omega, Summable (fun k => f k omega)`, which this
-module's call sites do not have; the summability-free version is therefore
-proved here. -/
-theorem measurable_tsum_of_nonneg' {Omega : Type*} [MeasurableSpace Omega]
-    {X : ℕ → Omega → ℝ} (hXm : ∀ k, Measurable (X k))
-    (hX0 : ∀ k omega, 0 ≤ X k omega) :
-    Measurable (fun omega => ∑' k : ℕ, X k omega) := by
-  have hnn : Measurable (fun omega => ∑' k : ℕ, (X k omega).toNNReal) :=
-    Measurable.tsum (L := SummationFilter.unconditional ℕ) fun k => (hXm k).real_toNNReal
-  have hnn := hnn.coe_nnreal_real
-  convert hnn using 1
-  funext omega
-  rw [NNReal.coe_tsum]
-  refine tsum_congr fun k => ?_
-  rw [Real.toNNReal_of_nonneg (hX0 k omega)]
-  rfl
 
 end Absorption
 

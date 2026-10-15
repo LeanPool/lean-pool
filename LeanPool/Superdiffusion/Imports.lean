@@ -2167,6 +2167,7 @@ public import LeanPool.Superdiffusion.Support.HighContrast.Coupled.Stampacchia.D
 public import LeanPool.Superdiffusion.Support.HighContrast.Coupled.Stampacchia.Iteration
 public import LeanPool.Superdiffusion.Support.HighContrast.Coupled.Stampacchia.LevelEnergy
 public import LeanPool.Superdiffusion.Support.HighContrast.Coupled.Stampacchia.LevelRecursion
+public import LeanPool.Superdiffusion.Support.HighContrast.LocalEllipticity
 public import LeanPool.Superdiffusion.Support.HighContrast.Variance.AveragingUniform
 public import LeanPool.Superdiffusion.Support.HighContrast.Variance.BlockVarianceBound
 public import LeanPool.Superdiffusion.Support.HighContrast.Variance.FixedPhaseUniform

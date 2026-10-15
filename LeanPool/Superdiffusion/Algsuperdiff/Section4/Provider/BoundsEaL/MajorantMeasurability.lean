@@ -81,25 +81,6 @@ variable {d : ℕ}
 
 /-! ## 1. The shell-built slots are genuinely measurable -/
 
-/-- Countable nonnegative sums of measurable real functions are measurable.
-(Re-derivation of the `ℕ`-indexed `private` helpers of
-`Proportion/G2Locality.lean` and `Support/ErrorRepresentative22.lean`, at a
-general countable index.) -/
-private theorem measurable_tsum_of_nonneg {Omega iota : Type*} [MeasurableSpace Omega]
-    [Countable iota] (term : iota → Omega → ℝ) (hmeas : ∀ i, Measurable (term i))
-    (hnonneg : ∀ i omega, 0 ≤ term i omega) :
-    Measurable fun omega => ∑' i, term i omega := by
-  have hnn : Measurable (fun omega => ∑' i, (term i omega).toNNReal) :=
-    Measurable.tsum (L := SummationFilter.unconditional iota) fun i =>
-      (hmeas i).real_toNNReal
-  have hnn := hnn.coe_nnreal_real
-  convert hnn using 1
-  funext omega
-  rw [NNReal.coe_tsum]
-  refine tsum_congr fun i => ?_
-  rw [Real.toNNReal_of_nonneg (hnonneg i omega)]
-  rfl
-
 /-- Each `ℤ`-indexed layer term is measurable in the sample. -/
 theorem measurable_tailLayerTerm (m k : ℤ) (v : Fin d → ℤ) (i : ℤ) :
     Measurable fun omega : Cutoff.CutoffSample d => tailLayerTerm m k v omega i := by
@@ -124,8 +105,8 @@ theorem measurable_tailLayerTerm (m k : ℤ) (v : Fin d → ℤ) (i : ℤ) :
 /-- **The canonical tail gauge is measurable.** -/
 theorem measurable_tailSeriesGauge (m k : ℤ) (v : Fin d → ℤ) :
     Measurable fun omega : Cutoff.CutoffSample d => tailSeriesGauge m k v omega :=
-  measurable_tsum_of_nonneg _ (fun i => measurable_tailLayerTerm m k v i)
-    (fun i omega => tailLayerTerm_nonneg m k v omega i)
+  Measurable.tsum (L := SummationFilter.unconditional ℤ)
+    (fun i => measurable_tailLayerTerm m k v i)
 
 /-- The `L`-free head block is measurable. -/
 theorem measurable_headLayerSum (m k : ℤ) (v : Fin d → ℤ) :

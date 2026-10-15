@@ -76,13 +76,15 @@ theorem integral_sphere_eq_measureReal_smul_sphereAverage [NeZero d] (u : 𝔼 �
 
 /-! ### Support of the Laplacian (helpers, re-derived natively) -/
 
-private theorem laplacian_zero_fun' : Δ (0 : 𝔼 → ℝ) = 0 := by
+/-- The Laplacian of the zero real-valued function vanishes. -/
+theorem laplacian_zero_fun' : Δ (0 : 𝔼 → ℝ) = 0 := by
   rw [show (0 : 𝔼 → ℝ) = fun _ => (0 : ℝ) from rfl]
   funext z
   rw [laplacian_eq_iteratedFDeriv_stdOrthonormalBasis, iteratedFDeriv_fun_zero]
   simp
 
-private theorem support_laplacian_subset' {ψ : 𝔼 → ℝ} :
+/-- A function's Laplacian is supported in its topological support. -/
+theorem support_laplacian_subset' {ψ : 𝔼 → ℝ} :
     Function.support (Δ ψ) ⊆ tsupport ψ := by
   intro y hy
   by_contra hy'
@@ -208,9 +210,9 @@ local notation "𝔼" => EuclideanSpace ℝ (Fin d)
 
 /-! ### Support helpers -/
 
-/-- A continuous integrable `f` that vanishes for `s > r` (with `0 < r < R`) has the same integral
+/-- An integrable `f` that vanishes for `s > r` (with `0 < r < R`) has the same integral
 over `(0, ∞)` and over the interval `[0, R]`. -/
-private theorem intervalIntegral_eq_integral_Ioi_of_zero {f : ℝ → ℝ} {r R : ℝ}
+theorem intervalIntegral_eq_integral_Ioi_of_zero {f : ℝ → ℝ} {r R : ℝ}
     (hr : 0 < r) (hrR : r < R) (hint : Integrable f)
     (hzero : ∀ s : ℝ, r < s → f s = 0) :
     ∫ s in (0 : ℝ)..R, f s = ∫ s in Ioi (0 : ℝ), f s := by
@@ -227,7 +229,7 @@ private theorem intervalIntegral_eq_integral_Ioi_of_zero {f : ℝ → ℝ} {r R 
 then `φ t = 0` for every `t ≥ r²` (and `t ≥ 0`): otherwise a sphere point at
 radius `√t ≥ r` would lie
 in the support. -/
-private theorem radialTest_eq_zero_of_ge [NeZero d] {φ : ℝ → ℝ} {x : 𝔼} {r : ℝ}
+theorem radialTest_eq_zero_of_ge [NeZero d] {φ : ℝ → ℝ} {x : 𝔼} {r : ℝ}
     (htsupp : tsupport (fun w : 𝔼 => φ (‖w - x‖ ^ 2)) ⊆ Metric.ball x r)
     {t : ℝ} (ht : 0 ≤ t) (htr : r ^ 2 ≤ t) : φ t = 0 := by
   by_contra hne

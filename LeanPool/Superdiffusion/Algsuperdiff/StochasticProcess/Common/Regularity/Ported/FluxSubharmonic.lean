@@ -41,22 +41,6 @@ variable {d : ℕ}
 
 local notation "𝔼" => EuclideanSpace ℝ (Fin d)
 
-private theorem laplacian_zero_fun' : Δ (0 : 𝔼 → ℝ) = 0 := by
-  rw [show (0 : 𝔼 → ℝ) = fun _ => (0 : ℝ) from rfl]
-  funext z
-  rw [laplacian_eq_iteratedFDeriv_stdOrthonormalBasis, iteratedFDeriv_fun_zero]
-  simp
-
-private theorem support_laplacian_subset' {ψ : 𝔼 → ℝ} :
-    Function.support (Δ ψ) ⊆ tsupport ψ := by
-  intro y hy
-  by_contra hy'
-  rw [Function.mem_support] at hy
-  refine hy ?_
-  have hev : ψ =ᶠ[nhds y] 0 := notMem_tsupport_iff_eventuallyEq.mp hy'
-  have := (laplacian_congr_nhds hev).eq_of_nhds
-  rw [this, laplacian_zero_fun']; rfl
-
 theorem sphereMeasure_mul_integral_Ioi_weighted_sphereAverage_eq_laplacian [NeZero d]
     {u : 𝔼 → ℝ} (hu : ContDiff ℝ 2 u) {x : 𝔼}
     {φ : ℝ → ℝ} (hφ : ContDiff ℝ ∞ φ)
@@ -131,52 +115,6 @@ theorem sphereMeasure_mul_integral_Ioi_weighted_sphereAverage_eq_laplacian [NeZe
     ring
   rw [hfactor] at hpolar
   rw [← hpolar, htrans, hgreen]
-
-/-! ### Support helpers -/
-
-/-- A continuous integrable `f` that vanishes for `s > r` (with `0 < r < R`) has the same integral
-over `(0, ∞)` and over the interval `[0, R]`. -/
-private theorem intervalIntegral_eq_integral_Ioi_of_zero {f : ℝ → ℝ} {r R : ℝ}
-    (hr : 0 < r) (hrR : r < R) (hint : Integrable f)
-    (hzero : ∀ s : ℝ, r < s → f s = 0) :
-    ∫ s in (0 : ℝ)..R, f s = ∫ s in Ioi (0 : ℝ), f s := by
-  have hle : (0 : ℝ) ≤ R := le_of_lt (hr.trans hrR)
-  rw [intervalIntegral.integral_of_le hle]
-  have hsplit : ∫ s in Ioi (0 : ℝ), f s
-      = (∫ s in Ioc (0 : ℝ) R, f s) + ∫ s in Ioi R, f s := by
-    rw [← setIntegral_union (Set.Ioc_disjoint_Ioi le_rfl) measurableSet_Ioi
-      hint.integrableOn hint.integrableOn, Set.Ioc_union_Ioi_eq_Ioi hle]
-  rw [hsplit, setIntegral_eq_zero_of_forall_eq_zero (t := Set.Ioi R)
-    (fun s hs => hzero s (hrR.trans hs)), add_zero]
-
-/-- **The radial profile of the test vanishes past `r`.**  If `tsupport (φ(‖· − x‖²)) ⊆ ball x r`,
-then `φ t = 0` for every `t ≥ r²` (and `t ≥ 0`): otherwise a sphere point at
-radius `√t ≥ r` would lie
-in the support. -/
-private theorem radialTest_eq_zero_of_ge [NeZero d] {φ : ℝ → ℝ} {x : 𝔼} {r : ℝ}
-    (htsupp : tsupport (fun w : 𝔼 => φ (‖w - x‖ ^ 2)) ⊆ Metric.ball x r)
-    {t : ℝ} (ht : 0 ≤ t) (htr : r ^ 2 ≤ t) : φ t = 0 := by
-  by_contra hne
-  obtain ⟨i⟩ : Nonempty (Fin d) := ⟨⟨0, Nat.pos_of_ne_zero (NeZero.ne d)⟩⟩
-  set e : 𝔼 := EuclideanSpace.single i (1 : ℝ) with he_def
-  have he : ‖e‖ = 1 := by
-    rw [he_def]
-    simp
-  set w : 𝔼 := x + Real.sqrt t • e with hw_def
-  have hwx : ‖w - x‖ = Real.sqrt t := by
-    rw [hw_def, add_sub_cancel_left, norm_smul, Real.norm_eq_abs,
-      abs_of_nonneg (Real.sqrt_nonneg t),
-      he, mul_one]
-  have hwsq : ‖w - x‖ ^ 2 = t := by rw [hwx, Real.sq_sqrt ht]
-  have hmem : w ∈ tsupport (fun w : 𝔼 => φ (‖w - x‖ ^ 2)) := by
-    refine subset_tsupport _ ?_
-    rw [Function.mem_support]
-    rw [hwsq]; exact hne
-  have hball := htsupp hmem
-  rw [Metric.mem_ball, dist_eq_norm, hwx] at hball
-  have : t < r ^ 2 := by
-    nlinarith only [hball, Real.sq_sqrt ht, Real.sqrt_nonneg t]
-  exact (not_lt_of_ge htr) this
 
 /-! ### The flux test identity -/
 

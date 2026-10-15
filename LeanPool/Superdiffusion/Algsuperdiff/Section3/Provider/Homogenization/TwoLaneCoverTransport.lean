@@ -512,20 +512,20 @@ private theorem twoLaneTransport_pointwiseDomination :
           (_ :
             ∀ᵐ (omega : Cutoff.CutoffSample d) ∂(↑(Cutoff.cutoffSampleLaw M) : Measure
               (Cutoff.CutoffSample d)),
-              Observable.cutoffHomogenizationErrorRepresentative (s := (1 / 8 : ℝ)) M L n (by
-                norm_num) (Annealed.sigmaBar M L) omega ^ (2 : ℕ) ≤
+              Observable.cutoffHomogenizationErrorRepresentative M L n
+                (1 / 8 : ℝ) (Annealed.sigmaBar M L) omega ^ (2 : ℕ) ≤
                 laneTotal L n Ycell omega + laneTotal L n Zcell omega)
           (_ : ∀ (omega : Cutoff.CutoffSample d), (0 : ℝ) ≤ laneTotal L n Ycell omega)
           (_ : ∀ (omega : Cutoff.CutoffSample d), (0 : ℝ) ≤ laneTotal L n Zcell omega),
           ∀ᵐ (omega : Cutoff.CutoffSample d) ∂(↑(Cutoff.cutoffSampleLaw M) : Measure
             (Cutoff.CutoffSample d)),
-            Observable.cutoffHomogenizationErrorRepresentative (s := (1 / 8 : ℝ)) M L n (by
-              norm_num) (Annealed.sigmaBar M L) omega ≤
+            Observable.cutoffHomogenizationErrorRepresentative M L n
+              (1 / 8 : ℝ) (Annealed.sigmaBar M L) omega ≤
               √(laneTotal L n Ycell omega) + √(laneTotal L n Zcell omega) := by
   intro _ M m L n _ _ Ycell Zcell hRepAE hUnonneg hVnonneg
   filter_upwards [hRepAE] with omega homega
   have h0 : 0 ≤ Observable.cutoffHomogenizationErrorRepresentative M L n
-      (by norm_num : (0 : ℝ) < 1 / 8) (Annealed.sigmaBar M L) omega :=
+      (1 / 8 : ℝ) (Annealed.sigmaBar M L) omega :=
     Observable.cutoffHomogenizationErrorRepresentative_nonneg M L n _ _ omega
   have hsum : laneTotal L n Ycell omega + laneTotal L n Zcell omega ≤
       (Real.sqrt (laneTotal L n Ycell omega) +
@@ -537,9 +537,9 @@ private theorem twoLaneTransport_pointwiseDomination :
     nlinarith [Real.sqrt_nonneg (laneTotal L n Ycell omega),
       Real.sqrt_nonneg (laneTotal L n Zcell omega)]
   calc Observable.cutoffHomogenizationErrorRepresentative M L n
-        (by norm_num : (0 : ℝ) < 1 / 8) (Annealed.sigmaBar M L) omega
+        (1 / 8 : ℝ) (Annealed.sigmaBar M L) omega
       = Real.sqrt ((Observable.cutoffHomogenizationErrorRepresentative M L n
-          (by norm_num : (0 : ℝ) < 1 / 8) (Annealed.sigmaBar M L) omega) ^ 2) :=
+          (1 / 8 : ℝ) (Annealed.sigmaBar M L) omega) ^ 2) :=
         (Real.sqrt_sq h0).symm
     _ ≤ Real.sqrt (laneTotal L n Ycell omega +
           laneTotal L n Zcell omega) := Real.sqrt_le_sqrt homega
@@ -582,7 +582,7 @@ theorem exists_twoLaneObservationScaleTransport (d : ℕ) :
           Probability.IsTwoTermBigOWith (Cutoff.cutoffSampleLaw M).toMeasure
             (gammaSigma 2) (gammaSigma (1 / 2))
             (@Observable.cutoffHomogenizationErrorRepresentative d M L n
-              (1 / 8) (by norm_num : (0 : ℝ) < 1 / 8) (Annealed.sigmaBar M L))
+              (1 / 8) (Annealed.sigmaBar M L))
             (Ctwo * ((E : ℝ) * (1 / 16 : ℝ)⁻¹ * Real.sqrt M.gamma))
             (Ctwo *
               (((1 / 16 : ℝ)⁻¹) ^ 2 *
@@ -671,7 +671,7 @@ theorem exists_twoLaneObservationScaleTransport (d : ℕ) :
     (hZcell)
   have hRepAE : ∀ᵐ omega ∂(Cutoff.cutoffSampleLaw M).toMeasure,
       (Observable.cutoffHomogenizationErrorRepresentative M L n
-        (by norm_num : (0 : ℝ) < 1 / 8) (Annealed.sigmaBar M L) omega) ^ 2 ≤
+        (1 / 8 : ℝ) (Annealed.sigmaBar M L) omega) ^ 2 ≤
         laneTotal L n Ycell omega + laneTotal L n Zcell omega := by
     have htarget := Observable.cutoffHomogenizationErrorRaw_ae_eq_representative
       M L n (by norm_num : (0 : ℝ) < 1 / 8) (Annealed.sigmaBar M L)
@@ -750,7 +750,7 @@ theorem exists_twoLaneObservationScaleTransport (d : ℕ) :
   -- the square root of the cover, lane by lane
   have hdomAE : ∀ᵐ omega ∂(Cutoff.cutoffSampleLaw M).toMeasure,
       Observable.cutoffHomogenizationErrorRepresentative M L n
-          (by norm_num : (0 : ℝ) < 1 / 8) (Annealed.sigmaBar M L) omega ≤
+          (1 / 8 : ℝ) (Annealed.sigmaBar M L) omega ≤
         Real.sqrt (laneTotal L n Ycell omega) +
           Real.sqrt (laneTotal L n Zcell omega)  := @twoLaneTransport_pointwiseDomination (d) (M)
             (m) (L) (n) (Yw) (Zw) (hRepAE) (hUnonneg) (hVnonneg)
@@ -759,7 +759,7 @@ theorem exists_twoLaneObservationScaleTransport (d : ℕ) :
     (Probability.isAdmissibleTail_gammaSigma (by norm_num : (0 : ℝ) < 1 / 2))
     (mul_pos hCtwoPos hApos) (mul_pos hCtwoPos hBpos)
     (Observable.measurable_cutoffHomogenizationErrorRepresentative M L n
-      (by norm_num : (0 : ℝ) < 1 / 8) (Annealed.sigmaBar M L))
+      (1 / 8 : ℝ) (Annealed.sigmaBar M L))
     ((laneTotal_measurable L n hLn hYcellMeas).sqrt)
     ((laneTotal_measurable L n hLn hZcellMeas).sqrt)
     hdomAE (hsqrtU.mono_scale hampU) (hsqrtV.mono_scale hampV)

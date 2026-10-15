@@ -477,24 +477,6 @@ theorem summable_rareWeight {s : ℝ} (hs : 0 < s) (hs1 : s ≤ 1) {d : ℕ} (hd
 
 /-! ## 5. The abstract lane aggregation -/
 
-/-- Measurability of a countable sum of nonnegative measurable functions.  The
-`Measurable` twin of the proved `A.aemeasurable_tsum_of_nonneg`
-(`Provider/Orlicz/TsumTriangle.lean`), same `NNReal` route; that lemma returns
-only `AEMeasurable`, while `IsTwoTermBigOWithWitnesses` and the witness upgrade demand
-`Measurable`. -/
-private theorem measurable_tsum_of_nonneg {Omega : Type*} [MeasurableSpace Omega]
-    {X : ℕ → Omega → ℝ} (hXm : ∀ k, Measurable (X k)) (hX0 : ∀ k omega, 0 ≤ X k omega) :
-    Measurable (fun omega => ∑' k : ℕ, X k omega) := by
-  have hnn : Measurable (fun omega => ∑' k : ℕ, (X k omega).toNNReal) :=
-    Measurable.tsum (L := SummationFilter.unconditional ℕ) fun k => (hXm k).real_toNNReal
-  have hnn := hnn.coe_nnreal_real
-  convert hnn using 1
-  funext omega
-  rw [NNReal.coe_tsum]
-  refine tsum_congr fun k => ?_
-  rw [Real.toNNReal_of_nonneg (hX0 k omega)]
-  rfl
-
 /-- **One lane of the aggregation.**  A per-`(depth, cube)` family of `Γ_σ` variables at one
 common amplitude `A` is turned into a single measurable envelope for the whole weighted grid
 series: the grid maximum at each depth (`Provider/Orlicz/Maximum.lean`, amplitude
@@ -582,7 +564,7 @@ private theorem exists_laneEnvelope {Omega : Type*} [MeasurableSpace Omega]
       (fun omega => Real.rpow (3 : ℝ) (-s * (j : ℝ)) * g j omega) (alpha j) := by
     intro j
     exact (IsBigOWith.const_mul (hweightNonneg j) (hsupTail j)).mono_scale (halphaBound j)
-  refine ⟨g, hg0, hgle, measurable_tsum_of_nonneg hXm hX0, ?_, ?_⟩
+  refine ⟨g, hg0, hgle, Measurable.tsum (L := SummationFilter.unconditional ℕ) hXm, ?_, ?_⟩
   · exact Provider.Orlicz.isBigOWith_gammaSigma_tsum_of_tsum_le hsigma hX0 hXm
       halphaPos halphaSum hXt halphaB
   · exact Provider.Orlicz.ae_summable_of_isBigOWith_gammaSigma hsigma hX0

@@ -65,22 +65,8 @@ theorem fluxCorrectedTwoScaleErrorFunctional_nonneg (M : ABKModel d)
     0 ≤ fluxCorrectedTwoScaleErrorFunctional M L m n s omega :=
   Real.sqrt_nonneg _
 
-private theorem fluxCorrectedTwoScaleErrorFunctional_term_nonneg
-    (M : ABKModel d) (L m n : ℤ) {s : ℝ} (hs : 0 < s) (l : ℕ)
-    (omega : Cutoff.CutoffSample d) :
-    0 ≤ Ch02.geometricWeight s 2 l *
-      fluxCorrectedMaxDescendantNormalizedBlockResponseRepresentative M L m
-        (originCube d m) (n - (l : ℤ))
-        (isotropicComparatorMatrix (Annealed.sigmaBar M m)) omega := by
-  refine mul_nonneg ?_ ?_
-  · simpa only [Ch02.geometricWeight_eq_old] using
-      HCPolySupport.geometricWeight_nonneg l (by positivity : 0 ≤ s * (2 : ℝ))
-  · exact fluxCorrectedMaxDescendantNormalizedBlockResponseRepresentative_nonneg
-      M L m (originCube d m) (n - (l : ℤ))
-      (isotropicComparatorMatrix (Annealed.sigmaBar M m)) omega
-
 theorem measurable_fluxCorrectedTwoScaleErrorFunctional (M : ABKModel d)
-    (L : ℤ) {m n : ℤ} (hnm : n ≤ m) {s : ℝ} (hs : 0 < s) :
+    (L : ℤ) {m n : ℤ} (hnm : n ≤ m) {s : ℝ} :
     Measurable (fluxCorrectedTwoScaleErrorFunctional M L m n s) := by
   have hterm : ∀ l : ℕ, Measurable
       (fun omega => Ch02.geometricWeight s 2 l *
@@ -92,8 +78,7 @@ theorem measurable_fluxCorrectedTwoScaleErrorFunctional (M : ABKModel d)
       ((sub_le_self n (by exact_mod_cast Nat.zero_le l)).trans hnm)
       (isotropicComparatorMatrix (Annealed.sigmaBar M m))).const_mul _
   exact Real.continuous_sqrt.measurable.comp
-    (measurable_tsum_of_nonneg _ hterm
-      (fluxCorrectedTwoScaleErrorFunctional_term_nonneg M L m n hs))
+    (Measurable.tsum (L := SummationFilter.unconditional ℕ) hterm)
 
 /-- The two-argument representative at the `{s // 0 < s}` public carrier. -/
 noncomputable def fluxCorrectedTwoScaleErrorRepresentative (M : ABKModel d)
@@ -106,7 +91,7 @@ theorem measurable_fluxCorrectedTwoScaleErrorRepresentative (M : ABKModel d)
     Measurable (fluxCorrectedTwoScaleErrorRepresentative M L m n s) := by
   let : NeZero d := neZero_of_model_FluxCorrectedTwoScale M
   change Measurable (fluxCorrectedTwoScaleErrorFunctional M L m n (s : ℝ))
-  exact measurable_fluxCorrectedTwoScaleErrorFunctional M L hnm s.2
+  exact measurable_fluxCorrectedTwoScaleErrorFunctional (s := (s : ℝ)) M L hnm
 
 /-- The two-argument `sup_{L ≥ m}` observable, taken in `[0,∞]` so no convergence
 side condition enters the statement. -/

@@ -8,6 +8,7 @@ module
 
 public import LeanPool.Superdiffusion.Algsuperdiff.Section3.Cutoff.CoefficientFamily
 public import LeanPool.Superdiffusion.Algsuperdiff.Section3.Cutoff.Law
+public import LeanPool.Superdiffusion.Support.HighContrast.LocalEllipticity
 
 /-!
 # LawCarrier
@@ -37,39 +38,6 @@ open HCPolySupport HCPolySupport.Book
 noncomputable section
 
 variable {d : ℕ}
-
-/-- The exact Chapter 4 local-ellipticity support event is measurable.  This is the
-countable quantitative-slice characterization of CoarseGraining's own
-`AELocallyUniformlyEllipticField`, kept local so the cutoff construction does not depend
-on the unrelated high-contrast development where the general lemma also occurs. -/
-private theorem measurableSet_aeLocallyUniformlyEllipticField :
-    MeasurableSet {a : RegCoeffField d | Ch04.AELocallyUniformlyEllipticField a} := by
-  classical
-  have hEq : {a : RegCoeffField d | Ch04.AELocallyUniformlyEllipticField a}
-      = ⋂ Q : TriadicCube d, ⋃ k : ℕ,
-          {a : RegCoeffField d |
-            AEEQuantitativeEllipticSlice (cubeSet Q) k a.toFun} := by
-    ext a
-    simp only [Set.mem_ofPred_eq, Set.mem_iInter, Set.mem_iUnion]
-    constructor
-    · intro ha Q
-      exact ha.exists_aeeQuantitativeEllipticSlice_cubeSet Q
-    · intro ha Q
-      obtain ⟨k, hk⟩ := ha Q
-      have hkpos : (0 : ℝ) < ((k : ℝ) + 1)⁻¹ := by positivity
-      have h1le : (1 : ℝ) ≤ (k : ℝ) + 1 := by
-        have hk_nonneg : (0 : ℝ) ≤ (k : ℝ) := by positivity
-        linarith
-      have hle : ((k : ℝ) + 1)⁻¹ ≤ (k : ℝ) + 1 :=
-        le_trans ((inv_le_one₀ (by positivity)).2 h1le) h1le
-      refine ⟨((k : ℝ) + 1)⁻¹, (k : ℝ) + 1, hkpos, hle, ?_⟩
-      have hslice : IsAEEllipticFieldOn ((k : ℝ) + 1)⁻¹ ((k : ℝ) + 1)
-          (cubeSet Q) a.toFun := hk
-      exact hslice.mono (measurableSet_openCubeSet Q) (openCubeSet_subset_cubeSet Q)
-  rw [hEq]
-  refine MeasurableSet.iInter fun Q => MeasurableSet.iUnion fun k => ?_
-  exact LocalSigmaR_le (cubeSet Q) _
-    (Ch04.measurableSet_localSigmaR_aeeQuantitativeEllipticSlice Q k)
 
 /-- On every triadic cube, the literal cutoff coefficient has the exact a.e.
 ellipticity data stored by its canonical Chapter 2 `CoeffOn` object. -/

@@ -174,26 +174,6 @@ theorem isBigOWith_gammaSigma_tsum_of_tsum_le [IsFiniteMeasure μ]
 
 /-! ## A.e.-measurable summands -/
 
-/-- A countable sum of nonnegative a.e.-measurable real functions is
-a.e.-measurable.  Passing through `NNReal` avoids any pointwise summability
-premise: both real and nonnegative-real `tsum` use zero on a nonsummable
-fiber. -/
-theorem aemeasurable_tsum_of_nonneg {X : ℕ → Ω → ℝ}
-    (hX_meas : ∀ k, AEMeasurable (X k) μ)
-    (hX_nonneg : ∀ k ω, 0 ≤ X k ω) :
-    AEMeasurable (fun ω => ∑' k, X k ω) μ := by
-  have hnn : AEMeasurable (fun ω => ∑' k, (X k ω).toNNReal) μ :=
-    AEMeasurable.tsum (L := SummationFilter.unconditional ℕ) fun k =>
-      (hX_meas k).real_toNNReal
-  have hnn := hnn.coe_nnreal_real
-  convert hnn using 1
-  funext omega
-  rw [NNReal.coe_tsum]
-  apply tsum_congr
-  intro k
-  rw [Real.toNNReal_of_nonneg (hX_nonneg k omega)]
-  rfl
-
 /-- Countable `Gamma_sigma` triangle inequality for nonnegative summands that are
 only a.e.-measurable.  This is the countable extension of CoarseGraining's
 finite `isBigO_finset_sum_of_isBigO_gammaSigma_aemeasurable`; it introduces no

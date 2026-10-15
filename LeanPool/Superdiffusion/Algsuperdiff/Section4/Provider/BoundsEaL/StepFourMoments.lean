@@ -122,33 +122,14 @@ theorem exists_lintegral_rpow_unitCubeHomogenizationError22_le (d : ℕ) : ∃ C
 
 /-! ## 3. (B6a): the whole `L`-free gradient slot -/
 
-/-- Countable nonnegative `ℕ`-sums of measurable real functions are measurable.
-Local re-derivation (distinct name) of the `private` helpers named in the
-module docstring. -/
-private theorem measurable_tsum_nat_of_nonneg {Omega : Type*} [MeasurableSpace Omega]
-    (term : ℕ → Omega → ℝ) (hmeas : ∀ n, Measurable (term n))
-    (hnonneg : ∀ n omega, 0 ≤ term n omega) :
-    Measurable fun omega => ∑' n : ℕ, term n omega := by
-  have hnn : Measurable (fun omega => ∑' n : ℕ, (term n omega).toNNReal) :=
-    Measurable.tsum (L := SummationFilter.unconditional ℕ) fun n =>
-      (hmeas n).real_toNNReal
-  have hnn := hnn.coe_nnreal_real
-  convert hnn using 1
-  funext omega
-  rw [NNReal.coe_tsum]
-  refine tsum_congr fun n => ?_
-  rw [Real.toNNReal_of_nonneg (hnonneg n omega)]
-  rfl
-
 theorem fullGradSeries_nonneg (k : ℤ) (v : Fin d → ℤ)
     (omega : Cutoff.CutoffSample d) : 0 ≤ fullGradSeries k v omega :=
   tsum_nonneg fun n => gradLayerGauge_nonneg k v omega (k - 1 + (n : ℤ))
 
 theorem measurable_fullGradSeries (k : ℤ) (v : Fin d → ℤ) :
     Measurable fun omega : Cutoff.CutoffSample d => fullGradSeries k v omega :=
-  measurable_tsum_nat_of_nonneg _
+  Measurable.tsum (L := SummationFilter.unconditional ℕ)
     (fun n => measurable_gradLayerGauge k v (k - 1 + (n : ℤ)))
-    (fun n omega => gradLayerGauge_nonneg k v omega (k - 1 + (n : ℤ)))
 
 /-- **(B6a) at the slot itself.**  Almost surely the `L`-free gradient slot IS
 the weighted full series, so it inherits the moment bound.  This is the form the

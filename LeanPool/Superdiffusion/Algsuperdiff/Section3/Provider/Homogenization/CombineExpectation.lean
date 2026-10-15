@@ -103,7 +103,7 @@ theorem integrable_cutoffResponseJ_of_isBigOWith_errorSq (M : ABKModel d) (n L :
       ⟨Nat.ne_of_gt (lt_of_lt_of_le (by omega) M.shellPrefix.dimension)⟩
     IsBigOWith (cutoffSampleLaw M).toMeasure (gammaSigma (1 / 4))
         (fun omega =>
-          Observable.cutoffHomogenizationErrorRepresentative M L n eighth_pos
+          Observable.cutoffHomogenizationErrorRepresentative M L n (1 / 8 : ℝ)
             (Annealed.sigmaBar M L) omega ^ 2) theta →
       Integrable (Observable.cutoffResponseJ M n L e)
         (cutoffSampleLaw M).toMeasure := by
@@ -111,19 +111,19 @@ theorem integrable_cutoffResponseJ_of_isBigOWith_errorSq (M : ABKModel d) (n L :
     ⟨Nat.ne_of_gt (lt_of_lt_of_le (by omega) M.shellPrefix.dimension)⟩
   intro hcov
   have hmeas : Measurable fun omega =>
-      Observable.cutoffHomogenizationErrorRepresentative M L n eighth_pos
+      Observable.cutoffHomogenizationErrorRepresentative M L n (1 / 8 : ℝ)
         (Annealed.sigmaBar M L) omega ^ 2 :=
-    (Observable.measurable_cutoffHomogenizationErrorRepresentative M L n eighth_pos
+    (Observable.measurable_cutoffHomogenizationErrorRepresentative M L n (1 / 8 : ℝ)
       (Annealed.sigmaBar M L)).pow_const 2
   have hrpow := integrable_rpow_of_isBigOWith_gammaSigma
     (μ := (cutoffSampleLaw M).toMeasure)
     (Y := fun omega =>
-      Observable.cutoffHomogenizationErrorRepresentative M L n eighth_pos
+      Observable.cutoffHomogenizationErrorRepresentative M L n (1 / 8 : ℝ)
         (Annealed.sigmaBar M L) omega ^ 2)
     (K := theta) (σ := 1 / 4) (p := 1) (by norm_num) htheta le_rfl
     (fun _ => sq_nonneg _) hmeas.aemeasurable hcov
   have hmajor : Integrable (fun omega =>
-      Observable.cutoffHomogenizationErrorRepresentative M L n eighth_pos
+      Observable.cutoffHomogenizationErrorRepresentative M L n (1 / 8 : ℝ)
         (Annealed.sigmaBar M L) omega ^ 2) (cutoffSampleLaw M).toMeasure := by
     simpa only [Real.rpow_one] using hrpow
   refine hmajor.mono'

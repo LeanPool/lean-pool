@@ -364,7 +364,7 @@ theorem ae_error_ge_of_mem_observationScaleBadEvent [NeZero d] (M : ABKModel d)
     ∀ᵐ omega ∂(Cutoff.cutoffSampleLaw M).toMeasure,
       omega ∈ observationScaleBadEvent M L m →
         (1 / 5 : ℝ) ≤ Observable.cutoffHomogenizationErrorRepresentative M L m
-          eighth_pos (Annealed.sigmaBar M L) omega := by
+          (1 / 8 : ℝ) (Annealed.sigmaBar M L) omega := by
   filter_upwards [Observable.cutoffHomogenizationErrorRaw_ae_eq_representative M L m
     eighth_pos (Annealed.sigmaBar M L)] with omega hraw
   intro hbad
@@ -372,15 +372,15 @@ theorem ae_error_ge_of_mem_observationScaleBadEvent [NeZero d] (M : ABKModel d)
   push Not at hlt
   have hsigma : (0 : ℝ) < (Annealed.sigmaBar M L : ℝ) := (Annealed.sigmaBar M L).2
   have hX0 : 0 ≤ Observable.cutoffHomogenizationErrorRepresentative M L m
-      eighth_pos (Annealed.sigmaBar M L) omega :=
-    Observable.cutoffHomogenizationErrorRepresentative_nonneg M L m eighth_pos
+      (1 / 8 : ℝ) (Annealed.sigmaBar M L) omega :=
+    Observable.cutoffHomogenizationErrorRepresentative_nonneg M L m (1 / 8 : ℝ)
       (Annealed.sigmaBar M L) omega
   have hcomp : Observable.isotropicComparatorMatrix (Annealed.sigmaBar M L) =
       scalarMatrix (d := d) ((Annealed.sigmaBar M L : ℝ)) := rfl
   have hErr : Ch02.HomogenizationErrorOnCube (originCube d m) (1 / 8) .infinity
         (.finite 2) (Cutoff.coefficientCutoffTriadicCoeffFamily M L omega)
         (scalarMatrix (d := d) ((Annealed.sigmaBar M L : ℝ))) =
-      Observable.cutoffHomogenizationErrorRepresentative M L m eighth_pos
+      Observable.cutoffHomogenizationErrorRepresentative M L m (1 / 8 : ℝ)
         (Annealed.sigmaBar M L) omega := by
     rw [← hcomp, ← Observable.cutoffHomogenizationErrorRaw_characterization M L m
       (1 / 8) (Annealed.sigmaBar M L) omega]
@@ -458,23 +458,23 @@ scale `theta`. -/
 private theorem fourthMoment_of_cover {M : ABKModel d} {L n : ℤ} {theta : ℝ} (hthetaPos : 0 < theta)
     (hcov : IsBigOWith (Cutoff.cutoffSampleLaw M).toMeasure (gammaSigma (1 / 4))
       (fun omega =>
-        Observable.cutoffHomogenizationErrorRepresentative M L n eighth_pos
+        Observable.cutoffHomogenizationErrorRepresentative M L n (1 / 8 : ℝ)
           (Annealed.sigmaBar M L) omega ^ 2) theta) :
     Integrable (fun omega =>
-        Observable.cutoffHomogenizationErrorRepresentative M L n eighth_pos
+        Observable.cutoffHomogenizationErrorRepresentative M L n (1 / 8 : ℝ)
             (Annealed.sigmaBar M L) omega ^ 2 *
-          Observable.cutoffHomogenizationErrorRepresentative M L n eighth_pos
+          Observable.cutoffHomogenizationErrorRepresentative M L n (1 / 8 : ℝ)
             (Annealed.sigmaBar M L) omega ^ 2)
         (Cutoff.cutoffSampleLaw M).toMeasure ∧
       ∫ omega,
-          Observable.cutoffHomogenizationErrorRepresentative M L n eighth_pos
+          Observable.cutoffHomogenizationErrorRepresentative M L n (1 / 8 : ℝ)
               (Annealed.sigmaBar M L) omega ^ 2 *
-            Observable.cutoffHomogenizationErrorRepresentative M L n eighth_pos
+            Observable.cutoffHomogenizationErrorRepresentative M L n (1 / 8 : ℝ)
               (Annealed.sigmaBar M L) omega ^ 2
           ∂(Cutoff.cutoffSampleLaw M).toMeasure ≤
         badEventMomentConst * theta ^ 2 :=
   integrable_sq_and_integral_sq_le_of_isBigOWith hthetaPos (fun _ => sq_nonneg _)
-    ((Observable.measurable_cutoffHomogenizationErrorRepresentative M L n eighth_pos
+    ((Observable.measurable_cutoffHomogenizationErrorRepresentative M L n (1 / 8 : ℝ)
       (Annealed.sigmaBar M L)).pow_const 2) hcov
 
 /-! ## Pure-real cores of the probabilistic steps
@@ -632,9 +632,9 @@ theorem exists_relativeCutoff_observationScale_badEvent_bound (d : ℕ) :
     have hMarkov := mul_meas_ge_le_integral_of_nonneg
       (μ := (Cutoff.cutoffSampleLaw M).toMeasure)
       (f := fun omega =>
-        Observable.cutoffHomogenizationErrorRepresentative M L m eighth_pos
+        Observable.cutoffHomogenizationErrorRepresentative M L m (1 / 8 : ℝ)
             (Annealed.sigmaBar M L) omega ^ 2 *
-          Observable.cutoffHomogenizationErrorRepresentative M L m eighth_pos
+          Observable.cutoffHomogenizationErrorRepresentative M L m (1 / 8 : ℝ)
             (Annealed.sigmaBar M L) omega ^ 2)
       (Filter.Eventually.of_forall fun _ =>
         mul_nonneg (sq_nonneg _) (sq_nonneg _)) hintm (1 / 625)
@@ -643,22 +643,22 @@ theorem exists_relativeCutoff_observationScale_badEvent_bound (d : ℕ) :
         (Cutoff.cutoffSampleLaw M).toMeasure.real
           {omega |
             (1 / 625 : ℝ) ≤
-              Observable.cutoffHomogenizationErrorRepresentative M L m eighth_pos
+              Observable.cutoffHomogenizationErrorRepresentative M L m (1 / 8 : ℝ)
                   (Annealed.sigmaBar M L) omega ^ 2 *
-                Observable.cutoffHomogenizationErrorRepresentative M L m eighth_pos
+                Observable.cutoffHomogenizationErrorRepresentative M L m (1 / 8 : ℝ)
                   (Annealed.sigmaBar M L) omega ^ 2} := by
       refine Ch04.measureReal_mono_ae ?_
       filter_upwards [hbadInc] with omega homega
       intro hmem
       exact inv_pow_four_le_of_fifth_le
-        (Observable.cutoffHomogenizationErrorRepresentative_nonneg M L m eighth_pos
+        (Observable.cutoffHomogenizationErrorRepresentative_nonneg M L m (1 / 8 : ℝ)
           (Annealed.sigmaBar M L) omega) (homega hmem)
     calc
       (Cutoff.cutoffSampleLaw M).toMeasure.real (observationScaleBadEvent M L m) ≤
           625 * ∫ omega,
-            Observable.cutoffHomogenizationErrorRepresentative M L m eighth_pos
+            Observable.cutoffHomogenizationErrorRepresentative M L m (1 / 8 : ℝ)
                 (Annealed.sigmaBar M L) omega ^ 2 *
-              Observable.cutoffHomogenizationErrorRepresentative M L m eighth_pos
+              Observable.cutoffHomogenizationErrorRepresentative M L m (1 / 8 : ℝ)
                 (Annealed.sigmaBar M L) omega ^ 2
             ∂(Cutoff.cutoffSampleLaw M).toMeasure :=
         hsub.trans (le_mul_of_inv_mul_le hMarkov)
@@ -679,13 +679,13 @@ theorem exists_relativeCutoff_observationScale_badEvent_bound (d : ℕ) :
     have hJnn := Observable.ae_forall_cutoffResponseJ_nonneg M (m - 1) L
     have hGint : Integrable (fun omega =>
         25 / 2 *
-          (Observable.cutoffHomogenizationErrorRepresentative M L (m - 1) eighth_pos
+          (Observable.cutoffHomogenizationErrorRepresentative M L (m - 1) (1 / 8 : ℝ)
                 (Annealed.sigmaBar M L) omega ^ 2 *
               Observable.cutoffHomogenizationErrorRepresentative M L (m - 1)
-                eighth_pos (Annealed.sigmaBar M L) omega ^ 2 +
-            Observable.cutoffHomogenizationErrorRepresentative M L m eighth_pos
+                (1 / 8 : ℝ) (Annealed.sigmaBar M L) omega ^ 2 +
+            Observable.cutoffHomogenizationErrorRepresentative M L m (1 / 8 : ℝ)
                 (Annealed.sigmaBar M L) omega ^ 2 *
-              Observable.cutoffHomogenizationErrorRepresentative M L m eighth_pos
+              Observable.cutoffHomogenizationErrorRepresentative M L m (1 / 8 : ℝ)
                 (Annealed.sigmaBar M L) omega ^ 2))
         (Cutoff.cutoffSampleLaw M).toMeasure := (hintm1.add hintm).const_mul _
     have hnonneg : 0 ≤ᵐ[(Cutoff.cutoffSampleLaw M).toMeasure]
@@ -698,19 +698,19 @@ theorem exists_relativeCutoff_observationScale_badEvent_bound (d : ℕ) :
         (Cutoff.cutoffSampleLaw M).toMeasure]
         fun omega =>
           25 / 2 *
-            (Observable.cutoffHomogenizationErrorRepresentative M L (m - 1) eighth_pos
+            (Observable.cutoffHomogenizationErrorRepresentative M L (m - 1) (1 / 8 : ℝ)
                   (Annealed.sigmaBar M L) omega ^ 2 *
                 Observable.cutoffHomogenizationErrorRepresentative M L (m - 1)
-                  eighth_pos (Annealed.sigmaBar M L) omega ^ 2 +
-              Observable.cutoffHomogenizationErrorRepresentative M L m eighth_pos
+                  (1 / 8 : ℝ) (Annealed.sigmaBar M L) omega ^ 2 +
+              Observable.cutoffHomogenizationErrorRepresentative M L m (1 / 8 : ℝ)
                   (Annealed.sigmaBar M L) omega ^ 2 *
-                Observable.cutoffHomogenizationErrorRepresentative M L m eighth_pos
+                Observable.cutoffHomogenizationErrorRepresentative M L m (1 / 8 : ℝ)
                   (Annealed.sigmaBar M L) omega ^ 2) := by
       filter_upwards [hJdom, hbadInc] with omega hdom hinc
       by_cases hmem : omega ∈ observationScaleBadEvent M L m
       · rw [Set.indicator_of_mem hmem]
         exact response_le_of_bad_event (hdom e he)
-          (Observable.cutoffHomogenizationErrorRepresentative_nonneg M L m eighth_pos
+          (Observable.cutoffHomogenizationErrorRepresentative_nonneg M L m (1 / 8 : ℝ)
             (Annealed.sigmaBar M L) omega) (hinc hmem)
       · rw [Set.indicator_of_notMem hmem]
         exact mul_nonneg (by norm_num)
@@ -726,26 +726,26 @@ theorem exists_relativeCutoff_observationScale_badEvent_bound (d : ℕ) :
       _ ≤ ∫ omega,
             25 / 2 *
               (Observable.cutoffHomogenizationErrorRepresentative M L (m - 1)
-                    eighth_pos (Annealed.sigmaBar M L) omega ^ 2 *
+                    (1 / 8 : ℝ) (Annealed.sigmaBar M L) omega ^ 2 *
                   Observable.cutoffHomogenizationErrorRepresentative M L (m - 1)
-                    eighth_pos (Annealed.sigmaBar M L) omega ^ 2 +
-                Observable.cutoffHomogenizationErrorRepresentative M L m eighth_pos
+                    (1 / 8 : ℝ) (Annealed.sigmaBar M L) omega ^ 2 +
+                Observable.cutoffHomogenizationErrorRepresentative M L m (1 / 8 : ℝ)
                     (Annealed.sigmaBar M L) omega ^ 2 *
-                  Observable.cutoffHomogenizationErrorRepresentative M L m eighth_pos
+                  Observable.cutoffHomogenizationErrorRepresentative M L m (1 / 8 : ℝ)
                     (Annealed.sigmaBar M L) omega ^ 2)
             ∂(Cutoff.cutoffSampleLaw M).toMeasure :=
         integral_mono_of_nonneg hnonneg hGint hle
       _ = 25 / 2 *
             ((∫ omega,
                 Observable.cutoffHomogenizationErrorRepresentative M L (m - 1)
-                    eighth_pos (Annealed.sigmaBar M L) omega ^ 2 *
+                    (1 / 8 : ℝ) (Annealed.sigmaBar M L) omega ^ 2 *
                   Observable.cutoffHomogenizationErrorRepresentative M L (m - 1)
-                    eighth_pos (Annealed.sigmaBar M L) omega ^ 2
+                    (1 / 8 : ℝ) (Annealed.sigmaBar M L) omega ^ 2
                 ∂(Cutoff.cutoffSampleLaw M).toMeasure) +
               ∫ omega,
-                Observable.cutoffHomogenizationErrorRepresentative M L m eighth_pos
+                Observable.cutoffHomogenizationErrorRepresentative M L m (1 / 8 : ℝ)
                     (Annealed.sigmaBar M L) omega ^ 2 *
-                  Observable.cutoffHomogenizationErrorRepresentative M L m eighth_pos
+                  Observable.cutoffHomogenizationErrorRepresentative M L m (1 / 8 : ℝ)
                     (Annealed.sigmaBar M L) omega ^ 2
                 ∂(Cutoff.cutoffSampleLaw M).toMeasure) := by
         rw [integral_const_mul, integral_add hintm1 hintm]

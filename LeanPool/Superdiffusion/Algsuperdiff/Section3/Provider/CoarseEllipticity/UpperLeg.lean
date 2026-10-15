@@ -676,16 +676,10 @@ private theorem measurable_cutoffMassLinearWeightedSum {d : ℕ}
   change Measurable (fun omega : CutoffSample d => ∑' n : ℕ,
     Ch02.geometricWeight (u : ℝ) 2 n *
       (M.nu⁻¹ ^ 2 * Provider.Stream.cutoffFrobeniusMassMaximum Q m n omega))
-  exact Provider.CoarseEllipticity.measurable_tsum_of_nonneg
+  exact Measurable.tsum (L := SummationFilter.unconditional ℕ)
     (fun n =>
       ((Provider.Stream.measurable_cutoffFrobeniusMassMaximum Q m n).const_mul
         (M.nu⁻¹ ^ 2)).const_mul (Ch02.geometricWeight (u : ℝ) 2 n))
-    (fun n omega => mul_nonneg
-      (HCPolySupport.geometricWeight_nonneg n
-        (mul_nonneg (Set.mem_Ioo.mp u.2).1.le (by norm_num)))
-      (mul_nonneg (sq_nonneg _)
-        (Provider.Stream.cutoffFrobeniusMassMaximum_nonneg Q m n omega)))
-    (summable_cutoffMassLinearWeightedSum_terms M Q m u)
 
 /-- Every admissible cutoff upper coefficient at `s` is bounded by four times
 the true infinity endpoint at `s / 2`, uniformly in the exponent. -/

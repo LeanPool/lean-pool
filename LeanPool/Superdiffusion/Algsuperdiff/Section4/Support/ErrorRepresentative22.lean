@@ -188,23 +188,6 @@ theorem cutoffAvgDescendantNormalizedBlockResponseRepresentative_nonneg
 
 /-! ## The `(2,2)` functional and its measurable representative -/
 
-private theorem aemeasurable_tsum_of_nonneg
-    {Ω : Type*} [MeasurableSpace Ω] {mu : Measure Ω} (term : ℕ → Ω → ℝ)
-    (hmeas : ∀ n, AEMeasurable (term n) mu)
-    (hnonneg : ∀ n omega, 0 ≤ term n omega) :
-    AEMeasurable (fun omega => ∑' n, term n omega) mu := by
-  have hnn : AEMeasurable (fun omega => ∑' n, (term n omega).toNNReal) mu :=
-    AEMeasurable.tsum (L := SummationFilter.unconditional ℕ) fun n =>
-      (hmeas n).real_toNNReal
-  have hnn := hnn.coe_nnreal_real
-  convert hnn using 1
-  funext omega
-  rw [NNReal.coe_tsum]
-  apply tsum_congr
-  intro n
-  rw [Real.toNNReal_of_nonneg (hnonneg n omega)]
-  rfl
-
 /-- The nonnegative everywhere-defined countable-sum functional of the `(2,2)`
 error, before selecting its measurable modification. -/
 noncomputable def cutoffHomogenizationError22Functional
@@ -239,7 +222,7 @@ theorem cutoffHomogenizationError22Functional_nonneg
   Real.sqrt_nonneg _
 
 theorem aemeasurable_cutoffHomogenizationError22Functional
-    (M : ABKModel d) (coefficientScale domainScale : ℤ) {s : ℝ} (hs : 0 < s)
+    (M : ABKModel d) (coefficientScale domainScale : ℤ) (s : ℝ)
     (sigma : PositiveScalar) :
     AEMeasurable
       (cutoffHomogenizationError22Functional M coefficientScale domainScale s sigma)
@@ -255,9 +238,7 @@ theorem aemeasurable_cutoffHomogenizationError22Functional
       M coefficientScale (originCube d domainScale)
       ((originCube d domainScale).scale - (l : ℤ))
       (isotropicComparatorMatrix sigma)).const_mul _).aemeasurable
-  have hsum := aemeasurable_tsum_of_nonneg _ hterm
-    (cutoffHomogenizationError22Functional_term_nonneg
-      M coefficientScale domainScale hs sigma)
+  have hsum := AEMeasurable.tsum (L := SummationFilter.unconditional ℕ) hterm
   exact Real.continuous_sqrt.measurable.comp_aemeasurable hsum
 
 /-- The genuine measurable, nonnegative representative of the `(2,2)` cutoff
@@ -266,37 +247,37 @@ measurable modification nonnegative everywhere, while
 `cutoffHomogenizationErrorRaw22_ae_eq_representative22` records its precise
 a.e. identity with the literal. -/
 noncomputable def cutoffHomogenizationErrorRepresentative22
-    (M : ABKModel d) (coefficientScale domainScale : ℤ) {s : ℝ} (hs : 0 < s)
+    (M : ABKModel d) (coefficientScale domainScale : ℤ) (s : ℝ)
     (sigma : PositiveScalar) : Cutoff.CutoffSample d → ℝ :=
   fun omega => max 0 (AEMeasurable.mk
     (cutoffHomogenizationError22Functional M coefficientScale domainScale s sigma)
     (aemeasurable_cutoffHomogenizationError22Functional M coefficientScale domainScale
-      hs sigma) omega)
+      s sigma) omega)
 
 theorem measurable_cutoffHomogenizationErrorRepresentative22
-    (M : ABKModel d) (coefficientScale domainScale : ℤ) {s : ℝ} (hs : 0 < s)
+    (M : ABKModel d) (coefficientScale domainScale : ℤ) (s : ℝ)
     (sigma : PositiveScalar) :
     Measurable
-      (cutoffHomogenizationErrorRepresentative22 M coefficientScale domainScale hs sigma) :=
+      (cutoffHomogenizationErrorRepresentative22 M coefficientScale domainScale s sigma) :=
   measurable_const.max
     (aemeasurable_cutoffHomogenizationError22Functional M coefficientScale domainScale
-      hs sigma).measurable_mk
+      s sigma).measurable_mk
 
 theorem cutoffHomogenizationErrorRepresentative22_nonneg
-    (M : ABKModel d) (coefficientScale domainScale : ℤ) {s : ℝ} (hs : 0 < s)
+    (M : ABKModel d) (coefficientScale domainScale : ℤ) (s : ℝ)
     (sigma : PositiveScalar) (omega : Cutoff.CutoffSample d) :
-    0 ≤ cutoffHomogenizationErrorRepresentative22 M coefficientScale domainScale hs sigma omega :=
+    0 ≤ cutoffHomogenizationErrorRepresentative22 M coefficientScale domainScale s sigma omega :=
   le_max_left _ _
 
 theorem cutoffHomogenizationError22Functional_ae_eq_representative22
-    (M : ABKModel d) (coefficientScale domainScale : ℤ) {s : ℝ} (hs : 0 < s)
+    (M : ABKModel d) (coefficientScale domainScale : ℤ) (s : ℝ)
     (sigma : PositiveScalar) :
     cutoffHomogenizationError22Functional M coefficientScale domainScale s sigma =ᵐ[
         (Cutoff.cutoffSampleLaw M).toMeasure]
-      cutoffHomogenizationErrorRepresentative22 M coefficientScale domainScale hs sigma := by
+      cutoffHomogenizationErrorRepresentative22 M coefficientScale domainScale s sigma := by
   filter_upwards
     [(aemeasurable_cutoffHomogenizationError22Functional M coefficientScale domainScale
-      hs sigma).ae_eq_mk] with omega homega
+      s sigma).ae_eq_mk] with omega homega
   rw [cutoffHomogenizationErrorRepresentative22, ← homega]
   exact (max_eq_right (cutoffHomogenizationError22Functional_nonneg
     M coefficientScale domainScale s sigma omega)).symm
@@ -379,12 +360,12 @@ theorem cutoffHomogenizationErrorRaw22_ae_eq_representative22 [NeZero d]
     (sigma : PositiveScalar) :
     cutoffHomogenizationErrorRaw22 M coefficientScale domainScale s sigma =ᵐ[
         (Cutoff.cutoffSampleLaw M).toMeasure]
-      cutoffHomogenizationErrorRepresentative22 M coefficientScale domainScale hs sigma := by
+      cutoffHomogenizationErrorRepresentative22 M coefficientScale domainScale s sigma := by
   filter_upwards
     [ae_forall_normalizedBlockResponseMax_cutoff_eq_representative M coefficientScale
       (isotropicComparatorMatrix sigma),
       cutoffHomogenizationError22Functional_ae_eq_representative22
-        M coefficientScale domainScale hs sigma] with omega hall hrepresentative
+        M coefficientScale domainScale s sigma] with omega hall hrepresentative
   exact (cutoffHomogenizationErrorRaw22_eq_functional_on_common_event
     M coefficientScale domainScale hs sigma omega hall).trans hrepresentative
 
@@ -400,25 +381,25 @@ Cutoff.translateCutoffSample z` (resolution A4). -/
 noncomputable def annularErrorObservable (M : ABKModel d) (n : ℤ)
     (s : {s : ℝ // 0 < s}) : Cutoff.CutoffSample d → ℝ := by
   letI : NeZero d := neZero_of_model_ErrorRepresentative22 M
-  exact cutoffHomogenizationErrorRepresentative22 M (n - 2) n s.2
+  exact cutoffHomogenizationErrorRepresentative22 M (n - 2) n (s : ℝ)
     (Annealed.sigmaBar M (n - 2))
 
 theorem measurable_annularErrorObservable (M : ABKModel d) (n : ℤ)
     (s : {s : ℝ // 0 < s}) :
     Measurable (annularErrorObservable M n s) := by
   let : NeZero d := neZero_of_model_ErrorRepresentative22 M
-  change Measurable (cutoffHomogenizationErrorRepresentative22 M (n - 2) n s.2
+  change Measurable (cutoffHomogenizationErrorRepresentative22 M (n - 2) n (s : ℝ)
     (Annealed.sigmaBar M (n - 2)))
-  exact measurable_cutoffHomogenizationErrorRepresentative22 M (n - 2) n s.2
+  exact measurable_cutoffHomogenizationErrorRepresentative22 M (n - 2) n (s : ℝ)
     (Annealed.sigmaBar M (n - 2))
 
 theorem annularErrorObservable_nonneg (M : ABKModel d) (n : ℤ)
     (s : {s : ℝ // 0 < s}) (omega : Cutoff.CutoffSample d) :
     0 ≤ annularErrorObservable M n s omega := by
   let : NeZero d := neZero_of_model_ErrorRepresentative22 M
-  change 0 ≤ cutoffHomogenizationErrorRepresentative22 M (n - 2) n s.2
+  change 0 ≤ cutoffHomogenizationErrorRepresentative22 M (n - 2) n (s : ℝ)
     (Annealed.sigmaBar M (n - 2)) omega
-  exact cutoffHomogenizationErrorRepresentative22_nonneg M (n - 2) n s.2
+  exact cutoffHomogenizationErrorRepresentative22_nonneg M (n - 2) n (s : ℝ)
     (Annealed.sigmaBar M (n - 2)) omega
 
 /-- The public `𝒢₂` observable is almost everywhere the literal `𝒢₂` atom of
@@ -431,7 +412,7 @@ theorem annularErrorAtom_ae_eq_annularErrorObservable (M : ABKModel d) (n : ℤ)
   let : NeZero d := neZero_of_model_ErrorRepresentative22 M
   change cutoffHomogenizationErrorRaw22 M (n - 2) n (s : ℝ)
       (Annealed.sigmaBar M (n - 2)) =ᵐ[(Cutoff.cutoffSampleLaw M).toMeasure]
-    cutoffHomogenizationErrorRepresentative22 M (n - 2) n s.2
+    cutoffHomogenizationErrorRepresentative22 M (n - 2) n (s : ℝ)
       (Annealed.sigmaBar M (n - 2))
   exact cutoffHomogenizationErrorRaw22_ae_eq_representative22 M (n - 2) n s.2
     (Annealed.sigmaBar M (n - 2))

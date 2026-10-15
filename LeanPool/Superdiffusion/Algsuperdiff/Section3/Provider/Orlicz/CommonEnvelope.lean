@@ -122,11 +122,11 @@ theorem exists_twoChannel_commonEnvelope_of_summable
   have hTTwoNonneg : ∀ omega, 0 ≤ TTwo omega := fun omega => by
     exact tsum_nonneg fun j => hWTwoNonneg j omega
   have hTOneMeas : AEMeasurable TOne mu :=
-    aemeasurable_tsum_of_nonneg
-      (fun j => (hWOneMeas j).aemeasurable) hWOneNonneg
+    AEMeasurable.tsum (L := SummationFilter.unconditional ℕ)
+      (fun j => (hWOneMeas j).aemeasurable)
   have hTTwoMeas : AEMeasurable TTwo mu :=
-    aemeasurable_tsum_of_nonneg
-      (fun j => (hWTwoMeas j).aemeasurable) hWTwoNonneg
+    AEMeasurable.tsum (L := SummationFilter.unconditional ℕ)
+      (fun j => (hWTwoMeas j).aemeasurable)
   let SOne : Omega → ℝ := fun omega => |hTOneMeas.mk TOne omega|
   let STwo : Omega → ℝ := fun omega => |hTTwoMeas.mk TTwo omega|
   have hSOneMeas : Measurable SOne :=

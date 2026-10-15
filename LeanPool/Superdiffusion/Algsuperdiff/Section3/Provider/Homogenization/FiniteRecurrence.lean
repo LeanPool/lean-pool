@@ -629,7 +629,7 @@ theorem exists_integral_cutoffResponseJ_le_finiteCorridorIndyhypDisplay (d : ℕ
   have hs : (0 : ℝ) < 1 / 4 := by norm_num
   obtain ⟨hdelta1mem, hmomentAll⟩ :=
     amplitude_mem_Ioc_and_lintegral_pow_four_le M (le_max_right _ _) hEfloor hregime hLower
-      hepsilon hgate hs
+      hepsilon hgate
   have hmoment := hmomentAll L (by omega)
   have hd2 : 2 ≤ d := M.shellPrefix.dimension
   have hLm : L ≤ m := by omega
