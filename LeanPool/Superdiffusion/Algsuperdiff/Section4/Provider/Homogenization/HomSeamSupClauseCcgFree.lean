@@ -19,43 +19,26 @@ Module imports, support namespace and local option directives adapted for Lean P
 
 
 /-!
-# The `Ccg` RE-THREAD: the seam carriers at a MODEL-DEPENDENT clause constant
+# Seam supply at a model-dependent clause constant
 
-## Why the pin has to move
+The clause constant is explicit at each model. This module supplies three
+interfaces:
 
-The sup-form clause carrier of `HomSeamSupClauseProvider` and
-`HomSeamSupClauseChain.RecutCoreSupplyFluxEnergySupGrad` hard-code
-`recutPinnedCcgFlux d p` in the clause conjunct.  The route that actually
-PRODUCES the sup-form clause (`HomSpineDepthBandInput`) arrives at its own
-constant `√d · CA · C(p,d)`, and `CA = (1 + C(d)(near + 2·x₀⁻¹))^{1/p'}` is
-model-dependent: the two-sided pin `x₀ ≤ s·p'` forces `x₀ ≍ |log γ|⁻¹`, so
-`CA ≍ |log γ|^{1-1/(4d)}` —'s own record.  The lane's numeral pin
-cannot receive it.
+* `RecutCoreSupplyFluxSupClauseAt`: the sup-form clause at a constant `Ccg`;
+* `SeamMultiscaleSupClauseSupplyAt`: its almost-sure supply at `CcgF M`;
+* `SeamSupplyFluxAtSupGradBudget`: the energy and clause supply, together with
+  the flux-corrected parent identification, at that same model-dependent constant.
 
-This file frees the slot.  The `Ccg` thread is SHORT: it dies at
-`HomSeamSupClauseChain.SpineDatumCoarseGrainingRecutFluxHalfSupGrad`, which
-quantifies `Ccg` EXISTENTIALLY.  So only three things have to be re-cut:
+`seamSupplyFluxAtSupGradBudget_of_supClauseAt` combines a clause supply with
+the regularity display. The downstream core in `HomSeamSupClauseChain` already
+carries `Ccg` freely, so `seamBundleOfRegularityHalfSupGradBudget_of_supplyAt`
+produces the budgeted seam bundle without fixing a numeral for this constant.
 
-```text
-  RecutCoreSupplyFluxSupClauseAt      -- the clause carrier, `Ccg` free
-  SeamMultiscaleSupClauseSupplyAt     -- the supply, at `CcgF: ABKModel d → ℝ`
-  SeamSupplyFluxAtSupGradBudget       -- the energy+clause supply layer at `CcgF`
-```
-
-Everything above them (`spineDatumRecutCoreFluxAtHalfSupGrad_of_supply`,
-`spineDatumCoarseGrainingRecutFluxAtHalfSupGrad_of_core_pinned`,
-`spineClauseConst_le_abs_half`) is ALREADY `Ccg`-free and is used verbatim.
-
-The re-thread is a strict widening: at the constant function
-`recutPinnedCcgFlux` the re-cut supply IS the pinned one, by `Iff.rfl`.
-
-## The budget, made explicit
-
-`K_abs` is affine in `C_en⁰` and LINEAR in `Ccg`
-(`recutCwHalfEnvelope_affine`), so the display's budget
-`K_abs ≤ C_abs·|log γ|` needs exactly ONE quantitative input: the PRODUCT
-`Ccg(M) · GEOM(M)` must stay inside one `|log γ|`.  That is precisely
-`HomSeamBudgetArith.recut_geomBudget_le_absLog`, which is available and waiting.
+The pairing envelope is linear in `Ccg` and affine in `C_en⁰`, as proved by
+`recutCwHalfEnvelope_affine`. For positive exponents,
+`one_le_coarseGrainingGeomFactor` bounds the energy factor below by one. With
+this hypothesis, `seamKabsAt_le_budget` bounds the full constant from the product budget
+`Ccg * GEOM ≤ C_bud * L`.
 -/
 
 open Algsuperdiff.Section3
@@ -117,9 +100,9 @@ def SeamMultiscaleSupClauseSupplyAt (d : ℕ) (hd1 : 1 ≤ d)
 
 /-! ## 2. The supply layer at `CcgF` -/
 
-/-- `HomSeamSupClauseSpine.SeamEnergySupplyOfRegularityGradSupBudget` carried one
-step further — straight to `RecutCoreSupplyFluxAtSupGrad`, whose `Ccg` slot is
-already free — at a model-dependent clause constant. -/
+/-- The energy and clause supply at a model-dependent constant `CcgF M`,
+with the flux-corrected parent identification included in
+`RecutCoreSupplyFluxAtSupGrad`. -/
 def SeamSupplyFluxAtSupGradBudget (d : ℕ) (hd1 : 1 ≤ d)
     (cstar gamma0 : ℝ) (Cen0F CcgF : ABKModel d → ℝ) (Ctop Creg : ℝ) : Prop :=
   ∀ M : ABKModel d, Disorder.cstar M = cstar → M.gamma ≤ gamma0 →

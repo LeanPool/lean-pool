@@ -30,7 +30,7 @@ noncomputable section
 
 variable {d : ℕ}
 
-/-! ## 1.: the `γ₀` min-merge and the threshold merge -/
+/-! ## Projections of a merged threshold -/
 
 /-- The left projection of a merged threshold. -/
 theorem rootGamma0_le_left {g0 g1 gamma : ℝ} (h : gamma ≤ min g0 g1) : gamma ≤ g0 :=
@@ -40,42 +40,10 @@ theorem rootGamma0_le_left {g0 g1 gamma : ℝ} (h : gamma ≤ min g0 g1) : gamma
 theorem rootGamma0_le_right {g0 g1 gamma : ℝ} (h : gamma ≤ min g0 g1) : gamma ≤ g1 :=
   le_trans h (min_le_right _ _)
 
-/-! ## 3.: the two clauses of the a.e. display -/
-
-/-- **Clause (A) of the a.e. lattice display**: the printed three-leg estimate
-printed lattice centre.  The binder prefix and the conjunct body are
-`RootInterfaceAe.RootLatticeDisplayAe`'s, character for character. -/
-def RootDisplayClauseAAe (M : ABKModel d) (C1 Cest alpha : ℝ) : Prop :=
-  ∀ m : ℤ,
-    ∀ᵐ omega ∂(Cutoff.cutoffSampleLaw M).toMeasure,
-      ∀ n : ℤ, n ≤ m →
-        RootWindowPayload M C1 alpha n m omega →
-          ∀ L : ℤ, m ≤ L →
-            ∀ (u h : H1Function (openCubeSet (originCube d m)))
-              (g : Vec d → Vec d) (Kg Kh : ℝ),
-              Support.IsDirichletSolutionOn
-                  (Cutoff.coefficientCutoff M.nu L omega).toCoeffField
-                  (originCube d m) u h g →
-              Support.HolderSeminormBoundOn (openCubeSet (originCube d m))
-                  (1 / 2) Kg g →
-              Support.HolderSeminormBoundOn (openCubeSet (originCube d m))
-                  (1 / 2) Kh h.grad →
-              ∀ x : Vec d, x ∈ openCubeSet (originCube d m) →
-                Real.sqrt M.nu *
-                    Support.normalizedL2On
-                      (truncatedWindow (offGridCentre n x) m (n + 1))
-                      (fun y => Real.sqrt (vecNormSq (u.grad y)))
-                  ≤ Cest * Real.rpow (3 : ℝ) ((1 - alpha) * ((m : ℝ) - (n : ℝ))) *
-                    (Real.sqrt M.nu *
-                        Support.normalizedL2On (openCubeSet (originCube d m))
-                          (fun y => Real.sqrt (vecNormSq (u.grad y)))
-                      + Real.sqrt (Annealed.sigmaBar M m : ℝ)⁻¹ *
-                          Real.rpow (3 : ℝ) ((m : ℝ) / 2) * Kg
-                      + Real.sqrt (Annealed.sigmaBar M m : ℝ) *
-                          Real.rpow (3 : ℝ) ((m : ℝ) / 2) * Kh)
+/-! ## The boundary-leg-free a.e. display -/
 
 /-- **Clause (B) of the a.e. lattice display**: the boundary-leg-free estimate,
-gated by `z ∈ □_{m-1}`.  discharged this clause. -/
+gated by the off-grid centre belonging to `□_{m-1}`. -/
 def RootDisplayClauseBAe (M : ABKModel d) (C1 Cest alpha : ℝ) : Prop :=
   ∀ m : ℤ,
     ∀ᵐ omega ∂(Cutoff.cutoffSampleLaw M).toMeasure,
@@ -104,11 +72,11 @@ def RootDisplayClauseBAe (M : ABKModel d) (C1 Cest alpha : ℝ) : Prop :=
                         + Real.sqrt (Annealed.sigmaBar M m : ℝ)⁻¹ *
                             Real.rpow (3 : ℝ) ((m : ℝ) / 2) * Kg))
 
-/-! ## 4., the `C_est` alignment -/
+/-! ## Increasing the estimate constant -/
 
 /-- Two distinct points of `□_m`.  Needed only to turn the display's own printed
-Hölder binders into the sign facts `0 ≤ K_g`, `0 ≤ K_h` ('s bonus), which is
-what makes the display's right-hand bracket nonnegative. -/
+Hölder binders into the sign facts `0 ≤ K_g`, `0 ≤ K_h`, which make
+the display's right-hand bracket nonnegative. -/
 private theorem exists_ne_pair_originCube [NeZero d] (m : ℤ) :
     ∃ x y : Vec d, x ∈ openCubeSet (originCube d m) ∧
       y ∈ openCubeSet (originCube d m) ∧ x ≠ y := by

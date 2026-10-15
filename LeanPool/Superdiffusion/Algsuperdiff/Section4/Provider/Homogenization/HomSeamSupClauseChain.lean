@@ -33,10 +33,10 @@ the `ℓ^p` clause instead.
 The swap is FREE at the point of consumption:
 `HomSpineSupFormRethread.spineClauseC3_of_supMultiscale` produces clause (C3)
 from the sup clause at IDENTICAL constants.  This file
-carries that measurement through the five carriers of the seam chain:
+carries that measurement through the four carriers of the seam chain:
 
 ```text
-  RecutCoreSupplyFluxEnergySupGrad          RecutCoreSupplyFluxAtSupGrad
+  RecutCoreSupplyFluxAtSupGrad
   SpineDatumRecutCoreFluxAtHalfSupGrad      SpineDatumCoarseGrainingRecutFluxHalfSupGrad
   HomSpineClauseSupplierAtGrad              (unchanged -- the clause is gone by then)
 ```
@@ -61,48 +61,7 @@ noncomputable section
 
 variable {d : ℕ}
 
-/-! ## 1. The energy residue and the supply, at the sup clause -/
-
-/-- The gradient-threaded energy residue with the multiscale
-conjunct re-cut at the print's own sup-over-depths aggregation. -/
-def RecutCoreSupplyFluxEnergySupGrad (M : ABKModel d)
-    (Y : Cutoff.CutoffSample d → ℝ≥0∞) (m : ℤ) (Cen0 : ℝ)
-    (hd1 : 1 ≤ d) (hlog : 4 ≤ |Real.log M.gamma|)
-    (omega : Cutoff.CutoffSample d) : Prop :=
-  ∀ L : ℤ, m ≤ L →
-    ∀ (u v h : H1Function (openCubeSet (originCube d m))) (g : Vec d → Vec d)
-      (Kg Kh KhInf : ℝ),
-      IsDirichletSolutionOn (Cutoff.coefficientCutoff M.nu L omega).toCoeffField
-        (originCube d m) u h g →
-      IsDirichletSolutionOn (fun _ => ((Annealed.sigmaBar M m : ℝ)) • (1 : Mat d))
-        (originCube d m) v h g →
-      HolderSeminormBoundOn (openCubeSet (originCube d m)) (1 / 2) Kg g →
-      HolderSeminormBoundOn (openCubeSet (originCube d m)) (1 / 2) Kh h.grad →
-      (∀ x ∈ openCubeSet (originCube d m), ‖h.grad x‖ ≤ KhInf) →
-      HasGradientOn (openCubeSet (originCube d m)) h.toFun h.grad →
-      ∃ (S : ℝ) (Fflux : Vec d → Vec d),
-        0 ≤ S ∧
-        (∀ N : ℕ,
-          coarseGrainingEnergyPartial (originCube d m)
-              (recutExponent d hd1).exponent.toReal (homS M - homS M / 4) (homK M) N
-              (printedLocalEnergy (fluxCorrectedCoeffOn M L m (originCube d m) omega) u) ≤
-            S) ∧
-        S ≤ Cen0 * recutEnergyFactor M Y m omega *
-            energyBracket ((Annealed.sigmaBar M m : ℝ))
-              (Real.rpow 3 ((m : ℝ) / 2)) Kg KhInf Kh ∧
-        (∀ G : Vec d → Vec d,
-          (∀ x ∈ openCubeSet (originCube d m), G x = u.grad x - v.grad x) →
-          CoarseGrainingSupMultiscale (originCube d m) (homK M)
-            (recutPinnedCcgFlux d (recutExponent d hd1)) (homS M) (homS M / 4)
-            (recutOrderTop : FractionalOrder).1 (recutExponent d hd1).exponent.toReal
-            ((Annealed.sigmaBar M m : ℝ))
-            (recutPinnedE1Flux M L omega m (homK M) (Annealed.sigmaBar M m).2
-              (recutOrderBase M hlog))
-            (recutPinnedE2Flux M L omega m (homK M) (Annealed.sigmaBar M m).2
-              (recutOrderBase M hlog))
-            (recutPinnedDg m recutOrderTop (recutExponent d hd1) g)
-            (printedLocalEnergy (fluxCorrectedCoeffOn M L m (originCube d m) omega) u)
-            G Fflux)
+/-! ## 1. The supply at the sup clause -/
 
 /-- The gradient-threaded core supply, at the sup clause. -/
 def RecutCoreSupplyFluxAtSupGrad (M : ABKModel d)

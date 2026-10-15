@@ -276,22 +276,8 @@ theorem matrixDerivativeNorm_deriv_le_localCubeDerivNorm_cubeSet
 
 private theorem matrixOperatorNorm_le_localCubeControl_openCubeSet (ell : ℤ)
     (j : ShellField d) {x : Vec d} (hx : x ∈ openCubeSet (originCube d ell)) :
-    Ch02.matrixOperatorNorm (j x) ≤ Cutoff.localCubeControl ell j := by
-  have hr : (0 : ℝ) < cubeScaleFactor (originCube d ell) := by
-    rw [cubeScaleFactor_originCube]
-    positivity
-  have hy : (cubeScaleFactor (originCube d ell))⁻¹ • x
-      ∈ openCubeSet (originCube d 0) := by
-    rw [openCubeSet_originCube_eq_smul_originCube_zero, Set.mem_smul_set] at hx
-    obtain ⟨y, hy, hxy⟩ := hx
-    rw [← hxy, smul_smul, inv_mul_cancel₀ (ne_of_gt hr), one_smul]
-    exact hy
-  have hbase := ShellField.matrixOperatorNorm_apply_le_unitCubeValueNorm
-    (ShellField.spatialScale (cubeScaleFactor (originCube d ell)) j)
-    ⟨(cubeScaleFactor (originCube d ell))⁻¹ • x, hy⟩
-  rw [ShellField.spatialScale_apply, smul_smul, mul_inv_cancel₀ (ne_of_gt hr),
-    one_smul] at hbase
-  exact hbase
+    Ch02.matrixOperatorNorm (j x) ≤ Cutoff.localCubeControl ell j :=
+  Cutoff.matrixOperatorNorm_le_localCubeControl ell j hx
 
 /-- The value gauge, at every point of the half-open cube. -/
 theorem matrixOperatorNorm_le_localCubeControl_cubeSet (ell : ℤ) (j : ShellField d)
@@ -301,29 +287,13 @@ theorem matrixOperatorNorm_le_localCubeControl_cubeSet (ell : ℤ) (j : ShellFie
     (ShellField.continuous_matrixOperatorNorm.comp j.1.1.continuous)
     (fun _y hy => matrixOperatorNorm_le_localCubeControl_openCubeSet ell j hy) hx
 
-/-- **Minimality of the value gauge**, the analogue of the proved
-`localCubeDerivNorm_le_of_forall` at the `L^infinity` leg.  The proved in-repo
-version is `private`; it is re-proved here rather than by widening the Section
-3 file's interface. -/
+/-- A nonnegative pointwise bound controls the value gauge. -/
 theorem localCubeControl_le_of_forall (ell : ℤ) (j : ShellField d) {C : ℝ}
     (hC : 0 ≤ C)
     (h : ∀ x ∈ openCubeSet (originCube d ell),
       Ch02.matrixOperatorNorm (j x) ≤ C) :
-    Cutoff.localCubeControl ell j ≤ C := by
-  unfold Cutoff.localCubeControl ShellField.unitCubeValueNorm
-  refine csSup_le ⟨0, none, rfl⟩ ?_
-  rintro _ ⟨o, rfl⟩
-  cases o with
-  | none => exact hC
-  | some x =>
-      have hx : cubeScaleFactor (originCube d ell) • x.1
-          ∈ openCubeSet (originCube d ell) := by
-        rw [openCubeSet_originCube_eq_smul_originCube_zero, Set.mem_smul_set]
-        exact ⟨x.1, x.2, rfl⟩
-      change Ch02.matrixOperatorNorm
-          ((ShellField.spatialScale (cubeScaleFactor (originCube d ell)) j) x.1) ≤ C
-      rw [ShellField.spatialScale_apply]
-      exact h _ hx
+    Cutoff.localCubeControl ell j ≤ C :=
+  Cutoff.localCubeControl_le_of_pointwise ell j C h hC
 
 private theorem matrixOperatorNorm_add_le (A B : Mat d) :
     Ch02.matrixOperatorNorm (A + B)

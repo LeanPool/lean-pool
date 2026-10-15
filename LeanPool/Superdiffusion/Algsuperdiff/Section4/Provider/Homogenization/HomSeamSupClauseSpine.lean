@@ -27,12 +27,11 @@ Module imports, support namespace and local option directives adapted for Lean P
 
 `HomSeamSupClauseChain` re-cut the seam carriers at the sup-form multiscale
 clause.  This file carries the re-cut to the spine's clause supplier — the last
-place the clause is visible — and re-states the two budgeted supply layers of
-the budgeted gradient provider at the sup carriers:
+place the clause is visible — and states the budgeted seam bundle of
+the gradient provider at the sup carriers:
 
 ```text
   homSpineClauseSupplierAtGrad_of_datumRecutFluxHalfSupGrad
-  SeamEnergySupplyOfRegularityGradSupBudget
   SeamBundleOfRegularityHalfSupGradBudget
 ```
 
@@ -212,22 +211,7 @@ theorem homSpineClauseSupplierAtGrad_of_datumRecutFluxHalfSupGrad [NeZero d] (hd
                 Real.sqrt sigmaBarM *
                   (KhInf + Real.rpow 3 ((m : ℝ) / 2) * Kh)) ^ (2 : ℕ) := by ring
 
-/-! ## 2. The two budgeted supply layers, at the sup carriers -/
-
-/-- The budgeted gradient energy supply at the
-sup-form energy residue. -/
-def SeamEnergySupplyOfRegularityGradSupBudget (d : ℕ) (hd1 : 1 ≤ d)
-    (cstar gamma0 : ℝ) (Cen0F : ABKModel d → ℝ) (Ctop Creg : ℝ) : Prop :=
-  ∀ M : ABKModel d, Disorder.cstar M = cstar → M.gamma ≤ gamma0 →
-    ∀ (hlog : 4 ≤ |Real.log M.gamma|) (m : ℤ),
-      ∀ X : Cutoff.CutoffSample d → ℕ∞, Measurable X →
-        (∀ᵐ omega ∂(Cutoff.cutoffSampleLaw M).toMeasure, X omega ≠ ⊤) →
-        (∀ᵐ omega ∂(Cutoff.cutoffSampleLaw M).toMeasure,
-          RegularityDisplayAt M Creg (homAlpha M) m X omega) →
-        ∀ᵐ omega ∂(Cutoff.cutoffSampleLaw M).toMeasure,
-          RecutCoreSupplyFluxEnergySupGrad M
-            (seamEnlargedY M m Ctop (homMinimalScaleFactor (1 - homAlpha M) X)) m
-            (Cen0F M) hd1 hlog omega
+/-! ## 2. The budgeted seam bundle at the sup carriers -/
 
 /-- The budgeted gradient seam bundle at the sup-form
 datum. -/

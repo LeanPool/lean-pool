@@ -100,37 +100,6 @@ variable {d : ℕ}
 
 /-! ## Monotonicity of the deterministic local control -/
 
-/-- The local control at scale `ell` bounds the matrix operator norm of the
-shell at every point of the open origin cube at that scale.  This is the step of
-`Cutoff.abs_entry_le_localCubeControl` before the entry is extracted. -/
-private theorem matrixOperatorNorm_le_localCubeControl (ell : ℤ) (j : ShellField d)
-    {x : Vec d} (hx : x ∈ openCubeSet (originCube d ell)) :
-    matrixOperatorNorm (j x) ≤ localCubeControl ell j := by
-  let r : ℝ := cubeScaleFactor (originCube d ell)
-  have hr_pos : 0 < r := by
-    simpa [r, cubeScaleFactor] using
-      (zpow_pos (show (0 : ℝ) < 3 by norm_num) ell)
-  have hx_scaled : r⁻¹ • x ∈ openCubeSet (originCube d 0) := by
-    have hx' : x ∈ cubeScaleFactor (originCube d ell) •
-        openCubeSet (originCube d 0) := by
-      rw [← openCubeSet_originCube_eq_smul_originCube_zero (d := d) ell]
-      exact hx
-    change x ∈ r • openCubeSet (originCube d 0) at hx'
-    rw [Set.mem_smul_set] at hx'
-    obtain ⟨y, hy, hxy⟩ := hx'
-    rw [← hxy, smul_smul, inv_mul_cancel₀ (ne_of_gt hr_pos), one_smul]
-    exact hy
-  let y : ShellField.UnitOpenCubePoint d := ⟨r⁻¹ • x, hx_scaled⟩
-  calc matrixOperatorNorm (j x)
-      = matrixOperatorNorm ((ShellField.spatialScale r j) y.1) := by
-        rw [ShellField.spatialScale_apply]
-        congr 2
-        dsimp [y]
-        rw [smul_smul, mul_inv_cancel₀ (ne_of_gt hr_pos), one_smul]
-    _ ≤ ShellField.unitCubeValueNorm (ShellField.spatialScale r j) :=
-        ShellField.matrixOperatorNorm_apply_le_unitCubeValueNorm _ y
-    _ = localCubeControl ell j := rfl
-
 /-- Open origin cubes are nested in the scale. -/
 private theorem openCubeSet_originCube_subset_of_le {q q' : ℤ} (hq : q ≤ q') :
     openCubeSet (originCube d q) ⊆ openCubeSet (originCube d q') := by

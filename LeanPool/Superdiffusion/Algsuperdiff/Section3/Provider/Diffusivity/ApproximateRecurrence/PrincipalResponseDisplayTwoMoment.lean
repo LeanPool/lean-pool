@@ -207,15 +207,6 @@ section Expectation
 
 variable {Omega : Type*} [MeasurableSpace Omega]
 
-/-- The positive part of a one-sided weak-Orlicz variable has the same tail, the
-threshold being positive for `t >= 1` and a positive amplitude. -/
-private theorem isBigOWith_max_zero_display {mu : Measure Omega} {Psi : ℝ → ℝ}
-    {X : Omega → ℝ} {A : ℝ} (hA : 0 < A)
-    (hX : IndependentSums.IsBigOWith mu Psi X A) :
-    IndependentSums.IsBigOWith mu Psi (fun omega => max (X omega) 0) A := by
-  simpa only [max_comm] using
-    Algsuperdiff.Section3.Probability.isBigOWith_max_zero hA hX
-
 private theorem rpow_two_eq_pow_display (y : ℝ) : y ^ (2 : ℝ) = y ^ (2 : ℕ) := by
   rw [show (2 : ℝ) = ((2 : ℕ) : ℝ) by norm_num, Real.rpow_natCast]
 
@@ -246,74 +237,22 @@ theorem integral_le_of_le_shift_add_kappa_sq {mu : Measure Omega}
     (hY : IndependentSums.IsBigOWith mu (IndependentSums.gammaSigma sigma) Y A) :
     ∫ omega, X omega ∂mu ≤
       B + kappa * (2 * (b + orliczSecondMomentScale sigma * A)) ^ (2 : ℕ) := by
-  classical
-  set P : Omega → ℝ := fun omega => max (X omega - B) 0 with hPdef
-  have hPnn : ∀ omega, 0 ≤ P omega := fun omega => le_max_right _ _
-  set W0 : Omega → ℝ := fun omega => Real.sqrt (P omega / kappa) with hW0def
-  have hW0nn : ∀ omega, 0 ≤ W0 omega := fun omega => Real.sqrt_nonneg _
-  have hW0m : Measurable W0 :=
-    Real.continuous_sqrt.measurable.comp
-      (((hXm.sub measurable_const).max measurable_const).div measurable_const)
-  have hW0sq : ∀ omega, kappa * W0 omega ^ (2 : ℕ) = P omega := by
-    intro omega
-    rw [hW0def]
-    have hnn : (0 : ℝ) ≤ P omega / kappa := div_nonneg (hPnn omega) hkappa.le
-    rw [Real.sq_sqrt hnn]
-    field_simp
-  have hXle : ∀ omega, X omega ≤ B + kappa * W0 omega ^ (2 : ℕ) := by
-    intro omega
-    rw [hW0sq omega, hPdef]
-    have : X omega - B ≤ max (X omega - B) 0 := le_max_left _ _
-    simp only
-    linarith
-  have hW0leW : ∀ omega, W0 omega ≤ W omega := by
-    intro omega
-    have hP : P omega ≤ kappa * W omega ^ (2 : ℕ) := by
-      rw [hPdef]
-      refine max_le ?_ (by positivity)
-      linarith [hXW omega]
-    have hsq : W0 omega ^ (2 : ℕ) ≤ W omega ^ (2 : ℕ) := by
-      have := hW0sq omega
-      nlinarith [hP, hkappa]
-    exact le_of_sq_le_sq hsq (hW0 omega)
-  -- the measurable lane
-  set Yt : Omega → ℝ := fun omega => W0 omega - b with hYtdef
+  obtain ⟨W0, hW0m, hW0nn, _hW0leW, hXle, hYt⟩ :=
+    exists_measurable_quadratic_dominator hkappa hXm hW0 hXW hWY hY
+  let Yt : Omega → ℝ := fun omega => W0 omega - b
   have hYtm : Measurable Yt := hW0m.sub measurable_const
-  have hYt : IndependentSums.IsBigOWith mu (IndependentSums.gammaSigma sigma) Yt A :=
-    hY.of_le fun omega => by
-      have h1 := hW0leW omega
-      have h2 := hWY omega
-      rw [hYtdef]
-      simp only
-      linarith
+  have hW0shift : ∀ omega, W0 omega ≤ b + Yt omega := by
+    intro omega
+    dsimp [Yt]
+    linarith
   -- the second moment of the proxy
   have hmom0 := integral_rpow_two_le_of_shift_add_one_orlicz hsigma hA hb hYtm hYt
-    hW0nn (fun omega => by rw [hYtdef]; simp only; linarith)
+    hW0nn hW0shift
   have hmom : ∫ omega, W0 omega ^ (2 : ℕ) ∂mu ≤
       (2 * (b + orliczSecondMomentScale sigma * A)) ^ (2 : ℕ) := by
     simpa only [rpow_two_eq_pow_display] using hmom0
-  -- integrability of the proxy's square
-  have hmax := isBigOWith_max_zero_display hA hYt
-  have hIY : Integrable (fun omega => max (Yt omega) 0 ^ (2 : ℕ)) mu := by
-    have h := IndependentSums.integrable_rpow_of_isBigOWith_gammaSigma
-      (p := (2 : ℝ)) hsigma hA (by norm_num) (fun omega => le_max_right _ _)
-      (hYtm.max measurable_const).aemeasurable hmax
-    simpa only [rpow_two_eq_pow_display] using h
-  have hdom2 : ∀ omega,
-      ‖W0 omega ^ (2 : ℕ)‖ ≤ 2 * b ^ (2 : ℕ) + 2 * max (Yt omega) 0 ^ (2 : ℕ) := by
-    intro omega
-    have hle : W0 omega ≤ b + max (Yt omega) 0 := by
-      have : Yt omega ≤ max (Yt omega) 0 := le_max_left _ _
-      rw [hYtdef] at this
-      simp only at this
-      linarith
-    have hnn : (0 : ℝ) ≤ max (Yt omega) 0 := le_max_right _ _
-    rw [Real.norm_eq_abs, abs_of_nonneg (by positivity : (0 : ℝ) ≤ W0 omega ^ (2 : ℕ))]
-    nlinarith [hW0nn omega, hle, hnn, hb, sq_nonneg (b - max (Yt omega) 0)]
-  have hIW0 : Integrable (fun omega => W0 omega ^ (2 : ℕ)) mu := by
-    refine Integrable.mono' ((integrable_const (2 * b ^ (2 : ℕ))).add (hIY.const_mul 2))
-      ((hW0m.pow_const 2).aestronglyMeasurable) ?_
-    exact Filter.Eventually.of_forall hdom2
+  have hIW0 := integrable_sq_of_shift_add_one_orlicz hsigma hA hb
+    hW0m hW0nn hW0shift hYt
   have hIg : Integrable (fun omega => B + kappa * W0 omega ^ (2 : ℕ)) mu :=
     (integrable_const B).add (hIW0.const_mul kappa)
   have hstep : ∫ omega, X omega ∂mu ≤

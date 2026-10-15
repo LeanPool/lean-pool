@@ -136,11 +136,11 @@ theorem measurable_localCubeControl (ell : ℤ) :
   exact ShellField.unitCubeValueNorm_measurable.comp
     (ShellField.measurable_spatialScale _)
 
-/-- The local control bounds every matrix entry on its corresponding open
-origin cube. -/
-theorem abs_entry_le_localCubeControl (ell : ℤ) (j : ShellField d)
-    {x : Vec d} (hx : x ∈ openCubeSet (originCube d ell)) (i k : Fin d) :
-    |j x i k| ≤ localCubeControl ell j := by
+/-- The local control bounds the operator norm at every point of its open cube. -/
+theorem matrixOperatorNorm_le_localCubeControl
+    (ell : ℤ) (j : ShellField d) {x : Vec d}
+    (hx : x ∈ openCubeSet (originCube d ell)) :
+    HCPolySupport.Book.Ch02.matrixOperatorNorm (j x) ≤ localCubeControl ell j := by
   let r : ℝ := cubeScaleFactor (originCube d ell)
   have hr_pos : 0 < r := by
     simpa [r, cubeScaleFactor] using
@@ -157,15 +157,47 @@ theorem abs_entry_le_localCubeControl (ell : ℤ) (j : ShellField d)
     exact hy
   let y : ShellField.UnitOpenCubePoint d := ⟨r⁻¹ • x, hx_scaled⟩
   calc
-    |j x i k| ≤ matrixOperatorNorm (j x) := abs_entry_le_matrixOperatorNorm _ _ _
-    _ = matrixOperatorNorm ((ShellField.spatialScale r j) y.1) := by
+    HCPolySupport.Book.Ch02.matrixOperatorNorm (j x) =
+        HCPolySupport.Book.Ch02.matrixOperatorNorm
+          ((ShellField.spatialScale r j) y.1) := by
       rw [ShellField.spatialScale_apply]
       congr 2
       dsimp [y]
       rw [smul_smul, mul_inv_cancel₀ (ne_of_gt hr_pos), one_smul]
     _ ≤ ShellField.unitCubeValueNorm (ShellField.spatialScale r j) :=
       unit_cube_value_norm_controls _ y
-    _ = localCubeControl ell j := by rfl
+    _ = localCubeControl ell j := rfl
+
+/-- A nonnegative pointwise bound controls the exact local supremum. -/
+theorem localCubeControl_le_of_pointwise
+    (ell : ℤ) (j : ShellField d) (C : ℝ)
+    (hC : ∀ x ∈ openCubeSet (originCube d ell),
+      HCPolySupport.Book.Ch02.matrixOperatorNorm (j x) ≤ C)
+    (hC_nonneg : 0 ≤ C) :
+    localCubeControl ell j ≤ C := by
+  unfold localCubeControl ShellField.unitCubeValueNorm
+  apply csSup_le
+  · exact ⟨0, none, rfl⟩
+  rintro _ ⟨o, rfl⟩
+  cases o with
+  | none => exact hC_nonneg
+  | some x =>
+      let r : ℝ := cubeScaleFactor (originCube d ell)
+      have hx : r • x.1 ∈ openCubeSet (originCube d ell) := by
+        rw [openCubeSet_originCube_eq_smul_originCube_zero, Set.mem_smul_set]
+        exact ⟨x.1, x.2, rfl⟩
+      change HCPolySupport.Book.Ch02.matrixOperatorNorm
+          ((ShellField.spatialScale r j) x.1) ≤ C
+      rw [ShellField.spatialScale_apply]
+      exact hC _ hx
+
+/-- The local control bounds every matrix entry on its corresponding open
+origin cube. -/
+theorem abs_entry_le_localCubeControl (ell : ℤ) (j : ShellField d)
+    {x : Vec d} (hx : x ∈ openCubeSet (originCube d ell)) (i k : Fin d) :
+    |j x i k| ≤ localCubeControl ell j :=
+  (abs_entry_le_matrixOperatorNorm _ _ _).trans
+    (matrixOperatorNorm_le_localCubeControl ell j hx)
 
 /-- The finite partial sum of descending-shell local controls. -/
 def lowerTailPartialSum (ell m : ℤ) (q : ℕ) (omega : ShellSeq d) : ℝ :=

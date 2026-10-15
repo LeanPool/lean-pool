@@ -34,28 +34,6 @@ noncomputable section
 
 variable {d : ℕ}
 
-private theorem localCubeControl_le_of_pointwise
-    (ell : ℤ) (j : ShellField d) (C : ℝ)
-    (hC : ∀ x ∈ openCubeSet (originCube d ell),
-      HCPolySupport.Book.Ch02.matrixOperatorNorm (j x) ≤ C)
-    (hC_nonneg : 0 ≤ C) :
-    localCubeControl ell j ≤ C := by
-  unfold localCubeControl ShellField.unitCubeValueNorm
-  apply csSup_le
-  · exact ⟨0, none, rfl⟩
-  rintro _ ⟨o, rfl⟩
-  cases o with
-  | none => exact hC_nonneg
-  | some x =>
-      let r : ℝ := cubeScaleFactor (originCube d ell)
-      have hx : r • x.1 ∈ openCubeSet (originCube d ell) := by
-        rw [openCubeSet_originCube_eq_smul_originCube_zero, Set.mem_smul_set]
-        exact ⟨x.1, x.2, rfl⟩
-      change HCPolySupport.Book.Ch02.matrixOperatorNorm
-          ((ShellField.spatialScale r j) x.1) ≤ C
-      rw [ShellField.spatialScale_apply]
-      exact hC _ hx
-
 /-- The exact `sSup` local control on a nonnegative-scale origin cube is
 bounded by the finite maximum of translated unit-cube controls. -/
 theorem localCubeControl_le_originCubeUnitControlMax

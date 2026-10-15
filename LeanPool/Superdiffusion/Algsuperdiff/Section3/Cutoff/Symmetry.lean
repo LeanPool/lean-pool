@@ -148,59 +148,6 @@ theorem localCubeControl_negate (ell : ℤ) (j : ShellField d) :
   unfold localCubeControl
   rw [spatialScale_negate, unitCubeValueNorm_negate]
 
-private theorem matrixOperatorNorm_le_localCubeControl
-    (ell : ℤ) (j : ShellField d) {x : Vec d}
-    (hx : x ∈ openCubeSet (originCube d ell)) :
-    HCPolySupport.Book.Ch02.matrixOperatorNorm (j x) ≤ localCubeControl ell j := by
-  let r : ℝ := cubeScaleFactor (originCube d ell)
-  have hr_pos : 0 < r := by
-    simpa [r, cubeScaleFactor] using
-      (zpow_pos (show (0 : ℝ) < 3 by norm_num) ell)
-  have hx_scaled : r⁻¹ • x ∈ openCubeSet (originCube d 0) := by
-    have hx' : x ∈ cubeScaleFactor (originCube d ell) •
-        openCubeSet (originCube d 0) := by
-      rw [← openCubeSet_originCube_eq_smul_originCube_zero (d := d) ell]
-      exact hx
-    change x ∈ r • openCubeSet (originCube d 0) at hx'
-    rw [Set.mem_smul_set] at hx'
-    obtain ⟨y, hy, hxy⟩ := hx'
-    rw [← hxy, smul_smul, inv_mul_cancel₀ (ne_of_gt hr_pos), one_smul]
-    exact hy
-  let y : ShellField.UnitOpenCubePoint d := ⟨r⁻¹ • x, hx_scaled⟩
-  calc
-    HCPolySupport.Book.Ch02.matrixOperatorNorm (j x) =
-        HCPolySupport.Book.Ch02.matrixOperatorNorm
-          ((ShellField.spatialScale r j) y.1) := by
-      rw [ShellField.spatialScale_apply]
-      congr 2
-      dsimp [y]
-      rw [smul_smul, mul_inv_cancel₀ (ne_of_gt hr_pos), one_smul]
-    _ ≤ ShellField.unitCubeValueNorm (ShellField.spatialScale r j) :=
-      ShellField.matrixOperatorNorm_apply_le_unitCubeValueNorm _ y
-    _ = localCubeControl ell j := rfl
-
-private theorem localCubeControl_le_of_pointwise
-    (ell : ℤ) (j : ShellField d) (C : ℝ)
-    (hC : ∀ x ∈ openCubeSet (originCube d ell),
-      HCPolySupport.Book.Ch02.matrixOperatorNorm (j x) ≤ C)
-    (hC_nonneg : 0 ≤ C) :
-    localCubeControl ell j ≤ C := by
-  unfold localCubeControl ShellField.unitCubeValueNorm
-  apply csSup_le
-  · exact ⟨0, none, rfl⟩
-  rintro _ ⟨o, rfl⟩
-  cases o with
-  | none => exact hC_nonneg
-  | some x =>
-      let r : ℝ := cubeScaleFactor (originCube d ell)
-      have hx : r • x.1 ∈ openCubeSet (originCube d ell) := by
-        rw [openCubeSet_originCube_eq_smul_originCube_zero, Set.mem_smul_set]
-        exact ⟨x.1, x.2, rfl⟩
-      change HCPolySupport.Book.Ch02.matrixOperatorNorm
-          ((ShellField.spatialScale r j) x.1) ≤ C
-      rw [ShellField.spatialScale_apply]
-      exact hC _ hx
-
 private theorem exists_translate_localCubeControl_bound (ell : ℤ) (z : Vec d) :
     ∃ ell' : ℤ, ∀ j : ShellField d,
       localCubeControl ell (ShellField.translate z j) ≤ localCubeControl ell' j := by

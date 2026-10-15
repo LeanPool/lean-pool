@@ -64,8 +64,8 @@ attempted: every consumer's constant is a free dimensional constant.
 
 ## Portability
 
-This file imports **only** Mathlib and `Homogenization.*`.  It mentions no
-ABK26 object: no model, no cutoff law, no cube, no scale and no anchor.  It is
+The probability engine mentions no ABK26 model, cutoff law, cube, scale or
+anchor. It is
 therefore a candidate for relocation into CoarseGraining beside the `p`-th
 moment layer-cake bound it consumes.
 
@@ -381,6 +381,107 @@ private theorem integrable_pow_two_max_zero {Y : Omega → ℝ} {A sigma : ℝ}
     (p := (2 : ℝ)) hsigma hA (by norm_num) (fun omega => le_max_right _ _)
     (hYm.max measurable_const).aemeasurable (isBigOWith_max_zero hA hY)
   simpa only [rpow_two_eq_pow] using h
+
+/-- A measurable observable under a quadratic envelope has a measurable,
+nonnegative dominating proxy below the envelope witness. The proxy inherits
+the shifted upper tail over a finite measure without measurability assumptions
+on the original envelope and tail witnesses. -/
+theorem exists_measurable_quadratic_dominator {nu : Measure Omega} [IsFiniteMeasure nu]
+    {Psi : ℝ → ℝ}
+    {X W Y : Omega → ℝ} {B kappa b A : ℝ}
+    (hkappa : 0 < kappa) (hXm : Measurable X) (hWnn : ∀ omega, 0 ≤ W omega)
+    (hXW : ∀ omega, X omega ≤ B + kappa * W omega ^ (2 : ℕ))
+    (hWY : ∀ omega, W omega ≤ b + Y omega)
+    (hY : IndependentSums.IsBigOWith nu Psi Y A) :
+    ∃ W0 : Omega → ℝ, Measurable W0 ∧ (∀ omega, 0 ≤ W0 omega) ∧
+      (∀ omega, W0 omega ≤ W omega) ∧
+      (∀ omega, X omega ≤ B + kappa * W0 omega ^ (2 : ℕ)) ∧
+      IndependentSums.IsBigOWith nu Psi (fun omega => W0 omega - b) A := by
+  classical
+  set P : Omega → ℝ := fun omega => max (X omega - B) 0 with hPdef
+  have hPnn : ∀ omega, 0 ≤ P omega := fun omega => le_max_right _ _
+  set W0 : Omega → ℝ := fun omega => Real.sqrt (P omega / kappa) with hW0def
+  have hW0nn : ∀ omega, 0 ≤ W0 omega := fun omega => Real.sqrt_nonneg _
+  have hW0m : Measurable W0 :=
+    Real.continuous_sqrt.measurable.comp
+      (((hXm.sub measurable_const).max
+        measurable_const).div measurable_const)
+  have hW0sq : ∀ omega, kappa * W0 omega ^ (2 : ℕ) = P omega := by
+    intro omega
+    rw [hW0def]
+    have hnn : (0 : ℝ) ≤ P omega / kappa := div_nonneg (hPnn omega) hkappa.le
+    rw [Real.sq_sqrt hnn]
+    field_simp
+  have hXle : ∀ omega, X omega ≤ B + kappa * W0 omega ^ (2 : ℕ) := by
+    intro omega
+    rw [hW0sq omega, hPdef]
+    have h : X omega - B ≤ max (X omega - B) 0 := le_max_left _ _
+    simp only
+    linarith only [h]
+  have hW0leW : ∀ omega, W0 omega ≤ W omega := by
+    intro omega
+    have hP : P omega ≤ kappa * W omega ^ (2 : ℕ) := by
+      rw [hPdef]
+      refine max_le ?_ (by positivity)
+      linarith only [hXW omega]
+    have hsq : W0 omega ^ (2 : ℕ) ≤ W omega ^ (2 : ℕ) := by
+      have hid := hW0sq omega
+      have hmul : kappa * W0 omega ^ (2 : ℕ) ≤ kappa * W omega ^ (2 : ℕ) :=
+        by linarith only [hid, hP]
+      exact le_of_mul_le_mul_left hmul hkappa
+    exact le_of_sq_le_sq hsq (hWnn omega)
+  refine ⟨W0, hW0m, hW0nn, hW0leW, hXle, ?_⟩
+  exact hY.of_le fun omega => by
+    have h := (hW0leW omega).trans (hWY omega)
+    linarith only [h]
+
+/-- A measurable nonnegative observable below a shifted Gamma-tail witness
+has an integrable square; the tail witness itself need not be measurable. -/
+theorem integrable_sq_of_shift_add_one_orlicz {X Y : Omega → ℝ} {b A sigma : ℝ}
+    (hsigma : 0 < sigma) (hA : 0 < A) (hb : 0 ≤ b)
+    (hXm : Measurable X) (hX0 : ∀ omega, 0 ≤ X omega)
+    (hdom : ∀ omega, X omega ≤ b + Y omega)
+    (hY : IndependentSums.IsBigOWith mu (IndependentSums.gammaSigma sigma) Y A) :
+    Integrable (fun omega => X omega ^ (2 : ℕ)) mu := by
+  let Yt : Omega → ℝ := fun omega => X omega - b
+  have hYtm : Measurable Yt := hXm.sub measurable_const
+  have hYt : IndependentSums.IsBigOWith mu (IndependentSums.gammaSigma sigma) Yt A :=
+    hY.of_le fun omega => by dsimp [Yt]; linarith only [hdom omega]
+  have hI := integrable_pow_two_max_zero hsigma hA hYtm hYt
+  refine Integrable.mono'
+    ((integrable_const (2 * b ^ (2 : ℕ))).add (hI.const_mul 2))
+    (hXm.pow_const 2).aestronglyMeasurable ?_
+  refine Filter.Eventually.of_forall fun omega => ?_
+  rw [Real.norm_eq_abs, abs_of_nonneg (sq_nonneg _)]
+  change X omega ^ (2 : ℕ) ≤ 2 * b ^ (2 : ℕ) + 2 * max (Yt omega) 0 ^ (2 : ℕ)
+  have hle : X omega ≤ b + max (Yt omega) 0 := by
+    have h := le_max_left (Yt omega) 0
+    dsimp [Yt] at h
+    linarith only [h]
+  have hnn : 0 ≤ max (Yt omega) 0 := le_max_right _ _
+  have hmul := mul_le_mul hle hle (hX0 omega) (add_nonneg hb hnn)
+  nlinarith only [hmul, sq_nonneg (b - max (Yt omega) 0)]
+
+/-- A measurable observable with an absolute quadratic envelope is integrable
+when the envelope has a shifted Gamma-tail bound. The envelope and tail
+witnesses need not be measurable. -/
+theorem integrable_of_abs_le_quadratic_orlicz_bound {f W Y : Omega → ℝ}
+    {B kappa b A sigma : ℝ}
+    (hsigma : 0 < sigma) (hA : 0 < A) (hb : 0 ≤ b) (hkappa : 0 < kappa)
+    (hfm : Measurable f) (hWnn : ∀ omega, 0 ≤ W omega)
+    (hfW : ∀ omega, |f omega| ≤ B + kappa * W omega ^ (2 : ℕ))
+    (hWY : ∀ omega, W omega ≤ b + Y omega)
+    (hY : IndependentSums.IsBigOWith mu (IndependentSums.gammaSigma sigma) Y A) :
+    Integrable f mu := by
+  obtain ⟨W0, hW0m, hW0nn, _hW0leW, hXle, hYt⟩ :=
+    exists_measurable_quadratic_dominator hkappa
+      (continuous_abs.measurable.comp hfm) hWnn hfW hWY hY
+  have hIW0 := integrable_sq_of_shift_add_one_orlicz hsigma hA hb hW0m hW0nn
+    (fun omega => by linarith) hYt
+  refine Integrable.mono' ((integrable_const B).add (hIW0.const_mul kappa))
+    hfm.aestronglyMeasurable (Filter.Eventually.of_forall fun omega => ?_)
+  rw [Real.norm_eq_abs]
+  exact hXle omega
 
 /-- **The one-lane shifted second moment.**
 

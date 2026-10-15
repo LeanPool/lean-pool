@@ -19,52 +19,20 @@ Module imports, support namespace and local option directives adapted for Lean P
 
 
 /-!
-# The composition target: `generator_renormalization`, unconditionally
+# The generator-renormalization conclusion
 
-## The remaining distance, named
+`GeneratorRenormalizationShape d cstar` names the frozen conclusion: the
+effective coefficient approximation, moments of the random error envelope,
+and the almost-everywhere comparison estimates for Dirichlet solutions.
 
-`GeneratorRenormalizationShape d cstar` is the frozen conclusion, named
-once so that a composition can be stated without a `sorry`.  Reducing the
-`generator_renormalization` root, at every `d` and every `cstar > 0`,
-to ONE remaining object — an a.e. producer of the sup-form multiscale clause at
-some positive `γ₀` — leaves nothing else: the `C_gap` slot is pinned to the
-numeral `1`, and the factor `D3` is discharged inside
-(`HomSeamBudgetArith.recut_geomFactor_le_absLog`).
-
-## THE EXACT REMAINING APPLICATIONS
-
-To produce such a clause producer one has to run, at each admissible
-`M`, `m` and a.e. `ω`, and at every `L ≥ m` and every datum tuple:
-
-1. the single-depth dual-converse route of `HomSpineSupFormClause`
-   at `p = recutExponent d hd1` (`= 4d`), `hp = recutExponent_two_le`, the
-   predicate `Pred s:= s = recutOrderBase M hlog`, and the dual-converse
-   constant `CA` — the target interface.  Its ONE hypothesis is
-   `NegativeBesovGridSmoothDualConverseAtDepth (originCube d m) s p j CA` at
-   every depth `j`.
-2. The constant reconciliation `Ccg ≤ recutPinnedCcgFlux d (recutExponent d hd1)`:
-   the lane's sup-form clause carrier is pinned at the lane's
-   own constant, while (1) produces its own `Ccg = √d · CA · C(p,d)`.  Either
-   `CoarseGrainingSupMultiscale` must be shown monotone in `Ccg`, or the pin
-   must be re-cut at a model-dependent `CcgF` — see the open question below.
-3. The five datum instantiations of (1): `a:= fluxCorrectedCoeffOn M L m
-   (originCube d m) ω`, `sigma0:= Annealed.sigmaBar M m`, the forced-equation
-   and `H¹₀`-difference legs (`HomSpineDataBridge`), `Gen:= printedLocalEnergy
-   a u`, and `Fgrad`/`Fflux` at the centred difference fields.
-4. The three domination legs `E1`, `E2`, `Dg` at the pinned slots
-   `recutPinnedE1Flux`, `recutPinnedE2Flux`, `recutPinnedDg` (all three already
-   have self-domination lemmas: `parentErrorOne_dominates_self`,
-   `parentErrorTwo_dominates_self`, `overlapSeminorm_dominates_self`).
-
-OPEN QUESTION.  Item 2 is a genuine open interface question: if `CA` is
-model-dependent (`≍ |log γ|^{1-1/(4d)}`), then `Ccg` is model-dependent too, and
-the lane's pinned
-`recutPinnedCcgFlux` cannot receive it.  The frozen budget has room for it — the
-whole `|log γ|` is spent on `GEOM` alone at present, and `GEOM ≤ 2|log γ|` is
-generous — but a `CcgF: ABKModel d → ℝ` re-thread of the lane's sup-form clause
-carrier and of `RecutCoreSupplyFluxEnergySupGrad` (the only two carriers that
-pin `Ccg`; everything downstream already carries it free) is required first.  NOT attempted in this
-file.
+This module defines that conclusion. The composition with a model-dependent
+clause constant is proved in `HomSeamCompositionCcg`, and
+the theorem `generator_renormalization_provider_final` in
+`HomSeamProviderFinal` constructs the shape for every dimension and positive
+`cstar` from the model assumptions.
+The clause and energy supply interfaces used by that route are recorded in
+`HomSeamSupClauseCcgFree`; the downstream seam data carry the clause constant
+as an explicit parameter or existential witness.
 -/
 
 open Algsuperdiff.Section3

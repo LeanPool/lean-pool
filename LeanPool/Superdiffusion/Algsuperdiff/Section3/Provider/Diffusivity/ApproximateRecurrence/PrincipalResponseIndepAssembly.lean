@@ -587,17 +587,6 @@ private theorem exists_kappa_abs_gaugedLoad_mul_le (K : ℤ) (jd : ℕ)
     _ = (((sigma : ℝ))⁻¹ * CU + 2 * ((sigma : ℝ))⁻¹ * CFU + 2 * (sigma : ℝ) * CV) *
         Wl ^ (2 : ℕ) := by ring
 
-private theorem isBigOWith_posPart_load {Omega : Type*} [MeasurableSpace Omega]
-    {mu : Measure Omega} {Psi : ℝ → ℝ}
-    {Y : Omega → ℝ} {A : ℝ} (hA : 0 < A)
-    (hY : IndependentSums.IsBigOWith mu Psi Y A) :
-    IndependentSums.IsBigOWith mu Psi (fun omega => max (Y omega) 0) A := by
-  simpa only [max_comm] using
-    Algsuperdiff.Section3.Probability.isBigOWith_max_zero hA hY
-
-private theorem rpow_two_eq_pow_load (y : ℝ) : y ^ (2 : ℝ) = y ^ (2 : ℕ) := by
-  rw [show (2 : ℝ) = ((2 : ℕ) : ℝ) by norm_num, Real.rpow_natCast]
-
 private theorem integrable_of_abs_le_shift_add_kappa_sq {Omega : Type*}
     [MeasurableSpace Omega] {mu : Measure Omega}
     [IsProbabilityMeasure mu] {f W Y : Omega → ℝ}
@@ -608,86 +597,8 @@ private theorem integrable_of_abs_le_shift_add_kappa_sq {Omega : Type*}
     (hWY : ∀ omega, W omega ≤ b + Y omega)
     (hY : IndependentSums.IsBigOWith mu (IndependentSums.gammaSigma sigma) Y A) :
     Integrable f mu := by
-  classical
-  set P : Omega → ℝ := fun omega => max (|f omega| - B) 0 with hPdef
-  have hPnn : ∀ omega, 0 ≤ P omega := fun omega => le_max_right _ _
-  set W0 : Omega → ℝ := fun omega => Real.sqrt (P omega / kappa) with hW0def
-  have hW0nn : ∀ omega, 0 ≤ W0 omega := fun omega => Real.sqrt_nonneg _
-  have hW0m : Measurable W0 :=
-    Real.continuous_sqrt.measurable.comp
-      ((((continuous_abs.measurable.comp hfm).sub measurable_const).max
-        measurable_const).div measurable_const)
-  have hW0sq : ∀ omega, kappa * W0 omega ^ (2 : ℕ) = P omega := by
-    intro omega
-    rw [hW0def]
-    have hnn : (0 : ℝ) ≤ P omega / kappa := div_nonneg (hPnn omega) hkappa.le
-    rw [Real.sq_sqrt hnn]
-    field_simp
-  have hXle : ∀ omega, |f omega| ≤ B + kappa * W0 omega ^ (2 : ℕ) := by
-    intro omega
-    rw [hW0sq omega, hPdef]
-    have h : |f omega| - B ≤ max (|f omega| - B) 0 := le_max_left _ _
-    simp only
-    linarith only [h]
-  have hW0leW : ∀ omega, W0 omega ≤ W omega := by
-    intro omega
-    have hP : P omega ≤ kappa * W omega ^ (2 : ℕ) := by
-      rw [hPdef]
-      refine max_le ?_ (by positivity)
-      linarith only [hfW omega]
-    have hsq : W0 omega ^ (2 : ℕ) ≤ W omega ^ (2 : ℕ) := by
-      have hid := hW0sq omega
-      have hmul : kappa * W0 omega ^ (2 : ℕ) ≤ kappa * W omega ^ (2 : ℕ) :=
-        by linarith only [hid, hP]
-      exact le_of_mul_le_mul_left hmul hkappa
-    exact le_of_sq_le_sq hsq (hWnn omega)
-  set Yt : Omega → ℝ := fun omega => W0 omega - b with hYtdef
-  have hYtm : Measurable Yt := hW0m.sub measurable_const
-  have hYt : IndependentSums.IsBigOWith mu (IndependentSums.gammaSigma sigma) Yt A :=
-    hY.of_le fun omega => by
-      have h1 := hW0leW omega
-      have h2 := hWY omega
-      rw [hYtdef]
-      simp only
-      linarith only [h1, h2]
-  have hmax := isBigOWith_posPart_load hA hYt
-  have hIY : Integrable
-      (fun omega => max (Yt omega) 0 ^ (2 : ℕ)) mu := by
-    have h := IndependentSums.integrable_rpow_of_isBigOWith_gammaSigma
-      (p := (2 : ℝ)) hsigma hA (by norm_num) (fun omega => le_max_right _ _)
-      (hYtm.max measurable_const).aemeasurable hmax
-    simpa only [rpow_two_eq_pow_load] using h
-  have hdom2 : ∀ omega,
-      W0 omega ^ (2 : ℕ) ≤ 2 * b ^ (2 : ℕ) + 2 * max (Yt omega) 0 ^ (2 : ℕ) := by
-    intro omega
-    have hle : W0 omega ≤ b + max (Yt omega) 0 := by
-      have hm : Yt omega ≤ max (Yt omega) 0 := le_max_left _ _
-      rw [hYtdef] at hm
-      simp only at hm
-      linarith only [hm]
-    have hnn : (0 : ℝ) ≤ max (Yt omega) 0 := le_max_right _ _
-    have hbm : (0 : ℝ) ≤ b + max (Yt omega) 0 := add_nonneg hb hnn
-    have hmul : W0 omega * W0 omega ≤
-        (b + max (Yt omega) 0) * (b + max (Yt omega) 0) :=
-      mul_le_mul hle hle (hW0nn omega) hbm
-    have hexp : (b + max (Yt omega) 0) * (b + max (Yt omega) 0) =
-        2 * b ^ (2 : ℕ) + 2 * max (Yt omega) 0 ^ (2 : ℕ) -
-          (b - max (Yt omega) 0) ^ (2 : ℕ) := by ring
-    have hw : W0 omega ^ (2 : ℕ) = W0 omega * W0 omega := by ring
-    linarith only [hmul, hexp, hw, sq_nonneg (b - max (Yt omega) 0)]
-  have hIW0 : Integrable (fun omega => W0 omega ^ (2 : ℕ)) mu := by
-    refine Integrable.mono'
-      ((integrable_const (2 * b ^ (2 : ℕ))).add (hIY.const_mul 2))
-      ((hW0m.pow_const 2).aestronglyMeasurable) ?_
-    refine Filter.Eventually.of_forall fun omega => ?_
-    rw [Real.norm_eq_abs,
-      abs_of_nonneg (by positivity : (0 : ℝ) ≤ W0 omega ^ (2 : ℕ))]
-    exact hdom2 omega
-  refine Integrable.mono'
-    ((integrable_const B).add (hIW0.const_mul kappa))
-    hfm.aestronglyMeasurable (Filter.Eventually.of_forall fun omega => ?_)
-  rw [Real.norm_eq_abs]
-  exact hXle omega
+  exact integrable_of_abs_le_quadratic_orlicz_bound
+    hsigma hA hb hkappa hfm hWnn hfW hWY hY
 
 private theorem measurable_toFullBlockVec_apply_load {Omega : Type*}
     {mOmega : MeasurableSpace Omega} {W : Omega → BlockVec d}
