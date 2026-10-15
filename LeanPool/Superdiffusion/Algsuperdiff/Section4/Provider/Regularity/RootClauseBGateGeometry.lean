@@ -139,96 +139,9 @@ theorem rootClauseB_dataM_gate [NeZero d] {M : ABKModel d} {m0 : ℤ}
     stepSevenCaccDataM (originCube d n') a (fun y => -gsrc (y + z)) ≤
       rootClauseBDataMConst d CBc *
         (Real.sqrt ((Annealed.sigmaBar M m : ℝ))⁻¹ * edFinalDataOscG Khol m) := by
-  have hFnn : (0 : ℝ) ≤ stepSevenCaccForcingFactor := stepSevenCaccForcingFactor_nonneg
-  have hKnn : (0 : ℝ) ≤ 4 * stepSevenCaccForcingFactor * (64 / 7 * CBc) :=
-    mul_nonneg (mul_nonneg (by norm_num : (0 : ℝ) ≤ 4) hFnn)
-      (by linarith only [hCBc] : (0 : ℝ) ≤ 64 / 7 * CBc)
-  have hidx : (n' + 1 - 1 : ℤ) = n' := by ring
-  have hlam : (Ch02.lambdaS (originCube d n') stepSevenCaccT a)⁻¹ ≤
-      (64 / 7 * CBc) * ((Annealed.sigmaBar M (n' + 1) : ℝ))⁻¹ := by
-    have h := stepSevenLambdaS_inv_le_of_caps (k := n' + 1) a hcaps
-    rwa [hidx] at h
-  set E : ℝ := M.gamma * ((m : ℝ) - ((n' + 1 : ℤ) : ℝ)) with hEdef
-  have hsig : ((Annealed.sigmaBar M (n' + 1) : ℝ))⁻¹ ≤
-      4 * Real.rpow (3 : ℝ) E * ((Annealed.sigmaBar M m : ℝ))⁻¹ :=
-    inv_sigmaBar_le_mul_inv_sigmaBar_of_inductionState hS (by omega) hmm0
-  have hlamF : stepSevenCaccForcingFactor *
-        (Ch02.lambdaS (originCube d n') stepSevenCaccT a)⁻¹ ≤
-      (4 * stepSevenCaccForcingFactor * (64 / 7 * CBc)) *
-        (Real.rpow (3 : ℝ) E * ((Annealed.sigmaBar M m : ℝ))⁻¹) := by
-    have h1 : (Ch02.lambdaS (originCube d n') stepSevenCaccT a)⁻¹ ≤
-        (64 / 7 * CBc) *
-          (4 * Real.rpow (3 : ℝ) E * ((Annealed.sigmaBar M m : ℝ))⁻¹) :=
-      le_trans hlam
-        (mul_le_mul_of_nonneg_left hsig (by linarith only [hCBc]))
-    have h2 := mul_le_mul_of_nonneg_left h1 hFnn
-    exact le_trans h2 (le_of_eq (by ring))
-  have hA : Real.sqrt (stepSevenCaccForcingFactor *
-        (Ch02.lambdaS (originCube d n') stepSevenCaccT a)⁻¹) ≤
-      Real.sqrt (4 * stepSevenCaccForcingFactor * (64 / 7 * CBc)) *
-        (Real.rpow (3 : ℝ) (E / 2) *
-          Real.sqrt ((Annealed.sigmaBar M m : ℝ))⁻¹) := by
-    have hRnn : (0 : ℝ) ≤ Real.rpow (3 : ℝ) E := Real.rpow_nonneg (by norm_num) E
-    refine le_trans (Real.sqrt_le_sqrt hlamF) (le_of_eq ?_)
-    rw [Real.sqrt_mul hKnn, Real.sqrt_mul hRnn, sqrt_rpow_three]
-  have hBes : scaleNormalizedPositiveBesovVectorSeminormTwo (originCube d n')
-        stepOneS (fun y => -gsrc (y + z)) ≤
-      rootClauseBDataBConst d * (Real.rpow (3 : ℝ) ((n' : ℝ) / 2) * Khol) :=
-    besovTranslated_neg_le_holder_gate (m := m) (j := n') hgate hKhol hgHol hgL2 hgW
-  have hforce : ForceBesovRegularity (originCube d n') stepOneS
-      (fun x => -gsrc (x + z)) :=
-    forceBesovRegularity_stepSevenCacc_gate hgate hgL2 hgW
-  have hBesnn : (0 : ℝ) ≤ scaleNormalizedPositiveBesovVectorSeminormTwo
-      (originCube d n') stepOneS (fun y => -gsrc (y + z)) :=
-    cubeBesovPositiveVectorSeminormTwo_nonneg_of_bddAbove _ stepOneS _
-      hforce.partialSeminorms_bddAbove
-  have hAnn : (0 : ℝ) ≤ Real.sqrt (4 * stepSevenCaccForcingFactor * (64 / 7 * CBc)) *
-      (Real.rpow (3 : ℝ) (E / 2) *
-        Real.sqrt ((Annealed.sigmaBar M m : ℝ))⁻¹) :=
-    mul_nonneg (Real.sqrt_nonneg _)
-      (mul_nonneg (Real.rpow_nonneg (by norm_num) _) (Real.sqrt_nonneg _))
-  have hcast : ((n' + 1 : ℤ) : ℝ) = (n' : ℝ) + 1 := by push_cast; ring
-  have hX : (0 : ℝ) ≤ (m : ℝ) - ((n' : ℝ) + 1) := by
-    have h : ((n' + 1 : ℤ) : ℝ) ≤ ((m : ℤ) : ℝ) := by exact_mod_cast (by omega : n' + 1 ≤ m)
-    rw [hcast] at h
-    linarith only [h]
-  have hEle : E ≤ (m : ℝ) - (n' : ℝ) := by
-    rw [hEdef, hcast]
-    have hprod : M.gamma * ((m : ℝ) - ((n' : ℝ) + 1)) ≤
-        (1 / 2 : ℝ) * ((m : ℝ) - ((n' : ℝ) + 1)) :=
-      mul_le_mul_of_nonneg_right (le_of_lt hgamma) hX
-    linarith only [hprod, hX]
-  have hexp : Real.rpow (3 : ℝ) (E / 2) * Real.rpow (3 : ℝ) ((n' : ℝ) / 2) ≤
-      Real.rpow (3 : ℝ) ((m : ℝ) / 2) := by
-    have hadd : Real.rpow (3 : ℝ) (E / 2 + (n' : ℝ) / 2) =
-        Real.rpow (3 : ℝ) (E / 2) * Real.rpow (3 : ℝ) ((n' : ℝ) / 2) :=
-      Real.rpow_add (by norm_num : (0 : ℝ) < 3) _ _
-    rw [← hadd]
-    exact Real.rpow_le_rpow_of_exponent_le (by norm_num) (by linarith only [hEle])
-  have hcoef : (0 : ℝ) ≤ Real.sqrt (4 * stepSevenCaccForcingFactor * (64 / 7 * CBc)) *
-      rootClauseBDataBConst d * Real.sqrt ((Annealed.sigmaBar M m : ℝ))⁻¹ :=
-    mul_nonneg (mul_nonneg (Real.sqrt_nonneg _) (rootClauseBDataBConst_nonneg d))
-      (Real.sqrt_nonneg _)
-  have hstep : (Real.rpow (3 : ℝ) (E / 2) * Real.rpow (3 : ℝ) ((n' : ℝ) / 2)) * Khol ≤
-      Real.rpow (3 : ℝ) ((m : ℝ) / 2) * Khol :=
-    mul_le_mul_of_nonneg_right hexp hKhol
-  rw [stepSevenCaccDataM, rootClauseBDataMConst, edFinalDataOscG]
-  refine le_trans (mul_le_mul hA hBes hBesnn hAnn) ?_
-  calc Real.sqrt (4 * stepSevenCaccForcingFactor * (64 / 7 * CBc)) *
-        (Real.rpow (3 : ℝ) (E / 2) * Real.sqrt ((Annealed.sigmaBar M m : ℝ))⁻¹) *
-        (rootClauseBDataBConst d * (Real.rpow (3 : ℝ) ((n' : ℝ) / 2) * Khol))
-      = Real.sqrt (4 * stepSevenCaccForcingFactor * (64 / 7 * CBc)) *
-          rootClauseBDataBConst d * Real.sqrt ((Annealed.sigmaBar M m : ℝ))⁻¹ *
-          ((Real.rpow (3 : ℝ) (E / 2) * Real.rpow (3 : ℝ) ((n' : ℝ) / 2)) * Khol) := by
-        ring
-    _ ≤ Real.sqrt (4 * stepSevenCaccForcingFactor * (64 / 7 * CBc)) *
-          rootClauseBDataBConst d * Real.sqrt ((Annealed.sigmaBar M m : ℝ))⁻¹ *
-          (Real.rpow (3 : ℝ) ((m : ℝ) / 2) * Khol) :=
-        mul_le_mul_of_nonneg_left hstep hcoef
-    _ = Real.sqrt (4 * stepSevenCaccForcingFactor * (64 / 7 * CBc)) *
-          rootClauseBDataBConst d *
-          (Real.sqrt ((Annealed.sigmaBar M m : ℝ))⁻¹ *
-            (Real.rpow (3 : ℝ) ((m : ℝ) / 2) * Khol)) := by ring
+  exact rootClauseB_dataM_of_besov_bound hS hgamma hmm0 hn' hKhol hCBc hcaps
+    (besovTranslated_neg_le_holder_gate (m := m) (j := n') hgate hKhol hgHol hgL2 hgW)
+    (forceBesovRegularity_stepSevenCacc_gate hgate hgL2 hgW)
 
 end
 

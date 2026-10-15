@@ -51,24 +51,19 @@ theorem sqrt_rpow_three (e : ℝ) :
   have h3 : e * (1 / 2 : ℝ) = e / 2 := by ring
   rw [h1, ← h2, h3]
 
-/-- **The clause-(B) `dataM` leg, produced**: the Caccioppoli's own data leg
-against the printed `K_g`-leg. -/
-theorem rootClauseB_dataM [NeZero d] {M : ABKModel d} {m0 : ℤ}
+/-- A Besov bound and forcing regularity supply the common Caccioppoli data estimate. -/
+theorem rootClauseB_dataM_of_besov_bound [NeZero d] {M : ABKModel d} {m0 : ℤ}
     {Ecap : {E : ℝ // 1 ≤ E}}
     (hS : Algsuperdiff.Frozen.Section3.inductionState M m0 Ecap)
-    (hgamma : M.gamma < 1 / 2) {m n' : ℤ} {z : Vec d} {a : CoeffFamily d}
-    {gsrc : Vec d → Vec d} {Khol CBc : ℝ} (hmm0 : m ≤ m0) (hn' : n' ≤ m - 1)
-    (hz : z ∈ openCubeSet (originCube d (m - 1))) (hKhol : 0 ≤ Khol)
-    (hCBc : 0 ≤ CBc)
-    (hgHol : Support.HolderSeminormBoundOn (openCubeSet (originCube d m))
-      (1 / 2) Khol gsrc)
-    (hgL2 : MemLp gsrc 2
-      (Support.normalizedVolumeMeasureOn (openCubeSet (originCube d m))))
-    (hgW : MemLp (Gagliardo.gagliardoKernel stepOneS 2 gsrc) 2
-      (Support.normalizedGagliardoMeasureOn (openCubeSet (originCube d m))))
+    (hgamma : M.gamma < 1 / 2) {m n' : ℤ} {a : CoeffFamily d}
+    {f : Vec d → Vec d} {Khol CBc : ℝ} (hmm0 : m ≤ m0) (hn' : n' ≤ m - 1)
+    (hKhol : 0 ≤ Khol) (hCBc : 0 ≤ CBc)
     (hcaps : StepSevenLambdaCaps (originCube d (n' + 1)) a
-      ((Annealed.sigmaBar M (n' + 1) : ℝ)) CBc) :
-    stepSevenCaccDataM (originCube d n') a (fun y => -gsrc (y + z)) ≤
+      ((Annealed.sigmaBar M (n' + 1) : ℝ)) CBc)
+    (hBes : scaleNormalizedPositiveBesovVectorSeminormTwo (originCube d n')
+      stepOneS f ≤ rootClauseBDataBConst d * (Real.rpow (3 : ℝ) ((n' : ℝ) / 2) * Khol))
+    (hforce : ForceBesovRegularity (originCube d n') stepOneS f) :
+    stepSevenCaccDataM (originCube d n') a f ≤
       rootClauseBDataMConst d CBc *
         (Real.sqrt ((Annealed.sigmaBar M m : ℝ))⁻¹ * edFinalDataOscG Khol m) := by
   have hFnn : (0 : ℝ) ≤ stepSevenCaccForcingFactor := stepSevenCaccForcingFactor_nonneg
@@ -107,16 +102,8 @@ theorem rootClauseB_dataM [NeZero d] {M : ABKModel d} {m0 : ℤ}
     have hRnn : (0 : ℝ) ≤ Real.rpow (3 : ℝ) E := Real.rpow_nonneg (by norm_num) E
     refine le_trans (Real.sqrt_le_sqrt hlamF) (le_of_eq ?_)
     rw [Real.sqrt_mul hKnn, Real.sqrt_mul hRnn, sqrt_rpow_three]
-  -- the data leg
-  have hBes : scaleNormalizedPositiveBesovVectorSeminormTwo (originCube d n')
-        stepOneS (fun y => -gsrc (y + z)) ≤
-      rootClauseBDataBConst d * (Real.rpow (3 : ℝ) ((n' : ℝ) / 2) * Khol) :=
-    besovTranslated_neg_le_holder (m := m) (j := n') hz hn' hKhol hgHol hgL2 hgW
-  have hforce : ForceBesovRegularity (originCube d n') stepOneS
-      (fun x => -gsrc (x + z)) :=
-    forceBesovRegularity_stepSevenCacc_interior hz hn' hgL2 hgW
   have hBesnn : (0 : ℝ) ≤ scaleNormalizedPositiveBesovVectorSeminormTwo
-      (originCube d n') stepOneS (fun y => -gsrc (y + z)) :=
+      (originCube d n') stepOneS f :=
     cubeBesovPositiveVectorSeminormTwo_nonneg_of_bddAbove _ stepOneS _
       hforce.partialSeminorms_bddAbove
   have hAnn : (0 : ℝ) ≤ Real.sqrt (4 * stepSevenCaccForcingFactor * (64 / 7 * CBc)) *
@@ -171,6 +158,31 @@ theorem rootClauseB_dataM [NeZero d] {M : ABKModel d} {m0 : ℤ}
           rootClauseBDataBConst d *
           (Real.sqrt ((Annealed.sigmaBar M m : ℝ))⁻¹ *
             (Real.rpow (3 : ℝ) ((m : ℝ) / 2) * Khol)) := by ring
+
+
+/-- **The clause-(B) `dataM` leg, produced**: the Caccioppoli's own data leg
+against the printed `K_g`-leg. -/
+theorem rootClauseB_dataM [NeZero d] {M : ABKModel d} {m0 : ℤ}
+    {Ecap : {E : ℝ // 1 ≤ E}}
+    (hS : Algsuperdiff.Frozen.Section3.inductionState M m0 Ecap)
+    (hgamma : M.gamma < 1 / 2) {m n' : ℤ} {z : Vec d} {a : CoeffFamily d}
+    {gsrc : Vec d → Vec d} {Khol CBc : ℝ} (hmm0 : m ≤ m0) (hn' : n' ≤ m - 1)
+    (hz : z ∈ openCubeSet (originCube d (m - 1))) (hKhol : 0 ≤ Khol)
+    (hCBc : 0 ≤ CBc)
+    (hgHol : Support.HolderSeminormBoundOn (openCubeSet (originCube d m))
+      (1 / 2) Khol gsrc)
+    (hgL2 : MemLp gsrc 2
+      (Support.normalizedVolumeMeasureOn (openCubeSet (originCube d m))))
+    (hgW : MemLp (Gagliardo.gagliardoKernel stepOneS 2 gsrc) 2
+      (Support.normalizedGagliardoMeasureOn (openCubeSet (originCube d m))))
+    (hcaps : StepSevenLambdaCaps (originCube d (n' + 1)) a
+      ((Annealed.sigmaBar M (n' + 1) : ℝ)) CBc) :
+    stepSevenCaccDataM (originCube d n') a (fun y => -gsrc (y + z)) ≤
+      rootClauseBDataMConst d CBc *
+        (Real.sqrt ((Annealed.sigmaBar M m : ℝ))⁻¹ * edFinalDataOscG Khol m) := by
+  exact rootClauseB_dataM_of_besov_bound hS hgamma hmm0 hn' hKhol hCBc hcaps
+    (besovTranslated_neg_le_holder (m := m) (j := n') hz hn' hKhol hgHol hgL2 hgW)
+    (forceBesovRegularity_stepSevenCacc_interior hz hn' hgL2 hgW)
 
 end
 

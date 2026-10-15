@@ -580,68 +580,20 @@ private theorem interiorComposed_comparisonBounds2 :
   intro d _ _CE Cout hCoutpos kappa hkappa e0 k0 b0 M s hs L m n x z _ hgeom _ hs1 omega u g hsubx
     _ hcaccW hgL2child hgWchild hR3 Erep hErepCap hErep0 Eb herrD hbrk sig hsig X Y Ychild P2 QS
     Q3s Q3sn S4 S192
-  have hkappadef :
-    kappa = √((192 : ℝ) * (↑d : ℝ)) * (3 : ℝ)
-    := rfl
   have he0def :
     e0 = kappa * (_CE * (1 / 2 : ℝ))
-    := rfl
-  have hk0def :
-    k0 = (2 : ℝ) * (↑d : ℝ) * (e0 ^ (2 : ℕ) + (1 : ℝ))
-    := rfl
-  have hb0def :
-    b0 = √k0 * e0 + (2 : ℝ) * k0
-    := rfl
-  have hEbdef :
-    Eb =
-                      √(offGridStabilityConst d (s / (6 : ℝ)) (s / (8 : ℝ))) *
-                        ((3 : ℝ) ^ ((2 : ℝ) * (s / (8 : ℝ))) * Erep)
     := rfl
   have hS40 : 0 ≤ S4 := Real.rpow_nonneg hs.le _
   have hS1920 : 0 ≤ S192 := Real.rpow_nonneg hs.le _
   have hsiginv0 : (0 : ℝ) ≤ sig⁻¹ := inv_nonneg.mpr hsig.le
-  -- the off-grid error factor
-  have hEb0 : 0 ≤ Eb := by
-    rw [hEbdef]
-    exact mul_nonneg (Real.sqrt_nonneg _)
-      (mul_nonneg (Real.rpow_nonneg (by norm_num) _) hErep0)
-  have hEbkappa : Eb ≤ kappa * Erep := by
-    have h1 : Real.sqrt (offGridStabilityConst d (s / 6) (s / 8)) ≤
-        Real.sqrt (192 * (d : ℝ)) :=
-      Real.sqrt_le_sqrt (offGridStabilityConst_slot_le hs hs1)
-    have h2 : ((3 : ℝ) ^ (2 * (s / 8))) ≤ 3 := by
-      have h := Real.rpow_le_rpow_of_exponent_le (by norm_num : (1 : ℝ) ≤ 3)
-        (by linarith only [hs1] : 2 * (s / 8) ≤ (1 : ℝ))
-      rwa [Real.rpow_one] at h
-    have h3 : (3 : ℝ) ^ (2 * (s / 8)) * Erep ≤ 3 * Erep :=
-      mul_le_mul_of_nonneg_right h2 hErep0
-    have h4 : (0 : ℝ) ≤ (3 : ℝ) ^ (2 * (s / 8)) * Erep :=
-      mul_nonneg (Real.rpow_nonneg (by norm_num) _) hErep0
-    rw [hEbdef]
-    calc Real.sqrt (offGridStabilityConst d (s / 6) (s / 8)) *
-          ((3 : ℝ) ^ (2 * (s / 8)) * Erep)
-        ≤ Real.sqrt (192 * (d : ℝ)) * (3 * Erep) :=
-          mul_le_mul h1 h3 h4 (Real.sqrt_nonneg _)
-      _ = kappa * Erep := by rw [hkappadef]; ring
+  have herror := offGridStabilityError_bound (d := d) hs hs1
+    (by linarith only [hs1] : (2 : ℝ) * (s / 8) ≤ 1) hErep0
+  have hEb0 : 0 ≤ Eb := herror.1
+  have hEbkappa : Eb ≤ kappa * Erep := herror.2
   have hEbe0 : Eb ≤ e0 := by
     refine hEbkappa.trans ?_
     rw [he0def]
     exact mul_le_mul_of_nonneg_left hErepCap hkappa
-  -- (b) the bracket cap
-  have hKble : 2 * (d : ℝ) * (Eb ^ 2 + 1) ≤ k0 := by
-    rw [hk0def]
-    have hsq : Eb ^ 2 ≤ e0 ^ 2 := pow_le_pow_left₀ hEb0 hEbe0 2
-    have h2d : (0 : ℝ) ≤ 2 * (d : ℝ) := by positivity
-    exact mul_le_mul_of_nonneg_left (by linarith only [hsq]) h2d
-  have hbrkCap : coarseGrainingForceBracket (originCube d n)
-      (parentRebasedFamily M L (n + 2) x z omega)
-      (scalarComparator (Annealed.sigmaBar M (n + 2)).2) (s / 3) ≤ b0 := by
-    refine (hbrk x m hgeom).trans ?_
-    rw [hb0def]
-    have h1 : Real.sqrt (2 * (d : ℝ) * (Eb ^ 2 + 1)) * Eb ≤ Real.sqrt k0 * e0 :=
-      mul_le_mul (Real.sqrt_le_sqrt hKble) hEbe0 hEb0 (Real.sqrt_nonneg _)
-    have h2 : 2 * (2 * (d : ℝ) * (Eb ^ 2 + 1)) ≤ 2 * k0 := by linarith only [hKble]
-    linarith only [h1, h2]
   -- (c) the energy leg
   have hEnergy : Ch03.h1EnergyNormOnCube (originCube d n)
       (parentRebasedFamily M L (n + 2) x z omega)
@@ -652,50 +604,19 @@ private theorem interiorComposed_comparisonBounds2 :
     rw [Real.sqrt_mul hCoutpos.le]
     exact mul_le_mul_of_nonneg_left
       (sqrt_interiorAnchorEnergyRHSOn_le M n hs _ u.toFun g) (Real.sqrt_nonneg _)
-  have hEnergy0 : 0 ≤ Ch03.h1EnergyNormOnCube (originCube d n)
+  have hcomparison := coarseGraining_comparisonBounds (originCube d n)
+    (parentRebasedFamily M L (n + 2) x z omega) hsig (s / 3)
+    kappa Erep Eb e0 Cout P2 QS Q3s X Y
+    (H1Function.untranslate x (u.restrict (isOpen_translateSet_openCubeSet x n) hsubx))
+    hkappa hErep0 hEb0 hEbe0 ((herrD x m hgeom).trans hEbkappa) (hbrk x m hgeom) hEnergy
+  have hbrkCap : coarseGrainingForceBracket (originCube d n)
       (parentRebasedFamily M L (n + 2) x z omega)
-      (H1Function.untranslate x (u.restrict (isOpen_translateSet_openCubeSet x n) hsubx)) :=
-    h1EnergyNormOnCube_nonneg _ _ _
-  have hET : coarseGrainingEnergyTerm (originCube d n)
-      (parentRebasedFamily M L (n + 2) x z omega)
-      (scalarComparator (Annealed.sigmaBar M (n + 2)).2) (s / 3)
-      (H1Function.untranslate x (u.restrict (isOpen_translateSet_openCubeSet x n) hsubx)) ≤
-      kappa * Real.sqrt Cout * Erep * (sig * (P2 * X) + QS * (Q3s * Y)) := by
-    have hEcap : Ch03.coarseGrainingHomogenizationErrorAtDepth (originCube d n)
-        (parentRebasedFamily M L (n + 2) x z omega)
-        (scalarComparator (Annealed.sigmaBar M (n + 2)).2) (s / 3) 0 ≤ kappa * Erep :=
-      (herrD x m hgeom).trans hEbkappa
-    rw [coarseGrainingEnergyTerm, constantCoeffMatrixNormHalf_scalarComparator_sqrt]
-    have hstep : Real.sqrt sig *
-        Ch03.coarseGrainingHomogenizationErrorAtDepth (originCube d n)
-          (parentRebasedFamily M L (n + 2) x z omega)
-          (scalarComparator (Annealed.sigmaBar M (n + 2)).2) (s / 3) 0 *
-        Ch03.h1EnergyNormOnCube (originCube d n)
-          (parentRebasedFamily M L (n + 2) x z omega)
-          (H1Function.untranslate x
-            (u.restrict (isOpen_translateSet_openCubeSet x n) hsubx)) ≤
-        Real.sqrt sig * (kappa * Erep) *
-          (Real.sqrt Cout * (Real.sqrt sig * P2 * X + QS * Real.sqrt sig⁻¹ * Q3s * Y)) := by
-      refine mul_le_mul (mul_le_mul_of_nonneg_left hEcap (Real.sqrt_nonneg _)) hEnergy
-        hEnergy0 ?_
-      exact mul_nonneg (Real.sqrt_nonneg _) (mul_nonneg hkappa hErep0)
-    refine hstep.trans (le_of_eq ?_)
-    have h1 : Real.sqrt sig * Real.sqrt sig = sig := Real.mul_self_sqrt hsig.le
-    have h2 : Real.sqrt sig * Real.sqrt sig⁻¹ = 1 := sqrt_mul_sqrt_inv hsig
-    calc Real.sqrt sig * (kappa * Erep) *
-          (Real.sqrt Cout * (Real.sqrt sig * P2 * X + QS * Real.sqrt sig⁻¹ * Q3s * Y))
-        = kappa * Real.sqrt Cout * Erep *
-            ((Real.sqrt sig * Real.sqrt sig) * (P2 * X) +
-              (Real.sqrt sig * Real.sqrt sig⁻¹) * (QS * (Q3s * Y))) := by ring
-      _ = kappa * Real.sqrt Cout * Erep * (sig * (P2 * X) + 1 * (QS * (Q3s * Y))) := by
-            rw [h1, h2]
-      _ = kappa * Real.sqrt Cout * Erep * (sig * (P2 * X) + QS * (Q3s * Y)) := by ring
+      (scalarComparator (Annealed.sigmaBar M (n + 2)).2) (s / 3) ≤ b0 := hcomparison.1
+  have hET := hcomparison.2
   -- (d) the forcing leg
   have hGbes : Ch03.scaleNormalizedPositiveBesovVectorSeminormTwo (originCube d n) s
-      (fun y => -g (y + x)) ≤ besovGagliardoConstant d * Q3sn * Ychild := by
-    have h := besovVectorSeminormTwo_translated_neg_le_gagliardo_window (originCube d n) hs hs1
-      hgL2child hgWchild
-    rwa [cubeBesovScaleWeight_neg_originCube (d := d) n s] at h
+      (fun y => -g (y + x)) ≤ besovGagliardoConstant d * Q3sn * Ychild :=
+    besovVectorSeminormTwo_originCube_translated_neg_le n hs hs1 hgL2child hgWchild
   exact ⟨hS40, hS1920, hsiginv0, hbrkCap, hET, hGbes⟩
 
 private theorem interiorComposed_comparisonBounds3 :

@@ -211,6 +211,86 @@ theorem constantCoeffMatrixNormHalf_scalarComparator_sqrt [NeZero d] {sigma : �
       Real.sqrt sigma := by
   rw [constantCoeffMatrixNormHalf_scalarComparator hsigma, rpow_half_eq_sqrt]
 
+
+/-- The off-grid error factor is bounded uniformly when its scale exponent is at most one. -/
+theorem offGridStabilityError_bound {s exponent E : ℝ} (hs : 0 < s) (hs1 : s ≤ 1)
+    (hexponent : exponent ≤ 1) (hE : 0 ≤ E) :
+    0 ≤ Real.sqrt (offGridStabilityConst d (s / 6) (s / 8)) *
+        ((3 : ℝ) ^ exponent * E) ∧
+      Real.sqrt (offGridStabilityConst d (s / 6) (s / 8)) *
+        ((3 : ℝ) ^ exponent * E) ≤ (Real.sqrt (192 * (d : ℝ)) * 3) * E := by
+  have hpower : (3 : ℝ) ^ exponent ≤ 3 := by
+    simpa only [Real.rpow_one] using
+      Real.rpow_le_rpow_of_exponent_le (by norm_num : (1 : ℝ) ≤ 3) hexponent
+  have hpositive : 0 ≤ (3 : ℝ) ^ exponent * E :=
+    mul_nonneg (Real.rpow_nonneg (by norm_num) _) hE
+  refine ⟨mul_nonneg (Real.sqrt_nonneg _) hpositive, ?_⟩
+  calc
+    Real.sqrt (offGridStabilityConst d (s / 6) (s / 8)) * ((3 : ℝ) ^ exponent * E) ≤
+        Real.sqrt (192 * (d : ℝ)) * (3 * E) :=
+      mul_le_mul (Real.sqrt_le_sqrt (offGridStabilityConst_slot_le hs hs1))
+        (mul_le_mul_of_nonneg_right hpower hE) hpositive (Real.sqrt_nonneg _)
+    _ = (Real.sqrt (192 * (d : ℝ)) * 3) * E := by ring
+
+/-- Error and energy bounds control both coarse-graining comparison coefficients. -/
+theorem coarseGraining_comparisonBounds [NeZero d]
+    (Q : TriadicCube d) (a : Ch03.CoeffFamily d) {sig : ℝ} (hsig : 0 < sig)
+    (r kappa Erep Eb e0 Cout P QS Qf X Y : ℝ)
+    (u : H1Function (Ch02.cubeDomain Q : Set (Vec d)))
+    (hkappa : 0 ≤ kappa) (hErep : 0 ≤ Erep) (hEb : 0 ≤ Eb) (hEbe0 : Eb ≤ e0)
+    (herr : Ch03.coarseGrainingHomogenizationErrorAtDepth Q a
+      (scalarComparator hsig) r 0 ≤ kappa * Erep)
+    (hbracket : coarseGrainingForceBracket Q a (scalarComparator hsig) r ≤
+      Real.sqrt (2 * (d : ℝ) * (Eb ^ 2 + 1)) * Eb + 2 * (2 * (d : ℝ) * (Eb ^ 2 + 1)))
+    (hEnergy : Ch03.h1EnergyNormOnCube Q a u ≤
+      Real.sqrt Cout * (Real.sqrt sig * P * X + QS * Real.sqrt sig⁻¹ * Qf * Y)) :
+    let k0 := 2 * (d : ℝ) * (e0 ^ 2 + 1)
+    coarseGrainingForceBracket Q a (scalarComparator hsig) r ≤
+        Real.sqrt k0 * e0 + 2 * k0 ∧
+      coarseGrainingEnergyTerm Q a (scalarComparator hsig) r u ≤
+        kappa * Real.sqrt Cout * Erep * (sig * (P * X) + QS * (Qf * Y)) := by
+  dsimp only
+  have hKble : 2 * (d : ℝ) * (Eb ^ 2 + 1) ≤ 2 * (d : ℝ) * (e0 ^ 2 + 1) := by
+    have hsq : Eb ^ 2 ≤ e0 ^ 2 := pow_le_pow_left₀ hEb hEbe0 2
+    exact mul_le_mul_of_nonneg_left (by linarith only [hsq]) (by positivity)
+  refine ⟨hbracket.trans ?_, ?_⟩
+  · exact add_le_add
+      (mul_le_mul (Real.sqrt_le_sqrt hKble) hEbe0 hEb (Real.sqrt_nonneg _))
+      (mul_le_mul_of_nonneg_left hKble (by norm_num))
+  · rw [coarseGrainingEnergyTerm, constantCoeffMatrixNormHalf_scalarComparator_sqrt]
+    have hstep := mul_le_mul
+      (mul_le_mul_of_nonneg_left herr (Real.sqrt_nonneg sig)) hEnergy
+      (h1EnergyNormOnCube_nonneg Q a u)
+      (mul_nonneg (Real.sqrt_nonneg sig) (mul_nonneg hkappa hErep))
+    refine hstep.trans (le_of_eq ?_)
+    have hself : Real.sqrt sig * Real.sqrt sig = sig := Real.mul_self_sqrt hsig.le
+    have hinv : Real.sqrt sig * Real.sqrt sig⁻¹ = 1 := sqrt_mul_sqrt_inv hsig
+    calc
+      Real.sqrt sig * (kappa * Erep) *
+          (Real.sqrt Cout * (Real.sqrt sig * P * X + QS * Real.sqrt sig⁻¹ * Qf * Y)) =
+        kappa * Real.sqrt Cout * Erep *
+          ((Real.sqrt sig * Real.sqrt sig) * (P * X) +
+            (Real.sqrt sig * Real.sqrt sig⁻¹) * (QS * (Qf * Y))) := by ring
+      _ = kappa * Real.sqrt Cout * Erep * (sig * (P * X) + QS * (Qf * Y)) := by
+        rw [hself, hinv, one_mul]
+
+/-- The translated Besov estimate with its origin-cube scale weight evaluated. -/
+theorem besovVectorSeminormTwo_originCube_translated_neg_le [NeZero d]
+    {x : Vec d} (n : ℤ) {s : ℝ} {g : Vec d → Vec d} (hs : 0 < s) (hs1 : s ≤ 1)
+    (hL2 : MemLp g 2
+      (Support.normalizedVolumeMeasureOn ((fun y => x + y) '' openCubeSet (originCube d n))))
+    (hW : MemLp (Gagliardo.gagliardoKernel s 2 g) 2
+      (Support.normalizedGagliardoMeasureOn
+        ((fun y => x + y) '' openCubeSet (originCube d n)))) :
+    Ch03.scaleNormalizedPositiveBesovVectorSeminormTwo (originCube d n) s
+        (fun y => -g (y + x)) ≤
+      besovGagliardoConstant d * Real.rpow (3 : ℝ) (s * (n : ℝ)) *
+        (Support.normalizedGagliardoESeminormOn
+          ((fun y => x + y) '' openCubeSet (originCube d n)) s g).toReal := by
+  have h := besovVectorSeminormTwo_translated_neg_le_gagliardo_window
+    (originCube d n) hs hs1 hL2 hW
+  rwa [cubeBesovScaleWeight_neg_originCube (d := d) n s] at h
+
 /-! ## 3. The `3`-powers of the frame division -/
 
 /-- Dividing by the left-hand weight `3^{-n}` is multiplying by `3^{n}`. -/
