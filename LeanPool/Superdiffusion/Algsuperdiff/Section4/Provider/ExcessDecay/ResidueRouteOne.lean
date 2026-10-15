@@ -674,125 +674,6 @@ theorem residueRouteOne_comparisonBounds1 : boundaryRouteEnergyComparison :=
             Sm2 * (sig * (Q3s * Hs)) + Sm2 * (sig * Hn)) := by ring
   exact ⟨hsiginv0, hbrkCap, hET⟩
 
-private theorem residueRouteOne_comparisonBounds2 : ∀ (d : ℕ) (b0 cg A2 : ℝ)
-      (_ : A2 = cg * (1944 : ℝ) * (b0 * (besovGagliardoConstant d * flushWindowConst d))) (_ : (0
-        : ℝ) ≤ A2) (A3 : ℝ)
-      (_ : A3 = interiorCorrectionConst d * flushWindowConst d) (_ : (0 : ℝ) ≤ A3) (s S Erep : ℝ)
-      (_ : (0 : ℝ) ≤ Erep) (sig X Gs Hs Hn Q3sn Q1s R3n S4 S7 S6 : ℝ) (_ : (0 : ℝ) ≤ X) (_ : (0 :
-        ℝ) ≤ Gs)
-      (_ : (0 : ℝ) ≤ Hs) (_ : (0 : ℝ) ≤ Hn) (_ : (0 : ℝ) ≤ S) (_ : (0 : ℝ) ≤ Q1s) (_ : (0 : ℝ) ≤
-        R3n)
-      (_ : (0 : ℝ) ≤ S4) (_ : (0 : ℝ) ≤ S7) (_ : (0 : ℝ) ≤ S6) (_ : (0 : ℝ) ≤ sig⁻¹)
-      (_ : s⁻¹ ^ (6 : ℕ) = S6) (_ : S6 ≤ S7) (_ : s.rpow (-(1 / 2 : ℝ)) ≤ S7) (_ : R3n * Q3sn =
-        Q1s),
-      sig⁻¹ * R3n *
-            (cg * ((1944 : ℝ) * s⁻¹ ^ (6 : ℕ) * (b0 * (besovGagliardoConstant d * Q3sn *
-              (flushWindowConst d * Gs))))) ≤
-          A2 * (S7 * sig⁻¹ * Q1s * Gs) ∧
-        sig⁻¹ * R3n * (interiorCorrectionConst d * s.rpow (-(1 / 2 : ℝ)) * Q3sn *
-          (flushWindowConst d * Gs)) ≤
-            A3 * (S7 * sig⁻¹ * Q1s * Gs) ∧
-          (0 : ℝ) ≤ S4 * Erep * X ∧
-            (0 : ℝ) ≤ S4 * Erep * S ∧ (0 : ℝ) ≤ S7 * sig⁻¹ * Q1s * Gs ∧ (0 : ℝ) ≤ S6 * Q1s * Hs ∧
-              (0 : ℝ) ≤ S6 * R3n * Hn := by
-  intro d b0 cg A2 hA2def hA2 A3 hA3def hA3 s S Erep hErep0 sig X Gs Hs Hn Q3sn Q1s R3n S4 S7 S6
-    hX0 hGs0 hHs0 hHn0 hS0 hQ1s0 hR3n0 hS40 hS70 hS60 hsiginv0 hS6eq hS6le hQScle hRQ3sn
-  have hT2 : (sig⁻¹ * R3n) * (cg * (1944 * (s⁻¹) ^ (6 : ℕ) *
-        (b0 * (besovGagliardoConstant d * Q3sn * (flushWindowConst d * Gs))))) ≤
-      A2 * (S7 * sig⁻¹ * Q1s * Gs) := by
-    have hrw : (sig⁻¹ * R3n) * (cg * (1944 * (s⁻¹) ^ (6 : ℕ) *
-          (b0 * (besovGagliardoConstant d * Q3sn * (flushWindowConst d * Gs))))) =
-        A2 * ((s⁻¹) ^ (6 : ℕ) * (sig⁻¹ * ((R3n * Q3sn) * Gs))) := by
-      rw [hA2def]; ring
-    rw [hrw, hRQ3sn, hS6eq]
-    have hnn : (0 : ℝ) ≤ sig⁻¹ * (Q1s * Gs) :=
-      mul_nonneg hsiginv0 (mul_nonneg hQ1s0 hGs0)
-    calc A2 * (S6 * (sig⁻¹ * (Q1s * Gs)))
-        ≤ A2 * (S7 * (sig⁻¹ * (Q1s * Gs))) :=
-          mul_le_mul_of_nonneg_left (mul_le_mul_of_nonneg_right hS6le hnn) hA2
-      _ = A2 * (S7 * sig⁻¹ * Q1s * Gs) := by ring
-  have hT3 : (sig⁻¹ * R3n) * (interiorCorrectionConst d * Real.rpow s (-(1 / 2 : ℝ)) *
-        Q3sn * (flushWindowConst d * Gs)) ≤ A3 * (S7 * sig⁻¹ * Q1s * Gs) := by
-    have hrw : (sig⁻¹ * R3n) * (interiorCorrectionConst d *
-          Real.rpow s (-(1 / 2 : ℝ)) * Q3sn * (flushWindowConst d * Gs)) =
-        A3 * (Real.rpow s (-(1 / 2 : ℝ)) * (sig⁻¹ * ((R3n * Q3sn) * Gs))) := by
-      rw [hA3def]; ring
-    rw [hrw, hRQ3sn]
-    have hnn : (0 : ℝ) ≤ sig⁻¹ * (Q1s * Gs) :=
-      mul_nonneg hsiginv0 (mul_nonneg hQ1s0 hGs0)
-    calc A3 * (Real.rpow s (-(1 / 2 : ℝ)) * (sig⁻¹ * (Q1s * Gs)))
-        ≤ A3 * (S7 * (sig⁻¹ * (Q1s * Gs))) :=
-          mul_le_mul_of_nonneg_left (mul_le_mul_of_nonneg_right hQScle hnn) hA3
-      _ = A3 * (S7 * sig⁻¹ * Q1s * Gs) := by ring
-  -- (h) the conclusion
-  have hXterm : (0 : ℝ) ≤ S4 * Erep * X := mul_nonneg (mul_nonneg hS40 hErep0) hX0
-  have hSterm : (0 : ℝ) ≤ S4 * Erep * S := mul_nonneg (mul_nonneg hS40 hErep0) hS0
-  have hGterm : (0 : ℝ) ≤ S7 * sig⁻¹ * Q1s * Gs :=
-    mul_nonneg (mul_nonneg (mul_nonneg hS70 hsiginv0) hQ1s0) hGs0
-  have hHsterm : (0 : ℝ) ≤ S6 * Q1s * Hs :=
-    mul_nonneg (mul_nonneg hS60 hQ1s0) hHs0
-  have hHnterm : (0 : ℝ) ≤ S6 * R3n * Hn :=
-    mul_nonneg (mul_nonneg hS60 hR3n0) hHn0
-  exact ⟨hT2, hT3, hXterm, hSterm, hGterm, hHsterm, hHnterm⟩
-
-private theorem residueRouteOne_comparisonBounds3 :
-    ∀ (CE KE kappa cg A1 : ℝ) (_ : A1 = cg * (216 : ℝ) * (kappa * KE)) (_ : (0 : ℝ) ≤ A1) (s : ℝ)
-      (_ : (0 : ℝ) < s) (n : ℤ) (_ : s ≤ (1 : ℝ)) (S Erep : ℝ) (_ : Erep ≤ CE * (1 / 2 : ℝ))
-      (_ : (0 : ℝ) ≤ Erep) (sig X Gs Hs Hn P2 : ℝ) (_ : P2 = Real.rpow (3 : ℝ) (-(↑(n + (2 : ℤ)) :
-        ℝ))) (Q3s : ℝ)
-      (_ : Q3s = Real.rpow (3 : ℝ) (s * (↑(n + (2 : ℤ)) : ℝ))) (Q3sn : ℝ)
-      (_ : Q3sn = Real.rpow (3 : ℝ) (s * (↑n : ℝ))) (Q1s : ℝ)
-      (_ : Q1s = Real.rpow (3 : ℝ) (((1 : ℝ) + s) * (↑n : ℝ))) (R3n : ℝ) (_ : R3n = Real.rpow (3 :
-        ℝ) (↑n : ℝ))
-      (S4 S7 : ℝ) (_ : S7 = s.rpow (-7 : ℝ)) (S6 : ℝ) (_ : S6 = s.rpow (-6 : ℝ)) (Sm3 Sm2 : ℝ) (_
-        : (0 : ℝ) ≤ X)
-      (_ : (0 : ℝ) ≤ Gs) (_ : (0 : ℝ) ≤ Hs) (_ : (0 : ℝ) ≤ Hn) (_ : (0 : ℝ) ≤ S) (_ : (0 : ℝ) ≤ Q3s)
-      (_ : (0 : ℝ) ≤ R3n) (_ : (0 : ℝ) ≤ Sm3) (_ : (0 : ℝ) ≤ Sm2) (_ : (0 : ℝ) ≤ sig⁻¹)
-      (_ : sig⁻¹ * sig = (1 : ℝ)) (_ : s⁻¹ ^ (4 : ℕ) = S4) (_ : S4 * Sm3 = S7) (_ : S4 * Sm2 = S6),
-      S6 ≤ S7 ∧
-        s.rpow (-(1 / 2 : ℝ)) ≤ S7 ∧
-          R3n * Q3sn = Q1s ∧
-            sig⁻¹ * R3n *
-                (cg *
-                  ((216 : ℝ) * s⁻¹ ^ (4 : ℕ) *
-                    (kappa * KE * Erep *
-                      (sig * (P2 * X) + sig * (P2 * S) + Sm3 * (Q3s * Gs) + Sm2 * (sig * (Q3s *
-                        Hs)) +
-                        Sm2 * (sig * Hn))))) ≤
-              A1 * (S4 * Erep * X) + (9 : ℝ) * (CE * (1 / 2 : ℝ)) * A1 * (S7 * sig⁻¹ * Q1s * Gs) +
-                    (9 : ℝ) * (CE * (1 / 2 : ℝ)) * A1 * (S6 * Q1s * Hs) +
-                  CE * (1 / 2 : ℝ) * A1 * (S6 * R3n * Hn) +
-                A1 * (S4 * Erep * S) := by
-  classical
-  intro CE KE kappa cg A1 hA1def hA1 s hs n hs1 S Erep hErepCap hErep0 sig X Gs Hs Hn P2 hP2def
-    Q3s hQ3sdef Q3sn hQ3sndef Q1s hQ1sdef R3n hR3ndef S4 S7 hS7def S6 hS6def Sm3 Sm2 hX0 hGs0 hHs0
-      hHn0 hS0 hQ3s0 hR3n0 hSm30 hSm20 hsiginv0 hsinv hS4eq hS4Sm3 hS4Sm2
-  have hS6le : S6 ≤ S7 := by
-    rw [hS6def, hS7def]
-    exact rpow_le_rpow_neg_seven hs hs1 (by norm_num)
-  have hQScle : Real.rpow s (-(1 / 2 : ℝ)) ≤ S7 := by
-    rw [hS7def]
-    exact rpow_le_rpow_neg_seven hs hs1 (by norm_num)
-  have hRP2 : R3n * P2 ≤ 1 := by
-    rw [hR3ndef, hP2def]
-    exact rpow_three_frame_l2_le_one n
-  have hRQ3s : R3n * Q3s ≤ 9 * Q1s := by
-    rw [hR3ndef, hQ3sdef, hQ1sdef]
-    exact rpow_three_frame_force_le n hs1
-  have hRQ3sn : R3n * Q3sn = Q1s := by
-    rw [hR3ndef, hQ3sndef, hQ1sdef]
-    exact rpow_three_mul_eq_one_add s n
-  have hT1 : (sig⁻¹ * R3n) * (cg * (216 * (s⁻¹) ^ (4 : ℕ) *
-        (kappa * KE * Erep * (sig * (P2 * X) + sig * (P2 * S) + Sm3 * (Q3s * Gs) +
-          Sm2 * (sig * (Q3s * Hs)) + Sm2 * (sig * Hn))))) ≤
-      A1 * (S4 * Erep * X) + (9 * (CE * (1 / 2)) * A1) * (S7 * sig⁻¹ * Q1s * Gs) +
-        (9 * (CE * (1 / 2)) * A1) * (S6 * Q1s * Hs) +
-        (CE * (1 / 2) * A1) * (S6 * R3n * Hn) + A1 * (S4 * Erep * S) := by
-    exact boundary_five_term_bound CE KE kappa cg A1 hA1def hA1 s hs S Erep
-      hErepCap hErep0 sig X Gs Hs Hn P2 Q3s Q1s R3n S4 S7 S6 Sm3 Sm2 hX0 hGs0 hHs0 hHn0 hS0
-      hQ3s0 hR3n0 hSm30 hSm20 hsiginv0 hsinv hS4eq hS4Sm3 hS4Sm2 hRP2 hRQ3s
-  exact ⟨hS6le, hQScle, hRQ3sn, hT1⟩
-
 theorem residueRouteOne_comparisonBounds4 : boundaryRouteGeometryComparison :=
   by
   classical
@@ -1332,7 +1213,175 @@ theorem residueRouteOne_comparisonBounds6 :
   exact ⟨CE, hCEpos, hCE, CB, KE, hCBpos, hEnergyLeg, hkappadef, hkappa, he0def, hk0def, hb0def,
     hb0, hcg, hA1def, hA1, hA2def, hA2, hA3def, hA3, hCE2, hCE3⟩
 
-private theorem residueRouteOne_comparisonBounds7 :
+/-- **Route 1, composed at the flush sub-cube.**
+
+The harmonic-approximation residue at `K'`, priced on the five canonical legs
+with the good-event error `𝓔` carried explicitly. -/
+private theorem residueRouteOneErrorWeighted_comparisonBounds2 :
+    ∀ (CE KE kappa cg A1 : ℝ) (_ : A1 = cg * (216 : ℝ) * (kappa * KE)) (_ : (0 : ℝ) ≤ A1) (s : ℝ)
+      (_ : (0 : ℝ) < s) (n : ℤ) (_ : s ≤ (1 : ℝ)) (S Erep : ℝ) (_ : Erep ≤ CE * (1 / 2 : ℝ))
+      (_ : (0 : ℝ) ≤ Erep) (sig X Gs Hs Hn P2 : ℝ) (_ : P2 = Real.rpow (3 : ℝ) (-(↑(n + (2 : ℤ)) :
+        ℝ))) (Q3s : ℝ)
+      (_ : Q3s = Real.rpow (3 : ℝ) (s * (↑(n + (2 : ℤ)) : ℝ))) (Q3sn : ℝ)
+      (_ : Q3sn = Real.rpow (3 : ℝ) (s * (↑n : ℝ))) (Q1s : ℝ)
+      (_ : Q1s = Real.rpow (3 : ℝ) (((1 : ℝ) + s) * (↑n : ℝ))) (R3n : ℝ) (_ : R3n = Real.rpow (3 :
+        ℝ) (↑n : ℝ))
+      (S4 S7 S6 Sm3 Sm2 : ℝ) (_ : (0 : ℝ) ≤ X) (_ : (0 : ℝ) ≤ Gs) (_ : (0 : ℝ) ≤ Hs) (_ : (0 : ℝ)
+        ≤ S)
+      (_ : (0 : ℝ) ≤ Q3s) (_ : (0 : ℝ) ≤ R3n) (_ : (0 : ℝ) ≤ Sm3) (_ : (0 : ℝ) ≤ Sm2)
+      (_ : (0 : ℝ) ≤ sig⁻¹) (_ : sig⁻¹ * sig = (1 : ℝ)) (_ : s⁻¹ ^ (4 : ℕ) = S4) (_ : S4 * Sm3 = S7)
+      (_ : S4 * Sm2 = S6),
+      R3n * Q3sn = Q1s ∧
+        sig⁻¹ * R3n *
+            (cg *
+              ((216 : ℝ) * s⁻¹ ^ (4 : ℕ) *
+                (kappa * KE * Erep *
+                  (sig * (P2 * X) + sig * (P2 * S) + Sm3 * (Q3s * Gs) + Sm2 * (sig * (Q3s * Hs)) +
+                    Sm2 * (sig * Hn))))) ≤
+          A1 * (S4 * Erep * X) + (9 : ℝ) * (CE * (1 / 2 : ℝ)) * A1 * (S7 * sig⁻¹ * Q1s * Gs) +
+                (9 : ℝ) * (CE * (1 / 2 : ℝ)) * A1 * (S6 * Q1s * Hs) +
+              A1 * (S6 * Erep * R3n * Hn) +
+            A1 * (S4 * Erep * S) := by
+  intro CE KE kappa cg A1 hA1def hA1 s hs n hs1 S Erep hErepCap hErep0 sig X Gs Hs Hn P2 hP2def
+    Q3s hQ3sdef Q3sn hQ3sndef Q1s hQ1sdef R3n hR3ndef S4 S7 S6 Sm3 Sm2 hX0 hGs0 hHs0 hS0 hQ3s0
+      hR3n0 hSm30 hSm20 hsiginv0 hsinv hS4eq hS4Sm3 hS4Sm2
+  have hRP2 : R3n * P2 ≤ 1 := by
+    rw [hR3ndef, hP2def]
+    exact rpow_three_frame_l2_le_one n
+  have hRQ3s : R3n * Q3s ≤ 9 * Q1s := by
+    rw [hR3ndef, hQ3sdef, hQ1sdef]
+    exact rpow_three_frame_force_le n hs1
+  have hRQ3sn : R3n * Q3sn = Q1s := by
+    rw [hR3ndef, hQ3sndef, hQ1sdef]
+    exact rpow_three_mul_eq_one_add s n
+  have hT1 : (sig⁻¹ * R3n) * (cg * (216 * (s⁻¹) ^ (4 : ℕ) *
+        (kappa * KE * Erep * (sig * (P2 * X) + sig * (P2 * S) + Sm3 * (Q3s * Gs) +
+          Sm2 * (sig * (Q3s * Hs)) + Sm2 * (sig * Hn))))) ≤
+      A1 * (S4 * Erep * X) + (9 * (CE * (1 / 2)) * A1) * (S7 * sig⁻¹ * Q1s * Gs) +
+        (9 * (CE * (1 / 2)) * A1) * (S6 * Q1s * Hs) +
+        A1 * (S6 * Erep * R3n * Hn) + A1 * (S4 * Erep * S) := by
+    exact boundary_five_term_bound_errorWeighted CE KE kappa cg A1 hA1def hA1 s hs S Erep
+      hErepCap hErep0 sig X Gs Hs Hn P2 Q3s Q1s R3n S4 S7 S6 Sm3 Sm2 hX0 hGs0 hHs0 hS0
+      hQ3s0 hR3n0 hSm30 hSm20 hsiginv0 hsinv hS4eq hS4Sm3 hS4Sm2 hRP2 hRQ3s
+  exact ⟨hRQ3sn, hT1⟩
+
+private theorem residueRouteOneErrorWeighted_comparisonBounds3 : ∀ (d : ℕ) (b0 cg A2 : ℝ)
+      (_ : A2 = cg * (1944 : ℝ) * (b0 * (besovGagliardoConstant d * flushWindowConst d))) (_ : (0
+        : ℝ) ≤ A2) (A3 : ℝ)
+      (_ : A3 = interiorCorrectionConst d * flushWindowConst d) (_ : (0 : ℝ) ≤ A3) (s S Erep : ℝ)
+      (_ : (0 : ℝ) ≤ Erep) (sig X Gs Hs Hn Q3sn Q1s R3n S4 S7 S6 : ℝ) (_ : (0 : ℝ) ≤ X) (_ : (0 :
+        ℝ) ≤ Gs)
+      (_ : (0 : ℝ) ≤ Hs) (_ : (0 : ℝ) ≤ Hn) (_ : (0 : ℝ) ≤ S) (_ : (0 : ℝ) ≤ Q1s) (_ : (0 : ℝ) ≤
+        R3n)
+      (_ : (0 : ℝ) ≤ S4) (_ : (0 : ℝ) ≤ S7) (_ : (0 : ℝ) ≤ S6) (_ : (0 : ℝ) ≤ sig⁻¹)
+      (_ : s⁻¹ ^ (6 : ℕ) = S6) (_ : S6 ≤ S7) (_ : s.rpow (-(1 / 2 : ℝ)) ≤ S7) (_ : R3n * Q3sn =
+        Q1s),
+      sig⁻¹ * R3n *
+            (cg * ((1944 : ℝ) * s⁻¹ ^ (6 : ℕ) * (b0 * (besovGagliardoConstant d * Q3sn *
+              (flushWindowConst d * Gs))))) ≤
+          A2 * (S7 * sig⁻¹ * Q1s * Gs) ∧
+        sig⁻¹ * R3n * (interiorCorrectionConst d * s.rpow (-(1 / 2 : ℝ)) * Q3sn *
+          (flushWindowConst d * Gs)) ≤
+            A3 * (S7 * sig⁻¹ * Q1s * Gs) ∧
+          (0 : ℝ) ≤ S4 * Erep * X ∧
+            (0 : ℝ) ≤ S4 * Erep * S ∧
+              (0 : ℝ) ≤ S7 * sig⁻¹ * Q1s * Gs ∧ (0 : ℝ) ≤ S6 * Q1s * Hs ∧ (0 : ℝ) ≤ S6 * Erep *
+                R3n * Hn := by
+  intro d b0 cg A2 hA2def hA2 A3 hA3def hA3 s S Erep hErep0 sig X Gs Hs Hn Q3sn Q1s R3n S4 S7 S6
+    hX0 hGs0 hHs0 hHn0 hS0 hQ1s0 hR3n0 hS40 hS70 hS60 hsiginv0 hS6eq hS6le hQScle hRQ3sn
+  have hT2 : (sig⁻¹ * R3n) * (cg * (1944 * (s⁻¹) ^ (6 : ℕ) *
+        (b0 * (besovGagliardoConstant d * Q3sn * (flushWindowConst d * Gs))))) ≤
+      A2 * (S7 * sig⁻¹ * Q1s * Gs) := by
+    have hrw : (sig⁻¹ * R3n) * (cg * (1944 * (s⁻¹) ^ (6 : ℕ) *
+          (b0 * (besovGagliardoConstant d * Q3sn * (flushWindowConst d * Gs))))) =
+        A2 * ((s⁻¹) ^ (6 : ℕ) * (sig⁻¹ * ((R3n * Q3sn) * Gs))) := by
+      rw [hA2def]; ring
+    rw [hrw, hRQ3sn, hS6eq]
+    have hnn : (0 : ℝ) ≤ sig⁻¹ * (Q1s * Gs) :=
+      mul_nonneg hsiginv0 (mul_nonneg hQ1s0 hGs0)
+    calc A2 * (S6 * (sig⁻¹ * (Q1s * Gs)))
+        ≤ A2 * (S7 * (sig⁻¹ * (Q1s * Gs))) :=
+          mul_le_mul_of_nonneg_left (mul_le_mul_of_nonneg_right hS6le hnn) hA2
+      _ = A2 * (S7 * sig⁻¹ * Q1s * Gs) := by ring
+  have hT3 : (sig⁻¹ * R3n) * (interiorCorrectionConst d * Real.rpow s (-(1 / 2 : ℝ)) *
+        Q3sn * (flushWindowConst d * Gs)) ≤ A3 * (S7 * sig⁻¹ * Q1s * Gs) := by
+    have hrw : (sig⁻¹ * R3n) * (interiorCorrectionConst d *
+          Real.rpow s (-(1 / 2 : ℝ)) * Q3sn * (flushWindowConst d * Gs)) =
+        A3 * (Real.rpow s (-(1 / 2 : ℝ)) * (sig⁻¹ * ((R3n * Q3sn) * Gs))) := by
+      rw [hA3def]; ring
+    rw [hrw, hRQ3sn]
+    have hnn : (0 : ℝ) ≤ sig⁻¹ * (Q1s * Gs) :=
+      mul_nonneg hsiginv0 (mul_nonneg hQ1s0 hGs0)
+    calc A3 * (Real.rpow s (-(1 / 2 : ℝ)) * (sig⁻¹ * (Q1s * Gs)))
+        ≤ A3 * (S7 * (sig⁻¹ * (Q1s * Gs))) :=
+          mul_le_mul_of_nonneg_left (mul_le_mul_of_nonneg_right hQScle hnn) hA3
+      _ = A3 * (S7 * sig⁻¹ * Q1s * Gs) := by ring
+  -- (h) the conclusion
+  have hXterm : (0 : ℝ) ≤ S4 * Erep * X := mul_nonneg (mul_nonneg hS40 hErep0) hX0
+  have hSterm : (0 : ℝ) ≤ S4 * Erep * S := mul_nonneg (mul_nonneg hS40 hErep0) hS0
+  have hGterm : (0 : ℝ) ≤ S7 * sig⁻¹ * Q1s * Gs :=
+    mul_nonneg (mul_nonneg (mul_nonneg hS70 hsiginv0) hQ1s0) hGs0
+  have hHsterm : (0 : ℝ) ≤ S6 * Q1s * Hs :=
+    mul_nonneg (mul_nonneg hS60 hQ1s0) hHs0
+  have hHnterm : (0 : ℝ) ≤ S6 * Erep * R3n * Hn :=
+    mul_nonneg (mul_nonneg (mul_nonneg hS60 hErep0) hR3n0) hHn0
+  exact ⟨hT2, hT3, hXterm, hSterm, hGterm, hHsterm, hHnterm⟩
+
+private theorem residueRouteOneErrorWeighted_comparisonBounds7 :
+    ∀ (d : ℕ) (CE : ℝ) (_ : (0 : ℝ) < CE) (CB : ℝ) (_ : (0 : ℝ) < CB) (M : ABKModel d) (s : ℝ)
+      (_ : s ∈ Set.Icc ((64 : ℝ) * M.gamma) (1 : ℝ)) (_ : M.gamma ≤ (max CE CB)⁻¹ * Disorder.cstar
+        M ^ (10 : ℕ))
+      (_ m n : ℤ) (_ : n + (3 : ℤ) ≤ m) (z : Vec d) (_ : z ∈ openCubeSet (originCube d m)) (i :
+        Fin d) (sigma : ℝ)
+      (_ : sigma = (1 : ℝ) ∨ sigma = (-1 : ℝ)),
+      s ≤ (1 : ℝ) ∧
+        n + (2 : ℤ) ≤ m ∧
+          M.gamma ≤ CE⁻¹ * Disorder.cstar M ^ (10 : ℕ) ∧
+            M.gamma ≤ CB⁻¹ * Disorder.cstar M ^ (10 : ℕ) ∧
+              flushSubCentre z m n i sigma ∈ openCubeSet (originCube d m) ∧
+                (fun (y : Vec d) => wellPlacedCentre (flushSubCentre z m n i sigma) m (n + (2 :
+                  ℤ)) + y) ''
+                      openCubeSet (originCube d (n + (2 : ℤ))) ⊆
+                    (fun (y : Vec d) => z + y) '' openCubeSet (originCube d (n + (3 : ℤ))) ∩
+                      openCubeSet (originCube d m) ∧
+                  translateSet (wellPlacedCentre (flushSubCentre z m n i sigma) m (n + (2 : ℤ)) - z)
+                        (cubeSet (originCube d (n + (2 : ℤ)))) ⊆
+                      cubeSet (originCube d (n + (3 : ℤ))) ∧
+                    translateSet (flushSubCentre z m n i sigma - z) (cubeSet (originCube d n)) ⊆
+                      cubeSet (originCube d (n + (3 : ℤ))) := by
+  classical
+  intro d CE hCEpos CB hCBpos M s hsrange hregime _ m n _ z hz i sigma hsigma
+  have hs1 : s ≤ 1 := hsrange.2
+  have hnm2 : n + 2 ≤ m := by omega
+  have hregimeCE : M.gamma ≤ CE⁻¹ * Disorder.cstar M ^ (10 : ℕ) := by
+    refine hregime.trans
+      (mul_le_mul_of_nonneg_right ?_ (Even.pow_nonneg (by exact ⟨5, rfl⟩) _))
+    have h1 := one_div_le_one_div_of_le hCEpos (le_max_left CE CB)
+    rw [one_div, one_div] at h1
+    exact h1
+  have hregimeCB : M.gamma ≤ CB⁻¹ * Disorder.cstar M ^ (10 : ℕ) := by
+    refine hregime.trans
+      (mul_le_mul_of_nonneg_right ?_ (Even.pow_nonneg (by exact ⟨5, rfl⟩) _))
+    have h1 := one_div_le_one_div_of_le hCBpos (le_max_right CE CB)
+    rw [one_div, one_div] at h1
+    exact h1
+  have hxc : flushSubCentre z m n i sigma ∈ openCubeSet (originCube d m) :=
+    flushSubCentre_mem_openCubeSet hnm2 z i hsigma
+  have hcov : (fun y => wellPlacedCentre (flushSubCentre z m n i sigma) m (n + 2) + y) ''
+      openCubeSet (originCube d (n + 2)) ⊆
+      (((fun y => z + y) '' openCubeSet (originCube d (n + 3))) ∩
+        openCubeSet (originCube d m)) :=
+    image_add_flushCoveringCube_subset_anchorWindow hnm2 hz i hsigma
+  have hPhinge : translateSet
+      (wellPlacedCentre (flushSubCentre z m n i sigma) m (n + 2) - z)
+      (cubeSet (originCube d (n + 2))) ⊆ cubeSet (originCube d (n + 3)) :=
+    translateSet_cubeSet_flushCoveringCube_subset_anchorParent hnm2 hz i hsigma
+  have hChinge : translateSet (flushSubCentre z m n i sigma - z)
+      (cubeSet (originCube d n)) ⊆ cubeSet (originCube d (n + 3)) :=
+    translateSet_cubeSet_flushSubCube_subset_anchorParent hnm2 hz i hsigma
+  exact ⟨hs1, hnm2, hregimeCE, hregimeCB, hxc, hcov, hPhinge, hChinge⟩
+
+private theorem residueRouteOneErrorWeighted_comparisonBounds8 :
     ∀ (d : ℕ) (CE KE kappa b0 cg A1 : ℝ) (_ : (0 : ℝ) ≤ A1)
       (_ : A1 = cg * (216 : ℝ) * (kappa * KE)) (A2 : ℝ) (_ : (0 : ℝ) ≤ A2)
       (_ : A2 = cg * (1944 : ℝ) * (b0 * (besovGagliardoConstant d * flushWindowConst d))) (A3
@@ -1365,7 +1414,7 @@ private theorem residueRouteOne_comparisonBounds7 :
                     Sm2 * (sig * Hn))))) ≤
           A1 * (S4 * Erep * X) + (9 : ℝ) * (CE * (1 / 2 : ℝ)) * A1 * (S7 * sig⁻¹ * Q1s * Gs) +
                 (9 : ℝ) * (CE * (1 / 2 : ℝ)) * A1 * (S6 * Q1s * Hs) +
-              CE * (1 / 2 : ℝ) * A1 * (S6 * R3n * Hn) +
+              A1 * (S6 * Erep * R3n * Hn) +
             A1 * (S4 * Erep * S) ∧
         sig⁻¹ * R3n *
               (cg * ((1944 : ℝ) * s⁻¹ ^ (6 : ℕ) * (b0 * (besovGagliardoConstant d * Q3sn *
@@ -1375,8 +1424,9 @@ private theorem residueRouteOne_comparisonBounds7 :
             (flushWindowConst d * Gs)) ≤
               A3 * (S7 * sig⁻¹ * Q1s * Gs) ∧
             (0 : ℝ) ≤ S4 * Erep * X ∧
-              (0 : ℝ) ≤ S4 * Erep * S ∧ (0 : ℝ) ≤ S7 * sig⁻¹ * Q1s * Gs ∧ (0 : ℝ) ≤ S6 * Q1s * Hs
-                ∧ (0 : ℝ) ≤ S6 * R3n * Hn := by
+              (0 : ℝ) ≤ S4 * Erep * S ∧
+                (0 : ℝ) ≤ S7 * sig⁻¹ * Q1s * Gs ∧ (0 : ℝ) ≤ S6 * Q1s * Hs ∧ (0 : ℝ) ≤ S6 * Erep *
+                  R3n * Hn := by
   classical
   intro d CE KE kappa b0 cg A1 hA1 hA1def A2 hA2 hA2def A3 hA3 hA3def s hs
     n hs1 S hS0 Erep hErepCap hErep0 sig hsiginv0 X hX0 Gs hGs0 Hs hHs0 Hn hHn0 P2 hP2def
@@ -1395,19 +1445,24 @@ private theorem residueRouteOne_comparisonBounds7 :
   have hS4Sm2 : S4 * Sm2 = S6 := by
     rw [hS4def, hSm2def, hS6def]
     exact rpow_neg_four_mul_neg_two hs
-  obtain ⟨hS6le, hQScle, hRQ3sn, hT1⟩ :=
-    (show (S6 ≤ S7) ∧ (Real.rpow s (-(1 / 2 : ℝ)) ≤ S7) ∧ (R3n * Q3sn = Q1s) ∧ ((sig⁻¹ * R3n) *
-      (cg * (216 * (s⁻¹) ^ (4 : ℕ) *
+  have hS6le : S6 ≤ S7 := by
+    rw [hS6def, hS7def]
+    exact rpow_le_rpow_neg_seven hs hs1 (by norm_num)
+  have hQScle : Real.rpow s (-(1 / 2 : ℝ)) ≤ S7 := by
+    rw [hS7def]
+    exact rpow_le_rpow_neg_seven hs hs1 (by norm_num)
+  obtain ⟨hRQ3sn, hT1⟩ :=
+    (show (R3n * Q3sn = Q1s) ∧ ((sig⁻¹ * R3n) * (cg * (216 * (s⁻¹) ^ (4 : ℕ) *
         (kappa * KE * Erep * (sig * (P2 * X) + sig * (P2 * S) + Sm3 * (Q3s * Gs) +
           Sm2 * (sig * (Q3s * Hs)) + Sm2 * (sig * Hn))))) ≤
       A1 * (S4 * Erep * X) + (9 * (CE * (1 / 2)) * A1) * (S7 * sig⁻¹ * Q1s * Gs) +
         (9 * (CE * (1 / 2)) * A1) * (S6 * Q1s * Hs) +
-        (CE * (1 / 2) * A1) * (S6 * R3n * Hn) + A1 * (S4 * Erep * S)) from
-      @residueRouteOne_comparisonBounds3 (CE) (KE) (kappa) (cg) (A1) (hA1def) (hA1) (s) (hs) (n)
-        (hs1) (S) (Erep) (hErepCap) (hErep0) (sig) (X) (Gs) (Hs) (Hn) (P2) (hP2def) (Q3s)
-          (hQ3sdef) (Q3sn) (hQ3sndef) (Q1s) (hQ1sdef) (R3n) (hR3ndef) (S4) (S7) (hS7def) (S6)
-            (hS6def) (Sm3) (Sm2) (hX0) (hGs0) (hHs0) (hHn0) (hS0) (hQ3s0) (hR3n0) (hSm30) (hSm20)
-              (hsiginv0) (hsinv) (hS4eq) (hS4Sm3) (hS4Sm2))
+        A1 * (S6 * Erep * R3n * Hn) + A1 * (S4 * Erep * S)) from
+      @residueRouteOneErrorWeighted_comparisonBounds2 (CE) (KE) (kappa) (cg) (A1) (hA1def) (hA1)
+        (s) (hs) (n) (hs1) (S) (Erep) (hErepCap) (hErep0) (sig) (X) (Gs) (Hs) (Hn) (P2) (hP2def)
+          (Q3s) (hQ3sdef) (Q3sn) (hQ3sndef) (Q1s) (hQ1sdef) (R3n) (hR3ndef) (S4) (S7) (S6) (Sm3)
+            (Sm2) (hX0) (hGs0) (hHs0) (hS0) (hQ3s0) (hR3n0) (hSm30) (hSm20) (hsiginv0) (hsinv)
+              (hS4eq) (hS4Sm3) (hS4Sm2))
   obtain ⟨hT2, hT3, hXterm, hSterm, hGterm, hHsterm, hHnterm⟩ :=
     (show ((sig⁻¹ * R3n) * (cg * (1944 * (s⁻¹) ^ (6 : ℕ) *
         (b0 * (besovGagliardoConstant d * Q3sn * (flushWindowConst d * Gs))))) ≤
@@ -1415,18 +1470,20 @@ private theorem residueRouteOne_comparisonBounds7 :
         (-(1 / 2 : ℝ)) *
         Q3sn * (flushWindowConst d * Gs)) ≤ A3 * (S7 * sig⁻¹ * Q1s * Gs)) ∧ ((0 : ℝ) ≤ S4 * Erep *
           X) ∧ ((0 : ℝ) ≤ S4 * Erep * S) ∧ ((0 : ℝ) ≤ S7 * sig⁻¹ * Q1s * Gs) ∧ ((0 : ℝ) ≤ S6 * Q1s
-            * Hs) ∧ ((0 : ℝ) ≤ S6 * R3n * Hn) from
-      @residueRouteOne_comparisonBounds2 (d) (b0) (cg) (A2) (hA2def) (hA2)
-        (A3) (hA3def) (hA3) (s) (S) (Erep) (hErep0) (sig) (X) (Gs) (Hs) (Hn) (Q3sn) (Q1s) (R3n)
-          (S4) (S7) (S6) (hX0) (hGs0) (hHs0) (hHn0) (hS0) (hQ1s0) (hR3n0) (hS40) (hS70) (hS60)
-            (hsiginv0) (hS6eq) (hS6le) (hQScle) (hRQ3sn))
+            * Hs) ∧ ((0 : ℝ) ≤ S6 * Erep * R3n * Hn) from
+      @residueRouteOneErrorWeighted_comparisonBounds3 (d) (b0) (cg) (A2)
+        (hA2def) (hA2) (A3) (hA3def) (hA3) (s) (S) (Erep) (hErep0) (sig) (X) (Gs) (Hs) (Hn) (Q3sn)
+          (Q1s) (R3n) (S4) (S7) (S6) (hX0) (hGs0) (hHs0) (hHn0) (hS0) (hQ1s0) (hR3n0) (hS40)
+            (hS70) (hS60) (hsiginv0) (hS6eq) (hS6le) (hQScle) (hRQ3sn))
   exact ⟨hT1, hT2, hT3, hXterm, hSterm, hGterm, hHsterm, hHnterm⟩
 
-/-- **Route 1, composed at the flush sub-cube.**
+/-- **Route 1, composed at the flush sub-cube — the error-weighted legs.**
 
 The harmonic-approximation residue at `K'`, priced on the five canonical legs
-with the good-event error `𝓔` carried explicitly. -/
-theorem exists_flushResidue_route1_composed (d : ℕ) [NeZero d] :
+with the good-event error `𝓔` carried explicitly.  As in `AssemblyComposedErrorWeighted`,
+the monotone discard is declined on the flat `∇h` row, so that leg reads
+`s^{-6}·𝓔·3^n·‖∇h‖_{L²(W')}`. -/
+theorem exists_flushResidue_route1_composed_errorWeighted (d : ℕ) [NeZero d] :
     ∃ C Cfin : ℝ, 0 < C ∧ 0 < Cfin ∧
       ∀ (M : ABKModel d) (s : ℝ), s ∈ Set.Icc (64 * M.gamma) 1 →
         M.gamma ≤ C⁻¹ * Disorder.cstar M ^ (10 : ℕ) →
@@ -1495,7 +1552,11 @@ theorem exists_flushResidue_route1_composed (d : ℕ) [NeZero d] :
                                 ((((fun y' => z + y') ''
                                     openCubeSet (originCube d (n + 3))) ∩
                                   openCubeSet (originCube d m))) s hdat.grad).toReal +
-                            Real.rpow s (-(6 : ℝ)) * Real.rpow (3 : ℝ) (n : ℝ) *
+                            Real.rpow s (-(6 : ℝ)) *
+                              Support.fluxCorrectedErrorRepresentative M L (n + 3)
+                                ⟨s / 8, by linarith only [hs]⟩
+                                (Cutoff.translateCutoffSample z omega) *
+                              Real.rpow (3 : ℝ) (n : ℝ) *
                               (eLpNorm hdat.grad 2
                                 (Support.normalizedVolumeMeasureOn
                                   ((((fun y' => z + y') ''
@@ -1525,34 +1586,19 @@ theorem exists_flushResidue_route1_composed (d : ℕ) [NeZero d] :
       (add_nonneg (add_nonneg (add_nonneg (add_nonneg hA1 hCE2) hCE3) hA2) hA3)
       zero_lt_one, ?_⟩
   intro M s hsrange hregime hsmall hs L m n hmL hnm z hz i sigma hsigma hover
-  have hs1 : s ≤ 1 := hsrange.2
-  have hnm2 : n + 2 ≤ m := by omega
-  have hregimeCE : M.gamma ≤ CE⁻¹ * Disorder.cstar M ^ (10 : ℕ) := by
-    refine hregime.trans
-      (mul_le_mul_of_nonneg_right ?_ (Even.pow_nonneg (by exact ⟨5, rfl⟩) _))
-    have h1 := one_div_le_one_div_of_le hCEpos (le_max_left CE CB)
-    rw [one_div, one_div] at h1
-    exact h1
-  have hregimeCB : M.gamma ≤ CB⁻¹ * Disorder.cstar M ^ (10 : ℕ) := by
-    refine hregime.trans
-      (mul_le_mul_of_nonneg_right ?_ (Even.pow_nonneg (by exact ⟨5, rfl⟩) _))
-    have h1 := one_div_le_one_div_of_le hCBpos (le_max_right CE CB)
-    rw [one_div, one_div] at h1
-    exact h1
-  have hxc : flushSubCentre z m n i sigma ∈ openCubeSet (originCube d m) :=
-    flushSubCentre_mem_openCubeSet hnm2 z i hsigma
-  have hcov : (fun y => wellPlacedCentre (flushSubCentre z m n i sigma) m (n + 2) + y) ''
+  obtain ⟨hs1, hnm2, hregimeCE, hregimeCB, hxc, hcov, hPhinge, hChinge⟩ :=
+    (show (s ≤ 1) ∧ (n + 2 ≤ m) ∧ (M.gamma ≤ CE⁻¹ * Disorder.cstar M ^ (10 : ℕ)) ∧ (M.gamma ≤ CB⁻¹
+      * Disorder.cstar M ^ (10 : ℕ)) ∧ (flushSubCentre z m n i sigma ∈ openCubeSet (originCube d
+        m)) ∧ ((fun y => wellPlacedCentre (flushSubCentre z m n i sigma) m (n + 2) + y) ''
       openCubeSet (originCube d (n + 2)) ⊆
       (((fun y => z + y) '' openCubeSet (originCube d (n + 3))) ∩
-        openCubeSet (originCube d m)) :=
-    image_add_flushCoveringCube_subset_anchorWindow hnm2 hz i hsigma
-  have hPhinge : translateSet
+        openCubeSet (originCube d m))) ∧ (translateSet
       (wellPlacedCentre (flushSubCentre z m n i sigma) m (n + 2) - z)
-      (cubeSet (originCube d (n + 2))) ⊆ cubeSet (originCube d (n + 3)) :=
-    translateSet_cubeSet_flushCoveringCube_subset_anchorParent hnm2 hz i hsigma
-  have hChinge : translateSet (flushSubCentre z m n i sigma - z)
-      (cubeSet (originCube d n)) ⊆ cubeSet (originCube d (n + 3)) :=
-    translateSet_cubeSet_flushSubCube_subset_anchorParent hnm2 hz i hsigma
+      (cubeSet (originCube d (n + 2))) ⊆ cubeSet (originCube d (n + 3))) ∧ (translateSet
+        (flushSubCentre z m n i sigma - z)
+      (cubeSet (originCube d n)) ⊆ cubeSet (originCube d (n + 3))) from
+      @residueRouteOneErrorWeighted_comparisonBounds7 (d) (CE) (hCEpos) (CB) (hCBpos) (M) (s)
+        (hsrange) (hregime) (L) (m) (n) (hnm) (z) (hz) (i) (sigma) (hsigma))
   filter_upwards [hCE M s hsrange hregimeCE hsmall hs n z,
     hEnergyLeg M s hsrange hregimeCB hsmall hs L m n hmL hnm
       (flushSubCentre z m n i sigma) z hxc hcov hPhinge,
@@ -1562,10 +1608,10 @@ theorem exists_flushResidue_route1_composed (d : ℕ) [NeZero d] :
   obtain ⟨hsubx, hErepCap, hErep0, hsig, hP2def, hQ3sdef, hxf, hQ3sndef, hQ1sdef, hR3ndef, hS4def,
     hS7def, hS6def, hSm3def, hSm2def, hX0, hGs0, hHs0, hHn0, hS0, hQ3s0, hQ3sn0, hQ1s0, hR3n0,
       hS40, hS70, hS60, hSm30, hSm20, hsiginv0, hbrkCap, hET, hGbes, hGbes0, hYchild3⟩ :=
-    @residueRouteOne_comparisonBounds4 (d) (by infer_instance) (CE) (KE) (hkappadef) (hkappa)
-      (he0def) (hk0def) (hb0def) (M) (s) (hs) (L) (m) (n) (hmL) (hnm) (z) (hz) (i) (sigma)
-        (hsigma) (hover) (hs1) (hnm2) (hChinge) (omega) (hcapE) (hEnLeg) (herrD) (hbrk) (hmem) (u)
-          (hdat) (g) (S) (hsol) (hgL2) (hgW) (hhW) (hmean) (v) (w) (hharm) (hval) (hgrad)
+    @residueRouteOne_comparisonBounds4 (d) (by infer_instance) (CE) (KE) (hkappadef)
+      (hkappa) (he0def) (hk0def) (hb0def) (M) (s) (hs) (L) (m) (n) (hmL) (hnm) (z) (hz) (i)
+        (sigma) (hsigma) (hover) (hs1) (hnm2) (hChinge) (omega) (hcapE) (hEnLeg) (herrD) (hbrk)
+          (hmem) (u) (hdat) (g) (S) (hsol) (hgL2) (hgW) (hhW) (hmean) (v) (w) (hharm) (hval) (hgrad)
   set Erep : ℝ := Support.fluxCorrectedErrorRepresentative M L (n + 3)
     ⟨s / 8, by linarith only [hs]⟩ (Cutoff.translateCutoffSample z omega) with hErepdef
   set Eb : ℝ := Real.sqrt (offGridStabilityConst d (s / 6) (s / 8)) *
@@ -1648,23 +1694,21 @@ theorem exists_flushResidue_route1_composed (d : ℕ) [NeZero d] :
           (interiorCorrectionConst d * Real.rpow s (-(1 / 2 : ℝ)) * Q3sn * Ychild ≤
       interiorCorrectionConst d * Real.rpow s (-(1 / 2 : ℝ)) * Q3sn *
         (flushWindowConst d * Gs)) from
-      @residueRouteOne_comparisonBounds5 (d) (by infer_instance) (CE) (KE) (M) (s) (hs) (L) (m)
-        (n) (z) (i) (sigma) (omega) (u) (hdat) (g) (S) (v) (hsubx) (hsig) (hsiginv0) (hYchild3)
-          (hQ3sn0) (hR3n0) (hET) (hFT) (hxf))
+      @residueRouteOne_comparisonBounds5 (d) (by infer_instance) (CE) (KE) (M) (s)
+        (hs) (L) (m) (n) (z) (i) (sigma) (omega) (u) (hdat) (g) (S) (v) (hsubx) (hsig) (hsiginv0)
+          (hYchild3) (hQ3sn0) (hR3n0) (hET) (hFT) (hxf))
   have hmono := add_le_add (mul_le_mul_of_nonneg_left (add_le_add hleg1 hleg2) hcg) hleg3
   clear_value Lhs X Gs Hs Hn Ychild ET FT Erep Eb sig P2 Q3s Q3sn Q1s R3n S4 S7 S6
     Sm3 Sm2 A3 A2 A1 cg b0 k0 e0 kappa
   -- (g) the regrouping
   obtain ⟨hT1, hT2, hT3, hXterm, hSterm, hGterm, hHsterm, hHnterm⟩ :=
-    @residueRouteOne_comparisonBounds7 (d) (CE) (KE) (kappa) (b0) (cg) (A1)
-      (hA1) (hA1def) (A2) (hA2) (hA2def) (A3)
-        (hA3) (hA3def) (s) (hs) (n) (hs1) (S) (hS0) (Erep) (hErepCap) (hErep0) (sig) (hsiginv0)
-          (X) (hX0) (Gs) (hGs0) (Hs) (hHs0) (Hn) (hHn0) (P2) (hP2def)
-            (Q3s) (hQ3s0) (hQ3sdef) (Q3sn) (hQ3sndef) (Q1s)
-              (hQ1s0) (hQ1sdef) (R3n) (hR3n0) (hR3ndef) (S4)
-                (hS40) (hS4def) (S7) (hS70) (hS7def) (S6) (hS60)
-                  (hS6def) (Sm3) (hSm30) (hSm3def) (Sm2) (hSm20)
-                    (hSm2def) (hsinv)
+    @residueRouteOneErrorWeighted_comparisonBounds8 (d) (CE) (KE) (kappa) (b0)
+      (cg) (A1) (hA1) (hA1def) (A2) (hA2) (hA2def) (A3) (hA3) (hA3def) (s) (hs) (n) (hs1) (S)
+        (hS0) (Erep) (hErepCap) (hErep0) (sig)
+          (hsiginv0) (X) (hX0) (Gs) (hGs0) (Hs) (hHs0) (Hn) (hHn0) (P2) (hP2def)
+            (Q3s) (hQ3s0) (hQ3sdef) (Q3sn) (hQ3sndef) (Q1s) (hQ1s0) (hQ1sdef) (R3n) (hR3n0)
+              (hR3ndef) (S4) (hS40) (hS4def) (S7) (hS70) (hS7def) (S6) (hS60) (hS6def) (Sm3)
+                (hSm30) (hSm3def) (Sm2) (hSm20) (hSm2def) (hsinv)
   refine hstep.trans (le_trans (mul_le_mul_of_nonneg_left hmono hfac0) ?_)
   have hdistrib : (sig⁻¹ * R3n) *
       (cg * (216 * (s⁻¹) ^ (4 : ℕ) *
@@ -1685,15 +1729,151 @@ theorem exists_flushResidue_route1_composed (d : ℕ) [NeZero d] :
   have habs : A1 * (S4 * Erep * X) +
         (9 * (CE * (1 / 2)) * A1 + A2 + A3) * (S7 * sig⁻¹ * Q1s * Gs) +
         (9 * (CE * (1 / 2)) * A1) * (S6 * Q1s * Hs) +
-        (CE * (1 / 2) * A1) * (S6 * R3n * Hn) + A1 * (S4 * Erep * S) ≤
+        A1 * (S6 * Erep * R3n * Hn) + A1 * (S4 * Erep * S) ≤
       (A1 + 9 * (CE * (1 / 2)) * A1 + CE * (1 / 2) * A1 + A2 + A3 + 1) *
-        (S4 * Erep * X + S7 * sig⁻¹ * Q1s * Gs + S6 * Q1s * Hs + S6 * R3n * Hn +
-          S4 * Erep * S) :=
+        (S4 * Erep * X + S7 * sig⁻¹ * Q1s * Gs + S6 * Q1s * Hs +
+          S6 * Erep * R3n * Hn + S4 * Erep * S) :=
     five_leg_bound le_rfl (by linarith only [hCE2, hCE3, hA2, hA3])
       (by linarith only [hA1, hCE3]) (by linarith only [hA1, hCE3, hA2, hA3])
-      (by linarith only [hA1, hCE2, hA2, hA3])
+      (by linarith only [hCE2, hCE3, hA2, hA3])
       (by linarith only [hCE2, hCE3, hA2, hA3]) hXterm hGterm hHsterm hHnterm hSterm
   linarith only [hT1, hT2, hT3, habs]
+
+
+theorem exists_flushResidue_route1_composed (d : ℕ) [NeZero d] :
+    ∃ C Cfin : ℝ, 0 < C ∧ 0 < Cfin ∧
+      ∀ (M : ABKModel d) (s : ℝ), s ∈ Set.Icc (64 * M.gamma) 1 →
+        M.gamma ≤ C⁻¹ * Disorder.cstar M ^ (10 : ℕ) →
+        M.gamma * |Real.log M.gamma| ^ (2 : ℕ) ≤
+            Real.rpow (s / 8) (3 / 2 : ℝ) * Disorder.cstar M ^ (2 : ℕ) * (1 / 2) →
+        ∀ hs : 0 < s, ∀ L m n : ℤ, m ≤ L → n + 3 ≤ m → ∀ z : Vec d,
+          z ∈ openCubeSet (originCube d m) →
+          ∀ (i : Fin d) (σ : ℝ), (σ = 1 ∨ σ = -1) →
+            wellPlacedHalfGap m (n + 2) < σ * z i →
+            ∀ᵐ omega ∂(Cutoff.cutoffSampleLaw M).toMeasure,
+              omega ∈ Algsuperdiff.Frozen.Section4.goodEventAt M
+                  (Support.cgEllipLowerConstant d) (n + 3) z
+                  ⟨s / 8, by linarith only [hs]⟩ (1 / 2) →
+                ∀ (u hdat : H1Function (openCubeSet (originCube d m)))
+                  (g : Vec d → Vec d) (S : ℝ),
+                  Support.IsDirichletSolutionOn
+                      (Cutoff.coefficientCutoff M.nu L omega).toCoeffField
+                      (originCube d m) u hdat g →
+                  MemLp g 2 (Support.normalizedVolumeMeasureOn
+                    (openCubeSet (originCube d m))) →
+                  MemLp (Gagliardo.gagliardoKernel s 2 g) 2
+                    (Support.normalizedGagliardoMeasureOn
+                      (openCubeSet (originCube d m))) →
+                  MemLp (Gagliardo.gagliardoKernel s 2 hdat.grad) 2
+                    (Support.normalizedGagliardoMeasureOn
+                      (openCubeSet (originCube d m))) →
+                  |volumeAverage ((fun y => wellPlacedCentre z m (n + 2) + y) ''
+                      openCubeSet (originCube d (n + 2)))
+                      (fun y => u.toFun y - hdat.toFun y)| ≤ S →
+                  ∀ (v : H1Function ((fun y => flushSubCentre z m n i σ + y) ''
+                      openCubeSet (originCube d n)))
+                    (w : H10Function ((fun y => flushSubCentre z m n i σ + y) ''
+                      openCubeSet (originCube d n))),
+                    Support.IsWeaklyHarmonicOn
+                        ((fun y => flushSubCentre z m n i σ + y) ''
+                          openCubeSet (originCube d n)) v →
+                    (∀ y, v.toFun y = u.toFun y - w.toH1Function.toFun y) →
+                    (∀ y, v.grad y = u.grad y - w.toH1Function.grad y) →
+                      (eLpNorm (fun y => u.toFun y - v.toFun y) 2
+                        (Support.normalizedVolumeMeasureOn
+                          ((fun y => flushSubCentre z m n i σ + y) ''
+                            openCubeSet (originCube d n)))).toReal ≤
+                        Cfin *
+                          (Real.rpow s (-(4 : ℝ)) *
+                              Support.fluxCorrectedErrorRepresentative M L (n + 3)
+                                ⟨s / 8, by linarith only [hs]⟩
+                                (Cutoff.translateCutoffSample z omega) *
+                              (eLpNorm (fun y => u.toFun y -
+                                  volumeAverage ((((fun y' => z + y') ''
+                                      openCubeSet (originCube d (n + 3))) ∩
+                                    openCubeSet (originCube d m))) u.toFun) 2
+                                (Support.normalizedVolumeMeasureOn
+                                  ((((fun y' => z + y') ''
+                                      openCubeSet (originCube d (n + 3))) ∩
+                                    openCubeSet (originCube d m))))).toReal +
+                            Real.rpow s (-(7 : ℝ)) *
+                              ((Annealed.sigmaBar M (n + 3) : ℝ))⁻¹ *
+                              Real.rpow (3 : ℝ) ((1 + s) * (n : ℝ)) *
+                              (Support.normalizedGagliardoESeminormOn
+                                ((((fun y' => z + y') ''
+                                    openCubeSet (originCube d (n + 3))) ∩
+                                  openCubeSet (originCube d m))) s g).toReal +
+                            Real.rpow s (-(6 : ℝ)) *
+                              Real.rpow (3 : ℝ) ((1 + s) * (n : ℝ)) *
+                              (Support.normalizedGagliardoESeminormOn
+                                ((((fun y' => z + y') ''
+                                    openCubeSet (originCube d (n + 3))) ∩
+                                  openCubeSet (originCube d m))) s hdat.grad).toReal +
+                            Real.rpow s (-(6 : ℝ)) * Real.rpow (3 : ℝ) (n : ℝ) *
+                              (eLpNorm hdat.grad 2
+                                (Support.normalizedVolumeMeasureOn
+                                  ((((fun y' => z + y') ''
+                                      openCubeSet (originCube d (n + 3))) ∩
+                                    openCubeSet (originCube d m))))).toReal +
+                            Real.rpow s (-(4 : ℝ)) *
+                              Support.fluxCorrectedErrorRepresentative M L (n + 3)
+                                ⟨s / 8, by linarith only [hs]⟩
+                                (Cutoff.translateCutoffSample z omega) * S) := by
+  obtain ⟨Cweighted, K, hCweighted, hK, hweighted⟩ :=
+    exists_flushResidue_route1_composed_errorWeighted d
+  obtain ⟨CE, hCE, hcap, _⟩ := residueRouteOne_comparisonBounds6 d
+  refine ⟨max Cweighted CE, K * max 1 (CE * (1 / 2 : ℝ)),
+    lt_of_lt_of_le hCweighted (le_max_left _ _),
+    mul_pos hK (lt_of_lt_of_le zero_lt_one (le_max_left _ _)), ?_⟩
+  intro M s hsrange hregime hsmall hs L m n hmL hnm z hz i sigma hsigma hover
+  have hregimeWeighted : M.gamma ≤ Cweighted⁻¹ * Disorder.cstar M ^ (10 : ℕ) :=
+    hregime.trans (mul_le_mul_of_nonneg_right
+      (inv_anti₀ hCweighted (le_max_left _ _)) (by positivity))
+  have hregimeCap : M.gamma ≤ CE⁻¹ * Disorder.cstar M ^ (10 : ℕ) :=
+    hregime.trans (mul_le_mul_of_nonneg_right
+      (inv_anti₀ hCE (le_max_right _ _)) (by positivity))
+  filter_upwards [hweighted M s hsrange hregimeWeighted hsmall hs L m n hmL hnm z hz i sigma
+      hsigma hover,
+    hcap M s hsrange hregimeCap hsmall hs n z] with omega hweighted hcap
+  intro hmem u hdat g S hsol hgL2 hgW hhW hmean v w hharm hval hgrad
+  have hbound := hweighted hmem u hdat g S hsol hgL2 hgW hhW hmean v w hharm hval hgrad
+  have herrorCap := hcap hmem L (le_trans hnm hmL)
+  let representativeError := fluxCorrectedErrorRepresentative M L (n + 3)
+    ⟨s / 8, by linarith only [hs]⟩ (Cutoff.translateCutoffSample z omega)
+  have herror0 : 0 ≤ representativeError := fluxCorrectedErrorRepresentative_nonneg _ _ _ _ _
+  have hS0 : 0 ≤ S := (abs_nonneg _).trans hmean
+  have hsigma : 0 < (Annealed.sigmaBar M (n + 3) : ℝ) :=
+    (Annealed.sigmaBar M (n + 3)).2
+  let parentWindow := ((fun y => z + y) '' openCubeSet (originCube d (n + 3))) ∩
+    openCubeSet (originCube d m)
+  let oscillationLeg := Real.rpow s (-(4 : ℝ)) * representativeError *
+    (eLpNorm (fun y => u.toFun y - volumeAverage parentWindow u.toFun) 2
+      (Support.normalizedVolumeMeasureOn parentWindow)).toReal
+  let forcingLeg := Real.rpow s (-(7 : ℝ)) * (Annealed.sigmaBar M (n + 3) : ℝ)⁻¹ *
+    Real.rpow (3 : ℝ) ((1 + s) * (n : ℝ)) *
+    (Support.normalizedGagliardoESeminormOn parentWindow s g).toReal
+  let gradientLeg := Real.rpow s (-(6 : ℝ)) * Real.rpow (3 : ℝ) ((1 + s) * (n : ℝ)) *
+    (Support.normalizedGagliardoESeminormOn parentWindow s hdat.grad).toReal
+  let flatLeg := Real.rpow s (-(6 : ℝ)) * Real.rpow (3 : ℝ) (n : ℝ) *
+    (eLpNorm hdat.grad 2 (Support.normalizedVolumeMeasureOn parentWindow)).toReal
+  let meanLeg := Real.rpow s (-(4 : ℝ)) * representativeError * S
+  have hbase : (eLpNorm (fun y => u.toFun y - v.toFun y) 2
+      (Support.normalizedVolumeMeasureOn
+        ((fun y => flushSubCentre z m n i sigma + y) '' openCubeSet (originCube d n)))).toReal ≤
+      K * (oscillationLeg + forcingLeg + gradientLeg +
+      representativeError * flatLeg + meanLeg) := by
+    convert hbound using 1
+    dsimp only [oscillationLeg, forcingLeg, gradientLeg, flatLeg, meanLeg,
+      representativeError, parentWindow]
+    ring
+  have hresult := five_leg_bound_errorWeighted hK.le herrorCap
+    (show 0 ≤ oscillationLeg by dsimp [oscillationLeg]; positivity)
+    (show 0 ≤ forcingLeg by dsimp [forcingLeg]; positivity)
+    (show 0 ≤ gradientLeg by dsimp [gradientLeg]; positivity)
+    (show 0 ≤ flatLeg by dsimp [flatLeg]; positivity)
+    (show 0 ≤ meanLeg by dsimp [meanLeg]; positivity) hbase
+  simpa only [oscillationLeg, forcingLeg, gradientLeg, flatLeg, meanLeg,
+    representativeError, parentWindow] using hresult
 
 end
 

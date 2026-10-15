@@ -110,23 +110,35 @@ theorem schauderInitialConst_nonneg (d : ℕ) : 0 ≤ schauderInitialConst d :=
   mul_nonneg (mul_nonneg (by norm_num) (Real.sqrt_nonneg _))
     (mul_nonneg (schauderDirichletPoincareConst_nonneg d) (Nat.cast_nonneg d))
 
-/-- **The excess of the zero-datum solution at the top scale.**
+/-! ## 1. The constant -/
 
-`E(w, (x+□_m) ∩ □_m) ≤ schauderInitialConst d · KG · √(3^m)`.  The proof is the
-freezing identity at the constant `G(0)` (a zero-trace test function does not see
-a constant forcing), the sharp energy bound, the coordinate dictionary and the
-Dirichlet Poincaré inequality — the same four steps as the one-step residue, run
-once at the top scale. -/
-theorem affineExcess_initial_le [NeZero d] (hd : d ≠ 0) {m : ℤ} {x : Vec d}
-    (hx : x ∈ openCubeSet (originCube d m))
+/-- The top-scale constant `C_Poincaré(d)·d`. -/
+def schauderTopScaleConst (d : ℕ) : ℝ :=
+  schauderDirichletPoincareConst d * (d : ℝ)
+
+theorem schauderTopScaleConst_nonneg (d : ℕ) : 0 ≤ schauderTopScaleConst d :=
+  mul_nonneg (schauderDirichletPoincareConst_nonneg d) (Nat.cast_nonneg d)
+
+/-! ## 2. The normalized `L²` bound on the whole cube -/
+
+/-- **The zero-datum solution is small in `L²(□_m)`.**
+
+Freezing the forcing at `G(0)`, the sharp energy bound and the Dirichlet
+Poincaré inequality give
+
+```text
+  ‖w‖_{L²(□_m)} ≤ C_Poincaré(d)·d·KG·3^m·√(3^m) .
+```
+-/
+theorem normalizedL2On_le_of_isDivFormWeakSolutionOn_one [NeZero d] {m : ℤ}
     (u : H10Function (openCubeSet (originCube d m)))
     {G : Vec d → Vec d} {KG : ℝ} (hKG : 0 ≤ KG)
     (hGL2 : MemVectorL2 (openCubeSet (originCube d m)) G)
     (hG : HolderSeminormBoundOn (openCubeSet (originCube d m)) (1 / 2) KG G)
     (hu : IsDivFormWeakSolutionOn (fun _ => (1 : Mat d))
       (openCubeSet (originCube d m)) u.toH1Function G) :
-    affineExcess (truncatedWindow x m m) u.toFun
-      ≤ schauderInitialConst d * KG * Real.sqrt ((3 : ℝ) ^ m) := by
+    normalizedL2On (openCubeSet (originCube d m)) u.toFun
+      ≤ schauderTopScaleConst d * KG * ((3 : ℝ) ^ m * Real.sqrt ((3 : ℝ) ^ m)) := by
   have hQdom : IsOpenBoundedConvexDomain (openCubeSet (originCube d m)) :=
     isOpenBoundedConvexDomain_openCubeSet _
   have : IsFiniteMeasure (volumeMeasureOn (openCubeSet (originCube d m))) :=
@@ -192,14 +204,46 @@ theorem affineExcess_initial_le [NeZero d] (hd : d ≠ 0) {m : ℤ} {x : Vec d}
       = Real.sqrt ((3 : ℝ) ^ m) *
         Real.sqrt ((volume (openCubeSet (originCube d m))).toReal) :=
     Real.sqrt_mul (zpow_pos (by norm_num) m).le _
+  rw [normalizedL2On_eq_toReal_eLpNorm_div huQ, div_le_iff₀ (Real.sqrt_pos.2 hvolQpos)]
+  refine hpoin'.trans (le_of_eq ?_)
+  rw [hsqrtV, schauderTopScaleConst]
+  ring
+
+/-- **The excess of the zero-datum solution at the top scale.**
+
+`E(w, (x+□_m) ∩ □_m) ≤ schauderInitialConst d · KG · √(3^m)`.  The proof is the
+freezing identity at the constant `G(0)` (a zero-trace test function does not see
+a constant forcing), the sharp energy bound, the coordinate dictionary and the
+Dirichlet Poincaré inequality — the same four steps as the one-step residue, run
+once at the top scale. -/
+theorem affineExcess_initial_le [NeZero d] (hd : d ≠ 0) {m : ℤ} {x : Vec d}
+    (hx : x ∈ openCubeSet (originCube d m))
+    (u : H10Function (openCubeSet (originCube d m)))
+    {G : Vec d → Vec d} {KG : ℝ} (hKG : 0 ≤ KG)
+    (hGL2 : MemVectorL2 (openCubeSet (originCube d m)) G)
+    (hG : HolderSeminormBoundOn (openCubeSet (originCube d m)) (1 / 2) KG G)
+    (hu : IsDivFormWeakSolutionOn (fun _ => (1 : Mat d))
+      (openCubeSet (originCube d m)) u.toH1Function G) :
+    affineExcess (truncatedWindow x m m) u.toFun
+      ≤ schauderInitialConst d * KG * Real.sqrt ((3 : ℝ) ^ m) := by
+  have hQdom : IsOpenBoundedConvexDomain (openCubeSet (originCube d m)) :=
+    isOpenBoundedConvexDomain_openCubeSet _
+  have : IsFiniteMeasure (volumeMeasureOn (openCubeSet (originCube d m))) :=
+    hQdom.isFiniteMeasure_restrict_volume
+  have hvolQ : (volume (openCubeSet (originCube d m))).toReal = ((3 : ℝ) ^ m) ^ d := by
+    rw [volume_openCubeSet_toReal, cubeVolume_eq_pow_scale]
+    rfl
+  have hvolQpos : (0 : ℝ) < (volume (openCubeSet (originCube d m))).toReal := by
+    rw [hvolQ]
+    positivity
+  -- the frozen equation and the sharp energy bound
+  have huQ : MemLp u.toFun 2 (volume.restrict (openCubeSet (originCube d m))) := by
+    simpa only [volumeMeasureOn] using u.toH1Function.memL2
   have hnormQ : normalizedL2On (openCubeSet (originCube d m)) u.toFun
       ≤ schauderDirichletPoincareConst d * (d : ℝ) * KG *
         ((3 : ℝ) ^ m * Real.sqrt ((3 : ℝ) ^ m)) := by
-    rw [normalizedL2On_eq_toReal_eLpNorm_div huQ, div_le_iff₀ (Real.sqrt_pos.2 hvolQpos)]
-    refine hpoin'.trans (le_of_eq ?_)
-    rw [hsqrtV]
-    ring
-  -- transfer to the truncated window at the top scale
+    simpa only [schauderTopScaleConst] using
+      normalizedL2On_le_of_isDivFormWeakSolutionOn_one u hKG hGL2 hG hu
   have hWQ : truncatedWindow x m m ⊆ openCubeSet (originCube d m) :=
     truncatedWindow_subset_domain x m m
   have hWpos : (0 : ℝ) < (volume (truncatedWindow x m m)).toReal :=

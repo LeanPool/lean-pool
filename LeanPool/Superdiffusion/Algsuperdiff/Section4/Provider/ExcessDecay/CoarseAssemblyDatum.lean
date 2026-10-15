@@ -19,43 +19,10 @@ Module imports, support namespace and local option directives adapted for Lean P
 
 
 /-!
-# The boundary-Caccioppoli export sibling: the full boundary-datum identity
+# Boundary Caccioppoli with the full boundary datum
 
-Nothing here imports that file, and nothing here claims the anchor or any
-source node.
-
-## Why this module exists
-
-`BoundaryEnergyRebase.exists_boundaryWindowEnergy_rebased_le_dirichletDatumRHS` (the
-general-data boundary Caccioppoli) produces the covering-cube Dirichlet
-comparison `v` and exports only the **value** half of its datum identity,
-
-```text
-  ∀ y, v.boundaryData.toFun y = hdat.toFun (y + c) ,   c = wellPlacedCentre x m (n+2) .
-```
-
-The Dirichlet-energy leg
-(`CoarseDirichletEnergy.dirichletEnergyWithRHSRHS_coveringCube_le_anchorLegs`) consumes
-the **gradient** half,
-
-```text
-  ∀ y, v.boundaryData.grad y = hdat.grad (y + c) ,
-```
-
-because CoarseGraining's `dirichletEnergyWithRHSRHS` reads the datum through
-`dirichletBoundaryGradientField`.  The underlying producer
-(`BoundaryAssemblyDirichlet.exists_dirichletForcedCubeSolution_boundaryData`)
-already returns the full `H1Function` equality `v.boundaryData = h`, so both
-halves are available at no cost; only the export was narrow.
-
-This module re-runs that script with the full identity exported.  The tracked
-file is **not** edited: `exists_boundaryWindowEnergy_rebased_le_dirichletDatumRHS`
-stays exactly as it is and this is an independent public sibling.
-
-## References
-
-* CoarseGraining: `Book/Ch03/Definitions.lean` (`DirichletForcedCubeSolution`),
-  `Book/Ch03/Theorems/Energy/Theory.lean`.
+The cube estimate specializes the shared window theorem and retains the value
+and gradient identities of the comparison solution's boundary data.
 -/
 
 namespace Algsuperdiff.Section4.Provider.ExcessDecay
@@ -119,64 +86,19 @@ theorem exists_boundaryWindowEnergy_rebased_le_dirichletDatumRHS_full
                           (wellPlacedCentre x m (n + 2)) z omega) r
                         (fun y => -g (y + wellPlacedCentre x m (n + 2))) v ^ 2)) := by
   obtain ⟨C₁, C₂, hC₁, hC₂, hmain⟩ :=
-    exists_boundaryCaccioppoliEnergy_withLocalizedBoundaryDatum d
+    exists_boundaryWindowEnergy_rebased_window_le_dirichletDatumRHS d
   refine ⟨C₁, C₂, hC₁, hC₂, ?_⟩
   intro M L omega m n x z s t r u hdat g hx hnm hsubx hsol hs hs1 ht ht2 hst hr hr1 hgTr hhTr
-  set c : Vec d := wellPlacedCentre x m (n + 2) with hc
-  set aFam : Ch03.CoeffFamily d := parentRebasedFamily M L (n + 3) c z omega with haFam
-  set hsub : translateSet c (openCubeSet (originCube d (n + 2))) ⊆
-      openCubeSet (originCube d m) := translateSet_wellPlacedCentre_subset x hnm
-    with hsubdef
-  set utr : H1Function (openCubeSet (originCube d (n + 2))) :=
-    H1Function.untranslate c
-      (u.restrict (isOpen_translateSet_openCubeSet c (n + 2)) hsub) with hutr
-  set htr : H1Function (openCubeSet (originCube d (n + 2))) :=
-    H1Function.untranslate c
-      (hdat.restrict (isOpen_translateSet_openCubeSet c (n + 2)) hsub) with hhtr
-  have heq : IsForcedEquation (originCube d (n + 2)) aFam utr (fun y => -g (y + c)) := by
-    rw [haFam, hutr]
-    exact isForcedEquation_parentRebasedFamily (k := n + 3) M L c z omega hsub hsol.2
-  have hgL2 : MemVectorL2 (openCubeSet (originCube d (n + 2))) (fun y => -g (y + c)) :=
-    memVectorL2_openCubeSet_of_forceBesovRegularity hgTr
-  obtain ⟨v, hvdat, sigma, hsigma⟩ :=
-    exists_dirichletForcedCubeSolution_boundaryData (originCube d (n + 2)) aFam htr hgL2
-  refine ⟨v, fun y => ?_, fun y => ?_, ?_⟩
-  · rw [hvdat, hhtr]
-    rfl
-  · rw [hvdat, hhtr]
-    rfl
-  obtain ⟨rho, hrhoval, _hrhograd⟩ := hsol.1
-  have hUV : ∀ y, utr.toFun y - v.toH1.toFun y =
-      rho.toH1Function.toFun (y + c) - sigma.toH1Function.toFun y := by
-    intro y
-    have hu : utr.toFun y = u.toFun (y + c) := rfl
-    have hh : htr.toFun y = hdat.toFun (y + c) := rfl
-    rw [hu, hrhoval (y + c), hsigma y, hh]
-    ring
-  have hloc := localizedZeroTraceFunctionOn_wellPlacedDifference x hnm rho sigma hUV
-  have hscale : (originCube d (n + 2)).scale - 1 = n + 2 - 1 := by
-    rw [scale_originCube]
-  have hloc' : Ch01.LocalizedZeroTraceFunctionOn
-      (Ch02.cubeDomain (originCube d (n + 2)) : Set (Vec d))
-      (openCubeAtScale (x - c) ((originCube d (n + 2)).scale - 1))
-      (fun y => utr.toFun y - v.toH1.toFun y) := by
-    rw [hscale]
-    exact hloc
-  have hhv : ForceBesovRegularity (originCube d (n + 2)) r
-      (dirichletBoundaryGradientField v) := by
-    rw [dirichletBoundaryGradientField, hvdat]
-    exact hhTr
-  have hxk : x - c ∈ openCubeSet (originCube d (n + 2)) :=
-    sub_wellPlacedCentre_mem_openCubeSet hx hnm
-  have hcacc := hmain (Q := originCube d (n + 2)) (a := aFam) (s := s) (t := t) (r := r)
-    (x := x - c) (g := fun y => -g (y + c)) utr v heq hloc' hs hs1 ht ht2 hst hr hr1
-    hgTr hhv hxk
-  rw [scale_originCube] at hcacc
-  have hcov := localizedCoeffEnergyValue_childCube_le_three_pow_mul_coveringCore
-    (z := z) M L (n + 3) omega hx hnm hsubx u
-  have h3d : (0 : ℝ) ≤ (3 : ℝ) ^ d := by positivity
-  refine hcov.trans (mul_le_mul_of_nonneg_left ?_ h3d)
-  exact hcacc
+  obtain ⟨v, hv, hgrad, henergy⟩ :=
+    hmain M L omega m n x z s t r u hdat g hx hnm hsol hs hs1 ht ht2 hst hr hr1 hgTr hhTr
+  refine ⟨v, hv, hgrad, ?_⟩
+  have hwin : truncatedWindow x m n = translateSet x (openCubeSet (originCube d n)) := by
+    rw [truncatedWindow, image_add_eq_translateSet]
+    exact Set.inter_eq_self_of_subset_left hsubx
+  rw [hwin, normalizedSetAverage_vecNormSq_translateSet x (openCubeSet (originCube d n))
+    u.grad] at henergy
+  rw [localizedCoeffEnergyValue_parentRebasedFamily_eq M L (n + 3) x z omega (originCube d n)]
+  exact henergy
 
 end
 

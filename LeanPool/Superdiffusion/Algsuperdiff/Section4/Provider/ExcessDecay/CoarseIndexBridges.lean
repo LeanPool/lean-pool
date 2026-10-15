@@ -103,7 +103,7 @@ bounded by an absolute `K(d)` against `σ_{n+3}`.
 The `s/6` instance is `BoundaryCoveringSlot.ae_coveringCubeCaps_le`; this
 is the same two-step pattern with the index left free, so the Dirichlet-energy
 indices `s/2` and `s/4` of the `r = s/2` pin are covered. -/
-theorem ae_coveringCubeRatioCap_le (d : ℕ) [NeZero d] :
+theorem ae_coveringCubeRatioCap_le_gapThree (d : ℕ) [NeZero d] :
     ∃ C K : ℝ, 0 < C ∧ 0 < K ∧
       ∀ (M : ABKModel d) (s : ℝ), s ∈ Set.Icc (64 * M.gamma) 1 →
         M.gamma ≤ C⁻¹ * Disorder.cstar M ^ (10 : ℕ) →
@@ -116,10 +116,10 @@ theorem ae_coveringCubeRatioCap_le (d : ℕ) [NeZero d] :
             omega ∈ Algsuperdiff.Frozen.Section4.goodEventAt M
                 (Support.cgEllipLowerConstant d) (n + 3) z
                 ⟨s / 8, by linarith only [hs]⟩ (1 / 2) →
-              ∀ x : Vec d, x ∈ openCubeSet (originCube d m) →
-                (fun y => x + y) '' openCubeSet (originCube d n) ⊆
-                    ((fun y => z + y) '' openCubeSet (originCube d (n + 1))) ∩
-                      openCubeSet (originCube d m) →
+              ∀ x : Vec d,
+                translateSet (wellPlacedCentre x m (n + 2) - z)
+                    (cubeSet (originCube d (n + 2))) ⊆
+                  cubeSet (originCube d (n + 3)) →
                 ((Annealed.sigmaBar M (n + 3) : ℝ))⁻¹ *
                       Ch02.LambdaSq (originCube d (n + 2)) t (.finite 2)
                         (parentRebasedFamily M L (n + 3)
@@ -132,7 +132,6 @@ theorem ae_coveringCubeRatioCap_le (d : ℕ) [NeZero d] :
   have hd : (0 : ℝ) < (d : ℝ) := by
     exact_mod_cast Nat.pos_of_ne_zero (NeZero.ne d)
   set kappa : ℝ := Real.sqrt (192 * (d : ℝ)) * 3 with hkappadef
-  have hkappa : 0 ≤ kappa := by positivity
   refine ⟨C, 2 * (d : ℝ) * ((kappa * (C * (1 / 2))) ^ 2 + 1), hCpos, ?_, ?_⟩
   · have h1 : (0 : ℝ) < (kappa * (C * (1 / 2))) ^ 2 + 1 := by positivity
     have h2 : (0 : ℝ) < 2 * (d : ℝ) := by linarith only [hd]
@@ -142,9 +141,9 @@ theorem ae_coveringCubeRatioCap_le (d : ℕ) [NeZero d] :
   have ht0 : (0 : ℝ) < t := by linarith only [hs, hst]
   have hsig : (0 : ℝ) < (Annealed.sigmaBar M (n + 3) : ℝ) := (Annealed.sigmaBar M (n + 3)).2
   filter_upwards [hC M s hsrange hregime hsmall hs n z,
-    ae_coveringCubeError_le_representative M L n m z hs hst ht]
+    ae_coveringCubeError_le_representative_gapThree M L n m z hs hst ht]
     with omega hcap herr
-  intro hmem x hx hgeom
+  intro hmem x hhinge
   have hErep0 : (0 : ℝ) ≤ fluxCorrectedErrorRepresentative M L (n + 3)
       ⟨s / 8, by linarith only [hs]⟩ (Cutoff.translateCutoffSample z omega) :=
     fluxCorrectedErrorRepresentative_nonneg _ _ _ _ _
@@ -154,7 +153,7 @@ theorem ae_coveringCubeRatioCap_le (d : ℕ) [NeZero d] :
       (parentRebasedFamily M L (n + 3) (wellPlacedCentre x m (n + 2)) z omega)
       (isotropicComparatorMatrix (Annealed.sigmaBar M (n + 3))) ≤
       kappa * (C * (1 / 2)) := by
-    refine (herr x (by omega) hx hgeom).trans ?_
+    refine (herr x hhinge).trans ?_
     have h1 : Real.sqrt (offGridStabilityConst d t (s / 8)) ≤
         Real.sqrt (192 * (d : ℝ)) := Real.sqrt_le_sqrt hstab
     have h2 : ((3 : ℝ) ^ (s / 8)) ≤ 3 := by
@@ -201,6 +200,43 @@ theorem ae_coveringCubeRatioCap_le (d : ℕ) [NeZero d] :
     scalarMatrix (d := d) ((Annealed.sigmaBar M (n + 3) : ℝ)) from rfl] at hE hEnn
   have hmax := hratio.trans (two_mul_dim_mul_sq_add_one_le_of_le hEnn hE)
   exact ⟨le_trans (le_max_left _ _) hmax, le_trans (le_max_right _ _) hmax⟩
+
+/-! ## 6. The recovery record: the proved binder implies the hinge -/
+
+
+theorem ae_coveringCubeRatioCap_le (d : ℕ) [NeZero d] :
+    ∃ C K : ℝ, 0 < C ∧ 0 < K ∧
+      ∀ (M : ABKModel d) (s : ℝ), s ∈ Set.Icc (64 * M.gamma) 1 →
+        M.gamma ≤ C⁻¹ * Disorder.cstar M ^ (10 : ℕ) →
+        M.gamma * |Real.log M.gamma| ^ (2 : ℕ) ≤
+            Real.rpow (s / 8) (3 / 2 : ℝ) * Disorder.cstar M ^ (2 : ℕ) * (1 / 2) →
+        ∀ hs : 0 < s, ∀ L m n : ℤ, m ≤ L → n + 3 ≤ m → ∀ z : Vec d,
+        ∀ t : ℝ, s / 8 < t → t ≤ 1 / 2 →
+          offGridStabilityConst d t (s / 8) ≤ 192 * (d : ℝ) →
+          ∀ᵐ omega ∂(Cutoff.cutoffSampleLaw M).toMeasure,
+            omega ∈ Algsuperdiff.Frozen.Section4.goodEventAt M
+                (Support.cgEllipLowerConstant d) (n + 3) z
+                ⟨s / 8, by linarith only [hs]⟩ (1 / 2) →
+              ∀ x : Vec d, x ∈ openCubeSet (originCube d m) →
+                (fun y => x + y) '' openCubeSet (originCube d n) ⊆
+                    ((fun y => z + y) '' openCubeSet (originCube d (n + 1))) ∩
+                      openCubeSet (originCube d m) →
+                ((Annealed.sigmaBar M (n + 3) : ℝ))⁻¹ *
+                      Ch02.LambdaSq (originCube d (n + 2)) t (.finite 2)
+                        (parentRebasedFamily M L (n + 3)
+                          (wellPlacedCentre x m (n + 2)) z omega) ≤ K ∧
+                  (Annealed.sigmaBar M (n + 3) : ℝ) *
+                      (Ch02.lambdaSq (originCube d (n + 2)) t (.finite 2)
+                        (parentRebasedFamily M L (n + 3)
+                          (wellPlacedCentre x m (n + 2)) z omega))⁻¹ ≤ K := by
+  obtain ⟨C, K, hC, hK, hcap⟩ := ae_coveringCubeRatioCap_le_gapThree d
+  refine ⟨C, K, hC, hK, ?_⟩
+  intro M s hsrange hregime hsmall hs L m n hmL hnm z t hst ht hstab
+  filter_upwards [hcap M s hsrange hregime hsmall hs L m n hmL hnm z t hst ht hstab]
+    with omega hcap
+  intro hmem x hx hgeom
+  exact hcap hmem x
+    (translateSet_cubeSet_coveringCube_subset_anchorParent (by omega) hx hgeom)
 
 /-! ## 2. `G-small-2`: the positive-Besov index conversion, at no cost -/
 

@@ -248,7 +248,6 @@ theorem ae_forceBracket_rebased_le_gapThree [NeZero d] (M : ABKModel d) (L n : �
     ae_ellipticityRatio_rebased_le_representative_gapThree M L n z hs hs1]
     with omega herr hratio
   intro x hcontain
-  have hs6 : (0 : ℝ) < s / 6 := by linarith only [hs]
   set A : Ch03.CoeffFamily d := parentRebasedFamily M L (n + 3) x z omega with hAdef
   set sig : ℝ := (Annealed.sigmaBar M (n + 3) : ℝ) with hsigdef
   have hsig : 0 < sig := (Annealed.sigmaBar M (n + 3)).2
@@ -256,64 +255,9 @@ theorem ae_forceBracket_rebased_le_gapThree [NeZero d] (M : ABKModel d) (L n : �
       ((3 : ℝ) ^ (3 * (s / 8)) *
         fluxCorrectedErrorRepresentative M L (n + 3) ⟨s / 8, by linarith only [hs]⟩
           (Cutoff.translateCutoffSample z omega)) with hEbdef
-  set Kb : ℝ := 2 * (d : ℝ) * (Eb ^ 2 + 1) with hKbdef
-  have hKb : 0 ≤ Kb := by
-    rw [hKbdef]
-    have h1 : (0 : ℝ) ≤ 2 * (d : ℝ) := by positivity
-    have h2 : (0 : ℝ) ≤ Eb ^ 2 + 1 := by positivity
-    exact mul_nonneg h1 h2
-  have hlam : 0 < Ch02.lambdaSq (originCube d n) (s / 6) (.finite 2) A :=
-    Ch02.lambdaSq_finite_pos (originCube d n) A hs6 (by norm_num)
-  have hLam : 0 < Ch02.LambdaSq (originCube d n) (s / 6) (.finite 2) A :=
-    Ch02.LambdaSq_finite_pos (originCube d n) A hs6 (by norm_num)
-  have hrat := hratio x hcontain
-  have h1 : sig⁻¹ * Ch02.LambdaSq (originCube d n) (s / 6) (.finite 2) A ≤ Kb :=
-    le_trans (le_max_left _ _) hrat
-  have h2 : sig * (Ch02.lambdaSq (originCube d n) (s / 6) (.finite 2) A)⁻¹ ≤ Kb :=
-    le_trans (le_max_right _ _) hrat
-  have hErrDepth := herr x hcontain
-  have hErrDepthNn : 0 ≤ Ch03.coarseGrainingHomogenizationErrorAtDepth (originCube d n) A
-      (scalarComparator (d := d) hsig) (s / 3) 0 :=
-    coarseGrainingHomogenizationErrorAtDepth_nonneg (originCube d n) A _
-      (by linarith only [hs]) 0
-  have hprodInv : Ch02.LambdaSq (originCube d n) (s / 6) (.finite 2) A *
-      (Ch02.lambdaSq (originCube d n) (s / 6) (.finite 2) A)⁻¹ ≤ Kb * Kb := by
-    have heq : Ch02.LambdaSq (originCube d n) (s / 6) (.finite 2) A *
-        (Ch02.lambdaSq (originCube d n) (s / 6) (.finite 2) A)⁻¹ =
-        (sig⁻¹ * Ch02.LambdaSq (originCube d n) (s / 6) (.finite 2) A) *
-          (sig * (Ch02.lambdaSq (originCube d n) (s / 6) (.finite 2) A)⁻¹) := by
-      field_simp
-    rw [heq]
-    exact mul_le_mul h1 h2 (mul_nonneg hsig.le (inv_pos.mpr hlam).le)
-      (le_trans (mul_nonneg (inv_pos.mpr hsig).le hLam.le) h1)
-  have hT2 : Ch03.poincareUpperEllipticityFactor (originCube d n) A (s / 6) (.finite 2) *
-      Ch03.poincareLowerEllipticityFactor (originCube d n) A (s / 6) (.finite 2) ≤ Kb := by
-    rw [Ch03.poincareUpperEllipticityFactor, Ch03.poincareLowerEllipticityFactor,
-      rpow_half_eq_sqrt, rpow_neg_half_eq_sqrt_inv hlam,
-      ← Real.sqrt_mul hLam.le]
-    refine le_trans (Real.sqrt_le_sqrt hprodInv) ?_
-    rw [show Kb * Kb = Kb ^ (2 : ℕ) by ring, Real.sqrt_sq hKb]
-  have hT3 : Ch03.constantCoeffMatrixNorm (scalarComparator (d := d) hsig) *
-      Real.rpow (Ch02.lambdaSq (originCube d n) (s / 6) (.finite 2) A) (-1 : ℝ) ≤ Kb := by
-    rw [constantCoeffMatrixNorm_scalarComparator hsig, rpow_neg_one_eq_inv hlam]
-    exact h2
-  have hT1 : Ch03.constantCoeffMatrixNormHalf (scalarComparator (d := d) hsig) *
-      Ch03.poincareLowerEllipticityFactor (originCube d n) A (s / 6) (.finite 2) *
-      Ch03.coarseGrainingHomogenizationErrorAtDepth (originCube d n) A
-        (scalarComparator (d := d) hsig) (s / 3) 0 ≤
-      Real.sqrt Kb * Eb := by
-    have hhalf : Ch03.constantCoeffMatrixNormHalf (scalarComparator (d := d) hsig) *
-        Ch03.poincareLowerEllipticityFactor (originCube d n) A (s / 6) (.finite 2) ≤
-        Real.sqrt Kb := by
-      rw [constantCoeffMatrixNormHalf_scalarComparator hsig,
-        Ch03.poincareLowerEllipticityFactor, rpow_half_eq_sqrt,
-        rpow_neg_half_eq_sqrt_inv hlam, ← Real.sqrt_mul hsig.le]
-      exact Real.sqrt_le_sqrt h2
-    exact mul_le_mul hhalf hErrDepth hErrDepthNn (Real.sqrt_nonneg _)
-  rw [coarseGrainingForceBracket, show s / 3 / 2 = s / 6 by ring]
-  linarith only [hT1, hT2, hT3]
-
-/-! ## 6. The proved statements, recovered -/
+  exact coarseGrainingForceBracket_le_of_ratio_and_error n A hs hsig
+    (by positivity : 0 ≤ 2 * (d : ℝ) * (Eb ^ 2 + 1))
+    (hratio x hcontain) (herr x hcontain)
 
 end
 

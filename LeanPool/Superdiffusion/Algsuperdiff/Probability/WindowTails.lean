@@ -60,6 +60,67 @@ section Generic
 
 variable {Ω : Type*}
 
+/-- A vanishing upper bound on all natural-number tails excludes the infinite value.
+No measurability of the random scale is needed. -/
+theorem ae_ne_top_of_enat_tail_tendsto_zero [MeasurableSpace Ω] {P : Measure Ω}
+    {X : Ω → ℕ∞} {b : ℕ → ℝ≥0∞}
+    (hlim : Filter.Tendsto b Filter.atTop (nhds 0))
+    (htail : ∀ N : ℕ, P {omega | (N : ℕ∞) ≤ X omega} ≤ b N) :
+    ∀ᵐ omega ∂P, X omega ≠ ⊤ := by
+  rw [MeasureTheory.ae_iff]
+  have hsub : ∀ N : ℕ, {omega | ¬ X omega ≠ ⊤} ⊆ {omega | (N : ℕ∞) ≤ X omega} := by
+    intro N omega homega
+    have htop : X omega = ⊤ := not_not.mp homega
+    simp only [Set.mem_ofPred_eq, htop, le_top]
+  exact le_antisymm (ge_of_tendsto' hlim fun N =>
+    le_trans (measure_mono (hsub N)) (htail N)) zero_le
+
+/-- A shifted exponential tail makes an extended-natural random scale finite almost surely. -/
+theorem ae_ne_top_of_enat_exponential_tail [MeasurableSpace Ω] {P : Measure Ω}
+    {X : Ω → ℕ∞} (Cst : ℝ) {a b : ℝ} (ha : 0 < a) (hb : 0 < b)
+    (htail : ∀ N : ℕ, P {omega | (N : ℕ∞) ≤ X omega} ≤
+      ENNReal.ofReal (Cst * Real.exp (-(a * ((N : ℝ) - Cst)) / b))) :
+    ∀ᵐ omega ∂P, X omega ≠ ⊤ := by
+  set r : ℝ := Real.exp (-(a / b)) with hrdef
+  have hr0 : (0 : ℝ) ≤ r := (Real.exp_pos _).le
+  have hr1 : r < 1 := by
+    have hab : (0 : ℝ) < a / b := div_pos ha hb
+    have hlt := Real.exp_lt_exp.mpr (show -(a / b) < (0 : ℝ) by linarith only [hab])
+    rwa [Real.exp_zero] at hlt
+  have hpow : ∀ N : ℕ, r ^ N = Real.exp (-(a / b) * (N : ℝ)) := by
+    intro N
+    induction N with
+    | zero => simp
+    | succ n ih =>
+        rw [pow_succ, ih, hrdef, ← Real.exp_add]
+        congr 1
+        push_cast
+        ring
+  have hrw : ∀ N : ℕ, Cst * Real.exp (-(a * ((N : ℝ) - Cst)) / b) =
+      Cst * Real.exp (a * Cst / b) * r ^ N := by
+    intro N
+    have hstep : Cst * Real.exp (a * Cst / b) * r ^ N =
+        Cst * (Real.exp (a * Cst / b) * Real.exp (-(a / b) * (N : ℝ))) := by
+      rw [hpow N]; ring
+    rw [hstep, ← Real.exp_add]
+    have harg : a * Cst / b + -(a / b) * (N : ℝ) = -(a * ((N : ℝ) - Cst)) / b := by
+      field_simp
+      ring
+    rw [harg]
+  have hlim : Filter.Tendsto
+      (fun N : ℕ => ENNReal.ofReal (Cst * Real.exp (-(a * ((N : ℝ) - Cst)) / b)))
+      Filter.atTop (nhds 0) := by
+    have h0 : Filter.Tendsto (fun N : ℕ => Cst * Real.exp (a * Cst / b) * r ^ N)
+        Filter.atTop (nhds (Cst * Real.exp (a * Cst / b) * 0)) :=
+      (tendsto_pow_atTop_nhds_zero_of_lt_one hr0 hr1).const_mul _
+    rw [mul_zero] at h0
+    have hreal : Filter.Tendsto
+        (fun N : ℕ => Cst * Real.exp (-(a * ((N : ℝ) - Cst)) / b)) Filter.atTop
+        (nhds 0) := h0.congr fun N => (hrw N).symm
+    have hcomp := (ENNReal.continuous_ofReal.tendsto (0 : ℝ)).comp hreal
+    simpa using! hcomp
+  exact ae_ne_top_of_enat_tail_tendsto_zero hlim htail
+
 /-- **Real countable subadditivity along an inclusion.**  If `S ⊆ ⋃ i, T i` and
 each `P.real (T i)` is dominated by a summable nonnegative `b i`, then
 `P.real S ≤ ∑' i, b i`.  The route is `measure_iUnion_le` in `ℝ≥0∞`, which is

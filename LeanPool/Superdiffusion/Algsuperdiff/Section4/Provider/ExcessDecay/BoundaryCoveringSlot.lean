@@ -137,13 +137,12 @@ At every index `t` strictly above the good-event index `s/8` and at most `1/2`,
 the covering cube's `q = 2` error at the `(n+3)` re-based family is bounded by
 the frozen clause's own `fluxCorrectedErrorRepresentative M L (n+3) ⟨s/8⟩`,
 with the **depth-one** factor `3^{s/8}` (at most `3^{1/8} < 1.15`). -/
-theorem ae_coveringCubeError_le_representative [NeZero d] (M : ABKModel d)
+theorem ae_coveringCubeError_le_representative_gapThree [NeZero d] (M : ABKModel d)
     (L n m : ℤ) (z : Vec d) {s t : ℝ} (hs : 0 < s) (hst : s / 8 < t) (ht : t ≤ 1 / 2) :
     ∀ᵐ omega ∂(Cutoff.cutoffSampleLaw M).toMeasure,
-      ∀ x : Vec d, n + 2 ≤ m → x ∈ openCubeSet (originCube d m) →
-        (fun y => x + y) '' openCubeSet (originCube d n) ⊆
-            ((fun y => z + y) '' openCubeSet (originCube d (n + 1))) ∩
-              openCubeSet (originCube d m) →
+      ∀ x : Vec d,
+        translateSet (wellPlacedCentre x m (n + 2) - z) (cubeSet (originCube d (n + 2))) ⊆
+            cubeSet (originCube d (n + 3)) →
         Ch02.HomogenizationErrorOnCube (originCube d (n + 2)) t .infinity (.finite 2)
             (parentRebasedFamily M L (n + 3) (wellPlacedCentre x m (n + 2)) z omega)
             (isotropicComparatorMatrix (Annealed.sigmaBar M (n + 3))) ≤
@@ -159,10 +158,9 @@ theorem ae_coveringCubeError_le_representative [NeZero d] (M : ABKModel d)
       (isotropicComparatorMatrix (Annealed.sigmaBar M (n + 3)))
       (by linarith only [hs] : (0 : ℝ) < s / 8) hst ht)
   filter_upwards [hbase] with omega hall
-  intro x hnm hx hgeom
+  intro x hhinge
   have hstep := hall (wellPlacedCentre x m (n + 2) - z) (originCube d (n + 2))
-    (originCube d (n + 3))
-    (translateSet_cubeSet_coveringCube_subset_anchorParent hnm hx hgeom)
+    (originCube d (n + 3)) hhinge
   rw [originCube_scale_gap_one (d := d) n,
     fluxCorrectedErrorFunctionalAtRoot_eq_representative M L (n + 3)
       ⟨s / 8, by linarith only [hs]⟩] at hstep
@@ -173,6 +171,27 @@ theorem ae_coveringCubeError_le_representative [NeZero d] (M : ABKModel d)
   rwa [homogenizationErrorOnCube_parentRebasedFamily_eq_offGrid M L (n + 3) (n + 2)
     (wellPlacedCentre x m (n + 2)) z omega (by linarith only [hs, hst] : (0 : ℝ) < t)
     (isotropicComparatorMatrix (Annealed.sigmaBar M (n + 3)))]
+
+
+theorem ae_coveringCubeError_le_representative [NeZero d] (M : ABKModel d)
+    (L n m : ℤ) (z : Vec d) {s t : ℝ} (hs : 0 < s) (hst : s / 8 < t) (ht : t ≤ 1 / 2) :
+    ∀ᵐ omega ∂(Cutoff.cutoffSampleLaw M).toMeasure,
+      ∀ x : Vec d, n + 2 ≤ m → x ∈ openCubeSet (originCube d m) →
+        (fun y => x + y) '' openCubeSet (originCube d n) ⊆
+            ((fun y => z + y) '' openCubeSet (originCube d (n + 1))) ∩
+              openCubeSet (originCube d m) →
+        Ch02.HomogenizationErrorOnCube (originCube d (n + 2)) t .infinity (.finite 2)
+            (parentRebasedFamily M L (n + 3) (wellPlacedCentre x m (n + 2)) z omega)
+            (isotropicComparatorMatrix (Annealed.sigmaBar M (n + 3))) ≤
+          Real.sqrt (offGridStabilityConst d t (s / 8)) *
+            ((3 : ℝ) ^ (s / 8) *
+              fluxCorrectedErrorRepresentative M L (n + 3)
+                ⟨s / 8, by linarith only [hs]⟩
+                (Cutoff.translateCutoffSample z omega)) := by
+  filter_upwards [ae_coveringCubeError_le_representative_gapThree M L n m z hs hst ht]
+    with omega herror
+  intro x hnm hx hgeom
+  exact herror x (translateSet_cubeSet_coveringCube_subset_anchorParent hnm hx hgeom)
 
 /-! ## 3. The covering cube's ellipticity data, capped on the good event -/
 

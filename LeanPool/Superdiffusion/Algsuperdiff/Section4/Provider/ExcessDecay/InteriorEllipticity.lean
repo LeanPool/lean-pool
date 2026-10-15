@@ -213,67 +213,26 @@ theorem rpow_neg_one_eq_inv {x : ℝ} (hx : 0 < x) :
   change x ^ (-1 : ℝ) = _
   rw [show (-1 : ℝ) = -(1 : ℝ) by norm_num, Real.rpow_neg hx.le, Real.rpow_one]
 
-/-- **The forcing bracket at the child frame, in terms of the anchor's own
-representative.**
-
-The comparator's scale `σ_{n+2}` cancels between the ellipticity factors and
-the matrix norm, so the bound is `σ`-free: it depends only on `d`, on the
-proved off-grid constant and on the anchor's `𝓔_{s/8}` representative.  On the
-good event the representative is a constant, so the whole bracket is. -/
-theorem ae_forceBracket_rebased_le [NeZero d] (M : ABKModel d) (L n : ℤ) (z : Vec d)
-    {s : ℝ} (hs : 0 < s) (hs1 : s ≤ 1) :
-    ∀ᵐ omega ∂(Cutoff.cutoffSampleLaw M).toMeasure,
-      ∀ x : Vec d, ∀ m : ℤ,
-        (fun y => x + y) '' openCubeSet (originCube d n) ⊆
-            ((fun y => z + y) '' openCubeSet (originCube d (n + 1))) ∩
-              openCubeSet (originCube d m) →
-        coarseGrainingForceBracket (originCube d n)
-            (parentRebasedFamily M L (n + 2) x z omega)
-            (scalarComparator (Annealed.sigmaBar M (n + 2)).2) (s / 3) ≤
-          Real.sqrt (2 * (d : ℝ) *
-                ((Real.sqrt (offGridStabilityConst d (s / 6) (s / 8)) *
-                    ((3 : ℝ) ^ (2 * (s / 8)) *
-                      fluxCorrectedErrorRepresentative M L (n + 2)
-                        ⟨s / 8, by linarith only [hs]⟩
-                        (Cutoff.translateCutoffSample z omega))) ^ 2 + 1)) *
-              (Real.sqrt (offGridStabilityConst d (s / 6) (s / 8)) *
-                ((3 : ℝ) ^ (2 * (s / 8)) *
-                  fluxCorrectedErrorRepresentative M L (n + 2)
-                    ⟨s / 8, by linarith only [hs]⟩
-                    (Cutoff.translateCutoffSample z omega))) +
-            2 * (2 * (d : ℝ) *
-                ((Real.sqrt (offGridStabilityConst d (s / 6) (s / 8)) *
-                    ((3 : ℝ) ^ (2 * (s / 8)) *
-                      fluxCorrectedErrorRepresentative M L (n + 2)
-                        ⟨s / 8, by linarith only [hs]⟩
-                        (Cutoff.translateCutoffSample z omega))) ^ 2 + 1)) := by
-  filter_upwards [ae_coarseGrainingErrorAtDepth_rebased_le_representative M L n z hs hs1,
-    ae_ellipticityRatio_rebased_le_representative M L n z hs hs1] with omega herr hratio
-  intro x m hgeom
+/-- A scalar comparator and ellipticity-ratio bound control the force bracket.
+This estimate is independent of how the coefficient family was rebased. -/
+theorem coarseGrainingForceBracket_le_of_ratio_and_error [NeZero d]
+    (n : ℤ) (A : Ch03.CoeffFamily d) {s sig Eb Kb : ℝ}
+    (hs : 0 < s) (hsig : 0 < sig) (hKb : 0 ≤ Kb)
+    (hrat : max (sig⁻¹ * Ch02.LambdaSq (originCube d n) (s / 6) (.finite 2) A)
+      (sig * (Ch02.lambdaSq (originCube d n) (s / 6) (.finite 2) A)⁻¹) ≤ Kb)
+    (hErrDepth : Ch03.coarseGrainingHomogenizationErrorAtDepth (originCube d n) A
+      (scalarComparator (d := d) hsig) (s / 3) 0 ≤ Eb) :
+    coarseGrainingForceBracket (originCube d n) A (scalarComparator hsig) (s / 3) ≤
+      Real.sqrt Kb * Eb + 2 * Kb := by
   have hs6 : (0 : ℝ) < s / 6 := by linarith only [hs]
-  set A : Ch03.CoeffFamily d := parentRebasedFamily M L (n + 2) x z omega with hAdef
-  set sig : ℝ := (Annealed.sigmaBar M (n + 2) : ℝ) with hsigdef
-  have hsig : 0 < sig := (Annealed.sigmaBar M (n + 2)).2
-  set Eb : ℝ := Real.sqrt (offGridStabilityConst d (s / 6) (s / 8)) *
-      ((3 : ℝ) ^ (2 * (s / 8)) *
-        fluxCorrectedErrorRepresentative M L (n + 2) ⟨s / 8, by linarith only [hs]⟩
-          (Cutoff.translateCutoffSample z omega)) with hEbdef
-  set Kb : ℝ := 2 * (d : ℝ) * (Eb ^ 2 + 1) with hKbdef
-  have hKb : 0 ≤ Kb := by
-    rw [hKbdef]
-    have h1 : (0 : ℝ) ≤ 2 * (d : ℝ) := by positivity
-    have h2 : (0 : ℝ) ≤ Eb ^ 2 + 1 := by positivity
-    exact mul_nonneg h1 h2
   have hlam : 0 < Ch02.lambdaSq (originCube d n) (s / 6) (.finite 2) A :=
     Ch02.lambdaSq_finite_pos (originCube d n) A hs6 (by norm_num)
   have hLam : 0 < Ch02.LambdaSq (originCube d n) (s / 6) (.finite 2) A :=
     Ch02.LambdaSq_finite_pos (originCube d n) A hs6 (by norm_num)
-  have hrat := hratio x m hgeom
   have h1 : sig⁻¹ * Ch02.LambdaSq (originCube d n) (s / 6) (.finite 2) A ≤ Kb :=
     le_trans (le_max_left _ _) hrat
   have h2 : sig * (Ch02.lambdaSq (originCube d n) (s / 6) (.finite 2) A)⁻¹ ≤ Kb :=
     le_trans (le_max_right _ _) hrat
-  have hErrDepth := herr x m hgeom
   have hErrDepthNn : 0 ≤ Ch03.coarseGrainingHomogenizationErrorAtDepth (originCube d n) A
       (scalarComparator (d := d) hsig) (s / 3) 0 :=
     coarseGrainingHomogenizationErrorAtDepth_nonneg (originCube d n) A _
@@ -317,6 +276,55 @@ theorem ae_forceBracket_rebased_le [NeZero d] (M : ABKModel d) (L n : ℤ) (z : 
     exact mul_le_mul hhalf hErrDepth hErrDepthNn (Real.sqrt_nonneg _)
   rw [coarseGrainingForceBracket, show s / 3 / 2 = s / 6 by ring]
   linarith only [hT1, hT2, hT3]
+
+
+/-- **The forcing bracket at the child frame, in terms of the anchor's own
+representative.**
+
+The comparator's scale `σ_{n+2}` cancels between the ellipticity factors and
+the matrix norm, so the bound is `σ`-free: it depends only on `d`, on the
+proved off-grid constant and on the anchor's `𝓔_{s/8}` representative.  On the
+good event the representative is a constant, so the whole bracket is. -/
+theorem ae_forceBracket_rebased_le [NeZero d] (M : ABKModel d) (L n : ℤ) (z : Vec d)
+    {s : ℝ} (hs : 0 < s) (hs1 : s ≤ 1) :
+    ∀ᵐ omega ∂(Cutoff.cutoffSampleLaw M).toMeasure,
+      ∀ x : Vec d, ∀ m : ℤ,
+        (fun y => x + y) '' openCubeSet (originCube d n) ⊆
+            ((fun y => z + y) '' openCubeSet (originCube d (n + 1))) ∩
+              openCubeSet (originCube d m) →
+        coarseGrainingForceBracket (originCube d n)
+            (parentRebasedFamily M L (n + 2) x z omega)
+            (scalarComparator (Annealed.sigmaBar M (n + 2)).2) (s / 3) ≤
+          Real.sqrt (2 * (d : ℝ) *
+                ((Real.sqrt (offGridStabilityConst d (s / 6) (s / 8)) *
+                    ((3 : ℝ) ^ (2 * (s / 8)) *
+                      fluxCorrectedErrorRepresentative M L (n + 2)
+                        ⟨s / 8, by linarith only [hs]⟩
+                        (Cutoff.translateCutoffSample z omega))) ^ 2 + 1)) *
+              (Real.sqrt (offGridStabilityConst d (s / 6) (s / 8)) *
+                ((3 : ℝ) ^ (2 * (s / 8)) *
+                  fluxCorrectedErrorRepresentative M L (n + 2)
+                    ⟨s / 8, by linarith only [hs]⟩
+                    (Cutoff.translateCutoffSample z omega))) +
+            2 * (2 * (d : ℝ) *
+                ((Real.sqrt (offGridStabilityConst d (s / 6) (s / 8)) *
+                    ((3 : ℝ) ^ (2 * (s / 8)) *
+                      fluxCorrectedErrorRepresentative M L (n + 2)
+                        ⟨s / 8, by linarith only [hs]⟩
+                        (Cutoff.translateCutoffSample z omega))) ^ 2 + 1)) := by
+  filter_upwards [ae_coarseGrainingErrorAtDepth_rebased_le_representative M L n z hs hs1,
+    ae_ellipticityRatio_rebased_le_representative M L n z hs hs1] with omega herr hratio
+  intro x m hgeom
+  set A : Ch03.CoeffFamily d := parentRebasedFamily M L (n + 2) x z omega with hAdef
+  set sig : ℝ := (Annealed.sigmaBar M (n + 2) : ℝ) with hsigdef
+  have hsig : 0 < sig := (Annealed.sigmaBar M (n + 2)).2
+  set Eb : ℝ := Real.sqrt (offGridStabilityConst d (s / 6) (s / 8)) *
+      ((3 : ℝ) ^ (2 * (s / 8)) *
+        fluxCorrectedErrorRepresentative M L (n + 2) ⟨s / 8, by linarith only [hs]⟩
+          (Cutoff.translateCutoffSample z omega)) with hEbdef
+  exact coarseGrainingForceBracket_le_of_ratio_and_error n A hs hsig
+    (by positivity : 0 ≤ 2 * (d : ℝ) * (Eb ^ 2 + 1))
+    (hratio x m hgeom) (herr x m hgeom)
 
 end
 

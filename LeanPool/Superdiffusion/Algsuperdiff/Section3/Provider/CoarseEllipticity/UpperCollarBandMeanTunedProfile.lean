@@ -133,28 +133,27 @@ theorem probeSharpCollarBandMeanTunedOuter_le_const
       mul_le_mul_of_nonneg_left hband (mul_nonneg hfive hdim0)
     _ = _ := by ring
 
-/-- The collar/frame core bound at an arbitrary deterministic integer depth.
-The proof is the same source algebra as the coefficient-one specialization;
-no size property of `k₀` is used here. -/
-theorem probeSharpCollarBandMeanLayerCore_le_atDepth
+/-- The collar estimate with its full nonnegative frame decay retained. -/
+theorem probeSharpCollarBandMeanLayerCore_le_retainFrame
     (M : ABKModel d) {m : ℤ} {k : ℕ} {R : TriadicCube d}
     (hR : R ∈ descendantsAtScale (originCube d m) (m - 1 - (k : ℤ)))
     (E : ℝ) (k₀ n : ℕ) (omega : CutoffSample d) :
     probeSharpCollarBandMeanLayerCore M R.scale E k₀ n (m - 1)
         (superposedGradConst d) omega ≤
-      (4 * superposedGradConst d ^ 2 *
-        probeSharpCollarBandMeanCapQuarter M E k₀ *
-        probeSharpCollarBandMeanMassQuarterConst d *
-        (3 : ℝ) ^ (2 * bfaProfileB * (k₀ : ℝ)) *
-        (3 : ℝ) ^ (1 / 16 : ℝ)) *
+      ((4 * superposedGradConst d ^ 2 *
+          probeSharpCollarBandMeanCapQuarter M E k₀ *
+          probeSharpCollarBandMeanMassQuarterConst d *
+          (3 : ℝ) ^ (2 * bfaProfileB * (k₀ : ℝ)) *
+          (3 : ℝ) ^ (1 / 16 : ℝ)) * whitneyDecayRatio ^ n) *
         slstarPowerTerm M R.scale E bfaProfileB M.gamma omega *
-        whitneyDecayRatio ^ n := by
+        (3 : ℝ) ^ (M.gamma *
+          (-((k : ℝ) + (n : ℝ) +
+            (bfaAfterBandLayerCeil n : ℝ) + (k₀ : ℝ)))) := by
   let hs := hsep M R.scale E bfaProfileB omega
   let c := bfaAfterBandLayerCeil n
   have hframe := probeSharpFramedAfterBandMultiplier_descendant_eq
     M hR E bfaProfileB k₀ n omega
-  have hbad := sqrt_assemblyBad_le_collarBandMean_fourthRoot
-    M E hs k₀ n
+  have hbad := sqrt_assemblyBad_le_collarBandMean_fourthRoot M E hs k₀ n
   rw [collarBandMean_fourthRoot_eq] at hbad
   have hceil : c ≤ n := by
     simpa only [c, bfaAfterBandLayerCeil] using bfaAfterBandLayerCeil_le n
@@ -163,13 +162,6 @@ theorem probeSharpCollarBandMeanLayerCore_le_atDepth
     (b := bfaProfileB) (gamma := (0 : ℝ)) bfaProfileB_pos.le
     (by norm_num [bfaProfileB]) (by norm_num) (by linarith [bfaProfileB_pos])
     n (n + c) hgap
-  have hneg : (3 : ℝ) ^
-      (M.gamma * (-((k : ℝ) + (n : ℝ) + (c : ℝ) + (k₀ : ℝ)))) ≤ 1 := by
-    refine Real.rpow_le_one_of_one_le_of_nonpos (by norm_num) ?_
-    have hsum : 0 ≤ (k : ℝ) + (n : ℝ) + (c : ℝ) + (k₀ : ℝ) := by
-      positivity
-    exact mul_nonpos_of_nonneg_of_nonpos M.shellPrefix.gamma_pos.le
-      (neg_nonpos.mpr hsum)
   have hfactor0 : 0 ≤ probeSharpFramedCollarFactor
       M R.scale E bfaProfileB k₀ n (superposedGradConst d) omega :=
     probeSharpFramedCollarFactor_nonneg
@@ -192,8 +184,7 @@ theorem probeSharpCollarBandMeanLayerCore_le_atDepth
     exact mul_le_mul_of_nonneg_right
       (mul_le_mul_of_nonneg_left hbad hfactor0) hframe0
   refine hreplace.trans ?_
-  rw [probeSharpFramedCollarFactor, hframe, whitneyScale,
-    whitneyScaleSeq]
+  rw [probeSharpFramedCollarFactor, hframe, whitneyScale, whitneyScaleSeq]
   change
     (4 * (superposedGradConst d ^ 2 *
           (3 : ℝ) ^ (2 * (bfaProfileB *
@@ -264,16 +255,56 @@ theorem probeSharpCollarBandMeanLayerCore_le_atDepth
         probeSharpCollarBandMeanMassQuarterConst d) *
         ((3 : ℝ) ^ (2 * bfaProfileB * (k₀ : ℝ)) *
           slstarPowerTerm M R.scale E bfaProfileB M.gamma omega) *
-        ((3 : ℝ) ^ (1 / 16 : ℝ) * whitneyDecayRatio ^ n) * 1 := by
-      exact mul_le_mul
+        ((3 : ℝ) ^ (1 / 16 : ℝ) * whitneyDecayRatio ^ n) *
+        (3 : ℝ) ^
+          (M.gamma * (-((k : ℝ) + (n : ℝ) + (c : ℝ) + (k₀ : ℝ)))) := by
+      exact mul_le_mul_of_nonneg_right
         (mul_le_mul_of_nonneg_left hdecay'
           (mul_nonneg hfixed (mul_nonneg hkpow0 hpower0)))
-        hneg (Real.rpow_nonneg (by norm_num) _)
-        (mul_nonneg
-          (mul_nonneg hfixed (mul_nonneg hkpow0 hpower0))
-          (mul_nonneg (Real.rpow_nonneg (by norm_num) _)
-            (pow_nonneg whitneyDecayRatio_nonneg n)))
-    _ = _ := by ring
+        (Real.rpow_nonneg (by norm_num) _)
+    _ = _ := by
+      dsimp only [c]
+      ring
+/-- The collar/frame core bound at an arbitrary deterministic integer depth.
+The proof is the same source algebra as the coefficient-one specialization;
+no size property of `k₀` is used here. -/
+theorem probeSharpCollarBandMeanLayerCore_le_atDepth
+    (M : ABKModel d) {m : ℤ} {k : ℕ} {R : TriadicCube d}
+    (hR : R ∈ descendantsAtScale (originCube d m) (m - 1 - (k : ℤ)))
+    (E : ℝ) (k₀ n : ℕ) (omega : CutoffSample d) :
+    probeSharpCollarBandMeanLayerCore M R.scale E k₀ n (m - 1)
+        (superposedGradConst d) omega ≤
+      (4 * superposedGradConst d ^ 2 *
+        probeSharpCollarBandMeanCapQuarter M E k₀ *
+        probeSharpCollarBandMeanMassQuarterConst d *
+        (3 : ℝ) ^ (2 * bfaProfileB * (k₀ : ℝ)) *
+        (3 : ℝ) ^ (1 / 16 : ℝ)) *
+        slstarPowerTerm M R.scale E bfaProfileB M.gamma omega *
+        whitneyDecayRatio ^ n := by
+  have hcap0 := probeSharpCollarBandMeanCapQuarter_nonneg M E k₀
+  have hmass0 := probeSharpCollarBandMeanMassQuarterConst_nonneg d
+  have hpower0 := slstarPowerTerm_nonneg M R.scale E bfaProfileB M.gamma omega
+  have hratio0 := whitneyDecayRatio_nonneg
+  let cap := 4 * superposedGradConst d ^ 2 *
+    probeSharpCollarBandMeanCapQuarter M E k₀ * probeSharpCollarBandMeanMassQuarterConst d *
+    (3 : ℝ) ^ (2 * bfaProfileB * (k₀ : ℝ)) * (3 : ℝ) ^ (1 / 16 : ℝ)
+  have hdecay : (3 : ℝ) ^ (M.gamma *
+      (-((k : ℝ) + (n : ℝ) + (bfaAfterBandLayerCeil n : ℝ) + (k₀ : ℝ)))) ≤ 1 := by
+    refine Real.rpow_le_one_of_one_le_of_nonpos (by norm_num) ?_
+    have hsum : 0 ≤ (k : ℝ) + (n : ℝ) + (bfaAfterBandLayerCeil n : ℝ) + (k₀ : ℝ) := by
+      positivity
+    exact mul_nonpos_of_nonneg_of_nonpos M.shellPrefix.gamma_pos.le (neg_nonpos.mpr hsum)
+  calc
+    _ ≤ (cap * whitneyDecayRatio ^ n) *
+        slstarPowerTerm M R.scale E bfaProfileB M.gamma omega *
+          (3 : ℝ) ^ (M.gamma *
+            (-((k : ℝ) + (n : ℝ) + (bfaAfterBandLayerCeil n : ℝ) + (k₀ : ℝ)))) :=
+      probeSharpCollarBandMeanLayerCore_le_retainFrame M hR E k₀ n omega
+    _ ≤ (cap * whitneyDecayRatio ^ n) *
+        slstarPowerTerm M R.scale E bfaProfileB M.gamma omega * 1 :=
+      mul_le_mul_of_nonneg_left hdecay (by dsimp only [cap]; positivity)
+    _ = _ := by dsimp only [cap]; ring
+
 
 /-- The literal ninth named summand at the source-compatible depth. -/
 theorem probeSharpFramedCollarWavePart_bandMeanTuned_le

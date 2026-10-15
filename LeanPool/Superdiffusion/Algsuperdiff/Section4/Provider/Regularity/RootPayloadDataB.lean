@@ -42,21 +42,11 @@ def rootClauseBDataBConst (d : ℕ) : ℝ :=
 theorem rootClauseBDataBConst_nonneg (d : ℕ) : 0 ≤ rootClauseBDataBConst d :=
   mul_nonneg (besovGagliardoConstant_nonneg d) (stepFourGagliardoConst_nonneg d _)
 
-/-- **The translated Besov datum at ANY interior scale.**
-
-For every interior centre `z ∈ □_{m-1}` and every scale `j ≤ m-1`, the
-translated forcing's `B^{1/4}_{2,∞}(□_j)` seminorm is dominated by the root's
-own Hölder-`1/2` datum:
-
-```text
-  [ -𝐠(· + z) ]_{B^{1/4}_{2,∞}(□_j)}  ≤  K_d(d) · 3^{j/2} K_g .
-```
-
-This is the shared engine of the payload's `dataB` field (at `j = m-1`) and of
-its `dataM` field (at `j = n'`). -/
-theorem besovTranslated_neg_le_holder [NeZero d] {m j : ℤ} {z : Vec d}
+/-- The translated Besov datum on every cube contained in the ambient domain. -/
+theorem besovTranslated_neg_le_holder_gate [NeZero d] {m j : ℤ} {z : Vec d}
     {gsrc : Vec d → Vec d} {Khol : ℝ}
-    (hz : z ∈ openCubeSet (originCube d (m - 1))) (hj : j ≤ m - 1)
+    (hgate : (fun y => z + y) '' openCubeSet (originCube d j) ⊆
+      openCubeSet (originCube d m))
     (hKhol : 0 ≤ Khol)
     (hgHol : Support.HolderSeminormBoundOn (openCubeSet (originCube d m))
       (1 / 2) Khol gsrc)
@@ -70,26 +60,19 @@ theorem besovTranslated_neg_le_holder [NeZero d] {m j : ℤ} {z : Vec d}
   have hd : 1 ≤ d := Nat.one_le_iff_ne_zero.mpr (NeZero.ne d)
   have hs1 : stepSevenCgS ≤ 1 := by rw [stepSevenCgS_eq]; norm_num
   have hshalf : stepSevenCgS < 1 / 2 := by rw [stepSevenCgS_eq]; norm_num
-  -- the two `MemLp` restrictions to the translated window
-  have hsub : (fun y => z + y) '' openCubeSet (originCube d j) ⊆
-      openCubeSet (originCube d m) :=
-    image_add_subset_openCubeSet_of_mem_inner hz hj
-  have hL2 := memLp_two_child_of_clause_iv hsub hgL2
-  have hW := memLp_normalizedGagliardoMeasureOn_subset hsub
+  have hL2 := memLp_two_child_of_clause_iv hgate hgL2
+  have hW := memLp_normalizedGagliardoMeasureOn_subset hgate
     (volume_openCubeSet_ne_zero (originCube d m))
     (volume_openCubeSet_ne_top (originCube d m))
     (volume_image_add_openCubeSet_ne_zero z (originCube d j)) hgW
-  -- step 1: the Besov--Gagliardo bridge in the translated frame
   have hbes := besovVectorSeminormTwo_translated_neg_le_gagliardo_window
     (z := z) (originCube d j) (s := stepSevenCgS) stepSevenCgS_pos hs1 hL2 hW
-  -- step 2: the translate IS the Step-3 window
   have hwin : stepThreeWindow z m j =
       (fun y => z + y) '' openCubeSet (originCube d j) := by
     change truncatedWindow z m j = _
-    rw [truncatedWindow_eq_translateSet_of_mem_inner hz hj, image_add_eq_translateSet]
+    exact Set.inter_eq_self_of_subset_left hgate
   have hzm : z ∈ openCubeSet (originCube d m) :=
-    openCubeSet_originCube_subset_of_le (by omega) hz
-  -- step 3: the Hoelder cap on that window
+    hgate ⟨0, zero_mem_openCubeSet_originCube d j, add_zero z⟩
   have hgag := normalizedGagliardoESeminormOn_stepThreeWindow_le (z := z) (m := m)
     (j := j) (g := gsrc) (K := Khol) (s := stepSevenCgS) hd hzm
     stepSevenCgS_pos hshalf hKhol hgHol
@@ -103,7 +86,6 @@ theorem besovTranslated_neg_le_holder [NeZero d] {m j : ℤ} {z : Vec d}
       Khol * stepFourGagliardoConst d stepSevenCgS *
         Real.rpow (3 : ℝ) ((j : ℝ) * (1 / 2 - stepSevenCgS)) :=
     ENNReal.toReal_le_of_le_ofReal hnn hgag
-  -- the scale weight, evaluated
   have hzp : cubeScaleFactor (originCube d j) = Real.rpow (3 : ℝ) ((j : ℝ)) := by
     have hsc : ((3 : ℝ) ^ (j : ℤ)) = Real.rpow (3 : ℝ) ((j : ℝ)) :=
       (Real.rpow_intCast (3 : ℝ) j).symm
@@ -117,7 +99,6 @@ theorem besovTranslated_neg_le_holder [NeZero d] {m j : ℤ} {z : Vec d}
       (Real.rpow_mul (by norm_num : (0 : ℝ) ≤ 3) ((j : ℝ)) stepSevenCgS).symm
     rw [cubeBesovScaleWeight, neg_neg, hzp]
     exact hmul
-  -- the exponent cancellation
   have hsum : Real.rpow (3 : ℝ) ((j : ℝ) * stepSevenCgS) *
       Real.rpow (3 : ℝ) ((j : ℝ) * (1 / 2 - stepSevenCgS)) =
       Real.rpow (3 : ℝ) ((j : ℝ) / 2) := by
@@ -149,6 +130,34 @@ theorem besovTranslated_neg_le_holder [NeZero d] {m j : ℤ} {z : Vec d}
           Real.rpow (3 : ℝ) ((j : ℝ) / 2) := by rw [hsum]
     _ = besovGagliardoConstant d * stepFourGagliardoConst d stepSevenCgS *
           (Real.rpow (3 : ℝ) ((j : ℝ) / 2) * Khol) := by ring
+
+/-- **The translated Besov datum at ANY interior scale.**
+
+For every interior centre `z ∈ □_{m-1}` and every scale `j ≤ m-1`, the
+translated forcing's `B^{1/4}_{2,∞}(□_j)` seminorm is dominated by the root's
+own Hölder-`1/2` datum:
+
+```text
+  [ -𝐠(· + z) ]_{B^{1/4}_{2,∞}(□_j)}  ≤  K_d(d) · 3^{j/2} K_g .
+```
+
+This is the shared engine of the payload's `dataB` field (at `j = m-1`) and of
+its `dataM` field (at `j = n'`). -/
+theorem besovTranslated_neg_le_holder [NeZero d] {m j : ℤ} {z : Vec d}
+    {gsrc : Vec d → Vec d} {Khol : ℝ}
+    (hz : z ∈ openCubeSet (originCube d (m - 1))) (hj : j ≤ m - 1)
+    (hKhol : 0 ≤ Khol)
+    (hgHol : Support.HolderSeminormBoundOn (openCubeSet (originCube d m))
+      (1 / 2) Khol gsrc)
+    (hgL2 : MemLp gsrc 2
+      (Support.normalizedVolumeMeasureOn (openCubeSet (originCube d m))))
+    (hgW : MemLp (Gagliardo.gagliardoKernel stepOneS 2 gsrc) 2
+      (Support.normalizedGagliardoMeasureOn (openCubeSet (originCube d m)))) :
+    scaleNormalizedPositiveBesovVectorSeminormTwo (originCube d j)
+        stepSevenCgS (fun y => -gsrc (y + z)) ≤
+      rootClauseBDataBConst d * (Real.rpow (3 : ℝ) ((j : ℝ) / 2) * Khol) := by
+  exact besovTranslated_neg_le_holder_gate
+    (image_add_subset_openCubeSet_of_mem_inner hz hj) hKhol hgHol hgL2 hgW
 
 end
 

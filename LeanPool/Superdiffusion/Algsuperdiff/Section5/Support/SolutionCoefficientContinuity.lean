@@ -128,35 +128,21 @@ theorem abs_setIntegral_vecDot_le_of_norm_le (U : Set (Vec d)) (hU : MeasurableS
 private theorem h10Sub_toH1Function' {U : Set (Vec d)} (v w : H10Function U) :
     (v - w).toH1Function = v.toH1Function - w.toH1Function := rfl
 
-/-- **The solution map is continuous in the coefficient field**, in the energy
-norm, with the dimensional factor `d²` of the supremum-norm carrier.
-
-`hbv` is the minimal integrability datum the subtraction of the two weak
-equations needs; at the use sites it is supplied by the ellipticity of the
-second coefficient field. -/
-theorem sqrt_energy_grad_sub_le {y : Vec d} {n : ℤ} {a b : CoeffField d} {lam Lam : ℝ}
-    {delta : ℝ} (hdelta : 0 ≤ delta)
+/-- Energy perturbation for weak solutions whose gradient difference has a zero-trace witness. -/
+theorem sqrt_energy_grad_sub_le_of_weak_solutions {y : Vec d} {n : ℤ} {a b : CoeffField d}
+    {lam Lam delta : ℝ} (hdelta : 0 ≤ delta)
     (hEll : IsEllipticFieldOn lam Lam (cubeSetAt y n) a)
     (hab : ∀ x ∈ cubeSetAt y n, ∀ i j, |a x i j - b x i j| ≤ delta)
     {u v : H1Function (cubeSetAt y n)} {g : Vec d → Vec d}
     (hbv : MemVectorL2 (cubeSetAt y n) fun x => matVecMul (b x) (v.grad x))
-    (hu : IsDirichletSolutionAt a y n u g) (hv : IsDirichletSolutionAt b y n v g) :
+    (w : H10Function (cubeSetAt y n)) (hwg : ∀ x, w.toH1Function.grad x = u.grad x - v.grad x)
+    (hu : IsDivFormWeakSolutionOn a (cubeSetAt y n) u g)
+    (hv : IsDivFormWeakSolutionOn b (cubeSetAt y n) v g) :
     Real.sqrt (∫ x in cubeSetAt y n, ‖u.grad x - v.grad x‖ ^ (2 : ℕ) ∂volume) ≤
       lam⁻¹ * ((d : ℝ) * (d : ℝ) * delta) *
         Real.sqrt (∫ x in cubeSetAt y n, ‖v.grad x‖ ^ (2 : ℕ) ∂volume) := by
   have hUmeas : MeasurableSet (cubeSetAt y n) := measurableSet_cubeSetAt y n
   have hlam : 0 < lam := (hEll.2 y (mem_cubeSetAt_self y n)).1
-  obtain ⟨w, hwf, hwg⟩ :
-      ∃ w : H10Function (cubeSetAt y n),
-        (∀ x, w.toH1Function.toFun x = u.toFun x - v.toFun x) ∧
-          (∀ x, w.toH1Function.grad x = u.grad x - v.grad x) := by
-    obtain ⟨w1, h1f, h1g⟩ := hu.1
-    obtain ⟨w2, h2f, h2g⟩ := hv.1
-    refine ⟨w1 - w2, fun x => ?_, fun x => ?_⟩
-    · rw [h1f x, h2f x, h10Sub_toH1Function']
-      simp only [H1Function.sub_toFun]
-    · rw [h1g x, h2g x, h10Sub_toH1Function']
-      simp only [H1Function.sub_grad]
   have hwL2 : MemVectorL2 (cubeSetAt y n) w.toH1Function.grad :=
     w.toH1Function.grad_memVectorL2
   have hvL2 : MemVectorL2 (cubeSetAt y n) v.grad := v.grad_memVectorL2
@@ -182,7 +168,7 @@ theorem sqrt_energy_grad_sub_le {y : Vec d} {n : ℤ} {a b : CoeffField d} {lam 
         vecDot (matVecMul (a x - b x) (v.grad x)) (w.toH1Function.grad x) ∂volume := by
     rw [Section4.Provider.Schauder.integral_vecDot_sub_split hAu hAv hsplitW w,
       Section4.Provider.Schauder.integral_vecDot_sub_split hAv hbv hsplitP w,
-      hu.2 w, hv.2 w]
+      hu w, hv w]
     ring
   -- ellipticity on the left
   have hEnergyInt : IntegrableOn
@@ -223,8 +209,6 @@ theorem sqrt_energy_grad_sub_le {y : Vec d} {n : ℤ} {a b : CoeffField d} {lam 
   -- assemble
   have hSnn : (0 : ℝ) ≤ Real.sqrt (∫ x in cubeSetAt y n,
       ‖w.toH1Function.grad x‖ ^ (2 : ℕ) ∂volume) := Real.sqrt_nonneg _
-  have hTnn : (0 : ℝ) ≤ Real.sqrt (∫ x in cubeSetAt y n, ‖v.grad x‖ ^ (2 : ℕ) ∂volume) :=
-    Real.sqrt_nonneg _
   have hNormNonneg : (0 : ℝ) ≤ ∫ x in cubeSetAt y n,
       ‖w.toH1Function.grad x‖ ^ (2 : ℕ) ∂volume :=
     integral_nonneg fun x => by positivity
@@ -265,10 +249,33 @@ theorem sqrt_energy_grad_sub_le {y : Vec d} {n : ℤ} {a b : CoeffField d} {lam 
             Real.sqrt (∫ x in cubeSetAt y n, ‖v.grad x‖ ^ (2 : ℕ) ∂volume)) *
             Real.sqrt (∫ x in cubeSetAt y n,
               ‖w.toH1Function.grad x‖ ^ (2 : ℕ) ∂volume) := by
-        linarith [h]
+        linarith only [h]
       exact le_of_mul_le_mul_right hmul hpos
     rw [inv_mul_eq_div, div_mul_eq_mul_div, le_div_iff₀ hlam]
-    linarith [hdiv]
+    linarith only [hdiv]
+
+/-- **The solution map is continuous in the coefficient field**, in the energy
+norm, with the dimensional factor `d²` of the supremum-norm carrier.
+
+`hbv` is the minimal integrability datum the subtraction of the two weak
+equations needs; at the use sites it is supplied by the ellipticity of the
+second coefficient field. -/
+theorem sqrt_energy_grad_sub_le {y : Vec d} {n : ℤ} {a b : CoeffField d} {lam Lam : ℝ}
+    {delta : ℝ} (hdelta : 0 ≤ delta)
+    (hEll : IsEllipticFieldOn lam Lam (cubeSetAt y n) a)
+    (hab : ∀ x ∈ cubeSetAt y n, ∀ i j, |a x i j - b x i j| ≤ delta)
+    {u v : H1Function (cubeSetAt y n)} {g : Vec d → Vec d}
+    (hbv : MemVectorL2 (cubeSetAt y n) fun x => matVecMul (b x) (v.grad x))
+    (hu : IsDirichletSolutionAt a y n u g) (hv : IsDirichletSolutionAt b y n v g) :
+    Real.sqrt (∫ x in cubeSetAt y n, ‖u.grad x - v.grad x‖ ^ (2 : ℕ) ∂volume) ≤
+      lam⁻¹ * ((d : ℝ) * (d : ℝ) * delta) *
+        Real.sqrt (∫ x in cubeSetAt y n, ‖v.grad x‖ ^ (2 : ℕ) ∂volume) := by
+  obtain ⟨w1, _h1f, h1g⟩ := hu.1
+  obtain ⟨w2, _h2f, h2g⟩ := hv.1
+  apply sqrt_energy_grad_sub_le_of_weak_solutions hdelta hEll hab hbv (w1 - w2) ?_ hu.2 hv.2
+  intro x
+  rw [h10Sub_toH1Function']
+  simp only [H1Function.sub_grad, h1g x, h2g x]
 
 end
 

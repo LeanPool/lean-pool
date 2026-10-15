@@ -63,106 +63,7 @@ noncomputable section
 
 variable {d : ℕ}
 
-/-! ## 1. The constant -/
-
-/-- The top-scale constant `C_Poincaré(d)·d`. -/
-def schauderTopScaleConst (d : ℕ) : ℝ :=
-  schauderDirichletPoincareConst d * (d : ℝ)
-
-theorem schauderTopScaleConst_nonneg (d : ℕ) : 0 ≤ schauderTopScaleConst d :=
-  mul_nonneg (schauderDirichletPoincareConst_nonneg d) (Nat.cast_nonneg d)
-
-/-! ## 2. The normalized `L²` bound on the whole cube -/
-
-/-- **The zero-datum solution is small in `L²(□_m)`.**
-
-Freezing the forcing at `G(0)`, the sharp energy bound and the Dirichlet
-Poincaré inequality give
-
-```text
-  ‖w‖_{L²(□_m)} ≤ C_Poincaré(d)·d·KG·3^m·√(3^m) .
-```
--/
-theorem normalizedL2On_le_of_isDivFormWeakSolutionOn_one [NeZero d] {m : ℤ}
-    (u : H10Function (openCubeSet (originCube d m)))
-    {G : Vec d → Vec d} {KG : ℝ} (hKG : 0 ≤ KG)
-    (hGL2 : MemVectorL2 (openCubeSet (originCube d m)) G)
-    (hG : HolderSeminormBoundOn (openCubeSet (originCube d m)) (1 / 2) KG G)
-    (hu : IsDivFormWeakSolutionOn (fun _ => (1 : Mat d))
-      (openCubeSet (originCube d m)) u.toH1Function G) :
-    normalizedL2On (openCubeSet (originCube d m)) u.toFun
-      ≤ schauderTopScaleConst d * KG * ((3 : ℝ) ^ m * Real.sqrt ((3 : ℝ) ^ m)) := by
-  have hQdom : IsOpenBoundedConvexDomain (openCubeSet (originCube d m)) :=
-    isOpenBoundedConvexDomain_openCubeSet _
-  have : IsFiniteMeasure (volumeMeasureOn (openCubeSet (originCube d m))) :=
-    hQdom.isFiniteMeasure_restrict_volume
-  have hvolQ : (volume (openCubeSet (originCube d m))).toReal = ((3 : ℝ) ^ m) ^ d := by
-    rw [volume_openCubeSet_toReal, cubeVolume_eq_pow_scale]
-    rfl
-  have hvolQpos : (0 : ℝ) < (volume (openCubeSet (originCube d m))).toReal := by
-    rw [hvolQ]
-    positivity
-  -- the frozen equation and the sharp energy bound
-  have hGc : MemVectorL2 (openCubeSet (originCube d m)) (fun y => G y - G 0) :=
-    hGL2.sub (memLp_const (G 0))
-  have hufroz : IsDivFormWeakSolutionOn (fun _ => (1 : Mat d))
-      (openCubeSet (originCube d m)) u.toH1Function (fun y => G y - G 0) :=
-    isDivFormWeakSolutionOn_sub_const hGL2 (G 0) hu
-  have henergy := dirichletEnergy_le_of_isDivFormWeakSolutionOn_one hGc u hufroz
-  -- the oscillation bound at the base point `0`
-  have h0 : (0 : Vec d) ∈ openCubeSet (originCube d m) :=
-    zero_mem_openCubeSet_originCube m
-  have hint : IntegrableOn (fun y => vecNormSq (G y - G 0))
-      (openCubeSet (originCube d m)) volume :=
-    integrableOn_vecNormSq_of_memVectorL2 hGc
-  have hbd : ∀ y ∈ openCubeSet (originCube d m),
-      vecNormSq (G y - G 0) ≤ (d : ℝ) * (KG ^ 2 * (3 : ℝ) ^ m) := by
-    intro y hy
-    have h := vecNormSq_sub_le_of_holderSeminormBoundOn_openCubeSet
-      (Q := originCube d m) hKG hG h0 hy
-    have hscale : cubeScaleFactor (originCube d m) = (3 : ℝ) ^ m := rfl
-    rwa [hscale] at h
-  have hconst : IntegrableOn (fun _ : Vec d => (d : ℝ) * (KG ^ 2 * (3 : ℝ) ^ m))
-      (openCubeSet (originCube d m)) volume := integrable_const _
-  have hmono := setIntegral_mono_on hint hconst (measurableSet_openCubeSet _) hbd
-  rw [setIntegral_const, smul_eq_mul, mul_comm] at hmono
-  have hE := henergy.trans hmono
-  have hsum := sum_toReal_eLpNorm_grad_le_of_dirichletEnergy_le u.toH1Function hE
-  have hsum' : ∑ i : Fin d,
-      (eLpNorm (fun y => u.toH1Function.grad y i) 2
-        (volume.restrict (openCubeSet (originCube d m)))).toReal
-      ≤ (d : ℝ) * KG *
-        Real.sqrt ((3 : ℝ) ^ m * (volume (openCubeSet (originCube d m))).toReal) := by
-    refine hsum.trans (le_of_eq ?_)
-    exact sqrt_freezing_budget (d : ℝ) KG ((3 : ℝ) ^ m)
-      ((volume (openCubeSet (originCube d m))).toReal) (Nat.cast_nonneg d) hKG
-  -- the Dirichlet Poincaré at the inscribing cube `0 + □_m`
-  have hinscribe : ∀ y ∈ openCubeSet (originCube d m), ∀ j : Fin d,
-      (0 : Vec d) j - (1 / 2 : ℝ) * (3 : ℝ) ^ m < y j ∧
-        y j < (0 : Vec d) j + (1 / 2 : ℝ) * (3 : ℝ) ^ m := by
-    intro y hy j
-    have h := mem_openCubeSet_originCube_iff.1 hy j
-    exact ⟨by simpa using by linarith only [h.1], by simpa using by linarith only [h.2]⟩
-  have hpoin := eLpNorm_le_schauderDirichletPoincare (measurableSet_openCubeSet _) 0 m
-    hinscribe u
-  have hpoin' : (eLpNorm u.toFun 2 (volume.restrict (openCubeSet (originCube d m)))).toReal
-      ≤ schauderDirichletPoincareConst d * (3 : ℝ) ^ m *
-        ((d : ℝ) * KG *
-          Real.sqrt ((3 : ℝ) ^ m * (volume (openCubeSet (originCube d m))).toReal)) := by
-    refine hpoin.trans (mul_le_mul_of_nonneg_left hsum' ?_)
-    exact mul_nonneg (schauderDirichletPoincareConst_nonneg d) (zpow_pos (by norm_num) m).le
-  have huQ : MemLp u.toFun 2 (volume.restrict (openCubeSet (originCube d m))) := by
-    simpa only [volumeMeasureOn] using u.toH1Function.memL2
-  have hsqrtV : Real.sqrt ((3 : ℝ) ^ m * (volume (openCubeSet (originCube d m))).toReal)
-      = Real.sqrt ((3 : ℝ) ^ m) *
-        Real.sqrt ((volume (openCubeSet (originCube d m))).toReal) :=
-    Real.sqrt_mul (zpow_pos (by norm_num) m).le _
-  rw [normalizedL2On_eq_toReal_eLpNorm_div huQ, div_le_iff₀ (Real.sqrt_pos.2 hvolQpos)]
-  refine hpoin'.trans (le_of_eq ?_)
-  rw [hsqrtV, schauderTopScaleConst]
-  ring
-
-/-! ## 3. The excess on the whole cube -/
+/-! ## 1. The excess on the whole cube -/
 
 /-- **The excess of the zero-datum solution over `□_m` itself.**
 
@@ -202,7 +103,7 @@ theorem affineExcess_openCubeSet_le [NeZero d] (hd : d ≠ 0) {m : ℤ}
     _ = schauderTopScaleConst d * KG * Real.sqrt ((3 : ℝ) ^ m) := by
         rw [hcancel, mul_one]
 
-/-! ## 4. The Campanato datum at the top scale, at every base point -/
+/-! ## 2. The Campanato datum at the top scale, at every base point -/
 
 /-- **The top-scale Campanato datum, uniform in the base point.**
 

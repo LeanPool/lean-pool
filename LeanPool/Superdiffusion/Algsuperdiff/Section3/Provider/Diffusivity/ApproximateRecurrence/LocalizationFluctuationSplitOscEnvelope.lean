@@ -207,65 +207,13 @@ theorem cubeFamilyAverage_integral_meshOscillationCell_pow_eight_le_freshShellEi
     rw [h1, cubeAverage_vecNormSq_pow_four_eq_cubeEuclideanLpNorm_eight_pow_eight
       (originCube d K) (u omega) (hmem omega)]
     ring
-  -- the measurable dominating fluctuation, exactly the device of the octic layer
-  set root : Omega → ℝ := fun omega => Real.sqrt (Real.sqrt (G omega)) with hrootdef
-  have hrootnn : ∀ omega, 0 ≤ root omega := fun _ => Real.sqrt_nonneg _
-  have hroot : ∀ omega, (root omega) ^ (4 : ℕ) = G omega := by
-    intro omega
-    have h1 : Real.sqrt (Real.sqrt (G omega)) ^ (2 : ℕ) = Real.sqrt (G omega) :=
-      Real.sq_sqrt (Real.sqrt_nonneg _)
-    have h2 : Real.sqrt (G omega) ^ (2 : ℕ) = G omega := Real.sq_sqrt (hG0 omega)
-    calc (root omega) ^ (4 : ℕ)
-        = (Real.sqrt (Real.sqrt (G omega)) ^ (2 : ℕ)) ^ (2 : ℕ) := by rw [hrootdef]; ring
-      _ = Real.sqrt (G omega) ^ (2 : ℕ) := by rw [h1]
-      _ = G omega := h2
-  set T' : Omega → ℝ := fun omega => max (root omega - Chead) 0 with hT'def
-  have hT'0 : ∀ omega, 0 ≤ T' omega := fun _ => le_max_right _ _
-  have hT'meas : Measurable T' :=
-    (((hglobMeas.sqrt).sqrt).sub measurable_const).max measurable_const
   have hGT : ∀ omega, G omega ≤ (Chead + T omega) ^ (4 : ℕ) := by
     intro omega
     rw [hGeq omega]
     exact pow_le_pow_left₀ (sq_nonneg _) (hpath omega) 4
-  have hT'le : ∀ omega, T' omega ≤ T omega := by
-    intro omega
-    have hnn : (0 : ℝ) ≤ Chead + T omega := by linarith [hT0 omega]
-    have hle : root omega ≤ Chead + T omega := by
-      by_contra hcon
-      push Not at hcon
-      have hlt : (Chead + T omega) ^ (4 : ℕ) < (root omega) ^ (4 : ℕ) :=
-        pow_lt_pow_left₀ hcon hnn (by norm_num)
-      rw [hroot omega] at hlt
-      exact absurd (hGT omega) (not_le.mpr hlt)
-    have hTeq : T' omega = max (root omega - Chead) 0 := rfl
-    rw [hTeq]
-    exact max_le (by linarith) (hT0 omega)
-  have hT'tail : IndependentSums.IsBigOWith mu (IndependentSums.gammaSigma 1) T' A :=
-    hT.of_le hT'le
-  have hGT' : ∀ omega, G omega ≤ (Chead + T' omega) ^ (4 : ℕ) := by
-    intro omega
-    have hle : root omega ≤ Chead + T' omega := by
-      have hbase := le_max_left (root omega - Chead) 0
-      have hTeq : T' omega = max (root omega - Chead) 0 := rfl
-      rw [hTeq]
-      linarith
-    calc G omega = (root omega) ^ (4 : ℕ) := (hroot omega).symm
-      _ ≤ (Chead + T' omega) ^ (4 : ℕ) := pow_le_pow_left₀ (hrootnn omega) hle 4
-  -- integrability of the dominating cube observable
-  have hT'fourInt : Integrable (fun omega => T' omega ^ (4 : ℕ)) mu :=
-    integrable_rpow_four_of_isBigOWith_gammaSigma_one hA hT'0 hT'meas.aemeasurable hT'tail
-  have hdomInt : Integrable
-      (fun omega => 8 * Chead ^ (4 : ℕ) + 8 * T' omega ^ (4 : ℕ)) mu :=
-    (integrable_const _).add (hT'fourInt.const_mul 8)
-  have hGint : Integrable G mu := by
-    refine hdomInt.mono' hglobMeas.aestronglyMeasurable
-      (Filter.Eventually.of_forall fun omega => ?_)
-    rw [Real.norm_of_nonneg (hG0 omega)]
-    have h := hGT' omega
-    have hstep := add_pow_four_le_eight_mul Chead (T' omega)
-    linarith
-  have hEbound : ∫ omega, G omega ∂mu ≤ freshShellEighthEnergyConst Chead A :=
-    integral_le_freshShellEighthEnergyConst hA hT'0 hT'meas.aemeasurable hT'tail hGint hGT'
+  obtain ⟨hGint, hEbound⟩ :=
+    integrable_and_integral_le_freshShellEighthEnergyConst_of_envelope
+      hG0 hglobMeas hChead hA hT0 hT hGT
   -- the grid composition, with `G` its own dominating observable
   have hcubeSet : ∀ (f : Vec d → ℝ),
       IntegrableOn f (openCubeSet (originCube d K)) volume →

@@ -134,20 +134,13 @@ theorem rpow_three_neg_mul_zpow_self (k : ℤ) :
 
 /-! ## 2. The scaled parent-`L²` object of the boundary Caccioppoli -/
 
-/-- **The parent-`L²` pricing, scaled by the covering cube's frame factor.**
-
-Two readings of the conclusion matter for the assembly:
-
-* the data-Poincaré leg loses its `3`-power entirely (`3^{-(n+2)} · 3^{n+2} =
-  1`), so after the frame division it proves at the frozen leg's `3^n`;
-* the open scalar `S` survives at coefficient `3^{-(n+2)}` and at coefficient
-  `1` in `S` itself, so after the frame division it is `3`-power-free. -/
-theorem rpow_three_neg_mul_sqrt_coveringDifference_le
+theorem rpow_three_neg_mul_sqrt_coveringDifference_le_atWindow
     {n m : ℤ} {x z : Vec d} {S R : ℝ} {a : CoeffFamily d} {g : Vec d → Vec d}
-    (hnm : n + 2 ≤ m) (hx : x ∈ openCubeSet (originCube d m))
-    (hgeom : (fun y => x + y) '' openCubeSet (originCube d n) ⊆
-      ((fun y => z + y) '' openCubeSet (originCube d (n + 1))) ∩
-        openCubeSet (originCube d m))
+    (hnm : n + 2 ≤ m)
+    (hcov : (fun y => wellPlacedCentre x m (n + 2) + y) ''
+        openCubeSet (originCube d (n + 2)) ⊆
+      (((fun y => z + y) '' openCubeSet (originCube d (n + 3))) ∩
+        openCubeSet (originCube d m)))
     (u hdat : H1Function (openCubeSet (originCube d m)))
     (v : DirichletForcedCubeSolution (originCube d (n + 2)) a g)
     (utr : H1Function (openCubeSet (originCube d (n + 2))))
@@ -193,8 +186,8 @@ theorem rpow_three_neg_mul_sqrt_coveringDifference_le
   classical
   set w : ℝ := Real.rpow (3 : ℝ) (-(((n + 2 : ℤ)) : ℝ)) with hw
   have hw0 : 0 ≤ w := Real.rpow_nonneg (by norm_num) _
-  have hbase := normalizedL2On_coveringDifference_le_meanControl
-    (x := x) (z := z) (S := S) (a := a) (g := g) hnm hx hgeom u hdat v utr hutr hvdat
+  have hbase := normalizedL2On_coveringDifference_le_meanControl_atWindow
+    (x := x) (z := z) (S := S) (a := a) (g := g) hnm hcov u hdat v utr hutr hvdat
     hXfin hHfin hmean
   have hscaled := mul_le_mul_of_nonneg_left hbase hw0
   have hcancel : w * ((3 : ℝ) ^ (n + 2 : ℤ)) = 1 := rpow_three_neg_mul_zpow_self (n + 2)
@@ -262,8 +255,69 @@ theorem rpow_three_neg_mul_sqrt_coveringDifference_le
           (fun y => v.toH1.toFun y - v.boundaryData.toFun y) := hscaled
   linarith only [hstep, hGA1]
 
-/-! ## 3. The `s`-powers of the boundary assembly -/
+/-! ## 4. The Dirichlet energy right-hand side, at the hinge -/
 
+
+
+/-- **The parent-`L²` pricing, scaled by the covering cube's frame factor.**
+
+Two readings of the conclusion matter for the assembly:
+
+* the data-Poincaré leg loses its `3`-power entirely (`3^{-(n+2)} · 3^{n+2} =
+  1`), so after the frame division it proves at the frozen leg's `3^n`;
+* the open scalar `S` survives at coefficient `3^{-(n+2)}` and at coefficient
+  `1` in `S` itself, so after the frame division it is `3`-power-free. -/
+theorem rpow_three_neg_mul_sqrt_coveringDifference_le
+    {n m : ℤ} {x z : Vec d} {S R : ℝ} {a : CoeffFamily d} {g : Vec d → Vec d}
+    (hnm : n + 2 ≤ m) (hx : x ∈ openCubeSet (originCube d m))
+    (hgeom : (fun y => x + y) '' openCubeSet (originCube d n) ⊆
+      ((fun y => z + y) '' openCubeSet (originCube d (n + 1))) ∩
+        openCubeSet (originCube d m))
+    (u hdat : H1Function (openCubeSet (originCube d m)))
+    (v : DirichletForcedCubeSolution (originCube d (n + 2)) a g)
+    (utr : H1Function (openCubeSet (originCube d (n + 2))))
+    (hutr : ∀ y, utr.toFun y = u.toFun (y + wellPlacedCentre x m (n + 2)))
+    (hvdat : ∀ y, v.boundaryData.toFun y =
+      hdat.toFun (y + wellPlacedCentre x m (n + 2)))
+    (hXfin : eLpNorm (fun y => u.toFun y -
+        volumeAverage ((((fun y' => z + y') '' openCubeSet (originCube d (n + 3))) ∩
+          openCubeSet (originCube d m))) u.toFun) 2
+      (Support.normalizedVolumeMeasureOn
+        ((((fun y' => z + y') '' openCubeSet (originCube d (n + 3))) ∩
+          openCubeSet (originCube d m)))) ≠ ⊤)
+    (hHfin : eLpNorm hdat.grad 2
+      (Support.normalizedVolumeMeasureOn
+        ((((fun y' => z + y') '' openCubeSet (originCube d (n + 3))) ∩
+          openCubeSet (originCube d m)))) ≠ ⊤)
+    (hmean : |volumeAverage ((fun y => wellPlacedCentre x m (n + 2) + y) ''
+        openCubeSet (originCube d (n + 2)))
+        (fun y => u.toFun y - hdat.toFun y)| ≤ S)
+    (hGA1 : cubeBesovScaleWeight (1 : ℝ) (originCube d (n + 2)) *
+        cubeLpNorm (originCube d (n + 2)) (2 : ℝ≥0∞)
+          (fun y => v.toH1.toFun y - v.boundaryData.toFun y) ≤ R) :
+    Real.rpow (3 : ℝ) (-(((n + 2 : ℤ)) : ℝ)) *
+        Real.sqrt (normalizedL2SqOnSet (openCubeSet (originCube d (n + 2)))
+          (fun y => utr.toFun y - v.toH1.toFun y)) ≤
+      Real.rpow (3 : ℝ) (-(((n + 2 : ℤ)) : ℝ)) *
+          ((3 : ℝ) ^ d *
+            (eLpNorm (fun y => u.toFun y -
+                volumeAverage ((((fun y' => z + y') ''
+                    openCubeSet (originCube d (n + 3))) ∩
+                  openCubeSet (originCube d m))) u.toFun) 2
+              (Support.normalizedVolumeMeasureOn
+                ((((fun y' => z + y') '' openCubeSet (originCube d (n + 3))) ∩
+                  openCubeSet (originCube d m))))).toReal) +
+        Real.rpow (3 : ℝ) (-(((n + 2 : ℤ)) : ℝ)) * S +
+        unitMeanZeroPoincareConst d *
+          ((d : ℝ) * ((3 : ℝ) ^ d *
+            (eLpNorm hdat.grad 2
+              (Support.normalizedVolumeMeasureOn
+                ((((fun y' => z + y') '' openCubeSet (originCube d (n + 3))) ∩
+                  openCubeSet (originCube d m))))).toReal)) +
+        R := by
+  exact rpow_three_neg_mul_sqrt_coveringDifference_le_atWindow hnm
+    (image_add_wellPlacedCentre_subset_anchorWindow hnm hx hgeom)
+    u hdat v utr hutr hvdat hXfin hHfin hmean hGA1
 /-- Powers of a fixed positive base add. -/
 theorem rpow_mul_rpow_of_add {b : ℝ} (hb : 0 < b) (p q r : ℝ) (hpq : p + q = r) :
     Real.rpow b p * Real.rpow b q = Real.rpow b r := by
@@ -285,6 +339,7 @@ theorem rpow_half_arg_neg {s : ℝ} (hs : 0 ≤ s) (e : ℝ) :
   exact h2
 
 /-! ## 4. The refutation: the frozen `∇h` legs cannot hold row 6 -/
+
 
 end
 

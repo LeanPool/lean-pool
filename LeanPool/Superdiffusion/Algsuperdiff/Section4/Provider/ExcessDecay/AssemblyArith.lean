@@ -183,6 +183,21 @@ theorem five_leg_bound {K c1 c2 c3 c4 c5 L1 L2 L3 L4 L5 T : ℝ}
   rw [hexp]
   linarith only [hT, e1, e2, e3, e4, e5]
 
+/-- Cap one error-weighted leg and enlarge a joint five-leg constant. -/
+theorem five_leg_bound_errorWeighted {K C E L1 L2 L3 L4 L5 T : ℝ}
+    (hK : 0 ≤ K) (hE : E ≤ C)
+    (hL1 : 0 ≤ L1) (hL2 : 0 ≤ L2) (hL3 : 0 ≤ L3) (hL4 : 0 ≤ L4) (hL5 : 0 ≤ L5)
+    (hT : T ≤ K * (L1 + L2 + L3 + E * L4 + L5)) :
+    T ≤ (K * max 1 C) * (L1 + L2 + L3 + L4 + L5) := by
+  have hKmax : K ≤ K * max 1 C := by
+    simpa only [mul_one] using mul_le_mul_of_nonneg_left (le_max_left (1 : ℝ) C) hK
+  have hKEmax : K * E ≤ K * max 1 C :=
+    mul_le_mul_of_nonneg_left (hE.trans (le_max_right 1 C)) hK
+  have hT' : T ≤ K * L1 + K * L2 + K * L3 + (K * E) * L4 + K * L5 := by
+    calc T ≤ K * (L1 + L2 + L3 + E * L4 + L5) := hT
+      _ = _ := by ring
+  exact five_leg_bound hT' hKmax hKmax hKmax hKEmax hKmax hL1 hL2 hL3 hL4 hL5
+
 /-- **The boundary energy assembly's arithmetic.**
 
 `T` is the square root of the boundary Caccioppoli's left-hand side, `alpha rs`
