@@ -13,6 +13,7 @@ public import LeanPool.Superdiffusion.Algsuperdiff.Section3.Provider.Orlicz.Tsum
 public import LeanPool.Superdiffusion.Algsuperdiff.Section3.Provider.Stream.IncrementDerivativeBounds
 public import LeanPool.Superdiffusion.Algsuperdiff.Section3.Provider.Stream.TranslatedLargeCubeW1Inf
 public import Mathlib.Analysis.SpecificLimits.Normed
+import LeanPool.Superdiffusion.Algsuperdiff.Section3.Probability.OneSidedOrlicz
 
 /-!
 # WaveSizes
@@ -500,19 +501,8 @@ and in `WaveSizesZeroth.lean`. -/
 theorem isBigOWith_gammaSigma_of_eq_zero {Omega : Type*}
     [MeasurableSpace Omega] {mu : Measure Omega} {X : Omega → ℝ} {sigma A : ℝ}
     (hA : 0 ≤ A) (hX : ∀ omega, X omega = 0) :
-    IndependentSums.IsBigOWith mu (IndependentSums.gammaSigma sigma) X A := by
-  intro t ht
-  have ht0 : (0 : ℝ) ≤ t := le_trans zero_le_one ht
-  have hAt : (0 : ℝ) ≤ A * t := mul_nonneg hA ht0
-  have hset : IndependentSums.upperTailEvent X (A * t) = (∅ : Set Omega) := by
-    ext omega
-    simp only [IndependentSums.mem_upperTailEvent, hX omega,
-      Set.mem_empty_iff_false, iff_false, not_lt]
-    exact hAt
-  rw [hset, measureReal_empty]
-  have h1 : (1 : ℝ) ≤ IndependentSums.gammaSigma sigma t :=
-    IndependentSums.one_le_gammaSigma ht0
-  exact inv_nonneg.2 (by linarith)
+    IndependentSums.IsBigOWith mu (IndependentSums.gammaSigma sigma) X A :=
+  Algsuperdiff.Section3.Probability.isBigOWith_gammaSigma_of_eq_zero hA hX
 
 /-- The cutoff-dependent amplitude of the per-cube wave estimate.  It is
 independent of the scale `l` and of the scale gap `m - l`. -/

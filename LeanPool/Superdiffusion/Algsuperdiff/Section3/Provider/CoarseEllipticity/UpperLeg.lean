@@ -863,20 +863,8 @@ theorem cutoffUpperEllipticity_mul_sigmaBarInv_le_four_add_mass {d : ℕ}
 private theorem isBigOWith_gammaSigma_zero {Omega : Type*}
     [MeasurableSpace Omega] {mu : Measure Omega} {sigma A : ℝ} (hA : 0 ≤ A) :
     IndependentSums.IsBigOWith mu (IndependentSums.gammaSigma sigma)
-      (fun _ : Omega => 0) A := by
-  intro t ht
-  have ht0 : (0 : ℝ) ≤ t := zero_le_one.trans ht
-  have hAt : (0 : ℝ) ≤ A * t := mul_nonneg hA ht0
-  have hset : IndependentSums.upperTailEvent
-      (fun _ : Omega => 0) (A * t) = (∅ : Set Omega) := by
-    ext omega
-    simp only [IndependentSums.mem_upperTailEvent, Set.mem_empty_iff_false,
-      iff_false, not_lt]
-    exact hAt
-  rw [hset, MeasureTheory.measureReal_empty]
-  have hPsi : 1 ≤ IndependentSums.gammaSigma sigma t :=
-    IndependentSums.one_le_gammaSigma ht0
-  exact inv_nonneg.mpr (by linarith)
+      (fun _ : Omega => 0) A :=
+  Algsuperdiff.Section3.Probability.isBigOWith_gammaSigma_of_eq_zero hA (fun _ => rfl)
 
 /-- The upper-family carrier in the direct branch `m ≤ mStarStar M`.
 The branch uses no induction-state or large-scale gate premise. -/

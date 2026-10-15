@@ -173,25 +173,14 @@ theorem isBigOWith_gammaSigma_const {sigma : ℝ} {A c : ℝ} (hc : c ≤ A) (hA
   simp only [measureReal_empty]
   exact inv_nonneg.2 (le_trans zero_le_one (one_le_gammaSigma (σ := sigma) ht0))
 
-/-- The zero observable has every nonnegative scale.
-
-This declaration is kept only as the `X := fun _ => 0` spelling the envelope
-constructors below apply directly.  Five further `private` copies of the same
-fact are named in the module header's twin census. -/
+/-- The zero observable has every nonnegative scale. This spelling delegates
+to the common zero-tail lemma used by the envelope constructors. -/
 theorem isBigOWith_gammaSigma_zero {sigma : ℝ} {A : ℝ} (hA : 0 ≤ A) :
     IsBigOWith mu (gammaSigma sigma) (fun _ : Omega => (0 : ℝ)) A :=
   isBigOWith_gammaSigma_of_eq_zero hA (fun _ => rfl)
 
-/-- Truncating a witness at zero preserves a positive weak-Orlicz scale.  the
-proved `Provider.Tail.isBigOWith_max_zero` (`TailSqrt.lean`), which is stated at
-the commuted spelling `max 0 (Y omega)`; the buckle
-`Provider.Orlicz.isTwoTermBigOWithWitnesses_sqrt_of_sq_one_quarter` emits `max
-(Y omega) 0`, so the one line of `max_comm` is the whole content.  (Two
-`private` copies sit in
-`Diffusivity/ApproximateRecurrence/PrincipalResponseMomentsCloseOrlicz.lean` and
-in `Diffusivity/ApproximateRecurrence/PrincipalResponseDisplayTwoMoment.lean`,
-the latter under the name `isBigOWith_max_zero_display`; both disclosed, neither
-copied.) -/
+/-- The `max (Y omega) 0` compatibility spelling of the common positive-part
+tail estimate. -/
 theorem isBigOWith_max_zero {Psi : ℝ → ℝ} {Y : Omega → ℝ} {A : ℝ} (hA : 0 < A)
     (hY : IsBigOWith mu Psi Y A) :
     IsBigOWith mu Psi (fun omega => max (Y omega) 0) A := by

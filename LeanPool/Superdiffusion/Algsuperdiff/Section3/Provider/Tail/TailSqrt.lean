@@ -134,20 +134,8 @@ theorem isBigOWith_of_ae_eq {Ψ : ℝ → ℝ} {X Y : Ω → ℝ} {A : ℝ}
 as the scale is positive. -/
 theorem isBigOWith_max_zero {Ψ : ℝ → ℝ} {Y : Ω → ℝ} {A : ℝ} (hA : 0 < A)
     (hY : IsBigOWith μ Ψ Y A) :
-    IsBigOWith μ Ψ (fun ω => max 0 (Y ω)) A := by
-  intro t ht
-  have hAt : 0 < A * t := mul_pos hA (lt_of_lt_of_le zero_lt_one ht)
-  have hsets :
-      upperTailEvent (fun ω => max 0 (Y ω)) (A * t) = upperTailEvent Y (A * t) := by
-    ext ω
-    simp only [mem_upperTailEvent, lt_max_iff]
-    constructor
-    · rintro (hω | hω)
-      · exact absurd hω (not_lt.2 hAt.le)
-      · exact hω
-    · exact Or.inr
-  rw [hsets]
-  exact hY ht
+    IsBigOWith μ Ψ (fun ω => max 0 (Y ω)) A :=
+  Algsuperdiff.Section3.Probability.isBigOWith_max_zero hA hY
 
 /-! ## The Orlicz square root -/
 

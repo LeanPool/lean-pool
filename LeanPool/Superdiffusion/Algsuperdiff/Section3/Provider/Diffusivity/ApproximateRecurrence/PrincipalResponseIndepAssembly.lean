@@ -12,6 +12,7 @@ public import LeanPool.Superdiffusion.Algsuperdiff.Section3.Provider.Diffusivity
 public import LeanPool.Superdiffusion.Algsuperdiff.Section3.Provider.Diffusivity.Corrector.FreshShellL8
 public import LeanPool.Superdiffusion.Algsuperdiff.Frozen.External.CalderonZygmund
 public import LeanPool.HighContrastHomogenization.Support.Book.Ch02.Theorems.MatrixOperatorNorm
+import LeanPool.Superdiffusion.Algsuperdiff.Section3.Probability.OneSidedOrlicz
 
 /-!
 # PrincipalResponseIndepAssembly
@@ -591,20 +592,8 @@ private theorem isBigOWith_posPart_load {Omega : Type*} [MeasurableSpace Omega]
     {Y : Omega → ℝ} {A : ℝ} (hA : 0 < A)
     (hY : IndependentSums.IsBigOWith mu Psi Y A) :
     IndependentSums.IsBigOWith mu Psi (fun omega => max (Y omega) 0) A := by
-  intro t ht
-  have hAt : (0 : ℝ) < A * t := mul_pos hA (lt_of_lt_of_le zero_lt_one ht)
-  have hset :
-      IndependentSums.upperTailEvent (fun omega => max (Y omega) 0) (A * t) =
-        IndependentSums.upperTailEvent Y (A * t) := by
-    ext omega
-    simp only [IndependentSums.mem_upperTailEvent, lt_max_iff]
-    constructor
-    · rintro (hlt | hlt)
-      · exact hlt
-      · exact absurd hlt (not_lt.2 hAt.le)
-    · exact fun hlt => Or.inl hlt
-  rw [hset]
-  exact hY ht
+  simpa only [max_comm] using
+    Algsuperdiff.Section3.Probability.isBigOWith_max_zero hA hY
 
 private theorem rpow_two_eq_pow_load (y : ℝ) : y ^ (2 : ℝ) = y ^ (2 : ℕ) := by
   rw [show (2 : ℝ) = ((2 : ℕ) : ℝ) by norm_num, Real.rpow_natCast]

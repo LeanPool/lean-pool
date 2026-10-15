@@ -8,6 +8,7 @@ module
 
 public import LeanPool.Superdiffusion.Algsuperdiff.Section4.Provider.Proportion.LargeWaves
 public import LeanPool.Superdiffusion.Algsuperdiff.Section4.Provider.Proportion.SmallWavesArith
+import LeanPool.Superdiffusion.Algsuperdiff.Section3.Probability.OneSidedOrlicz
 
 /-!
 # SmallWaves
@@ -72,16 +73,8 @@ variable {d : ℕ}
 
 private theorem isBigOWith_gammaSigma_zero {Omega : Type*} [MeasurableSpace Omega]
     {mu : Measure Omega} {sigma A : ℝ} (hA : 0 < A) :
-    IsBigOWith mu (gammaSigma sigma) (fun _ : Omega => (0 : ℝ)) A := by
-  intro t ht
-  have hAt : 0 < A * t := mul_pos hA (lt_of_lt_of_le zero_lt_one ht)
-  have hset : upperTailEvent (fun _ : Omega => (0 : ℝ)) (A * t) = (∅ : Set Omega) := by
-    ext omega
-    simp only [upperTailEvent, Set.mem_ofPred_eq, Set.mem_empty_iff_false, iff_false, not_lt]
-    exact hAt.le
-  rw [hset, measureReal_empty]
-  have : (0 : ℝ) < gammaSigma sigma t := Real.exp_pos _
-  positivity
+    IsBigOWith mu (gammaSigma sigma) (fun _ : Omega => (0 : ℝ)) A :=
+  Algsuperdiff.Section3.Probability.isBigOWith_gammaSigma_of_eq_zero hA.le (fun _ => rfl)
 
 /-! ## 1. The `𝒢₁b` score field: the lattice maximum at scale `k` inside `□_m` -/
 

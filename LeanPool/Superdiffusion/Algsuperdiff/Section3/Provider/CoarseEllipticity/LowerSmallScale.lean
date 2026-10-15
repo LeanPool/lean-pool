@@ -11,6 +11,7 @@ public import LeanPool.Superdiffusion.Algsuperdiff.Section3.Provider.Base.Cutoff
 public import LeanPool.Superdiffusion.Algsuperdiff.Section3.Provider.Base.PlateauLandmarks
 public import LeanPool.Superdiffusion.Algsuperdiff.Section3.Provider.CoarseEllipticity.GridDominationEndpoint
 public import LeanPool.Superdiffusion.Algsuperdiff.Section3.Provider.CoarseEllipticity.LambdaGridBridge
+import LeanPool.Superdiffusion.Algsuperdiff.Section3.Probability.OneSidedOrlicz
 
 /-!
 # LowerSmallScale
@@ -240,20 +241,8 @@ theorem two_le_lowerEllipticityProfile_of_eight_le
 private theorem isBigOWith_gammaSigma_zero {Ω : Type*}
     [MeasurableSpace Ω] {μ : Measure Ω} {sigma A : ℝ} (hA : 0 ≤ A) :
     HCPolySupport.IndependentSums.IsBigOWith μ
-      (HCPolySupport.IndependentSums.gammaSigma sigma) (fun _ : Ω => 0) A := by
-  intro t ht
-  have ht0 : (0 : ℝ) ≤ t := zero_le_one.trans ht
-  have hAt : (0 : ℝ) ≤ A * t := mul_nonneg hA ht0
-  have hset : HCPolySupport.IndependentSums.upperTailEvent
-      (fun _ : Ω => 0) (A * t) = (∅ : Set Ω) := by
-    ext omega
-    simp only [HCPolySupport.IndependentSums.mem_upperTailEvent,
-      Set.mem_empty_iff_false, iff_false, not_lt]
-    exact hAt
-  rw [hset, MeasureTheory.measureReal_empty]
-  have hPsi : 1 ≤ HCPolySupport.IndependentSums.gammaSigma sigma t :=
-    HCPolySupport.IndependentSums.one_le_gammaSigma ht0
-  exact inv_nonneg.mpr (by linarith)
+      (HCPolySupport.IndependentSums.gammaSigma sigma) (fun _ : Ω => 0) A :=
+  Algsuperdiff.Section3.Probability.isBigOWith_gammaSigma_of_eq_zero hA (fun _ => rfl)
 
 /-- The exact lower-family conclusion in the `m <= mStar M` branch.  The
 witness is identically zero; no induction-state or gate proposition is assumed

@@ -10,6 +10,7 @@ public import LeanPool.Superdiffusion.Algsuperdiff.Frozen.Section3.StreamIncreme
 public import LeanPool.Superdiffusion.Algsuperdiff.Section3.Provider.Stream.IncrementLpSquared
 public import LeanPool.Superdiffusion.Algsuperdiff.Section3.Provider.Diffusivity.Corrector.FreshShellCZ
 public import LeanPool.Superdiffusion.Algsuperdiff.Section3.Provider.Diffusivity.Corrector.ShellNormalization
+import LeanPool.Superdiffusion.Algsuperdiff.Section3.Probability.OneSidedOrlicz
 
 /-!
 # FreshShellL8
@@ -90,20 +91,8 @@ private theorem isBigOWith_posPart {Omega : Type*} [MeasurableSpace Omega]
     {mu : Measure Omega} {Psi : ℝ → ℝ} {X : Omega → ℝ} {A : ℝ} (hA : 0 < A)
     (hX : IndependentSums.IsBigOWith mu Psi X A) :
     IndependentSums.IsBigOWith mu Psi (fun omega => max (X omega) 0) A := by
-  intro t ht
-  have hAt : (0 : ℝ) < A * t := mul_pos hA (lt_of_lt_of_le zero_lt_one ht)
-  have hset :
-      IndependentSums.upperTailEvent (fun omega => max (X omega) 0) (A * t) =
-        IndependentSums.upperTailEvent X (A * t) := by
-    ext omega
-    simp only [IndependentSums.mem_upperTailEvent, lt_max_iff]
-    constructor
-    · rintro (hlt | hlt)
-      · exact hlt
-      · exact absurd hlt (not_lt.2 hAt.le)
-    · exact fun hlt => Or.inl hlt
-  rw [hset]
-  exact hX ht
+  simpa only [max_comm] using
+    Algsuperdiff.Section3.Probability.isBigOWith_max_zero hA hX
 
 /-! ## Line (ii): `e.km.kn.Lp` at `p = 8` -/
 

@@ -10,6 +10,7 @@ public import LeanPool.Superdiffusion.Algsuperdiff.Section4.Provider.GoodEvents.
 public import LeanPool.Superdiffusion.Algsuperdiff.Section4.Provider.GoodEvents.Translate
 public import LeanPool.Superdiffusion.Algsuperdiff.Section4.Provider.Localize.Nonlocal
 public import LeanPool.Superdiffusion.Algsuperdiff.Section4.Support.CgEllipLowerConstant
+import LeanPool.Superdiffusion.Algsuperdiff.Section3.Probability.OneSidedOrlicz
 
 /-!
 # AtomTail
@@ -114,19 +115,8 @@ into a bound for the positive part `(·)_+`. -/
 theorem isBigOWith_max_zero {mu : Measure Omega} {Psi : ℝ → ℝ} {X : Omega → ℝ}
     {A : ℝ} (hA : 0 < A) (h : IsBigOWith mu Psi X A) :
     IsBigOWith mu Psi (fun omega => max (X omega) 0) A := by
-  intro t ht
-  have hAt : 0 < A * t := mul_pos hA (lt_of_lt_of_le zero_lt_one ht)
-  have hset : upperTailEvent (fun omega => max (X omega) 0) (A * t)
-      = upperTailEvent X (A * t) := by
-    ext omega
-    simp only [upperTailEvent, Set.mem_ofPred_eq, lt_max_iff]
-    constructor
-    · rintro (h1 | h2)
-      · exact h1
-      · exact absurd h2 (not_lt.2 hAt.le)
-    · exact fun h1 => Or.inl h1
-  rw [hset]
-  exact h ht
+  simpa only [max_comm] using
+    Algsuperdiff.Section3.Probability.isBigOWith_max_zero hA h
 
 end Generic
 

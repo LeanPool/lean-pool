@@ -8,6 +8,7 @@ module
 
 public import LeanPool.Superdiffusion.Algsuperdiff.Section3.Provider.Diffusivity.ApproximateRecurrence.PrincipalResponseMomentsCloseOrlicz
 public import LeanPool.Superdiffusion.Algsuperdiff.Section3.Cutoff.Carrier
+import LeanPool.Superdiffusion.Algsuperdiff.Section3.Probability.OneSidedOrlicz
 
 /-!
 # PrincipalResponseDisplayTwoMoment
@@ -212,20 +213,8 @@ private theorem isBigOWith_max_zero_display {mu : Measure Omega} {Psi : ℝ → 
     {X : Omega → ℝ} {A : ℝ} (hA : 0 < A)
     (hX : IndependentSums.IsBigOWith mu Psi X A) :
     IndependentSums.IsBigOWith mu Psi (fun omega => max (X omega) 0) A := by
-  intro t ht
-  have hAt : (0 : ℝ) < A * t := mul_pos hA (lt_of_lt_of_le zero_lt_one ht)
-  have hset :
-      IndependentSums.upperTailEvent (fun omega => max (X omega) 0) (A * t) =
-        IndependentSums.upperTailEvent X (A * t) := by
-    ext omega
-    simp only [IndependentSums.mem_upperTailEvent, lt_max_iff]
-    constructor
-    · rintro (hlt | hlt)
-      · exact hlt
-      · exact absurd hlt (not_lt.2 hAt.le)
-    · exact fun hlt => Or.inl hlt
-  rw [hset]
-  exact hX ht
+  simpa only [max_comm] using
+    Algsuperdiff.Section3.Probability.isBigOWith_max_zero hA hX
 
 private theorem rpow_two_eq_pow_display (y : ℝ) : y ^ (2 : ℝ) = y ^ (2 : ℕ) := by
   rw [show (2 : ℝ) = ((2 : ℕ) : ℝ) by norm_num, Real.rpow_natCast]
