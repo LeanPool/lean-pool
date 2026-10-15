@@ -27,6 +27,45 @@ noncomputable section
 
 variable {Omega : Type*} [MeasurableSpace Omega] {mu : Measure Omega}
 
+/-- The hsep exponent stays above one fifth throughout the terminal window. -/
+theorem upperProfileHsepTau_one_fifth_le {sigma : ℝ}
+    (hsigma0 : 0 < sigma) (hsigma : sigma ≤ 1 / 2) :
+    (1 : ℝ) / 5 ≤ upperProfileHsepTau sigma := by
+  have hden : 0 < 8 + 3 * sigma + sigma ^ 2 := by positivity
+  have hsigmaSq : sigma ^ 2 ≤ (1 : ℝ) / 4 := by
+    calc sigma ^ 2 ≤ (1 / 2 : ℝ) ^ 2 := pow_le_pow_left₀ hsigma0.le hsigma 2
+      _ = (1 : ℝ) / 4 := by norm_num
+  rw [upperProfileHsepTau]
+  rw [div_le_div_iff₀ (by norm_num : (0 : ℝ) < 5) hden]
+  linarith only [hsigmaSq, hsigma]
+
+/-- A first exponent of at least one fifth bounds the product constant by `64`. -/
+theorem gammaProductConst_one_le_sixtyFour {alpha : ℝ}
+    (halphaLower : (1 : ℝ) / 5 ≤ alpha) :
+    HCPolySupport.Book.Ch04.gammaProductConst alpha 1 ≤ 64 := by
+  have halpha0 : 0 < alpha := lt_of_lt_of_le (by norm_num) halphaLower
+  have hinv : alpha⁻¹ ≤ (5 : ℝ) :=
+    (inv_le_iff_one_le_mul₀ halpha0).2 (by linarith only [halphaLower])
+  have hexponent : ((alpha * 1 / (alpha + 1))⁻¹) = alpha⁻¹ + 1 := by
+    field_simp [halpha0.ne']
+    ring
+  change (2 : ℝ) ^ ((alpha * 1 / (alpha + 1))⁻¹) ≤ 64
+  rw [hexponent]
+  calc
+    (2 : ℝ) ^ (alpha⁻¹ + 1) ≤ (2 : ℝ) ^ (5 + 1) :=
+      Real.rpow_le_rpow_of_exponent_le (by norm_num) (by linarith)
+    _ = 64 := by norm_num
+
+/-- Collar exponents obey the same uniform product bound for any positive gate. -/
+theorem gammaProductConst_collarPower_le_sixtyFour {sigma gamma b : ℝ}
+    (hsigma0 : 0 < sigma) (hsigma : sigma ≤ 1 / 2)
+    (hgamma0 : 0 ≤ gamma) (hb : 0 < b) (hgamma : gamma ≤ b * sigma) :
+    HCPolySupport.Book.Ch04.gammaProductConst
+        (upperProfileBaseSigma sigma / ((2 * gamma + 2 * b) / b)) 1 ≤ 64 := by
+  exact gammaProductConst_one_le_sixtyFour
+    ((upperProfileHsepTau_one_fifth_le hsigma0 hsigma).trans
+      (upperProfileHsepTau_le_collarPowerSigma hsigma0 hsigma hgamma0 hb hgamma))
+
 theorem isBigOWith_upperProfileTarget_hsep_mul_one [IsFiniteMeasure mu]
     {sigma AR AZ : ℝ} {R Z : Omega → ℝ}
     (hsigma0 : 0 < sigma) (hsigma : sigma ≤ 1 / 2)

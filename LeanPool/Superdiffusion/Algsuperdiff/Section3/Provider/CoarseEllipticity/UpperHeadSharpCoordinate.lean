@@ -484,41 +484,8 @@ theorem gamma_product_const_collar_head_le_sixty_four
     HCPolySupport.Book.Ch04.gammaProductConst
         (upperProfileBaseSigma sigma /
           ((2 * (gamma / 2) + 2 * bfaProfileB) / bfaProfileB)) 1 ≤ 64 := by
-  let alpha : ℝ := upperProfileBaseSigma sigma /
-    ((2 * (gamma / 2) + 2 * bfaProfileB) / bfaProfileB)
-  have hgammaHalf0 : 0 ≤ gamma / 2 := div_nonneg hgamma0 (by norm_num)
-  have halpha0 : 0 < alpha := by
-    dsimp only [alpha]
-    have hden : 0 < (2 * (gamma / 2) + 2 * bfaProfileB) / bfaProfileB := by
-      exact div_pos
-        (add_pos_of_nonneg_of_pos
-          (mul_nonneg (by norm_num) hgammaHalf0)
-          (mul_pos (by norm_num) bfaProfileB_pos))
-        bfaProfileB_pos
-    exact div_pos (upperProfileBaseSigma_pos hsigma0 hsigma) hden
-  have htau : upperProfileHsepTau sigma ≤ alpha := by
-    dsimp only [alpha]
-    exact upperProfileHsepTau_le_collarPowerSigma hsigma0 hsigma
-      hgammaHalf0 bfaProfileB_pos hgamma
-  have htauLower : (1 : ℝ) / 5 ≤ upperProfileHsepTau sigma := by
-    have hden : 0 < 8 + 3 * sigma + sigma ^ 2 := by positivity
-    have hsigmaSq : sigma ^ 2 ≤ (1 : ℝ) / 4 := by nlinarith
-    rw [upperProfileHsepTau]
-    rw [div_le_div_iff₀ (by norm_num : (0 : ℝ) < 5) hden]
-    nlinarith
-  have halphaLower : (1 : ℝ) / 5 ≤ alpha := htauLower.trans htau
-  have hinv : alpha⁻¹ ≤ (5 : ℝ) :=
-    (inv_le_iff_one_le_mul₀ halpha0).2 (by nlinarith)
-  have hexponent :
-      ((alpha * 1 / (alpha + 1))⁻¹) = alpha⁻¹ + 1 := by
-    field_simp [halpha0.ne']
-    ring
-  change (2 : ℝ) ^ ((alpha * 1 / (alpha + 1))⁻¹) ≤ 64
-  rw [hexponent]
-  calc
-    (2 : ℝ) ^ (alpha⁻¹ + 1) ≤ (2 : ℝ) ^ (5 + 1) :=
-      Real.rpow_le_rpow_of_exponent_le (by norm_num) (by linarith)
-    _ = 64 := by norm_num
+  exact gammaProductConst_collarPower_le_sixtyFour hsigma0 hsigma
+    (div_nonneg hgamma0 (by norm_num)) bfaProfileB_pos hgamma
 
 theorem upper_head_hsep_one_scale_le_const_mul_gamma
     {sigma gamma : ℝ} (hsigma0 : 0 < sigma)

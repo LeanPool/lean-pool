@@ -64,42 +64,13 @@ def probeSharpAfterBandRareGoodMassLayerBound
       (3 : ℝ) ^ (M.gamma * ((k + 1 : ℕ) : ℝ))) *
     Real.exp (-(upperHsepResidualRate * (E⁻¹ ^ 2 * M.gamma⁻¹)))
 
-private theorem upperProfileHsepTau_one_fifth_le_for_product {sigma : ℝ}
-    (hsigma0 : 0 < sigma) (hsigma : sigma ≤ 1 / 2) :
-    (1 : ℝ) / 5 ≤ upperProfileHsepTau sigma := by
-  have hden : 0 < 8 + 3 * sigma + sigma ^ 2 := by positivity
-  have hsigmaSq : sigma ^ 2 ≤ (1 : ℝ) / 4 := by nlinarith
-  rw [upperProfileHsepTau]
-  rw [div_le_div_iff₀ (by norm_num : (0 : ℝ) < 5) hden]
-  nlinarith
-
 /-- The additional product of the hsep residual with a `Gamma_1` factor has
 a universal product constant on the full terminal sigma window. -/
 theorem gammaProductConst_upperProfileHsepTau_one_le_sixty_four
     {sigma : ℝ} (hsigma0 : 0 < sigma) (hsigma : sigma ≤ 1 / 2) :
     HCPolySupport.Book.Ch04.gammaProductConst
         (upperProfileHsepTau sigma) 1 ≤ 64 := by
-  have hT : 0 < upperProfileHsepTau sigma :=
-    upperProfileHsepTau_pos hsigma0 hsigma
-  have hTlower : (1 : ℝ) / 5 ≤ upperProfileHsepTau sigma :=
-    upperProfileHsepTau_one_fifth_le_for_product hsigma0 hsigma
-  have hinv : (upperProfileHsepTau sigma)⁻¹ ≤ (5 : ℝ) :=
-    (inv_le_iff_one_le_mul₀ hT).2 (by nlinarith)
-  have hexponent :
-      ((upperProfileHsepTau sigma * 1 /
-        (upperProfileHsepTau sigma + 1))⁻¹) =
-        (upperProfileHsepTau sigma)⁻¹ + 1 := by
-    field_simp [hT.ne']
-    ring
-  change (2 : ℝ) ^
-      ((upperProfileHsepTau sigma * 1 /
-        (upperProfileHsepTau sigma + 1))⁻¹) ≤ 64
-  rw [hexponent]
-  calc
-    (2 : ℝ) ^ ((upperProfileHsepTau sigma)⁻¹ + 1) ≤
-        (2 : ℝ) ^ (6 : ℝ) :=
-      Real.rpow_le_rpow_of_exponent_le (by norm_num) (by linarith)
-    _ = 64 := by norm_num
+  exact gammaProductConst_one_le_sixtyFour (upperProfileHsepTau_one_fifth_le hsigma0 hsigma)
 
 theorem probeSharpAfterBandRareLayerConst_pos (d : ℕ) :
     0 < probeSharpAfterBandRareLayerConst d := by

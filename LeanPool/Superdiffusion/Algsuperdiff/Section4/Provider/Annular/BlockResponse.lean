@@ -222,7 +222,7 @@ private theorem ofFullBlockVec_mulVec (M : FullBlockMat d) (P : BlockVec d) :
 image under the constant block matrix, and its quadratic normalization is `1`.
 Both are representation free -- the matrix square root never has to be
 computed. -/
-private theorem blockProbe_of_mem_valueSet {a0 : Mat d} {lam Lam : ℝ}
+theorem blockProbe_of_mem_valueSet {a0 : Mat d} {lam Lam : ℝ}
     (ha0 : IsEllipticMatrix lam Lam a0) {e : FullBlockVec d}
     (he : Ch02.fullBlockVecNormSq e = 1) :
     ofFullBlockVec (Matrix.mulVec (Ch02.constantFullBlockMatrixSqrt a0) e) =

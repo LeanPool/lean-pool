@@ -129,19 +129,11 @@ theorem doubledResponseJ_transpose (U : Domain d) (a : CoeffOn U) (P Q' : BlockV
 
 /-! ## Part B -- the flip is a symmetry of the isotropic normalization -/
 
-private theorem ofFullBlockVec_mulVec' (M : FullBlockMat d) (P : BlockVec d) :
-    ofFullBlockVec (Matrix.mulVec M (toFullBlockVec P)) =
-      blockMatVecMul (ofFullBlockMat M) P := by
-  have h := toFullBlockVec_blockMatVecMul (ofFullBlockMat M) P
-  rw [toFullBlockMat_ofFullBlockMat] at h
-  rw [← h, ofFullBlockVec_toFullBlockVec]
-
 /-- **The structure of a normalized block probe.**  Its co-load is the image
 under the constant block matrix, and its quadratic normalization is `1`; the
 matrix square root never has to be computed.
 
-This is a forced, disclosed re-derivation of the `private` upstream helper
-`BlockResponse.blockProbe_of_mem_valueSet`. -/
+This interface uses the common block-probe normalization from `BlockResponse`. -/
 theorem blockProbe_normalization {a0 : Mat d} {lam Lam : ℝ}
     (ha0 : IsEllipticMatrix lam Lam a0) {e : FullBlockVec d}
     (he : Ch02.fullBlockVecNormSq e = 1) :
@@ -151,44 +143,7 @@ theorem blockProbe_normalization {a0 : Mat d} {lam Lam : ℝ}
       blockVecDot (ofFullBlockVec (Matrix.mulVec (Ch02.constantFullBlockMatrixInvSqrt a0) e))
         (blockMatVecMul (constantBlockMatrix a0)
           (ofFullBlockVec (Matrix.mulVec (Ch02.constantFullBlockMatrixInvSqrt a0) e))) = 1 := by
-  classical
-  set M : FullBlockMat d := Ch02.constantFullBlockMatrix a0 with hMdef
-  set S : FullBlockMat d := Ch02.constantFullBlockMatrixSqrt a0 with hSdef
-  have hMpos : M.PosDef := by
-    rw [hMdef]
-    exact constantFullBlockMatrix_posDef_of_isEllipticMatrix (a0 := a0) ha0
-  have hSunit : IsUnit S := by
-    rw [hSdef, Ch02.constantFullBlockMatrixSqrt, ← hMdef]
-    exact (CFC.isUnit_sqrt_iff M).2 hMpos.isUnit
-  have hSdet : IsUnit S.det := (Matrix.isUnit_iff_isUnit_det (A := S)).mp hSunit
-  have hSS : S * S = M := by
-    have hsq : S ^ 2 = M := by
-      rw [hSdef, Ch02.constantFullBlockMatrixSqrt, ← hMdef]
-      exact CFC.sq_sqrt M hMpos.posSemidef.nonneg
-    rwa [pow_two] at hsq
-  set P : BlockVec d :=
-    ofFullBlockVec (Matrix.mulVec (Ch02.constantFullBlockMatrixInvSqrt a0) e) with hPdef
-  have htoP : toFullBlockVec P = Matrix.mulVec S⁻¹ e := by
-    rw [hPdef, toFullBlockVec_ofFullBlockVec, Ch02.constantFullBlockMatrixInvSqrt, hSdef]
-  have hMS : M * S⁻¹ = S := by
-    rw [← hSS, Matrix.mul_assoc, Matrix.mul_nonsing_inv S hSdet, Matrix.mul_one]
-  have hSSinv : S * S⁻¹ = 1 := Matrix.mul_nonsing_inv S hSdet
-  have hco : blockMatVecMul (constantBlockMatrix a0) P =
-      ofFullBlockVec (Matrix.mulVec S e) := by
-    have hofM : ofFullBlockMat M = constantBlockMatrix a0 := by
-      rw [hMdef, Ch02.constantFullBlockMatrix, ofFullBlockMat_toFullBlockMat]
-    calc blockMatVecMul (constantBlockMatrix a0) P
-        = ofFullBlockVec (Matrix.mulVec M (toFullBlockVec P)) := by
-          rw [ofFullBlockVec_mulVec', hofM]
-      _ = ofFullBlockVec (Matrix.mulVec M (Matrix.mulVec S⁻¹ e)) := by rw [htoP]
-      _ = ofFullBlockVec (Matrix.mulVec (M * S⁻¹) e) := by rw [Matrix.mulVec_mulVec]
-      _ = ofFullBlockVec (Matrix.mulVec S e) := by rw [hMS]
-  refine ⟨hco.symm, ?_⟩
-  have hnorm :=
-    fullBlockVecNormSq_constantFullBlockMatrixSqrt_mul_toFullBlockVec_eq (a0 := a0) ha0 P
-  rw [htoP, ← hSdef, Matrix.mulVec_mulVec, hSSinv] at hnorm
-  rw [← hnorm, Matrix.one_mulVec]
-  exact he
+  exact blockProbe_of_mem_valueSet ha0 he
 
 /-- At an isotropic background the constant block matrix `diag(σ Id, σ⁻¹ Id)`
 commutes with the flux sign flip. -/

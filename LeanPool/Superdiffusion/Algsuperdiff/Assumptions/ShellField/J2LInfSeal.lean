@@ -153,16 +153,6 @@ private theorem unitOpenCubeSup_eq_eLpNorm_top
   change S = E.toReal
   exact le_antisymm hS_le_E_toReal hE_toReal_le
 
-private theorem matrixOperatorNorm_continuous_local :
-    Continuous (matrixOperatorNorm : Mat d → ℝ) := by
-  have htoEuclideanCLM :
-      Continuous
-        (fun A : Mat d =>
-          Matrix.toEuclideanCLM (n := Fin d) (𝕜 := ℝ) A) := by
-    exact LinearMap.continuous_of_finiteDimensional
-      (Matrix.toEuclideanCLM (n := Fin d) (𝕜 := ℝ)).toAlgEquiv.toLinearEquiv.toLinearMap
-  exact continuous_norm.comp htoEuclideanCLM
-
 /-- The pointwise value supremum in J2 is exactly its restricted-volume
 `L∞` seminorm on the literal open unit cube. -/
 theorem unitCubeValueNorm_eq_eLpNorm_top (j : ShellField d) :
@@ -178,7 +168,7 @@ theorem unitCubeValueNorm_eq_eLpNorm_top (j : ShellField d) :
           | some x => matrixOperatorNorm (j x.1)) = _
   refine unitOpenCubeSup_eq_eLpNorm_top
     (f := fun x : Vec d => matrixOperatorNorm (j x)) ?_ ?_
-  · exact matrixOperatorNorm_continuous_local.comp j.1.1.continuous
+  · exact continuous_matrixOperatorNorm.comp j.1.1.continuous
   · intro x
     exact matrixOperatorNorm_nonneg (j x)
 

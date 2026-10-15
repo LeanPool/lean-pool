@@ -42,83 +42,6 @@ noncomputable section
 
 variable {d : ℕ}
 
-private theorem sum_abs_entries_le (A : Mat d) :
-    (∑ i, ∑ j, |A i j|) ≤ (d : ℝ) ^ 2 * ‖A‖ := by
-  calc
-    (∑ i, ∑ j, |A i j|) ≤ ∑ _i : Fin d, ∑ _j : Fin d, ‖A‖ := by
-      gcongr with i j
-      simpa [Real.norm_eq_abs] using Matrix.norm_entry_le_entrywise_sup_norm A
-    _ = (d : ℝ) ^ 2 * ‖A‖ := by
-      simp [pow_two]
-      ring
-
-private theorem norm_matrix_operator_norm_sub_le_sq_mul_norm (A B : Mat d) :
-    ‖matrixOperatorNorm A - matrixOperatorNorm B‖ ≤
-      (d : ℝ) ^ 2 * ‖A - B‖ := by
-  rw [Real.norm_eq_abs, abs_le]
-  constructor
-  · rw [neg_le_sub_iff_le_add]
-    have h := matrixOperatorNorm_le_matrixOperatorNorm_add_sum_abs_sub_entries B A
-    have hsum := sum_abs_entries_le (B - A)
-    have hnorm : ‖B - A‖ = ‖A - B‖ := by
-      rw [show B - A = -(A - B) by abel, norm_neg]
-    calc
-      matrixOperatorNorm B ≤ matrixOperatorNorm A +
-          ∑ i, ∑ j, |B i j - A i j| := h
-      _ ≤ matrixOperatorNorm A + (d : ℝ) ^ 2 * ‖A - B‖ := by
-        gcongr
-        simpa [hnorm] using hsum
-  · rw [sub_le_iff_le_add]
-    have h := matrixOperatorNorm_le_matrixOperatorNorm_add_sum_abs_sub_entries A B
-    calc
-      matrixOperatorNorm A ≤ matrixOperatorNorm B +
-          ∑ i, ∑ j, |A i j - B i j| := h
-      _ ≤ matrixOperatorNorm B + (d : ℝ) ^ 2 * ‖A - B‖ := by
-        gcongr
-        exact sum_abs_entries_le (A - B)
-      _ = (d : ℝ) ^ 2 * ‖A - B‖ + matrixOperatorNorm B := add_comm _ _
-
-private theorem matrix_operator_norm_continuous :
-    Continuous (matrixOperatorNorm : Mat d → ℝ) := by
-  let L : NNReal := Real.toNNReal ((d : ℝ) ^ 2)
-  have hL : LipschitzWith L (matrixOperatorNorm : Mat d → ℝ) := by
-    apply LipschitzWith.of_dist_le_mul
-    intro A B
-    rw [dist_eq_norm, dist_eq_norm]
-    simpa [L, Real.coe_toNNReal _ (sq_nonneg (d : ℝ))] using
-      norm_matrix_operator_norm_sub_le_sq_mul_norm A B
-  exact hL.continuous
-
-private theorem unit_cube_value_norm_controls
-    (j : ShellField d) (x : ShellField.UnitOpenCubePoint d) :
-    matrixOperatorNorm (j x.1) ≤ ShellField.unitCubeValueNorm j := by
-  let K : Set (Vec d) := Metric.closedBall
-    (cubeCenter (originCube d 0)) (cubeRadius (originCube d 0))
-  have hK : IsCompact K := by
-    simpa [K] using isCompact_closedBall
-      (cubeCenter (originCube d 0)) (cubeRadius (originCube d 0))
-  have hcont : Continuous (fun y : Vec d => matrixOperatorNorm (j y)) :=
-    matrix_operator_norm_continuous.comp j.1.1.continuous
-  obtain ⟨C, hC⟩ := hK.exists_bound_of_continuousOn hcont.continuousOn
-  have hbdd : BddAbove (Set.range (fun o : Option (ShellField.UnitOpenCubePoint d) =>
-      match o with
-      | none => 0
-      | some y => matrixOperatorNorm (j y.1))) := by
-    refine ⟨max 0 C, ?_⟩
-    rintro r ⟨o, rfl⟩
-    cases o with
-    | none => exact le_max_left _ _
-    | some y =>
-      have hyK : y.1 ∈ K := by
-        apply Metric.ball_subset_closedBall
-        rw [ball_cubeCenter_eq_openCubeSet]
-        exact y.2
-      have h := hC y.1 hyK
-      have hop : matrixOperatorNorm (j y.1) ≤ C := by
-        simpa [Real.norm_eq_abs, abs_of_nonneg (matrixOperatorNorm_nonneg _)] using h
-      exact hop.trans (le_max_right _ _)
-  exact le_csSup hbdd ⟨some x, rfl⟩
-
 /-- A nonnegative control of a shell on the origin-centered cube at scale
 `ell`.  It is the exact unit-cube value norm after the corresponding spatial
 rescaling; the source `C²` shell carrier makes this finite and Borel
@@ -165,7 +88,7 @@ theorem matrixOperatorNorm_le_localCubeControl
       dsimp [y]
       rw [smul_smul, mul_inv_cancel₀ (ne_of_gt hr_pos), one_smul]
     _ ≤ ShellField.unitCubeValueNorm (ShellField.spatialScale r j) :=
-      unit_cube_value_norm_controls _ y
+      ShellField.matrixOperatorNorm_apply_le_unitCubeValueNorm _ y
     _ = localCubeControl ell j := rfl
 
 /-- A nonnegative pointwise bound controls the exact local supremum. -/

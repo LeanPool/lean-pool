@@ -518,6 +518,121 @@ theorem boundary_five_term_bound :
     convert h using 1 <;> ring
   exact hweighted.trans (add_le_add (add_le_add le_rfl hcap) le_rfl)
 
+/-- The five-term boundary estimate with its triadic frame weights exposed. -/
+theorem boundary_comparison_bounds_errorWeighted :
+    ∀ (CE KE kappa cg A1 : ℝ) (_ : A1 = cg * (216 : ℝ) * (kappa * KE)) (_ : (0 : ℝ) ≤ A1) (s : ℝ)
+      (_ : (0 : ℝ) < s) (n : ℤ) (_ : s ≤ (1 : ℝ)) (S Erep : ℝ) (_ : Erep ≤ CE * (1 / 2 : ℝ))
+      (_ : (0 : ℝ) ≤ Erep) (sig X Gs Hs Hn P2 : ℝ) (_ : P2 = Real.rpow (3 : ℝ) (-(↑(n + (2 : ℤ)) :
+        ℝ))) (Q3s : ℝ)
+      (_ : Q3s = Real.rpow (3 : ℝ) (s * (↑(n + (2 : ℤ)) : ℝ))) (Q3sn : ℝ)
+      (_ : Q3sn = Real.rpow (3 : ℝ) (s * (↑n : ℝ))) (Q1s : ℝ)
+      (_ : Q1s = Real.rpow (3 : ℝ) (((1 : ℝ) + s) * (↑n : ℝ))) (R3n : ℝ) (_ : R3n = Real.rpow (3 :
+        ℝ) (↑n : ℝ))
+      (S4 S7 S6 Sm3 Sm2 : ℝ) (_ : (0 : ℝ) ≤ X) (_ : (0 : ℝ) ≤ Gs) (_ : (0 : ℝ) ≤ Hs) (_ : (0 : ℝ)
+        ≤ S)
+      (_ : (0 : ℝ) ≤ Q3s) (_ : (0 : ℝ) ≤ R3n) (_ : (0 : ℝ) ≤ Sm3) (_ : (0 : ℝ) ≤ Sm2)
+      (_ : (0 : ℝ) ≤ sig⁻¹) (_ : sig⁻¹ * sig = (1 : ℝ)) (_ : s⁻¹ ^ (4 : ℕ) = S4) (_ : S4 * Sm3 = S7)
+      (_ : S4 * Sm2 = S6),
+      R3n * Q3sn = Q1s ∧
+        sig⁻¹ * R3n *
+            (cg *
+              ((216 : ℝ) * s⁻¹ ^ (4 : ℕ) *
+                (kappa * KE * Erep *
+                  (sig * (P2 * X) + sig * (P2 * S) + Sm3 * (Q3s * Gs) + Sm2 * (sig * (Q3s * Hs)) +
+                    Sm2 * (sig * Hn))))) ≤
+          A1 * (S4 * Erep * X) + (9 : ℝ) * (CE * (1 / 2 : ℝ)) * A1 * (S7 * sig⁻¹ * Q1s * Gs) +
+                (9 : ℝ) * (CE * (1 / 2 : ℝ)) * A1 * (S6 * Q1s * Hs) +
+              A1 * (S6 * Erep * R3n * Hn) +
+            A1 * (S4 * Erep * S) := by
+  intro CE KE kappa cg A1 hA1def hA1 s hs n hs1 S Erep hErepCap hErep0 sig X Gs Hs Hn P2 hP2def
+    Q3s hQ3sdef Q3sn hQ3sndef Q1s hQ1sdef R3n hR3ndef S4 S7 S6 Sm3 Sm2 hX0 hGs0 hHs0 hS0 hQ3s0
+      hR3n0 hSm30 hSm20 hsiginv0 hsinv hS4eq hS4Sm3 hS4Sm2
+  have hRP2 : R3n * P2 ≤ 1 := by
+    rw [hR3ndef, hP2def]
+    exact rpow_three_frame_l2_le_one n
+  have hRQ3s : R3n * Q3s ≤ 9 * Q1s := by
+    rw [hR3ndef, hQ3sdef, hQ1sdef]
+    exact rpow_three_frame_force_le n hs1
+  have hRQ3sn : R3n * Q3sn = Q1s := by
+    rw [hR3ndef, hQ3sndef, hQ1sdef]
+    change (3 : ℝ) ^ (n : ℝ) * (3 : ℝ) ^ (s * (n : ℝ)) = (3 : ℝ) ^ ((1 + s) * (n : ℝ))
+    rw [← Real.rpow_add (by norm_num : (0 : ℝ) < 3)]
+    congr 1
+    ring
+  have hT1 : (sig⁻¹ * R3n) * (cg * (216 * (s⁻¹) ^ (4 : ℕ) *
+        (kappa * KE * Erep * (sig * (P2 * X) + sig * (P2 * S) + Sm3 * (Q3s * Gs) +
+          Sm2 * (sig * (Q3s * Hs)) + Sm2 * (sig * Hn))))) ≤
+      A1 * (S4 * Erep * X) + (9 * (CE * (1 / 2)) * A1) * (S7 * sig⁻¹ * Q1s * Gs) +
+        (9 * (CE * (1 / 2)) * A1) * (S6 * Q1s * Hs) +
+        A1 * (S6 * Erep * R3n * Hn) + A1 * (S4 * Erep * S) := by
+    exact boundary_five_term_bound_errorWeighted CE KE kappa cg A1 hA1def hA1 s hs S Erep
+      hErepCap hErep0 sig X Gs Hs Hn P2 Q3s Q1s R3n S4 S7 S6 Sm3 Sm2 hX0 hGs0 hHs0 hS0
+      hQ3s0 hR3n0 hSm30 hSm20 hsiginv0 hsinv hS4eq hS4Sm3 hS4Sm2 hRP2 hRQ3s
+  exact ⟨hRQ3sn, hT1⟩
+
+/-- Force and correction estimates for an arbitrary boundary window coefficient. -/
+theorem boundary_force_correction_bounds : ∀ (B correction window : ℝ) (b0 cg A2 : ℝ)
+      (_ : A2 = cg * (1944 : ℝ) * (b0 * (B * window))) (_ : (0
+        : ℝ) ≤ A2) (A3 : ℝ)
+      (_ : A3 = correction * window) (_ : (0 : ℝ) ≤ A3) (s S Erep : ℝ)
+      (_ : (0 : ℝ) ≤ Erep) (sig X Gs Hs Hn Q3sn Q1s R3n S4 S7 S6 : ℝ) (_ : (0 : ℝ) ≤ X) (_ : (0 :
+        ℝ) ≤ Gs)
+      (_ : (0 : ℝ) ≤ Hs) (_ : (0 : ℝ) ≤ Hn) (_ : (0 : ℝ) ≤ S) (_ : (0 : ℝ) ≤ Q1s) (_ : (0 : ℝ) ≤
+        R3n)
+      (_ : (0 : ℝ) ≤ S4) (_ : (0 : ℝ) ≤ S7) (_ : (0 : ℝ) ≤ S6) (_ : (0 : ℝ) ≤ sig⁻¹)
+      (_ : s⁻¹ ^ (6 : ℕ) = S6) (_ : S6 ≤ S7) (_ : s.rpow (-(1 / 2 : ℝ)) ≤ S7) (_ : R3n * Q3sn =
+        Q1s),
+      sig⁻¹ * R3n *
+            (cg * ((1944 : ℝ) * s⁻¹ ^ (6 : ℕ) * (b0 * (B * Q3sn *
+              (window * Gs))))) ≤
+          A2 * (S7 * sig⁻¹ * Q1s * Gs) ∧
+        sig⁻¹ * R3n * (correction * s.rpow (-(1 / 2 : ℝ)) * Q3sn *
+          (window * Gs)) ≤
+            A3 * (S7 * sig⁻¹ * Q1s * Gs) ∧
+          (0 : ℝ) ≤ S4 * Erep * X ∧
+            (0 : ℝ) ≤ S4 * Erep * S ∧
+              (0 : ℝ) ≤ S7 * sig⁻¹ * Q1s * Gs ∧ (0 : ℝ) ≤ S6 * Q1s * Hs ∧ (0 : ℝ) ≤ S6 * Erep *
+                R3n * Hn := by
+  intro B correction window b0 cg A2 hA2def hA2 A3 hA3def hA3 s S Erep hErep0 sig X Gs Hs Hn
+    Q3sn Q1s R3n S4 S7 S6 hX0 hGs0 hHs0 hHn0 hS0 hQ1s0 hR3n0 hS40 hS70 hS60 hsiginv0
+    hS6eq hS6le hQScle hRQ3sn
+  have hT2 : (sig⁻¹ * R3n) * (cg * (1944 * (s⁻¹) ^ (6 : ℕ) *
+        (b0 * (B * Q3sn * (window * Gs))))) ≤
+      A2 * (S7 * sig⁻¹ * Q1s * Gs) := by
+    have hrw : (sig⁻¹ * R3n) * (cg * (1944 * (s⁻¹) ^ (6 : ℕ) *
+          (b0 * (B * Q3sn * (window * Gs))))) =
+        A2 * ((s⁻¹) ^ (6 : ℕ) * (sig⁻¹ * ((R3n * Q3sn) * Gs))) := by
+      rw [hA2def]; ring
+    rw [hrw, hRQ3sn, hS6eq]
+    have hnn : (0 : ℝ) ≤ sig⁻¹ * (Q1s * Gs) :=
+      mul_nonneg hsiginv0 (mul_nonneg hQ1s0 hGs0)
+    calc A2 * (S6 * (sig⁻¹ * (Q1s * Gs)))
+        ≤ A2 * (S7 * (sig⁻¹ * (Q1s * Gs))) :=
+          mul_le_mul_of_nonneg_left (mul_le_mul_of_nonneg_right hS6le hnn) hA2
+      _ = A2 * (S7 * sig⁻¹ * Q1s * Gs) := by ring
+  have hT3 : (sig⁻¹ * R3n) * (correction * Real.rpow s (-(1 / 2 : ℝ)) *
+        Q3sn * (window * Gs)) ≤ A3 * (S7 * sig⁻¹ * Q1s * Gs) := by
+    have hrw : (sig⁻¹ * R3n) * (correction *
+          Real.rpow s (-(1 / 2 : ℝ)) * Q3sn * (window * Gs)) =
+        A3 * (Real.rpow s (-(1 / 2 : ℝ)) * (sig⁻¹ * ((R3n * Q3sn) * Gs))) := by
+      rw [hA3def]; ring
+    rw [hrw, hRQ3sn]
+    have hnn : (0 : ℝ) ≤ sig⁻¹ * (Q1s * Gs) :=
+      mul_nonneg hsiginv0 (mul_nonneg hQ1s0 hGs0)
+    calc A3 * (Real.rpow s (-(1 / 2 : ℝ)) * (sig⁻¹ * (Q1s * Gs)))
+        ≤ A3 * (S7 * (sig⁻¹ * (Q1s * Gs))) :=
+          mul_le_mul_of_nonneg_left (mul_le_mul_of_nonneg_right hQScle hnn) hA3
+      _ = A3 * (S7 * sig⁻¹ * Q1s * Gs) := by ring
+  have hXterm : (0 : ℝ) ≤ S4 * Erep * X := mul_nonneg (mul_nonneg hS40 hErep0) hX0
+  have hSterm : (0 : ℝ) ≤ S4 * Erep * S := mul_nonneg (mul_nonneg hS40 hErep0) hS0
+  have hGterm : (0 : ℝ) ≤ S7 * sig⁻¹ * Q1s * Gs :=
+    mul_nonneg (mul_nonneg (mul_nonneg hS70 hsiginv0) hQ1s0) hGs0
+  have hHsterm : (0 : ℝ) ≤ S6 * Q1s * Hs :=
+    mul_nonneg (mul_nonneg hS60 hQ1s0) hHs0
+  have hHnterm : (0 : ℝ) ≤ S6 * Erep * R3n * Hn :=
+    mul_nonneg (mul_nonneg (mul_nonneg hS60 hErep0) hR3n0) hHn0
+  exact ⟨hT2, hT3, hXterm, hSterm, hGterm, hHsterm, hHnterm⟩
+
 end
 
 end Algsuperdiff.Section4.Provider.ExcessDecay
