@@ -179,7 +179,8 @@ theorem exists_nonnegative_topEigenvector (A : Matrix I I ℝ)
   have hyray : rayleigh A y = topEigenvalue A :=
     le_antisymm habove hbelow
   have hself : IsSelfAdjoint (continuousOperator A) :=
-    (operator_isSymmetric A hsymm).isSelfAdjoint
+    LinearMap.IsSymmetric.isSelfAdjoint (A := continuousOperator A)
+      (operator_isSymmetric A hsymm)
   have hmax :
       IsMaxOn (continuousOperator A).reApplyInnerSelf
         (sphere (0 : Space I) ‖y‖) y := by

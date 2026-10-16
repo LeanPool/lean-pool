@@ -2063,19 +2063,11 @@ theorem rootJointHarmonicBracketActionMixed_add_lowerStructure_eq_zero
       (((rootJointHarmonicActionLowerRootStructureCross n lam (k + 1) f S).val :
         youngMultihomogeneousSubmodule n (rootWedgeWeight lam S)) :
         PolynomialSpace r n) = 0
-  change
-    rootJointHarmonicPolynomialInclusion n lam (k + 1)
-        (rootJointHarmonicBracketActionMixed n lam k f) S.val =
-      rootPolynomialBracketActionMixed r n k g S.val at hmixedS
+  simp only [LinearMap.comp_apply] at hmixedS
   rw [rootJointHarmonicPolynomialInclusion_apply_admissible] at hmixedS
   rw [hmixedS]
-  change
-    rootBracketCoboundary r n k (rootActionBoundary r n k g) S.val +
-        rootActionBoundary r n (k + 1)
-          (rootBracketCoboundary r n (k + 1) g) S.val +
-      (((rootJointHarmonicActionLowerRootStructureCross n lam (k + 1) f S).val :
-        youngMultihomogeneousSubmodule n (rootWedgeWeight lam S)) :
-        PolynomialSpace r n) = 0
+  simp only [rootPolynomialBracketActionMixed, LinearMap.add_apply,
+    LinearMap.comp_apply, Pi.add_apply]
   rw [add_comm
     (rootBracketCoboundary r n k (rootActionBoundary r n k g) S.val)
     (rootActionBoundary r n (k + 1)
@@ -2819,19 +2811,11 @@ theorem rootJointHarmonicActionBracketMixed_add_upperStructure_eq_zero
       (((rootJointHarmonicActionUpperRootStructureCross n lam (k + 1) f S).val :
         youngMultihomogeneousSubmodule n (rootWedgeWeight lam S)) :
         PolynomialSpace r n) = 0
-  change
-    rootJointHarmonicPolynomialInclusion n lam (k + 1)
-        (rootJointHarmonicActionBracketMixed n lam k f) S.val =
-      rootPolynomialActionBracketMixed r n k g S.val at hmixedS
+  simp only [LinearMap.comp_apply] at hmixedS
   rw [rootJointHarmonicPolynomialInclusion_apply_admissible] at hmixedS
   rw [hmixedS]
-  change
-    rootActionCoboundary r n k (rootBracketBoundary r n k g) S.val +
-        rootBracketBoundary r n (k + 1)
-          (rootActionCoboundary r n (k + 1) g) S.val +
-      (((rootJointHarmonicActionUpperRootStructureCross n lam (k + 1) f S).val :
-        youngMultihomogeneousSubmodule n (rootWedgeWeight lam S)) :
-        PolynomialSpace r n) = 0
+  simp only [rootPolynomialActionBracketMixed, LinearMap.add_apply,
+    LinearMap.comp_apply, Pi.add_apply]
   rw [hfull]
   rw [fullRootExteriorUpperRootStructureIncidence_zeroExtension_apply lam f S]
   exact neg_add_cancel _

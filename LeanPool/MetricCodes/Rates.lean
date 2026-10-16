@@ -2923,8 +2923,8 @@ theorem edgeLimit_sq_div_zero
   have hs := (Real.sqrt_pos.mpr hu).ne'
   have hf := hfactor'.ne'
   unfold edgeLimit hattedEdgeLimit
+  rw [div_pow, hsquare]
   field_simp [hz, hm, hs, hf]
-  nlinarith [hsquare]
 
 theorem tendsto_johnsonHattedDiagonal
     {d a b g u : ℝ}

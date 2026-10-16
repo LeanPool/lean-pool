@@ -2110,7 +2110,7 @@ theorem coupledDegreeCoordinates_pairing {n w p q L : ℕ}
               n (p + q + i.val)))) _
           (e.repr A) (e.repr B)
       rw [PiLp.inner_apply]
-      simp only [RCLike.inner_apply, Real.ringHom_apply, mul_comm]
+      simp only [Real.inner_apply]
     _ = @inner ℝ
         (MetricCodes.Boolean.harmonicEuclideanLayer n
           (p + q + i.val)) _ A B :=
@@ -6357,7 +6357,7 @@ theorem clebschNormSq_succ_mul
     exact (mul_eq_zero.mp hcancel).resolve_left hpositive.ne'
   dsimp [A, B, T, M₀, Mprev] at hidentity
   push_cast at hidentity
-  nlinarith only [hidentity]
+  linear_combination hidentity
 
 theorem clebschNormSq_div_succ
     {w N p q t : ℕ}
@@ -6828,8 +6828,7 @@ theorem johnsonMiddleSignedScalar_eq_sqrt_hattedDiagonal
   have heq :
       (johnsonDiagonalChannelSign n w p q j * D) * S =
         Real.sqrt (D ^ 2 / z) := by
-    nlinarith [hsquare, hsqrt,
-      Real.sqrt_nonneg (D ^ 2 / z)]
+    exact (sq_eq_sq₀ hleft (Real.sqrt_nonneg _)).mp (hsquare.trans hsqrt.symm)
   rw [clebschClosedCenteredExpectation_eq_johnsonDiagonal
     h hstrict source]
   have hhatted :
@@ -8216,12 +8215,10 @@ theorem johnsonLowerOffDiagonalScalar_eq_sqrt_source
       johnsonLowerOffDiagonalScalar n w p q target.val ^ 2 =
         johnsonSourceChannelCoefficient
           n w p q L source target := by
-    nlinarith [sq_nonneg
-      (johnsonLowerOffDiagonalScalar n w p q target.val ^ 2 -
-        johnsonSourceChannelCoefficient n w p q L source target)]
+    exact (sq_eq_sq₀ (sq_nonneg _) hright).mp
+      ((pow_mul _ 2 2).symm.trans hfourth)
   have hroot := Real.sq_sqrt hright
-  nlinarith [Real.sqrt_nonneg
-    (johnsonSourceChannelCoefficient n w p q L source target)]
+  exact (sq_eq_sq₀ hleft.le (Real.sqrt_nonneg _)).mp (hsquare.trans hroot.symm)
 
 theorem johnsonUpperOffDiagonalScalar_eq_sqrt_source
     {n w p q L : ℕ}
