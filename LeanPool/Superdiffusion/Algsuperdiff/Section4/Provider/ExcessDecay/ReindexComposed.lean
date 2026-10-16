@@ -715,41 +715,9 @@ private theorem reindexComposed_comparisonBounds3 : reindexComposed_comparisonBo
   classical
   intro d _ CE Cout hCoutpos kappa hkappa _e0 _k0 b0 hb0 M s hs L m n hmL hnm x z hz hgeom hfr hs1
     omega hcapE hcacc herrD hbrk hmem u hdat g hsol hgL2 hgW v w hharm hval hgrad hsig
-  have hkappadef :
-    kappa = √((192 : ℝ) * (↑d : ℝ)) * (3 : ℝ) := rfl
-  have he0def :
-    _e0 = kappa * (CE * (1 / 2 : ℝ)) := rfl
-  have hk0def :
-    _k0 = (2 : ℝ) * (↑d : ℝ) * (_e0 ^ (2 : ℕ) + (1 : ℝ)) := rfl
-  have hb0def :
-    b0 = √_k0 * _e0 + (2 : ℝ) * _k0 := rfl
-  have hsubx : translateSet x (openCubeSet (originCube d n)) ⊆
-      openCubeSet (originCube d m) :=
-    translateSet_openCubeSet_subset_of_anchorGeometry hgeom
-  have hsubz : translateSet z (openCubeSet (originCube d (n + 2))) ⊆
-      openCubeSet (originCube d m) :=
-    translateSet_openCubeSet_subset_of_frontier_inter_empty hz hfr
-  have hsubimg : (fun y => x + y) '' openCubeSet (originCube d n) ⊆
-      openCubeSet (originCube d m) := fun p hp => (hgeom hp).2
-  have hwin : (((fun y' => z + y') '' openCubeSet (originCube d (n + 2))) ∩
-      openCubeSet (originCube d m)) =
-      (fun y' => z + y') '' openCubeSet (originCube d (n + 2)) :=
-    inter_eq_of_frontier_inter_empty hz hfr
-  have hWvol : volume (((fun y' => z + y') '' openCubeSet (originCube d (n + 2))) ∩
-      openCubeSet (originCube d m)) ≠ 0 := by
-    rw [hwin]
-    exact volume_image_add_openCubeSet_ne_zero z (originCube d (n + 2))
-  have hgL2W := memLp_normalizedVolumeMeasureOn_subset
-    (Set.inter_subset_right (s := (fun y' => z + y') '' openCubeSet (originCube d (n + 2))))
-    (volume_openCubeSet_ne_zero (originCube d m))
-    (volume_openCubeSet_ne_top (originCube d m)) hWvol hgL2
-  have hgWW := memLp_normalizedGagliardoMeasureOn_subset
-    (Set.inter_subset_right (s := (fun y' => z + y') '' openCubeSet (originCube d (n + 2))))
-    (volume_openCubeSet_ne_zero (originCube d m))
-    (volume_openCubeSet_ne_top (originCube d m)) hWvol hgW
+  obtain ⟨hsubx, hsubz, hgL2W, hgWW, hgL2child, hgWchild⟩ :=
+    interior_comparison_window_data hz hgeom hfr hgL2 hgW
   have hcaccW := hcacc hmem u hdat g hsol hgL2W hgWW
-  have hgL2child := memLp_two_child_of_clause_iv hsubimg hgL2
-  have hgWchild := memLp_two_gagliardo_child_of_clause_iv hsubimg hgW
   -- the deterministic `x`-frame composition
   have hxf := eLpNorm_sub_weaklyHarmonic_le_coarseGraining_rebased_addThree (z := z) M L omega
     hs hs1 hsubx u hdat g hsol hgL2 hgW v w hharm hval hgrad
@@ -762,8 +730,6 @@ private theorem reindexComposed_comparisonBounds3 : reindexComposed_comparisonBo
   have hErepCap : Erep ≤ CE * (1 / 2) := hcapE hmem L (le_trans hnm hmL)
   have hErep0 : 0 ≤ Erep := Support.fluxCorrectedErrorRepresentative_nonneg _ _ _ _ _
   -- names for the atoms
-  set Eb : ℝ := Real.sqrt (offGridStabilityConst d (s / 6) (s / 8)) *
-    ((3 : ℝ) ^ (3 * (s / 8)) * Erep) with hEbdef
   set sig : ℝ := (Annealed.sigmaBar M (n + 3) : ℝ) with hsigdef
   set X : ℝ := (eLpNorm (fun y => u.toFun y -
       volumeAverage (((fun y' => z + y') '' openCubeSet (originCube d (n + 2))) ∩
@@ -776,9 +742,6 @@ private theorem reindexComposed_comparisonBounds3 : reindexComposed_comparisonBo
         openCubeSet (originCube d m)) s g).toReal with hYdef
   set Ychild : ℝ := (Support.normalizedGagliardoESeminormOn
       ((fun y => x + y) '' openCubeSet (originCube d n)) s g).toReal with hYchilddef
-  set Lhs : ℝ := (eLpNorm (fun y => u.toFun y - v.toFun y) 2
-      (Support.normalizedVolumeMeasureOn
-        ((fun y => x + y) '' openCubeSet (originCube d n)))).toReal with hLhsdef
   set P2 : ℝ := Real.rpow (3 : ℝ) (-(((n + 2 : ℤ)) : ℝ))
   set QS : ℝ := Real.rpow s (-(3 : ℝ))
   set Q3s : ℝ := Real.rpow (3 : ℝ) (s * (((n + 2 : ℤ)) : ℝ))
@@ -789,8 +752,6 @@ private theorem reindexComposed_comparisonBounds3 : reindexComposed_comparisonBo
   set S7 : ℝ := Real.rpow s (-(7 : ℝ))
   have hX0 : 0 ≤ X := ENNReal.toReal_nonneg
   have hY0 : 0 ≤ Y := ENNReal.toReal_nonneg
-  have hYchild0 : 0 ≤ Ychild := ENNReal.toReal_nonneg
-  have hP20 : 0 ≤ P2 := Real.rpow_nonneg (by norm_num) _
   have hQS0 : 0 ≤ QS := Real.rpow_nonneg hs.le _
   have hQ3s0 : 0 ≤ Q3s := Real.rpow_nonneg (by norm_num) _
   have hQ3sn0 : 0 ≤ Q3sn := Real.rpow_nonneg (by norm_num) _
@@ -819,28 +780,11 @@ private theorem reindexComposed_comparisonBounds3 : reindexComposed_comparisonBo
   have hFT : coarseGrainingForceTerm (originCube d n)
       (parentRebasedFamily M L (n + 3) x z omega)
       (scalarComparator (Annealed.sigmaBar M (n + 3)).2) (s / 3) s (fun y => -g (y + x)) ≤
-      b0 * (besovGagliardoConstant d * Q3sn * (gagliardoWindowConst d * Y)) := by
-    rw [coarseGrainingForceTerm]
-    refine mul_le_mul hbrkCap ?_ hGbes0 hb0
-    refine hGbes.trans ?_
-    exact mul_le_mul_of_nonneg_left hYchildle
-      (mul_nonneg (besovGagliardoConstant_nonneg d) hQ3sn0)
-  -- (e) the frame division
-  set ET : ℝ := coarseGrainingEnergyTerm (originCube d n)
-      (parentRebasedFamily M L (n + 3) x z omega)
-      (scalarComparator (Annealed.sigmaBar M (n + 3)).2) (s / 3)
-      (H1Function.untranslate x (u.restrict (isOpen_translateSet_openCubeSet x n) hsubx))
-    with hETdef
-  set FT : ℝ := coarseGrainingForceTerm (originCube d n)
-      (parentRebasedFamily M L (n + 3) x z omega)
-      (scalarComparator (Annealed.sigmaBar M (n + 3)).2) (s / 3) s (fun y => -g (y + x))
-    with hFTdef
-  have hW1 : cubeBesovScaleWeight (1 : ℝ) (originCube d n) = Real.rpow (3 : ℝ) (-(n : ℝ)) := by
-    have h := cubeBesovScaleWeight_neg_originCube (d := d) n (-1)
-    rw [neg_neg] at h
-    rw [h]
-    congr 1
-    ring
+      b0 * (besovGagliardoConstant d * Q3sn * (gagliardoWindowConst d * Y)) :=
+    coarseGrainingForceTerm_le_of_seminorm_bounds _ _ _ _ _ _ hb0
+      (mul_nonneg (besovGagliardoConstant_nonneg d) hQ3sn0) hbrkCap hGbes0 hGbes hYchildle
+  have hW1 : cubeBesovScaleWeight (1 : ℝ) (originCube d n) = Real.rpow (3 : ℝ) (-(n : ℝ)) :=
+    cubeBesovScaleWeight_one_originCube n
   exact ⟨hsubx, hErepCap, hErep0, hsig, hX0, hY0, hQS0, hQ3s0, hQ3sn0, hQ1s0, hR3n0, hS40,
     hS70, hsiginv0, hYchildle, hET, hFT, hxf, hW1⟩
 

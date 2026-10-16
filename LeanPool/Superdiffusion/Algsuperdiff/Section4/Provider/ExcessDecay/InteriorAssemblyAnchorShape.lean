@@ -91,6 +91,47 @@ theorem translateSet_openCubeSet_subset_of_anchorGeometry {n m : ℤ} {x z : Vec
   rw [← image_add_eq_translateSet x (openCubeSet (originCube d n))]
   exact fun p hp => (hgeom hp).2
 
+/-- Restrict clause-(iv) data to the frontier-empty parent window and its child.
+The result is independent of the coefficient slot used by the comparison. -/
+theorem interior_comparison_window_data {n m : ℤ} {x z : Vec d} {s : ℝ}
+    (hz : z ∈ openCubeSet (originCube d m))
+    (hgeom : (fun y => x + y) '' openCubeSet (originCube d n) ⊆
+      ((fun y => z + y) '' openCubeSet (originCube d (n + 1))) ∩
+        openCubeSet (originCube d m))
+    (hfr : (fun y => z + y) '' openCubeSet (originCube d (n + 2)) ∩
+      frontier (openCubeSet (originCube d m)) = ∅)
+    {g : Vec d → Vec d}
+    (hg : MemLp g 2 (Support.normalizedVolumeMeasureOn (openCubeSet (originCube d m))))
+    (hgW : MemLp (Gagliardo.gagliardoKernel s 2 g) 2
+      (Support.normalizedGagliardoMeasureOn (openCubeSet (originCube d m)))) :
+    translateSet x (openCubeSet (originCube d n)) ⊆ openCubeSet (originCube d m) ∧
+    translateSet z (openCubeSet (originCube d (n + 2))) ⊆ openCubeSet (originCube d m) ∧
+    MemLp g 2 (Support.normalizedVolumeMeasureOn
+      (((fun y => z + y) '' openCubeSet (originCube d (n + 2))) ∩
+        openCubeSet (originCube d m))) ∧
+    MemLp (Gagliardo.gagliardoKernel s 2 g) 2 (Support.normalizedGagliardoMeasureOn
+      (((fun y => z + y) '' openCubeSet (originCube d (n + 2))) ∩
+        openCubeSet (originCube d m))) ∧
+    MemLp g 2 (Support.normalizedVolumeMeasureOn
+      ((fun y => x + y) '' openCubeSet (originCube d n))) ∧
+    MemLp (Gagliardo.gagliardoKernel s 2 g) 2 (Support.normalizedGagliardoMeasureOn
+      ((fun y => x + y) '' openCubeSet (originCube d n))) := by
+  have hsub : (fun y => x + y) '' openCubeSet (originCube d n) ⊆
+      openCubeSet (originCube d m) := fun y hy => (hgeom hy).2
+  have hvol : volume (((fun y => z + y) '' openCubeSet (originCube d (n + 2))) ∩
+      openCubeSet (originCube d m)) ≠ 0 := by
+    rw [inter_eq_of_frontier_inter_empty hz hfr]
+    exact volume_image_add_openCubeSet_ne_zero z (originCube d (n + 2))
+  exact ⟨translateSet_openCubeSet_subset_of_anchorGeometry hgeom,
+    translateSet_openCubeSet_subset_of_frontier_inter_empty hz hfr,
+    memLp_normalizedVolumeMeasureOn_subset Set.inter_subset_right
+      (volume_openCubeSet_ne_zero (originCube d m))
+      (volume_openCubeSet_ne_top (originCube d m)) hvol hg,
+    memLp_normalizedGagliardoMeasureOn_subset Set.inter_subset_right
+      (volume_openCubeSet_ne_zero (originCube d m))
+      (volume_openCubeSet_ne_top (originCube d m)) hvol hgW,
+    memLp_two_child_of_clause_iv hsub hg, memLp_two_gagliardo_child_of_clause_iv hsub hgW⟩
+
 end
 
 end Algsuperdiff.Section4.Provider.ExcessDecay

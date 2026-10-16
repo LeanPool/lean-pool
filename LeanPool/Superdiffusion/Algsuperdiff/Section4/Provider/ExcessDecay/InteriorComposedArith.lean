@@ -40,6 +40,29 @@ noncomputable section
 variable {d : ℕ}
 
 
+/-- Compare the forcing term through separate bracket and seminorm bounds.
+The coefficient family and comparator are arbitrary. -/
+theorem coarseGrainingForceTerm_le_of_seminorm_bounds (Q : TriadicCube d)
+    (a : Ch03.CoeffFamily d) (a0 : Ch03.ConstantCoeffMatrix d) (r s : ℝ)
+    (f : Vec d → Vec d) {b scale child parent : ℝ}
+    (hb : 0 ≤ b) (hscale : 0 ≤ scale)
+    (hbracket : coarseGrainingForceBracket Q a a0 r ≤ b)
+    (hnonneg : 0 ≤ Ch03.scaleNormalizedPositiveBesovVectorSeminormTwo Q s f)
+    (hbesov : Ch03.scaleNormalizedPositiveBesovVectorSeminormTwo Q s f ≤ scale * child)
+    (hchild : child ≤ parent) :
+    coarseGrainingForceTerm Q a a0 r s f ≤ b * (scale * parent) := by
+  exact mul_le_mul hbracket
+    (hbesov.trans (mul_le_mul_of_nonneg_left hchild hscale)) hnonneg hb
+
+/-- The scale-one Besov weight on an origin cube. -/
+theorem cubeBesovScaleWeight_one_originCube (n : ℤ) :
+    cubeBesovScaleWeight (1 : ℝ) (originCube d n) = Real.rpow (3 : ℝ) (-(n : ℝ)) := by
+  have h := cubeBesovScaleWeight_neg_originCube (d := d) n (-1)
+  rw [neg_neg] at h
+  rw [h]
+  congr 1
+  ring
+
 /-- A frame comparison separates the normalized energy and forcing legs. -/
 theorem scalar_frame_main_le
     (A cap E sig R P QS Qf Q1 S4 T factor X Y : ℝ)
