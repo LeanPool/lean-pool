@@ -44,6 +44,7 @@ constant never enters a conclusion.
 
 - `DivergenceFormProcess.Decay.weightedEnergy_localized_le`
 - `DivergenceFormProcess.Decay.weightedMass_le_of_energy`
+- `DivergenceFormProcess.Decay.integral_sq_mul_gradSq_product_le`
 - `DivergenceFormProcess.Decay.localizedMass_absorb`
 -/
 
@@ -263,39 +264,23 @@ theorem weightedMass_le_of_energy {a : CoeffField d} {g zeta : Vec d → ℝ}
 
 /-! ### Absorbing the exponential factor -/
 
-/-- Coordinate form of the product rule for two smooth factors. -/
-private theorem fderiv_mul_basisVec_local {f h : Vec d → ℝ}
-    (hf : ContDiff ℝ (⊤ : ℕ∞) f) (hh : ContDiff ℝ (⊤ : ℕ∞) h)
-    (x : Vec d) (i : Fin d) :
-    (fderiv ℝ (fun y => f y * h y) x) (basisVec i) =
-      h x * (fderiv ℝ f x) (basisVec i) + f x * (fderiv ℝ h x) (basisVec i) := by
-  have hfd : DifferentiableAt ℝ f x := hf.differentiable (by simp) x
-  have hhd : DifferentiableAt ℝ h x := hh.differentiable (by simp) x
-  rw [show (fun y => f y * h y) = f * h by funext y; simp only [Pi.mul_apply]]
-  rw [fderiv_mul hfd hhd]
-  simp only [add_apply, smul_apply,
-    smul_eq_mul]
-  ring
-
-/-- **Absorption of a logarithmic weight.**  Given a mass bound whose layer
-term is the squared gradient of the product weight, and a factor obeying the
-logarithmic gradient bound at rate `kappa`, half of the mass is absorbed and
-only the gradient of the localization survives. -/
-theorem localizedMass_absorb {u : H1Function U} {eta chi : Vec d → ℝ}
-    {mass kappa Cbase : ℝ}
+/-- The squared gradient of a product weight is controlled by the squared
+gradient of the localization and the logarithmic rate of the second factor. -/
+theorem integral_sq_mul_gradSq_product_le {u : H1Function U}
+    {eta chi : Vec d → ℝ} {kappa : ℝ}
     (heta : ContDiff ℝ (⊤ : ℕ∞) eta) (hetaCompact : HasCompactSupport eta)
-    (hchi : ContDiff ℝ (⊤ : ℕ∞) chi) (hCbase : 0 ≤ Cbase)
+    (hchi : ContDiff ℝ (⊤ : ℕ∞) chi)
     (hchiGrad : ∀ᵐ x ∂volumeMeasureOn U,
-      vecNormSq (fun i => (fderiv ℝ chi x) (basisVec i)) ≤ kappa ^ 2 * chi x ^ 2)
-    (habs : 2 * Cbase * kappa ^ 2 ≤ mass / 2)
-    (hbase : mass * ∫ x in U, (eta x * chi x) ^ 2 * u.toFun x ^ 2 ∂volume ≤
-      Cbase * ∫ x in U, u.toFun x ^ 2 *
+      vecNormSq (fun i => (fderiv ℝ chi x) (basisVec i)) ≤
+        kappa ^ 2 * chi x ^ 2) :
+    (∫ x in U, u.toFun x ^ 2 *
         vecNormSq (fun i =>
-          (fderiv ℝ (fun y => eta y * chi y) x) (basisVec i)) ∂volume) :
-    mass / 2 * ∫ x in U, u.toFun x ^ 2 * (eta x ^ 2 * chi x ^ 2) ∂volume ≤
-      2 * Cbase * ∫ x in U, u.toFun x ^ 2 *
-        (chi x ^ 2 *
-          vecNormSq (fun i => (fderiv ℝ eta x) (basisVec i))) ∂volume := by
+          (fderiv ℝ (fun y => eta y * chi y) x) (basisVec i)) ∂volume) ≤
+      2 * (∫ x in U, u.toFun x ^ 2 *
+          (chi x ^ 2 *
+            vecNormSq (fun i => (fderiv ℝ eta x) (basisVec i))) ∂volume) +
+        2 * kappa ^ 2 *
+          ∫ x in U, u.toFun x ^ 2 * (eta x ^ 2 * chi x ^ 2) ∂volume := by
   classical
   let mu := volumeMeasureOn U
   let zeta : Vec d → ℝ := fun x => eta x * chi x
@@ -320,10 +305,6 @@ theorem localizedMass_absorb {u : H1Function U} {eta chi : Vec d → ℝ}
   have hmassInt := integrable_sq_mul_memLpTop (u := u) hmassTop
   have hcutInt := integrable_sq_mul_memLpTop (u := u) hcutTop
   have hzetaInt := integrable_sq_mul_memLpTop (u := u) hzetaTop
-  have hA0 : 0 ≤ ∫ x, u.toFun x ^ 2 * (eta x ^ 2 * chi x ^ 2) ∂mu := by
-    apply integral_nonneg_of_ae
-    filter_upwards with x
-    positivity
   have hgradPt : ∀ᵐ x ∂volumeMeasureOn U,
       vecNormSq (fun i => (fderiv ℝ zeta x) (basisVec i)) ≤
         2 * (chi x ^ 2 *
@@ -334,7 +315,15 @@ theorem localizedMass_absorb {u : H1Function U} {eta chi : Vec d → ℝ}
         fun i => chi x * (fderiv ℝ eta x) (basisVec i) +
           eta x * (fderiv ℝ chi x) (basisVec i) := by
       funext i
-      exact fderiv_mul_basisVec_local heta hchi x i
+      have hfd : DifferentiableAt ℝ eta x := heta.differentiable (by simp) x
+      have hhd : DifferentiableAt ℝ chi x := hchi.differentiable (by simp) x
+      change (fderiv ℝ (fun y => eta y * chi y) x) (basisVec i) = _
+      rw [show (fun y => eta y * chi y) = eta * chi by
+        funext y; simp only [Pi.mul_apply]]
+      rw [fderiv_mul hfd hhd]
+      simp only [add_apply, smul_apply,
+        smul_eq_mul]
+      ring
     rw [hsplitG]
     have hscale : ∀ (c : ℝ) (v : Vec d),
         vecNormSq (fun i => c * v i) = c ^ 2 * vecNormSq v := by
@@ -350,28 +339,55 @@ theorem localizedMass_absorb {u : H1Function U} {eta chi : Vec d → ℝ}
     rw [hscale, hscale] at hbound
     have hsq : (0 : ℝ) ≤ eta x ^ 2 := sq_nonneg _
     nlinarith only [hbound, hchix, hsq]
+  rw [← integral_const_mul, ← integral_const_mul,
+    ← integral_add (hcutInt.const_mul _) (hmassInt.const_mul _)]
+  refine integral_mono_ae hzetaInt
+    ((hcutInt.const_mul _).add (hmassInt.const_mul _)) ?_
+  filter_upwards [hgradPt] with x hgx
+  have hsq : (0 : ℝ) ≤ u.toFun x ^ 2 := sq_nonneg _
+  calc
+    u.toFun x ^ 2 * vecNormSq (fun i => (fderiv ℝ zeta x) (basisVec i)) ≤
+        u.toFun x ^ 2 * (2 * (chi x ^ 2 *
+            vecNormSq (fun i => (fderiv ℝ eta x) (basisVec i))) +
+          2 * kappa ^ 2 * (eta x ^ 2 * chi x ^ 2)) :=
+      mul_le_mul_of_nonneg_left hgx hsq
+    _ = 2 * (u.toFun x ^ 2 * (chi x ^ 2 *
+            vecNormSq (fun i => (fderiv ℝ eta x) (basisVec i)))) +
+          2 * kappa ^ 2 *
+            (u.toFun x ^ 2 * (eta x ^ 2 * chi x ^ 2)) := by ring
+
+/-- **Absorption of a logarithmic weight.**  Given a mass bound whose layer
+term is the squared gradient of the product weight, and a factor obeying the
+logarithmic gradient bound at rate `kappa`, half of the mass is absorbed and
+only the gradient of the localization survives. -/
+theorem localizedMass_absorb {u : H1Function U} {eta chi : Vec d → ℝ}
+    {mass kappa Cbase : ℝ}
+    (heta : ContDiff ℝ (⊤ : ℕ∞) eta) (hetaCompact : HasCompactSupport eta)
+    (hchi : ContDiff ℝ (⊤ : ℕ∞) chi) (hCbase : 0 ≤ Cbase)
+    (hchiGrad : ∀ᵐ x ∂volumeMeasureOn U,
+      vecNormSq (fun i => (fderiv ℝ chi x) (basisVec i)) ≤ kappa ^ 2 * chi x ^ 2)
+    (habs : 2 * Cbase * kappa ^ 2 ≤ mass / 2)
+    (hbase : mass * ∫ x in U, (eta x * chi x) ^ 2 * u.toFun x ^ 2 ∂volume ≤
+      Cbase * ∫ x in U, u.toFun x ^ 2 *
+        vecNormSq (fun i =>
+          (fderiv ℝ (fun y => eta y * chi y) x) (basisVec i)) ∂volume) :
+    mass / 2 * ∫ x in U, u.toFun x ^ 2 * (eta x ^ 2 * chi x ^ 2) ∂volume ≤
+      2 * Cbase * ∫ x in U, u.toFun x ^ 2 *
+        (chi x ^ 2 *
+          vecNormSq (fun i => (fderiv ℝ eta x) (basisVec i))) ∂volume := by
+  let mu := volumeMeasureOn U
+  let zeta : Vec d → ℝ := fun x => eta x * chi x
+  have hA0 : 0 ≤ ∫ x, u.toFun x ^ 2 * (eta x ^ 2 * chi x ^ 2) ∂mu := by
+    apply integral_nonneg_of_ae
+    filter_upwards with x
+    positivity
   have hcompare : (∫ x, u.toFun x ^ 2 *
         vecNormSq (fun i => (fderiv ℝ zeta x) (basisVec i)) ∂mu) ≤
       2 * (∫ x, u.toFun x ^ 2 * (chi x ^ 2 *
           vecNormSq (fun i => (fderiv ℝ eta x) (basisVec i))) ∂mu) +
         2 * kappa ^ 2 *
-          ∫ x, u.toFun x ^ 2 * (eta x ^ 2 * chi x ^ 2) ∂mu := by
-    rw [← integral_const_mul, ← integral_const_mul,
-      ← integral_add (hcutInt.const_mul _) (hmassInt.const_mul _)]
-    refine integral_mono_ae hzetaInt
-      ((hcutInt.const_mul _).add (hmassInt.const_mul _)) ?_
-    filter_upwards [hgradPt] with x hgx
-    have hsq : (0 : ℝ) ≤ u.toFun x ^ 2 := sq_nonneg _
-    calc
-      u.toFun x ^ 2 * vecNormSq (fun i => (fderiv ℝ zeta x) (basisVec i)) ≤
-          u.toFun x ^ 2 * (2 * (chi x ^ 2 *
-              vecNormSq (fun i => (fderiv ℝ eta x) (basisVec i))) +
-            2 * kappa ^ 2 * (eta x ^ 2 * chi x ^ 2)) :=
-        mul_le_mul_of_nonneg_left hgx hsq
-      _ = 2 * (u.toFun x ^ 2 * (chi x ^ 2 *
-              vecNormSq (fun i => (fderiv ℝ eta x) (basisVec i)))) +
-            2 * kappa ^ 2 *
-              (u.toFun x ^ 2 * (eta x ^ 2 * chi x ^ 2)) := by ring
+          ∫ x, u.toFun x ^ 2 * (eta x ^ 2 * chi x ^ 2) ∂mu :=
+    integral_sq_mul_gradSq_product_le heta hetaCompact hchi hchiGrad
   have hrewrite : (∫ x, (eta x * chi x) ^ 2 * u.toFun x ^ 2 ∂mu) =
       ∫ x, u.toFun x ^ 2 * (eta x ^ 2 * chi x ^ 2) ∂mu := by
     apply integral_congr_ae

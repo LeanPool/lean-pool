@@ -73,13 +73,6 @@ variable {d : ℕ}
 
 /-! ## 1. Elementary `L²` bookkeeping -/
 
-/-- The square of the norm of an `L²` field is integrable. -/
-theorem integrableOn_sq_norm_of_memVectorL2 {U : Set (Vec d)} {F : Vec d → Vec d}
-    (hF : MemVectorL2 U F) : IntegrableOn (fun x => ‖F x‖ ^ (2 : ℕ)) U := by
-  have hn : MemLp (fun x => ‖F x‖) 2 (volume.restrict U) := hF.norm
-  have hmul := hn.integrable_mul hn
-  simpa [Pi.mul_apply, pow_two] using! hmul
-
 /-- The energy integral of a field is nonnegative. -/
 theorem setIntegral_sq_norm_nonneg (U : Set (Vec d)) (F : Vec d → Vec d) :
     (0 : ℝ) ≤ ∫ x in U, ‖F x‖ ^ (2 : ℕ) ∂volume :=
@@ -166,62 +159,17 @@ theorem sqrt_energy_grad_le_of_isDirichletSolutionAt {y : Vec d} {n : ℤ} {a : 
     {u : H1Function (cubeSetAt y n)} (hu : IsDirichletSolutionAt a y n u g) :
     lam * Real.sqrt (∫ x in cubeSetAt y n, ‖u.grad x‖ ^ (2 : ℕ) ∂volume) ≤
       (d : ℝ) * Real.sqrt (∫ x in cubeSetAt y n, ‖g x‖ ^ (2 : ℕ) ∂volume) := by
-  have hUmeas : MeasurableSet (cubeSetAt y n) := measurableSet_cubeSetAt y n
   have hlam : 0 < lam := (hEll.2 y (mem_cubeSetAt_self y n)).1
   obtain ⟨w, _hwf, hwg⟩ := hu.1
   have hgradEq : ∀ x, w.toH1Function.grad x = u.grad x := fun x => (hwg x).symm
-  have hAu : MemVectorL2 (cubeSetAt y n) fun x => matVecMul (a x) (u.grad x) :=
-    memVectorL2_matVecMul_of_isEllipticFieldOn hEll u.grad_memVectorL2
   have hEq := hu.2 w
   simp only [hgradEq] at hEq
-  have hEnergyInt : IntegrableOn
-      (fun x => vecDot (matVecMul (a x) (u.grad x)) (u.grad x)) (cubeSetAt y n) :=
-    integrableOn_vecDot_of_memVectorL2 hAu u.grad_memVectorL2
-  have hSqInt : IntegrableOn (fun x => lam * vecNormSq (u.grad x)) (cubeSetAt y n) :=
-    (integrableOn_vecDot_of_memVectorL2 u.grad_memVectorL2 u.grad_memVectorL2).const_mul lam
-  have hlower : ∫ x in cubeSetAt y n, lam * vecNormSq (u.grad x) ∂volume ≤
-      ∫ x in cubeSetAt y n, vecDot (matVecMul (a x) (u.grad x)) (u.grad x) ∂volume := by
-    refine integral_mono_ae hSqInt hEnergyInt ((ae_restrict_iff' hUmeas).2 ?_)
-    refine Filter.Eventually.of_forall fun x hx => ?_
-    change lam * vecNormSq (u.grad x) ≤ vecDot (matVecMul (a x) (u.grad x)) (u.grad x)
-    rw [vecDot_comm]
-    exact (hEll.2 x hx).2.2.1 (u.grad x)
-  have hNormInt : IntegrableOn (fun x => ‖u.grad x‖ ^ (2 : ℕ)) (cubeSetAt y n) :=
-    integrableOn_sq_norm_of_memVectorL2 u.grad_memVectorL2
-  have hEucInt : IntegrableOn (fun x => vecNormSq (u.grad x)) (cubeSetAt y n) :=
-    integrableOn_vecDot_of_memVectorL2 u.grad_memVectorL2 u.grad_memVectorL2
-  have hcompare : ∫ x in cubeSetAt y n, ‖u.grad x‖ ^ (2 : ℕ) ∂volume ≤
-      ∫ x in cubeSetAt y n, vecNormSq (u.grad x) ∂volume :=
-    integral_mono hNormInt hEucInt fun x => sq_norm_le_vecNormSq _
-  have hupper := abs_setIntegral_vecDot_le (cubeSetAt y n) hg u.grad_memVectorL2
-  have hA0 : (0 : ℝ) ≤ ∫ x in cubeSetAt y n, ‖u.grad x‖ ^ (2 : ℕ) ∂volume :=
-    setIntegral_sq_norm_nonneg _ _
-  have hchain : lam * (Real.sqrt (∫ x in cubeSetAt y n, ‖u.grad x‖ ^ (2 : ℕ) ∂volume) *
-        Real.sqrt (∫ x in cubeSetAt y n, ‖u.grad x‖ ^ (2 : ℕ) ∂volume)) ≤
-      (d : ℝ) * (Real.sqrt (∫ x in cubeSetAt y n, ‖g x‖ ^ (2 : ℕ) ∂volume) *
-        Real.sqrt (∫ x in cubeSetAt y n, ‖u.grad x‖ ^ (2 : ℕ) ∂volume)) := by
-    rw [← pow_two, Real.sq_sqrt hA0]
-    calc lam * ∫ x in cubeSetAt y n, ‖u.grad x‖ ^ (2 : ℕ) ∂volume
-        ≤ ∫ x in cubeSetAt y n, lam * vecNormSq (u.grad x) ∂volume := by
-          rw [integral_const_mul]
-          exact mul_le_mul_of_nonneg_left hcompare hlam.le
-      _ ≤ ∫ x in cubeSetAt y n, vecDot (matVecMul (a x) (u.grad x)) (u.grad x) ∂volume :=
-          hlower
-      _ = -∫ x in cubeSetAt y n, vecDot (g x) (u.grad x) ∂volume := hEq
-      _ ≤ |∫ x in cubeSetAt y n, vecDot (g x) (u.grad x) ∂volume| := neg_le_abs _
-      _ ≤ (d : ℝ) * (Real.sqrt (∫ x in cubeSetAt y n, ‖g x‖ ^ (2 : ℕ) ∂volume) *
-            Real.sqrt (∫ x in cubeSetAt y n, ‖u.grad x‖ ^ (2 : ℕ) ∂volume)) := hupper
-  rcases eq_or_lt_of_le (Real.sqrt_nonneg
-      (∫ x in cubeSetAt y n, ‖u.grad x‖ ^ (2 : ℕ) ∂volume)) with hzero | hpos
-  · rw [← hzero, mul_zero]
-    positivity
-  · have hmul : lam * Real.sqrt (∫ x in cubeSetAt y n, ‖u.grad x‖ ^ (2 : ℕ) ∂volume) *
-        Real.sqrt (∫ x in cubeSetAt y n, ‖u.grad x‖ ^ (2 : ℕ) ∂volume) ≤
-        (d : ℝ) * Real.sqrt (∫ x in cubeSetAt y n, ‖g x‖ ^ (2 : ℕ) ∂volume) *
-          Real.sqrt (∫ x in cubeSetAt y n, ‖u.grad x‖ ^ (2 : ℕ) ∂volume) := by
-      rw [mul_assoc, mul_assoc]
-      exact hchain
-    exact le_of_mul_le_mul_right hmul hpos
+  apply sqrt_setIntegral_sq_norm_le_of_energy_bound hlam.le (by positivity)
+    hEll u.grad_memVectorL2
+  rw [hEq]
+  exact (neg_le_abs _).trans
+    (by simpa only [mul_assoc] using!
+      (abs_setIntegral_vecDot_le (cubeSetAt y n) hg u.grad_memVectorL2))
 
 /-! ## 4. Additivity of the localized Dirichlet problem -/
 

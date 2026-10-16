@@ -30,7 +30,6 @@ same budget that fixes the rate.
 
 ## Main results
 
-- `DivergenceFormProcess.Decay.integral_sq_mul_gradSq_product_le`
 - `DivergenceFormProcess.Decay.integral_sq_mul_vecDot_skewFieldDiv_le`
 - `DivergenceFormProcess.Decay.agmonMass_split_le`
 - `DivergenceFormProcess.Decay.localizedAgmonUpper`
@@ -45,100 +44,6 @@ open DivergenceFormProcess.Form
 open scoped ENNReal
 
 variable {d : ℕ} {U : Set (Vec d)}
-
-/-! ### The gradient of a product weight -/
-
-/-- The squared gradient of a product weight is controlled by the squared
-gradient of the localization and the logarithmic rate of the second factor. -/
-theorem integral_sq_mul_gradSq_product_le {u : H1Function U}
-    {eta chi : Vec d → ℝ} {kappa : ℝ}
-    (heta : ContDiff ℝ (⊤ : ℕ∞) eta) (hetaCompact : HasCompactSupport eta)
-    (hchi : ContDiff ℝ (⊤ : ℕ∞) chi)
-    (hchiGrad : ∀ᵐ x ∂volumeMeasureOn U,
-      vecNormSq (fun i => (fderiv ℝ chi x) (basisVec i)) ≤
-        kappa ^ 2 * chi x ^ 2) :
-    (∫ x in U, u.toFun x ^ 2 *
-        vecNormSq (fun i =>
-          (fderiv ℝ (fun y => eta y * chi y) x) (basisVec i)) ∂volume) ≤
-      2 * (∫ x in U, u.toFun x ^ 2 *
-          (chi x ^ 2 *
-            vecNormSq (fun i => (fderiv ℝ eta x) (basisVec i))) ∂volume) +
-        2 * kappa ^ 2 *
-          ∫ x in U, u.toFun x ^ 2 * (eta x ^ 2 * chi x ^ 2) ∂volume := by
-  classical
-  let mu := volumeMeasureOn U
-  let zeta : Vec d → ℝ := fun x => eta x * chi x
-  have hzeta : ContDiff ℝ (⊤ : ℕ∞) zeta := heta.mul hchi
-  have hzetaCompact : HasCompactSupport zeta := hetaCompact.mul_right
-  have hetaSq : HasCompactSupport (fun x => eta x ^ 2) := by
-    simpa only [pow_two] using! hetaCompact.mul_left (f := eta)
-  have hmassTop : MemLp (fun x => eta x ^ 2 * chi x ^ 2) ∞ mu := by
-    refine (Continuous.memLp_of_hasCompactSupport ?_ ?_).restrict U
-    · exact (heta.continuous.pow 2).mul (hchi.continuous.pow 2)
-    · exact hetaSq.mul_right
-  have hcutTop : MemLp (fun x => chi x ^ 2 *
-      vecNormSq (fun i => (fderiv ℝ eta x) (basisVec i))) ∞ mu := by
-    refine (Continuous.memLp_of_hasCompactSupport ?_ ?_).restrict U
-    · exact (hchi.continuous.pow 2).mul (continuous_gradSq heta)
-    · exact (hasCompactSupport_gradSq hetaCompact).mul_left
-  have hzetaTop : MemLp
-      (fun x => vecNormSq (fun i => (fderiv ℝ zeta x) (basisVec i))) ∞ mu := by
-    refine (Continuous.memLp_of_hasCompactSupport ?_ ?_).restrict U
-    · exact continuous_gradSq hzeta
-    · exact hasCompactSupport_gradSq hzetaCompact
-  have hmassInt := integrable_sq_mul_memLpTop (u := u) hmassTop
-  have hcutInt := integrable_sq_mul_memLpTop (u := u) hcutTop
-  have hzetaInt := integrable_sq_mul_memLpTop (u := u) hzetaTop
-  have hgradPt : ∀ᵐ x ∂volumeMeasureOn U,
-      vecNormSq (fun i => (fderiv ℝ zeta x) (basisVec i)) ≤
-        2 * (chi x ^ 2 *
-            vecNormSq (fun i => (fderiv ℝ eta x) (basisVec i))) +
-          2 * kappa ^ 2 * (eta x ^ 2 * chi x ^ 2) := by
-    filter_upwards [hchiGrad] with x hchix
-    have hsplitG : (fun i => (fderiv ℝ zeta x) (basisVec i)) =
-        fun i => chi x * (fderiv ℝ eta x) (basisVec i) +
-          eta x * (fderiv ℝ chi x) (basisVec i) := by
-      funext i
-      have hfd : DifferentiableAt ℝ eta x := heta.differentiable (by simp) x
-      have hhd : DifferentiableAt ℝ chi x := hchi.differentiable (by simp) x
-      change (fderiv ℝ (fun y => eta y * chi y) x) (basisVec i) = _
-      rw [show (fun y => eta y * chi y) = eta * chi by
-        funext y; simp only [Pi.mul_apply]]
-      rw [fderiv_mul hfd hhd]
-      simp only [add_apply, smul_apply,
-        smul_eq_mul]
-      ring
-    rw [hsplitG]
-    have hscale : ∀ (c : ℝ) (v : Vec d),
-        vecNormSq (fun i => c * v i) = c ^ 2 * vecNormSq v := by
-      intro c v
-      simp only [vecNormSq, vecDot, Finset.mul_sum]
-      exact Finset.sum_congr rfl fun i _ => by ring
-    have hbound : vecNormSq (fun i => chi x * (fderiv ℝ eta x) (basisVec i) +
-        eta x * (fderiv ℝ chi x) (basisVec i)) ≤
-        2 * (vecNormSq (fun i => chi x * (fderiv ℝ eta x) (basisVec i)) +
-          vecNormSq (fun i => eta x * (fderiv ℝ chi x) (basisVec i))) :=
-      vecNormSq_add_le (fun i => chi x * (fderiv ℝ eta x) (basisVec i))
-        (fun i => eta x * (fderiv ℝ chi x) (basisVec i))
-    rw [hscale, hscale] at hbound
-    have hsq : (0 : ℝ) ≤ eta x ^ 2 := sq_nonneg _
-    nlinarith only [hbound, hchix, hsq]
-  rw [← integral_const_mul, ← integral_const_mul,
-    ← integral_add (hcutInt.const_mul _) (hmassInt.const_mul _)]
-  refine integral_mono_ae hzetaInt
-    ((hcutInt.const_mul _).add (hmassInt.const_mul _)) ?_
-  filter_upwards [hgradPt] with x hgx
-  have hsq : (0 : ℝ) ≤ u.toFun x ^ 2 := sq_nonneg _
-  calc
-    u.toFun x ^ 2 * vecNormSq (fun i => (fderiv ℝ zeta x) (basisVec i)) ≤
-        u.toFun x ^ 2 * (2 * (chi x ^ 2 *
-            vecNormSq (fun i => (fderiv ℝ eta x) (basisVec i))) +
-          2 * kappa ^ 2 * (eta x ^ 2 * chi x ^ 2)) :=
-      mul_le_mul_of_nonneg_left hgx hsq
-    _ = 2 * (u.toFun x ^ 2 * (chi x ^ 2 *
-            vecNormSq (fun i => (fderiv ℝ eta x) (basisVec i)))) +
-          2 * kappa ^ 2 *
-            (u.toFun x ^ 2 * (eta x ^ 2 * chi x ^ 2)) := by ring
 
 /-! ### The drift term -/
 

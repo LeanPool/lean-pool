@@ -68,6 +68,53 @@ theorem sq_norm_le_vecNormSq (xi : Vec d) : ‖xi‖ ^ (2 : ℕ) ≤ vecNormSq x
   rw [← pow_two, ← pow_two] at hsq
   rwa [Real.sq_sqrt (vecNormSq_nonneg xi)] at hsq
 
+/-- The square of the norm of an `L²` field is integrable. -/
+theorem integrableOn_sq_norm_of_memVectorL2 {U : Set (Vec d)} {F : Vec d → Vec d}
+    (hF : MemVectorL2 U F) : IntegrableOn (fun x => ‖F x‖ ^ (2 : ℕ)) U := by
+  have hn : MemLp (fun x => ‖F x‖) 2 (volume.restrict U) := hF.norm
+  have hmul := hn.integrable_mul hn
+  simpa [Pi.mul_apply, pow_two] using! hmul
+
+/-- Lower ellipticity converts any energy bound into an `L²` bound, independently
+of the equation or forcing used to obtain the pairing budget. -/
+theorem sqrt_setIntegral_sq_norm_le_of_energy_bound {U : Set (Vec d)}
+    {a : CoeffField d} {lam Lam C : ℝ} {F : Vec d → Vec d}
+    (hlam : 0 ≤ lam) (hC : 0 ≤ C) (hEll : IsEllipticFieldOn lam Lam U a)
+    (hF : MemVectorL2 U F)
+    (henergy : (∫ x in U, vecDot (matVecMul (a x) (F x)) (F x) ∂volume) ≤
+      C * Real.sqrt (∫ x in U, ‖F x‖ ^ (2 : ℕ) ∂volume)) :
+    lam * Real.sqrt (∫ x in U, ‖F x‖ ^ (2 : ℕ) ∂volume) ≤ C := by
+  have hNormInt := integrableOn_sq_norm_of_memVectorL2 hF
+  have hEucInt := integrableOn_vecDot_of_memVectorL2 hF hF
+  have hEnergyInt := integrableOn_vecDot_of_memVectorL2
+    (memVectorL2_matVecMul_of_isEllipticFieldOn hEll hF) hF
+  have hcompare : (∫ x in U, ‖F x‖ ^ (2 : ℕ) ∂volume) ≤
+      ∫ x in U, vecNormSq (F x) ∂volume :=
+    integral_mono hNormInt hEucInt fun x => sq_norm_le_vecNormSq _
+  have hlower : (∫ x in U, lam * vecNormSq (F x) ∂volume) ≤
+      ∫ x in U, vecDot (matVecMul (a x) (F x)) (F x) ∂volume := by
+    refine integral_mono_ae (hEucInt.const_mul lam) hEnergyInt
+      ((ae_restrict_iff' (measurableSet_of_isEllipticFieldOn hEll)).2 ?_)
+    refine Filter.Eventually.of_forall fun x hx => ?_
+    change lam * vecNormSq (F x) ≤ vecDot (matVecMul (a x) (F x)) (F x)
+    rw [vecDot_comm]
+    exact (hEll.2 x hx).2.2.1 (F x)
+  have hchain : lam * (Real.sqrt (∫ x in U, ‖F x‖ ^ (2 : ℕ) ∂volume)) ^ 2 ≤
+      C * Real.sqrt (∫ x in U, ‖F x‖ ^ (2 : ℕ) ∂volume) := by
+    rw [Real.sq_sqrt (integral_nonneg fun x => sq_nonneg ‖F x‖)]
+    calc
+      lam * (∫ x in U, ‖F x‖ ^ (2 : ℕ) ∂volume) ≤
+          lam * ∫ x in U, vecNormSq (F x) ∂volume :=
+        mul_le_mul_of_nonneg_left hcompare hlam
+      _ ≤ ∫ x in U, vecDot (matVecMul (a x) (F x)) (F x) ∂volume := by
+        simpa only [integral_const_mul] using hlower
+      _ ≤ C * Real.sqrt (∫ x in U, ‖F x‖ ^ (2 : ℕ) ∂volume) := henergy
+  rcases eq_or_lt_of_le (Real.sqrt_nonneg
+      (∫ x in U, ‖F x‖ ^ (2 : ℕ) ∂volume)) with hzero | hpos
+  · rw [← hzero, mul_zero]
+    exact hC
+  · exact le_of_mul_le_mul_right (by simpa only [pow_two, mul_assoc] using hchain) hpos
+
 /-- The pairing bound with the first field controlled pointwise by a second one;
 this avoids any measurability assumption on the first field. -/
 theorem abs_setIntegral_vecDot_le_of_norm_le (U : Set (Vec d)) (hU : MeasurableSet U)
@@ -146,8 +193,6 @@ theorem sqrt_energy_grad_sub_le_of_weak_solutions {y : Vec d} {n : ℤ} {a b : C
   have hwL2 : MemVectorL2 (cubeSetAt y n) w.toH1Function.grad :=
     w.toH1Function.grad_memVectorL2
   have hvL2 : MemVectorL2 (cubeSetAt y n) v.grad := v.grad_memVectorL2
-  have hAw : MemVectorL2 (cubeSetAt y n) fun x => matVecMul (a x) (w.toH1Function.grad x) :=
-    memVectorL2_matVecMul_of_isEllipticFieldOn hEll hwL2
   have hAu : MemVectorL2 (cubeSetAt y n) fun x => matVecMul (a x) (u.grad x) :=
     memVectorL2_matVecMul_of_isEllipticFieldOn hEll u.grad_memVectorL2
   have hAv : MemVectorL2 (cubeSetAt y n) fun x => matVecMul (a x) (v.grad x) :=
@@ -170,35 +215,6 @@ theorem sqrt_energy_grad_sub_le_of_weak_solutions {y : Vec d} {n : ℤ} {a b : C
       Section4.Provider.Schauder.integral_vecDot_sub_split hAv hbv hsplitP w,
       hu w, hv w]
     ring
-  -- ellipticity on the left
-  have hEnergyInt : IntegrableOn
-      (fun x => vecDot (matVecMul (a x) (w.toH1Function.grad x)) (w.toH1Function.grad x))
-      (cubeSetAt y n) := integrableOn_vecDot_of_memVectorL2 hAw hwL2
-  have hSqInt : IntegrableOn (fun x => lam * vecNormSq (w.toH1Function.grad x))
-      (cubeSetAt y n) :=
-    (integrableOn_vecDot_of_memVectorL2 hwL2 hwL2).const_mul lam
-  have hlower : ∫ x in cubeSetAt y n, lam * vecNormSq (w.toH1Function.grad x) ∂volume ≤
-      ∫ x in cubeSetAt y n,
-        vecDot (matVecMul (a x) (w.toH1Function.grad x)) (w.toH1Function.grad x) ∂volume := by
-    refine integral_mono_ae hSqInt hEnergyInt ((ae_restrict_iff' hUmeas).2 ?_)
-    refine Filter.Eventually.of_forall fun x hx => ?_
-    change lam * vecNormSq (w.toH1Function.grad x) ≤
-      vecDot (matVecMul (a x) (w.toH1Function.grad x)) (w.toH1Function.grad x)
-    rw [vecDot_comm]
-    exact (hEll.2 x hx).2.2.1 (w.toH1Function.grad x)
-  -- the norm-square integral is dominated by the Euclidean energy
-  have hNormInt : IntegrableOn (fun x => ‖w.toH1Function.grad x‖ ^ (2 : ℕ))
-      (cubeSetAt y n) := by
-    have hn : MemLp (fun x => ‖w.toH1Function.grad x‖) 2
-        (volume.restrict (cubeSetAt y n)) := hwL2.norm
-    have := hn.integrable_mul hn
-    simpa [Pi.mul_apply, pow_two] using! this
-  have hEucInt : IntegrableOn (fun x => vecNormSq (w.toH1Function.grad x))
-      (cubeSetAt y n) := integrableOn_vecDot_of_memVectorL2 hwL2 hwL2
-  have hcompare : ∫ x in cubeSetAt y n, ‖w.toH1Function.grad x‖ ^ (2 : ℕ) ∂volume ≤
-      ∫ x in cubeSetAt y n, vecNormSq (w.toH1Function.grad x) ∂volume :=
-    integral_mono hNormInt hEucInt fun x => sq_norm_le_vecNormSq _
-  -- the right-hand side
   have hpert : ∀ x ∈ cubeSetAt y n,
       ‖matVecMul (a x - b x) (v.grad x)‖ ≤ ((d : ℝ) * delta) * ‖v.grad x‖ := by
     intro x hx
@@ -206,53 +222,20 @@ theorem sqrt_energy_grad_sub_le_of_weak_solutions {y : Vec d} {n : ℤ} {a b : C
       (fun i j => by simpa [Matrix.sub_apply] using hab x hx i j) (v.grad x)
   have hupper := abs_setIntegral_vecDot_le_of_norm_le (cubeSetAt y n) hUmeas
     (by positivity : (0 : ℝ) ≤ (d : ℝ) * delta) hvL2 hwL2 hpert
-  -- assemble
-  have hSnn : (0 : ℝ) ≤ Real.sqrt (∫ x in cubeSetAt y n,
-      ‖w.toH1Function.grad x‖ ^ (2 : ℕ) ∂volume) := Real.sqrt_nonneg _
-  have hNormNonneg : (0 : ℝ) ≤ ∫ x in cubeSetAt y n,
-      ‖w.toH1Function.grad x‖ ^ (2 : ℕ) ∂volume :=
-    integral_nonneg fun x => by positivity
-  have hchain : lam * (Real.sqrt (∫ x in cubeSetAt y n,
-        ‖w.toH1Function.grad x‖ ^ (2 : ℕ) ∂volume)) ^ (2 : ℕ) ≤
-      (d : ℝ) * ((d : ℝ) * delta) *
-        (Real.sqrt (∫ x in cubeSetAt y n, ‖v.grad x‖ ^ (2 : ℕ) ∂volume) *
-          Real.sqrt (∫ x in cubeSetAt y n,
-            ‖w.toH1Function.grad x‖ ^ (2 : ℕ) ∂volume)) := by
-    have hsq := Real.sq_sqrt hNormNonneg
-    rw [hsq]
-    have hmid : lam * ∫ x in cubeSetAt y n, ‖w.toH1Function.grad x‖ ^ (2 : ℕ) ∂volume ≤
-        ∫ x in cubeSetAt y n, lam * vecNormSq (w.toH1Function.grad x) ∂volume := by
-      rw [integral_const_mul]
-      exact mul_le_mul_of_nonneg_left hcompare hlam.le
-    refine le_trans hmid (le_trans hlower ?_)
+  have hbound : lam * Real.sqrt (∫ x in cubeSetAt y n,
+      ‖w.toH1Function.grad x‖ ^ (2 : ℕ) ∂volume) ≤
+      ((d : ℝ) * (d : ℝ) * delta) *
+        Real.sqrt (∫ x in cubeSetAt y n, ‖v.grad x‖ ^ (2 : ℕ) ∂volume) := by
+    apply sqrt_setIntegral_sq_norm_le_of_energy_bound hlam.le (by positivity) hEll hwL2
     rw [hkey]
-    exact le_trans (neg_le_abs _) hupper
+    exact (neg_le_abs _).trans (by simpa only [mul_assoc] using hupper)
   have hgrad : (∫ x in cubeSetAt y n, ‖u.grad x - v.grad x‖ ^ (2 : ℕ) ∂volume) =
       ∫ x in cubeSetAt y n, ‖w.toH1Function.grad x‖ ^ (2 : ℕ) ∂volume := by
     refine integral_congr_ae (Filter.Eventually.of_forall fun x => ?_)
     change ‖u.grad x - v.grad x‖ ^ (2 : ℕ) = ‖w.toH1Function.grad x‖ ^ (2 : ℕ)
     rw [hwg x]
-  rw [hgrad]
-  rcases eq_or_lt_of_le hSnn with hzero | hpos
-  · rw [← hzero]
-    positivity
-  · have hdiv : lam * Real.sqrt (∫ x in cubeSetAt y n,
-        ‖w.toH1Function.grad x‖ ^ (2 : ℕ) ∂volume) ≤
-        (d : ℝ) * ((d : ℝ) * delta) *
-          Real.sqrt (∫ x in cubeSetAt y n, ‖v.grad x‖ ^ (2 : ℕ) ∂volume) := by
-      have h := hchain
-      rw [pow_two] at h
-      have hmul : (lam * Real.sqrt (∫ x in cubeSetAt y n,
-            ‖w.toH1Function.grad x‖ ^ (2 : ℕ) ∂volume)) *
-            Real.sqrt (∫ x in cubeSetAt y n, ‖w.toH1Function.grad x‖ ^ (2 : ℕ) ∂volume) ≤
-          ((d : ℝ) * ((d : ℝ) * delta) *
-            Real.sqrt (∫ x in cubeSetAt y n, ‖v.grad x‖ ^ (2 : ℕ) ∂volume)) *
-            Real.sqrt (∫ x in cubeSetAt y n,
-              ‖w.toH1Function.grad x‖ ^ (2 : ℕ) ∂volume) := by
-        linarith only [h]
-      exact le_of_mul_le_mul_right hmul hpos
-    rw [inv_mul_eq_div, div_mul_eq_mul_div, le_div_iff₀ hlam]
-    linarith only [hdiv]
+  rw [hgrad, inv_mul_eq_div, div_mul_eq_mul_div, le_div_iff₀ hlam]
+  linarith only [hbound]
 
 /-- **The solution map is continuous in the coefficient field**, in the energy
 norm, with the dimensional factor `d²` of the supremum-norm carrier.
