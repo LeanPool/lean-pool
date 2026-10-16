@@ -21,7 +21,7 @@ def repository(tmp_path: Path) -> Path:
     (tmp_path / "docbuild").mkdir()
     (tmp_path / "LeanPool.lean").write_text("module\n")
     (tmp_path / "LeanPool" / "A.lean").write_text(
-        "module\npublic import all LeanPool.Z\n"
+        "module\nimport all LeanPool.Z\n"
         "/- public import LeanPool.A -/\n"
         'def text := "import LeanPool.A"\n'
     )
