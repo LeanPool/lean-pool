@@ -61,8 +61,8 @@ band enlargement is needed at any scale.
 * `offGridLatticeIndex_mem_latticeCubeSet` — `z` is a member of the Step-3
   lattice index set `Support.latticeCubeSet d n m`;
 * `truncatedWindow_subset_offGrid` — `(x + □_n) ∩ □_m ⊆ (z + □_{n+1}) ∩ □_m`;
-* `exists_inner_cube_subset_truncatedWindow` — the inscribed origin cube one
-  scale down, the volume lower bound of `StepNineOffGridTransfer`.
+* `exists_inner_cube_subset_truncatedWindow` — the common inscribed cube from
+  `StepThreeWindows`, used for the volume bound in `StepNineOffGridTransfer`.
 
 ## References
 
@@ -223,85 +223,5 @@ theorem image_add_subset_offGridCentre (n : ℤ) (x : Vec d) :
 theorem truncatedWindow_subset_offGrid (n m : ℤ) (x : Vec d) :
     truncatedWindow x m n ⊆ truncatedWindow (offGridCentre n x) m (n + 1) :=
   Set.inter_subset_inter_left _ (image_add_subset_offGridCentre n x)
-
-/-! ## 4. The inscribed origin cube, one scale down -/
-
-/-- The truncated interval `(max(t−a,−A), min(t+a,A))` is at least `a` long when
-`|t| < A` and `a ≤ A`.  (The scalar core of the Step-3 sandwich, re-proved here:
-`StepThreeWindows`'s copy is `private`.) -/
-private theorem truncatedWidth_le {A a t : ℝ} (hA : 0 < A) (ha : 0 < a)
-    (haA : a ≤ A) (hlo : -A < t) (hhi : t < A) :
-    a ≤ min (t + a) A - max (t - a) (-A) := by
-  rcases le_total (t + a) A with h1 | h1 <;> rcases le_total (t - a) (-A) with h2 | h2
-  · rw [min_eq_left h1, max_eq_right h2]
-    linarith only [hlo]
-  · rw [min_eq_left h1, max_eq_left h2]
-    linarith only [ha]
-  · rw [min_eq_right h1, max_eq_right h2]
-    linarith only [hA, haA]
-  · rw [min_eq_right h1, max_eq_left h2]
-    linarith only [hhi]
-
-/-- **An inscribed origin cube one scale down.**  For every centre `x ∈ □_m` and
-every `k ≤ m` the truncated window `(x + □_k) ∩ □_m` contains a translate of
-`□_{k−1}`. -/
-theorem exists_inner_cube_subset_truncatedWindow (x : Vec d) {m k : ℤ}
-    (hx : x ∈ openCubeSet (originCube d m)) (hkm : k ≤ m) :
-    ∃ y : Vec d,
-      (fun v => y + v) '' openCubeSet (originCube d (k - 1)) ⊆ truncatedWindow x m k := by
-  set a : ℝ := (1 / 2 : ℝ) * (3 : ℝ) ^ k with ha_def
-  set A : ℝ := (1 / 2 : ℝ) * (3 : ℝ) ^ m with hA_def
-  have h3k : (0 : ℝ) < (3 : ℝ) ^ k := zpow_pos (by norm_num) k
-  have h3m : (0 : ℝ) < (3 : ℝ) ^ m := zpow_pos (by norm_num) m
-  have hapos : 0 < a := by rw [ha_def]; linarith only [h3k]
-  have hApos : 0 < A := by rw [hA_def]; linarith only [h3m]
-  have haA : a ≤ A := by
-    have h := zpow_le_zpow_right₀ (by norm_num : (1 : ℝ) ≤ 3) hkm
-    rw [ha_def, hA_def]
-    linarith only [h]
-  have hxmem := mem_openCubeSet_originCube_iff.mp hx
-  have hhalf : (3 : ℝ) ^ (k - 1) ≤ a := by
-    have h3 : (3 : ℝ) ^ (k - 1) = (3 : ℝ) ^ k / 3 := by
-      rw [zpow_sub₀ (by norm_num : (3 : ℝ) ≠ 0)]
-      norm_num
-    rw [h3, ha_def]
-    linarith only [h3k]
-  refine ⟨fun i => (max (x i - a) (-A) + min (x i + a) A) / 2, ?_⟩
-  rintro p ⟨y, hy, rfl⟩
-  have hymem := mem_openCubeSet_originCube_iff.mp hy
-  have key : ∀ i,
-      max (x i - a) (-A) <
-          (fun i => (max (x i - a) (-A) + min (x i + a) A) / 2) i + y i ∧
-        (fun i => (max (x i - a) (-A) + min (x i + a) A) / 2) i + y i <
-          min (x i + a) A := by
-    intro i
-    have hx1 : -A < x i := by rw [hA_def]; linarith only [(hxmem i).1]
-    have hx2 : x i < A := by rw [hA_def]; linarith only [(hxmem i).2]
-    have hw := truncatedWidth_le hApos hapos haA hx1 hx2
-    have hy1 : -((1 : ℝ) / 2) * (3 : ℝ) ^ (k - 1) < y i := (hymem i).1
-    have hy2 : y i < (1 / 2 : ℝ) * (3 : ℝ) ^ (k - 1) := (hymem i).2
-    simp only []
-    exact ⟨by linarith only [hw, hy1, hhalf], by linarith only [hw, hy2, hhalf]⟩
-  constructor
-  · refine ⟨fun i => (max (x i - a) (-A) + min (x i + a) A) / 2 + y i - x i, ?_, ?_⟩
-    · rw [mem_openCubeSet_originCube_iff]
-      intro i
-      have hk := key i
-      have hmax : x i - a ≤ max (x i - a) (-A) := le_max_left _ _
-      have hmin : min (x i + a) A ≤ x i + a := min_le_left _ _
-      simp only [] at hk ⊢
-      rw [ha_def] at hmax hmin
-      exact ⟨by linarith only [hk.1, hmax], by linarith only [hk.2, hmin]⟩
-    · funext i
-      simp only [Pi.add_apply]
-      ring
-  · rw [mem_openCubeSet_originCube_iff]
-    intro i
-    have hk := key i
-    have hmax : -A ≤ max (x i - a) (-A) := le_max_right _ _
-    have hmin : min (x i + a) A ≤ A := min_le_right _ _
-    simp only [Pi.add_apply] at hk ⊢
-    rw [hA_def] at hmax hmin
-    exact ⟨by linarith only [hk.1, hmax], by linarith only [hk.2, hmin]⟩
 
 end Algsuperdiff.Section4.Provider.Regularity

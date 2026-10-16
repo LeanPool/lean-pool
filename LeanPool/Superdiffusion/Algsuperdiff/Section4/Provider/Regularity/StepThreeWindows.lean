@@ -47,11 +47,14 @@ ones.
 
 ## The sandwich, and why the lattice plays no role
 
+The common construction first produces an inner cube at scale `j-1`; the
+iteration interface obtains scale `j-2` by cube inclusion.
+
 Coordinatewise `U_j` is the interval `(max(z_i - h, -H), min(z_i + h, H))` with
 `h = 3^j/2`, `H = 3^m/2`.  Its length is at least `h` in all four truncation
 cases (`width_le`): `2h` when the cube is interior, `H - z_i + h > h` and
 `z_i + H + h > h` at a single face — because `|z_i| < H` — and `2H ≥ h` when the
-cube overflows both faces, which forces `j = m`.  Since `3^{j-2} = 3^j/9 ≤ h`,
+cube overflows both faces, which forces `j = m`.  Since `3^{j-1} = 3^j/3 ≤ h`,
 the *centre of the truncated interval* is a legal inner centre `x`, and the
 outer centre is `y := z` outright.  No lattice-gap estimate on `z` is used, so
 the family is admissible for every centre in `□_m`, not only the triadic ones,
@@ -105,53 +108,52 @@ private theorem width_le {A a t : ℝ} (hA : 0 < A) (ha : 0 < a) (haA : a ≤ A)
   · rw [min_eq_right h1, max_eq_left h2]
     linarith only [hhi]
 
-/-- **The inner half of the window sandwich** (the iteration lemma's hypothesis):
-for every `j ≤ m` there is a centre `x` with `x + □_{j-2} ⊆ (z + □_j) ∩ □_m`.
-The witness is the centre of the truncated window, coordinate by coordinate. -/
-theorem exists_inner_cube_subset_stepThreeWindow (z : Vec d) {m j : ℤ}
-    (hz : z ∈ openCubeSet (originCube d m)) (hjm : j ≤ m) :
-    ∃ x : Vec d,
-      (fun v => x + v) '' openCubeSet (originCube d (j - 2)) ⊆ stepThreeWindow z m j := by
-  set a : ℝ := (1 / 2 : ℝ) * (3 : ℝ) ^ j with ha_def
+/-- Every truncated window with its centre in the domain cube contains a translated
+origin cube one scale down. The coordinatewise midpoint gives the common construction. -/
+theorem exists_inner_cube_subset_truncatedWindow (x : Vec d) {m k : ℤ}
+    (hx : x ∈ openCubeSet (originCube d m)) (hkm : k ≤ m) :
+    ∃ y : Vec d,
+      (fun v => y + v) '' openCubeSet (originCube d (k - 1)) ⊆ truncatedWindow x m k := by
+  set a : ℝ := (1 / 2 : ℝ) * (3 : ℝ) ^ k with ha_def
   set A : ℝ := (1 / 2 : ℝ) * (3 : ℝ) ^ m with hA_def
-  have h3j : (0 : ℝ) < (3 : ℝ) ^ j := zpow_pos (by norm_num) j
+  have h3k : (0 : ℝ) < (3 : ℝ) ^ k := zpow_pos (by norm_num) k
   have h3m : (0 : ℝ) < (3 : ℝ) ^ m := zpow_pos (by norm_num) m
-  have hapos : 0 < a := by rw [ha_def]; linarith only [h3j]
+  have hapos : 0 < a := by rw [ha_def]; linarith only [h3k]
   have hApos : 0 < A := by rw [hA_def]; linarith only [h3m]
   have haA : a ≤ A := by
-    have h := zpow_le_zpow_right₀ (by norm_num : (1 : ℝ) ≤ 3) hjm
+    have h := zpow_le_zpow_right₀ (by norm_num : (1 : ℝ) ≤ 3) hkm
     rw [ha_def, hA_def]
     linarith only [h]
-  have hzmem := mem_openCubeSet_originCube_iff.mp hz
-  refine ⟨fun i => (max (z i - a) (-A) + min (z i + a) A) / 2, ?_⟩
-  rintro p ⟨y, hy, rfl⟩
-  have hymem := mem_openCubeSet_originCube_iff.mp hy
-  have hhalf : (3 : ℝ) ^ (j - 2) ≤ a := by
-    have h9 : (3 : ℝ) ^ (j - 2) = (3 : ℝ) ^ j / 9 := by
+  have hxmem := mem_openCubeSet_originCube_iff.mp hx
+  have hhalf : (3 : ℝ) ^ (k - 1) ≤ a := by
+    have h3 : (3 : ℝ) ^ (k - 1) = (3 : ℝ) ^ k / 3 := by
       rw [zpow_sub₀ (by norm_num : (3 : ℝ) ≠ 0)]
       norm_num
-    rw [h9, ha_def]
-    linarith only [h3j]
+    rw [h3, ha_def]
+    linarith only [h3k]
+  refine ⟨fun i => (max (x i - a) (-A) + min (x i + a) A) / 2, ?_⟩
+  rintro p ⟨y, hy, rfl⟩
+  have hymem := mem_openCubeSet_originCube_iff.mp hy
   have key : ∀ i,
-      max (z i - a) (-A) <
-          (fun i => (max (z i - a) (-A) + min (z i + a) A) / 2) i + y i ∧
-        (fun i => (max (z i - a) (-A) + min (z i + a) A) / 2) i + y i <
-          min (z i + a) A := by
+      max (x i - a) (-A) <
+          (fun i => (max (x i - a) (-A) + min (x i + a) A) / 2) i + y i ∧
+        (fun i => (max (x i - a) (-A) + min (x i + a) A) / 2) i + y i <
+          min (x i + a) A := by
     intro i
-    have hz1 : -A < z i := by rw [hA_def]; linarith only [(hzmem i).1]
-    have hz2 : z i < A := by rw [hA_def]; linarith only [(hzmem i).2]
-    have hw := width_le hApos hapos haA hz1 hz2
-    have hy1 : -((1 : ℝ) / 2) * (3 : ℝ) ^ (j - 2) < y i := (hymem i).1
-    have hy2 : y i < (1 / 2 : ℝ) * (3 : ℝ) ^ (j - 2) := (hymem i).2
+    have hx1 : -A < x i := by rw [hA_def]; linarith only [(hxmem i).1]
+    have hx2 : x i < A := by rw [hA_def]; linarith only [(hxmem i).2]
+    have hw := width_le hApos hapos haA hx1 hx2
+    have hy1 : -((1 : ℝ) / 2) * (3 : ℝ) ^ (k - 1) < y i := (hymem i).1
+    have hy2 : y i < (1 / 2 : ℝ) * (3 : ℝ) ^ (k - 1) := (hymem i).2
     simp only []
     exact ⟨by linarith only [hw, hy1, hhalf], by linarith only [hw, hy2, hhalf]⟩
   constructor
-  · refine ⟨fun i => (max (z i - a) (-A) + min (z i + a) A) / 2 + y i - z i, ?_, ?_⟩
+  · refine ⟨fun i => (max (x i - a) (-A) + min (x i + a) A) / 2 + y i - x i, ?_, ?_⟩
     · rw [mem_openCubeSet_originCube_iff]
       intro i
       have hk := key i
-      have hmax : z i - a ≤ max (z i - a) (-A) := le_max_left _ _
-      have hmin : min (z i + a) A ≤ z i + a := min_le_left _ _
+      have hmax : x i - a ≤ max (x i - a) (-A) := le_max_left _ _
+      have hmin : min (x i + a) A ≤ x i + a := min_le_left _ _
       simp only [] at hk ⊢
       rw [ha_def] at hmax hmin
       exact ⟨by linarith only [hk.1, hmax], by linarith only [hk.2, hmin]⟩
@@ -161,11 +163,23 @@ theorem exists_inner_cube_subset_stepThreeWindow (z : Vec d) {m j : ℤ}
   · rw [mem_openCubeSet_originCube_iff]
     intro i
     have hk := key i
-    have hmax : -A ≤ max (z i - a) (-A) := le_max_right _ _
-    have hmin : min (z i + a) A ≤ A := min_le_right _ _
+    have hmax : -A ≤ max (x i - a) (-A) := le_max_right _ _
+    have hmin : min (x i + a) A ≤ A := min_le_right _ _
     simp only [Pi.add_apply] at hk ⊢
     rw [hA_def] at hmax hmin
     exact ⟨by linarith only [hk.1, hmax], by linarith only [hk.2, hmin]⟩
+
+/-- **The inner half of the window sandwich** (the iteration lemma's hypothesis):
+for every `j ≤ m` there is a centre `x` with `x + □_{j-2} ⊆ (z + □_j) ∩ □_m`.
+The witness is the centre of the truncated window, coordinate by coordinate. -/
+theorem exists_inner_cube_subset_stepThreeWindow (z : Vec d) {m j : ℤ}
+    (hz : z ∈ openCubeSet (originCube d m)) (hjm : j ≤ m) :
+    ∃ x : Vec d,
+      (fun v => x + v) '' openCubeSet (originCube d (j - 2)) ⊆ stepThreeWindow z m j := by
+  obtain ⟨x, hx⟩ := exists_inner_cube_subset_truncatedWindow z hz hjm
+  refine ⟨x, ?_⟩
+  rintro p ⟨y, hy, rfl⟩
+  exact hx ⟨y, openCubeSet_originCube_subset_of_le (by omega) hy, rfl⟩
 
 /-- **The outer half of the window sandwich**: `U_j ⊆ z + □_j` outright. -/
 theorem stepThreeWindow_subset_outer_cube (z : Vec d) (m j : ℤ) :

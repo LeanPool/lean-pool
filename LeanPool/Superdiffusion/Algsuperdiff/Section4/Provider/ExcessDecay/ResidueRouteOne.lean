@@ -1133,59 +1133,6 @@ theorem residueRouteOne_comparisonBounds6 :
 
 The harmonic-approximation residue at `K'`, priced on the five canonical legs
 with the good-event error `𝓔` carried explicitly. -/
-private theorem residueRouteOneErrorWeighted_comparisonBounds2 :
-    ∀ (CE KE kappa cg A1 : ℝ) (_ : A1 = cg * (216 : ℝ) * (kappa * KE)) (_ : (0 : ℝ) ≤ A1) (s : ℝ)
-      (_ : (0 : ℝ) < s) (n : ℤ) (_ : s ≤ (1 : ℝ)) (S Erep : ℝ) (_ : Erep ≤ CE * (1 / 2 : ℝ))
-      (_ : (0 : ℝ) ≤ Erep) (sig X Gs Hs Hn P2 : ℝ) (_ : P2 = Real.rpow (3 : ℝ) (-(↑(n + (2 : ℤ)) :
-        ℝ))) (Q3s : ℝ)
-      (_ : Q3s = Real.rpow (3 : ℝ) (s * (↑(n + (2 : ℤ)) : ℝ))) (Q3sn : ℝ)
-      (_ : Q3sn = Real.rpow (3 : ℝ) (s * (↑n : ℝ))) (Q1s : ℝ)
-      (_ : Q1s = Real.rpow (3 : ℝ) (((1 : ℝ) + s) * (↑n : ℝ))) (R3n : ℝ) (_ : R3n = Real.rpow (3 :
-        ℝ) (↑n : ℝ))
-      (S4 S7 S6 Sm3 Sm2 : ℝ) (_ : (0 : ℝ) ≤ X) (_ : (0 : ℝ) ≤ Gs) (_ : (0 : ℝ) ≤ Hs) (_ : (0 : ℝ)
-        ≤ S)
-      (_ : (0 : ℝ) ≤ Q3s) (_ : (0 : ℝ) ≤ R3n) (_ : (0 : ℝ) ≤ Sm3) (_ : (0 : ℝ) ≤ Sm2)
-      (_ : (0 : ℝ) ≤ sig⁻¹) (_ : sig⁻¹ * sig = (1 : ℝ)) (_ : s⁻¹ ^ (4 : ℕ) = S4) (_ : S4 * Sm3 = S7)
-      (_ : S4 * Sm2 = S6),
-      R3n * Q3sn = Q1s ∧
-        sig⁻¹ * R3n *
-            (cg *
-              ((216 : ℝ) * s⁻¹ ^ (4 : ℕ) *
-                (kappa * KE * Erep *
-                  (sig * (P2 * X) + sig * (P2 * S) + Sm3 * (Q3s * Gs) + Sm2 * (sig * (Q3s * Hs)) +
-                    Sm2 * (sig * Hn))))) ≤
-          A1 * (S4 * Erep * X) + (9 : ℝ) * (CE * (1 / 2 : ℝ)) * A1 * (S7 * sig⁻¹ * Q1s * Gs) +
-                (9 : ℝ) * (CE * (1 / 2 : ℝ)) * A1 * (S6 * Q1s * Hs) +
-              A1 * (S6 * Erep * R3n * Hn) +
-            A1 * (S4 * Erep * S) := by
-  exact boundary_comparison_bounds_errorWeighted
-
-private theorem residueRouteOneErrorWeighted_comparisonBounds3 : ∀ (d : ℕ) (b0 cg A2 : ℝ)
-      (_ : A2 = cg * (1944 : ℝ) * (b0 * (besovGagliardoConstant d * flushWindowConst d))) (_ : (0
-        : ℝ) ≤ A2) (A3 : ℝ)
-      (_ : A3 = interiorCorrectionConst d * flushWindowConst d) (_ : (0 : ℝ) ≤ A3) (s S Erep : ℝ)
-      (_ : (0 : ℝ) ≤ Erep) (sig X Gs Hs Hn Q3sn Q1s R3n S4 S7 S6 : ℝ) (_ : (0 : ℝ) ≤ X) (_ : (0 :
-        ℝ) ≤ Gs)
-      (_ : (0 : ℝ) ≤ Hs) (_ : (0 : ℝ) ≤ Hn) (_ : (0 : ℝ) ≤ S) (_ : (0 : ℝ) ≤ Q1s) (_ : (0 : ℝ) ≤
-        R3n)
-      (_ : (0 : ℝ) ≤ S4) (_ : (0 : ℝ) ≤ S7) (_ : (0 : ℝ) ≤ S6) (_ : (0 : ℝ) ≤ sig⁻¹)
-      (_ : s⁻¹ ^ (6 : ℕ) = S6) (_ : S6 ≤ S7) (_ : s.rpow (-(1 / 2 : ℝ)) ≤ S7) (_ : R3n * Q3sn =
-        Q1s),
-      sig⁻¹ * R3n *
-            (cg * ((1944 : ℝ) * s⁻¹ ^ (6 : ℕ) * (b0 * (besovGagliardoConstant d * Q3sn *
-              (flushWindowConst d * Gs))))) ≤
-          A2 * (S7 * sig⁻¹ * Q1s * Gs) ∧
-        sig⁻¹ * R3n * (interiorCorrectionConst d * s.rpow (-(1 / 2 : ℝ)) * Q3sn *
-          (flushWindowConst d * Gs)) ≤
-            A3 * (S7 * sig⁻¹ * Q1s * Gs) ∧
-          (0 : ℝ) ≤ S4 * Erep * X ∧
-            (0 : ℝ) ≤ S4 * Erep * S ∧
-              (0 : ℝ) ≤ S7 * sig⁻¹ * Q1s * Gs ∧ (0 : ℝ) ≤ S6 * Q1s * Hs ∧ (0 : ℝ) ≤ S6 * Erep *
-                R3n * Hn := by
-  intro d
-  exact boundary_force_correction_bounds (besovGagliardoConstant d)
-    (interiorCorrectionConst d) (flushWindowConst d)
-
 private theorem residueRouteOneErrorWeighted_comparisonBounds7 :
     ∀ (d : ℕ) (CE : ℝ) (_ : (0 : ℝ) < CE) (CB : ℝ) (_ : (0 : ℝ) < CB) (M : ABKModel d) (s : ℝ)
       (_ : s ∈ Set.Icc ((64 : ℝ) * M.gamma) (1 : ℝ)) (_ : M.gamma ≤ (max CE CB)⁻¹ * Disorder.cstar
@@ -1239,102 +1186,6 @@ private theorem residueRouteOneErrorWeighted_comparisonBounds7 :
       (cubeSet (originCube d n)) ⊆ cubeSet (originCube d (n + 3)) :=
     translateSet_cubeSet_flushSubCube_subset_anchorParent hnm2 hz i hsigma
   exact ⟨hs1, hnm2, hregimeCE, hregimeCB, hxc, hcov, hPhinge, hChinge⟩
-
-private theorem residueRouteOneErrorWeighted_comparisonBounds8 :
-    ∀ (d : ℕ) (CE KE kappa b0 cg A1 : ℝ) (_ : (0 : ℝ) ≤ A1)
-      (_ : A1 = cg * (216 : ℝ) * (kappa * KE)) (A2 : ℝ) (_ : (0 : ℝ) ≤ A2)
-      (_ : A2 = cg * (1944 : ℝ) * (b0 * (besovGagliardoConstant d * flushWindowConst d))) (A3
-        : ℝ)
-      (_ : (0 : ℝ) ≤ A3) (_ : A3 = interiorCorrectionConst d * flushWindowConst d) (s : ℝ)
-        (_ : (0 : ℝ) < s) (n : ℤ)
-      (_ : s ≤ (1 : ℝ)) (S : ℝ) (_ : (0 : ℝ) ≤ S) (Erep : ℝ) (_ : Erep ≤ CE * (1 / 2 :
-        ℝ))
-      (_ : (0 : ℝ) ≤ Erep) (sig : ℝ) (_ : (0 : ℝ) ≤ sig⁻¹) (X : ℝ) (_ : (0 : ℝ) ≤ X)
-        (Gs : ℝ)
-      (_ : (0 : ℝ) ≤ Gs) (Hs : ℝ) (_ : (0 : ℝ) ≤ Hs) (Hn : ℝ) (_ : (0 : ℝ) ≤ Hn) (P2 : ℝ)
-      (_ : P2 = Real.rpow (3 : ℝ) (-(↑(n + (2 : ℤ)) : ℝ))) (Q3s : ℝ)
-        (_ : (0 : ℝ) ≤ Q3s)
-      (_ : Q3s = Real.rpow (3 : ℝ) (s * (↑(n + (2 : ℤ)) : ℝ))) (Q3sn : ℝ)
-      (_ : Q3sn = Real.rpow (3 : ℝ) (s * (↑n : ℝ))) (Q1s : ℝ) (_
-        : (0 : ℝ) ≤ Q1s)
-      (_ : Q1s = Real.rpow (3 : ℝ) (((1 : ℝ) + s) * (↑n : ℝ))) (R3n : ℝ) (_ : (0 : ℝ) ≤ R3n)
-      (_ : R3n = Real.rpow (3 : ℝ) (↑n : ℝ)) (S4 : ℝ) (_ : (0 : ℝ) ≤ S4)
-      (_ : S4 = s.rpow (-4 : ℝ)) (S7 : ℝ) (_ : (0 : ℝ) ≤ S7) (_ :
-        S7 = s.rpow (-7 : ℝ))
-      (S6 : ℝ) (_ : (0 : ℝ) ≤ S6) (_ : S6 = s.rpow (-6 : ℝ)) (Sm3 : ℝ)
-      (_ : (0 : ℝ) ≤ Sm3) (_ : Sm3 = s.rpow (-3 : ℝ)) (Sm2 : ℝ)
-        (_ : (0 : ℝ) ≤ Sm2)
-      (_ : Sm2 = s.rpow (-2 : ℝ)) (_ : sig⁻¹ * sig = (1 : ℝ)),
-      sig⁻¹ * R3n *
-            (cg *
-              ((216 : ℝ) * s⁻¹ ^ (4 : ℕ) *
-                (kappa * KE * Erep *
-                  (sig * (P2 * X) + sig * (P2 * S) + Sm3 * (Q3s * Gs) + Sm2 * (sig * (Q3s * Hs)) +
-                    Sm2 * (sig * Hn))))) ≤
-          A1 * (S4 * Erep * X) + (9 : ℝ) * (CE * (1 / 2 : ℝ)) * A1 * (S7 * sig⁻¹ * Q1s * Gs) +
-                (9 : ℝ) * (CE * (1 / 2 : ℝ)) * A1 * (S6 * Q1s * Hs) +
-              A1 * (S6 * Erep * R3n * Hn) +
-            A1 * (S4 * Erep * S) ∧
-        sig⁻¹ * R3n *
-              (cg * ((1944 : ℝ) * s⁻¹ ^ (6 : ℕ) * (b0 * (besovGagliardoConstant d * Q3sn *
-                (flushWindowConst d * Gs))))) ≤
-            A2 * (S7 * sig⁻¹ * Q1s * Gs) ∧
-          sig⁻¹ * R3n * (interiorCorrectionConst d * s.rpow (-(1 / 2 : ℝ)) * Q3sn *
-            (flushWindowConst d * Gs)) ≤
-              A3 * (S7 * sig⁻¹ * Q1s * Gs) ∧
-            (0 : ℝ) ≤ S4 * Erep * X ∧
-              (0 : ℝ) ≤ S4 * Erep * S ∧
-                (0 : ℝ) ≤ S7 * sig⁻¹ * Q1s * Gs ∧ (0 : ℝ) ≤ S6 * Q1s * Hs ∧ (0 : ℝ) ≤ S6 * Erep *
-                  R3n * Hn := by
-  classical
-  intro d CE KE kappa b0 cg A1 hA1 hA1def A2 hA2 hA2def A3 hA3 hA3def s hs
-    n hs1 S hS0 Erep hErepCap hErep0 sig hsiginv0 X hX0 Gs hGs0 Hs hHs0 Hn hHn0 P2 hP2def
-      Q3s hQ3s0 hQ3sdef Q3sn hQ3sndef Q1s hQ1s0 hQ1sdef R3n hR3n0
-        hR3ndef S4 hS40 hS4def S7 hS70 hS7def S6 hS60 hS6def Sm3
-          hSm30 hSm3def Sm2 hSm20 hSm2def hsinv
-  have hS4eq : (s⁻¹) ^ (4 : ℕ) = S4 := by
-    rw [hS4def, inv_pow_eq_rpow_neg hs 4]
-    congr 1
-  have hS6eq : (s⁻¹) ^ (6 : ℕ) = S6 := by
-    rw [hS6def, inv_pow_eq_rpow_neg hs 6]
-    congr 1
-  have hS4Sm3 : S4 * Sm3 = S7 := by
-    rw [hS4def, hSm3def, hS7def]
-    exact rpow_s_four_mul_three hs
-  have hS4Sm2 : S4 * Sm2 = S6 := by
-    rw [hS4def, hSm2def, hS6def]
-    exact rpow_neg_four_mul_neg_two hs
-  have hS6le : S6 ≤ S7 := by
-    rw [hS6def, hS7def]
-    exact rpow_le_rpow_neg_seven hs hs1 (by norm_num)
-  have hQScle : Real.rpow s (-(1 / 2 : ℝ)) ≤ S7 := by
-    rw [hS7def]
-    exact rpow_le_rpow_neg_seven hs hs1 (by norm_num)
-  obtain ⟨hRQ3sn, hT1⟩ :=
-    (show (R3n * Q3sn = Q1s) ∧ ((sig⁻¹ * R3n) * (cg * (216 * (s⁻¹) ^ (4 : ℕ) *
-        (kappa * KE * Erep * (sig * (P2 * X) + sig * (P2 * S) + Sm3 * (Q3s * Gs) +
-          Sm2 * (sig * (Q3s * Hs)) + Sm2 * (sig * Hn))))) ≤
-      A1 * (S4 * Erep * X) + (9 * (CE * (1 / 2)) * A1) * (S7 * sig⁻¹ * Q1s * Gs) +
-        (9 * (CE * (1 / 2)) * A1) * (S6 * Q1s * Hs) +
-        A1 * (S6 * Erep * R3n * Hn) + A1 * (S4 * Erep * S)) from
-      @residueRouteOneErrorWeighted_comparisonBounds2 (CE) (KE) (kappa) (cg) (A1) (hA1def) (hA1)
-        (s) (hs) (n) (hs1) (S) (Erep) (hErepCap) (hErep0) (sig) (X) (Gs) (Hs) (Hn) (P2) (hP2def)
-          (Q3s) (hQ3sdef) (Q3sn) (hQ3sndef) (Q1s) (hQ1sdef) (R3n) (hR3ndef) (S4) (S7) (S6) (Sm3)
-            (Sm2) (hX0) (hGs0) (hHs0) (hS0) (hQ3s0) (hR3n0) (hSm30) (hSm20) (hsiginv0) (hsinv)
-              (hS4eq) (hS4Sm3) (hS4Sm2))
-  obtain ⟨hT2, hT3, hXterm, hSterm, hGterm, hHsterm, hHnterm⟩ :=
-    (show ((sig⁻¹ * R3n) * (cg * (1944 * (s⁻¹) ^ (6 : ℕ) *
-        (b0 * (besovGagliardoConstant d * Q3sn * (flushWindowConst d * Gs))))) ≤
-      A2 * (S7 * sig⁻¹ * Q1s * Gs)) ∧ ((sig⁻¹ * R3n) * (interiorCorrectionConst d * Real.rpow s
-        (-(1 / 2 : ℝ)) *
-        Q3sn * (flushWindowConst d * Gs)) ≤ A3 * (S7 * sig⁻¹ * Q1s * Gs)) ∧ ((0 : ℝ) ≤ S4 * Erep *
-          X) ∧ ((0 : ℝ) ≤ S4 * Erep * S) ∧ ((0 : ℝ) ≤ S7 * sig⁻¹ * Q1s * Gs) ∧ ((0 : ℝ) ≤ S6 * Q1s
-            * Hs) ∧ ((0 : ℝ) ≤ S6 * Erep * R3n * Hn) from
-      @residueRouteOneErrorWeighted_comparisonBounds3 (d) (b0) (cg) (A2)
-        (hA2def) (hA2) (A3) (hA3def) (hA3) (s) (S) (Erep) (hErep0) (sig) (X) (Gs) (Hs) (Hn) (Q3sn)
-          (Q1s) (R3n) (S4) (S7) (S6) (hX0) (hGs0) (hHs0) (hHn0) (hS0) (hQ1s0) (hR3n0) (hS40)
-            (hS70) (hS60) (hsiginv0) (hS6eq) (hS6le) (hQScle) (hRQ3sn))
-  exact ⟨hT1, hT2, hT3, hXterm, hSterm, hGterm, hHsterm, hHnterm⟩
 
 /-- **Route 1, composed at the flush sub-cube — the error-weighted legs.**
 
@@ -1561,7 +1412,9 @@ theorem exists_flushResidue_route1_composed_errorWeighted (d : ℕ) [NeZero d] :
     Sm3 Sm2 A3 A2 A1 cg b0 k0 e0 kappa
   -- (g) the regrouping
   obtain ⟨hT1, hT2, hT3, hXterm, hSterm, hGterm, hHsterm, hHnterm⟩ :=
-    @residueRouteOneErrorWeighted_comparisonBounds8 (d) (CE) (KE) (kappa) (b0)
+    @boundary_composed_comparison_bounds_errorWeighted
+      (besovGagliardoConstant d) (interiorCorrectionConst d) (flushWindowConst d)
+      (CE) (KE) (kappa) (b0)
       (cg) (A1) (hA1) (hA1def) (A2) (hA2) (hA2def) (A3) (hA3) (hA3def) (s) (hs) (n) (hs1) (S)
         (hS0) (Erep) (hErepCap) (hErep0) (sig)
           (hsiginv0) (X) (hX0) (Gs) (hGs0) (Hs) (hHs0) (Hn) (hHn0) (P2) (hP2def)
@@ -1569,34 +1422,8 @@ theorem exists_flushResidue_route1_composed_errorWeighted (d : ℕ) [NeZero d] :
               (hR3ndef) (S4) (hS40) (hS4def) (S7) (hS70) (hS7def) (S6) (hS60) (hS6def) (Sm3)
                 (hSm30) (hSm3def) (Sm2) (hSm20) (hSm2def) (hsinv)
   refine hstep.trans (le_trans (mul_le_mul_of_nonneg_left hmono hfac0) ?_)
-  have hdistrib : (sig⁻¹ * R3n) *
-      (cg * (216 * (s⁻¹) ^ (4 : ℕ) *
-            (kappa * KE * Erep * (sig * (P2 * X) + sig * (P2 * S) + Sm3 * (Q3s * Gs) +
-              Sm2 * (sig * (Q3s * Hs)) + Sm2 * (sig * Hn))) +
-          1944 * (s⁻¹) ^ (6 : ℕ) *
-            (b0 * (besovGagliardoConstant d * Q3sn * (flushWindowConst d * Gs)))) +
-        interiorCorrectionConst d * Real.rpow s (-(1 / 2 : ℝ)) * Q3sn *
-          (flushWindowConst d * Gs)) =
-      (sig⁻¹ * R3n) * (cg * (216 * (s⁻¹) ^ (4 : ℕ) *
-          (kappa * KE * Erep * (sig * (P2 * X) + sig * (P2 * S) + Sm3 * (Q3s * Gs) +
-            Sm2 * (sig * (Q3s * Hs)) + Sm2 * (sig * Hn))))) +
-        (sig⁻¹ * R3n) * (cg * (1944 * (s⁻¹) ^ (6 : ℕ) *
-          (b0 * (besovGagliardoConstant d * Q3sn * (flushWindowConst d * Gs))))) +
-        (sig⁻¹ * R3n) * (interiorCorrectionConst d * Real.rpow s (-(1 / 2 : ℝ)) *
-          Q3sn * (flushWindowConst d * Gs)) := by ring
-  rw [hdistrib]
-  have habs : A1 * (S4 * Erep * X) +
-        (9 * (CE * (1 / 2)) * A1 + A2 + A3) * (S7 * sig⁻¹ * Q1s * Gs) +
-        (9 * (CE * (1 / 2)) * A1) * (S6 * Q1s * Hs) +
-        A1 * (S6 * Erep * R3n * Hn) + A1 * (S4 * Erep * S) ≤
-      (A1 + 9 * (CE * (1 / 2)) * A1 + CE * (1 / 2) * A1 + A2 + A3 + 1) *
-        (S4 * Erep * X + S7 * sig⁻¹ * Q1s * Gs + S6 * Q1s * Hs +
-          S6 * Erep * R3n * Hn + S4 * Erep * S) :=
-    five_leg_bound le_rfl (by linarith only [hCE2, hCE3, hA2, hA3])
-      (by linarith only [hA1, hCE3]) (by linarith only [hA1, hCE3, hA2, hA3])
-      (by linarith only [hCE2, hCE3, hA2, hA3])
-      (by linarith only [hCE2, hCE3, hA2, hA3]) hXterm hGterm hHsterm hHnterm hSterm
-  linarith only [hT1, hT2, hT3, habs]
+  exact boundary_composed_absorption_errorWeighted
+    hA1 hA2 hA3 hCE2 hCE3 hXterm hGterm hHsterm hHnterm hSterm hT1 hT2 hT3
 
 
 theorem exists_flushResidue_route1_composed (d : ℕ) [NeZero d] :
