@@ -87,6 +87,8 @@ is `36d·(s/6)/((s/24)(1 - s/4)) = 144 d/(1 - s/4) ≤ 192 d` for `s ≤ 1`: a p
 * `tsum_geometricWeight_two_mul_le` — the outer (scale) sum.
 * `offGridStabilityConst`, `offGridStabilityConst_slot_le` — the constant and
   its value at the printed slot.
+* `offGridStabilityError_bound` — the shared nonnegative error-factor cap for any
+  scale exponent at most one.
 
 ## References
 
@@ -362,6 +364,28 @@ theorem offGridStabilityConst_slot_le {d : ℕ} {s : ℝ} (hs0 : 0 < s) (hs1 : s
   have hkey : (0 : ℝ) ≤ (d : ℝ) * s * (1 - s) :=
     mul_nonneg (mul_nonneg hdnn hs0.le) (by linarith only [hs1])
   nlinarith only [hkey]
+
+variable {d : ℕ}
+
+/-- The off-grid error factor is bounded uniformly when its scale exponent is at most one. -/
+theorem offGridStabilityError_bound {s exponent E : ℝ} (hs : 0 < s) (hs1 : s ≤ 1)
+    (hexponent : exponent ≤ 1) (hE : 0 ≤ E) :
+    0 ≤ Real.sqrt (offGridStabilityConst d (s / 6) (s / 8)) *
+        ((3 : ℝ) ^ exponent * E) ∧
+      Real.sqrt (offGridStabilityConst d (s / 6) (s / 8)) *
+        ((3 : ℝ) ^ exponent * E) ≤ (Real.sqrt (192 * (d : ℝ)) * 3) * E := by
+  have hpower : (3 : ℝ) ^ exponent ≤ 3 := by
+    simpa only [Real.rpow_one] using
+      Real.rpow_le_rpow_of_exponent_le (by norm_num : (1 : ℝ) ≤ 3) hexponent
+  have hpositive : 0 ≤ (3 : ℝ) ^ exponent * E :=
+    mul_nonneg (Real.rpow_nonneg (by norm_num) _) hE
+  refine ⟨mul_nonneg (Real.sqrt_nonneg _) hpositive, ?_⟩
+  calc
+    Real.sqrt (offGridStabilityConst d (s / 6) (s / 8)) * ((3 : ℝ) ^ exponent * E) ≤
+        Real.sqrt (192 * (d : ℝ)) * (3 * E) :=
+      mul_le_mul (Real.sqrt_le_sqrt (offGridStabilityConst_slot_le hs hs1))
+        (mul_le_mul_of_nonneg_right hpower hE) hpositive (Real.sqrt_nonneg _)
+    _ = (Real.sqrt (192 * (d : ℝ)) * 3) * E := by ring
 
 end
 

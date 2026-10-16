@@ -171,17 +171,11 @@ theorem ae_coveringCubeCapsPair_le_gapThree (d : ℕ) [NeZero d] :
       (parentRebasedFamily M L (n + 3) (wellPlacedCentre x m (n + 2)) z omega)
       (isotropicComparatorMatrix (Annealed.sigmaBar M (n + 3))) ≤
       kappa * (C * (1 / 2)) := by
-    refine (herr6 x hhinge).trans ?_
-    have h1 : Real.sqrt (offGridStabilityConst d (s / 6) (s / 8)) ≤
-        Real.sqrt (192 * (d : ℝ)) :=
-      Real.sqrt_le_sqrt (offGridStabilityConst_slot_le hs hs1)
-    calc Real.sqrt (offGridStabilityConst d (s / 6) (s / 8)) *
-          ((3 : ℝ) ^ (s / 8) *
-            fluxCorrectedErrorRepresentative M L (n + 3) ⟨s / 8, by linarith only [hs]⟩
-              (Cutoff.translateCutoffSample z omega))
-        ≤ Real.sqrt (192 * (d : ℝ)) * (3 * (C * (1 / 2))) :=
-          mul_le_mul h1 h3 h3nn (Real.sqrt_nonneg _)
-      _ = kappa * (C * (1 / 2)) := by rw [hkappadef]; ring
+    have herror := offGridStabilityError_bound (d := d) hs hs1
+      (by linarith only [hs1] : s / 8 ≤ 1) hErep0
+    refine (herr6 x hhinge).trans (herror.2.trans ?_)
+    exact mul_le_mul_of_nonneg_left hErepCap
+      (mul_nonneg (Real.sqrt_nonneg _) (by norm_num))
   have hE4 : Ch02.HomogenizationErrorOnCube (originCube d (n + 2)) (1 / 4) .infinity
       (.finite 2)
       (parentRebasedFamily M L (n + 3) (wellPlacedCentre x m (n + 2)) z omega)

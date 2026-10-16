@@ -92,13 +92,11 @@ noncomputable section
 abbrev boundaryRouteGeometryComparison : Prop :=
     ∀ (d : ℕ) [NeZero d] (CE KE : ℝ),
       let kappa : ℝ := √((192 : ℝ) * (↑d : ℝ)) * (3 : ℝ);
-      ∀ (_ : kappa = √((192 : ℝ) * (↑d : ℝ)) * (3 : ℝ)) (_ : (0 : ℝ) ≤ kappa),
+      ∀ (_ : (0 : ℝ) ≤ kappa),
         let e0 : ℝ := kappa * (CE * (1 / 2 : ℝ));
-        ∀ (_ : e0 = kappa * (CE * (1 / 2 : ℝ))),
           let k0 : ℝ := (2 : ℝ) * (↑d : ℝ) * (e0 ^ (2 : ℕ) + (1 : ℝ));
-          ∀ (_ : k0 = (2 : ℝ) * (↑d : ℝ) * (e0 ^ (2 : ℕ) + (1 : ℝ))),
             let b0 : ℝ := √k0 * e0 + (2 : ℝ) * k0;
-            ∀ (_ : b0 = √k0 * e0 + (2 : ℝ) * k0) (M : ABKModel d) (s : ℝ) (_ : (0 : ℝ) < s) (L m n
+            ∀ (M : ABKModel d) (s : ℝ) (_ : (0 : ℝ) < s) (L m n
               : ℤ) (_ : m ≤ L)
               (_ : n + (3 : ℤ) ≤ m) (z : Vec d) (_ : z ∈ openCubeSet (originCube d m)) (i : Fin d)
                 (sigma : ℝ)
@@ -440,13 +438,11 @@ abbrev boundaryRouteGeometryComparison : Prop :=
 abbrev boundaryRouteEnergyComparison : Prop :=
     ∀ (d : ℕ) [NeZero d] (CE KE : ℝ),
       let kappa : ℝ := √((192 : ℝ) * (↑d : ℝ)) * (3 : ℝ);
-      ∀ (_ : kappa = √((192 : ℝ) * (↑d : ℝ)) * (3 : ℝ)) (_ : (0 : ℝ) ≤ kappa),
+      ∀ (_ : (0 : ℝ) ≤ kappa),
         let e0 : ℝ := kappa * (CE * (1 / 2 : ℝ));
-        ∀ (_ : e0 = kappa * (CE * (1 / 2 : ℝ))),
           let k0 : ℝ := (2 : ℝ) * (↑d : ℝ) * (e0 ^ (2 : ℕ) + (1 : ℝ));
-          ∀ (_ : k0 = (2 : ℝ) * (↑d : ℝ) * (e0 ^ (2 : ℕ) + (1 : ℝ))),
             let b0 : ℝ := √k0 * e0 + (2 : ℝ) * k0;
-            ∀ (_ : b0 = √k0 * e0 + (2 : ℝ) * k0) (M : ABKModel d) (s : ℝ) (_ : (0 : ℝ) < s) (L m n
+            ∀ (M : ABKModel d) (s : ℝ) (_ : (0 : ℝ) < s) (L m n
               : ℤ) (z : Vec d)
               (i : Fin d) (sigma : ℝ) (_ : s ≤ (1 : ℝ))
               (_ :
@@ -484,11 +480,7 @@ abbrev boundaryRouteEnergyComparison : Prop :=
                             (scalarComparator (Annealed.sigmaBar M (n + (3 : ℤ))).property) (s /
                               (3 : ℝ)) ≤
                           √((2 : ℝ) * (↑d : ℝ) * (Eb ^ (2 : ℕ) + (1 : ℝ))) * Eb +
-                            (2 : ℝ) * ((2 : ℝ) * (↑d : ℝ) * (Eb ^ (2 : ℕ) + (1 : ℝ))))
-                  (_ :
-                    Eb =
-                      √(offGridStabilityConst d (s / (6 : ℝ)) (s / (8 : ℝ))) *
-                        ((3 : ℝ) ^ ((3 : ℝ) * (s / (8 : ℝ))) * Erep)),
+                            (2 : ℝ) * ((2 : ℝ) * (↑d : ℝ) * (Eb ^ (2 : ℕ) + (1 : ℝ)))),
                   let sig : ℝ := (↑(Annealed.sigmaBar M (n + (3 : ℤ))) : ℝ);
                   ∀ (_ : (0 : ℝ) < sig),
                     let X : ℝ :=
@@ -561,33 +553,17 @@ abbrev boundaryRouteEnergyComparison : Prop :=
 
 theorem residueRouteOne_comparisonBounds1 : boundaryRouteEnergyComparison :=
   by
-  intro d _ _ KE kappa hkappadef hkappa e0 he0def k0 hk0def b0 hb0def M s hs L m n z i sigma hs1
-    hChinge omega u _ _ S hsubx Erep hErepCap hErep0 Eb herrD hbrk hEbdef sig hsig X Gs Hs Hn P2
+  intro d _ CE KE kappa hkappa e0 k0 b0 M s hs L m n z i sigma hs1
+    hChinge omega u _ _ S hsubx Erep hErepCap hErep0 Eb herrD hbrk sig hsig X Gs Hs Hn P2
       Q3s Sm3 Sm2 hEn
+  have he0def : e0 = kappa * (CE * (1 / 2 : ℝ)) := rfl
+  have hk0def : k0 = (2 : ℝ) * (↑d : ℝ) * (e0 ^ (2 : ℕ) + (1 : ℝ)) := rfl
+  have hb0def : b0 = √k0 * e0 + (2 : ℝ) * k0 := rfl
   have hsiginv0 : (0 : ℝ) ≤ sig⁻¹ := inv_nonneg.mpr hsig.le
-  -- the off-grid error factor
-  have hEb0 : 0 ≤ Eb := by
-    rw [hEbdef]
-    exact mul_nonneg (Real.sqrt_nonneg _)
-      (mul_nonneg (Real.rpow_nonneg (by norm_num) _) hErep0)
-  have hEbkappa : Eb ≤ kappa * Erep := by
-    have h1 : Real.sqrt (offGridStabilityConst d (s / 6) (s / 8)) ≤
-        Real.sqrt (192 * (d : ℝ)) :=
-      Real.sqrt_le_sqrt (offGridStabilityConst_slot_le hs hs1)
-    have h2 : ((3 : ℝ) ^ (3 * (s / 8))) ≤ 3 := by
-      have h := Real.rpow_le_rpow_of_exponent_le (by norm_num : (1 : ℝ) ≤ 3)
-        (by linarith only [hs1] : 3 * (s / 8) ≤ (1 : ℝ))
-      rwa [Real.rpow_one] at h
-    have h3 : (3 : ℝ) ^ (3 * (s / 8)) * Erep ≤ 3 * Erep :=
-      mul_le_mul_of_nonneg_right h2 hErep0
-    have h4 : (0 : ℝ) ≤ (3 : ℝ) ^ (3 * (s / 8)) * Erep :=
-      mul_nonneg (Real.rpow_nonneg (by norm_num) _) hErep0
-    rw [hEbdef]
-    calc Real.sqrt (offGridStabilityConst d (s / 6) (s / 8)) *
-          ((3 : ℝ) ^ (3 * (s / 8)) * Erep)
-        ≤ Real.sqrt (192 * (d : ℝ)) * (3 * Erep) :=
-          mul_le_mul h1 h3 h4 (Real.sqrt_nonneg _)
-      _ = kappa * Erep := by rw [hkappadef]; ring
+  have herror := offGridStabilityError_bound (d := d) hs hs1
+    (by linarith only [hs1] : (3 : ℝ) * (s / 8) ≤ 1) hErep0
+  have hEb0 : 0 ≤ Eb := herror.1
+  have hEbkappa : Eb ≤ kappa * Erep := herror.2
   have hEbe0 : Eb ≤ e0 := by
     refine hEbkappa.trans ?_
     rw [he0def]
@@ -667,7 +643,7 @@ theorem residueRouteOne_comparisonBounds1 : boundaryRouteEnergyComparison :=
 theorem residueRouteOne_comparisonBounds4 : boundaryRouteGeometryComparison :=
   by
   classical
-  intro d _ CE KE kappa hkappadef hkappa _ he0def _ hk0def b0 hb0def M s hs L m n hmL hnm z hz i
+  intro d _ CE KE kappa hkappa _ _ b0 M s hs L m n hmL hnm z hz i
     sigma hsigma hover hs1 hnm2 hChinge omega hcapE hEnLeg herrD hbrk hmem u hdat g S hsol hgL2
       hgW hhW hmean v w hharm hval hgrad
   have hsig : (0 : ℝ) < (Annealed.sigmaBar M (n + 3) : ℝ) :=
@@ -769,9 +745,9 @@ theorem residueRouteOne_comparisonBounds4 : boundaryRouteGeometryComparison :=
       kappa * KE * Erep *
         (sig * (P2 * X) + sig * (P2 * S) + Sm3 * (Q3s * Gs) +
           Sm2 * (sig * (Q3s * Hs)) + Sm2 * (sig * Hn))) from
-      @residueRouteOne_comparisonBounds1 (d) (by infer_instance) (CE) (KE) (hkappadef) (hkappa)
-        (he0def) (hk0def) (hb0def) (M) (s) (hs) (L) (m) (n) (z) (i) (sigma) (hs1) (hChinge)
-          (omega) (u) (hdat) (g) (S) (hsubx) (hErepCap) (hErep0) (herrD) (hbrk) (hEbdef) (hsig)
+      @residueRouteOne_comparisonBounds1 (d) (by infer_instance) (CE) (KE) (hkappa)
+        (M) (s) (hs) (L) (m) (n) (z) (i) (sigma) (hs1) (hChinge)
+          (omega) (u) (hdat) (g) (S) (hsubx) (hErepCap) (hErep0) (herrD) (hbrk) (hsig)
             (hEn))
   -- (d) the forcing leg, through the one-hop window move
   have hGbes : Ch03.scaleNormalizedPositiveBesovVectorSeminormTwo (originCube d n) s
@@ -912,17 +888,7 @@ theorem residueRouteOne_comparisonBounds5 :
         interiorCorrectionConst d * Real.rpow s (-(1 / 2 : ℝ)) * Q3sn * Ychild := hxf
   have hfac0 : (0 : ℝ) ≤ sig⁻¹ * R3n := mul_nonneg hsiginv0 hR3n0
   have hsinv : sig⁻¹ * sig = 1 := inv_mul_cancel₀ hsig.ne'
-  have hid : sig⁻¹ * R3n * (sig * (Real.rpow (3 : ℝ) (-(n : ℝ)) * Lhs)) = Lhs := by
-    have h2 : Real.rpow (3 : ℝ) (-(n : ℝ)) * R3n = 1 := rpow_three_neg_mul_self n
-    calc sig⁻¹ * R3n * (sig * (Real.rpow (3 : ℝ) (-(n : ℝ)) * Lhs))
-        = (sig⁻¹ * sig) * ((Real.rpow (3 : ℝ) (-(n : ℝ)) * R3n) * Lhs) := by ring
-      _ = 1 * (1 * Lhs) := by rw [hsinv, h2]
-      _ = Lhs := by ring
-  have hstep : Lhs ≤ (sig⁻¹ * R3n) *
-      (cg * (216 * (s⁻¹) ^ (4 : ℕ) * ET + 1944 * (s⁻¹) ^ (6 : ℕ) * FT) +
-        interiorCorrectionConst d * Real.rpow s (-(1 / 2 : ℝ)) * Q3sn * Ychild) := by
-    rw [← hid]
-    exact mul_le_mul_of_nonneg_left hxfr hfac0
+  have hstep := scalar_frame_cancel_le hsig hR3n0 (rpow_three_neg_mul_self n) hxfr
   -- (f) the monotone replacement of the three legs
   have hccorr0 : (0 : ℝ) ≤ interiorCorrectionConst d * Real.rpow s (-(1 / 2 : ℝ)) * Q3sn :=
     mul_nonneg (mul_nonneg (interiorCorrectionConst_pos d).le
@@ -1318,8 +1284,8 @@ theorem exists_flushResidue_route1_composed_errorWeighted (d : ℕ) [NeZero d] :
   obtain ⟨hsubx, hErepCap, hErep0, hsig, hxf, hX0, hGs0, hHs0, hHn0, hS0, hQ3s0, hQ3sn0,
     hQ1s0, hR3n0, hS40, hS70, hS60, hSm30, hSm20, hsiginv0, hbrkCap, hET, hGbes,
     hGbes0, hYchild3⟩ :=
-    @residueRouteOne_comparisonBounds4 (d) (by infer_instance) (CE) (KE) (hkappadef)
-      (hkappa) (he0def) (hk0def) (hb0def) (M) (s) (hs) (L) (m) (n) (hmL) (hnm) (z) (hz) (i)
+    @residueRouteOne_comparisonBounds4 (d) (by infer_instance) (CE) (KE) (hkappa)
+      (M) (s) (hs) (L) (m) (n) (hmL) (hnm) (z) (hz) (i)
         (sigma) (hsigma) (hover) (hs1) (hnm2) (hChinge) (omega) (hcapE) (hEnLeg) (herrD) (hbrk)
           (hmem) (u) (hdat) (g) (S) (hsol) (hgL2) (hgW) (hhW) (hmean) (v) (w) (hharm) (hval) (hgrad)
   set Erep : ℝ := Support.fluxCorrectedErrorRepresentative M L (n + 3)

@@ -718,22 +718,14 @@ private theorem assemblyComposedErrorWeighted_comparisonBounds3 :
                                                     Eb ≤ e0 ∧ (2 : ℝ) * (↑d : ℝ) * (Eb ^ (2 : ℕ) +
                                                       (1 : ℝ)) ≤ k0 := by
   intro d calculationCE kappa hkappa e0 k0 _ s hs _ _ n _ _ hs1 _ _ _ _ S hmean Erep hErepCap
-    hErep0 Eb sig hsig X Gs Hs Hn Y2 Ychild Q3s Q3sn Q1s R3n S4 S7 S6 Sm3 Sm2
-  let P2 : ℝ := Real.rpow (3 : ℝ) (-(↑(n + (2 : ℤ)) : ℝ))
-  have hkappadef : kappa = √((192 : ℝ) * (↑d : ℝ)) * (3 : ℝ) := rfl
+    hErep0 Eb sig hsig X Gs Hs Hn _ _ Q3s Q3sn Q1s R3n S4 S7 S6 Sm3 Sm2
   have he0def : e0 = kappa * (calculationCE * (1 / 2 : ℝ)) := rfl
   have hk0def : k0 = (2 : ℝ) * (↑d : ℝ) * (e0 ^ (2 : ℕ) + (1 : ℝ)) := rfl
-  have hEbdef : Eb =
-                    √(offGridStabilityConst d (s / (6 : ℝ)) (s / (8 : ℝ))) * ((3 : ℝ) ^ ((3 : ℝ) *
-                      (s / (8 : ℝ))) * Erep) := rfl
   have hX0 : 0 ≤ X := ENNReal.toReal_nonneg
   have hGs0 : 0 ≤ Gs := ENNReal.toReal_nonneg
   have hHs0 : 0 ≤ Hs := ENNReal.toReal_nonneg
   have hHn0 : 0 ≤ Hn := ENNReal.toReal_nonneg
-  have hY20 : 0 ≤ Y2 := ENNReal.toReal_nonneg
-  have hYchild0 : 0 ≤ Ychild := ENNReal.toReal_nonneg
   have hS0 : 0 ≤ S := le_trans (abs_nonneg _) hmean
-  have hP20 : 0 ≤ P2 := Real.rpow_nonneg (by norm_num) _
   have hQ3s0 : 0 ≤ Q3s := Real.rpow_nonneg (by norm_num) _
   have hQ3sn0 : 0 ≤ Q3sn := Real.rpow_nonneg (by norm_num) _
   have hQ1s0 : 0 ≤ Q1s := Real.rpow_nonneg (by norm_num) _
@@ -744,29 +736,10 @@ private theorem assemblyComposedErrorWeighted_comparisonBounds3 :
   have hSm30 : 0 ≤ Sm3 := Real.rpow_nonneg hs.le _
   have hSm20 : 0 ≤ Sm2 := Real.rpow_nonneg hs.le _
   have hsiginv0 : (0 : ℝ) ≤ sig⁻¹ := inv_nonneg.mpr hsig.le
-  -- the off-grid error factor
-  have hEb0 : 0 ≤ Eb := by
-    rw [hEbdef]
-    exact mul_nonneg (Real.sqrt_nonneg _)
-      (mul_nonneg (Real.rpow_nonneg (by norm_num) _) hErep0)
-  have hEbkappa : Eb ≤ kappa * Erep := by
-    have h1 : Real.sqrt (offGridStabilityConst d (s / 6) (s / 8)) ≤
-        Real.sqrt (192 * (d : ℝ)) :=
-      Real.sqrt_le_sqrt (offGridStabilityConst_slot_le hs hs1)
-    have h2 : ((3 : ℝ) ^ (3 * (s / 8))) ≤ 3 := by
-      have h := Real.rpow_le_rpow_of_exponent_le (by norm_num : (1 : ℝ) ≤ 3)
-        (by linarith only [hs1] : 3 * (s / 8) ≤ (1 : ℝ))
-      rwa [Real.rpow_one] at h
-    have h3 : (3 : ℝ) ^ (3 * (s / 8)) * Erep ≤ 3 * Erep :=
-      mul_le_mul_of_nonneg_right h2 hErep0
-    have h4 : (0 : ℝ) ≤ (3 : ℝ) ^ (3 * (s / 8)) * Erep :=
-      mul_nonneg (Real.rpow_nonneg (by norm_num) _) hErep0
-    rw [hEbdef]
-    calc Real.sqrt (offGridStabilityConst d (s / 6) (s / 8)) *
-          ((3 : ℝ) ^ (3 * (s / 8)) * Erep)
-        ≤ Real.sqrt (192 * (d : ℝ)) * (3 * Erep) :=
-          mul_le_mul h1 h3 h4 (Real.sqrt_nonneg _)
-      _ = kappa * Erep := by rw [hkappadef]; ring
+  have herror := offGridStabilityError_bound (d := d) hs hs1
+    (by linarith only [hs1] : (3 : ℝ) * (s / 8) ≤ 1) hErep0
+  have hEb0 : 0 ≤ Eb := herror.1
+  have hEbkappa : Eb ≤ kappa * Erep := herror.2
   have hEbe0 : Eb ≤ e0 := by
     refine hEbkappa.trans ?_
     rw [he0def]
@@ -1050,17 +1023,7 @@ private theorem assemblyComposedErrorWeighted_comparisonBounds6 :
         interiorCorrectionConst d * Real.rpow s (-(1 / 2 : ℝ)) * Q3sn * Ychild := hxf
   have hfac0 : (0 : ℝ) ≤ sig⁻¹ * R3n := mul_nonneg hsiginv0 hR3n0
   have hsinv : sig⁻¹ * sig = 1 := inv_mul_cancel₀ hsig.ne'
-  have hid : sig⁻¹ * R3n * (sig * (Real.rpow (3 : ℝ) (-(n : ℝ)) * Lhs)) = Lhs := by
-    have h2 : Real.rpow (3 : ℝ) (-(n : ℝ)) * R3n = 1 := rpow_three_neg_mul_self n
-    calc sig⁻¹ * R3n * (sig * (Real.rpow (3 : ℝ) (-(n : ℝ)) * Lhs))
-        = (sig⁻¹ * sig) * ((Real.rpow (3 : ℝ) (-(n : ℝ)) * R3n) * Lhs) := by ring
-      _ = 1 * (1 * Lhs) := by rw [hsinv, h2]
-      _ = Lhs := by ring
-  have hstep : Lhs ≤ (sig⁻¹ * R3n) *
-      (cg * (216 * (s⁻¹) ^ (4 : ℕ) * ET + 1944 * (s⁻¹) ^ (6 : ℕ) * FT) +
-        interiorCorrectionConst d * Real.rpow s (-(1 / 2 : ℝ)) * Q3sn * Ychild) := by
-    rw [← hid]
-    exact mul_le_mul_of_nonneg_left hxfr hfac0
+  have hstep := scalar_frame_cancel_le hsig hR3n0 (rpow_three_neg_mul_self n) hxfr
   -- (f) the monotone replacement of the three legs
   have hccorr0 : (0 : ℝ) ≤ interiorCorrectionConst d * Real.rpow s (-(1 / 2 : ℝ)) * Q3sn :=
     mul_nonneg (mul_nonneg (interiorCorrectionConst_pos d).le

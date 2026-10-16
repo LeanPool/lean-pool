@@ -212,26 +212,6 @@ theorem constantCoeffMatrixNormHalf_scalarComparator_sqrt [NeZero d] {sigma : �
   rw [constantCoeffMatrixNormHalf_scalarComparator hsigma, rpow_half_eq_sqrt]
 
 
-/-- The off-grid error factor is bounded uniformly when its scale exponent is at most one. -/
-theorem offGridStabilityError_bound {s exponent E : ℝ} (hs : 0 < s) (hs1 : s ≤ 1)
-    (hexponent : exponent ≤ 1) (hE : 0 ≤ E) :
-    0 ≤ Real.sqrt (offGridStabilityConst d (s / 6) (s / 8)) *
-        ((3 : ℝ) ^ exponent * E) ∧
-      Real.sqrt (offGridStabilityConst d (s / 6) (s / 8)) *
-        ((3 : ℝ) ^ exponent * E) ≤ (Real.sqrt (192 * (d : ℝ)) * 3) * E := by
-  have hpower : (3 : ℝ) ^ exponent ≤ 3 := by
-    simpa only [Real.rpow_one] using
-      Real.rpow_le_rpow_of_exponent_le (by norm_num : (1 : ℝ) ≤ 3) hexponent
-  have hpositive : 0 ≤ (3 : ℝ) ^ exponent * E :=
-    mul_nonneg (Real.rpow_nonneg (by norm_num) _) hE
-  refine ⟨mul_nonneg (Real.sqrt_nonneg _) hpositive, ?_⟩
-  calc
-    Real.sqrt (offGridStabilityConst d (s / 6) (s / 8)) * ((3 : ℝ) ^ exponent * E) ≤
-        Real.sqrt (192 * (d : ℝ)) * (3 * E) :=
-      mul_le_mul (Real.sqrt_le_sqrt (offGridStabilityConst_slot_le hs hs1))
-        (mul_le_mul_of_nonneg_right hpower hE) hpositive (Real.sqrt_nonneg _)
-    _ = (Real.sqrt (192 * (d : ℝ)) * 3) * E := by ring
-
 /-- Error and energy bounds control both coarse-graining comparison coefficients. -/
 theorem coarseGraining_comparisonBounds [NeZero d]
     (Q : TriadicCube d) (a : Ch03.CoeffFamily d) {sig : ℝ} (hsig : 0 < sig)
