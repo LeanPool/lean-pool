@@ -1,0 +1,50 @@
+slug: planar-midpoint-rigidity
+title: Planar Euclidean dual-geodesic midpoint rigidity
+entry_module: LeanPool.PlanarMidpoint
+authors:
+  - JD Jones
+source:
+  github_repo: JD-Jones-ASES/PlanarMidpoint
+  url: https://github.com/JD-Jones-ASES/PlanarMidpoint/tree/f277b89a3b0db20872101fd61580ecced748e7c1
+  arxiv: "2609.07551"
+  notes: >-
+    The upstream MIT-licensed original proof settles the dimension-two case of
+    Nielsen–Okamura Conjecture 9.1 (v2, Section 9); the cited paper poses the
+    general-dimensional conjecture and does not contain this planar necessity proof.
+    Public completed source was released on 2026-10-08. Proofs and mathematical
+    arguments were produced by OpenAI Codex agents under JD Jones's supervision.
+license: MIT
+status: verified
+provenance: AI
+summary: >-
+  Complementary canonical local midpoints for two Euclidean dual torsion-free
+  connections force their symmetric cubic tensor to be constant on a connected
+  open planar domain. The proof constructs the local geodesic germs and derives
+  the fourth-order obstruction, including its exceptional tensors. A differential
+  strengthening needs only differentiability; five fixed direction tests suffice.
+branch: Differential geometry
+main_declarations:
+  - PlanarMidpoint.planar_dual_midpoint_rigidity
+main_results:
+  - declaration: PlanarMidpoint.planar_dual_midpoint_rigidity
+    informal: >-
+      On an open preconnected Euclidean planar domain, a smooth symmetric cubic
+      tensor field whose canonical local dual geodesic midpoints sum to the
+      endpoints is constant.
+  - declaration: PlanarMidpoint.planar_midpoint_rigidity_C2
+    informal: The geometric midpoint rigidity theorem already holds for C2 coefficient fields.
+  - declaration: PlanarMidpoint.planar_obstruction_rigidity
+    informal: >-
+      A differentiable planar cubic coefficient field is constant if its quartic
+      midpoint obstruction vanishes at every point and in every direction.
+  - declaration: PlanarMidpoint.planar_five_direction_rigidity
+    informal: >-
+      The differential obstruction criterion needs only the five directions
+      (j, 1) for j = 0, 1, 2, 3, 4 at every point.
+tags:
+  - differential-geometry
+  - ordinary-differential-equations
+  - functional-equations
+msc:
+  - 53B12
+  - 39B22

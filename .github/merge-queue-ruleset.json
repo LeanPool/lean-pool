@@ -2,7 +2,13 @@
   "name": "Validated merge queue",
   "target": "branch",
   "enforcement": "disabled",
-  "bypass_actors": [],
+  "bypass_actors": [
+    {
+      "actor_id": 17322558,
+      "actor_type": "User",
+      "bypass_mode": "always"
+    }
+  ],
   "conditions": {
     "ref_name": {
       "include": [
