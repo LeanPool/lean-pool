@@ -21,7 +21,7 @@ def repository(tmp_path: Path) -> Path:
     (tmp_path / "docbuild").mkdir()
     (tmp_path / "LeanPool.lean").write_text("module\n")
     (tmp_path / "LeanPool" / "A.lean").write_text(
-        "module\npublic import LeanPool.Z\n"
+        "module\npublic import all LeanPool.Z\n"
         "/- public import LeanPool.A -/\n"
         'def text := "import LeanPool.A"\n'
     )
@@ -49,6 +49,7 @@ def test_import_order_ignores_comments_and_strings(repository: Path) -> None:
     modules = documentation.ordered_modules(repository)
     assert modules.index("LeanPool.Z") < modules.index("LeanPool.A")
     assert set(modules) == {"LeanPool", "LeanPool.A", "LeanPool.Z"}
+    assert documentation.external_modules(repository) == ["Init", "Lake", "Lean", "Std"]
 
 
 @pytest.mark.parametrize(
@@ -127,7 +128,10 @@ def test_timeout_advances_only_completed_batches(repository: Path, monkeypatch) 
     assert calls == 3
 
 
-def test_native_build_timeout_stops_child_writers(tmp_path: Path) -> None:
+@pytest.mark.parametrize("failed_parent", [False, True])
+def test_native_build_failure_stops_child_writers(
+    tmp_path: Path, failed_parent: bool
+) -> None:
     """A descendant cannot modify the restored checkpoint after its parent is killed."""
     script = tmp_path / "parent.py"
     result = tmp_path / "late-write"
@@ -138,9 +142,12 @@ def test_native_build_timeout_stops_child_writers(tmp_path: Path) -> None:
     script.write_text(
         "import subprocess,sys,time\n"
         f"subprocess.Popen([sys.executable, '-c', {child!r}])\n"
-        "time.sleep(60)\n"
+        + ("sys.exit(1)\n" if failed_parent else "time.sleep(60)\n")
     )
-    with pytest.raises(subprocess.TimeoutExpired):
+    error = (
+        subprocess.CalledProcessError if failed_parent else subprocess.TimeoutExpired
+    )
+    with pytest.raises(error):
         documentation.run_build([sys.executable, str(script)], tmp_path, 0.2)
     subprocess.run([sys.executable, "-c", "import time; time.sleep(1.1)"], check=True)
     assert not result.exists()

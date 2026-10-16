@@ -28,7 +28,9 @@ from lean_pool.exposition.source_text import code_view
 from lean_pool.indexes import structure_errors
 
 LOGGER = logging.getLogger(__name__)
-IMPORTS = re.compile(r"(?m)^\s*(?:(?:public|private|meta)\s+)*import\s+([^\n]+)")
+IMPORTS = re.compile(
+    r"(?m)^\s*(?:(?:public|private|meta)\s+)*import\s+(?:all\s+)?([^\n]+)"
+)
 STATE = "documentation-progress.json"
 
 
@@ -159,28 +161,34 @@ def batch_checkpoint(build: Path):
             raise
 
 
+def stop_build(process: subprocess.Popen) -> None:
+    """Stop descendants even when their failed parent has already exited."""
+    try:
+        os.killpg(process.pid, signal.SIGTERM)
+    except ProcessLookupError:
+        pass
+    try:
+        process.wait(timeout=5)
+    except subprocess.TimeoutExpired:
+        pass
+    # A parent can exit before a child that still holds the SQLite database.
+    try:
+        os.killpg(process.pid, signal.SIGKILL)
+    except ProcessLookupError:
+        pass
+    process.wait()
+
+
 def run_build(command: list[str], directory: Path, timeout: float) -> None:
     """Bound a native build and reap its entire process group before rollback."""
     process = subprocess.Popen(command, cwd=directory, start_new_session=True)
     try:
         status = process.wait(timeout=timeout)
     except BaseException:
-        try:
-            os.killpg(process.pid, signal.SIGTERM)
-        except ProcessLookupError:
-            pass
-        try:
-            process.wait(timeout=5)
-        except subprocess.TimeoutExpired:
-            pass
-        # A parent can exit before a child that still holds the SQLite database.
-        try:
-            os.killpg(process.pid, signal.SIGKILL)
-        except ProcessLookupError:
-            pass
-        process.wait()
+        stop_build(process)
         raise
     if status:
+        stop_build(process)
         raise subprocess.CalledProcessError(status, command)
 
 
