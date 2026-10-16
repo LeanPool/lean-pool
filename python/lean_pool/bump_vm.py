@@ -47,6 +47,10 @@ GATES = {
 WARNING = re.compile(r"(^|: )warning:", re.M)
 
 
+class RepairIncompleteError(RuntimeError):
+    """The account waterfall could not finish a project in this activation."""
+
+
 def rank_accounts(statuses: list[dict]) -> list[str]:
     """Prefer most remaining quota in the most constrained reported window."""
     eligible = []
@@ -263,7 +267,7 @@ class Runner:
             statuses = json.loads(self.command("cx", "limits", "--json"))
             candidates = [name for name in rank_accounts(statuses) if name not in tried]
             if not candidates:
-                raise RuntimeError(
+                raise RepairIncompleteError(
                     "cx waterfall exhausted; checkpoint retained for retry"
                 )
             account = candidates[0]
@@ -436,13 +440,15 @@ Current build diagnostics (excerpt):
         )
         if not projects:
             raise RuntimeError("no project Imports modules found")
-        for project in projects:
-            if not self.build_project(project) and not probe_only:
+        broken = [project for project in projects if not self.build_project(project)]
+        self.checkpoint(phase="repair", broken=broken)
+        if not probe_only:
+            for project in broken:
                 try:
                     self.repair(project)
-                except RuntimeError:
-                    self.publish({"build": False}, incomplete=True)
-                    raise
+                except RepairIncompleteError:
+                    LOGGER.warning("Account waterfall did not finish %s", project)
+                    self.checkpoint(project=None)
                 self.command("git", "push", "origin", f"bump/{target}")
         results = self.validate()
         self.publish(results)

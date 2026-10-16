@@ -81,8 +81,8 @@ before upstream merges. Unexpected edits, merge conflicts and racing pushes stop
 without discarding changes; inspect and repair those explicitly. Do not delete a
 pending checkpoint to force a fresh run.
 
-The controller commits and pushes repairs incrementally. A failed account
-waterfall publishes saved progress as a draft and leaves the checkpoint pending.
+The controller commits and pushes repairs incrementally. An unfinished project does not skip other project repairs. A failed account
+waterfall retains saved progress for the draft and leaves the checkpoint pending.
 Whole-pool build, warning, index, linter, style and quality results are measured
 outside the agent. Only passing every gate clears the checkpoint; even then the
 PR remains a draft for statement review and normal current-head CI.

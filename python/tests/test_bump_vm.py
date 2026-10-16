@@ -232,3 +232,26 @@ def test_pin_update_is_recovered_before_checkout_fetch(
     finish = calls.index(("finish-pins",))
     fetch = next(i for i, call in enumerate(calls) if call[:2] == ("git", "fetch"))
     assert finish < fetch
+
+
+def test_unfinished_project_does_not_skip_other_repairs(
+    runner: Runner, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """A difficult proof must not starve the rest of the migration."""
+    for project in ("First", "Second"):
+        directory = runner.repository / "LeanPool" / project
+        directory.mkdir(parents=True)
+        (directory / "Imports.lean").write_text("-- example")
+    monkeypatch.setattr(runner, "checkout", Mock())
+    monkeypatch.setattr(runner, "select_target", Mock(return_value="v4.35.0"))
+    monkeypatch.setattr(runner, "prepare_branch", Mock())
+    monkeypatch.setattr(runner, "build_project", Mock(return_value=False))
+    repairs = Mock(side_effect=[bump_vm.RepairIncompleteError("unfinished"), None])
+    monkeypatch.setattr(runner, "repair", repairs)
+    monkeypatch.setattr(runner, "command", Mock())
+    monkeypatch.setattr(runner, "validate", Mock(return_value={"build": False}))
+    monkeypatch.setattr(runner, "publish", Mock())
+    with pytest.raises(RuntimeError, match="failing gates"):
+        runner.run(None, False, False)
+    assert [call.args[0] for call in repairs.call_args_list] == ["First", "Second"]
+    assert runner.state_path.exists()
