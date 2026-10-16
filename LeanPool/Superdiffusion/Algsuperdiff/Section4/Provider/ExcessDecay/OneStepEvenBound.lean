@@ -78,6 +78,42 @@ theorem normalizedL2On_abs (W : Set (Vec d)) (f : Vec d → ℝ) :
   funext y
   rw [sq_abs]
 
+/-- Integrate a translated pointwise domination bound on an arbitrary window. -/
+theorem normalizedL2On_le_of_abs_le_translate {W : Set (Vec d)} {u f : Vec d → ℝ}
+    {v : Vec d} {a R : ℝ} (hW : MeasurableSet W) (hWpos : 0 < (volume W).toReal)
+    (ha : 0 ≤ a) (hR : 0 ≤ R) (hu : MemLp u 2 (volume.restrict W))
+    (hf : MemLp f 2 (volume.restrict W))
+    (hft : MemLp (fun y => f (y - v)) 2 (volume.restrict W))
+    (hdom : ∀ y ∈ W, |u y| ≤ a * |f y| + |f (y - v)| + R) :
+    normalizedL2On W u ≤ a * normalizedL2On W f
+      + normalizedL2On ((fun z => z - v) '' W) f + R := by
+  have hWtop : volume W ≠ ⊤ := by
+    intro htop
+    simp [htop] at hWpos
+  have : IsFiniteMeasure (volume.restrict W) := by
+    refine ⟨?_⟩
+    rw [Measure.restrict_apply_univ]
+    exact lt_top_iff_ne_top.2 hWtop
+  let g : Vec d → ℝ := fun y => a * |f y| + (|f (y - v)| + R)
+  have hg : MemLp g 2 (volume.restrict W) :=
+    (hf.abs.const_mul a).add (hft.abs.add (memLp_const _))
+  have hmono : normalizedL2On W u ≤ normalizedL2On W g := by
+    refine normalizedL2On_mono_of_abs_le hW hu.integrable_sq hg.integrable_sq ?_
+    intro y hy
+    dsimp [g]
+    linarith only [hdom y hy]
+  have hsplit : normalizedL2On W g
+      ≤ normalizedL2On W (fun y => a * |f y|)
+        + normalizedL2On W (fun y => |f (y - v)| + R) :=
+    normalizedL2On_add_le (hf.abs.const_mul a) (hft.abs.add (memLp_const R))
+  have hsplit2 : normalizedL2On W (fun y => |f (y - v)| + R)
+      ≤ normalizedL2On W (fun y => |f (y - v)|) + normalizedL2On W (fun _ => R) :=
+    normalizedL2On_add_le hft.abs (memLp_const R)
+  rw [normalizedL2On_const_mul, normalizedL2On_abs, abs_of_nonneg ha] at hsplit
+  rw [normalizedL2On_abs, normalizedL2On_comp_sub_right,
+    normalizedL2On_const_of_toReal_pos hWpos, abs_of_nonneg hR] at hsplit2
+  linarith only [hmono, hsplit, hsplit2]
+
 /-- The face reflection displaces a point by twice its distance to the face,
 along the normal. -/
 theorem coordFaceReflection_sub_self (a : ℝ) (i : Fin d) (y : Vec d) :

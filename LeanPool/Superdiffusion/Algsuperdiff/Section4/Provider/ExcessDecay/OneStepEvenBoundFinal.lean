@@ -202,10 +202,6 @@ theorem normalizedL2On_evenAffinePart_le_of_hessian_bound {m n : ℤ} {x : Vec d
     rw [hedef, evenAffinePart]
     exact (memLp_affineEval_truncatedWindow x m (n - 2) _ _).mono_measure
       (Measure.restrict_mono hPU le_rfl)
-  have : IsFiniteMeasure (volume.restrict P) := by
-    refine ⟨?_⟩
-    rw [Measure.restrict_apply_univ]
-    exact lt_of_le_of_ne le_top (volume_coordBox_ne_top _ _)
   have hmp : MeasurePreserving (fun z : Vec d => z - v0) (volume.restrict P)
       (volume.restrict D) := by
     rw [← himg]
@@ -213,14 +209,11 @@ theorem normalizedL2On_evenAffinePart_le_of_hessian_bound {m n : ℤ} {x : Vec d
       (measurableEmbedding_subRight v0) P
   have hftP : MemLp (fun y => f (y - v0)) 2 (volume.restrict P) :=
     hfD.comp_measurePreserving hmp
-  -- the dominating function
-  set g : Vec d → ℝ := fun y => 2 * |f y| + (|f (y - v0)| + 3 * (M * delta ^ 2)) with hgdef
-  have hgmem : MemLp g 2 (volume.restrict P) := by
-    rw [hgdef]
-    exact (hfP.abs.const_mul 2).add (hftP.abs.add (memLp_const _))
-  have hdom : normalizedL2On P e ≤ normalizedL2On P g := by
-    refine normalizedL2On_mono_of_abs_le (measurableSet_coordBox _ _) heP.integrable_sq
-      hgmem.integrable_sq ?_
+  have hslab : normalizedL2On P e
+      ≤ 2 * normalizedL2On P f + normalizedL2On D f + 3 * (M * delta ^ 2) := by
+    rw [← himg]
+    refine normalizedL2On_le_of_abs_le_translate (measurableSet_coordBox _ _)
+      hPpos (by norm_num) (by positivity) heP hfP hftP ?_
     intro y hy
     have hyD0 : y - v0 ∈ D := by
       rw [← himg]
@@ -228,35 +221,9 @@ theorem normalizedL2On_evenAffinePart_le_of_hessian_bound {m n : ℤ} {x : Vec d
     have hyD : y - v0 ∈ coordBox (taylorLo x m (n - 2) i delta) (taylorHi x m (n - 2) i delta) :=
       coordBox_deep_subset_taylor hdelta hyD0
     have h := abs_evenAffinePart_le_pointwise (n := n) hVodd hdelta hM hharm hMbound hy hyD
-    rw [hgdef]
-    change |e y| ≤ 2 * |f y| + (|f (y - v0)| + 3 * (M * delta ^ 2))
-    have habs : |f (y - v0)| = |V (y - v0) - affineEval (c - vecDot A x) A (y - v0)| := rfl
-    have habs2 : |f y| = |V y - affineEval (c - vecDot A x) A y| := rfl
-    rw [habs, habs2]
+    change |e y| ≤ 2 * |f y| + |f (y - v0)| + 3 * (M * delta ^ 2)
+    dsimp [e, f, v0]
     linarith only [h]
-  -- the three seminorms
-  have hg1 : normalizedL2On P g
-      ≤ 2 * normalizedL2On P f + (normalizedL2On D f + 3 * (M * delta ^ 2)) := by
-    have hsplit : normalizedL2On P g
-        ≤ normalizedL2On P (fun y => 2 * |f y|)
-          + normalizedL2On P (fun y => |f (y - v0)| + 3 * (M * delta ^ 2)) := by
-      rw [hgdef]
-      exact normalizedL2On_add_le (hfP.abs.const_mul 2) (hftP.abs.add (memLp_const _))
-    have hsplit2 : normalizedL2On P (fun y => |f (y - v0)| + 3 * (M * delta ^ 2))
-        ≤ normalizedL2On P (fun y => |f (y - v0)|)
-          + normalizedL2On P (fun _ : Vec d => 3 * (M * delta ^ 2)) :=
-      normalizedL2On_add_le hftP.abs (memLp_const _)
-    have hA : normalizedL2On P (fun y => 2 * |f y|) = 2 * normalizedL2On P f := by
-      rw [normalizedL2On_const_mul, normalizedL2On_abs,
-        abs_of_nonneg (by norm_num : (0 : ℝ) ≤ 2)]
-    have hB : normalizedL2On P (fun y => |f (y - v0)|) = normalizedL2On D f := by
-      rw [normalizedL2On_abs, normalizedL2On_comp_sub_right, himg]
-    have hC : normalizedL2On P (fun _ : Vec d => 3 * (M * delta ^ 2))
-        = 3 * (M * delta ^ 2) := by
-      rw [normalizedL2On_const_of_toReal_pos hPpos, abs_of_nonneg (by positivity)]
-    rw [hA] at hsplit
-    rw [hB, hC] at hsplit2
-    linarith only [hsplit, hsplit2]
   -- the volume-ratio transfers
   have hratio : ∀ {W : Set (Vec d)}, W ⊆ truncatedWindow x m (n - 2) →
       delta ^ d ≤ (volume W).toReal → 0 < (volume W).toReal →
@@ -290,7 +257,7 @@ theorem normalizedL2On_evenAffinePart_le_of_hessian_bound {m n : ℤ} {x : Vec d
       rw [slabLo_of_ne hj, slabHi_of_ne hj, windowLo_eq_of_ne hother hj,
         windowHi_eq_of_ne hother hj]
       linarith only []
-  linarith only [hhalf, hdom, hg1, hPtrans, hDtrans]
+  linarith only [hhalf, hslab, hPtrans, hDtrans]
 
 /-! ## 3. `(★)` -/
 

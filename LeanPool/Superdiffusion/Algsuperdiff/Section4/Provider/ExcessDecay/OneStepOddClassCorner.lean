@@ -139,10 +139,6 @@ theorem normalizedL2On_evenAffinePart_slab_le {m : ℤ} {x : Vec d} {face : Fin 
   have heP : MemLp (evenAffinePart x m face c' A') 2 (volume.restrict P) := by
     rw [evenAffinePart]
     exact memLp_affineEval_coordBox loP hiP _ _
-  have : IsFiniteMeasure (volume.restrict P) := by
-    refine ⟨?_⟩
-    rw [Measure.restrict_apply_univ]
-    exact lt_of_le_of_ne le_top (volume_coordBox_ne_top _ _)
   have hmp : MeasurePreserving (fun z : Vec d => z - v0) (volume.restrict P)
       (volume.restrict D) := by
     rw [← himg]
@@ -150,51 +146,18 @@ theorem normalizedL2On_evenAffinePart_slab_le {m : ℤ} {x : Vec d} {face : Fin 
       (measurableEmbedding_subRight v0) P
   have hftP : MemLp (fun y => f (y - v0)) 2 (volume.restrict P) :=
     hfD.comp_measurePreserving hmp
-  set g : Vec d → ℝ := fun y => 2 * |f y| + (|f (y - v0)| + 3 * (M * delta ^ 2))
-    with hgdef
-  have hgmem : MemLp g 2 (volume.restrict P) := by
-    rw [hgdef]
-    exact (hfP.abs.const_mul 2).add (hftP.abs.add (memLp_const _))
-  have hdom : normalizedL2On P (evenAffinePart x m face c' A')
-      ≤ normalizedL2On P g := by
-    refine normalizedL2On_mono_of_abs_le (measurableSet_coordBox _ _)
-      heP.integrable_sq hgmem.integrable_sq ?_
-    intro y hy
-    have hyd := hdepth y hy
-    have h := abs_evenAffinePart_le_pointwise_of_mem hVodd hdelta hM
-      (convex_coordBox loT hiT) hharmT hMT (hPT hy) (hrT y hy) (hpT y hy)
-      hyd.1 hyd.2
-    rw [hgdef]
-    change |evenAffinePart x m face c' A' y|
-        ≤ 2 * |f y| + (|f (y - v0)| + 3 * (M * delta ^ 2))
-    have habs : |f (y - v0)| = |V (y - v0) - affineEval (c' - vecDot A' x) A' (y - v0)| :=
-      rfl
-    have habs2 : |f y| = |V y - affineEval (c' - vecDot A' x) A' y| := rfl
-    rw [habs, habs2]
-    linarith only [h]
-  have hg1 : normalizedL2On P g
-      ≤ 2 * normalizedL2On P f + (normalizedL2On D f + 3 * (M * delta ^ 2)) := by
-    have hsplit : normalizedL2On P g
-        ≤ normalizedL2On P (fun y => 2 * |f y|)
-          + normalizedL2On P (fun y => |f (y - v0)| + 3 * (M * delta ^ 2)) := by
-      rw [hgdef]
-      exact normalizedL2On_add_le (hfP.abs.const_mul 2) (hftP.abs.add (memLp_const _))
-    have hsplit2 : normalizedL2On P (fun y => |f (y - v0)| + 3 * (M * delta ^ 2))
-        ≤ normalizedL2On P (fun y => |f (y - v0)|)
-          + normalizedL2On P (fun _ : Vec d => 3 * (M * delta ^ 2)) :=
-      normalizedL2On_add_le hftP.abs (memLp_const _)
-    have hA : normalizedL2On P (fun y => 2 * |f y|) = 2 * normalizedL2On P f := by
-      rw [normalizedL2On_const_mul, normalizedL2On_abs,
-        abs_of_nonneg (by norm_num : (0 : ℝ) ≤ 2)]
-    have hB : normalizedL2On P (fun y => |f (y - v0)|) = normalizedL2On D f := by
-      rw [normalizedL2On_abs, normalizedL2On_comp_sub_right, himg]
-    have hC : normalizedL2On P (fun _ : Vec d => 3 * (M * delta ^ 2))
-        = 3 * (M * delta ^ 2) := by
-      rw [normalizedL2On_const_of_toReal_pos hPpos, abs_of_nonneg (by positivity)]
-    rw [hA] at hsplit
-    rw [hB, hC] at hsplit2
-    linarith only [hsplit, hsplit2]
-  linarith only [hdom, hg1]
+  rw [← himg]
+  refine normalizedL2On_le_of_abs_le_translate (measurableSet_coordBox _ _)
+    hPpos (by norm_num) (by positivity) heP hfP hftP ?_
+  intro y hy
+  have hyd := hdepth y hy
+  have h := abs_evenAffinePart_le_pointwise_of_mem hVodd hdelta hM
+    (convex_coordBox loT hiT) hharmT hMT (hPT hy) (hrT y hy) (hpT y hy)
+    hyd.1 hyd.2
+  change |evenAffinePart x m face c' A' y|
+    ≤ 2 * |f y| + |f (y - v0)| + 3 * (M * delta ^ 2)
+  dsimp [f, v0]
+  linarith only [h]
 
 /-! ## 2. Transfer helpers -/
 

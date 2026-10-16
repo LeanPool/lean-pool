@@ -108,44 +108,13 @@ theorem abs_le_slab_of_pointwise {i : Fin d} {w : ℝ} {S : Set (Vec d)}
     (hpt : ∀ y ∈ S, |beta| ≤ 2 * |G y| + |G (y - w • (basisVec i : Vec d))| + Mw) :
     |beta| ≤ 2 * normalizedL2On S G
       + normalizedL2On ((fun z => z - w • (basisVec i : Vec d)) '' S) G + Mw := by
-  classical
   have : IsFiniteMeasure (volume.restrict S) := by
     refine ⟨?_⟩
     rw [Measure.restrict_apply_univ]
     exact lt_top_iff_ne_top.2 hStop
-  set v0 : Vec d := w • (basisVec i : Vec d) with hv0def
-  set g : Vec d → ℝ := fun y => 2 * |G y| + (|G (y - v0)| + Mw) with hgdef
-  have hgmem : MemLp g 2 (volume.restrict S) := by
-    rw [hgdef]
-    exact (hGS.abs.const_mul 2).add (hGpush.abs.add (memLp_const _))
-  have hconstmem : MemLp (fun _ : Vec d => beta) 2 (volume.restrict S) := memLp_const _
-  have hdom : normalizedL2On S (fun _ : Vec d => beta) ≤ normalizedL2On S g := by
-    refine normalizedL2On_mono_of_abs_le hSm hconstmem.integrable_sq hgmem.integrable_sq ?_
-    intro y hy
-    have h := hpt y hy
-    change |beta| ≤ 2 * |G y| + (|G (y - v0)| + Mw)
-    linarith only [h]
-  rw [normalizedL2On_const_of_toReal_pos hSpos] at hdom
-  have hsplit : normalizedL2On S g
-      ≤ normalizedL2On S (fun y => 2 * |G y|)
-        + normalizedL2On S (fun y => |G (y - v0)| + Mw) := by
-    rw [hgdef]
-    exact normalizedL2On_add_le (hGS.abs.const_mul 2) (hGpush.abs.add (memLp_const _))
-  have hsplit2 : normalizedL2On S (fun y => |G (y - v0)| + Mw)
-      ≤ normalizedL2On S (fun y => |G (y - v0)|)
-        + normalizedL2On S (fun _ : Vec d => Mw) :=
-    normalizedL2On_add_le hGpush.abs (memLp_const _)
-  have hA : normalizedL2On S (fun y => 2 * |G y|) = 2 * normalizedL2On S G := by
-    rw [normalizedL2On_const_mul, normalizedL2On_abs,
-      abs_of_nonneg (by norm_num : (0 : ℝ) ≤ 2)]
-  have hB : normalizedL2On S (fun y => |G (y - v0)|)
-      = normalizedL2On ((fun z => z - v0) '' S) G := by
-    rw [normalizedL2On_abs, normalizedL2On_comp_sub_right]
-  have hC : normalizedL2On S (fun _ : Vec d => Mw) = Mw := by
-    rw [normalizedL2On_const_of_toReal_pos hSpos, abs_of_nonneg hMw]
-  rw [hA] at hsplit
-  rw [hB, hC] at hsplit2
-  linarith only [hdom, hsplit, hsplit2]
+  have h := normalizedL2On_le_of_abs_le_translate hSm hSpos (by norm_num) hMw
+    (memLp_const beta) hGS hGpush hpt
+  rwa [normalizedL2On_const_of_toReal_pos hSpos] at h
 
 /-! ## 3. `(A)` -/
 
