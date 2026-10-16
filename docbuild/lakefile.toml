@@ -8,6 +8,7 @@ name = "lean-pool"
 path = "../"
 
 [[require]]
-scope = "leanprover"
 name = "doc-gen4"
-rev = "v4.35.0-rc3"
+git = "https://github.com/kim-em/doc-gen4"
+# Interproject linking, pinned to the Lean v4.35.0-rc3-compatible revision.
+rev = "9a591946b68fbb4cec5355d0c7a8187a0984c6ba"

@@ -1,0 +1,312 @@
+name: Daily documentation
+'on':
+  schedule:
+  - cron: 23 6 * * *
+  workflow_dispatch: {}
+concurrency:
+  group: daily-documentation-${{ github.ref }}
+  cancel-in-progress: false
+permissions:
+  contents: read
+  actions: write
+  pages: write
+  id-token: write
+jobs:
+  prepare:
+    runs-on: ubuntu-latest
+    outputs:
+      build_revision: ${{ steps.identity.outputs.revision }}
+    steps:
+    - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
+      with:
+        persist-credentials: false
+    - name: Identify compiled sources
+      id: identity
+      run: |
+        revision=$(PYTHONPATH=python python3 -m lean_pool.ci_cache revision)
+        echo "revision=$revision" >> "$GITHUB_OUTPUT"
+  exposition:
+    needs: prepare
+    runs-on: ubuntu-latest
+    name: Build exposition site
+    permissions:
+      contents: read
+      actions: write
+    steps:
+    - name: Checkout project
+      uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
+      with:
+        persist-credentials: false
+    - name: Restore Lean dependencies
+      id: dependency-cache
+      uses: actions/cache/restore@27d5ce7f107fe9357f9df03efb73ab90386fccae
+      with:
+        path: |
+          ~/.elan
+          .lake/packages
+        key: LeanDependencies-v1-${{ runner.os }}-${{ hashFiles('lean-toolchain', 'lake-manifest.json') }}
+    - name: Restore pool build
+      id: pool-build
+      uses: actions/cache/restore@27d5ce7f107fe9357f9df03efb73ab90386fccae
+      with:
+        path: .lake/build
+        key: LeanPoolBuild-v1-${{ runner.os }}-${{ hashFiles('lean-toolchain', 'lake-manifest.json', 'lakefile.toml')
+          }}-${{ needs.prepare.outputs.build_revision }}
+        restore-keys: |
+          LeanPoolBuild-v1-${{ runner.os }}-${{ hashFiles('lean-toolchain', 'lake-manifest.json', 'lakefile.toml') }}-
+    - name: Install Lean
+      uses: leanprover/lean-action@38fbc41a8c28c4cbaec22d7f7de508ec2e7c0dd9
+      with:
+        auto-config: false
+        use-github-cache: false
+        use-mathlib-cache: false
+    - name: Install Mathlib cache
+      run: |
+        set -euo pipefail
+        ~/.elan/bin/lake exe cache get
+        expected=$(jq -r '.packages[] | select(.name == "mathlib") | .rev' lake-manifest.json)
+        actual=$(git -C .lake/packages/mathlib rev-parse HEAD)
+        if [ "$actual" != "$expected" ]; then
+          echo "::error::Mathlib checkout $actual does not match lake-manifest.json ($expected)."
+          exit 1
+        fi
+    - name: Reuse matching Lean CI build
+      if: steps.pool-build.outputs.cache-hit != 'true'
+      env:
+        GH_TOKEN: ${{ github.token }}
+        BUILD_HEAD: ${{ github.event.pull_request.head.sha || github.sha }}
+        BUILD_EVENT: push
+      run: PYTHONPATH=python python3 -m lean_pool.ci_artifacts restore --head "$BUILD_HEAD" --event "$BUILD_EVENT"
+    - name: Build pool
+      run: ~/.elan/bin/lake build LeanPool
+    - name: Restore project extraction cache
+      id: extraction-cache
+      uses: actions/cache/restore@27d5ce7f107fe9357f9df03efb73ab90386fccae
+      with:
+        path: .lake/exposition-cache/v1
+        key: Exposition-v1-${{ runner.os }}-${{ hashFiles('lean-toolchain', 'lake-manifest.json', 'lakefile.toml',
+          'scripts/exposition/Extract.lean', 'scripts/exposition/extract-all.sh', 'python/lean_pool/exposition/extract.py',
+          'python/lean_pool/exposition/source_text.py') }}-${{ github.sha }}-${{ github.run_id }}-${{ github.run_attempt
+          }}
+        restore-keys: |
+          Exposition-v1-${{ runner.os }}-${{ hashFiles('lean-toolchain', 'lake-manifest.json', 'lakefile.toml', 'scripts/exposition/Extract.lean', 'scripts/exposition/extract-all.sh', 'python/lean_pool/exposition/extract.py', 'python/lean_pool/exposition/source_text.py') }}-
+    - name: Extract declarations
+      env:
+        LEAN_CMD: /home/runner/.elan/bin/lean
+        EXTRACT_JOBS: '2'
+      run: ~/.elan/bin/lake env bash scripts/exposition/extract-all.sh exposition-dump.jsonl exposition-commands.jsonl
+    - name: Save project extraction cache
+      id: extraction-cache-save
+      if: always() && steps.extraction-cache.outcome == 'success' && steps.extraction-cache.outputs.cache-hit !=
+        'true'
+      uses: actions/cache/save@27d5ce7f107fe9357f9df03efb73ab90386fccae
+      with:
+        path: .lake/exposition-cache/v1
+        key: ${{ steps.extraction-cache.outputs.cache-primary-key }}
+    - name: Upload extraction timings and logs
+      if: always()
+      uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+      with:
+        name: exposition-extraction-diagnostics
+        path: |
+          .lake/exposition-timings.json
+          .lake/exposition-cache/v1/**/extract.log
+          .lake/exposition-cache/v1/**/failed.log
+        include-hidden-files: true
+        retention-days: 7
+    - name: Install uv
+      uses: astral-sh/setup-uv@d0d8abe699bfb85fec6de9f7adb5ae17292296ff
+      with:
+        enable-cache: true
+    - name: Generate site
+      run: |
+        cd python
+        uv sync --locked
+        uv run python -m lean_pool.exposition \
+          --dump ../exposition-dump.jsonl \
+          --commands ../exposition-commands.jsonl \
+          --repo-root .. \
+          --out ../exposition-site \
+          --commit ${{ github.sha }}
+    - name: Upload exposition artifact
+      uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+      with:
+        name: exposition-site
+        path: exposition-site
+        if-no-files-found: error
+        retention-days: 3
+    timeout-minutes: 330
+  analysis_1:
+    needs:
+    - prepare
+    uses: ./.github/workflows/docs-build.yml
+    with:
+      phase: analysis
+      stage: '1'
+      build_revision: ${{ needs.prepare.outputs.build_revision }}
+  analysis_2:
+    needs:
+    - prepare
+    - analysis_1
+    uses: ./.github/workflows/docs-build.yml
+    with:
+      phase: analysis
+      stage: '2'
+      build_revision: ${{ needs.prepare.outputs.build_revision }}
+      previous_complete: ${{ needs.analysis_1.outputs.complete }}
+  analysis_3:
+    needs:
+    - prepare
+    - analysis_2
+    uses: ./.github/workflows/docs-build.yml
+    with:
+      phase: analysis
+      stage: '3'
+      build_revision: ${{ needs.prepare.outputs.build_revision }}
+      previous_complete: ${{ needs.analysis_2.outputs.complete }}
+  analysis_4:
+    needs:
+    - prepare
+    - analysis_3
+    uses: ./.github/workflows/docs-build.yml
+    with:
+      phase: analysis
+      stage: '4'
+      build_revision: ${{ needs.prepare.outputs.build_revision }}
+      previous_complete: ${{ needs.analysis_3.outputs.complete }}
+  analysis_complete:
+    needs: analysis_4
+    runs-on: ubuntu-latest
+    steps:
+    - name: Require complete analysis before rendering
+      env:
+        COMPLETE: ${{ needs.analysis_4.outputs.complete }}
+      run: |
+        if [ "$COMPLETE" != true ]; then
+          echo "::error::Documentation analysis remains incomplete; verified progress is saved for the next run."
+          exit 1
+        fi
+  build:
+    needs:
+    - prepare
+    - analysis_complete
+    uses: ./.github/workflows/docs-build.yml
+    with:
+      phase: render
+      stage: render
+      build_revision: ${{ needs.prepare.outputs.build_revision }}
+  deployment_freshness:
+    needs:
+    - exposition
+    - build
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    name: Check deployment freshness
+    outputs:
+      deploy: ${{ steps.check.outputs.deploy }}
+    steps:
+    - name: Compare with latest Documentation run
+      id: check
+      env:
+        GH_TOKEN: ${{ github.token }}
+      run: |
+        set -euo pipefail
+        latest_run=$(gh api --method GET \
+          "repos/${GITHUB_REPOSITORY}/actions/workflows/docs-publish.yml/runs" \
+          -f branch=main -F exclude_pull_requests=true -F per_page=1 \
+          --jq '.workflow_runs[0].run_number')
+        if ! [[ "$latest_run" =~ ^[0-9]+$ ]]; then
+          echo "::error::Could not determine the latest Documentation run on main."
+          exit 1
+        fi
+        if (( latest_run > GITHUB_RUN_NUMBER )); then
+          echo "deploy=false" >> "$GITHUB_OUTPUT"
+          echo "::notice::Skipping superseded Documentation run $GITHUB_RUN_NUMBER; main has run $latest_run."
+        else
+          echo "deploy=true" >> "$GITHUB_OUTPUT"
+        fi
+  deploy:
+    needs:
+    - exposition
+    - build
+    - deployment_freshness
+    if: needs.deployment_freshness.outputs.deploy == 'true'
+    runs-on: ubuntu-latest
+    name: Deploy documentation
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+    - name: Download documentation artifact
+      uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093
+      with:
+        name: documentation-site
+        path: site
+    - name: Download exposition artifact
+      uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093
+      with:
+        name: exposition-site
+        path: site/exposition
+    - name: Validate assembled Pages tree
+      run: |
+        set -euo pipefail
+        test -s site/index.html
+        test -s site/exposition/index.html
+        test -s site/exposition/decls/index.html
+        test -s site/exposition/assets/landing.js
+        test -s site/exposition/data/decls.json
+        jq -e --arg commit "$GITHUB_SHA" '
+          .commit == $commit
+          and (.projects | length > 0)
+          and (.totals.projects == (.projects | length))
+          and (.totals.decls > 0)
+        ' site/exposition/data/index.json > /dev/null
+        first_project=$(jq -r '.projects[0].slug' site/exposition/data/index.json)
+        test -s "site/exposition/p/${first_project}/index.html"
+        mkdir -p site/deployments
+        printf '%s\n' "$GITHUB_SHA" > "site/deployments/${GITHUB_SHA}.txt"
+        test "$(cat site/SOURCE_SHA)" = "$GITHUB_SHA"
+    - name: Configure Pages
+      uses: actions/configure-pages@983d7736d9b0ae728b81ab479565c72886d7745b
+    - name: Upload Pages artifact
+      uses: actions/upload-pages-artifact@7b1f4a764d45c48632c6b24a0339c27f5614fb0b
+      with:
+        path: site
+    - name: Recheck deployment freshness
+      id: final-freshness
+      env:
+        GH_TOKEN: ${{ github.token }}
+      run: |
+        set -euo pipefail
+        latest_run=$(gh api --method GET \
+          "repos/${GITHUB_REPOSITORY}/actions/workflows/docs-publish.yml/runs" \
+          -f branch=main -F exclude_pull_requests=true -F per_page=1 \
+          --jq '.workflow_runs[0].run_number')
+        if ! [[ "$latest_run" =~ ^[0-9]+$ ]]; then
+          echo "::error::Could not determine the latest Documentation run on main."
+          exit 1
+        fi
+        if (( latest_run > GITHUB_RUN_NUMBER )); then
+          echo "deploy=false" >> "$GITHUB_OUTPUT"
+          echo "::notice::Skipping superseded Documentation run $GITHUB_RUN_NUMBER; main has run $latest_run."
+        else
+          echo "deploy=true" >> "$GITHUB_OUTPUT"
+        fi
+    - name: Deploy Pages
+      id: deployment
+      if: steps.final-freshness.outputs.deploy == 'true'
+      uses: actions/deploy-pages@cd2ce8fcbc39b97be8ca5fce6e763baed58fa128
+    - name: Verify deployed site
+      if: steps.final-freshness.outputs.deploy == 'true'
+      env:
+        PAGE_URL: ${{ steps.deployment.outputs.page_url }}
+      run: |
+        curl --fail --silent --show-error \
+          --retry 30 --retry-delay 10 --retry-all-errors --retry-max-time 300 \
+          --output deployed-commit.txt \
+          "${PAGE_URL%/}/deployments/${GITHUB_SHA}.txt"
+        cmp "site/deployments/${GITHUB_SHA}.txt" deployed-commit.txt
+        curl --fail --silent --show-error \
+          --retry 30 --retry-delay 10 --retry-all-errors --retry-max-time 300 \
+          --output /dev/null \
+          "${PAGE_URL%/}/exposition/index.html"
