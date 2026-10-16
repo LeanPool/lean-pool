@@ -121,6 +121,31 @@ theorem volume_anchorWindow_le_coveringCube (n m : ℤ) (z c : Vec d) :
   rw [hlower, ← ENNReal.ofReal_mul (by positivity)]
   exact le_trans hupper (ENNReal.ofReal_le_ofReal hstep)
 
+/-- Normalized L² transport assuming containment of the covering cube in the window. -/
+theorem eLpNorm_coveringCube_atWindow {n m : ℤ} {x z : Vec d}
+    (hcov : (fun y => wellPlacedCentre x m (n + 2) + y) ''
+        openCubeSet (originCube d (n + 2)) ⊆
+      (((fun y => z + y) '' openCubeSet (originCube d (n + 3))) ∩
+        openCubeSet (originCube d m)))
+    (f : Vec d → E) :
+    eLpNorm f 2 (Support.normalizedVolumeMeasureOn
+        ((fun y => wellPlacedCentre x m (n + 2) + y) ''
+          openCubeSet (originCube d (n + 2)))) ≤
+      ENNReal.ofReal ((3 : ℝ) ^ d) *
+        eLpNorm f 2 (Support.normalizedVolumeMeasureOn
+          ((((fun y' => z + y') '' openCubeSet (originCube d (n + 3))) ∩
+            openCubeSet (originCube d m)))) := by
+  have hbase := eLpNorm_le_of_volume_le (K := ENNReal.ofReal ((9 : ℝ) ^ d))
+    hcov (by simp) (by simp)
+    (volume_anchorWindow_le_coveringCube n m z (wellPlacedCentre x m (n + 2))) f
+  have hhalf : (ENNReal.ofReal ((9 : ℝ) ^ d)) ^ (1 / 2 : ℝ) =
+      ENNReal.ofReal ((3 : ℝ) ^ d) := by
+    have h9 : (9 : ℝ) ^ d = ((3 : ℝ) ^ d) ^ (2 : ℕ) := by
+      rw [show (9 : ℝ) = 3 ^ (2 : ℕ) by norm_num, ← pow_mul, ← pow_mul, Nat.mul_comm]
+    rw [ENNReal.ofReal_rpow_of_pos (by positivity : (0 : ℝ) < (9 : ℝ) ^ d), h9,
+      ← Real.sqrt_eq_rpow, Real.sqrt_sq (by positivity)]
+  rwa [hhalf] at hbase
+
 /-- **The `L²` transport onto the anchor's window.**
 
 A normalized `L²` norm over the boundary covering cube is at most `3^d` times the
@@ -138,18 +163,8 @@ theorem eLpNorm_coveringCube_le_anchorWindow {n m : ℤ} {x z : Vec d}
         eLpNorm f 2 (Support.normalizedVolumeMeasureOn
           ((((fun y' => z + y') '' openCubeSet (originCube d (n + 3))) ∩
             openCubeSet (originCube d m)))) := by
-  have hbase := eLpNorm_le_of_volume_le (K := ENNReal.ofReal ((9 : ℝ) ^ d))
-    (image_add_wellPlacedCentre_subset_anchorWindow hnm hx hgeom) (by simp) (by simp)
-    (volume_anchorWindow_le_coveringCube n m z (wellPlacedCentre x m (n + 2))) f
-  have hhalf : (ENNReal.ofReal ((9 : ℝ) ^ d)) ^ (1 / 2 : ℝ) =
-      ENNReal.ofReal ((3 : ℝ) ^ d) := by
-    have h9 : (9 : ℝ) ^ d = ((3 : ℝ) ^ d) ^ (2 : ℕ) := by
-      rw [show (9 : ℝ) = 3 ^ (2 : ℕ) by norm_num, ← pow_mul, ← pow_mul, Nat.mul_comm]
-    rw [ENNReal.ofReal_rpow_of_pos (by positivity : (0 : ℝ) < (9 : ℝ) ^ d), h9,
-      ← Real.sqrt_eq_rpow, Real.sqrt_sq (by positivity)]
-  rwa [hhalf] at hbase
-
-/-! ## 3. The zero-trace localization onto the anchor's window -/
+  exact eLpNorm_coveringCube_atWindow
+    (image_add_wellPlacedCentre_subset_anchorWindow hnm hx hgeom) f
 
 end
 

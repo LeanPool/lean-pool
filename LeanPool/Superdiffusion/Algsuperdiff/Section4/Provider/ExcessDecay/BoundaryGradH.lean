@@ -65,6 +65,39 @@ theorem memLp_gagliardoKernel_neg (A : Set (Vec d)) (s : ℝ) {F : Vec d → E}
 
 /-! ## 2. The seminorm half of the `∇h` leg -/
 
+/-- The transported datum-gradient Besov budget under covering-cube containment. -/
+theorem besovVectorSeminormTwo_datumGrad_coveringCube_atWindow [NeZero d]
+    {n m : ℤ} {x z : Vec d} {s : ℝ} {H : Vec d → Vec d}
+    (hcov : (fun y => wellPlacedCentre x m (n + 2) + y) ''
+        openCubeSet (originCube d (n + 2)) ⊆
+      (((fun y => z + y) '' openCubeSet (originCube d (n + 3))) ∩
+        openCubeSet (originCube d m)))
+    (hs : 0 < s) (hs1 : s ≤ 1)
+    (hL2 : MemLp H 2
+      (Support.normalizedVolumeMeasureOn
+        ((fun y => wellPlacedCentre x m (n + 2) + y) ''
+          openCubeSet (originCube d (n + 2)))))
+    (hWcov : MemLp (Gagliardo.gagliardoKernel s 2 H) 2
+      (Support.normalizedGagliardoMeasureOn
+        ((fun y => wellPlacedCentre x m (n + 2) + y) ''
+          openCubeSet (originCube d (n + 2)))))
+    (hW : MemLp (Gagliardo.gagliardoKernel s 2 H) 2
+      (Support.normalizedGagliardoMeasureOn
+        ((((fun y' => z + y') '' openCubeSet (originCube d (n + 3))) ∩
+          openCubeSet (originCube d m))))) :
+    Ch03.scaleNormalizedPositiveBesovVectorSeminormTwo (originCube d (n + 2)) s
+        (fun y => H (y + wellPlacedCentre x m (n + 2))) ≤
+      besovGagliardoConstant d * Real.rpow (3 : ℝ) (s * ((n + 2 : ℤ) : ℝ)) *
+        (gagliardoWindowConst d *
+          (Support.normalizedGagliardoESeminormOn
+            ((((fun y' => z + y') '' openCubeSet (originCube d (n + 3))) ∩
+              openCubeSet (originCube d m))) s H).toReal) := by
+  have hbase := besovVectorSeminormTwo_coveringCube_atWindow
+    (g := fun y => -H y) hcov hs hs1 hL2.neg
+    (memLp_gagliardoKernel_neg _ s hWcov) (memLp_gagliardoKernel_neg _ s hW)
+  rw [normalizedGagliardoESeminormOn_neg] at hbase
+  simpa only [neg_neg] using hbase
+
 /-- **The transported boundary gradient's cube Besov seminorm, priced on the
 anchor window.** -/
 theorem besovVectorSeminormTwo_datumGrad_coveringCube_le_anchorWindow [NeZero d]
@@ -93,11 +126,8 @@ theorem besovVectorSeminormTwo_datumGrad_coveringCube_le_anchorWindow [NeZero d]
           (Support.normalizedGagliardoESeminormOn
             ((((fun y' => z + y') '' openCubeSet (originCube d (n + 3))) ∩
               openCubeSet (originCube d m))) s H).toReal) := by
-  have hbase := besovVectorSeminormTwo_coveringCube_le_anchorWindow
-    (g := fun y => -H y) hnm hx hgeom hs hs1 hL2.neg
-    (memLp_gagliardoKernel_neg _ s hWcov) (memLp_gagliardoKernel_neg _ s hW)
-  rw [normalizedGagliardoESeminormOn_neg] at hbase
-  simpa only [neg_neg] using hbase
+  exact besovVectorSeminormTwo_datumGrad_coveringCube_atWindow
+    (image_add_wellPlacedCentre_subset_anchorWindow hnm hx hgeom) hs hs1 hL2 hWcov hW
 
 /-! ## 3. The average half of the `∇h` leg -/
 
@@ -124,14 +154,13 @@ theorem sqrt_vecNormSq_le_sqrt_dim_mul_norm (v : Vec d) :
     _ = Real.sqrt (d : ℝ) * ‖v‖ := by
         rw [Real.sqrt_mul (Nat.cast_nonneg d), Real.sqrt_mul_self (norm_nonneg v)]
 
-/-- **The transported boundary gradient's cube average, priced on the anchor
-window.** -/
-theorem sqrt_vecNormSq_cubeAverageVec_coveringCube_le_anchorWindow {n m : ℤ}
-    {x z : Vec d} {H : Vec d → Vec d} (hnm : n + 2 ≤ m)
-    (hx : x ∈ openCubeSet (originCube d m))
-    (hgeom : (fun y => x + y) '' openCubeSet (originCube d n) ⊆
-      ((fun y => z + y) '' openCubeSet (originCube d (n + 1))) ∩
-        openCubeSet (originCube d m))
+/-- The transported gradient-average budget under covering-cube containment. -/
+theorem sqrt_vecNormSq_cubeAverageVec_coveringCube_atWindow {n m : ℤ}
+    {x z : Vec d} {H : Vec d → Vec d}
+    (hcov : (fun y => wellPlacedCentre x m (n + 2) + y) ''
+        openCubeSet (originCube d (n + 2)) ⊆
+      (((fun y => z + y) '' openCubeSet (originCube d (n + 3))) ∩
+        openCubeSet (originCube d m)))
     (hL2W : MemLp H 2
       (Support.normalizedVolumeMeasureOn
         ((((fun y' => z + y') '' openCubeSet (originCube d (n + 3))) ∩
@@ -144,13 +173,35 @@ theorem sqrt_vecNormSq_cubeAverageVec_coveringCube_le_anchorWindow {n m : ℤ}
             ((((fun y' => z + y') '' openCubeSet (originCube d (n + 3))) ∩
               openCubeSet (originCube d m))))).toReal := by
   classical
+  -- the hinge, and section 1's transport, taken before the abbreviations
+  have hsubcov : (fun y => wellPlacedCentre x m (n + 2) + y) ''
+      openCubeSet (originCube d (n + 2)) ⊆
+      ((((fun y' => z + y') '' openCubeSet (originCube d (n + 3))) ∩
+        openCubeSet (originCube d m))) := hcov
+  have hmove : (eLpNorm H 2 (Support.normalizedVolumeMeasureOn
+        ((fun y => wellPlacedCentre x m (n + 2) + y) ''
+          openCubeSet (originCube d (n + 2))))).toReal ≤
+      (3 : ℝ) ^ d * (eLpNorm H 2 (Support.normalizedVolumeMeasureOn
+        ((((fun y' => z + y') '' openCubeSet (originCube d (n + 3))) ∩
+          openCubeSet (originCube d m))))).toReal := by
+    have hbase := eLpNorm_coveringCube_atWindow hcov H
+    have hne : eLpNorm H 2 (Support.normalizedVolumeMeasureOn
+        ((((fun y' => z + y') '' openCubeSet (originCube d (n + 3))) ∩
+          openCubeSet (originCube d m)))) ≠ ⊤ := hL2W.eLpNorm_ne_top
+    have hRHSne : ENNReal.ofReal ((3 : ℝ) ^ d) *
+        eLpNorm H 2 (Support.normalizedVolumeMeasureOn
+          ((((fun y' => z + y') '' openCubeSet (originCube d (n + 3))) ∩
+            openCubeSet (originCube d m)))) ≠ ⊤ :=
+      ENNReal.mul_ne_top ENNReal.ofReal_ne_top hne
+    have hstep := ENNReal.toReal_mono hRHSne hbase
+    rwa [ENNReal.toReal_mul,
+      ENNReal.toReal_ofReal (by positivity : (0 : ℝ) ≤ (3 : ℝ) ^ d)] at hstep
   set c : Vec d := wellPlacedCentre x m (n + 2) with hc
   set cov : Set (Vec d) :=
-    (fun y => c + y) '' openCubeSet (originCube d (n + 2)) with hcov
+    (fun y => c + y) '' openCubeSet (originCube d (n + 2)) with hcovDef
   set W : Set (Vec d) :=
     (((fun y' => z + y') '' openCubeSet (originCube d (n + 3))) ∩
-      openCubeSet (originCube d m)) with hW
-  have hsubcov : cov ⊆ W := image_add_wellPlacedCentre_subset_anchorWindow hnm hx hgeom
+      openCubeSet (originCube d m)) with hWDef
   have hcovne : volume cov ≠ 0 :=
     volume_image_add_openCubeSet_ne_zero c (originCube d (n + 2))
   have hWne : volume W ≠ 0 := by
@@ -171,23 +222,13 @@ theorem sqrt_vecNormSq_cubeAverageVec_coveringCube_le_anchorWindow {n m : ℤ}
       (eLpNorm (fun y => H (y + c)) 2
         (normalizedCubeMeasure (originCube d (n + 2)))).toReal :=
     norm_cubeAverageVec_le_cubeLpNorm_two (originCube d (n + 2)) _ hL2cube
+  -- the frame move
   have hframe : eLpNorm (fun y => H (y + c)) 2
       (normalizedCubeMeasure (originCube d (n + 2))) =
       eLpNorm H 2 (Support.normalizedVolumeMeasureOn cov) := by
-    rw [hcov, eLpNorm_normalizedVolumeMeasureOn_image_add c
+    rw [hcovDef, eLpNorm_normalizedVolumeMeasureOn_image_add c
       (openCubeSet (originCube d (n + 2))) (by norm_num) (by norm_num),
       normalizedVolumeMeasureOn_openCubeSet]
-  have hmove : (eLpNorm H 2 (Support.normalizedVolumeMeasureOn cov)).toReal ≤
-      (3 : ℝ) ^ d * (eLpNorm H 2 (Support.normalizedVolumeMeasureOn W)).toReal := by
-    have hbase := eLpNorm_coveringCube_le_anchorWindow hnm hx hgeom H
-    have hne : eLpNorm H 2 (Support.normalizedVolumeMeasureOn W) ≠ ⊤ :=
-      hL2W.eLpNorm_ne_top
-    have hRHSne : ENNReal.ofReal ((3 : ℝ) ^ d) *
-        eLpNorm H 2 (Support.normalizedVolumeMeasureOn W) ≠ ⊤ :=
-      ENNReal.mul_ne_top ENNReal.ofReal_ne_top hne
-    have hstep := ENNReal.toReal_mono hRHSne hbase
-    rwa [ENNReal.toReal_mul,
-      ENNReal.toReal_ofReal (by positivity : (0 : ℝ) ≤ (3 : ℝ) ^ d)] at hstep
   have hsqrtd : (0 : ℝ) ≤ Real.sqrt (d : ℝ) := Real.sqrt_nonneg _
   calc Real.sqrt (vecNormSq (cubeAverageVec (originCube d (n + 2))
         (fun y => H (y + c))))
@@ -206,7 +247,27 @@ theorem sqrt_vecNormSq_cubeAverageVec_coveringCube_le_anchorWindow {n m : ℤ}
     _ = Real.sqrt (d : ℝ) * (3 : ℝ) ^ d *
           (eLpNorm H 2 (Support.normalizedVolumeMeasureOn W)).toReal := by ring
 
-/-! ## 4. The `σ` leg: the honest form and the `ν`-divided fork -/
+/-- **The transported boundary gradient's cube average, priced on the anchor
+window.** -/
+theorem sqrt_vecNormSq_cubeAverageVec_coveringCube_le_anchorWindow {n m : ℤ}
+    {x z : Vec d} {H : Vec d → Vec d} (hnm : n + 2 ≤ m)
+    (hx : x ∈ openCubeSet (originCube d m))
+    (hgeom : (fun y => x + y) '' openCubeSet (originCube d n) ⊆
+      ((fun y => z + y) '' openCubeSet (originCube d (n + 1))) ∩
+        openCubeSet (originCube d m))
+    (hL2W : MemLp H 2
+      (Support.normalizedVolumeMeasureOn
+        ((((fun y' => z + y') '' openCubeSet (originCube d (n + 3))) ∩
+          openCubeSet (originCube d m))))) :
+    Real.sqrt (vecNormSq (cubeAverageVec (originCube d (n + 2))
+        (fun y => H (y + wellPlacedCentre x m (n + 2))))) ≤
+      Real.sqrt (d : ℝ) * (3 : ℝ) ^ d *
+        (eLpNorm H 2
+          (Support.normalizedVolumeMeasureOn
+            ((((fun y' => z + y') '' openCubeSet (originCube d (n + 3))) ∩
+              openCubeSet (originCube d m))))).toReal := by
+  exact sqrt_vecNormSq_cubeAverageVec_coveringCube_atWindow
+    (image_add_wellPlacedCentre_subset_anchorWindow hnm hx hgeom) hL2W
 
 end
 

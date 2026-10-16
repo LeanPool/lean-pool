@@ -155,13 +155,56 @@ theorem cubeBesovNegativeVectorPartialSeminormTwo_const_smul (Q : TriadicCube d)
   exact sqrt_sum_sq_const_mul_eq (Finset.range (N + 1)) |c|
     (fun j => cubeBesovNegativeVectorDepthSeminorm Q s f j) (abs_nonneg c)
 
-/-! ## `L²` bookkeeping on the closed unit cube -/
+/-! ## `L²` bookkeeping on triadic cubes -/
 
 theorem isFiniteMeasure_volumeMeasureOn_cubeSet (Q : TriadicCube d) :
     IsFiniteMeasure (volumeMeasureOn (cubeSet Q)) := by
   let : Fact (MeasureTheory.volume (cubeSet Q) < ⊤) := ⟨volume_cubeSet_lt_top Q⟩
   change IsFiniteMeasure (MeasureTheory.volume.restrict (cubeSet Q))
   infer_instance
+
+/-! ## Shared finite-depth witness estimates -/
+
+/-- A scalar multiple of a sum has a uniform finite-depth budget whenever both
+summands have bounded partial seminorms and the stated full-seminorm budgets. -/
+theorem cubeBesovNegativeVectorPartialSeminormTwo_smul_add_le
+    (Q : TriadicCube d) (s c : ℝ) (f g : Vec d → Vec d)
+    (hfL2 : MemVectorL2 (cubeSet Q) f) (hgL2 : MemVectorL2 (cubeSet Q) g)
+    (hfBdd : BddAbove (Set.range fun N : ℕ =>
+      cubeBesovNegativeVectorPartialSeminormTwo Q s N f))
+    (hgBdd : BddAbove (Set.range fun N : ℕ =>
+      cubeBesovNegativeVectorPartialSeminormTwo Q s N g))
+    {A B : ℝ} (hf : cubeBesovNegativeVectorSeminormTwo Q s f ≤ A)
+    (hg : cubeBesovNegativeVectorSeminormTwo Q s g ≤ B) (N : ℕ) :
+    cubeBesovNegativeVectorPartialSeminormTwo Q s N (fun x => c • (f x + g x)) ≤
+      |c| * Real.sqrt 2 * (A + B) := by
+  have hfN : cubeBesovNegativeVectorPartialSeminormTwo Q s N f ≤ A :=
+    (le_csSup hfBdd ⟨N, rfl⟩).trans hf
+  have hgN : cubeBesovNegativeVectorPartialSeminormTwo Q s N g ≤ B :=
+    (le_csSup hgBdd ⟨N, rfl⟩).trans hg
+  rw [cubeBesovNegativeVectorPartialSeminormTwo_const_smul, mul_assoc]
+  apply mul_le_mul_of_nonneg_left _ (abs_nonneg c)
+  exact (cubeBesovNegativeVectorPartialSeminormTwo_add_le_sqrtTwo_mul_add
+    Q s f g hfL2 hgL2 N).trans
+      (mul_le_mul_of_nonneg_left (add_le_add hfN hgN) (Real.sqrt_nonneg 2))
+
+/-- Adding a constant field combines two uniform partial-seminorm budgets.
+The target may be any representative equal to the sum almost everywhere. -/
+theorem cubeBesovNegativeVectorSeminormTwo_add_const_le
+    (Q : TriadicCube d) (s : ℝ) (f h : Vec d → Vec d) (p : Vec d)
+    (hfL2 : MemVectorL2 (cubeSet Q) f)
+    (hae : h =ᵐ[normalizedCubeMeasure Q] fun x => f x + p)
+    {A B : ℝ} (hf : ∀ N, cubeBesovNegativeVectorPartialSeminormTwo Q s N f ≤ A)
+    (hp : ∀ N, cubeBesovNegativeVectorPartialSeminormTwo Q s N (fun _ => p) ≤ B) :
+    cubeBesovNegativeVectorSeminormTwo Q s h ≤ Real.sqrt 2 * (A + B) := by
+  have hpL2 : MemVectorL2 (cubeSet Q) (fun _ : Vec d => p) := by
+    let := isFiniteMeasure_volumeMeasureOn_cubeSet Q
+    exact memVectorL2_const p
+  refine cubeBesovNegativeVectorSeminormTwo_le_of_partialBound Q s h fun N => ?_
+  rw [cubeBesovNegativeVectorPartialSeminormTwo_congr_ae Q s N hae]
+  exact (cubeBesovNegativeVectorPartialSeminormTwo_add_le_sqrtTwo_mul_add
+    Q s f (fun _ => p) hfL2 hpL2 N).trans
+      (mul_le_mul_of_nonneg_left (add_le_add (hf N) (hp N)) (Real.sqrt_nonneg 2))
 
 /-! ## The two maximizer-gradient budgets -/
 
@@ -294,10 +337,6 @@ theorem cubeBesovNegativeVectorSeminormTwo_witnessGrad_le [NeZero d]
   set X : ℝ := Real.sqrt ((unitCubeLambda (3 / 8) (.finite 2) a)⁻¹) *
     (Real.sqrt (responseJ (cubeDomain (originCube d 0)) a p q) +
       Real.sqrt |vecDot p q|) with hX
-  have hXnn : 0 ≤ X := by
-    rw [hX]
-    exact mul_nonneg (Real.sqrt_nonneg _)
-      (add_nonneg (Real.sqrt_nonneg _) (Real.sqrt_nonneg _))
   set PD : ℝ := Ch03.poincareDiscountFactor (3 / 8) (.finite 2) with hPD
   have hPDnn : 0 ≤ PD := poincareDiscountFactor_sensitivity_pos.le
   -- the three summand budgets
@@ -341,72 +380,19 @@ theorem cubeBesovNegativeVectorSeminormTwo_witnessGrad_le [NeZero d]
     memVectorL2_cubeSet_grad vAdj.toH1
   have hL2v : MemVectorL2 (cubeSet (originCube d 0)) (fun x => v.toH1.grad x) :=
     memVectorL2_cubeSet_grad v.toH1
-  have hL2sum : MemVectorL2 (cubeSet (originCube d 0))
-      (fun x => vAdj.toH1.grad x + v.toH1.grad x) := hL2Adj.add hL2v
-  have hL2smul : MemVectorL2 (cubeSet (originCube d 0))
-      (fun x => (2 : ℝ)⁻¹ • (vAdj.toH1.grad x + v.toH1.grad x)) :=
-    hL2sum.const_smul ((2 : ℝ)⁻¹)
-  have hL2const : MemVectorL2 (cubeSet (originCube d 0)) (fun _ : Vec d => p) := by
-    let := isFiniteMeasure_volumeMeasureOn_cubeSet (originCube d 0)
-    exact memVectorL2_const p
-  -- the bounded-above data
   have hBddAdj := bddAbove_cubeBesovNegativeVectorPartialSeminormTwo_h1Grad
     (originCube d 0) vAdj.toH1
   have hBddv := bddAbove_cubeBesovNegativeVectorPartialSeminormTwo_h1Grad
     (originCube d 0) v.toH1
-  refine cubeBesovNegativeVectorSeminormTwo_le_of_partialBound _ _ _ ?_
-  intro N
-  rw [cubeBesovNegativeVectorPartialSeminormTwo_congr_ae (originCube d 0) (3 / 8) N hae]
-  have hadd := cubeBesovNegativeVectorPartialSeminormTwo_add_le_sqrtTwo_mul_add
-    (originCube d 0) (3 / 8)
-    (fun x => (2 : ℝ)⁻¹ • (vAdj.toH1.grad x + v.toH1.grad x))
-    (fun _ => p) hL2smul hL2const N
-  refine hadd.trans ?_
-  have hsmul := cubeBesovNegativeVectorPartialSeminormTwo_const_smul
-    (originCube d 0) (3 / 8) N ((2 : ℝ)⁻¹)
-    (fun x => vAdj.toH1.grad x + v.toH1.grad x)
-  have habs2 : |((2 : ℝ)⁻¹)| = (2 : ℝ)⁻¹ := by norm_num
-  rw [habs2] at hsmul
-  have hinner := cubeBesovNegativeVectorPartialSeminormTwo_add_le_sqrtTwo_mul_add
-    (originCube d 0) (3 / 8) (fun x => vAdj.toH1.grad x) (fun x => v.toH1.grad x)
-    hL2Adj hL2v N
-  have hAdjN : cubeBesovNegativeVectorPartialSeminormTwo (originCube d 0) (3 / 8) N
-      (fun x => vAdj.toH1.grad x) ≤ (2 * Real.sqrt 2 * PD) * X := by
-    refine le_trans ?_ hAdj
-    unfold cubeBesovNegativeVectorSeminormTwo
-    exact le_csSup hBddAdj ⟨N, rfl⟩
-  have hvN : cubeBesovNegativeVectorPartialSeminormTwo (originCube d 0) (3 / 8) N
-      (fun x => v.toH1.grad x) ≤ (2 * PD) * X := by
-    refine le_trans ?_ hPrimal
-    unfold cubeBesovNegativeVectorSeminormTwo
-    exact le_csSup hBddv ⟨N, rfl⟩
-  have hs2 : (0 : ℝ) ≤ Real.sqrt 2 := Real.sqrt_nonneg 2
-  have hleft :
-      cubeBesovNegativeVectorPartialSeminormTwo (originCube d 0) (3 / 8) N
-          (fun x => (2 : ℝ)⁻¹ • (vAdj.toH1.grad x + v.toH1.grad x)) ≤
-        2⁻¹ * Real.sqrt 2 * ((2 * Real.sqrt 2 * PD) * X + (2 * PD) * X) := by
-    rw [hsmul]
-    have := hinner.trans (mul_le_mul_of_nonneg_left (add_le_add hAdjN hvN) hs2)
-    linarith
-  have hright := hConst N
-  have hgoal :
-      Real.sqrt 2 *
-          (2⁻¹ * Real.sqrt 2 * ((2 * Real.sqrt 2 * PD) * X + (2 * PD) * X) +
-            (constantFieldBesovConst (3 / 8) * Real.sqrt 2) * X) =
-        gradSplitConst * X := by
-    unfold gradSplitConst
-    rw [hPD]; ring
-  calc
-    Real.sqrt 2 *
-        (cubeBesovNegativeVectorPartialSeminormTwo (originCube d 0) (3 / 8) N
-            (fun x => (2 : ℝ)⁻¹ • (vAdj.toH1.grad x + v.toH1.grad x)) +
-          cubeBesovNegativeVectorPartialSeminormTwo (originCube d 0) (3 / 8) N
-            (fun _ => p))
-        ≤ Real.sqrt 2 *
-            (2⁻¹ * Real.sqrt 2 * ((2 * Real.sqrt 2 * PD) * X + (2 * PD) * X) +
-              (constantFieldBesovConst (3 / 8) * Real.sqrt 2) * X) :=
-          mul_le_mul_of_nonneg_left (add_le_add hleft hright) hs2
-    _ = gradSplitConst * X := hgoal
+  have hleft := cubeBesovNegativeVectorPartialSeminormTwo_smul_add_le
+    (originCube d 0) (3 / 8) ((2 : ℝ)⁻¹) _ _ hL2Adj hL2v hBddAdj hBddv hAdj hPrimal
+  have hbound := cubeBesovNegativeVectorSeminormTwo_add_const_le
+    (originCube d 0) (3 / 8) _ _ p ((hL2Adj.add hL2v).const_smul ((2 : ℝ)⁻¹))
+    hae hleft hConst
+  refine hbound.trans_eq ?_
+  rw [abs_of_nonneg (by norm_num : (0 : ℝ) ≤ (2 : ℝ)⁻¹)]
+  unfold gradSplitConst
+  rw [hPD]; ring
 
 end
 

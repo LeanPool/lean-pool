@@ -172,11 +172,8 @@ theorem cubeBesovNegativeVectorSeminormTwo_fluxWitnessGrad_le [NeZero d]
           Real.sqrt (responseJ (cubeDomain Q) (F.coeffOn Q) 0 w)) := by
   classical
   set PD : ℝ := Ch03.poincareDiscountFactor (3 / 8) (.finite 2) with hPD
-  have hPDnn : 0 ≤ PD := poincareDiscountFactor_sensitivity_pos.le
   set X : ℝ := Real.sqrt ((Ch02.lambdaSq Q (3 / 8) (.finite 2) F)⁻¹) *
     Real.sqrt (responseJ (cubeDomain Q) (F.coeffOn Q) 0 w) with hX
-  have hXnn : 0 ≤ X := by
-    rw [hX]; exact mul_nonneg (Real.sqrt_nonneg _) (Real.sqrt_nonneg _)
   have hAdj : cubeBesovNegativeVectorSeminormTwo Q (3 / 8)
       (fun x => vAdj.toH1.grad x) ≤ (2 * PD) * X := by
     refine (cubeBesovNegativeVectorSeminormTwo_cubeAdjointGrad_flux_le Q F hvAdj).trans
@@ -199,39 +196,18 @@ theorem cubeBesovNegativeVectorSeminormTwo_fluxWitnessGrad_le [NeZero d]
     memVectorL2_cubeSet_grad vAdj.toH1
   have hL2v : MemVectorL2 (cubeSet Q) (fun x => v.toH1.grad x) :=
     memVectorL2_cubeSet_grad v.toH1
-  have hBddAdj := bddAbove_cubeBesovNegativeVectorPartialSeminormTwo_h1Grad Q vAdj.toH1
-  have hBddv := bddAbove_cubeBesovNegativeVectorPartialSeminormTwo_h1Grad Q v.toH1
-  refine cubeBesovNegativeVectorSeminormTwo_le_of_partialBound _ _ _ ?_
-  intro N
+  have hBddAdj := bddAbove_cubeBesovNegativeVectorPartialSeminormTwo_h1Grad
+    Q vAdj.toH1
+  have hBddv := bddAbove_cubeBesovNegativeVectorPartialSeminormTwo_h1Grad
+    Q v.toH1
+  have hleft := cubeBesovNegativeVectorPartialSeminormTwo_smul_add_le
+    Q (3 / 8) ((2 : ℝ)⁻¹) _ _ hL2Adj hL2v hBddAdj hBddv hAdj hPrimal
+  refine cubeBesovNegativeVectorSeminormTwo_le_of_partialBound _ _ _ fun N => ?_
   rw [cubeBesovNegativeVectorPartialSeminormTwo_congr_ae Q (3 / 8) N hae]
-  have hsmul := cubeBesovNegativeVectorPartialSeminormTwo_const_smul Q (3 / 8) N
-    ((2 : ℝ)⁻¹) (fun x => vAdj.toH1.grad x + v.toH1.grad x)
-  have habs2 : |((2 : ℝ)⁻¹)| = (2 : ℝ)⁻¹ := by norm_num
-  rw [habs2] at hsmul
-  have hinner := cubeBesovNegativeVectorPartialSeminormTwo_add_le_sqrtTwo_mul_add
-    Q (3 / 8) (fun x => vAdj.toH1.grad x) (fun x => v.toH1.grad x) hL2Adj hL2v N
-  have hAdjN : cubeBesovNegativeVectorPartialSeminormTwo Q (3 / 8) N
-      (fun x => vAdj.toH1.grad x) ≤ (2 * PD) * X := by
-    refine le_trans ?_ hAdj
-    unfold cubeBesovNegativeVectorSeminormTwo
-    exact le_csSup hBddAdj ⟨N, rfl⟩
-  have hvN : cubeBesovNegativeVectorPartialSeminormTwo Q (3 / 8) N
-      (fun x => v.toH1.grad x) ≤ (2 * PD) * X := by
-    refine le_trans ?_ hPrimal
-    unfold cubeBesovNegativeVectorSeminormTwo
-    exact le_csSup hBddv ⟨N, rfl⟩
-  have hs2 : (0 : ℝ) ≤ Real.sqrt 2 := Real.sqrt_nonneg 2
-  rw [hsmul]
-  have hstep := hinner.trans (mul_le_mul_of_nonneg_left (add_le_add hAdjN hvN) hs2)
-  have hgoal : (2 : ℝ)⁻¹ * (Real.sqrt 2 * ((2 * PD) * X + (2 * PD) * X)) =
-      fluxWitnessConst * X := by
-    unfold fluxWitnessConst
-    rw [hPD]; ring
-  calc (2 : ℝ)⁻¹ * cubeBesovNegativeVectorPartialSeminormTwo Q (3 / 8) N
-        (fun x => vAdj.toH1.grad x + v.toH1.grad x)
-      ≤ (2 : ℝ)⁻¹ * (Real.sqrt 2 * ((2 * PD) * X + (2 * PD) * X)) :=
-        mul_le_mul_of_nonneg_left hstep (by norm_num)
-    _ = fluxWitnessConst * X := hgoal
+  refine (hleft N).trans_eq ?_
+  rw [abs_of_nonneg (by norm_num : (0 : ℝ) ≤ (2 : ℝ)⁻¹)]
+  unfold fluxWitnessConst
+  rw [hPD]; ring
 
 end
 
