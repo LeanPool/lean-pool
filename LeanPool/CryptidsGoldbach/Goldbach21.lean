@@ -19,6 +19,8 @@ namespace ConjectureMachines.Goldbach21
 
 open Turing StateTransition
 
+variable {states : ℕ}
+
 /-- The original 25-state transition table used for the reference execution. -/
 abbrev refM : Machine 25 2 := Machines.goldbach25
 /-- The compressed 21-state transition table. -/
@@ -100,23 +102,23 @@ theorem candidate_iff_edited :
   (StateTransition.tr_eval_dom respects_embed rfl).symm
 
 /-- Execute exactly `n` transitions, returning `none` if a transition halts early. -/
-def nSteps (M : Machine 25 2) (n : ℕ) : Cfg 25 2 → Option (Cfg 25 2) :=
-  Nat.rec (motive := fun _ => Cfg 25 2 → Option (Cfg 25 2))
+def nSteps (M : Machine states 2) (n : ℕ) : Cfg states 2 → Option (Cfg states 2) :=
+  Nat.rec (motive := fun _ => Cfg states 2 → Option (Cfg states 2))
     (fun c => some c)
     (fun _ ih c => (step M c).bind ih)
     n
 
 @[simp]
-theorem nSteps_zero (M : Machine 25 2) (c : Cfg 25 2) :
+theorem nSteps_zero (M : Machine states 2) (c : Cfg states 2) :
     nSteps M 0 c = some c := rfl
 
 @[simp]
-theorem nSteps_succ (M : Machine 25 2) (n : ℕ) (c : Cfg 25 2) :
+theorem nSteps_succ (M : Machine states 2) (n : ℕ) (c : Cfg states 2) :
     nSteps M (n + 1) c = (step M c).bind (nSteps M n) := rfl
 
 attribute [eqns nSteps_zero nSteps_succ] nSteps
 
-theorem nSteps_reaches {M : Machine 25 2} {n : ℕ} {c c' : Cfg 25 2}
+theorem nSteps_reaches {M : Machine states 2} {n : ℕ} {c c' : Cfg states 2}
     (h : nSteps M n c = some c') : Reaches (step M) c c' := by
   induction n generalizing c with
   | zero =>
@@ -128,12 +130,12 @@ theorem nSteps_reaches {M : Machine 25 2} {n : ℕ} {c c' : Cfg 25 2}
     obtain ⟨c₁, hstep, hrest⟩ := h
     exact Relation.ReflTransGen.head hstep (ih hrest)
 
-theorem nSteps_eval_dom {M : Machine 25 2} {n : ℕ} {c c' : Cfg 25 2}
+theorem nSteps_eval_dom {M : Machine states 2} {n : ℕ} {c c' : Cfg states 2}
     (h : nSteps M n c = some c') :
     (eval (step M) c).Dom ↔ (eval (step M) c').Dom := by
   rw [StateTransition.reaches_eval (nSteps_reaches h)]
 
-theorem nSteps_add {M : Machine 25 2} (m n : ℕ) (c : Cfg 25 2) :
+theorem nSteps_add {M : Machine states 2} (m n : ℕ) (c : Cfg states 2) :
     nSteps M (m + n) c = (nSteps M m c).bind (nSteps M n) := by
   induction m generalizing c with
   | zero => simp [nSteps]
@@ -141,17 +143,17 @@ theorem nSteps_add {M : Machine 25 2} (m n : ℕ) (c : Cfg 25 2) :
     rw [Nat.succ_add, nSteps, nSteps]
     cases step M c <;> simp [ih]
 
-theorem nSteps_bind_eq {M : Machine 25 2} {m n : ℕ} {c c₁ c₂ : Cfg 25 2}
+theorem nSteps_bind_eq {M : Machine states 2} {m n : ℕ} {c c₁ c₂ : Cfg states 2}
     (h₁ : nSteps M m c = some c₁) (h₂ : nSteps M n c₁ = some c₂) :
     nSteps M (m + n) c = some c₂ := by
   rw [nSteps_add, h₁, Option.bind_some, h₂]
 
-theorem step_nSteps {M : Machine 25 2} {n : ℕ} {c c₁ c₂ : Cfg 25 2}
+theorem step_nSteps {M : Machine states 2} {n : ℕ} {c c₁ c₂ : Cfg states 2}
     (h₁ : step M c = some c₁) (h₂ : nSteps M n c₁ = some c₂) :
     nSteps M (n + 1) c = some c₂ := by
   rw [nSteps, h₁, Option.bind_some, h₂]
 
-theorem step_one {M : Machine 25 2} {c c₁ : Cfg 25 2} (h : step M c = some c₁) :
+theorem step_one {M : Machine states 2} {c c₁ : Cfg states 2} (h : step M c = some c₁) :
     nSteps M 1 c = some c₁ := by
   rw [nSteps, h]; rfl
 
@@ -188,32 +190,32 @@ theorem Tape.mk'_cons (a : Fin 2) (L R : ListBlank (Fin 2)) :
     Tape.mk' L (R.cons a) = ⟨a, L, R⟩ := by
   simp [Tape.mk']
 
-theorem step_right {M : Machine 25 2} {q q' : Fin 25} {a b : Fin 2}
+theorem step_right {M : Machine states 2} {q q' : Fin states} {a b : Fin 2}
     (h : M.transition q a = some (b, .right, q')) (L R : ListBlank (Fin 2)) :
     step M ⟨q, ⟨a, L, R⟩⟩ = some ⟨q', ⟨R.head, L.cons b, R.tail⟩⟩ := by
   simp [step, h, Tape.write, Tape.move]
 
-theorem step_right_cons {M : Machine 25 2} {q q' : Fin 25} {a b c : Fin 2}
+theorem step_right_cons {M : Machine states 2} {q q' : Fin states} {a b c : Fin 2}
     (h : M.transition q a = some (b, .right, q')) (L R : ListBlank (Fin 2)) :
     step M ⟨q, ⟨a, L, R.cons c⟩⟩ = some ⟨q', ⟨c, L.cons b, R⟩⟩ := by
   simp [step, h, Tape.write, Tape.move]
 
-theorem step_mkL_left {M : Machine 25 2} {q q' : Fin 25} {a b : Fin 2}
+theorem step_mkL_left {M : Machine states 2} {q q' : Fin states} {a b : Fin 2}
     (h : M.transition q a = some (b, .left, q')) (L R : ListBlank (Fin 2)) :
     step M ⟨q, Tape.mkL (L.cons a) R⟩ = some ⟨q', Tape.mkL L (R.cons b)⟩ := by
   simp [step, h, Tape.mkL, Tape.write, Tape.move]
 
-theorem step_mkL_right {M : Machine 25 2} {q q' : Fin 25} {a b : Fin 2}
+theorem step_mkL_right {M : Machine states 2} {q q' : Fin states} {a b : Fin 2}
     (h : M.transition q a = some (b, .right, q')) (L R : ListBlank (Fin 2)) :
     step M ⟨q, Tape.mkL (L.cons a) R⟩ = some ⟨q', Tape.mk' (L.cons b) R⟩ := by
   simp [step, h, Tape.mkL, Tape.mk', Tape.write, Tape.move]
 
-theorem step_mk'_right {M : Machine 25 2} {q q' : Fin 25} {a b : Fin 2}
+theorem step_mk'_right {M : Machine states 2} {q q' : Fin states} {a b : Fin 2}
     (h : M.transition q a = some (b, .right, q')) (L R : ListBlank (Fin 2)) :
     step M ⟨q, Tape.mk' L (R.cons a)⟩ = some ⟨q', Tape.mk' (L.cons b) R⟩ := by
   simp [step, h, Tape.mk', Tape.write, Tape.move]
 
-theorem step_mk'_left {M : Machine 25 2} {q q' : Fin 25} {a b : Fin 2}
+theorem step_mk'_left {M : Machine states 2} {q q' : Fin states} {a b : Fin 2}
     (h : M.transition q a = some (b, .left, q')) (L R : ListBlank (Fin 2)) :
     step M ⟨q, Tape.mk' L (R.cons a)⟩ = some ⟨q', Tape.mkL L (R.cons b)⟩ := by
   simp [step, h, Tape.mkL, Tape.mk', Tape.write, Tape.move]
@@ -228,7 +230,7 @@ theorem append_replicate_add (m n : ℕ) (b : Fin 2) (L : ListBlank (Fin 2)) :
       ListBlank.append (List.replicate (m + n) b) L := by
   rw [← ListBlank.append_assoc, ← List.replicate_add]
 
-theorem nSteps_mkL_left_scan {M : Machine 25 2} {q : Fin 25} {a b : Fin 2}
+theorem nSteps_mkL_left_scan {M : Machine states 2} {q : Fin states} {a b : Fin 2}
     (h : M.transition q a = some (b, .left, q)) (k : ℕ) (L R : ListBlank (Fin 2)) :
     nSteps M k ⟨q, Tape.mkL (ListBlank.append (List.replicate k a) L) R⟩ =
       some ⟨q, Tape.mkL L (ListBlank.append (List.replicate k b) R)⟩ := by
@@ -239,7 +241,7 @@ theorem nSteps_mkL_left_scan {M : Machine 25 2} {q : Fin 25} {a b : Fin 2}
     simp only [Option.bind_some]
     rw [ih (R.cons b), append_replicate_cons]
 
-theorem nSteps_mk'_right_scan {M : Machine 25 2} {q : Fin 25} {a b : Fin 2}
+theorem nSteps_mk'_right_scan {M : Machine states 2} {q : Fin states} {a b : Fin 2}
     (h : M.transition q a = some (b, .right, q)) (k : ℕ) (L R : ListBlank (Fin 2)) :
     nSteps M k ⟨q, Tape.mk' L (ListBlank.append (List.replicate k a) R)⟩ =
       some ⟨q, Tape.mk' (ListBlank.append (List.replicate k b) L) R⟩ := by
@@ -782,18 +784,24 @@ theorem cfg11_step_bsucc (is_right : Bool) (q A b m r' : ℕ) :
     A b m (LBase1 is_right q) (ListBlank.append (List.replicate r' 1) ((REnd1 is_right q).cons 0))
   exact ⟨_, by omega, h⟩
 
-theorem cfg11_drain (is_right : Bool) (q k r A B m : ℕ)
-    (hAB : A + B = k + 1) (hdvd : (k + 2) ∣ B + m + 2) :
+/-- Drain a unary counter loop from its zero-counter and successor-counter update rules. -/
+theorem drain_counters {M : Machine states 2}
+    (configuration : ℕ → ℕ → ℕ → ℕ → Cfg states 2)
+    (zero_step : ∀ A m r, ∃ s, 1 ≤ s ∧
+      nSteps M s (configuration A 0 m (r + 1)) = some (configuration 0 A (m + 1) r))
+    (successor_step : ∀ A b m r, ∃ s, 1 ≤ s ∧
+      nSteps M s (configuration A (b + 1) m (r + 1)) =
+        some (configuration (A + 1) b (m + 1) r))
+    (k r A B m : ℕ) (hAB : A + B = k + 1) (hdvd : (k + 2) ∣ B + m + 2) :
     ∃ A' B', A' + B' = k + 1 ∧ (k + 2) ∣ B' + (m + r) + 2 ∧
-      ∃ s, nSteps refM s (cfg11 is_right q A B m r) =
-        some (cfg11 is_right q A' B' (m + r) 0) := by
+      ∃ s, nSteps M s (configuration A B m r) = some (configuration A' B' (m + r) 0) := by
   induction r generalizing A B m with
   | zero =>
     exact ⟨A, B, hAB, by simpa using hdvd, 0, rfl⟩
   | succ r' ih =>
     cases B with
     | zero =>
-      obtain ⟨s₁, _, hs₁⟩ := cfg11_step_b0 is_right q A m r'
+      obtain ⟨s₁, _, hs₁⟩ := zero_step A m r'
       have hdvd' : (k + 2) ∣ A + (m + 1) + 2 := by
         have h_eq : A + (m + 1) + 2 = (0 + m + 2) + (k + 2) := by omega
         rw [h_eq]
@@ -803,7 +811,7 @@ theorem cfg11_drain (is_right : Bool) (q k r A B m : ℕ)
       rw [h_mr] at hdvd'' hs₂
       exact ⟨A', B', hAB', hdvd'', s₁ + s₂, nSteps_bind_eq hs₁ hs₂⟩
     | succ b =>
-      obtain ⟨s₁, _, hs₁⟩ := cfg11_step_bsucc is_right q A b m r'
+      obtain ⟨s₁, _, hs₁⟩ := successor_step A b m r'
       have hdvd' : (k + 2) ∣ b + (m + 1) + 2 := by
         have h_eq : b + (m + 1) + 2 = b + 1 + m + 2 := by omega
         rwa [h_eq]
@@ -811,6 +819,14 @@ theorem cfg11_drain (is_right : Bool) (q k r A B m : ℕ)
       have h_mr : m + 1 + r' = m + (r' + 1) := by omega
       rw [h_mr] at hdvd'' hs₂
       exact ⟨A', B', hAB', hdvd'', s₁ + s₂, nSteps_bind_eq hs₁ hs₂⟩
+
+theorem cfg11_drain (is_right : Bool) (q k r A B m : ℕ)
+    (hAB : A + B = k + 1) (hdvd : (k + 2) ∣ B + m + 2) :
+    ∃ A' B', A' + B' = k + 1 ∧ (k + 2) ∣ B' + (m + r) + 2 ∧
+      ∃ s, nSteps refM s (cfg11 is_right q A B m r) =
+        some (cfg11 is_right q A' B' (m + r) 0) := by
+  exact drain_counters (cfg11 is_right q) (cfg11_step_b0 is_right q)
+    (cfg11_step_bsucc is_right q) k r A B m hAB hdvd
 
 theorem cfg6_step_enter (is_right : Bool) (q k r' : ℕ) :
     ∃ s, 1 ≤ s ∧
@@ -1189,7 +1205,7 @@ theorem stage_halt (w : ℕ) (h : ¬ HasGoldbachPair (2 * w + 4)) :
   intro q' hq' ⟨hq1, hp1⟩
   exact h ⟨q' + 1, 2 * w + 3 - q', hq1, hp1, by omega⟩
 
-theorem reaches_imp_nSteps {M : Machine 25 2} {a b : Cfg 25 2}
+theorem reaches_imp_nSteps {M : Machine states 2} {a b : Cfg states 2}
     (h : Reaches (step M) a b) : ∃ k, nSteps M k a = some b := by
   induction h with
   | refl => exact ⟨0, rfl⟩
@@ -1197,7 +1213,7 @@ theorem reaches_imp_nSteps {M : Machine 25 2} {a b : Cfg 25 2}
     obtain ⟨k, hk⟩ := ih
     exact ⟨k + 1, nSteps_bind_eq hk (step_one hstep)⟩
 
-theorem nSteps_eq_none_of_step_none {M : Machine 25 2} {k : ℕ} (s : ℕ) {a b : Cfg 25 2}
+theorem nSteps_eq_none_of_step_none {M : Machine states 2} {k : ℕ} (s : ℕ) {a b : Cfg states 2}
     (hk : nSteps M k a = some b) (hnone : step M b = none) (hks : k < s) :
     nSteps M s a = none := by
   have hs : s = k + ((s - k - 1) + 1) := by omega
@@ -1336,30 +1352,8 @@ theorem cfg11E_drain (is_right : Bool) (q k r A B m : ℕ)
     ∃ A' B', A' + B' = k + 1 ∧ (k + 2) ∣ B' + (m + r) + 2 ∧
       ∃ s, nSteps edited s (cfg11E is_right q A B m r) =
         some (cfg11E is_right q A' B' (m + r) 0) := by
-  induction r generalizing A B m with
-  | zero =>
-    exact ⟨A, B, hAB, by simpa using hdvd, 0, rfl⟩
-  | succ r' ih =>
-    cases B with
-    | zero =>
-      obtain ⟨s₁, _, hs₁⟩ := cfg11E_step_b0 is_right q A m r'
-      have hdvd' : (k + 2) ∣ A + (m + 1) + 2 := by
-        have h_eq : A + (m + 1) + 2 = (0 + m + 2) + (k + 2) := by omega
-        rw [h_eq]
-        exact Nat.dvd_add_self_right.mpr hdvd
-      obtain ⟨A', B', hAB', hdvd'', s₂, hs₂⟩ := ih 0 A (m + 1) (by omega) hdvd'
-      have h_mr : m + 1 + r' = m + (r' + 1) := by omega
-      rw [h_mr] at hdvd'' hs₂
-      exact ⟨A', B', hAB', hdvd'', s₁ + s₂, nSteps_bind_eq hs₁ hs₂⟩
-    | succ b =>
-      obtain ⟨s₁, _, hs₁⟩ := cfg11E_step_bsucc is_right q A b m r'
-      have hdvd' : (k + 2) ∣ b + (m + 1) + 2 := by
-        have h_eq : b + (m + 1) + 2 = b + 1 + m + 2 := by omega
-        rwa [h_eq]
-      obtain ⟨A', B', hAB', hdvd'', s₂, hs₂⟩ := ih (A + 1) b (m + 1) (by omega) hdvd'
-      have h_mr : m + 1 + r' = m + (r' + 1) := by omega
-      rw [h_mr] at hdvd'' hs₂
-      exact ⟨A', B', hAB', hdvd'', s₁ + s₂, nSteps_bind_eq hs₁ hs₂⟩
+  exact drain_counters (cfg11E is_right q) (cfg11E_step_b0 is_right q)
+    (cfg11E_step_bsucc is_right q) k r A B m hAB hdvd
 
 theorem cfg6E_step_enter (is_right : Bool) (q k r' : ℕ) :
     ∃ s, 1 ≤ s ∧
