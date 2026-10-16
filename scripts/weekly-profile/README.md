@@ -15,6 +15,22 @@ source module, including files outside project entry imports. Sources, native
 module setups, raw recordings and exported summaries are audited before
 publication. Failed coverage leaves the previous public snapshot intact.
 
+Capture failures trigger one dependency repair per service attempt. The runner
+checks the failed files' native Lake setup, force-restores the pinned Mathlib
+cache when imported artifacts are missing (ordinary cache restoration can trust
+stale trace files), and incrementally builds remaining imports and failed files
+with Lake. It verifies the artifacts before retrying capture. Successful
+recordings and source/profiler pins are preserved, including if repair itself is
+interrupted. A repeated proof or profiler error fails the attempt rather than
+looping inside it; systemd retains the hourly retry policy.
+
+An independent hourly health check fails if the public recording is over ten
+days old or an unfinished local run has made no useful progress for 72 hours.
+It tracks the highest captured-file count per run/stage, so restarting a failed
+capture or rewriting its progress timestamp cannot hide a stall. The health
+service's failure and journal are available to host monitoring; the timer itself
+does not send notifications.
+
 All checkouts, recordings, temporary files and npm downloads live under
 `/data/lean-pool-profile`. Existing elan and user cache directories also resolve
 onto `/data`. The runner refuses to start with less than 30 GiB free and retains
@@ -36,11 +52,14 @@ From the LeanPool checkout:
 cx doctor
 install -d /data/lean-pool-profile/bin /data/lean-pool-profile/tmp
 install -m 755 scripts/weekly-profile/run.py /data/lean-pool-profile/bin/run.py
+install -m 755 scripts/weekly-profile/check-health.py /data/lean-pool-profile/bin/check-health.py
 install -m 644 scripts/weekly-profile/*.service scripts/weekly-profile/*.timer \
   ~/.config/systemd/user/
 systemctl --user daemon-reload
 systemctl --user enable lean-pool-source-profile-resume.service
 systemctl --user enable --now lean-pool-source-profile.timer
+systemctl --user enable --now lean-pool-source-profile-health.timer
+systemctl --user start --no-block lean-pool-source-profile-health.service
 systemctl --user start --no-block lean-pool-source-profile.service
 ```
 
@@ -56,6 +75,10 @@ systemctl --user status lean-pool-source-profile.service
 systemctl --user list-timers lean-pool-source-profile.timer
 journalctl --user -u lean-pool-source-profile.service -f
 cat /data/lean-pool-profile/active.json
+# Independent freshness/progress check, also suitable for external monitoring:
+python3 /data/lean-pool-profile/bin/check-health.py
+systemctl --user status lean-pool-source-profile-health.service
+journalctl --user -u lean-pool-source-profile-health.service -n 20
 # Once capture starts, the current recording also has progress.json and errors.json.
 systemctl --user start --no-block lean-pool-source-profile.service
 ```

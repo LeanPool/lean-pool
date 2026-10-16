@@ -241,6 +241,98 @@ def checked_run_state(root: Path) -> dict:
     return run_state(root)
 
 
+def failed_capture_sources(recording: Path) -> list[str]:
+    """Recover only source paths belonging to the pinned recording inventory."""
+    errors = recording / "errors.json"
+    if not errors.exists():
+        return []
+    inventory = read_json(recording / "inventory.json")
+    sources = {
+        entry["path"] for project in inventory["projects"] for entry in project["files"]
+    }
+    failed = set()
+    for error in read_json(errors):
+        if error["stage"] != "capture":
+            continue
+        source = error["path"]
+        if source not in sources or ".." in Path(source).parts:
+            raise RuntimeError(f"Capture failure is outside the inventory: {source}")
+        if not source.startswith("LeanPool/") or not source.endswith(".lean"):
+            raise RuntimeError(f"Invalid capture source: {source}")
+        failed.add(source)
+    return sorted(failed)
+
+
+def missing_capture_imports(repository: Path, sources: list[str]) -> set[str]:
+    """Check every artifact Lake resolved, including server, private and IR files."""
+    missing = set()
+    for source in sources:
+        setup = repository / ".lake/build/ir" / Path(source).with_suffix(".setup.json")
+        if not setup.exists():
+            continue
+        for module, groups in read_json(setup)["importArts"].items():
+            if any(
+                not (repository / artifact).is_file()
+                for group in groups
+                for artifact in group
+            ):
+                missing.add(module)
+    return missing
+
+
+def build_capture_modules(repository: Path, modules: set[str]) -> None:
+    """Let Lake repair the dependency graph instead of trusting profiler markers."""
+    lake = os.environ.get("LAKE", "/data/.elan/bin/lake")
+    targets = [f"+{module}:olean" for module in sorted(modules)]
+    for offset in range(0, len(targets), 128):
+        command(lake, "build", *targets[offset : offset + 128], directory=repository)
+
+
+def repair_capture(root: Path, recording: Path) -> bool:
+    """Repair failed files without changing pins or discarding successful captures."""
+    sources = failed_capture_sources(recording)
+    if not sources:
+        return False
+    require_profile_space(root, "capture")
+    repository = root / "repository"
+    missing = missing_capture_imports(repository, sources)
+    LOGGER.warning(
+        "Repairing %d failed captures (%d missing imports).", len(sources), len(missing)
+    )
+    if missing:
+        lake = os.environ.get("LAKE", "/data/.elan/bin/lake")
+        # Ordinary `cache get` trusts trace files even if an artifact was removed.
+        command(lake, "exe", "cache", "get!", directory=repository)
+        require_profile_space(root, "capture")
+        build_capture_modules(repository, missing_capture_imports(repository, sources))
+    modules = {source.removesuffix(".lean").replace("/", ".") for source in sources}
+    build_capture_modules(repository, modules)
+    remaining = missing_capture_imports(repository, sources)
+    if remaining:
+        raise RuntimeError(
+            f"Capture imports remain missing after repair: {sorted(remaining)}"
+        )
+    return True
+
+
+def capture_with_recovery(root: Path, run: Path) -> None:
+    """Allow one dependency repair per attempt, including after an interrupted retry."""
+    recording = run / "recording"
+    repaired = repair_capture(root, recording)
+    arguments = (
+        "node",
+        "scripts/capture-whole-pool.cjs",
+        str(root / "repository"),
+        str(recording),
+    )
+    try:
+        command(*arguments, directory=root / "profiler")
+    except subprocess.CalledProcessError:
+        if repaired or not repair_capture(root, recording):
+            raise
+        command(*arguments, directory=root / "profiler")
+
+
 def execute_profile_stage(root: Path, state: dict) -> None:
     """Run one nonpublication stage after its disk-space admission."""
     phase = state["phase"]
@@ -253,13 +345,7 @@ def execute_profile_stage(root: Path, state: dict) -> None:
         command("npm", "run", "build", directory=profiler)
         command(lake, "exe", "cache", "get", directory=repository)
     elif phase == "capture":
-        command(
-            "node",
-            "scripts/capture-whole-pool.cjs",
-            str(repository),
-            str(run / "recording"),
-            directory=profiler,
-        )
+        capture_with_recovery(root, run)
     elif phase == "export":
         command(
             "python3",

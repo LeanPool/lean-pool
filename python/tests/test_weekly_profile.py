@@ -4,6 +4,7 @@ import importlib.util
 import json
 import os
 import subprocess
+from datetime import UTC, datetime, timedelta
 from functools import partial
 from pathlib import Path
 from types import SimpleNamespace
@@ -14,6 +15,11 @@ SCRIPT = Path(__file__).resolve().parents[2] / "scripts/weekly-profile/run.py"
 SPECIFICATION = importlib.util.spec_from_file_location("weekly_profile", SCRIPT)
 weekly_profile = importlib.util.module_from_spec(SPECIFICATION)
 SPECIFICATION.loader.exec_module(weekly_profile)
+HEALTH_SPECIFICATION = importlib.util.spec_from_file_location(
+    "profile_health", SCRIPT.with_name("check-health.py")
+)
+profile_health = importlib.util.module_from_spec(HEALTH_SPECIFICATION)
+HEALTH_SPECIFICATION.loader.exec_module(profile_health)
 
 
 def test_failed_capture_keeps_pinned_state_and_cannot_publish(monkeypatch, tmp_path):
@@ -616,3 +622,217 @@ def test_low_disk_publish_keeps_pinned_checkout_guard(monkeypatch, completion_ru
     with pytest.raises(RuntimeError, match="pinned repository"):
         weekly_profile.checked_run_state(root)
     assert weekly_profile.read_json(root / "active.json") == state
+
+
+@pytest.fixture
+def damaged_capture(tmp_path):
+    """Keep a successful recording beside a failed file with missing imports."""
+    run = tmp_path / "runs/test"
+    recording = run / "recording"
+    recording.mkdir(parents=True)
+    source = "LeanPool/Example/Failed.lean"
+    weekly_profile.write_json(
+        recording / "inventory.json",
+        {"projects": [{"files": [{"path": source}]}]},
+    )
+    weekly_profile.write_json(
+        recording / "errors.json", [{"stage": "capture", "path": source}]
+    )
+    artifacts = tmp_path / "repository/.lake/packages/mathlib/.lake/build/lib/lean"
+    artifacts.mkdir(parents=True)
+    setup = tmp_path / "repository/.lake/build/ir/LeanPool/Example/Failed.setup.json"
+    setup.parent.mkdir(parents=True)
+    successful = recording / "retained.leanprofile.json"
+    successful.write_bytes(b"expensive successful capture")
+    return {
+        "root": tmp_path,
+        "run": run,
+        "recording": recording,
+        "setup": setup,
+        "artifacts": artifacts,
+        "successful": successful,
+    }
+
+
+@pytest.mark.parametrize("suffix", [".olean", ".olean.server", ".olean.private", ".ir"])
+def test_capture_restores_missing_artifacts_despite_existing_trace(
+    monkeypatch, damaged_capture, suffix
+):
+    """A trace and profiler marker cannot hide a removed import artifact."""
+    damaged = damaged_capture
+    missing = damaged["artifacts"] / f"Dependency{suffix}"
+    missing.with_suffix(".trace").write_text("cache considers this decompressed")
+    weekly_profile.write_json(
+        damaged["setup"], {"importArts": {"Mathlib.Dependency": [[str(missing)]]}}
+    )
+    calls = []
+
+    def command(*arguments, directory, capture=False):
+        calls.append(arguments)
+        if arguments[1:] == ("exe", "cache", "get!"):
+            missing.write_bytes(b"restored")
+        if arguments[0] == "node":
+            assert missing.is_file()
+            assert any("+LeanPool.Example.Failed:olean" in call for call in calls)
+        return ""
+
+    monkeypatch.setattr(weekly_profile, "command", command)
+    weekly_profile.capture_with_recovery(damaged["root"], damaged["run"])
+    assert len(calls) == 3
+    assert calls[-1][0] == "node"
+    assert damaged["successful"].read_bytes() == b"expensive successful capture"
+
+
+def test_capture_builds_dependencies_outside_mathlib_cache(
+    monkeypatch, damaged_capture
+):
+    """A dependency absent from the cache is built explicitly before capture."""
+    damaged = damaged_capture
+    missing = damaged["artifacts"] / "Extension.olean"
+    weekly_profile.write_json(
+        damaged["setup"], {"importArts": {"OtherPackage.Extension": [[str(missing)]]}}
+    )
+    calls = []
+
+    def command(*arguments, directory, capture=False):
+        calls.append(arguments)
+        if "+OtherPackage.Extension:olean" in arguments:
+            missing.write_bytes(b"built from pinned source")
+        if arguments[0] == "node":
+            assert missing.exists()
+        return ""
+
+    monkeypatch.setattr(weekly_profile, "command", command)
+    weekly_profile.capture_with_recovery(damaged["root"], damaged["run"])
+    assert len(calls) == 4
+
+
+def test_new_capture_failure_repairs_once_and_reuses_recording(
+    monkeypatch, damaged_capture
+):
+    """Recover in the same invocation, but never loop on a deterministic failure."""
+    damaged = damaged_capture
+    errors = damaged["recording"] / "errors.json"
+    saved_errors = errors.read_text()
+    errors.unlink()
+    calls = []
+
+    def command(*arguments, directory, capture=False):
+        calls.append(arguments)
+        if arguments[0] == "node":
+            errors.write_text(saved_errors)
+            raise subprocess.CalledProcessError(1, arguments)
+        return ""
+
+    monkeypatch.setattr(weekly_profile, "command", command)
+    with pytest.raises(subprocess.CalledProcessError):
+        weekly_profile.capture_with_recovery(damaged["root"], damaged["run"])
+    assert [call[0] for call in calls] == ["node", "/data/.elan/bin/lake", "node"]
+    assert calls[0] == calls[-1]
+    assert damaged["successful"].exists()
+
+
+def test_interrupted_dependency_repair_resumes_without_losing_captures(
+    monkeypatch, damaged_capture
+):
+    """A failed cache restore stays retryable without erasing recorded proofs."""
+    damaged = damaged_capture
+    missing = damaged["artifacts"] / "Dependency.olean"
+    weekly_profile.write_json(
+        damaged["setup"], {"importArts": {"Mathlib.Dependency": [[str(missing)]]}}
+    )
+    restores = 0
+    captures = []
+
+    def command(*arguments, directory, capture=False):
+        nonlocal restores
+        if arguments[1:] == ("exe", "cache", "get!"):
+            restores += 1
+            if restores == 1:
+                raise subprocess.CalledProcessError(1, arguments)
+            missing.write_bytes(b"restored on retry")
+        if arguments[0] == "node":
+            captures.append(arguments)
+        return ""
+
+    monkeypatch.setattr(weekly_profile, "command", command)
+    with pytest.raises(subprocess.CalledProcessError):
+        weekly_profile.capture_with_recovery(damaged["root"], damaged["run"])
+    assert captures == []
+    weekly_profile.capture_with_recovery(damaged["root"], damaged["run"])
+    assert restores == 2
+    assert len(captures) == 1
+    assert damaged["successful"].read_bytes() == b"expensive successful capture"
+
+
+def test_dependency_repair_verifies_artifacts_after_successful_build(
+    monkeypatch, damaged_capture
+):
+    """A stale build trace returning success must not bypass the artifact check."""
+    damaged = damaged_capture
+    missing = damaged["artifacts"] / "Dependency.olean"
+    weekly_profile.write_json(
+        damaged["setup"], {"importArts": {"Mathlib.Dependency": [[str(missing)]]}}
+    )
+    calls = []
+    monkeypatch.setattr(
+        weekly_profile, "command", lambda *args, **kwargs: calls.append(args)
+    )
+    with pytest.raises(RuntimeError, match="remain missing"):
+        weekly_profile.capture_with_recovery(damaged["root"], damaged["run"])
+    assert all(call[0] != "node" for call in calls)
+
+
+def test_repair_rejects_failure_outside_inventory(damaged_capture):
+    """Malformed failure records cannot select arbitrary files for rebuilding."""
+    recording = damaged_capture["recording"]
+    weekly_profile.write_json(
+        recording / "errors.json", [{"stage": "capture", "path": "../../other.lean"}]
+    )
+    with pytest.raises(RuntimeError, match="outside the inventory"):
+        weekly_profile.repair_capture(damaged_capture["root"], recording)
+
+
+def test_hourly_retry_activity_does_not_reset_progress_health(tmp_path):
+    """Fresh heartbeat timestamps with unchanged success counts are still stuck."""
+    now = datetime(2026, 10, 15, tzinfo=UTC)
+    weekly_profile.write_json(
+        tmp_path / "active.json", {"runId": "test", "phase": "capture"}
+    )
+    progress = tmp_path / "runs/test/recording/progress.json"
+    progress.parent.mkdir(parents=True)
+    weekly_profile.write_json(
+        progress, {"successful": 25409, "updatedAt": now.isoformat()}
+    )
+    profile_health.check_progress(tmp_path, now)
+    later = now + timedelta(hours=73)
+    weekly_profile.write_json(progress, {"successful": 0})
+    with pytest.raises(RuntimeError, match="No useful profiling progress"):
+        profile_health.check_progress(tmp_path, later)
+    weekly_profile.write_json(
+        progress, {"successful": 25409, "updatedAt": later.isoformat()}
+    )
+    with pytest.raises(RuntimeError, match="No useful profiling progress"):
+        profile_health.check_progress(tmp_path, later)
+    weekly_profile.write_json(progress, {"successful": 25410})
+    profile_health.check_progress(tmp_path, later)
+
+
+@pytest.mark.parametrize(
+    "age,healthy", [(timedelta(days=9), True), (timedelta(days=11), False)]
+)
+def test_health_checks_actual_publication_freshness(
+    monkeypatch, tmp_path, age, healthy
+):
+    """A responsive website serving an old snapshot must report unhealthy."""
+    now = datetime(2026, 10, 15, tzinfo=UTC)
+    manifest = tmp_path / "manifest.json"
+    weekly_profile.write_json(manifest, {"completedAt": (now - age).isoformat()})
+    monkeypatch.setattr(
+        profile_health, "urlopen", lambda *args, **kwargs: manifest.open()
+    )
+    if healthy:
+        profile_health.check_health(tmp_path, now)
+    else:
+        with pytest.raises(RuntimeError, match="profile is stale"):
+            profile_health.check_health(tmp_path, now)

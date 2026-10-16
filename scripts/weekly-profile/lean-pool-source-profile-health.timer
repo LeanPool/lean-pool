@@ -1,0 +1,10 @@
+[Unit]
+Description=Hourly LeanPool source profile health check
+
+[Timer]
+OnCalendar=*-*-* *:17:00 UTC
+Persistent=true
+Unit=lean-pool-source-profile-health.service
+
+[Install]
+WantedBy=timers.target
