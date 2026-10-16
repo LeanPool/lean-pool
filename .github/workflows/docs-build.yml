@@ -1,0 +1,158 @@
+name: Documentation build stage
+'on':
+  workflow_call:
+    inputs:
+      phase:
+        required: true
+        type: string
+      stage:
+        required: true
+        type: string
+      build_revision:
+        required: true
+        type: string
+      previous_complete:
+        type: string
+        default: 'false'
+    outputs:
+      complete:
+        value: ${{ jobs.receipt.outputs.complete }}
+permissions:
+  contents: read
+  actions: write
+env:
+  DOCGEN_LOCAL_MODULE_ROOTS: LeanPool
+  DOCGEN_DEPS_DOCS_URL: https://leanprover-community.github.io/mathlib4_docs
+  DOCGEN_DEPS_DOCS_URLS: TauCeti=https://taucetiproject.github.io/TauCeti/docs
+jobs:
+  build:
+    name: Documentation ${{ inputs.phase }} ${{ inputs.stage }}
+    if: inputs.phase == 'render' || inputs.previous_complete != 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 330
+    outputs:
+      complete: ${{ steps.analysis.outputs.complete }}
+    steps:
+    - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
+      with:
+        persist-credentials: false
+    - name: Restore Lean dependencies
+      id: dependency-cache
+      uses: actions/cache/restore@27d5ce7f107fe9357f9df03efb73ab90386fccae
+      with:
+        path: |
+          ~/.elan
+          .lake/packages
+        key: LeanDependencies-v1-${{ runner.os }}-${{ hashFiles('lean-toolchain', 'lake-manifest.json') }}
+    - name: Restore pool build
+      id: pool-build
+      uses: actions/cache/restore@27d5ce7f107fe9357f9df03efb73ab90386fccae
+      with:
+        path: .lake/build
+        key: LeanPoolBuild-v1-${{ runner.os }}-${{ hashFiles('lean-toolchain', 'lake-manifest.json', 'lakefile.toml')
+          }}-${{ inputs.build_revision }}
+        restore-keys: |
+          LeanPoolBuild-v1-${{ runner.os }}-${{ hashFiles('lean-toolchain', 'lake-manifest.json', 'lakefile.toml') }}-
+    - name: Restore documentation checkpoint
+      id: docs-cache
+      uses: actions/cache/restore@27d5ce7f107fe9357f9df03efb73ab90386fccae
+      with:
+        path: |-
+          docbuild/.lake/build
+          .lake/packages/doc-gen4
+          .lake/packages/leansqlite
+          .lake/packages/UnicodeBasic
+          .lake/packages/BibtexQuery
+          .lake/packages/MD4Lean
+        key: DocsState-v1-${{ runner.os }}-${{ hashFiles('lean-toolchain', 'lakefile.toml', 'lake-manifest.json',
+          'docbuild/lakefile.toml', 'docbuild/lake-manifest.json') }}-${{ github.run_id }}-${{ github.run_attempt
+          }}-${{ inputs.stage }}
+        restore-keys: |
+          DocsState-v1-${{ runner.os }}-${{ hashFiles('lean-toolchain', 'lakefile.toml', 'lake-manifest.json', 'docbuild/lakefile.toml', 'docbuild/lake-manifest.json') }}-
+    - name: Install Lean
+      uses: leanprover/lean-action@38fbc41a8c28c4cbaec22d7f7de508ec2e7c0dd9
+      with:
+        auto-config: false
+        use-github-cache: false
+        use-mathlib-cache: false
+    - name: Install Mathlib cache
+      run: |
+        set -euo pipefail
+        ~/.elan/bin/lake exe cache get
+        expected=$(jq -r '.packages[] | select(.name == "mathlib") | .rev' lake-manifest.json)
+        actual=$(git -C .lake/packages/mathlib rev-parse HEAD)
+        if [ "$actual" != "$expected" ]; then
+          echo "::error::Mathlib checkout $actual does not match lake-manifest.json ($expected)."
+          exit 1
+        fi
+    - name: Reuse matching Lean CI build
+      if: steps.pool-build.outputs.cache-hit != 'true'
+      env:
+        GH_TOKEN: ${{ github.token }}
+        BUILD_HEAD: ${{ github.event.pull_request.head.sha || github.sha }}
+        BUILD_EVENT: push
+      run: PYTHONPATH=python python3 -m lean_pool.ci_artifacts restore --head "$BUILD_HEAD" --event "$BUILD_EVENT"
+    - name: Verify documentation workspace
+      run: PYTHONPATH=python python3 -m lean_pool.documentation prepare
+    - name: Verify pinned doc-gen compatibility
+      run: cd docbuild && ~/.elan/bin/lake build doc-gen4
+    - name: Analyze a bounded batch
+      id: analysis
+      if: inputs.phase == 'analysis'
+      run: PYTHONPATH=python python3 -m lean_pool.documentation batch --seconds 5400 --lake /home/runner/.elan/bin/lake
+    - name: Save completed analysis batches
+      if: inputs.phase == 'analysis'
+      uses: actions/cache/save@27d5ce7f107fe9357f9df03efb73ab90386fccae
+      with:
+        path: |-
+          docbuild/.lake/build
+          .lake/packages/doc-gen4
+          .lake/packages/leansqlite
+          .lake/packages/UnicodeBasic
+          .lake/packages/BibtexQuery
+          .lake/packages/MD4Lean
+        key: ${{ steps.docs-cache.outputs.cache-primary-key }}
+    - name: Render and validate the complete local API
+      if: inputs.phase == 'render'
+      run: PYTHONPATH=python python3 -m lean_pool.documentation render --lake /home/runner/.elan/bin/lake
+    - name: Upload documentation artifact
+      if: inputs.phase == 'render'
+      uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+      with:
+        name: documentation-site
+        path: docbuild/.lake/build/doc
+        if-no-files-found: error
+        retention-days: 3
+    - name: Upload documentation progress
+      if: always()
+      uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+      with:
+        name: documentation-progress-${{ inputs.stage }}
+        path: docbuild/.lake/build/documentation-progress.json
+        if-no-files-found: ignore
+        include-hidden-files: true
+        retention-days: 7
+  receipt:
+    needs: build
+    if: always()
+    runs-on: ubuntu-latest
+    outputs:
+      complete: ${{ steps.result.outputs.complete }}
+    steps:
+    - id: result
+      name: Report completed or reused analysis
+      env:
+        RESULT: ${{ needs.build.result }}
+        PREVIOUS: ${{ inputs.previous_complete }}
+        PHASE: ${{ inputs.phase }}
+        COMPLETE: ${{ needs.build.outputs.complete }}
+      run: |
+        set -euo pipefail
+        if [ "$RESULT" = skipped ]; then
+          test "$PHASE" = analysis
+          test "$PREVIOUS" = true
+          COMPLETE=true
+        else
+          test "$RESULT" = success
+        fi
+        echo "complete=${COMPLETE:-false}" >> "$GITHUB_OUTPUT"
