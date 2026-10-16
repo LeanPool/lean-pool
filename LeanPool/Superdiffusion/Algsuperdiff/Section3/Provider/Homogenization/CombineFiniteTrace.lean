@@ -351,73 +351,10 @@ private theorem cutoffError_four_integrable_and_le_of_twoTerm
           ((gammaMomentConst 2 * (4 : ℝ) ^ ((2 : ℝ)⁻¹) * A) ^ (4 : ℕ) +
             (gammaMomentConst (1 / 2) *
               (4 : ℝ) ^ (((1 / 2 : ℝ))⁻¹) * D) ^ (4 : ℕ)) := by
-  let mu := (Cutoff.cutoffSampleLaw M).toMeasure
-  let X0 : Cutoff.CutoffSample d → ℝ :=
-    Observable.cutoffHomogenizationError M L ⟨1 / 16, by norm_num⟩
-  obtain ⟨Y, Z, _hPsiY, _hPsiZ, hA, hD, hXmeas, hYmeas, hZmeas,
-      hdom, hYtail, hZtail⟩ := hLower
-  let Y0 : Cutoff.CutoffSample d → ℝ := fun omega => max 0 (Y omega)
-  let Z0 : Cutoff.CutoffSample d → ℝ := fun omega => max 0 (Z omega)
-  have hY0nonneg : ∀ omega, 0 ≤ Y0 omega := fun omega => le_max_left _ _
-  have hZ0nonneg : ∀ omega, 0 ≤ Z0 omega := fun omega => le_max_left _ _
-  have hY0meas : AEMeasurable Y0 mu :=
-    (measurable_const.max hYmeas).aemeasurable
-  have hZ0meas : AEMeasurable Z0 mu :=
-    (measurable_const.max hZmeas).aemeasurable
-  have hY0tail : IsBigOWith mu (gammaSigma 2) Y0 A := by
-    simpa only [Y0] using Tail.isBigOWith_max_zero hA hYtail
-  have hZ0tail : IsBigOWith mu (gammaSigma (1 / 2)) Z0 D := by
-    simpa only [Z0] using Tail.isBigOWith_max_zero hD hZtail
-  have hYfour : Integrable (fun omega => Y0 omega ^ (4 : ℕ)) mu := by
-    have h := integrable_rpow_of_isBigOWith_gammaSigma
-      (μ := mu) (Y := Y0) (K := A) (σ := 2) (p := 4)
-      (by norm_num) hA (by norm_num) hY0nonneg hY0meas hY0tail
-    simpa only [show (4 : ℝ) = (4 : ℕ) by norm_num, Real.rpow_natCast] using h
-  have hZfour : Integrable (fun omega => Z0 omega ^ (4 : ℕ)) mu := by
-    have h := integrable_rpow_of_isBigOWith_gammaSigma
-      (μ := mu) (Y := Z0) (K := D) (σ := (1 / 2 : ℝ)) (p := 4)
-      (by norm_num) hD (by norm_num) hZ0nonneg hZ0meas hZ0tail
-    simpa only [show (4 : ℝ) = (4 : ℕ) by norm_num, Real.rpow_natCast] using h
-  have hYbound : ∫ omega, Y0 omega ^ (4 : ℕ) ∂mu ≤
-      (gammaMomentConst 2 * (4 : ℝ) ^ ((2 : ℝ)⁻¹) * A) ^ (4 : ℕ) := by
-    simpa only [show (4 : ℝ) = (4 : ℕ) by norm_num, Real.rpow_natCast] using
-      (integral_rpow_le_of_isBigOWith_gammaSigma
-        (μ := mu) (Y := Y0) (K := A) (σ := 2) (p := 4)
-        (by norm_num) hA (by norm_num) hY0nonneg hY0meas hY0tail)
-  have hZbound : ∫ omega, Z0 omega ^ (4 : ℕ) ∂mu ≤
-      (gammaMomentConst (1 / 2) *
-        (4 : ℝ) ^ (((1 / 2 : ℝ))⁻¹) * D) ^ (4 : ℕ) := by
-    simpa only [show (4 : ℝ) = (4 : ℕ) by norm_num, Real.rpow_natCast] using
-      (integral_rpow_le_of_isBigOWith_gammaSigma
-        (μ := mu) (Y := Z0) (K := D) (σ := (1 / 2 : ℝ)) (p := 4)
-        (by norm_num) hD (by norm_num) hZ0nonneg hZ0meas hZ0tail)
-  have hXnonneg : ∀ omega, 0 ≤ X0 omega := fun omega => by
-    simpa only [X0] using
-      Observable.cutoffHomogenizationError_nonneg M L ⟨1 / 16, by norm_num⟩ omega
-  have hXpoint : ∀ omega, X0 omega ^ (4 : ℕ) ≤
-      8 * (Y0 omega ^ (4 : ℕ) + Z0 omega ^ (4 : ℕ)) := by
-    intro omega
-    have hYZ : X0 omega ≤ Y0 omega + Z0 omega :=
-      (hdom omega).trans (add_le_add (le_max_right _ _) (le_max_right _ _))
-    have hp := pow_le_pow_left₀ (hXnonneg omega) hYZ 4
-    have hadd := add_pow_le (hY0nonneg omega) (hZ0nonneg omega) 4
-    norm_num at hadd ⊢
-    exact hp.trans hadd
-  have hXfour : Integrable (fun omega => X0 omega ^ (4 : ℕ)) mu := by
-    refine Integrable.mono' ((hYfour.add hZfour).const_mul 8)
-      ((hXmeas.pow_const 4).aestronglyMeasurable) ?_
-    filter_upwards with omega
-    rw [Real.norm_eq_abs, abs_of_nonneg (pow_nonneg (hXnonneg omega) 4)]
-    exact hXpoint omega
-  refine ⟨hXfour, ?_⟩
-  calc
-    (∫ omega, X0 omega ^ (4 : ℕ) ∂mu) ≤
-        ∫ omega, 8 * (Y0 omega ^ (4 : ℕ) + Z0 omega ^ (4 : ℕ)) ∂mu :=
-      integral_mono hXfour ((hYfour.add hZfour).const_mul 8) hXpoint
-    _ = 8 * ((∫ omega, Y0 omega ^ (4 : ℕ) ∂mu) +
-        ∫ omega, Z0 omega ^ (4 : ℕ) ∂mu) := by
-      rw [integral_const_mul, integral_add hYfour hZfour]
-    _ ≤ _ := mul_le_mul_of_nonneg_left (add_le_add hYbound hZbound) (by norm_num)
+  simpa only [Nat.cast_ofNat, show (2 : ℝ) ^ (4 - 1 : ℕ) = 8 by norm_num] using
+    Tail.pow_integrable_and_integral_le_of_twoTerm 4 (by norm_num)
+    (by norm_num) (by norm_num)
+    (Observable.cutoffHomogenizationError_nonneg M L ⟨1 / 16, by norm_num⟩) hLower
 
 private theorem cellErrorFour_integral_eq
     {d : ℕ} [NeZero d] (M : ABKModel d) (L : ℤ)

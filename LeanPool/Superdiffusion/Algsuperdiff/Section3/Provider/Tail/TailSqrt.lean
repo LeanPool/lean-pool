@@ -137,6 +137,64 @@ theorem isBigOWith_max_zero {Ψ : ℝ → ℝ} {Y : Ω → ℝ} {A : ℝ} (hA : 
     IsBigOWith μ Ψ (fun ω => max 0 (Y ω)) A :=
   Algsuperdiff.Section3.Probability.isBigOWith_max_zero hA hY
 
+/-- A clipped one-sided Gamma tail controls every positive natural-power moment. -/
+theorem positivePart_pow_integrable_and_integral_le_of_gammaSigma
+    [IsProbabilityMeasure μ] {Y : Ω → ℝ} {A σ : ℝ} (p : ℕ) (hp : 1 ≤ p)
+    (hσ : 0 < σ) (hA : 0 < A)
+    (hYm : AEMeasurable (fun ω => max 0 (Y ω)) μ)
+    (hY : IsBigOWith μ (gammaSigma σ) Y A) :
+    Integrable (fun ω => max 0 (Y ω) ^ p) μ ∧
+      (∫ ω, max 0 (Y ω) ^ p ∂μ) ≤
+        (gammaMomentConst σ * (p : ℝ) ^ σ⁻¹ * A) ^ p := by
+  have hpReal : 1 ≤ (p : ℝ) := by exact_mod_cast hp
+  have htail := isBigOWith_max_zero hA hY
+  have hnonneg : ∀ ω, 0 ≤ max 0 (Y ω) := fun ω => le_max_left _ _
+  constructor
+  · simpa only [Real.rpow_natCast] using
+      integrable_rpow_of_isBigOWith_gammaSigma hσ hA hpReal hnonneg hYm htail
+  · simpa only [Real.rpow_natCast] using
+      integral_rpow_le_of_isBigOWith_gammaSigma hσ hA hpReal hnonneg hYm htail
+
+/-- Two one-sided Gamma tails bound moments of a nonnegative dominated variable,
+with the natural-power split constant and each tail's original scale. -/
+theorem pow_integrable_and_integral_le_of_twoTerm [IsProbabilityMeasure μ]
+    {X : Ω → ℝ} {A B σ τ : ℝ} (p : ℕ) (hp : 1 ≤ p)
+    (hσ : 0 < σ) (hτ : 0 < τ) (hXnonneg : ∀ ω, 0 ≤ X ω)
+    (h : IsTwoTermBigOWith μ (gammaSigma σ) (gammaSigma τ) X A B) :
+    Integrable (fun ω => X ω ^ p) μ ∧
+      (∫ ω, X ω ^ p ∂μ) ≤
+        2 ^ (p - 1) *
+          ((gammaMomentConst σ * (p : ℝ) ^ σ⁻¹ * A) ^ p +
+            (gammaMomentConst τ * (p : ℝ) ^ τ⁻¹ * B) ^ p) := by
+  obtain ⟨Y, Z, -, -, hA, hB, hXm, hYm, hZm, hdom, hYtail, hZtail⟩ := h
+  let Y0 : Ω → ℝ := fun ω => max 0 (Y ω)
+  let Z0 : Ω → ℝ := fun ω => max 0 (Z ω)
+  obtain ⟨hYInt, hYBound⟩ :=
+    positivePart_pow_integrable_and_integral_le_of_gammaSigma p hp hσ hA
+      (measurable_const.max hYm).aemeasurable hYtail
+  obtain ⟨hZInt, hZBound⟩ :=
+    positivePart_pow_integrable_and_integral_le_of_gammaSigma p hp hτ hB
+      (measurable_const.max hZm).aemeasurable hZtail
+  have hpoint : ∀ ω, X ω ^ p ≤ 2 ^ (p - 1) * (Y0 ω ^ p + Z0 ω ^ p) := by
+    intro ω
+    have hdom0 : X ω ≤ Y0 ω + Z0 ω :=
+      (hdom ω).trans (add_le_add (le_max_right _ _) (le_max_right _ _))
+    exact (pow_le_pow_left₀ (hXnonneg ω) hdom0 p).trans
+      (add_pow_le (le_max_left _ _) (le_max_left _ _) p)
+  have hInt : Integrable (fun ω => X ω ^ p) μ := by
+    refine Integrable.mono' ((hYInt.add hZInt).const_mul (2 ^ (p - 1)))
+      (hXm.pow_const p).aestronglyMeasurable ?_
+    filter_upwards with ω
+    rw [Real.norm_eq_abs, abs_of_nonneg (pow_nonneg (hXnonneg ω) p)]
+    exact hpoint ω
+  refine ⟨hInt, ?_⟩
+  calc
+    _ ≤ ∫ ω, 2 ^ (p - 1) * (Y0 ω ^ p + Z0 ω ^ p) ∂μ :=
+      integral_mono hInt ((hYInt.add hZInt).const_mul (2 ^ (p - 1))) hpoint
+    _ = 2 ^ (p - 1) * ((∫ ω, Y0 ω ^ p ∂μ) + ∫ ω, Z0 ω ^ p ∂μ) := by
+      rw [integral_const_mul, integral_add hYInt hZInt]
+    _ ≤ _ := mul_le_mul_of_nonneg_left (add_le_add hYBound hZBound) (by positivity)
+
 /-! ## The Orlicz square root -/
 
 /-- **The Orlicz square root.**  From `X <= O_{Gamma_sigma}(A)` for a

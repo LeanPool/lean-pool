@@ -210,6 +210,47 @@ theorem ofFullBlockVec_constantFullBlockMatrixSqrt_scalarMatrix {d : ℕ}
     simp [ofFullBlockVec, Matrix.mulVec_diagonal,
       Book.Ch05.Section56.scalarFullBlockSqrtDiag]
 
+/-- The positive scalar comparator maps its inverse-root normalized probe to
+its root normalized probe, for every doubled vector. -/
+theorem blockMatVecMul_constantBlockMatrix_invSqrt_scalarMatrix {d : ℕ}
+    {σ : ℝ} (hσ : 0 < σ) (q : FullBlockVec d) :
+    blockMatVecMul (Book.Ch02.constantBlockMatrix (scalarMatrix (d := d) σ))
+        (ofFullBlockVec (Matrix.mulVec
+          (Book.Ch02.constantFullBlockMatrixInvSqrt (scalarMatrix (d := d) σ)) q)) =
+      ofFullBlockVec (Matrix.mulVec
+        (Book.Ch02.constantFullBlockMatrixSqrt (scalarMatrix (d := d) σ)) q) := by
+  rw [Book.Ch02.constantBlockMatrix_scalarMatrix hσ,
+    ofFullBlockVec_constantFullBlockMatrixInvSqrt_scalarMatrix hσ,
+    ofFullBlockVec_constantFullBlockMatrixSqrt_scalarMatrix hσ]
+  ext i
+  · simp [blockMatVecMul, matVecMul_scalarMatrix, matVecMul]
+    field_simp [ne_of_gt (Real.sqrt_pos.2 hσ)]
+    rw [Real.sq_sqrt hσ.le]
+  · simp [blockMatVecMul, matVecMul_scalarMatrix, matVecMul]
+    field_simp [ne_of_gt (Real.sqrt_pos.2 hσ)]
+    rw [Real.sq_sqrt hσ.le]
+
+/-- The reflected scalar comparator maps the root normalized probe back to
+its inverse-root normalized probe, for every doubled vector. -/
+theorem blockMatVecMul_reflect_constantBlockMatrix_sqrt_scalarMatrix {d : ℕ}
+    {σ : ℝ} (hσ : 0 < σ) (q : FullBlockVec d) :
+    blockMatVecMul (blockReflect (Book.Ch02.constantBlockMatrix
+        (scalarMatrix (d := d) σ)))
+        (ofFullBlockVec (Matrix.mulVec
+          (Book.Ch02.constantFullBlockMatrixSqrt (scalarMatrix (d := d) σ)) q)) =
+      ofFullBlockVec (Matrix.mulVec
+        (Book.Ch02.constantFullBlockMatrixInvSqrt (scalarMatrix (d := d) σ)) q) := by
+  rw [Book.Ch02.constantBlockMatrix_scalarMatrix hσ,
+    ofFullBlockVec_constantFullBlockMatrixSqrt_scalarMatrix hσ,
+    ofFullBlockVec_constantFullBlockMatrixInvSqrt_scalarMatrix hσ]
+  ext i
+  · simp [blockReflect, blockMatVecMul, matVecMul_scalarMatrix, matVecMul]
+    field_simp [ne_of_gt (Real.sqrt_pos.2 hσ)]
+    rw [Real.sq_sqrt hσ.le]
+  · simp [blockReflect, blockMatVecMul, matVecMul_scalarMatrix, matVecMul]
+    field_simp [ne_of_gt (Real.sqrt_pos.2 hσ)]
+    rw [Real.sq_sqrt hσ.le]
+
 /-- The squared Euclidean norm of a doubled vector splits into the two halves. -/
 theorem fullBlockVecNormSq_eq_add {d : ℕ} (e : FullBlockVec d) :
     Book.Ch02.fullBlockVecNormSq e =

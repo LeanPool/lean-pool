@@ -406,139 +406,6 @@ private theorem starredComparatorQuadratic_centeredDescendantSum_root_le
         simp only [D, Q, Z, X, mu0], hIntegralEq]
     simpa only [Q, D] using! hRosenthal
 
-private theorem combineFiniteMean_momentBounds1 :
-    ∀ {d : ℕ} (M : ABKModel d) (L : ℤ) {s A D : ℝ} (hs : (0 : ℝ) < s),
-      let mu : Measure (Cutoff.CutoffSample d) := (↑(Cutoff.cutoffSampleLaw M) : Measure
-        (Cutoff.CutoffSample d));
-      let X0 : Cutoff.CutoffSample d → ℝ := Observable.cutoffHomogenizationError M L ⟨s, hs⟩;
-      ∀ (Y Z : Cutoff.CutoffSample d → ℝ) (_ : (0 : ℝ) < A) (_ : (0 : ℝ) < D)
-        (_ : Measurable (Observable.cutoffHomogenizationError M L ⟨s, hs⟩)) (_ : Measurable Z)
-        (_ : ∀ (ω : Cutoff.CutoffSample d), Observable.cutoffHomogenizationError M L ⟨s, hs⟩ ω ≤ Y
-          ω + Z ω)
-        (_ : IsBigOWith (↑(Cutoff.cutoffSampleLaw M) : Measure (Cutoff.CutoffSample d))
-          (gammaSigma (2 : ℝ)) Y A)
-        (_ : IsBigOWith (↑(Cutoff.cutoffSampleLaw M) : Measure (Cutoff.CutoffSample d))
-          (gammaSigma (1 / 2 : ℝ)) Z D),
-        let Y0 : Cutoff.CutoffSample d → ℝ := fun (omega : Cutoff.CutoffSample d) => max (0 : ℝ)
-          (Y omega);
-        let Z0 : Cutoff.CutoffSample d → ℝ := fun (omega : Cutoff.CutoffSample d) => max (0 : ℝ)
-          (Z omega);
-        ∀ (_ : ∀ (omega : Cutoff.CutoffSample d), (0 : ℝ) ≤ Y0 omega)
-          (_ : ∀ (omega : Cutoff.CutoffSample d), (0 : ℝ) ≤ Z0 omega) (_ : AEMeasurable Y0 mu),
-          Integrable (fun (omega : Cutoff.CutoffSample d) => Y0 omega ^ (4 : ℕ)) mu ∧
-            Integrable (fun (omega : Cutoff.CutoffSample d) => Z0 omega ^ (4 : ℕ)) mu ∧
-              ∫ (omega : Cutoff.CutoffSample d), Y0 omega ^ (4 : ℕ) ∂mu ≤
-                  (gammaMomentConst (2 : ℝ) * (4 : ℝ) ^ (2 : ℝ)⁻¹ * A) ^ (4 : ℕ) ∧
-                ∫ (omega : Cutoff.CutoffSample d), Z0 omega ^ (4 : ℕ) ∂mu ≤
-                    (gammaMomentConst (1 / 2 : ℝ) * (4 : ℝ) ^ (1 / 2 : ℝ)⁻¹ * D) ^ (4 : ℕ) ∧
-                  (∀ (omega : Cutoff.CutoffSample d),
-                      X0 omega ^ (4 : ℕ) ≤ (8 : ℝ) * (Y0 omega ^ (4 : ℕ) + Z0 omega ^ (4 : ℕ))) ∧
-                    Integrable (fun (omega : Cutoff.CutoffSample d) => X0 omega ^ (2 : ℕ)) mu ∧
-                      Integrable (fun (omega : Cutoff.CutoffSample d) => X0 omega ^ (4 : ℕ)) mu ∧
-                        ∫ (omega : Cutoff.CutoffSample d), X0 omega ^ (2 : ℕ) ∂mu ≤
-                          (2 : ℝ) *
-                            ((gammaMomentConst (2 : ℝ) * (2 : ℝ) ^ (2 : ℝ)⁻¹ * A) ^ (2 : ℕ) +
-                              (gammaMomentConst (1 / 2 : ℝ) * (2 : ℝ) ^ (1 / 2 : ℝ)⁻¹ * D) ^ (2 :
-                                ℕ)) := by
-  intro _ M L s A D hs mu X0 Y _ hA hD hXmeas hZmeas hdom hYtail hZtail Y0 Z0 hY0nonneg hZ0nonneg
-    hY0meas
-  have hZ0meas : AEMeasurable Z0 mu :=
-    (measurable_const.max hZmeas).aemeasurable
-  have hY0tail : IsBigOWith mu (gammaSigma 2) Y0 A := by
-    simpa only [Y0] using Tail.isBigOWith_max_zero hA hYtail
-  have hZ0tail : IsBigOWith mu (gammaSigma (1 / 2)) Z0 D := by
-    simpa only [Z0] using Tail.isBigOWith_max_zero hD hZtail
-  have hY2Int : Integrable (fun omega => Y0 omega ^ (2 : ℕ)) mu := by
-    have h := integrable_rpow_of_isBigOWith_gammaSigma
-      (μ := mu) (Y := Y0) (K := A) (σ := 2) (p := 2)
-      (by norm_num) hA (by norm_num) hY0nonneg hY0meas hY0tail
-    simpa only [show (2 : ℝ) = (2 : ℕ) by norm_num, Real.rpow_natCast] using h
-  have hZ2Int : Integrable (fun omega => Z0 omega ^ (2 : ℕ)) mu := by
-    have h := integrable_rpow_of_isBigOWith_gammaSigma
-      (μ := mu) (Y := Z0) (K := D) (σ := (1 / 2 : ℝ)) (p := 2)
-      (by norm_num) hD (by norm_num) hZ0nonneg hZ0meas hZ0tail
-    simpa only [show (2 : ℝ) = (2 : ℕ) by norm_num, Real.rpow_natCast] using h
-  have hY4Int : Integrable (fun omega => Y0 omega ^ (4 : ℕ)) mu := by
-    have h := integrable_rpow_of_isBigOWith_gammaSigma
-      (μ := mu) (Y := Y0) (K := A) (σ := 2) (p := 4)
-      (by norm_num) hA (by norm_num) hY0nonneg hY0meas hY0tail
-    simpa only [show (4 : ℝ) = (4 : ℕ) by norm_num, Real.rpow_natCast] using h
-  have hZ4Int : Integrable (fun omega => Z0 omega ^ (4 : ℕ)) mu := by
-    have h := integrable_rpow_of_isBigOWith_gammaSigma
-      (μ := mu) (Y := Z0) (K := D) (σ := (1 / 2 : ℝ)) (p := 4)
-      (by norm_num) hD (by norm_num) hZ0nonneg hZ0meas hZ0tail
-    simpa only [show (4 : ℝ) = (4 : ℕ) by norm_num, Real.rpow_natCast] using h
-  have hY2 : ∫ omega, Y0 omega ^ (2 : ℕ) ∂mu ≤
-      (gammaMomentConst 2 * (2 : ℝ) ^ ((2 : ℝ)⁻¹) * A) ^ (2 : ℕ) := by
-    simpa only [show (2 : ℝ) = (2 : ℕ) by norm_num, Real.rpow_natCast] using
-      (integral_rpow_le_of_isBigOWith_gammaSigma
-        (μ := mu) (Y := Y0) (K := A) (σ := 2) (p := 2)
-        (by norm_num) hA (by norm_num) hY0nonneg hY0meas hY0tail)
-  have hZ2 : ∫ omega, Z0 omega ^ (2 : ℕ) ∂mu ≤
-      (gammaMomentConst (1 / 2) *
-        (2 : ℝ) ^ (((1 / 2 : ℝ))⁻¹) * D) ^ (2 : ℕ) := by
-    simpa only [show (2 : ℝ) = (2 : ℕ) by norm_num, Real.rpow_natCast] using
-      (integral_rpow_le_of_isBigOWith_gammaSigma
-        (μ := mu) (Y := Z0) (K := D) (σ := (1 / 2 : ℝ)) (p := 2)
-        (by norm_num) hD (by norm_num) hZ0nonneg hZ0meas hZ0tail)
-  have hY4 : ∫ omega, Y0 omega ^ (4 : ℕ) ∂mu ≤
-      (gammaMomentConst 2 * (4 : ℝ) ^ ((2 : ℝ)⁻¹) * A) ^ (4 : ℕ) := by
-    simpa only [show (4 : ℝ) = (4 : ℕ) by norm_num, Real.rpow_natCast] using
-      (integral_rpow_le_of_isBigOWith_gammaSigma
-        (μ := mu) (Y := Y0) (K := A) (σ := 2) (p := 4)
-        (by norm_num) hA (by norm_num) hY0nonneg hY0meas hY0tail)
-  have hZ4 : ∫ omega, Z0 omega ^ (4 : ℕ) ∂mu ≤
-      (gammaMomentConst (1 / 2) *
-        (4 : ℝ) ^ (((1 / 2 : ℝ))⁻¹) * D) ^ (4 : ℕ) := by
-    simpa only [show (4 : ℝ) = (4 : ℕ) by norm_num, Real.rpow_natCast] using
-      (integral_rpow_le_of_isBigOWith_gammaSigma
-        (μ := mu) (Y := Z0) (K := D) (σ := (1 / 2 : ℝ)) (p := 4)
-        (by norm_num) hD (by norm_num) hZ0nonneg hZ0meas hZ0tail)
-  have hX0nonneg : ∀ omega, 0 ≤ X0 omega := fun omega => by
-    simpa only [X0] using Observable.cutoffHomogenizationError_nonneg M L ⟨s, hs⟩ omega
-  have hX0dom : ∀ omega, X0 omega ≤ Y0 omega + Z0 omega := by
-    intro omega
-    exact (hdom omega).trans (add_le_add (le_max_right _ _) (le_max_right _ _))
-  have hX2Point : ∀ omega, X0 omega ^ (2 : ℕ) ≤
-      2 * (Y0 omega ^ (2 : ℕ) + Z0 omega ^ (2 : ℕ)) := by
-    intro omega
-    have hp := pow_le_pow_left₀ (hX0nonneg omega) (hX0dom omega) 2
-    nlinarith [sq_nonneg (Y0 omega - Z0 omega)]
-  have hX4Point : ∀ omega, X0 omega ^ (4 : ℕ) ≤
-      8 * (Y0 omega ^ (4 : ℕ) + Z0 omega ^ (4 : ℕ)) := by
-    intro omega
-    have hp := pow_le_pow_left₀ (hX0nonneg omega) (hX0dom omega) 4
-    have hadd := add_pow_le (hY0nonneg omega) (hZ0nonneg omega) 4
-    norm_num at hadd ⊢
-    exact hp.trans hadd
-  have hX2Int : Integrable (fun omega => X0 omega ^ (2 : ℕ)) mu := by
-    refine Integrable.mono'
-      ((hY2Int.add hZ2Int).const_mul 2)
-      ((hXmeas.pow_const 2).aestronglyMeasurable) ?_
-    filter_upwards with omega
-    rw [Real.norm_eq_abs, abs_of_nonneg (sq_nonneg _)]
-    exact hX2Point omega
-  have hX4Int : Integrable (fun omega => X0 omega ^ (4 : ℕ)) mu := by
-    refine Integrable.mono'
-      ((hY4Int.add hZ4Int).const_mul 8)
-      ((hXmeas.pow_const 4).aestronglyMeasurable) ?_
-    filter_upwards with omega
-    rw [Real.norm_eq_abs, abs_of_nonneg (pow_nonneg (hX0nonneg omega) 4)]
-    exact hX4Point omega
-  have hX2 : ∫ omega, X0 omega ^ (2 : ℕ) ∂mu ≤
-      2 *
-        ((gammaMomentConst 2 * (2 : ℝ) ^ ((2 : ℝ)⁻¹) * A) ^ (2 : ℕ) +
-          (gammaMomentConst (1 / 2) *
-            (2 : ℝ) ^ (((1 / 2 : ℝ))⁻¹) * D) ^ (2 : ℕ)) := by
-    calc
-      _ ≤ ∫ omega, 2 * (Y0 omega ^ (2 : ℕ) + Z0 omega ^ (2 : ℕ)) ∂mu :=
-        integral_mono hX2Int ((hY2Int.add hZ2Int).const_mul 2) hX2Point
-      _ = 2 * ((∫ omega, Y0 omega ^ (2 : ℕ) ∂mu) +
-          ∫ omega, Z0 omega ^ (2 : ℕ) ∂mu) := by
-        rw [integral_const_mul, integral_add hY2Int hZ2Int]
-      _ ≤ _ := mul_le_mul_of_nonneg_left (add_le_add hY2 hZ2) (by norm_num)
-  exact ⟨hY4Int, hZ4Int, hY4, hZ4, hX4Point, hX2Int, hX4Int, hX2⟩
-
 private theorem relativeOrigin_centeredStarredComparatorQuadratic_sq_integrable_and_le
     {d : ℕ} [NeZero d] (M : ABKModel d) (L : ℤ)
     {s A D : ℝ} (hs : 0 < s)
@@ -571,29 +438,13 @@ private theorem relativeOrigin_centeredStarredComparatorQuadratic_sq_integrable_
   let mu := (Cutoff.cutoffSampleLaw M).toMeasure
   let X0 : Cutoff.CutoffSample d → ℝ :=
     Observable.cutoffHomogenizationError M L ⟨s, hs⟩
-  obtain ⟨Y, Z, _hPsiY, _hPsiZ, hA, hD, hXmeas, hYmeas, hZmeas,
-      hdom, hYtail, hZtail⟩ := hLower
-  let Y0 : Cutoff.CutoffSample d → ℝ := fun omega => max 0 (Y omega)
-  let Z0 : Cutoff.CutoffSample d → ℝ := fun omega => max 0 (Z omega)
-  have hY0nonneg : ∀ omega, 0 ≤ Y0 omega := fun omega => le_max_left _ _
-  have hZ0nonneg : ∀ omega, 0 ≤ Z0 omega := fun omega => le_max_left _ _
-  have hY0meas : AEMeasurable Y0 mu :=
-    (measurable_const.max hYmeas).aemeasurable
-  obtain ⟨hY4Int, hZ4Int, hY4, hZ4, hX4Point, hX2Int, hX4Int, hX2⟩ :=
-    @combineFiniteMean_momentBounds1 (d) (M) (L) (s) (A) (D) (hs) (Y) (Z) (hA) (hD) (hXmeas)
-      (hZmeas) (hdom) (hYtail) (hZtail) (hY0nonneg) (hZ0nonneg) (hY0meas)
-  have hX4 : ∫ omega, X0 omega ^ (4 : ℕ) ∂mu ≤
-      8 *
-        ((gammaMomentConst 2 * (4 : ℝ) ^ ((2 : ℝ)⁻¹) * A) ^ (4 : ℕ) +
-          (gammaMomentConst (1 / 2) *
-            (4 : ℝ) ^ (((1 / 2 : ℝ))⁻¹) * D) ^ (4 : ℕ)) := by
-    calc
-      _ ≤ ∫ omega, 8 * (Y0 omega ^ (4 : ℕ) + Z0 omega ^ (4 : ℕ)) ∂mu :=
-        integral_mono hX4Int ((hY4Int.add hZ4Int).const_mul 8) hX4Point
-      _ = 8 * ((∫ omega, Y0 omega ^ (4 : ℕ) ∂mu) +
-          ∫ omega, Z0 omega ^ (4 : ℕ) ∂mu) := by
-        rw [integral_const_mul, integral_add hY4Int hZ4Int]
-      _ ≤ _ := mul_le_mul_of_nonneg_left (add_le_add hY4 hZ4) (by norm_num)
+  have hXnonneg := Observable.cutoffHomogenizationError_nonneg M L ⟨s, hs⟩
+  obtain ⟨hX2Int, hX2⟩ := Tail.pow_integrable_and_integral_le_of_twoTerm
+    2 (by norm_num) (by norm_num) (by norm_num) hXnonneg hLower
+  obtain ⟨hX4Int, hX4⟩ := Tail.pow_integrable_and_integral_le_of_twoTerm
+    4 (by norm_num) (by norm_num) (by norm_num) hXnonneg hLower
+  simp only [show (2 : ℝ) ^ (2 - 1 : ℕ) = 2 by norm_num] at hX2
+  simp only [show (2 : ℝ) ^ (4 - 1 : ℕ) = 8 by norm_num] at hX4
   have hErrInt : Integrable
       (fun omega => 6 * (dotProduct q q) ^ (2 : ℕ) *
         (X0 omega ^ (2 : ℕ) + X0 omega ^ (4 : ℕ))) mu :=

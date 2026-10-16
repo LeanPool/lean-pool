@@ -215,77 +215,10 @@ private theorem cutoffError_sq_integrable_and_le_of_twoTerm
         (Cutoff.cutoffSampleLaw M).toMeasure ∧
       (∫ omega, X omega ^ (2 : ℕ) ∂(Cutoff.cutoffSampleLaw M).toMeasure) ≤
         secondBudget := by
-  let mu := (Cutoff.cutoffSampleLaw M).toMeasure
-  let X := Observable.cutoffHomogenizationError M L ⟨s, hs⟩
-  let secondBudget : ℝ :=
-    2 *
-      ((gammaMomentConst 2 * (2 : ℝ) ^ ((2 : ℝ)⁻¹) * A) ^ (2 : ℕ) +
-        (gammaMomentConst (1 / 2) *
-          (2 : ℝ) ^ (((1 / 2 : ℝ))⁻¹) * D) ^ (2 : ℕ))
-  obtain ⟨Y, Z, _hPsiY, _hPsiZ, hA, hD, hXmeas, hYmeas, hZmeas,
-      hdom, hYtail, hZtail⟩ := hLower
-  let Y0 : Cutoff.CutoffSample d → ℝ := fun omega => max 0 (Y omega)
-  let Z0 : Cutoff.CutoffSample d → ℝ := fun omega => max 0 (Z omega)
-  have hY0nonneg : ∀ omega, 0 ≤ Y0 omega := fun omega => le_max_left _ _
-  have hZ0nonneg : ∀ omega, 0 ≤ Z0 omega := fun omega => le_max_left _ _
-  have hY0meas : AEMeasurable Y0 mu :=
-    (measurable_const.max hYmeas).aemeasurable
-  have hZ0meas : AEMeasurable Z0 mu :=
-    (measurable_const.max hZmeas).aemeasurable
-  have hY0tail : IsBigOWith mu (gammaSigma 2) Y0 A := by
-    simpa only [Y0] using Tail.isBigOWith_max_zero hA hYtail
-  have hZ0tail : IsBigOWith mu (gammaSigma (1 / 2)) Z0 D := by
-    simpa only [Z0] using Tail.isBigOWith_max_zero hD hZtail
-  have hY2Int : Integrable (fun omega => Y0 omega ^ (2 : ℕ)) mu := by
-    have h := integrable_rpow_of_isBigOWith_gammaSigma
-      (μ := mu) (Y := Y0) (K := A) (σ := 2) (p := 2)
-      (by norm_num) hA (by norm_num) hY0nonneg hY0meas hY0tail
-    simpa only [show (2 : ℝ) = (2 : ℕ) by norm_num, Real.rpow_natCast] using h
-  have hZ2Int : Integrable (fun omega => Z0 omega ^ (2 : ℕ)) mu := by
-    have h := integrable_rpow_of_isBigOWith_gammaSigma
-      (μ := mu) (Y := Z0) (K := D) (σ := (1 / 2 : ℝ)) (p := 2)
-      (by norm_num) hD (by norm_num) hZ0nonneg hZ0meas hZ0tail
-    simpa only [show (2 : ℝ) = (2 : ℕ) by norm_num, Real.rpow_natCast] using h
-  have hY2 : ∫ omega, Y0 omega ^ (2 : ℕ) ∂mu ≤
-      (gammaMomentConst 2 * (2 : ℝ) ^ ((2 : ℝ)⁻¹) * A) ^ (2 : ℕ) := by
-    simpa only [show (2 : ℝ) = (2 : ℕ) by norm_num, Real.rpow_natCast] using
-      (integral_rpow_le_of_isBigOWith_gammaSigma
-        (μ := mu) (Y := Y0) (K := A) (σ := 2) (p := 2)
-        (by norm_num) hA (by norm_num) hY0nonneg hY0meas hY0tail)
-  have hZ2 : ∫ omega, Z0 omega ^ (2 : ℕ) ∂mu ≤
-      (gammaMomentConst (1 / 2) *
-        (2 : ℝ) ^ (((1 / 2 : ℝ))⁻¹) * D) ^ (2 : ℕ) := by
-    simpa only [show (2 : ℝ) = (2 : ℕ) by norm_num, Real.rpow_natCast] using
-      (integral_rpow_le_of_isBigOWith_gammaSigma
-        (μ := mu) (Y := Z0) (K := D) (σ := (1 / 2 : ℝ)) (p := 2)
-        (by norm_num) hD (by norm_num) hZ0nonneg hZ0meas hZ0tail)
-  have hXnonneg : ∀ omega, 0 ≤ X omega := fun omega => by
-    simpa only [X] using Observable.cutoffHomogenizationError_nonneg M L ⟨s, hs⟩ omega
-  have hXdom : ∀ omega, X omega ≤ Y0 omega + Z0 omega := fun omega =>
-    (hdom omega).trans (add_le_add (le_max_right _ _) (le_max_right _ _))
-  have hX2Point : ∀ omega, X omega ^ (2 : ℕ) ≤
-      2 * (Y0 omega ^ (2 : ℕ) + Z0 omega ^ (2 : ℕ)) := by
-    intro omega
-    have hp := pow_le_pow_left₀ (hXnonneg omega) (hXdom omega) 2
-    nlinarith [sq_nonneg (Y0 omega - Z0 omega)]
-  have hX2Int : Integrable (fun omega => X omega ^ (2 : ℕ)) mu := by
-    refine Integrable.mono' ((hY2Int.add hZ2Int).const_mul 2)
-      ((hXmeas.pow_const 2).aestronglyMeasurable) ?_
-    filter_upwards with omega
-    rw [Real.norm_eq_abs, abs_of_nonneg (sq_nonneg _)]
-    exact hX2Point omega
-  refine ⟨?_, ?_⟩
-  · simpa only [mu, X] using hX2Int
-  · change (∫ omega, X omega ^ (2 : ℕ) ∂mu) ≤ secondBudget
-    calc
-      _ ≤ ∫ omega, 2 * (Y0 omega ^ (2 : ℕ) + Z0 omega ^ (2 : ℕ)) ∂mu :=
-        integral_mono hX2Int ((hY2Int.add hZ2Int).const_mul 2) hX2Point
-      _ = 2 * ((∫ omega, Y0 omega ^ (2 : ℕ) ∂mu) +
-          ∫ omega, Z0 omega ^ (2 : ℕ) ∂mu) := by
-        rw [integral_const_mul, integral_add hY2Int hZ2Int]
-      _ ≤ secondBudget := by
-        dsimp only [secondBudget]
-        exact mul_le_mul_of_nonneg_left (add_le_add hY2 hZ2) (by norm_num)
+  simpa only [Nat.cast_ofNat, show (2 : ℝ) ^ (2 - 1 : ℕ) = 2 by norm_num] using
+    Tail.pow_integrable_and_integral_le_of_twoTerm 2 (by norm_num)
+    (by norm_num) (by norm_num)
+    (Observable.cutoffHomogenizationError_nonneg M L ⟨s, hs⟩) hLower
 
 private theorem relativeNormalizedCutoffLaw_integrable_blockMatEntryAtScale_int
     {d : ℕ} [NeZero d] (M : ABKModel d) (L r : ℤ) :
@@ -1066,47 +999,12 @@ private theorem combineFiniteQuantitative_comparisonBounds2 :
     · exact (hprimalInt.const_mul (1 / 2 : ℝ)).add
         (hstarInt.const_mul (1 / 2 : ℝ))
     · exact integrable_const _
-  have hQv : blockMatVecMul C0 Pq = Qq := by
-    dsimp only [C0, Pq, Qq, a0]
-    change blockMatVecMul
-      (Book.Ch02.constantBlockMatrix (scalarMatrix (d := d) (sigma : ℝ)))
-      (ofFullBlockVec (Matrix.mulVec
-        (Book.Ch02.constantFullBlockMatrixInvSqrt
-          (scalarMatrix (d := d) (sigma : ℝ))) q)) =
-      ofFullBlockVec (Matrix.mulVec
-        (Book.Ch02.constantFullBlockMatrixSqrt
-          (scalarMatrix (d := d) (sigma : ℝ))) q)
-    rw [Book.Ch02.constantBlockMatrix_scalarMatrix sigma.property]
-    rw [Provider.ErrorComparison.ofFullBlockVec_constantFullBlockMatrixInvSqrt_scalarMatrix
-      sigma.property]
-    rw [Provider.ErrorComparison.ofFullBlockVec_constantFullBlockMatrixSqrt_scalarMatrix
-      sigma.property]
-    ext i <;>
-      simp [blockMatVecMul, zero_matVecMul, matVecMul_scalarMatrix] <;>
-      field_simp [ne_of_gt (Real.sqrt_pos.2 sigma.property)] <;>
-      rw [Real.sq_sqrt sigma.property.le];
-      field_simp [ne_of_gt sigma.property]
-  have hreflectQv : blockMatVecMul (blockReflect C0) Qq = Pq := by
-    dsimp only [C0, Pq, Qq, a0]
-    change blockMatVecMul
-      (blockReflect
-        (Book.Ch02.constantBlockMatrix (scalarMatrix (d := d) (sigma : ℝ))))
-      (ofFullBlockVec (Matrix.mulVec
-        (Book.Ch02.constantFullBlockMatrixSqrt
-          (scalarMatrix (d := d) (sigma : ℝ))) q)) =
-      ofFullBlockVec (Matrix.mulVec
-        (Book.Ch02.constantFullBlockMatrixInvSqrt
-          (scalarMatrix (d := d) (sigma : ℝ))) q)
-    rw [Book.Ch02.constantBlockMatrix_scalarMatrix sigma.property]
-    rw [Provider.ErrorComparison.ofFullBlockVec_constantFullBlockMatrixSqrt_scalarMatrix
-      sigma.property]
-    rw [Provider.ErrorComparison.ofFullBlockVec_constantFullBlockMatrixInvSqrt_scalarMatrix
-      sigma.property]
-    ext i <;>
-      simp [blockReflect, blockMatVecMul, zero_matVecMul, matVecMul_scalarMatrix] <;>
-      field_simp [ne_of_gt (Real.sqrt_pos.2 sigma.property)] <;>
-      rw [Real.sq_sqrt sigma.property.le];
-      field_simp [ne_of_gt sigma.property]
+  have hQv : blockMatVecMul C0 Pq = Qq :=
+    Provider.ErrorComparison.blockMatVecMul_constantBlockMatrix_invSqrt_scalarMatrix
+      sigma.property q
+  have hreflectQv : blockMatVecMul (blockReflect C0) Qq = Pq :=
+    Provider.ErrorComparison.blockMatVecMul_reflect_constantBlockMatrix_sqrt_scalarMatrix
+      sigma.property q
   exact ⟨hJInt, hJMean, hQv, hreflectQv⟩
 
 private theorem relativeMeanDefect_sq_le_secondBudget_sq

@@ -125,15 +125,6 @@ private theorem exp_neg_pow_four_le_of_regime {E gamma : ℝ} (hE : 1 ≤ E)
         mul_le_mul_of_nonneg_left (mul_le_mul_of_nonneg_left h20 hP) (by norm_num)
     _ = 16 * (E ^ 4 * gamma ^ 2) := by rw [mul_one]
 
-/-- The two-term split at the fourth power. -/
-private theorem add_pow_four_le_eight_mul (a b : ℝ) :
-    (a + b) ^ 4 ≤ 8 * (a ^ 4 + b ^ 4) := by
-  have h1 : (a + b) ^ 2 ≤ 2 * (a ^ 2 + b ^ 2) := by nlinarith [sq_nonneg (a - b)]
-  have h2 : (0 : ℝ) ≤ (a + b) ^ 2 := sq_nonneg _
-  calc (a + b) ^ 4 = ((a + b) ^ 2) ^ 2 := by ring
-    _ ≤ (2 * (a ^ 2 + b ^ 2)) ^ 2 := by nlinarith [h1, h2]
-    _ ≤ 8 * (a ^ 4 + b ^ 4) := by nlinarith [sq_nonneg (a ^ 2 - b ^ 2)]
-
 /-! ## The two Chapter 4 moment constants at `p = 4` -/
 
 /-- `4 ^ (1/2) = 2`, the `sigma = 2` moment factor `p ^ sigma⁻¹` at `p = 4`. -/
@@ -200,30 +191,10 @@ private theorem lintegral_ofReal_pow_four_le_of_twoTerm
     (h : Probability.IsTwoTermBigOWith mu (gammaSigma 2) (gammaSigma (1 / 2)) X A B) :
     ∫⁻ omega, ENNReal.ofReal (X omega ^ 4) ∂mu ≤
       ENNReal.ofReal (8 * ((12 * A) ^ 4 + (208 * B) ^ 4)) := by
-  obtain ⟨Y, Z, -, -, hA, hB, -, hYmeas, hZmeas, hdom, hYtail, hZtail⟩ := h
-  set Y0 : Omega → ℝ := fun omega => max 0 (Y omega) with hY0def
-  set Z0 : Omega → ℝ := fun omega => max 0 (Z omega) with hZ0def
-  have hY0nonneg : ∀ omega, 0 ≤ Y0 omega := fun _ => le_max_left _ _
-  have hZ0nonneg : ∀ omega, 0 ≤ Z0 omega := fun _ => le_max_left _ _
-  have hY0meas : Measurable Y0 := measurable_const.max hYmeas
-  have hZ0meas : Measurable Z0 := measurable_const.max hZmeas
-  have hY0tail : IsBigOWith mu (gammaSigma 2) Y0 A := by
-    simpa only [hY0def] using Tail.isBigOWith_max_zero hA hYtail
-  have hZ0tail : IsBigOWith mu (gammaSigma (1 / 2)) Z0 B := by
-    simpa only [hZ0def] using Tail.isBigOWith_max_zero hB hZtail
-  -- the two Chapter 4 fourth moments, converted from `rpow` to a natural power
-  have hY4 : ∫⁻ omega, ENNReal.ofReal (Y0 omega ^ (4 : ℕ)) ∂mu ≤
-      ENNReal.ofReal ((gammaMomentConst 2 * (4 : ℝ) ^ (2 : ℝ)⁻¹ * A) ^ (4 : ℕ)) := by
-    have hraw := lintegral_rpow_le_of_isBigOWith_gammaSigma (μ := mu) (Y := Y0)
-      (K := A) (σ := 2) (p := 4) (by norm_num) hA (by norm_num) hY0nonneg
-      hY0meas.aemeasurable hY0tail
-    simpa only [show (4 : ℝ) = ((4 : ℕ) : ℝ) by norm_num, Real.rpow_natCast] using hraw
-  have hZ4 : ∫⁻ omega, ENNReal.ofReal (Z0 omega ^ (4 : ℕ)) ∂mu ≤
-      ENNReal.ofReal ((gammaMomentConst (1 / 2) * (4 : ℝ) ^ ((1 : ℝ) / 2)⁻¹ * B) ^ (4 : ℕ)) := by
-    have hraw := lintegral_rpow_le_of_isBigOWith_gammaSigma (μ := mu) (Y := Z0)
-      (K := B) (σ := (1 / 2 : ℝ)) (p := 4) (by norm_num) hB (by norm_num) hZ0nonneg
-      hZ0meas.aemeasurable hZ0tail
-    simpa only [show (4 : ℝ) = ((4 : ℕ) : ℝ) by norm_num, Real.rpow_natCast] using hraw
+  obtain ⟨hXInt, hXBound⟩ := Tail.pow_integrable_and_integral_le_of_twoTerm
+    4 (by norm_num) (by norm_num) (by norm_num) hXnonneg h
+  simp only [show (2 : ℝ) ^ (4 - 1 : ℕ) = 8 by norm_num] at hXBound
+  obtain ⟨_, _, -, -, hA, hB, -⟩ := h
   -- the constants
   have hc1 : gammaMomentConst 2 * (4 : ℝ) ^ (2 : ℝ)⁻¹ ≤ 12 := by
     rw [rpow_four_inv_two]
@@ -235,56 +206,14 @@ private theorem lintegral_ofReal_pow_four_le_of_twoTerm
     mul_nonneg (gammaMomentConst_pos (by norm_num)).le (Real.rpow_nonneg (by norm_num) _)
   have hc2nn : (0 : ℝ) ≤ gammaMomentConst (1 / 2) * (4 : ℝ) ^ ((1 : ℝ) / 2)⁻¹ :=
     mul_nonneg (gammaMomentConst_pos (by norm_num)).le (Real.rpow_nonneg (by norm_num) _)
-  have hY4' : ∫⁻ omega, ENNReal.ofReal (Y0 omega ^ (4 : ℕ)) ∂mu ≤
-      ENNReal.ofReal ((12 * A) ^ (4 : ℕ)) :=
-    hY4.trans (ENNReal.ofReal_le_ofReal
-      (pow_le_pow_left₀ (mul_nonneg hc1nn hA.le)
-        (mul_le_mul_of_nonneg_right hc1 hA.le) 4))
-  have hZ4' : ∫⁻ omega, ENNReal.ofReal (Z0 omega ^ (4 : ℕ)) ∂mu ≤
-      ENNReal.ofReal ((208 * B) ^ (4 : ℕ)) :=
-    hZ4.trans (ENNReal.ofReal_le_ofReal
-      (pow_le_pow_left₀ (mul_nonneg hc2nn hB.le)
-        (mul_le_mul_of_nonneg_right hc2 hB.le) 4))
-  -- the pointwise two-term split
-  have hpt : ∀ omega, ENNReal.ofReal (X omega ^ 4) ≤
-      8 * ENNReal.ofReal (Y0 omega ^ 4) + 8 * ENNReal.ofReal (Z0 omega ^ 4) := by
-    intro omega
-    have hdom0 : X omega ≤ Y0 omega + Z0 omega :=
-      (hdom omega).trans (add_le_add (le_max_right _ _) (le_max_right _ _))
-    have hreal : X omega ^ 4 ≤ 8 * Y0 omega ^ 4 + 8 * Z0 omega ^ 4 := by
-      have hstep := pow_le_pow_left₀ (hXnonneg omega) hdom0 4
-      have hsplit := add_pow_four_le_eight_mul (Y0 omega) (Z0 omega)
-      linarith
-    calc ENNReal.ofReal (X omega ^ 4)
-        ≤ ENNReal.ofReal (8 * Y0 omega ^ 4 + 8 * Z0 omega ^ 4) :=
-          ENNReal.ofReal_le_ofReal hreal
-      _ = 8 * ENNReal.ofReal (Y0 omega ^ 4) + 8 * ENNReal.ofReal (Z0 omega ^ 4) := by
-          rw [ENNReal.ofReal_add (by positivity) (by positivity),
-            ENNReal.ofReal_mul (by norm_num : (0 : ℝ) ≤ 8),
-            ENNReal.ofReal_mul (by norm_num : (0 : ℝ) ≤ 8)]
-          norm_num
-  have hYm4 : Measurable fun omega => ENNReal.ofReal (Y0 omega ^ 4) :=
-    (hY0meas.pow_const 4).ennreal_ofReal
-  have hZm4 : Measurable fun omega => ENNReal.ofReal (Z0 omega ^ 4) :=
-    (hZ0meas.pow_const 4).ennreal_ofReal
-  calc ∫⁻ omega, ENNReal.ofReal (X omega ^ 4) ∂mu
-      ≤ ∫⁻ omega,
-          (8 * ENNReal.ofReal (Y0 omega ^ 4) + 8 * ENNReal.ofReal (Z0 omega ^ 4)) ∂mu :=
-        lintegral_mono hpt
-    _ = 8 * (∫⁻ omega, ENNReal.ofReal (Y0 omega ^ 4) ∂mu) +
-          8 * ∫⁻ omega, ENNReal.ofReal (Z0 omega ^ 4) ∂mu := by
-        rw [lintegral_add_left (hYm4.const_mul 8), lintegral_const_mul 8 hYm4,
-          lintegral_const_mul 8 hZm4]
-    _ ≤ 8 * ENNReal.ofReal ((12 * A) ^ (4 : ℕ)) +
-          8 * ENNReal.ofReal ((208 * B) ^ (4 : ℕ)) := by
-        gcongr
-    _ = ENNReal.ofReal (8 * ((12 * A) ^ 4 + (208 * B) ^ 4)) := by
-        rw [show ((8 : ENNReal)) = ENNReal.ofReal 8 by norm_num,
-          ← ENNReal.ofReal_mul (by norm_num : (0 : ℝ) ≤ 8),
-          ← ENNReal.ofReal_mul (by norm_num : (0 : ℝ) ≤ 8),
-          ← ENNReal.ofReal_add (by positivity) (by positivity)]
-        congr 1
-        ring
+  rw [← ofReal_integral_eq_lintegral_ofReal hXInt
+    (Filter.Eventually.of_forall (fun omega => pow_nonneg (hXnonneg omega) 4))]
+  apply ENNReal.ofReal_le_ofReal
+  refine hXBound.trans (mul_le_mul_of_nonneg_left (add_le_add ?_ ?_) (by norm_num))
+  · exact pow_le_pow_left₀ (mul_nonneg hc1nn hA.le)
+      (mul_le_mul_of_nonneg_right hc1 hA.le) 4
+  · exact pow_le_pow_left₀ (mul_nonneg hc2nn hB.le)
+      (mul_le_mul_of_nonneg_right hc2 hB.le) 4
 
 /-! ## The `E` floor available from the `c_star` upper bound -/
 

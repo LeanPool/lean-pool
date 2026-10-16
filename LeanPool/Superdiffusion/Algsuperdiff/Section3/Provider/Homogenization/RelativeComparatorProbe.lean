@@ -267,53 +267,12 @@ private theorem fullBlockQuadratic_starredCoarse_sub_comparator_sq_le_of_unit
   let P : BlockVec d := ofFullBlockVec (Matrix.mulVec D q)
   let Qv : BlockVec d := ofFullBlockVec (Matrix.mulVec S q)
   let H : ℝ := Book.Ch02.normalizedBlockResponseMax R F a0
-  have hQv : blockMatVecMul C0 P = Qv := by
-    dsimp only [C0, P, Qv, S, D, a0]
-    change blockMatVecMul
-      (Book.Ch02.constantBlockMatrix (scalarMatrix (d := d) (sigma : ℝ)))
-      (ofFullBlockVec (Matrix.mulVec
-        (Book.Ch02.constantFullBlockMatrixInvSqrt
-          (scalarMatrix (d := d) (sigma : ℝ))) q)) =
-      ofFullBlockVec (Matrix.mulVec
-        (Book.Ch02.constantFullBlockMatrixSqrt
-          (scalarMatrix (d := d) (sigma : ℝ))) q)
-    rw [Book.Ch02.constantBlockMatrix_scalarMatrix sigma.property]
-    rw [Provider.ErrorComparison.ofFullBlockVec_constantFullBlockMatrixInvSqrt_scalarMatrix
-      sigma.property]
-    rw [Provider.ErrorComparison.ofFullBlockVec_constantFullBlockMatrixSqrt_scalarMatrix
-      sigma.property]
-    ext i
-    · simp [blockMatVecMul, zero_matVecMul, matVecMul_scalarMatrix]
-      field_simp [ne_of_gt (Real.sqrt_pos.2 sigma.property)]
-      rw [Real.sq_sqrt sigma.property.le]
-    · simp [blockMatVecMul, zero_matVecMul, matVecMul_scalarMatrix]
-      field_simp [ne_of_gt (Real.sqrt_pos.2 sigma.property)]
-      rw [Real.sq_sqrt sigma.property.le]
-      field_simp [ne_of_gt sigma.property]
-  have hreflectQv : blockMatVecMul (blockReflect C0) Qv = P := by
-    dsimp only [C0, P, Qv, S, D, a0]
-    change blockMatVecMul
-      (blockReflect
-        (Book.Ch02.constantBlockMatrix (scalarMatrix (d := d) (sigma : ℝ))))
-      (ofFullBlockVec (Matrix.mulVec
-        (Book.Ch02.constantFullBlockMatrixSqrt
-          (scalarMatrix (d := d) (sigma : ℝ))) q)) =
-      ofFullBlockVec (Matrix.mulVec
-        (Book.Ch02.constantFullBlockMatrixInvSqrt
-          (scalarMatrix (d := d) (sigma : ℝ))) q)
-    rw [Book.Ch02.constantBlockMatrix_scalarMatrix sigma.property]
-    rw [Provider.ErrorComparison.ofFullBlockVec_constantFullBlockMatrixSqrt_scalarMatrix
-      sigma.property]
-    rw [Provider.ErrorComparison.ofFullBlockVec_constantFullBlockMatrixInvSqrt_scalarMatrix
-      sigma.property]
-    ext i
-    · simp [blockReflect, blockMatVecMul, zero_matVecMul, matVecMul_scalarMatrix]
-      field_simp [ne_of_gt (Real.sqrt_pos.2 sigma.property)]
-      rw [Real.sq_sqrt sigma.property.le]
-      field_simp [ne_of_gt sigma.property]
-    · simp [blockReflect, blockMatVecMul, zero_matVecMul, matVecMul_scalarMatrix]
-      field_simp [ne_of_gt (Real.sqrt_pos.2 sigma.property)]
-      rw [Real.sq_sqrt sigma.property.le]
+  have hQv : blockMatVecMul C0 P = Qv :=
+    Provider.ErrorComparison.blockMatVecMul_constantBlockMatrix_invSqrt_scalarMatrix
+      sigma.property q
+  have hreflectQv : blockMatVecMul (blockReflect C0) Qv = P :=
+    Provider.ErrorComparison.blockMatVecMul_reflect_constantBlockMatrix_sqrt_scalarMatrix
+      sigma.property q
   have hnorm : Book.Ch02.fullBlockVecNormSq q = 1 := by
     simpa [Book.Ch02.fullBlockVecNormSq, dotProduct, pow_two] using hq
   have hpair : blockVecDot P Qv = 1 := by
