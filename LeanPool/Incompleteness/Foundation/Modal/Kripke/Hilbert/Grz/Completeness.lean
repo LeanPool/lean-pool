@@ -93,10 +93,13 @@ lemma reflexive : Std.Refl (miniCanonicalFrame φ).Rel :=
 lemma transitive : IsTrans (miniCanonicalFrame φ).World (miniCanonicalFrame φ).Rel := by
   constructor
   rintro X Y Z ⟨RXY₁, RXY₂⟩ ⟨RYZ₁, RYZ₂⟩;
-  constructor;
-  · simp_all
-  · intro h;
-    simp_all
+  constructor
+  · intro χ hχ hX
+    exact RYZ₁ χ hχ (RXY₁ χ hχ hX)
+  · intro h
+    have hXY : X = Y := RXY₂ fun χ hχ hY ↦ h χ hχ (RYZ₁ χ hχ hY)
+    have hYZ : Y = Z := RYZ₂ fun χ hχ hZ ↦ RXY₁ χ hχ (h χ hχ hZ)
+    exact hXY.trans hYZ
 
 lemma antisymm : Std.Antisymm (miniCanonicalFrame φ).Rel := by
   constructor

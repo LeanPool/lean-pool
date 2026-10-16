@@ -8,7 +8,6 @@ module
 public import LeanPool.Incompleteness.Arithmetization.ISigmaOne.HFS.Basic
 import LeanPool.Incompleteness.Arithmetization.Definability.Absoluteness
 import LeanPool.Incompleteness.Arithmetization.Definability.Init
-import Mathlib.Algebra.Order.Sub.Basic
 
 /-!
 
@@ -432,8 +431,21 @@ section «lp_section_4»
 def _root_.LO.FirstOrder.Arith.mkSeq₁Def : Sg0.Semisentence 2 := .mkSigma
   “s x. !seqConsDef s 0 x” (by simp)
 
+-- Keeping the function abstract prevents conversion from unfolding encoded sequence operations.
+omit [V ⊧ₘ* 𝐈Sg1] in
+private lemma defined_zero_left (f : V → V → V) (φ : Sg0.Semisentence 3)
+    (hφ : Sg0-Function₂ f via φ) :
+    Sg0-Function₁ (fun x ↦ f ∅ x) via
+      (.mkSigma “s x. !φ s 0 x” (by simp)) := by
+  intro v
+  simp only [Fin.isValue, Fin.succ_zero_eq_one, Nat.reduceAdd, Nat.succ_eq_add_one,
+    HierarchySymbol.Semiformula.val_mkSigma, Semiformula.eval_substs, hφ.df.iff,
+    Matrix.vecCons_zero, Semiterm.val_bvar, Matrix.cons_val_one,
+    Semiterm.val_const, Structure.numeral_eq_numeral, ORingStruc.zero_eq_zero]
+  rfl
+
 lemma mkSeq₁_defined : Sg0-Function₁ (fun x : V ↦ !⟦x⟧) via mkSeq₁Def := by
-  intro v; simp [mkSeq₁Def]; rfl
+  simpa only [mkSeq₁Def] using defined_zero_left seqCons seqConsDef seqCons_defined
 
 @[simp] lemma eval_mkSeq₁Def (v) :
     Semiformula.Evalbm V v mkSeq₁Def.val ↔ v 0 = !⟦v 1⟧ := mkSeq₁_defined.df.iff v
