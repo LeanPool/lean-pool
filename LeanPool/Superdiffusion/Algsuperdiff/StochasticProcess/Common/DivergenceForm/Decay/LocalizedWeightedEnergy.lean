@@ -356,6 +356,44 @@ theorem integral_sq_mul_gradSq_product_le {u : H1Function U}
           2 * kappa ^ 2 *
             (u.toFun x ^ 2 * (eta x ^ 2 * chi x ^ 2)) := by ring
 
+/-- Absorb a logarithmic weight while paying an explicit remainder from the mass budget. -/
+theorem localizedMass_absorb_remainder {u : H1Function U} {eta chi : Vec d → ℝ}
+    {mass kappa Cbase remainder : ℝ}
+    (heta : ContDiff ℝ (⊤ : ℕ∞) eta) (hetaCompact : HasCompactSupport eta)
+    (hchi : ContDiff ℝ (⊤ : ℕ∞) chi) (hCbase : 0 ≤ Cbase)
+    (hchiGrad : ∀ᵐ x ∂volumeMeasureOn U,
+      vecNormSq (fun i => (fderiv ℝ chi x) (basisVec i)) ≤ kappa ^ 2 * chi x ^ 2)
+    (habs : remainder + 2 * Cbase * kappa ^ 2 ≤ mass / 2)
+    (hbase : mass * ∫ x in U, (eta x * chi x) ^ 2 * u.toFun x ^ 2 ∂volume ≤
+      Cbase * ∫ x in U, u.toFun x ^ 2 *
+        vecNormSq (fun i =>
+          (fderiv ℝ (fun y => eta y * chi y) x) (basisVec i)) ∂volume +
+        remainder * ∫ x in U, u.toFun x ^ 2 * (eta x ^ 2 * chi x ^ 2) ∂volume) :
+    mass / 2 * ∫ x in U, u.toFun x ^ 2 * (eta x ^ 2 * chi x ^ 2) ∂volume ≤
+      2 * Cbase * ∫ x in U, u.toFun x ^ 2 *
+        (chi x ^ 2 * vecNormSq (fun i => (fderiv ℝ eta x) (basisVec i))) ∂volume := by
+  let A := ∫ x in U, u.toFun x ^ 2 * (eta x ^ 2 * chi x ^ 2) ∂volume
+  let B := ∫ x in U, u.toFun x ^ 2 *
+    (chi x ^ 2 * vecNormSq (fun i => (fderiv ℝ eta x) (basisVec i))) ∂volume
+  let Z := ∫ x in U, u.toFun x ^ 2 *
+    vecNormSq (fun i => (fderiv ℝ (fun y => eta y * chi y) x) (basisVec i)) ∂volume
+  have hA0 : 0 ≤ A := integral_nonneg_of_ae (Filter.Eventually.of_forall fun x => by
+    dsimp only
+    positivity)
+  have hrewrite : (∫ x in U, (eta x * chi x) ^ 2 * u.toFun x ^ 2 ∂volume) = A := by
+    apply integral_congr_ae
+    filter_upwards with x
+    ring
+  rw [hrewrite] at hbase
+  change mass * A ≤ Cbase * Z + remainder * A at hbase
+  have hcompare : Z ≤ 2 * B + 2 * kappa ^ 2 * A :=
+    integral_sq_mul_gradSq_product_le heta hetaCompact hchi hchiGrad
+  have hscaled := mul_le_mul_of_nonneg_left hcompare hCbase
+  have habsorb : (remainder + 2 * Cbase * kappa ^ 2) * A ≤ mass / 2 * A :=
+    mul_le_mul_of_nonneg_right habs hA0
+  change mass / 2 * A ≤ 2 * Cbase * B
+  nlinarith only [hbase, hscaled, habsorb]
+
 /-- **Absorption of a logarithmic weight.**  Given a mass bound whose layer
 term is the squared gradient of the product weight, and a factor obeying the
 logarithmic gradient bound at rate `kappa`, half of the mass is absorbed and
@@ -375,46 +413,9 @@ theorem localizedMass_absorb {u : H1Function U} {eta chi : Vec d → ℝ}
       2 * Cbase * ∫ x in U, u.toFun x ^ 2 *
         (chi x ^ 2 *
           vecNormSq (fun i => (fderiv ℝ eta x) (basisVec i))) ∂volume := by
-  let mu := volumeMeasureOn U
-  let zeta : Vec d → ℝ := fun x => eta x * chi x
-  have hA0 : 0 ≤ ∫ x, u.toFun x ^ 2 * (eta x ^ 2 * chi x ^ 2) ∂mu := by
-    apply integral_nonneg_of_ae
-    filter_upwards with x
-    positivity
-  have hcompare : (∫ x, u.toFun x ^ 2 *
-        vecNormSq (fun i => (fderiv ℝ zeta x) (basisVec i)) ∂mu) ≤
-      2 * (∫ x, u.toFun x ^ 2 * (chi x ^ 2 *
-          vecNormSq (fun i => (fderiv ℝ eta x) (basisVec i))) ∂mu) +
-        2 * kappa ^ 2 *
-          ∫ x, u.toFun x ^ 2 * (eta x ^ 2 * chi x ^ 2) ∂mu :=
-    integral_sq_mul_gradSq_product_le heta hetaCompact hchi hchiGrad
-  have hrewrite : (∫ x, (eta x * chi x) ^ 2 * u.toFun x ^ 2 ∂mu) =
-      ∫ x, u.toFun x ^ 2 * (eta x ^ 2 * chi x ^ 2) ∂mu := by
-    apply integral_congr_ae
-    filter_upwards with x
-    ring
-  change mass * ∫ x, (eta x * chi x) ^ 2 * u.toFun x ^ 2 ∂mu ≤
-    Cbase * ∫ x, u.toFun x ^ 2 *
-      vecNormSq (fun i => (fderiv ℝ zeta x) (basisVec i)) ∂mu at hbase
-  rw [hrewrite] at hbase
-  change mass / 2 * ∫ x, u.toFun x ^ 2 * (eta x ^ 2 * chi x ^ 2) ∂mu ≤
-    2 * Cbase * ∫ x, u.toFun x ^ 2 *
-      (chi x ^ 2 * vecNormSq (fun i => (fderiv ℝ eta x) (basisVec i))) ∂mu
-  set A := ∫ x, u.toFun x ^ 2 * (eta x ^ 2 * chi x ^ 2) ∂mu with hAdef
-  set B := ∫ x, u.toFun x ^ 2 *
-    (chi x ^ 2 * vecNormSq (fun i => (fderiv ℝ eta x) (basisVec i))) ∂mu
-    with hBdef
-  set Z := ∫ x, u.toFun x ^ 2 *
-    vecNormSq (fun i => (fderiv ℝ zeta x) (basisVec i)) ∂mu with hZdef
-  have habsorb : 2 * Cbase * kappa ^ 2 * A ≤ mass / 2 * A :=
-    mul_le_mul_of_nonneg_right habs hA0
-  have key : mass * A ≤ 2 * Cbase * B + 2 * Cbase * kappa ^ 2 * A := by
-    calc
-      mass * A ≤ Cbase * Z := hbase
-      _ ≤ Cbase * (2 * B + 2 * kappa ^ 2 * A) :=
-        mul_le_mul_of_nonneg_left hcompare hCbase
-      _ = 2 * Cbase * B + 2 * Cbase * kappa ^ 2 * A := by ring
-  linarith only [key, habsorb]
+  exact localizedMass_absorb_remainder (remainder := 0) heta hetaCompact hchi hCbase
+    hchiGrad (by simpa only [zero_add] using habs)
+    (by simpa only [zero_mul, add_zero] using hbase)
 
 /-! ### The localized Agmon mass estimate -/
 

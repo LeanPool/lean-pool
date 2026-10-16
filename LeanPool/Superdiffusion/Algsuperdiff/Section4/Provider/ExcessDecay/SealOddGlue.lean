@@ -334,145 +334,38 @@ theorem exists_oddHarmonic_of_meetsUpperFace [NeZero d] {x' : Vec d} {m k : ℤ}
       HarmonicOnNhd (W ∘ (toEuc.symm : EuclideanSpace ℝ (Fin d) → Vec d))
         ((toEuc : Vec d → EuclideanSpace ℝ (Fin d)) '' D) ∧
       W =ᵐ[volume.restrict (truncatedWindow x' m k)] v.toFun := by
-  classical
   obtain ⟨w, hwval, hwgrad⟩ :=
     exists_h1_oddFaceReflection_of_meetsUpperFace hkm hup hother v hzt
   have hharm : IsWeaklyHarmonicOn (reflectedWindow x' m k) w :=
     isWeaklyHarmonicOn_reflectedWindow_of_meetsUpperFace hkm hup hother v hv w hwgrad
   obtain ⟨V, hVharm, hVmem, hVae⟩ :=
     exists_classicalCompetitor_reflectedWindow x' m k hharm
-  have hρmem : ∀ y, coordFaceReflection ((1 / 2 : ℝ) * (3 : ℝ) ^ m) i y ∈
-      reflectedWindow x' m k ↔ y ∈ reflectedWindow x' m k :=
-    mem_reflectedWindow_coordFaceReflection_iff hkm hup
-  have hVcont : ContinuousOn V (reflectedWindow x' m k) := by
-    intro y hy
-    have hharmAt := hVharm (toEuc y) ⟨y, hy, rfl⟩
-    have hcontAt : ContinuousAt
-        (V ∘ (toEuc.symm : EuclideanSpace ℝ (Fin d) → Vec d)) (toEuc y) :=
-      hharmAt.1.continuousAt
-    have hVeq : V = (V ∘ (toEuc.symm : EuclideanSpace ℝ (Fin d) → Vec d)) ∘
-        (toEuc : Vec d → EuclideanSpace ℝ (Fin d)) := by
-      funext p
-      simp [Function.comp]
-    rw [hVeq]
-    exact (hcontAt.comp (toEuc : Vec d ≃L[ℝ]
-      EuclideanSpace ℝ (Fin d)).continuous.continuousAt).continuousWithinAt
-  have hpre : (coordFaceReflection ((1 / 2 : ℝ) * (3 : ℝ) ^ m) i) ⁻¹'
-      reflectedWindow x' m k = reflectedWindow x' m k := by
-    ext y
-    exact hρmem y
-  have hmp : MeasurePreserving (coordFaceReflection ((1 / 2 : ℝ) * (3 : ℝ) ^ m) i)
-      (volume.restrict (reflectedWindow x' m k))
-      (volume.restrict (reflectedWindow x' m k)) := by
-    have h := (measurePreserving_coordFaceReflection (d := d)
-      ((1 / 2 : ℝ) * (3 : ℝ) ^ m) i).restrict_preimage
-      (isOpen_reflectedWindow x' m k).measurableSet
-    rwa [hpre] at h
-  have hae2 : (fun y => V (coordFaceReflection ((1 / 2 : ℝ) * (3 : ℝ) ^ m) i y))
-      =ᵐ[volume.restrict (reflectedWindow x' m k)]
-      (fun y => w.toFun (coordFaceReflection ((1 / 2 : ℝ) * (3 : ℝ) ^ m) i y)) :=
-    hVae.comp_tendsto hmp.quasiMeasurePreserving.tendsto_ae
   have hwodd : ∀ y, w.toFun (coordFaceReflection ((1 / 2 : ℝ) * (3 : ℝ) ^ m) i y) =
       -w.toFun y := by
     intro y
     rw [hwval, hwval y]
     exact oddFaceExtend_comp_coordFaceReflection _ i _ y
-  have hae3 : (fun y => V (coordFaceReflection ((1 / 2 : ℝ) * (3 : ℝ) ^ m) i y))
-      =ᵐ[volume.restrict (reflectedWindow x' m k)] (fun y => -V y) := by
-    filter_upwards [hae2, hVae] with y h2 h3
-    rw [h2, hwodd y, h3]
-  have hVρcont : ContinuousOn
-      (fun y => V (coordFaceReflection ((1 / 2 : ℝ) * (3 : ℝ) ^ m) i y))
-      (reflectedWindow x' m k) := by
-    refine ContinuousOn.comp hVcont
-      (contDiff_coordFaceReflection _ i).continuous.continuousOn ?_
-    intro y hy
-    exact (hρmem y).mpr hy
-  have hodd_eq : Set.EqOn
-      (fun y => V (coordFaceReflection ((1 / 2 : ℝ) * (3 : ℝ) ^ m) i y))
-      (fun y => -V y) (reflectedWindow x' m k) :=
-    Measure.eqOn_open_of_ae_eq hae3 (isOpen_reflectedWindow x' m k)
-      hVρcont hVcont.neg
-  have hodd_eq' : ∀ y ∈ reflectedWindow x' m k,
-      V (coordFaceReflection ((1 / 2 : ℝ) * (3 : ℝ) ^ m) i y) = -V y :=
-    fun y hy => hodd_eq hy
-  refine ⟨fun y =>
-    (V y - V (coordFaceReflection ((1 / 2 : ℝ) * (3 : ℝ) ^ m) i y)) / 2,
-    ?_, ?_, ?_, ?_⟩
-  · intro y
-    change (V (coordFaceReflection ((1 / 2 : ℝ) * (3 : ℝ) ^ m) i y) -
-        V (coordFaceReflection ((1 / 2 : ℝ) * (3 : ℝ) ^ m) i
-          (coordFaceReflection ((1 / 2 : ℝ) * (3 : ℝ) ^ m) i y))) / 2 =
-      -((V y - V (coordFaceReflection ((1 / 2 : ℝ) * (3 : ℝ) ^ m) i y)) / 2)
-    rw [coordFaceReflection_involutive]
-    ring
-  · have hVρ : MemLp
-        (fun y => V (coordFaceReflection ((1 / 2 : ℝ) * (3 : ℝ) ^ m) i y)) 2
-        (volume : Measure (Vec d)) :=
-      hVmem.comp_measurePreserving
-        (measurePreserving_coordFaceReflection ((1 / 2 : ℝ) * (3 : ℝ) ^ m) i)
-    have hfun : (fun y =>
-        (V y - V (coordFaceReflection ((1 / 2 : ℝ) * (3 : ℝ) ^ m) i y)) / 2) =
-        fun y => (1 / 2 : ℝ) *
-          (V y - V (coordFaceReflection ((1 / 2 : ℝ) * (3 : ℝ) ^ m) i y)) := by
-      funext y
-      ring
-    rw [hfun]
-    exact (((hVmem.sub hVρ).const_mul ((1 : ℝ) / 2)).restrict D)
-  · have hWeqV : ∀ y ∈ reflectedWindow x' m k,
-        (V y - V (coordFaceReflection ((1 / 2 : ℝ) * (3 : ℝ) ^ m) i y)) / 2 =
-          V y := by
-      intro y hy
-      rw [hodd_eq' y hy]
-      ring
-    intro e he
-    obtain ⟨y, hy, rfl⟩ := he
-    have hyR : y ∈ reflectedWindow x' m k := hD hy
-    have hharmAt := hVharm (toEuc y) ⟨y, hyR, rfl⟩
-    have hnhds : (toEuc : Vec d → EuclideanSpace ℝ (Fin d)) ''
-        reflectedWindow x' m k ∈ nhds (toEuc y) := by
-      have hopen : IsOpen ((toEuc : Vec d → EuclideanSpace ℝ (Fin d)) ''
-          reflectedWindow x' m k) :=
-        (toEuc : Vec d ≃L[ℝ] EuclideanSpace ℝ (Fin d)).toHomeomorph.isOpenMap _
-          (isOpen_reflectedWindow x' m k)
-      exact hopen.mem_nhds ⟨y, hyR, rfl⟩
-    have hgerm : (fun p =>
-        (V p - V (coordFaceReflection ((1 / 2 : ℝ) * (3 : ℝ) ^ m) i p)) / 2) ∘
-        (toEuc.symm : EuclideanSpace ℝ (Fin d) → Vec d) =ᶠ[nhds (toEuc y)]
-        V ∘ (toEuc.symm : EuclideanSpace ℝ (Fin d) → Vec d) := by
-      refine Filter.eventually_of_mem hnhds ?_
-      rintro e ⟨p, hp, rfl⟩
-      change (V (toEuc.symm (toEuc p)) - V (coordFaceReflection
-          ((1 / 2 : ℝ) * (3 : ℝ) ^ m) i (toEuc.symm (toEuc p)))) / 2 =
-        V (toEuc.symm (toEuc p))
-      rw [ContinuousLinearEquiv.symm_apply_apply]
-      exact hWeqV p hp
-    exact (harmonicAt_congr_nhds hgerm).mpr hharmAt
-  · have hsub : truncatedWindow x' m k ⊆ reflectedWindow x' m k :=
-      truncatedWindow_subset_reflectedWindow x' m k
-    have hVae' : V =ᵐ[volume.restrict (truncatedWindow x' m k)] w.toFun :=
-      ae_restrict_of_ae_restrict_of_subset hsub hVae
-    have hface : faceHalf (reflectedWindow x' m k) i ((1 / 2 : ℝ) * (3 : ℝ) ^ m) 1 =
-        truncatedWindow x' m k :=
-      faceHalf_reflectedWindow_of_meetsUpperFace hkm hup hother
-    have hwv : ∀ y ∈ truncatedWindow x' m k, w.toFun y = v.toFun y := by
-      intro y hy
-      rw [hwval y]
-      have hy' : y ∈ faceHalf (reflectedWindow x' m k) i
-          ((1 / 2 : ℝ) * (3 : ℝ) ^ m) 1 := by
-        rw [hface]
-        exact hy
-      have h := oddFaceExtend_zeroExtend_faceHalf (u := v.toFun) hy'
-      rw [hface] at h
-      exact h
-    filter_upwards [hVae',
-      self_mem_ae_restrict (isOpen_truncatedWindow x' m k).measurableSet]
-      with y hyae hymem
-    have hyR : y ∈ reflectedWindow x' m k := hsub hymem
-    change (V y - V (coordFaceReflection ((1 / 2 : ℝ) * (3 : ℝ) ^ m) i y)) / 2 =
-      v.toFun y
-    rw [hodd_eq' y hyR, hyae, hwv y hymem]
-    ring
+  obtain ⟨W, hWodd, hWmem, hWharm, hWeq⟩ := exists_oddHarmonic_of_ae_eq
+    (isOpen_reflectedWindow x' m k)
+    (contDiff_coordFaceReflection ((1 / 2 : ℝ) * (3 : ℝ) ^ m) i).continuous
+    (measurePreserving_coordFaceReflection ((1 / 2 : ℝ) * (3 : ℝ) ^ m) i)
+    (fun y => coordFaceReflection_involutive ((1 / 2 : ℝ) * (3 : ℝ) ^ m) i y)
+    (mem_reflectedWindow_coordFaceReflection_iff hkm hup) hVharm hVmem hVae hwodd
+  refine ⟨W, hWodd, hWmem.restrict D, hWharm.mono (Set.image_mono hD), ?_⟩
+  have hsub := truncatedWindow_subset_reflectedWindow x' m k
+  have hVae' : V =ᵐ[volume.restrict (truncatedWindow x' m k)] w.toFun :=
+    ae_restrict_of_ae_restrict_of_subset hsub hVae
+  have hface : faceHalf (reflectedWindow x' m k) i ((1 / 2 : ℝ) * (3 : ℝ) ^ m) 1 =
+      truncatedWindow x' m k :=
+    faceHalf_reflectedWindow_of_meetsUpperFace hkm hup hother
+  filter_upwards [hVae',
+    self_mem_ae_restrict (isOpen_truncatedWindow x' m k).measurableSet]
+    with y hy hymem
+  rw [hWeq (hsub hymem), hy, hwval y]
+  have hy' : y ∈ faceHalf (reflectedWindow x' m k) i ((1 / 2 : ℝ) * (3 : ℝ) ^ m) 1 := by
+    rwa [hface]
+  have h := oddFaceExtend_zeroExtend_faceHalf (u := v.toFun) hy'
+  rwa [hface] at h
 
 /-- **The pointwise-odd classical representative, lower met face.** -/
 theorem exists_oddHarmonic_of_meetsLowerFace [NeZero d] {x' : Vec d} {m k : ℤ}
@@ -489,145 +382,38 @@ theorem exists_oddHarmonic_of_meetsLowerFace [NeZero d] {x' : Vec d} {m k : ℤ}
       HarmonicOnNhd (W ∘ (toEuc.symm : EuclideanSpace ℝ (Fin d) → Vec d))
         ((toEuc : Vec d → EuclideanSpace ℝ (Fin d)) '' D) ∧
       W =ᵐ[volume.restrict (truncatedWindow x' m k)] v.toFun := by
-  classical
   obtain ⟨w, hwval, hwgrad⟩ :=
     exists_h1_oddFaceReflection_of_meetsLowerFace hkm hlow hother v hzt
   have hharm : IsWeaklyHarmonicOn (reflectedWindow x' m k) w :=
     isWeaklyHarmonicOn_reflectedWindow_of_meetsLowerFace hkm hlow hother v hv w hwgrad
   obtain ⟨V, hVharm, hVmem, hVae⟩ :=
     exists_classicalCompetitor_reflectedWindow x' m k hharm
-  have hρmem : ∀ y, coordFaceReflection (-(1 / 2 : ℝ) * (3 : ℝ) ^ m) i y ∈
-      reflectedWindow x' m k ↔ y ∈ reflectedWindow x' m k :=
-    mem_reflectedWindow_coordFaceReflection_iff_lower hkm hlow
-  have hVcont : ContinuousOn V (reflectedWindow x' m k) := by
-    intro y hy
-    have hharmAt := hVharm (toEuc y) ⟨y, hy, rfl⟩
-    have hcontAt : ContinuousAt
-        (V ∘ (toEuc.symm : EuclideanSpace ℝ (Fin d) → Vec d)) (toEuc y) :=
-      hharmAt.1.continuousAt
-    have hVeq : V = (V ∘ (toEuc.symm : EuclideanSpace ℝ (Fin d) → Vec d)) ∘
-        (toEuc : Vec d → EuclideanSpace ℝ (Fin d)) := by
-      funext p
-      simp [Function.comp]
-    rw [hVeq]
-    exact (hcontAt.comp (toEuc : Vec d ≃L[ℝ]
-      EuclideanSpace ℝ (Fin d)).continuous.continuousAt).continuousWithinAt
-  have hpre : (coordFaceReflection (-(1 / 2 : ℝ) * (3 : ℝ) ^ m) i) ⁻¹'
-      reflectedWindow x' m k = reflectedWindow x' m k := by
-    ext y
-    exact hρmem y
-  have hmp : MeasurePreserving (coordFaceReflection (-(1 / 2 : ℝ) * (3 : ℝ) ^ m) i)
-      (volume.restrict (reflectedWindow x' m k))
-      (volume.restrict (reflectedWindow x' m k)) := by
-    have h := (measurePreserving_coordFaceReflection (d := d)
-      (-(1 / 2 : ℝ) * (3 : ℝ) ^ m) i).restrict_preimage
-      (isOpen_reflectedWindow x' m k).measurableSet
-    rwa [hpre] at h
-  have hae2 : (fun y => V (coordFaceReflection (-(1 / 2 : ℝ) * (3 : ℝ) ^ m) i y))
-      =ᵐ[volume.restrict (reflectedWindow x' m k)]
-      (fun y => w.toFun (coordFaceReflection (-(1 / 2 : ℝ) * (3 : ℝ) ^ m) i y)) :=
-    hVae.comp_tendsto hmp.quasiMeasurePreserving.tendsto_ae
   have hwodd : ∀ y, w.toFun (coordFaceReflection (-(1 / 2 : ℝ) * (3 : ℝ) ^ m) i y) =
       -w.toFun y := by
     intro y
     rw [hwval, hwval y]
     exact oddFaceExtend_comp_coordFaceReflection _ i _ y
-  have hae3 : (fun y => V (coordFaceReflection (-(1 / 2 : ℝ) * (3 : ℝ) ^ m) i y))
-      =ᵐ[volume.restrict (reflectedWindow x' m k)] (fun y => -V y) := by
-    filter_upwards [hae2, hVae] with y h2 h3
-    rw [h2, hwodd y, h3]
-  have hVρcont : ContinuousOn
-      (fun y => V (coordFaceReflection (-(1 / 2 : ℝ) * (3 : ℝ) ^ m) i y))
-      (reflectedWindow x' m k) := by
-    refine ContinuousOn.comp hVcont
-      (contDiff_coordFaceReflection _ i).continuous.continuousOn ?_
-    intro y hy
-    exact (hρmem y).mpr hy
-  have hodd_eq : Set.EqOn
-      (fun y => V (coordFaceReflection (-(1 / 2 : ℝ) * (3 : ℝ) ^ m) i y))
-      (fun y => -V y) (reflectedWindow x' m k) :=
-    Measure.eqOn_open_of_ae_eq hae3 (isOpen_reflectedWindow x' m k)
-      hVρcont hVcont.neg
-  have hodd_eq' : ∀ y ∈ reflectedWindow x' m k,
-      V (coordFaceReflection (-(1 / 2 : ℝ) * (3 : ℝ) ^ m) i y) = -V y :=
-    fun y hy => hodd_eq hy
-  refine ⟨fun y =>
-    (V y - V (coordFaceReflection (-(1 / 2 : ℝ) * (3 : ℝ) ^ m) i y)) / 2,
-    ?_, ?_, ?_, ?_⟩
-  · intro y
-    change (V (coordFaceReflection (-(1 / 2 : ℝ) * (3 : ℝ) ^ m) i y) -
-        V (coordFaceReflection (-(1 / 2 : ℝ) * (3 : ℝ) ^ m) i
-          (coordFaceReflection (-(1 / 2 : ℝ) * (3 : ℝ) ^ m) i y))) / 2 =
-      -((V y - V (coordFaceReflection (-(1 / 2 : ℝ) * (3 : ℝ) ^ m) i y)) / 2)
-    rw [coordFaceReflection_involutive]
-    ring
-  · have hVρ : MemLp
-        (fun y => V (coordFaceReflection (-(1 / 2 : ℝ) * (3 : ℝ) ^ m) i y)) 2
-        (volume : Measure (Vec d)) :=
-      hVmem.comp_measurePreserving
-        (measurePreserving_coordFaceReflection (-(1 / 2 : ℝ) * (3 : ℝ) ^ m) i)
-    have hfun : (fun y =>
-        (V y - V (coordFaceReflection (-(1 / 2 : ℝ) * (3 : ℝ) ^ m) i y)) / 2) =
-        fun y => (1 / 2 : ℝ) *
-          (V y - V (coordFaceReflection (-(1 / 2 : ℝ) * (3 : ℝ) ^ m) i y)) := by
-      funext y
-      ring
-    rw [hfun]
-    exact (((hVmem.sub hVρ).const_mul ((1 : ℝ) / 2)).restrict D)
-  · have hWeqV : ∀ y ∈ reflectedWindow x' m k,
-        (V y - V (coordFaceReflection (-(1 / 2 : ℝ) * (3 : ℝ) ^ m) i y)) / 2 =
-          V y := by
-      intro y hy
-      rw [hodd_eq' y hy]
-      ring
-    intro e he
-    obtain ⟨y, hy, rfl⟩ := he
-    have hyR : y ∈ reflectedWindow x' m k := hD hy
-    have hharmAt := hVharm (toEuc y) ⟨y, hyR, rfl⟩
-    have hnhds : (toEuc : Vec d → EuclideanSpace ℝ (Fin d)) ''
-        reflectedWindow x' m k ∈ nhds (toEuc y) := by
-      have hopen : IsOpen ((toEuc : Vec d → EuclideanSpace ℝ (Fin d)) ''
-          reflectedWindow x' m k) :=
-        (toEuc : Vec d ≃L[ℝ] EuclideanSpace ℝ (Fin d)).toHomeomorph.isOpenMap _
-          (isOpen_reflectedWindow x' m k)
-      exact hopen.mem_nhds ⟨y, hyR, rfl⟩
-    have hgerm : (fun p =>
-        (V p - V (coordFaceReflection (-(1 / 2 : ℝ) * (3 : ℝ) ^ m) i p)) / 2) ∘
-        (toEuc.symm : EuclideanSpace ℝ (Fin d) → Vec d) =ᶠ[nhds (toEuc y)]
-        V ∘ (toEuc.symm : EuclideanSpace ℝ (Fin d) → Vec d) := by
-      refine Filter.eventually_of_mem hnhds ?_
-      rintro e ⟨p, hp, rfl⟩
-      change (V (toEuc.symm (toEuc p)) - V (coordFaceReflection
-          (-(1 / 2 : ℝ) * (3 : ℝ) ^ m) i (toEuc.symm (toEuc p)))) / 2 =
-        V (toEuc.symm (toEuc p))
-      rw [ContinuousLinearEquiv.symm_apply_apply]
-      exact hWeqV p hp
-    exact (harmonicAt_congr_nhds hgerm).mpr hharmAt
-  · have hsub : truncatedWindow x' m k ⊆ reflectedWindow x' m k :=
-      truncatedWindow_subset_reflectedWindow x' m k
-    have hVae' : V =ᵐ[volume.restrict (truncatedWindow x' m k)] w.toFun :=
-      ae_restrict_of_ae_restrict_of_subset hsub hVae
-    have hface : faceHalf (reflectedWindow x' m k) i
-        (-(1 / 2 : ℝ) * (3 : ℝ) ^ m) (-1) = truncatedWindow x' m k :=
-      faceHalf_reflectedWindow_of_meetsLowerFace hkm hlow hother
-    have hwv : ∀ y ∈ truncatedWindow x' m k, w.toFun y = v.toFun y := by
-      intro y hy
-      rw [hwval y]
-      have hy' : y ∈ faceHalf (reflectedWindow x' m k) i
-          (-(1 / 2 : ℝ) * (3 : ℝ) ^ m) (-1) := by
-        rw [hface]
-        exact hy
-      have h := oddFaceExtend_zeroExtend_faceHalf (u := v.toFun) hy'
-      rw [hface] at h
-      exact h
-    filter_upwards [hVae',
-      self_mem_ae_restrict (isOpen_truncatedWindow x' m k).measurableSet]
-      with y hyae hymem
-    have hyR : y ∈ reflectedWindow x' m k := hsub hymem
-    change (V y - V (coordFaceReflection (-(1 / 2 : ℝ) * (3 : ℝ) ^ m) i y)) / 2 =
-      v.toFun y
-    rw [hodd_eq' y hyR, hyae, hwv y hymem]
-    ring
+  obtain ⟨W, hWodd, hWmem, hWharm, hWeq⟩ := exists_oddHarmonic_of_ae_eq
+    (isOpen_reflectedWindow x' m k)
+    (contDiff_coordFaceReflection (-(1 / 2 : ℝ) * (3 : ℝ) ^ m) i).continuous
+    (measurePreserving_coordFaceReflection (-(1 / 2 : ℝ) * (3 : ℝ) ^ m) i)
+    (fun y => coordFaceReflection_involutive (-(1 / 2 : ℝ) * (3 : ℝ) ^ m) i y)
+    (mem_reflectedWindow_coordFaceReflection_iff_lower hkm hlow) hVharm hVmem hVae hwodd
+  refine ⟨W, hWodd, hWmem.restrict D, hWharm.mono (Set.image_mono hD), ?_⟩
+  have hsub := truncatedWindow_subset_reflectedWindow x' m k
+  have hVae' : V =ᵐ[volume.restrict (truncatedWindow x' m k)] w.toFun :=
+    ae_restrict_of_ae_restrict_of_subset hsub hVae
+  have hface : faceHalf (reflectedWindow x' m k) i (-(1 / 2 : ℝ) * (3 : ℝ) ^ m) (-1) =
+      truncatedWindow x' m k :=
+    faceHalf_reflectedWindow_of_meetsLowerFace hkm hlow hother
+  filter_upwards [hVae',
+    self_mem_ae_restrict (isOpen_truncatedWindow x' m k).measurableSet]
+    with y hy hymem
+  rw [hWeq (hsub hymem), hy, hwval y]
+  have hy' : y ∈ faceHalf (reflectedWindow x' m k) i (-(1 / 2 : ℝ) * (3 : ℝ) ^ m) (-1) := by
+    rwa [hface]
+  have h := oddFaceExtend_zeroExtend_faceHalf (u := v.toFun) hy'
+  rwa [hface] at h
 
 /-- **The `(W)(iv)` glue at the flush sub-cube.**
 

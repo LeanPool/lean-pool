@@ -190,6 +190,61 @@ theorem integral_sq_mul_vecDot_skewFieldDiv_le {Om : Set (Vec d)}
 
 
 
+/-- The split-skew mass argument after admissibility, energy and drift witnesses are supplied.
+The logarithmic weight is arbitrary, and no trace or domain regularity is required here. -/
+theorem agmonMass_split_of_energy_le {a : CoeffField d} {u : H1Function U}
+    {g eta chi : Vec d → ℝ} {nu Ks Kl mass kappa D : ℝ}
+    (hnu : 0 < nu) (hmass : 0 < mass)
+    (heta : ContDiff ℝ (⊤ : ℕ∞) eta) (hetaCompact : HasCompactSupport eta)
+    (hchi : ContDiff ℝ (⊤ : ℕ∞) chi)
+    (hchiGrad : ∀ᵐ x ∂volumeMeasureOn U,
+      vecNormSq (fun i => (fderiv ℝ chi x) (basisVec i)) ≤ kappa ^ 2 * chi x ^ 2)
+    (hsol : IsScalarForcedWeakSolution a U g u)
+    (hadm : IsAdmissibleMultiplier U u (fun x => (eta x * chi x) ^ 2))
+    (hg : ∀ᵐ x ∂volumeMeasureOn U,
+      eta x * chi x ≠ 0 → g x * u.toFun x ≤ -(mass * u.toFun x ^ 2))
+    (henergy : nu / 2 * (∫ x in U, (eta x * chi x) ^ 2 * vecNormSq (u.grad x) ∂volume) +
+      1 / 2 * D ≤ (∫ x in U, g x * ((eta x * chi x) ^ 2 * u.toFun x) ∂volume) +
+        2 * (nu + Ks) ^ 2 / nu * ∫ x in U, u.toFun x ^ 2 *
+          vecNormSq (fun i =>
+            (fderiv ℝ (fun y => eta y * chi y) x) (basisVec i)) ∂volume)
+    (hdrift : -(1 / 2) * D ≤
+      mass / 8 * (∫ x in U, u.toFun x ^ 2 * (eta x * chi x) ^ 2 ∂volume) +
+        2 * Kl ^ 2 / mass * ∫ x in U, u.toFun x ^ 2 *
+          vecNormSq (fun i =>
+            (fderiv ℝ (fun y => eta y * chi y) x) (basisVec i)) ∂volume)
+    (hadmiss : (4 * (nu + Ks) ^ 2 / nu + 4 * Kl ^ 2 / mass) * kappa ^ 2 ≤ 3 * mass / 8) :
+    mass / 2 * ∫ x in U, u.toFun x ^ 2 * (eta x ^ 2 * chi x ^ 2) ∂volume ≤
+      (4 * (nu + Ks) ^ 2 / nu + 4 * Kl ^ 2 / mass) * ∫ x in U, u.toFun x ^ 2 *
+        (chi x ^ 2 * vecNormSq (fun i => (fderiv ℝ eta x) (basisVec i))) ∂volume := by
+  let Z := ∫ x in U, u.toFun x ^ 2 *
+    vecNormSq (fun i => (fderiv ℝ (fun y => eta y * chi y) x) (basisVec i)) ∂volume
+  let Cbase := 2 * (nu + Ks) ^ 2 / nu + 2 * Kl ^ 2 / mass
+  have hmassRaw := weightedMass_le_of_energy (zeta := fun x => eta x * chi x)
+    (T := 2 * (nu + Ks) ^ 2 / nu * Z - 1 / 2 * D) hnu hsol hadm hg
+    (by linarith only [henergy])
+  have hrewrite : (∫ x in U, u.toFun x ^ 2 * (eta x * chi x) ^ 2 ∂volume) =
+      ∫ x in U, u.toFun x ^ 2 * (eta x ^ 2 * chi x ^ 2) ∂volume := by
+    apply integral_congr_ae
+    filter_upwards with x
+    ring
+  rw [hrewrite] at hdrift
+  have hCbase : 0 ≤ Cbase := by dsimp only [Cbase]; positivity
+  have hfactor : 2 * Cbase = 4 * (nu + Ks) ^ 2 / nu + 4 * Kl ^ 2 / mass := by
+    dsimp only [Cbase]
+    ring
+  have hbudget : mass / 8 + 2 * Cbase * kappa ^ 2 ≤ mass / 2 := by
+    rw [hfactor]
+    linarith only [hadmiss]
+  have hbase : mass * (∫ x in U, (eta x * chi x) ^ 2 * u.toFun x ^ 2 ∂volume) ≤
+      Cbase * Z + mass / 8 *
+        ∫ x in U, u.toFun x ^ 2 * (eta x ^ 2 * chi x ^ 2) ∂volume := by
+    dsimp only [Cbase]
+    linarith only [hmassRaw, hdrift]
+  have hfinal := localizedMass_absorb_remainder heta hetaCompact hchi hCbase hchiGrad
+    hbudget hbase
+  simpa only [hfactor] using hfinal
+
 /-! ### The Agmon mass estimate with a split antisymmetric part -/
 
 /-- **The Agmon weighted mass estimate with a split antisymmetric part.**  The
@@ -251,69 +306,11 @@ theorem agmonMass_split_le {Om : Set (Vec d)} (hOmOpen : IsOpen Om)
     exact exponentialWeight_gradient_le hpsi hy kappa
   have hsplitEnergy := weightedEnergy_split_le hOmOpen hOmBdd hnu hKs hEllS
     hsplit hksSkew hklSkew hklC1 hsol hzetaSmooth hzetaCompact hzetaL hksSize
-  have hZle := integral_sq_mul_gradSq_product_le (u := z.toH1Function)
-    (kappa := kappa) heta hetaCompact hchiSmooth hchiGrad
   have hDle := integral_sq_mul_vecDot_skewFieldDiv_le (u := z.toH1Function)
     (kl := kl) (L := L) (mass := mass) hmass hzetaSmooth hzetaCompact hzetaL
     hklC1 hklDiv
-  set A := ∫ y in Om, z.toH1Function.toFun y ^ 2 *
-    (eta y ^ 2 * Real.exp (kappa * psi y) ^ 2) ∂volume with hA_def
-  set B := ∫ y in Om, z.toH1Function.toFun y ^ 2 *
-    (Real.exp (kappa * psi y) ^ 2 *
-      vecNormSq (fun i => (fderiv ℝ eta y) (basisVec i))) ∂volume with hB_def
-  set Zg := ∫ y in Om, z.toH1Function.toFun y ^ 2 *
-    vecNormSq (fun i =>
-      (fderiv ℝ (fun w => eta w * Real.exp (kappa * psi w)) y)
-        (basisVec i)) ∂volume with hZ_def
-  set D := ∫ y in Om, z.toH1Function.toFun y ^ 2 *
-    vecDot (skewFieldDiv kl y)
-      (fun i => (fderiv ℝ
-        (fun w => (eta w * Real.exp (kappa * psi w)) ^ 2) y) (basisVec i))
-    ∂volume with hD_def
-  have henergy : nu / 2 * (∫ x in Om,
-      (eta x * Real.exp (kappa * psi x)) ^ 2 *
-        vecNormSq (z.toH1Function.grad x) ∂volume) ≤
-      (∫ x in Om, g x * ((eta x * Real.exp (kappa * psi x)) ^ 2 *
-        z.toH1Function.toFun x) ∂volume) +
-        (2 * (nu + Ks) ^ 2 / nu * Zg - 1 / 2 * D) := by
-    linarith only [hsplitEnergy]
-  have hmassRaw := weightedMass_le_of_energy hnu hsol hadm hgzeta henergy
-  have hArw : (∫ x in Om, (eta x * Real.exp (kappa * psi x)) ^ 2 *
-      z.toH1Function.toFun x ^ 2 ∂volume) = A := by
-    rw [hA_def]
-    refine integral_congr_ae (Filter.Eventually.of_forall fun x => ?_)
-    ring
-  have hDArw : (∫ y in Om, z.toH1Function.toFun y ^ 2 *
-      (eta y * Real.exp (kappa * psi y)) ^ 2 ∂volume) = A := by
-    rw [hA_def]
-    refine integral_congr_ae (Filter.Eventually.of_forall fun x => ?_)
-    ring
-  rw [hArw] at hmassRaw
-  rw [hDArw] at hDle
-  have hA0 : 0 ≤ A := by
-    rw [hA_def]
-    refine integral_nonneg_of_ae (Filter.Eventually.of_forall fun x => ?_)
-    positivity
-  have hCnn : (0 : ℝ) ≤ 2 * (nu + Ks) ^ 2 / nu + 2 * Kl ^ 2 / mass := by
-    positivity
-  set C : ℝ := 2 * (nu + Ks) ^ 2 / nu + 2 * Kl ^ 2 / mass with hC_def
-  have hcombine : mass * A ≤ C * Zg + mass / 8 * A := by
-    rw [hC_def]
-    linarith only [hmassRaw, hDle]
-  have hZmul : C * Zg ≤ C * (2 * B + 2 * kappa ^ 2 * A) :=
-    mul_le_mul_of_nonneg_left hZle hCnn
-  have hadmiss' : 2 * C * kappa ^ 2 ≤ 3 * mass / 8 := by
-    rw [hC_def]
-    calc 2 * (2 * (nu + Ks) ^ 2 / nu + 2 * Kl ^ 2 / mass) * kappa ^ 2
-        = (4 * (nu + Ks) ^ 2 / nu + 4 * Kl ^ 2 / mass) * kappa ^ 2 := by ring
-      _ ≤ 3 * mass / 8 := hadmiss
-  have hadmA : 2 * C * kappa ^ 2 * A ≤ 3 * mass / 8 * A :=
-    mul_le_mul_of_nonneg_right hadmiss' hA0
-  have hgoal : (4 * (nu + Ks) ^ 2 / nu + 4 * Kl ^ 2 / mass) = 2 * C := by
-    rw [hC_def]
-    ring
-  rw [hgoal]
-  nlinarith only [hcombine, hZmul, hadmA]
+  exact agmonMass_split_of_energy_le hnu hmass heta hetaCompact hchiSmooth hchiGrad
+    hsol hadm hgzeta hsplitEnergy hDle hadmiss
 
 /-! ### The effective upper constant -/
 
@@ -372,6 +369,78 @@ theorem eight_mul_div_le_localizedAgmonUpper_sq {nu mass Ks Kl : ℝ}
   rw [hid]
   linarith only [hmono]
 
+private theorem localizedAgmonUpper_mass_coefficient_le_three {nu mass Ks Kl : ℝ}
+    (hnu : 0 < nu) (hmass : 0 < mass) (hKs : 0 ≤ Ks) (hKl : 0 ≤ Kl) :
+    4 * (nu + Ks) ^ 2 / nu + 4 * Kl ^ 2 / mass ≤
+      3 * localizedAgmonUpper nu mass Ks Kl ^ 2 / nu := by
+  have hL1 := two_mul_sq_le_localizedAgmonUpper_sq (mass := mass) hnu hKs hKl
+  have hL2 := eight_mul_div_le_localizedAgmonUpper_sq hnu hmass hKs hKl
+  have hcoef : 4 * (nu + Ks) ^ 2 / nu + 4 * Kl ^ 2 / mass ≤
+      3 * localizedAgmonUpper nu mass Ks Kl ^ 2 / nu := by
+    rw [le_div_iff₀ hnu]
+    have hexp : (4 * (nu + Ks) ^ 2 / nu + 4 * Kl ^ 2 / mass) * nu =
+        4 * (nu + Ks) ^ 2 + 4 * nu * Kl ^ 2 / mass := by
+      field_simp
+    rw [hexp]
+    have hLsq0 : (0 : ℝ) ≤ localizedAgmonUpper nu mass Ks Kl ^ 2 := sq_nonneg _
+    have hnn : (0 : ℝ) ≤ nu * Kl ^ 2 := by positivity
+    have hinv : (0 : ℝ) ≤ mass⁻¹ := (inv_pos.2 hmass).le
+    have hL2' : 4 * nu * Kl ^ 2 / mass ≤
+        localizedAgmonUpper nu mass Ks Kl ^ 2 := by
+      refine le_trans ?_ hL2
+      rw [div_eq_mul_inv, div_eq_mul_inv]
+      exact mul_le_mul_of_nonneg_right (by linarith only [hnn]) hinv
+    linarith only [hL1, hL2', hLsq0]
+  exact hcoef
+
+/-- One numerical comparison supplies the mass and gradient effective-constant bounds. -/
+theorem localizedAgmonUpper_coefficient_bounds {nu mass Ks Kl : ℝ}
+    (hnu : 0 < nu) (hmass : 0 < mass) (hKs : 0 ≤ Ks) (hKl : 0 ≤ Kl) :
+    (4 * (nu + Ks) ^ 2 / nu + 4 * Kl ^ 2 / mass ≤
+      3 * localizedAgmonUpper nu mass Ks Kl ^ 2 / nu) ∧
+    (4 * (nu + Ks) ^ 2 / nu + 4 * Kl ^ 2 / mass ≤
+      4 * localizedAgmonUpper nu mass Ks Kl ^ 2 / nu) ∧
+    (4 * (nu + Ks) ^ 2 / nu ^ 2 + Kl ^ 2 / (nu * mass) ≤
+      4 * localizedAgmonUpper nu mass Ks Kl ^ 2 / nu ^ 2) := by
+  have hcoef := localizedAgmonUpper_mass_coefficient_le_three hnu hmass hKs hKl
+  have hLsq0 : 0 ≤ localizedAgmonUpper nu mass Ks Kl ^ 2 := sq_nonneg _
+  have hthreeFour : 3 * localizedAgmonUpper nu mass Ks Kl ^ 2 ≤
+      4 * localizedAgmonUpper nu mass Ks Kl ^ 2 := by linarith only [hLsq0]
+  have hfour : 4 * (nu + Ks) ^ 2 / nu + 4 * Kl ^ 2 / mass ≤
+      4 * localizedAgmonUpper nu mass Ks Kl ^ 2 / nu :=
+    hcoef.trans (div_le_div_of_nonneg_right hthreeFour hnu.le)
+  refine ⟨hcoef, hfour, ?_⟩
+  have hgrad : 4 * (nu + Ks) ^ 2 / nu ^ 2 + Kl ^ 2 / (nu * mass) ≤
+      (4 * (nu + Ks) ^ 2 / nu + 4 * Kl ^ 2 / mass) / nu := by
+    rw [le_div_iff₀ hnu]
+    have hid : (4 * (nu + Ks) ^ 2 / nu ^ 2 + Kl ^ 2 / (nu * mass)) * nu =
+        4 * (nu + Ks) ^ 2 / nu + Kl ^ 2 / mass := by field_simp
+    rw [hid]
+    have hterm : 0 ≤ Kl ^ 2 / mass := by positivity
+    rw [mul_div_assoc (4 : ℝ) (Kl ^ 2) mass]
+    linarith only [hterm]
+  refine hgrad.trans ?_
+  have h := div_le_div_of_nonneg_right hfour hnu.le
+  simpa only [div_div, pow_two] using h
+
+/-- Normalize an Agmon mass estimate at the effective constant and its rate budget. -/
+theorem agmonMass_normalize_effective_constant {nu mass Ks Kl kappa A B : ℝ}
+    (hnu : 0 < nu) (hmass : 0 < mass) (hKs : 0 ≤ Ks) (hKl : 0 ≤ Kl)
+    (hkappa : 8 * localizedAgmonUpper nu mass Ks Kl ^ 2 * kappa ^ 2 ≤ nu * mass)
+    (hB : 0 ≤ B)
+    (hbase : (4 * (nu + Ks) ^ 2 / nu + 4 * Kl ^ 2 / mass) * kappa ^ 2 ≤ 3 * mass / 8 →
+      mass / 2 * A ≤ (4 * (nu + Ks) ^ 2 / nu + 4 * Kl ^ 2 / mass) * B) :
+    mass / 2 * A ≤ 4 * localizedAgmonUpper nu mass Ks Kl ^ 2 / nu * B := by
+  obtain ⟨hcoef, hfour, -⟩ := localizedAgmonUpper_coefficient_bounds hnu hmass hKs hKl
+  have hLsqk : localizedAgmonUpper nu mass Ks Kl ^ 2 * kappa ^ 2 ≤
+      nu * mass / 8 := by linarith only [hkappa]
+  have hval : 3 * localizedAgmonUpper nu mass Ks Kl ^ 2 / nu * kappa ^ 2 ≤
+      3 * mass / 8 := by
+    rw [div_mul_eq_mul_div, div_le_iff₀ hnu]
+    nlinarith only [hLsqk, hnu]
+  have hadmiss := (mul_le_mul_of_nonneg_right hcoef (sq_nonneg kappa)).trans hval
+  exact (hbase hadmiss).trans (mul_le_mul_of_nonneg_right hfour hB)
+
 /-! ### The uniformly elliptic shape at the effective constant -/
 
 /-- **The localized Agmon mass estimate at the effective constant.**  With the
@@ -407,49 +476,13 @@ theorem agmonMass_localizedSplit_le {Om : Set (Vec d)} (hOmOpen : IsOpen Om)
         ∫ y in Om, z.toH1Function.toFun y ^ 2 *
           (Real.exp (kappa * psi y) ^ 2 *
             vecNormSq (fun i => (fderiv ℝ eta y) (basisVec i))) ∂volume := by
-  have hL1 := two_mul_sq_le_localizedAgmonUpper_sq (mass := mass) hnu hKs hKl
-  have hL2 := eight_mul_div_le_localizedAgmonUpper_sq hnu hmass hKs hKl
-  have hcoef : 4 * (nu + Ks) ^ 2 / nu + 4 * Kl ^ 2 / mass ≤
-      3 * localizedAgmonUpper nu mass Ks Kl ^ 2 / nu := by
-    rw [le_div_iff₀ hnu]
-    have hexp : (4 * (nu + Ks) ^ 2 / nu + 4 * Kl ^ 2 / mass) * nu =
-        4 * (nu + Ks) ^ 2 + 4 * nu * Kl ^ 2 / mass := by
-      field_simp
-    rw [hexp]
-    have hLsq0 : (0 : ℝ) ≤ localizedAgmonUpper nu mass Ks Kl ^ 2 := sq_nonneg _
-    have hnn : (0 : ℝ) ≤ nu * Kl ^ 2 := by positivity
-    have hinv : (0 : ℝ) ≤ mass⁻¹ := (inv_pos.2 hmass).le
-    have hL2' : 4 * nu * Kl ^ 2 / mass ≤
-        localizedAgmonUpper nu mass Ks Kl ^ 2 := by
-      refine le_trans ?_ hL2
-      rw [div_eq_mul_inv, div_eq_mul_inv]
-      exact mul_le_mul_of_nonneg_right (by linarith only [hnn]) hinv
-    linarith only [hL1, hL2', hLsq0]
-  have hkappaSq : (0 : ℝ) ≤ kappa ^ 2 := sq_nonneg _
-  have hLsqk : localizedAgmonUpper nu mass Ks Kl ^ 2 * kappa ^ 2 ≤
-      nu * mass / 8 := by linarith only [hkappa]
-  have hadmiss : (4 * (nu + Ks) ^ 2 / nu + 4 * Kl ^ 2 / mass) * kappa ^ 2 ≤
-      3 * mass / 8 := by
-    have hstep := mul_le_mul_of_nonneg_right hcoef hkappaSq
-    have hval : 3 * localizedAgmonUpper nu mass Ks Kl ^ 2 / nu * kappa ^ 2 ≤
-        3 * mass / 8 := by
-      rw [div_mul_eq_mul_div, div_le_iff₀ hnu]
-      nlinarith only [hLsqk, hnu]
-    linarith only [hstep, hval]
-  have hbase := agmonMass_split_le hOmOpen hOmBdd hnu hKs hmass hEllS hsplit
+  refine agmonMass_normalize_effective_constant hnu hmass hKs hKl hkappa
+    (integral_nonneg_of_ae (Filter.Eventually.of_forall fun x =>
+      mul_nonneg (sq_nonneg _) (mul_nonneg (sq_nonneg _) (vecNormSq_nonneg _)))) ?_
+  intro hadmiss
+  exact agmonMass_split_le hOmOpen hOmBdd hnu hKs hmass hEllS hsplit
     hksSkew hklSkew hklC1 hsol heta hetaCompact hetaL hpsi hpsiGrad hg
     hksSize hklDiv hadmiss
-  refine hbase.trans (mul_le_mul_of_nonneg_right ?_ ?_)
-  · have hLsq : (0 : ℝ) ≤ localizedAgmonUpper nu mass Ks Kl ^ 2 := sq_nonneg _
-    have hquarter : 3 * localizedAgmonUpper nu mass Ks Kl ^ 2 / nu ≤
-        4 * localizedAgmonUpper nu mass Ks Kl ^ 2 / nu := by
-      have hinv : (0 : ℝ) < nu⁻¹ := inv_pos.2 hnu
-      rw [div_eq_mul_inv, div_eq_mul_inv]
-      exact mul_le_mul_of_nonneg_right (by linarith only [hLsq]) hinv.le
-    linarith only [hcoef, hquarter]
-  · refine integral_nonneg_of_ae (Filter.Eventually.of_forall fun x => ?_)
-    have := vecNormSq_nonneg (fun i => (fderiv ℝ eta x) (basisVec i))
-    positivity
 
 /-! ### The Caccioppoli gradient bound with a split antisymmetric part -/
 
@@ -597,23 +630,7 @@ theorem setIntegral_gradSq_localizedSplit_le {Om : Set (Vec d)}
   refine hbase.trans ?_
   have hvol0 : (0 : ℝ) ≤ volLayer := le_trans ENNReal.toReal_nonneg hvolLayer
   have hdata : (0 : ℝ) ≤ M ^ 2 * (Ceta * volLayer) := by positivity
-  have hL1 := two_mul_sq_le_localizedAgmonUpper_sq (mass := mu) hnu hKs hKl
-  have hL2 := eight_mul_div_le_localizedAgmonUpper_sq hnu hmu hKs hKl
-  have hLsq0 : (0 : ℝ) ≤ localizedAgmonUpper nu mu Ks Kl ^ 2 := sq_nonneg _
-  have hcoef : 4 * (nu + Ks) ^ 2 / nu ^ 2 + Kl ^ 2 / (nu * mu) ≤
-      4 * localizedAgmonUpper nu mu Ks Kl ^ 2 / nu ^ 2 := by
-    rw [le_div_iff₀ (by positivity : (0 : ℝ) < nu ^ 2)]
-    have hexp : (4 * (nu + Ks) ^ 2 / nu ^ 2 + Kl ^ 2 / (nu * mu)) * nu ^ 2 =
-        4 * (nu + Ks) ^ 2 + nu * Kl ^ 2 / mu := by
-      field_simp
-    rw [hexp]
-    have hnn : (0 : ℝ) ≤ nu * Kl ^ 2 := by positivity
-    have hinv : (0 : ℝ) ≤ mu⁻¹ := (inv_pos.2 hmu).le
-    have hL2' : nu * Kl ^ 2 / mu ≤ localizedAgmonUpper nu mu Ks Kl ^ 2 := by
-      refine le_trans ?_ hL2
-      rw [div_eq_mul_inv, div_eq_mul_inv]
-      exact mul_le_mul_of_nonneg_right (by linarith only [hnn]) hinv
-    linarith only [hL1, hL2', hLsq0]
+  have hcoef := (localizedAgmonUpper_coefficient_bounds hnu hmu hKs hKl).2.2
   have hstep := mul_le_mul_of_nonneg_right hcoef hdata
   calc
     (4 * (nu + Ks) ^ 2 / nu ^ 2 + Kl ^ 2 / (nu * mu)) * M ^ 2 *

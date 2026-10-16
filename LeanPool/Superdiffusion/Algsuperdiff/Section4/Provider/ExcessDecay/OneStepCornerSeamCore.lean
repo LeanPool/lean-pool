@@ -86,24 +86,7 @@ theorem harmonicOnNhd_congr_eqOn {S : Set (Vec d)} (hS : IsOpen S) {V W : Vec d 
     (h : Set.EqOn W V S)
     (hV : HarmonicOnNhd (V ∘ (toEuc.symm : 𝔼 → Vec d)) ((toEuc : Vec d → 𝔼) '' S)) :
     HarmonicOnNhd (W ∘ (toEuc.symm : 𝔼 → Vec d)) ((toEuc : Vec d → 𝔼) '' S) := by
-  have hopen : IsOpen ((toEuc : Vec d → 𝔼) '' S) :=
-    (toEuc : Vec d ≃L[ℝ] 𝔼).toHomeomorph.isOpenMap _ hS
-  have hgerm : ∀ e ∈ (toEuc : Vec d → 𝔼) '' S,
-      (W ∘ (toEuc.symm : 𝔼 → Vec d)) =ᶠ[nhds e] (V ∘ (toEuc.symm : 𝔼 → Vec d)) := by
-    intro e he
-    refine Filter.eventually_of_mem (hopen.mem_nhds he) ?_
-    rintro w ⟨p, hp, rfl⟩
-    change W (toEuc.symm (toEuc p)) = V (toEuc.symm (toEuc p))
-    rw [ContinuousLinearEquiv.symm_apply_apply]
-    exact h hp
-  rintro e ⟨y, hy, rfl⟩
-  have hmem : (toEuc : Vec d → 𝔼) y ∈ (toEuc : Vec d → 𝔼) '' S := ⟨y, hy, rfl⟩
-  have hVe := hV _ hmem
-  refine ⟨hVe.1.congr_of_eventuallyEq (hgerm _ hmem), ?_⟩
-  have hlap := laplacian_congr_nhds (hgerm _ hmem)
-  filter_upwards [hVe.2, hlap] with e he hl
-  rw [Pi.zero_apply] at he ⊢
-  rw [hl, he]
+  exact harmonicOnNhd_toEuc_congr_eqOn hS h hV
 
 /-! ## 2. From an almost-everywhere odd datum to oddness on the doubled window -/
 
@@ -118,36 +101,10 @@ theorem eqOn_faceOdd_upper_of_ae_eq {x : Vec d} {m k : ℤ} (hkm : k < m) {i : F
       O (coordFaceReflection ((1 / 2 : ℝ) * (3 : ℝ) ^ m) i z) = -O z) :
     ∀ y ∈ reflectedWindow x m k,
       V (coordFaceReflection ((1 / 2 : ℝ) * (3 : ℝ) ^ m) i y) = -V y := by
-  have hiff := mem_reflectedWindow_coordFaceReflection_iff hkm hup
-  have hpre : coordFaceReflection ((1 / 2 : ℝ) * (3 : ℝ) ^ m) i ⁻¹'
-      reflectedWindow x m k = reflectedWindow x m k := by
-    ext y
-    exact hiff y
-  have hmp : MeasurePreserving (coordFaceReflection ((1 / 2 : ℝ) * (3 : ℝ) ^ m) i)
-      (volume.restrict (reflectedWindow x m k))
-      (volume.restrict (reflectedWindow x m k)) := by
-    have h := (HCPolySupport.measurePreserving_coordFaceReflection (d := d)
-      ((1 / 2 : ℝ) * (3 : ℝ) ^ m) i).restrict_preimage
-      (isOpen_reflectedWindow x m k).measurableSet
-    rwa [hpre] at h
-  have hae2 : (fun y => V (coordFaceReflection ((1 / 2 : ℝ) * (3 : ℝ) ^ m) i y))
-      =ᵐ[volume.restrict (reflectedWindow x m k)]
-      (fun y => O (coordFaceReflection ((1 / 2 : ℝ) * (3 : ℝ) ^ m) i y)) :=
-    hae.comp_tendsto hmp.quasiMeasurePreserving.tendsto_ae
-  have hae3 : (fun y => V (coordFaceReflection ((1 / 2 : ℝ) * (3 : ℝ) ^ m) i y))
-      =ᵐ[volume.restrict (reflectedWindow x m k)] (fun y => -V y) := by
-    filter_upwards [hae2, hae] with y h2 h3
-    rw [h2, hOodd y, h3]
-  have hVrcont : ContinuousOn
-      (fun y => V (coordFaceReflection ((1 / 2 : ℝ) * (3 : ℝ) ^ m) i y))
-      (reflectedWindow x m k) := by
-    refine ContinuousOn.comp hVcont
-      (HCPolySupport.contDiff_coordFaceReflection _ i).continuous.continuousOn ?_
-    intro y hy
-    exact (hiff y).mpr hy
-  have heq := Measure.eqOn_open_of_ae_eq hae3 (isOpen_reflectedWindow x m k)
-    hVrcont hVcont.neg
-  exact fun y hy => heq hy
+  exact eqOn_odd_of_ae_eq (isOpen_reflectedWindow x m k)
+    (HCPolySupport.contDiff_coordFaceReflection ((1 / 2 : ℝ) * (3 : ℝ) ^ m) i).continuous
+    (HCPolySupport.measurePreserving_coordFaceReflection ((1 / 2 : ℝ) * (3 : ℝ) ^ m) i)
+    (mem_reflectedWindow_coordFaceReflection_iff hkm hup) hVcont hae hOodd
 
 /-- **The lower-face seam**, the twin of `eqOn_faceOdd_upper_of_ae_eq`. -/
 theorem eqOn_faceOdd_lower_of_ae_eq {x : Vec d} {m k : ℤ} (hkm : k < m) {i : Fin d}
@@ -158,36 +115,10 @@ theorem eqOn_faceOdd_lower_of_ae_eq {x : Vec d} {m k : ℤ} (hkm : k < m) {i : F
       O (coordFaceReflection (-(1 / 2 : ℝ) * (3 : ℝ) ^ m) i z) = -O z) :
     ∀ y ∈ reflectedWindow x m k,
       V (coordFaceReflection (-(1 / 2 : ℝ) * (3 : ℝ) ^ m) i y) = -V y := by
-  have hiff := mem_reflectedWindow_coordFaceReflection_iff_lower hkm hlow
-  have hpre : coordFaceReflection (-(1 / 2 : ℝ) * (3 : ℝ) ^ m) i ⁻¹'
-      reflectedWindow x m k = reflectedWindow x m k := by
-    ext y
-    exact hiff y
-  have hmp : MeasurePreserving (coordFaceReflection (-(1 / 2 : ℝ) * (3 : ℝ) ^ m) i)
-      (volume.restrict (reflectedWindow x m k))
-      (volume.restrict (reflectedWindow x m k)) := by
-    have h := (HCPolySupport.measurePreserving_coordFaceReflection (d := d)
-      (-(1 / 2 : ℝ) * (3 : ℝ) ^ m) i).restrict_preimage
-      (isOpen_reflectedWindow x m k).measurableSet
-    rwa [hpre] at h
-  have hae2 : (fun y => V (coordFaceReflection (-(1 / 2 : ℝ) * (3 : ℝ) ^ m) i y))
-      =ᵐ[volume.restrict (reflectedWindow x m k)]
-      (fun y => O (coordFaceReflection (-(1 / 2 : ℝ) * (3 : ℝ) ^ m) i y)) :=
-    hae.comp_tendsto hmp.quasiMeasurePreserving.tendsto_ae
-  have hae3 : (fun y => V (coordFaceReflection (-(1 / 2 : ℝ) * (3 : ℝ) ^ m) i y))
-      =ᵐ[volume.restrict (reflectedWindow x m k)] (fun y => -V y) := by
-    filter_upwards [hae2, hae] with y h2 h3
-    rw [h2, hOodd y, h3]
-  have hVrcont : ContinuousOn
-      (fun y => V (coordFaceReflection (-(1 / 2 : ℝ) * (3 : ℝ) ^ m) i y))
-      (reflectedWindow x m k) := by
-    refine ContinuousOn.comp hVcont
-      (HCPolySupport.contDiff_coordFaceReflection _ i).continuous.continuousOn ?_
-    intro y hy
-    exact (hiff y).mpr hy
-  have heq := Measure.eqOn_open_of_ae_eq hae3 (isOpen_reflectedWindow x m k)
-    hVrcont hVcont.neg
-  exact fun y hy => heq hy
+  exact eqOn_odd_of_ae_eq (isOpen_reflectedWindow x m k)
+    (HCPolySupport.contDiff_coordFaceReflection (-(1 / 2 : ℝ) * (3 : ℝ) ^ m) i).continuous
+    (HCPolySupport.measurePreserving_coordFaceReflection (-(1 / 2 : ℝ) * (3 : ℝ) ^ m) i)
+    (mem_reflectedWindow_coordFaceReflection_iff_lower hkm hlow) hVcont hae hOodd
 
 /-! ## 3. The piecewise globally odd representative -/
 

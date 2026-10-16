@@ -72,16 +72,7 @@ theorem continuousOn_of_harmonicOnNhd {S : Set (Vec d)} {V : Vec d → ℝ}
     (hV : HarmonicOnNhd (V ∘ (toEuc.symm : EuclideanSpace ℝ (Fin d) → Vec d))
       ((toEuc : Vec d → EuclideanSpace ℝ (Fin d)) '' S)) :
     ContinuousOn V S := by
-  intro p hp
-  have h1 : HarmonicAt (V ∘ (toEuc.symm : EuclideanSpace ℝ (Fin d) → Vec d)) (toEuc p) :=
-    hV (toEuc p) ⟨p, hp, rfl⟩
-  have h2 : ContinuousAt (V ∘ (toEuc.symm : EuclideanSpace ℝ (Fin d) → Vec d))
-      (toEuc p) := h1.1.continuousAt
-  have h3 : ContinuousAt ((V ∘ (toEuc.symm : EuclideanSpace ℝ (Fin d) → Vec d))
-      ∘ (toEuc : Vec d → EuclideanSpace ℝ (Fin d))) p :=
-    h2.comp (toEuc : Vec d ≃L[ℝ] EuclideanSpace ℝ (Fin d)).continuous.continuousAt
-  rw [comp_toEuc_symm_toEuc] at h3
-  exact h3.continuousWithinAt
+  exact continuousOn_of_harmonicOnNhd_toEuc hV
 
 /-! ## 2. Transfer of the two consumers along an `EqOn` -/
 

@@ -428,6 +428,88 @@ theorem exists_harmonicRepresentative_memLp [NeZero d] {U : Set (Vec d)} (hUopen
   obtain ⟨v, hharm, hae⟩ := exists_harmonicRepresentative_full hUopen hu
   exact ⟨v, hharm, (memLp_indicator_h1 hUopen.measurableSet u).ae_eq hae.symm, hae⟩
 
+/-! ## 6. Harmonic representatives and measure-preserving involutions -/
+
+/-- A classical harmonic representative is continuous on its coordinate window. -/
+theorem continuousOn_of_harmonicOnNhd_toEuc {S : Set (Vec d)} {V : Vec d → ℝ}
+    (hV : HarmonicOnNhd (V ∘ (toEuc.symm : EuclideanSpace ℝ (Fin d) → Vec d))
+      ((toEuc : Vec d → EuclideanSpace ℝ (Fin d)) '' S)) :
+    ContinuousOn V S := by
+  intro y hy
+  have hcont := (hV (toEuc y) ⟨y, hy, rfl⟩).1.continuousAt
+  have heq : V = (V ∘ (toEuc.symm : EuclideanSpace ℝ (Fin d) → Vec d)) ∘
+      (toEuc : Vec d → EuclideanSpace ℝ (Fin d)) := by
+    funext z
+    simp only [Function.comp_apply, ContinuousLinearEquiv.symm_apply_apply]
+  rw [heq]
+  exact (hcont.comp (toEuc : Vec d ≃L[ℝ]
+    EuclideanSpace ℝ (Fin d)).continuous.continuousAt).continuousWithinAt
+
+/-- Harmonicity transfers through equality on an open coordinate window. -/
+theorem harmonicOnNhd_toEuc_congr_eqOn {S : Set (Vec d)} (hS : IsOpen S)
+    {V W : Vec d → ℝ} (h : Set.EqOn W V S)
+    (hV : HarmonicOnNhd (V ∘ (toEuc.symm : EuclideanSpace ℝ (Fin d) → Vec d))
+      ((toEuc : Vec d → EuclideanSpace ℝ (Fin d)) '' S)) :
+    HarmonicOnNhd (W ∘ (toEuc.symm : EuclideanSpace ℝ (Fin d) → Vec d))
+      ((toEuc : Vec d → EuclideanSpace ℝ (Fin d)) '' S) := by
+  have hopen : IsOpen ((toEuc : Vec d → EuclideanSpace ℝ (Fin d)) '' S) :=
+    (toEuc : Vec d ≃L[ℝ] EuclideanSpace ℝ (Fin d)).toHomeomorph.isOpenMap _ hS
+  intro e he
+  have hgerm : (W ∘ (toEuc.symm : EuclideanSpace ℝ (Fin d) → Vec d)) =ᶠ[nhds e]
+      (V ∘ (toEuc.symm : EuclideanSpace ℝ (Fin d) → Vec d)) := by
+    refine Filter.eventually_of_mem (hopen.mem_nhds he) ?_
+    rintro z ⟨y, hy, rfl⟩
+    simpa only [Function.comp_apply, ContinuousLinearEquiv.symm_apply_apply] using h hy
+  exact (harmonicAt_congr_nhds hgerm).mpr (hV e he)
+
+/-- On an invariant open set, an a.e.-equal continuous representative inherits oddness. -/
+theorem eqOn_odd_of_ae_eq {S : Set (Vec d)} (hS : IsOpen S)
+    {r : Vec d → Vec d} (hr : Continuous r) (hmp : MeasurePreserving r volume volume)
+    (hsymm : ∀ y, r y ∈ S ↔ y ∈ S) {V O : Vec d → ℝ}
+    (hV : ContinuousOn V S) (hae : V =ᵐ[volume.restrict S] O)
+    (hO : ∀ y, O (r y) = -O y) : ∀ y ∈ S, V (r y) = -V y := by
+  have hpre : r ⁻¹' S = S := Set.ext hsymm
+  have hrestricted : MeasurePreserving r (volume.restrict S) (volume.restrict S) := by
+    have h := hmp.restrict_preimage hS.measurableSet
+    rwa [hpre] at h
+  have hae2 : (fun y => V (r y)) =ᵐ[volume.restrict S] fun y => O (r y) :=
+    hae.comp_tendsto hrestricted.quasiMeasurePreserving.tendsto_ae
+  have hae3 : (fun y => V (r y)) =ᵐ[volume.restrict S] fun y => -V y := by
+    filter_upwards [hae2, hae] with y h2 h3
+    rw [h2, hO y, h3]
+  have hVr : ContinuousOn (fun y => V (r y)) S :=
+    hV.comp hr.continuousOn (fun y hy => (hsymm y).mpr hy)
+  exact Measure.eqOn_open_of_ae_eq hae3 hS hVr hV.neg
+
+/-- Symmetrization makes a harmonic a.e. representative globally odd under a
+continuous measure-preserving involution, without changing it on the invariant open set. -/
+theorem exists_oddHarmonic_of_ae_eq {S : Set (Vec d)} (hS : IsOpen S)
+    {r : Vec d → Vec d} (hr : Continuous r) (hmp : MeasurePreserving r volume volume)
+    (hinv : Function.Involutive r) (hsymm : ∀ y, r y ∈ S ↔ y ∈ S)
+    {V O : Vec d → ℝ}
+    (hVharm : HarmonicOnNhd (V ∘ (toEuc.symm : EuclideanSpace ℝ (Fin d) → Vec d))
+      ((toEuc : Vec d → EuclideanSpace ℝ (Fin d)) '' S))
+    (hVmem : MemLp V 2 (volume : Measure (Vec d)))
+    (hae : V =ᵐ[volume.restrict S] O) (hO : ∀ y, O (r y) = -O y) :
+    ∃ W : Vec d → ℝ, (∀ y, W (r y) = -W y) ∧
+      MemLp W 2 (volume : Measure (Vec d)) ∧
+      HarmonicOnNhd (W ∘ (toEuc.symm : EuclideanSpace ℝ (Fin d) → Vec d))
+        ((toEuc : Vec d → EuclideanSpace ℝ (Fin d)) '' S) ∧ Set.EqOn W V S := by
+  have hodd := eqOn_odd_of_ae_eq hS hr hmp hsymm
+    (continuousOn_of_harmonicOnNhd_toEuc hVharm) hae hO
+  let W : Vec d → ℝ := fun y => (1 / 2 : ℝ) * (V y - V (r y))
+  have hWeq : Set.EqOn W V S := by
+    intro y hy
+    dsimp only [W]
+    rw [hodd y hy]
+    ring
+  refine ⟨W, ?_, (hVmem.sub (hVmem.comp_measurePreserving hmp)).const_mul (1 / 2),
+    harmonicOnNhd_toEuc_congr_eqOn hS hWeq hVharm, hWeq⟩
+  intro y
+  dsimp only [W]
+  rw [hinv y]
+  ring
+
 end
 
 end Algsuperdiff.Section4.Provider.ExcessDecay.Schauder
