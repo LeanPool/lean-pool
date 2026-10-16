@@ -924,6 +924,7 @@ public import LeanPool.Superdiffusion.Algsuperdiff.Section3.Provider.Percolation
 public import LeanPool.Superdiffusion.Algsuperdiff.Section3.Provider.Scales.BaseLoss
 public import LeanPool.Superdiffusion.Algsuperdiff.Section3.Provider.Scales.DescendantMassFactor
 public import LeanPool.Superdiffusion.Algsuperdiff.Section3.Provider.Scales.Landmarks
+public import LeanPool.Superdiffusion.Algsuperdiff.Section3.Provider.Scales.RpowThreshold
 public import LeanPool.Superdiffusion.Algsuperdiff.Section3.Provider.Stream.BlockConcentration
 public import LeanPool.Superdiffusion.Algsuperdiff.Section3.Provider.Stream.CutoffFrobeniusMass
 public import LeanPool.Superdiffusion.Algsuperdiff.Section3.Provider.Stream.CutoffFrobeniusMassMaximum
@@ -2202,6 +2203,7 @@ public import LeanPool.Superdiffusion.Support.Sobolev.Foundations.Cutoff.OpenSet
 public import LeanPool.Superdiffusion.Support.Sobolev.Fractional.EuclideanWspLegacyCircComparison
 public import LeanPool.Superdiffusion.Support.Sobolev.Fractional.EuclideanWspSmoothDualBesovBound
 public import LeanPool.Superdiffusion.Support.Sobolev.Fractional.EuclideanWspSmoothDualNegativeBesov
+public import LeanPool.Superdiffusion.Support.Sobolev.GradientIdentification
 public import LeanPool.Superdiffusion.Support.Sobolev.MatchedPair
 public import LeanPool.Superdiffusion.Support.Sobolev.MatchedPair.Core
 public import LeanPool.Superdiffusion.Support.Sobolev.Truncation.Approx

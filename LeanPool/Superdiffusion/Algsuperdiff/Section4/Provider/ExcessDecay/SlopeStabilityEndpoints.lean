@@ -37,12 +37,19 @@ private theorem volume_ne_top_of_toReal_pos {W : Set (Vec d)} (hW : 0 < (volume 
   rw [htop, ENNReal.toReal_top] at hW
   exact absurd hW (lt_irrefl 0)
 
-private theorem volumeAverage_sub_of_integrable {W : Set (Vec d)} {f g : Vec d → ℝ}
-    (hf : IntegrableOn f W) (hg : IntegrableOn g W) :
-    volumeAverage W (fun x => f x - g x) = volumeAverage W f - volumeAverage W g := by
+/-- The volume average is additive on integrable differences. -/
+theorem volumeAverage_sub_eq {V : Set (Vec d)} {f g : Vec d → ℝ}
+    (hf : IntegrableOn f V volume) (hg : IntegrableOn g V volume) :
+    volumeAverage V (fun x => f x - g x) =
+      volumeAverage V f - volumeAverage V g := by
   unfold volumeAverage
   rw [MeasureTheory.integral_sub hf hg]
   ring
+
+private theorem volumeAverage_sub_of_integrable {W : Set (Vec d)} {f g : Vec d → ℝ}
+    (hf : IntegrableOn f W) (hg : IntegrableOn g W) :
+    volumeAverage W (fun x => f x - g x) = volumeAverage W f - volumeAverage W g := by
+  exact volumeAverage_sub_eq hf hg
 
 /-- `‖a‖_{L²(W)} = |a|` for a constant `a`, on a window of positive finite volume. -/
 theorem normalizedL2On_const_of_pos {W : Set (Vec d)} (hW : 0 < (volume W).toReal) (a : ℝ) :
@@ -66,6 +73,28 @@ theorem abs_volumeAverage_le_normalizedL2On {W : Set (Vec d)} (hWm : MeasurableS
     linarith only [hexp, hnn]
   rw [← Real.sqrt_sq_eq_abs, normalizedL2On]
   exact Real.sqrt_le_sqrt hm2
+
+/-- Transfer the difference of nested-window means through normalized oscillation. -/
+theorem abs_volumeAverage_sub_average_le {W V : Set (Vec d)}
+    (hVm : MeasurableSet V) (hsub : V ⊆ W)
+    (hWpos : 0 < (volume W).toReal) (hVpos : 0 < (volume V).toReal)
+    (hVtop : volume V ≠ ⊤) {f : Vec d → ℝ} (hfV : IntegrableOn f V volume)
+    (hfV2 : IntegrableOn (fun x => (f x - volumeAverage W f) ^ 2) V volume)
+    (hfW2 : IntegrableOn (fun x => (f x - volumeAverage W f) ^ 2) W volume) :
+    |volumeAverage V f - volumeAverage W f| ≤
+      Real.sqrt ((volume W).toReal / (volume V).toReal) *
+        normalizedL2On W (fun x => f x - volumeAverage W f) := by
+  have : IsFiniteMeasure (volume.restrict V) := by
+    refine ⟨?_⟩
+    rw [Measure.restrict_apply_univ]
+    exact lt_top_iff_ne_top.2 hVtop
+  have hc : IntegrableOn (fun _ : Vec d => volumeAverage W f) V volume :=
+    MeasureTheory.integrable_const _
+  have hsubint : IntegrableOn (fun x => f x - volumeAverage W f) V volume := hfV.sub hc
+  have hJ := abs_volumeAverage_le_normalizedL2On hVm hVpos hsubint hfV2
+  rw [volumeAverage_sub_of_integrable hfV hc,
+    volumeAverage_const_of_pos hVpos (volumeAverage W f)] at hJ
+  exact hJ.trans (normalizedL2On_le_of_subset hsub hWpos hVpos hfW2)
 
 /-! ### The oscillation -/
 

@@ -10,8 +10,7 @@ public import LeanPool.Superdiffusion.Algsuperdiff.StochasticProcess.Common.Regu
 public import LeanPool.Superdiffusion.Algsuperdiff.StochasticProcess.Common.Regularity.Ported.FluxSubharmonic
 public import LeanPool.Superdiffusion.Algsuperdiff.Section4.Provider.ExcessDecay.OneStepSchauderLapTransfer
 public import LeanPool.Superdiffusion.Algsuperdiff.Section4.Provider.ExcessDecay.OneStepWeylRepresentative
-public import LeanPool.HighContrastHomogenization.Support.Sobolev.Foundations.EuclideanL2CZ
-public import LeanPool.HighContrastHomogenization.Support.Book.Ch03.Theorems.PublicInternalBridges.H1Transport
+public import LeanPool.Superdiffusion.Support.Sobolev.GradientIdentification
 public import Mathlib.Analysis.SpecialFunctions.Integrals.Basic
 
 /-!
@@ -53,30 +52,7 @@ theorem ae_eq_euclideanGradient_of_ae_eq_of_contDiff
     (h : H1Function U) {v : Vec d → ℝ} (hv : ContDiff ℝ 1 v)
     (hae : v =ᵐ[volume.restrict V] h.toFun) :
     euclideanGradient v =ᵐ[volume.restrict V] h.grad := by
-  have hgv : HasWeakGradientOn V v (euclideanGradient v) :=
-    HasWeakGradientOn.of_contDiff hv
-  have hcoord : ∀ i : Fin d,
-      (fun x ↦ euclideanGradient v x i) =ᵐ[volume.restrict V]
-        fun x ↦ h.grad x i := by
-    intro i
-    apply Book.Ch03.HasWeakPartialDerivOn.ae_eq_of_toFun_ae_eq hV hae
-    · have hcont : Continuous (fun x ↦ euclideanGradient v x i) := by
-        simpa [euclideanGradient, euclideanCoordDeriv] using
-          (hv.continuous_fderiv (by simp)).clm_apply
-            (continuous_const (y := basisVec i))
-      exact hcont.locallyIntegrable.locallyIntegrableOn V
-    · have hL2 : MemL2On V (fun x ↦ h.grad x i) :=
-        memL2On_mono hVU (h.grad_memL2 i)
-      have hint : IntegrableOn (fun x ↦ h.grad x i) V volume :=
-        hL2.integrable (by norm_num)
-      exact hint.locallyIntegrableOn
-    · exact hgv i
-    · exact HasWeakPartialDerivOn.restrict hV hVU (h.hasWeakGradient i)
-  have hall : ∀ᵐ x ∂(volume.restrict V), ∀ i : Fin d,
-      euclideanGradient v x i = h.grad x i := ae_all_iff.2 hcoord
-  filter_upwards [hall] with x hx
-  funext i
-  exact hx i
+  exact Algsuperdiff.ae_eq_euclideanGradient_of_ae_eq_of_contDiff hV hVU h hv hae
 
 private theorem euclideanCoordDeriv_eq_zero_of_eventuallyEq
     {f : Vec d → ℝ} {c : ℝ} {x : Vec d}

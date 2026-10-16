@@ -42,15 +42,6 @@ noncomputable section
 
 variable {d : ℕ}
 
-private theorem volumeAverage_sub_of_integrableOn
-    {V : Set (Vec d)} {f g : Vec d → ℝ}
-    (hf : IntegrableOn f V volume) (hg : IntegrableOn g V volume) :
-    volumeAverage V (fun x => f x - g x) =
-      volumeAverage V f - volumeAverage V g := by
-  unfold volumeAverage
-  rw [MeasureTheory.integral_sub hf hg]
-  ring
-
 /-- The difference of averages on nested windows is controlled by the
 normalized oscillation on the larger window. -/
 theorem abs_volumeAverage_sub_windowAverage_le {W V : Set (Vec d)}
@@ -62,23 +53,8 @@ theorem abs_volumeAverage_sub_windowAverage_le {W V : Set (Vec d)}
     |volumeAverage V f - volumeAverage W f| ≤
       Real.sqrt ((volume W).toReal / (volume V).toReal) *
         normalizedL2On W (fun x => f x - volumeAverage W f) := by
-  let : IsFiniteMeasure (volume.restrict V) := by
-    refine ⟨?_⟩
-    rw [Measure.restrict_apply_univ]
-    exact lt_top_iff_ne_top.2 hVtop
-  have hc : IntegrableOn (fun _ : Vec d => volumeAverage W f) V volume :=
-    MeasureTheory.integrable_const _
-  have hsubint : IntegrableOn (fun x => f x - volumeAverage W f) V volume := hfV.sub hc
-  have hJ := abs_volumeAverage_le_normalizedL2On hVm hVpos hsubint hfV2
-  have hconst : volumeAverage V (fun _ : Vec d => volumeAverage W f) = volumeAverage W f := by
-    unfold volumeAverage
-    rw [MeasureTheory.setIntegral_const, smul_eq_mul, MeasureTheory.measureReal_def]
-    field_simp
-  have hsubavg : volumeAverage V (fun x => f x - volumeAverage W f) =
-      volumeAverage V f - volumeAverage W f := by
-    rw [volumeAverage_sub_of_integrableOn hfV hc, hconst]
-  rw [hsubavg] at hJ
-  exact hJ.trans (normalizedL2On_le_of_subset hsub hWpos hVpos hfW2)
+  exact Algsuperdiff.Section4.Provider.ExcessDecay.abs_volumeAverage_sub_average_le
+    hVm hsub hWpos hVpos hVtop hfV hfV2 hfW2
 
 /-- The dyadic contraction ratio for the Campanato oscillation estimate. -/
 def smallContrastCampanatoRatio (alpha : ℝ) : ℝ := (1 / 2 : ℝ) ^ alpha

@@ -89,19 +89,12 @@ variable {d : ℕ}
 theorem volumeAverage_const_of_toReal_pos {V : Set (Vec d)}
     (hVpos : 0 < (volume V).toReal) (b : ℝ) :
     volumeAverage V (fun _ => b) = b := by
-  have hVne : ((volume V).toReal) ≠ 0 := ne_of_gt hVpos
-  have hconst : ∫ _x in V, b ∂volume = (volume V).toReal * b := by
-    rw [MeasureTheory.setIntegral_const, smul_eq_mul, MeasureTheory.measureReal_def]
-  unfold volumeAverage
-  rw [hconst, ← mul_assoc, inv_mul_cancel₀ hVne, one_mul]
+  exact volumeAverage_const_of_pos hVpos b
 
 /-- The normalized seminorm of a constant is its absolute value. -/
 theorem normalizedL2On_const_abs {V : Set (Vec d)} (hVpos : 0 < (volume V).toReal)
     (b : ℝ) : normalizedL2On V (fun _ => b) = |b| := by
-  have hconst : volumeAverage V (fun _ => b ^ 2) = b ^ 2 :=
-    volumeAverage_const_of_toReal_pos hVpos (b ^ 2)
-  unfold normalizedL2On
-  rw [hconst, Real.sqrt_sq_eq_abs]
+  exact normalizedL2On_const_of_pos hVpos b
 
 /-- The volume average is additive on integrable summands. -/
 theorem volumeAverage_add_eq {V : Set (Vec d)} {f g : Vec d → ℝ}
@@ -110,15 +103,6 @@ theorem volumeAverage_add_eq {V : Set (Vec d)} {f g : Vec d → ℝ}
       volumeAverage V f + volumeAverage V g := by
   unfold volumeAverage
   rw [MeasureTheory.integral_add hf hg]
-  ring
-
-/-- The volume average is additive on integrable differences. -/
-theorem volumeAverage_sub_eq {V : Set (Vec d)} {f g : Vec d → ℝ}
-    (hf : IntegrableOn f V volume) (hg : IntegrableOn g V volume) :
-    volumeAverage V (fun x => f x - g x) =
-      volumeAverage V f - volumeAverage V g := by
-  unfold volumeAverage
-  rw [MeasureTheory.integral_sub hf hg]
   ring
 
 /-- Subtracting a constant shifts the volume average by that constant. -/
@@ -133,7 +117,11 @@ theorem volumeAverage_sub_const_eq {V : Set (Vec d)}
   have hc : IntegrableOn (fun _ : Vec d => c) V volume := MeasureTheory.integrable_const c
   rw [volumeAverage_sub_eq hf hc, volumeAverage_const_of_toReal_pos hVpos]
 
-/-! ## 1. The two-window mean transfer -/
+/-! ## 1. The two-window mean transfer
+
+`SlopeStabilityEndpoints` provides `abs_volumeAverage_sub_average_le` so the
+mean-control and Campanato branches share the same estimate.
+-/
 
 /-- **The mean transfer.**
 
@@ -150,16 +138,7 @@ theorem abs_volumeAverage_sub_windowAverage_le {W V : Set (Vec d)}
     |volumeAverage V f - volumeAverage W f| ≤
       Real.sqrt ((volume W).toReal / (volume V).toReal) *
         normalizedL2On W (fun x => f x - volumeAverage W f) := by
-  have : IsFiniteMeasure (volume.restrict V) := by
-    refine ⟨?_⟩
-    rw [Measure.restrict_apply_univ]
-    exact lt_top_iff_ne_top.2 hVtop
-  have hc : IntegrableOn (fun _ : Vec d => volumeAverage W f) V volume :=
-    MeasureTheory.integrable_const _
-  have hsubint : IntegrableOn (fun x => f x - volumeAverage W f) V volume := hfV.sub hc
-  have hJ := abs_volumeAverage_le_normalizedL2On hVm hVpos hsubint hfV2
-  rw [volumeAverage_sub_const_eq hVpos hVtop hfV] at hJ
-  exact hJ.trans (normalizedL2On_le_of_subset hsub hWpos hVpos hfW2)
+  exact abs_volumeAverage_sub_average_le hVm hsub hWpos hVpos hVtop hfV hfV2 hfW2
 
 /-! ## 2. The split through the comparators -/
 

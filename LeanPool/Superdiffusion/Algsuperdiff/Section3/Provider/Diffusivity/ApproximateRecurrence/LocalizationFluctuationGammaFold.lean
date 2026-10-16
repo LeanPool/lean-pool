@@ -6,6 +6,7 @@ Authors: Scott Armstrong
 
 module
 
+public import LeanPool.Superdiffusion.Algsuperdiff.Section3.Provider.Scales.RpowThreshold
 public import Mathlib.Analysis.Complex.ExponentialBounds
 public import LeanPool.Superdiffusion.Algsuperdiff.Section3.Provider.Diffusivity.ApproximateRecurrence.LocalizationFluctuationMeshTransfer
 public import LeanPool.HighContrastHomogenization.Support.Deterministic.WeakNormInterfacesPositiveQTwo
@@ -292,26 +293,8 @@ private theorem gammaFold_exists_threshold_spare (C : ℝ) :
     ∃ gamma0 : ℝ, 0 < gamma0 ∧ gamma0 ≤ 1 / 4 ∧
       ∀ gamma : ℝ, 0 < gamma → gamma ≤ gamma0 →
         C ≤ (3 : ℝ) ^ ((10 : ℝ) ^ (9 : ℕ) * gamma⁻¹) := by
-  obtain ⟨N, hN⟩ : ∃ N : ℕ, C < (3 : ℝ) ^ N :=
-    ((tendsto_pow_atTop_atTop_of_one_lt (r := (3 : ℝ)) (by norm_num)).eventually_gt_atTop
-      C).exists
-  refine ⟨min (1 / 4) ((10 : ℝ) ^ (9 : ℕ) / ((N : ℝ) + 1)), ?_, min_le_left _ _, ?_⟩
-  · have hpos : (0 : ℝ) < (10 : ℝ) ^ (9 : ℕ) / ((N : ℝ) + 1) := by positivity
-    exact lt_min (by norm_num) hpos
-  · intro gamma hgamma hle
-    have hNpos : (0 : ℝ) < (N : ℝ) + 1 := by positivity
-    have hbound : gamma ≤ (10 : ℝ) ^ (9 : ℕ) / ((N : ℝ) + 1) := hle.trans (min_le_right _ _)
-    have hmul : gamma * ((N : ℝ) + 1) ≤ (10 : ℝ) ^ (9 : ℕ) := (le_div_iff₀ hNpos).mp hbound
-    have hexp : ((N : ℕ) : ℝ) ≤ (10 : ℝ) ^ (9 : ℕ) * gamma⁻¹ := by
-      have hinvpos : (0 : ℝ) < gamma⁻¹ := inv_pos.2 hgamma
-      have hstep : gamma⁻¹ * (gamma * ((N : ℝ) + 1)) ≤ gamma⁻¹ * (10 : ℝ) ^ (9 : ℕ) :=
-        mul_le_mul_of_nonneg_left hmul hinvpos.le
-      rw [← mul_assoc, inv_mul_cancel₀ (ne_of_gt hgamma), one_mul] at hstep
-      nlinarith [hstep]
-    have hmono : ((3 : ℝ) ^ N : ℝ) ≤ (3 : ℝ) ^ ((10 : ℝ) ^ (9 : ℕ) * gamma⁻¹) := by
-      rw [← Real.rpow_natCast (3 : ℝ) N]
-      exact Real.rpow_le_rpow_of_exponent_le (by norm_num) hexp
-    linarith [hN, hmono]
+  exact Algsuperdiff.exists_rpow_inverse_threshold (b := 3) (a := (10 : ℝ) ^ (9 : ℕ))
+    (cap := 1 / 4) (C := C) (by norm_num) (by norm_num) (by norm_num)
 
 /-- **The boundary remainder is below every power of `gamma`.**  Under the
 recurrence's own large-cube gate, read on the mesh as `10^10 gamma^{-1} <= p -

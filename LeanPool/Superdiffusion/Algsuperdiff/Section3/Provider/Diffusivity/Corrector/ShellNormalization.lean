@@ -6,6 +6,7 @@ Authors: Scott Armstrong, Tuomo Kuusi
 
 module
 
+public import LeanPool.Superdiffusion.Algsuperdiff.Section3.Provider.Scales.RpowThreshold
 public import LeanPool.Superdiffusion.Algsuperdiff.Frozen.Section3.InductionState
 public import LeanPool.Superdiffusion.Algsuperdiff.Section3.Provider.Disorder.CstarUpperBound
 
@@ -303,33 +304,8 @@ theorem exists_gamma_threshold_for_gap_constant (C : ℝ) :
     ∃ gamma0 : ℝ, 0 < gamma0 ∧ gamma0 ≤ 1 / 4 ∧
       ∀ gamma : ℝ, 0 < gamma → gamma ≤ gamma0 →
         C ≤ (3 : ℝ) ^ ((10 : ℝ) ^ (9 : ℕ) * gamma⁻¹) := by
-  obtain ⟨N, hN⟩ : ∃ N : ℕ, C < (3 : ℝ) ^ N :=
-    ((tendsto_pow_atTop_atTop_of_one_lt (r := (3 : ℝ))
-      (by norm_num)).eventually_gt_atTop C).exists
-  refine ⟨min (1 / 4) ((10 : ℝ) ^ (9 : ℕ) / ((N : ℝ) + 1)), ?_, min_le_left _ _, ?_⟩
-  · have : (0 : ℝ) < (10 : ℝ) ^ (9 : ℕ) / ((N : ℝ) + 1) := by positivity
-    exact lt_min (by norm_num) this
-  · intro gamma hgamma hle
-    have hNpos : (0 : ℝ) < (N : ℝ) + 1 := by positivity
-    have hbound : gamma ≤ (10 : ℝ) ^ (9 : ℕ) / ((N : ℝ) + 1) :=
-      hle.trans (min_le_right _ _)
-    have hmul : gamma * ((N : ℝ) + 1) ≤ (10 : ℝ) ^ (9 : ℕ) :=
-      (le_div_iff₀ hNpos).mp hbound
-    have hexp : ((N : ℕ) : ℝ) ≤ (10 : ℝ) ^ (9 : ℕ) * gamma⁻¹ := by
-      have hscaled : gamma⁻¹ * (gamma * ((N : ℝ) + 1)) ≤
-          gamma⁻¹ * (10 : ℝ) ^ (9 : ℕ) :=
-        mul_le_mul_of_nonneg_left hmul (inv_pos.mpr hgamma).le
-      have hsimp : gamma⁻¹ * (gamma * ((N : ℝ) + 1)) = (N : ℝ) + 1 := by
-        field_simp
-      rw [hsimp] at hscaled
-      calc ((N : ℕ) : ℝ) ≤ (N : ℝ) + 1 := by linarith
-        _ ≤ gamma⁻¹ * (10 : ℝ) ^ (9 : ℕ) := hscaled
-        _ = (10 : ℝ) ^ (9 : ℕ) * gamma⁻¹ := by ring
-    have hmono : (3 : ℝ) ^ (((N : ℕ) : ℝ)) ≤
-        (3 : ℝ) ^ ((10 : ℝ) ^ (9 : ℕ) * gamma⁻¹) :=
-      Real.rpow_le_rpow_of_exponent_le (by norm_num) hexp
-    rw [Real.rpow_natCast] at hmono
-    exact hN.le.trans hmono
+  exact Algsuperdiff.exists_rpow_inverse_threshold (b := 3) (a := (10 : ℝ) ^ (9 : ℕ))
+    (cap := 1 / 4) (C := C) (by norm_num) (by norm_num) (by norm_num)
 
 end
 
