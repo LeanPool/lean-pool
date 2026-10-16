@@ -30,9 +30,9 @@ Module imports, support namespace and local option directives adapted for Lean P
 # Relative comparator probe
 
 This module isolates the deterministic comparator algebra needed by the
-finite-corridor mean consumer. Its sole public endpoint controls the actual
-same-cutoff relative-origin starred fluctuation probe by the physical cutoff
-homogenization error. The consumer imports and applies that endpoint directly.
+finite-corridor mean consumer. It provides the shared relative-origin error
+transport and controls the actual same-cutoff starred fluctuation probe by the
+physical cutoff homogenization error. Consumers apply these results directly.
 -/
 
 namespace Algsuperdiff.Section3.Provider.Homogenization
@@ -44,6 +44,55 @@ open _root_.HCPolySupport.Book.Ch05.Section54.VarianceBoundGoodScale
 open scoped MatrixOrder
 
 noncomputable section
+
+/-- Relative normalization preserves the physical cutoff error for any
+comparator scalar and smoothing exponent. -/
+theorem relativeOrigin_homogenizationError_eq_cutoffError
+    {d : ℕ} (M : ABKModel d) (L : ℤ) (s : ℝ)
+    (sigma : Observable.PositiveScalar) (omega : Cutoff.CutoffSample d) :
+    let c : ℤ := Cutoff.cutoffRelativeNormalizationShift d
+    let h : ℤ := L + c
+    let aPhys : RegCoeffField d := Cutoff.coefficientCutoff M.nu L omega
+    let haPhys : Book.Ch04.AELocallyUniformlyEllipticField aPhys :=
+      Cutoff.coefficientCutoff_aeLocallyUniformlyEllipticField M L omega
+    let aRel : RegCoeffField d := dilateReg (-h) aPhys
+    let haRel : Book.Ch04.AELocallyUniformlyEllipticField aRel :=
+      Cutoff.aelocallyUniformlyEllipticField_dilateReg haPhys (-h)
+    let Frel : Book.Ch02.TriadicCoeffFamily d :=
+      Book.Ch04.triadicCoeffFamilyOfAELocallyUniformlyEllipticField aRel haRel
+    Book.Ch02.HomogenizationErrorOnCube (originCube d (-c)) s .infinity (.finite 2)
+      Frel (Observable.isotropicComparatorMatrix sigma) =
+        Observable.cutoffHomogenizationErrorRaw M L L s sigma omega := by
+  intro c h aPhys haPhys aRel haRel Frel
+  let R : TriadicCube d := originCube d (-c)
+  let a0 : Mat d := Observable.isotropicComparatorMatrix sigma
+  let Fphys : Book.Ch02.TriadicCoeffFamily d :=
+    Book.Ch04.triadicCoeffFamilyOfAELocallyUniformlyEllipticField aPhys haPhys
+  let Fdil : Book.Ch02.TriadicCoeffFamily d :=
+    Book.Ch02.TriadicCoeffFamily.dilate (-h) Fphys
+  have hR : Book.Ch02.dilateCube (-h) (originCube d L) = R := by
+    simp [R, h, c, Book.Ch02.dilateCube, originCube]
+  have hrelDil : Book.Ch02.TriadicCoeffFamily.AEEq Frel Fdil := by
+    simpa only [Frel, Fdil, Fphys, aRel, haRel] using
+      Cutoff.triadicCoeffFamily_dilateReg_aeeq_dilate haPhys (-h)
+  change Book.Ch02.HomogenizationErrorOnCube R s .infinity (.finite 2) Frel a0 = _
+  calc
+    _ = Book.Ch02.HomogenizationErrorOnCube R s .infinity (.finite 2) Fdil a0 :=
+      Book.Ch02.HomogenizationErrorOnCube_eq_ofAEEq hrelDil R s
+        .infinity (.finite 2) a0
+    _ = Book.Ch02.HomogenizationErrorOnCube (originCube d L) s .infinity
+        (.finite 2) Fphys a0 := by
+      rw [← hR]
+      exact Book.Ch02.HomogenizationErrorOnCube_dilate
+        (Book.Ch02.TriadicCoeffFamily.isDilation_dilate (-h) Fphys)
+        (originCube d L) s .infinity (.finite 2) a0
+    _ = Book.Ch02.HomogenizationErrorOnCube (originCube d L) s .infinity
+        (.finite 2) (Cutoff.coefficientCutoffTriadicCoeffFamily M L omega) a0 :=
+      Book.Ch02.HomogenizationErrorOnCube_eq_ofAEEq
+        (Cutoff.coefficientCutoff_canonicalFamily_aeeq M L omega)
+        (originCube d L) s .infinity (.finite 2) a0
+    _ = Observable.cutoffHomogenizationErrorRaw M L L s sigma omega := by
+      rw [Observable.cutoffHomogenizationErrorRaw_characterization]
 
 private theorem coarseStarredInv_comparator_quadratic_sub_one_sq_le {d : ℕ} (R : TriadicCube d)
     (F : Book.Ch02.TriadicCoeffFamily d)
@@ -426,37 +475,12 @@ theorem fullBlockQuadratic_starredFluctuation_relativeOrigin_sq_le_error
   let aRel : RegCoeffField d := dilateReg (-h) aPhys
   let haRel : Book.Ch04.AELocallyUniformlyEllipticField aRel :=
     Cutoff.aelocallyUniformlyEllipticField_dilateReg haPhys (-h)
-  let Fphys : Book.Ch02.TriadicCoeffFamily d :=
-    Book.Ch04.triadicCoeffFamilyOfAELocallyUniformlyEllipticField aPhys haPhys
   let Frel : Book.Ch02.TriadicCoeffFamily d :=
     Book.Ch04.triadicCoeffFamilyOfAELocallyUniformlyEllipticField aRel haRel
-  let Fdil : Book.Ch02.TriadicCoeffFamily d :=
-    Book.Ch02.TriadicCoeffFamily.dilate (-h) Fphys
-  have hR : Book.Ch02.dilateCube (-h) (originCube d L) = R := by
-    simp [R, h, c, Book.Ch02.dilateCube, originCube]
-  have hrelDil : Book.Ch02.TriadicCoeffFamily.AEEq Frel Fdil := by
-    simpa only [Frel, Fdil, Fphys, aRel, haRel] using
-      Cutoff.triadicCoeffFamily_dilateReg_aeeq_dilate haPhys (-h)
   have herr :
       Book.Ch02.HomogenizationErrorOnCube R s .infinity (.finite 2) Frel a0 =
-        Observable.cutoffHomogenizationErrorRaw M L L s sigma omega := by
-    calc
-      _ = Book.Ch02.HomogenizationErrorOnCube R s .infinity (.finite 2) Fdil a0 :=
-        Book.Ch02.HomogenizationErrorOnCube_eq_ofAEEq hrelDil R s
-          .infinity (.finite 2) a0
-      _ = Book.Ch02.HomogenizationErrorOnCube (originCube d L) s .infinity
-          (.finite 2) Fphys a0 := by
-        rw [← hR]
-        exact Book.Ch02.HomogenizationErrorOnCube_dilate
-          (Book.Ch02.TriadicCoeffFamily.isDilation_dilate (-h) Fphys)
-          (originCube d L) s .infinity (.finite 2) a0
-      _ = Book.Ch02.HomogenizationErrorOnCube (originCube d L) s .infinity
-          (.finite 2) (Cutoff.coefficientCutoffTriadicCoeffFamily M L omega) a0 :=
-        Book.Ch02.HomogenizationErrorOnCube_eq_ofAEEq
-          (Cutoff.coefficientCutoff_canonicalFamily_aeeq M L omega)
-          (originCube d L) s .infinity (.finite 2) a0
-      _ = Observable.cutoffHomogenizationErrorRaw M L L s sigma omega := by
-        rw [Observable.cutoffHomogenizationErrorRaw_characterization]
+        Observable.cutoffHomogenizationErrorRaw M L L s sigma omega :=
+    relativeOrigin_homogenizationError_eq_cutoffError M L s sigma omega
   have hcoarse : coarseBlockMatrix (cubeSet R) aRel.toFun =
       Book.Ch02.coarseBlockMatrix (Book.Ch02.cubeDomain R) (Frel.coeffOn R) :=
     Book.Ch04.RestrictionLawCarrier.coarseBlockMatrix_cubeSet_eq_chapterCoarse

@@ -185,41 +185,16 @@ private theorem relativeOrigin_doubledResponseJ_le_normSq_mul_cutoffError_sq
   let aRel : RegCoeffField d := dilateReg (-h) aPhys
   let haRel : Book.Ch04.AELocallyUniformlyEllipticField aRel :=
     Cutoff.aelocallyUniformlyEllipticField_dilateReg haPhys (-h)
-  let Fphys : Book.Ch02.TriadicCoeffFamily d :=
-    Book.Ch04.triadicCoeffFamilyOfAELocallyUniformlyEllipticField aPhys haPhys
   let Frel : Book.Ch02.TriadicCoeffFamily d :=
     Book.Ch04.triadicCoeffFamilyOfAELocallyUniformlyEllipticField aRel haRel
-  let Fdil : Book.Ch02.TriadicCoeffFamily d :=
-    Book.Ch02.TriadicCoeffFamily.dilate (-h) Fphys
   let Pq : BlockVec d := ofFullBlockVec
     (Matrix.mulVec (Book.Ch02.constantFullBlockMatrixInvSqrt a0) q)
   let Qq : BlockVec d := ofFullBlockVec
     (Matrix.mulVec (Book.Ch02.constantFullBlockMatrixSqrt a0) q)
-  have hR : Book.Ch02.dilateCube (-h) (originCube d L) = R := by
-    simp [R, h, c, Book.Ch02.dilateCube, originCube]
-  have hrelDil : Book.Ch02.TriadicCoeffFamily.AEEq Frel Fdil := by
-    simpa only [Frel, Fdil, Fphys, aRel, haRel] using
-      Cutoff.triadicCoeffFamily_dilateReg_aeeq_dilate haPhys (-h)
   have herr :
       Book.Ch02.HomogenizationErrorOnCube R s .infinity (.finite 2) Frel a0 =
-        Observable.cutoffHomogenizationErrorRaw M L L s sigma omega := by
-    calc
-      _ = Book.Ch02.HomogenizationErrorOnCube R s .infinity (.finite 2) Fdil a0 :=
-        Book.Ch02.HomogenizationErrorOnCube_eq_ofAEEq hrelDil R s
-          .infinity (.finite 2) a0
-      _ = Book.Ch02.HomogenizationErrorOnCube (originCube d L) s .infinity
-          (.finite 2) Fphys a0 := by
-        rw [← hR]
-        exact Book.Ch02.HomogenizationErrorOnCube_dilate
-          (Book.Ch02.TriadicCoeffFamily.isDilation_dilate (-h) Fphys)
-          (originCube d L) s .infinity (.finite 2) a0
-      _ = Book.Ch02.HomogenizationErrorOnCube (originCube d L) s .infinity
-          (.finite 2) (Cutoff.coefficientCutoffTriadicCoeffFamily M L omega) a0 :=
-        Book.Ch02.HomogenizationErrorOnCube_eq_ofAEEq
-          (Cutoff.coefficientCutoff_canonicalFamily_aeeq M L omega)
-          (originCube d L) s .infinity (.finite 2) a0
-      _ = Observable.cutoffHomogenizationErrorRaw M L L s sigma omega := by
-        rw [Observable.cutoffHomogenizationErrorRaw_characterization]
+        Observable.cutoffHomogenizationErrorRaw M L L s sigma omega :=
+    relativeOrigin_homogenizationError_eq_cutoffError M L s sigma omega
   have hbound := doubledResponseJ_constantNormalizer_le_normSq_mul_error_sq
     R Frel sigma hs q
   simpa only [Pq, Qq, a0, herr] using hbound

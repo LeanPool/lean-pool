@@ -36,6 +36,10 @@ needs: the downstream carrier is the full `descendantsAtDepth` family of
 `LocalizationRecurrenceMesh`, so the interior restriction cannot be pushed
 forward.  The transfer has two halves, both proved here and both unconditional.
 
+The signed transfer is also proved here in the `Closure` namespace, with the
+interior average replaced by its maximum with zero. The nonnegative estimate
+is a corollary of that common calculation.
+
 * A **Cauchy--Schwarz split**: for a nonnegative family `F` on a finite grid `I`
   and any sub-grid `J`,
   ```
@@ -104,13 +108,22 @@ theorem sum_le_sqrt_card_mul_sqrt_sum_sq (s : Finset (TriadicCube d))
       Real.sqrt ((s.card : ℝ) * ∑ R ∈ s, F R ^ 2) := Real.sqrt_le_sqrt h
   rwa [Real.sqrt_sq hnn, Real.sqrt_mul (by positivity)] at h2
 
-/-- **The boundary transfer.**  For a nonnegative family, the average over the
-full grid is the average over any sub-grid plus a Cauchy--Schwarz remainder
-carrying the square root of the missing fraction.  Unconditional. -/
-theorem cubeFamilyAverage_le_add_sqrt_boundaryFraction {I J : Finset (TriadicCube d)}
-    (hJI : J ⊆ I) (F : TriadicCube d → ℝ) (hF : ∀ R ∈ I, 0 ≤ F R) :
+namespace Closure
+
+/-- **The boundary transfer without a sign hypothesis.**
+
+For any sub-family `J` of `I` and any real family `F`,
+
+```
+  avsum_I F  <=  max (avsum_J F) 0  +  sqrt (1 - |J|/|I|) . sqrt (avsum_I F^2) .
+```
+
+The interior half uses only `|J| <= |I|` and `0 <= max (avsum_J F) 0`; the strip
+half is Cauchy--Schwarz at `|F|`.  Unconditional. -/
+theorem cubeFamilyAverage_le_max_add_sqrt_boundaryFraction {I J : Finset (TriadicCube d)}
+    (hJI : J ⊆ I) (F : TriadicCube d → ℝ) :
     cubeFamilyAverage I F ≤
-      cubeFamilyAverage J F +
+      max (cubeFamilyAverage J F) 0 +
         Real.sqrt (1 - (J.card : ℝ) / (I.card : ℝ)) *
           Real.sqrt (cubeFamilyAverage I (fun R => F R ^ 2)) := by
   classical
@@ -123,37 +136,52 @@ theorem cubeFamilyAverage_le_add_sqrt_boundaryFraction {I J : Finset (TriadicCub
   have hN : (0 : ℝ) < (I.card : ℝ) := by exact_mod_cast hIpos
   have hMN : J.card ≤ I.card := Finset.card_le_card hJI
   have hMNR : (J.card : ℝ) ≤ (I.card : ℝ) := by exact_mod_cast hMN
-  have hFJ : ∀ R ∈ J, 0 ≤ F R := fun R hR => hF R (hJI hR)
-  have hFD : ∀ R ∈ I \ J, 0 ≤ F R := fun R hR => hF R (Finset.mem_sdiff.mp hR).1
   have hsplit : ∑ R ∈ I, F R = ∑ R ∈ J, F R + ∑ R ∈ I \ J, F R := by
     rw [← Finset.sum_union Finset.disjoint_sdiff]
     congr 1
     exact (Finset.union_sdiff_of_subset hJI).symm
-  have hpart1 : ((I.card : ℝ))⁻¹ * ∑ R ∈ J, F R ≤ cubeFamilyAverage J F := by
-    unfold cubeFamilyAverage
+  have hpart1 : ((I.card : ℝ))⁻¹ * ∑ R ∈ J, F R ≤ max (cubeFamilyAverage J F) 0 := by
     rcases Nat.eq_zero_or_pos J.card with hJ0 | hJpos
     · have hJempty : J = ∅ := Finset.card_eq_zero.mp hJ0
       subst hJempty
-      simp
+      simp [cubeFamilyAverage]
     · have hM : (0 : ℝ) < (J.card : ℝ) := by exact_mod_cast hJpos
-      have hsum : 0 ≤ ∑ R ∈ J, F R := Finset.sum_nonneg hFJ
-      exact mul_le_mul_of_nonneg_right (inv_anti₀ hM hMNR) hsum
+      have hsumJ : ∑ R ∈ J, F R = (J.card : ℝ) * cubeFamilyAverage J F := by
+        change _ = (J.card : ℝ) * (((J.card : ℝ))⁻¹ * ∑ R ∈ J, F R)
+        field_simp
+      rw [hsumJ]
+      have hle1 : (J.card : ℝ) / (I.card : ℝ) ≤ 1 := (div_le_one hN).2 hMNR
+      have hmax : cubeFamilyAverage J F ≤ max (cubeFamilyAverage J F) 0 := le_max_left _ _
+      have hmax0 : (0 : ℝ) ≤ max (cubeFamilyAverage J F) 0 := le_max_right _ _
+      calc ((I.card : ℝ))⁻¹ * ((J.card : ℝ) * cubeFamilyAverage J F)
+          = ((J.card : ℝ) / (I.card : ℝ)) * cubeFamilyAverage J F := by
+            field_simp
+        _ ≤ ((J.card : ℝ) / (I.card : ℝ)) * max (cubeFamilyAverage J F) 0 :=
+            mul_le_mul_of_nonneg_left hmax (by positivity)
+        _ ≤ 1 * max (cubeFamilyAverage J F) 0 :=
+            mul_le_mul_of_nonneg_right hle1 hmax0
+        _ = max (cubeFamilyAverage J F) 0 := one_mul _
   have hcard : ((I \ J).card : ℝ) = (I.card : ℝ) - (J.card : ℝ) := by
     rw [Finset.card_sdiff_of_subset hJI]
     push_cast [hMN]
     ring
-  have hCS : ∑ R ∈ I \ J, F R ≤
-      Real.sqrt (((I \ J).card : ℝ)) * Real.sqrt (∑ R ∈ I \ J, F R ^ 2) :=
-    sum_le_sqrt_card_mul_sqrt_sum_sq _ F hFD
+  have hCS : ∑ R ∈ I \ J, |F R| ≤
+      Real.sqrt (((I \ J).card : ℝ)) * Real.sqrt (∑ R ∈ I \ J, |F R| ^ 2) :=
+    sum_le_sqrt_card_mul_sqrt_sum_sq _ (fun R => |F R|) fun R _ => abs_nonneg _
+  have habs2 : ∑ R ∈ I \ J, |F R| ^ 2 = ∑ R ∈ I \ J, F R ^ 2 :=
+    Finset.sum_congr rfl fun R _ => sq_abs _
   have hsq_le : ∑ R ∈ I \ J, F R ^ 2 ≤ ∑ R ∈ I, F R ^ 2 :=
     Finset.sum_le_sum_of_subset_of_nonneg Finset.sdiff_subset fun R _ _ => sq_nonneg _
+  have hsumle : ∑ R ∈ I \ J, F R ≤ ∑ R ∈ I \ J, |F R| :=
+    Finset.sum_le_sum fun R _ => le_abs_self _
   have hpart2 : ((I.card : ℝ))⁻¹ * ∑ R ∈ I \ J, F R ≤
       Real.sqrt (1 - (J.card : ℝ) / (I.card : ℝ)) *
         Real.sqrt (cubeFamilyAverage I (fun R => F R ^ 2)) := by
     have hstep : ((I.card : ℝ))⁻¹ * ∑ R ∈ I \ J, F R ≤
         ((I.card : ℝ))⁻¹ *
           (Real.sqrt (((I \ J).card : ℝ)) * Real.sqrt (∑ R ∈ I, F R ^ 2)) := by
-      refine mul_le_mul_of_nonneg_left (hCS.trans ?_) (by positivity)
+      refine mul_le_mul_of_nonneg_left (hsumle.trans (hCS.trans ?_)) (by positivity)
+      rw [habs2]
       exact mul_le_mul_of_nonneg_left (Real.sqrt_le_sqrt hsq_le) (Real.sqrt_nonneg _)
     refine hstep.trans (le_of_eq ?_)
     unfold cubeFamilyAverage
@@ -173,6 +201,22 @@ theorem cubeFamilyAverage_le_add_sqrt_boundaryFraction {I J : Finset (TriadicCub
   unfold cubeFamilyAverage
   rw [hsplit, mul_add]
   exact add_le_add hpart1 hpart2
+
+end Closure
+
+/-- **The boundary transfer.**  For a nonnegative family, the average over the
+full grid is the average over any sub-grid plus a Cauchy--Schwarz remainder
+carrying the square root of the missing fraction.  Unconditional. -/
+theorem cubeFamilyAverage_le_add_sqrt_boundaryFraction {I J : Finset (TriadicCube d)}
+    (hJI : J ⊆ I) (F : TriadicCube d → ℝ) (hF : ∀ R ∈ I, 0 ≤ F R) :
+    cubeFamilyAverage I F ≤
+      cubeFamilyAverage J F +
+        Real.sqrt (1 - (J.card : ℝ) / (I.card : ℝ)) *
+          Real.sqrt (cubeFamilyAverage I (fun R => F R ^ 2)) := by
+  have hJ : 0 ≤ cubeFamilyAverage J F :=
+    cubeFamilyAverage_nonneg fun R hR => hF R (hJI hR)
+  simpa only [max_eq_left hJ] using
+    Closure.cubeFamilyAverage_le_max_add_sqrt_boundaryFraction hJI F
 
 /-! ## The index box inside the interior mesh -/
 
