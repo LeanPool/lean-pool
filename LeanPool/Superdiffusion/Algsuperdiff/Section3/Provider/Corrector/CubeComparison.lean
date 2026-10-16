@@ -81,6 +81,25 @@ theorem vecDot_add_self (a b : Vec d) :
 theorem vecDot_self_nonneg (a : Vec d) : 0 ≤ vecDot a a :=
   Finset.sum_nonneg fun i _ => mul_self_nonneg (a i)
 
+/-- The squared-distance polarization identity integrated over any domain. -/
+theorem setIntegral_vecDot_sub_self_eq {U : Set (Vec d)} {D v : Vec d → Vec d}
+    (hD : MemVectorL2 U D) (hv : MemVectorL2 U v) :
+    (∫ x in U, vecDot (D x - v x) (D x - v x)) =
+      (∫ x in U, vecDot (D x) (D x)) - 2 * (∫ x in U, vecDot (D x) (v x)) +
+        ∫ x in U, vecDot (v x) (v x) := by
+  have hDD := integrableOn_vecDot_of_memVectorL2 hD hD
+  have hDv := integrableOn_vecDot_of_memVectorL2 hD hv
+  have hvv := integrableOn_vecDot_of_memVectorL2 hv hv
+  calc
+    (∫ x in U, vecDot (D x - v x) (D x - v x)) =
+        ∫ x in U, vecDot (D x) (D x) - 2 * vecDot (D x) (v x) + vecDot (v x) (v x) :=
+      integral_congr_ae (Filter.Eventually.of_forall fun x => vecDot_sub_self _ _)
+    _ = _ := by
+      have hadd := integral_add (hDD.sub (hDv.const_mul 2)) hvv
+      have hsub := integral_sub hDD (hDv.const_mul 2)
+      simp only [Pi.sub_apply] at hadd hsub
+      rw [hadd, hsub, integral_const_mul]
+
 /-! ### Testing the weak formulations -/
 
 /-- Testing a solenoidal field against a zero-trace potential competitor.  With
@@ -112,6 +131,28 @@ theorem isPotentialOn_of_isPotentialZeroTraceOn {U : Set (Vec d)}
   obtain ⟨u, hu⟩ := hv
   exact ⟨u.toH1Function, hu⟩
 
+/-- Splitting the tested flux into its two square-integrable halves. -/
+theorem setIntegral_vecDot_add_left_split {U : Set (Vec d)} {D F v : Vec d → Vec d}
+    (hD : MemVectorL2 U D) (hF : MemVectorL2 U F) (hv : MemVectorL2 U v) :
+    ∫ x in U, vecDot (D x + F x) (v x)
+      = (∫ x in U, vecDot (D x) (v x)) + ∫ x in U, vecDot (F x) (v x) := by
+  rw [← integral_add (integrableOn_vecDot_of_memVectorL2 hD hv)
+    (integrableOn_vecDot_of_memVectorL2 hF hv)]
+  exact integral_congr_ae (Filter.Eventually.of_forall fun x => vecDot_add_left _ _ _)
+
+/-- Completing the square bounds the energy from a single tested flux identity. -/
+theorem setIntegral_vecDot_self_ge_of_test {U : Set (Vec d)} {D F v : Vec d → Vec d}
+    (hD : MemVectorL2 U D) (hF : MemVectorL2 U F) (hv : MemVectorL2 U v)
+    (h0 : ∫ x in U, vecDot (D x + F x) (v x) = 0) :
+    -2 * (∫ x in U, vecDot (F x) (v x)) - (∫ x in U, vecDot (v x) (v x))
+      ≤ ∫ x in U, vecDot (D x) (D x)  := by
+  have hsplit := setIntegral_vecDot_add_left_split hD hF hv
+  rw [h0] at hsplit
+  have hnonneg : 0 ≤ ∫ x in U, vecDot (D x - v x) (D x - v x) :=
+    integral_nonneg fun x => vecDot_self_nonneg _
+  rw [setIntegral_vecDot_sub_self_eq hD hv] at hnonneg
+  linarith only [hsplit, hnonneg]
+
 /-! ### The Step-2 comparison -/
 
 /-- **Step 2 of `l.corrector.limit` at a fixed realization**.
@@ -134,44 +175,8 @@ theorem setIntegral_vecDot_self_ge_of_isSolenoidalOn {U : Set (Vec d)}
     (hvpot : IsPotentialZeroTraceOn U v) :
     -2 * (∫ x in U, vecDot (F x) (v x)) - (∫ x in U, vecDot (v x) (v x))
       ≤ ∫ x in U, vecDot (D x) (D x) := by
-  have hDv : IntegrableOn (fun x => vecDot (D x) (v x)) U :=
-    integrableOn_vecDot_of_memVectorL2 hD hv
-  have hFv : IntegrableOn (fun x => vecDot (F x) (v x)) U :=
-    integrableOn_vecDot_of_memVectorL2 hF hv
-  have hDD : IntegrableOn (fun x => vecDot (D x) (D x)) U :=
-    integrableOn_vecDot_of_memVectorL2 hD hD
-  have hvv : IntegrableOn (fun x => vecDot (v x) (v x)) U :=
-    integrableOn_vecDot_of_memVectorL2 hv hv
-  -- The weak formulation, split into its two integrable halves.
-  have h0 : (∫ x in U, vecDot (D x) (v x)) + ∫ x in U, vecDot (F x) (v x) = 0 := by
-    have hsplit : ∫ x in U, vecDot (D x + F x) (v x)
-        = (∫ x in U, vecDot (D x) (v x)) + ∫ x in U, vecDot (F x) (v x) := by
-      rw [← integral_add hDv hFv]
-      exact integral_congr_ae (Filter.Eventually.of_forall fun x => vecDot_add_left _ _ _)
-    rw [← hsplit]
-    exact setIntegral_vecDot_eq_zero_of_isSolenoidalOn hsol hvpot
-  -- Nonnegativity of the squared distance to the competitor.
-  have hnn : 0 ≤ ∫ x in U, vecDot (D x - v x) (D x - v x) :=
-    integral_nonneg fun x => vecDot_self_nonneg _
-  have hexp : ∫ x in U, vecDot (D x - v x) (D x - v x)
-      = (∫ x in U, vecDot (D x) (D x)) - 2 * (∫ x in U, vecDot (D x) (v x))
-        + ∫ x in U, vecDot (v x) (v x) := by
-    have hpt : ∀ x, vecDot (D x - v x) (D x - v x)
-        = vecDot (D x) (D x) - 2 * vecDot (D x) (v x) + vecDot (v x) (v x) := fun x =>
-      vecDot_sub_self _ _
-    have h1 : ∫ x in U, (vecDot (D x) (D x) - 2 * vecDot (D x) (v x)
-          + vecDot (v x) (v x))
-        = (∫ x in U, (vecDot (D x) (D x) - 2 * vecDot (D x) (v x)))
-          + ∫ x in U, vecDot (v x) (v x) :=
-      integral_add (hDD.sub (hDv.const_mul 2)) hvv
-    have h2 : ∫ x in U, (vecDot (D x) (D x) - 2 * vecDot (D x) (v x))
-        = (∫ x in U, vecDot (D x) (D x)) - ∫ x in U, 2 * vecDot (D x) (v x) :=
-      integral_sub hDD (hDv.const_mul 2)
-    have h3 : ∫ x in U, 2 * vecDot (D x) (v x)
-        = 2 * ∫ x in U, vecDot (D x) (v x) := integral_const_mul 2 _
-    rw [integral_congr_ae (Filter.Eventually.of_forall hpt), h1, h2, h3]
-  rw [hexp] at hnn
-  linarith
+  exact setIntegral_vecDot_self_ge_of_test hD hF hv
+    (setIntegral_vecDot_eq_zero_of_isSolenoidalOn hsol hvpot)
 
 /-- The flux rewriting of the Step-2 comparison.  Completing the square turns
 `-2 ∫ F · v - ∫ |v|²` into `∫ |F|² - ∫ |v + F|²`, which is the form the
@@ -181,29 +186,13 @@ theorem setIntegral_vecDot_flux_eq {U : Set (Vec d)} {F v : Vec d → Vec d}
     (hF : MemVectorL2 U F) (hv : MemVectorL2 U v) :
     (∫ x in U, vecDot (F x) (F x)) - ∫ x in U, vecDot (v x + F x) (v x + F x)
       = -2 * (∫ x in U, vecDot (F x) (v x)) - ∫ x in U, vecDot (v x) (v x) := by
-  have hvF : IntegrableOn (fun x => vecDot (v x) (F x)) U :=
-    integrableOn_vecDot_of_memVectorL2 hv hF
-  have hFF : IntegrableOn (fun x => vecDot (F x) (F x)) U :=
-    integrableOn_vecDot_of_memVectorL2 hF hF
-  have hvv : IntegrableOn (fun x => vecDot (v x) (v x)) U :=
-    integrableOn_vecDot_of_memVectorL2 hv hv
-  have hpt : ∀ x, vecDot (v x + F x) (v x + F x)
-      = vecDot (v x) (v x) + 2 * vecDot (v x) (F x) + vecDot (F x) (F x) := fun x =>
-    vecDot_add_self _ _
-  have h1 : ∫ x in U, (vecDot (v x) (v x) + 2 * vecDot (v x) (F x)
-        + vecDot (F x) (F x))
-      = (∫ x in U, (vecDot (v x) (v x) + 2 * vecDot (v x) (F x)))
-        + ∫ x in U, vecDot (F x) (F x) :=
-    integral_add (hvv.add (hvF.const_mul 2)) hFF
-  have h2 : ∫ x in U, (vecDot (v x) (v x) + 2 * vecDot (v x) (F x))
-      = (∫ x in U, vecDot (v x) (v x)) + ∫ x in U, 2 * vecDot (v x) (F x) :=
-    integral_add hvv (hvF.const_mul 2)
-  have h3 : ∫ x in U, 2 * vecDot (v x) (F x)
-      = 2 * ∫ x in U, vecDot (v x) (F x) := integral_const_mul 2 _
-  have h4 : ∫ x in U, vecDot (v x) (F x) = ∫ x in U, vecDot (F x) (v x) :=
+  have hexp := setIntegral_vecDot_sub_self_eq hv hF.neg
+  simp only [Pi.neg_apply, sub_neg_eq_add, vecDot_neg_left, vecDot_neg_right,
+    neg_neg, integral_neg] at hexp
+  have hcomm : (∫ x in U, vecDot (v x) (F x)) = ∫ x in U, vecDot (F x) (v x) :=
     integral_congr_ae (Filter.Eventually.of_forall fun x => vecDot_comm _ _)
-  rw [integral_congr_ae (Filter.Eventually.of_forall hpt), h1, h2, h3, h4]
-  ring
+  rw [hcomm] at hexp
+  linarith only [hexp]
 
 /-- **The Step-2 comparison in flux form**.  For every admissible zero-trace
 competitor `v`,
@@ -240,53 +229,12 @@ theorem setIntegral_vecDot_self_le_of_isSolenoidal {U : Set (Vec d)}
     (hDpot : IsPotentialZeroTraceOn U D) (hDsol : IsSolenoidalOn U fun x => D x + F x)
     (hNsol : IsSolenoidalZeroNormalTraceOn U fun x => N x + F x) :
     (∫ x in U, vecDot (D x) (D x)) ≤ ∫ x in U, vecDot (N x) (N x) := by
-  have hDD : IntegrableOn (fun x => vecDot (D x) (D x)) U :=
-    integrableOn_vecDot_of_memVectorL2 hD hD
-  have hND : IntegrableOn (fun x => vecDot (N x) (D x)) U :=
-    integrableOn_vecDot_of_memVectorL2 hN hD
-  have hNN : IntegrableOn (fun x => vecDot (N x) (N x)) U :=
-    integrableOn_vecDot_of_memVectorL2 hN hN
-  have hFD : IntegrableOn (fun x => vecDot (F x) (D x)) U :=
-    integrableOn_vecDot_of_memVectorL2 hF hD
-  -- `⨍ (D + F) · D = 0`: the Dirichlet equation tested against its own solution.
-  have hDself : (∫ x in U, vecDot (D x) (D x)) + ∫ x in U, vecDot (F x) (D x) = 0 := by
-    have hsplit : ∫ x in U, vecDot (D x + F x) (D x)
-        = (∫ x in U, vecDot (D x) (D x)) + ∫ x in U, vecDot (F x) (D x) := by
-      rw [← integral_add hDD hFD]
-      exact integral_congr_ae (Filter.Eventually.of_forall fun x => vecDot_add_left _ _ _)
-    rw [← hsplit]
-    exact setIntegral_vecDot_eq_zero_of_isSolenoidalOn hDsol hDpot
-  -- `⨍ (N + F) · D = 0`: the Neumann equation tested against the Dirichlet solution,
-  -- admissible because `H¹₀(U) ⊆ H¹(U)`.
-  have hcross : (∫ x in U, vecDot (N x) (D x)) + ∫ x in U, vecDot (F x) (D x) = 0 := by
-    have hsplit : ∫ x in U, vecDot (N x + F x) (D x)
-        = (∫ x in U, vecDot (N x) (D x)) + ∫ x in U, vecDot (F x) (D x) := by
-      rw [← integral_add hND hFD]
-      exact integral_congr_ae (Filter.Eventually.of_forall fun x => vecDot_add_left _ _ _)
-    rw [← hsplit]
-    exact setIntegral_vecDot_eq_zero_of_isSolenoidalZeroNormalTraceOn hNsol
-      (isPotentialOn_of_isPotentialZeroTraceOn hDpot)
-  -- Expand the squared distance between the two gradients.
-  have hnn : 0 ≤ ∫ x in U, vecDot (N x - D x) (N x - D x) :=
-    integral_nonneg fun x => vecDot_self_nonneg _
-  have hexp : ∫ x in U, vecDot (N x - D x) (N x - D x)
-      = (∫ x in U, vecDot (N x) (N x)) - 2 * (∫ x in U, vecDot (N x) (D x))
-        + ∫ x in U, vecDot (D x) (D x) := by
-    have hpt : ∀ x, vecDot (N x - D x) (N x - D x)
-        = vecDot (N x) (N x) - 2 * vecDot (N x) (D x) + vecDot (D x) (D x) := fun x =>
-      vecDot_sub_self _ _
-    have h1 : ∫ x in U, (vecDot (N x) (N x) - 2 * vecDot (N x) (D x)
-          + vecDot (D x) (D x))
-        = (∫ x in U, (vecDot (N x) (N x) - 2 * vecDot (N x) (D x)))
-          + ∫ x in U, vecDot (D x) (D x) :=
-      integral_add (hNN.sub (hND.const_mul 2)) hDD
-    have h2 : ∫ x in U, (vecDot (N x) (N x) - 2 * vecDot (N x) (D x))
-        = (∫ x in U, vecDot (N x) (N x)) - ∫ x in U, 2 * vecDot (N x) (D x) :=
-      integral_sub hNN (hND.const_mul 2)
-    have h3 : ∫ x in U, 2 * vecDot (N x) (D x)
-        = 2 * ∫ x in U, vecDot (N x) (D x) := integral_const_mul 2 _
-    rw [integral_congr_ae (Filter.Eventually.of_forall hpt), h1, h2, h3]
-  rw [hexp] at hnn
-  linarith
+  have hDtest := setIntegral_vecDot_eq_zero_of_isSolenoidalOn hDsol hDpot
+  have hDself := setIntegral_vecDot_add_left_split hD hF hD
+  rw [hDtest] at hDself
+  have hcomparison := setIntegral_vecDot_self_ge_of_test hN hF hD
+    (setIntegral_vecDot_eq_zero_of_isSolenoidalZeroNormalTraceOn hNsol
+      (isPotentialOn_of_isPotentialZeroTraceOn hDpot))
+  linarith only [hDself, hcomparison]
 
 end Algsuperdiff.Section3.Provider.Corrector

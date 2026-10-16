@@ -102,62 +102,13 @@ noncomputable section
 
 /-! ### The deterministic comparison lemmas, in tested form
 
-`Algsuperdiff/Section3/Provider/Corrector/CubeComparison.lean` proves these for
-the Dirichlet weak formulation.  Here the weak formulation enters only through
-the single scalar identity `∫_U (D + F) · v = 0`, so one set of lemmas serves
-both the Dirichlet and the Neumann cube problem. -/
+`Algsuperdiff/Section3/Provider/Corrector/CubeComparison.lean` supplies the shared
+tested comparison and integral identities. The remaining attainment and forcing
+bounds below use only `∫_U (D + F) · v = 0`, for both boundary conditions. -/
 
 section Deterministic
 
 variable {d : ℕ}
-
-/-- Splitting the tested flux into its two square-integrable halves. -/
-private theorem setIntegral_vecDot_add_left_split {U : Set (Vec d)} {D F v : Vec d → Vec d}
-    (hD : MemVectorL2 U D) (hF : MemVectorL2 U F) (hv : MemVectorL2 U v) :
-    ∫ x in U, vecDot (D x + F x) (v x)
-      = (∫ x in U, vecDot (D x) (v x)) + ∫ x in U, vecDot (F x) (v x) := by
-  rw [← integral_add (integrableOn_vecDot_of_memVectorL2 hD hv)
-    (integrableOn_vecDot_of_memVectorL2 hF hv)]
-  exact integral_congr_ae (Filter.Eventually.of_forall fun x => vecDot_add_left _ _ _)
-
-/-- **Step 2 of `l.corrector.limit`, tested form.**  If the flux `D + F` is
-orthogonal to the competitor `v`, then `-2 ∫ F · v - ∫ |v|² ≤ ∫ |D|²`.  This is
-`Algsuperdiff.Section3.Provider.Corrector.setIntegral_vecDot_self_ge_of_isSolenoidalOn`
-with the weak formulation replaced by the single identity it supplies. -/
-private theorem setIntegral_vecDot_self_ge_of_test {U : Set (Vec d)} {D F v : Vec d → Vec d}
-    (hD : MemVectorL2 U D) (hF : MemVectorL2 U F) (hv : MemVectorL2 U v)
-    (h0 : ∫ x in U, vecDot (D x + F x) (v x) = 0) :
-    -2 * (∫ x in U, vecDot (F x) (v x)) - (∫ x in U, vecDot (v x) (v x))
-      ≤ ∫ x in U, vecDot (D x) (D x) := by
-  have hDv : IntegrableOn (fun x => vecDot (D x) (v x)) U :=
-    integrableOn_vecDot_of_memVectorL2 hD hv
-  have hDD : IntegrableOn (fun x => vecDot (D x) (D x)) U :=
-    integrableOn_vecDot_of_memVectorL2 hD hD
-  have hvv : IntegrableOn (fun x => vecDot (v x) (v x)) U :=
-    integrableOn_vecDot_of_memVectorL2 hv hv
-  have hsplit := setIntegral_vecDot_add_left_split hD hF hv
-  rw [h0] at hsplit
-  have hnn : 0 ≤ ∫ x in U, vecDot (D x - v x) (D x - v x) :=
-    integral_nonneg fun x => vecDot_self_nonneg _
-  have hexp : ∫ x in U, vecDot (D x - v x) (D x - v x)
-      = (∫ x in U, vecDot (D x) (D x)) - 2 * (∫ x in U, vecDot (D x) (v x))
-        + ∫ x in U, vecDot (v x) (v x) := by
-    have hpt : ∀ x, vecDot (D x - v x) (D x - v x)
-        = vecDot (D x) (D x) - 2 * vecDot (D x) (v x) + vecDot (v x) (v x) := fun x =>
-      vecDot_sub_self _ _
-    have h1 : ∫ x in U, (vecDot (D x) (D x) - 2 * vecDot (D x) (v x)
-          + vecDot (v x) (v x))
-        = (∫ x in U, (vecDot (D x) (D x) - 2 * vecDot (D x) (v x)))
-          + ∫ x in U, vecDot (v x) (v x) :=
-      integral_add (hDD.sub (hDv.const_mul 2)) hvv
-    have h2 : ∫ x in U, (vecDot (D x) (D x) - 2 * vecDot (D x) (v x))
-        = (∫ x in U, vecDot (D x) (D x)) - ∫ x in U, 2 * vecDot (D x) (v x) :=
-      integral_sub hDD (hDv.const_mul 2)
-    have h3 : ∫ x in U, 2 * vecDot (D x) (v x)
-        = 2 * ∫ x in U, vecDot (D x) (v x) := integral_const_mul 2 _
-    rw [integral_congr_ae (Filter.Eventually.of_forall hpt), h1, h2, h3]
-  rw [hexp] at hnn
-  linarith
 
 /-- The supremum in the variational characterization is *attained* at the
 solution itself: testing the flux against `D` turns the Step-2 lower bound into

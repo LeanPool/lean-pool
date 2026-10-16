@@ -43,6 +43,75 @@ noncomputable section
 
 variable {d : ℕ}
 
+/-- Canonical per-descendant choices preserve nonnegativity, measurability,
+both Orlicz estimates and domination, with zero values outside the descendant row. -/
+theorem perDescendantSplit_choice_properties
+    {Omega : Type*} [MeasurableSpace Omega] {mu : Measure Omega} {m : ℤ}
+    {block : TriadicCube d → Omega → ℝ} {deterministicBound sigma : ℝ}
+    {ordinaryAmplitude rareAmplitude : ℕ → ℝ}
+    (hblockNonneg : ∀ (k : ℕ) (R : TriadicCube d),
+      R ∈ descendantsAtScale (originCube d m) (m - 1 - (k : ℤ)) →
+        ∀ omega, 0 ≤ block R omega)
+    (hper : ∀ (k : ℕ) (R : TriadicCube d),
+      R ∈ descendantsAtScale (originCube d m) (m - 1 - (k : ℤ)) →
+        ∃ Uone Uexp : Omega → ℝ,
+          (∀ omega, 0 ≤ Uone omega) ∧ Measurable Uone ∧
+          (∀ omega, 0 ≤ Uexp omega) ∧ Measurable Uexp ∧
+          (∀ omega, block R omega ≤ deterministicBound + Uone omega + Uexp omega) ∧
+          IsBigOWith mu (gammaSigma 1) Uone (ordinaryAmplitude k) ∧
+          IsBigOWith mu (gammaSigma sigma) Uexp (rareAmplitude k)) :
+    let UoneCube : ℕ → TriadicCube d → Omega → ℝ := fun k R =>
+      if hR : R ∈ descendantsAtScale (originCube d m) (m - 1 - (k : ℤ)) then
+        Classical.choose (hper k R hR) else fun _ => 0
+    let UexpCube : ℕ → TriadicCube d → Omega → ℝ := fun k R =>
+      if hR : R ∈ descendantsAtScale (originCube d m) (m - 1 - (k : ℤ)) then
+        Classical.choose (Classical.choose_spec (hper k R hR)) else fun _ => 0
+    (∀ k R omega, 0 ≤ UoneCube k R omega) ∧
+    (∀ k R omega, 0 ≤ UexpCube k R omega) ∧
+    (∀ k R, Measurable (UoneCube k R)) ∧
+    (∀ k R, Measurable (UexpCube k R)) ∧
+    (∀ (k : ℕ) (R : TriadicCube d), R ∈ descendantsAtScale (originCube d m) (m - 1 - (k : ℤ)) →
+      IsBigOWith mu (gammaSigma 1) (UoneCube k R) (ordinaryAmplitude k)) ∧
+    (∀ (k : ℕ) (R : TriadicCube d), R ∈ descendantsAtScale (originCube d m) (m - 1 - (k : ℤ)) →
+      IsBigOWith mu (gammaSigma sigma) (UexpCube k R) (rareAmplitude k)) ∧
+    ∀ (k : ℕ) (R : TriadicCube d), R ∈ descendantsAtScale (originCube d m) (m - 1 - (k : ℤ)) →
+      ∀ omega, |block R omega| ≤ deterministicBound + UoneCube k R omega + UexpCube k R omega := by
+  classical
+  intro UoneCube UexpCube
+  have hproperties (k : ℕ) (R : TriadicCube d)
+      (hR : R ∈ descendantsAtScale (originCube d m) (m - 1 - (k : ℤ))) :
+      (∀ omega, 0 ≤ UoneCube k R omega) ∧ Measurable (UoneCube k R) ∧
+      (∀ omega, 0 ≤ UexpCube k R omega) ∧ Measurable (UexpCube k R) ∧
+      (∀ omega, block R omega ≤ deterministicBound + UoneCube k R omega + UexpCube k R omega) ∧
+      IsBigOWith mu (gammaSigma 1) (UoneCube k R) (ordinaryAmplitude k) ∧
+      IsBigOWith mu (gammaSigma sigma) (UexpCube k R) (rareAmplitude k) := by
+    simpa only [UoneCube, UexpCube, dite_eq_left hR] using
+      Classical.choose_spec (Classical.choose_spec (hper k R hR))
+  refine ⟨?_, ?_, ?_, ?_, ?_, ?_, ?_⟩
+  · intro k R omega
+    by_cases hR : R ∈ descendantsAtScale (originCube d m) (m - 1 - (k : ℤ))
+    · exact (hproperties k R hR).1 omega
+    · simp [UoneCube, hR]
+  · intro k R omega
+    by_cases hR : R ∈ descendantsAtScale (originCube d m) (m - 1 - (k : ℤ))
+    · exact (hproperties k R hR).2.2.1 omega
+    · simp [UexpCube, hR]
+  · intro k R
+    by_cases hR : R ∈ descendantsAtScale (originCube d m) (m - 1 - (k : ℤ))
+    · exact (hproperties k R hR).2.1
+    · simpa only [UoneCube, dite_eq_right hR] using measurable_const (a := (0 : ℝ))
+  · intro k R
+    by_cases hR : R ∈ descendantsAtScale (originCube d m) (m - 1 - (k : ℤ))
+    · exact (hproperties k R hR).2.2.2.1
+    · simpa only [UexpCube, dite_eq_right hR] using measurable_const (a := (0 : ℝ))
+  · intro k R hR
+    exact (hproperties k R hR).2.2.2.2.2.1
+  · intro k R hR
+    exact (hproperties k R hR).2.2.2.2.2.2
+  · intro k R hR omega
+    rw [abs_of_nonneg (hblockNonneg k R hR omega)]
+    exact (hproperties k R hR).2.2.2.2.1 omega
+
 /-! ## The exact finite upper carrier -/
 
 /-- The Chapter 4 finite upper ellipticity is its defining weighted

@@ -905,123 +905,6 @@ private theorem upperFiniteQGeTwoInfinityAggregation_momentBounds1 :
     exact ⟨hO, hrare.1, hrare.2.trans_eq heq⟩
   exact ⟨hYoneMeas, hYoneO, hGood⟩
 
-private theorem upperFiniteQGeTwoInfinityAggregation_momentBounds2 :
-    ∀ {d : ℕ} (M : ABKModel d) (m : ℤ) {scaling Cblock Krare eps sigmaExp : ℝ},
-    (0 : ℝ) ≤ scaling →
-    ∀
-    (hper :
-    ∀ (k : ℕ),
-    ∀ R ∈ descendantsAtScale (originCube d m) (m - (1 : ℤ) - (↑k : ℤ)),
-    ∃ (Uone : Cutoff.CutoffSample d → ℝ) (Uexp : Cutoff.CutoffSample d → ℝ),
-    (∀ (omega : Cutoff.CutoffSample d), (0 : ℝ) ≤ Uone omega) ∧
-    Measurable Uone ∧
-    (∀ (omega : Cutoff.CutoffSample d), (0 : ℝ) ≤ Uexp omega) ∧
-    Measurable Uexp ∧
-    (∀ (omega : Cutoff.CutoffSample d),
-    cutoffBBlockFamily M m scaling R omega ≤ Cblock + Uone omega + Uexp omega) ∧
-    IsBigOWith (↑(Cutoff.cutoffSampleLaw M) : Measure (Cutoff.CutoffSample d)) (gammaSigma (1 : ℝ))
-    Uone (upperSaturatedPerCubeAmplitude Cblock (Disorder.cstar M) M.gamma k) ∧
-    IsBigOWith (↑(Cutoff.cutoffSampleLaw M) : Measure (Cutoff.CutoffSample d))
-    (gammaSigma sigmaExp) Uexp
-    (Krare⁻¹ * (3 : ℝ) ^ (M.gamma * ((↑k : ℝ) + (1 : ℝ))) * eps ^ (15 : ℕ))),
-    let mu : Measure (Cutoff.CutoffSample d) := (↑(Cutoff.cutoffSampleLaw M) : Measure
-      (Cutoff.CutoffSample d));
-    let gamma : ℝ := M.gamma;
-    let abase : ℝ := Krare⁻¹ * eps ^ (15 : ℕ);
-    let UoneCube : ℕ → TriadicCube d → Cutoff.CutoffSample d → ℝ := fun (k : ℕ) (R : TriadicCube
-      d) =>
-    if hR : R ∈ descendantsAtScale (originCube d m) (m - (1 : ℤ) - (↑k : ℤ)) then Classical.choose
-      (hper k R hR)
-    else fun (_ : Cutoff.CutoffSample d) => (0 : ℝ);
-    let UexpCube : ℕ → TriadicCube d → Cutoff.CutoffSample d → ℝ := fun (k : ℕ) (R : TriadicCube
-      d) =>
-    if hR : R ∈ descendantsAtScale (originCube d m) (m - (1 : ℤ) - (↑k : ℤ)) then
-    Classical.choose (Classical.choose_spec (hper k R hR))
-    else fun (_ : Cutoff.CutoffSample d) => (0 : ℝ);
-    (∀ (k : ℕ) (R : TriadicCube d) (omega : Cutoff.CutoffSample d), (0 : ℝ) ≤ UoneCube k R omega) ∧
-    (∀ (k : ℕ) (R : TriadicCube d) (omega : Cutoff.CutoffSample d), (0 : ℝ) ≤ UexpCube k R omega) ∧
-    (∀ (k : ℕ) (R : TriadicCube d), Measurable (UoneCube k R)) ∧
-    (∀ (k : ℕ) (R : TriadicCube d), Measurable (UexpCube k R)) ∧
-    (∀ (k : ℕ),
-    ∀ R ∈ descendantsAtScale (originCube d m) (m - (1 : ℤ) - (↑k : ℤ)),
-    IsBigOWith mu (gammaSigma (1 : ℝ)) (UoneCube k R)
-    (upperSaturatedPerCubeAmplitude Cblock (Disorder.cstar M) gamma k)) ∧
-    (∀ (k : ℕ),
-    ∀ R ∈ descendantsAtScale (originCube d m) (m - (1 : ℤ) - (↑k : ℤ)),
-    IsBigOWith mu (gammaSigma sigmaExp) (UexpCube k R)
-    ((3 : ℝ) ^ (gamma * ((↑k : ℝ) + (1 : ℝ))) * abase)) ∧
-    ∀ (k : ℕ),
-    ∀ R ∈ descendantsAtScale (originCube d m) (m - (1 : ℤ) - (↑k : ℤ)),
-    ∀ (omega : Cutoff.CutoffSample d),
-    |cutoffBBlockFamily M m scaling R omega| ≤ Cblock + UoneCube k R omega + UexpCube k R omega :=
-      by
-  intro d M m scaling Cblock _ _ sigmaExp hscaling hper mu gamma abase UoneCube UexpCube
-  have hUoneCubeNonneg : ∀ (k : ℕ) (R : TriadicCube d) omega,
-      0 ≤ UoneCube k R omega := by
-    intro k R omega
-    by_cases hR : R ∈ descendantsAtScale (originCube d m) (m - 1 - (k : ℤ))
-    · obtain ⟨hUone, _⟩ :=
-        Classical.choose_spec (Classical.choose_spec (hper k R hR))
-      simpa only [UoneCube, dite_eq_left hR] using hUone omega
-    · simp [UoneCube, hR]
-  have hUexpCubeNonneg : ∀ (k : ℕ) (R : TriadicCube d) omega,
-      0 ≤ UexpCube k R omega := by
-    intro k R omega
-    by_cases hR : R ∈ descendantsAtScale (originCube d m) (m - 1 - (k : ℤ))
-    · obtain ⟨_, _, hUexp, _⟩ :=
-        Classical.choose_spec (Classical.choose_spec (hper k R hR))
-      simpa only [UexpCube, dite_eq_left hR] using hUexp omega
-    · simp [UexpCube, hR]
-  have hUoneCubeMeas : ∀ (k : ℕ) (R : TriadicCube d),
-      Measurable (UoneCube k R) := by
-    intro k R
-    by_cases hR : R ∈ descendantsAtScale (originCube d m) (m - 1 - (k : ℤ))
-    · obtain ⟨_, hUone, _⟩ :=
-        Classical.choose_spec (Classical.choose_spec (hper k R hR))
-      simpa only [UoneCube, dite_eq_left hR] using hUone
-    · simp [UoneCube, hR]
-  have hUexpCubeMeas : ∀ (k : ℕ) (R : TriadicCube d),
-      Measurable (UexpCube k R) := by
-    intro k R
-    by_cases hR : R ∈ descendantsAtScale (originCube d m) (m - 1 - (k : ℤ))
-    · obtain ⟨_, _, _, hUexp, _⟩ :=
-        Classical.choose_spec (Classical.choose_spec (hper k R hR))
-      simpa only [UexpCube, dite_eq_left hR] using hUexp
-    · simp [UexpCube, hR]
-  have hUoneCubeO : ∀ (k : ℕ) (R : TriadicCube d),
-      R ∈ descendantsAtScale (originCube d m) (m - 1 - (k : ℤ)) →
-      IsBigOWith mu (gammaSigma 1) (UoneCube k R)
-        (upperSaturatedPerCubeAmplitude Cblock
-          (Disorder.cstar M) gamma k) := by
-    intro k R hR
-    obtain ⟨_, _, _, _, _, hUone, _⟩ :=
-      Classical.choose_spec (Classical.choose_spec (hper k R hR))
-    simpa only [mu, gamma, UoneCube, dite_eq_left hR] using hUone
-  have hUexpCubeO : ∀ (k : ℕ) (R : TriadicCube d),
-      R ∈ descendantsAtScale (originCube d m) (m - 1 - (k : ℤ)) →
-      IsBigOWith mu (gammaSigma sigmaExp) (UexpCube k R)
-        ((3 : ℝ) ^ (gamma * ((k : ℝ) + 1)) * abase) := by
-    intro k R hR
-    obtain ⟨_, _, _, _, _, _, hUexp⟩ :=
-      Classical.choose_spec (Classical.choose_spec (hper k R hR))
-    convert hUexp using 1
-    · simp only [UexpCube, dite_eq_left hR]
-    · dsimp [gamma, abase]
-      ring
-  have hblock : ∀ (k : ℕ) (R : TriadicCube d),
-      R ∈ descendantsAtScale (originCube d m) (m - 1 - (k : ℤ)) →
-      ∀ omega, |cutoffBBlockFamily M m scaling R omega| ≤
-        Cblock + UoneCube k R omega + UexpCube k R omega := by
-    intro k R hR omega
-    obtain ⟨_, _, _, _, hdom, _, _⟩ :=
-      Classical.choose_spec (Classical.choose_spec (hper k R hR))
-    have hnonneg : 0 ≤ cutoffBBlockFamily M m scaling R omega :=
-      mul_nonneg hscaling (coarseBNormCoeffField_nonneg R _)
-    rw [abs_of_nonneg hnonneg]
-    simpa only [UoneCube, UexpCube, dite_eq_left hR] using hdom omega
-  exact ⟨hUoneCubeNonneg, hUexpCubeNonneg, hUoneCubeMeas, hUexpCubeMeas, hUoneCubeO, hUexpCubeO,
-    hblock⟩
-
 private theorem upperGrid_geometricDepthWeight :
     ∀ {d : ℕ} [NeZero d] (M : ABKModel d) (m : ℤ)
       {scaling Cblock Krare eps sigmaExp : ℝ} (_ : (0 : ℝ) ≤ scaling)
@@ -1656,10 +1539,19 @@ private theorem upper_finite_two_le_and_infinity_split_of_per_descendant
       if hR : R ∈ descendantsAtScale (originCube d m) (m - 1 - (k : ℤ)) then
         Classical.choose (Classical.choose_spec (hper k R hR))
       else fun _ => 0
-  obtain ⟨hUoneCubeNonneg, hUexpCubeNonneg, hUoneCubeMeas, hUexpCubeMeas, hUoneCubeO, hUexpCubeO,
-    hblock⟩ :=
-    @upperFiniteQGeTwoInfinityAggregation_momentBounds2 (d) (M) (m) (scaling) (Cblock) (Krare)
-      (eps) (sigmaExp) (hscaling) (hper)
+  obtain ⟨hUoneCubeNonneg, hUexpCubeNonneg, hUoneCubeMeas, hUexpCubeMeas,
+    hUoneCubeO, hUexpCubeRawO, hblock⟩ :=
+    perDescendantSplit_choice_properties (mu := mu) (m := m)
+      (block := cutoffBBlockFamily M m scaling) (deterministicBound := Cblock) (sigma := sigmaExp)
+      (fun _ R _ _ => mul_nonneg hscaling (coarseBNormCoeffField_nonneg R _)) hper
+  have hUexpCubeO : ∀ (k : ℕ) (R : TriadicCube d),
+      R ∈ descendantsAtScale (originCube d m) (m - 1 - (k : ℤ)) →
+      IsBigOWith mu (gammaSigma sigmaExp) (UexpCube k R)
+        ((3 : ℝ) ^ (gamma * ((k : ℝ) + 1)) * abase) := by
+    intro k R hR
+    convert hUexpCubeRawO k R hR using 1
+    dsimp only [gamma, abase]
+    ring
   let Gone : ℕ → Cutoff.CutoffSample d → ℝ := fun k =>
     blockGridSup d m k (UoneCube k)
   let Gexp : ℕ → Cutoff.CutoffSample d → ℝ := fun k =>

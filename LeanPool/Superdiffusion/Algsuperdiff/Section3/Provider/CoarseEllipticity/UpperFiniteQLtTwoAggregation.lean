@@ -288,66 +288,11 @@ private theorem finiteQLtTwoSplit_of_perDescendantAndBudgets
       if hR : R ∈ descendantsAtScale (originCube d m) (m - 1 - (k : ℤ)) then
         Classical.choose (Classical.choose_spec (hper k R hR))
       else fun _ => 0
-  have hUoneCubeNonneg : ∀ (k : ℕ) (R : TriadicCube d) omega,
-      0 ≤ UoneCube k R omega := by
-    intro k R omega
-    by_cases hR : R ∈ descendantsAtScale (originCube d m) (m - 1 - (k : ℤ))
-    · obtain ⟨hUone, _⟩ :=
-        Classical.choose_spec (Classical.choose_spec (hper k R hR))
-      simpa only [UoneCube, dite_eq_left hR] using hUone omega
-    · simp [UoneCube, hR]
-  have hUexpCubeNonneg : ∀ (k : ℕ) (R : TriadicCube d) omega,
-      0 ≤ UexpCube k R omega := by
-    intro k R omega
-    by_cases hR : R ∈ descendantsAtScale (originCube d m) (m - 1 - (k : ℤ))
-    · obtain ⟨_, _, hUexp, _⟩ :=
-        Classical.choose_spec (Classical.choose_spec (hper k R hR))
-      simpa only [UexpCube, dite_eq_left hR] using hUexp omega
-    · simp [UexpCube, hR]
-  have hUoneCubeMeas : ∀ (k : ℕ) (R : TriadicCube d),
-      Measurable (UoneCube k R) := by
-    intro k R
-    by_cases hR : R ∈ descendantsAtScale (originCube d m) (m - 1 - (k : ℤ))
-    · obtain ⟨_, hUone, _⟩ :=
-        Classical.choose_spec (Classical.choose_spec (hper k R hR))
-      simpa only [UoneCube, dite_eq_left hR] using hUone
-    · simp [UoneCube, hR]
-  have hUexpCubeMeas : ∀ (k : ℕ) (R : TriadicCube d),
-      Measurable (UexpCube k R) := by
-    intro k R
-    by_cases hR : R ∈ descendantsAtScale (originCube d m) (m - 1 - (k : ℤ))
-    · obtain ⟨_, _, _, hUexp, _⟩ :=
-        Classical.choose_spec (Classical.choose_spec (hper k R hR))
-      simpa only [UexpCube, dite_eq_left hR] using hUexp
-    · simp [UexpCube, hR]
-  have hUoneCubeO : ∀ (k : ℕ) (R : TriadicCube d),
-      R ∈ descendantsAtScale (originCube d m) (m - 1 - (k : ℤ)) →
-      IsBigOWith mu (gammaSigma 1) (UoneCube k R)
-        (upperSaturatedPerCubeAmplitude Cblock
-          (Disorder.cstar M) M.gamma k) := by
-    intro k R hR
-    obtain ⟨_, _, _, _, _, hUone, _⟩ :=
-      Classical.choose_spec (Classical.choose_spec (hper k R hR))
-    simpa only [mu, UoneCube, dite_eq_left hR] using hUone
-  have hUexpCubeO : ∀ (k : ℕ) (R : TriadicCube d),
-      R ∈ descendantsAtScale (originCube d m) (m - 1 - (k : ℤ)) →
-      IsBigOWith mu (gammaSigma sigmaExp) (UexpCube k R)
-        (Krare⁻¹ * (3 : ℝ) ^ (M.gamma * ((k : ℝ) + 1)) * eps ^ 15) := by
-    intro k R hR
-    obtain ⟨_, _, _, _, _, _, hUexp⟩ :=
-      Classical.choose_spec (Classical.choose_spec (hper k R hR))
-    simpa only [mu, UexpCube, dite_eq_left hR] using hUexp
-  have hblock : ∀ (k : ℕ) (R : TriadicCube d),
-      R ∈ descendantsAtScale (originCube d m) (m - 1 - (k : ℤ)) →
-      ∀ omega, |cutoffBBlockFamily M m scaling R omega| ≤
-        Cblock + UoneCube k R omega + UexpCube k R omega := by
-    intro k R hR omega
-    obtain ⟨_, _, _, _, hdom, _, _⟩ :=
-      Classical.choose_spec (Classical.choose_spec (hper k R hR))
-    have hnonneg : 0 ≤ cutoffBBlockFamily M m scaling R omega :=
-      mul_nonneg hscaling (coarseBNormCoeffField_nonneg R _)
-    rw [abs_of_nonneg hnonneg]
-    simpa only [UoneCube, UexpCube, dite_eq_left hR] using hdom omega
+  obtain ⟨hUoneCubeNonneg, hUexpCubeNonneg, hUoneCubeMeas, hUexpCubeMeas,
+    hUoneCubeO, hUexpCubeO, hblock⟩ :=
+    perDescendantSplit_choice_properties (mu := mu) (m := m)
+      (block := cutoffBBlockFamily M m scaling) (deterministicBound := Cblock) (sigma := sigmaExp)
+      (fun _ R _ _ => mul_nonneg hscaling (coarseBNormCoeffField_nonneg R _)) hper
   let Gone : ℕ → Cutoff.CutoffSample d → ℝ := fun k =>
     blockGridSup d m k (UoneCube k)
   let Gexp : ℕ → Cutoff.CutoffSample d → ℝ := fun k =>

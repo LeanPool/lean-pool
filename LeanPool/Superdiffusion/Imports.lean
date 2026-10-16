@@ -2188,6 +2188,7 @@ public import LeanPool.Superdiffusion.Support.Sobolev.CubeEmbedding.Limit
 public import LeanPool.Superdiffusion.Support.Sobolev.Foundations.CubeCalderonZygmund.CubeTranslationFiniteP
 public import LeanPool.Superdiffusion.Support.Sobolev.Foundations.CubeCalderonZygmund.DirichletEndpoint
 public import LeanPool.Superdiffusion.Support.Sobolev.Foundations.CubeCalderonZygmund.DirichletNeumannEndpoint
+public import LeanPool.Superdiffusion.Support.Sobolev.Foundations.CubeCalderonZygmund.FiniteLpAdjoint
 public import LeanPool.Superdiffusion.Support.Sobolev.Foundations.CubeCalderonZygmund.FiniteLpLpData
 public import LeanPool.Superdiffusion.Support.Sobolev.Foundations.CubeCalderonZygmund.Neumann.EnergyDuality
 public import LeanPool.Superdiffusion.Support.Sobolev.Foundations.CubeCalderonZygmund.Neumann.FiniteLpAboveTwo
