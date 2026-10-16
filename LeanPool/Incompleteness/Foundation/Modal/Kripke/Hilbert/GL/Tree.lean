@@ -9,7 +9,6 @@ public import LeanPool.Incompleteness.Foundation.Modal.Kripke.Tree
 public import LeanPool.Incompleteness.Foundation.Modal.Hilbert.WellKnown
 public import LeanPool.Incompleteness.Foundation.Modal.Kripke.AxiomL
 import LeanPool.Incompleteness.Foundation.Modal.Kripke.Hilbert.GL.Completeness
-import LeanPool.Incompleteness.Foundation.Modal.Kripke.Hilbert.GL.Soundness
 
 /-! # Tree -/
 

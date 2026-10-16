@@ -93,10 +93,13 @@ lemma reflexive : Std.Refl (miniCanonicalFrame φ).Rel :=
 lemma transitive : IsTrans (miniCanonicalFrame φ).World (miniCanonicalFrame φ).Rel := by
   constructor
   rintro X Y Z ⟨RXY₁, RXY₂⟩ ⟨RYZ₁, RYZ₂⟩;
-  constructor;
-  · simp_all
-  · intro h;
-    simp_all
+  constructor
+  · intro χ hχ hX
+    exact RYZ₁ χ hχ (RXY₁ χ hχ hX)
+  · intro h
+    have hXY : X = Y := RXY₂ fun χ hχ hY ↦ h χ hχ (RYZ₁ χ hχ hY)
+    have hYZ : Y = Z := RYZ₂ fun χ hχ hZ ↦ RXY₁ χ hχ (h χ hχ hZ)
+    exact hXY.trans hYZ
 
 lemma antisymm : Std.Antisymm (miniCanonicalFrame φ).Rel := by
   constructor
@@ -166,8 +169,9 @@ lemma truthlemma_lemma2
     have : (Hilbert.Grz) ⊢! ⋀□'Γ₁ ==> □ψ := imp_trans''! collect_box_conj! this;
     have : (Hilbert.Grz) ⊢! ⋀□'(X.1.prebox.modalBox |>.toList) ==> □ψ :=
       imp_trans''! (conjconj_subset! (by
-      simp_all
-    )) this;
+        intro χ hχ
+        exact List.box_subset_mono (fun {ψ} hψ ↦ Finset.mem_toList.mpr (hΓ₁ ψ hψ)) hχ
+      )) this;
     have : (Hilbert.Grz) ⊢! ⋀□'(X.1.prebox.toList) ==> □ψ := imp_trans''! (conjconj_provable! (by
       intro ψ hq;
       simp only [Finset.eq_prebox_premultibox_one, Finset.eq_box_multibox_one,

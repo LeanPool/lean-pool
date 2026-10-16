@@ -232,23 +232,9 @@ example (a b : ℕ) : Set.Finite {a, b} := by simp only [Set.finite_singleton, S
     ext φ; constructor
     · rintro ⟨⟩
       case equal => left; assumption
-      case addZero => tauto
-      case addAssoc => tauto
-      case addComm => tauto
-      case addEqOfLt => tauto
-      case zeroLe => tauto
-      case zeroLtOne => tauto
-      case oneLeOfZeroLt => tauto
-      case addLtAdd => tauto
-      case mulZero => tauto
-      case mulOne => tauto
-      case mulAssoc => tauto
-      case mulComm => tauto
-      case mulLtMul => tauto
-      case distr => tauto
-      case ltIrrefl => tauto
-      case ltTrans => tauto
-      case ltTri => tauto
+      all_goals
+        right
+        simp only [Set.mem_insert_iff, Set.mem_singleton_iff, or_true, true_or]
     · rintro (h | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl
       | rfl | rfl | rfl)
       · exact PeanoMinus.equal _ h
