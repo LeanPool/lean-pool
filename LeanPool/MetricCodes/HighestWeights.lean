@@ -571,7 +571,7 @@ theorem projectedCoordinateRaise_canonicalGelfandTsetlinFibre_eq_of_pathExchange
   simpa only [EuclideanSpace.basisFun_apply, mul_one] using
     (projectedCoordinateRaise_reverseInterlacingHarmonicBranch_eq_of_pathExchange low mu row
       hlow hhigh hdom 1
-      (by simpa using hexchange) q)
+      (by simpa only [one_smul] using hexchange) q)
 
 theorem canonicalAdjacentProjectedRaiseCoefficient_sq
     {r n : ℕ} (low : Fin (r + 2) → ℕ)
@@ -2869,12 +2869,6 @@ theorem spectralPathOperator_succ_rtt_of
     spectralPathOperator_succ lam hdom a t k v,
     spectralPathOperator_succ lam hdom a t k u,
     spectralPathOperator_succ lam hdom a s k v]
-  change
-    (u - v) •
-        ((x • C - A.comp S).comp (y • F - B.comp T) -
-          (y • F - B.comp T).comp (x • C - A.comp S)) =
-      (x • E - A.comp T).comp (y • D - B.comp S) -
-        (y • F - B.comp T).comp (x • C - A.comp S)
   exact hstep
 
 end ArbitraryRowSameAxisDiamondSpectralRTTStep

@@ -4456,10 +4456,9 @@ theorem gtRelativeCasimir_comp_eq_smul_add_of_orthogonal_full_block_rows
   apply gtRelativeCasimir_comp_eq_smul_add_of_full_axis_transverse_rows
     lam hn hdom B A K d
   · intro mu
-    rw [haxisOrth mu, smul_zero, zero_add, haxis mu]
+    simpa only [haxisOrth mu, smul_zero, zero_add] using haxis mu
   · intro mu
-    rw [htransverseOrth mu, LinearMap.zero_comp, add_zero,
-      htransverse mu]
+    simpa only [htransverseOrth mu, LinearMap.zero_comp, add_zero] using htransverse mu
 
 end AllRankGTPhysicalRetainedAdditiveColumn
 

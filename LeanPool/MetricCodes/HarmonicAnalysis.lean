@@ -6817,7 +6817,7 @@ theorem rawLiftChannel_inner {n k L : ℕ}
       rw [PiLp.inner_apply]
       apply Finset.sum_congr rfl
       intro a ha
-      simp only [RCLike.inner_apply, Real.ringHom_apply, mul_comm]
+      simp only [Real.inner_apply]
 
 /-- The zero coordinate index in the nonempty certificate fibre. -/
 def firstFibreIndex (n k : ℕ) (hn : 3 ≤ n) :

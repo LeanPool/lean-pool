@@ -2700,7 +2700,9 @@ theorem sliceCost_continuousOn {s : ℝ} (hs : s < 1) :
   have harg : (1 - t) / (1 - s) ≠ 0 := by
     exact (div_pos (by linarith [ht.2]) (by linarith)).ne'
   unfold MetricCodes.Spherical.SidelnikovLocalization.sliceCost Real.logb
-  fun_prop
+  exact continuousWithinAt_const.mul
+    ((((continuousWithinAt_const.sub continuousWithinAt_id).div_const (1 - s)).log harg).div_const
+      _)
 
 theorem levelRate_zero_le_squared_entropy_of_spectral {t : ℝ}
     (ht : 0 < t) (hspectral : t < 2 * spectralAtom (t ^ 2)) :
