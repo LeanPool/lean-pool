@@ -93,6 +93,27 @@ def test_resume_refuses_changed_private_checkout(monkeypatch, tmp_path):
         weekly_profile.run_state(tmp_path)
 
 
+def test_new_recording_can_pin_a_profiler_rollout(monkeypatch, tmp_path):
+    """A corrected profiler starts a distinct run without rewriting old captures."""
+    monkeypatch.setenv("LEAN_POOL_PROFILE_POOL_REF", "validated-pool-commit")
+    monkeypatch.setenv("LEAN_POOL_PROFILE_PROFILER_REF", "corrected-profiler-commit")
+    calls = []
+
+    def checkout(root, name, url, revision="main"):
+        calls.append((name, revision))
+        return revision
+
+    monkeypatch.setattr(weekly_profile, "checkout", checkout)
+    state = weekly_profile.run_state(tmp_path)
+    assert calls == [
+        ("repository", "validated-pool-commit"),
+        ("profiler", "corrected-profiler-commit"),
+    ]
+    assert state["commit"] == "validated-pool-commit"
+    assert state["profilerCommit"] == "corrected-profiler-commit"
+    assert weekly_profile.read_json(tmp_path / "active.json") == state
+
+
 def test_publication_retries_racing_push_and_retains_new_viewer(monkeypatch, tmp_path):
     """Publish a dataset against a real Git remote with a concurrent UI change."""
     remote, initial, run = tmp_path / "remote", tmp_path / "initial", tmp_path / "run"

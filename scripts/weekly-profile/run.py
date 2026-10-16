@@ -140,8 +140,18 @@ def run_state(root: Path) -> dict:
                 if actual != state[key]:
                     raise RuntimeError(f"The pinned {name} checkout changed.")
             return state
-    commit = checkout(root, "repository", POOL_URL)
-    profiler_commit = checkout(root, "profiler", PROFILER_URL)
+    commit = checkout(
+        root,
+        "repository",
+        POOL_URL,
+        os.environ.get("LEAN_POOL_PROFILE_POOL_REF", "main"),
+    )
+    profiler_commit = checkout(
+        root,
+        "profiler",
+        PROFILER_URL,
+        os.environ.get("LEAN_POOL_PROFILE_PROFILER_REF", "main"),
+    )
     stamp = datetime.now(UTC).strftime("%Y%m%dT%H%M%SZ")
     state = {
         "runId": f"{stamp}-{commit[:12]}",

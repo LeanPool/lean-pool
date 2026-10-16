@@ -68,6 +68,14 @@ the shared development checkout. Optional environment overrides belong in
 `/data/lean-pool-profile/environment`; changing capture scope or configuration
 requires finishing the current run first.
 
+`LEAN_POOL_PROFILE_POOL_REF` and `LEAN_POOL_PROFILE_PROFILER_REF` optionally
+select the Git revisions used for **new** recordings (both default to `main`).
+An unfinished recording always keeps its original pins. To deploy a changed
+profiler immediately, stop the service, preserve the old `active.json` alongside
+its recording, set the new profiler ref, and start a new recording. Recordings
+from different profiler revisions must not be combined. Clear a temporary ref
+override after its fix lands on main to resume automatic weekly updates.
+
 ## Monitor or run manually
 
 ```bash
