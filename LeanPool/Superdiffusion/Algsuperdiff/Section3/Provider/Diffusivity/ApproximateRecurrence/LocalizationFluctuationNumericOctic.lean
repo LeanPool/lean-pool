@@ -103,105 +103,6 @@ noncomputable section
 
 variable {d : ℕ}
 
-/-! ## The centring identity -/
-
-/-- **The exact form of the centring step.**  The window average of the squared
-deviation from the window average is the window average of the square minus the
-square of the window average.
-
-on the volume data and the two integrabilities; this is the equality whose
-inequality half is
-`LocalizationFluctuationEighthMoment.volumeAverage_sub_volumeAverage_sq_le`. -/
-theorem volumeAverage_sub_volumeAverage_sq_eq {V : Set (Vec d)}
-    (hfin : volume V ≠ ⊤) (hpos : 0 < (volume V).toReal) {g : Vec d → ℝ}
-    (hg : IntegrableOn g V volume) (hg2 : IntegrableOn (fun x => g x ^ 2) V volume) :
-    volumeAverage V (fun x => (g x - volumeAverage V g) ^ 2) =
-      volumeAverage V (fun x => g x ^ 2) - (volumeAverage V g) ^ 2 := by
-  set m : ℝ := (volume V).toReal with hmdef
-  set I : ℝ := ∫ x in V, g x ∂volume with hIdef
-  set J : ℝ := ∫ x in V, g x ^ 2 ∂volume with hJdef
-  have hmne : m ≠ 0 := ne_of_gt hpos
-  have ht : volumeAverage V g = m⁻¹ * I := rfl
-  set t : ℝ := m⁻¹ * I with htdef
-  have hconst : IntegrableOn (fun _ : Vec d => t ^ 2) V volume := integrableOn_const hfin
-  have hexp : (fun x => (g x - t) ^ 2)
-      = fun x => g x ^ 2 + (-(2 * t) * g x + t ^ 2) := by
-    funext x
-    ring
-  have hint2 : IntegrableOn (fun x => -(2 * t) * g x + t ^ 2) V volume :=
-    (hg.const_mul (-(2 * t))).add hconst
-  have hcalc : ∫ x in V, (g x - t) ^ 2 ∂volume = J + (-(2 * t) * I + t ^ 2 * m) := by
-    rw [hexp, integral_add hg2 hint2, integral_add (hg.const_mul (-(2 * t))) hconst,
-      integral_const_mul, setIntegral_const, measureReal_def, smul_eq_mul]
-    ring
-  have hgoal : volumeAverage V (fun x => (g x - t) ^ 2) = m⁻¹ * J - t ^ 2 := by
-    change m⁻¹ * ∫ x in V, (g x - t) ^ 2 ∂volume = m⁻¹ * J - t ^ 2
-    rw [hcalc, htdef]
-    field_simp
-    ring
-  rw [ht, hgoal]
-  rfl
-
-/-- The coordinate squares average to the squared Euclidean gauge.
-
-on the coordinate integrabilities. -/
-theorem sum_volumeAverage_coord_sq_eq_volumeAverage_vecNormSq {V : Set (Vec d)}
-    (u : Vec d → Vec d)
-    (hcoordsq : ∀ k : Fin d, IntegrableOn (fun x => (u x k) ^ 2) V volume) :
-    ∑ k : Fin d, volumeAverage V (fun x => (u x k) ^ 2) =
-      volumeAverage V (fun x => vecNormSq (u x)) := by
-  classical
-  unfold volumeAverage vecNormSq vecDot
-  rw [← Finset.mul_sum]
-  congr 1
-  rw [MeasureTheory.integral_finsetSum Finset.univ
-    (fun k _ => by simpa [pow_two] using! (hcoordsq k))]
-  refine Finset.sum_congr rfl fun k _ => ?_
-  exact integral_congr_ae (Filter.Eventually.of_forall fun x => by ring)
-
-/-- **The oscillation is a difference of two window observables.**  The
-mean-square oscillation of a vector field over a window is the window average of
-its squared gauge minus the squared gauge of its window average.
-
-on the volume data and the coordinate integrabilities.  This is the identity
-that makes the oscillation cell measurable in the sample: both terms on the
-right are window observables of the `L^2` class. -/
-theorem meanSquareOscillationVecOn_eq_sub_vecNormSq_volumeAverageVec {V : Set (Vec d)}
-    (hfin : volume V ≠ ⊤) (hpos : 0 < (volume V).toReal) (u : Vec d → Vec d)
-    (hcoord : ∀ k : Fin d, IntegrableOn (fun x => u x k) V volume)
-    (hcoordsq : ∀ k : Fin d, IntegrableOn (fun x => (u x k) ^ 2) V volume) :
-    Book.Ch01.meanSquareOscillationVecOn V u =
-      volumeAverage V (fun x => vecNormSq (u x)) -
-        vecNormSq (volumeAverageVec V u) := by
-  classical
-  have hterm : ∀ k : Fin d,
-      Book.Ch01.meanSquareDeviationOn V (fun x => u x k) (volumeAverageVec V u k) =
-        volumeAverage V (fun x => (u x k) ^ 2) -
-          (volumeAverage V (fun x => u x k)) ^ 2 := by
-    intro k
-    have hk : volumeAverageVec V u k = volumeAverage V (fun x => u x k) := rfl
-    rw [Book.Ch01.meanSquareDeviationOn, hk]
-    exact volumeAverage_sub_volumeAverage_sq_eq hfin hpos (hcoord k) (hcoordsq k)
-  have hnorm : vecNormSq (volumeAverageVec V u) =
-      ∑ k : Fin d, (volumeAverage V (fun x => u x k)) ^ 2 := by
-    unfold vecNormSq vecDot
-    refine Finset.sum_congr rfl fun k _ => ?_
-    rw [pow_two]
-    rfl
-  calc Book.Ch01.meanSquareOscillationVecOn V u
-      = ∑ k : Fin d,
-          Book.Ch01.meanSquareDeviationOn V (fun x => u x k)
-            (volumeAverageVec V u k) := rfl
-    _ = ∑ k : Fin d, (volumeAverage V (fun x => (u x k) ^ 2) -
-          (volumeAverage V (fun x => u x k)) ^ 2) :=
-        Finset.sum_congr rfl fun k _ => hterm k
-    _ = (∑ k : Fin d, volumeAverage V (fun x => (u x k) ^ 2)) -
-          ∑ k : Fin d, (volumeAverage V (fun x => u x k)) ^ 2 :=
-        Finset.sum_sub_distrib _ _
-    _ = volumeAverage V (fun x => vecNormSq (u x)) -
-          vecNormSq (volumeAverageVec V u) := by
-        rw [sum_volumeAverage_coord_sq_eq_volumeAverage_vecNormSq u hcoordsq, hnorm]
-
 /-! ## The oscillation cell as a square -/
 
 /-- The fourth power of the oscillation cell is the square of the mean-square
@@ -232,23 +133,65 @@ theorem sq_meshOscillationCell_rpow_four (n : ℤ) (u : Vec d → Vec d)
 
 /-! ## Measurability of the oscillation cell -/
 
-/-- The coordinate window integral at the gradient class of an `H^1` function is
-the ordinary Lebesgue integral of the coordinate over the window. -/
-private theorem setIntegral_gradCoord_eq {U : Set (Vec d)} (w : H1Function U)
+/-- A representative identified almost everywhere gives the same coordinate window integral. -/
+theorem setIntegral_coordL2_eq_of_ae {U : Set (Vec d)}
+    {F : HilbertVectorL2 U} {u : Vec d → Vec d}
+    (hFu : (F : Vec d → HilbertVec d) =ᵐ[volumeMeasureOn U] hilbertifyVecField u)
     {S : Set (Vec d)} (hS : MeasurableSet S) (hSU : S ⊆ U) (i : Fin d) :
-    ∫ x in S, (w.gradToHilbertVectorL2 : Vec d → HilbertVec d) x i
-        ∂(volumeMeasureOn U) =
-      ∫ x in S, w.grad x i ∂volume := by
+    ∫ x in S, (F : Vec d → HilbertVec d) x i ∂(volumeMeasureOn U) =
+      ∫ x in S, u x i ∂volume := by
   have hrestrict : (volumeMeasureOn U).restrict S = volume.restrict S := by
     rw [volumeMeasureOn, Measure.restrict_restrict hS,
       Set.inter_eq_self_of_subset_left hSU]
   have hae : ∀ᵐ x ∂((volumeMeasureOn U).restrict S),
-      (w.gradToHilbertVectorL2 : Vec d → HilbertVec d) x i = w.grad x i := by
-    refine (w.coeFn_gradToHilbertVectorL2.filter_mono
-      (ae_mono Measure.restrict_le_self)).mono fun x hx => ?_
+      (F : Vec d → HilbertVec d) x i = u x i := by
+    refine (hFu.filter_mono (ae_mono Measure.restrict_le_self)).mono fun x hx => ?_
     rw [hx]
     simp [hilbertifyVecField]
   rw [integral_congr_ae hae, hrestrict]
+
+/-- Oscillation is measurable for arbitrary representatives of measurable `L²` classes.
+Quadratic-observable measurability and the window integrabilities remain explicit premises. -/
+theorem measurable_meanSquareOscillationVecOn_of_measurable_representative
+    {Omega : Type*} [MeasurableSpace Omega] (Q : TriadicCube d) {S : Set (Vec d)}
+    (hS : MeasurableSet S) (hSU : S ⊆ openCubeSet Q)
+    (hfin : volume S ≠ ⊤) (hpos : 0 < (volume S).toReal)
+    {F : Omega → HilbertVectorL2 (openCubeSet Q)} (hF : Measurable F)
+    {u : Omega → Vec d → Vec d}
+    (hFu : ∀ omega, (F omega : Vec d → HilbertVec d) =ᵐ[volumeMeasureOn (openCubeSet Q)]
+      hilbertifyVecField (u omega))
+    (hsqMeas : Measurable fun omega => volumeAverage S (fun x => vecNormSq (u omega x)))
+    (hcoord : ∀ (omega : Omega) (k : Fin d), IntegrableOn (fun x => u omega x k) S volume)
+    (hcoordsq : ∀ (omega : Omega) (k : Fin d),
+      IntegrableOn (fun x => (u omega x k) ^ 2) S volume) :
+    Measurable fun omega => Book.Ch01.meanSquareOscillationVecOn S (u omega) := by
+  classical
+  have : IsFiniteMeasure (volumeMeasureOn (openCubeSet Q)) :=
+    Corrector.isFiniteMeasure_volumeMeasureOn_openCubeSet Q
+  have hcoordMeas : ∀ k : Fin d, Measurable fun omega =>
+      volumeAverage S (fun x => u omega x k) := by
+    intro k
+    have hEq : (fun omega => volumeAverage S (fun x => u omega x k)) =
+        fun omega => (volume S).toReal⁻¹ *
+          ∫ x in S, (F omega : Vec d → HilbertVec d) x k
+            ∂(volumeMeasureOn (openCubeSet Q)) := by
+      funext omega
+      rw [setIntegral_coordL2_eq_of_ae (hFu omega) hS hSU k, volumeAverage]
+    rw [hEq]
+    exact measurable_const.mul
+      (Corrector.measurable_setIntegral_gradCoordL2 Q hS k hF)
+  have hEq : (fun omega => Book.Ch01.meanSquareOscillationVecOn S (u omega)) =
+      fun omega => volumeAverage S (fun x => vecNormSq (u omega x)) -
+        ∑ k : Fin d, (volumeAverage S (fun x => u omega x k)) ^ 2 := by
+    funext omega
+    have hnorm : vecNormSq (volumeAverageVec S (u omega)) =
+        ∑ k : Fin d, (volumeAverage S (fun x => u omega x k)) ^ 2 := by
+      simp only [vecNormSq, vecDot, volumeAverageVec, pow_two]
+    rw [meanSquareOscillationVecOn_eq_sub_vecNormSq_volumeAverageVec hfin hpos
+      (u omega) (hcoord omega) (hcoordsq omega), hnorm]
+  rw [hEq]
+  exact hsqMeas.sub (Finset.measurable_sum Finset.univ
+    fun k _ => (hcoordMeas k).pow_const 2)
 
 /-- **The measurability core.**  For a measurable family of gradient classes on
 the cube whose quadratic window observable is already known measurable, the
@@ -272,37 +215,11 @@ private theorem measurable_meanSquareOscillationVecOn_of_measurable {Omega : Typ
       IntegrableOn (fun x => ((w omega).grad x k) ^ 2) S volume) :
     Measurable fun omega =>
       Book.Ch01.meanSquareOscillationVecOn S ((w omega).grad) := by
-  classical
-  have : IsFiniteMeasure (volumeMeasureOn (openCubeSet Q)) :=
-    Corrector.isFiniteMeasure_volumeMeasureOn_openCubeSet Q
-  have hcoordMeas : ∀ k : Fin d, Measurable fun omega =>
-      volumeAverage S (fun x => (w omega).grad x k) := by
-    intro k
-    have hEq : (fun omega => volumeAverage S (fun x => (w omega).grad x k)) =
-        fun omega => (volume S).toReal⁻¹ *
-          ∫ x in S, ((F omega : Vec d → HilbertVec d)) x k
-            ∂(volumeMeasureOn (openCubeSet Q)) := by
-      funext omega
-      rw [hw omega, setIntegral_gradCoord_eq (w omega) hS hSU k, volumeAverage]
-    rw [hEq]
-    exact measurable_const.mul
-      (Corrector.measurable_setIntegral_gradCoordL2 Q hS k hF)
-  have hEq : (fun omega =>
-      Book.Ch01.meanSquareOscillationVecOn S ((w omega).grad)) =
-      fun omega => volumeAverage S (fun x => vecNormSq ((w omega).grad x)) -
-        ∑ k : Fin d, (volumeAverage S (fun x => (w omega).grad x k)) ^ 2 := by
-    funext omega
-    have hnorm : vecNormSq (volumeAverageVec S ((w omega).grad)) =
-        ∑ k : Fin d, (volumeAverage S (fun x => (w omega).grad x k)) ^ 2 := by
-      unfold vecNormSq vecDot
-      refine Finset.sum_congr rfl fun k _ => ?_
-      rw [pow_two]
-      rfl
-    rw [meanSquareOscillationVecOn_eq_sub_vecNormSq_volumeAverageVec hfin hpos
-      ((w omega).grad) (hcoord omega) (hcoordsq omega), hnorm]
-  rw [hEq]
-  exact hsqMeas.sub (Finset.measurable_sum Finset.univ
-    fun k _ => (hcoordMeas k).pow_const 2)
+  refine measurable_meanSquareOscillationVecOn_of_measurable_representative Q hS hSU hfin hpos
+    hF ?_ hsqMeas hcoord hcoordsq
+  intro omega
+  rw [hw omega]
+  exact (w omega).coeFn_gradToHilbertVectorL2
 
 /-- Unconditional in the sample: **the fourth power of the oscillation cell of
 `e.nablaw.oscillations` is a measurable function of the sample**, for an

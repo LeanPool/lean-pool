@@ -47,26 +47,14 @@ input.
 
 ## How
 
-**Measurability.**  The gradient-specific measurability core of
-`LocalizationFluctuationNumericOctic` (its private
-`measurable_meanSquareOscillationVecOn_of_measurable`) never uses the gradient
-structure of the family beyond one fact: that the sample-indexed field has a
-*measurable ambient `L^2` class*.  The centring identity
-`LocalizationFluctuationNumericOctic.meanSquareOscillationVecOn_eq_sub_vecNormSq_volumeAverageVec`
-writes the mean-square oscillation as the window average of the squared gauge
-minus the sum of the squared coordinate window averages, and both terms are
-continuous window observables of that class:
-
-* the first through the proved general
-  `Closure.SplitFoldCellMoments.measurable_volumeAverage_vecNormSq_of_measurable_class`;
-* the second through the proved general
-  `Corrector.measurable_setIntegral_gradCoordL2`, whose family argument is an
-  arbitrary measurable `HilbertVectorL2` family, together with the a.e.
-  characterization `coeFn_toHilbertVectorL2OfVecField` of the class of a plain
-  vector field.
-
-So the core generalizes verbatim, and the flux family's class is measurable by
-the proved
+**Measurability.** The shared representative-based core in
+`LocalizationFluctuationNumericOctic` takes measurable ambient `L²` classes,
+almost-everywhere representatives and measurability of the quadratic window
+observable. Here `coeFn_toHilbertVectorL2OfVecField` identifies the plain vector
+field with its class, and
+`Closure.SplitFoldCellMoments.measurable_volumeAverage_vecNormSq_of_measurable_class`
+supplies the quadratic measurability. Coordinate transport and centring use the
+same earlier producers as the gradient families. The flux class is measurable by
 `LocalizationFluctuationBackgroundClass.measurable_toHilbertVectorL2OfVecField_neumannFluxField`.
 
 **Integrability.**  The cellwise Minkowski split
@@ -80,9 +68,6 @@ supplies.
 
 ## What is proved
 
-* `setIntegral_coordL2_eq` (private) --- the coordinate window integral of the
-  ambient `L^2` class of a vector field is the Lebesgue integral of that
-  coordinate.
 * `measurable_meanSquareOscillationVecOn_of_measurable_class` --- the measurability
   core, for an arbitrary measurable family of ambient `L^2` classes.
 * `measurable_meshOscillationCell_of_measurable_class` --- the same at the cell of
@@ -109,18 +94,10 @@ no `sorry`, no `admit`, no custom axiom and no `set_option maxHeartbeats`.
 
 ## Proof-text provenance
 
-`setIntegral_coordL2_eq` and
-`measurable_meanSquareOscillationVecOn_of_measurable_class` are adaptations of
-the proof text of the private
-`LocalizationFluctuationNumericOctic.setIntegral_gradCoord_eq` and
-`LocalizationFluctuationNumericOctic.measurable_meanSquareOscillationVecOn_of_measurable`
-(same repository), with the gradient identification `F omega = (w
-omega).gradToHilbertVectorL2` replaced by the definitional class
-`toHilbertVectorL2OfVecField` of a plain vector field and its a.e.
-characterization, and with the quadratic window observable taken from the
-proved general
-`Closure.SplitFoldCellMoments.measurable_volumeAverage_vecNormSq_of_measurable_class`
-rather than assumed.  Neither private declaration is consumed.
+Representative transport and oscillation measurability specialize the shared
+producers in `LocalizationFluctuationNumericOctic`. The plain-field instance
+obtains its quadratic observable from `Closure.SplitFoldCellMoments`; the
+gradient instances retain that observable as an explicit premise.
 
 ## References
 
@@ -139,31 +116,6 @@ open scoped ENNReal
 noncomputable section
 
 variable {d : ℕ}
-
-/-! ## The coordinate window integral of an ambient `L^2` class -/
-
-/-- The coordinate window integral of the ambient `L^2` class of a vector field is
-the ordinary Lebesgue integral of that coordinate over the window.
-
-on the window data `hS`, `hSU`. -/
-private theorem setIntegral_coordL2_eq {Q : TriadicCube d} {u : Vec d → Vec d}
-    (hu : MemVectorL2 (openCubeSet Q) u) {S : Set (Vec d)} (hS : MeasurableSet S)
-    (hSU : S ⊆ openCubeSet Q) (i : Fin d) :
-    ∫ x in S, ((toHilbertVectorL2OfVecField hu :
-        HilbertVectorL2 (openCubeSet Q)) : Vec d → HilbertVec d) x i
-        ∂(volumeMeasureOn (openCubeSet Q)) =
-      ∫ x in S, u x i ∂volume := by
-  have hrestrict : (volumeMeasureOn (openCubeSet Q)).restrict S = volume.restrict S := by
-    rw [volumeMeasureOn, Measure.restrict_restrict hS,
-      Set.inter_eq_self_of_subset_left hSU]
-  have hae : ∀ᵐ x ∂((volumeMeasureOn (openCubeSet Q)).restrict S),
-      ((toHilbertVectorL2OfVecField hu :
-        HilbertVectorL2 (openCubeSet Q)) : Vec d → HilbertVec d) x i = u x i := by
-    refine ((coeFn_toHilbertVectorL2OfVecField hu).filter_mono
-      (ae_mono Measure.restrict_le_self)).mono fun x hx => ?_
-    rw [hx]
-    simp [hilbertifyVecField]
-  rw [integral_congr_ae hae, hrestrict]
 
 /-! ## The measurability core, for an arbitrary measurable family of classes -/
 
@@ -188,39 +140,9 @@ theorem measurable_meanSquareOscillationVecOn_of_measurable_class {Omega : Type*
     (hcoordsq : ∀ (omega : Omega) (k : Fin d),
       IntegrableOn (fun x => (u omega x k) ^ 2) S volume) :
     Measurable fun omega => Book.Ch01.meanSquareOscillationVecOn S (u omega) := by
-  classical
-  have : IsFiniteMeasure (volumeMeasureOn (openCubeSet Q)) :=
-    isFiniteMeasure_volumeMeasureOn_openCubeSet Q
-  have hcoordMeas : ∀ k : Fin d, Measurable fun omega =>
-      volumeAverage S (fun x => u omega x k) := by
-    intro k
-    have hEq : (fun omega => volumeAverage S (fun x => u omega x k)) =
-        fun omega => (volume S).toReal⁻¹ *
-          ∫ x in S, ((toHilbertVectorL2OfVecField (hu omega) :
-              HilbertVectorL2 (openCubeSet Q)) : Vec d → HilbertVec d) x k
-            ∂(volumeMeasureOn (openCubeSet Q)) := by
-      funext omega
-      rw [setIntegral_coordL2_eq (hu omega) hS hSU k, volumeAverage]
-    rw [hEq]
-    exact measurable_const.mul (measurable_setIntegral_gradCoordL2 Q hS k hclass)
-  have hsqMeas : Measurable fun omega =>
-      volumeAverage S (fun x => vecNormSq (u omega x)) :=
-    measurable_volumeAverage_vecNormSq_of_measurable_class hS hSU hu hclass
-  have hEq : (fun omega => Book.Ch01.meanSquareOscillationVecOn S (u omega)) =
-      fun omega => volumeAverage S (fun x => vecNormSq (u omega x)) -
-        ∑ k : Fin d, (volumeAverage S (fun x => u omega x k)) ^ 2 := by
-    funext omega
-    have hnorm : vecNormSq (volumeAverageVec S (u omega)) =
-        ∑ k : Fin d, (volumeAverage S (fun x => u omega x k)) ^ 2 := by
-      unfold vecNormSq vecDot
-      refine Finset.sum_congr rfl fun k _ => ?_
-      rw [pow_two]
-      rfl
-    rw [meanSquareOscillationVecOn_eq_sub_vecNormSq_volumeAverageVec hfin hpos
-      (u omega) (hcoord omega) (hcoordsq omega), hnorm]
-  rw [hEq]
-  exact hsqMeas.sub (Finset.measurable_sum Finset.univ
-    fun k _ => (hcoordMeas k).pow_const 2)
+  exact measurable_meanSquareOscillationVecOn_of_measurable_representative Q hS hSU hfin hpos
+    hclass (fun omega => coeFn_toHilbertVectorL2OfVecField (hu omega))
+    (measurable_volumeAverage_vecNormSq_of_measurable_class hS hSU hu hclass) hcoord hcoordsq
 
 /-- **The oscillation cell of `e.nablaw.oscillations` is measurable in the sample
 for any family of fields with measurable ambient `L^2` classes.**

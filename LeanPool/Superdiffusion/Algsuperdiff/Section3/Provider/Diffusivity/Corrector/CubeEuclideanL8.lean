@@ -141,7 +141,7 @@ theorem memLp_vecNorm_of_memLp {Omega : Type*} [MeasurableSpace Omega] {mu : Mea
     Real.norm_eq_abs, abs_of_nonneg (Real.sqrt_nonneg ((d : ℝ)))]
   exact hle
 
-/-- Integrability for normalized cube measure gives Lebesgue integrability on the closed cube. -/
+/-- Integrability for normalized cube measure gives Lebesgue integrability on the half-open cube. -/
 theorem integrableOn_cubeSet_of_integrable_normalized {E : Type*}
     [NormedAddCommGroup E] (Q : TriadicCube d)
     {g : Vec d → E} (hg : Integrable g (normalizedCubeMeasure Q)) :
@@ -151,7 +151,7 @@ theorem integrableOn_cubeSet_of_integrable_normalized {E : Type*}
   rw [normalizedCubeMeasure] at hg
   exact (integrable_smul_measure hne ENNReal.ofReal_ne_top).1 hg
 
-/-- An `L⁴` field has integrable squared energy on the closed cube. -/
+/-- An `L⁴` field has integrable squared energy on the half-open cube. -/
 theorem integrableOn_cubeSet_vecNormSq_sq_of_memLp_four (Q : TriadicCube d)
     {u : Vec d → Vec d} (hu : MemLp u (4 : ℝ≥0∞) (normalizedCubeMeasure Q)) :
     IntegrableOn (fun x => vecNormSq (u x) ^ (2 : ℕ)) (cubeSet Q) volume := by

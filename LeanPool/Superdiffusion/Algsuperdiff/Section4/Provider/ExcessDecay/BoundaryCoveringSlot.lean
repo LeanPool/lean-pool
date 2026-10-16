@@ -84,16 +84,12 @@ variable {d : ℕ}
 
 /-! ## 1. The half-open containment of the covering cube in the `n+3` parent -/
 
-/-- **The covering cube inside the `n+3` parent, half-open.** -/
-theorem translateSet_cubeSet_coveringCube_subset_anchorParent {n m : ℤ} {x z : Vec d}
-    (hnm : n + 2 ≤ m) (hx : x ∈ openCubeSet (originCube d m))
-    (hgeom : (fun y => x + y) '' openCubeSet (originCube d n) ⊆
-      ((fun y => z + y) '' openCubeSet (originCube d (n + 1))) ∩
-        openCubeSet (originCube d m)) :
+/-- Displacement control places the clamped covering cube in its anchor parent. -/
+theorem translateSet_cubeSet_coveringCube_subset_anchorParent_of_sub {n m : ℤ}
+    {x z : Vec d} (hnm : n + 2 ≤ m) (hx : x ∈ openCubeSet (originCube d m))
+    (hw : x - z ∈ openCubeSet (originCube d (n + 1))) :
     translateSet (wellPlacedCentre x m (n + 2) - z) (cubeSet (originCube d (n + 2))) ⊆
       cubeSet (originCube d (n + 3)) := by
-  have hw : x - z ∈ openCubeSet (originCube d (n + 1)) :=
-    sub_mem_openCubeSet_of_anchorGeometry hgeom
   rw [mem_openCubeSet_originCube_iff] at hw
   have h1 : (3 : ℝ) ^ (n + 1) = 3 ^ n * 3 := by
     rw [zpow_add_one₀ (by norm_num : (3 : ℝ) ≠ 0)]
@@ -118,6 +114,17 @@ theorem translateSet_cubeSet_coveringCube_subset_anchorParent {n m : ℤ} {x z :
   rw [h3]
   refine ⟨?_, ?_⟩ <;> simp only [Pi.add_apply, Pi.sub_apply] <;>
     linarith only [hyi.1, hyi.2, hwi.1, hwi.2, hci.1, hci.2, hpos]
+
+/-- **The covering cube inside the `n+3` parent, half-open.** -/
+theorem translateSet_cubeSet_coveringCube_subset_anchorParent {n m : ℤ} {x z : Vec d}
+    (hnm : n + 2 ≤ m) (hx : x ∈ openCubeSet (originCube d m))
+    (hgeom : (fun y => x + y) '' openCubeSet (originCube d n) ⊆
+      ((fun y => z + y) '' openCubeSet (originCube d (n + 1))) ∩
+        openCubeSet (originCube d m)) :
+    translateSet (wellPlacedCentre x m (n + 2) - z) (cubeSet (originCube d (n + 2))) ⊆
+      cubeSet (originCube d (n + 3)) := by
+  exact translateSet_cubeSet_coveringCube_subset_anchorParent_of_sub hnm hx
+    (sub_mem_openCubeSet_of_anchorGeometry hgeom)
 
 /-! ## 2. The off-grid transport at depth one -/
 

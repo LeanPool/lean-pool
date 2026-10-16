@@ -112,13 +112,18 @@ theorem sq_volumeAverage_le_volumeAverage_sq {V : Set (Vec d)}
         mul_le_mul_of_nonneg_left hcs (by positivity)
     _ = (volume V).toReal⁻¹ * ∫ x in V, g x ^ 2 ∂volume := by field_simp
 
-/-- **Variance is below the second moment.**  Dropping the centring in
-`meanSquareOscillationVecOn` costs nothing. -/
-theorem volumeAverage_sub_volumeAverage_sq_le {V : Set (Vec d)}
+/-- **The exact form of the centring step.**  The window average of the squared
+deviation from the window average is the window average of the square minus the
+square of the window average.
+
+on the volume data and the two integrabilities; this is the equality whose
+inequality half is
+`LocalizationFluctuationEighthMoment.volumeAverage_sub_volumeAverage_sq_le`. -/
+theorem volumeAverage_sub_volumeAverage_sq_eq {V : Set (Vec d)}
     (hfin : volume V ≠ ⊤) (hpos : 0 < (volume V).toReal) {g : Vec d → ℝ}
     (hg : IntegrableOn g V volume) (hg2 : IntegrableOn (fun x => g x ^ 2) V volume) :
-    volumeAverage V (fun x => (g x - volumeAverage V g) ^ 2) ≤
-      volumeAverage V (fun x => g x ^ 2) := by
+    volumeAverage V (fun x => (g x - volumeAverage V g) ^ 2) =
+      volumeAverage V (fun x => g x ^ 2) - (volumeAverage V g) ^ 2 := by
   set m : ℝ := (volume V).toReal with hmdef
   set I : ℝ := ∫ x in V, g x ∂volume with hIdef
   set J : ℝ := ∫ x in V, g x ^ 2 ∂volume with hJdef
@@ -142,11 +147,76 @@ theorem volumeAverage_sub_volumeAverage_sq_le {V : Set (Vec d)}
     field_simp
     ring
   rw [ht, hgoal]
-  have hsq : (0 : ℝ) ≤ t ^ 2 := sq_nonneg t
-  change m⁻¹ * J - t ^ 2 ≤ m⁻¹ * J
-  linarith
+  rfl
+
+/-- **Variance is below the second moment.**  Dropping the centring in
+`meanSquareOscillationVecOn` costs nothing. -/
+theorem volumeAverage_sub_volumeAverage_sq_le {V : Set (Vec d)}
+    (hfin : volume V ≠ ⊤) (hpos : 0 < (volume V).toReal) {g : Vec d → ℝ}
+    (hg : IntegrableOn g V volume) (hg2 : IntegrableOn (fun x => g x ^ 2) V volume) :
+    volumeAverage V (fun x => (g x - volumeAverage V g) ^ 2) ≤
+      volumeAverage V (fun x => g x ^ 2) := by
+  rw [volumeAverage_sub_volumeAverage_sq_eq hfin hpos hg hg2]
+  exact sub_le_self _ (sq_nonneg _)
 
 /-! ## The oscillation cell against the window energy -/
+
+/-- The coordinate squares average to the squared Euclidean gauge.
+
+on the coordinate integrabilities. -/
+theorem sum_volumeAverage_coord_sq_eq_volumeAverage_vecNormSq {V : Set (Vec d)}
+    (u : Vec d → Vec d)
+    (hcoordsq : ∀ k : Fin d, IntegrableOn (fun x => (u x k) ^ 2) V volume) :
+    ∑ k : Fin d, volumeAverage V (fun x => (u x k) ^ 2) =
+      volumeAverage V (fun x => vecNormSq (u x)) := by
+  classical
+  unfold volumeAverage vecNormSq vecDot
+  rw [← Finset.mul_sum]
+  congr 1
+  rw [MeasureTheory.integral_finsetSum Finset.univ
+    (fun k _ => by simpa [pow_two] using! (hcoordsq k))]
+  refine Finset.sum_congr rfl fun k _ => ?_
+  exact integral_congr_ae (Filter.Eventually.of_forall fun x => by ring)
+
+/-- **The oscillation is a difference of two window observables.**  The
+mean-square oscillation of a vector field over a window is the window average of
+its squared gauge minus the squared gauge of its window average.
+
+on the volume data and the coordinate integrabilities.  This is the identity
+that makes the oscillation cell measurable in the sample: both terms on the
+right are window observables of the `L^2` class. -/
+theorem meanSquareOscillationVecOn_eq_sub_vecNormSq_volumeAverageVec {V : Set (Vec d)}
+    (hfin : volume V ≠ ⊤) (hpos : 0 < (volume V).toReal) (u : Vec d → Vec d)
+    (hcoord : ∀ k : Fin d, IntegrableOn (fun x => u x k) V volume)
+    (hcoordsq : ∀ k : Fin d, IntegrableOn (fun x => (u x k) ^ 2) V volume) :
+    Book.Ch01.meanSquareOscillationVecOn V u =
+      volumeAverage V (fun x => vecNormSq (u x)) -
+        vecNormSq (volumeAverageVec V u) := by
+  classical
+  have hterm : ∀ k : Fin d,
+      Book.Ch01.meanSquareDeviationOn V (fun x => u x k) (volumeAverageVec V u k) =
+        volumeAverage V (fun x => (u x k) ^ 2) -
+          (volumeAverage V (fun x => u x k)) ^ 2 := by
+    intro k
+    have hk : volumeAverageVec V u k = volumeAverage V (fun x => u x k) := rfl
+    rw [Book.Ch01.meanSquareDeviationOn, hk]
+    exact volumeAverage_sub_volumeAverage_sq_eq hfin hpos (hcoord k) (hcoordsq k)
+  have hnorm : vecNormSq (volumeAverageVec V u) =
+      ∑ k : Fin d, (volumeAverage V (fun x => u x k)) ^ 2 := by
+    simp only [vecNormSq, vecDot, volumeAverageVec, pow_two]
+  calc Book.Ch01.meanSquareOscillationVecOn V u
+      = ∑ k : Fin d,
+          Book.Ch01.meanSquareDeviationOn V (fun x => u x k)
+            (volumeAverageVec V u k) := rfl
+    _ = ∑ k : Fin d, (volumeAverage V (fun x => (u x k) ^ 2) -
+          (volumeAverage V (fun x => u x k)) ^ 2) :=
+        Finset.sum_congr rfl fun k _ => hterm k
+    _ = (∑ k : Fin d, volumeAverage V (fun x => (u x k) ^ 2)) -
+          ∑ k : Fin d, (volumeAverage V (fun x => u x k)) ^ 2 :=
+        Finset.sum_sub_distrib _ _
+    _ = volumeAverage V (fun x => vecNormSq (u x)) -
+          vecNormSq (volumeAverageVec V u) := by
+        rw [sum_volumeAverage_coord_sq_eq_volumeAverage_vecNormSq u hcoordsq, hnorm]
 
 /-- **The mean-square oscillation is below the mean-square size.**  Componentwise
 `volumeAverage_sub_volumeAverage_sq_le`, summed over the coordinates.
@@ -158,29 +228,8 @@ theorem meanSquareOscillationVecOn_le_volumeAverage_vecNormSq {V : Set (Vec d)}
     (hcoordsq : ∀ k : Fin d, IntegrableOn (fun x => (u x k) ^ 2) V volume) :
     Book.Ch01.meanSquareOscillationVecOn V u ≤
       volumeAverage V (fun x => vecNormSq (u x)) := by
-  classical
-  have hterm : ∀ k : Fin d,
-      Book.Ch01.meanSquareDeviationOn V (fun x => u x k) (volumeAverageVec V u k) ≤
-        volumeAverage V (fun x => (u x k) ^ 2) := by
-    intro k
-    have hk : volumeAverageVec V u k = volumeAverage V (fun x => u x k) := rfl
-    rw [Book.Ch01.meanSquareDeviationOn, hk]
-    exact volumeAverage_sub_volumeAverage_sq_le hfin hpos (hcoord k) (hcoordsq k)
-  have hsum : ∑ k : Fin d, volumeAverage V (fun x => (u x k) ^ 2) =
-      volumeAverage V (fun x => vecNormSq (u x)) := by
-    unfold volumeAverage vecNormSq vecDot
-    rw [← Finset.mul_sum]
-    congr 1
-    rw [MeasureTheory.integral_finsetSum Finset.univ
-      (fun k _ => by simpa [pow_two] using! (hcoordsq k))]
-    refine Finset.sum_congr rfl fun k _ => ?_
-    exact integral_congr_ae (Filter.Eventually.of_forall fun x => by ring)
-  calc Book.Ch01.meanSquareOscillationVecOn V u
-      = ∑ k : Fin d,
-          Book.Ch01.meanSquareDeviationOn V (fun x => u x k) (volumeAverageVec V u k) := rfl
-    _ ≤ ∑ k : Fin d, volumeAverage V (fun x => (u x k) ^ 2) :=
-        Finset.sum_le_sum fun k _ => hterm k
-    _ = volumeAverage V (fun x => vecNormSq (u x)) := hsum
+  rw [meanSquareOscillationVecOn_eq_sub_vecNormSq_volumeAverageVec hfin hpos u hcoord hcoordsq]
+  exact sub_le_self _ (vecNormSq_nonneg _)
 
 /-! ## The volume data of an open triadic cube -/
 

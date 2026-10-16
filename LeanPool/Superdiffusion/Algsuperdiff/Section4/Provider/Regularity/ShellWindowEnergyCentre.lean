@@ -44,30 +44,7 @@ theorem translateSet_cubeSet_coveringCube_subset_anchorParent_of_sub {n m : ℤ}
     (hw : x - z ∈ openCubeSet (originCube d (n + 1))) :
     translateSet (wellPlacedCentre x m (n + 2) - z) (cubeSet (originCube d (n + 2))) ⊆
       cubeSet (originCube d (n + 3)) := by
-  rw [mem_openCubeSet_originCube_iff] at hw
-  have h1 : (3 : ℝ) ^ (n + 1) = 3 ^ n * 3 := by
-    rw [zpow_add_one₀ (by norm_num : (3 : ℝ) ≠ 0)]
-  have h2 : (3 : ℝ) ^ (n + 2) = 3 ^ n * 9 := by
-    have hn : n + 2 = n + 1 + 1 := by ring
-    rw [hn, zpow_add_one₀ (by norm_num : (3 : ℝ) ≠ 0), h1]
-    ring
-  have h3 : (3 : ℝ) ^ (n + 3) = 3 ^ n * 27 := by
-    have hn : n + 3 = n + 2 + 1 := by ring
-    rw [hn, zpow_add_one₀ (by norm_num : (3 : ℝ) ≠ 0), h2]
-    ring
-  have hpos : (0 : ℝ) < 3 ^ n := zpow_pos (by norm_num) n
-  rintro p ⟨y, hy, rfl⟩
-  rw [mem_cubeSet_originCube_iff] at hy ⊢
-  intro i
-  have hyi := hy i
-  have hwi := hw i
-  have hci := sub_wellPlacedCentre_coord_bound hnm hx i
-  simp only [Pi.sub_apply] at hwi
-  rw [h1] at hwi
-  rw [h2] at hyi hci
-  rw [h3]
-  refine ⟨?_, ?_⟩ <;> simp only [Pi.add_apply, Pi.sub_apply] <;>
-    linarith only [hyi.1, hyi.2, hwi.1, hwi.2, hci.1, hci.2, hpos]
+  exact ExcessDecay.translateSet_cubeSet_coveringCube_subset_anchorParent_of_sub hnm hx hw
 
 /-- **The covering inclusion at the diagonal.**  At `x = z` the displacement datum
 is `0 ∈ □_{n+1}`, so the half-open containment holds for centre of `□_m`. -/
