@@ -169,8 +169,9 @@ lemma truthlemma_lemma2
     have : (Hilbert.Grz) ⊢! ⋀□'Γ₁ ==> □ψ := imp_trans''! collect_box_conj! this;
     have : (Hilbert.Grz) ⊢! ⋀□'(X.1.prebox.modalBox |>.toList) ==> □ψ :=
       imp_trans''! (conjconj_subset! (by
-      simp_all
-    )) this;
+        intro χ hχ
+        exact List.box_subset_mono (fun {ψ} hψ ↦ Finset.mem_toList.mpr (hΓ₁ ψ hψ)) hχ
+      )) this;
     have : (Hilbert.Grz) ⊢! ⋀□'(X.1.prebox.toList) ==> □ψ := imp_trans''! (conjconj_provable! (by
       intro ψ hq;
       simp only [Finset.eq_prebox_premultibox_one, Finset.eq_box_multibox_one,

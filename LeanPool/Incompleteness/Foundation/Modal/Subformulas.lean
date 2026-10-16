@@ -44,12 +44,15 @@ lemma mem_imp (h : (ψ ==> χ) ∈ φ.subformulas) : ψ ∈ φ.subformulas ∧ �
   | himp φ₁ φ₂ ihp₁ ihp₂ =>
     simp only [subformulas, Finset.mem_insert, Finset.mem_union] at h ⊢
     rcases h with h_eq | h₁ | h₂
-    · simp_all
-    · simp_all
-    · simp_all
+    · cases h_eq
+      exact ⟨Or.inr (Or.inl mem_self), Or.inr (Or.inr mem_self)⟩
+    · exact ⟨Or.inr (Or.inl (ihp₁ h₁).1), Or.inr (Or.inl (ihp₁ h₁).2)⟩
+    · exact ⟨Or.inr (Or.inr (ihp₂ h₂).1), Or.inr (Or.inr (ihp₂ h₂).2)⟩
   | hbox _ ihp =>
     simp only [subformulas, Finset.mem_insert] at h ⊢
-    simp_all
+    rcases h with h_eq | h_sub
+    · cases h_eq
+    · exact ⟨Or.inr (ihp h_sub).1, Or.inr (ihp h_sub).2⟩
 
 lemma mem_imp₁ (h : (ψ ==> χ) ∈ φ.subformulas) : ψ ∈ φ.subformulas := mem_imp h |>.1
 
@@ -72,7 +75,8 @@ lemma mem_box (h : □ψ ∈ φ.subformulas) : ψ ∈ φ.subformulas := by
   | hbox _ ihp =>
     simp only [subformulas, Finset.mem_insert] at h ⊢
     rcases h with h_eq | h_sub
-    · simp_all
+    · cases h_eq
+      exact Or.inr mem_self
     · exact Or.inr (ihp h_sub)
 
 -- TODO: add tactic like `subformulas`.

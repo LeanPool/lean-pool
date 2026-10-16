@@ -65,24 +65,21 @@ abbrev miniCanonicalModel (φ : Formula ℕ) : Kripke.Model where
 lemma truthlemma_lemma1
   {X : ComplementClosedConsistentFinset Hilbert.GL φ.subformulas} (hq : □ψ ∈ φ.subformulas)
   : ((X.1.prebox ∪ X.1.prebox.modalBox) ∪ {□ψ, -ψ}) ⊆ φ.subformulas⁻ := by
-  intro χ hr;
-  replace hr : χ = □ψ ∨ χ = -ψ ∨ □χ ∈ X ∨ (∃ a, □a ∈ X ∧ □a = χ) := by simp at hr; tauto;
-  rcases hr with (rfl | rfl | hp | ⟨χ, hr, rfl⟩);
-  · apply Finset.mem_union.mpr;
-    tauto;
-  · apply Finset.mem_union.mpr;
-    right;
-    apply Finset.mem_image.mpr;
-    use ψ;
-    constructor;
-    · exact subformulas.mem_box hq;
-    · tauto;
-  · have := X.closed.subset hp;
-    have := FormulaFinset.complementary_mem_box (by apply subformulas.mem_imp₁) this;
-    apply Finset.mem_union.mpr;
-    left;
-    exact subformulas.mem_box this;
-  · exact X.closed.subset hr;
+  intro χ hr
+  simp only [Finset.mem_union, Finset.mem_insert, Finset.mem_singleton] at hr
+  rcases hr with (hprebox | hbox) | rfl | rfl
+  · have hp : □χ ∈ X.1 := by
+      simpa only [Finset.eq_prebox_premultibox_one, Finset.mem_preimage,
+        Function.iterate_one] using hprebox
+    have := X.closed.subset hp
+    have := FormulaFinset.complementary_mem_box (by apply subformulas.mem_imp₁) this
+    exact Finset.mem_union_left _ (subformulas.mem_box this)
+  · obtain ⟨χ, hχ, rfl⟩ := Finset.mem_image.mp hbox
+    apply X.closed.subset
+    simpa only [Finset.eq_prebox_premultibox_one, Finset.mem_preimage,
+      Function.iterate_one] using hχ
+  · exact Finset.mem_union_left _ hq
+  · exact Finset.mem_union_right _ (Finset.mem_image.mpr ⟨ψ, subformulas.mem_box hq, rfl⟩)
 
 
 lemma truthlemma_lemma2
@@ -93,14 +90,14 @@ lemma truthlemma_lemma2
   apply FormulaFinset.intro_union_consistent;
   rintro Γ₁ Γ₂ ⟨hΓ₁, hΓ₂⟩;
   replace hΓ₂ : ∀ χ ∈ Γ₂, χ = □ψ ∨ χ = -ψ := by
-    simp_all
+    simpa only [Finset.mem_insert, Finset.mem_singleton] using hΓ₂
   by_contra hC;
   have : Γ₁ ⊢[_]! ⋀Γ₂ ==> ⊥ := provable_iff.mpr <| and_imply_iff_imply_imply'!.mp hC;
   have : Γ₁ ⊢[_]! (□ψ ⋏ -ψ) ==> ⊥ := imp_trans''! (by
     suffices Γ₁ ⊢[Hilbert.GL]! ⋀[□ψ, -ψ] ==> ⋀Γ₂ by
-      simp_all
-    apply conjconj_subset!;
-    simpa using hΓ₂;
+      simpa only [List.conj₂_doubleton] using this
+    apply conjconj_subset!
+    simpa only [List.mem_cons, List.not_mem_nil, or_false] using hΓ₂
   ) this;
   have : Γ₁ ⊢[_]! □ψ ==> -ψ ==> ⊥ := and_imply_iff_imply_imply'!.mp this;
   have : Γ₁ ⊢[Hilbert.GL]! □ψ ==> ψ := by
@@ -113,8 +110,9 @@ lemma truthlemma_lemma2
   have : _ ⊢! ⋀□'Γ₁ ==> □ψ := provable_iff.mp this;
   have : _ ⊢! ⋀□'(X.1.prebox ∪ X.1.prebox.modalBox |>.toList) ==> □ψ :=
     imp_trans''! (conjconj_subset! (by
-    simp_all
-  )) this;
+      intro χ hχ
+      exact List.box_subset_mono (fun {ψ} hψ ↦ Finset.mem_toList.mpr (hΓ₁ ψ hψ)) hχ
+    )) this;
   have : _ ⊢! ⋀□'(X.1.prebox.toList) ==> □ψ := imp_trans''! (conjconj_provable! (by
     suffices ∀ χ, (□χ ∈ X ∨ ∃ χ', □χ' ∈ X ∧ □χ' =
       χ) → (□'^[1](Finset.premultibox 1 X).toList) ⊢[Hilbert.GL]! □χ by simpa;

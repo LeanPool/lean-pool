@@ -185,7 +185,13 @@ def toSubLanguage' (pf : ∀ k, L.Func k → Prop) (pr : ∀ k, L.Rel k → Prop
       lMap L.ofSubLanguage (toSubLanguage' pf pr (∃' φ) hf hr) =
           ∃' lMap L.ofSubLanguage (toSubLanguage' pf pr φ hf hr) := rfl
       _ = ∃' φ := congrArg Semiformula.ex (ih hf hr)
-  all_goals simp_all [toSubLanguage']
+  all_goals simp only [toSubLanguage']
+  case hverum => rfl
+  case hfalsum => rfl
+  case hand φ ψ ihp ihq =>
+    exact congrArg₂ Semiformula.and (ihp _ _) (ihq _ _)
+  case hor φ ψ ihp ihq =>
+    exact congrArg₂ Semiformula.or (ihp _ _) (ihq _ _)
 
 /-- Imported declaration from the Incompleteness formalization. -/
 noncomputable def languageFuncIndexed (φ : Semiformula L μ n) (k) : Finset (L.Func k) :=
