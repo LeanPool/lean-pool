@@ -37,7 +37,7 @@ namespace canonicalFrame
 
 variable {Ω₁ Ω₂ : (canonicalFrame 𝓢).World}
 
-@[simp] lemma rel_def_box : Ω₁ ≺ Ω₂ ↔ ∀ {φ}, □φ ∈ Ω₁ → φ ∈ Ω₂ := by simp [Frame.Rel']; aesop;
+@[simp] lemma rel_def_box : Ω₁ ≺ Ω₂ ↔ ∀ {φ}, □φ ∈ Ω₁ → φ ∈ Ω₂ := Iff.rfl
 
 lemma multirel_def_multibox : Ω₁ ≺^[n] Ω₂ ↔ ∀ {φ}, □^[n]φ ∈ Ω₁.1 → φ ∈ Ω₂.1 := by
   induction n generalizing Ω₁ Ω₂ with
@@ -91,10 +91,8 @@ lemma multirel_def_multibox : Ω₁ ≺^[n] Ω₂ ↔ ∀ {φ}, □^[n]φ ∈ Ω
         apply hΩ;
         simp_all;
 
-lemma multirel_def_multibox' : Ω₁ ≺^[n] Ω₂ ↔ ∀ {φ}, φ ∈ (□''⁻¹^[n]Ω₁.1) → φ ∈ Ω₂.1 := by
-  constructor;
-  · intro h φ hp; exact multirel_def_multibox.mp h hp;
-  · intro h; apply multirel_def_multibox.mpr; assumption;
+lemma multirel_def_multibox' : Ω₁ ≺^[n] Ω₂ ↔ ∀ {φ}, φ ∈ (□''⁻¹^[n]Ω₁.1) → φ ∈ Ω₂.1 :=
+  multirel_def_multibox
 
 lemma multirel_def_multidia : Ω₁ ≺^[n] Ω₂ ↔ ∀ {φ}, (φ ∈ Ω₂.1 → ◇^[n]φ ∈ Ω₁.1) :=
   Iff.trans multirel_def_multibox multibox_multidia

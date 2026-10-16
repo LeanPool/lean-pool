@@ -84,21 +84,7 @@ def toSubLanguage' (pf : ∀ k, L.Func k → Prop) (pr : ∀ k, L.Rel k → Prop
     | bvar x => rfl
     | fvar x => rfl
     | func f v ih =>
-      have hv : (fun i => (toSubLanguage' pf pr (v i)
-          (fun k' f' h' => h k' f' (lang_func_ss f v i h'))).lMap L.ofSubLanguage) = v := by
-        funext i
-        exact ih i _
-      calc
-        (toSubLanguage' pf pr (func f v) h).lMap L.ofSubLanguage =
-            func ((L.ofSubLanguage).func ⟨f, h _ f (lang_func f v)⟩)
-              (fun i => (toSubLanguage' pf pr (v i)
-                (fun k' f' h' => h k' f' (lang_func_ss f v i h'))).lMap
-                  L.ofSubLanguage) := rfl
-        _ = func f (fun i => (toSubLanguage' pf pr (v i)
-              (fun k' f' h' => h k' f' (lang_func_ss f v i h'))).lMap
-                L.ofSubLanguage) := by
-          rfl
-        _ = func f v := congrArg (func f) hv
+      exact congrArg (func f) (funext fun i ↦ ih i _)
 
 end Semiterm
 
@@ -188,18 +174,7 @@ def toSubLanguage' (pf : ∀ k, L.Func k → Prop) (pr : ∀ k, L.Rel k → Prop
         (fun k f h => hf k f (langFunc_rel_ss r v i h))).lMap L.ofSubLanguage) = v := by
       funext i
       exact Semiterm.lMap_toSubLanguage' pf pr (v i) _
-    calc
-      lMap L.ofSubLanguage (toSubLanguage' pf pr (nrel r v) hf hr) =
-          nrel (L.ofSubLanguage.rel
-            ⟨r, hr _ r (by simp only [langRel, Finset.mem_singleton])⟩)
-            (fun i => ((v i).toSubLanguage' pf pr
-              (fun k f h => hf k f (langFunc_rel_ss r v i h))).lMap
-                L.ofSubLanguage) := rfl
-      _ = nrel r (fun i => ((v i).toSubLanguage' pf pr
-            (fun k f h => hf k f (langFunc_rel_ss r v i h))).lMap
-              L.ofSubLanguage) := by
-        rfl
-      _ = nrel r v := congrArg (nrel r) hv
+    exact congrArg (nrel r) hv
   case hall φ ih =>
     calc
       lMap L.ofSubLanguage (toSubLanguage' pf pr (∀' φ) hf hr) =

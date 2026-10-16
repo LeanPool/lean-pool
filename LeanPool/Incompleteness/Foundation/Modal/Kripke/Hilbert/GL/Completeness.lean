@@ -42,15 +42,16 @@ namespace miniCanonicalFrame
 
 lemma is_irreflexive : Std.Irrefl (miniCanonicalFrame φ).Rel := by
   constructor
-  simp_all
+  rintro X ⟨_, χ, _, hnot, hmem⟩
+  exact hnot hmem
 
 lemma is_transitive : IsTrans (miniCanonicalFrame φ).World (miniCanonicalFrame φ).Rel := by
   constructor
-  rintro X Y Z ⟨RXY, ⟨χ, _, _, _⟩⟩ ⟨RYZ, _⟩;
-  constructor;
-  · simp_all
-  · use χ;
-    simp_all
+  rintro X Y Z ⟨RXY, ⟨χ, hχ, hnot, hmem⟩⟩ ⟨RYZ, _⟩
+  constructor
+  · intro ψ hψ hX
+    exact RYZ ψ hψ (RXY ψ hψ hX).2
+  · exact ⟨χ, hχ, hnot, (RYZ χ hχ hmem).2⟩
 
 end miniCanonicalFrame
 
@@ -174,9 +175,14 @@ lemma truthlemma {X : (miniCanonicalModel φ).World} (q_sub : ψ ∈ φ.subformu
       push Not;
       use Y;
       constructor;
-      · constructor;
-        · aesop;
-        · aesop;
+      · constructor
+        · intro χ hχ hBox
+          have hprebox : χ ∈ X.1.prebox := by
+            change □χ ∈ X.1 at hBox
+            simpa only [Finset.eq_prebox_premultibox_one, Finset.mem_preimage,
+              Function.iterate_one] using hBox
+          exact ⟨hY₁.1.1 hprebox, hY₁.1.2 (Finset.mem_image.mpr ⟨χ, hprebox, rfl⟩)⟩
+        · exact ⟨ψ, q_sub, h, hY₁.2 (Finset.mem_insert_self _ _)⟩
       · apply ih ?_ |>.not.mpr;
         · apply iff_mem_compl (subformulas.mem_box q_sub) |>.not.mpr;
           push Not;
