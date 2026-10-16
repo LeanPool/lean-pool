@@ -338,9 +338,6 @@ private theorem isDivFormWeakSolutionOn_castH1 {U V : Set (Vec d)} (hUV : U = V)
   subst hUV
   exact H
 
-private theorem sub_toH1Function {U : Set (Vec d)} (v w : H10Function U) :
-    (v - w).toH1Function = v.toH1Function - w.toH1Function := rfl
-
 /-- **The truncated Dirichlet problem on the origin cube is solvable with the
 given datum and force.**  The truncated field is elliptic on the cube and the
 force is square integrable, so the Lax-Milgram construction supplies a solution
@@ -376,53 +373,8 @@ theorem tendsto_sqrt_integral_grad_sub_cubeSetAt (M : ABKModel d)
     Tendsto (fun L : ℤ =>
         Real.sqrt (∫ z in cubeSetAt y n, ‖(u L).grad z - v.grad z‖ ^ (2 : ℕ) ∂volume))
       atTop (𝓝 0) := by
-  have : NeZero d := Algsuperdiff.Section3.Provider.Orlicz.neZero_of_model M
-  obtain ⟨C, hC⟩ := fullTailGood_sharp omega.2
-  obtain ⟨ell, hell⟩ := exists_cubeSetAt_subset_openCubeSet y n
-  have hgamma : M.gamma < 1 := by
-    have hq := M.shellPrefix.gamma_le_quarter
-    linarith only [hq]
-  obtain ⟨Lam', hEll'⟩ := exists_isEllipticFieldOn_streamCoefficient M.nu_pos omega y n
-  have hbv : MemVectorL2 (cubeSetAt y n)
-      fun z => matVecMul (streamCoefficient M.nu omega z) (v.grad z) :=
-    memVectorL2_matVecMul_of_isEllipticFieldOn hEll' v.grad_memVectorL2
-  obtain ⟨wv, hwvf, hwvg⟩ := hv
-  set E : ℝ := Real.sqrt (∫ z in cubeSetAt y n, ‖v.grad z‖ ^ (2 : ℕ) ∂volume) with hE_def
-  have hbound : ∀ L : ℤ,
-      Real.sqrt (∫ z in cubeSetAt y n, ‖(u L).grad z - v.grad z‖ ^ (2 : ℕ) ∂volume) ≤
-        M.nu⁻¹ * ((d : ℝ) * (d : ℝ) * cutoffLimitGap d M.gamma C ell L) * E := by
-    intro L
-    obtain ⟨wL, hwLf, hwLg⟩ := hu L
-    have hwg : ∀ z, (wL - wv).toH1Function.grad z = (u L).grad z - v.grad z := by
-      intro z
-      rw [sub_toH1Function, H1Function.sub_grad]
-      change wL.toH1Function.grad z - wv.toH1Function.grad z = _
-      rw [hwLg z, hwvg z]
-      abel
-    obtain ⟨Lam, hEll⟩ :=
-      exists_isEllipticFieldOn_normalizedCoefficientCutoff M.nu_pos L omega.1 y n
-    have hab : ∀ z ∈ cubeSetAt y n, ∀ i j,
-        |normalizedCoefficientCutoff M.nu L omega.1 z i j -
-          streamCoefficient M.nu omega z i j| ≤ cutoffLimitGap d M.gamma C ell L := by
-      intro z hz i j
-      rw [abs_sub_comm]
-      exact abs_streamCoefficient_sub_normalizedCoefficientCutoff_le_gap M.nu hgamma omega hC
-        ell L (hell hz) i j
-    have huw' : IsDivFormWeakSolutionOn (normalizedCoefficientCutoff M.nu L omega.1)
-        (cubeSetAt y n) (u L) g :=
-      (isDivFormWeakSolutionOn_normalizedCoefficientCutoff_iff M.nu L omega.1).2 (huw L)
-    exact sqrt_energy_grad_sub_le_of_h10Diff (cutoffLimitGap_nonneg d M.gamma C ell L)
-      hEll hab hbv (wL - wv) hwg huw' hvw
-  have hlim : Tendsto (fun L : ℤ =>
-      M.nu⁻¹ * ((d : ℝ) * (d : ℝ) * cutoffLimitGap d M.gamma C ell L) * E)
-      atTop (𝓝 0) := by
-    have hgap := tendsto_cutoffLimitGap_atTop d hgamma C ell
-    have h1 : Tendsto (fun L : ℤ =>
-        M.nu⁻¹ * ((d : ℝ) * (d : ℝ) * cutoffLimitGap d M.gamma C ell L) * E)
-        atTop (𝓝 (M.nu⁻¹ * ((d : ℝ) * (d : ℝ) * 0) * E)) :=
-      (((hgap.const_mul ((d : ℝ) * (d : ℝ))).const_mul M.nu⁻¹).mul_const E)
-    simpa using h1
-  exact squeeze_zero (fun L => Real.sqrt_nonneg _) hbound hlim
+  exact Algsuperdiff.Section5.Provider.tendsto_sqrt_energy_grad_cutoff_of_h10Diff
+    M omega y n hu huw hv hvw
 
 /-- The `L²` convergence of the gradients of the truncated solutions, read on
 the origin cube. -/

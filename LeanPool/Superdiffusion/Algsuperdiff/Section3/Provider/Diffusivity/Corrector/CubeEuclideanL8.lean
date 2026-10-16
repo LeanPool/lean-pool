@@ -126,6 +126,43 @@ theorem continuous_vecNorm : Continuous (Book.Ch02.vecNorm : Vec d → ℝ) := b
   exact Real.continuous_sqrt.comp
     (continuous_finsetSum _ fun i _ => (continuous_apply i).mul (continuous_apply i))
 
+/-- The Euclidean gauge of an `Lᵖ` vector field is `Lᵖ` for any measure and exponent. -/
+theorem memLp_vecNorm_of_memLp {Omega : Type*} [MeasurableSpace Omega] {mu : Measure Omega}
+    {p : ℝ≥0∞} {u : Omega → Vec d}
+    (hu : MemLp u p mu) :
+    MemLp (fun x => Book.Ch02.vecNorm (u x)) p mu := by
+  have hsmul : MemLp (fun x => Real.sqrt (d : ℝ) • u x) p mu :=
+    hu.const_smul (Real.sqrt (d : ℝ))
+  refine hsmul.of_le
+    (continuous_vecNorm.comp_aestronglyMeasurable hu.aestronglyMeasurable) ?_
+  filter_upwards with x
+  have hle := vecNorm_le_sqrt_dim_mul_norm (u x)
+  rw [Real.norm_eq_abs, abs_of_nonneg (Book.Ch02.vecNorm_nonneg (u x)), norm_smul,
+    Real.norm_eq_abs, abs_of_nonneg (Real.sqrt_nonneg ((d : ℝ)))]
+  exact hle
+
+/-- Integrability for normalized cube measure gives Lebesgue integrability on the closed cube. -/
+theorem integrableOn_cubeSet_of_integrable_normalized {E : Type*}
+    [NormedAddCommGroup E] (Q : TriadicCube d)
+    {g : Vec d → E} (hg : Integrable g (normalizedCubeMeasure Q)) :
+    IntegrableOn g (cubeSet Q) volume := by
+  have hne : ENNReal.ofReal ((cubeVolume Q)⁻¹) ≠ 0 :=
+    (ENNReal.ofReal_pos.mpr (inv_pos.mpr (cubeVolume_pos Q))).ne'
+  rw [normalizedCubeMeasure] at hg
+  exact (integrable_smul_measure hne ENNReal.ofReal_ne_top).1 hg
+
+/-- An `L⁴` field has integrable squared energy on the closed cube. -/
+theorem integrableOn_cubeSet_vecNormSq_sq_of_memLp_four (Q : TriadicCube d)
+    {u : Vec d → Vec d} (hu : MemLp u (4 : ℝ≥0∞) (normalizedCubeMeasure Q)) :
+    IntegrableOn (fun x => vecNormSq (u x) ^ (2 : ℕ)) (cubeSet Q) volume := by
+  have hint := (memLp_vecNorm_of_memLp hu).integrable_norm_pow (p := 4) (by norm_num)
+  have hfun : (fun x => ‖Book.Ch02.vecNorm (u x)‖ ^ (4 : ℕ)) =
+      fun x => vecNormSq (u x) ^ (2 : ℕ) := by
+    funext x
+    rw [Real.norm_eq_abs, abs_of_nonneg (Book.Ch02.vecNorm_nonneg (u x)),
+      show (4 : ℕ) = 2 * 2 by norm_num, pow_mul, Book.Ch02.vecNorm_sq_eq_vecNormSq]
+  exact integrableOn_cubeSet_of_integrable_normalized Q (hfun ▸ hint)
+
 /-! ## Elementary `cubeLpNorm` A -/
 
 /-- Pointwise domination transfers to `cubeLpNorm`, provided the dominating

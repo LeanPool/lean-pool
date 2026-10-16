@@ -95,6 +95,67 @@ theorem sqrt_energy_grad_sub_le_of_h10Diff {y : Vec d} {n : ℤ} {a b : CoeffFie
 
 /-! ## 2. `L²` convergence of the truncated solutions -/
 
+/-- Gradients of cutoff solutions with common datum and forcing converge in `L²`. -/
+theorem tendsto_sqrt_energy_grad_cutoff_of_h10Diff (M : ABKModel d)
+    (omega : FullSample d M.gamma)
+    (y : Vec d) (n : ℤ) {h : H1Function (cubeSetAt y n)} {g : Vec d → Vec d}
+    {u : ℤ → H1Function (cubeSetAt y n)} {v : H1Function (cubeSetAt y n)}
+    (hu : ∀ L : ℤ, HasZeroTraceDifferenceOn (cubeSetAt y n) (u L) h)
+    (huw : ∀ L : ℤ, IsDivFormWeakSolutionOn
+      ((Cutoff.coefficientCutoff M.nu L omega.1).toCoeffField) (cubeSetAt y n) (u L) g)
+    (hv : HasZeroTraceDifferenceOn (cubeSetAt y n) v h)
+    (hvw : IsDivFormWeakSolutionOn (streamCoefficient M.nu omega) (cubeSetAt y n) v g) :
+    Tendsto (fun L : ℤ =>
+        Real.sqrt (∫ x in cubeSetAt y n, ‖(u L).grad x - v.grad x‖ ^ (2 : ℕ) ∂volume))
+      atTop (𝓝 0) := by
+  have : NeZero d := Algsuperdiff.Section3.Provider.Orlicz.neZero_of_model M
+  obtain ⟨C, hC⟩ := fullTailGood_sharp omega.2
+  obtain ⟨ell, hell⟩ := exists_cubeSetAt_subset_openCubeSet y n
+  have hgamma : M.gamma < 1 := by
+    have := M.shellPrefix.gamma_le_quarter
+    linarith only [this]
+  obtain ⟨Lam', hEll'⟩ := exists_isEllipticFieldOn_streamCoefficient M.nu_pos omega y n
+  have hbv : MemVectorL2 (cubeSetAt y n)
+      fun x => matVecMul (streamCoefficient M.nu omega x) (v.grad x) :=
+    memVectorL2_matVecMul_of_isEllipticFieldOn hEll' v.grad_memVectorL2
+  obtain ⟨wv, hwvf, hwvg⟩ := hv
+  set E : ℝ := Real.sqrt (∫ x in cubeSetAt y n, ‖v.grad x‖ ^ (2 : ℕ) ∂volume) with hE_def
+  have hbound : ∀ L : ℤ,
+      Real.sqrt (∫ x in cubeSetAt y n, ‖(u L).grad x - v.grad x‖ ^ (2 : ℕ) ∂volume) ≤
+        M.nu⁻¹ * ((d : ℝ) * (d : ℝ) * cutoffLimitGap d M.gamma C ell L) * E := by
+    intro L
+    obtain ⟨wL, hwLf, hwLg⟩ := hu L
+    have hwg : ∀ x, (wL - wv).toH1Function.grad x = (u L).grad x - v.grad x := by
+      intro x
+      rw [h10Sub_toH1Function, H1Function.sub_grad]
+      change wL.toH1Function.grad x - wv.toH1Function.grad x = _
+      rw [hwLg x, hwvg x]
+      abel
+    obtain ⟨Lam, hEll⟩ :=
+      exists_isEllipticFieldOn_normalizedCoefficientCutoff M.nu_pos L omega.1 y n
+    have hab : ∀ x ∈ cubeSetAt y n, ∀ i j,
+        |normalizedCoefficientCutoff M.nu L omega.1 x i j -
+          streamCoefficient M.nu omega x i j| ≤ cutoffLimitGap d M.gamma C ell L := by
+      intro x hx i j
+      rw [abs_sub_comm]
+      exact abs_streamCoefficient_sub_normalizedCoefficientCutoff_le_gap M.nu hgamma omega hC
+        ell L (hell hx) i j
+    have huw' : IsDivFormWeakSolutionOn (normalizedCoefficientCutoff M.nu L omega.1)
+        (cubeSetAt y n) (u L) g :=
+      (isDivFormWeakSolutionOn_normalizedCoefficientCutoff_iff M.nu L omega.1).2 (huw L)
+    exact sqrt_energy_grad_sub_le_of_h10Diff (cutoffLimitGap_nonneg d M.gamma C ell L)
+      hEll hab hbv (wL - wv) hwg huw' hvw
+  have hlim : Tendsto (fun L : ℤ =>
+      M.nu⁻¹ * ((d : ℝ) * (d : ℝ) * cutoffLimitGap d M.gamma C ell L) * E)
+      atTop (𝓝 0) := by
+    have hgap := tendsto_cutoffLimitGap_atTop d hgamma C ell
+    have h1 : Tendsto (fun L : ℤ =>
+        M.nu⁻¹ * ((d : ℝ) * (d : ℝ) * cutoffLimitGap d M.gamma C ell L) * E)
+        atTop (𝓝 (M.nu⁻¹ * ((d : ℝ) * (d : ℝ) * 0) * E)) :=
+      (((hgap.const_mul ((d : ℝ) * (d : ℝ))).const_mul M.nu⁻¹).mul_const E)
+    simpa using h1
+  exact squeeze_zero (fun L => Real.sqrt_nonneg _) hbound hlim
+
 /-- **The truncated solutions of a Dirichlet problem with a datum converge in `L²` to the
 full-field solution.**  The datum `h` and the forcing `g` are the same at every scale; only the
 coefficient field moves. -/
@@ -110,22 +171,13 @@ theorem tendsto_l2_cutoff_of_h10Diff (M : ABKModel d) (omega : FullSample d M.ga
         Real.sqrt (∫ x in cubeSetAt y n, ((u L).toFun x - v.toFun x) ^ (2 : ℕ) ∂volume))
       atTop (𝓝 0) := by
   have : NeZero d := Algsuperdiff.Section3.Provider.Orlicz.neZero_of_model M
-  obtain ⟨C, hC⟩ := fullTailGood_sharp omega.2
-  obtain ⟨ell, hell⟩ := exists_cubeSetAt_subset_openCubeSet y n
-  have hgamma : M.gamma < 1 := by
-    have := M.shellPrefix.gamma_le_quarter
-    linarith only [this]
-  obtain ⟨CP, hCP, hpoin⟩ :=
+  have hgradLimit := tendsto_sqrt_energy_grad_cutoff_of_h10Diff M omega y n hu huw hv hvw
+  obtain ⟨CP, _, hpoin⟩ :=
     exists_poincare_integral_constant (isOpenBoundedConvexDomain_cubeSetAt y n)
-  obtain ⟨Lam', hEll'⟩ := exists_isEllipticFieldOn_streamCoefficient M.nu_pos omega y n
-  have hbv : MemVectorL2 (cubeSetAt y n)
-      fun x => matVecMul (streamCoefficient M.nu omega x) (v.grad x) :=
-    memVectorL2_matVecMul_of_isEllipticFieldOn hEll' v.grad_memVectorL2
   obtain ⟨wv, hwvf, hwvg⟩ := hv
-  set E : ℝ := Real.sqrt (∫ x in cubeSetAt y n, ‖v.grad x‖ ^ (2 : ℕ) ∂volume) with hE_def
   have hbound : ∀ L : ℤ,
       Real.sqrt (∫ x in cubeSetAt y n, ((u L).toFun x - v.toFun x) ^ (2 : ℕ) ∂volume) ≤
-        CP * (M.nu⁻¹ * ((d : ℝ) * (d : ℝ) * cutoffLimitGap d M.gamma C ell L) * E) := by
+        CP * Real.sqrt (∫ x in cubeSetAt y n, ‖(u L).grad x - v.grad x‖ ^ (2 : ℕ) ∂volume) := by
     intro L
     obtain ⟨wL, hwLf, hwLg⟩ := hu L
     have hwf : ∀ x, (wL - wv).toH1Function.toFun x = (u L).toFun x - v.toFun x := by
@@ -140,48 +192,9 @@ theorem tendsto_l2_cutoff_of_h10Diff (M : ABKModel d) (omega : FullSample d M.ga
       change wL.toH1Function.grad x - wv.toH1Function.grad x = _
       rw [hwLg x, hwvg x]
       abel
-    have hval : (∫ x in cubeSetAt y n, ((u L).toFun x - v.toFun x) ^ (2 : ℕ) ∂volume) =
-        ∫ x in cubeSetAt y n, (wL - wv).toH1Function.toFun x ^ (2 : ℕ) ∂volume := by
-      refine integral_congr_ae (Filter.Eventually.of_forall fun x => ?_)
-      change ((u L).toFun x - v.toFun x) ^ (2 : ℕ) = (wL - wv).toH1Function.toFun x ^ (2 : ℕ)
-      rw [hwf x]
-    have hgrad : (∫ x in cubeSetAt y n, ‖(u L).grad x - v.grad x‖ ^ (2 : ℕ) ∂volume) =
-        ∫ x in cubeSetAt y n, ‖(wL - wv).toH1Function.grad x‖ ^ (2 : ℕ) ∂volume := by
-      refine integral_congr_ae (Filter.Eventually.of_forall fun x => ?_)
-      change ‖(u L).grad x - v.grad x‖ ^ (2 : ℕ) = ‖(wL - wv).toH1Function.grad x‖ ^ (2 : ℕ)
-      rw [hwg x]
-    obtain ⟨Lam, hEll⟩ :=
-      exists_isEllipticFieldOn_normalizedCoefficientCutoff M.nu_pos L omega.1 y n
-    have hab : ∀ x ∈ cubeSetAt y n, ∀ i j,
-        |normalizedCoefficientCutoff M.nu L omega.1 x i j -
-          streamCoefficient M.nu omega x i j| ≤ cutoffLimitGap d M.gamma C ell L := by
-      intro x hx i j
-      rw [abs_sub_comm]
-      exact abs_streamCoefficient_sub_normalizedCoefficientCutoff_le_gap M.nu hgamma omega hC
-        ell L (hell hx) i j
-    have huw' : IsDivFormWeakSolutionOn (normalizedCoefficientCutoff M.nu L omega.1)
-        (cubeSetAt y n) (u L) g :=
-      (isDivFormWeakSolutionOn_normalizedCoefficientCutoff_iff M.nu L omega.1).2 (huw L)
-    have henergy := sqrt_energy_grad_sub_le_of_h10Diff (cutoffLimitGap_nonneg d M.gamma C ell L)
-      hEll hab hbv (wL - wv) hwg huw' hvw
-    rw [hval]
-    calc Real.sqrt (∫ x in cubeSetAt y n, (wL - wv).toH1Function.toFun x ^ (2 : ℕ) ∂volume)
-        ≤ CP * Real.sqrt (∫ x in cubeSetAt y n,
-            ‖(wL - wv).toH1Function.grad x‖ ^ (2 : ℕ) ∂volume) := hpoin (wL - wv)
-      _ ≤ CP * (M.nu⁻¹ * ((d : ℝ) * (d : ℝ) * cutoffLimitGap d M.gamma C ell L) * E) := by
-          refine mul_le_mul_of_nonneg_left ?_ hCP
-          rw [← hgrad]
-          exact henergy
-  have hlim : Tendsto (fun L : ℤ =>
-      CP * (M.nu⁻¹ * ((d : ℝ) * (d : ℝ) * cutoffLimitGap d M.gamma C ell L) * E))
-      atTop (𝓝 0) := by
-    have hgap := tendsto_cutoffLimitGap_atTop d hgamma C ell
-    have h1 : Tendsto (fun L : ℤ =>
-        CP * (M.nu⁻¹ * ((d : ℝ) * (d : ℝ) * cutoffLimitGap d M.gamma C ell L) * E))
-        atTop (𝓝 (CP * (M.nu⁻¹ * ((d : ℝ) * (d : ℝ) * 0) * E))) :=
-      ((((hgap.const_mul ((d : ℝ) * (d : ℝ))).const_mul M.nu⁻¹).mul_const E).const_mul CP)
-    simpa using h1
-  exact squeeze_zero (fun L => Real.sqrt_nonneg _) hbound hlim
+    simpa only [hwf, hwg] using hpoin (wL - wv)
+  exact squeeze_zero (fun L => Real.sqrt_nonneg _) hbound
+    (by simpa using hgradLimit.const_mul CP)
 
 /-! ## 3. Uniform bounds on the truncated solutions pass to the full field -/
 

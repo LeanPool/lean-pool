@@ -748,93 +748,6 @@ private theorem residueScalarFlush_comparisonBounds3 :
     nlinarith only [hc10, hc20, hc30, hXX0, t1, hNU0]
   exact ⟨htotal, hXXe, hfinal⟩
 
-private theorem residueScalarFlush_comparisonBounds4 :
-    ∀ (d : ℕ) {n m : ℤ} {z : Vec d} {i : Fin d} {σ : ℝ} (u h : H1Function (openCubeSet (originCube
-      d m))),
-      let c' : Vec d := flushSubCentre z m n i σ;
-      let cz : Vec d := wellPlacedCentre z m (n + (2 : ℤ));
-      ∀
-        (_ :
-          (fun (y' : Vec d) => z + y') '' openCubeSet (originCube d (n + (3 : ℤ))) ∩ openCubeSet
-            (originCube d m) ⊆
-            openCubeSet (originCube d m))
-        (_ : (fun (y : Vec d) => c' + y) '' openCubeSet (originCube d n) ⊆ openCubeSet (originCube
-          d m))
-        (_ : (fun (y : Vec d) => cz + y) '' openCubeSet (originCube d (n + (2 : ℤ))) ⊆ openCubeSet
-          (originCube d m))
-        (wu : H1Function (translateSet c' (openCubeSet (originCube d n))))
-        (rhou : H10Function (translateSet c' (openCubeSet (originCube d n))))
-        (_ : ∀ (y : Vec d), wu.toFun y = u.toFun y + rhou.toFun y)
-        (wh : H1Function (translateSet c' (openCubeSet (originCube d n))))
-        (rhoh : H10Function (translateSet c' (openCubeSet (originCube d n))))
-        (_ : ∀ (y : Vec d), wh.toFun y = h.toFun y + rhoh.toFun y)
-        (_ :
-          (fun (y : Vec d) => c' + y) '' openCubeSet (originCube d n) = translateSet c'
-            (openCubeSet (originCube d n))),
-        MemLp u.toFun (2 : ℝ≥0∞) (volume.restrict ((fun (y : Vec d) => c' + y) '' openCubeSet
-          (originCube d n))) ∧
-          MemLp h.toFun (2 : ℝ≥0∞) (volume.restrict ((fun (y : Vec d) => c' + y) '' openCubeSet
-            (originCube d n))) ∧
-            MemLp u.toFun (2 : ℝ≥0∞)
-                (volume.restrict ((fun (y : Vec d) => cz + y) '' openCubeSet (originCube d (n + (2
-                  : ℤ))))) ∧
-              MemLp h.toFun (2 : ℝ≥0∞)
-                  (volume.restrict ((fun (y : Vec d) => cz + y) '' openCubeSet (originCube d (n +
-                    (2 : ℤ))))) ∧
-                MemLp u.toFun (2 : ℝ≥0∞)
-                    (volume.restrict
-                      ((fun (y' : Vec d) => z + y') '' openCubeSet (originCube d (n + (3 : ℤ))) ∩
-                        openCubeSet (originCube d m))) ∧
-                  MemLp (fun (y : Vec d) => wu.toFun y) (2 : ℝ≥0∞)
-                      (volume.restrict ((fun (y : Vec d) => c' + y) '' openCubeSet (originCube d
-                        n))) ∧
-                    MemLp (fun (y : Vec d) => wh.toFun y) (2 : ℝ≥0∞)
-                        (volume.restrict ((fun (y : Vec d) => c' + y) '' openCubeSet (originCube d
-                          n))) ∧
-                      MemLp (fun (y : Vec d) => u.toFun y - wu.toFun y) (2 : ℝ≥0∞)
-                          (volume.restrict ((fun (y : Vec d) => c' + y) '' openCubeSet (originCube
-                            d n))) ∧
-                        MemLp (fun (y : Vec d) => h.toFun y - wh.toFun y) (2 : ℝ≥0∞)
-                          (volume.restrict ((fun (y : Vec d) => c' + y) '' openCubeSet (originCube
-                            d n))) := by
-  intro d n _ _ _ _ u h c' _ hW'm hK'm hV1m wu rhou hvalu wh rhoh hvalh hKT
-  have hmemU_K := memLp_toFun_of_subset u hK'm
-  have hmemH_K := memLp_toFun_of_subset h hK'm
-  have hmemU_V1 := memLp_toFun_of_subset u hV1m
-  have hmemH_V1 := memLp_toFun_of_subset h hV1m
-  have hmemU_W := memLp_toFun_of_subset u hW'm
-  have hRhoU : MemLp (fun y => rhou.toH1Function.toFun y) 2
-      (volume.restrict ((fun y => c' + y) '' openCubeSet (originCube d n))) := by
-    rw [hKT]
-    exact rhou.toH1Function.memL2
-  have hRhoH : MemLp (fun y => rhoh.toH1Function.toFun y) 2
-      (volume.restrict ((fun y => c' + y) '' openCubeSet (originCube d n))) := by
-    rw [hKT]
-    exact rhoh.toH1Function.memL2
-  have hWU_K : MemLp (fun y => wu.toFun y) 2
-      (volume.restrict ((fun y => c' + y) '' openCubeSet (originCube d n))) := by
-    have hfun : (fun y => wu.toFun y) =
-        fun y => u.toFun y + rhou.toH1Function.toFun y := by
-      funext y
-      exact hvalu y
-    rw [hfun]
-    exact hmemU_K.add hRhoU
-  have hWH_K : MemLp (fun y => wh.toFun y) 2
-      (volume.restrict ((fun y => c' + y) '' openCubeSet (originCube d n))) := by
-    have hfun : (fun y => wh.toFun y) =
-        fun y => h.toFun y + rhoh.toH1Function.toFun y := by
-      funext y
-      exact hvalh y
-    rw [hfun]
-    exact hmemH_K.add hRhoH
-  have hUWU : MemLp (fun y => u.toFun y - wu.toFun y) 2
-      (volume.restrict ((fun y => c' + y) '' openCubeSet (originCube d n))) :=
-    hmemU_K.sub hWU_K
-  have hHWH : MemLp (fun y => h.toFun y - wh.toFun y) 2
-      (volume.restrict ((fun y => c' + y) '' openCubeSet (originCube d n))) :=
-    hmemH_K.sub hWH_K
-  exact ⟨hmemU_K, hmemH_K, hmemU_V1, hmemH_V1, hmemU_W, hWU_K, hWH_K, hUWU, hHWH⟩
-
 private theorem residueScalarFlush_comparisonBounds5 :
     ∀ (d : ℕ) (CA : ℝ)
       (_ :
@@ -1208,10 +1121,12 @@ theorem exists_scalarControl_flushCube_comparator (d : ℕ) [NeZero d] :
     rw [Measure.restrict_apply_univ]
     exact lt_top_iff_ne_top.2 hK'top
   -- ------------------------------------------------- integrability inventory
+  have inventory := residueInterface_comparatorIntegrability
+    (K := translateSet c' (openCubeSet (originCube d n)))
+    u h (by rw [← hKT]; exact hK'm) hV1m hW'm wu wh
+  rw [congrArg (Measure.restrict volume) hKT.symm] at inventory
   obtain ⟨stage_hmemU_K, stage_hmemH_K, stage_hmemU_V1, stage_hmemH_V1, stage_hmemU_W,
-    stage_hWU_K, stage_hWH_K, stage_hUWU, stage_hHWH⟩ :=
-    @residueScalarFlush_comparisonBounds4 (d) (n) (m) (z) (i) (σ) (u) (h) (hW'm) (hK'm) (hV1m)
-      (wu) (rhou) (hvalu) (wh) (rhoh) (hvalh) (hKT)
+    stage_hWU_K, stage_hWH_K, stage_hUWU, stage_hHWH⟩ := inventory
   have hmemU_K := stage_hmemU_K
   have hmemH_K := stage_hmemH_K
   have hmemU_V1 := stage_hmemU_V1

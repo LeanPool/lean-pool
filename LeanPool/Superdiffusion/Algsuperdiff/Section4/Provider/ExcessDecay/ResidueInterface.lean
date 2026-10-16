@@ -1030,96 +1030,28 @@ private theorem residueInterface_estimate3 :
         exact add_le_add hB1 hB2
     _ = (Real.sqrt ((3 : ℝ) ^ d) + Real.sqrt ((27 : ℝ) ^ d)) * XX := by ring
 
-private theorem residueInterface_comparatorIntegrability :
-    ∀ (d : ℕ) {n m : ℤ} {x z : Vec d} {i : Fin d} {σ : ℝ} (u h : H1Function (openCubeSet
-      (originCube d m))),
-      let c' : Vec d := flushSubCentre z m n i σ;
-      ∀
-        (_ :
-          (fun (y' : Vec d) => z + y') '' openCubeSet (originCube d (n + (3 : ℤ))) ∩ openCubeSet
-            (originCube d m) ⊆
-            openCubeSet (originCube d m))
-        (_ : (fun (y : Vec d) => c' + y) '' openCubeSet (originCube d n) ⊆ openCubeSet (originCube
-          d m))
-        (_ :
-          (fun (y : Vec d) => wellPlacedCentre x m (n + (2 : ℤ)) + y) '' openCubeSet (originCube d
-            (n + (2 : ℤ))) ⊆
-            openCubeSet (originCube d m))
-        (wu : H1Function (translateSet c' (openCubeSet (originCube d n))))
-        (rhou : H10Function (translateSet c' (openCubeSet (originCube d n))))
-        (_ : ∀ (y : Vec d), wu.toFun y = u.toFun y + rhou.toFun y)
-        (wh : H1Function (translateSet c' (openCubeSet (originCube d n))))
-        (rhoh : H10Function (translateSet c' (openCubeSet (originCube d n))))
-        (_ : ∀ (y : Vec d), wh.toFun y = h.toFun y + rhoh.toFun y)
-        (_ :
-          (fun (y : Vec d) => c' + y) '' openCubeSet (originCube d n) = translateSet c'
-            (openCubeSet (originCube d n))),
-        MemLp u.toFun (2 : ℝ≥0∞) (volume.restrict ((fun (y : Vec d) => c' + y) '' openCubeSet
-          (originCube d n))) ∧
-          MemLp h.toFun (2 : ℝ≥0∞) (volume.restrict ((fun (y : Vec d) => c' + y) '' openCubeSet
-            (originCube d n))) ∧
-            MemLp u.toFun (2 : ℝ≥0∞)
-                (volume.restrict
-                  ((fun (y : Vec d) => wellPlacedCentre x m (n + (2 : ℤ)) + y) ''
-                    openCubeSet (originCube d (n + (2 : ℤ))))) ∧
-              MemLp h.toFun (2 : ℝ≥0∞)
-                  (volume.restrict
-                    ((fun (y : Vec d) => wellPlacedCentre x m (n + (2 : ℤ)) + y) ''
-                      openCubeSet (originCube d (n + (2 : ℤ))))) ∧
-                MemLp u.toFun (2 : ℝ≥0∞)
-                    (volume.restrict
-                      ((fun (y' : Vec d) => z + y') '' openCubeSet (originCube d (n + (3 : ℤ))) ∩
-                        openCubeSet (originCube d m))) ∧
-                  MemLp (fun (y : Vec d) => wu.toFun y) (2 : ℝ≥0∞)
-                      (volume.restrict ((fun (y : Vec d) => c' + y) '' openCubeSet (originCube d
-                        n))) ∧
-                    MemLp (fun (y : Vec d) => wh.toFun y) (2 : ℝ≥0∞)
-                        (volume.restrict ((fun (y : Vec d) => c' + y) '' openCubeSet (originCube d
-                          n))) ∧
-                      MemLp (fun (y : Vec d) => u.toFun y - wu.toFun y) (2 : ℝ≥0∞)
-                          (volume.restrict ((fun (y : Vec d) => c' + y) '' openCubeSet (originCube
-                            d n))) ∧
-                        MemLp (fun (y : Vec d) => h.toFun y - wh.toFun y) (2 : ℝ≥0∞)
-                          (volume.restrict ((fun (y : Vec d) => c' + y) '' openCubeSet (originCube
-                            d n))) := by
-  classical
-  intro d n _ _ _ _ _ u h c' hW'm hK'm hV1m wu rhou hvalu wh rhoh hvalh hKT
-  have hmemU_K := memLp_toFun_of_subset u hK'm
-  have hmemH_K := memLp_toFun_of_subset h hK'm
-  have hmemU_V1 := memLp_toFun_of_subset u hV1m
-  have hmemH_V1 := memLp_toFun_of_subset h hV1m
-  have hmemU_W := memLp_toFun_of_subset u hW'm
-  have hRhoU : MemLp (fun y => rhou.toH1Function.toFun y) 2
-      (volume.restrict ((fun y => c' + y) '' openCubeSet (originCube d n))) := by
-    rw [hKT]
-    exact rhou.toH1Function.memL2
-  have hRhoH : MemLp (fun y => rhoh.toH1Function.toFun y) 2
-      (volume.restrict ((fun y => c' + y) '' openCubeSet (originCube d n))) := by
-    rw [hKT]
-    exact rhoh.toH1Function.memL2
-  have hWU_K : MemLp (fun y => wu.toFun y) 2
-      (volume.restrict ((fun y => c' + y) '' openCubeSet (originCube d n))) := by
-    have hfun : (fun y => wu.toFun y) =
-        fun y => u.toFun y + rhou.toH1Function.toFun y := by
-      funext y
-      exact hvalu y
-    rw [hfun]
-    exact hmemU_K.add hRhoU
-  have hWH_K : MemLp (fun y => wh.toFun y) 2
-      (volume.restrict ((fun y => c' + y) '' openCubeSet (originCube d n))) := by
-    have hfun : (fun y => wh.toFun y) =
-        fun y => h.toFun y + rhoh.toH1Function.toFun y := by
-      funext y
-      exact hvalh y
-    rw [hfun]
-    exact hmemH_K.add hRhoH
-  have hUWU : MemLp (fun y => u.toFun y - wu.toFun y) 2
-      (volume.restrict ((fun y => c' + y) '' openCubeSet (originCube d n))) :=
-    hmemU_K.sub hWU_K
-  have hHWH : MemLp (fun y => h.toFun y - wh.toFun y) 2
-      (volume.restrict ((fun y => c' + y) '' openCubeSet (originCube d n))) :=
-    hmemH_K.sub hWH_K
-  exact ⟨hmemU_K, hmemH_K, hmemU_V1, hmemH_V1, hmemU_W, hWU_K, hWH_K, hUWU, hHWH⟩
+/-- Square-integrability of two functions, their local comparators and their differences.
+The three comparison regions can be arbitrary subsets of the original domain. -/
+theorem residueInterface_comparatorIntegrability
+    {d : ℕ} {U K V W : Set (Vec d)} (u h : H1Function U)
+    (hKU : K ⊆ U) (hVU : V ⊆ U) (hWU : W ⊆ U) (wu wh : H1Function K) :
+    MemLp u.toFun (2 : ℝ≥0∞) (volume.restrict K) ∧
+      MemLp h.toFun (2 : ℝ≥0∞) (volume.restrict K) ∧
+      MemLp u.toFun (2 : ℝ≥0∞) (volume.restrict V) ∧
+      MemLp h.toFun (2 : ℝ≥0∞) (volume.restrict V) ∧
+      MemLp u.toFun (2 : ℝ≥0∞) (volume.restrict W) ∧
+      MemLp wu.toFun (2 : ℝ≥0∞) (volume.restrict K) ∧
+      MemLp wh.toFun (2 : ℝ≥0∞) (volume.restrict K) ∧
+      MemLp (fun x => u.toFun x - wu.toFun x) (2 : ℝ≥0∞) (volume.restrict K) ∧
+      MemLp (fun x => h.toFun x - wh.toFun x) (2 : ℝ≥0∞) (volume.restrict K) := by
+  have huK := MemLp.mono_measure (Measure.restrict_mono_set volume hKU) u.memL2
+  have hhK := MemLp.mono_measure (Measure.restrict_mono_set volume hKU) h.memL2
+  have hwu : MemLp wu.toFun (2 : ℝ≥0∞) (volume.restrict K) := wu.memL2
+  have hwh : MemLp wh.toFun (2 : ℝ≥0∞) (volume.restrict K) := wh.memL2
+  exact ⟨huK, hhK, MemLp.mono_measure (Measure.restrict_mono_set volume hVU) u.memL2,
+    MemLp.mono_measure (Measure.restrict_mono_set volume hVU) h.memL2,
+    MemLp.mono_measure (Measure.restrict_mono_set volume hWU) u.memL2,
+    hwu, hwh, huK.sub hwu, hhK.sub hwh⟩
 
 /-- **The boundary scalar `S`, composed, with the residue exhibited as the
 harmonic-approximation error at the flush sub-cube.**
@@ -1286,9 +1218,11 @@ theorem exists_scalarControl_boundaryBranch_comparator (d : ℕ) [NeZero d] :
     rw [Measure.restrict_apply_univ]
     exact lt_top_iff_ne_top.2 hK'top
   -- ------------------------------------------------- integrability inventory
-  obtain ⟨hmemU_K, hmemH_K, hmemU_V1, hmemH_V1, hmemU_W, hWU_K, hWH_K, hUWU, hHWH⟩ :=
-    @residueInterface_comparatorIntegrability (d) (n) (m) (x) (z) (i) (σ) (u) (h) (hW'm) (hK'm)
-      (hV1m) (wu) (rhou) (hvalu) (wh) (rhoh) (hvalh) (hKT)
+  have inventory := residueInterface_comparatorIntegrability
+    (K := translateSet c' (openCubeSet (originCube d n)))
+    u h (by rw [← hKT]; exact hK'm) hV1m hW'm wu wh
+  rw [congrArg (Measure.restrict volume) hKT.symm] at inventory
+  obtain ⟨hmemU_K, hmemH_K, hmemU_V1, hmemH_V1, hmemU_W, hWU_K, hWH_K, hUWU, hHWH⟩ := inventory
   -- ---------------------------------------------------------------- the legs
   set XX : ℝ := normalizedL2On
     ((((fun y' => z + y') '' openCubeSet (originCube d (n + 3))) ∩

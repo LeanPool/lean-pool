@@ -100,41 +100,17 @@ the membership `hu`. -/
 theorem memLp_vecNorm_eight_of_memLp_eight (Q : TriadicCube d) {p : ℝ≥0∞}
     {u : Vec d → Vec d} (hu : MemLp u p (normalizedCubeMeasure Q)) :
     MemLp (fun x => Book.Ch02.vecNorm (u x)) p (normalizedCubeMeasure Q) := by
-  have hsmul : MemLp (fun x => Real.sqrt (d : ℝ) • u x) p (normalizedCubeMeasure Q) :=
-    hu.const_smul (Real.sqrt (d : ℝ))
-  refine hsmul.mono ?_ ?_
-  · exact (continuous_vecNorm (d := d)).comp_aestronglyMeasurable hu.aestronglyMeasurable
-  · filter_upwards with x
-    rw [Real.norm_eq_abs, abs_of_nonneg (Book.Ch02.vecNorm_nonneg (u x)), norm_smul,
-      Real.norm_eq_abs, abs_of_nonneg (Real.sqrt_nonneg ((d : ℝ)))]
-    exact vecNorm_le_sqrt_dim_mul_norm (u x)
-
-/-- Integrability against the normalized cube measure is integrability against
-Lebesgue measure on the closed cube.  Unconditional apart from `hg`. -/
-private theorem integrableOn_cubeSet_of_integrable_normalized {E : Type*}
-    [NormedAddCommGroup E] (Q : TriadicCube d)
-    {g : Vec d → E} (hg : Integrable g (normalizedCubeMeasure Q)) :
-    IntegrableOn g (cubeSet Q) volume := by
-  have hne : ENNReal.ofReal ((cubeVolume Q)⁻¹) ≠ 0 :=
-    (ENNReal.ofReal_pos.mpr (inv_pos.mpr (cubeVolume_pos Q))).ne'
-  rw [normalizedCubeMeasure] at hg
-  exact (integrable_smul_measure hne ENNReal.ofReal_ne_top).1 hg
+  exact Algsuperdiff.Section3.Provider.Diffusivity.Corrector.memLp_vecNorm_of_memLp hu
 
 /-- **`|grad w|^2` is integrable on `cu_K`.**: on `hu`. -/
 theorem integrableOn_openCubeSet_vecNormSq_of_memLp_eight (Q : TriadicCube d)
     {u : Vec d → Vec d} (hu : MemLp u (8 : ℝ≥0∞) (normalizedCubeMeasure Q)) :
     IntegrableOn (fun x => vecNormSq (u x)) (openCubeSet Q) volume := by
-  have huE : MemLp (fun x => Book.Ch02.vecNorm (u x)) (8 : ℝ≥0∞)
-      (normalizedCubeMeasure Q) := memLp_vecNorm_eight_of_memLp_eight Q hu
   have huE2 : MemLp (fun x => Book.Ch02.vecNorm (u x)) (2 : ℝ≥0∞)
-      (normalizedCubeMeasure Q) := huE.mono_exponent (by norm_num)
+      (normalizedCubeMeasure Q) :=
+    (memLp_vecNorm_eight_of_memLp_eight Q hu).mono_exponent (by norm_num)
   have hint : Integrable (fun x => vecNormSq (u x)) (normalizedCubeMeasure Q) := by
-    have h := huE2.integrable_sq
-    have hfun : (fun x => Book.Ch02.vecNorm (u x) ^ (2 : ℕ)) =
-        fun x => vecNormSq (u x) := by
-      funext x
-      exact Book.Ch02.vecNorm_sq_eq_vecNormSq (u x)
-    rwa [hfun] at h
+    simpa only [Book.Ch02.vecNorm_sq_eq_vecNormSq] using huE2.integrable_sq
   exact (integrableOn_cubeSet_of_integrable_normalized Q hint).mono_set
     (openCubeSet_subset_cubeSet Q)
 
@@ -142,35 +118,8 @@ theorem integrableOn_openCubeSet_vecNormSq_of_memLp_eight (Q : TriadicCube d)
 theorem integrableOn_openCubeSet_vecNormSq_sq_of_memLp_eight (Q : TriadicCube d)
     {u : Vec d → Vec d} (hu : MemLp u (8 : ℝ≥0∞) (normalizedCubeMeasure Q)) :
     IntegrableOn (fun x => vecNormSq (u x) ^ 2) (openCubeSet Q) volume := by
-  have huE : MemLp (fun x => Book.Ch02.vecNorm (u x)) (8 : ℝ≥0∞)
-      (normalizedCubeMeasure Q) := memLp_vecNorm_eight_of_memLp_eight Q hu
-  have huE4 : MemLp (fun x => Book.Ch02.vecNorm (u x)) (4 : ℝ≥0∞)
-      (normalizedCubeMeasure Q) := huE.mono_exponent (by norm_num)
-  have hsq : MemLp (fun x => Book.Ch02.vecNorm (u x) ^ (2 : ℕ)) (2 : ℝ≥0∞)
-      (normalizedCubeMeasure Q) := by
-    have h := (memLp_norm_rpow_iff (μ := normalizedCubeMeasure Q)
-        (f := fun x => Book.Ch02.vecNorm (u x)) (p := (4 : ℝ≥0∞)) (q := (2 : ℝ≥0∞))
-        huE4.aestronglyMeasurable (by norm_num) (by norm_num)).2 huE4
-    have hdiv : (4 : ℝ≥0∞) / 2 = 2 := by
-      rw [show (4 : ℝ≥0∞) = 2 * 2 by norm_num]
-      rw [mul_div_assoc, ENNReal.div_self (by norm_num) (by norm_num), mul_one]
-    rw [hdiv] at h
-    have hfun : (fun x => ‖Book.Ch02.vecNorm (u x)‖ ^ ((2 : ℝ≥0∞).toReal)) =
-        fun x => Book.Ch02.vecNorm (u x) ^ (2 : ℕ) := by
-      funext x
-      rw [show ((2 : ℝ≥0∞).toReal) = ((2 : ℕ) : ℝ) by norm_num, Real.rpow_natCast,
-        Real.norm_eq_abs, ← abs_pow,
-        abs_of_nonneg (by positivity : (0 : ℝ) ≤ Book.Ch02.vecNorm (u x) ^ (2 : ℕ))]
-    rwa [hfun] at h
-  have hint : Integrable (fun x => vecNormSq (u x) ^ 2) (normalizedCubeMeasure Q) := by
-    have h := hsq.integrable_sq
-    have hfun : (fun x => (Book.Ch02.vecNorm (u x) ^ (2 : ℕ)) ^ (2 : ℕ)) =
-        fun x => vecNormSq (u x) ^ 2 := by
-      funext x
-      rw [Book.Ch02.vecNorm_sq_eq_vecNormSq]
-    rwa [hfun] at h
-  exact (integrableOn_cubeSet_of_integrable_normalized Q hint).mono_set
-    (openCubeSet_subset_cubeSet Q)
+  exact (integrableOn_cubeSet_vecNormSq_sq_of_memLp_four Q
+    (hu.mono_exponent (by norm_num))).mono_set (openCubeSet_subset_cubeSet Q)
 
 /-- **Each coordinate square of `grad w` is integrable on `cu_K`.**: on `hu`. -/
 theorem integrableOn_openCubeSet_coord_sq_of_memLp_eight (Q : TriadicCube d)
