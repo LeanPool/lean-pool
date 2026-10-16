@@ -54,6 +54,8 @@ def input_identity(root: Path) -> str:
             for name in ("lean-toolchain", "lakefile.toml", "lake-manifest.json")
         ),
         Path(__file__),
+        Path(__file__).with_name("indexes.py"),
+        Path(__file__).parent / "exposition" / "source_text.py",
     ]
     for path in paths:
         name = path.relative_to(root) if path.is_relative_to(root) else Path(path.name)
