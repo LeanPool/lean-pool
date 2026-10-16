@@ -192,7 +192,6 @@ private theorem tunedDeepTailFluct_sq_le
   dsimp only
   let c := collarBandMeanDepthCoeff d
   let k₀ := collarBandMeanDepth M E
-  let ell := probeSharpLayerAnchor root bfaProfileB k₀ n
   let g₀ := probeSharpLayerGap bfaProfileB n
   let q := probeBandUnitGain d
   let A := HCPolySupport.IndependentSums.gammaTriangleConst 2 *
@@ -861,8 +860,6 @@ theorem collarDeepTail_coordinate_isBigOWith_and_ae_summable
   dsimp only
   have hd : 2 ≤ d := M.shellPrefix.dimension
   let k₀ := collarBandMeanDepth M (E : ℝ)
-  let ell : ℕ → ℤ := fun n =>
-    probeSharpLayerAnchor R.scale bfaProfileB k₀ n
   let tailA : ℝ := HCPolySupport.IndependentSums.gammaTriangleConst 2 *
     (probeDeepBandGainRootConst d * 3 * Real.sqrt 2)
   let D₀ : ℝ := probeMeanGoodWaveConst M * (5 * (d : ℝ) ^ 2) *

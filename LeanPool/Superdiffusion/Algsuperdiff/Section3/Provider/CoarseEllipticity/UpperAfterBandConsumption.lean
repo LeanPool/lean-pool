@@ -895,26 +895,6 @@ theorem collar_afterBand_trace_isBigOWith_depthProfile
     (3 : ℝ) ^ (M.gamma * ((k + 1 : ℕ) : ℝ))
   let ell : ℕ → ℤ := fun n =>
     probeSharpLayerAnchor R.scale bfaProfileB k₀ n
-  let P : CutoffSample d → ℝ := fun omega =>
-    slstarPowerTerm M R.scale (E : ℝ) bfaProfileB M.gamma
-      (translateCutoffSample (triadicCubeShift R) omega)
-  let T : ℕ → CutoffSample d → ℝ := fun n omega =>
-    probeSharpAfterBandTerm M R.scale (ell n) k₀ m
-      (translateCutoffSample (triadicCubeShift R) omega) ^ 2
-  let AT : ℕ → ℝ := fun n =>
-    probeSharpAfterBandExactScale M (ell n) k₀ m ^ 2
-  let D : ℕ → ℝ := fun n =>
-    F * whitneyDecayRatio ^ n *
-      (3 : ℝ) ^ (M.gamma *
-        (-((k : ℝ) + (n : ℝ) +
-          (bfaAfterBandLayerCeil n : ℝ) + (k₀ : ℝ))))
-  let B : ℕ → ℝ := fun n =>
-    A₀ * (((n + 1 : ℕ) : ℝ) * rho ^ n) * target
-  let X : ℕ → CutoffSample d → ℝ := fun n omega =>
-    probeSharpFramedCollarWavePart M R.scale (E : ℝ) bfaProfileB
-      k₀ n (m - 1) (basisVec j₀) (superposedGradConst d)
-      (fun eta => probeSharpAfterBandTerm M R.scale (ell n) k₀ m eta ^ 2)
-      (translateCutoffSample (triadicCubeShift R) omega)
   have hscale : R.scale = m - 1 - (k : ℤ) :=
     scale_eq_of_mem_descendantsAtScale hR
   have hroot : R.scale - 1 ≤ m - 1 := by rw [hscale]; omega
@@ -963,9 +943,6 @@ theorem collar_afterBand_trace_isBigOWith_depthProfile
       _ ≤ bfaProfileB := by linarith only [bfaProfileB_pos]
   let alpha : ℝ := upperProfileBaseSigma sigma /
     ((2 * (M.gamma / 2) + 2 * bfaProfileB) / bfaProfileB)
-  let AP : ℝ := hsepAmplitude (upperProfileSigma sigma) bfaProfileB ^
-    bfaPower M.gamma bfaProfileB
-  let G : ℝ := HCPolySupport.Book.Ch04.gammaProductConst alpha 1
   have hrawP := isBigOWith_gammaSigma_slstarPowerTerm_of_gates
     (m := R.scale) (E := (E : ℝ))
     (sigma := upperProfileSigma sigma) (b := bfaProfileB) (gam := M.gamma)

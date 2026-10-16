@@ -2837,41 +2837,7 @@ private theorem superposedFluxUpperPerDescendant_comparisonBounds1 :
         ((3 : ℝ) ^ (M.gamma * ((↑k : ℝ) + (1 : ℝ))) * Real.exp (-(Clane⁻¹ * ((↑E : ℝ)⁻¹ ^ (2 : ℕ)
           * M.gamma⁻¹))) ^ (8 : ℕ)) := by
   classical
-  intro d M m E hstate _ _ hsigma0 hsigmaHalf hmaxLane hE2 hcollarBaseOutput k R hR _ laneEps
-  let depthFactor : ℝ := (3 : ℝ) ^ (M.gamma * ((k : ℝ) + 1))
-  let rarePerLaneScale : ℝ := depthFactor * laneEps ^ 8
-  let collarBase : Cutoff.CutoffSample d → ℝ :=
-    Algsuperdiff.Section3.Provider.CoarseEllipticity.probeSharpFramedCollarBaseTraceLane
-      M R (E : ℝ)
-        (Algsuperdiff.Section3.Provider.CoarseEllipticity.collarBandMeanDepth
-          M (E : ℝ))
-  let collarHead : Cutoff.CutoffSample d → ℝ := fun omega =>
-    ∑ j : Fin d, ∑' n : ℕ,
-      Algsuperdiff.Section3.Provider.Multiscale.probeSharpFramedCollarWavePart
-        M R.scale (E : ℝ)
-        Algsuperdiff.Section3.Provider.CoarseEllipticity.bfaProfileB
-        (Algsuperdiff.Section3.Provider.CoarseEllipticity.collarBandMeanDepth
-          M (E : ℝ)) n (m - 1) (basisVec j)
-        (Algsuperdiff.Section3.Provider.Affine.superposedGradConst d)
-        (fun eta => Algsuperdiff.Section3.Provider.Multiscale.waveHeadTerm
-          M R.scale (E : ℝ)
-          Algsuperdiff.Section3.Provider.CoarseEllipticity.bfaProfileB
-          (Algsuperdiff.Section3.Provider.CoarseEllipticity.probeSharpLayerAnchor
-            R.scale
-            Algsuperdiff.Section3.Provider.CoarseEllipticity.bfaProfileB
-            (Algsuperdiff.Section3.Provider.CoarseEllipticity.collarBandMeanDepth
-              M (E : ℝ)) n) eta ^ 2)
-        (Algsuperdiff.Section3.Cutoff.translateCutoffSample
-          (triadicCubeShift R) omega)
-  let collarBand : Cutoff.CutoffSample d → ℝ :=
-    Algsuperdiff.Section3.Provider.CoarseEllipticity.probeSharpFramedCollarBandMeanTunedTraceLane
-      M m R (E : ℝ)
-  let collarDeep : Cutoff.CutoffSample d → ℝ :=
-    Algsuperdiff.Section3.Provider.CoarseEllipticity.probeSharpFramedCollarDeepTailTraceLane
-      M m R (E : ℝ)
-  let collarAfter : Cutoff.CutoffSample d → ℝ :=
-    Algsuperdiff.Section3.Provider.CoarseEllipticity.probeSharpFramedCollarAfterBandTraceLane
-      M m R (E : ℝ)
+  intro d M m E hstate _ _ hsigma0 hsigmaHalf hmaxLane hE2 hcollarBaseOutput k R hR
   have hcollarBase :=
     isBigOWith_upperProfileTarget_probeSharpFramedCollarBaseTraceLane_tuned
       M hR hstate hsigma0 hsigmaHalf hmaxLane hE2 hcollarBaseOutput
@@ -2928,45 +2894,9 @@ private theorem superposedFluxUpperPerDescendant_comparisonBounds2 :
   classical
   intro d M m E hstate sigma Clane hsigma0 hsigmaHalf hmaxLane hE2 hcollarBaseOutput
     hcollarHeadOutput k R hR
-  let laneX : ℝ := (E : ℝ)⁻¹ ^ 2 * M.gamma⁻¹
-  let laneEps : ℝ := Real.exp (-(Clane⁻¹ * laneX))
   have hcollarBase :=
     @superposedFluxUpperPerDescendant_comparisonBounds1 (d) (M) (m) (E) (hstate) (sigma) (Clane)
       (hsigma0) (hsigmaHalf) (hmaxLane) (hE2) (hcollarBaseOutput) (k) (R) (hR)
-  let depthFactor : ℝ := (3 : ℝ) ^ (M.gamma * ((k : ℝ) + 1))
-  let rarePerLaneScale : ℝ := depthFactor * laneEps ^ 8
-  let collarBase : Cutoff.CutoffSample d → ℝ :=
-    Algsuperdiff.Section3.Provider.CoarseEllipticity.probeSharpFramedCollarBaseTraceLane
-      M R (E : ℝ)
-        (Algsuperdiff.Section3.Provider.CoarseEllipticity.collarBandMeanDepth
-          M (E : ℝ))
-  let collarHead : Cutoff.CutoffSample d → ℝ := fun omega =>
-    ∑ j : Fin d, ∑' n : ℕ,
-      Algsuperdiff.Section3.Provider.Multiscale.probeSharpFramedCollarWavePart
-        M R.scale (E : ℝ)
-        Algsuperdiff.Section3.Provider.CoarseEllipticity.bfaProfileB
-        (Algsuperdiff.Section3.Provider.CoarseEllipticity.collarBandMeanDepth
-          M (E : ℝ)) n (m - 1) (basisVec j)
-        (Algsuperdiff.Section3.Provider.Affine.superposedGradConst d)
-        (fun eta => Algsuperdiff.Section3.Provider.Multiscale.waveHeadTerm
-          M R.scale (E : ℝ)
-          Algsuperdiff.Section3.Provider.CoarseEllipticity.bfaProfileB
-          (Algsuperdiff.Section3.Provider.CoarseEllipticity.probeSharpLayerAnchor
-            R.scale
-            Algsuperdiff.Section3.Provider.CoarseEllipticity.bfaProfileB
-            (Algsuperdiff.Section3.Provider.CoarseEllipticity.collarBandMeanDepth
-              M (E : ℝ)) n) eta ^ 2)
-        (Algsuperdiff.Section3.Cutoff.translateCutoffSample
-          (triadicCubeShift R) omega)
-  let collarBand : Cutoff.CutoffSample d → ℝ :=
-    Algsuperdiff.Section3.Provider.CoarseEllipticity.probeSharpFramedCollarBandMeanTunedTraceLane
-      M m R (E : ℝ)
-  let collarDeep : Cutoff.CutoffSample d → ℝ :=
-    Algsuperdiff.Section3.Provider.CoarseEllipticity.probeSharpFramedCollarDeepTailTraceLane
-      M m R (E : ℝ)
-  let collarAfter : Cutoff.CutoffSample d → ℝ :=
-    Algsuperdiff.Section3.Provider.CoarseEllipticity.probeSharpFramedCollarAfterBandTraceLane
-      M m R (E : ℝ)
   have hcollarHead :=
     collar_head_tuned_trace_is_big_o_with_eighth_power
       M hR hstate hsigma0 hsigmaHalf hmaxLane hE2 hcollarHeadOutput
@@ -3087,42 +3017,6 @@ private theorem superposedFluxUpperPerDescendant_comparisonBounds3 :
   obtain ⟨hcollarBase, hcollarHead⟩ :=
     @superposedFluxUpperPerDescendant_comparisonBounds2 (d) (M) (m) (E) (hstate) (sigma) (Clane)
       (hsigma0) (hsigmaHalf) (hmaxLane) (hE2) (hcollarBaseOutput) (hcollarHeadOutput) (k) (R) (hR)
-  let laneX : ℝ := (E : ℝ)⁻¹ ^ 2 * M.gamma⁻¹
-  let laneEps : ℝ := Real.exp (-(Clane⁻¹ * laneX))
-  let depthFactor : ℝ := (3 : ℝ) ^ (M.gamma * ((k : ℝ) + 1))
-  let rarePerLaneScale : ℝ := depthFactor * laneEps ^ 8
-  let collarBase : Cutoff.CutoffSample d → ℝ :=
-    Algsuperdiff.Section3.Provider.CoarseEllipticity.probeSharpFramedCollarBaseTraceLane
-      M R (E : ℝ)
-        (Algsuperdiff.Section3.Provider.CoarseEllipticity.collarBandMeanDepth
-          M (E : ℝ))
-  let collarHead : Cutoff.CutoffSample d → ℝ := fun omega =>
-    ∑ j : Fin d, ∑' n : ℕ,
-      Algsuperdiff.Section3.Provider.Multiscale.probeSharpFramedCollarWavePart
-        M R.scale (E : ℝ)
-        Algsuperdiff.Section3.Provider.CoarseEllipticity.bfaProfileB
-        (Algsuperdiff.Section3.Provider.CoarseEllipticity.collarBandMeanDepth
-          M (E : ℝ)) n (m - 1) (basisVec j)
-        (Algsuperdiff.Section3.Provider.Affine.superposedGradConst d)
-        (fun eta => Algsuperdiff.Section3.Provider.Multiscale.waveHeadTerm
-          M R.scale (E : ℝ)
-          Algsuperdiff.Section3.Provider.CoarseEllipticity.bfaProfileB
-          (Algsuperdiff.Section3.Provider.CoarseEllipticity.probeSharpLayerAnchor
-            R.scale
-            Algsuperdiff.Section3.Provider.CoarseEllipticity.bfaProfileB
-            (Algsuperdiff.Section3.Provider.CoarseEllipticity.collarBandMeanDepth
-              M (E : ℝ)) n) eta ^ 2)
-        (Algsuperdiff.Section3.Cutoff.translateCutoffSample
-          (triadicCubeShift R) omega)
-  let collarBand : Cutoff.CutoffSample d → ℝ :=
-    Algsuperdiff.Section3.Provider.CoarseEllipticity.probeSharpFramedCollarBandMeanTunedTraceLane
-      M m R (E : ℝ)
-  let collarDeep : Cutoff.CutoffSample d → ℝ :=
-    Algsuperdiff.Section3.Provider.CoarseEllipticity.probeSharpFramedCollarDeepTailTraceLane
-      M m R (E : ℝ)
-  let collarAfter : Cutoff.CutoffSample d → ℝ :=
-    Algsuperdiff.Section3.Provider.CoarseEllipticity.probeSharpFramedCollarAfterBandTraceLane
-      M m R (E : ℝ)
   rcases hcollarHead with
     ⟨hcollarHeadNonneg, hcollarHeadMeasurable,
       hcollarHeadENNRealEq, hcollarHead⟩
@@ -3168,13 +3062,6 @@ private theorem superposedFluxUpperPerDescendant_comparisonBounds4 :
       hwaveRareNonneg, hwaveRareMeasurable, _,
       _, hwaveENNRealDom,
       hwaveBoundedO, hwaveRareO, _, hwaveScaleLe⟩
-  let perCubeScale : ℝ :=
-    Algsuperdiff.Section3.Provider.CoarseEllipticity.upperSaturatedPerCubeAmplitude
-      Clane (Disorder.cstar M) M.gamma k
-  let ordinaryLane : Fin 3 → Cutoff.CutoffSample d → ℝ :=
-    ![headOrdinary, deepOrdinary, afterOrdinary]
-  let Uone : Cutoff.CutoffSample d → ℝ := fun omega =>
-    ∑ i : Fin 3, ordinaryLane i omega
   obtain ⟨hordinaryLaneNonneg, hUoneNonneg, hUoneMeasurable, hUone⟩ :=
     @superposedFlux_ordinaryContribution (d) (M) (sigma) (Clane) (hsigma0) (hsigmaHalf) (hlanePos)
       (k) (headOrdinary) (headOrdinaryScale) (hheadOrdinaryNonneg) (hheadOrdinaryMeasurable)
@@ -3190,11 +3077,6 @@ private theorem superposedFluxUpperPerDescendant_comparisonBounds4 :
         (hbandRareO) (hbandRareScaleLe) (deepRare) (deepRareScale) (hdeepRareO) (hdeepRareScaleLe)
           (afterRare) (afterRareScale) (hafterRareO) (hafterRareScaleLe) (waveBounded) (waveRare)
             (hwaveBoundedO) (hwaveRareO) (hwaveScaleLe)
-  let rareLane : Fin 12 → Cutoff.CutoffSample d → ℝ :=
-    ![headRare, bandRare, deepRare, afterRare, waveBounded, waveRare,
-      collarBase, collarHead, collarBand, collarDeep, collarAfter, collarWave]
-  let Uexp : Cutoff.CutoffSample d → ℝ := fun omega =>
-    ∑ i : Fin 12, rareLane i omega
   obtain ⟨hrareLaneNonneg, hUexpNonneg, hUexpMeasurable, hUexpRaw⟩ :=
     @superposedFluxUpperPerDescendant_momentBounds2 (d) (M) (m) (E) (sigma) (Clane) (hsigma0)
       (hsigmaHalf) (k) (R) (headRare) (hheadRareNonneg) (hheadRareMeasurable) (bandRare)
@@ -3378,38 +3260,6 @@ theorem superposedFlux_upper_per_descendant_split
   let laneEps : ℝ := Real.exp (-(Clane⁻¹ * laneX))
   let depthFactor : ℝ := (3 : ℝ) ^ (M.gamma * ((k : ℝ) + 1))
   let rarePerLaneScale : ℝ := depthFactor * laneEps ^ 8
-  let collarBase : Cutoff.CutoffSample d → ℝ :=
-    Algsuperdiff.Section3.Provider.CoarseEllipticity.probeSharpFramedCollarBaseTraceLane
-      M R (E : ℝ)
-        (Algsuperdiff.Section3.Provider.CoarseEllipticity.collarBandMeanDepth
-          M (E : ℝ))
-  let collarHead : Cutoff.CutoffSample d → ℝ := fun omega =>
-    ∑ j : Fin d, ∑' n : ℕ,
-      Algsuperdiff.Section3.Provider.Multiscale.probeSharpFramedCollarWavePart
-        M R.scale (E : ℝ)
-        Algsuperdiff.Section3.Provider.CoarseEllipticity.bfaProfileB
-        (Algsuperdiff.Section3.Provider.CoarseEllipticity.collarBandMeanDepth
-          M (E : ℝ)) n (m - 1) (basisVec j)
-        (Algsuperdiff.Section3.Provider.Affine.superposedGradConst d)
-        (fun eta => Algsuperdiff.Section3.Provider.Multiscale.waveHeadTerm
-          M R.scale (E : ℝ)
-          Algsuperdiff.Section3.Provider.CoarseEllipticity.bfaProfileB
-          (Algsuperdiff.Section3.Provider.CoarseEllipticity.probeSharpLayerAnchor
-            R.scale
-            Algsuperdiff.Section3.Provider.CoarseEllipticity.bfaProfileB
-            (Algsuperdiff.Section3.Provider.CoarseEllipticity.collarBandMeanDepth
-              M (E : ℝ)) n) eta ^ 2)
-        (Algsuperdiff.Section3.Cutoff.translateCutoffSample
-          (triadicCubeShift R) omega)
-  let collarBand : Cutoff.CutoffSample d → ℝ :=
-    Algsuperdiff.Section3.Provider.CoarseEllipticity.probeSharpFramedCollarBandMeanTunedTraceLane
-      M m R (E : ℝ)
-  let collarDeep : Cutoff.CutoffSample d → ℝ :=
-    Algsuperdiff.Section3.Provider.CoarseEllipticity.probeSharpFramedCollarDeepTailTraceLane
-      M m R (E : ℝ)
-  let collarAfter : Cutoff.CutoffSample d → ℝ :=
-    Algsuperdiff.Section3.Provider.CoarseEllipticity.probeSharpFramedCollarAfterBandTraceLane
-      M m R (E : ℝ)
   have hcollarBand :=
     isBigOWith_upperProfileTarget_probeSharpFramedCollarBandMeanTunedTraceLane_frozenReserve
       M hR hstate hsigma0 hsigmaHalf hmaxLane hE2
@@ -3466,15 +3316,6 @@ theorem superposedFlux_upper_per_descendant_split
                                 (hcollarHeadMeasurable) (hcollarHead) (hcollarBand) (hcollarDeep)
                                   (hcollarAfterNonneg) (hcollarAfterMeasurable) (hcollarAfter)
                                     (hcollarWaveRaw)
-  let ordinaryLane : Fin 3 → Cutoff.CutoffSample d → ℝ :=
-    ![headOrdinary, deepOrdinary, afterOrdinary]
-  let Uone : Cutoff.CutoffSample d → ℝ := fun omega =>
-    ∑ i : Fin 3, ordinaryLane i omega
-  let rareLane : Fin 12 → Cutoff.CutoffSample d → ℝ :=
-    ![headRare, bandRare, deepRare, afterRare, waveBounded, waveRare,
-      collarBase, collarHead, collarBand, collarDeep, collarAfter, collarWave]
-  let Uexp : Cutoff.CutoffSample d → ℝ := fun omega =>
-    ∑ i : Fin 12, rareLane i omega
   let K : ℝ := 12 *
     upperAfterBandRareTriangleConst
   simp only [ENNReal.tsum_add, Finset.sum_add_distrib] at hEnvelope

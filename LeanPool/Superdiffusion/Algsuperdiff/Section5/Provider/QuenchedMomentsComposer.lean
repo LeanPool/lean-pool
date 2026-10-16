@@ -221,11 +221,7 @@ theorem meanSq_quenched_of_moments (M : ABKModel d) (t C0 : ℝ)
   let instComplete : CompleteSpace (OnePoint (Vec d)) :=
     input.toOnePointRegular.completeSpace
   let m := confinementScale S L omega.1
-  let scaleSq : ℝ := ((3 : ℝ) ^ m) ^ (2 : ℕ)
   let err : ℝ := EB m omega.1
-  let fullMean : Vec d :=
-    ∫ path, onePointRetract (0 : Vec d) (path t.toNNReal)
-      ∂input.wholeSpaceProcess ((0 : Vec d) : OnePoint (Vec d))
   have hraw := vecNormSq_fullMean_le_of_stopped_and_removal
     M.shellPrefix.gamma_pos hgamma4 hscaleSq hCremove hC5 hC4
   have herrSq : 0 ≤ err ^ (2 : ℕ) := sq_nonneg err

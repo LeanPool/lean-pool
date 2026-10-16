@@ -56,7 +56,6 @@ theorem potentialZeroTraceFieldOn_globalCompetitorSlope_sub_badComponent
   let : NeZero d :=
     ⟨Nat.ne_of_gt (lt_of_lt_of_le (by omega) M.shellPrefix.dimension)⟩
   let hn : ℕ → ℕ := whitneyScale M m E b k₀ omega
-  let I : Set (TriadicCube d) := badFamily M m hn omega
   have hwindow := badComponents_window_badFamily hb0 hb hk₀ hne C hCmem
   let N : Finset (TriadicCube d) := hwindow.1.toFinset
   have hmono : Monotone hn := by

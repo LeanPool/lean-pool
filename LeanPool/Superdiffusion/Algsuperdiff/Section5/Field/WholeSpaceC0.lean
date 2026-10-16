@@ -276,7 +276,6 @@ theorem zero_at_infty_streamAnalyticMinimalResolventReal_of_compact
     Tendsto ((streamWholeSpaceAnalyticData M omega).analyticMinimalResolventReal
       mu f f.continuous.measurable (D := ‖f‖) (by exact abs_le_norm_streamC0 f))
       (cocompact (Vec d)) (nhds 0) := by
-  let A := streamWholeSpaceAnalyticData M omega
   let fp : Vec d → ℝ := fun x ↦ max (f x) 0
   let fn : Vec d → ℝ := fun x ↦ max (-f x) 0
   have hfp0 : ∀ x, 0 ≤ fp x := fun x ↦ le_max_right _ _

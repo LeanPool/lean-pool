@@ -1666,12 +1666,6 @@ theorem isBigOWith_upperProfileTarget_collarWaveTailFiniteTrace
   have hd : 2 ≤ d := M.shellPrefix.dimension
   let k₀ : ℕ := collarBandMeanDepth M (E : ℝ)
   let shift : Vec d := triadicCubeShift R
-  let alpha : ℝ := upperProfileBaseSigma sigma /
-    ((2 * (M.gamma / 2) + 2 * bfaProfileB) / bfaProfileB)
-  let beta : ℝ := upperProfileTailSigma sigma
-  let AP : ℝ := hsepAmplitude (upperProfileSigma sigma) bfaProfileB ^
-    bfaPower M.gamma bfaProfileB
-  let G : ℝ := HCPolySupport.Book.Ch04.gammaProductConst alpha beta
   let waveC : ℝ := 4 * waveTailProfileConst d
   let Xpar : ℝ := (E : ℝ)⁻¹ ^ 2 * M.gamma⁻¹
   let rate : ℝ := probeSharpWaveTailTunedRate d
@@ -1688,13 +1682,6 @@ theorem isBigOWith_upperProfileTarget_collarWaveTailFiniteTrace
     (64 * superposedFluxHsepConst ^ (3 : ℝ) *
       (waveC ^ 2 * sigma⁻¹ ^ 2 * Z))
   let B : ℕ → ℝ := fun n => B₀ * whitneyDecayRatio ^ n
-  let j₀ : Fin d := ⟨0, lt_of_lt_of_le Nat.zero_lt_two hd⟩
-  let X : ℕ → CutoffSample d → ℝ := fun n omega =>
-    probeSharpFramedCollarWavePart M R.scale (E : ℝ) bfaProfileB
-      k₀ n (m - 1) (basisVec j₀) (superposedGradConst d)
-      (fun eta => waveTailTerm M R.scale (E : ℝ) bfaProfileB R.scale
-        (probeSharpLayerAnchor R.scale bfaProfileB k₀ n) eta ^ 2)
-      (translateCutoffSample shift omega)
   let K : ℝ := 1 +
     (d : ℝ) * upperAfterBandRareTriangleConst *
       probeMeanGoodWaveDimensionConst d * (5 * (d : ℝ) ^ 2) * fixed *

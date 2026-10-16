@@ -258,7 +258,6 @@ private theorem fullBlockQuadratic_starredCoarse_sub_comparator_sq_le_of_unit
           CFC.sqrt B) q) ^ (2 : ℕ) ≤
       6 * (H + H ^ (2 : ℕ)) := by
   let a0 : Mat d := Observable.isotropicComparatorMatrix sigma
-  let B : FullBlockMat d := Book.Ch02.constantFullBlockMatrix a0
   let C0 : BlockMat d := Book.Ch02.constantBlockMatrix a0
   let A : BlockMat d := Book.Ch02.coarseBlockMatrix
     (Book.Ch02.cubeDomain R) (F.coeffOn R)

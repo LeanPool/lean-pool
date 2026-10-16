@@ -1584,11 +1584,8 @@ private theorem upper_finite_two_le_and_infinity_split_of_per_descendant
     (collar k)⁻¹ * Gexp k omega
   let Fexp : ℕ → Cutoff.CutoffSample d → ℝ := fun k omega =>
     ctop * Wexp 0 omega + Wexp k omega
-  let afold : ℕ → ℝ := fun k =>
-    foldedAmp sigmaExp ctop (fun j => gridBlockAmp d sigmaExp abase j) k
   let Xexp : ℕ → Cutoff.CutoffSample d → ℝ := fun k omega =>
     gridWeight rho k * Fexp k omega
-  let bexp : ℕ → ℝ := fun k => gridWeight rho k * afold k
   let Rraw : Cutoff.CutoffSample d → ℝ := fun omega => ∑' k, Xexp k omega
   let Yexp : Cutoff.CutoffSample d → ℝ := hRrawAE.mk Rraw
   let Odepth : ℕ → Cutoff.CutoffSample d → ℝ := fun n => Gone n.pred

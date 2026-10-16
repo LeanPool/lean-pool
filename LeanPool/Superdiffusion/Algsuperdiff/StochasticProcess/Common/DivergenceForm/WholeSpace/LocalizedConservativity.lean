@@ -78,14 +78,11 @@ theorem abs_analyticCubeBoundaryRemainder_le_localized
             (-(euclideanNorm (x - 0) + L.freezingRadius x / 2) -
               (-cubeBoundaryCutoffInnerRadius m + 1)))) := by
   let hU := isOpenBoundedConvexDomain_wholeSpaceCube d m
-  let u := A.cubeBoundaryRemainderH1 mu m
   let eta := cubeBoundaryCutoff (d := d) m
   let psi := Decay.inwardPhase (0 : Vec d) 1
   let radius : ℝ := (3 : ℝ) ^ m
   let Ks := L.roughBound 0 radius
   let Kl := L.smoothDivBound 0 radius
-  let E : ℝ := (mu : ℝ) * (min (mu : ℝ) A.nu)⁻¹ *
-    (volume (wholeSpaceCube d m)).toReal
   let Ceta := cubeBoundaryCutoffUniformGradientBudget (d := d)
   have hradius : 0 ≤ radius := (pow_pos (by norm_num) m).le
   have hKs : 0 ≤ Ks := L.roughBound_nonneg 0 radius hradius

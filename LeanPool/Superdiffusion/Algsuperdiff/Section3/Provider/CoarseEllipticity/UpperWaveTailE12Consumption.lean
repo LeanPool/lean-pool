@@ -1290,16 +1290,6 @@ theorem exists_good_wave_tail_tuned_finite_trace_split
   have hrare0 : ∀ omega, 0 ≤ rare omega := fun omega =>
     mul_nonneg hC0 (tsum_nonneg fun n => probeSharpWaveTailTunedRareLayer_nonneg
       M R.scale (E : ℝ) k n (translateCutoffSample shift omega))
-  let L : Fin d → ℕ → CutoffSample d → ℝ := fun j n omega =>
-    probeSharpFramedGoodWavePart M R.scale (E : ℝ) bfaProfileB
-      (collarBandMeanDepth M (E : ℝ)) n (m - 1) (basisVec j)
-      (fun eta => waveTailTerm M R.scale (E : ℝ) bfaProfileB R.scale
-        (probeSharpLayerAnchor R.scale bfaProfileB
-          (collarBandMeanDepth M (E : ℝ)) n) eta ^ 2)
-      (translateCutoffSample shift omega)
-  let traceR : CutoffSample d → ℝ := fun omega => ∑ j : Fin d, ∑' n, L j n omega
-  let traceE : CutoffSample d → ENNReal := fun omega =>
-    ∑ j : Fin d, ∑' n, ENNReal.ofReal (L j n omega)
   have hbridges := @waveTail_trace_ofReal_domination (d) (M) (m) (k) (R) (hR) (E) (hstate) (sigma)
     (hsigma0) (hsigma) (hEgamma) (hd) (hmaxAux) (hBtranslated) (hVtranslated) (hbounded0) (hrare0)
   have hpoint := hbridges.mono fun _ h => h.1
