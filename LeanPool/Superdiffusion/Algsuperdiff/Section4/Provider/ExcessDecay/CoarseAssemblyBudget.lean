@@ -119,12 +119,8 @@ theorem sqrt_le_of_boundaryCaccioppoliDisplay {LCE D3 P Lam T2 Nsq E18 DirE : �
 
 /-- The covering cube's Besov scale weight is the frame factor `3^{-(n+2)}`. -/
 theorem cubeBesovScaleWeight_one_originCube_eq (k : ℤ) :
-    cubeBesovScaleWeight (1 : ℝ) (originCube d k) = Real.rpow (3 : ℝ) (-((k : ℤ) : ℝ)) := by
-  have h := cubeBesovScaleWeight_neg_originCube (d := d) k (-1)
-  rw [neg_neg] at h
-  rw [h]
-  congr 1
-  ring
+    cubeBesovScaleWeight (1 : ℝ) (originCube d k) = Real.rpow (3 : ℝ) (-((k : ℤ) : ℝ)) :=
+  cubeBesovScaleWeight_one_originCube k
 
 /-- The frame factor cancels the covering cube's own diameter. -/
 theorem rpow_three_neg_mul_zpow_self (k : ℤ) :

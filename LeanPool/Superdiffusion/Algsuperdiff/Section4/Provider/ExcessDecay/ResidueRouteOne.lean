@@ -1330,12 +1330,9 @@ theorem exists_flushResidue_route1_composed_errorWeighted (d : ℕ) [NeZero d] :
       (parentRebasedFamily M L (n + 3) (flushSubCentre z m n i sigma) z omega)
       (scalarComparator (Annealed.sigmaBar M (n + 3)).2) (s / 3) s
       (fun y => -g (y + flushSubCentre z m n i sigma)) ≤
-      b0 * (besovGagliardoConstant d * Q3sn * (flushWindowConst d * Gs)) := by
-    rw [coarseGrainingForceTerm]
-    refine mul_le_mul hbrkCap ?_ hGbes0 hb0
-    refine hGbes.trans ?_
-    exact mul_le_mul_of_nonneg_left hYchild3
-      (mul_nonneg (besovGagliardoConstant_nonneg d) hQ3sn0)
+      b0 * (besovGagliardoConstant d * Q3sn * (flushWindowConst d * Gs)) :=
+    coarseGrainingForceTerm_le_of_seminorm_bounds _ _ _ _ _ _ hb0
+      (mul_nonneg (besovGagliardoConstant_nonneg d) hQ3sn0) hbrkCap hGbes0 hGbes hYchild3
   -- (e) the frame division
   set ET : ℝ := coarseGrainingEnergyTerm (originCube d n)
       (parentRebasedFamily M L (n + 3) (flushSubCentre z m n i sigma) z omega)
@@ -1350,12 +1347,8 @@ theorem exists_flushResidue_route1_composed_errorWeighted (d : ℕ) [NeZero d] :
       (fun y => -g (y + flushSubCentre z m n i sigma))
     with hFTdef
   have hW1 : cubeBesovScaleWeight (1 : ℝ) (originCube d n) =
-      Real.rpow (3 : ℝ) (-(n : ℝ)) := by
-    have h := cubeBesovScaleWeight_neg_originCube (d := d) n (-1)
-    rw [neg_neg] at h
-    rw [h]
-    congr 1
-    ring
+      Real.rpow (3 : ℝ) (-(n : ℝ)) :=
+    cubeBesovScaleWeight_one_originCube n
   rw [hW1] at hxf
   obtain ⟨hfac0, hsinv, hstep, hleg1, hleg2, hleg3⟩ :=
     (show ((0 : ℝ) ≤ sig⁻¹ * R3n) ∧ (sig⁻¹ * sig = 1) ∧ (Lhs ≤ (sig⁻¹ * R3n) *

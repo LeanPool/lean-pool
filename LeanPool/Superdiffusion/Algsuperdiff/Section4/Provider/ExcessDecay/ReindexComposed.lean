@@ -499,49 +499,14 @@ theorem sqrt_constantDatumAnchorEnergyRHSOn_addThree_le (M : ABKModel d) (n : �
           Real.sqrt ((Annealed.sigmaBar M (n + 3) : ℝ))⁻¹ *
           Real.rpow (3 : ℝ) (s * (((n + 2 : ℤ)) : ℝ)) *
           (Support.normalizedGagliardoESeminormOn W s g).toReal := by
-  have hsig : (0 : ℝ) < (Annealed.sigmaBar M (n + 3) : ℝ) := (Annealed.sigmaBar M (n + 3)).2
-  set X : ℝ := (eLpNorm (fun y => f y - volumeAverage W f) 2
-    (Support.normalizedVolumeMeasureOn W)).toReal with hXdef
-  set Y : ℝ := (Support.normalizedGagliardoESeminormOn W s g).toReal with hYdef
-  have hX : 0 ≤ X := ENNReal.toReal_nonneg
-  have hY : 0 ≤ Y := ENNReal.toReal_nonneg
-  set P3 : ℝ := Real.rpow (3 : ℝ) (-2 * (((n + 2 : ℤ)) : ℝ)) with hP3def
-  set Q3 : ℝ := Real.rpow (3 : ℝ) (-(((n + 2 : ℤ)) : ℝ)) with hQ3def
-  set PS : ℝ := Real.rpow s (-6 : ℝ) with hPSdef
-  set QS : ℝ := Real.rpow s (-(3 : ℝ)) with hQSdef
-  set P3s : ℝ := Real.rpow (3 : ℝ) (2 * s * (((n + 2 : ℤ)) : ℝ)) with hP3sdef
-  set Q3s : ℝ := Real.rpow (3 : ℝ) (s * (((n + 2 : ℤ)) : ℝ)) with hQ3sdef
-  set SIG : ℝ := (Annealed.sigmaBar M (n + 3) : ℝ) with hSIGdef
-  have hP3nn : (0 : ℝ) ≤ P3 := Real.rpow_nonneg (by norm_num) _
-  have hPSnn : (0 : ℝ) ≤ PS := Real.rpow_nonneg hs.le _
-  have hP3snn : (0 : ℝ) ≤ P3s := Real.rpow_nonneg (by norm_num) _
-  have hP3sqrt : Real.sqrt P3 = Q3 := by
-    rw [hP3def, hQ3def,
-      show (-2 : ℝ) * (((n + 2 : ℤ)) : ℝ) = 2 * (-(((n + 2 : ℤ)) : ℝ)) by ring]
-    exact sqrt_rpow_two_mul (by norm_num) _
-  have hPSsqrt : Real.sqrt PS = QS := by
-    rw [hPSdef, hQSdef, show (-6 : ℝ) = 2 * (-(3 : ℝ)) by norm_num]
-    exact sqrt_rpow_two_mul hs _
-  have hP3ssqrt : Real.sqrt P3s = Q3s := by
-    rw [hP3sdef, hQ3sdef,
-      show (2 : ℝ) * s * (((n + 2 : ℤ)) : ℝ) = 2 * (s * (((n + 2 : ℤ)) : ℝ)) by ring]
-    exact sqrt_rpow_two_mul (by norm_num) _
-  have hAnn : (0 : ℝ) ≤ SIG * P3 * X ^ (2 : ℕ) :=
-    mul_nonneg (mul_nonneg hsig.le hP3nn) (pow_nonneg hX 2)
-  have hBnn : (0 : ℝ) ≤ PS * SIG⁻¹ * P3s * Y ^ (2 : ℕ) :=
-    mul_nonneg (mul_nonneg (mul_nonneg hPSnn (inv_nonneg.mpr hsig.le)) hP3snn)
-      (pow_nonneg hY 2)
-  have hA : Real.sqrt (SIG * P3 * X ^ (2 : ℕ)) = Real.sqrt SIG * Q3 * X := by
-    rw [Real.sqrt_mul (mul_nonneg hsig.le hP3nn) (X ^ (2 : ℕ)), Real.sqrt_sq hX,
-      Real.sqrt_mul hsig.le P3, hP3sqrt]
-  have hB : Real.sqrt (PS * SIG⁻¹ * P3s * Y ^ (2 : ℕ)) =
-      QS * Real.sqrt SIG⁻¹ * Q3s * Y := by
-    have h1 : (0 : ℝ) ≤ PS * SIG⁻¹ := mul_nonneg hPSnn (inv_nonneg.mpr hsig.le)
-    rw [Real.sqrt_mul (mul_nonneg h1 hP3snn) (Y ^ (2 : ℕ)), Real.sqrt_sq hY,
-      Real.sqrt_mul h1 P3s, Real.sqrt_mul hPSnn SIG⁻¹, hPSsqrt, hP3ssqrt]
-  rw [constantDatumAnchorEnergyRHSOnAddThree]
-  exact le_trans (sqrt_add_le_sqrt_add_sqrt hAnn hBnn)
-    (le_of_eq (by rw [hA, hB]))
+  simpa only [constantDatumAnchorEnergyRHSOnAddThree,
+    show ((-6) : ℝ) / 2 = -(3 : ℝ) by norm_num] using
+    sqrt_scalar_anchor_energy_le (Annealed.sigmaBar M (n + 3) : ℝ) s
+      (((n + 2 : ℤ)) : ℝ) (-6)
+      (eLpNorm (fun y => f y - volumeAverage W f) 2
+        (Support.normalizedVolumeMeasureOn W)).toReal
+      (Support.normalizedGagliardoESeminormOn W s g).toReal
+      (Annealed.sigmaBar M (n + 3)).2 hs ENNReal.toReal_nonneg ENNReal.toReal_nonneg
 
 /-! ## 2. The slot-free energy bridge -/
 

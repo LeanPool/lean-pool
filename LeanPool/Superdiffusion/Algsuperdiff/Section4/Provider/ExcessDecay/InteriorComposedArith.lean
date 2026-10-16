@@ -167,6 +167,41 @@ theorem sqrt_mul_sqrt_inv {a : ℝ} (ha : 0 < a) :
     Real.sqrt a * Real.sqrt a⁻¹ = 1 := by
   rw [← Real.sqrt_mul ha.le, mul_inv_cancel₀ ha.ne', Real.sqrt_one]
 
+/-- The two scalar energy legs, for any positive diffusivity and real forcing exponent. -/
+theorem sqrt_scalar_anchor_energy_le (sig s t exponent X Y : ℝ)
+    (hsig : 0 < sig) (hs : 0 < s) (hX : 0 ≤ X) (hY : 0 ≤ Y) :
+    Real.sqrt (sig * Real.rpow (3 : ℝ) (-2 * t) * X ^ 2 +
+      Real.rpow s exponent * sig⁻¹ * Real.rpow (3 : ℝ) (2 * s * t) * Y ^ 2) ≤
+      Real.sqrt sig * Real.rpow (3 : ℝ) (-t) * X +
+        Real.rpow s (exponent / 2) * Real.sqrt sig⁻¹ * Real.rpow (3 : ℝ) (s * t) * Y := by
+  have hP0 : 0 ≤ Real.rpow (3 : ℝ) (-2 * t) := Real.rpow_nonneg (by norm_num) _
+  have hS0 : 0 ≤ Real.rpow s exponent := Real.rpow_nonneg hs.le _
+  have hQ0 : 0 ≤ Real.rpow (3 : ℝ) (2 * s * t) := Real.rpow_nonneg (by norm_num) _
+  have hSInv0 : 0 ≤ Real.rpow s exponent * sig⁻¹ :=
+    mul_nonneg hS0 (inv_nonneg.mpr hsig.le)
+  have hP : Real.sqrt (Real.rpow (3 : ℝ) (-2 * t)) = Real.rpow (3 : ℝ) (-t) := by
+    rw [show (-2 : ℝ) * t = 2 * (-t) by ring]
+    exact sqrt_rpow_two_mul (by norm_num) _
+  have hS : Real.sqrt (Real.rpow s exponent) = Real.rpow s (exponent / 2) := by
+    conv_lhs => rw [show exponent = 2 * (exponent / 2) by ring]
+    exact sqrt_rpow_two_mul hs _
+  have hQ : Real.sqrt (Real.rpow (3 : ℝ) (2 * s * t)) = Real.rpow (3 : ℝ) (s * t) := by
+    rw [show (2 : ℝ) * s * t = 2 * (s * t) by ring]
+    exact sqrt_rpow_two_mul (by norm_num) _
+  have hA : Real.sqrt (sig * Real.rpow (3 : ℝ) (-2 * t) * X ^ 2) =
+      Real.sqrt sig * Real.rpow (3 : ℝ) (-t) * X := by
+    rw [Real.sqrt_mul (mul_nonneg hsig.le hP0) (X ^ 2), Real.sqrt_sq hX,
+      Real.sqrt_mul hsig.le (Real.rpow (3 : ℝ) (-2 * t)), hP]
+  have hB : Real.sqrt (Real.rpow s exponent * sig⁻¹ * Real.rpow (3 : ℝ) (2 * s * t) * Y ^ 2) =
+      Real.rpow s (exponent / 2) * Real.sqrt sig⁻¹ * Real.rpow (3 : ℝ) (s * t) * Y := by
+    rw [Real.sqrt_mul (mul_nonneg hSInv0 hQ0) (Y ^ 2), Real.sqrt_sq hY,
+      Real.sqrt_mul hSInv0 (Real.rpow (3 : ℝ) (2 * s * t)),
+      Real.sqrt_mul hS0 sig⁻¹, hS, hQ]
+  exact (sqrt_add_le_sqrt_add_sqrt
+    (mul_nonneg (mul_nonneg hsig.le hP0) (sq_nonneg X))
+    (mul_nonneg (mul_nonneg hSInv0 hQ0) (sq_nonneg Y))).trans
+      (le_of_eq (by rw [hA, hB]))
+
 /-- **The two legs of the interior-Caccioppoli right-hand side.**
 
 ```text
@@ -184,48 +219,13 @@ theorem sqrt_interiorAnchorEnergyRHSOn_le (M : ABKModel d) (n : ℤ) {s : ℝ}
           Real.sqrt ((Annealed.sigmaBar M (n + 2) : ℝ))⁻¹ *
           Real.rpow (3 : ℝ) (s * (((n + 2 : ℤ)) : ℝ)) *
           (Support.normalizedGagliardoESeminormOn W s g).toReal := by
-  have hsig : (0 : ℝ) < (Annealed.sigmaBar M (n + 2) : ℝ) := (Annealed.sigmaBar M (n + 2)).2
-  set X : ℝ := (eLpNorm (fun y => f y - volumeAverage W f) 2
-    (Support.normalizedVolumeMeasureOn W)).toReal with hXdef
-  set Y : ℝ := (Support.normalizedGagliardoESeminormOn W s g).toReal with hYdef
-  have hX : 0 ≤ X := ENNReal.toReal_nonneg
-  have hY : 0 ≤ Y := ENNReal.toReal_nonneg
-  set P3 : ℝ := Real.rpow (3 : ℝ) (-2 * (((n + 2 : ℤ)) : ℝ)) with hP3def
-  set Q3 : ℝ := Real.rpow (3 : ℝ) (-(((n + 2 : ℤ)) : ℝ)) with hQ3def
-  set PS : ℝ := Real.rpow s (-11 : ℝ) with hPSdef
-  set QS : ℝ := Real.rpow s (-(11 / 2 : ℝ)) with hQSdef
-  set P3s : ℝ := Real.rpow (3 : ℝ) (2 * s * (((n + 2 : ℤ)) : ℝ)) with hP3sdef
-  set Q3s : ℝ := Real.rpow (3 : ℝ) (s * (((n + 2 : ℤ)) : ℝ)) with hQ3sdef
-  set SIG : ℝ := (Annealed.sigmaBar M (n + 2) : ℝ) with hSIGdef
-  have hP3nn : (0 : ℝ) ≤ P3 := Real.rpow_nonneg (by norm_num) _
-  have hPSnn : (0 : ℝ) ≤ PS := Real.rpow_nonneg hs.le _
-  have hP3snn : (0 : ℝ) ≤ P3s := Real.rpow_nonneg (by norm_num) _
-  have hP3sqrt : Real.sqrt P3 = Q3 := by
-    rw [hP3def, hQ3def, show (-2 : ℝ) * (((n + 2 : ℤ)) : ℝ) = 2 * (-(((n + 2 : ℤ)) : ℝ)) by ring]
-    exact sqrt_rpow_two_mul (by norm_num) _
-  have hPSsqrt : Real.sqrt PS = QS := by
-    rw [hPSdef, hQSdef, show (-11 : ℝ) = 2 * (-(11 / 2 : ℝ)) by norm_num]
-    exact sqrt_rpow_two_mul hs _
-  have hP3ssqrt : Real.sqrt P3s = Q3s := by
-    rw [hP3sdef, hQ3sdef,
-      show (2 : ℝ) * s * (((n + 2 : ℤ)) : ℝ) = 2 * (s * (((n + 2 : ℤ)) : ℝ)) by ring]
-    exact sqrt_rpow_two_mul (by norm_num) _
-  have hAnn : (0 : ℝ) ≤ SIG * P3 * X ^ (2 : ℕ) :=
-    mul_nonneg (mul_nonneg hsig.le hP3nn) (pow_nonneg hX 2)
-  have hBnn : (0 : ℝ) ≤ PS * SIG⁻¹ * P3s * Y ^ (2 : ℕ) :=
-    mul_nonneg (mul_nonneg (mul_nonneg hPSnn (inv_nonneg.mpr hsig.le)) hP3snn)
-      (pow_nonneg hY 2)
-  have hA : Real.sqrt (SIG * P3 * X ^ (2 : ℕ)) = Real.sqrt SIG * Q3 * X := by
-    rw [Real.sqrt_mul (mul_nonneg hsig.le hP3nn) (X ^ (2 : ℕ)), Real.sqrt_sq hX,
-      Real.sqrt_mul hsig.le P3, hP3sqrt]
-  have hB : Real.sqrt (PS * SIG⁻¹ * P3s * Y ^ (2 : ℕ)) =
-      QS * Real.sqrt SIG⁻¹ * Q3s * Y := by
-    have h1 : (0 : ℝ) ≤ PS * SIG⁻¹ := mul_nonneg hPSnn (inv_nonneg.mpr hsig.le)
-    rw [Real.sqrt_mul (mul_nonneg h1 hP3snn) (Y ^ (2 : ℕ)), Real.sqrt_sq hY,
-      Real.sqrt_mul h1 P3s, Real.sqrt_mul hPSnn SIG⁻¹, hPSsqrt, hP3ssqrt]
-  rw [interiorAnchorEnergyRHSOn_def]
-  exact le_trans (sqrt_add_le_sqrt_add_sqrt hAnn hBnn)
-    (le_of_eq (by rw [hA, hB]))
+  simpa only [interiorAnchorEnergyRHSOn_def, show ((-11) : ℝ) / 2 = -(11 / 2 : ℝ) by norm_num] using
+    sqrt_scalar_anchor_energy_le (Annealed.sigmaBar M (n + 2) : ℝ) s
+      (((n + 2 : ℤ)) : ℝ) (-11)
+      (eLpNorm (fun y => f y - volumeAverage W f) 2
+        (Support.normalizedVolumeMeasureOn W)).toReal
+      (Support.normalizedGagliardoESeminormOn W s g).toReal
+      (Annealed.sigmaBar M (n + 2)).2 hs ENNReal.toReal_nonneg ENNReal.toReal_nonneg
 
 /-- The comparator's half-norm, in the `Real.sqrt` spelling. -/
 theorem constantCoeffMatrixNormHalf_scalarComparator_sqrt [NeZero d] {sigma : ℝ}

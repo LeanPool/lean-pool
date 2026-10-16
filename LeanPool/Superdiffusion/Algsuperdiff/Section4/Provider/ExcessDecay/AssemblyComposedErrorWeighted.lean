@@ -885,12 +885,9 @@ private theorem assemblyComposedErrorWeighted_comparisonBounds5 :
       (scalarComparator (Annealed.sigmaBar M (n + 3)).2) (s / 3) s
       (fun y => -g (y + x)) ≤
       b0 * (besovGagliardoConstant d * Q3sn *
-        (gagliardoWindowConst d * windowMoveConst d * Gs)) := by
-    rw [coarseGrainingForceTerm]
-    refine mul_le_mul hbrkCap ?_ hGbes0 hb0
-    refine hGbes.trans ?_
-    exact mul_le_mul_of_nonneg_left hYchild3
-      (mul_nonneg (besovGagliardoConstant_nonneg d) hQ3sn0)
+        (gagliardoWindowConst d * windowMoveConst d * Gs)) :=
+    coarseGrainingForceTerm_le_of_seminorm_bounds _ _ _ _ _ _ hb0
+      (mul_nonneg (besovGagliardoConstant_nonneg d) hQ3sn0) hbrkCap hGbes0 hGbes hYchild3
   exact ⟨hsubx, hErepCap, hErep0, hsig, hxf, hX0, hGs0, hHs0, hHn0, hS0, hQ3s0, hQ3sn0,
     hQ1s0, hR3n0, hS40, hS70, hS60, hSm30, hSm20, hsiginv0, hET, hYchild3, hFT⟩
 
@@ -1229,12 +1226,8 @@ theorem exists_boundaryClauseComposed_honest_errorWeighted (d : ℕ) [NeZero d] 
       (scalarComparator (Annealed.sigmaBar M (n + 3)).2) (s / 3) s (fun y => -g (y + x))
     with hFTdef
   have hW1 : cubeBesovScaleWeight (1 : ℝ) (originCube d n) =
-      Real.rpow (3 : ℝ) (-(n : ℝ)) := by
-    have h := cubeBesovScaleWeight_neg_originCube (d := d) n (-1)
-    rw [neg_neg] at h
-    rw [h]
-    congr 1
-    ring
+      Real.rpow (3 : ℝ) (-(n : ℝ)) :=
+    cubeBesovScaleWeight_one_originCube n
   rw [hW1] at hxf
   obtain ⟨hfac0, hsinv, hstep, hleg1, hleg2, hleg3⟩ :=
     (show ((0 : ℝ) ≤ sig⁻¹ * R3n) ∧ (sig⁻¹ * sig = 1) ∧ (Lhs ≤ (sig⁻¹ * R3n) *
