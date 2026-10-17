@@ -66,7 +66,7 @@ theorem safeStages_value_eq_getElem (P : ℕ → List ℕ)
     (hcover : ∀ n t, t < n → t ∈ P n)
     (n i : ℕ) (hi : i < (P n).length) : (P (i + 1)).getD i 0 = (P n)[i] := by
   have hi' : i < (P (i + 1)).length :=
-    lt_of_lt_of_le (Nat.lt_succ_self i) (safeStages_length P hcover (i + 1))
+    Nat.lt_of_lt_of_le (Nat.lt_succ_self i) (safeStages_length P hcover (i + 1))
   rw [List.getD_eq_getElem _ _ hi']
   let N := max n (i + 1)
   have h₁ : (P (i + 1)).IsPrefix (P N) :=
@@ -103,7 +103,7 @@ def permutationOfSafeStages (R : ℕ → ℕ → Prop) (P : ℕ → List ℕ)
   left_inv i := by
     dsimp only
     have hi : i < (P (i + 1)).length :=
-      lt_of_lt_of_le (Nat.lt_succ_self i) (safeStages_length P hcover (i + 1))
+      Nat.lt_of_lt_of_le (Nat.lt_succ_self i) (safeStages_length P hcover (i + 1))
     have hvalue := safeStages_value_eq_getElem P hstep hcover (i + 1) i hi
     have hmem : (P (i + 1)).getD i 0 ∈ P (i + 1) := by
       rw [hvalue]
@@ -161,7 +161,7 @@ theorem permutationOfSafeStages_apFree
   let f := permutationOfSafeStages R P hsafe hstep hcover
   let N := l + 1
   have hl : l < (P N).length :=
-    lt_of_lt_of_le (Nat.lt_succ_self l) (safeStages_length P hcover N)
+    Nat.lt_of_lt_of_le (Nat.lt_succ_self l) (safeStages_length P hcover N)
   have hk : k < (P N).length := Nat.lt_trans hkl hl
   have hj : j < (P N).length := Nat.lt_trans hjk hk
   have hi : i < (P N).length := Nat.lt_trans hij hj

@@ -94,7 +94,7 @@ theorem completion_total (hR : ∀ ⦃x y⦄, x ≠ y → R x y ∨ R y x)
   by_cases ha : a ∈ P
   · by_cases hb : b ∈ P
     · have hidx : P.idxOf a ≠ P.idxOf b := fun h => hne ((List.idxOf_inj ha).mp h)
-      rcases lt_or_gt_of_ne hidx with h | h
+      rcases Nat.lt_or_gt_of_ne hidx with h | h
       · exact Or.inl (Or.inl h)
       · exact Or.inr (Or.inl h)
     · exact Or.inl (completion_mem_notMem ha hb)
