@@ -2196,43 +2196,6 @@ theorem isCompact_boxQ (r : Fin n → Fin 2) : IsCompact (boxQ r : Set (Rn n)) :
   rw [this]
   exact (isCompact_univ_pi fun _ => isCompact_Icc).image (PiLp.continuous_toLp 2 _)
 
-theorem continuous_gQ (r : Fin n → Fin 2) : Continuous (gQ r : Rn n → ℝ) := by
-  -- `g_r = χ ⋆ 1_{-Q_r}` is a convolution of a compactly supported continuous function
-  -- with a locally integrable one
-  have hconv : gQ r = fun y => convolution chiR
-      (fun z : Rn n => (boxQ r).indicator (fun _ => (1 : ℝ)) (-z))
-      (ContinuousLinearMap.lsmul ℝ ℝ) volume y := by
-    funext y
-    simp only [gQ, convolution, ContinuousLinearMap.lsmul_apply, smul_eq_mul, neg_sub]
-  rw [hconv]
-  refine hasCompactSupport_chiR.continuous_convolution_left _ continuous_chiR ?_
-  have hset : MeasurableSet (Neg.neg ⁻¹' (boxQ r : Set (Rn n))) :=
-    measurable_neg (measurableSet_boxQ r)
-  have heq : (fun z : Rn n => (boxQ r).indicator (fun _ => (1 : ℝ)) (-z)) =
-      (Neg.neg ⁻¹' (boxQ r : Set (Rn n))).indicator (fun _ => 1) := by
-    funext z
-    by_cases h : -z ∈ boxQ r
-    · rw [Set.indicator_of_mem h, Set.indicator_of_mem (by exact h)]
-    · rw [Set.indicator_of_notMem h, Set.indicator_of_notMem (by exact h)]
-  rw [heq]
-  have hfin : volume (Neg.neg ⁻¹' (boxQ r : Set (Rn n))) < ⊤ := by
-    rw [Measure.measure_preimage_neg]
-    exact (isCompact_boxQ r).measure_lt_top
-  exact ((integrableOn_const hfin.ne enorm_ne_top).integrable_indicator hset).locallyIntegrable
-
-/-- Homogeneity of `θ_r` (paper, Lemma 3.3, texline~263): `θ_r(δ_t ξ) = θ_r(ξ)` for `t > 0`. -/
-theorem thetaR_dil (α : Fin n → ℕ) (r : Fin n → Fin 2) (ξ : Rn n) {t : ℝ} (ht : 0 < t) :
-    thetaR α r (dil α t ξ) = thetaR α r ξ := by
-  unfold thetaR
-  congr 2
-  unfold ThetaE
-  have h : ∀ v : ℝ, dil α ((2 : ℝ) ^ v) (dil α t ξ) = dil α ((2 : ℝ) ^ (v + Real.logb 2 t)) ξ := by
-    intro v
-    rw [dil_dil, Real.rpow_add (by norm_num), Real.rpow_logb (by norm_num) (by norm_num) ht]
-  simp_rw [h]
-  exact lintegral_add_right_eq_self (fun v : ℝ => ∫⁻ w : Rn n, chiE w *
-    (boxQ r).indicator (fun _ => (1 : ℝ≥0∞)) (w - dil α ((2 : ℝ) ^ v) ξ)) (Real.logb 2 t)
-
 theorem gQ_eq_convolution (r : Fin n → Fin 2) : gQ r = fun y => convolution chiR
     (fun z : Rn n => (boxQ r).indicator (fun _ => (1 : ℝ)) (-z))
     (ContinuousLinearMap.lsmul ℝ ℝ) volume y := by
@@ -2254,6 +2217,24 @@ theorem locallyIntegrable_indicator_neg (r : Fin n → Fin 2) :
     rw [Measure.measure_preimage_neg]
     exact (isCompact_boxQ r).measure_lt_top
   exact ((integrableOn_const hfin.ne enorm_ne_top).integrable_indicator hset).locallyIntegrable
+
+theorem continuous_gQ (r : Fin n → Fin 2) : Continuous (gQ r : Rn n → ℝ) := by
+  rw [gQ_eq_convolution]
+  exact hasCompactSupport_chiR.continuous_convolution_left _ continuous_chiR
+    (locallyIntegrable_indicator_neg r)
+
+/-- Homogeneity of `θ_r` (paper, Lemma 3.3, texline~263): `θ_r(δ_t ξ) = θ_r(ξ)` for `t > 0`. -/
+theorem thetaR_dil (α : Fin n → ℕ) (r : Fin n → Fin 2) (ξ : Rn n) {t : ℝ} (ht : 0 < t) :
+    thetaR α r (dil α t ξ) = thetaR α r ξ := by
+  unfold thetaR
+  congr 2
+  unfold ThetaE
+  have h : ∀ v : ℝ, dil α ((2 : ℝ) ^ v) (dil α t ξ) = dil α ((2 : ℝ) ^ (v + Real.logb 2 t)) ξ := by
+    intro v
+    rw [dil_dil, Real.rpow_add (by norm_num), Real.rpow_logb (by norm_num) (by norm_num) ht]
+  simp_rw [h]
+  exact lintegral_add_right_eq_self (fun v : ℝ => ∫⁻ w : Rn n, chiE w *
+    (boxQ r).indicator (fun _ => (1 : ℝ≥0∞)) (w - dil α ((2 : ℝ) ^ v) ξ)) (Real.logb 2 t)
 
 theorem contDiff_gQ (r : Fin n → Fin 2) : ContDiff ℝ ((⊤ : ℕ∞) : WithTop ℕ∞) (gQ r : Rn n → ℝ) := by
   rw [gQ_eq_convolution]

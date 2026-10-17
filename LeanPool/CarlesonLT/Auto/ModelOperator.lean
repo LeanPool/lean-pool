@@ -1214,6 +1214,54 @@ theorem exists_coord_eq_rho (α : Fin n → ℕ) (hα : ∀ i, 1 ≤ α i) {y : 
 theorem rpow_neg_nat_eq (x : ℝ) (hx : 0 < x) (ν : ℕ) : x ^ (-(ν : ℝ)) = (x ^ ν)⁻¹ := by
   rw [Real.rpow_neg hx.le, Real.rpow_natCast]
 
+/-- Generic decay of oscillatory integrals by integration by parts:
+if `∫ ‖g‖ ≤ B₀` and `∫ ‖D^ν g‖ ≤ B_ν`, then `|∫ e^{i⟨y,ζ⟩} g(ζ) dζ| ≤ (B₀ + B_ν) 2^ν (1 +
+    ρ(y))^{-ν}`. -/
+theorem norm_integral_exp_le_of_bounds (α : Fin n → ℕ) (hα : ∀ i, 1 ≤ α i) {ν : ℕ}
+    {g : Rn n → ℂ} (hg : ContDiff ℝ ν g) (hgc : HasCompactSupport g) {B₀ Bν : ℝ} (hB₀ : 0 ≤ B₀)
+    (hBν : 0 ≤ Bν) (h0 : ∫ ζ, ‖g ζ‖ ≤ B₀) (hν : ∫ ζ, ‖iteratedFDeriv ℝ ν g ζ‖ ≤ Bν) (y : Rn n) :
+    ‖∫ ζ, Complex.exp (Complex.I * (⟪y, ζ⟫_ℝ : ℂ)) * g ζ‖ ≤
+      (B₀ + Bν) * 2 ^ ν * (1 + rho α y) ^ (-(ν : ℝ)) := by
+  have hρ := rho_nonneg α y
+  set Q := B₀ + Bν
+  have hQ : 0 ≤ Q := by positivity
+  rw [rpow_neg_nat_eq _ (by linarith) ν]
+  rcases lt_or_ge (rho α y) 1 with hlt | hge
+  · have h1 : ‖∫ ζ, Complex.exp (Complex.I * (⟪y, ζ⟫_ℝ : ℂ)) * g ζ‖ ≤ B₀ := by
+      refine (norm_integral_le_integral_norm _).trans (le_trans (le_of_eq ?_) h0)
+      congr 1
+      ext ζ
+      rw [norm_mul, mul_comm Complex.I, Complex.norm_exp_ofReal_mul_I, one_mul]
+    have h2 : (1 + rho α y) ^ ν ≤ 2 ^ ν := by gcongr; linarith
+    have h3 : 1 ≤ 2 ^ ν * ((1 + rho α y) ^ ν)⁻¹ := by
+      rw [← div_eq_mul_inv, one_le_div (by positivity)]
+      exact h2
+    calc _ ≤ B₀ := h1
+      _ ≤ Q := by simp only [Q]; linarith
+      _ ≤ Q * (2 ^ ν * ((1 + rho α y) ^ ν)⁻¹) := le_mul_of_one_le_right hQ h3
+      _ = _ := by ring
+  · have hρpos : 0 < rho α y := by linarith
+    obtain ⟨j, hj⟩ := exists_coord_eq_rho α hα hρpos
+    have hyj : rho α y ≤ |y j| := by
+      rw [hj]
+      calc rho α y = rho α y ^ 1 := (pow_one _).symm
+        _ ≤ rho α y ^ α j := pow_le_pow_right₀ hge (hα j)
+    have hibp := pow_abs_mul_norm_integral_exp_le g hg hgc y j
+    set I := ‖∫ ζ, Complex.exp (Complex.I * (⟪y, ζ⟫_ℝ : ℂ)) * g ζ‖
+    have hI : 0 ≤ I := norm_nonneg _
+    have h1 : rho α y ^ ν * I ≤ Q := by
+      calc rho α y ^ ν * I ≤ |y j| ^ ν * I := by gcongr
+        _ ≤ Bν := hibp.trans hν
+        _ ≤ Q := by simp only [Q]; linarith
+    have h2 : (1 + rho α y) ^ ν ≤ 2 ^ ν * rho α y ^ ν := by
+      rw [← mul_pow]; gcongr; linarith
+    have hpos' : 0 < (1 + rho α y) ^ ν := by positivity
+    rw [← div_eq_mul_inv, le_div_iff₀ hpos']
+    calc I * (1 + rho α y) ^ ν ≤ I * (2 ^ ν * rho α y ^ ν) := by gcongr
+      _ = 2 ^ ν * (rho α y ^ ν * I) := by ring
+      _ ≤ 2 ^ ν * Q := by gcongr
+      _ = Q * 2 ^ ν := by ring
+
 /-- Decay of the localized oscillatory integral (the core of the proof of (4.15), §8):
 `|∫ e^{i⟨y,ζ⟩} g(ζ) dζ| ≤ (A₀ + A_ν) ‖m‖ |B| 2^ν (1 + ρ(y))^{-ν}`. -/
 theorem norm_integral_exp_gloc_le (α : Fin n → ℕ) (hα : ∀ i, 1 ≤ α i) {ν : ℕ}
@@ -1222,69 +1270,16 @@ theorem norm_integral_exp_gloc_le (α : Fin n → ℕ) (hα : ∀ i, 1 ≤ α i)
     ‖∫ ζ, Complex.exp (Complex.I * (⟪y, ζ⟫_ℝ : ℂ)) * gloc m a ζ‖ ≤
       (gBound α 0 + gBound α ν) * (normM α ν m).toReal * volB n * 2 ^ ν *
         (1 + rho α y) ^ (-(ν : ℝ)) := by
-  set M := (normM α ν m).toReal
-  have hM : 0 ≤ M := ENNReal.toReal_nonneg
-  have hVB : 0 ≤ volB n := ENNReal.toReal_nonneg
+  have h0 := integral_norm_iteratedFDeriv_gloc_le α hα hm hfin ha (Nat.zero_le ν)
+  simp only [norm_iteratedFDeriv_zero] at h0
+  have hν := integral_norm_iteratedFDeriv_gloc_le α hα hm hfin ha (le_refl ν)
   have hA0 := gBound_nonneg α 0
   have hAν := gBound_nonneg α ν
-  have hρ := rho_nonneg α y
-  set Q := (gBound α 0 + gBound α ν) * M * volB n
-  have hQ : 0 ≤ Q := by positivity
-  rw [rpow_neg_nat_eq _ (by linarith) ν]
-  rcases lt_or_ge (rho α y) 1 with hlt | hge
-  · -- small `ρ(y)`: trivial bound
-    have h1 : ‖∫ ζ, Complex.exp (Complex.I * (⟪y, ζ⟫_ℝ : ℂ)) * gloc m a ζ‖ ≤
-        gBound α 0 * M * volB n := by
-      refine (norm_integral_le_integral_norm _).trans ?_
-      have := integral_norm_iteratedFDeriv_gloc_le α hα hm hfin ha (Nat.zero_le ν)
-      simp only [norm_iteratedFDeriv_zero] at this
-      refine le_trans (le_of_eq ?_) this
-      congr 1
-      ext ζ
-      rw [norm_mul, mul_comm Complex.I, Complex.norm_exp_ofReal_mul_I, one_mul]
-    have h2 : (1 + rho α y) ^ ν ≤ 2 ^ ν := by
-      gcongr
-      linarith
-    have h3 : 1 ≤ 2 ^ ν * ((1 + rho α y) ^ ν)⁻¹ := by
-      rw [← div_eq_mul_inv, one_le_div (by positivity)]
-      exact h2
-    calc _ ≤ gBound α 0 * M * volB n := h1
-      _ ≤ Q := by
-          simp only [Q]
-          gcongr
-          linarith
-      _ ≤ Q * (2 ^ ν * ((1 + rho α y) ^ ν)⁻¹) := le_mul_of_one_le_right hQ h3
-      _ = _ := by ring
-  · -- large `ρ(y)`: integrate by parts `ν` times in a maximal coordinate
-    have hρpos : 0 < rho α y := by linarith
-    obtain ⟨j, hj⟩ := exists_coord_eq_rho α hα hρpos
-    have hyj : rho α y ≤ |y j| := by
-      rw [hj]
-      calc rho α y = rho α y ^ 1 := (pow_one _).symm
-        _ ≤ rho α y ^ α j := pow_le_pow_right₀ hge (hα j)
-    have hibp := pow_abs_mul_norm_integral_exp_le (gloc m a) (contDiff_gloc α hα hm ha)
-      (hasCompactSupport_gloc m a) y j
-    have hint := integral_norm_iteratedFDeriv_gloc_le α hα hm hfin ha (le_refl ν)
-    set I := ‖∫ ζ, Complex.exp (Complex.I * (⟪y, ζ⟫_ℝ : ℂ)) * gloc m a ζ‖
-    have hI : 0 ≤ I := norm_nonneg _
-    have h1 : rho α y ^ ν * I ≤ Q := by
-      calc rho α y ^ ν * I ≤ |y j| ^ ν * I := by gcongr
-        _ ≤ gBound α ν * M * volB n := hibp.trans hint
-        _ ≤ Q := by
-            simp only [Q]
-            gcongr
-            linarith
-    have h2 : (1 + rho α y) ^ ν ≤ 2 ^ ν * rho α y ^ ν := by
-      rw [← mul_pow]
-      gcongr
-      linarith
-    have hpos : 0 < rho α y ^ ν := by positivity
-    have hpos' : 0 < (1 + rho α y) ^ ν := by positivity
-    rw [← div_eq_mul_inv, le_div_iff₀ hpos']
-    calc I * (1 + rho α y) ^ ν ≤ I * (2 ^ ν * rho α y ^ ν) := by gcongr
-      _ = 2 ^ ν * (rho α y ^ ν * I) := by ring
-      _ ≤ 2 ^ ν * Q := by gcongr
-      _ = Q * 2 ^ ν := by ring
+  have hM : 0 ≤ (normM α ν m).toReal := ENNReal.toReal_nonneg
+  have hVB : 0 ≤ volB n := ENNReal.toReal_nonneg
+  convert norm_integral_exp_le_of_bounds α hα (contDiff_gloc α hα hm ha)
+    (hasCompactSupport_gloc m a) (by positivity) (by positivity) h0 hν y using 1
+  ring
 
 /-- The weight `w^ν(x) = (1 + ρ(x))^{-ν}` (paper, §4, texline~320). -/
 def wgt (α : Fin n → ℕ) (ν : ℝ) (x : Rn n) : ℝ := (1 + rho α x) ^ (-ν)
@@ -4045,6 +4040,43 @@ theorem integrable_mul_conj_of_memLp {f g : Rn n → ℂ} (hf : MemLp f 2) (hg :
       (Filter.Eventually.of_forall fun x => by simp)
   exact hf.integrable_mul hg'
 
+/-- Expansion of `‖∑ c_P φ_P‖₂²` into pairings. -/
+theorem integral_norm_sq_sum_wavePhi_le (α : Fin n → ℕ) (hα : ∀ i, 1 ≤ α i)
+    (U : Finset (Tile n)) (c : Tile n → ℂ) :
+    ∫ x, ‖∑ P ∈ U, c P * wavePhi α P x‖ ^ 2 ≤
+      ∑ P ∈ U, ∑ P' ∈ U, ‖c P‖ * ‖c P'‖ * ‖pairing (wavePhi α P) (wavePhi α P')‖ := by
+  set g : Rn n → ℂ := fun x => ∑ P ∈ U, c P * wavePhi α P x
+  have hφ := memLp_wavePhi α hα
+  have hint : ∀ P P', Integrable (fun x => c P' * wavePhi α P' x *
+      ((starRingEnd ℂ) (c P) * (starRingEnd ℂ) (wavePhi α P x))) := by
+    intro P P'
+    have := (integrable_mul_conj_of_memLp (hφ P') (hφ P)).const_mul (c P' * (starRingEnd ℂ) (c P))
+    refine this.congr (Filter.Eventually.of_forall fun x => ?_)
+    simp only; ring
+  have hgg : ∫ x, g x * (starRingEnd ℂ) (g x) = ∑ P ∈ U, ∑ P' ∈ U,
+      c P' * (starRingEnd ℂ) (c P) * pairing (wavePhi α P') (wavePhi α P) := by
+    simp only [g, map_sum, map_mul, Finset.sum_mul, Finset.mul_sum]
+    rw [integral_finsetSum _ fun P _ => integrable_finsetSum _ fun P' _ => hint P P']
+    refine Finset.sum_congr rfl fun P _ => ?_
+    rw [integral_finsetSum _ fun P' _ => hint P P']
+    refine Finset.sum_congr rfl fun P' _ => ?_
+    have e : (fun x => c P' * wavePhi α P' x * ((starRingEnd ℂ) (c P) *
+        (starRingEnd ℂ) (wavePhi α P x))) = fun x => c P' * (starRingEnd ℂ) (c P) *
+        (wavePhi α P' x * (starRingEnd ℂ) (wavePhi α P x)) := by
+      ext x; ring
+    rw [e, integral_const_mul]
+    rfl
+  have hre : ∫ x, ‖g x‖ ^ 2 = (∫ x, g x * (starRingEnd ℂ) (g x)).re := by
+    have : ∀ x, g x * (starRingEnd ℂ) (g x) = ((‖g x‖ ^ 2 : ℝ) : ℂ) := by
+      intro x
+      rw [Complex.mul_conj, Complex.normSq_eq_norm_sq];
+    simp_rw [this]
+    rw [integral_complex_ofReal, Complex.ofReal_re]
+  rw [hre, hgg, Finset.sum_comm (s := U) (t := U)]
+  refine (Complex.re_le_norm _).trans ((norm_sum_le _ _).trans (Finset.sum_le_sum fun P _ =>
+    (norm_sum_le _ _).trans (Finset.sum_le_sum fun P' _ => le_of_eq ?_)))
+  rw [norm_mul, norm_mul, RCLike.norm_conj]
+
 /-- A Bessel-type inequality for wave packets (paper, (6.4)–(6.7), texline~511–532):
 `∑_{P ∈ U} |⟨f, φ_P⟩|² ≤ ‖f‖₂ (∑_{P, P' ∈ U} |⟨f,φ_P⟩| |⟨f,φ_{P'}⟩| |⟨φ_P, φ_{P'}⟩|)^{1/2}`. -/
 theorem bessel_wavePhi (α : Fin n → ℕ) (hα : ∀ i, 1 ≤ α i) {f : Rn n → ℂ} (hf : MemLp f 2)
@@ -4090,38 +4122,9 @@ theorem bessel_wavePhi (α : Fin n → ℕ) (hα : ∀ i, 1 ≤ α i) {f : Rn n 
     rw [hnormf]
     refine le_trans (norm_integral_le_integral_norm _) (le_trans (le_of_eq ?_) hCS)
     congr 1; ext x; simp
-  -- step 3: expand `‖g‖₂²`
-  have hint : ∀ P P', Integrable (fun x => a P' * wavePhi α P' x *
-      ((starRingEnd ℂ) (a P) * (starRingEnd ℂ) (wavePhi α P x))) := by
-    intro P P'
-    have := (integrable_mul_conj_of_memLp (hφ P') (hφ P)).const_mul (a P' * (starRingEnd ℂ) (a P))
-    refine this.congr (Filter.Eventually.of_forall fun x => ?_)
-    simp only; ring
-  have hgg : ∫ x, g x * (starRingEnd ℂ) (g x) = ∑ P ∈ U, ∑ P' ∈ U,
-      a P' * (starRingEnd ℂ) (a P) * pairing (wavePhi α P') (wavePhi α P) := by
-    simp only [g, map_sum, map_mul, Finset.sum_mul, Finset.mul_sum]
-    rw [integral_finsetSum _ fun P _ => integrable_finsetSum _ fun P' _ => hint P P']
-    refine Finset.sum_congr rfl fun P _ => ?_
-    rw [integral_finsetSum _ fun P' _ => hint P P']
-    refine Finset.sum_congr rfl fun P' _ => ?_
-    have e : (fun x => a P' * wavePhi α P' x * ((starRingEnd ℂ) (a P) *
-        (starRingEnd ℂ) (wavePhi α P x))) = fun x => a P' * (starRingEnd ℂ) (a P) *
-        (wavePhi α P' x * (starRingEnd ℂ) (wavePhi α P x)) := by
-      ext x; ring
-    rw [e, integral_const_mul]
-    rfl
   have h4 : ∫ x, ‖g x‖ ^ (2 : ℝ) ≤ ∑ P ∈ U, ∑ P' ∈ U, ‖a P‖ * ‖a P'‖ *
       ‖pairing (wavePhi α P) (wavePhi α P')‖ := by
-    have hre : ∫ x, ‖g x‖ ^ (2 : ℝ) = (∫ x, g x * (starRingEnd ℂ) (g x)).re := by
-      have : ∀ x, g x * (starRingEnd ℂ) (g x) = ((‖g x‖ ^ (2 : ℝ) : ℝ) : ℂ) := by
-        intro x
-        rw [Complex.mul_conj, Complex.normSq_eq_norm_sq, Real.rpow_two]
-      simp_rw [this]
-      rw [integral_complex_ofReal, Complex.ofReal_re]
-    rw [hre, hgg, Finset.sum_comm (s := U) (t := U)]
-    refine (Complex.re_le_norm _).trans ((norm_sum_le _ _).trans (Finset.sum_le_sum fun P _ =>
-      (norm_sum_le _ _).trans (Finset.sum_le_sum fun P' _ => le_of_eq ?_)))
-    rw [norm_mul, norm_mul, RCLike.norm_conj]
+    simpa only [g, Real.rpow_two] using integral_norm_sq_sum_wavePhi_le α hα U a
   rw [h2]
   refine h3.trans (mul_le_mul_of_nonneg_left ?_ ENNReal.toReal_nonneg)
   rw [← Real.sqrt_eq_rpow]
@@ -6474,54 +6477,6 @@ theorem K2_oneTree_le (α : Fin n → ℕ) (hα : ∀ i, 1 ≤ α i) (hn : 0 < n
 
 /-! ### The case of `2`-trees (paper, §7.2): the difference wave packets -/
 
-/-- Generic decay of oscillatory integrals by integration by parts:
-if `∫ ‖g‖ ≤ B₀` and `∫ ‖D^ν g‖ ≤ B_ν`, then `|∫ e^{i⟨y,ζ⟩} g(ζ) dζ| ≤ (B₀ + B_ν) 2^ν (1 +
-    ρ(y))^{-ν}`. -/
-theorem norm_integral_exp_le_of_bounds (α : Fin n → ℕ) (hα : ∀ i, 1 ≤ α i) {ν : ℕ}
-    {g : Rn n → ℂ} (hg : ContDiff ℝ ν g) (hgc : HasCompactSupport g) {B₀ Bν : ℝ} (hB₀ : 0 ≤ B₀)
-    (hBν : 0 ≤ Bν) (h0 : ∫ ζ, ‖g ζ‖ ≤ B₀) (hν : ∫ ζ, ‖iteratedFDeriv ℝ ν g ζ‖ ≤ Bν) (y : Rn n) :
-    ‖∫ ζ, Complex.exp (Complex.I * (⟪y, ζ⟫_ℝ : ℂ)) * g ζ‖ ≤
-      (B₀ + Bν) * 2 ^ ν * (1 + rho α y) ^ (-(ν : ℝ)) := by
-  have hρ := rho_nonneg α y
-  set Q := B₀ + Bν
-  have hQ : 0 ≤ Q := by positivity
-  rw [rpow_neg_nat_eq _ (by linarith) ν]
-  rcases lt_or_ge (rho α y) 1 with hlt | hge
-  · have h1 : ‖∫ ζ, Complex.exp (Complex.I * (⟪y, ζ⟫_ℝ : ℂ)) * g ζ‖ ≤ B₀ := by
-      refine (norm_integral_le_integral_norm _).trans (le_trans (le_of_eq ?_) h0)
-      congr 1
-      ext ζ
-      rw [norm_mul, mul_comm Complex.I, Complex.norm_exp_ofReal_mul_I, one_mul]
-    have h2 : (1 + rho α y) ^ ν ≤ 2 ^ ν := by gcongr; linarith
-    have h3 : 1 ≤ 2 ^ ν * ((1 + rho α y) ^ ν)⁻¹ := by
-      rw [← div_eq_mul_inv, one_le_div (by positivity)]
-      exact h2
-    calc _ ≤ B₀ := h1
-      _ ≤ Q := by simp only [Q]; linarith
-      _ ≤ Q * (2 ^ ν * ((1 + rho α y) ^ ν)⁻¹) := le_mul_of_one_le_right hQ h3
-      _ = _ := by ring
-  · have hρpos : 0 < rho α y := by linarith
-    obtain ⟨j, hj⟩ := exists_coord_eq_rho α hα hρpos
-    have hyj : rho α y ≤ |y j| := by
-      rw [hj]
-      calc rho α y = rho α y ^ 1 := (pow_one _).symm
-        _ ≤ rho α y ^ α j := pow_le_pow_right₀ hge (hα j)
-    have hibp := pow_abs_mul_norm_integral_exp_le g hg hgc y j
-    set I := ‖∫ ζ, Complex.exp (Complex.I * (⟪y, ζ⟫_ℝ : ℂ)) * g ζ‖
-    have hI : 0 ≤ I := norm_nonneg _
-    have h1 : rho α y ^ ν * I ≤ Q := by
-      calc rho α y ^ ν * I ≤ |y j| ^ ν * I := by gcongr
-        _ ≤ Bν := hibp.trans hν
-        _ ≤ Q := by simp only [Q]; linarith
-    have h2 : (1 + rho α y) ^ ν ≤ 2 ^ ν * rho α y ^ ν := by
-      rw [← mul_pow]; gcongr; linarith
-    have hpos' : 0 < (1 + rho α y) ^ ν := by positivity
-    rw [← div_eq_mul_inv, le_div_iff₀ hpos']
-    calc I * (1 + rho α y) ^ ν ≤ I * (2 ^ ν * rho α y ^ ν) := by gcongr
-      _ = 2 ^ ν * (rho α y ^ ν * I) := by ring
-      _ ≤ 2 ^ ν * Q := by gcongr
-      _ = Q * 2 ^ ν := by ring
-
 theorem mem_segment_coord_le {a a' ζ p : Rn n} {j : Fin n} {c : ℝ} (hj : a j ≤ c) (hj' : a' j ≤ c)
     (hp : p ∈ segment ℝ (ζ + a') (ζ + a)) : ∃ b : Rn n, p = ζ + b ∧ b j ≤ c := by
   obtain ⟨s, t, hs, ht, hst, rfl⟩ := hp
@@ -7456,43 +7411,6 @@ theorem norm_le_normM (α : Fin n → ℕ) (hα : ∀ i, 1 ≤ α i) {ν : ℕ} 
   rw [hmi, ← ofReal_norm] at h
   rw [← ENNReal.ofReal_le_iff_le_toReal (normM_lt_top α hα hm).ne]
   exact h
-
-/-- Expansion of `‖∑ c_P φ_P‖₂²` into pairings. -/
-theorem integral_norm_sq_sum_wavePhi_le (α : Fin n → ℕ) (hα : ∀ i, 1 ≤ α i)
-    (U : Finset (Tile n)) (c : Tile n → ℂ) :
-    ∫ x, ‖∑ P ∈ U, c P * wavePhi α P x‖ ^ 2 ≤
-      ∑ P ∈ U, ∑ P' ∈ U, ‖c P‖ * ‖c P'‖ * ‖pairing (wavePhi α P) (wavePhi α P')‖ := by
-  set g : Rn n → ℂ := fun x => ∑ P ∈ U, c P * wavePhi α P x
-  have hφ := memLp_wavePhi α hα
-  have hint : ∀ P P', Integrable (fun x => c P' * wavePhi α P' x *
-      ((starRingEnd ℂ) (c P) * (starRingEnd ℂ) (wavePhi α P x))) := by
-    intro P P'
-    have := (integrable_mul_conj_of_memLp (hφ P') (hφ P)).const_mul (c P' * (starRingEnd ℂ) (c P))
-    refine this.congr (Filter.Eventually.of_forall fun x => ?_)
-    simp only; ring
-  have hgg : ∫ x, g x * (starRingEnd ℂ) (g x) = ∑ P ∈ U, ∑ P' ∈ U,
-      c P' * (starRingEnd ℂ) (c P) * pairing (wavePhi α P') (wavePhi α P) := by
-    simp only [g, map_sum, map_mul, Finset.sum_mul, Finset.mul_sum]
-    rw [integral_finsetSum _ fun P _ => integrable_finsetSum _ fun P' _ => hint P P']
-    refine Finset.sum_congr rfl fun P _ => ?_
-    rw [integral_finsetSum _ fun P' _ => hint P P']
-    refine Finset.sum_congr rfl fun P' _ => ?_
-    have e : (fun x => c P' * wavePhi α P' x * ((starRingEnd ℂ) (c P) *
-        (starRingEnd ℂ) (wavePhi α P x))) = fun x => c P' * (starRingEnd ℂ) (c P) *
-        (wavePhi α P' x * (starRingEnd ℂ) (wavePhi α P x)) := by
-      ext x; ring
-    rw [e, integral_const_mul]
-    rfl
-  have hre : ∫ x, ‖g x‖ ^ 2 = (∫ x, g x * (starRingEnd ℂ) (g x)).re := by
-    have : ∀ x, g x * (starRingEnd ℂ) (g x) = ((‖g x‖ ^ 2 : ℝ) : ℂ) := by
-      intro x
-      rw [Complex.mul_conj, Complex.normSq_eq_norm_sq];
-    simp_rw [this]
-    rw [integral_complex_ofReal, Complex.ofReal_re]
-  rw [hre, hgg, Finset.sum_comm (s := U) (t := U)]
-  refine (Complex.re_le_norm _).trans ((norm_sum_le _ _).trans (Finset.sum_le_sum fun P _ =>
-    (norm_sum_le _ _).trans (Finset.sum_le_sum fun P' _ => le_of_eq ?_)))
-  rw [norm_mul, norm_mul, RCLike.norm_conj]
 
 /-- In a `2`-tree (half-open sense), wave packets of different tiles with different frequency
 cubes are orthogonal. -/
