@@ -227,7 +227,7 @@ theorem Q_height_one : Q.height = 1 := by
       rfl
     rw [hψ] at hker
     have hX0_zero := (mem_nonZeroDivisors_iff.mp
-      (X_mem_nonzeroDivisors (i := (1 : Fin 2)))).2 _ hker
+      (X_mem_nonZeroDivisors (i := (1 : Fin 2)))).2 _ hker
     have := congr_arg (MvPowerSeries.coeff (Finsupp.single (0 : Fin 2) 1)) hX0_zero
     simp [MvPowerSeries.coeff_X] at this
   refine le_antisymm hle ?_

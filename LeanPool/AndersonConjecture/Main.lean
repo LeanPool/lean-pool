@@ -19,6 +19,8 @@ import Mathlib.Order.CompletePartialOrder
 import Mathlib.RingTheory.AdicCompletion.Completeness
 import Mathlib.RingTheory.AdicCompletion.AsTensorProduct
 import Mathlib.RingTheory.AdicCompletion.Noetherian
+import Mathlib.RingTheory.Flat.TorsionFree
+import Mathlib.RingTheory.Ideal.Quotient.Noetherian
 import Mathlib.RingTheory.KrullDimension.Regular
 import Mathlib.RingTheory.PicardGroup
 
