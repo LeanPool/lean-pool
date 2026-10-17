@@ -22,7 +22,7 @@ def amnrAdvectionVelocity (b c : AmnrSpace → Vec 2) (p : Fin 2) : AmnrSpace �
 theorem amnrAdvectionVelocity_contDiff {b c : AmnrSpace → Vec 2}
     (hb : ContDiff ℝ (⊤ : ℕ∞) b) (hc : ContDiff ℝ (⊤ : ℕ∞) c) (p : Fin 2) :
     ContDiff ℝ (⊤ : ℕ∞) (amnrAdvectionVelocity b c p) :=
-  ((contDiff_apply ℝ ℝ p).comp hb).sub ((contDiff_apply ℝ ℝ p).comp hc)
+  ((contDiff_apply ℝ (fun _ => ℝ) p).comp hb).sub ((contDiff_apply ℝ (fun _ => ℝ) p).comp hc)
 
 /-- Every new-velocity material derivative is its coarse material part plus
 two actual fast-advection derivatives. Each new factor records its coordinate. -/

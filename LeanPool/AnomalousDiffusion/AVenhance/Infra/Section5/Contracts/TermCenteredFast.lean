@@ -42,7 +42,7 @@ theorem sdFast4_isFastPeriodic {m : ℕ} (hm : 1 ≤ m) (κm : ℝ) (k : ℤ) (t
 theorem sdFast4_continuous (m : ℕ) (κm : ℝ) (k : ℤ) (t : ℝ) (p q : Fin 2) :
     Continuous (sdFast4 I κm m k t p q) := by
   have h : ContDiff ℝ ∞ (fun z => I.chiMK κm m k t z q) :=
-    (contDiff_apply ℝ ℝ q).comp (contDiff_chiMK I κm m k t)
+    (contDiff_apply ℝ (fun _ => ℝ) q).comp (contDiff_chiMK I κm m k t)
   exact (contDiff_spaceGrad_coord h p).continuous
 
 theorem sdFast4_cellAverage {m : ℕ} (hm : 1 ≤ m) (κm : ℝ) (k : ℤ) (t : ℝ) (p q : Fin 2) :

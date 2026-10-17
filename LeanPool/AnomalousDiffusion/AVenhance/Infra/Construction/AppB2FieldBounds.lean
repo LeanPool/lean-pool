@@ -158,7 +158,7 @@ theorem streamVel_derivativeSup_le_next
     have hcolumn : ContDiff ℝ ∞
         (fun x : Vec 2 => fderiv ℝ F x (coordinateVector 2 j)) :=
       hFderiv.clm_apply contDiff_const
-    exact (contDiff_apply ℝ ℝ i).comp hcolumn
+    exact (contDiff_apply ℝ (fun _ => ℝ) i).comp hcolumn
   rw [AppB2FieldBounds.streamVel_eq_extractedGradient φ hφ t]
   calc
     derivativeSup n

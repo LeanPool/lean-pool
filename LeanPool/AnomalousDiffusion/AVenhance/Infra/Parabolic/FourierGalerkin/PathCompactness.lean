@@ -9,6 +9,7 @@ public import LeanPool.AnomalousDiffusion.AVenhance.Infra.Parabolic.FourierGaler
 public import Mathlib.Analysis.Normed.Module.WeakDual
 public import Mathlib.Topology.UniformSpace.Ascoli
 public import Mathlib.Topology.Bases
+public import Mathlib.Topology.MetricSpace.PiNat
 
 /-!
 # Weak path compactness for Galerkin approximations

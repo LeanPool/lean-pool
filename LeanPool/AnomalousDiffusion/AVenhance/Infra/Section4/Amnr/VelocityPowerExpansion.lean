@@ -24,8 +24,8 @@ theorem amnr_velocity_power_error_expansion {b c : AmnrSpace → Vec 2}
       amnrWord c (List.replicate n none) (fun y => c y i) =
         amnrWord c (List.replicate n none) (amnrAdvectionVelocity b c i) +
           amnrMaterialErrorValue b c (fun y => b y i) n := by
-  have hbi := (contDiff_apply ℝ ℝ i).comp hb
-  have hci := (contDiff_apply ℝ ℝ i).comp hc
+  have hbi := (contDiff_apply ℝ (fun _ => ℝ) i).comp hb
+  have hci := (contDiff_apply ℝ (fun _ => ℝ) i).comp hc
   have hh := amnr_material_power_expansion hb hc hbi n
   have hs := amnrWord_sub_global hc hbi hci (List.replicate n none)
   funext z
@@ -51,8 +51,8 @@ theorem amnr_velocity_coarse_mixed_abs_le_of_bounds {b c : AmnrSpace → Vec 2}
     (hcoarse : |amnrWord c w (fun y => c y i) z| ≤ A)
     (hfast : |amnrWord c w (amnrAdvectionVelocity b c i) z| ≤ B) :
     |amnrWord c w (fun y => b y i) z| ≤ A + B := by
-  have hs := congrFun (amnrWord_sub_global hc ((contDiff_apply ℝ ℝ i).comp hb)
-    ((contDiff_apply ℝ ℝ i).comp hc) w) z
+  have hs := congrFun (amnrWord_sub_global hc ((contDiff_apply ℝ (fun _ => ℝ) i).comp hb)
+    ((contDiff_apply ℝ (fun _ => ℝ) i).comp hc) w) z
   change amnrWord c w (amnrAdvectionVelocity b c i) z =
     amnrWord c w (fun y => b y i) z - amnrWord c w (fun y => c y i) z at hs
   have he : amnrWord c w (fun y => b y i) z =

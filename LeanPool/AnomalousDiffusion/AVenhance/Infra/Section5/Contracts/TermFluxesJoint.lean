@@ -176,7 +176,7 @@ theorem tf_chiW_contDiffOn (hΦ : IsStreamSeq I Φ) (m : ℕ) {T : ℝ → Vec 2
   refine ContDiffOn.sum fun j _ => ContDiffOn.mul ?_ ?_
   · have hu : ContDiff ℝ ∞ (fun p : ℝ × Vec 2 =>
         uShear β I.Λ m k (I.xFlowInv hΦ m (lIdx β I.Λ m k) p.1 p.2) j) :=
-      (contDiff_apply ℝ ℝ j).comp ((contDiff_uShear' β I.Λ m k).comp
+      (contDiff_apply ℝ (fun _ => ℝ) j).comp ((contDiff_uShear' β I.Λ m k).comp
         (xFlowInv_joint_contDiff_infty I hΦ m _))
     exact (hu.neg.of_le (by norm_num)).contDiffOn
   · exact tf_gradG_contDiffOn I hΦ m _ hT i j

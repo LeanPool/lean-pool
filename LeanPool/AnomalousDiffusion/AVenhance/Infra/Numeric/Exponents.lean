@@ -23,7 +23,10 @@ theorem gamma_eq_beta_fraction {β : ℝ} (hβ : 1 < β) :
   rw [q_eq_beta_div_four_sub_one hβ]
   have h1 : β - 1 ≠ 0 := ne_of_gt (sub_pos.mpr hβ)
   have h2 : 5 * β - 4 ≠ 0 := by linarith
-  field_simp [h1, h2]
+  have h3 : -4 + β * 5 ≠ 0 := by linarith
+  field_simp [h1, h2, h3]
+  ring_nf
+  field_simp [h1, h2, h3]
   ring
 
 /-- The delta as a rational function of beta. -/

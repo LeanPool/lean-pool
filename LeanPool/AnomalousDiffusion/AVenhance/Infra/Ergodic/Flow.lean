@@ -183,7 +183,7 @@ theorem Flow.flow_imageFundamentalCell_isAddFundamentalDomain {d : ℕ}
   let e := Flow.flowMeasurableEquiv X
   have hInv : MeasurePreserving (⇑e.toEquiv.symm) volume volume := by
     simpa [e] using MeasurePreserving.symm e X.measurePreserving
-  have hInvQ : Measure.QuasiMeasurePreserving (⇑e.toEquiv.symm) volume volume :=
+  have hInvQ : QuasiMeasurePreserving (⇑e.toEquiv.symm) volume volume :=
     hInv.quasiMeasurePreserving
   exact (Flow.flowFundamentalCell_isAddFundamentalDomain d).image_of_equiv e.toEquiv
     hInvQ (Equiv.refl _) (by

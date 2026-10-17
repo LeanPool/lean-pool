@@ -98,7 +98,7 @@ theorem iterate_actual_coordinate_induction_of_scales {β : ℝ} (I : Ingredient
           ring
         have hn := iterate_actual_first_increment_norm_recurrence I hΦ hi hT hθ hm hκm hκ
           hflow hflowp hA3 w hL hg hvel hD hCs
-          (by positivity : 0 ≤ N * iterateAmplitude (C₀ * (ρ * F ^ 2)) 1 / Real.sqrt κprev)
+          (div_nonneg (mul_nonneg hN (iterateAmplitude_pos hη 1).le) (Real.sqrt_nonneg _))
           hN hB hr hρ.le hq hρq hQ hscale hvelocity' hjet hFlowBound hFlowScale hrem
           (fun p _ => by simpa only [iterateCoordinateEnergyProfile, iterateAnalyticWeight,
             Nat.mul_zero, Nat.add_zero] using hbase.2 p)

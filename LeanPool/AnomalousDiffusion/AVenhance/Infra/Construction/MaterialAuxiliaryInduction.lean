@@ -62,7 +62,7 @@ theorem material_aux_velocity_nonempty_spatial_abs_le_of_A3
     have hb : ContDiff ℝ (⊤ : ℕ∞) b :=
       (AVenhance.Infra.Construction.smoothPeriodic_streamVel
         (AVenhance.streamSeq_isAdmissible hΦ m)).smooth
-    have hf : ContDiff ℝ (⊤ : ℕ∞) (fun y => b y i) := (contDiff_apply ℝ ℝ i).comp hb
+    have hf : ContDiff ℝ (⊤ : ℕ∞) (fun y => b y i) := (contDiff_apply ℝ (fun _ => ℝ) i).comp hb
     have heq : amnrWord b [some p] (fun y => b y i) = amnrVelocityGradient b i p := by
       funext y
       exact amnrOp_space (hf.differentiable (by simp) y) p
@@ -455,7 +455,7 @@ theorem material_aux_velocity_higher_material_abs_le_of_source_lower_levels
       (AVenhance.Infra.Construction.smoothPeriodic_streamVel
         (AVenhance.streamSeq_isAdmissible hΦ j)).smooth
     exact contDiffOn_univ.mp (amnrWord_contDiffOn_infty isOpen_univ hb.contDiffOn
-      ((contDiff_apply ℝ ℝ i).comp hb).contDiffOn (List.replicate n none))
+      ((contDiff_apply ℝ (fun _ => ℝ) i).comp hb).contDiffOn (List.replicate n none))
   have hzero : v 0 = 0 := by
     have hFb : F 0 = 0 := amnr_streamVelocity_zero_word I hΦ _ i
     simp [v, hFb, amnrWord_zero]

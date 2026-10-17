@@ -159,7 +159,7 @@ theorem hmPiola_spaceGrad_flowGrad_entry
   have hXs := contDiff_xFlow_slice I hΦ m l t
   have hYs := contDiff_xFlowInv_slice I hΦ m l t
   have hXp : ContDiff ℝ ∞ (fun u => I.xFlow hΦ m l t u r) :=
-    (contDiff_apply ℝ ℝ r).comp hXs
+    (contDiff_apply ℝ (fun _ => ℝ) r).comp hXs
   have hfpj : ContDiff ℝ ∞
       (fun w => spaceGrad (fun u => I.xFlow hΦ m l t u r) w p) :=
     Integration.contDiff_spaceGrad_component hXp p
@@ -256,7 +256,7 @@ theorem hmPiola_vecDiv_term_abs_le
       (I.flowGrad hΦ m l t y).mulVec (spaceGrad (T t) y) :=
     LeftJacobian.G_eq_flowGrad_mulVec_of_contDiff I hΦ m T t hT1 l y
   have hGsm (q : Fin 2) : ContDiff ℝ ∞ (fun y => G I hΦ m T l t y q) :=
-    (contDiff_apply ℝ ℝ q).comp (contDiff_G I hΦ m T l hTt)
+    (contDiff_apply ℝ (fun _ => ℝ) q).comp (contDiff_G I hΦ m T l hTt)
   have hFsm (p r : Fin 2) :
       ContDiff ℝ ∞ (fun y => I.flowGrad hΦ m l t y p r) :=
     LeftJacobian.contDiff_flowGrad_entry I hΦ m l t p r

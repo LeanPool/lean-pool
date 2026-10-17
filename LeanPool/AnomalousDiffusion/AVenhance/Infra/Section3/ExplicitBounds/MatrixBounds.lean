@@ -6,6 +6,7 @@ Authors: Scott Armstrong and Vlad Vicol
 module
 
 public import Mathlib.Analysis.Real.Pi.Bounds
+public import Mathlib.Analysis.Calculus.Deriv.Prod
 
 public import LeanPool.AnomalousDiffusion.AVenhance.Infra.Section3.ExplicitBounds.CutoffMemory
 

@@ -32,7 +32,7 @@ theorem amnr_velocity_nonempty_spatial_abs_le_of_A3 {β C : ℝ}
     have hb : ContDiff ℝ (⊤ : ℕ∞) b :=
       (AVenhance.Infra.Construction.smoothPeriodic_streamVel
         (AVenhance.streamSeq_isAdmissible hΦ m)).smooth
-    have hf : ContDiff ℝ (⊤ : ℕ∞) (fun y => b y i) := (contDiff_apply ℝ ℝ i).comp hb
+    have hf : ContDiff ℝ (⊤ : ℕ∞) (fun y => b y i) := (contDiff_apply ℝ (fun _ => ℝ) i).comp hb
     have heq : amnrWord b [some p] (fun y => b y i) = amnrVelocityGradient b i p := by
       funext y
       exact amnrOp_space (hf.differentiable (by simp) y) p

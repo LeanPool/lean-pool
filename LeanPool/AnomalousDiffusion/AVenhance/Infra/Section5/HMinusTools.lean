@@ -492,7 +492,7 @@ theorem hMinusOneNorm_divergence_le (F : Vec 2 → Vec 2)
     (hF : ContDiff ℝ (⊤ : ℕ∞) F) (hp : IsZ2Periodic F) :
     hMinusOneNorm (cellDivergence F) ≤ ENNReal.ofReal (Real.sqrt (gradNormSq F)) := by
   have hd (i : Fin 2) : ContDiff ℝ (⊤ : ℕ∞) (fun x => F x i) :=
-    (contDiff_apply ℝ ℝ i).comp hF
+    (contDiff_apply ℝ (fun _ => ℝ) i).comp hF
   have hper (i : Fin 2) : IsZPeriodic (fun x => F x i) := by
     intro x k
     exact congrFun (hp k x) i

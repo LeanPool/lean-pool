@@ -154,7 +154,7 @@ theorem tf_chiW_slice_contDiff (hΦ : IsStreamSeq I Φ) (m : ℕ) (T : ℝ → V
   refine ContDiff.sum fun j _ => ContDiff.mul ?_ (tf_gradG_slice_contDiff I hΦ m T t _ hT i j)
   have hXI : ContDiff ℝ (⊤ : ℕ∞) (I.xFlowInv hΦ m (lIdx β I.Λ m k) t) :=
     (xFlowInv_joint_contDiff_infty I hΦ m (lIdx β I.Λ m k)).comp (contDiff_prodMk_right t)
-  exact ((contDiff_apply ℝ ℝ j).comp ((contDiff_uShear' β I.Λ m k).comp hXI)).neg
+  exact ((contDiff_apply ℝ (fun _ => ℝ) j).comp ((contDiff_uShear' β I.Λ m k).comp hXI)).neg
 
 theorem tf_chiW_slice_periodic (hΦ : IsStreamSeq I Φ) (m : ℕ) (T : ℝ → Vec 2 → ℝ) (t : ℝ)
     (k : ℤ) (hT : IsZ2Periodic (T t)) : IsZ2Periodic (tfChiW I hΦ m T k t) := by

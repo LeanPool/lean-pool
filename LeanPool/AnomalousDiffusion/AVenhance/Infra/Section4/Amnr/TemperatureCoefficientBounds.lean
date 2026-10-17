@@ -33,7 +33,7 @@ theorem amnr_temperatureCoefficient_contDiff {β : ℝ} (I : AVenhance.Ingredien
     ContDiff ℝ (AVenhance.Nstar β) (amnrTemperatureCoefficient I hΦ m κm κprev i j) := by
   have hK (p : Fin 2) : ContDiff ℝ (AVenhance.Nstar β)
       (fun z : AmnrSpace => I.Kmat κm m z.1 i p) :=
-    ((contDiff_apply ℝ ℝ p).comp ((contDiff_apply ℝ (Fin 2 → ℝ) i).comp
+    ((contDiff_apply ℝ (fun _ => ℝ) p).comp ((contDiff_apply ℝ (fun _ => Fin 2 → ℝ) i).comp
       (Section3.Kmat_contDiff I hm hκm))).comp contDiff_fst
   have hmain := (ContDiff.sum (s := Finset.univ) (fun p _ =>
     (hK p).mul (amnr_flowAverage_contDiff I hΦ hm (AVenhance.Nstar β) p j))).sub
@@ -41,7 +41,7 @@ theorem amnr_temperatureCoefficient_contDiff {β : ℝ} (I : AVenhance.Ingredien
   have hP (a b' : Fin 2) : ContDiff ℝ (AVenhance.Nstar β)
       (fun z : AmnrSpace =>
         (I.Kmat κm m z.1 - κm • (1 : Matrix (Fin 2) (Fin 2) ℝ)) a b') := by
-    exact (((contDiff_apply ℝ ℝ b').comp ((contDiff_apply ℝ (Fin 2 → ℝ) a).comp
+    exact (((contDiff_apply ℝ (fun _ => ℝ) b').comp ((contDiff_apply ℝ (fun _ => Fin 2 → ℝ) a).comp
       (Section3.Kmat_contDiff I hm hκm))).comp contDiff_fst).sub contDiff_const
   have hA (a b' : Fin 2) : ContDiff ℝ (AVenhance.Nstar β)
       (amnrFlowAverageA0Plus I hΦ m a b' i j) := by
@@ -104,7 +104,7 @@ theorem amnr_temperatureCoefficient_mixed_bound_of_components
     amnr_previous_velocity_contDiff I hΦ hm (AVenhance.Nstar β)
   have hK (p : Fin 2) : ContDiff ℝ (AVenhance.Nstar β)
       (fun y : AmnrSpace => I.Kmat κm m y.1 i p) :=
-    ((contDiff_apply ℝ ℝ p).comp ((contDiff_apply ℝ (Fin 2 → ℝ) i).comp
+    ((contDiff_apply ℝ (fun _ => ℝ) p).comp ((contDiff_apply ℝ (fun _ => Fin 2 → ℝ) i).comp
       (Section3.Kmat_contDiff I hm hκm))).comp contDiff_fst
   have hG (p : Fin 2) : ContDiff ℝ (AVenhance.Nstar β)
       (amnrFlowAverage I hΦ m p j) :=
@@ -112,7 +112,7 @@ theorem amnr_temperatureCoefficient_mixed_bound_of_components
   have hP (a b' : Fin 2) : ContDiff ℝ (AVenhance.Nstar β)
       (fun y : AmnrSpace =>
         (I.Kmat κm m y.1 - κm • (1 : Matrix (Fin 2) (Fin 2) ℝ)) a b') := by
-    exact (((contDiff_apply ℝ ℝ b').comp ((contDiff_apply ℝ (Fin 2 → ℝ) a).comp
+    exact (((contDiff_apply ℝ (fun _ => ℝ) b').comp ((contDiff_apply ℝ (fun _ => Fin 2 → ℝ) a).comp
       (Section3.Kmat_contDiff I hm hκm))).comp contDiff_fst).sub contDiff_const
   have hAplus (a b' : Fin 2) : ContDiff ℝ (AVenhance.Nstar β)
       (amnrFlowAverageA0Plus I hΦ m a b' i j) := by

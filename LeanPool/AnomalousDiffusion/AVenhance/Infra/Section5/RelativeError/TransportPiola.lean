@@ -77,8 +77,8 @@ theorem cofactorTranspose_gradient_columns_divergence_free
         (fun z => AVenhance.FaaDiBruno.flowMatrixCofactorTranspose
           (AVenhance.FaaDiBruno.spatialGradientMatrix Y z) i j) x)
         (basisVec i) = 0 := by
-  have hY0 : ContDiff ℝ 2 (fun y => Y y 0) := (contDiff_apply ℝ ℝ 0).comp hY
-  have hY1 : ContDiff ℝ 2 (fun y => Y y 1) := (contDiff_apply ℝ ℝ 1).comp hY
+  have hY0 : ContDiff ℝ 2 (fun y => Y y 0) := (contDiff_apply ℝ (fun _ => ℝ) 0).comp hY
+  have hY1 : ContDiff ℝ 2 (fun y => Y y 1) := (contDiff_apply ℝ (fun _ => ℝ) 1).comp hY
   have hq00 (z : Vec 2) :
       AVenhance.FaaDiBruno.flowMatrixCofactorTranspose
         (AVenhance.FaaDiBruno.spatialGradientMatrix Y z) 0 0 =
