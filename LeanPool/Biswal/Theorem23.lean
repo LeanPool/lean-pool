@@ -11,7 +11,7 @@ import Mathlib.Algebra.Order.Ring.Star
 import Mathlib.Analysis.Normed.Field.Lemmas
 import Mathlib.CategoryTheory.Category.Init
 import Mathlib.Data.Nat.Totient
-import Mathlib.Data.Rat.Star
+import Mathlib.Algebra.Order.Star.Rat
 import Mathlib.LinearAlgebra.Matrix.Block
 import Mathlib.Logic.Equiv.PartialEquiv
 import Mathlib.RingTheory.SimpleRing.Principal
