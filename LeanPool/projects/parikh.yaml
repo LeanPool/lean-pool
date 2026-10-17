@@ -1,0 +1,68 @@
+slug: parikh
+title: Parikh's theorem and a certified semilinear grammar compiler
+summary: >-
+  Proves that the letter-count image of every context-free language over a finite
+  alphabet is semilinear, using Mathlib's language, grammar and semilinear-set
+  definitions. Proves the converse realization by a regular language and computes
+  exact finite semilinear representations for encoded finite grammars, with
+  component, period, coordinate and bit-budget bounds. Preserves production-labelled
+  derivation trees, bounded decomposition, context activation and word-block automata.
+  The language theorem does not require a finite ambient nonterminal type.
+branch: formal language theory
+entry_module: LeanPool.Parikh
+authors:
+- Umang Mathur
+source:
+  title: On Context-Free Languages
+  authors:
+  - Rohit J. Parikh
+  doi: 10.1145/321356.321364
+  url: https://github.com/focs-lab/parikh-theorem/tree/9c1cde93f29bbaa91542e401e074ec3cd7646880
+  github_repo: focs-lab/parikh-theorem
+  commit: 9c1cde93f29bbaa91542e401e074ec3cd7646880
+  announcement_url: https://github.com/focs-lab/parikh-theorem/releases/tag/v0.1.0
+  announcement_date: '2026-10-12'
+  proof_references:
+  - title: Simple proof of Parikh's theorem a la Takahashi
+    authors:
+    - Ryoma Sin'ya
+    arxiv: '1909.09393'
+  - title: The Simplest Proof of Parikh's Theorem via Derivation Trees
+    authors:
+    - Alexander Rubtsov
+    arxiv: '2301.00047'
+license: Apache-2.0
+status: verified
+provenance: AI
+main_declarations:
+- Parikh.parikhImage_isSemilinear_of_isContextFree
+main_results:
+- declaration: Parikh.parikhImage_isSemilinear_of_isContextFree
+  informal: >-
+    For every context-free language over a finite alphabet, its set of letter-count
+    vectors is semilinear in Mathlib's sense.
+- declaration: Parikh.exists_regularLanguage_with_parikhImage
+  informal: >-
+    Every semilinear set of natural-number vectors indexed by a finite alphabet is
+    exactly the letter-count image of some regular language.
+- declaration: Parikh.compileGrammar_correct
+  informal: >-
+    For every encoded finite grammar, the compiled finite representation denotes
+    exactly the letter-count image of its decoded Mathlib grammar language.
+- declaration: Parikh.compileGrammar_size_bounds
+  informal: >-
+    The compiled representation satisfies the explicit component-count, period-count,
+    base-norm and period-norm bounds determined by the encoded grammar's size.
+- declaration: Parikh.compileGrammar_bit_bound
+  informal: >-
+    The compiled representation's numerical entries satisfy the declared total bit
+    budget, and every base and period coordinate fits its coordinate bit width.
+tags:
+- formal-languages
+- context-free-grammars
+- semilinear-sets
+- verified-algorithms
+msc:
+- 68Q45
+- 68Q42
+- 03D05
