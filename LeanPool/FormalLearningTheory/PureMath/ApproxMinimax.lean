@@ -555,7 +555,7 @@ private lemma hitRate_from_potential
     calc (1 - η) * ((T : ℝ) * η * v - Real.log (N : ℝ))
         ≤ (1 - η) * ((H : ℝ) * (η / (1 - η))) :=
           mul_le_mul_of_nonneg_left hanti' h1η_nonneg
-      _ = (H : ℝ) * η := by field_simp [show (1 : ℝ) - η ≠ 0 by linarith]; try ring
+      _ = (H : ℝ) * η := by field_simp [show (1 : ℝ) - η ≠ 0 by linarith]
   have hηTpos : 0 < η * (T : ℝ) := by positivity
   have hTne : (T : ℝ) ≠ 0 := by exact_mod_cast (Nat.ne_of_gt hTpos)
   have hrate0 :
@@ -565,10 +565,10 @@ private lemma hitRate_from_potential
     have hsimpL :
         ((1 - η) * ((T : ℝ) * η * v - Real.log (N : ℝ))) / (η * T) =
           (1 - η) * v - ((1 - η) * Real.log (N : ℝ)) / (η * T) := by
-      field_simp [show η ≠ 0 from ne_of_gt hη, hTne]; try ring
+      field_simp [show η ≠ 0 from ne_of_gt hη, hTne]
     have hsimpR :
         ((H : ℝ) * η) / (η * T) = (H : ℝ) / T := by
-      field_simp [show η ≠ 0 from ne_of_gt hη, hTne]; try ring
+      field_simp [show η ≠ 0 from ne_of_gt hη, hTne]
     simpa [hsimpL, hsimpR] using hdiv
   have hterm1 : v - ε / 4 ≤ (1 - η) * v := by nlinarith [hηsmall, hv1]
   have hlog_nonneg : 0 ≤ Real.log (N : ℝ) := Real.log_natCast_nonneg N
