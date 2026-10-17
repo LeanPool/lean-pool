@@ -54,8 +54,6 @@ theorem exists_nonadj_pair_of_cubic_K4free (G : SimpleGraph V) [DecidableRel G.A
       first
         | exact absurd rfl hyz
         | assumption
-        | (exact ha) | (exact hb) | (exact hc)
-        | (exact hnab) | (exact hnac) | (exact hnbc)
         | (exact ha.symm) | (exact hb.symm) | (exact hc.symm)
         | (exact hnab.symm) | (exact hnac.symm) | (exact hnbc.symm)
   · rw [Finset.card_insert_of_notMem, Finset.card_insert_of_notMem,
