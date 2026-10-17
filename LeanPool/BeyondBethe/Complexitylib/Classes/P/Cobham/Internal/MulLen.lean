@@ -191,17 +191,17 @@ def mulLenTM : TM 1 where
         cases iHead <;>
           exact ⟨by first | exact fun _ => rfl | exact idleDir_right_of_start,
             fun _ => idleDir_right_of_start,
-            by first | exact fun _ => rfl | exact idleDir_right_of_start⟩
+            idleDir_right_of_start⟩
     | .scanB0 =>
         cases iHead <;>
           exact ⟨by first | exact fun _ => rfl | exact idleDir_right_of_start,
             by first | exact fun _ _ => rfl | exact fun _ => idleDir_right_of_start,
-            by first | exact fun _ => rfl | exact idleDir_right_of_start⟩
+            idleDir_right_of_start⟩
     | .scanB1 =>
         cases iHead <;>
           exact ⟨by first | exact fun _ => rfl | exact idleDir_right_of_start,
             by first | exact fun _ _ => rfl | exact fun _ => idleDir_right_of_start,
-            by first | exact fun _ => rfl | exact idleDir_right_of_start⟩
+            idleDir_right_of_start⟩
     | .outer =>
         dsimp only []
         split
