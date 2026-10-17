@@ -7,6 +7,7 @@ module
 
 public import LeanPool.BruhatTits.Graph.GroupAction
 public import Mathlib.Combinatorics.SimpleGraph.Acyclic
+import all Batteries.Data.List.Basic
 
 /-!
 # Proof that the Bruhat-Tits graph is a tree
