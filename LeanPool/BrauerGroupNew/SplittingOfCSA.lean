@@ -19,8 +19,8 @@ import Mathlib.Algebra.Azumaya.Basic
 import Mathlib.Algebra.Central.Matrix
 import Mathlib.Analysis.Normed.Group.Basic
 import Mathlib.Data.EReal.Operations
-import Mathlib.Data.Int.ConditionallyCompleteOrder
 import Mathlib.LinearAlgebra.FreeModule.PID
+import Mathlib.Order.Int.ConditionallyCompleteOrder
 import Mathlib.RingTheory.Flat.FaithfullyFlat.Basic
 import Mathlib.RingTheory.SimpleRing.Matrix
 import Mathlib.Topology.Algebra.InfiniteSum.Order
