@@ -1215,9 +1215,11 @@ private theorem boxUnion_profile (α β : Program) (ψ : Formula) (ℓ : TP (α�
   simp only [evaluate, and_congr_left_iff, relate] at *
   intro w_sign_ℓ
   specialize IHα ?_
-  · simp_all [signature, conEval, testsOfProgram]
+  · clear IHα IHβ
+    simp_all [signature, conEval, testsOfProgram]
   specialize IHβ ?_
-  · simp_all [signature, conEval, testsOfProgram]
+  · clear IHα IHβ
+    simp_all [signature, conEval, testsOfProgram]
   -- rewrite using semantics of union and the two IH:
   have : (∀ (v : W), relate M α w v ∨ relate M β w v → evaluate M v ψ)
       ↔ ((∀ (v : W), relate M α w v → evaluate M v ψ)

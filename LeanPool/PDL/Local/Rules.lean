@@ -1067,7 +1067,11 @@ lemma LocalRuleApp.preserve_bottom_down (lra : LocalRuleApp) :
     ∀ Y ∈ lra.C, ⊥ ∈ lra.X.toFinset → ⊥ ∈ Y.toFinset := by
   rcases lra with ⟨L, R, O, Lcond, Rcond, Ocond, ress, rule, C, hC, pre⟩
   subst hC
-  cases rule <;> simp_all only [applyLocalRule, Finset.sdiff_empty, Finset.mem_image,
+  dsimp only [LocalRuleApp.X]
+  cases rule
+  case' oneSidedL => clear pre
+  case' oneSidedR => clear pre
+  all_goals simp_all only [applyLocalRule, Finset.sdiff_empty, Finset.mem_image,
     exists_exists_and_eq_and, Finset.union_empty, Olf.change_old_none_none, Sequent.toFinset,
     Finset.union_assoc, Finset.mem_union, Option.mem_toFinset, Option.mem_def,
     Option.map_eq_some_iff, Sum.exists, Sum.elim_inl, negUnload, reduceCtorEq, and_false,
@@ -1075,10 +1079,8 @@ lemma LocalRuleApp.preserve_bottom_down (lra : LocalRuleApp) :
     forall_apply_eq_imp_iff₂, Finset.mem_sdiff, Finset.image_empty, Finset.notMem_empty,
     exists_const_iff, and_true, IsEmpty.forall_iff, implies_true, Prod.exists, ↓existsAndEq]
   case oneSidedL ress orule ress_def =>
-    clear pre
     cases orule <;> simp_all <;> grind only []
   case oneSidedR ress orule ress_def =>
-    clear pre
     cases orule <;> simp_all <;> grind only []
   case loadedL ress chi lrule ress_def => cases lrule <;> simp_all only [Finset.empty_subset,
     Option.some_subseteq, true_and, List.pdlToFinFinOpt, List.mem_toFinset, List.mem_map,
@@ -1094,7 +1096,11 @@ lemma LocalRuleApp.preserve_atom_down (lra : LocalRuleApp) :
       Formula.atom_prop p ∈ lra.X.toFinset → Formula.atom_prop p ∈ Y.toFinset := by
   rcases lra with ⟨L, R, O, Lcond, Rcond, Ocond, ress, rule, C, hC, pre⟩
   subst hC
-  cases rule <;> simp_all only [applyLocalRule, Finset.sdiff_empty, Finset.mem_image,
+  dsimp only [LocalRuleApp.X]
+  cases rule
+  case' oneSidedL => clear pre
+  case' oneSidedR => clear pre
+  all_goals simp_all only [applyLocalRule, Finset.sdiff_empty, Finset.mem_image,
     exists_exists_and_eq_and, Finset.union_empty, Olf.change_old_none_none, Sequent.toFinset,
     Finset.union_assoc, Finset.mem_union, Option.mem_toFinset, Option.mem_def,
     Option.map_eq_some_iff, Sum.exists, Sum.elim_inl, negUnload, reduceCtorEq, and_false,
@@ -1103,10 +1109,8 @@ lemma LocalRuleApp.preserve_atom_down (lra : LocalRuleApp) :
     exists_const_iff, and_true, not_isEmpty_of_nonempty, IsEmpty.forall_iff, implies_true,
     Prod.exists, ↓existsAndEq]
   case oneSidedL ress orule ress_def =>
-    clear pre
     cases orule <;> simp_all <;> grind only []
   case oneSidedR ress orule ress_def =>
-    clear pre
     cases orule <;> simp_all <;> grind only []
   case loadedL ress chi lrule ress_def =>
     cases lrule <;> simp_all only [Finset.empty_subset, Option.some_subseteq, true_and,
@@ -1124,7 +1128,11 @@ lemma LocalRuleApp.preserve_neg_atom_down (lra : LocalRuleApp) :
       (~(Formula.atom_prop p)) ∈ lra.X.toFinset → (~(Formula.atom_prop p)) ∈ Y.toFinset := by
   rcases lra with ⟨L, R, O, Lcond, Rcond, Ocond, ress, rule, C, hC, pre⟩
   subst hC
-  cases rule <;> simp_all only [applyLocalRule, Finset.sdiff_empty, Finset.mem_image,
+  dsimp only [LocalRuleApp.X]
+  cases rule
+  case' oneSidedL => clear pre
+  case' oneSidedR => clear pre
+  all_goals simp_all only [applyLocalRule, Finset.sdiff_empty, Finset.mem_image,
     exists_exists_and_eq_and, Finset.union_empty, Olf.change_old_none_none, Sequent.toFinset,
     Finset.union_assoc, Finset.mem_union, Option.mem_toFinset, Option.mem_def,
     Option.map_eq_some_iff, Sum.exists, Sum.elim_inl, negUnload, Formula.neg.injEq, Sum.elim_inr,
@@ -1132,10 +1140,8 @@ lemma LocalRuleApp.preserve_neg_atom_down (lra : LocalRuleApp) :
     Finset.notMem_empty, not_isEmpty_of_nonempty, IsEmpty.forall_iff, implies_true, Prod.exists,
     ↓existsAndEq, and_true]
   case oneSidedL ress orule ress_def =>
-    clear pre
     cases orule <;> grind only [Finset.mem_insert, Finset.mem_singleton, Finset.notMem_empty]
   case oneSidedR ress orule ress_def =>
-    clear pre
     cases orule <;> grind only [Finset.mem_insert, Finset.mem_singleton, Finset.notMem_empty]
   case loadedL ress chi lrule ress_def =>
     cases lrule <;> simp_all only [Finset.empty_subset, Option.some_subseteq, true_and,
@@ -1937,7 +1943,11 @@ lemma LocalRuleApp.preserve_basic_down (lra : LocalRuleApp) :
     ∀ Y ∈ lra.C, ∀ f, f.basic → f ∈ lra.X.toFinset → f ∈ Y.toFinset := by
   rcases lra with ⟨L, R, O, Lcond, Rcond, Ocond, ress, rule, C, hC, pre⟩
   subst hC
-  cases rule <;> simp_all only [applyLocalRule, Finset.sdiff_empty, Finset.mem_image,
+  dsimp only [LocalRuleApp.X]
+  cases rule
+  case' oneSidedL => clear pre
+  case' oneSidedR => clear pre
+  all_goals simp_all only [applyLocalRule, Finset.sdiff_empty, Finset.mem_image,
     exists_exists_and_eq_and, Finset.union_empty, Olf.change_old_none_none, Formula.basic,
     decide_false, decide_true, Sequent.toFinset, Finset.union_assoc, Finset.mem_union,
     Option.mem_toFinset, Option.mem_def, Option.map_eq_some_iff, Sum.exists, Sum.elim_inl,
@@ -1945,10 +1955,8 @@ lemma LocalRuleApp.preserve_basic_down (lra : LocalRuleApp) :
     Finset.mem_sdiff, Finset.image_empty, Finset.notMem_empty, implies_true, forall_const,
     not_isEmpty_of_nonempty, IsEmpty.forall_iff, Prod.exists, ↓existsAndEq, and_true]
   case oneSidedL ress orule ress_def =>
-    clear pre
     cases orule <;> simp_all <;> grind only [Program.isAtomic]
   case oneSidedR ress orule ress_def =>
-    clear pre
     cases orule <;> simp_all <;> grind only [Program.isAtomic]
   case loadedL ress chi lrule ress_def =>
     cases lrule <;> simp_all only [Finset.empty_subset, Option.some_subseteq, true_and,
