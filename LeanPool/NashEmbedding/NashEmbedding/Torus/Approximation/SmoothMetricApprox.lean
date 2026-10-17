@@ -12,7 +12,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Aristotle (Harmonic), Claude Fable 5 (Anthropic), Claude Opus 4.7 (Anthropic)
   — at the request of David Wiygul
 -/
-public import Mathlib.Tactic
+public import LeanPool.NashEmbedding.Tactics
 public import LeanPool.NashEmbedding.NashEmbedding.Sobolev.Periodization
 public import LeanPool.NashEmbedding.NashEmbedding.Sobolev.Mollifier
 public import LeanPool.NashEmbedding.NashEmbedding.Sobolev.PositionSpace
