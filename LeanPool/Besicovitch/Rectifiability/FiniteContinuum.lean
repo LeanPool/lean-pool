@@ -50,7 +50,7 @@ private theorem exists_short_closed_walk {V : Type*} [Fintype V] (G : SimpleGrap
     let : Fintype t := Fintype.ofFinite t
     have ht_card_eq : Fintype.card t = Fintype.card V - 1 := by
       rw [Fintype.card_eq_nat_card, Fintype.card_eq_nat_card]
-      simpa [t] using Set.ncard_compl ({v} : Set V)
+      simp [t]
     have ht_card : Fintype.card t < Fintype.card V := by rw [ht_card_eq]; omega
     obtain ⟨r, p, hp, hp_len⟩ := ih (Fintype.card t) (hn ▸ ht_card) (G.induce t) hv rfl
     have hv_support : v ∈ G.support := by simp [hG.preconnected.support_eq_univ]
