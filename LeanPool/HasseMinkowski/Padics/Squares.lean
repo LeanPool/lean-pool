@@ -124,7 +124,7 @@ variable (p : ℕ) [Fact (Nat.Prime p)]
 lemma isSquare_of_dist_one_lt_one {p : ℕ} [Fact (Nat.Prime p)] (hp : p ≠ 2) {x : ℚ_[p]}
     (hx : dist x 1 < 1) : IsSquare x := by
   let z : ℤ_[p] := ⟨x - 1, hx.le⟩
-  have : ‖x - 1‖ = ‖z‖ := by simp [z]
+  have : ‖x - 1‖ = ‖z‖ := rfl
   rw [dist_eq_norm, ← zpow_zero (p : ℝ), norm_lt_pow_iff_norm_le_pow_sub_one, this, zero_sub,
     ← Nat.cast_one, PadicInt.norm_le_pow_iff_mem_span_pow, pow_one, Ideal.mem_span_singleton] at hx
   have hz1 : IsSquare (z + 1) := by
@@ -140,7 +140,7 @@ lemma isSquare_of_dist_one_lt_one {p : ℕ} [Fact (Nat.Prime p)] (hp : p ≠ 2) 
 lemma isSquare_of_dist_one_lt_pow {x : ℚ_[2]} (hx : dist x 1 < 2 ^ (-(2 : ℤ))) : IsSquare x := by
   have hx1 : ‖x - 1‖ ≤ 1 := le_trans hx.le (by norm_num)
   let z : ℤ_[2] := ⟨x - 1, hx1⟩
-  have : ‖x - 1‖ = ‖z‖ := by simp [z]
+  have : ‖x - 1‖ = ‖z‖ := rfl
   rw [dist_eq_norm, ← Nat.cast_two (R := ℝ), norm_lt_pow_iff_norm_le_pow_sub_one, this] at hx
   simp only [Int.reduceSub, ← Nat.cast_three (R := ℤ), PadicInt.norm_le_pow_iff_mem_span_pow,
     Ideal.mem_span_singleton] at hx
