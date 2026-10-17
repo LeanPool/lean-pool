@@ -67,13 +67,15 @@ private theorem FreeMeridianMarking.orientedEquiv_orientedClass (reverse b : Boo
 private theorem fundamentalGroup_basepoint_change_apply {X : Type*} [TopologicalSpace X] {x₀ x₁ : X}
     (p : Path x₀ x₁) (γ : FundamentalGroup X x₀) :
     FundamentalGroup.fundamentalGroupMulEquivOfPath p γ =
-      (Path.Homotopic.Quotient.mk p).symm.trans (γ.trans (Path.Homotopic.Quotient.mk p)) :=
+      FundamentalGroup.fromPath ((Path.Homotopic.Quotient.mk p).symm.trans
+        (γ.toPath.trans (Path.Homotopic.Quotient.mk p))) :=
   rfl
 
 private theorem fundamentalGroup_basepoint_change_mk {X : Type*} [TopologicalSpace X] {x₀ x₁ : X}
     (p : Path x₀ x₁) (γ : Path x₀ x₀) :
-    FundamentalGroup.fundamentalGroupMulEquivOfPath p (Path.Homotopic.Quotient.mk γ) =
-      Path.Homotopic.Quotient.mk (p.symm.trans (γ.trans p)) :=
+    FundamentalGroup.fundamentalGroupMulEquivOfPath p
+        (FundamentalGroup.fromPath (Path.Homotopic.Quotient.mk γ)) =
+      FundamentalGroup.fromPath (Path.Homotopic.Quotient.mk (p.symm.trans (γ.trans p))) :=
   rfl
 
 private theorem fundamentalGroup_basepoint_naturality {X Y : Type*} [TopologicalSpace X]
@@ -83,16 +85,14 @@ private theorem fundamentalGroup_basepoint_naturality {X Y : Type*} [Topological
       (FundamentalGroup.map f x₁).comp
         (FundamentalGroup.fundamentalGroupMulEquivOfPath p).toMonoidHom := by
   apply MonoidHom.ext
-  intro γ
-  induction γ using Path.Homotopic.Quotient.ind with
-  | mk
-    γ =>
-    change
-      Path.Homotopic.Quotient.mk
-          ((p.map f.continuous).symm.trans ((γ.map f.continuous).trans (p.map f.continuous))) =
-        Path.Homotopic.Quotient.mk ((p.symm.trans (γ.trans p)).map f.continuous)
-    apply congrArg Path.Homotopic.Quotient.mk
-    rw [Path.map_trans, Path.map_trans, Path.map_symm]
+  rintro ⟨⟨γ⟩⟩
+  apply CategoryTheory.End.ext
+  change
+    Path.Homotopic.Quotient.mk
+        ((p.map f.continuous).symm.trans ((γ.map f.continuous).trans (p.map f.continuous))) =
+      Path.Homotopic.Quotient.mk ((p.symm.trans (γ.trans p)).map f.continuous)
+  apply congrArg Path.Homotopic.Quotient.mk
+  rw [Path.map_trans, Path.map_trans, Path.map_symm]
 
 private theorem fundamentalGroup_basepoint_naturality_apply {X Y : Type*} [TopologicalSpace X]
     [TopologicalSpace Y] {x₀ x₁ : X} (f : C(X, Y)) (p : Path x₀ x₁) (γ : FundamentalGroup X x₀) :
@@ -155,11 +155,10 @@ private theorem
     (hS : IsPathConnected (p ⁻¹' S)) (e : E) (he : p e ∈ S) :
     Function.Surjective
       (FundamentalGroup.map (⟨Subtype.val, continuous_subtype_val⟩ : C(S, X)) ⟨p e, he⟩) := by
-  intro γ
-  induction γ using Path.Homotopic.Quotient.ind with
-  | mk γ =>
-    obtain ⟨δ, hδ⟩ := covering_exists_restricted_loop_homotopic hp S hS e he γ
-    exact ⟨Path.Homotopic.Quotient.mk δ, Path.Homotopic.Quotient.eq.mpr hδ⟩
+  rintro ⟨⟨γ⟩⟩
+  obtain ⟨δ, hδ⟩ := covering_exists_restricted_loop_homotopic hp S hS e he γ
+  exact ⟨FundamentalGroup.fromPath (Path.Homotopic.Quotient.mk δ),
+    CategoryTheory.End.ext (Path.Homotopic.Quotient.eq.mpr hδ)⟩
 
 private theorem
     covering_restriction_fundamentalGroup_map_surjective {E X : Type*} [TopologicalSpace E]

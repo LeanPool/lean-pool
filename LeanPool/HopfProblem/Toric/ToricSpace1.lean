@@ -84,12 +84,13 @@ private theorem ToricCharts.monomial_contDiffOn {d : ℕ} (A : Matrix (Fin d) (F
   cases h : A i j with
   | ofNat k =>
     simpa only [h, Int.ofNat_eq_natCast, zpow_natCast] using
-      (contDiff_apply ℂ ℂ j).contDiffOn.pow k
+      (contDiff_apply ℂ (fun _ => ℂ) j).contDiffOn.pow k
   | negSucc k =>
     have hn : A i j < 0 := by omega
     intro z hz
     simpa only [h, zpow_negSucc] using
-      ((contDiff_apply ℂ ℂ j).contDiffWithinAt.pow (k + 1)).fun_inv (pow_ne_zero _ (hz i j hn))
+      ((contDiff_apply ℂ (fun _ => ℂ) j).contDiffWithinAt.pow (k + 1)).fun_inv
+        (pow_ne_zero _ (hz i j hn))
 
 private theorem ToricCharts.prod_zpow_eq_mo1973_9082 {d : ℕ} (a : ℂ) (ha : a ≠ 0)
     (s : Finset (Fin d)) (k : Fin d → ℤ) : (∏ i ∈ s, a ^ k i) = a ^ ∑ i ∈ s, k i := by
@@ -383,7 +384,8 @@ private def ToricFan.Triangle.time (z : ToricCharts.CoordinateSpace 3) : ℂ :=
   z 0 * z 1 * z 2
 
 private theorem ToricFan.Triangle.time_holomorphic : ContDiff ℂ ω time := by
-  exact ((contDiff_apply ℂ ℂ 0).mul (contDiff_apply ℂ ℂ 1)).mul (contDiff_apply ℂ ℂ 2)
+  exact ((contDiff_apply ℂ (fun _ => ℂ) 0).mul (contDiff_apply ℂ (fun _ => ℂ) 1)).mul
+    (contDiff_apply ℂ (fun _ => ℂ) 2)
 
 private theorem ToricFan.Triangle.monomial_rays_height (s : ToricFan.Triangle)
     (z : ToricCharts.CoordinateSpace 3) : ToricCharts.monomial s.rays z 2 = time z := by
@@ -836,7 +838,7 @@ private theorem ToricCharts.character_contDiff (a : Fin 3 → ℤ) (ha : ∀ j, 
     funext z
     conv_lhs => rw [← Int.toNat_of_nonneg (ha j), zpow_natCast]
   rw [he]
-  exact (contDiff_apply ℂ ℂ j).pow _
+  exact (contDiff_apply ℂ (fun _ => ℂ) j).pow _
 
 private theorem ToricCharts.characters_mul_on_torus (A : Matrix (Fin 3) (Fin 3) ℤ) (a b : Fin 3 → ℤ)
     (h : ∀ j, a j + ∑ i, b i * A i j = 0) {z : CoordinateSpace 3} (hz : z ∈ torus) :
@@ -1057,7 +1059,7 @@ private theorem ToricSpace.scale_holomorphic (s : ToricFan.Triangle) (u : Acting
     ContDiff ℂ ω (scale s u) := by
   apply contDiff_pi.mpr
   intro j
-  exact contDiff_const.mul (contDiff_apply ℂ ℂ j)
+  exact contDiff_const.mul (contDiff_apply ℂ (fun _ => ℂ) j)
 
 private theorem ToricSpace.scale_mem_source (s t : ToricFan.Triangle) (u : ActingTorus)
     (z : ToricCharts.CoordinateSpace 3) :

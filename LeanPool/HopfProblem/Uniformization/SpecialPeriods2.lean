@@ -7,6 +7,7 @@ module
 
 public import LeanPool.HopfProblem.Prelude
 public import LeanPool.HopfProblem.Threefold.SpecialPeriods3
+import Mathlib.Analysis.SpecialFunctions.Complex.LogDeriv
 import all LeanPool.HopfProblem.Foundations.Core1
 import all LeanPool.HopfProblem.Lattice.Core1
 import all LeanPool.HopfProblem.Foundations.Core2
@@ -2356,7 +2357,7 @@ private instance SpecialPeriods.Triangle.translationSubgroup_discrete (Γ : Subg
 private theorem SpecialPeriods.Triangle.translationSubgroup_cyclic (Γ : Subgroup (SL(2, ℝ)))
     [DiscreteTopology Γ] : ∃ t : ℝ, translationSubgroup Γ = AddSubgroup.zmultiples t := by
   have hc : IsAddCyclic (translationSubgroup Γ) :=
-    AddSubgroup.discrete_iff_addCyclic.mpr inferInstance
+    AddSubgroup.isAddCyclic_iff_discreteTopology.mpr inferInstance
   obtain ⟨t, ht⟩ :=
     (AddSubgroup.isAddCyclic_iff_exists_zmultiples_eq_top (translationSubgroup Γ)).mp hc
   exact ⟨t, ht.symm⟩
@@ -5575,10 +5576,8 @@ private theorem SpecialPeriods.Triangle.cayleyCoordinate_hasStrictDerivAt_center
     have hd' : HasStrictDerivAt (fun z : ℂ => z - starRingEnd ℂ (a : ℂ)) 1 (a : ℂ) :=
       (hasStrictDerivAt_id (a : ℂ)).sub_const (starRingEnd ℂ (a : ℂ))
     convert hn.div hd' hd using 1
-    all_goals
-      first
-      | rfl
-      | (field_simp; ring)
+    field_simp
+    ring
   apply h.congr_of_eventuallyEq
   filter_upwards [UpperHalfPlane.eventuallyEq_coe_comp_ofComplex a.im_pos] with z hz
   change (UpperHalfPlane.ofComplex z : ℂ) = z at hz

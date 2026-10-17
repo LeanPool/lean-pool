@@ -292,8 +292,9 @@ private def FundamentalGroupVanKampen.TwoOpenCover.inclusionHomV {X : Type*} [To
 private theorem FundamentalGroupVanKampen.TwoOpenCover.inclusionHom_compatible {X : Type*}
     [TopologicalSpace X] (D : FundamentalGroupVanKampen.TwoOpenCover X) :
     D.inclusionHomU.comp D.overlapHomU = D.inclusionHomV.comp D.overlapHomV := by
-  ext γ
-  obtain ⟨p⟩ := γ
+  apply MonoidHom.ext
+  rintro ⟨⟨p⟩⟩
+  apply CategoryTheory.End.ext
   apply congrArg Path.Homotopic.Quotient.mk
   ext t
   rfl
@@ -431,21 +432,21 @@ private theorem FundamentalGroupVanKampen.TwoOpenCover.hom_ext {X : Type*} [Topo
     let l' : Path (D.baseChart i) (D.baseChart i) :=
       FundamentalGroupVanKampen.pathIn l (D.base_mem_chart i) (D.base_mem_chart i) hl
     have hmap :
-      (Path.Homotopic.Quotient.mk l').map
-          (⟨Subtype.val, continuous_subtype_val⟩ : C(D.chart i, X)) =
+      FundamentalGroup.fromPath ((Path.Homotopic.Quotient.mk l').map
+          (⟨Subtype.val, continuous_subtype_val⟩ : C(D.chart i, X))) =
         TriangleRegularBaseFundamentalGroup.basedLoop F (Path.Homotopic.Quotient.mk p) := by
       change
-        Path.Homotopic.Quotient.mk (l'.map continuous_subtype_val) =
+        FundamentalGroup.fromPath (Path.Homotopic.Quotient.mk (l'.map continuous_subtype_val)) =
           TriangleRegularBaseFundamentalGroup.basedLoop F (Path.Homotopic.Quotient.mk p)
       rw [show l'.map continuous_subtype_val = l from
           FundamentalGroupVanKampen.pathIn_map _ _ _ _]
       rfl
     cases i with
     | false =>
-      have h := DFunLike.congr_fun hU (Path.Homotopic.Quotient.mk l')
+      have h := DFunLike.congr_fun hU (FundamentalGroup.fromPath (Path.Homotopic.Quotient.mk l'))
       exact (congrArg f hmap).symm.trans (h.trans (congrArg g hmap))
     | true =>
-      have h := DFunLike.congr_fun hV (Path.Homotopic.Quotient.mk l')
+      have h := DFunLike.congr_fun hV (FundamentalGroup.fromPath (Path.Homotopic.Quotient.mk l'))
       exact (congrArg f hmap).symm.trans (h.trans (congrArg g hmap))
   have hall :
     ∀ {x y : X} (q : Path.Homotopic.Quotient x y),
@@ -467,12 +468,13 @@ private theorem FundamentalGroupVanKampen.TwoOpenCover.hom_ext {X : Type*} [Topo
     simp only [F, D.pathTo_base, Path.Homotopic.Quotient.mk_refl]
   have hsymm : (Path.Homotopic.Quotient.refl D.base).symm = Path.Homotopic.Quotient.refl D.base :=
     by
-    change (1 : FundamentalGroup X D.base)⁻¹ = 1
-    exact inv_one
+    exact congrArg FundamentalGroup.toPath
+      (show (1 : FundamentalGroup X D.base)⁻¹ = 1 from inv_one)
   apply MonoidHom.ext
   intro q
   simpa only [TriangleRegularBaseFundamentalGroup.basedLoop, hbase,
-    Path.Homotopic.Quotient.refl_trans, hsymm, Path.Homotopic.Quotient.trans_refl] using hall q
+    Path.Homotopic.Quotient.refl_trans, hsymm, Path.Homotopic.Quotient.trans_refl]
+    using hall q.toPath
 
 end Mathoverflow1973
 

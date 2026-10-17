@@ -3062,7 +3062,8 @@ private theorem Elliptic.surfaceFundamentalGroupDeckEquiv_monodromy (j : Kind) (
     (v : Lattice) (hv : AdmissibleTwist j v) (y : RealPlane₄)
     (γ : FundamentalGroup (Surface j p v hv) (affineCoverProjection j p v hv y)) :
     (surfaceFundamentalGroupDeckEquiv j p v hv y γ)⁻¹ • y =
-      ((affineCoverProjection_isQuotientCoveringMap j p v hv).isCoveringMap.monodromy γ ⟨y, rfl⟩ :
+      ((affineCoverProjection_isQuotientCoveringMap j p v hv).isCoveringMap.monodromy
+        γ.toPath ⟨y, rfl⟩ :
         RealPlane₄) := by
   let hq := affineCoverProjection_isQuotientCoveringMap j p v hv
   change ((hq.fundamentalGroupToMulOpposite ⟨y, rfl⟩ γ).unop⁻¹)⁻¹ • y = _

@@ -11,6 +11,7 @@ import all LeanPool.HopfProblem.Foundations.LineBundleTransport
 import all LeanPool.HopfProblem.Recognition.Smale1
 import all LeanPool.HopfProblem.CuspFibre.CuspPositiveRetraction
 import all Mathlib.Analysis.InnerProductSpace.Adjoint
+import Mathlib.Geometry.Manifold.ContMDiffMFDeriv
 import all Mathlib.Geometry.Manifold.SmoothApprox
 
 /-!

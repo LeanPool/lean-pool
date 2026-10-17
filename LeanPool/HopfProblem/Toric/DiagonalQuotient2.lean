@@ -7,6 +7,8 @@ module
 
 public import LeanPool.HopfProblem.Prelude
 public import LeanPool.HopfProblem.Recognition.Smale7
+import Mathlib.AlgebraicTopology.FundamentalGroupoid.InducedMaps
+import Mathlib.Topology.Homotopy.Product
 import all LeanPool.HopfProblem.Toric.ToricSpace1
 import all LeanPool.HopfProblem.Toric.DiagonalQuotient1
 import all LeanPool.HopfProblem.Recognition.Smale7
@@ -148,33 +150,30 @@ private theorem
     (projectionFundamentalGroupHom (G := G) b c).comp (sectionFundamentalGroupHom c hc b) =
       MonoidHom.id (FundamentalGroup (BaseSpace G B) (baseQuotient G B b)) := by
   apply DFunLike.ext
-  intro γ
-  induction γ using Path.Homotopic.Quotient.ind with
-  | mk
-    γ =>
-    change
-      Path.Homotopic.Quotient.mk
-          ((γ.map (zeroSection_continuous c hc)).map (projection_continuous G B F)) =
-        Path.Homotopic.Quotient.mk γ
-    apply congrArg Path.Homotopic.Quotient.mk
-    ext t
-    exact projection_zeroSection c hc (γ t)
+  rintro ⟨⟨γ⟩⟩
+  apply CategoryTheory.End.ext
+  change
+    Path.Homotopic.Quotient.mk
+        ((γ.map (zeroSection_continuous c hc)).map (projection_continuous G B F)) =
+      Path.Homotopic.Quotient.mk γ
+  apply congrArg Path.Homotopic.Quotient.mk
+  ext t
+  exact projection_zeroSection c hc (γ t)
 
 @[simp]
 private theorem DiagonalQuotient.projectionFundamentalGroupHom_fibre {G B F : Type*} [Group G]
     [MulAction G B] [MulAction G F] [TopologicalSpace B] [TopologicalSpace F] (b : B) (c : F)
     (γ : FundamentalGroup F c) :
     projectionFundamentalGroupHom (G := G) b c (fibreFundamentalGroupHom b c γ) = 1 := by
-  induction γ using Path.Homotopic.Quotient.ind with
-  | mk
-    γ =>
-    change
-      Path.Homotopic.Quotient.mk
-          ((γ.map (fibreInclusion_continuous G B F b)).map (projection_continuous G B F)) =
-        Path.Homotopic.Quotient.mk (Path.refl (baseQuotient G B b))
-    apply congrArg Path.Homotopic.Quotient.mk
-    ext t
-    rfl
+  obtain ⟨⟨γ⟩⟩ := γ
+  apply CategoryTheory.End.ext
+  change
+    Path.Homotopic.Quotient.mk
+        ((γ.map (fibreInclusion_continuous G B F b)).map (projection_continuous G B F)) =
+      Path.Homotopic.Quotient.mk (Path.refl (baseQuotient G B b))
+  apply congrArg Path.Homotopic.Quotient.mk
+  ext t
+  rfl
 
 private theorem DiagonalQuotient.fibreFundamentalGroupHom_range_le_ker {G B F : Type*} [Group G]
     [MulAction G B] [MulAction G F] [TopologicalSpace B] [TopologicalSpace F] (b : B) (c : F) :
@@ -192,7 +191,7 @@ private def
 private theorem DiagonalQuotient.deckTransportHom_monodromy {G B : Type*} [Group G] [MulAction G B]
     [TopologicalSpace B] (hq : IsQuotientCoveringMap (baseQuotient G B) G) (b : B)
     (γ : FundamentalGroup (BaseSpace G B) (baseQuotient G B b)) :
-    (deckTransportHom hq b γ)⁻¹ • b = (hq.isCoveringMap.monodromy γ ⟨b, rfl⟩ : B) := by
+    (deckTransportHom hq b γ)⁻¹ • b = (hq.isCoveringMap.monodromy γ.toPath ⟨b, rfl⟩ : B) := by
   change ((hq.fundamentalGroupToMulOpposite ⟨b, rfl⟩ γ).unop⁻¹)⁻¹ • b = _
   rw [inv_inv]
   exact hq.unop_fundamentalGroupToMulOpposite_smul
@@ -295,17 +294,18 @@ private theorem DiagonalQuotient.fibreFundamentalGroupHom_injective {G B F : Typ
     [ContinuousConstSMul G F] (hq : IsQuotientCoveringMap (baseQuotient G B) G) (b : B) (c : F) :
     Function.Injective (fibreFundamentalGroupHom (G := G) b c) := by
   intro α β h
+  apply CategoryTheory.End.ext
   apply product_vertical_loop_map_injective b c
   apply (quotient_isCoveringMap (F := F) hq).injective_path_homotopic_map (b, c) (b, c)
   change
-    (Path.Homotopic.Quotient.map α
+    (Path.Homotopic.Quotient.map α.toPath
             ⟨fun f : F => (b, f), continuous_const.prodMk continuous_id⟩).map
         ⟨quotient G B F, quotient_continuous G B F⟩ =
-      (Path.Homotopic.Quotient.map β
+      (Path.Homotopic.Quotient.map β.toPath
             ⟨fun f : F => (b, f), continuous_const.prodMk continuous_id⟩).map
         ⟨quotient G B F, quotient_continuous G B F⟩
   rw [← Path.Homotopic.Quotient.map_comp, ← Path.Homotopic.Quotient.map_comp]
-  exact h
+  exact congrArg FundamentalGroup.toPath h
 
 private theorem DiagonalQuotient.fibreFundamentalGroupHom_range_eq_ker {G B F : Type*} [Group G]
     [MulAction G B] [MulAction G F] [TopologicalSpace B] [TopologicalSpace F]
@@ -314,10 +314,11 @@ private theorem DiagonalQuotient.fibreFundamentalGroupHom_range_eq_ker {G B F : 
       (projectionFundamentalGroupHom (G := G) b c).ker := by
   apply le_antisymm (fibreFundamentalGroupHom_range_le_ker b c)
   intro γ hγ
+  replace hγ := congrArg FundamentalGroup.toPath hγ
   change
-    Path.Homotopic.Quotient.map γ ⟨projection G B F, projection_continuous G B F⟩ =
+    Path.Homotopic.Quotient.map γ.toPath ⟨projection G B F, projection_continuous G B F⟩ =
       Path.Homotopic.Quotient.refl (baseQuotient G B b) at hγ
-  obtain ⟨α, hα⟩ := quotient_loop_lift_of_projection_eq_refl hq b c γ hγ
+  obtain ⟨α, hα⟩ := quotient_loop_lift_of_projection_eq_refl hq b c γ.toPath hγ
   have hfst : α.map ⟨Prod.fst, continuous_fst⟩ = Path.Homotopic.Quotient.refl b := by
     apply hq.isCoveringMap.injective_path_homotopic_map b b
     change
@@ -337,7 +338,8 @@ private theorem DiagonalQuotient.fibreFundamentalGroupHom_range_eq_ker {G B F : 
                 η.map ⟨projection G B F, projection_continuous G B F⟩)
               hα).trans
           hγ)
-  refine ⟨α.map ⟨Prod.snd, continuous_snd⟩, ?_⟩
+  refine ⟨FundamentalGroup.fromPath (α.map ⟨Prod.snd, continuous_snd⟩), ?_⟩
+  apply CategoryTheory.End.ext
   have hv :=
     congrArg
       (fun η : Path.Homotopic.Quotient (b, c) (b, c) =>
@@ -376,15 +378,16 @@ private def
 private theorem DiagonalQuotient.fundamentalGroup_conjugation_of_homotopy {F E : Type*}
     [TopologicalSpace F] [TopologicalSpace E] (f₀ f₁ : C(F, E)) (H : f₀.Homotopy f₁) (c : F)
     (e : E) (h₀ : f₀ c = e) (h₁ : f₁ c = e) (v : FundamentalGroup F c) :
-    let s : FundamentalGroup E e := .mk ((H.evalAt c).cast h₀.symm h₁.symm)
+    let s : FundamentalGroup E e :=
+      FundamentalGroup.fromPath (.mk ((H.evalAt c).cast h₀.symm h₁.symm))
     s * FundamentalGroup.mapOfEq f₀ h₀ v * s⁻¹ = FundamentalGroup.mapOfEq f₁ h₁ v := by
-  let s : FundamentalGroup E e := .mk ((H.evalAt c).cast h₀.symm h₁.symm)
+  let s : FundamentalGroup E e :=
+    FundamentalGroup.fromPath (.mk ((H.evalAt c).cast h₀.symm h₁.symm))
   change s * FundamentalGroup.mapOfEq f₀ h₀ v * s⁻¹ = FundamentalGroup.mapOfEq f₁ h₁ v
   have hsquare : s * FundamentalGroup.mapOfEq f₀ h₀ v = FundamentalGroup.mapOfEq f₁ h₁ v * s := by
-    obtain ⟨p, rfl⟩ := Path.Homotopic.Quotient.mk_surjective v
-    simp only [s, FundamentalGroup.mul_def, FundamentalGroup.mapOfEq_apply,
-      ← Path.Homotopic.Quotient.mk_map, ← Path.Homotopic.Quotient.mk_cast,
-      ← Path.Homotopic.Quotient.mk_trans]
+    obtain ⟨⟨p⟩⟩ := v
+    apply CategoryTheory.End.ext
+    simp only [s, FundamentalGroup.mul_def, FundamentalGroup.mapOfEq_apply]
     apply Path.Homotopic.Quotient.eq.mpr
     have hp := (Path.Homotopic.map_trans_evalAt H p).pathCast h₀.symm h₁.symm
     rw [Path.cast_trans (p.map f₀.continuous) (H.evalAt c) h₀.symm h₀.symm h₁.symm,
@@ -411,16 +414,18 @@ private theorem
         (sectionFundamentalGroupHom c hc b β)⁻¹ =
       fibreFundamentalGroupHom b c
         (fibreActionFundamentalGroupHom c hc (deckTransportHom hq b β) v) := by
-  obtain ⟨γ, rfl⟩ := Path.Homotopic.Quotient.mk_surjective β
-  let g : G := deckTransportHom hq b (.mk γ)
+  obtain ⟨⟨γ⟩⟩ := β
+  let g : G := deckTransportHom hq b (FundamentalGroup.fromPath (.mk γ))
   have hend : (hq.isCoveringMap.monodromy (.mk γ) ⟨b, rfl⟩ : B) = g⁻¹ • b :=
-    (deckTransportHom_monodromy hq b (.mk γ)).symm
+    (deckTransportHom_monodromy hq b (FundamentalGroup.fromPath (.mk γ))).symm
   let i : C(F, Space G B F) := ⟨fibreInclusion G B F b, fibreInclusion_continuous G B F b⟩
   let a : C(F, F) := ⟨fun f : F => g • f, ContinuousConstSMul.continuous_const_smul g⟩
   let H : i.Homotopy (i.comp a) := liftedFibreHomotopy (F := F) hq b γ g hend
   have h₁ : (i.comp a) c = i c := congrArg i (hc g)
-  let s : FundamentalGroup (Space G B F) (i c) := .mk ((H.evalAt c).cast rfl h₁.symm)
-  have hs : s = sectionFundamentalGroupHom c hc b (.mk γ) := by
+  let s : FundamentalGroup (Space G B F) (i c) :=
+    FundamentalGroup.fromPath (.mk ((H.evalAt c).cast rfl h₁.symm))
+  have hs : s = sectionFundamentalGroupHom c hc b (FundamentalGroup.fromPath (.mk γ)) := by
+    apply CategoryTheory.End.ext
     change
       Path.Homotopic.Quotient.mk ((H.evalAt c).cast rfl h₁.symm) =
         Path.Homotopic.Quotient.mk (γ.map (zeroSection_continuous c hc))
@@ -433,7 +438,7 @@ private theorem
   have hi (w : FundamentalGroup F c) :
     FundamentalGroup.mapOfEq i rfl w = fibreFundamentalGroupHom b c w := by
     rw [FundamentalGroup.mapOfEq_apply]
-    exact Path.Homotopic.Quotient.cast_rfl_rfl _
+    exact CategoryTheory.End.ext (Path.Homotopic.Quotient.cast_rfl_rfl _)
   have hterminal :
     FundamentalGroup.mapOfEq (i.comp a) h₁ v =
       fibreFundamentalGroupHom b c (fibreActionFundamentalGroupHom c hc g v) := by

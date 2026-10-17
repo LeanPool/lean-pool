@@ -39,7 +39,7 @@ public import Mathlib.Analysis.SpecialFunctions.Pow.Integral
 public import Mathlib.CategoryTheory.EffectiveEpi.Comp
 public import Mathlib.CategoryTheory.ExtremalEpi
 public import Mathlib.Combinatorics.Quiver.ReflQuiver
-public import Mathlib.Data.Int.Star
+public import Mathlib.Algebra.Order.Star.Int
 public import Mathlib.Dynamics.OmegaLimit
 public import Mathlib.Geometry.Manifold.Complex
 public import Mathlib.Geometry.Manifold.Instances.Icc
@@ -97,7 +97,7 @@ public import Mathlib.Topology.Connected.Separation
 public import Mathlib.Topology.Gluing
 public import Mathlib.Topology.Homotopy.HomotopyGroup
 public import Mathlib.Topology.MetricSpace.HausdorffDimension
-public import Mathlib.Topology.Separation.Lemmas
+public import Mathlib.Topology.Separation.CompletelyRegular
 public import Mathlib.Topology.Sheaves.EtaleSpace
 public import Mathlib.Topology.Subpath
 public import Mathlib.Topology.UniformSpace.Ascoli

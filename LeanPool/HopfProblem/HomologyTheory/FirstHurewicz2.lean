@@ -52,11 +52,13 @@ private theorem SphereHomology.twoOpenCover_fundamentalGroup_eq_one {X : Type*} 
     MonoidHom.id (FundamentalGroup X D.base) =
       (1 : FundamentalGroup X D.base →* FundamentalGroup X D.base) := by
     apply D.hom_ext
-    · ext a
+    · apply MonoidHom.ext
+      intro a
       have ha : a = 1 := Subsingleton.elim _ _
       change D.inclusionHomU a = 1
       rw [ha, map_one]
-    · ext a
+    · apply MonoidHom.ext
+      intro a
       have ha : a = 1 := Subsingleton.elim _ _
       change D.inclusionHomV a = 1
       rw [ha, map_one]

@@ -2733,8 +2733,9 @@ private theorem SpecialPeriods.Threefold.attachmentLeftGroupEquiv_inclusion (s :
     (i : Puncture) (hi : i ∉ s) :
     (previousStageHom s i).comp (attachmentLeftGroupEquiv s i hi).toMonoidHom =
       (attachmentCover s i hi).inclusionHomU := by
-  ext γ
-  obtain ⟨p⟩ := γ
+  ext γ : 1
+  obtain ⟨⟨p⟩⟩ := γ
+  apply CategoryTheory.End.ext
   apply congrArg Path.Homotopic.Quotient.mk
   ext t
   rfl
@@ -2743,8 +2744,9 @@ private theorem SpecialPeriods.Threefold.attachmentRightGroupEquiv_overlap (s : 
     (i : Puncture) (hi : i ∉ s) :
     (attachmentRightGroupEquiv s i hi).toMonoidHom.comp (attachmentCover s i hi).overlapHomV =
       (overlapFillingHom i).comp (attachmentOverlapGroupEquiv s i hi).toMonoidHom := by
-  ext γ
-  obtain ⟨p⟩ := γ
+  ext γ : 1
+  obtain ⟨⟨p⟩⟩ := γ
+  apply CategoryTheory.End.ext
   apply congrArg Path.Homotopic.Quotient.mk
   ext t
   rfl

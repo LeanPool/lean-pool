@@ -8,6 +8,7 @@ module
 public import LeanPool.HopfProblem.Prelude
 public import LeanPool.HopfProblem.Recognition.Smale2
 public import LeanPool.HopfProblem.Uniformization.SpecialPeriods1
+import Mathlib.Topology.Algebra.Module.Equiv.Submodule
 import all LeanPool.HopfProblem.Foundations.LineBundleTransport
 import all LeanPool.HopfProblem.Recognition.Smale1
 import all LeanPool.HopfProblem.Recognition.Smale2

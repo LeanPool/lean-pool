@@ -1316,13 +1316,13 @@ private theorem
   obtain rfl | ⟨l, rfl⟩ := Fin.eq_self_or_eq_succAbove j k
   · simpa only [insertZero_at] using
       (contDiff_const : ContDiff ℂ ω (fun _ : ToricCharts.CoordinateSpace 2 => (0 : ℂ)))
-  · simpa only [insertZero, Fin.insertNth_apply_succAbove] using (contDiff_apply ℂ ℂ l)
+  · simpa only [insertZero, Fin.insertNth_apply_succAbove] using (contDiff_apply ℂ (fun _ => ℂ) l)
 
 private theorem ToricComponent.removeCoordinate_holomorphic (j : Fin 3) :
     ContDiff ℂ ω (removeCoordinate j) := by
   apply contDiff_pi.mpr
   intro i
-  exact contDiff_apply ℂ ℂ (j.succAbove i)
+  exact contDiff_apply ℂ (fun _ => ℂ) (j.succAbove i)
 
 private structure ToricComponent.ChartIndex (v : Fin 2 → ℤ) where
   triangle : ToricFan.Triangle

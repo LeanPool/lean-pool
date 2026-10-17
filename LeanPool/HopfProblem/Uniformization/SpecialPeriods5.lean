@@ -8,6 +8,7 @@ module
 public import LeanPool.HopfProblem.Prelude
 public import LeanPool.HopfProblem.Threefold.SpecialPeriods5
 public import LeanPool.HopfProblem.CuspFibre.CuspCentralHomology1
+import Mathlib.Analysis.SpecialFunctions.PolarCoord
 import all LeanPool.HopfProblem.Uniformization.HolomorphicCousin
 import all LeanPool.HopfProblem.Foundations.Core2
 import all LeanPool.HopfProblem.PeriodFamily.PeriodPoint

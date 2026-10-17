@@ -167,10 +167,10 @@ private theorem Elliptic.familyLinearLift_holomorphic (j : Kind) :
   have hμ := (familyPeriods j).holomorphic_mu.comp hf
   have hτ0 : ∀ x : SpecialPeriods.Disc × ComplexPlane₂, ((familyPeriods j).point x.1).val.τ ≠ 0 :=
     fun x => ((familyPeriods j).point x.1).val.τ_ne_zero ((familyPeriods j).point x.1).property.1
-  have h₀ := (contMDiff_pi_space.mp hs) 0
-  have h₁ := (contMDiff_pi_space.mp hs) 1
+  have h₀ := (contMDiff_pi_module_iff.mp hs) 0
+  have h₁ := (contMDiff_pi_module_iff.mp hs) 1
   cases j
-  · apply contMDiff_pi_space.mpr
+  · apply contMDiff_pi_module_iff.mpr
     intro i
     fin_cases i
     · convert (((contMDiff_const (c := (-1 : ℂ))).div₀ hτ hτ0).mul h₀) using 1
@@ -181,7 +181,7 @@ private theorem Elliptic.familyLinearLift_holomorphic (j : Kind) :
       funext x
       simp [linearMatrix, PeriodPoint.R₁, Matrix.mulVec, dotProduct, Fin.sum_univ_two,
         Function.comp_def]
-  · apply contMDiff_pi_space.mpr
+  · apply contMDiff_pi_module_iff.mpr
     intro i
     fin_cases i
     · convert (((contMDiff_const (c := (1 : ℂ))).div₀ hτ hτ0).mul h₀) using 1

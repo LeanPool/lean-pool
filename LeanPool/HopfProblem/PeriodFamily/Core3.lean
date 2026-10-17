@@ -2188,7 +2188,7 @@ private theorem PeriodFamily.Data.deckTransportHom_monodromy {V B : Type*} [Norm
     [MulAction SpecialPeriods.TriangleGroup B] (D : PeriodFamily.Data V B)
     (hq : IsQuotientCoveringMap D.baseQuotient SpecialPeriods.TriangleGroup) (b : B)
     (γ : FundamentalGroup D.BaseSpace (D.baseQuotient b)) :
-    (D.deckTransportHom hq b γ)⁻¹ • b = (hq.isCoveringMap.monodromy γ ⟨b, rfl⟩ : B) := by
+    (D.deckTransportHom hq b γ)⁻¹ • b = (hq.isCoveringMap.monodromy γ.toPath ⟨b, rfl⟩ : B) := by
   change ((hq.fundamentalGroupToMulOpposite ⟨b, rfl⟩ γ).unop⁻¹)⁻¹ • b = _
   rw [inv_inv]
   exact hq.unop_fundamentalGroupToMulOpposite_smul
@@ -2198,7 +2198,7 @@ private theorem PeriodFamily.Data.deckTransportHom_eq_of_inverse_endpoint {V B :
     [MulAction SpecialPeriods.TriangleGroup B] (D : PeriodFamily.Data V B)
     (hq : IsQuotientCoveringMap D.baseQuotient SpecialPeriods.TriangleGroup) (b : B)
     (γ : FundamentalGroup D.BaseSpace (D.baseQuotient b)) (g : SpecialPeriods.TriangleGroup)
-    (hγ : (hq.isCoveringMap.monodromy γ ⟨b, rfl⟩ : B) = g⁻¹ • b) :
+    (hγ : (hq.isCoveringMap.monodromy γ.toPath ⟨b, rfl⟩ : B) = g⁻¹ • b) :
     D.deckTransportHom hq b γ = g := by
   let := hq.isCancelSMul
   apply inv_injective
@@ -2262,7 +2262,7 @@ private def PeriodFamily.FlatTorus.fundamentalGroupEquiv :
 private theorem PeriodFamily.FlatTorus.fundamentalGroupEquiv_monodromy
     (γ : FundamentalGroup RealTorus₄ 0) :
     periodVector (fundamentalGroupEquiv γ).toAdd =
-      (quotientCovering.isCoveringMap.monodromy γ zeroLift : RealPlane₄) := by
+      (quotientCovering.isCoveringMap.monodromy γ.toPath zeroLift : RealPlane₄) := by
   have h := quotientCovering.unop_fundamentalGroupToMulOpposite_smul (e := zeroLift) (γ := γ)
   change
     periodVector
@@ -2288,7 +2288,7 @@ private theorem PeriodFamily.FlatTorus.periodLoop_apply (c : Lattice) (t : unitI
   simp only [Path.segment_apply, AffineMap.lineMap_apply_module, smul_zero, zero_add]
 
 private theorem PeriodFamily.FlatTorus.periodLoop_monodromy (c : Lattice) :
-    quotientCovering.isCoveringMap.monodromy (FirstHurewicz.loopQuotient (periodLoop c))
+    quotientCovering.isCoveringMap.monodromy (FirstHurewicz.loopQuotient (periodLoop c)).toPath
         zeroLift =
       ⟨periodVector c, mkQ_periodVector c⟩ := by
   apply
@@ -2585,7 +2585,8 @@ private theorem PeriodFamily.Data.latticeFundamentalGroupHom_periodLoop {V B : T
     [MulAction SpecialPeriods.TriangleGroup B] (D : PeriodFamily.Data V B) (b : B) (v : Lattice) :
     D.latticeFundamentalGroupHom b (Multiplicative.ofAdd v) =
       D.flatFibreFundamentalGroupHom b
-        (Path.Homotopic.Quotient.mk (PeriodFamily.FlatTorus.periodLoop v)) := by
+        (FundamentalGroup.fromPath
+          (Path.Homotopic.Quotient.mk (PeriodFamily.FlatTorus.periodLoop v))) := by
   change
     D.flatFibreFundamentalGroupHom b
         (PeriodFamily.FlatTorus.fundamentalGroupEquiv.symm (Multiplicative.ofAdd v)) =
@@ -2612,6 +2613,7 @@ private theorem PeriodFamily.FlatTorus.fibreActionFundamentalGroupHom_periodLoop
       FirstHurewicz.loopQuotient
         (periodLoop ((SpecialPeriods.triangleDualRepresentation g : LatticeMatrix) *ᵥ c)) := by
   rw [DiagonalQuotient.fibreActionFundamentalGroupHom, FundamentalGroup.mapOfEq_apply]
+  apply CategoryTheory.End.ext
   change
     Path.Homotopic.Quotient.mk
         (((periodLoop c).map (SpecialPeriods.triangleTorusHomeomorph g).continuous).cast
@@ -2878,7 +2880,8 @@ private def PeriodFamily.Meridians.pointedHomeomorphFundamentalGroupEquiv_mo1973
           (FundamentalGroup.mapOfEq ⟨e, e.continuous⟩ h γ) =
         γ
     rw [FundamentalGroup.mapOfEq_apply, FundamentalGroup.mapOfEq_apply]
-    obtain ⟨γ⟩ := γ
+    obtain ⟨⟨γ⟩⟩ := γ
+    apply CategoryTheory.End.ext
     apply congrArg Path.Homotopic.Quotient.mk
     ext t
     exact e.symm_apply_apply (γ t)
@@ -2890,7 +2893,8 @@ private def PeriodFamily.Meridians.pointedHomeomorphFundamentalGroupEquiv_mo1973
             ((congrArg e.symm h).symm.trans (e.symm_apply_apply x)) γ) =
         γ
     rw [FundamentalGroup.mapOfEq_apply, FundamentalGroup.mapOfEq_apply]
-    obtain ⟨γ⟩ := γ
+    obtain ⟨⟨γ⟩⟩ := γ
+    apply CategoryTheory.End.ext
     apply congrArg Path.Homotopic.Quotient.mk
     ext t
     exact e.apply_symm_apply (γ t)
@@ -2921,6 +2925,7 @@ private theorem PeriodFamily.Meridians.compatibleBasePlaneEquiv_meridianClass (b
       FreeMeridianMarking.orientedClass normalizationReversesMeridians b := by
   rw [compatibleBasePlaneEquiv_apply, FundamentalGroup.mapOfEq_apply, ←
     compatiblePlanarMeridian_class]
+  apply CategoryTheory.End.ext
   apply congrArg Path.Homotopic.Quotient.mk
   apply Path.ext
   funext t

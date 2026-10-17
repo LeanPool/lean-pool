@@ -3178,9 +3178,7 @@ private theorem Smale.SheetCorrection.hasFDerivAt_centeredCorrection_zero {A F :
     HasFDerivAt (centeredCorrection R G) (0 : (ℝ × A) →L[ℝ] F) (s, 0) := by
   have hdiff : HasFDerivAt (fun p => R p - G p) (0 : (ℝ × A) →L[ℝ] F) (s, (0 : A)) := by
     convert hR.sub hG using 1
-    first
-    | rfl
-    | simp only [sub_self]
+    simp only [sub_self]
   have hcenter := hdiff.comp (s, (0 : A)) (centerProjection (A := A)).hasFDerivAt
   convert hdiff.sub hcenter using 1 <;>
     first

@@ -8,6 +8,7 @@ module
 public import LeanPool.HopfProblem.Prelude
 public import LeanPool.HopfProblem.Foundations.TrianglePeriodFamilyHomologySplitting
 public import LeanPool.HopfProblem.PeriodFamily.Core4
+import Mathlib.LinearAlgebra.FreeModule.PID
 import all LeanPool.HopfProblem.Foundations.Core1
 import all LeanPool.HopfProblem.HomologyTheory.SingularMayerVietoris
 import all LeanPool.HopfProblem.Lattice.Core1

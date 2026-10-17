@@ -125,7 +125,7 @@ private def FullPeriodMatrix.fundamentalGroupEquiv (p : FullPeriodMatrix) :
 private theorem FullPeriodMatrix.fundamentalGroupEquiv_monodromy (p : FullPeriodMatrix)
     (γ : FundamentalGroup p.Torus 0) :
     p.periodVector (p.fundamentalGroupEquiv γ).toAdd =
-      (p.quotientCovering.isCoveringMap.monodromy γ p.zeroLift : ComplexPlane₂) := by
+      (p.quotientCovering.isCoveringMap.monodromy γ.toPath p.zeroLift : ComplexPlane₂) := by
   have h := p.quotientCovering.unop_fundamentalGroupToMulOpposite_smul (e := p.zeroLift) (γ := γ)
   change
     p.periodVector
@@ -154,7 +154,7 @@ private theorem FullPeriodMatrix.periodLoop_apply (p : FullPeriodMatrix) (c : In
     AffineMap.lineMap_apply_module, smul_zero, zero_add]
 
 private theorem FullPeriodMatrix.periodLoop_monodromy (p : FullPeriodMatrix) (c : IntegerPeriods) :
-    p.quotientCovering.isCoveringMap.monodromy (FundamentalGroup.fromPath ⟦p.periodLoop c⟧)
+    p.quotientCovering.isCoveringMap.monodromy ⟦p.periodLoop c⟧
         p.zeroLift =
       ⟨p.periodVector c, p.mkQ_periodVector c⟩ := by
   apply
@@ -256,7 +256,7 @@ private def PeriodDomain.fundamentalGroupEquiv (p : PeriodDomain) :
 private theorem PeriodDomain.fundamentalGroupEquiv_monodromy (p : PeriodDomain)
     (g : FundamentalGroup p.Torus 0) :
     p.periodVector (p.fundamentalGroupEquiv g).toAdd =
-      (p.quotientCovering.isCoveringMap.monodromy g p.zeroLift : ComplexPlane₂) := by
+      (p.quotientCovering.isCoveringMap.monodromy g.toPath p.zeroLift : ComplexPlane₂) := by
   have h := p.quotientCovering.unop_fundamentalGroupToMulOpposite_smul (e := p.zeroLift) (γ := g)
   change
     p.periodVector
@@ -284,7 +284,7 @@ private theorem PeriodDomain.periodLoop_apply (p : PeriodDomain) (c : Lattice) (
     AffineMap.lineMap_apply_module, smul_zero, zero_add]
 
 private theorem PeriodDomain.periodLoop_monodromy (p : PeriodDomain) (c : Lattice) :
-    p.quotientCovering.isCoveringMap.monodromy (FirstHurewicz.loopQuotient (p.periodLoop c))
+    p.quotientCovering.isCoveringMap.monodromy (FirstHurewicz.loopQuotient (p.periodLoop c)).toPath
         p.zeroLift =
       ⟨p.periodVector c, p.mkQ_periodVector c⟩ := by
   apply

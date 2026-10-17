@@ -85,7 +85,7 @@ private theorem
     ContMDiff (modelWithCornersSelf ℂ V) (modelWithCornersSelf ℂ ComplexPlane₂) ω
       (fun b => P.periodEquiv b v) := by
   simp_rw [periodEquiv_coordinates]
-  apply contMDiff_pi_space.mpr
+  apply contMDiff_pi_module_iff.mpr
   intro i
   fin_cases i
   · exact

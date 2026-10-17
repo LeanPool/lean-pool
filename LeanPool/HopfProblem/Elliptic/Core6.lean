@@ -309,7 +309,7 @@ private theorem Elliptic.affineDeckPathLoop_monodromy (j : Kind) (p : FixedPerio
     (hv : AdmissibleTwist j v) (y : RealPlane₄) (g : AffineDeckGroup j v)
     (q : Path y (g • y)) :
     (affineCoverProjection_isQuotientCoveringMap j p v hv).isCoveringMap.monodromy
-        (FundamentalGroup.fromPath ⟦affineDeckPathLoop j p v hv y g q⟧) ⟨y, rfl⟩ =
+        ⟦affineDeckPathLoop j p v hv y g q⟧ ⟨y, rfl⟩ =
       ⟨g • y, affineCoverProjection_deck j p v hv y g⟩ := by
   let hq := affineCoverProjection_isQuotientCoveringMap j p v hv
   apply hq.isCoveringMap.monodromy_eq_of_map_eq (Path.Homotopic.Quotient.mk q)
@@ -646,7 +646,15 @@ private theorem EllipticRetractionTopology.fundamentalGroup_map_bijective {X Y :
     [TopologicalSpace X] [TopologicalSpace Y] (e : X ≃ₕ Y) (x : X) :
     Function.Bijective (FundamentalGroup.map e.toFun x) := by
   let E := FundamentalGroupoidFunctor.equivOfHomotopyEquiv e
-  exact E.fullyFaithfulFunctor.map_bijective (FundamentalGroupoid.mk x) (FundamentalGroupoid.mk x)
+  obtain ⟨hinj, hsurj⟩ :=
+    E.fullyFaithfulFunctor.map_bijective (FundamentalGroupoid.mk x) (FundamentalGroupoid.mk x)
+  constructor
+  · intro a b h
+    apply CategoryTheory.End.ext
+    exact hinj (congrArg FundamentalGroup.toPath h)
+  · rintro ⟨q⟩
+    obtain ⟨p, hp⟩ := hsurj q
+    exact ⟨FundamentalGroup.fromPath p, CategoryTheory.End.ext hp⟩
 
 private def EllipticRetractionTopology.fundamentalGroupEquivAt {X Y : Type*} [TopologicalSpace X]
     [TopologicalSpace Y] (e : X ≃ₕ Y) (x : X) :

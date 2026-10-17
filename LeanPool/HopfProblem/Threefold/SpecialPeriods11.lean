@@ -368,7 +368,8 @@ private theorem SpecialPeriods.Threefold.EllipticGeometry.transportedAttachingCl
   rw [transportedAttachingClass, attachingTransportHom_fromPath]
   change
     FundamentalGroup.fundamentalGroupMulEquivOfPath (attachingGlobalTail j s₀ hs₀).symm
-        (Path.Homotopic.Quotient.mk (includedAttachingLoop j s₀ hs₀ hr)) =
+        (FundamentalGroup.fromPath
+          (Path.Homotopic.Quotient.mk (includedAttachingLoop j s₀ hs₀ hr))) =
       _
   rw [fundamentalGroup_basepoint_change_mk, Path.symm_symm]
   rfl
@@ -548,7 +549,7 @@ private theorem SpecialPeriods.Threefold.CuspAttaching.globalLatticeLoop_apply
 private theorem SpecialPeriods.Threefold.CuspAttaching.globalLatticeHom_periodLoop
     (b : SpecialPeriods.TriangleRegularPoint) (v : Lattice) :
     globalLatticeHom b (Multiplicative.ofAdd v) =
-      Path.Homotopic.Quotient.mk (globalLatticeLoop b v) := by
+      FundamentalGroup.fromPath (Path.Homotopic.Quotient.mk (globalLatticeLoop b v)) := by
   change
     FundamentalGroup.map regularFamilyInclusionMap (regularData.fundamentalGroupBasepoint b)
         (regularData.latticeFundamentalGroupHom b (Multiplicative.ofAdd v)) =
@@ -825,7 +826,8 @@ private theorem SpecialPeriods.Threefold.CuspAttaching.globalLatticeHom_eq_one_a
     (hv : CuspUniformization.cuspLatticeProjection v = 0) :
     globalLatticeHom (cuspLift s) (Multiplicative.ofAdd v) = 1 := by
   rw [globalLatticeHom_periodLoop]
-  exact Quotient.sound (globalLatticeLoop_nullhomotopic_at_cusp s v hv)
+  exact CategoryTheory.End.ext
+    (Quotient.sound (globalLatticeLoop_nullhomotopic_at_cusp s v hv))
 
 private def SpecialPeriods.Threefold.CuspAttaching.globalZeroSectionPath
     {b₀ b₁ : SpecialPeriods.TriangleRegularPoint} (p : Path b₀ b₁) :
@@ -1040,10 +1042,11 @@ private theorem
 
 private theorem SpecialPeriods.Threefold.CuspPeripheral.planeSection_positiveOuterMeridian_eq_one :
     FundamentalGroup.map planeSectionMap SpecialPeriods.Triangle.meridianBasepoint
-        (Path.Homotopic.Quotient.mk
-          (SpecialPeriods.Triangle.positiveOuterMeridian outerRadius outerRadius_ge_two)) =
+        (FundamentalGroup.fromPath (Path.Homotopic.Quotient.mk
+          (SpecialPeriods.Triangle.positiveOuterMeridian outerRadius outerRadius_ge_two))) =
       1 :=
-  Path.Homotopic.Quotient.eq.mpr positiveOuterMeridian_section_nullhomotopic
+  CategoryTheory.End.ext
+    (Path.Homotopic.Quotient.eq.mpr positiveOuterMeridian_section_nullhomotopic)
 
 private theorem SpecialPeriods.Threefold.CuspPeripheral.planeSection_meridian_product_eq_one :
     FundamentalGroup.map planeSectionMap SpecialPeriods.Triangle.meridianBasepoint
@@ -1157,7 +1160,8 @@ private theorem SpecialPeriods.Threefold.PiOne.regularHom_section_eq_plane
   unfold pointedPlaneHom
   rw [PeriodFamily.Meridians.compatibleBasePlaneEquiv_apply, FundamentalGroup.mapOfEq_apply,
     FundamentalGroup.mapOfEq_apply]
-  obtain ⟨p⟩ := g
+  obtain ⟨⟨p⟩⟩ := g
+  apply CategoryTheory.End.ext
   apply congrArg Path.Homotopic.Quotient.mk
   ext t
   exact (planeSection_regularCoordinate (p t)).symm

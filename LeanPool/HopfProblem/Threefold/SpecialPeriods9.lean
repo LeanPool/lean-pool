@@ -6,6 +6,7 @@ Authors: Boris Alexeev
 module
 
 public import LeanPool.HopfProblem.Prelude
+import Mathlib.AlgebraicTopology.FundamentalGroupoid.InducedMaps
 public import LeanPool.HopfProblem.Uniformization.SpecialPeriods8
 import all LeanPool.HopfProblem.HomologyTheory.SingularMayerVietoris
 import all LeanPool.HopfProblem.Foundations.Core2

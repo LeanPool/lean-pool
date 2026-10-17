@@ -2609,7 +2609,7 @@ private theorem
     (γ : FundamentalGroup (QuotientSpace C ε) (quotientMap C ε e)) :
     letI := ToricSpace.tubeAction C (disc ε)
     ToricSpace.tubeTranslate C (disc ε) (fundamentalGroupEquivAt C ε hε hε1 hC hR e γ).toAdd e =
-      ((quotientMap_covering C ε hε hε1 hC hR).isCoveringMap.monodromy γ ⟨e, rfl⟩ :
+      ((quotientMap_covering C ε hε hε1 hC hR).isCoveringMap.monodromy γ.toPath ⟨e, rfl⟩ :
         ToricSpace.Tube (disc ε)) := by
   let := ToricSpace.tubeAction C (disc ε)
   let := tube_simplyConnected hε

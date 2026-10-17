@@ -197,10 +197,12 @@ private theorem PeriodFamily.Data.linearLift_holomorphic {V B : Type*} [NormedAd
       ω (Prod.snd : B × ComplexPlane₂ → ComplexPlane₂) := by
     rw [modelWithCornersSelf_prod]
     exact contMDiff_snd
-  apply contMDiff_pi_space.mpr
+  apply contMDiff_pi_module_iff.mpr
   intro i
-  have h₀ := ((D.rightBlock_entry_holomorphic g i 0).comp hf).mul ((contMDiff_pi_space.mp hs) 0)
-  have h₁ := ((D.rightBlock_entry_holomorphic g i 1).comp hf).mul ((contMDiff_pi_space.mp hs) 1)
+  have h₀ := ((D.rightBlock_entry_holomorphic g i 0).comp hf).mul
+    ((contMDiff_pi_module_iff.mp hs) 0)
+  have h₁ := ((D.rightBlock_entry_holomorphic g i 1).comp hf).mul
+    ((contMDiff_pi_module_iff.mp hs) 1)
   convert h₀.add h₁ using 1
   funext x
   simp [Matrix.mulVec, dotProduct, Fin.sum_univ_two, Function.comp_def]

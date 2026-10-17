@@ -122,7 +122,7 @@ private theorem MorseCancel.contDiffOn_cubicFlowCylinderInverse {m : ℕ} (σ : 
   intro i
   exact
     (Real.contDiff_exp.comp_contDiffOn (contDiffOn_const.mul ht)).mul
-      (((contDiff_apply ℝ ℝ i).comp contDiff_snd).contDiffOn)
+      (((contDiff_apply ℝ (fun _ => ℝ) i).comp contDiff_snd).contDiffOn)
 
 private def MorseCancel.cubicFlowCylinderChart {m : ℕ} (σ : Fin m → ℝ) {a : ℝ} (ha : 0 < a) :
     PartialDiffeomorph 𝓘(ℝ, (Fin m → ℝ) × ℝ) 𝓘(ℝ, Model m) ((Fin m → ℝ) × ℝ) (Model m) ∞
@@ -154,9 +154,7 @@ private theorem
       ((Real.hasDerivAt_exp (-σ i * t)).comp t ((hasDerivAt_id t).const_mul (-σ i))).mul_const
         (z i)
     convert! hd using 1
-    first
-    | rfl
-    | ring
+    ring
   have hd := (hasDerivAt_cubicAxisParameter a t).prodMk hz
   have he :
     cubicDescent σ (-(a ^ 2)) (cubicFlowCylinder σ a (z, t)) =

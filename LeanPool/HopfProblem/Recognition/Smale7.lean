@@ -1960,9 +1960,7 @@ private theorem Smale.WhitneyPairModel.hasDerivAt_upperBoundaryArc (h t : ℝ) :
     simpa using ((hasDerivAt_id t).const_mul 2).sub_const 1
   have hy : HasDerivAt (fun s : ℝ => h * (1 - (2 * s - 1) ^ 2)) (-4 * h * (2 * t - 1)) t := by
     convert HasDerivAt.const_mul h ((hasDerivAt_const t (1 : ℝ)).sub (hs.pow 2)) using 1
-    first
-    | rfl
-    | ring
+    ring
   exact hs.prodMk hy
 
 private theorem Smale.TubularBigon.lowerBoundaryArc_mem_bigon {E M : Type*} [NormedAddCommGroup E]

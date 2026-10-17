@@ -247,7 +247,7 @@ private theorem
     (α : Path meridianBasepoint c) (β : Path c d) (γ : Path d meridianBasepoint)
     (hα : ∀ s, α s ∈ freeGroupCover.V) (hβ : ∀ s, β s ∈ freeGroupCover.U)
     (hγ : ∀ s, γ s ∈ freeGroupCover.V) :
-    meridianFreeWordHom (.mk (α.trans (β.trans γ))) =
+    meridianFreeWordHom (FundamentalGroup.fromPath (.mk (α.trans (β.trans γ)))) =
       (freeGroupTransition d)⁻¹ * freeGroupTransition c := by
   have hm :
     freeGroupCover.isCoveringMap.monodromy (.mk (α.trans (β.trans γ)))
@@ -265,16 +265,16 @@ private theorem
       mul_one]
   have hop :
     freeGroupCover.fundamentalGroupToMulOpposite meridianBasepoint freeGroupCover_basepoint_mem.1
-        (.mk (α.trans (β.trans γ))) =
+        (FundamentalGroup.fromPath (.mk (α.trans (β.trans γ)))) =
       MulOpposite.op ((freeGroupTransition c)⁻¹ * freeGroupTransition d) := by
-    apply (freeGroupCover.isQuotientCoveringMap.fundamentalGroupToMulOpposite_apply_eq_Iff).mpr
+    apply (freeGroupCover.isQuotientCoveringMap.fundamentalGroupToMulOpposite_apply_eq_iff).mpr
     have hm' := congrArg Subtype.val hm
     simpa only [MulOpposite.unop_op, TwoOpenTransition.basepointU_eq_fiberPointU,
       TwoOpenTransition.fiberPointU_val, TwoOpenTransition.smul_pointU, mul_one] using hm'.symm
   change
     (MulEquiv.inv' (FreeGroup Bool)).symm
         (freeGroupCover.fundamentalGroupToMulOpposite meridianBasepoint
-          freeGroupCover_basepoint_mem.1 (.mk (α.trans (β.trans γ)))) =
+          freeGroupCover_basepoint_mem.1 (FundamentalGroup.fromPath (.mk (α.trans (β.trans γ))))) =
       _
   rw [hop]
   change ((freeGroupTransition c)⁻¹ * freeGroupTransition d)⁻¹ = _
@@ -419,7 +419,7 @@ private theorem
 attribute [local instance] SpecialPeriods.Triangle.discreteFreeGroup in
 private theorem
     SpecialPeriods.Triangle.meridianFreeWordHom_positiveOuterMeridian (R : ℝ) (hR : 2 ≤ R) :
-    meridianFreeWordHom (.mk (positiveOuterMeridian R hR)) =
+    meridianFreeWordHom (FundamentalGroup.fromPath (.mk (positiveOuterMeridian R hR))) =
       FreeGroup.of Bool.false * FreeGroup.of Bool.true := by
   rw [positiveOuterMeridian_subdivision]
   rw [meridianFreeWordHom_lower_upper_lower (outerQuarter_mem_overlap R hR)
@@ -430,11 +430,12 @@ private theorem
 
 attribute [local instance] SpecialPeriods.Triangle.discreteFreeGroup in
 private theorem SpecialPeriods.Triangle.positiveOuterMeridian_class_eq (R : ℝ) (hR : 2 ≤ R) :
-    (.mk (positiveOuterMeridian R hR) : FundamentalGroup TwicePuncturedPlane meridianBasepoint) =
+    (FundamentalGroup.fromPath (.mk (positiveOuterMeridian R hR)) :
+      FundamentalGroup TwicePuncturedPlane meridianBasepoint) =
       meridianClass Bool.false * meridianClass Bool.true := by
   apply twicePuncturedFundamentalGroupFreeEquiv.injective
   change
-    meridianFreeWordHom (.mk (positiveOuterMeridian R hR)) =
+    meridianFreeWordHom (FundamentalGroup.fromPath (.mk (positiveOuterMeridian R hR))) =
       meridianFreeWordHom (meridianClass Bool.false * meridianClass Bool.true)
   rw [meridianFreeWordHom_positiveOuterMeridian, map_mul, meridianFreeWordHom_meridianClass,
     meridianFreeWordHom_meridianClass]
