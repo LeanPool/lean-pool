@@ -7,6 +7,7 @@ module
 
 public import LeanPool.LocalComplexGeometry.Analytic.Rank
 public import Mathlib.LinearAlgebra.FiniteDimensional.Defs
+public import Mathlib.Topology.Algebra.Module.Equiv.Prod
 import Mathlib.Data.Nat.Totient
 import Mathlib.Data.Sym.Sym2.Init
 import Mathlib.LinearAlgebra.FiniteDimensional.Lemmas
