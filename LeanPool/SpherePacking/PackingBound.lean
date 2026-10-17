@@ -6,7 +6,12 @@ Authors: OpenAI, Sidharth Hariharan, Gareth Ma, Dean Cureton
 
 module
 
-import all LeanPool.SpherePacking.RadialConstruction
+-- The packing bound is independent of the saddle construction.
+import Mathlib.Analysis.Distribution.SchwartzSpace.Fourier
+import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
+import Mathlib.MeasureTheory.Measure.Lebesgue.VolumeOfBalls
+import Mathlib.Tactic.NormNum.RealSqrt
+import Mathlib.Order.CompletePartialOrder
 public import Mathlib.Analysis.Normed.Lp.MeasurableSpace
 public import Mathlib.MeasureTheory.Measure.Haar.OfBasis
 import Mathlib.Algebra.Module.ZLattice.Covolume
@@ -15,11 +20,11 @@ import Mathlib.Algebra.Order.Archimedean.Real.Hom
 import Mathlib.Analysis.Fourier.AddCircleMulti
 import Mathlib.Analysis.InnerProductSpace.Adjoint
 import Mathlib.Analysis.RCLike.Inner
+import Mathlib.LinearAlgebra.BilinearForm.DualLattice
+import Mathlib.Topology.Instances.ENat
 import Mathlib.Data.Finset.Functor
 import Mathlib.Dynamics.Ergodic.Action.Regular
-import Mathlib.LinearAlgebra.BilinearForm.DualLattice
 import Mathlib.Topology.Connected.Separation
-import Mathlib.Topology.Instances.ENat
 import Mathlib.Topology.Separation.Lemmas
 
 /-!
