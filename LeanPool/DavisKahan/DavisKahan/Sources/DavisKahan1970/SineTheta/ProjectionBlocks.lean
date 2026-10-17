@@ -176,9 +176,7 @@ theorem sameApproximationSingularValues_comp_reflection_right
           T.approximationNumber_comp_le_mul_norm _ n
       _ ≤ T.approximationNumber n * 1 := by
         gcongr
-        first
-          | assumption
-          | simpa using ContinuousLinearMap.approximationNumber_nonneg _ _
+        simpa using ContinuousLinearMap.approximationNumber_nonneg _ _
       _ = T.approximationNumber n := mul_one _
   have hcomp :
       (A ∘L U.reflectionOperator) ∘L U.reflectionOperator = A := by
@@ -214,9 +212,7 @@ theorem sameApproximationSingularValues_comp_reflection_left
           ContinuousLinearMap.approximationNumber_comp_le_norm_mul _ T n
       _ ≤ 1 * T.approximationNumber n := by
         gcongr
-        first
-          | assumption
-          | simpa using ContinuousLinearMap.approximationNumber_nonneg _ _
+        simpa using ContinuousLinearMap.approximationNumber_nonneg _ _
       _ = T.approximationNumber n := one_mul _
   have hcomp :
       U.reflectionOperator ∘L (U.reflectionOperator ∘L A) = A := by

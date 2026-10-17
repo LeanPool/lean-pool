@@ -7,6 +7,7 @@ module
 
 public import LeanPool.DavisKahan.DavisKahan.InfiniteDimensional.Sylvester.FourierSemigroup
 public import LeanPool.DavisKahan.ForTauCeti.Analysis.InnerProductSpace.SpectralOrder
+public import Mathlib.Analysis.Calculus.Deriv.Prod
 public import Mathlib.MeasureTheory.Integral.ExpDecay
 public import LeanPool.DavisKahan.DavisKahan.SpectralTheory.AbstractSpectrum
 public import Mathlib.Analysis.SpecialFunctions.ContinuousFunctionalCalculus.ExpLog.Basic

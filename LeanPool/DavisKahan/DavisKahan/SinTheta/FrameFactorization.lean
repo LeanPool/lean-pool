@@ -11,6 +11,7 @@ public import LeanPool.DavisKahan.DavisKahan.BoundedOperator.Problem
 public import LeanPool.DavisKahan.DavisKahan.Sylvester.Bounded
 public import LeanPool.DavisKahan.DavisKahan.OperatorIdeal.CanonicalRealView
 public import LeanPool.DavisKahan.ForTauCeti.Analysis.InnerProductSpace.CoerciveUnit
+public import Mathlib.Analysis.CStarAlgebra.ContinuousLinearMap
 public import Mathlib.Analysis.InnerProductSpace.StarOrder
 public import Mathlib.Analysis.Normed.Group.Uniform
 public import Mathlib.Analysis.SpecialFunctions.ContinuousFunctionalCalculus.Rpow.Basic

@@ -645,7 +645,7 @@ theorem polarFactor_add_star_eq_two_absoluteValue :
       hEcross (E y) hEycross]
   have hEzero : E = 0 := by
     have hs : star E * E = 0 := by rw [hEsa.star_eq]; exact hEE
-    exact (CStarRing.star_mul_self_eq_zero_iff E).mp hs
+    exact star_mul_self_eq_zero.mp hs
   have : (W + star W) - (A + A) = 0 := hEdef.symm.trans hEzero
   exact sub_eq_zero.mp this
 

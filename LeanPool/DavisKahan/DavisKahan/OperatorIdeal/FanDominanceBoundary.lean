@@ -970,10 +970,7 @@ private theorem approximationNumber_comp_isometryEquiv_le
             ‖(V.toContinuousLinearEquiv : E₂ →L[ℂ] E₁)‖ :=
       ContinuousLinearMap.approximationNumber_comp_comp_le _ _ _ n
     _ ≤ 1 * A.approximationNumber n * 1 := by
-      gcongr <;>
-        first
-          | assumption
-          | simpa using A.approximationNumber_nonneg n
+      gcongr <;> simpa using A.approximationNumber_nonneg n
     _ = A.approximationNumber n := by ring
 
 private theorem approximationNumber_comp_isometryEquiv_eq
