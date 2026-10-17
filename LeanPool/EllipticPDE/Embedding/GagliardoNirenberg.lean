@@ -429,9 +429,10 @@ theorem exists_eLpNorm_sobolevConj_le (hd : 0 < d) (c : EuclideanSpace ℝ (Fin 
   have hwg' : HasWeakGradOn Set.univ w G :=
     hasWeakGradOn_univ_mul_cutoff hBm hηc hηcs hηs hvint hgint hwg
   -- `w` is compactly supported and integrable, and both `w` and `G` lie in `L²`.
-  have hvB : MemLp (B.indicator v) p volume := (memLp_indicator_iff_restrict hBm).mpr hv
+  have hvB : MemLp (B.indicator v) p volume :=
+    (memLp_indicator_iff_restrict hBm.nullMeasurableSet).mpr hv
   have hgB : ∀ k, MemLp (B.indicator (g k)) p volume :=
-    fun k => (memLp_indicator_iff_restrict hBm).mpr (hg k)
+    fun k => (memLp_indicator_iff_restrict hBm.nullMeasurableSet).mpr (hg k)
   have hwmeas : AEStronglyMeasurable w volume :=
     hηc.continuous.aestronglyMeasurable.mul hvB.aestronglyMeasurable
   have hwL2 : MemLp w p volume := by
@@ -455,7 +456,7 @@ theorem exists_eLpNorm_sobolevConj_le (hd : 0 < d) (c : EuclideanSpace ℝ (Fin 
         ≤ eLpNorm (g k) p (volume.restrict B) := by
       refine (eLpNorm_mono (g := B.indicator (g k))
         (hηc.continuous.aestronglyMeasurable.mul (hgB k).aestronglyMeasurable) fun x => ?_).trans_eq
-        (eLpNorm_indicator_eq_eLpNorm_restrict hBm)
+        (eLpNorm_indicator_eq_eLpNorm_restrict hBm.nullMeasurableSet)
       rw [Pi.mul_apply, norm_mul]
       exact mul_le_of_le_one_left (norm_nonneg _) (hηnorm x)
     have h2 : eLpNorm (fun x => partialD k η x * B.indicator v x) p volume
@@ -469,7 +470,7 @@ theorem exists_eLpNorm_sobolevConj_le (hd : 0 < d) (c : EuclideanSpace ℝ (Fin 
         exact mul_le_mul_of_nonneg_right (hMk k x) (norm_nonneg _)
       refine hstep.trans (le_of_eq ?_)
       rw [show (fun x => M * B.indicator v x) = M • (B.indicator v) from rfl,
-        eLpNorm_const_smul, eLpNorm_indicator_eq_eLpNorm_restrict hBm]
+        eLpNorm_const_smul, eLpNorm_indicator_eq_eLpNorm_restrict hBm.nullMeasurableSet]
       congr 1
       rw [Real.enorm_eq_ofReal hM0]
     exact (eLpNorm_add_le hp1).trans (add_le_add h1 h2)

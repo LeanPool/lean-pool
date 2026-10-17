@@ -55,7 +55,7 @@ lemma eLpNorm_restrict_eq_of_tsupport_subset' {d : ℕ} {Ω : Set (EuclideanSpac
     (hΩm : MeasurableSet Ω) {F : Type*} [NormedAddCommGroup F]
     {f : EuclideanSpace ℝ (Fin d) → F} (hf : tsupport f ⊆ Ω) (p : ℝ≥0∞) :
     eLpNorm f p (volume.restrict Ω) = eLpNorm f p volume := by
-  rw [← eLpNorm_indicator_eq_eLpNorm_restrict hΩm]
+  rw [← eLpNorm_indicator_eq_eLpNorm_restrict hΩm.nullMeasurableSet]
   refine eLpNorm_congr_ae (EventuallyEq.of_eq (funext fun x => ?_))
   by_cases hx : x ∈ Ω
   · rw [Set.indicator_of_mem hx]

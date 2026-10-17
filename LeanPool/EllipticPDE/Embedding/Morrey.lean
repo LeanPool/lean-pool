@@ -275,7 +275,7 @@ private theorem exists_kernel_bound_subset (hd : 0 < d) {p : ℝ} (hp : (d : ℝ
   obtain ⟨Cdp, hCdp⟩ := exists_kernel_bound hd hp
   refine ⟨Cdp, ?_⟩
   intro x R hR g hg S hSmeas hSsub
-  have key := hCdp x hR (S.indicator g) (hg.indicator hSmeas)
+  have key := hCdp x hR (S.indicator g) (hg.indicator hSmeas.nullMeasurableSet)
   have hfun : (fun y => ‖(S.indicator g) y‖ / dist x y ^ (d - 1))
       = S.indicator (fun y => ‖g y‖ / dist x y ^ (d - 1)) := by
     funext y
@@ -283,7 +283,7 @@ private theorem exists_kernel_bound_subset (hd : 0 < d) {p : ℝ} (hp : (d : ℝ
     · rw [Set.indicator_of_mem hy, Set.indicator_of_mem hy]
     · rw [Set.indicator_of_notMem hy, Set.indicator_of_notMem hy, norm_zero, zero_div]
   rw [hfun, setIntegral_indicator hSmeas, Set.inter_eq_right.mpr hSsub,
-    eLpNorm_indicator_eq_eLpNorm_restrict hSmeas,
+    eLpNorm_indicator_eq_eLpNorm_restrict hSmeas.nullMeasurableSet,
     Measure.restrict_restrict_of_subset hSsub] at key
   exact key
 
@@ -858,7 +858,7 @@ theorem morrey_ball (hd : 0 < d) {p : ℝ} (hp : (d : ℝ) < p)
   have huB_int : Integrable uB volume := hu.integrable_indicator measurableSet_ball
   have huB_li : LocallyIntegrable uB volume := huB_int.locallyIntegrable
   have hgBk : ∀ k, MemLp ((Metric.ball c r).indicator (g k)) (ENNReal.ofReal p) volume :=
-    fun k => (memLp_indicator_iff_restrict measurableSet_ball).mpr (hmemg k)
+    fun k => (memLp_indicator_iff_restrict measurableSet_ball.nullMeasurableSet).mpr (hmemg k)
   -- The shrinking mollifier family.
   have hn2 : ∀ n : ℕ, (0 : ℝ) < (n + 2 : ℝ) := fun n => by positivity
   let φ : ℕ → ContDiffBump (0 : EuclideanSpace ℝ (Fin d)) := fun n =>
@@ -941,7 +941,7 @@ theorem morrey_ball (hd : 0 < d) {p : ℝ} (hp : (d : ℝ) < p)
           ≤ eLpNorm ((Metric.ball c r).indicator (g k)) (ENNReal.ofReal p) volume :=
             eLpNorm_convolution_restrict_le hp1 hρ0 hρm hρ1 (hgBk k) (Metric.ball c r')
         _ = eLpNorm (g k) (ENNReal.ofReal p) (volume.restrict (Metric.ball c r)) :=
-            eLpNorm_indicator_eq_eLpNorm_restrict measurableSet_ball
+            eLpNorm_indicator_eq_eLpNorm_restrict measurableSet_ball.nullMeasurableSet
     exact (hC0 (U n) hsmooth c hr'pos hpartMemLp).mono_const (mul_le_mul' (le_refl C₀) hsum)
   -- Almost-everywhere convergence of the mollifications to `u` on the ball.
   have hae : ∀ᵐ x ∂(volume.restrict (Metric.ball c r)),

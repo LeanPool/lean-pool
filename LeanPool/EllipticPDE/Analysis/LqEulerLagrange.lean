@@ -11,6 +11,7 @@ public import LeanPool.EllipticPDE.Analysis.LqDerivative
 public import Mathlib.Analysis.Calculus.LocalExtr.Basic
 public import Mathlib.MeasureTheory.Function.LpSpace.Basic
 public import Mathlib.Analysis.InnerProductSpace.Basic
+public import Mathlib.Analysis.SpecialFunctions.Pow.Deriv
 
 
 /-!

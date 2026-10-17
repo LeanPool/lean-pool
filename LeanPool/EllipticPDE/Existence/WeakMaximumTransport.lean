@@ -336,9 +336,9 @@ theorem energy_le_transport (Op : FullEllipticOp d)
   -- the truncation restricted to `Γ`
   set vΓ : EuclideanSpace ℝ (Fin d) → ℝ := Γ.indicator fun x => ((V : H1amb Ω) 0 x : ℝ)
     with hvΓdef
-  have hvΓm : MemLp vΓ 2 μ := (Lp.memLp _).indicator hΓ
+  have hvΓm : MemLp vΓ 2 μ := (Lp.memLp _).indicator hΓ.nullMeasurableSet
   have hnormΓ : (eLpNorm vΓ 2 μ).toReal = (eLpNorm ((V : H1amb Ω) 0) 2 (μ.restrict Γ)).toReal := by
-    rw [hvΓdef, eLpNorm_indicator_eq_eLpNorm_restrict hΓ]
+    rw [hvΓdef, eLpNorm_indicator_eq_eLpNorm_restrict hΓ.nullMeasurableSet]
   -- the test is nonnegative
   have hVnn : ∀ᵐ x ∂μ, 0 ≤ ((V : H1amb Ω) 0 x : ℝ) := by
     filter_upwards [hV0] with x hx

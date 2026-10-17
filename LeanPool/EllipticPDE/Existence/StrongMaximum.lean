@@ -8,6 +8,7 @@ Authors: Alejandro Soto Franco
 module
 
 public import LeanPool.EllipticPDE.Existence.ClassicalMaximum
+public import Mathlib.Analysis.Calculus.FDeriv.Pow
 
 
 /-!
