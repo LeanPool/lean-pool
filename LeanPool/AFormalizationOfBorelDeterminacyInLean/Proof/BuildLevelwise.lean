@@ -9,7 +9,7 @@ public import LeanPool.AFormalizationOfBorelDeterminacyInLean.Tree.TreeExtension
 public import LeanPool.AFormalizationOfBorelDeterminacyInLean.Tree.BodyFunctor
 public import LeanPool.AFormalizationOfBorelDeterminacyInLean.Game.Strategies
 import LeanPool.AFormalizationOfBorelDeterminacyInLean.Basic.Meta
-import Mathlib.Data.Nat.SuccPred
+import Mathlib.Order.SuccPred.Nat
 import Mathlib.Data.Rat.Cast.Order
 import Mathlib.Order.Lattice.Nat
 import Mathlib.Tactic.NormNum.Abs
