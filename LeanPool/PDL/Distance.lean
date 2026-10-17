@@ -257,7 +257,7 @@ lemma distance_list_eq_distance_steps (M : KripkeModel W) (v w : W) δ :
     (distanceList M v w δ) = (distance M (Program.steps δ) v w) := by
   induction δ generalizing v w
   · simp_all [distanceList, distance]
-    aesop
+    aesop (rule_sets := [-default])
   case cons α δ IH =>
     simp_all [distanceList, distance]
 
@@ -466,8 +466,8 @@ theorem relateSeq_existsD_dist (v_αγ_w : relateSeq M (α :: γ) v w)
     rw [distance_list_cons] at αγ_not_inf
     rw [distance_list_cons]
     refine ⟨u, ?_, ?_, u_minimizes⟩
-    · rw [← dist_iff_rel]; aesop
-    · rw [← distance_list_iff_relate_Seq]; aesop
+    · rw [← dist_iff_rel]; aesop (rule_sets := [-default])
+    · rw [← distance_list_iff_relate_Seq]; aesop (rule_sets := [-default])
   rcases claim with ⟨u, v_α_u, u_w, αγ_eq_α_γ⟩
   have := rel_existsD_dist v_α_u -- applying (f)
   rcases this with ⟨⟨X,δ⟩, in_D, v_X, δ_eq_α⟩
@@ -577,8 +577,8 @@ theorem exists_same_distance_list_relateSeq_concat (w_δα_v : relateSeq M (δ +
   rcases this with ⟨x, same_dist⟩
   refine ⟨x, ?_, ?_, same_dist⟩
   · rw [← distance_list_iff_relate_Seq]
-    aesop
+    aesop (rule_sets := [-default])
   · rw [← dist_iff_rel]
-    aesop
+    aesop (rule_sets := [-default])
 
 end PDL

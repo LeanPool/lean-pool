@@ -179,7 +179,7 @@ lemma def_of_boxesOf_def {φ γ ψ} (h : boxesOf φ = (γ, ψ)) : φ = ⌈⌈γ�
     cases φ <;> simp_all
   case cons α αs IH =>
     simp only [Formula.boxes_cons]
-    cases φ <;> grind [boxesOf]
+    cases φ <;> grind only [boxesOf]
 
 /-- Whether a formula has an outer box constructor. -/
 def Formula.isBox : Formula → Prop
@@ -190,7 +190,7 @@ lemma boxesOf_def_of_def_of_nonBox {φ γ ψ} (h : φ = ⌈⌈γ⌉⌉ψ) (nonBo
     boxesOf φ = (γ, ψ) := by
   induction γ generalizing φ
   · unfold boxesOf
-    cases φ <;> simp_all [Formula.isBox]; aesop
+    cases φ <;> simp_all [Formula.isBox]; aesop (rule_sets := [-default])
   case cons α αs IH =>
     subst h
     unfold boxesOf
@@ -459,7 +459,7 @@ lemma LoadFormula.split_boxes_cons {βs α φ} :
   · rw [List.cons_append]
     rw [LoadFormula.boxes_cons]
     simp only [split, AnyFormula.split, Prod.mk.injEq, List.cons.injEq, true_and]
-    grind
+    grind only []
 
 @[simp]
 theorem AnyFormula.split_normal (φ : Formula) : (AnyFormula.normal φ).split = ([],φ) := by
@@ -613,7 +613,7 @@ lemma loadMulti_eq_of_some (h : δ.head? = some d) :
 
 lemma loadMulti_eq_loadBoxes :
     AnyFormula.loaded (loadMulti δ α φ) = AnyFormula.loadBoxes (δ ++ [α]) φ := by
-  induction δ <;> aesop
+  induction δ <;> aesop (rule_sets := [-default])
 
 /-! ## splitLast -/
 
@@ -653,7 +653,7 @@ lemma splitLast_inj {α} {xs ys : List α} (h : splitLast xs = splitLast ys) :
     simp_all
   · exfalso
     simp_all
-  aesop
+  aesop (rule_sets := [-default])
 
 lemma LoadFormula.split_splitLast_to_loadBoxes {δs φ δs_ δ ξ}
     (ξsp_def : ξ.split = (δs, φ))

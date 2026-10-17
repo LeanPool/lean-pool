@@ -108,7 +108,7 @@ theorem loadClaimHelper {Worlds : Finset (Finset Formula)}
         rw [← length_def]
         simp only [List.append_eq, List.length_append, List.length_cons, List.length_nil,
           zero_add] at hyp
-        linarith
+        omega
       simp only [pairRel, List.zip_cons_cons, List.append_eq, List.getElem_cons_succ,
         List.getElem_zip] at lchain
       convert lchain
@@ -254,8 +254,9 @@ theorem loadedTruthLemmaProg {Worlds} (MG : ModelGraph Worlds) α :
     induction n generalizing X φ -- not generalizing Y, but φ to be replaced φ with ⌈∗β⌉φ below!
     · rcases claim with ⟨YS, X_def, Y_def, _⟩
       have : YS.head = YS.last := by
+        clear * -YS
         have := List.Vector.exists_eq_cons YS
-        aesop
+        aesop (rule_sets := [-default])
       rw [this] at X_def
       subst X_def Y_def
       have := ((MG.2.1 (YS.last)).1 φ φ (∗β)).right.right.right.left boxP_in_X
@@ -265,9 +266,10 @@ theorem loadedTruthLemmaProg {Worlds} (MG : ModelGraph Worlds) α :
       rcases claim with ⟨YS, X_def, Y_def, relSteps⟩
       let Z := YS.get 1
       have X_β_Z : relate MG.1 β X Z := by
+        clear * -relSteps X_def
         specialize relSteps 0
         unfold Z
-        convert relSteps <;> aesop
+        convert relSteps <;> aesop (rule_sets := [-default])
       have := ((MG.2.1 X).1 φ φ (∗β)).right.right.right.left boxP_in_X
       rcases this with ⟨ℓ, mysat⟩
       simp only [Bset, List.all_append, List.all_map, Bool.and_eq_true, List.all_eq_true,
@@ -297,18 +299,18 @@ theorem loadedTruthLemmaProg {Worlds} (MG : ModelGraph Worlds) α :
         refine ⟨YS.tail, ?_, ?_, ?_⟩
         · rw [← List.Vector.get_zero]
           rw [List.Vector.get_tail_succ]
-          aesop
+          aesop (rule_sets := [-default])
         · rw [List.Vector.last_def]
           rw [List.Vector.get_tail_succ]
-          aesop
+          aesop (rule_sets := [-default])
         · intro i
           clear * -relSteps
           specialize relSteps i.succ
           have : ((List.Vector.tail YS).get i.castSucc) = (YS.get ((Fin.succ i).castSucc)) := by
-            aesop
+            aesop (rule_sets := [-default])
           rw [this]; clear this
           have : ((List.Vector.tail YS).get i.succ) = (YS.get ((Fin.succ i).succ)) := by
-            aesop
+            aesop (rule_sets := [-default])
           rw [this]; clear this
           exact relSteps
       case inr δ_notEmpty =>
@@ -360,9 +362,11 @@ theorem loadedTruthLemmaProg {Worlds} (MG : ModelGraph Worlds) α :
         · intro i
           clear * -relSteps
           specialize relSteps i.succ
-          have : ((List.Vector.tail YS).get i.castSucc) = (YS.get i.succ.castSucc) := by aesop
+          have : ((List.Vector.tail YS).get i.castSucc) = (YS.get i.succ.castSucc) := by
+            aesop (rule_sets := [-default])
           rw [this]; clear this
-          have : ((List.Vector.tail YS).get i.succ) = (YS.get i.succ.succ) := by aesop
+          have : ((List.Vector.tail YS).get i.succ) = (YS.get i.succ.succ) := by
+            aesop (rule_sets := [-default])
           rw [this]; clear this
           exact relSteps
   -- remaining cases: sequence, union, test
@@ -384,7 +388,7 @@ theorem loadedTruthLemmaProg {Worlds} (MG : ModelGraph Worlds) α :
       (by simp only [vDash.SemImplies, evaluatePoint, conEval]; exact X_F)
     rcases this with ⟨δ, δ_in_P, X_δ_Y⟩
     have δφ_in_X : (⌈⌈δ⌉⌉φ) ∈ X.val := by
-      simp_all only [relate, Subtype.exists]
+      clear * -Bset_sub_X δ_in_P α_def
       subst_eqs
       apply Bset_sub_X
       right
@@ -458,13 +462,14 @@ theorem Qsteps_single : Qsteps R [α] v w ↔ Q R α v w := by
 theorem Qsteps_append : Qsteps R (δ1 ++ δ2) v w ↔ ∃ u, Qsteps R δ1 v u ∧ Qsteps R δ2 u w := by
   induction δ1 generalizing v w
   case nil =>
-    simp [Qsteps]
+    simp only [List.nil_append, Qsteps, beq_iff_eq, exists_eq_left']
   case cons α δ IH =>
-    simp only [List.cons_append, Qsteps, Relation.Comp, Subtype.exists]
-    constructor <;> rintro ⟨z, z_in, hyp⟩
-    · rw [IH] at hyp
-      aesop
-    · aesop
+    simp only [List.cons_append, Qsteps, Relation.Comp, IH]
+    constructor
+    · rintro ⟨u, hu, z, h1, h2⟩
+      exact ⟨z, ⟨u, hu, h1⟩, h2⟩
+    · rintro ⟨z, ⟨u, hu, h1⟩, h2⟩
+      exact ⟨u, hu, z, h1, h2⟩
 
 /-- Q_Fδ for a list of tests F and a list or programs δ. -/
 def Qcombo {W : Finset (Finset Formula)} (R : Nat → W → W → Prop)

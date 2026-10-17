@@ -390,8 +390,8 @@ theorem length_succ_eq_length_of_edge {Hist X} {tab : Tableau Hist X} {s t : Pat
 
 theorem edge_then_length_lt {Hist X} {tab : Tableau Hist X} {s t : PathIn tab} (s_t : s ⋖_ t) :
   s.length < t.length := by
-  have := length_succ_eq_length_of_edge s_t
-  linarith
+  rw [← length_succ_eq_length_of_edge s_t]
+  exact Nat.lt_succ_self _
 
 /-- Map tableau edges to strict increases in path length. -/
 def edgeNatLTRelHom {Hist X tab} : RelHom (@edge Hist X tab) Nat.lt :=
@@ -567,7 +567,7 @@ Lemmas developed for `tabToIntAt`.
 
 @[simp]
 lemma PathIn.cast_nil {Hist : History} {X : Sequent} {tab tab2 : Tableau Hist X} (h : tab = tab2) :
-    (h ▸ (.nil : PathIn tab)) = (.nil : PathIn tab2) := by grind
+    (h ▸ (.nil : PathIn tab)) = (.nil : PathIn tab2) := by grind only []
 
 lemma PathIn.tabAt_cast_nil {Hist : History} {X : Sequent} {tab tab2 : Tableau Hist X}
     (h : tab = tab2) :
@@ -644,7 +644,7 @@ lemma PathIn.lt_append_non_nil {Hist X pHist pX tabNew} {tab : Tableau Hist X}
         have := @PathIn.loc_append _ _ nflprep nbas lt nexts Y Y_in tail rfl
         convert this <;> try rw [h]
         · simp_all
-        · grind
+        · grind only []
       · simp only [tabAt_append]
         rw! [h]
         simp
@@ -668,7 +668,7 @@ lemma PathIn.lt_append_non_nil {Hist X pHist pX tabNew} {tab : Tableau Hist X}
         have := @PathIn.pdl_append _ _ _ next nflprep bas r tail rfl
         convert this <;> try rw [h]
         · simp_all
-        · grind
+        · grind only []
       · simp only [tabAt_append]
         rw! [h]
         simp
@@ -946,7 +946,7 @@ theorem path_then_length_lt {Hist X} {tab : Tableau Hist X} {s t : PathIn tab} (
   induction s_t
   case single set => exact edge_then_length_lt set
   case tail h ih => have := edge_then_length_lt h
-                    linarith
+                    omega
 
 theorem path_is_irreflexive {Hist X} {tab : Tableau Hist X} {a : PathIn tab} : ¬(Relation.TransGen
   edge a a) := by
@@ -1052,7 +1052,7 @@ theorem rewind_of_edge_is_eq {Hist X} {tab : Tableau Hist X} {a b : PathIn tab} 
   b.rewind 1 = a := by
   induction tab
   case loc rest Y nrep nbas lt next IH =>
-    cases b <;> simp_all only [PathIn.rewind]
+    cases b <;> simp only [PathIn.rewind]
     case nil => simp_all [not_edge_nil]
     case loc Z nbas' nrep' Z_in tail =>
       cases a
@@ -1064,10 +1064,10 @@ theorem rewind_of_edge_is_eq {Hist X} {tab : Tableau Hist X} {a b : PathIn tab} 
             apply PathIn.loc_injective
             rw [p_def]
             unfold tabAt at tabAt_def
-            aesop
+            aesop (rule_sets := [-default])
           · exfalso
             unfold tabAt at tabAt_def
-            aesop
+            aesop (rule_sets := [-default])
         subst t_nil
         rfl
       case loc X nbas'' nrep'' X_in tail' =>
@@ -1103,9 +1103,9 @@ theorem rewind_of_edge_is_eq {Hist X} {tab : Tableau Hist X} {a b : PathIn tab} 
           Fin.val_castSucc, Fin.coe_ofNat_eq_mod, PathIn.loc_length_eq, Nat.one_mod, Fin.val_cast]
             at *
         rw [kdef, @Nat.one_mod_eq_one]
-        aesop
+        aesop (rule_sets := [-default])
   case pdl rest Y X nrep bas r tab IH =>
-    cases b <;> simp_all only [PathIn.rewind]
+    cases b <;> simp only [PathIn.rewind]
     case nil => simp_all [not_edge_nil]
     case pdl Z bas' nrep' tail =>
       cases a
@@ -1115,12 +1115,12 @@ theorem rewind_of_edge_is_eq {Hist X} {tab : Tableau Hist X} {a b : PathIn tab} 
                           | ⟨_, _, _, _, _, _, _, tabAt_def, p_def⟩ )
           · exfalso
             unfold tabAt at tabAt_def
-            aesop
+            aesop (rule_sets := [-default])
           · simp only [PathIn.append] at p_def
             apply PathIn.pdl_injective
             rw [p_def]
             unfold tabAt at tabAt_def
-            aesop
+            aesop (rule_sets := [-default])
         subst t_nil
         rfl
       case pdl bas'' nrep'' tail' =>
@@ -1148,7 +1148,7 @@ theorem rewind_of_edge_is_eq {Hist X} {tab : Tableau Hist X} {a b : PathIn tab} 
           Fin.val_castSucc, Fin.coe_ofNat_eq_mod, PathIn.pdl_length_eq, Nat.one_mod, Fin.val_cast]
             at *
         rw [kdef, @Nat.one_mod_eq_one]
-        aesop
+        aesop (rule_sets := [-default])
   case lrep => cases b; simp [not_edge_nil] at a_b
 
 theorem rewind_order_reversing_if_not_nil {Hist X} {tab : Tableau Hist X} {t : PathIn tab}
@@ -1379,10 +1379,10 @@ theorem rewind_helper {Hist X} {tab : Tableau Hist X} {a b : PathIn tab} {k : Fi
             apply PathIn.loc_injective
             rw [p_def]
             unfold tabAt at tabAt_def
-            aesop
+            aesop (rule_sets := [-default])
           · exfalso
             unfold tabAt at tabAt_def
-            aesop
+            aesop (rule_sets := [-default])
         subst t_nil
         simp_all [PathIn.rewind, Fin.lastCases, PathIn.toHistory]
         have ⟨k_val, k_pf⟩ := k
@@ -1434,12 +1434,12 @@ theorem rewind_helper {Hist X} {tab : Tableau Hist X} {a b : PathIn tab} {k : Fi
                         | ⟨_, _, _, _, _, _, _, tabAt_def, p_def⟩ )
           · exfalso
             unfold tabAt at tabAt_def
-            aesop
+            aesop (rule_sets := [-default])
           · simp only [PathIn.append] at p_def
             apply PathIn.pdl_injective
             rw [p_def]
             unfold tabAt at tabAt_def
-            aesop
+            aesop (rule_sets := [-default])
         subst t_nil
         simp_all [PathIn.rewind, PathIn.toHistory]
         have ⟨k_val, k_pf⟩ := k
@@ -1460,7 +1460,7 @@ theorem rewind_helper {Hist X} {tab : Tableau Hist X} {a b : PathIn tab} {k : Fi
             simp_all [Fin.last]
             simp [PathIn.toHistory] at i_pf
             have := edge_inc_length_by_one t'_t
-            linarith
+            omega
           rw [← Fin.exists_castSucc_eq] at h
           rcases h with ⟨k, kdef⟩
           simp only [Fin.cast_succ_eq, ← kdef, Fin.lastCases_castSucc, Function.comp_apply,
@@ -1544,31 +1544,19 @@ theorem allPaths_loc_cases {Hist X} {nrep : ¬ flprep Hist X} {nbas : ¬ X.basic
       ∨ ∃ (Y : Sequent) (Y_in : Y ∈ endNodesOf lt) (t :  PathIn (next Y Y_in)),
           t ∈ allPaths (next Y Y_in) ∧
           s = PathIn.loc Y_in t := by
-  constructor <;> intro hyp
-  · unfold allPaths at hyp
-    aesop
-  · unfold allPaths
-    aesop
+  simp only [allPaths, Finset.mem_union, Finset.mem_singleton, Finset.mem_sup,
+    Finset.mem_attach, true_and, Finset.mem_image, Subtype.exists, eq_comm]
 
 theorem PathIn.elem_allPaths {Hist X} {tab : Tableau Hist X} (p : PathIn tab) :
     p ∈ allPaths tab := by
-  induction tab
-  case loc Hist X lt nexts IH =>
-    induction p using init_inductionOn
-    case root =>
-      simp_all [allPaths]
-    case step t _ s t_s =>
-      rw [allPaths_loc_cases]
-      cases s
-      · tauto
-      case loc nrep nbas Y Y_in tail =>
-        right
-        simp_all
-  case pdl nrep bas r next =>
-    cases p <;> simp_all [allPaths]
-  case lrep lpr =>
-    cases p
-    simp_all [allPaths]
+  induction p with
+  | nil =>
+    rename_i tab
+    cases tab <;> simp only [allPaths, Finset.mem_union, Finset.mem_singleton, true_or]
+  | loc Y_in tail ih =>
+    exact (allPaths_loc_cases _).mpr (Or.inr ⟨_, Y_in, tail, ih, rfl⟩)
+  | pdl tail ih =>
+    exact Finset.mem_union_right _ (Finset.mem_image.mpr ⟨tail, ih, rfl⟩)
 
 /-- A Tableau is finite.
 Should be useful to get *converse* well-foundedness of `edge` -/
@@ -1582,15 +1570,29 @@ theorem Finite.wellfounded_of_irrefl_TC {α : Type} [Finite α] (r : α → α �
   ⟨fun a => acc_transGen_iff.mp <| wf.apply a⟩
 
 lemma nodeAt_mem_History_of_edge : p ⋖_ q → nodeAt p ∈ (tabAt q).1 := by
-  rintro ( ⟨Hist, XX, nrep, nbas, lt, next, Y, Y_in, tab_def, q_def⟩
-         | ⟨Hist, XX, nrep, bas, Y, r, next, tab_def, q_def⟩ )
-  <;> induction p <;> (simp at tab_def; try aesop)
+  rintro (⟨Hist, XX, nrep, nbas, lt, next, Y, Y_in, tab_def, q_def⟩ |
+    ⟨Hist, XX, nrep, bas, Y, rule, next, tab_def, q_def⟩)
+  all_goals
+    subst q_def
+    rw [tabAt_append, tabAt_cast_gen p _ tab_def]
+    simp only [tabAt]
+    have hnode : nodeAt p = XX := by
+      change (tabAt p).2.1 = XX
+      exact congrArg (fun value => value.2.1) tab_def
+    rw [hnode]
+    exact List.mem_cons_self
 
 lemma mem_History_of_edge : p ⋖_ q → x ∈ (tabAt p).1 → x ∈ (tabAt q).1 := by
-  intro hedge hmemp
-  rcases hedge with ( ⟨Hist, XX, nrep, nbas, lt, next, Y, Y_in, tab_def, q_def⟩
-                    | ⟨Hist, XX, nrep, bas, Y, r, next, tab_def, q_def⟩ )
-  <;> induction p <;> (simp at tab_def; try aesop)
+  intro hedge hx
+  rcases hedge with (⟨Hist, XX, nrep, nbas, lt, next, Y, Y_in, tab_def, q_def⟩ |
+    ⟨Hist, XX, nrep, bas, Y, rule, next, tab_def, q_def⟩)
+  all_goals
+    subst q_def
+    rw [tabAt_append, tabAt_cast_gen p _ tab_def]
+    simp only [tabAt]
+    have hhistory : (tabAt p).1 = Hist := congrArg (fun value => value.1) tab_def
+    rw [hhistory] at hx
+    exact List.mem_cons_of_mem XX hx
 
 lemma mem_History_append : X ∈ (tabAt p).1 → X ∈ (tabAt (p.append q)).1 := by
   intro h
@@ -1628,7 +1630,7 @@ lemma PathIn.length_lt_tab_size {H X} (tab : Tableau H X) (p : PathIn tab) :
     case pdl nrep bas tail =>
       simp only [length, Tableau.size]
       specialize IH tail
-      grind
+      grind only []
   · cases p
     simp [Tableau.size]
 
@@ -1645,9 +1647,9 @@ theorem flipEdge.wellFounded {H X} {tab : Tableau H X} :
     fun n => edge_then_length_lt (all_rel n)
   have : ∀ n, (f (n + 1)).length > n := by
     intro n
-    induction n <;> grind
+    induction n <;> grind only []
   absurd this tab.size
-  grind
+  grind only []
 
 /-- Induction principle going from the leaves (= childless nodes) to the root.
 Suppose whenever the `motive` holds at all children then it holds at the parent.

@@ -103,11 +103,11 @@ decreasing_by
 
 theorem lmOfFormula_lt_box_of_nonAtom (h : ¬ α.isAtomic) :
     lmOfFormula φ < lmOfFormula (⌈α⌉φ) := by
-  cases α <;> simp_all [Program.isAtomic, testsOfProgram] <;> linarith
+  cases α <;> simp_all [Program.isAtomic, testsOfProgram] <;> omega
 
 theorem lmOfFormula_lt_dia_of_nonAtom (h : ¬ α.isAtomic) :
     lmOfFormula (~φ) < lmOfFormula (~⌈α⌉φ) := by
-  cases α <;> simp_all [Program.isAtomic, testsOfProgram] <;> linarith
+  cases α <;> simp_all [Program.isAtomic, testsOfProgram] <;> omega
 
 
 /-- The multiset of unloaded formulas represented by an optional loading. -/
@@ -164,12 +164,12 @@ theorem unfoldBox.decreases_lmOf_nonAtomic {α : Program} {φ : Formula} {X : Li
       simp [lmOfFormula]
   case union α β => -- based on sequence case
     rcases ubc with one | ⟨τ, τ_in, def_ψ⟩ | ⟨a, δ, def_ψ, _⟩
-    · subst_eqs; linarith
+    · subst_eqs; omega
     · subst def_ψ
       suffices lmOfFormula (~τ)
           < (List.map (fun x => lmOfFormula (~ (x.1))) (testsOfProgram (α⋓β)).attach).sum.succ by
         simp_all
-        linarith
+        omega
       rw [@List.attach_map_val _ _ (testsOfProgram (α⋓β)) (fun x => lmOfFormula (~↑x))]
       rw [Nat.lt_succ_iff]
       exact List.single_le_sum (by simp) _ (by rw [List.mem_map]; use τ)
@@ -177,12 +177,12 @@ theorem unfoldBox.decreases_lmOf_nonAtomic {α : Program} {φ : Formula} {X : Li
       simp [lmOfFormula]
   case star β => -- based on sequence case
     rcases ubc with one | ⟨τ, τ_in, def_ψ⟩ | ⟨a, δ, def_ψ, _⟩
-    · subst_eqs; linarith
+    · subst_eqs; omega
     · subst def_ψ
       suffices lmOfFormula (~τ)
           < (List.map (fun x => lmOfFormula (~ (x.1))) (testsOfProgram (∗β)).attach).sum.succ by
         simp_all
-        linarith
+        omega
       rw [@List.attach_map_val _ _ (testsOfProgram (∗β)) (fun x => lmOfFormula (~↑x))]
       rw [Nat.lt_succ_iff]
       exact List.single_le_sum (by simp) _ (by rw [List.mem_map]; use τ)
@@ -190,12 +190,12 @@ theorem unfoldBox.decreases_lmOf_nonAtomic {α : Program} {φ : Formula} {X : Li
       simp [lmOfFormula]
   case test τ0 => -- based on sequence case
     rcases ubc with one | ⟨τ, τ_in, def_ψ⟩ | ⟨a, δ, def_ψ, _⟩
-    · subst_eqs; linarith
+    · subst_eqs; omega
     · subst def_ψ
       suffices lmOfFormula (~τ)
           < (List.map (fun x => lmOfFormula (~ (x.1))) (testsOfProgram (?'τ0)).attach).sum.succ by
         simp_all
-        linarith
+        omega
       rw [@List.attach_map_val _ _ (testsOfProgram (?'τ0)) (fun x => lmOfFormula (~↑x))]
       rw [Nat.lt_succ_iff]
       exact List.single_le_sum (by simp) _ (by rw [List.mem_map]; use τ)
@@ -293,36 +293,36 @@ theorem unfoldDiamond.decreases_lmOf_nonAtomic {α : Program} {φ : Formula} {X 
     case sequence α β =>
       suffices lmOfFormula ψ < (List.map lmOfFormula (testsOfProgram (α;'β))).sum.succ by
         simp_all [testsOfProgram]
-        linarith
+        omega
       suffices ∃ τ' ∈ testsOfProgram (α;'β), lmOfFormula ψ < 1 + lmOfFormula τ' by
         rw [Nat.lt_succ_iff]
         apply List.le_sum_of_mem
         simp_all [testsOfProgram]
-        aesop
+        aesop (rule_sets := [-default])
       simp_all [testsOfProgram]
-      aesop
+      aesop (rule_sets := [-default])
     case union α β =>
       suffices lmOfFormula ψ < (List.map lmOfFormula (testsOfProgram (α⋓β))).sum.succ by
         simp_all [testsOfProgram]
-        linarith
+        omega
       suffices ∃ τ' ∈ testsOfProgram (α;'β), lmOfFormula ψ < 1 + lmOfFormula τ' by
         rw [Nat.lt_succ_iff]
         apply List.le_sum_of_mem
         simp_all [testsOfProgram]
-        aesop
+        aesop (rule_sets := [-default])
       simp_all [testsOfProgram]
-      aesop
+      aesop (rule_sets := [-default])
     case star β =>
       suffices lmOfFormula ψ < (List.map lmOfFormula (testsOfProgram (∗β))).sum.succ by
         simp_all [testsOfProgram]
-        linarith
+        omega
       suffices ∃ τ' ∈ testsOfProgram (∗β), lmOfFormula ψ < 1 + lmOfFormula τ' by
         rw [Nat.lt_succ_iff]
         apply List.le_sum_of_mem
         simp_all [testsOfProgram]
-        aesop
+        aesop (rule_sets := [-default])
       simp_all [testsOfProgram]
-      aesop
+      aesop (rule_sets := [-default])
   · simp only [lmOfFormula, gt_iff_lt]
     cases α <;> simp_all [Program.isAtomic]
 
@@ -336,12 +336,12 @@ lemma finset_sum_trichotomy {A : Type*} [DecidableEq A]
   have h_sum_split : (∑ x ∈ X.toFinset, f x) ≤ (∑ x ∈ (X.toFinset.erase a), f x) + f a := by
     by_cases ha : a ∈ X.toFinset <;> simp_all +decide only [List.mem_toFinset, not_false_eq_true,
       Finset.erase_eq_of_notMem, le_add_iff_nonneg_right, zero_le]
-    rw [← Finset.sum_erase_add _ _ (by aesop : a ∈ X.toFinset), add_comm]
+    rw [← Finset.sum_erase_add _ _ (by aesop (rule_sets := [-default]) : a ∈ X.toFinset), add_comm]
   have h_sum_le : (∑ x ∈ X.toFinset.erase a, f x) ≤ (∑ x ∈ (bs.toFinset), f x) := by
     have h_sum_le' : (∑ x ∈ X.toFinset.erase a, f x) ≤
         (∑ x ∈ (X.toFinset.erase a ∩ bs.toFinset), f x) := by
       rw [← Finset.sum_subset (Finset.inter_subset_left)]
-      intro x hx hx'; specialize h x; aesop
+      intro x hx hx'; specialize h x; aesop (rule_sets := [-default])
     exact h_sum_le'.trans (Finset.sum_le_sum_of_subset_of_nonneg
       (Finset.inter_subset_right) (fun _ _ _ => Nat.zero_le _))
   apply le_trans h_sum_split
@@ -351,7 +351,7 @@ lemma finset_sum_trichotomy {A : Type*} [DecidableEq A]
     intro l; induction l <;> simp_all +decide only [List.toFinset_nil, Finset.sum_empty,
       List.map_nil, List.sum_nil, Std.le_refl, List.toFinset_cons, List.map_cons, List.sum_cons]
     by_cases hh : ‹A› ∈ ‹List A›.toFinset <;> simp_all +decide only [List.mem_toFinset,
-      Finset.insert_eq_of_mem, not_false_eq_true, Finset.sum_insert, add_le_add_iff_left]; linarith!
+      Finset.insert_eq_of_mem, not_false_eq_true, Finset.sum_insert, add_le_add_iff_left]; omega
   exact h_toFinset_le bs
 
 /-- This is a summary lemma and not used as a whole anywhere.
@@ -402,7 +402,7 @@ lemma measureProp {α : Program} {φ φ₁ φ₂ : Formula} :
     case test τ =>
       simp_all [testsOfProgram, unfoldDiamond, Dset, Yset]
       subst X_in
-      by_cases h : τ = ~φ <;> simp_all; grind
+      by_cases h : τ = ~φ <;> simp_all; grind only []
     all_goals
       have tri : ∀ ψ ∈ X, ψ = (~φ) ∨ ψ ∈ testsOfProgram α ∨ lmOfFormula ψ = 0 := by
         have udc := unfoldDiamondContent _ _ _ X_in
@@ -414,7 +414,7 @@ lemma measureProp {α : Program} {φ φ₁ φ₂ : Formula} :
       have := finset_sum_trichotomy lmOfFormula X (~φ) (testsOfProgram α) tri
       subst α_def
       simp only [lmOfFormula, List.map_subtype, List.unattach_attach, gt_iff_lt] at *
-      linarith
+      omega
 
 /-- The end sequents of a local tableau. -/
 @[simp]
@@ -699,7 +699,7 @@ theorem endNodeIsEndNodeOfChild {X} {lrA : LocalRuleApp}
   ∃ Y h, E ∈ endNodesOf (subTabs Y h) := by
   have := endNodeToEndNodeOfChild def_X subTabs E_in
   use this
-  aesop
+  aesop (rule_sets := [-default])
 
 theorem endNodeOfChild_to_endNode
     {Y : Sequent}
@@ -717,13 +717,13 @@ theorem endNodeOfChild_to_endNode
     subst h
     simp only [endNodesOf, Finset.sup_image, Function.id_comp, Finset.mem_sup, Finset.mem_attach,
       true_and, Subtype.exists]
-    grind
+    grind only []
   case byLocalRule C' subTabs' lrA' =>
     subst h
     rw [h'] at Z_in
     simp only [endNodesOf, Finset.sup_image, Function.id_comp, Finset.mem_sup, Finset.mem_attach,
       true_and, Subtype.exists]
-    grind
+    grind only []
 
 /-- Membership in the end nodes of a local tableau given by a local rule application. -/
 lemma mem_endNodesOf_byLocalRule_iff {X} {lra : LocalRuleApp} {X_def : X = lra.X}
@@ -738,11 +738,18 @@ lemma mem_endNodesOf_byLocalRule_iff {X} {lra : LocalRuleApp} {X_def : X = lra.X
 theorem localTableauTruth {X} (lt : LocalTableau X) {W} (M : KripkeModel W) (w : W) :
     (M, w) ⊨ X  ↔ ∃ Y ∈ endNodesOf lt, (M, w) ⊨ Y := by
   induction lt
-  case byLocalRule Y lrA X_def next IH  =>
-    have := localRuleTruth lrA M w
-    aesop
+  case byLocalRule Y lrA X_def next IH =>
+    subst Y
+    rw [localRuleTruth lrA M w]
+    constructor
+    · rintro ⟨child, hchild, hsat⟩
+      obtain ⟨leaf, hleaf, hsat⟩ := (IH child hchild).mp hsat
+      exact ⟨leaf, mem_endNodesOf_byLocalRule_iff.mpr ⟨child, hchild, hleaf⟩, hsat⟩
+    · rintro ⟨leaf, hleaf, hsat⟩
+      obtain ⟨child, hchild, hleaf⟩ := mem_endNodesOf_byLocalRule_iff.mp hleaf
+      exact ⟨child, hchild, (IH child hchild).mpr ⟨leaf, hleaf, hsat⟩⟩
   case sim =>
-    simp_all
+    simp only [endNodesOf, Finset.mem_singleton, exists_eq_left]
 
 open HasSat
 
@@ -769,7 +776,7 @@ lemma endNodesOf_basic {X Z} {ltZ : LocalTableau Z} : X ∈ endNodesOf ltZ → X
   case byLocalRule B lrA next IH =>
     intro X_in
     simp [endNodesOf] at X_in
-    aesop
+    aesop (rule_sets := [-default])
   case sim X =>
     simp_all
 
@@ -779,7 +786,7 @@ theorem endNodesOf_nonbasic_non_eq {X Y} (lt : LocalTableau X) (X_nonbas : ¬ X.
     Y ∈ endNodesOf lt → Y ≠ X := by
   intro Y_in
   have := endNodesOf_basic Y_in
-  grind
+  grind only []
 
 -- upstream me / Haitian?;-)
 lemma IsDershowitzMannaLT.irrefl [Preorder α] [WellFoundedLT α] (X : Multiset α) :

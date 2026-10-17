@@ -97,8 +97,8 @@ lemma basic_flip {X : Sequent} : X.flip.basic ↔ X.basic := by
     · intro φ φ_in
       apply fs_basic
       rcases φ_in with h|h|h|h
-      · grind
-      · grind
+      · grind only []
+      · grind only []
       · right
         right
         right
@@ -111,14 +111,14 @@ lemma basic_flip {X : Sequent} : X.flip.basic ↔ X.basic := by
         simp only [Olf.flip, Option.map_eq_some_iff, Sum.exists, Sum.swap_inl, reduceCtorEq,
           and_false, exists_false, Sum.swap_inr, Sum.inl.injEq, exists_eq_right, false_or]
         exact h
-    · aesop
+    · aesop (rule_sets := [-default])
   · intro ⟨fs_basic, not_closed⟩
     constructor
     · intro φ φ_in
       apply fs_basic
       rcases φ_in with h|h|h|h
-      · grind
-      · grind
+      · grind only []
+      · grind only []
       · right
         right
         right
@@ -131,7 +131,7 @@ lemma basic_flip {X : Sequent} : X.flip.basic ↔ X.basic := by
         simp only [Olf.flip, Option.map_eq_some_iff, Sum.exists, Sum.swap_inl, Sum.inr.injEq,
           exists_eq_right, Sum.swap_inr, reduceCtorEq, and_false, exists_false, or_false] at h
         exact h
-    · aesop
+    · aesop (rule_sets := [-default])
 
 /-- Reflect a local rule by exchanging its left and right components. -/
 def LocalRule.flip {Lcond Ocond Rcond ress} (lr : LocalRule (Lcond, Rcond, Ocond) ress) :
@@ -162,7 +162,7 @@ def LocalRule.flip {Lcond Ocond Rcond ress} (lr : LocalRule (Lcond, Rcond, Ocond
 
 lemma LocalRule.flip_flip {Lcond Ocond Rcond ress} (lr : LocalRule (Lcond, Rcond, Ocond) ress) :
     lr.flip.flip = Olf.flip_flip ▸ Sequent.image_flip_image_flip ▸ lr := by
-  cases lr <;> simp_all [LocalRule.flip] <;> grind
+  cases lr <;> simp_all [LocalRule.flip] <;> grind only []
 
 /-- Note: is it possible and useful to rewrite this in more term and less tactic mode? -/
 def LocalRuleApp.flip : LocalRuleApp → LocalRuleApp := by
@@ -191,10 +191,10 @@ lemma LocalRuleApp.flip_flip {lra : LocalRuleApp} :
   rcases lra with ⟨L, R, O, C, Lcond, Rcond, Ocond, ress, rule, hC, preconditionProof⟩
   simp only [flip, Olf.flip_flip, Sequent.image_flip_image_flip, mk.injEq, and_true, true_and]
   rw [LocalRule.flip_flip]
-  grind
+  grind only []
 
 lemma Sequent.flip_mem_of_mem_image_flip {B : Finset Sequent} {Y : Sequent} :
-    Y ∈ B.image Sequent.flip → Y.flip ∈ B := by aesop
+    Y ∈ B.image Sequent.flip → Y.flip ∈ B := by aesop (rule_sets := [-default])
 
 /-- Reflect every rule and branch of a local tableau. -/
 def LocalTableau.flip {X} : LocalTableau X → LocalTableau X.flip
@@ -216,16 +216,16 @@ lemma LocalTableau.flip_flip {lt : LocalTableau X} : lt.flip.flip = Sequent.flip
       intro X X' X_heq_X'
       apply Function.hfunext
       · rw [LocalRuleApp.flip_flip]
-        grind
-      · grind
-  · grind
+        grind only []
+      · grind only []
+  · grind only []
 
 lemma LocalTableau.flip_inj {X} {lt : LocalTableau X} :
     lt.flip.flip = (Sequent.flip_flip ▸ lt) := by
   cases lt
   case byLocalRule =>
     rw [LocalTableau.flip_flip]
-  · grind [LocalTableau.flip]
+  · grind only [LocalTableau.flip]
 
 lemma endNodesOf_flip {X} {lt : LocalTableau X} {Y} :
     Y ∈ endNodesOf lt.flip → Y.flip ∈ endNodesOf lt := by
@@ -235,7 +235,7 @@ lemma endNodesOf_flip {X} {lt : LocalTableau X} {Y} :
     simp only [LocalTableau.flip, endNodesOf, Finset.sup_image, Function.id_comp, Finset.mem_sup,
       Finset.mem_attach, true_and, Subtype.exists] at *
     rcases Y_in with ⟨W, W_in_B, Y_in_end⟩
-    refine ⟨W.flip, ?_, ?_⟩ <;> grind
+    refine ⟨W.flip, ?_, ?_⟩ <;> grind only []
   case sim Z Zbas =>
     simp_all [LocalTableau.flip]
 
@@ -296,7 +296,7 @@ def PdlRule.flip {X Y} (r : PdlRule X Y) : PdlRule X.flip Y.flip := by
 
 lemma PdlRule.flip_flip {X Y} (r : PdlRule X Y) :
     r.flip.flip = (Sequent.flip_flip ▸ Sequent.flip_flip ▸ r) := by
-  cases r <;> simp [PdlRule.flip] <;> grind
+  cases r <;> simp [PdlRule.flip] <;> grind only []
 
 /-- Flipping sequents is injective. -/
 @[simp]
@@ -336,14 +336,14 @@ lemma flprep_flip {Hist} :
     exists_eq_right, and_true, Sequent.isFree, Sequent.flip_isLoaded]
   refine ⟨?_,?_⟩
   · rintro (frep|⟨⟨lpr⟩⟩ )
-    · grind
+    · grind only []
     · have := lpr.flip
       right
       simp only [List.map_map, Sequent.flip_comp_flip, List.map_id_fun, id_eq, Sequent.flip_flip]
         at this
       exact ⟨this⟩
   · rintro (frep|⟨⟨lpr⟩⟩ )
-    · grind
+    · grind only []
     · have := lpr.flip
       right
       exact ⟨this⟩
@@ -391,9 +391,9 @@ lemma Tableau.flip_flip {Hist X} {tab : Tableau Hist X} :
     nth_rewrite 1 [Tableau.flip]
     rw [IH]; clear IH
     rw [PdlRule.flip_flip]
-    grind
+    grind only []
   case lrep lpr =>
-    grind [Tableau.flip, LoadedPathRepeat.flip_flip]
+    grind only [Tableau.flip, LoadedPathRepeat.flip_flip]
 
 /-- Map a tableau path to the corresponding path in the reflected tableau. -/
 def PathIn.flip {Hist X} {tab : Tableau Hist X} : PathIn tab → PathIn tab.flip
@@ -420,7 +420,7 @@ lemma PathIn_helper {HistA HistB XA XB} {tabA : Tableau HistA XA} {tabB : Tablea
 lemma PathIn_type_flip_flip {Hist} {tab : Tableau Hist X} :
     PathIn tab.flip.flip = PathIn tab := by
   rw [Tableau.flip_flip]
-  grind
+  grind only []
 
 /-- `Eq.mpr` is a heterogeneous identity. -/
 theorem flip_aux_eq_mpr_heq {a b : Sort u} (h : a = b) (x : b) : HEq (Eq.mpr h x) x := by

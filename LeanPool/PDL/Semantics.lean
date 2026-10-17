@@ -136,7 +136,7 @@ theorem notsatisfnotThenTaut : ∀ φ, ¬ satisfiable (~φ) → tautology φ :=
 
 theorem subsetSat {M : KripkeModel W} {w : W} {X Y : List Formula} :
     (∀ φ ∈ X, evaluate M w φ) → Y ⊆ X → ∀ φ ∈ Y, evaluate M w φ :=
-  by aesop
+  by aesop (rule_sets := [-default])
 
 theorem semEquiv.refl : Std.Refl semEquiv := by
   constructor
@@ -234,17 +234,17 @@ theorem forms_to_lists {φ ψ : Formula} : φ⊨ψ → ([φ] : List Formula)⊨(
   apply impTaut
   · rw [←vDashSingleton_iff_vDash_formula φ] at lhs
     tauto
-  · aesop
+  · aesop (rule_sets := [-default])
 
 /-- The Local Deduction Theorem. -/
 theorem deduction (X : List Formula) (ψ φ : Formula) :
     X ++ [ψ] ⊨ φ ↔ (X ⊨ ψ ↣ φ) := by
   constructor
   · intro Xφ_then_ψ W M w w_X
-    aesop
+    aesop (rule_sets := [-default])
   · intro X_ W M w w_X
     specialize X_ W M w
-    aesop
+    aesop (rule_sets := [-default])
 
 theorem notSat_iff_semImplies (X : List Formula) (φ : Formula) :
     ¬ satisfiable (X ∪ [~φ]) ↔ X ⊨ ([φ] : List Formula) := by
@@ -253,7 +253,7 @@ theorem notSat_iff_semImplies (X : List Formula) (φ : Formula) :
     intro nSat W M w satX
     specialize nSat W M w
     rcases nSat with ⟨φ, phi_in, not_phi⟩
-    aesop
+    aesop (rule_sets := [-default])
   · intro X_φ
     by_contra hyp
     simp only [satisfiable] at hyp
@@ -363,7 +363,7 @@ theorem relateSeq_append {M : KripkeModel W} {l1 l2 : List Program} {w v : W} :
   · simp [relateSeq]
   case cons l l1 IH =>
     simp [relateSeq]
-    aesop
+    aesop (rule_sets := [-default])
 
 lemma relate_steps_iff_relateSeq (M : KripkeModel W) (δ : List Program) (w v : W) :
     relate M (Program.steps δ) w v ↔ relateSeq M δ w v := by
@@ -379,11 +379,11 @@ theorem relateSeq_iff_exists_Vector (M : KripkeModel W) (δ : List Program) (w v
     List.get_eq_getElem, IsEmpty.forall_iff, and_true]
     constructor <;> intro h
     · use ⟨[w], by simp⟩
-      aesop
+      aesop (rule_sets := [-default])
     · rcases h with ⟨⟨ws, ws_len_eq_1⟩ , w_def, v_def⟩
       rw [List.length_eq_one_iff] at ws_len_eq_1
       rcases ws_len_eq_1 with ⟨x, ws_def⟩
-      aesop
+      aesop (rule_sets := [-default])
   case cons d δ IH =>
     simp only [relateSeq_cons, List.length_cons, Nat.succ_eq_add_one, List.get_eq_getElem]
     constructor <;> intro h
@@ -404,8 +404,8 @@ theorem relateSeq_iff_exists_Vector (M : KripkeModel W) (δ : List Program) (w v
             simp [List.Vector.get]
           · rcases ws with ⟨ws, ws_len⟩
             have := List.exists_of_length_succ _ ws_len
-            aesop
-        · aesop
+            aesop (rule_sets := [-default])
+        · aesop (rule_sets := [-default])
     · rcases h with ⟨wws, w_def, v_def, claim⟩
       let u := wws[1]
       use wws[1]
@@ -427,7 +427,7 @@ theorem relateSeq_iff_exists_Vector (M : KripkeModel W) (δ : List Program) (w v
             (by simp at wws_len; assumption : t.length = δ.length + 1)
           rcases this with ⟨y, tt, t_def⟩
           subst t_def
-          aesop
+          aesop (rule_sets := [-default])
         · rw [v_def]
           -- copied from previous case
           rcases wws with ⟨wws, wws_len⟩
@@ -437,10 +437,10 @@ theorem relateSeq_iff_exists_Vector (M : KripkeModel W) (δ : List Program) (w v
             (by simp at wws_len; assumption : t.length = δ.length + 1)
           rcases this with ⟨y, tt, t_def⟩
           subst t_def
-          aesop
+          aesop (rule_sets := [-default])
         · intro i
           specialize claim i.succ
-          aesop
+          aesop (rule_sets := [-default])
 
 /-- Relating along `Program.unions L` means relating along one of the programs in `L`. -/
 lemma relate_unions {W} {M : KripkeModel W} : ∀ (L : List Program) (v u : W),

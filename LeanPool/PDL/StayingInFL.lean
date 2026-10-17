@@ -423,10 +423,10 @@ lemma unfoldBox_in_FL (α : Program) (ψ : Formula) (X : List Formula) :
     rcases this with ⟨τ, τ_in, def_φ⟩
     subst def_φ
     have := @neg_testsOfProgram_in_FLb τ α τ_in ψ
-    grind
+    grind only []
   · subst def_φ
     have := P_in_FL _ _ _ ψ in_P
-    grind [FL]
+    grind only [FL]
 
 /-- Helper for `LocalRule.stays_in_FL` -/
 theorem OneSidedLocalRule.stays_in_FL {precond ress}

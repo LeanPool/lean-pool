@@ -110,7 +110,7 @@ lemma evaluate_rho_iff {W} {M : KripkeModel W} {w : W} {n} (h : C.Q.atOpt x = so
   constructor
   · rintro ⟨_, t, hev⟩
     simp [conEval] at hev
-    grind
+    grind only []
   · rintro ⟨t, ht, hev⟩
     simp only [conEval, Formula.mem_pdlSort]
     use t
@@ -243,7 +243,7 @@ lemma leftEntails_thetaOf (hθ : ∀ f ∈ C.fineExits, isPartInterpolant f.labe
   by_contra hcon
   exact C.thetaOf_left θ hθ Δ t ht ⟨W, M, w, by
     intro φ hφ
-    aesop⟩
+    aesop (rule_sets := [-default])⟩
 
 /-- Case `k(x) = 1` where `x` is a leaf that is not a repeat: `ι_x = θ_{Δ_x}` and every
 node of the region is an exit node, so Lemma 9.14 (a) applies. -/

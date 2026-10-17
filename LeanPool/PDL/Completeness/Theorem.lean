@@ -147,7 +147,7 @@ theorem completeness : ∀ X, consistent X → satisfiable X :=
   intro f f_in
   apply truthLemma M w f
   apply h
-  aesop
+  aesop (rule_sets := [-default])
 
 theorem consIffSat : ∀ X, X.isFree → (consistent X ↔ satisfiable X) :=
   fun X X_isFree => ⟨completeness X, correctness X X_isFree⟩
