@@ -103,11 +103,13 @@ recall Subtype.dense_iff {X : Type u_1} [TopologicalSpace X] {s : Set X}
 
 recall ContinuousLinearMap.flip_apply {K : Type u_1} {K2 : Type u_2}
     {K3 : Type u_3} {E : Type u_4} {F : Type u_5} {G : Type u_6}
-    [SeminormedAddCommGroup E] [SeminormedAddCommGroup F] [SeminormedAddCommGroup G]
     [NontriviallyNormedField K] [NontriviallyNormedField K2]
-    [NontriviallyNormedField K3] [NormedSpace K E] [NormedSpace K2 F]
-    [NormedSpace K3 G] {sigma23 : K2 →+* K3} {sigma13 : K →+* K3}
+    [NontriviallyNormedField K3] {sigma23 : K2 →+* K3} {sigma13 : K →+* K3}
+    [AddCommGroup E] [Module K E] [TopologicalSpace E]
+    [AddCommGroup F] [Module K2 F] [TopologicalSpace F] [IsNormableSpace K2 F]
+    [AddCommGroup G] [Module K3 G] [TopologicalSpace G] [IsNormableSpace K3 G]
     [RingHomIsometric sigma23] [RingHomIsometric sigma13]
+    [IsNormableSpace K E] [IsTopologicalAddGroup G]
     (f : E →SL[sigma13] F →SL[sigma23] G) (x : E) (y : F) :
     f.flip y x = f x y
 

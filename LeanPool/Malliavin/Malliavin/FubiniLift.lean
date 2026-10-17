@@ -51,7 +51,7 @@ recall MeasureTheory.integral_prod_mul {α : Type u_1} {β : Type u_2} [Measurab
     ∫ z, f z.1 * g z.2 ∂μ.prod ν = (∫ x, f x ∂μ) * ∫ y, g y ∂ν
 
 recall MeasureTheory.Integrable.mul_prod {α : Type u_1} {β : Type u_2} [MeasurableSpace α]
-    [MeasurableSpace β] {μ : Measure α} {ν : Measure β} [SFinite ν]
+    [MeasurableSpace β] {μ : Measure α} {ν : Measure β}
     {L : Type u_3} [NormedRing L] {f : α → L}
     {g : β → L} (hf : Integrable f μ) (hg : Integrable g ν) :
     Integrable (fun z : α × β ↦ f z.1 * g z.2) (μ.prod ν)
@@ -92,7 +92,7 @@ theorem memLp_tensor (A : FiniteMeasurableSet μ) (g : Lp ℝ 2 ν) :
     MemLp (fun p : T × Ω ↦ g p.1 * A.1.indicator (1 : Ω → ℝ) p.2) 2 (legacyProduct ν μ) := by
   have hg : MemLp (g : T → ℝ) 2 ν := Lp.memLp g
   have hA : MemLp (A.1.indicator (1 : Ω → ℝ)) 2 μ :=
-    memLp_indicator_const 2 A.2.1 (1 : ℝ) (Or.inr A.2.2)
+    memLp_indicator_const 2 A.2.1.nullMeasurableSet (1 : ℝ) (Or.inr A.2.2)
   refine (memLp_two_iff_integrable_sq ((hg.aestronglyMeasurable.comp_quasiMeasurePreserving
     legacyProduct_quasiMeasurePreserving_fst).mul
       (hA.aestronglyMeasurable.comp_quasiMeasurePreserving
@@ -853,9 +853,10 @@ theorem LegacyTensor.aestronglyMeasurable_comp_snd {G : Ω → ℝ} (hG : AEStro
     AEStronglyMeasurable (fun p : T × Ω ↦ G p.2) (legacyProduct ν μ) :=
   hG.comp_quasiMeasurePreserving legacyProduct_quasiMeasurePreserving_snd
 
-omit [SFinite ν] in
+omit [SFinite μ] [SFinite ν] in
 /-- A bounded measurable function of `ω`, viewed on `T × Ω`. -/
-theorem aestronglyMeasurable_comp_snd {G : Ω → ℝ} (hG : AEStronglyMeasurable G μ) :
+theorem aestronglyMeasurable_comp_snd [SFinite μ] {G : Ω → ℝ}
+    (hG : AEStronglyMeasurable G μ) :
     AEStronglyMeasurable (fun p : T × Ω ↦ G p.2) (ν.prod μ) :=
   hG.comp_quasiMeasurePreserving Measure.quasiMeasurePreserving_snd
 

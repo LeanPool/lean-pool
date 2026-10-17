@@ -6,6 +6,7 @@ Authors: The lean-malliavin contributors
 module
 
 public import LeanPool.Malliavin.Malliavin.CameronMartinTheorem
+public import Mathlib.Analysis.Calculus.ParametricIntegral
 
 /-!
 # The Malliavin derivative and its closability

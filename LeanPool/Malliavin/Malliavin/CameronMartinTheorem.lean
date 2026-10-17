@@ -112,11 +112,13 @@ recall Real.log_exp (x : ℝ) : Real.log (Real.exp x) = x
 
 recall ContinuousLinearMap.flip_apply {𝕜 : Type u_1} {𝕜₂ : Type u_2}
     {𝕜₃ : Type u_3} {E : Type u_4} {F : Type u_6} {G : Type u_8}
-    [SeminormedAddCommGroup E] [SeminormedAddCommGroup F] [SeminormedAddCommGroup G]
     [NontriviallyNormedField 𝕜] [NontriviallyNormedField 𝕜₂]
-    [NontriviallyNormedField 𝕜₃] [NormedSpace 𝕜 E] [NormedSpace 𝕜₂ F]
-    [NormedSpace 𝕜₃ G] {σ₂₃ : 𝕜₂ →+* 𝕜₃} {σ₁₃ : 𝕜 →+* 𝕜₃}
+    [NontriviallyNormedField 𝕜₃] {σ₂₃ : 𝕜₂ →+* 𝕜₃} {σ₁₃ : 𝕜 →+* 𝕜₃}
+    [AddCommGroup E] [Module 𝕜 E] [TopologicalSpace E]
+    [AddCommGroup F] [Module 𝕜₂ F] [TopologicalSpace F] [IsNormableSpace 𝕜₂ F]
+    [AddCommGroup G] [Module 𝕜₃ G] [TopologicalSpace G] [IsNormableSpace 𝕜₃ G]
     [RingHomIsometric σ₂₃] [RingHomIsometric σ₁₃]
+    [IsNormableSpace 𝕜 E] [IsTopologicalAddGroup G]
     (f : E →SL[σ₁₃] F →SL[σ₂₃] G) (x : E) (y : F) : f.flip y x = f x y
 
 recall ContinuousLinearMap.lpPairing_eq_integral {α : Type u_1} {𝕜 : Type u_2}

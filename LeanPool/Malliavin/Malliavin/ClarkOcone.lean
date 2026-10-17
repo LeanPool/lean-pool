@@ -170,11 +170,11 @@ recall ProbabilityTheory.IndepFun.integral_mul_eq_mul_integral
     (hY : AEStronglyMeasurable Y μ) :
     μ[X * Y] = μ[X] * μ[Y]
 
-recall MeasureTheory.Measure.QuasiMeasurePreserving.ae_eq_comp
+recall MeasureTheory.QuasiMeasurePreserving.ae_eq_comp
     {α : Type u_1} {β : Type u_2} {δ : Type u_4}
     {mα : MeasurableSpace α} {mβ : MeasurableSpace β}
     {μa : Measure α} {μb : Measure β} {f : α → β}
-    (h : Measure.QuasiMeasurePreserving f μa μb) {g₁ g₂ : β → δ}
+    (h : QuasiMeasurePreserving f μa μb) {g₁ g₂ : β → δ}
     (hg : g₁ =ᵐ[μb] g₂) : g₁ ∘ f =ᵐ[μa] g₂ ∘ f
 
 noncomputable
@@ -249,9 +249,9 @@ noncomputable def deterministicTimeEmbedding :
     Lp ℝ 2 nonnegativeLebesgueMeasure →ₗᵢ[ℝ] TimeProcessL2 P :=
   Lp.compMeasurePreservingₗᵢ ℝ Prod.fst measurePreserving_fst
 
-omit [CompleteSpace W] [BorelSpace W] in
+omit [CompleteSpace W] [BorelSpace W] [SecondCountableTopology W] in
 /-- A deterministic time integrand is measurably predictable. -/
-theorem deterministicTimeEmbedding_aestronglyMeasurable
+theorem deterministicTimeEmbedding_aestronglyMeasurable [SecondCountableTopology W]
     (𝓕 : Filtration ℝ≥0 ‹MeasurableSpace W›)
     (f : Lp ℝ 2 nonnegativeLebesgueMeasure) :
     AEStronglyMeasurable[𝓕.predictable]
