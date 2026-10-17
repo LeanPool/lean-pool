@@ -51,7 +51,11 @@ public noncomputable section
 
 namespace Berarducci
 
-variable {K : Type v} [Field K] [CharZero K]
+variable {K : Type v} [Field K]
+
+section
+
+variable [CharZero K]
 
 /-! ### Degrees of divisors and units -/
 
@@ -83,6 +87,8 @@ theorem isUnit_of_dvd_of_seriesDegree_le_zero {a u : Nonpositive ℝ K} (ha : Ir
       seriesDegree_eq_zero_of_isUnit h, add_zero] at haDegree
     exact absurd (lt_of_lt_of_le haDegree hu) (lt_irrefl _)
 
+end
+
 /-! ### Clearing denominators -/
 
 /-- The fraction field `L = Frac(K_fin)` of the finite-support series. -/
@@ -99,14 +105,12 @@ abbrev coordinatePolynomialMap :
   MvPolynomial.map (algebraMap (Berarducci.FiniteSupportRing (K := K))
     (FiniteSupportFractionField (K := K)))
 
-omit [CharZero K] in
 variable (K ι) in
 /-- Extension of coefficients to the fraction field is injective. -/
 theorem coordinatePolynomialMap_injective :
     Function.Injective (coordinatePolynomialMap K ι) :=
   MvPolynomial.map_injective _ (IsFractionRing.injective _ _)
 
-omit [CharZero K] in
 /-- Every polynomial over `L` becomes a polynomial over `K_fin` after multiplication by a nonzero
 finite-support denominator. -/
 theorem exists_C_mul_eq_coordinatePolynomialMap
@@ -128,7 +132,6 @@ theorem exists_C_mul_eq_coordinatePolynomialMap
 
 /-! ### Polynomial presentations -/
 
-omit [CharZero K] in
 /-- A constant `c ∈ K_fin` evaluates to itself under `K_fin[X_i] → K((ℝ^{≤0}))`. -/
 theorem aeval_C_finiteSupport (b : ι → Nonpositive ℝ K)
     (c : Berarducci.FiniteSupportRing (K := K)) :
@@ -165,7 +168,6 @@ include hb
 
 /-! ### Constant polynomials -/
 
-omit [CharZero K] in
 /-- If a nonzero finite-support multiple of `G ∈ L[X_i]` comes from a polynomial over `K_fin`
 whose value has degree at most zero, and `G ≠ 0`, then `G` is a unit of `L[X_i]`. -/
 theorem isUnit_of_C_mul_eq_coordinatePolynomialMap
@@ -188,6 +190,8 @@ theorem isUnit_of_C_mul_eq_coordinatePolynomialMap
       MvPolynomial.C
   rw [← hGG'] at hunit
   exact isUnit_of_mul_isUnit_right hunit
+
+variable [CharZero K]
 
 omit hb in
 /-- The image of a degree-zero finite-support factor times a unit has degree at most zero. -/

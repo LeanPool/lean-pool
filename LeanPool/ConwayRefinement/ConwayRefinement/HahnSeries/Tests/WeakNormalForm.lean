@@ -8,7 +8,7 @@ module
 public import LeanPool.ConwayRefinement.ConwayRefinement.HahnSeries.WeakNormalForm
 public import LeanPool.ConwayRefinement.ConwayRefinement.SetTheory.Ordinal.CantorTermCount
 
-import Mathlib.Data.Sum.Order
+import Mathlib.Order.Sum.Order
 
 /-!
 # API checks for LM24 weak normal forms

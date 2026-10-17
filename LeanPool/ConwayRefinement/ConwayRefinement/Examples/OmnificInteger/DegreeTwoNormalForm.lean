@@ -5,7 +5,7 @@ Authors: Dan Abramov
 -/
 module
 
-public import Mathlib.Data.Prod.Lex
+public import Mathlib.Order.Prod.Lex.Basic
 public import Mathlib.SetTheory.Ordinal.Arithmetic
 public import LeanPool.ConwayRefinement.CombinatorialGames.Surreal.HahnSeries.Basic
 

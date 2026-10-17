@@ -6,7 +6,7 @@ Authors: Dan Abramov
 module
 
 public import LeanPool.ConwayRefinement.ConwayRefinement.SetTheory.Ordinal.SetOrderType
-public import Mathlib.Data.Sum.Order
+public import Mathlib.Order.Sum.Order
 
 /-!
 # API check for order type of a union

@@ -26,6 +26,8 @@ universe u
 
 public noncomputable section
 
+open scoped ZFClass
+
 namespace Surreal.OmnificInteger
 
 /-- Omnific integers with option sets in universe `u` are not `u`-small. -/
@@ -43,7 +45,7 @@ end Surreal.OmnificInteger
 namespace ZFSet
 
 /-- The ZFC class of sets satisfying the game-code grammar and Conway's numeric condition. -/
-def numericGameCodes : Class.{u} :=
+def numericGameCodes : ZFClass.{u} :=
   fun z ↦ ∃ h : IsGameCode z, (GameCode.mk z h).IsNumeric
 
 /-- Membership in the numeric-code class is the intrinsic numeric predicate on a game code. -/
@@ -51,7 +53,7 @@ theorem numericGameCodes_iff (z : ZFSet.{u}) :
     numericGameCodes z ↔ ∃ h : IsGameCode z, (GameCode.mk z h).IsNumeric := (Iff.rfl)
 
 /-- The ZFC class of game codes satisfying Conway's omnific-integer condition. -/
-def omnificGameCodes : Class.{u} :=
+def omnificGameCodes : ZFClass.{u} :=
   fun z ↦ ∃ h : IsGameCode z, (GameCode.mk z h).IsOmnificInteger
 
 /-- Membership in the omnific-code class is Conway's omnific-integer predicate on a game code. -/
@@ -164,35 +166,35 @@ theorem omnificGameCodes_iff_exists (z : ZFSet.{u}) :
     exact c.mem_omnificGameCodes
 
 private theorem class_ne_ofSet_of_not_small {α : Type (u + 1)} (f : α → ZFSet.{u})
-    (hf : Function.Injective f) (C : Class.{u}) (hC : ∀ x, C (f x))
-    (hα : ¬Small.{u} α) (s : ZFSet.{u}) : C ≠ Class.ofSet s := by
+    (hf : Function.Injective f) (C : ZFClass.{u}) (hC : ∀ x, C (f x))
+    (hα : ¬Small.{u} α) (s : ZFSet.{u}) : C ≠ (s : ZFClass.{u}) := by
   intro h
   let g : α → s := fun x ↦ ⟨f x, by
-    apply Class.coe_apply.1
+    change f x ∈ (s : ZFClass.{u})
     rw [← h]
     exact hC x⟩
   exact hα (small_of_injective (f := g) (fun _ _ hab ↦ hf (congrArg Subtype.val hab)))
 
 /-- No ZFC set has exactly the numeric game codes as its elements. -/
-theorem numericGameCodes_ne_ofSet (s : ZFSet.{u}) : numericGameCodes ≠ Class.ofSet s :=
+theorem numericGameCodes_ne_ofSet (s : ZFSet.{u}) : numericGameCodes ≠ (s : ZFClass.{u}) :=
   class_ne_ofSet_of_not_small _ NumericGameCode.coe_code_injective _
     NumericGameCode.mem_numericGameCodes NumericGameCode.not_small s
 
 /-- Numeric game codes form a proper ZFC class, with a proper class of distinct surreal values. -/
-theorem numericGameCodes_notMem_univ : numericGameCodes ∉ Class.univ.{u} := by
+theorem numericGameCodes_notMem_univ : numericGameCodes ᶜ∉ (Set.univ : ZFClass.{u}) := by
   intro h
-  obtain ⟨s, hs⟩ := Class.mem_univ.1 h
+  obtain ⟨s, hs⟩ := ZFClass.cmem_univ.1 h
   exact numericGameCodes_ne_ofSet s hs.symm
 
 /-- No ZFC set has exactly the omnific game codes as its elements. -/
-theorem omnificGameCodes_ne_ofSet (s : ZFSet.{u}) : omnificGameCodes ≠ Class.ofSet s :=
+theorem omnificGameCodes_ne_ofSet (s : ZFSet.{u}) : omnificGameCodes ≠ (s : ZFClass.{u}) :=
   class_ne_ofSet_of_not_small _ OmnificCode.coe_code_injective _
     OmnificCode.mem_omnificGameCodes OmnificCode.not_small s
 
 /-- Omnific codes form a proper ZFC class, with a proper class of distinct omnific values. -/
-theorem omnificGameCodes_notMem_univ : omnificGameCodes ∉ Class.univ.{u} := by
+theorem omnificGameCodes_notMem_univ : omnificGameCodes ᶜ∉ (Set.univ : ZFClass.{u}) := by
   intro h
-  obtain ⟨s, hs⟩ := Class.mem_univ.1 h
+  obtain ⟨s, hs⟩ := ZFClass.cmem_univ.1 h
   exact omnificGameCodes_ne_ofSet s hs.symm
 
 namespace Surreal
