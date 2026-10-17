@@ -516,7 +516,7 @@ private lemma hitRate_from_potential
       Real.log_pow] at h0
     simpa [mul_comm, mul_left_comm, mul_assoc] using h0
   have hlog_up : Real.log (1 - η * v) ≤ -η * v :=
-    by linarith [Real.log_le_sub_one_of_pos hbasev]
+    by linarith only [Real.log_le_sub_one_of_pos hbasev]
   have hlog_down : -η / (1 - η) ≤ Real.log (1 - η) := by
     have h := Real.one_sub_inv_le_log_of_pos hbase
     have hne : 1 - η ≠ 0 := by linarith
@@ -531,20 +531,11 @@ private lemma hitRate_from_potential
     -- Hence H * log(1-η) ≤ log N - T*η*v
     -- Since log(1-η) < 0 (as 0 < η < 1), -log(1-η) > 0
     -- So H * (-log(1-η)) ≥ -log N + T*η*v = T*η*v - log N
-    by_cases hv_sign : 0 ≤ v
-    · nlinarith [mul_nonneg hTreal_nonneg (mul_nonneg (le_of_lt hη) hv_sign)]
-    · push Not at hv_sign
-      -- v < 0 means T*η*v - log N < 0 ≤ H*(-log(1-η))
-      have hlog_neg : Real.log (1 - η) < 0 := Real.log_neg (by linarith) (by linarith)
-      have h_rhs_nn : 0 ≤ (H : ℝ) * (-Real.log (1 - η)) := mul_nonneg hHnonneg (by linarith)
-      have hTreal_pos : (0 : ℝ) < T := by exact_mod_cast hTpos
-      have h_Tηv_neg : (T : ℝ) * η * v < 0 := by
-        have := mul_neg_of_pos_of_neg hη hv_sign
-        nlinarith
-      linarith [Real.log_natCast_nonneg N]
+    have hscaled := mul_le_mul_of_nonneg_left hlog_up hTreal_nonneg
+    linarith only [hlog, hscaled]
   have hcoef : -Real.log (1 - η) ≤ η / (1 - η) := by
     have : -η / (1 - η) = -(η / (1 - η)) := by ring
-    linarith
+    linarith only [hlog_down, this]
   have hanti' :
       (T : ℝ) * η * v - Real.log (N : ℝ) ≤
         (H : ℝ) * (η / (1 - η)) :=
@@ -570,14 +561,17 @@ private lemma hitRate_from_potential
         ((H : ℝ) * η) / (η * T) = (H : ℝ) / T := by
       field_simp [show η ≠ 0 from ne_of_gt hη, hTne]; try ring
     simpa [hsimpL, hsimpR] using hdiv
-  have hterm1 : v - ε / 4 ≤ (1 - η) * v := by nlinarith [hηsmall, hv1]
+  have hterm1 : v - ε / 4 ≤ (1 - η) * v := by
+    linarith only [hηsmall, mul_le_of_le_one_right hη.le hv1]
   have hlog_nonneg : 0 ≤ Real.log (N : ℝ) := Real.log_natCast_nonneg N
   have haux : Real.log (N : ℝ) ≤ (ε / 4) * (η * T) := (div_le_iff₀ hηTpos).mp hlargeT
   have hterm2 :
       ((1 - η) * Real.log (N : ℝ)) / (η * T) ≤ ε / 4 := by
     apply (div_le_iff₀ hηTpos).2
-    nlinarith [haux, hlog_nonneg]
-  linarith
+    calc (1 - η) * Real.log (N : ℝ) ≤ 1 * Real.log (N : ℝ) :=
+          mul_le_mul_of_nonneg_right (by linarith only [hη]) hlog_nonneg
+      _ ≤ (ε / 4) * (η * T) := by simpa only [one_mul] using haux
+  linarith only [hterm1, hterm2, hrate0, hη, hηsmall]
 
 /-- **Genuine approximate minimax via MWU regret extraction.**
     If every column mixture admits a pure row with expected payoff ≥ v,
