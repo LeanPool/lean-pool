@@ -10,7 +10,10 @@ public import Mathlib.Analysis.SpecialFunctions.Log.Base
 public import LeanPool.FrontierMathOpenHypergraphs.Substitution
 import all LeanPool.FrontierMathOpenHypergraphs.Uniform
 import Batteries.Tactic.OpenPrivate
+import Mathlib.Analysis.Convex.Jensen
+import Mathlib.Analysis.SpecialFunctions.Log.NegMulLog
 import Mathlib.NumberTheory.Harmonic.Bounds
+import Mathlib.Tactic.Positivity.Finset
 
 /-!
 # Lubell frames and asymptotic context
