@@ -1182,7 +1182,7 @@ theorem ray_decomp (i : Fin 6) (p : Point) :
       sub_add_sub_cancel, add_sub_add_left_eq_sub, Prod.ext_iff, Fin.mk_one, zero_mul,
       Fin.reduceAdd, zero_sub, sub_self, mul_zero, add_zero, add_sub_cancel, and_true,
       Fin.reduceFinMk, neg_mul, sub_neg_eq_add, sub_add_sub_cancel', neg_add_cancel_left] <;> (try
-      constructor) <;> (first | exact trivial | ring)
+      constructor) <;> ring
 
 theorem alphaCoord_rayU (i : Fin 6) (a : ℝ) : alphaCoord i (vertex i + a • rayU i) = a := by
   fin_cases i <;> simp [alphaCoord, rayU, vertex, previous, sideForm, formEval] <;> ring
