@@ -72,7 +72,6 @@ The rules treated here are (L-), i.e. `freeL` and `freeR`, and the modal rule (M
 which form a singleton cluster. -/
 
 
--- Reason: the many `simp` calls about `Finset` membership below are slow.
 open HasSat in
 /-- Interpolant for the modal rule (M) applied to a node loaded on the left.
 The lists `Xl, Xr` are the two components of the premise and `Yl, Yr` those of the
@@ -137,9 +136,10 @@ lemma exists_itp_modL {A : Nat} {L R Xl Xr Yl Yr : Finset Formula} {ψ θ : Form
         rw [Finset.mem_inter] at this ⊢
         exact ⟨hYlXl this.1, hYrXr this.2⟩
     · rintro ⟨W, M, w, hw⟩
-      have hXlw : ∀ f ∈ Xl, evaluate M w f := fun f hf => hw f (by simp_all)
+      have hXlw : ∀ f ∈ Xl, evaluate M w f := fun f hf => hw f (Finset.mem_union_right _ hf)
       obtain ⟨v, hv, hvYl⟩ := exists_succ W M w hXlw
-      have h1 : evaluate M w (~~⌈·A⌉(~θ)) := hw _ (by simp_all)
+      have h1 : evaluate M w (~~⌈·A⌉(~θ)) :=
+        hw _ (Finset.mem_union_left _ (Finset.mem_singleton_self _))
       simp only [evaluate, relate, not_not] at h1
       refine hL ⟨W, M, v, ?_⟩
       intro f hf
@@ -148,8 +148,9 @@ lemma exists_itp_modL {A : Nat} {L R Xl Xr Yl Yr : Finset Formula} {ψ θ : Form
       · exact h1 v hv
       · exact hvYl f hf
     · rintro ⟨W, M, w, hw⟩
-      have hXrw : ∀ f ∈ Xr, evaluate M w f := fun f hf => hw f (by simp; tauto)
-      have h1 : evaluate M w (~⌈·A⌉(~θ)) := hw _ (by simp)
+      have hXrw : ∀ f ∈ Xr, evaluate M w f := fun f hf => hw f (Finset.mem_union_right _ hf)
+      have h1 : evaluate M w (~⌈·A⌉(~θ)) :=
+        hw _ (Finset.mem_union_left _ (Finset.mem_singleton_self _))
       simp only [evaluate, relate, not_forall, not_not] at h1
       obtain ⟨v, hv, hvθ⟩ := h1
       refine hR ⟨W, M, v, ?_⟩
@@ -179,11 +180,10 @@ lemma exists_itp_modL {A : Nat} {L R Xl Xr Yl Yr : Finset Formula} {ψ θ : Form
       · exact hvYl f hf
     refine ⟨⊥, by simp, ?_, ?_⟩
     · rintro ⟨W, M, w, hw⟩
-      exact Xl_unsat ⟨W, M, w, fun f hf => hw f (by simp_all)⟩
+      exact Xl_unsat ⟨W, M, w, fun f hf => hw f (Finset.mem_union_right _ hf)⟩
     · rintro ⟨W, M, w, hw⟩
-      simp_all
+      exact hw ⊥ (Finset.mem_union_left _ (Finset.mem_singleton_self _))
 
--- Reason: the many `simp` calls about `Finset` membership below are slow.
 open HasSat in
 /-- Interpolant for the modal rule (M) applied to a node loaded on the right.
 The interpolant is `⌈·A⌉θ`, unless the projection of the left component is empty,
@@ -246,8 +246,9 @@ lemma exists_itp_modR {A : Nat} {L R Xl Xr Yl Yr : Finset Formula} {ψ θ : Form
         rw [Finset.mem_inter] at this ⊢
         exact ⟨hYlXl this.1, hYrXr this.2⟩
     · rintro ⟨W, M, w, hw⟩
-      have hXlw : ∀ f ∈ Xl, evaluate M w f := fun f hf => hw f (by simp_all)
-      have h1 : evaluate M w (~⌈·A⌉θ) := hw _ (by simp_all)
+      have hXlw : ∀ f ∈ Xl, evaluate M w f := fun f hf => hw f (Finset.mem_union_right _ hf)
+      have h1 : evaluate M w (~⌈·A⌉θ) :=
+        hw _ (Finset.mem_union_left _ (Finset.mem_singleton_self _))
       simp only [evaluate, relate, not_forall] at h1
       obtain ⟨v, hv, hvθ⟩ := h1
       refine hL ⟨W, M, v, ?_⟩
@@ -257,9 +258,10 @@ lemma exists_itp_modR {A : Nat} {L R Xl Xr Yl Yr : Finset Formula} {ψ θ : Form
       · simpa using hvθ
       · exact succ_Yl W M w v hXlw hv f hf
     · rintro ⟨W, M, w, hw⟩
-      have hXrw : ∀ f ∈ Xr, evaluate M w f := fun f hf => hw f (by simp_all)
+      have hXrw : ∀ f ∈ Xr, evaluate M w f := fun f hf => hw f (Finset.mem_union_right _ hf)
       obtain ⟨v, hv, hvYr⟩ := exists_succ W M w hXrw
-      have h1 : evaluate M w (⌈·A⌉θ) := hw _ (by simp_all)
+      have h1 : evaluate M w (⌈·A⌉θ) :=
+        hw _ (Finset.mem_union_left _ (Finset.mem_singleton_self _))
       simp only [evaluate, relate] at h1
       refine hR ⟨W, M, v, ?_⟩
       intro f hf
@@ -289,9 +291,9 @@ lemma exists_itp_modR {A : Nat} {L R Xl Xr Yl Yr : Finset Formula} {ψ θ : Form
       · exact hvYr f hf
     refine ⟨~⊥, by simp, ?_, ?_⟩
     · rintro ⟨W, M, w, hw⟩
-      simpa using hw (~~⊥) (by simp_all)
+      exact hw (~~⊥) (Finset.mem_union_left _ (Finset.mem_singleton_self _)) id
     · rintro ⟨W, M, w, hw⟩
-      exact Xr_unsat ⟨W, M, w, fun f hf => hw f (by simp_all)⟩
+      exact Xr_unsat ⟨W, M, w, fun f hf => hw f (Finset.mem_union_right _ hf)⟩
 
 /-- Given an interpolant for the conclusion of a `PdlRule` applied to a *loaded* sequent,
 we get an interpolant for the premise. This is the loaded analogue of

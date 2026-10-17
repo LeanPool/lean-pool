@@ -1544,11 +1544,8 @@ theorem allPaths_loc_cases {Hist X} {nrep : ¬ flprep Hist X} {nbas : ¬ X.basic
       ∨ ∃ (Y : Sequent) (Y_in : Y ∈ endNodesOf lt) (t :  PathIn (next Y Y_in)),
           t ∈ allPaths (next Y Y_in) ∧
           s = PathIn.loc Y_in t := by
-  constructor <;> intro hyp
-  · unfold allPaths at hyp
-    aesop
-  · unfold allPaths
-    aesop
+  simp only [allPaths, Finset.mem_union, Finset.mem_singleton, Finset.mem_sup,
+    Finset.mem_attach, true_and, Finset.mem_image, Subtype.exists, eq_comm]
 
 theorem PathIn.elem_allPaths {Hist X} {tab : Tableau Hist X} (p : PathIn tab) :
     p ∈ allPaths tab := by

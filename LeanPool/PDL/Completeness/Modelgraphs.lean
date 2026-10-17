@@ -458,13 +458,14 @@ theorem Qsteps_single : Qsteps R [α] v w ↔ Q R α v w := by
 theorem Qsteps_append : Qsteps R (δ1 ++ δ2) v w ↔ ∃ u, Qsteps R δ1 v u ∧ Qsteps R δ2 u w := by
   induction δ1 generalizing v w
   case nil =>
-    simp [Qsteps]
+    simp only [List.nil_append, Qsteps, beq_iff_eq, exists_eq_left']
   case cons α δ IH =>
-    simp only [List.cons_append, Qsteps, Relation.Comp, Subtype.exists]
-    constructor <;> rintro ⟨z, z_in, hyp⟩
-    · rw [IH] at hyp
-      aesop
-    · aesop
+    simp only [List.cons_append, Qsteps, Relation.Comp, IH]
+    constructor
+    · rintro ⟨u, hu, z, h1, h2⟩
+      exact ⟨z, ⟨u, hu, h1⟩, h2⟩
+    · rintro ⟨z, ⟨u, hu, h1⟩, h2⟩
+      exact ⟨u, hu, z, h1, h2⟩
 
 /-- Q_Fδ for a list of tests F and a list or programs δ. -/
 def Qcombo {W : Finset (Finset Formula)} (R : Nat → W → W → Prop)
