@@ -6,8 +6,8 @@ Authors: ukiyois, OpenCode agent sessions
 module
 
 public import LeanPool.HardSphereNBC.MayerNBC
-public import Mathlib.Data.Prod.Lex
-public import Mathlib.Data.Sym.Sym2.Order
+public import Mathlib.Order.Prod.Lex.Basic
+public import Mathlib.Order.Sym2
 public import Mathlib.MeasureTheory.Constructions.Pi
 public import Mathlib.MeasureTheory.Integral.Bochner.Set
 public import Mathlib.MeasureTheory.Measure.Haar.InnerProductSpace
