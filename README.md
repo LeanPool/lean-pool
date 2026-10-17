@@ -19,8 +19,8 @@ Lean Pool sits between [`mathlib`](https://github.com/leanprover-community/mathl
 Semantic search is also available via the [API](https://search.octo.axiomatic-ai.com/api/search).
 
 Explore compile costs in the [LeanPool source profile](https://vilin97.github.io/lean-source-profiler/pool/),
-from projects and files down to declarations and source lines. The
-[weekly profiling job](scripts/weekly-profile/README.md) runs on our Azure VM;
+from projects and files down to declarations and source lines. A weekly job
+on our Azure VM refreshes the profile;
 the badge shows the date of the latest completed recording.
 
 <!-- BEGIN STATS -->
