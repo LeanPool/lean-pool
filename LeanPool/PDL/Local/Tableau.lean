@@ -738,11 +738,18 @@ lemma mem_endNodesOf_byLocalRule_iff {X} {lra : LocalRuleApp} {X_def : X = lra.X
 theorem localTableauTruth {X} (lt : LocalTableau X) {W} (M : KripkeModel W) (w : W) :
     (M, w) ⊨ X  ↔ ∃ Y ∈ endNodesOf lt, (M, w) ⊨ Y := by
   induction lt
-  case byLocalRule Y lrA X_def next IH  =>
-    have := localRuleTruth lrA M w
-    aesop
+  case byLocalRule Y lrA X_def next IH =>
+    subst Y
+    rw [localRuleTruth lrA M w]
+    constructor
+    · rintro ⟨child, hchild, hsat⟩
+      obtain ⟨leaf, hleaf, hsat⟩ := (IH child hchild).mp hsat
+      exact ⟨leaf, mem_endNodesOf_byLocalRule_iff.mpr ⟨child, hchild, hleaf⟩, hsat⟩
+    · rintro ⟨leaf, hleaf, hsat⟩
+      obtain ⟨child, hchild, hleaf⟩ := mem_endNodesOf_byLocalRule_iff.mp hleaf
+      exact ⟨child, hchild, (IH child hchild).mpr ⟨leaf, hleaf, hsat⟩⟩
   case sim =>
-    simp_all
+    simp only [endNodesOf, Finset.mem_singleton, exists_eq_left]
 
 open HasSat
 

@@ -1549,23 +1549,14 @@ theorem allPaths_loc_cases {Hist X} {nrep : ¬ flprep Hist X} {nbas : ¬ X.basic
 
 theorem PathIn.elem_allPaths {Hist X} {tab : Tableau Hist X} (p : PathIn tab) :
     p ∈ allPaths tab := by
-  induction tab
-  case loc Hist X lt nexts IH =>
-    induction p using init_inductionOn
-    case root =>
-      simp_all [allPaths]
-    case step t _ s t_s =>
-      rw [allPaths_loc_cases]
-      cases s
-      · tauto
-      case loc nrep nbas Y Y_in tail =>
-        right
-        simp_all
-  case pdl nrep bas r next =>
-    cases p <;> simp_all [allPaths]
-  case lrep lpr =>
-    cases p
-    simp_all [allPaths]
+  induction p with
+  | nil =>
+    rename_i tab
+    cases tab <;> simp only [allPaths, Finset.mem_union, Finset.mem_singleton, true_or]
+  | loc Y_in tail ih =>
+    exact (allPaths_loc_cases _).mpr (Or.inr ⟨_, Y_in, tail, ih, rfl⟩)
+  | pdl tail ih =>
+    exact Finset.mem_union_right _ (Finset.mem_image.mpr ⟨tail, ih, rfl⟩)
 
 /-- A Tableau is finite.
 Should be useful to get *converse* well-foundedness of `edge` -/

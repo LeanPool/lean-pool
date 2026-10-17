@@ -1631,11 +1631,11 @@ lemma Sequent.basic_then_saturated {X : Sequent} : X.basic → saturated X.toFin
   intro Fs φ ψ α
   refine ⟨?_, ?_, ?_, ?box, ?dia⟩
   · simp_all [basic, Fs, toFinset]
-    grind
+    grind only []
   · simp_all [basic, Fs, toFinset]
-    grind
+    grind only []
   · simp_all [basic, Fs, toFinset]
-    grind
+    grind only []
   case box =>
     intro _in_F
     simp_all only [basic, toFinset, Finset.union_assoc, Finset.mem_union, Option.mem_toFinset,
@@ -1653,7 +1653,7 @@ lemma Sequent.basic_then_saturated {X : Sequent} : X.basic → saturated X.toFin
       exact _in_F
     all_goals
       simp [TP, testsOfProgram,Bset,P,F]
-      grind
+      grind only []
   case dia =>
     intro _in_F
     cases α
@@ -1667,7 +1667,7 @@ lemma Sequent.basic_then_saturated {X : Sequent} : X.basic → saturated X.toFin
     all_goals
       simp_all [basic, Fs, toFinset]
       simp [Dset, Yset]
-      grind
+      grind only []
 
 /-- A set of formulas is *lcoally consistent* iff it does not contain `⊥`
 and for all atoms `p ∈ X` we do not have `~p ∈ X`. Part of Def 6.2 -/
@@ -1932,18 +1932,18 @@ lemma LocalRuleApp.preserve_basic_down (lra : LocalRuleApp) :
     negUnload, Sum.elim_inr, forall_exists_index, and_imp, forall_apply_eq_imp_iff₂,
     Finset.mem_sdiff, Finset.image_empty, Finset.notMem_empty, implies_true, forall_const,
     not_isEmpty_of_nonempty, IsEmpty.forall_iff, Prod.exists, ↓existsAndEq, and_true]
-  case oneSidedL ress orule ress_def => cases orule <;> simp_all <;> grind [Program.isAtomic]
-  case oneSidedR ress orule ress_def => cases orule <;> simp_all <;> grind [Program.isAtomic]
+  case oneSidedL ress orule ress_def => cases orule <;> simp_all <;> grind only [Program.isAtomic]
+  case oneSidedR ress orule ress_def => cases orule <;> simp_all <;> grind only [Program.isAtomic]
   case loadedL ress chi lrule ress_def =>
     cases lrule <;> simp_all only [Finset.empty_subset, Option.some_subseteq, true_and,
       List.pdlToFinFinOpt, List.mem_toFinset, List.mem_map, Prod.mk.injEq, Prod.exists,
       exists_eq_right_right, forall_exists_index, and_imp] <;> intros <;> subst_eqs <;> simp_all
-        <;> grind [Program.isAtomic]
+        <;> grind only [Program.isAtomic]
   case loadedR ress chi lrule ress_def =>
     cases lrule <;> simp_all only [Finset.empty_subset, Option.some_subseteq, true_and,
       List.pdlToFinFinOpt, List.mem_toFinset, List.mem_map, Prod.mk.injEq, Prod.exists,
       exists_eq_right_right, forall_exists_index, and_imp] <;> intros <;> subst_eqs <;> simp_all
-        <;> grind [Program.isAtomic]
+        <;> grind only [Program.isAtomic]
 
 /-- Local rules never *load* a formula: if the sequent we apply a local rule to is free,
 then so are all children. (The rules `loadedL` and `loadedR` are not applicable to a free
