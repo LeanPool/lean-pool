@@ -10,7 +10,7 @@ public import Mathlib.Algebra.Group.Even
 import Mathlib.Algebra.Order.Star.Basic
 import Mathlib.Data.Finset.Powerset
 import Mathlib.Data.Nat.ModEq
-import Mathlib.Data.Nat.SuccPred
+import Mathlib.Order.SuccPred.Nat
 import Mathlib.Order.Interval.Finset.Nat
 import Mathlib.Tactic.IntervalCases
 import Mathlib.Tactic.Ring.RingNF
