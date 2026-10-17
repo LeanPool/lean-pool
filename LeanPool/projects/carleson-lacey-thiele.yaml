@@ -1,0 +1,41 @@
+slug: carleson-lacey-thiele
+title: Anisotropic Carleson bounds and almost-everywhere Fourier convergence
+summary: >-
+  Weak (2,2) bounds for maximally modulated anisotropically homogeneous smooth
+  multipliers on Euclidean space, following the Lacey–Thiele time-frequency method,
+  and almost-everywhere convergence of the Fourier series of periodic L² functions.
+branch: harmonic analysis
+entry_module: LeanPool.CarlesonLT
+authors:
+- Joris Roos
+source:
+  url: https://github.com/roos-j/lean-lt-carleson
+  github_repo: roos-j/lean-lt-carleson
+  commit: a83052776113c6417432c594a29b98f3500091a4
+  arxiv: '1710.10962'
+  doi: 10.1007/s00041-018-09657-7
+license: Apache-2.0
+status: verified
+provenance: AI
+main_declarations:
+- CarlesonLT.anisotropic_carleson
+- CarlesonLT.classical_carleson
+main_results:
+- declaration: CarlesonLT.anisotropic_carleson
+  informal: >-
+    For positive integer anisotropies and sufficient multiplier smoothness, the
+    associated maximally modulated multiplier operator obeys a weak L² bound on
+    Schwartz functions, with a constant independent of the multiplier and function.
+- declaration: CarlesonLT.classical_carleson
+  informal: >-
+    The symmetric Fourier partial sums of a 2π-periodic function that is square
+    integrable on one period converge to the function almost everywhere on the real line.
+tags:
+- harmonic-analysis
+- fourier-series
+- time-frequency-analysis
+- maximal-operators
+msc:
+- 42A20
+- 42B20
+- 42B25
