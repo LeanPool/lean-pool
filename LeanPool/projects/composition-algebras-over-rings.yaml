@@ -1,16 +1,17 @@
 slug: composition-algebras-over-rings
 title: Composition Algebras over Commutative Rings
-summary: 'Develops the theory of composition algebras over an arbitrary commutative
-  ring, following Garibaldi, Petersson and Racine: conic algebras, Cayley--Dickson
-  doubling, and composition algebras, which are shown to be alternative over every
-  base and to have constant rank 1, 2, 4 or 8. Over LG rings, a class containing all
-  fields and semilocal rings, composition algebras are classified by their norms, and
-  reduced composition algebras are shown to be split. Along the way the project proves
-  Witt cancellation for quadratic forms over LG rings by the elementary
-  Dias--Baeza--Knebusch route, Artin''s theorem that a ring is alternative if and only
-  if its two-generated subrings are associative, freeness of constant-rank projective
-  modules over LG rings, and the classification of composition algebras over the reals
-  and over finite fields. Nothing assumes that 2 is invertible.'
+summary: 'Develops conic algebras, Cayley--Dickson doubling, and finitely generated projective
+  composition algebras over an arbitrary commutative ring, following Garibaldi,
+  Petersson and Racine. Composition algebras are alternative over every base. Over a
+  nontrivial base, if the underlying module has constant rank, that rank is 1, 2, 4 or
+  8. Over LG rings, a class containing all fields and semilocal rings, composition
+  algebras are classified by their norms, and reduced composition algebras are shown
+  to be split. Along the way the project proves Witt cancellation for quadratic forms
+  over LG rings by the elementary Dias--Baeza--Knebusch route, Artin''s theorem that a
+  ring is alternative if and only if its two-generated subrings are associative,
+  freeness of constant-rank projective modules over LG rings, and the classification
+  of composition algebras over the reals and over finite fields. Nothing assumes that
+  2 is invertible.'
 branch: nonassociative algebra
 entry_module: LeanPool.CompositionAlgebrasOverRings
 authors:
