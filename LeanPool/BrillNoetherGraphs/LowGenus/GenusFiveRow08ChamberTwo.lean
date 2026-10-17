@@ -514,7 +514,7 @@ theorem lbCoeff_eq {d : DegSpec 8 12} (hCore : d.core = row08Core)
       zero_ne_one, ite_self, add_zero, contribForm, heightLB, one_ne_zero,
       tailContribution_same, zero_add, lbCoeff, Fin.mk_one, hT4, headContribution_same,
       zeroChip, add_left_inj, Fin.reduceFinMk, hH4, hT7, hH7]
-  all_goals (try (first | ring1 | ring_nf))
+  all_goals (try ring_nf)
   all_goals (try split_ifs)
   all_goals (try simp_all only [Fin.isValue, zero_le, ↓reduceIte, add_zero, not_lt,
     nonpos_iff_eq_zero, headContribution_same, lt_self_iff_false, add_right_inj, not_le])
@@ -629,7 +629,7 @@ theorem rbCoeff_eq {d : DegSpec 8 12} (hCore : d.core = row08Core)
       zero_ne_one, ite_self, add_zero, contribForm, heightRB, tailContribution_same,
       headContribution_same, rbCoeff, Fin.mk_one, zero_add, one_ne_zero, hT4, zeroChip,
       Fin.reduceFinMk, hH4, hT7, hH7]
-  all_goals (try (first | ring1 | ring_nf))
+  all_goals (try ring_nf)
   all_goals (try split_ifs)
   all_goals (try simp_all only [Fin.isValue, zero_le, ↓reduceIte, not_le])
   all_goals (try split_ifs)
@@ -798,7 +798,7 @@ theorem t4Coeff_eq {d : DegSpec 8 12} (hCore : d.core = row08Core)
       heightT4, tailContribution_same, headContribution_same, t4Coeff, Fin.mk_one, zero_add,
       zero_sub, Int.reduceNeg, one_ne_zero, hT4, zeroChip, Fin.reduceFinMk, sub_zero, lend,
       positiveChip, add_left_inj, hH4, armAl, hT7, hH7]
-  all_goals (try (first | ring1 | ring_nf))
+  all_goals (try ring_nf)
   all_goals (try split_ifs)
   all_goals (try simp_all only [Fin.isValue, Std.le_refl, zero_tsub, nonpos_iff_eq_zero,
     zero_le, zero_add, lt_self_iff_false, not_false_eq_true, Int.reduceNeg, add_neg_cancel,
@@ -1031,7 +1031,7 @@ theorem t5Coeff_eq {d : DegSpec 8 12} (hCore : d.core = row08Core)
       contribForm, heightT5, tailContribution_same, headContribution_same, t5Coeff, Fin.mk_one,
       zero_add, zero_sub, Int.reduceNeg, one_ne_zero, hT4, zeroChip, Fin.reduceFinMk, sub_zero,
       lend, positiveChip, add_left_inj, hH4, hT7, hH7]
-  all_goals (try (first | ring1 | ring_nf))
+  all_goals (try ring_nf)
   all_goals (try split_ifs)
   all_goals (try simp_all only [Fin.isValue, Std.le_refl, zero_tsub, nonpos_iff_eq_zero,
     zero_add, zero_le, lt_self_iff_false, not_false_eq_true, Int.reduceNeg, add_neg_cancel,

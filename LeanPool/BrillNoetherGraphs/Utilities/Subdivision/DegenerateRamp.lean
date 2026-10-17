@@ -273,7 +273,6 @@ theorem rampSlope_diff (sgn : Fin p → ℤ) (lo : Fin p → ℕ) (t : ℕ)
     rw [rampSlope_zero_t, rampSlope_zero_t,
       ite_eq_right (show ¬ (k = lo e ∧ 0 < 0) by omega),
       ite_eq_right (show ¬ (k = lo e + 0 ∧ 0 < 0) by omega)]
-    try ring
   · simp only [rampSlope]
     by_cases h1 : lo e ≤ k ∧ k < lo e + t
     · rw [ite_eq_left h1]
@@ -283,15 +282,12 @@ theorem rampSlope_diff (sgn : Fin p → ℤ) (lo : Fin p → ℕ) (t : ℕ)
         try ring
       · rw [ite_eq_right h2, ite_eq_left (show k = lo e ∧ 0 < t by omega),
           ite_eq_right (show ¬ (k = lo e + t ∧ 0 < t) by omega)]
-        try ring
     · rw [ite_eq_right h1]
       by_cases h2 : lo e ≤ k - 1 ∧ k - 1 < lo e + t
       · rw [ite_eq_left h2, ite_eq_right (show ¬ (k = lo e ∧ 0 < t) by omega),
           ite_eq_left (show k = lo e + t ∧ 0 < t by omega)]
-        try ring
       · rw [ite_eq_right h2, ite_eq_right (show ¬ (k = lo e ∧ 0 < t) by omega),
           ite_eq_right (show ¬ (k = lo e + t ∧ 0 < t) by omega)]
-        try ring
 
 /-! ## Agreement with the open orthant
 
