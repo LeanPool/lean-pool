@@ -196,7 +196,7 @@ lemma eLpNorm_zext (f : Lp ℝ p muPlus) : eLpNorm (zext ⇑f) p volume = eLpNor
 omit [Fact (1 ≤ p)] in
 lemma memLp_rawOp (hφ : MeasurePreserving φ volume volume) (hA : MeasurableSet A)
     (f : Lp ℝ p muPlus) : MemLp (rawOp φ A ⇑f) p muPlus :=
-  (((memLp_zext f).comp_measurePreserving hφ).indicator hA).mono_measure
+  (((memLp_zext f).comp_measurePreserving hφ).indicator hA.nullMeasurableSet).mono_measure
     Measure.restrict_le_self
 
 omit [Fact (1 ≤ p)] in
@@ -205,7 +205,7 @@ lemma eLpNorm_rawOp_le (hφ : MeasurePreserving φ volume volume) (hA : Measurab
   calc eLpNorm (rawOp φ A ⇑f) p muPlus
       ≤ eLpNorm (rawOp φ A ⇑f) p volume := eLpNorm_mono_measure _ Measure.restrict_le_self
     _ ≤ eLpNorm (zext ⇑f ∘ φ) p volume :=
-        eLpNorm_indicator_le (zext ⇑f ∘ φ) hA
+        eLpNorm_indicator_le (zext ⇑f ∘ φ) hA.nullMeasurableSet
     _ = eLpNorm (zext ⇑f) p volume :=
         eLpNorm_comp_measurePreserving (memLp_zext f).aestronglyMeasurable hφ
     _ = eLpNorm (⇑f) p muPlus := eLpNorm_zext f

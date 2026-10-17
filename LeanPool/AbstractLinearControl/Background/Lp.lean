@@ -120,11 +120,11 @@ section General
 variable {p : ℝ≥0∞}
 
 lemma memLp_zeroExt (u : Lp U p muPlus) : MemLp (zeroExt ⇑u) p volume :=
-  (memLp_indicator_iff_restrict measurableSet_Ici).2 (Lp.memLp u)
+  (memLp_indicator_iff_restrict measurableSet_Ici.nullMeasurableSet).2 (Lp.memLp u)
 
 lemma eLpNorm_zeroExt (u : Lp U p muPlus) :
     eLpNorm (zeroExt ⇑u) p volume = eLpNorm (⇑u) p muPlus :=
-  eLpNorm_indicator_eq_eLpNorm_restrict measurableSet_Ici
+  eLpNorm_indicator_eq_eLpNorm_restrict measurableSet_Ici.nullMeasurableSet
 
 /-- If `φ` preserves Lebesgue measure on `ℝ`, then `‖(zeroExt u) ∘ φ‖_{L^p(ℝ₊)} ≤ ‖u‖`. -/
 lemma eLpNorm_zeroExt_comp_le (u : Lp U p muPlus) {φ : ℝ → ℝ}
@@ -210,7 +210,7 @@ theorem exists_delay (a : ℝ) (u : Lp U p muPlus) :
 
 /-- The truncated input `u ⋄_τ 0`: equal to `u` on `[0, τ)` and to zero afterwards. -/
 noncomputable def truncate (τ : ℝ) (u : Lp U p muPlus) : Lp U p muPlus :=
-  ((Lp.memLp u).indicator measurableSet_Iio).toLp ((Set.Iio τ).indicator ⇑u)
+  ((Lp.memLp u).indicator measurableSet_Iio.nullMeasurableSet).toLp ((Set.Iio τ).indicator ⇑u)
 
 lemma concat_truncate (τ : ℝ) (u : Lp U p muPlus) :
     ⇑(truncate τ u) =ᵐ[muPlus] concat τ ⇑u ⇑(0 : Lp U p muPlus) := by
@@ -219,7 +219,7 @@ lemma concat_truncate (τ : ℝ) (u : Lp U p muPlus) :
     by_cases hs : s < τ
     · simp only [Set.indicator_of_mem (Set.mem_Iio.2 hs), concat, ite_eq_left hs]
     · simp only [Set.indicator_of_notMem (fun h => hs (Set.mem_Iio.1 h)), concat, ite_eq_right hs]
-  exact ((Lp.memLp u).indicator measurableSet_Iio).coeFn_toLp.trans
+  exact ((Lp.memLp u).indicator measurableSet_Iio.nullMeasurableSet).coeFn_toLp.trans
     ((Filter.EventuallyEq.of_eq hraw).trans
       (concat_congr τ (Filter.EventuallyEq.refl _ _) (Lp.coeFn_zero U p muPlus).symm))
 
@@ -238,7 +238,7 @@ theorem tendsto_norm_truncate [Fact (1 ≤ p)] (hp : p ≠ ∞) (u : Lp U p muPl
     intro ε hε
     obtain ⟨δ, hδ, hsmall⟩ := (Lp.memLp u).eLpNorm_indicator_le Fact.out hp hε
     filter_upwards [hmeas.eventually (eventually_lt_nhds hδ)] with τ hτ
-    exact hsmall _ measurableSet_Iio (by rw [muPlus_Iio]; exact hτ.le)
+    exact hsmall _ measurableSet_Iio.nullMeasurableSet (by rw [muPlus_Iio]; exact hτ.le)
   -- then take real parts
   have hreal := (ENNReal.tendsto_toReal ENNReal.zero_ne_top).comp hlim
   simpa only [truncate, Lp.norm_toLp, Function.comp_def, ENNReal.toReal_zero] using hreal
