@@ -5,6 +5,8 @@ Authors: OpenAI
 -/
 module
 
+public import LeanPool.MatrixMultiplicationAllFields.LinearAlgebra.MatrixMultiplication.Arithmetic.ProgramComposition
+
 public import LeanPool.MatrixMultiplicationAllFields.LinearAlgebra.MatrixMultiplication.ComplexArithmetic.Programs
 
 /- Ported to Lean Pool with project-local modules and namespaces. -/
@@ -15,199 +17,50 @@ public import LeanPool.MatrixMultiplicationAllFields.LinearAlgebra.MatrixMultipl
 
 namespace MatrixMultiplicationAllFields
 
-
-
 noncomputable section
 
 namespace MatrixMultiplication.Foundation.Arithmetic
 
 namespace Gate
 
-variable {Input Input' Register : Type*}
+export MatrixMultiplication.Arithmetic.Gate
+  (eval_mapInput cost_mapInput eval_mapSource cost_mapSource)
 
-/-- Relabel a gate's input wires while preserving its register references. -/
-def mapInput (f : Input → Input') : Gate Input Register → Gate Input' Register
-  | .literal z => .literal z
-  | .input i => .input (f i)
-  | .add i j => .add i j
-  | .sub i j => .sub i j
-  | .mul i j => .mul i j
+/-- Relabel the inputs of a complex gate through the generic implementation. -/
+abbrev mapInput {Input Input' Register : Type*} (f : Input → Input') :
+    Gate Input Register → Gate Input' Register := MatrixMultiplication.Arithmetic.Gate.mapInput f
 
-@[simp] theorem eval_mapInput (f : Input → Input') (g : Gate Input Register)
-    (inputs : Input' → ℂ) (registers : Register → ℂ) :
-    (g.mapInput f).eval inputs registers = g.eval (inputs ∘ f) registers := by
-  cases g <;> rfl
-
-@[simp] theorem cost_mapInput (f : Input → Input') (g : Gate Input Register) :
-    (g.mapInput f).cost = g.cost := by
-  cases g <;> rfl
-
-/-- Replace input wires by new input wires or literal scalars. -/
-def mapSource (f : Input → Input' ⊕ ℂ) : Gate Input Register → Gate Input' Register
-  | .literal z => .literal z
-  | .input i => match f i with
-    | .inl j => .input j
-    | .inr z => .literal z
-  | .add i j => .add i j
-  | .sub i j => .sub i j
-  | .mul i j => .mul i j
-
-@[simp] theorem eval_mapSource (f : Input → Input' ⊕ ℂ) (g : Gate Input Register)
-    (inputs : Input' → ℂ) (registers : Register → ℂ) :
-    (g.mapSource f).eval inputs registers =
-      g.eval (fun i => Sum.elim inputs id (f i)) registers := by
-  cases g with
-  | input i => cases h : f i <;> simp [mapSource, h, eval]
-  | literal => rfl
-  | add => rfl
-  | sub => rfl
-  | mul => rfl
-
-@[simp] theorem cost_mapSource (f : Input → Input' ⊕ ℂ) (g : Gate Input Register) :
-    (g.mapSource f).cost = g.cost := by
-  cases g with
-  | input i => cases h : f i <;> simp [mapSource, h, cost]
-  | literal => rfl
-  | add => rfl
-  | sub => rfl
-  | mul => rfl
+/-- Substitute input wires or scalars in a complex gate. -/
+abbrev mapSource {Input Input' Register : Type*} (f : Input → Input' ⊕ ℂ) :
+    Gate Input Register → Gate Input' Register := MatrixMultiplication.Arithmetic.Gate.mapSource f
 
 end Gate
 
 namespace Program
 
-variable {Input Input' Mid : Type*}
+export MatrixMultiplication.Arithmetic.Program
+  (eval_mapInput cost_mapInput eval_mapSource cost_mapSource Substituted)
 
-/-- Relabel every input wire of a straight-line program. -/
-def mapInput (f : Input → Input') : {r : ℕ} → Program Input r → Program Input' r
-  | 0, .nil => .nil
-  | _ + 1, .step p g => (p.mapInput f).step (g.mapInput f)
+/-- Relabel complex program inputs through the generic implementation. -/
+abbrev mapInput {Input Input' : Type*} (f : Input → Input') :
+    {r : ℕ} → Program Input r → Program Input' r :=
+  MatrixMultiplication.Arithmetic.Program.mapInput f
 
-@[simp] theorem eval_mapInput (f : Input → Input') {r : ℕ} (p : Program Input r)
-    (inputs : Input' → ℂ) :
-    ∀ i : Fin r, (p.mapInput f).eval inputs i = p.eval (inputs ∘ f) i := by
-  induction p with
-  | nil => intro i; exact Fin.elim0 i
-  | @step r p g ih =>
-    intro i
-    refine Fin.cases ?_ (fun j => ?_) i
-    · simp only [mapInput, eval_step_zero, Gate.eval_mapInput]
-      rw [funext ih]
-    · exact ih j
+/-- Substitute input wires or scalars throughout a complex program. -/
+abbrev mapSource {Input Input' : Type*} (f : Input → Input' ⊕ ℂ) :
+    {r : ℕ} → Program Input r → Program Input' r :=
+  MatrixMultiplication.Arithmetic.Program.mapSource f
 
-@[simp] theorem cost_mapInput (f : Input → Input') {r : ℕ} (p : Program Input r) :
-    (p.mapInput f).cost = p.cost := by
-  induction p with
-  | nil => rfl
-  | step p g ih => simp only [mapInput, cost_step, Gate.cost_mapInput, ih]
-
-/-- Specialize a program's inputs to new wires or literal scalars. -/
-def mapSource (f : Input → Input' ⊕ ℂ) : {r : ℕ} → Program Input r → Program Input' r
-  | 0, .nil => .nil
-  | _ + 1, .step p g => (p.mapSource f).step (g.mapSource f)
-
-@[simp] theorem eval_mapSource (f : Input → Input' ⊕ ℂ) {r : ℕ}
-    (p : Program Input r) (inputs : Input' → ℂ) :
-    ∀ i : Fin r, (p.mapSource f).eval inputs i =
-      p.eval (fun j => Sum.elim inputs id (f j)) i := by
-  induction p with
-  | nil => intro i; exact Fin.elim0 i
-  | @step r p g ih =>
-    intro i
-    refine Fin.cases ?_ (fun j => ?_) i
-    · simp only [mapSource, eval_step_zero, Gate.eval_mapSource]
-      rw [funext ih]
-    · exact ih j
-
-@[simp] theorem cost_mapSource (f : Input → Input' ⊕ ℂ) {r : ℕ}
-    (p : Program Input r) : (p.mapSource f).cost = p.cost := by
-  induction p with
-  | nil => rfl
-  | step p g ih => simp only [mapSource, cost_step, Gate.cost_mapSource, ih]
-
-/-- A composed program with output maps and correctness and cost certificates for both
-stages. -/
-structure Substituted {r s : ℕ} (p : Program Input r) (q : Program Mid s)
-    (wires : Mid → Fin r) where
-  /-- Number of registers in the composed program. -/
-  registers : ℕ
-  /-- The straight-line program realizing the composition. -/
-  program : Program Input registers
-  /-- Locations of the first program's outputs in the composed register space. -/
-  oldOutput : Fin r → Fin registers
-  /-- Locations of the second program's outputs in the composed register space. -/
-  output : Fin s → Fin registers
-  correctOld : ∀ inputs i, program.eval inputs (oldOutput i) = p.eval inputs i
-  correct : ∀ inputs i, program.eval inputs (output i) =
-    q.eval (fun j => p.eval inputs (wires j)) i
-  cost_eq : program.cost = p.cost + q.cost
+/-- Compose complex programs using the generic substitution proof and certificates. -/
+abbrev substitute {Input Mid : Type*} {r : ℕ} (p : Program Input r) :
+    {s : ℕ} → (q : Program Mid s) → (wires : Mid → Fin r) → Substituted p q wires :=
+  MatrixMultiplication.Arithmetic.Program.substitute p
 
 namespace Substituted
 
-/-- Extend a certified composition by one gate without changing its cost accounting. -/
-def step {r s : ℕ} {p : Program Input r} {q : Program Mid s}
-    {wires : Mid → Fin r} (a : Substituted p q wires)
-    (g : Gate Mid (Fin s)) (h : Gate Input (Fin a.registers))
-    (heval : ∀ inputs, h.eval inputs (a.program.eval inputs) =
-      g.eval (fun j => p.eval inputs (wires j))
-        (q.eval (fun j => p.eval inputs (wires j))))
-    (hcost : h.cost = g.cost) : Substituted p (q.step g) wires where
-  registers := a.registers + 1
-  program := a.program.step h
-  oldOutput := fun i => (a.oldOutput i).succ
-  output := Fin.cases 0 (fun i => (a.output i).succ)
-  correctOld := by
-    intro inputs i
-    exact a.correctOld inputs i
-  correct := by
-    intro inputs i
-    refine Fin.cases ?_ (fun j => ?_) i
-    · exact heval inputs
-    · exact a.correct inputs j
-  cost_eq := by
-    simp only [cost_step, a.cost_eq, hcost, Nat.add_assoc]
+export MatrixMultiplication.Arithmetic.Program.Substituted (step)
 
 end Substituted
-
-/-- Substitute the outputs of one program for the input wires of another. -/
-def substitute {r : ℕ} (p : Program Input r) :
-    {s : ℕ} → (q : Program Mid s) → (wires : Mid → Fin r) → Substituted p q wires
-  | 0, .nil, wires =>
-    { registers := r
-      program := p
-      oldOutput := id
-      output := Fin.elim0
-      correctOld := fun _ _ => rfl
-      correct := fun _ i => Fin.elim0 i
-      cost_eq := by simp only [cost, Nat.add_zero] }
-  | _ + 1, .step q g, wires =>
-    let a := substitute p q wires
-    match g with
-    | .input j =>
-      { registers := a.registers
-        program := a.program
-        oldOutput := a.oldOutput
-        output := Fin.cases (a.oldOutput (wires j)) a.output
-        correctOld := a.correctOld
-        correct := by
-          intro inputs i
-          refine Fin.cases ?_ (fun k => ?_) i
-          · exact a.correctOld inputs (wires j)
-          · exact a.correct inputs k
-        cost_eq := by
-          simpa only [cost_step, Gate.cost, Nat.add_zero] using a.cost_eq }
-    | .literal z =>
-      a.step (.literal z) (.literal z) (fun _ => rfl) rfl
-    | .add i j =>
-      a.step (.add i j) (.add (a.output i) (a.output j))
-        (by intro inputs; simp only [Gate.eval, a.correct]) rfl
-    | .sub i j =>
-      a.step (.sub i j) (.sub (a.output i) (a.output j))
-        (by intro inputs; simp only [Gate.eval, a.correct]) rfl
-    | .mul i j =>
-      a.step (.mul i j) (.mul (a.output i) (a.output j))
-        (by intro inputs; simp only [Gate.eval, a.correct]) rfl
-
 end Program
 
 end MatrixMultiplication.Foundation.Arithmetic

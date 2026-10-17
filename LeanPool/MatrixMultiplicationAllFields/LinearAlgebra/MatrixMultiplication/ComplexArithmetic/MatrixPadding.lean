@@ -79,7 +79,7 @@ theorem padSource_eval {n m : ℕ} (A B : Matrix (Fin n) (Fin n) ℂ) :
   rcases x with ⟨i, j⟩ | ⟨i, j⟩
   all_goals
     by_cases hi : i.val < n <;> by_cases hj : j.val < n <;>
-      simp [padSource, matrixInputs, zeroPadMatrix, hi, hj]
+      simp [padSource, MatrixMultiplication.Arithmetic.matrixInputs, zeroPadMatrix, hi, hj]
 
 namespace MatrixAlgorithm
 

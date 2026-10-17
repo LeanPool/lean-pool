@@ -39,16 +39,18 @@ def sumFin : (n : ℕ) → (Fin n → Expression Input) → Expression Input
 theorem eval_sumFin (n : ℕ) (f : Fin n → Expression Input) (inputs : Input → ℂ) :
     (sumFin n f).eval inputs = ∑ i, (f i).eval inputs := by
   induction n with
-  | zero => simp [sumFin, Expression.eval]
+  | zero => simp [sumFin, Expression.eval, MatrixMultiplication.Arithmetic.Expression.eval]
   | succ n ih =>
-    simp only [sumFin, Expression.eval, ih, Fin.sum_univ_succ]
+    simp only [sumFin, Expression.eval, MatrixMultiplication.Arithmetic.Expression.eval,
+      ih, Fin.sum_univ_succ]
 
 theorem cost_sumFin (n : ℕ) (f : Fin n → Expression Input) :
     (sumFin n f).cost = (∑ i, (f i).cost) + n := by
   induction n with
-  | zero => simp [sumFin, Expression.cost]
+  | zero => simp [sumFin, Expression.cost, MatrixMultiplication.Arithmetic.Expression.cost]
   | succ n ih =>
-    simp only [sumFin, Expression.cost, ih, Fin.sum_univ_succ]
+    simp only [sumFin, Expression.cost, MatrixMultiplication.Arithmetic.Expression.cost,
+      ih, Fin.sum_univ_succ]
     omega
 
 /-- Encode a finite linear combination of selected input wires as an arithmetic expression. -/
@@ -67,7 +69,8 @@ theorem eval_linear {Term : Type*} [Fintype Term]
 theorem cost_linear {Term : Type*} [Fintype Term]
     (a : Term → ℂ) (wire : Term → Input) :
     (linear a wire).cost = 2 * Fintype.card Term := by
-  simp [linear, cost_sumFin, Expression.cost, two_mul]
+  simp [linear, cost_sumFin, Expression.cost,
+    MatrixMultiplication.Arithmetic.Expression.cost, two_mul]
 
 end LinearExpression
 
@@ -160,10 +163,10 @@ theorem eval_parallel (r : ℕ) (p : Fin r → Family Input Output)
 theorem cost_parallel (r : ℕ) (p : Fin r → Family Input Output) :
     (parallel r p).cost = ∑ i, (p i).cost := by
   induction r with
-  | zero => simp [parallel, cost, Program.cost]
+  | zero => simp [parallel, cost, MatrixMultiplication.Arithmetic.Program.cost]
   | succ r ih =>
     change ((p 0).program.append (parallel r (fun i => p i.succ)).program).cost = _
-    rw [Program.cost_append]
+    rw [Program.append, Program.cost, Program.cost_append]
     change (p 0).cost + (parallel r (fun i => p i.succ)).cost = _
     rw [ih, Fin.sum_univ_succ]
 
@@ -195,7 +198,7 @@ theorem eval_ofMatrix {m : ℕ} (p : MatrixAlgorithm m) (hp : p.Correct)
       ∑ j, inputs (.inl (o.1, j)) * inputs (.inr (j, o.2)) := by
   have h := (MatrixAlgorithm.correct_iff_entries p).mp hp
     (fun i j => inputs (.inl (i, j))) (fun j k => inputs (.inr (j, k))) o.1 o.2
-  have hi : matrixInputs (fun i j => inputs (.inl (i, j)))
+  have hi : MatrixMultiplication.Arithmetic.matrixInputs (fun i j => inputs (.inl (i, j)))
       (fun j k => inputs (.inr (j, k))) = inputs := by
     funext x
     cases x <;> rfl
@@ -293,15 +296,15 @@ def inputFamily (a b : Fin r → Fin n × Fin n → ℂ) :
 
 theorem inputFamily_eval (a b : Fin r → Fin n × Fin n → ℂ)
     (A B : Matrix (Fin (n * m)) (Fin (n * m)) ℂ) (q : Fin r) (x : MatrixInput m) :
-    (inputFamily a b).eval (matrixInputs A B) (q, x) =
-      matrixInputs (leftBlock a A q) (rightBlock b B q) x := by
+    (inputFamily a b).eval (MatrixMultiplication.Arithmetic.matrixInputs A B) (q, x) =
+      MatrixMultiplication.Arithmetic.matrixInputs (leftBlock a A q) (rightBlock b B q) x := by
   cases x with
   | inl x =>
     simp only [inputFamily, Family.eval_expressions, inputExpressions,
-      LinearExpression.eval_linear, matrixInputs, leftBlock]
+      LinearExpression.eval_linear, MatrixMultiplication.Arithmetic.matrixInputs, leftBlock]
   | inr x =>
     simp only [inputFamily, Family.eval_expressions, inputExpressions,
-      LinearExpression.eval_linear, matrixInputs, rightBlock]
+      LinearExpression.eval_linear, MatrixMultiplication.Arithmetic.matrixInputs, rightBlock]
 
 theorem inputFamily_cost (a b : Fin r → Fin n × Fin n → ℂ) :
     (inputFamily (m := m) a b).cost = 4 * r * n ^ 2 * m ^ 2 := by
@@ -322,11 +325,11 @@ def recursiveProducts (a b : Fin r → Fin n × Fin n → ℂ) (p : MatrixAlgori
 theorem recursiveProducts_eval (a b : Fin r → Fin n × Fin n → ℂ)
     (p : MatrixAlgorithm m) (hp : p.Correct)
     (A B : Matrix (Fin (n * m)) (Fin (n * m)) ℂ) (q : Fin r) (s u : Fin m) :
-    (recursiveProducts a b p).eval (matrixInputs A B) (q, (s, u)) =
+    (recursiveProducts a b p).eval (MatrixMultiplication.Arithmetic.matrixInputs A B) (q, (s, u)) =
       ((leftBlock a A q) * (rightBlock b B q)) s u := by
   rw [recursiveProducts, Family.eval_compose, Family.eval_copies,
     Family.eval_ofMatrix _ hp]
-  simp only [inputFamily_eval, matrixInputs, Matrix.mul_apply]
+  simp only [inputFamily_eval, MatrixMultiplication.Arithmetic.matrixInputs, Matrix.mul_apply]
 
 theorem recursiveProducts_cost (a b : Fin r → Fin n × Fin n → ℂ)
     (p : MatrixAlgorithm m) :
@@ -376,7 +379,7 @@ theorem algorithm_correct
   obtain ⟨⟨i, s⟩, rfl⟩ := finProdFinEquiv.surjective i
   obtain ⟨⟨k, u⟩, rfl⟩ := finProdFinEquiv.surjective k
   change ((recursiveProducts a b p).compose (outputFamily c)).eval
-    (matrixInputs A B) (join i s, join k u) = _
+    (MatrixMultiplication.Arithmetic.matrixInputs A B) (join i s, join k u) = _
   rw [Family.eval_compose, outputFamily_eval]
   simp_rw [recursiveProducts_eval a b p hp A B]
   exact block_identity a b c h A B i k s u

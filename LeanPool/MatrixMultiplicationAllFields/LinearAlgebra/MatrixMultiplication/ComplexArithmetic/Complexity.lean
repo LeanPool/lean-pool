@@ -5,9 +5,8 @@ Authors: OpenAI
 -/
 module
 
+public import LeanPool.MatrixMultiplicationAllFields.LinearAlgebra.MatrixMultiplication.Arithmetic.Complexity
 public import LeanPool.MatrixMultiplicationAllFields.LinearAlgebra.MatrixMultiplication.Tensor.ComplexTensor
-public import Mathlib.Analysis.SpecialFunctions.Pow.Real
-public import Mathlib.Data.Matrix.Mul
 
 /- Ported to Lean Pool with project-local modules and namespaces. -/
 
@@ -17,153 +16,101 @@ public import Mathlib.Data.Matrix.Mul
 
 namespace MatrixMultiplicationAllFields
 
-
-
 noncomputable section
 
-open scoped BigOperators
+namespace MatrixMultiplication.Foundation.Arithmetic
 
-namespace MatrixMultiplication.Foundation
-
-namespace Arithmetic
-
-/-- Complex arithmetic gates with explicit input and register references. -/
-inductive Gate (Input Register : Type*) where
-  | literal : ℂ → Gate Input Register
-  | input : Input → Gate Input Register
-  | add : Register → Register → Gate Input Register
-  | sub : Register → Register → Gate Input Register
-  | mul : Register → Register → Gate Input Register
+/-- Complex gates are the field-generic gates specialized to the complex numbers. -/
+abbrev Gate (Input Register : Type*) :=
+  MatrixMultiplication.Arithmetic.Gate ℂ Input Register
 
 namespace Gate
 
-variable {Input Register : Type*}
+export MatrixMultiplication.Arithmetic.Gate (literal input add sub mul)
 
-/-- Interpret a gate using the current input values and register contents. -/
-def eval (inputs : Input → ℂ) (registers : Register → ℂ) : Gate Input Register → ℂ
-  | .literal z => z
-  | .input i => inputs i
-  | .add i j => registers i + registers j
-  | .sub i j => registers i - registers j
-  | .mul i j => registers i * registers j
+/-- Evaluate a complex gate using the shared arithmetic semantics. -/
+abbrev eval {Input Register : Type*} (inputs : Input → ℂ) (registers : Register → ℂ) :
+    Gate Input Register → ℂ := MatrixMultiplication.Arithmetic.Gate.eval inputs registers
 
-/-- Charge one operation for arithmetic gates and none for input or literal loading. -/
-def cost : Gate Input Register → ℕ
-  | .literal _ => 0
-  | .input _ => 0
-  | .add _ _ => 1
-  | .sub _ _ => 1
-  | .mul _ _ => 1
+/-- Count the arithmetic operation performed by a complex gate. -/
+abbrev cost {Input Register : Type*} : Gate Input Register → ℕ :=
+  MatrixMultiplication.Arithmetic.Gate.cost
 
 end Gate
 
-/-- A finite sequence of gates, indexed by the number of allocated registers. -/
-inductive Program (Input : Type*) : ℕ → Type _ where
-  | nil : Program Input 0
-  | step {r : ℕ} : Program Input r → Gate Input (Fin r) → Program Input (r + 1)
+/-- Complex programs use the shared field-generic straight-line syntax. -/
+abbrev Program (Input : Type*) (registers : ℕ) :=
+  MatrixMultiplication.Arithmetic.Program ℂ Input registers
 
 namespace Program
 
-variable {Input : Type*}
+export MatrixMultiplication.Arithmetic.Program (eval_step_zero eval_step_succ cost_step)
 
-/-- Evaluate the registers of a straight-line program on given complex inputs. -/
-def eval : {r : ℕ} → Program Input r → (Input → ℂ) → Fin r → ℂ
-  | 0, .nil, _ => Fin.elim0
-  | _ + 1, .step p g, inputs =>
-    Fin.cases (g.eval inputs (p.eval inputs)) (p.eval inputs)
+/-- The empty complex program. -/
+abbrev nil {Input : Type*} : Program Input 0 := MatrixMultiplication.Arithmetic.Program.nil
 
-/-- Total number of arithmetic operations in a straight-line program. -/
-def cost : {r : ℕ} → Program Input r → ℕ
-  | 0, .nil => 0
-  | _ + 1, .step p g => p.cost + g.cost
+/-- Append one gate to a complex program. -/
+abbrev step {Input : Type*} {r : ℕ} (p : Program Input r) (g : Gate Input (Fin r)) :
+    Program Input (r + 1) := MatrixMultiplication.Arithmetic.Program.step p g
 
-@[simp] theorem eval_step_zero {r : ℕ} (p : Program Input r)
-    (g : Gate Input (Fin r)) (inputs : Input → ℂ) :
-    (p.step g).eval inputs 0 = g.eval inputs (p.eval inputs) := rfl
+/-- Evaluate the registers of a complex program using the shared interpreter. -/
+abbrev eval {Input : Type*} : {r : ℕ} → Program Input r → (Input → ℂ) → Fin r → ℂ :=
+  MatrixMultiplication.Arithmetic.Program.eval
 
-@[simp] theorem eval_step_succ {r : ℕ} (p : Program Input r)
-    (g : Gate Input (Fin r)) (inputs : Input → ℂ) (i : Fin r) :
-    (p.step g).eval inputs i.succ = p.eval inputs i := rfl
-
-@[simp] theorem cost_step {r : ℕ} (p : Program Input r)
-    (g : Gate Input (Fin r)) : (p.step g).cost = p.cost + g.cost := rfl
+/-- Total arithmetic cost of a complex program. -/
+abbrev cost {Input : Type*} : {r : ℕ} → Program Input r → ℕ :=
+  MatrixMultiplication.Arithmetic.Program.cost
 
 end Program
 
-/-- Disjoint input positions for the two square matrices. -/
-abbrev MatrixInput (n : ℕ) := (Fin n × Fin n) ⊕ (Fin n × Fin n)
+/-- Input entries for the two square matrices. -/
+abbrev MatrixInput (n : ℕ) := MatrixMultiplication.Arithmetic.MatrixInput n n n
 
-/-- Assemble the two matrices into the program's disjoint input space. -/
-def matrixInputs {n : ℕ} (A B : Matrix (Fin n) (Fin n) ℂ) : MatrixInput n → ℂ
-  | .inl (i, j) => A i j
-  | .inr (j, k) => B j k
+/-- Assemble the two square matrices in the shared input representation. -/
+abbrev matrixInputs {n : ℕ} (A B : Matrix (Fin n) (Fin n) ℂ) : MatrixInput n → ℂ :=
+  MatrixMultiplication.Arithmetic.matrixInputs A B
 
-/-- A program with designated output registers for square matrix multiplication. -/
-structure MatrixAlgorithm (n : ℕ) where
-  /-- Number of registers used by the matrix multiplication program. -/
-  registers : ℕ
-  /-- The straight-line program underlying the matrix algorithm. -/
-  program : Program (MatrixInput n) registers
-  /-- Register location of each output matrix entry. -/
-  output : Fin n → Fin n → Fin registers
+/-- Square complex matrix algorithms are a specialization of rectangular field algorithms. -/
+abbrev MatrixAlgorithm (n : ℕ) :=
+  MatrixMultiplication.Arithmetic.MatrixAlgorithm ℂ n n n
 
 namespace MatrixAlgorithm
 
-/-- Evaluate the algorithm's output matrix on its two input matrices. -/
-def eval {n : ℕ} (P : MatrixAlgorithm n)
-    (A B : Matrix (Fin n) (Fin n) ℂ) : Matrix (Fin n) (Fin n) ℂ :=
-  fun i k => P.program.eval (matrixInputs A B) (P.output i k)
+export MatrixMultiplication.Arithmetic.MatrixAlgorithm (correct_iff_entries)
 
-/-- The program computes the matrix product for every pair of inputs. -/
-def Correct {n : ℕ} (P : MatrixAlgorithm n) : Prop :=
-  ∀ A B : Matrix (Fin n) (Fin n) ℂ, P.eval A B = A * B
+/-- Evaluate the output matrix of a square complex algorithm. -/
+abbrev eval {n : ℕ} (P : MatrixAlgorithm n) (A B : Matrix (Fin n) (Fin n) ℂ) :
+    Matrix (Fin n) (Fin n) ℂ := MatrixMultiplication.Arithmetic.MatrixAlgorithm.eval P A B
 
-/-- Arithmetic operation count of the matrix multiplication program. -/
-def cost {n : ℕ} (P : MatrixAlgorithm n) : ℕ := P.program.cost
+/-- Correctness for every pair of square complex input matrices. -/
+abbrev Correct {n : ℕ} (P : MatrixAlgorithm n) : Prop :=
+  MatrixMultiplication.Arithmetic.MatrixAlgorithm.Correct P
 
-theorem correct_iff_entries {n : ℕ} (P : MatrixAlgorithm n) :
-    P.Correct ↔ ∀ (A B : Matrix (Fin n) (Fin n) ℂ) (i k : Fin n),
-      P.program.eval (matrixInputs A B) (P.output i k) = ∑ j, A i j * B j k := by
-  constructor
-  · intro h A B i k
-    exact congrFun (congrFun (h A B) i) k
-  · intro h A B
-    funext i k
-    exact h A B i k
+/-- Total arithmetic cost of a square complex matrix algorithm. -/
+abbrev cost {n : ℕ} (P : MatrixAlgorithm n) : ℕ :=
+  MatrixMultiplication.Arithmetic.MatrixAlgorithm.cost P
 
 end MatrixAlgorithm
 
-/-- Multiply two scalar inputs using one multiplication gate. -/
-def scalarAlgorithm : MatrixAlgorithm 1 where
-  registers := 3
-  program := ((Program.nil.step (.input (.inl (0, 0)))).step
-    (.input (.inr (0, 0)))).step (.mul 1 0)
-  output := fun _ _ => 0
+/-- The shared one-multiplication scalar algorithm over the complex numbers. -/
+abbrev scalarAlgorithm : MatrixAlgorithm 1 := MatrixMultiplication.Arithmetic.scalarAlgorithm ℂ
 
-theorem scalarAlgorithm_correct : scalarAlgorithm.Correct := by
-  intro A B
-  funext i k
-  have hi : i = 0 := Subsingleton.elim _ _
-  have hk : k = 0 := Subsingleton.elim _ _
-  subst i
-  subst k
-  change A 0 0 * B 0 0 = (A * B) 0 0
-  simp [Matrix.mul_apply]
+theorem scalarAlgorithm_correct : scalarAlgorithm.Correct :=
+  MatrixMultiplication.Arithmetic.scalarAlgorithm_correct ℂ
 
-@[simp] theorem scalarAlgorithm_cost : scalarAlgorithm.cost = 1 := rfl
+theorem scalarAlgorithm_cost : scalarAlgorithm.cost = 1 :=
+  MatrixMultiplication.Arithmetic.scalarAlgorithm_cost ℂ
 
-/-- An exponent admitting uniformly bounded correct programs with arbitrarily small positive
-slack. -/
-def AdmissibleExponent (τ : ℝ) : Prop :=
-  ∀ ε : ℝ, 0 < ε → ∃ C : ℝ, 0 < C ∧
-    ∀ n : ℕ, 1 ≤ n → ∃ P : MatrixAlgorithm n,
-      P.Correct ∧ (P.cost : ℝ) ≤ C * (n : ℝ) ^ (τ + ε)
+/-- Uniform complex arithmetic bounds with arbitrarily small positive exponent slack. -/
+abbrev AdmissibleExponent (exponent : ℝ) : Prop :=
+  MatrixMultiplication.Arithmetic.AdmissibleExponent ℂ exponent
 
-/-- The infimum of admissible arithmetic matrix multiplication exponents over the complex
-numbers. -/
-noncomputable def omega : ℝ := sInf {τ : ℝ | AdmissibleExponent τ}
+/-- The field-generic matrix multiplication exponent specialized to the complex numbers. -/
+abbrev omega : ℝ := MatrixMultiplication.Arithmetic.omega ℂ
 
-end Arithmetic
+end MatrixMultiplication.Foundation.Arithmetic
+
+namespace MatrixMultiplication.Foundation
 
 namespace Tensor
 

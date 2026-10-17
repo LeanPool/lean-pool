@@ -6,7 +6,6 @@ Authors: OpenAI
 module
 
 public import LeanPool.MatrixMultiplicationAllFields.LinearAlgebra.MatrixMultiplication.Model
-public import LeanPool.MatrixMultiplicationAllFields.LinearAlgebra.MatrixMultiplication.ComplexArithmetic.Complexity
 public import Mathlib.Algebra.Order.Floor.Semiring
 
 /- Ported to Lean Pool with project-local modules and namespaces. -/
