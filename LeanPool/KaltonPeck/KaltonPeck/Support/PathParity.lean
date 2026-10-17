@@ -13,6 +13,7 @@ Authors: adas1236
 public import LeanPool.KaltonPeck.KaltonPeck.Support.Fredholm
 public import LeanPool.KaltonPeck.KaltonPeck.Support.FiniteParity
 public import Mathlib.Analysis.Normed.Ring.Units
+public import Mathlib.Topology.Algebra.Module.Equiv.Submodule
 
 /-!
 # Parity along paths of alternating forms
