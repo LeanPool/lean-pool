@@ -9,6 +9,7 @@ public import LeanPool.LehmerE10.Defs
 public import Mathlib.Algebra.Field.ZMod
 public import Mathlib.RingTheory.Polynomial.Cyclotomic.Basic
 import LeanPool.LehmerE10.Kronecker
+import Mathlib.LinearAlgebra.Matrix.Charpoly.Minpoly
 import Mathlib.MeasureTheory.Integral.Bochner.Basic
 import Mathlib.RingTheory.Polynomial.Cyclotomic.Eval
 import Mathlib.Tactic.NormNum.Prime
