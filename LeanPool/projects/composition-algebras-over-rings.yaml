@@ -10,8 +10,8 @@ summary: 'Develops conic algebras, Cayley--Dickson doubling, and finitely genera
   over LG rings by the elementary Dias--Baeza--Knebusch route, Artin''s theorem that a
   ring is alternative if and only if its two-generated subrings are associative,
   freeness of constant-rank projective modules over LG rings, and the classification
-  of composition algebras over the reals and over finite fields. Nothing assumes that
-  2 is invertible.'
+  of composition algebras over the reals and over finite fields. These main results do
+  not assume that 2 is invertible.'
 branch: nonassociative algebra
 entry_module: LeanPool.CompositionAlgebrasOverRings
 authors:
