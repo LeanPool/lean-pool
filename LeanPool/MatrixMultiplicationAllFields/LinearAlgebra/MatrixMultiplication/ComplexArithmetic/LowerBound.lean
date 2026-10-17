@@ -28,24 +28,14 @@ theorem eval_eq_constant_or_input_of_cost_eq_zero {Input : Type*} {r : ℕ}
     (p : Program Input r) (hp : p.cost = 0) (i : Fin r) :
     (∃ z : ℂ, ∀ inputs, p.eval inputs i = z) ∨
       (∃ a : Input, ∀ inputs, p.eval inputs i = inputs a) := by
-  revert hp i
-  induction p with
-  | nil =>
-    intro _ i
-    exact Fin.elim0 i
-  | @step r p g ih =>
-    intro hp i
-    have hcost : p.cost + g.cost = 0 := hp
-    have hp0 : p.cost = 0 := by omega
-    have hg0 : g.cost = 0 := by omega
-    refine Fin.cases ?_ (fun j => ?_) i
-    · cases g with
-      | literal z => exact Or.inl ⟨z, fun _ => rfl⟩
-      | input a => exact Or.inr ⟨a, fun _ => rfl⟩
-      | add a b => simp [MatrixMultiplication.Arithmetic.Gate.cost] at hg0
-      | sub a b => simp [MatrixMultiplication.Arithmetic.Gate.cost] at hg0
-      | mul a b => simp [MatrixMultiplication.Arithmetic.Gate.cost] at hg0
-    · simpa only [eval_step_succ] using ih hp0 j
+  have hi : MatrixMultiplication.Arithmetic.Program.registerCost p i ≤
+      MatrixMultiplication.Arithmetic.Program.cost p := by
+    rw [← MatrixMultiplication.Arithmetic.Program.sum_registerCost]
+    exact Finset.single_le_sum (fun _ _ => Nat.zero_le _) (Finset.mem_univ i)
+  have hp' : MatrixMultiplication.Arithmetic.Program.cost p = 0 := hp
+  rw [hp'] at hi
+  exact MatrixMultiplication.Arithmetic.Program.eval_eq_constant_or_input_of_registerCost_eq_zero
+    p i (Nat.eq_zero_of_le_zero hi)
 
 end Program
 

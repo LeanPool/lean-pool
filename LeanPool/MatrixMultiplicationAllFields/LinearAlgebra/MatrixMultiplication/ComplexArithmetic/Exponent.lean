@@ -5,62 +5,44 @@ Authors: OpenAI
 -/
 module
 
+public import LeanPool.MatrixMultiplicationAllFields.LinearAlgebra.MatrixMultiplication.Arithmetic.Exponent
 public import LeanPool.MatrixMultiplicationAllFields.LinearAlgebra.MatrixMultiplication.ComplexArithmetic.NaiveAlgorithm
 public import LeanPool.MatrixMultiplicationAllFields.LinearAlgebra.MatrixMultiplication.ComplexArithmetic.LowerBound
 
 /- Ported to Lean Pool with project-local modules and namespaces. -/
 
-/-! Complex arithmetic programs and asymptotic matrix multiplication costs. -/
+/-! Complex arithmetic interfaces specialized from the shared field-generic implementation. -/
 
 @[expose] public section
 
 namespace MatrixMultiplicationAllFields
 
-
-
 noncomputable section
+
+open scoped BigOperators
 
 namespace MatrixMultiplication.Foundation.Arithmetic
 
 theorem AdmissibleExponent.mono {τ σ : ℝ} (hτ : AdmissibleExponent τ)
-    (hτσ : τ ≤ σ) : AdmissibleExponent σ := by
-  intro ε hε
-  obtain ⟨C, hC, hbound⟩ := hτ ε hε
-  refine ⟨C, hC, ?_⟩
-  intro n hn
-  obtain ⟨P, hP, hcost⟩ := hbound n hn
-  refine ⟨P, hP, hcost.trans ?_⟩
-  apply mul_le_mul_of_nonneg_left _ hC.le
-  exact Real.rpow_le_rpow_of_exponent_le (by exact_mod_cast hn)
-    (add_le_add_left hτσ ε)
+    (hτσ : τ ≤ σ) : AdmissibleExponent σ :=
+  MatrixMultiplication.Arithmetic.AdmissibleExponent.mono (F := ℂ) hτ hτσ
 
 theorem omega_le_of_admissibleExponent {τ : ℝ} (hτ : AdmissibleExponent τ) :
     omega ≤ τ :=
-  csInf_le admissibleExponent_bddBelow hτ
+  MatrixMultiplication.Arithmetic.omega_le_of_admissibleExponent (F := ℂ) hτ
 
 theorem omega_nonneg : 0 ≤ omega :=
-  le_csInf admissibleExponent_nonempty (fun _ hτ => admissibleExponent_nonneg hτ)
+  MatrixMultiplication.Arithmetic.omega_nonneg (F := ℂ)
 
 theorem omega_le_three : omega ≤ 3 :=
-  omega_le_of_admissibleExponent admissibleExponent_three
+  MatrixMultiplication.Arithmetic.omega_le_three (F := ℂ)
 
-theorem omega_admissibleExponent : AdmissibleExponent omega := by
-  intro ε hε
-  have hhalf : 0 < ε / 2 := half_pos hε
-  obtain ⟨τ, hτ, hclose⟩ := exists_lt_of_csInf_lt admissibleExponent_nonempty
-    (show sInf {σ : ℝ | AdmissibleExponent σ} < omega + ε / 2 from
-      lt_add_of_pos_right omega hhalf)
-  obtain ⟨C, hC, hbound⟩ := hτ (ε / 2) hhalf
-  refine ⟨C, hC, ?_⟩
-  intro n hn
-  obtain ⟨P, hP, hcost⟩ := hbound n hn
-  refine ⟨P, hP, hcost.trans ?_⟩
-  apply mul_le_mul_of_nonneg_left _ hC.le
-  exact Real.rpow_le_rpow_of_exponent_le (by exact_mod_cast hn) (by linarith)
+theorem omega_admissibleExponent : AdmissibleExponent omega :=
+  MatrixMultiplication.Arithmetic.omega_admissibleExponent (F := ℂ)
 
 theorem admissibleExponent_iff_omega_le {τ : ℝ} :
     AdmissibleExponent τ ↔ omega ≤ τ :=
-  ⟨omega_le_of_admissibleExponent, omega_admissibleExponent.mono⟩
+  MatrixMultiplication.Arithmetic.admissibleExponent_iff_omega_le (F := ℂ)
 
 end MatrixMultiplication.Foundation.Arithmetic
 

@@ -5,21 +5,17 @@ Authors: OpenAI
 -/
 module
 
-public import LeanPool.MatrixMultiplicationAllFields.LinearAlgebra.MatrixMultiplication.Polynomial.ComplexExpressionFamily
+public import LeanPool.MatrixMultiplicationAllFields.LinearAlgebra.MatrixMultiplication.Arithmetic.RecursiveBlockPrograms
 public import LeanPool.MatrixMultiplicationAllFields.LinearAlgebra.MatrixMultiplication.ComplexArithmetic.ProgramComposition
-public import LeanPool.MatrixMultiplicationAllFields.LinearAlgebra.MatrixMultiplication.Tensor.ComplexMatrixTensor
-public import Mathlib.Logic.Equiv.Fin.Basic
-public import Mathlib.Tactic.Ring
+public import LeanPool.MatrixMultiplicationAllFields.LinearAlgebra.MatrixMultiplication.Polynomial.ComplexExpressionFamily
 
 /- Ported to Lean Pool with project-local modules and namespaces. -/
 
-/-! Complex arithmetic programs and asymptotic matrix multiplication costs. -/
+/-! Complex arithmetic interfaces specialized from the shared field-generic implementation. -/
 
 @[expose] public section
 
 namespace MatrixMultiplicationAllFields
-
-
 
 noncomputable section
 
@@ -32,187 +28,139 @@ namespace LinearExpression
 variable {Input : Type*}
 
 /-- Form a finite sum of arithmetic expressions for the block-recursion construction. -/
-def sumFin : (n : ℕ) → (Fin n → Expression Input) → Expression Input
-  | 0, _ => .literal 0
-  | n + 1, f => .add (f 0) (sumFin n (fun i => f i.succ))
+abbrev sumFin : (n : ℕ) → (Fin n → Expression Input) → Expression Input :=
+  MatrixMultiplication.Arithmetic.RecursiveBlock.LinearExpression.sumFin (F := ℂ)
 
 theorem eval_sumFin (n : ℕ) (f : Fin n → Expression Input) (inputs : Input → ℂ) :
-    (sumFin n f).eval inputs = ∑ i, (f i).eval inputs := by
-  induction n with
-  | zero => simp [sumFin, Expression.eval, MatrixMultiplication.Arithmetic.Expression.eval]
-  | succ n ih =>
-    simp only [sumFin, Expression.eval, MatrixMultiplication.Arithmetic.Expression.eval,
-      ih, Fin.sum_univ_succ]
+    (sumFin n f).eval inputs = ∑ i, (f i).eval inputs :=
+  MatrixMultiplication.Arithmetic.RecursiveBlock.LinearExpression.eval_sumFin (F := ℂ) n f inputs
 
 theorem cost_sumFin (n : ℕ) (f : Fin n → Expression Input) :
-    (sumFin n f).cost = (∑ i, (f i).cost) + n := by
-  induction n with
-  | zero => simp [sumFin, Expression.cost, MatrixMultiplication.Arithmetic.Expression.cost]
-  | succ n ih =>
-    simp only [sumFin, Expression.cost, MatrixMultiplication.Arithmetic.Expression.cost,
-      ih, Fin.sum_univ_succ]
-    omega
+    (sumFin n f).cost = (∑ i, (f i).cost) + n :=
+  MatrixMultiplication.Arithmetic.RecursiveBlock.LinearExpression.cost_sumFin (F := ℂ) n f
 
 /-- Encode a finite linear combination of selected input wires as an arithmetic expression. -/
-def linear {Term : Type*} [Fintype Term] (a : Term → ℂ) (wire : Term → Input) :
+abbrev linear {Term : Type*} [Fintype Term] (a : Term → ℂ) (wire : Term → Input) :
     Expression Input :=
-  sumFin (Fintype.card Term) (fun i =>
-    .mul (.literal (a ((Fintype.equivFin Term).symm i)))
-      (.input (wire ((Fintype.equivFin Term).symm i))))
+  MatrixMultiplication.Arithmetic.RecursiveBlock.LinearExpression.linear (F := ℂ) a wire
 
 theorem eval_linear {Term : Type*} [Fintype Term]
     (a : Term → ℂ) (wire : Term → Input) (inputs : Input → ℂ) :
-    (linear a wire).eval inputs = ∑ i, a i * inputs (wire i) := by
-  rw [linear, eval_sumFin]
-  exact (Fintype.equivFin Term).symm.sum_comp (fun i => a i * inputs (wire i))
+    (linear a wire).eval inputs = ∑ i, a i * inputs (wire i) :=
+  MatrixMultiplication.Arithmetic.RecursiveBlock.LinearExpression.eval_linear (F := ℂ) a wire inputs
 
 theorem cost_linear {Term : Type*} [Fintype Term]
     (a : Term → ℂ) (wire : Term → Input) :
-    (linear a wire).cost = 2 * Fintype.card Term := by
-  simp [linear, cost_sumFin, Expression.cost,
-    MatrixMultiplication.Arithmetic.Expression.cost, two_mul]
+    (linear a wire).cost = 2 * Fintype.card Term :=
+  MatrixMultiplication.Arithmetic.RecursiveBlock.LinearExpression.cost_linear (F := ℂ) a wire
 
 end LinearExpression
 
-/-- A shared straight-line program with an indexed family of outputs. -/
-structure Family (Input Output : Type*) where
-  /-- Number of registers allocated to the output family. -/
-  registers : ℕ
-  /-- The program shared by all members of the output family. -/
-  program : Program Input registers
-  /-- Register location of each indexed output. -/
-  output : Output → Fin registers
+/-- A shared complex straight-line program with an indexed family of outputs. -/
+abbrev Family (Input Output : Type*) :=
+  MatrixMultiplication.Arithmetic.RecursiveBlock.Family ℂ Input Output
 
 namespace Family
 
 variable {Input Mid Output : Type*}
 
 /-- Evaluate one member of a program's output family. -/
-def eval (p : Family Input Output) (inputs : Input → ℂ) (o : Output) : ℂ :=
-  p.program.eval inputs (p.output o)
+abbrev eval (p : Family Input Output) (inputs : Input → ℂ) (o : Output) : ℂ :=
+  MatrixMultiplication.Arithmetic.RecursiveBlock.Family.eval (F := ℂ) p inputs o
 
 /-- Arithmetic cost of the shared program, counting each gate once. -/
-def cost (p : Family Input Output) : ℕ := p.program.cost
+abbrev cost (p : Family Input Output) : ℕ :=
+  MatrixMultiplication.Arithmetic.RecursiveBlock.Family.cost (F := ℂ) p
 
 /-- Compile an indexed family of expressions into a shared output program. -/
-def expressions [Fintype Output] (e : Output → Expression Input) : Family Input Output :=
-  let p := Expression.compileFamily e
-  ⟨p.registers, p.program, p.output⟩
+abbrev expressions [Fintype Output] (e : Output → Expression Input) : Family Input Output :=
+  MatrixMultiplication.Arithmetic.RecursiveBlock.Family.expressions (F := ℂ) e
 
 theorem eval_expressions [Fintype Output] (e : Output → Expression Input)
     (inputs : Input → ℂ) (o : Output) :
     (expressions e).eval inputs o = (e o).eval inputs :=
-  (Expression.compileFamily e).correct inputs o
+  MatrixMultiplication.Arithmetic.RecursiveBlock.Family.eval_expressions (F := ℂ) e inputs o
 
 theorem cost_expressions [Fintype Output] (e : Output → Expression Input) :
     (expressions e).cost = ∑ o, (e o).cost :=
-  (Expression.compileFamily e).cost_eq
+  MatrixMultiplication.Arithmetic.RecursiveBlock.Family.cost_expressions (F := ℂ) e
 
 /-- Connect the outputs of one program family to the inputs of another. -/
-def compose (p : Family Input Mid) (q : Family Mid Output) : Family Input Output :=
-  let s := p.program.substitute q.program p.output
-  ⟨s.registers, s.program, fun o => s.output (q.output o)⟩
+abbrev compose (p : Family Input Mid) (q : Family Mid Output) : Family Input Output :=
+  MatrixMultiplication.Arithmetic.RecursiveBlock.Family.compose (F := ℂ) p q
 
 theorem eval_compose (p : Family Input Mid) (q : Family Mid Output)
     (inputs : Input → ℂ) (o : Output) :
     (compose p q).eval inputs o = q.eval (p.eval inputs) o :=
-  (p.program.substitute q.program p.output).correct inputs (q.output o)
+  MatrixMultiplication.Arithmetic.RecursiveBlock.Family.eval_compose (F := ℂ) p q inputs o
 
 theorem cost_compose (p : Family Input Mid) (q : Family Mid Output) :
     (compose p q).cost = p.cost + q.cost :=
-  (p.program.substitute q.program p.output).cost_eq
+  MatrixMultiplication.Arithmetic.RecursiveBlock.Family.cost_compose (F := ℂ) p q
 
 /-- Relabel the input wires of a program family. -/
-def mapInputs {NewInput : Type*} (f : Input → NewInput) (p : Family Input Output) :
+abbrev mapInputs {NewInput : Type*} (f : Input → NewInput) (p : Family Input Output) :
     Family NewInput Output :=
-  ⟨p.registers, p.program.mapInput f, p.output⟩
+  MatrixMultiplication.Arithmetic.RecursiveBlock.Family.mapInputs (F := ℂ) f p
 
 theorem eval_mapInputs {NewInput : Type*} (f : Input → NewInput)
     (p : Family Input Output) (inputs : NewInput → ℂ) (o : Output) :
-    (p.mapInputs f).eval inputs o = p.eval (fun i => inputs (f i)) o := by
-  exact Program.eval_mapInput f p.program inputs (p.output o)
+    (p.mapInputs f).eval inputs o = p.eval (fun i => inputs (f i)) o :=
+  MatrixMultiplication.Arithmetic.RecursiveBlock.Family.eval_mapInputs (F := ℂ) f p inputs o
 
 theorem cost_mapInputs {NewInput : Type*} (f : Input → NewInput)
-    (p : Family Input Output) : (p.mapInputs f).cost = p.cost := by
-  exact Program.cost_mapInput f p.program
+    (p : Family Input Output) : (p.mapInputs f).cost = p.cost :=
+  MatrixMultiplication.Arithmetic.RecursiveBlock.Family.cost_mapInputs (F := ℂ) f p
 
 /-- Concatenate a finite family of programs with a common input space. -/
-def parallel : (r : ℕ) → (Fin r → Family Input Output) → Family Input (Fin r × Output)
-  | 0, _ => ⟨0, Program.nil, fun o => Fin.elim0 o.1⟩
-  | r + 1, p =>
-    let head := p 0
-    let tail := parallel r (fun i => p i.succ)
-    { registers := head.registers + tail.registers
-      program := head.program.append tail.program
-      output := fun o => Fin.cases
-        (Program.oldIndex _ _ (head.output o.2))
-        (fun i => Program.newIndex _ _ (tail.output (i, o.2))) o.1 }
+abbrev parallel : (r : ℕ) → (Fin r → Family Input Output) → Family Input (Fin r × Output) :=
+  MatrixMultiplication.Arithmetic.RecursiveBlock.Family.parallel (F := ℂ)
 
 theorem eval_parallel (r : ℕ) (p : Fin r → Family Input Output)
     (inputs : Input → ℂ) (o : Fin r × Output) :
-    (parallel r p).eval inputs o = (p o.1).eval inputs o.2 := by
-  induction r with
-  | zero => exact Fin.elim0 o.1
-  | succ r ih =>
-    rcases o with ⟨i, o⟩
-    refine Fin.cases ?_ (fun j => ?_) i
-    · exact Program.eval_append_old _ _ inputs _
-    · exact (Program.eval_append_new _ _ inputs _).trans
-        (ih (fun j => p j.succ) (j, o))
+    (parallel r p).eval inputs o = (p o.1).eval inputs o.2 :=
+  MatrixMultiplication.Arithmetic.RecursiveBlock.Family.eval_parallel (F := ℂ) r p inputs o
 
 theorem cost_parallel (r : ℕ) (p : Fin r → Family Input Output) :
-    (parallel r p).cost = ∑ i, (p i).cost := by
-  induction r with
-  | zero => simp [parallel, cost, MatrixMultiplication.Arithmetic.Program.cost]
-  | succ r ih =>
-    change ((p 0).program.append (parallel r (fun i => p i.succ)).program).cost = _
-    rw [Program.append, Program.cost, Program.cost_append]
-    change (p 0).cost + (parallel r (fun i => p i.succ)).cost = _
-    rw [ih, Fin.sum_univ_succ]
+    (parallel r p).cost = ∑ i, (p i).cost :=
+  MatrixMultiplication.Arithmetic.RecursiveBlock.Family.cost_parallel (F := ℂ) r p
 
 /-- Run independent copies of a program family on separately indexed inputs. -/
-def copies (r : ℕ) (p : Family Input Output) :
+abbrev copies (r : ℕ) (p : Family Input Output) :
     Family (Fin r × Input) (Fin r × Output) :=
-  parallel r (fun i => p.mapInputs (fun x => (i, x)))
+  MatrixMultiplication.Arithmetic.RecursiveBlock.Family.copies (F := ℂ) r p
 
 theorem eval_copies (r : ℕ) (p : Family Input Output)
     (inputs : Fin r × Input → ℂ) (o : Fin r × Output) :
-    (copies r p).eval inputs o = p.eval (fun x => inputs (o.1, x)) o.2 := by
-  rw [copies, eval_parallel, eval_mapInputs]
+    (copies r p).eval inputs o = p.eval (fun x => inputs (o.1, x)) o.2 :=
+  MatrixMultiplication.Arithmetic.RecursiveBlock.Family.eval_copies (F := ℂ) r p inputs o
 
 theorem cost_copies (r : ℕ) (p : Family Input Output) :
-    (copies r p).cost = r * p.cost := by
-  simp [copies, cost_parallel, cost_mapInputs]
+    (copies r p).cost = r * p.cost :=
+  MatrixMultiplication.Arithmetic.RecursiveBlock.Family.cost_copies (F := ℂ) r p
 
 /-- View a matrix multiplication algorithm as a family indexed by output positions. -/
-def ofMatrix {m : ℕ} (p : MatrixAlgorithm m) :
+abbrev ofMatrix {m : ℕ} (p : MatrixAlgorithm m) :
     Family (MatrixInput m) (Fin m × Fin m) :=
-  ⟨p.registers, p.program, fun o => p.output o.1 o.2⟩
+  MatrixMultiplication.Arithmetic.RecursiveBlock.Family.ofMatrix (F := ℂ) p
 
-@[simp] theorem cost_ofMatrix {m : ℕ} (p : MatrixAlgorithm m) :
-    (ofMatrix p).cost = p.cost := rfl
+theorem cost_ofMatrix {m : ℕ} (p : MatrixAlgorithm m) :
+    (ofMatrix p).cost = p.cost :=
+  MatrixMultiplication.Arithmetic.RecursiveBlock.Family.cost_ofMatrix (F := ℂ) p
 
 theorem eval_ofMatrix {m : ℕ} (p : MatrixAlgorithm m) (hp : p.Correct)
     (inputs : MatrixInput m → ℂ) (o : Fin m × Fin m) :
     (ofMatrix p).eval inputs o =
-      ∑ j, inputs (.inl (o.1, j)) * inputs (.inr (j, o.2)) := by
-  have h := (MatrixAlgorithm.correct_iff_entries p).mp hp
-    (fun i j => inputs (.inl (i, j))) (fun j k => inputs (.inr (j, k))) o.1 o.2
-  have hi : MatrixMultiplication.Arithmetic.matrixInputs (fun i j => inputs (.inl (i, j)))
-      (fun j k => inputs (.inr (j, k))) = inputs := by
-    funext x
-    cases x <;> rfl
-  rw [hi] at h
-  exact h
+      ∑ j, inputs (.inl (o.1, j)) * inputs (.inr (j, o.2)) :=
+  MatrixMultiplication.Arithmetic.RecursiveBlock.Family.eval_ofMatrix (F := ℂ) p hp inputs o
 
 end Family
-
-section BlockIdentities
 
 variable {n r m : ℕ}
 
 /-- Flatten a pair of finite block and within-block indices. -/
-def join (i : Fin n) (j : Fin m) : Fin (n * m) := finProdFinEquiv (i, j)
+abbrev join (i : Fin n) (j : Fin m) : Fin (n * m) :=
+  MatrixMultiplication.Arithmetic.RecursiveBlock.join i j
 
 theorem rank_bilinear_identity
     (a b c : Fin r → Fin n × Fin n → ℂ)
@@ -220,41 +168,21 @@ theorem rank_bilinear_identity
       fun x y z => ∑ q, Tensor.rankOne (a q) (b q) (c q) x y z)
     (left right : Fin n × Fin n → ℂ) (i k : Fin n) :
     (∑ q, c q (k, i) * (∑ x, a q x * left x) * (∑ y, b q y * right y)) =
-      ∑ j, left (i, j) * right (j, k) := by
-  rw [← Tensor.contract_matrixCoefficients left right i k]
-  change _ = Tensor.contract (Tensor.matrixMultiplication n n n) left right (k, i)
-  rw [h]
-  simp only [Tensor.contract, Tensor.rankOne, Finset.sum_mul, Finset.mul_sum]
-  calc
-    (∑ q, ∑ y, ∑ x, c q (k, i) * (a q x * left x) * (b q y * right y)) =
-        ∑ q, ∑ x, ∑ y, c q (k, i) * (a q x * left x) * (b q y * right y) := by
-      apply Finset.sum_congr rfl
-      intro q hq
-      exact Finset.sum_comm
-    _ =
-        ∑ x, ∑ q, ∑ y, c q (k, i) * (a q x * left x) * (b q y * right y) :=
-      Finset.sum_comm
-    _ = ∑ x, ∑ y, ∑ q, a q x * b q y * c q (k, i) * left x * right y := by
-      apply Finset.sum_congr rfl
-      intro x hx
-      rw [Finset.sum_comm]
-      apply Finset.sum_congr rfl
-      intro y hy
-      apply Finset.sum_congr rfl
-      intro q hq
-      ring
+      ∑ j, left (i, j) * right (j, k) :=
+  MatrixMultiplication.Arithmetic.RecursiveBlock.rank_bilinear_identity (F := ℂ)
+    a b c h left right i k
 
 /-- The left matrix block obtained from one linear form in a tensor-rank decomposition. -/
-def leftBlock (a : Fin r → Fin n × Fin n → ℂ)
+abbrev leftBlock (a : Fin r → Fin n × Fin n → ℂ)
     (A : Matrix (Fin (n * m)) (Fin (n * m)) ℂ) (q : Fin r) :
     Matrix (Fin m) (Fin m) ℂ :=
-  fun s t => ∑ x, a q x * A (join x.1 s) (join x.2 t)
+  MatrixMultiplication.Arithmetic.RecursiveBlock.leftBlock (F := ℂ) a A q
 
 /-- The right matrix block obtained from one linear form in a tensor-rank decomposition. -/
-def rightBlock (b : Fin r → Fin n × Fin n → ℂ)
+abbrev rightBlock (b : Fin r → Fin n × Fin n → ℂ)
     (B : Matrix (Fin (n * m)) (Fin (n * m)) ℂ) (q : Fin r) :
     Matrix (Fin m) (Fin m) ℂ :=
-  fun t u => ∑ y, b q y * B (join y.1 t) (join y.2 u)
+  MatrixMultiplication.Arithmetic.RecursiveBlock.rightBlock (F := ℂ) b B q
 
 theorem block_identity
     (a b c : Fin r → Fin n × Fin n → ℂ)
@@ -263,142 +191,97 @@ theorem block_identity
     (A B : Matrix (Fin (n * m)) (Fin (n * m)) ℂ)
     (i k : Fin n) (s u : Fin m) :
     (∑ q, c q (k, i) * ((leftBlock a A q) * (rightBlock b B q)) s u) =
-      (A * B) (join i s) (join k u) := by
-  simp only [Matrix.mul_apply, Finset.mul_sum]
-  rw [Finset.sum_comm]
-  have hlocal (t : Fin m) := rank_bilinear_identity a b c h
-    (fun x => A (join x.1 s) (join x.2 t))
-    (fun y => B (join y.1 t) (join y.2 u)) i k
-  simp only [leftBlock, rightBlock]
-  simp_rw [← mul_assoc, hlocal]
-  rw [Finset.sum_comm]
-  exact (Fintype.sum_prod_type _).symm.trans
-    (finProdFinEquiv.sum_comp (fun j => A (join i s) j * B j (join k u)))
-
-end BlockIdentities
-
-section BlockPrograms
-
-variable {n r m : ℕ}
+      (A * B) (join i s) (join k u) :=
+  MatrixMultiplication.Arithmetic.RecursiveBlock.block_identity (F := ℂ) a b c h A B i k s u
 
 /-- Expressions forming the left and right inputs to all recursive block products. -/
-def inputExpressions (a b : Fin r → Fin n × Fin n → ℂ) :
-    Fin r × MatrixInput m → Expression (MatrixInput (n * m))
-  | (q, .inl (s, t)) => LinearExpression.linear (a q)
-      (fun x => .inl (join x.1 s, join x.2 t))
-  | (q, .inr (t, u)) => LinearExpression.linear (b q)
-      (fun y => .inr (join y.1 t, join y.2 u))
+abbrev inputExpressions (a b : Fin r → Fin n × Fin n → ℂ) :
+    Fin r × MatrixInput m → Expression (MatrixInput (n * m)) :=
+  MatrixMultiplication.Arithmetic.RecursiveBlock.inputExpressions (F := ℂ) a b
 
 /-- Compile the input linear forms required by a tensor-rank block decomposition. -/
-def inputFamily (a b : Fin r → Fin n × Fin n → ℂ) :
+abbrev inputFamily (a b : Fin r → Fin n × Fin n → ℂ) :
     Family (MatrixInput (n * m)) (Fin r × MatrixInput m) :=
-  Family.expressions (inputExpressions a b)
+  MatrixMultiplication.Arithmetic.RecursiveBlock.inputFamily (F := ℂ) a b
 
 theorem inputFamily_eval (a b : Fin r → Fin n × Fin n → ℂ)
     (A B : Matrix (Fin (n * m)) (Fin (n * m)) ℂ) (q : Fin r) (x : MatrixInput m) :
     (inputFamily a b).eval (MatrixMultiplication.Arithmetic.matrixInputs A B) (q, x) =
-      MatrixMultiplication.Arithmetic.matrixInputs (leftBlock a A q) (rightBlock b B q) x := by
-  cases x with
-  | inl x =>
-    simp only [inputFamily, Family.eval_expressions, inputExpressions,
-      LinearExpression.eval_linear, MatrixMultiplication.Arithmetic.matrixInputs, leftBlock]
-  | inr x =>
-    simp only [inputFamily, Family.eval_expressions, inputExpressions,
-      LinearExpression.eval_linear, MatrixMultiplication.Arithmetic.matrixInputs, rightBlock]
+      MatrixMultiplication.Arithmetic.matrixInputs (leftBlock a A q) (rightBlock b B q) x :=
+  MatrixMultiplication.Arithmetic.RecursiveBlock.inputFamily_eval (F := ℂ) a b A B q x
 
 theorem inputFamily_cost (a b : Fin r → Fin n × Fin n → ℂ) :
     (inputFamily (m := m) a b).cost = 4 * r * n ^ 2 * m ^ 2 := by
-  rw [inputFamily, Family.cost_expressions]
-  have hc (o : Fin r × MatrixInput m) : (inputExpressions a b o).cost = 2 * n ^ 2 := by
-    rcases o with ⟨q, o⟩
-    cases o <;> simp [inputExpressions, LinearExpression.cost_linear, pow_two]
-  simp_rw [hc]
-  simp only [Finset.sum_const, Finset.card_univ, Fintype.card_prod,
-    Fintype.card_fin, Fintype.card_sum, smul_eq_mul]
+  convert MatrixMultiplication.Arithmetic.RecursiveBlock.inputFamily_cost (F := ℂ) a b using 1
   ring
 
 /-- Run the smaller matrix algorithm on each pair of transformed input blocks. -/
-def recursiveProducts (a b : Fin r → Fin n × Fin n → ℂ) (p : MatrixAlgorithm m) :
+abbrev recursiveProducts (a b : Fin r → Fin n × Fin n → ℂ) (p : MatrixAlgorithm m) :
     Family (MatrixInput (n * m)) (Fin r × (Fin m × Fin m)) :=
-  (inputFamily a b).compose (Family.copies r (Family.ofMatrix p))
+  MatrixMultiplication.Arithmetic.RecursiveBlock.recursiveProducts (F := ℂ) a b p
 
 theorem recursiveProducts_eval (a b : Fin r → Fin n × Fin n → ℂ)
     (p : MatrixAlgorithm m) (hp : p.Correct)
     (A B : Matrix (Fin (n * m)) (Fin (n * m)) ℂ) (q : Fin r) (s u : Fin m) :
     (recursiveProducts a b p).eval (MatrixMultiplication.Arithmetic.matrixInputs A B) (q, (s, u)) =
-      ((leftBlock a A q) * (rightBlock b B q)) s u := by
-  rw [recursiveProducts, Family.eval_compose, Family.eval_copies,
-    Family.eval_ofMatrix _ hp]
-  simp only [inputFamily_eval, MatrixMultiplication.Arithmetic.matrixInputs, Matrix.mul_apply]
+      ((leftBlock a A q) * (rightBlock b B q)) s u :=
+  MatrixMultiplication.Arithmetic.RecursiveBlock.recursiveProducts_eval (F := ℂ) a b p hp A B q s u
 
 theorem recursiveProducts_cost (a b : Fin r → Fin n × Fin n → ℂ)
     (p : MatrixAlgorithm m) :
     (recursiveProducts a b p).cost = 4 * r * n ^ 2 * m ^ 2 + r * p.cost := by
-  rw [recursiveProducts, Family.cost_compose, inputFamily_cost,
-    Family.cost_copies, Family.cost_ofMatrix]
+  convert MatrixMultiplication.Arithmetic.RecursiveBlock.recursiveProducts_cost (F := ℂ)
+    a b p using 1
+  ring
 
 /-- Expressions recombining recursive products into the final matrix entries. -/
-def outputExpressions (c : Fin r → Fin n × Fin n → ℂ) :
+abbrev outputExpressions (c : Fin r → Fin n × Fin n → ℂ) :
     Fin (n * m) × Fin (n * m) → Expression (Fin r × (Fin m × Fin m)) :=
-  fun o => LinearExpression.linear
-    (fun q => c q ((finProdFinEquiv.symm o.2).1, (finProdFinEquiv.symm o.1).1))
-    (fun q => (q, ((finProdFinEquiv.symm o.1).2, (finProdFinEquiv.symm o.2).2)))
+  MatrixMultiplication.Arithmetic.RecursiveBlock.outputExpressions (F := ℂ) c
 
 /-- Compile the output linear forms of the tensor-rank decomposition. -/
-def outputFamily (c : Fin r → Fin n × Fin n → ℂ) :
+abbrev outputFamily (c : Fin r → Fin n × Fin n → ℂ) :
     Family (Fin r × (Fin m × Fin m)) (Fin (n * m) × Fin (n * m)) :=
-  Family.expressions (outputExpressions c)
+  MatrixMultiplication.Arithmetic.RecursiveBlock.outputFamily (F := ℂ) c
 
 theorem outputFamily_eval (c : Fin r → Fin n × Fin n → ℂ)
     (inputs : Fin r × (Fin m × Fin m) → ℂ) (i k : Fin n) (s u : Fin m) :
     (outputFamily c).eval inputs (join i s, join k u) =
-      ∑ q, c q (k, i) * inputs (q, (s, u)) := by
-  simp only [outputFamily, Family.eval_expressions, outputExpressions,
-    LinearExpression.eval_linear, join, Equiv.symm_apply_apply]
+      ∑ q, c q (k, i) * inputs (q, (s, u)) :=
+  MatrixMultiplication.Arithmetic.RecursiveBlock.outputFamily_eval (F := ℂ) c inputs i k s u
 
 theorem outputFamily_cost (c : Fin r → Fin n × Fin n → ℂ) :
     (outputFamily (m := m) c).cost = 2 * r * n ^ 2 * m ^ 2 := by
-  simp only [outputFamily, Family.cost_expressions, outputExpressions,
-    LinearExpression.cost_linear, Fintype.card_fin, Finset.sum_const,
-    Finset.card_univ, Fintype.card_prod, smul_eq_mul]
+  convert MatrixMultiplication.Arithmetic.RecursiveBlock.outputFamily_cost (F := ℂ) c using 1
   ring
 
 /-- Construct the larger matrix algorithm from a rank decomposition and a smaller algorithm. -/
-def algorithm (a b c : Fin r → Fin n × Fin n → ℂ) (p : MatrixAlgorithm m) :
+abbrev algorithm (a b c : Fin r → Fin n × Fin n → ℂ) (p : MatrixAlgorithm m) :
     MatrixAlgorithm (n * m) :=
-  let f := (recursiveProducts a b p).compose (outputFamily c)
-  ⟨f.registers, f.program, fun i k => f.output (i, k)⟩
+  MatrixMultiplication.Arithmetic.RecursiveBlock.algorithm (F := ℂ) a b c p
 
 theorem algorithm_correct
     (a b c : Fin r → Fin n × Fin n → ℂ)
     (h : Tensor.matrixMultiplication n n n =
       fun x y z => ∑ q, Tensor.rankOne (a q) (b q) (c q) x y z)
-    (p : MatrixAlgorithm m) (hp : p.Correct) : (algorithm a b c p).Correct := by
-  intro A B
-  funext i k
-  obtain ⟨⟨i, s⟩, rfl⟩ := finProdFinEquiv.surjective i
-  obtain ⟨⟨k, u⟩, rfl⟩ := finProdFinEquiv.surjective k
-  change ((recursiveProducts a b p).compose (outputFamily c)).eval
-    (MatrixMultiplication.Arithmetic.matrixInputs A B) (join i s, join k u) = _
-  rw [Family.eval_compose, outputFamily_eval]
-  simp_rw [recursiveProducts_eval a b p hp A B]
-  exact block_identity a b c h A B i k s u
+    (p : MatrixAlgorithm m) (hp : p.Correct) : (algorithm a b c p).Correct :=
+  MatrixMultiplication.Arithmetic.RecursiveBlock.algorithm_correct (F := ℂ) a b c h p hp
 
 theorem algorithm_cost (a b c : Fin r → Fin n × Fin n → ℂ)
     (p : MatrixAlgorithm m) :
     (algorithm a b c p).cost = r * p.cost + (6 * r * n ^ 2) * m ^ 2 := by
-  change ((recursiveProducts a b p).compose (outputFamily c)).cost = _
-  rw [Family.cost_compose, recursiveProducts_cost, outputFamily_cost]
+  convert MatrixMultiplication.Arithmetic.RecursiveBlock.algorithm_cost (F := ℂ) a b c p using 1
   ring
 
 theorem rank_block_step (h : Tensor.RankAtMost (Tensor.matrixMultiplication n n n) r)
     (p : MatrixAlgorithm m) (hp : p.Correct) :
     ∃ q : MatrixAlgorithm (n * m), q.Correct ∧
       q.cost = r * p.cost + (6 * r * n ^ 2) * m ^ 2 := by
-  rcases h with ⟨a, b, c, h⟩
-  exact ⟨algorithm a b c p, algorithm_correct a b c h p hp, algorithm_cost a b c p⟩
-
-end BlockPrograms
+  obtain ⟨q, hq, hcost⟩ := MatrixMultiplication.Arithmetic.RecursiveBlock.rank_block_step h p hp
+  refine ⟨q, hq, ?_⟩
+  change MatrixMultiplication.Arithmetic.MatrixAlgorithm.cost q = _
+  rw [hcost]
+  ring
 
 end MatrixMultiplication.Foundation.Arithmetic.RecursiveBlock
 
