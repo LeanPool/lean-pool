@@ -12,6 +12,7 @@ import LeanPool.Chudnovsky.SingularModuli.CMRelations
 import LeanPool.Chudnovsky.SingularModuli.Kronecker
 import LeanPool.Chudnovsky.SingularModuli.Rationality
 import LeanPool.Chudnovsky.SingularModuli.Valence
+import Mathlib.Analysis.Calculus.Deriv.Polynomial
 import Mathlib.Tactic.NormNum.Prime
 
 /-!

@@ -7,6 +7,7 @@ module
 
 public import LeanPool.Chudnovsky.Basic
 public import LeanPool.Chudnovsky.SigmaZeta
+import Mathlib.Analysis.Normed.Module.Connected
 
 /-!
 # Quasiperiods and the Legendre relation

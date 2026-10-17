@@ -10,6 +10,7 @@ public import Mathlib.RingTheory.IntegralClosure.IsIntegral.Defs
 import LeanPool.Chudnovsky.Quasiperiods
 import LeanPool.Chudnovsky.WeierstrassMore
 import Mathlib.Analysis.Meromorphic.TrailingCoefficient
+import Mathlib.Analysis.Normed.Module.Connected
 import Mathlib.NumberTheory.Real.Irrational
 
 /-!

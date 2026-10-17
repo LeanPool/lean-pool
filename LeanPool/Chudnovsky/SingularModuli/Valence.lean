@@ -11,6 +11,7 @@ import LeanPool.Chudnovsky.DivisionValues
 import LeanPool.Chudnovsky.Estimates
 import LeanPool.Chudnovsky.Fourier
 import Mathlib.Analysis.Complex.OpenMapping
+import Mathlib.Analysis.Normed.Module.Connected
 import Mathlib.Analysis.Real.Pi.Bounds
 
 /-!

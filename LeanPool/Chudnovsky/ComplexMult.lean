@@ -9,6 +9,7 @@ public import LeanPool.Chudnovsky.Quasiperiods
 import LeanPool.Chudnovsky.DivisionValues
 import LeanPool.Chudnovsky.Fourier
 import LeanPool.Chudnovsky.Liouville
+import Mathlib.Analysis.Normed.Module.Connected
 
 /-!
 # Complex multiplication and the integrality of `E₂*` (Milla, Appendix B)
