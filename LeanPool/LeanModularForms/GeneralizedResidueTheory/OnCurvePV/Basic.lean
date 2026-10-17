@@ -237,7 +237,7 @@ theorem aEStronglyMeasurable_pv_integrand_piecewiseC1
     simpa only [Measure.restrict_eq_zero.mpr hP_meas_zero] using aestronglyMeasurable_zero_measure _
   have h_piecewise : AEStronglyMeasurable
       ((S ∩ Icc a b).piecewise (fun t => f (γ t) * deriv γ t) (fun _ => (0 : ℂ))) volume :=
-    AEStronglyMeasurable.piecewise hS_meas h_base_meas aestronglyMeasurable_const
+    AEStronglyMeasurable.piecewise hS_meas.nullMeasurableSet h_base_meas aestronglyMeasurable_const
   have h_eq : (fun t => if ε < ‖γ t - z₀‖ then f (γ t) * deriv γ t else 0)
       =ᵐ[volume.restrict (Icc a b)]
       (S ∩ Icc a b).piecewise (fun t => f (γ t) * deriv γ t) (fun _ => 0) := by

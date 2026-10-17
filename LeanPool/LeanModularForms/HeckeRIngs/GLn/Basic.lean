@@ -9,7 +9,7 @@ public import Mathlib.LinearAlgebra.Matrix.GeneralLinearGroup.Defs
 public import LeanPool.LeanModularForms.HeckeRIngs.AbstractHeckeRing.Basic
 import Mathlib.Analysis.Normed.Group.Basic
 import Mathlib.Data.EReal.Operations
-import Mathlib.Data.Int.ConditionallyCompleteOrder
+import Mathlib.Order.Int.ConditionallyCompleteOrder
 import Mathlib.Topology.Algebra.InfiniteSum.Order
 import Mathlib.Topology.MetricSpace.Bounded
 

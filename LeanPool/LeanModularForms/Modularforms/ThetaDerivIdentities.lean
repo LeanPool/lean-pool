@@ -11,7 +11,7 @@ public import LeanPool.LeanModularForms.Modularforms.Derivative
 import LeanPool.LeanModularForms.Modularforms.DimensionFormulas
 import LeanPool.LeanModularForms.Modularforms.EisensteinAsymptotics
 import LeanPool.LeanModularForms.Modularforms.ForMathlibCusps
-import Mathlib.Data.Int.Star
+import Mathlib.Algebra.Order.Star.Int
 
 /-! # ThetaDerivIdentities -/
 

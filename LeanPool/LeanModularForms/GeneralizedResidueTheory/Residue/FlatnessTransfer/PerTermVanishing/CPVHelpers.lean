@@ -235,7 +235,7 @@ lemma intervalIntegrable_cpvIntegrandOn_of_continuousOn_diff
         (volume.restrict (GoodSet ∩ Icc γ.a γ.b)) :=
       (hgγ_cont_good.aestronglyMeasurable hGoodSet_meas).mul
         ((aesm_deriv_on_Icc γ).mono_measure (Measure.restrict_mono Set.inter_subset_right le_rfl))
-    have h_pw := AEStronglyMeasurable.piecewise hGoodSet_meas h_prod_meas
+    have h_pw := AEStronglyMeasurable.piecewise hGoodSet_meas.nullMeasurableSet h_prod_meas
       (aestronglyMeasurable_const : AEStronglyMeasurable (fun _ : ℝ => (0 : ℂ))
         (volume.restrict (GoodSet ∩ Icc γ.a γ.b)ᶜ))
     have h_ae_eq : cpv_fn =ᵐ[volume.restrict (Icc γ.a γ.b)]

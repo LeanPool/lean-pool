@@ -17,7 +17,7 @@ import LeanPool.LeanModularForms.Modularforms.ForMathlibCusps
 import LeanPool.LeanModularForms.Modularforms.ForMathlibFunctionsBoundedAtInfty
 import Mathlib.Algebra.Order.Star.Real
 import Mathlib.Analysis.Normed.Group.Tannery
-import Mathlib.Data.Int.Star
+import Mathlib.Algebra.Order.Star.Int
 import Mathlib.Order.CompletePartialOrder
 
 /-! # JacobiTheta -/
@@ -406,7 +406,7 @@ lemma jacobiTheta₂_rel_aux (n : ℤ) (t : ℝ) :
   simp
   ring_nf!
 
-lemma Complex.norm_exp_mul_I (z : ℂ) : ‖cexp (z * I)‖ = rexp (-z.im) := by simp [norm_exp]
+lemma LeanModularForms.norm_exp_mul_I (z : ℂ) : ‖cexp (z * I)‖ = rexp (-z.im) := by simp [norm_exp]
 
 theorem isBoundedAtImInfty_H₂ : IsBoundedAtImInfty H₂ := by
   simp_rw [UpperHalfPlane.isBoundedAtImInfty_iff, H₂, Θ₂]

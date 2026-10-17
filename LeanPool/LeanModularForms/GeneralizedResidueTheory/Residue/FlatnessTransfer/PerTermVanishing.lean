@@ -408,7 +408,7 @@ private lemma aesm_diff_single_multi_cpv_zpow
         ({t | ∀ s' ∈ S0, ε < ‖γ.toFun t - s'‖} ∩ Icc γ.a γ.b) from by
         ext x; simp only [mem_inter_iff, Set.mem_sdiff]; tauto]
     exact hSF_meas.diff (measurableSet_goodSet_Icc S0 γ ε)
-  apply ((AEStronglyMeasurable.piecewise hSG_meas
+  apply ((AEStronglyMeasurable.piecewise hSG_meas.nullMeasurableSet
     ((aesm_zpow_on_singleFar γ s m ε hε).mono_measure (Measure.restrict_mono hSG_sub le_rfl))
     (aestronglyMeasurable_const (β := ℂ) (b := 0))).mono_measure
       Measure.restrict_le_self).congr
@@ -530,7 +530,8 @@ private lemma multi_cutoff_zpow_intervalIntegrable
         (hγ'_meas.mono_measure (Measure.restrict_mono Set.inter_subset_right le_rfl))
     have h_zero_meas : AEStronglyMeasurable (fun _ : ℝ => (0 : ℂ))
         (volume.restrict (GoodSet ∩ Icc γ.a γ.b)ᶜ) := aestronglyMeasurable_const
-    have h_pw := AEStronglyMeasurable.piecewise hGoodSet_meas h_prod_meas h_zero_meas
+    have h_pw := AEStronglyMeasurable.piecewise hGoodSet_meas.nullMeasurableSet
+      h_prod_meas h_zero_meas
     exact (h_pw.mono_measure Measure.restrict_le_self).congr (by
       filter_upwards [ae_restrict_mem measurableSet_Icc] with t ht
       simp only [cauchyPrincipalValueIntegrandOn]

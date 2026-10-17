@@ -72,9 +72,7 @@ private lemma unitArc_angle_hasDerivAt (θ₁ θ₂ a b t : ℝ) (_hab : b - a �
       ((θ₂ - θ₁) / (b - a)) t := by
     have hmul := hd.mul_const (θ₂ - θ₁)
     convert hmul using 2
-    first
-      | rfl
-      | ring
+    ring
   simpa using h1.const_add θ₁
 
 /-- Derivative of the unit arc. -/

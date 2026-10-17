@@ -9,7 +9,7 @@ public import LeanPool.LeanModularForms.HeckeRIngs.AbstractHeckeRing.Ring
 import LeanPool.LeanModularForms.HeckeRIngs.AbstractHeckeRing.Associativity
 import Mathlib.Analysis.Normed.Group.Basic
 import Mathlib.Data.EReal.Operations
-import Mathlib.Data.Int.ConditionallyCompleteOrder
+import Mathlib.Order.Int.ConditionallyCompleteOrder
 import Mathlib.Tactic.ContinuousFunctionalCalculus
 import Mathlib.Topology.Algebra.InfiniteSum.Order
 import Mathlib.Topology.MetricSpace.Bounded

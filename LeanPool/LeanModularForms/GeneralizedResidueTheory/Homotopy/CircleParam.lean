@@ -6,6 +6,7 @@ Authors: Chris Birkbeck
 module
 
 public import LeanPool.LeanModularForms.GeneralizedResidueTheory.Basic
+import Mathlib.Analysis.Calculus.Deriv.Linear
 import Mathlib.Analysis.SpecialFunctions.ExpDeriv
 import Mathlib.CategoryTheory.Category.Init
 import Mathlib.Combinatorics.Matroid.Init

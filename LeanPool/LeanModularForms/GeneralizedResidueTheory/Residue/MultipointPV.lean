@@ -159,7 +159,7 @@ private theorem aEStronglyMeasurable_pv_integrand_multipoint {g : ℂ → ℂ} {
   have h_zero_meas : AEStronglyMeasurable (fun _ : ℝ => (0 : ℂ))
       (volume.restrict ({t : ℝ | ∀ s ∈ S, ε < ‖γ t - s‖} ∩ Icc a b)ᶜ) :=
     aestronglyMeasurable_const
-  exact ((AEStronglyMeasurable.piecewise (measurableSet_multipoint_goodset S hγ)
+  exact ((AEStronglyMeasurable.piecewise (measurableSet_multipoint_goodset S hγ).nullMeasurableSet
     (h_base_meas.mono_measure (Measure.restrict_mono Set.inter_subset_right le_rfl))
     h_zero_meas).mono_measure Measure.restrict_le_self).congr
     (goodset_piecewise_ae_eq_multipoint S).symm
@@ -211,7 +211,7 @@ private theorem
     aEStronglyMeasurable_residueProd_on_goodset
       _hε hγ hγ'_off_P
   have h_piecewise :=
-    AEStronglyMeasurable.piecewise hGoodSet_meas
+    AEStronglyMeasurable.piecewise hGoodSet_meas.nullMeasurableSet
       h_prod_meas h_zero_meas
   refine (h_piecewise.mono_measure
     Measure.restrict_le_self).congr ?_
@@ -281,7 +281,7 @@ theorem aEStronglyMeasurable_pv_integrand_decomposed {g_reg : ℂ → ℂ} {γ :
       else (g_reg (γ t) + ∑ s ∈ S, coeffs s / (γ t - s)) * deriv γ t)
       (volume.restrict (Icc a b)) := by
   exact ((AEStronglyMeasurable.piecewise
-    (measurableSet_multipoint_goodset S hγ)
+    (measurableSet_multipoint_goodset S hγ).nullMeasurableSet
     (aEStronglyMeasurable_decomposed_on_goodset S coeffs hε hg hγ hγ'_off_P)
     aestronglyMeasurable_const).mono_measure
     Measure.restrict_le_self).congr

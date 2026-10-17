@@ -10,7 +10,7 @@ public import LeanPool.LeanModularForms.Modularforms.SummableLems
 public import Mathlib.NumberTheory.LSeries.RiemannZeta
 import LeanPool.LeanModularForms.Modularforms.IccIcoLems
 import LeanPool.LeanModularForms.Modularforms.RiemannZetalems
-import Mathlib.Data.Int.Star
+import Mathlib.Algebra.Order.Star.Int
 
 /-! # Cauchylems -/
 

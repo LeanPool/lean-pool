@@ -417,7 +417,7 @@ theorem cpv_integrand_intervalIntegrable
     have h_pw : AEStronglyMeasurable
         (S.piecewise (fun t => (γ.toFun t - z₀)⁻¹ * deriv γ.toFun t) (fun _ => (0 : ℂ)))
         volume := by
-      apply AEStronglyMeasurable.piecewise hS_meas
+      apply AEStronglyMeasurable.piecewise hS_meas.nullMeasurableSet
       · have h_cont_on_S : ContinuousOn (fun t => (γ.toFun t - z₀)⁻¹ * deriv γ.toFun t)
             (S \ γ.partition) := by
           intro t ⟨⟨ht_far, ht_Icc⟩, ht_notP⟩

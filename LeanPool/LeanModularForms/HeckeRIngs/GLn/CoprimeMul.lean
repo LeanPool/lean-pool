@@ -10,7 +10,7 @@ public import LeanPool.LeanModularForms.HeckeRIngs.AbstractHeckeRing.Degree
 import LeanPool.LeanModularForms.HeckeRIngs.GLn.SLnTransvection
 import Mathlib.Analysis.Normed.Group.Basic
 import Mathlib.Data.EReal.Operations
-import Mathlib.Data.Int.ConditionallyCompleteOrder
+import Mathlib.Order.Int.ConditionallyCompleteOrder
 import Mathlib.Tactic.LinearCombination
 import Mathlib.Tactic.Positivity.Finset
 import Mathlib.Topology.Algebra.InfiniteSum.Order

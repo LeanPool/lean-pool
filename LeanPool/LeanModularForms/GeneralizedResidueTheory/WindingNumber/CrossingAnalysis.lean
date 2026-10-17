@@ -48,7 +48,6 @@ private lemma hasDerivAt_norm_sub_const (z₀ : ℂ) (f : ℝ → ℂ) (t : ℝ)
   have hgsq := (hf.sub_const z₀).norm_sq
   convert (Real.hasDerivAt_sqrt (by positivity)).comp t hgsq using 1
   all_goals first
-    | rfl
     | (ext s; simp only [Function.comp, Real.sqrt_sq (norm_nonneg _)])
     | (rw [Real.sqrt_sq hpos.le]; field_simp [ne_of_gt hpos])
 

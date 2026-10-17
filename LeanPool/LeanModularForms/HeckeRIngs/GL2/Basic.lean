@@ -11,7 +11,7 @@ import LeanPool.LeanModularForms.HeckeRIngs.GLn.CoprimeMul
 import LeanPool.LeanModularForms.HeckeRIngs.GLn.PrimeDecomposition
 import Mathlib.Analysis.Normed.Group.Basic
 import Mathlib.Data.EReal.Operations
-import Mathlib.Data.Int.ConditionallyCompleteOrder
+import Mathlib.Order.Int.ConditionallyCompleteOrder
 import Mathlib.Tactic.Positivity.Finset
 import Mathlib.Topology.Algebra.InfiniteSum.Order
 import Mathlib.Topology.MetricSpace.Bounded

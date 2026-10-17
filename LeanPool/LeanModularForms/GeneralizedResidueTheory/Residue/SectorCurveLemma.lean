@@ -9,6 +9,7 @@ public import LeanPool.LeanModularForms.GeneralizedResidueTheory.Residue.SectorC
 public import LeanPool.LeanModularForms.GeneralizedResidueTheory.Residue
 import LeanPool.LeanModularForms.GeneralizedResidueTheory.CauchyPrimitive
 import LeanPool.LeanModularForms.GeneralizedResidueTheory.PrincipalValue
+import Mathlib.Analysis.Calculus.Deriv.Pow
 import Mathlib.Analysis.Calculus.Deriv.ZPow
 import Mathlib.Analysis.SpecialFunctions.ExpDeriv
 import Mathlib.Analysis.SpecialFunctions.Trigonometric.Arctan
