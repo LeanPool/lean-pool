@@ -257,7 +257,7 @@ theorem block_boundary (q : ℝ) (i j k : Fin t) (U : Finset (Obs t))
       simp only [Finset.prod_insert (by simp : Obs.A i j ∉ ({Obs.B i k} : Finset (Obs t))),
         Finset.prod_singleton]
       rw [← triParity_momAB q]
-      exact Finset.sum_congr rfl (fun w _ => by simp only [Obs.party, partyBit]; try ring)
+      exact Finset.sum_congr rfl (fun w _ => by simp only [Obs.party, partyBit])
   · refine ⟨{(0, i), (2, k)}, fun s => ?_, ?_, ?_, Or.inr (pair_fam hxy), ?_⟩
     · rw [Finset.prod_insert (by simp), Finset.prod_singleton, walsh_pair (pair_ne hxy)]
       simp only [triObs, sgn_xor]
@@ -269,7 +269,7 @@ theorem block_boundary (q : ℝ) (i j k : Fin t) (U : Finset (Obs t))
       simp only [Finset.prod_insert (by simp : Obs.A i j ∉ ({Obs.C j k} : Finset (Obs t))),
         Finset.prod_singleton]
       rw [← triParity_momAC q]
-      exact Finset.sum_congr rfl (fun w _ => by simp only [Obs.party, partyBit]; try ring)
+      exact Finset.sum_congr rfl (fun w _ => by simp only [Obs.party, partyBit])
   · refine ⟨{(0, i), (1, j)}, fun s => ?_, ?_, ?_, Or.inr (pair_fam hxz), ?_⟩
     · rw [Finset.prod_insert (by simp), Finset.prod_singleton, walsh_pair (pair_ne hxz)]
       simp only [triObs, sgn_xor]
@@ -282,7 +282,7 @@ theorem block_boundary (q : ℝ) (i j k : Fin t) (U : Finset (Obs t))
       simp only [Finset.prod_insert (by simp : Obs.B i k ∉ ({Obs.C j k} : Finset (Obs t))),
         Finset.prod_singleton]
       rw [← triParity_momBC q]
-      exact Finset.sum_congr rfl (fun w _ => by simp only [Obs.party, partyBit]; try ring)
+      exact Finset.sum_congr rfl (fun w _ => by simp only [Obs.party, partyBit])
   · refine ⟨∅, fun s => ?_, by simp, by simp, Or.inl rfl, ?_⟩
     · rw [Finset.prod_insert (by simp), Finset.prod_insert (by simp), Finset.prod_singleton]
       simp only [triObs, sgn_xor, walsh, Finset.prod_empty]
