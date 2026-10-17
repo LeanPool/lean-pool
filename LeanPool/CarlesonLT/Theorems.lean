@@ -5,6 +5,8 @@ Authors: Joris Roos
 -/
 module
 
+/- Adapted for Lean Pool from roos-j/lean-lt-carleson. -/
+
 public import LeanPool.CarlesonLT.Defs
 public import Mathlib.Analysis.Distribution.SchwartzSpace.Basic
 import LeanPool.CarlesonLT.Auto.ClassicalCarleson

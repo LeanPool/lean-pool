@@ -6,6 +6,8 @@ Authors: Joris Roos
 
 module
 
+/- Adapted for Lean Pool from roos-j/lean-lt-carleson. -/
+
 public import LeanPool.CarlesonLT.Auto.ModelOperator
 public import LeanPool.CarlesonLT.Auto.AnisotropicCarleson
 public import LeanPool.CarlesonLT.Auto.ParametricIntegralContDiff
