@@ -13,8 +13,6 @@ Authors: Susanna Bertolini, Jaume de Dios Pont
 module
 
 public import LeanPool.PhaseRetrieval.DimdPoly.Internal.Hermite.Definitions
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Combinatorics.Matroid.Init
 
 /-! # MissingMathlib -/
 

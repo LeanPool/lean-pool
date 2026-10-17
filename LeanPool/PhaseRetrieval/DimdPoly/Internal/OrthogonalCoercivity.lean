@@ -12,10 +12,6 @@ import LeanPool.PhaseRetrieval.DimdPoly.Internal.Hermite1Dimd.ImportedAnalyticIn
 import LeanPool.PhaseRetrieval.DimdPoly.Internal.Hermitek.TrueLevelBasis
 import LeanPool.PhaseRetrieval.DimdPoly.Internal.ProductAnnulusLocalization
 import LeanPool.PhaseRetrieval.DimdPoly.Internal.TensorBasis
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Combinatorics.Matroid.Init
-import Mathlib.Data.Nat.Factorial.DoubleFactorial
 import Mathlib.MeasureTheory.Function.LpSeminorm.LpNorm
 import Mathlib.Tactic.NormNum.Parity
 

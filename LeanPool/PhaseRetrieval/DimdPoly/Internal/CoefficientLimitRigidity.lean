@@ -11,8 +11,6 @@ import LeanPool.PhaseRetrieval.DimdPoly.Internal.FiniteBaseAnnulusEstimate
 import LeanPool.PhaseRetrieval.DimdPoly.Internal.Hermitek.TrueLevelBasis
 import LeanPool.PhaseRetrieval.DimdPoly.Internal.ProductAnnulusLocalization
 import LeanPool.PhaseRetrieval.DimdPoly.Internal.TensorBasis
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Combinatorics.Matroid.Init
 import Mathlib.MeasureTheory.Function.LpSeminorm.LpNorm
 import Mathlib.Tactic.NormNum.Parity
 import Mathlib.Topology.MetricSpace.Sequences

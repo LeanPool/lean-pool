@@ -10,9 +10,7 @@ public import LeanPool.PhaseRetrieval.DimdPoly.Internal.ImportedAnalyticInputs
 public import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
 import LeanPool.PhaseRetrieval.DimdPoly.Internal.TensorBasis
 import Mathlib.Analysis.Calculus.Deriv.Star
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
 import Mathlib.Analysis.Fourier.LpSpace
-import Mathlib.Combinatorics.Matroid.Init
 import Mathlib.MeasureTheory.Integral.Gamma
 import Mathlib.Probability.Distributions.Gaussian.Real
 import Mathlib.RingTheory.Finiteness.Prod
@@ -87,7 +85,8 @@ private lemma star_sub_div_sqrtTwo (x ω : ℝ) :
         (Real.sqrt 2 : ℂ)) =
       ((x : ℂ) + (2 * Real.pi : ℂ) * Complex.I * (ω : ℂ)) /
         (Real.sqrt 2 : ℂ) := by
-  simp_all
+  simp_all only [star_div₀, star_sub, RCLike.star_def, Complex.conj_ofReal, star_mul', star_ofNat,
+    Complex.conj_I, mul_neg, neg_mul, sub_neg_eq_add]
 
 /-- `realHermiteGenerating`: real Hermite Generating. -/
 noncomputable def realHermiteGenerating (t : ℝ) (u : ℂ) : ℂ :=
@@ -101,7 +100,7 @@ theorem realHermiteGenerating_conj (t : ℝ) (u : ℂ) :
   rw [star_mul]
   have hpi : star (((Real.pi ^ (-(1 / 4 : ℝ)) : ℝ) : ℂ)) =
       (((Real.pi ^ (-(1 / 4 : ℝ)) : ℝ) : ℂ)) := by
-    simp_all
+    simp_all only [one_div, RCLike.star_def, Complex.conj_ofReal]
   rw [hpi, mul_comm]
   congr 1
   change (starRingEnd ℂ)
@@ -110,7 +109,8 @@ theorem realHermiteGenerating_conj (t : ℝ) (u : ℂ) :
   rw [← Complex.exp_conj]
   congr 1
   have htwo : (starRingEnd ℂ) 2 = (2 : ℂ) := Complex.conj_ofReal 2
-  simp_all
+  simp_all only [one_div, RCLike.star_def, Complex.conj_ofReal, map_sub, map_add, map_neg, map_div₀,
+    map_pow, map_mul]
 
 theorem realHermiteGenerating_hasDerivAt (t : ℝ) (u : ℂ) :
     HasDerivAt (realHermiteGenerating t)
@@ -669,6 +669,8 @@ theorem hasDerivAt_integral_shifted_generating_mul_modulated_right_closed
   let E : ℂ :=
     Complex.ofReal
       (Real.exp (-((x ^ 2 + (2 * Real.pi) ^ 2 * ω ^ 2) / 4)))
+  change HasDerivAt _
+    (((u - star z) * Complex.exp (u * w0 + z * u - star z * w0)) * E) w0
   have hfun :
       (fun w : ℂ => ∫ t : ℝ,
         realHermiteGenerating (t + x / 2) u *
@@ -676,21 +678,17 @@ theorem hasDerivAt_integral_shifted_generating_mul_modulated_right_closed
             Complex.exp (-(2 * Real.pi : ℂ) * Complex.I * (ω * t : ℂ))) =
       fun w : ℂ => Complex.exp (u * w + z * u - star z * w) * E := by
     funext w
-    simpa [z, E] using
-      realHermiteGenerating_ambiguity_integral_independent_kernel x ω u w
+    exact realHermiteGenerating_ambiguity_integral_independent_kernel x ω u w
   rw [hfun]
   have hu : HasDerivAt (fun w : ℂ => u * w) u w0 := by
-    simpa using HasDerivAt.const_mul u (hasDerivAt_id w0)
+    simpa only [id_eq, mul_one] using HasDerivAt.const_mul u (hasDerivAt_id w0)
   have hz : HasDerivAt (fun w : ℂ => star z * w) (star z) w0 := by
-    simpa using HasDerivAt.const_mul (star z) (hasDerivAt_id w0)
+    simpa only [id_eq, mul_one] using HasDerivAt.const_mul (star z) (hasDerivAt_id w0)
   have hlin :
       HasDerivAt (fun w : ℂ => u * w + z * u - star z * w) (u - star z) w0 := by
-    have h := (hu.add_const (z * u)).sub hz
-    have heq : (fun w : ℂ => u * w + z * u - star z * w) =
-        (fun x => u * x + z * u) - fun w => star z * w := by
-      funext w; simp [Pi.sub_apply]
-    rw [heq]; exact h
-  simpa [z, E, mul_assoc, mul_left_comm, mul_comm] using hlin.cexp.mul_const E
+    exact (hu.add_const (z * u)).sub hz
+  exact (hlin.cexp.mul_const E).congr_deriv
+    (congrArg (fun value : ℂ => value * E) (mul_comm _ _))
 
 theorem hasDerivAt_integral_shifted_generating_mul_modulated_left_closed
     (u0 w : ℂ) (x ω : ℝ) :
@@ -717,6 +715,8 @@ theorem hasDerivAt_integral_shifted_generating_mul_modulated_left_closed
   let E : ℂ :=
     Complex.ofReal
       (Real.exp (-((x ^ 2 + (2 * Real.pi) ^ 2 * ω ^ 2) / 4)))
+  change HasDerivAt _
+    (((w + z) * Complex.exp (u0 * w + z * u0 - star z * w)) * E) u0
   have hfun :
       (fun u : ℂ => ∫ t : ℝ,
         realHermiteGenerating (t + x / 2) u *
@@ -724,18 +724,17 @@ theorem hasDerivAt_integral_shifted_generating_mul_modulated_left_closed
             Complex.exp (-(2 * Real.pi : ℂ) * Complex.I * (ω * t : ℂ))) =
       fun u : ℂ => Complex.exp (u * w + z * u - star z * w) * E := by
     funext u
-    simpa [z, E] using
-      realHermiteGenerating_ambiguity_integral_independent_kernel x ω u w
+    exact realHermiteGenerating_ambiguity_integral_independent_kernel x ω u w
   rw [hfun]
   have hw : HasDerivAt (fun u : ℂ => u * w) w u0 := by
-    simpa using HasDerivAt.mul_const (hasDerivAt_id u0) w
+    simpa only [id_eq, one_mul] using HasDerivAt.mul_const (hasDerivAt_id u0) w
   have hz : HasDerivAt (fun u : ℂ => z * u) z u0 := by
-    simpa using HasDerivAt.const_mul z (hasDerivAt_id u0)
+    simpa only [id_eq, mul_one] using HasDerivAt.const_mul z (hasDerivAt_id u0)
   have hlin :
       HasDerivAt (fun u : ℂ => u * w + z * u - star z * w) (w + z) u0 := by
-    simpa [sub_eq_add_neg, add_assoc, add_left_comm, add_comm] using
-      (hw.add hz).sub_const (star z * w)
-  simpa [z, E, mul_assoc, mul_left_comm, mul_comm] using hlin.cexp.mul_const E
+    exact (hw.add hz).sub_const (star z * w)
+  exact (hlin.cexp.mul_const E).congr_deriv
+    (congrArg (fun value : ℂ => value * E) (mul_comm _ _))
 
 theorem iteratedDeriv_cexp_mul_right_at_zero (n : ℕ) (w : ℂ) :
     iteratedDeriv n (fun u : ℂ => Complex.exp (u * w)) 0 = w ^ n := by
@@ -881,7 +880,8 @@ private theorem cexp_ambiguity_kernel_sum_eq_complexHermite
       (-1 : ℂ) ^ k * complexHermite n k z := by
   rw [complexHermite, Finset.mul_sum]
   have hsubset : Finset.range (min n k + 1) ⊆ Finset.range (k + 1) := by
-    simp_all
+    simp_all only [Finset.range_subset_range, add_le_add_iff_right, min_le_iff, Std.le_refl,
+      or_true]
   rw [← Finset.sum_subset hsubset]
   · apply Finset.sum_congr rfl
     intro i hi
@@ -895,7 +895,10 @@ private theorem cexp_ambiguity_kernel_sum_eq_complexHermite
     rw [← neg_one_pow_mul_of_le k i hi_le_k]
     norm_num [Nat.cast_mul]
     ring
-  · simp_all
+  · simp_all only [Finset.range_subset_range, add_le_add_iff_right, min_le_iff, Std.le_refl,
+      or_true, Finset.mem_range, Order.lt_add_one_iff, le_inf_iff, and_true, not_le,
+      RCLike.star_def, mul_eq_zero, Nat.cast_eq_zero, Nat.descFactorial_eq_zero_iff_lt,
+      pow_eq_zero_iff', ne_eq, true_or, neg_eq_zero, map_eq_zero, implies_true]
 
 private theorem iteratedDeriv_cexp_ambiguity_kernel_diag_at_zero
     (k : ℕ) (z : ℂ) :
@@ -923,7 +926,7 @@ private theorem inv_factorial_mul_complexHermite_self_eq_phi1D
   have hsqrt :
       Real.sqrt ((Nat.factorial k : ℝ) * (Nat.factorial k : ℝ)) =
         (Nat.factorial k : ℝ) := by
-    simp_all
+    simp_all only [Nat.cast_nonneg, Real.sqrt_mul_self]
   rw [phi1D, hsqrt]
   norm_num
 
@@ -944,7 +947,11 @@ theorem realHermiteGenerating_deriv_zero (t : ℝ) :
           funext u
           ring]
         rw [deriv_fun_add]
-        · simp_all
+        · simp_all only [deriv_const_mul_id', differentiableAt_const, deriv_const_add',
+            differentiableAt_fun_id, DifferentiableAt.fun_pow, deriv_fun_mul, deriv_fun_pow,
+            Nat.cast_ofNat, Nat.add_one_sub_one, pow_one, mul_zero, deriv_id'', mul_one, zero_mul,
+            ne_eq, OfNat.ofNat_ne_zero, not_false_eq_true, zero_pow, deriv_div_const, deriv_const',
+            zero_div, add_zero]
         · fun_prop
         · fun_prop]
       ring_nf
@@ -972,7 +979,7 @@ theorem integral_real_sq_exp_neg_sq :
     (∫ x : ℝ, x ^ (2 : ℕ) * Real.exp (-(x ^ (2 : ℕ)))) = Real.sqrt Real.pi / 2 := by
   have h_abs : (fun x : ℝ => x ^ (2 : ℕ) * Real.exp (-(x ^ (2 : ℕ)))) =
       fun x : ℝ => (fun y : ℝ => y ^ (2 : ℕ) * Real.exp (-(y ^ (2 : ℕ)))) |x| := by
-    simp_all
+    simp_all only [sq_abs]
   rw [h_abs]
   rw [show (∫ x : ℝ, (fun y : ℝ => y ^ (2 : ℕ) * Real.exp (-(y ^ (2 : ℕ)))) |x|) =
       2 * ∫ x in Set.Ioi (0 : ℝ),
@@ -983,11 +990,13 @@ theorem integral_real_sq_exp_neg_sq :
   rw [show (∫ x in Set.Ioi (0 : ℝ),
       (fun y : ℝ => y ^ (2 : ℕ) * Real.exp (-(y ^ (2 : ℕ)))) x) =
       ∫ x in Set.Ioi (0 : ℝ), x ^ (2 : ℝ) * Real.exp (-1 * x ^ (2 : ℝ)) by
-    simp_all]
+    simp_all only [sq_abs, Real.rpow_ofNat, neg_mul, one_mul]]
   rw [integral_rpow_mul_exp_neg_mul_rpow]
   · rw [show ((2 : ℝ) + 1) / 2 = ((1 : ℕ) : ℝ) + 1 / 2 by norm_num]
     rw [Real.Gamma_nat_add_half]
-    simp_all
+    simp_all only [sq_abs, neg_add_rev, Real.one_rpow, one_div, one_mul, mul_one,
+      Nat.add_one_sub_one, Nat.doubleFactorial.eq_2, Nat.cast_one, pow_one, ne_eq,
+      OfNat.ofNat_ne_zero, not_false_eq_true, mul_inv_cancel_left₀]
   · norm_num
   · norm_num
   · norm_num
@@ -999,7 +1008,7 @@ theorem integral_real_mul_exp_neg_sq :
     (μ := (volume : MeasureTheory.Measure ℝ))
   rw [show (fun x : ℝ => (-x) * Real.exp (-((-x) ^ (2 : ℕ)))) =
       fun x : ℝ => -(x * Real.exp (-(x ^ (2 : ℕ)))) by
-    simp_all]
+    simp_all only [even_two, Even.neg_pow, neg_mul]]
     at h
   rw [MeasureTheory.integral_neg] at h
   linarith
@@ -1042,7 +1051,7 @@ theorem realHermite1D_inner_one_one :
   rw [show (∫ t : ℝ, (t : ℂ) ^ (2 : ℕ) *
       ((Real.exp (-(t ^ (2 : ℕ))) : ℝ) : ℂ)) =
       ∫ t : ℝ, ((t ^ (2 : ℕ) * Real.exp (-(t ^ (2 : ℕ))) : ℝ) : ℂ) by
-    simp_all]
+    simp_all only [Complex.ofReal_exp, Complex.ofReal_neg, Complex.ofReal_pow, Complex.ofReal_mul]]
   rw [integral_complex_ofReal, integral_real_sq_exp_neg_sq]
   rw [show (((2 : ℝ) : ℂ) * ((Real.pi ^ (-(1 / 2 : ℝ)) : ℝ) : ℂ)) *
       ((Real.sqrt Real.pi / 2 : ℝ) : ℂ) = 1 by
@@ -1137,7 +1146,7 @@ theorem realHermite1D_zero_memLp :
   · have hbase : Integrable (fun t : ℝ => Real.exp (-1 * t ^ (2 : ℝ))) := by
       simpa using integrable_exp_neg_mul_sq (b := (1 : ℝ)) zero_lt_one
     have hbase_nat : Integrable (fun t : ℝ => Real.exp (-(t ^ (2 : ℕ)))) := by
-      simp_all
+      simp_all only [one_div, Real.rpow_ofNat, neg_mul, one_mul]
     refine (hbase_nat.const_mul
       (‖((Real.pi ^ (-(1 / 4 : ℝ)) : ℝ) : ℂ)‖ ^ (2 : ℕ))).congr ?_
     filter_upwards with t
@@ -1155,7 +1164,8 @@ theorem realHermite1D_one_memLp :
     funext t
     rw [realHermite1D_one]
     unfold realHermiteGenerating
-    simp_all
+    simp_all only [one_div, mul_zero, add_zero, ne_eq, OfNat.ofNat_ne_zero, not_false_eq_true,
+      zero_pow, zero_div, sub_zero]
   rw [hfun]
   refine (MeasureTheory.memLp_two_iff_integrable_sq_norm ?_).2 ?_
   · exact Continuous.aestronglyMeasurable (by fun_prop)
@@ -1165,7 +1175,7 @@ theorem realHermite1D_one_memLp :
           Integrable (fun t : ℝ => t ^ (2 : ℝ) * Real.exp (-1 * t ^ (2 : ℝ))) := by
         simpa using integrable_rpow_mul_exp_neg_mul_sq
           (b := (1 : ℝ)) zero_lt_one (by norm_num : (-1 : ℝ) < 2)
-      simp_all
+      simp_all only [one_div, Real.rpow_ofNat, neg_mul, one_mul]
     refine (hbase.const_mul
       (‖(Real.sqrt 2 : ℂ) *
           ((Real.pi ^ (-(1 / 4 : ℝ)) : ℝ) : ℂ)‖ ^ (2 : ℕ))).congr ?_
@@ -1174,7 +1184,7 @@ theorem realHermite1D_one_memLp :
     rw [neg_ofReal_sq_div_two_re t]
     rw [real_exp_neg_sq_eq_sq t]
     rw [show t ^ (2 : ℕ) = ‖(t : ℂ)‖ ^ (2 : ℕ) by
-      simp_all]
+      simp_all only [one_div, Complex.norm_real, Real.norm_eq_abs, sq_abs]]
     ring
 
 private lemma integrable_pow_mul_exp_neg_sq
@@ -1182,7 +1192,7 @@ private lemma integrable_pow_mul_exp_neg_sq
     Integrable (fun r : ℝ => r ^ n * Real.exp (-r ^ 2)) volume := by
   have hs : (-1 : ℝ) < (n : ℝ) := by exact_mod_cast (show -1 < (n : ℤ) by omega)
   have h := integrable_rpow_mul_exp_neg_mul_sq one_pos hs
-  simp_all
+  simp_all only [Real.rpow_natCast, neg_mul, one_mul]
 
 theorem complex_monomial_gaussian_memLp
     (k : ℕ) :
@@ -1330,7 +1340,7 @@ theorem complex_monomial_gaussian_product_integral_of_eq_two_mul
       (((((2 * r - 1 : ℕ)‼ : ℕ) : ℝ) * Real.sqrt Real.pi /
         (2 ^ r : ℝ)) : ℂ) := by
   have heven : Even (k + l) := by
-    simp_all
+    simp_all only [even_two, Even.mul_right]
   rw [complex_monomial_gaussian_product_integral_of_even heven]
   rw [show ((((k + l : ℕ) : ℝ) + 1) / 2) = (r : ℝ) + 1 / 2 by
     rw [hkl]
@@ -1425,7 +1435,7 @@ theorem complex_monomial_gaussian_finite_bilinear_integral_eq_even_moments
         (a k * b l) *
           (Real.Gamma ((((k + l : ℕ) : ℝ) + 1) / 2) : ℂ) := by
   rw [complex_monomial_gaussian_finite_bilinear_integral_eq_ite]
-  simp_all
+  simp_all only [↓reduceIte, Nat.cast_add]
 
 private theorem iteratedDeriv_cexp_neg_sq_div_two_zero_of_odd
     {n : ℕ} (hodd : Odd n) :
@@ -1482,11 +1492,17 @@ private theorem iteratedDeriv_cexp_neg_sq_div_two_zero_of_two_mul
           have hb_ne_one : b ≠ 1 := by omega
           have hder : iteratedDeriv b (fun u : ℂ => -u) 0 = 0 := by
             rw [show (fun u : ℂ => -u) = fun u : ℂ => (-1 : ℂ) * u by
-              simp_all]
+              simp_all only [Finset.mem_range, Order.lt_add_one_iff, ne_eq, not_false_eq_true,
+                neg_mul, one_mul]]
             rw [iteratedDeriv_const_mul_field]
             simp [iteratedDeriv_fun_id_zero, hb_ne_one]
-          simp_all
-        · simp_all
+          simp_all only [Finset.mem_range, Order.lt_add_one_iff, ne_eq, not_false_eq_true, mul_zero,
+            zero_mul]
+        · simp_all only [Finset.mem_range, lt_add_iff_pos_left, Order.lt_add_one_iff, zero_le,
+            not_true_eq_false, Nat.choose_one_right, Nat.cast_add, Nat.cast_mul, Nat.cast_ofNat,
+            Nat.cast_one, iteratedDeriv_one, deriv_neg'', mul_neg, mul_one, neg_add_rev,
+            add_tsub_cancel_right, mul_eq_zero, pow_eq_zero_iff', neg_eq_zero, one_ne_zero, ne_eq,
+            true_and, Nat.cast_eq_zero, IsEmpty.forall_iff]
       · fun_prop
       · fun_prop
 
@@ -1539,7 +1555,7 @@ theorem realHermiteGenerating_iteratedDeriv_zero_expansion
             b ^ k *
               iteratedDeriv (n - k) q 0 := by
       rw [hfun, iteratedDeriv_const_mul_field, iteratedDeriv_fun_mul]
-      · simp_all
+      · simp_all only [iteratedDeriv_cexp_const_mul, mul_zero, Complex.exp_zero, mul_one]
       · fun_prop
       · fun_prop
     _ = ∑ k ∈ Finset.range (n + 1),
@@ -1649,7 +1665,10 @@ private lemma standardGaussianMoment_add_two (r : ℕ) :
       refine ⟨s + 1, ?_⟩
       rw [hs]
       ring
-    simp_all
+    simp_all only [Nat.not_even_bit1, not_false_eq_true, Nat.add_one_sub_one,
+      Nat.doubleFactorial.eq_3, Nat.cast_mul, Nat.cast_add, Nat.cast_ofNat, Nat.cast_one,
+      ↓reduceIte, mul_zero, ite_eq_right_iff, mul_eq_zero, Nat.cast_eq_zero, isEmpty_Prop,
+      Nat.not_even_iff_odd, IsEmpty.forall_iff]
 
 private lemma standardGaussianMoment_succ_eq_mul_pred (k : ℕ) :
     standardGaussianMoment (k + 1) =
@@ -1727,7 +1746,7 @@ private lemma gaussianMomentFunctional_add (p q : Polynomial ℤ) :
       gaussianMomentFunctional p + gaussianMomentFunctional q := by
   unfold gaussianMomentFunctional
   rw [Polynomial.sum_add_index]
-  · simp_all
+  · simp_all only [Int.cast_zero, zero_mul, implies_true]
   · intro i a b
     norm_num
     ring
@@ -1736,7 +1755,7 @@ private lemma gaussianMomentFunctional_monomial (k : ℕ) (a : ℤ) :
     gaussianMomentFunctional (Polynomial.monomial k a) =
       (a : ℂ) * standardGaussianMoment k := by
   unfold gaussianMomentFunctional
-  simp_all
+  simp_all only [Int.cast_zero, zero_mul, Polynomial.sum_monomial_index]
 
 private lemma gaussianMomentFunctional_neg (p : Polynomial ℤ) :
     gaussianMomentFunctional (-p) = -gaussianMomentFunctional p := by
@@ -1747,7 +1766,7 @@ private lemma gaussianMomentFunctional_neg (p : Polynomial ℤ) :
   | monomial k a =>
       rw [← Polynomial.monomial_neg, gaussianMomentFunctional_monomial,
         gaussianMomentFunctional_monomial]
-      simp_all
+      simp_all only [Int.cast_neg, neg_mul]
 
 private lemma gaussianMomentFunctional_sub (p q : Polynomial ℤ) :
     gaussianMomentFunctional (p - q) =
@@ -1925,7 +1944,8 @@ private theorem hermiteStandardInner_eq_factorial (n m : ℕ) :
           by_cases h : n = m
           · subst m
             simp [Nat.factorial_succ]
-          · simp_all
+          · simp_all only [Nat.cast_add, Nat.cast_one, ↓reduceIte, mul_zero,
+              Nat.add_right_cancel_iff]
 
 private lemma hermite_support_subset_range_succ (n : ℕ) :
     (Polynomial.hermite n).support ⊆ Finset.range (n + 1) := by
@@ -2067,7 +2087,9 @@ theorem realHermiteGenerating_iteratedDeriv_inner_eq_zero_of_odd_add
     · have hnk_even : Even (n + k) := Nat.not_odd_iff_even.mp hnk
       have hml_even : Even (m + l) := Nat.not_odd_iff_even.mp hml
       have hkl_odd : Odd (k + l) := by grind [Nat.odd_add]
-      simp_all
+      simp_all only [Finset.mem_range, Order.lt_add_one_iff, Nat.not_odd_iff_even, Nat.cast_add,
+        mul_ite, mul_zero, ite_eq_right_iff, mul_eq_zero, Complex.ofReal_eq_zero, isEmpty_Prop,
+        Nat.not_even_iff_odd, IsEmpty.forall_iff]
 
 theorem realHermiteGenerating_inner_finite_sum_eq_factorial
     (n m : ℕ) :
@@ -2216,7 +2238,8 @@ private lemma star_deriv_of_conj_symm {g : ℂ → ℂ}
   have hderiv := (hgdiff z).hasDerivAt.conj_conj
   have hfun : (conj ∘ g ∘ conj) = g := by
     funext x
-    simp_all
+    simp_all only [RCLike.star_def, hasDerivAt_conj_conj_iff, RingHomCompTriple.comp_apply,
+      RingHom.id_apply, hasDerivAt_deriv_iff, Function.comp_apply]
   have hderiv' : HasDerivAt g (star (deriv g z)) (star z) := by simpa [hfun] using hderiv
   exact hderiv'.deriv.symm
 
@@ -2228,7 +2251,7 @@ private lemma star_iteratedDeriv_of_conj_symm {f : ℂ → ℂ}
   intro n
   induction n with
   | zero =>
-      simp_all
+      simp_all only [RCLike.star_def, iteratedDeriv_zero, implies_true]
   | succ n ih =>
       intro z
       simp only [iteratedDeriv_succ]
@@ -2305,7 +2328,7 @@ private theorem realHermiteGenerating_stft_integral_eq_phase_mul_halfCentered
   have hphase : phase * phaseInv = 1 := by
     dsimp [phase, phaseInv]
     rw [← Complex.exp_add]
-    simp_all
+    simp_all only [one_div, neg_mul, neg_add_cancel, Complex.exp_zero]
   change (∫ t : ℝ, G t) = phase * (∫ t : ℝ, F t)
   rw [hF, ← mul_assoc, hphase, one_mul]
 
@@ -2450,8 +2473,8 @@ private theorem realHermiteGenerating_stft_interchange_of_halfCentered_interchan
           fun u : ℂ =>
             phase * (Complex.exp (u * v + z * u - star z * v) * E) by
         funext u
-        simpa [phase, z, E, inner, mul_assoc, mul_left_comm, mul_comm]
-          using realHermiteGenerating_stft_integral_kernel x ω u v]
+        simpa only [Real.inner_apply, Complex.ofReal_mul] using
+          (realHermiteGenerating_stft_integral_kernel x ω u v).trans (mul_assoc _ _ _)]
       rw [iteratedDeriv_const_mul_field, iteratedDeriv_mul_const_field]
     rw [hfun,
       iteratedDeriv_const_mul_field,
@@ -2524,7 +2547,9 @@ private theorem realHermite1D_stft_integral_formula_of_interchange
         ((Real.sqrt ((Nat.factorial n : ℝ) * (Nat.factorial k : ℝ))) : ℂ) =
           sn * sk := by
       rw [← Complex.ofReal_mul]
-      simp_all
+      simp_all only [neg_mul, RCLike.inner_apply, conj_trivial, Complex.ofReal_mul, RCLike.star_def,
+        ne_eq, Nat.cast_eq_zero, Nat.cast_pos, Complex.ofReal_eq_zero, Nat.cast_nonneg,
+        Real.sqrt_eq_zero, not_false_eq_true, Real.sqrt_mul]
     have hscale_scalar : cn * ck = (sn * sk)⁻¹ := by
       change (sn / fn) * (sk / fk) = (sn * sk)⁻¹
       field_simp [hfn_ne, hfk_ne, hsn_ne, hsk_ne]
@@ -2584,8 +2609,8 @@ private theorem realHermite1D_stft_integral_formula_of_interchange
           fun u : ℂ =>
             phase * (Complex.exp (u * v + z * u - star z * v) * E) by
         funext u
-        simpa [phase, z, E, inner, mul_assoc, mul_left_comm, mul_comm]
-          using realHermiteGenerating_stft_integral_kernel x ω u v]
+        simpa only [Real.inner_apply, Complex.ofReal_mul] using
+          (realHermiteGenerating_stft_integral_kernel x ω u v).trans (mul_assoc _ _ _)]
       rw [iteratedDeriv_const_mul_field, iteratedDeriv_mul_const_field]
     rw [hfun,
       iteratedDeriv_const_mul_field,
@@ -2778,7 +2803,7 @@ theorem realHermiteTensorL2_inner_eq_integral_of_memLp
     realHermiteTensorL2_eq_toLp_of_memLp beta hβ, MeasureTheory.L2.inner_def]
   apply MeasureTheory.integral_congr_ae
   filter_upwards [hα.coeFn_toLp, hβ.coeFn_toLp] with x hαx hβx
-  simp_all
+  simp_all only [RCLike.inner_apply, RCLike.star_def]
 
 theorem realHermiteTensorL2_orthonormal_of_memLp_integral
     {d : Nat}
@@ -2846,7 +2871,7 @@ theorem realHermiteTensorRep_memLp_of_realHermite1D_memLp
           (s := Finset.univ)
           (f := fun q : Fin d => ‖realHermite1D (alpha q) (y q)‖)
           (by
-            simp_all)
+            simp_all only [Real.rpow_ofNat, Finset.mem_univ, norm_nonneg, imp_self, implies_true])
           (2 : ℝ)))
   have hg_aesm_pi : AEStronglyMeasurable g μpi := by
     have hcoord_aesm :
@@ -2873,7 +2898,7 @@ theorem realHermiteTensorRep_memLp_of_realHermite1D_memLp
         (f := fun q (y : Fin d -> ℝ) =>
           realHermite1D (alpha q) (y q))
         (by
-          simp_all)
+          simp_all only [Real.rpow_ofNat, Finset.mem_univ, imp_self, implies_true])
   have hg_pi : MemLp g 2 μpi := by
     rw [← integrable_norm_rpow_iff hg_aesm_pi
       (by norm_num : (2 : ℝ≥0∞) ≠ 0) (by norm_num : (2 : ℝ≥0∞) ≠ ∞)]
@@ -2929,13 +2954,13 @@ theorem realHermiteTensorRep_inner_of_realHermite1D_inner
       rw [hprod]
       simp_rw [hinner1]
       by_cases h : alpha = beta
-      · simp_all
+      · simp_all only [RCLike.star_def, ↓reduceIte, Finset.prod_const_one]
       · rw [ite_eq_right h]
         have hq : ∃ q, alpha q ≠ beta q := by
           by_contra hnone
           apply h
           funext q
-          simp_all
+          simp_all only [RCLike.star_def, ne_eq, not_exists, Decidable.not_not]
         rcases hq with ⟨q, hq⟩
         have hfactor : (if alpha q = beta q then (1 : ℂ) else 0) = 0 := by simp [hq]
         rw [show (∏ q : Fin d, if alpha q = beta q then (1 : ℂ) else 0) = 0 from by
@@ -3027,7 +3052,7 @@ theorem bKappa_coeff_recovery_of_realHermite_orthonormal
     have hba :
         inner ℂ (realHermiteTensorL2 beta) (realHermiteTensorL2 alpha) = 0 := by
       simpa [Ne.symm halpha] using orthonormal_iff_ite.mp horth beta alpha
-    simp_all
+    simp_all only [ne_eq, map_smul, coe_innerSL_apply, smul_eq_mul, mul_zero]
 
 private theorem skappa_ext_coeff_from_realHermite
     {d : Nat} {kappa : MultiIndex d} {U V : Skappa d kappa}
@@ -3048,7 +3073,7 @@ theorem bKappa_injective_of_realHermite_coeff_recovery
     Function.Injective (bKappa kappa) := by
   intro U V hUV
   apply skappa_ext_coeff_from_realHermite
-  simp_all
+  simp_all only [implies_true]
 
 theorem bKappa_injective_of_realHermite_orthonormal
     {d : Nat} (kappa : MultiIndex d)
@@ -3240,7 +3265,10 @@ private lemma complexHermite_self_zero (k : Nat) :
       omega
     have hpos : 0 < k - j := Nat.sub_pos_of_lt hjlt
     simp [hpos.ne']
-  · simp_all
+  · simp_all only [Finset.mem_range, lt_add_iff_pos_right, Order.lt_one_iff, not_true_eq_false,
+      Nat.choose_self, Nat.cast_one, mul_one, tsub_self, pow_zero, star_zero, mul_eq_zero,
+      pow_eq_zero_iff', neg_eq_zero, one_ne_zero, ne_eq, true_and, Nat.cast_eq_zero,
+      IsEmpty.forall_iff]
 
 private lemma phi1D_self_zero_ne (k : Nat) : phi1D k k 0 ≠ 0 := by
   rw [phi1D, complexHermite_self_zero]
@@ -3281,8 +3309,10 @@ private theorem stftModelPhase_norm {d : Nat} (kappa : MultiIndex d)
       ‖Complex.exp (-(Real.pi : ℂ) * Complex.I *
           ((inner ℝ ξ.1 ξ.2 : ℝ) : ℂ))‖ = 1 := by
     rw [Complex.norm_exp]
-    simp_all
-  simp_all
+    simp_all only [norm_pow, norm_neg, norm_one, one_pow, neg_mul, Complex.neg_re, Complex.mul_re,
+      Complex.ofReal_re, Complex.I_re, mul_zero, Complex.ofReal_im, Complex.I_im, mul_one, sub_self,
+      zero_mul, Complex.mul_im, add_zero, neg_zero, Real.exp_zero]
+  simp_all only [norm_pow, norm_neg, norm_one, one_pow, neg_mul, mul_one]
 
 private theorem stftRep_varphiKappa_realHermiteTensorL2_eq_tensorRep_integral
     {d : Nat} (kappa alpha : MultiIndex d) (ξ : PhaseSpace d) :
@@ -3363,7 +3393,8 @@ private theorem tensorRep_stft_integral_eq_prod_oneD
                         ((inner ℝ (ξ.2 q) (WithLp.ofLp t q) : ℝ) : ℂ) by
                 simp only [PiLp.inner_apply, Complex.ofReal_sum, Finset.mul_sum]]
               rw [Complex.exp_sum]
-            simp_all
+            simp_all only [neg_mul, RCLike.inner_apply, conj_trivial, Complex.ofReal_mul,
+              PiLp.sub_apply, RCLike.star_def]
       _ = ∫ y : Fin d → ℝ, ∏ q : Fin d, f q (y q) := by
             simpa [MeasurableEquiv.coe_toLp_symm] using
               (EuclideanSpace.volume_preserving_symm_measurableEquiv_toLp (Fin d)).integral_comp'
@@ -3423,10 +3454,11 @@ private theorem prod_oneDRealHermiteSTFT_closed_eq_model
     calc
       (∏ q : Fin d, Complex.ofReal (Real.exp (-(coordQ q)))) =
           ∏ q : Fin d, Complex.exp (((-(coordQ q) : ℝ) : ℂ)) := by
-            simp_all
+            simp_all only [neg_mul, Complex.ofReal_exp, Complex.ofReal_neg]
       _ = Complex.exp (∑ q : Fin d, (((-(coordQ q) : ℝ) : ℂ))) := by rw [Complex.exp_sum]
       _ = Complex.ofReal (Real.exp (-(QKappa ξ))) := by
-            simp_all
+            simp_all only [neg_mul, Complex.ofReal_neg, Finset.sum_neg_distrib, Complex.ofReal_exp,
+              Complex.ofReal_sum]
   calc
     (∏ q : Fin d,
       (-1 : ℂ) ^ kappa q *
@@ -3469,7 +3501,8 @@ private theorem oneDWindowAmbiguityFactor_eq_scaled_iteratedDeriv_integral
       ((Real.sqrt (Nat.factorial k : ℝ) : ℂ) ^ (2 : ℕ)) =
         (Nat.factorial k : ℂ) := by
     rw [← Complex.ofReal_pow]
-    simp_all
+    simp_all only [RCLike.star_def, ne_eq, Nat.cast_eq_zero, Nat.cast_nonneg, Real.sq_sqrt,
+      Complex.ofReal_natCast]
   have hc_sq : c * c = (Nat.factorial k : ℂ)⁻¹ := by
     dsimp [c]
     field_simp [hfac_ne]
@@ -4183,7 +4216,8 @@ private theorem scaled_moment_sum_eq_shifted_mgf_unscaled_sum
         ((Real.pi ^ (-(1 / 4 : ℝ)) : ℝ) : ℂ)) =
         ((Real.pi ^ (-(1 / 2 : ℝ)) : ℝ) : ℂ) :=
       by simpa [one_div] using realHermiteGenerating_pi_quarter_mul_self
-    simp_all
+    simp_all only [one_div, ne_eq, Complex.ofReal_eq_zero, Finset.mem_range, Order.lt_add_one_iff,
+      not_false_eq_true, inv_mul_cancel₀]
   calc
     ((Real.pi ^ (-(1 / 2 : ℝ)) : ℝ) : ℂ)⁻¹ *
         (((Real.pi ^ (-(1 / 4 : ℝ)) : ℝ) : ℂ) * A *
@@ -4194,7 +4228,8 @@ private theorem scaled_moment_sum_eq_shifted_mgf_unscaled_sum
             ((Real.pi ^ (-(1 / 4 : ℝ)) : ℝ) : ℂ))) *
         (Complex.exp (-((x : ℂ) ^ 2 / 4)) * (A * B * S)) := by ring
     _ = Complex.exp (-((x : ℂ) ^ 2 / 4)) * (A * B * S) := by
-        simp_all
+        simp_all only [one_div, ne_eq, Complex.ofReal_eq_zero, Finset.mem_range,
+          Order.lt_add_one_iff, one_mul]
     _ = Complex.exp (-((x : ℂ) ^ 2 / 4)) *
         ((Nat.choose n k : ℂ) * (Real.sqrt 2 : ℂ) ^ k *
           iteratedDeriv (n - k) (fun u : ℂ => Complex.exp (-(u ^ 2) / 2)) 0 *
@@ -4257,7 +4292,8 @@ private theorem shifted_mgf_coefficient_eq_kernel_coefficient
         fun w : ℂ =>
           iteratedDeriv n
             (fun u : ℂ => Complex.exp (u * w + z * u - star z * w)) 0 * E := by
-    simp_all
+    simp_all only [neg_mul, iteratedDeriv_const_mul_field, RCLike.star_def,
+      iteratedDeriv_mul_const_field]
   rw [hinner, iteratedDeriv_mul_const_field, iteratedDeriv_cexp_ambiguity_kernel_at_zero]
 
 private theorem oneDWindowAmbiguityMonomialKernel_eq_shifted_monomial
@@ -4425,7 +4461,7 @@ private theorem oneDWindowAmbiguityMonomialKernel_normalized_integrable
       Integrable g
         ((volume : Measure ℝ).withDensity
           (ProbabilityTheory.gaussianPDF 0 (1 / 2 : NNReal))) := by
-    simp_all
+    simp_all only [one_div]
   have hpdf_meas :
       Measurable (ProbabilityTheory.gaussianPDF 0 (1 / 2 : NNReal)) :=
     ProbabilityTheory.measurable_gaussianPDF 0 (1 / 2 : NNReal)
@@ -4780,7 +4816,7 @@ private theorem iteratedDeriv_generating_cross_ambiguity_moment_sum_eq_kernel_co
   rw [← shifted_mgf_coefficient_eq_kernel_coefficient n m x ω,
     scaled_moment_sum_eq_shifted_mgf_unscaled_sum,
     ← shifted_mgf_mixed_derivative_expansion_unscaled]
-  simp_all
+  simp_all only [neg_mul, iteratedDeriv_const_mul_field]
 
 private theorem iteratedDeriv_generating_cross_ambiguity_integral_eq_kernel_coefficient
     (n m : ℕ) (x ω : ℝ) :
@@ -4839,7 +4875,9 @@ private theorem realHermiteTensor_stft_integral_formula_of_oneD
               (Complex.ofReal
                 (Real.exp (-(((ξ.1 q) ^ 2 + (2 * Real.pi) ^ 2 * (ξ.2 q) ^ 2) / 4))) *
                 phi1D (kappa q) (alpha q) (TKappa ξ q)) by
-    simp_all]
+    simp_all only [RCLike.star_def, neg_mul, RCLike.inner_apply, conj_trivial, Complex.ofReal_mul,
+      Complex.ofReal_exp, Complex.ofReal_neg, Complex.ofReal_div, Complex.ofReal_add,
+      Complex.ofReal_pow, Complex.ofReal_ofNat]]
   exact prod_oneDRealHermiteSTFT_closed_eq_model kappa alpha ξ
 
 private theorem realHermiteTensor_stft_integral_formula
@@ -4920,7 +4958,7 @@ private theorem stft_model_global_phase_of_basis_formula
           (stftModelPhase kappa ξ *
             (((WKappa ξ : ℝ) : ℂ) *
               Phi kappa alpha (TKappa ξ))) := by
-          simp_all
+          simp_all only [Prod.forall, map_smul, smul_eq_mul, Subtype.forall, Prod.mk.eta]
     _ = ∑' alpha : Idx d,
         (stftModelPhase kappa ξ * ((WKappa ξ : ℝ) : ℂ)) *
           (coeffSkappa U alpha * Phi kappa alpha (TKappa ξ)) := by
@@ -4956,7 +4994,8 @@ private theorem stft_model_modulus_of_global_phase_formula
       WKappa ξ * ‖toFun kappa U (TKappa ξ)‖ := by
   rw [hmodel U ξ]
   have hW_nonneg : 0 ≤ WKappa ξ := le_of_lt (WKappa_pos ξ)
-  simp_all
+  simp_all only [Prod.forall, Complex.norm_mul, Complex.norm_real, Real.norm_eq_abs, one_mul,
+    mul_eq_mul_right_iff, abs_eq_self, norm_eq_zero, true_or]
 
 theorem stft_model_modulus
     {d : Nat} (hd : 0 < d) (kappa : MultiIndex d)
@@ -5129,7 +5168,8 @@ private theorem tensorRep_windowAmbiguity_integral_eq_prod_oneD
                         ((inner ℝ (ξ.2 q) (WithLp.ofLp t q) : ℝ) : ℂ) by
                 simp only [PiLp.inner_apply, Complex.ofReal_sum, Finset.mul_sum]]
               rw [Complex.exp_sum]
-            simp_all
+            simp_all only [neg_mul, RCLike.inner_apply, conj_trivial, Complex.ofReal_mul, one_div,
+              PiLp.add_apply, PiLp.smul_apply, smul_eq_mul, PiLp.sub_apply, RCLike.star_def]
       _ = ∫ y : Fin d → ℝ, ∏ q : Fin d, f q (y q) := by
             simpa [MeasurableEquiv.coe_toLp_symm] using
               (EuclideanSpace.volume_preserving_symm_measurableEquiv_toLp (Fin d)).integral_comp'
@@ -5168,10 +5208,11 @@ private theorem prod_oneDWindowAmbiguity_closed_eq_PKappa_exp
     calc
       (∏ q : Fin d, Complex.ofReal (Real.exp (-(coordQ q)))) =
           ∏ q : Fin d, Complex.exp (((-(coordQ q) : ℝ) : ℂ)) := by
-            simp_all
+            simp_all only [Complex.ofReal_exp, Complex.ofReal_neg]
       _ = Complex.exp (∑ q : Fin d, (((-(coordQ q) : ℝ) : ℂ))) := by rw [Complex.exp_sum]
       _ = Complex.ofReal (Real.exp (-(QKappa ξ))) := by
-            simp_all
+            simp_all only [Complex.ofReal_neg, Finset.sum_neg_distrib, Complex.ofReal_exp,
+              Complex.ofReal_sum]
   calc
     (∏ q : Fin d,
       ((-1 : ℂ) ^ kappa q * phi1D (kappa q) (kappa q) (TKappa ξ q) *
@@ -5208,7 +5249,8 @@ private theorem tensorRep_windowAmbiguity_integral_eq_PKappa_exp_of_oneD
             Complex.ofReal
               (Real.exp
                 (-(((ξ.1 q) ^ 2 + (2 * Real.pi) ^ 2 * (ξ.2 q) ^ 2) / 4)))) by
-    simp_all]
+    simp_all only [Complex.ofReal_exp, Complex.ofReal_neg, Complex.ofReal_div, Complex.ofReal_add,
+      Complex.ofReal_pow, Complex.ofReal_mul, Complex.ofReal_ofNat]]
   exact prod_oneDWindowAmbiguity_closed_eq_PKappa_exp kappa ξ
 
 theorem windowAmbiguity_factorization
@@ -5261,7 +5303,8 @@ private lemma dense_ne_zero_of_phaseSpace_polynomial
             have hC : (Polynomial.evalRingHom (t : ℂ)).comp Polynomial.C = RingHom.id ℂ := by
               ext z
               simp
-            simp_all
+            simp_all only [Prod.forall, Prod.mk.eta, ne_eq, gt_iff_lt, Polynomial.coe_evalRingHom,
+              MvPolynomial.coe_eval₂Hom, MvPolynomial.eval₂_id]
       _ = MvPolynomial.eval (phaseSpacePolyEval (line t)) p := by
             have hev : (fun s => Polynomial.eval (t : ℂ) (affineCoord s)) =
                 phaseSpacePolyEval (line t) := by
@@ -5279,7 +5322,8 @@ private lemma dense_ne_zero_of_phaseSpace_polynomial
   have hq_ne : qpoly ≠ 0 := by
     intro hzero
     have hq1 := hqeval 1
-    simp_all
+    simp_all only [Prod.forall, Prod.mk.eta, ne_eq, gt_iff_lt, Polynomial.eval_zero,
+      Complex.ofReal_one, not_true_eq_false]
   let rootsReal : Set ℝ := {t : ℝ | qpoly.eval (t : ℂ) = 0}
   have hroots_countable : rootsReal.Countable := by
     have hroots_complex : ({z : ℂ | qpoly.IsRoot z}).Finite :=
@@ -5301,7 +5345,8 @@ private lemma dense_ne_zero_of_phaseSpace_polynomial
     exact hline_cont.continuousAt hball
   rcases hnonroots_dense.inter_nhds_nonempty hpre_ball with ⟨t, ht_nonroot, ht_ball⟩
   refine ⟨line t, ?_⟩
-  simp_all
+  simp_all only [Prod.forall, Prod.mk.eta, ne_eq, gt_iff_lt, Set.mem_ofPred_eq, Set.mem_preimage,
+    Metric.mem_ball, Set.mem_inter_iff, not_false_eq_true, and_self]
 
 theorem windowAmbiguity_dense_nonvanishing
     {d : Nat} (hd : 0 < d) (kappa : MultiIndex d) :
@@ -5340,13 +5385,14 @@ theorem spectrogram_eq_of_equal_modulus_to_ambiguity_eq
     have hprod :
         ambiguityRep f f ξ * star (ambiguityRep hwin hwin ξ) =
           ambiguityRep g g ξ * star (ambiguityRep hwin hwin ξ) := by
-      simp_all
+      simp_all only [Prod.forall, Complex.ofReal_pow, RCLike.star_def, mul_eq_mul_right_iff,
+        map_eq_zero]
     exact mul_right_cancel₀ (star_ne_zero.mpr hξ) hprod
   have hs_dense : Dense s := by simpa [s, hwin] using windowAmbiguity_dense_nonvanishing hd kappa
   have hamb : ambiguityRep f f = ambiguityRep g g :=
     Continuous.ext_on hs_dense (continuous_ambiguityRep f f)
       (continuous_ambiguityRep g g) h_on
-  simp_all
+  simp_all only [Prod.forall, implies_true]
 
 private lemma integral_fourier_schwartz_mul_eq
     {V : Type*} [NormedAddCommGroup V] [InnerProductSpace ℝ V]
@@ -5376,7 +5422,7 @@ private lemma integral_fourier_schwartz_mul_eq
             funext x
             rw [ContinuousLinearMap.mul_apply', Real.fourier_eq]
             simp only [VectorFourier.fourierIntegral]
-            simp_all
+            simp_all only [ContinuousLinearMap.mul_apply', flip_innerₗ, innerₗ_apply_apply]
           rw [hflip]
           simpa [ContinuousLinearMap.mul_apply', Real.fourier_eq,
             VectorFourier.fourierIntegral] using hswap.symm
@@ -5416,11 +5462,12 @@ private theorem fourier_l1_l2_eq_zero_ae
         𝓕 H ∈
           (MeasureTheory.Lp.toTemperedDistributionCLM
             ℂ (volume : Measure V) 2).ker := by
-      simp_all
+      simp_all only [LinearMap.mem_ker, ContinuousLinearMap.coe_coe,
+        Lp.toTemperedDistributionCLM_apply]
     have hker_bot :=
       MeasureTheory.Lp.ker_toTemperedDistributionCLM_eq_bot
         (F := ℂ) (μ := (volume : Measure V)) (p := (2 : ℝ≥0∞))
-    simp_all
+    simp_all only [Submodule.mem_bot]
   have hH_zero : H = 0 := by
     have h :=
       congrArg (fun G : Lp ℂ 2 (volume : Measure V) => 𝓕⁻ G)
@@ -5671,7 +5718,24 @@ private lemma sectionDiff_fourier_eq_ambiguity_sub
       funext v
       ring]
   rw [integral_sub hFphase hGphase]
-  simp [ambiguityRep, Fsec, Gsec, phase, real_inner_comm, mul_assoc, mul_comm]
+  have hphase_eq (t : RealVec d) :
+      phase t = Complex.exp (-(2 * Real.pi : ℂ) * Complex.I * ((inner ℝ ω t : ℝ) : ℂ)) := by
+    dsimp [phase]
+    congr 1
+    rw [real_inner_comm t ω]
+    push_cast
+    ring
+  have hamb (h : L2Real d) :
+      (∫ t : RealVec d, phase t *
+        ((h : RealVec d → ℂ) (t + ((1 / 2 : ℝ) • x)) *
+          star ((h : RealVec d → ℂ) (t - ((1 / 2 : ℝ) • x))))) =
+        ambiguityRep h h (x, ω) := by
+    rw [ambiguityRep]
+    apply integral_congr_ae
+    filter_upwards with t
+    rw [hphase_eq]
+    exact mul_comm _ _
+  exact congrArg₂ (fun a b : ℂ => a - b) (hamb f) (hamb g)
 
 theorem equalAmbiguity_to_rankOneKernel_ae
     {d : Nat} {f g : L2Real d} {fRep gRep : RealVec d -> ℂ}
@@ -5750,7 +5814,7 @@ theorem equalAmbiguity_to_rankOneKernel_ae
                   (by simpa [f0, μ] using hf_int)
                   (by simpa [g0, μ] using hg_int)
         _ = 0 := by
-              simp_all
+              simp_all only [Prod.forall, one_div, RCLike.star_def, sub_self]
     exact fourier_l1_l2_eq_zero_ae hdiff_int hx_l2 hfourier
   have hcenter_zero_prod :
       centerDiff =ᵐ[μ.prod μ] fun _ => (0 : ℂ) := by
@@ -5817,7 +5881,7 @@ theorem equalAmbiguity_to_rankOneKernel_ae
     have h0 : f0 p.1 * star (f0 p.2) - g0 p.1 * star (g0 p.2) = 0 := hp
     have heq : f0 p.1 * star (f0 p.2) = g0 p.1 * star (g0 p.2) :=
       sub_eq_zero.mp h0
-    simp_all
+    simp_all only [Prod.forall, one_div, RCLike.star_def]
   simpa [μ, MeasureTheory.Measure.volume_eq_prod] using hrep_prod
 
 private lemma exists_eventually_and_ne_zero
@@ -5829,7 +5893,7 @@ private lemma exists_eventually_and_ne_zero
   by_contra hnone
   apply hnot
   filter_upwards [hP] with x hxP
-  simp_all
+  simp_all only [ne_eq, not_exists, not_and, Decidable.not_not]
 
 private lemma norm_eq_one_of_mul_star_eq_one {w : ℂ}
     (h : w * star w = 1) :
@@ -6038,7 +6102,8 @@ private theorem pkappa_eq_zero_of_norm_sq_eq_zero_wip
         (Finset.single_le_sum
           (f := fun beta : Idx d => ‖F beta‖ ^ 2) (s := F.support) (a := alpha)
           (fun beta _ => by positivity) hmem)
-    simp_all
+    simp_all only [ne_eq, OfNat.ofNat_ne_zero, not_false_eq_true, pow_eq_zero_iff,
+      Finsupp.mem_support_iff, sq_nonpos_iff, norm_eq_zero]
   · exact Finsupp.notMem_support_iff.mp hmem
 
 private theorem pkappa_eq_zero_of_eval_zero_wip
@@ -6118,14 +6183,15 @@ private theorem skappa_eq_zero_of_toFun_zero_exact_wip
 private theorem coeff_eq_zero_of_self_kernel_zero_exact_wip {z : ℂ}
     (h : z * star z = 0) :
     z = 0 := by
-  simp_all
+  simp_all only [RCLike.star_def, mul_eq_zero, map_eq_zero, or_self]
 
 private theorem norm_eq_of_self_kernel_eq_exact_wip {x y : ℂ}
     (h : x * star x = y * star y) :
     ‖x‖ = ‖y‖ := by
   have hmul_norm : ‖x‖ * ‖x‖ = ‖y‖ * ‖y‖ := by simpa [norm_mul, norm_star] using congrArg norm h
   have hsq : ‖x‖ ^ 2 = ‖y‖ ^ 2 := by simpa [sq] using hmul_norm
-  simp_all
+  simp_all only [RCLike.star_def, norm_nonneg, ne_eq, OfNat.ofNat_ne_zero, not_false_eq_true,
+    pow_left_inj₀]
 
 private theorem scalar_multiple_of_coeff_kernel_exact_wip
     {d : Nat} {kappa : MultiIndex d} {U V : Skappa d kappa}
@@ -6140,7 +6206,7 @@ private theorem scalar_multiple_of_coeff_kernel_exact_wip
         rw [hU_zero]
         rfl
       have hself : coeffSkappa V alpha * star (coeffSkappa V alpha) = 0 := by
-        simp_all
+        simp_all only [RCLike.star_def, map_zero, mul_zero]
       exact coeff_eq_zero_of_self_kernel_zero_exact_wip hself
     have hV_zero : V = 0 := skappa_eq_zero_of_coeff_zero_exact_wip hV_coeff_zero
     refine ⟨1, by norm_num, ?_⟩
@@ -6152,7 +6218,7 @@ private theorem scalar_multiple_of_coeff_kernel_exact_wip
   · have hU_coeff_nonzero : ∃ alpha0, coeffSkappa U alpha0 ≠ 0 := by
       by_contra hnone
       have hzero : ∀ alpha, coeffSkappa U alpha = 0 := by
-        simp_all
+        simp_all only [RCLike.star_def, ne_eq, not_exists, Decidable.not_not, implies_true]
       exact hU_zero (skappa_eq_zero_of_coeff_zero_exact_wip hzero)
     rcases hU_coeff_nonzero with ⟨alpha0, hU0⟩
     let u0 : ℂ := coeffSkappa U alpha0
@@ -6179,7 +6245,8 @@ private theorem scalar_multiple_of_coeff_kernel_exact_wip
         dsimp [u, v, u0, v0]
         exact hker alpha alpha0
       have hstar_v0 : star v0 = star w * star u0 := by
-        simp_all
+        simp_all only [RCLike.star_def, ne_eq, Complex.norm_mul, one_mul, norm_eq_zero,
+          not_false_eq_true, star_mul']
       have hcancel : v * star w = u := by
         apply mul_right_cancel₀ (star_ne_zero.mpr hu0_ne)
         calc
@@ -6217,7 +6284,7 @@ private theorem coeff_kernel_of_scalar_multiple_exact_wip
           rw [star_mul]
           ring
     _ = coeffSkappa U alpha * star (coeffSkappa U beta) := by
-          simp_all
+          simp_all only [RCLike.star_def, one_mul]
 
 theorem ambiguity_eq_to_skappa_phase
     {d : Nat} (hd : 0 < d) (kappa : MultiIndex d)
@@ -6296,7 +6363,7 @@ theorem exact_modulus_recovery_skappa
     {U V : Skappa d kappa}
     (hmod : ∀ z, ‖toFun kappa U z‖ = ‖toFun kappa V z‖) :
     ∃ w : ℂ, ‖w‖ = 1 ∧ V = w • U := exact_modulus_recovery_skappa_ae hd kappa (by
-    simp_all)
+    simp_all only [Filter.EventuallyEq.refl])
 
 theorem exact_modulus_recovery_pkappa
     {d : Nat} (hd : 0 < d) (kappa : MultiIndex d)

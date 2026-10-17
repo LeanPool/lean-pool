@@ -15,10 +15,8 @@ module
 public import LeanPool.PhaseRetrieval.DimdPoly.Internal.Hermitek.TrueLevelBasis
 import LeanPool.PhaseRetrieval.Constant.Internal.LaplaceFactorial
 import LeanPool.PhaseRetrieval.DimdPoly.Internal.Hermite.MissingMathlib
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
 import Mathlib.Analysis.SpecialFunctions.PolarCoord
-import Mathlib.Combinatorics.Matroid.Init
+import Mathlib.MeasureTheory.Integral.Prod
 import Mathlib.Tactic.NormNum.Parity
 
 /-! # BasisLocalization -/
@@ -36,7 +34,7 @@ private theorem hermiteSeries_single (k n : ℕ) :
     hermiteSeries k (fun m : ℕ => if m = n then (1 : ℂ) else 0) = Phi k n := by
   funext z
   unfold hermiteSeries
-  simp_all
+  simp_all only [ite_mul, one_mul, zero_mul, tsum_ite_eq]
 
 private theorem qkn_zero (k : ℕ) {r : ℝ} (hr : 0 < r) : qkn k 0 r = 1 := by simp [qkn_explicit hr]
 
@@ -59,9 +57,10 @@ private theorem qkn_descFactorial_form
     exact_mod_cast (Nat.factorial_mul_descFactorial (n := n) (k := j) hjn)
   have hmul' :
     (Nat.factorial n : ℝ) = (Nat.descFactorial n j : ℝ) * (Nat.factorial (n - j) : ℝ) := by
-    simpa [mul_comm] using hmul.symm
+    simpa only [mul_comm] using hmul.symm
   have hden : (Nat.factorial (n - j) : ℝ) ≠ 0 := by positivity
-  simp_all
+  simp_all only [mem_range, Order.lt_add_one_iff, ne_eq, Nat.cast_eq_zero, not_false_eq_true,
+    mul_div_cancel_right₀]
 
 -- Nat-level coefficient identity for the Charlier recurrence (s = s'+2 case).
 private theorem charlier_coeff_nat (k n s' : ℕ) :
@@ -127,7 +126,9 @@ private theorem Pkn_eval (k n : ℕ) (x : ℝ) :
       (Finset.sum (Finset.range (k + 1)) (fun j =>
         Polynomial.C (((-1 : ℝ) ^ j) * (Nat.choose k j : ℝ) * (Nat.descFactorial n j : ℝ)) *
           Polynomial.X ^ (k - j))) = _
-  simp_all
+  simp_all only [map_mul, map_pow, map_neg, map_one, map_natCast, map_sum,
+    Polynomial.coe_evalRingHom,
+      Polynomial.eval_X]
 
 private theorem Pkn_coeff (k n m : ℕ) :
     (Pkn k n).coeff m =
@@ -139,7 +140,8 @@ private theorem Pkn_coeff (k n m : ℕ) :
   rw [Polynomial.finsetSum_coeff]
   refine Finset.sum_congr rfl ?_
   intro j hj
-  simpa [mul_assoc, mul_left_comm, mul_comm] using
+  simpa only [mul_comm, mul_left_comm, map_mul, map_natCast, map_pow, map_neg, map_one, mul_assoc,
+    Polynomial.coeff_natCast_mul] using
     (Polynomial.coeff_C_mul_X_pow
       (((-1 : ℝ) ^ j) * (Nat.choose k j : ℝ) * (Nat.descFactorial n j : ℝ))
       (k - j) m)
@@ -161,14 +163,15 @@ private theorem Pkn_coeff_single (k n m : ℕ) :
         exact hjne hjeq
       · simp [hmj]
     · intro hnotmem
-      simp_all
+      simp_all only [mem_range, Order.lt_add_one_iff, tsub_le_iff_right, le_add_iff_nonneg_right,
+        zero_le, not_true_eq_false]
   · rw [Pkn_coeff]
     have hmgt : k < m := Nat.lt_of_not_ge hmk
     rw [Finset.sum_eq_zero]
     · simp [hmk]
     · intro j hj
       by_cases hmj : m = k - j
-      · simp_all
+      · simp_all only [tsub_le_iff_right, le_add_iff_nonneg_right, zero_le, not_true_eq_false]
       · simp [hmj]
 
 private theorem Pkn_succ_succ
@@ -249,9 +252,19 @@ private theorem Pkn_succ_succ
         have hak : a = k ∨ a = k + 1 := by omega
         rcases hak with ha_eq | ha_eq
         · subst ha_eq
-          simp_all
+          simp_all only [add_le_add_iff_left, Nat.one_le_ofNat, lt_add_iff_pos_right,
+            Order.lt_one_iff, ↓reduceIte, Nat.reduceSubDiff, add_tsub_cancel_left, pow_one,
+            Nat.choose_one_right, Nat.cast_add, Nat.cast_ofNat, neg_mul, one_mul, neg_add_rev,
+            Nat.descFactorial_succ, tsub_zero, Nat.descFactorial_zero, mul_one,
+            le_add_iff_nonneg_right, zero_le, Nat.cast_one, Std.le_refl, tsub_self, pow_zero,
+            Nat.choose_zero_right, add_le_iff_nonpos_right, nonpos_iff_eq_zero, one_ne_zero,
+            mul_zero]
           ring_nf
-        · simp_all
+        · simp_all only [Std.le_refl, Order.lt_add_one_iff, le_add_iff_nonneg_right, zero_le,
+            ↓reduceIte, tsub_self, pow_zero, Nat.choose_zero_right, Nat.cast_one, mul_one,
+            Nat.descFactorial_zero, add_le_iff_nonpos_right, nonpos_iff_eq_zero, one_ne_zero,
+            mul_zero, sub_zero, Nat.cast_add, Order.add_one_le_iff, add_lt_iff_neg_left,
+            not_lt_zero]
 
 private theorem qkn_power_split
     {r : ℝ}
@@ -345,7 +358,7 @@ private lemma normSq_finiteHermiteSum_circlePoint
         circleLeadingFactor k r *
           (fourier (-(k : ℤ)) (QuotientAddGroup.mk θ : Circle) : ℂ) *
             finiteCirclePoly k r a (QuotientAddGroup.mk θ : Circle) := by
-    simpa using
+    simpa only [fourier_apply, neg_smul, natCast_zsmul] using
       (finiteHermiteSum_circle (k := k) (a := a) hr (QuotientAddGroup.mk θ : Circle))
   have hfour : ‖(fourier (-(k : ℤ)) (QuotientAddGroup.mk θ : Circle) : ℂ)‖ ^ 2 = 1 := by
     rw [fourier_mk_norm]; norm_num
@@ -360,7 +373,8 @@ private lemma integral_addCircle_volume_eq_smul_haar
     ∫ t : Circle, f t = T • ∫ t : Circle, f t ∂AddCircle.haarAddCircle := by
   rw [AddCircle.volume_eq_smul_haarAddCircle, integral_smul_measure]
   have hT_nonneg : 0 ≤ T := by
-    simpa [T, HermiteLEAN.T] using (show (0 : ℝ) ≤ 2 * Real.pi by positivity)
+    simpa only [T, HermiteLEAN.T, Nat.ofNat_pos, mul_nonneg_iff_of_pos_left] using
+      (show (0 : ℝ) ≤ 2 * Real.pi by positivity)
   simp [ENNReal.toReal_ofReal hT_nonneg]
 
 private lemma integral_Ioo_eq_addCircle
@@ -405,7 +419,7 @@ private lemma setIntegral_radialStrip_eq_intervalIntegral (j : ℕ) (f : ℝ →
   rw [MeasureTheory.setIntegral_congr_set hIoiIco_ae,
     intervalIntegral.integral_of_le
       (show (j : ℝ) ≤ (((j + 1 : ℕ) : ℝ)) by exact_mod_cast Nat.le_succ j)]
-  simpa using
+  simpa only [Nat.cast_add, Nat.cast_one] using
     (MeasureTheory.setIntegral_congr_set
       (f := f) (μ := volume)
       (Ico_ae_eq_Ioc (a := (j : ℝ)) (b := (((j + 1 : ℕ) : ℝ)))))
@@ -428,7 +442,7 @@ private lemma continuous_finiteHermiteSumCircle_comp
     Continuous
       (fun p : ℝ × ℝ =>
         finiteHermiteSum k a (circlePoint p.1 ((QuotientAddGroup.mk p.2 : Circle)))) := by
-  simpa [finiteHermiteSum] using
+  simpa only [finiteHermiteSum, Pi.mul_apply, Function.comp_apply] using
     (continuous_finsetSum (s := (Finset.univ : Finset (Fin D))) fun n _ =>
       continuous_const.mul ((continuous_Phi k n.1).comp continuous_circlePoint_mk))
 
@@ -493,7 +507,7 @@ private lemma annulus_polar_indicator_rw
   intro p hp
   rcases p with ⟨r, θ⟩
   rcases hp with ⟨hrpos, hθ⟩
-  have hrpos' : 0 < r := by simpa using hrpos
+  have hrpos' : 0 < r := by simpa only [Set.mem_Ioi] using hrpos
   by_cases hrj : r ∈ Set.Ico (j : ℝ) (((j + 1 : ℕ) : ℝ))
   · have hann : Complex.polarCoord.symm (r, θ) ∈ annulus j := by
       change (j : ℝ) ≤ ‖Complex.polarCoord.symm (r, θ)‖ ∧
@@ -512,7 +526,9 @@ private lemma annulus_polar_indicator_rw
           =
         finiteHermiteSum k a (circlePoint r ((QuotientAddGroup.mk θ : Circle))) := by
       rw [← circlePoint_mk_eq_polarCoord_symm]
-    simp_all
+    simp_all only [Set.mem_Ioi, Set.mem_Ioo, Nat.cast_add, Nat.cast_one, Set.mem_Ico,
+      Complex.polarCoord_symm_apply, ofReal_cos, ofReal_sin, Complex.norm_mul, norm_real,
+      norm_eq_abs, norm_cos_add_sin_mul_I, mul_one, sq_abs]
   · have hann : Complex.polarCoord.symm (r, θ) ∉ annulus j := by
       intro hz
       apply hrj
@@ -520,7 +536,10 @@ private lemma annulus_polar_indicator_rw
           ‖Complex.polarCoord.symm (r, θ)‖ < (((j + 1 : ℕ) : ℝ)) at hz
       rw [Complex.norm_polarCoord_symm, abs_of_pos hrpos'] at hz
       exact hz
-    simp_all
+    simp_all only [Set.mem_Ioi, Set.mem_Ioo, Nat.cast_add, Nat.cast_one, Set.mem_Ico, not_and,
+      not_lt, Complex.polarCoord_symm_apply, ofReal_cos, ofReal_sin, not_false_eq_true,
+      Set.indicator_of_notMem, smul_eq_mul, mul_zero, Set.mem_prod, Set.mem_inter_iff, true_and,
+      and_self, and_true, implies_true]
 
 private lemma annulusIntegralSq_finiteHermiteSum_eq_radial
     (k : ℕ)
@@ -558,14 +577,18 @@ private lemma annulusIntegralSq_finiteHermiteSum_eq_radial
       (Set.Ioi (0 : ℝ) ∩ Set.Ico (j : ℝ) (((j + 1 : ℕ) : ℝ))) ×ˢ
         Set.Ioo (-Real.pi) Real.pi := by
     ext p
-    simp_all
+    simp_all only [Complex.polarCoord_symm_apply, ofReal_cos, ofReal_sin, smul_eq_mul, Nat.cast_add,
+      Nat.cast_one, Set.mem_inter_iff, Set.mem_prod, Set.mem_Ioi, Set.mem_Ico, Set.mem_Ioo,
+      and_iff_left_iff_imp, and_self, implies_true]
   rw [hstrip, show (volume : Measure (ℝ × ℝ)) = volume.prod volume from Measure.volume_eq_prod ℝ ℝ]
   rw [setIntegral_prod _ ((integrableOn_annulus_polar_finiteHermiteSum k a j).mono_set
     (Set.prod_mono
       (by
-        simp_all)
+        simp_all only [Complex.polarCoord_symm_apply, ofReal_cos, ofReal_sin, smul_eq_mul,
+          Nat.cast_add, Nat.cast_one, Set.inter_eq_left, Set.inter_subset_right])
       (by
-        simp_all)))]
+        simp_all only [Complex.polarCoord_symm_apply, ofReal_cos, ofReal_sin, smul_eq_mul,
+          Nat.cast_add, Nat.cast_one, Set.inter_eq_left, Std.le_refl])))]
   let srad : Set ℝ := Set.Ioi (0 : ℝ) ∩ Set.Ico (j : ℝ) (((j + 1 : ℕ) : ℝ))
   have inner_eq :
       ∀ r : ℝ, r ∈ srad →
@@ -687,7 +710,8 @@ private lemma annulusIntegralSq_Phi_eq
           |qkn k n r| ^ 2)
   rw [show circleL2Sq (finiteCirclePoly k r (singleCoeff n)) =
       ∑ m : Fin (n + 1), ‖singleCoeff n m‖ ^ 2 * |qkn k m.1 r| ^ 2 by
-      simpa using (finiteCirclePoly_l2_identity (k := k) (r := r) (a := singleCoeff n))]
+      simpa only [sq_abs] using
+        (finiteCirclePoly_l2_identity (k := k) (r := r) (a := singleCoeff n))]
   let n0 : Fin (n + 1) := ⟨n, Nat.lt_succ_self n⟩
   have hn0 : n0 ∈ (Finset.univ : Finset (Fin (n + 1))) := by simp [n0]
   rw [Finset.sum_eq_single_of_mem n0 hn0]
@@ -700,7 +724,9 @@ private lemma annulusIntegralSq_Phi_eq
       apply hne
       exact Fin.ext hm_eq
     have hm_zero : singleCoeff n m = 0 := by simp [singleCoeff, hm_ne]
-    simp_all
+    simp_all only [Nat.cast_add, Nat.cast_one, le_add_iff_nonneg_right, zero_le_one, Set.uIcc_of_le,
+      Set.mem_Icc, mem_univ, ne_eq, norm_zero, OfNat.ofNat_ne_zero, not_false_eq_true, zero_pow,
+      sq_abs, zero_mul]
 
 private lemma intervalIntegrable_basisRadialTerm
     (k n j : ℕ) :
@@ -716,7 +742,7 @@ private lemma intervalIntegrable_basisRadialTerm
   have hcircle0 : Continuous (fun r : ℝ => circlePoint r t0) := by
     have h := continuous_circlePoint_mk.comp
       (continuous_id.prodMk (continuous_const (y := (0 : ℝ))))
-    simpa [t0, Function.comp_def] using h
+    simpa only [QuotientAddGroup.mk_zero, id_eq, Function.comp_def, t0] using h
   have hg : Continuous g := by
     dsimp [g]
     have h := continuous_id.mul
@@ -763,7 +789,7 @@ private lemma sqrt_sub_le_sub_of_one_le
   have hdiff_nonneg : 0 ≤ Real.sqrt a - Real.sqrt b := sub_nonneg.mpr (Real.sqrt_le_sqrt hba)
   have hden : 1 ≤ Real.sqrt a + Real.sqrt b := by
     have hb_sqrt : 1 ≤ Real.sqrt b := by
-      simp_all
+      simp_all only [sub_nonneg, sqrt_le_sqrt_iff, one_le_sqrt]
     nlinarith [hb_sqrt, Real.sqrt_nonneg a]
   have hmul :
       (Real.sqrt a - Real.sqrt b) * (Real.sqrt a + Real.sqrt b) = a - b := by
@@ -801,7 +827,7 @@ private lemma monomial_core_pointwise
     have hfac := FockSPR.exp_phi_le_factorial hm
     exact
       (div_le_iff₀ hfact_pos).2
-        (by simpa [div_eq_mul_inv, mul_assoc, mul_left_comm, mul_comm] using hfac)
+        (by simpa only [div_eq_mul_inv, one_mul, mul_comm, mul_left_comm, mul_assoc] using hfac)
   calc
     r ^ (2 * m + 1) * Real.exp (-r ^ 2) / (Nat.factorial m : ℝ)
       = Real.exp (FockSPR.phiFunc m r) / (Nat.factorial m : ℝ) := by rw [h_eq]
@@ -866,7 +892,7 @@ private theorem phi0_support_zero (k : ℕ) :
         phi0 k (circlePoint r t) = circleLeadingFactor k r * (fourier (-(k : ℤ)) t : ℂ) * g 0) := by
   let g : ℕ → ℂ := fun n => if n = 0 then 1 else 0
   refine ⟨g, ?_, ?_, ?_⟩
-  · simpa [g, phi0] using (hermiteSeries_single k 0).symm
+  · simpa only [phi0, g] using (hermiteSeries_single k 0).symm
   · intro n hn
     simp [g, Nat.ne_of_gt hn]
   · intro r hr t
@@ -956,7 +982,7 @@ private theorem annulusIntegralSq_phi0_eq
     intro p hp
     rcases p with ⟨r, θ⟩
     rcases hp with ⟨hrpos, hθ⟩
-    have hrpos' : 0 < r := by simpa using hrpos
+    have hrpos' : 0 < r := by simpa only [Set.mem_Ioi] using hrpos
     by_cases hrj : r ∈ Set.Ico (j : ℝ) (((j + 1 : ℕ) : ℝ))
     · have hann :
           Complex.polarCoord.symm (r, θ) ∈ annulus j := by
@@ -988,7 +1014,10 @@ private theorem annulusIntegralSq_phi0_eq
             ‖Complex.polarCoord.symm (r, θ)‖ < (((j + 1 : ℕ) : ℝ)) at hz
         rw [Complex.norm_polarCoord_symm, abs_of_pos hrpos'] at hz
         exact hz
-      simp_all
+      simp_all only [fourier_apply, neg_smul, natCast_zsmul, Set.mem_Ioi, Set.mem_Ioo, Nat.cast_add,
+        Nat.cast_one, Set.mem_Ico, not_and, not_lt, Complex.polarCoord_symm_apply, ofReal_cos,
+        ofReal_sin, not_false_eq_true, Set.indicator_of_notMem, smul_eq_mul, mul_zero, Set.mem_prod,
+        Set.mem_inter_iff, true_and, and_self, and_true, implies_true]
   change
     (1 / Real.pi) *
         ∫ p in Complex.polarCoord.target,
@@ -1008,7 +1037,10 @@ private theorem annulusIntegralSq_phi0_eq
       (Set.Ioi (0 : ℝ) ∩ Set.Ico (j : ℝ) (((j + 1 : ℕ) : ℝ))) ×ˢ
         Set.Ioo (-Real.pi) Real.pi := by
     ext p
-    simp_all
+    simp_all only [fourier_apply, neg_smul, natCast_zsmul, Complex.polarCoord_symm_apply,
+      ofReal_cos, ofReal_sin, smul_eq_mul, Nat.cast_add, Nat.cast_one, Set.mem_inter_iff,
+      Set.mem_prod, Set.mem_Ioi, Set.mem_Ico, Set.mem_Ioo, and_iff_left_iff_imp, and_self,
+      implies_true]
   rw [hstrip,
     show (volume : Measure (ℝ × ℝ)) = volume.prod volume from Measure.volume_eq_prod ℝ ℝ,
     setIntegral_prod _ (integrableOn_annulus_polar_phi0 k j (‖g 0‖ ^ 2))]
@@ -1128,7 +1160,9 @@ private theorem annulusIntegralSq_phi0_shell_bound
         =
       (‖g 0‖ ^ 2 / (Nat.factorial k : ℝ)) *
         ((((j + 1 : ℕ) : ℝ) ^ (2 * k + 1))) * Real.exp (-(j : ℝ) ^ 2) := by
-    simp_all
+    simp_all only [fourier_apply, neg_smul, natCast_zsmul, Nat.cast_add, Nat.cast_one,
+      intervalIntegral.integral_const_mul, intervalIntegral.integral_const, add_sub_cancel_left,
+      smul_eq_mul, one_mul]
   calc
     2 * ∫ r in (j : ℝ)..(((j + 1 : ℕ) : ℝ)), phi0AnnulusIntegrand k (‖g 0‖ ^ 2) r
       ≤
@@ -1179,7 +1213,7 @@ theorem phi0_localization :
       rw [hkcast]
       linarith
     have hsum : (((j + 1 : ℕ) : ℝ)) ≤ x + (((k + 6 : ℕ) : ℝ)) := by
-      simpa [Nat.cast_add, Nat.cast_one] using hsum'
+      simpa only [Nat.cast_add, Nat.cast_one, Nat.cast_ofNat] using hsum'
     have hk6_ge1_nat : 1 ≤ k + 6 := by omega
     have hk6_ge1 : (1 : ℝ) ≤ (((k + 6 : ℕ) : ℝ)) := by exact_mod_cast hk6_ge1_nat
     have hmul : x + (((k + 6 : ℕ) : ℝ)) ≤ (((k + 6 : ℕ) : ℝ)) * (x + 1) := by nlinarith
@@ -1189,7 +1223,7 @@ theorem phi0_localization :
       (((j + 1 : ℕ) : ℝ) ^ m) ≤ ((((k + 6 : ℕ) : ℝ) * (x + 1)) ^ m) := by gcongr
       _ = ((((k + 6 : ℕ) : ℝ) ^ m)) * ((x + 1) ^ m) := by rw [mul_pow]
   have hpoly2 : (x + 1) ^ m ≤ 2 ^ (m - 1) * (x ^ m + 1) := by
-    simpa [add_comm, add_left_comm, add_assoc] using
+    simpa only [one_pow, add_comm, add_left_comm, add_assoc] using
       add_pow_le hx_nonneg (show (0 : ℝ) ≤ 1 by norm_num) m
   have hpoly :
       (((j + 1 : ℕ) : ℝ) ^ m) ≤ ((((k + 6 : ℕ) : ℝ) ^ m)) * (2 ^ (m - 1)) * (1 + x ^ m) := by
@@ -1206,24 +1240,25 @@ theorem phi0_localization :
     calc
       annulusIntegralSq (phi0 k) j
         ≤ (2 * (‖g 0‖ ^ 2 / (Nat.factorial k : ℝ))) * ((((j + 1 : ℕ) : ℝ) ^ m)) *
-            Real.exp (-(j : ℝ) ^ 2) := by simpa [m] using hshell
+            Real.exp (-(j : ℝ) ^ 2) := by simpa only [Nat.cast_add, Nat.cast_one, m] using hshell
       _ ≤ (2 * (‖g 0‖ ^ 2 / (Nat.factorial k : ℝ))) *
             ((((k + 6 : ℕ) : ℝ) ^ m) * (2 ^ (m - 1)) * (1 + x ^ m)) * Real.exp (-x ^ 2) := by gcongr
       _ = A * (1 + x ^ m) * Real.exp (-x ^ 2) := by
               dsimp [A]
               ring
   have hgauss : (1 + x ^ m) * Real.exp (-x ^ 2) ≤ Cpoly * Real.exp (-((1 : ℝ) / 2) * x ^ 2) := by
-    simpa [one_mul] using hCpoly x hx_nonneg
+    simpa only [one_div, neg_mul, one_mul] using hCpoly x hx_nonneg
   have hA_nonneg : 0 ≤ A := by positivity
   calc
     annulusIntegralSq (phi0 k) j
       ≤ A * (1 + x ^ m) * Real.exp (-x ^ 2) := hmain
     _ ≤ A * (Cpoly * Real.exp (-((1 : ℝ) / 2) * x ^ 2)) := by
-          simpa [mul_assoc] using mul_le_mul_of_nonneg_left hgauss hA_nonneg
+          simpa only [mul_assoc, one_div, neg_mul] using mul_le_mul_of_nonneg_left hgauss hA_nonneg
     _ ≤ (A * Cpoly + 1) * Real.exp (-((1 : ℝ) / 2) * x ^ 2) := by
           have hexp_nonneg : 0 ≤ Real.exp (-((1 : ℝ) / 2) * x ^ 2) := (Real.exp_pos _).le
           have hcoeff : A * Cpoly ≤ A * Cpoly + 1 := by linarith
-          simpa [mul_assoc] using mul_le_mul_of_nonneg_right hcoeff hexp_nonneg
+          simpa only [one_div, neg_mul, ge_iff_le, mul_assoc] using
+            mul_le_mul_of_nonneg_right hcoeff hexp_nonneg
     _ = C * Real.exp (-((1 : ℝ) / 2) * x ^ 2) := by rfl
     _ = C * Real.exp (-((1 : ℝ) / 2) * (posPart ((j : ℝ) - ((k + 5 : ℕ) : ℝ))) ^ 2) := by rfl
 
@@ -1866,7 +1901,7 @@ private lemma Pkn_sq_bound (k n : ℕ) (hkn_strict : k < n) (r : ℝ) {Ak : ℝ}
       have hkn_cast : (k : ℝ) < (n : ℝ) := by exact_mod_cast hkn_strict
       simp only [m]; linarith
     rw [sq, ← Real.rpow_add hm_pos', ← hm_rpow_nat]
-    simp_all
+    simp_all only [rpow_natCast, add_halves]
   have hP_abs_bound :=
     sq_le_sq' (by linarith [abs_nonneg ((Pkn k n).eval (r ^ 2))]) hPkn
   calc ((Pkn k n).eval (r ^ 2)) ^ 2
@@ -2145,12 +2180,15 @@ private lemma radial_density_eq_step (k : ℕ) (r : ℝ) (hr : 0 ≤ r) (hr_pos 
   have hqkn :
       r ^ k * qkn k k r =
         (1 / Real.sqrt (Nat.factorial k : ℝ)) * (Pkn k k).eval (r ^ 2) := by
-    simpa using qkn_mul_rpow_eq_Pkn_eval k k hr_pos le_rfl
+    simpa only [one_div, tsub_self, pow_zero, mul_one] using
+      qkn_mul_rpow_eq_Pkn_eval k k hr_pos le_rfl
   have hPkn :
       |(Pkn k k).eval (r ^ 2)| ≤ Ak * (1 + |r ^ 2 - 1|) ^ k := by
-    simpa [show k - k + 1 = 1 by omega, Real.sqrt_one] using hAk_bound k le_rfl (r ^ 2)
+    simpa only [sub_self, zero_add, one_rpow, mul_one, sqrt_one, div_one, show k - k + 1 = 1 by
+      omega, Real.sqrt_one] using hAk_bound k le_rfl (r ^ 2)
   have hu_bound : 1 + |r ^ 2 - 1| ≤ (1 + |r - 1|) ^ 2 := by
-    simpa [Real.sqrt_one] using one_plus_abs_u_le_sq 1 (by norm_num) r hr
+    simpa only [Nat.cast_one, sqrt_one, div_one, Real.sqrt_one] using
+      one_plus_abs_u_le_sq 1 (by norm_num) r hr
   have hPkn_sq :
       ((Pkn k k).eval (r ^ 2)) ^ 2 ≤ Ak ^ 2 * (1 + |r - 1|) ^ (4 * k) := by
     have hu_pow : (1 + |r ^ 2 - 1|) ^ k ≤ (1 + |r - 1|) ^ (2 * k) := by
@@ -2214,7 +2252,7 @@ private lemma radial_density_eq_step (k : ℕ) (r : ℝ) (hr : 0 ≤ r) (hr_pos 
       nlinarith only [show (1 : ℝ) ≤ (Nat.factorial k : ℝ) by exact_mod_cast hfac_ge_one_nat]
     have htmp : (1 : ℝ) / ((Nat.factorial k : ℝ) ^ 2) ≤ (1 : ℝ) / 1 :=
       one_div_le_one_div_of_le (by positivity : (0 : ℝ) < 1) hfac_sq_ge
-    simpa using htmp
+    simpa only [one_div, ge_iff_le, ne_eq, one_ne_zero, not_false_eq_true, div_self] using htmp
   have hconst_le :
       Ak ^ 2 * Real.exp 1 * Cp ≤
         Ak ^ 2 * C0 * Real.exp 2 * Cp + Ak ^ 2 * Real.exp 1 * Cp + Cp * Real.exp 1 := by
@@ -2468,7 +2506,7 @@ private theorem gaussian_rStar_to_posPart (k n : ℕ) (hn : 1 ≤ n) (hkn : k �
     -- m = (n:ℝ)-(k:ℝ)+1.
     have hm_pos : 1 ≤ m := by
       dsimp [m]
-      simp_all
+      simp_all only [le_add_iff_nonneg_left, sub_nonneg, Nat.cast_le]
     rcases Nat.eq_zero_or_pos k with rfl | hk
     · -- k = 0: m = n - 0 + 1 = n + 1.
       have hm_eq : m = (n : ℝ) + 1 := by dsimp [m]; simp

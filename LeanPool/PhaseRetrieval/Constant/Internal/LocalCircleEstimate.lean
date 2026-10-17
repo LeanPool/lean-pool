@@ -16,8 +16,6 @@ Authors: Susanna Bertolini, Jaume de Dios Pont
 module
 
 public import LeanPool.PhaseRetrieval.Constant.Internal.Definitions
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Data.Nat.Factorial.DoubleFactorial
 import Mathlib.Tactic.NormNum.Parity
 
 /-! # LocalCircleEstimate -/
@@ -247,7 +245,7 @@ private lemma equal_l2_masses {L : ℕ} (_hL : 1 ≤ L) {E : Finset ℕ}
 
 /-! ### Pointwise bound: rho(w)² ≥ w.re²/2 - ‖w‖⁴ -/
 
--- The nonlinear `rho` estimate is discharged by a large `nlinarith` certificate.
+-- A sum-of-squares identity controls the nonlinear remainder in the `rho` estimate.
 private lemma rho_sq_lower_bound (w : ℂ) (hw : ‖w‖ ≤ 1 / 4) :
     (rho w) ^ 2 ≥ w.re ^ 2 / 2 - ‖w‖ ^ 4 := by
   unfold rho; rw [sq_abs]
@@ -268,28 +266,43 @@ private lemma rho_sq_lower_bound (w : ℂ) (hw : ‖w‖ ≤ 1 / 4) :
   have hA_sq :
       (2 + 2 * u + s - u ^ 2 / 2 + s ^ 2) ^ 2 ≥
         4 * ((1 + u) ^ 2 + v ^ 2) := by
-    nlinarith [sq_nonneg (2 * u + u ^ 2 / 2 + v ^ 2 +
-        (u ^ 2 + v ^ 2) ^ 2),
-      sq_nonneg u, sq_nonneg v, sq_nonneg (u * v),
-      sq_nonneg (u ^ 2 + v ^ 2 - u),
-      sq_nonneg (u + v ^ 2),
-      sq_nonneg (u ^ 2 - v ^ 2)]
+    set t := u ^ 2 / 2 + v ^ 2 + s ^ 2
+    have hs : 0 ≤ s := add_nonneg (sq_nonneg u) (sq_nonneg v)
+    have hs_sq : s ^ 2 ≤ s := by
+      simpa only [sq, mul_one] using
+        mul_le_mul_of_nonneg_left (show s ≤ 1 by linarith only [hs_le]) hs
+    have ht : 0 ≤ t := by dsimp [t]; positivity
+    have ht_le : t ≤ 2 * s := by
+      dsimp [t]
+      have hu : u ^ 2 / 2 + v ^ 2 ≤ s := by dsimp [s]; linarith only [sq_nonneg u]
+      linarith only [hu, hs_sq]
+    have hdiff : 0 ≤ (2 * s - t) * (2 * s + t) :=
+      mul_nonneg (sub_nonneg.mpr ht_le) (by positivity)
+    have hidentity :
+        (2 + 2 * u + s - u ^ 2 / 2 + s ^ 2) ^ 2 -
+            4 * ((1 + u) ^ 2 + v ^ 2) =
+          2 * (u + t) ^ 2 + (2 * s - t) * (2 * s + t) := by
+      dsimp [s, t]
+      ring
+    have hnonneg : 0 ≤ (2 + 2 * u + s - u ^ 2 / 2 + s ^ 2) ^ 2 -
+        4 * ((1 + u) ^ 2 + v ^ 2) := by
+      rw [hidentity]
+      positivity
+    linarith only [hnonneg]
   have hA_nn : 0 ≤ 2 + 2 * u + s - u ^ 2 / 2 + s ^ 2 := by
-    have : u ^ 2 ≤ s := by simp [s]; nlinarith [sq_nonneg v]
-    nlinarith
+    have hidentity : 2 + 2 * u + s - u ^ 2 / 2 + s ^ 2 =
+        (u + 2) ^ 2 / 2 + v ^ 2 + s ^ 2 := by dsimp [s]; ring
+    rw [hidentity]
+    positivity
   have h2r :
       2 * r ≤ 2 + 2 * u + s - u ^ 2 / 2 + s ^ 2 := by
-    by_contra h_neg; push Not at h_neg
-    have h1 :
-        (2 * r) ^ 2 >
-          (2 + 2 * u + s - u ^ 2 / 2 + s ^ 2) ^ 2 :=
-      sq_lt_sq' (by linarith) h_neg
-    rw [show (2 * r) ^ 2 = 4 * r ^ 2 from by ring, hr_sq] at h1
-    linarith
+    apply (sq_le_sq₀ (by positivity) hA_nn).mp
+    linarith only [hr_sq, hA_sq]
   have hw4 : ‖w‖ ^ 4 = s ^ 2 := by
     have : ‖w‖ ^ 4 = (‖w‖ ^ 2) ^ 2 := by ring
     rw [this, hw_sq]
-  rw [hw4]; nlinarith [sq_nonneg (r - 1)]
+  rw [hw4]
+  linarith only [hr_sq, h2r, show s = u ^ 2 + v ^ 2 from rfl]
 
 /-! ### ∫ ‖P‖⁴ bound -/
 
@@ -581,7 +594,7 @@ private lemma large_amplitude {L : ℕ} (hL : 1 ≤ L) {E : Finset ℕ}
       ∂AddCircle.haarAddCircle ≤ 2 * cns + 4 := by
     have h_pw : ∀ t : AddCircle T,
         (‖(1 : ℂ) + P t‖ + 1) ^ 2 ≤
-        2 * ‖(1 : ℂ) + P t‖ ^ 2 + 2 := by intro t; nlinarith [sq_nonneg (‖(1 : ℂ) + P t‖ - 1)]
+        2 * ‖(1 : ℂ) + P t‖ ^ 2 + 2 := by intro t; linarith only [sq_nonneg (‖(1 : ℂ) + P t‖ - 1)]
     calc ∫ t, (‖(1 : ℂ) + P t‖ + 1) ^ 2 ∂AddCircle.haarAddCircle
         ≤ ∫ t, (2 * ‖(1 : ℂ) + P t‖ ^ 2 + 2) ∂AddCircle.haarAddCircle :=
           integral_mono
@@ -644,7 +657,7 @@ theorem local_circle_estimate {L : ℕ} (hL : 1 ≤ L) {E : Finset ℕ}
     have hL_real : (1 : ℝ) ≤ (L : ℝ) := Nat.one_le_cast.mpr hL
     nlinarith [mul_le_mul_of_nonneg_left (by linarith : (3 : ℝ) / 16 * circleNormSq P ≤
       ∫ t, rho (P t) ^ 2 ∂AddCircle.haarAddCircle)
-      (show (0 : ℝ) ≤ 144 * L from by nlinarith)]
+      (show (0 : ℝ) ≤ 144 * L from by linarith)]
   · push Not at hx
     have h := large_amplitude hL hE hE_pos b P hP hx
     have hL_pos : (0 : ℝ) < (L : ℝ) := Nat.cast_pos.mpr (by omega)

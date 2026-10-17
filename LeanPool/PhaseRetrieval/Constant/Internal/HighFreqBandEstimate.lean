@@ -22,8 +22,6 @@ import LeanPool.PhaseRetrieval.Constant.Internal.MissingMathlib.Poincare
 import LeanPool.PhaseRetrieval.Constant.Internal.RotationalAveraging
 import LeanPool.PhaseRetrieval.Constant.Internal.SafeSquare
 import Mathlib.Analysis.Real.Pi.Bounds
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Data.Nat.Factorial.DoubleFactorial
 import Mathlib.Tactic.NormNum.Parity
 
 /-! # HighFreqBandEstimate -/

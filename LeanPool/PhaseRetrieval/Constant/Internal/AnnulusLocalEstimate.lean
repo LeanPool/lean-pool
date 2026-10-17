@@ -18,8 +18,6 @@ module
 public import LeanPool.PhaseRetrieval.Constant.Internal.BlockDecomposition
 import LeanPool.PhaseRetrieval.Constant.Internal.HighFreqBandEstimate
 import LeanPool.PhaseRetrieval.Constant.Internal.LocalCircleEstimate
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Data.Nat.Factorial.DoubleFactorial
 import Mathlib.Tactic.NormNum.Parity
 
 /-! # AnnulusLocalEstimate -/
