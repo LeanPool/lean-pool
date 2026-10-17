@@ -10,6 +10,7 @@ module
 
 public import LeanPool.LiebThirring.Defs.Configuration
 import LeanPool.LiebThirring.Electrostatics.SphereRadial
+import Mathlib.Analysis.SpecialFunctions.Integrals.Basic
 
 /-!
 # Inverse-distance cutoff integrals

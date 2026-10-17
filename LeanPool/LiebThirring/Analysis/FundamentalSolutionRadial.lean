@@ -10,6 +10,7 @@ module
 
 public import LeanPool.LiebThirring.Analysis.FundamentalSolutionRegularization
 import LeanPool.LiebThirring.Electrostatics.SphereRadial
+import Mathlib.Analysis.Calculus.Deriv.Pow
 
 /-!
 # Radial normalization of the regularized Coulomb density

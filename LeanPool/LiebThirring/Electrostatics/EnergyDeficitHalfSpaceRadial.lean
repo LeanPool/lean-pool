@@ -9,6 +9,8 @@ module
 -- Imports adapted for Lean Pool.
 
 public import Mathlib.MeasureTheory.Integral.IntegralEqImproper
+import Mathlib.Analysis.Calculus.Deriv.Pow
+import Mathlib.Analysis.Calculus.Deriv.Inv
 
 /-!
 # Scalar integrals for the half-space inverse-fourth mass
