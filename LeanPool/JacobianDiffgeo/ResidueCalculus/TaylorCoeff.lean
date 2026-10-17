@@ -11,8 +11,11 @@ module
 
 public import Mathlib.Analysis.Calculus.DSlope
 public import Mathlib.Analysis.Complex.Basic
+public import Mathlib.Analysis.Analytic.Basic
+import Mathlib.Analysis.Analytic.Constructions
 import Mathlib.Analysis.Analytic.IsolatedZeros
 import Mathlib.Analysis.Calculus.Deriv.Mul
+import Mathlib.Analysis.Calculus.Deriv.Pow
 
 /-!
 # Taylor coefficients via iterated difference quotients (residue-calculus)

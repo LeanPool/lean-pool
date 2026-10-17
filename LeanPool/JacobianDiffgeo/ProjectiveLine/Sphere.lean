@@ -6,6 +6,7 @@ Authors: Rado Kirov
 module
 
 public import Mathlib.Topology.Compactification.OnePoint.Sphere
+import Mathlib.LinearAlgebra.Complex.FiniteDimensional
 
 /-!
 # The challenge bridge: `ℙ¹ ≃ₜ` the unit 2-sphere (CC5)

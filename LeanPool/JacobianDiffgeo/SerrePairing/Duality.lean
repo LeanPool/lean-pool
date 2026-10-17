@@ -8,6 +8,7 @@ module
 public import LeanPool.JacobianDiffgeo.SerrePairing.Pairing
 public import LeanPool.JacobianDiffgeo.CanonicalForms.LinearSystems
 import Mathlib.Combinatorics.Matroid.Init
+import Mathlib.LinearAlgebra.Dual.Lemmas
 import Mathlib.LinearAlgebra.FreeModule.Finite.Matrix
 import Mathlib.MeasureTheory.Covering.Besicovitch
 

@@ -11,6 +11,7 @@ module
 
 public import LeanPool.JacobianDiffgeo.LocalMultiplicity.Multiplicity
 import LeanPool.JacobianDiffgeo.LocalMultiplicity.AdaptedCharts
+import Mathlib.Analysis.Calculus.Deriv.Pow
 import Mathlib.MeasureTheory.Integral.Bochner.Basic
 import Mathlib.RingTheory.RootsOfUnity.Complex
 

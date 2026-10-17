@@ -12,6 +12,7 @@ module
 public import Mathlib.Analysis.Analytic.Order
 public import Mathlib.Algebra.Polynomial.Roots
 public import Mathlib.Analysis.Complex.Basic
+import Mathlib.Analysis.Calculus.Deriv.Pow
 import Mathlib.RingTheory.RootsOfUnity.Complex
 
 /-!

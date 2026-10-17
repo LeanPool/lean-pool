@@ -15,6 +15,7 @@ import LeanPool.JacobianDiffgeo.PlanarStokes.CompactSupport
 import LeanPool.JacobianDiffgeo.PlanarStokes.Compat
 import LeanPool.JacobianDiffgeo.TailDuality.Duality
 import Mathlib.Combinatorics.Matroid.Init
+import Mathlib.LinearAlgebra.Dual.Lemmas
 import Mathlib.LinearAlgebra.FreeModule.Finite.Matrix
 import Mathlib.MeasureTheory.Covering.Besicovitch
 

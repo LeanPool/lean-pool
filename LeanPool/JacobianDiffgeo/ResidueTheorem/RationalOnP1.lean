@@ -293,7 +293,7 @@ theorem meromorphicAt_neg_sq_inv_mul_sub_inv_zpow (a : ℂ) (k : ℤ) :
     have hz1 : (w⁻¹ - a) = (1 - a * w) * w⁻¹ := by field_simp
     change (-((1 - a * w) ^ k * w ^ (-k - 2)) : ℂ) = -(w ^ 2)⁻¹ * (w⁻¹ - a) ^ k
     rw [hz1, mul_zpow]
-    have h1 : (w ^ 2)⁻¹ = w ^ (-2 : ℤ) := by rw [zpow_neg]; norm_num; try rfl
+    have h1 : (w ^ 2)⁻¹ = w ^ (-2 : ℤ) := by rw [zpow_neg]; norm_num
     have h2 : (w⁻¹ : ℂ) ^ k = w ^ (-k) := by rw [← zpow_neg_one, ← zpow_mul, neg_one_mul]
     rw [h1, h2]
     rw [show (-(w ^ (-2:ℤ)) * ((1 - a*w)^k * w ^ (-k)) : ℂ)
@@ -315,7 +315,7 @@ theorem resAt_neg_sq_inv_mul_sub_inv_zpow (a : ℂ) {k : ℤ} (hk : k < 0) :
     have hz1 : (w⁻¹ - a) = (1 - a * w) * w⁻¹ := by field_simp
     change (-(w ^ 2)⁻¹ * (w⁻¹ - a) ^ k : ℂ) = -((1 - a * w) ^ k * w ^ (-k - 2))
     rw [hz1, mul_zpow]
-    have h1 : (w ^ 2)⁻¹ = w ^ (-2 : ℤ) := by rw [zpow_neg]; norm_num; try rfl
+    have h1 : (w ^ 2)⁻¹ = w ^ (-2 : ℤ) := by rw [zpow_neg]; norm_num
     have h2 : (w⁻¹ : ℂ) ^ k = w ^ (-k) := by rw [← zpow_neg_one, ← zpow_mul, neg_one_mul]
     rw [h1, h2]
     rw [show (-(w ^ (-2:ℤ)) * ((1 - a*w)^k * w ^ (-k)) : ℂ)
