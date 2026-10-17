@@ -164,12 +164,12 @@ theorem unfoldBox.decreases_lmOf_nonAtomic {α : Program} {φ : Formula} {X : Li
       simp [lmOfFormula]
   case union α β => -- based on sequence case
     rcases ubc with one | ⟨τ, τ_in, def_ψ⟩ | ⟨a, δ, def_ψ, _⟩
-    · subst_eqs; linarith
+    · subst_eqs; omega
     · subst def_ψ
       suffices lmOfFormula (~τ)
           < (List.map (fun x => lmOfFormula (~ (x.1))) (testsOfProgram (α⋓β)).attach).sum.succ by
         simp_all
-        linarith
+        omega
       rw [@List.attach_map_val _ _ (testsOfProgram (α⋓β)) (fun x => lmOfFormula (~↑x))]
       rw [Nat.lt_succ_iff]
       exact List.single_le_sum (by simp) _ (by rw [List.mem_map]; use τ)
@@ -177,12 +177,12 @@ theorem unfoldBox.decreases_lmOf_nonAtomic {α : Program} {φ : Formula} {X : Li
       simp [lmOfFormula]
   case star β => -- based on sequence case
     rcases ubc with one | ⟨τ, τ_in, def_ψ⟩ | ⟨a, δ, def_ψ, _⟩
-    · subst_eqs; linarith
+    · subst_eqs; omega
     · subst def_ψ
       suffices lmOfFormula (~τ)
           < (List.map (fun x => lmOfFormula (~ (x.1))) (testsOfProgram (∗β)).attach).sum.succ by
         simp_all
-        linarith
+        omega
       rw [@List.attach_map_val _ _ (testsOfProgram (∗β)) (fun x => lmOfFormula (~↑x))]
       rw [Nat.lt_succ_iff]
       exact List.single_le_sum (by simp) _ (by rw [List.mem_map]; use τ)
@@ -190,12 +190,12 @@ theorem unfoldBox.decreases_lmOf_nonAtomic {α : Program} {φ : Formula} {X : Li
       simp [lmOfFormula]
   case test τ0 => -- based on sequence case
     rcases ubc with one | ⟨τ, τ_in, def_ψ⟩ | ⟨a, δ, def_ψ, _⟩
-    · subst_eqs; linarith
+    · subst_eqs; omega
     · subst def_ψ
       suffices lmOfFormula (~τ)
           < (List.map (fun x => lmOfFormula (~ (x.1))) (testsOfProgram (?'τ0)).attach).sum.succ by
         simp_all
-        linarith
+        omega
       rw [@List.attach_map_val _ _ (testsOfProgram (?'τ0)) (fun x => lmOfFormula (~↑x))]
       rw [Nat.lt_succ_iff]
       exact List.single_le_sum (by simp) _ (by rw [List.mem_map]; use τ)
@@ -293,7 +293,7 @@ theorem unfoldDiamond.decreases_lmOf_nonAtomic {α : Program} {φ : Formula} {X 
     case sequence α β =>
       suffices lmOfFormula ψ < (List.map lmOfFormula (testsOfProgram (α;'β))).sum.succ by
         simp_all [testsOfProgram]
-        linarith
+        omega
       suffices ∃ τ' ∈ testsOfProgram (α;'β), lmOfFormula ψ < 1 + lmOfFormula τ' by
         rw [Nat.lt_succ_iff]
         apply List.le_sum_of_mem
@@ -304,7 +304,7 @@ theorem unfoldDiamond.decreases_lmOf_nonAtomic {α : Program} {φ : Formula} {X 
     case union α β =>
       suffices lmOfFormula ψ < (List.map lmOfFormula (testsOfProgram (α⋓β))).sum.succ by
         simp_all [testsOfProgram]
-        linarith
+        omega
       suffices ∃ τ' ∈ testsOfProgram (α;'β), lmOfFormula ψ < 1 + lmOfFormula τ' by
         rw [Nat.lt_succ_iff]
         apply List.le_sum_of_mem
@@ -315,7 +315,7 @@ theorem unfoldDiamond.decreases_lmOf_nonAtomic {α : Program} {φ : Formula} {X 
     case star β =>
       suffices lmOfFormula ψ < (List.map lmOfFormula (testsOfProgram (∗β))).sum.succ by
         simp_all [testsOfProgram]
-        linarith
+        omega
       suffices ∃ τ' ∈ testsOfProgram (∗β), lmOfFormula ψ < 1 + lmOfFormula τ' by
         rw [Nat.lt_succ_iff]
         apply List.le_sum_of_mem
@@ -414,7 +414,7 @@ lemma measureProp {α : Program} {φ φ₁ φ₂ : Formula} :
       have := finset_sum_trichotomy lmOfFormula X (~φ) (testsOfProgram α) tri
       subst α_def
       simp only [lmOfFormula, List.map_subtype, List.unattach_attach, gt_iff_lt] at *
-      linarith
+      omega
 
 /-- The end sequents of a local tableau. -/
 @[simp]

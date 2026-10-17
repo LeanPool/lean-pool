@@ -390,8 +390,8 @@ theorem length_succ_eq_length_of_edge {Hist X} {tab : Tableau Hist X} {s t : Pat
 
 theorem edge_then_length_lt {Hist X} {tab : Tableau Hist X} {s t : PathIn tab} (s_t : s ⋖_ t) :
   s.length < t.length := by
-  have := length_succ_eq_length_of_edge s_t
-  linarith
+  rw [← length_succ_eq_length_of_edge s_t]
+  exact Nat.lt_succ_self _
 
 /-- Map tableau edges to strict increases in path length. -/
 def edgeNatLTRelHom {Hist X tab} : RelHom (@edge Hist X tab) Nat.lt :=
@@ -946,7 +946,7 @@ theorem path_then_length_lt {Hist X} {tab : Tableau Hist X} {s t : PathIn tab} (
   induction s_t
   case single set => exact edge_then_length_lt set
   case tail h ih => have := edge_then_length_lt h
-                    linarith
+                    omega
 
 theorem path_is_irreflexive {Hist X} {tab : Tableau Hist X} {a : PathIn tab} : ¬(Relation.TransGen
   edge a a) := by

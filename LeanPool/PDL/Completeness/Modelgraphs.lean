@@ -108,7 +108,7 @@ theorem loadClaimHelper {Worlds : Finset (Finset Formula)}
         rw [← length_def]
         simp only [List.append_eq, List.length_append, List.length_cons, List.length_nil,
           zero_add] at hyp
-        linarith
+        omega
       simp only [pairRel, List.zip_cons_cons, List.append_eq, List.getElem_cons_succ,
         List.getElem_zip] at lchain
       convert lchain
@@ -266,6 +266,7 @@ theorem loadedTruthLemmaProg {Worlds} (MG : ModelGraph Worlds) α :
       rcases claim with ⟨YS, X_def, Y_def, relSteps⟩
       let Z := YS.get 1
       have X_β_Z : relate MG.1 β X Z := by
+        clear * -relSteps X_def
         specialize relSteps 0
         unfold Z
         convert relSteps <;> aesop (rule_sets := [-default])
@@ -387,7 +388,7 @@ theorem loadedTruthLemmaProg {Worlds} (MG : ModelGraph Worlds) α :
       (by simp only [vDash.SemImplies, evaluatePoint, conEval]; exact X_F)
     rcases this with ⟨δ, δ_in_P, X_δ_Y⟩
     have δφ_in_X : (⌈⌈δ⌉⌉φ) ∈ X.val := by
-      simp_all only [relate, Subtype.exists]
+      clear * -Bset_sub_X δ_in_P α_def
       subst_eqs
       apply Bset_sub_X
       right
