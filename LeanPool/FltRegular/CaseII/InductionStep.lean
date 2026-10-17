@@ -9,6 +9,7 @@ module
 public import Mathlib.NumberTheory.NumberField.Cyclotomic.Basic
 import Mathlib.NumberTheory.NumberField.Cyclotomic.Ideal
 public import Mathlib.RingTheory.ClassGroup.Basic
+import Mathlib.RingTheory.RootsOfUnity.CyclotomicUnits
 
 import LeanPool.FltRegular.CaseII.AuxLemmas
 import LeanPool.FltRegular.NumberTheory.Cyclotomic.MoreLemmas
@@ -410,7 +411,7 @@ lemma isPrincipal_a_div_a_zero : Submodule.IsPrincipal
     FractionalIdeal.isPrincipal_iff] at this
   obtain ⟨a, ha⟩ := this
   rw [div_eq_iff, Ideal.span_singleton_pow, FractionalIdeal.coeIdeal_span_singleton,
-    FractionalIdeal.spanSingleton_mul_spanSingleton] at ha
+    ← map_mul] at ha
   · rw [FractionalIdeal.isPrincipal_iff]
     exact ⟨_, ha⟩
   · rw [← FractionalIdeal.coeIdeal_bot,
