@@ -121,8 +121,7 @@ theorem fractionRingAlgEquiv_finitePlaceOrder_eq
       finitePlaceOrder q x := by
   by_cases hx : x = 0
   · subst x
-    simp only [map_zero, finitePlaceOrder,
-      FractionalIdeal.spanSingleton_zero, FractionalIdeal.count_zero]
+    simp only [map_zero, finitePlaceOrder, FractionalIdeal.count_zero]
   · have hmap : FractionRing.algEquiv R L x ≠ 0 := by simpa using hx
     have hactual := valuation_eq_exp_neg_finitePlaceOrder
       q (FractionRing.algEquiv R L x) hmap
@@ -206,7 +205,7 @@ theorem localizationAtPrime_finitePlaceOrder_eq
       finitePlaceOrder q x := by
   by_cases hx : x = 0
   · subst x
-    simp only [finitePlaceOrder, FractionalIdeal.spanSingleton_zero,
+    simp only [finitePlaceOrder, map_zero,
       FractionalIdeal.count_zero]
   · have hlocal := valuation_eq_exp_neg_finitePlaceOrder
       (IsDiscreteValuationRing.maximalIdeal S) x hx

@@ -89,7 +89,7 @@ private theorem ratFunc_principal_fractionalIdeal_representation
           ((algebraMap K[X] (RatFunc K) f.denom)⁻¹) *
         (↑(Ideal.span {f.num}) : FractionalIdeal (K[X])⁰ (RatFunc K)) := by
   rw [FractionalIdeal.coeIdeal_span_singleton,
-    FractionalIdeal.spanSingleton_mul_spanSingleton]
+    ← map_mul]
   apply congrArg (FractionalIdeal.spanSingleton (K[X])⁰)
   simpa only [div_eq_mul_inv, mul_comm] using (RatFunc.num_div_denom f).symm
 

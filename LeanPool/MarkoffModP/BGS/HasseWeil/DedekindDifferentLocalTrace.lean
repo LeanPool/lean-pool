@@ -296,7 +296,7 @@ theorem exists_base_multiplier_clearing_different_counts
         FractionalIdeal.count L q
             (FractionalIdeal.spanSingleton B⁰ (algebraMap A L c)) +
           FractionalIdeal.count L q (FractionalIdeal.spanSingleton B⁰ y) := by
-    rw [← FractionalIdeal.spanSingleton_mul_spanSingleton,
+    rw [map_mul,
       FractionalIdeal.count_mul]
     · exact FractionalIdeal.spanSingleton_ne_zero_iff.mpr hcL0
     · exact FractionalIdeal.spanSingleton_ne_zero_iff.mpr hy

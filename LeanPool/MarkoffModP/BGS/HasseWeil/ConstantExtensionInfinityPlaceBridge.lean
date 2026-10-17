@@ -6,6 +6,7 @@ Authors: Yuma Mizuno
 module
 
 
+public import Mathlib.RingTheory.QuasiFinite.Basic
 public import LeanPool.MarkoffModP.BGS.HasseWeil.ConstantTensorResidue
 public import LeanPool.MarkoffModP.BGS.HasseWeil.ExactConstantExtensionInfinityNormalization
 public import LeanPool.MarkoffModP.BGS.HasseWeil.OnePointLeadingCoefficient
@@ -312,7 +313,8 @@ private theorem actualInfinityPlaceResidueField_finite
       Localization.localRingHom_to_map]
   let : Algebra.QuasiFiniteAt (RatFuncInfinityIntegers K) P.1 :=
     inferInstance
-  let : Module.Finite p.ResidueField P.1.ResidueField := inferInstance
+  let : Module.Finite p.ResidueField P.1.ResidueField :=
+    Algebra.instFiniteResidueFieldOfQuasiFiniteAt p P.1
   exact Module.finite_of_finite p.ResidueField
 
 end LocalizationHelpers

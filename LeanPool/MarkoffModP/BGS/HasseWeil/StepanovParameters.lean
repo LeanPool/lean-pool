@@ -7,7 +7,7 @@ module
 
 
 public import Mathlib.Algebra.Order.Ring.Star
-public import Mathlib.Data.Int.Star
+public import Mathlib.Algebra.Order.Star.Int
 public import Mathlib.Tactic
 public import Mathlib.Tactic.Linarith.Lemmas
 public import Mathlib.Tactic.NormNum.Ineq

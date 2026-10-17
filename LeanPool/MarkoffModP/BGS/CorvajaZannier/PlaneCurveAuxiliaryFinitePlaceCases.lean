@@ -6,6 +6,7 @@ Authors: Yuma Mizuno
 module
 
 
+public import Mathlib.RingTheory.QuasiFinite.Basic
 public import LeanPool.MarkoffModP.BGS.CorvajaZannier.PlaneCurveAuxiliaryFinitePlace
 public import LeanPool.MarkoffModP.BGS.CorvajaZannier.DedekindPerfectResidueCaseI
 public import LeanPool.MarkoffModP.BGS.CorvajaZannier.RatFuncExhaustiveProductFormula

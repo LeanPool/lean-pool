@@ -707,8 +707,6 @@ noncomputable def
         Ideal.span ({Polynomial.X} : Set C[X])} ≃
       (Ideal.span ({Polynomial.X} : Set C[X])).primesOver
         (integralClosure C[X] (ExactConstantExtension C N S)) := by
-  letI : Field (ExactConstantExtension C N S) :=
-    exactConstantExtensionField C N S hExact
   exact
     { toFun := fun q => ⟨q.1.asIdeal, q.1.isPrime, ⟨q.2.symm⟩⟩
       invFun := fun P => by
@@ -743,7 +741,8 @@ noncomputable def
             (R := C) (A := S) (B := N)
           intro hx
           apply hNX
-          apply f.injective
+          apply Algebra.TensorProduct.includeRight_injective
+            (R := C) (A := S) (B := N) (algebraMap C S).injective
           exact hx.trans (map_zero f).symm
         have hAX : algebraMap C[X]
             (integralClosure C[X] (ExactConstantExtension C N S))

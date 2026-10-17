@@ -156,9 +156,12 @@ variable (L : Type*) [Field L] [Algebra (RatFunc K) L]
   [Algebra.IsSeparable (RatFunc K) L]
   [DecidableEq (RatFunc K)]
 
+-- Keep the canonical algebra when the extension field is itself `RatFunc K`.
+attribute [local instance 1100] RatFunc.instAlgebraOfPolynomial
+
 /-- The algebra structure from `K[X]` to `L` used in the plane rational place affine
     comparison construction. -/
-local instance (priority := 10) rationalComparisonPolynomialAlgebra :
+local instance rationalComparisonPolynomialAlgebra :
     Algebra K[X] L :=
   RingHom.toAlgebra ((algebraMap (RatFunc K) L).comp
     (algebraMap K[X] (RatFunc K)))

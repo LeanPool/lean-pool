@@ -258,7 +258,7 @@ theorem functionFieldNormalClosureConstantBase_le_originalCompositum
     rw [← functionFieldNormalClosureConstantBase_eq_compositum K F]
     exact b.2
   refine IntermediateField.adjoin_induction (RatFunc K)
-    (p := fun z _ =>
+    (motive := fun z _ =>
       z ∈ FunctionFieldNormalClosureOriginalCompositum K F hExact)
     ?_ ?_ ?_ ?_ ?_ hb
   · rintro _ ⟨c, rfl⟩

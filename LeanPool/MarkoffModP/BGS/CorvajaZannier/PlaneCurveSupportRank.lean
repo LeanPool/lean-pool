@@ -151,7 +151,11 @@ private theorem integerVectorLine_cyclic {d : Fin 2 → ℤ} (hd : d ≠ 0) :
     exact hwz
   let e : L ≃+ L.map (integerCoordinate i) :=
     AddEquiv.ofBijective phi ⟨hphi_inj, hphi_surj⟩
-  obtain ⟨a, ha⟩ := Int.subgroup_cyclic (L.map (integerCoordinate i))
+  obtain ⟨a, haGen⟩ :=
+    (AddSubgroup.isAddCyclic_iff_exists_zmultiples_eq_top (L.map (integerCoordinate i))).mp
+      inferInstance
+  have ha : L.map (integerCoordinate i) = AddSubgroup.closure {a} := by
+    simpa only [AddSubgroup.zmultiples_eq_closure] using haGen.symm
   have ha_mem : a ∈ L.map (integerCoordinate i) := by
     rw [ha]
     exact AddSubgroup.subset_closure (Set.mem_singleton a)

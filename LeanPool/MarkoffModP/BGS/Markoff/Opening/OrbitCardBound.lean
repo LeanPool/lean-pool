@@ -84,14 +84,8 @@ private theorem four_le_normalizedGammaOrbit_ncard_of_firstCoordinate_zero
       | exact h₂ hfirst.symm
       | exact h₂ hsecond
       | exact h₂ hsecond.symm
-      | exact h₂ hthird
-      | exact h₂ hthird.symm
       | exact h₃ hfirst
       | exact h₃ hfirst.symm
-      | exact h₃ hsecond
-      | exact h₃ hsecond.symm
-      | exact h₃ hthird
-      | exact h₃ hthird.symm
       | exact h₂₃ hfirst
       | exact h₂₃ hfirst.symm
       | exact h₂₃ hsecond

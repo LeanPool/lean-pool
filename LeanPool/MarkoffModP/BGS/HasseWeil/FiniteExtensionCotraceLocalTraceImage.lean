@@ -277,7 +277,7 @@ theorem exists_trace_eq_of_count_threshold_lt_neg_different
     intro q
     change FractionalIdeal.count L q
         (FractionalIdeal.spanSingleton B⁰ (u * s)) = _
-    rw [← FractionalIdeal.spanSingleton_mul_spanSingleton,
+    rw [map_mul,
       FractionalIdeal.count_mul]
     · exact FractionalIdeal.spanSingleton_ne_zero_iff.mpr hu0
     · exact FractionalIdeal.spanSingleton_ne_zero_iff.mpr hs0
@@ -360,7 +360,7 @@ theorem exists_trace_eq_of_count_threshold_lt_neg_different
           FractionalIdeal.count L q
             (FractionalIdeal.spanSingleton B⁰ z₀) := by
     rw [show z = r • z₀ from rfl, Algebra.smul_def,
-      ← FractionalIdeal.spanSingleton_mul_spanSingleton,
+      map_mul,
       FractionalIdeal.count_mul]
     · exact FractionalIdeal.spanSingleton_ne_zero_iff.mpr hrTop0
     · exact FractionalIdeal.spanSingleton_ne_zero_iff.mpr hz₀0

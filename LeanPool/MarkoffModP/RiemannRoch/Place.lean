@@ -73,7 +73,7 @@ theorem valuation_eq_exp_neg_count (v : IsDedekindDomain.HeightOneSpectrum R) (x
       spanSingleton R⁰ (algebraMap R K (d : R))⁻¹ *
         (Ideal.span {n} : Ideal R) := by
     rw [← hx, IsFractionRing.mk'_eq_div, div_eq_mul_inv,
-      coeIdeal_span_singleton, spanSingleton_mul_spanSingleton, mul_comm]
+      coeIdeal_span_singleton, ← map_mul, mul_comm]
   conv_lhs =>
     rw [← hx, v.valuation_of_mk', v.intValuation_if_neg hn,
       v.intValuation_if_neg (nonZeroDivisors.ne_zero d.property)]
@@ -499,7 +499,8 @@ instance finiteDimensionalResidueFieldInfinite
   let : FiniteDimensional k (A ⧸ p) := by
     rw [hp]
     exact inftyValuationSubring.finiteDimensionalResidueField k
-  let : FiniteDimensional (A ⧸ p) (S ⧸ v.asIdeal) := inferInstance
+  let : FiniteDimensional (A ⧸ p) (S ⧸ v.asIdeal) :=
+    Module.Finite.of_restrictScalars_finite A (A ⧸ p) (S ⧸ v.asIdeal)
   let : IsScalarTower k (A ⧸ p) (S ⧸ v.asIdeal) :=
     IsScalarTower.of_algebraMap_eq fun _ => rfl
   exact FiniteDimensional.trans k (A ⧸ p) (S ⧸ v.asIdeal)
