@@ -229,7 +229,7 @@ theorem pressureSplitRemainder_harmonic_slices
         (ENNReal.ofReal (3 / 2 : ℝ)) volume := by
       exact (memLp_congr_ae (Filter.Eventually.of_forall fun x =>
         congrFun hEq x)).1
-        ((memLp_indicator_iff_restrict hBallMeas).2 ht)
+        ((memLp_indicator_iff_restrict hBallMeas.nullMeasurableSet).2 ht)
     exact (hMem.locallyIntegrable (by norm_num)).locallyIntegrableOn
       pressureSplitBall
   filter_upwards [hbump, hloc] with t ht hloc

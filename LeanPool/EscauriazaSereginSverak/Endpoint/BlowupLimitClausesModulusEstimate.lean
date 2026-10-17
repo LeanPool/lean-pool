@@ -397,7 +397,7 @@ theorem blowupLimitClauses_modulus_of_formula
       exact ENNReal.mul_lt_top hvolC ENNReal.ofReal_lt_top⟩
     -- the test function and its derivatives
     have hwi : ∀ i, ContDiff ℝ (⊤ : ℕ∞) (fun y => w y i) := fun i =>
-      (contDiff_apply ℝ ℝ i).comp hw
+      (contDiff_apply ℝ (fun _ : Fin 3 => ℝ) i).comp hw
     have hwic : ∀ i, HasCompactSupport (fun y => w y i) := fun i =>
       hwc.comp_left (g := fun v : Vec3 => v i) rfl
     set φ : Fin 3 → Fin 3 → Vec3 → ℝ := fun i j x => spatialDeriv (fun y => w y i) j x

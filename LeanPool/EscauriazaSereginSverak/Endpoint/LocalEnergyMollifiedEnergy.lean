@@ -176,18 +176,18 @@ private theorem localEnergy_mollified_input_regularities
   have huExtLp (i : Fin 3) : MemLp
       (U.indicator (fun z : Vec3 × ℝ => u z i)) 4
       (volume : Measure (Vec3 × ℝ)) :=
-    (memLp_indicator_iff_restrict hUmeas).2 (hu4i i)
+    (memLp_indicator_iff_restrict hUmeas.nullMeasurableSet).2 (hu4i i)
   have hFExtLp (i j : Fin 3) : MemLp
       (U.indicator (fun z : Vec3 × ℝ => u z i * u z j)) 2
       (volume : Measure (Vec3 × ℝ)) :=
-    (memLp_indicator_iff_restrict hUmeas).2 (hF2ij i j)
+    (memLp_indicator_iff_restrict hUmeas.nullMeasurableSet).2 (hF2ij i j)
   have hGExtLp (i j : Fin 3) : MemLp
       (U.indicator (fun z : Vec3 × ℝ => Du z i j)) 2
       (volume : Measure (Vec3 × ℝ)) :=
-    (memLp_indicator_iff_restrict hUmeas).2 (hDu2ij i j)
+    (memLp_indicator_iff_restrict hUmeas.nullMeasurableSet).2 (hDu2ij i j)
   have hpExtLp : MemLp (U.indicator p) (ENNReal.ofReal (3 / 2 : ℝ))
       (volume : Measure (Vec3 × ℝ)) :=
-    (memLp_indicator_iff_restrict hUmeas).2 hpProd
+    (memLp_indicator_iff_restrict hUmeas.nullMeasurableSet).2 hpProd
   have huLoc (i : Fin 3) : LocallyIntegrable
       (fun z : Vec3 × ℝ => U.indicator (fun q => u q i) z)
       (volume : Measure (Vec3 × ℝ)) := huExtLp i |>.locallyIntegrable (by norm_num)

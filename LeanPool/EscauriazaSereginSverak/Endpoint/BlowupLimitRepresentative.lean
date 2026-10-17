@@ -116,7 +116,7 @@ private theorem blowupRepresentative_raw_memLp
     (fun x => weakContL3OfLp (v t x))) 3 volume
   unfold blowupRepresentativeDomain
   rw [memLp_indicator_iff_restrict
-    ((isOpen_vec3Ball (0 : Vec3) (3 / 4 : ℝ)).measurableSet)]
+    ((isOpen_vec3Ball (0 : Vec3) (3 / 4 : ℝ)).measurableSet).nullMeasurableSet]
   exact (Lp.memLp (v t)).continuousLinearMap_comp weakContL3OfLp
 
 private theorem blowupRepresentative_raw_coordinate_memLp

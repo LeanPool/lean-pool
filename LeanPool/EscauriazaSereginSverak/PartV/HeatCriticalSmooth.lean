@@ -375,10 +375,10 @@ theorem heatRegTest_heatConv_dissipation_integrable {b : Vec3 → Vec3}
     (heatRegTest_contDiff hη).comp hprofile
   have htestSmooth (i : Fin 3) : ContDiff ℝ (⊤ : ℕ∞)
       (fun x : Vec3 => heatRegTest η (heatConvVec3 t b x) i) :=
-    (contDiff_apply ℝ ℝ i).comp htestProfile
+    (contDiff_apply ℝ (fun _ : Fin 3 => ℝ) i).comp htestProfile
   have hheatSmooth (i : Fin 3) : ContDiff ℝ (⊤ : ℕ∞)
       (fun x : Vec3 => heatConvVec3 t b x i) :=
-    (contDiff_apply ℝ ℝ i).comp hprofile
+    (contDiff_apply ℝ (fun _ : Fin 3 => ℝ) i).comp hprofile
   have hterm (i j : Fin 3) : Integrable
       (fun x : Vec3 =>
         CKN.spatialDeriv
@@ -424,10 +424,10 @@ theorem heatRegEnergy_integral_derivative_eq_neg_gradient
     (heatRegTest_contDiff hη).comp hprofile
   have hfSmooth (i : Fin 3) : ContDiff ℝ (⊤ : ℕ∞) (f i) := by
     dsimp [f]
-    exact (contDiff_apply ℝ ℝ i).comp htestProfile
+    exact (contDiff_apply ℝ (fun _ : Fin 3 => ℝ) i).comp htestProfile
   have hgSmooth (i : Fin 3) : ContDiff ℝ (⊤ : ℕ∞) (g i) := by
     dsimp [g]
-    exact (contDiff_apply ℝ ℝ i).comp hprofile
+    exact (contDiff_apply ℝ (fun _ : Fin 3 => ℝ) i).comp hprofile
   have hfg (i j : Fin 3) : Integrable
       (fun x : Vec3 => f i x * CKN.spatialDeriv (g i) j x) volume := by
     apply heat_product_decay_six_integrable (hfSmooth i).continuous
@@ -560,10 +560,10 @@ private theorem heatRegEnergy_integral_deriv_nonpos
     (heatRegTest_contDiff hη).comp hprofile
   have hfSmooth (i : Fin 3) : ContDiff ℝ (⊤ : ℕ∞) (f i) := by
     dsimp [f]
-    exact (contDiff_apply ℝ ℝ i).comp htestProfile
+    exact (contDiff_apply ℝ (fun _ : Fin 3 => ℝ) i).comp htestProfile
   have hgSmooth (i : Fin 3) : ContDiff ℝ (⊤ : ℕ∞) (g i) := by
     dsimp [g]
-    exact (contDiff_apply ℝ ℝ i).comp hprofile
+    exact (contDiff_apply ℝ (fun _ : Fin 3 => ℝ) i).comp hprofile
   have htermInt (i j : Fin 3) : Integrable
       (fun x : Vec3 => CKN.spatialDeriv (f i) j x *
         CKN.spatialDeriv (g i) j x) volume := by

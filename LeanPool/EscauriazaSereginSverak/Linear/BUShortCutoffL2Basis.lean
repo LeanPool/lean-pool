@@ -41,7 +41,7 @@ private theorem bu_memLp_mul_bounded_support
     (hzero : ∀ z ∉ K, g z = 0) :
     MemLp (fun z => g z * f z) 2 volume := by
   have hExt : MemLp (K.indicator f) 2 volume :=
-    (memLp_indicator_iff_restrict hKmeas).2 hf
+    (memLp_indicator_iff_restrict hKmeas.nullMeasurableSet).2 hf
   have hprod : MemLp (fun z => g z * K.indicator f z) 2 volume := by
     apply MemLp.of_le_mul (c := C) hExt
       (hg.aestronglyMeasurable.mul hExt.aestronglyMeasurable)

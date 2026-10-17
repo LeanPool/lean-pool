@@ -474,7 +474,7 @@ theorem vorticityTestCurl_mem_spaceTimeTestFunction
     vorticityTestCurl ψ ∈ CKN.spaceTimeTestFunction (V := Vec3) Ω I := by
   rcases hψ with ⟨hψsmooth, hψcompact, hψsupport⟩
   have hcomp (i : Fin 3) : ContDiff ℝ (⊤ : ℕ∞) (fun z : Vec3 × ℝ => ψ z i) :=
-    (contDiff_apply ℝ ℝ i).comp hψsmooth
+    (contDiff_apply ℝ (fun _ : Fin 3 => ℝ) i).comp hψsmooth
   have hpartSmooth (i j : Fin 3) : ContDiff ℝ (⊤ : ℕ∞)
       (fun z : Vec3 × ℝ => vorticityTestPartial (fun w => ψ w i) j z) := by
     have h := CKN.spatialPartial_contDiff (hcomp i) j
@@ -560,16 +560,16 @@ theorem vorticityTestCurl_divergence
     ∑ i : Fin 3, vorticityTestPartial
       (fun w : Vec3 × ℝ => vorticityTestCurl ψ w i) i z = 0 := by
   have h0 : ContDiff ℝ (⊤ : ℕ∞) (fun w : Vec3 × ℝ => ψ w 0) :=
-    (contDiff_apply ℝ ℝ 0).comp hψ
+    (contDiff_apply ℝ (fun _ : Fin 3 => ℝ) 0).comp hψ
   have h1 : ContDiff ℝ (⊤ : ℕ∞) (fun w : Vec3 × ℝ => ψ w 1) :=
-    (contDiff_apply ℝ ℝ 1).comp hψ
+    (contDiff_apply ℝ (fun _ : Fin 3 => ℝ) 1).comp hψ
   have h2 : ContDiff ℝ (⊤ : ℕ∞) (fun w : Vec3 × ℝ => ψ w 2) :=
-    (contDiff_apply ℝ ℝ 2).comp hψ
+    (contDiff_apply ℝ (fun _ : Fin 3 => ℝ) 2).comp hψ
   have hpartSmooth (i j : Fin 3) : ContDiff ℝ (⊤ : ℕ∞)
       (fun w : Vec3 × ℝ => vorticityTestPartial (fun x => ψ x i) j w) := by
     have h := CKN.spatialPartial_contDiff
       (show ContDiff ℝ (⊤ : ℕ∞) (fun x : Vec3 × ℝ => ψ x i) from
-        (contDiff_apply ℝ ℝ i).comp hψ) j
+        (contDiff_apply ℝ (fun _ : Fin 3 => ℝ) i).comp hψ) j
     convert h using 1
     funext w
     exact vorticityTestPartial_eq_spatialPartial (fun x => ψ x i) j w

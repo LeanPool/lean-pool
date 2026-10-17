@@ -8,6 +8,7 @@ module
 
 public import LeanPool.CaffarelliKohnNirenberg.Foundation.LocalSobolevCalculus
 public import LeanPool.EscauriazaSereginSverak.LPS.SmoothingSobolevEmbedding
+public import Mathlib.Analysis.Calculus.UniformLimitsDeriv
 
 /-!
 # Uniform limits of smooth functions and their ordered derivatives

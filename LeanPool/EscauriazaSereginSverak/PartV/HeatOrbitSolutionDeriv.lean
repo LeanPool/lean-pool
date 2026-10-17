@@ -6,6 +6,7 @@ Authors: Scott Armstrong
 
 module
 
+public import Mathlib.Analysis.Calculus.UniformLimitsDeriv
 public import LeanPool.EscauriazaSereginSverak.PartV.HeatOrbitSolutionKernel
 public import LeanPool.CaffarelliKohnNirenberg.Statements.IsInJ
 

@@ -355,15 +355,15 @@ theorem localEnergy_zeroExtensionLp
   refine ⟨?_, ?_, ?_, ?_⟩
   · intro i
     simpa [U] using
-      ((memLp_indicator_iff_restrict hUmeas).2 (hu4i i))
+      ((memLp_indicator_iff_restrict hUmeas.nullMeasurableSet).2 (hu4i i))
   · intro i j
     have hF : MemLp (fun z : Vec3 × ℝ => u z i * u z j) 2
         ((volume : Measure (Vec3 × ℝ)).restrict U) :=
       MeasureTheory.MemLp.mul (p := 4) (q := 4) (r := 2) (hu4i i) (hu4i j)
-    simpa [U] using ((memLp_indicator_iff_restrict hUmeas).2 hF)
+    simpa [U] using ((memLp_indicator_iff_restrict hUmeas.nullMeasurableSet).2 hF)
   · intro i j
-    simpa [U] using ((memLp_indicator_iff_restrict hUmeas).2 (hDu2ij i j))
-  · simpa [U] using ((memLp_indicator_iff_restrict hUmeas).2 hpProd)
+    simpa [U] using ((memLp_indicator_iff_restrict hUmeas.nullMeasurableSet).2 (hDu2ij i j))
+  · simpa [U] using ((memLp_indicator_iff_restrict hUmeas.nullMeasurableSet).2 hpProd)
 
 /-- A compactly supported test admits positive mollifier scales whose convolution neighborhoods
 stay within the unit cylinder. -/

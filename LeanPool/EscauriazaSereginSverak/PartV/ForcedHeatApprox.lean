@@ -122,8 +122,9 @@ theorem exists_smooth_approx_two_norms {f : Vec3 × ℝ → ℝ}
   let S : ℕ → Set (Vec3 × ℝ) := positiveTimeTruncation
   let fk : ℕ → Vec3 × ℝ → ℝ := fun k => (S k).indicator f
   have hfk52 (k : ℕ) : MemLp (fk k) (ENNReal.ofReal (5 / 2)) volume :=
-    h52.indicator (positiveTimeTruncation_measurableSet k)
-  have hfk2 (k : ℕ) : MemLp (fk k) 2 volume := h2.indicator (positiveTimeTruncation_measurableSet k)
+    h52.indicator (positiveTimeTruncation_measurableSet k).nullMeasurableSet
+  have hfk2 (k : ℕ) : MemLp (fk k) 2 volume :=
+    h2.indicator (positiveTimeTruncation_measurableSet k).nullMeasurableSet
   have hfkloc (k : ℕ) : LocallyIntegrable (fk k) volume := (hfk2 k).locallyIntegrable hp2
   have hSball (k : ℕ) : S k ⊆ Metric.closedBall (0 : Vec3 × ℝ) ((k : ℝ) + 1) := by
     intro z hz

@@ -79,7 +79,7 @@ theorem blowup_limit_smooth_test_derivative_bounds
         PiLp.contDiff_ofLp (𝕜 := ℝ)
           (E := fun _ : Fin 3 => ℝ) (p := (2 : ℝ≥0∞))
       have hcoordinate : ContDiff ℝ (⊤ : ℕ∞)
-          (fun v : Vec3 => v i) := contDiff_apply ℝ ℝ i
+          (fun v : Vec3 => v i) := contDiff_apply ℝ (fun _ : Fin 3 => ℝ) i
       have hmap : ContDiff ℝ (⊤ : ℕ∞)
           (fun v : L2Vec3 => (v.ofLp : Vec3)) := hofLp
       exact (hcoordinate.comp hmap).comp hw

@@ -438,7 +438,7 @@ theorem blowupLimitClauses_pairing_modulus
       (by linarith only [hra])
   -- integrability of the flux on the box
   have hwi : ∀ i, ContDiff ℝ (⊤ : ℕ∞) (fun y => w y i) := fun i =>
-    (contDiff_apply ℝ ℝ i).comp hw
+    (contDiff_apply ℝ (fun _ : Fin 3 => ℝ) i).comp hw
   have hφm : ∀ i j, Measurable (fun z : ParabolicPoint =>
       spatialDeriv (fun y => w y i) j z.1) := fun i j =>
     (blowupLimitClauses_spatialDeriv_contDiff (hwi i) j).continuous.measurable.comp

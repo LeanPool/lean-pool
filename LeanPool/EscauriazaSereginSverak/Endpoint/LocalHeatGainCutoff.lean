@@ -300,7 +300,7 @@ theorem IsSpaceTimeFamily.extend_univ {n : ℕ} {U K N : Set Vec3} {I : Set ℝ}
       · rw [Set.indicator_of_notMem hpUI]
         exact hFU α hα p fun hpU => hpUI ⟨hpU, hp.2⟩
     refine MemLp.ae_eq hind.symm ?_
-    rw [memLp_indicator_iff_restrict hUIm, Measure.restrict_restrict hUIm,
+    rw [memLp_indicator_iff_restrict hUIm.nullMeasurableSet, Measure.restrict_restrict hUIm,
       Set.inter_eq_left.2 hsub]
     exact hF.memL2 α hα
   · have hα' : (α ++ [j]).length ≤ n := by

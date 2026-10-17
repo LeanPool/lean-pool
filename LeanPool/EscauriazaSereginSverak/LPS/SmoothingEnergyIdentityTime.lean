@@ -6,6 +6,7 @@ Authors: Scott Armstrong
 
 module
 
+public import Mathlib.Analysis.Calculus.Deriv.Prod
 public import LeanPool.CaffarelliKohnNirenberg.Foundation.WeakDerivMollify
 public import LeanPool.CaffarelliKohnNirenberg.Foundation.WeakDerivOneDim
 public import LeanPool.EscauriazaSereginSverak.PartV.SerrinCutoff
@@ -113,9 +114,9 @@ theorem lps_kineticEnergy_hasWeakDerivOn {c d : ℝ}
   have hV (i : Fin 3) : MemLp (V i) 2 ν := (memLp_pi_iff.1 (lps_memLp_slab_to_prod hv)) i
   have hG (i : Fin 3) : MemLp (G i) 2 ν := (memLp_pi_iff.1 (lps_memLp_slab_to_prod hDtv)) i
   have hW (i : Fin 3) : MemLp (P.indicator (V i)) 2 volume :=
-    (memLp_indicator_iff_restrict hPm).2 (by rw [hPν]; exact hV i)
+    (memLp_indicator_iff_restrict hPm.nullMeasurableSet).2 (by rw [hPν]; exact hV i)
   have hT (i : Fin 3) : MemLp (P.indicator (G i)) 2 volume :=
-    (memLp_indicator_iff_restrict hPm).2 (by rw [hPν]; exact hG i)
+    (memLp_indicator_iff_restrict hPm.nullMeasurableSet).2 (by rw [hPν]; exact hG i)
   -- bounds for the time weight
   have hχ'cont : Continuous (deriv χ) := hχs.continuous_deriv (by simp)
   obtain ⟨C1, hC1⟩ := hχ'cont.bounded_above_of_compact_support hχc.deriv

@@ -78,7 +78,7 @@ theorem blowup_exterior_velocity_tensor_memLp
   rw [hcoeff]
   change MemLp (C.indicator (fun z => v z i * v z j))
     (3 / 2 : ℝ≥0∞) volume
-  rw [memLp_indicator_iff_restrict hC]
+  rw [memLp_indicator_iff_restrict hC.nullMeasurableSet]
   exact (hcomp i).mul (hcomp j)
 
 /-- The exterior tensor slice has `L^(3/2)` norm at most the square of the
@@ -135,7 +135,7 @@ theorem blowup_exterior_velocity_tensor_slice_bound
     calc
       _ ≤ eLpNorm (fun x : Vec3 => w x i * w x j)
           (3 / 2 : ℝ≥0∞) volume :=
-        eLpNorm_indicator_le _ hC
+        eLpNorm_indicator_le _ hC.nullMeasurableSet
       _ ≤ eLpNorm (fun x : Vec3 => w x i) 3 volume *
           eLpNorm (fun x : Vec3 => w x j) 3 volume := hmul
       _ ≤ N * N := by gcongr

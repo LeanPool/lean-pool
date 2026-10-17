@@ -64,7 +64,7 @@ theorem vorticityTestCurl_timePartial
       vorticityTestCurl
         (fun w => fun k => vorticityTestTimePartial (fun y => ψ y k) w) z i := by
   have hcomp (k : Fin 3) : ContDiff ℝ (⊤ : ℕ∞) (fun w : Vec3 × ℝ => ψ w k) :=
-    (contDiff_apply ℝ ℝ k).comp hψ
+    (contDiff_apply ℝ (fun _ : Fin 3 => ℝ) k).comp hψ
   have hpartial (k l : Fin 3) : ContDiff ℝ (⊤ : ℕ∞)
       (fun w : Vec3 × ℝ => vorticityTestPartial (fun y => ψ y k) l w) := by
     have h := CKN.spatialPartial_contDiff (hcomp k) l

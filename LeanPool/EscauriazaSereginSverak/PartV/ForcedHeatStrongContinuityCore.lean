@@ -85,7 +85,7 @@ theorem forcedHeat_lp_everyTime {τ : ℝ} (hτ : 0 < τ)
       ∫ x, (L t : Vec3 → Vec3) x i * φ x = ∫ x, forcedHeat G (x, t) i * φ x := by
     have hφq : MemLp φ q volume := hφ.continuous.memLp_of_hasCompactSupport hφc
     let T : Lp Vec3 p volume →L[ℝ] ℝ :=
-      ((ContinuousLinearMap.apply ℝ (E := Lp ℝ q volume) ℝ (hφq.toLp φ)).comp
+      ((ContinuousLinearMap.apply ℝ (E' := Lp ℝ q volume) ℝ (hφq.toLp φ)).comp
         (ContinuousLinearMap.lpPairing (volume : Measure Vec3) p q
           (ContinuousLinearMap.mul ℝ ℝ))).comp
         ((ContinuousLinearMap.proj i : Vec3 →L[ℝ] ℝ).compLpL p volume)

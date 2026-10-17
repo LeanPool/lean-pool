@@ -232,11 +232,11 @@ theorem smoothVorticityEnergyDifferentialInequality
         (f := zi) (t := t) hziCompact j)
   have hAsmooth (j i : Fin 3) : ContDiff ℝ (⊤ : ℕ∞) (A j i) := by
     have hvj : ContDiff ℝ (⊤ : ℕ∞) (fun x : Vec3 => v (x, t) j) :=
-      vorticityEnergy_slice_contDiff ((contDiff_apply ℝ ℝ j).comp hv) t
+      vorticityEnergy_slice_contDiff ((contDiff_apply ℝ (fun _ : Fin 3 => ℝ) j).comp hv) t
     have hzi : ContDiff ℝ (⊤ : ℕ∞) (Z i) := hZsmooth i
     have hzj : ContDiff ℝ (⊤ : ℕ∞) (Z j) := hZsmooth j
     have hvi : ContDiff ℝ (⊤ : ℕ∞) (fun x : Vec3 => v (x, t) i) :=
-      vorticityEnergy_slice_contDiff ((contDiff_apply ℝ ℝ i).comp hv) t
+      vorticityEnergy_slice_contDiff ((contDiff_apply ℝ (fun _ : Fin 3 => ℝ) i).comp hv) t
     dsimp [A, Z]
     exact (hvj.mul hzi).sub (hzj.mul hvi)
   have hHsmooth (j i : Fin 3) : ContDiff ℝ (⊤ : ℕ∞) (H j i) :=
@@ -280,7 +280,7 @@ theorem smoothVorticityEnergyDifferentialInequality
         (fun x : Vec3 => g (x, t) i * Z i x) volume :=
       vorticityEnergy_integrable_mul_compact
         (vorticityEnergy_slice_contDiff
-          ((contDiff_apply ℝ ℝ i).comp hg) t).continuous
+          ((contDiff_apply ℝ (fun _ : Fin 3 => ℝ) i).comp hg) t).continuous
         (hZsmooth i).continuous (hZcompact i)
     change Integrable (fun x : Vec3 => ∑ i : Fin 3,
       g (x, t) i * Z i x) volume
@@ -332,7 +332,7 @@ theorem smoothVorticityEnergyDifferentialInequality
       simpa [W] using (vorticityEnergy_integral_finsetSum (fun i => by
         simpa [Z] using vorticityEnergy_integrable_mul_compact
           (vorticityEnergy_slice_contDiff
-            ((contDiff_apply ℝ ℝ i).comp hg) t).continuous
+            ((contDiff_apply ℝ (fun _ : Fin 3 => ℝ) i).comp hg) t).continuous
           (hZsmooth i).continuous (hZcompact i))).symm
     have hsum' :
         (∑ i : Fin 3, (∫ x : Vec3, T i x * Z i x ∂volume +
@@ -463,7 +463,7 @@ theorem smoothVorticityEnergyDifferentialInequality_commonSupport
     apply vorticityEnergy_integrable_smooth_compact hK
     · apply continuous_finsetSum
       intro i hi
-      exact ((contDiff_apply ℝ ℝ i).comp hg).continuous.comp
+      exact ((contDiff_apply ℝ (fun _ : Fin 3 => ℝ) i).comp hg).continuous.comp
         (continuous_id.prodMk continuous_const) |>.pow 2
     · intro x hx
       apply Finset.sum_eq_zero

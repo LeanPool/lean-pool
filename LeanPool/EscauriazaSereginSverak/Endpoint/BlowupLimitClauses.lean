@@ -208,7 +208,7 @@ private theorem blowupLimitClauses_traceSliceMemLp
     (isOpen_vec3Ball 0 _).measurableSet
   intro t
   have h := (hsourceW t).1
-  rw [memLp_indicator_iff_restrict hball] at h
+  rw [memLp_indicator_iff_restrict hball.nullMeasurableSet] at h
   exact h
 
 private theorem blowupLimitClauses_zeroEnergyAlternative

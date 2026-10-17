@@ -37,7 +37,7 @@ functions. -/
 theorem blowupLimitClauses_abs_integral_mul_le {μ : Measure α} {f g : α → ℝ}
     (hf : MemLp f 2 μ) (hg : MemLp g 2 μ) :
     |∫ x, f x * g x ∂μ| ≤ (eLpNorm f 2 μ).toReal * (eLpNorm g 2 μ).toReal := by
-  have hH := MeasureTheory.eLpNorm_le_eLpNorm_mul_eLpNorm_of_nnnorm
+  have hH := MeasureTheory.eLpNorm_le_eLpNorm_mul_eLpNorm
     (μ := μ) (f := f) (g := g) (p := (2 : ℝ≥0∞)) (q := (2 : ℝ≥0∞))
     (r := (1 : ℝ≥0∞)) (b := fun a b : ℝ => a * b) (c := (1 : NNReal))
     (by exact continuous_mul) hf.aestronglyMeasurable hg.aestronglyMeasurable (by
@@ -114,7 +114,7 @@ theorem blowupLimitClauses_tail_tendsto_zero {μ : Measure α} {Q : Set α}
   have hν : ∀ n, eLpNorm ((S n)ᶜ.indicator w) 2 (μ.restrict Q) =
       ν ((S n)ᶜ) ^ (1 / 2 : ℝ) := by
     intro n
-    rw [eLpNorm_indicator_eq_eLpNorm_restrict (hS n).compl,
+    rw [eLpNorm_indicator_eq_eLpNorm_restrict (hS n).compl.nullMeasurableSet,
       eLpNorm_eq_lintegral_rpow_enorm_toReal htwo htwo'
         (hw.aestronglyMeasurable.mono_measure Measure.restrict_le_self),
       withDensity_apply _ (hS n).compl]
@@ -214,7 +214,7 @@ theorem blowupLimitClauses_weak_L2_of_exhaustion
       · simp [hx]
       · simp [hx]
     have hint2 : Integrable (fun x => f x * (S n)ᶜ.indicator w x) (μ.restrict Q) :=
-      hf.integrable_mul (hw.indicator (hS n).compl)
+      hf.integrable_mul (hw.indicator (hS n).compl.nullMeasurableSet)
     have hint1 : Integrable ((S n).indicator (fun y => f y * w y)) (μ.restrict Q) :=
       hint.indicator (hS n)
     calc
@@ -247,7 +247,8 @@ theorem blowupLimitClauses_weak_L2_of_exhaustion
   obtain ⟨hgk, hgkM⟩ := hK' k hkK'
   have hmain := hK k hkK
   rw [Real.dist_eq] at hmain ⊢
-  have htailw : MemLp ((S n)ᶜ.indicator w) 2 (μ.restrict Q) := hw.indicator (hS n).compl
+  have htailw : MemLp ((S n)ᶜ.indicator w) 2 (μ.restrict Q) :=
+    hw.indicator (hS n).compl.nullMeasurableSet
   have h1 := blowupLimitClauses_abs_integral_mul_le hgk htailw
   have h2 := blowupLimitClauses_abs_integral_mul_le hGmem htailw
   rw [hsplit (g k) hgk n, hsplit G hGmem n]

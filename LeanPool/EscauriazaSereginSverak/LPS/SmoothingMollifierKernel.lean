@@ -7,6 +7,7 @@ Authors: Scott Armstrong
 module
 
 public import LeanPool.CaffarelliKohnNirenberg.Leray.RegMollifierLemmaAssembly
+public import Mathlib.Analysis.Calculus.ContDiff.WithLp
 
 /-!
 # The physical regularization kernel
@@ -39,7 +40,7 @@ theorem lps_regUniformMollifierKernel_properties
   have hsmooth : ContDiff ℝ (⊤ : ℕ∞)
       (CKN.Leray.regUniformMollifierKernel ρ ε hε) := by
     have hto : ContDiff ℝ (⊤ : ℕ∞)
-        (fun x : Vec3 => WithLp.toLp 2 x) := by fun_prop
+        (fun x : Vec3 => WithLp.toLp 2 x) := PiLp.contDiff_toLp
     change ContDiff ℝ (⊤ : ℕ∞)
       (fun x : Vec3 => (ε ^ 3)⁻¹ * ρ.rho (ε⁻¹ • WithLp.toLp 2 x))
     exact contDiff_const.mul
