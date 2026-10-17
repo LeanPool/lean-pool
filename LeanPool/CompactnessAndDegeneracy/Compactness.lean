@@ -9375,7 +9375,7 @@ private theorem finiteCycle_connected {n : ℕ} (hn : 0 < n) :
     (finiteCycle n).graph.Connected := by
   change (SimpleGraph.cycleGraph n).Connected
   let _ : Nonempty (Fin n) := ⟨⟨0, hn⟩⟩
-  exact ⟨SimpleGraph.cycleGraph_preconnected⟩
+  exact ⟨SimpleGraph.preconnected_cycleGraph⟩
 
 private theorem proposedFamily_member_connected
     {forbidden : FiniteGraph}
