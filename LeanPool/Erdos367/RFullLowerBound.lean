@@ -52,7 +52,7 @@ lemma rFullPart_factorization (r m : ℕ) (_hm : m ≠ 0) :
     (rFullPart r m).factorization =
       m.factorization.filter (fun p => r ≤ m.factorization p) := by
   unfold rFullPart
-  apply Nat.prod_pow_factorization_eq_self
+  apply Nat.factorization_prod_pow_eq_self
   simp_all
 
 /-

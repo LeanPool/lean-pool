@@ -71,7 +71,7 @@ theorem rFullPart_factorization (r M : ℕ) (q : ℕ) :
     (rFullPart r M).factorization q
       = if r ≤ M.factorization q then M.factorization q else 0 := by
   unfold rFullPart
-  rw [Nat.prod_pow_factorization_eq_self]
+  rw [Nat.factorization_prod_pow_eq_self]
   · rw [Finsupp.filter_apply]
   · simp_all
 
