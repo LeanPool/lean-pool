@@ -351,40 +351,10 @@ theorem IsComposition.exists_isGPRRegular_rankAtStalk_two_mul (hLG : IsLGRing k)
   obtain ⟨v, hu, hBv, hinj, -, -⟩ := h.exists_cayToAlgebra hLG hreg
     (hasFullSupport_polarOrthogonal_of_rankAtStalk_lt hreg hA hB hlt)
   obtain ⟨D, e, he⟩ := exists_subalgebra_equiv_cay hBv hu hinj
-  -- The norm of `D`, pulled back along `e`, is the Cayley–Dickson norm.
-  have hpull : (C.restrict D).norm.comp e.toLinearMap = ((C.restrict B).cay (-C.norm v)).norm := by
-    refine QuadraticMap.ext fun p ↦ ?_
-    rw [QuadraticMap.comp_apply, LinearEquiv.coe_coe]
-    change C.norm ((e p : A)) = _
-    rw [he p, norm_cayToAlgebra hBv h.isMultiplicative]
-  have : Module.Finite k D := Module.Finite.equiv e
-  have : Module.Projective k D := Module.Projective.of_equiv e
-  -- `D` is a composition algebra: `GN (C.8.3)` for the norm, restriction for multiplicativity.
-  have hcay : QuadraticForm.IsGPRNonsingular.{u, v, u}
-      ((C.restrict B).cay (-C.norm v)).norm :=
-    hreg.prod_isGPRNonsingular
-      (hreg.isGPRNonsingular.smul_of_isUnit (by rwa [neg_neg] : IsUnit (-(-C.norm v))))
-  have hDns : QuadraticForm.IsGPRNonsingular.{u, v, u} (C.restrict D).norm := by
-    have hcomp := hcay.comp_linearEquiv e.symm
-    have heq : ((C.restrict B).cay (-C.norm v)).norm.comp e.symm.toLinearMap =
-        (C.restrict D).norm := by
-      rw [← hpull]
-      refine QuadraticMap.ext fun d ↦ ?_
-      simp
-    rwa [heq] at hcomp
-  have hDcomp : (C.restrict D).IsComposition.{u, v, u} := ⟨hDns, h.isMultiplicative.restrict⟩
-  -- The rank doubles.
-  have hDrank : Module.rankAtStalk (R := k) D = fun _ ↦ 2 * s := by
-    rw [← Module.rankAtStalk_eq_of_equiv e, rankAtStalk_cay, ← rankAtStalk_toSubmodule, hB]
-    rfl
-  have hDrank' : Module.rankAtStalk (R := k) D.toNonUnitalSubalgebra.toSubmodule =
-      fun _ ↦ 2 * s := by
-    rw [rankAtStalk_toSubmodule]
-    exact hDrank
-  refine ⟨D, v, hu, hBv, hDcomp.isGPRRegular_of_rankAtStalk_ne_one hDrank (by omega), hDrank',
-    fun hfull ↦ ⟨hinj, fun x ↦ ?_⟩⟩
-  have hmem : x ∈ D := mem_of_isGPRRegular_of_rankAtStalk_eq
-    (hDcomp.isGPRRegular_of_rankAtStalk_ne_one hDrank (by omega)) hA (hfull ▸ hDrank') x
+  obtain ⟨hDreg, hDrank'⟩ :=
+    isGPRRegular_restrict_and_rankAtStalk_of_equiv_cay h hreg hBv hu D e he hB
+  refine ⟨D, v, hu, hBv, hDreg, hDrank', fun hfull ↦ ⟨hinj, fun x ↦ ?_⟩⟩
+  have hmem : x ∈ D := mem_of_isGPRRegular_of_rankAtStalk_eq hDreg hA (hfull ▸ hDrank') x
   exact ⟨e.symm ⟨x, hmem⟩, by rw [← he, e.apply_symm_apply]⟩
 
 /-! ### Iterating: `GPR 19.17` -/

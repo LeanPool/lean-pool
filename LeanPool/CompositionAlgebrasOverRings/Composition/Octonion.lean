@@ -178,9 +178,10 @@ instance isAlternative_cay₈ : IsAlternative (Cay₈ k μ₁ μ₂ μ₃) :=
 /-- **The octonion norm permits composition**, `n(xy) = n(x)n(y)` — `GPR Exc. 18.18` applied to the
 associative `Cay₄`. Again no hypothesis on `2` or on the `μᵢ`.
 
-This is the last rung for which it holds: `Cay₈` is not associative, so `GPR Exc. 18.18` does not
-apply
-to it, and the sedenions `Cay(Cay₈, μ₄)` are not multiplicative. -/
+This is the last rung covered uniformly by the associative-input theorem used here. For a
+further double, `GPR Exc. 18.18` gives the sharp criterion `μ₄[B, B, B] ⊆ Rad(Dn_B)`.
+Non-associativity alone does not force failure of norm multiplicativity; the criterion is
+automatic when `μ₄ = 0`. -/
 theorem isMultiplicative_cay₈ : (cay₈ k μ₁ μ₂ μ₃).IsMultiplicative :=
   isMultiplicative_cay (cay₄ k μ₁ μ₂) μ₃ (isMultiplicative_cay₄ k μ₁ μ₂)
 

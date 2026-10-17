@@ -330,57 +330,8 @@ omit [IsAlternative A] in
 /-- **`GPR 22.16`, reduced ⇒ split over an LG ring.** Each rank component has constant rank by
 the rank decomposition. Its base is again LG because it is an idempotent factor; ranks four and
 eight are therefore untwisted by freeness of constant-rank projective modules. -/
-theorem isSplit_of_isLGRing (h : C.IsReduced) (hLG : IsLGRing k) : C.IsSplit := by
-  let S₁ := SplitRankFactor k A 1
-  let S₂ := SplitRankFactor k A 2
-  let S₄ := SplitRankFactor k A 4
-  let S₈ := SplitRankFactor k A 8
-  have hrank₁ : Module.rankAtStalk (R := S₁) (S₁ ⊗[k] A) = fun _ ↦ 1 :=
-    Module.rankAtStalk_quotientTensor_rankIdempotent k A 1
-  have hrank₂ : Module.rankAtStalk (R := S₂) (S₂ ⊗[k] A) = fun _ ↦ 2 :=
-    Module.rankAtStalk_quotientTensor_rankIdempotent k A 2
-  have hrank₄ : Module.rankAtStalk (R := S₄) (S₄ ⊗[k] A) = fun _ ↦ 4 :=
-    Module.rankAtStalk_quotientTensor_rankIdempotent k A 4
-  have hrank₈ : Module.rankAtStalk (R := S₈) (S₈ ⊗[k] A) = fun _ ↦ 8 :=
-    Module.rankAtStalk_quotientTensor_rankIdempotent k A 8
-  have hcomp₄ := h.isComposition.baseChangeOfProjective S₄
-  have hcomp₈ := h.isComposition.baseChangeOfProjective S₈
-  have hone : (C.splitRankComponent 1).IsSplitOfRank 1 := by
-    rcases subsingleton_or_nontrivial S₁ with hS₁ | hS₁
-    · let := hS₁
-      exact Isomorphic.of_subsingleton
-    · let := hS₁
-      exact isSplitOfRank_one hrank₁
-  have htwo : (C.splitRankComponent 2).IsSplitOfRank 2 := by
-    obtain ⟨c₂, hc₂⟩ := h.hasElementaryIdempotent_splitRankComponent_two
-    exact hc₂.isSplitOfRank_two hrank₂
-  have hfour : (C.splitRankComponent 4).IsSplitOfRank 4 := by
-    rcases subsingleton_or_nontrivial S₄ with hS₄ | hS₄
-    · let := hS₄
-      exact Isomorphic.of_subsingleton
-    · let := hS₄
-      have hLG₄ : IsLGRing S₄ :=
-        hLG.quotient_span_one_sub_of_isIdempotentElem
-          (Module.isIdempotentElem_rankIdempotent k A 4)
-      let hreg₄ := hcomp₄.isGPRRegular_of_rankAtStalk_ne_one hrank₄ (by omega)
-      let : IsAlternative (S₄ ⊗[k] A) :=
-        hcomp₄.isMultiplicative.isAlternative hreg₄.isGPRNondegenerate
-      obtain ⟨c₄, hc₄⟩ := h.hasElementaryIdempotent_splitRankComponent_four
-      exact hc₄.isSplitOfRank_four_of_isLGRing hLG₄ hcomp₄ hrank₄
-  have height : (C.splitRankComponent 8).IsSplitOfRank 8 := by
-    rcases subsingleton_or_nontrivial S₈ with hS₈ | hS₈
-    · let := hS₈
-      exact Isomorphic.of_subsingleton
-    · let := hS₈
-      have hLG₈ : IsLGRing S₈ :=
-        hLG.quotient_span_one_sub_of_isIdempotentElem
-          (Module.isIdempotentElem_rankIdempotent k A 8)
-      let hreg₈ := hcomp₈.isGPRRegular_of_rankAtStalk_ne_one hrank₈ (by omega)
-      let : IsAlternative (S₈ ⊗[k] A) :=
-        hcomp₈.isMultiplicative.isAlternative hreg₈.isGPRNondegenerate
-      obtain ⟨c₈, hc₈⟩ := h.hasElementaryIdempotent_splitRankComponent_eight
-      exact hc₈.isSplitOfRank_eight_of_isLGRing hLG₈ hcomp₈ hrank₈
-  exact ⟨h.isComposition, hone, htwo, hfour, height⟩
+theorem isSplit_of_isLGRing (h : C.IsReduced) (hLG : IsLGRing k) : C.IsSplit :=
+  h.isSplit_of_projectiveConstantRankFree (.of_isLGRing hLG)
 
 end IsReduced
 

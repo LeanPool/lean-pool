@@ -173,8 +173,9 @@ theorem isDivision_realOctonion : IsDivision RealOctonion :=
 `ℍ` is not commutative and `𝕆` is not associative, with explicit witnesses. These are what stop
 the tower: `ConicAlgebra.mul_assoc_cay` needs its input commutative, so `𝕆` gets no `Ring`
 structure, and `ConicAlgebra.isMultiplicative_cay` and `ConicAlgebra.isAlternative_cay` need their
-input associative, so the sedenions `Cay(𝕆, μ)` get neither a multiplicative norm nor
-alternativity. -/
+input associative. These sufficient results cannot be iterated from non-associative `𝕆`.
+This does not imply failure of norm multiplicativity for every parameter: the criterion in
+`GPR Exc. 18.18` is automatic for `μ = 0`. -/
 
 /-- The conjugation of `ℂ` moves `i`, which is what makes `ℍ` non-commutative. -/
 theorem conj_i_ne_i : (cay₂ ℝ (-1)).conj ((0, 1) : ℝ × ℝ) ≠ ((0, 1) : ℝ × ℝ) := by
@@ -190,9 +191,7 @@ theorem conj_i_ne_i : (cay₂ ℝ (-1)).conj ((0, 1) : ℝ × ℝ) ≠ ((0, 1) :
 theorem exists_mul_ne_mul_realQuaternion : ∃ x y : RealQuaternion, x * y ≠ y * x :=
   exists_mul_ne_mul_cay _ _ conj_i_ne_i
 
-/-- **`𝕆` is not associative** — so the tower cannot be continued by the theorems that built
-it,
-and the sedenions are neither alternative nor multiplicative. -/
+/-- **`𝕆` is not associative.** -/
 theorem exists_mul_mul_ne_mul_mul_realOctonion :
     ∃ x y z : RealOctonion, x * y * z ≠ x * (y * z) :=
   let ⟨_, _, h⟩ := exists_mul_ne_mul_realQuaternion

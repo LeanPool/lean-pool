@@ -80,9 +80,10 @@ private theorem polar_shuffle (h : C.IsMultiplicative) (u₁ u₂ v₁ v₂ : B)
 norm of
 `Cay(B, μ)` is multiplicative, for every scalar `μ`.
 
-This is the step that makes `ℍ` a composition algebra out of `ℂ`, and `𝕆` out of `ℍ`; it fails to
-apply one rung further because `𝕆` is not associative, which is why the sedenions
-`Cay(𝕆, μ)` are conic but not composition (`GPR 19.23`). -/
+This sufficient result constructs multiplicative norms on `ℍ` and `𝕆` from associative
+inputs. It gives no converse for a non-associative input: further norm multiplicativity is
+governed by the radical criterion of `GPR Exc. 18.18`, which is automatic for `μ = 0`.
+Multiplicativity alone does not establish that the double is a composition algebra. -/
 theorem isMultiplicative_cay (C : ConicAlgebra k B) (μ : k) (h : C.IsMultiplicative) :
     (C.cay μ).IsMultiplicative := by
   intro x y
