@@ -151,16 +151,16 @@ lemma F_sub_testsOfProgram_map_neg (α : Program) (ℓ : TP α) :
   case sequence α β =>
     have IHα := F_sub_testsOfProgram_map_neg α
     have IHβ := F_sub_testsOfProgram_map_neg β
-    grind
+    grind only [= List.subset_def, = List.mem_union_iff, = List.mem_append]
   case union α β =>
     have IHα := F_sub_testsOfProgram_map_neg α
     have IHβ := F_sub_testsOfProgram_map_neg β
-    grind
+    grind only [= List.subset_def, = List.mem_union_iff, = List.mem_append]
   case star α =>
     have IHα := F_sub_testsOfProgram_map_neg α
-    grind
+    grind only []
   case test =>
-    split <;> grind
+    split <;> grind only [= List.subset_def, = List.mem_cons]
 
 /-- The residual program sequences produced by box unfolding under a test profile. -/
 def P : (α : Program) →  (ℓ : TP α) → List (List Program)
@@ -401,8 +401,9 @@ theorem boxHelperTermination α (ℓ : TP α) :
         use a
         subst δ'_def
         simp at *
-        grind
-      · rcases IH.2 with ⟨a, ⟨δ1n, δ'_def⟩, ⟨_, δ'_sub⟩⟩ <;> simp_all [subprograms] <;> grind
+        grind only [= List.subset_def, =_ List.cons_append, = List.mem_append, = List.mem_cons]
+      · rcases IH.2 with ⟨a, ⟨δ1n, δ'_def⟩, ⟨_, δ'_sub⟩⟩ <;> simp_all [subprograms] <;>
+        grind only [→ List.mem_of_mem_erase, = List.subset_def, = List.mem_append]
     · by_cases [] ∈ P α ℓ
       · simp_all only [true_and, subprograms, List.cons_append, List.nil_append, List.mem_cons,
         reduceCtorEq, List.mem_append, false_or, List.erase_cons_head]
@@ -433,10 +434,12 @@ theorem boxHelperTermination α (ℓ : TP α) :
           rcases hyp with ⟨γ, α_def⟩
           specialize IH γ
           simp_all
-          rcases IH with ⟨a, δ1n, δ'_def⟩ <;> simp_all [subprograms]; grind
+          rcases IH with ⟨a, δ1n, δ'_def⟩ <;> simp_all [subprograms];
+            grind only [= List.subset_def, = List.mem_append, = List.mem_cons,
+              ← List.not_mem_nil]
         · cases IH
           simp_all [subprograms]
-          grind
+          grind only [→ List.mem_of_mem_erase, = List.subset_def, = List.mem_append]
       · simp_all
   case union α β =>
     cases δ_in
@@ -455,7 +458,8 @@ theorem boxHelperTermination α (ℓ : TP α) :
         simp_all
         have IH := boxHelperTermination (∗γ) ℓ δ δ_in
         simp [subprograms] at *
-        grind
+        grind only [=_ List.cons_append, = List.subset_def, = List.mem_cons, = List.mem_append,
+          ← List.not_mem_nil]
       case neg hyp1 hyp2 =>
         rcases hyp1 with ⟨a, α_def⟩
         subst α_def
@@ -463,7 +467,8 @@ theorem boxHelperTermination α (ℓ : TP α) :
         simp_all [Program.isAtomic_iff, Program.isStar_iff, subprograms]
       · have IH := boxHelperTermination (α) ℓ δ δ_in
         simp_all [Program.isAtomic_iff, Program.isStar_iff]
-        grind
+        grind only [= List.mem_erase_of_ne, = List.subset_def, = List.mem_append,
+          → List.mem_of_mem_erase]
     case inr δ_in =>
       by_cases β.isAtomic <;> by_cases β.isStar <;>
         simp_all only [Program.isAtomic_iff, Program.isStar_iff, subprograms, List.cons_append,
@@ -479,7 +484,7 @@ theorem boxHelperTermination α (ℓ : TP α) :
         simp_all
         have IH := boxHelperTermination (∗γ) ℓ δ δ_in
         simp [subprograms] at *
-        grind
+        grind only [= List.subset_def, = List.mem_append, = List.mem_cons, ← List.not_mem_nil]
       case neg hyp1 hyp2 =>
         rcases hyp1 with ⟨a, β_def⟩
         subst β_def
@@ -487,7 +492,8 @@ theorem boxHelperTermination α (ℓ : TP α) :
         simp_all [Program.isAtomic_iff, Program.isStar_iff, subprograms]
       · have IH := boxHelperTermination (β) ℓ δ δ_in
         simp_all [Program.isAtomic_iff, Program.isStar_iff]
-        grind
+        grind only [= List.mem_erase_of_ne, = List.subset_def, = List.mem_append,
+          → List.mem_of_mem_erase]
   case star β =>
     rcases δ_in with _|hyp
     · left; assumption
@@ -525,7 +531,7 @@ theorem boxHelperTermination α (ℓ : TP α) :
       · rcases IH with ⟨a, δ1n, δ'_def, a_in, δ'_sub⟩
         use a
         simp_all [subprograms]
-        grind
+        grind only [= List.mem_erase_of_ne, = List.subset_def, → List.mem_of_mem_erase]
 
 /-- Proven from `boxHelperTermination`. -/
 theorem PgoesDown : γ ∈ δ → δ ∈ P α ℓ →
@@ -536,7 +542,7 @@ theorem PgoesDown : γ ∈ δ → δ ∈ P α ℓ →
   intro γ_in δ_in
   have bht := boxHelperTermination α ℓ δ δ_in; clear δ_in
   by_cases α.isAtomic
-  case pos α_atom => grind
+  case pos α_atom => grind only [= List.mem_cons, ← List.not_mem_nil]
   case neg α_not_atom =>
     by_cases α.isStar
     case pos α_star =>
@@ -546,7 +552,7 @@ theorem PgoesDown : γ ∈ δ → δ ∈ P α ℓ →
         and_self, IsEmpty.forall_iff, ne_eq, List.mem_erase_of_ne, true_and, Program.star.injEq,
         forall_eq', and_false, ↓reduceIte, lengthOfProgram]
       rcases bht with _|⟨a, δ1n, δ_def, a_in, δ1n_sub⟩
-      · exfalso; grind
+      · exfalso; grind only [← List.not_mem_nil]
       · subst δ_def
         simp_all only [subprograms, List.cons_append, List.nil_append, List.mem_cons,
           reduceCtorEq, false_or, List.erase_cons_head, List.mem_append, List.not_mem_nil,
@@ -561,7 +567,7 @@ theorem PgoesDown : γ ∈ δ → δ ∈ P α ℓ →
       rcases bht with ⟨h1,h2,bht⟩; clear h1 h2
       specialize bht ⟨α_not_atom, α_not_star⟩
       have := @length_lt_of_mem_subprograms_erase α
-      grind
+      grind only [← List.not_mem_nil, = List.subset_def]
 
 /-- Where formulas in the unfolding can come from.
 The article also says `φ ∈ fischerLadner [⌈α⌉ψ]` which we prove later in `unfoldBox_in_FL`. -/
@@ -642,7 +648,7 @@ theorem unfoldBoxContent α ψ :
           right
           use δ1n
           simp
-          grind
+          grind only [= List.subset_def, = List.mem_append]
       case star β =>
         rcases bht with _ | ⟨a, δ1n, δ_def, a_in, δ_sub⟩
         · subst_eqs; simp
@@ -651,7 +657,7 @@ theorem unfoldBoxContent α ψ :
             Formula.box.injEq, Program.atom_prog.injEq, ↓existsAndEq, true_and]
           right
           use δ1n ++ [∗β]
-          grind
+          grind only [= List.subset_def, = List.mem_append, = List.mem_cons, ← List.not_mem_nil]
 
 theorem unfoldBox_voc {x α φ} {L} (L_in : L ∈ unfoldBox α φ) {ψ} (ψ_in : ψ ∈ L)
     (x_in_voc_ψ : x ∈ ψ.voc) : x ∈ α.voc ∨ x ∈ φ.voc := by
@@ -1223,7 +1229,9 @@ private theorem boxUnion_profile (α β : Program) (ψ : Formula) (ℓ : TP (α�
   -- rewrite using semantics of union and the two IH:
   have : (∀ (v : W), relate M α w v ∨ relate M β w v → evaluate M v ψ)
       ↔ ((∀ (v : W), relate M α w v → evaluate M v ψ)
-       ∧ (∀ (v : W), relate M β w v → evaluate M v ψ)) := by aesop (rule_sets := [-default])
+       ∧ (∀ (v : W), relate M β w v → evaluate M v ψ)) := by
+    clear IHα IHβ w_sign_ℓ
+    aesop (rule_sets := [-default])
   rw [this, IHα, IHβ]
   clear this IHα IHβ
   -- signature is true, so we can add it for free:
@@ -1313,7 +1321,7 @@ private theorem boxSequence_profile (α β : Program) (ψ : Formula) (ℓ : TP (
   -- only rewriting with IHα here, but not yet IHβ
   have : (∀ (v x : W), relate M α w x → relate M β x v → evaluate M v ψ)
         ↔ ∀ (v : W), relate M α w v → ∀ (v_1 : W), relate M β v v_1 → evaluate M v_1 ψ := by
-    clear IHα IHβ
+    clear IHα IHβ w_sign_ℓ
     aesop (rule_sets := [-default])
   rw [this, IHα]
   clear this IHα
@@ -1340,6 +1348,7 @@ private theorem boxSequence_profile (α β : Program) (ψ : Formula) (ℓ : TP (
       rcases δ_from_Pα with ⟨δ_α, bla, def_δ⟩
       use δ_α
       subst def_δ
+      clear IHβ w_sign_ℓ
       simp_all [boxes_append]
     · subst def_φ
       cases em ([] ∈ P α ℓ)
