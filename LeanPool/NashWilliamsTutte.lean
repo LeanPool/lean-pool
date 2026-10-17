@@ -29,6 +29,6 @@ prepared by Juan Pablo Traverso Gianini with Claude Code.
 These are the finite simple-graph versions of the tree-packing theorem of
 Nash-Williams (1961), doi:10.1112/jlms/s1-36.1.445, and Tutte (1961),
 doi:10.1112/jlms/s1-36.1.221, and the arboricity theorem of Nash-Williams (1964),
-doi:10.1112/jlms/s1-39.1.12. The upstream proof plan follows Diestel,
+doi:10.1112/jlms/s1-39.1.12. For background on these statements, see Diestel,
 *Graph Theory*, fifth edition, Section 2.4, doi:10.1007/978-3-662-53622-3.
 -/
