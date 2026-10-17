@@ -1588,71 +1588,63 @@ theorem wavePhi_decay (α : Fin n → ℕ) (hα : ∀ i, 1 ≤ α i) (M : ℕ) :
         exact hdec _
     _ = _ := by ring
 
-/-- Tile interaction estimate (paper, §4, (4.16), proved in §8): for `|I_P| ≥ |I_{P'}|`
-(i.e. `k_{P'} ≤ k_P`) and every integer `ν ≥ 0`,
-`|⟨φ_P, φ_{P'}⟩| ≤ C |I_P|^{-1/2} |I_{P'}|^{1/2} (1 + 2^{-k_P} ρ(c(I_P) - c(I_{P'})))^{-ν}`,
-with `C` depending only on `ν`, `α` and `φ`. -/
-theorem tile_interaction (α : Fin n → ℕ) (hα : ∀ i, 1 ≤ α i) (ν : ℕ) :
-    ∃ C : ℝ, 0 ≤ C ∧ ∀ P P' : Tile n, P'.k ≤ P.k →
-      ‖pairing (wavePhi α P) (wavePhi α P')‖ ≤
-        C * ((2 : ℝ) ^ P.k) ^ (-(absA α : ℝ) / 2) * ((2 : ℝ) ^ P'.k) ^ ((absA α : ℝ) / 2) *
-          (1 + ((2 : ℝ) ^ P.k)⁻¹ * rho α (P.cI α - P'.cI α)) ^ (-(ν : ℝ)) := by
-  obtain ⟨C1, hC1, h1⟩ := wavePhi_decay α hα ν
-  obtain ⟨C2, hC2, h2⟩ := wavePhi_decay α hα (ν + (absA α + 1))
+/-- Pairing bound for two functions with anisotropic decay at ordered spatial scales. -/
+theorem norm_pairing_le_of_rho_decay (α : Fin n → ℕ) (hα : ∀ i, 1 ≤ α i) (ν : ℕ)
+    {f g : Rn n → ℂ} {t t' : ℝ} (ht : 0 < t) (ht' : 0 < t') (htt' : t' ≤ t)
+    (c c' : Rn n) {C1 C2 : ℝ} (hC1 : 0 ≤ C1) (hC2 : 0 ≤ C2)
+    (h1 : ∀ x, ‖f x‖ ≤ C1 * t ^ (-(absA α : ℝ) / 2) *
+      (1 + t⁻¹ * rho α (x - c)) ^ (-(ν : ℝ)))
+    (h2 : ∀ x, ‖g x‖ ≤ C2 * t' ^ (-(absA α : ℝ) / 2) *
+      (1 + t'⁻¹ * rho α (x - c')) ^ (-((ν + (absA α + 1) : ℕ) : ℝ))) :
+    ‖pairing f g‖ ≤ C1 * C2 * (∫ z : Rn n, (1 + rho α z) ^ (-(absA α + 1 : ℝ))) *
+      t ^ (-(absA α : ℝ) / 2) * t' ^ ((absA α : ℝ) / 2) *
+        (1 + t⁻¹ * rho α (c - c')) ^ (-(ν : ℝ)) := by
   set s0 : ℝ := absA α + 1
   set W := ∫ z : Rn n, (1 + rho α z) ^ (-s0)
-  have hW : 0 ≤ W := integral_nonneg fun z => by
-    have := rho_nonneg α z; positivity
-  refine ⟨C1 * C2 * W, by positivity, fun P P' hk => ?_⟩
-  set t := (2 : ℝ) ^ P.k
-  set t' := (2 : ℝ) ^ P'.k
-  have ht : 0 < t := by positivity
-  have ht' : 0 < t' := by positivity
-  have htt' : t' ≤ t := zpow_le_zpow_right₀ (by norm_num) hk
-  set D := (1 + t⁻¹ * rho α (P.cI α - P'.cI α)) ^ (-(ν : ℝ))
-  have hD : 0 ≤ D := by have := rho_nonneg α (P.cI α - P'.cI α); positivity
+  set D := (1 + t⁻¹ * rho α (c - c')) ^ (-(ν : ℝ))
+  have hD : 0 ≤ D := by have := rho_nonneg α (c - c'); positivity
   -- pointwise bound on the integrand
-  have hpt : ∀ x, ‖wavePhi α P x * (starRingEnd ℂ) (wavePhi α P' x)‖ ≤
+  have hpt : ∀ x, ‖f x * (starRingEnd ℂ) (g x)‖ ≤
       C1 * C2 * t ^ (-(absA α : ℝ) / 2) * t' ^ (-(absA α : ℝ) / 2) * D *
-        (1 + t'⁻¹ * rho α (x - P'.cI α)) ^ (-s0) := by
+        (1 + t'⁻¹ * rho α (x - c')) ^ (-s0) := by
     intro x
     rw [norm_mul, RCLike.norm_conj]
-    have hu := rho_nonneg α (x - P.cI α)
-    have hv := rho_nonneg α (x - P'.cI α)
-    have hA : 0 < 1 + t⁻¹ * rho α (x - P.cI α) := by positivity
-    have hB : 0 < 1 + t'⁻¹ * rho α (x - P'.cI α) := by positivity
-    have hprod : (1 + t⁻¹ * rho α (x - P.cI α)) ^ (-(ν : ℝ)) *
-        (1 + t'⁻¹ * rho α (x - P'.cI α)) ^ (-(ν : ℝ)) ≤ D := by
+    have hu := rho_nonneg α (x - c)
+    have hv := rho_nonneg α (x - c')
+    have hA : 0 < 1 + t⁻¹ * rho α (x - c) := by positivity
+    have hB : 0 < 1 + t'⁻¹ * rho α (x - c') := by positivity
+    have hprod : (1 + t⁻¹ * rho α (x - c)) ^ (-(ν : ℝ)) *
+        (1 + t'⁻¹ * rho α (x - c')) ^ (-(ν : ℝ)) ≤ D := by
       rw [← Real.mul_rpow hA.le hB.le]
-      apply Real.rpow_le_rpow_of_nonpos (by have := rho_nonneg α (P.cI α - P'.cI α); positivity)
+      apply Real.rpow_le_rpow_of_nonpos (by have := rho_nonneg α (c - c'); positivity)
           _ (by simp)
       have := one_add_mul_rho_sub_le α hα (inv_nonneg.mpr ht.le)
-        (inv_anti₀ ht' htt') (x - P.cI α) (x - P'.cI α)
+        (inv_anti₀ ht' htt') (x - c) (x - c')
       rwa [sub_sub_sub_cancel_left, rho_sub_comm] at this
-    have hsplit : (1 + t'⁻¹ * rho α (x - P'.cI α)) ^ (-((ν + (absA α + 1) : ℕ) : ℝ)) =
-        (1 + t'⁻¹ * rho α (x - P'.cI α)) ^ (-(ν : ℝ)) *
-          (1 + t'⁻¹ * rho α (x - P'.cI α)) ^ (-s0) := by
+    have hsplit : (1 + t'⁻¹ * rho α (x - c')) ^ (-((ν + (absA α + 1) : ℕ) : ℝ)) =
+        (1 + t'⁻¹ * rho α (x - c')) ^ (-(ν : ℝ)) *
+          (1 + t'⁻¹ * rho α (x - c')) ^ (-s0) := by
       rw [← Real.rpow_add hB]
       congr 1
       push_cast
       ring
-    calc ‖wavePhi α P x‖ * ‖wavePhi α P' x‖
-        ≤ (C1 * t ^ (-(absA α : ℝ) / 2) * (1 + t⁻¹ * rho α (x - P.cI α)) ^ (-(ν : ℝ))) *
+    calc ‖f x‖ * ‖g x‖
+        ≤ (C1 * t ^ (-(absA α : ℝ) / 2) * (1 + t⁻¹ * rho α (x - c)) ^ (-(ν : ℝ))) *
           (C2 * t' ^ (-(absA α : ℝ) / 2) *
-            (1 + t'⁻¹ * rho α (x - P'.cI α)) ^ (-((ν + (absA α + 1) : ℕ) : ℝ))) :=
-          mul_le_mul (h1 P x) (h2 P' x) (norm_nonneg _) (by positivity)
+            (1 + t'⁻¹ * rho α (x - c')) ^ (-((ν + (absA α + 1) : ℕ) : ℝ))) :=
+          mul_le_mul (h1 x) (h2 x) (norm_nonneg _) (by positivity)
       _ = C1 * C2 * t ^ (-(absA α : ℝ) / 2) * t' ^ (-(absA α : ℝ) / 2) *
-          ((1 + t⁻¹ * rho α (x - P.cI α)) ^ (-(ν : ℝ)) *
-            (1 + t'⁻¹ * rho α (x - P'.cI α)) ^ (-(ν : ℝ))) *
-          (1 + t'⁻¹ * rho α (x - P'.cI α)) ^ (-s0) := by rw [hsplit]; ring
+          ((1 + t⁻¹ * rho α (x - c)) ^ (-(ν : ℝ)) *
+            (1 + t'⁻¹ * rho α (x - c')) ^ (-(ν : ℝ))) *
+          (1 + t'⁻¹ * rho α (x - c')) ^ (-s0) := by rw [hsplit]; ring
       _ ≤ _ := by gcongr
   have hs0 : (absA α : ℝ) < s0 := by simp [s0]
-  have hint := integrable_wgt_scaled α hα hs0 ht' (P'.cI α)
-  calc ‖pairing (wavePhi α P) (wavePhi α P')‖
-      ≤ ∫ x, ‖wavePhi α P x * (starRingEnd ℂ) (wavePhi α P' x)‖ :=
+  have hint := integrable_wgt_scaled α hα hs0 ht' c'
+  calc ‖pairing f g‖
+      ≤ ∫ x, ‖f x * (starRingEnd ℂ) (g x)‖ :=
         norm_integral_le_integral_norm _
     _ ≤ ∫ x, C1 * C2 * t ^ (-(absA α : ℝ) / 2) * t' ^ (-(absA α : ℝ) / 2) * D *
-          (1 + t'⁻¹ * rho α (x - P'.cI α)) ^ (-s0) :=
+          (1 + t'⁻¹ * rho α (x - c')) ^ (-s0) :=
         integral_mono_of_nonneg (Filter.Eventually.of_forall fun x => norm_nonneg _)
           (hint.const_mul _) (Filter.Eventually.of_forall hpt)
     _ = C1 * C2 * t ^ (-(absA α : ℝ) / 2) * t' ^ (-(absA α : ℝ) / 2) * D * (t' ^ absA α * W) := by
@@ -1665,6 +1657,24 @@ theorem tile_interaction (α : Fin n → ℕ) (hα : ∀ i, 1 ≤ α i) (ν : �
         calc _ = C1 * C2 * W * t ^ (-(absA α : ℝ) / 2) *
               (t' ^ (-(absA α : ℝ) / 2) * t' ^ absA α) * D := by ring
           _ = _ := by rw [this]
+
+/-- Tile interaction estimate (paper, §4, (4.16), proved in §8): for `|I_P| ≥ |I_{P'}|`
+(i.e. `k_{P'} ≤ k_P`) and every integer `ν ≥ 0`,
+`|⟨φ_P, φ_{P'}⟩| ≤ C |I_P|^{-1/2} |I_{P'}|^{1/2} (1 + 2^{-k_P} ρ(c(I_P) - c(I_{P'})))^{-ν}`,
+with `C` depending only on `ν`, `α` and `φ`. -/
+theorem tile_interaction (α : Fin n → ℕ) (hα : ∀ i, 1 ≤ α i) (ν : ℕ) :
+    ∃ C : ℝ, 0 ≤ C ∧ ∀ P P' : Tile n, P'.k ≤ P.k →
+      ‖pairing (wavePhi α P) (wavePhi α P')‖ ≤
+        C * ((2 : ℝ) ^ P.k) ^ (-(absA α : ℝ) / 2) * ((2 : ℝ) ^ P'.k) ^ ((absA α : ℝ) / 2) *
+          (1 + ((2 : ℝ) ^ P.k)⁻¹ * rho α (P.cI α - P'.cI α)) ^ (-(ν : ℝ)) := by
+  obtain ⟨C1, hC1, h1⟩ := wavePhi_decay α hα ν
+  obtain ⟨C2, hC2, h2⟩ := wavePhi_decay α hα (ν + (absA α + 1))
+  set W := ∫ z : Rn n, (1 + rho α z) ^ (-(absA α + 1 : ℝ))
+  have hW : 0 ≤ W := integral_nonneg fun z => by
+    have := rho_nonneg α z; positivity
+  refine ⟨C1 * C2 * W, by positivity, fun P P' hk => ?_⟩
+  exact norm_pairing_le_of_rho_decay α hα ν (by positivity) (by positivity)
+    (zpow_le_zpow_right₀ (by norm_num) hk) (P.cI α) (P'.cI α) hC1 hC2 (h1 P) (h2 P')
 
 /-! ### Finiteness of `‖m‖_{𝓜^ν}` and the interaction estimate (4.17) (paper, §8) -/
 
@@ -1775,11 +1785,6 @@ theorem tile_interaction_psi (α : Fin n → ℕ) (hα : ∀ i, 1 ≤ α i) (ν 
   have hM : 0 ≤ M := ENNReal.toReal_nonneg
   set t := (2 : ℝ) ^ P.k
   set t' := (2 : ℝ) ^ P'.k
-  have ht : 0 < t := by positivity
-  have ht' : 0 < t' := by positivity
-  have htt' : t' ≤ t := zpow_le_zpow_right₀ (by norm_num) hk
-  set D := (1 + t⁻¹ * rho α (P.cI α - P'.cI α)) ^ (-(ν : ℝ))
-  have hD : 0 ≤ D := by have := rho_nonneg α (P.cI α - P'.cI α); positivity
   -- lower-order decay for `P` from the higher-order estimate
   have hP : ∀ x, ‖wavePsi α m N P x‖ ≤ C1 * M * t ^ (-(absA α : ℝ) / 2) *
       (1 + t⁻¹ * rho α (x - P.cI α)) ^ (-(ν : ℝ)) := by
@@ -1789,62 +1794,15 @@ theorem tile_interaction_psi (α : Fin n → ℕ) (hα : ∀ i, 1 ≤ α i) (ν 
       have := rho_nonneg α (x - P.cI α); simp only [le_add_iff_nonneg_right]; positivity
     gcongr
     omega
-  have hpt : ∀ x, ‖wavePsi α m N P x * (starRingEnd ℂ) (wavePsi α m N P' x)‖ ≤
-      C1 * C1 * M ^ 2 * t ^ (-(absA α : ℝ) / 2) * t' ^ (-(absA α : ℝ) / 2) * D *
-        (1 + t'⁻¹ * rho α (x - P'.cI α)) ^ (-s0) := by
-    intro x
-    rw [norm_mul, RCLike.norm_conj]
-    have hu := rho_nonneg α (x - P.cI α)
-    have hv := rho_nonneg α (x - P'.cI α)
-    have hA : 0 < 1 + t⁻¹ * rho α (x - P.cI α) := by positivity
-    have hB : 0 < 1 + t'⁻¹ * rho α (x - P'.cI α) := by positivity
-    have hprod : (1 + t⁻¹ * rho α (x - P.cI α)) ^ (-(ν : ℝ)) *
-        (1 + t'⁻¹ * rho α (x - P'.cI α)) ^ (-(ν : ℝ)) ≤ D := by
-      rw [← Real.mul_rpow hA.le hB.le]
-      apply Real.rpow_le_rpow_of_nonpos
-        (by have := rho_nonneg α (P.cI α - P'.cI α); positivity) _ (by simp)
-      have := one_add_mul_rho_sub_le α hα (inv_nonneg.mpr ht.le)
-        (inv_anti₀ ht' htt') (x - P.cI α) (x - P'.cI α)
-      rwa [sub_sub_sub_cancel_left, rho_sub_comm] at this
-    have hsplit : (1 + t'⁻¹ * rho α (x - P'.cI α)) ^ (-(ν' : ℝ)) =
-        (1 + t'⁻¹ * rho α (x - P'.cI α)) ^ (-(ν : ℝ)) *
-          (1 + t'⁻¹ * rho α (x - P'.cI α)) ^ (-s0) := by
-      rw [← Real.rpow_add hB]
-      congr 1
-      simp only [ν', s0]
-      push_cast
-      ring
-    calc ‖wavePsi α m N P x‖ * ‖wavePsi α m N P' x‖
-        ≤ (C1 * M * t ^ (-(absA α : ℝ) / 2) * (1 + t⁻¹ * rho α (x - P.cI α)) ^ (-(ν : ℝ))) *
-          (C1 * M * t' ^ (-(absA α : ℝ) / 2) *
-            (1 + t'⁻¹ * rho α (x - P'.cI α)) ^ (-(ν' : ℝ))) :=
-          mul_le_mul (hP x) (psi_estimate_real α hα ν' hm P' N hNP' x) (norm_nonneg _)
-            (by positivity)
-      _ = C1 * C1 * M ^ 2 * t ^ (-(absA α : ℝ) / 2) * t' ^ (-(absA α : ℝ) / 2) *
-          ((1 + t⁻¹ * rho α (x - P.cI α)) ^ (-(ν : ℝ)) *
-            (1 + t'⁻¹ * rho α (x - P'.cI α)) ^ (-(ν : ℝ))) *
-          (1 + t'⁻¹ * rho α (x - P'.cI α)) ^ (-s0) := by rw [hsplit]; ring
-      _ ≤ _ := by gcongr
-  have hs0 : (absA α : ℝ) < s0 := by simp [s0]
-  have hint := integrable_wgt_scaled α hα hs0 ht' (P'.cI α)
   calc ‖pairing (wavePsi α m N P) (wavePsi α m N P')‖
-      ≤ ∫ x, ‖wavePsi α m N P x * (starRingEnd ℂ) (wavePsi α m N P' x)‖ :=
-        norm_integral_le_integral_norm _
-    _ ≤ ∫ x, C1 * C1 * M ^ 2 * t ^ (-(absA α : ℝ) / 2) * t' ^ (-(absA α : ℝ) / 2) * D *
-          (1 + t'⁻¹ * rho α (x - P'.cI α)) ^ (-s0) :=
-        integral_mono_of_nonneg (Filter.Eventually.of_forall fun x => norm_nonneg _)
-          (hint.const_mul _) (Filter.Eventually.of_forall hpt)
-    _ = C1 * C1 * M ^ 2 * t ^ (-(absA α : ℝ) / 2) * t' ^ (-(absA α : ℝ) / 2) * D *
-          (t' ^ absA α * W) := by
-        rw [integral_const_mul, integral_wgt_scaled α hα s0 ht']
-    _ = C1 * C1 * W * M ^ 2 * t ^ (-(absA α : ℝ) / 2) * t' ^ ((absA α : ℝ) / 2) * D := by
-        have : t' ^ (-(absA α : ℝ) / 2) * t' ^ absA α = t' ^ ((absA α : ℝ) / 2) := by
-          rw [← Real.rpow_natCast, ← Real.rpow_add ht']
-          congr 1
-          ring
-        calc _ = C1 * C1 * W * M ^ 2 * t ^ (-(absA α : ℝ) / 2) *
-              (t' ^ (-(absA α : ℝ) / 2) * t' ^ absA α) * D := by ring
-          _ = _ := by rw [this]
+      ≤ (C1 * M) * (C1 * M) * W * t ^ (-(absA α : ℝ) / 2) *
+          t' ^ ((absA α : ℝ) / 2) *
+            (1 + t⁻¹ * rho α (P.cI α - P'.cI α)) ^ (-(ν : ℝ)) :=
+        norm_pairing_le_of_rho_decay α hα ν (by positivity) (by positivity)
+          (zpow_le_zpow_right₀ (by norm_num) hk) (P.cI α) (P'.cI α)
+          (mul_nonneg hC1 hM) (mul_nonneg hC1 hM) hP
+          (psi_estimate_real α hα ν' hm P' N hNP')
+    _ = _ := by ring
 
 /-! ### Lattice sums of anisotropic weights -/
 
@@ -2523,6 +2481,15 @@ theorem tsum_enorm_modelTerm_le (α : Fin n → ℕ) (hα : ∀ i, 1 ≤ α i) {
         ring
     _ = _ := by simp only [F]
 
+/-- A finite real bound for the sum of extended norms gives absolute convergence and a sum bound. -/
+theorem summable_and_norm_tsum_le_of_enorm_sum_le {ι E : Type*} [NormedAddCommGroup E]
+    [CompleteSpace E] {f : ι → E} {C : ℝ} (hC : 0 ≤ C)
+    (hb : ∑' i, ‖f i‖ₑ ≤ ENNReal.ofReal C) : Summable f ∧ ‖∑' i, f i‖ ≤ C := by
+  have hfin := ne_top_of_le_ne_top ENNReal.ofReal_ne_top hb
+  refine ⟨(tsum_enorm_ne_top_iff_summable_norm.mp hfin).of_norm, ?_⟩
+  exact (ENNReal.ofReal_le_ofReal_iff hC).mp
+    (by simpa only [ofReal_norm] using enorm_tsum_le_tsum_enorm.trans hb)
+
 /-- The model sum converges absolutely and is uniformly bounded (paper, §3, (3.3)):
 for `r ≠ 0`, integrable `g` with integrable `ĝ`, the series defining `A^{r,m}_N g(x)` is
 summable and `|A^{r,m}_N g(x)| ≤ C ‖m‖_{𝓜^{|α|+1}} ‖ĝ‖₁`. -/
@@ -2535,26 +2502,9 @@ theorem modelOp_summable_bound (α : Fin n → ℕ) (hα : ∀ i, 1 ≤ α i) {r
       ‖modelOp α r m N g x‖ ≤ C * (normM α (absA α + 1) m).toReal * ∫ ξ, ‖fhat g ξ‖ := by
   obtain ⟨C, hC, h⟩ := tsum_enorm_modelTerm_le α hα hr
   refine ⟨C, hC, fun m hm g hg hG N x => ?_⟩
-  set f : Tile n → ℂ := fun P => pairing g (wavePhi α P) * wavePsi α m N P x *
-    (P.semi α r).indicator (fun _ => (1 : ℂ)) N
-  have hb := h m hm g hg hG N x
-  have hfin : ∑' P, ‖f P‖ₑ ≠ ⊤ := ne_top_of_le_ne_top ENNReal.ofReal_ne_top hb
-  have hsn : Summable (fun P => ‖f P‖) := by
-    have := ENNReal.summable_toReal hfin
-    simpa [toReal_enorm] using this
-  refine ⟨hsn.of_norm, ?_⟩
-  have hnn : 0 ≤ C * (normM α (absA α + 1) m).toReal * ∫ ξ, ‖fhat g ξ‖ := by
-    have : 0 ≤ ∫ ξ, ‖fhat g ξ‖ := integral_nonneg fun ξ => norm_nonneg _
-    have : 0 ≤ (normM α (absA α + 1) m).toReal := ENNReal.toReal_nonneg
-    positivity
-  calc ‖modelOp α r m N g x‖ = ‖∑' P, f P‖ := rfl
-    _ ≤ ∑' P, ‖f P‖ := norm_tsum_le_tsum_norm hsn
-    _ = (∑' P, ‖f P‖ₑ).toReal := by
-        rw [ENNReal.tsum_toReal_eq (fun P => enorm_ne_top)]
-        simp [toReal_enorm]
-    _ ≤ _ := by
-        rw [← ENNReal.toReal_ofReal hnn]
-        exact ENNReal.toReal_mono ENNReal.ofReal_ne_top hb
+  exact summable_and_norm_tsum_le_of_enorm_sum_le
+    (mul_nonneg (mul_nonneg hC ENNReal.toReal_nonneg) (integral_nonneg fun ξ => norm_nonneg _))
+    (h m hm g hg hG N x)
 
 theorem integrable_fhat_schwartz (f : 𝓢(Rn n, ℂ)) : Integrable (fhat (f : Rn n → ℂ)) := by
   apply integrable_fhat_of_fourier
@@ -2675,26 +2625,9 @@ theorem modelOpHO_summable_bound (α : Fin n → ℕ) (hα : ∀ i, 1 ≤ α i) 
       ‖modelOpHO α r m N g x‖ ≤ C * (normM α (absA α + 1) m).toReal * ∫ ξ, ‖fhat g ξ‖ := by
   obtain ⟨C, hC, h⟩ := tsum_enorm_modelTermHO_le α hα hr
   refine ⟨C, hC, fun m hm g hg hG N x => ?_⟩
-  set f : Tile n → ℂ := fun P => pairing g (wavePhi α P) * wavePsi α m N P x *
-    (P.semiHO α r).indicator (fun _ => (1 : ℂ)) N
-  have hb := h m hm g hg hG N x
-  have hfin : ∑' P, ‖f P‖ₑ ≠ ⊤ := ne_top_of_le_ne_top ENNReal.ofReal_ne_top hb
-  have hsn : Summable (fun P => ‖f P‖) := by
-    have := ENNReal.summable_toReal hfin
-    simpa [toReal_enorm] using this
-  refine ⟨hsn.of_norm, ?_⟩
-  have hnn : 0 ≤ C * (normM α (absA α + 1) m).toReal * ∫ ξ, ‖fhat g ξ‖ := by
-    have : 0 ≤ ∫ ξ, ‖fhat g ξ‖ := integral_nonneg fun ξ => norm_nonneg _
-    have : 0 ≤ (normM α (absA α + 1) m).toReal := ENNReal.toReal_nonneg
-    positivity
-  calc ‖modelOpHO α r m N g x‖ = ‖∑' P, f P‖ := rfl
-    _ ≤ ∑' P, ‖f P‖ := norm_tsum_le_tsum_norm hsn
-    _ = (∑' P, ‖f P‖ₑ).toReal := by
-        rw [ENNReal.tsum_toReal_eq (fun P => enorm_ne_top)]
-        simp [toReal_enorm]
-    _ ≤ _ := by
-        rw [← ENNReal.toReal_ofReal hnn]
-        exact ENNReal.toReal_mono ENNReal.ofReal_ne_top hb
+  exact summable_and_norm_tsum_le_of_enorm_sum_le
+    (mul_nonneg (mul_nonneg hC ENNReal.toReal_nonneg) (integral_nonneg fun ξ => norm_nonneg _))
+    (h m hm g hg hG N x)
 
 /-- The dual pairing `∫_{E ∩ N⁻¹(ω_{P(r)})} ψ^{N(x)}_P(x) σ(x) dx` appearing in (4.1) (with a
 unimodular weight `σ`; the paper has `σ = 1`). -/
