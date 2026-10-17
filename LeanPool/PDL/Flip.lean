@@ -111,7 +111,7 @@ lemma basic_flip {X : Sequent} : X.flip.basic ↔ X.basic := by
         simp only [Olf.flip, Option.map_eq_some_iff, Sum.exists, Sum.swap_inl, reduceCtorEq,
           and_false, exists_false, Sum.swap_inr, Sum.inl.injEq, exists_eq_right, false_or]
         exact h
-    · aesop
+    · aesop (rule_sets := [-default])
   · intro ⟨fs_basic, not_closed⟩
     constructor
     · intro φ φ_in
@@ -131,7 +131,7 @@ lemma basic_flip {X : Sequent} : X.flip.basic ↔ X.basic := by
         simp only [Olf.flip, Option.map_eq_some_iff, Sum.exists, Sum.swap_inl, Sum.inr.injEq,
           exists_eq_right, Sum.swap_inr, reduceCtorEq, and_false, exists_false, or_false] at h
         exact h
-    · aesop
+    · aesop (rule_sets := [-default])
 
 /-- Reflect a local rule by exchanging its left and right components. -/
 def LocalRule.flip {Lcond Ocond Rcond ress} (lr : LocalRule (Lcond, Rcond, Ocond) ress) :
@@ -194,7 +194,7 @@ lemma LocalRuleApp.flip_flip {lra : LocalRuleApp} :
   grind only []
 
 lemma Sequent.flip_mem_of_mem_image_flip {B : Finset Sequent} {Y : Sequent} :
-    Y ∈ B.image Sequent.flip → Y.flip ∈ B := by aesop
+    Y ∈ B.image Sequent.flip → Y.flip ∈ B := by aesop (rule_sets := [-default])
 
 /-- Reflect every rule and branch of a local tableau. -/
 def LocalTableau.flip {X} : LocalTableau X → LocalTableau X.flip

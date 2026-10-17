@@ -1064,10 +1064,10 @@ theorem rewind_of_edge_is_eq {Hist X} {tab : Tableau Hist X} {a b : PathIn tab} 
             apply PathIn.loc_injective
             rw [p_def]
             unfold tabAt at tabAt_def
-            aesop
+            aesop (rule_sets := [-default])
           · exfalso
             unfold tabAt at tabAt_def
-            aesop
+            aesop (rule_sets := [-default])
         subst t_nil
         rfl
       case loc X nbas'' nrep'' X_in tail' =>
@@ -1103,7 +1103,7 @@ theorem rewind_of_edge_is_eq {Hist X} {tab : Tableau Hist X} {a b : PathIn tab} 
           Fin.val_castSucc, Fin.coe_ofNat_eq_mod, PathIn.loc_length_eq, Nat.one_mod, Fin.val_cast]
             at *
         rw [kdef, @Nat.one_mod_eq_one]
-        aesop
+        aesop (rule_sets := [-default])
   case pdl rest Y X nrep bas r tab IH =>
     cases b <;> simp only [PathIn.rewind]
     case nil => simp_all [not_edge_nil]
@@ -1115,12 +1115,12 @@ theorem rewind_of_edge_is_eq {Hist X} {tab : Tableau Hist X} {a b : PathIn tab} 
                           | ⟨_, _, _, _, _, _, _, tabAt_def, p_def⟩ )
           · exfalso
             unfold tabAt at tabAt_def
-            aesop
+            aesop (rule_sets := [-default])
           · simp only [PathIn.append] at p_def
             apply PathIn.pdl_injective
             rw [p_def]
             unfold tabAt at tabAt_def
-            aesop
+            aesop (rule_sets := [-default])
         subst t_nil
         rfl
       case pdl bas'' nrep'' tail' =>
@@ -1148,7 +1148,7 @@ theorem rewind_of_edge_is_eq {Hist X} {tab : Tableau Hist X} {a b : PathIn tab} 
           Fin.val_castSucc, Fin.coe_ofNat_eq_mod, PathIn.pdl_length_eq, Nat.one_mod, Fin.val_cast]
             at *
         rw [kdef, @Nat.one_mod_eq_one]
-        aesop
+        aesop (rule_sets := [-default])
   case lrep => cases b; simp [not_edge_nil] at a_b
 
 theorem rewind_order_reversing_if_not_nil {Hist X} {tab : Tableau Hist X} {t : PathIn tab}
@@ -1379,10 +1379,10 @@ theorem rewind_helper {Hist X} {tab : Tableau Hist X} {a b : PathIn tab} {k : Fi
             apply PathIn.loc_injective
             rw [p_def]
             unfold tabAt at tabAt_def
-            aesop
+            aesop (rule_sets := [-default])
           · exfalso
             unfold tabAt at tabAt_def
-            aesop
+            aesop (rule_sets := [-default])
         subst t_nil
         simp_all [PathIn.rewind, Fin.lastCases, PathIn.toHistory]
         have ⟨k_val, k_pf⟩ := k
@@ -1434,12 +1434,12 @@ theorem rewind_helper {Hist X} {tab : Tableau Hist X} {a b : PathIn tab} {k : Fi
                         | ⟨_, _, _, _, _, _, _, tabAt_def, p_def⟩ )
           · exfalso
             unfold tabAt at tabAt_def
-            aesop
+            aesop (rule_sets := [-default])
           · simp only [PathIn.append] at p_def
             apply PathIn.pdl_injective
             rw [p_def]
             unfold tabAt at tabAt_def
-            aesop
+            aesop (rule_sets := [-default])
         subst t_nil
         simp_all [PathIn.rewind, PathIn.toHistory]
         have ⟨k_val, k_pf⟩ := k

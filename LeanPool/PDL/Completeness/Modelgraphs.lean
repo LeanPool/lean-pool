@@ -256,7 +256,7 @@ theorem loadedTruthLemmaProg {Worlds} (MG : ModelGraph Worlds) α :
       have : YS.head = YS.last := by
         clear * -YS
         have := List.Vector.exists_eq_cons YS
-        aesop
+        aesop (rule_sets := [-default])
       rw [this] at X_def
       subst X_def Y_def
       have := ((MG.2.1 (YS.last)).1 φ φ (∗β)).right.right.right.left boxP_in_X
@@ -268,7 +268,7 @@ theorem loadedTruthLemmaProg {Worlds} (MG : ModelGraph Worlds) α :
       have X_β_Z : relate MG.1 β X Z := by
         specialize relSteps 0
         unfold Z
-        convert relSteps <;> aesop
+        convert relSteps <;> aesop (rule_sets := [-default])
       have := ((MG.2.1 X).1 φ φ (∗β)).right.right.right.left boxP_in_X
       rcases this with ⟨ℓ, mysat⟩
       simp only [Bset, List.all_append, List.all_map, Bool.and_eq_true, List.all_eq_true,
@@ -298,18 +298,18 @@ theorem loadedTruthLemmaProg {Worlds} (MG : ModelGraph Worlds) α :
         refine ⟨YS.tail, ?_, ?_, ?_⟩
         · rw [← List.Vector.get_zero]
           rw [List.Vector.get_tail_succ]
-          aesop
+          aesop (rule_sets := [-default])
         · rw [List.Vector.last_def]
           rw [List.Vector.get_tail_succ]
-          aesop
+          aesop (rule_sets := [-default])
         · intro i
           clear * -relSteps
           specialize relSteps i.succ
           have : ((List.Vector.tail YS).get i.castSucc) = (YS.get ((Fin.succ i).castSucc)) := by
-            aesop
+            aesop (rule_sets := [-default])
           rw [this]; clear this
           have : ((List.Vector.tail YS).get i.succ) = (YS.get ((Fin.succ i).succ)) := by
-            aesop
+            aesop (rule_sets := [-default])
           rw [this]; clear this
           exact relSteps
       case inr δ_notEmpty =>
@@ -361,9 +361,11 @@ theorem loadedTruthLemmaProg {Worlds} (MG : ModelGraph Worlds) α :
         · intro i
           clear * -relSteps
           specialize relSteps i.succ
-          have : ((List.Vector.tail YS).get i.castSucc) = (YS.get i.succ.castSucc) := by aesop
+          have : ((List.Vector.tail YS).get i.castSucc) = (YS.get i.succ.castSucc) := by
+            aesop (rule_sets := [-default])
           rw [this]; clear this
-          have : ((List.Vector.tail YS).get i.succ) = (YS.get i.succ.succ) := by aesop
+          have : ((List.Vector.tail YS).get i.succ) = (YS.get i.succ.succ) := by
+            aesop (rule_sets := [-default])
           rw [this]; clear this
           exact relSteps
   -- remaining cases: sequence, union, test

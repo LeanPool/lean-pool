@@ -298,9 +298,9 @@ theorem unfoldDiamond.decreases_lmOf_nonAtomic {α : Program} {φ : Formula} {X 
         rw [Nat.lt_succ_iff]
         apply List.le_sum_of_mem
         simp_all [testsOfProgram]
-        aesop
+        aesop (rule_sets := [-default])
       simp_all [testsOfProgram]
-      aesop
+      aesop (rule_sets := [-default])
     case union α β =>
       suffices lmOfFormula ψ < (List.map lmOfFormula (testsOfProgram (α⋓β))).sum.succ by
         simp_all [testsOfProgram]
@@ -309,9 +309,9 @@ theorem unfoldDiamond.decreases_lmOf_nonAtomic {α : Program} {φ : Formula} {X 
         rw [Nat.lt_succ_iff]
         apply List.le_sum_of_mem
         simp_all [testsOfProgram]
-        aesop
+        aesop (rule_sets := [-default])
       simp_all [testsOfProgram]
-      aesop
+      aesop (rule_sets := [-default])
     case star β =>
       suffices lmOfFormula ψ < (List.map lmOfFormula (testsOfProgram (∗β))).sum.succ by
         simp_all [testsOfProgram]
@@ -320,9 +320,9 @@ theorem unfoldDiamond.decreases_lmOf_nonAtomic {α : Program} {φ : Formula} {X 
         rw [Nat.lt_succ_iff]
         apply List.le_sum_of_mem
         simp_all [testsOfProgram]
-        aesop
+        aesop (rule_sets := [-default])
       simp_all [testsOfProgram]
-      aesop
+      aesop (rule_sets := [-default])
   · simp only [lmOfFormula, gt_iff_lt]
     cases α <;> simp_all [Program.isAtomic]
 
@@ -336,12 +336,12 @@ lemma finset_sum_trichotomy {A : Type*} [DecidableEq A]
   have h_sum_split : (∑ x ∈ X.toFinset, f x) ≤ (∑ x ∈ (X.toFinset.erase a), f x) + f a := by
     by_cases ha : a ∈ X.toFinset <;> simp_all +decide only [List.mem_toFinset, not_false_eq_true,
       Finset.erase_eq_of_notMem, le_add_iff_nonneg_right, zero_le]
-    rw [← Finset.sum_erase_add _ _ (by aesop : a ∈ X.toFinset), add_comm]
+    rw [← Finset.sum_erase_add _ _ (by aesop (rule_sets := [-default]) : a ∈ X.toFinset), add_comm]
   have h_sum_le : (∑ x ∈ X.toFinset.erase a, f x) ≤ (∑ x ∈ (bs.toFinset), f x) := by
     have h_sum_le' : (∑ x ∈ X.toFinset.erase a, f x) ≤
         (∑ x ∈ (X.toFinset.erase a ∩ bs.toFinset), f x) := by
       rw [← Finset.sum_subset (Finset.inter_subset_left)]
-      intro x hx hx'; specialize h x; aesop
+      intro x hx hx'; specialize h x; aesop (rule_sets := [-default])
     exact h_sum_le'.trans (Finset.sum_le_sum_of_subset_of_nonneg
       (Finset.inter_subset_right) (fun _ _ _ => Nat.zero_le _))
   apply le_trans h_sum_split
@@ -699,7 +699,7 @@ theorem endNodeIsEndNodeOfChild {X} {lrA : LocalRuleApp}
   ∃ Y h, E ∈ endNodesOf (subTabs Y h) := by
   have := endNodeToEndNodeOfChild def_X subTabs E_in
   use this
-  aesop
+  aesop (rule_sets := [-default])
 
 theorem endNodeOfChild_to_endNode
     {Y : Sequent}
@@ -776,7 +776,7 @@ lemma endNodesOf_basic {X Z} {ltZ : LocalTableau Z} : X ∈ endNodesOf ltZ → X
   case byLocalRule B lrA next IH =>
     intro X_in
     simp [endNodesOf] at X_in
-    aesop
+    aesop (rule_sets := [-default])
   case sim X =>
     simp_all
 

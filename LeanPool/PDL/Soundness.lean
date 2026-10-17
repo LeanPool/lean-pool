@@ -1064,12 +1064,12 @@ lemma loadedDiamondPathsPDL
     exfalso
     simp only [nodeAt, AnyNegFormula.inSide] at negLoad_in
     rw [tabAt_t_def] at negLoad_in
-    aesop
+    aesop (rule_sets := [-default])
   case loadR =>
     exfalso
     simp only [nodeAt, AnyNegFormula.inSide] at negLoad_in
     rw [tabAt_t_def] at negLoad_in
-    aesop
+    aesop (rule_sets := [-default])
   case freeL L R δ β φ Z_def Y_def =>
     subst Z_def Y_def
     -- Leaving cluster, interesting that IH is not needed here.
@@ -1575,7 +1575,7 @@ theorem tableauThenNotSat {Root} (tab : Tableau .nil Root) (Root_isFree : Root.i
       case nil =>
         simp only [loadMulti, List.foldr_nil] at lf_def
         have in_t : (~''(⌊α⌋φ)).inSide _theSide (nodeAt t) := by
-          simp_all [nodeAt]; aesop
+          simp_all [nodeAt]; aesop (rule_sets := [-default])
         -- Let C be the cluster to which `t` belongs.
         -- We claim that any ◃-path of satisfiable nodes starting at t must remain in C.
         have claim : ∀ s, t ◃⁺ s → satisfiable (nodeAt s) → s ≡ᶜ t := by
@@ -1615,7 +1615,7 @@ theorem tableauThenNotSat {Root} (tab : Tableau .nil Root) (Root_isFree : Root.i
           · have : (nodeAt t).isLoaded := by
               unfold Sequent.isLoaded
               simp [AnyNegFormula.inSide] at in_t
-              aesop
+              aesop (rule_sets := [-default])
             apply ePropB.e_help _ _ this rest_s_free t_to_s
       case cons β δ =>
         rintro ⟨W,M,v,v_⟩
@@ -1661,7 +1661,7 @@ theorem tableauThenNotSat {Root} (tab : Tableau .nil Root) (Root_isFree : Root.i
           · have : (nodeAt t).isLoaded := by
               unfold Sequent.isLoaded
               simp [AnyNegFormula.inSide] at in_t
-              aesop
+              aesop (rule_sets := [-default])
             apply ePropB.e_help _ _ this rest_s_free t_to_s
 
 theorem correctness : ∀ LR : Sequent, LR.isFree → satisfiable LR → consistent LR := by

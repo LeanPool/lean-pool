@@ -642,7 +642,7 @@ lemma combo_mem_of_forall_in {α : Type} [DecidableEq α] {q : α → Type} {L :
     cases x_in
   case cons x xs IH =>
     simp only [combo, List.mem_flatMap, List.mem_map]
-    specialize IH (fun y y_in => f y (by aesop))
+    specialize IH (fun y y_in => f y (by aesop (rule_sets := [-default])))
     exact ⟨fun y y_in => g _ (by simp_all), IH _ (by grind only []), (by grind only [])⟩
 
 /-- Version of `combo` for `Finset`s. -/

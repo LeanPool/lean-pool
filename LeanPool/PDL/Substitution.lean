@@ -299,7 +299,7 @@ theorem repl_in_disMap x ρ (L : List α) (p : α → Prop) (f : α → Formula)
     dis (L.map (fun Fδ => if p Fδ then Formula.bottom else replInF x ρ (f Fδ))) := by
   rw [repl_in_dis, listEq_to_disEq]
   simp only [List.map_map]
-  aesop
+  aesop (rule_sets := [-default])
 
 /-! ## Cancellation of replacements -/
 

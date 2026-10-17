@@ -363,7 +363,7 @@ lemma no_moves_of_rep {H X pos} (h : rep H X ∧ X.isFree) :
   push Not at hyp
   rcases hyp with ⟨p, p_in⟩
   unfold theMoves at p_in
-  rcases X with ⟨L,R,_|o⟩ <;> rcases pos with (_|_|_)|(_|_) <;> aesop
+  rcases X with ⟨L,R,_|o⟩ <;> rcases pos with (_|_|_)|(_|_) <;> aesop (rule_sets := [-default])
 
 /-- The finite set given by `theMoves` indeed agrees with the relation `move`.
 Other direction is `mem_theMoves_of_move`. -/
@@ -494,7 +494,7 @@ lemma mem_theMoves_of_move {pos next} :
           use a, AnyFormula.normal ψ
           simp only [AnyFormula.normal.injEq, exists_eq_left', reduceCtorEq, false_and,
             exists_false, LoadFormula.unload, false_or, true_and]
-          aesop
+          aesop (rule_sets := [-default])
         all_goals
           absurd bas
           rintro ⟨bas, nclos⟩
@@ -529,7 +529,7 @@ lemma mem_theMoves_of_move {pos next} :
           use a, AnyFormula.normal ψ
           simp only [AnyFormula.normal.injEq, exists_eq_left', reduceCtorEq, false_and,
             exists_false, LoadFormula.unload, false_or, true_and]
-          aesop
+          aesop (rule_sets := [-default])
         all_goals
           absurd bas
           rintro ⟨bas, nclos⟩
@@ -610,10 +610,10 @@ lemma move.trans_hist {pX pY} (movt : Relation.TransGen move pX pY) :
       simp_all
     · cases Y_def
       simp
-      aesop
+      aesop (rule_sets := [-default])
     · cases HXP_eq
       simp at *
-      aesop
+      aesop (rule_sets := [-default])
     · cases Y_def
       simp only [] at *
       rcases pX with ⟨X, H, p⟩

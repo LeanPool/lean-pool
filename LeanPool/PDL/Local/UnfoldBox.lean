@@ -76,10 +76,10 @@ theorem signature_iff {W} {M : KripkeModel W} {w : W} :
   · intro w_ℓ τ τ_in
     cases em (ℓ ⟨τ, τ_in⟩)
     · specialize w_ℓ τ τ τ_in
-      aesop
+      aesop (rule_sets := [-default])
     · specialize w_ℓ (~τ) τ τ_in
-      aesop
-  · aesop
+      aesop (rule_sets := [-default])
+  · aesop (rule_sets := [-default])
 
 -- Now come two out of the three facts about test profiles and signatures.
 
@@ -97,7 +97,7 @@ theorem top_equiv_disj_TP : ∀ α, tautology (dis ((allTP α).map (signature α
     forall_exists_index]
     intro f τ τ_in def_f
     subst def_f
-    aesop
+    aesop (rule_sets := [-default])
 
 /-- This is currently unused. -/
 theorem signature_contradiction_of_neq_TPs {ℓ ℓ' : TP α} :
@@ -427,7 +427,7 @@ theorem boxHelperTermination α (ℓ : TP α) :
           cases IH
           subst_eqs
           simp_all [subprograms]
-          aesop
+          aesop (rule_sets := [-default])
         · rw [Program.isStar_iff] at *
           rename _ => hyp
           rcases hyp with ⟨γ, α_def⟩
@@ -693,7 +693,7 @@ theorem boxHelperTP α (ℓ : TP α) :
   refine ⟨?_, ?_, ?_⟩
   · intro τ τ_in
     have := F_mem_iff_neg α ℓ (~τ)
-    aesop
+    aesop (rule_sets := [-default])
   · intro W M w
     simp only [evaluate, conEval, signature, List.mem_map, List.mem_attach, true_and,
       Subtype.exists, forall_exists_index, and_iff_right_iff_imp]
@@ -703,22 +703,22 @@ theorem boxHelperTP α (ℓ : TP α) :
     clear this
     rcases φ_in with ⟨τ, τ_in, φ_def, not_ℓ_τ⟩
     specialize w_ℓ φ τ
-    aesop
+    aesop (rule_sets := [-default])
   · intro ψ W M w
     simp only [evaluate, Bset, conEval, List.mem_append, List.mem_map, forall_exists_index,
       and_imp, forall_apply_eq_imp_iff₂, and_congr_left_iff]
     intro w_sign
     constructor
     · intro lhs δ δ_in
-      aesop
+      aesop (rule_sets := [-default])
     · rintro rhs φ (φ_in_F | ⟨δ,δ_in,def_φ⟩)
       · rw [F_mem_iff_neg α ℓ φ] at φ_in_F
         rcases φ_in_F with ⟨τ, τ_in, φ_def, not_ℓ_τ⟩
         subst φ_def
         simp_all [signature, conEval]
         specialize w_sign (~τ) τ
-        aesop
-      · aesop
+        aesop (rule_sets := [-default])
+      · aesop (rule_sets := [-default])
 
 theorem guardToStar (x : Nat) β χ0 χ1 ρ ψ
     (x_notin_beta : Sum.inl x ∉ β.voc)
@@ -843,7 +843,7 @@ theorem localBoxTruth_connector γ ψ :
       constructor
       · assumption
       · simp_all [signature, conEval]
-        aesop
+        aesop (rule_sets := [-default])
     simp_all
 
 /-- A box-star expansion implies every compatible test-profile expansion. -/
@@ -951,14 +951,14 @@ private theorem boxStar_forward (β : Program) (ψ : Formula)
       rintro f (f_in_F| ⟨δ, δ_in, def_f⟩)
       · simp only [F_mem_iff_neg, exists_and_left] at f_in_F
         unfold ℓ' at f_in_F
-        aesop
+        aesop (rule_sets := [-default])
       · subst def_f
         specialize step ℓ' W M w
         simp only [List.mem_singleton, forall_eq] at step
         rw [conEval] at step
         simp only [evaluate, relate, signature, conEval, List.mem_map, List.mem_attach, true_and,
           Subtype.exists, forall_exists_index, and_imp, forall_apply_eq_imp_iff₂] at step
-        apply step <;> aesop
+        apply step <;> aesop (rule_sets := [-default])
   intro ℓ W M w
   simp only [List.mem_singleton, forall_eq]
   intro hyp
@@ -1064,7 +1064,7 @@ private theorem boxStar_backward (β : Program) (ψ : Formula)
           intro f δ δ_in _ def_f
           apply w_Xβ
           right
-          aesop
+          aesop (rule_sets := [-default])
       · right -- choose χ1
         unfold χ1 T1 φ'
         simp only [ne_eq, decide_not, disEval, List.mem_map, List.mem_filter,
@@ -1075,7 +1075,7 @@ private theorem boxStar_backward (β : Program) (ψ : Formula)
         intro f δ δ_in _ def_f
         apply w_Xβ
         right
-        aesop
+        aesop (rule_sets := [-default])
     · rintro (⟨w_c, w_χ0⟩ | w_χ1)
       · unfold χ0 T0 φ' at w_χ0
         simp only [ne_eq, decide_not, disEval, List.mem_map, List.mem_filter, decide_eq_true_eq,
@@ -1085,7 +1085,7 @@ private theorem boxStar_backward (β : Program) (ψ : Formula)
         use ℓ
         simp_all only [true_and]
         rintro φ (φ_in_Fβ | ⟨δ, δ_in, def_φ⟩)
-        · aesop
+        · aesop (rule_sets := [-default])
         · subst def_φ
           cases em (δ = [])
           · simp_all
@@ -1153,7 +1153,7 @@ private theorem boxStar_backward (β : Program) (ψ : Formula)
           specialize left_to_right W M
           simp [evalBoxes] at left_to_right w_Xℓ
           simp [evalBoxes]
-          aesop
+          aesop (rule_sets := [-default])
     case inr empty_not_in_Pβ =>
       right
       -- exactly the same as inl case!
@@ -1189,7 +1189,7 @@ private theorem boxStar_backward (β : Program) (ψ : Formula)
           specialize left_to_right W M
           simp [evalBoxes] at left_to_right w_Xℓ
           simp [evalBoxes]
-          aesop
+          aesop (rule_sets := [-default])
   · -- ρ ⊨ ψ
     unfold ρ
     simp only [Bset, P, List.cons_union, List.nil_union, List.mem_map, List.mem_filter,
@@ -1223,7 +1223,7 @@ private theorem boxUnion_profile (α β : Program) (ψ : Formula) (ℓ : TP (α�
   -- rewrite using semantics of union and the two IH:
   have : (∀ (v : W), relate M α w v ∨ relate M β w v → evaluate M v ψ)
       ↔ ((∀ (v : W), relate M α w v → evaluate M v ψ)
-       ∧ (∀ (v : W), relate M β w v → evaluate M v ψ)) := by aesop
+       ∧ (∀ (v : W), relate M β w v → evaluate M v ψ)) := by aesop (rule_sets := [-default])
   rw [this, IHα, IHβ]
   clear this IHα IHβ
   -- signature is true, so we can add it for free:
@@ -1314,7 +1314,7 @@ private theorem boxSequence_profile (α β : Program) (ψ : Formula) (ℓ : TP (
   have : (∀ (v x : W), relate M α w x → relate M β x v → evaluate M v ψ)
         ↔ ∀ (v : W), relate M α w v → ∀ (v_1 : W), relate M β v v_1 → evaluate M v_1 ψ := by
     clear IHα IHβ
-    aesop
+    aesop (rule_sets := [-default])
   rw [this, IHα]
   clear this IHα
   constructor
@@ -1345,7 +1345,7 @@ private theorem boxSequence_profile (α β : Program) (ψ : Formula) (ℓ : TP (
       cases em ([] ∈ P α ℓ)
       · simp_all only [true_and]
         apply IHβ.1 ?_ (⌈⌈δ⌉⌉ψ) <;> clear IHβ
-        · right; aesop
+        · right; aesop (rule_sets := [-default])
         · have := lhs (⌈β⌉ψ)
           simp only [evaluate] at this; apply this; clear this -- sounds like daft punk ;-)
           right

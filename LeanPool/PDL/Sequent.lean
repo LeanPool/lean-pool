@@ -428,8 +428,8 @@ lemma Sequent.satisfiable_top_cons_right {X : Sequent} (h_left_nil : X.left = {}
   simp only [toFinset, Finset.empty_union, Finset.mem_union, Option.mem_toFinset, Option.mem_def,
     Option.map_eq_some_iff, Sum.exists, Sum.elim_inl, negUnload, Sum.elim_inr] at φ_in
   rcases φ_in with _|_|⟨⟨χ⟩, ⟨O_def, def_φ⟩⟩
-  · aesop
-  · aesop
+  · aesop (rule_sets := [-default])
+  · aesop (rule_sets := [-default])
   · subst O_def def_φ
     unfold right at w_
     simp only [Top.top, R_eq, O_eq, Olf.R_inr] at w_
@@ -447,7 +447,7 @@ theorem Sequent.without_normal_isFree_iff_isFree (LRO : Sequent) :
     (LRO.without (~''(.normal φ))).isFree ↔ LRO.isFree := by
   rcases LRO with ⟨L, R, O⟩
   simp [Sequent.without, isFree, isLoaded]
-  aesop
+  aesop (rule_sets := [-default])
 
 @[simp]
 theorem Sequent.isFree_then_without_isFree (LRO : Sequent) :
@@ -544,7 +544,7 @@ theorem Sequent.without_loaded_in_side_isFree (LRO : Sequent) ξ side :
   rcases LRO with ⟨L, R, _|(OL|OR)⟩ <;> cases side
   all_goals
     simp [Sequent.without, isFree, isLoaded, AnyNegFormula.inSide]
-    try aesop
+    try aesop (rule_sets := [-default])
 
 /-! ## Whatever formulas
 

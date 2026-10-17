@@ -135,7 +135,7 @@ lemma PdlRule.all_spec {X Y} (bas : X.basic) (r : PdlRule X Y) : ⟨Y, r⟩ ∈ 
       cases α_def : α <;> simp_all only [LoadFormula.boxes_nil, all, Finset.singleton_union,
         AnyFormula.split, LoadFormula.unload, List.cons_append, List.nil_append, List.mem_cons,
         Sigma.mk.injEq, Finset.union_singleton, List.not_mem_nil, or_false]
-      case atom_prog a => aesop
+      case atom_prog a => aesop (rule_sets := [-default])
       all_goals
         -- Here we need `bas` to disallow non-atomic freeL applications
         subst_eqs
@@ -180,7 +180,7 @@ lemma PdlRule.all_spec {X Y} (bas : X.basic) (r : PdlRule X Y) : ⟨Y, r⟩ ∈ 
       cases α_def : α <;> simp_all only [LoadFormula.boxes_nil, all, Finset.singleton_union,
         AnyFormula.split, LoadFormula.unload, List.cons_append, List.nil_append, List.mem_cons,
         Sigma.mk.injEq, Finset.union_singleton, List.not_mem_nil, or_false]
-      case atom_prog a => aesop
+      case atom_prog a => aesop (rule_sets := [-default])
       all_goals
         -- Here we need `bas` to disallow non-atomic freeL applications
         subst_eqs

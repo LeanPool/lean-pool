@@ -388,7 +388,7 @@ lemma oneSidedL_sat_down (LRO : Sequent)
   rcases LRO with ⟨L,R,O⟩
   subst YS_def
   rcases LX_sat with ⟨W, M, w, satM⟩
-  have : evaluate M w (con Lcond.sort) := by simp [conEval]; aesop
+  have : evaluate M w (con Lcond.sort) := by simp [conEval]; aesop (rule_sets := [-default])
   have := (oneSidedLocalRuleTruth orule W M w).1 this
   rw [Finset.disconEval] at this
   rcases this with ⟨L', L'_in, w_L'⟩
@@ -397,7 +397,7 @@ lemma oneSidedL_sat_down (LRO : Sequent)
   refine ⟨L', L'_in, W, M, w, fun φ φ_in => ?_⟩
   specialize @satM φ
   simp only [Finset.mem_union, Finset.mem_sdiff] at φ_in
-  rcases φ_in with φ_in_LnoCond | φ_in_L' | φ_in_O <;> aesop
+  rcases φ_in with φ_in_LnoCond | φ_in_L' | φ_in_O <;> aesop (rule_sets := [-default])
 
 lemma oneSidedR_sat_down (LRO : Sequent)
     {Rcond : Finset Formula} (Rpreproof : Rcond ⊆ LRO.R)
@@ -408,7 +408,7 @@ lemma oneSidedR_sat_down (LRO : Sequent)
   rcases LRO with ⟨L,R,O⟩
   subst YS_def
   rcases RX_sat with ⟨W, M, w, satM⟩
-  have : evaluate M w (con Rcond.sort) := by simp [conEval]; aesop
+  have : evaluate M w (con Rcond.sort) := by simp [conEval]; aesop (rule_sets := [-default])
   have := (oneSidedLocalRuleTruth orule W M w).1 this
   rw [Finset.disconEval] at this
   rcases this with ⟨L', L'_in, w_L'⟩
@@ -417,7 +417,7 @@ lemma oneSidedR_sat_down (LRO : Sequent)
   refine ⟨L', L'_in, W, M, w, fun φ φ_in => ?_⟩
   specialize @satM φ
   simp only [Finset.mem_union, Finset.mem_sdiff] at φ_in
-  rcases φ_in with φ_in_LnoCond | φ_in_L' | φ_in_O <;> aesop
+  rcases φ_in with φ_in_LnoCond | φ_in_L' | φ_in_O <;> aesop (rule_sets := [-default])
 
 -- Following four lemmas are almost the same, but then for the loaded diamond rules.
 
@@ -873,11 +873,11 @@ lemma nonbasic_of_localRuleApp (lra : LocalRuleApp) : ¬ lra.X.basic := by
   case LRnegL =>
     right
     simp [Sequent.closed]
-    aesop
+    aesop (rule_sets := [-default])
   case LRnegR =>
     right
     simp [Sequent.closed]
-    aesop
+    aesop (rule_sets := [-default])
   case loadedL ress χ lrule ress_def =>
     obtain ⟨-, -, hO⟩ := preconditionProof
     rw [Option.some_subseteq] at hO
@@ -1250,7 +1250,7 @@ private theorem formulaExpansion_oneSidedL
     · subst f; right; simp
     · left
       rcases hf with hf | hf | hf | hf
-      all_goals aesop
+      all_goals aesop (rule_sets := [-default])
   case con φ ψ =>
     simp_all only [applyLocalRule, Finset.sdiff_empty, Finset.image_singleton,
       Finset.union_insert, Finset.union_singleton, Finset.union_empty, Olf.change_old_none_none,
@@ -1264,7 +1264,7 @@ private theorem formulaExpansion_oneSidedL
     · subst f; right; simp
     · left
       rcases hf with hf | hf | hf | hf
-      all_goals aesop
+      all_goals aesop (rule_sets := [-default])
   case nCo φ ψ =>
     simp_all only [applyLocalRule, Finset.sdiff_empty, Finset.image_insert,
       Finset.image_singleton, Finset.union_singleton, Finset.union_empty,
@@ -1278,10 +1278,10 @@ private theorem formulaExpansion_oneSidedL
       right
       intro φ' ψ' _
       rcases hY with hY | hY <;> subst Y <;>
-        simp <;> aesop
+        simp <;> aesop (rule_sets := [-default])
     · left
       rcases hf with hf | hf | hf | hf
-      all_goals aesop
+      all_goals aesop (rule_sets := [-default])
   case box α φ notAtom =>
     simp_all only [applyLocalRule, Finset.sdiff_empty, List.pdlToFinFin, Finset.mem_image,
       List.mem_toFinset, List.mem_map, exists_exists_and_eq_and, Finset.union_empty,
@@ -1306,7 +1306,7 @@ private theorem formulaExpansion_oneSidedL
       simp [hx]
     · left
       rcases hf with hf | hf | hf | hf
-      all_goals aesop
+      all_goals aesop (rule_sets := [-default])
   case dia α φ notAtom =>
     simp_all only [applyLocalRule, Finset.sdiff_empty, List.pdlToFinFin, Finset.mem_image,
       List.mem_toFinset, List.mem_map, exists_exists_and_eq_and, Finset.union_empty,
@@ -1333,7 +1333,7 @@ private theorem formulaExpansion_oneSidedL
       simp [hx]
     · left
       rcases hf with hf | hf | hf | hf
-      all_goals aesop
+      all_goals aesop (rule_sets := [-default])
   all_goals simp_all [applyLocalRule]
 
 /-- Preservation and expansion for a local rule acting on the R component. -/
@@ -1365,7 +1365,7 @@ private theorem formulaExpansion_oneSidedR
     · subst f; right; simp
     · left
       rcases hf with hf | hf | hf | hf
-      all_goals aesop
+      all_goals aesop (rule_sets := [-default])
   case con φ ψ =>
     simp_all only [applyLocalRule, Finset.sdiff_empty, Finset.image_singleton,
       Finset.union_insert, Finset.union_singleton, Finset.union_empty, Olf.change_old_none_none,
@@ -1379,7 +1379,7 @@ private theorem formulaExpansion_oneSidedR
     · subst f; right; simp
     · left
       rcases hf with hf | hf | hf | hf
-      all_goals aesop
+      all_goals aesop (rule_sets := [-default])
   case nCo φ ψ =>
     simp_all only [applyLocalRule, Finset.sdiff_empty, Finset.image_insert,
       Finset.image_singleton, Finset.union_singleton, Finset.union_empty,
@@ -1393,10 +1393,10 @@ private theorem formulaExpansion_oneSidedR
       right
       intro φ' ψ' _
       rcases hY with hY | hY <;> subst Y <;>
-        simp <;> aesop
+        simp <;> aesop (rule_sets := [-default])
     · left
       rcases hf with hf | hf | hf | hf
-      all_goals aesop
+      all_goals aesop (rule_sets := [-default])
   case box α φ notAtom =>
     simp_all only [applyLocalRule, Finset.sdiff_empty, List.pdlToFinFin, Finset.mem_image,
       List.mem_toFinset, List.mem_map, exists_exists_and_eq_and, Finset.union_empty,
@@ -1421,7 +1421,7 @@ private theorem formulaExpansion_oneSidedR
       simp [hx]
     · left
       rcases hf with hf | hf | hf | hf
-      all_goals aesop
+      all_goals aesop (rule_sets := [-default])
   case dia α φ notAtom =>
     simp_all only [applyLocalRule, Finset.sdiff_empty, List.pdlToFinFin, Finset.mem_image,
       List.mem_toFinset, List.mem_map, exists_exists_and_eq_and, Finset.union_empty,
@@ -1448,7 +1448,7 @@ private theorem formulaExpansion_oneSidedR
       simp [hx]
     · left
       rcases hf with hf | hf | hf | hf
-      all_goals aesop
+      all_goals aesop (rule_sets := [-default])
   all_goals simp_all [applyLocalRule]
 
 /-- Preservation and expansion for a local rule acting on the L component. -/
@@ -1496,7 +1496,7 @@ private theorem formulaExpansion_loadedL
       · simp only [Finset.mem_union, List.mem_toFinset]
         tauto
       · rcases w with _ | nlf <;> simp_all [Olf.L]
-    · left; aesop
+    · left; aesop (rule_sets := [-default])
   case dia' α φ notAtom =>
     simp_all only [applyLocalRule, Finset.sdiff_empty, List.pdlToFinFinOpt, Finset.mem_image,
       List.mem_toFinset, List.mem_map, Prod.exists, Prod.mk.injEq, exists_eq_right_right,
@@ -1524,7 +1524,7 @@ private theorem formulaExpansion_loadedL
       · simp only [Finset.mem_union, List.mem_toFinset]
         tauto
       · rcases w with _ | nlf <;> simp_all [Olf.L]
-    · left; aesop
+    · left; aesop (rule_sets := [-default])
 
 /-- Preservation and expansion for a local rule acting on the R component. -/
 private theorem formulaExpansion_loadedR
@@ -1571,7 +1571,7 @@ private theorem formulaExpansion_loadedR
       · simp only [Finset.mem_union, List.mem_toFinset]
         tauto
       · rcases w with _ | nlf <;> simp_all [Olf.R]
-    · left; aesop
+    · left; aesop (rule_sets := [-default])
   case dia' α φ notAtom =>
     simp_all only [applyLocalRule, Finset.sdiff_empty, List.pdlToFinFinOpt, Finset.mem_image,
       List.mem_toFinset, List.mem_map, Prod.exists, Prod.mk.injEq, exists_eq_right_right,
@@ -1599,7 +1599,7 @@ private theorem formulaExpansion_loadedR
       · simp only [Finset.mem_union, List.mem_toFinset]
         tauto
       · rcases w with _ | nlf <;> simp_all [Olf.R]
-    · left; aesop
+    · left; aesop (rule_sets := [-default])
 
 /-- Every formula at the source of a local rule is retained by the chosen child or has
 its principal-formula expansion in that child. -/
@@ -1892,7 +1892,7 @@ lemma LocalRuleApp.wForms_negLoad_preserved_or_unfolded (lra : LocalRuleApp) {Y 
     · simp only [List.all_eq_true, decide_eq_true_eq]
       intro f f_in
       rw [Sequent.mem_wForms_normal_iff]
-      aesop
+      aesop (rule_sets := [-default])
     · cases onew with
       | none => simp
       | some nl =>
@@ -1914,7 +1914,7 @@ lemma LocalRuleApp.wForms_negLoad_preserved_or_unfolded (lra : LocalRuleApp) {Y 
     · simp only [List.all_eq_true, decide_eq_true_eq]
       intro f f_in
       rw [Sequent.mem_wForms_normal_iff]
-      aesop
+      aesop (rule_sets := [-default])
     · cases onew with
       | none => simp
       | some nl =>
