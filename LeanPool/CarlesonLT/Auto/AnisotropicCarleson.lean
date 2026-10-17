@@ -537,47 +537,6 @@ theorem fhat_dilOp_transl_modul (α : Fin n → ℕ) {t : ℝ} (ht : 0 < t) (y �
               simp only [c]; push_cast; ring
           _ = _ := by rw [hpow]
 
-/-- Bounded overlap: for `r ≠ 0` and fixed `N, ξ`, at most four pairs `(k, u)` have
-`N ∈ ω_{P(r)}` and `ξ ∈ S_P` (with `P = (k, ·, u)`). -/
-theorem tsum_ind_suppBox_le (α : Fin n → ℕ) (hα : ∀ i, 1 ≤ α i) {r : Fin n → Fin 2}
-    (hr : r ≠ 0) (N ξ : Rn n) :
-    ∑' k : ℤ, ∑' u : Fin n → ℤ,
-      ((⟨k, 0, u⟩ : Tile n).semi α r).indicator (fun _ => (1 : ℝ≥0∞)) N *
-        (suppBox α ⟨k, 0, u⟩).indicator (fun _ => (1 : ℝ≥0∞)) ξ ≤ 4 := by
-  set K : Finset ℤ :=
-    Finset.Icc (-(Int.log 2 (rho α (ξ - N))) - 3) (-(Int.log 2 (rho α (ξ - N))))
-  have hle : ∀ (k : ℤ) (u : Fin n → ℤ),
-      ((⟨k, 0, u⟩ : Tile n).semi α r).indicator (fun _ => (1 : ℝ≥0∞)) N *
-        (suppBox α ⟨k, 0, u⟩).indicator (fun _ => (1 : ℝ≥0∞)) ξ ≤
-        if k ∈ K then (if u = freqPos α k ξ then 1 else 0) else 0 := by
-    intro k u
-    by_cases hNP : N ∈ (⟨k, 0, u⟩ : Tile n).semi α r
-    · by_cases hξ : ξ ∈ suppBox α ⟨k, 0, u⟩
-      · have hb := rho_sub_bounds_of_mem_suppBox α hα hr hNP hξ
-        have ht0 : 0 < rho α (ξ - N) := lt_of_lt_of_le (by positivity) hb.1
-        have hk : k ∈ K := scales_subset_Icc ht0 hb.1 hb.2
-        have hu : u = freqPos α k ξ := u_eq_freqPos_of_mem_suppBox α hξ
-        rw [Set.indicator_of_mem hNP, Set.indicator_of_mem hξ]
-        simp [hk, hu]
-      · simp [Set.indicator_of_notMem hξ]
-    · simp [Set.indicator_of_notMem hNP]
-  calc _ ≤ ∑' k : ℤ, ∑' u : Fin n → ℤ,
-        (if k ∈ K then (if u = freqPos α k ξ then (1 : ℝ≥0∞) else 0) else 0) :=
-        ENNReal.tsum_le_tsum fun k => ENNReal.tsum_le_tsum fun u => hle k u
-    _ = ∑' k : ℤ, (if k ∈ K then (1 : ℝ≥0∞) else 0) := by
-        congr 1
-        ext k
-        split_ifs with hk
-        · exact tsum_ite_eq (freqPos α k ξ) 1
-        · simp
-    _ = ∑ k ∈ K, (1 : ℝ≥0∞) := by
-        rw [tsum_eq_sum (s := K) fun k hk => by simp [hk]]
-        exact Finset.sum_congr rfl fun k hk => by simp [hk]
-    _ ≤ 4 := by
-        simp only [Finset.sum_const, nsmul_eq_mul, mul_one, K, Int.card_Icc]
-        norm_cast
-        omega
-
 theorem PhiP_eq_zero_of_notMem (α : Fin n → ℕ) (P : Tile n) {ξ : Rn n}
     (hξ : ξ ∉ suppBox α P) : PhiP α P ξ = 0 := by
   by_contra hne

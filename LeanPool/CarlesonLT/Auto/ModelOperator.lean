@@ -2337,6 +2337,47 @@ theorem one_add_rho_cI_eq (α : Fin n → ℕ) (hα : ∀ i, 1 ≤ α i) (P : Ti
   rw [this, hs]
   ring
 
+/-- Bounded overlap: for `r ≠ 0` and fixed `N, ξ`, at most four pairs `(k, u)` have
+`N ∈ ω_{P(r)}` and `ξ ∈ S_P` (with `P = (k, ·, u)`). -/
+theorem tsum_ind_suppBox_le (α : Fin n → ℕ) (hα : ∀ i, 1 ≤ α i) {r : Fin n → Fin 2}
+    (hr : r ≠ 0) (N ξ : Rn n) :
+    ∑' k : ℤ, ∑' u : Fin n → ℤ,
+      ((⟨k, 0, u⟩ : Tile n).semi α r).indicator (fun _ => (1 : ℝ≥0∞)) N *
+        (suppBox α ⟨k, 0, u⟩).indicator (fun _ => (1 : ℝ≥0∞)) ξ ≤ 4 := by
+  set K : Finset ℤ :=
+    Finset.Icc (-(Int.log 2 (rho α (ξ - N))) - 3) (-(Int.log 2 (rho α (ξ - N))))
+  have hle : ∀ (k : ℤ) (u : Fin n → ℤ),
+      ((⟨k, 0, u⟩ : Tile n).semi α r).indicator (fun _ => (1 : ℝ≥0∞)) N *
+        (suppBox α ⟨k, 0, u⟩).indicator (fun _ => (1 : ℝ≥0∞)) ξ ≤
+        if k ∈ K then (if u = freqPos α k ξ then 1 else 0) else 0 := by
+    intro k u
+    by_cases hNP : N ∈ (⟨k, 0, u⟩ : Tile n).semi α r
+    · by_cases hξ : ξ ∈ suppBox α ⟨k, 0, u⟩
+      · have hb := rho_sub_bounds_of_mem_suppBox α hα hr hNP hξ
+        have ht0 : 0 < rho α (ξ - N) := lt_of_lt_of_le (by positivity) hb.1
+        have hk : k ∈ K := scales_subset_Icc ht0 hb.1 hb.2
+        have hu : u = freqPos α k ξ := u_eq_freqPos_of_mem_suppBox α hξ
+        rw [Set.indicator_of_mem hNP, Set.indicator_of_mem hξ]
+        simp [hk, hu]
+      · simp [Set.indicator_of_notMem hξ]
+    · simp [Set.indicator_of_notMem hNP]
+  calc _ ≤ ∑' k : ℤ, ∑' u : Fin n → ℤ,
+        (if k ∈ K then (if u = freqPos α k ξ then (1 : ℝ≥0∞) else 0) else 0) :=
+        ENNReal.tsum_le_tsum fun k => ENNReal.tsum_le_tsum fun u => hle k u
+    _ = ∑' k : ℤ, (if k ∈ K then (1 : ℝ≥0∞) else 0) := by
+        congr 1
+        ext k
+        split_ifs with hk
+        · exact tsum_ite_eq (freqPos α k ξ) 1
+        · simp
+    _ = ∑ k ∈ K, (1 : ℝ≥0∞) := by
+        rw [tsum_eq_sum (s := K) fun k hk => by simp [hk]]
+        exact Finset.sum_congr rfl fun k hk => by simp [hk]
+    _ ≤ 4 := by
+        simp only [Finset.sum_const, nsmul_eq_mul, mul_one, K, Int.card_Icc]
+        norm_cast
+        omega
+
 /-- Convergence of the model sum (paper, §3, (3.3)), with a uniform bound: for `r ≠ 0`,
 `∑_P |⟨g, φ_P⟩ ψ^N_P(x) 1_{ω_{P(r)}}(N)| ≤ C ‖m‖_{𝓜^{|α|+1}} ‖ĝ‖₁`, uniformly in `N` and `x`. -/
 theorem tsum_enorm_modelTerm_le (α : Fin n → ℕ) (hα : ∀ i, 1 ≤ α i) {r : Fin n → Fin 2}
@@ -2404,44 +2445,16 @@ theorem tsum_enorm_modelTerm_le (α : Fin n → ℕ) (hα : ∀ i, 1 ≤ α i) {
     simp only [w]
     rw [one_add_rho_cI_eq α hα ⟨k, ℓ, u⟩ x]
   -- Step 3: bounded overlap of the boxes `S_P`
-  set K : Rn n → Finset ℤ := fun ξ =>
-    Finset.Icc (-(Int.log 2 (rho α (ξ - N))) - 3) (-(Int.log 2 (rho α (ξ - N))))
   have hcount : ∀ ξ : Rn n, ∑' k : ℤ, ∑' u : Fin n → ℤ,
       ENNReal.ofReal (ind ⟨k, 0, u⟩) *
         (suppBox α ⟨k, 0, u⟩).indicator (fun _ => (1 : ℝ≥0∞)) ξ ≤ 4 := by
     intro ξ
-    have hle : ∀ (k : ℤ) (u : Fin n → ℤ),
-        ENNReal.ofReal (ind ⟨k, 0, u⟩) *
-          (suppBox α ⟨k, 0, u⟩).indicator (fun _ => (1 : ℝ≥0∞)) ξ ≤
-          if k ∈ K ξ then (if u = freqPos α k ξ then 1 else 0) else 0 := by
-      intro k u
-      by_cases hNP : N ∈ (⟨k, 0, u⟩ : Tile n).semi α r
-      · by_cases hξ : ξ ∈ suppBox α ⟨k, 0, u⟩
-        · have hb := rho_sub_bounds_of_mem_suppBox α hα hr hNP hξ
-          have ht0 : 0 < rho α (ξ - N) := lt_of_lt_of_le (by positivity) hb.1
-          have hk : k ∈ K ξ := scales_subset_Icc ht0 hb.1 hb.2
-          have hu : u = freqPos α k ξ := u_eq_freqPos_of_mem_suppBox α hξ
-          simp only [ind]
-          rw [Set.indicator_of_mem hNP, Set.indicator_of_mem hξ]
-          simp [hk, hu]
-        · simp [Set.indicator_of_notMem hξ]
-      · simp [ind, Set.indicator_of_notMem hNP]
-    calc _ ≤ ∑' k : ℤ, ∑' u : Fin n → ℤ,
-          (if k ∈ K ξ then (if u = freqPos α k ξ then (1 : ℝ≥0∞) else 0) else 0) :=
-          ENNReal.tsum_le_tsum fun k => ENNReal.tsum_le_tsum fun u => hle k u
-      _ = ∑' k : ℤ, (if k ∈ K ξ then (1 : ℝ≥0∞) else 0) := by
-          congr 1
-          ext k
-          split_ifs with hk
-          · exact tsum_ite_eq (freqPos α k ξ) 1
-          · simp
-      _ = ∑ k ∈ K ξ, (1 : ℝ≥0∞) := by
-          rw [tsum_eq_sum (s := K ξ) fun k hk => by simp [hk]]
-          exact Finset.sum_congr rfl fun k hk => by simp [hk]
-      _ ≤ 4 := by
-          simp only [Finset.sum_const, nsmul_eq_mul, mul_one, K, Int.card_Icc]
-          norm_cast
-          omega
+    have hindENN (P : Tile n) : ENNReal.ofReal (ind P) =
+        (P.semi α r).indicator (fun _ => (1 : ℝ≥0∞)) N := by
+      by_cases hNP : N ∈ P.semi α r
+      · simp only [ind, Set.indicator_of_mem hNP, ENNReal.ofReal_one]
+      · simp only [ind, Set.indicator_of_notMem hNP, ENNReal.ofReal_zero]
+    simpa only [hindENN] using tsum_ind_suppBox_le α hα hr N ξ
   -- Step 4: assemble
   have hFint : Integrable F := hG.norm
   have hFmeas : AEMeasurable (fun ξ => ENNReal.ofReal (F ξ)) := hFint.aemeasurable.ennreal_ofReal
@@ -3942,11 +3955,11 @@ theorem side_neg_eq_mul (α : Fin n → ℕ) {k k' : ℤ} (h : k' < k) (i : Fin 
     rw [Int.toNat_of_nonneg this]
     ring
 
-/-- Grid property: a strictly finer frequency cube meeting the half-open lower semi-tile of `P'`
-is contained in it. -/
-theorem ω_subset_semiHO0 (α : Fin n → ℕ) (hα : ∀ i, 1 ≤ α i) {P P' : Tile n} (hk : P'.k < P.k)
-    {ξ : Rn n} (hξ : ξ ∈ P.ω.toSet α) (hξ' : ξ ∈ P'.semiHO0 α) :
-    P.ω.toSet α ⊆ P'.semiHO0 α := by
+/-- Grid property for general half-open semi-tiles: a strictly finer frequency cube meeting
+`ω_{P'(r)}` is contained in it. -/
+theorem ω_subset_semiHO (α : Fin n → ℕ) (hα : ∀ i, 1 ≤ α i) {P P' : Tile n} (hk : P'.k < P.k)
+    (r : Fin n → Fin 2) {ξ : Rn n} (hξ : ξ ∈ P.ω.toSet α) (hξ' : ξ ∈ P'.semiHO α r) :
+    P.ω.toSet α ⊆ P'.semiHO α r := by
   intro η hη i
   obtain ⟨d, hd, hs⟩ := side_neg_eq_mul α hk i (hα i)
   set s := side α (-P.k) i
@@ -3956,32 +3969,42 @@ theorem ω_subset_semiHO0 (α : Fin n → ℕ) (hα : ∀ i, 1 ≤ α i) {P P' :
   have h3 := hη i
   simp only [Tile.ω] at h1 h3
   rw [hs] at h2 ⊢
-  -- integer bounds `A ≤ u < u + 1 ≤ B` with `A = 2^d u'`, `B = 2^d u' + 2^{d-1}`
   obtain ⟨e, rfl⟩ : ∃ e, d = e + 1 := ⟨d - 1, by omega⟩
-  have hA : (2 : ℤ) ^ (e + 1) * P'.u i ≤ P.u i := by
-    have : ((2 : ℤ) ^ (e + 1) * P'.u i : ℝ) < P.u i + 1 := by
-      push_cast
-      have : s * (2 ^ (e + 1) * P'.u i) < s * (P.u i + 1) := by nlinarith
+  set rv : ℤ := ((r i : ℕ) : ℤ)
+  have hrv : ((r i : ℕ) : ℝ) = (rv : ℝ) := by simp [rv]
+  set A : ℤ := 2 ^ (e + 1) * P'.u i + 2 ^ e * rv
+  set B : ℤ := 2 ^ (e + 1) * P'.u i + 2 ^ e * (rv + 1)
+  have eA : s * 2 ^ (e + 1) * (P'.u i + ((r i : ℕ) : ℝ) / 2) = s * (A : ℝ) := by
+    simp only [A]; rw [hrv]; push_cast; rw [pow_succ]; ring
+  have eB : s * 2 ^ (e + 1) * (P'.u i + (((r i : ℕ) : ℝ) + 1) / 2) = s * (B : ℝ) := by
+    simp only [B]; rw [hrv]; push_cast; rw [pow_succ]; ring
+  have h2' : s * (A : ℝ) ≤ ξ i ∧ ξ i < s * (B : ℝ) := by
+    rw [← eA, ← eB]; exact h2
+  have hAu : A ≤ P.u i := by
+    have : (A : ℝ) < P.u i + 1 := by
+      have : s * (A : ℝ) < s * (P.u i + 1) := by linarith [h2'.1, h1.2]
       exact lt_of_mul_lt_mul_left this hs0.le
-    exact_mod_cast Int.lt_add_one_iff.mp (by exact_mod_cast this)
-  have hB : P.u i + 1 ≤ (2 : ℤ) ^ (e + 1) * P'.u i + 2 ^ e := by
-    have : (P.u i : ℝ) < (2 : ℤ) ^ (e + 1) * P'.u i + 2 ^ e := by
-      push_cast
-      have : s * P.u i < s * (2 ^ (e + 1) * P'.u i + 2 ^ e) := by
-        have := h1.1.trans_lt h2.2
-        rw [pow_succ] at this ⊢
-        nlinarith
+    exact Int.lt_add_one_iff.mp (by exact_mod_cast this)
+  have huB : P.u i + 1 ≤ B := by
+    have : (P.u i : ℝ) < B := by
+      have : s * (P.u i : ℝ) < s * B := by linarith [h1.1, h2'.2]
       exact lt_of_mul_lt_mul_left this hs0.le
-    exact_mod_cast (Int.add_one_le_iff.mpr (by exact_mod_cast this))
-  have hA' : ((2 : ℝ) ^ (e + 1) * P'.u i) ≤ P.u i := by exact_mod_cast hA
-  have hB' : (P.u i : ℝ) + 1 ≤ 2 ^ (e + 1) * P'.u i + 2 ^ e := by exact_mod_cast hB
+    exact Int.add_one_le_iff.mpr (by exact_mod_cast this)
+  have hAu' : (A : ℝ) ≤ P.u i := by exact_mod_cast hAu
+  have huB' : (P.u i : ℝ) + 1 ≤ B := by exact_mod_cast huB
+  rw [eA, eB]
   constructor
-  · calc s * 2 ^ (e + 1) * P'.u i = s * (2 ^ (e + 1) * P'.u i) := by ring
-      _ ≤ s * P.u i := by gcongr
-      _ ≤ η i := h3.1
-  · calc η i < s * (P.u i + 1) := h3.2
-      _ ≤ s * (2 ^ (e + 1) * P'.u i + 2 ^ e) := by gcongr
-      _ = s * 2 ^ (e + 1) * (P'.u i + 1 / 2) := by rw [pow_succ]; ring
+  · nlinarith [h3.1]
+  · nlinarith [h3.2]
+
+/-- Grid property: a strictly finer frequency cube meeting the half-open lower semi-tile of `P'`
+is contained in it. -/
+theorem ω_subset_semiHO0 (α : Fin n → ℕ) (hα : ∀ i, 1 ≤ α i) {P P' : Tile n} (hk : P'.k < P.k)
+    {ξ : Rn n} (hξ : ξ ∈ P.ω.toSet α) (hξ' : ξ ∈ P'.semiHO0 α) :
+    P.ω.toSet α ⊆ P'.semiHO0 α := by
+  simpa [Tile.semiHO0, Tile.semiHO] using
+    (ω_subset_semiHO α hα hk 0 hξ (by
+      simpa [Tile.semiHO0, Tile.semiHO] using hξ'))
 
 theorem suppBox_subset_semiHO0 (α : Fin n → ℕ) (P : Tile n) : suppBox α P ⊆ P.semiHO0 α := by
   intro ξ hξ i
@@ -4460,6 +4483,24 @@ theorem measurable_wgt_scaled_enn (α : Fin n → ℕ) {t : ℝ} (ht : 0 < t) (�
   have : 0 ≤ t⁻¹ * rho α z := by positivity
   linarith
 
+/-- `∑_{k ∈ ks, k ≤ K} 2^{k − K} ≤ 2`. -/
+theorem sum_two_zpow_sub_le (ks : Finset ℤ) (K : ℤ) (hks : ∀ k ∈ ks, k ≤ K) :
+    ∑ k ∈ ks, (2 : ℝ) ^ (k - K) ≤ 2 := by
+  have hinj : Set.InjOn (fun k : ℤ => (K - k).toNat) (ks : Set ℤ) := by
+    intro a ha b hb hab
+    have := hks a ha; have := hks b hb
+    simp only at hab; omega
+  calc ∑ k ∈ ks, (2 : ℝ) ^ (k - K) = ∑ m ∈ ks.image (fun k : ℤ => (K - k).toNat), (1 / 2 : ℝ) ^
+      m := by
+        rw [Finset.sum_image hinj]
+        refine Finset.sum_congr rfl fun k hk => ?_
+        have h1 := hks k hk
+        rw [one_div, inv_pow, ← zpow_natCast, Int.toNat_of_nonneg (by omega), ← zpow_neg]
+        congr 1; ring
+    _ ≤ ∑' m : ℕ, (1 / 2 : ℝ) ^ m :=
+        Summable.sum_le_tsum _ (fun _ _ => by positivity) summable_geometric_two
+    _ = 2 := tsum_geometric_two
+
 /-- The boundary estimate of the energy lemma (paper, (6.12)–(6.13), texline~560–576), proved by
 averaging instead of lattice counting: for a collection `T` of tiles with pairwise distinct
 spatial cubes inside `I_top`,
@@ -4625,25 +4666,10 @@ theorem boundary_sum_le (α : Fin n → ℕ) (hα : ∀ i, 1 ≤ α i) (hn : 0 <
   -- step 5: summing over the scales
   set ks := T.image Tile.k
   have hgeom : ∑ k ∈ ks, (2 : ℝ) ^ (k - K) ≤ 2 := by
-    have hinjm : Set.InjOn (fun k : ℤ => (K - k).toNat) (ks : Set ℤ) := by
-      intro a ha b hb hab
-      obtain ⟨P, hP, rfl⟩ := Finset.mem_image.mp ha
-      obtain ⟨Q, hQ, rfl⟩ := Finset.mem_image.mp hb
-      have h1 := hkK P hP
-      have h2 := hkK Q hQ
-      simp only at hab
-      omega
-    calc ∑ k ∈ ks, (2 : ℝ) ^ (k - K) = ∑ m ∈ ks.image (fun k : ℤ => (K - k).toNat), (1 / 2 : ℝ)
-        ^ m := by
-          rw [Finset.sum_image hinjm]
-          refine Finset.sum_congr rfl fun k hk => ?_
-          obtain ⟨P, hP, rfl⟩ := Finset.mem_image.mp hk
-          have h1 := hkK P hP
-          rw [one_div, inv_pow, ← zpow_natCast, Int.toNat_of_nonneg (by omega), ← zpow_neg]
-          congr 1; ring
-      _ ≤ ∑' m : ℕ, (1 / 2 : ℝ) ^ m :=
-          Summable.sum_le_tsum _ (fun _ _ => by positivity) summable_geometric_two
-      _ = 2 := tsum_geometric_two
+    refine sum_two_zpow_sub_le ks K ?_
+    intro k hk
+    obtain ⟨P, hP, rfl⟩ := Finset.mem_image.mp hk
+    exact hkK P hP
   have hGsum : ∑ i, G i = ENNReal.ofReal Gs := by
     rw [ENNReal.ofReal_sum_of_nonneg fun i _ => ENNReal.toReal_nonneg]
     exact Finset.sum_congr rfl fun i _ => (ENNReal.ofReal_toReal (hG i).ne).symm
@@ -5558,6 +5584,28 @@ theorem tree_scale_sum_le (α : Fin n → ℕ) (hα : ∀ i, 1 ≤ α i) {b : �
         hs.sum_le_tsum _ fun ℓ _ => hnn ℓ
     _ ≤ W := hle
 
+/-- Two points of a dyadic cube of scale `k` are at anisotropic distance `≤ 2^k`. -/
+theorem rho_sub_le_of_mem_DCube (α : Fin n → ℕ) (hα : ∀ i, 1 ≤ α i) (J : DCube n) {x y : Rn n}
+    (hx : x ∈ J.toSet α) (hy : y ∈ J.toSet α) : rho α (x - y) ≤ (2 : ℝ) ^ J.k := by
+  have hle : rhoNN α (x - y) ≤ Real.toNNReal ((2 : ℝ) ^ J.k) := by
+    rw [rhoNN_le_iff]
+    intro i
+    rw [← NNReal.coe_le_coe, Real.coe_toNNReal _ (by positivity)]
+    simp only [NNReal.coe_rpow, coe_nnnorm, Real.norm_eq_abs, PiLp.sub_apply]
+    have h1 := hx i
+    have h2 := hy i
+    have hs : |x i - y i| ≤ ((2 : ℝ) ^ J.k) ^ (α i : ℝ) := by
+      rw [Real.rpow_natCast, ← zpow_natCast, ← zpow_mul]
+      change |x i - y i| ≤ side α J.k i
+      rw [abs_le]; constructor <;> nlinarith [h1.1, h1.2, h2.1, h2.2]
+    have hai : (α i : ℝ) ≠ 0 := by have := hα i; positivity
+    calc |x i - y i| ^ ((α i : ℝ)⁻¹) ≤ (((2 : ℝ) ^ J.k) ^ (α i : ℝ)) ^ ((α i : ℝ)⁻¹) :=
+          Real.rpow_le_rpow (abs_nonneg _) hs (by positivity)
+      _ = (2 : ℝ) ^ J.k := by
+          rw [← Real.rpow_mul (by positivity), mul_inv_cancel₀ hai, Real.rpow_one]
+  have := NNReal.coe_le_coe.mpr hle
+  rwa [Real.coe_toNNReal _ (by positivity)] at this
+
 /-- Slow variation of `(1 + 2^{-k_P} ρ(· − c(I_P)))` on an admissible cube `J` with
 `k_P ≤ k_J + 1` (the disjointness `I_P ∩ J_tilde = ∅` is used when `k_P ≤ k_J`). -/
 theorem one_add_rho_le_two_mul_of_mem_J (α : Fin n → ℕ) (hα : ∀ i, 1 ≤ α i)
@@ -5567,25 +5615,7 @@ theorem one_add_rho_le_two_mul_of_mem_J (α : Fin n → ℕ) (hα : ∀ i, 1 ≤
       2 * (1 + ((2 : ℝ) ^ P.k)⁻¹ * rho α (y - P.cI α)) := by
   have htP : (0 : ℝ) < (2 : ℝ) ^ P.k := by positivity
   -- `ρ(x - y) ≤ 2^{k_J}`
-  have hxy : rho α (x - y) ≤ (2 : ℝ) ^ J.k := by
-    have hle : rhoNN α (x - y) ≤ Real.toNNReal ((2 : ℝ) ^ J.k) := by
-      rw [rhoNN_le_iff]
-      intro i
-      rw [← NNReal.coe_le_coe, Real.coe_toNNReal _ (by positivity)]
-      simp only [NNReal.coe_rpow, coe_nnnorm, Real.norm_eq_abs, PiLp.sub_apply]
-      have h1 := hx i
-      have h2 := hy i
-      have hs : |x i - y i| ≤ ((2 : ℝ) ^ J.k) ^ (α i : ℝ) := by
-        rw [Real.rpow_natCast, ← zpow_natCast, ← zpow_mul]
-        change |x i - y i| ≤ side α J.k i
-        rw [abs_le]; constructor <;> nlinarith [h1.1, h1.2, h2.1, h2.2]
-      have hai : (α i : ℝ) ≠ 0 := by have := hα i; positivity
-      calc |x i - y i| ^ ((α i : ℝ)⁻¹) ≤ (((2 : ℝ) ^ J.k) ^ (α i : ℝ)) ^ ((α i : ℝ)⁻¹) :=
-            Real.rpow_le_rpow (abs_nonneg _) hs (by positivity)
-        _ = (2 : ℝ) ^ J.k := by
-            rw [← Real.rpow_mul (by positivity), mul_inv_cancel₀ hai, Real.rpow_one]
-    have := NNReal.coe_le_coe.mpr hle
-    rwa [Real.coe_toNNReal _ (by positivity)] at this
+  have hxy := rho_sub_le_of_mem_DCube α hα J hx hy
   have htri : rho α (x - P.cI α) ≤ rho α (x - y) + rho α (y - P.cI α) := by
     have := rho_add_le α hα (x - y) (y - P.cI α)
     rwa [sub_add_sub_cancel] at this
@@ -6002,48 +6032,6 @@ theorem K1_le (α : Fin n → ℕ) (hα : ∀ i, 1 ≤ α i) (hn : 0 < n) {r : F
           ← zpow_mul]
         simp only [Kc, Cψ, Nm, G]
         ring
-
-/-- Grid property for general half-open semi-tiles: a strictly finer frequency cube meeting
-`ω_{P'(r)}` is contained in it. -/
-theorem ω_subset_semiHO (α : Fin n → ℕ) (hα : ∀ i, 1 ≤ α i) {P P' : Tile n} (hk : P'.k < P.k)
-    (r : Fin n → Fin 2) {ξ : Rn n} (hξ : ξ ∈ P.ω.toSet α) (hξ' : ξ ∈ P'.semiHO α r) :
-    P.ω.toSet α ⊆ P'.semiHO α r := by
-  intro η hη i
-  obtain ⟨d, hd, hs⟩ := side_neg_eq_mul α hk i (hα i)
-  set s := side α (-P.k) i
-  have hs0 : 0 < s := side_pos α _ i
-  have h1 := hξ i
-  have h2 := hξ' i
-  have h3 := hη i
-  simp only [Tile.ω] at h1 h3
-  rw [hs] at h2 ⊢
-  obtain ⟨e, rfl⟩ : ∃ e, d = e + 1 := ⟨d - 1, by omega⟩
-  set rv : ℤ := ((r i : ℕ) : ℤ)
-  have hrv : ((r i : ℕ) : ℝ) = (rv : ℝ) := by simp [rv]
-  set A : ℤ := 2 ^ (e + 1) * P'.u i + 2 ^ e * rv
-  set B : ℤ := 2 ^ (e + 1) * P'.u i + 2 ^ e * (rv + 1)
-  have eA : s * 2 ^ (e + 1) * (P'.u i + ((r i : ℕ) : ℝ) / 2) = s * (A : ℝ) := by
-    simp only [A]; rw [hrv]; push_cast; rw [pow_succ]; ring
-  have eB : s * 2 ^ (e + 1) * (P'.u i + (((r i : ℕ) : ℝ) + 1) / 2) = s * (B : ℝ) := by
-    simp only [B]; rw [hrv]; push_cast; rw [pow_succ]; ring
-  have h2' : s * (A : ℝ) ≤ ξ i ∧ ξ i < s * (B : ℝ) := by
-    rw [← eA, ← eB]; exact h2
-  have hAu : A ≤ P.u i := by
-    have : (A : ℝ) < P.u i + 1 := by
-      have : s * (A : ℝ) < s * (P.u i + 1) := by linarith [h2'.1, h1.2]
-      exact lt_of_mul_lt_mul_left this hs0.le
-    exact Int.lt_add_one_iff.mp (by exact_mod_cast this)
-  have huB : P.u i + 1 ≤ B := by
-    have : (P.u i : ℝ) < B := by
-      have : s * (P.u i : ℝ) < s * B := by linarith [h1.1, h2'.2]
-      exact lt_of_mul_lt_mul_left this hs0.le
-    exact Int.add_one_le_iff.mpr (by exact_mod_cast this)
-  have hAu' : (A : ℝ) ≤ P.u i := by exact_mod_cast hAu
-  have huB' : (P.u i : ℝ) + 1 ≤ B := by exact_mod_cast huB
-  rw [eA, eB]
-  constructor
-  · nlinarith [h3.1]
-  · nlinarith [h3.2]
 
 /-- Two points of `Q_tilde` are at anisotropic distance `≤ 2 · 2^{k_Q+1}`. -/
 theorem rho_sub_le_of_mem_enl3 (α : Fin n → ℕ) (hα : ∀ i, 1 ≤ α i) (Q : DCube n) {x y : Rn n}
@@ -6728,24 +6716,6 @@ theorem norm_le_sum_abs_coord (v : Rn n) : ‖v‖ ≤ ∑ j, |v j| := by
     _ = ∑ j, |v j| := by
         refine Finset.sum_congr rfl fun j _ => ?_
         rw [norm_smul, PiLp.norm_single, norm_one, mul_one, Real.norm_eq_abs]
-
-/-- `∑_{k ∈ ks, k ≤ K} 2^{k − K} ≤ 2`. -/
-theorem sum_two_zpow_sub_le (ks : Finset ℤ) (K : ℤ) (hks : ∀ k ∈ ks, k ≤ K) :
-    ∑ k ∈ ks, (2 : ℝ) ^ (k - K) ≤ 2 := by
-  have hinj : Set.InjOn (fun k : ℤ => (K - k).toNat) (ks : Set ℤ) := by
-    intro a ha b hb hab
-    have := hks a ha; have := hks b hb
-    simp only at hab; omega
-  calc ∑ k ∈ ks, (2 : ℝ) ^ (k - K) = ∑ m ∈ ks.image (fun k : ℤ => (K - k).toNat), (1 / 2 : ℝ) ^
-      m := by
-        rw [Finset.sum_image hinj]
-        refine Finset.sum_congr rfl fun k hk => ?_
-        have h1 := hks k hk
-        rw [one_div, inv_pow, ← zpow_natCast, Int.toNat_of_nonneg (by omega), ← zpow_neg]
-        congr 1; ring
-    _ ≤ ∑' m : ℕ, (1 / 2 : ℝ) ^ m :=
-        Summable.sum_le_tsum _ (fun _ _ => by positivity) summable_geometric_two
-    _ = 2 := tsum_geometric_two
 
 /-- In a `2`-tree (half-open sense) the semi-tiles are nested: a frequency in the semi-tile of a
 finer tile lies in the semi-tile of every coarser tile. -/
@@ -7662,28 +7632,6 @@ theorem normM_toReal_mono (α : Fin n → ℕ) (hα : ∀ i, 1 ≤ α i) {ν ν'
     (hm : ClassM α ν m) (h : ν' ≤ ν) :
     (normM α ν' m).toReal ≤ (normM α ν m).toReal :=
   ENNReal.toReal_mono (normM_lt_top α hα hm).ne (normM_mono α m h)
-
-/-- Two points of a dyadic cube of scale `k` are at anisotropic distance `≤ 2^k`. -/
-theorem rho_sub_le_of_mem_DCube (α : Fin n → ℕ) (hα : ∀ i, 1 ≤ α i) (J : DCube n) {x y : Rn n}
-    (hx : x ∈ J.toSet α) (hy : y ∈ J.toSet α) : rho α (x - y) ≤ (2 : ℝ) ^ J.k := by
-  have hle : rhoNN α (x - y) ≤ Real.toNNReal ((2 : ℝ) ^ J.k) := by
-    rw [rhoNN_le_iff]
-    intro i
-    rw [← NNReal.coe_le_coe, Real.coe_toNNReal _ (by positivity)]
-    simp only [NNReal.coe_rpow, coe_nnnorm, Real.norm_eq_abs, PiLp.sub_apply]
-    have h1 := hx i
-    have h2 := hy i
-    have hs : |x i - y i| ≤ ((2 : ℝ) ^ J.k) ^ (α i : ℝ) := by
-      rw [Real.rpow_natCast, ← zpow_natCast, ← zpow_mul]
-      change |x i - y i| ≤ side α J.k i
-      rw [abs_le]; constructor <;> nlinarith [h1.1, h1.2, h2.1, h2.2]
-    have hai : (α i : ℝ) ≠ 0 := by have := hα i; positivity
-    calc |x i - y i| ^ ((α i : ℝ)⁻¹) ≤ (((2 : ℝ) ^ J.k) ^ (α i : ℝ)) ^ ((α i : ℝ)⁻¹) :=
-          Real.rpow_le_rpow (abs_nonneg _) hs (by positivity)
-      _ = (2 : ℝ) ^ J.k := by
-          rw [← Real.rpow_mul (by positivity), mul_inv_cancel₀ hai, Real.rpow_one]
-  have := NNReal.coe_le_coe.mpr hle
-  rwa [Real.coe_toNNReal _ (by positivity)] at this
 
 /-- **Term 1 is controlled by the maximal function** (paper, (7.15)–(7.16), via Lemma 7.2):
 `|∫ H(x − z) (h₊ − h₋)(z) dz| ≤ K M_λ|H|(x)`, `λ = 2^{k₊}`. -/
