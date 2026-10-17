@@ -968,7 +968,7 @@ theorem localLoadedDiamondList (αs : List Program) {X : Sequent}
         simp_all only [and_self, and_true]
         use (L \ Lcond ∪ res, R, O)
         simp_all only [exists_prop, and_true]
-        grind
+        grind only []
       case oneSidedR YS orule YS_def => -- analogous to oneSidedL
         simp_all only [applyLocalRule, Finset.sdiff_empty, Finset.mem_image,
           exists_exists_and_eq_and, Finset.union_empty, Olf.change_old_none_none,
@@ -988,7 +988,7 @@ theorem localLoadedDiamondList (αs : List Program) {X : Sequent}
         simp_all only [and_self, and_true]
         use (L, R \ Rcond ∪ res, O)
         simp_all only [exists_prop, and_true]
-        grind
+        grind only []
       case LRnegL φ =>
         simp_all
       case LRnegR =>

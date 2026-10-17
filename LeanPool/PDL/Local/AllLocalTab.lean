@@ -406,7 +406,7 @@ lemma LocalRuleApp.all_X (X : Sequent) : ∀ lra ∈ LocalRuleApp.all X, lra.X =
   simp only [all, List.reduceOption_mem_iff, List.mem_map, List.mem_attach, true_and,
     Subtype.exists, List.mem_flatMap, List.mem_sublists, List.mem_cons,
     List.not_mem_nil, or_false] at lra_in
-  grind [Option.map_eq_some_iff]
+  grind only [Option.map_eq_some_iff]
 
 lemma LocalRuleApp.all_spec (lrA : LocalRuleApp) : lrA ∈ LocalRuleApp.all lrA.X := by
   rcases lrA with ⟨L, R, O, Lcond, Rcond, Ocond, ress, lr, C, hC, ⟨hL, hR, hO⟩⟩
@@ -643,7 +643,7 @@ lemma combo_mem_of_forall_in {α : Type} [DecidableEq α] {q : α → Type} {L :
   case cons x xs IH =>
     simp only [combo, List.mem_flatMap, List.mem_map]
     specialize IH (fun y y_in => f y (by aesop))
-    exact ⟨fun y y_in => g _ (by simp_all), IH _ (by grind), (by grind)⟩
+    exact ⟨fun y y_in => g _ (by simp_all), IH _ (by grind only []), (by grind only [])⟩
 
 /-- Version of `combo` for `Finset`s. -/
 def comboF {q : Sequent → Type} (s : Finset Sequent)

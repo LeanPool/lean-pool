@@ -71,19 +71,19 @@ instance Option.insHasSdiff [DecidableEq α] : SDiff (Option α) := SDiff.mk
 lemma Option.insHasSdiff_none [DecidableEq α] :
     (none : Option α) \ o = none := by
   unfold Option.insHasSdiff
-  grind
+  grind only []
 
 @[simp]
 lemma Option.insHasSdiff_remove_none_cancel [DecidableEq α] :
     o \ (none : Option α) = o := by
   unfold Option.insHasSdiff
-  grind
+  grind only []
 
 @[simp]
 lemma Option.insHasSdiff_remove_sem_eq_none [DecidableEq α] :
     (some x) \ (some x : Option α) = none := by
   unfold Option.insHasSdiff
-  grind
+  grind only []
 
 /-- The unloaded left formula contributed by an optional loading. -/
 def Olf.L : Olf → Finset Formula

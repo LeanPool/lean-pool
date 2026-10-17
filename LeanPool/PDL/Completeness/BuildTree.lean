@@ -120,7 +120,7 @@ lemma BuildTree.size_lt_loc (H : History) (X : Sequent) (nbas : ¬X.basic)
   have : ∀ lt, (next lt).size = (next lt).6.size := fun lt => by
     cases next lt; simp [BuildChoice.size]
   simp_rw [this]
-  grind
+  grind only []
 
 lemma BuildTree.size_lt_pdl (H : History) (X : Sequent) (bas : X.basic)
     (someR : PdlRule.all X ≠ [])
@@ -131,7 +131,7 @@ lemma BuildTree.size_lt_pdl (H : History) (X : Sequent) (bas : X.basic)
     simp only [List.mem_map, Sigma.exists]
     use Y, r, PdlRule.all_spec bas _
   have := List.le_sum_of_mem this
-  grind
+  grind only []
 
 @[simp]
 lemma BuildChoice.fst_eq {H X YS} {bc : BuildChoice H X YS} : bc.1 = H := by cases bc; rfl
@@ -512,7 +512,7 @@ lemma Match.btAt_newHist_length_eq_length_plus_oldHist {H X} {bt : BuildTree H X
     unfold btAt
     rw [IH]
     simp
-    grind
+    grind only []
   | pdl tail => by
     have IH := Match.btAt_newHist_length_eq_length_plus_oldHist tail
     simp only [length]

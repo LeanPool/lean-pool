@@ -179,7 +179,7 @@ lemma def_of_boxesOf_def {φ γ ψ} (h : boxesOf φ = (γ, ψ)) : φ = ⌈⌈γ�
     cases φ <;> simp_all
   case cons α αs IH =>
     simp only [Formula.boxes_cons]
-    cases φ <;> grind [boxesOf]
+    cases φ <;> grind only [boxesOf]
 
 /-- Whether a formula has an outer box constructor. -/
 def Formula.isBox : Formula → Prop
@@ -459,7 +459,7 @@ lemma LoadFormula.split_boxes_cons {βs α φ} :
   · rw [List.cons_append]
     rw [LoadFormula.boxes_cons]
     simp only [split, AnyFormula.split, Prod.mk.injEq, List.cons.injEq, true_and]
-    grind
+    grind only []
 
 @[simp]
 theorem AnyFormula.split_normal (φ : Formula) : (AnyFormula.normal φ).split = ([],φ) := by

@@ -27,7 +27,7 @@ lemma isPartInterpolant_of_mem_iff {Z Y : Sequent} {θ : Formula}
     simp only [jvoc, Finset.mem_inter] at x_in ⊢
     have := fvoc_subset_of_mem_voc (fun f hf => ⟨f, (hl f).mpr hf, subset_rfl⟩) x_in.1
     have := fvoc_subset_of_mem_voc (fun f hf => ⟨f, (hr f).mpr hf, subset_rfl⟩) x_in.2
-    grind
+    grind only []
   · rw [Finset.ext hl]; exact hL
   · rw [Finset.ext hr]; exact hR
 

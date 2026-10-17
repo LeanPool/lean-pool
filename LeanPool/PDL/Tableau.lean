@@ -136,7 +136,7 @@ lemma LoadedPathRepeat.ext {Hist X} (lprA lprB : LoadedPathRepeat Hist X) :
     lprA.1 = lprB.1 → lprA = lprB := by
   rcases lprA with ⟨a, ha⟩
   rcases lprB with ⟨b, hb⟩
-  grind
+  grind only []
 
 instance {Hist X} : DecidableEq (LoadedPathRepeat Hist X) := Subtype.instDecidableEq
 

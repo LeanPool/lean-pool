@@ -110,7 +110,7 @@ lemma evaluate_rho_iff {W} {M : KripkeModel W} {w : W} {n} (h : C.Q.atOpt x = so
   constructor
   · rintro ⟨_, t, hev⟩
     simp [conEval] at hev
-    grind
+    grind only []
   · rintro ⟨t, ht, hev⟩
     simp only [conEval, Formula.mem_pdlSort]
     use t

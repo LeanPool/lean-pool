@@ -371,6 +371,6 @@ theorem mapCon_mapForall (M : KripkeModel W) w φ
     (∃ f ∈ List.map (fun Fδ => con (g Fδ φ)) X, evaluate M w f) ↔
     ∃ fs ∈ List.map (fun Fδ => g Fδ φ) X, ∀ f ∈ fs, evaluate M w f := by
   simp_all only [List.mem_map, Prod.exists, ↓existsAndEq, and_true]
-  constructor <;> grind [conEval]
+  constructor <;> grind only [conEval]
 
 end PDL

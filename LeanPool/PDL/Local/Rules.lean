@@ -364,7 +364,7 @@ lemma oneSidedL_preserves_right {LRO : Sequent}
   rintro ⟨L',R',O'⟩
   subst YS_def
   simp at *
-  grind
+  grind only []
 
 lemma oneSidedR_preserves_left {LRO : Sequent}
     {Rcond : Finset Formula} (Rpreproof : Rcond ⊆ LRO.R)
@@ -375,7 +375,7 @@ lemma oneSidedR_preserves_left {LRO : Sequent}
   rintro ⟨L',R',O'⟩
   subst YS_def
   simp at *
-  grind
+  grind only []
 
 open HasSat
 
@@ -1074,8 +1074,12 @@ lemma LocalRuleApp.preserve_bottom_down (lra : LocalRuleApp) :
     exists_false, Sum.elim_inr, or_self, or_false, forall_exists_index, and_imp,
     forall_apply_eq_imp_iff₂, Finset.mem_sdiff, Finset.image_empty, Finset.notMem_empty,
     exists_const_iff, and_true, IsEmpty.forall_iff, implies_true, Prod.exists, ↓existsAndEq]
-  case oneSidedL ress orule ress_def => cases orule <;> simp_all <;> grind only []
-  case oneSidedR ress orule ress_def => cases orule <;> simp_all <;> grind only []
+  case oneSidedL ress orule ress_def =>
+    clear pre
+    cases orule <;> simp_all <;> grind only []
+  case oneSidedR ress orule ress_def =>
+    clear pre
+    cases orule <;> simp_all <;> grind only []
   case loadedL ress chi lrule ress_def => cases lrule <;> simp_all only [Finset.empty_subset,
     Option.some_subseteq, true_and, List.pdlToFinFinOpt, List.mem_toFinset, List.mem_map,
     Prod.mk.injEq, Prod.exists, exists_eq_right_right, forall_exists_index, and_imp] <;>
@@ -1098,8 +1102,12 @@ lemma LocalRuleApp.preserve_atom_down (lra : LocalRuleApp) :
     forall_apply_eq_imp_iff₂, Finset.mem_sdiff, Finset.image_empty, Finset.notMem_empty,
     exists_const_iff, and_true, not_isEmpty_of_nonempty, IsEmpty.forall_iff, implies_true,
     Prod.exists, ↓existsAndEq]
-  case oneSidedL ress orule ress_def => cases orule <;> simp_all <;> grind only []
-  case oneSidedR ress orule ress_def => cases orule <;> simp_all <;> grind only []
+  case oneSidedL ress orule ress_def =>
+    clear pre
+    cases orule <;> simp_all <;> grind only []
+  case oneSidedR ress orule ress_def =>
+    clear pre
+    cases orule <;> simp_all <;> grind only []
   case loadedL ress chi lrule ress_def =>
     cases lrule <;> simp_all only [Finset.empty_subset, Option.some_subseteq, true_and,
       List.pdlToFinFinOpt, List.mem_toFinset, List.mem_map, Prod.mk.injEq, Prod.exists,
@@ -1124,8 +1132,10 @@ lemma LocalRuleApp.preserve_neg_atom_down (lra : LocalRuleApp) :
     Finset.notMem_empty, not_isEmpty_of_nonempty, IsEmpty.forall_iff, implies_true, Prod.exists,
     ↓existsAndEq, and_true]
   case oneSidedL ress orule ress_def =>
+    clear pre
     cases orule <;> grind only [Finset.mem_insert, Finset.mem_singleton, Finset.notMem_empty]
   case oneSidedR ress orule ress_def =>
+    clear pre
     cases orule <;> grind only [Finset.mem_insert, Finset.mem_singleton, Finset.notMem_empty]
   case loadedL ress chi lrule ress_def =>
     cases lrule <;> simp_all only [Finset.empty_subset, Option.some_subseteq, true_and,
@@ -1719,7 +1729,7 @@ lemma LocalRuleApp.preserve_saturated_up (lra : LocalRuleApp) :
       f ∈ (({lra.X} ∪ rest).image Sequent.toFinset).sup id →
       f ∈ lra.X.toFinset ∨ f ∈ (rest.image Sequent.toFinset).sup id := by simp
   have child_in_rest (f : Formula) (hf : f ∈ Y.toFinset) :
-      f ∈ (rest.image Sequent.toFinset).sup id := by simp; grind
+      f ∈ (rest.image Sequent.toFinset).sup id := by simp; grind only []
   have lift_rest (f : Formula) :
       f ∈ (rest.image Sequent.toFinset).sup id →
       f ∈ (({lra.X} ∪ rest).image Sequent.toFinset).sup id := by simp_all
@@ -1934,8 +1944,12 @@ lemma LocalRuleApp.preserve_basic_down (lra : LocalRuleApp) :
     negUnload, Sum.elim_inr, forall_exists_index, and_imp, forall_apply_eq_imp_iff₂,
     Finset.mem_sdiff, Finset.image_empty, Finset.notMem_empty, implies_true, forall_const,
     not_isEmpty_of_nonempty, IsEmpty.forall_iff, Prod.exists, ↓existsAndEq, and_true]
-  case oneSidedL ress orule ress_def => cases orule <;> simp_all <;> grind only [Program.isAtomic]
-  case oneSidedR ress orule ress_def => cases orule <;> simp_all <;> grind only [Program.isAtomic]
+  case oneSidedL ress orule ress_def =>
+    clear pre
+    cases orule <;> simp_all <;> grind only [Program.isAtomic]
+  case oneSidedR ress orule ress_def =>
+    clear pre
+    cases orule <;> simp_all <;> grind only [Program.isAtomic]
   case loadedL ress chi lrule ress_def =>
     cases lrule <;> simp_all only [Finset.empty_subset, Option.some_subseteq, true_and,
       List.pdlToFinFinOpt, List.mem_toFinset, List.mem_map, Prod.mk.injEq, Prod.exists,

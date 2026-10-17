@@ -567,7 +567,7 @@ Lemmas developed for `tabToIntAt`.
 
 @[simp]
 lemma PathIn.cast_nil {Hist : History} {X : Sequent} {tab tab2 : Tableau Hist X} (h : tab = tab2) :
-    (h ▸ (.nil : PathIn tab)) = (.nil : PathIn tab2) := by grind
+    (h ▸ (.nil : PathIn tab)) = (.nil : PathIn tab2) := by grind only []
 
 lemma PathIn.tabAt_cast_nil {Hist : History} {X : Sequent} {tab tab2 : Tableau Hist X}
     (h : tab = tab2) :
@@ -644,7 +644,7 @@ lemma PathIn.lt_append_non_nil {Hist X pHist pX tabNew} {tab : Tableau Hist X}
         have := @PathIn.loc_append _ _ nflprep nbas lt nexts Y Y_in tail rfl
         convert this <;> try rw [h]
         · simp_all
-        · grind
+        · grind only []
       · simp only [tabAt_append]
         rw! [h]
         simp
@@ -668,7 +668,7 @@ lemma PathIn.lt_append_non_nil {Hist X pHist pX tabNew} {tab : Tableau Hist X}
         have := @PathIn.pdl_append _ _ _ next nflprep bas r tail rfl
         convert this <;> try rw [h]
         · simp_all
-        · grind
+        · grind only []
       · simp only [tabAt_append]
         rw! [h]
         simp
@@ -1052,7 +1052,7 @@ theorem rewind_of_edge_is_eq {Hist X} {tab : Tableau Hist X} {a b : PathIn tab} 
   b.rewind 1 = a := by
   induction tab
   case loc rest Y nrep nbas lt next IH =>
-    cases b <;> simp_all only [PathIn.rewind]
+    cases b <;> simp only [PathIn.rewind]
     case nil => simp_all [not_edge_nil]
     case loc Z nbas' nrep' Z_in tail =>
       cases a
@@ -1105,7 +1105,7 @@ theorem rewind_of_edge_is_eq {Hist X} {tab : Tableau Hist X} {a b : PathIn tab} 
         rw [kdef, @Nat.one_mod_eq_one]
         aesop
   case pdl rest Y X nrep bas r tab IH =>
-    cases b <;> simp_all only [PathIn.rewind]
+    cases b <;> simp only [PathIn.rewind]
     case nil => simp_all [not_edge_nil]
     case pdl Z bas' nrep' tail =>
       cases a
@@ -1630,7 +1630,7 @@ lemma PathIn.length_lt_tab_size {H X} (tab : Tableau H X) (p : PathIn tab) :
     case pdl nrep bas tail =>
       simp only [length, Tableau.size]
       specialize IH tail
-      grind
+      grind only []
   · cases p
     simp [Tableau.size]
 
@@ -1647,9 +1647,9 @@ theorem flipEdge.wellFounded {H X} {tab : Tableau H X} :
     fun n => edge_then_length_lt (all_rel n)
   have : ∀ n, (f (n + 1)).length > n := by
     intro n
-    induction n <;> grind
+    induction n <;> grind only []
   absurd this tab.size
-  grind
+  grind only []
 
 /-- Induction principle going from the leaves (= childless nodes) to the root.
 Suppose whenever the `motive` holds at all children then it holds at the parent.

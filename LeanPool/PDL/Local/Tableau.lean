@@ -402,7 +402,7 @@ lemma measureProp {α : Program} {φ φ₁ φ₂ : Formula} :
     case test τ =>
       simp_all [testsOfProgram, unfoldDiamond, Dset, Yset]
       subst X_in
-      by_cases h : τ = ~φ <;> simp_all; grind
+      by_cases h : τ = ~φ <;> simp_all; grind only []
     all_goals
       have tri : ∀ ψ ∈ X, ψ = (~φ) ∨ ψ ∈ testsOfProgram α ∨ lmOfFormula ψ = 0 := by
         have udc := unfoldDiamondContent _ _ _ X_in
@@ -717,13 +717,13 @@ theorem endNodeOfChild_to_endNode
     subst h
     simp only [endNodesOf, Finset.sup_image, Function.id_comp, Finset.mem_sup, Finset.mem_attach,
       true_and, Subtype.exists]
-    grind
+    grind only []
   case byLocalRule C' subTabs' lrA' =>
     subst h
     rw [h'] at Z_in
     simp only [endNodesOf, Finset.sup_image, Function.id_comp, Finset.mem_sup, Finset.mem_attach,
       true_and, Subtype.exists]
-    grind
+    grind only []
 
 /-- Membership in the end nodes of a local tableau given by a local rule application. -/
 lemma mem_endNodesOf_byLocalRule_iff {X} {lra : LocalRuleApp} {X_def : X = lra.X}
@@ -786,7 +786,7 @@ theorem endNodesOf_nonbasic_non_eq {X Y} (lt : LocalTableau X) (X_nonbas : ¬ X.
     Y ∈ endNodesOf lt → Y ≠ X := by
   intro Y_in
   have := endNodesOf_basic Y_in
-  grind
+  grind only []
 
 -- upstream me / Haitian?;-)
 lemma IsDershowitzMannaLT.irrefl [Preorder α] [WellFoundedLT α] (X : Multiset α) :
