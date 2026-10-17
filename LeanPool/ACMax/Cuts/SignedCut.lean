@@ -174,7 +174,7 @@ theorem algConn_le_two_of_signed {V : Type*} [Fintype V] [Nonempty V]
           first
           | exact absurd hiN (hiPN i hiP)
           | exact absurd hjN (hiPN j hjP)
-          | (simp [hadj, hiP, hiN, hjP, hjN, Finset.mem_union] <;> norm_num)
+          | norm_num [hadj, hiP, hiN, hjP, hjN, Finset.mem_union]
       · simp [hadj]
     simp_rw [hterm, Finset.sum_add_distrib, ← Finset.mul_sum]
     rw [hPN, hNP, hPZ, hZP, hNZ, hZN]
