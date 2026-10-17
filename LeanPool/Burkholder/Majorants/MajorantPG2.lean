@@ -8,6 +8,8 @@ module
 public import LeanPool.Burkholder.Majorants.Definitions
 import Mathlib.Analysis.Convex.Deriv
 import Mathlib.Analysis.InnerProductSpace.NormPow
+import Mathlib.Analysis.SpecialFunctions.Log.Deriv
+import Mathlib.Analysis.SpecialFunctions.Pow.Deriv
 
 
 /-!

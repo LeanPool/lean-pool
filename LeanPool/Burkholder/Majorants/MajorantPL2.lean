@@ -9,6 +9,7 @@ public import LeanPool.Burkholder.Majorants.Definitions
 import Mathlib.Analysis.Convex.Deriv
 import Mathlib.Analysis.Convex.SpecificFunctions.Pow
 import Mathlib.Analysis.InnerProductSpace.NormPow
+import Mathlib.Analysis.SpecialFunctions.Pow.Deriv
 
 /-!
 # Burkholder majorant for `1 < p < 2`
