@@ -54,7 +54,7 @@ theorem eval_eq_constant_or_input_of_registerCost_eq_zero [Field F]
     · intro hi
       change g.cost = 0 at hi
       cases g with
-      | constant z => exact Or.inl ⟨z, fun _ => rfl⟩
+      | literal z => exact Or.inl ⟨z, fun _ => rfl⟩
       | input a => exact Or.inr ⟨a, fun _ => rfl⟩
       | add a b => simp [Gate.cost] at hi
       | sub a b => simp [Gate.cost] at hi

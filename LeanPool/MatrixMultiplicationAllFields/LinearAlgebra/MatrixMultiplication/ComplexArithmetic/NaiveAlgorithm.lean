@@ -29,7 +29,7 @@ namespace Expression
 variable {Input : Type*}
 
 def sumFin : {n : ℕ} → (Fin n → Expression Input) → Expression Input
-  | 0, _ => .constant 0
+  | 0, _ => .literal 0
   | n + 1, f => .add (f 0) (sumFin (fun i : Fin n => f i.succ))
 
 theorem sumFin_eval {n : ℕ} (f : Fin n → Expression Input) (inputs : Input → ℂ) :

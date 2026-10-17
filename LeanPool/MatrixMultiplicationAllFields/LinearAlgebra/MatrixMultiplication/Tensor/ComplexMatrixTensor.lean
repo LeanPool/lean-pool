@@ -87,13 +87,15 @@ theorem matrixCoefficients_product_rank [DecidableEq A] [DecidableEq B] [Decidab
     RankAtMost (matrixCoefficients (K := K) (A × D) (B × E) (C × F)) (r * s) :=
   matrixCoefficients_rank_of_product (hT.product hS)
 
-theorem matrixCoefficients_batch_rank [DecidableEq A] [DecidableEq B] [Fintype B]
+theorem matrixCoefficients_batch_rank [DecidableEq A] [DecidableEq B] [Finite B]
     {R k r batches : ℕ}
     (houter : RankAtMost (matrixCoefficients (K := K) A A A) R)
     (hbatch : RankAtMost (directSum (fun _ : Fin k => matrixCoefficients (K := K) B B B)) r)
     (hfit : R ≤ batches * k) :
-    RankAtMost (matrixCoefficients (K := K) (A × B) (A × B) (A × B)) (batches * r) :=
-  matrixCoefficients_rank_of_product (houter.batch_product hbatch hfit)
+    RankAtMost (matrixCoefficients (K := K) (A × B) (A × B) (A × B)) (batches * r) := by
+  classical
+  let : Fintype B := Fintype.ofFinite B
+  exact matrixCoefficients_rank_of_product (houter.batch_product hbatch hfit)
 
 theorem matrixCoefficients_power [DecidableEq A] [DecidableEq B] [DecidableEq C]
     (n : ℕ) (x : (Fin n → A) × (Fin n → B))

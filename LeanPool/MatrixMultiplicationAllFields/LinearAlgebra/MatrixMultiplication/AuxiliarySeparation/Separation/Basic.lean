@@ -199,7 +199,8 @@ def separationTarget (B : Fin M → Tensor K X Y Z) :
 
 /-- The square-weighted polynomial has exactly the advertised constant tensor. -/
 theorem separationPolynomial_coeff_zero {ζ : K} (hM : 0 < M)
-    (hL : (L : K) ≠ 0) (hLM : 3 * M < L + 3) (hζ : IsPrimitiveRoot ζ L) (B : Fin M → Tensor K X Y Z) :
+    (hL : (L : K) ≠ 0) (hLM : 3 * M < L + 3) (hζ : IsPrimitiveRoot ζ L)
+    (B : Fin M → Tensor K X Y Z) :
     (fun x y z => (separationPolynomial L ζ B x y z).coeff 0) =
       separationTarget B := by
   classical

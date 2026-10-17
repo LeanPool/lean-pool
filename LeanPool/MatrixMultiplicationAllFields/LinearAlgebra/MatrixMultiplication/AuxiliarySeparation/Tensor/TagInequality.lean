@@ -41,13 +41,14 @@ variable {K : Type} [Field K]
 noncomputable section
 
 open MatrixMultiplication.Foundation
-open scoped BigOperators Classical
+open scoped BigOperators
 
 namespace MatrixMultiplication.AuxiliarySeparation
 
 variable {s : ℕ} {X Y Z : Type}
   [Fintype X] [Fintype Y] [Fintype Z]
 
+open Classical in
 /-- A word prescribes one branch tensor at each tensor-product position. -/
 def branchWordTensor (B : Fin s → Tensor K X Y Z) {n : ℕ} (w : Fin n → Fin s) :
     Tensor K (Fin n → X) (Fin n → Y) (Fin n → Z) :=
@@ -57,6 +58,7 @@ def branchWordTensor (B : Fin s → Tensor K X Y Z) {n : ℕ} (w : Fin n → Fin
 theorem Character.value_branchWordTensor (χ : Character K)
     (B : Fin s → Tensor K X Y Z) {n : ℕ} (w : Fin n → Fin s) :
     χ.value (branchWordTensor B w) = ∏ i, χ.value (B (w i)) := by
+  classical
   induction n with
   | zero =>
       have hzero : branchWordTensor B w = Tensor.pullback
@@ -83,6 +85,7 @@ theorem Character.value_branchWordTensor (χ : Character K)
 theorem Character.value_exact_branchWordTensor (χ : Character K)
     (B : Fin s → Tensor K X Y Z) (counts : Fin s → ℕ) (w : ExactWords counts) :
     χ.value (branchWordTensor B w.val) = ∏ a, χ.value (B a) ^ counts a := by
+  classical
   rw [χ.value_branchWordTensor,
     ← Fintype.prod_fiberwise' w.val (fun a => χ.value (B a))]
   simp only [Finset.prod_const, Finset.card_univ]
@@ -90,6 +93,7 @@ theorem Character.value_exact_branchWordTensor (χ : Character K)
   intro a _
   rw [show Fintype.card {i // w.val i = a} = counts a from w.property a]
 
+open Classical in
 /-- A coordinate on a retained split leg remembers its type word. -/
 def typeWordCoordinate (counts : Fin s → ℕ)
     (e : Fin (Fintype.card (ExactWords counts)) ≃ ExactWords counts)
@@ -106,6 +110,7 @@ theorem exactType_power_pullback (B : Fin s → Tensor K X Y Z)
     Tensor.pullback id (typeWordCoordinate counts e) (typeWordCoordinate counts e)
         (Tensor.power (sharedFirstTensor B) (∑ a, counts a)) =
       sharedFirstTensor (fun h => branchWordTensor B (e h).val) := by
+  classical
   funext x y z
   by_cases h : y.1 = z.1
   · simp [Tensor.pullback, Tensor.power, typeWordCoordinate, sharedFirstTensor,
@@ -125,6 +130,7 @@ theorem Character.exactType_value_le_power (χ : Character K)
     (e : Fin (Fintype.card (ExactWords counts)) ≃ ExactWords counts) :
     χ.value (sharedFirstTensor (fun h => branchWordTensor B (e h).val)) ≤
       χ.value (sharedFirstTensor B) ^ (∑ a, counts a) := by
+  classical
   rw [← exactType_power_pullback B counts e, ← χ.value_power]
   exact χ.value_pullback_le _ _ _ _
 
@@ -135,6 +141,7 @@ theorem Character.integral_type_comparison [IsAlgClosed K] (χ : Character K)
     (Fintype.card (ExactWords counts) : ℝ) ^ χ.pX *
         ∏ a, χ.value (B a) ^ counts a ≤
       5 * χ.value (sharedFirstTensor B) ^ (∑ a, counts a) := by
+  classical
   let M := Fintype.card (ExactWords counts)
   let e : Fin M ≃ ExactWords counts := (Fintype.equivFin _).symm
   let W : Fin M → Tensor K (Fin (∑ a, counts a) → X)
@@ -166,6 +173,7 @@ omit [Fintype X] [Fintype Y] [Fintype Z] in
 /-- A nonzero branch remains visible in the tensor with a shared first leg. -/
 theorem sharedFirstTensor_ne_zero_of_branch (B : Fin s → Tensor K X Y Z)
     (a : Fin s) (ha : B a ≠ 0) : sharedFirstTensor B ≠ 0 := by
+  classical
   intro h
   apply ha
   funext x y z
@@ -180,6 +188,7 @@ theorem Character.sharedFirst_tag [IsAlgClosed K] (χ : Character K)
     (hB : ∀ a, B a ≠ 0) :
     Real.exp (χ.pX * finiteEntropy q.mass) *
         ∏ a, χ.value (B a) ^ q.mass a ≤ χ.value (sharedFirstTensor B) := by
+  classical
   have hs : 0 < s := by
     by_contra hn
     have hs0 : s = 0 := Nat.eq_zero_of_not_pos hn
@@ -198,6 +207,7 @@ theorem Character.log_sharedFirst_tag [IsAlgClosed K] (χ : Character K)
     (hB : ∀ a, B a ≠ 0) :
     χ.pX * finiteEntropy q.mass + ∑ a, q.mass a * Real.log (χ.value (B a)) ≤
       Real.log (χ.value (sharedFirstTensor B)) := by
+  classical
   have hs : 0 < s := by
     by_contra hn
     have hs0 : s = 0 := Nat.eq_zero_of_not_pos hn
@@ -221,6 +231,7 @@ theorem Character.sharedFirstDependent_tag [IsAlgClosed K] (χ : Character K)
     (hB : ∀ a, B a ≠ 0) :
     Real.exp (χ.pX * finiteEntropy q.mass) *
         ∏ a, χ.value (B a) ^ q.mass a ≤ χ.value (sharedFirstDependentTensor B) := by
+  classical
   simpa only [χ.value_paddedSharedBranch, χ.value_sharedFirstTensor_padded] using
     χ.sharedFirst_tag q (paddedSharedBranch B)
       (fun a => paddedSharedBranch_ne_zero B a (hB a))
@@ -231,6 +242,7 @@ theorem Character.log_sharedFirstDependent_tag [IsAlgClosed K] (χ : Character K
     (hB : ∀ a, B a ≠ 0) :
     χ.pX * finiteEntropy q.mass + ∑ a, q.mass a * Real.log (χ.value (B a)) ≤
       Real.log (χ.value (sharedFirstDependentTensor B)) := by
+  classical
   simpa only [χ.value_paddedSharedBranch, χ.value_sharedFirstTensor_padded] using
     χ.log_sharedFirst_tag q (paddedSharedBranch B)
       (fun a => paddedSharedBranch_ne_zero B a (hB a))

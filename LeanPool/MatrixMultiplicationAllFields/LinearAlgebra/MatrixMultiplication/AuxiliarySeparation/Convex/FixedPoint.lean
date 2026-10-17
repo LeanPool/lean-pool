@@ -119,7 +119,8 @@ theorem exists_finite_partition_weights {I : Type*} {K : Set (I → ℝ)}
     rw [hUa]
     apply isOpen_biInter_finset
     intro i hi
-    exact isOpen_lt (continuous_const.sub ((continuous_apply i).comp continuous_subtype_val)).abs continuous_const
+    exact isOpen_lt
+      (continuous_const.sub ((continuous_apply i).comp continuous_subtype_val)).abs continuous_const
   have hUc : (univ : Set K) ⊆ ⋃ a, U a := by
     intro x hx
     refine mem_iUnion.mpr ⟨x, ?_⟩

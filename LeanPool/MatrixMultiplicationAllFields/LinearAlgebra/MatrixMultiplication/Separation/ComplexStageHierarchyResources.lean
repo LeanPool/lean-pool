@@ -41,7 +41,8 @@ def stageNodeCounts (counts : A → ℕ) (labels : ∀ n, A → Label n) (n : �
 
 theorem stageRefinementCount_eq_nodeProduct (counts : A → ℕ)
     (labels : ∀ n, A → Label n) (n t : ℕ) :
-    stageRefinementCount counts labels n t = pairingProduct (stageNodeCounts counts labels n) t := by
+    stageRefinementCount counts labels n t =
+      pairingProduct (stageNodeCounts counts labels n) t := by
   unfold stageRefinementCount refinementCount pairingProduct
   apply Finset.prod_congr rfl
   intro r hr
@@ -88,12 +89,15 @@ theorem stageConditionalPool_card {Position : Type*} [Fintype Position]
   simpa only [ConditionalWords, Fintype.card_subtype] using
     stageConditionalWords_card counts labels n t w hword
 
-theorem stageConditionalWords_nonempty {Position : Type*} [Fintype Position]
+omit [∀ n, Fintype (Label n)] in
+theorem stageConditionalWords_nonempty [∀ n, Finite (Label n)] {Position : Type*} [Fintype Position]
     (counts : A → ℕ) (labels : ∀ n, A → Label n) (n t : ℕ)
     (w : Position → LabelRecord Label n)
     (hword : ∀ r, wordPopulation w r = sourcePrefixCounts (fun a => t * counts a) labels n r) :
     Nonempty (ConditionalWords w
       (fun r s => sourcePrefixCounts (fun a => t * counts a) labels (n + 1) (r, s))) := by
+  classical
+  let : ∀ n, Fintype (Label n) := fun n => Fintype.ofFinite (Label n)
   apply Fintype.card_pos_iff.mp
   rw [stageConditionalWords_card counts labels n t w hword]
   exact stageRefinementCount_pos counts labels n t
@@ -177,7 +181,8 @@ abbrev StageAuxiliaryCoordinates (counts : A → ℕ) (labels : ∀ n, A → Lab
 def stageAuxiliaryTensor (counts : A → ℕ) (labels : ∀ n, A → Label n)
     (depth t : ℕ) :
     Tensor ℂ (StageAuxiliaryCoordinates counts labels depth t)
-      (StageAuxiliaryCoordinates counts labels depth t) (StageAuxiliaryCoordinates counts labels depth t) :=
+      (StageAuxiliaryCoordinates counts labels depth t)
+      (StageAuxiliaryCoordinates counts labels depth t) :=
   LabelHierarchySeparation.bankTensor (fun n : Fin depth =>
     LabelHierarchySeparation.poolAuxiliaryTensor (stageRefinementCount counts labels n.val t))
 
@@ -270,7 +275,8 @@ theorem source_stage_resource_rates (counts : A → ℕ) (hD : 0 < ∑ a, counts
       (stageAuxiliaryBudget counts labels depth t)) ∧
       (∀ t, stagePairingProduct counts labels depth t =
         Fintype.card (ExactWords (fun a => t * counts a))) ∧
-      (∀ t, stagePairingProduct counts labels depth t ≤ stageAuxiliaryBudget counts labels depth t) ∧
+      (∀ t, stagePairingProduct counts labels depth t ≤
+        stageAuxiliaryBudget counts labels depth t) ∧
       Tendsto
         (fun t : ℕ => Real.log (stagePairingProduct counts labels depth t : ℝ) /
           ((t : ℝ) * (∑ a, counts a : ℕ)))

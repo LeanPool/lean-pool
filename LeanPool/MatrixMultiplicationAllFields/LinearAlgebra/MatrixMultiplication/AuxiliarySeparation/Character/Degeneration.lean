@@ -147,9 +147,12 @@ theorem value_le_of_polynomialApproximation [IsAlgClosed K]
       ring
 
 omit [Fintype Z] in
-private theorem exists_rankAtMost (T : Tensor K X Y Z) :
+omit [Fintype X] [Fintype Y] in
+private theorem exists_rankAtMost (T : Tensor K X Y Z) [Finite X] [Finite Y] :
     ∃ r : ℕ, Tensor.RankAtMost T r := by
   classical
+  let : Fintype X := Fintype.ofFinite X
+  let : Fintype Y := Fintype.ofFinite Y
   let a : X × Y → X → K := fun p x => if p.1 = x then 1 else 0
   let b : X × Y → Y → K := fun p y => if p.2 = y then 1 else 0
   let c : X × Y → Z → K := fun p z => T p.1 p.2 z

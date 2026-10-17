@@ -50,7 +50,8 @@ def binaryLaw (q : ℝ) (hq₀ : 0 ≤ q) (hq₁ : q ≤ 1) : FiniteLaw (Fin 2) 
 /-- The finite-law entropy agrees exactly with the binary entropy convention. -/
 theorem binaryLaw_entropy (q : ℝ) (hq₀ : 0 ≤ q) (hq₁ : q ≤ 1) :
     finiteEntropy (binaryLaw q hq₀ hq₁).mass = Real.binEntropy q := by
-  simp [finiteEntropy, Fin.sum_univ_two, entropyTerm, Real.binEntropy_eq_negMulLog_add_negMulLog_one_sub, Real.negMulLog_def]
+  simp [finiteEntropy, Fin.sum_univ_two, entropyTerm,
+    Real.binEntropy_eq_negMulLog_add_negMulLog_one_sub, Real.negMulLog_def]
   ring
 
 theorem binaryLaw_product (q : ℝ) (hq₀ : 0 ≤ q) (hq₁ : q ≤ 1) (f : Fin 2 → ℝ) :

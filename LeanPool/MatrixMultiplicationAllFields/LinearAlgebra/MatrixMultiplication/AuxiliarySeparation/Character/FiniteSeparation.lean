@@ -157,7 +157,8 @@ theorem value_separationTarget (hM : 0 < M) (B : Fin M → Tensor K X Y Z) :
   simp only [χ.map_product, χ.value_cyclic_cyclic_dotPairing hM, Finset.sum_mul]
 
 /-- Exact finite character separation: the common first coordinate can be
-separated at a cost of `5M` (in fact `L ≤ 5M`), retaining an `M`-dimensional first-leg dot factor. -/
+separated at a cost of `5M` (in fact `L ≤ 5M`), retaining an
+`M`-dimensional first-leg dot factor. -/
 theorem finiteSeparation_bound [IsAlgClosed K] (hM : 0 < M) (B : Fin M → Tensor K X Y Z) :
     (∑ h, χ.value (B h)) * (M : ℝ) ^ χ.pX ≤
       5 * (M : ℝ) * χ.value (sharedFirstTensor B) := by

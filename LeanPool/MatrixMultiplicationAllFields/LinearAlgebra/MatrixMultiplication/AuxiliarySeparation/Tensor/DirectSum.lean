@@ -36,14 +36,20 @@ def sumTensor (T : Tensor K X Y Z) (S : Tensor K U V W) :
     Tensor K (X ⊕ U) (Y ⊕ V) (Z ⊕ W)
   | .inl x, .inl y, .inl z => T x y z
   | .inr u, .inr v, .inr w => S u v w
-  | _, _, _ => 0
+  | .inl _, .inl _, .inr _ => 0
+  | .inl _, .inr _, .inl _ => 0
+  | .inl _, .inr _, .inr _ => 0
+  | .inr _, .inl _, .inl _ => 0
+  | .inr _, .inl _, .inr _ => 0
+  | .inr _, .inr _, .inl _ => 0
 
 /-- The block-diagonal sum of two restriction matrices. -/
 def sumRestriction {X' U' : Type*} (f : X' → X → K) (g : U' → U → K) :
     (X' ⊕ U') → (X ⊕ U) → K
   | .inl x', .inl x => f x' x
   | .inr u', .inr u => g u' u
-  | _, _ => 0
+  | .inl _, .inr _ => 0
+  | .inr _, .inl _ => 0
 
 /-- Independent restrictions of both summands give a restriction of the sum. -/
 theorem sumTensor_restrict

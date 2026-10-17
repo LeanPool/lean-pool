@@ -80,7 +80,7 @@ theorem spectral_coefficient_le_of_all_nat {ν k D : ℝ} {d : ℕ}
     (hbound : ∀ n : ℕ, 1 ≤ n → ∀ δ : ℝ, 0 < δ →
       (d : ℝ) ^ ν * (n : ℝ) ^ (ν / (ν + δ)) ≤ (n : ℝ) * k + D) :
     (d : ℝ) ^ ν ≤ k := by
-  apply coefficient_le_of_nat_mul_bound
+  apply coefficient_le_of_nat_mul_bound (D := D)
   intro n hn
   exact spectral_bound_of_positive_slack hν hn (hbound n hn)
 

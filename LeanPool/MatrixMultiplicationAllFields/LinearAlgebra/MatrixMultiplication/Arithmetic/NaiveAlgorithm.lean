@@ -31,7 +31,7 @@ namespace Expression
 variable {Input : Type*}
 
 def sumFin : {n : ℕ} → (Fin n → Expression F Input) → Expression F Input
-  | 0, _ => .constant 0
+  | 0, _ => .literal 0
   | n + 1, f => .add (f 0) (sumFin (fun i : Fin n => f i.succ))
 
 theorem sumFin_eval {n : ℕ} (f : Fin n → Expression F Input) (inputs : Input → F) :
@@ -72,14 +72,16 @@ def naiveAlgorithm (a b c : ℕ) : MatrixAlgorithm F a b c :=
 theorem naiveAlgorithm_correct (a b c : ℕ) : (naiveAlgorithm (F := F) a b c).Correct := by
   apply (MatrixAlgorithm.correct_iff_entries _).2
   intro A B i k
-  let p := Expression.compileFamily (fun ik : Fin a × Fin c => naiveEntry (F := F) (b := b) ik.1 ik.2)
+  let p := Expression.compileFamily
+    (fun ik : Fin a × Fin c => naiveEntry (F := F) (b := b) ik.1 ik.2)
   change p.program.eval (matrixInputs A B) (p.output (i, k)) = _
   rw [p.correct]
   exact naiveEntry_eval i k A B
 
 @[simp] theorem naiveAlgorithm_cost (a b c : ℕ) :
     (naiveAlgorithm (F := F) a b c).cost = 2 * a * b * c := by
-  let p := Expression.compileFamily (fun ik : Fin a × Fin c => naiveEntry (F := F) (b := b) ik.1 ik.2)
+  let p := Expression.compileFamily
+    (fun ik : Fin a × Fin c => naiveEntry (F := F) (b := b) ik.1 ik.2)
   change p.program.cost = _
   rw [p.cost_eq]
   simp only [naiveEntry_cost, Finset.sum_const, Finset.card_univ,

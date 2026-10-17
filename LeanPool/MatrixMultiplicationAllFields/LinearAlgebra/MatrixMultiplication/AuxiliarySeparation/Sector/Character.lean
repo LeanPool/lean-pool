@@ -40,12 +40,13 @@ variable {K : Type} [Field K]
 
 noncomputable section
 
-open scoped BigOperators Classical
+open scoped BigOperators
 open MatrixMultiplication.Foundation
 
 namespace MatrixMultiplication.AuxiliarySeparation.Sector
 
 variable (K) in
+open Classical in
 /-- The actual three retained tensors in their original ambient spaces. -/
 def branchFamily (a h : ℕ) (b : Fin 3) :
     Tensor K (Fin a) (YIndex a h) (ZIndex a h) :=
@@ -60,10 +61,12 @@ def branchFamily (a h : ℕ) (b : Fin 3) :
 @[simp] theorem branchFamily_two (a h : ℕ) :
     branchFamily K a h 2 = rightTensor K a h := by simp [branchFamily]
 
+open Classical in
 /-- Label a second-leg coordinate by its interval. -/
 def yLabel (a h : ℕ) (j : YIndex a h) : Fin 3 :=
   if j.val < h then 0 else if j.val < rightStart a h then 1 else 2
 
+open Classical in
 /-- Label a third-leg coordinate by its corresponding interval. -/
 def zLabel (a h : ℕ) (k : ZIndex a h) : Fin 3 :=
   if k.val < h + a - 1 then 0 else if k.val < rightStart a h then 1 else 2
@@ -72,6 +75,7 @@ def zLabel (a h : ℕ) (k : ZIndex a h) : Fin 3 :=
 theorem branchFamily_labels (a h : ℕ) (b : Fin 3) (i : Fin a)
     (j : YIndex a h) (k : ZIndex a h) (hn : branchFamily K a h b i j k ≠ 0) :
     yLabel a h j = b ∧ zLabel a h k = b := by
+  classical
   fin_cases b
   · have hb : LeftBranch a h i.val j.val k.val := by
       by_contra hb
@@ -96,6 +100,7 @@ theorem branchFamily_labels (a h : ℕ) (b : Fin 3) (i : Fin a)
 /-- The branch family sums to exactly the retained tensor. -/
 theorem sum_branchFamily (a h : ℕ) :
     (∑ b : Fin 3, branchFamily K a h b) = retained K a h := by
+  classical
   simp only [Fin.sum_univ_three, branchFamily_zero, branchFamily_one, branchFamily_two]
   exact (retained_eq_three_branches a h).symm
 
@@ -108,11 +113,13 @@ theorem value_retained_le_source [IsAlgClosed K] (χ : Character K) (a h : ℕ) 
 input, so the tagged branch tensor has precisely the retained tensor's value. -/
 theorem value_sharedFirst_branchFamily (χ : Character K) (a h : ℕ) :
     χ.value (sharedFirstTensor (branchFamily K a h)) = χ.value (retained K a h) := by
+  classical
   rw [χ.value_sharedFirstTensor_eq_sum (branchFamily K a h)
     (yLabel a h) (zLabel a h) (branchFamily_labels a h), sum_branchFamily]
 
 theorem branchFamily_nonzero {a h : ℕ} (ha : 0 < a) (hh : 0 < h)
     (b : Fin 3) : branchFamily K a h b ≠ 0 := by
+  classical
   fin_cases b
   · simpa [branchFamily] using leftTensor_nonzero ha hh
   · simpa [branchFamily] using middleTensor_nonzero ha hh
@@ -124,6 +131,7 @@ theorem uniform_branchFamily_product (χ : Character K) (a h : ℕ)
     (∏ b, χ.value (branchFamily K a h b) ^ (FiniteLaw.uniform (Fin 3)).mass b) =
       χ.value (convolution K a h) ^ (2 / 3 : ℝ) *
         χ.value (exchangedConvolution K a h) ^ (1 / 3 : ℝ) := by
+  classical
   rw [uniformThree_product]
   simp only [branchFamily_zero, branchFamily_one, branchFamily_two,
     value_leftTensor, value_middleTensor, value_rightTensor]
@@ -148,6 +156,7 @@ theorem convolution_tripling_tag [IsAlgClosed K] (χ : Character K) (a h : ℕ)
     (3 : ℝ) ^ χ.pX * χ.value (convolution K a h) ^ (2 / 3 : ℝ) *
       χ.value (fun i s r => convolution K a h i r s) ^ (1 / 3 : ℝ) ≤
         χ.value (convolution K a (3 * h + a - 1)) := by
+  classical
   have htag := χ.sharedFirst_tag (FiniteLaw.uniform (Fin 3))
     (branchFamily K a h) (branchFamily_nonzero ha hh)
   rw [uniformThree_entropy_factor, uniform_branchFamily_product χ a h ha hh,

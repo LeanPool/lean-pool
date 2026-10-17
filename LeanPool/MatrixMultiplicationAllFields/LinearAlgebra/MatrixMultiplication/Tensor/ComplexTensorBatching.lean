@@ -76,12 +76,15 @@ theorem RankAtMost.repeat_batch {S : Tensor K U V W} {k r R B : ℕ}
     rcases hs with hs | hs <;>
       simp [directSum, Tensor.product, diagonal, liftU, liftV, liftW, hxy, hs]
 
-theorem RankAtMost.batch_substitute [Fintype U] [Fintype V] [Fintype W]
+theorem RankAtMost.batch_substitute [Finite U] [Finite V] [Finite W]
     {T : Tensor K X Y Z} {S : Tensor K U V W} {r b : ℕ}
     (hT : RankAtMost T r)
     (hbatch : RankAtMost (directSum (fun _ : Fin r => S)) b) :
     RankAtMost (Tensor.product T S) b := by
   classical
+  let : Fintype U := Fintype.ofFinite U
+  let : Fintype V := Fintype.ofFinite V
+  let : Fintype W := Fintype.ofFinite W
   rcases hT with ⟨a, c, e, rfl⟩
   let A : (X × U) → (Fin r × U) → K :=
     fun x i => if x.2 = i.2 then a i.1 x.1 else 0
@@ -97,12 +100,16 @@ theorem RankAtMost.batch_substitute [Fintype U] [Fintype V] [Fintype W]
   rw [← heq]
   exact hbatch.restrict A B C
 
-theorem RankAtMost.batch_product [Fintype U] [Fintype V] [Fintype W]
+theorem RankAtMost.batch_product [Finite U] [Finite V] [Finite W]
     {T : Tensor K X Y Z} {S : Tensor K U V W} {R k r B : ℕ}
     (hT : RankAtMost T R)
     (hbatch : RankAtMost (directSum (fun _ : Fin k => S)) r)
-    (hfit : R ≤ B * k) : RankAtMost (Tensor.product T S) (B * r) :=
-  hT.batch_substitute (hbatch.repeat_batch hfit)
+    (hfit : R ≤ B * k) : RankAtMost (Tensor.product T S) (B * r) := by
+  classical
+  let : Fintype U := Fintype.ofFinite U
+  let : Fintype V := Fintype.ofFinite V
+  let : Fintype W := Fintype.ofFinite W
+  exact hT.batch_substitute (hbatch.repeat_batch hfit)
 
 end Tensor
 end MatrixMultiplication.Foundation

@@ -28,7 +28,7 @@ namespace MatrixMultiplication.Foundation
 namespace Arithmetic
 
 inductive Gate (Input Register : Type*) where
-  | constant : ℂ → Gate Input Register
+  | literal : ℂ → Gate Input Register
   | input : Input → Gate Input Register
   | add : Register → Register → Gate Input Register
   | sub : Register → Register → Gate Input Register
@@ -39,14 +39,14 @@ namespace Gate
 variable {Input Register : Type*}
 
 def eval (inputs : Input → ℂ) (registers : Register → ℂ) : Gate Input Register → ℂ
-  | .constant z => z
+  | .literal z => z
   | .input i => inputs i
   | .add i j => registers i + registers j
   | .sub i j => registers i - registers j
   | .mul i j => registers i * registers j
 
 def cost : Gate Input Register → ℕ
-  | .constant _ => 0
+  | .literal _ => 0
   | .input _ => 0
   | .add _ _ => 1
   | .sub _ _ => 1

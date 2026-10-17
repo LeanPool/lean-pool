@@ -80,6 +80,7 @@ theorem finite_separation_degeneratesTo
   exact subset_closure
     (finite_separation_mem_restrictionOrbit T lx ly tag point hlabels hcollision)
 
+omit [DecidableEq G] in
 theorem finite_separation_rankAtMost
     (T : Tensor ℂ X Y Z) (lx : X → S) (ly : Y → S)
     (tag : S → G) (point : S → U → G) {r : ℕ}
@@ -88,9 +89,11 @@ theorem finite_separation_rankAtMost
     (hcollision : ∀ s s' i j,
       point s i + (tag s - point s j) = tag s' ↔ s = s' ∧ i = j) :
     Tensor.RankAtMost (separatedTensor (U := U) lx T) (r * Fintype.card G) := by
+  classical
   rw [← finite_separation_identity T lx ly tag point hlabels hcollision]
   exact (hT.product (groupTensor_rankAtMost G)).pullback _ _ _
 
+omit [DecidableEq G] in
 theorem finite_separation_borderRankAtMost
     [Fintype X] [Fintype Y] [Fintype Z] [Fintype S] [Fintype U]
     (T : Tensor ℂ X Y Z) (lx : X → S) (ly : Y → S)
@@ -101,6 +104,7 @@ theorem finite_separation_borderRankAtMost
       point s i + (tag s - point s j) = tag s' ↔ s = s' ∧ i = j) :
     Tensor.BorderRankAtMost (separatedTensor (U := U) lx T)
       (r * Fintype.card G) := by
+  classical
   classical
   rw [← finite_separation_identity T lx ly tag point hlabels hcollision]
   rw [Tensor.pullback_eq_restrict]

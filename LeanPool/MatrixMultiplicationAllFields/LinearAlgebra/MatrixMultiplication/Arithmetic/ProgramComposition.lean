@@ -28,7 +28,7 @@ namespace Gate
 variable {Input Input' Register : Type*}
 
 def mapInput (f : Input → Input') : Gate F Input Register → Gate F Input' Register
-  | .constant z => .constant z
+  | .literal z => .literal z
   | .input i => .input (f i)
   | .add i j => .add i j
   | .sub i j => .sub i j
@@ -45,10 +45,10 @@ omit [Field F] in
   cases g <;> rfl
 
 def mapSource (f : Input → Input' ⊕ F) : Gate F Input Register → Gate F Input' Register
-  | .constant z => .constant z
+  | .literal z => .literal z
   | .input i => match f i with
     | .inl j => .input j
-    | .inr z => .constant z
+    | .inr z => .literal z
   | .add i j => .add i j
   | .sub i j => .sub i j
   | .mul i j => .mul i j
@@ -59,7 +59,7 @@ def mapSource (f : Input → Input' ⊕ F) : Gate F Input Register → Gate F In
       g.eval (fun i => Sum.elim inputs id (f i)) registers := by
   cases g with
   | input i => cases h : f i <;> simp [mapSource, h, eval]
-  | constant => rfl
+  | literal => rfl
   | add => rfl
   | sub => rfl
   | mul => rfl
@@ -69,7 +69,7 @@ omit [Field F] in
     (g.mapSource f).cost = g.cost := by
   cases g with
   | input i => cases h : f i <;> simp [mapSource, h, cost]
-  | constant => rfl
+  | literal => rfl
   | add => rfl
   | sub => rfl
   | mul => rfl
@@ -190,8 +190,8 @@ def substitute {r : ℕ} (p : Program F Input r) :
           · exact a.correct inputs k
         cost_eq := by
           simpa only [cost_step, Gate.cost, Nat.add_zero] using a.cost_eq }
-    | .constant z =>
-      a.step (.constant z) (.constant z) (fun _ => rfl) rfl
+    | .literal z =>
+      a.step (.literal z) (.literal z) (fun _ => rfl) rfl
     | .add i j =>
       a.step (.add i j) (.add (a.output i) (a.output j))
         (by intro inputs; simp only [Gate.eval, a.correct]) rfl

@@ -41,7 +41,7 @@ theorem eval_eq_constant_or_input_of_cost_eq_zero {Input : Type*} {r : ℕ}
     have hg0 : g.cost = 0 := by omega
     refine Fin.cases ?_ (fun j => ?_) i
     · cases g with
-      | constant z => exact Or.inl ⟨z, fun _ => rfl⟩
+      | literal z => exact Or.inl ⟨z, fun _ => rfl⟩
       | input a => exact Or.inr ⟨a, fun _ => rfl⟩
       | add a b => simp [Gate.cost] at hg0
       | sub a b => simp [Gate.cost] at hg0

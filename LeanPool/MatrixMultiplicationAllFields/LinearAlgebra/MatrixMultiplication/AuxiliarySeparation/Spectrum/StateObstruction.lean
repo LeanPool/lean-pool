@@ -194,12 +194,13 @@ theorem finite_stateConstraint_solution (R : S → ℕ) (d : S) (k : ℕ)
     (hadd : ∀ a b c e : S, a ≤ b → c ≤ e → a + c ≤ b + e)
     (hno : ∀ (D s : S) (m : ℕ), 0 < m →
       ¬D + (m : S) + d * s ≤ D + (k : S) * s)
-    {I : Type*} [Fintype I] (cs : I → StateConstraint S) (H : Finset S) (hOne : (1 : S) ∈ H)
+    {I : Type*} [Finite I] (cs : I → StateConstraint S) (H : Finset S) (hOne : (1 : S) ∈ H)
     (hH : ∀ i, (stateConstraintVector R d k (cs i)).support ⊆ H) :
     ∃ f : S → ℝ, f 1 = 1 ∧
       (∀ i, 0 ≤ statePairing f (stateConstraintVector R d k (cs i))) ∧
       ∀ x ∉ H, f x = 0 := by
   classical
+  let : Fintype I := Fintype.ofFinite I
   let A : I → H → ℤ := fun i j ↦ stateConstraintVector R d k (cs i) j
   let u : H → ℤ := fun j ↦ (Finsupp.single (1 : S) (1 : ℤ)) j
   have hcert : ¬∃ m : ℕ, 0 < m ∧ ∃ n : I → ℕ,

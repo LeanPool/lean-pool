@@ -85,15 +85,23 @@ theorem IsRestriction.of_reindex (T : Tensor K X Y Z)
     simp [Tensor.pullback]
   rwa [heq] at h
 
-theorem IsRestriction.reindex_iff
+omit [Fintype X] [Fintype Y] [Fintype Z] in
+theorem IsRestriction.reindex_iff [Finite X] [Finite Y] [Finite Z]
     (T : Tensor K X Y Z) (S : Tensor K U V W)
     {X' Y' Z' U' V' W' : Type*}
-    [Fintype X'] [Fintype Y'] [Fintype Z']
+    [Finite X'] [Finite Y'] [Finite Z']
     [Fintype U'] [Fintype V'] [Fintype W']
     (ex : X' ≃ X) (ey : Y' ≃ Y) (ez : Z' ≃ Z)
     (eu : U' ≃ U) (ev : V' ≃ V) (ew : W' ≃ W) :
     IsRestriction (Tensor.pullback ex ey ez T) (Tensor.pullback eu ev ew S) ↔
       IsRestriction T S := by
+  classical
+  let : Fintype X := Fintype.ofFinite X
+  let : Fintype Y := Fintype.ofFinite Y
+  let : Fintype Z := Fintype.ofFinite Z
+  let : Fintype X' := Fintype.ofFinite X'
+  let : Fintype Y' := Fintype.ofFinite Y'
+  let : Fintype Z' := Fintype.ofFinite Z'
   constructor
   · intro h
     exact (IsRestriction.of_reindex T ex ey ez).trans

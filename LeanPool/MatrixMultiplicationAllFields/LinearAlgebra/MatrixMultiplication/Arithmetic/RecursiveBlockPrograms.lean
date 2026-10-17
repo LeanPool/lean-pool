@@ -36,7 +36,7 @@ namespace LinearExpression
 variable {Input : Type*}
 
 def sumFin : (n : ℕ) → (Fin n → Expression F Input) → Expression F Input
-  | 0, _ => .constant 0
+  | 0, _ => .literal 0
   | n + 1, f => .add (f 0) (sumFin n (fun i => f i.succ))
 
 theorem eval_sumFin (n : ℕ) (f : Fin n → Expression F Input) (inputs : Input → F) :
@@ -57,7 +57,7 @@ theorem cost_sumFin (n : ℕ) (f : Fin n → Expression F Input) :
 def linear {Term : Type*} [Fintype Term] (a : Term → F) (wire : Term → Input) :
     Expression F Input :=
   sumFin (Fintype.card Term) (fun i =>
-    .mul (.constant (a ((Fintype.equivFin Term).symm i)))
+    .mul (.literal (a ((Fintype.equivFin Term).symm i)))
       (.input (wire ((Fintype.equivFin Term).symm i))))
 
 theorem eval_linear {Term : Type*} [Fintype Term]

@@ -164,6 +164,7 @@ theorem prefix_separation_identity
     simp only [Tensor.pullback, Tensor.product, groupTensor, separatedTensor]
     simp only [← hxy, ← hxz, ← hl, collision, mul_ite, mul_one, mul_zero]
 
+omit [DecidableEq G] in
 theorem prefix_separation_rankAtMost
     (T : Tensor ℂ X Y Z)
     (px : X → Prefix) (py : Y → Prefix) (pz : Z → Prefix)
@@ -177,6 +178,7 @@ theorem prefix_separation_rankAtMost
         s = s' ∧ i = j) :
     Tensor.RankAtMost (separatedTensor (U := Pairing) lx T)
       (r * Fintype.card G) := by
+  classical
   rw [← prefix_separation_identity T px py pz lx ly tag point
     prefixes labels collision]
   exact (hT.product (groupTensor_rankAtMost G)).pullback _ _ _
@@ -470,19 +472,24 @@ variable {K X Y Z A B C A' B' C' Label : Type*}
 variable [CommSemiring K] [Fintype X] [Fintype Y] [Fintype Z]
 variable [Fintype A] [Fintype B] [Fintype C] [Fintype Label]
 
+omit [Fintype X] [Fintype Y] [Fintype Z] in
 theorem shared_branch_rankAtMost
     (lx : X → Label) (ly : Y → Label) (lz : Z → Label)
     (MX : Label → X → A' → A → K) (MY : Label → Y → B' → B → K)
     (MZ : Label → Z → C' → C → K)
     (T : Tensor K (X × A) (Y × B) (Z × C)) {r : ℕ}
     (hT : Tensor.RankAtMost T r)
-    (synchronized : LocalMaps.SupportedOn (LocalMaps.Synchronized lx ly lz) T) :
+    (synchronized : LocalMaps.SupportedOn (LocalMaps.Synchronized lx ly lz) T)
+    [Finite X] [Finite Y] [Finite Z] :
     Tensor.RankAtMost
       (fun x y z => ∑ label,
         LocalMaps.fiberTransform (MX label) (MY label) (MZ label)
           (LocalMaps.originalMask (LocalMaps.InBranch lx ly lz label) T) x y z)
       r := by
   classical
+  let : Fintype X := Fintype.ofFinite X
+  let : Fintype Y := Fintype.ofFinite Y
+  let : Fintype Z := Fintype.ofFinite Z
   rw [← LocalMaps.controlled_eq_sum_branches_of_supported
     lx ly lz MX MY MZ T synchronized]
   rw [LocalMaps.fiberTransform_eq_restrict]
@@ -506,7 +513,7 @@ instance auxiliaryCoordinatesFintype [∀ n, Fintype (A n)] (n : ℕ) :
   induction n with
   | zero => exact inferInstanceAs (Fintype PUnit)
   | succ n ih =>
-      letI : Fintype (AuxiliaryCoordinates A n) := ih
+      let : Fintype (AuxiliaryCoordinates A n) := ih
       exact inferInstanceAs (Fintype (AuxiliaryCoordinates A n × A n))
 
 def auxiliaryTensor (E : ∀ n, Tensor K (A n) (B n) (C n)) :
@@ -588,7 +595,7 @@ theorem stageTensor_rankAtMost
 
 theorem stageTensor_borderRankAtMost
     [∀ n, Fintype (X n)] [∀ n, Fintype (Y n)] [∀ n, Fintype (Z n)]
-    [∀ n, Fintype (A n)] [∀ n, Fintype (B n)] [∀ n, Fintype (C n)]
+    [∀ n, Finite (A n)] [∀ n, Finite (B n)] [∀ n, Finite (C n)]
     (T : Tensor ℂ (X 0) (Y 0) (Z 0)) {rT : ℕ}
     (hT : Tensor.BorderRankAtMost T rT)
     (E : ∀ n, Tensor ℂ (A n) (B n) (C n)) (r : ℕ → ℕ)
@@ -599,6 +606,9 @@ theorem stageTensor_borderRankAtMost
     Tensor.BorderRankAtMost (stageTensor T E fx fy fz n)
       (rT * ∏ j ∈ Finset.range n, r j) := by
   classical
+  let : ∀ n, Fintype (A n) := fun n => Fintype.ofFinite (A n)
+  let : ∀ n, Fintype (B n) := fun n => Fintype.ofFinite (B n)
+  let : ∀ n, Fintype (C n) := fun n => Fintype.ofFinite (C n)
   rw [stageTensor_eq_shared_bank, Tensor.pullback_eq_restrict]
   exact (hT.product (auxiliaryTensor_rankAtMost E r hE n).borderRankAtMost).restrict _ _ _
 

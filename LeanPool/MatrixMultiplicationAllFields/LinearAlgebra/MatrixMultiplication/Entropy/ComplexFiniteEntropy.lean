@@ -134,7 +134,10 @@ def conditional (p : FiniteLaw A) (f : A → B) (b : B) : FiniteLaw A := by
   exact if hzero : (p.map f).mass b = 0 then p else
     { mass := fun a => (if f a = b then p.mass a else 0) / (p.map f).mass b
       nonneg := fun a => div_nonneg
-        (by split_ifs; exact p.nonneg a; exact le_rfl) ((p.map f).nonneg b)
+        (by
+          split_ifs
+          · exact p.nonneg a
+          · exact le_rfl) ((p.map f).nonneg b)
       total := by
         rw [← Finset.sum_div, ← map_mass p f b, div_self hzero] }
 

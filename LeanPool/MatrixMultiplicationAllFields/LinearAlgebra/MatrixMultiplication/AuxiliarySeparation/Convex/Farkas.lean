@@ -30,7 +30,7 @@ namespace MatrixMultiplication.AuxiliarySeparation
 /-- Closed-cone separation followed by rational certificate extraction yields
 a normalized nonnegative linear functional. -/
 theorem exists_normalized_nonneg_linear_of_no_nat_certificate_of_isClosed
-    {I J : Type*} [Fintype I] [Fintype J]
+    {I J : Type*} [Fintype I] [Finite J]
     (A : I → J → ℤ) (u : J → ℤ)
     (hclosed : IsClosed (PointedCone.hull ℝ
       (Set.range (fun i j ↦ (A i j : ℝ))) : Set (J → ℝ)))
@@ -40,6 +40,7 @@ theorem exists_normalized_nonneg_linear_of_no_nat_certificate_of_isClosed
       L (fun j ↦ (u j : ℝ)) = 1 ∧
       ∀ i, 0 ≤ L (fun j ↦ (A i j : ℝ)) := by
   classical
+  let : Fintype J := Fintype.ofFinite J
   let C : ProperCone ℝ (J → ℝ) :=
     { toSubmodule := PointedCone.hull ℝ (Set.range (fun i j ↦ (A i j : ℝ)))
       isClosed' := hclosed }
@@ -70,14 +71,16 @@ theorem exists_normalized_nonneg_linear_of_no_nat_certificate_of_isClosed
 negative normalizing vector, or admits a linear functional which is
 nonnegative on the generators and takes value one on that vector. -/
 theorem exists_normalized_nonneg_linear_of_no_nat_certificate
-    {I J : Type*} [Fintype I] [Fintype J]
+    {I J : Type*} [Fintype I] [Finite J]
     (A : I → J → ℤ) (u : J → ℤ)
     (hno : ¬ ∃ D : ℕ, 0 < D ∧ ∃ c : I → ℕ,
       ∀ j, ∑ i, (c i : ℤ) * A i j = -(D : ℤ) * u j) :
     ∃ L : (J → ℝ) →ₗ[ℝ] ℝ,
       L (fun j ↦ (u j : ℝ)) = 1 ∧
-      ∀ i, 0 ≤ L (fun j ↦ (A i j : ℝ)) :=
-  exists_normalized_nonneg_linear_of_no_nat_certificate_of_isClosed A u
+      ∀ i, 0 ≤ L (fun j ↦ (A i j : ℝ)) := by
+  classical
+  let : Fintype J := Fintype.ofFinite J
+  exact exists_normalized_nonneg_linear_of_no_nat_certificate_of_isClosed A u
     (isClosed_pointedCone_hull_range _) hno
 
 end MatrixMultiplication.AuxiliarySeparation

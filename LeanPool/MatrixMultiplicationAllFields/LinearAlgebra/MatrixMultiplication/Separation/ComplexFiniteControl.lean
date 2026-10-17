@@ -75,13 +75,14 @@ theorem population_product_eq {I J Node M : Type*}
       rw [he i]
     _ = ∏ j, cost (g j) := e.prod_comp (fun j => cost (g j))
 
-theorem exists_common_bank_multiple {Node : Type*} [Fintype Node]
+theorem exists_common_bank_multiple {Node : Type*} [Finite Node]
     (denominator blockSize : Node → ℕ)
     (denominator_pos : ∀ node, 0 < denominator node)
     (blockSize_pos : ∀ node, 0 < blockSize node) :
     ∃ bank : ℕ, 0 < bank ∧
       ∀ node, denominator node * blockSize node ∣ bank := by
   classical
+  let : Fintype Node := Fintype.ofFinite Node
   refine ⟨∏ node, denominator node * blockSize node, ?_, ?_⟩
   · exact Finset.prod_pos fun node _ =>
       Nat.mul_pos (denominator_pos node) (blockSize_pos node)
@@ -89,11 +90,13 @@ theorem exists_common_bank_multiple {Node : Type*} [Fintype Node]
     exact Finset.dvd_prod_of_mem (fun node => denominator node * blockSize node)
       (Finset.mem_univ node)
 
-theorem exists_exact_rational_tiling {Node : Type*} [Fintype Node]
+theorem exists_exact_rational_tiling {Node : Type*} [Finite Node]
     (weight : Node → ℚ) (nonnegative : ∀ node, 0 ≤ weight node)
     (blockSize : Node → ℕ) (blockSize_pos : ∀ node, 0 < blockSize node) :
     ∃ bank : ℕ, 0 < bank ∧ ∀ node, ∃ copies : ℕ,
       (bank : ℚ) * weight node = (copies * blockSize node : ℕ) := by
+  classical
+  let : Fintype Node := Fintype.ofFinite Node
   obtain ⟨bank, bank_pos, divisible⟩ := exists_common_bank_multiple
     (fun node => (weight node).den) blockSize
     (fun node => (weight node).den_pos) blockSize_pos

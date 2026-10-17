@@ -93,11 +93,12 @@ theorem exists_nonneg_representation_linearIndependent (A : I → E) (s : Finset
 
 /-- Every element of a finitely generated cone belongs to the cone generated
 by some linearly independent subfamily of the given generators. -/
-theorem exists_linearIndependent_subcone [Fintype I] (A : I → E) {x : E}
+theorem exists_linearIndependent_subcone [Finite I] (A : I → E) {x : E}
     (hx : x ∈ PointedCone.hull ℝ (Set.range A)) :
     ∃ s : Finset I, LinearIndependent ℝ (fun i : s ↦ A i) ∧
       x ∈ PointedCone.hull ℝ (Set.range (fun i : s ↦ A i)) := by
   classical
+  let : Fintype I := Fintype.ofFinite I
   obtain ⟨w, hw⟩ := (Submodule.mem_span_range_iff_exists_fun (Nonneg ℝ)).mp hx
   obtain ⟨s, _, hs, v, hv, heq⟩ :=
     exists_nonneg_representation_linearIndependent A Finset.univ

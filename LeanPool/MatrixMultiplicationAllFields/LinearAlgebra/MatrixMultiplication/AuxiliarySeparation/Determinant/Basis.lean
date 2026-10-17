@@ -53,7 +53,8 @@ def quotientVector (e : ℕ) (j : Fin (e + 2)) : BoundedPair R e :=
   if h : (j : ℕ) < e + 1 then
     (⟨X ^ (j : ℕ), mem_degreeLT.mpr ((degree_X_pow_le _).trans_lt (by exact_mod_cast h))⟩, 0)
   else
-    (0, ⟨X ^ e, mem_degreeLT.mpr ((degree_X_pow_le _).trans_lt (by exact_mod_cast Nat.lt_succ_self e))⟩)
+    (0, ⟨X ^ e, mem_degreeLT.mpr
+      ((degree_X_pow_le _).trans_lt (by exact_mod_cast Nat.lt_succ_self e))⟩)
 
 /-- A bounded kernel vector, obtained by multiplication by `uw-vs`. -/
 def kernelVector (e : ℕ) (j : Fin e) : BoundedPair R e :=

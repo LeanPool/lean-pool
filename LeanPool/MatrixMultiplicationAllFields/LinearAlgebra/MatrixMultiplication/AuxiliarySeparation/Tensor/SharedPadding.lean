@@ -37,18 +37,20 @@ variable {K : Type} [Field K]
 noncomputable section
 
 open MatrixMultiplication.Foundation
-open scoped BigOperators Classical
+open scoped BigOperators
 
 namespace MatrixMultiplication.AuxiliarySeparation
 
 variable {M : ℕ} {X : Type} {Y Z : Fin M → Type}
 variable [Fintype X] [∀ i, Fintype (Y i)] [∀ i, Fintype (Z i)]
 
+open Classical in
 /-- Branches sharing their first input but with independently sized other legs. -/
 def sharedFirstDependentTensor (B : ∀ i, Tensor K X (Y i) (Z i)) :
     Tensor K X (Σ i, Y i) (Σ i, Z i) :=
   fun x y z => if h : z.1 = y.1 then B y.1 x y.2 (h ▸ z.2) else 0
 
+open Classical in
 /-- A branch in the two common sigma coordinate spaces, with zero padding. -/
 def paddedSharedBranch (B : ∀ i, Tensor K X (Y i) (Z i)) (i : Fin M) :
     Tensor K X (Σ i, Y i) (Σ i, Z i) :=
@@ -61,17 +63,20 @@ omit [Fintype X] [∀ i, Fintype (Y i)] [∀ i, Fintype (Z i)] in
     (B : ∀ i, Tensor K X (Y i) (Z i)) (i : Fin M)
     (x : X) (y : Y i) (z : Z i) :
     sharedFirstDependentTensor B x ⟨i, y⟩ ⟨i, z⟩ = B i x y z := by
+  classical
   simp [sharedFirstDependentTensor]
 
 @[simp] theorem paddedSharedBranch_matching
     (B : ∀ i, Tensor K X (Y i) (Z i)) (i : Fin M)
     (x : X) (y : Y i) (z : Z i) :
     paddedSharedBranch B i x ⟨i, y⟩ ⟨i, z⟩ = B i x y z := by
+  classical
   simp [paddedSharedBranch, Tensor.restrict, ite_mul, mul_ite]
 
 theorem paddedSharedBranch_pullback
     (B : ∀ i, Tensor K X (Y i) (Z i)) (i : Fin M) :
     Tensor.pullback id (Sigma.mk i) (Sigma.mk i) (paddedSharedBranch B i) = B i := by
+  classical
   funext x y z
   exact paddedSharedBranch_matching B i x y z
 
@@ -79,6 +84,7 @@ theorem paddedSharedBranch_pullback
 theorem paddedSharedBranch_ne_zero
     (B : ∀ i, Tensor K X (Y i) (Z i)) (i : Fin M) (hB : B i ≠ 0) :
     paddedSharedBranch B i ≠ 0 := by
+  classical
   intro h
   apply hB
   rw [← paddedSharedBranch_pullback B i, h]
@@ -88,6 +94,7 @@ theorem paddedSharedBranch_zero_middle
     (B : ∀ i, Tensor K X (Y i) (Z i)) (i : Fin M)
     (x : X) (y : Σ i, Y i) (z : Σ i, Z i) (hy : y.1 ≠ i) :
     paddedSharedBranch B i x y z = 0 := by
+  classical
   have hzero : ∀ b : Y i, Sigma.mk i b ≠ y :=
     fun b h => hy (congrArg Sigma.fst h).symm
   simp [paddedSharedBranch, Tensor.restrict, hzero]
@@ -96,10 +103,12 @@ theorem paddedSharedBranch_zero_right
     (B : ∀ i, Tensor K X (Y i) (Z i)) (i : Fin M)
     (x : X) (y : Σ i, Y i) (z : Σ i, Z i) (hz : z.1 ≠ i) :
     paddedSharedBranch B i x y z = 0 := by
+  classical
   have hzero : ∀ c : Z i, Sigma.mk i c ≠ z :=
     fun c h => hz (congrArg Sigma.fst h).symm
   simp [paddedSharedBranch, Tensor.restrict, hzero]
 
+open Classical in
 /-- Redundant branch labels zero-extend the varying-dimension shared tensor. -/
 theorem sharedFirstTensor_paddedSharedBranch
     (B : ∀ i, Tensor K X (Y i) (Z i)) :
@@ -108,6 +117,7 @@ theorem sharedFirstTensor_paddedSharedBranch
       (fun (y' : Fin M × (Σ i, Y i)) y => if (y.1, y) = y' then 1 else 0)
       (fun (z' : Fin M × (Σ i, Z i)) z => if (z.1, z) = z' then 1 else 0)
       (sharedFirstDependentTensor B) := by
+  classical
   funext x' y' z'
   rcases y' with ⟨i, ⟨iy, y⟩⟩
   rcases z' with ⟨j, ⟨iz, z⟩⟩
@@ -143,6 +153,7 @@ namespace Character
 @[simp] theorem value_paddedSharedBranch (χ : Character K)
     (B : ∀ i, Tensor K X (Y i) (Z i)) (i : Fin M) :
     χ.value (paddedSharedBranch B i) = χ.value (B i) := by
+  classical
   simpa only [paddedSharedBranch, id_eq] using
     χ.value_extendByZero (B i) id (Sigma.mk i) (Sigma.mk i)
       Function.injective_id
@@ -154,6 +165,7 @@ namespace Character
     (B : ∀ i, Tensor K X (Y i) (Z i)) :
     χ.value (sharedFirstTensor (paddedSharedBranch B)) =
       χ.value (sharedFirstDependentTensor B) := by
+  classical
   rw [sharedFirstTensor_paddedSharedBranch]
   simpa only [id_eq] using
     χ.value_extendByZero (sharedFirstDependentTensor B) id

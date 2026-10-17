@@ -97,14 +97,20 @@ theorem conditionalWords_card_pos (w : I → A) (counts : A → B → ℕ)
   rw [conditionalWords_card w counts h]
   exact Finset.prod_pos fun a _ => Nat.multinomial_pos Finset.univ (counts a)
 
-theorem conditionalWords_nonempty (w : I → A) (counts : A → B → ℕ)
+omit [Fintype A] [DecidableEq I] in
+theorem conditionalWords_nonempty [Finite A] (w : I → A) (counts : A → B → ℕ)
     (h : ∀ a, wordPopulation w a = ∑ b, counts a b) :
-    Nonempty (ConditionalWords w counts) :=
-  Fintype.card_pos_iff.mp (conditionalWords_card_pos w counts h)
+    Nonempty (ConditionalWords w counts) := by
+  classical
+  let : Fintype A := Fintype.ofFinite A
+  exact Fintype.card_pos_iff.mp (conditionalWords_card_pos w counts h)
 
-theorem conditionalWords_nonempty_iff (w : I → A) (counts : A → B → ℕ) :
+omit [Fintype A] [DecidableEq I] in
+theorem conditionalWords_nonempty_iff [Finite A] (w : I → A) (counts : A → B → ℕ) :
     Nonempty (ConditionalWords w counts) ↔
       ∀ a, wordPopulation w a = ∑ b, counts a b := by
+  classical
+  let : Fintype A := Fintype.ofFinite A
   constructor
   · rintro ⟨r⟩ a
     calc

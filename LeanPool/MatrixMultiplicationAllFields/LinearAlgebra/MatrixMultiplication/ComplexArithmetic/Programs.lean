@@ -27,7 +27,7 @@ namespace Gate
 variable {Input R S : Type*}
 
 def mapRegister (f : R → S) : Gate Input R → Gate Input S
-  | .constant z => .constant z
+  | .literal z => .literal z
   | .input i => .input i
   | .add i j => .add (f i) (f j)
   | .sub i j => .sub (f i) (f j)
@@ -105,7 +105,7 @@ theorem eval_append_old {r s : ℕ} (p : Program Input r) (q : Program Input s)
 end Program
 
 inductive Expression (Input : Type*) where
-  | constant : ℂ → Expression Input
+  | literal : ℂ → Expression Input
   | input : Input → Expression Input
   | add : Expression Input → Expression Input → Expression Input
   | sub : Expression Input → Expression Input → Expression Input
@@ -116,14 +116,14 @@ namespace Expression
 variable {Input : Type*}
 
 def eval (inputs : Input → ℂ) : Expression Input → ℂ
-  | .constant z => z
+  | .literal z => z
   | .input i => inputs i
   | .add e f => e.eval inputs + f.eval inputs
   | .sub e f => e.eval inputs - f.eval inputs
   | .mul e f => e.eval inputs * f.eval inputs
 
 def cost : Expression Input → ℕ
-  | .constant _ => 0
+  | .literal _ => 0
   | .input _ => 0
   | .add e f => e.cost + f.cost + 1
   | .sub e f => e.cost + f.cost + 1
@@ -137,9 +137,9 @@ structure Compiled (e : Expression Input) where
   cost_eq : program.cost = e.cost
 
 def compile : (e : Expression Input) → Compiled e
-  | .constant z =>
+  | .literal z =>
     { registers := 1
-      program := Program.nil.step (.constant z)
+      program := Program.nil.step (.literal z)
       output := 0
       correct := fun _ => rfl
       cost_eq := rfl }

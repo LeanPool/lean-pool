@@ -35,12 +35,13 @@ variable {K : Type} [Field K]
 namespace MatrixMultiplication.AuxiliarySeparation
 
 open MatrixMultiplication.Foundation
-open scoped Classical
+
 
 variable {X Y Z X' Y' Z' : Type}
 variable [Fintype X] [Fintype Y] [Fintype Z]
 variable [Fintype X'] [Fintype Y'] [Fintype Z']
 
+open Classical in
 omit [Fintype X'] [Fintype Y'] [Fintype Z'] in
 /-- Support in embedded coordinate sets reconstructs the tensor by zero extension. -/
 theorem tensor_eq_extendByZero_pullback (T : Tensor K X' Y' Z')
@@ -90,6 +91,7 @@ theorem value_eq_pullback_of_support (χ : Character K) (T : Tensor K X' Y' Z')
     (hs : ∀ x' y' z', T x' y' z' ≠ 0 →
       x' ∈ Set.range fx ∧ y' ∈ Set.range fy ∧ z' ∈ Set.range fz) :
     χ.value T = χ.value (Tensor.pullback fx fy fz T) := by
+  classical
   calc
     χ.value T = χ.value (Tensor.restrict
         (fun x' x => if fx x = x' then 1 else 0)

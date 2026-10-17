@@ -5,7 +5,10 @@ Authors: OpenAI
 -/
 module
 
-public import Mathlib
+public import Mathlib.Data.Matrix.Mul
+public import Mathlib.Analysis.Complex.Basic
+public import Mathlib.Analysis.SpecialFunctions.Pow.Real
+public import Mathlib.Algebra.Order.Floor.Ring
 
 /- Ported to Lean Pool with project-local modules and namespaces. -/
 
@@ -24,7 +27,7 @@ open scoped BigOperators
 namespace MatrixMultiplication.Arithmetic
 
 inductive Gate (F Input Register : Type*) where
-  | constant : F → Gate F Input Register
+  | literal : F → Gate F Input Register
   | input : Input → Gate F Input Register
   | add : Register → Register → Gate F Input Register
   | sub : Register → Register → Gate F Input Register
@@ -36,14 +39,14 @@ variable {F Input Register : Type*}
 
 def eval [Field F] (inputs : Input → F) (registers : Register → F) :
     Gate F Input Register → F
-  | .constant z => z
+  | .literal z => z
   | .input i => inputs i
   | .add i j => registers i + registers j
   | .sub i j => registers i - registers j
   | .mul i j => registers i * registers j
 
 def cost : Gate F Input Register → ℕ
-  | .constant _ => 0
+  | .literal _ => 0
   | .input _ => 0
   | .add _ _ => 1
   | .sub _ _ => 1

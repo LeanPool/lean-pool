@@ -101,9 +101,13 @@ theorem classOf_scalarTensor_add (m n : ℕ) :
 
 /-- Exact rank decompositions are precisely restrictions of diagonal tensors. -/
 theorem rankAtMost_iff_isRestriction_scalarTensor
-    {X Y Z : Type*} [Fintype X] [Fintype Y] [Fintype Z]
+    {X Y Z : Type*} [Finite X] [Finite Y] [Finite Z]
     (T : Tensor K X Y Z) (r : ℕ) :
     Tensor.RankAtMost T r ↔ IsRestriction T (scalarTensor K r) := by
+  classical
+  let : Fintype X := Fintype.ofFinite X
+  let : Fintype Y := Fintype.ofFinite Y
+  let : Fintype Z := Fintype.ofFinite Z
   constructor
   · rintro ⟨a, b, c, h⟩
     refine ⟨(fun x i => a i x), (fun y i => b i y), (fun z i => c i z), ?_⟩
@@ -143,7 +147,8 @@ theorem le_rank (T : (TensorClass K)) : T ≤ (rank T : (TensorClass K)) := by
   · intro h
     obtain ⟨k, rfl⟩ := Nat.exists_eq_add_of_le h
     rw [Nat.cast_add]
-    simpa only [add_zero] using add_mono (le_refl (m : (TensorClass K))) (zero_le (k : (TensorClass K)))
+    simpa only [add_zero] using
+      add_mono (le_refl (m : (TensorClass K))) (zero_le (k : (TensorClass K)))
 
 /-- A natural multiple of any nonzero tensor contains any prescribed tensor
 by restriction. -/

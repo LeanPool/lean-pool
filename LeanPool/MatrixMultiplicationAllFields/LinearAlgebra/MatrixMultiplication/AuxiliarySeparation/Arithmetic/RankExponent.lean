@@ -44,9 +44,12 @@ open scoped BigOperators
 namespace MatrixMultiplication.AuxiliarySeparation
 
 /-- Every finite coefficient tensor has a finite exact rank decomposition. -/
-theorem exists_rankAtMost {X Y Z : Type*} [Fintype X] [Fintype Y] [Fintype Z]
+theorem exists_rankAtMost {X Y Z : Type*} [Finite X] [Finite Y] [Finite Z]
     (T : Tensor K X Y Z) : ∃ r : ℕ, Tensor.RankAtMost T r := by
   classical
+  let : Fintype X := Fintype.ofFinite X
+  let : Fintype Y := Fintype.ofFinite Y
+  let : Fintype Z := Fintype.ofFinite Z
   let a : X × Y × Z → X → K := fun p x => if x = p.1 then T p.1 p.2.1 p.2.2 else 0
   let b : X × Y × Z → Y → K := fun p y => if y = p.2.1 then 1 else 0
   let c : X × Y × Z → Z → K := fun p z => if z = p.2.2 then 1 else 0

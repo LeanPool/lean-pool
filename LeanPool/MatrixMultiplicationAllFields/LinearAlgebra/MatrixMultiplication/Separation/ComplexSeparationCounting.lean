@@ -52,13 +52,14 @@ def normColor {d Q : ℕ} (x : Grid d Q) : Fin (d * Q ^ 2 + 1) :=
 def dotColor {d Q : ℕ} (t u : Grid d Q) : Fin (d * Q ^ 2 + 1) :=
   ⟨gridDot t u, Nat.lt_succ_of_le (gridDot_le t u)⟩
 
-theorem two_stage_pigeonhole {A : Type*} [Fintype A] [DecidableEq A]
+theorem two_stage_pigeonhole {A : Type*} [Fintype A]
     {M K m : ℕ} (hM : 0 < M) (f : A → Fin M) (g : A → A → Fin M)
     (hK : M * K ≤ Fintype.card A) (hm : M * m ≤ Fintype.card A) :
     ∃ tags : Finset A, tags.card = K ∧
       (∃ radius : Fin M, ∀ t ∈ tags, f t = radius) ∧
       ∀ t ∈ tags, ∃ slice : Finset A, slice.card = m ∧
         ∃ level : Fin M, ∀ u ∈ slice, g t u = level := by
+  classical
   let : Nonempty (Fin M) := ⟨⟨0, hM⟩⟩
   obtain ⟨radius, hr⟩ := Fintype.exists_le_card_fiber_of_mul_le_card f
     (by simpa only [Fintype.card_fin] using hK)

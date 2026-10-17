@@ -115,21 +115,27 @@ theorem RankAtMost.repeat_batch_ceiling {S : Tensor K U V W} {k r R : ℕ}
     RankAtMost (directSum (fun _ : Fin R => S)) (batchCount R k * r) :=
   hbatch.repeat_batch (le_batchCount_mul R hk)
 
-theorem RankAtMost.batch_product_ceiling [Fintype U] [Fintype V] [Fintype W]
+theorem RankAtMost.batch_product_ceiling [Finite U] [Finite V] [Finite W]
     {T : Tensor K X Y Z} {S : Tensor K U V W} {R k r : ℕ}
     (hT : RankAtMost T R)
     (hbatch : RankAtMost (directSum (fun _ : Fin k => S)) r) (hk : 0 < k) :
-    RankAtMost (Tensor.product T S) (batchCount R k * r) :=
-  hT.batch_product hbatch (le_batchCount_mul R hk)
+    RankAtMost (Tensor.product T S) (batchCount R k * r) := by
+  classical
+  let : Fintype U := Fintype.ofFinite U
+  let : Fintype V := Fintype.ofFinite V
+  let : Fintype W := Fintype.ofFinite W
+  exact hT.batch_product hbatch (le_batchCount_mul R hk)
 
-theorem matrixCoefficients_batch_rank_ceiling [DecidableEq A] [DecidableEq B] [Fintype B]
+theorem matrixCoefficients_batch_rank_ceiling [DecidableEq A] [DecidableEq B] [Finite B]
     {R k r : ℕ}
     (houter : RankAtMost (matrixCoefficients (K := K) A A A) R)
     (hbatch : RankAtMost (directSum (fun _ : Fin k => matrixCoefficients (K := K) B B B)) r)
     (hk : 0 < k) :
     RankAtMost (matrixCoefficients (K := K) (A × B) (A × B) (A × B))
-      (batchCount R k * r) :=
-  matrixCoefficients_batch_rank houter hbatch (le_batchCount_mul R hk)
+      (batchCount R k * r) := by
+  classical
+  let : Fintype B := Fintype.ofFinite B
+  exact matrixCoefficients_batch_rank houter hbatch (le_batchCount_mul R hk)
 
 end Tensor
 end MatrixMultiplication.Foundation

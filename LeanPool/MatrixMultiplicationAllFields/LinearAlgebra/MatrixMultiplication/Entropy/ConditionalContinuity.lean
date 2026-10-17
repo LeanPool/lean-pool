@@ -22,7 +22,7 @@ noncomputable section
 namespace MatrixMultiplication.ConditionalLabels
 
 open MatrixMultiplication.Foundation Filter
-open scoped BigOperators Topology Classical
+open scoped BigOperators Topology
 
 universe u v w
 variable {A : Type u} [Fintype A] {Label : ℕ → Type v}
@@ -33,6 +33,7 @@ theorem refinementEntropy_eq_prefix_difference (p : FiniteLaw A)
     (FiniteLabelHierarchy.ofLawLabels p labels depth).refinementEntropy n =
       finiteEntropy (p.map (labelRecordOf labels (n + 1))).mass -
         finiteEntropy (p.map (labelRecordOf labels n)).mass := by
+  classical
   have h := (FiniteLabelHierarchy.ofLawLabels p labels depth).prefixLaw_entropy_succ
     n (Nat.succ_le_of_lt hn)
   rw [FiniteLabelHierarchy.ofLawLabels_prefixLaw_mass,
@@ -45,6 +46,7 @@ theorem tendsto_map_entropy {J : Type w} {filter : Filter J}
     {B : Type*} [Fintype B] (label : A → B) :
     Tendsto (fun j => finiteEntropy ((p j).map label).mass) filter
       (𝓝 (finiteEntropy (q.map label).mass)) := by
+  classical
   apply FiniteLaw.entropy_tendsto
   intro b
   simp only [FiniteLaw.map_mass]
@@ -62,6 +64,7 @@ theorem tendsto_lawPairingRate {J : Type w} {filter : Filter J}
     (reader : Fin depth → ReaderPair) (pair : ReaderPair) :
     Tendsto (fun j => lawPairingRate (p j) labels depth reader pair) filter
       (𝓝 (lawPairingRate q labels depth reader pair)) := by
+  classical
   unfold lawPairingRate pairingRate
   apply tendsto_finsetSum
   intro n _
@@ -76,6 +79,7 @@ theorem tendsto_lawPairingRate {J : Type w} {filter : Filter J}
 theorem exists_rational_law_sequence (p : FiniteLaw A) :
     ∃ q : ℕ → RationalLaw A,
       ∀ a, Tendsto (fun n => (q n).toFiniteLaw.mass a) atTop (𝓝 (p.mass a)) := by
+  classical
   have hexists (n : ℕ) := p.exists_rational_approximation
     (1 / ((n : ℝ) + 1)) (by positivity)
   choose q _support close using hexists
@@ -105,6 +109,7 @@ theorem exists_rational_with_strict_margins (p : FiniteLaw A)
         2 * lawPairingRate q.toFiniteLaw labels depth reader .yz ∧
       2 * C < target * (lawPairingRate q.toFiniteLaw labels depth reader .xy +
         lawPairingRate q.toFiniteLaw labels depth reader .xz) := by
+  classical
   obtain ⟨q, hq⟩ := exists_rational_law_sequence p
   have hincident := (tendsto_lawPairingRate hq labels depth reader .xy).add
     (tendsto_lawPairingRate hq labels depth reader .xz)

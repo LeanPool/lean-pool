@@ -45,11 +45,12 @@ theorem coeff_eq_sum_eval {ι : Type*} [Fintype ι] [DecidableEq ι]
       simp only [Lagrange.interpolate_apply, Polynomial.finsetSum_coeff,
         Polynomial.coeff_C_mul]
 
-theorem RankAtMost.coeff {ι : Type*} [Fintype ι] [DecidableEq ι]
+theorem RankAtMost.coeff {ι : Type*} [Fintype ι]
     (nodes : ι → F) (hnodes : Function.Injective nodes)
     {P : Tensor (Polynomial F) X Y Z} {r : ℕ} (hP : RankAtMost P r)
     (d : ℕ) (hdegree : ∀ x y z, (P x y z).degree < Fintype.card ι) :
     RankAtMost (fun x y z => (P x y z).coeff d) (Fintype.card ι * r) := by
+  classical
   rcases hP with ⟨a, b, c, rfl⟩
   let w : ι → F := fun i => (Lagrange.basis Finset.univ nodes i).coeff d
   let aa : (ι × Fin r) → X → F := fun i x => w i.1 * (a i.2 x).eval (nodes i.1)

@@ -36,7 +36,8 @@ theorem rectangularAdmissibleExponent_of_rankAtMost
     {a b R : ℕ} (ha : 2 ≤ a) {k τ : ℝ} (hk : 0 ≤ k)
     (hab : (a : ℝ) ^ k ≤ (b : ℝ))
     (hRank : MatrixMultiplication.Foundation.Tensor.RankAtMost
-      (MatrixMultiplication.Foundation.Tensor.matrixCoefficients (K := F) (Fin a) (Fin b) (Fin a)) R)
+      (MatrixMultiplication.Foundation.Tensor.matrixCoefficients
+        (K := F) (Fin a) (Fin b) (Fin a)) R)
     (hτ : 0 ≤ τ) (hR : (R : ℝ) ≤ (a : ℝ) ^ τ)
     (hin : (a * b : ℕ) ≤ (a : ℝ) ^ τ)
     (hout : (a : ℝ) ^ (2 : ℕ) ≤ (a : ℝ) ^ τ) :
@@ -54,7 +55,8 @@ theorem rectangular_rpow_omega_le_of_rankAtMost
     {a b R : ℕ} {B k : ℝ} (ha : 2 ≤ a) (hk : 0 ≤ k)
     (hab : (a : ℝ) ^ k ≤ (b : ℝ))
     (hRank : MatrixMultiplication.Foundation.Tensor.RankAtMost
-      (MatrixMultiplication.Foundation.Tensor.matrixCoefficients (K := F) (Fin a) (Fin b) (Fin a)) R)
+      (MatrixMultiplication.Foundation.Tensor.matrixCoefficients
+        (K := F) (Fin a) (Fin b) (Fin a)) R)
     (hout : (a : ℝ) ^ (2 : ℕ) ≤ B) (hin : (a * b : ℕ) ≤ B)
     (hR : (R : ℝ) ≤ B) :
     (a : ℝ) ^ rectangularOmega F k ≤ B := by

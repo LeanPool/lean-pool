@@ -36,7 +36,7 @@ variable {K : Type} [Field K]
 noncomputable section
 
 open MatrixMultiplication.Foundation
-open scoped BigOperators Classical
+open scoped BigOperators
 
 namespace MatrixMultiplication.AuxiliarySeparation.Character
 
@@ -82,6 +82,7 @@ variable {X Y Z : Type} [Fintype X] [Fintype Y] [Fintype Z]
 /-- Tensor powers turn a character value into an ordinary natural power. -/
 @[simp] theorem value_power (T : Tensor K X Y Z) (n : ℕ) :
     χ.value (Tensor.power T n) = χ.value T ^ n := by
+  classical
   induction n with
   | zero =>
       have heq : Tensor.power T 0 = Tensor.pullback
@@ -105,6 +106,7 @@ variable {X Y Z : Type} [Fintype X] [Fintype Y] [Fintype Z]
 /-- Full independent copies contribute their exact multiplicity. -/
 theorem value_copies (T : Tensor K X Y Z) (r : ℕ) :
     χ.value (Tensor.directSum (fun _ : Fin r => T)) = r * χ.value T := by
+  classical
   rw [χ.map_directSum]
   simp
 
@@ -112,6 +114,7 @@ theorem value_copies (T : Tensor K X Y Z) (r : ℕ) :
 theorem value_power_copies (T : Tensor K X Y Z) (r n : ℕ) :
     χ.value (Tensor.directSum (fun _ : Fin r => Tensor.power T n)) =
       r * χ.value T ^ n := by
+  classical
   rw [χ.value_copies, χ.value_power]
 
 end Powers
@@ -122,6 +125,7 @@ variable {ι : Type} [Fintype ι] [DecidableEq ι]
 variable {X Y Z : ι → Type}
 variable [∀ i, Fintype (X i)] [∀ i, Fintype (Y i)] [∀ i, Fintype (Z i)]
 
+open Classical in
 /-- A branch extended to the common ambient sigma coordinate spaces. -/
 def paddedBranch (T : ∀ i, Tensor K (X i) (Y i) (Z i)) (i : ι) :
     Tensor K (Σ i, X i) (Σ i, Y i) (Σ i, Z i) :=
@@ -133,6 +137,7 @@ def paddedBranch (T : ∀ i, Tensor K (X i) (Y i) (Z i)) (i : ι) :
 @[simp] theorem value_paddedBranch
     (T : ∀ i, Tensor K (X i) (Y i) (Z i)) (i : ι) :
     χ.value (paddedBranch T i) = χ.value (T i) := by
+  classical
   simpa only [paddedBranch] using
     χ.value_extendByZero (T i) (Sigma.mk i) (Sigma.mk i) (Sigma.mk i)
     (fun _ _ h => eq_of_heq (Sigma.mk.inj h).2)
@@ -144,6 +149,7 @@ omit [Fintype ι] in
     (T : ∀ i, Tensor K (X i) (Y i) (Z i))
     (i : ι) (x : X i) (y : Y i) (z : Z i) :
     paddedBranch T i ⟨i, x⟩ ⟨i, y⟩ ⟨i, z⟩ = T i x y z := by
+  classical
   simp [paddedBranch, Tensor.restrict, ite_mul, mul_ite]
 
 omit [Fintype ι] in
@@ -151,6 +157,7 @@ theorem paddedBranch_zero_left
     (T : ∀ i, Tensor K (X i) (Y i) (Z i)) (i : ι)
     (x : Σ i, X i) (y : Σ i, Y i) (z : Σ i, Z i) (hx : x.1 ≠ i) :
     paddedBranch T i x y z = 0 := by
+  classical
   have hzero : ∀ a : X i, Sigma.mk i a ≠ x :=
     fun a h => hx (congrArg Sigma.fst h).symm
   simp [paddedBranch, Tensor.restrict, hzero]
@@ -160,6 +167,7 @@ theorem paddedBranch_zero_middle
     (T : ∀ i, Tensor K (X i) (Y i) (Z i)) (i : ι)
     (x : Σ i, X i) (y : Σ i, Y i) (z : Σ i, Z i) (hy : y.1 ≠ i) :
     paddedBranch T i x y z = 0 := by
+  classical
   have hzero : ∀ b : Y i, Sigma.mk i b ≠ y :=
     fun b h => hy (congrArg Sigma.fst h).symm
   simp [paddedBranch, Tensor.restrict, hzero]
@@ -169,10 +177,12 @@ theorem paddedBranch_zero_right
     (T : ∀ i, Tensor K (X i) (Y i) (Z i)) (i : ι)
     (x : Σ i, X i) (y : Σ i, Y i) (z : Σ i, Z i) (hz : z.1 ≠ i) :
     paddedBranch T i x y z = 0 := by
+  classical
   have hzero : ∀ c : Z i, Sigma.mk i c ≠ z :=
     fun c h => hz (congrArg Sigma.fst h).symm
   simp [paddedBranch, Tensor.restrict, hzero]
 
+open Classical in
 /-- Redundant outer labels give a zero extension of the varying-dimension sum. -/
 theorem directSum_paddedBranch
     (T : ∀ i, Tensor K (X i) (Y i) (Z i)) :
@@ -181,6 +191,7 @@ theorem directSum_paddedBranch
       (fun (y' : ι × (Σ i, Y i)) y => if (y.1, y) = y' then 1 else 0)
       (fun (z' : ι × (Σ i, Z i)) z => if (z.1, z) = z' then 1 else 0)
       (Tensor.dependentDirectSum T) := by
+  classical
   funext x' y' z'
   rcases x' with ⟨i, ⟨ix, x⟩⟩
   rcases y' with ⟨j, ⟨iy, y⟩⟩
@@ -225,6 +236,7 @@ theorem directSum_paddedBranch
 theorem value_dependentDirectSum
     (T : ∀ i, Tensor K (X i) (Y i) (Z i)) :
     χ.value (Tensor.dependentDirectSum T) = ∑ i, χ.value (T i) := by
+  classical
   have h := χ.value_extendByZero (Tensor.dependentDirectSum T)
     (fun x => (x.1, x)) (fun y => (y.1, y)) (fun z => (z.1, z))
     (fun _ _ h => congrArg Prod.snd h) (fun _ _ h => congrArg Prod.snd h)

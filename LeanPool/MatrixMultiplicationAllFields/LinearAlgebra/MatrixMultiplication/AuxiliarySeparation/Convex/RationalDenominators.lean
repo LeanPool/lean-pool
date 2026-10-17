@@ -39,10 +39,11 @@ theorem exists_nat_eq_mul_rat_of_den_dvd {q : ℚ} (hq : 0 ≤ q)
 
 /-- A finite nonnegative rational family has a common positive denominator
 which turns every coefficient into a natural number. -/
-theorem exists_nat_mul_eq_nat {I : Type*} [Fintype I]
+theorem exists_nat_mul_eq_nat {I : Type*} [Finite I]
     (q : I → ℚ) (hq : ∀ i, 0 ≤ q i) :
     ∃ D : ℕ, 0 < D ∧ ∃ c : I → ℕ, ∀ i, (D : ℚ) * q i = (c i : ℚ) := by
   classical
+  let : Fintype I := Fintype.ofFinite I
   let D : ℕ := ∏ i, (q i).den
   have hD : 0 < D := Finset.prod_pos fun i _ ↦ (q i).den_pos
   have hc : ∀ i, ∃ c : ℕ, (D : ℚ) * q i = (c : ℚ) := by
