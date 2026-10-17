@@ -64,6 +64,8 @@ Apache License, Version 2.0, and are redistributed here under the same license.
   LeanPool/CompactSpectral           https://github.com/abenenson/compact-spectral
   LeanPool/CompactnessAndDegeneracy  https://github.com/openai/ten-proofs
   LeanPool/CompositionAlgebras       https://github.com/ehrlich-b/composition-algebras
+  LeanPool/CompositionAlgebrasOverRings
+                                     https://github.com/skipgaribaldi/CompositionAlgebras-lean
   LeanPool/Computability             https://github.com/tannerduve/computability
   LeanPool/ComputableReal            https://github.com/Timeroot/computableReal
   LeanPool/ConcentrationInequalities https://github.com/jtraverso/erdos-81-chordal-clique-partitions
