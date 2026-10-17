@@ -271,7 +271,7 @@ theorem realize_liftAt' {n' m : ℕ} {h_n_prime_nezero : n' > 0} {s : ℕ → V}
           have h2_2 : NeZero _n := by
             have h2_2_1 : k.val < _n := by
               omega
-            exact NeZero.of_gt h2_2_1
+            exact NeZero.of_pos (by omega)
           have h2_3 : fixedSnoc (xs ∘ fun i ↦ if ↑i < m then Fin.castAdd n' i
               else i.addNat n') a k = xs (Fin.ofNat (_n+n') k.val) := by
             have h2_3_1 : k = (Fin.ofNat _n k.val).castSucc := by
@@ -321,7 +321,7 @@ theorem realize_liftAt' {n' m : ℕ} {h_n_prime_nezero : n' > 0} {s : ℕ → V}
             have h3 : NeZero _n := by
               have h3_1 : k.val < _n := by
                 omega
-              exact NeZero.of_gt h3_1
+              exact NeZero.of_pos (by omega)
             have h4 : k = (Fin.ofNat _n k.val).castSucc := by
               apply Fin.eq_of_val_eq
               simp only [Fin.ofNat_eq_cast, Fin.val_castSucc, Fin.val_natCast]
