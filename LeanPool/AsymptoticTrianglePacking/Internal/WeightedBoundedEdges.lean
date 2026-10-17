@@ -41,7 +41,7 @@ import Mathlib.Algebra.Order.BigOperators.Group.Finset
 public import Mathlib.Algebra.Order.Ring.Star
 public import Mathlib.Analysis.InnerProductSpace.Basic
 public import Mathlib.Analysis.RCLike.Lemmas
-public import Mathlib.Data.Int.Star
+public import Mathlib.Algebra.Order.Star.Int
 public import Mathlib.Analysis.Real.Sqrt
 public import Mathlib.Tactic.ContinuousFunctionalCalculus
 

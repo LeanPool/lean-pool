@@ -2045,11 +2045,10 @@ theorem triPos_injective {th : Finset {S : Finset V // S ∈ Pp.parts}} (h3 : #t
   obtain ⟨hab, hac, hbc, -⟩ := pick3_spec h3
   intro a b hEq
   rcases zmod3_cases a with rfl | rfl | rfl <;> rcases zmod3_cases b with rfl | rfl | rfl <;>
-    simp only [triPos, ite_eq_left] at hEq ⊢ <;> first
-      | rfl
-      | (exfalso; first
-          | exact hab hEq | exact hab hEq.symm | exact hac hEq | exact hac hEq.symm
-          | exact hbc hEq | exact hbc hEq.symm)
+    simp only [triPos, ite_eq_left] at hEq ⊢ <;>
+      (exfalso; first
+        | exact hab hEq | exact hab hEq.symm | exact hac hEq | exact hac hEq.symm
+        | exact hbc hEq | exact hbc hEq.symm)
 
 /-- **The density of the cluster pair opposite to the position `a`.** -/
 noncomputable def dOpp (th : Finset {S : Finset V // S ∈ Pp.parts}) (a : ZMod 3) : ℝ :=
