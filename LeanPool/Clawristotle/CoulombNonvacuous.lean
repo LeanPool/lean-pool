@@ -375,7 +375,7 @@ theorem CoulombConcreteTheorem42_nonvacuous (ν T ρIon : ℝ)
     apply ContDiff.neg
     unfold normSq dotProduct
     exact ContDiff.sum fun i _ =>
-      (contDiff_apply ℝ ℝ i).mul (contDiff_apply ℝ ℝ i)
+      (contDiff_apply ℝ (fun _ => ℝ) i).mul (contDiff_apply ℝ (fun _ => ℝ) i)
   -- (5) hf_smooth_x: periodicLift of constant is C^∞
   · intro v
     simp only [periodicLift]

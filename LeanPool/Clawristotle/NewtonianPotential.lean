@@ -210,7 +210,6 @@ lemma inv_norm_local_integrable (R : ℝ) (hR : 0 < R) :
             rw [Real.lt_logb_iff_rpow_lt,
               Real.logb_le_iff_le_rpow] at hk
               <;> norm_num at *
-              <;> try positivity
             · exact ⟨k,
                 by rw [lt_div_iff₀ hR] at hk; linarith,
                 by rw [div_le_iff₀ hR] at hk; linarith⟩
