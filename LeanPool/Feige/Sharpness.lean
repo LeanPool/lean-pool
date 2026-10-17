@@ -35,15 +35,16 @@ abbrev ExtremalSpace (n : ℕ) := Fin n → Fin (n + 1)
 
 /-- The uniform probability measure on the extremal sample space. -/
 noncomputable def extremalMarginal (n : ℕ) : Measure (Fin (n + 1)) :=
-  (PMF.uniformOfFintype (Fin (n + 1))).toMeasure
+  Measure.uniformOfFinset Finset.univ
 
 /-- The product of the uniform one-coordinate measures. -/
 noncomputable def extremalMeasure (n : ℕ) : Measure (ExtremalSpace n) :=
   Measure.pi (fun _ : Fin n ↦ extremalMarginal n)
 
 instance (n : ℕ) : IsProbabilityMeasure (extremalMarginal n) := by
-  unfold extremalMarginal
-  infer_instance
+  constructor
+  simpa [extremalMarginal, Measure.uniformOfFinset_apply] using
+    ENNReal.div_self (by positivity : (n : ℝ≥0∞) + 1 ≠ 0) (by simp)
 
 instance (n : ℕ) : IsProbabilityMeasure (extremalMeasure n) := by
   unfold extremalMeasure
@@ -121,8 +122,10 @@ theorem extremalX_integrable (n : ℕ) (i : Fin n) :
 theorem extremalMarginal_mean (n : ℕ) :
     (∫ x : Fin (n + 1), (if x = 0 then (n + 1 : ℝ) else 0)
         ∂(extremalMarginal n)) = 1 := by
-  rw [extremalMarginal, PMF.integral_eq_sum]
-  simp only [PMF.uniformOfFintype_apply, Fintype.card_fin, Nat.cast_add,
+  rw [integral_fintype .of_finite]
+  simp only [extremalMarginal, Measure.real, Measure.uniformOfFinset_apply_singleton,
+    Finset.mem_univ, ite_true,
+    Finset.card_univ, Fintype.card_fin, Nat.cast_add,
     Nat.cast_one, ENNReal.toReal_inv, smul_eq_mul, mul_ite, mul_zero,
     Finset.sum_ite_eq', Finset.mem_univ, ite_true]
   have htr : (↑n + 1 : ℝ≥0∞).toReal = (n : ℝ) + 1 := by
@@ -200,15 +203,8 @@ theorem extremalGood_probability (n : ℕ) :
   have hm (i : Fin n) :
       extremalMarginal n {x : Fin (n + 1) | x ≠ 0} =
         (n : ℝ≥0∞) / (n + 1) := by
-    rw [extremalMarginal,
-      PMF.toMeasure_uniformOfFintype_apply _ MeasurableSet.of_discrete]
-    rw [Fintype.card_fin]
-    push_cast
-    congr 1
-    norm_cast
-    change Fintype.card {x : Fin (n + 1) // ¬x = 0} = n
-    rw [Fintype.card_subtype_compl (fun x : Fin (n + 1) ↦ x = 0)]
-    simp
+    rw [extremalMarginal, Measure.uniformOfFinset_apply]
+    simp [Finset.filter_ne', Finset.card_erase_of_mem]
   rw [Finset.prod_congr rfl (fun i _ ↦ hm i)]
   rw [Finset.prod_const, Finset.card_univ, Fintype.card_fin, ENNReal.toReal_pow,
     ENNReal.toReal_div, ENNReal.toReal_natCast]

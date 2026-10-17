@@ -108,14 +108,8 @@ theorem interior_simplexSet_nonempty (n : ℕ) :
         split_ifs <;> positivity
       · simp [b, coordinateSum_apply, EuclideanSpace.basisFun_apply, PiLp.single_apply]
   have htop : affineSpan ℝ (insert 0 (Set.range b)) = ⊤ := by
-    apply SetLike.ext
-    intro x
-    change x ∈ (affineSpan ℝ (insert 0 (Set.range b)) : Set (SimplexE n)) ↔
-      x ∈ (⊤ : AffineSubspace ℝ (SimplexE n))
-    have hi := Set.ext_iff.mp
-      (affineSpan_insert_zero (k := ℝ) (Set.range b)) x
-    rw [hi, b.span_eq]
-    simp
+    rw [affineSpan_insert_zero, b.span_eq]
+    rfl
   exact top_unique (htop ▸ affineSpan_mono ℝ hsub)
 
 theorem volume_simplexSet_pos (n : ℕ) :
