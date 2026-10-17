@@ -8,6 +8,7 @@ module
 public import Mathlib.Analysis.InnerProductSpace.Harmonic.Basic
 public import Mathlib.LinearAlgebra.Complex.FiniteDimensional
 public import Mathlib.MeasureTheory.Integral.CircleIntegral
+import Mathlib.Analysis.Complex.CauchyIntegral
 import Mathlib.Analysis.Complex.Harmonic.Analytic
 
 /-!

@@ -5,6 +5,7 @@ Authors: seb488, Aristotle
 -/
 module
 
+public import Mathlib.Analysis.Analytic.Basic
 public import Mathlib.Analysis.Calculus.DSlope
 public import Mathlib.MeasureTheory.Integral.IntervalIntegral.Basic
 import Mathlib.Analysis.Complex.RemovableSingularity
@@ -369,8 +370,7 @@ lemma exists_log_of_analytic_nonzero_on_ball (f : ℂ → ℂ)
         simp only [real_smul]
         convert this.comp t (HasDerivAt.const_mul z (hasDerivAt_id t |>
           HasDerivAt.ofReal_comp)) using 1 <;>
-          first | rfl
-                | (ext s; simp [mul_comm])
+          first | (ext s; simp [mul_comm])
                 | (norm_num [mul_assoc, mul_comm, mul_left_comm, Function.comp_def])
       · exact (ContinuousOn.intervalIntegrable (by rw [continuousOn_congr fun t ht =>
           by rw [hH_deriv_zero _ (h_path t <| by simpa using ht)]]; exact continuousOn_const)) ..
