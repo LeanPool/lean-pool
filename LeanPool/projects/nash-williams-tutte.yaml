@@ -1,7 +1,8 @@
 slug: nash-williams-tutte
 title: Nash-Williams–Tutte tree packing and arboricity
-summary: A finite simple graph has k edge-disjoint spanning trees exactly when every
-  partition into m nonempty parts has at least k(m − 1) crossing edges. The development
+summary: A finite simple graph on a nonempty vertex type has k edge-disjoint spanning
+  trees exactly when every partition into m nonempty parts has at least k(m − 1) crossing
+  edges. The development
   also proves the Nash-Williams characterization of covering the edges by k forests,
   and that every finite nonempty 2k-edge-connected simple graph has k edge-disjoint
   spanning trees. It preserves the general forest exchange lemma and supporting
