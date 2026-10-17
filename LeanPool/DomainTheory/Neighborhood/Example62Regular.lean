@@ -7,6 +7,8 @@ module
 
 public import Mathlib.Computability.MyhillNerode
 
+import Mathlib.Data.Set.Finite.Basic
+
 /-!
 # Example 6.2 (Scott 1981, PRG-19, §6) — eventually-periodic trees and regular
 events
