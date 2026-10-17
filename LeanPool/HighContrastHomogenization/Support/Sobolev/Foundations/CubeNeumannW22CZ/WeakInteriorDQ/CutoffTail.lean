@@ -92,7 +92,7 @@ theorem tendsto_eLpNorm_sub_mul_of_eventually_eq_one_on_compacts
       simpa [Set.inter_eq_self_of_subset_left (Set.sdiff_subset : U \ K ⊆ U)]
         using hμK.le
     have htail :=
-      hδ (U \ K) (hUopen.measurableSet.diff hK_closed.measurableSet) hsmall
+      hδ (U \ K) (hUopen.measurableSet.diff hK_closed.measurableSet).nullMeasurableSet hsmall
     have hε_bound : ENNReal.ofReal (ε.toReal / 2) ≤ ε := by
       have hhalf_le : ε.toReal / 2 ≤ ε.toReal := by
         linarith [(ENNReal.toReal_nonneg : 0 ≤ ε.toReal)]

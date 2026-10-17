@@ -43,7 +43,7 @@ theorem integral_sq_exp_weight (l s : ℝ) :
     have hexp : HasDerivAt (fun u : ℝ => Real.exp (l * u)) (l * Real.exp (l * t)) t := by
       simpa [mul_comm] using ((hasDerivAt_id t).const_mul l).exp
     convert hpow.mul hexp using 1
-    all_goals first | rfl | ring
+    ring
   have hint :
       IntervalIntegrable
         (fun t : ℝ => ((2 * t + l * t ^ (2 : ℕ)) * Real.exp (l * t)))

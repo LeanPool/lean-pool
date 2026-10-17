@@ -371,7 +371,7 @@ theorem cubeProjection_memLp {d : ℕ} (Q : TriadicCube d) (j : ℕ) (p : ℝ≥
     exact ne_of_lt (lt_of_le_of_lt hR_le hUniv_lt)
   simpa [Set.indicator] using!
     (MeasureTheory.memLp_indicator_const (μ := normalizedCubeMeasure Q)
-      (p := p) (s := cubeSet R) (hs := measurableSet_cubeSet R)
+      (p := p) (s := cubeSet R) (hs := (measurableSet_cubeSet R).nullMeasurableSet)
       (c := cubeAverage R u) (Or.inr hR_ne_top))
 
 theorem cubeLpNorm_rpow_cubeProjection_eq_cubeBesovCircDepthAverage {d : ℕ}

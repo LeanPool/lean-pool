@@ -149,7 +149,7 @@ theorem memLp_prod_entry {d : ℕ} {ι : Type*} {P : Measure (CoeffSpace d)}
       filter_upwards [(hY i hi).symmetric] with a ha
       exact blockOpNorm_le_absSchattenNorm ((toFullBlockMat_isHermitian_iff _).2 ha) hN)
   have hm : AEMeasurable (fun a => (l.map (fun i => toFullBlockMat (Y i a))).prod α β) P := by
-    let : ContinuousENorm (FullBlockMat d) := SeminormedAddGroup.toContinuousENorm
+    let : ContinuousENorm (FullBlockMat d) := ESeminormedAddMonoid.toContinuousENorm
     exact (measurable_pi_apply β).comp_aemeasurable
       ((measurable_pi_apply α).comp_aemeasurable hp.aestronglyMeasurable.aemeasurable)
   refine hp.norm.mono' hm.aestronglyMeasurable (Filter.Eventually.of_forall fun a => ?_)

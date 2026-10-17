@@ -195,7 +195,7 @@ private theorem tendsto_setIntegral_mul_of_tendsto_eLpNorm_finiteLp
       ‖(f n x - g x) * h x‖₊ ≤ 1 * ‖f n x - g x‖₊ * ‖h x‖₊ :=
     Eventually.of_forall fun x => by rw [nnnorm_mul]; simp
   have hHolder : eLpNorm (fun x => (f n x - g x) * h x) 1 μ ≤ B n := by
-    have h := eLpNorm_le_eLpNorm_mul_eLpNorm_of_nnnorm
+    have h := eLpNorm_le_eLpNorm_mul_eLpNorm
       (p := p.exponent) (q := p.conjugate.exponent) (r := 1)
       (fun a b => a * b) 1 continuous_mul
       ((hf n).sub hg).aestronglyMeasurable hh.aestronglyMeasurable hbound

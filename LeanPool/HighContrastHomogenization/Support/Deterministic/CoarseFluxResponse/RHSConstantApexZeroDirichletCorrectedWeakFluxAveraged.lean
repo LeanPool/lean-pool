@@ -162,8 +162,9 @@ private theorem weakFluxCorrection_componentBudget_le_compactSquare
         0 ≤ lambdaSq Q (s / 2) (.finite 2) a :=
       multiscale_ellipticity_lambdaSq_finite_nonneg Q (s / 2) 2 a
         (by norm_num) (by nlinarith : 0 ≤ s / 2 * (2 : ℝ))
-    dsimp [K, L]
-    positivity
+    exact mul_nonneg
+      (mul_nonneg (mul_nonneg (sq_nonneg _) hLam_nonneg)
+        (inv_nonneg.mpr hlambda_nonneg)) (sq_nonneg G)
   have hcomponentBudget :
       (Bcoeff + Bcorr) * H ≤
         (C * coarseFluxResponseRHSWeakFluxCorrectionBound Q a s g) ^ 2 := by

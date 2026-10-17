@@ -7,6 +7,7 @@ Authors: Scott Armstrong, Tuomo Kuusi
 module
 
 public import LeanPool.HighContrastHomogenization.Support.Sobolev.Foundations.PoincareLpKernel.SegmentChangeOfVariables
+public import Mathlib.Analysis.SpecialFunctions.Integrals.Basic
 public import Mathlib.MeasureTheory.Function.LpSeminorm.Basic
 public import Mathlib.MeasureTheory.Integral.Bochner.ContinuousLinearMap
 public import Mathlib.MeasureTheory.Measure.WithDensity

@@ -173,7 +173,6 @@ private theorem respM0_isSymm {F : BlockMat d} (hm : (explicitCanonicalMetric F)
   cases α <;> cases β <;>
     simp only [blockMatEntry, respM0, Matrix.zero_apply] <;>
     first
-      | rfl
       | exact congrFun (congrFun hsym.symm _) _
       | exact congrFun (congrFun hsymi.symm _) _
 

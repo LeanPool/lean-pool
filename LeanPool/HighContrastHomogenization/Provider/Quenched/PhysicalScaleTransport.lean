@@ -37,7 +37,7 @@ noncomputable section
 variable {d : ℕ}
 
 theorem quasiMeasurePreserving_triadicDilateVec (N : ℕ) :
-    Measure.QuasiMeasurePreserving (triadicDilateVec (d := d) N) volume volume := by
+    MeasureTheory.QuasiMeasurePreserving (triadicDilateVec (d := d) N) volume volume := by
   simpa [triadicDilateVec, Pi.smul_apply, smul_eq_mul] using!
     (Measure.quasiMeasurePreserving_smul (μ := volume)
       (pow_ne_zero N (by norm_num : (3 : ℝ) ≠ 0)))

@@ -41,7 +41,7 @@ theorem ae_affinePullback {L : Mat d} (hL : IsUnit L.det)
     {U : Set (Vec d)} (hU : MeasurableSet U) {P : Vec d → Prop}
     (hP : ∀ᵐ x ∂(volumeMeasureOn U), P x) :
     ∀ᵐ y ∂(volumeMeasureOn (matImage L⁻¹ U)), P (matVecMul L y) := by
-  let hq : Measure.QuasiMeasurePreserving (matVecMul L)
+  let hq : MeasureTheory.QuasiMeasurePreserving (matVecMul L)
       (volumeMeasureOn (matImage L⁻¹ U)) (volumeMeasureOn U) := by
     refine ⟨(continuous_matVecMul L).measurable, ?_⟩
     rw [map_restrict_volume_affinePullback hL hU]

@@ -633,7 +633,7 @@ theorem memScalarL2_openCubeSet_union_upperFaceReflectedScalar {d : ℕ}
         (MeasureTheory.volume.restrict U) :=
     MeasureTheory.MemLp.piecewise
       (μ := MeasureTheory.volume.restrict U) (s := S)
-      (p := (2 : ℝ≥0∞)) (measurableSet_openCubeSet Q)
+      (p := (2 : ℝ≥0∞)) (measurableSet_openCubeSet Q).nullMeasurableSet
       hmain hreflected
   simpa [MemScalarL2, volumeMeasureOn, upperFaceReflectedScalar, U, S, R,
     Set.piecewise] using! hpiece
@@ -679,7 +679,7 @@ theorem memScalarL2_openCubeSet_union_lowerFaceReflectedScalar {d : ℕ}
         (MeasureTheory.volume.restrict U) :=
     MeasureTheory.MemLp.piecewise
       (μ := MeasureTheory.volume.restrict U) (s := S)
-      (p := (2 : ℝ≥0∞)) (measurableSet_openCubeSet Q)
+      (p := (2 : ℝ≥0∞)) (measurableSet_openCubeSet Q).nullMeasurableSet
       hmain hreflected
   simpa [MemScalarL2, volumeMeasureOn, lowerFaceReflectedScalar, U, S, R,
     Set.piecewise] using! hpiece
@@ -726,7 +726,7 @@ theorem memVectorL2_openCubeSet_union_upperFaceReflectedVectorField {d : ℕ}
         (MeasureTheory.volume.restrict U) :=
     MeasureTheory.MemLp.piecewise
       (μ := MeasureTheory.volume.restrict U) (s := S)
-      (p := (2 : ℝ≥0∞)) (measurableSet_openCubeSet Q)
+      (p := (2 : ℝ≥0∞)) (measurableSet_openCubeSet Q).nullMeasurableSet
       hmain hreflected
   simpa [MemVectorL2, volumeMeasureOn, upperFaceReflectedVectorField, U, S, R,
     Set.piecewise] using! hpiece
@@ -773,7 +773,7 @@ theorem memVectorL2_openCubeSet_union_lowerFaceReflectedVectorField {d : ℕ}
         (MeasureTheory.volume.restrict U) :=
     MeasureTheory.MemLp.piecewise
       (μ := MeasureTheory.volume.restrict U) (s := S)
-      (p := (2 : ℝ≥0∞)) (measurableSet_openCubeSet Q)
+      (p := (2 : ℝ≥0∞)) (measurableSet_openCubeSet Q).nullMeasurableSet
       hmain hreflected
   simpa [MemVectorL2, volumeMeasureOn, lowerFaceReflectedVectorField, U, S, R,
     Set.piecewise] using! hpiece
@@ -842,7 +842,7 @@ theorem memScalarL2_cubeFaceNeighborSlabSet_faceNeighborSlabReflectedScalar
         ((MeasureTheory.volume.restrict S).restrict Lᶜ) :=
     MeasureTheory.MemLp.piecewise
       (μ := (MeasureTheory.volume.restrict S).restrict Lᶜ)
-      (s := M) (p := (2 : ℝ≥0∞)) (measurableSet_openCubeSet Q)
+      (s := M) (p := (2 : ℝ≥0∞)) (measurableSet_openCubeSet Q).nullMeasurableSet
       hmid hright
   have hpiece :
       MeasureTheory.MemLp (L.piecewise lower (M.piecewise F upper))
@@ -850,7 +850,7 @@ theorem memScalarL2_cubeFaceNeighborSlabSet_faceNeighborSlabReflectedScalar
     MeasureTheory.MemLp.piecewise
       (μ := MeasureTheory.volume.restrict S) (s := L)
       (p := (2 : ℝ≥0∞))
-      (measurableSet_openCubeSet (cubeLowerFaceNeighbor Q i))
+      (measurableSet_openCubeSet (cubeLowerFaceNeighbor Q i)).nullMeasurableSet
       hleft htail
   simpa [MemScalarL2, volumeMeasureOn, faceNeighborSlabReflectedScalar,
     Set.piecewise, S, L, M, U, lower, upper] using! hpiece
@@ -921,7 +921,7 @@ theorem memVectorL2_cubeFaceNeighborSlabSet_faceNeighborSlabReflectedVectorField
         ((MeasureTheory.volume.restrict S).restrict Lᶜ) :=
     MeasureTheory.MemLp.piecewise
       (μ := (MeasureTheory.volume.restrict S).restrict Lᶜ)
-      (s := M) (p := (2 : ℝ≥0∞)) (measurableSet_openCubeSet Q)
+      (s := M) (p := (2 : ℝ≥0∞)) (measurableSet_openCubeSet Q).nullMeasurableSet
       hmid hright
   have hpiece :
       MeasureTheory.MemLp (L.piecewise lower (M.piecewise G upper))
@@ -929,7 +929,7 @@ theorem memVectorL2_cubeFaceNeighborSlabSet_faceNeighborSlabReflectedVectorField
     MeasureTheory.MemLp.piecewise
       (μ := MeasureTheory.volume.restrict S) (s := L)
       (p := (2 : ℝ≥0∞))
-      (measurableSet_openCubeSet (cubeLowerFaceNeighbor Q i))
+      (measurableSet_openCubeSet (cubeLowerFaceNeighbor Q i)).nullMeasurableSet
       hleft htail
   simpa [MemVectorL2, volumeMeasureOn, faceNeighborSlabReflectedVectorField,
     Set.piecewise, S, L, M, U, lower, upper] using! hpiece

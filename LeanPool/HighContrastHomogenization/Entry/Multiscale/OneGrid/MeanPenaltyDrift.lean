@@ -207,7 +207,7 @@ theorem meanPenalty_normalizedMean_compose (d : ℕ) (hd : 2 ≤ d) (γ : ℝ)
   have hpow := pow_le_pow_left₀ hnn hscalar' (bigQ d γ)
   rw [mul_pow] at hpow
   simp only [meanPenalty]
-  convert hpow using 1 <;> first | rfl | ring
+  convert hpow using 1 <;> ring
 
 /-- The mean-penalty advance used in Steps 2 and 4 (`p.fixed.geometry.one.grid.propagation`):
 `Ψ_Q(P^q_{j,k}) ≤ e^{QΔ^q_{m,k}}Ψ_Q(P^q_{j,m}) + e^{QΔ^q_{m,k}} - 1` for `j ≤ m ≤ k`. -/

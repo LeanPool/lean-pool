@@ -288,7 +288,7 @@ theorem besovSeminorm_add_const_le (t : ℤ) (A : ℕ → (Fin d → ℤ) → Bl
     have hgeom : Summable (fun n : ℕ => ((3 : ℝ) ^ (-(1 / 2 : ℝ))) ^ n) :=
       summable_geometric_of_lt_one besovRatio_nonneg besovRatio_lt_one
     have hmul := hgeom.mul_left ((3 : ℝ) ^ ((t : ℝ) / 2) * Real.sqrt (blockVecDot c c))
-    (convert hmul using 1; try rfl)
+    convert hmul using 1
     funext n
     rw [three_rpow_scale_split t n]; ring
   have hmaj : Summable (fun n : ℕ => besovTerm t A n +

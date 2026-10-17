@@ -120,7 +120,7 @@ theorem inv_le_inv_of_posDef_le {ι : Type*} [Fintype ι] [DecidableEq ι]
   rw [hD.eq] at h₁
   rw [hB.inv.isHermitian.eq] at h₂
   apply Matrix.le_iff.mpr
-  (convert h₁.add h₂ using 1; try rfl)
+  convert h₁.add h₂ using 1
   have hAiA := Matrix.nonsing_inv_mul A ((Matrix.isUnit_iff_isUnit_det A).mp hA.isUnit)
   have hAAi := Matrix.mul_nonsing_inv A ((Matrix.isUnit_iff_isUnit_det A).mp hA.isUnit)
   have hBiB := Matrix.nonsing_inv_mul B ((Matrix.isUnit_iff_isUnit_det B).mp hB.isUnit)

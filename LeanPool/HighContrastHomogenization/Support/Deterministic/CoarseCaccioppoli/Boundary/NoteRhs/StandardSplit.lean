@@ -91,8 +91,7 @@ theorem
       have hTheta_factor_pos :
           0 < Real.rpow (ThetaRatio Q s t a) (s / σ) :=
         Real.rpow_pos_of_pos hTheta _
-      dsimp [K]
-      positivity
+      exact mul_pos (mul_pos hs_factor_pos hTheta_factor_pos) hΛ_pos
     have hX_nonneg : 0 ≤ max (A / K) 0 + 1 := by
       linarith [le_max_right (A / K) 0]
     simpa [σ, p, K, A] using
@@ -289,9 +288,9 @@ private theorem coarseCaccioppoliBoundaryHeightSecondTermSplit_div_kernel_le {d 
         multiscale_ellipticity_LambdaSq_one_nonneg Q s a hs.le
       have hΛ_pos : 0 < LambdaSq Q s (.finite 1) a :=
         lt_of_le_of_ne' hΛ_nonneg hΛ_zero
-      have hK_pos : 0 < K := by
-        dsimp [K]
-        positivity
+      have hK_pos : 0 < K :=
+        mul_pos (mul_pos (Real.rpow_pos_of_pos hs _)
+          (Real.rpow_pos_of_pos hTheta_pos _)) hΛ_pos
       have hrec :
           coarseCaccioppoliBoundaryRecursionCoeffSplit
               Q a s t Calpha Ccross / K =
@@ -392,9 +391,9 @@ theorem coarseCaccioppoliBoundaryStandardExplicitHeightCoeffSplit_div_kernel_le_
       exact multiscale_ellipticity_LambdaSq_one_nonneg Q s a hs.le
     have hΛ_pos : 0 < Λ := lt_of_le_of_ne' hΛ_nonneg hΛ_zero
     have hTheta_pos : 0 < ThetaRatio Q s t a := lt_of_lt_of_le zero_lt_one hTheta
-    have hK_pos : 0 < K := by
-      dsimp [K]
-      positivity
+    have hK_pos : 0 < K :=
+      mul_pos (mul_pos (Real.rpow_pos_of_pos hs _)
+        (Real.rpow_pos_of_pos hTheta_pos _)) hΛ_pos
     have hfirst :
         first / K ≤ B₁ := by
       simpa [σ, Λ, K, first, B₁] using
@@ -602,8 +601,7 @@ theorem
       have hTheta_factor_pos :
           0 < Real.rpow (ThetaRatio Q s t a) (s / σ) :=
         Real.rpow_pos_of_pos hTheta _
-      dsimp [K]
-      positivity
+      exact mul_pos (mul_pos hs_factor_pos hTheta_factor_pos) hΛ_pos
     let X : ℝ := max (A / K) 0 + 1
     let Cnote : ℝ := σ * Real.rpow X p⁻¹
     have hA_div_le_X : A / K ≤ X := by

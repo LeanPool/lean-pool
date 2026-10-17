@@ -229,7 +229,7 @@ matrix that transports the Lebesgue null sets: a ball is carried into a ball of
 proportional radius. -/
 theorem IsAELocallyUniformlyElliptic.comp_matVecMul {b : CoeffField d}
     (hb : IsAELocallyUniformlyElliptic b) (L : Mat d)
-    (hL : Measure.QuasiMeasurePreserving (matVecMul L) volume volume) :
+    (hL : MeasureTheory.QuasiMeasurePreserving (matVecMul L) volume volume) :
     IsAELocallyUniformlyElliptic (fun y => b (matVecMul L y)) := by
   intro R hR
   have hnonneg : (0 : ℝ) ≤ ∑ i : Fin d, ∑ j : Fin d, |L i j| :=

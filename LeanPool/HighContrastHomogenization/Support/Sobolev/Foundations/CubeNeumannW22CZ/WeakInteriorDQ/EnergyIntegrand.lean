@@ -376,7 +376,7 @@ theorem memLp_restrict_of_support_subset_of_memLp
       simp [Set.indicator_of_notMem hx, hFx]
   have hindicator_mem :
       MeasureTheory.MemLp (V.indicator F) 2 (MeasureTheory.volume.restrict U) := by
-    rw [MeasureTheory.memLp_indicator_iff_restrict hV_meas]
+    rw [MeasureTheory.memLp_indicator_iff_restrict hV_meas.nullMeasurableSet]
     exact hF.mono_measure
       (MeasureTheory.Measure.restrict_mono_measure
         MeasureTheory.Measure.restrict_le_self V)
@@ -405,7 +405,7 @@ private theorem aestronglyMeasurable_volume_of_restrict_of_support_subset
     (hF_support : Function.support F ⊆ W)
     (hF : MeasureTheory.AEStronglyMeasurable F (MeasureTheory.volume.restrict W)) :
     MeasureTheory.AEStronglyMeasurable F MeasureTheory.volume := by
-  rw [← MeasureTheory.Measure.restrict_toMeasurable_of_sFinite] at hF
+  rw [← MeasureTheory.Measure.restrict_toMeasurable_of_sfinite] at hF
   have hind := (aestronglyMeasurable_indicator_iff
     (MeasureTheory.measurableSet_toMeasurable MeasureTheory.volume W)).2 hF
   rwa [Set.indicator_eq_self.2

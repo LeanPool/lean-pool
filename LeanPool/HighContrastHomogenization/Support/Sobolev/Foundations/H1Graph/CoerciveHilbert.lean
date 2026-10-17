@@ -113,7 +113,7 @@ noncomputable def gradientBilin :
 @[simp] theorem gradientBilin_apply
     (z w : H1CoerciveHilbertSpace (U := U)) :
     gradientBilin (U := U) z w = inner ℝ (gradient (U := U) z) (gradient (U := U) w) := by
-  simp [gradientBilin, ContinuousLinearMap.bilinearComp_apply, gradient]
+  rfl
 
 /-- The forcing functional `z ↦ ⟪f, ∇z⟫` on the coercive Hilbert graph. -/
 @[expose]

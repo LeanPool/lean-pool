@@ -301,7 +301,7 @@ private theorem tendsto_integral_mul_of_tendsto_eLpNorm
           MeasureTheory.eLpNorm (fun x => F n x - G x) 2
             (MeasureTheory.volume.restrict U) := by
     intro n
-    exact MeasureTheory.eLpNorm_le_eLpNorm_mul_eLpNorm_of_nnnorm
+    exact MeasureTheory.eLpNorm_le_eLpNorm_mul_eLpNorm
       (μ := MeasureTheory.volume.restrict U)
       (p := (2 : ENNReal)) (q := (2 : ENNReal)) (r := (1 : ENNReal))
       (fun a b : ℝ => a * b) 1 continuous_mul

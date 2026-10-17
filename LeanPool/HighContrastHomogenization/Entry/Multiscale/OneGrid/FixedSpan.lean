@@ -140,7 +140,7 @@ theorem profile_old_terms_advance_le (d : ℕ) (hd : 2 ≤ d) (γ : ℝ)
     have h := mul_le_mul_of_nonneg_right
       (mul_le_mul_of_nonneg_left (hadv n hn hnm) (mul_nonneg (hw (L : ℝ)) (hw ((m : ℝ) - (n :
         ℝ))))) hhistory
-    (convert h using 1; try rfl)
+    convert h using 1
     ring
   have hmean : (∑ j ∈ Finset.Ico n m,
       w (((m + L : ℤ) : ℝ) - 1 - (j : ℝ)) * p j (m + L)) ≤
@@ -171,7 +171,7 @@ theorem profile_old_terms_advance_le (d : ℕ) (hd : 2 ≤ d) (γ : ℝ)
           mul_le_mul_of_nonneg_left hs (mul_nonneg (hw _) (sub_nonneg.mpr he))
         _ ≤ B * (e - 1) := by
           have h := mul_le_mul_of_nonneg_right hwL (mul_nonneg (sub_nonneg.mpr he) hB.le)
-          convert h using 1 <;> first | rfl | ring
+          convert h using 1 <;> ring
     exact hterms.trans (add_le_add le_rfl htail)
   have hsum : (∑ j ∈ Finset.Icc (n + 1) m,
       w (((m + L : ℤ) : ℝ) - (j : ℝ)) *
@@ -203,7 +203,7 @@ theorem profile_old_terms_advance_le (d : ℕ) (hd : 2 ≤ d) (γ : ℝ)
     calc
       _ ≤ e * profile P γ q jStar n m := by
         have h := mul_le_mul_of_nonneg_right hwL (mul_nonneg (by linarith only [he]) hprof0)
-        convert h using 1 <;> first | rfl | ring
+        convert h using 1 <;> ring
       _ ≤ _ := by
         nlinarith only [mul_nonneg (sub_nonneg.mpr he) (sub_nonneg.mpr hprof)]
   change _ ≤ profile P γ q jStar n m + (1 + B) * (e - 1)

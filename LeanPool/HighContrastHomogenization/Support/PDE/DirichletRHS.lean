@@ -605,7 +605,7 @@ omit [MeasureTheory.IsFiniteMeasure (volumeMeasureOn U)] in
     (z w : Space M) :
     coeffBilin (M := M) hEll z w =
       inner ℝ (hilbertCoeffOperator hEll (field z)) (field w) := by
-  simp [coeffBilin, coeffFieldCLM, ContinuousLinearMap.bilinearComp_apply, field]
+  rfl
 
 /-- The forcing functional induced by `g` on the Hilbert realization of
 `\Lpoto(U)`. -/

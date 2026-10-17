@@ -337,7 +337,7 @@ theorem two_grid_transport_roundedGrid
         have hfac : 0 ≤ 1 + x + L := by positivity
         have hh := mul_le_mul_of_nonneg_right (mul_le_mul_of_nonneg_right
           (mul_le_mul_of_nonneg_left hbD hCd.le) hfac) (by positivity : 0 ≤ (3 : ℝ) ^ (-a * x))
-        (convert hh using 1; try rfl)
+        convert hh using 1
         dsimp only [x]
         ring
       _ = (Cd * B) * (A * (1 + x + L) * (3 : ℝ) ^ (-a * x)) := by ring
