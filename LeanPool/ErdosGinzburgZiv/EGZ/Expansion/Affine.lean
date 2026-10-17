@@ -51,7 +51,7 @@ theorem exists_affineModel {p d r : ℕ} [Fact p.Prime]
     obtain ⟨v, hv, hvq⟩ := hφ (Set.mem_univ (q + c))
     refine ⟨⟨v - o, V.vsub_mem_direction hv ho⟩, ?_⟩
     change φ.linear (v - o) = q
-    have hh := φ.linearMap_vsub v o
+    have hh := φ.linear_apply_vsub v o
     change φ.linear (v - o) = φ v - φ o at hh
     rw [hh, hvq, hoc, add_sub_cancel_right]
   obtain ⟨s, hs⟩ := F.exists_rightInverse_of_surjective (LinearMap.range_eq_top.mpr hF)
