@@ -103,11 +103,11 @@ decreasing_by
 
 theorem lmOfFormula_lt_box_of_nonAtom (h : ¬ α.isAtomic) :
     lmOfFormula φ < lmOfFormula (⌈α⌉φ) := by
-  cases α <;> simp_all [Program.isAtomic, testsOfProgram] <;> linarith
+  cases α <;> simp_all [Program.isAtomic, testsOfProgram] <;> omega
 
 theorem lmOfFormula_lt_dia_of_nonAtom (h : ¬ α.isAtomic) :
     lmOfFormula (~φ) < lmOfFormula (~⌈α⌉φ) := by
-  cases α <;> simp_all [Program.isAtomic, testsOfProgram] <;> linarith
+  cases α <;> simp_all [Program.isAtomic, testsOfProgram] <;> omega
 
 
 /-- The multiset of unloaded formulas represented by an optional loading. -/
@@ -351,7 +351,7 @@ lemma finset_sum_trichotomy {A : Type*} [DecidableEq A]
     intro l; induction l <;> simp_all +decide only [List.toFinset_nil, Finset.sum_empty,
       List.map_nil, List.sum_nil, Std.le_refl, List.toFinset_cons, List.map_cons, List.sum_cons]
     by_cases hh : ‹A› ∈ ‹List A›.toFinset <;> simp_all +decide only [List.mem_toFinset,
-      Finset.insert_eq_of_mem, not_false_eq_true, Finset.sum_insert, add_le_add_iff_left]; linarith!
+      Finset.insert_eq_of_mem, not_false_eq_true, Finset.sum_insert, add_le_add_iff_left]; omega
   exact h_toFinset_le bs
 
 /-- This is a summary lemma and not used as a whole anywhere.

@@ -1460,7 +1460,7 @@ theorem rewind_helper {Hist X} {tab : Tableau Hist X} {a b : PathIn tab} {k : Fi
             simp_all [Fin.last]
             simp [PathIn.toHistory] at i_pf
             have := edge_inc_length_by_one t'_t
-            linarith
+            omega
           rw [← Fin.exists_castSucc_eq] at h
           rcases h with ⟨k, kdef⟩
           simp only [Fin.cast_succ_eq, ← kdef, Fin.lastCases_castSucc, Function.comp_apply,
@@ -1570,15 +1570,29 @@ theorem Finite.wellfounded_of_irrefl_TC {α : Type} [Finite α] (r : α → α �
   ⟨fun a => acc_transGen_iff.mp <| wf.apply a⟩
 
 lemma nodeAt_mem_History_of_edge : p ⋖_ q → nodeAt p ∈ (tabAt q).1 := by
-  rintro ( ⟨Hist, XX, nrep, nbas, lt, next, Y, Y_in, tab_def, q_def⟩
-         | ⟨Hist, XX, nrep, bas, Y, r, next, tab_def, q_def⟩ )
-  <;> induction p <;> (simp at tab_def; try aesop)
+  rintro (⟨Hist, XX, nrep, nbas, lt, next, Y, Y_in, tab_def, q_def⟩ |
+    ⟨Hist, XX, nrep, bas, Y, rule, next, tab_def, q_def⟩)
+  all_goals
+    subst q_def
+    rw [tabAt_append, tabAt_cast_gen p _ tab_def]
+    simp only [tabAt]
+    have hnode : nodeAt p = XX := by
+      change (tabAt p).2.1 = XX
+      exact congrArg (fun value => value.2.1) tab_def
+    rw [hnode]
+    exact List.mem_cons_self
 
 lemma mem_History_of_edge : p ⋖_ q → x ∈ (tabAt p).1 → x ∈ (tabAt q).1 := by
-  intro hedge hmemp
-  rcases hedge with ( ⟨Hist, XX, nrep, nbas, lt, next, Y, Y_in, tab_def, q_def⟩
-                    | ⟨Hist, XX, nrep, bas, Y, r, next, tab_def, q_def⟩ )
-  <;> induction p <;> (simp at tab_def; try aesop)
+  intro hedge hx
+  rcases hedge with (⟨Hist, XX, nrep, nbas, lt, next, Y, Y_in, tab_def, q_def⟩ |
+    ⟨Hist, XX, nrep, bas, Y, rule, next, tab_def, q_def⟩)
+  all_goals
+    subst q_def
+    rw [tabAt_append, tabAt_cast_gen p _ tab_def]
+    simp only [tabAt]
+    have hhistory : (tabAt p).1 = Hist := congrArg (fun value => value.1) tab_def
+    rw [hhistory] at hx
+    exact List.mem_cons_of_mem XX hx
 
 lemma mem_History_append : X ∈ (tabAt p).1 → X ∈ (tabAt (p.append q)).1 := by
   intro h

@@ -981,7 +981,7 @@ lemma basic_iff_noLocalRuleApp {Y : Sequent} :
     Y.basic ↔ ¬ ∃ (lra : LocalRuleApp),lra.X = Y := by
   constructor
   · have := nonbasic_of_localRuleApp
-    grind
+    grind only []
   · intro no_lra
     by_contra Y_nonbas
     unfold Sequent.basic at Y_nonbas
@@ -1000,11 +1000,11 @@ lemma basic_iff_noLocalRuleApp {Y : Sequent} :
         simp only [LocalRuleApp.X, not_exists, Sequent.mem_def, Sequent.L_eq, Sequent.R_eq] at *
         cases φ_in <;> cases not_φ_in
         · refine ⟨⟨L,R,O, {φ, ~φ}, {}, none, {}, .oneSidedL (.not _) rfl, {}, rfl, ?_⟩, by simp⟩
-          simp_all; grind
+          simp_all; grind only [Finset.insert_subset_iff, Finset.singleton_subset_iff]
         · exact ⟨⟨L,R,O, {φ}, {~φ}, none, {}, LocalRule.LRnegL φ, {}, rfl, by simp_all⟩, by simp⟩
         · exact ⟨⟨L,R,O, {~φ}, {φ}, none, {}, LocalRule.LRnegR φ, {}, rfl, by simp_all⟩, by simp⟩
         · refine ⟨⟨L,R,O, {}, {φ, ~φ}, none, {}, .oneSidedR (.not _) rfl, {}, rfl, ?_⟩, by simp⟩
-          simp_all; grind
+          simp_all; grind only [Finset.insert_subset_iff, Finset.singleton_subset_iff]
     rcases Y with ⟨L,R,O⟩
     simp_all only [LocalRuleApp.X, not_exists, Sequent.toFinset, Finset.union_assoc,
       Finset.mem_union, Option.mem_toFinset, Option.mem_def, Option.map_eq_some_iff, Sum.exists,
@@ -1074,16 +1074,16 @@ lemma LocalRuleApp.preserve_bottom_down (lra : LocalRuleApp) :
     exists_false, Sum.elim_inr, or_self, or_false, forall_exists_index, and_imp,
     forall_apply_eq_imp_iff₂, Finset.mem_sdiff, Finset.image_empty, Finset.notMem_empty,
     exists_const_iff, and_true, IsEmpty.forall_iff, implies_true, Prod.exists, ↓existsAndEq]
-  case oneSidedL ress orule ress_def => cases orule <;> simp_all <;> grind
-  case oneSidedR ress orule ress_def => cases orule <;> simp_all <;> grind
+  case oneSidedL ress orule ress_def => cases orule <;> simp_all <;> grind only []
+  case oneSidedR ress orule ress_def => cases orule <;> simp_all <;> grind only []
   case loadedL ress chi lrule ress_def => cases lrule <;> simp_all only [Finset.empty_subset,
     Option.some_subseteq, true_and, List.pdlToFinFinOpt, List.mem_toFinset, List.mem_map,
     Prod.mk.injEq, Prod.exists, exists_eq_right_right, forall_exists_index, and_imp] <;>
-    intros <;> subst_eqs <;> simp_all <;> grind
+    intros <;> subst_eqs <;> simp_all <;> grind only []
   case loadedR ress chi lrule ress_def => cases lrule <;> simp_all only [Finset.empty_subset,
     Option.some_subseteq, true_and, List.pdlToFinFinOpt, List.mem_toFinset, List.mem_map,
     Prod.mk.injEq, Prod.exists, exists_eq_right_right, forall_exists_index, and_imp] <;>
-    intros <;> subst_eqs <;> simp_all <;> grind
+    intros <;> subst_eqs <;> simp_all <;> grind only []
 
 lemma LocalRuleApp.preserve_atom_down (lra : LocalRuleApp) :
     ∀ Y ∈ lra.C, ∀ p : Nat,
@@ -1098,18 +1098,18 @@ lemma LocalRuleApp.preserve_atom_down (lra : LocalRuleApp) :
     forall_apply_eq_imp_iff₂, Finset.mem_sdiff, Finset.image_empty, Finset.notMem_empty,
     exists_const_iff, and_true, not_isEmpty_of_nonempty, IsEmpty.forall_iff, implies_true,
     Prod.exists, ↓existsAndEq]
-  case oneSidedL ress orule ress_def => cases orule <;> simp_all <;> grind
-  case oneSidedR ress orule ress_def => cases orule <;> simp_all <;> grind
+  case oneSidedL ress orule ress_def => cases orule <;> simp_all <;> grind only []
+  case oneSidedR ress orule ress_def => cases orule <;> simp_all <;> grind only []
   case loadedL ress chi lrule ress_def =>
     cases lrule <;> simp_all only [Finset.empty_subset, Option.some_subseteq, true_and,
       List.pdlToFinFinOpt, List.mem_toFinset, List.mem_map, Prod.mk.injEq, Prod.exists,
       exists_eq_right_right, forall_exists_index, and_imp] <;> intros <;> subst_eqs <;> simp_all
-        <;> grind
+        <;> grind only []
   case loadedR ress chi lrule ress_def =>
     cases lrule <;> simp_all only [Finset.empty_subset, Option.some_subseteq, true_and,
       List.pdlToFinFinOpt, List.mem_toFinset, List.mem_map, Prod.mk.injEq, Prod.exists,
       exists_eq_right_right, forall_exists_index, and_imp] <;> intros <;> subst_eqs <;> simp_all
-        <;> grind
+        <;> grind only []
 
 lemma LocalRuleApp.preserve_neg_atom_down (lra : LocalRuleApp) :
     ∀ Y ∈ lra.C, ∀ p : Nat,
@@ -1123,18 +1123,20 @@ lemma LocalRuleApp.preserve_neg_atom_down (lra : LocalRuleApp) :
     forall_exists_index, and_imp, forall_apply_eq_imp_iff₂, Finset.mem_sdiff, Finset.image_empty,
     Finset.notMem_empty, not_isEmpty_of_nonempty, IsEmpty.forall_iff, implies_true, Prod.exists,
     ↓existsAndEq, and_true]
-  case oneSidedL ress orule ress_def => cases orule <;> grind
-  case oneSidedR ress orule ress_def => cases orule <;> grind
+  case oneSidedL ress orule ress_def =>
+    cases orule <;> grind only [Finset.mem_insert, Finset.mem_singleton, Finset.notMem_empty]
+  case oneSidedR ress orule ress_def =>
+    cases orule <;> grind only [Finset.mem_insert, Finset.mem_singleton, Finset.notMem_empty]
   case loadedL ress chi lrule ress_def =>
     cases lrule <;> simp_all only [Finset.empty_subset, Option.some_subseteq, true_and,
       List.pdlToFinFinOpt, List.mem_toFinset, List.mem_map, Prod.mk.injEq, Prod.exists,
       exists_eq_right_right, forall_exists_index, and_imp] <;> intros <;> subst_eqs <;> simp_all
-        <;> grind
+        <;> grind only []
   case loadedR ress chi lrule ress_def =>
     cases lrule <;> simp_all only [Finset.empty_subset, Option.some_subseteq, true_and,
       List.pdlToFinFinOpt, List.mem_toFinset, List.mem_map, Prod.mk.injEq, Prod.exists,
       exists_eq_right_right, forall_exists_index, and_imp] <;> intros <;> subst_eqs <;> simp_all
-        <;> grind
+        <;> grind only []
 
 lemma LocalRuleApp.preserve_local_atom_down (lra : LocalRuleApp) :
     ∀ Y ∈ lra.C, ∀ f,

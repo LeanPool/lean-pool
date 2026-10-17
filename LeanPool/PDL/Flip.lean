@@ -162,7 +162,7 @@ def LocalRule.flip {Lcond Ocond Rcond ress} (lr : LocalRule (Lcond, Rcond, Ocond
 
 lemma LocalRule.flip_flip {Lcond Ocond Rcond ress} (lr : LocalRule (Lcond, Rcond, Ocond) ress) :
     lr.flip.flip = Olf.flip_flip ▸ Sequent.image_flip_image_flip ▸ lr := by
-  cases lr <;> simp_all [LocalRule.flip] <;> grind
+  cases lr <;> simp_all [LocalRule.flip] <;> grind only []
 
 /-- Note: is it possible and useful to rewrite this in more term and less tactic mode? -/
 def LocalRuleApp.flip : LocalRuleApp → LocalRuleApp := by
@@ -296,7 +296,7 @@ def PdlRule.flip {X Y} (r : PdlRule X Y) : PdlRule X.flip Y.flip := by
 
 lemma PdlRule.flip_flip {X Y} (r : PdlRule X Y) :
     r.flip.flip = (Sequent.flip_flip ▸ Sequent.flip_flip ▸ r) := by
-  cases r <;> simp [PdlRule.flip] <;> grind
+  cases r <;> simp [PdlRule.flip] <;> grind only []
 
 /-- Flipping sequents is injective. -/
 @[simp]

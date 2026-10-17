@@ -1303,9 +1303,11 @@ private theorem boxSequence_profile (α β : Program) (ψ : Formula) (ℓ : TP (
   simp only [evaluate, relate, forall_exists_index, and_imp, and_congr_left_iff] at *
   intro w_sign_ℓ
   specialize IHα ?_
-  · simp_all [signature, conEval, testsOfProgram]
+  · clear IHα IHβ
+    simp_all [signature, conEval, testsOfProgram]
   specialize IHβ ?_
-  · simp_all [signature, conEval, testsOfProgram]
+  · clear IHα IHβ
+    simp_all [signature, conEval, testsOfProgram]
   -- only rewriting with IHα here, but not yet IHβ
   have : (∀ (v x : W), relate M α w x → relate M β x v → evaluate M v ψ)
         ↔ ∀ (v : W), relate M α w v → ∀ (v_1 : W), relate M β v v_1 → evaluate M v_1 ψ := by
