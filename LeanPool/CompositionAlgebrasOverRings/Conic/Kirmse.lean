@@ -88,7 +88,7 @@ regularity where the rank exceeds one, and commutativity and associativity outri
 ## References
 
 * [GPR] Garibaldi, Petersson, Racine, *Albert Algebras over Commutative Rings*, 19.3 (composition
-  algebras are alternative), 16.5 (norm-associativity).
+  algebras are alternative), 16.12(3–4) and 17.2(a) (norm-associativity).
 -/
 
 @[expose] public section

@@ -1039,6 +1039,8 @@ theorem QuadraticForm.IsGPRRegular.prod_isGPRNonsingular {Q₁ : QuadraticForm R
 
 end OrthogonalSumNonsingular
 
+universe w2
+
 /-- `Q` is **non-degenerate** in `EKM`'s sense (`EKM Definition 7.17`, condition (1) of
 `Lemma 7.16`): unlike every other predicate in this file, this is only meaningful for `Q` over a
 *field* `R` — `EKM` never considers quadratic forms over a general commutative ring, so there is
@@ -1050,7 +1052,7 @@ stronger condition than `GPR`'s "non-degenerate" — see `QuadraticForm.IsGPRNon
 `EKM`'s own weaker condition, `radical Q = ⊥`, is what `EKM` calls "regular", and is *not* what this
 predicate captures — that is `QuadraticForm.IsGPRNondegenerate`, again via the naming clash noted
 there. -/
-def QuadraticForm.IsEKMNondegenerate.{w2} {F : Type u} [Field F] {V : Type v}
+def QuadraticForm.IsEKMNondegenerate {F : Type u} [Field F] {V : Type v}
     [AddCommGroup V] [Module F V] [Module.Finite F V] [Module.Projective F V]
     (Q : QuadraticForm F V) : Prop :=
   QuadraticForm.IsGPRNonsingular.{u, v, w2} Q
@@ -1063,7 +1065,7 @@ formulations — is `QuadraticForm.isEKMNondegenerate_iff_nondegenerate`, in
 `QuadraticForm/NonsingularOverFields.lean`; this theorem only records that the definition chosen
 here for `IsEKMNondegenerate` (condition (1) of the lemma) coincides on the nose with the
 ring-theoretic `IsGPRNonsingular` once the ring is a field, which is `GN C.9`'s claim. -/
-theorem QuadraticForm.isEKMNondegenerate_iff_isGPRNonsingular.{w2} {F : Type u} [Field F]
+theorem QuadraticForm.isEKMNondegenerate_iff_isGPRNonsingular {F : Type u} [Field F]
     {V : Type v} [AddCommGroup V] [Module F V] [Module.Finite F V] [Module.Projective F V]
     (Q : QuadraticForm F V) :
     QuadraticForm.IsEKMNondegenerate.{u, v, w2} Q ↔ QuadraticForm.IsGPRNonsingular.{u, v, w2} Q :=

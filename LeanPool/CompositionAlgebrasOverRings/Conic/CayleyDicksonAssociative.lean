@@ -11,20 +11,20 @@ public import LeanPool.CompositionAlgebrasOverRings.Conic.CayleyDickson
 # Commutativity and associativity of the double (`GPR 18.14(a),(b)`)
 
 `Cay(B, μ)` is associative **if and only if** `B` is commutative and associative with involutive
-conjugation (`GPR 18.14(b)`), and commutative **if and only if** `B` is the base ring
-(`GPR 18.14(a)`). This file proves the directions that build algebras, and packages them as `Ring`,
-`CommRing` and `Algebra` structures on the double so that the Cayley–Dickson tower can be iterated.
+conjugation (`GPR 18.14(b)`), and commutative **if and only if** `B` is commutative with trivial
+conjugation (`GPR 18.14(a)`). This file proves the directions that build algebras, and packages them
+as `Ring`, `CommRing` and `Algebra` structures on the double so that the Cayley–Dickson tower can
+be iterated.
 
-The two results play different roles. Associativity of `Cay(B, μ)` is what
-`ConicAlgebra.isMultiplicative_cay` and `ConicAlgebra.isAlternative_cay` need of *their* input, so
-it is what carries the tower from one rung to the next. Commutativity is needed only once, to get
-the tower started: `mul_assoc_cay` asks its input to be commutative, and the first double
-`Cay(k, μ)` is the last rung for which that is true.
+Associativity of `Cay(B, μ)` supplies the associative input needed for a further application of
+`ConicAlgebra.isMultiplicative_cay` or `ConicAlgebra.isAlternative_cay`. To prove that a double is
+associative, `mul_assoc_cay` asks its input to be commutative. The base ring starts this process,
+but it is not the only possible commutative input: in characteristic two, iterated doubles with
+trivial conjugation can remain commutative (`GPR 18.17(b)`).
 
-Iteration is the whole point. `ConicAlgebra.isMultiplicative_cay` (`GPR 18.15`) and
-`ConicAlgebra.isAlternative_cay` (`GPR 18.14(c)`) both require their input `B` to be *associative*,
-which for a double `Cay(B₀, μ₀)` is exactly what this file supplies. Without it the tower stops one
-rung up from the base ring.
+For iteration, `ConicAlgebra.isMultiplicative_cay` (the associative special case of
+`GPR Exc. 18.18`) and `ConicAlgebra.isAlternative_cay` (`GPR 18.14(c)`) both require their input
+`B` to be *associative*, which for a double `Cay(B₀, μ₀)` is what this file supplies.
 
 ## The computation
 
@@ -161,9 +161,9 @@ end Failure
 /-- If the conjugation of a commutative `B` is the **identity** then `Cay(B, μ)` is commutative.
 
 Both products come out as `(ac + μ db, da + bc)`; only commutativity of `B` is used, since with
-`conj = id` there is nothing left for the conjugation to do. The hypothesis holds for the base ring
-(`ConicAlgebra.baseRing_conj_apply`) and essentially only there — `GPR 18.14(a)` says
-`Cay(B, μ)` is commutative exactly when `B = k`. -/
+`conj = id` there is nothing left for the conjugation to do. The base ring satisfies the hypothesis
+(`ConicAlgebra.baseRing_conj_apply`). More generally, `GPR 18.14(a)` characterizes commutativity of
+`Cay(B, μ)` by commutativity of `B` with trivial conjugation. -/
 theorem mul_comm_cay (hconj : ∀ u : B, C.conj u = u) (x y : Cay C μ) : x * y = y * x := by
   refine Cay.ext ?_ ?_ <;>
     simp only [Cay.fst_mul, Cay.snd_mul, hconj, Algebra.smul_def] <;> ring

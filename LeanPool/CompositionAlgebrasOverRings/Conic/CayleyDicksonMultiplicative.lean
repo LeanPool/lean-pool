@@ -11,10 +11,11 @@ public import LeanPool.CompositionAlgebrasOverRings.Conic.Multiplicative
 /-!
 # The double of an associative multiplicative conic algebra is multiplicative (`GPR Exc. 18.18`)
 
-`Cay(B, μ)` has a multiplicative norm **if and only if** `B` is associative with a multiplicative
-norm (`GPR Exc. 18.18`). This file proves the direction that builds algebras: it is what carries
-`n(xy) = n(x)n(y)` up the tower `k → k[√·] → ℍ → 𝕆`, and — since `𝕆` is *not* associative — it is
-also where the tower stops, which is the content of the sedenion non-example (`GPR 19.23`,
+If `B` is associative with a multiplicative norm, then `Cay(B, μ)` has a multiplicative norm.
+This is the associative special case of `GPR Exc. 18.18`: for multiplicative `B`, the sharp
+criterion is `μ[B, B, B] ⊆ Rad(Dn_B)`, which is not proved here. In particular, `μ = 0` does not
+require associativity. The sufficient case proved here carries `n(xy) = n(x)n(y)` up the usual
+tower `k → k[√·] → ℍ → 𝕆`. The sedenion non-example is treated separately (`GPR 19.23`,
 Layer 8).
 
 ## The computation
@@ -41,7 +42,7 @@ underlying `B`.
 
 ## Main results
 
-* `ConicAlgebra.isMultiplicative_cay` : **`GPR Exc. 18.18`**, the direction `⇐`.
+* `ConicAlgebra.isMultiplicative_cay` : the associative special case of **`GPR Exc. 18.18`**.
 
 ## References
 

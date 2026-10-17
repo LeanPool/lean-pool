@@ -308,7 +308,8 @@ produces an elementary idempotent.
 
 Given a unimodular null `u`, unimodularity gives a functional `l` with `l(u) = 1`; precomposing
 with the conjugation and inverting the polar map produces `v` with `n(v, conj u) = 1`.
-Norm-associativity (`GPR 16.5`) turns that into `t(uv) = 1`, while multiplicativity gives
+Norm-associativity (`GPR 16.12(3–4)` and `17.2(a)`) turns that into `t(uv) = 1`, while
+multiplicativity gives
 `n(uv) = n(u) n(v) = 0`. So `c = uv` is elementary. -/
 theorem exists_isElementaryIdempotent_of_isGPRIsotropic {C : ConicAlgebra k A}
     (hreg : C.norm.IsGPRRegular) (hmul : C.IsMultiplicative)

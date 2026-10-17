@@ -84,6 +84,8 @@ namespace ConicAlgebra
 variable {k : Type u} {A : Type v} [CommRing k] [NonAssocRing A] [Module k A]
   [SMulCommClass k A A] [IsScalarTower k A A] [Module.Finite k A] [Module.Projective k A]
 
+universe w'
+
 /-- **`GPR 19.5`: `C` is a composition algebra.** A conic algebra whose underlying module is
 finitely generated projective (an instance argument, not a field) and whose norm is non-singular
 in `GPR`'s sense and multiplicative.
@@ -97,7 +99,7 @@ base-change-stable vanishing of the radical (`GN C.8(e)`), which is what makes c
 stable under base change. It is strictly weaker than `QuadraticForm.IsGPRRegular` unless `2 ∈ kˣ`
 (`QuadraticForm.isGPRRegular_iff_isGPRNonsingular`), and it is not mathlib's
 `LinearMap.BilinForm.Nondegenerate`; see overview §6(b). -/
-structure IsComposition.{w'} (C : ConicAlgebra k A) : Prop where
+structure IsComposition (C : ConicAlgebra k A) : Prop where
   /-- The norm is non-singular in `GPR`'s sense (`GN C.8(e)`): its radical vanishes after base
   change to every field. -/
   isGPRNonsingular : QuadraticForm.IsGPRNonsingular.{u, v, w'} C.norm
@@ -114,13 +116,15 @@ theorem norm_mul (h : C.IsComposition.{u, v, w}) (x y : A) :
   h.isMultiplicative.norm_mul x y
 
 omit [SMulCommClass k A A] in
-/-- **Norm-associativity** of a composition algebra (`GPR 16.5`): `n(xy, z) = n(y, (conj x)z)`. -/
+/-- **Norm-associativity** of a composition algebra (`GPR 16.12(4)` and `17.2(a)`):
+`n(xy, z) = n(y, (conj x)z)`. -/
 theorem polar_mul_left (h : C.IsComposition.{u, v, w}) (x y z : A) :
     QuadraticMap.polar C.norm (x * y) z = QuadraticMap.polar C.norm y (C.conj x * z) :=
   h.isMultiplicative.polar_mul_left x y z
 
 omit [IsScalarTower k A A] in
-/-- **Norm-associativity** of a composition algebra (`GPR 16.5`): `n(xy, z) = n(x, z(conj y))`. -/
+/-- **Norm-associativity** of a composition algebra (`GPR 16.12(3)` and `17.2(a)`):
+`n(xy, z) = n(x, z(conj y))`. -/
 theorem polar_mul_right (h : C.IsComposition.{u, v, w}) (x y z : A) :
     QuadraticMap.polar C.norm (x * y) z = QuadraticMap.polar C.norm x (z * C.conj y) :=
   h.isMultiplicative.polar_mul_right x y z

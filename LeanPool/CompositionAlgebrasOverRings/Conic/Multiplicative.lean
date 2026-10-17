@@ -190,7 +190,7 @@ theorem polar_mul_add_polar_mul (h : C.IsMultiplicative) (x y z w : A) :
   QuadraticForm.polar_mul_add_polar_mul_of_map_mul h x y z w
 
 omit [SMulCommClass k A A] in
-/-- **Norm-associativity** (`GPR 16.5`, and the reason multiplicativity is so rigid):
+/-- **Norm-associativity** (`GPR 16.12(4)`, obtained from multiplicativity by `GPR 17.2(a)`):
 `n(xy, z) = n(y, (conj x)z)`.
 
 The left factor may be moved across the polar form at the cost of conjugating it. Specialize the
@@ -204,7 +204,8 @@ theorem polar_mul_left (h : C.IsMultiplicative) (x y z : A) :
   linear_combination key
 
 omit [IsScalarTower k A A] in
-/-- **Norm-associativity**, the other side (`GPR 16.5`): `n(xy, z) = n(x, z(conj y))`.
+/-- **Norm-associativity**, the other side (`GPR 16.12(3)` and `17.2(a)`):
+`n(xy, z) = n(x, z(conj y))`.
 
 Not a consequence of `ConicAlgebra.IsMultiplicative.polar_mul_left` — `A` is not assumed
 associative or commutative — but proved the same way, specializing the second linearization at

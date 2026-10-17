@@ -46,6 +46,7 @@ definition of `Module.Invertible`.
 ## References
 
 * [Stacks, Tag 00NX] The Stacks Project, *Finite projective modules*.
+* [Stacks, Tag 0B8I] The Stacks Project, *Invertible modules*.
 -/
 
 @[expose] public section
@@ -288,7 +289,7 @@ private theorem invertible_of_finite_projective_of_rankAtStalk_eq_one
 /-- An `R`-module is invertible if and only if it is finite locally free of rank one.
 
 This is the module-theoretic characterization of line bundles; see
-[Stacks, Tag 00NX](https://stacks.math.columbia.edu/tag/00NX). -/
+[Stacks, Tag 0B8I](https://stacks.math.columbia.edu/tag/0B8I). -/
 theorem invertible_iff_isLocallyFreeRankOne :
     Module.Invertible R M ↔ IsLocallyFreeRankOne R M := by
   constructor
