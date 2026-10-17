@@ -9,10 +9,6 @@ public import LeanPool.PhaseRetrieval.DimdPoly.Internal.TensorBasis
 import LeanPool.PhaseRetrieval.DimdPoly.Internal.CoefficientLimitRigidity
 import LeanPool.PhaseRetrieval.DimdPoly.Internal.OrthogonalCoercivity
 import LeanPool.PhaseRetrieval.DimdPoly.Internal.OrthogonalReduction.OrthogonalReduction
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Combinatorics.Matroid.Init
-import Mathlib.Data.Nat.Factorial.DoubleFactorial
 import Mathlib.MeasureTheory.Function.LpSeminorm.LpNorm
 import Mathlib.Tactic.NormNum.Parity
 

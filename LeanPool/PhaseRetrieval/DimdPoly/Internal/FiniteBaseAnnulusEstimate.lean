@@ -13,10 +13,6 @@ import LeanPool.PhaseRetrieval.DimdPoly.Internal.Hermite1Dimd.ProductAnnulusCirc
 import LeanPool.PhaseRetrieval.DimdPoly.Internal.Hermite1Dimd.ProductBasisAndAnnuli
 import LeanPool.PhaseRetrieval.DimdPoly.Internal.ProductAnnulusLocalization
 import LeanPool.PhaseRetrieval.DimdPoly.Internal.TensorBasis
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Combinatorics.Matroid.Init
-import Mathlib.Data.Nat.Factorial.DoubleFactorial
 import Mathlib.Tactic.NormNum.Parity
 
 /-! # FiniteBaseAnnulusEstimate -/

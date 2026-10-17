@@ -10,10 +10,6 @@ import LeanPool.PhaseRetrieval.DimdPoly.Internal.Hermite1Dimd.BlockLocalization
 import LeanPool.PhaseRetrieval.DimdPoly.Internal.Hermite1Dimd.DegreeBookkeeping
 import LeanPool.PhaseRetrieval.DimdPoly.Internal.Hermite1Dimd.ImportedAnalyticInputs
 import LeanPool.PhaseRetrieval.DimdPoly.Internal.Hermite1Dimd.ProductBasisAndAnnuli
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Combinatorics.Matroid.Init
-import Mathlib.Data.Nat.Factorial.DoubleFactorial
 import Mathlib.Tactic.NormNum.Parity
 
 /-! # ProductAnnulusCircle -/

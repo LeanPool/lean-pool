@@ -8,10 +8,6 @@ module
 public import LeanPool.PhaseRetrieval.DimdPoly.Internal.Hermite1Dimd.Definitions
 import LeanPool.PhaseRetrieval.DimdPoly.Internal.Hermitek.BasisLocalization
 import LeanPool.PhaseRetrieval.DimdPoly.Internal.Hermitek.ImportedAnalyticInputs
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Combinatorics.Matroid.Init
-import Mathlib.Data.Nat.Factorial.DoubleFactorial
 import Mathlib.MeasureTheory.Integral.Pi
 import Mathlib.Tactic.NormNum.Parity
 

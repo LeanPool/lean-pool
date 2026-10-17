@@ -7,10 +7,6 @@ module
 
 public import Mathlib.Analysis.Fourier.AddCircle
 public import Mathlib.LinearAlgebra.Complex.FiniteDimensional
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Combinatorics.Matroid.Init
-import Mathlib.Data.Nat.Factorial.DoubleFactorial
 
 /-! # Definitions -/
 

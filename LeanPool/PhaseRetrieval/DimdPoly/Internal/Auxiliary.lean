@@ -9,10 +9,6 @@ public import Mathlib.LinearAlgebra.Complex.FiniteDimensional
 public import Mathlib.MeasureTheory.Integral.Bochner.Basic
 public import Mathlib.MeasureTheory.Measure.Haar.OfBasis
 import LeanPool.PhaseRetrieval.DimdPoly.Internal.PhaseStability
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Combinatorics.Matroid.Init
-import Mathlib.Data.Nat.Factorial.DoubleFactorial
 import Mathlib.MeasureTheory.Function.LpSeminorm.LpNorm
 import Mathlib.Tactic.NormNum.Parity
 
