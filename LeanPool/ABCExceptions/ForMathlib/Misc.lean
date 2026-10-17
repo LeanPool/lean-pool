@@ -12,7 +12,7 @@ import Mathlib.Algebra.BigOperators.Group.Finset.Basic
 import Mathlib.Algebra.Order.Interval.Finset.SuccPred
 import Mathlib.Algebra.Order.Ring.Nat
 import Mathlib.Data.Finset.Powerset
-import Mathlib.Data.Nat.SuccPred
+import Mathlib.Order.SuccPred.Nat
 
 /-!
 # LeanPool.ABCExceptions.ForMathlib.Misc
