@@ -22,6 +22,7 @@ import Mathlib.Data.Finsupp.Encodable
 import Mathlib.GroupTheory.Complement
 import Mathlib.Order.CompletePartialOrder
 import Mathlib.RingTheory.Henselian
+import Mathlib.RingTheory.HopkinsLevitzki
 import Mathlib.RingTheory.KrullDimension.Polynomial
 import Mathlib.RingTheory.PiTensorProduct
 import Mathlib.RingTheory.PicardGroup
