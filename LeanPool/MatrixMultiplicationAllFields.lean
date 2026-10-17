@@ -113,6 +113,9 @@ is replaced by the pooled simplex theorem. Entropy proofs use the public Mathlib
 
 namespace MatrixMultiplicationAllFields
 
-export MatrixMultiplication (omega_le_nine_quarters_all_fields)
+/-- The matrix multiplication exponent is at most 9/4 over every field. -/
+theorem omega_le_nine_quarters_all_fields (F : Type*) [Field F] :
+    MatrixMultiplication.Arithmetic.omega F ≤ (9 : ℝ) / 4 :=
+  MatrixMultiplication.omega_le_nine_quarters_all_fields F
 
 end MatrixMultiplicationAllFields
