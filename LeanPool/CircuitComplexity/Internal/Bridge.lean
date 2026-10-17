@@ -177,10 +177,10 @@ private theorem wireValD_padDesc_lt {N s s' : Nat} (d : CircDesc N s) (hs : 0 < 
     simp only [padDesc, show (w.val - N) < s from hi, dite_true]
     have hw1 : (d ⟨↑w - N, hi⟩).2.1.1.val < N + s := (d ⟨↑w - N, hi⟩).2.1.1.isLt
     have hw2 : (d ⟨↑w - N, hi⟩).2.1.2.val < N + s := (d ⟨↑w - N, hi⟩).2.1.2.isLt
-    congr 1 <;> (congr 1 <;> (first | rfl | (congr 1; split_ifs with hlt <;> (
+    congr 1 <;> (congr 1 <;> (congr 1; split_ifs with hlt <;> (
       first
       | exact wireValD_padDesc_lt d hs h x _ (by first | exact hw1 | exact hw2)
-      | rfl))))
+      | rfl)))
   termination_by w.val
 
 -- Helper: padded wire values equal the last original output

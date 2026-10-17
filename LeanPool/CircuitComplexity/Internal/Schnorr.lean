@@ -869,7 +869,7 @@ private theorem restrictD_false_components {n s : Nat} (d : CircDesc (n + 1) s) 
     (d_r g).2.1.2.val = (if (d g).2.1.2.val = 0 then n + g.val else (d g).2.1.2.val - 1) := by
   refine ⟨rfl, ?_, ?_, ?_, ?_⟩ <;>
     · simp only [restrictD, remapWireR]
-      split_ifs <;> simp_all <;> omega
+      split_ifs <;> first | omega | simp_all
 
 /-- When neither effective wire of a restricted gate is a back-reference (both
     have index `≥ n + g.val`), the gate output is the constant determined by the
