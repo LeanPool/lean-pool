@@ -44,8 +44,6 @@ that proves `generators_nuclear`.
 
 ## References
 
-* E. Artin, *Zur Theorie der hyperkomplexen Zahlen*, Abh. Math. Sem. Univ. Hamburg **5** (1927),
-  251–260.
 * Schafer, *An Introduction to Nonassociative Algebras*, §3, Theorem 3.1.
 * Zhevlakov, Slin'ko, Shestakov, Shirshov, *Rings That Are Nearly Associative*, ch. 2.
 * [GPR] Garibaldi, Petersson, Racine, *Albert Algebras over Commutative Rings*, Ch. 13.
