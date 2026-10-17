@@ -5543,12 +5543,114 @@ private theorem saddleShiftedLineMajorant_nonneg
     0 ≤ saddleShiftedLineMajorant ε ℓ a k m := by
   have hgammaarg :
       0 < a / 2 + ((k + (m + 3) : ℕ) : ℝ) := by
-    rw [Nat.cast_add]
-    have hm : (0 : ℝ) ≤ ((m + 3 : ℕ) : ℝ) :=
-      Nat.cast_nonneg _
-    linarith
+    rw [Nat.cast_add, ← add_assoc]
+    exact add_pos_of_pos_of_nonneg hshift (Nat.cast_nonneg _)
   unfold saddleShiftedLineMajorant
   positivity [Real.Gamma_pos_of_pos hgammaarg]
+
+private theorem saddleMellinEnvelope_weighted_norm_le
+    {ε ℓ : ℝ} (hε : 0 < ε) (hℓ : 0 < ℓ)
+    (horder : (ε ^ 3) ≤ (10 * Real.log (1 / ε)))
+    (a : ℝ) {t : ℝ} (ht : 1 ≤ |t|)
+    (k m : ℕ) (hshift : 0 < a / 2 + (k : ℝ))
+    (p : ℂ)
+    (hpoly : ‖p‖ ≤ ((1 + |(ε / 4)|) *
+      (1 + ℓ⁻¹ + |(a - ℓ) / ℓ|) ^ 3) * |t| ^ 3) :
+    |t| ^ m * ‖saddleMellinEnvelope ε ℓ
+      ((a : ℂ) + (t : ℂ) * Complex.I) * p‖ ≤
+      saddleShiftedLineMajorant ε ℓ a k m := by
+  let z : ℂ := (a : ℂ) + (t : ℂ) * Complex.I
+  let q : ℂ :=
+    Complex.I * (z - (ℓ : ℂ)) / (ℓ : ℂ)
+  let C : ℝ :=
+    (1 + |(ε / 4)|) *
+      (1 + ℓ⁻¹ + |(a - ℓ) / ℓ|) ^ 3
+  let G : ℝ :=
+    (2 : ℝ) ^ (k + (m + 3)) *
+      Real.Gamma
+        (a / 2 + ((k + (m + 3) : ℕ) : ℝ))
+  have hC : 0 ≤ C := by
+    try dsimp [C]
+    positivity
+  have hgammaarg :
+      0 < a / 2 + ((k + (m + 3) : ℕ) : ℝ) := by
+    rw [Nat.cast_add, ← add_assoc]
+    exact add_pos_of_pos_of_nonneg hshift (Nat.cast_nonneg _)
+  have hG : 0 ≤ G := by
+    try dsimp [G]
+    positivity [Real.Gamma_pos_of_pos hgammaarg]
+  have hgamma :
+      |t| ^ (m + 3) *
+          ‖Complex.Gamma (z / 2)‖ ≤ G := by
+    exact (saddleGamma_shiftedLine_polynomial_bound
+        a ht k (m + 3) hshift)
+  have hpi :
+      ‖Complex.exp
+        (((ℓ : ℂ) - z) *
+          (Real.log Real.pi : ℂ) / 2)‖ =
+        Real.exp ((ℓ - a) * Real.log Real.pi / 2) := by
+    exact saddleMellinPiFactor_shiftedLine_norm ℓ a t
+  have hshell :
+      ‖Complex.exp
+        ((ℓ : ℂ) * mellinShellPhase ε q)‖ ≤
+        Real.exp
+          (ℓ * saddleHorizontalShellVariation ε
+            |(a - ℓ) / ℓ|) := by
+    exact norm_saddleShellExponential_shiftedLine_le
+        hε hℓ horder a t
+  change |t| ^ m *
+    ‖(saddleMellinEnvelope ε ℓ z * p)‖ ≤ _
+  calc
+    |t| ^ m * ‖(saddleMellinEnvelope ε ℓ z * p)‖ =
+        |t| ^ m * ‖Complex.Gamma (z / 2)‖ *
+          ‖Complex.exp
+            (((ℓ : ℂ) - z) *
+              (Real.log Real.pi : ℂ) / 2)‖ *
+          ‖Complex.exp
+            ((ℓ : ℂ) * mellinShellPhase ε q)‖ *
+          ‖p‖ := by
+      unfold saddleMellinEnvelope
+      try dsimp [q]
+      rw [norm_mul, norm_mul, norm_mul]
+      ring
+    _ ≤ |t| ^ m * ‖Complex.Gamma (z / 2)‖ *
+          ‖Complex.exp
+            (((ℓ : ℂ) - z) *
+              (Real.log Real.pi : ℂ) / 2)‖ *
+          ‖Complex.exp
+            ((ℓ : ℂ) * mellinShellPhase ε q)‖ *
+            (C * |t| ^ 3) := by
+      gcongr
+    _ = C *
+          (|t| ^ (m + 3) *
+            ‖Complex.Gamma (z / 2)‖) *
+          ‖Complex.exp
+            (((ℓ : ℂ) - z) *
+              (Real.log Real.pi : ℂ) / 2)‖ *
+          ‖Complex.exp
+            ((ℓ : ℂ) * mellinShellPhase ε q)‖ := by
+      rw [pow_add]
+      ring
+    _ ≤ C * G *
+          ‖Complex.exp
+            (((ℓ : ℂ) - z) *
+              (Real.log Real.pi : ℂ) / 2)‖ *
+          ‖Complex.exp
+            ((ℓ : ℂ) * mellinShellPhase ε q)‖ := by
+      gcongr
+    _ = C * G *
+          Real.exp ((ℓ - a) * Real.log Real.pi / 2) *
+          ‖Complex.exp
+            ((ℓ : ℂ) * mellinShellPhase ε q)‖ := by
+      rw [hpi]
+    _ ≤ C * G *
+          Real.exp ((ℓ - a) * Real.log Real.pi / 2) *
+          Real.exp
+            (ℓ * saddleHorizontalShellVariation ε
+              |(a - ℓ) / ℓ|) := by
+      gcongr
+    _ = saddleShiftedLineMajorant ε ℓ a k m := by
+      rfl
 
 private theorem plusSaddleMellinData_shiftedLine_polynomial_bound
     {ε ℓ : ℝ} (hε : 0 < ε) (hℓ : 0 < ℓ)
@@ -5558,109 +5660,11 @@ private theorem plusSaddleMellinData_shiftedLine_polynomial_bound
     |t| ^ m *
       ‖plusSaddleMellinData ε ℓ
         ((a : ℂ) + (t : ℂ) * Complex.I)‖ ≤
-      saddleShiftedLineMajorant ε ℓ a k m := by
-  let z : ℂ := (a : ℂ) + (t : ℂ) * Complex.I
-  let q : ℂ :=
-    Complex.I * (z - (ℓ : ℂ)) / (ℓ : ℂ)
-  let C : ℝ :=
-    (1 + |(ε / 4)|) *
-      (1 + ℓ⁻¹ + |(a - ℓ) / ℓ|) ^ 3
-  let G : ℝ :=
-    (2 : ℝ) ^ (k + (m + 3)) *
-      Real.Gamma
-        (a / 2 + ((k + (m + 3) : ℕ) : ℝ))
-  have hC : 0 ≤ C := by
-    try dsimp [C]
-    positivity
-  have hgammaarg :
-      0 < a / 2 + ((k + (m + 3) : ℕ) : ℝ) := by
-    rw [Nat.cast_add]
-    have hm : (0 : ℝ) ≤ ((m + 3 : ℕ) : ℝ) :=
-      Nat.cast_nonneg _
-    linarith
-  have hG : 0 ≤ G := by
-    try dsimp [G]
-    positivity [Real.Gamma_pos_of_pos hgammaarg]
-  have hgamma :
-      |t| ^ (m + 3) *
-          ‖Complex.Gamma (z / 2)‖ ≤ G := by
-    simpa [z, G] using!
-      (saddleGamma_shiftedLine_polynomial_bound
-        a ht k (m + 3) hshift)
-  have hpoly :
-      ‖plusPolynomial ε q‖ ≤ C * |t| ^ 3 := by
-    simpa only  using!
-      (norm_plusPolynomial_shiftedLine_le
-        (ε := ε) hℓ a ht)
-  have hpi :
-      ‖Complex.exp
-        (((ℓ : ℂ) - z) *
-          (Real.log Real.pi : ℂ) / 2)‖ =
-        Real.exp ((ℓ - a) * Real.log Real.pi / 2) := by
-    simpa only  using!
-      saddleMellinPiFactor_shiftedLine_norm ℓ a t
-  have hshell :
-      ‖Complex.exp
-        ((ℓ : ℂ) * mellinShellPhase ε q)‖ ≤
-        Real.exp
-          (ℓ * saddleHorizontalShellVariation ε
-            |(a - ℓ) / ℓ|) := by
-    simpa only  using!
-      norm_saddleShellExponential_shiftedLine_le
-        hε hℓ horder a t
-  change |t| ^ m *
-    ‖plusSaddleMellinData ε ℓ z‖ ≤ _
-  calc
-    |t| ^ m * ‖plusSaddleMellinData ε ℓ z‖ =
-        |t| ^ m * ‖Complex.Gamma (z / 2)‖ *
-          ‖Complex.exp
-            (((ℓ : ℂ) - z) *
-              (Real.log Real.pi : ℂ) / 2)‖ *
-          ‖Complex.exp
-            ((ℓ : ℂ) * mellinShellPhase ε q)‖ *
-          ‖plusPolynomial ε q‖ := by
-      unfold plusSaddleMellinData saddleMellinEnvelope
-      try dsimp [q]
-      rw [norm_mul, norm_mul, norm_mul]
-      ring
-    _ ≤ |t| ^ m * ‖Complex.Gamma (z / 2)‖ *
-          ‖Complex.exp
-            (((ℓ : ℂ) - z) *
-              (Real.log Real.pi : ℂ) / 2)‖ *
-          ‖Complex.exp
-            ((ℓ : ℂ) * mellinShellPhase ε q)‖ *
-            (C * |t| ^ 3) := by
-      gcongr
-    _ = C *
-          (|t| ^ (m + 3) *
-            ‖Complex.Gamma (z / 2)‖) *
-          ‖Complex.exp
-            (((ℓ : ℂ) - z) *
-              (Real.log Real.pi : ℂ) / 2)‖ *
-          ‖Complex.exp
-            ((ℓ : ℂ) * mellinShellPhase ε q)‖ := by
-      rw [pow_add]
-      ring
-    _ ≤ C * G *
-          ‖Complex.exp
-            (((ℓ : ℂ) - z) *
-              (Real.log Real.pi : ℂ) / 2)‖ *
-          ‖Complex.exp
-            ((ℓ : ℂ) * mellinShellPhase ε q)‖ := by
-      gcongr
-    _ = C * G *
-          Real.exp ((ℓ - a) * Real.log Real.pi / 2) *
-          ‖Complex.exp
-            ((ℓ : ℂ) * mellinShellPhase ε q)‖ := by
-      rw [hpi]
-    _ ≤ C * G *
-          Real.exp ((ℓ - a) * Real.log Real.pi / 2) *
-          Real.exp
-            (ℓ * saddleHorizontalShellVariation ε
-              |(a - ℓ) / ℓ|) := by
-      gcongr
-    _ = saddleShiftedLineMajorant ε ℓ a k m := by
-      rfl
+      saddleShiftedLineMajorant ε ℓ a k m :=
+  saddleMellinEnvelope_weighted_norm_le hε hℓ horder a ht k m hshift
+    (plusPolynomial ε (Complex.I *
+      (((a : ℂ) + (t : ℂ) * Complex.I) - (ℓ : ℂ)) / (ℓ : ℂ)))
+    (norm_plusPolynomial_shiftedLine_le (ε := ε) hℓ a ht)
 
 private theorem minusSaddleMellinData_shiftedLine_polynomial_bound
     {ε ℓ : ℝ} (hε : 0 < ε) (hℓ : 0 < ℓ)
@@ -5670,109 +5674,11 @@ private theorem minusSaddleMellinData_shiftedLine_polynomial_bound
     |t| ^ m *
       ‖minusSaddleMellinData ε ℓ
         ((a : ℂ) + (t : ℂ) * Complex.I)‖ ≤
-      saddleShiftedLineMajorant ε ℓ a k m := by
-  let z : ℂ := (a : ℂ) + (t : ℂ) * Complex.I
-  let q : ℂ :=
-    Complex.I * (z - (ℓ : ℂ)) / (ℓ : ℂ)
-  let C : ℝ :=
-    (1 + |(ε / 4)|) *
-      (1 + ℓ⁻¹ + |(a - ℓ) / ℓ|) ^ 3
-  let G : ℝ :=
-    (2 : ℝ) ^ (k + (m + 3)) *
-      Real.Gamma
-        (a / 2 + ((k + (m + 3) : ℕ) : ℝ))
-  have hC : 0 ≤ C := by
-    try dsimp [C]
-    positivity
-  have hgammaarg :
-      0 < a / 2 + ((k + (m + 3) : ℕ) : ℝ) := by
-    rw [Nat.cast_add]
-    have hm : (0 : ℝ) ≤ ((m + 3 : ℕ) : ℝ) :=
-      Nat.cast_nonneg _
-    linarith
-  have hG : 0 ≤ G := by
-    try dsimp [G]
-    positivity [Real.Gamma_pos_of_pos hgammaarg]
-  have hgamma :
-      |t| ^ (m + 3) *
-          ‖Complex.Gamma (z / 2)‖ ≤ G := by
-    simpa [z, G] using!
-      (saddleGamma_shiftedLine_polynomial_bound
-        a ht k (m + 3) hshift)
-  have hpoly :
-      ‖minusPolynomial ε q‖ ≤ C * |t| ^ 3 := by
-    simpa only  using!
-      (norm_minusPolynomial_shiftedLine_le
-        (ε := ε) hℓ a ht)
-  have hpi :
-      ‖Complex.exp
-        (((ℓ : ℂ) - z) *
-          (Real.log Real.pi : ℂ) / 2)‖ =
-        Real.exp ((ℓ - a) * Real.log Real.pi / 2) := by
-    simpa only  using!
-      saddleMellinPiFactor_shiftedLine_norm ℓ a t
-  have hshell :
-      ‖Complex.exp
-        ((ℓ : ℂ) * mellinShellPhase ε q)‖ ≤
-        Real.exp
-          (ℓ * saddleHorizontalShellVariation ε
-            |(a - ℓ) / ℓ|) := by
-    simpa only  using!
-      norm_saddleShellExponential_shiftedLine_le
-        hε hℓ horder a t
-  change |t| ^ m *
-    ‖minusSaddleMellinData ε ℓ z‖ ≤ _
-  calc
-    |t| ^ m * ‖minusSaddleMellinData ε ℓ z‖ =
-        |t| ^ m * ‖Complex.Gamma (z / 2)‖ *
-          ‖Complex.exp
-            (((ℓ : ℂ) - z) *
-              (Real.log Real.pi : ℂ) / 2)‖ *
-          ‖Complex.exp
-            ((ℓ : ℂ) * mellinShellPhase ε q)‖ *
-          ‖minusPolynomial ε q‖ := by
-      unfold minusSaddleMellinData saddleMellinEnvelope
-      try dsimp [q]
-      rw [norm_mul, norm_mul, norm_mul]
-      ring
-    _ ≤ |t| ^ m * ‖Complex.Gamma (z / 2)‖ *
-          ‖Complex.exp
-            (((ℓ : ℂ) - z) *
-              (Real.log Real.pi : ℂ) / 2)‖ *
-          ‖Complex.exp
-            ((ℓ : ℂ) * mellinShellPhase ε q)‖ *
-            (C * |t| ^ 3) := by
-      gcongr
-    _ = C *
-          (|t| ^ (m + 3) *
-            ‖Complex.Gamma (z / 2)‖) *
-          ‖Complex.exp
-            (((ℓ : ℂ) - z) *
-              (Real.log Real.pi : ℂ) / 2)‖ *
-          ‖Complex.exp
-            ((ℓ : ℂ) * mellinShellPhase ε q)‖ := by
-      rw [pow_add]
-      ring
-    _ ≤ C * G *
-          ‖Complex.exp
-            (((ℓ : ℂ) - z) *
-              (Real.log Real.pi : ℂ) / 2)‖ *
-          ‖Complex.exp
-            ((ℓ : ℂ) * mellinShellPhase ε q)‖ := by
-      gcongr
-    _ = C * G *
-          Real.exp ((ℓ - a) * Real.log Real.pi / 2) *
-          ‖Complex.exp
-            ((ℓ : ℂ) * mellinShellPhase ε q)‖ := by
-      rw [hpi]
-    _ ≤ C * G *
-          Real.exp ((ℓ - a) * Real.log Real.pi / 2) *
-          Real.exp
-            (ℓ * saddleHorizontalShellVariation ε
-              |(a - ℓ) / ℓ|) := by
-      gcongr
-    _ = saddleShiftedLineMajorant ε ℓ a k m := by
-      rfl
+      saddleShiftedLineMajorant ε ℓ a k m :=
+  saddleMellinEnvelope_weighted_norm_le hε hℓ horder a ht k m hshift
+    (minusPolynomial ε (Complex.I *
+      (((a : ℂ) + (t : ℂ) * Complex.I) - (ℓ : ℂ)) / (ℓ : ℂ)))
+    (norm_minusPolynomial_shiftedLine_le (ε := ε) hℓ a ht)
 
 private noncomputable def saddleHorizontalStripHeight (ℓ A B : ℝ) : ℝ :=
   max |(A - ℓ) / ℓ| |(B - ℓ) / ℓ|
@@ -5823,10 +5729,8 @@ private theorem saddleShiftedLineMajorant_le_fixedStrip
       saddleFixedStripMajorant ε ℓ H a k m := by
   have hgammaarg :
       0 < a / 2 + ((k + (m + 3) : ℕ) : ℝ) := by
-    rw [Nat.cast_add]
-    have hm : (0 : ℝ) ≤ ((m + 3 : ℕ) : ℝ) :=
-      Nat.cast_nonneg _
-    linarith
+    rw [Nat.cast_add, ← add_assoc]
+    exact add_pos_of_pos_of_nonneg hshift (Nat.cast_nonneg _)
   have hgamma :
       0 ≤ Real.Gamma
         (a / 2 + ((k + (m + 3) : ℕ) : ℝ)) :=
@@ -5919,17 +5823,15 @@ private theorem plusSaddleMellinData_horizontalStrip_polynomial_bound
       0 ≤ saddleFixedStripMajorant ε ℓ H A k m := by
     have hgammaarg :
         0 < A / 2 + ((k + (m + 3) : ℕ) : ℝ) := by
-      rw [Nat.cast_add]
-      have hm : (0 : ℝ) ≤ ((m + 3 : ℕ) : ℝ) :=
-        Nat.cast_nonneg _
-      linarith
+      rw [Nat.cast_add, ← add_assoc]
+      exact add_pos_of_pos_of_nonneg hshiftA (Nat.cast_nonneg _)
     unfold saddleFixedStripMajorant
     positivity [Real.Gamma_pos_of_pos hgammaarg]
   refine ⟨C, hAnonneg.trans
     (hC (Set.mem_image_of_mem _ hAmem)), ?_⟩
   intro a ha t ht
   have hshifta : 0 < a / 2 + (k : ℝ) := by
-    linarith [ha.1]
+    linarith only [ha.1, hk]
   calc
     |t| ^ m *
         ‖plusSaddleMellinData ε ℓ
@@ -5969,17 +5871,15 @@ private theorem minusSaddleMellinData_horizontalStrip_polynomial_bound
       0 ≤ saddleFixedStripMajorant ε ℓ H A k m := by
     have hgammaarg :
         0 < A / 2 + ((k + (m + 3) : ℕ) : ℝ) := by
-      rw [Nat.cast_add]
-      have hm : (0 : ℝ) ≤ ((m + 3 : ℕ) : ℝ) :=
-        Nat.cast_nonneg _
-      linarith
+      rw [Nat.cast_add, ← add_assoc]
+      exact add_pos_of_pos_of_nonneg hshiftA (Nat.cast_nonneg _)
     unfold saddleFixedStripMajorant
     positivity [Real.Gamma_pos_of_pos hgammaarg]
   refine ⟨C, hAnonneg.trans
     (hC (Set.mem_image_of_mem _ hAmem)), ?_⟩
   intro a ha t ht
   have hshifta : 0 < a / 2 + (k : ℝ) := by
-    linarith [ha.1]
+    linarith only [ha.1, hk]
   calc
     |t| ^ m *
         ‖minusSaddleMellinData ε ℓ
@@ -6151,24 +6051,22 @@ private theorem norm_minusPolynomial_scaled_le {ε ℓ t : ℝ}
     _ = (1 + |(ε / 4)|) * (1 + ℓ⁻¹) ^ 3 * |t| ^ 3 := by
           ring
 
-private theorem plusSaddleSpectrum_vertical_polynomial_bound {ε ℓ : ℝ}
-    (hε : 0 < ε) (hℓ : 0 < ℓ)
+private theorem saddleEnvelope_weighted_norm_le
+    {ε ℓ : ℝ} (hε : 0 < ε) (hℓ : 0 < ℓ)
     (horder : (ε ^ 3) ≤ (10 * Real.log (1 / ε)))
-    {t : ℝ} (ht : 1 ≤ |t|) (k : ℕ) :
-    |t| ^ k * ‖plusSaddleSpectrum ε ℓ t‖ ≤
+    (t : ℝ) (k : ℕ) (p : ℂ)
+    (hpoly : ‖p‖ ≤ (1 + |(ε / 4)|) * (1 + ℓ⁻¹) ^ 3 * |t| ^ 3) :
+    |t| ^ k * ‖saddleEnvelope ε ℓ t * p‖ ≤
       ((1 + |(ε / 4)|) * (1 + ℓ⁻¹) ^ 3) *
         ((2 : ℝ) ^ (k + 3) *
           Real.Gamma (ℓ / 2 + (k + 3)) *
           Real.exp (2 * |ℓ| * saddleShellTotalVariation ε)) := by
-  have hpoly := norm_plusPolynomial_scaled_le
-    (ε := ε) hℓ ht
   have hgamma := saddleEnvelope_vertical_polynomial_bound
     hε hℓ horder t (k + 3)
   calc
-    |t| ^ k * ‖plusSaddleSpectrum ε ℓ t‖ =
+    |t| ^ k * ‖(saddleEnvelope ε ℓ t * p)‖ =
         |t| ^ k * ‖saddleEnvelope ε ℓ t‖ *
-          ‖plusPolynomial ε ((t : ℂ) / (ℓ : ℂ))‖ := by
-            unfold plusSaddleSpectrum
+          ‖p‖ := by
             rw [norm_mul]
             ring
     _ ≤ |t| ^ k * ‖saddleEnvelope ε ℓ t‖ *
@@ -6186,6 +6084,19 @@ private theorem plusSaddleSpectrum_vertical_polynomial_bound {ε ℓ : ℝ}
               (mul_le_mul_of_nonneg_left hgamma
                 (show 0 ≤ (1 + |(ε / 4)|) * (1 + ℓ⁻¹) ^ 3 by
                   positivity))
+
+private theorem plusSaddleSpectrum_vertical_polynomial_bound {ε ℓ : ℝ}
+    (hε : 0 < ε) (hℓ : 0 < ℓ)
+    (horder : (ε ^ 3) ≤ (10 * Real.log (1 / ε)))
+    {t : ℝ} (ht : 1 ≤ |t|) (k : ℕ) :
+    |t| ^ k * ‖plusSaddleSpectrum ε ℓ t‖ ≤
+      ((1 + |(ε / 4)|) * (1 + ℓ⁻¹) ^ 3) *
+        ((2 : ℝ) ^ (k + 3) *
+          Real.Gamma (ℓ / 2 + (k + 3)) *
+          Real.exp (2 * |ℓ| * saddleShellTotalVariation ε)) :=
+  saddleEnvelope_weighted_norm_le hε hℓ horder t k
+    (plusPolynomial ε ((t : ℂ) / (ℓ : ℂ)))
+    (norm_plusPolynomial_scaled_le (ε := ε) hℓ ht)
 
 private theorem minusSaddleSpectrum_vertical_polynomial_bound {ε ℓ : ℝ}
     (hε : 0 < ε) (hℓ : 0 < ℓ)
@@ -6195,107 +6106,40 @@ private theorem minusSaddleSpectrum_vertical_polynomial_bound {ε ℓ : ℝ}
       ((1 + |(ε / 4)|) * (1 + ℓ⁻¹) ^ 3) *
         ((2 : ℝ) ^ (k + 3) *
           Real.Gamma (ℓ / 2 + (k + 3)) *
-          Real.exp (2 * |ℓ| * saddleShellTotalVariation ε)) := by
-  have hpoly := norm_minusPolynomial_scaled_le
-    (ε := ε) hℓ ht
-  have hgamma := saddleEnvelope_vertical_polynomial_bound
-    hε hℓ horder t (k + 3)
-  calc
-    |t| ^ k * ‖minusSaddleSpectrum ε ℓ t‖ =
-        |t| ^ k * ‖saddleEnvelope ε ℓ t‖ *
-          ‖minusPolynomial ε ((t : ℂ) / (ℓ : ℂ))‖ := by
-            unfold minusSaddleSpectrum
-            rw [norm_mul]
-            ring
-    _ ≤ |t| ^ k * ‖saddleEnvelope ε ℓ t‖ *
-          ((1 + |(ε / 4)|) * (1 + ℓ⁻¹) ^ 3 * |t| ^ 3) := by
-            gcongr
-    _ = ((1 + |(ε / 4)|) * (1 + ℓ⁻¹) ^ 3) *
-          (|t| ^ (k + 3) * ‖saddleEnvelope ε ℓ t‖) := by
-            rw [pow_add]
-            ring
-    _ ≤ ((1 + |(ε / 4)|) * (1 + ℓ⁻¹) ^ 3) *
-        ((2 : ℝ) ^ (k + 3) *
-          Real.Gamma (ℓ / 2 + (k + 3)) *
-          Real.exp (2 * |ℓ| * saddleShellTotalVariation ε)) := by
-            simpa only [Nat.cast_add, Nat.cast_ofNat] using!
-              (mul_le_mul_of_nonneg_left hgamma
-                (show 0 ≤ (1 + |(ε / 4)|) * (1 + ℓ⁻¹) ^ 3 by
-                  positivity))
+          Real.exp (2 * |ℓ| * saddleShellTotalVariation ε)) :=
+  saddleEnvelope_weighted_norm_le hε hℓ horder t k
+    (minusPolynomial ε ((t : ℂ) / (ℓ : ℂ)))
+    (norm_minusPolynomial_scaled_le (ε := ε) hℓ ht)
 
 private theorem integrable_of_continuous_polynomial_decay
     {F : ℝ → ℂ} (hF : Continuous F)
     (hdecay : ∀ j : ℕ, ∃ C : ℝ, 0 ≤ C ∧
       ∀ t : ℝ, 1 ≤ |t| → |t| ^ j * ‖F t‖ ≤ C)
     (k : ℕ) : Integrable (fun t : ℝ => (t : ℂ) ^ k * F t) := by
-  have hcompact : IsCompact (Set.Icc (-1 : ℝ) 1) :=
-    isCompact_Icc
-  obtain ⟨M, hM⟩ := hcompact.bddAbove_image hF.norm.continuousOn
-  have hzero : (0 : ℝ) ∈ Set.Icc (-1 : ℝ) 1 := by
-    constructor <;> norm_num
-  have hMnonneg : 0 ≤ M :=
-    (norm_nonneg (F 0)).trans
-      (hM (Set.mem_image_of_mem (fun t : ℝ => ‖F t‖) hzero))
-  obtain ⟨C, hC, htail⟩ := hdecay (k + 2)
-  have hmajor : Integrable (fun t : ℝ =>
-      (2 * (M + C)) * (1 + t ^ 2)⁻¹) :=
-    integrable_inv_one_add_sq.const_mul (2 * (M + C))
-  have hmoment : Continuous (fun t : ℝ =>
-      (t : ℂ) ^ k * F t) := by
-    exact ((Complex.continuous_ofReal.comp continuous_id).pow k).mul hF
-  apply hmajor.mono' hmoment.aestronglyMeasurable
-  filter_upwards [] with t
-  have hden : 0 < 1 + t ^ 2 := by positivity
-  change ‖(t : ℂ) ^ k * F t‖ ≤
-    2 * (M + C) / (1 + t ^ 2)
-  apply (le_div_iff₀ hden).2
+  obtain ⟨C, _, htail⟩ := hdecay (k + 2)
+  have hmoment : Continuous (fun t : ℝ => (t : ℂ) ^ k * F t) :=
+    ((Complex.continuous_ofReal.comp continuous_id).pow k).mul hF
+  apply hmoment.locallyIntegrable.integrable_of_isBigO_cocompact
+    (g := fun t : ℝ => (1 + t ^ 2)⁻¹) ?_
+    (integrable_inv_one_add_sq.integrableAtFilter _)
+  apply Asymptotics.IsBigO.of_bound (2 * C)
+  have hlarge : ∀ᶠ t : ℝ in cocompact ℝ, 1 ≤ |t| := by
+    simpa only [Real.norm_eq_abs] using
+      (tendsto_norm_cocompact_atTop (E := ℝ)).eventually (eventually_ge_atTop 1)
+  filter_upwards [hlarge] with t ht
+  rw [norm_inv, Real.norm_eq_abs, abs_of_pos (add_pos_of_pos_of_nonneg zero_lt_one (sq_nonneg t)),
+    ← div_eq_mul_inv]
+  apply (le_div_iff₀ (add_pos_of_pos_of_nonneg zero_lt_one (sq_nonneg t))).2
   rw [norm_mul, norm_pow, Complex.norm_real, Real.norm_eq_abs]
-  by_cases ht : |t| ≤ (1 : ℝ)
-  · have htmem : t ∈ Set.Icc (-1 : ℝ) 1 := by
-      constructor
-      · linarith [neg_abs_le t]
-      · linarith [le_abs_self t]
-    have hnorm : ‖F t‖ ≤ M :=
-      hM (Set.mem_image_of_mem (fun u : ℝ => ‖F u‖) htmem)
-    have hpow : |t| ^ k ≤ 1 :=
-      pow_le_one₀ (abs_nonneg t) ht
-    have hsquare : t ^ 2 ≤ 1 := by
-      have habs : |t| ^ 2 ≤ (1 : ℝ) := by
-        linarith [mul_nonneg (abs_nonneg t)
-          (sub_nonneg.mpr ht)]
-      simpa only [sq_abs] using! habs
-    have hweighted : |t| ^ k * ‖F t‖ ≤ M := by
-      calc
-        |t| ^ k * ‖F t‖ ≤ 1 * ‖F t‖ := by
-          gcongr
-        _ = ‖F t‖ := one_mul _
-        _ ≤ M := hnorm
-    calc
-      (|t| ^ k * ‖F t‖) * (1 + t ^ 2)
-        ≤ M * 2 :=
-          mul_le_mul hweighted (by linarith)
-            (by positivity) hMnonneg
-      _ ≤ 2 * (M + C) := by linarith
-  · have htlarge : 1 ≤ |t| :=
-      (lt_of_not_ge ht).le
-    have hsquare : (1 : ℝ) ≤ t ^ 2 := by
-      have habs : (1 : ℝ) ≤ |t| ^ 2 := by
-        linarith [mul_nonneg (abs_nonneg t)
-          (sub_nonneg.mpr htlarge)]
-      simpa only [sq_abs] using! habs
-    calc
-      (|t| ^ k * ‖F t‖) * (1 + t ^ 2)
-        ≤ (|t| ^ k * ‖F t‖) * (2 * t ^ 2) := by
-          gcongr
-          linarith
-      _ = 2 * (|t| ^ (k + 2) * ‖F t‖) := by
-          rw [pow_add, sq_abs]
-          ring
-      _ ≤ 2 * C := by
-          gcongr
-          exact htail t htlarge
-      _ ≤ 2 * (M + C) := by
-          linarith
+  have hsquare : (1 : ℝ) ≤ t ^ 2 := by
+    simpa only [sq_abs] using (one_le_pow₀ ht : 1 ≤ |t| ^ 2)
+  calc
+    (|t| ^ k * ‖F t‖) * (1 + t ^ 2)
+      ≤ (|t| ^ k * ‖F t‖) * (2 * t ^ 2) :=
+        mul_le_mul_of_nonneg_left (by linarith only [hsquare])
+          (mul_nonneg (pow_nonneg (abs_nonneg t) _) (norm_nonneg _))
+    _ = 2 * (|t| ^ (k + 2) * ‖F t‖) := by rw [pow_add, sq_abs]; ring
+    _ ≤ 2 * C := mul_le_mul_of_nonneg_left (htail t ht) (by norm_num)
 
 private theorem saddleShiftedLine_ne_pole
     {a : ℝ}
