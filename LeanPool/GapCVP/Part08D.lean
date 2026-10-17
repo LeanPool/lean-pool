@@ -7,6 +7,7 @@ Authors: OpenAI, Dean Cureton
 module
 
 public import LeanPool.GapCVP.Part08C
+public import Mathlib.Data.Nat.Bitwise
 
 /-! # GapCVP proof, part 08, continuation 04 -/
 
