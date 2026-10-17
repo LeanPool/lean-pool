@@ -1,0 +1,51 @@
+slug: nash-williams-tutte
+title: Nash-Williams–Tutte tree packing and arboricity
+summary: A finite simple graph on a nonempty vertex type has k edge-disjoint spanning
+  trees exactly when every partition into m nonempty parts has at least k(m − 1) crossing
+  edges. The development
+  also proves the Nash-Williams characterization of covering the edges by k forests,
+  and that every finite nonempty 2k-edge-connected simple graph has k edge-disjoint
+  spanning trees. It preserves the general forest exchange lemma and supporting
+  reachability and edge-counting infrastructure, using Mathlib's graph definitions.
+branch: graph theory
+entry_module: LeanPool.NashWilliamsTutte
+authors:
+- Juan Pablo Traverso Gianini
+source:
+  title: Edge-disjoint spanning trees of finite graphs
+  doi: 10.1112/jlms/s1-36.1.445
+  url: https://github.com/jtraverso/nash-williams-trees/tree/101e48847a929dd8102521f57723e2137989ce2e
+  github_repo: jtraverso/nash-williams-trees
+  commit: 101e48847a929dd8102521f57723e2137989ce2e
+  completion_url: https://github.com/jtraverso/nash-williams-trees/commit/5a5153dedcdfdc2eb9dc7e51f71abe0a6778830f
+  completion_date: '2026-10-17'
+license: Apache-2.0
+status: verified
+provenance: AI
+main_declarations:
+- NashWilliamsTutte.tree_packing
+- NashWilliamsTutte.arboricity
+main_results:
+- declaration: NashWilliamsTutte.tree_packing
+  informal: A finite simple graph on a nonempty vertex type has k pairwise edge-disjoint
+    spanning trees if and only if every vertex partition into m nonempty parts has at
+    least k(m − 1) crossing edges.
+- declaration: NashWilliamsTutte.arboricity
+  informal: A finite simple graph is the union of k forests if and only if every nonempty
+    finite vertex set S induces at most k(|S| − 1) edges.
+- declaration: NashWilliamsTutte.exists_trees_of_isEdgeConnected
+  informal: Every finite simple graph on a nonempty vertex type that remains connected
+    after deletion of fewer than 2k edges has k pairwise edge-disjoint spanning trees.
+- declaration: NashWilliamsTutte.exists_forests_core
+  informal: Every finite simple graph G contains k pairwise edge-disjoint forests and
+    a subgraph H such that intersecting each forest with H preserves the connected
+    components of H, and the forests cover every edge of G outside H.
+tags:
+- graph-theory
+- tree-packing
+- arboricity
+- edge-connectivity
+msc:
+- 05C05
+- 05C70
+- 05C40
