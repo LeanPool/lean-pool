@@ -44,7 +44,7 @@ theorem memLp_two_cutoff_vec3_global
     simpa only [Real.norm_eq_abs] using
       mul_le_mul_of_nonneg_right (hχbound x) (norm_nonneg (f x))
   have hglobal : MemLp (K.indicator (fun x => χ x • f x)) 2 volume :=
-    (memLp_indicator_iff_restrict hK).2 hlocal
+    (memLp_indicator_iff_restrict hK.nullMeasurableSet).2 hlocal
   have heq : K.indicator (fun x => χ x • f x) = (fun x => χ x • f x) := by
     funext x
     by_cases hx : x ∈ K
@@ -79,7 +79,8 @@ theorem eLpNorm_two_cutoff_vec3_global_le
     eLpNorm (fun x => χ x • f x) 2 volume ≤
         eLpNorm (K.indicator f) 2 volume :=
       eLpNorm_mono_ae hmem.aestronglyMeasurable (Filter.Eventually.of_forall hpoint)
-    _ = eLpNorm f 2 (volume.restrict K) := eLpNorm_indicator_eq_eLpNorm_restrict hK
+    _ = eLpNorm f 2 (volume.restrict K) :=
+      eLpNorm_indicator_eq_eLpNorm_restrict hK.nullMeasurableSet
 
 /-- A local squared-integral bound controls the Hilbert norm of a bounded
 cutoff of the field. -/

@@ -217,7 +217,7 @@ theorem localized_convection_transfer_of_sws
   let b : Vec3 × ℝ → ℝ := fun z => φ z * ψ z i
   have hb : ContDiff ℝ (⊤ : ℕ∞) b := by
     dsimp [b]
-    exact hφd.mul ((contDiff_apply ℝ ℝ i).comp hψd)
+    exact hφd.mul ((contDiff_apply ℝ (fun _ => ℝ) i).comp hψd)
   have hbc : HasCompactSupport b := by
     dsimp [b]
     exact hφ.2.1.mul_right (f' := fun z => ψ z i)
@@ -358,7 +358,7 @@ private lemma localized_diffusion_transfer_htransfer'_1 :
       apply integral_congr_ae
       filter_upwards [] with z
       have hprod := spatialPartial_mul_full hφsp
-        ((contDiff_apply ℝ ℝ i).comp hψd) j (z.1, z.2)
+        ((contDiff_apply ℝ (fun _ => ℝ) i).comp hψd) j (z.1, z.2)
       change u z i * spatialPartial b j z =
         u z i *
           (spatialSecondPartial (show ParabolicPoint → ℝ from φ) j j z * ψ z i +
@@ -419,7 +419,7 @@ private lemma localized_diffusion_transfer_hsplit_2 :
   have hA := compact_factor_integrable (a := fun z => u z i)
     (b := fun z : Vec3 × ℝ => spatialSecondPartial φ j j z * ψ z i)
     hUi ((spatialSecondPartial_contDiff_full hφd j j).mul
-      ((contDiff_apply ℝ ℝ i).comp hψd)).continuous
+      ((contDiff_apply ℝ (fun _ => ℝ) i).comp hψd)).continuous
     (hφsecondc.mul_right (f' := fun z => ψ z i))
     ((tsupport_mul_subset_left
       (f := fun z : Vec3 × ℝ => spatialSecondPartial φ j j z)
@@ -428,7 +428,7 @@ private lemma localized_diffusion_transfer_hsplit_2 :
     (b := fun z : Vec3 × ℝ => spatialPartial φ j z *
       spatialPartial (fun w => ψ w i) j z)
     hUi ((hφsp.mul (spatialPartial_contDiff
-      ((contDiff_apply ℝ ℝ i).comp hψd) j))).continuous
+      ((contDiff_apply ℝ (fun _ => ℝ) i).comp hψd) j))).continuous
     (hφspc.mul_right (f' := fun z : Vec3 × ℝ =>
       spatialPartial (fun w : Vec3 × ℝ => ψ w i) j z))
     ((tsupport_mul_subset_left
@@ -526,7 +526,7 @@ theorem localized_diffusion_transfer_of_sws
   let b : Vec3 × ℝ → ℝ := fun z => spatialPartial φ j z * ψ z i
   have hb : ContDiff ℝ (⊤ : ℕ∞) b := by
     dsimp [b]
-    exact hφsp.mul ((contDiff_apply ℝ ℝ i).comp hψd)
+    exact hφsp.mul ((contDiff_apply ℝ (fun _ => ℝ) i).comp hψd)
   have hbc : HasCompactSupport b := by
     dsimp [b]
     exact hφspc.mul_right (f' := fun z => ψ z i)

@@ -433,7 +433,7 @@ theorem regEquicontinuity_pressure_mul_memLp_one
     hp.mono_measure (Measure.restrict_le_self)
   have hprod : MemLp (fun z => p z * g z) 1
       (regUniformPositiveTimeMeasure.restrict Q) := hpQ.mul hg
-  have hnorm := eLpNorm_le_eLpNorm_mul_eLpNorm_of_nnnorm
+  have hnorm := eLpNorm_le_eLpNorm_mul_eLpNorm
     (p := ENNReal.ofReal (5 / 3 : ℝ)) (q := ENNReal.ofReal (5 / 2 : ℝ))
     (r := (1 : ℝ≥0∞))
     (fun x y : ℝ => x * y) 1 continuous_mul

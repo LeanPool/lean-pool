@@ -194,7 +194,8 @@ private theorem cutoff_scalar_data
     · rw [show η y = 0 from by by_contra hn; exact hy (hs hn)]
       simp only [zero_mul]
   rw [hid]
-  have hgi : MemLp (B.indicator g) p volume := (memLp_indicator_iff_restrict hB).mpr hg
+  have hgi : MemLp (B.indicator g) p volume :=
+    (memLp_indicator_iff_restrict hB.nullMeasurableSet).mpr hg
   have hmeas : AEStronglyMeasurable (fun y => η y * B.indicator g y) volume :=
     hη.mul hgi.aestronglyMeasurable
   have hnorm : ∀ᵐ y ∂volume, ‖η y * B.indicator g y‖ ≤ C * ‖B.indicator g y‖ := by
@@ -206,7 +207,7 @@ private theorem cutoff_scalar_data
     simpa only [norm_mul, Real.norm_eq_abs C, abs_of_nonneg hC] using hy)
       (g := fun y => C * B.indicator g y) (p := p)
   rw [show (fun y => C * B.indicator g y) = C • B.indicator g from rfl,
-    eLpNorm_const_smul, eLpNorm_indicator_eq_eLpNorm_restrict hB] at hh
+    eLpNorm_const_smul, eLpNorm_indicator_eq_eLpNorm_restrict hB.nullMeasurableSet] at hh
   simpa only [Real.enorm_eq_ofReal_abs, abs_of_nonneg hC] using hh
 
 /-- The harmonic force-growth constant is bounded by its norm envelope

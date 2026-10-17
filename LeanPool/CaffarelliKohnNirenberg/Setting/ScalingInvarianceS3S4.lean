@@ -134,7 +134,7 @@ private theorem s34_second_zero
 private theorem s34_component_contDiff
     {φ : Vec3 × ℝ → Vec3} (hφ : ContDiff ℝ (⊤ : ℕ∞) φ) (i : Fin 3) :
     ContDiff ℝ (⊤ : ℕ∞) (fun z => φ z i) := by
-  exact (contDiff_apply ℝ ℝ i).comp hφ
+  exact contDiff_pi.mp hφ i
 
 private theorem s34_source_support_zero
     {u : ParabolicPoint → Vec3} {Du : ParabolicPoint → Fin 3 → Vec3}

@@ -137,7 +137,7 @@ private theorem associatedPressureTestCurl_spatialPartial_formula
       | 2 => CKN.spatialSecondPartialProd (fun q => A q 1) 0 j z -
           CKN.spatialSecondPartialProd (fun q => A q 0) 1 j z := by
   have hAcomp (k : Fin 3) : ContDiff ℝ (⊤ : ℕ∞) (fun q => A q k) :=
-    (contDiff_apply ℝ ℝ k).comp hA
+    (contDiff_apply ℝ (fun _ => ℝ) k).comp hA
   have hpart (k l : Fin 3) : ContDiff ℝ (⊤ : ℕ∞)
       (fun q => associatedPressureTestPartial (fun w => A w k) l q) := by
     have h := CKN.spatialPartial_contDiff (hAcomp k) l
@@ -339,7 +339,7 @@ private theorem associatedPressureHelmholtzCutoffCurl_derivative_bounds
   have hA : ContDiff ℝ (⊤ : ℕ∞) A :=
     associatedPressureHelmholtzVectorPotential_contDiff hφ
   have hAcomp (i : Fin 3) : ContDiff ℝ (⊤ : ℕ∞) (fun q => A q i) :=
-    (contDiff_apply ℝ ℝ i).comp hA
+    (contDiff_apply ℝ (fun _ => ℝ) i).comp hA
   have hAtcomp (i : Fin 3) : ContDiff ℝ (⊤ : ℕ∞) (fun q => At q i) := by
     simpa [At, associatedPressureHelmholtzVectorPotentialTimePartial,
       CKN.timePartialProd] using CKN.contDiff_timePartial (hAcomp i)
@@ -393,7 +393,7 @@ private theorem associatedPressureHelmholtzCutoffCurl_derivative_bounds
     have hAc : ContDiff ℝ (⊤ : ℕ∞) Ac :=
       (associatedPressureHelmholtzCutoffVectorPotential_mem_spaceTimeTestFunction hφ n).1
     have hAcComp (k : Fin 3) : ContDiff ℝ (⊤ : ℕ∞) (fun q => Ac q k) :=
-      (contDiff_apply ℝ ℝ k).comp hAc
+      (contDiff_apply ℝ (fun _ => ℝ) k).comp hAc
     have hterm (k l : Fin 3) :
         |CKN.spatialSecondPartialProd (fun q => Ac q k) l j z| ≤
           HA k * associatedPressureSpatialProfile K 2 z := by
@@ -463,7 +463,7 @@ theorem associatedPressureHelmholtzTestCutoff_derivative_profile_bounds
     exact associatedPressureTimePartialProd_eq_zero_of_timeSupport hψ hK.isClosed
       hzeroψ (show (x, t).2 ∉ K from ht)
   have hAcomp (i : Fin 3) : ContDiff ℝ (⊤ : ℕ∞) (fun q => A q i) :=
-    (contDiff_apply ℝ ℝ i).comp hA
+    (contDiff_apply ℝ (fun _ => ℝ) i).comp hA
   have hAdecay (i : Fin 3) : RieszPressurePotentialDecay (fun q => A q i) :=
     (associatedPressureHelmholtzVectorPotential_component_decay hφ i).1
   have hAtdecay (i : Fin 3) : RieszPressurePotentialDecay (fun q => At q i) := by
@@ -530,8 +530,8 @@ theorem associatedPressureHelmholtzTestCutoff_derivative_profile_bounds
     let g : Vec3 × ℝ → Vec3 := associatedPressureTestGradient
       (associatedPressureHelmholtzScalarPotentialCutoff φ n)
     have hsum := associatedPressureTimePartialProd_add
-      ((contDiff_apply ℝ ℝ i).comp (hVn n).1)
-      ((contDiff_apply ℝ ℝ i).comp (hGn n).1) z
+      ((contDiff_apply ℝ (fun _ => ℝ) i).comp (hVn n).1)
+      ((contDiff_apply ℝ (fun _ => ℝ) i).comp (hGn n).1) z
     have htime : CKN.timePartialProd
         (fun q => associatedPressureHelmholtzTestCutoff φ n q i) z =
         CKN.timePartialProd (fun q => v q i) z +
@@ -563,8 +563,8 @@ theorem associatedPressureHelmholtzTestCutoff_derivative_profile_bounds
     let g : Vec3 × ℝ → Vec3 := associatedPressureTestGradient
       (associatedPressureHelmholtzScalarPotentialCutoff φ n)
     have hsum := associatedPressureSpatialPartialProd_add
-      ((contDiff_apply ℝ ℝ i).comp (hVn n).1)
-      ((contDiff_apply ℝ ℝ i).comp (hGn n).1) j z
+      ((contDiff_apply ℝ (fun _ => ℝ) i).comp (hVn n).1)
+      ((contDiff_apply ℝ (fun _ => ℝ) i).comp (hGn n).1) j z
     have hspace : CKN.spatialPartialProd
         (fun q => associatedPressureHelmholtzTestCutoff φ n q i) j z =
         CKN.spatialPartialProd (fun q => v q i) j z +

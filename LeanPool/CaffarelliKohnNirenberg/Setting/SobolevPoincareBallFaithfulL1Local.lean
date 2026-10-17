@@ -1120,10 +1120,10 @@ theorem w1p_euclideanBall_poincareL1_inner_faithful
     change MemLp (fun x => u.grad x i) 1 (volumeOn B)
     exact u.grad_memLp i
   have huExt : MemLp (B.indicator u.toFun) 1 volume :=
-    (memLp_indicator_iff_restrict hBmeas).2 huB
+    (memLp_indicator_iff_restrict hBmeas.nullMeasurableSet).2 huB
   have hgradExt (i : Fin 3) :
       MemLp (B.indicator (fun x => u.grad x i)) 1 volume :=
-    (memLp_indicator_iff_restrict hBmeas).2 (hgradB i)
+    (memLp_indicator_iff_restrict hBmeas.nullMeasurableSet).2 (hgradB i)
   have huLoc : LocallyIntegrable (B.indicator u.toFun) volume :=
     huExt.locallyIntegrable (by norm_num)
   have hgradLoc (i : Fin 3) :

@@ -130,7 +130,7 @@ theorem localized_gradient_force_morrey_of_sws
   have hlowIndicator : MemLp
       (S.indicator (fun z : ParabolicPoint => φp z * f z i))
       (ENNReal.ofReal (min q (25 / 9 : ℝ))) volume := by
-    exact (memLp_indicator_iff_restrict hSmeas).2 hlowLocal
+    exact (memLp_indicator_iff_restrict hSmeas.nullMeasurableSet).2 hlowLocal
   have hzero : ∀ z ∉ S, φp z * f z i = 0 := by
     intro z hz
     have hzφ : φp z = 0 := by

@@ -46,7 +46,7 @@ private theorem rieszPressurePackageTimeTensor_memLp
       ((volume : Measure Vec3).prod (volume.restrict (Ioo 0 1))) :=
     (hF i j).comp_fst (volume.restrict (Ioo 0 1))
   have hG : MemLp G (ENNReal.ofReal r) (volume : Measure (Vec3 × ℝ)) := by
-    rw [Measure.volume_eq_prod Vec3 ℝ, memLp_indicator_iff_restrict hE]
+    rw [Measure.volume_eq_prod Vec3 ℝ, memLp_indicator_iff_restrict hE.nullMeasurableSet]
     rw [← Measure.prod_restrict]
     simpa [E] using hProd
   have hTensor : G = rieszPressurePackageTimeTensor F i j := by

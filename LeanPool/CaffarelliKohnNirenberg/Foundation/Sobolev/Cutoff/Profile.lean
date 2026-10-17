@@ -5,6 +5,8 @@ Authors: Scott Armstrong, Vlad Vicol
 -/
 module
 
+public import Mathlib.Analysis.Calculus.Deriv.Inv
+
 public import Mathlib.Analysis.SpecialFunctions.SmoothTransition
 public import Mathlib.Tactic.Linarith
 public import Mathlib.Tactic.Positivity

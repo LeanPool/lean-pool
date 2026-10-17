@@ -33,7 +33,7 @@ theorem stability_tendsto_setIntegral_mul_test_of_weak_Ltwo
     Tendsto (fun n => ∫ x in S, F n x * φ x ∂μ) atTop
       (nhds (∫ x in S, G x * φ x ∂μ)) := by
   let w : α → ℝ := S.indicator φ
-  have hw : MemLp w 2 μ := (hφ.indicator hS).mono_exponent (by simp)
+  have hw : MemLp w 2 μ := (hφ.indicator hS.nullMeasurableSet).mono_exponent (by simp)
   have h := hweak w hw
   have heqF (n : ℕ) :
       (∫ x, F n x * w x ∂μ) = ∫ x in S, F n x * φ x ∂μ := by

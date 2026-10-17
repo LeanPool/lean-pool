@@ -86,7 +86,7 @@ theorem contDiff_vecNormSq {d : ℕ} :
     ContDiff ℝ (⊤ : ℕ∞) (fun x : Vec d => vecNormSq x) := by
   unfold vecNormSq vecDot
   exact ContDiff.sum (s := Finset.univ) fun i _hi =>
-    (contDiff_apply ℝ ℝ i).mul (contDiff_apply ℝ ℝ i)
+    (contDiff_apply ℝ (fun _ => ℝ) i).mul (contDiff_apply ℝ (fun _ => ℝ) i)
 
 theorem contDiff_euclideanSqDist_left {d : ℕ} (x₀ : Vec d) :
     ContDiff ℝ (⊤ : ℕ∞)

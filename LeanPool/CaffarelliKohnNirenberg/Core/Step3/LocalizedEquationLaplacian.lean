@@ -831,9 +831,9 @@ theorem laplacian_transfer_of_sws {Ω : Set Vec3} {I : Set ℝ} {q : ℝ}
   have hφsecond (i j : Fin 3) : ContDiff ℝ (⊤ : ℕ∞)
       (fun z : Vec3 × ℝ => spatialSecondPartial (fun w => ψ w i) j j z) :=
     spatialSecondPartial_contDiff_full
-      ((contDiff_apply ℝ ℝ i).comp hψd) j j
+      ((contDiff_apply ℝ (fun _ => ℝ) i).comp hψd) j j
   have hψi (i : Fin 3) : ContDiff ℝ (⊤ : ℕ∞) (fun z => ψ z i) :=
-    (contDiff_apply ℝ ℝ i).comp hψd
+    (contDiff_apply ℝ (fun _ => ℝ) i).comp hψd
   have hφtime_c := @laplacian_transfer_hφtime_c_1 φ hφd hφc
   have hφsp_c (j : Fin 3) := @laplacian_transfer_hφsp_c_2 φ hφd hφc j
   have hφsp_ts (j : Fin 3) := @laplacian_transfer_hφsp_ts_3 φ hφd j

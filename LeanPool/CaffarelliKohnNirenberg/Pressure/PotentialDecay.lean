@@ -160,7 +160,7 @@ theorem eLpNorm_euclideanBall_le_of_inv_norm_decay
           (ENNReal.ofReal (3 / 2 : ℝ)) volume =
         eLpNorm h (ENNReal.ofReal (3 / 2 : ℝ))
           (volume.restrict (Metric.ball (0 : Vec3) (2 * R))) :=
-      eLpNorm_indicator_eq_eLpNorm_restrict hsm
+      eLpNorm_indicator_eq_eLpNorm_restrict hsm.nullMeasurableSet
     exact (eLpNorm_mono_measure (p := ENNReal.ofReal (3 / 2 : ℝ))
       ((Metric.ball (0 : Vec3) (2 * R)).indicator h) hres).trans heq.le
   have hbound2 : eLpNorm ((Metric.ball (0 : Vec3) (2 * R))ᶜ.indicator h)

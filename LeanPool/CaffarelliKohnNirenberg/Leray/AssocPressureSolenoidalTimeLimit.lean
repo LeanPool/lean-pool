@@ -44,7 +44,7 @@ private theorem associatedPressureHelmholtzCutoffPotential_timePartial
         associatedPressureHelmholtzVectorPotentialTimePartial φ z i := by
   let A : Vec3 × ℝ → ℝ := fun q => associatedPressureHelmholtzVectorPotential φ q i
   have hA : ContDiff ℝ (⊤ : ℕ∞) A := by
-    exact (contDiff_apply ℝ ℝ i).comp
+    exact (contDiff_apply ℝ (fun _ => ℝ) i).comp
       (associatedPressureHelmholtzVectorPotential_contDiff hφ)
   have htimeA : DifferentiableAt ℝ (fun t : ℝ => A (z.1, t)) z.2 := by
     exact ((hA.differentiable (by simp)).differentiableAt).comp z.2 (by fun_prop)
@@ -130,7 +130,7 @@ theorem associatedPressureHelmholtzCutoffCurl_timePartial_eventually_eq
   have hAtSmooth (k : Fin 3) : ContDiff ℝ (⊤ : ℕ∞)
       (fun q : Vec3 × ℝ => associatedPressureHelmholtzVectorPotentialTimePartial φ q k) := by
     exact CKN.contDiff_timePartial
-      ((contDiff_apply ℝ ℝ k).comp
+      ((contDiff_apply ℝ (fun _ => ℝ) k).comp
         (associatedPressureHelmholtzVectorPotential_contDiff hφ))
   have hdir (k l : Fin 3) : ∀ᶠ n : ℕ in atTop,
       rieszPressureJointDirection
@@ -148,7 +148,7 @@ theorem associatedPressureHelmholtzCutoffCurl_timePartial_eventually_eq
     have hc := hdir k l
     filter_upwards [hc] with n hn
     have hcutSmooth := CKN.contDiff_timePartial
-      ((contDiff_apply ℝ ℝ k).comp
+      ((contDiff_apply ℝ (fun _ => ℝ) k).comp
         (associatedPressureHelmholtzVectorPotential_contDiff hφ))
     have hcutTest := rieszPressurePotentialCutoffTest_contDiff (hAtSmooth k) n
     have hleft := rieszPressure_sliceSpatialDeriv_eq_joint hcutTest l z

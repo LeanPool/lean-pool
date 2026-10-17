@@ -171,13 +171,13 @@ theorem zeroExtend_spaceTimeData_memLp
     simpa [T] using hTfin
   refine ⟨?_, ?_, ?_, ?_⟩
   · change MemLp (U.indicator (fun q : Vec3 × ℝ => w (parabolicHomeomorph.symm q))) 2 _
-    exact (memLp_indicator_iff_restrict hUmeas).2 hWmem
+    exact (memLp_indicator_iff_restrict hUmeas.nullMeasurableSet).2 hWmem
   · change MemLp (U.indicator (fun q : Vec3 × ℝ => Dw (parabolicHomeomorph.symm q))) 2 _
-    exact (memLp_indicator_iff_restrict hUmeas).2 hGmem
+    exact (memLp_indicator_iff_restrict hUmeas.nullMeasurableSet).2 hGmem
   · change MemLp (U.indicator (fun q : Vec3 × ℝ => D2w (parabolicHomeomorph.symm q))) 2 _
-    exact (memLp_indicator_iff_restrict hUmeas).2 hHmem
+    exact (memLp_indicator_iff_restrict hUmeas.nullMeasurableSet).2 hHmem
   · change MemLp (U.indicator (fun q : Vec3 × ℝ => Dtw (parabolicHomeomorph.symm q))) 2 _
-    exact (memLp_indicator_iff_restrict hUmeas).2 hTmem
+    exact (memLp_indicator_iff_restrict hUmeas.nullMeasurableSet).2 hTmem
 
 /-- A finite-coordinate projection preserves MemLp (`lem:carleman-sobolev`, ESS). -/
 theorem memLp_pi_component

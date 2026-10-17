@@ -169,7 +169,7 @@ private theorem lpNorm_eq_restrict_of_support_slice
         eLpNorm (B.indicator g) (ENNReal.ofReal (3 / 2 : ℝ)) volume :=
       (eLpNorm_congr_ae hind.symm)
     _ = eLpNorm g (ENNReal.ofReal (3 / 2 : ℝ))
-        (volume.restrict B) := eLpNorm_indicator_eq_eLpNorm_restrict hB)
+        (volume.restrict B) := eLpNorm_indicator_eq_eLpNorm_restrict hB.nullMeasurableSet)
 
 /-- For almost every time in a cylinder, the velocity has spatial `L³` norm on
 the cylinder's ball. -/

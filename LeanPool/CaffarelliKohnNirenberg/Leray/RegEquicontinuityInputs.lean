@@ -105,14 +105,14 @@ private theorem regEquicontinuity_pressure_bound_from_inputs
     by_cases hz : z ∈ S <;> simp [Jbar, Set.indicator, hz]
   have hUbarMem (j : Fin 3) :
       MemLp (fun z : Vec3 × ℝ => Ubar z j) q volume := by
-    rw [hUbarCompEq j, memLp_indicator_iff_restrict hSmeas]
+    rw [hUbarCompEq j, memLp_indicator_iff_restrict hSmeas.nullMeasurableSet]
     have hpos := hU j
     rw [hPositiveTimeMeasure] at hpos
     change MemLp (fun z : Vec3 × ℝ => U z j) q (volume.restrict S) at hpos
     simpa [q] using hpos
   have hUbarBound (j : Fin 3) :
       eLpNorm (fun z : Vec3 × ℝ => Ubar z j) q volume ≤ ENNReal.ofReal BU := by
-    rw [hUbarCompEq j, eLpNorm_indicator_eq_eLpNorm_restrict hSmeas]
+    rw [hUbarCompEq j, eLpNorm_indicator_eq_eLpNorm_restrict hSmeas.nullMeasurableSet]
     have hpos := hUbound j
     rw [hPositiveTimeMeasure] at hpos
     change eLpNorm (fun z : Vec3 × ℝ => U z j) q
@@ -120,7 +120,7 @@ private theorem regEquicontinuity_pressure_bound_from_inputs
     simpa [q] using hpos
   have hJbarMem (i : Fin 3) :
       MemLp (fun z : Vec3 × ℝ => Jbar z i) q volume := by
-    rw [hJbarCompEq i, memLp_indicator_iff_restrict hSmeas]
+    rw [hJbarCompEq i, memLp_indicator_iff_restrict hSmeas.nullMeasurableSet]
     have hpos := (hJpositive i).1
     rw [hPositiveTimeMeasure] at hpos
     change MemLp (fun z : Vec3 × ℝ => J z i) q (volume.restrict S) at hpos
@@ -128,7 +128,7 @@ private theorem regEquicontinuity_pressure_bound_from_inputs
   have hJbarBound (i : Fin 3) :
       eLpNorm (fun z : Vec3 × ℝ => Jbar z i) q volume ≤
         ENNReal.ofReal (3 * BU) := by
-    rw [hJbarCompEq i, eLpNorm_indicator_eq_eLpNorm_restrict hSmeas]
+    rw [hJbarCompEq i, eLpNorm_indicator_eq_eLpNorm_restrict hSmeas.nullMeasurableSet]
     have hpos := (hJpositive i).2
     rw [hPositiveTimeMeasure] at hpos
     change eLpNorm (fun z : Vec3 × ℝ => J z i) q

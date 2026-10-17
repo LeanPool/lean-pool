@@ -54,7 +54,7 @@ theorem contDiffAt_newtonianKernel (n : ℕ) {x : Vec3} (hx : x ≠ 0) :
     unfold q
     apply ContDiff.sum
     intro i _
-    exact (contDiff_apply ℝ ℝ i).pow 2
+    exact (contDiff_apply ℝ (fun _ => ℝ) i).pow 2
   have hpow : ContDiffAt ℝ n (fun z : Vec3 => q z ^ (-(1 : ℝ) / 2)) x :=
     hq.contDiffAt.rpow_const_of_ne (q_pos hx).ne'
   have hconst : ContDiffAt ℝ n (fun _ : Vec3 => (4 * Real.pi)⁻¹) x :=

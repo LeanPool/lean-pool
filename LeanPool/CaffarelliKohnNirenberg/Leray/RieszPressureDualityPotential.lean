@@ -54,7 +54,7 @@ theorem rieszPressurePotentialSpatialProfile_memLp3
       (volume : Measure (Vec3 × ℝ)) := by
   have htime : MemLp (K.indicator (fun _ : ℝ => (1 : ℝ)))
       (ENNReal.ofReal (3 : ℝ)) (volume : Measure ℝ) :=
-    memLp_indicator_const (ENNReal.ofReal (3 : ℝ)) hK.measurableSet (1 : ℝ)
+    memLp_indicator_const (ENNReal.ofReal (3 : ℝ)) hK.measurableSet.nullMeasurableSet (1 : ℝ)
       (Or.inr hK.measure_lt_top.ne)
   have hthree : (ENNReal.ofReal (3 : ℝ)).toReal = 3 := by norm_num
   let b : Vec3 → ℝ := fun x => (1 + ‖x‖) ^ (-(4 : ℝ))

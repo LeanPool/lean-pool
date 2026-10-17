@@ -107,7 +107,8 @@ theorem vlSlab_memLp_shift {k : Vec3 → ℝ} (hk : IsVlKernel k) (x : Vec3) (a 
     rw [vlSlab_measure, Measure.prod_prod]
     exact ENNReal.mul_ne_top hKc.measure_lt_top.ne
       (by simp [Real.volume_Ioo])
-  have hind := memLp_indicator_const (μ := volume.restrict (vlSlab a τ)) 2 hKm C (Or.inr hfin)
+  have hind := memLp_indicator_const (μ := volume.restrict (vlSlab a τ))
+    2 hKm.nullMeasurableSet C (Or.inr hfin)
   refine hind.of_le ?_ ?_
   · exact (hk.continuous.comp (continuous_const.sub continuous_fst)).aestronglyMeasurable
   · filter_upwards [] with p

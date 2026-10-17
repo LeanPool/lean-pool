@@ -146,7 +146,8 @@ theorem pressure_source_bounded_supported_morrey_lt_top
     (hbound : ∀ᵐ z ∂volume, |g z| ≤ |C|)
     (hzero : ∀ z ∉ S, g z = 0) : morreyNorm P κ g < ⊤ := by
   have hconst : MemLp (S.indicator (fun _ : ParabolicPoint => C))
-      (ENNReal.ofReal κ) volume := memLp_indicator_const _ hS C (Or.inr hSfinite.ne)
+      (ENNReal.ofReal κ) volume :=
+    memLp_indicator_const _ hS.nullMeasurableSet C (Or.inr hSfinite.ne)
   apply pressure_source_morrey_lt_top_of_memLp hP hPκ
   apply hconst.of_le hg.aestronglyMeasurable
   filter_upwards [hbound] with z hz

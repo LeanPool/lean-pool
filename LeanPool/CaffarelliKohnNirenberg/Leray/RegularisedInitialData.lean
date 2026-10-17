@@ -72,8 +72,8 @@ def regularisedProfileConvolution (ρ : RegMollifierProfile)
 private theorem regularisedPhysicalKernel_smooth
     (ρ : RegMollifierProfile) (ε : ℝ) (hε : 0 < ε) :
     ContDiff ℝ (⊤ : ℕ∞) (regularisedPhysicalKernel ρ ε hε) := by
-  have hto : ContDiff ℝ (⊤ : ℕ∞) (fun x : Vec3 => WithLp.toLp 2 x) := by
-    fun_prop
+  have hto : ContDiff ℝ (⊤ : ℕ∞) (fun x : Vec3 => WithLp.toLp 2 x) :=
+    regularisedCoordinateEquiv.symm.contDiff
   change ContDiff ℝ (⊤ : ℕ∞)
     (fun x : Vec3 => (ε ^ 3)⁻¹ * ρ.rho (ε⁻¹ • WithLp.toLp 2 x))
   exact contDiff_const.mul (ρ.smooth.comp ((contDiff_const_smul ε⁻¹).comp hto))

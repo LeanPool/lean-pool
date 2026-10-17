@@ -87,7 +87,7 @@ theorem pressureDivergenceCutoffSourceCentredTensor_memLp_hasCompactSupport
       (hηc.fderiv_apply (𝕜 := ℝ) (basisVec j)) (volume.restrict B)) hu hDu i
   refine ⟨?_, fun i => sourceMorreyCutoffVCentredTensor_hasCompactSupport hηB hdB hB i⟩
   intro i
-  have hind := (memLp_indicator_iff_restrict hB.measurableSet).2 (hlocal i)
+  have hind := (memLp_indicator_iff_restrict hB.measurableSet.nullMeasurableSet).2 (hlocal i)
   have heq : B.indicator (fun x => pressureDivergenceCutoffSourceCentredTensor η (spatialDeriv η)
     u Du c x i) =
       (fun x => pressureDivergenceCutoffSourceCentredTensor η (spatialDeriv η) u Du c x i) := by

@@ -64,7 +64,7 @@ theorem sobolev_L6_global :
     dsimp [radius]
     positivity
   have htruncMem (n : ℕ) : MemLp (truncation n) 2 volume := by
-    exact hfun.indicator (hballMeas n)
+    exact hfun.indicator (hballMeas n).nullMeasurableSet
   have htruncMeas (n : ℕ) : AEStronglyMeasurable (truncation n) volume :=
     (htruncMem n).aestronglyMeasurable
   have hfunMeas : AEStronglyMeasurable g.toFun volume := hfun.aestronglyMeasurable
@@ -103,7 +103,7 @@ theorem sobolev_L6_global :
   have htruncBound (n : ℕ) :
       eLpNorm (truncation n) 6 volume ≤ C * (G + error n * A) := by
     rw [show truncation n = (ball n).indicator g.toFun by rfl,
-      eLpNorm_indicator_eq_eLpNorm_restrict (hballMeas n)]
+      eLpNorm_indicator_eq_eLpNorm_restrict (hballMeas n).nullMeasurableSet]
     calc
       lpNormOn 6 (ball n) g.toFun ≤
           C * (weakGradientLpNormOn 2 (euclideanBall (0 : Vec3) (2 * radius n)) g.grad +

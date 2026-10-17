@@ -58,7 +58,8 @@ private lemma memLp_of_memLp_restrict_vec3Ball {g : Vec3 → ℝ} {x₀ : Vec3} 
   have hind : (vec3Ball x₀ ρ).indicator g = g := by
     apply Set.indicator_eq_self.2
     exact Function.support_subset_iff'.2 hzero
-  have h := (memLp_indicator_iff_restrict (isOpen_vec3Ball x₀ ρ).measurableSet).2 hg
+  have h :=
+    (memLp_indicator_iff_restrict (isOpen_vec3Ball x₀ ρ).measurableSet.nullMeasurableSet).2 hg
   rwa [hind] at h
 
 /-- The linear-growth constant of `p₇ + p₈` for the cutoff of `lem:cutoff` at `x₀` of radius

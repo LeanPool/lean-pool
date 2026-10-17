@@ -31,7 +31,7 @@ private theorem eLpNorm_mul_two_two_le
     (hf : AEStronglyMeasurable f μ) (hg : AEStronglyMeasurable g μ) :
     eLpNorm (fun x => f x * g x) 1 μ ≤
       eLpNorm f 2 μ * eLpNorm g 2 μ := by
-  have h := MeasureTheory.eLpNorm_le_eLpNorm_mul_eLpNorm_of_nnnorm
+  have h := MeasureTheory.eLpNorm_le_eLpNorm_mul_eLpNorm
     (μ := μ) (f := f) (g := g) (p := (2 : ℝ≥0∞)) (q := (2 : ℝ≥0∞))
     (r := (1 : ℝ≥0∞)) (b := fun a b : ℝ => a * b) (c := (1 : NNReal))
     (by exact continuous_mul) hf hg (by
@@ -837,17 +837,17 @@ theorem HasWeakGradientOn.mul_of_memLp_two
     HasWeakGradientOn U (fun x => u x * v x)
       (fun x i => Du x i * v x + u x * Dv x i) := by
   have huExt : MemLp (U.indicator u) 2 volume := by
-    exact (memLp_indicator_iff_restrict hU.measurableSet).2 hu
+    exact (memLp_indicator_iff_restrict hU.measurableSet.nullMeasurableSet).2 hu
   have hvExt : MemLp (U.indicator v) 2 volume := by
-    exact (memLp_indicator_iff_restrict hU.measurableSet).2 hv
+    exact (memLp_indicator_iff_restrict hU.measurableSet.nullMeasurableSet).2 hv
   have hDuExt : ∀ i : Fin 3,
       MemLp (fun x => U.indicator (fun y => Du y i) x) 2 volume := by
     intro i
-    exact (memLp_indicator_iff_restrict hU.measurableSet).2 (hDu i)
+    exact (memLp_indicator_iff_restrict hU.measurableSet.nullMeasurableSet).2 (hDu i)
   have hDvExt : ∀ i : Fin 3,
       MemLp (fun x => U.indicator (fun y => Dv y i) x) 2 volume := by
     intro i
-    exact (memLp_indicator_iff_restrict hU.measurableSet).2 (hDv i)
+    exact (memLp_indicator_iff_restrict hU.measurableSet.nullMeasurableSet).2 (hDv i)
   have hwuExt : HasWeakGradientOn U (U.indicator u)
       (fun x i => U.indicator (fun y => Du y i) x) := by
     intro i φ hφ hφc hφU

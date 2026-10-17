@@ -289,8 +289,8 @@ theorem smoothSobolevBall
             (Real.toNNReal (32 / r) : ℝ≥0∞) *
               lpNormOn 2 (euclideanBall x₀ (2 * r)) u) := by
       rw [localSobolevConstant]
-      rw [eLpNorm_indicator_eq_eLpNorm_restrict houter] at hgrad
-      rw [eLpNorm_indicator_eq_eLpNorm_restrict houter] at hgrad
+      rw [eLpNorm_indicator_eq_eLpNorm_restrict houter.nullMeasurableSet] at hgrad
+      rw [eLpNorm_indicator_eq_eLpNorm_restrict houter.nullMeasurableSet] at hgrad
       simpa [gradientLpNormOn, lpNormOn, ENNReal.smul_def, smul_eq_mul,
         mul_assoc, mul_left_comm, mul_comm] using
         (mul_le_mul_of_nonneg_left hgrad

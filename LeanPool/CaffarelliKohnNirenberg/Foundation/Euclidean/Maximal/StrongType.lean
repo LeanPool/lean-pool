@@ -5,6 +5,8 @@ Authors: Scott Armstrong, Vlad Vicol
 -/
 module
 
+public import Mathlib.Analysis.SpecialFunctions.Integrals.Basic
+
 public import LeanPool.CaffarelliKohnNirenberg.Foundation.Euclidean.Maximal.HardyLittlewood
 public import LeanPool.CaffarelliKohnNirenberg.Foundation.Measure.LayerCake
 public import LeanPool.CaffarelliKohnNirenberg.Foundation.Measure.WeightedKernelIdentity
