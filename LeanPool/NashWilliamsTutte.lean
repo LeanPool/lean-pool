@@ -7,7 +7,6 @@ module
 
 public import LeanPool.NashWilliamsTutte.Theorems
 
-
 /-!
 # Nash-Williams–Tutte tree packing and arboricity
 

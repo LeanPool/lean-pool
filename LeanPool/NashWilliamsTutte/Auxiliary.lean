@@ -174,7 +174,7 @@ variable (G : SimpleGraph V) {k : ℕ}
 def ValidForests (F : Fin k → SimpleGraph V) : Prop :=
   (∀ i, F i ≤ G ∧ (F i).IsAcyclic) ∧ Pairwise fun i j ↦ Disjoint (F i) (F j)
 
-/-- The totalEdges number of edges of a family of graphs. -/
+/-- The total number of edges of a family of graphs. -/
 noncomputable def totalEdges (F : Fin k → SimpleGraph V) : ℕ := ∑ i, (F i).edgeSet.ncard
 
 /-- `uv` is an edge of `G` not covered by the family `F`. -/
@@ -266,7 +266,7 @@ theorem ExchangeStep.total_eq [Finite V] {F F' : Fin k → SimpleGraph V} (h : E
       (Set.toFinite _)
   omega
 
-/-- In a family with the maximum totalEdges number of edges, the endpoints of an uncovered edge are
+/-- In a family with the maximum total number of edges, the endpoints of an uncovered edge are
 joined in every forest. -/
 theorem reachable_of_uncovered [Finite V] {F : Fin k → SimpleGraph V} (hF : ValidForests G F)
     (hmax : ∀ F' : Fin k → SimpleGraph V, ValidForests G F' → totalEdges F' ≤ totalEdges F)

@@ -15,8 +15,8 @@ For a finite simple graph `G` on `V`:
 
 * `NashWilliamsTutte.tree_packing`: **Nash-Williams (1961), Tutte (1961).**
   `G` has `k` edge-disjoint spanning trees if and only if, for every partition of `V` into `m`
-  parts, at least `k (m - 1)`
-  edges of `G` join different parts. A partition is given by a map `f : V → V` (its parts are the
+  parts, at least `k (m - 1)` edges of `G` join different parts. A partition is given by a map
+  `f : V → V` (its parts are the
   nonempty fibres, `#(univ.image f)` of them), and the edges of `G` joining different parts are
   those of `G ⊓ (⊤ : SimpleGraph V).comap f`.
 * `NashWilliamsTutte.arboricity`: **Nash-Williams (1964).** The edges of `G` can be covered by `k`
