@@ -162,13 +162,13 @@ theorem S_SEQ {L_b'' : Set UInt64} :
   specialize HSecondWeak HCode'
   rcases HSecondWeak with ⟨m', ⟨_, HSW2, HSW3, HSW4⟩⟩
   exists s''
-  constructor <;> try assumption
+  constructor
   · unfold weak
     intros HCode
     exists (m + m')
-    constructor <;> try assumption
+    constructor
     · exact Nat.add_gt_zero _ _ HFW1
-    · constructor <;> try assumption
+    · constructor
       · rw [<- HFW2] at HSW2
         simp only [MState.run_n_m_steps_comp] at HSW2
         exact HSW2
