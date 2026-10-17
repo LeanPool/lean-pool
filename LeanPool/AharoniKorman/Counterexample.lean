@@ -5,7 +5,7 @@ Authors: Bhavik Mehta
 -/
 module
 
-public import Mathlib.Data.Setoid.Partition
+public import Mathlib.Order.Setoid.Partition
 
 public import Mathlib.Algebra.Group.End
 public import Mathlib.Algebra.Order.Ring.Unbundled.Rat
