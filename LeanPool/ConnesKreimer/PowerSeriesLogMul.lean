@@ -64,6 +64,7 @@ theorem logOf_mul [IsAddTorsionFree A] {f g : A⟦X⟧}
     obtain ⟨U, hU⟩ := hfgU
     have h2 : P * (f * g) * ↑U⁻¹ = Q * (f * g) * ↑U⁻¹ := by rw [h]
     rwa [← hU, mul_assoc, mul_assoc, U.mul_inv, mul_one, mul_one] at h2
+  have : HasUniqueDiv A := .of_module_rat A
   apply derivative.ext
   · -- derivatives agree
     apply hcancel
