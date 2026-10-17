@@ -100,7 +100,7 @@ def determinant (e : ℕ) : degreeLT R e →ₗ[R] BoundedPair R e where
   change (widen e q : R[X]) = (q : R[X])
   exact widen_coe e q
 
-@[simp] theorem diagonal_determinant (e : ℕ) (q : degreeLT R e) :
+theorem diagonal_determinant (e : ℕ) (q : degreeLT R e) :
     diagonal e (determinant e q) = 0 := by
   simp only [diagonal_apply, determinant_fst, determinant_snd, neg_mul, neg_add_cancel]
 

@@ -26,6 +26,7 @@ open scoped BigOperators
 
 namespace MatrixMultiplication.Arithmetic
 
+/-- Arithmetic gates over a field with explicit input and register references. -/
 inductive Gate (F Input Register : Type*) where
   | literal : F → Gate F Input Register
   | input : Input → Gate F Input Register
@@ -37,6 +38,7 @@ namespace Gate
 
 variable {F Input Register : Type*}
 
+/-- Interpret a gate using the current input values and register contents. -/
 def eval [Field F] (inputs : Input → F) (registers : Register → F) :
     Gate F Input Register → F
   | .literal z => z
@@ -45,6 +47,7 @@ def eval [Field F] (inputs : Input → F) (registers : Register → F) :
   | .sub i j => registers i - registers j
   | .mul i j => registers i * registers j
 
+/-- Charge one operation for arithmetic gates and none for input or literal loading. -/
 def cost : Gate F Input Register → ℕ
   | .literal _ => 0
   | .input _ => 0
@@ -54,6 +57,7 @@ def cost : Gate F Input Register → ℕ
 
 end Gate
 
+/-- A division-free straight-line program indexed by its number of allocated registers. -/
 inductive Program (F Input : Type*) : ℕ → Type _ where
   | nil : Program F Input 0
   | step {r : ℕ} : Program F Input r → Gate F Input (Fin r) → Program F Input (r + 1)
@@ -62,42 +66,54 @@ namespace Program
 
 variable {F Input : Type*}
 
+/-- Evaluate every register of a field-valued straight-line program. -/
 def eval [Field F] : {r : ℕ} → Program F Input r → (Input → F) → Fin r → F
   | 0, .nil, _ => Fin.elim0
   | _ + 1, .step p g, inputs =>
     Fin.cases (g.eval inputs (p.eval inputs)) (p.eval inputs)
 
+/-- Total number of arithmetic operations in a straight-line program. -/
 def cost : {r : ℕ} → Program F Input r → ℕ
   | 0, .nil => 0
   | _ + 1, .step p g => p.cost + g.cost
 
 end Program
 
+/-- Disjoint entry positions of the left and right rectangular matrix inputs. -/
 abbrev MatrixInput (a b c : ℕ) := (Fin a × Fin b) ⊕ (Fin b × Fin c)
 
+/-- Assemble the two matrices into the program's disjoint input space. -/
 def matrixInputs {F : Type*} {a b c : ℕ}
     (A : Matrix (Fin a) (Fin b) F) (B : Matrix (Fin b) (Fin c) F) :
     MatrixInput a b c → F
   | .inl (i, j) => A i j
   | .inr (j, k) => B j k
 
+/-- A straight-line program with designated registers for rectangular matrix-product
+entries. -/
 structure MatrixAlgorithm (F : Type*) (a b c : ℕ) where
+  /-- Number of registers used by the matrix multiplication program. -/
   registers : ℕ
+  /-- The straight-line program underlying the matrix algorithm. -/
   program : Program F (MatrixInput a b c) registers
+  /-- Register location of each output matrix entry. -/
   output : Fin a → Fin c → Fin registers
 
 namespace MatrixAlgorithm
 
 variable {F : Type*} [Field F] {a b c : ℕ}
 
+/-- Evaluate the algorithm's output matrix on its two input matrices. -/
 def eval (P : MatrixAlgorithm F a b c)
     (A : Matrix (Fin a) (Fin b) F) (B : Matrix (Fin b) (Fin c) F) :
     Matrix (Fin a) (Fin c) F :=
   fun i k => P.program.eval (matrixInputs A B) (P.output i k)
 
+/-- The program computes the matrix product for every pair of inputs. -/
 def Correct (P : MatrixAlgorithm F a b c) : Prop :=
   ∀ (A : Matrix (Fin a) (Fin b) F) (B : Matrix (Fin b) (Fin c) F), P.eval A B = A * B
 
+/-- Arithmetic operation count of the matrix multiplication program. -/
 def cost (P : MatrixAlgorithm F a b c) : ℕ := P.program.cost
 
 end MatrixAlgorithm
@@ -108,16 +124,21 @@ def AdmissibleExponent (F : Type*) [Field F] (τ : ℝ) : Prop :=
     ∀ n : ℕ, 1 ≤ n → ∃ P : MatrixAlgorithm F n n n,
       P.Correct ∧ (P.cost : ℝ) ≤ C * (n : ℝ) ^ (τ + ε)
 
+/-- The infimum of admissible arithmetic matrix multiplication exponents over the given
+field. -/
 def omega (F : Type*) [Field F] : ℝ := sInf {τ : ℝ | AdmissibleExponent F τ}
 
 /-- The inner dimension of an `n × n^k` by `n^k × n` multiplication. -/
 def innerSize (n : ℕ) (k : ℝ) : ℕ := ⌈(n : ℝ) ^ k⌉₊
 
+/-- Uniform arithmetic cost bounds for n by ceil(n^k) by n multiplication, with positive
+slack. -/
 def RectangularAdmissibleExponent (F : Type*) [Field F] (k τ : ℝ) : Prop :=
   ∀ ε : ℝ, 0 < ε → ∃ C : ℝ, 0 < C ∧
     ∀ n : ℕ, 1 ≤ n → ∃ P : MatrixAlgorithm F n (innerSize n k) n,
       P.Correct ∧ (P.cost : ℝ) ≤ C * (n : ℝ) ^ (τ + ε)
 
+/-- The infimum of admissible arithmetic exponents at a fixed rectangular shape. -/
 def rectangularOmega (F : Type*) [Field F] (k : ℝ) : ℝ :=
   sInf {τ : ℝ | RectangularAdmissibleExponent F k τ}
 

@@ -23,10 +23,13 @@ namespace MatrixMultiplicationAllFields
 
 namespace MatrixMultiplication.Foundation.Separation
 
+/-- A d-dimensional integer grid with Q positions per coordinate. -/
 abbrev Grid (d Q : ℕ) := Fin d → Fin Q
 
+/-- Squared Euclidean norm of a grid point, computed in natural numbers. -/
 def gridSquaredNorm {d Q : ℕ} (x : Grid d Q) : ℕ := ∑ i, (x i : ℕ) ^ 2
 
+/-- Dot product of two grid points, computed in natural numbers. -/
 def gridDot {d Q : ℕ} (t u : Grid d Q) : ℕ := ∑ i, (t i : ℕ) * (u i : ℕ)
 
 theorem gridSquaredNorm_le {d Q : ℕ} (x : Grid d Q) : gridSquaredNorm x ≤ d * Q ^ 2 := by
@@ -46,9 +49,11 @@ theorem gridDot_le {d Q : ℕ} (t u : Grid d Q) : gridDot t u ≤ d * Q ^ 2 := b
         Nat.mul_le_mul (Nat.le_of_lt (t i).isLt) (Nat.le_of_lt (u i).isLt)
     _ = d * Q ^ 2 := by simp
 
+/-- Color a grid point by its bounded squared norm for the pigeonhole argument. -/
 def normColor {d Q : ℕ} (x : Grid d Q) : Fin (d * Q ^ 2 + 1) :=
   ⟨gridSquaredNorm x, Nat.lt_succ_of_le (gridSquaredNorm_le x)⟩
 
+/-- Color a pair of grid points by their bounded dot product. -/
 def dotColor {d Q : ℕ} (t u : Grid d Q) : Fin (d * Q ^ 2 + 1) :=
   ⟨gridDot t u, Nat.lt_succ_of_le (gridDot_le t u)⟩
 

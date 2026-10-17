@@ -26,10 +26,13 @@ open scoped BigOperators
 variable {K X Y Z A B C A' B' C' : Type*}
 variable [CommSemiring K] [Fintype A] [Fintype B] [Fintype C]
 
+/-- Block-diagonal coordinate map applying a separate matrix in each original-coordinate
+fiber. -/
 def fiberMatrix [DecidableEq X] (M : X → A' → A → K) :
     (X × A') → (X × A) → K :=
   fun output input => if output.1 = input.1 then M output.1 output.2 input.2 else 0
 
+/-- Apply three families of linear maps within their respective original-coordinate fibers. -/
 def fiberTransform (MX : X → A' → A → K) (MY : Y → B' → B → K)
     (MZ : Z → C' → C → K) (T : Tensor K (X × A) (Y × B) (Z × C)) :
     Tensor K (X × A') (Y × B') (Z × C') :=
@@ -37,6 +40,7 @@ def fiberTransform (MX : X → A' → A → K) (MY : Y → B' → B → K)
     MX x.1 x.2 a * MY y.1 y.2 b * MZ z.1 z.2 c *
       T (x.1, a) (y.1, b) (z.1, c)
 
+/-- Scale each tensor coefficient by a function of its original coordinates. -/
 def originalScale (coefficient : X → Y → Z → K)
     (T : Tensor K (X × A) (Y × B) (Z × C)) :
     Tensor K (X × A) (Y × B) (Z × C) :=
@@ -79,6 +83,7 @@ theorem fiberTransform_eq_restrict [Fintype X] [Fintype Y] [Fintype Z]
   simp [fiberTransform, Tensor.restrict, fiberMatrix, Fintype.sum_prod_type,
     ite_mul, mul_ite]
 
+/-- Zero tensor entries whose original coordinates fail a prescribed predicate. -/
 noncomputable def originalMask (P : X → Y → Z → Prop)
     (T : Tensor K (X × A) (Y × B) (Z × C)) :
     Tensor K (X × A) (Y × B) (Z × C) := by
@@ -94,6 +99,7 @@ theorem fiberTransform_originalMask (MX : X → A' → A → K)
   funext x y z
   by_cases h : P x.1 y.1 z.1 <;> simp [fiberTransform, originalMask, h]
 
+/-- All tensor coefficients outside the prescribed original-coordinate support vanish. -/
 def SupportedOn (P : X → Y → Z → Prop)
     (T : Tensor K (X × A) (Y × B) (Z × C)) : Prop :=
   ∀ x y z, ¬ P x.1 y.1 z.1 → T x y z = 0
@@ -121,6 +127,7 @@ theorem originalMask_eq_self (P : X → Y → Z → Prop)
   · simp [originalMask, h]
   · simp [originalMask, h, hT x y z h]
 
+/-- The diagonal projection retaining the fibers selected by a predicate. -/
 noncomputable def localSelector (P : X → Prop) : (X × A) → (X × A) → K := by
   classical
   exact fun output input =>
@@ -138,10 +145,12 @@ theorem factoredMask_eq_restrict [Fintype X] [Fintype Y] [Fintype Z]
 
 variable {Label : Type*}
 
+/-- The three original coordinates have the same branch label. -/
 def Synchronized (lx : X → Label) (ly : Y → Label) (lz : Z → Label) :
     X → Y → Z → Prop :=
   fun x y z => lx x = ly y ∧ lx x = lz z
 
+/-- All three original coordinates belong to one specified branch. -/
 def InBranch (lx : X → Label) (ly : Y → Label) (lz : Z → Label)
     (label : Label) : X → Y → Z → Prop :=
   fun x y z => lx x = label ∧ ly y = label ∧ lz z = label

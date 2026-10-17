@@ -25,13 +25,15 @@ namespace MatrixMultiplication
 open MatrixMultiplication.Foundation Filter
 open scoped Topology BigOperators
 
+/-- The three pairs of tensor readers charged for shared auxiliary resources. -/
 inductive ReaderPair where
   | xy | xz | yz
   deriving DecidableEq
 
+/-- An explicit enumeration of the three reader pairs. -/
 protected abbrev ReaderPair.enumList : List ReaderPair := [.xy, .xz, .yz]
 
-protected theorem ReaderPair.enumList_getElem?_ctorIdx_eq (x : ReaderPair) :
+protected theorem ReaderPair.enumList_getElemAtCtorIdx (x : ReaderPair) :
     ReaderPair.enumList[ReaderPair.ctorIdx x]? = some x := by
   classical
   cases x <;> rfl
@@ -48,7 +50,7 @@ instance : Fintype ReaderPair where
   complete := by
     intro x
     rw [Finset.mem_mk, Multiset.mem_coe, List.mem_iff_getElem?]
-    exact ⟨ReaderPair.ctorIdx x, ReaderPair.enumList_getElem?_ctorIdx_eq x⟩
+    exact ⟨ReaderPair.ctorIdx x, ReaderPair.enumList_getElemAtCtorIdx x⟩
 
 namespace ConditionalLabels
 
@@ -59,11 +61,13 @@ section PairAccounting
 variable {I : Type u} [Fintype I]
 
 open Classical in
+/-- Product of pool populations assigned to one reader pair. -/
 def pairingSize (population : I → ℕ) (reader : I → ReaderPair)
     (pair : ReaderPair) : ℕ :=
   ∏ i, if reader i = pair then population i else 1
 
 open Classical in
+/-- Sum of pool rates assigned to one reader pair. -/
 def pairingRate (rate : I → ℝ) (reader : I → ReaderPair)
     (pair : ReaderPair) : ℝ :=
   ∑ i, if reader i = pair then rate i else 0
@@ -135,11 +139,13 @@ variable {A : Type u} [Fintype A] {Label : ℕ → Type v}
 open StageHierarchyResources HierarchySeparationRates
 
 open Classical in
+/-- Product of the finite refinement counts charged to one reader pair. -/
 def stagePairingSize (counts : A → ℕ) (labels : ∀ n, A → Label n)
     (depth : ℕ) (reader : Fin depth → ReaderPair) (pair : ReaderPair) (t : ℕ) : ℕ :=
   pairingSize (fun n : Fin depth => stageRefinementCount counts labels n.val t) reader pair
 
 open Classical in
+/-- Sum of hierarchy entropy rates charged to one reader pair. -/
 def stagePairingRate (counts : A → ℕ) (labels : ∀ n, A → Label n)
     (depth : ℕ) (reader : Fin depth → ReaderPair) (pair : ReaderPair) : ℝ :=
   pairingRate (fun n : Fin depth => stageEntropyRate counts labels n.val) reader pair
@@ -239,6 +245,7 @@ theorem limit_le_source_cost (counts : A → ℕ) (hD : 0 < ∑ a, counts a)
     (charged_cost_tendsto counts hD labels depth complete C) finite_bound
 
 open Classical in
+/-- Conditional entropy charged to one reader pair under a source probability law. -/
 def lawPairingRate (p : FiniteLaw A) (labels : ∀ n, A → Label n)
     (depth : ℕ) (reader : Fin depth → ReaderPair) (pair : ReaderPair) : ℝ :=
   pairingRate (fun n : Fin depth =>

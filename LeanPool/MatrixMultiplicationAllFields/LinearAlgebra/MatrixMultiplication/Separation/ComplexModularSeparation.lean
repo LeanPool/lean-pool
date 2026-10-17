@@ -23,11 +23,14 @@ namespace MatrixMultiplicationAllFields
 
 namespace MatrixMultiplication.Foundation.Separation
 
+/-- Finite product of cyclic groups containing the integer separation grid. -/
 abbrev AuxiliaryGroup (d Q : ℕ) := Fin d → ZMod (4 * Q)
 
+/-- Embed an integer grid point into the finite ambient separation group. -/
 def gridToGroup {d Q : ℕ} (x : Grid d Q) : AuxiliaryGroup d Q :=
   fun i => (x i : ℕ)
 
+/-- Embed an integer grid point into real coordinate space. -/
 def gridToReal {d Q : ℕ} (x : Grid d Q) : Fin d → ℝ :=
   fun i => (x i : ℕ)
 

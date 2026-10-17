@@ -47,6 +47,7 @@ theorem map_mass_mul_conditional_map {A B C : Type*}
 
 end FiniteLaw
 
+/-- A finite record of labels from the first n levels of a hierarchy. -/
 def LabelRecord (Label : ℕ → Type u) : ℕ → Type u
   | 0 => PUnit
   | n + 1 => LabelRecord Label n × Label n
@@ -61,19 +62,23 @@ instance labelRecordFintype (Label : ℕ → Type u) [∀ n, Fintype (Label n)] 
       change Fintype (LabelRecord Label n × Label n)
       infer_instance
 
+/-- Collect the first n labels of a source point into a label record. -/
 def labelRecordOf {A : Type v} {Label : ℕ → Type u}
     (labels : ∀ n, A → Label n) : (n : ℕ) → A → LabelRecord Label n
   | 0, _ => PUnit.unit
   | n + 1, a => (labelRecordOf labels n a, labels n a)
 
+/-- Conditional probability laws describing successive refinements of finite labels. -/
 structure FiniteLabelHierarchy (Label : ℕ → Type u) [∀ n, Fintype (Label n)]
     (depth : ℕ) where
+  /-- The next-label law conditioned on an existing prefix. -/
   conditional : ∀ n, n < depth → LabelRecord Label n → FiniteLaw (Label n)
 
 namespace FiniteLabelHierarchy
 
 variable {Label : ℕ → Type u} [∀ n, Fintype (Label n)] {depth : ℕ}
 
+/-- The probability law on label prefixes induced by the successive conditional laws. -/
 def prefixLaw (h : FiniteLabelHierarchy Label depth) :
     (n : ℕ) → n ≤ depth → FiniteLaw (LabelRecord Label n)
   | 0, _ =>
@@ -100,12 +105,13 @@ def prefixLaw (h : FiniteLabelHierarchy Label depth) :
       (h.prefixLaw n (Nat.le_of_succ_le hn)).joint
         (h.conditional n (Nat.lt_of_succ_le hn)) := rfl
 
-@[simp] theorem prefixLaw_succ_mass (h : FiniteLabelHierarchy Label depth)
+theorem prefixLaw_succ_mass (h : FiniteLabelHierarchy Label depth)
     (n : ℕ) (hn : n + 1 ≤ depth) (r : LabelRecord Label n) (s : Label n) :
     (h.prefixLaw (n + 1) hn).mass (r, s) =
       (h.prefixLaw n (Nat.le_of_succ_le hn)).mass r *
         (h.conditional n (Nat.lt_of_succ_le hn) r).mass s := rfl
 
+/-- Expected conditional entropy contributed by one hierarchy refinement. -/
 def refinementEntropy (h : FiniteLabelHierarchy Label depth) (n : ℕ) : ℝ :=
   if hn : n < depth then
     ∑ r, (h.prefixLaw n (Nat.le_of_lt hn)).mass r *
@@ -151,6 +157,7 @@ theorem prefixLaw_entropy (h : FiniteLabelHierarchy Label depth)
       rw [prefixLaw_entropy_succ h n hn,
         ih (Nat.le_of_succ_le hn), Finset.sum_range_succ]
 
+/-- The induced probability law on complete label records. -/
 def recordLaw (h : FiniteLabelHierarchy Label depth) :
     FiniteLaw (LabelRecord Label depth) := h.prefixLaw depth le_rfl
 
@@ -171,6 +178,7 @@ theorem refinementEntropy_sum_of_injective_record
     _ = finiteEntropy (p.map record).mass := congrArg finiteEntropy hmass
     _ = finiteEntropy p.mass := p.map_entropy_of_injective record hinjective
 
+/-- Build a hierarchy by conditioning a source law on its successive label prefixes. -/
 def ofLawLabels {A : Type v} [Fintype A] (p : FiniteLaw A)
     (labels : ∀ n, A → Label n) (depth : ℕ) : FiniteLabelHierarchy Label depth where
   conditional n _ r := (p.conditional (labelRecordOf labels n) r).map (labels n)

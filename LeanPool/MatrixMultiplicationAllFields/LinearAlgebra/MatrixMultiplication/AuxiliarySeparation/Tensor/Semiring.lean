@@ -155,9 +155,13 @@ end Restriction
 variable (K) in
 /-- A set-sized presentation of any finite coefficient tensor over `K`. -/
 structure FiniteTensor where
+  /-- Dimension of the tensor's first coordinate space. -/
   nx : ℕ
+  /-- Dimension of the tensor's second coordinate space. -/
   ny : ℕ
+  /-- Dimension of the tensor's third coordinate space. -/
   nz : ℕ
+  /-- Coefficient array in the three standard finite coordinate spaces. -/
   coeff : Tensor K (Fin nx) (Fin ny) (Fin nz)
 
 namespace FiniteTensor
@@ -184,9 +188,11 @@ theorem ofTensor_le_iff {X Y Z U V W : Type*}
     ofTensor T ≤ ofTensor S ↔ IsRestriction T S :=
   IsRestriction.reindex_iff T S _ _ _ _ _ _
 
+/-- Tensor product represented again on standard finite coordinate sets. -/
 def product (T S : (FiniteTensor K)) : (FiniteTensor K) :=
   ofTensor (Tensor.product T.coeff S.coeff)
 
+/-- Direct sum represented again on standard finite coordinate sets. -/
 def sum (T S : (FiniteTensor K)) : (FiniteTensor K) :=
   ofTensor (sumTensor T.coeff S.coeff)
 

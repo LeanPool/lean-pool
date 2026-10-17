@@ -40,8 +40,10 @@ theorem grid_modular_collision (Q c t u v : ℤ)
 
 variable {ι : Type*} [Fintype ι]
 
+/-- Squared Euclidean norm of a finitely indexed real vector. -/
 def squaredNorm (t : ι → ℝ) : ℝ := ∑ i, (t i) ^ 2
 
+/-- Euclidean dot product of two finitely indexed real vectors. -/
 def dot (t u : ι → ℝ) : ℝ := ∑ i, t i * u i
 
 theorem squaredNorm_displacement (t u v : ι → ℝ) :

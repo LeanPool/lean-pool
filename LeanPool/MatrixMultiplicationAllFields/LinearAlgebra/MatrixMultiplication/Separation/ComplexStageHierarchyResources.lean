@@ -26,15 +26,19 @@ open scoped BigOperators Topology
 
 universe u v
 
-local instance (priority := low) {B : Type*} : DecidableEq B := Classical.decEq B
+/-- Classical equality for the finite-label counting API. -/
+local instance (priority := low) classicalDecidableEq {B : Type*} : DecidableEq B :=
+  Classical.decEq B
 
 variable {A : Type u} [Fintype A] {Label : ℕ → Type v}
   [∀ n, Fintype (Label n)]
 
+/-- Exact number of label refinements at one stage after repeating source populations. -/
 def stageRefinementCount (counts : A → ℕ) (labels : ∀ n, A → Label n)
     (n t : ℕ) : ℕ :=
   refinementCount (sourcePrefixCounts (fun a => t * counts a) labels) n
 
+/-- Source populations for the next label inside one existing prefix fiber. -/
 def stageNodeCounts (counts : A → ℕ) (labels : ∀ n, A → Label n) (n : ℕ)
     (r : LabelRecord Label n) (s : Label n) : ℕ :=
   sourcePrefixCounts counts labels (n + 1) (r, s)
@@ -102,6 +106,7 @@ theorem stageConditionalWords_nonempty [∀ n, Finite (Label n)] {Position : Typ
   rw [stageConditionalWords_card counts labels n t w hword]
   exact stageRefinementCount_pos counts labels n t
 
+/-- Total population entropy rate contributed by one hierarchy refinement. -/
 def stageEntropyRate (counts : A → ℕ) (labels : ∀ n, A → Label n) (n : ℕ) : ℝ :=
   poolEntropyTotal (stageNodeCounts counts labels n)
 
@@ -117,6 +122,7 @@ theorem tendsto_log_stageRefinementCount_div (counts : A → ℕ)
   simpa only [stageRefinementCount_eq_nodeProduct, stageEntropyRate] using
     tendsto_log_pairingProduct_div (stageNodeCounts counts labels n)
 
+/-- Auxiliary tensor rank budget assigned to one hierarchy refinement. -/
 def stageCost (counts : A → ℕ) (labels : ∀ n, A → Label n) (n t : ℕ) : ℕ :=
   LabelHierarchySeparation.poolAuxiliaryCost (stageRefinementCount counts labels n t)
 
@@ -128,10 +134,12 @@ theorem tendsto_log_stageCost_div (counts : A → ℕ)
     (stageRefinementCount_pos counts labels n) (stageEntropyRate_nonneg counts labels n)
     (tendsto_log_stageRefinementCount_div counts labels n)
 
+/-- Product of exact refinement counts through all stages of the hierarchy. -/
 def stagePairingProduct (counts : A → ℕ) (labels : ∀ n, A → Label n)
     (depth t : ℕ) : ℕ :=
   ∏ n : Fin depth, stageRefinementCount counts labels n.val t
 
+/-- Product of auxiliary rank budgets through all stages of the hierarchy. -/
 def stageAuxiliaryBudget (counts : A → ℕ) (labels : ∀ n, A → Label n)
     (depth t : ℕ) : ℕ :=
   ∏ n : Fin depth, stageCost counts labels n.val t
@@ -173,11 +181,13 @@ theorem stageAuxiliaryBudget_pos (counts : A → ℕ)
   exact Finset.prod_pos (fun n _ => LabelHierarchySeparation.poolAuxiliaryCost_pos
     (stageRefinementCount counts labels n.val t))
 
+/-- Coordinate space for the combined auxiliary resource bank across hierarchy stages. -/
 abbrev StageAuxiliaryCoordinates (counts : A → ℕ) (labels : ∀ n, A → Label n)
     (depth t : ℕ) :=
   ∀ n : Fin depth,
     LabelHierarchySeparation.PoolAuxiliaryGroup (stageRefinementCount counts labels n.val t)
 
+/-- Tensor product of the auxiliary tensors allocated to all hierarchy stages. -/
 def stageAuxiliaryTensor (counts : A → ℕ) (labels : ∀ n, A → Label n)
     (depth t : ℕ) :
     Tensor ℂ (StageAuxiliaryCoordinates counts labels depth t)
@@ -203,6 +213,7 @@ theorem stageAuxiliaryTensor_borderRankAtMost (counts : A → ℕ)
       (stageAuxiliaryBudget counts labels depth t) :=
   (stageAuxiliaryTensor_rankAtMost counts labels depth t).borderRankAtMost
 
+/-- Independent refinement-choice coordinates across the hierarchy stages. -/
 abbrev StagePairingCoordinates (counts : A → ℕ) (labels : ∀ n, A → Label n)
     (depth t : ℕ) := ∀ n : Fin depth, Fin (stageRefinementCount counts labels n.val t)
 

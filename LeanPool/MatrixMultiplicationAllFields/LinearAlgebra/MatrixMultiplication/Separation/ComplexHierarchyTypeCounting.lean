@@ -26,6 +26,7 @@ open scoped BigOperators
 
 universe u v
 
+/-- Sum letter populations over the fibers of a labelling map. -/
 def pushforwardCounts {A B : Type*} [Fintype A]
     (counts : A → ℕ) (label : A → B) (b : B) : ℕ := by
   classical
@@ -88,6 +89,7 @@ namespace LabelHierarchyCounts
 
 variable {Label : ℕ → Type u} [∀ n, Fintype (Label n)]
 
+/-- Product of multinomial counts for refining every prefix by one additional label. -/
 def refinementCount (counts : ∀ n, LabelRecord Label n → ℕ) (n : ℕ) : ℕ :=
   ∏ r : LabelRecord Label n,
     Nat.multinomial Finset.univ (fun s : Label n => counts (n + 1) (r, s))
@@ -133,6 +135,7 @@ theorem multinomial_eq_refinementCount_product
       rw [ih (fun n hn => compatible n (Nat.lt_trans hn (Nat.lt_succ_self depth))),
         Finset.prod_range_succ]
 
+/-- Push source letter populations forward to their first n labels. -/
 def sourcePrefixCounts {A : Type v} [Fintype A] (counts : A → ℕ)
     (labels : ∀ n, A → Label n) (n : ℕ) : LabelRecord Label n → ℕ :=
   pushforwardCounts counts (labelRecordOf labels n)

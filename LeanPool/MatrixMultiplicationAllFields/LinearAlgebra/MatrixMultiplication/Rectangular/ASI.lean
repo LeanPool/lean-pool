@@ -237,7 +237,7 @@ theorem equalVolume_inequality_of_polynomialApproximation
     Fintype.equivOfCardEq (by simp [pow_succ])
   let indices : Fin (a * b * c) ≃ Fin a × Fin b × Fin c :=
     Fintype.equivOfCardEq (by simp [mul_assoc])
-  have Q := P.matrixCoefficients_directSum_symmetrized.matrixCoefficients_directSum_of_injective
+  have Q := P.matrixCoefficientsDirectSumSymmetrized.matrixCoefficientsDirectSumOfInjective
     tags tags.injective indices indices.injective
   have h := equalSquare_inequality_of_polynomialApproximation
     (Nat.mul_pos (Nat.mul_pos ha hb) hc) Q

@@ -25,6 +25,7 @@ namespace MatrixMultiplication.Arithmetic
 
 variable {F : Type*} [Field F]
 
+/-- Embed a smaller matrix in a larger rectangle by filling the remaining entries with zero. -/
 def zeroPadMatrix {a b : ℕ} (A B : ℕ) (M : Matrix (Fin a) (Fin b) F) :
     Matrix (Fin A) (Fin B) F :=
   fun i j => if hi : i.val < a then
@@ -65,6 +66,7 @@ theorem zeroPadMatrix_mul {a b c A B C : ℕ} (ha : a ≤ A) (hb : b ≤ B) (hc 
       simp [zeroPadMatrix, not_lt_of_ge hj]
     _ = ∑ j : Fin b, M i j * N j k := by simp
 
+/-- Route a padded input position to its original entry or the scalar zero. -/
 def padSource {a b c A B C : ℕ} : MatrixInput A B C → MatrixInput a b c ⊕ F
   | .inl (i, j) => if hi : i.val < a then
       if hj : j.val < b then .inl (.inl (⟨i.val, hi⟩, ⟨j.val, hj⟩)) else .inr 0
@@ -86,6 +88,7 @@ theorem padSource_eval {a b c A B C : ℕ}
 
 namespace MatrixAlgorithm
 
+/-- Run a larger matrix algorithm on zero-padded inputs and retain the requested outputs. -/
 def pad {a b c A B C : ℕ} (ha : a ≤ A) (_hb : b ≤ B) (hc : c ≤ C)
     (P : MatrixAlgorithm F A B C) : MatrixAlgorithm F a b c where
   registers := P.registers

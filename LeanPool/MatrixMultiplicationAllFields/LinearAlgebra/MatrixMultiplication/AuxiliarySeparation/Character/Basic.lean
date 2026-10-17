@@ -58,6 +58,7 @@ Index types vary over all finite types in `Type`. No character-existence result 
 included among the fields or claimed by this definition.
 -/
 structure Character where
+  /-- The nonnegative real value assigned to a finite tensor by the character. -/
   value : {X Y Z : Type} → [Fintype X] → [Fintype Y] → [Fintype Z] →
     Tensor K X Y Z → ℝ
   nonneg : ∀ {X Y Z : Type} [Fintype X] [Fintype Y] [Fintype Z]

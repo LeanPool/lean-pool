@@ -104,10 +104,15 @@ section PolynomialLocalMaps
 variable {F X Y Z X' Y' Z' : Type*} [Field F]
 variable [Fintype X] [Fintype Y] [Fintype Z]
 
+/-- Polynomial coordinate maps certifying a restriction degeneration with controlled
+degrees. -/
 structure PolynomialRestrictionDegeneration
     (T : Tensor F X Y Z) (U : Tensor F X' Y' Z') (k Lx Ly Lz : ℕ) where
+  /-- Polynomial coordinate map on the first tensor leg. -/
   leftMap : X' → X → Polynomial F
+  /-- Polynomial coordinate map on the second tensor leg. -/
   middleMap : Y' → Y → Polynomial F
+  /-- Polynomial coordinate map on the third tensor leg. -/
   rightMap : Z' → Z → Polynomial F
   left_degree : ∀ x' x, (leftMap x' x).degree ≤ Lx
   middle_degree : ∀ y' y, (middleMap y' y).degree ≤ Ly
@@ -124,6 +129,7 @@ namespace PolynomialRestrictionDegeneration
 variable {T : Tensor F X Y Z} {U : Tensor F X' Y' Z'}
 variable {k Lx Ly Lz r d D : ℕ}
 
+/-- Cyclically permute the legs of a certified polynomial restriction degeneration. -/
 def cyclic (L : PolynomialRestrictionDegeneration T U k Lx Ly Lz) :
     PolynomialRestrictionDegeneration (Tensor.cyclic T) (Tensor.cyclic U) k Ly Lz Lx where
   leftMap := L.middleMap
@@ -146,15 +152,19 @@ def cyclic (L : PolynomialRestrictionDegeneration T U k Lx Ly Lz) :
     rw [← cyclic_restrict]
     exact L.leading x' y' z'
 
+/-- Apply the degeneration's polynomial coordinate maps to the original tensor. -/
 def basePolynomial (L : PolynomialRestrictionDegeneration T U k Lx Ly Lz) :
     Tensor (Polynomial F) X' Y' Z' :=
   restrict L.leftMap L.middleMap L.rightMap (fun x y z => Polynomial.C (T x y z))
 
+/-- Compose a restriction degeneration with an approximation after expanding its polynomial
+variable. -/
 def compositionPolynomial (L : PolynomialRestrictionDegeneration T U k Lx Ly Lz)
     (W : PolynomialApproximation T r d D) : Tensor (Polynomial F) X' Y' Z' :=
   restrict L.leftMap L.middleMap L.rightMap
     (fun x y z => Polynomial.expand F (k + 1) (W.polynomial x y z))
 
+/-- Compose the degeneration with the normalized approximation after expanding its variable. -/
 def normalizedComposition (L : PolynomialRestrictionDegeneration T U k Lx Ly Lz)
     (W : PolynomialApproximation T r d D) : Tensor (Polynomial F) X' Y' Z' :=
   restrict L.leftMap L.middleMap L.rightMap
@@ -226,6 +236,7 @@ theorem compositionPolynomial_degree
       D * (k + 1) + Lx + Ly + Lz
   simpa only [Nat.add_assoc, Nat.add_comm, Nat.add_left_comm] using hprod
 
+/-- Construct the composed polynomial approximation with explicit rank and degree bounds. -/
 def compose (L : PolynomialRestrictionDegeneration T U k Lx Ly Lz)
     (W : PolynomialApproximation T r d D) :
     PolynomialApproximation U r (d * (k + 1) + k) (D * (k + 1) + Lx + Ly + Lz) where

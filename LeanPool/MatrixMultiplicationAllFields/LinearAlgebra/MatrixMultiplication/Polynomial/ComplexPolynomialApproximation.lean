@@ -71,7 +71,10 @@ theorem RankAtMost.coeff {ι : Type*} [Fintype ι]
   rw [heq]
   simpa only [Fintype.card_prod, Fintype.card_fin] using rankAtMost_sum_rankOne aa bb cc
 
+/-- A bounded-degree, bounded-rank polynomial tensor with specified leading tensor and
+vanishing order. -/
 structure PolynomialApproximation (T : Tensor F X Y Z) (r d D : ℕ) where
+  /-- Polynomial coefficients of the approximating tensor family. -/
   polynomial : Tensor (Polynomial F) X Y Z
   rank_bound : RankAtMost polynomial r
   vanishes : ∀ x y z k, k < d → (polynomial x y z).coeff k = 0
@@ -82,6 +85,7 @@ namespace PolynomialApproximation
 
 variable {T : Tensor F X Y Z} {r d D : ℕ}
 
+/-- Remove the common power of the polynomial variable from an approximation. -/
 def normalized (A : PolynomialApproximation T r d D) :
     Tensor (Polynomial F) X Y Z :=
   fun x y z => Classical.choose (Polynomial.X_pow_dvd_iff.mpr (A.vanishes x y z))
@@ -102,6 +106,7 @@ theorem power_polynomial_eq (A : PolynomialApproximation T r d D) (n : ℕ)
       Polynomial.X ^ (d * n) * Tensor.power A.normalized n x y z := by
   simp [Tensor.power, A.polynomial_eq, Finset.prod_mul_distrib, ← pow_mul]
 
+/-- Tensor-power a polynomial approximation, multiplying rank bounds and adding degrees. -/
 def power (A : PolynomialApproximation T r d D) (n : ℕ) :
     PolynomialApproximation (Tensor.power T n) (r ^ n) (d * n) (D * n) where
   polynomial := Tensor.power A.polynomial n
@@ -161,7 +166,7 @@ theorem rank_normalized_eval (A : PolynomialApproximation T r d D)
   rw [heq] at h
   exact h
 
-theorem borderRankAtMost [Fintype X] [Fintype Y] [Fintype Z]
+theorem borderRankAtMost
     {S : Tensor ℂ X Y Z} (A : PolynomialApproximation S r d D) :
     BorderRankAtMost S r := by
   let f : ℂ → Tensor ℂ X Y Z := fun t x y z => (A.normalized x y z).eval t

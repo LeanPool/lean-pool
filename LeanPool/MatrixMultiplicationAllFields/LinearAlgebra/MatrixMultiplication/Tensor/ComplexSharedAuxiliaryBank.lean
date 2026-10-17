@@ -25,6 +25,7 @@ namespace MatrixMultiplication.Foundation.LabelHierarchySeparation
 variable {K I : Type*} [CommSemiring K] [Fintype I]
 variable {X Y Z : I → Type*}
 
+/-- Tensor product of a dependent finite family, with function-valued coordinate sets. -/
 def bankTensor (T : ∀ i, Tensor K (X i) (Y i) (Z i)) :
     Tensor K (∀ i, X i) (∀ i, Y i) (∀ i, Z i) :=
   fun x y z => ∏ i, T i (x i) (y i) (z i)

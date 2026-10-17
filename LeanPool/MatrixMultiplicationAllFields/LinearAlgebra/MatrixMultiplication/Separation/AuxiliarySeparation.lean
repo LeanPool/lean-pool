@@ -39,7 +39,7 @@ theorem directSum_rankAtMost (T : Tensor ℂ X Y Z)
       (R * Separation.gridGroupOrder (Fintype.card Label)) :=
   auxiliary_separation_directSum_rankAtMost T readX readY hT readable
 
-theorem directSum_borderRankAtMost [Fintype X] [Fintype Y] [Fintype Z]
+theorem directSum_borderRankAtMost
     (T : Tensor ℂ X Y Z) (readX : X → Label) (readY : Y → Label) {R : ℕ}
     (hT : Tensor.BorderRankAtMost T R)
     (readable : ∀ x y z, T x y z ≠ 0 → readX x = readY y) :

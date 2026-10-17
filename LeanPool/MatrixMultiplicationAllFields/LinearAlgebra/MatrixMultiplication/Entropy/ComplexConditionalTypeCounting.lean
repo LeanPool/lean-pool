@@ -24,9 +24,11 @@ open scoped BigOperators
 variable {A B I : Type*} [Fintype A] [DecidableEq A]
   [Fintype B] [DecidableEq B] [Fintype I] [DecidableEq I]
 
+/-- Words on an arbitrary finite position set with prescribed letter populations. -/
 abbrev PopulationWords (I : Type*) [Fintype I] (counts : A → ℕ) :=
   {w : I → A // ∀ a, wordPopulation w a = counts a}
 
+/-- Identify population-constrained words with words on the standard finite position set. -/
 noncomputable def populationWordsEquiv (counts : A → ℕ)
     (h : Fintype.card I = ∑ a, counts a) : PopulationWords I counts ≃ ExactWords counts := by
   let e : I ≃ Fin (∑ a, counts a) := Fintype.equivFinOfCardEq h
@@ -51,9 +53,11 @@ theorem populationWords_card (counts : A → ℕ)
     Fintype.card (PopulationWords I counts) = Nat.multinomial Finset.univ counts := by
   rw [Fintype.card_congr (populationWordsEquiv counts h), exactWords_card]
 
+/-- Refinements with prescribed joint populations relative to an existing coarse word. -/
 abbrev ConditionalWords (w : I → A) (counts : A → B → ℕ) :=
   {r : I → B // ∀ a b, Fintype.card {i // w i = a ∧ r i = b} = counts a b}
 
+/-- Restrict a word to the fibers of a coarse labelling, reversibly. -/
 def fiberWordEquiv (w : I → A) : (I → B) ≃ (∀ a, {i // w i = a} → B) where
   toFun r _ i := r i.val
   invFun r i := r (w i) ⟨i, rfl⟩
@@ -72,6 +76,8 @@ theorem wordPopulation_fiber (w : I → A) (r : I → B) (a : A) (b : B) :
   Fintype.card_congr
     (Equiv.subtypeSubtypeEquivSubtypeInter (fun i => w i = a) (fun i => r i = b))
 
+/-- Identify conditional refinements with independent population-constrained words in each
+fiber. -/
 def conditionalWordsEquiv (w : I → A) (counts : A → B → ℕ) :
     ConditionalWords w counts ≃ ∀ a, PopulationWords {i // w i = a} (counts a) := by
   let e : ConditionalWords w counts ≃

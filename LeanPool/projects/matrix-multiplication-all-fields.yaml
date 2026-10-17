@@ -1,10 +1,10 @@
 slug: matrix-multiplication-all-fields
 title: Matrix multiplication exponent at most 9/4 over every field
-summary: The arithmetic exponent of square matrix multiplication is at most 9/4 over every field.
-  The proof preserves a general tensor-rank and arithmetic-program library, extends Fourier separation
-  to positive characteristic, and descends finite tensor decompositions through algebraic extensions.
-  For every positive epsilon it constructs correct division-free programs of cost at most C n^(9/4
-  + epsilon), with C uniform in the matrix size.
+summary: The arithmetic exponent of square matrix multiplication is at most 9/4 over every field. The
+  proof preserves a general tensor-rank and arithmetic-program library, extends Fourier separation to
+  positive characteristic, and descends finite tensor decompositions through algebraic extensions. For
+  every positive epsilon it constructs correct division-free programs of cost at most C n^(9/4 + epsilon),
+  with C uniform in the matrix size.
 branch: algebraic complexity theory
 entry_module: LeanPool.MatrixMultiplicationAllFields
 authors:
@@ -23,19 +23,18 @@ license: Apache-2.0
 status: verified
 provenance: AI
 main_declarations:
-- MatrixMultiplicationAllFields.MatrixMultiplication.omega_le_nine_quarters_all_fields
-- MatrixMultiplicationAllFields.MatrixMultiplication.matrix_multiplication_cost_le_all_fields
+- MatrixMultiplicationAllFields.omega_le_nine_quarters_all_fields
 main_results:
-- declaration: MatrixMultiplicationAllFields.MatrixMultiplication.omega_le_nine_quarters_all_fields
-  informal: For every field F, the infimum of admissible arithmetic matrix multiplication exponents
-    is at most 9/4.
+- declaration: MatrixMultiplicationAllFields.omega_le_nine_quarters_all_fields
+  informal: For every field F, the infimum of admissible arithmetic matrix multiplication exponents is
+    at most 9/4.
 - declaration: MatrixMultiplicationAllFields.MatrixMultiplication.admissibleExponent_nine_quarters_all_fields
-  informal: Over every field F and for every epsilon > 0, a positive constant C bounds the cost of
-    a correct division-free straight-line program for n by n matrix multiplication by C n^(9/4 + epsilon)
-    for every n >= 1.
+  informal: Over every field F and for every epsilon > 0, a positive constant C bounds the cost of a correct
+    division-free straight-line program for n by n matrix multiplication by C n^(9/4 + epsilon) for every
+    n >= 1.
 - declaration: MatrixMultiplicationAllFields.MatrixMultiplication.matrix_multiplication_cost_le_all_fields
-  informal: The bound is realized by correct arithmetic programs at every positive matrix size, with
-    a constant depending on the field and epsilon but not the size.
+  informal: The bound is realized by correct arithmetic programs at every positive matrix size, with a
+    constant depending on the field and epsilon but not the size.
 - declaration: MatrixMultiplicationAllFields.MatrixMultiplication.AllFields.rankAtMost_of_map
   informal: A rank-R decomposition over a finite extension E/P of degree m descends to a rank at most
     m^3 R decomposition over P.

@@ -26,6 +26,7 @@ section Algebra
 
 variable {K X Y Z X' Y' Z' X'' Y'' Z'' : Type*} [CommSemiring K]
 
+/-- Matrix composition for two consecutive linear restrictions of one tensor leg. -/
 def composeRestrictionMatrix [Fintype X']
     (D : X'' → X' → K) (A : X' → X → K) : X'' → X → K :=
   fun x'' x => ∑ x', D x'' x' * A x' x
@@ -162,6 +163,7 @@ variable [Fintype X] [Fintype Y] [Fintype Z]
 variable [Fintype X'] [Fintype Y'] [Fintype Z']
 variable [Fintype X''] [Fintype Y''] [Fintype Z'']
 
+omit [Fintype X'] [Fintype Y'] [Fintype Z'] in
 theorem degeneratesTo_restrict (T : Tensor ℂ X Y Z)
     (A : X' → X → ℂ) (B : Y' → Y → ℂ) (C : Z' → Z → ℂ) :
     DegeneratesTo T (restrict A B C T) :=
@@ -184,6 +186,7 @@ theorem mem_restrictionOrbit_restrict {T : Tensor ℂ X Y Z}
   exact ⟨composeRestrictionMatrix D A, composeRestrictionMatrix E B,
     composeRestrictionMatrix F C, restrict_restrict A B C D E F T⟩
 
+omit [Fintype X''] [Fintype Y''] [Fintype Z''] in
 theorem DegeneratesTo.restrict {T : Tensor ℂ X Y Z} {U : Tensor ℂ X' Y' Z'}
     (h : DegeneratesTo T U)
     (D : X'' → X' → ℂ) (E : Y'' → Y' → ℂ) (F : Z'' → Z' → ℂ) :
@@ -197,6 +200,7 @@ theorem DegeneratesTo.restrict {T : Tensor ℂ X Y Z} {U : Tensor ℂ X' Y' Z'}
     exact subset_closure (mem_restrictionOrbit_restrict hS D E F)
   exact closure_minimal hsubset hclosed h
 
+omit [Fintype X''] [Fintype Y''] [Fintype Z''] in
 theorem DegeneratesTo.trans {T : Tensor ℂ X Y Z} {U : Tensor ℂ X' Y' Z'}
     {V : Tensor ℂ X'' Y'' Z''} (hTU : DegeneratesTo T U)
     (hUV : DegeneratesTo U V) : DegeneratesTo T V := by
@@ -206,6 +210,7 @@ theorem DegeneratesTo.trans {T : Tensor ℂ X Y Z} {U : Tensor ℂ X' Y' Z'}
     exact hTU.restrict D E F
   exact closure_minimal hsubset isClosed_closure hUV
 
+omit [Fintype X''] [Fintype Y''] [Fintype Z''] in
 theorem DegeneratesTo.of_restrict {T : Tensor ℂ X Y Z} {V : Tensor ℂ X'' Y'' Z''}
     (A : X' → X → ℂ) (B : Y' → Y → ℂ) (C : Z' → Z → ℂ)
     (h : DegeneratesTo (Tensor.restrict A B C T) V) : DegeneratesTo T V :=

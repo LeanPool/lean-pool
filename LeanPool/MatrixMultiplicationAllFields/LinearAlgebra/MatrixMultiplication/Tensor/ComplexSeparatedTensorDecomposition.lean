@@ -28,6 +28,7 @@ section DependentSum
 variable {K S : Type*} [CommSemiring K] [DecidableEq S]
 variable {X Y Z : S → Type*}
 
+/-- Direct sum of tensors whose coordinate spaces may depend on the summand. -/
 def dependentDirectSum (T : ∀ s, Tensor K (X s) (Y s) (Z s)) :
     Tensor K (Σ s, X s) (Σ s, Y s) (Σ s, Z s) :=
   fun x y z =>
@@ -48,6 +49,8 @@ theorem dependentDirectSum_zero_of_left_ne
     (h : x.1 ≠ y.1) : dependentDirectSum T x y z = 0 := by
   simp [dependentDirectSum, Ne.symm h]
 
+/-- Replace summand-dependent coordinates by a common coordinate type using chosen
+equivalences. -/
 def directSumCoordinateEquiv {A : Type*} (e : ∀ s, X s ≃ A) :
     (Σ s, X s) ≃ S × A where
   toFun x := (x.1, e x.1 x.2)
@@ -87,10 +90,13 @@ section FiberDecomposition
 
 variable {X Y Z S U : Type*} [DecidableEq S] [DecidableEq U]
 
+/-- Restrict the first two tensor legs to fibers with a specified common label. -/
 def labelFiberTensor (lx : X → S) (ly : Y → S) (T : Tensor ℂ X Y Z) (s : S) :
     Tensor ℂ {x // lx x = s} {y // ly y = s} Z :=
   fun x y z => T x.1 y.1 z
 
+/-- Identify labelled fiber coordinates with the original coordinates and an auxiliary
+factor. -/
 def fiberCoordinateEquiv (lx : X → S) :
     (Σ s, {x // lx x = s} × U) ≃ X × U where
   toFun x := (x.2.1.1, x.2.2)
@@ -103,6 +109,7 @@ def fiberCoordinateEquiv (lx : X → S) :
     rintro ⟨x, u⟩
     rfl
 
+/-- Exchange a summand tag and its tensor coordinate, removing a singleton factor. -/
 def tagCoordinateEquiv : (Σ _ : S, Z × Unit) ≃ Z × S where
   toFun z := (z.2.1, z.1)
   invFun z := ⟨z.2, (z.1, ())⟩
@@ -179,7 +186,6 @@ theorem separatedTensor_fiber_directSum_rankAtMost_iff
     exact h.pullback _ _ _
 
 theorem separatedTensor_fiber_directSum_borderRankAtMost
-    [Fintype X] [Fintype Y] [Fintype Z] [Fintype S] [Fintype U]
     (T : Tensor ℂ X Y Z) (lx : X → S) (ly : Y → S) {r : ℕ}
     (hlabels : ∀ x y z, T x y z ≠ 0 → lx x = ly y)
     (h : Tensor.BorderRankAtMost (separatedTensor (U := U) lx T) r) :
@@ -187,8 +193,7 @@ theorem separatedTensor_fiber_directSum_borderRankAtMost
       Tensor.product (labelFiberTensor lx ly T s) (Tensor.dotPairing U))) r := by
   classical
   rw [← separatedTensor_eq_fiber_directSum T lx ly hlabels]
-  rw [Tensor.pullback_eq_restrict]
-  exact h.restrict _ _ _
+  exact h.pullback _ _ _
 
 theorem separatedTensor_uniform_directSum_rankAtMost {A B : Type*}
     (T : Tensor ℂ X Y Z) (lx : X → S) (ly : Y → S)
@@ -253,8 +258,6 @@ theorem separatedTensor_localModels_rankAtMost {A B C : Type*}
   exact h.pullback _ _ _
 
 theorem separatedTensor_localModels_borderRankAtMost {A B C : Type*}
-    [Fintype X] [Fintype Y] [Fintype Z] [Fintype S] [Fintype U]
-    [Fintype A] [Fintype B] [Fintype C]
     (T : Tensor ℂ X Y Z) (lx : X → S) (ly : Y → S)
     (fx : S → A → X) (fy : S → B → Y) (fz : S → C → Z)
     (hfx : ∀ s a, lx (fx s a) = s) (hfy : ∀ s b, ly (fy s b) = s)
@@ -264,8 +267,7 @@ theorem separatedTensor_localModels_borderRankAtMost {A B C : Type*}
       (Tensor.pullback (fx s) (fy s) (fz s) T) (Tensor.dotPairing U))) r := by
   classical
   rw [← separatedTensor_localModels_identity T lx ly fx fy fz hfx hfy hlabels]
-  rw [Tensor.pullback_eq_restrict]
-  exact h.restrict _ _ _
+  exact h.pullback _ _ _
 
 theorem separatedTensor_scalar_identity
     (T : Tensor ℂ X Y Z) (lx : X → S) (ly : Y → S)
@@ -302,7 +304,6 @@ theorem separatedTensor_scalar_rankAtMost
   exact h.pullback _ _ _
 
 theorem separatedTensor_scalar_borderRankAtMost
-    [Fintype X] [Fintype Y] [Fintype Z] [Fintype S] [Fintype U]
     (T : Tensor ℂ X Y Z) (lx : X → S) (ly : Y → S)
     (sx : S → X) (sy : S → Y) (sz : S → Z)
     (hsx : ∀ s, lx (sx s) = s) (hsy : ∀ s, ly (sy s) = s)
@@ -312,8 +313,7 @@ theorem separatedTensor_scalar_borderRankAtMost
     Tensor.BorderRankAtMost (Tensor.directSum (fun _ : S => Tensor.dotPairing U)) r := by
   classical
   rw [← separatedTensor_scalar_identity T lx ly sx sy sz hsx hsy hlabels hscalar]
-  rw [Tensor.pullback_eq_restrict]
-  exact h.restrict _ _ _
+  exact h.pullback _ _ _
 
 end FiberDecomposition
 end MatrixMultiplication.Foundation

@@ -27,13 +27,18 @@ namespace MatrixMultiplication.Foundation.Arithmetic.Expression
 
 variable {Input Output : Type*}
 
+/-- A compiled output family with semantic and total operation-count certificates. -/
 structure CompiledFamily [Fintype Output] (expressions : Output → Expression Input) where
+  /-- Number of registers allocated to the compiled output family. -/
   registers : ℕ
+  /-- Program computing the entire indexed output family. -/
   program : Program Input registers
+  /-- Register holding each compiled output expression. -/
   output : Output → Fin registers
   correct : ∀ inputs i, program.eval inputs (output i) = (expressions i).eval inputs
   cost_eq : program.cost = ∑ i, (expressions i).cost
 
+/-- Compile a family indexed by a standard finite set, appending the individual programs. -/
 def compileFinFamily : (n : ℕ) → (expressions : Fin n → Expression Input) →
     CompiledFamily expressions
   | 0, _ =>
@@ -61,6 +66,8 @@ def compileFinFamily : (n : ℕ) → (expressions : Fin n → Expression Input) 
       cost_eq := by
         rw [Program.cost_append, p.cost_eq, q.cost_eq, Fin.sum_univ_succ] }
 
+/-- Compile an arbitrary finite family after transporting its indices to a standard finite
+set. -/
 def compileFamily [Fintype Output] (expressions : Output → Expression Input) :
     CompiledFamily expressions :=
   let e := Fintype.equivFin Output

@@ -25,6 +25,7 @@ namespace MatrixMultiplication.Foundation
 open Filter
 open scoped Topology
 
+/-- The remainder after subtracting the leading Stirling terms from log(n!). -/
 noncomputable def factorialLogRemainder (n : ℕ) : ℝ :=
   Real.log (Nat.factorial n : ℝ) - ((n : ℝ) * Real.log n - n)
 

@@ -131,6 +131,7 @@ namespace FiniteLaw
 
 variable {A : Type*} [Fintype A]
 
+/-- The probability law assigning equal mass to every point of a nonempty finite type. -/
 def uniform (A : Type*) [Fintype A] [Nonempty A] : FiniteLaw A where
   mass _a := (Fintype.card A : ℝ)⁻¹
   nonneg _a := inv_nonneg.mpr (Nat.cast_nonneg _)
@@ -146,6 +147,7 @@ def uniform (A : Type*) [Fintype A] [Nonempty A] : FiniteLaw A where
     finiteEntropy (uniform A).mass = Real.log (Fintype.card A) :=
   finiteEntropy_uniform
 
+/-- The probability law concentrated at one point. -/
 def pure (a : A) : FiniteLaw A := by
   classical
   exact

@@ -31,6 +31,7 @@ namespace LinearExpression
 
 variable {Input : Type*}
 
+/-- Form a finite sum of arithmetic expressions for the block-recursion construction. -/
 def sumFin : (n : ℕ) → (Fin n → Expression Input) → Expression Input
   | 0, _ => .literal 0
   | n + 1, f => .add (f 0) (sumFin n (fun i => f i.succ))
@@ -50,6 +51,7 @@ theorem cost_sumFin (n : ℕ) (f : Fin n → Expression Input) :
     simp only [sumFin, Expression.cost, ih, Fin.sum_univ_succ]
     omega
 
+/-- Encode a finite linear combination of selected input wires as an arithmetic expression. -/
 def linear {Term : Type*} [Fintype Term] (a : Term → ℂ) (wire : Term → Input) :
     Expression Input :=
   sumFin (Fintype.card Term) (fun i =>
@@ -69,20 +71,27 @@ theorem cost_linear {Term : Type*} [Fintype Term]
 
 end LinearExpression
 
+/-- A shared straight-line program with an indexed family of outputs. -/
 structure Family (Input Output : Type*) where
+  /-- Number of registers allocated to the output family. -/
   registers : ℕ
+  /-- The program shared by all members of the output family. -/
   program : Program Input registers
+  /-- Register location of each indexed output. -/
   output : Output → Fin registers
 
 namespace Family
 
 variable {Input Mid Output : Type*}
 
+/-- Evaluate one member of a program's output family. -/
 def eval (p : Family Input Output) (inputs : Input → ℂ) (o : Output) : ℂ :=
   p.program.eval inputs (p.output o)
 
+/-- Arithmetic cost of the shared program, counting each gate once. -/
 def cost (p : Family Input Output) : ℕ := p.program.cost
 
+/-- Compile an indexed family of expressions into a shared output program. -/
 def expressions [Fintype Output] (e : Output → Expression Input) : Family Input Output :=
   let p := Expression.compileFamily e
   ⟨p.registers, p.program, p.output⟩
@@ -96,6 +105,7 @@ theorem cost_expressions [Fintype Output] (e : Output → Expression Input) :
     (expressions e).cost = ∑ o, (e o).cost :=
   (Expression.compileFamily e).cost_eq
 
+/-- Connect the outputs of one program family to the inputs of another. -/
 def compose (p : Family Input Mid) (q : Family Mid Output) : Family Input Output :=
   let s := p.program.substitute q.program p.output
   ⟨s.registers, s.program, fun o => s.output (q.output o)⟩
@@ -109,6 +119,7 @@ theorem cost_compose (p : Family Input Mid) (q : Family Mid Output) :
     (compose p q).cost = p.cost + q.cost :=
   (p.program.substitute q.program p.output).cost_eq
 
+/-- Relabel the input wires of a program family. -/
 def mapInputs {NewInput : Type*} (f : Input → NewInput) (p : Family Input Output) :
     Family NewInput Output :=
   ⟨p.registers, p.program.mapInput f, p.output⟩
@@ -122,6 +133,7 @@ theorem cost_mapInputs {NewInput : Type*} (f : Input → NewInput)
     (p : Family Input Output) : (p.mapInputs f).cost = p.cost := by
   exact Program.cost_mapInput f p.program
 
+/-- Concatenate a finite family of programs with a common input space. -/
 def parallel : (r : ℕ) → (Fin r → Family Input Output) → Family Input (Fin r × Output)
   | 0, _ => ⟨0, Program.nil, fun o => Fin.elim0 o.1⟩
   | r + 1, p =>
@@ -155,6 +167,7 @@ theorem cost_parallel (r : ℕ) (p : Fin r → Family Input Output) :
     change (p 0).cost + (parallel r (fun i => p i.succ)).cost = _
     rw [ih, Fin.sum_univ_succ]
 
+/-- Run independent copies of a program family on separately indexed inputs. -/
 def copies (r : ℕ) (p : Family Input Output) :
     Family (Fin r × Input) (Fin r × Output) :=
   parallel r (fun i => p.mapInputs (fun x => (i, x)))
@@ -168,6 +181,7 @@ theorem cost_copies (r : ℕ) (p : Family Input Output) :
     (copies r p).cost = r * p.cost := by
   simp [copies, cost_parallel, cost_mapInputs]
 
+/-- View a matrix multiplication algorithm as a family indexed by output positions. -/
 def ofMatrix {m : ℕ} (p : MatrixAlgorithm m) :
     Family (MatrixInput m) (Fin m × Fin m) :=
   ⟨p.registers, p.program, fun o => p.output o.1 o.2⟩
@@ -194,6 +208,7 @@ section BlockIdentities
 
 variable {n r m : ℕ}
 
+/-- Flatten a pair of finite block and within-block indices. -/
 def join (i : Fin n) (j : Fin m) : Fin (n * m) := finProdFinEquiv (i, j)
 
 theorem rank_bilinear_identity
@@ -226,11 +241,13 @@ theorem rank_bilinear_identity
       intro q hq
       ring
 
+/-- The left matrix block obtained from one linear form in a tensor-rank decomposition. -/
 def leftBlock (a : Fin r → Fin n × Fin n → ℂ)
     (A : Matrix (Fin (n * m)) (Fin (n * m)) ℂ) (q : Fin r) :
     Matrix (Fin m) (Fin m) ℂ :=
   fun s t => ∑ x, a q x * A (join x.1 s) (join x.2 t)
 
+/-- The right matrix block obtained from one linear form in a tensor-rank decomposition. -/
 def rightBlock (b : Fin r → Fin n × Fin n → ℂ)
     (B : Matrix (Fin (n * m)) (Fin (n * m)) ℂ) (q : Fin r) :
     Matrix (Fin m) (Fin m) ℂ :=
@@ -261,6 +278,7 @@ section BlockPrograms
 
 variable {n r m : ℕ}
 
+/-- Expressions forming the left and right inputs to all recursive block products. -/
 def inputExpressions (a b : Fin r → Fin n × Fin n → ℂ) :
     Fin r × MatrixInput m → Expression (MatrixInput (n * m))
   | (q, .inl (s, t)) => LinearExpression.linear (a q)
@@ -268,6 +286,7 @@ def inputExpressions (a b : Fin r → Fin n × Fin n → ℂ) :
   | (q, .inr (t, u)) => LinearExpression.linear (b q)
       (fun y => .inr (join y.1 t, join y.2 u))
 
+/-- Compile the input linear forms required by a tensor-rank block decomposition. -/
 def inputFamily (a b : Fin r → Fin n × Fin n → ℂ) :
     Family (MatrixInput (n * m)) (Fin r × MatrixInput m) :=
   Family.expressions (inputExpressions a b)
@@ -295,6 +314,7 @@ theorem inputFamily_cost (a b : Fin r → Fin n × Fin n → ℂ) :
     Fintype.card_fin, Fintype.card_sum, smul_eq_mul]
   ring
 
+/-- Run the smaller matrix algorithm on each pair of transformed input blocks. -/
 def recursiveProducts (a b : Fin r → Fin n × Fin n → ℂ) (p : MatrixAlgorithm m) :
     Family (MatrixInput (n * m)) (Fin r × (Fin m × Fin m)) :=
   (inputFamily a b).compose (Family.copies r (Family.ofMatrix p))
@@ -314,12 +334,14 @@ theorem recursiveProducts_cost (a b : Fin r → Fin n × Fin n → ℂ)
   rw [recursiveProducts, Family.cost_compose, inputFamily_cost,
     Family.cost_copies, Family.cost_ofMatrix]
 
+/-- Expressions recombining recursive products into the final matrix entries. -/
 def outputExpressions (c : Fin r → Fin n × Fin n → ℂ) :
     Fin (n * m) × Fin (n * m) → Expression (Fin r × (Fin m × Fin m)) :=
   fun o => LinearExpression.linear
     (fun q => c q ((finProdFinEquiv.symm o.2).1, (finProdFinEquiv.symm o.1).1))
     (fun q => (q, ((finProdFinEquiv.symm o.1).2, (finProdFinEquiv.symm o.2).2)))
 
+/-- Compile the output linear forms of the tensor-rank decomposition. -/
 def outputFamily (c : Fin r → Fin n × Fin n → ℂ) :
     Family (Fin r × (Fin m × Fin m)) (Fin (n * m) × Fin (n * m)) :=
   Family.expressions (outputExpressions c)
@@ -338,6 +360,7 @@ theorem outputFamily_cost (c : Fin r → Fin n × Fin n → ℂ) :
     Finset.card_univ, Fintype.card_prod, smul_eq_mul]
   ring
 
+/-- Construct the larger matrix algorithm from a rank decomposition and a smaller algorithm. -/
 def algorithm (a b c : Fin r → Fin n × Fin n → ℂ) (p : MatrixAlgorithm m) :
     MatrixAlgorithm (n * m) :=
   let f := (recursiveProducts a b p).compose (outputFamily c)

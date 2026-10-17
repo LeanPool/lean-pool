@@ -34,6 +34,7 @@ open scoped Topology
 /-- The scalar profile hypotheses used in Section 6. Only positive indices
 carry mathematical content; the values on either coordinate axis are unused. -/
 structure ScalarProfile (t : ℝ) where
+  /-- The scalar profile value at a pair of positive tensor dimensions. -/
   value : ℕ → ℕ → ℝ
   positive : ∀ a b : ℕ, 1 ≤ a → 1 ≤ b → 0 < value a b
   symmetric : ∀ a b : ℕ, 1 ≤ a → 1 ≤ b → value a b = value b a

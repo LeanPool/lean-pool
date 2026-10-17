@@ -30,6 +30,7 @@ namespace Expression
 
 variable {Input : Type*}
 
+/-- Build an arithmetic expression for a finite sum, with zero as the empty sum. -/
 def sumFin : {n : ℕ} → (Fin n → Expression F Input) → Expression F Input
   | 0, _ => .literal 0
   | n + 1, f => .add (f 0) (sumFin (fun i : Fin n => f i.succ))
@@ -50,6 +51,7 @@ theorem sumFin_cost {n : ℕ} (f : Fin n → Expression F Input) :
 
 end Expression
 
+/-- The schoolbook dot-product expression for one matrix-product entry. -/
 def naiveEntry {a b c : ℕ} (i : Fin a) (k : Fin c) : Expression F (MatrixInput a b c) :=
   Expression.sumFin fun j : Fin b =>
     .mul (.input (.inl (i, j))) (.input (.inr (j, k)))
@@ -63,6 +65,7 @@ theorem naiveEntry_eval {a b c : ℕ} (i : Fin a) (k : Fin c)
     (naiveEntry (F := F) (b := b) i k).cost = 2 * b := by
   simp [naiveEntry, Expression.sumFin_cost, Expression.cost, two_mul]
 
+/-- Compile all schoolbook dot products into one matrix multiplication program. -/
 def naiveAlgorithm (a b c : ℕ) : MatrixAlgorithm F a b c :=
   let p := Expression.compileFamily (fun ik : Fin a × Fin c => naiveEntry (b := b) ik.1 ik.2)
   { registers := p.registers

@@ -112,7 +112,7 @@ def basis (K : Type*) [Field K] (e : ℕ) :
 
 /-- Forgetting degree bounds identifies the finite basis with the explicit
 polynomial-pair formulas. -/
-@[simp] theorem forget_basis (K : Type*) [Field K] (e : ℕ)
+theorem forget_basis (K : Type*) [Field K] (e : ℕ)
     (j : Fin (e + 2) ⊕ Fin e) :
     forget e (basis K e j) =
       Sum.elim (DeterminantKernel.quotientVector e) (DeterminantKernel.kernelVector e) j := by

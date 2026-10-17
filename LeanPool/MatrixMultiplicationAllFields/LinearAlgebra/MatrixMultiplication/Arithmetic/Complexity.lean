@@ -65,7 +65,8 @@ theorem correct_iff_entries (P : MatrixAlgorithm F a b c) :
 
 end MatrixAlgorithm
 
-def scalarAlgorithm (F : Type*) [Field F] : MatrixAlgorithm F 1 1 1 where
+/-- Multiply two scalar inputs using one multiplication gate. -/
+def scalarAlgorithm (F : Type*) : MatrixAlgorithm F 1 1 1 where
   registers := 3
   program := ((Program.nil.step (.input (.inl (0, 0)))).step
     (.input (.inr (0, 0)))).step (.mul 1 0)
@@ -81,7 +82,7 @@ theorem scalarAlgorithm_correct (F : Type*) [Field F] : (scalarAlgorithm F).Corr
   change A 0 0 * B 0 0 = (A * B) 0 0
   simp [Matrix.mul_apply]
 
-@[simp] theorem scalarAlgorithm_cost (F : Type*) [Field F] : (scalarAlgorithm F).cost = 1 := rfl
+@[simp] theorem scalarAlgorithm_cost (F : Type*) : (scalarAlgorithm F).cost = 1 := rfl
 
 theorem one_le_innerSize {n : ℕ} (hn : 1 ≤ n) (k : ℝ) : 1 ≤ innerSize n k := by
   apply Nat.one_le_ceil_iff.mpr

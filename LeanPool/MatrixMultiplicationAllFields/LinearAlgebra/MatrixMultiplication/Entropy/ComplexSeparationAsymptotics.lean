@@ -38,6 +38,7 @@ theorem scale_exists (K : ℕ) : ∃ n : ℕ, K ≤ 2 ^ (n ^ 2) := by
   have hK : K < 2 ^ K := Nat.lt_pow_self (by decide : 1 < 2)
   exact hK.le.trans (Nat.pow_le_pow_right (by decide) (by nlinarith))
 
+/-- The least grid scale whose capacity covers the requested population. -/
 noncomputable def gridScale (K : ℕ) : ℕ := Nat.find (scale_exists K)
 
 theorem population_le_scale (K : ℕ) : K ≤ 2 ^ ((gridScale K) ^ 2) :=
@@ -66,10 +67,13 @@ theorem gridScale_monotone : Monotone gridScale := by
   intro K L hKL
   exact Nat.find_min' (scale_exists K) (hKL.trans (population_le_scale L))
 
+/-- Number of grid coordinates chosen for the separation construction. -/
 def gridDimension (K : ℕ) : ℕ := gridScale K + 4
 
+/-- Width of each coordinate in the separation grid. -/
 def gridWidth (K : ℕ) : ℕ := 2 ^ (gridScale K + 2)
 
+/-- Order of the finite ambient group containing the separation grid. -/
 def gridGroupOrder (K : ℕ) : ℕ := (4 * gridWidth K) ^ gridDimension K
 
 theorem gridDimension_pos (K : ℕ) : 0 < gridDimension K := by

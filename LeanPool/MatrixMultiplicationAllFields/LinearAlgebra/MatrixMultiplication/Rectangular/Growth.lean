@@ -64,6 +64,7 @@ theorem rectangularAdmissibleExponent_of_power_costs
   obtain ⟨C, hC, hcost⟩ := hpower ε hε
   exact rectangular_power_cost_padding_bound ha hk hab (by linarith) hC hcost
 
+/-- The recursive cost of rectangular block multiplication with explicit linear overhead. -/
 def rectangularBlockCost (a b R K : ℕ) : ℕ → ℕ
   | 0 => 1
   | t + 1 => R * rectangularBlockCost a b R K t + K * ((a * b) ^ t + (a ^ 2) ^ t)

@@ -26,6 +26,7 @@ namespace Gate
 
 variable {Input R S : Type*}
 
+/-- Relabel a gate's register references without changing its input wires. -/
 def mapRegister (f : R → S) : Gate Input R → Gate Input S
   | .literal z => .literal z
   | .input i => .input i
@@ -48,8 +49,10 @@ namespace Program
 
 variable {Input : Type*}
 
+/-- Locate an earlier program's registers after appending a second program. -/
 def oldIndex (r s : ℕ) (i : Fin r) : Fin (r + s) := ⟨s + i.val, by omega⟩
 
+/-- Locate the appended program's registers in the combined register space. -/
 def newIndex (r s : ℕ) (i : Fin s) : Fin (r + s) := ⟨i.val, by omega⟩
 
 @[simp] theorem oldIndex_zero (r : ℕ) (i : Fin r) : oldIndex r 0 i = i := by
@@ -71,6 +74,7 @@ def newIndex (r s : ℕ) (i : Fin s) : Fin (r + s) := ⟨i.val, by omega⟩
   apply Fin.ext
   rfl
 
+/-- Concatenate independent programs, relabelling the second program's register references. -/
 def append {r : ℕ} (p : Program Input r) : {s : ℕ} → Program Input s → Program Input (r + s)
   | 0, .nil => p
   | s + 1, .step q g => (p.append q).step (g.mapRegister (newIndex r s))
@@ -104,6 +108,8 @@ theorem eval_append_old {r s : ℕ} (p : Program Input r) (q : Program Input s)
 
 end Program
 
+/-- Division-free arithmetic expressions built from inputs, scalars, addition, subtraction
+and multiplication. -/
 inductive Expression (Input : Type*) where
   | literal : ℂ → Expression Input
   | input : Input → Expression Input
@@ -115,6 +121,7 @@ namespace Expression
 
 variable {Input : Type*}
 
+/-- Interpret an arithmetic expression at the supplied input values. -/
 def eval (inputs : Input → ℂ) : Expression Input → ℂ
   | .literal z => z
   | .input i => inputs i
@@ -122,6 +129,7 @@ def eval (inputs : Input → ℂ) : Expression Input → ℂ
   | .sub e f => e.eval inputs - f.eval inputs
   | .mul e f => e.eval inputs * f.eval inputs
 
+/-- Count arithmetic operations, treating input and literal loading as free. -/
 def cost : Expression Input → ℕ
   | .literal _ => 0
   | .input _ => 0
@@ -129,13 +137,18 @@ def cost : Expression Input → ℕ
   | .sub e f => e.cost + f.cost + 1
   | .mul e f => e.cost + f.cost + 1
 
+/-- A compiled expression with certified semantics and exact operation count. -/
 structure Compiled (e : Expression Input) where
+  /-- Number of registers allocated for the compiled expression. -/
   registers : ℕ
+  /-- The straight-line program computing the expression. -/
   program : Program Input registers
+  /-- Register containing the expression's value. -/
   output : Fin registers
   correct : ∀ inputs, program.eval inputs output = e.eval inputs
   cost_eq : program.cost = e.cost
 
+/-- Compile an expression while certifying its evaluation and operation count. -/
 def compile : (e : Expression Input) → Compiled e
   | .literal z =>
     { registers := 1

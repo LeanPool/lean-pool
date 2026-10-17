@@ -38,9 +38,11 @@ theorem normalizedTranslate_continuousOn {K : Set (S → ℝ)} (z : S)
   exact ((continuous_apply (z * x)).comp continuous_subtype_val).div
     ((continuous_apply z).comp continuous_subtype_val) (fun f => hz f.val f.property)
 
+/-- Functions satisfying a fixed multiplicative scaling relation at one semiring element. -/
 def frozenConstraint (z : S) (c : ℝ) : Set (S → ℝ) :=
   {f | ∀ x, f (z * x) = c * f x}
 
+/-- Intersect a family of candidate states with one multiplicative scaling constraint. -/
 def frozenSlice (C : Set (S → ℝ)) (z : S) (c : ℝ) : Set (S → ℝ) :=
   C ∩ frozenConstraint z c
 

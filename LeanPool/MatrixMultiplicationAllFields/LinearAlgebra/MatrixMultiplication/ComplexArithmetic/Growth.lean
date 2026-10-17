@@ -152,6 +152,7 @@ theorem admissibleExponent_of_recursive_costs
       simpa only [← pow_mul, Nat.mul_comm k 2] using hcast)
   exact ⟨C, hC, fun k => ⟨P k, hP k, hbound k⟩⟩
 
+/-- The recursive arithmetic cost for a fixed block size, rank bound and linear overhead. -/
 def blockRecurrenceCost (b R K : ℕ) : ℕ → ℕ
   | 0 => 1
   | k + 1 => R * blockRecurrenceCost b R K k + K * (b ^ k) ^ 2

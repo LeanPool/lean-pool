@@ -46,7 +46,9 @@ namespace MatrixMultiplication.AuxiliarySeparation.Sector
 open MatrixMultiplication.Foundation
 open Polynomial
 
+/-- Second-leg coordinates of the three-sector source tensor. -/
 abbrev YIndex (a h : ℕ) := Fin (sourceWidth a h)
+/-- Third-leg coordinates of the three-sector source tensor. -/
 abbrev ZIndex (a h : ℕ) := Fin (a + sourceWidth a h - 1)
 
 variable (K) in

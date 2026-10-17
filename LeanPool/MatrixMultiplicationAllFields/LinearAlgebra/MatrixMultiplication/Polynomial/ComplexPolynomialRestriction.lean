@@ -29,6 +29,8 @@ section ConstantRestriction
 variable {F X Y Z X' Y' Z' : Type*} [CommSemiring F]
 variable [Fintype X] [Fintype Y] [Fintype Z]
 
+/-- Restrict a polynomial tensor using coordinate maps with constant polynomial
+coefficients. -/
 def restrictPolynomial (A : X' → X → F) (B : Y' → Y → F)
     (C : Z' → Z → F) (P : Tensor (Polynomial F) X Y Z) :
     Tensor (Polynomial F) X' Y' Z' :=
@@ -69,6 +71,7 @@ namespace PolynomialApproximation
 
 variable {F X Y Z X' Y' Z' : Type*} [Field F]
 
+/-- Regard an exact rank decomposition as a degree-zero polynomial approximation. -/
 def ofRankAtMost (T : Tensor F X Y Z) (r : ℕ) (hT : RankAtMost T r) :
     PolynomialApproximation T r 0 0 where
   polynomial := fun x y z => Polynomial.C (T x y z)
@@ -90,6 +93,7 @@ def ofRankAtMost (T : Tensor F X Y Z) (r : ℕ) (hT : RankAtMost T r) :
 variable [Fintype X] [Fintype Y] [Fintype Z]
 variable {T : Tensor F X Y Z} {r d D : ℕ}
 
+/-- Apply fixed linear coordinate maps to a polynomial approximation. -/
 def restrict (W : PolynomialApproximation T r d D)
     (A : X' → X → F) (B : Y' → Y → F) (C : Z' → Z → F) :
     PolynomialApproximation (Tensor.restrict A B C T) r d D where

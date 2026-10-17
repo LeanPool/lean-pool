@@ -27,6 +27,7 @@ namespace Tensor
 
 variable {K A B C D E F : Type*} [CommSemiring K]
 
+/-- The coefficient tensor of matrix multiplication on arbitrary decidable coordinate sets. -/
 def matrixCoefficients (A B C : Type*) [DecidableEq A] [DecidableEq B] [DecidableEq C] :
     Tensor K (A × B) (B × C) (C × A) :=
   fun x y z => if x.2 = y.1 ∧ y.2 = z.1 ∧ z.2 = x.1 then 1 else 0

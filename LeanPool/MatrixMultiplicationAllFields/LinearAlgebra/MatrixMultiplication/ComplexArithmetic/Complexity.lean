@@ -27,6 +27,7 @@ namespace MatrixMultiplication.Foundation
 
 namespace Arithmetic
 
+/-- Complex arithmetic gates with explicit input and register references. -/
 inductive Gate (Input Register : Type*) where
   | literal : ℂ → Gate Input Register
   | input : Input → Gate Input Register
@@ -38,6 +39,7 @@ namespace Gate
 
 variable {Input Register : Type*}
 
+/-- Interpret a gate using the current input values and register contents. -/
 def eval (inputs : Input → ℂ) (registers : Register → ℂ) : Gate Input Register → ℂ
   | .literal z => z
   | .input i => inputs i
@@ -45,6 +47,7 @@ def eval (inputs : Input → ℂ) (registers : Register → ℂ) : Gate Input Re
   | .sub i j => registers i - registers j
   | .mul i j => registers i * registers j
 
+/-- Charge one operation for arithmetic gates and none for input or literal loading. -/
 def cost : Gate Input Register → ℕ
   | .literal _ => 0
   | .input _ => 0
@@ -54,6 +57,7 @@ def cost : Gate Input Register → ℕ
 
 end Gate
 
+/-- A finite sequence of gates, indexed by the number of allocated registers. -/
 inductive Program (Input : Type*) : ℕ → Type _ where
   | nil : Program Input 0
   | step {r : ℕ} : Program Input r → Gate Input (Fin r) → Program Input (r + 1)
@@ -62,11 +66,13 @@ namespace Program
 
 variable {Input : Type*}
 
+/-- Evaluate the registers of a straight-line program on given complex inputs. -/
 def eval : {r : ℕ} → Program Input r → (Input → ℂ) → Fin r → ℂ
   | 0, .nil, _ => Fin.elim0
   | _ + 1, .step p g, inputs =>
     Fin.cases (g.eval inputs (p.eval inputs)) (p.eval inputs)
 
+/-- Total number of arithmetic operations in a straight-line program. -/
 def cost : {r : ℕ} → Program Input r → ℕ
   | 0, .nil => 0
   | _ + 1, .step p g => p.cost + g.cost
@@ -84,26 +90,35 @@ def cost : {r : ℕ} → Program Input r → ℕ
 
 end Program
 
+/-- Disjoint input positions for the two square matrices. -/
 abbrev MatrixInput (n : ℕ) := (Fin n × Fin n) ⊕ (Fin n × Fin n)
 
+/-- Assemble the two matrices into the program's disjoint input space. -/
 def matrixInputs {n : ℕ} (A B : Matrix (Fin n) (Fin n) ℂ) : MatrixInput n → ℂ
   | .inl (i, j) => A i j
   | .inr (j, k) => B j k
 
+/-- A program with designated output registers for square matrix multiplication. -/
 structure MatrixAlgorithm (n : ℕ) where
+  /-- Number of registers used by the matrix multiplication program. -/
   registers : ℕ
+  /-- The straight-line program underlying the matrix algorithm. -/
   program : Program (MatrixInput n) registers
+  /-- Register location of each output matrix entry. -/
   output : Fin n → Fin n → Fin registers
 
 namespace MatrixAlgorithm
 
+/-- Evaluate the algorithm's output matrix on its two input matrices. -/
 def eval {n : ℕ} (P : MatrixAlgorithm n)
     (A B : Matrix (Fin n) (Fin n) ℂ) : Matrix (Fin n) (Fin n) ℂ :=
   fun i k => P.program.eval (matrixInputs A B) (P.output i k)
 
+/-- The program computes the matrix product for every pair of inputs. -/
 def Correct {n : ℕ} (P : MatrixAlgorithm n) : Prop :=
   ∀ A B : Matrix (Fin n) (Fin n) ℂ, P.eval A B = A * B
 
+/-- Arithmetic operation count of the matrix multiplication program. -/
 def cost {n : ℕ} (P : MatrixAlgorithm n) : ℕ := P.program.cost
 
 theorem correct_iff_entries {n : ℕ} (P : MatrixAlgorithm n) :
@@ -118,6 +133,7 @@ theorem correct_iff_entries {n : ℕ} (P : MatrixAlgorithm n) :
 
 end MatrixAlgorithm
 
+/-- Multiply two scalar inputs using one multiplication gate. -/
 def scalarAlgorithm : MatrixAlgorithm 1 where
   registers := 3
   program := ((Program.nil.step (.input (.inl (0, 0)))).step
@@ -136,17 +152,22 @@ theorem scalarAlgorithm_correct : scalarAlgorithm.Correct := by
 
 @[simp] theorem scalarAlgorithm_cost : scalarAlgorithm.cost = 1 := rfl
 
+/-- An exponent admitting uniformly bounded correct programs with arbitrarily small positive
+slack. -/
 def AdmissibleExponent (τ : ℝ) : Prop :=
   ∀ ε : ℝ, 0 < ε → ∃ C : ℝ, 0 < C ∧
     ∀ n : ℕ, 1 ≤ n → ∃ P : MatrixAlgorithm n,
       P.Correct ∧ (P.cost : ℝ) ≤ C * (n : ℝ) ^ (τ + ε)
 
+/-- The infimum of admissible arithmetic matrix multiplication exponents over the complex
+numbers. -/
 noncomputable def omega : ℝ := sInf {τ : ℝ | AdmissibleExponent τ}
 
 end Arithmetic
 
 namespace Tensor
 
+/-- The coefficient tensor encoding rectangular matrix multiplication. -/
 def matrixMultiplication (a b c : ℕ) :
     Tensor ℂ (Fin a × Fin b) (Fin b × Fin c) (Fin c × Fin a) :=
   fun x y z => if x.2 = y.1 ∧ y.2 = z.1 ∧ z.2 = x.1 then 1 else 0

@@ -25,6 +25,7 @@ namespace Gate
 
 variable {Input Input' Register : Type*}
 
+/-- Relabel a gate's input wires while preserving its register references. -/
 def mapInput (f : Input → Input') : Gate Input Register → Gate Input' Register
   | .literal z => .literal z
   | .input i => .input (f i)
@@ -41,6 +42,7 @@ def mapInput (f : Input → Input') : Gate Input Register → Gate Input' Regist
     (g.mapInput f).cost = g.cost := by
   cases g <;> rfl
 
+/-- Replace input wires by new input wires or literal scalars. -/
 def mapSource (f : Input → Input' ⊕ ℂ) : Gate Input Register → Gate Input' Register
   | .literal z => .literal z
   | .input i => match f i with
@@ -76,6 +78,7 @@ namespace Program
 
 variable {Input Input' Mid : Type*}
 
+/-- Relabel every input wire of a straight-line program. -/
 def mapInput (f : Input → Input') : {r : ℕ} → Program Input r → Program Input' r
   | 0, .nil => .nil
   | _ + 1, .step p g => (p.mapInput f).step (g.mapInput f)
@@ -98,6 +101,7 @@ def mapInput (f : Input → Input') : {r : ℕ} → Program Input r → Program 
   | nil => rfl
   | step p g ih => simp only [mapInput, cost_step, Gate.cost_mapInput, ih]
 
+/-- Specialize a program's inputs to new wires or literal scalars. -/
 def mapSource (f : Input → Input' ⊕ ℂ) : {r : ℕ} → Program Input r → Program Input' r
   | 0, .nil => .nil
   | _ + 1, .step p g => (p.mapSource f).step (g.mapSource f)
@@ -121,11 +125,17 @@ def mapSource (f : Input → Input' ⊕ ℂ) : {r : ℕ} → Program Input r →
   | nil => rfl
   | step p g ih => simp only [mapSource, cost_step, Gate.cost_mapSource, ih]
 
+/-- A composed program with output maps and correctness and cost certificates for both
+stages. -/
 structure Substituted {r s : ℕ} (p : Program Input r) (q : Program Mid s)
     (wires : Mid → Fin r) where
+  /-- Number of registers in the composed program. -/
   registers : ℕ
+  /-- The straight-line program realizing the composition. -/
   program : Program Input registers
+  /-- Locations of the first program's outputs in the composed register space. -/
   oldOutput : Fin r → Fin registers
+  /-- Locations of the second program's outputs in the composed register space. -/
   output : Fin s → Fin registers
   correctOld : ∀ inputs i, program.eval inputs (oldOutput i) = p.eval inputs i
   correct : ∀ inputs i, program.eval inputs (output i) =
@@ -134,6 +144,7 @@ structure Substituted {r s : ℕ} (p : Program Input r) (q : Program Mid s)
 
 namespace Substituted
 
+/-- Extend a certified composition by one gate without changing its cost accounting. -/
 def step {r s : ℕ} {p : Program Input r} {q : Program Mid s}
     {wires : Mid → Fin r} (a : Substituted p q wires)
     (g : Gate Mid (Fin s)) (h : Gate Input (Fin a.registers))
@@ -158,6 +169,7 @@ def step {r s : ℕ} {p : Program Input r} {q : Program Mid s}
 
 end Substituted
 
+/-- Substitute the outputs of one program for the input wires of another. -/
 def substitute {r : ℕ} (p : Program Input r) :
     {s : ℕ} → (q : Program Mid s) → (wires : Mid → Fin r) → Substituted p q wires
   | 0, .nil, wires =>

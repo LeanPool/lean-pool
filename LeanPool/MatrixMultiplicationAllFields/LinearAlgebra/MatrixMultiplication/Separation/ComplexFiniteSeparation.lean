@@ -26,6 +26,7 @@ variable {X Y Z S U G : Type*}
 variable [AddCommGroup G] [Fintype G] [DecidableEq G]
 variable [DecidableEq S] [DecidableEq U]
 
+/-- Retain tensor entries with matching branch labels and a shared auxiliary coordinate. -/
 def separatedTensor (lx : X → S) (T : Tensor ℂ X Y Z) :
     Tensor ℂ (X × U) (Y × U) (Z × S) :=
   fun x y z => if lx x.1 = z.2 ∧ x.2 = y.2 then T x.1 y.1 z.1 else 0
@@ -69,7 +70,7 @@ theorem finite_separation_mem_restrictionOrbit
   exact Tensor.pullback_eq_restrict _ _ _ _
 
 theorem finite_separation_degeneratesTo
-    [Fintype X] [Fintype Y] [Fintype Z] [Fintype S] [Fintype U]
+    [Fintype X] [Fintype Y] [Fintype Z]
     (T : Tensor ℂ X Y Z) (lx : X → S) (ly : Y → S)
     (tag : S → G) (point : S → U → G)
     (hlabels : ∀ x y z, T x y z ≠ 0 → lx x = ly y)
@@ -95,7 +96,6 @@ theorem finite_separation_rankAtMost
 
 omit [DecidableEq G] in
 theorem finite_separation_borderRankAtMost
-    [Fintype X] [Fintype Y] [Fintype Z] [Fintype S] [Fintype U]
     (T : Tensor ℂ X Y Z) (lx : X → S) (ly : Y → S)
     (tag : S → G) (point : S → U → G) {r : ℕ}
     (hT : Tensor.BorderRankAtMost T r)
@@ -105,10 +105,8 @@ theorem finite_separation_borderRankAtMost
     Tensor.BorderRankAtMost (separatedTensor (U := U) lx T)
       (r * Fintype.card G) := by
   classical
-  classical
   rw [← finite_separation_identity T lx ly tag point hlabels hcollision]
-  rw [Tensor.pullback_eq_restrict]
-  exact (hT.product (groupTensor_rankAtMost G).borderRankAtMost).restrict _ _ _
+  exact (hT.product (groupTensor_rankAtMost G).borderRankAtMost).pullback _ _ _
 
 end Separation
 
@@ -158,7 +156,6 @@ theorem finite_grid_separation_rankAtMost
   simpa only [Separation.card_auxiliaryGroup] using hr
 
 theorem finite_grid_separation_borderRankAtMost
-    [Fintype X] [Fintype Y] [Fintype Z]
     (T : Tensor ℂ X Y Z) (lx : X → S) (ly : Y → S)
     {d Q m r : ℕ} (hQ : 0 < Q)
     (hK : (d * Q ^ 2 + 1) * Fintype.card S ≤ Q ^ d)

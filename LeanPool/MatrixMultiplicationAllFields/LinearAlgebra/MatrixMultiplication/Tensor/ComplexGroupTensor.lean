@@ -22,6 +22,7 @@ namespace MatrixMultiplication.Foundation
 
 variable (G : Type*) [AddCommGroup G] [Fintype G] [DecidableEq G]
 
+/-- The coefficient tensor for addition in a finite abelian group. -/
 def groupTensor : Tensor ℂ G G G := fun a b c => if a + b = c then 1 else 0
 
 theorem groupTensor_fourier :

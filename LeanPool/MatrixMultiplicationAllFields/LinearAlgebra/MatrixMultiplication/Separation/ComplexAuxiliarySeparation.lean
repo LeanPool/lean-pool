@@ -55,7 +55,6 @@ theorem auxiliary_separation_rankAtMost
     (Separation.grid_population_bound (Fintype.card S)) hT hlabels
 
 theorem auxiliary_separation_borderRankAtMost
-    [Fintype X] [Fintype Y] [Fintype Z]
     (T : Tensor ℂ X Y Z) (lx : X → S) (ly : Y → S) {r : ℕ}
     (hT : Tensor.BorderRankAtMost T r)
     (hlabels : ∀ x y z, T x y z ≠ 0 → lx x = ly y) :
@@ -79,7 +78,6 @@ theorem auxiliary_separation_directSum_rankAtMost
     (auxiliary_separation_rankAtMost T lx ly hT hlabels)
 
 theorem auxiliary_separation_directSum_borderRankAtMost
-    [Fintype X] [Fintype Y] [Fintype Z]
     (T : Tensor ℂ X Y Z) (lx : X → S) (ly : Y → S) {r : ℕ}
     (hT : Tensor.BorderRankAtMost T r)
     (hlabels : ∀ x y z, T x y z ≠ 0 → lx x = ly y) :

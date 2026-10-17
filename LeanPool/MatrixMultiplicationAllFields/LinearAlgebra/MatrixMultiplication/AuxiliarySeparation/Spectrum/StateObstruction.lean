@@ -121,6 +121,7 @@ def stateConstraintLower (c : StateConstraint S) : S :=
   | .order x _ _ => x
   | _ => 0
 
+/-- The semiring element providing the upper endpoint of a state constraint. -/
 def stateConstraintUpper (R : S → ℕ) (c : StateConstraint S) : S :=
   match c with
   | .lower x => x

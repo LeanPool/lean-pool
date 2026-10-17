@@ -74,14 +74,14 @@ theorem classOf_scalarTensor_add (m n : ℕ) :
   have h := classOf_eq_of_reindex _ _ _ (scalarTensor_add_reindex (K := K) m n)
   exact h.symm.trans (classOf_sum _ _)
 
-@[simp] theorem classOf_scalarTensor_zero :
+theorem classOf_scalarTensor_zero :
     classOf (scalarTensor K 0) = (0 : (TensorClass K)) := by
   have h : scalarTensor K 0 = 0 := by
     funext x
     exact Fin.elim0 x
   rw [h, classOf_zero]
 
-@[simp] theorem classOf_scalarTensor_one :
+theorem classOf_scalarTensor_one :
     classOf (scalarTensor K 1) = (1 : (TensorClass K)) := by
   change classOf (scalarTensor K 1) = classOf (fun (_ _ _ : PUnit.{1}) => (1 : K))
   apply classOf_eq_of_reindex (Equiv.equivPUnit (Fin 1))

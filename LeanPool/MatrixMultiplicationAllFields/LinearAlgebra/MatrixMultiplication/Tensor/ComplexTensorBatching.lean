@@ -24,6 +24,7 @@ namespace Tensor
 
 variable {K X Y Z U V W : Type*} [CommSemiring K]
 
+/-- The diagonal tensor with coefficient one exactly when all three indices agree. -/
 def diagonal (ι : Type*) [DecidableEq ι] : Tensor K ι ι ι :=
   fun i j k => if i = j ∧ i = k then 1 else 0
 

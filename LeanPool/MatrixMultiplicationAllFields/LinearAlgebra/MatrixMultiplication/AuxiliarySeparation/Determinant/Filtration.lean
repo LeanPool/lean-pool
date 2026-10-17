@@ -43,6 +43,7 @@ open MatrixMultiplication.Foundation Polynomial
 
 namespace MatrixMultiplication.AuxiliarySeparation.DeterminantFiltration
 
+/-- Indices for the quotient and kernel parts of a determinant filtration. -/
 abbrev Index (e : ℕ) := Sum (Fin (e + 2)) (Fin e)
 
 variable (K) in
@@ -155,10 +156,12 @@ def inputScale (e : ℕ) : Index e → K[X]
   | .inr _ => 1
 
 variable (K) in
+/-- Scale quotient coordinates by one and kernel coordinates by the polynomial variable. -/
 def outputScale (e : ℕ) : Index e → K[X]
   | .inl _ => 1
   | .inr _ => X
 
+/-- The diagonal coordinate map with prescribed polynomial scaling factors. -/
 def diagonalMap {I : Type*} [DecidableEq I] (s : I → K[X]) : I → I → K[X] :=
   fun i j => if i = j then s i else 0
 
@@ -211,6 +214,7 @@ def degeneration (d e : ℕ) :
 
 /-! The actual coordinate change from the original two-copy convolution. -/
 
+/-- Indices for the two original monomial bases before the filtration change of basis. -/
 abbrev OriginalIndex (e : ℕ) := Sum (Fin (e + 1)) (Fin (e + 1))
 
 variable (K) in

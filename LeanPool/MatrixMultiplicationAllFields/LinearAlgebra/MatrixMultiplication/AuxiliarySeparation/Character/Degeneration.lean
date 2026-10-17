@@ -170,10 +170,10 @@ theorem value_polynomialRestrictionDegeneration_le [IsAlgClosed K]
     χ.value U ≤ χ.value T := by
   obtain ⟨r, hr⟩ := exists_rankAtMost T
   apply χ.value_le_of_polynomialApproximation
-    (restrictionDegeneration_approximation L hr) (χ.nonneg T)
+    (restrictionDegenerationApproximation L hr) (χ.nonneg T)
   intro t ht
   have heval : (fun x y z =>
-      ((restrictionDegeneration_approximation L hr).polynomial x y z).eval t) =
+      ((restrictionDegenerationApproximation L hr).polynomial x y z).eval t) =
       Tensor.restrict (fun x' x => (L.leftMap x' x).eval t)
         (fun y' y => (L.middleMap y' y).eval t)
         (fun z' z => (L.rightMap z' z).eval t) T := by

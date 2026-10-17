@@ -70,6 +70,7 @@ namespace HierarchySeparationRates
 
 universe u v w
 
+/-- Total population times the entropy of its normalized letter frequencies. -/
 def populationEntropyRate {B : Type*} [Fintype B] (counts : B → ℕ) : ℝ :=
   (∑ b, counts b : ℕ) *
     finiteEntropy (fun b => (counts b : ℝ) / (∑ b, counts b : ℕ))
@@ -118,18 +119,23 @@ section FinitePools
 variable {I : Type u} [Fintype I] {Alphabet : I → Type v}
   [∀ i, Fintype (Alphabet i)]
 
+/-- The multinomial count for one pool after repeating all populations t times. -/
 def poolTypeCount (counts : ∀ i, Alphabet i → ℕ) (i : I) (t : ℕ) : ℕ :=
   Nat.multinomial Finset.univ (fun b => t * counts i b)
 
+/-- The sum of population entropy rates over all pools. -/
 def poolEntropyTotal (counts : ∀ i, Alphabet i → ℕ) : ℝ :=
   ∑ i, populationEntropyRate (counts i)
 
+/-- The product of exact word counts across the independent pools. -/
 def pairingProduct (counts : ∀ i, Alphabet i → ℕ) (t : ℕ) : ℕ :=
   ∏ i, poolTypeCount counts i t
 
+/-- The product of ambient grid group orders used to separate the pools. -/
 def gridProduct (counts : ∀ i, Alphabet i → ℕ) (t : ℕ) : ℕ :=
   ∏ i, Separation.gridGroupOrder (poolTypeCount counts i t)
 
+/-- The product of auxiliary tensor costs assigned to the pools. -/
 def auxiliaryProduct (counts : ∀ i, Alphabet i → ℕ) (t : ℕ) : ℕ :=
   ∏ i, LabelHierarchySeparation.poolAuxiliaryCost (poolTypeCount counts i t)
 
@@ -202,9 +208,11 @@ theorem sourcePrefixCounts_mul (counts : A → ℕ) (labels : ∀ n, A → Label
       t * LabelHierarchyCounts.sourcePrefixCounts counts labels n r :=
   pushforwardCounts_mul counts (labelRecordOf labels n) t r
 
+/-- A hierarchy stage together with a label prefix at that stage. -/
 abbrev PrefixPool (Label : ℕ → Type v) (depth : ℕ) :=
   Σ n : Fin depth, LabelRecord Label n.val
 
+/-- Letter populations in each prefix fiber of the source hierarchy. -/
 def sourcePoolCounts (counts : A → ℕ) (labels : ∀ n, A → Label n) (depth : ℕ)
     (j : PrefixPool Label depth) (s : Label j.1.val) : ℕ :=
   LabelHierarchyCounts.sourcePrefixCounts counts labels (j.1.val + 1) (j.2, s)

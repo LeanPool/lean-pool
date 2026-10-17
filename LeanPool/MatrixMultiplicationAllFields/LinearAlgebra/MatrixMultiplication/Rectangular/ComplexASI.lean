@@ -24,10 +24,12 @@ namespace MatrixMultiplication.Foundation
 
 namespace Tensor
 
+/-- Identify a standard set of L cubed tags with three independent L-valued tags. -/
 def rectangularTagEquiv (L : ℕ) :
     Fin (L ^ 3) ≃ (Fin L × Fin L) × Fin L :=
   Fintype.equivOfCardEq (by simp [pow_succ])
 
+/-- Identify a standard product-sized index set with the three rectangular coordinate sets. -/
 def rectangularIndexEquiv (a b c : ℕ) :
     Fin (a * b * c) ≃ Fin a × Fin b × Fin c :=
   Fintype.equivOfCardEq (by simp [mul_assoc])
@@ -41,7 +43,9 @@ theorem matrixMultiplication_directSum_symmetrized_rank {a b c L r : ℕ}
     (rectangularTagEquiv L) (rectangularTagEquiv L).injective
     (rectangularIndexEquiv a b c) (rectangularIndexEquiv a b c).injective
 
-def PolynomialApproximation.matrixCoefficients_directSum_of_injective
+/-- Pull a direct-sum matrix tensor approximation back along injective tag and coordinate
+maps. -/
+def PolynomialApproximation.matrixCoefficientsDirectSumOfInjective
     {F ι κ A B : Type*} [Field F]
     [DecidableEq ι] [DecidableEq κ] [DecidableEq A] [DecidableEq B] {r d D : ℕ}
     (P : PolynomialApproximation
@@ -59,14 +63,16 @@ def PolynomialApproximation.matrixCoefficients_directSum_of_injective
   rw [← heq]
   exact P.pullback coord coord coord
 
-def PolynomialApproximation.matrixMultiplication_directSum_symmetrized
+/-- Symmetrize a direct sum of finite rectangular matrix multiplication tensors into square
+ones. -/
+def PolynomialApproximation.matrixMultiplicationDirectSumSymmetrized
     {a b c L r d D : ℕ}
     (P : PolynomialApproximation
       (directSum (fun _ : Fin L => matrixMultiplication a b c)) r d D) :
     PolynomialApproximation (directSum (fun _ : Fin (L ^ 3) =>
       matrixMultiplication (a * b * c) (a * b * c) (a * b * c)))
       (r ^ 3) (3 * d) (3 * D) :=
-  P.matrixCoefficients_directSum_symmetrized.matrixCoefficients_directSum_of_injective
+  P.matrixCoefficientsDirectSumSymmetrized.matrixCoefficientsDirectSumOfInjective
     (rectangularTagEquiv L) (rectangularTagEquiv L).injective
     (rectangularIndexEquiv a b c) (rectangularIndexEquiv a b c).injective
 
@@ -101,7 +107,7 @@ theorem equalRectangular_inequality_of_polynomialApproximation
     (L : ℝ) * ((a * b * c : ℕ) : ℝ) ^ (omega / 3) ≤ (r : ℝ) := by
   have hv : 1 ≤ a * b * c := Nat.mul_pos (Nat.mul_pos ha hb) hc
   have hs := equalSummand_inequality_of_polynomialApproximation hv
-    P.matrixMultiplication_directSum_symmetrized
+    P.matrixMultiplicationDirectSumSymmetrized
   apply mul_rpow_third_le_of_cube (Nat.cast_nonneg (a * b * c)) (Nat.cast_nonneg r)
   simpa only [Nat.cast_pow] using hs
 

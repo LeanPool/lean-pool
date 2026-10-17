@@ -170,7 +170,7 @@ theorem restrictionDegeneration_degree
 
 /-- The existing polynomial-approximation API applies to a polynomial
 restriction as soon as the source tensor has a rank bound. -/
-def restrictionDegeneration_approximation
+def restrictionDegenerationApproximation
     (L : Tensor.PolynomialRestrictionDegeneration T U k Lx Ly Lz)
     {r : ℕ} (hT : Tensor.RankAtMost T r) :
     Tensor.PolynomialApproximation U r k (Lx + Ly + Lz) where

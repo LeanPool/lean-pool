@@ -59,7 +59,7 @@ def determinant : R[X] →ₗ[R] FormPair R where
 
 @[simp] theorem determinant_apply (p : R[X]) : determinant p = (-X * p, p) := rfl
 
-@[simp] theorem diagonal_determinant (p : R[X]) : diagonal (determinant p) = 0 := by
+theorem diagonal_determinant (p : R[X]) : diagonal (determinant p) = 0 := by
   simp [diagonal, determinant]
 
 /-- The determinant factor can be recovered from the second component. -/
@@ -112,10 +112,10 @@ def split : (R[X] × R[X]) ≃ₗ[R] FormPair R where
 
 @[simp] theorem split_symm_apply (p : FormPair R) : split.symm p = (diagonal p, p.2) := rfl
 
-@[simp] theorem diagonal_split (p : R[X] × R[X]) : diagonal (split p) = p.1 := by
+theorem diagonal_split (p : R[X] × R[X]) : diagonal (split p) = p.1 := by
   simp [split, diagonal]
 
-@[simp] theorem split_zero_left (q : R[X]) : split (0, q) = determinant q := by
+theorem split_zero_left (q : R[X]) : split (0, q) = determinant q := by
   simp [split, determinant]
 
 theorem diagonal_surjective : Function.Surjective (diagonal (R := R)) := by
@@ -174,23 +174,23 @@ def quotientTop (e : ℕ) : FormPair R := (0, X ^ e)
 /-- The kernel monomial `(uw-vs) u^(e-1-j) v^j`, with `j < e`. -/
 def kernelMonomial (j : ℕ) : FormPair R := determinant (X ^ j)
 
-@[simp] theorem diagonal_quotientMonomial (j : ℕ) :
+theorem diagonal_quotientMonomial (j : ℕ) :
     diagonal (quotientMonomial (R := R) j) = X ^ j := by
   simp [diagonal, quotientMonomial]
 
-@[simp] theorem diagonal_quotientTop (e : ℕ) :
+theorem diagonal_quotientTop (e : ℕ) :
     diagonal (quotientTop (R := R) e) = X ^ (e + 1) := by
   simp [diagonal, quotientTop, pow_succ, mul_comm]
 
-@[simp] theorem diagonal_kernelMonomial (j : ℕ) :
+theorem diagonal_kernelMonomial (j : ℕ) :
     diagonal (kernelMonomial (R := R) j) = 0 := by
   simp [kernelMonomial]
 
-@[simp] theorem multiply_quotientMonomial (i j : ℕ) :
+theorem multiply_quotientMonomial (i j : ℕ) :
     multiply (X ^ i) (quotientMonomial (R := R) j) = quotientMonomial (i + j) := by
   apply Prod.ext <;> simp [multiply, quotientMonomial, pow_add]
 
-@[simp] theorem multiply_kernelMonomial (i j : ℕ) :
+theorem multiply_kernelMonomial (i j : ℕ) :
     multiply (X ^ i) (kernelMonomial (R := R) j) = kernelMonomial (i + j) := by
   rw [kernelMonomial, multiply_determinant, ← pow_add, kernelMonomial]
 
@@ -214,7 +214,7 @@ def quotientVector (e : ℕ) (j : Fin (e + 2)) : FormPair R :=
 /-- The actual kernel vectors used at degree `e`: there are `e` of them. -/
 def kernelVector (_e : ℕ) (j : Fin _e) : FormPair R := kernelMonomial j
 
-@[simp] theorem diagonal_quotientVector (e : ℕ) (j : Fin (e + 2)) :
+theorem diagonal_quotientVector (e : ℕ) (j : Fin (e + 2)) :
     diagonal (quotientVector (R := R) e j) = X ^ (j : ℕ) := by
   unfold quotientVector
   split_ifs with h
@@ -222,7 +222,7 @@ def kernelVector (_e : ℕ) (j : Fin _e) : FormPair R := kernelMonomial j
   · have hj : (j : ℕ) = e + 1 := by omega
     simpa [hj] using diagonal_quotientTop (R := R) e
 
-@[simp] theorem diagonal_kernelVector (e : ℕ) (j : Fin e) :
+theorem diagonal_kernelVector (e : ℕ) (j : Fin e) :
     diagonal (kernelVector (R := R) e j) = 0 := by
   exact diagonal_kernelMonomial j
 

@@ -26,6 +26,7 @@ open scoped BigOperators
 
 namespace MatrixMultiplication.Foundation
 
+/-- A three-legged coefficient array over the given scalar type. -/
 abbrev Tensor (K X Y Z : Type*) := X → Y → Z → K
 
 namespace Tensor
@@ -34,31 +35,38 @@ section Algebra
 
 variable {K X Y Z X' Y' Z' : Type*} [CommSemiring K]
 
+/-- Tensor formed by multiplying one coefficient function from each leg. -/
 def rankOne (a : X → K) (b : Y → K) (c : Z → K) : Tensor K X Y Z :=
   fun x y z => a x * b y * c z
 
+/-- Existence of a decomposition as a sum of r rank-one tensors. -/
 def RankAtMost (T : Tensor K X Y Z) (r : ℕ) : Prop :=
   ∃ (a : Fin r → X → K) (b : Fin r → Y → K) (c : Fin r → Z → K),
     T = fun x y z => ∑ i, rankOne (a i) (b i) (c i) x y z
 
+/-- Apply a linear coordinate map independently to each of the three tensor legs. -/
 def restrict [Fintype X] [Fintype Y] [Fintype Z]
     (A : X' → X → K) (B : Y' → Y → K) (C : Z' → Z → K)
     (T : Tensor K X Y Z) : Tensor K X' Y' Z' :=
   fun x' y' z' => ∑ x, ∑ y, ∑ z,
     A x' x * B y' y * C z' z * T x y z
 
+/-- Contract the first two tensor legs against coefficient functions. -/
 def contract (T : Tensor K X Y Z) [Fintype X] [Fintype Y]
     (a : X → K) (b : Y → K) : Z → K :=
   fun z => ∑ x, ∑ y, T x y z * a x * b y
 
+/-- Tensor product with paired coordinates on each of the three legs. -/
 def product {U V W : Type*} (T : Tensor K X Y Z) (S : Tensor K U V W) :
     Tensor K (X × U) (Y × V) (Z × W) :=
   fun x y z => T x.1 y.1 z.1 * S x.2 y.2 z.2
 
+/-- Block-diagonal direct sum retaining a common summand tag on all three legs. -/
 def directSum {ι : Type*} [DecidableEq ι] (T : ι → Tensor K X Y Z) :
     Tensor K (ι × X) (ι × Y) (ι × Z) :=
   fun x y z => if x.1 = y.1 ∧ x.1 = z.1 then T x.1 x.2 y.2 z.2 else 0
 
+/-- The n-fold tensor product, indexed by words of length n on each leg. -/
 def power (T : Tensor K X Y Z) (n : ℕ) :
     Tensor K (Fin n → X) (Fin n → Y) (Fin n → Z) :=
   fun x y z => ∏ i, T (x i) (y i) (z i)
@@ -212,6 +220,7 @@ end Algebra
 section Pullback
 variable {K X Y Z X' Y' Z' : Type*} [CommSemiring K]
 
+/-- Precompose each tensor coordinate with a map of its index set. -/
 def pullback (fx : X' → X) (fy : Y' → Y) (fz : Z' → Z)
     (T : Tensor K X Y Z) : Tensor K X' Y' Z' :=
   fun x y z => T (fx x) (fy y) (fz z)
@@ -240,23 +249,42 @@ section ComplexTopology
 
 variable {X Y Z X' Y' Z' : Type*}
 
-def BorderRankAtMost [Fintype X] [Fintype Y] [Fintype Z]
+/-- Membership in the topological closure of tensors of rank at most r. -/
+def BorderRankAtMost
     (T : Tensor ℂ X Y Z) (r : ℕ) : Prop :=
   T ∈ closure {S | RankAtMost S r}
 
+/-- Tensors obtainable by applying three linear coordinate maps to a fixed tensor. -/
 def restrictionOrbit [Fintype X] [Fintype Y] [Fintype Z]
     (T : Tensor ℂ X Y Z) : Set (Tensor ℂ X' Y' Z') :=
   {U | ∃ (A : X' → X → ℂ) (B : Y' → Y → ℂ) (C : Z' → Z → ℂ),
     U = restrict A B C T}
 
+/-- Membership in the topological closure of a tensor's restriction orbit. -/
 def DegeneratesTo [Fintype X] [Fintype Y] [Fintype Z]
-    [Fintype X'] [Fintype Y'] [Fintype Z']
     (T : Tensor ℂ X Y Z) (U : Tensor ℂ X' Y' Z') : Prop :=
   U ∈ closure (restrictionOrbit T)
 
-theorem RankAtMost.borderRankAtMost [Fintype X] [Fintype Y] [Fintype Z]
+theorem RankAtMost.borderRankAtMost
     {T : Tensor ℂ X Y Z} {r : ℕ} (h : RankAtMost T r) :
     BorderRankAtMost T r := subset_closure h
+
+/-- Pulling back coordinates preserves border-rank bounds, without finiteness assumptions. -/
+theorem BorderRankAtMost.pullback {T : Tensor ℂ X Y Z} {r : ℕ}
+    (h : BorderRankAtMost T r) (fx : X' → X) (fy : Y' → Y) (fz : Z' → Z) :
+    BorderRankAtMost (Tensor.pullback fx fy fz T) r := by
+  have hcontinuous : Continuous
+      (Tensor.pullback fx fy fz : Tensor ℂ X Y Z → Tensor ℂ X' Y' Z') := by
+    unfold Tensor.pullback
+    fun_prop
+  have hclosed : IsClosed {S : Tensor ℂ X Y Z |
+      BorderRankAtMost (Tensor.pullback fx fy fz S) r} :=
+    isClosed_closure.preimage hcontinuous
+  have hsubset : {S : Tensor ℂ X Y Z | RankAtMost S r} ⊆
+      {S | BorderRankAtMost (Tensor.pullback fx fy fz S) r} := by
+    intro S hS
+    exact subset_closure (hS.pullback fx fy fz)
+  exact closure_minimal hsubset hclosed h
 
 theorem continuous_restrict [Fintype X] [Fintype Y] [Fintype Z]
     (A : X' → X → ℂ) (B : Y' → Y → ℂ) (C : Z' → Z → ℂ) :
@@ -265,7 +293,6 @@ theorem continuous_restrict [Fintype X] [Fintype Y] [Fintype Z]
   fun_prop
 
 theorem BorderRankAtMost.restrict [Fintype X] [Fintype Y] [Fintype Z]
-    [Fintype X'] [Fintype Y'] [Fintype Z']
     {T : Tensor ℂ X Y Z} {r : ℕ} (h : BorderRankAtMost T r)
     (A : X' → X → ℂ) (B : Y' → Y → ℂ) (C : Z' → Z → ℂ) :
     BorderRankAtMost (Tensor.restrict A B C T) r := by
@@ -289,7 +316,6 @@ theorem continuous_product_right {U V W : Type*} (T : Tensor ℂ X Y Z) :
   fun_prop
 
 theorem BorderRankAtMost.product {U V W : Type*}
-    [Fintype X] [Fintype Y] [Fintype Z] [Fintype U] [Fintype V] [Fintype W]
     {T : Tensor ℂ X Y Z} {S : Tensor ℂ U V W} {r s : ℕ}
     (hT : BorderRankAtMost T r) (hS : BorderRankAtMost S s) :
     BorderRankAtMost (Tensor.product T S) (r * s) := by
@@ -310,7 +336,6 @@ theorem BorderRankAtMost.product {U V W : Type*}
   exact closure_minimal hexact hclosed hT
 
 theorem BorderRankAtMost.of_degeneration [Fintype X] [Fintype Y] [Fintype Z]
-    [Fintype X'] [Fintype Y'] [Fintype Z']
     {T : Tensor ℂ X Y Z} {U : Tensor ℂ X' Y' Z'} {r : ℕ}
     (hT : BorderRankAtMost T r) (hTU : DegeneratesTo T U) :
     BorderRankAtMost U r := by

@@ -25,7 +25,9 @@ namespace MatrixMultiplication.Foundation
 
 open scoped BigOperators
 
+/-- A finite probability law whose masses are rational numbers. -/
 structure RationalLaw (A : Type*) [Fintype A] where
+  /-- Rational probability mass assigned to each point. -/
   mass : A → ℚ
   nonneg : ∀ a, 0 ≤ mass a
   total : ∑ a, mass a = 1
@@ -34,6 +36,7 @@ namespace RationalLaw
 
 variable {A B : Type*} [Fintype A] [Fintype B]
 
+/-- Regard a rational probability law as a real-valued finite probability law. -/
 def toFiniteLaw (p : RationalLaw A) : FiniteLaw A where
   mass a := p.mass a
   nonneg a := by exact_mod_cast p.nonneg a

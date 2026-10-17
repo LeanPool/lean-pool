@@ -29,8 +29,10 @@ namespace MatrixMultiplication.Foundation
 
 open scoped BigOperators
 
+/-- The contribution of one mass to Shannon entropy, using natural logarithms. -/
 def entropyTerm (p : ℝ) : ℝ := -p * Real.log p
 
+/-- Shannon entropy of a finite mass function, using natural logarithms. -/
 def finiteEntropy {A : Type*} [Fintype A] (p : A → ℝ) : ℝ := ∑ a, entropyTerm (p a)
 
 theorem finiteEntropy_equiv {A B : Type*} [Fintype A] [Fintype B]
@@ -56,7 +58,9 @@ theorem finiteEntropy_chain {A B : Type*} [Fintype A] [Fintype B]
   simp only [finiteEntropy, Fintype.sum_prod_type, entropyTerm_mul,
     Finset.sum_add_distrib, ← Finset.sum_mul, ← Finset.mul_sum, hq, one_mul]
 
+/-- A nonnegative probability mass function on a finite type. -/
 structure FiniteLaw (A : Type*) [Fintype A] where
+  /-- Probability mass assigned to each point. -/
   mass : A → ℝ
   nonneg : ∀ a, 0 ≤ mass a
   total : ∑ a, mass a = 1
@@ -65,6 +69,7 @@ namespace FiniteLaw
 
 variable {A B : Type*} [Fintype A] [Fintype B]
 
+/-- Push a finite probability law forward along a map. -/
 def map (p : FiniteLaw A) (f : A → B) : FiniteLaw B := by
   classical
   exact
@@ -105,6 +110,7 @@ theorem map_entropy_of_injective (p : FiniteLaw A) (f : A → B)
   rw [Finset.sum_comm]
   simp
 
+/-- The joint law obtained by sampling a point and then its conditional law. -/
 def joint (p : FiniteLaw A) (q : A → FiniteLaw B) : FiniteLaw (A × B) where
   mass ab := p.mass ab.1 * (q ab.1).mass ab.2
   nonneg ab := mul_nonneg (p.nonneg ab.1) ((q ab.1).nonneg ab.2)
@@ -129,6 +135,7 @@ theorem mass_le_map_mass (p : FiniteLaw A) (f : A → B) (a : A) :
     (Finset.mem_univ a)
   simpa using h
 
+/-- Condition on a fiber, retaining the original law when that fiber has zero mass. -/
 def conditional (p : FiniteLaw A) (f : A → B) (b : B) : FiniteLaw A := by
   classical
   exact if hzero : (p.map f).mass b = 0 then p else

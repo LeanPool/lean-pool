@@ -26,6 +26,7 @@ section Pairing
 
 variable {K U : Type*} [CommSemiring K] [DecidableEq U]
 
+/-- The diagonal dot-pairing tensor, with a singleton third coordinate. -/
 def dotPairing (U : Type*) [DecidableEq U] : Tensor K U U Unit :=
   fun i j _ => if i = j then 1 else 0
 

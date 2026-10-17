@@ -36,6 +36,8 @@ theorem product_polynomial_eq (A : PolynomialApproximation T r d D)
   rw [A.polynomial_eq, B.polynomial_eq, pow_add]
   ring
 
+/-- Tensor-product two approximations, multiplying their rank bounds and adding their
+degrees. -/
 def product (A : PolynomialApproximation T r d D)
     (B : PolynomialApproximation S s e E) :
     PolynomialApproximation (Tensor.product T S) (r * s) (d + e) (D + E) where
@@ -61,11 +63,13 @@ def product (A : PolynomialApproximation T r d D)
     (B : PolynomialApproximation S s e E) :
     (A.product B).polynomial = Tensor.product A.polynomial B.polynomial := rfl
 
+/-- Tensor-product an approximation with an exactly rank-bounded tensor. -/
 def productExact (A : PolynomialApproximation T r d D)
     (S : Tensor F U V W) (s : ℕ) (hS : RankAtMost S s) :
     PolynomialApproximation (Tensor.product T S) (r * s) d D := by
   simpa only [Nat.add_zero] using A.product (ofRankAtMost S s hS)
 
+/-- Pull a polynomial approximation back along maps of its coordinate sets. -/
 def pullback (A : PolynomialApproximation T r d D)
     (fx : X' → X) (fy : Y' → Y) (fz : Z' → Z) :
     PolynomialApproximation (Tensor.pullback fx fy fz T) r d D where
@@ -79,6 +83,7 @@ def pullback (A : PolynomialApproximation T r d D)
     (fx : X' → X) (fy : Y' → Y) (fz : Z' → Z) :
     (A.pullback fx fy fz).polynomial = Tensor.pullback fx fy fz A.polynomial := rfl
 
+/-- Cyclically permute the three coordinate sets of a polynomial approximation. -/
 def cyclic (A : PolynomialApproximation T r d D) :
     PolynomialApproximation (Tensor.cyclic T) r d D where
   polynomial := Tensor.cyclic A.polynomial
@@ -90,7 +95,8 @@ def cyclic (A : PolynomialApproximation T r d D) :
 @[simp] theorem cyclic_polynomial (A : PolynomialApproximation T r d D) :
     A.cyclic.polynomial = Tensor.cyclic A.polynomial := rfl
 
-def directSum_product {ι κ : Type*} [DecidableEq ι] [DecidableEq κ]
+/-- Form the approximation for all pairwise products of two direct-sum families. -/
+def directSumProduct {ι κ : Type*} [DecidableEq ι] [DecidableEq κ]
     {T : ι → Tensor F X Y Z} {S : κ → Tensor F U V W}
     (A : PolynomialApproximation (Tensor.directSum T) r d D)
     (B : PolynomialApproximation (Tensor.directSum S) s e E) :
@@ -99,9 +105,10 @@ def directSum_product {ι κ : Type*} [DecidableEq ι] [DecidableEq κ]
       (r * s) (d + e) (D + E) := by
   have h := (A.product B).pullback (directSumProductEquiv ι κ X U)
     (directSumProductEquiv ι κ Y V) (directSumProductEquiv ι κ Z W)
-  simpa only [Tensor.directSum_product] using h
+  simpa only [Tensor.directSumProduct] using h
 
-def directSum_pullback {ι : Type*} [DecidableEq ι]
+/-- Apply the same coordinate pullback to every direct-sum summand of an approximation. -/
+def directSumPullback {ι : Type*} [DecidableEq ι]
     {T : ι → Tensor F X Y Z}
     (A : PolynomialApproximation (Tensor.directSum T) r d D)
     (fx : X' → X) (fy : Y' → Y) (fz : Z' → Z) :
@@ -110,7 +117,8 @@ def directSum_pullback {ι : Type*} [DecidableEq ι]
   A.pullback (fun x : ι × X' => (x.1, fx x.2))
     (fun y : ι × Y' => (y.1, fy y.2)) (fun z : ι × Z' => (z.1, fz z.2))
 
-def directSum_cyclic {ι : Type*} [DecidableEq ι]
+/-- Cyclically permute every direct-sum summand of a polynomial approximation. -/
+def directSumCyclic {ι : Type*} [DecidableEq ι]
     {T : ι → Tensor F X Y Z}
     (A : PolynomialApproximation (Tensor.directSum T) r d D) :
     PolynomialApproximation (Tensor.directSum (fun i => Tensor.cyclic (T i))) r d D := by
@@ -120,7 +128,9 @@ section Rectangular
 
 variable {A B C : Type*} [DecidableEq A] [DecidableEq B] [DecidableEq C]
 
-def matrixCoefficients_symmetrized
+/-- Combine the three cyclic rectangular matrix tensors into a square matrix tensor
+approximation. -/
+def matrixCoefficientsSymmetrized
     (P : PolynomialApproximation (matrixCoefficients (K := F) A B C) r d D) :
     PolynomialApproximation
       (matrixCoefficients (K := F) (A × B × C) (A × B × C) (A × B × C))
@@ -132,7 +142,9 @@ def matrixCoefficients_symmetrized
   simpa only [Tensor.cyclic_matrixCoefficients, Tensor.matrixCoefficients_cyclic_product_square,
     pow_succ, pow_zero, one_mul, hd, hD] using h
 
-def matrixCoefficients_directSum_symmetrized {ι : Type*} [DecidableEq ι]
+/-- Symmetrize a direct sum of rectangular matrix tensors, cubing its rank and summand
+count. -/
+def matrixCoefficientsDirectSumSymmetrized {ι : Type*} [DecidableEq ι]
     (P : PolynomialApproximation
       (Tensor.directSum (fun _ : ι => matrixCoefficients (K := F) A B C)) r d D) :
     PolynomialApproximation
@@ -141,11 +153,11 @@ def matrixCoefficients_directSum_symmetrized {ι : Type*} [DecidableEq ι]
       (r ^ 3) (3 * d) (3 * D) := by
   have P₁ : PolynomialApproximation
       (Tensor.directSum (fun _ : ι => matrixCoefficients (K := F) B C A)) r d D := by
-    simpa only [Tensor.cyclic_matrixCoefficients] using P.directSum_cyclic
+    simpa only [Tensor.cyclic_matrixCoefficients] using P.directSumCyclic
   have P₂ : PolynomialApproximation
       (Tensor.directSum (fun _ : ι => matrixCoefficients (K := F) C A B)) r d D := by
-    simpa only [Tensor.cyclic_matrixCoefficients] using P₁.directSum_cyclic
-  have h := ((P.directSum_product P₁).directSum_product P₂).directSum_pullback
+    simpa only [Tensor.cyclic_matrixCoefficients] using P₁.directSumCyclic
+  have h := ((P.directSumProduct P₁).directSumProduct P₂).directSumPullback
     (rectangularSquareX A B C) (rectangularSquareY A B C) (rectangularSquareZ A B C)
   have hd : d + d + d = 3 * d := by ring
   have hD : D + D + D = 3 * D := by ring

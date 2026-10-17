@@ -33,6 +33,7 @@ variable {X Y Z : I → Type*}
 
 variable {Node : Type*} [Fintype Node]
 
+/-- Transport a dependent coordinate family along a population-preserving reindexing. -/
 def populationCoordinateEquiv {J : Type*} (D : Node → Type*)
     (pool : I → Node) (reference : J → Node) (e : I ≃ J)
     (same : ∀ i, reference (e i) = pool i) :
@@ -74,6 +75,7 @@ theorem bankTensor_population_rankAtMost {J : Type*} [Fintype J]
   rw [← bankTensor_population_reindex T pool reference e same]
   exact hT.pullback _ _ _
 
+/-- Individual occurrences of each node in a prescribed resource population. -/
 abbrev BankOccurrences (population : Node → ℕ) :=
   (node : Node) × Fin (population node)
 
@@ -190,7 +192,7 @@ theorem prefix_separation_rankAtMost
   simp [separatedTensor]
 
 theorem deterministic_separation_identity
-    [Subsingleton Label] [Subsingleton Pairing] [Nonempty Pairing]
+    [Subsingleton Label] [Subsingleton Pairing]
     (T : Tensor ℂ X Y Z) (lx : X → Label) :
     separatedTensor (U := Pairing) lx T =
       Tensor.pullback Prod.fst Prod.fst Prod.fst T := by
@@ -222,10 +224,12 @@ section ExactPools
 
 variable {X Y Z Prefix Label : Type*} [DecidableEq Label]
 
+/-- Choose equally sized finite label pools' enumerations by standard finite sets. -/
 noncomputable def poolEnumeration (pool : Prefix → Finset Label) (k : ℕ)
     (counts : ∀ p, (pool p).card = k) : ∀ p, ↥(pool p) ≃ Fin k :=
   fun p => Finset.equivFinOfCardEq (counts p)
 
+/-- Encode an allowed label by its index in the pool selected by its prefix. -/
 def poolCode (pool : Prefix → Finset Label) {k : ℕ}
     (enumerate : ∀ p, ↥(pool p) ≃ Fin k)
     (prior : X → Prefix) (label : X → Label)
@@ -255,12 +259,15 @@ theorem poolCode_agree (pool : Prefix → Finset Label) {k : ℕ}
     exact congrArg (enumerate p) (Subtype.ext hl)
   exact congr_code _ _ ⟨lx x, ax x⟩ ⟨ly y, ay y⟩ hp hl
 
+/-- Rank budget for one label pool, using the trivial cost for a singleton pool. -/
 noncomputable def poolAuxiliaryCost (k : ℕ) : ℕ :=
   if k = 1 then 1 else Separation.gridGroupOrder k
 
+/-- Ambient finite group chosen to separate a label pool. -/
 abbrev PoolAuxiliaryGroup (k : ℕ) :=
   Separation.AuxiliaryGroup (Separation.gridDimension k) (Separation.gridWidth k)
 
+/-- The trivial or group tensor used as one pool's auxiliary resource. -/
 noncomputable def poolAuxiliaryTensor (k : ℕ) :
     Tensor ℂ (PoolAuxiliaryGroup k) (PoolAuxiliaryGroup k) (PoolAuxiliaryGroup k) :=
   if k = 1 then Tensor.rankOne (fun _ => 1) (fun _ => 1) (fun _ => 1)
@@ -368,7 +375,6 @@ theorem exact_pool_rankAtMost
 
 omit [DecidableEq Label] in
 theorem exact_pool_borderRankAtMost
-    [Fintype X] [Fintype Y] [Fintype Z]
     (pool : Prefix → Finset Label) (k : ℕ) (counts : ∀ p, (pool p).card = k)
     (T : Tensor ℂ X Y Z) (px : X → Prefix) (py : Y → Prefix)
     (lx : X → Label) (ly : Y → Label)
@@ -385,12 +391,8 @@ theorem exact_pool_borderRankAtMost
   · subst k
     have hcost : poolAuxiliaryCost 1 = 1 := by simp [poolAuxiliaryCost]
     rw [hcost, mul_one, deterministic_separation_identity]
-    rw [Tensor.pullback_eq_restrict (fun x : X × Fin 1 => x.1)
-      (fun y : Y × Fin 1 => y.1) (fun z : Z × Fin 1 => z.1) T]
-    exact hT.restrict (fun (x : X × Fin 1) (original : X) =>
-      if original = x.1 then 1 else 0)
-      (fun (y : Y × Fin 1) (original : Y) => if original = y.1 then 1 else 0)
-      (fun (z : Z × Fin 1) (original : Z) => if original = z.1 then 1 else 0)
+    exact hT.pullback (fun x : X × Fin 1 => x.1)
+      (fun y : Y × Fin 1 => y.1) (fun z : Z × Fin 1 => z.1)
   · have hagree : ∀ x y z, T x y z ≠ 0 →
         poolCode pool (poolEnumeration pool k counts) px lx ax x =
           poolCode pool (poolEnumeration pool k counts) py ly ay y := by
@@ -504,6 +506,7 @@ universe u
 variable {K : Type*} [CommSemiring K]
 variable {X Y Z A B C : ℕ → Type*}
 
+/-- Coordinate records for the auxiliary tensors accumulated through n stages. -/
 def AuxiliaryCoordinates (A : ℕ → Type u) : ℕ → Type u
   | 0 => PUnit
   | n + 1 => AuxiliaryCoordinates A n × A n
@@ -516,22 +519,27 @@ instance auxiliaryCoordinatesFintype [∀ n, Fintype (A n)] (n : ℕ) :
       let : Fintype (AuxiliaryCoordinates A n) := ih
       exact inferInstanceAs (Fintype (AuxiliaryCoordinates A n × A n))
 
+/-- Tensor product of the auxiliary resources accumulated through n stages. -/
 def auxiliaryTensor (E : ∀ n, Tensor K (A n) (B n) (C n)) :
     ∀ n, Tensor K (AuxiliaryCoordinates A n)
       (AuxiliaryCoordinates B n) (AuxiliaryCoordinates C n)
   | 0 => fun _ _ _ => 1
   | n + 1 => Tensor.product (auxiliaryTensor E n) (E n)
 
+/-- Recover the original source coordinate from successive source-and-auxiliary splittings. -/
 def sourceCoordinate (step : ∀ n, X (n + 1) → X n × A n) :
     ∀ n, X n → X 0
   | 0 => id
   | n + 1 => fun x => sourceCoordinate step n (step n x).1
 
+/-- Collect the auxiliary coordinates from successive source-and-auxiliary splittings. -/
 def auxiliaryCoordinate (step : ∀ n, X (n + 1) → X n × A n) :
     ∀ n, X n → AuxiliaryCoordinates A n
   | 0 => fun _ => PUnit.unit
   | n + 1 => fun x => (auxiliaryCoordinate step n (step n x).1, (step n x).2)
 
+/-- Execute successive coordinate pullbacks after tensoring in each stage's auxiliary
+resource. -/
 def stageTensor (T : Tensor K (X 0) (Y 0) (Z 0))
     (E : ∀ n, Tensor K (A n) (B n) (C n))
     (fx : ∀ n, X (n + 1) → X n × A n)
@@ -594,8 +602,6 @@ theorem stageTensor_rankAtMost
   exact (hT.product (auxiliaryTensor_rankAtMost E r hE n)).pullback _ _ _
 
 theorem stageTensor_borderRankAtMost
-    [∀ n, Fintype (X n)] [∀ n, Fintype (Y n)] [∀ n, Fintype (Z n)]
-    [∀ n, Finite (A n)] [∀ n, Finite (B n)] [∀ n, Finite (C n)]
     (T : Tensor ℂ (X 0) (Y 0) (Z 0)) {rT : ℕ}
     (hT : Tensor.BorderRankAtMost T rT)
     (E : ∀ n, Tensor ℂ (A n) (B n) (C n)) (r : ℕ → ℕ)
@@ -606,11 +612,8 @@ theorem stageTensor_borderRankAtMost
     Tensor.BorderRankAtMost (stageTensor T E fx fy fz n)
       (rT * ∏ j ∈ Finset.range n, r j) := by
   classical
-  let : ∀ n, Fintype (A n) := fun n => Fintype.ofFinite (A n)
-  let : ∀ n, Fintype (B n) := fun n => Fintype.ofFinite (B n)
-  let : ∀ n, Fintype (C n) := fun n => Fintype.ofFinite (C n)
-  rw [stageTensor_eq_shared_bank, Tensor.pullback_eq_restrict]
-  exact (hT.product (auxiliaryTensor_rankAtMost E r hE n).borderRankAtMost).restrict _ _ _
+  rw [stageTensor_eq_shared_bank]
+  exact (hT.product (auxiliaryTensor_rankAtMost E r hE n).borderRankAtMost).pullback _ _ _
 
 end FiniteAssembly
 

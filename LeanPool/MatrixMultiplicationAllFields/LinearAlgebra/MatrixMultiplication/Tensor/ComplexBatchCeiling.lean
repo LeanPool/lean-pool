@@ -20,6 +20,7 @@ namespace MatrixMultiplicationAllFields
 
 namespace MatrixMultiplication.Foundation
 
+/-- Number of batches of size k needed to cover rank R, with natural-number division. -/
 def batchCount (R k : ℕ) : ℕ := (R + k - 1) / k
 
 @[simp] theorem batchCount_zero (k : ℕ) : batchCount 0 k = 0 := by
@@ -82,6 +83,7 @@ theorem batchCount_mul_cast_le (R r : ℕ) {k : ℕ} (hk : 0 < k) :
       simp only [div_eq_mul_inv]
       ring
 
+/-- Rank bound obtained by repeatedly applying the finite batching recurrence. -/
 def batchRank (k r : ℕ) : ℕ → ℕ
   | 0 => 1
   | t + 1 => batchCount (batchRank k r t) k * r

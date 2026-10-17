@@ -30,6 +30,7 @@ namespace Program
 
 variable {F Input : Type*}
 
+/-- Charge each register only for the arithmetic operation that created it. -/
 def registerCost : {r : ℕ} → Program F Input r → Fin r → ℕ
   | 0, .nil => Fin.elim0
   | _ + 1, .step p g => Fin.cases g.cost p.registerCost
@@ -68,9 +69,11 @@ section ElementaryMatrices
 
 variable {F : Type*} [Field F] {a b c : ℕ}
 
+/-- A matrix unit for isolating a left-input entry in the arithmetic lower bound. -/
 def elementaryLeft (i : Fin a) (j : Fin b) : Matrix (Fin a) (Fin b) F :=
   fun x y => if x = i then if y = j then 1 else 0 else 0
 
+/-- A matrix unit for isolating a right-input entry in the arithmetic lower bound. -/
 def elementaryRight (j : Fin b) (k : Fin c) : Matrix (Fin b) (Fin c) F :=
   fun y z => if z = k then if y = j then 1 else 0 else 0
 

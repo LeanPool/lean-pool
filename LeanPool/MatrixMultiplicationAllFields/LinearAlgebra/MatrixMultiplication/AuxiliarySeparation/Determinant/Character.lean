@@ -43,7 +43,9 @@ noncomputable section
 open MatrixMultiplication.Foundation
 open scoped BigOperators
 
-namespace MatrixMultiplication.AuxiliarySeparation.DeterminantFiltration
+namespace MatrixMultiplication.AuxiliarySeparation
+
+namespace DeterminantFiltration
 
 variable (K) in
 /-- The two graded blocks, padded with zeros in common coordinate spaces. -/
@@ -53,6 +55,7 @@ def branch (d e : ℕ) (n : Fin 2) :
   | i, .inr j, .inr k => if n = 1 then if i.val + j.val = k.val then 1 else 0 else 0
   | _, _, _ => 0
 
+/-- Label quotient coordinates by zero and kernel coordinates by one. -/
 def branchLabel (e : ℕ) : Index e → Fin 2
   | .inl _ => 0
   | .inr _ => 1

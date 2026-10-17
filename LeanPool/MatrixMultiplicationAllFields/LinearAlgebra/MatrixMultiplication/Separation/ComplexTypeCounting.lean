@@ -27,6 +27,7 @@ open scoped BigOperators
 variable {A I J : Type*} [Fintype A] [DecidableEq A] [Fintype I] [Fintype J]
   [DecidableEq I]
 
+/-- Number of occurrences of a letter in a finitely indexed word. -/
 def wordPopulation (w : I → A) (a : A) : ℕ := Fintype.card {i // w i = a}
 
 omit [DecidableEq I] in
@@ -39,6 +40,7 @@ theorem wordPopulation_reindex (w : I → A) (e : J ≃ I) (a : A) :
     wordPopulation (w ∘ e) a = wordPopulation w a :=
   Fintype.card_congr (Equiv.subtypeEquiv e fun _ => Iff.rfl)
 
+/-- Words of the prescribed total length with exactly the specified letter populations. -/
 abbrev ExactWords (counts : A → ℕ) :=
   {w : Fin (∑ a, counts a) → A // ∀ a, wordPopulation w a = counts a}
 

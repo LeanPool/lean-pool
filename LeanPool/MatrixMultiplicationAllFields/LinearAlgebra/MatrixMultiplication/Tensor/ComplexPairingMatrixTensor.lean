@@ -23,18 +23,21 @@ namespace Tensor
 
 variable {K : Type*} [CommSemiring K]
 
+/-- Remove the singleton factor from the first leg of a dot-pairing matrix tensor. -/
 def dotPairingMatrixX (U : Type*) : (Unit × U) ≃ U where
   toFun x := x.2
   invFun x := ((), x)
   left_inv := by rintro ⟨⟨⟩, x⟩; rfl
   right_inv x := rfl
 
+/-- Remove the singleton factor from the second leg of a dot-pairing matrix tensor. -/
 def dotPairingMatrixY (U : Type*) : (U × Unit) ≃ U where
   toFun y := y.1
   invFun y := (y, ())
   left_inv := by rintro ⟨y, ⟨⟩⟩; rfl
   right_inv y := rfl
 
+/-- Identify the singleton third-leg coordinate spaces of the dot-pairing matrix tensor. -/
 def dotPairingMatrixZ : (Unit × Unit) ≃ Unit where
   toFun _ := ()
   invFun _ := ((), ())
@@ -69,30 +72,34 @@ theorem matrixCoefficients_rank_of_dotPairing {U : Type*} [DecidableEq U] {r : �
   exact h'
 
 theorem matrixCoefficients_borderRank_of_dotPairing
-    {U : Type*} [Fintype U] [DecidableEq U] {r : ℕ}
+    {U : Type*} [DecidableEq U] {r : ℕ}
     (h : BorderRankAtMost (dotPairing (K := ℂ) U) r) :
     BorderRankAtMost (matrixCoefficients (K := ℂ) Unit U Unit) r := by
   classical
-  rw [← dotPairing_matrixCoefficients, pullback_eq_restrict]
-  exact h.restrict _ _ _
+  rw [← dotPairing_matrixCoefficients]
+  exact h.pullback _ _ _
 
+/-- Product of three cyclically positioned dot-pairing tensors. -/
 def pairingTriple (A B C : Type*) [DecidableEq A] [DecidableEq B] [DecidableEq C] :
     Tensor K ((B × A) × Unit) ((B × Unit) × C) ((Unit × A) × C) :=
   product (product (dotPairing B) (cyclic (dotPairing A)))
     (cyclic (cyclic (dotPairing C)))
 
+/-- Reindex the first matrix-coordinate pair for the triple dot-pairing representation. -/
 def pairingTripleMatrixX (A B : Type*) : (A × B) ≃ ((B × A) × Unit) where
   toFun x := ((x.2, x.1), ())
   invFun x := (x.1.2, x.1.1)
   left_inv x := rfl
   right_inv := by rintro ⟨⟨b, a⟩, ⟨⟩⟩; rfl
 
+/-- Reindex the second matrix-coordinate pair for the triple dot-pairing representation. -/
 def pairingTripleMatrixY (B C : Type*) : (B × C) ≃ ((B × Unit) × C) where
   toFun y := ((y.1, ()), y.2)
   invFun y := (y.1.1, y.2)
   left_inv y := rfl
   right_inv := by rintro ⟨⟨b, ⟨⟩⟩, c⟩; rfl
 
+/-- Reindex the third matrix-coordinate pair for the triple dot-pairing representation. -/
 def pairingTripleMatrixZ (C A : Type*) : (C × A) ≃ ((Unit × A) × C) where
   toFun z := (((), z.2), z.1)
   invFun z := (z.2, z.1.2)
@@ -123,32 +130,31 @@ theorem matrixCoefficients_rank_of_pairingTriple {r : ℕ}
   exact h'
 
 theorem matrixCoefficients_borderRank_of_pairingTriple
-    [Fintype A] [Fintype B] [Fintype C] {r : ℕ}
+       {r : ℕ}
     (h : BorderRankAtMost (pairingTriple (K := ℂ) A B C) r) :
     BorderRankAtMost (matrixCoefficients (K := ℂ) A B C) r := by
   classical
-  rw [← pairingTriple_matrixCoefficients, pullback_eq_restrict]
-  exact h.restrict _ _ _
+  rw [← pairingTriple_matrixCoefficients]
+  exact h.pullback _ _ _
 
 theorem matrixCoefficients_directSum_rank_of_pairingTriple
     {ι : Type*} [DecidableEq ι] {r : ℕ}
     (h : RankAtMost (directSum (fun _ : ι => pairingTriple (K := K) A B C)) r) :
     RankAtMost (directSum (fun _ : ι => matrixCoefficients (K := K) A B C)) r := by
-  have h' := h.directSum_pullback (pairingTripleMatrixX A B) (pairingTripleMatrixY B C)
+  have h' := h.directSumPullback (pairingTripleMatrixX A B) (pairingTripleMatrixY B C)
     (pairingTripleMatrixZ C A)
   simpa only [pairingTriple_matrixCoefficients] using h'
 
 theorem matrixCoefficients_directSum_borderRank_of_pairingTriple
-    [Fintype A] [Fintype B] [Fintype C]
-    {ι : Type*} [Fintype ι] [DecidableEq ι] {r : ℕ}
+    {ι : Type*} [DecidableEq ι] {r : ℕ}
     (h : BorderRankAtMost (directSum (fun _ : ι => pairingTriple (K := ℂ) A B C)) r) :
     BorderRankAtMost (directSum (fun _ : ι => matrixCoefficients (K := ℂ) A B C)) r := by
   classical
-  have heq := directSum_pullback (fun _ : ι => pairingTriple (K := ℂ) A B C)
+  have heq := directSumPullback (fun _ : ι => pairingTriple (K := ℂ) A B C)
     (pairingTripleMatrixX A B) (pairingTripleMatrixY B C) (pairingTripleMatrixZ C A)
   simp only [pairingTriple_matrixCoefficients] at heq
-  rw [← heq, pullback_eq_restrict]
-  exact h.restrict _ _ _
+  rw [← heq]
+  exact h.pullback _ _ _
 
 end Tensor
 end MatrixMultiplication.Foundation
