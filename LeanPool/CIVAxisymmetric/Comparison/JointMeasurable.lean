@@ -132,11 +132,11 @@ private theorem aestronglyMeasurable_comp_swap {q : Vec m × ℝ → ℝ} {μs :
       (((volume : Measure (Vec m)).prod μs).prod (volume : Measure (Vec m))) := by
   set μx : Measure (Vec m) := (volume : Measure (Vec m)) with hμx_def
   have hg : AEStronglyMeasurable (fun z : ℝ × Vec m => q z.swap) (μs.prod μx) := hqmeas.prod_swap
-  have hf : Measure.QuasiMeasurePreserving
+  have hf : QuasiMeasurePreserving
       (Prod.map (Prod.snd : Vec m × ℝ → ℝ) (id : Vec m → Vec m))
       ((μx.prod μs).prod μx) (μs.prod μx) :=
     QuasiMeasurePreserving.prodMap Measure.quasiMeasurePreserving_snd
-      (Measure.QuasiMeasurePreserving.id μx)
+      (QuasiMeasurePreserving.id μx)
   exact hg.comp_quasiMeasurePreserving hf
 
 /-- Joint measurability, in `(x, τ)`, of a spatial convolution `(x, τ) ↦ ∫ y, k (x - y) * q (y, τ)`
@@ -338,9 +338,9 @@ private theorem aestronglyMeasurable_setIntegral_Ioc {f : Vec m → ℝ → ℝ}
     AEStronglyMeasurable (fun p : Vec m × ℝ × ℝ => ∫ s in Set.Ioc (a p) (b p), f p.1 s ∂μI)
       (μx.prod μτ) := by
   set proj : (Vec m × ℝ × ℝ) × ℝ → Vec m × ℝ := fun w => (w.1.1, w.2) with hprojdef
-  have hprojQMP : Measure.QuasiMeasurePreserving proj ((μx.prod μτ).prod μI) (μx.prod μI) :=
+  have hprojQMP : QuasiMeasurePreserving proj ((μx.prod μτ).prod μI) (μx.prod μI) :=
     QuasiMeasurePreserving.prodMap Measure.quasiMeasurePreserving_fst
-      (Measure.QuasiMeasurePreserving.id μI)
+      (QuasiMeasurePreserving.id μI)
   have hflift : AEStronglyMeasurable (fun w : (Vec m × ℝ × ℝ) × ℝ => f w.1.1 w.2)
       ((μx.prod μτ).prod μI) := hf.comp_quasiMeasurePreserving hprojQMP
   have hSmeas : MeasurableSet {w : (Vec m × ℝ × ℝ) × ℝ | w.2 ∈ Set.Ioc (a w.1) (b w.1)} := by
@@ -513,13 +513,13 @@ theorem mollifySlice_ae_prod_sub_eq_intervalIntegral {d : ℕ} {I : Set ℝ} (hI
     rw [heq2]; exact hq.1
   have hmoll : AEStronglyMeasurable (fun z : Vec m × ℝ => mollifySlice m ε q z) (μx.prod μI) :=
     aestronglyMeasurable_mollifySlice hqmeas
-  have hproj2 : Measure.QuasiMeasurePreserving (fun p : Vec m × ℝ × ℝ => (p.1, p.2.2))
+  have hproj2 : QuasiMeasurePreserving (fun p : Vec m × ℝ × ℝ => (p.1, p.2.2))
       (μx.prod (μI.prod μI)) (μx.prod μI) :=
-    QuasiMeasurePreserving.prodMap (Measure.QuasiMeasurePreserving.id μx)
+    QuasiMeasurePreserving.prodMap (QuasiMeasurePreserving.id μx)
       Measure.quasiMeasurePreserving_snd
-  have hproj1 : Measure.QuasiMeasurePreserving (fun p : Vec m × ℝ × ℝ => (p.1, p.2.1))
+  have hproj1 : QuasiMeasurePreserving (fun p : Vec m × ℝ × ℝ => (p.1, p.2.1))
       (μx.prod (μI.prod μI)) (μx.prod μI) :=
-    QuasiMeasurePreserving.prodMap (Measure.QuasiMeasurePreserving.id μx)
+    QuasiMeasurePreserving.prodMap (QuasiMeasurePreserving.id μx)
       Measure.quasiMeasurePreserving_fst
   have hf2 : AEStronglyMeasurable (fun p : Vec m × ℝ × ℝ => mollifySlice m ε q (p.1, p.2.2))
       (μx.prod (μI.prod μI)) := hmoll.comp_quasiMeasurePreserving hproj2

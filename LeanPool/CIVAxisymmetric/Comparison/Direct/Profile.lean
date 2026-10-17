@@ -11,6 +11,7 @@ public import Mathlib.Analysis.Calculus.ContDiff.Deriv
 public import Mathlib.Analysis.Calculus.MeanValue
 public import Mathlib.MeasureTheory.Integral.IntervalIntegral.AbsolutelyContinuousFun
 public import Mathlib.MeasureTheory.Integral.IntervalIntegral.FundThmCalculus
+public import Mathlib.MeasureTheory.Integral.IntervalIntegral.LebesgueDifferentiationThm
 
 /-!
 # A smooth convex profile vanishing on the nonpositive half-line

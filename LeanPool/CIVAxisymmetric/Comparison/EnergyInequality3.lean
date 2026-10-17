@@ -203,7 +203,7 @@ theorem contDiff_mollifierCutoff (m : ℕ) (R : ℝ) (hR : 0 < R) :
   refine contDiff_finset_prod Finset.univ
     (f := fun (i : Fin m) (x : Vec m) => kappaBump1D R (x i)) ?_
   intro i _
-  exact (contDiff_kappaBump1D R hR).comp (contDiff_apply ℝ ℝ i)
+  exact (contDiff_kappaBump1D R hR).comp (contDiff_apply ℝ (fun _ : Fin m => ℝ) i)
 
 theorem mollifierCutoff_nonneg (m : ℕ) (R : ℝ) (hR : 0 < R) (x : Vec m) :
     0 ≤ mollifierCutoff m R x :=

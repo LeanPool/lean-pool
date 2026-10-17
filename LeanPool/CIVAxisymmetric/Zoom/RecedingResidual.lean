@@ -817,7 +817,7 @@ private theorem integral_rec_residual_eq_remainder
         (fun w => zoomSRec lam h rc zc u (planeLiftPoint w)) S :=
       hSsmoothPlane.comp hplSmooth.contDiffOn hSonD
     have hw10cd : ContDiff ℝ (⊤ : ℕ∞) (fun w : Vec 2 × ℝ => w.1 0) :=
-      (contDiff_apply ℝ ℝ (0 : Fin 2)).comp contDiff_fst
+      (contDiff_apply ℝ (fun _ : Fin 2 => ℝ) (0 : Fin 2)).comp contDiff_fst
     have hden : ContDiffOn ℝ (⊤ : ℕ∞) (fun w : Vec 2 × ℝ => A + w.1 0) S :=
       contDiffOn_const.add hw10cd.contDiffOn
     exact (hnum.pow 2).div hden hSdenom_ne

@@ -12,6 +12,7 @@ public import LeanPool.CIVAxisymmetric.Statements.TimeDeriv
 public import Mathlib.Algebra.BigOperators.Field
 public import Mathlib.Analysis.Calculus.Deriv.Add
 public import Mathlib.Analysis.Calculus.Deriv.Inv
+public import Mathlib.Analysis.Calculus.Deriv.Mul
 public import Mathlib.Analysis.SpecialFunctions.Sqrt
 
 /-!
@@ -89,7 +90,8 @@ theorem norm_le_japaneseBracket (x : Vec m) : ‖x‖ ≤ japaneseBracket m x :=
 
 theorem contDiff_japaneseBracket : ContDiff ℝ (⊤ : ℕ∞) (japaneseBracket m) := by
   refine ContDiff.sqrt ?_ (fun x => by positivity)
-  exact contDiff_const.add (ContDiff.sum fun i _ => (contDiff_apply ℝ ℝ i).pow 2)
+  exact contDiff_const.add (ContDiff.sum fun i _ =>
+    (contDiff_apply ℝ (fun _ : Fin m => ℝ) i).pow 2)
 
 theorem differentiable_japaneseBracket : Differentiable ℝ (japaneseBracket m) :=
   (contDiff_japaneseBracket (m := m)).differentiable (by simp)
