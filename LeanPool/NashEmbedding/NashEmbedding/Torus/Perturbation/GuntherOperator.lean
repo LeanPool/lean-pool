@@ -12,7 +12,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Aristotle (Harmonic), Claude Fable 5 (Anthropic), Claude Opus 4.7 (Anthropic)
   — at the request of David Wiygul
 -/
-public import Mathlib.Tactic
+public import LeanPool.NashEmbedding.Tactics
 public import LeanPool.NashEmbedding.NashEmbedding.Torus.Perturbation.GuntherIteration
 public import LeanPool.NashEmbedding.NashEmbedding.Sobolev.ConvolutionAlgebra
 public import LeanPool.NashEmbedding.NashEmbedding.Sobolev.MultiplicationBootstrap
@@ -108,12 +108,9 @@ lemma vecNormSq_mul_le_top {r k : ℕ} (hk : r ≤ k) {v w : VecSeq n N}
     (hv : VMem n N k v) :
     vecNormSq n N r v * vecNormSq n N r w ≤ top n N r k v w := by
   unfold top
-  have hrk : ((r : ℕ) : ℝ) ≤ ((k : ℕ) : ℝ) := by exact_mod_cast hk
-  have hvm : vecNormSq n N r v ≤ vecNormSq n N k v := vecNormSq_mono hv hrk
-  have hv0 : 0 ≤ vecNormSq n N ((r : ℕ) : ℝ) v := vecNormSq_nonneg _ _
-  have hw0 : 0 ≤ vecNormSq n N ((r : ℕ) : ℝ) w := vecNormSq_nonneg _ _
-  have hwk : 0 ≤ vecNormSq n N ((k : ℕ) : ℝ) w := vecNormSq_nonneg _ _
-  nlinarith
+  exact (mul_le_mul_of_nonneg_right (vecNormSq_mono hv (by exact_mod_cast hk))
+    (vecNormSq_nonneg _ _)).trans
+      (le_add_of_nonneg_right (mul_nonneg (vecNormSq_nonneg _ _) (vecNormSq_nonneg _ _)))
 
 /-- Monotonicity of the lower bucket in `k` (for `r ≤ k`). -/
 lemma lower_mono {r k : ℕ} {v w : VecSeq n N}
@@ -121,7 +118,7 @@ lemma lower_mono {r k : ℕ} {v w : VecSeq n N}
     lower n N r k v w ≤ lower n N r (k + 1) v w := by
   unfold lower
   simp only [Nat.add_sub_cancel]
-  have hkk : ((k : ℕ) : ℝ) ≤ ((k + 1 : ℕ) : ℝ) := by push_cast; linarith
+  have hkk : ((k : ℕ) : ℝ) ≤ ((k + 1 : ℕ) : ℝ) := by exact_mod_cast Nat.le_succ k
   have hvk : VMem n N ((k : ℕ) : ℝ) v := hv.mono hkk
   have hwk : VMem n N ((k : ℕ) : ℝ) w := hw.mono hkk
   have hsub : ((k - 1 : ℕ) : ℝ) ≤ ((k : ℕ) : ℝ) := by exact_mod_cast Nat.sub_le k 1
@@ -131,16 +128,15 @@ lemma lower_mono {r k : ℕ} {v w : VecSeq n N}
     vecNormSq_mono hwk hsub
   have hv0 : 0 ≤ vecNormSq n N ((r : ℕ) : ℝ) v := vecNormSq_nonneg _ _
   have hw0 : 0 ≤ vecNormSq n N ((r : ℕ) : ℝ) w := vecNormSq_nonneg _ _
-  nlinarith
+  exact add_le_add (add_le_add (mul_le_mul_of_nonneg_right hv1 hw0)
+    (mul_le_mul_of_nonneg_left hw1 hv0)) le_rfl
 
 /-- `top_k ≤ lower_{k+1}`. -/
 lemma top_le_lower_succ (r k : ℕ) (v w : VecSeq n N) :
     top n N r k v w ≤ lower n N r (k + 1) v w := by
   unfold top lower
   simp only [Nat.add_sub_cancel]
-  have hv0 : 0 ≤ vecNormSq n N ((r : ℕ) : ℝ) v := vecNormSq_nonneg _ _
-  have hw0 : 0 ≤ vecNormSq n N ((r : ℕ) : ℝ) w := vecNormSq_nonneg _ _
-  nlinarith
+  exact le_add_of_nonneg_right (mul_nonneg (vecNormSq_nonneg _ _) (vecNormSq_nonneg _ _))
 
 /-! ## Derivative operators -/
 
@@ -436,6 +432,29 @@ def smulLowConst (n N r : ℕ) (a : VecSeq n N) (A' : ℝ) (Bk : ℕ → ℝ) (k
     * (vecNormSq n N r a + vecNormSq n N k a + vecNormSq n N ((k - 1 : ℕ) : ℝ) a)
     * (Bk k + Bk (k - 1) + 3 * A' + 3 * Bk r + 1)
 
+-- Preserve the existing private proof-helper contracts when tactic dependencies change.
+private theorem ScalarTame.smulSeq._proof_1_2 {_n r : ℕ} (k : ℕ) (_hk1 : 1 ≤ k)
+    (heq : r = k) (a : ¬k - 1 ≤ r) : False := by
+  subst r
+  exact a (Nat.sub_le k 1)
+
+private theorem ScalarTame.smulSeq._proof_1_3 {_n r : ℕ} (k : ℕ) (_hk1 : 1 ≤ k)
+    (hlt : @LT.lt ℕ (@Preorder.toLT ℕ (@PartialOrder.toPreorder ℕ Nat.instPartialOrder)) r k)
+    (a : ¬r ≤ k - 1) : False :=
+  a (Nat.le_sub_one_of_lt hlt)
+
+private theorem ScalarTame.smulSeq._proof_1_4 {_n _r : ℕ} (k : ℕ) (hk1 : 1 ≤ k)
+    (a : ¬k - 1 + 1 = k) : False :=
+  a (Nat.sub_add_cancel hk1)
+
+private theorem ScalarTame.smulSeq._simp_1_6.{u_1, u_4} {ι : Type u_1} {M : Type u_4}
+    {s : Finset ι} [inst : AddCommMonoid M] {f g : ι → M} :
+    @HAdd.hAdd M M M (@instHAdd M inst.toAddMonoid.toAddZeroClass.toAddZero.toAdd)
+        (∑ x ∈ s, f x) (∑ x ∈ s, g x) =
+      ∑ x ∈ s, @HAdd.hAdd M M M
+        (@instHAdd M inst.toAddMonoid.toAddZeroClass.toAddZero.toAdd) (f x) (g x) :=
+  (Finset.sum_add_distrib (s := s) (f := f) (g := g)).symm
+
 /-- **Multiplication by a fixed rapidly decaying sequence preserves tameness.** Uses
 `third_multiplication_theorem_seq` at level `k` with `r' = r` (needs `1 + n/2 < r`). -/
 theorem ScalarTame.smulSeq (hn : 0 < n) {r : ℕ} (hr : 1 + (n : ℝ) / 2 < r)
@@ -444,12 +463,13 @@ theorem ScalarTame.smulSeq (hn : 0 < n) {r : ℕ} (hr : 1 + (n : ℝ) / 2 < r)
     VecTame n N r (fun v w => smulSeq (Q v w) a) (smulTopConst n N r a A')
       (smulLowConst n N r a A' Bk) := by
   have hn1 : (1 : ℝ) ≤ (n : ℝ) := by exact_mod_cast hn
-  have hr1 : (1 : ℝ) < (r : ℝ) := by linarith
-  have h2r : (n : ℝ) < 2 * (r : ℝ) := by linarith
+  have hr1 : (1 : ℝ) < (r : ℝ) := by linarith only [hr, hn1]
+  have h2r : (n : ℝ) < 2 * (r : ℝ) := by linarith only [hr]
   have hA3 : 0 ≤ mt3AConstSq n (r : ℝ) := by
     have h0 : (0 : ℝ) ≤ mt3KSq n (r : ℝ) := by
       unfold mt3KSq; exact tsum_nonneg fun j => weight_nonneg _ _
-    unfold mt3AConstSq; linarith
+    unfold mt3AConstSq
+    linarith only [h0]
   have hB3 : ∀ j : ℕ, 0 ≤ mt3BConstSq n j (r : ℝ) := by
     intro j
     have hL : (0 : ℝ) ≤ mt3LSq n (r : ℝ) := by
@@ -468,11 +488,7 @@ theorem ScalarTame.smulSeq (hn : 0 < n) {r : ℕ} (hr : 1 + (n : ℝ) / 2 < r)
     refine mul_nonneg (mul_nonneg (add_nonneg hA3 (hB3 k)) ?_) ?_
     · exact add_nonneg (add_nonneg (vecNormSq_nonneg _ _) (vecNormSq_nonneg _ _))
         (vecNormSq_nonneg _ _)
-    · have h1 := h.Bk_nonneg k
-      have h2 := h.Bk_nonneg (k - 1)
-      have h3 := h.Bk_nonneg r
-      have h4 := h.A'_nonneg
-      linarith
+    · linarith only [h.Bk_nonneg k, h.Bk_nonneg (k - 1), h.Bk_nonneg r, h.A'_nonneg]
   · intro k hk v w hv hw α
     exact (third_multiplication_theorem_seq hn hr (by exact_mod_cast hk)
       (h.mem k hk v w hv hw) (ha k α)).1
@@ -497,7 +513,7 @@ theorem ScalarTame.smulSeq (hn : 0 < n) {r : ℕ} (hr : 1 + (n : ℝ) / 2 < r)
       have p2 : 0 ≤ vecNormSq n N (r : ℝ) v * vecNormSq n N ((k - 1 : ℕ) : ℝ) w :=
         mul_nonneg (vecNormSq_nonneg _ _) (vecNormSq_nonneg _ _)
       unfold lower
-      linarith
+      exact le_add_of_nonneg_left (add_nonneg p1 p2)
     have hQr : sobolevNormSq n (r : ℝ) (Q v w)
         ≤ (2 * A' + 3 * Bk r) * lower n N r k v w := by
       have hbr := h.bound r le_rfl v w hvr hwr
@@ -512,12 +528,13 @@ theorem ScalarTame.smulSeq (hn : 0 < n) {r : ℕ} (hr : 1 + (n : ℝ) / 2 < r)
         have p1 := vecNormSq_nonneg (n := n) (N := N) (r : ℝ) v
         have p2 := vecNormSq_nonneg (n := n) (N := N) (r : ℝ) w
         unfold lower
-        nlinarith
+        linarith only [mul_le_mul_of_nonneg_right e1 p2,
+          mul_le_mul_of_nonneg_left e2 p1]
       rw [htr] at hbr
       have hstep : sobolevNormSq n (r : ℝ) (Q v w)
           ≤ (2 * A' + 3 * Bk r) * (vecNormSq n N (r : ℝ) v * vecNormSq n N (r : ℝ) w) := by
-        nlinarith [mul_le_mul_of_nonneg_left hlr hBr]
-      exact hstep.trans (mul_le_mul_of_nonneg_left hXlow (by linarith))
+        linarith only [hbr, mul_le_mul_of_nonneg_left hlr hBr]
+      exact hstep.trans (mul_le_mul_of_nonneg_left hXlow (by linarith only [hA'0, hBr]))
     have hQk1 : sobolevNormSq n ((k - 1 : ℕ) : ℝ) (Q v w)
         ≤ (Bk (k - 1) + 3 * A' + 3 * Bk r) * lower n N r k v w := by
       rcases eq_or_lt_of_le hk with heq | hlt
@@ -527,8 +544,8 @@ theorem ScalarTame.smulSeq (hn : 0 < n) {r : ℕ} (hr : 1 + (n : ℝ) / 2 < r)
           have : (k - 1 : ℕ) ≤ r := by omega
           exact_mod_cast this
         have hextra : 0 ≤ (Bk (k - 1) + A') * lower n N r k v w :=
-          mul_nonneg (by linarith) hlow0
-        nlinarith [hmono, hQr, hextra]
+          mul_nonneg (by linarith only [hBk1, hA'0]) hlow0
+        linarith only [hmono, hQr, hextra]
       · have hkr1 : r ≤ k - 1 := by omega
         have hsucc : k - 1 + 1 = k := by omega
         have hvk1 : VMem n N ((k - 1 : ℕ) : ℝ) v :=
@@ -544,8 +561,10 @@ theorem ScalarTame.smulSeq (hn : 0 < n) {r : ℕ} (hr : 1 + (n : ℝ) / 2 < r)
           have hw' : VMem n N ((k - 1 + 1 : ℕ) : ℝ) w := by rw [hsucc]; exact hw
           have hl := lower_mono (n := n) (N := N) (r := r) hv' hw'
           rwa [hsucc] at hl
-        nlinarith [mul_le_mul_of_nonneg_left htl hA'0, mul_le_mul_of_nonneg_left hll hBk1,
-          mul_nonneg (show (0 : ℝ) ≤ 2 * A' + 3 * Bk r by linarith) hlow0]
+        linarith only [hb1, mul_le_mul_of_nonneg_left htl hA'0,
+          mul_le_mul_of_nonneg_left hll hBk1,
+          mul_nonneg (show (0 : ℝ) ≤ 2 * A' + 3 * Bk r by
+            linarith only [hA'0, hBr]) hlow0]
     have hper : ∀ α : Fin N, sobolevNormSq n (k : ℝ) (seqConv (Q v w) (a α)) ≤
         mt3AConstSq n (r : ℝ) * (sobolevNormSq n (k : ℝ) (Q v w) * sobolevNormSq n (r : ℝ) (a α)
           + sobolevNormSq n (r : ℝ) (Q v w) * sobolevNormSq n (k : ℝ) (a α))
@@ -592,12 +611,14 @@ theorem ScalarTame.smulSeq (hn : 0 < n) {r : ℕ} (hr : 1 + (n : ℝ) / 2 < r)
         ≤ mt3BConstSq n k (r : ℝ) * vecNormSq n N ((k - 1 : ℕ) : ℝ) a
             * ((2 * A' + 3 * Bk r) * lower n N r k v w) :=
       mul_le_mul_of_nonneg_left hQr (mul_nonneg hB3k hak1)
-    have hF1 : (0 : ℝ) ≤ (Bk k + Bk (k - 1) + 3 * A' + 3 * Bk r + 1) - Bk k := by linarith
+    have hF1 : (0 : ℝ) ≤ (Bk k + Bk (k - 1) + 3 * A' + 3 * Bk r + 1) - Bk k := by
+      linarith only [hBk1, hA'0, hBr]
     have hF2 : (0 : ℝ) ≤ (Bk k + Bk (k - 1) + 3 * A' + 3 * Bk r + 1)
-        - (Bk (k - 1) + 3 * A' + 3 * Bk r) := by linarith
+        - (Bk (k - 1) + 3 * A' + 3 * Bk r) := by linarith only [hBkk]
     have hF3 : (0 : ℝ) ≤ (Bk k + Bk (k - 1) + 3 * A' + 3 * Bk r + 1)
-        - (2 * A' + 3 * Bk r) := by linarith
-    have hF0 : (0 : ℝ) ≤ Bk k + Bk (k - 1) + 3 * A' + 3 * Bk r + 1 := by linarith
+        - (2 * A' + 3 * Bk r) := by linarith only [hBkk, hBk1, hA'0]
+    have hF0 : (0 : ℝ) ≤ Bk k + Bk (k - 1) + 3 * A' + 3 * Bk r + 1 := by
+      linarith only [hBkk, hBk1, hA'0, hBr]
     have hP : 0 ≤ mt3AConstSq n (r : ℝ) * vecNormSq n N (r : ℝ) a := mul_nonneg hA3 har
     have hR : 0 ≤ mt3BConstSq n k (r : ℝ) * vecNormSq n N (r : ℝ) a := mul_nonneg hB3k har
     have hS : 0 ≤ mt3AConstSq n (r : ℝ) * vecNormSq n N (k : ℝ) a := mul_nonneg hA3 hak
@@ -644,6 +665,15 @@ def baseTopConst (n N r : ℕ) : ℝ := N * mt3AConstSq n ((r : ℝ) - 2)
 /-- Lower constant of `R(D₁v · D₂w)` at level `k`: `N · mt3BConstSq n (k - 2) (r - 2)`. -/
 def baseLowConst (n N r : ℕ) (k : ℕ) : ℝ := N * mt3BConstSq n (k - 2) ((r : ℝ) - 2)
 
+-- Keep the pre-existing private arithmetic helper types and names stable.
+private theorem resolvent_dotConv_estimate._proof_1_3 {_n _r _d₁ _d₂ : ℕ} (k : ℕ)
+    (hk4 : 4 ≤ k) (a : ¬2 ≤ k) : False :=
+  a (Nat.le_of_succ_le (Nat.le_of_succ_le hk4))
+
+private theorem resolvent_dotConv_estimate._proof_1_4 {_n _r _d₁ _d₂ : ℕ} (k : ℕ)
+    (hk4 : 4 ≤ k) (a : ¬1 ≤ k) : False :=
+  a (Nat.le_of_succ_le (Nat.le_of_succ_le (Nat.le_of_succ_le hk4)))
+
 /-- The resolvent of a derivative product satisfies the Sobolev membership and tame bound. -/
 private theorem resolvent_dotConv_estimate (hn : 0 < n) {r : ℕ} (hr : 1 + (n : ℝ) / 2 < (r : ℝ) - 2)
     {D₁ D₂ : VecSeq n N → VecSeq n N} {d₁ d₂ : ℕ} (h₁ : IsDerivOp D₁ d₁) (h₂ : IsDerivOp D₂ d₂)
@@ -654,7 +684,7 @@ private theorem resolvent_dotConv_estimate (hn : 0 < n) {r : ℕ} (hr : 1 + (n :
           ≤ baseTopConst n N r * top n N r k v w
             + baseLowConst n N r k * lower n N r k v w := by
   have hn1 : (1 : ℝ) ≤ (n : ℝ) := by exact_mod_cast hn
-  have hrR : (3 : ℝ) < (r : ℝ) := by linarith
+  have hrR : (3 : ℝ) < (r : ℝ) := by linarith only [hr, hn1]
   have hr4 : 4 ≤ r := by
     have h3 : 3 < r := by exact_mod_cast hrR
     omega
@@ -663,7 +693,7 @@ private theorem resolvent_dotConv_estimate (hn : 0 < n) {r : ℕ} (hr : 1 + (n :
   have hA3 : 0 ≤ mt3AConstSq n ((r : ℝ) - 2) := by
     have h0 : (0 : ℝ) ≤ mt3KSq n ((r : ℝ) - 2) := by
       unfold mt3KSq; exact tsum_nonneg fun j => weight_nonneg _ _
-    unfold mt3AConstSq; linarith
+    unfold mt3AConstSq; linarith only [h0]
   have hB3 : ∀ j : ℕ, 0 ≤ mt3BConstSq n j ((r : ℝ) - 2) := by
     intro j
     have hL : (0 : ℝ) ≤ mt3LSq n ((r : ℝ) - 2) := by
@@ -690,39 +720,41 @@ private theorem resolvent_dotConv_estimate (hn : 0 < n) {r : ℕ} (hr : 1 + (n :
   have hkm1 : ((k - 1 : ℕ) : ℝ) = (k : ℝ) - 1 := by
     have h1 : (1 : ℕ) ≤ k := by omega
     rw [Nat.cast_sub h1]; norm_num
-  have hvk1 : VMem n N ((k - 1 : ℕ) : ℝ) v := hv.mono (by rw [hkm1]; linarith)
-  have hwk1 : VMem n N ((k - 1 : ℕ) : ℝ) w := hw.mono (by rw [hkm1]; linarith)
+  have hvk1 : VMem n N ((k - 1 : ℕ) : ℝ) v := hv.mono (by rw [hkm1]; linarith only [])
+  have hwk1 : VMem n N ((k - 1 : ℕ) : ℝ) w := hw.mono (by rw [hkm1]; linarith only [])
   have hvr : VMem n N (r : ℝ) v := hv.mono hkR
   have hwr : VMem n N (r : ℝ) w := hw.mono hkR
   -- level `k - 2`
-  have hv_j : VMem n N (((k - 2 : ℕ) : ℝ) + (d₁ : ℝ)) v := hv.mono (by rw [hs]; linarith)
-  have hw_j : VMem n N (((k - 2 : ℕ) : ℝ) + (d₂ : ℝ)) w := hw.mono (by rw [hs]; linarith)
+  have hv_j : VMem n N (((k - 2 : ℕ) : ℝ) + (d₁ : ℝ)) v :=
+    hv.mono (by rw [hs]; linarith only [hd1R])
+  have hw_j : VMem n N (((k - 2 : ℕ) : ℝ) + (d₂ : ℝ)) w :=
+    hw.mono (by rw [hs]; linarith only [hd2R])
   have hD1j : VMem n N ((k - 2 : ℕ) : ℝ) (D₁ v) := h₁.mem _ v hv_j
   have hD2j : VMem n N ((k - 2 : ℕ) : ℝ) (D₂ w) := h₂.mem _ w hw_j
   have nD1j : vecNormSq n N ((k - 2 : ℕ) : ℝ) (D₁ v) ≤ vecNormSq n N (k : ℝ) v :=
-    le_trans (h₁.bound _ v hv_j) (vecNormSq_mono hv (by rw [hs]; linarith))
+    le_trans (h₁.bound _ v hv_j) (vecNormSq_mono hv (by rw [hs]; linarith only [hd1R]))
   have nD2j : vecNormSq n N ((k - 2 : ℕ) : ℝ) (D₂ w) ≤ vecNormSq n N (k : ℝ) w :=
-    le_trans (h₂.bound _ w hw_j) (vecNormSq_mono hw (by rw [hs]; linarith))
+    le_trans (h₂.bound _ w hw_j) (vecNormSq_mono hw (by rw [hs]; linarith only [hd2R]))
   -- level `r - 2`
-  have hv_r2 : VMem n N (((r : ℝ) - 2) + (d₁ : ℝ)) v := hv.mono (by linarith)
-  have hw_r2 : VMem n N (((r : ℝ) - 2) + (d₂ : ℝ)) w := hw.mono (by linarith)
+  have hv_r2 : VMem n N (((r : ℝ) - 2) + (d₁ : ℝ)) v := hv.mono (by linarith only [hd1R, hkR])
+  have hw_r2 : VMem n N (((r : ℝ) - 2) + (d₂ : ℝ)) w := hw.mono (by linarith only [hd2R, hkR])
   have nD1r2 : vecNormSq n N ((r : ℝ) - 2) (D₁ v) ≤ vecNormSq n N (r : ℝ) v :=
-    le_trans (h₁.bound _ v hv_r2) (vecNormSq_mono hvr (by linarith))
+    le_trans (h₁.bound _ v hv_r2) (vecNormSq_mono hvr (by linarith only [hd1R]))
   have nD2r2 : vecNormSq n N ((r : ℝ) - 2) (D₂ w) ≤ vecNormSq n N (r : ℝ) w :=
-    le_trans (h₂.bound _ w hw_r2) (vecNormSq_mono hwr (by linarith))
+    le_trans (h₂.bound _ w hw_r2) (vecNormSq_mono hwr (by linarith only [hd2R]))
   -- level `k - 3`
   have hv_s1 : VMem n N ((((k - 2 : ℕ) : ℝ) - 1) + (d₁ : ℝ)) v :=
-    hv.mono (by rw [hs]; linarith)
+    hv.mono (by rw [hs]; linarith only [hd1R])
   have hw_s1 : VMem n N ((((k - 2 : ℕ) : ℝ) - 1) + (d₂ : ℝ)) w :=
-    hw.mono (by rw [hs]; linarith)
+    hw.mono (by rw [hs]; linarith only [hd2R])
   have nD1s1 : vecNormSq n N (((k - 2 : ℕ) : ℝ) - 1) (D₁ v)
       ≤ vecNormSq n N ((k - 1 : ℕ) : ℝ) v :=
-    le_trans (h₁.bound _ v hv_s1) (vecNormSq_mono hvk1 (by rw [hs, hkm1]; linarith))
+    le_trans (h₁.bound _ v hv_s1) (vecNormSq_mono hvk1 (by rw [hs, hkm1]; linarith only [hd1R]))
   have nD2s1 : vecNormSq n N (((k - 2 : ℕ) : ℝ) - 1) (D₂ w)
       ≤ vecNormSq n N ((k - 1 : ℕ) : ℝ) w :=
-    le_trans (h₂.bound _ w hw_s1) (vecNormSq_mono hwk1 (by rw [hs, hkm1]; linarith))
+    le_trans (h₂.bound _ w hw_s1) (vecNormSq_mono hwk1 (by rw [hs, hkm1]; linarith only [hd2R]))
   -- the multiplication theorem, componentwise
-  have hkr2 : (r : ℝ) - 2 ≤ ((k - 2 : ℕ) : ℝ) := by rw [hs]; linarith
+  have hkr2 : (r : ℝ) - 2 ≤ ((k - 2 : ℕ) : ℝ) := by rw [hs]; linarith only [hkR]
   have mt : ∀ α : Fin N,
       MemSobolev n ((k - 2 : ℕ) : ℝ) (seqConv (D₁ v α) (D₂ w α))
       ∧ sobolevNormSq n ((k - 2 : ℕ) : ℝ) (seqConv (D₁ v α) (D₂ w α))
@@ -820,7 +852,7 @@ private theorem resolvent_dotConv_estimate (hn : 0 < n) {r : ℕ} (hr : 1 + (n :
         ≤ mt3AConstSq n ((r : ℝ) - 2) * top n N r k v w := by
       refine mul_le_mul_of_nonneg_left ?_ hA3
       unfold top
-      linarith
+      exact add_le_add p12 p34
     have hBb : mt3BConstSq n (k - 2) ((r : ℝ) - 2)
           * ((∑ α, sobolevNormSq n (((k - 2 : ℕ) : ℝ) - 1) (D₁ v α)
                 * sobolevNormSq n ((r : ℝ) - 2) (D₂ w α))
@@ -831,8 +863,8 @@ private theorem resolvent_dotConv_estimate (hn : 0 < n) {r : ℕ} (hr : 1 + (n :
       have hnn : 0 ≤ vecNormSq n N (r : ℝ) v * vecNormSq n N (r : ℝ) w :=
         mul_nonneg (vecNormSq_nonneg _ _) (vecNormSq_nonneg _ _)
       unfold lower
-      linarith
-    linarith [step1, step2.le, step2.ge, hA, hBb]
+      exact (add_le_add p52 p36).trans (le_add_of_nonneg_right hnn)
+    linarith only [step1, step2.le, step2.ge, hA, hBb]
   calc sobolevNormSq n (k : ℝ) (resolventCoeff (dotConv (D₁ v) (D₂ w)))
       = sobolevNormSq n ((k - 2 : ℕ) : ℝ) (dotConv (D₁ v) (D₂ w)) := hres_norm
     _ ≤ (N : ℝ) * ∑ α, sobolevNormSq n ((k - 2 : ℕ) : ℝ) (seqConv (D₁ v α) (D₂ w α)) := hsum1
