@@ -92,12 +92,13 @@ noncomputable def graphFundamentalGroupRootEquiv {V : Type u} [Quiver.{u} V]
     graphFundamentalGroup root₁ ≃* graphFundamentalGroup root₂ := by
   let f := graphRootChangeHom root₁ root₂
   exact
-    { toFun := fun γ => inv f ≫ γ ≫ f
-      invFun := fun δ => f ≫ δ ≫ inv f
-      left_inv := fun γ => by simp
-      right_inv := fun δ => by simp
+    { toFun := fun γ => .of (inv f ≫ γ.asHom ≫ f)
+      invFun := fun δ => .of (f ≫ δ.asHom ≫ inv f)
+      left_inv := fun γ => by ext; simp
+      right_inv := fun δ => by ext; simp
       map_mul' := fun γ₁ γ₂ => by
-        simp [CategoryTheory.End.mul_def, Category.assoc] }
+        ext
+        simp [CategoryTheory.End.mul_asHom, Category.assoc] }
 
 @[simp]
 theorem graphFundamentalGroupRootEquiv_refl {V : Type u} [Quiver.{u} V]
