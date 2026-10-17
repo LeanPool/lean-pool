@@ -11,6 +11,7 @@ public import LeanPool.CarlsonFunctions.Carlson.R.SlitJointAnalytic
 public import LeanPool.CarlsonFunctions.Carlson.R.SlitRelations
 public import LeanPool.CarlsonFunctions.Carlson.R.Deriv
 public import LeanPool.CarlsonFunctions.SeveralComplexVariables.Derivatives
+public import Mathlib.Analysis.Calculus.Deriv.Prod
 
 /-!
 # Differentiation of R on the full slit domain
