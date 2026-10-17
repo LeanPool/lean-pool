@@ -9,6 +9,8 @@ module
 public import LeanPool.EhrhartVolumeInequality.Foundations
 public import Mathlib.Analysis.Complex.Exponential
 import all LeanPool.EhrhartVolumeInequality.Foundations
+import Mathlib.Analysis.Calculus.FDeriv.Symmetric
+import Mathlib.Analysis.Calculus.FDeriv.WithLp
 import Mathlib.Analysis.Calculus.LineDeriv.IntegrationByParts
 import Mathlib.Analysis.Matrix.PosDef
 import Mathlib.MeasureTheory.Measure.FiniteMeasure

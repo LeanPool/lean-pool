@@ -14,6 +14,7 @@ import Mathlib.Analysis.Calculus.BumpFunction.Convolution
 import Mathlib.Analysis.Calculus.Rademacher
 import Mathlib.Analysis.Complex.ValueDistribution.LogCounting.Basic
 import Mathlib.Analysis.Convex.Continuous
+import Mathlib.Analysis.Convex.Deriv
 import Mathlib.Analysis.Convex.Measure
 import Mathlib.Analysis.Fourier.AddCircleMulti
 import Mathlib.Analysis.InnerProductSpace.JointEigenspace
@@ -21,6 +22,7 @@ import Mathlib.Analysis.SpecialFunctions.Choose
 import Mathlib.Data.Sym.Card
 import Mathlib.MeasureTheory.Integral.Layercake
 import Mathlib.MeasureTheory.Integral.ExpDecay
+import Mathlib.MeasureTheory.Integral.Pi
 import Mathlib.MeasureTheory.SpecificCodomains.Pi
 import Mathlib.Topology.UniformSpace.Ascoli
 

@@ -391,7 +391,7 @@ private theorem setIntegral_norm_sq_normalizedCoverComplexDriftCommutator_le
   have hκint : Integrable κ (volume : Measure (LogSpace n)) :=
     hκ.integrable_of_hasCompactSupport hκcompact
   have ht : MemLp t 2 (volume : Measure (LogSpace n)) :=
-    (MeasureTheory.memLp_indicator_iff_restrict hS.measurableSet).mpr hlocal
+    (MeasureTheory.memLp_indicator_iff_restrict hS.measurableSet.nullMeasurableSet).mpr hlocal
   have hq : Integrable q (volume : Measure (LogSpace n)) :=
     hκint.integrable_convolution L ht.norm.integrable_sq
   have hqnonneg (x : LogSpace n) : 0 ≤ q x := by
@@ -4571,7 +4571,7 @@ private theorem normalizedCoverMollification_localL2_tendsto_zero
   have hS : IsCompact S := hK.cthickening
   have hz : MemLp z 2 (volume : Measure (LogSpace n)) :=
     (MeasureTheory.memLp_indicator_iff_restrict
-      hS.measurableSet).mpr hlocal
+      hS.measurableSet.nullMeasurableSet).mpr hlocal
   have hagree (k : ℕ) :
       (∫ x in K,
         ‖normalizedCoverMollification h k x - h x‖ ^ 2
