@@ -162,18 +162,18 @@ lemma repl_in_F_voc_def p φ ψ :
   cases ψ <;> simp only [replInF, Formula.voc, Finset.empty_sdiff, Finset.notMem_empty,
     ↓reduceIte, Finset.union_idempotent, beq_iff_eq, Finset.mem_singleton, Sum.inl.injEq,
     Finset.mem_union]
-  case atom_prop q => by_cases q = p <;> aesop
+  case atom_prop q => by_cases q = p <;> aesop (rule_sets := [-default])
   case neg => apply repl_in_F_voc_def
   case and ψ1 ψ2 =>
     ext x
     have := repl_in_F_voc_def p φ ψ1
     have := repl_in_F_voc_def p φ ψ2
-    aesop
+    aesop (rule_sets := [-default])
   case box α ψ =>
     ext x
     have := repl_in_F_voc_def p φ ψ
     have := repl_in_P_voc_def p φ α
-    aesop
+    aesop (rule_sets := [-default])
 
 lemma repl_in_P_voc_def p φ α :
     (replInP p φ α).voc = (α.voc \ {Sum.inl p}) ∪ (if Sum.inl p ∈ α.voc then φ.voc else {}) := by
@@ -185,12 +185,12 @@ lemma repl_in_P_voc_def p φ α :
     ext x
     have := repl_in_P_voc_def p φ α
     have := repl_in_P_voc_def p φ β
-    aesop
+    aesop (rule_sets := [-default])
   case union α β =>
     ext x
     have := repl_in_P_voc_def p φ α
     have := repl_in_P_voc_def p φ β
-    aesop
+    aesop (rule_sets := [-default])
   case test τ =>
     ext x
     have := repl_in_F_voc_def p φ τ

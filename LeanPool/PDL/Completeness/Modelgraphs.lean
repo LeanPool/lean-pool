@@ -254,6 +254,7 @@ theorem loadedTruthLemmaProg {Worlds} (MG : ModelGraph Worlds) α :
     induction n generalizing X φ -- not generalizing Y, but φ to be replaced φ with ⌈∗β⌉φ below!
     · rcases claim with ⟨YS, X_def, Y_def, _⟩
       have : YS.head = YS.last := by
+        clear * -YS
         have := List.Vector.exists_eq_cons YS
         aesop
       rw [this] at X_def
