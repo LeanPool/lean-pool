@@ -29,32 +29,47 @@ noncomputable section
 def epsPart (N : ℕ) : ℕ := Nat.gcd N 24
 
 /-- An integer matrix with N ∣ M₁₀ and ε ∣ M₁₁ − M₀₀. -/
-def InL (N : ℕ) (M : Matrix (Fin 2) (Fin 2) ℝ) : Prop :=
-  ∃ a b c d : ℤ, M = !![(a : ℝ), b; c, d] ∧ (N : ℤ) ∣ c ∧ (epsPart N : ℤ) ∣ d - a
+def InLe (N ε : ℕ) (M : Matrix (Fin 2) (Fin 2) ℝ) : Prop :=
+  ∃ a b c d : ℤ, M = !![(a : ℝ), b; c, d] ∧ (N : ℤ) ∣ c ∧ (ε : ℤ) ∣ d - a
 
-theorem InL.add {N : ℕ} {M M' : Matrix (Fin 2) (Fin 2) ℝ} (h : InL N M) (h' : InL N M') :
-    InL N (M + M') := by
+theorem InLe.add {N ε : ℕ} {M M' : Matrix (Fin 2) (Fin 2) ℝ} (h : InLe N ε M) (h' : InLe N ε M') :
+    InLe N ε (M + M') := by
   obtain ⟨a, b, c, d, rfl, hc, hd⟩ := h
   obtain ⟨a', b', c', d', rfl, hc', hd'⟩ := h'
   refine ⟨a + a', b + b', c + c', d + d', ?_, dvd_add hc hc', ?_⟩
   · ext i j; fin_cases i <;> fin_cases j <;> simp
   · rw [show d + d' - (a + a') = (d - a) + (d' - a') by ring]; exact dvd_add hd hd'
 
-theorem InL.zsmul {N : ℕ} {M : Matrix (Fin 2) (Fin 2) ℝ} (h : InL N M) (m : ℤ) :
-    InL N ((m : ℝ) • M) := by
+theorem InLe.zsmul {N ε : ℕ} {M : Matrix (Fin 2) (Fin 2) ℝ} (h : InLe N ε M) (m : ℤ) :
+    InLe N ε ((m : ℝ) • M) := by
   obtain ⟨a, b, c, d, rfl, hc, hd⟩ := h
   refine ⟨m * a, m * b, m * c, m * d, ?_, dvd_mul_of_dvd_right hc _, ?_⟩
   · ext i j; fin_cases i <;> fin_cases j <;> simp
   · rw [show m * d - m * a = m * (d - a) by ring]; exact dvd_mul_of_dvd_right hd _
 
-theorem InL.sub {N : ℕ} {M M' : Matrix (Fin 2) (Fin 2) ℝ} (h : InL N M) (h' : InL N M') :
-    InL N (M - M') := by
+theorem InLe.sub {N ε : ℕ} {M M' : Matrix (Fin 2) (Fin 2) ℝ} (h : InLe N ε M) (h' : InLe N ε M') :
+    InLe N ε (M - M') := by
   have := h.add (h'.zsmul (-1))
   convert this using 1
   simp [sub_eq_add_neg]
 
-theorem InL.one (N : ℕ) : InL N 1 :=
+theorem InLe.one {ε : ℕ} (N : ℕ) : InLe N ε 1 :=
   ⟨1, 0, 0, 1, by ext i j; fin_cases i <;> fin_cases j <;> simp, dvd_zero _, by simp⟩
+
+
+/-- The Γ₀(N) lattice, with parameter gcd(N, 24). -/
+def InL (N : ℕ) (M : Matrix (Fin 2) (Fin 2) ℝ) : Prop := InLe N (epsPart N) M
+
+theorem InL.add {N : ℕ} {M M' : Matrix (Fin 2) (Fin 2) ℝ} (h : InL N M) (h' : InL N M') :
+    InL N (M + M') := InLe.add h h'
+
+theorem InL.zsmul {N : ℕ} {M : Matrix (Fin 2) (Fin 2) ℝ} (h : InL N M) (m : ℤ) :
+    InL N ((m : ℝ) • M) := InLe.zsmul h m
+
+theorem InL.sub {N : ℕ} {M M' : Matrix (Fin 2) (Fin 2) ℝ} (h : InL N M) (h' : InL N M') :
+    InL N (M - M') := InLe.sub h h'
+
+theorem InL.one (N : ℕ) : InL N 1 := InLe.one N
 
 theorem epsPart_dvd_24 (N : ℕ) : epsPart N ∣ 24 := Nat.gcd_dvd_right _ _
 

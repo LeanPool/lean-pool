@@ -16,9 +16,7 @@ public import LeanPool.CongruenceNormalizers.NormalizerLean.Basic
 public import LeanPool.CongruenceNormalizers.NormalizerLean.Defs
 public import LeanPool.CongruenceNormalizers.NormalizerLean.NewmanCond
 public import LeanPool.CongruenceNormalizers.NormalizerLean.NewmanFacts
-public import LeanPool.CongruenceNormalizers.NormalizerLean.NewmanLocal
 public import LeanPool.CongruenceNormalizers.NormalizerLean.NewmanMain
 public import LeanPool.CongruenceNormalizers.NormalizerLean.NewmanRat
 public import LeanPool.CongruenceNormalizers.NormalizerLean.NewmanVal
-public import LeanPool.CongruenceNormalizers.NormalizerLean.RelBasic
 public import LeanPool.CongruenceNormalizers.NormalizerLean.T1General

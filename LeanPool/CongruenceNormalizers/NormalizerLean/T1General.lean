@@ -44,6 +44,7 @@ theorem isNewmanForm_conj_mem {N : ℕ} [NeZero N] {g : SL(2, ℝ)} (hg : IsNewm
     {γ : SL(2, ℝ)} (hγ : γ ∈ Gamma0R N) : g * γ * g⁻¹ ∈ Gamma0R N := by
   have hN0 := NeZero.ne N
   obtain ⟨a, b, c, d, e, he0, ⟨m, hm⟩, hdet, ε, hε, hgm⟩ := hg
+  change nPart N = e * m at hm
   obtain ⟨x, y, c', t, hγdet, ⟨z, rfl⟩, hγm⟩ := exists_entries_of_mem_Gamma0R hγ
   have hNnh := hPart_sq_mul_nPart N hN0
   set h := hPart N with hh
@@ -116,6 +117,7 @@ theorem conjGamma0n_isNewmanForm {N : ℕ} [NeZero N] {g : SL(2, ℝ)} (hg : g �
   obtain ⟨a, b, c', d, hdet, ⟨c, rfl⟩, hγm⟩ := exists_entries_of_mem_Gamma0R hγ
   have hNnh := hPart_sq_mul_nPart N (NeZero.ne N)
   have hh0 : (hPart N : ℝ) ≠ 0 := Nat.cast_ne_zero.2 (hPart_pos N).ne'
+  dsimp only [nPart] at hdet
   refine ⟨a, b, c, d, 1, one_pos, one_dvd _, by linear_combination hdet, 1, Or.inl rfl, ?_⟩
   have hD := coe_Dsl N
   have hDinv := coe_inv_of_coe_eq_smul hD

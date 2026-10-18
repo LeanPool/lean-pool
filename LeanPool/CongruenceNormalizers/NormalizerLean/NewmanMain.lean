@@ -6,16 +6,14 @@ Authors: Filip Najman
 module
 
 public import LeanPool.CongruenceNormalizers.NormalizerLean.NewmanFacts
-public import LeanPool.CongruenceNormalizers.NormalizerLean.NewmanLocal
 
 /-!
-# T2: Newman's theorem
+# Newman's theorem for Γ₀(N)
 
-Every g ∈ Norm(Γ₀(N)) has the form (8′).  Write g = κ·[[α, β/h], [hγ, δ]] with α, β, γ, δ ∈ ℤ
-coprime (`exists_prim_form`), e = αδ − βγ.  The divisibilities F1–F12 (for g and g⁻¹, and with
-s = t − x from the element γ_p of Lemma 3) give, at every prime p, the valuation inequalities of
-`local_form`, whose conclusion says: either v_p(e) = 0 and p^{v_p(n)} ∣ γ, or v_p(e) = v_p(n) and
-p^{v_p(n)} divides α, γ, δ.  Hence e ∣ n, n ∣ γ, e ∣ α, e ∣ δ, which is (8′).
+The primitive representative and local valuation argument is proved for arbitrary subgroups in
+`NormalizerDelta/NewmanGen`. Here it is instantiated with `newmanData_gamma0`, which supplies
+Γ₀(N)'s lattice, unipotents and valuation witnesses. The existing specialized local and final
+theorems retain their statements as wrappers around that shared argument.
 -/
 
 @[expose] public section

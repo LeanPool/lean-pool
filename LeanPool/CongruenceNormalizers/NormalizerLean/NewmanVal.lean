@@ -6,7 +6,6 @@ Authors: Filip Najman
 module
 
 public import LeanPool.CongruenceNormalizers.NormalizerLean.NewmanCond
-public import LeanPool.CongruenceNormalizers.NormalizerLean.RelBasic
 
 /-!
 # Newman's theorem: valuations, the local constants, and the element γ_p of Lemma 3

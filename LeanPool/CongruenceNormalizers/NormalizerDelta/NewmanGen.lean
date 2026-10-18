@@ -50,10 +50,6 @@ theorem vz_int_natCast (p n : ℕ) : vz p (n : ℤ) = n.factorization p := vz_na
 /-- n = N / η². -/
 def nOf (N η : ℕ) : ℕ := N / η ^ 2
 
-/-- An integer matrix with N ∣ M₁₀ and ε ∣ M₁₁ − M₀₀. -/
-def InLe (N ε : ℕ) (M : Matrix (Fin 2) (Fin 2) ℝ) : Prop :=
-  ∃ a b c d : ℤ, M = !![(a : ℝ), b; c, d] ∧ (N : ℤ) ∣ c ∧ (ε : ℤ) ∣ d - a
-
 /-- The hypotheses of Newman's argument for Γ ≤ Γ₀(N), with lattice parameter ε and output η. -/
 structure NewmanData (N : ℕ) (Γ : Subgroup SL(2, ℝ)) (ε η : ℕ) : Prop where
   le : Γ ≤ Gamma0R N
@@ -83,47 +79,18 @@ theorem NewmanData.factorization_n {N : ℕ} (D : NewmanData N Γ ε η) (hN : N
   simp only [Finsupp.add_apply, Finsupp.smul_apply, smul_eq_mul] at this
   omega
 
-/-- The local valuation lemma of T2 (`local_form`) for arbitrary j = v_p(ε) ≤ v_p(N). -/
-theorem local_form_gen (ν j k e₂ δ₀ a b c d : ℕ)
-    (_hj : j ≤ ν) (_he₂ : e₂ ≤ 1)
+/-- The local matrix shape from primitivity and the necessary valuation bounds. -/
+theorem local_form_gen (ν j k δ₀ a b c d : ℕ)
     (hk : k = min j (ν / 2))
     (prim : a = 0 ∨ b = 0 ∨ c = 0 ∨ d = 0)
     (u1 : min (a + d) (b + c) ≤ δ₀) (u2 : a + d ≠ b + c → δ₀ = min (a + d) (b + c))
-    (_C1 : δ₀ ≤ k + a + c) (C2 : δ₀ ≤ 2 * a) (C3 : δ₀ + ν ≤ 2 * k + 2 * c)
-    (C4 : j + δ₀ ≤ e₂ + k + a + c) (_C5 : δ₀ + k ≤ ν + b + d) (C6 : δ₀ + 2 * k ≤ ν + 2 * b)
-    (C7 : δ₀ ≤ 2 * d) (C8 : j + δ₀ + k ≤ e₂ + ν + b + d) (_C9 : δ₀ ≤ j + b + c)
-    (C10 : δ₀ + k ≤ j + a + b) (C11 : δ₀ + ν ≤ j + k + c + d) (C12 : δ₀ ≤ e₂ + b + c)
-    (_C13 : δ₀ ≤ k + c + d) (C14 : j + δ₀ ≤ e₂ + k + c + d) (_C15 : δ₀ + k ≤ ν + a + b)
-    (C16 : j + δ₀ + k ≤ e₂ + ν + a + b) (C17 : δ₀ + k ≤ j + b + d)
-    (C18 : δ₀ + ν ≤ j + k + a + c) :
+    (C2 : δ₀ ≤ 2 * a) (C3 : δ₀ + ν ≤ 2 * k + 2 * c)
+    (C6 : δ₀ + 2 * k ≤ ν + 2 * b) (C7 : δ₀ ≤ 2 * d)
+    (C10 : δ₀ + k ≤ j + a + b) (C11 : δ₀ + ν ≤ j + k + c + d)
+    (C17 : δ₀ + k ≤ j + b + d) (C18 : δ₀ + ν ≤ j + k + a + c) :
     (δ₀ = 0 ∧ ν - 2 * k ≤ c) ∨
       (δ₀ = ν - 2 * k ∧ ν - 2 * k ≤ a ∧ ν - 2 * k ≤ c ∧ ν - 2 * k ≤ d) := by
   omega
-
-theorem InLe.add {N : ℕ} {M M' : Matrix (Fin 2) (Fin 2) ℝ} (h : InLe N ε M) (h' : InLe N ε M') :
-    InLe N ε (M + M') := by
-  obtain ⟨a, b, c, d, rfl, hc, hd⟩ := h
-  obtain ⟨a', b', c', d', rfl, hc', hd'⟩ := h'
-  refine ⟨a + a', b + b', c + c', d + d', ?_, dvd_add hc hc', ?_⟩
-  · ext i j; fin_cases i <;> fin_cases j <;> simp
-  · rw [show d + d' - (a + a') = (d - a) + (d' - a') by ring]; exact dvd_add hd hd'
-
-theorem InLe.zsmul {N : ℕ} {M : Matrix (Fin 2) (Fin 2) ℝ} (h : InLe N ε M) (m : ℤ) :
-    InLe N ε ((m : ℝ) • M) := by
-  obtain ⟨a, b, c, d, rfl, hc, hd⟩ := h
-  refine ⟨m * a, m * b, m * c, m * d, ?_, dvd_mul_of_dvd_right hc _, ?_⟩
-  · ext i j; fin_cases i <;> fin_cases j <;> simp
-  · rw [show m * d - m * a = m * (d - a) by ring]; exact dvd_mul_of_dvd_right hd _
-
-theorem InLe.sub {N : ℕ} {M M' : Matrix (Fin 2) (Fin 2) ℝ} (h : InLe N ε M) (h' : InLe N ε M') :
-    InLe N ε (M - M') := by
-  have := h.add (h'.zsmul (-1))
-  convert this using 1
-  simp [sub_eq_add_neg]
-
-theorem InLe.one (N : ℕ) : InLe N ε 1 :=
-  ⟨1, 0, 0, 1, by ext i j; fin_cases i <;> fin_cases j <;> simp, dvd_zero _, by simp⟩
-
 
 /-- The products of entries that are integers. -/
 theorem products_intG {N : ℕ} {g : SL(2, ℝ)} (D : NewmanData N Γ ε η) (hg : g ∈ NormG Γ) {x y z w
@@ -355,30 +322,21 @@ theorem local_conclusionG {N : ℕ} [NeZero N] {g : SL(2, ℝ)} (D : NewmanData 
     have := D.n_mul_sq
     rw [h0, zero_mul] at this
     exact hN this.symm
-  have hnz : (nOf N η : ℤ) ≠ 0 := Nat.cast_ne_zero.2 hn0
   have hε0 : ε ≠ 0 := (Nat.pos_of_dvd_of_pos D.eps_dvd (Nat.pos_of_ne_zero hN)).ne'
-  have hεz : (ε : ℤ) ≠ 0 := Nat.cast_ne_zero.2 hε0
   -- the local constants
   set ν := N.factorization p with hν
   set j := (ε).factorization p with hj
   set k := (η).factorization p with hk
-  set e₂ := (2 : ℕ).factorization p with he₂
   set nν := (nOf N η).factorization p with hnν
   set δ₀ := vz p (α * δ - β * γ) with hδ₀
   have hkj : k = min j (ν / 2) := D.h_fact p
   have hnk : nν + 2 * k = ν := D.factorization_n hN p
   have hjν : j ≤ ν := (Nat.factorization_le_iff_dvd hε0 hN).2 D.eps_dvd p
-  have he₂1 : e₂ ≤ 1 := by rw [he₂, factorization_two]; split_ifs <;> omega
   -- valuations of the constants
   have vN : vz p (N : ℤ) = ν := vz_natCast p N
   have vh : vz p (η : ℤ) = k := vz_natCast p _
   have vn : vz p (nOf N η : ℤ) = nν := vz_natCast p _
-  have vε : vz p (ε : ℤ) = j := vz_natCast p _
-  have v2 : vz p (2 : ℤ) = e₂ := by
-    have := vz_natCast p 2
-    simpa using this
   have v1 : vz p (1 : ℤ) = 0 := by simp [vz]
-  have two0 : (2 : ℤ) ≠ 0 := by norm_num
   -- shorthand for the valuations of the entries
   set a := vv B p α
   set b := vv B p β
@@ -401,79 +359,51 @@ theorem local_conclusionG {N : ℕ} [NeZero N] {g : SL(2, ℝ)} (D : NewmanData 
     exact ⟨key α hcon.1, key β hcon.2.1, key γ hcon.2.2.1, key δ hcon.2.2.2⟩
   -- ultrametric relation
   obtain ⟨u1, u2⟩ := ultra_vv (B := B) hp he (by simp only [B]; omega)
-  -- the facts
-  obtain ⟨F1, F2, F3, F4, F5, F6, F7, F8, F9, F10, F11, F12⟩ := int_factsG D hgN hg he
+  obtain ⟨_, F2, F3, _, _, F6, F7, _, _, F10, F11, _⟩ := int_factsG D hgN hg he
   have he' : δ * α - -β * -γ = α * δ - β * γ := by ring
   have he'0 : δ * α - -β * -γ ≠ 0 := by rw [he']; exact he
-  obtain ⟨G1, G2, G3, G4, G5, G6, G7, G8, G9, G10, G11, G12⟩ :=
+  obtain ⟨_, _, _, _, _, _, _, _, _, G10, G11, _⟩ :=
     int_factsG D (inv_mem hgN) hginv he'0
-  rw [he'] at G1 G2 G3 G4 G5 G6 G7 G8 G9 G10 G11 G12
-  -- valuations of the moduli
-  have vX : ∀ X : ℤ, X ≠ 0 → vz p ((α * δ - β * γ) * X) = δ₀ + vz p X := fun X hX =>
+  rw [he'] at G10 G11
+  have vX : ∀ X : ℤ, X ≠ 0 → vz p ((α * δ - β * γ) * X) = δ₀ + vz p X := fun _ hX =>
     vz_mul he hX
   have hBe : vz p (α * δ - β * γ) ≤ B := by simp only [B]; omega
   have hBN : vz p ((α * δ - β * γ) * N) ≤ B := by rw [vX _ hNz, vN]; simp only [B]; omega
-  have hBε : vz p ((α * δ - β * γ) * (ε : ℤ)) ≤ B := by
-    rw [vX _ hεz, vε]; simp only [B]; omega
   have hBh : vz p ((α * δ - β * γ) * (η : ℤ)) ≤ B := by
     rw [vX _ hhz, vh]; simp only [B]
     omega
-  -- the inequalities from g
-  have c1 := le_vv2 (B := B) hhz hBe F1
   have c2 := le_vv_sq (B := B) one_ne_zero hBe F2
   have c3 := le_vv_sq (B := B) (pow_ne_zero 2 hhz) hBN F3
-  have c4 := le_vv2 (B := B) (mul_ne_zero two0 hhz) hBε F4
-  have c5 := le_vv2 (B := B) (mul_ne_zero hnz hhz) hBe F5
-  have c6 := le_vv_sq (B := B) hnz hBe F6
+  have c6 := le_vv_sq (B := B) (Nat.cast_ne_zero.2 hn0) hBe F6
   have c7 := le_vv_sq (B := B) one_ne_zero hBe F7
-  have c8 := le_vv2 (B := B) (mul_ne_zero (mul_ne_zero two0 hnz) hhz) hBε F8
-  have c9 := le_vv2 (B := B) hNz hBe F9
   have c10 := le_vv2 (B := B) hNz hBh F10
   have c11 := le_vv2 (B := B) (mul_ne_zero hNz hhz) hBN F11
-  have c12 := le_vv2 (B := B) (mul_ne_zero two0 hNz) hBε F12
-  -- and from g⁻¹
-  have d1 := le_vv2 (B := B) hhz hBe G1
-  have d2 := le_vv_sq (B := B) one_ne_zero hBe G2
-  have d4 := le_vv2 (B := B) (mul_ne_zero two0 hhz) hBε G4
-  have d5 := le_vv2 (B := B) (mul_ne_zero hnz hhz) hBe G5
-  have d7 := le_vv_sq (B := B) one_ne_zero hBe G7
-  have d8 := le_vv2 (B := B) (mul_ne_zero (mul_ne_zero two0 hnz) hhz) hBε G8
   have d10 := le_vv2 (B := B) hNz hBh G10
   have d11 := le_vv2 (B := B) (mul_ne_zero hNz hhz) hBN G11
-  simp only [hb', hc'] at d1 d4 d5 d8 d10 d11
-  simp only [vX _ hNz, vX _ hεz, vX _ hhz, vz_mul two0 hhz, vz_mul hnz hhz,
-    vz_mul (mul_ne_zero two0 hnz) hhz, vz_mul two0 hnz, vz_mul hNz hhz, vz_mul two0 hNz,
-    vz_mul hhz hhz, pow_two, vN, vh, vn, vε, v2, v1] at c1 c2 c3 c4 c5 c6 c7 c8 c9 c10 c11 c12
-  simp only [vX _ hNz, vX _ hεz, vX _ hhz, vz_mul two0 hhz, vz_mul hnz hhz,
-    vz_mul (mul_ne_zero two0 hnz) hhz, vz_mul two0 hnz, vz_mul hNz hhz,
-    vN, vh, vn, vε, v2, v1] at d1 d2 d4 d5 d7 d8 d10 d11
-  -- the conditions C9–C12, C17, C18 with j: from N if ν = j, from γ_p otherwise
-  obtain ⟨C9, C10, C11, C12, C17, C18⟩ : δ₀ ≤ j + b + c ∧ δ₀ + k ≤ j + a + b ∧
-      δ₀ + ν ≤ j + k + c + d ∧ δ₀ ≤ e₂ + b + c ∧ δ₀ + k ≤ j + b + d ∧ δ₀ + ν ≤ j + k + c + a := by
+  simp only [hb', hc'] at d10 d11
+  simp only [vX _ hNz, vX _ hhz, vz_mul hNz hhz, vz_mul hhz hhz, pow_two, vN, vh, vn, v1]
+    at c2 c3 c6 c7 c10 c11 d10 d11
+  obtain ⟨C10, C11, C17, C18⟩ : δ₀ + k ≤ j + a + b ∧ δ₀ + ν ≤ j + k + c + d ∧
+      δ₀ + k ≤ j + b + d ∧ δ₀ + ν ≤ j + k + c + a := by
     by_cases hνj : ν = j
-    · refine ⟨by omega, by omega, by omega, by omega, by omega, by omega⟩
+    · exact ⟨by omega, by omega, by omega, by omega⟩
     have hpN : p ∣ N := by
       by_contra hpN
       have : ν = 0 := Nat.factorization_eq_zero_of_not_dvd hpN
       omega
-    obtain ⟨x, y, t, -, ⟨γp, hγp, hγm⟩, hs0, hvs⟩ := D.gamma p hp hpN (by omega)
-    obtain ⟨S9, S10, S11, S12⟩ := int_facts_sG D hgN hg he hγp hγm
-    obtain ⟨T9, T10, T11, T12⟩ := int_facts_sG D (inv_mem hgN) hginv he'0 hγp hγm
-    rw [he'] at T9 T10 T11 T12
-    have s9 := le_vv2 (B := B) hs0 hBe S9
+    obtain ⟨x, y, t, _, ⟨γp, hγp, hγm⟩, hs0, hvs⟩ := D.gamma p hp hpN (by omega)
+    obtain ⟨_, S10, S11, _⟩ := int_facts_sG D hgN hg he hγp hγm
+    obtain ⟨_, T10, T11, _⟩ := int_facts_sG D (inv_mem hgN) hginv he'0 hγp hγm
+    rw [he'] at T10 T11
     have s10 := le_vv2 (B := B) hs0 hBh S10
     have s11 := le_vv2 (B := B) (mul_ne_zero hs0 hhz) hBN S11
-    have s12 := le_vv2 (B := B) (mul_ne_zero two0 hs0) hBε S12
     have t10 := le_vv2 (B := B) hs0 hBh T10
     have t11 := le_vv2 (B := B) (mul_ne_zero hs0 hhz) hBN T11
     simp only [hb', hc'] at t10 t11
-    simp only [vX _ hNz, vX _ hεz, vX _ hhz, vz_mul hs0 hhz, vz_mul two0 hs0, hvs, vh, vN, vε,
-      v2] at s9 s10 s11 s12 t10 t11
-    refine ⟨by omega, by omega, by omega, by omega, by omega, by omega⟩
-  have := local_form_gen ν j k e₂ δ₀ a b c d hjν he₂1 hkj prim u1 u2 (by omega) (by omega) (by
-    omega)
-    (by omega) (by omega) (by omega) (by omega) (by omega) C9 C10 C11 C12 (by omega) (by omega)
-    (by omega) (by omega) C17 (by omega)
+    simp only [vX _ hNz, vX _ hhz, vz_mul hs0 hhz, hvs, vh, vN] at s10 s11 t10 t11
+    exact ⟨by omega, by omega, by omega, by omega⟩
+  have := local_form_gen ν j k δ₀ a b c d hkj prim u1 u2 (by omega) (by omega) (by omega)
+    (by omega) C10 C11 C17 (by omega)
   have hn2 : ν - 2 * k = nν := by omega
   rw [hn2] at this
   exact this

@@ -8,7 +8,6 @@ module
 public import Mathlib.Analysis.Real.Sqrt
 public import Mathlib.Algebra.Group.Subgroup.Basic
 public import Mathlib.GroupTheory.QuotientGroup.Basic
-public import Mathlib.GroupTheory.FreeGroup.Basic
 public import Mathlib.NumberTheory.ModularForms.CongruenceSubgroups
 public import Mathlib.RingTheory.UniqueFactorizationDomain.Finsupp
 public import Mathlib.Tactic.FieldSimp
@@ -91,15 +90,22 @@ def IsAtkinLehner (N Q : ℕ) (g : SL(2, ℝ)) : Prop :=
     (g : Matrix (Fin 2) (Fin 2) ℝ) =
       (Real.sqrt Q)⁻¹ • !![(Q : ℝ) * x, (y : ℝ); (N : ℝ) * z, (Q : ℝ) * w]
 
-/-- `g` has Newman's form (8′) [Nw, Theorem]:
-`g = ±(1/√e)·[[ae, b/h], [Nc/h, de]]` with `a b c d : ℤ`, `e ≥ 1`, `e ∣ n`, `ade² − bcn = e`. -/
-def IsNewmanForm (N : ℕ) (g : SL(2, ℝ)) : Prop :=
-  ∃ (a b c d : ℤ) (e : ℕ), 0 < e ∧ e ∣ nPart N ∧
-    a * d * (e : ℤ) ^ 2 - b * c * (nPart N : ℤ) = e ∧
+/-- `g` has the form of the generalized Newman bound, with parameter h (and n = N/h²):
+`g = ±(1/√e)·[[ae, b/h], [Nc/h, de]]` with `a b c d : ℤ`, `e ≥ 1`, `e ∣ n`, `ade² − bcn = e`.
+(Together with e ∣ n, the equation forces e ∥ n.  The sign ± is there because we work in SL₂(ℝ).)
+For h = h(N) this is `IsNewmanForm N`.  The statements only use h = h(N) or h = h_Δ, which are ≥ 1
+with h² ∣ N, so the divisions by h and the ℕ-division N / h² are exact. -/
+def IsNewmanFormH (N h : ℕ) (g : SL(2, ℝ)) : Prop :=
+  ∃ (a b c d : ℤ) (e : ℕ), 0 < e ∧ e ∣ N / h ^ 2 ∧
+    a * d * (e : ℤ) ^ 2 - b * c * ((N / h ^ 2 : ℕ) : ℤ) = e ∧
     ∃ ε : ℝ, (ε = 1 ∨ ε = -1) ∧
       (g : Matrix (Fin 2) (Fin 2) ℝ) =
         (ε / Real.sqrt e) •
-          !![(a : ℝ) * e, (b : ℝ) / hPart N; (N : ℝ) * c / hPart N, (d : ℝ) * e]
+          !![(a : ℝ) * e, (b : ℝ) / h; (N : ℝ) * c / h, (d : ℝ) * e]
+
+
+/-- Newman's form with the canonical Γ₀(N) square-divisor parameter. -/
+def IsNewmanForm (N : ℕ) (g : SL(2, ℝ)) : Prop := IsNewmanFormH N (hPart N) g
 
 /-- D = diag(h, 1), rescaled into SL₂(ℝ): `diag(√h, 1/√h)`.  Conjugation by it equals conjugation
 by D. -/
@@ -108,27 +114,6 @@ def Dsl (N : ℕ) : SL(2, ℝ) := projSL !![(hPart N : ℝ), 0; 0, 1]
 /-- D⁻¹ Γ₀(n) D ≤ SL₂(ℝ). -/
 def conjGamma0n (N : ℕ) : Subgroup SL(2, ℝ) :=
   (Gamma0R (nPart N)).map (MulAut.conj (Dsl N)⁻¹).toMonoidHom
-
-/-- The two generators of a local presentation. -/
-inductive LGen
-  | w
-  | s
-  deriving DecidableEq
-
-/-- `[x, y] = x⁻¹ y⁻¹ x y` (blueprint convention, not Mathlib's `⁅x, y⁆`). -/
-def bracket {G : Type*} [Group G] (x y : G) : G := x⁻¹ * y⁻¹ * x * y
-
-namespace Words
-
-/-- The word `w`. -/
-abbrev w : FreeGroup LGen := FreeGroup.of .w
-/-- The word `s`. -/
-abbrev s : FreeGroup LGen := FreeGroup.of .s
-/-- `r = w s⁻¹ w`, an abbreviation, not a generator [BA]. -/
-abbrev r : FreeGroup LGen := w * s⁻¹ * w
-
-end Words
-
 
 /-- The image in SL₂(ℝ) of a subgroup of SL₂(ℤ). -/
 def toR (Γ : Subgroup SL(2, ℤ)) : Subgroup SL(2, ℝ) :=
@@ -183,20 +168,6 @@ def epsDelta (N : ℕ) [NeZero N] (Δ : Subgroup (ZMod N)ˣ) : ℕ :=
 /-- h_Δ = ∏_{p ∣ N} p^{min(v_p(ε_Δ), ⌊v_p(N)/2⌋)}. -/
 def hDelta (N : ℕ) [NeZero N] (Δ : Subgroup (ZMod N)ˣ) : ℕ :=
   ∏ p ∈ N.primeFactors, p ^ min ((epsDelta N Δ).factorization p) (N.factorization p / 2)
-
-/-- `g` has the form of the generalized Newman bound, with parameter h (and n = N/h²):
-`g = ±(1/√e)·[[ae, b/h], [Nc/h, de]]` with `a b c d : ℤ`, `e ≥ 1`, `e ∣ n`, `ade² − bcn = e`.
-(Together with e ∣ n, the equation forces e ∥ n.  The sign ± is there because we work in SL₂(ℝ).)
-For h = h(N) this is `IsNewmanForm N`.  The statements only use h = h(N) or h = h_Δ, which are ≥ 1
-with h² ∣ N, so the divisions by h and the ℕ-division N / h² are exact. -/
-def IsNewmanFormH (N h : ℕ) (g : SL(2, ℝ)) : Prop :=
-  ∃ (a b c d : ℤ) (e : ℕ), 0 < e ∧ e ∣ N / h ^ 2 ∧
-    a * d * (e : ℤ) ^ 2 - b * c * ((N / h ^ 2 : ℕ) : ℤ) = e ∧
-    ∃ ε : ℝ, (ε = 1 ∨ ε = -1) ∧
-      (g : Matrix (Fin 2) (Fin 2) ℝ) =
-        (ε / Real.sqrt e) •
-          !![(a : ℝ) * e, (b : ℝ) / h; (N : ℝ) * c / h, (d : ℝ) * e]
-
 
 /-- The image in SL₂(ℝ) of an integer matrix. -/
 abbrev ofZ (γ : SL(2, ℤ)) : SL(2, ℝ) := SpecialLinearGroup.map (Int.castRingHom ℝ) γ
