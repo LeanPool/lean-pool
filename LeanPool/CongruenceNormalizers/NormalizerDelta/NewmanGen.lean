@@ -5,24 +5,15 @@ Authors: Filip Najman
 -/
 module
 
-public import LeanPool.CongruenceNormalizers.NormalizerLean.NewmanMain
+public import LeanPool.CongruenceNormalizers.NormalizerLean.NewmanVal
 public import LeanPool.CongruenceNormalizers.NormalizerDelta.Defs
 
 /-!
-# The generalized Newman bound, generic part: Newman's argument for a subgroup Γ ≤ Γ₀(N)
+# Newman's argument for subgroups of Γ₀(N)
 
-The frozen proof of T2 (`NormalizerLean/NewmanCond`, `NewmanRat`, `NewmanFacts`, `NewmanMain`) uses
-Γ₀(N) only through: Γ ≤ Γ₀(N); T, U ∈ Γ; every element of Γ is in the lattice
-L_ε = {M integral : N ∣ M₁₀, ε ∣ M₁₁ − M₀₀} with ε = gcd(N, 24); and, for p ∣ N with v_p(ε) <
-v_p(N),
-an element γ_p = [[x, y], [N, t]] ∈ Γ with v_p(t − x) = v_p(ε).  Here these are hypotheses
-(`NewmanData N Γ ε η`), with η the h of the conclusion (v_p(η) = min(v_p(ε), ⌊v_p(N)/2⌋)).  The
-local
-valuation lemma holds for every j = v_p(ε) ≤ v_p(N) (`local_form_gen`, by `omega`).
-
-This file was generated from the frozen files by `scratch/stage1/gen_newmangen.py` (substitutions
-Γ₀(N) ↦ Γ, gcd(N, 24) ↦ ε, h(N) ↦ η, n(N) ↦ N/η²) and `scratch/stage1/finish_newmangen.py`
-(the places listed above), then compiled; the frozen files are unchanged.
+`NewmanData` records the lattice, unipotent and valuation hypotheses used in the argument.
+The proof applies both to Γ₀(N), instantiated in `NormalizerLean/NewmanFacts`, and to ΓΔ(N).
+Its integer divisibilities, local conclusion and final matrix form are proved once here.
 -/
 
 @[expose] public section
@@ -32,6 +23,29 @@ open Matrix MatrixGroups
 namespace CongruenceNormalizers
 
 noncomputable section
+
+theorem int_eq_of_real {e X a : ℤ} (he : e ≠ 0) (h : ((e : ℝ))⁻¹ * (X : ℝ) = a) : X = e * a := by
+  have her : (e : ℝ) ≠ 0 := by exact_mod_cast he
+  have : (X : ℝ) = e * a := by rw [← h]; field_simp
+  exact_mod_cast this
+
+theorem int_eq_of_real_div {e X a : ℤ} {d : ℕ} (he : e ≠ 0) (hd : d ≠ 0)
+    (h : ((e : ℝ))⁻¹ * ((X : ℝ) / d) = a) : X = e * d * a := by
+  have her : (e : ℝ) ≠ 0 := by exact_mod_cast he
+  have hdr : (d : ℝ) ≠ 0 := Nat.cast_ne_zero.2 hd
+  have : (X : ℝ) = e * d * a := by rw [← h]; field_simp
+  exact_mod_cast this
+
+theorem dvd_of_forall_vz_le {m x : ℤ} (hm : m ≠ 0) (hx : x ≠ 0)
+    (h : ∀ p : ℕ, p.Prime → vz p m ≤ vz p x) : m ∣ x := by
+  rw [← Int.natAbs_dvd_natAbs]
+  rw [← Nat.factorization_le_iff_dvd (Int.natAbs_ne_zero.2 hm) (Int.natAbs_ne_zero.2 hx)]
+  intro p
+  by_cases hp : p.Prime
+  · exact h p hp
+  · simp [Nat.factorization_eq_zero_of_not_prime _ hp]
+
+theorem vz_int_natCast (p n : ℕ) : vz p (n : ℤ) = n.factorization p := vz_natCast p n
 
 /-- n = N / η². -/
 def nOf (N η : ℕ) : ℕ := N / η ^ 2
