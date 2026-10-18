@@ -432,29 +432,6 @@ def smulLowConst (n N r : ℕ) (a : VecSeq n N) (A' : ℝ) (Bk : ℕ → ℝ) (k
     * (vecNormSq n N r a + vecNormSq n N k a + vecNormSq n N ((k - 1 : ℕ) : ℝ) a)
     * (Bk k + Bk (k - 1) + 3 * A' + 3 * Bk r + 1)
 
--- Preserve the existing private proof-helper contracts when tactic dependencies change.
-private theorem ScalarTame.smulSeq._proof_1_2 {_n r : ℕ} (k : ℕ) (_hk1 : 1 ≤ k)
-    (heq : r = k) (a : ¬k - 1 ≤ r) : False := by
-  subst r
-  exact a (Nat.sub_le k 1)
-
-private theorem ScalarTame.smulSeq._proof_1_3 {_n r : ℕ} (k : ℕ) (_hk1 : 1 ≤ k)
-    (hlt : @LT.lt ℕ (@Preorder.toLT ℕ (@PartialOrder.toPreorder ℕ Nat.instPartialOrder)) r k)
-    (a : ¬r ≤ k - 1) : False :=
-  a (Nat.le_sub_one_of_lt hlt)
-
-private theorem ScalarTame.smulSeq._proof_1_4 {_n _r : ℕ} (k : ℕ) (hk1 : 1 ≤ k)
-    (a : ¬k - 1 + 1 = k) : False :=
-  a (Nat.sub_add_cancel hk1)
-
-private theorem ScalarTame.smulSeq._simp_1_6.{u_1, u_4} {ι : Type u_1} {M : Type u_4}
-    {s : Finset ι} [inst : AddCommMonoid M] {f g : ι → M} :
-    @HAdd.hAdd M M M (@instHAdd M inst.toAddMonoid.toAddZeroClass.toAddZero.toAdd)
-        (∑ x ∈ s, f x) (∑ x ∈ s, g x) =
-      ∑ x ∈ s, @HAdd.hAdd M M M
-        (@instHAdd M inst.toAddMonoid.toAddZeroClass.toAddZero.toAdd) (f x) (g x) :=
-  (Finset.sum_add_distrib (s := s) (f := f) (g := g)).symm
-
 /-- **Multiplication by a fixed rapidly decaying sequence preserves tameness.** Uses
 `third_multiplication_theorem_seq` at level `k` with `r' = r` (needs `1 + n/2 < r`). -/
 theorem ScalarTame.smulSeq (hn : 0 < n) {r : ℕ} (hr : 1 + (n : ℝ) / 2 < r)
@@ -664,15 +641,6 @@ def baseTopConst (n N r : ℕ) : ℝ := N * mt3AConstSq n ((r : ℝ) - 2)
 
 /-- Lower constant of `R(D₁v · D₂w)` at level `k`: `N · mt3BConstSq n (k - 2) (r - 2)`. -/
 def baseLowConst (n N r : ℕ) (k : ℕ) : ℝ := N * mt3BConstSq n (k - 2) ((r : ℝ) - 2)
-
--- Keep the pre-existing private arithmetic helper types and names stable.
-private theorem resolvent_dotConv_estimate._proof_1_3 {_n _r _d₁ _d₂ : ℕ} (k : ℕ)
-    (hk4 : 4 ≤ k) (a : ¬2 ≤ k) : False :=
-  a (Nat.le_of_succ_le (Nat.le_of_succ_le hk4))
-
-private theorem resolvent_dotConv_estimate._proof_1_4 {_n _r _d₁ _d₂ : ℕ} (k : ℕ)
-    (hk4 : 4 ≤ k) (a : ¬1 ≤ k) : False :=
-  a (Nat.le_of_succ_le (Nat.le_of_succ_le (Nat.le_of_succ_le hk4)))
 
 /-- The resolvent of a derivative product satisfies the Sobolev membership and tame bound. -/
 private theorem resolvent_dotConv_estimate (hn : 0 < n) {r : ℕ} (hr : 1 + (n : ℝ) / 2 < (r : ℝ) - 2)
