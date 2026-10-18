@@ -83,11 +83,10 @@ theorem NewmanData.factorization_n {N : ℕ} (D : NewmanData N Γ ε η) (hN : N
 theorem local_form_gen (ν j k δ₀ a b c d : ℕ)
     (hk : k = min j (ν / 2))
     (prim : a = 0 ∨ b = 0 ∨ c = 0 ∨ d = 0)
-    (u1 : min (a + d) (b + c) ≤ δ₀) (u2 : a + d ≠ b + c → δ₀ = min (a + d) (b + c))
+    (u1 : min (a + d) (b + c) ≤ δ₀)
     (C2 : δ₀ ≤ 2 * a) (C3 : δ₀ + ν ≤ 2 * k + 2 * c)
     (C6 : δ₀ + 2 * k ≤ ν + 2 * b) (C7 : δ₀ ≤ 2 * d)
-    (C10 : δ₀ + k ≤ j + a + b) (C11 : δ₀ + ν ≤ j + k + c + d)
-    (C17 : δ₀ + k ≤ j + b + d) (C18 : δ₀ + ν ≤ j + k + a + c) :
+    (C10 : δ₀ + k ≤ j + a + b) (C11 : δ₀ + ν ≤ j + k + c + d) :
     (δ₀ = 0 ∧ ν - 2 * k ≤ c) ∨
       (δ₀ = ν - 2 * k ∧ ν - 2 * k ≤ a ∧ ν - 2 * k ≤ c ∧ ν - 2 * k ≤ d) := by
   omega
@@ -303,8 +302,6 @@ theorem int_facts_sG {N : ℕ} {g : SL(2, ℝ)} (D : NewmanData N Γ ε η) (hgN
 theorem local_conclusionG {N : ℕ} [NeZero N] {g : SL(2, ℝ)} (D : NewmanData N Γ ε η) (hgN : g ∈
   NormG Γ) {κ : ℝ}
     {α β γ δ : ℤ} (hg : (g : Matrix (Fin 2) (Fin 2) ℝ) = κ • Smat (η) α β γ δ)
-    (hginv : ((g⁻¹ : SL(2, ℝ)) : Matrix (Fin 2) (Fin 2) ℝ) =
-      κ • Smat (η) δ (-β) (-γ) α)
     (he : α * δ - β * γ ≠ 0)
     (hprim : ∀ p : ℕ, p.Prime → ¬ ((p : ℤ) ∣ α ∧ (p : ℤ) ∣ β ∧ (p : ℤ) ∣ γ ∧ (p : ℤ) ∣ δ))
     {p : ℕ} (hp : p.Prime) :
@@ -342,8 +339,6 @@ theorem local_conclusionG {N : ℕ} [NeZero N] {g : SL(2, ℝ)} (D : NewmanData 
   set b := vv B p β
   set c := vv B p γ
   set d := vv B p δ
-  have hb' : vv B p (-β) = b := vv_neg B p β
-  have hc' : vv B p (-γ) = c := vv_neg B p γ
   -- primitivity
   have prim : a = 0 ∨ b = 0 ∨ c = 0 ∨ d = 0 := by
     by_contra hcon
@@ -358,13 +353,8 @@ theorem local_conclusionG {N : ℕ} [NeZero N] {g : SL(2, ℝ)} (D : NewmanData 
         simpa using this
     exact ⟨key α hcon.1, key β hcon.2.1, key γ hcon.2.2.1, key δ hcon.2.2.2⟩
   -- ultrametric relation
-  obtain ⟨u1, u2⟩ := ultra_vv (B := B) hp he (by simp only [B]; omega)
+  have u1 := (ultra_vv (B := B) hp he (by simp only [B]; omega)).1
   obtain ⟨_, F2, F3, _, _, F6, F7, _, _, F10, F11, _⟩ := int_factsG D hgN hg he
-  have he' : δ * α - -β * -γ = α * δ - β * γ := by ring
-  have he'0 : δ * α - -β * -γ ≠ 0 := by rw [he']; exact he
-  obtain ⟨_, _, _, _, _, _, _, _, _, G10, G11, _⟩ :=
-    int_factsG D (inv_mem hgN) hginv he'0
-  rw [he'] at G10 G11
   have vX : ∀ X : ℤ, X ≠ 0 → vz p ((α * δ - β * γ) * X) = δ₀ + vz p X := fun _ hX =>
     vz_mul he hX
   have hBe : vz p (α * δ - β * γ) ≤ B := by simp only [B]; omega
@@ -378,32 +368,23 @@ theorem local_conclusionG {N : ℕ} [NeZero N] {g : SL(2, ℝ)} (D : NewmanData 
   have c7 := le_vv_sq (B := B) one_ne_zero hBe F7
   have c10 := le_vv2 (B := B) hNz hBh F10
   have c11 := le_vv2 (B := B) (mul_ne_zero hNz hhz) hBN F11
-  have d10 := le_vv2 (B := B) hNz hBh G10
-  have d11 := le_vv2 (B := B) (mul_ne_zero hNz hhz) hBN G11
-  simp only [hb', hc'] at d10 d11
   simp only [vX _ hNz, vX _ hhz, vz_mul hNz hhz, vz_mul hhz hhz, pow_two, vN, vh, vn, v1]
-    at c2 c3 c6 c7 c10 c11 d10 d11
-  obtain ⟨C10, C11, C17, C18⟩ : δ₀ + k ≤ j + a + b ∧ δ₀ + ν ≤ j + k + c + d ∧
-      δ₀ + k ≤ j + b + d ∧ δ₀ + ν ≤ j + k + c + a := by
+    at c2 c3 c6 c7 c10 c11
+  obtain ⟨C10, C11⟩ : δ₀ + k ≤ j + a + b ∧ δ₀ + ν ≤ j + k + c + d := by
     by_cases hνj : ν = j
-    · exact ⟨by omega, by omega, by omega, by omega⟩
+    · exact ⟨by omega, by omega⟩
     have hpN : p ∣ N := by
       by_contra hpN
       have : ν = 0 := Nat.factorization_eq_zero_of_not_dvd hpN
       omega
     obtain ⟨x, y, t, _, ⟨γp, hγp, hγm⟩, hs0, hvs⟩ := D.gamma p hp hpN (by omega)
     obtain ⟨_, S10, S11, _⟩ := int_facts_sG D hgN hg he hγp hγm
-    obtain ⟨_, T10, T11, _⟩ := int_facts_sG D (inv_mem hgN) hginv he'0 hγp hγm
-    rw [he'] at T10 T11
     have s10 := le_vv2 (B := B) hs0 hBh S10
     have s11 := le_vv2 (B := B) (mul_ne_zero hs0 hhz) hBN S11
-    have t10 := le_vv2 (B := B) hs0 hBh T10
-    have t11 := le_vv2 (B := B) (mul_ne_zero hs0 hhz) hBN T11
-    simp only [hb', hc'] at t10 t11
-    simp only [vX _ hNz, vX _ hhz, vz_mul hs0 hhz, hvs, vh, vN] at s10 s11 t10 t11
-    exact ⟨by omega, by omega, by omega, by omega⟩
-  have := local_form_gen ν j k δ₀ a b c d hkj prim u1 u2 (by omega) (by omega) (by omega)
-    (by omega) C10 C11 C17 (by omega)
+    simp only [vX _ hNz, vX _ hhz, vz_mul hs0 hhz, hvs, vh, vN] at s10 s11
+    exact ⟨by omega, by omega⟩
+  have := local_form_gen ν j k δ₀ a b c d hkj prim u1 (by omega) (by omega) (by omega)
+    (by omega) C10 C11
   have hn2 : ν - 2 * k = nν := by omega
   rw [hn2] at this
   exact this
@@ -432,13 +413,7 @@ theorem newmanG {N : ℕ} [NeZero N] {g : SL(2, ℝ)} (D : NewmanData N Γ ε η
       push Not at hc
       nlinarith
     exact_mod_cast this
-  have hginv : ((g⁻¹ : SL(2, ℝ)) : Matrix (Fin 2) (Fin 2) ℝ) =
-      κ • Smat (η) δ (-β) (-γ) α := by
-    rw [coe_inv_of_coe_eq_smul hgm]
-    congr 1
-    ext i j
-    fin_cases i <;> fin_cases j <;> simp [Smat] ; ring
-  have hloc := fun (p : ℕ) (hp : p.Prime) => local_conclusionG D hg hgS hginv he hprim hp
+  have hloc := fun (p : ℕ) (hp : p.Prime) => local_conclusionG D hg hgS he hprim hp
   have hn0 : nOf N η ≠ 0 := by
     intro h0
     have := D.n_mul_sq

@@ -44,7 +44,7 @@ theorem vz_le_of_dvd (p : ℕ) {x y : ℤ} (hy : y ≠ 0) (hxy : x ∣ y) : vz p
   exact (Nat.factorization_le_iff_dvd (Int.natAbs_ne_zero.2 hx) (Int.natAbs_ne_zero.2 hy)).2
     (Int.natAbs_dvd_natAbs.2 hxy) p
 
-theorem vz_eq_zero_of_not_dvd {p : ℕ} (_hp : p.Prime) {x : ℤ} (h : ¬ (p : ℤ) ∣ x) : vz p x = 0 := by
+theorem vz_eq_zero_of_not_dvd {p : ℕ} {x : ℤ} (h : ¬ (p : ℤ) ∣ x) : vz p x = 0 := by
   apply Nat.factorization_eq_zero_of_not_dvd
   intro h'
   exact h (Int.natCast_dvd.2 h')
