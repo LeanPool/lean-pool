@@ -204,8 +204,6 @@ theorem osc_markovOp_le {z₀ : Z} {s₀ : P.State} {p₀ : ℝ} {N : ℕ} (hp0 
   rw [hbad t] at ht
   linarith
 
-theorem prob_le_one' (s : P.State) (z' : Z) : P.prob s z' ≤ 1 := P.prob_le_one s z'
-
 theorem osc_cycle_le {z₀ : Z} {s₀ : P.State} {p₀ : ℝ} {N : ℕ} (hp0 : 0 ≤ p₀)
     (hp : ∀ s : P.State, p₀ ≤ P.prob s z₀) (hbad : ∀ s, (P.badStep z₀)^[N] s = s₀)
     (k : ℕ) (h : P.State →ᵇ ℝ) :

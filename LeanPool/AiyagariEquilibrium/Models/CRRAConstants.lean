@@ -253,14 +253,9 @@ DIFFERENCES of continuation values, so an oscillation bound avoids this normaliz
 `(u maxConsumption - u minConsumption) / (1 - β)`. -/
 
 /-- The spread of the value function, from the two constant plans. -/
-noncomputable def oscGap : ℝ :=
-  (P.u P.maxConsumption - P.u P.minConsumption) / (1 - P.discount)
+noncomputable def oscGap : ℝ := P.oscSpread
 
-theorem oscGap_nonneg : 0 ≤ P.oscGap := by
-  have hβ : (P.discount : ℝ) < 1 := by exact_mod_cast P.discount_lt_one
-  refine div_nonneg (sub_nonneg.mpr ?_) (by linarith)
-  exact P.monotoneOn_u_dom (P.mem_dom_of_pos P.minConsumption_pos)
-    (P.mem_dom_of_pos P.maxConsumption_pos) P.minConsumption_le_maxConsumption
+theorem oscGap_nonneg : 0 ≤ P.oscGap := P.oscSpread_nonneg
 
 /-- **The continuation value moves by at most the oscillation gap**, whatever the two saving
 levels. This is what replaces `2 ‖V‖` in every comparison. -/
@@ -275,7 +270,7 @@ theorem cont_sub_le_oscGap (z : Z) (x y : ℝ) : P.cont z x - P.cont z y ≤ P.o
       ≤ ∑ z' : Z, P.transitionMatrix z z' * P.oscGap := by
         refine Finset.sum_le_sum fun z' _ => ?_
         refine mul_le_mul_of_nonneg_left ?_ (P.transitionMatrix_nonneg _ _)
-        simp only [oscGap, sub_div]
+        simp only [oscGap, oscSpread, sub_div]
         linarith [P.valueFunction_le_oscBound (x, z'), P.oscBound_le_valueFunction (y, z')]
     _ = P.oscGap := by rw [← Finset.sum_mul, P.transitionMatrix_sum, one_mul]
 
@@ -392,7 +387,7 @@ theorem crra_policy_le_mul {γ θ : ℝ} (hγ0 : 0 < γ) (hθ0 : 0 < θ) (hθ1 :
         * (P.consumption (a, z) (P.policy (a, z)) + (1 - θ) * P.policy (a, z)) ^ γ := by
   have h := P.policyOf_le_mul_of_power_marginal (γ := γ) (η := 0) hθ0 hθ1
     P.concaveOn_valueFunction P.oscGap_nonneg
-    (by simpa only [oscSpread, oscGap] using P.oscOn_valueFunction)
+    P.oscOn_valueFunction
     (fun c d _ hcd hpositive => by
       simpa only [zero_add, hu] using
         crra_marginal_bound hγ0 (by simpa only [zero_add] using hpositive) hcd (le_refl d)) ha z
