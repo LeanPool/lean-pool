@@ -32,9 +32,9 @@ open Set MeasureTheory
 
 namespace LeanEconomics
 
-/-- **Aiyagari (1994)'s economy with a Tauchen earnings chain**: `β = 0.96`, log utility, no
-borrowing, `n + 2` grid points on `[-3σ, 3σ]` for the AR(1) with persistence `ρ` and
-unconditional standard deviation `σ`, endowment scaled by `c`. -/
+/-- A capped log household with a Tauchen earnings chain: `β = 0.96`, no borrowing,
+`n + 2` grid points on `[-3σ, 3σ]`, persistence `ρ`, unconditional standard deviation `σ`
+and arbitrary positive earnings scale `c`. -/
 noncomputable def aiyagariTauchen (n : ℕ) (ρ σ c cap : ℝ) (hρ0 : 0 ≤ ρ) (hρ1 : ρ < 1)
     (hσ : 0 < σ) (hc : 0 < c) (hcap : 0 ≤ cap) : IncomeFluctuation (Fin (n + 2)) 0 cap where
   income i := c * Real.exp (-3 * σ + i * (6 * σ / (n + 1)))
@@ -106,9 +106,9 @@ theorem aiyagariTauchen_monotone :
   monotoneTransitions_of_tauchen _ rfl aiyagariTauchen_income_strictMono hρ0
     (mul_pos hσ (Real.sqrt_pos.mpr (by nlinarith))) (by positivity)
 
-/-- **Aiyagari (1994) at `μ = 1` with his Tauchen earnings process: two equilibrium rates in
-`(-δ, λ)` coincide**, for any number of states, any `ρ ∈ [0, 1)`, any `σ > 0` and any scale,
-given the cap condition at the larger rate. -/
+/-- **Two normalized clearing rates in `(-δ, λ)` coincide** for the finite Tauchen household,
+for any number of states, `ρ ∈ [0, 1)`, `σ > 0` and positive earnings scale, given the cap
+condition at the larger rate. The hypotheses use the explicit prescribed normalized demand. -/
 theorem aiyagariTauchen_equilibriumRate_unique_Ioo {r₁ r₂ : ℝ}
     (h₁ : r₁ ∈ Ioo (-2 / 25 : ℝ) (1 / 24)) (h₂ : r₂ ∈ Ioo (-2 / 25 : ℝ) (1 / 24))
     (hcapc : 2 * (24 / 25) * (c * Real.exp (3 * σ)) < (1 - 24 / 25 * (1 + max r₁ r₂)) * cap)

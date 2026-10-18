@@ -62,7 +62,7 @@ variable {assetCap : ℝ} (P : IncomeFluctuation Z 0 assetCap)
 
 /-! ### Theorem 1 on the interval, by chaining -/
 
-/-- **Saving rises with the rate on `[0, rhi]`**, for log utility. Local comparisons from
+/-- **Saving rises with the rate on `[rlo, rhi]`**, for log utility. Local comparisons from
 `crra_policy_mono_withRate_of_minMPC` chained by `monotoneOn_of_local`. For log the minimal MPC is
 `1 - β` at every rate, so every cap condition collapses to the one on `hcap`. -/
 theorem log_policy_mono_rateFamily {rlo rhi ε : ℝ} (hu : P.u = crraUtility 1) (hunb : P.Unbounded)
@@ -238,9 +238,9 @@ theorem log_monotoneOn_capitalSupply {rlo rhi ε a₀ : ℝ} (hu : P.u = crraUti
 
 /-! ### Theorem 3: single crossing -/
 
-/-- **The equilibrium rate is unique on `[0, rhi]`**, for a log economy against the normalised
-Cobb--Douglas firm. Two equilibria — a rate and a stationary distribution whose aggregate
-capital is `k(r)/w(r)` — have the same rate. -/
+/-- **The normalized clearing rate is unique on `[rlo, rhi]`.** Two rates with stationary
+household distributions whose mean assets equal the prescribed `normalisedDemand α δ r`
+have the same rate, under the stated cap, transition and impatience hypotheses. -/
 theorem log_equilibriumRate_unique {rlo rhi ε a₀ α δ : ℝ} (hα0 : 0 < α) (hα1 : α < 1)
     (hδ : 0 < rlo + δ)
     (hu : P.u = crraUtility 1) (hunb : P.Unbounded)
@@ -401,20 +401,17 @@ theorem log_no_equilibrium_of_ceiling {α δ r : ℝ} (hu : P.u = crraUtility 1)
   have := P.log_aggregateCapital_le hu hunb hβ hβ1 hrr hβR hthr hμ
   linarith
 
-/-! ### Aiyagari (1994), `μ = 1`
+/-! ### Normalized clearing with the Aiyagari (1994) log calibration
 
-`β = 0.96`, `α = 0.36`, `δ = 0.08`, log utility, no borrowing, and a labour endowment process
-with monotone transitions and a lowest-income state reached with positive probability from
-every state in one step. The time-preference rate is
-`λ = 1/0.96 - 1 = 1/24`, and the theorem covers every interval `[rlo, rhi]` with
-`-δ < rlo ≤ rhi < 1/24` — so the whole of `(-δ, λ)`, the range on which Cobb--Douglas demand is
-finite and the household impatient; his reported equilibrium rates at `μ = 1` lie between `3.3%`
-and `4.17%`. -/
+The constants are `β = 0.96`, `α = 0.36` and `δ = 0.08`, with log utility, no borrowing,
+and monotone earnings transitions reaching a lowest-income state with positive probability
+in one step. The time-preference rate is `λ = 1/0.96 - 1 = 1/24`. The theorems concern the
+prescribed normalized equation on intervals `-δ < rlo ≤ rhi < λ`; they do not identify it
+with full competitive market clearing for arbitrary household earnings scales. -/
 
-/-- **Aiyagari (1994) at `μ = 1`: the equilibrium interest rate is unique** on `[rlo, rhi]` for
-every `-δ < rlo ≤ rhi` below the time-preference rate `1/24`, for any economy with his
-preferences and technology, monotone earnings transitions and positive one-step access to a
-lowest-income state, provided the asset cap clears
+/-- **The calibrated normalized clearing rate is unique on `[rlo, rhi]`.** The interval is
+above `-δ` and below the time-preference rate `1/24`. Earnings transitions are monotone and
+reach a lowest-income state in one step; the asset cap must exceed
 `(48/25) · maxIncome / (1 - (24/25)(1+rhi))`. -/
 theorem aiyagari1994_log_equilibriumRate_unique {rlo rhi : ℝ}
     (hu : P.u = crraUtility 1) (hunb : P.Unbounded) (hβ : (P.discount : ℝ) = 24 / 25)
@@ -432,11 +429,9 @@ theorem aiyagari1994_log_equilibriumRate_unique {rlo rhi : ℝ}
     (by rw [hβ]; norm_num) (by rw [hβ]; norm_num) (by linarith) hlohi (by rw [hβ]; linarith)
     (by rw [hβ]; exact hcap) hmono hz₀ hmin hreach h₁ h₂ hrr₁ hrr₂ hμ₁ hμ₂ he₁ he₂
 
-/-- **Aiyagari (1994) at `μ = 1`: two equilibrium rates in `(-δ, λ)` coincide.** The interval
-version applied to `[min r₁ r₂, max r₁ r₂]`; the cap condition is the one at the larger rate.
-Together with `aiyagari1994_log_no_equilibrium_of_ceiling` below `-δ + ε` and
-`log_no_equilibrium_of_patient_risk` above `λ + ε`, this is uniqueness of the equilibrium rate
-for his log calibration, up to two thin bands the cap forces. -/
+/-- **Two normalized clearing rates in `(-δ, λ)` coincide.** The interval version is applied
+to `[min r₁ r₂, max r₁ r₂]`; the cap condition is required at the larger rate. The clearing
+hypotheses equate stationary mean household assets to the prescribed normalized demand. -/
 theorem aiyagari1994_log_equilibriumRate_unique_Ioo
     (hu : P.u = crraUtility 1) (hunb : P.Unbounded) (hβ : (P.discount : ℝ) = 24 / 25)
     (hmono : P.MonotoneTransitions) {z₀ : Z} (hz₀ : ∀ z : Z, P.income z₀ ≤ P.income z)
@@ -453,9 +448,9 @@ theorem aiyagari1994_log_equilibriumRate_unique_Ioo
     ⟨min_le_left _ _, le_max_left _ _⟩ ⟨min_le_right _ _, le_max_right _ _⟩
     hrr₁ hrr₂ hμ₁ hμ₂ he₁ he₂
 
-/-- **Aiyagari (1994) at `μ = 1`: no equilibrium at a negative rate where the ceiling is below
-demand.** The condition is the ceiling–demand inequality written out with his numbers: it is
-polynomial in `r` and `maxIncome`, so it can be checked for any earnings grid. -/
+/-- **No normalized clearing at a negative rate where the saving ceiling is below demand.**
+The ceiling–demand inequality uses the calibrated constants and is polynomial in `r` and
+`maxIncome`, so it can be checked for any earnings grid. -/
 theorem aiyagari1994_log_no_equilibrium_of_ceiling {r : ℝ}
     (hu : P.u = crraUtility 1) (hunb : P.Unbounded) (hβ : (P.discount : ℝ) = 24 / 25)
     (hcap : 24 * P.maxIncome < assetCap) (hlo : -2 / 25 < r) (hr0 : r ≤ 0) (hrr : P.RateOK r)
@@ -476,11 +471,9 @@ theorem aiyagari1994_log_no_equilibrium_of_ceiling {r : ℝ}
     rw [div_lt_div_iff₀ h1 h2]
     nlinarith [hD]
 
-/-- **Aiyagari (1994) at `μ = 1`: no equilibrium on `(-δ, -1/20]`** whenever the highest
-endowment is at most `3/2` (in wage units, as his mean-one normalisation has it). The bound is
-not sharp — the ceiling–demand crossing sits near `-4.7%` — and the band `(-4.7%, 0)` stays
-open: there the minimal-MPC ceiling `β · maxIncome/(1 - β(1+r))` exceeds Cobb--Douglas demand,
-and excluding it needs a bound on capital supply that the household side does not yet give. -/
+/-- **No normalized clearing on `(-δ, -1/20]`** when household income is at most `3/2` and
+the stated asset-cap bound holds. The income bound is an explicit hypothesis in household
+units; it is not inferred from a mean-one endowment normalization. -/
 theorem aiyagari1994_log_no_equilibrium_below {r : ℝ}
     (hu : P.u = crraUtility 1) (hunb : P.Unbounded) (hβ : (P.discount : ℝ) = 24 / 25)
     (hcap : 24 * P.maxIncome < assetCap) (hmax : P.maxIncome ≤ 3 / 2)
