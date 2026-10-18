@@ -170,14 +170,12 @@ theorem hasDerivAt_bellman_of_optimal {v : (ℝ × Z) →ᵇ ℝ} {z : Z} {a a' 
 
 theorem hasDerivAt_valueFunction (hpc : P.PositiveConsumption) {z : Z} {a du : ℝ}
     (ha : assetFloor < a) (hacap : a < assetCap)
-    (hconc : ConcaveOn ℝ (Icc assetFloor assetCap)
-      fun x => P.toExtended.valueFunction (x, z))
     (hint : P.policy (a, z) < P.maxSaving (a, z))
     (hu : HasDerivAt P.u du (P.resources (a, z) - P.policy (a, z))) :
     HasDerivAt (fun x => P.toExtended.valueFunction (x, z)) ((1 + P.interest) * du) a := by
   simpa only [P.toExtended.bellman_valueFunction] using
     P.hasDerivAt_bellman_of_optimal ha hacap
-      (by simpa only [P.toExtended.bellman_valueFunction] using hconc)
+      (by simpa only [P.toExtended.bellman_valueFunction] using P.concaveOn_valueFunction z)
       (P.policy_mem (a, z)) (P.policy_optimal (a, z)) hint
       (P.consumption_policy_pos hpc ⟨ha.le, hacap.le⟩) hu
 

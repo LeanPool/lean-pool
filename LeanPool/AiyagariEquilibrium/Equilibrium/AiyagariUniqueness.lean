@@ -298,31 +298,20 @@ The interval, the step and the corner level are not primitives of the economy. G
 the cap clears `2β · maxIncome / (1 - β(1+rhi))`, choose the step as half the room under `1` and
 the corner level as small as the corner test needs. -/
 
-/-- **Uniqueness from one inequality on the cap.** -/
-theorem log_equilibriumRate_unique_of_cap {rlo rhi α δ : ℝ} (hα0 : 0 < α) (hα1 : α < 1)
-    (hδ : 0 < rlo + δ)
-    (hu : P.u = crraUtility 1) (hunb : P.Unbounded)
-    (hβ : 0 < (P.discount : ℝ)) (hrlo : 0 < 1 + rlo)
-    (hlohi : rlo ≤ rhi) (hβR : (P.discount : ℝ) * (1 + rhi) < 1)
-    (hcap : 2 * (P.discount : ℝ) * P.maxIncome < (1 - (P.discount : ℝ) * (1 + rhi)) * assetCap)
-    (hmono : P.MonotoneTransitions) {z₀ : Z} (hz₀ : ∀ z : Z, P.income z₀ ≤ P.income z)
-    (hmin : P.income z₀ = P.minIncome) (hreach : ∀ z, 0 < P.transitionMatrix z z₀)
-    {r₁ r₂ : ℝ} (h₁ : r₁ ∈ Icc rlo rhi) (h₂ : r₂ ∈ Icc rlo rhi)
-    (hrr₁ : P.RateOK r₁) (hrr₂ : P.RateOK r₂)
-    {μ₁ μ₂ : ProbabilityMeasure P.State}
-    (hμ₁ : (P.withRate r₁ hrr₁).IsStationary μ₁) (hμ₂ : (P.withRate r₂ hrr₂).IsStationary μ₂)
-    (he₁ : P.aggregateCapital μ₁ = normalisedDemand α δ r₁)
-    (he₂ : P.aggregateCapital μ₂ = normalisedDemand α δ r₂) : r₁ = r₂ := by
+omit [MeasurableSpace Z] [BorelSpace Z] in
+/-- A slack cap supplies a positive comparison step and a corner level meeting both bounds. -/
+theorem exists_log_cap_corner {R : ℝ} (hβ : 0 < (P.discount : ℝ)) (hR : 0 < R)
+    (hcap : 2 * (P.discount : ℝ) * P.maxIncome < (1 - (P.discount : ℝ) * R) * assetCap)
+    {z₀ : Z} (hmin : P.income z₀ = P.minIncome) :
+    ∃ ε > 0, ∃ a₀ > 0, a₀ ≤ assetCap ∧
+      (P.discount : ℝ) * P.maxIncome
+        + ((P.discount : ℝ) * R + ε) * assetCap < assetCap ∧
+      (P.discount : ℝ) * R * (P.income z₀ + R * a₀) < P.minIncome := by
   set β : ℝ := (P.discount : ℝ) with hβdef
-  set R : ℝ := 1 + rhi with hRdef
-  have hR : 0 < R := by rw [hRdef]; linarith [hrlo, hlohi]
-  have hroom : 0 < 1 - β * R := by rw [hβdef, hRdef]; linarith
   have hmaxpos : 0 < P.maxIncome := lt_of_lt_of_le P.minIncome_pos P.minIncome_le_maxIncome
-  have hcap0 : 0 < assetCap := by
-    by_contra h
-    have h' : assetCap ≤ 0 := not_lt.mp h
-    have : (1 - β * R) * assetCap ≤ 0 := mul_nonpos_of_nonneg_of_nonpos hroom.le h'
-    nlinarith [hcap, hβ, hmaxpos]
+  have hproduct : 0 < (1 - β * R) * assetCap := lt_trans (by positivity) hcap
+  have hroom : 0 < 1 - β * R := pos_of_mul_pos_left hproduct P.assetCap_nonneg
+  have hcap0 : 0 < assetCap := pos_of_mul_pos_right hproduct hroom.le
   have hminpos : 0 < P.minIncome := P.minIncome_pos
   -- the step: half the room under `1`
   set ε : ℝ := (1 - β * R) / 2 with hεdef
@@ -348,6 +337,25 @@ theorem log_equilibriumRate_unique_of_cap {rlo rhi α δ : ℝ} (hα0 : 0 < α) 
     have : β * R * (P.minIncome + R * a₀) = β * R * P.minIncome + β * R * (R * a₀) := by ring
     rw [this]
     nlinarith [hkey, hmono, hroom, hminpos]
+  exact ⟨ε, hε, a₀, ha₀, hle, hcapε, hcorn⟩
+
+/-- **Uniqueness from one inequality on the cap.** -/
+theorem log_equilibriumRate_unique_of_cap {rlo rhi α δ : ℝ} (hα0 : 0 < α) (hα1 : α < 1)
+    (hδ : 0 < rlo + δ)
+    (hu : P.u = crraUtility 1) (hunb : P.Unbounded)
+    (hβ : 0 < (P.discount : ℝ)) (hrlo : 0 < 1 + rlo)
+    (hlohi : rlo ≤ rhi) (hβR : (P.discount : ℝ) * (1 + rhi) < 1)
+    (hcap : 2 * (P.discount : ℝ) * P.maxIncome < (1 - (P.discount : ℝ) * (1 + rhi)) * assetCap)
+    (hmono : P.MonotoneTransitions) {z₀ : Z} (hz₀ : ∀ z : Z, P.income z₀ ≤ P.income z)
+    (hmin : P.income z₀ = P.minIncome) (hreach : ∀ z, 0 < P.transitionMatrix z z₀)
+    {r₁ r₂ : ℝ} (h₁ : r₁ ∈ Icc rlo rhi) (h₂ : r₂ ∈ Icc rlo rhi)
+    (hrr₁ : P.RateOK r₁) (hrr₂ : P.RateOK r₂)
+    {μ₁ μ₂ : ProbabilityMeasure P.State}
+    (hμ₁ : (P.withRate r₁ hrr₁).IsStationary μ₁) (hμ₂ : (P.withRate r₂ hrr₂).IsStationary μ₂)
+    (he₁ : P.aggregateCapital μ₁ = normalisedDemand α δ r₁)
+    (he₂ : P.aggregateCapital μ₂ = normalisedDemand α δ r₂) : r₁ = r₂ := by
+  obtain ⟨ε, hε, a₀, ha₀, hle, hcapε, hcorn⟩ :=
+    P.exists_log_cap_corner hβ (R := 1 + rhi) (by linarith only [hrlo, hlohi]) hcap hmin
   exact P.log_equilibriumRate_unique hα0 hα1 hδ hu hunb hβ hrlo hlohi hβR hε hcapε hmono hz₀
     hreach ha₀ hle hcorn h₁ h₂ hrr₁ hrr₂ hμ₁ hμ₂ he₁ he₂
 

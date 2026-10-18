@@ -183,39 +183,10 @@ theorem log_selection_of_cap {rlo rhi : ℝ}
     MonotoneOn (fun r => P.aggregateCapital (ν r)) (Icc rlo rhi) ∧
       ∀ r ∈ Icc rlo rhi, ∀ hrr : P.RateOK r, ∀ μ : ProbabilityMeasure P.State,
         (P.withRate r hrr).IsStationary μ → μ = ν r := by
-  set β : ℝ := (P.discount : ℝ) with hβdef
-  set R : ℝ := 1 + rhi with hRdef
-  have hR : 0 < R := by rw [hRdef]; linarith [hrlo, hlohi]
-  have hroom : 0 < 1 - β * R := by rw [hβdef, hRdef]; linarith
-  have hmaxpos : 0 < P.maxIncome := lt_of_lt_of_le P.minIncome_pos P.minIncome_le_maxIncome
-  have hcap0 : 0 < assetCap := by
-    by_contra h
-    have h' : assetCap ≤ 0 := not_lt.mp h
-    have : (1 - β * R) * assetCap ≤ 0 := mul_nonpos_of_nonneg_of_nonpos hroom.le h'
-    nlinarith [hcap, hβ, hmaxpos]
-  have hminpos : 0 < P.minIncome := P.minIncome_pos
-  set ε : ℝ := (1 - β * R) / 2 with hεdef
-  have hε : 0 < ε := by rw [hεdef]; linarith
-  set A : ℝ := P.minIncome * (1 - β * R) / (2 * β * R ^ 2) with hAdef
-  have hA : 0 < A := by rw [hAdef]; positivity
-  set a₀ : ℝ := min assetCap A with ha₀def
-  have ha₀ : 0 < a₀ := lt_min hcap0 hA
-  have hle : a₀ ≤ assetCap := min_le_left _ _
-  have ha₀A : a₀ ≤ A := min_le_right _ _
-  have hcapε : β * P.maxIncome + (β * R + ε) * assetCap < assetCap := by
-    rw [hεdef]
-    nlinarith [hcap]
-  have hcap' : β * (P.maxIncome + R * assetCap) < assetCap := by
-    nlinarith [hcap, mul_pos hβ hmaxpos]
-  have hcorn : β * R * (P.income z₀ + R * a₀) < P.minIncome := by
-    rw [hmin]
-    have hkey : β * R * (R * A) = P.minIncome * (1 - β * R) / 2 := by
-      rw [hAdef]; field_simp; try ring
-    have hmono : β * R * (R * a₀) ≤ β * R * (R * A) :=
-      mul_le_mul_of_nonneg_left (mul_le_mul_of_nonneg_left ha₀A hR.le) (by positivity)
-    have : β * R * (P.minIncome + R * a₀) = β * R * P.minIncome + β * R * (R * a₀) := by ring
-    rw [this]
-    nlinarith [hkey, hmono, hroom, hminpos]
+  obtain ⟨ε, hε, a₀, ha₀, hle, hcapε, hcorn⟩ :=
+    P.exists_log_cap_corner hβ (R := 1 + rhi) (by linarith only [hrlo, hlohi]) hcap hmin
+  have hcap' : (P.discount : ℝ) * (P.maxIncome + (1 + rhi) * assetCap) < assetCap := by
+    nlinarith only [hcapε, mul_nonneg hε.le P.assetCap_nonneg]
   refine ⟨P.log_monotoneOn_capitalSupply hu hunb hβ hrlo hlohi hβR hε hcapε hmono hz₀ hreach
     ha₀ hle hcorn ν hν, fun r hr hrr μ hμ => ?_⟩
   exact (P.log_existsUnique_isStationary hu hunb hβ hβR hcap' hmono hz₀ hreach ha₀ hle hcorn
