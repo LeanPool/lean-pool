@@ -8,7 +8,6 @@ module
 public import LeanPool.AiyagariEquilibrium.Models.BoundedIncomeFluctuation
 public import LeanPool.AiyagariEquilibrium.Models.NaturalAssetBound
 
-
 /-!
 # The quantitative constants for CES
 

@@ -8,7 +8,6 @@ module
 public import LeanPool.AiyagariEquilibrium.Models.IncomeFluctuationAugmented
 public import LeanPool.AiyagariEquilibrium.Equilibrium.Aiyagari
 
-
 /-!
 # Capital supply is continuous, and the equilibrium theorem applies
 

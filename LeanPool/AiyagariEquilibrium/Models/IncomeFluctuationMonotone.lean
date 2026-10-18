@@ -8,7 +8,6 @@ module
 public import LeanPool.AiyagariEquilibrium.Models.IncomeFluctuation
 public import LeanPool.AiyagariEquilibrium.Analysis.DecreasingIncrements
 
-
 /-!
 # The optimal policy is increasing in assets
 

@@ -6,9 +6,7 @@ Authors: Robert Kirkby
 
 module
 public import Mathlib.Topology.Semicontinuity.Hemicontinuity
-public import Mathlib.Topology.Order.Compact
 public import Mathlib.Topology.Instances.Real.Lemmas
-
 
 /-!
 # Berge's maximum theorem

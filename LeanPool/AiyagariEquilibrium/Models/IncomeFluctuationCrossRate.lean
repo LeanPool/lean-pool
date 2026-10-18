@@ -7,7 +7,6 @@ Authors: Robert Kirkby
 module
 public import LeanPool.AiyagariEquilibrium.Models.IncomeFluctuationBounds
 
-
 /-!
 # Comparing two interest rates
 

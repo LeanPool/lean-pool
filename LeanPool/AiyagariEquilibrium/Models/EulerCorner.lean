@@ -7,7 +7,6 @@ Authors: Robert Kirkby
 module
 public import LeanPool.AiyagariEquilibrium.Models.ImpatientDecline
 
-
 /-!
 # The corner condition from the Euler inequality
 

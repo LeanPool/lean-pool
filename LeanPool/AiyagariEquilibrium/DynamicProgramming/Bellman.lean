@@ -8,7 +8,6 @@ module
 public import LeanPool.AiyagariEquilibrium.DynamicProgramming.Blackwell
 public import LeanPool.AiyagariEquilibrium.Topology.Berge
 
-
 /-!
 # The Bellman operator of a deterministic dynamic program
 

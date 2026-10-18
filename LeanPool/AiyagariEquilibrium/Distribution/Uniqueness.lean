@@ -8,7 +8,6 @@ module
 public import LeanPool.AiyagariEquilibrium.Distribution.Stationary
 public import LeanPool.AiyagariEquilibrium.Models.IncomeFluctuationMonotone
 
-
 /-!
 # Uniqueness of the stationary agent distribution
 

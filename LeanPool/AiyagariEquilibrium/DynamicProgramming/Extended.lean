@@ -8,7 +8,6 @@ module
 public import LeanPool.AiyagariEquilibrium.DynamicProgramming.Bellman
 public import LeanPool.AiyagariEquilibrium.Topology.BergeEReal
 
-
 /-!
 # Dynamic programs with extended-real rewards
 

@@ -8,7 +8,6 @@ module
 public import LeanPool.AiyagariEquilibrium.Models.IncomeFluctuationConsumption
 public import LeanPool.AiyagariEquilibrium.Analysis.PowerMean
 
-
 /-!
 # Concavity of the consumption function as a closed class
 

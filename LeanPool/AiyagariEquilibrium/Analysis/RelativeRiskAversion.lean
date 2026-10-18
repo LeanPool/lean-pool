@@ -9,7 +9,6 @@ public import LeanPool.AiyagariEquilibrium.Analysis.DecreasingIncrements
 public import Mathlib.Analysis.Convex.Deriv
 public import Mathlib.Analysis.SpecialFunctions.Pow.Deriv
 
-
 /-!
 # Relative risk aversion at most one
 

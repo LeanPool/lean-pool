@@ -9,7 +9,6 @@ public import LeanPool.AiyagariEquilibrium.Models.IncomeFluctuationEuler
 public import LeanPool.AiyagariEquilibrium.Models.ImpatientDecline
 public import LeanPool.AiyagariEquilibrium.Models.IncomeFluctuationRate
 
-
 /-!
 # Persistent income: the decline condition from monotone transitions
 

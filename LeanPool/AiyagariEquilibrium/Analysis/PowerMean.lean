@@ -5,10 +5,8 @@ Authors: Robert Kirkby
 -/
 
 module
-public import Mathlib.Analysis.MeanInequalities
+public import Mathlib.Algebra.BigOperators.Field
 public import Mathlib.Analysis.MeanInequalitiesPow
-public import Mathlib.Analysis.Convex.SpecificFunctions.Basic
-
 
 /-!
 # Weighted power means with a negative exponent

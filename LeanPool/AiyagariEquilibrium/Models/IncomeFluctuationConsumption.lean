@@ -8,7 +8,6 @@ module
 public import LeanPool.AiyagariEquilibrium.Models.IncomeFluctuationMonotone
 public import LeanPool.AiyagariEquilibrium.Analysis.RelativeRiskAversion
 
-
 /-!
 # The consumption function
 

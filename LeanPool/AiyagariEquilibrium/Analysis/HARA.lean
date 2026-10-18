@@ -8,7 +8,6 @@ module
 public import LeanPool.AiyagariEquilibrium.Analysis.RelativeRiskAversion
 public import LeanPool.AiyagariEquilibrium.Models.CRRA
 
-
 /-!
 # HARA utility
 

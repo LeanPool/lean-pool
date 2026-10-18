@@ -12,7 +12,6 @@ public import LeanPool.AiyagariEquilibrium.Models.ImpatientDecline
 public import LeanPool.AiyagariEquilibrium.Equilibrium.SignChange
 public import LeanPool.AiyagariEquilibrium.Analysis.HARA
 
-
 /-!
 # Carroll and Kimball beyond CRRA: the HARA induction step
 
@@ -205,7 +204,6 @@ theorem concaveOn_consumptionFnOf_bellman_of_hara {γ η : ℝ} (hγ : 0 < γ) (
   exact P.hara_egmMap_consumptionFnOf hγ hβ hu hη ha rfl hA0 hAmax (hcpos a ha) hint'
     (fun z' => hpos z' _ (P.feasible_subset_region (P.policyOf_mem _ (a, z))))
 
-
 /-- **CRRA is the `η = 0` member**, so the HARA step really does generalise the CRRA one rather
 than sitting beside it. -/
 theorem concaveOn_consumptionFnOf_bellman_of_crra_via_hara {γ : ℝ} (hγ : 0 < γ)
@@ -220,7 +218,6 @@ theorem concaveOn_consumptionFnOf_bellman_of_crra_via_hara {γ : ℝ} (hγ : 0 <
       (P.consumptionFnOf (P.toExtended.bellman v) z) :=
   P.concaveOn_consumptionFnOf_bellman_of_hara hγ le_rfl hβ
     (by rw [hu, haraUtility_zero_shift]) z hpos hconc hmono hcpos hint
-
 
 /-! ### Marginal bounds
 
@@ -565,7 +562,6 @@ theorem concaveOn_consumptionFn_of_hara {γ η δ : ℝ} (hγ0 : 0 < γ) (hγ1 :
   exact P.concaveOn_consumptionFn_of_iterates
     (P.concaveOn_consumptionFnOf_iterates_of_hara hγ0 hη hβ hu hpos hslack) z
 
-
 /-! ### The two comparative-statics corollaries, for shifted CRRA
 
 Light's Theorem 1 and the impatience-driven decline both take the marginal-utility hypotheses
@@ -624,7 +620,6 @@ theorem hara_exists_exhaust_of_impatient {γ η : ℝ} (hγ0 : 0 < γ) (hη : 0 
     (fun c hc => by rw [hu]; exact hasDerivAt_haraUtility γ (by linarith))
     (hara_marginal_antitone hγ0 hη)
     (fun c hc => hara_marginal_pos hη hc) hpos hslack hz₀ ha₀ hle hzero
-
 
 /-! ### The supply floor
 
@@ -706,7 +701,6 @@ theorem hara_policy_ge_of_gain {γ η : ℝ} (hγ : 0 < γ) (hη : 0 ≤ η)
   refine P.policy_ge_of_cost hfl hpc z₁ hh0 hhcap hhinc (fun R b hm hb0 hbh => ?_) hgain ha
   rw [hu]
   exact hara_cost_of_saving hγ hη hh0 hhinc hm hb0 hbh
-
 
 /-! ### The corner condition, in primitives
 
@@ -832,7 +826,6 @@ theorem hara_le_aggregateCapital_of_gain {γ η : ℝ} (hγ0 : 0 < γ) (hη : 0 
   have hgen := P.hara_cont_sub_ge_gen hγ0 hη hu rfl hpc z₁ z₀ hhalf hfull (by linarith)
   rw [show h - h / 2 = h / 2 from by ring] at hgen
   exact hgen
-
 
 /-- **The supply floor with the two powers bounded separately.** The gain condition compares
 `(η + y₁ - t)^(-γ)`, the marginal cost of saving `t` in the high state, against

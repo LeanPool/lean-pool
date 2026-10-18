@@ -8,7 +8,6 @@ module
 public import LeanPool.AiyagariEquilibrium.Models.IncomeFluctuationIterate
 public import LeanPool.AiyagariEquilibrium.Models.IncomeFluctuationRateMonotone
 
-
 /-!
 # Light (2018), step 5: increasing differences propagate across rates
 
@@ -109,7 +108,6 @@ theorem consumption_withRate (h₁ : P.RateOK r₁) (h₂ : P.RateOK r₂) (z : 
   simp only [consumption, resources, IncomeFluctuation.withRate_income,
     IncomeFluctuation.withRate_interest, max_eq_right ha, max_eq_right hscale, harg]
 
-
 /-- **The whole solution at `(a, r₁)` is the solution at `(t a, r₂)`.** -/
 theorem bellmanFn_withRate (h₁ : P.RateOK r₁) (h₂ : P.RateOK r₂) (hr : r₁ ≤ r₂)
     (v : (ℝ × Z) →ᵇ ℝ) (z : Z) {a : ℝ} (ha : a ∈ Icc (0 : ℝ) assetCap) :
@@ -196,7 +194,6 @@ theorem consumptionFnOf_withRate (h₁ : P.RateOK r₁) (h₂ : P.RateOK r₂) (
       = (P.withRate r₂ h₂).consumptionFnOf v z ((1 + r₁) / (1 + r₂) * a) := by
   simp only [consumptionFnOf]
   rw [P.policyOf_withRate h₁ h₂ hr hv z ha, P.consumption_withRate h₁ h₂ z _ ha.1]
-
 
 /-! ### The derivative assembly
 

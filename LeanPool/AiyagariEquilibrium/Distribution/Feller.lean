@@ -7,9 +7,6 @@ Authors: Robert Kirkby
 module
 public import LeanPool.AiyagariEquilibrium.Models.IncomeFluctuation
 public import Mathlib.MeasureTheory.Measure.ProbabilityMeasure
-public import Mathlib.MeasureTheory.Integral.Bochner.ContinuousLinearMap
-public import Mathlib.MeasureTheory.Integral.Bochner.SumMeasure
-
 
 /-!
 # The agent distribution: state space and Markov operator

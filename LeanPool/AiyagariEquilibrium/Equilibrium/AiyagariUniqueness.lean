@@ -11,7 +11,6 @@ public import LeanPool.AiyagariEquilibrium.Equilibrium.Uniqueness
 public import LeanPool.AiyagariEquilibrium.Equilibrium.AiyagariContinuity
 public import LeanPool.AiyagariEquilibrium.Equilibrium.SignChange
 
-
 /-!
 # Uniqueness of the equilibrium rate for a log economy at large `β`
 

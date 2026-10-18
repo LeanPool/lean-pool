@@ -5,10 +5,7 @@ Authors: Robert Kirkby
 -/
 
 module
-public import Mathlib.Analysis.Calculus.LocalExtr.Basic
-public import Mathlib.Analysis.Calculus.Deriv.Add
 public import Mathlib.Analysis.Convex.Deriv
-
 
 /-!
 # The Differentiable Sandwich Lemma

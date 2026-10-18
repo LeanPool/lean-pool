@@ -9,7 +9,6 @@ public import LeanPool.AiyagariEquilibrium.Models.IncomeFluctuationConsumption
 public import LeanPool.AiyagariEquilibrium.Models.IncomeFluctuationBounds
 public import LeanPool.AiyagariEquilibrium.Models.CRRA
 
-
 /-!
 # A consumption floor from the margin, not from the level
 

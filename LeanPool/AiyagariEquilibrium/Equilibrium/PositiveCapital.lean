@@ -9,7 +9,6 @@ public import LeanPool.AiyagariEquilibrium.Distribution.Feller
 public import LeanPool.AiyagariEquilibrium.Equilibrium.Aiyagari
 public import LeanPool.AiyagariEquilibrium.Models.IncomeFluctuationMonotone
 
-
 /-!
 # Aggregate capital is strictly positive
 
@@ -537,7 +536,6 @@ theorem policy_ge_of_gain (hfl : assetFloor = 0) (hpc : P.PositiveConsumption)
     nlinarith [hm, hh0, hb0, hhinc]
   rw [← Real.log_div (by linarith) (by linarith)]
   exact Real.log_le_log (div_pos (by linarith) (by linarith)) hratio
-
 
 end IncomeFluctuation
 

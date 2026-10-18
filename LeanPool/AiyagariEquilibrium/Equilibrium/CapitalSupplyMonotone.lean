@@ -8,7 +8,6 @@ module
 public import LeanPool.AiyagariEquilibrium.Distribution.Uniqueness
 public import LeanPool.AiyagariEquilibrium.Equilibrium.Uniqueness
 
-
 /-!
 # Light (2018) Theorem 2: aggregate savings rise with the interest rate
 

@@ -10,7 +10,6 @@ public import LeanPool.AiyagariEquilibrium.Models.EulerCorner
 public import LeanPool.AiyagariEquilibrium.Distribution.Uniqueness
 public import LeanPool.AiyagariEquilibrium.Models.MonotoneTransitions
 
-
 /-!
 # The Doeblin chain at large `β`
 

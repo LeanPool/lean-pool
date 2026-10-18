@@ -8,7 +8,6 @@ module
 public import LeanPool.AiyagariEquilibrium.Models.IncomeFluctuationEuler
 public import LeanPool.AiyagariEquilibrium.Models.CRRAConstants
 
-
 /-!
 # Positivity and monotonicity along the iteration
 
@@ -590,7 +589,6 @@ theorem concaveOn_consumptionFn_of_crra {γ : ℝ} (hpc : P.PositiveConsumptionA
   P.concaveOn_consumptionFn_of_iterates
     (P.concaveOn_consumptionFnOf_iterates_of_crra hpc hγ0 hβ hu hslack) z
 
-
 /-- **Carroll and Kimball (1996) for CRRA, from a calibration.** Beyond CRRA utility and
 marginal utility unbounded at zero, the only hypothesis left is one inequality: the asset cap
 must sit above the uniform bound on saving that the marginal bound `m` produces. Nothing about
@@ -890,8 +888,6 @@ theorem concaveOn_consumptionFn_of_oscSpread {γ θ : ℝ} (hγ0 : 0 < γ) (hγ1
     (P.concaveOn_consumptionFnOf_iterates_of_crra hpc hγ0 hβ hu
       (fun n a ha z' => P.crra_policyOf_lt_assetCap hγ0 hγ1 hθ0 hθ1 hu hpc (hslices n)
         P.oscSpread_nonneg (P.oscOn_iterate n) hlt ha z')) z
-
-
 
 /-! ### A slope bound from the OSCILLATION rather than the level
 

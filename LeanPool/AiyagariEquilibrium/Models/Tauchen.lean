@@ -9,7 +9,6 @@ public import Mathlib.Probability.CDF
 public import Mathlib.Probability.Distributions.Gaussian.Real
 public import LeanPool.AiyagariEquilibrium.Models.MonotoneTransitions
 
-
 /-!
 # Tauchen (1986) chains have monotone transitions
 

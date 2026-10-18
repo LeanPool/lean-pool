@@ -9,7 +9,6 @@ public import LeanPool.AiyagariEquilibrium.Models.IncomeFluctuation
 public import LeanPool.AiyagariEquilibrium.Analysis.DifferentiableSandwich
 public import Mathlib.Analysis.Calculus.FDeriv.Extend
 
-
 /-!
 # The lazy agent's value, and the envelope condition
 

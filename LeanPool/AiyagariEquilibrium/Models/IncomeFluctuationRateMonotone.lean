@@ -8,7 +8,6 @@ module
 public import LeanPool.AiyagariEquilibrium.Models.IncomeFluctuationConsumption
 public import LeanPool.AiyagariEquilibrium.Models.IncomeFluctuationRate
 
-
 /-!
 # Light (2018) Theorem 1: saving rises with the interest rate
 

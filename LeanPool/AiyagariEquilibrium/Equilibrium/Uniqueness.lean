@@ -7,7 +7,6 @@ Authors: Robert Kirkby
 module
 public import LeanPool.AiyagariEquilibrium.Equilibrium.Firm
 
-
 /-!
 # Uniqueness of the equilibrium interest rate
 

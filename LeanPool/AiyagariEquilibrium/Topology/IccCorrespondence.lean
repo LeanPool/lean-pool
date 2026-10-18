@@ -9,7 +9,6 @@ public import Mathlib.Topology.Semicontinuity.Hemicontinuity
 public import Mathlib.Topology.MetricSpace.Thickening
 public import Mathlib.Topology.Instances.Real.Lemmas
 
-
 /-!
 # A closed interval with moving endpoints is a continuous correspondence
 

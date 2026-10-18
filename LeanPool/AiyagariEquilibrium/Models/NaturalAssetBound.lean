@@ -8,7 +8,6 @@ module
 public import LeanPool.AiyagariEquilibrium.Models.ConsumptionFloor
 public import LeanPool.AiyagariEquilibrium.Models.IncomeFluctuationLipschitz
 
-
 /-!
 # A natural asset bound for log utility
 
@@ -228,9 +227,16 @@ theorem log_consumption_linear_lower_bound' (hpc : P.PositiveConsumption) (hu : 
       rw [div_le_div_iff₀ (by linarith) (by linarith)] at hslope
       rw [hd1, hd2] at hslope
       rw [le_div_iff₀ hθ0]
+      have hbound : P.cont z d - P.cont z assetFloor ≤
+          2 * ‖P.toExtended.valueFunction‖ := by linarith only [hb1.2, hb0.1]
       have hkey : (P.cont z b - P.cont z d) * θ * (b - assetFloor)
           ≤ 2 * ‖P.toExtended.valueFunction‖ * (1 - θ) * (b - assetFloor) := by
-        nlinarith [hslope, hb1.2, hb0.1, hbf, h1θ]
+        calc
+          _ = (P.cont z b - P.cont z d) * (θ * (b - assetFloor)) := by ring
+          _ ≤ (P.cont z d - P.cont z assetFloor) * ((1 - θ) * (b - assetFloor)) := hslope
+          _ ≤ 2 * ‖P.toExtended.valueFunction‖ * ((1 - θ) * (b - assetFloor)) :=
+            mul_le_mul_of_nonneg_right hbound (mul_nonneg h1θ.le hbf.le)
+          _ = _ := by ring
       exact le_of_mul_le_mul_right hkey hbf
     have heq : (P.discount : ℝ) * (2 * ‖P.toExtended.valueFunction‖ * (1 - θ) / θ)
         = G * (1 - θ) / θ := by
@@ -248,7 +254,7 @@ theorem log_consumption_linear_lower_bound' (hpc : P.PositiveConsumption) (hu : 
     rw [div_le_div_iff₀ (by linarith) hθ0] at hchain
     have hcancel : θ * (b - assetFloor) ≤ G * (c + (1 - θ) * (b - assetFloor)) := by
       refine le_of_mul_le_mul_left ?_ h1θ
-      nlinarith [hchain]
+      convert hchain using 1 <;> ring
     exact two_gap_cancel hθkey hcancel
   rw [hres, div_le_iff₀ (by linarith)]
   linarith [hb2]
@@ -332,8 +338,6 @@ theorem log_policy_eq_zero_of_resources (hdom : P.Unbounded) (hu : P.u = Real.lo
       linarith)
     hlt
 
-
-
 end IncomeFluctuation
 
 /-- **The bound is not vacuous.** At `r = 0` the interest-rate hypothesis holds automatically,
@@ -346,6 +350,5 @@ theorem logImpatient_natural_asset_bound (z : Fin 2) :
   have hint : logImpatient.interest = 0 := rfl
   rw [hint]
   linarith
-
 
 end LeanEconomics

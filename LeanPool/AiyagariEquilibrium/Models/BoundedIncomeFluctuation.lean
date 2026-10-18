@@ -11,7 +11,6 @@ public import LeanPool.AiyagariEquilibrium.Distribution.Stationary
 public import LeanPool.AiyagariEquilibrium.Equilibrium.PositiveCapital
 public import Mathlib.Analysis.Convex.SpecificFunctions.Pow
 
-
 /-!
 # CES with `γ < 1`: utility bounded below
 

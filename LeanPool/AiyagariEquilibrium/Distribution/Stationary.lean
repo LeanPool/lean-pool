@@ -8,7 +8,6 @@ module
 public import LeanPool.AiyagariEquilibrium.Distribution.Feller
 public import Mathlib.MeasureTheory.Measure.Prokhorov
 
-
 /-!
 # Existence of a stationary agent distribution
 

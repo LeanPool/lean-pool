@@ -8,7 +8,6 @@ module
 public import LeanPool.AiyagariEquilibrium.Topology.Berge
 public import Mathlib.Topology.Instances.EReal.Lemmas
 
-
 /-!
 # Berge's maximum theorem for extended-real objectives
 

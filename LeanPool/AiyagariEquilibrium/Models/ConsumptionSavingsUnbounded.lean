@@ -8,9 +8,7 @@ module
 public import LeanPool.AiyagariEquilibrium.DynamicProgramming.Extended
 public import LeanPool.AiyagariEquilibrium.Topology.IccCorrespondence
 public import Mathlib.Analysis.SpecialFunctions.Pow.Continuity
-public import Mathlib.Analysis.SpecialFunctions.Log.Basic
 public import Mathlib.Analysis.Convex.SpecificFunctions.Basic
-
 
 /-!
 # Consumption and savings with period utility unbounded below

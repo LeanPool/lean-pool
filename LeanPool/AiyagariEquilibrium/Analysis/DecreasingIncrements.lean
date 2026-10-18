@@ -5,10 +5,7 @@ Authors: Robert Kirkby
 -/
 
 module
-public import Mathlib.Analysis.Convex.Function
 public import Mathlib.Analysis.Convex.SpecificFunctions.Basic
-public import Mathlib.Analysis.Convex.Slope
-
 
 /-!
 # Decreasing increments of a concave function

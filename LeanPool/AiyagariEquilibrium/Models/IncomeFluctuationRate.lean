@@ -8,7 +8,6 @@ module
 public import LeanPool.AiyagariEquilibrium.Models.IncomeFluctuationRegion
 public import LeanPool.AiyagariEquilibrium.Distribution.Feller
 
-
 /-!
 # Varying the interest rate
 

@@ -8,7 +8,6 @@ module
 public import LeanPool.AiyagariEquilibrium.Models.Tauchen
 public import LeanPool.AiyagariEquilibrium.Equilibrium.AiyagariUniqueness
 
-
 /-!
 # Aiyagari (1994) with his own earnings process
 

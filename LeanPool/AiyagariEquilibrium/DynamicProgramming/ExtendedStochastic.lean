@@ -8,7 +8,6 @@ module
 public import LeanPool.AiyagariEquilibrium.DynamicProgramming.Extended
 public import LeanPool.AiyagariEquilibrium.DynamicProgramming.Stochastic
 
-
 /-!
 # Stochastic dynamic programs with extended-real rewards
 

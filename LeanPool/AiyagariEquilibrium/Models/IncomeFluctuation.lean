@@ -9,7 +9,6 @@ public import LeanPool.AiyagariEquilibrium.DynamicProgramming.ExtendedStochastic
 public import LeanPool.AiyagariEquilibrium.Topology.IccCorrespondence
 public import LeanPool.AiyagariEquilibrium.Models.ConsumptionSavingsUnbounded
 
-
 /-!
 # The income fluctuation problem
 

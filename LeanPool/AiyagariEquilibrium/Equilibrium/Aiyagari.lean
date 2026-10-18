@@ -7,7 +7,6 @@ Authors: Robert Kirkby
 module
 public import LeanPool.AiyagariEquilibrium.Distribution.Uniqueness
 
-
 /-!
 # Aiyagari stationary equilibrium
 

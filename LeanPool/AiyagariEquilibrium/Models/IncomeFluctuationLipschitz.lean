@@ -8,7 +8,6 @@ module
 public import LeanPool.AiyagariEquilibrium.Models.IncomeFluctuationBounds
 public import LeanPool.AiyagariEquilibrium.Analysis.DecreasingIncrements
 
-
 /-!
 # The Bellman operator preserves Lipschitz continuity in assets
 

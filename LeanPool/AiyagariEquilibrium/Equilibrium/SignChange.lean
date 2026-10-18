@@ -10,7 +10,6 @@ public import LeanPool.AiyagariEquilibrium.Equilibrium.PositiveCapital
 public import LeanPool.AiyagariEquilibrium.Models.IncomeFluctuationConsumption
 public import LeanPool.AiyagariEquilibrium.Models.MinimalMPC
 
-
 /-!
 # The sign change, both ends
 
@@ -114,7 +113,6 @@ theorem exists_firm_of_bounds {rlo rhi m M : ℝ} (hlt : rlo < rhi) (hm : 0 < m)
     simp only [capitalDemand, hr]
     rw [div_le_iff₀ (by positivity)]
     nlinarith [hsq, hsM2, hsm2]
-
 
 namespace IncomeFluctuation
 
@@ -285,7 +283,6 @@ theorem exists_equilibrium_of_technology {rlo rhi : ℝ} (hrlo : 0 < 1 + rlo) (h
   P.exists_equilibrium_of_ceiling_and_floor hrlo hlt huniq
     (fun _ μ _ => P.aggregateCapital_le μ) hfloor A δ hδ hDlo hDhi
 
-
 /-- **An Aiyagari equilibrium from household-side hypotheses alone.** Uniqueness of the stationary
 distribution at each rate, and a positive floor under capital supply AT THE TOP OF THE INTERVAL,
 suffice: the firm is then calibrated to meet them.
@@ -311,7 +308,6 @@ theorem exists_equilibrium_of_uniqueness_and_floor {rlo rhi : ℝ} (hrlo : 0 < 1
   obtain ⟨A, δ, hA, hrδ, hDlo, hDhi⟩ := exists_firm_of_bounds hlt hm hmM
   exact ⟨A, δ, hA, hrδ,
     P.exists_equilibrium_of_technology hrlo hlt huniq hfloor A δ hrδ hDlo hDhi⟩
-
 
 /-- **Capital supply is bounded above by the impatience of the household.** Every household saves
 at most `1 - ε` of its resources, capital is mean saving, and resources are income plus the return
@@ -419,7 +415,6 @@ the rate: raising `r` raises `(1+r) t / (y₀ + (1+r) t)` towards one, so the ri
 while the left does not move. Checking the condition at the LOW end of the interval therefore
 covers all of it. -/
 
-
 theorem gain_term_mono {y₀ t : ℝ} (hy₀ : 0 < y₀) (ht : 0 < t) {s₀ s₁ : ℝ}
     (hs₀ : 0 < s₀) (hs : s₀ ≤ s₁) :
     Real.log (1 + s₀ * t / (y₀ + s₀ * t)) ≤ Real.log (1 + s₁ * t / (y₀ + s₁ * t)) := by
@@ -430,7 +425,6 @@ theorem gain_term_mono {y₀ t : ℝ} (hy₀ : 0 < y₀) (ht : 0 < t) {s₀ s₁
     rw [div_le_div_iff₀ h0 h1]
     nlinarith [mul_le_mul_of_nonneg_right hs (mul_nonneg ht.le hy₀.le)]
   linarith
-
 
 /-- **An Aiyagari equilibrium with the Cobb–Douglas firm**, from two-sided bounds on capital
 supply. Both ends of the sign change are now theorems; what is assumed is a positive floor under

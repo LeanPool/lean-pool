@@ -7,7 +7,6 @@ Authors: Robert Kirkby
 module
 public import LeanPool.AiyagariEquilibrium.Equilibrium.AiyagariContinuity
 
-
 /-!
 # The firm side
 
@@ -155,7 +154,6 @@ theorem capitalDemand_eq_iff {A δ r K : ℝ} (hA : 0 < A) (hr : 0 < r + δ) (hK
     field_simp
     ring
 
-
 /-- **Equilibrium in implied-rate form.** A rate is an equilibrium exactly when the capital its
 households hold implies it back. -/
 theorem isAiyagariEquilibrium_iff_impliedRate {Z : Type*} [Fintype Z] [Nonempty Z]
@@ -171,7 +169,6 @@ theorem isAiyagariEquilibrium_iff_impliedRate {Z : Type*} [Fintype Z] [Nonempty 
     exact ⟨μ, hμ, hpos, (capitalDemand_eq_iff hA hr hpos).mp hK⟩
   · rintro ⟨μ, hμ, hpos, himp⟩
     exact ⟨μ, hμ, (capitalDemand_eq_iff hA hr hpos).mpr himp⟩
-
 
 namespace IncomeFluctuation
 

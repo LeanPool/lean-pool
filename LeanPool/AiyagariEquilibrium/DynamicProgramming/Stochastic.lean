@@ -7,7 +7,6 @@ Authors: Robert Kirkby
 module
 public import LeanPool.AiyagariEquilibrium.DynamicProgramming.Bellman
 
-
 /-!
 # Stochastic dynamic programming with finitely many shocks
 

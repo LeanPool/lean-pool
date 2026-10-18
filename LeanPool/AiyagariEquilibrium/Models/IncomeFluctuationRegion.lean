@@ -7,7 +7,6 @@ Authors: Robert Kirkby
 module
 public import LeanPool.AiyagariEquilibrium.Models.IncomeFluctuationCrossRate
 
-
 /-!
 # The contraction, run on the compact region alone
 

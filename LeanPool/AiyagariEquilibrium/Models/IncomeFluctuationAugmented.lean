@@ -8,7 +8,6 @@ module
 public import LeanPool.AiyagariEquilibrium.Models.IncomeFluctuationRate
 public import LeanPool.AiyagariEquilibrium.Distribution.Stationary
 
-
 /-!
 # The interest rate as a state variable
 

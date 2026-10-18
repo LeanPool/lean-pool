@@ -6,8 +6,6 @@ Authors: Robert Kirkby
 
 module
 public import LeanPool.AiyagariEquilibrium.Models.IncomeFluctuation
-public import Mathlib.Algebra.Order.Group.Pointwise.Interval
-
 
 /-!
 # Consumption at the optimum is bounded away from zero

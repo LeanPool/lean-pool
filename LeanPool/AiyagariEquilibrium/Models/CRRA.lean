@@ -8,7 +8,6 @@ module
 public import LeanPool.AiyagariEquilibrium.Models.IncomeFluctuation
 public import LeanPool.AiyagariEquilibrium.Analysis.RelativeRiskAversion
 
-
 /-!
 # CRRA utility, and where it fits
 

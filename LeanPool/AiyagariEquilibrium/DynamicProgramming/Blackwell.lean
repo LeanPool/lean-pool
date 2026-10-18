@@ -8,7 +8,6 @@ module
 public import Mathlib.Topology.ContinuousMap.Bounded.Normed
 public import Mathlib.Topology.MetricSpace.Contracting
 
-
 /-!
 # Blackwell's sufficient conditions
 

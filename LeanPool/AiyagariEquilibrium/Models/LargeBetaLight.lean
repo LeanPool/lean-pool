@@ -9,7 +9,6 @@ public import LeanPool.AiyagariEquilibrium.Models.MinimalMPC
 public import LeanPool.AiyagariEquilibrium.Models.IncomeFluctuationRateStep
 public import LeanPool.AiyagariEquilibrium.Models.IncomeFluctuationHARA
 
-
 /-!
 # Light's Theorem 1 at large `β`
 

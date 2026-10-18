@@ -9,7 +9,6 @@ public import LeanPool.AiyagariEquilibrium.Models.IncomeFluctuationEuler
 public import LeanPool.AiyagariEquilibrium.Models.IncomeFluctuationIterate
 public import LeanPool.AiyagariEquilibrium.Analysis.HARA
 
-
 /-!
 # The minimal marginal propensity to consume
 
@@ -171,7 +170,7 @@ theorem crra_minMPC_step {γ : ℝ} (hγ0 : 0 < γ) (hu : P.u = crraUtility γ)
   have hcA : c = P.resources (a, z) - A := rfl
   have hc0 : 0 < c := hposW z a ha
   rcases eq_or_lt_of_le hAmem.1 with hA0 | hA0
-  · nlinarith [hκ1, hc0, hcA, hA0]
+  · nlinarith only [hκ1, hc0, hcA, hA0]
   · have hslack : ∀ z' : Z, P.policyOf v (A, z') < P.maxSaving (A, z') := fun z' =>
       P.policyOf_lt_maxSaving_of_pos (hposv z' A hAmem) (hcapv A hAmem z')
     have hc' : ∀ z' : Z, 0 < P.consumptionFnOf v z' A := fun z' => hposv z' A hAmem
@@ -189,7 +188,7 @@ theorem crra_minMPC_step {γ : ℝ} (hγ0 : 0 < γ) (hu : P.u = crraUtility γ)
         simp only [resources, max_eq_right hAmem.1]
       have hinc : 0 < P.income z' := lt_of_lt_of_le P.minIncome_pos (P.minIncome_le z')
       rw [hres, hXdef]
-      nlinarith [hκ0]
+      nlinarith only [hκ0, hinc]
     have hsum : ∑ z' : Z, P.transitionMatrix z z' * (P.consumptionFnOf v z' A) ^ (-γ)
         ≤ X ^ (-γ) := by
       calc ∑ z' : Z, P.transitionMatrix z z' * (P.consumptionFnOf v z' A) ^ (-γ)
@@ -207,7 +206,8 @@ theorem crra_minMPC_step {γ : ℝ} (hγ0 : 0 < γ) (hu : P.u = crraUtility γ)
       linarith [hchain]
     have hXTc : X ≤ T * c := le_of_rpow_neg_le (by positivity) hX0 hγ0 hTc
     rw [hXdef] at hXTc
-    nlinarith [hXTc, hkey, hR, hcA]
+    refine le_of_mul_le_mul_right (a := 1 + P.interest) ?_ hR
+    linear_combination hXTc - c * hkey - (P.minMPC γ * (1 + P.interest)) * hcA
 
 /-- **The minimal-MPC bound, at every iterate.** Consumption is at least `κ` times cash on hand,
 uniformly in the horizon — so it passes to the value function.
@@ -248,7 +248,7 @@ theorem crra_minMPC_mul_le_consumptionFnOf {γ : ℝ} (hγ0 : 0 < γ) (hu : P.u 
       change P.consumption (a, z) (P.policyOf (0 : (ℝ × Z) →ᵇ ℝ) (a, z)) = P.resources (a, z)
       rw [hz]; simp [consumption]
     rw [heq]
-    nlinarith [hres, hκ1]
+    nlinarith only [hres, hκ1]
   | succ k ih =>
     intro z a ha
     have hiter : (P.toExtended.bellman)^[k + 1] (0 : (ℝ × Z) →ᵇ ℝ)
@@ -373,7 +373,7 @@ theorem crra_minMPC_of_cap {γ : ℝ} (hγ0 : 0 < γ) (hu : P.u = crraUtility γ
         change P.consumption (a, z) (P.policyOf (0 : (ℝ × Z) →ᵇ ℝ) (a, z)) = P.resources (a, z)
         rw [hz]; simp [consumption]
       rw [heq]
-      nlinarith [hres, hκ1]
+      nlinarith only [hres, hκ1]
     exact ⟨hm, fun a ha z => P.crra_policyOf_lt_cap_of_minMPC_bound hγ0 hβ hfl hthr hm ha z⟩
   | succ k ih =>
     obtain ⟨ihm, ihc⟩ := ih
@@ -461,7 +461,7 @@ theorem hara_minMPC_mul_le_consumptionFnOf {γ η : ℝ} (hγ0 : 0 < γ) (hη : 
       change P.consumption (a, z) (P.policyOf (0 : (ℝ × Z) →ᵇ ℝ) (a, z)) = P.resources (a, z)
       rw [hz]; simp [consumption]
     rw [heq]
-    nlinarith [hres, hκ1, hη]
+    nlinarith only [hres, hκ1, hη]
   | succ k ih =>
     intro z a ha
     have hiter : (P.toExtended.bellman)^[k + 1] (0 : (ℝ × Z) →ᵇ ℝ)
@@ -478,7 +478,7 @@ theorem hara_minMPC_mul_le_consumptionFnOf {γ η : ℝ} (hγ0 : 0 < γ) (hη : 
       have := hpos (k + 1) z a ha
       rwa [hiter] at this
     rcases eq_or_lt_of_le hAmem.1 with hA0 | hA0
-    · nlinarith [hκ1, hc0, hcA, hA0, hη]
+    · nlinarith only [hκ1, hc0, hcA, hA0, hη]
     · have hslack : ∀ z' : Z, P.policyOf v (A, z') < P.maxSaving (A, z') := fun z' =>
         P.policyOf_lt_maxSaving_of_pos (hpos k z' A hAmem) (hcap k A hAmem z')
       have hc' : ∀ z' : Z, 0 < P.consumptionFnOf v z' A := fun z' => hpos k z' A hAmem
@@ -500,7 +500,7 @@ theorem hara_minMPC_mul_le_consumptionFnOf {γ η : ℝ} (hγ0 : 0 < γ) (hη : 
           simp only [resources, max_eq_right hAmem.1]
         have hinc : 0 < P.income z' := lt_of_lt_of_le P.minIncome_pos (P.minIncome_le z')
         rw [hres, hXdef]
-        nlinarith [hκ0]
+        nlinarith only [hκ0, hinc]
       have hsum : ∑ z' : Z, P.transitionMatrix z z'
             * (η + P.consumptionFnOf v z' A) ^ (-γ) ≤ X ^ (-γ) := by
         calc ∑ z' : Z, P.transitionMatrix z z' * (η + P.consumptionFnOf v z' A) ^ (-γ)
@@ -520,7 +520,9 @@ theorem hara_minMPC_mul_le_consumptionFnOf {γ η : ℝ} (hγ0 : 0 < γ) (hη : 
         le_of_rpow_neg_le (by positivity) hX0 hγ0 hTc
       rw [hXdef] at hXTc
       -- `κR + Þ = R`, and the extra `η` term has the right sign because `κ ≥ 0`
-      nlinarith [hXTc, hkey, hR, hcA, hκ0, hη, hT0]
+      refine le_of_mul_le_mul_right (a := 1 + P.interest) ?_ hR
+      linear_combination hXTc - (η + c) * hkey
+        - (P.minMPC γ * (1 + P.interest)) * hcA + mul_nonneg hκ0.le hη
 
 /-- **The shifted-CRRA bound at the value function.** -/
 theorem hara_minMPC_mul_le_consumptionFn {γ η : ℝ} (hγ0 : 0 < γ) (hη : 0 ≤ η)
@@ -681,7 +683,5 @@ theorem crra_exists_exhaust_of_minMPC {γ : ℝ} (hγ0 : 0 < γ) (hu : P.u = crr
   linarith
 
 end IncomeFluctuation
-
-
 
 end LeanEconomics

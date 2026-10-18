@@ -9,7 +9,6 @@ public import LeanPool.AiyagariEquilibrium.Models.IncomeFluctuationEnvelope
 public import LeanPool.AiyagariEquilibrium.Models.IncomeFluctuationCarrollKimball
 public import LeanPool.AiyagariEquilibrium.Models.CRRA
 
-
 /-!
 # The Euler equation along the iteration, and the borrowing limit
 

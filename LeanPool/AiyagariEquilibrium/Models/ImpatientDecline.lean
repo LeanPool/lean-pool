@@ -8,7 +8,6 @@ module
 public import LeanPool.AiyagariEquilibrium.Models.IncomeFluctuationIterate
 public import LeanPool.AiyagariEquilibrium.Distribution.Uniqueness
 
-
 /-!
 # Açıkgöz (2018) Proposition 4: the natural asset bound from impatience alone
 

@@ -7,7 +7,6 @@ Authors: Robert Kirkby
 module
 public import LeanPool.AiyagariEquilibrium.Equilibrium.AiyagariUniqueness
 
-
 /-!
 # Bisection finds the equilibrium rate, and the log Aiyagari instance
 
