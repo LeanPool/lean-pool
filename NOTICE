@@ -69,6 +69,7 @@ Apache License, Version 2.0, and are redistributed here under the same license.
   LeanPool/Computability             https://github.com/tannerduve/computability
   LeanPool/ComputableReal            https://github.com/Timeroot/computableReal
   LeanPool/ConcentrationInequalities https://github.com/jtraverso/erdos-81-chordal-clique-partitions
+  LeanPool/CongruenceNormalizers     https://github.com/F-Najman/normalizer-lean
   LeanPool/ConnesKreimer             https://github.com/karlesmarin/connes-kreimer-lean
   LeanPool/ConnesRigidity            https://github.com/utensil/connes-rigidity
   LeanPool/ConwayRefinement          https://github.com/gaearon/conway-refinement
