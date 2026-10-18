@@ -93,8 +93,8 @@ theorem hasDerivAt_haraUtility (γ : ℝ) {a c : ℝ} (hac : 0 < a + c) :
 
 /-! ### Light's condition -/
 
-/-- The factorisation that does the work: `c · u' c` splits into two nonnegative nondecreasing
-pieces exactly when the shift is nonnegative and `γ ≤ 1`. -/
+/-- The factorisation used for Light's condition: when the shift is nonnegative and
+`0 < γ ≤ 1`, both factors are nonnegative and nondecreasing on positive consumption. -/
 theorem mul_rpow_neg_eq {γ a c : ℝ} (hc : 0 < c) (hac : 0 < a + c) :
     c * (a + c) ^ (-γ) = c ^ (1 - γ) * (c / (a + c)) ^ γ := by
   rw [Real.div_rpow hc.le hac.le, Real.rpow_neg hac.le]

@@ -416,7 +416,8 @@ theorem log_no_equilibrium_of_ceiling {α δ r : ℝ} (hu : P.u = crraUtility 1)
 /-! ### Aiyagari (1994), `μ = 1`
 
 `β = 0.96`, `α = 0.36`, `δ = 0.08`, log utility, no borrowing, and a labour endowment process
-with monotone transitions about which nothing else is assumed. The time-preference rate is
+with monotone transitions and a lowest-income state reached with positive probability from
+every state in one step. The time-preference rate is
 `λ = 1/0.96 - 1 = 1/24`, and the theorem covers every interval `[rlo, rhi]` with
 `-δ < rlo ≤ rhi < 1/24` — so the whole of `(-δ, λ)`, the range on which Cobb--Douglas demand is
 finite and the household impatient; his reported equilibrium rates at `μ = 1` lie between `3.3%`
@@ -424,8 +425,9 @@ and `4.17%`. -/
 
 /-- **Aiyagari (1994) at `μ = 1`: the equilibrium interest rate is unique** on `[rlo, rhi]` for
 every `-δ < rlo ≤ rhi` below the time-preference rate `1/24`, for any economy with his
-preferences and technology and any earnings process with monotone transitions, provided the
-asset cap clears `(48/25) · maxIncome / (1 - (24/25)(1+rhi))`. -/
+preferences and technology, monotone earnings transitions and positive one-step access to a
+lowest-income state, provided the asset cap clears
+`(48/25) · maxIncome / (1 - (24/25)(1+rhi))`. -/
 theorem aiyagari1994_log_equilibriumRate_unique {rlo rhi : ℝ}
     (hu : P.u = crraUtility 1) (hunb : P.Unbounded) (hβ : (P.discount : ℝ) = 24 / 25)
     (hrlo : -2 / 25 < rlo) (hlohi : rlo ≤ rhi) (hlam : rhi < 1 / 24)

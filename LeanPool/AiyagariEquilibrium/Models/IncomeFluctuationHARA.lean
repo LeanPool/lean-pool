@@ -713,7 +713,7 @@ CRRA, so the test becomes one inequality among the primitives.
   consumption: `(η + minConsumption / 2) ^ (-γ)`.
 * The marginal value at `(a, z₀)` for `a ≤ a₀` is at least `(η + income z₀ + R a₀) ^ (-γ)`.
 
-So the corner holds below `a₀` exactly when
+A sufficient condition for the corner to hold below `a₀` is
 
   `β · (η + minConsumption/2) ^ (-γ) · R / (1 - β R)  <  (η + income z₀ + R a₀) ^ (-γ)`,
 

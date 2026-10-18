@@ -3,8 +3,9 @@ title: Capped log Aiyagari equilibrium and dynamic programming
 summary: >-
   Proves uniqueness of the equilibrium interest rate for capped log-utility
   households with Aiyagari's discount and firm parameters, no borrowing,
-  and monotone finite-state earnings transitions, subject to an explicit
-  cap-slack inequality at the larger rate. Instantiates the earnings
+  and monotone finite-state earnings transitions with positive one-step
+  access to a lowest-income state, subject to an explicit cap-slack
+  inequality at the larger rate. Instantiates the earnings
   process with arbitrary finite Tauchen chains. Bisection brackets a given
   equilibrium and converges along a stationary-distribution selection;
   existence of that equilibrium is a hypothesis of the bisection result.
