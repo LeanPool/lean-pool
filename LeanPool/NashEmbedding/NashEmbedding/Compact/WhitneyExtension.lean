@@ -12,7 +12,7 @@ Authors: Aristotle (Harmonic), Claude Fable 5 (Anthropic), Claude Opus 4.7 (Anth
 -/
 module
 
-public import Mathlib.Tactic
+public import LeanPool.NashEmbedding.Tactics
 public import Mathlib.Geometry.Manifold.WhitneyEmbedding
 import all Mathlib.Geometry.Manifold.WhitneyEmbedding
 

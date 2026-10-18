@@ -13,7 +13,7 @@ Authors: Aristotle (Harmonic), Claude Fable 5 (Anthropic), Claude Opus 4.7 (Anth
   — at the request of David Wiygul
 -/
 public import Mathlib.Algebra.Order.Chebyshev
-public import Mathlib.Tactic
+public import LeanPool.NashEmbedding.Tactics
 public import LeanPool.NashEmbedding.NashEmbedding.Sobolev.Basic
 public import LeanPool.NashEmbedding.NashEmbedding.Sobolev.Differentiation
 

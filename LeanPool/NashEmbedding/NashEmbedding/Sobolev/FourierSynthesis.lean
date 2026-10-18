@@ -14,7 +14,7 @@ Authors: Aristotle (Harmonic), Claude Fable 5 (Anthropic), Claude Opus 4.7 (Anth
 -/
 public import Mathlib.Analysis.SpecialFunctions.Integrals.Basic
 public import Mathlib.MeasureTheory.Integral.Pi
-public import Mathlib.Tactic
+public import LeanPool.NashEmbedding.Tactics
 public import LeanPool.NashEmbedding.NashEmbedding.Sobolev.Basic
 public import LeanPool.NashEmbedding.NashEmbedding.Sobolev.Summability
 public import LeanPool.NashEmbedding.NashEmbedding.Sobolev.Differentiation

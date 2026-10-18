@@ -16,7 +16,7 @@ public import Mathlib.Analysis.Fourier.AddCircleMulti
 public import Mathlib.Analysis.Real.Pi.Bounds
 public import Mathlib.MeasureTheory.Integral.DivergenceTheorem
 public import Mathlib.MeasureTheory.Measure.Haar.NormedSpace
-public import Mathlib.Tactic
+public import LeanPool.NashEmbedding.Tactics
 public import Mathlib.Topology.Separation.CompletelyRegular
 public import LeanPool.NashEmbedding.NashEmbedding.Sobolev.Distribution
 public import LeanPool.NashEmbedding.NashEmbedding.Sobolev.Periodicity
@@ -173,6 +173,33 @@ lemma periodicExtension_contDiff {φ : (Fin n → ℝ) → ℂ}
     exact ContDiffOn.sum fun k hk => hsmooth.comp_contDiffOn ( contDiffOn_id.add contDiffOn_const );
   exact h_cont_diff.contDiffAt ( hU_open.mem_nhds hxU ) |> fun h => h.congr_of_eventuallyEq (
       Filter.eventuallyEq_of_mem ( hU_open.mem_nhds hxU ) fun y hy => hS y hy ▸ rfl )
+
+/-- A translate with a bounded norm has bounded lattice coordinates. -/
+lemma periodicShift_index_le (x : Fin n → ℝ) (k : Fin n → ℤ) (i : Fin n) :
+    |(k i : ℝ)| ≤ (‖x + periodicShift n k‖ + ‖x‖) / (2 * Real.pi) := by
+  apply (le_div_iff₀ (mul_pos zero_lt_two Real.pi_pos)).2
+  calc
+    |(k i : ℝ)| * (2 * Real.pi) = |(x + periodicShift n k) i - x i| := by
+      simp only [Pi.add_apply, periodicShift, add_sub_cancel_left, abs_mul,
+        abs_of_pos Real.pi_pos, abs_two]
+      ring
+    _ ≤ |(x + periodicShift n k) i| + |x i| := abs_sub _ _
+    _ ≤ ‖x + periodicShift n k‖ + ‖x‖ :=
+      add_le_add (by simpa only [Real.norm_eq_abs] using norm_le_pi_norm (x + periodicShift n k) i)
+        (by simpa only [Real.norm_eq_abs] using norm_le_pi_norm x i)
+
+/-- The lattice coordinates of a translate meeting a ball are uniformly bounded. -/
+lemma periodicShift_index_le_of_mem_ball {R : ℝ} {x y : Fin n → ℝ} (k : Fin n → ℤ)
+    (i : Fin n) (hy : y ∈ Metric.ball x 1) (hshift : ‖y + periodicShift n k‖ ≤ R) :
+    |(k i : ℝ)| ≤ (R + ‖x‖ + 1) / (2 * Real.pi) := by
+  have hdist : ‖y - x‖ < 1 := by
+    rw [← dist_eq_norm]
+    exact hy
+  have hnorm : ‖y‖ ≤ ‖y - x‖ + ‖x‖ := by
+    simpa only [sub_add_cancel] using norm_add_le (y - x) x
+  refine (periodicShift_index_le y k i).trans ?_
+  apply div_le_div_of_nonneg_right _ (by positivity)
+  linarith only [hshift, hdist, hnorm]
 
 /-
 If `φ` has pointwise non-negative real part, its periodic extension does too.

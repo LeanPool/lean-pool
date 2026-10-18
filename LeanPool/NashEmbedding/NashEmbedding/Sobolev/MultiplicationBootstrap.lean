@@ -13,7 +13,7 @@ Authors: Aristotle (Harmonic), Claude Fable 5 (Anthropic), Claude Opus 4.7 (Anth
   — at the request of David Wiygul
 -/
 public import Mathlib.Analysis.Complex.ExponentialBounds
-public import Mathlib.Tactic
+public import LeanPool.NashEmbedding.Tactics
 public import LeanPool.NashEmbedding.NashEmbedding.Sobolev.Basic
 public import LeanPool.NashEmbedding.NashEmbedding.Sobolev.Summability
 public import LeanPool.NashEmbedding.NashEmbedding.Sobolev.Distribution
@@ -89,24 +89,24 @@ For k ≥ 1 and |ρ| ≤ 1/(2k), we have (1+ρ)^k ≤ 2.
 lemma one_add_pow_le_two {k : ℕ} (hk : 1 ≤ k) {ρ : ℝ}
     (hρ : |ρ| ≤ 1 / (2 * (k : ℝ))) :
     (1 + ρ) ^ k ≤ 2 := by
-  by_cases hρ_neg : ρ < 0;
-  · exact le_trans ( pow_le_one₀ ( by
-    linarith [ abs_le.mp hρ, show ( 1 : ℝ ) / ( 2 * k ) ≤ 1 by
-      rw [ div_le_iff₀ ] <;> norm_cast <;> linarith ] ) ( by
-    linarith [ abs_le.mp hρ, show ( 1 : ℝ ) / ( 2 * k ) ≤ 1 by
-      rw [ div_le_iff₀ ] <;> norm_cast <;> linarith ] ) ) ( by
-    norm_num );
-  · -- For ρ ≥ 0, use (1+ρ) ≤ exp(ρ), so (1+ρ)^k ≤ exp(kρ) ≤ exp(1/2) < 2.
-    have h_exp : (1 + ρ) ^ k ≤ Real.exp (k * ρ) := by
-      rw [ ← Real.rpow_natCast, Real.rpow_def_of_pos ( by linarith ) ]; norm_num; ring_nf;
-      exact mul_le_mul_of_nonneg_right ( le_trans ( Real.log_le_sub_one_of_pos ( by
-        linarith ) ) ( by
-        linarith ) ) ( Nat.cast_nonneg _ );
-    refine le_trans h_exp ?_;
-    rw [ ← Real.log_le_log_iff ( by positivity ) ( by positivity ), Real.log_exp ];
-    exact le_trans ( mul_le_mul_of_nonneg_left ( le_of_abs_le hρ ) ( Nat.cast_nonneg _ ) ) ( by
-      rw [ mul_div, div_le_iff₀ ] <;> nlinarith [ Real.log_two_gt_d9, show ( k : ℝ ) ≥ 1 by
-        norm_cast ] )
+  have hk1 : (1 : ℝ) ≤ k := by exact_mod_cast hk
+  have hkpos : (0 : ℝ) < k := lt_of_lt_of_le zero_lt_one hk1
+  have hbound : (1 : ℝ) / (2 * k) ≤ 1 := by
+    apply (div_le_iff₀ (by positivity)).2
+    linarith only [hk1]
+  have hbase : 0 ≤ 1 + ρ := by linarith only [(abs_le.mp hρ).1, hbound]
+  have hproduct : (k : ℝ) * ρ ≤ 1 / 2 := by
+    have h := (le_div_iff₀ (show (0 : ℝ) < 2 * k by positivity)).mp (le_of_abs_le hρ)
+    linarith only [h]
+  calc
+    (1 + ρ) ^ k ≤ (Real.exp ρ) ^ k :=
+      pow_le_pow_left₀ hbase (by simpa only [add_comm] using Real.add_one_le_exp ρ) k
+    _ = Real.exp (k * ρ) := (Real.exp_nat_mul ρ k).symm
+    _ ≤ Real.exp (1 / 2) := Real.exp_le_exp.mpr hproduct
+    _ ≤ 2 := by
+      apply (Real.log_le_log_iff (by positivity) (by norm_num)).mp
+      rw [Real.log_exp]
+      linarith only [Real.log_two_gt_d9]
 
 /-
 Case B of the refined weight inequality:
@@ -116,41 +116,52 @@ Case B of the refined weight inequality:
 lemma refined_weight_case_b {k : ℕ} (hk : 1 ≤ k) (i j : Fin n → ℤ)
     (hsmall : ∑ l, (j l : ℝ) ^ 2 ≤ ∑ l, (i l : ℝ) ^ 2 / (64 * (k : ℝ) ^ 2)) :
     weight n (k : ℝ) (i + j) ≤ 2 * weight n (k : ℝ) i := by
-  -- Applying the inequality $(1 + \rho)^k \leq 2$ to $\rho$.
-  have h_rho : (1 + (2 * (∑ l, (i l : ℝ) * (j l : ℝ)) + (∑ l, ((j l : ℝ) ^ 2))) / (1 + (∑ l, ((i
-      l : ℝ) ^ 2)))) ^ k ≤ 2 := by
-    refine one_add_pow_le_two hk ?_;
-    -- We have $|2 \cdot \sum i_l \cdot j_l| \leq 2 \cdot \sqrt{S_i} \cdot \sqrt{S_j}$
-    -- (Cauchy-Schwarz).
-    have h_cauchy_schwarz : |2 * ∑ l : Fin n, ((i l : ℝ) * (j l : ℝ))| ≤ 2 * Real.sqrt (∑ l :
-        Fin n, ((i l : ℝ) ^ 2)) * Real.sqrt (∑ l : Fin n, ((j l : ℝ) ^ 2)) := by
-      -- By the Cauchy-Schwarz inequality, we have that for any vectors $u$ and $v$ of
-      -- equal length, $(∑ l, u l * v l)^2 ≤ (∑ l, u l^2) * (∑ l, v l^2)$.
-      have h_cauchy_schwarz : ∀ (u v : Fin n → ℝ), (∑ l, u l * v l)^2 ≤ (∑ l, u l^2) * (∑ l, v
-          l^2) := by
-        exact fun u v => Finset.sum_mul_sq_le_sq_mul_sq Finset.univ u v;
-      rw [ abs_mul, abs_two ];
-      rw [ mul_assoc ]; exact mul_le_mul_of_nonneg_left ( Real.abs_le_sqrt <| by
-        simpa using h_cauchy_schwarz _ _ ) zero_le_two |> le_trans <| by
-        rw [ Real.sqrt_mul <| Finset.sum_nonneg fun _ _ => sq_nonneg _ ];
-    generalize_proofs at *; (
-    -- We have $\sqrt{S_j} \leq \sqrt{S_i / (64k^2)} = \sqrt{S_i} / (8k)$.
-    have h_sqrt_bound : Real.sqrt (∑ l : Fin n, ((j l : ℝ) ^ 2)) ≤ Real.sqrt (∑ l : Fin n, ((i l
-        : ℝ) ^ 2)) / (8 * k) := by
-      convert Real.sqrt_le_sqrt hsmall using 1; ring_nf; norm_num [ show k ≠ 0 by linarith ];
-      norm_num [ ← Finset.mul_sum _ _ _, ← Finset.sum_mul ]; ring
-    generalize_proofs at *; (
-    rw [ abs_div, abs_of_nonneg ( by
-      positivity : ( 0 : ℝ ) ≤ 1 + ∑ l : Fin n, ( i l : ℝ ) ^ 2 ) ]; rw [ div_le_div_iff₀ ] <;>
-        try positivity;
-    rw [ le_div_iff₀ ( by positivity ) ] at h_sqrt_bound;
-    cases abs_cases ( 2 * ∑ l : Fin n, ( i l : ℝ ) * j l + ∑ l : Fin n, ( j l : ℝ ) ^ 2 ) <;>
-      cases abs_cases ( 2 * ∑ l : Fin n, ( i l : ℝ ) * j l ) <;> nlinarith [ show ( k : ℝ ) ≥ 1 by
-      norm_cast, Real.sqrt_nonneg ( ∑ l : Fin n, ( i l : ℝ ) ^ 2 ), Real.sqrt_nonneg ( ∑ l : Fin
-        n, ( j l : ℝ ) ^ 2 ), Real.mul_self_sqrt ( show 0 ≤ ∑ l : Fin n, ( i l : ℝ ) ^ 2 by
-      exact Finset.sum_nonneg fun _ _ => sq_nonneg _ ), Real.mul_self_sqrt ( show 0 ≤ ∑ l : Fin
-        n, ( j l : ℝ ) ^ 2 by
-      exact Finset.sum_nonneg fun _ _ => sq_nonneg _ ) ]));
+  have hi : 0 ≤ ∑ l, (i l : ℝ) ^ 2 := Finset.sum_nonneg fun _ _ => sq_nonneg _
+  have hj : 0 ≤ ∑ l, (j l : ℝ) ^ 2 := Finset.sum_nonneg fun _ _ => sq_nonneg _
+  have hk1 : (1 : ℝ) ≤ k := by exact_mod_cast hk
+  have hkpos : (0 : ℝ) < k := lt_of_lt_of_le zero_lt_one hk1
+  have hsmall' : 64 * (k : ℝ) ^ 2 * (∑ l, (j l : ℝ) ^ 2) ≤ ∑ l, (i l : ℝ) ^ 2 := by
+    rw [← Finset.sum_div] at hsmall
+    simpa only [mul_comm] using (le_div_iff₀ (by positivity)).mp hsmall
+  -- A weighted sum-of-squares bound avoids introducing square roots of both norms.
+  have hcross : 4 * (k : ℝ) * |2 * ∑ l, (i l : ℝ) * (j l : ℝ)| ≤
+      (∑ l, (i l : ℝ) ^ 2) + 16 * (k : ℝ) ^ 2 * (∑ l, (j l : ℝ) ^ 2) := by
+    calc
+      _ = |∑ l, 2 * (i l : ℝ) * ((j l : ℝ) * (4 * (k : ℝ)))| := by
+        have heq : (∑ l, 2 * (i l : ℝ) * ((j l : ℝ) * (4 * (k : ℝ)))) =
+            8 * (k : ℝ) * ∑ l, (i l : ℝ) * (j l : ℝ) := by
+          rw [Finset.mul_sum]
+          apply Finset.sum_congr rfl
+          intro l _
+          ring
+        rw [heq]
+        norm_num [abs_mul, abs_of_pos hkpos]
+        ring
+      _ ≤ ∑ l, |2 * (i l : ℝ) * ((j l : ℝ) * (4 * (k : ℝ)))| :=
+        Finset.abs_sum_le_sum_abs _ _
+      _ ≤ ∑ l, ((i l : ℝ) ^ 2 + ((j l : ℝ) * (4 * (k : ℝ))) ^ 2) := by
+        apply Finset.sum_le_sum
+        intro l _
+        rw [abs_mul, abs_mul, abs_two]
+        simpa only [sq_abs] using
+          two_mul_le_add_sq |(i l : ℝ)| |(j l : ℝ) * (4 * (k : ℝ))|
+      _ = _ := by
+        norm_num [mul_pow, Finset.sum_add_distrib, ← Finset.sum_mul]
+        ring
+  have hkb : (k : ℝ) * (∑ l, (j l : ℝ) ^ 2) ≤
+      (k : ℝ) ^ 2 * (∑ l, (j l : ℝ) ^ 2) :=
+    mul_le_mul_of_nonneg_right (by nlinarith only [hk1]) hj
+  have h_rho : (1 + (2 * (∑ l, (i l : ℝ) * (j l : ℝ)) + (∑ l, ((j l : ℝ) ^ 2))) /
+      (1 + (∑ l, ((i l : ℝ) ^ 2)))) ^ k ≤ 2 := by
+    apply one_add_pow_le_two hk
+    rw [abs_div, abs_of_pos (show 0 < 1 + ∑ l, (i l : ℝ) ^ 2 from
+      add_pos_of_pos_of_nonneg zero_lt_one hi),
+      div_le_div_iff₀ (by positivity) (show (0 : ℝ) < 2 * k by positivity)]
+    have htriangle := mul_le_mul_of_nonneg_right
+      (abs_add_le (2 * ∑ l, (i l : ℝ) * (j l : ℝ)) (∑ l, (j l : ℝ) ^ 2))
+      (show (0 : ℝ) ≤ 2 * k by positivity)
+    rw [abs_of_nonneg hj] at htriangle
+    nlinarith only [htriangle, hcross, hsmall', hkb, hi]
   -- By definition of `weight`, we know that `weight n k (i + j) = (1 + ∑ l, (i l + j l : ℝ) ^
   -- 2) ^ k`.
   simp only [weight, Pi.add_apply, Int.cast_add, rpow_natCast, ge_iff_le];
@@ -176,75 +187,82 @@ lemma refined_weight_ineq {k : ℕ} (hk : 1 ≤ k) (i j : Fin n → ℤ) :
       2 * (weight n (k : ℝ) i + weight n (k : ℝ) j) +
       mt3BStar k * (weight n ((k : ℝ) - 1) i * weight n 1 j +
                      weight n 1 i * weight n ((k : ℝ) - 1) j) := by
-  by_cases hB : ∑ l, (j l : ℝ) ^ 2 ≤ ∑ l, (i l : ℝ) ^ 2 / (64 * (k : ℝ) ^ 2);
-  · refine le_add_of_le_of_nonneg ?_ ?_;
-    · exact le_trans ( refined_weight_case_b hk i j hB ) ( by
-      linarith [ show 0 ≤ weight n ( k : ℝ ) j from weight_nonneg _ _ ] );
-    · exact mul_nonneg ( mt3BStar_nonneg hk ) ( add_nonneg ( mul_nonneg ( weight_nonneg _ _ ) (
-        weight_nonneg _ _ ) ) ( mul_nonneg ( weight_nonneg _ _ ) ( weight_nonneg _ _ ) ) );
-  · by_cases hA : ∑ l, (i l : ℝ) ^ 2 ≤ ∑ l, (j l : ℝ) ^ 2 / (64 * (k : ℝ) ^ 2);
-    · -- Apply the refined weight case b to (j, i) instead.
-      have h_case_b : weight n (k : ℝ) (j + i) ≤ 2 * weight n (k : ℝ) j := by
-        apply refined_weight_case_b hk j i hA;
-      rw [ add_comm ] at h_case_b;
-      refine le_add_of_le_of_nonneg ?_ ?_;
-      · exact h_case_b.trans ( mul_le_mul_of_nonneg_left ( le_add_of_nonneg_left <| by
-        exact Real.rpow_nonneg ( add_nonneg zero_le_one <| Finset.sum_nonneg fun _ _ =>
-          sq_nonneg _ ) _ ) zero_le_two );
-      · exact mul_nonneg ( mt3BStar_nonneg hk ) ( add_nonneg ( mul_nonneg ( weight_nonneg _ _ )
-          ( weight_nonneg _ _ ) ) ( mul_nonneg ( weight_nonneg _ _ ) ( weight_nonneg _ _ ) ) );
-    · -- Case C: S_j > S_i/(64k²) AND S_i > S_j/(64k²). Then:
-      -- S_i < 64k²*S_j, so X = 1+S_i ≤ 1+64k²*S_j ≤ 64k²*(1+S_j) = 64k²*Y (using 1 ≤ 64k²
-      -- since k ≥ 1).
-      -- Similarly Y ≤ 64k²*X.
-      have hX : (1 + ∑ l, (i l : ℝ) ^ 2) ≤ 64 * (k : ℝ) ^ 2 * (1 + ∑ l, (j l : ℝ) ^ 2) := by
-        norm_num [ ← Finset.sum_div _ _ _ ] at *;
-        rw [ div_lt_iff₀ ] at hB <;> nlinarith [ show ( k : ℝ ) ^ 2 ≥ 1 by norm_cast; nlinarith ]
-      have hY : (1 + ∑ l, (j l : ℝ) ^ 2) ≤ 64 * (k : ℝ) ^ 2 * (1 + ∑ l, (i l : ℝ) ^ 2) := by
-        norm_num [ ← Finset.sum_div _ _ _ ] at *;
-        rw [ div_lt_iff₀ ] at hA <;> nlinarith [ show ( k : ℝ ) ^ 2 ≥ 1 by norm_cast; nlinarith ];
-      -- Step C1: 1+S_{i+j} ≤ 2(X+Y). Since S_{i+j} = ∑(i_l+j_l)² ≤ 2S_i+2S_j (by (a+b)² ≤
-      -- 2a²+2b²), we get 1+S_{i+j} ≤ 1+2S_i+2S_j ≤ 2(1+S_i)+2(1+S_j) = 2X+2Y = 2(X+Y).
-      have hC1 : 1 + ∑ l, ((i l + j l) : ℝ) ^ 2 ≤ 2 * (1 + ∑ l, (i l : ℝ) ^ 2 + 1 + ∑ l, (j l :
-          ℝ) ^ 2) := by
-        have hC1 : ∑ l, ((i l + j l) : ℝ) ^ 2 ≤ 2 * (∑ l, (i l : ℝ) ^ 2 + ∑ l, (j l : ℝ) ^ 2) := by
-          rw [ ← Finset.sum_add_distrib, Finset.mul_sum _ _ _ ];
-          exact Finset.sum_le_sum fun _ _ => by linarith [ sq_nonneg ( i ‹_› - j ‹_› : ℝ ) ];
-        linarith;
-      -- Step C2: Use add_pow_le for Nat.pow. (X+Y)^k ≤ 2^{k-1}*(X^k+Y^k). So (2(X+Y))^k =
-      -- 2^k*(X+Y)^k ≤ 2^k*2^{k-1}*(X^k+Y^k) = 2^{2k-1}*(X^k+Y^k).
-      have hC2 : (1 + ∑ l, ((i l + j l) : ℝ) ^ 2) ^ k ≤ 2 ^ (2 * k - 1) * ((1 + ∑ l, (i l : ℝ) ^
-          2) ^ k + (1 + ∑ l, (j l : ℝ) ^ 2) ^ k) := by
-        have hC2 : (1 + ∑ l, (i l : ℝ) ^ 2 + 1 + ∑ l, (j l : ℝ) ^ 2) ^ k ≤ 2 ^ (k - 1) * ((1 + ∑
-            l, (i l : ℝ) ^ 2) ^ k + (1 + ∑ l, (j l : ℝ) ^ 2) ^ k) := by
-          have hC2 : ∀ (x y : ℝ), 0 ≤ x → 0 ≤ y → (x + y) ^ k ≤ 2 ^ (k - 1) * (x ^ k + y ^ k) := by
-            exact fun x y a a_1 => add_pow_le a a_1 k;
-          convert hC2 ( 1 + ∑ l, ( i l : ℝ ) ^ 2 ) ( 1 + ∑ l, ( j l : ℝ ) ^ 2 ) ( by
-            exact add_nonneg zero_le_one <| Finset.sum_nonneg fun _ _ => sq_nonneg _ ) ( by
-            exact add_nonneg zero_le_one <| Finset.sum_nonneg fun _ _ => sq_nonneg _ ) using 1;
-              ring;
-        refine le_trans ( pow_le_pow_left₀ ( by
-          exact add_nonneg zero_le_one <| Finset.sum_nonneg fun _ _ => sq_nonneg _ ) hC1 _ ) ?_;
-        rw [ mul_pow ];
-        convert mul_le_mul_of_nonneg_left hC2 ( pow_nonneg zero_le_two k ) using 1; rw [ show 2
-          * k - 1 = k - 1 + k by
-          omega ]; ring;
-      -- Step C4: Since X ≤ 64k²*Y, X^k = X^{k-1}*X ≤ 64k²*X^{k-1}*Y. Similarly Y^k ≤
-      -- 64k²*X*Y^{k-1}. So (X^k+Y^k) ≤ 64k²*(X^{k-1}*Y + X*Y^{k-1}).
-      have hC4 : (1 + ∑ l, (i l : ℝ) ^ 2) ^ k + (1 + ∑ l, (j l : ℝ) ^ 2) ^ k ≤ 64 * (k : ℝ) ^ 2
-          * ((1 + ∑ l, (i l : ℝ) ^ 2) ^ (k - 1) * (1 + ∑ l, (j l : ℝ) ^ 2) + (1 + ∑ l, (i l : ℝ)
-          ^ 2) * (1 + ∑ l, (j l : ℝ) ^ 2) ^ (k - 1)) := by
-        rcases k with ( _ | k ) <;> simp_all +decide [ pow_succ' ];
-        nlinarith [ pow_nonneg ( show 0 ≤ 1 + ∑ x : Fin n, ( i x : ℝ ) * i x by
-          exact add_nonneg zero_le_one <| Finset.sum_nonneg fun _ _ => mul_self_nonneg _ ) k,
-            pow_nonneg ( show 0 ≤ 1 + ∑ x : Fin n, ( j x : ℝ ) * j x by
-          exact add_nonneg zero_le_one <| Finset.sum_nonneg fun _ _ => mul_self_nonneg _ ) k ];
-      unfold weight mt3BStar;
-      rcases k with ( _ | k ) <;> norm_num [ Nat.mul_succ, pow_succ' ] at *;
-      norm_cast at *; norm_num [ Nat.mul_succ, pow_succ' ] at *;
-      rw [ Int.subNatNat_of_le ( by
-        linarith ) ]; norm_cast; norm_num [ Nat.mul_succ, pow_succ' ] at *;
-      rw [ Int.subNatNat_eq_coe ]; push_cast; nlinarith [ pow_pos ( zero_lt_two' ℤ ) ( 2 * k ) ]
+  have hrest : 0 ≤ mt3BStar k * (weight n ((k : ℝ) - 1) i * weight n 1 j +
+      weight n 1 i * weight n ((k : ℝ) - 1) j) :=
+    mul_nonneg (mt3BStar_nonneg hk)
+      (add_nonneg (mul_nonneg (weight_nonneg _ _) (weight_nonneg _ _))
+        (mul_nonneg (weight_nonneg _ _) (weight_nonneg _ _)))
+  by_cases hB : ∑ l, (j l : ℝ) ^ 2 ≤ ∑ l, (i l : ℝ) ^ 2 / (64 * (k : ℝ) ^ 2)
+  · exact le_add_of_le_of_nonneg
+      ((refined_weight_case_b hk i j hB).trans
+        (mul_le_mul_of_nonneg_left (le_add_of_nonneg_right (weight_nonneg _ _)) zero_le_two))
+      hrest
+  by_cases hA : ∑ l, (i l : ℝ) ^ 2 ≤ ∑ l, (j l : ℝ) ^ 2 / (64 * (k : ℝ) ^ 2)
+  · rw [add_comm i j]
+    exact le_add_of_le_of_nonneg
+      ((refined_weight_case_b hk j i hA).trans
+        (mul_le_mul_of_nonneg_left (le_add_of_nonneg_left (weight_nonneg _ _)) zero_le_two))
+      hrest
+  rw [← Finset.sum_div] at hB hA
+  let X : ℝ := 1 + ∑ l, (i l : ℝ) ^ 2
+  let Y : ℝ := 1 + ∑ l, (j l : ℝ) ^ 2
+  have hX0 : 0 ≤ X := add_nonneg zero_le_one (Finset.sum_nonneg fun _ _ => sq_nonneg _)
+  have hY0 : 0 ≤ Y := add_nonneg zero_le_one (Finset.sum_nonneg fun _ _ => sq_nonneg _)
+  have hk1 : (1 : ℝ) ≤ k := by exact_mod_cast hk
+  have hD : (1 : ℝ) ≤ 64 * (k : ℝ) ^ 2 := by nlinarith only [hk1, sq_nonneg (k : ℝ)]
+  have hDpos : 0 < 64 * (k : ℝ) ^ 2 := lt_of_lt_of_le zero_lt_one hD
+  have hX : X ≤ 64 * (k : ℝ) ^ 2 * Y := by
+    have h := (div_lt_iff₀ hDpos).mp
+      (show (∑ l, (i l : ℝ) ^ 2) / (64 * (k : ℝ) ^ 2) < ∑ l, (j l : ℝ) ^ 2
+        from lt_of_not_ge hB)
+    dsimp [X, Y]
+    nlinarith only [h, hD]
+  have hY : Y ≤ 64 * (k : ℝ) ^ 2 * X := by
+    have h := (div_lt_iff₀ hDpos).mp
+      (show (∑ l, (j l : ℝ) ^ 2) / (64 * (k : ℝ) ^ 2) < ∑ l, (i l : ℝ) ^ 2
+        from lt_of_not_ge hA)
+    dsimp [X, Y]
+    nlinarith only [h, hD]
+  have hsum : 1 + ∑ l, ((i l + j l) : ℝ) ^ 2 ≤ 2 * (X + Y) := by
+    have h := Finset.sum_le_sum (s := Finset.univ) fun l _ =>
+      (show ((i l + j l) : ℝ) ^ 2 ≤ 2 * ((i l : ℝ) ^ 2 + (j l : ℝ) ^ 2) by
+        nlinarith only [sq_nonneg ((i l : ℝ) - j l)])
+    rw [← Finset.mul_sum, Finset.sum_add_distrib] at h
+    dsimp [X, Y]
+    linarith only [h]
+  have hpower : (1 + ∑ l, ((i l + j l) : ℝ) ^ 2) ^ k ≤
+      2 ^ (2 * k - 1) * (X ^ k + Y ^ k) := by
+    calc
+      _ ≤ (2 * (X + Y)) ^ k := pow_le_pow_left₀ (by positivity) hsum k
+      _ = 2 ^ k * (X + Y) ^ k := mul_pow _ _ _
+      _ ≤ 2 ^ k * (2 ^ (k - 1) * (X ^ k + Y ^ k)) :=
+        mul_le_mul_of_nonneg_left (add_pow_le hX0 hY0 k) (by positivity)
+      _ = _ := by
+        rw [show 2 * k - 1 = k - 1 + k by omega]
+        ring
+  have hcross : X ^ k + Y ^ k ≤ 64 * (k : ℝ) ^ 2 *
+      (X ^ (k - 1) * Y + X * Y ^ (k - 1)) := by
+    have hXi := mul_le_mul_of_nonneg_left hX (pow_nonneg hX0 (k - 1))
+    have hYi := mul_le_mul_of_nonneg_left hY (pow_nonneg hY0 (k - 1))
+    rw [← pow_succ, Nat.sub_add_cancel hk] at hXi hYi
+    nlinarith only [hXi, hYi]
+  have hk2 : 2 ≤ 2 * k := by simpa only [Nat.mul_one] using Nat.mul_le_mul_left 2 hk
+  have hexponent : ((2 * k - 1 : ℕ) : ℝ) = 2 * (k : ℝ) - 1 := by
+    rw [Nat.cast_sub ((Nat.le_succ 1).trans hk2)]
+    norm_num
+  have hcoefficient : 0 ≤ (2 : ℝ) ^ (2 * k - 1) - 2 := by
+    have h := pow_le_pow_right₀ (show (1 : ℝ) ≤ 2 by norm_num)
+      (show 1 ≤ 2 * k - 1 from Nat.sub_le_sub_right hk2 1)
+    apply sub_nonneg.mpr
+    simpa only [pow_one] using h
+  have hscaled := mul_le_mul_of_nonneg_left hcross hcoefficient
+  have hcast : (k : ℝ) - 1 = ((k - 1 : ℕ) : ℝ) := by rw [Nat.cast_sub hk]; norm_num
+  simp only [weight, mt3BStar, Pi.add_apply, Int.cast_add, hcast, ← hexponent,
+    Real.rpow_natCast, Real.rpow_one]
+  change (1 + ∑ l, ((i l + j l) : ℝ) ^ 2) ^ k ≤
+    2 * (X ^ k + Y ^ k) + 64 * (k : ℝ) ^ 2 * (2 ^ (2 * k - 1) - 2) *
+      (X ^ (k - 1) * Y + X * Y ^ (k - 1))
+  nlinarith only [hpower, hscaled]
 
 /-! ## Half-power form of the refined weight inequality -/
 
