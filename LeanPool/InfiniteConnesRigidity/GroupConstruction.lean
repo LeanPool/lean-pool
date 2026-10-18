@@ -11,11 +11,6 @@ import Mathlib.Algebra.Order.Star.Real
 import Mathlib.Algebra.Ring.IsFormallyReal
 import Mathlib.GroupTheory.FiniteAbelian.Duality
 import Mathlib.LinearAlgebra.TensorProduct.Pi
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Std.Tactic.BVDecide.Normalize.Prop
 public import LeanPool.InfiniteConnesRigidity.SpectralAndPropertyT
 
 /-!
@@ -1512,7 +1507,7 @@ private theorem exists_affineUniformGeneratorDisplacement_of_no_fixed
     gromovRescaledAffineAction α (x n) (D (x n) / 2)
   apply exists_affineUniformGeneratorDisplacement_of_local_sequence γ S hgen
   · intro n s hs
-    simpa [γ, D] using
+    simpa only [γ, D, gromovRescaledAffineAction_apply, map_zero, inv_div, zero_add, sub_zero] using
       gromov_rescaled_generator_displacement_at_zero_le_two
         α S (x n) (hpositive (x n)) s hs
   · intro n z hz
@@ -2182,7 +2177,10 @@ private theorem integerRankTwo_basis_decomposition (v : IntegerRankTwo) :
       v 1 • (Pi.single 1 1) := by
   funext i
   fin_cases i <;>
-    simp
+    simp only [Fin.zero_eta, Fin.isValue, zsmul_eq_mul, Pi.add_apply, Pi.mul_apply,
+      Pi.intCast_apply, Int.cast_eq, Pi.single_eq_same, mul_one, ne_eq, zero_ne_one,
+      not_false_eq_true, Pi.single_eq_of_ne, mul_zero, add_zero, Fin.mk_one, one_ne_zero,
+      zero_add]
 
 /-- Cross-module support for the infinite Connes-rigidity construction. -/
 private theorem integerDual_eq_one_iff_coordinate_values
@@ -4071,7 +4069,7 @@ private theorem integerShalomShears_inv_mem
   classical
   simp only [integerShalomShears, Finset.mem_insert,
     Finset.mem_singleton] at hg ⊢
-  rcases hg with rfl | rfl | rfl | rfl <;> simp
+  rcases hg with rfl | rfl | rfl | rfl <;> simp only [inv_inj, true_or, or_true, inv_inv]
 
 /-- Cross-module support for the infinite Connes-rigidity construction. -/
 @[simp]
@@ -4843,7 +4841,11 @@ private theorem polynomialCharacter_monomial
           z • (Pi.single i ((Polynomial.X : IntegralPolynomial) ^ n) :
             Fin 2 → IntegralPolynomial) := by
     ext j
-    by_cases hji : j = i <;> simp [hji]
+    by_cases hji : j = i <;> simp only [hji, zsmul_eq_mul, Pi.single_eq_same,
+                               Polynomial.coeff_intCast_mul, Int.cast_eq, Polynomial.coeff_X_pow,
+                               mul_ite, mul_one, mul_zero, Pi.smul_apply, ne_eq,
+                               not_false_eq_true, Pi.single_eq_of_ne, Polynomial.coeff_zero,
+                               smul_zero]
   rw [hsingle]
   change χ ((Multiplicative.ofAdd
     (Pi.single i ((Polynomial.X : IntegralPolynomial) ^ n) :
@@ -4868,7 +4870,9 @@ private theorem polynomialCharacter_ext
             (Pi.single i (p + q) : Fin 2 → IntegralPolynomial) =
               Pi.single i p + Pi.single i q := by
           ext j
-          by_cases hji : j = i <;> simp [hji]
+          by_cases hji : j = i <;> simp only [hji, Pi.single_eq_same, Polynomial.coeff_add,
+                                     Pi.add_apply, ne_eq, not_false_eq_true, Pi.single_eq_of_ne,
+                                     Polynomial.coeff_zero, add_zero]
         rw [hsingle]
         have hsplit :
             Multiplicative.ofAdd
@@ -4888,7 +4892,9 @@ private theorem polynomialCharacter_ext
   have hw : w = Pi.single (0 : Fin 2) (w 0) +
       Pi.single (1 : Fin 2) (w 1) := by
     ext i
-    fin_cases i <;> simp
+    fin_cases i <;> simp only [Fin.zero_eta, Fin.isValue, Pi.add_apply, Pi.single_eq_same, ne_eq,
+                      zero_ne_one, not_false_eq_true, Pi.single_eq_of_ne, add_zero, Fin.mk_one,
+                      one_ne_zero, zero_add]
   change χ (Multiplicative.ofAdd w) =
     ψ (Multiplicative.ofAdd w)
   rw [hw]
@@ -5838,7 +5844,9 @@ private theorem shalomConstantVector_single
     shalomConstantVector (Pi.single i a) =
       (Pi.single i (Polynomial.C a) : Fin 2 → IntegralPolynomial) := by
   ext j
-  by_cases h : i = j <;> simp [shalomConstantVector, h]
+  by_cases h : i = j <;> simp only [shalomConstantVector, h, eq_intCast, AddMonoidHom.coe_mk,
+                           ZeroHom.coe_mk, Pi.single_eq_same, ne_eq, not_false_eq_true,
+                           Pi.single_eq_of_ne', Int.cast_zero, Polynomial.coeff_zero]
 
 /-- Cross-module support for the infinite Connes-rigidity construction. -/
 private def shalomConstantSpecialLinear :
@@ -6130,51 +6138,7 @@ private theorem shalom_projectionResidual_norm_lt_of_relativePair
       ‖(π (f g) : W →L[ℂ] W) ξ - ξ‖ < δ) :
     ‖ξ - (normalFixedSubmodule N₀ (π.comp f)).starProjection ξ‖ <
       δ / κ := by
-  let ρ : UnitaryRepresentation G₀ W := π.comp f
-  let M : Submodule ℂ W := normalFixedSubmodule N₀ ρ
-  let z : W := ξ - M.starProjection ξ
-  have hκ : 0 < κ := hpair.1
-  change ‖z‖ < δ / κ
-  by_contra hnot
-  have hzlower : δ / κ ≤ ‖z‖ := le_of_not_gt hnot
-  have hz : z ≠ 0 := by
-    intro hzero
-    rw [hzero, norm_zero] at hzlower
-    exact (not_le_of_gt (div_pos hδ hκ)) hzlower
-  have hzmem : z ∈ Mᗮ :=
-    Submodule.sub_starProjection_mem_orthogonal ξ
-  let w : Mᗮ :=
-    ⟨((‖z‖ : ℂ)⁻¹) • z, (Mᗮ).smul_mem _ hzmem⟩
-  have hwnorm : ‖w‖ = 1 := norm_smul_inv_norm hz
-  have hwsmall :
-      ∀ g ∈ F₀,
-        ‖(normalFixedOrthogonalRepresentation N₀ ρ g :
-          Mᗮ →L[ℂ] Mᗮ) w - w‖ < κ := by
-    intro g hg
-    have hcontract :
-        ‖(ρ g : W →L[ℂ] W) z - z‖ ≤
-          ‖(ρ g : W →L[ℂ] W) ξ - ξ‖ :=
-      normalFixed_orthogonalResidual_displacement_le N₀ ρ g ξ
-    have hwformula :
-        ‖(normalFixedOrthogonalRepresentation N₀ ρ g :
-            Mᗮ →L[ℂ] Mᗮ) w - w‖ =
-          ‖(ρ g : W →L[ℂ] W) z - z‖ / ‖z‖ := by
-      change ‖(ρ g : W →L[ℂ] W)
-        (((‖z‖ : ℂ)⁻¹) • z) - ((‖z‖ : ℂ)⁻¹) • z‖ = _
-      rw [map_smul, ← smul_sub, norm_smul, norm_inv,
-        Complex.norm_real, Real.norm_of_nonneg (norm_nonneg z)]
-      simp only [div_eq_mul_inv, mul_comm]
-    rw [hwformula]
-    apply (div_lt_iff₀ (norm_pos_iff.mpr hz)).2
-    have hgsmall : ‖(ρ g : W →L[ℂ] W) ξ - ξ‖ < δ := by
-      exact hsmall g hg
-    have hδbound : δ ≤ κ * ‖z‖ :=
-      by simpa only [mul_comm] using (div_le_iff₀ hκ).mp hzlower
-    exact lt_of_lt_of_le (lt_of_le_of_lt hcontract hgsmall) hδbound
-  obtain ⟨η, hη, hηfixed⟩ := hpair.2
-    Mᗮ inferInstance inferInstance inferInstance
-    (normalFixedOrthogonalRepresentation N₀ ρ) w hwnorm hwsmall
-  exact hη (normalFixedOrthogonalRepresentation_no_fixed N₀ ρ η hηfixed)
+  exact relativeKazhdanPair_orthogonalResidual_norm_lt N₀ hpair hδ W (π.comp f) ξ hsmall
 
 /-- Cross-module support for the infinite Connes-rigidity construction. -/
 private theorem shalom_normalizedFixedVector_of_relativePair
@@ -6333,7 +6297,8 @@ private theorem shalom_constantCoordinate_fixed_of_constantTranslation_fixed
       (Multiplicative.ofAdd (Pi.single i (1 : ℤ))),
       ⟨Multiplicative.ofAdd (Pi.single i (1 : ℤ)), rfl⟩⟩
   have hn := hfixed n
-  simpa [n] using hn
+  simpa only [n, shalomConstantEmbedding_inl, shalomConstantVector_single, eq_intCast,
+    Int.cast_one] using hn
 
 end
 
@@ -6462,6 +6427,16 @@ section
 
 universe u v
 
+/-- Transport centralizer membership before specializing to operators on Hilbert spaces. -/
+private theorem starAlgEquiv_mem_centralizer_image_iff {R A B : Type*} [CommSemiring R] [StarRing R]
+    [Semiring A] [StarRing A] [Algebra R A] [StarModule R A]
+    [Semiring B] [StarRing B] [Algebra R B] [StarModule R B]
+    (e : A ≃⋆ₐ[R] B) (S : Set A) (T : A) :
+    e T ∈ StarSubalgebra.centralizer R (e '' S) ↔ T ∈ StarSubalgebra.centralizer R S := by
+  have hinj : Function.Injective (fun x : A ↦ e x) := e.injective
+  simp only [StarSubalgebra.mem_centralizer_iff, Set.forall_mem_image,
+    ← map_star, ← map_mul, hinj.eq_iff]
+
 /-- Cross-module support for the infinite Connes-rigidity construction. -/
 private theorem conj_mem_centralizer_image_iff
     {H K : Type*}
@@ -6472,35 +6447,7 @@ private theorem conj_mem_centralizer_image_iff
     e.conjStarAlgEquiv T ∈
         StarSubalgebra.centralizer ℂ (e.conjStarAlgEquiv '' S) ↔
       T ∈ StarSubalgebra.centralizer ℂ S := by
-  rw [StarSubalgebra.mem_centralizer_iff,
-    StarSubalgebra.mem_centralizer_iff]
-  constructor
-  · intro h x hx
-    have hx' := h (e.conjStarAlgEquiv x) ⟨x, hx, rfl⟩
-    constructor
-    · have heq :
-          e.conjStarAlgEquiv (x * T) =
-            e.conjStarAlgEquiv (T * x) := by
-        rw [map_mul, map_mul]
-        exact hx'.1
-      exact e.conjStarAlgEquiv.injective heq
-    · have heq :
-          e.conjStarAlgEquiv (star x * T) =
-            e.conjStarAlgEquiv (T * star x) := by
-        rw [map_mul, map_mul]
-        simpa only [map_star] using hx'.2
-      exact e.conjStarAlgEquiv.injective heq
-  · intro h y hy
-    obtain ⟨x, hx, rfl⟩ := hy
-    have hx' := h x hx
-    constructor
-    · have heq := congrArg e.conjStarAlgEquiv hx'.1
-      rw [map_mul, map_mul] at heq
-      exact heq
-    · have heq := congrArg e.conjStarAlgEquiv hx'.2
-      rw [map_mul, map_mul] at heq
-      rw [map_star] at heq
-      exact heq
+  exact starAlgEquiv_mem_centralizer_image_iff e.conjStarAlgEquiv S T
 
 /-- Cross-module support for the infinite Connes-rigidity construction. -/
 private theorem conj_image_centralizer
@@ -6598,27 +6545,15 @@ private theorem crossedHaarHilbertEquiv_multiplier_conj
       crossedMultiplier Y
         (Lp.compMeasurePreserving e.toMeasurableEquiv.symm
           (EquivariantHaarEquiv.symm e).measure_preserving f) := by
-  apply ContinuousLinearMap.ext
-  intro η
-  obtain ⟨ξ, rfl⟩ := (crossedHaarHilbertEquiv e).surjective η
+  apply conjStarAlgEquiv_eq_of_intertwining
+  intro ξ
   apply lp.ext
   funext k
-  change
-    crossedHaarHilbertEquiv e
-      (crossedMultiplier X f
-        ((crossedHaarHilbertEquiv e).symm
-          ((crossedHaarHilbertEquiv e) ξ))) k =
-      crossedBaseMultiplier Y
-        (Lp.compMeasurePreserving e.toMeasurableEquiv.symm
-          (EquivariantHaarEquiv.symm e).measure_preserving f)
-        (crossedBaseHaarEquiv e (ξ k))
-  rw [LinearIsometryEquiv.symm_apply_apply]
-  change
-    crossedBaseHaarEquiv e (crossedBaseMultiplier X f (ξ k)) =
-      crossedBaseMultiplier Y
-        (Lp.compMeasurePreserving e.toMeasurableEquiv.symm
-          (EquivariantHaarEquiv.symm e).measure_preserving f)
-        (crossedBaseHaarEquiv e (ξ k))
+  change crossedBaseHaarEquiv e (crossedBaseMultiplier X f (ξ k)) =
+    crossedBaseMultiplier Y
+      (Lp.compMeasurePreserving e.toMeasurableEquiv.symm
+        (EquivariantHaarEquiv.symm e).measure_preserving f)
+      (crossedBaseHaarEquiv e (ξ k))
   exact crossedBaseHaarEquiv_multiplier_apply e f (ξ k)
 
 /-- Cross-module support for the infinite Connes-rigidity construction. -/
@@ -7537,8 +7472,10 @@ private theorem upperUnitriangular_factorization (g : Q)
   have h32 := hu 3 2 (by decide)
   apply Matrix.SpecialLinearGroup.ext
   intro i j
-  fin_cases i <;> fin_cases j <;>
-    simp only [Fin.zero_eta, Fin.isValue, Fin.mk_one, Fin.reduceFinMk,
+  revert i j
+  refine matrix_four_entrywise _ _
+    ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ <;>
+    simp only [Fin.isValue,
       ConnesRigidity.MennickeIdentity.specialLinear_mul_transvection_apply, Fin.reduceEq,
       ↓reduceIte,
       Matrix.SpecialLinearGroup.transvection_coe, Matrix.add_apply, Matrix.one_apply,
@@ -7837,7 +7774,14 @@ private theorem semidirectMap_range_index
       apply Quotient.sound'
       rw [QuotientGroup.leftRel_apply]
       refine ⟨SemidirectProduct.inr z.right, ?_⟩
-      apply SemidirectProduct.ext <;> simp [F, j]
+      apply SemidirectProduct.ext <;> simp only [F, j, SemidirectProduct.map_inr,
+                                        MonoidHom.id_apply, SemidirectProduct.left_inr,
+                                        SemidirectProduct.mul_left, SemidirectProduct.inv_left,
+                                        SemidirectProduct.right_inl, inv_one, map_one,
+                                        SemidirectProduct.left_inl, MulAut.one_apply,
+                                        SemidirectProduct.inv_right, inv_mul_cancel,
+                                        SemidirectProduct.right_inr, SemidirectProduct.mul_right,
+                                        one_mul]
   change F.range.index = f.range.index
   exact (Nat.card_congr (Equiv.ofBijective quotientMap hbijective)).symm
 
@@ -7943,24 +7887,6 @@ private theorem additiveLeftRegularUnitary_single
     ofAdd_add]
 
 /-- Cross-module support for the infinite Connes-rigidity construction. -/
-private theorem fourierUnitary_single_smul
-    {A : Type u} [DecidableEq A]
-    {H : Type v} [NormedAddCommGroup H] [InnerProductSpace ℂ H]
-    (U : GroupL2 (Multiplicative A) ≃ₗᵢ[ℂ] H)
-    (χ : A → H)
-    (hU : ∀ b : A,
-      U (lp.single 2 (Multiplicative.ofAdd b) 1) = χ b)
-    (b : A) (c : ℂ) :
-    U (lp.single 2 (Multiplicative.ofAdd b) c) = c • χ b := by
-  have hs : lp.single (E := fun _ : Multiplicative A => ℂ)
-      2 (Multiplicative.ofAdd b) c =
-      c • lp.single (E := fun _ : Multiplicative A => ℂ)
-        2 (Multiplicative.ofAdd b) (1 : ℂ) := by
-    simpa only [smul_eq_mul, mul_one] using (lp.single_smul (E := fun _ : Multiplicative A => ℂ)
-      2 (Multiplicative.ofAdd b) c (1 : ℂ))
-  rw [hs, map_smul, hU]
-
-/-- Cross-module support for the infinite Connes-rigidity construction. -/
 private theorem fourier_conjugates_regular_of_character_basis
     {A : Type u} [AddCommGroup A] [DecidableEq A]
     {H : Type v} [NormedAddCommGroup H] [InnerProductSpace ℂ H]
@@ -7983,30 +7909,19 @@ private theorem fourier_conjugates_regular_of_character_basis
           GroupL2 (Multiplicative A)) = T.comp F := by
     apply lp.ext_continuousLinearMap (by simp only [ne_eq, ENNReal.ofNat_ne_top, not_false_eq_true])
     intro b
-    apply ContinuousLinearMap.ext
-    intro c
+    apply ContinuousLinearMap.ext_ring
     change U
       ((leftRegularUnitary (Multiplicative.ofAdd a) :
         GroupL2 (Multiplicative A) →L[ℂ]
           GroupL2 (Multiplicative A))
-        (lp.single 2 (Multiplicative.ofAdd (Multiplicative.toAdd b)) c)) =
+        (lp.single 2 (Multiplicative.ofAdd (Multiplicative.toAdd b)) (1 : ℂ))) =
       T (U (lp.single 2
-        (Multiplicative.ofAdd (Multiplicative.toAdd b)) c))
-    rw [additiveLeftRegularUnitary_single
-      a (Multiplicative.toAdd b) c,
-      fourierUnitary_single_smul U χ hU,
-      fourierUnitary_single_smul U χ hU,
-      map_smul, hT]
-  apply ContinuousLinearMap.ext
+        (Multiplicative.ofAdd (Multiplicative.toAdd b)) (1 : ℂ)))
+    rw [additiveLeftRegularUnitary_single a (Multiplicative.toAdd b) (1 : ℂ),
+      hU, hU, hT]
+  apply conjStarAlgEquiv_eq_of_intertwining
   intro ξ
-  obtain ⟨η, rfl⟩ := U.surjective ξ
-  change U
-    ((leftRegularUnitary (Multiplicative.ofAdd a) :
-      GroupL2 (Multiplicative A) →L[ℂ]
-        GroupL2 (Multiplicative A))
-      (U.symm (U η))) = T (U η)
-  rw [U.symm_apply_apply]
-  exact DFunLike.congr_fun hcomp η
+  exact DFunLike.congr_fun hcomp ξ
 
 /-- Cross-module support for the infinite Connes-rigidity construction. -/
 private theorem carryFourier_conjugates_regular_of_character_basis
