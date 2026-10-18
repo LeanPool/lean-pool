@@ -66,11 +66,6 @@ namespace LeanEconomics
 /-- Shifted CRRA: the `b ≠ 0` branch of HARA, with subsistence level `a`. -/
 noncomputable def haraUtility (γ a c : ℝ) : ℝ := crraUtility γ (a + c)
 
-/-- A zero shift recovers ordinary CRRA utility. -/
-theorem haraUtility_zero (γ : ℝ) : haraUtility γ 0 = crraUtility γ := by
-  funext c
-  simp only [haraUtility, zero_add]
-
 @[simp] theorem haraUtility_zero_shift (γ : ℝ) : haraUtility γ 0 = crraUtility γ := by
   funext c; simp [haraUtility]
 

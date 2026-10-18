@@ -234,7 +234,7 @@ theorem crra_minMPC_step {γ : ℝ} (hγ0 : 0 < γ) (hu : P.u = crraUtility γ)
     (z : Z) {a : ℝ} (ha : a ∈ Icc (0 : ℝ) assetCap) :
     P.minMPC γ * P.resources (a, z) ≤ P.consumptionFnOf (P.toExtended.bellman v) z a := by
   simpa only [zero_add] using P.hara_minMPC_step hγ0 (le_refl (0 : ℝ))
-    (hu.trans (haraUtility_zero γ).symm) hfl hκ hβ hposv hcapv hposW
+    (hu.trans (haraUtility_zero_shift γ).symm) hfl hκ hβ hposv hcapv hposW
     (fun z' a' ha' => by simpa only [zero_add] using ih z' a' ha') z ha
 
 /-- **The minimal-MPC bound, at every iterate.** Consumption is at least `κ` times cash on hand,
