@@ -17,10 +17,9 @@ gives the value function its Lipschitz constant), a bound on saving (which gives
 condition), and the calibration arithmetic that checks they fit together. All four were computed
 for `Real.log`, and `hu : P.u = Real.log` propagated through the whole chain.
 
-This file does them for CES. The pleasant surprise is that most of it is not a duplication:
-`hasDerivAt_crraUtility` already covers every `γ > 0`, log included, so the CES lemmas here
-GENERALISE their log counterparts rather than sitting beside them. `crra_marginal_bound` at
-`γ = 1` is `log_marginal_bound`, and `crraSlopeBound` at `γ = 1` is `2 log 2 / m`.
+The common derivative formula `hasDerivAt_crraUtility` covers every `γ > 0`, including log,
+so the marginal bounds also cover that case. The closed form `crraSlopeBound` is used only
+when `γ ≠ 1`; the logarithmic slope bound is evaluated separately as `2 log 2 / m`.
 
 ## The one place the shape changes
 
@@ -180,8 +179,9 @@ theorem crra_cost_of_saving {γ : ℝ} (hγ : 0 < γ) {m h R b : ℝ} (hh0 : 0 <
 
 /-! ### Secant slopes of CRRA, bounded above -/
 
-/-- The closed form of `slopeBound (crraUtility γ)` at the income floor. At `γ = 1` this is
-`2 log 2 / m`, which is `log_slopeBoundU`. -/
+/-- The closed form of `slopeBound (crraUtility γ)` at the income floor for `γ ≠ 1`.
+The literal expression below evaluates to zero at `γ = 1` under total real division, so
+the logarithmic case uses `log_slopeBoundU` separately. -/
 noncomputable def crraSlopeBound (γ m : ℝ) : ℝ :=
   2 * m ^ (-γ) * (1 - ((2 : ℝ) ^ (1 - γ))⁻¹) / (1 - γ)
 
@@ -279,11 +279,12 @@ theorem policy_le_of_marginal_bound {m : ℝ} (hm : 0 < m)
 
 /-! ### The oscillation gap
 
-`deviationGap = 2 β ‖V‖` is what the log development compares against, and it is not
-translation-invariant. That is fatal for CES: `c ^ (1-γ) / (1-γ)` differs from `log` by the
-constant `1 / (1-γ)`, so `‖V‖` blows up as `γ → 1` while the model it describes does not. Every
-use of it is against a DIFFERENCE of continuation values, so what is really needed is the
-oscillation, and that is `(u maxConsumption - u minIncome) / (1 - β)`. -/
+`deviationGap = 2 β ‖V‖` is not translation-invariant. For CES, subtracting
+`1 / (1-γ)` from `c ^ (1-γ) / (1-γ)` gives the normalization that tends to `log c`
+as `γ → 1` for positive `c`; it is not an equality with `log c` at a fixed `γ ≠ 1`.
+A value-norm bound is sensitive to that additive utility constant. The comparisons here use
+DIFFERENCES of continuation values, so an oscillation bound avoids this normalization dependence:
+`(u maxConsumption - u minConsumption) / (1 - β)`. -/
 
 /-- The spread of the value function, from the two constant plans. -/
 noncomputable def oscGap : ℝ :=

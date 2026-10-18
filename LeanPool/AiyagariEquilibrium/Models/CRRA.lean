@@ -41,8 +41,9 @@ open Set Filter Topology
 
 namespace LeanEconomics
 
-/-- **CRRA period utility.** `c ^ (1 - γ) / (1 - γ)`, with the removable case `γ = 1` filled in
-by `log`, which is its limit. -/
+/-- **CRRA period utility.** Power utility for `γ ≠ 1`, with the usual logarithmic convention
+at `γ = 1`. For positive `c`, subtracting `1 / (1 - γ)` from the power branch gives the
+normalization whose limit as `γ → 1` is `log c`; the raw branch does not have a finite limit. -/
 noncomputable def crraUtility (γ c : ℝ) : ℝ :=
   if γ = 1 then Real.log c else c ^ (1 - γ) / (1 - γ)
 
@@ -156,9 +157,9 @@ theorem relativeRiskAversionLeOne_crraUtility_iff {γ : ℝ} :
     rw [he]
     exact not_relativeRiskAversionLeOne_crra h
 
-/-- **The two requirements pinch CRRA to log utility.** The income fluctuation structure needs
-utility to fall to `-∞` at zero consumption, which forces `γ ≥ 1`; Light's uniqueness argument
-needs relative risk aversion at most one, which forces `γ ≤ 1`. -/
+/-- **The unbounded-domain requirements pinch CRRA to log utility.** Divergence to `-∞` at zero
+forces `γ ≥ 1`, while relative risk aversion at most one forces `γ ≤ 1`. This conjunction
+does not restrict the separate bounded-domain treatment of `0 < γ < 1`. -/
 theorem crra_pinch {γ : ℝ} :
     (Tendsto (crraUtility γ) (𝓝[>] 0) atBot ∧ RelativeRiskAversionLeOne (crraUtility γ))
       ↔ γ = 1 := by

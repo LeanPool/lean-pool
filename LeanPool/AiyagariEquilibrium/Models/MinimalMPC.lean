@@ -116,8 +116,9 @@ theorem minMPC_one : P.minMPC 1 = 1 - (P.discount : ℝ) := by
   simp only [minMPC, div_one, Real.rpow_one]
   rw [mul_div_assoc, div_self hR.ne', mul_one]
 
-/-- **The minimal MPC is positive** exactly when the household is impatient and the rate is
-non-negative — Carroll's return impatience, which `βR < 1` implies once `R ≥ 1`. -/
+/-- **Sufficient conditions for a positive minimal MPC:** impatience and a nonnegative rate.
+Here `βR < 1` and `R ≥ 1` imply the required return-impatience bound; these conditions are
+not necessary, as `minMPC_one` also applies at negative admissible rates. -/
 theorem minMPC_pos {γ : ℝ} (hγ0 : 0 < γ) (hint : 0 ≤ P.interest)
     (hβR : (P.discount : ℝ) * (1 + P.interest) < 1) : 0 < P.minMPC γ := by
   have hR : (1 : ℝ) ≤ 1 + P.interest := by linarith

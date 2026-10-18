@@ -30,29 +30,26 @@ deviation argument compares the optimum with saving `h` less:
   `u (c + h) - u c ≤ β * (cont a - cont (a - h))`,
 
 and the right-hand side has to be bounded by a multiple of `h`. The continuation is concave and
-bounded, so its slope on `[0, x]` is at most `2‖V‖ / x` — which blows up as `x → 0`. Minimum
-income kills that case: if consumption is small then saving is nearly all of resources, so
-`a ≥ 3 minIncome / 4` and the slope constant is `4‖V‖ / minIncome`, depending on the state
-through nothing at all. That is `contSlope_le`.
+bounded, so its slope from `assetFloor` to `x` is at most `2‖V‖ / (x - assetFloor)`. The
+positive sustainability bound `minConsumption` keeps the deviation away from that endpoint:
+small consumption forces saving at least `assetFloor + 3 * minConsumption / 4`. The resulting
+state-independent slope constant is `4‖V‖ / minConsumption`, as used by `cont_sub_le`.
 
 With a state-independent constant `L`, any consumption level whose marginal value beats `β L`
 cannot be optimal, and `MarginalInada` supplies one. The floor is explicit:
-`min δ (minIncome / 4)`.
+`min δ (minConsumption / 4)`.
 
-## What this does NOT do, and why
+## How the current bounded-domain model uses this result
 
-The plan was to swap `tendsto_atBot_u` out of the structure. It cannot simply be swapped, and
-the reason is worth recording. That condition does a SECOND job: `continuous_rewardFn` uses it
-to make `extendBot u` continuous into `EReal`, and continuity of the reward is what Berge's
-maximum theorem runs on. With `u (0⁺)` finite, `extendBot u` jumps from a finite limit down to
-`⊥` at zero consumption — it is not even upper semicontinuous there, so the maximum is not
-attained by the general argument and the whole `ExtendedStochasticProgram` apparatus lapses.
+Divergence at zero has two distinct roles in the unbounded-domain model: it makes
+`extendBot u` continuous into `EReal` and excludes zero consumption at an optimum. The marginal
+argument here replaces the latter role.
 
-So admitting `γ < 1` needs the reward to stop being `extendBot u` and start being `u` itself,
-real-valued and continuous on `[0, ∞)` — a different reward, hence a different structure, not a
-different axiom. The floor proved here is what that structure will need and is stated so that it
-transfers: it uses concavity and boundedness of the continuation and nothing else, and in
-particular it never mentions `tendsto_atBot_u`.
+The current `IncomeFluctuation` structure has a utility-domain field.
+`BoundedIncomeFluctuation` takes `dom = Ici 0`, where `extendDom` uses the finite value `u 0`
+rather than `⊥`, and proves the needed reward continuity. Its marginal Inada argument then
+establishes positive consumption separately. The floor results here fit that shared structure;
+they do not require a new household type or a divergence assumption.
 -/
 
 @[expose] public section

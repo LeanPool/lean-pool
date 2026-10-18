@@ -100,7 +100,8 @@ theorem continuousOn_extendDom_Ioi {u : ℝ → ℝ} (hc : ContinuousOn u (Ioi 0
   rw [extendDom_Ioi]
   exact (continuous_extendBot hc ht).continuousOn
 
-/-- The income fluctuation problem, with period utility unbounded below. -/
+/-- The income fluctuation problem, with a utility domain supporting bounded and unbounded
+below period utility. -/
 structure IncomeFluctuation (Z : Type*) [Fintype Z] [Nonempty Z] [TopologicalSpace Z]
     [DiscreteTopology Z] (assetFloor assetCap : ℝ) where
   /-- Income in each state. -/

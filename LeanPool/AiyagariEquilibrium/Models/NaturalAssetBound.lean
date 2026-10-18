@@ -29,13 +29,13 @@ reads `log (resources / consumption) ≤ 2 β ‖V‖`, which is a linear bound 
 
   `consumption ≥ exp (-2 β ‖V‖) · resources`.
 
-## Why this works for log and for nothing else
+## Log and the other CRRA regimes
 
-The deviation is informative only because log is UNBOUNDED ABOVE, so `u resources` grows without
-limit and drags `u consumption` up with it. With CRRA `γ > 1` utility is bounded above, the same
-comparison gives only `c^(1-γ)` bounded, hence a constant floor and no linear bound at all — the
-crude deviation says nothing about rich households. That is another face of the same split
-`crra_pinch` found, and it is the case the structure leaves us with anyway.
+For log utility, `u resources` grows without limit and the deviation gives the proportional
+consumption bound above. In the unbounded-domain CRRA branch with `γ > 1`, utility is bounded
+above, so this comparison gives a constant consumption floor rather than that linear bound.
+The separate bounded-domain treatment also permits `0 < γ < 1`; `crra_pinch` does not exclude
+that regime from the shared household structure.
 
 ## What is honest about the constant
 
