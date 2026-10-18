@@ -1,0 +1,61 @@
+slug: congruence-normalizers
+title: Newman normalizer bounds for congruence subgroups
+summary: >-
+  Characterizes the normalizer of Gamma0(N) in SL(2, R), for every positive
+  level N, by explicit integral matrices scaled by a square root. Extends the
+  necessary matrix form to GammaDelta(N) for every subgroup Delta of the units
+  modulo N. Preserves Atkin-Lehner elements, rational representatives, integral
+  matrix lattices, prime valuations and a generic normalizer argument.
+  The upstream finite presentations, group orders and modular-curve
+  automorphism classifications are outside this import's scope.
+branch: modular forms and arithmetic groups
+entry_module: LeanPool.CongruenceNormalizers
+authors:
+- Filip Najman
+source:
+  title: The normalizer of Gamma0(N) in PSL(2, R)
+  authors:
+  - M. Akbas
+  - D. Singerman
+  doi: 10.1017/S001708950000940X
+  url: https://github.com/F-Najman/normalizer-lean/tree/ea4445c0d991a65d54fc77af0af559f2322e8660
+  github_repo: F-Najman/normalizer-lean
+  commit: ea4445c0d991a65d54fc77af0af559f2322e8660
+  public_release_date: '2026-10-12'
+  completed_snapshot_date: '2026-10-14'
+  completed_snapshot_url: https://github.com/F-Najman/normalizer-lean/commit/99e6fc82ca7a364776179d7c5452cf18593acf6f
+  provenance_url: https://github.com/F-Najman/normalizer-lean/blob/ea4445c0d991a65d54fc77af0af559f2322e8660/palomar/part1/formalization.yaml
+license: Apache-2.0
+status: verified
+provenance: AI
+main_declarations:
+- CongruenceNormalizers.newman_iff
+- CongruenceNormalizers.newman_delta
+main_results:
+- declaration: CongruenceNormalizers.newman_iff
+  informal: >-
+    For N > 0, put h = 2^min(3, floor(v_2(N)/2)) times
+    3^min(1, floor(v_3(N)/2)) and n = N/h^2. A real determinant-one matrix
+    normalizes Gamma0(N) exactly when it equals plus or minus 1/sqrt(e)
+    times [[a*e, b/h], [N*c/h, d*e]], for integers a, b, c, d and a positive
+    divisor e of n satisfying a*d*e^2 - b*c*n = e.
+- declaration: CongruenceNormalizers.newman_delta
+  informal: >-
+    For N > 0 and Delta a subgroup of the units modulo N, let epsilon be
+    gcd(N, u^2 - 1 for representatives u in Delta), and let h be the product
+    over primes p dividing N of p^min(v_p(epsilon), floor(v_p(N)/2)). Every
+    determinant-one real matrix normalizing GammaDelta(N) has the same
+    integral Newman form with this h and n = N/h^2. This is a necessary
+    bound; no converse for GammaDelta(N) is asserted.
+- declaration: CongruenceNormalizers.hPart_isGreatest'
+  informal: >-
+    At every positive level, h(N) is the greatest divisor of 24 whose square
+    divides N.
+tags:
+- modular-forms
+- congruence-subgroups
+- normalizers
+- arithmetic-groups
+msc:
+- 11F06
+- 20H05
