@@ -66,20 +66,6 @@ open scoped TensorProduct
 
 variable {R : Type u} [CommRing R] {M : Type v} [AddCommGroup M] [Module R M]
 
-/-- A module that splits off a free rank-one summand from a finitely generated module is itself
-finitely generated. -/
-theorem Module.Finite.of_linearEquiv_prod {N : Type v} [AddCommGroup N] [Module R N]
-    [Module.Finite R M] (e : M ≃ₗ[R] R × N) : Module.Finite R N :=
-  haveI : Module.Finite R (R × N) := Module.Finite.equiv e
-  Module.Finite.of_surjective (LinearMap.snd R R N) Prod.snd_surjective
-
-/-- A module that splits off a free rank-one summand from a projective module is itself
-projective. -/
-theorem Module.Projective.of_linearEquiv_prod {N : Type v} [AddCommGroup N] [Module R N]
-    [Module.Projective R M] (e : M ≃ₗ[R] R × N) : Module.Projective R N :=
-  haveI : Module.Projective R (R × N) := Module.Projective.of_equiv' e
-  Module.Projective.of_split (LinearMap.inr R R N) (LinearMap.snd R R N) (by ext x; simp)
-
 /-- Positive rank at a maximal ideal makes the residue-field fibre nonzero.
 
 This is the bridge from `Module.rankAtStalk`, which is defined through the localization `R_𝔪`, to

@@ -171,17 +171,9 @@ theorem eq_unitForm_smul_one_of_rankAtStalk_eq_one (D : ConicAlgebra k B)
     [Nontrivial k] (hB : Module.rankAtStalk (R := k) B = fun _ ↦ 1) (x : B) :
     x = D.unitForm x • (1 : B) := by
   let N := LinearMap.ker D.unitForm
-  let p : B →ₗ[k] N := LinearMap.codRestrict N
-    (LinearMap.id - LinearMap.toSpanSingleton k B 1 ∘ₗ D.unitForm) (fun z ↦ by
-      simp [N, LinearMap.mem_ker, LinearMap.toSpanSingleton_apply, D.unitForm_one])
-  have hpi : p ∘ₗ N.subtype = LinearMap.id := by
-    refine LinearMap.ext fun z ↦ Subtype.ext ?_
-    have hz : D.unitForm (z : B) = 0 := z.2
-    simp [p, hz, LinearMap.toSpanSingleton_apply]
-  let : Module.Finite k N :=
-    Module.Finite.of_surjective p fun z ↦ ⟨(z : B), DFunLike.congr_fun hpi z⟩
-  let : Module.Projective k N := Module.Projective.of_split N.subtype p hpi
   let E := LinearMap.equivProdKerOfApplyEqOne D.unitForm (1 : B) D.unitForm_one
+  have : Module.Finite k N := .of_linearEquiv_prod E
+  have : Module.Projective k N := .of_linearEquiv_prod E
   have hN : Module.rankAtStalk (R := k) N = 0 := by
     have hprod := Module.rankAtStalk_prod (R := k) k N
     have hE := Module.rankAtStalk_eq_of_equiv E
