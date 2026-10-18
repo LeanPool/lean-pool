@@ -175,14 +175,7 @@ the state and not on the interest rate, which is what the parametric argument ne
 
 theorem abs_expect_le (v : (ℝ × Z) →ᵇ ℝ) (p : (ℝ × Z) × ℝ) :
     |P.toExtended.expect v p| ≤ ‖v‖ := by
-  calc |P.toExtended.expect v p|
-      ≤ ∑ z', |P.toExtended.prob z' p * v (P.toExtended.transition z' p)| :=
-        Finset.abs_sum_le_sum_abs _ _
-    _ ≤ ∑ z' : Z, P.toExtended.prob z' p * ‖v‖ := by
-        refine Finset.sum_le_sum fun z' _ => ?_
-        rw [abs_mul, abs_of_nonneg (P.toExtended.prob_nonneg z' _)]
-        exact mul_le_mul_of_nonneg_left (v.norm_coe_le_norm _) (P.toExtended.prob_nonneg z' _)
-    _ = ‖v‖ := by rw [← Finset.sum_mul, P.toExtended.prob_sum, one_mul]
+  exact P.toExtended.abs_expect_le v p
 
 /-- **Actions worth keeping consume a bounded amount**, for a cutoff `δ` given in advance.
 

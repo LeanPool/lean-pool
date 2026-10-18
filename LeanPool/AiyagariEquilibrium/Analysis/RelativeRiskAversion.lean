@@ -239,6 +239,24 @@ theorem mul_marginal_le_of_scale {c du : ℝ → ℝ} {s : Set ℝ}
     field_simp
   rwa [e1, e2] at hmul
 
+/-- The pivotal inequality on a bounded asset interval, with the asset rescaled by the
+ratio of two positive gross returns. -/
+theorem mul_marginal_le_of_ratio {c du : ℝ → ℝ} {cap R₁ R₂ a : ℝ}
+    (hc : ConcaveOn ℝ (Icc 0 cap) c) (hc0 : 0 < c 0)
+    (hmono : MonotoneOn c (Icc 0 cap))
+    (hrra : MonotoneOn (fun y => y * du y) (Ioi 0)) (hdu : ∀ y ∈ Ioi 0, 0 ≤ du y)
+    (hR₁ : 0 < R₁) (hR : R₁ ≤ R₂) (ha : a ∈ Ioo 0 cap) :
+    R₁ * du (c (R₁ / R₂ * a)) ≤ R₂ * du (c a) := by
+  have hR₂ : 0 < R₂ := lt_of_lt_of_le hR₁ hR
+  have hscaled : R₁ / R₂ * a ∈ Icc 0 cap :=
+    ⟨mul_nonneg (div_pos hR₁ hR₂).le ha.1.le,
+      (mul_le_of_le_one_left ha.1.le ((div_le_one hR₂).mpr hR)).trans ha.2.le⟩
+  have e₁ : R₁ * (a / R₂) = R₁ / R₂ * a := by ring
+  have e₂ : R₂ * (a / R₂) = a := mul_div_cancel₀ a hR₂.ne'
+  simpa only [e₁, e₂] using
+    mul_marginal_le_of_scale hc ⟨le_rfl, ha.1.le.trans ha.2.le⟩ hc0 hmono hrra hdu
+      hR₁ hR (div_pos ha.1 hR₂) (by rwa [e₁]) (by rw [e₂]; exact ⟨ha.1.le, ha.2.le⟩)
+
 /-! ### Beyond relative risk aversion one
 
 For `u'(c) = c^{-γ}` with `γ > 1`, `c · u'(c) = c^{1-γ}` FALLS, so the second factor above goes

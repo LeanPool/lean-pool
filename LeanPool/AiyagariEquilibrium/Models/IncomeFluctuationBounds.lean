@@ -49,15 +49,7 @@ variable (P : IncomeFluctuation Z assetFloor assetCap)
 theorem abs_expectation_le (a : ℝ) (z : Z) :
     |∑ z', P.transitionMatrix z z' * P.toExtended.valueFunction (a, z')|
       ≤ ‖P.toExtended.valueFunction‖ := by
-  calc |∑ z', P.transitionMatrix z z' * P.toExtended.valueFunction (a, z')|
-      ≤ ∑ z', |P.transitionMatrix z z' * P.toExtended.valueFunction (a, z')| :=
-        Finset.abs_sum_le_sum_abs _ _
-    _ ≤ ∑ z', P.transitionMatrix z z' * ‖P.toExtended.valueFunction‖ := by
-        refine Finset.sum_le_sum fun z' _ => ?_
-        rw [abs_mul, abs_of_nonneg (P.transitionMatrix_nonneg z z')]
-        exact mul_le_mul_of_nonneg_left
-          (P.toExtended.valueFunction.norm_coe_le_norm _) (P.transitionMatrix_nonneg z z')
-    _ = ‖P.toExtended.valueFunction‖ := by rw [← Finset.sum_mul, P.transitionMatrix_sum, one_mul]
+  exact P.toExtended.abs_expect_le P.toExtended.valueFunction ((assetFloor, z), a)
 
 /-- **The utility of optimal consumption is bounded below**, by a quantity depending only on
 the sup norm of the value function — not on the state. -/

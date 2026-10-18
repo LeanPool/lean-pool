@@ -244,11 +244,8 @@ theorem concaveOn_consumptionFnOf_iterates_of_crra {γ : ℝ} (hpc : P.PositiveC
     ∀ n : ℕ, ∀ z : Z, ConcaveOn ℝ (Icc assetFloor assetCap)
       (P.consumptionFnOf ((P.toExtended.bellman)^[n] (0 : (ℝ × Z) →ᵇ ℝ)) z) := by
   set T := P.toExtended.bellman with hTdef
-  have hslices : ∀ n : ℕ, ConcaveSlices assetFloor assetCap (T^[n] (0 : (ℝ × Z) →ᵇ ℝ)) := by
-    intro n
-    induction n with
-    | zero => exact concaveSlices_zero
-    | succ k ih => rw [Function.iterate_succ_apply']; exact P.concaveSlices_bellman ih
+  have hslices : ∀ n : ℕ, ConcaveSlices assetFloor assetCap (T^[n] (0 : (ℝ × Z) →ᵇ ℝ)) :=
+    P.concaveSlices_iterate_bellman concaveSlices_zero
   · intro n
     induction n with
     | zero => exact P.concaveOn_consumptionFnOf_zero
@@ -292,11 +289,8 @@ theorem concaveOn_consumptionFn_of_marginal {γ m : ℝ} (hpc : P.PositiveConsum
       < assetCap)
     (z : Z) : ConcaveOn ℝ (Icc assetFloor assetCap) (P.consumptionFn z) := by
   have hslices : ∀ n : ℕ, ConcaveSlices assetFloor assetCap
-      ((P.toExtended.bellman)^[n] (0 : (ℝ × Z) →ᵇ ℝ)) := by
-    intro n
-    induction n with
-    | zero => exact concaveSlices_zero
-    | succ k ih => rw [Function.iterate_succ_apply']; exact P.concaveSlices_bellman ih
+      ((P.toExtended.bellman)^[n] (0 : (ℝ × Z) →ᵇ ℝ)) :=
+    P.concaveSlices_iterate_bellman concaveSlices_zero
   refine P.concaveOn_consumptionFn_of_crra hpc hγ0 hβ hu (fun n a ha z' => ?_) z
   have hb := P.policyOf_le_of_marginal_bound (hslices n) hm hmarg ha z'
   have hn := P.norm_iterate_le n
@@ -395,11 +389,8 @@ theorem concaveOn_consumptionFn_of_oscSpread {γ θ : ℝ} (hγ0 : 0 < γ) (hγ1
     rw [hb, hu]
     exact marginalInadaOn_Ici_crraUtility hγ0 hγ1
   have hslices : ∀ n : ℕ, ConcaveSlices assetFloor assetCap
-      ((P.toExtended.bellman)^[n] (0 : (ℝ × Z) →ᵇ ℝ)) := by
-    intro n
-    induction n with
-    | zero => exact concaveSlices_zero
-    | succ k ih => rw [Function.iterate_succ_apply']; exact P.concaveSlices_bellman ih
+      ((P.toExtended.bellman)^[n] (0 : (ℝ × Z) →ᵇ ℝ)) :=
+    P.concaveSlices_iterate_bellman concaveSlices_zero
   exact P.concaveOn_consumptionFn_of_iterates
     (P.concaveOn_consumptionFnOf_iterates_of_crra hpc hγ0 hβ hu
       (fun n a ha z' => P.crra_policyOf_lt_assetCap hγ0 hγ1 hθ0 hθ1 hu hpc (hslices n)

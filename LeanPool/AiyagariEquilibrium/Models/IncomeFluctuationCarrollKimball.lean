@@ -127,6 +127,14 @@ theorem concaveSlices_bellman {v : (ℝ × Z) →ᵇ ℝ} (hv : ConcaveSlices as
     ConcaveSlices assetFloor assetCap (P.toExtended.bellman v) :=
   fun z => P.concaveOn_bellman v hv z
 
+/-- Bellman iteration preserves concavity from any concave continuation. -/
+theorem concaveSlices_iterate_bellman {v : (ℝ × Z) →ᵇ ℝ}
+    (hv : ConcaveSlices assetFloor assetCap v) (n : ℕ) :
+    ConcaveSlices assetFloor assetCap ((P.toExtended.bellman)^[n] v) := by
+  induction n with
+  | zero => exact hv
+  | succ k ih => rw [Function.iterate_succ_apply']; exact P.concaveSlices_bellman ih
+
 theorem concaveSlices_valueFunction :
     ConcaveSlices assetFloor assetCap P.toExtended.valueFunction :=
   P.concaveOn_valueFunction

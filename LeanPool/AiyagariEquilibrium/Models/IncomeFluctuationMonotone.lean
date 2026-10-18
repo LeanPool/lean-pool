@@ -110,18 +110,7 @@ theorem concaveOn_contOf {v : (ℝ × Z) →ᵇ ℝ}
   nlinarith [mul_le_mul_of_nonneg_left hz' (P.transitionMatrix_nonneg z z')]
 
 theorem abs_contOf_le (v : (ℝ × Z) →ᵇ ℝ) (z : Z) (x : ℝ) : |P.contOf v z x| ≤ ‖v‖ := by
-  have h1 : |∑ z' : Z, P.transitionMatrix z z' * v (x, z')|
-      ≤ ∑ z' : Z, |P.transitionMatrix z z' * v (x, z')| := Finset.abs_sum_le_sum_abs _ _
-  have h2 : ∑ z' : Z, |P.transitionMatrix z z' * v (x, z')|
-      ≤ ∑ z' : Z, P.transitionMatrix z z' * ‖v‖ := by
-    refine Finset.sum_le_sum fun z' _ => ?_
-    rw [abs_mul, abs_of_nonneg (P.transitionMatrix_nonneg z z')]
-    exact mul_le_mul_of_nonneg_left
-      (by simpa [Real.norm_eq_abs] using v.norm_coe_le_norm (x, z'))
-      (P.transitionMatrix_nonneg z z')
-  rw [← Finset.sum_mul, P.transitionMatrix_sum, one_mul] at h2
-  simp only [contOf]
-  linarith
+  exact P.toExtended.abs_expect_le v ((assetFloor, z), x)
 
 /-- The objective in the reals agrees with the extended objective where consumption is
 positive. -/

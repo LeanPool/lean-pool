@@ -310,231 +310,16 @@ theorem monotoneOn_bellman_sub_scaled {assetCap : ℝ} (Q : IncomeFluctuation Z 
   refine Q.monotoneOn_bellman_sub_scaled_of_piv ht0 ht1 hderiv hanti hwc hid hbv hbw hintv hintw
     hposv hposw ?_
   intro a ha
-  have hR : (0 : ℝ) < 1 + Q.interest := Q.interest_gt_neg_one
-  have hcap : (0 : ℝ) ≤ assetCap := Q.assetFloor_le_assetCap
-  have hzero : (0 : ℝ) ∈ Icc (0 : ℝ) assetCap := ⟨le_rfl, hcap⟩
-  have ha0 : (0 : ℝ) < a := ha.1
-  have hamem : a ∈ Icc (0 : ℝ) assetCap := ⟨ha.1.le, ha.2.le⟩
-  have hta0 : (0 : ℝ) < t * a := mul_pos ht0 ha0
-  have htale : t * a ≤ a := by nlinarith
-  have htamem : t * a ∈ Icc (0 : ℝ) assetCap := ⟨hta0.le, le_trans htale hamem.2⟩
-  -- Light's pivotal inequality, at `α₁ = t R`, `α₂ = R`, `x = a / R`, applied to economy
-  -- two's OWN consumption function
-  have e1 : t * (1 + Q.interest) * (a / (1 + Q.interest)) = t * a := by field_simp
-  have e2 : (1 + Q.interest) * (a / (1 + Q.interest)) = a := by field_simp
-  have hpiv := mul_marginal_le_of_scale (c := Q.consumptionFnOf w z) (du := du) hcw hzero
-    (hposw 0 hzero) hmw hrra hdunn (α₁ := t * (1 + Q.interest)) (α₂ := 1 + Q.interest)
-    (x := a / (1 + Q.interest)) (by positivity) (by nlinarith) (by positivity)
-    (by rw [e1]; exact htamem) (by rw [e2]; exact hamem)
-  rw [e1, e2] at hpiv
-  exact hpiv
+  have hR : 0 < 1 + Q.interest := Q.interest_gt_neg_one
+  simpa only [mul_div_cancel_right₀ _ hR.ne'] using
+    mul_marginal_le_of_ratio hcw (hposw 0 ⟨le_rfl, Q.assetFloor_le_assetCap⟩)
+      hmw hrra hdunn (mul_pos ht0 hR) (mul_le_of_le_one_left hR.le ht1) ha
 
 /-! ### The step, across rates
 
 Reading the difference back through the budget coincidence turns the previous theorem into the
 statement Light's induction propagates: the Bellman images of two continuations with increasing
 differences again have increasing differences, at the two rates. -/
-
-/-- **Light (2018), step 5.** Increasing differences survive the Bellman operator. -/
-theorem incDiffSlices_bellman_withRate (h₁ : P.RateOK r₁) (h₂ : P.RateOK r₂) (hr : r₁ ≤ r₂)
-    {v w : (ℝ × Z) →ᵇ ℝ} {du : ℝ → ℝ}
-    (hderiv : ∀ c : ℝ, 0 < c → HasDerivAt P.u (du c) c)
-    (hanti : AntitoneOn du (Ioi (0 : ℝ))) (hrra : MonotoneOn (fun y => y * du y) (Ioi (0 : ℝ)))
-    (hdunn : ∀ y ∈ Ioi (0 : ℝ), 0 ≤ du y)
-    (hvc : ConcaveSlices (0 : ℝ) assetCap v) (hwc : ConcaveSlices (0 : ℝ) assetCap w)
-    (hposv : ∀ a ∈ Icc (0 : ℝ) assetCap, ∀ z : Z,
-      0 < (P.withRate r₂ h₂).consumptionFnOf v z a)
-    (hposw : ∀ a ∈ Icc (0 : ℝ) assetCap, ∀ z : Z,
-      0 < (P.withRate r₂ h₂).consumptionFnOf w z a)
-    (hslackv : ∀ a ∈ Icc (0 : ℝ) assetCap, ∀ z : Z,
-      (P.withRate r₂ h₂).policyOf v (a, z) < assetCap)
-    (hslackw : ∀ a ∈ Icc (0 : ℝ) assetCap, ∀ z : Z,
-      (P.withRate r₂ h₂).policyOf w (a, z) < assetCap)
-    (hcw : ∀ z : Z, ConcaveOn ℝ (Icc (0 : ℝ) assetCap) ((P.withRate r₂ h₂).consumptionFnOf w z))
-    (hid : IncDiffSlices (0 : ℝ) assetCap v w) :
-    IncDiffSlices (0 : ℝ) assetCap ((P.withRate r₁ h₁).toExtended.bellman v)
-      ((P.withRate r₂ h₂).toExtended.bellman w) := by
-  have hR₁ : (0 : ℝ) < 1 + r₁ := h₁.1
-  have hR₂ : (0 : ℝ) < 1 + r₂ := h₂.1
-  intro z x y hx hy hxy
-  have hmono := (P.withRate r₂ h₂).monotoneOn_bellman_sub_scaled
-    (t := (1 + r₁) / (1 + r₂)) (div_pos hR₁ hR₂) (by rw [div_le_one hR₂]; linarith)
-    (v := v) (w := w) (z := z) (du := du) hderiv hanti hrra hdunn hwc
-    ((P.withRate r₂ h₂).contOfIncreasingDifferences_of_slices hid)
-    ((P.withRate r₂ h₂).concaveSlices_bellman hvc z)
-    ((P.withRate r₂ h₂).concaveSlices_bellman hwc z)
-    (fun a ha => (P.withRate r₂ h₂).policyOf_lt_maxSaving_of_pos (hposv a ha z)
-      (hslackv a ha z))
-    (fun a ha => (P.withRate r₂ h₂).policyOf_lt_maxSaving_of_pos (hposw a ha z)
-      (hslackw a ha z))
-    (fun a ha => hposv a ha z) (fun a ha => hposw a ha z) (hcw z)
-    (fun a ha a' ha' hle => (P.withRate r₂ h₂).consumptionFnOf_mono hwc ha ha' hle)
-  have hkey := hmono hx hy hxy
-  -- read the economy-one terms back through the budget coincidence
-  have hcoin : ∀ a ∈ Icc (0 : ℝ) assetCap,
-      ((P.withRate r₁ h₁).toExtended.bellman v) (a, z)
-        = ((P.withRate r₂ h₂).toExtended.bellman v) ((1 + r₁) / (1 + r₂) * a, z) := by
-    intro a ha
-    rw [(P.withRate r₁ h₁).toExtended.bellman_apply,
-      (P.withRate r₂ h₂).toExtended.bellman_apply]
-    exact P.bellmanFn_withRate h₁ h₂ hr v z ha
-  rw [hcoin x hx, hcoin y hy]
-  linarith
-
-/-! ### The induction, and the limit
-
-`IncDiffSlices` mentions no economy and is closed under pointwise limits, so the step iterates
-from the common start `0` and passes to the two value functions. That discharges the hypothesis
-`hid` of `policy_mono_interest`, and with it Light's Theorem 1. -/
-
-/-- **Light (2018) Theorem 1, with step 5 discharged.** The value functions at two rates have
-increasing differences in assets, so the continuations do. -/
-theorem contIncreasingDifferences_withRate (h₁ : P.RateOK r₁) (h₂ : P.RateOK r₂) (hr : r₁ ≤ r₂)
-    {du : ℝ → ℝ} (hderiv : ∀ c : ℝ, 0 < c → HasDerivAt P.u (du c) c)
-    (hanti : AntitoneOn du (Ioi (0 : ℝ))) (hrra : MonotoneOn (fun y => y * du y) (Ioi (0 : ℝ)))
-    (hdunn : ∀ y ∈ Ioi (0 : ℝ), 0 ≤ du y)
-    (hposv : ∀ n : ℕ, ∀ a ∈ Icc (0 : ℝ) assetCap, ∀ z : Z, 0 <
-      (P.withRate r₂ h₂).consumptionFnOf
-        (((P.withRate r₁ h₁).toExtended.bellman)^[n] (0 : (ℝ × Z) →ᵇ ℝ)) z a)
-    (hposw : ∀ n : ℕ, ∀ a ∈ Icc (0 : ℝ) assetCap, ∀ z : Z, 0 <
-      (P.withRate r₂ h₂).consumptionFnOf
-        (((P.withRate r₂ h₂).toExtended.bellman)^[n] (0 : (ℝ × Z) →ᵇ ℝ)) z a)
-    (hslackv : ∀ n : ℕ, ∀ a ∈ Icc (0 : ℝ) assetCap, ∀ z : Z, (P.withRate r₂ h₂).policyOf
-      (((P.withRate r₁ h₁).toExtended.bellman)^[n] (0 : (ℝ × Z) →ᵇ ℝ)) (a, z) < assetCap)
-    (hslackw : ∀ n : ℕ, ∀ a ∈ Icc (0 : ℝ) assetCap, ∀ z : Z, (P.withRate r₂ h₂).policyOf
-      (((P.withRate r₂ h₂).toExtended.bellman)^[n] (0 : (ℝ × Z) →ᵇ ℝ)) (a, z) < assetCap)
-    (hcons : ∀ n : ℕ, ∀ z : Z, ConcaveOn ℝ (Icc (0 : ℝ) assetCap)
-      ((P.withRate r₂ h₂).consumptionFnOf
-        (((P.withRate r₂ h₂).toExtended.bellman)^[n] (0 : (ℝ × Z) →ᵇ ℝ)) z)) :
-    ContIncreasingDifferences (P.withRate r₁ h₁) (P.withRate r₂ h₂) := by
-  have hvs : ∀ n : ℕ, ConcaveSlices (0 : ℝ) assetCap
-      (((P.withRate r₁ h₁).toExtended.bellman)^[n] (0 : (ℝ × Z) →ᵇ ℝ)) := by
-    intro n
-    induction n with
-    | zero => exact concaveSlices_zero
-    | succ k ih =>
-      rw [Function.iterate_succ_apply']
-      exact (P.withRate r₁ h₁).concaveSlices_bellman ih
-  have hws : ∀ n : ℕ, ConcaveSlices (0 : ℝ) assetCap
-      (((P.withRate r₂ h₂).toExtended.bellman)^[n] (0 : (ℝ × Z) →ᵇ ℝ)) := by
-    intro n
-    induction n with
-    | zero => exact concaveSlices_zero
-    | succ k ih =>
-      rw [Function.iterate_succ_apply']
-      exact (P.withRate r₂ h₂).concaveSlices_bellman ih
-  -- the induction
-  have hstep : ∀ n : ℕ, IncDiffSlices (0 : ℝ) assetCap
-      (((P.withRate r₁ h₁).toExtended.bellman)^[n] (0 : (ℝ × Z) →ᵇ ℝ))
-      (((P.withRate r₂ h₂).toExtended.bellman)^[n] (0 : (ℝ × Z) →ᵇ ℝ)) := by
-    intro n
-    induction n with
-    | zero => exact incDiffSlices_zero _ _
-    | succ k ih =>
-      rw [Function.iterate_succ_apply', Function.iterate_succ_apply']
-      exact P.incDiffSlices_bellman_withRate h₁ h₂ hr hderiv hanti hrra hdunn (hvs k) (hws k)
-        (hposv k) (hposw k) (hslackv k) (hslackw k) (hcons k) ih
-  -- and the limit
-  refine contIncreasingDifferences_of_valueFunction _ _ rfl ?_
-  intro z x y hx hy hxy
-  have hlim₁ : Tendsto (fun n => ((P.withRate r₁ h₁).toExtended.bellman)^[n]
-      (0 : (ℝ × Z) →ᵇ ℝ)) atTop (𝓝 (P.withRate r₁ h₁).toExtended.valueFunction) :=
-    (P.withRate r₁ h₁).toExtended.tendsto_iterate_valueFunction 0
-  have hlim₂ : Tendsto (fun n => ((P.withRate r₂ h₂).toExtended.bellman)^[n]
-      (0 : (ℝ × Z) →ᵇ ℝ)) atTop (𝓝 (P.withRate r₂ h₂).toExtended.valueFunction) :=
-    (P.withRate r₂ h₂).toExtended.tendsto_iterate_valueFunction 0
-  have hpt : ∀ (F : ℕ → (ℝ × Z) →ᵇ ℝ) (G : (ℝ × Z) →ᵇ ℝ), Tendsto F atTop (𝓝 G) →
-      ∀ p : ℝ × Z, Tendsto (fun n => F n p) atTop (𝓝 (G p)) := fun F G hF p =>
-    (BoundedContinuousFunction.tendsto_iff_tendstoUniformly.mp hF).tendsto_at p
-  have hev₁ := hpt _ _ hlim₁
-  have hev₂ := hpt _ _ hlim₂
-  exact le_of_tendsto_of_tendsto ((hev₁ (y, z)).sub (hev₁ (x, z)))
-    ((hev₂ (y, z)).sub (hev₂ (x, z))) (Eventually.of_forall fun n => hstep n z x y hx hy hxy)
-
-/-- **Light (2018) Theorem 1, unconditional on the increasing-differences hypothesis.** A
-household facing a higher interest rate saves at least as much, at every asset level and every
-income state. -/
-theorem policy_mono_withRate' (h₁ : P.RateOK r₁) (h₂ : P.RateOK r₂) (hr : r₁ ≤ r₂)
-    {du : ℝ → ℝ} (hderiv : ∀ c : ℝ, 0 < c → HasDerivAt P.u (du c) c)
-    (hanti : AntitoneOn du (Ioi (0 : ℝ))) (hrra : MonotoneOn (fun y => y * du y) (Ioi (0 : ℝ)))
-    (hdunn : ∀ y ∈ Ioi (0 : ℝ), 0 ≤ du y)
-    (hposv : ∀ n : ℕ, ∀ a ∈ Icc (0 : ℝ) assetCap, ∀ z : Z, 0 <
-      (P.withRate r₂ h₂).consumptionFnOf
-        (((P.withRate r₁ h₁).toExtended.bellman)^[n] (0 : (ℝ × Z) →ᵇ ℝ)) z a)
-    (hposw : ∀ n : ℕ, ∀ a ∈ Icc (0 : ℝ) assetCap, ∀ z : Z, 0 <
-      (P.withRate r₂ h₂).consumptionFnOf
-        (((P.withRate r₂ h₂).toExtended.bellman)^[n] (0 : (ℝ × Z) →ᵇ ℝ)) z a)
-    (hslackv : ∀ n : ℕ, ∀ a ∈ Icc (0 : ℝ) assetCap, ∀ z : Z, (P.withRate r₂ h₂).policyOf
-      (((P.withRate r₁ h₁).toExtended.bellman)^[n] (0 : (ℝ × Z) →ᵇ ℝ)) (a, z) < assetCap)
-    (hslackw : ∀ n : ℕ, ∀ a ∈ Icc (0 : ℝ) assetCap, ∀ z : Z, (P.withRate r₂ h₂).policyOf
-      (((P.withRate r₂ h₂).toExtended.bellman)^[n] (0 : (ℝ × Z) →ᵇ ℝ)) (a, z) < assetCap)
-    (hcons : ∀ n : ℕ, ∀ z : Z, ConcaveOn ℝ (Icc (0 : ℝ) assetCap)
-      ((P.withRate r₂ h₂).consumptionFnOf
-        (((P.withRate r₂ h₂).toExtended.bellman)^[n] (0 : (ℝ × Z) →ᵇ ℝ)) z))
-    {a : ℝ} (ha : a ∈ Icc (0 : ℝ) assetCap) (z : Z) :
-    (P.withRate r₁ h₁).policy (a, z) ≤ (P.withRate r₂ h₂).policy (a, z) :=
-  P.policy_mono_withRate h₁ h₂ hr
-    (P.contIncreasingDifferences_withRate h₁ h₂ hr hderiv hanti hrra hdunn hposv hposw hslackv
-      hslackw hcons) ha z
-
-/-! ### CRRA, with the marginal-utility hypotheses discharged
-
-For `u = crraUtility γ` marginal utility is `c ^ (-γ)`, which is decreasing and non-negative for
-every `γ > 0`, and `c · u'(c) = c ^ (1 - γ)` is nondecreasing exactly when `γ ≤ 1` — relative
-risk aversion at most one, the hypothesis Light needs and the one this development has carried
-since `RelativeRiskAversion`. -/
-
-theorem policy_mono_withRate_crra {γ : ℝ} (hγ0 : 0 < γ) (hγ1 : γ ≤ 1) (hu : P.u = crraUtility γ)
-    (h₁ : P.RateOK r₁) (h₂ : P.RateOK r₂) (hr : r₁ ≤ r₂)
-    (hposv : ∀ n : ℕ, ∀ a ∈ Icc (0 : ℝ) assetCap, ∀ z : Z, 0 <
-      (P.withRate r₂ h₂).consumptionFnOf
-        (((P.withRate r₁ h₁).toExtended.bellman)^[n] (0 : (ℝ × Z) →ᵇ ℝ)) z a)
-    (hposw : ∀ n : ℕ, ∀ a ∈ Icc (0 : ℝ) assetCap, ∀ z : Z, 0 <
-      (P.withRate r₂ h₂).consumptionFnOf
-        (((P.withRate r₂ h₂).toExtended.bellman)^[n] (0 : (ℝ × Z) →ᵇ ℝ)) z a)
-    (hslackv : ∀ n : ℕ, ∀ a ∈ Icc (0 : ℝ) assetCap, ∀ z : Z, (P.withRate r₂ h₂).policyOf
-      (((P.withRate r₁ h₁).toExtended.bellman)^[n] (0 : (ℝ × Z) →ᵇ ℝ)) (a, z) < assetCap)
-    (hslackw : ∀ n : ℕ, ∀ a ∈ Icc (0 : ℝ) assetCap, ∀ z : Z, (P.withRate r₂ h₂).policyOf
-      (((P.withRate r₂ h₂).toExtended.bellman)^[n] (0 : (ℝ × Z) →ᵇ ℝ)) (a, z) < assetCap)
-    (hcons : ∀ n : ℕ, ∀ z : Z, ConcaveOn ℝ (Icc (0 : ℝ) assetCap)
-      ((P.withRate r₂ h₂).consumptionFnOf
-        (((P.withRate r₂ h₂).toExtended.bellman)^[n] (0 : (ℝ × Z) →ᵇ ℝ)) z))
-    {a : ℝ} (ha : a ∈ Icc (0 : ℝ) assetCap) (z : Z) :
-    (P.withRate r₁ h₁).policy (a, z) ≤ (P.withRate r₂ h₂).policy (a, z) := by
-  have hpow : ∀ c : ℝ, 0 < c → c * c ^ (-γ) = c ^ (1 - γ) := by
-    intro c hc
-    rw [show (1 : ℝ) - γ = 1 + -γ by ring, Real.rpow_add hc, Real.rpow_one]
-  refine P.policy_mono_withRate' h₁ h₂ hr (du := fun c => c ^ (-γ)) ?_ ?_ ?_ ?_
-    hposv hposw hslackv hslackw hcons ha z
-  · intro c hc
-    rw [hu]
-    exact hasDerivAt_crraUtility γ hc
-  · intro x hx y hy hxy
-    exact Real.rpow_le_rpow_of_nonpos hx hxy (by linarith)
-  · intro x hx y hy hxy
-    simp only []
-    rw [hpow x hx, hpow y hy]
-    exact Real.rpow_le_rpow hx.le hxy (by linarith)
-  · intro y hy
-    exact Real.rpow_nonneg hy.le _
-
-/-! ### Beyond relative risk aversion one
-
-Everything above used `γ ≤ 1` in one place: the pivotal inequality
-`t R u'(c_w(t a)) ≤ R u'(c_w(a))` applied to economy two's consumption function against the
-CURRENT continuation `w`. Two changes make that inequality a hypothesis one can hope to meet
-when `γ > 1`.
-
-First, run the induction from economy two's own value function rather than from `0`. The
-economy-two iterates are then constant — `T₂ V₂ = V₂` — so the pivotal inequality is asked of
-economy two's TRUE consumption function alone, not of every iterate (whose consumption functions
-start at "eat everything", where no such inequality holds).
-
-Second, `mul_rpow_neg_le_of_scale` gives the inequality for `u' = c^{-γ}`, any `γ`, wherever
-`(1 - c₂(0)/c₂(t a))(ρ - 1) ≤ ρ^{1/γ} - 1` with `ρ = R₂/R₁` — a condition on the range of the
-consumption function, roughly `c₂(a) ≤ (γ/(γ-1)) c₂(0)` for rates close together. It is a
-restriction on wealth, not on preferences: for a small enough asset cap, or on an invariant
-interval, Light's Theorem 1 holds for every `γ`. -/
 
 omit [Fintype Z] [Nonempty Z] [DiscreteTopology Z] in
 theorem incDiffSlices_refl (v : (ℝ × Z) →ᵇ ℝ) : IncDiffSlices (0 : ℝ) assetCap v v :=
@@ -609,21 +394,11 @@ theorem contIncreasingDifferences_withRate_of_piv (h₁ : P.RateOK r₁) (h₂ :
           (((P.withRate r₂ h₂).toExtended.bellman)^[n] v₀) z a)) :
     ContIncreasingDifferences (P.withRate r₁ h₁) (P.withRate r₂ h₂) := by
   have hvs : ∀ n : ℕ, ConcaveSlices (0 : ℝ) assetCap
-      (((P.withRate r₁ h₁).toExtended.bellman)^[n] v₀) := by
-    intro n
-    induction n with
-    | zero => exact hv₀
-    | succ k ih =>
-      rw [Function.iterate_succ_apply']
-      exact (P.withRate r₁ h₁).concaveSlices_bellman ih
+      (((P.withRate r₁ h₁).toExtended.bellman)^[n] v₀) :=
+    (P.withRate r₁ h₁).concaveSlices_iterate_bellman hv₀
   have hws : ∀ n : ℕ, ConcaveSlices (0 : ℝ) assetCap
-      (((P.withRate r₂ h₂).toExtended.bellman)^[n] v₀) := by
-    intro n
-    induction n with
-    | zero => exact hv₀
-    | succ k ih =>
-      rw [Function.iterate_succ_apply']
-      exact (P.withRate r₂ h₂).concaveSlices_bellman ih
+      (((P.withRate r₂ h₂).toExtended.bellman)^[n] v₀) :=
+    (P.withRate r₂ h₂).concaveSlices_iterate_bellman hv₀
   have hstep : ∀ n : ℕ, IncDiffSlices (0 : ℝ) assetCap
       (((P.withRate r₁ h₁).toExtended.bellman)^[n] v₀)
       (((P.withRate r₂ h₂).toExtended.bellman)^[n] v₀) := by
@@ -649,6 +424,153 @@ theorem contIncreasingDifferences_withRate_of_piv (h₁ : P.RateOK r₁) (h₂ :
   have hev₂ := hpt _ _ hlim₂
   exact le_of_tendsto_of_tendsto ((hev₁ (y, z)).sub (hev₁ (x, z)))
     ((hev₂ (y, z)).sub (hev₂ (x, z))) (Eventually.of_forall fun n => hstep n z x y hx hy hxy)
+
+/-- **Light (2018), step 5.** Increasing differences survive the Bellman operator. -/
+theorem incDiffSlices_bellman_withRate (h₁ : P.RateOK r₁) (h₂ : P.RateOK r₂) (hr : r₁ ≤ r₂)
+    {v w : (ℝ × Z) →ᵇ ℝ} {du : ℝ → ℝ}
+    (hderiv : ∀ c : ℝ, 0 < c → HasDerivAt P.u (du c) c)
+    (hanti : AntitoneOn du (Ioi (0 : ℝ))) (hrra : MonotoneOn (fun y => y * du y) (Ioi (0 : ℝ)))
+    (hdunn : ∀ y ∈ Ioi (0 : ℝ), 0 ≤ du y)
+    (hvc : ConcaveSlices (0 : ℝ) assetCap v) (hwc : ConcaveSlices (0 : ℝ) assetCap w)
+    (hposv : ∀ a ∈ Icc (0 : ℝ) assetCap, ∀ z : Z,
+      0 < (P.withRate r₂ h₂).consumptionFnOf v z a)
+    (hposw : ∀ a ∈ Icc (0 : ℝ) assetCap, ∀ z : Z,
+      0 < (P.withRate r₂ h₂).consumptionFnOf w z a)
+    (hslackv : ∀ a ∈ Icc (0 : ℝ) assetCap, ∀ z : Z,
+      (P.withRate r₂ h₂).policyOf v (a, z) < assetCap)
+    (hslackw : ∀ a ∈ Icc (0 : ℝ) assetCap, ∀ z : Z,
+      (P.withRate r₂ h₂).policyOf w (a, z) < assetCap)
+    (hcw : ∀ z : Z, ConcaveOn ℝ (Icc (0 : ℝ) assetCap) ((P.withRate r₂ h₂).consumptionFnOf w z))
+    (hid : IncDiffSlices (0 : ℝ) assetCap v w) :
+    IncDiffSlices (0 : ℝ) assetCap ((P.withRate r₁ h₁).toExtended.bellman v)
+      ((P.withRate r₂ h₂).toExtended.bellman w) := by
+  refine P.incDiffSlices_bellman_withRate_of_piv h₁ h₂ hr hderiv hanti hvc hwc
+    hposv hposw hslackv hslackw ?_ hid
+  intro z a ha
+  exact mul_marginal_le_of_ratio (hcw z)
+    (hposw 0 ⟨le_rfl, P.assetFloor_le_assetCap⟩ z)
+    (fun x hx y hy hxy => (P.withRate r₂ h₂).consumptionFnOf_mono hwc hx hy hxy)
+    hrra hdunn h₁.1 (add_le_add le_rfl hr) ha
+
+/-! ### The induction, and the limit
+
+`IncDiffSlices` mentions no economy and is closed under pointwise limits, so the step iterates
+from the common start `0` and passes to the two value functions. That discharges the hypothesis
+`hid` of `policy_mono_interest`, and with it Light's Theorem 1. -/
+
+/-- **Light (2018) Theorem 1, with step 5 discharged.** The value functions at two rates have
+increasing differences in assets, so the continuations do. -/
+theorem contIncreasingDifferences_withRate (h₁ : P.RateOK r₁) (h₂ : P.RateOK r₂) (hr : r₁ ≤ r₂)
+    {du : ℝ → ℝ} (hderiv : ∀ c : ℝ, 0 < c → HasDerivAt P.u (du c) c)
+    (hanti : AntitoneOn du (Ioi (0 : ℝ))) (hrra : MonotoneOn (fun y => y * du y) (Ioi (0 : ℝ)))
+    (hdunn : ∀ y ∈ Ioi (0 : ℝ), 0 ≤ du y)
+    (hposv : ∀ n : ℕ, ∀ a ∈ Icc (0 : ℝ) assetCap, ∀ z : Z, 0 <
+      (P.withRate r₂ h₂).consumptionFnOf
+        (((P.withRate r₁ h₁).toExtended.bellman)^[n] (0 : (ℝ × Z) →ᵇ ℝ)) z a)
+    (hposw : ∀ n : ℕ, ∀ a ∈ Icc (0 : ℝ) assetCap, ∀ z : Z, 0 <
+      (P.withRate r₂ h₂).consumptionFnOf
+        (((P.withRate r₂ h₂).toExtended.bellman)^[n] (0 : (ℝ × Z) →ᵇ ℝ)) z a)
+    (hslackv : ∀ n : ℕ, ∀ a ∈ Icc (0 : ℝ) assetCap, ∀ z : Z, (P.withRate r₂ h₂).policyOf
+      (((P.withRate r₁ h₁).toExtended.bellman)^[n] (0 : (ℝ × Z) →ᵇ ℝ)) (a, z) < assetCap)
+    (hslackw : ∀ n : ℕ, ∀ a ∈ Icc (0 : ℝ) assetCap, ∀ z : Z, (P.withRate r₂ h₂).policyOf
+      (((P.withRate r₂ h₂).toExtended.bellman)^[n] (0 : (ℝ × Z) →ᵇ ℝ)) (a, z) < assetCap)
+    (hcons : ∀ n : ℕ, ∀ z : Z, ConcaveOn ℝ (Icc (0 : ℝ) assetCap)
+      ((P.withRate r₂ h₂).consumptionFnOf
+        (((P.withRate r₂ h₂).toExtended.bellman)^[n] (0 : (ℝ × Z) →ᵇ ℝ)) z)) :
+    ContIncreasingDifferences (P.withRate r₁ h₁) (P.withRate r₂ h₂) := by
+  refine P.contIncreasingDifferences_withRate_of_piv h₁ h₂ hr hderiv hanti 0
+    concaveSlices_zero hposv hposw hslackv hslackw ?_
+  intro n z a ha
+  exact mul_marginal_le_of_ratio (hcons n z)
+    (hposw n 0 ⟨le_rfl, P.assetFloor_le_assetCap⟩ z)
+    (fun x hx y hy hxy => (P.withRate r₂ h₂).consumptionFnOf_mono
+      ((P.withRate r₂ h₂).concaveSlices_iterate_bellman concaveSlices_zero n) hx hy hxy)
+    hrra hdunn h₁.1 (add_le_add le_rfl hr) ha
+
+/-- **Light (2018) Theorem 1, unconditional on the increasing-differences hypothesis.** A
+household facing a higher interest rate saves at least as much, at every asset level and every
+income state. -/
+theorem policy_mono_withRate' (h₁ : P.RateOK r₁) (h₂ : P.RateOK r₂) (hr : r₁ ≤ r₂)
+    {du : ℝ → ℝ} (hderiv : ∀ c : ℝ, 0 < c → HasDerivAt P.u (du c) c)
+    (hanti : AntitoneOn du (Ioi (0 : ℝ))) (hrra : MonotoneOn (fun y => y * du y) (Ioi (0 : ℝ)))
+    (hdunn : ∀ y ∈ Ioi (0 : ℝ), 0 ≤ du y)
+    (hposv : ∀ n : ℕ, ∀ a ∈ Icc (0 : ℝ) assetCap, ∀ z : Z, 0 <
+      (P.withRate r₂ h₂).consumptionFnOf
+        (((P.withRate r₁ h₁).toExtended.bellman)^[n] (0 : (ℝ × Z) →ᵇ ℝ)) z a)
+    (hposw : ∀ n : ℕ, ∀ a ∈ Icc (0 : ℝ) assetCap, ∀ z : Z, 0 <
+      (P.withRate r₂ h₂).consumptionFnOf
+        (((P.withRate r₂ h₂).toExtended.bellman)^[n] (0 : (ℝ × Z) →ᵇ ℝ)) z a)
+    (hslackv : ∀ n : ℕ, ∀ a ∈ Icc (0 : ℝ) assetCap, ∀ z : Z, (P.withRate r₂ h₂).policyOf
+      (((P.withRate r₁ h₁).toExtended.bellman)^[n] (0 : (ℝ × Z) →ᵇ ℝ)) (a, z) < assetCap)
+    (hslackw : ∀ n : ℕ, ∀ a ∈ Icc (0 : ℝ) assetCap, ∀ z : Z, (P.withRate r₂ h₂).policyOf
+      (((P.withRate r₂ h₂).toExtended.bellman)^[n] (0 : (ℝ × Z) →ᵇ ℝ)) (a, z) < assetCap)
+    (hcons : ∀ n : ℕ, ∀ z : Z, ConcaveOn ℝ (Icc (0 : ℝ) assetCap)
+      ((P.withRate r₂ h₂).consumptionFnOf
+        (((P.withRate r₂ h₂).toExtended.bellman)^[n] (0 : (ℝ × Z) →ᵇ ℝ)) z))
+    {a : ℝ} (ha : a ∈ Icc (0 : ℝ) assetCap) (z : Z) :
+    (P.withRate r₁ h₁).policy (a, z) ≤ (P.withRate r₂ h₂).policy (a, z) :=
+  P.policy_mono_withRate h₁ h₂ hr
+    (P.contIncreasingDifferences_withRate h₁ h₂ hr hderiv hanti hrra hdunn hposv hposw hslackv
+      hslackw hcons) ha z
+
+/-! ### CRRA, with the marginal-utility hypotheses discharged
+
+For `u = crraUtility γ` marginal utility is `c ^ (-γ)`, which is decreasing and non-negative for
+every `γ > 0`, and `c · u'(c) = c ^ (1 - γ)` is nondecreasing exactly when `γ ≤ 1` — relative
+risk aversion at most one, the hypothesis Light needs and the one this development has carried
+since `RelativeRiskAversion`. -/
+
+theorem policy_mono_withRate_crra {γ : ℝ} (hγ0 : 0 < γ) (hγ1 : γ ≤ 1) (hu : P.u = crraUtility γ)
+    (h₁ : P.RateOK r₁) (h₂ : P.RateOK r₂) (hr : r₁ ≤ r₂)
+    (hposv : ∀ n : ℕ, ∀ a ∈ Icc (0 : ℝ) assetCap, ∀ z : Z, 0 <
+      (P.withRate r₂ h₂).consumptionFnOf
+        (((P.withRate r₁ h₁).toExtended.bellman)^[n] (0 : (ℝ × Z) →ᵇ ℝ)) z a)
+    (hposw : ∀ n : ℕ, ∀ a ∈ Icc (0 : ℝ) assetCap, ∀ z : Z, 0 <
+      (P.withRate r₂ h₂).consumptionFnOf
+        (((P.withRate r₂ h₂).toExtended.bellman)^[n] (0 : (ℝ × Z) →ᵇ ℝ)) z a)
+    (hslackv : ∀ n : ℕ, ∀ a ∈ Icc (0 : ℝ) assetCap, ∀ z : Z, (P.withRate r₂ h₂).policyOf
+      (((P.withRate r₁ h₁).toExtended.bellman)^[n] (0 : (ℝ × Z) →ᵇ ℝ)) (a, z) < assetCap)
+    (hslackw : ∀ n : ℕ, ∀ a ∈ Icc (0 : ℝ) assetCap, ∀ z : Z, (P.withRate r₂ h₂).policyOf
+      (((P.withRate r₂ h₂).toExtended.bellman)^[n] (0 : (ℝ × Z) →ᵇ ℝ)) (a, z) < assetCap)
+    (hcons : ∀ n : ℕ, ∀ z : Z, ConcaveOn ℝ (Icc (0 : ℝ) assetCap)
+      ((P.withRate r₂ h₂).consumptionFnOf
+        (((P.withRate r₂ h₂).toExtended.bellman)^[n] (0 : (ℝ × Z) →ᵇ ℝ)) z))
+    {a : ℝ} (ha : a ∈ Icc (0 : ℝ) assetCap) (z : Z) :
+    (P.withRate r₁ h₁).policy (a, z) ≤ (P.withRate r₂ h₂).policy (a, z) := by
+  have hpow : ∀ c : ℝ, 0 < c → c * c ^ (-γ) = c ^ (1 - γ) := by
+    intro c hc
+    rw [show (1 : ℝ) - γ = 1 + -γ by ring, Real.rpow_add hc, Real.rpow_one]
+  refine P.policy_mono_withRate' h₁ h₂ hr (du := fun c => c ^ (-γ)) ?_ ?_ ?_ ?_
+    hposv hposw hslackv hslackw hcons ha z
+  · intro c hc
+    rw [hu]
+    exact hasDerivAt_crraUtility γ hc
+  · intro x hx y hy hxy
+    exact Real.rpow_le_rpow_of_nonpos hx hxy (by linarith)
+  · intro x hx y hy hxy
+    simp only []
+    rw [hpow x hx, hpow y hy]
+    exact Real.rpow_le_rpow hx.le hxy (by linarith)
+  · intro y hy
+    exact Real.rpow_nonneg hy.le _
+
+/-! ### Beyond relative risk aversion one
+
+The relative-risk-aversion specializations use `γ ≤ 1` in one place: the pivotal inequality
+`t R u'(c_w(t a)) ≤ R u'(c_w(a))` applied to economy two's consumption function against the
+CURRENT continuation `w`. Two changes make that inequality a hypothesis one can hope to meet
+when `γ > 1`.
+
+First, run the induction from economy two's own value function rather than from `0`. The
+economy-two iterates are then constant — `T₂ V₂ = V₂` — so the pivotal inequality is asked of
+economy two's TRUE consumption function alone, not of every iterate (whose consumption functions
+start at "eat everything", where no such inequality holds).
+
+Second, `mul_rpow_neg_le_of_scale` gives the inequality for `u' = c^{-γ}`, any `γ`, wherever
+`(1 - c₂(0)/c₂(t a))(ρ - 1) ≤ ρ^{1/γ} - 1` with `ρ = R₂/R₁` — a condition on the range of the
+consumption function, roughly `c₂(a) ≤ (γ/(γ-1)) c₂(0)` for rates close together. It is a
+restriction on wealth, not on preferences: for a small enough asset cap, or on an invariant
+interval, Light's Theorem 1 holds for every `γ`. -/
 
 /-- **Light (2018) Theorem 1 from the pivotal inequality on economy two's OWN consumption
 function.** The induction is started at economy two's value function, which its Bellman
