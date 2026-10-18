@@ -214,23 +214,24 @@ theorem monotoneOn_consumptionFn (z : Z) :
 
 /-! ### A linear lower bound on consumption makes assets decline
 
-Ma and Toda (2022) prove that the consumption function is asymptotically LINEAR whenever
-marginal utility is regularly varying, and characterise the slope. Their Corollary 2.10 covers
-this model — constant discount factor and return, bounded relative risk aversion, `R ≥ 1` — and
-gives the asymptotic marginal propensity to consume in closed form,
+Ma and Toda study asymptotic linearity in an UNCAPPED savings problem. Corollary 2.10 of their
+[March 8, 2021 draft](https://qingyin-ma.github.io/papers/AL_10_arxiv.pdf) gives the following
+asymptotic marginal propensity under its standing assumptions, bounded relative risk aversion,
+constant discount and return, and `R ≥ 1`. The standing infinite-horizon assumptions include
+`β R < 1` and regular variation of marginal utility with index `-γ`, where `γ > 0`:
 
   `c_bar = 1 - (β R^(1-γ))^(1/γ)`.
 
-That result is about the UNCAPPED problem and is not proved here. What is proved here is the
-consequence, which is what this development actually wants: a linear lower bound on consumption
-forces assets to fall, above an explicit threshold. That is precisely the hypothesis `hdecl` of
+No identification of that uncapped problem with this capped household is asserted. What is
+proved here is a conditional implication: a linear lower bound on consumption forces assets
+to fall above an explicit threshold. That is precisely the hypothesis `hdecl` of
 `exists_exhaust_of_decline`, on which the whole Doeblin uniqueness and convergence argument
 rests, and which has been a raw assumption until now.
 
-The two fit together exactly. With Ma and Toda's slope the asymptotic growth factor of assets is
+For the displayed candidate slope, the algebraic growth factor is
 `(1 - c_bar) R = (β R)^(1/γ)` — `one_sub_mpc_mul_of_asymptotic`, below — so the condition
 `(1 - ε) (1 + r) < 1` demanded by `policy_lt_self_of_consumption_lower_bound` is exactly `β R < 1`.
-Impatience, and nothing else, is what bounds assets. -/
+The lower-bound premise remains explicit; the identity alone supplies no asset bound. -/
 
 /-- **The asymptotic growth factor of assets is `(β R)^(1/γ)`.** With Ma and Toda's asymptotic
 MPC `c_bar = 1 - (β R^(1-γ))^(1/γ)`, the factor `(1 - c_bar) R` by which assets grow collapses to

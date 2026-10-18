@@ -242,7 +242,6 @@ positive at each iterate, and the saving cap slack there. Both are fields (or im
 consequences of fields) of `Calibrated`. -/
 theorem crra_minMPC_mul_le_consumptionFnOf {γ : ℝ} (hγ0 : 0 < γ) (hu : P.u = crraUtility γ)
     (hfl : assetFloor = 0) (hκ : 0 < P.minMPC γ) (hβ : 0 < (P.discount : ℝ))
-    (hβR : (P.discount : ℝ) * (1 + P.interest) < 1)
     (hpos : ∀ n : ℕ, ∀ z : Z, ∀ a ∈ Icc (0 : ℝ) assetCap,
       0 < P.consumptionFnOf ((P.toExtended.bellman)^[n] (0 : (ℝ × Z) →ᵇ ℝ)) z a)
     (hcap : ∀ n : ℕ, ∀ a ∈ Icc (0 : ℝ) assetCap, ∀ z : Z,
@@ -281,14 +280,13 @@ follow uniform limits when the limit has concave slices, which the value functio
 /-- **The minimal-MPC bound at the value function.** -/
 theorem crra_minMPC_mul_le_consumptionFn {γ : ℝ} (hγ0 : 0 < γ) (hu : P.u = crraUtility γ)
     (hfl : assetFloor = 0) (hκ : 0 < P.minMPC γ) (hβ : 0 < (P.discount : ℝ))
-    (hβR : (P.discount : ℝ) * (1 + P.interest) < 1)
     (hpos : ∀ n : ℕ, ∀ z : Z, ∀ a ∈ Icc (0 : ℝ) assetCap,
       0 < P.consumptionFnOf ((P.toExtended.bellman)^[n] (0 : (ℝ × Z) →ᵇ ℝ)) z a)
     (hcap : ∀ n : ℕ, ∀ a ∈ Icc (0 : ℝ) assetCap, ∀ z : Z,
       P.policyOf ((P.toExtended.bellman)^[n] (0 : (ℝ × Z) →ᵇ ℝ)) (a, z) < assetCap)
     (z : Z) {a : ℝ} (ha : a ∈ Icc (0 : ℝ) assetCap) :
     P.minMPC γ * P.resources (a, z) ≤ P.consumptionFn z a := by
-  have hiter := P.crra_minMPC_mul_le_consumptionFnOf hγ0 hu hfl hκ hβ hβR hpos hcap
+  have hiter := P.crra_minMPC_mul_le_consumptionFnOf hγ0 hu hfl hκ hβ hpos hcap
   have hmem : ((a, z) : ℝ × Z).1 ∈ Icc assetFloor assetCap := by rw [hfl]; exact ha
   have htend : Tendsto
       (fun n => P.policyOf ((P.toExtended.bellman)^[n] (0 : (ℝ × Z) →ᵇ ℝ)) (a, z)) atTop
@@ -310,7 +308,6 @@ its assets down, because it consumes at least the share `κ` of cash on hand and
 development has carried as an assumption. -/
 theorem crra_policy_lt_self_of_minMPC {γ : ℝ} (hγ0 : 0 < γ) (hu : P.u = crraUtility γ)
     (hfl : assetFloor = 0) (hκ : 0 < P.minMPC γ) (hβ : 0 < (P.discount : ℝ))
-    (hβR : (P.discount : ℝ) * (1 + P.interest) < 1)
     (hpos : ∀ n : ℕ, ∀ z : Z, ∀ a ∈ Icc (0 : ℝ) assetCap,
       0 < P.consumptionFnOf ((P.toExtended.bellman)^[n] (0 : (ℝ × Z) →ᵇ ℝ)) z a)
     (hcap : ∀ n : ℕ, ∀ a ∈ Icc (0 : ℝ) assetCap, ∀ z : Z,
@@ -321,7 +318,7 @@ theorem crra_policy_lt_self_of_minMPC {γ : ℝ} (hγ0 : 0 < γ) (hu : P.u = crr
     P.policy (a, z) < a := by
   subst hfl
   refine P.policy_lt_self_of_consumption_lower_bound (ε := P.minMPC γ) ha ?_ (by linarith)
-  simpa using P.crra_minMPC_mul_le_consumptionFn hγ0 hu rfl hκ hβ hβR hpos hcap z ha
+  simpa using P.crra_minMPC_mul_le_consumptionFn hγ0 hu rfl hκ hβ hpos hcap z ha
 
 /-! ### Cap slack from the bound itself
 
@@ -361,7 +358,6 @@ theorem crra_policyOf_lt_cap_of_minMPC_bound {γ : ℝ} (hfl : assetFloor = 0)
 beyond one inequality among the primitives. -/
 theorem crra_minMPC_of_cap {γ : ℝ} (hγ0 : 0 < γ) (hu : P.u = crraUtility γ)
     (hfl : assetFloor = 0) (hκ : 0 < P.minMPC γ) (hβ : 0 < (P.discount : ℝ))
-    (hβR : (P.discount : ℝ) * (1 + P.interest) < 1)
     (hpos : ∀ n : ℕ, ∀ z : Z, ∀ a ∈ Icc (0 : ℝ) assetCap,
       0 < P.consumptionFnOf ((P.toExtended.bellman)^[n] (0 : (ℝ × Z) →ᵇ ℝ)) z a)
     (hthr : (1 - P.minMPC γ) * (P.maxIncome + (1 + P.interest) * assetCap) < assetCap) :
@@ -406,26 +402,24 @@ theorem crra_minMPC_of_cap {γ : ℝ} (hγ0 : 0 < γ) (hu : P.u = crraUtility γ
 /-- **The minimal-MPC bound at the value function, with the cap from primitives.** -/
 theorem crra_minMPC_mul_le_consumptionFn_of_cap {γ : ℝ} (hγ0 : 0 < γ) (hu : P.u = crraUtility γ)
     (hfl : assetFloor = 0) (hκ : 0 < P.minMPC γ) (hβ : 0 < (P.discount : ℝ))
-    (hβR : (P.discount : ℝ) * (1 + P.interest) < 1)
     (hpos : ∀ n : ℕ, ∀ z : Z, ∀ a ∈ Icc (0 : ℝ) assetCap,
       0 < P.consumptionFnOf ((P.toExtended.bellman)^[n] (0 : (ℝ × Z) →ᵇ ℝ)) z a)
     (hthr : (1 - P.minMPC γ) * (P.maxIncome + (1 + P.interest) * assetCap) < assetCap)
     (z : Z) {a : ℝ} (ha : a ∈ Icc (0 : ℝ) assetCap) :
     P.minMPC γ * P.resources (a, z) ≤ P.consumptionFn z a :=
-  P.crra_minMPC_mul_le_consumptionFn hγ0 hu hfl hκ hβ hβR hpos
-    (fun n => (P.crra_minMPC_of_cap hγ0 hu hfl hκ hβ hβR hpos hthr n).2) z ha
+  P.crra_minMPC_mul_le_consumptionFn hγ0 hu hfl hκ hβ hpos
+    (fun n => (P.crra_minMPC_of_cap hγ0 hu hfl hκ hβ hpos hthr n).2) z ha
 
 /-- **The cap is slack at the fixed point**, from primitives. -/
 theorem crra_policy_lt_cap_of_minMPC {γ : ℝ} (hγ0 : 0 < γ) (hu : P.u = crraUtility γ)
     (hfl : assetFloor = 0) (hκ : 0 < P.minMPC γ) (hβ : 0 < (P.discount : ℝ))
-    (hβR : (P.discount : ℝ) * (1 + P.interest) < 1)
     (hpos : ∀ n : ℕ, ∀ z : Z, ∀ a ∈ Icc (0 : ℝ) assetCap,
       0 < P.consumptionFnOf ((P.toExtended.bellman)^[n] (0 : (ℝ × Z) →ᵇ ℝ)) z a)
     (hthr : (1 - P.minMPC γ) * (P.maxIncome + (1 + P.interest) * assetCap) < assetCap)
     {a : ℝ} (ha : a ∈ Icc (0 : ℝ) assetCap) (z : Z) : P.policy (a, z) < assetCap :=
   P.crra_policyOf_lt_cap_of_minMPC_bound hfl hthr
     (fun z' _b hb =>
-      P.crra_minMPC_mul_le_consumptionFn_of_cap hγ0 hu hfl hκ hβ hβR hpos hthr z' hb)
+      P.crra_minMPC_mul_le_consumptionFn_of_cap hγ0 hu hfl hκ hβ hpos hthr z' hb)
     ha z
 
 /-! ### The shifted-CRRA version
@@ -445,7 +439,6 @@ household with income raised by `η` — which is what a subsistence level is. -
 theorem hara_minMPC_mul_le_consumptionFnOf {γ η : ℝ} (hγ0 : 0 < γ) (hη : 0 ≤ η)
     (hu : P.u = haraUtility γ η)
     (hfl : assetFloor = 0) (hκ : 0 < P.minMPC γ) (hβ : 0 < (P.discount : ℝ))
-    (hβR : (P.discount : ℝ) * (1 + P.interest) < 1)
     (hpos : ∀ n : ℕ, ∀ z : Z, ∀ a ∈ Icc (0 : ℝ) assetCap,
       0 < P.consumptionFnOf ((P.toExtended.bellman)^[n] (0 : (ℝ × Z) →ᵇ ℝ)) z a)
     (hcap : ∀ n : ℕ, ∀ a ∈ Icc (0 : ℝ) assetCap, ∀ z : Z,
@@ -479,14 +472,13 @@ theorem hara_minMPC_mul_le_consumptionFnOf {γ η : ℝ} (hγ0 : 0 < γ) (hη : 
 theorem hara_minMPC_mul_le_consumptionFn {γ η : ℝ} (hγ0 : 0 < γ) (hη : 0 ≤ η)
     (hu : P.u = haraUtility γ η)
     (hfl : assetFloor = 0) (hκ : 0 < P.minMPC γ) (hβ : 0 < (P.discount : ℝ))
-    (hβR : (P.discount : ℝ) * (1 + P.interest) < 1)
     (hpos : ∀ n : ℕ, ∀ z : Z, ∀ a ∈ Icc (0 : ℝ) assetCap,
       0 < P.consumptionFnOf ((P.toExtended.bellman)^[n] (0 : (ℝ × Z) →ᵇ ℝ)) z a)
     (hcap : ∀ n : ℕ, ∀ a ∈ Icc (0 : ℝ) assetCap, ∀ z : Z,
       P.policyOf ((P.toExtended.bellman)^[n] (0 : (ℝ × Z) →ᵇ ℝ)) (a, z) < assetCap)
     (z : Z) {a : ℝ} (ha : a ∈ Icc (0 : ℝ) assetCap) :
     P.minMPC γ * (η + P.resources (a, z)) ≤ η + P.consumptionFn z a := by
-  have hiter := P.hara_minMPC_mul_le_consumptionFnOf hγ0 hη hu hfl hκ hβ hβR hpos hcap
+  have hiter := P.hara_minMPC_mul_le_consumptionFnOf hγ0 hη hu hfl hκ hβ hpos hcap
   have hmem : ((a, z) : ℝ × Z).1 ∈ Icc assetFloor assetCap := by rw [hfl]; exact ha
   have htend : Tendsto
       (fun n => P.policyOf ((P.toExtended.bellman)^[n] (0 : (ℝ × Z) →ᵇ ℝ)) (a, z)) atTop
@@ -512,14 +504,13 @@ noncomputable def minMPCShare (γ η : ℝ) : ℝ :=
 theorem hara_minMPCShare_mul_le_consumptionFn {γ η : ℝ} (hγ0 : 0 < γ) (hη : 0 ≤ η)
     (hu : P.u = haraUtility γ η)
     (hfl : assetFloor = 0) (hκ : 0 < P.minMPC γ) (hβ : 0 < (P.discount : ℝ))
-    (hβR : (P.discount : ℝ) * (1 + P.interest) < 1)
     (hpos : ∀ n : ℕ, ∀ z : Z, ∀ a ∈ Icc (0 : ℝ) assetCap,
       0 < P.consumptionFnOf ((P.toExtended.bellman)^[n] (0 : (ℝ × Z) →ᵇ ℝ)) z a)
     (hcap : ∀ n : ℕ, ∀ a ∈ Icc (0 : ℝ) assetCap, ∀ z : Z,
       P.policyOf ((P.toExtended.bellman)^[n] (0 : (ℝ × Z) →ᵇ ℝ)) (a, z) < assetCap)
     (z : Z) {a : ℝ} (ha : a ∈ Icc (0 : ℝ) assetCap) :
     P.minMPCShare γ η * P.resources (a, z) ≤ P.consumptionFn z a := by
-  have hbound := P.hara_minMPC_mul_le_consumptionFn hγ0 hη hu hfl hκ hβ hβR hpos hcap z ha
+  have hbound := P.hara_minMPC_mul_le_consumptionFn hγ0 hη hu hfl hκ hβ hpos hcap z ha
   have hκ1 : P.minMPC γ ≤ 1 := minMPC_le_one (P := P)
   have hy : 0 < P.minIncome := P.minIncome_pos
   have hR : (0 : ℝ) < 1 + P.interest := P.interest_gt_neg_one
@@ -547,7 +538,6 @@ household behaves like a CRRA household whose income is raised by the subsistenc
 theorem hara_policy_lt_self_of_minMPC {γ η : ℝ} (hγ0 : 0 < γ) (hη : 0 ≤ η)
     (hu : P.u = haraUtility γ η)
     (hfl : assetFloor = 0) (hκ : 0 < P.minMPC γ) (hβ : 0 < (P.discount : ℝ))
-    (hβR : (P.discount : ℝ) * (1 + P.interest) < 1)
     (hpos : ∀ n : ℕ, ∀ z : Z, ∀ a ∈ Icc (0 : ℝ) assetCap,
       0 < P.consumptionFnOf ((P.toExtended.bellman)^[n] (0 : (ℝ × Z) →ᵇ ℝ)) z a)
     (hcap : ∀ n : ℕ, ∀ a ∈ Icc (0 : ℝ) assetCap, ∀ z : Z,
@@ -556,7 +546,7 @@ theorem hara_policy_lt_self_of_minMPC {γ η : ℝ} (hγ0 : 0 < γ) (hη : 0 ≤
     (hgt : (1 - P.minMPC γ) * (η + P.income z)
       < (1 - (1 - P.minMPC γ) * (1 + P.interest)) * a) :
     P.policy (a, z) < a := by
-  have hbound := P.hara_minMPC_mul_le_consumptionFn hγ0 hη hu hfl hκ hβ hβR hpos hcap z ha
+  have hbound := P.hara_minMPC_mul_le_consumptionFn hγ0 hη hu hfl hκ hβ hpos hcap z ha
   have hres : P.resources (a, z) = P.income z + (1 + P.interest) * a := by
     simp only [resources, max_eq_right (hfl ▸ ha.1 : assetFloor ≤ a)]
   have hpol : P.policy (a, z) = P.resources (a, z) - P.consumptionFn z a := by
@@ -585,7 +575,7 @@ theorem hara_exists_exhaust_of_minMPC {γ η : ℝ} (hγ0 : 0 < γ) (hη : 0 ≤
     have := patience_lt_one (P := P) hγ0 hβR
     linarith
   refine P.exists_exhaust_of_decline ha₀ hle hzero fun a ha => ?_
-  refine P.hara_policy_lt_self_of_minMPC hγ0 hη hu rfl hκ hβ hβR hpos hcap z₀
+  refine P.hara_policy_lt_self_of_minMPC hγ0 hη hu rfl hκ hβ hpos hcap z₀
     ⟨le_trans ha₀.le ha.1, ha.2⟩ ?_
   have hmono : (1 - (1 - P.minMPC γ) * (1 + P.interest)) * a₀
       ≤ (1 - (1 - P.minMPC γ) * (1 + P.interest)) * a :=
@@ -627,7 +617,7 @@ theorem crra_exists_exhaust_of_minMPC {γ : ℝ} (hγ0 : 0 < γ) (hu : P.u = crr
     have := patience_lt_one (P := P) hγ0 hβR
     linarith
   refine P.exists_exhaust_of_decline ha₀ hle hzero fun a ha => ?_
-  refine P.crra_policy_lt_self_of_minMPC hγ0 hu rfl hκ hβ hβR hpos hcap z₀
+  refine P.crra_policy_lt_self_of_minMPC hγ0 hu rfl hκ hβ hpos hcap z₀
     ⟨le_trans ha₀.le ha.1, ha.2⟩ ?_
   have hmono : (1 - (1 - P.minMPC γ) * (1 + P.interest)) * a₀
       ≤ (1 - (1 - P.minMPC γ) * (1 + P.interest)) * a :=

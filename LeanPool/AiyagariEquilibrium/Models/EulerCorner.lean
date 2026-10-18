@@ -31,8 +31,9 @@ saving is not optimal: if it were, the Euler inequality and step one would give
 `u'(cash on hand) ≤ u'(c) ≤ βR u'(minIncome)`. This is the contrapositive of `euler_ge`.
 
 For log utility the test at the worst income state is `a < minIncome (1 - βR) / (βR²)`: a small
-but positive corner region, at every `β < 1/R`. Compare Clarida (1987), who has the corner on
-`[ε - rφ, w_bar]` under `u'(0) < ∞`; here nothing is assumed about `u'(0)`.
+but positive corner region, at every `β < 1/R`, without assuming a value for `u'(0)`.
+Related literature: Clarida (1987), *Consumption, Liquidity Constraints and Asset Accumulation
+in the Presence of Random Income Fluctuations*.
 -/
 
 @[expose] public section

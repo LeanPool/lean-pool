@@ -57,8 +57,10 @@ discharged is `policy_mono_withRate'`.
 Worth recording precisely: his step 5 applies Lemma 4 to `σ_f(·, R₂)` and needs it CONCAVE. That
 is Light's Lemma 5, which is the Carroll and Kimball theorem — the hypothesis `hT` of
 `IncomeFluctuationCarrollKimball`. So the residual hypothesis here and the residual hypothesis
-there are not two gaps but one: concavity of the consumption function, which by Toda (2021) is
-unavailable outside HARA. Closing it closes both.
+there are not two gaps but one: concavity of the consumption function. Closing it closes both.
+Toda's necessity result concerns concavity uniformly across return and income laws under its
+regularity hypotheses with borrowing permitted. It does not exclude concavity outside HARA
+for this capped model; see `Analysis.HARA` for the source.
 
 The pivotal inequality that step 5 turns on, `mul_marginal_le_of_scale`, is already proved.
 -/

@@ -45,7 +45,7 @@ the Banach fixed point theorem needs.
 
 ## References
 
-* Stokey, Lucas and Prescott, *Recursive Methods in Economic Dynamics*, theorem 3.3.
+* Stokey, Lucas and Prescott, *Recursive Methods in Economic Dynamics*.
 * Blackwell, *Discounted dynamic programming*, Ann. Math. Statist. 36 (1965).
 -/
 

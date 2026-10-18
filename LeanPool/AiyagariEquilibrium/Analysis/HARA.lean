@@ -12,9 +12,9 @@ public import LeanPool.AiyagariEquilibrium.Models.CRRA
 # HARA utility
 
 Hyperbolic absolute risk aversion: absolute risk tolerance `-u' / u''` is affine in consumption.
-Toda (2021) shows HARA is NECESSARY for the consumption function to be concave under regularity
-conditions, so it is the class in which Carroll and Kimball (1996) -- and hence Light's
-uniqueness argument -- can possibly hold.
+[Toda's November 2020 draft](https://arxiv.org/pdf/2009.13564v2) studies concavity uniformly
+over arbitrary return and income laws, under its regularity hypotheses with borrowing permitted.
+That necessity result does not exclude concavity outside HARA in a particular capped model.
 
 ## The definition
 

@@ -67,7 +67,7 @@ variable {assetCap : ℝ} (P : IncomeFluctuation Z 0 assetCap)
 `1 - β` at every rate, so every cap condition collapses to the one on `hcap`. -/
 theorem log_policy_mono_rateFamily {rlo rhi ε : ℝ} (hu : P.u = crraUtility 1) (hunb : P.Unbounded)
     (hβ : 0 < (P.discount : ℝ)) (hβ1 : (P.discount : ℝ) < 1) (hrlo : 0 < 1 + rlo)
-    (hlohi : rlo ≤ rhi) (hβR : (P.discount : ℝ) * (1 + rhi) < 1)
+    (hlohi : rlo ≤ rhi)
     (hε : 0 < ε)
     (hcap : (P.discount : ℝ) * P.maxIncome
       + ((P.discount : ℝ) * (1 + rhi) + ε) * assetCap < assetCap) :
@@ -102,7 +102,7 @@ theorem log_policy_mono_rateFamily {rlo rhi ε : ℝ} (hu : P.u = crraUtility 1)
     have hεcap : (0 : ℝ) ≤ ε * assetCap := mul_nonneg hε.le hcap0
     refine P.crra_policy_mono_withRate_of_minMPC (γ := 1) one_pos le_rfl hu hxok hyok hxy hκxpos
       hκypos hβ
-      (by linarith) ((P.withRate x hxok).positiveConsumptionAll_of_unbounded hunb)
+      ((P.withRate x hxok).positiveConsumptionAll_of_unbounded hunb)
       ((P.withRate y hyok).positiveConsumptionAll_of_unbounded hunb) ?_ ?_ ?_ hs z
     · rw [hκx]
       have := mul_le_mul_of_nonneg_left hx_le hcap0
@@ -228,7 +228,7 @@ theorem log_monotoneOn_capitalSupply {rlo rhi ε a₀ : ℝ} (hu : P.u = crraUti
     nlinarith
   refine P.monotoneOn_capitalSupply_of_policy_mono (P.rateFamily hrlo hlohi)
     (fun r r' z z' => rfl)
-    (P.log_policy_mono_rateFamily hu hunb hβ hβ1 hrlo hlohi hβR hε hcap)
+    (P.log_policy_mono_rateFamily hu hunb hβ hβ1 hrlo hlohi hε hcap)
     ⟨Measure.dirac (Classical.ofNonempty : P.State), inferInstance⟩ ν ?_
   intro r hr
   have hrr : P.RateOK r := rateOK_of_floor_zero (by linarith [hr.1])
@@ -382,7 +382,7 @@ theorem log_aggregateCapital_le {r : ℝ} (hu : P.u = crraUtility 1) (hunb : P.U
   have hslackIt : ∀ n : ℕ, ∀ x ∈ Icc (0 : ℝ) assetCap, ∀ z : Z,
       (P.withRate r hrr).policyOf
         (((P.withRate r hrr).toExtended.bellman)^[n] (0 : (ℝ × Z) →ᵇ ℝ)) (x, z) < assetCap :=
-    fun n x hx z => ((P.withRate r hrr).crra_minMPC_of_cap one_pos hu rfl hκpos hβ hβR'
+    fun n x hx z => ((P.withRate r hrr).crra_minMPC_of_cap one_pos hu rfl hκpos hβ
       hposIt hthr' n).2 x hx z
   have hkey := (P.withRate r hrr).crra_aggregateCapital_le_of_minMPC one_pos hu hκpos hβ hβR'
     hposIt hslackIt hμ

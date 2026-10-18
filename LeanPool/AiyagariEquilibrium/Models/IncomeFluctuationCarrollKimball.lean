@@ -71,17 +71,16 @@ OSCILLATION rather than its level, and the hypothesis is character for character
 `nearLog_concaveOn_consumptionFn` is Carroll and Kimball for a concrete CES economy, at every
 rate the equilibrium argument uses.
 
-**Toda (2021) still bounds what can be hoped for.** Under regularity conditions HARA is
-NECESSARY for the consumption function to be concave, and the structure assumes of `u` only
-strict concavity, so `hT` at that generality is FALSE and no proof of it can exist. That is why
-the step above is stated for CRRA, which is what Light's published version (2020) assumes.
+**Toda's necessity result is uniform**, across arbitrary return and income laws under its
+regularity hypotheses with borrowing permitted; see `Analysis.HARA`. It does not establish that `hT`
+is false for an individual capped household outside HARA. This file proves sufficient results
+for the stated CRRA families.
 
 ## OWED: this is deferred, not abandoned
 
 The obstruction has moved four times.
 
-* HARA was the first answer: Toda (2021) makes it NECESSARY, and `Analysis/HARA.lean` supplies
-  it. The utility class is no longer the blocker.
+* Shifted CRRA was the first sufficient utility family; `Analysis.HARA` supplies this branch.
 * The asset cap was the second, and worse, because it made the conclusion outright FALSE --
   `not_concaveOn_consumptionFn_of_cap_binds` below. `crra_policy_lt_assetCap` removes it by
   calibration, and `nearLog` is recalibrated so that saving provably never reaches the cap.

@@ -100,7 +100,7 @@ explicitly. -/
 theorem crra_policyOf_withRate_lt_cap {γ : ℝ} (hγ0 : 0 < γ) (hu : P.u = crraUtility γ)
     {r₁ r₂ : ℝ} (h₁ : P.RateOK r₁) (h₂ : P.RateOK r₂) (hr : r₁ ≤ r₂)
     (hκ₁ : 0 < (P.withRate r₁ h₁).minMPC γ)
-    (hβ : 0 < (P.discount : ℝ)) (hβR₁ : (P.discount : ℝ) * (1 + r₁) < 1)
+    (hβ : 0 < (P.discount : ℝ))
     (hpos₁ : ∀ n : ℕ, ∀ z : Z, ∀ a ∈ Icc (0 : ℝ) assetCap, 0 <
       (P.withRate r₁ h₁).consumptionFnOf
         (((P.withRate r₁ h₁).toExtended.bellman)^[n] (0 : (ℝ × Z) →ᵇ ℝ)) z a)
@@ -121,7 +121,7 @@ theorem crra_policyOf_withRate_lt_cap {γ : ℝ} (hγ0 : 0 < γ) (hu : P.u = crr
   -- economy 1's minimal-MPC bound at this iterate
   have hmpc : κ * Q₁.resources (a, z) ≤ Q₁.consumptionFnOf v z a :=
     (Q₁.crra_minMPC_of_cap hγ0 (show Q₁.u = crraUtility γ from hu) rfl
-      hκ₁ hβ hβR₁ hpos₁ hthr₁ n).1 z a ha
+      hκ₁ hβ hpos₁ hthr₁ n).1 z a ha
   -- the rescale, and monotonicity of consumption in assets
   set t : ℝ := (1 + r₁) / (1 + r₂) with ht
   have ht0 : 0 < t := div_pos hR₁ hR₂
@@ -167,7 +167,7 @@ theorem crra_policy_mono_withRate_of_minMPC {γ : ℝ} (hγ0 : 0 < γ) (hγ1 : �
     (hu : P.u = crraUtility γ)
     {r₁ r₂ : ℝ} (h₁ : P.RateOK r₁) (h₂ : P.RateOK r₂) (hr : r₁ ≤ r₂)
     (hκ₁ : 0 < (P.withRate r₁ h₁).minMPC γ) (hκ₂ : 0 < (P.withRate r₂ h₂).minMPC γ)
-    (hβ : 0 < (P.discount : ℝ)) (hβR₂ : (P.discount : ℝ) * (1 + r₂) < 1)
+    (hβ : 0 < (P.discount : ℝ))
     (hpc₁ : (P.withRate r₁ h₁).PositiveConsumptionAll)
     (hpc₂ : (P.withRate r₂ h₂).PositiveConsumptionAll)
     (hthr₁ : (1 - (P.withRate r₁ h₁).minMPC γ) * (P.maxIncome + (1 + r₁) * assetCap) < assetCap)
@@ -176,7 +176,6 @@ theorem crra_policy_mono_withRate_of_minMPC {γ : ℝ} (hγ0 : 0 < γ) (hγ1 : �
       + ((1 - (P.withRate r₁ h₁).minMPC γ) * (1 + r₁) + (r₂ - r₁)) * assetCap < assetCap)
     {a : ℝ} (ha : a ∈ Icc (0 : ℝ) assetCap) (z : Z) :
     (P.withRate r₁ h₁).policy (a, z) ≤ (P.withRate r₂ h₂).policy (a, z) := by
-  have hβR₁ : (P.discount : ℝ) * (1 + r₁) < 1 := by nlinarith [hβ]
   -- positivity at the iterates, read in either economy
   have hpos₁ : ∀ n : ℕ, ∀ z : Z, ∀ a ∈ Icc (0 : ℝ) assetCap, 0 <
       (P.withRate r₁ h₁).consumptionFnOf
@@ -195,7 +194,7 @@ theorem crra_policy_mono_withRate_of_minMPC {γ : ℝ} (hγ0 : 0 < γ) (hγ1 : �
       (P.withRate r₂ h₂).policyOf
         (((P.withRate r₂ h₂).toExtended.bellman)^[n] (0 : (ℝ × Z) →ᵇ ℝ)) (a, z) < assetCap :=
     fun n a ha z => ((P.withRate r₂ h₂).crra_minMPC_of_cap hγ0 hu rfl
-      hκ₂ hβ hβR₂ hpos₂ hthr₂ n).2 a ha z
+      hκ₂ hβ hpos₂ hthr₂ n).2 a ha z
   -- Carroll--Kimball along economy 2's iteration
   have hcons : ∀ n : ℕ, ∀ z : Z, ConcaveOn ℝ (Icc (0 : ℝ) assetCap)
       ((P.withRate r₂ h₂).consumptionFnOf
@@ -206,7 +205,7 @@ theorem crra_policy_mono_withRate_of_minMPC {γ : ℝ} (hγ0 : 0 < γ) (hγ1 : �
         (hslackw n a ha z))
   exact P.policy_mono_withRate_hara hγ0 hγ1 le_rfl (by rw [haraUtility_zero_shift]; exact hu)
     h₁ h₂ hr (fun n a ha z => hposv n z a ha) (fun n a ha z => hpos₂ n z a ha)
-    (fun n a ha z => P.crra_policyOf_withRate_lt_cap hγ0 hu h₁ h₂ hr hκ₁ hβ hβR₁ hpos₁ hthr₁
+    (fun n a ha z => P.crra_policyOf_withRate_lt_cap hγ0 hu h₁ h₂ hr hκ₁ hβ hpos₁ hthr₁
       hgap n ha z)
     hslackw hcons ha z
 

@@ -10,11 +10,10 @@ public import LeanPool.AiyagariEquilibrium.Equilibrium.AiyagariUniqueness
 /-!
 # Bisection for a monotone zero and normalized clearing
 
-Aiyagari (1994) computed his equilibrium by bisection on the interest rate: evaluate excess
-supply at the midpoint of a bracket and keep the half on which it still changes sign. Hajek and
-Livesay (2019) ask, for mean field games, which equilibria are STABLE fixed points of the
-best-response map; for the Bewley model the raw best-response iteration `r ↦ r_d(K_s(r))` has
-negative slope and may oscillate, so the algorithm that is certified here is the bisection.
+Bisection evaluates excess supply at the midpoint of a bracket and keeps the half containing
+the zero. Hajek and Livesay (2019) discuss stability of best-response fixed points in mean field
+games. Here, a decreasing inverse-demand map composed with an increasing supply map can reverse
+order, so raw iteration `r ↦ r_d(K_s(r))` may oscillate. This file certifies bisection.
 
 ## The abstract statement
 
@@ -253,7 +252,7 @@ theorem log_bisection_of_cap {rlo rhi α δ : ℝ} (hα0 : 0 < α) (hα1 : α < 
   exact ⟨fun n => (bisect_mem_of_strictMonoOn hE hr hzero n).2.2,
     abs_bisect_mid_sub_le hE hr hzero, tendsto_bisect_fst hE hr hzero⟩
 
-/-- **Aiyagari (1994) at `μ = 1`: his bisection finds his equilibrium rate.** On any
+/-- **Bisection for normalized clearing with the Aiyagari log calibration.** On any
 `[rlo, rhi] ⊂ (-δ, λ)` with the cap clearing `(48/25)·maxIncome/(1 - (24/25)(1+rhi))`, and along
 any selection of stationary distributions, the bisection on excess supply brackets the
 equilibrium rate at every step, its midpoint is within `(rhi - rlo)/2^(n+1)` after `n` steps,

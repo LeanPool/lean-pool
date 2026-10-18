@@ -28,20 +28,25 @@ rate raises the price of current consumption, but also makes existing wealth wor
 only when `γ ≤ 1` does the first dominate.
 
 For `γ > 1` supply need not rise. Açıkgöz (2018) exhibits multiple stationary equilibria at
-`γ = 6.5`. Walsh and Young (2025) search 24,000 parameter draws and find multiplicity in 250
-of them — always exactly three equilibria — and report that they never see it with risk
+`γ = 6.5`. Walsh and Young's
+[November 19, 2025 draft](https://www.aeaweb.org/conference/2026/preliminary/paper/i57n5khB)
+uses 24,000 parameter draws, retains 23,673 after numerical screening, and reports 250 cases
+with three equilibria. They report that they never see multiplicity with risk
 aversion below about 1.49, depreciation below about 0.19, or income persistence below about
 0.47, and only ever with a disaster state for income. Their mechanism is precautionary: with
 a disaster state, persistent income and high risk aversion, agents facing a low return still
 amass capital to insure against near-zero income, so capital supply bends back and can cross
 downward-sloping demand more than once.
+These findings concern their competitive economies, not counterexamples instantiating this
+capped household and its prescribed normalized demand.
 
 Kirkby (2018) approaches it computationally and finds both Aiyagari (1994) and Pijoan-Mas
 (2006) "almost certainly have a unique general equilibrium".
 
 So the honest formal target is CONDITIONAL uniqueness — uniqueness given monotone supply —
 plus, separately, whatever route establishes monotone supply for a restricted class. That is
-what is proved here. An unconditional uniqueness theorem for this model would be false.
+what is proved here; monotone supply remains an explicit input rather than a claim about every
+calibration.
 -/
 
 @[expose] public section

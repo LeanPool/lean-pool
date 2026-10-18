@@ -55,7 +55,7 @@ serve the second purpose, where that correspondence may take empty values.
 ## References
 
 * Berge, *Espaces topologiques: Fonctions multivoques*, 1959.
-* Stokey, Lucas and Prescott, *Recursive Methods in Economic Dynamics*, theorem 3.6.
+* Stokey, Lucas and Prescott, *Recursive Methods in Economic Dynamics*.
 -/
 
 @[expose] public section

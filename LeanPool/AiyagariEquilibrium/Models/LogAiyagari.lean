@@ -64,7 +64,7 @@ theorem crra_exists_exhaust_of_euler_corner_of_lowest {γ : ℝ} (hγ0 : 0 < γ)
   -- cap slack at the fixed point, from the minimal MPC
   have hslack : ∀ z : Z, ∀ x ∈ Icc (0 : ℝ) assetCap, P.policy (x, z) < P.maxSaving (x, z) :=
     fun z x hx => P.policyOf_lt_maxSaving_of_pos (hpos z x hx)
-      (P.crra_policy_lt_cap_of_minMPC hγ0 hu rfl hκ hβ hβR hposIt hthr hx z)
+      (P.crra_policy_lt_cap_of_minMPC hγ0 hu rfl hκ hβ hposIt hthr hx z)
   -- the corner below `a₀`, from the Euler inequality
   have hzero : ∀ a ∈ Icc (0 : ℝ) a₀, P.policy (a, z₀) = 0 := by
     intro a ha
@@ -124,7 +124,7 @@ theorem crra_exists_exhaust_of_euler_corner_monotone {γ : ℝ} (hγ0 : 0 < γ)
     fun n z a ha => hpc _ (P.concaveSlices_iterate_zero n) z a ha
   have hslackIt : ∀ n : ℕ, ∀ x ∈ Icc (0 : ℝ) assetCap, ∀ z : Z,
       P.policyOf ((P.toExtended.bellman)^[n] (0 : (ℝ × Z) →ᵇ ℝ)) (x, z) < assetCap :=
-    fun n x hx z => (P.crra_minMPC_of_cap hγ0 hu rfl hκ hβ hβR hposIt hthr n).2 x hx z
+    fun n x hx z => (P.crra_minMPC_of_cap hγ0 hu rfl hκ hβ hposIt hthr n).2 x hx z
   refine P.crra_exists_exhaust_of_euler_corner_of_lowest hγ0 hu rfl hκ hβ hβR hpc hthr
     (fun a ha z => ?_) ha₀ hle hcorner
   exact P.consumptionFn_le_of_income_le_monotone hmono (du := fun c => c ^ (-γ))
