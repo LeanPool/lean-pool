@@ -341,7 +341,7 @@ where it lands. The bound then involves the continuation's OSCILLATION, not its 
 proportional to consumption rather than constant. -/
 
 /-- **The proportional CES bound on saving, against an arbitrary continuation.** -/
-theorem crra_policyOf_le_mul {γ θ G : ℝ} (hγ0 : 0 < γ) (hγ1 : γ < 1) (hθ0 : 0 < θ) (hθ1 : θ < 1)
+theorem crra_policyOf_le_mul {γ θ G : ℝ} (hγ0 : 0 < γ) (hθ0 : 0 < θ) (hθ1 : θ < 1)
     (hu : P.u = crraUtility γ) (hpc : P.PositiveConsumptionAll) {v : (ℝ × Z) →ᵇ ℝ}
     (hv : ConcaveSlices assetFloor assetCap v) (hG : 0 ≤ G) (hosc : P.OscOn v G)
     {a : ℝ} (ha : a ∈ Icc assetFloor assetCap) (z : Z) :
@@ -350,15 +350,15 @@ theorem crra_policyOf_le_mul {γ θ G : ℝ} (hγ0 : 0 < γ) (hγ1 : γ < 1) (h�
         * (P.consumptionFnOf v z a
             + (1 - θ) * (P.policyOf v (a, z) - assetFloor)) ^ γ := by
   simpa only [zero_add] using P.policyOf_le_mul_of_power_marginal (γ := γ) (η := 0)
-    hθ0 hθ1 hv hG hosc (fun c d hc hcd _ => by
+    hθ0 hθ1 hv hG hosc (fun c d _ hcd hpositive => by
       simpa only [zero_add, hu] using
-        crra_marginal_bound_Ici hγ0 hγ1 (P.nonneg_of_mem_dom hc) hcd (le_refl d)) ha z
+        crra_marginal_bound hγ0 (by simpa only [zero_add] using hpositive) hcd (le_refl d)) ha z
     (by simpa only [zero_add] using hpc v hv z a ha)
 
 /-- **Saving never reaches the asset cap, against an arbitrary continuation.** The hypothesis is
 the one `crra_policy_lt_assetCap` carries at the fixed point, so the calibrations already proved
 for the CES witnesses discharge it. -/
-theorem crra_policyOf_lt_assetCap {γ θ G : ℝ} (hγ0 : 0 < γ) (hγ1 : γ < 1) (hθ0 : 0 < θ)
+theorem crra_policyOf_lt_assetCap {γ θ G : ℝ} (hγ0 : 0 < γ) (hθ0 : 0 < θ)
     (hθ1 : θ < 1) (hu : P.u = crraUtility γ) (hpc : P.PositiveConsumptionAll)
     {v : (ℝ × Z) →ᵇ ℝ} (hv : ConcaveSlices assetFloor assetCap v) (hG : 0 ≤ G)
     (hosc : P.OscOn v G)
@@ -371,7 +371,7 @@ theorem crra_policyOf_lt_assetCap {γ θ G : ℝ} (hγ0 : 0 < γ) (hγ1 : γ < 1
     (show 0 ≤ (P.discount : ℝ) * G / θ from
       div_nonneg (mul_nonneg P.discount.coe_nonneg hG) hθ0.le) ha z
     (by simpa only [zero_add] using (hpc v hv z a ha).le) ?_ ?_
-  · simpa only [zero_add] using P.crra_policyOf_le_mul hγ0 hγ1 hθ0 hθ1 hu hpc hv hG hosc ha z
+  · simpa only [zero_add] using P.crra_policyOf_le_mul hγ0 hθ0 hθ1 hu hpc hv hG hosc ha z
   · simpa only [zero_add] using hlt
 
 /-- **Carroll and Kimball for the bounded CES family, at the witnesses' own calibration.** The
@@ -393,7 +393,7 @@ theorem concaveOn_consumptionFn_of_oscSpread {γ θ : ℝ} (hγ0 : 0 < γ) (hγ1
     P.concaveSlices_iterate_bellman concaveSlices_zero
   exact P.concaveOn_consumptionFn_of_iterates
     (P.concaveOn_consumptionFnOf_iterates_of_crra hpc hγ0 hβ hu
-      (fun n a ha z' => P.crra_policyOf_lt_assetCap hγ0 hγ1 hθ0 hθ1 hu hpc (hslices n)
+      (fun n a ha z' => P.crra_policyOf_lt_assetCap hγ0 hθ0 hθ1 hu hpc (hslices n)
         P.oscSpread_nonneg (P.oscOn_iterate n) hlt ha z')) z
 
 /-! ### A slope bound from the OSCILLATION rather than the level

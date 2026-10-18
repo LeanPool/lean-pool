@@ -9,7 +9,7 @@ public import LeanPool.AiyagariEquilibrium.Models.BoundedIncomeFluctuation
 public import LeanPool.AiyagariEquilibrium.Models.NaturalAssetBound
 
 /-!
-# The quantitative constants for CES
+# Quantitative constants for CRRA households
 
 The equilibrium programme runs on four explicit constants: a lower bound on the secant slope of
 `u` (which drives the corner condition and the precautionary gain), an upper bound on it (which
@@ -336,7 +336,7 @@ theorem crra_exists_decline {γ : ℝ} (hγ0 : 0 < γ) (hγ1 : γ < 1) (hb : P.B
 /-- **The continuation's gain between two saving levels, CES version.** Where the log form carries
 `log (1 + R·(y-x) / (income + R·x))`, this carries `(income + R·y) ^ (-γ) · R·(y-x)`: the extra
 resources, valued at the marginal utility of the largest consumption they could buy. -/
-theorem crra_cont_sub_ge_gen {γ : ℝ} (hγ0 : 0 < γ) (hγ1 : γ < 1)
+theorem crra_cont_sub_ge_gen {γ : ℝ} (hγ0 : 0 < γ)
     (hu : P.u = crraUtility γ) (hpc : P.PositiveConsumption) (z z₀ : Z) {x y : ℝ}
     (hx : x ∈ Icc (0 : ℝ) assetCap) (hy : y ∈ Icc (0 : ℝ) assetCap) (hxy : x ≤ y) :
     P.transitionMatrix z z₀ * ((P.income z₀ + (1 + P.interest) * y) ^ (-γ)
@@ -350,18 +350,18 @@ theorem crra_cont_sub_ge_gen {γ : ℝ} (hγ0 : 0 < γ) (hγ1 : γ < 1)
   rw [hu]
   have hR : c + (1 + P.interest) * (y - x)
       ≤ P.income z₀ + (1 + P.interest) * y := by nlinarith only [hcle]
-  simpa using crra_marginal_bound_Ici hγ0 hγ1 (mem_Ici.mpr hc.le)
+  simpa using crra_marginal_bound hγ0 hc
     (le_add_of_nonneg_right hRh) hR
 
 /-- **The continuation's gain from zero, CES version.** -/
-theorem crra_cont_sub_ge {γ : ℝ} (hγ0 : 0 < γ) (hγ1 : γ < 1)
+theorem crra_cont_sub_ge {γ : ℝ} (hγ0 : 0 < γ)
     (hu : P.u = crraUtility γ) (hpc : P.PositiveConsumption) (z z₀ : Z) {h : ℝ}
     (hh : h ∈ Icc (0 : ℝ) assetCap) :
     P.transitionMatrix z z₀ * ((P.income z₀ + (1 + P.interest) * h) ^ (-γ)
         * ((1 + P.interest) * h))
       ≤ P.cont z h - P.cont z 0 := by
   have h0 : (0 : ℝ) ∈ Icc (0 : ℝ) assetCap := ⟨le_rfl, P.assetCap_nonneg⟩
-  have := P.crra_cont_sub_ge_gen hγ0 hγ1 hu hpc z z₀ h0 hh hh.1
+  have := P.crra_cont_sub_ge_gen hγ0 hu hpc z z₀ h0 hh hh.1
   simpa using this
 
 /-! ### The sharp decline constant
@@ -377,7 +377,7 @@ Taking `θ` near 1 makes the right-hand side nearly `(β · oscGap) c ^ γ`, pro
 consumption, which is the shape the decline condition needs. -/
 
 /-- **The proportional CES bound on saving.** -/
-theorem crra_policy_le_mul {γ θ : ℝ} (hγ0 : 0 < γ) (hγ1 : γ < 1) (hθ0 : 0 < θ) (hθ1 : θ < 1)
+theorem crra_policy_le_mul {γ θ : ℝ} (hγ0 : 0 < γ) (hθ0 : 0 < θ) (hθ1 : θ < 1)
     (hu : P.u = crraUtility γ) (hpc : P.PositiveConsumption)
     {a : ℝ} (ha : a ∈ Icc (0 : ℝ) assetCap) (z : Z) :
     P.policy (a, z)
@@ -386,9 +386,9 @@ theorem crra_policy_le_mul {γ θ : ℝ} (hγ0 : 0 < γ) (hγ1 : γ < 1) (hθ0 :
   have h := P.policyOf_le_mul_of_power_marginal (γ := γ) (η := 0) hθ0 hθ1
     P.concaveOn_valueFunction P.oscGap_nonneg
     (by simpa only [oscSpread, oscGap] using P.oscOn_valueFunction)
-    (fun c d hc hcd _ => by
+    (fun c d _ hcd hpositive => by
       simpa only [zero_add, hu] using
-        crra_marginal_bound_Ici hγ0 hγ1 (P.nonneg_of_mem_dom hc) hcd (le_refl d)) ha z
+        crra_marginal_bound hγ0 (by simpa only [zero_add] using hpositive) hcd (le_refl d)) ha z
     (by simpa only [zero_add, P.consumptionFnOf_valueFunction] using
       P.consumptionFn_pos hpc ha z)
   simpa only [P.policyOf_valueFunction, consumptionFnOf, zero_add, sub_zero] using h
@@ -397,7 +397,7 @@ theorem crra_policy_le_mul {γ θ : ℝ} (hγ0 : 0 < γ) (hγ1 : γ < 1) (hθ0 :
 is `(β · oscGap / θ) · (income z + (1 + r - θ) · assetCap) ^ γ`; with `θ` near one the second
 factor is close to `income z ^ γ`, so the threshold shrinks with the income of the state -- which
 is exactly what lets the corner condition reach it. -/
-theorem crra_policy_lt_self {γ θ : ℝ} (hγ0 : 0 < γ) (hγ1 : γ < 1) (hθ0 : 0 < θ) (hθ1 : θ < 1)
+theorem crra_policy_lt_self {γ θ : ℝ} (hγ0 : 0 < γ) (hθ0 : 0 < θ) (hθ1 : θ < 1)
     (hθr : θ ≤ 1 + P.interest) (hu : P.u = crraUtility γ)
     (hpc : P.PositiveConsumption) {a : ℝ} (ha : a ∈ Icc (0 : ℝ) assetCap) (z : Z)
     (hlt : (P.discount * P.oscGap / θ)
@@ -409,7 +409,7 @@ theorem crra_policy_lt_self {γ θ : ℝ} (hγ0 : 0 < γ) (hγ1 : γ < 1) (hθ0 
   have hβ : (0 : ℝ) ≤ (P.discount : ℝ) := P.discount.coe_nonneg
   set b : ℝ := P.policy (a, z) with hbdef
   set c : ℝ := P.consumption (a, z) b with hcdef
-  have hkey := P.crra_policy_le_mul hγ0 hγ1 hθ0 hθ1 hu hpc ha z
+  have hkey := P.crra_policy_le_mul hγ0 hθ0 hθ1 hu hpc ha z
   rw [← hbdef, ← hcdef] at hkey
   have hres : P.resources (a, z) = P.income z + (1 + P.interest) * a := by
     simp only [resources, max_eq_right ha.1]
@@ -440,14 +440,12 @@ theorem crra_policy_lt_self {γ θ : ℝ} (hγ0 : 0 < γ) (hγ1 : γ < 1) (hθ0 
 saving reaches the cap, so the cap is the obstruction to Light's uniqueness argument, not the
 utility class. It can be removed by calibration rather than by weakening the theory: run
 `crra_policy_le_mul` by contradiction. If saving reached the cap then consumption would be at
-most `maxIncome + (1 + r - θ) · assetCap`, and the saving bound evaluated THERE has to exceed
-the cap.
+most `maxIncome + (1 + r - θ) · assetCap`. The displayed inequality makes the saving upper
+bound at that quantity strictly smaller than the cap.
 
-The point of doing it this way is that the bound does not degrade as the cap grows -- the
-right-hand side rises with `assetCap` while the left rises only through `oscGap` -- so raising
-the cap always eventually works. A cruder estimate that keeps `maxConsumption ^ γ` on the left
-grows on both sides and closes the window for `γ` near one, which is an artefact of the
-estimate.
+The criterion evaluates the proportional bound at the consumption quantity implied by cap
+binding. The theorem retains the displayed numerical inequality as an explicit calibration
+hypothesis.
 
 Related literature: Marcet, Obiols-Homs and Weil (2007), *Incomplete Markets, Labor Supply
 and Capital Accumulation*. The sufficient criterion below is specific to this capped household
@@ -455,7 +453,7 @@ model: it uses the displayed quantitative inequality and positive optimal
 consumption. Its fixed-point and iterative versions share the same comparison argument. -/
 
 /-- **Saving never reaches the asset cap.** -/
-theorem crra_policy_lt_assetCap {γ θ : ℝ} (hγ0 : 0 < γ) (hγ1 : γ < 1) (hθ0 : 0 < θ)
+theorem crra_policy_lt_assetCap {γ θ : ℝ} (hγ0 : 0 < γ) (hθ0 : 0 < θ)
     (hθ1 : θ < 1) (hu : P.u = crraUtility γ)
     (hpc : P.PositiveConsumption)
     (hlt : (P.discount * P.oscGap / θ)
@@ -469,7 +467,7 @@ theorem crra_policy_lt_assetCap {γ θ : ℝ} (hγ0 : 0 < γ) (hγ1 : γ < 1) (h
     (by simpa only [zero_add, P.consumptionFnOf_valueFunction] using
       (P.consumptionFn_pos hpc ha z).le)
     (by simpa only [P.policyOf_valueFunction, consumptionFnOf, zero_add, sub_zero] using
-      P.crra_policy_le_mul hγ0 hγ1 hθ0 hθ1 hu hpc ha z)
+      P.crra_policy_le_mul hγ0 hθ0 hθ1 hu hpc ha z)
     (by simpa only [zero_add, mul_zero, sub_zero] using hlt)
   simpa only [P.policyOf_valueFunction] using h
 
@@ -478,14 +476,14 @@ hypothesis of `not_concaveOn_consumptionFn_of_cap_binds` -- a flat stretch of th
 top of the asset region -- cannot occur, so nothing in this development contradicts concavity of
 the consumption function. That is not a proof of concavity; it is the removal of the obstruction
 that made one impossible. -/
-theorem no_flat_at_cap {γ θ : ℝ} (hγ0 : 0 < γ) (hγ1 : γ < 1) (hθ0 : 0 < θ) (hθ1 : θ < 1)
+theorem no_flat_at_cap {γ θ : ℝ} (hγ0 : 0 < γ) (hθ0 : 0 < θ) (hθ1 : θ < 1)
     (hu : P.u = crraUtility γ)
     (hpc : P.PositiveConsumption)
     (hlt : (P.discount * P.oscGap / θ)
         * (P.maxIncome + (1 + P.interest - θ) * assetCap) ^ γ < assetCap)
     {a : ℝ} (ha : a ∈ Icc (0 : ℝ) assetCap) (z : Z) :
     P.policy (a, z) ≠ assetCap :=
-  ne_of_lt (P.crra_policy_lt_assetCap hγ0 hγ1 hθ0 hθ1 hu hpc hlt ha z)
+  ne_of_lt (P.crra_policy_lt_assetCap hγ0 hθ0 hθ1 hu hpc hlt ha z)
 
 /-- **A quantitative CES saving floor**, the form the sign-change argument consumes. -/
 theorem crra_policy_ge_of_gain {γ : ℝ} (hγ : 0 < γ) (hu : P.u = crraUtility γ)
@@ -506,7 +504,7 @@ variable [MeasurableSpace Z] [BorelSpace Z]
 `log (m / (m - h)) < β · P z₁ z₀ · log (1 + R h / income z₀)` becomes
 `(m - h) ^ (-γ) · h  <  β · P z₁ z₀ · (income z₀ + R h) ^ (-γ) · R h`: the saved unit priced at
 the margin where consumption is lowest, against its return in the bad state. -/
-theorem crra_aggregateCapital_pos_of_primitives {γ : ℝ} (hγ0 : 0 < γ) (hγ1 : γ < 1)
+theorem crra_aggregateCapital_pos_of_primitives {γ : ℝ} (hγ0 : 0 < γ)
     (hu : P.u = crraUtility γ) (hpc : P.PositiveConsumption)
     {μ : ProbabilityMeasure P.State} (hμ : P.IsStationary μ) {z₁ z₀ : Z} {p₀ : ℝ} (hp0 : 0 < p₀)
     (hp : ∀ z, p₀ ≤ P.transitionMatrix z z₁)
@@ -519,7 +517,7 @@ theorem crra_aggregateCapital_pos_of_primitives {γ : ℝ} (hγ0 : 0 < γ) (hγ1
     (lt_of_lt_of_le hgain ?_)
   · rw [hu]
     simpa using crra_cost_of_saving hγ0 hh0 hhinc hm (le_refl (0 : ℝ)) hh0.le
-  · exact mul_le_mul_of_nonneg_left (P.crra_cont_sub_ge hγ0 hγ1 hu hpc z₁ z₀ ⟨hh0.le, hhcap⟩)
+  · exact mul_le_mul_of_nonneg_left (P.crra_cont_sub_ge hγ0 hu hpc z₁ z₀ ⟨hh0.le, hhcap⟩)
       P.discount.coe_nonneg
 
 end Measure
