@@ -198,16 +198,23 @@ theorem slopeBound_crraUtility {γ m : ℝ} (hγ : γ ≠ 1) (hm : 0 < m) :
   simp only [slopeBound, crraSlopeBound, crraUtility_of_ne hγ, hhalf, hexp]
   field_simp
 
-theorem crraSlopeBound_nonneg {γ m : ℝ} (hγ1 : γ < 1) (hm : 0 < m) :
+theorem crraSlopeBound_nonneg {γ m : ℝ} (hm : 0 ≤ m) :
     0 ≤ crraSlopeBound γ m := by
-  have h2 : (1 : ℝ) ≤ (2 : ℝ) ^ (1 - γ) :=
-    Real.one_le_rpow (by norm_num : (1 : ℝ) ≤ 2) (by linarith)
-  have hinv : ((2 : ℝ) ^ (1 - γ))⁻¹ ≤ 1 := by
-    rw [inv_le_one₀ (by linarith)]; exact h2
-  have hmp : (0 : ℝ) < m ^ (-γ) := Real.rpow_pos_of_pos hm _
-  refine div_nonneg ?_ (by linarith)
-  have : (0 : ℝ) ≤ 1 - ((2 : ℝ) ^ (1 - γ))⁻¹ := by linarith
-  positivity
+  unfold crraSlopeBound
+  have hmp : 0 ≤ 2 * m ^ (-γ) := mul_nonneg (by norm_num) (Real.rpow_nonneg hm _)
+  have hpositive : 0 < (2 : ℝ) ^ (1 - γ) := Real.rpow_pos_of_pos (by norm_num) _
+  by_cases hγ : γ ≤ 1
+  · have hpower : 1 ≤ (2 : ℝ) ^ (1 - γ) :=
+      Real.one_le_rpow (by norm_num) (sub_nonneg.mpr hγ)
+    exact div_nonneg
+      (mul_nonneg hmp (sub_nonneg.mpr ((inv_le_one₀ hpositive).mpr hpower)))
+      (sub_nonneg.mpr hγ)
+  · have hγ' : 1 ≤ γ := (lt_of_not_ge hγ).le
+    have hpower : (2 : ℝ) ^ (1 - γ) ≤ 1 :=
+      Real.rpow_le_one_of_one_le_of_nonpos (by norm_num) (sub_nonpos.mpr hγ')
+    exact div_nonneg_of_nonpos
+      (mul_nonpos_of_nonneg_of_nonpos hmp (sub_nonpos.mpr ((one_le_inv₀ hpositive).mpr hpower)))
+      (sub_nonpos.mpr hγ')
 
 namespace IncomeFluctuation
 
@@ -272,26 +279,26 @@ theorem cont_sub_le_oscGap (z : Z) (x y : ℝ) : P.cont z x - P.cont z y ≤ P.o
         linarith [P.valueFunction_le_oscBound (x, z'), P.oscBound_le_valueFunction (y, z')]
     _ = P.oscGap := by rw [← Finset.sum_mul, P.transitionMatrix_sum, one_mul]
 
-/-- The Lipschitz constant of the value function under CES, mirroring `logLipschitz`. -/
+/-- The nonlogarithmic CRRA Lipschitz constant, mirroring `logLipschitz`. -/
 noncomputable def crraLipschitz (γ : ℝ) : ℝ :=
   crraSlopeBound γ P.minConsumption * (1 + P.interest) / (1 - P.discount * (1 + P.interest))
 
-theorem crraLipschitz_nonneg {γ : ℝ} (hγ1 : γ < 1)
+theorem crraLipschitz_nonneg {γ : ℝ}
     (hβR : P.discount * (1 + P.interest) < 1) : 0 ≤ P.crraLipschitz γ := by
-  have hs := crraSlopeBound_nonneg hγ1 P.minConsumption_pos
+  have hs := crraSlopeBound_nonneg (γ := γ) P.minConsumption_pos.le
   have hr := P.interest_gt_neg_one
   exact div_nonneg (by positivity) (by linarith)
 
-/-- **The value function is Lipschitz with the explicit CES constant.** -/
-theorem crra_valueFunction_lipschitz {γ : ℝ} (hγ1 : γ < 1)
+/-- **The value function is Lipschitz with the explicit CRRA constant for `γ ≠ 1`.** -/
+theorem crra_valueFunction_lipschitz {γ : ℝ} (hγ : γ ≠ 1)
     (hu : P.u = crraUtility γ) (hβR : P.discount * (1 + P.interest) < 1) :
     ∀ z : Z, ∀ x ∈ Icc (0 : ℝ) assetCap, ∀ y ∈ Icc (0 : ℝ) assetCap,
       |P.toExtended.valueFunction (x, z) - P.toExtended.valueFunction (y, z)|
         ≤ P.crraLipschitz γ * |x - y| := by
-  refine P.valueFunction_lipschitz (P.crraLipschitz_nonneg hγ1 hβR) (le_of_eq ?_)
+  refine P.valueFunction_lipschitz (P.crraLipschitz_nonneg (γ := γ) hβR) (le_of_eq ?_)
   have hne : (1 : ℝ) - P.discount * (1 + P.interest) ≠ 0 := by linarith
   simp only [crraLipschitz, slopeBoundU, hu,
-    slopeBound_crraUtility (show γ ≠ 1 by linarith) P.minConsumption_pos]
+    slopeBound_crraUtility hγ P.minConsumption_pos]
   field_simp
   ring
 
@@ -302,7 +309,7 @@ theorem crra_policy_eq_zero_of_resources {γ : ℝ} (hγ0 : 0 < γ) (hγ1 : γ <
     (hβR : P.discount * (1 + P.interest) < 1) {s : ℝ × Z} (hs : s.1 ∈ Icc (0 : ℝ) assetCap)
     (hlt : P.discount * P.crraLipschitz γ < P.resources s ^ (-γ)) :
     P.policy s = 0 :=
-  P.policy_eq_zero_of_corner_at (P.crra_valueFunction_lipschitz hγ1 hu hβR) hs
+  P.policy_eq_zero_of_corner_at (P.crra_valueFunction_lipschitz (ne_of_lt hγ1) hu hβR) hs
     (fun c d hd hdc hc => by
       rw [hu]
       rw [sub_zero] at hc
@@ -394,9 +401,9 @@ theorem crra_policy_le_mul {γ θ : ℝ} (hγ0 : 0 < γ) (hθ0 : 0 < θ) (hθ1 :
   simpa only [P.policyOf_valueFunction, consumptionFnOf, zero_add, sub_zero] using h
 
 /-- **Assets fall above an explicit threshold**, in the income state that matters. The threshold
-is `(β · oscGap / θ) · (income z + (1 + r - θ) · assetCap) ^ γ`; with `θ` near one the second
-factor is close to `income z ^ γ`, so the threshold shrinks with the income of the state -- which
-is exactly what lets the corner condition reach it. -/
+is `(β · oscGap / θ) · (income z + (1 + r - θ) · assetCap) ^ γ`. It depends on the
+income of the selected state and the residual gross return `1 + r - θ`; its strict comparison
+with current assets is an explicit hypothesis. -/
 theorem crra_policy_lt_self {γ θ : ℝ} (hγ0 : 0 < γ) (hθ0 : 0 < θ) (hθ1 : θ < 1)
     (hθr : θ ≤ 1 + P.interest) (hu : P.u = crraUtility γ)
     (hpc : P.PositiveConsumption) {a : ℝ} (ha : a ∈ Icc (0 : ℝ) assetCap) (z : Z)
