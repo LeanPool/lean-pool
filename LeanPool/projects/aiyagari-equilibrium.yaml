@@ -1,0 +1,62 @@
+slug: aiyagari-equilibrium
+title: Capped log Aiyagari equilibrium and dynamic programming
+summary: >-
+  Proves uniqueness of the equilibrium interest rate for capped log-utility
+  households with Aiyagari's discount and firm parameters, no borrowing,
+  and monotone finite-state earnings transitions, subject to an explicit
+  cap-slack inequality at the larger rate. Instantiates the earnings
+  process with arbitrary finite Tauchen chains. Bisection brackets a given
+  equilibrium and converges along a stationary-distribution selection;
+  existence of that equilibrium is a hypothesis of the bisection result.
+  Preserves Bellman contraction theory, real and extended-real Berge
+  maximum theorems, stationary Markov distributions, consumption concavity,
+  Euler inequalities, and marginal-propensity bounds used in the proofs.
+branch: mathematical economics
+entry_module: LeanPool.AiyagariEquilibrium
+authors:
+  - Robert Kirkby
+source:
+  url: https://github.com/LeanEconomics/LeanEconomics
+  github_repo: LeanEconomics/LeanEconomics
+  commit: 8295256bbd64ab488c8cb436d68e7064db560dfc
+  completion_url: https://github.com/LeanEconomics/LeanEconomics/commit/0cf50632dad6952f6feb45efec5a8fe2f3ff0876
+  completed_at: '2026-09-18T07:21:51Z'
+license: Apache-2.0
+status: verified
+provenance: AI
+main_declarations:
+  - LeanEconomics.aiyagariTauchen_equilibriumRate_unique_Ioo
+main_results:
+  - declaration: LeanEconomics.aiyagariTauchen_equilibriumRate_unique_Ioo
+    informal: >-
+      For log households with discount 24/25, capital share 9/25,
+      depreciation 2/25, no borrowing, and a finite Tauchen earnings chain
+      with nonnegative persistence below one, two stationary equilibria
+      with rates in (-2/25, 1/24) coincide, provided the explicit asset-cap
+      inequality holds at their larger rate.
+  - declaration: LeanEconomics.IncomeFluctuation.aiyagari1994_log_bisection
+    informal: >-
+      Given an equilibrium rate in a compact interval inside (-2/25, 1/24),
+      a stationary-distribution selection and the cap and monotonicity
+      hypotheses, bisection on excess supply brackets that rate at every
+      step, bounds the midpoint error by the initial width divided by
+      2^(n+1), and has left endpoints converging to the rate.
+  - declaration: LeanEconomics.continuousAt_maxValue
+    informal: >-
+      A continuous objective maximized over a nonempty compact-valued
+      correspondence that is upper and lower hemicontinuous has a
+      continuous maximum value at the parameter.
+  - declaration: LeanEconomics.Blackwell.contractingWith
+    informal: >-
+      A monotone operator on bounded continuous real functions that
+      discounts constants by a nonnegative factor below one is a
+      contraction with that factor.
+tags:
+  - mathematical-economics
+  - dynamic-programming
+  - stationary-equilibrium
+  - markov-processes
+msc:
+  - 91B50
+  - 90C39
+  - 60J05
