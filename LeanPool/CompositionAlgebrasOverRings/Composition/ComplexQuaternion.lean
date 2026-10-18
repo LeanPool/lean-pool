@@ -108,9 +108,9 @@ unify. So the conjugation is only ever rewritten through its **components**, and
 `cay_conj_apply` is removed from the default simp set with `-cay_conj_apply`.
 
 The second is that `ℍ[ℝ]` is a `def` wrapping `QuaternionAlgebra ℝ (-1) 0 (-1)`. A goal mixing
-that spelling with `RealQuaternion` is not type-correct at `rw`'s transparency, so all quaternion
-arithmetic is done in `ConicAlgebra.quaternion_mk_mul` and `ConicAlgebra.quaternion_star_mk`,
-whose statements mention no `Cay`, and then used as fully instantiated rewrites. -/
+that spelling with `RealQuaternion` is not type-correct at `rw`'s transparency, so each quaternion
+computation first `change`s its goal into the `ℍ[ℝ, -1, 0, -1]` spelling and only then rewrites
+with `QuaternionAlgebra.mk_mul_mk` or `QuaternionAlgebra.star_mk`. -/
 
 private theorem cay₂_conj_fst (μ : ℝ) (x : Cay₂ ℝ μ) :
     ((cay₂ ℝ μ).conj x).1 = x.1 := by
@@ -127,20 +127,6 @@ private theorem cay₄_conj_fst (x : RealQuaternion) :
 private theorem cay₄_conj_snd (x : RealQuaternion) :
     ((cay₄ ℝ (-1) (-1)).conj x).2 = -x.2 := by
   rw [cay_conj_apply]
-
-private theorem quaternion_mk_mul (a₁ b₁ c₁ d₁ a₂ b₂ c₂ d₂ : ℝ) :
-    (⟨a₁, b₁, c₁, d₁⟩ : ℍ[ℝ]) * ⟨a₂, b₂, c₂, d₂⟩ =
-      ⟨a₁ * a₂ - b₁ * b₂ - c₁ * c₂ - d₁ * d₂,
-        a₁ * b₂ + b₁ * a₂ + c₁ * d₂ - d₁ * c₂,
-        a₁ * c₂ - b₁ * d₂ + c₁ * a₂ + d₁ * b₂,
-        a₁ * d₂ + b₁ * c₂ - c₁ * b₂ + d₁ * a₂⟩ := by
-  rw [QuaternionAlgebra.mk_mul_mk, QuaternionAlgebra.mk.injEq]
-  exact ⟨by ring, by ring, by ring, by ring⟩
-
-private theorem quaternion_star_mk (a b c d : ℝ) :
-    star (⟨a, b, c, d⟩ : ℍ[ℝ]) = ⟨a, -b, -c, -d⟩ := by
-  rw [QuaternionAlgebra.star_mk, QuaternionAlgebra.mk.injEq]
-  exact ⟨by ring, rfl, rfl, rfl⟩
 
 /-- The underlying map `((a, b), (c, d)) ↦ a + bi + cj + dk`. -/
 def toQuaternion (x : RealQuaternion) : ℍ[ℝ] := ⟨x.1.1, x.1.2, x.2.1, x.2.2⟩

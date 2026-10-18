@@ -125,6 +125,12 @@ theorem ProjectiveConstantRankFree.of_isLGRing (hLG : IsLGRing k) :
     ProjectiveConstantRankFree.{u, w} k :=
   fun M _ _ _ _ r hM ↦ Module.free_of_isLGRing_of_rankAtStalk_eq hLG r M hM
 
+/-- Over a PID every finitely generated projective module is free, being torsion-free, so
+`GPR`'s freeness hypothesis holds; this is the freeness step of `GPR 22.19`. -/
+theorem ProjectiveConstantRankFree.of_isPrincipalIdealRing [IsDomain k] [IsPrincipalIdealRing k] :
+    ProjectiveConstantRankFree.{u, w} k :=
+  fun _ _ _ _ _ _ _ ↦ Module.free_of_finite_type_torsion_free'
+
 private theorem finrank_eq_of_rankAtStalk_eq [Nontrivial k]
     {M : Type v} [AddCommGroup M] [Module k M] [Module.Free k M]
     (hM : Module.rankAtStalk (R := k) M = fun _ ↦ n) : Module.finrank k M = n := by
@@ -144,25 +150,6 @@ theorem isSplitOfRank_two (hc : C.IsElementaryIdempotent c)
         exact hc.norm_splitEtaleEquiv hA x⟩,
       hc.splitEtaleEquiv_one hA, hc.splitEtaleEquiv_mul hA⟩
   exact hiso.symm
-
-/-- **`GPR 22.16`, rank four:** over a nontrivial LG ring, a reduced constant-rank-four
-composition algebra is split. -/
-theorem isSplitOfRank_four_of_isLGRing [Nontrivial k]
-    (hc : C.IsElementaryIdempotent c) (hLG : IsLGRing k)
-    (hcomp : C.IsComposition.{u, v, u})
-    (hA : Module.rankAtStalk (R := k) A = fun _ ↦ 4) : C.IsSplitOfRank 4 := by
-  let L := TwistingModule (k := k) c
-  let : Module.Finite k L := IsAlternative.finite_peirceComponent true false
-  let : Module.Projective k L :=
-    IsAlternative.projective_peirceComponent hc.mul_self true false
-  have hL : Module.rankAtStalk (R := k) L = 1 :=
-    hc.rankAtStalk_offDiagonal_eq_one hcomp.isMultiplicative
-      (hcomp.isGPRRegular_of_rankAtStalk_ne_one hA (by omega)) hA true
-  let : Module.Free k L := Module.free_of_isLGRing_of_rankAtStalk_eq hLG 1 L hL
-  let b : Module.Basis Unit k L :=
-    Module.basisUnique Unit (finrank_eq_of_rankAtStalk_eq hL)
-  exact (hc.isomorphic_twistedMat (k := k) hcomp hA).symm.trans
-    (isomorphic_twistedMat_ofBasis k b)
 
 /-- **`GPR 22.16`, rank four under its abstract freeness hypothesis.** -/
 theorem isSplitOfRank_four_of_projective_constantRank_free [Nontrivial k]
@@ -184,45 +171,23 @@ theorem isSplitOfRank_four_of_projective_constantRank_free [Nontrivial k]
   exact (hc.isomorphic_twistedMat (k := k) hcomp hA).symm.trans
     (isomorphic_twistedMat_ofBasis k b)
 
+/-- **`GPR 22.16`, rank four:** over a nontrivial LG ring, a reduced constant-rank-four
+composition algebra is split. -/
+theorem isSplitOfRank_four_of_isLGRing [Nontrivial k]
+    (hc : C.IsElementaryIdempotent c) (hLG : IsLGRing k)
+    (hcomp : C.IsComposition.{u, v, u})
+    (hA : Module.rankAtStalk (R := k) A = fun _ ↦ 4) : C.IsSplitOfRank 4 :=
+  hc.isSplitOfRank_four_of_projective_constantRank_free
+    (ProjectiveConstantRankFree.of_isLGRing hLG) hcomp hA
+
 /-- **`GPR 22.19`, rank four:** over a PID, a reduced constant-rank-four composition algebra is
 split. The twisting line is projective, hence flat and torsion-free, and a finite torsion-free
 module over a PID is free. -/
 theorem isSplitOfRank_four_of_pid [IsDomain k] [IsPrincipalIdealRing k]
     (hc : C.IsElementaryIdempotent c) (hcomp : C.IsComposition.{u, v, u})
-    (hA : Module.rankAtStalk (R := k) A = fun _ ↦ 4) : C.IsSplitOfRank 4 := by
-  let L := TwistingModule (k := k) c
-  let : Module.Finite k L := IsAlternative.finite_peirceComponent true false
-  let : Module.Projective k L :=
-    IsAlternative.projective_peirceComponent hc.mul_self true false
-  let : Module.IsTorsionFree k L := inferInstance
-  let : Module.Free k L := Module.free_of_finite_type_torsion_free'
-  have hL : Module.rankAtStalk (R := k) L = 1 :=
-    hc.rankAtStalk_offDiagonal_eq_one hcomp.isMultiplicative
-      (hcomp.isGPRRegular_of_rankAtStalk_ne_one hA (by omega)) hA true
-  let b : Module.Basis Unit k L :=
-    Module.basisUnique Unit (finrank_eq_of_rankAtStalk_eq hL)
-  exact (hc.isomorphic_twistedMat (k := k) hcomp hA).symm.trans
-    (isomorphic_twistedMat_ofBasis k b)
-
-/-- **`GPR 22.16`, rank eight:** over a nontrivial LG ring, a reduced constant-rank-eight
-composition algebra is split. -/
-theorem isSplitOfRank_eight_of_isLGRing [Nontrivial k]
-    (hc : C.IsElementaryIdempotent c) (hLG : IsLGRing k)
-    (hcomp : C.IsComposition.{u, v, u})
-    (hA : Module.rankAtStalk (R := k) A = fun _ ↦ 8) : C.IsSplitOfRank 8 := by
-  let M := ZornTwistingModule (k := k) c
-  let : Module.Finite k M := IsAlternative.finite_peirceComponent true false
-  let : Module.Projective k M :=
-    IsAlternative.projective_peirceComponent hc.mul_self true false
-  let hreg := hcomp.isGPRRegular_of_rankAtStalk_ne_one hA (by omega)
-  let P := hc.peirceVectorProductPair hcomp.isMultiplicative hreg
-  have hM : Module.rankAtStalk (R := k) M = 3 :=
-    hc.rankAtStalk_twistingModule_eq_three hcomp.isMultiplicative hreg hA
-  let : Module.Free k M := Module.free_of_isLGRing_of_rankAtStalk_eq hLG 3 M hM
-  let b : Module.Basis (Fin 3) k M :=
-    Module.finBasisOfFinrankEq k M (finrank_eq_of_rankAtStalk_eq hM)
-  exact (hc.isomorphic_twistedZor (k := k) hcomp.isMultiplicative hreg).symm.trans
-    (isomorphic_twistedZor_of_exists_basis P b)
+    (hA : Module.rankAtStalk (R := k) A = fun _ ↦ 4) : C.IsSplitOfRank 4 :=
+  hc.isSplitOfRank_four_of_projective_constantRank_free
+    ProjectiveConstantRankFree.of_isPrincipalIdealRing hcomp hA
 
 /-- **`GPR 22.16`, rank eight under its abstract freeness hypothesis.** -/
 theorem isSplitOfRank_eight_of_projective_constantRank_free [Nontrivial k]
@@ -246,25 +211,22 @@ theorem isSplitOfRank_eight_of_projective_constantRank_free [Nontrivial k]
   exact (hc.isomorphic_twistedZor (k := k) hcomp.isMultiplicative hreg).symm.trans
     (isomorphic_twistedZor_of_exists_basis P b)
 
+/-- **`GPR 22.16`, rank eight:** over a nontrivial LG ring, a reduced constant-rank-eight
+composition algebra is split. -/
+theorem isSplitOfRank_eight_of_isLGRing [Nontrivial k]
+    (hc : C.IsElementaryIdempotent c) (hLG : IsLGRing k)
+    (hcomp : C.IsComposition.{u, v, u})
+    (hA : Module.rankAtStalk (R := k) A = fun _ ↦ 8) : C.IsSplitOfRank 8 :=
+  hc.isSplitOfRank_eight_of_projective_constantRank_free
+    (ProjectiveConstantRankFree.of_isLGRing hLG) hcomp hA
+
 /-- **`GPR 22.19`, rank eight:** over a PID, a reduced constant-rank-eight composition algebra is
 split. The rank-three twisting module is projective, hence finite free over the PID. -/
 theorem isSplitOfRank_eight_of_pid [IsDomain k] [IsPrincipalIdealRing k]
     (hc : C.IsElementaryIdempotent c) (hcomp : C.IsComposition.{u, v, u})
-    (hA : Module.rankAtStalk (R := k) A = fun _ ↦ 8) : C.IsSplitOfRank 8 := by
-  let M := ZornTwistingModule (k := k) c
-  let : Module.Finite k M := IsAlternative.finite_peirceComponent true false
-  let : Module.Projective k M :=
-    IsAlternative.projective_peirceComponent hc.mul_self true false
-  let : Module.IsTorsionFree k M := inferInstance
-  let : Module.Free k M := Module.free_of_finite_type_torsion_free'
-  let hreg := hcomp.isGPRRegular_of_rankAtStalk_ne_one hA (by omega)
-  let P := hc.peirceVectorProductPair hcomp.isMultiplicative hreg
-  have hM : Module.rankAtStalk (R := k) M = 3 :=
-    hc.rankAtStalk_twistingModule_eq_three hcomp.isMultiplicative hreg hA
-  let b : Module.Basis (Fin 3) k M :=
-    Module.finBasisOfFinrankEq k M (finrank_eq_of_rankAtStalk_eq hM)
-  exact (hc.isomorphic_twistedZor (k := k) hcomp.isMultiplicative hreg).symm.trans
-    (isomorphic_twistedZor_of_exists_basis P b)
+    (hA : Module.rankAtStalk (R := k) A = fun _ ↦ 8) : C.IsSplitOfRank 8 :=
+  hc.isSplitOfRank_eight_of_projective_constantRank_free
+    ProjectiveConstantRankFree.of_isPrincipalIdealRing hcomp hA
 
 end IsElementaryIdempotent
 
@@ -425,21 +387,8 @@ reverse implication uses `GPR 22.9` and the reduced classification of `GPR 22.16
 theorem isSplitOfRank_iff_isGPRIsotropic_of_isLGRing [Nontrivial k]
     (hcomp : C.IsComposition.{u, v, u}) (hLG : IsLGRing k)
     (hA : Module.rankAtStalk (R := k) A = fun _ ↦ r)
-    (hr : r = 2 ∨ r = 4 ∨ r = 8) : C.IsSplitOfRank r ↔ C.norm.IsGPRIsotropic := by
-  constructor
-  · intro hsplit
-    obtain ⟨c, hc⟩ := hsplit.hasElementaryIdempotent_of_two_or_four_or_eight hr
-    exact hc.isGPRIsotropic
-  · intro hiso
-    have hreg := hcomp.isGPRRegular_of_rankAtStalk_ne_one hA (by omega)
-    obtain ⟨c, hc⟩ := exists_isElementaryIdempotent_of_isGPRIsotropic
-      hreg hcomp.isMultiplicative hiso
-    let : IsAlternative A :=
-      hcomp.isMultiplicative.isAlternative hreg.isGPRNondegenerate
-    rcases hr with rfl | rfl | rfl
-    · exact hc.isSplitOfRank_two hA
-    · exact hc.isSplitOfRank_four_of_isLGRing hLG hcomp hA
-    · exact hc.isSplitOfRank_eight_of_isLGRing hLG hcomp hA
+    (hr : r = 2 ∨ r = 4 ∨ r = 8) : C.IsSplitOfRank r ↔ C.norm.IsGPRIsotropic :=
+  hcomp.isSplitOfRank_iff_isGPRIsotropic_of_projectiveConstantRankFree (.of_isLGRing hLG) hA hr
 
 omit [IsAlternative A] in
 /-- **`GPR 22.18`, hyperbolic ⇒ split over an LG ring.** A norm isometric to a hyperbolic form
@@ -474,21 +423,9 @@ twisting modules are free over the PID, replacing the LG-ring freeness step in `
 theorem isSplitOfRank_iff_isGPRIsotropic_of_pid [IsDomain k] [IsPrincipalIdealRing k]
     (hcomp : C.IsComposition.{u, v, u})
     (hA : Module.rankAtStalk (R := k) A = fun _ ↦ r)
-    (hr : r = 2 ∨ r = 4 ∨ r = 8) : C.IsSplitOfRank r ↔ C.norm.IsGPRIsotropic := by
-  constructor
-  · intro hsplit
-    obtain ⟨c, hc⟩ := hsplit.hasElementaryIdempotent_of_two_or_four_or_eight hr
-    exact hc.isGPRIsotropic
-  · intro hiso
-    have hreg := hcomp.isGPRRegular_of_rankAtStalk_ne_one hA (by omega)
-    obtain ⟨c, hc⟩ := exists_isElementaryIdempotent_of_isGPRIsotropic
-      hreg hcomp.isMultiplicative hiso
-    let : IsAlternative A :=
-      hcomp.isMultiplicative.isAlternative hreg.isGPRNondegenerate
-    rcases hr with rfl | rfl | rfl
-    · exact hc.isSplitOfRank_two hA
-    · exact hc.isSplitOfRank_four_of_pid hcomp hA
-    · exact hc.isSplitOfRank_eight_of_pid hcomp hA
+    (hr : r = 2 ∨ r = 4 ∨ r = 8) : C.IsSplitOfRank r ↔ C.norm.IsGPRIsotropic :=
+  hcomp.isSplitOfRank_iff_isGPRIsotropic_of_projectiveConstantRankFree
+    .of_isPrincipalIdealRing hA hr
 
 omit [IsAlternative A] in
 /-- **`GPR 22.19`, split ↔ a nonzero null vector over a PID.** This is where GPR's

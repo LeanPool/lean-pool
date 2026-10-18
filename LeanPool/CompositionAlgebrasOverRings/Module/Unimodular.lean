@@ -38,6 +38,8 @@ This is not a norm-theoretic notion — no quadratic form is in sight here — b
   vector in a vector space is hit by a functional. This is what collapses GPR-sense isotropy onto
   mathlib's `Anisotropic` over a field; see `QuadraticForm/Isotropic.lean`.
 * `Module.IsUnimodular.exists_linearEquiv_prod` : a unimodular element splits `M` as `R × M'`.
+* `Module.Finite.of_linearEquiv_prod`, `Module.Projective.of_linearEquiv_prod` : the complement
+  `M'` of such a splitting is finitely generated, resp. projective, when `M` is.
 
 ## Implementation notes
 
@@ -179,3 +181,17 @@ theorem Module.IsUnimodular.exists_linearEquiv_prod {m : M} (hm : Module.IsUnimo
     ∃ M' : Submodule R M, Nonempty (M ≃ₗ[R] R × M') := by
   obtain ⟨l, hl⟩ := Module.isUnimodular_iff.mp hm
   exact ⟨LinearMap.ker l, ⟨LinearMap.equivProdKerOfApplyEqOne l m hl⟩⟩
+
+/-- A module that splits off a free rank-one summand from a finitely generated module is itself
+finitely generated. -/
+theorem Module.Finite.of_linearEquiv_prod {N : Type v} [AddCommGroup N] [Module R N]
+    [Module.Finite R M] (e : M ≃ₗ[R] R × N) : Module.Finite R N :=
+  haveI : Module.Finite R (R × N) := Module.Finite.equiv e
+  Module.Finite.of_surjective (LinearMap.snd R R N) Prod.snd_surjective
+
+/-- A module that splits off a free rank-one summand from a projective module is itself
+projective. -/
+theorem Module.Projective.of_linearEquiv_prod {N : Type v} [AddCommGroup N] [Module R N]
+    [Module.Projective R M] (e : M ≃ₗ[R] R × N) : Module.Projective R N :=
+  haveI : Module.Projective R (R × N) := Module.Projective.of_equiv' e
+  Module.Projective.of_split (LinearMap.inr R R N) (LinearMap.snd R R N) (by ext x; simp)

@@ -129,16 +129,9 @@ theorem norm_eq_of_projective (C D : ConicAlgebra k A) : C.norm = D.norm := by
     simp only [map_smul, C.unitForm_one, smul_eq_mul, mul_one] at h
     exact h.symm
   set N : Submodule k A := LinearMap.ker C.unitForm with hN
-  set p : A →ₗ[k] N := LinearMap.codRestrict N
-    (LinearMap.id - LinearMap.toSpanSingleton k A 1 ∘ₗ C.unitForm) (fun z ↦ by
-      simp [hN, LinearMap.mem_ker, LinearMap.toSpanSingleton_apply]) with hp
-  have hpi : p ∘ₗ N.subtype = LinearMap.id := by
-    refine LinearMap.ext fun z ↦ Subtype.ext ?_
-    have hz : C.unitForm (z : A) = 0 := z.2
-    simp [hp, hz, LinearMap.toSpanSingleton_apply]
-  have : Module.Finite k N :=
-    Module.Finite.of_surjective p fun z ↦ ⟨(z : A), DFunLike.congr_fun hpi z⟩
-  have : Module.Projective k N := Module.Projective.of_split N.subtype p hpi
+  let e := LinearMap.equivProdKerOfApplyEqOne C.unitForm 1 C.unitForm_one
+  have : Module.Finite k N := .of_linearEquiv_prod e
+  have : Module.Projective k N := .of_linearEquiv_prod e
   have hdN : d.comp N.subtype = 0 := by
     refine LinearMap.eq_zero_of_smul_self_eq_zero _ fun z ↦ ?_
     refine Subtype.ext ?_
@@ -190,16 +183,9 @@ conic algebra over `ℤ/4`, on a non-projective module, whose trace defect is `2
 theorem traceDefect_eq_zero_of_projective (x y : A) : C.traceDefect x y = 0 := by
   -- the kernel of `λ`, a direct summand of `A` and so finitely generated projective
   set N : Submodule k A := LinearMap.ker C.unitForm with hN
-  set p : A →ₗ[k] N := LinearMap.codRestrict N (LinearMap.id - (LinearMap.toSpanSingleton k A 1)
-    ∘ₗ C.unitForm) (fun z ↦ by
-      simp [hN, LinearMap.mem_ker, LinearMap.toSpanSingleton_apply]) with hp
-  have hpi : p ∘ₗ N.subtype = LinearMap.id := by
-    refine LinearMap.ext fun z ↦ Subtype.ext ?_
-    have hz : C.unitForm (z : A) = 0 := z.2
-    simp [hp, hz, LinearMap.toSpanSingleton_apply]
-  have : Module.Finite k N :=
-    Module.Finite.of_surjective p fun z ↦ ⟨(z : A), DFunLike.congr_fun hpi z⟩
-  have : Module.Projective k N := Module.Projective.of_split N.subtype p hpi
+  let e := LinearMap.equivProdKerOfApplyEqOne C.unitForm 1 C.unitForm_one
+  have : Module.Finite k N := .of_linearEquiv_prod e
+  have : Module.Projective k N := .of_linearEquiv_prod e
   -- the trace defect restricted to `N` annihilates its own argument
   have hzero : (C.traceDefectLeft y).comp N.subtype = 0 := by
     refine LinearMap.eq_zero_of_smul_self_eq_zero _ fun z ↦ ?_
