@@ -9,7 +9,7 @@ public import LeanPool.AiyagariEquilibrium.Models.IncomeFluctuationIterate
 public import LeanPool.AiyagariEquilibrium.Distribution.Uniqueness
 
 /-!
-# Açıkgöz (2018) Proposition 4: the natural asset bound from impatience alone
+# Worst-state asset decline from impatience
 
 `NaturalAssetBound` gets assets to decline from a LINEAR lower bound on consumption, which it
 can supply only for log utility, and with the very lossy constant `exp (-2 β ‖V‖)`. Its own
@@ -38,6 +38,16 @@ Only the Euler inequality's own side conditions: consumption positive at every o
 saving strictly below its cap (`hslack`), which is `policyOf_lt_maxSaving` once the asset cap is
 slack. Note the direction — `euler_ge` comes from the deviation "save LESS", so it needs room
 BELOW, which is exactly what `A ≥ a > assetFloor` provides.
+
+## Source and scope
+
+Related source: Açıkgöz, April 2016 author draft, Proposition 3, printed page 8
+(https://mpra.ub.uni-muenchen.de/71066/1/MPRA_paper_71066.pdf#page=9).
+That proposition concerns worst-state decline; Proposition 4 on the same page concerns a
+finite asset bound. The capped variants here have their own explicit positivity, cap-slack
+and iid or monotone-transition hypotheses; they do not restate the uncapped proposition.
+
+
 -/
 
 @[expose] public section
@@ -109,60 +119,11 @@ theorem consumptionFn_mono_of_cont_eq {a a' : ℝ} {z₁ z₂ : Z} (hcont : P.co
     (ha : a ∈ Icc assetFloor assetCap) (ha' : a' ∈ Icc assetFloor assetCap)
     (hres : P.resources (a, z₁) ≤ P.resources (a', z₂)) :
     P.consumptionFn z₁ a ≤ P.consumptionFn z₂ a' := by
-  set Δ : ℝ := P.resources (a', z₂) - P.resources (a, z₁) with hΔdef
-  have hΔ : 0 ≤ Δ := by rw [hΔdef]; linarith
-  set b : ℝ := P.policy (a, z₁) with hbdef
-  set b' : ℝ := P.policy (a', z₂) with hb'def
-  by_contra hcon
-  rw [not_le] at hcon
-  have hgap : b + Δ < b' := by
-    simp only [consumptionFn, consumption] at hcon
-    rw [hΔdef]; linarith
-  have hbmem : b ∈ P.toExtended.feasible (a, z₁) := P.policy_mem _
-  have hb'mem : b' ∈ P.toExtended.feasible (a', z₂) := P.policy_mem _
-  rw [P.feasible_eq] at hbmem hb'mem
-  -- the saving cap cannot grow by more than resources do, across states as within one
-  have hms : P.maxSaving (a', z₂) ≤ P.maxSaving (a, z₁) + Δ := by
-    have hmin : min assetCap (P.resources (a', z₂))
-        ≤ min assetCap (P.resources (a, z₁)) + Δ := by
-      rcases le_total assetCap (P.resources (a, z₁)) with h | h
-      · rw [min_eq_left h]
-        exact le_trans (min_le_left _ _) (by linarith)
-      · rw [min_eq_right h]
-        exact le_trans (min_le_right _ _) (by rw [hΔdef]; linarith)
-    rw [P.maxSaving_eq, P.maxSaving_eq]
-    linarith
-  have hshiftup : b + Δ ∈ P.toExtended.feasible (a', z₂) := by
-    rw [P.feasible_eq]
-    exact ⟨by linarith [hbmem.1], by linarith [hb'mem.2]⟩
-  have hshiftdown : b' - Δ ∈ P.toExtended.feasible (a, z₁) := by
-    rw [P.feasible_eq]
-    exact ⟨by linarith [hbmem.1], by linarith [hb'mem.2]⟩
-  have hc1 : P.consumption (a, z₁) b ∈ P.dom := P.consumption_policy_mem_dom (s := (a, z₁)) ha
-  have hc2 : P.consumption (a', z₂) b' ∈ P.dom := P.consumption_policy_mem_dom (s := (a', z₂)) ha'
-  have he1 : P.consumption (a', z₂) (b + Δ) = P.consumption (a, z₁) b := by
-    simp only [consumption, hΔdef]; ring
-  have he2 : P.consumption (a, z₁) (b' - Δ) = P.consumption (a', z₂) b' := by
-    simp only [consumption, hΔdef]; ring
-  have hI := P.objR_le_of_mem ha hshiftdown (by rw [he2]; exact hc2)
-  have hII := P.objR_le_of_mem ha' hshiftup (by rw [he1]; exact hc1)
-  have hbreg : b ∈ Icc assetFloor assetCap := P.policy_mem_region _
-  have hb'reg : b' ∈ Icc assetFloor assetCap := P.policy_mem_region _
-  have hshift := (P.concaveOn_cont z₁).sub_le_sub_of_shift (c₁ := b) (c₂ := b' - Δ) (Δ := Δ)
-    hbreg (by simpa using hb'reg) (by linarith) hΔ
-  rw [sub_add_cancel] at hshift
-  have hβ : (0 : ℝ) ≤ P.discount := P.discount.coe_nonneg
-  have hscaled := mul_le_mul_of_nonneg_left hshift hβ
-  simp only [objR, he1, he2, ← hcont] at hI hII
-  have hIIeq : P.objR (a', z₂) (b + Δ) = P.objR (a', z₂) b' := by
-    simp only [objR, he1, ← hcont]
-    nlinarith [hI, hII, hscaled]
-  have hbell : P.toExtended.objectiveE P.toExtended.valueFunction (a', z₂) (b + Δ)
-      = ((P.toExtended.bellmanFn P.toExtended.valueFunction (a', z₂) : ℝ) : EReal) := by
-    rw [P.objectiveE_eq_coe ha' hshiftup (by rw [he1]; exact hc1), hIIeq,
-      ← P.objectiveE_eq_coe ha' (P.policy_mem _) hc2]
-    exact P.policy_optimal _
-  exact absurd (P.eq_policy_of_optimal ha' hshiftup hbell) (by rw [← hb'def]; linarith)
+  simpa only [P.consumptionFnOf_valueFunction] using
+    P.consumptionFnOf_le_across_states P.concaveOn_valueFunction
+      (z₁ := z₁) (z₂ := z₂) (fun x y _ _ _ => by
+        change P.cont z₂ y - P.cont z₂ x ≤ P.cont z₁ y - P.cont z₁ x
+        rw [← hcont]) ha ha' hres
 
 /-- Income is iid: the transition probabilities do not depend on today's state. -/
 def IidIncome : Prop := ∀ z₁ z₂ z' : Z, P.transitionMatrix z₁ z' = P.transitionMatrix z₂ z'
@@ -190,7 +151,8 @@ sequence, and the Doeblin argument needs an ATOM — the constraint has to be re
 approached. That is a statement about the bottom of the state space, where the Euler equation
 does not hold, and it stays a calibration. -/
 
-/-- **Açıkgöz (2018) Proposition 4.** With iid income and `β(1+r) < 1`, assets strictly decline
+/-- **Worst-state decline in the capped iid model.** With iid income and `β(1+r) < 1`,
+assets strictly decline
 at the lowest income state, at every asset level above the borrowing constraint. -/
 theorem policy_lt_self_of_impatient_iid
     (hβR : (P.discount : ℝ) * (1 + P.interest) < 1) (hiid : P.IidIncome)
@@ -222,7 +184,8 @@ theorem exists_exhaust_of_impatient
 
 /-! ### CRRA, with the marginal-utility hypotheses discharged -/
 
-/-- **Açıkgöz Proposition 4 for CRRA.** Marginal utility `c ^ (-γ)` is positive and decreasing
+/-- **Worst-state decline for capped CRRA households.** Marginal utility `c ^ (-γ)` is positive
+and decreasing
 for every `γ > 0`, so impatience is the whole hypothesis. -/
 theorem crra_exists_exhaust_of_impatient {γ : ℝ} (hγ0 : 0 < γ) (hu : P.u = crraUtility γ)
     (hβR : (P.discount : ℝ) * (1 + P.interest) < 1) (hiid : P.IidIncome)

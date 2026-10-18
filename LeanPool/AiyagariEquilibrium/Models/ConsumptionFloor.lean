@@ -54,7 +54,7 @@ they do not require a new household type or a divergence assumption.
 
 @[expose] public section
 
-open Set Filter Topology
+open Set Filter Topology BoundedContinuousFunction
 
 namespace LeanEconomics
 
@@ -119,6 +119,40 @@ variable {Z : Type*} [Fintype Z] [Nonempty Z] [TopologicalSpace Z] [DiscreteTopo
 variable {assetFloor assetCap : ℝ}
 variable (P : IncomeFluctuation Z assetFloor assetCap)
 
+/-- The state-independent bound on the continuation's slope, read against `v`. -/
+noncomputable def contSlopeConstOf (v : (ℝ × Z) →ᵇ ℝ) : ℝ := 4 * ‖v‖ / P.minConsumption
+
+theorem contSlopeConstOf_nonneg (v : (ℝ × Z) →ᵇ ℝ) : 0 ≤ P.contSlopeConstOf v :=
+  div_nonneg (by positivity) P.minConsumption_pos.le
+
+/-- **The continuation's slope is bounded by a state-independent constant**, above
+`assetFloor + minConsumption / 2`, whatever the continuation. -/
+theorem contOf_sub_le {v : (ℝ × Z) →ᵇ ℝ}
+    (hv : ∀ z : Z, ConcaveOn ℝ (Icc assetFloor assetCap) fun a => v (a, z)) (z : Z)
+    {x y : ℝ} (hx : assetFloor + P.minConsumption / 2 ≤ x) (hxy : x < y)
+    (hy : y ∈ Icc assetFloor assetCap) :
+    P.contOf v z y - P.contOf v z x ≤ P.contSlopeConstOf v * (y - x) := by
+  have hmin := P.minConsumption_pos
+  have hx0 : assetFloor < x := by linarith
+  have hslope := (P.concaveOn_contOf hv z).slope_anti_adjacent
+    (mem_Icc.mpr ⟨le_rfl, P.assetFloor_le_assetCap⟩) hy hx0 hxy
+  have hb1 := abs_le.mp (P.abs_contOf_le v z x)
+  have hb2 := abs_le.mp (P.abs_contOf_le v z assetFloor)
+  have hhalf : P.contSlopeConstOf v * (P.minConsumption / 2) = 2 * ‖v‖ := by
+    rw [contSlopeConstOf]; field_simp; ring
+  have hbig : P.contOf v z x - P.contOf v z assetFloor
+      ≤ P.contSlopeConstOf v * (x - assetFloor) := by
+    have hstep : P.contSlopeConstOf v * (P.minConsumption / 2)
+        ≤ P.contSlopeConstOf v * (x - assetFloor) :=
+      mul_le_mul_of_nonneg_left (by linarith) (P.contSlopeConstOf_nonneg v)
+    rw [hhalf] at hstep
+    linarith [hb1.2, hb2.1]
+  rw [div_le_div_iff₀ (by linarith) (by linarith)] at hslope
+  have hprod : (P.contOf v z y - P.contOf v z x) * (x - assetFloor)
+      ≤ (P.contSlopeConstOf v * (x - assetFloor)) * (y - x) := by
+    nlinarith [hslope, hbig, (show (0 : ℝ) < y - x by linarith)]
+  nlinarith [hprod, hx0]
+
 /-- The state-independent bound on the continuation's slope, which is where the positive income
 floor does its work. -/
 noncomputable def contSlopeConst : ℝ := 4 * ‖P.toExtended.valueFunction‖ / P.minConsumption
@@ -135,80 +169,116 @@ argument lives. -/
 theorem cont_sub_le (z : Z) {x y : ℝ} (hx : assetFloor + P.minConsumption / 2 ≤ x) (hxy : x < y)
     (hy : y ∈ Icc assetFloor assetCap) :
     P.cont z y - P.cont z x ≤ P.contSlopeConst * (y - x) := by
+  simpa only [cont, contOf, contSlopeConst, contSlopeConstOf] using
+    P.contOf_sub_le P.concaveOn_valueFunction z hx hxy hy
+
+/-- **A consumption floor from the margin, against an arbitrary continuation.** -/
+theorem exists_consumptionFnOf_floor_of_marginalInada (hu : MarginalInadaOn P.dom P.u)
+    {v : (ℝ × Z) →ᵇ ℝ} (hv : ∀ z : Z, ConcaveOn ℝ (Icc assetFloor assetCap) fun a => v (a, z)) :
+    ∃ δ > 0, ∀ (z : Z), ∀ a ∈ Icc assetFloor assetCap, δ ≤ P.consumptionFnOf v z a := by
   have hmin := P.minConsumption_pos
-  have hx0 : assetFloor < x := by linarith
-  have hxmem : x ∈ Icc assetFloor assetCap := ⟨hx0.le, le_trans hxy.le hy.2⟩
-  have hslope := (P.concaveOn_cont z).slope_anti_adjacent
-    (mem_Icc.mpr ⟨le_rfl, P.assetFloor_le_assetCap⟩) hy hx0 hxy
-  have hb1 := abs_le.mp (P.abs_cont_le z x)
-  have hb2 := abs_le.mp (P.abs_cont_le z assetFloor)
-  have hhalf : P.contSlopeConst * (P.minConsumption / 2)
-      = 2 * ‖P.toExtended.valueFunction‖ := by
-    rw [contSlopeConst]; field_simp; ring
-  have hbig : P.cont z x - P.cont z assetFloor ≤ P.contSlopeConst * (x - assetFloor) := by
-    have hstep : P.contSlopeConst * (P.minConsumption / 2)
-        ≤ P.contSlopeConst * (x - assetFloor) :=
-      mul_le_mul_of_nonneg_left (by linarith) P.contSlopeConst_nonneg
-    rw [hhalf] at hstep
-    linarith [hb1.2, hb2.1]
-  rw [div_le_div_iff₀ (by linarith) (by linarith)] at hslope
-  have hprod : (P.cont z y - P.cont z x) * (x - assetFloor)
-      ≤ (P.contSlopeConst * (x - assetFloor)) * (y - x) := by
-    nlinarith [hslope, hbig, (show (0 : ℝ) < y - x by linarith)]
-  nlinarith [hprod, hx0]
+  have hβ : (0 : ℝ) ≤ (P.discount : ℝ) := P.discount.coe_nonneg
+  obtain ⟨δ₀, hδ₀, hδ⟩ := hu ((P.discount : ℝ) * P.contSlopeConstOf v + 1)
+  refine ⟨min δ₀ (P.minConsumption / 4), lt_min hδ₀ (by linarith), fun z a ha => ?_⟩
+  by_contra hlt
+  rw [not_le] at hlt
+  set d : ℝ := min δ₀ (P.minConsumption / 4) with hd
+  set b : ℝ := P.policyOf v (a, z) with hbdef
+  set c : ℝ := P.consumption (a, z) b with hcdef
+  have hltc : c < d := hlt
+  have hdδ : d ≤ δ₀ := min_le_left _ _
+  have hd4 : d ≤ P.minConsumption / 4 := min_le_right _ _
+  have hcmem : c ∈ P.dom := P.consumption_policyOf_mem_dom v ha
+  have hc0 : 0 ≤ c := P.nonneg_of_mem_dom hcmem
+  have hres : P.minConsumption ≤ P.resources (a, z) - assetFloor :=
+    P.minConsumption_le_consumption_floor (a, z)
+  have hcb : c = P.resources (a, z) - b := rfl
+  have hbig : assetFloor + 3 * P.minConsumption / 4 ≤ b := by rw [hcb] at hltc; linarith
+  set h : ℝ := d - c with hhdef
+  have hh0 : 0 < h := by rw [hhdef]; linarith
+  have hhle : h ≤ P.minConsumption / 4 := by rw [hhdef]; linarith
+  have hlow : assetFloor + P.minConsumption / 2 ≤ b - h := by linarith
+  have hbmem : b ∈ Icc assetFloor assetCap :=
+    P.feasible_subset_region (P.policyOf_mem v (a, z))
+  have hfeas : b - h ∈ P.toExtended.feasible (a, z) := by
+    rw [P.feasible_eq]
+    exact ⟨by linarith [hbmem.1], by linarith [(P.policyOf_mem v (a, z)).2]⟩
+  have hcd : P.consumption (a, z) (b - h) = d := by
+    simp only [consumption] at hcb ⊢; linarith
+  have hdpos : 0 < P.consumption (a, z) (b - h) := by rw [hcd]; linarith
+  have hopt := P.objROf_le_of_mem v ha hfeas (P.mem_dom_of_pos hdpos)
+  simp only [objROf, hcd] at hopt
+  have hslope := P.contOf_sub_le hv z hlow (by linarith) hbmem
+  rw [show b - (b - h) = h from by ring] at hslope
+  have hscaled := mul_le_mul_of_nonneg_left hslope hβ
+  have hutil : P.u d - P.u c
+      ≤ ((P.discount : ℝ) * P.contSlopeConstOf v) * (d - c) := by
+    have e : (P.discount : ℝ) * (P.contSlopeConstOf v * h)
+        = ((P.discount : ℝ) * P.contSlopeConstOf v) * (d - c) := by rw [hhdef]; ring
+    linarith [hopt, hscaled, e.le, e.ge]
+  have hmarg := hδ c d hcmem (by linarith) hdδ
+  rw [show ((P.discount : ℝ) * P.contSlopeConstOf v + 1) * (d - c)
+      = ((P.discount : ℝ) * P.contSlopeConstOf v) * (d - c) + (d - c) from by ring] at hmarg
+  rw [hhdef] at hh0
+  linarith [hmarg, hutil, hh0]
 
 /-- **A consumption floor from the margin.** No use is made of `tendsto_atBot_u`: the argument
 runs on concavity and boundedness of the continuation, a positive income floor, and unbounded
 marginal value at zero consumption. -/
 theorem exists_consumption_floor_of_marginalInada (hu : MarginalInadaOn P.dom P.u) :
     ∃ δ > 0, ∀ s : ℝ × Z, s.1 ∈ Icc assetFloor assetCap → δ ≤ P.consumption s (P.policy s) := by
-  have hmin := P.minConsumption_pos
-  have hβ : (0 : ℝ) ≤ P.discount := P.discount.coe_nonneg
-  obtain ⟨δ₀, hδ₀, hδ⟩ := hu (P.discount * P.contSlopeConst + 1)
-  refine ⟨min δ₀ (P.minConsumption / 4), lt_min hδ₀ (by linarith), fun s hs => ?_⟩
-  by_contra hlt
-  rw [not_le] at hlt
-  set d : ℝ := min δ₀ (P.minConsumption / 4) with hd
-  set a : ℝ := P.policy s with hadef
-  set c : ℝ := P.consumption s a with hcdef
-  have hdδ : d ≤ δ₀ := min_le_left _ _
-  have hd4 : d ≤ P.minConsumption / 4 := min_le_right _ _
-  have hcmem : c ∈ P.dom := P.consumption_policy_mem_dom hs
-  have hc0 : 0 ≤ c := P.nonneg_of_mem_dom hcmem
-  have hres : P.minConsumption ≤ P.resources s - assetFloor :=
-    P.minConsumption_le_consumption_floor s
-  have hca : c = P.resources s - a := rfl
-  -- consumption small forces saving large, which is what bounds the continuation's slope
-  have ha : assetFloor + 3 * P.minConsumption / 4 ≤ a := by rw [hca] at hlt; linarith
-  set h : ℝ := d - c with hhdef
-  have hh0 : 0 < h := by rw [hhdef]; linarith
-  have hhle : h ≤ P.minConsumption / 4 := by rw [hhdef]; linarith
-  have hlow : assetFloor + P.minConsumption / 2 ≤ a - h := by linarith
-  have hamem : a ∈ Icc assetFloor assetCap := P.policy_mem_region s
-  -- the deviation is feasible and its consumption is `d`
-  have hfeas : a - h ∈ P.toExtended.feasible s := by
+  obtain ⟨δ, hδ, hspec⟩ :=
+    P.exists_consumptionFnOf_floor_of_marginalInada hu P.concaveOn_valueFunction
+  exact ⟨δ, hδ, fun s hs => hspec s.2 s.1 hs⟩
+
+/-- **A uniform bound on saving from a uniform marginal bound**, against any continuation. -/
+theorem policyOf_le_of_marginal_bound {v : (ℝ × Z) →ᵇ ℝ}
+    (hv : ∀ z : Z, ConcaveOn ℝ (Icc assetFloor assetCap) fun a => v (a, z)) {m : ℝ} (hm : 0 < m)
+    (hmarg : ∀ c d : ℝ, d ∈ P.dom → d ≤ c → c ≤ P.maxConsumption → m * (c - d) ≤ P.u c - P.u d)
+    {a : ℝ} (ha : a ∈ Icc assetFloor assetCap) (z : Z) :
+    P.policyOf v (a, z) ≤ assetFloor + 4 * (P.discount : ℝ) * ‖v‖ / m := by
+  have hβ : (0 : ℝ) ≤ (P.discount : ℝ) := P.discount.coe_nonneg
+  have hnv : (0 : ℝ) ≤ ‖v‖ := norm_nonneg _
+  have hbound : (0 : ℝ) ≤ 4 * (P.discount : ℝ) * ‖v‖ / m := by positivity
+  set b : ℝ := P.policyOf v (a, z) with hbdef
+  have hbreg : b ∈ Icc assetFloor assetCap := P.feasible_subset_region (P.policyOf_mem v _)
+  rcases eq_or_lt_of_le hbreg.1 with hzero | hbpos
+  · rw [← hzero]; linarith
+  set c : ℝ := P.consumptionFnOf v z a with hcdef
+  have hcdom : c ∈ P.dom := P.consumption_policyOf_mem_dom v ha
+  have hcpos : 0 ≤ c := P.nonneg_of_mem_dom hcdom
+  have hres : P.resources (a, z) = c + b := by
+    simp only [hcdef, consumptionFnOf, consumption]; ring
+  set w : ℝ := (b + assetFloor) / 2 with hwdef
+  have hw0 : assetFloor < w := by rw [hwdef]; linarith
+  have hwb : w < b := by rw [hwdef]; linarith
+  have heq : b - w = w - assetFloor := by rw [hwdef]; ring
+  have hfeas : w ∈ P.toExtended.feasible (a, z) := by
     rw [P.feasible_eq]
-    exact ⟨by linarith [hamem.1], by linarith [(P.policy_mem s).2]⟩
-  have hcd : P.consumption s (a - h) = d := by
-    simp only [consumption] at hca ⊢; linarith
-  have hdpos : 0 < P.consumption s (a - h) := by rw [hcd]; linarith
-  -- optimality of `a` against the deviation
-  have hopt := P.objR_le_of_mem hs hfeas (P.mem_dom_of_pos hdpos)
-  simp only [objR, hcd] at hopt
-  -- the continuation cannot repay more than `L * h`
-  have hslope := P.cont_sub_le s.2 hlow (by linarith) hamem
-  rw [show a - (a - h) = h from by ring] at hslope
-  have hscaled := mul_le_mul_of_nonneg_left hslope hβ
-  have hutil : P.u d - P.u c ≤ (P.discount * P.contSlopeConst) * (d - c) := by
-    have e : (P.discount : ℝ) * (P.contSlopeConst * h)
-        = (P.discount * P.contSlopeConst) * (d - c) := by rw [hhdef]; ring
-    linarith [hopt, hscaled, e.le, e.ge]
-  -- but the marginal condition says it must repay strictly more
-  have hmarg := hδ c d hcmem (by linarith) hdδ
-  rw [show ((P.discount : ℝ) * P.contSlopeConst + 1) * (d - c)
-      = (P.discount * P.contSlopeConst) * (d - c) + (d - c) from by ring] at hmarg
-  rw [hhdef] at hh0
-  linarith [hmarg, hutil, hh0]
+    exact ⟨hw0.le, by linarith [(P.policyOf_mem v (a, z)).2]⟩
+  have hcons : P.consumption (a, z) w = c + (b - assetFloor) / 2 := by
+    simp only [consumption, hres, hwdef]; ring
+  have hdev : 0 < P.consumption (a, z) w := by rw [hcons]; linarith
+  have hopt := P.objROf_le_of_mem v ha hfeas (P.mem_dom_of_pos hdev)
+  simp only [objROf, hcons] at hopt
+  rw [show P.consumption (a, z) (P.policyOf v (a, z)) = c from rfl,
+    show P.policyOf v (a, z) = b from rfl] at hopt
+  -- concavity of the continuation caps what the forgone saving could have repaid
+  have hfloormem : assetFloor ∈ Icc assetFloor assetCap := ⟨le_rfl, P.assetFloor_le_assetCap⟩
+  have hslope := (P.concaveOn_contOf hv z).slope_anti_adjacent hfloormem hbreg hw0 hwb
+  have hb1 := abs_le.mp (P.abs_contOf_le v z w)
+  have hb0 := abs_le.mp (P.abs_contOf_le v z assetFloor)
+  have hloss : P.contOf v z b - P.contOf v z w ≤ 2 * ‖v‖ := by
+    rw [div_le_div_iff₀ (by linarith) (by linarith), ← heq] at hslope
+    have := le_of_mul_le_mul_right hslope (by linarith : (0 : ℝ) < b - w)
+    linarith [hb1.2, hb0.1]
+  have hcmax : c + (b - assetFloor) / 2 ≤ P.maxConsumption := by
+    have hcm := P.consumption_le_maxConsumption (s := (a, z)) ha hw0.le
+    rwa [hcons] at hcm
+  have hmg := hmarg (c + (b - assetFloor) / 2) c hcdom (by linarith) hcmax
+  rw [show c + (b - assetFloor) / 2 - c = (b - assetFloor) / 2 from by ring] at hmg
+  rw [← sub_le_iff_le_add', le_div_iff₀ hm]
+  nlinarith only [hopt, hmg, mul_le_mul_of_nonneg_left hloss hβ]
 
 /-- **The second route to positive consumption.** When utility is unbounded below the reward is
 `⊥` at zero consumption and positivity is free; when it is bounded — CES with `γ < 1` — it has to

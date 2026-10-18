@@ -227,17 +227,7 @@ theorem crra_minMPC_mul_le_consumptionFnOf {γ : ℝ} (hγ0 : 0 < γ) (hu : P.u 
       P.minMPC γ * P.resources (a, z)
         ≤ P.consumptionFnOf ((P.toExtended.bellman)^[n] (0 : (ℝ × Z) →ᵇ ℝ)) z a := by
   subst hfl
-  have hR : (0 : ℝ) < 1 + P.interest := P.interest_gt_neg_one
-  have hβR0 : (0 : ℝ) < (P.discount : ℝ) * (1 + P.interest) := mul_pos hβ hR
-  set T : ℝ := ((P.discount : ℝ) * (1 + P.interest)) ^ (1 / γ) with hTdef
-  have hT0 : 0 < T := patience_pos (P := P) hγ0 hβ
-  have hκ0 : 0 < P.minMPC γ := hκ
   have hκ1 : P.minMPC γ ≤ 1 := minMPC_le_one (P := P) hγ0 hβ
-  have hkey : (1 - P.minMPC γ) * (1 + P.interest) = T := one_sub_minMPC_mul (P := P)
-  -- `Þ ^ (-γ) = 1/(βR)`, the one rpow identity the step needs
-  have hTneg : T ^ (-γ) = ((P.discount : ℝ) * (1 + P.interest))⁻¹ := by
-    rw [hTdef, ← Real.rpow_mul hβR0.le,
-      show (1 / γ) * (-γ) = -1 from by field_simp, Real.rpow_neg_one]
   intro n
   induction n with
   | zero =>
@@ -644,7 +634,8 @@ theorem hara_exists_exhaust_of_minMPC {γ η : ℝ} (hγ0 : 0 < γ) (hη : 0 ≤
 
 /-! ### The exhaustion data, without `IidIncome`
 
-`exists_exhaust_of_impatient` (Açıkgöz Proposition 4) also supplies the decline half from
+`exists_exhaust_of_impatient` (the capped worst-state decline argument) also supplies
+the decline half from
 impatience, but it gets there by comparing income states: consumption is lowest where income is
 lowest, which needs `IidIncome` so that the continuation does not depend on today's state. The
 minimal-MPC route compares nothing. It is a statement about the budget and the Euler inequality

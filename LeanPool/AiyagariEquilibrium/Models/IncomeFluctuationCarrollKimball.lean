@@ -148,13 +148,6 @@ theorem optimal_action_unique_of_concaveSlices {v : (ℝ × Z) →ᵇ ℝ}
     a₀ = a₁ := by
   exact P.optimal_action_unique_of_concave hv hs h₀ h₁ hm₀ hm₁
 
-/-- The consumption function implied by an arbitrary continuation. -/
-noncomputable def consumptionFnOf (v : (ℝ × Z) →ᵇ ℝ) (z : Z) (a : ℝ) : ℝ :=
-  P.consumption (a, z) (P.policyOf v (a, z))
-
-theorem consumptionFnOf_valueFunction :
-    P.consumptionFnOf P.toExtended.valueFunction = P.consumptionFn := rfl
-
 /-! ### The agent with no future eats everything
 
 The iteration starts at the zero continuation, where saving buys nothing and the optimal plan
@@ -292,6 +285,31 @@ theorem tendsto_policyOf {v : ℕ → (ℝ × Z) →ᵇ ℝ} {w : (ℝ × Z) →
       (P.policyOf_optimal w s)
   exact ⟨φ, by rw [← hLeq]; exact hlim'⟩
 
+/-- The limit step, split off from `concaveOn_consumptionFn_of_preserves`: concavity of the
+consumption functions of the iterates passes to the fixed point, because optimal actions survive
+a uniform limit. -/
+theorem concaveOn_consumptionFn_of_iterates
+    (hcons : ∀ n : ℕ, ∀ z : Z, ConcaveOn ℝ (Icc assetFloor assetCap)
+      (P.consumptionFnOf ((P.toExtended.bellman)^[n] (0 : (ℝ × Z) →ᵇ ℝ)) z)) (z : Z) :
+    ConcaveOn ℝ (Icc assetFloor assetCap) (P.consumptionFn z) := by
+  set T := P.toExtended.bellman with hTdef
+  have hlim : Tendsto (fun n => T^[n] (0 : (ℝ × Z) →ᵇ ℝ)) atTop
+      (𝓝 P.toExtended.valueFunction) := P.toExtended.tendsto_iterate_valueFunction 0
+  have hpt : ∀ a ∈ Icc assetFloor assetCap,
+      Tendsto (fun n => P.consumptionFnOf (T^[n] (0 : (ℝ × Z) →ᵇ ℝ)) z a) atTop
+        (𝓝 (P.consumptionFn z a)) := by
+    intro a ha
+    have hp := P.tendsto_policyOf hlim P.concaveSlices_valueFunction (s := (a, z)) ha
+    have he : P.consumptionFn z a
+        = P.resources (a, z) - P.policyOf P.toExtended.valueFunction (a, z) := rfl
+    rw [he]
+    simpa only [consumptionFnOf, consumption] using tendsto_const_nhds.sub hp
+  refine ⟨convex_Icc _ _, fun x hx y hy θ φ hθ hφ hθφ => ?_⟩
+  have hm : θ • x + φ • y ∈ Icc assetFloor assetCap := convex_Icc _ _ hx hy hθ hφ hθφ
+  refine le_of_tendsto_of_tendsto
+    (((hpt x hx).const_smul θ).add ((hpt y hy).const_smul φ)) (hpt _ hm)
+    (Eventually.of_forall fun n => (hcons n z).2 hx hy hθ hφ hθφ)
+
 /-! ### Carroll and Kimball, reduced to one step -/
 
 /-- **The consumption function of the fixed point is concave whenever the Bellman operator
@@ -316,22 +334,7 @@ theorem concaveOn_consumptionFn_of_preserves
     induction n with
     | zero => exact P.concaveOn_consumptionFnOf_zero
     | succ k ih => rw [Function.iterate_succ_apply']; exact hT _ (hslices k) ih
-  have hlim : Tendsto (fun n => T^[n] (0 : (ℝ × Z) →ᵇ ℝ)) atTop (𝓝 P.toExtended.valueFunction) :=
-    P.toExtended.tendsto_iterate_valueFunction 0
-  have hpt : ∀ a ∈ Icc assetFloor assetCap,
-      Tendsto (fun n => P.consumptionFnOf (T^[n] (0 : (ℝ × Z) →ᵇ ℝ)) z a) atTop
-        (𝓝 (P.consumptionFn z a)) := by
-    intro a ha
-    have hp := P.tendsto_policyOf hlim P.concaveSlices_valueFunction (s := (a, z)) ha
-    have he : P.consumptionFn z a
-        = P.resources (a, z) - P.policyOf P.toExtended.valueFunction (a, z) := rfl
-    rw [he]
-    simpa only [consumptionFnOf, consumption] using tendsto_const_nhds.sub hp
-  refine ⟨convex_Icc _ _, fun x hx y hy θ φ hθ hφ hθφ => ?_⟩
-  have hm : θ • x + φ • y ∈ Icc assetFloor assetCap := convex_Icc _ _ hx hy hθ hφ hθφ
-  refine le_of_tendsto_of_tendsto
-    (((hpt x hx).const_smul θ).add ((hpt y hy).const_smul φ)) (hpt _ hm)
-    (Eventually.of_forall fun n => (hcons n z).2 hx hy hθ hφ hθφ)
+  exact P.concaveOn_consumptionFn_of_iterates hcons z
 
 /-! ### The endogenous-gridpoint transfer
 

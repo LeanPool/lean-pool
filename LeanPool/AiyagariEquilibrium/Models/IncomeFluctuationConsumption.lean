@@ -51,7 +51,7 @@ else that theorem needs about the consumption function is discharged here.
 
 @[expose] public section
 
-open Set Filter Topology
+open Set Filter Topology BoundedContinuousFunction
 
 namespace LeanEconomics
 
@@ -64,17 +64,25 @@ variable (P : IncomeFluctuation Z assetFloor assetCap)
 /-- **The continuation value is concave in savings**, being a non-negative combination of the
 value function's concave slices. -/
 theorem concaveOn_cont (z : Z) : ConcaveOn ℝ (Icc assetFloor assetCap) (P.cont z) := by
-  refine ⟨convex_Icc _ _, fun x hx y hy θ φ hθ hφ hθφ => ?_⟩
-  simp only [cont, smul_eq_mul]
-  rw [Finset.mul_sum, Finset.mul_sum, ← Finset.sum_add_distrib]
-  refine Finset.sum_le_sum fun z' _ => ?_
-  have hvz := (P.concaveOn_valueFunction z').2 hx hy hθ hφ hθφ
-  simp only [smul_eq_mul] at hvz
-  nlinarith [P.transitionMatrix_nonneg z z']
+  exact P.concaveOn_contOf P.concaveOn_valueFunction z
 
 /-- Consumption at the optimum, as a function of assets. -/
 noncomputable def consumptionFn (z : Z) (a : ℝ) : ℝ :=
   P.consumption (a, z) (P.policy (a, z))
+
+/-- The consumption function implied by an arbitrary continuation. -/
+noncomputable def consumptionFnOf (v : (ℝ × Z) →ᵇ ℝ) (z : Z) (a : ℝ) : ℝ :=
+  P.consumption (a, z) (P.policyOf v (a, z))
+
+theorem consumptionFnOf_valueFunction :
+    P.consumptionFnOf P.toExtended.valueFunction = P.consumptionFn := rfl
+
+/-- **Consumption at the optimum lies in the utility domain**, whatever the continuation. This
+needs no positivity: the optimum's objective is a real number, so the reward is not `⊥`. -/
+theorem consumption_policyOf_mem_dom (v : (ℝ × Z) →ᵇ ℝ) {z : Z} {a : ℝ}
+    (ha : a ∈ Icc assetFloor assetCap) : P.consumptionFnOf v z a ∈ P.dom :=
+  (P.bellmanFn_eq_of_optimal (s := (a, z)) ha (P.policyOf_mem v (a, z))
+    (P.policyOf_optimal v (a, z))).1
 
 theorem consumptionFn_pos (hpc : P.PositiveConsumption) {a : ℝ} (ha : a ∈ Icc assetFloor assetCap)
     (z : Z) :
@@ -97,6 +105,82 @@ theorem maxSaving_le_add_sub {a a' : ℝ} {z : Z} (hle : a ≤ a') :
   rw [P.maxSaving_eq, P.maxSaving_eq]
   linarith
 
+/-- **Consumption is ordered across states** against a continuation whose increments are
+antitone in income. -/
+theorem consumptionFnOf_le_across_states {v : (ℝ × Z) →ᵇ ℝ}
+    (hv : ∀ z : Z, ConcaveOn ℝ (Icc assetFloor assetCap) fun a => v (a, z)) {z₁ z₂ : Z}
+    (hid : ∀ x y : ℝ, x ∈ Icc assetFloor assetCap → y ∈ Icc assetFloor assetCap → x ≤ y →
+      P.contOf v z₂ y - P.contOf v z₂ x ≤ P.contOf v z₁ y - P.contOf v z₁ x)
+    {a a' : ℝ} (ha : a ∈ Icc assetFloor assetCap) (ha' : a' ∈ Icc assetFloor assetCap)
+    (hres : P.resources (a, z₁) ≤ P.resources (a', z₂)) :
+    P.consumptionFnOf v z₁ a ≤ P.consumptionFnOf v z₂ a' := by
+  set Δ : ℝ := P.resources (a', z₂) - P.resources (a, z₁) with hΔdef
+  have hΔ : 0 ≤ Δ := by rw [hΔdef]; linarith
+  set b : ℝ := P.policyOf v (a, z₁) with hbdef
+  set b' : ℝ := P.policyOf v (a', z₂) with hb'def
+  by_contra hcon
+  rw [not_le] at hcon
+  have hgap : b + Δ < b' := by
+    simp only [consumptionFnOf, consumption] at hcon
+    rw [hΔdef]; linarith
+  have hbmem : b ∈ P.toExtended.feasible (a, z₁) := P.policyOf_mem v (a, z₁)
+  have hb'mem : b' ∈ P.toExtended.feasible (a', z₂) := P.policyOf_mem v (a', z₂)
+  rw [P.feasible_eq] at hbmem hb'mem
+  have hms : P.maxSaving (a', z₂) ≤ P.maxSaving (a, z₁) + Δ := by
+    have hmin : min assetCap (P.resources (a', z₂))
+        ≤ min assetCap (P.resources (a, z₁)) + Δ := by
+      rcases le_total assetCap (P.resources (a, z₁)) with h | h
+      · rw [min_eq_left h]
+        exact le_trans (min_le_left _ _) (by linarith)
+      · rw [min_eq_right h]
+        exact le_trans (min_le_right _ _) (by rw [hΔdef]; linarith)
+    rw [P.maxSaving_eq, P.maxSaving_eq]
+    linarith
+  have hshiftup : b + Δ ∈ P.toExtended.feasible (a', z₂) := by
+    rw [P.feasible_eq]
+    exact ⟨by linarith [hbmem.1], by linarith [hb'mem.2]⟩
+  have hshiftdown : b' - Δ ∈ P.toExtended.feasible (a, z₁) := by
+    rw [P.feasible_eq]
+    exact ⟨by linarith [hbmem.1], by linarith [hb'mem.2]⟩
+  have hc1 : P.consumption (a, z₁) b ∈ P.dom := P.consumption_policyOf_mem_dom v ha
+  have hc2 : P.consumption (a', z₂) b' ∈ P.dom := P.consumption_policyOf_mem_dom v ha'
+  have he1 : P.consumption (a', z₂) (b + Δ) = P.consumption (a, z₁) b := by
+    simp only [consumption, hΔdef]; ring
+  have he2 : P.consumption (a, z₁) (b' - Δ) = P.consumption (a', z₂) b' := by
+    simp only [consumption, hΔdef]; ring
+  have hI := P.objROf_le_of_mem v ha hshiftdown (by rw [he2]; exact hc2)
+  have hII := P.objROf_le_of_mem v ha' hshiftup (by rw [he1]; exact hc1)
+  have hbreg : b ∈ Icc assetFloor assetCap := P.feasible_subset_region (P.policyOf_mem v _)
+  have hb'reg : b' ∈ Icc assetFloor assetCap := P.feasible_subset_region (P.policyOf_mem v _)
+  -- concavity of the poorer continuation, shifted by `Δ`
+  have hshift := (P.concaveOn_contOf hv z₁).sub_le_sub_of_shift (c₁ := b) (c₂ := b' - Δ) (Δ := Δ)
+    hbreg (by simpa using hb'reg) (by linarith) hΔ
+  rw [sub_add_cancel] at hshift
+  -- and the richer continuation is flatter still
+  have hacross := hid (b + Δ) b' ⟨by linarith [hbreg.1], by linarith [hb'reg.2]⟩ hb'reg hgap.le
+  have hβ : (0 : ℝ) ≤ P.discount := P.discount.coe_nonneg
+  have hchain := mul_le_mul_of_nonneg_left (le_trans hacross hshift) hβ
+  simp only [objROf, he1, he2] at hI hII
+  have hIIeq : P.objROf v (a', z₂) (b + Δ) = P.objROf v (a', z₂) b' := by
+    simp only [objROf, he1]
+    linarith [hI, hII, hchain]
+  have hbell : P.toExtended.objectiveE v (a', z₂) (b + Δ)
+      = ((P.toExtended.bellmanFn v (a', z₂) : ℝ) : EReal) := by
+    rw [P.objectiveE_eq_coe_of v ha' hshiftup (by rw [he1]; exact hc1), hIIeq,
+      ← P.objectiveE_eq_coe_of v ha' (P.policyOf_mem v _) hc2]
+    exact P.policyOf_optimal v _
+  exact absurd (P.optimal_action_unique_of_concave hv ha' hshiftup (P.policyOf_mem v _)
+    hbell (P.policyOf_optimal v _)) (by rw [← hb'def]; linarith)
+
+/-- **Consumption rises with assets, whatever the continuation.** The exchange argument of
+`consumptionFn_mono`, run against `v`. -/
+theorem consumptionFnOf_mono {v : (ℝ × Z) →ᵇ ℝ}
+    (hv : ∀ z : Z, ConcaveOn ℝ (Icc assetFloor assetCap) fun a => v (a, z)) {a a' : ℝ} {z : Z}
+    (ha : a ∈ Icc assetFloor assetCap) (ha' : a' ∈ Icc assetFloor assetCap) (hle : a ≤ a') :
+    P.consumptionFnOf v z a ≤ P.consumptionFnOf v z a' := by
+  exact P.consumptionFnOf_le_across_states hv (fun _ _ _ _ _ => le_rfl) ha ha'
+    (P.resources_mono hle)
+
 /-- **Consumption rises with assets.** The two households swap savings plans shifted by their
 resource gap, which leaves consumption alone and moves only the continuation — so the
 comparison is increasing differences of the continuation, exactly as `policy_mono` is
@@ -105,61 +189,8 @@ theorem consumptionFn_mono {a a' : ℝ} {z : Z}
     (ha : a ∈ Icc assetFloor assetCap)
     (ha' : a' ∈ Icc assetFloor assetCap) (hle : a ≤ a') :
     P.consumptionFn z a ≤ P.consumptionFn z a' := by
-  set Δ : ℝ := P.resources (a', z) - P.resources (a, z) with hΔdef
-  have hΔ : 0 ≤ Δ := by
-    rw [hΔdef]; linarith [P.resources_mono (z := z) hle]
-  set b : ℝ := P.policy (a, z) with hbdef
-  set b' : ℝ := P.policy (a', z) with hb'def
-  -- the goal is `b' ≤ b + Δ`
-  by_contra hcon
-  rw [not_le] at hcon
-  have hgap : b + Δ < b' := by
-    simp only [consumptionFn, consumption] at hcon
-    rw [hΔdef]; linarith
-  have hbmem : b ∈ P.toExtended.feasible (a, z) := P.policy_mem _
-  have hb'mem : b' ∈ P.toExtended.feasible (a', z) := P.policy_mem _
-  rw [P.feasible_eq] at hbmem hb'mem
-  -- both shifted plans are feasible
-  have hshiftup : b + Δ ∈ P.toExtended.feasible (a', z) := by
-    rw [P.feasible_eq]
-    exact ⟨by linarith [hbmem.1], by linarith [hb'mem.2]⟩
-  have hshiftdown : b' - Δ ∈ P.toExtended.feasible (a, z) := by
-    rw [P.feasible_eq]
-    refine ⟨by linarith [hbmem.1], ?_⟩
-    have := P.maxSaving_le_add_sub (z := z) hle
-    rw [← hΔdef] at this
-    linarith [hb'mem.2]
-  -- the shift is consumption-neutral, so only two consumption levels appear
-  have hc1 : P.consumption (a, z) b ∈ P.dom := P.consumption_policy_mem_dom (s := (a, z)) ha
-  have hc2 : P.consumption (a', z) b' ∈ P.dom :=
-    P.consumption_policy_mem_dom (s := (a', z)) ha'
-  have he1 : P.consumption (a', z) (b + Δ) = P.consumption (a, z) b := by
-    simp only [consumption, hΔdef]; ring
-  have he2 : P.consumption (a, z) (b' - Δ) = P.consumption (a', z) b' := by
-    simp only [consumption, hΔdef]; ring
-  -- optimality at each state, against the other's shifted plan
-  have hI := P.objR_le_of_mem ha hshiftdown (by rw [he2]; exact hc2)
-  have hII := P.objR_le_of_mem ha' hshiftup (by rw [he1]; exact hc1)
-  -- increasing differences of the continuation
-  have hbreg : b ∈ Icc assetFloor assetCap := P.policy_mem_region _
-  have hb'reg : b' ∈ Icc assetFloor assetCap := P.policy_mem_region _
-  have hshift := (P.concaveOn_cont z).sub_le_sub_of_shift (c₁ := b) (c₂ := b' - Δ) (Δ := Δ)
-    hbreg (by simpa using hb'reg) (by linarith) hΔ
-  rw [sub_add_cancel] at hshift
-  -- the two optimality inequalities therefore hold with equality
-  have hβ : (0 : ℝ) ≤ P.discount := P.discount.coe_nonneg
-  have hscaled := mul_le_mul_of_nonneg_left hshift hβ
-  simp only [objR, he1, he2] at hI hII
-  have hIIeq : P.objR (a', z) (b + Δ) = P.objR (a', z) b' := by
-    simp only [objR, he1]
-    nlinarith [hI, hII, hscaled]
-  -- so the shifted plan attains the optimum at the richer state, and uniqueness closes it
-  have hbell : P.toExtended.objectiveE P.toExtended.valueFunction (a', z) (b + Δ)
-      = ((P.toExtended.bellmanFn P.toExtended.valueFunction (a', z) : ℝ) : EReal) := by
-    rw [P.objectiveE_eq_coe ha' hshiftup (by rw [he1]; exact hc1), hIIeq,
-      ← P.objectiveE_eq_coe ha' (P.policy_mem _) hc2]
-    exact P.policy_optimal _
-  exact absurd (P.eq_policy_of_optimal ha' hshiftup hbell) (by rw [← hb'def]; linarith)
+  simpa only [P.consumptionFnOf_valueFunction] using
+    P.consumptionFnOf_mono P.concaveOn_valueFunction ha ha' hle
 
 /-- **The marginal propensities are both non-negative.** Consumption rises with assets, and by
 no more than resources do — the second half is `policy_mono`. -/

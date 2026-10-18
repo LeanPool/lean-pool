@@ -12,39 +12,27 @@ public import LeanPool.AiyagariEquilibrium.Equilibrium.AiyagariContinuity
 public import LeanPool.AiyagariEquilibrium.Equilibrium.SignChange
 
 /-!
-# Uniqueness of the equilibrium rate for a log economy at large `β`
+# Rate uniqueness for normalized capped-log clearing
 
-The chain of Light (2018) — individual saving rises with the rate (Theorem 1), so aggregate
-saving does (Theorem 2), so it meets a strictly decreasing demand once (Theorem 3) — assembled
-for LOG utility with the constants that survive `β = 0.96`.
+This file combines rate monotonicity of household saving, monotonicity of stationary mean
+assets and a strictly decreasing prescribed demand schedule. The log-household constants
+support discount `24/25`.
 
-## The normalised firm
+## The prescribed normalized schedule
 
-Aiyagari's firm is Cobb--Douglas with capital share `α`: `k(r) = (α/(r+δ))^(1/(1-α))` and
-`w(r) = (1-α) k(r)^α`. Light's Theorem 3 works with the ratio, and the ratio needs no root:
+`normalisedDemand α δ r = α / ((1 - α) * (r + δ))` is the capital-to-wage ratio for a
+Cobb–Douglas firm per unit of effective labor. The clearing equation used here equates this
+schedule to mean household assets. No mean-one endowment condition or wage/asset-cap scaling
+bridge to full competitive equilibrium is supplied. The result is uniqueness for this
+explicit unit-wage normalized clearing problem.
 
-  `k(r) / w(r) = α / ((1-α)(r+δ))`,
+## Household conditions
 
-strictly decreasing in `r`. Capital supply is homogeneous of degree one in the wage (Açıkgöz
-Proposition 7, `Equilibrium/Homothetic`), so Aiyagari's steady-state condition `K(r) = Ea(r)` at
-wage `w(r)` is the condition `k(r)/w(r) = Ea₁(r)` for the unit-wage economy. This file proves
-that the latter has at most one solution.
-
-## What is assumed of the income process
-
-That its transitions are MONOTONE — a higher-income state's row first-order stochastically
-dominates a lower one's (`MonotoneTransitions`; iid is the trivial case) — and that the worst
-state has income `minIncome` and is reachable from everywhere. Nothing else: no transition
-probabilities are named. That is why the theorem can be stated for Aiyagari's calibration
-without reproducing his seven-state Tauchen chains: a Tauchen discretisation of an AR(1) with
-positive persistence has monotone transitions by construction, so at `μ = 1` every column of his
-Table II is covered, `ρ = 0` and `ρ > 0` alike.
-
-## What is assumed of the cap
-
-One inequality, `2β · maxIncome < (1 - β(1+rhi)) · cap`. The asset cap is bookkeeping imposed for
-compactness; this says it was set large enough not to bind, and it is the only place the cap
-enters.
+Transitions are monotone in income, and a lowest-income state is reached with positive
+probability in one step from every state. The Tauchen construction verifies these properties
+for its arbitrary positive earnings scale. The cap inequality
+`2β * maxIncome < (1 - β * (1 + rhi)) * cap` guarantees the required saving bound across
+the rate interval; the asset bounds are fixed across that family.
 -/
 
 @[expose] public section
@@ -53,9 +41,9 @@ open Set Filter Topology MeasureTheory BoundedContinuousFunction
 
 namespace LeanEconomics
 
-/-! ### The normalised Cobb--Douglas demand -/
+/-! ### The prescribed normalized demand -/
 
-/-- `k(r)/w(r)` for a Cobb--Douglas firm with capital share `α` and depreciation `δ`. -/
+/-- The prescribed unit-wage normalized demand schedule, per unit of effective labor. -/
 noncomputable def normalisedDemand (α δ r : ℝ) : ℝ := α / ((1 - α) * (r + δ))
 
 theorem normalisedDemand_strictAntiOn {α δ rlo rhi : ℝ} (hα0 : 0 < α) (hα1 : α < 1)

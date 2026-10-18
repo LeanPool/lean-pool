@@ -99,6 +99,30 @@ noncomputable def contOf (v : (ℝ × Z) →ᵇ ℝ) (z : Z) (x : ℝ) : ℝ :=
 noncomputable def objROf (v : (ℝ × Z) →ᵇ ℝ) (s : ℝ × Z) (x : ℝ) : ℝ :=
   P.u (P.consumption s x) + P.discount * P.contOf v s.2 x
 
+theorem concaveOn_contOf {v : (ℝ × Z) →ᵇ ℝ}
+    (hv : ∀ z : Z, ConcaveOn ℝ (Icc assetFloor assetCap) fun a => v (a, z)) (z : Z) :
+    ConcaveOn ℝ (Icc assetFloor assetCap) (P.contOf v z) := by
+  refine ⟨convex_Icc _ _, fun x hx y hy θ φ hθ hφ hθφ => ?_⟩
+  simp only [contOf, smul_eq_mul, Finset.mul_sum, ← Finset.sum_add_distrib]
+  refine Finset.sum_le_sum fun z' _ => ?_
+  have hz' := (hv z').2 hx hy hθ hφ hθφ
+  simp only [smul_eq_mul] at hz'
+  nlinarith [mul_le_mul_of_nonneg_left hz' (P.transitionMatrix_nonneg z z')]
+
+theorem abs_contOf_le (v : (ℝ × Z) →ᵇ ℝ) (z : Z) (x : ℝ) : |P.contOf v z x| ≤ ‖v‖ := by
+  have h1 : |∑ z' : Z, P.transitionMatrix z z' * v (x, z')|
+      ≤ ∑ z' : Z, |P.transitionMatrix z z' * v (x, z')| := Finset.abs_sum_le_sum_abs _ _
+  have h2 : ∑ z' : Z, |P.transitionMatrix z z' * v (x, z')|
+      ≤ ∑ z' : Z, P.transitionMatrix z z' * ‖v‖ := by
+    refine Finset.sum_le_sum fun z' _ => ?_
+    rw [abs_mul, abs_of_nonneg (P.transitionMatrix_nonneg z z')]
+    exact mul_le_mul_of_nonneg_left
+      (by simpa [Real.norm_eq_abs] using v.norm_coe_le_norm (x, z'))
+      (P.transitionMatrix_nonneg z z')
+  rw [← Finset.sum_mul, P.transitionMatrix_sum, one_mul] at h2
+  simp only [contOf]
+  linarith
+
 /-- The objective in the reals agrees with the extended objective where consumption is
 positive. -/
 theorem objectiveE_eq_coe_of (v : (ℝ × Z) →ᵇ ℝ) {a : ℝ} {z : Z} {x : ℝ}

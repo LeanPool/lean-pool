@@ -8,7 +8,7 @@ module
 public import LeanPool.AiyagariEquilibrium.Equilibrium.AiyagariUniqueness
 
 /-!
-# Bisection finds the equilibrium rate, and the log Aiyagari instance
+# Bisection for a monotone zero and normalized clearing
 
 Aiyagari (1994) computed his equilibrium by bisection on the interest rate: evaluate excess
 supply at the midpoint of a bracket and keep the half on which it still changes sign. Hajek and
@@ -27,12 +27,21 @@ monotonicity alone decides which half the zero is in. The midpoint after `n` ste
 
 ## The instance
 
-For Aiyagari's log calibration the supply schedule along any selection of stationary
-distributions is monotone (`log_monotoneOn_capitalSupply`) and Cobb--Douglas demand is strictly
-decreasing, so excess supply is strictly increasing. `aiyagari1994_log_bisection` therefore says:
-whatever equilibrium rate there is on `[rlo, rhi] ⊂ (-δ, λ)`, the bisection on excess supply
-brackets it at every step and converges to it — the numerical procedure is certified to find the
-rate that `aiyagari1994_log_equilibriumRate_unique` says is the only one.
+For the capped log-household calibration, stationary mean assets are monotone in the rate
+under the stated hypotheses, and the prescribed normalized demand is strictly decreasing.
+Thus normalized excess supply is strictly increasing. Given a stationary distribution and a
+rate solving that explicit normalized clearing equation, `aiyagari1994_log_bisection` proves
+that bisection brackets the rate and converges to it. Existence of such a solution is an input.
+
+## Normalized clearing scope
+
+The economic endpoints use the prescribed equation
+`aggregateCapital μ = normalisedDemand (9/25) (2/25) r`, where the right side is
+`(9/25) / ((1 - 9/25) * (r + 2/25))`. This is a unit-wage normalized clearing problem.
+The household earnings scale is arbitrary; no mean-one endowment condition or bridge from
+these units and the fixed asset cap to full competitive market clearing is established here.
+The uniqueness and bisection claims concern this explicit normalized equation.
+
 -/
 
 @[expose] public section

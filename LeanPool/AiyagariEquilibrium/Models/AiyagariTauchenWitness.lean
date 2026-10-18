@@ -9,19 +9,21 @@ public import LeanPool.AiyagariEquilibrium.Models.Tauchen
 public import LeanPool.AiyagariEquilibrium.Equilibrium.AiyagariUniqueness
 
 /-!
-# Aiyagari (1994) with his own earnings process
+# Finite Tauchen earnings for normalized capped-log clearing
 
-Aiyagari's labour endowment follows `log l' = ρ log l + σ √(1 - ρ²) ε`, `ε ~ N(0,1)`, discretised
-by Tauchen's method on `[-3σ, 3σ]`, and scaled so that its mean is one. He used seven states,
-`ρ ∈ {0, 0.3, 0.6, 0.9}` and `σ ∈ {0.2, 0.4}`. The economy here has `n + 2` states for any `n`,
-any `ρ ∈ [0, 1)`, any `σ > 0`, and any scale `c > 0` — the normalising constant is whatever it
-is; uniqueness does not depend on it except through the cap condition, where it enters via the
-highest endowment `c · e^{3σ}`.
+The earnings chain discretizes `log l' = ρ log l + σ √(1 - ρ²) ε`, with standard normal `ε`,
+on `n + 2` grid points in `[-3σ, 3σ]`. Its earnings scale `c > 0` is arbitrary: no mean-one
+endowment normalization is imposed. Monotone transitions and positive one-step access to the
+lowest state follow from `monotoneTransitions_of_tauchen` and `tauchen_pos_zero`.
 
-The two facts about the chain that the uniqueness theorem needs — monotone transitions and a
-lowest state reachable from everywhere — are `monotoneTransitions_of_tauchen` and
-`tauchen_pos_zero`, both consequences of `Φ` being monotone and positive. Everything else is
-`rfl` and `norm_num`, as for the two-state witnesses.
+The household has discount `24/25`, log utility, no borrowing and a fixed finite asset cap.
+The rate-uniqueness endpoint uses the prescribed unit-wage normalized clearing equation
+`aggregateCapital μ = normalisedDemand (9/25) (2/25) r`, with demand `9 / (16 * (r + 2/25))`,
+and an explicit cap-slack inequality at the larger rate.
+
+A bridge from these household units and the fixed cap to full competitive market clearing
+for arbitrary earnings scales is not established here. The theorem concerns this explicit
+normalized clearing equation.
 -/
 
 @[expose] public section

@@ -480,16 +480,19 @@ theorem tendsto_pushProb_iterate {z₀ : Z} {s₀ : P.State} {p₀ : ℝ} {N : �
 to check directly, and in the earlier calibrations it was obtained only by making the policy
 identically zero.
 
-Açıkgöz (2018) obtains it instead from two natural facts, in the proof of his Proposition 5:
+In Açıkgöz's April 2016 author draft, Proposition 5 (printed page 9; proof in Appendix E,
+printed page 32) uses two natural facts:
 the constraint binds near zero, and assets strictly decline above that at the worst income
 state. A continuous strictly declining map on a compact interval has a UNIFORM minimum
 decline, so finitely many periods carry the richest household below the threshold, and one
 more step pins it to the constraint.
 
-His Proposition 4, which produces the asset bound itself, is a different matter: its proof
-runs the Euler equation at an interior optimum and takes limits of `u'(x+ε)/u'(x)`, so it
-needs differentiability of the utility and the first-order condition. This development
-deliberately has neither. The lemma below extracts only the part that does not. -/
+In that edition, Proposition 3 (printed page 8) supplies worst-state decline, while
+Proposition 4 (the same page) supplies a finite asset bound. The source is
+https://mpra.ub.uni-muenchen.de/71066/1/MPRA_paper_71066.pdf.
+The lemma below uses only continuity, binding near the constraint and strict decline on an
+already compact interval; the Euler arguments establishing these inputs appear separately.
+ -/
 
 omit [MeasurableSpace Z] [BorelSpace Z] in
 theorem exists_exhaust_of_decline {z₀ : Z} {a₀ : ℝ} (ha₀ : assetFloor < a₀) (hle : a₀ ≤ assetCap)

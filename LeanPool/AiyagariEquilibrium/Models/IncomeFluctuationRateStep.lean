@@ -119,7 +119,6 @@ theorem bellmanFn_withRate (h₁ : P.RateOK r₁) (h₂ : P.RateOK r₂) (hr : r
   have hscale : (1 + r₁) / (1 + r₂) * a ∈ Icc (0 : ℝ) assetCap := by
     refine ⟨mul_nonneg (le_of_lt (div_pos hR₁ hR₂)) ha.1, ?_⟩
     nlinarith [ha.1, ha.2, div_pos hR₁ hR₂]
-  have hback : (1 + r₂) / (1 + r₁) * ((1 + r₁) / (1 + r₂) * a) = a := by field_simp
   refine le_antisymm ?_ ?_
   · set b := (P.withRate r₁ h₁).policyOf v (a, z) with hb
     have heq := (P.withRate r₁ h₁).lazyValue_eq_dom v z ha

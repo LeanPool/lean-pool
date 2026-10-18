@@ -36,17 +36,13 @@ would change nothing conceptually.
 
 Equilibrium needs excess demand to change sign across `[rlo, rhi]`. The LOW end is now a
 theorem: capital demand diverges as `r` approaches `-δ`, while capital supply can never exceed
-the asset cap, so `capitalDemand δ rlo ≥ assetCap ≥ S rlo` for `rlo` close enough to `-δ`.
+the asset cap, so `capitalDemand 1 δ rlo ≥ assetCap ≥ S rlo` for `rlo` close enough to `-δ`.
 
-The HIGH end is not, and the obstruction is economic rather than technical. It needs
-`capitalDemand δ rhi ≤ S rhi`, and since Cobb–Douglas demand is strictly positive that forces
-`S rhi > 0` -- households must hold capital at high interest rates. That is obvious
-economically and unproved here. Worse, it is in tension with the only calibration whose
-Doeblin hypotheses are verified: the impatient household of `NonVacuity` is driven to the
-borrowing constraint at EVERY asset level, so its stationary distribution sits at zero assets
-and its capital supply is identically zero. A calibration with a genuine equilibrium needs the
-constraint to bind at the bad income state but not the good one, which the uniform corner
-condition of `policy_eq_zero_of_corner` cannot express.
+The high-end sign inequality requires positive household capital supply. This module
+exposes that condition; the later `PositiveCapital` and `SignChange` modules provide lower
+bounds and calibrate the firm under their additional hypotheses. The uniformly impatient
+`NonVacuity` household alone has zero stationary capital supply and does not discharge it.
+
 -/
 
 @[expose] public section
@@ -55,7 +51,7 @@ open Set Filter Topology MeasureTheory
 
 namespace LeanEconomics
 
-/-- Capital demand from a Cobb–Douglas firm with `α = 1/2`, unit labour and unit productivity:
+/-- Capital demand from a Cobb–Douglas firm with `α = 1/2`, unit labour and productivity `A`:
 the capital stock at which the net marginal product equals `r`. -/
 noncomputable def capitalDemand (A δ r : ℝ) : ℝ := A ^ 2 / (4 * (r + δ) ^ 2)
 

@@ -20,7 +20,7 @@ route that does not carry `1/(1-β)` or `1/(1-βR)` in a constant.
 
 * The corner from the Euler inequality (`crra_policy_eq_zero_of_euler`), whose test is
   `βR · minIncome^(-γ) < (income z₀ + R a₀)^(-γ)` — one inequality, no Lipschitz constant.
-* Decline from Açıkgöz Proposition 4 (`policy_lt_self_of_impatient_iid`), which holds at every
+* Euler-based worst-state decline (`policy_lt_self_of_impatient_iid`), which holds at every
   asset level above the constraint given `βR < 1` and iid income.
 * Cap slack at the fixed point from the minimal MPC (`crra_policy_lt_cap_of_minMPC`).
 

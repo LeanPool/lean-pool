@@ -606,7 +606,7 @@ theorem policy_mono_withRate_hara {assetCap : ℝ} (P : IncomeFluctuation Z 0 as
     (fun y hy => (hara_marginal_pos hη (mem_Ioi.mp hy)).le)
     hposv hposw hslackv hslackw hcons ha z
 
-/-- **Açıkgöz Proposition 4 for shifted CRRA**: the decline condition is impatience. -/
+/-- **Worst-state decline for shifted CRRA**: the decline condition is impatience. -/
 theorem hara_exists_exhaust_of_impatient {γ η : ℝ} (hγ0 : 0 < γ) (hη : 0 ≤ η)
     (hu : P.u = haraUtility γ η)
     (hβR : (P.discount : ℝ) * (1 + P.interest) < 1) (hiid : P.IidIncome)
@@ -635,7 +635,6 @@ theorem hara_cost_of_saving {γ η : ℝ} (hγ : 0 < γ) (hη : 0 ≤ η) {m h R
     (by linarith) (by linarith) hb0 hbh
   have e1 : η + R - b = η + (R - b) := by ring
   have e2 : η + R - h = η + (R - h) := by ring
-  have e3 : η + m - h = η + m - h := rfl
   rw [e1, e2] at hstep
   simpa only [haraUtility] using hstep
 

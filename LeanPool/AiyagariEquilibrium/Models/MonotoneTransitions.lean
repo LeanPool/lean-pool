@@ -99,73 +99,6 @@ The exchange argument of `consumptionFn_mono_of_cont_eq`, with the shared contin
 by an ordered pair: the richer state has a flatter continuation as well as more resources, and
 both push consumption up. -/
 
-/-- **Consumption is ordered across states** against a continuation whose increments are
-antitone in income. -/
-theorem consumptionFnOf_le_across_states {v : (ℝ × Z) →ᵇ ℝ}
-    (hv : ConcaveSlices assetFloor assetCap v) {z₁ z₂ : Z}
-    (hid : ∀ x y : ℝ, x ∈ Icc assetFloor assetCap → y ∈ Icc assetFloor assetCap → x ≤ y →
-      P.contOf v z₂ y - P.contOf v z₂ x ≤ P.contOf v z₁ y - P.contOf v z₁ x)
-    {a a' : ℝ} (ha : a ∈ Icc assetFloor assetCap) (ha' : a' ∈ Icc assetFloor assetCap)
-    (hres : P.resources (a, z₁) ≤ P.resources (a', z₂)) :
-    P.consumptionFnOf v z₁ a ≤ P.consumptionFnOf v z₂ a' := by
-  set Δ : ℝ := P.resources (a', z₂) - P.resources (a, z₁) with hΔdef
-  have hΔ : 0 ≤ Δ := by rw [hΔdef]; linarith
-  set b : ℝ := P.policyOf v (a, z₁) with hbdef
-  set b' : ℝ := P.policyOf v (a', z₂) with hb'def
-  by_contra hcon
-  rw [not_le] at hcon
-  have hgap : b + Δ < b' := by
-    simp only [consumptionFnOf, consumption] at hcon
-    rw [hΔdef]; linarith
-  have hbmem : b ∈ P.toExtended.feasible (a, z₁) := P.policyOf_mem v (a, z₁)
-  have hb'mem : b' ∈ P.toExtended.feasible (a', z₂) := P.policyOf_mem v (a', z₂)
-  rw [P.feasible_eq] at hbmem hb'mem
-  have hms : P.maxSaving (a', z₂) ≤ P.maxSaving (a, z₁) + Δ := by
-    have hmin : min assetCap (P.resources (a', z₂))
-        ≤ min assetCap (P.resources (a, z₁)) + Δ := by
-      rcases le_total assetCap (P.resources (a, z₁)) with h | h
-      · rw [min_eq_left h]
-        exact le_trans (min_le_left _ _) (by linarith)
-      · rw [min_eq_right h]
-        exact le_trans (min_le_right _ _) (by rw [hΔdef]; linarith)
-    rw [P.maxSaving_eq, P.maxSaving_eq]
-    linarith
-  have hshiftup : b + Δ ∈ P.toExtended.feasible (a', z₂) := by
-    rw [P.feasible_eq]
-    exact ⟨by linarith [hbmem.1], by linarith [hb'mem.2]⟩
-  have hshiftdown : b' - Δ ∈ P.toExtended.feasible (a, z₁) := by
-    rw [P.feasible_eq]
-    exact ⟨by linarith [hbmem.1], by linarith [hb'mem.2]⟩
-  have hc1 : P.consumption (a, z₁) b ∈ P.dom := P.consumption_policyOf_mem_dom v ha
-  have hc2 : P.consumption (a', z₂) b' ∈ P.dom := P.consumption_policyOf_mem_dom v ha'
-  have he1 : P.consumption (a', z₂) (b + Δ) = P.consumption (a, z₁) b := by
-    simp only [consumption, hΔdef]; ring
-  have he2 : P.consumption (a, z₁) (b' - Δ) = P.consumption (a', z₂) b' := by
-    simp only [consumption, hΔdef]; ring
-  have hI := P.objROf_le_of_mem v ha hshiftdown (by rw [he2]; exact hc2)
-  have hII := P.objROf_le_of_mem v ha' hshiftup (by rw [he1]; exact hc1)
-  have hbreg : b ∈ Icc assetFloor assetCap := P.feasible_subset_region (P.policyOf_mem v _)
-  have hb'reg : b' ∈ Icc assetFloor assetCap := P.feasible_subset_region (P.policyOf_mem v _)
-  -- concavity of the poorer continuation, shifted by `Δ`
-  have hshift := (P.concaveOn_contOf hv z₁).sub_le_sub_of_shift (c₁ := b) (c₂ := b' - Δ) (Δ := Δ)
-    hbreg (by simpa using hb'reg) (by linarith) hΔ
-  rw [sub_add_cancel] at hshift
-  -- and the richer continuation is flatter still
-  have hacross := hid (b + Δ) b' ⟨by linarith [hbreg.1], by linarith [hb'reg.2]⟩ hb'reg hgap.le
-  have hβ : (0 : ℝ) ≤ P.discount := P.discount.coe_nonneg
-  have hchain := mul_le_mul_of_nonneg_left (le_trans hacross hshift) hβ
-  simp only [objROf, he1, he2] at hI hII
-  have hIIeq : P.objROf v (a', z₂) (b + Δ) = P.objROf v (a', z₂) b' := by
-    simp only [objROf, he1]
-    linarith [hI, hII, hchain]
-  have hbell : P.toExtended.objectiveE v (a', z₂) (b + Δ)
-      = ((P.toExtended.bellmanFn v (a', z₂) : ℝ) : EReal) := by
-    rw [P.objectiveE_eq_coe_of v ha' hshiftup (by rw [he1]; exact hc1), hIIeq,
-      ← P.objectiveE_eq_coe_of v ha' (P.policyOf_mem v _) hc2]
-    exact P.policyOf_optimal v _
-  exact absurd (P.optimal_action_unique_of_concaveSlices hv ha' hshiftup (P.policyOf_mem v _)
-    hbell (P.policyOf_optimal v _)) (by rw [← hb'def]; linarith)
-
 /-! ### The Bellman step, by the envelope -/
 
 /-- **Huggett's Lemma 1, one step.** If `v` has income-antitone increments then so does
@@ -267,7 +200,7 @@ theorem consumptionFn_le_of_income_le_monotone (hmono : P.MonotoneTransitions) {
       (P.incDiffAcrossStates_valueFunction hmono hderiv hanti hpc hslack) hinc hx hy hxy)
     ha ha (by simp only [resources]; linarith)
 
-/-- **Açıkgöz Proposition 4 with persistent income.** Assets strictly decline at the lowest
+/-- **Worst-state decline with persistent income.** Assets strictly decline at the lowest
 income state, at every asset level above the borrowing constraint, given `β(1+r) < 1` and
 monotone transitions. -/
 theorem policy_lt_self_of_impatient_monotone

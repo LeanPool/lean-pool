@@ -228,54 +228,13 @@ argument extracts. For CES with `γ < 1` the uniform `m = maxConsumption ^ (-γ)
 and it is enough. -/
 theorem policy_le_of_marginal_bound {m : ℝ} (hm : 0 < m)
     (hmarg : ∀ c d : ℝ, d ∈ P.dom → d ≤ c → c ≤ P.maxConsumption → m * (c - d) ≤ P.u c - P.u d)
-    (hpc : P.PositiveConsumption) {a : ℝ} (ha : a ∈ Icc (0 : ℝ) assetCap) (z : Z) :
+    {a : ℝ} (ha : a ∈ Icc (0 : ℝ) assetCap) (z : Z) :
     P.policy (a, z) ≤ 2 * P.deviationGap / m := by
-  have hG : 0 ≤ P.deviationGap := P.deviationGap_nonneg
-  set b : ℝ := P.policy (a, z) with hbdef
-  set c : ℝ := P.consumptionFn z a with hcdef
-  rcases eq_or_lt_of_le (P.policy_mem_region (a, z)).1 with hzero | hbpos
-  · rw [← hbdef] at hzero
-    rw [← hzero]
-    positivity
-  rw [← hbdef] at hbpos
-  have hcpos : 0 < c := P.consumptionFn_pos hpc ha z
-  have hres : P.resources (a, z) = c + b := by simp only [hcdef, consumptionFn, consumption]; ring
-  -- the deviation: save half as much
-  have hhalf0 : 0 < b / 2 := by linarith
-  have hhalfb : b / 2 < b := by linarith
-  have hbreg : b ∈ Icc (0 : ℝ) assetCap := P.policy_mem_region _
-  have hmem0 : (0 : ℝ) ∈ Icc (0 : ℝ) assetCap := ⟨le_rfl, P.assetCap_nonneg⟩
-  have hfeas : b / 2 ∈ P.toExtended.feasible (a, z) := by
-    rw [P.feasible_eq]
-    exact ⟨hhalf0.le, by linarith [(P.policy_mem (a, z)).2]⟩
-  have hcons : P.consumption (a, z) (b / 2) = c + b / 2 := by
-    simp only [consumption]; rw [hres]; ring
-  have hdev : 0 < P.consumption (a, z) (b / 2) := by rw [hcons]; linarith
-  have hopt := P.objR_le_of_mem ha hfeas (P.mem_dom_of_pos hdev)
-  simp only [objR, hcons] at hopt
-  rw [show P.consumption (a, z) (P.policy (a, z)) = c from rfl,
-    show P.policy (a, z) = b from rfl] at hopt
-  -- concavity of the continuation caps the forgone repayment
-  have hslope := (P.concaveOn_cont z).slope_anti_adjacent hmem0 hbreg hhalf0 hhalfb
-  have hb1 := abs_le.mp (P.abs_cont_le z (b / 2))
-  have hb0 := abs_le.mp (P.abs_cont_le z 0)
-  have hβ : (0 : ℝ) ≤ (P.discount : ℝ) := P.discount.coe_nonneg
-  have hloss : P.cont z b - P.cont z (b / 2) ≤ 2 * ‖P.toExtended.valueFunction‖ := by
-    rw [div_le_div_iff₀ (by linarith) (by linarith)] at hslope
-    nlinarith [hslope, hb1.1, hb0.2]
-  have hscaled : (P.discount : ℝ) * (P.cont z b - P.cont z (b / 2)) ≤ P.deviationGap := by
-    simp only [deviationGap]
-    nlinarith [hloss, hβ]
-  -- the marginal gain from the extra consumption
-  have hcmax : c + b / 2 ≤ P.maxConsumption := by
-    have := P.consumption_le_maxConsumption (s := (a, z)) ha (le_refl (0 : ℝ))
-    simp only [consumption, sub_zero] at this
-    rw [hres] at this
-    linarith
-  have hmg := hmarg (c + b / 2) c (P.mem_dom_of_pos hcpos) (by linarith) hcmax
-  rw [show c + b / 2 - c = b / 2 from by ring] at hmg
-  rw [le_div_iff₀ hm]
-  nlinarith [hopt, hscaled, hmg]
+  have h := P.policyOf_le_of_marginal_bound P.concaveOn_valueFunction hm hmarg ha z
+  rw [P.policyOf_valueFunction, zero_add] at h
+  convert h using 1
+  dsimp [deviationGap]
+  ring
 
 /-! ### The oscillation gap
 
@@ -377,7 +336,7 @@ theorem crra_policy_eq_zero_of_resources {γ : ℝ} (hγ0 : 0 < γ) (hγ1 : γ <
 /-- **The CES saving bound in closed form.** Saving never exceeds `2 · deviationGap ·
 maxConsumption ^ γ`, whatever the state. -/
 theorem crra_policy_le {γ : ℝ} (hγ0 : 0 < γ) (hγ1 : γ < 1) (hb : P.Bounded)
-    (hu : P.u = crraUtility γ) (hpc : P.PositiveConsumption) {a : ℝ} (ha : a ∈ Icc (0 : ℝ) assetCap)
+    (hu : P.u = crraUtility γ) {a : ℝ} (ha : a ∈ Icc (0 : ℝ) assetCap)
     (z : Z) : P.policy (a, z) ≤ 2 * P.deviationGap * P.maxConsumption ^ γ := by
   have hmc := P.maxConsumption_pos
   have hm : (0 : ℝ) < P.maxConsumption ^ (-γ) := Real.rpow_pos_of_pos hmc _
@@ -385,7 +344,7 @@ theorem crra_policy_le {γ : ℝ} (hγ0 : 0 < γ) (hγ1 : γ < 1) (hb : P.Bounde
     (fun c d hd hdc hc => by
       rw [hu]
       exact crra_marginal_bound_Ici hγ0 hγ1 (by rw [hb] at hd; exact hd) hdc hc)
-    hpc ha z
+    ha z
   have hinv : P.maxConsumption ^ (-γ) = (P.maxConsumption ^ γ)⁻¹ := Real.rpow_neg hmc.le γ
   rw [hinv, div_eq_mul_inv, inv_inv] at hkey
   exact hkey
@@ -393,10 +352,10 @@ theorem crra_policy_le {γ : ℝ} (hγ0 : 0 < γ) (hγ1 : γ < 1) (hb : P.Bounde
 /-- **The natural asset bound for CES.** A uniform cap on saving is a decline condition outright:
 above it, assets fall. No linear consumption bound and no `exp` in sight. -/
 theorem crra_exists_decline {γ : ℝ} (hγ0 : 0 < γ) (hγ1 : γ < 1) (hb : P.Bounded)
-    (hu : P.u = crraUtility γ) (hpc : P.PositiveConsumption) (z : Z) :
+    (hu : P.u = crraUtility γ) (z : Z) :
     ∃ ā : ℝ, ∀ a ∈ Icc (0 : ℝ) assetCap, ā < a → P.policy (a, z) < a :=
   ⟨2 * P.deviationGap * P.maxConsumption ^ γ, fun _ ha hlt =>
-    lt_of_le_of_lt (P.crra_policy_le hγ0 hγ1 hb hu hpc ha _) hlt⟩
+    lt_of_le_of_lt (P.crra_policy_le hγ0 hγ1 hb hu ha _) hlt⟩
 
 /-- **The continuation's gain between two saving levels, CES version.** Where the log form carries
 `log (1 + R·(y-x) / (income + R·x))`, this carries `(income + R·y) ^ (-γ) · R·(y-x)`: the extra

@@ -10,7 +10,7 @@ public import LeanPool.AiyagariEquilibrium.Models.AiyagariTauchenWitness
 public import LeanPool.AiyagariEquilibrium.Equilibrium.Bisection
 
 /-!
-# Capped log Aiyagari equilibrium and dynamic programming
+# Normalized capped log-household clearing and dynamic programming
 
 Source: url:https://github.com/LeanEconomics/LeanEconomics
 Authors: Robert Kirkby
