@@ -133,7 +133,7 @@ is the consumption function, which is concave on the asset region and nowhere el
 original statement over `[0, ∞)` would not reach it. Positivity is needed only at the origin
 and at the far point: concavity carries it to everything in between. -/
 theorem ConcaveOn.div_le_div_of_scale {z : ℝ → ℝ} {s : Set ℝ} (hz : ConcaveOn ℝ s z)
-    (h0 : (0 : ℝ) ∈ s) (hz0 : 0 < z 0) {α₁ α₂ x : ℝ} (h1 : 0 < α₁) (h12 : α₁ ≤ α₂) (hx : 0 < x)
+    (h0 : (0 : ℝ) ∈ s) (hz0 : 0 < z 0) {α₁ α₂ x : ℝ} (h1 : 0 < α₁) (h12 : α₁ ≤ α₂)
     (hm2 : α₂ * x ∈ s) (hp2 : 0 < z (α₂ * x)) :
     α₁ / z (α₁ * x) ≤ α₂ / z (α₂ * x) := by
   have h2 : 0 < α₂ := lt_of_lt_of_le h1 h12

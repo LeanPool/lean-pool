@@ -198,7 +198,7 @@ theorem slopeBound_crraUtility {γ m : ℝ} (hγ : γ ≠ 1) (hm : 0 < m) :
   simp only [slopeBound, crraSlopeBound, crraUtility_of_ne hγ, hhalf, hexp]
   field_simp
 
-theorem crraSlopeBound_nonneg {γ m : ℝ} (hγ0 : 0 < γ) (hγ1 : γ < 1) (hm : 0 < m) :
+theorem crraSlopeBound_nonneg {γ m : ℝ} (hγ1 : γ < 1) (hm : 0 < m) :
     0 ≤ crraSlopeBound γ m := by
   have h2 : (1 : ℝ) ≤ (2 : ℝ) ^ (1 - γ) :=
     Real.one_le_rpow (by norm_num : (1 : ℝ) ≤ 2) (by linarith)
@@ -276,19 +276,19 @@ theorem cont_sub_le_oscGap (z : Z) (x y : ℝ) : P.cont z x - P.cont z y ≤ P.o
 noncomputable def crraLipschitz (γ : ℝ) : ℝ :=
   crraSlopeBound γ P.minConsumption * (1 + P.interest) / (1 - P.discount * (1 + P.interest))
 
-theorem crraLipschitz_nonneg {γ : ℝ} (hγ0 : 0 < γ) (hγ1 : γ < 1)
+theorem crraLipschitz_nonneg {γ : ℝ} (hγ1 : γ < 1)
     (hβR : P.discount * (1 + P.interest) < 1) : 0 ≤ P.crraLipschitz γ := by
-  have hs := crraSlopeBound_nonneg hγ0 hγ1 P.minConsumption_pos
+  have hs := crraSlopeBound_nonneg hγ1 P.minConsumption_pos
   have hr := P.interest_gt_neg_one
   exact div_nonneg (by positivity) (by linarith)
 
 /-- **The value function is Lipschitz with the explicit CES constant.** -/
-theorem crra_valueFunction_lipschitz {γ : ℝ} (hγ0 : 0 < γ) (hγ1 : γ < 1)
+theorem crra_valueFunction_lipschitz {γ : ℝ} (hγ1 : γ < 1)
     (hu : P.u = crraUtility γ) (hβR : P.discount * (1 + P.interest) < 1) :
     ∀ z : Z, ∀ x ∈ Icc (0 : ℝ) assetCap, ∀ y ∈ Icc (0 : ℝ) assetCap,
       |P.toExtended.valueFunction (x, z) - P.toExtended.valueFunction (y, z)|
         ≤ P.crraLipschitz γ * |x - y| := by
-  refine P.valueFunction_lipschitz (P.crraLipschitz_nonneg hγ0 hγ1 hβR) (le_of_eq ?_)
+  refine P.valueFunction_lipschitz (P.crraLipschitz_nonneg hγ1 hβR) (le_of_eq ?_)
   have hne : (1 : ℝ) - P.discount * (1 + P.interest) ≠ 0 := by linarith
   simp only [crraLipschitz, slopeBoundU, hu,
     slopeBound_crraUtility (show γ ≠ 1 by linarith) P.minConsumption_pos]
@@ -302,7 +302,7 @@ theorem crra_policy_eq_zero_of_resources {γ : ℝ} (hγ0 : 0 < γ) (hγ1 : γ <
     (hβR : P.discount * (1 + P.interest) < 1) {s : ℝ × Z} (hs : s.1 ∈ Icc (0 : ℝ) assetCap)
     (hlt : P.discount * P.crraLipschitz γ < P.resources s ^ (-γ)) :
     P.policy s = 0 :=
-  P.policy_eq_zero_of_corner_at (P.crra_valueFunction_lipschitz hγ0 hγ1 hu hβR) hs
+  P.policy_eq_zero_of_corner_at (P.crra_valueFunction_lipschitz hγ1 hu hβR) hs
     (fun c d hd hdc hc => by
       rw [hu]
       rw [sub_zero] at hc
@@ -343,39 +343,15 @@ theorem crra_cont_sub_ge_gen {γ : ℝ} (hγ0 : 0 < γ) (hγ1 : γ < 1)
         * ((1 + P.interest) * (y - x)))
       ≤ P.cont z y - P.cont z x := by
   have hRh : 0 ≤ (1 + P.interest) * (y - x) :=
-    mul_nonneg P.interest_gt_neg_one.le (by linarith)
-  have hsum : P.cont z y - P.cont z x = ∑ z' : Z, P.transitionMatrix z z' *
-      (P.toExtended.valueFunction (y, z') - P.toExtended.valueFunction (x, z')) := by
-    simp only [cont, ← Finset.sum_sub_distrib, ← mul_sub]
-  have hterm : P.transitionMatrix z z₀ *
-      (P.toExtended.valueFunction (y, z₀) - P.toExtended.valueFunction (x, z₀))
-        ≤ P.cont z y - P.cont z x := by
-    rw [hsum]
-    refine Finset.single_le_sum (f := fun z' : Z => P.transitionMatrix z z' *
-      (P.toExtended.valueFunction (y, z') - P.toExtended.valueFunction (x, z')))
-      (fun z' _ => ?_) (Finset.mem_univ z₀)
-    exact mul_nonneg (P.transitionMatrix_nonneg _ _)
-      (by linarith [P.valueFunction_le_of_le hpc (z := z') hx hy hxy])
-  have hc0 : 0 < P.consumption (x, z₀) (P.policy (x, z₀)) := P.consumption_policy_pos hpc hx
-  have hresx : P.resources (x, z₀) = P.income z₀ + (1 + P.interest) * x := by
-    simp only [resources, max_eq_right hx.1]
-  have hcle : P.consumption (x, z₀) (P.policy (x, z₀))
-      ≤ P.income z₀ + (1 + P.interest) * x := by
-    simp only [consumption, hresx]
-    linarith [(P.policy_mem_region (x, z₀)).1]
-  have hgain := P.valueFunction_sub_ge hpc hx hy hxy z₀
-  rw [hu] at hgain
-  -- the marginal bound, at the largest consumption the richer state could reach
-  have hbound : (P.income z₀ + (1 + P.interest) * y) ^ (-γ) * ((1 + P.interest) * (y - x))
-      ≤ crraUtility γ (P.consumption (x, z₀) (P.policy (x, z₀)) + (1 + P.interest) * (y - x))
-        - crraUtility γ (P.consumption (x, z₀) (P.policy (x, z₀))) := by
-    have hR : P.consumption (x, z₀) (P.policy (x, z₀)) + (1 + P.interest) * (y - x)
-        ≤ P.income z₀ + (1 + P.interest) * y := by nlinarith [hcle]
-    have := crra_marginal_bound_Ici hγ0 hγ1 (mem_Ici.mpr hc0.le)
-      (le_add_of_nonneg_right hRh) hR
-    simpa using this
-  exact le_trans (mul_le_mul_of_nonneg_left (le_trans hbound hgain)
-    (P.transitionMatrix_nonneg z z₀)) hterm
+    mul_nonneg P.interest_gt_neg_one.le (sub_nonneg.mpr hxy)
+  refine P.cont_sub_ge_of_utility_bound hpc z z₀ hx hy hxy ?_
+  intro c hc hcle
+  simp only [sub_zero] at hcle
+  rw [hu]
+  have hR : c + (1 + P.interest) * (y - x)
+      ≤ P.income z₀ + (1 + P.interest) * y := by nlinarith only [hcle]
+  simpa using crra_marginal_bound_Ici hγ0 hγ1 (mem_Ici.mpr hc.le)
+    (le_add_of_nonneg_right hRh) hR
 
 /-- **The continuation's gain from zero, CES version.** -/
 theorem crra_cont_sub_ge {γ : ℝ} (hγ0 : 0 < γ) (hγ1 : γ < 1)

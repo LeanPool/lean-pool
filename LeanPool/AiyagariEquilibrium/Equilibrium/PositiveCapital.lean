@@ -402,6 +402,33 @@ theorem cont_le_of_le (hpc : P.PositiveConsumption) (z : Z) {x y : ℝ}
     (P.transitionMatrix_nonneg _ _)
 
 omit [MeasurableSpace Z] [BorelSpace Z] in
+/-- A lower bound on the one-period utility gain in one successor state gives a
+probability-weighted lower bound on the continuation gain. -/
+theorem cont_sub_ge_of_utility_bound (hpc : P.PositiveConsumption) (z z₀ : Z)
+    {x y bound : ℝ} (hx : x ∈ Icc assetFloor assetCap) (hy : y ∈ Icc assetFloor assetCap)
+    (hxy : x ≤ y)
+    (hbound : ∀ c : ℝ, 0 < c → c ≤ P.income z₀ + (1 + P.interest) * x - assetFloor →
+      bound ≤ P.u (c + (1 + P.interest) * (y - x)) - P.u c) :
+    P.transitionMatrix z z₀ * bound ≤ P.cont z y - P.cont z x := by
+  have hterm : P.transitionMatrix z z₀ *
+      (P.toExtended.valueFunction (y, z₀) - P.toExtended.valueFunction (x, z₀))
+        ≤ P.cont z y - P.cont z x := by
+    simp only [cont, ← Finset.sum_sub_distrib, ← mul_sub]
+    refine Finset.single_le_sum (f := fun z' : Z => P.transitionMatrix z z' *
+      (P.toExtended.valueFunction (y, z') - P.toExtended.valueFunction (x, z')))
+      (fun z' _ => ?_) (Finset.mem_univ z₀)
+    exact mul_nonneg (P.transitionMatrix_nonneg _ _)
+      (sub_nonneg.mpr (P.valueFunction_le_of_le hpc hx hy hxy))
+  have hc : 0 < P.consumption (x, z₀) (P.policy (x, z₀)) := P.consumption_policy_pos hpc hx
+  have hcle : P.consumption (x, z₀) (P.policy (x, z₀))
+      ≤ P.income z₀ + (1 + P.interest) * x - assetFloor := by
+    simp only [consumption, resources, max_eq_right hx.1]
+    exact sub_le_sub_left (P.policy_mem_region (x, z₀)).1 _
+  exact (mul_le_mul_of_nonneg_left
+    ((hbound _ hc hcle).trans (P.valueFunction_sub_ge hpc hx hy hxy z₀))
+    (P.transitionMatrix_nonneg _ _)).trans hterm
+
+omit [MeasurableSpace Z] [BorelSpace Z] in
 /-- **The continuation's gain between two saving levels, in primitives.** -/
 theorem log_cont_sub_ge_gen (hfl : assetFloor = 0) (hpc : P.PositiveConsumption)
     (hu : P.u = Real.log) (z z₀ : Z)
@@ -412,44 +439,22 @@ theorem log_cont_sub_ge_gen (hfl : assetFloor = 0) (hpc : P.PositiveConsumption)
       ≤ P.cont z y - P.cont z x := by
   subst hfl
   have hRh : 0 ≤ (1 + P.interest) * (y - x) :=
-    mul_nonneg P.interest_gt_neg_one.le (by linarith)
-  have hsum : P.cont z y - P.cont z x = ∑ z' : Z, P.transitionMatrix z z' *
-      (P.toExtended.valueFunction (y, z') - P.toExtended.valueFunction (x, z')) := by
-    simp only [cont, ← Finset.sum_sub_distrib, ← mul_sub]
-  have hterm : P.transitionMatrix z z₀ *
-      (P.toExtended.valueFunction (y, z₀) - P.toExtended.valueFunction (x, z₀))
-        ≤ P.cont z y - P.cont z x := by
-    rw [hsum]
-    refine Finset.single_le_sum (f := fun z' : Z => P.transitionMatrix z z' *
-      (P.toExtended.valueFunction (y, z') - P.toExtended.valueFunction (x, z')))
-      (fun z' _ => ?_) (Finset.mem_univ z₀)
-    exact mul_nonneg (P.transitionMatrix_nonneg _ _)
-      (by linarith [P.valueFunction_le_of_le hpc (z := z') hx hy hxy])
-  have hc0 : 0 < P.consumption (x, z₀) (P.policy (x, z₀)) := P.consumption_policy_pos hpc hx
-  have hresx : P.resources (x, z₀) = P.income z₀ + (1 + P.interest) * x := by
-    simp only [resources, max_eq_right hx.1]
-  have hcle : P.consumption (x, z₀) (P.policy (x, z₀))
-      ≤ P.income z₀ + (1 + P.interest) * x := by
-    simp only [consumption, hresx]
-    linarith [(P.policy_mem_region (x, z₀)).1]
-  have hgain := P.valueFunction_sub_ge hpc hx hy hxy z₀
-  rw [hu] at hgain
-  have hden : 0 < P.income z₀ + (1 + P.interest) * x := lt_of_lt_of_le hc0 hcle
+    mul_nonneg P.interest_gt_neg_one.le (sub_nonneg.mpr hxy)
+  refine P.cont_sub_ge_of_utility_bound hpc z z₀ hx hy hxy ?_
+  intro c hc hcle
+  simp only [sub_zero] at hcle
+  rw [hu]
+  have hden : 0 < P.income z₀ + (1 + P.interest) * x := lt_of_lt_of_le hc hcle
   have hfrac : 0 ≤ (1 + P.interest) * (y - x) / (P.income z₀ + (1 + P.interest) * x) :=
     div_nonneg hRh hden.le
-  have hlog : Real.log (1 + (1 + P.interest) * (y - x) / (P.income z₀ + (1 + P.interest) * x))
-      ≤ Real.log (P.consumption (x, z₀) (P.policy (x, z₀)) + (1 + P.interest) * (y - x))
-        - Real.log (P.consumption (x, z₀) (P.policy (x, z₀))) := by
-    rw [← Real.log_div (by linarith) hc0.ne']
-    refine Real.log_le_log (by linarith) ?_
-    rw [le_div_iff₀ hc0]
-    have hkey : (1 + P.interest) * (y - x) / (P.income z₀ + (1 + P.interest) * x)
-        * P.consumption (x, z₀) (P.policy (x, z₀)) ≤ (1 + P.interest) * (y - x) := by
-      rw [div_mul_eq_mul_div, div_le_iff₀ hden]
-      nlinarith [hRh, hcle]
-    nlinarith [hkey]
-  exact le_trans (mul_le_mul_of_nonneg_left (le_trans hlog hgain)
-    (P.transitionMatrix_nonneg z z₀)) hterm
+  rw [← Real.log_div (by linarith) hc.ne']
+  refine Real.log_le_log (by linarith) ?_
+  rw [le_div_iff₀ hc]
+  have hkey : (1 + P.interest) * (y - x) / (P.income z₀ + (1 + P.interest) * x) * c
+      ≤ (1 + P.interest) * (y - x) := by
+    rw [div_mul_eq_mul_div, div_le_iff₀ hden]
+    exact mul_le_mul_of_nonneg_left hcle hRh
+  nlinarith only [hkey]
 
 omit [MeasurableSpace Z] [BorelSpace Z] in
 /-- **The continuation's gain from zero, in primitives.** Only the term for income state `z₀` is

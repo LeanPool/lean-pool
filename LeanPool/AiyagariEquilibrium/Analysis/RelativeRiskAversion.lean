@@ -229,7 +229,7 @@ theorem mul_marginal_le_of_scale {c du : ℝ → ℝ} {s : Set ℝ}
   have hcle : c (α₁ * x) ≤ c (α₂ * x) :=
     hmono hm1 hm2 (mul_le_mul_of_nonneg_right h12 hx.le)
   -- the two factors, each signed by one of the two hypotheses
-  have hdiv := hc.div_le_div_of_scale h0 hc0 h1 h12 hx hm2 hp2
+  have hdiv := hc.div_le_div_of_scale h0 hc0 h1 h12 hm2 hp2
   have hprod := hrra (mem_Ioi.mpr hp1) (mem_Ioi.mpr hp2) hcle
   have hnn : 0 ≤ c (α₁ * x) * du (c (α₁ * x)) := mul_nonneg hp1.le (hdu _ (mem_Ioi.mpr hp1))
   have hmul := mul_le_mul hdiv hprod hnn (div_pos h2 hp2).le

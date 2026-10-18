@@ -555,45 +555,17 @@ theorem hara_cont_sub_ge_gen {γ η : ℝ} (hγ0 : 0 < γ) (hη : 0 ≤ η)
       ≤ P.cont z y - P.cont z x := by
   subst hfl
   have hRh : 0 ≤ (1 + P.interest) * (y - x) :=
-    mul_nonneg P.interest_gt_neg_one.le (by linarith)
-  have hsum : P.cont z y - P.cont z x = ∑ z' : Z, P.transitionMatrix z z' *
-      (P.toExtended.valueFunction (y, z') - P.toExtended.valueFunction (x, z')) := by
-    simp only [cont, ← Finset.sum_sub_distrib, ← mul_sub]
-  have hterm : P.transitionMatrix z z₀ *
-      (P.toExtended.valueFunction (y, z₀) - P.toExtended.valueFunction (x, z₀))
-        ≤ P.cont z y - P.cont z x := by
-    rw [hsum]
-    refine Finset.single_le_sum (f := fun z' : Z => P.transitionMatrix z z' *
-      (P.toExtended.valueFunction (y, z') - P.toExtended.valueFunction (x, z')))
-      (fun z' _ => ?_) (Finset.mem_univ z₀)
-    exact mul_nonneg (P.transitionMatrix_nonneg _ _)
-      (by linarith [P.valueFunction_le_of_le hpc (z := z') hx hy hxy])
-  have hc0 : 0 < P.consumption (x, z₀) (P.policy (x, z₀)) := P.consumption_policy_pos hpc hx
-  have hresx : P.resources (x, z₀) = P.income z₀ + (1 + P.interest) * x := by
-    simp only [resources, max_eq_right hx.1]
-  have hcle : P.consumption (x, z₀) (P.policy (x, z₀))
-      ≤ P.income z₀ + (1 + P.interest) * x := by
-    simp only [consumption, hresx]
-    linarith [(P.policy_mem_region (x, z₀)).1]
-  have hgain := P.valueFunction_sub_ge hpc hx hy hxy z₀
-  rw [hu] at hgain
-  have hbound : (η + P.income z₀ + (1 + P.interest) * y) ^ (-γ) * ((1 + P.interest) * (y - x))
-      ≤ haraUtility γ η (P.consumption (x, z₀) (P.policy (x, z₀)) + (1 + P.interest) * (y - x))
-        - haraUtility γ η (P.consumption (x, z₀) (P.policy (x, z₀))) := by
-    have hR : P.consumption (x, z₀) (P.policy (x, z₀)) + (1 + P.interest) * (y - x)
-        ≤ P.income z₀ + (1 + P.interest) * y := by nlinarith [hcle]
-    have hstep := haraUtility_marginal_bound_pos (γ := γ) (η := η)
-      (R := P.income z₀ + (1 + P.interest) * y) hγ0 (by linarith)
-      (le_add_of_nonneg_right hRh) hR
-    have he : η + (P.income z₀ + (1 + P.interest) * y)
-        = η + P.income z₀ + (1 + P.interest) * y := by ring
-    rw [he] at hstep
-    have he2 : P.consumption (x, z₀) (P.policy (x, z₀)) + (1 + P.interest) * (y - x)
-        - P.consumption (x, z₀) (P.policy (x, z₀)) = (1 + P.interest) * (y - x) := by ring
-    rw [he2] at hstep
-    exact hstep
-  exact le_trans (mul_le_mul_of_nonneg_left (le_trans hbound hgain)
-    (P.transitionMatrix_nonneg z z₀)) hterm
+    mul_nonneg P.interest_gt_neg_one.le (sub_nonneg.mpr hxy)
+  refine P.cont_sub_ge_of_utility_bound hpc z z₀ hx hy hxy ?_
+  intro c hc hcle
+  simp only [sub_zero] at hcle
+  rw [hu]
+  have hR : c + (1 + P.interest) * (y - x)
+      ≤ P.income z₀ + (1 + P.interest) * y := by nlinarith only [hcle]
+  have hstep := haraUtility_marginal_bound_pos (γ := γ) (η := η)
+    (R := P.income z₀ + (1 + P.interest) * y) hγ0 (by linarith)
+    (le_add_of_nonneg_right hRh) hR
+  simpa only [add_assoc, add_sub_cancel_left] using hstep
 
 /-- **Saving is bounded below**, for shifted CRRA, when the gain beats the cost. -/
 theorem hara_policy_ge_of_gain {γ η : ℝ} (hγ : 0 < γ) (hη : 0 ≤ η)
