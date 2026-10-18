@@ -220,6 +220,91 @@ theorem policy_mono {a a' : ℝ} {z : Z} (ha : a ∈ Icc assetFloor assetCap)
   simpa only [P.policyOf_valueFunction] using
     P.policyOf_mono P.concaveOn_valueFunction ha ha' hle
 
+/-- `v` varies by at most `G` over the asset region. -/
+def OscOn (_P : IncomeFluctuation Z assetFloor assetCap) (v : (ℝ × Z) →ᵇ ℝ) (G : ℝ) : Prop :=
+  ∀ x ∈ Icc assetFloor assetCap, ∀ y ∈ Icc assetFloor assetCap, ∀ z z' : Z,
+    v (x, z) - v (y, z') ≤ G
+
+theorem OscOn.mono {v : (ℝ × Z) →ᵇ ℝ} {G G' : ℝ} (h : P.OscOn v G) (hG : G ≤ G') :
+    P.OscOn v G' := fun x hx y hy z z' => (h x hx y hy z z').trans hG
+
+/-- The continuation inherits the bound, even across different income states. -/
+theorem contOf_sub_le_osc {v : (ℝ × Z) →ᵇ ℝ} {G : ℝ} (h : P.OscOn v G) {x y : ℝ}
+    (hx : x ∈ Icc assetFloor assetCap) (hy : y ∈ Icc assetFloor assetCap) (z z' : Z) :
+    P.contOf v z x - P.contOf v z' y ≤ G := by
+  classical
+  obtain ⟨z₁, -, hz₁⟩ := Finset.exists_max_image Finset.univ (fun w : Z => v (x, w))
+    ⟨Classical.ofNonempty, Finset.mem_univ _⟩
+  obtain ⟨z₂, -, hz₂⟩ := Finset.exists_min_image Finset.univ (fun w : Z => v (y, w))
+    ⟨Classical.ofNonempty, Finset.mem_univ _⟩
+  have h1 : P.contOf v z x ≤ v (x, z₁) := by
+    have hle : ∑ w : Z, P.transitionMatrix z w * v (x, w)
+        ≤ ∑ w : Z, P.transitionMatrix z w * v (x, z₁) :=
+      Finset.sum_le_sum fun w _ =>
+        mul_le_mul_of_nonneg_left (hz₁ w (Finset.mem_univ _)) (P.transitionMatrix_nonneg z w)
+    rw [← Finset.sum_mul, P.transitionMatrix_sum, one_mul] at hle
+    exact hle
+  have h2 : v (y, z₂) ≤ P.contOf v z' y := by
+    have hle : ∑ w : Z, P.transitionMatrix z' w * v (y, z₂)
+        ≤ ∑ w : Z, P.transitionMatrix z' w * v (y, w) :=
+      Finset.sum_le_sum fun w _ =>
+        mul_le_mul_of_nonneg_left (hz₂ w (Finset.mem_univ _)) (P.transitionMatrix_nonneg z' w)
+    rw [← Finset.sum_mul, P.transitionMatrix_sum, one_mul] at hle
+    exact hle
+  linarith [h x hx y hy z₁ z₂]
+
+/-- A bounded continuation oscillates by at most twice its norm. -/
+theorem oscOn_two_norm (v : (ℝ × Z) →ᵇ ℝ) : P.OscOn v (2 * ‖v‖) := by
+  intro x _ y _ z z'
+  have hx := abs_le.mp (show |v (x, z)| ≤ ‖v‖ by
+    simpa only [Real.norm_eq_abs] using v.norm_coe_le_norm (x, z))
+  have hy := abs_le.mp (show |v (y, z')| ≤ ‖v‖ by
+    simpa only [Real.norm_eq_abs] using v.norm_coe_le_norm (y, z'))
+  linarith
+
+theorem valueFunction_le_oscBound (s : ℝ × Z) :
+    P.toExtended.valueFunction s ≤ P.u P.maxConsumption / (1 - P.discount) := by
+  have hβ : (P.discount : ℝ) < 1 := by exact_mod_cast P.discount_lt_one
+  refine P.toExtended.valueFunction_le_const ?_ s
+  have hne : (1 : ℝ) - P.discount ≠ 0 := by linarith
+  have key : P.u P.maxConsumption
+      + (P.discount : ℝ) * (P.u P.maxConsumption / (1 - P.discount))
+      = P.u P.maxConsumption / (1 - P.discount) := by field_simp; ring
+  rw [show P.toExtended.rewardMax = P.u P.maxConsumption from rfl,
+    show ((P.toExtended.discount : ℝ)) = (P.discount : ℝ) from rfl]
+  exact le_of_eq key
+
+theorem oscBound_le_valueFunction (s : ℝ × Z) :
+    P.u P.minConsumption / (1 - P.discount) ≤ P.toExtended.valueFunction s := by
+  have hβ : (P.discount : ℝ) < 1 := by exact_mod_cast P.discount_lt_one
+  refine P.toExtended.const_le_valueFunction ?_ s
+  have hne : (1 : ℝ) - P.discount ≠ 0 := by linarith
+  have key : P.u P.minConsumption / (1 - P.discount)
+      = P.u P.minConsumption + (P.discount : ℝ) * (P.u P.minConsumption / (1 - P.discount)) := by
+    field_simp; ring
+  rw [show P.toExtended.rewardMin = P.u P.minConsumption from rfl,
+    show ((P.toExtended.discount : ℝ)) = (P.discount : ℝ) from rfl]
+  exact le_of_eq key
+
+/-- The spread the iteration can produce: the reward's spread, amplified by `(1 - β)⁻¹`. At a
+zero borrowing limit this is definitionally `CRRAConstants.oscGap`, so the witnesses' bounds on
+that transfer unchanged. -/
+noncomputable def oscSpread : ℝ :=
+  (P.u P.maxConsumption - P.u P.minConsumption) / (1 - P.discount)
+
+theorem oscSpread_nonneg : 0 ≤ P.oscSpread := by
+  have hβ : (P.discount : ℝ) < 1 := by exact_mod_cast P.discount_lt_one
+  refine div_nonneg (sub_nonneg.mpr ?_) (by linarith)
+  exact P.monotoneOn_u_dom (P.mem_dom_of_pos P.minConsumption_pos)
+    (P.mem_dom_of_pos P.maxConsumption_pos) P.minConsumption_le_maxConsumption
+
+/-- The fixed-point value function satisfies the oscillation premise used by saving bounds. -/
+theorem oscOn_valueFunction : P.OscOn P.toExtended.valueFunction P.oscSpread := by
+  intro x _ y _ z z'
+  dsimp [oscSpread]
+  rw [sub_div]
+  exact sub_le_sub (P.valueFunction_le_oscBound (x, z)) (P.oscBound_le_valueFunction (y, z'))
+
 end IncomeFluctuation
 
 end LeanEconomics

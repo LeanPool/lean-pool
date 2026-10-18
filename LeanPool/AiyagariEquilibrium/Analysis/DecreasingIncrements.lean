@@ -10,6 +10,9 @@ public import Mathlib.Analysis.Convex.SpecificFunctions.Basic
 /-!
 # Decreasing increments of a concave function
 
+Numbered Light references use the October 31, 2018 author draft, printed page 13:
+https://www.researchgate.net/publication/314238962
+
 A concave function's increment over an interval of fixed length shrinks as the interval
 slides right. In economics this is the increasing-differences (supermodularity) condition
 that monotone-comparative-statics arguments run on, usually stated as a cross partial
@@ -116,7 +119,7 @@ theorem ConcaveOn.abs_sub_le_slopeBound_mul {u : ℝ → ℝ} (hu : ConcaveOn �
 
 /-! ### Scaling a concave function
 
-For a concave, strictly positive `z`, the ratio `α / z (α x)` rises with `α`. This is Lemma 3
+For a concave, strictly positive `z`, the ratio `α / z (α x)` rises with `α`. This is Lemma 4
 of Light (2018), one of the three ingredients of his Theorem 1 (savings rise with the interest
 rate when relative risk aversion is at most one).
 
@@ -125,7 +128,7 @@ and `α₂ x` with weight `α₁ / α₂`, so concavity gives the inequality dir
 positivity at the origin is what turns it from weak into the stated form.
 -/
 
-/-- **Light (2018), Lemma 3**, on any convex set containing the origin. In the application `z`
+/-- **Light (2018), Lemma 4**, on any convex set containing the origin. In the application `z`
 is the consumption function, which is concave on the asset region and nowhere else, so the
 original statement over `[0, ∞)` would not reach it. Positivity is needed only at the origin
 and at the far point: concavity carries it to everything in between. -/

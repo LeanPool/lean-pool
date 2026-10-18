@@ -220,8 +220,8 @@ theorem sqrtCES_optimal_action_unique {s : ℝ × Fin 2} (hs : s.1 ∈ Icc (0 : 
     a₀ = a₁ :=
   sqrtCES.optimal_action_unique hs h₀ h₁ hm₀ hm₁
 
-/-- **Light's Theorem 1 holds for it**: the policy is increasing in assets. This is a result
-about `IncomeFluctuation`, applied with no porting at all. -/
+/-- **The policy is increasing in assets at a fixed interest rate.** This specializes the
+asset-monotonicity theorem for `IncomeFluctuation`. -/
 theorem sqrtCES_policy_mono {a a' : ℝ} {z : Fin 2} (ha : a ∈ Icc (0 : ℝ) 1)
     (ha' : a' ∈ Icc (0 : ℝ) 1) (hle : a ≤ a') :
     sqrtCES.policy (a, z) ≤ sqrtCES.policy (a', z) :=

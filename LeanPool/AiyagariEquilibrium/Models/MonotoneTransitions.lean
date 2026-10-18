@@ -19,15 +19,15 @@ continuations differ, and the lowest-income state is still the lowest-consumptio
 its continuation is the STEEPEST — a poor household today expects to be poor tomorrow, so wealth
 is worth more to it at the margin.
 
-That is Huggett (1993) Lemma 1, `v'(a, e_h) ≤ v'(a, e_l)`, proved there by induction on the
-Bellman iterates under `π(e_h | e_h) ≥ π(e_h | e_l)`. This file is that induction, in secant form
-and for a finite income process ordered by income.
+This file proves the property in secant form for a finite income process ordered by income,
+using induction on Bellman iterates. Related literature: Huggett (1993), *The Risk-Free Rate
+in Heterogeneous-Agent Incomplete-Insurance Economies*.
 
 ## Monotone transitions
 
 The condition is stated by its use: a state with higher income has a transition row that makes
 every income-antitone function of tomorrow's state smaller in expectation
-(`MonotoneTransitions`). For two states it is exactly Huggett's `π(h|h) ≥ π(h|l)`
+(`MonotoneTransitions`). For two states it is exactly `π(h|h) ≥ π(h|l)`
 (`monotoneTransitions_of_two_states`); for a Tauchen chain it is first-order stochastic
 dominance of the rows, which the chain has by construction.
 
@@ -101,7 +101,8 @@ both push consumption up. -/
 
 /-! ### The Bellman step, by the envelope -/
 
-/-- **Huggett's Lemma 1, one step.** If `v` has income-antitone increments then so does
+/-- **Income-antitone increments, one Bellman step.** If `v` has income-antitone increments,
+then so does
 `bellman v`: the derivative of `bellman v (·, z)` is `R · u'(c_v(·, z))`, and consumption at a
 fixed asset level rises with income. -/
 theorem incDiffAcrossStates_bellman (hmono : P.MonotoneTransitions)
@@ -155,7 +156,7 @@ theorem incDiffAcrossStates_bellman (hmono : P.MonotoneTransitions)
 
 /-! ### Along the iteration, and at the fixed point -/
 
-/-- **Huggett's Lemma 1 for the value function.** -/
+/-- **Income-antitone increments at the value function.** -/
 theorem incDiffAcrossStates_valueFunction (hmono : P.MonotoneTransitions) {du : ℝ → ℝ}
     (hderiv : ∀ c : ℝ, 0 < c → HasDerivAt P.u (du c) c)
     (hanti : AntitoneOn du (Ioi (0 : ℝ))) (hpc : P.PositiveConsumptionAll)

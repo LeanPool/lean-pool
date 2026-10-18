@@ -105,7 +105,7 @@ theorem crra_exists_exhaust_of_euler_corner {γ : ℝ} (hγ0 : 0 < γ) (hu : P.u
     (fun a ha z => P.consumptionFn_le_of_income_le hiid (hz₀ z) ha) ha₀ hle hcorner
 
 /-- **The exhaustion data with persistent income**: monotone transitions in place of iid, via
-Huggett's Lemma 1 (`consumptionFn_le_of_income_le_monotone`). The extra iterate-level
+the income-monotonicity lemma (`consumptionFn_le_of_income_le_monotone`). The extra iterate-level
 hypotheses that lemma needs are supplied by the minimal MPC. -/
 theorem crra_exists_exhaust_of_euler_corner_monotone {γ : ℝ} (hγ0 : 0 < γ)
     (hu : P.u = crraUtility γ) (hfl : assetFloor = 0) (hκ : 0 < P.minMPC γ)

@@ -11,6 +11,9 @@ public import LeanPool.AiyagariEquilibrium.Models.IncomeFluctuationRate
 /-!
 # Light (2018) Theorem 1: saving rises with the interest rate
 
+Numbered Light references use the October 31, 2018 author draft, printed page 13:
+https://www.researchgate.net/publication/314238962
+
 This is the last link in the uniqueness chain. `CapitalSupplyMonotone` turns a uniformly larger
 policy into larger aggregate capital (Theorem 2), and `Equilibrium.Uniqueness` turns monotone
 capital supply into a unique equilibrium rate (Theorem 3). What is still needed is that the
@@ -51,8 +54,8 @@ envelope equality it needs is `hasDerivAt_bellman`, Clausen–Strub's lazy agent
 input is the Carroll–Kimball concavity of the consumption function. Theorem 1 with `hid`
 discharged is `policy_mono_withRate'`.
 
-Worth recording precisely: his step 5 applies Lemma 3 to `σ_f(·, R₂)` and needs it CONCAVE. That
-is Light's Lemma 4, which is the Carroll and Kimball theorem — the hypothesis `hT` of
+Worth recording precisely: his step 5 applies Lemma 4 to `σ_f(·, R₂)` and needs it CONCAVE. That
+is Light's Lemma 5, which is the Carroll and Kimball theorem — the hypothesis `hT` of
 `IncomeFluctuationCarrollKimball`. So the residual hypothesis here and the residual hypothesis
 there are not two gaps but one: concavity of the consumption function, which by Toda (2021) is
 unavailable outside HARA. Closing it closes both.

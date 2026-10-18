@@ -12,6 +12,9 @@ public import Mathlib.Analysis.SpecialFunctions.Pow.Deriv
 /-!
 # Relative risk aversion at most one
 
+Numbered Light references use the October 31, 2018 author draft, printed page 13:
+https://www.researchgate.net/publication/314238962
+
 Light (2018) proves that individual saving rises with the interest rate — his Theorem 1, the
 household half of the uniqueness argument — under the assumption that `u'(c) · c` is
 non-decreasing. With `u' > 0` that is exactly relative risk aversion `-c u''/u' ≤ 1`, because
@@ -202,12 +205,12 @@ Light's Theorem 1 compares a household facing gross return `α₁` with one faci
 its pivotal inequality is that the marginal value of wealth, `α · u'(c)`, is larger at the
 higher return. Written out, `α u'(c) = (α / c) · (u'(c) · c)`, and the two factors are exactly
 the two conditions: `α / c(α x)` rises with `α` because the consumption function is CONCAVE
-(Lemma 3, `ConcaveOn.div_le_div_of_scale`), and `u'(c) c` rises with `c` because relative risk
+(Lemma 4, `ConcaveOn.div_le_div_of_scale`), and `u'(c) c` rises with `c` because relative risk
 aversion is at most one. Neither factor alone signs the product; splitting it this way is the
 whole trick.
 
 Note what the consumption function has to supply: concavity, positivity at zero assets, and
-monotonicity. The first is Light's Lemma 4 and is the deep one — he cites Jensen (2017), and it
+monotonicity. The first is Light's Lemma 5 and is the deep one — he cites Jensen (2017), and it
 is a Carroll–Kimball result that needs more than concavity of `u` and of the value function.
 -/
 

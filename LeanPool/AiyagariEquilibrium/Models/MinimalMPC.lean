@@ -12,9 +12,12 @@ public import LeanPool.AiyagariEquilibrium.Analysis.HARA
 /-!
 # The minimal marginal propensity to consume
 
-Carroll and Shanker (2026), Lemma 1, bound the consumption SHARE of cash on hand between two
-constants — the maximal and minimal marginal propensities to consume. This file proves the
-minimal one,
+Carroll and Shanker's *Theoretical Foundations of Buffer Stock Saving*, draft dated
+2025-12-05, Lemma 1 (Limiting MPCs), gives consumption-share bounds in their buffer-stock model:
+https://econ-ark.github.io/BufferStockTheory/BufferStockTheory.pdf
+
+Here the minimal bound is proved for the finite capped-household model, under explicit
+positivity and cap-slack hypotheses,
 
   `κ · m ≤ c(m)`,   `κ = 1 - Þ/R`,   `Þ = (βR)^(1/γ)`,
 
@@ -138,21 +141,19 @@ theorem le_of_rpow_neg_le {x y γ : ℝ} (hx : 0 < x) (hy : 0 < y) (hγ : 0 < γ
 
 /-! ### The bound along the iteration -/
 
-/-- **One Euler step of the minimal-MPC bound.** If a continuation `v` satisfies
-`κ m ≤ c_v(m)` everywhere, with consumption positive and the cap slack against it, then so does
-`bellman v`. Extracted from the induction so that it can also drive a SIMULTANEOUS induction on
-cap slack (`crra_minMPC_of_cap`), which is what large `β` needs. -/
-theorem crra_minMPC_step {γ : ℝ} (hγ0 : 0 < γ) (hu : P.u = crraUtility γ)
+/-- One shifted-CRRA Euler step propagates the minimal consumption bound. -/
+theorem hara_minMPC_step {γ η : ℝ} (hγ0 : 0 < γ) (hη : 0 ≤ η)
+    (hu : P.u = haraUtility γ η)
     (hfl : assetFloor = 0) (hκ : 0 < P.minMPC γ) (hβ : 0 < (P.discount : ℝ))
-    (hβR : (P.discount : ℝ) * (1 + P.interest) < 1) {v : (ℝ × Z) →ᵇ ℝ}
+    {v : (ℝ × Z) →ᵇ ℝ}
     (hposv : ∀ z : Z, ∀ a ∈ Icc (0 : ℝ) assetCap, 0 < P.consumptionFnOf v z a)
     (hcapv : ∀ a ∈ Icc (0 : ℝ) assetCap, ∀ z : Z, P.policyOf v (a, z) < assetCap)
     (hposW : ∀ z : Z, ∀ a ∈ Icc (0 : ℝ) assetCap,
       0 < P.consumptionFnOf (P.toExtended.bellman v) z a)
     (ih : ∀ z : Z, ∀ a ∈ Icc (0 : ℝ) assetCap,
-      P.minMPC γ * P.resources (a, z) ≤ P.consumptionFnOf v z a)
+      P.minMPC γ * (η + P.resources (a, z)) ≤ η + P.consumptionFnOf v z a)
     (z : Z) {a : ℝ} (ha : a ∈ Icc (0 : ℝ) assetCap) :
-    P.minMPC γ * P.resources (a, z) ≤ P.consumptionFnOf (P.toExtended.bellman v) z a := by
+    P.minMPC γ * (η + P.resources (a, z)) ≤ η + P.consumptionFnOf (P.toExtended.bellman v) z a := by
   subst hfl
   have hR : (0 : ℝ) < 1 + P.interest := P.interest_gt_neg_one
   have hβR0 : (0 : ℝ) < (P.discount : ℝ) * (1 + P.interest) := mul_pos hβ hR
@@ -171,18 +172,22 @@ theorem crra_minMPC_step {γ : ℝ} (hγ0 : 0 < γ) (hu : P.u = crraUtility γ)
   have hcA : c = P.resources (a, z) - A := rfl
   have hc0 : 0 < c := hposW z a ha
   rcases eq_or_lt_of_le hAmem.1 with hA0 | hA0
-  · nlinarith only [hκ1, hc0, hcA, hA0]
+  · nlinarith only [hκ1, hc0, hcA, hA0, hη]
   · have hslack : ∀ z' : Z, P.policyOf v (A, z') < P.maxSaving (A, z') := fun z' =>
       P.policyOf_lt_maxSaving_of_pos (hposv z' A hAmem) (hcapv A hAmem z')
     have hc' : ∀ z' : Z, 0 < P.consumptionFnOf v z' A := fun z' => hposv z' A hAmem
-    have hder : ∀ z' : Z, HasDerivAt P.u ((P.consumptionFnOf v z' A) ^ (-γ))
+    have hder : ∀ z' : Z, HasDerivAt P.u ((η + P.consumptionFnOf v z' A) ^ (-γ))
         (P.consumptionFnOf v z' A) := by
-      intro z'; rw [hu]; exact hasDerivAt_crraUtility γ (hc' z')
+      intro z'; rw [hu]
+      exact hasDerivAt_haraUtility γ (by linarith [hc' z'])
     have heuler := P.euler_ge (v := v) (z := z) (a := a) (A := A) ha rfl hA0 hslack hc0
-      (by rw [hu]; exact hasDerivAt_crraUtility γ hc0) hc' hder
-    set X : ℝ := P.minMPC γ * ((1 + P.interest) * A) with hXdef
-    have hX0 : 0 < X := by rw [hXdef]; positivity
-    have hstep : ∀ z' : Z, X ≤ P.consumptionFnOf v z' A := by
+      (by rw [hu]; exact hasDerivAt_haraUtility γ (by linarith)) hc' hder
+    -- the continuation's shifted consumption is at least `κ (η + R A)`
+    set X : ℝ := P.minMPC γ * (η + (1 + P.interest) * A) with hXdef
+    have hX0 : 0 < X := by
+      have : (0 : ℝ) < (1 + P.interest) * A := by positivity
+      rw [hXdef]; nlinarith [hκ0, hη]
+    have hstep : ∀ z' : Z, X ≤ η + P.consumptionFnOf v z' A := by
       intro z'
       refine le_trans ?_ (ih z' A hAmem)
       have hres : P.resources (A, z') = P.income z' + (1 + P.interest) * A := by
@@ -190,25 +195,47 @@ theorem crra_minMPC_step {γ : ℝ} (hγ0 : 0 < γ) (hu : P.u = crraUtility γ)
       have hinc : 0 < P.income z' := lt_of_lt_of_le P.minIncome_pos (P.minIncome_le z')
       rw [hres, hXdef]
       nlinarith only [hκ0, hinc]
-    have hsum : ∑ z' : Z, P.transitionMatrix z z' * (P.consumptionFnOf v z' A) ^ (-γ)
-        ≤ X ^ (-γ) := by
-      calc ∑ z' : Z, P.transitionMatrix z z' * (P.consumptionFnOf v z' A) ^ (-γ)
+    have hsum : ∑ z' : Z, P.transitionMatrix z z'
+          * (η + P.consumptionFnOf v z' A) ^ (-γ) ≤ X ^ (-γ) := by
+      calc ∑ z' : Z, P.transitionMatrix z z' * (η + P.consumptionFnOf v z' A) ^ (-γ)
           ≤ ∑ z' : Z, P.transitionMatrix z z' * X ^ (-γ) :=
             Finset.sum_le_sum fun z' _ =>
               mul_le_mul_of_nonneg_left (rpow_neg_antitone hγ0 hX0 (hstep z'))
                 (P.transitionMatrix_nonneg z z')
         _ = X ^ (-γ) := by rw [← Finset.sum_mul, P.transitionMatrix_sum z, one_mul]
-    have hchain : c ^ (-γ) ≤ (P.discount : ℝ) * (1 + P.interest) * X ^ (-γ) := by
+    have hchain : (η + c) ^ (-γ) ≤ (P.discount : ℝ) * (1 + P.interest) * X ^ (-γ) := by
       have := le_trans heuler
         (mul_le_mul_of_nonneg_left (mul_le_mul_of_nonneg_left hsum hR.le) hβ.le)
       linarith [this]
-    have hTc : (T * c) ^ (-γ) ≤ X ^ (-γ) := by
-      rw [Real.mul_rpow hT0.le hc0.le, hTneg, inv_mul_le_iff₀ hβR0]
+    have hTc : (T * (η + c)) ^ (-γ) ≤ X ^ (-γ) := by
+      rw [Real.mul_rpow hT0.le (by linarith), hTneg, inv_mul_le_iff₀ hβR0]
       linarith [hchain]
-    have hXTc : X ≤ T * c := le_of_rpow_neg_le (by positivity) hX0 hγ0 hTc
+    have hXTc : X ≤ T * (η + c) :=
+      le_of_rpow_neg_le (by positivity) hX0 hγ0 hTc
     rw [hXdef] at hXTc
+    -- `κR + Þ = R`, and the extra `η` term has the right sign because `κ ≥ 0`
     refine le_of_mul_le_mul_right (a := 1 + P.interest) ?_ hR
-    linear_combination hXTc - c * hkey - (P.minMPC γ * (1 + P.interest)) * hcA
+    linear_combination hXTc - (η + c) * hkey
+      - (P.minMPC γ * (1 + P.interest)) * hcA + mul_nonneg hκ0.le hη
+
+/-- **One Euler step of the minimal-MPC bound.** If a continuation `v` satisfies
+`κ m ≤ c_v(m)` everywhere, with consumption positive and the cap slack against it, then so does
+`bellman v`. Extracted from the induction so that it can also drive a SIMULTANEOUS induction on
+cap slack (`crra_minMPC_of_cap`), which is what large `β` needs. -/
+theorem crra_minMPC_step {γ : ℝ} (hγ0 : 0 < γ) (hu : P.u = crraUtility γ)
+    (hfl : assetFloor = 0) (hκ : 0 < P.minMPC γ) (hβ : 0 < (P.discount : ℝ))
+    {v : (ℝ × Z) →ᵇ ℝ}
+    (hposv : ∀ z : Z, ∀ a ∈ Icc (0 : ℝ) assetCap, 0 < P.consumptionFnOf v z a)
+    (hcapv : ∀ a ∈ Icc (0 : ℝ) assetCap, ∀ z : Z, P.policyOf v (a, z) < assetCap)
+    (hposW : ∀ z : Z, ∀ a ∈ Icc (0 : ℝ) assetCap,
+      0 < P.consumptionFnOf (P.toExtended.bellman v) z a)
+    (ih : ∀ z : Z, ∀ a ∈ Icc (0 : ℝ) assetCap,
+      P.minMPC γ * P.resources (a, z) ≤ P.consumptionFnOf v z a)
+    (z : Z) {a : ℝ} (ha : a ∈ Icc (0 : ℝ) assetCap) :
+    P.minMPC γ * P.resources (a, z) ≤ P.consumptionFnOf (P.toExtended.bellman v) z a := by
+  simpa only [zero_add] using P.hara_minMPC_step hγ0 (le_refl (0 : ℝ))
+    (hu.trans (haraUtility_zero γ).symm) hfl hκ hβ hposv hcapv hposW
+    (fun z' a' ha' => by simpa only [zero_add] using ih z' a' ha') z ha
 
 /-- **The minimal-MPC bound, at every iterate.** Consumption is at least `κ` times cash on hand,
 uniformly in the horizon — so it passes to the value function.
@@ -246,7 +273,7 @@ theorem crra_minMPC_mul_le_consumptionFnOf {γ : ℝ} (hγ0 : 0 < γ) (hu : P.u 
         = P.toExtended.bellman ((P.toExtended.bellman)^[k] (0 : (ℝ × Z) →ᵇ ℝ)) :=
       Function.iterate_succ_apply' _ _ _
     rw [hiter]
-    exact P.crra_minMPC_step hγ0 hu rfl hκ hβ hβR (hpos k) (hcap k)
+    exact P.crra_minMPC_step hγ0 hu rfl hκ hβ (hpos k) (hcap k)
       (fun z' b hb => by have := hpos (k + 1) z' b hb; rwa [hiter] at this) ih z ha
 
 /-! ### At the fixed point, and what it buys
@@ -376,7 +403,7 @@ theorem crra_minMPC_of_cap {γ : ℝ} (hγ0 : 0 < γ) (hu : P.u = crraUtility γ
           ≤ P.consumptionFnOf ((P.toExtended.bellman)^[k + 1] (0 : (ℝ × Z) →ᵇ ℝ)) z a := by
       intro z a ha
       rw [hiter]
-      exact P.crra_minMPC_step hγ0 hu hfl hκ hβ hβR (hpos k) ihc
+      exact P.crra_minMPC_step hγ0 hu hfl hκ hβ (hpos k) ihc
         (fun z' b hb => by have := hpos (k + 1) z' b hb; rwa [hiter] at this) ihm z ha
     exact ⟨hm, fun a ha z => P.crra_policyOf_lt_cap_of_minMPC_bound hγ0 hβ hfl hthr hm ha z⟩
 
@@ -431,16 +458,7 @@ theorem hara_minMPC_mul_le_consumptionFnOf {γ η : ℝ} (hγ0 : 0 < γ) (hη : 
       P.minMPC γ * (η + P.resources (a, z))
         ≤ η + P.consumptionFnOf ((P.toExtended.bellman)^[n] (0 : (ℝ × Z) →ᵇ ℝ)) z a := by
   subst hfl
-  have hR : (0 : ℝ) < 1 + P.interest := P.interest_gt_neg_one
-  have hβR0 : (0 : ℝ) < (P.discount : ℝ) * (1 + P.interest) := mul_pos hβ hR
-  set T : ℝ := ((P.discount : ℝ) * (1 + P.interest)) ^ (1 / γ) with hTdef
-  have hT0 : 0 < T := patience_pos (P := P) hγ0 hβ
-  have hκ0 : 0 < P.minMPC γ := hκ
   have hκ1 : P.minMPC γ ≤ 1 := minMPC_le_one (P := P) hγ0 hβ
-  have hkey : (1 - P.minMPC γ) * (1 + P.interest) = T := one_sub_minMPC_mul (P := P)
-  have hTneg : T ^ (-γ) = ((P.discount : ℝ) * (1 + P.interest))⁻¹ := by
-    rw [hTdef, ← Real.rpow_mul hβR0.le,
-      show (1 / γ) * (-γ) = -1 from by field_simp, Real.rpow_neg_one]
   intro n
   induction n with
   | zero =>
@@ -455,65 +473,11 @@ theorem hara_minMPC_mul_le_consumptionFnOf {γ η : ℝ} (hγ0 : 0 < γ) (hη : 
     nlinarith only [hres, hκ1, hη]
   | succ k ih =>
     intro z a ha
-    have hiter : (P.toExtended.bellman)^[k + 1] (0 : (ℝ × Z) →ᵇ ℝ)
-        = P.toExtended.bellman ((P.toExtended.bellman)^[k] (0 : (ℝ × Z) →ᵇ ℝ)) :=
-      Function.iterate_succ_apply' _ _ _
-    set v : (ℝ × Z) →ᵇ ℝ := (P.toExtended.bellman)^[k] (0 : (ℝ × Z) →ᵇ ℝ) with hvdef
-    rw [hiter]
-    set W : (ℝ × Z) →ᵇ ℝ := P.toExtended.bellman v with hWdef
-    set A : ℝ := P.policyOf W (a, z) with hAdef
-    have hAmem : A ∈ Icc (0 : ℝ) assetCap := P.feasible_subset_region (P.policyOf_mem W (a, z))
-    set c : ℝ := P.consumptionFnOf W z a with hcdef
-    have hcA : c = P.resources (a, z) - A := rfl
-    have hc0 : 0 < c := by
-      have := hpos (k + 1) z a ha
-      rwa [hiter] at this
-    rcases eq_or_lt_of_le hAmem.1 with hA0 | hA0
-    · nlinarith only [hκ1, hc0, hcA, hA0, hη]
-    · have hslack : ∀ z' : Z, P.policyOf v (A, z') < P.maxSaving (A, z') := fun z' =>
-        P.policyOf_lt_maxSaving_of_pos (hpos k z' A hAmem) (hcap k A hAmem z')
-      have hc' : ∀ z' : Z, 0 < P.consumptionFnOf v z' A := fun z' => hpos k z' A hAmem
-      have hder : ∀ z' : Z, HasDerivAt P.u ((η + P.consumptionFnOf v z' A) ^ (-γ))
-          (P.consumptionFnOf v z' A) := by
-        intro z'; rw [hu]
-        exact hasDerivAt_haraUtility γ (by linarith [hc' z'])
-      have heuler := P.euler_ge (v := v) (z := z) (a := a) (A := A) ha rfl hA0 hslack hc0
-        (by rw [hu]; exact hasDerivAt_haraUtility γ (by linarith)) hc' hder
-      -- the continuation's shifted consumption is at least `κ (η + R A)`
-      set X : ℝ := P.minMPC γ * (η + (1 + P.interest) * A) with hXdef
-      have hX0 : 0 < X := by
-        have : (0 : ℝ) < (1 + P.interest) * A := by positivity
-        rw [hXdef]; nlinarith [hκ0, hη]
-      have hstep : ∀ z' : Z, X ≤ η + P.consumptionFnOf v z' A := by
-        intro z'
-        refine le_trans ?_ (ih z' A hAmem)
-        have hres : P.resources (A, z') = P.income z' + (1 + P.interest) * A := by
-          simp only [resources, max_eq_right hAmem.1]
-        have hinc : 0 < P.income z' := lt_of_lt_of_le P.minIncome_pos (P.minIncome_le z')
-        rw [hres, hXdef]
-        nlinarith only [hκ0, hinc]
-      have hsum : ∑ z' : Z, P.transitionMatrix z z'
-            * (η + P.consumptionFnOf v z' A) ^ (-γ) ≤ X ^ (-γ) := by
-        calc ∑ z' : Z, P.transitionMatrix z z' * (η + P.consumptionFnOf v z' A) ^ (-γ)
-            ≤ ∑ z' : Z, P.transitionMatrix z z' * X ^ (-γ) :=
-              Finset.sum_le_sum fun z' _ =>
-                mul_le_mul_of_nonneg_left (rpow_neg_antitone hγ0 hX0 (hstep z'))
-                  (P.transitionMatrix_nonneg z z')
-          _ = X ^ (-γ) := by rw [← Finset.sum_mul, P.transitionMatrix_sum z, one_mul]
-      have hchain : (η + c) ^ (-γ) ≤ (P.discount : ℝ) * (1 + P.interest) * X ^ (-γ) := by
-        have := le_trans heuler
-          (mul_le_mul_of_nonneg_left (mul_le_mul_of_nonneg_left hsum hR.le) hβ.le)
-        linarith [this]
-      have hTc : (T * (η + c)) ^ (-γ) ≤ X ^ (-γ) := by
-        rw [Real.mul_rpow hT0.le (by linarith), hTneg, inv_mul_le_iff₀ hβR0]
-        linarith [hchain]
-      have hXTc : X ≤ T * (η + c) :=
-        le_of_rpow_neg_le (by positivity) hX0 hγ0 hTc
-      rw [hXdef] at hXTc
-      -- `κR + Þ = R`, and the extra `η` term has the right sign because `κ ≥ 0`
-      refine le_of_mul_le_mul_right (a := 1 + P.interest) ?_ hR
-      linear_combination hXTc - (η + c) * hkey
-        - (P.minMPC γ * (1 + P.interest)) * hcA + mul_nonneg hκ0.le hη
+    rw [Function.iterate_succ_apply']
+    exact P.hara_minMPC_step hγ0 hη hu rfl hκ hβ (hpos k) (hcap k)
+      (fun z' b hb => by
+        have h := hpos (k + 1) z' b hb
+        simpa only [Function.iterate_succ_apply'] using h) ih z ha
 
 /-- **The shifted-CRRA bound at the value function.** -/
 theorem hara_minMPC_mul_le_consumptionFn {γ η : ℝ} (hγ0 : 0 < γ) (hη : 0 ≤ η)

@@ -11,9 +11,12 @@ public import LeanPool.AiyagariEquilibrium.Analysis.RelativeRiskAversion
 /-!
 # The consumption function
 
+Numbered Light references use the October 31, 2018 author draft, printed page 13:
+https://www.researchgate.net/publication/314238962
+
 `consumptionFn z a` is what the household actually eats at assets `a`: cash on hand less the
 optimal saving. Light (2018) Theorem 1 needs three things from it — positivity, monotonicity,
-and CONCAVITY in assets (his Lemma 4). The first two are proved here. The third is not, and
+and CONCAVITY in assets (his Lemma 5). The first two are proved here. The third is not, and
 this file says exactly why.
 
 ## Consumption rises with assets
@@ -44,7 +47,7 @@ about the FIXED POINT rather than about one application of the operator.
 That is the Carroll and Kimball (1996) theorem — the Bellman operator preserves concavity of
 the consumption function when utility is HARA — and it is the shape of the closed-class
 arguments already used here for monotonicity, concavity, Lipschitz bounds and increasing
-differences. Light states it as his Lemma 4 and cites Jensen (2017) rather than proving it.
+differences. Light states it as his Lemma 5 and cites Jensen (2017) rather than proving it.
 It is left as a hypothesis: `mul_marginal_le_of_scale` takes it as an argument, and everything
 else that theorem needs about the consumption function is discharged here.
 -/

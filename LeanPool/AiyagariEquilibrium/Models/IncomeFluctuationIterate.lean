@@ -33,8 +33,6 @@ namespace IncomeFluctuation
 variable {Z : Type*} [Fintype Z] [Nonempty Z] [TopologicalSpace Z] [DiscreteTopology Z]
 variable {assetFloor assetCap : ℝ} (P : IncomeFluctuation Z assetFloor assetCap)
 
-/-! ### The objective against an arbitrary continuation -/
-
 /-! ### Positivity -/
 
 /-- **Consumption never vanishes at the optimum, whatever the continuation.** With utility
@@ -113,54 +111,9 @@ for CES — where utility is bounded and the level of `v` is large compared with
 it is far too crude. `oscGap` is the right one, and what it bounds is the OSCILLATION. This
 section carries that along the iteration. -/
 
-/-- `v` varies by at most `G` over the asset region. -/
-def OscOn (_P : IncomeFluctuation Z assetFloor assetCap) (v : (ℝ × Z) →ᵇ ℝ) (G : ℝ) : Prop :=
-  ∀ x ∈ Icc assetFloor assetCap, ∀ y ∈ Icc assetFloor assetCap, ∀ z z' : Z,
-    v (x, z) - v (y, z') ≤ G
-
-theorem OscOn.mono {v : (ℝ × Z) →ᵇ ℝ} {G G' : ℝ} (h : P.OscOn v G) (hG : G ≤ G') :
-    P.OscOn v G' := fun x hx y hy z z' => (h x hx y hy z z').trans hG
-
-/-- The spread the iteration can produce: the reward's spread, amplified by `(1 - β)⁻¹`. At a
-zero borrowing limit this is definitionally `CRRAConstants.oscGap`, so the witnesses' bounds on
-that transfer unchanged. -/
-noncomputable def oscSpread : ℝ :=
-  (P.u P.maxConsumption - P.u P.minConsumption) / (1 - P.discount)
-
 /-- At a zero borrowing limit the spread is `CRRAConstants.oscGap`. -/
 theorem oscSpread_eq_oscGap {assetCap : ℝ} (Q : IncomeFluctuation Z 0 assetCap) :
     Q.oscSpread = Q.oscGap := rfl
-
-theorem oscSpread_nonneg : 0 ≤ P.oscSpread := by
-  have hβ : (P.discount : ℝ) < 1 := by exact_mod_cast P.discount_lt_one
-  refine div_nonneg (sub_nonneg.mpr ?_) (by linarith)
-  exact P.monotoneOn_u_dom (P.mem_dom_of_pos P.minConsumption_pos)
-    (P.mem_dom_of_pos P.maxConsumption_pos) P.minConsumption_le_maxConsumption
-
-/-- The continuation inherits the bound, even across different income states. -/
-theorem contOf_sub_le_osc {v : (ℝ × Z) →ᵇ ℝ} {G : ℝ} (h : P.OscOn v G) {x y : ℝ}
-    (hx : x ∈ Icc assetFloor assetCap) (hy : y ∈ Icc assetFloor assetCap) (z z' : Z) :
-    P.contOf v z x - P.contOf v z' y ≤ G := by
-  classical
-  obtain ⟨z₁, -, hz₁⟩ := Finset.exists_max_image Finset.univ (fun w : Z => v (x, w))
-    ⟨Classical.ofNonempty, Finset.mem_univ _⟩
-  obtain ⟨z₂, -, hz₂⟩ := Finset.exists_min_image Finset.univ (fun w : Z => v (y, w))
-    ⟨Classical.ofNonempty, Finset.mem_univ _⟩
-  have h1 : P.contOf v z x ≤ v (x, z₁) := by
-    have hle : ∑ w : Z, P.transitionMatrix z w * v (x, w)
-        ≤ ∑ w : Z, P.transitionMatrix z w * v (x, z₁) :=
-      Finset.sum_le_sum fun w _ =>
-        mul_le_mul_of_nonneg_left (hz₁ w (Finset.mem_univ _)) (P.transitionMatrix_nonneg z w)
-    rw [← Finset.sum_mul, P.transitionMatrix_sum, one_mul] at hle
-    exact hle
-  have h2 : v (y, z₂) ≤ P.contOf v z' y := by
-    have hle : ∑ w : Z, P.transitionMatrix z' w * v (y, z₂)
-        ≤ ∑ w : Z, P.transitionMatrix z' w * v (y, w) :=
-      Finset.sum_le_sum fun w _ =>
-        mul_le_mul_of_nonneg_left (hz₂ w (Finset.mem_univ _)) (P.transitionMatrix_nonneg z' w)
-    rw [← Finset.sum_mul, P.transitionMatrix_sum, one_mul] at hle
-    exact hle
-  linarith [h x hx y hy z₁ z₂]
 
 theorem oscOn_zero : P.OscOn (0 : (ℝ × Z) →ᵇ ℝ) 0 := fun _ _ _ _ _ _ => by simp
 
@@ -228,17 +181,6 @@ ceiling. `policy_le_of_marginal_bound` does this at the fixed point; the same de
 half as far above the borrowing limit — works against any continuation, with `‖v‖` in place of
 `‖V‖`. The iterates are uniformly bounded because the Bellman operator adds at most the reward
 and contracts what it inherits, so one calibration inequality covers the whole iteration. -/
-
-/-- **The fixed point oscillates by no more than the iterates do**, being their uniform limit. -/
-theorem oscOn_valueFunction : P.OscOn P.toExtended.valueFunction P.oscSpread := by
-  intro x hx y hy z z'
-  have hpt : ∀ p : ℝ × Z, Tendsto
-      (fun n => ((P.toExtended.bellman)^[n] (0 : (ℝ × Z) →ᵇ ℝ)) p) atTop
-        (𝓝 (P.toExtended.valueFunction p)) := fun p =>
-    (BoundedContinuousFunction.tendsto_iff_tendstoUniformly.mp
-      (P.toExtended.tendsto_iterate_valueFunction 0)).tendsto_at p
-  exact le_of_tendsto_of_tendsto ((hpt (x, z)).sub (hpt (y, z'))) tendsto_const_nhds
-    (Eventually.of_forall fun n => P.oscOn_iterate n x hx y hy z z')
 
 /-- The Bellman operator adds at most the reward and contracts what it inherits. -/
 theorem norm_bellman_le (v : (ℝ × Z) →ᵇ ℝ) :
@@ -413,76 +355,11 @@ theorem crra_policyOf_le_mul {γ θ G : ℝ} (hγ0 : 0 < γ) (hγ1 : γ < 1) (h�
       ≤ ((P.discount : ℝ) * G / θ)
         * (P.consumptionFnOf v z a
             + (1 - θ) * (P.policyOf v (a, z) - assetFloor)) ^ γ := by
-  have hβ : (0 : ℝ) ≤ (P.discount : ℝ) := P.discount.coe_nonneg
-  set b : ℝ := P.policyOf v (a, z) with hbdef
-  set c : ℝ := P.consumptionFnOf v z a with hcdef
-  have hbreg : b ∈ Icc assetFloor assetCap :=
-    P.feasible_subset_region (P.policyOf_mem v (a, z))
-  have hcpos : 0 < c := hpc v hv z a ha
-  have hbase : (0 : ℝ) < c + (1 - θ) * (b - assetFloor) := by
-    have h := mul_nonneg (show (0 : ℝ) ≤ 1 - θ by linarith)
-      (show (0 : ℝ) ≤ b - assetFloor by linarith [hbreg.1])
-    linarith
-  have hrpow : (0 : ℝ) < (c + (1 - θ) * (b - assetFloor)) ^ γ := Real.rpow_pos_of_pos hbase _
-  rcases eq_or_lt_of_le hbreg.1 with hzero | hbpos
-  · rw [← hzero, sub_self]
-    positivity
-  have hbf : (0 : ℝ) < b - assetFloor := by linarith
-  set w : ℝ := assetFloor + θ * (b - assetFloor) with hwdef
-  have hw0 : assetFloor < w := by rw [hwdef]; nlinarith
-  have hwb : w < b := by rw [hwdef]; nlinarith
-  have hwmem : w ∈ Icc assetFloor assetCap := ⟨hw0.le, by linarith [hbreg.2]⟩
-  have hfeas : w ∈ P.toExtended.feasible (a, z) := by
-    rw [P.feasible_eq]
-    exact ⟨hw0.le, by linarith [(P.policyOf_mem v (a, z)).2]⟩
-  have hcb : c = P.resources (a, z) - b := rfl
-  have hcons : P.consumption (a, z) w = c + (1 - θ) * (b - assetFloor) := by
-    simp only [consumption, hwdef]; rw [hcb]; ring
-  have hdev : 0 < P.consumption (a, z) w := by rw [hcons]; linarith
-  have hopt := P.objROf_le_of_mem v ha hfeas (P.mem_dom_of_pos hdev)
-  simp only [objROf, hcons] at hopt
-  rw [show P.consumption (a, z) (P.policyOf v (a, z)) = c from rfl,
-    show P.policyOf v (a, z) = b from rfl] at hopt
-  -- concavity of the continuation, priced against its oscillation
-  have hslope := (P.concaveOn_contOf hv z).slope_anti_adjacent
-    (mem_Icc.mpr ⟨le_rfl, P.assetFloor_le_assetCap⟩) hbreg hw0 hwb
-  have hgap := P.contOf_sub_le_osc hosc hwmem
-    (show assetFloor ∈ Icc assetFloor assetCap from ⟨le_rfl, P.assetFloor_le_assetCap⟩) z z
-  have hbw : b - w = (1 - θ) * (b - assetFloor) := by rw [hwdef]; ring
-  have hwf : w - assetFloor = θ * (b - assetFloor) := by rw [hwdef]; ring
-  have hloss : P.contOf v z b - P.contOf v z w ≤ (1 - θ) / θ * G := by
-    rw [div_le_div_iff₀ (show (0 : ℝ) < b - w by linarith)
-      (show (0 : ℝ) < w - assetFloor by linarith), hbw, hwf] at hslope
-    have h2 : (P.contOf v z b - P.contOf v z w) * (θ * (b - assetFloor))
-        ≤ G * ((1 - θ) * (b - assetFloor)) :=
-      hslope.trans (mul_le_mul_of_nonneg_right hgap
-        (mul_nonneg (sub_pos.mpr hθ1).le hbf.le))
-    rw [div_mul_eq_mul_div, le_div_iff₀ hθ0]
-    refine le_of_mul_le_mul_right (a := b - assetFloor) ?_ hbf
-    convert h2 using 1 <;> ring
-  -- the marginal gain, priced where it lands
-  have hmg : (c + (1 - θ) * (b - assetFloor)) ^ (-γ) * ((1 - θ) * (b - assetFloor))
-      ≤ P.u (c + (1 - θ) * (b - assetFloor)) - P.u c := by
-    rw [hu]
-    have hbound := crra_marginal_bound_Ici hγ0 hγ1 (mem_Ici.mpr hcpos.le)
-      (le_add_of_nonneg_right (mul_nonneg (by linarith) hbf.le))
-      (le_refl (c + (1 - θ) * (b - assetFloor)))
-    simpa using hbound
-  have hmid : P.u (c + (1 - θ) * (b - assetFloor)) - P.u c
-      ≤ (P.discount : ℝ) * (P.contOf v z b - P.contOf v z w) := by
-    have hd : (P.discount : ℝ) * (P.contOf v z b - P.contOf v z w)
-        = (P.discount : ℝ) * P.contOf v z b - (P.discount : ℝ) * P.contOf v z w := by ring
-    linarith [hopt, hd.le, hd.ge]
-  have hkey := le_trans hmg (le_trans hmid (mul_le_mul_of_nonneg_left hloss hβ))
-  rw [Real.rpow_neg hbase.le γ] at hkey
-  have h1θ : (0 : ℝ) < 1 - θ := by linarith
-  have hexp : ((c + (1 - θ) * (b - assetFloor)) ^ γ)⁻¹ * ((1 - θ) * (b - assetFloor))
-      = (1 - θ) * ((b - assetFloor) / (c + (1 - θ) * (b - assetFloor)) ^ γ) := by field_simp
-  rw [hexp, show (P.discount : ℝ) * ((1 - θ) / θ * G)
-      = (1 - θ) * ((P.discount : ℝ) * G / θ) from by ring] at hkey
-  have hdiv := le_of_mul_le_mul_left hkey h1θ
-  rw [div_le_iff₀ hrpow] at hdiv
-  linarith
+  simpa only [zero_add] using P.policyOf_le_mul_of_power_marginal (γ := γ) (η := 0)
+    hθ0 hθ1 hv hG hosc (fun c d hc hcd _ => by
+      simpa only [zero_add, hu] using
+        crra_marginal_bound_Ici hγ0 hγ1 (P.nonneg_of_mem_dom hc) hcd (le_refl d)) ha z
+    (by simpa only [zero_add] using hpc v hv z a ha)
 
 /-- **Saving never reaches the asset cap, against an arbitrary continuation.** The hypothesis is
 the one `crra_policy_lt_assetCap` carries at the fixed point, so the calibrations already proved
@@ -496,37 +373,12 @@ theorem crra_policyOf_lt_assetCap {γ θ G : ℝ} (hγ0 : 0 < γ) (hγ1 : γ < 1
       < assetCap - assetFloor)
     {a : ℝ} (ha : a ∈ Icc assetFloor assetCap) (z : Z) :
     P.policyOf v (a, z) < assetCap := by
-  by_contra hcon
-  rw [not_lt] at hcon
-  have hβ : (0 : ℝ) ≤ (P.discount : ℝ) := P.discount.coe_nonneg
-  set b : ℝ := P.policyOf v (a, z) with hbdef
-  set c : ℝ := P.consumptionFnOf v z a with hcdef
-  have hbreg : b ∈ Icc assetFloor assetCap :=
-    P.feasible_subset_region (P.policyOf_mem v (a, z))
-  have hkey := P.crra_policyOf_le_mul hγ0 hγ1 hθ0 hθ1 hu hpc hv hG hosc ha z
-  rw [← hbdef, ← hcdef] at hkey
-  have hcpos : 0 < c := hpc v hv z a ha
-  have hres : P.resources (a, z) - assetFloor ≤ P.maxConsumption :=
-    P.consumption_le_maxConsumption (s := (a, z)) ha le_rfl
-  have hsum : c + (1 - θ) * (b - assetFloor)
-      = (P.resources (a, z) - assetFloor) - θ * (b - assetFloor) := by
-    simp only [hcdef, consumptionFnOf, consumption, ← hbdef]; ring
-  have hle : c + (1 - θ) * (b - assetFloor)
-      ≤ P.maxIncome + (1 + P.interest - θ) * assetCap - (1 - θ) * assetFloor := by
-    rw [hsum]
-    have hθb : θ * (assetCap - assetFloor) ≤ θ * (b - assetFloor) :=
-      mul_le_mul_of_nonneg_left (by linarith) hθ0.le
-    simp only [maxConsumption] at hres
-    nlinarith [hres, hθb]
-  have hnn : (0 : ℝ) ≤ c + (1 - θ) * (b - assetFloor) := by
-    have h := mul_nonneg (show (0 : ℝ) ≤ 1 - θ by linarith)
-      (show (0 : ℝ) ≤ b - assetFloor by linarith [hbreg.1])
-    linarith
-  have hmono : (c + (1 - θ) * (b - assetFloor)) ^ γ
-      ≤ (P.maxIncome + (1 + P.interest - θ) * assetCap - (1 - θ) * assetFloor) ^ γ :=
-    Real.rpow_le_rpow hnn hle hγ0.le
-  have hcoef : (0 : ℝ) ≤ (P.discount : ℝ) * G / θ := by positivity
-  nlinarith [hkey, mul_le_mul_of_nonneg_left hmono hcoef, hlt]
+  refine P.policyOf_lt_cap_of_power_bound (η := 0) hγ0.le hθ0.le hθ1.le
+    (show 0 ≤ (P.discount : ℝ) * G / θ from
+      div_nonneg (mul_nonneg P.discount.coe_nonneg hG) hθ0.le) ha z
+    (by simpa only [zero_add] using (hpc v hv z a ha).le) ?_ ?_
+  · simpa only [zero_add] using P.crra_policyOf_le_mul hγ0 hγ1 hθ0 hθ1 hu hpc hv hG hosc ha z
+  · simpa only [zero_add] using hlt
 
 /-- **Carroll and Kimball for the bounded CES family, at the witnesses' own calibration.** The
 cap hypothesis is exactly `crra_policy_lt_assetCap`'s, with `oscSpread` for `oscGap` — the same
@@ -559,42 +411,8 @@ theorem concaveOn_consumptionFn_of_oscSpread {γ θ : ℝ} (hγ0 : 0 < γ) (hγ1
 had to hand. For utilities whose marginal value at zero is FINITE — CARA, and shifted CRRA with
 a subsistence level — the consumption floor has to beat that slope, and the level is far too
 crude a bound to beat. The oscillation is the right measure and it is the one the iterates
-control (`oscOn_iterate`), so the same geometry is redone with `G` in place of `2‖v‖`. -/
-
-/-- The slope constant an oscillation bound `G` gives. -/
-noncomputable def oscSlopeConst (G : ℝ) : ℝ := 2 * G / P.minConsumption
-
-theorem oscSlopeConst_nonneg {G : ℝ} (hG : 0 ≤ G) : 0 ≤ P.oscSlopeConst G :=
-  div_nonneg (by linarith) P.minConsumption_pos.le
-
-/-- **The continuation's slope, priced by its oscillation**, above
-`assetFloor + minConsumption / 2`. -/
-theorem contOf_sub_le_of_osc {v : (ℝ × Z) →ᵇ ℝ} {G : ℝ} (hG : 0 ≤ G)
-    (hv : ConcaveSlices assetFloor assetCap v) (hosc : P.OscOn v G) (z : Z) {x y : ℝ}
-    (hx : assetFloor + P.minConsumption / 2 ≤ x) (hxy : x < y)
-    (hy : y ∈ Icc assetFloor assetCap) :
-    P.contOf v z y - P.contOf v z x ≤ P.oscSlopeConst G * (y - x) := by
-  have hmin := P.minConsumption_pos
-  have hx0 : assetFloor < x := by linarith
-  have hxmem : x ∈ Icc assetFloor assetCap := ⟨hx0.le, by linarith [hy.2]⟩
-  have hslope := (P.concaveOn_contOf hv z).slope_anti_adjacent
-    (mem_Icc.mpr ⟨le_rfl, P.assetFloor_le_assetCap⟩) hy hx0 hxy
-  have hgap := P.contOf_sub_le_osc hosc hxmem
-    (show assetFloor ∈ Icc assetFloor assetCap from ⟨le_rfl, P.assetFloor_le_assetCap⟩) z z
-  have hhalf : P.oscSlopeConst G * (P.minConsumption / 2) = G := by
-    rw [oscSlopeConst]; field_simp
-  have hbig : P.contOf v z x - P.contOf v z assetFloor
-      ≤ P.oscSlopeConst G * (x - assetFloor) := by
-    have hstep : P.oscSlopeConst G * (P.minConsumption / 2)
-        ≤ P.oscSlopeConst G * (x - assetFloor) :=
-      mul_le_mul_of_nonneg_left (by linarith) (P.oscSlopeConst_nonneg hG)
-    rw [hhalf] at hstep
-    linarith
-  rw [div_le_div_iff₀ (by linarith) (by linarith)] at hslope
-  have hprod : (P.contOf v z y - P.contOf v z x) * (x - assetFloor)
-      ≤ (P.oscSlopeConst G * (x - assetFloor)) * (y - x) := by
-    nlinarith [hslope, hbig, (show (0 : ℝ) < y - x by linarith)]
-  nlinarith [hprod, hx0]
+control (`oscOn_iterate`). The shared slope and consumption-floor arguments in
+`ConsumptionFloor` use this oscillation directly; norm bounds are specializations. -/
 
 /-! ### A consumption floor from a FINITE marginal bound
 
@@ -602,55 +420,6 @@ theorem contOf_sub_le_of_osc {v : (ℝ × Z) →ᵇ ℝ} {G : ℝ} (hG : 0 ≤ G
 excludes every HARA member except pure CRRA. What the argument actually uses is that the
 marginal value of consumption near zero beats the discounted slope of the continuation, and for
 a finite marginal bound `M` that is an inequality to check rather than a triviality. -/
-
-/-- **The consumption floor, from a finite marginal bound.** -/
-theorem exists_consumptionFnOf_floor_of_marginal {M G : ℝ}
-    (hM : MarginalBoundOn P.dom P.u M) (hG : 0 ≤ G)
-    {v : (ℝ × Z) →ᵇ ℝ} (hv : ConcaveSlices assetFloor assetCap v) (hosc : P.OscOn v G)
-    (hlt : (P.discount : ℝ) * P.oscSlopeConst G < M) :
-    ∃ δ > 0, ∀ (z : Z), ∀ a ∈ Icc assetFloor assetCap, δ ≤ P.consumptionFnOf v z a := by
-  have hmin := P.minConsumption_pos
-  have hβ : (0 : ℝ) ≤ (P.discount : ℝ) := P.discount.coe_nonneg
-  obtain ⟨δ₀, hδ₀, hδ⟩ := hM
-  refine ⟨min δ₀ (P.minConsumption / 4), lt_min hδ₀ (by linarith), fun z a ha => ?_⟩
-  by_contra hlt'
-  rw [not_le] at hlt'
-  set d : ℝ := min δ₀ (P.minConsumption / 4) with hd
-  set b : ℝ := P.policyOf v (a, z) with hbdef
-  set c : ℝ := P.consumption (a, z) b with hcdef
-  have hltc : c < d := hlt'
-  have hdδ : d ≤ δ₀ := min_le_left _ _
-  have hd4 : d ≤ P.minConsumption / 4 := min_le_right _ _
-  have hcmem : c ∈ P.dom := P.consumption_policyOf_mem_dom v ha
-  have hc0 : 0 ≤ c := P.nonneg_of_mem_dom hcmem
-  have hres : P.minConsumption ≤ P.resources (a, z) - assetFloor :=
-    P.minConsumption_le_consumption_floor (a, z)
-  have hcb : c = P.resources (a, z) - b := rfl
-  have hbig : assetFloor + 3 * P.minConsumption / 4 ≤ b := by rw [hcb] at hltc; linarith
-  set hgap : ℝ := d - c with hhdef
-  have hh0 : 0 < hgap := by rw [hhdef]; linarith
-  have hhle : hgap ≤ P.minConsumption / 4 := by rw [hhdef]; linarith
-  have hlow : assetFloor + P.minConsumption / 2 ≤ b - hgap := by linarith
-  have hbmem : b ∈ Icc assetFloor assetCap :=
-    P.feasible_subset_region (P.policyOf_mem v (a, z))
-  have hfeas : b - hgap ∈ P.toExtended.feasible (a, z) := by
-    rw [P.feasible_eq]
-    exact ⟨by linarith [hbmem.1], by linarith [(P.policyOf_mem v (a, z)).2]⟩
-  have hcd : P.consumption (a, z) (b - hgap) = d := by
-    simp only [consumption] at hcb ⊢; linarith
-  have hdpos : 0 < P.consumption (a, z) (b - hgap) := by rw [hcd]; linarith
-  have hopt := P.objROf_le_of_mem v ha hfeas (P.mem_dom_of_pos hdpos)
-  simp only [objROf, hcd] at hopt
-  have hslope := P.contOf_sub_le_of_osc hG hv hosc z hlow (by linarith) hbmem
-  rw [show b - (b - hgap) = hgap from by ring] at hslope
-  have hscaled := mul_le_mul_of_nonneg_left hslope hβ
-  have hutil : P.u d - P.u c ≤ ((P.discount : ℝ) * P.oscSlopeConst G) * (d - c) := by
-    have e : (P.discount : ℝ) * (P.oscSlopeConst G * hgap)
-        = ((P.discount : ℝ) * P.oscSlopeConst G) * (d - c) := by rw [hhdef]; ring
-    linarith [hopt, hscaled, e.le, e.ge]
-  have hmarg := hδ c d hcmem (by linarith) hdδ
-  rw [hhdef] at hh0
-  nlinarith only [hmarg, hutil, hh0, hlt]
 
 /-- **Positive consumption from a finite marginal bound**, against every continuation with
 concave slices and oscillation at most `G`. -/

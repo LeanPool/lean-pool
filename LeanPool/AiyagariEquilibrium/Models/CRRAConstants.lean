@@ -249,30 +249,6 @@ DIFFERENCES of continuation values, so an oscillation bound avoids this normaliz
 noncomputable def oscGap : ℝ :=
   (P.u P.maxConsumption - P.u P.minConsumption) / (1 - P.discount)
 
-theorem valueFunction_le_oscBound (s : ℝ × Z) :
-    P.toExtended.valueFunction s ≤ P.u P.maxConsumption / (1 - P.discount) := by
-  have hβ : (P.discount : ℝ) < 1 := by exact_mod_cast P.discount_lt_one
-  refine P.toExtended.valueFunction_le_const ?_ s
-  have hne : (1 : ℝ) - P.discount ≠ 0 := by linarith
-  have key : P.u P.maxConsumption
-      + (P.discount : ℝ) * (P.u P.maxConsumption / (1 - P.discount))
-      = P.u P.maxConsumption / (1 - P.discount) := by field_simp; ring
-  rw [show P.toExtended.rewardMax = P.u P.maxConsumption from rfl,
-    show ((P.toExtended.discount : ℝ)) = (P.discount : ℝ) from rfl]
-  exact le_of_eq key
-
-theorem oscBound_le_valueFunction (s : ℝ × Z) :
-    P.u P.minConsumption / (1 - P.discount) ≤ P.toExtended.valueFunction s := by
-  have hβ : (P.discount : ℝ) < 1 := by exact_mod_cast P.discount_lt_one
-  refine P.toExtended.const_le_valueFunction ?_ s
-  have hne : (1 : ℝ) - P.discount ≠ 0 := by linarith
-  have key : P.u P.minConsumption / (1 - P.discount)
-      = P.u P.minConsumption + (P.discount : ℝ) * (P.u P.minConsumption / (1 - P.discount)) := by
-    field_simp; ring
-  rw [show P.toExtended.rewardMin = P.u P.minConsumption from rfl,
-    show ((P.toExtended.discount : ℝ)) = (P.discount : ℝ) from rfl]
-  exact le_of_eq key
-
 theorem oscGap_nonneg : 0 ≤ P.oscGap := by
   have hβ : (P.discount : ℝ) < 1 := by exact_mod_cast P.discount_lt_one
   refine div_nonneg (sub_nonneg.mpr ?_) (by linarith)
@@ -431,74 +407,15 @@ theorem crra_policy_le_mul {γ θ : ℝ} (hγ0 : 0 < γ) (hγ1 : γ < 1) (hθ0 :
     P.policy (a, z)
       ≤ (P.discount * P.oscGap / θ)
         * (P.consumption (a, z) (P.policy (a, z)) + (1 - θ) * P.policy (a, z)) ^ γ := by
-  have hosc := P.oscGap_nonneg
-  have hβ : (0 : ℝ) ≤ (P.discount : ℝ) := P.discount.coe_nonneg
-  set b : ℝ := P.policy (a, z) with hbdef
-  set c : ℝ := P.consumption (a, z) b with hcdef
-  have hcpos : 0 < c := by
-    rw [hcdef, hbdef]; exact P.consumption_policy_pos hpc ha
-  have hbase : (0 : ℝ) < c + (1 - θ) * b := by
-    have : 0 ≤ (1 - θ) * b := mul_nonneg (by linarith) (P.policy_mem_region (a, z)).1
-    linarith
-  have hrpow : (0 : ℝ) < (c + (1 - θ) * b) ^ γ := Real.rpow_pos_of_pos hbase _
-  rcases eq_or_lt_of_le (P.policy_mem_region (a, z)).1 with hzero | hbpos
-  · rw [← hbdef] at hzero
-    rw [← hzero]
-    positivity
-  rw [← hbdef] at hbpos
-  -- the deviation: save `θ` times as much
-  have hθb0 : 0 < θ * b := mul_pos hθ0 hbpos
-  have hθbb : θ * b < b := by nlinarith
-  have hbreg : b ∈ Icc (0 : ℝ) assetCap := P.policy_mem_region _
-  have hmem0 : (0 : ℝ) ∈ Icc (0 : ℝ) assetCap := ⟨le_rfl, P.assetCap_nonneg⟩
-  have hfeas : θ * b ∈ P.toExtended.feasible (a, z) := by
-    rw [P.feasible_eq]
-    exact ⟨hθb0.le, by linarith [(P.policy_mem (a, z)).2]⟩
-  have hcons : P.consumption (a, z) (θ * b) = c + (1 - θ) * b := by
-    simp only [hcdef, consumption]; ring
-  have hdev : 0 < P.consumption (a, z) (θ * b) := by rw [hcons]; linarith
-  have hopt := P.objR_le_of_mem ha hfeas (P.mem_dom_of_pos hdev)
-  simp only [objR, hcons] at hopt
-  rw [show P.consumption (a, z) (P.policy (a, z)) = c from rfl,
-    show P.policy (a, z) = b from rfl] at hopt
-  -- concavity of the continuation caps what the forgone saving could have repaid
-  have hslope := (P.concaveOn_cont z).slope_anti_adjacent hmem0 hbreg hθb0 hθbb
-  have hloss : P.cont z b - P.cont z (θ * b) ≤ (1 - θ) / θ * P.oscGap := by
-    have hgap := P.cont_sub_le_oscGap z (θ * b) 0
-    rw [div_le_div_iff₀ (show (0:ℝ) < b - θ * b by nlinarith)
-      (show (0:ℝ) < θ * b - 0 by linarith)] at hslope
-    have h2 : (P.cont z b - P.cont z (θ * b)) * (θ * b) ≤ P.oscGap * ((1 - θ) * b) := by
-      nlinarith [hslope, hgap, hbpos, hθ0]
-    rw [div_mul_eq_mul_div, le_div_iff₀ hθ0]
-    nlinarith [h2, hbpos]
-  -- the marginal gain from the extra consumption, priced where it lands
-  have hmg : (c + (1 - θ) * b) ^ (-γ) * ((1 - θ) * b)
-      ≤ P.u (c + (1 - θ) * b) - P.u c := by
-    rw [hu]
-    have := crra_marginal_bound_Ici hγ0 hγ1 (mem_Ici.mpr hcpos.le)
-      (le_add_of_nonneg_right (mul_nonneg (by linarith) hbpos.le)) (le_refl (c + (1 - θ) * b))
-    simpa using this
-  have hmid : P.u (c + (1 - θ) * b) - P.u c
-      ≤ (P.discount : ℝ) * (P.cont z b - P.cont z (θ * b)) := by
-    have hd : (P.discount : ℝ) * (P.cont z b - P.cont z (θ * b))
-        = (P.discount : ℝ) * P.cont z b - (P.discount : ℝ) * P.cont z (θ * b) := by ring
-    linarith [hopt, hd.le, hd.ge]
-  have hkey : (c + (1 - θ) * b) ^ (-γ) * ((1 - θ) * b)
-      ≤ (P.discount : ℝ) * ((1 - θ) / θ * P.oscGap) :=
-    le_trans hmg (le_trans hmid (mul_le_mul_of_nonneg_left hloss hβ))
-  -- divide out `1 - θ` and clear the negative power
-  have hinv : (c + (1 - θ) * b) ^ (-γ) = ((c + (1 - θ) * b) ^ γ)⁻¹ :=
-    Real.rpow_neg hbase.le γ
-  rw [hinv] at hkey
-  have h1θ : (0 : ℝ) < 1 - θ := by linarith
-  have hexp : ((c + (1 - θ) * b) ^ γ)⁻¹ * ((1 - θ) * b)
-      = (1 - θ) * (b / (c + (1 - θ) * b) ^ γ) := by field_simp
-  rw [hexp, show (P.discount : ℝ) * ((1 - θ) / θ * P.oscGap)
-      = (1 - θ) * (P.discount * P.oscGap / θ) from by ring] at hkey
-  have hdiv : b / (c + (1 - θ) * b) ^ γ ≤ P.discount * P.oscGap / θ :=
-    le_of_mul_le_mul_left hkey h1θ
-  rw [div_le_iff₀ hrpow] at hdiv
-  linarith
+  have h := P.policyOf_le_mul_of_power_marginal (γ := γ) (η := 0) hθ0 hθ1
+    P.concaveOn_valueFunction P.oscGap_nonneg
+    (by simpa only [oscSpread, oscGap] using P.oscOn_valueFunction)
+    (fun c d hc hcd _ => by
+      simpa only [zero_add, hu] using
+        crra_marginal_bound_Ici hγ0 hγ1 (P.nonneg_of_mem_dom hc) hcd (le_refl d)) ha z
+    (by simpa only [zero_add, P.consumptionFnOf_valueFunction] using
+      P.consumptionFn_pos hpc ha z)
+  simpa only [P.policyOf_valueFunction, consumptionFnOf, zero_add, sub_zero] using h
 
 /-- **Assets fall above an explicit threshold**, in the income state that matters. The threshold
 is `(β · oscGap / θ) · (income z + (1 + r - θ) · assetCap) ^ γ`; with `θ` near one the second
@@ -556,16 +473,10 @@ the cap always eventually works. A cruder estimate that keeps `maxConsumption ^ 
 grows on both sides and closes the window for `γ` near one, which is an artefact of the
 estimate.
 
-This is Marcet, Obiols-Homs and Weil (2007), Remark R4: "the upper bound on capital that was
-introduced to obtain existence and uniqueness of the value function is, in fact, not binding".
-Their route is different -- with endogenous labour supply, savings have an absorbing point `k_bar`
-below the bound, so the bound is slack for any initial condition below it -- but the purpose is
-identical, and it is reassuring that the standard treatment regards the cap as an artefact to be
-discharged rather than a modelling choice to be defended.
-
-The converse is `policy_assetCap_of_patient` (their Proposition 3, in `Impatience`): without
-impatience the cap BINDS. So the cap is an artefact precisely when `β (1 + r) < 1`, and the
-hypothesis this file carries everywhere is exactly the one that makes it one. -/
+Related literature: Marcet, Obiols-Homs and Weil (2007), *Incomplete Markets, Labor Supply
+and Capital Accumulation*. The sufficient criterion below is specific to this capped household
+model: it uses the displayed quantitative inequality, bounded utility and positive optimal
+consumption. Its fixed-point and iterative versions share the same comparison argument. -/
 
 /-- **Saving never reaches the asset cap.** -/
 theorem crra_policy_lt_assetCap {γ θ : ℝ} (hγ0 : 0 < γ) (hγ1 : γ < 1) (hθ0 : 0 < θ)
@@ -575,39 +486,16 @@ theorem crra_policy_lt_assetCap {γ θ : ℝ} (hγ0 : 0 < γ) (hγ1 : γ < 1) (h
         * (P.maxIncome + (1 + P.interest - θ) * assetCap) ^ γ < assetCap)
     {a : ℝ} (ha : a ∈ Icc (0 : ℝ) assetCap) (z : Z) :
     P.policy (a, z) < assetCap := by
-  by_contra hcon
-  rw [not_lt] at hcon
-  have hcap := P.assetCap_nonneg
-  have hosc := P.oscGap_nonneg
-  have hβ : (0 : ℝ) ≤ (P.discount : ℝ) := P.discount.coe_nonneg
-  set b : ℝ := P.policy (a, z) with hbdef
-  set c : ℝ := P.consumption (a, z) b with hcdef
-  have hkey := P.crra_policy_le_mul hγ0 hγ1 hθ0 hθ1 hb hu hpc ha z
-  rw [← hbdef, ← hcdef] at hkey
-  have hc0 : 0 < c := by rw [hcdef, hbdef]; exact P.consumption_policy_pos hpc ha
-  -- if saving reached the cap, what is left to consume is small
-  have hres : P.resources (a, z) ≤ P.maxConsumption := by
-    have := P.consumption_le_maxConsumption (s := (a, z)) ha (le_refl (0 : ℝ))
-    simpa only [IncomeFluctuation.consumption, sub_zero] using this
-  have hsum : c + (1 - θ) * b = P.resources (a, z) - θ * b := by
-    simp only [hcdef, IncomeFluctuation.consumption]; ring
-  have hle : c + (1 - θ) * b
-      ≤ P.maxIncome + (1 + P.interest - θ) * assetCap := by
-    rw [hsum]
-    have hθb : θ * assetCap ≤ θ * b := mul_le_mul_of_nonneg_left hcon hθ0.le
-    simp only [IncomeFluctuation.maxConsumption] at hres
-    nlinarith [hres, hθb]
-  have hnn : (0 : ℝ) ≤ c + (1 - θ) * b := by
-    have : 0 ≤ (1 - θ) * b := mul_nonneg (by linarith) (P.policy_mem_region (a, z)).1
-    linarith
-  have hmono : (c + (1 - θ) * b) ^ γ
-      ≤ (P.maxIncome + (1 + P.interest - θ) * assetCap) ^ γ :=
-    Real.rpow_le_rpow hnn hle hγ0.le
-  have hscale : (P.discount * P.oscGap / θ) * (c + (1 - θ) * b) ^ γ
-      ≤ (P.discount * P.oscGap / θ)
-        * (P.maxIncome + (1 + P.interest - θ) * assetCap) ^ γ :=
-    mul_le_mul_of_nonneg_left hmono (by positivity)
-  linarith
+  have h := P.policyOf_lt_cap_of_power_bound (η := 0) hγ0.le hθ0.le hθ1.le
+    (show 0 ≤ (P.discount : ℝ) * P.oscGap / θ by
+      exact div_nonneg (mul_nonneg P.discount.coe_nonneg P.oscGap_nonneg) hθ0.le)
+    (v := P.toExtended.valueFunction) ha z
+    (by simpa only [zero_add, P.consumptionFnOf_valueFunction] using
+      (P.consumptionFn_pos hpc ha z).le)
+    (by simpa only [P.policyOf_valueFunction, consumptionFnOf, zero_add, sub_zero] using
+      P.crra_policy_le_mul hγ0 hγ1 hθ0 hθ1 hb hu hpc ha z)
+    (by simpa only [zero_add, mul_zero, sub_zero] using hlt)
+  simpa only [P.policyOf_valueFunction] using h
 
 /-- **The disproof of Carroll and Kimball is disarmed.** Where saving never reaches the cap, the
 hypothesis of `not_concaveOn_consumptionFn_of_cap_binds` -- a flat stretch of the policy at the
