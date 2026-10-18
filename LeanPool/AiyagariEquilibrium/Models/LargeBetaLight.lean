@@ -117,7 +117,7 @@ theorem crra_policyOf_withRate_lt_cap {γ : ℝ} (hγ0 : 0 < γ) (hu : P.u = crr
   have hR₁ : (0 : ℝ) < 1 + r₁ := h₁.1
   have hR₂ : (0 : ℝ) < 1 + r₂ := h₂.1
   have hslices : ConcaveSlices (0 : ℝ) assetCap v := Q₁.concaveSlices_iterate_zero n
-  have hκ1 : κ ≤ 1 := minMPC_le_one (P := Q₁) hγ0 hβ
+  have hκ1 : κ ≤ 1 := minMPC_le_one (P := Q₁)
   -- economy 1's minimal-MPC bound at this iterate
   have hmpc : κ * Q₁.resources (a, z) ≤ Q₁.consumptionFnOf v z a :=
     (Q₁.crra_minMPC_of_cap hγ0 (show Q₁.u = crraUtility γ from hu) rfl

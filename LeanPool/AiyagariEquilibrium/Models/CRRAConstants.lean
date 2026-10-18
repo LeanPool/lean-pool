@@ -402,7 +402,7 @@ consumption, which is the shape the decline condition needs. -/
 
 /-- **The proportional CES bound on saving.** -/
 theorem crra_policy_le_mul {γ θ : ℝ} (hγ0 : 0 < γ) (hγ1 : γ < 1) (hθ0 : 0 < θ) (hθ1 : θ < 1)
-    (_hb : P.Bounded) (hu : P.u = crraUtility γ) (hpc : P.PositiveConsumption)
+    (hu : P.u = crraUtility γ) (hpc : P.PositiveConsumption)
     {a : ℝ} (ha : a ∈ Icc (0 : ℝ) assetCap) (z : Z) :
     P.policy (a, z)
       ≤ (P.discount * P.oscGap / θ)
@@ -422,7 +422,7 @@ is `(β · oscGap / θ) · (income z + (1 + r - θ) · assetCap) ^ γ`; with `θ
 factor is close to `income z ^ γ`, so the threshold shrinks with the income of the state -- which
 is exactly what lets the corner condition reach it. -/
 theorem crra_policy_lt_self {γ θ : ℝ} (hγ0 : 0 < γ) (hγ1 : γ < 1) (hθ0 : 0 < θ) (hθ1 : θ < 1)
-    (hθr : θ ≤ 1 + P.interest) (hb : P.Bounded) (hu : P.u = crraUtility γ)
+    (hθr : θ ≤ 1 + P.interest) (hu : P.u = crraUtility γ)
     (hpc : P.PositiveConsumption) {a : ℝ} (ha : a ∈ Icc (0 : ℝ) assetCap) (z : Z)
     (hlt : (P.discount * P.oscGap / θ)
         * (P.income z + (1 + P.interest - θ) * assetCap) ^ γ < a) :
@@ -433,7 +433,7 @@ theorem crra_policy_lt_self {γ θ : ℝ} (hγ0 : 0 < γ) (hγ1 : γ < 1) (hθ0 
   have hβ : (0 : ℝ) ≤ (P.discount : ℝ) := P.discount.coe_nonneg
   set b : ℝ := P.policy (a, z) with hbdef
   set c : ℝ := P.consumption (a, z) b with hcdef
-  have hkey := P.crra_policy_le_mul hγ0 hγ1 hθ0 hθ1 hb hu hpc ha z
+  have hkey := P.crra_policy_le_mul hγ0 hγ1 hθ0 hθ1 hu hpc ha z
   rw [← hbdef, ← hcdef] at hkey
   have hres : P.resources (a, z) = P.income z + (1 + P.interest) * a := by
     simp only [resources, max_eq_right ha.1]
@@ -475,12 +475,12 @@ estimate.
 
 Related literature: Marcet, Obiols-Homs and Weil (2007), *Incomplete Markets, Labor Supply
 and Capital Accumulation*. The sufficient criterion below is specific to this capped household
-model: it uses the displayed quantitative inequality, bounded utility and positive optimal
+model: it uses the displayed quantitative inequality and positive optimal
 consumption. Its fixed-point and iterative versions share the same comparison argument. -/
 
 /-- **Saving never reaches the asset cap.** -/
 theorem crra_policy_lt_assetCap {γ θ : ℝ} (hγ0 : 0 < γ) (hγ1 : γ < 1) (hθ0 : 0 < θ)
-    (hθ1 : θ < 1) (hb : P.Bounded) (hu : P.u = crraUtility γ)
+    (hθ1 : θ < 1) (hu : P.u = crraUtility γ)
     (hpc : P.PositiveConsumption)
     (hlt : (P.discount * P.oscGap / θ)
         * (P.maxIncome + (1 + P.interest - θ) * assetCap) ^ γ < assetCap)
@@ -493,7 +493,7 @@ theorem crra_policy_lt_assetCap {γ θ : ℝ} (hγ0 : 0 < γ) (hγ1 : γ < 1) (h
     (by simpa only [zero_add, P.consumptionFnOf_valueFunction] using
       (P.consumptionFn_pos hpc ha z).le)
     (by simpa only [P.policyOf_valueFunction, consumptionFnOf, zero_add, sub_zero] using
-      P.crra_policy_le_mul hγ0 hγ1 hθ0 hθ1 hb hu hpc ha z)
+      P.crra_policy_le_mul hγ0 hγ1 hθ0 hθ1 hu hpc ha z)
     (by simpa only [zero_add, mul_zero, sub_zero] using hlt)
   simpa only [P.policyOf_valueFunction] using h
 
@@ -503,13 +503,13 @@ top of the asset region -- cannot occur, so nothing in this development contradi
 the consumption function. That is not a proof of concavity; it is the removal of the obstruction
 that made one impossible. -/
 theorem no_flat_at_cap {γ θ : ℝ} (hγ0 : 0 < γ) (hγ1 : γ < 1) (hθ0 : 0 < θ) (hθ1 : θ < 1)
-    (hb : P.Bounded) (hu : P.u = crraUtility γ)
+    (hu : P.u = crraUtility γ)
     (hpc : P.PositiveConsumption)
     (hlt : (P.discount * P.oscGap / θ)
         * (P.maxIncome + (1 + P.interest - θ) * assetCap) ^ γ < assetCap)
     {a : ℝ} (ha : a ∈ Icc (0 : ℝ) assetCap) (z : Z) :
     P.policy (a, z) ≠ assetCap :=
-  ne_of_lt (P.crra_policy_lt_assetCap hγ0 hγ1 hθ0 hθ1 hb hu hpc hlt ha z)
+  ne_of_lt (P.crra_policy_lt_assetCap hγ0 hγ1 hθ0 hθ1 hu hpc hlt ha z)
 
 /-- **A quantitative CES saving floor**, the form the sign-change argument consumes. -/
 theorem crra_policy_ge_of_gain {γ : ℝ} (hγ : 0 < γ) (hu : P.u = crraUtility γ)

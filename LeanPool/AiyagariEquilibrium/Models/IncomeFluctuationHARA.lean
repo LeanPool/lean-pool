@@ -683,7 +683,7 @@ theorem hara_valueFunction_lipschitz {γ η : ℝ} (hγ0 : 0 < γ) (hη : 0 ≤ 
 /-- **The corner condition from primitives.** One inequality, `norm_num`-checkable. -/
 theorem hara_policy_eq_zero_of_primitives {γ η : ℝ} (hγ0 : 0 < γ) (hη : 0 < η)
     (hu : P.u = haraUtility γ η) (hfl : assetFloor = 0)
-    (hβR : P.discount * (1 + P.interest) < 1) (z₀ : Z) {a₀ : ℝ} (_ha₀ : 0 ≤ a₀)
+    (hβR : P.discount * (1 + P.interest) < 1) (z₀ : Z) {a₀ : ℝ}
     (ha₀cap : a₀ ≤ assetCap)
     (hcond : P.discount * P.haraLipschitz γ η
       < (η + P.income z₀ + (1 + P.interest) * a₀) ^ (-γ))

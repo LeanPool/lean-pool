@@ -82,7 +82,7 @@ noncomputable def minMPC (γ : ℝ) : ℝ :=
 variable {P}
 
 /-- The absolute patience factor is positive when the household discounts at all. -/
-theorem patience_pos {γ : ℝ} (_hγ0 : 0 < γ) (hβ : 0 < (P.discount : ℝ)) :
+theorem patience_pos {γ : ℝ} (hβ : 0 < (P.discount : ℝ)) :
     0 < ((P.discount : ℝ) * (1 + P.interest)) ^ (1 / γ) :=
   Real.rpow_pos_of_pos (mul_pos hβ P.interest_gt_neg_one) _
 
@@ -103,14 +103,11 @@ theorem one_sub_minMPC_mul {γ : ℝ} :
   field_simp
   ring
 
-theorem minMPC_le_one {γ : ℝ} (hγ0 : 0 < γ) (hβ : 0 < (P.discount : ℝ)) :
-    P.minMPC γ ≤ 1 := by
-  have hR : (0 : ℝ) < 1 + P.interest := P.interest_gt_neg_one
-  have := patience_pos (P := P) hγ0 hβ
-  simp only [minMPC]
-  have : (0 : ℝ) < ((P.discount : ℝ) * (1 + P.interest)) ^ (1 / γ) / (1 + P.interest) := by
-    positivity
-  linarith
+theorem minMPC_le_one {γ : ℝ} : P.minMPC γ ≤ 1 := by
+  unfold minMPC
+  exact sub_le_self _ (div_nonneg
+    (Real.rpow_nonneg (mul_nonneg P.discount.coe_nonneg P.interest_gt_neg_one.le) _)
+    P.interest_gt_neg_one.le)
 
 /-- **At `γ = 1` the patience factor is `βR` itself**, so `κ = 1 - β`: log and log Stone--Geary
 need no root at all. -/
@@ -158,9 +155,9 @@ theorem hara_minMPC_step {γ η : ℝ} (hγ0 : 0 < γ) (hη : 0 ≤ η)
   have hR : (0 : ℝ) < 1 + P.interest := P.interest_gt_neg_one
   have hβR0 : (0 : ℝ) < (P.discount : ℝ) * (1 + P.interest) := mul_pos hβ hR
   set T : ℝ := ((P.discount : ℝ) * (1 + P.interest)) ^ (1 / γ) with hTdef
-  have hT0 : 0 < T := patience_pos (P := P) hγ0 hβ
+  have hT0 : 0 < T := patience_pos (P := P) hβ
   have hκ0 : 0 < P.minMPC γ := hκ
-  have hκ1 : P.minMPC γ ≤ 1 := minMPC_le_one (P := P) hγ0 hβ
+  have hκ1 : P.minMPC γ ≤ 1 := minMPC_le_one (P := P)
   have hkey : (1 - P.minMPC γ) * (1 + P.interest) = T := one_sub_minMPC_mul (P := P)
   have hTneg : T ^ (-γ) = ((P.discount : ℝ) * (1 + P.interest))⁻¹ := by
     rw [hTdef, ← Real.rpow_mul hβR0.le,
@@ -254,7 +251,7 @@ theorem crra_minMPC_mul_le_consumptionFnOf {γ : ℝ} (hγ0 : 0 < γ) (hu : P.u 
       P.minMPC γ * P.resources (a, z)
         ≤ P.consumptionFnOf ((P.toExtended.bellman)^[n] (0 : (ℝ × Z) →ᵇ ℝ)) z a := by
   subst hfl
-  have hκ1 : P.minMPC γ ≤ 1 := minMPC_le_one (P := P) hγ0 hβ
+  have hκ1 : P.minMPC γ ≤ 1 := minMPC_le_one (P := P)
   intro n
   induction n with
   | zero =>
@@ -337,8 +334,7 @@ both. The cap is then bookkeeping again: any `cap > (1-κ)maxIncome / (1 - (1-κ
 
 /-- Saving under the minimal-MPC bound is at most `(1-κ) m`, hence below the cap once the cap
 clears `(1-κ)(maxIncome + R·cap)`. -/
-theorem crra_policyOf_lt_cap_of_minMPC_bound {γ : ℝ} (hγ0 : 0 < γ) (hβ : 0 < (P.discount : ℝ))
-    (hfl : assetFloor = 0)
+theorem crra_policyOf_lt_cap_of_minMPC_bound {γ : ℝ} (hfl : assetFloor = 0)
     (hthr : (1 - P.minMPC γ) * (P.maxIncome + (1 + P.interest) * assetCap) < assetCap)
     {v : (ℝ × Z) →ᵇ ℝ}
     (hv : ∀ z : Z, ∀ a ∈ Icc (0 : ℝ) assetCap,
@@ -346,7 +342,7 @@ theorem crra_policyOf_lt_cap_of_minMPC_bound {γ : ℝ} (hγ0 : 0 < γ) (hβ : 0
     {a : ℝ} (ha : a ∈ Icc (0 : ℝ) assetCap) (z : Z) : P.policyOf v (a, z) < assetCap := by
   subst hfl
   have hR : (0 : ℝ) < 1 + P.interest := P.interest_gt_neg_one
-  have hκ1 : P.minMPC γ ≤ 1 := minMPC_le_one (P := P) hγ0 hβ
+  have hκ1 : P.minMPC γ ≤ 1 := minMPC_le_one (P := P)
   have hres : P.resources (a, z) = P.income z + (1 + P.interest) * a := by
     simp only [resources, max_eq_right ha.1]
   have hbd : P.income z + (1 + P.interest) * a ≤ P.maxIncome + (1 + P.interest) * assetCap := by
@@ -378,7 +374,7 @@ theorem crra_minMPC_of_cap {γ : ℝ} (hγ0 : 0 < γ) (hu : P.u = crraUtility γ
   intro n
   induction n with
   | zero =>
-    have hκ1 : P.minMPC γ ≤ 1 := minMPC_le_one (P := P) hγ0 hβ
+    have hκ1 : P.minMPC γ ≤ 1 := minMPC_le_one (P := P)
     have hm : ∀ z : Z, ∀ a ∈ Icc (0 : ℝ) assetCap,
         P.minMPC γ * P.resources (a, z)
           ≤ P.consumptionFnOf ((P.toExtended.bellman)^[0] (0 : (ℝ × Z) →ᵇ ℝ)) z a := by
@@ -392,7 +388,7 @@ theorem crra_minMPC_of_cap {γ : ℝ} (hγ0 : 0 < γ) (hu : P.u = crraUtility γ
         rw [hz]; simp [consumption]
       rw [heq]
       nlinarith only [hres, hκ1]
-    exact ⟨hm, fun a ha z => P.crra_policyOf_lt_cap_of_minMPC_bound hγ0 hβ hfl hthr hm ha z⟩
+    exact ⟨hm, fun a ha z => P.crra_policyOf_lt_cap_of_minMPC_bound hfl hthr hm ha z⟩
   | succ k ih =>
     obtain ⟨ihm, ihc⟩ := ih
     have hiter : (P.toExtended.bellman)^[k + 1] (0 : (ℝ × Z) →ᵇ ℝ)
@@ -405,7 +401,7 @@ theorem crra_minMPC_of_cap {γ : ℝ} (hγ0 : 0 < γ) (hu : P.u = crraUtility γ
       rw [hiter]
       exact P.crra_minMPC_step hγ0 hu hfl hκ hβ (hpos k) ihc
         (fun z' b hb => by have := hpos (k + 1) z' b hb; rwa [hiter] at this) ihm z ha
-    exact ⟨hm, fun a ha z => P.crra_policyOf_lt_cap_of_minMPC_bound hγ0 hβ hfl hthr hm ha z⟩
+    exact ⟨hm, fun a ha z => P.crra_policyOf_lt_cap_of_minMPC_bound hfl hthr hm ha z⟩
 
 /-- **The minimal-MPC bound at the value function, with the cap from primitives.** -/
 theorem crra_minMPC_mul_le_consumptionFn_of_cap {γ : ℝ} (hγ0 : 0 < γ) (hu : P.u = crraUtility γ)
@@ -427,7 +423,7 @@ theorem crra_policy_lt_cap_of_minMPC {γ : ℝ} (hγ0 : 0 < γ) (hu : P.u = crra
       0 < P.consumptionFnOf ((P.toExtended.bellman)^[n] (0 : (ℝ × Z) →ᵇ ℝ)) z a)
     (hthr : (1 - P.minMPC γ) * (P.maxIncome + (1 + P.interest) * assetCap) < assetCap)
     {a : ℝ} (ha : a ∈ Icc (0 : ℝ) assetCap) (z : Z) : P.policy (a, z) < assetCap :=
-  P.crra_policyOf_lt_cap_of_minMPC_bound hγ0 hβ hfl hthr
+  P.crra_policyOf_lt_cap_of_minMPC_bound hfl hthr
     (fun z' _b hb =>
       P.crra_minMPC_mul_le_consumptionFn_of_cap hγ0 hu hfl hκ hβ hβR hpos hthr z' hb)
     ha z
@@ -458,7 +454,7 @@ theorem hara_minMPC_mul_le_consumptionFnOf {γ η : ℝ} (hγ0 : 0 < γ) (hη : 
       P.minMPC γ * (η + P.resources (a, z))
         ≤ η + P.consumptionFnOf ((P.toExtended.bellman)^[n] (0 : (ℝ × Z) →ᵇ ℝ)) z a := by
   subst hfl
-  have hκ1 : P.minMPC γ ≤ 1 := minMPC_le_one (P := P) hγ0 hβ
+  have hκ1 : P.minMPC γ ≤ 1 := minMPC_le_one (P := P)
   intro n
   induction n with
   | zero =>
@@ -524,7 +520,7 @@ theorem hara_minMPCShare_mul_le_consumptionFn {γ η : ℝ} (hγ0 : 0 < γ) (hη
     (z : Z) {a : ℝ} (ha : a ∈ Icc (0 : ℝ) assetCap) :
     P.minMPCShare γ η * P.resources (a, z) ≤ P.consumptionFn z a := by
   have hbound := P.hara_minMPC_mul_le_consumptionFn hγ0 hη hu hfl hκ hβ hβR hpos hcap z ha
-  have hκ1 : P.minMPC γ ≤ 1 := minMPC_le_one (P := P) hγ0 hβ
+  have hκ1 : P.minMPC γ ≤ 1 := minMPC_le_one (P := P)
   have hy : 0 < P.minIncome := P.minIncome_pos
   have hR : (0 : ℝ) < 1 + P.interest := P.interest_gt_neg_one
   have hres : P.resources (a, z) = P.income z + (1 + P.interest) * a := by

@@ -376,7 +376,7 @@ theorem crra_aggregateCapital_le_of_minMPC {γ : ℝ} (hγ0 : 0 < γ) (hu : P.u 
     P.aggregateCapital μ
       ≤ (1 - P.minMPC γ) * P.maxIncome / (1 - (1 - P.minMPC γ) * (1 + P.interest)) := by
   refine P.aggregateCapital_le_of_consumption_bound hμ
-    (IncomeFluctuation.minMPC_le_one hγ0 hβ) ?_ ?_
+    IncomeFluctuation.minMPC_le_one ?_ ?_
   · rw [IncomeFluctuation.one_sub_minMPC_mul]
     exact IncomeFluctuation.patience_lt_one hγ0 hβR
   · exact fun z a ha => P.crra_minMPC_mul_le_consumptionFn hγ0 hu rfl hκ hβ hβR hpos hcapit z ha
@@ -397,7 +397,7 @@ theorem hara_aggregateCapital_le_of_minMPC {γ η : ℝ} (hγ0 : 0 < γ) (hη : 
       ≤ (1 - P.minMPCShare γ η) * P.maxIncome
         / (1 - (1 - P.minMPCShare γ η) * (1 + P.interest)) := by
   refine P.aggregateCapital_le_of_consumption_bound hμ ?_ hshare ?_
-  · have hκ : P.minMPC γ ≤ 1 := IncomeFluctuation.minMPC_le_one hγ0 hβ
+  · have hκ : P.minMPC γ ≤ 1 := IncomeFluctuation.minMPC_le_one
     have hy : 0 < P.minIncome := P.minIncome_pos
     have : (0 : ℝ) ≤ (1 - P.minMPC γ) * η / P.minIncome := by
       apply div_nonneg (mul_nonneg (by linarith) hη) hy.le
