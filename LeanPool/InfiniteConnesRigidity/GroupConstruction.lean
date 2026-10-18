@@ -7887,24 +7887,6 @@ private theorem additiveLeftRegularUnitary_single
     ofAdd_add]
 
 /-- Cross-module support for the infinite Connes-rigidity construction. -/
-private theorem fourierUnitary_single_smul
-    {A : Type u} [DecidableEq A]
-    {H : Type v} [NormedAddCommGroup H] [InnerProductSpace ℂ H]
-    (U : GroupL2 (Multiplicative A) ≃ₗᵢ[ℂ] H)
-    (χ : A → H)
-    (hU : ∀ b : A,
-      U (lp.single 2 (Multiplicative.ofAdd b) 1) = χ b)
-    (b : A) (c : ℂ) :
-    U (lp.single 2 (Multiplicative.ofAdd b) c) = c • χ b := by
-  have hs : lp.single (E := fun _ : Multiplicative A => ℂ)
-      2 (Multiplicative.ofAdd b) c =
-      c • lp.single (E := fun _ : Multiplicative A => ℂ)
-        2 (Multiplicative.ofAdd b) (1 : ℂ) := by
-    simpa only [smul_eq_mul, mul_one] using (lp.single_smul (E := fun _ : Multiplicative A => ℂ)
-      2 (Multiplicative.ofAdd b) c (1 : ℂ))
-  rw [hs, map_smul, hU]
-
-/-- Cross-module support for the infinite Connes-rigidity construction. -/
 private theorem fourier_conjugates_regular_of_character_basis
     {A : Type u} [AddCommGroup A] [DecidableEq A]
     {H : Type v} [NormedAddCommGroup H] [InnerProductSpace ℂ H]

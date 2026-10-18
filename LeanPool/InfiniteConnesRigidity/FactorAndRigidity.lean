@@ -3506,16 +3506,6 @@ private theorem splitL2Reindex_single [DecidableEq D]
   rfl
 
 /-- Cross-module support for the infinite Connes-rigidity construction. -/
-private theorem splitFourierEquiv_single_smul [DecidableEq D]
-    (d : D) (c : ℂ) :
-    splitFourierEquiv (lp.single 2 d c) = c • splitCharacterL2 d := by
-  classical
-  have hsingle : lp.single (E := fun _ : D => ℂ) 2 d c =
-      c • lp.single (E := fun _ : D => ℂ) 2 d (1 : ℂ) := by
-    simpa only [smul_eq_mul, mul_one] using (lp.single_smul (E := fun _ : D => ℂ) 2 d c (1 : ℂ))
-  rw [hsingle, map_smul, splitFourierEquiv_single]
-
-/-- Cross-module support for the infinite Connes-rigidity construction. -/
 private theorem splitCharacterL2_zero :
     splitCharacterL2 0 = Lp.const 2 productHaar (1 : ℂ) := by
   apply Lp.ext
@@ -4163,48 +4153,6 @@ private theorem gammaGroupFactorUnitary_vacuum (n : ℕ) :
   exact groupFactorUnitary_vacuum (kEAction n)
     (paperCarryHaarAction n) (carryFourierEquiv n)
     (@carryFourierEquiv_zero_single n (Classical.decEq (E n)))
-
-open Classical in
-/-- Cross-module support for the infinite Connes-rigidity construction. -/
-private theorem lambdaDelta_apply (g : Lambda) :
-    delta lambdaGroup 1 (show lambdaGroup from g) =
-      if g = (1 : Lambda) then 1 else 0 := by
-  classical
-  rw [delta_eq_single lambdaGroup (1 : lambdaGroup)]
-  by_cases hg : g = (1 : Lambda)
-  · subst g
-    rw [ite_eq_left rfl]
-    exact lp.single_apply_self (E := fun _ : lambdaGroup => ℂ)
-      2 (1 : lambdaGroup) (1 : ℂ)
-  · rw [ite_eq_right hg]
-    exact lp.single_apply_ne (E := fun _ : lambdaGroup => ℂ)
-      2 (1 : lambdaGroup) (1 : ℂ) hg
-
-open Classical in
-/-- Cross-module support for the infinite Connes-rigidity construction. -/
-private theorem splitVacuum_apply (k : K) :
-  crossedVacuum paperSplitHaarAction k =
-      if k = 1 then Lp.const 2 productHaar (1 : ℂ) else 0 := by
-  classical
-  by_cases hk : k = (1 : K)
-  · subst k
-    rw [ite_eq_left rfl]
-    change
-      (@lp.single K (fun _ ↦ Lp ℂ 2 productHaar) _
-        (fun a b ↦ Classical.propDecidable (a = b))
-        2 (1 : K) (Lp.const 2 productHaar (1 : ℂ))) 1 =
-          Lp.const 2 productHaar (1 : ℂ)
-    exact @lp.single_apply_self K (fun _ ↦ Lp ℂ 2 productHaar) _
-      (fun a b ↦ Classical.propDecidable (a = b))
-      2 (1 : K) (Lp.const 2 productHaar (1 : ℂ))
-  · rw [ite_eq_right hk]
-    change
-      (@lp.single K (fun _ ↦ Lp ℂ 2 productHaar) _
-        (fun a b ↦ Classical.propDecidable (a = b))
-        2 (1 : K) (Lp.const 2 productHaar (1 : ℂ))) k = 0
-    exact @lp.single_apply_ne K (fun _ ↦ Lp ℂ 2 productHaar) _
-      (fun a b ↦ Classical.propDecidable (a = b))
-      2 (1 : K) (Lp.const 2 productHaar (1 : ℂ)) k hk
 
 /-- Cross-module support for the infinite Connes-rigidity construction. -/
 private theorem lambdaGroupFactorUnitary_vacuum :
