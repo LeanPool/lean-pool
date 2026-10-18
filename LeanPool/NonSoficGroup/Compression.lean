@@ -499,7 +499,7 @@ private theorem card_symmDiff_upperLevel_le_nine_sq_error {V : Type*}
     · obtain ⟨hxlevel, hxT⟩ := hx
       have hfx : t < f x := (Finset.mem_filter.mp hxlevel).2
       simp only [ite_eq_right hxT]
-      nlinarith [sq_nonneg (3 * f x - 1)]
+      linarith only [hlow, hfx, sq_nonneg (3 * f x - 1)]
     · obtain ⟨hxT, hxlevel⟩ := hx
       have hfx : f x ≤ t := by
         apply le_of_not_gt
@@ -507,7 +507,7 @@ private theorem card_symmDiff_upperLevel_le_nine_sq_error {V : Type*}
         exact hxlevel
           (Finset.mem_filter.mpr ⟨Finset.mem_univ x, h⟩)
       simp only [ite_eq_left hxT]
-      nlinarith only [hhigh, hfx, sq_nonneg (3 * f x - 2)]
+      linarith only [hhigh, hfx, sq_nonneg (3 * f x - 2)]
   have hcard :
       (D.card : ℝ) = ∑ x : V, if x ∈ D then (1 : ℝ) else 0 := by
     simp only [Finset.sum_ite_mem, Finset.univ_inter, Finset.sum_const, nsmul_eq_mul, mul_one]
@@ -631,9 +631,6 @@ private theorem sum_sum_sq_displacement_eq_twice_card_mul_realMarkov_residual
       2 * (Fintype.card ι : ℝ) *
         ∑ x : V, f x * (f x - realMarkov σ f x) := by
   classical
-  have hd : 0 < (Fintype.card ι : ℝ) := by
-    exact_mod_cast Fintype.card_pos_iff.mpr
-      (inferInstance : Nonempty ι)
   calc
     (∑ i : ι, ∑ x : V, (f (σ i x) - f x) ^ 2) =
         2 * ∑ x : V, ∑ i : ι,
@@ -664,7 +661,10 @@ private theorem sum_sq_le_card_of_unit_interval_mass
     (∑ x : V, f x ^ 2) ≤ ∑ x : V, f x := by
       apply Finset.sum_le_sum
       intro x _
-      nlinarith only [mul_nonneg (hfzero x) (sub_nonneg.mpr (hfone x))]
+      calc
+        f x ^ 2 = f x * f x := pow_two _
+        _ ≤ f x * 1 := mul_le_mul_of_nonneg_left (hfone x) (hfzero x)
+        _ = f x := mul_one _
     _ = (T.card : ℝ) := hmass
 
 private theorem realMarkov_residual_pairing_le_sqrt_card_mul_residual
@@ -712,7 +712,7 @@ private theorem sum_sum_sq_displacement_le_twice_card_mul_sqrt_card_mul_residual
   have hpair := realMarkov_residual_pairing_le_sqrt_card_mul_residual
     σ T f hfzero hfone hmass
   have hfactor : 0 ≤ 2 * (Fintype.card ι : ℝ) := by positivity
-  nlinarith only [hpair, hfactor, mul_nonneg hfactor (sub_nonneg.mpr hpair)]
+  linarith only [hpair, hfactor, mul_nonneg hfactor (sub_nonneg.mpr hpair)]
 
 private theorem card_highSupport_le_three_card
     {V : Type*} [Fintype V]
@@ -1230,7 +1230,7 @@ theorem symmDiff_card_lt_of_overlap_and_exp_card
       ((C ∆ D).card : ℝ) + 2 * ((C ∩ D).card : ℝ) =
         (C.card : ℝ) + (D.card : ℝ) := by
     exact_mod_cast card_symmDiff_add_twice_inter C D
-  nlinarith
+  linarith only [hoverlap, hcard, hexact]
 
 public
 theorem target_majority_of_overlap_and_exp_card
@@ -1299,7 +1299,7 @@ theorem symmDiff_density_tendsto_zero_of_log_rank_bounds
   have hexp : 1 ≤ Real.exp (H n) := by
     simpa only [Real.one_le_exp_iff, Real.exp_zero] using (Real.exp_le_exp.mpr (hH n))
   have hnonneg : 0 ≤ Real.exp (H n) - 1 + 2 * eta n := by
-    nlinarith only [hexp, heta n]
+    linarith only [heta, hexp, heta n]
   have hmassnat :
       (∑ C ∈ R n, C.card) ≤ (U n).card := by
     calc
@@ -2248,8 +2248,6 @@ private theorem reference_difference_le_of_good_root_threshold
   have hd : 0 < (Fintype.card ι : ℝ) := by
     exact_mod_cast Fintype.card_pos_iff.mpr
       (inferInstance : Nonempty ι)
-  have hden : 0 < (Fintype.card ι : ℝ) * (1 - q) ^ 2 :=
-    mul_pos hd (sq_pos_of_pos (sub_pos.mpr hq))
   have hdefect_real :
       (permutationCommutationDefect σ p : ℝ) ≤
         2 * (t : ℝ) := by
@@ -2618,7 +2616,7 @@ private theorem close_and_large_of_symmDiff_bound
             mul_le_mul_of_nonneg_left hdistance (by norm_num)
           _ = 216 * boundaryValue / denominator := by ring
       _ < (T.card : ℝ) :=
-        (div_lt_iff₀ hdenominator).2 (by nlinarith only [hscaled])
+        (div_lt_iff₀ hdenominator).2 (by linarith only [hscaled])
   have hclose : 3 * (U ∆ T).card < T.card := by
     exact_mod_cast hcloseReal
   have hsub : T ⊆ U ∪ (U ∆ T) := by
@@ -2778,7 +2776,7 @@ private theorem exists_rooted_word_radius_sparse_cut_of_boundary
     have hboundary' :=
       mul_le_mul_of_nonneg_left hboundary.le
         (by norm_num : (0 : ℝ) ≤ 2)
-    nlinarith only [hscaled, hboundary']
+    linarith only [hboundary, hscaled, hboundary']
   have hsmall :
       486 * (Fintype.card (↥S) : ℝ) ^ 2 * η ≤
         4 * α ^ 2 := by
@@ -2838,7 +2836,7 @@ private theorem exists_rooted_word_radius_sparse_cut_of_boundary
     change
       (boundary X.generator
         (KunSharpThresholdCut.upperLevel f t) : ℝ) ≤ _
-    nlinarith only [hcut, hvariation, hscaledlarge]
+    linarith only [hvariation, hcut, hscaledlarge]
   exact ⟨U, by simpa only [f, χ] using hdistance,
     by simpa only [q] using hquant, hclose, hboundaryU⟩
 
@@ -3507,9 +3505,6 @@ private theorem rooted_graph_boundary_lt_of_slow_tolerance
   have hγ : 0 < γ := by
     dsimp [γ]
     positivity
-  have hC : 0 ≤ C := by
-    dsimp [C]
-    positivity
   have hslowCscaled : h * (5 * C * t) ≤ h * N := by
     have hslow' : 5 * (4 + h * C) * t ≤ h * N := by
       simpa only [C, δ] using hslow
@@ -3554,7 +3549,7 @@ private theorem rooted_graph_coefficient_small
     positivity
   constructor
   · positivity
-  · nlinarith
+  · linarith only [hgap]
 
 end KunRootedUniversalToleranceNumerics
 
@@ -5306,7 +5301,7 @@ private theorem exists_source_full_finpartition_sequence_of_kazhdan
     have hgap : 0 < (S.card : ℝ) * (1 - q) ^ 2 := by
       positivity
     dsimp [γ, q]
-    nlinarith only [hgap]
+    linarith only [hgap]
   let α : ℕ → ℝ := fun j => 1 / ((j : ℝ) + 1)
   have hα (j : ℕ) : 0 < α j := by
     dsimp [α]
@@ -6151,9 +6146,6 @@ private theorem comparisonBad_subset_partitionWordCrossing
     unfold partitionComponentSize
     rw [hpart]
   rw [hsize]
-  have hnonneg : (0 : ℝ) ≤
-      (partitionComponentSize Q x : ℝ) := by
-    positivity
   nlinarith only [heta]
 
 private noncomputable def overlapRetainedComponents
@@ -6839,8 +6831,7 @@ private theorem squaredPermutationEnergy_mul_le
       apply Finset.sum_le_sum
       intro x _
       simp only [Equiv.Perm.mul_apply]
-      nlinarith [sq_nonneg
-        ((f (p (q x)) - f (q x)) - (f (q x) - f x))]
+      linarith only [sq_nonneg ((f (p (q x)) - f (q x)) - (f (q x) - f x))]
     _ = 2 * (∑ x : V, (f (p x) - f x) ^ 2) +
           2 * (∑ x : V, (f (q x) - f x) ^ 2) := by
       rw [Finset.sum_add_distrib, ← Finset.mul_sum, ← Finset.mul_sum,
@@ -6864,9 +6855,8 @@ private theorem squaredPermutationEnergy_le_add_hammingDist
       have hp1 := hf1 (p x)
       have hx0 := hf0 x
       have hx1 := hf1 x
-      nlinarith [sq_nonneg (f (q x) - f x),
-        mul_nonneg
-          (show 0 ≤ 1 - (f (p x) - f x) by linarith)
+      linarith only [hp0, hp1, hx0, hx1, sq_nonneg (f (q x) - f x),
+        mul_nonneg (show 0 ≤ 1 - (f (p x) - f x) by linarith)
           (show 0 ≤ 1 + (f (p x) - f x) by linarith)]
   have hindicator :
       (∑ x : V, if p x = q x then (0 : ℝ) else 1) =
@@ -7605,7 +7595,7 @@ private theorem additive_permutation_median_absolute_deviation
     exact hpoint x
   refine ⟨m, hm_nonnegative, hm_one, ?_⟩
   rw [← hmass, ← hvariation]
-  nlinarith only [hp_coarea, hq_coarea]
+  linarith only [hp_coarea, hq_coarea]
 
 private theorem additive_permutation_median_variance
     {V ι : Type*} [Fintype V] [Nonempty V]
@@ -7674,7 +7664,7 @@ private theorem additive_permutation_finiteVariance
     σ γ ε hγ hε hexp f hf hf_one
   rw [← CheegerPoincare.card_mul_finiteVariance f]
     at hvariance
-  nlinarith only [hvariance]
+  linarith only [hvariance]
 
 end KunAdditiveMedianPoincare
 

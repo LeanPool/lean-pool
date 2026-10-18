@@ -312,7 +312,7 @@ private theorem ejThreeProjectionAverage_apply (x : H) :
 private theorem ejThreeResidualEnergy_nonneg (x : H) :
     0 ≤ ejThreeResidualEnergy V x := by
   unfold ejThreeResidualEnergy
-  positivity
+  exact add_nonneg (add_nonneg (sq_nonneg _) (sq_nonneg _)) (sq_nonneg _)
 
 private theorem ejThreeResidualEnergy_eq_re_inner (x : H) :
     ejThreeResidualEnergy V x =
@@ -1116,7 +1116,7 @@ private theorem hasPropertyT_of_geometric_finite_averaging
     rw [hone] at hdist
     have hden : 0 < 1 - q := sub_pos.mpr hq1
     have hlt : C / (1 - q) < 1 / 2 :=
-      (div_lt_iff₀ hden).mpr (by nlinarith only [hhalf])
+      (div_lt_iff₀ hden).mpr (by linarith only [hhalf])
     linarith only [hdist, hlt]
   exact ⟨η, hηne, hfixed η hηfixed⟩
 
@@ -1207,7 +1207,6 @@ private theorem norm_inner_le_inv_sqrt_eight_of_sq
     (h : 8 * ‖inner ℂ a b‖ ^ 2 ≤ ‖a‖ ^ 2 * ‖b‖ ^ 2) :
     ‖inner ℂ a b‖ ≤
       (Real.sqrt (8 : ℝ))⁻¹ * ‖a‖ * ‖b‖ := by
-  have hsqrt : 0 < Real.sqrt (8 : ℝ) := by positivity
   have hsquare : Real.sqrt (8 : ℝ) ^ 2 = 8 :=
     Real.sq_sqrt (by norm_num)
   have hsq :
@@ -1217,7 +1216,7 @@ private theorem norm_inner_le_inv_sqrt_eight_of_sq
       ‖inner ℂ a b‖ ^ 2 ≤
           (‖a‖ ^ 2 * ‖b‖ ^ 2) / 8 := by
             apply (le_div_iff₀ (show (0 : ℝ) < 8 by norm_num)).mpr
-            nlinarith only [h]
+            linarith only [h]
       _ = ((Real.sqrt (8 : ℝ))⁻¹ * ‖a‖ * ‖b‖) ^ 2 := by
         field_simp
         nlinarith only [h, hsquare]
@@ -2422,6 +2421,64 @@ private theorem inner_eq_zero_of_finite_subgroupAverage_pair_orthogonal
 
 end FiniteSubgroupAveraging
 
+/-- Keep projection algebra abstract before specializing to matrix root subgroups. -/
+private theorem fixed_submodule_inner_square_bound_of_central_sectors
+    {G H ι : Type*} [Group G] [NormedAddCommGroup H]
+    [InnerProductSpace ℂ H] [CompleteSpace H] [Finite ι]
+    (π : UnitaryRepresentation G H) (X Y : Subgroup G) (Z : ι → Subgroup G)
+    (hcentral : ∀ i (z : Z i) (g : (X ⊔ Y : Subgroup G)), Commute (z : G) (g : G))
+    (hcommute : ∀ i j (z : Z i) (w : Z j), Commute (z : G) (w : G))
+    (hsector : ∀ i (x y : H), x ∈ unitaryFixedSubmodule π X →
+      x ∈ (unitaryFixedSubmodule π (Z i))ᗮ → y ∈ unitaryFixedSubmodule π Y →
+      8 * ‖inner ℂ x y‖ ^ 2 ≤ ‖x‖ ^ 2 * ‖y‖ ^ 2)
+    (hterminal : ∀ (x y : H),
+      x ∈ unitaryFixedSubmodule π X ⊓
+        (unitaryFixedSubmodule π X ⊓ unitaryFixedSubmodule π Y)ᗮ →
+      y ∈ unitaryFixedSubmodule π Y ⊓
+        (unitaryFixedSubmodule π X ⊓ unitaryFixedSubmodule π Y)ᗮ →
+      (∀ i, x ∈ unitaryFixedSubmodule π (Z i)) →
+      (∀ i, y ∈ unitaryFixedSubmodule π (Z i)) → inner ℂ x y = 0)
+    {a b : H} (ha : a ∈ unitaryFixedSubmodule π X)
+    (hb : b ∈ unitaryFixedSubmodule π Y)
+    (haQ : a ∈ (unitaryFixedSubmodule π X ⊓ unitaryFixedSubmodule π Y)ᗮ)
+    (hbQ : b ∈ (unitaryFixedSubmodule π X ⊓ unitaryFixedSubmodule π Y)ᗮ) :
+    8 * ‖inner ℂ a b‖ ^ 2 ≤ ‖a‖ ^ 2 * ‖b‖ ^ 2 := by
+  classical
+  let Q := unitaryFixedSubmodule π X ⊓ unitaryFixedSubmodule π Y
+  let U := unitaryFixedSubmodule π X ⊓ Qᗮ
+  let V := unitaryFixedSubmodule π Y ⊓ Qᗮ
+  let F (i : ι) := unitaryFixedSubmodule π (Z i)
+  let (i : ι) : CompleteSpace (F i) := unitaryFixedSubmodule_completeSpace π (Z i)
+  refine inner_sq_le_of_finite_orthogonal_sector_splitting
+    F U V ?_ ?_ ?_ ?_ hterminal a b ⟨ha, haQ⟩ ⟨hb, hbQ⟩
+  · intro i x hx
+    refine ⟨?_, ?_⟩
+    · exact unitaryFixedSubmodule_starProjection_mem_of_commute π (Z i) X
+        (fun z g => hcentral i z ⟨g.val, Subgroup.mem_sup_left g.property⟩) hx.1
+    · have hq : x ∈ (unitaryFixedSubmodule π (X ⊔ Y))ᗮ := by
+        rw [unitaryFixedSubmodule_sup]
+        exact hx.2
+      have hp := unitaryFixedSubmodule_starProjection_mem_orthogonal_of_commute
+        π (Z i) (X ⊔ Y) (hcentral i) hq
+      rw [unitaryFixedSubmodule_sup] at hp
+      exact hp
+  · intro i x hx
+    refine ⟨?_, ?_⟩
+    · exact unitaryFixedSubmodule_starProjection_mem_of_commute π (Z i) Y
+        (fun z g => hcentral i z ⟨g.val, Subgroup.mem_sup_right g.property⟩) hx.1
+    · have hq : x ∈ (unitaryFixedSubmodule π (X ⊔ Y))ᗮ := by
+        rw [unitaryFixedSubmodule_sup]
+        exact hx.2
+      have hp := unitaryFixedSubmodule_starProjection_mem_orthogonal_of_commute
+        π (Z i) (X ⊔ Y) (hcentral i) hq
+      rw [unitaryFixedSubmodule_sup] at hp
+      exact hp
+  · intro i j x hx
+    exact unitaryFixedSubmodule_starProjection_mem_of_commute
+      π (Z i) (Z j) (hcommute i j) hx
+  · intro i x y hx hy hxZ _
+    exact hsector i x y hx.1 hxZ hy.1
+
 private theorem finiteOuterBlockRootSubgroups_pair_inner_sq_le
     {R : Type*} [Ring R] [Algebra (ZMod 2) R]
     {H : Type v₁} [NormedAddCommGroup H]
@@ -2455,14 +2512,7 @@ private theorem finiteOuterBlockRootSubgroups_pair_inner_sq_le
     finiteOuterBlockProductCentralRootSubgroup W i k hik B
   let Q : Submodule ℂ H :=
     unitaryFixedSubmodule π X ⊓ unitaryFixedSubmodule π Y
-  let U : Submodule ℂ H := unitaryFixedSubmodule π X ⊓ Qᗮ
-  let V : Submodule ℂ H := unitaryFixedSubmodule π Y ⊓ Qᗮ
-  let F (B : Matrix (Fin 3) (Fin 3) W) :=
-    unitaryFixedSubmodule π (Z B)
   let : Finite X := finite_finiteOuterBlockRootSubgroup W i j hij
-  let : Fintype X := Fintype.ofFinite X
-  let (B : Matrix (Fin 3) (Fin 3) W) : CompleteSpace (F B) :=
-    unitaryFixedSubmodule_completeSpace π (Z B)
   have hpairCentral (B : Matrix (Fin 3) (Fin 3) W) :
       ∀ z : Z B, ∀ g :
         (X ⊔ Y : Subgroup
@@ -2479,53 +2529,13 @@ private theorem finiteOuterBlockRootSubgroups_pair_inner_sq_le
       (g : elementaryGroup (Fin 3) (Matrix (Fin 3) (Fin 3) R)) *
       (z : elementaryGroup (Fin 3) (Matrix (Fin 3) (Fin 3) R))
     exact hg z z.property
-  refine inner_sq_le_of_finite_orthogonal_sector_splitting
-    F U V ?_ ?_ ?_ ?_ ?_ a b ⟨ha, haQ⟩ ⟨hb, hbQ⟩
-  · intro B x hx
-    change (unitaryFixedSubmodule π (Z B)).starProjection x ∈
-      unitaryFixedSubmodule π X ⊓ Qᗮ
-    refine ⟨?_, ?_⟩
-    · exact unitaryFixedSubmodule_starProjection_mem_of_commute
-        π (Z B) X
-        (fun z x =>
-          (finiteOuterBlockProductCentralRoot_commute_left
-            W i j k hij hik B x z x.property z.property).symm)
-        hx.1
-    · have hq : x ∈ (unitaryFixedSubmodule π (X ⊔ Y))ᗮ := by
-        rw [unitaryFixedSubmodule_sup]
-        exact hx.2
-      have hp := unitaryFixedSubmodule_starProjection_mem_orthogonal_of_commute
-        π (Z B) (X ⊔ Y) (hpairCentral B) hq
-      rw [unitaryFixedSubmodule_sup] at hp
-      exact hp
-  · intro B x hx
-    change (unitaryFixedSubmodule π (Z B)).starProjection x ∈
-      unitaryFixedSubmodule π Y ⊓ Qᗮ
-    refine ⟨?_, ?_⟩
-    · exact unitaryFixedSubmodule_starProjection_mem_of_commute
-        π (Z B) Y
-        (fun z y =>
-          (finiteOuterBlockProductCentralRoot_commute_right
-            W i j k hjk hik B y z y.property z.property).symm)
-        hx.1
-    · have hq : x ∈ (unitaryFixedSubmodule π (X ⊔ Y))ᗮ := by
-        rw [unitaryFixedSubmodule_sup]
-        exact hx.2
-      have hp := unitaryFixedSubmodule_starProjection_mem_orthogonal_of_commute
-        π (Z B) (X ⊔ Y) (hpairCentral B) hq
-      rw [unitaryFixedSubmodule_sup] at hp
-      exact hp
-  · intro B C x hx
-    change (unitaryFixedSubmodule π (Z B)).starProjection x ∈
-      unitaryFixedSubmodule π (Z C)
-    exact unitaryFixedSubmodule_starProjection_mem_of_commute
-      π (Z B) (Z C)
-      (fun z w => finiteOuterBlockProductCentralRoots_commute
-        W i k hik B C z w z.property w.property)
-      hx
-  · intro B x y hx hy hxZ _
-    exact finiteOuterBlockProductCentral_centerComplement_inner_sq_le
-      W i j k hij hjk hik B π hx.1 hxZ hy.1
+  refine fixed_submodule_inner_square_bound_of_central_sectors π X Y Z
+    hpairCentral
+    (fun B C z w => finiteOuterBlockProductCentralRoots_commute
+      W i k hik B C z w z.property w.property)
+    (fun B x y hx hxZ hy => finiteOuterBlockProductCentral_centerComplement_inner_sq_le
+      W i j k hij hjk hik B π hx hxZ hy)
+    ?_ ha hb haQ hbQ
   · intro x y hx hy _ hyF
     apply inner_eq_zero_of_finite_subgroupAverage_pair_orthogonal
       π X Y x y
@@ -4522,7 +4532,7 @@ private theorem exists_boundary_controlled_permutation_repair
             ((U \ matchedFiberEdges U).card : ℝ)) ≤
         8 * (boundary
           (fun i => (σ i).prodCongr (σ i)) U : ℝ) := by
-    nlinarith only [hvertex, hrelation]
+    linarith only [hvertex, hrelation]
   have hdnonneg : (0 : ℝ) ≤ Fintype.card ι := by
     positivity
   have hscaled := mul_le_mul_of_nonneg_left hsum hdnonneg
@@ -4539,7 +4549,7 @@ private theorem exists_boundary_controlled_permutation_repair
     _ ≤ (h + 8 * (Fintype.card ι : ℝ)) *
           (boundary
             (fun i => (σ i).prodCongr (σ i)) U : ℝ) := by
-      nlinarith only [hscaled]
+      linarith only [hscaled]
 
 private theorem permutationDistance_eq_card_permutationGraph_sdiff
     {V : Type*} [Fintype V] [DecidableEq V]
@@ -4642,7 +4652,7 @@ private theorem exists_boundary_controlled_permutation_repair_close_to_reference
     σ U h hpositive hexp hfirst hsecond
   refine ⟨q, ?_, hdefect⟩
   have hscaled := mul_le_mul_of_nonneg_left hdistance_real hpositive.le
-  nlinarith only [hvertex, hscaled]
+  linarith only [hvertex, hscaled]
 
 private theorem hasAlmostCentralizerImprovement_of_expanding_diagonal_cuts
     {V ι : Type*} [Fintype V] [Fintype ι] [DecidableEq V]
@@ -4682,8 +4692,6 @@ private theorem hasAlmostCentralizerImprovement_of_expanding_diagonal_cuts
   have hdefect :
       permutationCommutationDefect σ q ≤ tolerance := by
     exact_mod_cast hdefect_real
-  have hscaled := mul_le_mul_of_nonneg_left hqdistance
-    (show (0 : ℝ) ≤ 5 by norm_num)
   have hdistance_real :
       (5 : ℝ) * (permutationDistance q p : ℝ) ≤
         (Fintype.card V : ℝ) := by
@@ -8902,7 +8910,7 @@ private theorem exists_expanding_full_finpartition
             add_le_add hQbudget hbad
       _ ≤ 2 * (Fintype.card ι : ℝ) * (B.card : ℝ) +
           4 * α * (Fintype.card V : ℝ) := by
-            nlinarith only [hscaled]
+            linarith only [hscaled]
 
 public
 theorem exists_expanding_full_finpartition_sequence
@@ -9672,8 +9680,6 @@ theorem completedRestriction_mul_of_not_mem_sourceCompletionBad
     completedRestriction (p (j * k)) Z z =
       (completedRestriction (p j) Z * completedRestriction (p k) Z) z := by
   have hg := sourceCompletionBad_good σ p F Z z z.property hz
-  have hjT :=
-    CompressionCriterion.mem_productTrackedTable hj
   have hkT :=
     CompressionCriterion.mem_productTrackedTable hk
   have hjkT :=

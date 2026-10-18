@@ -27,8 +27,9 @@ import Mathlib.MeasureTheory.Measure.Lebesgue.Basic
 import Mathlib.Order.CompletePartialOrder
 import Mathlib.RingTheory.TotallySplit
 import Mathlib.SetTheory.Cardinal.Free
--- Retain the finite-field and scalar tower instances used by the representation definitions.
-import Mathlib.Tactic.NormNum.LegendreSymbol -- shake: keep
+import Mathlib.FieldTheory.Finite.GaloisField
+-- Retain the freeness instance used by the existing finite-field basis type.
+import Mathlib.LinearAlgebra.FreeModule.PID -- shake: keep
 
 /-!
 # Foundations for the non-sofic group construction
@@ -117,7 +118,7 @@ public
 theorem normalizedHamming_nonneg {Y : Type*} [Fintype Y] [DecidableEq Y]
     (p q : Equiv.Perm Y) : 0 ≤ normalizedHamming p q := by
   unfold normalizedHamming
-  positivity
+  exact div_nonneg (Nat.cast_nonneg _) (Nat.cast_nonneg _)
 
 public
 theorem normalizedHamming_triangle {Y : Type*} [Fintype Y] [DecidableEq Y]
@@ -967,8 +968,6 @@ private theorem maximal_bad_cut_induced_lower {V ι : Type*}
     ell * (E.card : ℝ) ≤ (inducedBoundary σ B E : ℝ) := by
   classical
   by_contra h
-  have hE : (inducedBoundary σ B E : ℝ) < ell * (E.card : ℝ) :=
-    lt_of_not_ge h
   have hcut : (boundary σ (B ∪ E) : ℝ) ≤
       (boundary σ B : ℝ) + (inducedBoundary σ B E : ℝ) := by
     exact_mod_cast boundary_union_le σ B E
@@ -976,7 +975,7 @@ private theorem maximal_bad_cut_induced_lower {V ι : Type*}
     exact_mod_cast Finset.card_union_of_disjoint hdisj
   have hbad : (boundary σ (B ∪ E) : ℝ) < ell * ((B ∪ E).card : ℝ) := by
     rw [hcard]
-    nlinarith only [hB, h, hcut]
+    linarith only [hB, h, hcut]
   have hsize := hmax (B ∪ E) hhalf hbad
   have hepos : 0 < E.card := Finset.card_pos.mpr hne
   have hnat := Finset.card_union_of_disjoint hdisj
@@ -988,7 +987,7 @@ private theorem bad_cut_card_bound {γ ell a : ℝ} {N b q : ℕ}
     (hbad : (q : ℝ) ≤ ell * (b : ℝ)) :
     (b : ℝ) ≤ a * (N : ℝ) / (γ - ell) := by
   apply (le_div_iff₀ (sub_pos.mpr hgap)).2
-  nlinarith
+  linarith only [hadd, hbad]
 
 private theorem large_cut_lower {γ ell a d N b e q : ℝ}
     (hgap : ell < γ) (hd : 0 ≤ d) (hN : 0 ≤ N)
@@ -4146,8 +4145,6 @@ theorem componentVertexMidrank_le_one {V : Type*}
       exact_mod_cast hcard
     unfold componentVertexMidrank
     apply (div_le_one hc).2
-    have heq : 0 ≤ ((C.filter fun z => b z = b x).card : ℝ) := by
-      positivity
     linarith only [hcard']
 
 private theorem componentVertexMidrank_mono {V : Type*}
@@ -4182,13 +4179,13 @@ private theorem componentVertexMidrank_mono {V : Type*}
             ((C.filter fun z => b z = b x).card : ℝ) ≤
               ((C.filter fun z => b z < b y).card : ℝ) := by
         exact_mod_cast hcard
-      have hex : 0 ≤ ((C.filter fun z => b z = b x).card : ℝ) := by
-        positivity
-      have hey : 0 ≤ ((C.filter fun z => b z = b y).card : ℝ) := by
-        positivity
+      have hex : 0 ≤ ((C.filter fun z => b z = b x).card : ℝ) :=
+        Nat.cast_nonneg _
+      have hey : 0 ≤ ((C.filter fun z => b z = b y).card : ℝ) :=
+        Nat.cast_nonneg _
       unfold componentVertexMidrank
       apply (div_le_div_iff_of_pos_right hc).2
-      linarith
+      linarith only [hcard', hex, hey]
 
 /-- Internal interface connecting the split non-sofic proof modules. -/
 public
@@ -5545,7 +5542,6 @@ private theorem shifted_floor_drop_volume_bound_sharp
   let k : ℤ := ⌊u / H⌋
   let c : ℝ := (((k + 1 : ℤ) : ℝ) * H - u)
   let d : ℝ := u - v
-  have hd : 0 ≤ d := sub_nonneg.mpr hvu
   have hklo : (k : ℝ) ≤ u / H := by
     dsimp [k]
     exact Int.floor_le _
@@ -5554,10 +5550,6 @@ private theorem shifted_floor_drop_volume_bound_sharp
     exact Int.lt_floor_add_one _
   have hklo' : (k : ℝ) * H ≤ u := (le_div_iff₀ hH).mp hklo
   have hkhi' : u < ((k : ℝ) + 1) * H := (div_lt_iff₀ hH).mp hkhi
-  have hc0 : 0 ≤ c := by
-    dsimp [c]
-    push_cast
-    linarith only [hkhi']
   have hcH : c ≤ H := by
     dsimp [c]
     push_cast
@@ -5746,7 +5738,7 @@ private theorem abs_log_one_sub_le_two_mul
   have hlower := Real.one_sub_inv_le_log_of_pos hfactor
   have hratio : eta / (1 - eta) ≤ 2 * eta := by
     apply (div_le_iff₀ hfactor).2
-    nlinarith [mul_nonneg heta0 (by linarith : 0 ≤ 1 - 2 * eta)]
+    linarith only [heta0, hetaHalf, mul_nonneg heta0 (by linarith : 0 ≤ 1 - 2 * eta)]
   have hidentity : (1 - eta)⁻¹ - 1 = eta / (1 - eta) := by
     field_simp
     ring
@@ -7759,7 +7751,7 @@ private theorem partitionVertexMidrank_permutation_energy_le
         ((partitionWordCrossing P p).card : ℝ) +
           ((rankDecreasingVertices Finset.univ b p).card : ℝ) := by
     exact_mod_cast hcard
-  nlinarith only [hbase, hcast]
+  linarith only [hbase, hcast]
 
 private theorem sum_partitionVertexMidrank_permutation_energy_le
     {V ι : Type*} [Fintype V] [DecidableEq V]
@@ -8284,7 +8276,7 @@ private theorem almostCentralizerGap_of_expansion {V ι : Type*}
       mul_pos hpositive (sub_pos.mpr hlarge')
     change h * (permutationDistance p.permutation q.permutation : ℝ) ≤ _
       at hnear
-    nlinarith only [hsmall, hdef, hpos, hnear]
+    linarith only [hsmall, hdef, hpos, hnear]
   · right
     by_contra hnot
     have hlarge :
@@ -8300,7 +8292,7 @@ private theorem almostCentralizerGap_of_expansion {V ι : Type*}
       mul_nonneg hpositive.le (sub_nonneg.mpr hlarge')
     change h * ((Fintype.card V : ℝ) -
       permutationDistance p.permutation q.permutation) ≤ _ at hfar
-    nlinarith only [hsmall, hdef, hpos, hfar]
+    linarith only [hsmall, hdef, hpos, hfar]
 
 private def almostCentralizerSetoid {V ι : Type*}
     [Fintype V] [Fintype ι] [DecidableEq V]
@@ -8866,7 +8858,7 @@ private theorem exists_positive_antitone_slow_vanishing_threshold
       _ ≤ d n + q n := le_add_of_nonneg_right (hq_pos n).le
       _ = eta n * eta n := by
         dsimp [eta]
-        nlinarith [Real.sq_sqrt (add_nonneg (hd_nonneg n) (hq_pos n).le)]
+        linarith only [hd_nonneg, hq_pos, Real.sq_sqrt (add_nonneg (hd_nonneg n) (hq_pos n).le)]
   refine ⟨eta, heta_pos, heta_antitone, heta_zero, ?_⟩
   exact squeeze_zero (fun n => div_nonneg (he_nonneg n) (heta_pos n).le)
     hratio_bound heta_zero
@@ -8896,7 +8888,7 @@ theorem exists_positive_antitone_slow_overlap_scales
   have hquot (n : ℕ) : eta n / H n = H n := by
     dsimp [H]
     apply (div_eq_iff (Real.sqrt_pos.2 (heta_pos n)).ne').2
-    nlinarith only [heta_pos, Real.sq_sqrt (heta_pos n).le]
+    exact (Real.mul_self_sqrt (heta_pos n).le).symm
   have hquot_zero : Tendsto (fun n => eta n / H n) atTop (nhds 0) := by
     have hfun : (fun n => eta n / H n) = H := funext hquot
     rw [hfun]
