@@ -16,22 +16,10 @@ public import Mathlib.RingTheory.AdjoinRoot
 public import Mathlib.RingTheory.DiscreteValuationRing.Basic
 public import Mathlib.RingTheory.KrullDimension.Basic
 public import Mathlib.RingTheory.Localization.AtPrime.Basic
-import Mathlib.Algebra.AffineMonoid.Basic
 import Mathlib.Algebra.Ring.IsFormallyReal
 import Mathlib.Data.Finsupp.Encodable
 import Mathlib.GroupTheory.Complement
-import Mathlib.Order.CompletePartialOrder
-import Mathlib.RingTheory.Henselian
 import Mathlib.RingTheory.KrullDimension.Polynomial
-import Mathlib.RingTheory.PiTensorProduct
-import Mathlib.RingTheory.PicardGroup
-import Mathlib.RingTheory.RegularLocalRing.Defs
-import Mathlib.RingTheory.SimpleRing.Principal
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Std.Tactic.BVDecide.Normalize.Prop
 
 /-!
 # Universal-lattice and relative-property-(T) foundations
@@ -39,7 +27,50 @@ import Std.Tactic.BVDecide.Normalize.Prop
 
 noncomputable section
 
+-- Prefer concrete additive groups to the speculative simple/nilpotent group instance.
+attribute [local instance low] instAddCommGroupOfIsSimpleAddGroupOfIsNilpotent
+
 namespace ConnesRigidity
+
+/-- An intertwining identity determines conjugation by an isometric equivalence. -/
+public theorem conjStarAlgEquiv_eq_of_intertwining
+    {V W : Type*} [NormedAddCommGroup V] [InnerProductSpace ℂ V] [CompleteSpace V]
+    [NormedAddCommGroup W] [InnerProductSpace ℂ W] [CompleteSpace W]
+    (e : V ≃ₗᵢ[ℂ] W) (T : V →L[ℂ] V) (S : W →L[ℂ] W)
+    (h : ∀ ξ, e (T ξ) = S (e ξ)) : e.conjStarAlgEquiv T = S := by
+  apply ContinuousLinearMap.ext
+  intro ξ
+  change e (T (e.symm ξ)) = S ξ
+  rw [h, e.apply_symm_apply]
+
+
+/-- Reuse finite entry elimination across four-by-four matrix proofs. -/
+public theorem matrix_four_entrywise {β : Type*}
+    (M N : Matrix (Fin 4) (Fin 4) β)
+    (h00 : M 0 0 = N 0 0) (h01 : M 0 1 = N 0 1) (h02 : M 0 2 = N 0 2) (h03 : M 0 3 = N 0 3)
+    (h10 : M 1 0 = N 1 0) (h11 : M 1 1 = N 1 1) (h12 : M 1 2 = N 1 2) (h13 : M 1 3 = N 1 3)
+    (h20 : M 2 0 = N 2 0) (h21 : M 2 1 = N 2 1) (h22 : M 2 2 = N 2 2) (h23 : M 2 3 = N 2 3)
+    (h30 : M 3 0 = N 3 0) (h31 : M 3 1 = N 3 1) (h32 : M 3 2 = N 3 2) (h33 : M 3 3 = N 3 3) :
+    ∀ i j, M i j = N i j := by
+  intro i j
+  fin_cases i <;> fin_cases j
+  · exact h00
+  · exact h01
+  · exact h02
+  · exact h03
+  · exact h10
+  · exact h11
+  · exact h12
+  · exact h13
+  · exact h20
+  · exact h21
+  · exact h22
+  · exact h23
+  · exact h30
+  · exact h31
+  · exact h32
+  · exact h33
+
 
 section
 
@@ -262,6 +293,49 @@ def vonNeumannClosure
             Set (H →L[ℂ] H))
     rw [StarSubalgebra.coe_centralizer_centralizer]
     exact Set.centralizer_centralizer_centralizer ((S ∪ star S).centralizer)
+
+section
+
+variable {H : Type*} [NormedAddCommGroup H] [InnerProductSpace ℂ H] [CompleteSpace H]
+
+/-- Membership in a bicommutant from commutation with its commutant. -/
+public
+theorem mem_vonNeumannClosure_of_commute
+    (S : Set (H →L[ℂ] H)) (A : H →L[ℂ] H)
+    (h : ∀ T ∈ StarSubalgebra.centralizer ℂ S, Commute T A) :
+    A ∈ vonNeumannClosure S := by
+  apply (StarSubalgebra.mem_centralizer_iff ℂ).2
+  intro T hT
+  exact ⟨(h T hT).eq, (h (star T) (star_mem hT)).eq⟩
+
+/-- Two generator sets have the same bicommutant when each generates the other. -/
+public
+theorem vonNeumannClosure_eq_of_generators
+    (S G : Set (H →L[ℂ] H))
+    (hsub : S ⊆ G) (hclosure : G ⊆ vonNeumannClosure S) :
+    vonNeumannClosure S = vonNeumannClosure G := by
+  have hcommutants : StarSubalgebra.centralizer ℂ S = StarSubalgebra.centralizer ℂ G := by
+    apply StarSubalgebra.ext
+    intro T
+    constructor
+    · intro hT
+      apply (StarSubalgebra.mem_centralizer_iff ℂ).2
+      intro R hR
+      have hf := hclosure hR
+      have hforward := (StarSubalgebra.mem_centralizer_iff ℂ).1 hf T hT
+      have hstar := (StarSubalgebra.mem_centralizer_iff ℂ).1 (star_mem hf) T hT
+      exact ⟨hforward.1.symm, hstar.1.symm⟩
+    · intro hT
+      exact StarSubalgebra.centralizer_le ℂ S G hsub hT
+  apply VonNeumannAlgebra.ext
+  intro T
+  change T ∈ StarSubalgebra.centralizer ℂ
+      (StarSubalgebra.centralizer ℂ S : Set (H →L[ℂ] H)) ↔
+    T ∈ StarSubalgebra.centralizer ℂ
+      (StarSubalgebra.centralizer ℂ G : Set (H →L[ℂ] H))
+  rw [hcommutants]
+
+end
 
 /-- Cross-module support for the infinite Connes-rigidity construction. -/
 @[expose]
@@ -608,12 +682,12 @@ private theorem inducedRepresentation_hasAlmostInvariantUnitVectors
   let q₀ : G ⧸ S := QuotientGroup.mk 1
   have hraw_lower : 1 ≤ ‖raw‖ := by
     have hcoord := PiLp.norm_apply_le raw q₀
-    simpa [raw, q₀, hvnorm] using hcoord
+    simpa only [raw, q₀, hvnorm, ge_iff_le] using hcoord
   have hraw_pos : 0 < ‖raw‖ := zero_lt_one.trans_le hraw_lower
   let a : ℂ := ((‖raw‖⁻¹ : ℝ) : ℂ)
   let ξ : InducedSpace (H := H) S := a • raw
   have ha_norm : ‖a‖ = ‖raw‖⁻¹ := by
-    simp [a]
+    simp only [a, Complex.ofReal_inv, norm_inv, Complex.norm_real, norm_norm]
   have ha_le_one : ‖a‖ ≤ 1 := by
     rw [ha_norm]
     exact inv_le_one_of_one_le₀ hraw_lower
@@ -638,13 +712,14 @@ private theorem inducedRepresentation_hasAlmostInvariantUnitVectors
             InducedSpace (H := H) S →L[ℂ] InducedSpace (H := H) S) ξ - ξ) q =
           a •
             ((π (correction S g (g⁻¹ • q)) : H →L[ℂ] H) v - v) := by
-      simp [ξ, raw, map_smul, smul_sub]
+      simp only [ξ, raw, map_smul, smul_sub, PiLp.sub_apply, PiLp.smul_apply,
+        inducedRepresentation_apply]
     rw [hformula, norm_smul]
     calc
       ‖a‖ * ‖(π (correction S g (g⁻¹ • q)) : H →L[ℂ] H) v - v‖ ≤
           1 * ‖(π (correction S g (g⁻¹ • q)) : H →L[ℂ] H) v - v‖ :=
         mul_le_mul_of_nonneg_right ha_le_one (norm_nonneg _)
-      _ < δ := by simpa using hclose
+      _ < δ := by simpa only [one_mul] using hclose
   calc
     ‖(inducedRepresentation S π g :
         InducedSpace (H := H) S →L[ℂ] InducedSpace (H := H) S) ξ - ξ‖ ≤
@@ -656,7 +731,7 @@ private theorem inducedRepresentation_hasAlmostInvariantUnitVectors
       Finset.sum_lt_sum_of_nonempty Finset.univ_nonempty
         (fun q _ ↦ hcoordinate q)
     _ = n * δ := by
-      simp [n]
+      simp only [n, Finset.sum_const, Finset.card_univ, nsmul_eq_mul]
     _ < ε := by
       dsimp [δ]
       rw [show n * (ε / (n + 1)) = (n * ε) / (n + 1) by ring]
@@ -734,7 +809,8 @@ private theorem inducedInvariant_baseCoset_isInvariant
     rw [← Subgroup.coe_inv]
     exact subgroup_smul_baseCoset S t⁻¹
   have hcorr : correction S (t : G) q₀ = s := by
-    simpa [t, r, q₀] using correction_conjugate_at_baseCoset S s
+    simpa only [t, r, q₀, Subgroup.coe_mul,
+      InvMemClass.coe_inv] using correction_conjugate_at_baseCoset S s
   simpa only [inducedRepresentation_apply, htfix, hcorr] using heval
 
 end Induced
@@ -2204,6 +2280,21 @@ def suslinDifferencePath (a : A)
     (Matrix.SpecialLinearGroup.map suslinBivariateConstantRingHom
       (suslinDifferenceDilation a g))⁻¹
 
+/-- Compose coefficient maps before applying them to a special linear matrix. -/
+private theorem specialLinear_map_comp_apply
+    {B C : Type*} [CommRing B] [CommRing C]
+    (f : B →+* C) (g : A →+* B)
+    (M : Matrix.SpecialLinearGroup Index A) :
+    Matrix.SpecialLinearGroup.map f (Matrix.SpecialLinearGroup.map g M) =
+      Matrix.SpecialLinearGroup.map (f.comp g) M := rfl
+/-- Evaluating a constant matrix over a polynomial ring returns that matrix. -/
+private theorem specialLinear_eval_constant (x : Polynomial A)
+    (M : Matrix.SpecialLinearGroup Index (Polynomial A)) :
+    Matrix.SpecialLinearGroup.map (Polynomial.evalRingHom x)
+        (Matrix.SpecialLinearGroup.map suslinBivariateConstantRingHom M) = M := by
+  apply Matrix.SpecialLinearGroup.ext
+  intro i j
+  exact Polynomial.eval_C
 /-- Cross-module support for the infinite Connes-rigidity construction. -/
 private theorem suslinBivariateShift_eval_zero (a : A) :
     (Polynomial.evalRingHom (0 : Polynomial A)).comp
@@ -2224,28 +2315,10 @@ private theorem suslinDifferencePath_eval_zero (a : A)
     Matrix.SpecialLinearGroup.map
         (Polynomial.evalRingHom (0 : Polynomial A))
         (suslinDifferencePath a g) = 1 := by
-  rw [suslinDifferencePath, map_mul, map_inv]
-  have hshift :
-      Matrix.SpecialLinearGroup.map
-          (Polynomial.evalRingHom (0 : Polynomial A))
-          (Matrix.SpecialLinearGroup.map
-            (suslinBivariateShiftRingHom a) g) =
-        suslinDifferenceDilation a g := by
-    apply Matrix.SpecialLinearGroup.ext
-    intro i j
-    exact RingHom.congr_fun (suslinBivariateShift_eval_zero a) (g i j)
-  have hconstant :
-      Matrix.SpecialLinearGroup.map
-          (Polynomial.evalRingHom (0 : Polynomial A))
-          (Matrix.SpecialLinearGroup.map
-            suslinBivariateConstantRingHom
-            (suslinDifferenceDilation a g)) =
-        suslinDifferenceDilation a g := by
-    apply Matrix.SpecialLinearGroup.ext
-    intro i j
-    simp only [suslinBivariateConstantRingHom, Matrix.SpecialLinearGroup.map_apply_coe,
-      RingHom.mapMatrix_apply, coe_evalRingHom, Matrix.map_apply, eval_C]
-  rw [hshift, hconstant, mul_inv_cancel]
+  rw [suslinDifferencePath, map_mul, map_inv,
+    specialLinear_eval_constant, specialLinear_map_comp_apply,
+    suslinBivariateShift_eval_zero]
+  exact mul_inv_cancel _
 
 /-- Cross-module support for the infinite Connes-rigidity construction. -/
 private theorem suslinBivariateShift_eval_mul_X (a b : A) :
@@ -2270,28 +2343,10 @@ theorem suslinDifferencePath_eval_mul_X (a b : A)
         (suslinDifferencePath a g) =
       suslinDifferenceDilation (a + b) g *
         (suslinDifferenceDilation a g)⁻¹ := by
-  rw [suslinDifferencePath, map_mul, map_inv]
-  have hshift :
-      Matrix.SpecialLinearGroup.map
-          (Polynomial.evalRingHom (Polynomial.C b * Polynomial.X))
-          (Matrix.SpecialLinearGroup.map
-            (suslinBivariateShiftRingHom a) g) =
-        suslinDifferenceDilation (a + b) g := by
-    apply Matrix.SpecialLinearGroup.ext
-    intro i j
-    exact RingHom.congr_fun (suslinBivariateShift_eval_mul_X a b) (g i j)
-  have hconstant :
-      Matrix.SpecialLinearGroup.map
-          (Polynomial.evalRingHom (Polynomial.C b * Polynomial.X))
-          (Matrix.SpecialLinearGroup.map
-            suslinBivariateConstantRingHom
-            (suslinDifferenceDilation a g)) =
-        suslinDifferenceDilation a g := by
-    apply Matrix.SpecialLinearGroup.ext
-    intro i j
-    simp only [suslinBivariateConstantRingHom, Matrix.SpecialLinearGroup.map_apply_coe,
-      RingHom.mapMatrix_apply, coe_evalRingHom, Matrix.map_apply, eval_C]
-  rw [hshift, hconstant]
+  rw [suslinDifferencePath, map_mul, map_inv,
+    specialLinear_eval_constant, specialLinear_map_comp_apply,
+    suslinBivariateShift_eval_mul_X]
+  rfl
 
 /-- Cross-module support for the infinite Connes-rigidity construction. -/
 private theorem suslinDifferenceDilationRingHom_baseChange
@@ -2316,10 +2371,12 @@ theorem suslinDifferenceDilation_baseChange
         (suslinDifferenceDilation a g) =
       suslinDifferenceDilation (f a)
         (Matrix.SpecialLinearGroup.map (Polynomial.mapRingHom f) g) := by
-  apply Matrix.SpecialLinearGroup.ext
-  intro i j
-  exact RingHom.congr_fun
-    (suslinDifferenceDilationRingHom_baseChange f a) (g i j)
+  change Matrix.SpecialLinearGroup.map (Polynomial.mapRingHom f)
+      (Matrix.SpecialLinearGroup.map (suslinDifferenceDilationRingHom a) g) =
+    Matrix.SpecialLinearGroup.map (suslinDifferenceDilationRingHom (f a))
+      (Matrix.SpecialLinearGroup.map (Polynomial.mapRingHom f) g)
+  rw [specialLinear_map_comp_apply, specialLinear_map_comp_apply,
+    suslinDifferenceDilationRingHom_baseChange]
 
 /-- Cross-module support for the infinite Connes-rigidity construction. -/
 private theorem suslinBivariateShiftRingHom_baseChange
@@ -2877,7 +2934,8 @@ private theorem suslin_polynomial_conjugate_opposite_integral_mem_eventual
           (Polynomial.C (d : A)) =
         (Polynomial.mapRingHom (algebraMap A B)) c' := by
     have hcomp := congrArg (fun z : Polynomial B => z.comp σ) hc
-    simpa [a', c', σ, τ, Polynomial.mul_comp, Polynomial.map_comp]
+    simpa only [a', c', σ, τ, Polynomial.mul_comp, Polynomial.map_comp, coe_mapRingHom, map_C,
+      map_comp, Polynomial.map_mul, map_X, mul_comp, C_comp]
       using hcomp
   obtain ⟨k, hki, hkj⟩ :=
     Fin.exists_ne_and_ne_of_two_lt i j (by decide : 2 < 4)
@@ -2900,8 +2958,8 @@ private theorem suslin_polynomial_conjugate_opposite_integral_mem_eventual
   congr 2
   apply congrArg (Matrix.SpecialLinearGroup.transvection hij.symm)
   dsimp [r, τ, D]
-  simp [Polynomial.map_comp, Polynomial.mul_comp,
-    Polynomial.C_mul, mul_assoc]
+  simp only [Polynomial.map_comp, Polynomial.mul_comp, mul_assoc, map_C,
+    Polynomial.map_mul, map_X, map_comp, map_mul, mul_comp, X_comp]
 
 /-- Cross-module support for the infinite Connes-rigidity construction. -/
 private theorem suslin_polynomial_conjugate_opposite_mem_eventual
@@ -2988,7 +3046,8 @@ private theorem quotient_uniformizer_isUnit_of_relation
       _ = ρ f := (congrArg ρ hf).symm
       _ = 0 := hfzero
   refine isUnit_iff_exists_inv'.mpr ⟨-(ρ q), ?_⟩
-  linear_combination -hrelation
+  rw [neg_mul, mul_comm, neg_eq_iff_eq_neg]
+  exact eq_neg_of_add_eq_zero_right hrelation
 
 /-- Cross-module support for the infinite Connes-rigidity construction. -/
 private theorem quotient_nonzero_coefficient_isUnit
@@ -4238,9 +4297,14 @@ private theorem firstRowClear_mul_apply
         Matrix.transvection (0 : Fin 4) 2 (-(g 0 2)) *
         Matrix.transvection (0 : Fin 4) 3 (-(g 0 3)))) i j = _
   simp only [← mul_assoc]
-  fin_cases i <;> fin_cases j <;>
-    simp [Matrix.mul_transvection_apply_same,
-      Matrix.mul_transvection_apply_of_ne, h0, h1, h2, h3]
+  revert i j
+  refine matrix_four_entrywise _ _
+    ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ <;>
+    simp only [Matrix.mul_transvection_apply_same, Matrix.mul_transvection_apply_of_ne, h0, h1,
+      h2, h3, Fin.isValue, ne_eq, Fin.reduceEq, not_false_eq_true,
+      mul_transvection_apply_of_ne, zero_ne_one, ↓reduceIte,
+      mul_transvection_apply_same, mul_one, add_neg_cancel, one_ne_zero,
+      mul_zero, add_zero]
 
 /-- Cross-module support for the infinite Connes-rigidity construction. -/
 private theorem lowerRight_det_eq_one
@@ -4280,7 +4344,9 @@ private theorem firstColumn_block_decomposition
   change (if i = 0 then if j = 0 then 1 else 0 else g i j) =
     lowerBlockMatrix (g.val.submatrix Fin.succ Fin.succ) i j
   cases i using Fin.cases <;> cases j using Fin.cases <;>
-    simp [Matrix.submatrix, hcolumn]
+    simp only [Matrix.submatrix, hcolumn, Fin.isValue, ↓reduceIte, submatrix,
+      lowerBlockMatrix_zero_zero, Fin.succ_ne_zero, lowerBlockMatrix_zero_succ,
+      lowerBlockMatrix_succ_zero, lowerBlockMatrix_succ_succ, of_apply]
 
 /-- Cross-module support for the infinite Connes-rigidity construction. -/
 private theorem firstColumn_mem_elementary_iff_block
@@ -4355,7 +4421,11 @@ private theorem lowerBlockSpecialLinear_one :
   apply Matrix.SpecialLinearGroup.ext
   intro i j
   cases i using Fin.cases <;> cases j using Fin.cases <;>
-    simp [lowerBlockSpecialLinear, Matrix.one_apply, eq_comm]
+    simp only [↓reduceIte, lowerBlockSpecialLinear, Matrix.one_apply, eq_comm,
+      SpecialLinearGroup.coe_one,
+      Fin.isValue, lowerBlockMatrix_zero_zero, lowerBlockMatrix_zero_succ,
+      Nat.reduceAdd, Fin.succ_ne_zero,
+      lowerBlockMatrix_succ_zero, lowerBlockMatrix_succ_succ, Fin.succ_inj]
 
 /-- Cross-module support for the infinite Connes-rigidity construction. -/
 @[simp]
@@ -4370,8 +4440,10 @@ private theorem lowerBlockSpecialLinear_mul
     (lowerBlockMatrix (b : Matrix (Fin 3) (Fin 3) R) *
       lowerBlockMatrix (c : Matrix (Fin 3) (Fin 3) R)) i j
   cases i using Fin.cases <;> cases j using Fin.cases <;>
-    simp [Matrix.mul_apply,
-      Fin.sum_univ_succ, lowerBlockMatrix]
+    simp only [Matrix.mul_apply, Fin.sum_univ_succ, lowerBlockMatrix, Fin.isValue, Fin.cases_zero,
+      SpecialLinearGroup.coe_mul, Fin.succ_zero_eq_one, Finset.univ_unique, Fin.default_eq_zero,
+      Finset.sum_singleton, Fin.succ_one_eq_two, mul_one, Fin.cases_succ, mul_zero,
+      Finset.sum_const_zero, add_zero, zero_mul, zero_add]
 
 /-- Cross-module support for the infinite Connes-rigidity construction. -/
 private def lowerBlockHom :
@@ -4391,9 +4463,13 @@ private theorem lowerBlockHom_transvection (i j : Fin 3) (h : i ≠ j) (r : R) :
   apply Matrix.SpecialLinearGroup.ext
   intro p q
   cases p using Fin.cases <;> cases q using Fin.cases <;>
-    simp [lowerBlockHom, lowerBlockSpecialLinear,
+    simp only [add_zero, ↓reduceIte, lowerBlockHom, lowerBlockSpecialLinear,
       Matrix.SpecialLinearGroup.transvection_coe,
-      Matrix.single_apply, Matrix.one_apply, eq_comm]
+      Matrix.single_apply, Matrix.one_apply, eq_comm, MonoidHom.coe_mk, OneHom.coe_mk,
+      SpecialLinearGroup.transvection_coe, Fin.isValue, lowerBlockMatrix_zero_zero, Nat.reduceAdd,
+      Matrix.add_apply, Fin.succ_ne_zero, and_self,
+      lowerBlockMatrix_zero_succ, Fin.succ_inj,
+      false_and, lowerBlockMatrix_succ_zero, and_false, lowerBlockMatrix_succ_succ, single_apply]
 
 
 
@@ -4532,7 +4608,12 @@ theorem stabilizedTwoSpecialLinear_one :
   apply Matrix.SpecialLinearGroup.ext
   intro i j
   cases i using Fin.lastCases <;> cases j using Fin.lastCases <;>
-    simp [Matrix.one_apply, eq_comm]
+    simp only [↓reduceIte, Matrix.one_apply, eq_comm, Fin.reduceLast,
+      stabilizedTwoSpecialLinear_two_two,
+      SpecialLinearGroup.coe_one, stabilizedTwoSpecialLinear_two_castSucc,
+      Fin.isValue, finTwo_castSucc_ne_two,
+      stabilizedTwoSpecialLinear_castSucc_two, Nat.reduceAdd,
+      stabilizedTwoSpecialLinear_castSucc_castSucc, Fin.castSucc_inj]
 
 /-- Cross-module support for the infinite Connes-rigidity construction. -/
 @[simp]
@@ -4544,7 +4625,12 @@ theorem stabilizedTwoSpecialLinear_mul
   apply Matrix.SpecialLinearGroup.ext
   intro i j
   cases i using Fin.lastCases <;> cases j using Fin.lastCases <;>
-    simp [Matrix.mul_apply, Fin.sum_univ_castSucc]
+    simp only [Matrix.mul_apply, Fin.sum_univ_castSucc, Fin.reduceLast,
+      stabilizedTwoSpecialLinear_two_two, SpecialLinearGroup.coe_mul, Fin.isValue,
+      stabilizedTwoSpecialLinear_two_castSucc, stabilizedTwoSpecialLinear_castSucc_two, mul_zero,
+      Finset.sum_const_zero, mul_one, zero_add, stabilizedTwoSpecialLinear_castSucc_castSucc,
+      zero_mul, add_zero, Finset.univ_unique, Fin.default_eq_zero, Finset.sum_singleton,
+      Fin.castSucc_zero]
 
 /-- Cross-module support for the infinite Connes-rigidity construction. -/
 @[expose]
@@ -4600,8 +4686,14 @@ private theorem stabilizedTwoHom_transvection
   apply Matrix.SpecialLinearGroup.ext
   intro p q
   cases p using Fin.lastCases <;> cases q using Fin.lastCases <;>
-    simp [Matrix.SpecialLinearGroup.transvection_coe,
-      Matrix.single_apply, Matrix.one_apply, eq_comm]
+    simp only [add_zero, ↓reduceIte, Matrix.SpecialLinearGroup.transvection_coe,
+      Matrix.single_apply,
+      Matrix.one_apply,
+      eq_comm, Fin.reduceLast, stabilizedTwoHom_two_two, Nat.reduceAdd,
+      SpecialLinearGroup.transvection_coe, Fin.isValue, Matrix.add_apply,
+      finTwo_castSucc_ne_two, and_self,
+      stabilizedTwoHom_two_castSucc, Fin.castSucc_inj, false_and,
+      stabilizedTwoHom_castSucc_two, and_false, stabilizedTwoHom_castSucc_castSucc, single_apply]
 
 /-- Cross-module support for the infinite Connes-rigidity construction. -/
 @[expose]
@@ -5844,6 +5936,65 @@ private def mennickeWord
     Matrix.SpecialLinearGroup.transvection
       (show (2 : Fin 3) ≠ 1 by decide) (-(ap * d))
 
+/-- Check the nine entries without repeating finite case elimination in every matrix step. -/
+private theorem matrix_three_entrywise {β : Type*}
+    (M N : Matrix (Fin 3) (Fin 3) β)
+    (h00 : M 0 0 = N 0 0) (h01 : M 0 1 = N 0 1) (h02 : M 0 2 = N 0 2)
+    (h10 : M 1 0 = N 1 0) (h11 : M 1 1 = N 1 1) (h12 : M 1 2 = N 1 2)
+    (h20 : M 2 0 = N 2 0) (h21 : M 2 1 = N 2 1) (h22 : M 2 2 = N 2 2) :
+    ∀ i j, M i j = N i j := by
+  intro i j
+  fin_cases i <;> fin_cases j
+  · exact h00
+  · exact h01
+  · exact h02
+  · exact h10
+  · exact h11
+  · exact h12
+  · exact h20
+  · exact h21
+  · exact h22
+
+/-- Compute a three-dimensional column shear as one matrix equality. -/
+private theorem specialLinear_mul_transvection_three {R : Type*} [CommRing R]
+    (g : Matrix.SpecialLinearGroup (Fin 3) R) {i j : Fin 3}
+    (h : i ≠ j) (r : R) :
+    ((g * Matrix.SpecialLinearGroup.transvection h r :
+        Matrix.SpecialLinearGroup (Fin 3) R) : Matrix (Fin 3) (Fin 3) R) =
+      !![if 0 = j then g 0 j + r * g 0 i else g 0 0,
+          if 1 = j then g 0 j + r * g 0 i else g 0 1,
+          if 2 = j then g 0 j + r * g 0 i else g 0 2;
+         if 0 = j then g 1 j + r * g 1 i else g 1 0,
+          if 1 = j then g 1 j + r * g 1 i else g 1 1,
+          if 2 = j then g 1 j + r * g 1 i else g 1 2;
+         if 0 = j then g 2 j + r * g 2 i else g 2 0,
+          if 1 = j then g 2 j + r * g 2 i else g 2 1,
+          if 2 = j then g 2 j + r * g 2 i else g 2 2] := by
+  simpa only [specialLinear_mul_transvection_apply] using
+    Matrix.eta_fin_three
+      ((g * Matrix.SpecialLinearGroup.transvection h r :
+        Matrix.SpecialLinearGroup (Fin 3) R) : Matrix (Fin 3) (Fin 3) R)
+
+/-- Multiply the first two-by-two Mennicke block in one matrix step. -/
+private theorem mennicke_first_block_product (a ap b c d : R)
+    (hdet : a * ap * d - b * c = 1) :
+    (!![1, 0, 0; -c * d, a * d, -1; 0, 1, 0] : Matrix (Fin 3) (Fin 3) R) *
+        !![a, b, 0; c, ap * d, 0; 0, 0, 1] =
+      !![a, b, 0; 0, d, -1; c, ap * d, 0] := by
+  have hleft : -(c * d * a) + a * d * c = 0 := by ring
+  have hcenter : -(c * d * b) + a * d * (ap * d) = d := by
+    linear_combination d * hdet
+  simp only [Matrix.mul_fin_three, one_mul, mul_one, zero_mul,
+    mul_zero, zero_add, add_zero, neg_mul, hleft, hcenter]
+
+/-- Multiply the second two-by-two Mennicke block in one matrix step. -/
+private theorem mennicke_second_block_product (a ap b c d : R) :
+    (!![a, 0, b; 0, 1, d; c, 0, ap * d] : Matrix (Fin 3) (Fin 3) R) *
+        !![ap, b, 0; c, a * d, 0; 0, 0, 1] =
+      !![a * ap, a * b, b; c, a * d, d; ap * c, b * c, ap * d] := by
+  simp only [Matrix.mul_fin_three, one_mul, mul_one, zero_mul,
+    mul_zero, zero_add, add_zero, mul_comm c ap, mul_comm c b]
+
 /-- Cross-module support for the infinite Connes-rigidity construction. -/
 private theorem parkWoodburn_mennicke_identity
     (a ap b c d : R) (hdet : a * ap * d - b * c = 1) :
@@ -5854,124 +6005,103 @@ private theorem parkWoodburn_mennicke_identity
       (c * (ap * d) * (a * d) - d * (c + ap * c * (a * d)))
   have hw1 (i j : Fin 3) : w1 i j = !![1, 0, 0; -c * d, 1, 0; 0, 0, 1] i j := by
     dsimp only [w1]
-    fin_cases i <;> fin_cases j <;>
-      simp only [Fin.isValue, Fin.zero_eta, SpecialLinearGroup.transvection_coe,
+    revert i j
+    refine matrix_three_entrywise _ _ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ <;>
+      simp only [Fin.isValue, SpecialLinearGroup.transvection_coe,
         Matrix.add_apply, one_apply_eq, one_ne_zero, and_true, not_false_eq_true,
         single_apply_of_ne, add_zero, neg_mul, of_apply, cons_val', cons_val_zero,
-        cons_val_fin_one, Fin.mk_one, Nat.reduceAdd, ne_eq, zero_ne_one, one_apply_ne, and_self,
-        cons_val_one, Fin.reduceFinMk, Fin.reduceEq, cons_val, single_apply_same, zero_add,
+        cons_val_fin_one, ne_eq, zero_ne_one, one_apply_ne, and_self,
+        cons_val_one, Fin.reduceEq, cons_val, single_apply_same, zero_add,
         and_false]; ring
   let w2 := w1 * Matrix.SpecialLinearGroup.transvection
     (show (1 : Fin 3) ≠ 2 by decide) (a * d - 1)
-  have hw2 (i j : Fin 3) :
-      w2 i j = !![1, 0, 0; -c * d, 1, a * d - 1; 0, 0, 1] i j := by
-    dsimp only [w2]
-    rw [specialLinear_mul_transvection_apply]
-    fin_cases i <;> fin_cases j <;>
-      simp only [Fin.zero_eta, Fin.isValue, Fin.reduceEq, ↓reduceIte, hw1, neg_mul, of_apply,
-        cons_val', cons_val_zero, cons_val_fin_one, Fin.mk_one, cons_val_one, Fin.reduceFinMk,
-        cons_val, mul_zero, add_zero, mul_one, zero_add]
+  have hw2 : (w2 : Matrix (Fin 3) (Fin 3) R) =
+      !![1, 0, 0; -c * d, 1, a * d - 1; 0, 0, 1] := by
+    simpa only [w2, Fin.isValue, Fin.reduceEq, ↓reduceIte, hw1, neg_mul, of_apply,
+      cons_val', cons_val_zero, cons_val_fin_one, cons_val_one,
+      cons_val, mul_zero, add_zero, mul_one, zero_add] using
+      specialLinear_mul_transvection_three w1
+        (show (1 : Fin 3) ≠ 2 by decide) (a * d - 1)
   let w3 := w2 * Matrix.SpecialLinearGroup.transvection
     (show (2 : Fin 3) ≠ 1 by decide) 1
-  have hw3 (i j : Fin 3) :
-      w3 i j = !![1, 0, 0; -c * d, a * d, a * d - 1; 0, 1, 1] i j := by
-    dsimp only [w3]
-    rw [specialLinear_mul_transvection_apply]
-    fin_cases i <;> fin_cases j <;>
-      simp only [Fin.zero_eta, Fin.isValue, zero_ne_one, ↓reduceIte, hw2, neg_mul, of_apply,
-        cons_val', cons_val_zero, cons_val_fin_one, Fin.mk_one, cons_val_one, cons_val, mul_zero,
-        add_zero, Fin.reduceFinMk, Fin.reduceEq, one_mul, add_sub_cancel, mul_one, zero_add]
+  have hw3 : (w3 : Matrix (Fin 3) (Fin 3) R) =
+      !![1, 0, 0; -c * d, a * d, a * d - 1; 0, 1, 1] := by
+    simpa only [w3, Fin.isValue, zero_ne_one, ↓reduceIte, hw2, neg_mul, of_apply,
+      cons_val', cons_val_zero, cons_val_fin_one, cons_val_one, cons_val, mul_zero,
+      add_zero, Fin.reduceEq, one_mul, add_sub_cancel, mul_one, zero_add] using
+      specialLinear_mul_transvection_three w2
+        (show (2 : Fin 3) ≠ 1 by decide) 1
   let w4 := w3 * Matrix.SpecialLinearGroup.transvection
     (show (1 : Fin 3) ≠ 2 by decide) (-1)
-  have hw4 (i j : Fin 3) :
-      w4 i j = !![1, 0, 0; -c * d, a * d, -1; 0, 1, 0] i j := by
-    dsimp only [w4]
-    rw [specialLinear_mul_transvection_apply]
-    fin_cases i <;> fin_cases j <;>
-      simp only [Fin.zero_eta, Fin.isValue, Fin.reduceEq, ↓reduceIte, hw3, neg_mul, of_apply,
-        cons_val', cons_val_zero, cons_val_fin_one, Fin.mk_one, cons_val_one, Fin.reduceFinMk,
-        cons_val, mul_zero, add_zero, one_mul, mul_one, add_neg_cancel]; ring
+  have hw4 : (w4 : Matrix (Fin 3) (Fin 3) R) =
+      !![1, 0, 0; -c * d, a * d, -1; 0, 1, 0] := by
+    have hcancel : a * d - 1 + -(a * d) = (-1 : R) := by ring
+    simpa only [w4, Fin.isValue, Fin.reduceEq, ↓reduceIte, hw3, neg_mul, of_apply,
+      cons_val', cons_val_zero, cons_val_fin_one, cons_val_one, cons_val,
+      mul_zero, add_zero, one_mul, mul_one, add_neg_cancel, neg_zero, hcancel] using
+      specialLinear_mul_transvection_three w3
+        (show (1 : Fin 3) ≠ 2 by decide) (-1)
   let w5 := w4 * mennickeBlock a b c (ap * d)
     (mennicke_left_factor_det a ap b c d hdet)
-  have hmiddleLeft : -(c * d * a) + a * d * c = 0 := by
-    ring
-  have hmiddleCenter : -(c * d * b) + a * d * (ap * d) = d := by
-    linear_combination d * hdet
-  have hw5 (i j : Fin 3) :
-      w5 i j = !![a, b, 0; 0, d, -1; c, ap * d, 0] i j := by
-    dsimp only [w5]
-    rw [Matrix.SpecialLinearGroup.coe_mul]
-    fin_cases i <;> fin_cases j <;>
-      simp only [mennickeBlock, Fin.zero_eta, Fin.isValue, Matrix.mul_apply, hw4, neg_mul,
-        of_apply, cons_val', cons_val_fin_one, cons_val_zero, Fin.sum_univ_succ, one_mul,
-        cons_val_succ, zero_mul, Finset.univ_unique, Fin.default_eq_zero, mul_zero,
-        Finset.sum_const_zero, add_zero, Fin.mk_one, cons_val_one, Fin.reduceFinMk, cons_val,
-        mul_one, hmiddleLeft, hmiddleCenter, Finset.sum_neg_distrib, Finset.sum_const,
-        Finset.card_singleton, one_smul, zero_add]
+  have hw5 : (w5 : Matrix (Fin 3) (Fin 3) R) =
+      !![a, b, 0; 0, d, -1; c, ap * d, 0] := by
+    change (w4 : Matrix (Fin 3) (Fin 3) R) * !![a, b, 0; c, ap * d, 0; 0, 0, 1] = _
+    rw [hw4]
+    exact mennicke_first_block_product a ap b c d hdet
   let w6 := w5 * Matrix.SpecialLinearGroup.transvection
     (show (1 : Fin 3) ≠ 2 by decide) 1
-  have hw6 (i j : Fin 3) :
-      w6 i j = !![a, b, b; 0, d, d - 1; c, ap * d, ap * d] i j := by
-    dsimp only [w6]
-    rw [specialLinear_mul_transvection_apply]
-    fin_cases i <;> fin_cases j <;>
-      simp only [Fin.zero_eta, Fin.isValue, Fin.reduceEq, ↓reduceIte, hw5, of_apply, cons_val',
-        cons_val_zero, cons_val_fin_one, Fin.mk_one, cons_val_one, Fin.reduceFinMk, cons_val,
-        one_mul, zero_add]; ring
+  have hw6 : (w6 : Matrix (Fin 3) (Fin 3) R) =
+      !![a, b, b; 0, d, d - 1; c, ap * d, ap * d] := by
+    simpa only [w6, Fin.isValue, Fin.reduceEq, ↓reduceIte, hw5, of_apply, cons_val',
+      cons_val_zero, cons_val_fin_one, cons_val_one, cons_val,
+      one_mul, zero_add, neg_add_eq_sub] using
+      specialLinear_mul_transvection_three w5
+        (show (1 : Fin 3) ≠ 2 by decide) 1
   let w7 := w6 * Matrix.SpecialLinearGroup.transvection
     (show (2 : Fin 3) ≠ 1 by decide) (-1)
-  have hw7 (i j : Fin 3) :
-      w7 i j = !![a, 0, b; 0, 1, d - 1; c, 0, ap * d] i j := by
-    dsimp only [w7]
-    rw [specialLinear_mul_transvection_apply]
-    fin_cases i <;> fin_cases j <;>
-      simp only [Fin.zero_eta, Fin.isValue, zero_ne_one, ↓reduceIte, hw6, of_apply, cons_val',
-        cons_val_zero, cons_val_fin_one, Fin.mk_one, cons_val_one, cons_val, neg_mul, one_mul,
-        add_neg_cancel, Fin.reduceFinMk, Fin.reduceEq, neg_sub, add_sub_cancel]
+  have hw7 : (w7 : Matrix (Fin 3) (Fin 3) R) =
+      !![a, 0, b; 0, 1, d - 1; c, 0, ap * d] := by
+    simpa only [w7, Fin.isValue, zero_ne_one, ↓reduceIte, hw6, of_apply, cons_val',
+      cons_val_zero, cons_val_fin_one, cons_val_one, cons_val, neg_mul, one_mul,
+      add_neg_cancel, Fin.reduceEq, neg_sub, add_sub_cancel] using
+      specialLinear_mul_transvection_three w6
+        (show (2 : Fin 3) ≠ 1 by decide) (-1)
   let w8 := w7 * Matrix.SpecialLinearGroup.transvection
     (show (1 : Fin 3) ≠ 2 by decide) 1
-  have hw8 (i j : Fin 3) :
-      w8 i j = !![a, 0, b; 0, 1, d; c, 0, ap * d] i j := by
-    dsimp only [w8]
-    rw [specialLinear_mul_transvection_apply]
-    fin_cases i <;> fin_cases j <;>
-      simp only [Fin.zero_eta, Fin.isValue, Fin.reduceEq, ↓reduceIte, hw7, of_apply, cons_val',
-        cons_val_zero, cons_val_fin_one, Fin.mk_one, cons_val_one, Fin.reduceFinMk, cons_val,
-        mul_zero, add_zero, mul_one, sub_add_cancel]
+  have hw8 : (w8 : Matrix (Fin 3) (Fin 3) R) =
+      !![a, 0, b; 0, 1, d; c, 0, ap * d] := by
+    simpa only [w8, Fin.isValue, Fin.reduceEq, ↓reduceIte, hw7, of_apply, cons_val',
+      cons_val_zero, cons_val_fin_one, cons_val_one, cons_val,
+      mul_zero, add_zero, mul_one, sub_add_cancel] using
+      specialLinear_mul_transvection_three w7
+        (show (1 : Fin 3) ≠ 2 by decide) 1
   let w9 := w8 * mennickeBlock ap b c (a * d)
     (mennicke_right_factor_det a ap b c d hdet)
-  have hw9 (i j : Fin 3) : w9 i j =
-      !![a * ap, a * b, b; c, a * d, d; ap * c, b * c, ap * d] i j := by
-    dsimp only [w9]
-    rw [Matrix.SpecialLinearGroup.coe_mul]
-    fin_cases i <;> fin_cases j <;>
-      simp only [mennickeBlock, Fin.zero_eta, Fin.isValue, Matrix.mul_apply, hw8, of_apply,
-        cons_val', cons_val_fin_one, cons_val_zero, Fin.sum_univ_succ, cons_val_succ, zero_mul,
-        Finset.univ_unique, Fin.default_eq_zero, mul_zero, Finset.sum_const_zero, add_zero,
-        Fin.mk_one, cons_val_one, Fin.reduceFinMk, cons_val, mul_one, Finset.sum_const,
-        Finset.card_singleton, one_smul, zero_add, one_mul] <;> ring
+  have hw9 : (w9 : Matrix (Fin 3) (Fin 3) R) =
+      !![a * ap, a * b, b; c, a * d, d; ap * c, b * c, ap * d] := by
+    change (w8 : Matrix (Fin 3) (Fin 3) R) * !![ap, b, 0; c, a * d, 0; 0, 0, 1] = _
+    rw [hw8]
+    exact mennicke_second_block_product a ap b c d
   let w10 := w9 * Matrix.SpecialLinearGroup.transvection
     (show (1 : Fin 3) ≠ 2 by decide) (-1)
-  have hw10 (i j : Fin 3) : w10 i j =
+  have hw10 : (w10 : Matrix (Fin 3) (Fin 3) R) =
       !![a * ap, a * b, b - a * b; c, a * d, d - a * d;
-        ap * c, b * c, ap * d - b * c] i j := by
-    dsimp only [w10]
-    rw [specialLinear_mul_transvection_apply]
-    fin_cases i <;> fin_cases j <;>
-      simp only [Fin.zero_eta, Fin.isValue, Fin.reduceEq, ↓reduceIte, hw9, of_apply, cons_val',
-        cons_val_zero, cons_val_fin_one, Fin.mk_one, cons_val_one, Fin.reduceFinMk, cons_val,
-        neg_mul, one_mul] <;> ring
+        ap * c, b * c, ap * d - b * c] := by
+    simpa only [w10, Fin.isValue, Fin.reduceEq, ↓reduceIte, hw9, of_apply, cons_val',
+      cons_val_zero, cons_val_fin_one, cons_val_one, cons_val,
+      neg_mul, one_mul, ← sub_eq_add_neg] using
+      specialLinear_mul_transvection_three w9
+        (show (1 : Fin 3) ≠ 2 by decide) (-1)
   let w11 := w10 * Matrix.SpecialLinearGroup.transvection
     (show (2 : Fin 3) ≠ 1 by decide) 1
-  have hw11 (i j : Fin 3) : w11 i j =
+  have hw11 : (w11 : Matrix (Fin 3) (Fin 3) R) =
       !![a * ap, b, b - a * b; c, d, d - a * d;
-        ap * c, ap * d, ap * d - b * c] i j := by
-    dsimp only [w11]
-    rw [specialLinear_mul_transvection_apply]
-    fin_cases i <;> fin_cases j <;>
-      simp only [Fin.zero_eta, Fin.isValue, zero_ne_one, ↓reduceIte, hw10, of_apply, cons_val',
-        cons_val_zero, cons_val_fin_one, Fin.mk_one, cons_val_one, cons_val, one_mul,
-        add_sub_cancel, Fin.reduceFinMk, Fin.reduceEq]
+        ap * c, ap * d, ap * d - b * c] := by
+    simpa only [w11, Fin.isValue, zero_ne_one, ↓reduceIte, hw10, of_apply, cons_val',
+      cons_val_zero, cons_val_fin_one, cons_val_one, cons_val, one_mul,
+      add_sub_cancel, Fin.reduceEq] using
+      specialLinear_mul_transvection_three w10
+        (show (2 : Fin 3) ≠ 1 by decide) 1
   let w12 := w11 * Matrix.SpecialLinearGroup.transvection
     (show (1 : Fin 3) ≠ 2 by decide) (a - 1)
   have htopRight : b - a * b + (a - 1) * b = 0 := by
@@ -5980,38 +6110,35 @@ private theorem parkWoodburn_mennicke_identity
     ring
   have hbottomRight : ap * d - b * c + (a - 1) * (ap * d) = 1 := by
     linear_combination hdet
-  have hw12 (i j : Fin 3) :
-      w12 i j = !![a * ap, b, 0; c, d, 0; ap * c, ap * d, 1] i j := by
-    dsimp only [w12]
-    rw [specialLinear_mul_transvection_apply]
-    fin_cases i <;> fin_cases j <;>
-      simp only [Fin.zero_eta, Fin.isValue, Fin.reduceEq, ↓reduceIte, hw11, of_apply, cons_val',
-        cons_val_zero, cons_val_fin_one, Fin.mk_one, cons_val_one, Fin.reduceFinMk, cons_val,
-        htopRight, hmiddleRight, hbottomRight]
+  have hw12 : (w12 : Matrix (Fin 3) (Fin 3) R) =
+      !![a * ap, b, 0; c, d, 0; ap * c, ap * d, 1] := by
+    simpa only [w12, Fin.isValue, Fin.reduceEq, ↓reduceIte, hw11, of_apply, cons_val',
+      cons_val_zero, cons_val_fin_one, cons_val_one, cons_val,
+      htopRight, hmiddleRight, hbottomRight] using
+      specialLinear_mul_transvection_three w11
+        (show (1 : Fin 3) ≠ 2 by decide) (a - 1)
   let w13 := w12 * Matrix.SpecialLinearGroup.transvection
     (show (2 : Fin 3) ≠ 0 by decide) (-ap * c)
-  have hw13 (i j : Fin 3) :
-      w13 i j = !![a * ap, b, 0; c, d, 0; 0, ap * d, 1] i j := by
-    dsimp only [w13]
-    rw [specialLinear_mul_transvection_apply]
-    fin_cases i <;> fin_cases j <;>
-      simp only [Fin.zero_eta, Fin.isValue, ↓reduceIte, hw12, of_apply, cons_val', cons_val_zero,
-        cons_val_fin_one, neg_mul, cons_val, mul_zero, add_zero, Fin.mk_one, one_ne_zero,
-        cons_val_one, Fin.reduceFinMk, Fin.reduceEq, mul_one, add_neg_cancel]
+  have hw13 : (w13 : Matrix (Fin 3) (Fin 3) R) =
+      !![a * ap, b, 0; c, d, 0; 0, ap * d, 1] := by
+    simpa only [w13, Fin.isValue, ↓reduceIte, hw12, of_apply, cons_val', cons_val_zero,
+      cons_val_fin_one, neg_mul, cons_val, mul_zero, add_zero, one_ne_zero,
+      cons_val_one, Fin.reduceEq, mul_one, add_neg_cancel] using
+      specialLinear_mul_transvection_three w12
+        (show (2 : Fin 3) ≠ 0 by decide) (-ap * c)
   let w14 := w13 * Matrix.SpecialLinearGroup.transvection
     (show (2 : Fin 3) ≠ 1 by decide) (-(ap * d))
-  have hw14 (i j : Fin 3) :
-      w14 i j = !![a * ap, b, 0; c, d, 0; 0, 0, 1] i j := by
-    dsimp only [w14]
-    rw [specialLinear_mul_transvection_apply]
-    fin_cases i <;> fin_cases j <;>
-      simp only [Fin.zero_eta, Fin.isValue, zero_ne_one, ↓reduceIte, hw13, of_apply, cons_val',
-        cons_val_zero, cons_val_fin_one, Fin.mk_one, cons_val_one, cons_val, mul_zero, add_zero,
-        Fin.reduceFinMk, Fin.reduceEq, mul_one, add_neg_cancel]
+  have hw14 : (w14 : Matrix (Fin 3) (Fin 3) R) =
+      !![a * ap, b, 0; c, d, 0; 0, 0, 1] := by
+    simpa only [w14, Fin.isValue, zero_ne_one, ↓reduceIte, hw13, of_apply, cons_val',
+      cons_val_zero, cons_val_fin_one, cons_val_one, cons_val, mul_zero, add_zero,
+      Fin.reduceEq, mul_one, add_neg_cancel] using
+      specialLinear_mul_transvection_three w13
+        (show (2 : Fin 3) ≠ 1 by decide) (-(ap * d))
   change mennickeBlock (a * ap) b c d hdet = w14
   apply Matrix.SpecialLinearGroup.ext
   intro i j
-  exact (hw14 i j).symm
+  exact congrFun (congrFun hw14.symm i) j
 
 /-- Cross-module support for the infinite Connes-rigidity construction. -/
 private theorem mennickeWord_mem
@@ -6085,8 +6212,9 @@ private theorem mennickeBlock_rotation_conjugate
     Matrix.SpecialLinearGroup.transvection_inv]
   apply Matrix.SpecialLinearGroup.ext
   intro i j
-  fin_cases i <;> fin_cases j <;>
-    simp only [Fin.zero_eta, Fin.isValue, Fin.mk_one, Fin.reduceFinMk, ← mul_assoc,
+  revert i j
+  refine MennickeIdentity.matrix_three_entrywise _ _ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ <;>
+    simp only [Fin.isValue, ← mul_assoc,
       specialLinear_mul_transvection_apply, Fin.reduceEq, ↓reduceIte] <;>
     simp only [mul_assoc] <;>
     simp only [specialLinear_transvection_mul_apply, Fin.isValue, Fin.reduceEq, ↓reduceIte] <;>
@@ -6310,7 +6438,7 @@ private theorem natDegree_sub_shiftedLeadingCancellationQuotient_mul_lt
       g.natDegree := by
   let r : A[X] := g - shiftedLeadingCancellationQuotient f g c * f
   by_cases hr : r = 0
-  · simpa [r, hr] using hgpos
+  · simpa only [r, hr, natDegree_zero, gt_iff_lt] using hgpos
   · apply (Polynomial.natDegree_lt_iff_degree_lt hr).mpr
     rw [← Polynomial.degree_eq_natDegree hg]
     exact degree_sub_shiftedLeadingCancellationQuotient_mul_lt
@@ -6457,8 +6585,9 @@ private theorem unitEntry_diagonalUnitPair_apply
       if i = j then
         if i = 0 then (a : R) else if i = 1 then (↑a⁻¹ : R) else 1
       else 0 := by
-  fin_cases i <;> fin_cases j <;>
-    simp only [unitEntry_diagonalUnitPair, Fin.zero_eta, Fin.isValue, Fin.mk_one, Fin.reduceFinMk,
+  revert i j
+  refine MennickeIdentity.matrix_three_entrywise _ _ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ <;>
+    simp only [unitEntry_diagonalUnitPair, Fin.isValue,
       MennickeIdentity.specialLinear_mul_transvection_apply, Fin.reduceEq, ↓reduceIte,
       Matrix.SpecialLinearGroup.transvection_coe, Matrix.add_apply, Matrix.one_apply,
       Matrix.single_apply, one_ne_zero, zero_ne_one, and_self, and_false, and_true, mul_one,
@@ -6515,12 +6644,17 @@ private theorem stabilizedTwoByTwo_mem_elementaryThree_of_topLeft_isUnit
   have hb : b = l * d * u := by
     apply Matrix.SpecialLinearGroup.ext
     intro i j
-    fin_cases i <;> fin_cases j <;>
-      simp [l, d, u, unitEntry_diagonalUnitPair_apply,
-        Matrix.SpecialLinearGroup.transvection_coe,
-        Matrix.mul_apply, Fin.sum_univ_succ,
-        Matrix.single_apply, Matrix.one_apply,
-        hrow, hcolumn, a, ← hzeroOne, ← honeZero, ← honeOne]
+    revert i j
+    refine MennickeIdentity.matrix_three_entrywise _ _ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ <;>
+      simp only [l, d, u, unitEntry_diagonalUnitPair_apply,
+        Matrix.SpecialLinearGroup.transvection_coe, Matrix.mul_apply, Fin.sum_univ_succ,
+        Matrix.single_apply, Matrix.one_apply, hrow, hcolumn, a, ← hzeroOne, ← honeZero, ←
+        honeOne, Fin.isValue, SpecialLinearGroup.coe_mul, SpecialLinearGroup.transvection_coe,
+        Matrix.add_apply, one_ne_zero, false_and, add_zero,
+        IsUnit.unit_spec, mul_ite, ite_mul, one_mul, zero_mul, mul_one, mul_zero,
+        Finset.sum_ite_eq', Finset.mem_univ, ↓reduceIte, and_false, single_apply, and_true,
+        zero_ne_one, zero_add, Fin.succ_ne_zero, Fin.succ_zero_eq_one, Finset.univ_unique,
+        Fin.default_eq_zero, Finset.sum_singleton, Fin.succ_one_eq_two, Fin.reduceEq, true_and]
   rw [hb]
   exact (StabilizedBlockReduction.elementaryThreeSubgroup R).mul_mem
     ((StabilizedBlockReduction.elementaryThreeSubgroup R).mul_mem hl hd) hu'
@@ -6534,9 +6668,13 @@ private theorem mennickeBlock_mem_of_isUnit_topLeft
   apply stabilizedTwoByTwo_mem_elementaryThree_of_topLeft_isUnit
     (MennickeIdentity.mennickeBlock a b c d hdet)
   · intro j
-    fin_cases j <;> simp [MennickeIdentity.mennickeBlock]
+    fin_cases j <;> simp only [MennickeIdentity.mennickeBlock, Fin.isValue, Fin.zero_eta,
+                      of_apply, cons_val', cons_val_zero, cons_val_fin_one, cons_val,
+                      cons_val_one, Fin.reduceEq, ↓reduceIte, Fin.mk_one, Fin.reduceFinMk]
   · intro i
-    fin_cases i <;> simp [MennickeIdentity.mennickeBlock]
+    fin_cases i <;> simp only [MennickeIdentity.mennickeBlock, Fin.zero_eta, Fin.isValue,
+                      of_apply, cons_val', cons_val, cons_val_fin_one, cons_val_zero,
+                      Fin.reduceEq, ↓reduceIte, Fin.mk_one, cons_val_one, Fin.reduceFinMk]
   · exact ha
 
 /-- Cross-module support for the infinite Connes-rigidity construction. -/
@@ -6631,8 +6769,9 @@ private theorem mennickeBlock_X_constant_shear_mul
         mennickeBlock a g p X hdet := by
   apply Matrix.SpecialLinearGroup.ext
   intro i j
-  fin_cases i <;> fin_cases j <;>
-    simp only [Fin.zero_eta, Fin.isValue, Fin.mk_one, Fin.reduceFinMk,
+  revert i j
+  refine MennickeIdentity.matrix_three_entrywise _ _ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ <;>
+    simp only [Fin.isValue,
       MennickeIdentity.specialLinear_transvection_mul_apply, Fin.reduceEq, ↓reduceIte] <;>
     simp only [MennickeIdentity.mennickeBlock, Matrix.of_apply, Matrix.cons_val',
       Matrix.cons_val_zero, Matrix.cons_val_one, Matrix.cons_val_fin_one, Matrix.cons_val] <;>
@@ -6688,7 +6827,7 @@ private theorem mennickeBlock_mem_of_isUnit_bottomRight
   have hconjugate := mennickeBlock_rotation_conjugate
     d b c a hswapped
   have hmem := E.mul_mem (E.mul_mem hJ hunit) (E.inv_mem hJ)
-  simpa [J, hconjugate] using hmem
+  simpa only [J, hconjugate] using hmem
 
 /-- Cross-module support for the infinite Connes-rigidity construction. -/
 private theorem mennickeBlock_mem_of_bottomRight_X_pow
@@ -6908,11 +7047,12 @@ private theorem suslin_local_stabilizedTwo_unit_offdiag_normalization
     refine ⟨b * j, (stabilizedTwoHom j)⁻¹,
       (elementaryThreeSubgroup (Polynomial A)).inv_mem hj,
       ?_, ?_, ?_⟩
-    · simp [map_mul]
-    · simpa [j] using hdiag.1
-    · simpa [j] using hdiag.2.neg
+    · simp only [map_mul, mul_inv_cancel_right]
+    · simpa only [j, Fin.isValue, suslin_mul_signedSwap_zero_one] using hdiag.1
+    · simpa only [j, Fin.isValue, suslin_mul_signedSwap_one_zero, coeff_neg,
+      IsUnit.neg_iff] using hdiag.2.neg
   · exact ⟨b, 1, (elementaryThreeSubgroup (Polynomial A)).one_mem,
-      by simp, hoff.1, hoff.2⟩
+      by simp only [mul_one], hoff.1, hoff.2⟩
 
 end
 
@@ -7032,8 +7172,9 @@ private theorem suslin_uniformizer_column_shear
   dsimp
   apply Matrix.SpecialLinearGroup.ext
   intro i j
-  fin_cases i <;> fin_cases j <;>
-    simp only [Fin.zero_eta, Fin.isValue, Fin.mk_one, Fin.reduceFinMk,
+  revert i j
+  refine MennickeIdentity.matrix_three_entrywise _ _ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ <;>
+    simp only [Fin.isValue,
       MennickeIdentity.specialLinear_mul_transvection_apply, Fin.reduceEq, ↓reduceIte] <;>
     simp only [MennickeIdentity.mennickeBlock, Matrix.of_apply, Matrix.cons_val',
       Matrix.cons_val_zero, Matrix.cons_val_one, Matrix.cons_val_fin_one, Matrix.cons_val] <;>
@@ -7448,8 +7589,9 @@ private theorem mennickeBlock_rowSecond_sub_mul
         mennickeBlock a b c d hdet := by
   apply Matrix.SpecialLinearGroup.ext
   intro i j
-  fin_cases i <;> fin_cases j <;>
-    simp only [Fin.zero_eta, Fin.isValue, Fin.mk_one, Fin.reduceFinMk,
+  revert i j
+  refine MennickeIdentity.matrix_three_entrywise _ _ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ <;>
+    simp only [Fin.isValue,
       MennickeIdentity.specialLinear_transvection_mul_apply, Fin.reduceEq, ↓reduceIte] <;>
     simp only [MennickeIdentity.mennickeBlock, Matrix.of_apply, Matrix.cons_val',
       Matrix.cons_val_zero, Matrix.cons_val_one, Matrix.cons_val_fin_one, Matrix.cons_val] <;>
@@ -7465,8 +7607,9 @@ private theorem mennickeBlock_columnFirst_sub_mul
           (show (1 : Fin 3) ≠ 0 by decide) (-q) := by
   apply Matrix.SpecialLinearGroup.ext
   intro i j
-  fin_cases i <;> fin_cases j <;>
-    simp only [Fin.zero_eta, Fin.isValue, Fin.mk_one, Fin.reduceFinMk,
+  revert i j
+  refine MennickeIdentity.matrix_three_entrywise _ _ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ <;>
+    simp only [Fin.isValue,
       MennickeIdentity.specialLinear_mul_transvection_apply, Fin.reduceEq, ↓reduceIte] <;>
     simp only [MennickeIdentity.mennickeBlock, Matrix.of_apply, Matrix.cons_val',
       Matrix.cons_val_zero, Matrix.cons_val_one, Matrix.cons_val_fin_one, Matrix.cons_val] <;>
@@ -7703,11 +7846,17 @@ private theorem mennickeBlock_secondColumnSub_mem_iff
     apply Matrix.SpecialLinearGroup.ext
     intro i j
     rw [Matrix.SpecialLinearGroup.coe_mul]
-    fin_cases i <;> fin_cases j <;>
-      simp [mennickeBlock,
-        Matrix.SpecialLinearGroup.transvection_coe,
-        Matrix.mul_apply, Fin.sum_univ_succ,
-        Matrix.single_apply, Matrix.one_apply] <;> ring
+    revert i j
+    refine MennickeIdentity.matrix_three_entrywise _ _ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ <;>
+      simp only [mennickeBlock, Matrix.SpecialLinearGroup.transvection_coe, Matrix.mul_apply,
+        Fin.sum_univ_succ, Matrix.single_apply, Matrix.one_apply, Fin.isValue,
+        SpecialLinearGroup.transvection_coe, of_apply, cons_val', cons_val_fin_one, cons_val_zero,
+        Matrix.add_apply, one_ne_zero, and_false, add_zero,
+        mul_ite, mul_one, mul_zero, Finset.sum_ite_eq', Finset.mem_univ, ↓reduceIte, single_apply,
+        and_true, zero_ne_one, zero_add, mul_neg, cons_val_succ, Fin.succ_zero_eq_one,
+        Finset.univ_unique, Fin.default_eq_zero, zero_mul, Finset.sum_const_zero, cons_val_one,
+        Fin.reduceEq, cons_val, neg_zero, one_mul, Finset.sum_singleton,
+          Fin.succ_one_eq_two] <;> ring
   rw [← hmul]
   exact (E.mul_mem_cancel_right hroot).symm
 
@@ -7920,8 +8069,9 @@ private theorem mennickeBlock_mul_columnSubtract
         (mennickeBlock_columnSubtract_det f g p q t hdet) := by
   apply Matrix.SpecialLinearGroup.ext
   intro i j
-  fin_cases i <;> fin_cases j <;>
-    simp only [Fin.zero_eta, Fin.isValue, Fin.mk_one, Fin.reduceFinMk,
+  revert i j
+  refine MennickeIdentity.matrix_three_entrywise _ _ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ <;>
+    simp only [Fin.isValue,
       MennickeIdentity.specialLinear_mul_transvection_apply, Fin.reduceEq, ↓reduceIte] <;>
     simp only [MennickeIdentity.mennickeBlock, Matrix.of_apply, Matrix.cons_val',
       Matrix.cons_val_zero, Matrix.cons_val_one, Matrix.cons_val_fin_one, Matrix.cons_val] <;>
@@ -7946,7 +8096,7 @@ private theorem mennickeBlock_columnSubtract_mem_iff
       exact E.mul_mem h hz
     · intro h
       have h' := E.mul_mem h (E.inv_mem hz)
-      simpa [z, mul_assoc] using h'
+      simpa only [z, mul_assoc, Fin.isValue, mul_inv_cancel, mul_one] using h'
 
 /-- Cross-module support for the infinite Connes-rigidity construction. -/
 private theorem mennickeBlock_shifted_det
@@ -7979,7 +8129,10 @@ private theorem mennickeBlock_shifted_mem_iff
           (mennickeBlock_shifted_det f g p q f₁ t s hdet hshift) := by
     apply Matrix.SpecialLinearGroup.ext
     intro i j
-    fin_cases i <;> fin_cases j <;> simp [mennickeBlock, hfirst]
+    revert i j
+    refine MennickeIdentity.matrix_three_entrywise _ _ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ <;>
+      simp only [mennickeBlock, hfirst, Fin.isValue, of_apply, cons_val', cons_val_zero,
+        cons_val_fin_one, cons_val_one, cons_val]
   rw [hblock] at h
   exact h
 
@@ -8027,7 +8180,8 @@ private theorem stabilizedTwoHom_eq_mennickeBlock
           exact hdet) := by
   apply Matrix.SpecialLinearGroup.ext
   intro i j
-  fin_cases i <;> fin_cases j
+  revert i j
+  refine MennickeIdentity.matrix_three_entrywise _ _ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_
   · exact stabilizedTwoHom_castSucc_castSucc b 0 0
   · exact stabilizedTwoHom_castSucc_castSucc b 0 1
   · exact stabilizedTwoHom_castSucc_two b 0
@@ -8151,8 +8305,10 @@ private theorem valuation_mennicke_outer_induction
                   hdetfactor := by
             apply Matrix.SpecialLinearGroup.ext
             intro j k
-            fin_cases j <;> fin_cases k <;>
-              simp [MennickeIdentity.mennickeBlock, hshape]
+            revert j k
+            refine MennickeIdentity.matrix_three_entrywise _ _ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ <;>
+              simp only [MennickeIdentity.mennickeBlock, hshape, mennickeBlock, Fin.isValue,
+                of_apply, cons_val', cons_val_zero, cons_val_fin_one, cons_val_one, cons_val]
           rw [hblock]
           exact hfactored
     intro f g p q hdet hg₀
@@ -8389,9 +8545,12 @@ private theorem lastRowClear_mul_apply
       (Matrix.transvection (2 : Fin 3) 0 (-(g 2 0)) *
         Matrix.transvection (2 : Fin 3) 1 (-(g 2 1)))) i j = _
   simp only [← mul_assoc]
-  fin_cases i <;> fin_cases j <;>
-    simp [Matrix.mul_transvection_apply_same,
-      Matrix.mul_transvection_apply_of_ne, h0, h1, h2]
+  revert i j
+  refine MennickeIdentity.matrix_three_entrywise _ _ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ <;>
+    simp only [Matrix.mul_transvection_apply_same, Matrix.mul_transvection_apply_of_ne, h0, h1,
+      h2, Fin.isValue, ne_eq, zero_ne_one, not_false_eq_true, mul_transvection_apply_of_ne,
+      mul_transvection_apply_same, Fin.reduceEq, ↓reduceIte, mul_zero, add_zero, one_ne_zero,
+      mul_one, add_neg_cancel]
 
 /-- Cross-module support for the infinite Connes-rigidity construction. -/
 private theorem upperLeft_det_eq_one
@@ -8425,8 +8584,12 @@ private theorem lastColumn_block_decomposition
   intro i j
   rw [lastRowClear_mul_apply g hcolumn]
   cases i using Fin.lastCases <;> cases j using Fin.lastCases <;>
-    simp [stabilizedTwoHom, stabilizedTwoSpecialLinear, stabilizedTwoMatrix,
-      upperLeftSpecialLinear, Matrix.submatrix, hcolumn]
+    simp only [stabilizedTwoHom, stabilizedTwoSpecialLinear, stabilizedTwoMatrix,
+      upperLeftSpecialLinear, Matrix.submatrix, hcolumn, Fin.reduceLast, Fin.isValue, ↓reduceIte,
+      submatrix, MonoidHom.coe_mk, OneHom.coe_mk, Nat.reduceAdd, reindex_apply, of_apply,
+      finTwoPlusOne_symm_two, fromBlocks_apply₂₂, one_apply_eq, finTwo_castSucc_ne_two,
+      finSumFinEquiv_symm_apply_castSucc, fromBlocks_apply₂₁, Matrix.zero_apply,
+      fromBlocks_apply₁₂, fromBlocks_apply₁₁]
 
 /-- Cross-module support for the infinite Connes-rigidity construction. -/
 public
@@ -8923,9 +9086,9 @@ private theorem normalizeSigns_mem (g : IGroup) : normalizeSigns g ∈ elementar
   unfold normalizeSigns
   apply elementary.mul_mem
   · apply elementary.mul_mem
-    · split_ifs <;> simp [signFlip_mem]
-    · split_ifs <;> simp [signFlip_mem]
-  · split_ifs <;> simp [signFlip_mem]
+    · split_ifs <;> simp only [signFlip_mem, Fin.isValue, one_mem]
+    · split_ifs <;> simp only [signFlip_mem, Fin.isValue, one_mem]
+  · split_ifs <;> simp only [signFlip_mem, Fin.isValue, one_mem]
 
 /-- Cross-module support for the infinite Connes-rigidity construction. -/
 private theorem normalizeSigns_preserves_upper (g : IGroup)
@@ -8938,18 +9101,19 @@ private theorem normalizeSigns_preserves_upper (g : IGroup)
     dsimp [f₁]
     split_ifs
     · exact signFlip_preserves_upper 0 1 _ g hg
-    · simpa using hg
+    · simpa only [SpecialLinearGroup.coe_one, one_mul] using hg
   have h₂ : ∀ a b : Index, b < a → (f₂ * (f₁ * g)) a b = 0 := by
     dsimp [f₂]
     split_ifs
     · exact signFlip_preserves_upper 0 2 _ (f₁ * g) h₁
-    · simpa using h₁
+    · simpa only [SpecialLinearGroup.coe_one, one_mul, SpecialLinearGroup.coe_mul] using h₁
   have h₃ : ∀ a b : Index, b < a → (f₃ * (f₂ * (f₁ * g))) a b = 0 := by
     dsimp [f₃]
     split_ifs
     · exact signFlip_preserves_upper 0 3 _ (f₂ * (f₁ * g)) h₂
-    · simpa using h₂
-  simpa [normalizeSigns, f₁, f₂, f₃, mul_assoc] using h₃
+    · simpa only [SpecialLinearGroup.coe_one, one_mul, SpecialLinearGroup.coe_mul] using h₂
+  simpa only [normalizeSigns, f₁, f₂, f₃, mul_assoc, Fin.isValue, Int.reduceNeg, mul_ite, ite_mul,
+    one_mul, mul_one] using h₃
 
 /-- Cross-module support for the infinite Connes-rigidity construction. -/
 private theorem normalizeSigns_diag_one (g : IGroup)
@@ -8976,19 +9140,22 @@ private theorem normalizeSigns_diag_one (g : IGroup)
       simp only [mul_assoc]
       rcases h1 with h1 | h1 <;> rcases h2 with h2 | h2 <;>
         rcases h3 with h3 | h3 <;>
-        simp [h1, h2, h3, signFlip_mul_apply]
+        simp only [h1, h2, h3, signFlip_mul_apply, Fin.isValue, Int.reduceNeg, reduceCtorEq,
+          ↓reduceIte, one_mul, one_ne_zero, Fin.reduceEq, or_self, or_true, neg_neg]
     have hdiag2 : (normalizeSigns g * g) (2 : Index) 2 = 1 := by
       unfold normalizeSigns
       simp only [mul_assoc]
       rcases h1 with h1 | h1 <;> rcases h2 with h2 | h2 <;>
         rcases h3 with h3 | h3 <;>
-        simp [h1, h2, h3, signFlip_mul_apply]
+        simp only [h1, h2, h3, signFlip_mul_apply, Fin.isValue, Int.reduceNeg, reduceCtorEq,
+          ↓reduceIte, one_mul, Fin.reduceEq, or_self, or_true, neg_neg]
     have hdiag3 : (normalizeSigns g * g) (3 : Index) 3 = 1 := by
       unfold normalizeSigns
       simp only [mul_assoc]
       rcases h1 with h1 | h1 <;> rcases h2 with h2 | h2 <;>
         rcases h3 with h3 | h3 <;>
-        simp [h1, h2, h3, signFlip_mul_apply]
+        simp only [h1, h2, h3, signFlip_mul_apply, Fin.isValue, Int.reduceNeg, reduceCtorEq,
+          ↓reduceIte, one_mul, Fin.reduceEq, or_true, neg_neg, or_self]
     norm_num [Fin.prod_univ_succ] at hprod
     change (normalizeSigns g * g) 0 0 *
       ((normalizeSigns g * g) 1 1 *
@@ -9001,17 +9168,20 @@ private theorem normalizeSigns_diag_one (g : IGroup)
     simp only [mul_assoc]
     rcases h1 with h1 | h1 <;> rcases h2 with h2 | h2 <;>
       rcases h3 with h3 | h3 <;>
-      simp [h1, h2, h3, signFlip_mul_apply]
+      simp only [h1, h2, h3, signFlip_mul_apply, Fin.isValue, Int.reduceNeg, reduceCtorEq,
+        ↓reduceIte, one_mul, Fin.mk_one, one_ne_zero, Fin.reduceEq, or_self, or_true, neg_neg]
   · unfold normalizeSigns
     simp only [mul_assoc]
     rcases h1 with h1 | h1 <;> rcases h2 with h2 | h2 <;>
       rcases h3 with h3 | h3 <;>
-      simp [h1, h2, h3, signFlip_mul_apply]
+      simp only [h1, h2, h3, signFlip_mul_apply, Fin.isValue, Int.reduceNeg, reduceCtorEq,
+        ↓reduceIte, one_mul, Fin.reduceFinMk, Fin.reduceEq, or_self, or_true, neg_neg]
   · unfold normalizeSigns
     simp only [mul_assoc]
     rcases h1 with h1 | h1 <;> rcases h2 with h2 | h2 <;>
       rcases h3 with h3 | h3 <;>
-      simp [h1, h2, h3, signFlip_mul_apply]
+      simp only [h1, h2, h3, signFlip_mul_apply, Fin.isValue, Int.reduceNeg, reduceCtorEq,
+        ↓reduceIte, one_mul, Fin.reduceFinMk, Fin.reduceEq, or_true, neg_neg, or_self]
 
 /-- Cross-module support for the infinite Connes-rigidity construction. -/
 public
@@ -9043,8 +9213,10 @@ theorem upperUnitriangular_factorization (g : IGroup)
   have h32 := hu 3 2 (by decide)
   apply Matrix.SpecialLinearGroup.ext
   intro i j
-  fin_cases i <;> fin_cases j <;>
-    simp only [Fin.zero_eta, Fin.isValue, Fin.mk_one, Fin.reduceFinMk,
+  revert i j
+  refine matrix_four_entrywise _ _
+    ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ <;>
+    simp only [Fin.isValue,
       MennickeIdentity.specialLinear_mul_transvection_apply, Fin.reduceEq, ↓reduceIte,
       Matrix.SpecialLinearGroup.transvection_coe, Matrix.add_apply, Matrix.one_apply,
       Matrix.single_apply, one_ne_zero, zero_ne_one, and_self, and_false, and_true,
