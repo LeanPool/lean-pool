@@ -60,7 +60,7 @@ theorem exactAliceQuestionConditionalWeight_sum
             rw [Finset.sum_div]
             apply Finset.sum_congr rfl
             intro q _
-            split <;> simp
+            split <;> simp only [zero_div]
     _ = exactAliceQuestionMass G n D seed history x /
           exactAliceQuestionMass G n D seed history x := by
             rfl
@@ -100,7 +100,7 @@ theorem exactBobQuestionConditionalWeight_sum
             rw [Finset.sum_div]
             apply Finset.sum_congr rfl
             intro q _
-            split <;> simp
+            split <;> simp only [zero_div]
     _ = exactBobQuestionMass G n D seed history y /
           exactBobQuestionMass G n D seed history y := by
             rfl
@@ -155,7 +155,7 @@ theorem exactAliceQuestionFilter_complement_posSemidef
     apply Finset.sum_congr rfl
     intro q _
     dsimp [w, E]
-    split <;> simp
+    split <;> simp only [zero_smul]
   have split :
       1 - (∑ q, w q • E q) =
         (1 - (∑ q, w q)) •
@@ -218,7 +218,7 @@ theorem exactBobQuestionFilter_complement_posSemidef
     apply Finset.sum_congr rfl
     intro q _
     dsimp [w, E]
-    split <;> simp
+    split <;> simp only [zero_smul]
   have split :
       1 - (∑ q, w q • E q) =
         (1 - (∑ q, w q)) •
@@ -474,7 +474,7 @@ theorem exactFairAliceHistoryLowOperatorPotential_neg_le_entropy
   have bound := mul_le_mul_of_nonneg_left
     (exactFairAliceMean_spectral_entropy_le G n S D r y)
     (G.marginalY_nonneg y)
-  linarith
+  linarith only [bound]
 
 theorem exactFairBobHistoryLowOperatorPotential_neg_le_entropy
     (G : Game X Y A B) (n : ℕ) (S : Strategy (G.repeat n))
@@ -496,7 +496,7 @@ theorem exactFairBobHistoryLowOperatorPotential_neg_le_entropy
   have bound := mul_le_mul_of_nonneg_left
     (exactFairBobMean_spectral_entropy_le G n S D r x)
     (G.marginalX_nonneg x)
-  linarith
+  linarith only [bound]
 
 theorem exactReverseAliceFilterHighOperatorPotential_nonpos
     (G : Game X Y A B) (n : ℕ) (S : Strategy (G.repeat n))
@@ -1419,7 +1419,7 @@ private theorem exactAliceQuestionFilter_eq_jointPrefixOperatorFilter
     unfold exactPriorQuestionWeight
     rw [div_eq_mul_inv]
     congr 1
-    ring
+    ac_rfl
   · rw [ite_eq_right (fun h => compatible (same.mp h)),
       ite_eq_right compatible, smul_zero]
 
@@ -1491,7 +1491,7 @@ private theorem exactBobQuestionFilter_eq_jointPrefixOperatorFilter
     unfold exactPriorQuestionWeight
     rw [div_eq_mul_inv]
     congr 1
-    ring
+    ac_rfl
   · rw [ite_eq_right (fun h => compatible (same.mp h)),
       ite_eq_right compatible, smul_zero]
 
@@ -1860,7 +1860,7 @@ theorem exactFairAliceHistoryHighOperatorPotential_eq_joint
         intro y _
         apply Finset.sum_congr rfl
         intro x _
-        ring
+        ac_rfl
     _ = ∑ y : Y, ∑ x : X, G.questionWeight x y *
         bornTracePairing S.state.matrix
           (cfc (fun z : ℝ => z * Real.log z)
@@ -1896,7 +1896,7 @@ theorem exactFairBobHistoryHighOperatorPotential_eq_joint
   apply Finset.sum_congr rfl
   intro y _
   rw [← G.marginalX_mul_conditionalYGivenX x y]
-  ring
+  ac_rfl
 
 theorem exactFairAliceHistoryLowOperatorPotential_eq_joint
     (G : Game X Y A B) (n : ℕ) (S : Strategy (G.repeat n))
@@ -2024,7 +2024,7 @@ theorem exactFairAcceptedJointStatistic_reindex
             intro x _
             apply Finset.sum_congr rfl
             intro y _
-            ring
+            ac_rfl
           · simp only [accepted, ↓reduceIte, sum_const_zero]
     _ = ∑ history : ExactRevealHistory X Y D seed,
       ∑ x : X, ∑ y : Y,
@@ -4041,7 +4041,7 @@ private theorem exactReverseAliceLowOperatorPotential_neg_le_scalarEntropy
       (exactRevealMass_nonneg G n D
         (exactReverseBobMarkerDecode side context marker)
         history)
-    linarith
+    linarith only [weighted]
   · simp only [accepted, ↓reduceIte, neg_zero, Std.le_refl]
 
 private theorem exactReverseAliceAlignedCfcPrefixPotential_last_nonpos
@@ -4086,7 +4086,7 @@ private theorem exactReverseAliceFilterOperatorMarkerEntropy_sum_le_scalarEntrop
   rw [exactReverseAliceLowOperatorPotential_eq_question,
     exactReverseAliceLowQuestionPotential_eq_alignedPrefix] at low
   dsimp only at low
-  linarith
+  linarith only [nonempty, last, low]
 
 end
 
@@ -4216,7 +4216,7 @@ private theorem exactReverseBobFilterOperatorMarkerEntropy_sum_le_scalarEntropy
         G n S D side context 0 ≤
       exactReverseBobAcceptedScalarEntropy
         G n S D side context initial
-  linarith
+  linarith only [terminal, scalar]
 
 end
 
@@ -4323,7 +4323,7 @@ theorem exactFairAliceMeanBornMass_eq_fullOutcome_sum
           Finset.mul_sum, Finset.mul_sum]
         apply Finset.sum_congr rfl
         intro x _
-        ring
+        ac_rfl
     _ = ∑ x : X, ∑ y : Y,
         exactRevealMass G n D r.seed r.history *
           G.questionWeight x y *
@@ -4383,7 +4383,7 @@ theorem exactFairBobMeanBornMass_eq_fullOutcome_sum
           Finset.mul_sum, Finset.mul_sum]
         apply Finset.sum_congr rfl
         intro y _
-        ring
+        ac_rfl
     _ = ∑ x : X, ∑ y : Y,
         exactRevealMass G n D r.seed r.history *
           G.questionWeight x y *
@@ -4653,7 +4653,7 @@ private theorem exactFairAliceScalarCountingWeight_sum_le
         nsmul_eq_mul, Nat.cast_pow, mul_sum, fullHistoryAnswerCount, mul_assoc, mul_comm]
     _ = _ := by
       rw [exactRevealMass_sum, G.marginalY_normalized]
-      ring
+      ac_rfl
 
 private theorem exactFairBobScalarCountingWeight_sum_le
     (G : Game X Y A B) (n : ℕ)
@@ -4698,7 +4698,7 @@ private theorem exactFairBobScalarCountingWeight_sum_le
         nsmul_eq_mul, Nat.cast_pow, mul_sum, fullHistoryAnswerCount, mul_assoc, mul_comm]
     _ = _ := by
       rw [exactRevealMass_sum, G.marginalX_normalized]
-      ring
+      ac_rfl
 
 private theorem exactFairAliceScalarBornMass_sum
     (G : Game X Y A B) (n : ℕ) (S : Strategy (G.repeat n))
@@ -4740,7 +4740,7 @@ private theorem exactFairAliceScalarBornMass_sum
           ite_eq_left accepted, Finset.mul_sum]
         apply Finset.sum_congr rfl
         intro y _
-        ring
+        ac_rfl
       · simp only [exactFairAliceScalarCountingWeight, accepted, ↓reduceIte, zero_mul,
           sum_const_zero]
     _ = _ := exactFairAliceMeanAcceptedBornMass_sum
@@ -4786,7 +4786,7 @@ private theorem exactFairBobScalarBornMass_sum
           ite_eq_left accepted, Finset.mul_sum]
         apply Finset.sum_congr rfl
         intro x _
-        ring
+        ac_rfl
       · simp only [exactFairBobScalarCountingWeight, accepted, ↓reduceIte, zero_mul,
           sum_const_zero]
     _ = _ := exactFairBobMeanAcceptedBornMass_sum
@@ -4892,7 +4892,7 @@ private theorem exactFairAliceSeedScalarEntropy_eq_weighted
       Finset.mul_sum]
     apply Finset.sum_congr rfl
     intro y _
-    ring
+    ac_rfl
   · simp only [accepted, ↓reduceIte, exactFairAliceScalarCountingWeight, zero_mul, sum_const_zero]
 
 private theorem exactFairBobSeedScalarEntropy_eq_weighted
@@ -4921,7 +4921,7 @@ private theorem exactFairBobSeedScalarEntropy_eq_weighted
       Finset.mul_sum]
     apply Finset.sum_congr rfl
     intro x _
-    ring
+    ac_rfl
   · simp only [accepted, ↓reduceIte, exactFairBobScalarCountingWeight, zero_mul, sum_const_zero]
 
 private theorem exactFairAliceSeedScalarEntropy_le
@@ -5093,7 +5093,7 @@ theorem fullHistoryAnswerCount_pos_of_postselection
       (fullHistoryAtomCountingWeight_nonneg G D L t)
       (fullHistoryAtomBornMass_le_one G n S D L t)
   have hsecond := fullHistoryAtomCountingWeight_sum_le G D L
-  linarith
+  linarith only [hp, hmass, hfirst, hsecond]
 
 theorem divisor_greedy_remaining_bounds
     {n q : ℕ} (hq : 2 ≤ q)
@@ -5164,7 +5164,7 @@ private theorem divisor_greedy_log_cost_per_remaining_le
         (η / (4 * (q : ℝ))) * (n : ℝ) := by
     have hlog := (Real.lt_log_iff_exp_lt hθ).mpr hwitness
     rw [one_div, Real.log_inv]
-    linarith
+    linarith only [hlog]
   have hlogp :
       Real.log (1 / p) ≤
         (η / (4 * (q : ℝ))) * (n : ℝ) := by
@@ -5176,7 +5176,7 @@ private theorem divisor_greedy_log_cost_per_remaining_le
           (η / (4 * (q : ℝ))) * (n : ℝ) := by
     rw [Real.log_div hN.ne' hp.ne']
     rw [one_div, Real.log_inv] at hlogp
-    linarith
+    linarith only [hcount, hlogp]
   obtain ⟨hmnat, hnmnat, hdqmnat⟩ :=
     divisor_greedy_remaining_bounds hq hD
   have hm : 0 < (m : ℝ) := by
@@ -5243,7 +5243,7 @@ private theorem exists_source_rounding_divisor
   have hsmall : C / (q : ℝ) < δ ^ 2 := by
     apply (div_lt_iff₀ hqreal).mpr
     have hcross := (div_lt_iff₀ hsquare).mp hthreshold
-    linarith [hC]
+    linarith only [hcross]
   refine ⟨q, hqnat, ?_⟩
   calc
     8 * K *
@@ -5295,7 +5295,6 @@ theorem arbitrarily_large_purified_divisor_greedy_conditioning_with_rounding
   refine ⟨q, hq, ?_⟩
   intro N₀
   have hqpos : 0 < q := by omega
-  have hqreal : 0 < (q : ℝ) := by exact_mod_cast hqpos
   have hrate : 0 < η / (4 * (q : ℝ)) := by positivity
   obtain ⟨n, hn, S, hS⟩ :=
     arbitrarily_large_purifiedRepeatedStrategy_of_subexponentialWitness
@@ -5409,7 +5408,7 @@ theorem exactSourceClassicalInformationRate_le_three_martingaleRate
     lt_of_le_of_ne denominator_nonnegative (Ne.symm denominator_zero)
   apply (div_le_iff₀ denominator_positive).2
   field_simp
-  linarith
+  linarith only [answer_nonnegative]
 
 theorem exactSourcePinskerRate_le_half_of_martingaleRate
     (G : Game X Y A B) (n : ℕ) (S : Strategy (G.repeat n))
@@ -5426,7 +5425,7 @@ theorem exactSourcePinskerRate_le_half_of_martingaleRate
   · have information :=
       exactSourceClassicalInformationRate_le_three_martingaleRate
         G n S D positive
-    nlinarith
+    nlinarith only [rate_bound, information]
 
 theorem exact_arbitrarily_large_conditioning_of_subexponentialWitness
     (G : Game X Y A B)
@@ -5492,7 +5491,7 @@ theorem exact_arbitrarily_large_conditioning_of_subexponentialWitness
       martingaleRate G n actual D ≤
         rateTolerance ^ 2 / 8 := by
     apply (le_div_iff₀ (by norm_num : (0 : ℝ) < 8)).2
-    linarith
+    linarith only [scaled_rate]
   exact ⟨n, beyond, actual, D, actual_positive,
     postselection_positive, remaining_positive, failure_small,
     actual_rate,
@@ -5551,7 +5550,7 @@ theorem exactReversePartitionInverseCard_le
         intro side _
         unfold forwardMarkedPartitionWeight
         ring
-    _ = _ := by rw [fairPartitionWeight_sum]; ring
+    _ = _ := by rw [fairPartitionWeight_sum]; ac_rfl
 
 theorem exactReverseBobSeedInverseCard_le
     {M : Type*} [Fintype M] [DecidableEq M] :
@@ -5850,7 +5849,7 @@ theorem unconditionalLiterature_sqrt_two_mul_sqrt_thirtytwo
     8 * Real.sqrt 2 * Real.sqrt (32 * η) =
         8 * Real.sqrt ((2 : ℝ) * (32 * η)) := by
           rw [Real.sqrt_mul (by norm_num : (0 : ℝ) ≤ 2)]
-          ring
+          ac_rfl
     _ = 8 * Real.sqrt ((64 : ℝ) * η) := by
           congr 2
           ring
@@ -5900,7 +5899,7 @@ theorem unconditionalLiterature_weightedAsynchronous_le
                       apply Finset.sum_congr rfl
                       intro i _
                       ring
-            _ = _ := by rw [weight_normalized]; ring
+            _ = _ := by rw [weight_normalized]; ac_rfl
     _ ≤ 8 * Real.sqrt 2 * Real.sqrt (32 * η) + δ := by
           gcongr
     _ = 64 * Real.sqrt η + δ := by
@@ -6484,7 +6483,8 @@ private theorem
     dSVDensityRationalHeterogeneousActualPhysicalFlagBornCopyConditionMask]
   cases h : dSVDensityRationalCompleteStoppedOptionalLocalSchedule
       L flag i with
-  | none => simp [dSVDensityRationalCompleteStoppedOptionalLocalEffect]
+  | none => simp only [UnitaryGroup.inv_val, mul_one, SetLike.coe_mem,
+              Unitary.star_mul_self_of_mem, dSVDensityRationalCompleteStoppedOptionalLocalEffect]
   | some outcome =>
       simpa only [UnitaryGroup.inv_val, dSVDensityRationalCompleteStoppedOptionalLocalEffect]
         using
@@ -6800,7 +6800,7 @@ theorem dSVDensityRationalPublicLogPhasePhysicalAlignedLocalAction_apply
         intro x _
         apply Finset.sum_congr rfl
         intro y _
-        ring
+        ac_rfl
       · rfl
 
 /--
