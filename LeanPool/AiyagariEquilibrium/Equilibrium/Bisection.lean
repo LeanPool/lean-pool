@@ -173,7 +173,7 @@ supply along it is monotone, and it is the ONLY stationary distribution at each 
 constants are chosen as in `log_equilibriumRate_unique_of_cap`. -/
 theorem log_selection_of_cap {rlo rhi : ℝ}
     (hu : P.u = crraUtility 1) (hunb : P.Unbounded)
-    (hβ : 0 < (P.discount : ℝ)) (hβ1 : (P.discount : ℝ) < 1) (hrlo : 0 < 1 + rlo)
+    (hβ : 0 < (P.discount : ℝ)) (hrlo : 0 < 1 + rlo)
     (hlohi : rlo ≤ rhi) (hβR : (P.discount : ℝ) * (1 + rhi) < 1)
     (hcap : 2 * (P.discount : ℝ) * P.maxIncome < (1 - (P.discount : ℝ) * (1 + rhi)) * assetCap)
     (hmono : P.MonotoneTransitions) {z₀ : Z} (hz₀ : ∀ z : Z, P.income z₀ ≤ P.income z)
@@ -216,16 +216,16 @@ theorem log_selection_of_cap {rlo rhi : ℝ}
     have : β * R * (P.minIncome + R * a₀) = β * R * P.minIncome + β * R * (R * a₀) := by ring
     rw [this]
     nlinarith [hkey, hmono, hroom, hminpos]
-  refine ⟨P.log_monotoneOn_capitalSupply hu hunb hβ hβ1 hrlo hlohi hβR hε hcapε hmono hz₀ hreach
+  refine ⟨P.log_monotoneOn_capitalSupply hu hunb hβ hrlo hlohi hβR hε hcapε hmono hz₀ hreach
     ha₀ hle hcorn ν hν, fun r hr hrr μ hμ => ?_⟩
-  exact (P.log_existsUnique_isStationary hu hunb hβ hβ1 hβR hcap' hmono hz₀ hreach ha₀ hle hcorn
+  exact (P.log_existsUnique_isStationary hu hunb hβ hβR hcap' hmono hz₀ hreach ha₀ hle hcorn
     hr hrr).unique hμ (hν r hr hrr)
 
 /-- **Bisection on excess supply brackets and converges to the equilibrium rate of the log
 economy**, along any selection of stationary distributions. -/
 theorem log_bisection_of_cap {rlo rhi α δ : ℝ} (hα0 : 0 < α) (hα1 : α < 1) (hδ : 0 < rlo + δ)
     (hu : P.u = crraUtility 1) (hunb : P.Unbounded)
-    (hβ : 0 < (P.discount : ℝ)) (hβ1 : (P.discount : ℝ) < 1) (hrlo : 0 < 1 + rlo)
+    (hβ : 0 < (P.discount : ℝ)) (hrlo : 0 < 1 + rlo)
     (hlohi : rlo ≤ rhi) (hβR : (P.discount : ℝ) * (1 + rhi) < 1)
     (hcap : 2 * (P.discount : ℝ) * P.maxIncome < (1 - (P.discount : ℝ) * (1 + rhi)) * assetCap)
     (hmono : P.MonotoneTransitions) {z₀ : Z} (hz₀ : ∀ z : Z, P.income z₀ ≤ P.income z)
@@ -242,7 +242,7 @@ theorem log_bisection_of_cap {rlo rhi α δ : ℝ} (hα0 : 0 < α) (hα1 : α < 
         ≤ (rhi - rlo) / 2 ^ (n + 1)) ∧
     Tendsto (fun n => (bisect (P.excessSupply ν (normalisedDemand α δ)) rlo rhi n).1) atTop
       (𝓝 r) := by
-  obtain ⟨hS, hid⟩ := P.log_selection_of_cap hu hunb hβ hβ1 hrlo hlohi hβR hcap hmono hz₀ hmin
+  obtain ⟨hS, hid⟩ := P.log_selection_of_cap hu hunb hβ hrlo hlohi hβR hcap hmono hz₀ hmin
     hreach ν hν
   have hE : StrictMonoOn (P.excessSupply ν (normalisedDemand α δ)) (Icc rlo rhi) :=
     strictMonoOn_sub_of_monotoneOn_of_strictAntiOn hS (normalisedDemand_strictAntiOn hα0 hα1 hδ)
@@ -276,7 +276,7 @@ theorem aiyagari1994_log_bisection {rlo rhi : ℝ}
     Tendsto (fun n => (bisect (P.excessSupply ν (normalisedDemand (9 / 25) (2 / 25))) rlo rhi n).1)
       atTop (𝓝 r) :=
   P.log_bisection_of_cap (by norm_num) (by norm_num) (by linarith) hu hunb
-    (by rw [hβ]; norm_num) (by rw [hβ]; norm_num) (by linarith) hlohi (by rw [hβ]; linarith)
+    (by rw [hβ]; norm_num) (by linarith) hlohi (by rw [hβ]; linarith)
     (by rw [hβ]; exact hcap) hmono hz₀ hmin hreach ν hν hr hrr hμ he
 
 end IncomeFluctuation
