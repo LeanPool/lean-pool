@@ -238,7 +238,7 @@ theorem consumptionFnOf_mono {v : (ℝ × Z) →ᵇ ℝ}
   simp only [objROf, he1, he2] at hI hII
   have hIIeq : P.objROf v (a', z) (b + Δ) = P.objROf v (a', z) b' := by
     simp only [objROf, he1]
-    nlinarith [hI, hII, hscaled]
+    nlinarith only [hI, hII, hscaled]
   have hbell : P.toExtended.objectiveE v (a', z) (b + Δ)
       = ((P.toExtended.bellmanFn v (a', z) : ℝ) : EReal) := by
     rw [P.objectiveE_eq_coe_of v ha' hshiftup (by rw [he1]; exact hc1), hIIeq,
@@ -468,7 +468,7 @@ theorem policyOf_le_of_marginal_bound {v : (ℝ × Z) →ᵇ ℝ}
   have hmg := hmarg (c + (b - assetFloor) / 2) c hcdom (by linarith) hcmax
   rw [show c + (b - assetFloor) / 2 - c = (b - assetFloor) / 2 from by ring] at hmg
   rw [← sub_le_iff_le_add', le_div_iff₀ hm]
-  nlinarith [hopt, hmg, mul_le_mul_of_nonneg_left hloss hβ]
+  nlinarith only [hopt, hmg, mul_le_mul_of_nonneg_left hloss hβ]
 
 /-- The Bellman operator adds at most the reward and contracts what it inherits. -/
 theorem norm_bellman_le (v : (ℝ × Z) →ᵇ ℝ) :
@@ -792,10 +792,12 @@ theorem crra_policyOf_le_mul {γ θ G : ℝ} (hγ0 : 0 < γ) (hγ1 : γ < 1) (h�
     rw [div_le_div_iff₀ (show (0 : ℝ) < b - w by linarith)
       (show (0 : ℝ) < w - assetFloor by linarith), hbw, hwf] at hslope
     have h2 : (P.contOf v z b - P.contOf v z w) * (θ * (b - assetFloor))
-        ≤ G * ((1 - θ) * (b - assetFloor)) := by
-      nlinarith [hslope, hgap, mul_pos (show (0:ℝ) < 1 - θ by linarith) hbf]
+        ≤ G * ((1 - θ) * (b - assetFloor)) :=
+      hslope.trans (mul_le_mul_of_nonneg_right hgap
+        (mul_nonneg (sub_pos.mpr hθ1).le hbf.le))
     rw [div_mul_eq_mul_div, le_div_iff₀ hθ0]
-    nlinarith [h2, hbf]
+    refine le_of_mul_le_mul_right (a := b - assetFloor) ?_ hbf
+    convert h2 using 1 <;> ring
   -- the marginal gain, priced where it lands
   have hmg : (c + (1 - θ) * (b - assetFloor)) ^ (-γ) * ((1 - θ) * (b - assetFloor))
       ≤ P.u (c + (1 - θ) * (b - assetFloor)) - P.u c := by
@@ -986,7 +988,7 @@ theorem exists_consumptionFnOf_floor_of_marginal {M G : ℝ}
     linarith [hopt, hscaled, e.le, e.ge]
   have hmarg := hδ c d hcmem (by linarith) hdδ
   rw [hhdef] at hh0
-  nlinarith [hmarg, hutil, hh0, hlt]
+  nlinarith only [hmarg, hutil, hh0, hlt]
 
 /-- **Positive consumption from a finite marginal bound**, against every continuation with
 concave slices and oscillation at most `G`. -/
