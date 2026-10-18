@@ -77,44 +77,8 @@ theorem hasDerivAt_bellman {v : (ℝ × Z) →ᵇ ℝ} {z : Z} {a du : ℝ}
     (hc : 0 < P.consumptionFnOf v z a)
     (hu : HasDerivAt P.u du (P.consumptionFnOf v z a)) :
     HasDerivAt (fun x => (P.toExtended.bellman v) (x, z)) ((1 + P.interest) * du) a := by
-  set a' := P.policyOf v (a, z) with ha'
-  have hamem : ((a, z) : ℝ × Z).1 ∈ Icc assetFloor assetCap := ⟨ha.le, hacap.le⟩
-  have ha'0 : assetFloor ≤ a' := (P.policyOf_mem v (a, z)).1
-  have hba : ∀ x : ℝ, P.toExtended.bellmanFn v (x, z) = (P.toExtended.bellman v) (x, z) :=
-    fun x => by rw [← P.toExtended.bellman_apply]
-  -- the frozen saving stays feasible, and consumption stays positive, near `a`
-  have hcms : ContinuousAt (fun x => P.maxSaving (x, z)) a :=
-    (P.continuous_maxSaving.comp (continuous_id.prodMk continuous_const)).continuousAt
-  have hccon : ContinuousAt (fun x => P.consumption (x, z) a') a :=
-    ((P.continuous_resources.comp (continuous_id.prodMk continuous_const)).sub
-      continuous_const).continuousAt
-  have hev : {x : ℝ | assetFloor < x ∧ x < assetCap ∧ a' < P.maxSaving (x, z)
-      ∧ 0 < P.consumption (x, z) a'} ∈ 𝓝 a := by
-    have h1 : ∀ᶠ x in 𝓝 a, assetFloor < x := lt_mem_nhds ha
-    have h2 : ∀ᶠ x in 𝓝 a, x < assetCap := gt_mem_nhds hacap
-    have h3 : ∀ᶠ x in 𝓝 a, a' < P.maxSaving (x, z) := hcms.eventually_const_lt hint
-    have h4 : ∀ᶠ x in 𝓝 a, 0 < P.consumption (x, z) a' := hccon.eventually_const_lt hc
-    filter_upwards [h1, h2, h3, h4] with x hx1 hx2 hx3 hx4 using ⟨hx1, hx2, hx3, hx4⟩
-  obtain ⟨l, r, hmem, hsub⟩ := mem_nhds_iff_exists_Ioo_subset.mp hev
-  have hIsub : Ioo l r ⊆ Icc assetFloor assetCap := fun x hx =>
-    ⟨(hsub hx).1.le, (hsub hx).2.1.le⟩
-  have hlow : ∀ x ∈ Ioo l r, P.lazyValue v z a' x ≤ (P.toExtended.bellman v) (x, z) := by
-    intro x hx
-    obtain ⟨hx1, hx2, hx3, hx4⟩ := hsub hx
-    have hfe : a' ∈ P.toExtended.feasible (x, z) := ⟨ha'0, hx3.le⟩
-    have := P.lazyValue_le v z ⟨hx1.le, hx2.le⟩ hfe hx4
-    rwa [hba x] at this
-  have htouch : P.lazyValue v z a' a = (P.toExtended.bellman v) (a, z) := by
-    have hfe : a' ∈ P.toExtended.feasible (a, z) := P.policyOf_mem v (a, z)
-    have := P.lazyValue_eq v z hamem hfe hc (P.policyOf_optimal v (a, z))
-    rwa [hba a] at this
-  refine (hconc.subset hIsub (convex_Ioo l r)).hasDerivAt_of_lowerBound hmem
-    (Ioo_mem_nhds hmem.1 hmem.2)
-    ⟨(l + a) / 2, ⟨by linarith [hmem.1, hmem.2], by linarith [hmem.1, hmem.2]⟩,
-      by linarith [hmem.1, hmem.2]⟩
-    ⟨(a + r) / 2, ⟨by linarith [hmem.1, hmem.2], by linarith [hmem.1, hmem.2]⟩,
-      by linarith [hmem.1, hmem.2]⟩
-    hlow htouch (P.hasDerivAt_lazyValue v z a' ha hu)
+  exact P.hasDerivAt_bellman_of_optimal ha hacap hconc
+    (P.policyOf_mem v (a, z)) (P.policyOf_optimal v (a, z)) hint hc hu
 
 /-! ### The two lazy bounds on the marginal value of assets
 

@@ -11,17 +11,15 @@ public import LeanPool.AiyagariEquilibrium.Models.CRRAConstants
 /-!
 # Positivity and monotonicity along the iteration
 
-Carroll and Kimball's induction step needs the CONTINUATION's consumption function to be
-positive, concave and nondecreasing. Concavity is the induction hypothesis; the other two are
-facts, but they are proved in this development only at the FIXED POINT
-(`positiveConsumption_of_unbounded`, `consumptionFn_mono`). This file restates them for an
-arbitrary continuation, which is what the induction sees.
+Carroll and Kimball's induction step needs the continuation's consumption function to be
+positive, concave and nondecreasing. Concavity is the induction hypothesis. This file proves
+positivity and consumption monotonicity against arbitrary continuations, together with saving
+bounds uniform over the iteration. Saving-policy monotonicity is shared with the fixed-point
+case in `IncomeFluctuationMonotone`.
 
-Both proofs are the fixed-point proofs with `objR` replaced by `objROf`: the objective read
-against an arbitrary continuation. The one structural fact they use is that the continuation
-value depends on the saving chosen and the income state, never on current assets, so shifting
-both households' plans by their resource gap leaves consumption alone and moves only the
-continuation. That is true of `objROf` for exactly the same reason it is true of `objR`.
+The exchange arguments use `objROf`, the real objective against an arbitrary continuation.
+Continuation value depends on chosen saving and the income state, never on current assets,
+so shifting household plans between asset levels cancels the continuation terms.
 -/
 
 @[expose] public section
@@ -36,14 +34,6 @@ variable {Z : Type*} [Fintype Z] [Nonempty Z] [TopologicalSpace Z] [DiscreteTopo
 variable {assetFloor assetCap : ℝ} (P : IncomeFluctuation Z assetFloor assetCap)
 
 /-! ### The objective against an arbitrary continuation -/
-
-/-- The continuation value of saving `x`, read against `v`. -/
-noncomputable def contOf (v : (ℝ × Z) →ᵇ ℝ) (z : Z) (x : ℝ) : ℝ :=
-  ∑ z' : Z, P.transitionMatrix z z' * v (x, z')
-
-/-- The objective, as a real number, read against `v`. -/
-noncomputable def objROf (v : (ℝ × Z) →ᵇ ℝ) (s : ℝ × Z) (x : ℝ) : ℝ :=
-  P.u (P.consumption s x) + P.discount * P.contOf v s.2 x
 
 theorem concaveOn_contOf {v : (ℝ × Z) →ᵇ ℝ} (hv : ConcaveSlices assetFloor assetCap v) (z : Z) :
     ConcaveOn ℝ (Icc assetFloor assetCap) (P.contOf v z) := by
@@ -103,93 +93,6 @@ theorem positiveConsumptionAll_of_rich (hrich : assetCap - assetFloor < P.minCon
     (P.feasible_subset_region (P.policyOf_mem v (a, z))).2
   simp only [consumptionFnOf, consumption]
   linarith
-
-/-- The objective in the reals agrees with the extended objective where consumption is
-positive. -/
-theorem objectiveE_eq_coe_of (v : (ℝ × Z) →ᵇ ℝ) {a : ℝ} {z : Z} {x : ℝ}
-    (ha : a ∈ Icc assetFloor assetCap) (hx : x ∈ P.toExtended.feasible (a, z))
-    (hcx : P.consumption (a, z) x ∈ P.dom) :
-    P.toExtended.objectiveE v (a, z) x = ((P.objROf v (a, z) x : ℝ) : EReal) := by
-  rw [ExtendedStochasticProgram.objectiveE, P.reward_eq_coe_dom (s := (a, z)) ha hx hcx,
-    ← EReal.coe_add]
-  rfl
-
-/-- **Any feasible action with positive consumption is worth at most the optimum**, whatever
-the continuation. -/
-theorem objROf_le_of_mem (v : (ℝ × Z) →ᵇ ℝ) {a : ℝ} {z : Z} {x : ℝ}
-    (ha : a ∈ Icc assetFloor assetCap) (hx : x ∈ P.toExtended.feasible (a, z))
-    (hcx : P.consumption (a, z) x ∈ P.dom) :
-    P.objROf v (a, z) x ≤ P.objROf v (a, z) (P.policyOf v (a, z)) := by
-  have hc : P.consumptionFnOf v z a ∈ P.dom := P.consumption_policyOf_mem_dom v ha
-  have h1 := P.lazyValue_le_dom v z ha hx hcx
-  have h2 := P.lazyValue_eq_dom v z ha (P.policyOf_mem v (a, z)) hc
-    (P.policyOf_optimal v (a, z))
-  simp only [lazyValue] at h1 h2
-  simp only [objROf, contOf, consumption]
-  linarith
-
-/-! ### Monotonicity of the saving policy -/
-
-/-- **The optimal policy is increasing in assets, whatever the continuation.** The exchange
-argument of `policy_mono`, run against `v`. -/
-theorem policyOf_mono {v : (ℝ × Z) →ᵇ ℝ}
-    (hv : ConcaveSlices assetFloor assetCap v) {a a' : ℝ} {z : Z}
-    (ha : a ∈ Icc assetFloor assetCap) (ha' : a' ∈ Icc assetFloor assetCap) (hle : a ≤ a') :
-    P.policyOf v (a, z) ≤ P.policyOf v (a', z) := by
-  by_contra hcon
-  rw [not_le] at hcon
-  have hR : P.resources (a, z) ≤ P.resources (a', z) := P.resources_mono hle
-  have hys : P.policyOf v (a, z) ∈ P.toExtended.feasible (a, z) := P.policyOf_mem v _
-  have hys' : P.policyOf v (a, z) ∈ P.toExtended.feasible (a', z) := P.feasible_mono hle hys
-  have hy's' : P.policyOf v (a', z) ∈ P.toExtended.feasible (a', z) := P.policyOf_mem v _
-  have hy's : P.policyOf v (a', z) ∈ P.toExtended.feasible (a, z) := by
-    rw [P.feasible_eq] at hys ⊢
-    rw [P.feasible_eq] at hy's'
-    exact ⟨hy's'.1, le_trans hcon.le hys.2⟩
-  have hcsy : P.consumption (a, z) (P.policyOf v (a, z)) ∈ P.dom :=
-    P.consumption_policyOf_mem_dom v ha
-  have hcs'y' : P.consumption (a', z) (P.policyOf v (a', z)) ∈ P.dom :=
-    P.consumption_policyOf_mem_dom v ha'
-  have hcsy' : P.consumption (a, z) (P.policyOf v (a', z)) ∈ P.dom := by
-    refine P.dom_upward hcsy ?_
-    simp only [consumption]; linarith
-  have hcs'y : P.consumption (a', z) (P.policyOf v (a, z)) ∈ P.dom := by
-    refine P.dom_upward hcsy ?_
-    simp only [consumption]; linarith
-  -- increasing differences, from concavity of `u` alone
-  have hshift := P.strictConcaveOn_u_dom.concaveOn.sub_le_sub_of_shift
-    (c₁ := P.resources (a, z) - P.policyOf v (a, z))
-    (c₂ := P.resources (a, z) - P.policyOf v (a', z))
-    (Δ := P.resources (a', z) - P.resources (a, z))
-    (by simpa only [consumption] using hcsy)
-    (by
-      have he : P.resources (a, z) - P.policyOf v (a', z)
-          + (P.resources (a', z) - P.resources (a, z))
-          = P.consumption (a', z) (P.policyOf v (a', z)) := by simp only [consumption]; ring
-      rw [he]; exact hcs'y')
-    (by linarith) (by linarith)
-  have hopt_s := P.objROf_le_of_mem v ha hy's hcsy'
-  have hge : P.objROf v (a', z) (P.policyOf v (a', z))
-      ≤ P.objROf v (a', z) (P.policyOf v (a, z)) := by
-    simp only [objROf, consumption] at hopt_s ⊢
-    have e₁ : P.resources (a, z) - P.policyOf v (a', z)
-        + (P.resources (a', z) - P.resources (a, z))
-        = P.resources (a', z) - P.policyOf v (a', z) := by ring
-    have e₂ : P.resources (a, z) - P.policyOf v (a, z)
-        + (P.resources (a', z) - P.resources (a, z))
-        = P.resources (a', z) - P.policyOf v (a, z) := by ring
-    rw [e₁, e₂] at hshift
-    linarith
-  have hopt' : P.objROf v (a', z) (P.policyOf v (a, z))
-      = P.objROf v (a', z) (P.policyOf v (a', z)) :=
-    le_antisymm (P.objROf_le_of_mem v ha' hys' hcs'y) hge
-  have hbell : P.toExtended.objectiveE v (a', z) (P.policyOf v (a, z))
-      = ((P.toExtended.bellmanFn v (a', z) : ℝ) : EReal) := by
-    rw [P.objectiveE_eq_coe_of v ha' hys' hcs'y, hopt',
-      ← P.objectiveE_eq_coe_of v ha' hy's' hcs'y']
-    exact P.policyOf_optimal v _
-  exact absurd (P.optimal_action_unique_of_concaveSlices hv (s := (a', z)) ha' hys' hy's'
-    hbell (P.policyOf_optimal v _)) (by linarith)
 
 /-! ### Monotonicity of the consumption function -/
 

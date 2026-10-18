@@ -134,9 +134,9 @@ theorem concaveSlices_valueFunction :
 
 /-! ### The optimal action of an arbitrary continuation
 
-`IncomeFluctuation` gives uniqueness of the optimal action at the value function. The closure
-argument needs it along the whole approximating sequence, so the same proof is run with any
-continuation whose slices are concave. -/
+`IncomeFluctuation` proves uniqueness for every continuation whose asset slices are concave.
+The closure argument applies that shared theorem along the whole approximating sequence; the
+wrapper below gives its hypothesis the name `ConcaveSlices`. -/
 
 /-- **The optimal action is unique** for any continuation with concave slices. -/
 theorem optimal_action_unique_of_concaveSlices {v : (ℝ × Z) →ᵇ ℝ}
@@ -146,67 +146,7 @@ theorem optimal_action_unique_of_concaveSlices {v : (ℝ × Z) →ᵇ ℝ}
     (hm₀ : P.toExtended.objectiveE v s a₀ = ((P.toExtended.bellmanFn v s : ℝ) : EReal))
     (hm₁ : P.toExtended.objectiveE v s a₁ = ((P.toExtended.bellmanFn v s : ℝ) : EReal)) :
     a₀ = a₁ := by
-  by_contra hne
-  obtain ⟨hc₀, hb₀⟩ := P.bellmanFn_eq_of_optimal hs h₀ hm₀
-  obtain ⟨hc₁, hb₁⟩ := P.bellmanFn_eq_of_optimal hs h₁ hm₁
-  have hhalf : (0 : ℝ) < 1 / 2 := by norm_num
-  have hsum : (1 : ℝ) / 2 + 1 / 2 = 1 := by norm_num
-  have hmem : (1 / 2 : ℝ) * a₀ + (1 / 2 : ℝ) * a₁ ∈ P.toExtended.feasible s := by
-    rw [P.feasible_eq] at h₀ h₁ ⊢
-    exact convex_Icc assetFloor (P.maxSaving s) h₀ h₁ hhalf.le hhalf.le hsum
-  have hcmid : P.consumption s ((1 / 2 : ℝ) * a₀ + (1 / 2 : ℝ) * a₁)
-      = (1 / 2 : ℝ) * P.consumption s a₀ + (1 / 2 : ℝ) * P.consumption s a₁ := by
-    simp only [consumption]; ring
-  have hcm : P.consumption s ((1 / 2 : ℝ) * a₀ + (1 / 2 : ℝ) * a₁) ∈ P.dom := by
-    rw [hcmid]
-    simpa only [smul_eq_mul] using P.convex_dom hc₀ hc₁ hhalf.le hhalf.le hsum
-  have hcne : P.consumption s a₀ ≠ P.consumption s a₁ := by
-    simp only [consumption]
-    intro h
-    exact hne (by linarith)
-  have hu := P.strictConcaveOn_u_dom.2 hc₀ hc₁ hcne hhalf hhalf hsum
-  have hexp : (1 / 2 : ℝ) * (∑ z', P.transitionMatrix s.2 z' * v (a₀, z'))
-      + (1 / 2 : ℝ) * (∑ z', P.transitionMatrix s.2 z' * v (a₁, z'))
-      ≤ ∑ z', P.transitionMatrix s.2 z' * v ((1 / 2 : ℝ) * a₀ + (1 / 2 : ℝ) * a₁, z') := by
-    rw [Finset.mul_sum, Finset.mul_sum, ← Finset.sum_add_distrib]
-    refine Finset.sum_le_sum fun z' _ => ?_
-    have hvz := (hv z').2 (P.feasible_subset_region h₀) (P.feasible_subset_region h₁)
-      hhalf.le hhalf.le hsum
-    simp only [smul_eq_mul] at hvz
-    nlinarith [P.transitionMatrix_nonneg s.2 z']
-  have hβ : (0 : ℝ) ≤ P.discount := P.discount.coe_nonneg
-  have hscaled := mul_le_mul_of_nonneg_left hexp hβ
-  simp only [smul_eq_mul] at hu
-  have hle := P.toExtended.le_bellmanFn v hmem
-  have hobj : P.toExtended.objectiveE v s ((1 / 2 : ℝ) * a₀ + (1 / 2 : ℝ) * a₁)
-      = ((P.u (P.consumption s ((1 / 2 : ℝ) * a₀ + (1 / 2 : ℝ) * a₁))
-          + P.discount * ∑ z', P.transitionMatrix s.2 z'
-              * v ((1 / 2 : ℝ) * a₀ + (1 / 2 : ℝ) * a₁, z') : ℝ) : EReal) := by
-    rw [ExtendedStochasticProgram.objectiveE, P.reward_eq_coe_dom hs hmem hcm, ← EReal.coe_add]
-    rfl
-  rw [hobj] at hle
-  have hle' : P.u (P.consumption s ((1 / 2 : ℝ) * a₀ + (1 / 2 : ℝ) * a₁))
-      + P.discount * ∑ z', P.transitionMatrix s.2 z'
-          * v ((1 / 2 : ℝ) * a₀ + (1 / 2 : ℝ) * a₁, z')
-      ≤ P.toExtended.bellmanFn v s := by exact_mod_cast hle
-  rw [hcmid] at hle'
-  linarith
-
-/-- The optimal saving choice under an arbitrary continuation. At the value function this is
-definitionally `policy`. -/
-noncomputable def policyOf (v : (ℝ × Z) →ᵇ ℝ) (s : ℝ × Z) : ℝ :=
-  Classical.choose (P.toExtended.exists_optimal_action v s)
-
-theorem policyOf_mem (v : (ℝ × Z) →ᵇ ℝ) (s : ℝ × Z) :
-    P.policyOf v s ∈ P.toExtended.feasible s :=
-  (Classical.choose_spec (P.toExtended.exists_optimal_action v s)).1
-
-theorem policyOf_optimal (v : (ℝ × Z) →ᵇ ℝ) (s : ℝ × Z) :
-    P.toExtended.objectiveE v s (P.policyOf v s)
-      = ((P.toExtended.bellmanFn v s : ℝ) : EReal) :=
-  (Classical.choose_spec (P.toExtended.exists_optimal_action v s)).2
-
-theorem policyOf_valueFunction : P.policyOf P.toExtended.valueFunction = P.policy := rfl
+  exact P.optimal_action_unique_of_concave hv hs h₀ h₁ hm₀ hm₁
 
 /-- The consumption function implied by an arbitrary continuation. -/
 noncomputable def consumptionFnOf (v : (ℝ × Z) →ᵇ ℝ) (z : Z) (a : ℝ) : ℝ :=

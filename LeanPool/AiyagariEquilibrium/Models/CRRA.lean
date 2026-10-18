@@ -11,35 +11,22 @@ public import LeanPool.AiyagariEquilibrium.Analysis.RelativeRiskAversion
 /-!
 # CRRA utility, and where it fits
 
-Two separate strands of the development each ask something of `u`, and this file specialises to
-the CRRA family to see what they ask together.
+This file compares two conditions on the CRRA utility family:
 
-* The income fluctuation structure requires `tendsto_atBot_u`: utility falls to `-∞` as
-  consumption vanishes. That is what makes consumption positive at the optimum without a floor,
-  and everything downstream — the policy, the distribution, the equilibrium — rests on it.
-* Light (2018) requires relative risk aversion at most one, `RelativeRiskAversionLeOne`.
+* `Tendsto u (𝓝[>] 0) atBot`, which gives unbounded-below utility at zero consumption;
+* Light's relative-risk-aversion bound `RelativeRiskAversionLeOne`.
 
-Within CRRA the first holds exactly when `γ ≥ 1` and the second exactly when `γ ≤ 1`, so
-**together they hold only at `γ = 1`: log utility**. That is `crra_pinch`, the point of this file.
+For CRRA the first holds exactly when `γ ≥ 1` and the second exactly when `γ ≤ 1`.
+`crra_pinch` records that both hold only for log utility, `γ = 1`. For `γ < 1`,
+`not_tendsto_atBot_crraUtility` proves utility is bounded below; for `γ > 1`,
+`strictConcaveOn_crra_comp_exp` rules out the relative-risk-aversion bound.
 
-The pinch is sharp in both directions and neither side is an artefact of the proofs. For `γ < 1`
-period utility is bounded below by zero, so it cannot tend to `-∞` under any argument
-(`not_tendsto_atBot_crraUtility`); for `γ > 1` the utility is strictly CONCAVE in log consumption,
-so `RelativeRiskAversionLeOne` fails as badly as it can
-(`strictConcaveOn_crra_comp_exp`).
-
-## What this says about the uniqueness programme
-
-The formalisation's only worked witness, `NonVacuity.impatient`, uses `u c = -c⁻¹`, which is CRRA
-with `γ = 2` (`crraUtility_two`). It satisfies the existence machinery and fails Light's
-condition. Log utility is the one CRRA calibration where both can hold, and it sits on the
-boundary of each — `u ∘ exp` is affine there, neither convex-strictly nor concave-strictly.
-
-This is the parametric cost of the uniqueness argument stated exactly, and it matches what the
-survey literature reports: Toda and Walsh (2024) call `RRA ≤ 1` "a quite strong parametric
-restriction". Escaping `γ = 1` means giving up `tendsto_atBot_u`, which means carrying a
-consumption floor or an Inada-free treatment of the corner — a different development, not a
-different proof.
+The household structure itself supports both cases. Its utility domain can be `Ioi 0` or
+`Ici 0`, with continuity of the extended reward in place of an unconditional divergence
+assumption. `IncomeFluctuation.Unbounded` recovers divergence in the open-domain case.
+`BoundedIncomeFluctuation` supplies a bounded-utility CES model, and the later iteration
+machinery obtains its positive consumption from a marginal Inada condition. Thus the pinch
+restricts the unbounded-below CRRA subclass, rather than every household model in the library.
 
 ## The single derivative formula
 

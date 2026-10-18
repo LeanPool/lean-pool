@@ -116,18 +116,24 @@ work is the neighbourhood: the frozen saving is feasible at the state it came fr
 poorer states it need not be, so the lower bound is only local. Continuity of the feasible
 boundary gives an interval on which it survives, provided the saving is interior there. -/
 
-theorem hasDerivAt_valueFunction (hpc : P.PositiveConsumption) {z : Z} {a du : ℝ}
+/-- **The envelope condition for `bellman v`.** The marginal value of assets is the gross
+interest rate times the marginal utility of the consumption the household actually chooses.
+Clausen and Strub's sandwich, run one step of the iteration at a time rather than at the fixed
+point. -/
+theorem hasDerivAt_bellman_of_optimal {v : (ℝ × Z) →ᵇ ℝ} {z : Z} {a a' du : ℝ}
     (ha : assetFloor < a) (hacap : a < assetCap)
-    (hconc : ConcaveOn ℝ (Icc assetFloor assetCap)
-      fun x => P.toExtended.valueFunction (x, z))
-    (hint : P.policy (a, z) < P.maxSaving (a, z))
-    (hu : HasDerivAt P.u du (P.resources (a, z) - P.policy (a, z))) :
-    HasDerivAt (fun x => P.toExtended.valueFunction (x, z)) ((1 + P.interest) * du) a := by
-  set V := P.toExtended.valueFunction with hV
-  set a' := P.policy (a, z) with ha'
+    (hconc : ConcaveOn ℝ (Icc assetFloor assetCap) fun x => (P.toExtended.bellman v) (x, z))
+    (ha'mem : a' ∈ P.toExtended.feasible (a, z))
+    (hopt : P.toExtended.objectiveE v (a, z) a'
+      = ((P.toExtended.bellmanFn v (a, z) : ℝ) : EReal))
+    (hint : a' < P.maxSaving (a, z))
+    (hc : 0 < P.consumption (a, z) a')
+    (hu : HasDerivAt P.u du (P.consumption (a, z) a')) :
+    HasDerivAt (fun x => (P.toExtended.bellman v) (x, z)) ((1 + P.interest) * du) a := by
   have hamem : ((a, z) : ℝ × Z).1 ∈ Icc assetFloor assetCap := ⟨ha.le, hacap.le⟩
-  have hc : 0 < P.consumption (a, z) a' := P.consumption_policy_pos hpc hamem
-  have ha'0 : assetFloor ≤ a' := (P.policy_mem (a, z)).1
+  have ha'0 : assetFloor ≤ a' := ha'mem.1
+  have hba : ∀ x : ℝ, P.toExtended.bellmanFn v (x, z) = (P.toExtended.bellman v) (x, z) :=
+    fun x => by rw [← P.toExtended.bellman_apply]
   -- the frozen saving stays feasible, and consumption stays positive, near `a`
   have hcms : ContinuousAt (fun x => P.maxSaving (x, z)) a :=
     (P.continuous_maxSaving.comp (continuous_id.prodMk continuous_const)).continuousAt
@@ -142,31 +148,38 @@ theorem hasDerivAt_valueFunction (hpc : P.PositiveConsumption) {z : Z} {a du : �
     have h4 : ∀ᶠ x in 𝓝 a, 0 < P.consumption (x, z) a' := hccon.eventually_const_lt hc
     filter_upwards [h1, h2, h3, h4] with x hx1 hx2 hx3 hx4 using ⟨hx1, hx2, hx3, hx4⟩
   obtain ⟨l, r, hmem, hsub⟩ := mem_nhds_iff_exists_Ioo_subset.mp hev
-  -- on that interval the lazy value is a lower bound
   have hIsub : Ioo l r ⊆ Icc assetFloor assetCap := fun x hx =>
     ⟨(hsub hx).1.le, (hsub hx).2.1.le⟩
-  have hlow : ∀ x ∈ Ioo l r, P.lazyValue V z a' x ≤ V (x, z) := by
+  have hlow : ∀ x ∈ Ioo l r, P.lazyValue v z a' x ≤ (P.toExtended.bellman v) (x, z) := by
     intro x hx
     obtain ⟨hx1, hx2, hx3, hx4⟩ := hsub hx
     have hfe : a' ∈ P.toExtended.feasible (x, z) := ⟨ha'0, hx3.le⟩
-    have := P.lazyValue_le V z ⟨hx1.le, hx2.le⟩ hfe hx4
-    rwa [hV, show P.toExtended.bellmanFn P.toExtended.valueFunction (x, z)
-      = P.toExtended.valueFunction (x, z) from by
-        rw [← P.toExtended.bellman_apply, P.toExtended.bellman_valueFunction]] at this
-  -- and it touches at `a`
-  have htouch : P.lazyValue V z a' a = V (a, z) := by
-    have hfe : a' ∈ P.toExtended.feasible (a, z) := P.policy_mem (a, z)
-    have := P.lazyValue_eq V z hamem hfe hc (P.policy_optimal (a, z))
-    rwa [hV, show P.toExtended.bellmanFn P.toExtended.valueFunction (a, z)
-      = P.toExtended.valueFunction (a, z) from by
-        rw [← P.toExtended.bellman_apply, P.toExtended.bellman_valueFunction]] at this
+    have := P.lazyValue_le v z ⟨hx1.le, hx2.le⟩ hfe hx4
+    rwa [hba x] at this
+  have htouch : P.lazyValue v z a' a = (P.toExtended.bellman v) (a, z) := by
+    have hfe : a' ∈ P.toExtended.feasible (a, z) := ha'mem
+    have := P.lazyValue_eq v z hamem hfe hc hopt
+    rwa [hba a] at this
   refine (hconc.subset hIsub (convex_Ioo l r)).hasDerivAt_of_lowerBound hmem
     (Ioo_mem_nhds hmem.1 hmem.2)
     ⟨(l + a) / 2, ⟨by linarith [hmem.1, hmem.2], by linarith [hmem.1, hmem.2]⟩,
       by linarith [hmem.1, hmem.2]⟩
     ⟨(a + r) / 2, ⟨by linarith [hmem.1, hmem.2], by linarith [hmem.1, hmem.2]⟩,
       by linarith [hmem.1, hmem.2]⟩
-    hlow htouch (P.hasDerivAt_lazyValue V z a' ha hu)
+    hlow htouch (P.hasDerivAt_lazyValue v z a' ha hu)
+
+theorem hasDerivAt_valueFunction (hpc : P.PositiveConsumption) {z : Z} {a du : ℝ}
+    (ha : assetFloor < a) (hacap : a < assetCap)
+    (hconc : ConcaveOn ℝ (Icc assetFloor assetCap)
+      fun x => P.toExtended.valueFunction (x, z))
+    (hint : P.policy (a, z) < P.maxSaving (a, z))
+    (hu : HasDerivAt P.u du (P.resources (a, z) - P.policy (a, z))) :
+    HasDerivAt (fun x => P.toExtended.valueFunction (x, z)) ((1 + P.interest) * du) a := by
+  simpa only [P.toExtended.bellman_valueFunction] using
+    P.hasDerivAt_bellman_of_optimal ha hacap
+      (by simpa only [P.toExtended.bellman_valueFunction] using hconc)
+      (P.policy_mem (a, z)) (P.policy_optimal (a, z)) hint
+      (P.consumption_policy_pos hpc ⟨ha.le, hacap.le⟩) hu
 
 /-! ### At the borrowing constraint
 

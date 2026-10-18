@@ -551,13 +551,13 @@ theorem concaveOn_valueFunction (z : Z) :
     P.toExtended.blackwell P.toExtended.discount_lt_one
     (fun v hv => P.concaveOn_bellman v hv) z
 
-/-- **The optimal action is unique.** -/
-theorem optimal_action_unique {s : ℝ × Z} (hs : s.1 ∈ Icc assetFloor assetCap) {a₀ a₁ : ℝ}
+/-- **The optimal action is unique** for any continuation with concave slices. -/
+theorem optimal_action_unique_of_concave {v : (ℝ × Z) →ᵇ ℝ}
+    (hv : ∀ z : Z, ConcaveOn ℝ (Icc assetFloor assetCap) fun a => v (a, z))
+    {s : ℝ × Z} (hs : s.1 ∈ Icc assetFloor assetCap) {a₀ a₁ : ℝ}
     (h₀ : a₀ ∈ P.toExtended.feasible s) (h₁ : a₁ ∈ P.toExtended.feasible s)
-    (hm₀ : P.toExtended.objectiveE P.toExtended.valueFunction s a₀
-      = ((P.toExtended.bellmanFn P.toExtended.valueFunction s : ℝ) : EReal))
-    (hm₁ : P.toExtended.objectiveE P.toExtended.valueFunction s a₁
-      = ((P.toExtended.bellmanFn P.toExtended.valueFunction s : ℝ) : EReal)) :
+    (hm₀ : P.toExtended.objectiveE v s a₀ = ((P.toExtended.bellmanFn v s : ℝ) : EReal))
+    (hm₁ : P.toExtended.objectiveE v s a₁ = ((P.toExtended.bellmanFn v s : ℝ) : EReal)) :
     a₀ = a₁ := by
   by_contra hne
   obtain ⟨hc₀, hb₀⟩ := P.bellmanFn_eq_of_optimal hs h₀ hm₀
@@ -565,7 +565,8 @@ theorem optimal_action_unique {s : ℝ × Z} (hs : s.1 ∈ Icc assetFloor assetC
   have hhalf : (0 : ℝ) < 1 / 2 := by norm_num
   have hsum : (1 : ℝ) / 2 + 1 / 2 = 1 := by norm_num
   have hmem : (1 / 2 : ℝ) * a₀ + (1 / 2 : ℝ) * a₁ ∈ P.toExtended.feasible s := by
-    simpa using convex_Icc assetFloor (P.maxSaving s) h₀ h₁ hhalf.le hhalf.le hsum
+    rw [P.feasible_eq] at h₀ h₁ ⊢
+    exact convex_Icc assetFloor (P.maxSaving s) h₀ h₁ hhalf.le hhalf.le hsum
   have hcmid : P.consumption s ((1 / 2 : ℝ) * a₀ + (1 / 2 : ℝ) * a₁)
       = (1 / 2 : ℝ) * P.consumption s a₀ + (1 / 2 : ℝ) * P.consumption s a₁ := by
     simp only [consumption]; ring
@@ -577,35 +578,42 @@ theorem optimal_action_unique {s : ℝ × Z} (hs : s.1 ∈ Icc assetFloor assetC
     intro h
     exact hne (by linarith)
   have hu := P.strictConcaveOn_u_dom.2 hc₀ hc₁ hcne hhalf hhalf hsum
-  have hexp : (1 / 2 : ℝ) * (∑ z', P.transitionMatrix s.2 z' * P.toExtended.valueFunction (a₀, z'))
-      + (1 / 2 : ℝ) * (∑ z', P.transitionMatrix s.2 z' * P.toExtended.valueFunction (a₁, z'))
-      ≤ ∑ z', P.transitionMatrix s.2 z'
-          * P.toExtended.valueFunction ((1 / 2 : ℝ) * a₀ + (1 / 2 : ℝ) * a₁, z') := by
+  have hexp : (1 / 2 : ℝ) * (∑ z', P.transitionMatrix s.2 z' * v (a₀, z'))
+      + (1 / 2 : ℝ) * (∑ z', P.transitionMatrix s.2 z' * v (a₁, z'))
+      ≤ ∑ z', P.transitionMatrix s.2 z' * v ((1 / 2 : ℝ) * a₀ + (1 / 2 : ℝ) * a₁, z') := by
     rw [Finset.mul_sum, Finset.mul_sum, ← Finset.sum_add_distrib]
     refine Finset.sum_le_sum fun z' _ => ?_
-    have hvz := (P.concaveOn_valueFunction z').2 (P.feasible_subset_region h₀)
-      (P.feasible_subset_region h₁) hhalf.le hhalf.le hsum
+    have hvz := (hv z').2 (P.feasible_subset_region h₀) (P.feasible_subset_region h₁)
+      hhalf.le hhalf.le hsum
     simp only [smul_eq_mul] at hvz
     nlinarith [P.transitionMatrix_nonneg s.2 z']
   have hβ : (0 : ℝ) ≤ P.discount := P.discount.coe_nonneg
   have hscaled := mul_le_mul_of_nonneg_left hexp hβ
   simp only [smul_eq_mul] at hu
-  have hle := P.toExtended.le_bellmanFn P.toExtended.valueFunction hmem
-  have hobj : P.toExtended.objectiveE P.toExtended.valueFunction s
-        ((1 / 2 : ℝ) * a₀ + (1 / 2 : ℝ) * a₁)
+  have hle := P.toExtended.le_bellmanFn v hmem
+  have hobj : P.toExtended.objectiveE v s ((1 / 2 : ℝ) * a₀ + (1 / 2 : ℝ) * a₁)
       = ((P.u (P.consumption s ((1 / 2 : ℝ) * a₀ + (1 / 2 : ℝ) * a₁))
           + P.discount * ∑ z', P.transitionMatrix s.2 z'
-              * P.toExtended.valueFunction ((1 / 2 : ℝ) * a₀ + (1 / 2 : ℝ) * a₁, z')
-            : ℝ) : EReal) := by
+              * v ((1 / 2 : ℝ) * a₀ + (1 / 2 : ℝ) * a₁, z') : ℝ) : EReal) := by
     rw [ExtendedStochasticProgram.objectiveE, P.reward_eq_coe_dom hs hmem hcm, ← EReal.coe_add]
     rfl
   rw [hobj] at hle
   have hle' : P.u (P.consumption s ((1 / 2 : ℝ) * a₀ + (1 / 2 : ℝ) * a₁))
       + P.discount * ∑ z', P.transitionMatrix s.2 z'
-          * P.toExtended.valueFunction ((1 / 2 : ℝ) * a₀ + (1 / 2 : ℝ) * a₁, z')
-      ≤ P.toExtended.bellmanFn P.toExtended.valueFunction s := by exact_mod_cast hle
+          * v ((1 / 2 : ℝ) * a₀ + (1 / 2 : ℝ) * a₁, z')
+      ≤ P.toExtended.bellmanFn v s := by exact_mod_cast hle
   rw [hcmid] at hle'
   linarith
+
+/-- **The optimal action is unique.** -/
+theorem optimal_action_unique {s : ℝ × Z} (hs : s.1 ∈ Icc assetFloor assetCap) {a₀ a₁ : ℝ}
+    (h₀ : a₀ ∈ P.toExtended.feasible s) (h₁ : a₁ ∈ P.toExtended.feasible s)
+    (hm₀ : P.toExtended.objectiveE P.toExtended.valueFunction s a₀
+      = ((P.toExtended.bellmanFn P.toExtended.valueFunction s : ℝ) : EReal))
+    (hm₁ : P.toExtended.objectiveE P.toExtended.valueFunction s a₁
+      = ((P.toExtended.bellmanFn P.toExtended.valueFunction s : ℝ) : EReal)) :
+    a₀ = a₁ := by
+  exact P.optimal_action_unique_of_concave P.concaveOn_valueFunction hs h₀ h₁ hm₀ hm₁
 
 /-- The optimal saving choice. -/
 noncomputable def policy (s : ℝ × Z) : ℝ :=
@@ -620,6 +628,22 @@ theorem policy_optimal (s : ℝ × Z) :
       = ((P.toExtended.bellmanFn P.toExtended.valueFunction s : ℝ) : EReal) :=
   (Classical.choose_spec
     (P.toExtended.exists_optimal_action P.toExtended.valueFunction s)).2
+
+/-- The optimal saving choice under an arbitrary continuation. At the value function this is
+definitionally `policy`. -/
+noncomputable def policyOf (v : (ℝ × Z) →ᵇ ℝ) (s : ℝ × Z) : ℝ :=
+  Classical.choose (P.toExtended.exists_optimal_action v s)
+
+theorem policyOf_mem (v : (ℝ × Z) →ᵇ ℝ) (s : ℝ × Z) :
+    P.policyOf v s ∈ P.toExtended.feasible s :=
+  (Classical.choose_spec (P.toExtended.exists_optimal_action v s)).1
+
+theorem policyOf_optimal (v : (ℝ × Z) →ᵇ ℝ) (s : ℝ × Z) :
+    P.toExtended.objectiveE v s (P.policyOf v s)
+      = ((P.toExtended.bellmanFn v s : ℝ) : EReal) :=
+  (Classical.choose_spec (P.toExtended.exists_optimal_action v s)).2
+
+theorem policyOf_valueFunction : P.policyOf P.toExtended.valueFunction = P.policy := rfl
 
 theorem policy_mem_region (s : ℝ × Z) : P.policy s ∈ Icc assetFloor assetCap :=
   P.feasible_subset_region (P.policy_mem s)

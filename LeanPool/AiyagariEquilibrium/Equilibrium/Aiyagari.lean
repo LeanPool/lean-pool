@@ -23,9 +23,10 @@ The firm side is left abstract: any continuous capital demand schedule `D` will 
 Cobb-Douglas firm with depreciation is one instance among many, and nothing here depends on
 which.
 
-What is assumed rather than proved is that capital supply moves continuously with the
-interest rate. That is the remaining gap, and it is a real one -- see the note at the end of
-this file.
+This module takes continuity of capital supply as an explicit hypothesis. The later
+`AiyagariContinuity` module proves it for a fixed-cap, zero-borrowing-floor rate family from a
+stationary selection that is unique at each rate; its equilibrium theorem also requires a
+continuous demand schedule and opposite signs of excess demand at the interval endpoints.
 -/
 
 @[expose] public section
@@ -117,34 +118,17 @@ end Equilibrium
 end LeanEconomics
 
 /-!
-## What remains
+## Rate continuity and the remaining hypotheses
 
-`exists_aiyagari_equilibrium` takes continuity of capital supply `S` as a hypothesis. The
-pieces already proved discharge part of it and identify exactly what is missing.
+`IncomeFluctuation Z assetFloor assetCap` takes the asset bounds as parameters. Fixing them
+across a rate family gives a common state space for its stationary distributions.
 
-Given a family of household problems indexed by the interest rate:
-
-1. `continuousAt_fixedPoint` (in `DynamicProgramming/Parametric.lean`) reduces continuity of
-   `r ↦ valueFunction r` to continuity of `r ↦ bellman r v₀` at the SINGLE function
-   `v₀ = valueFunction r₀`, in sup norm. The Blackwell contraction modulus is the discount
-   factor, which does not vary with `r`, so the common-modulus hypothesis is free.
-2. From a continuous value function, continuity of the policy in `r` would follow by the same
-   Berge argument that already gives continuity in the state, since the maximiser is unique.
-3. From a continuous policy, `r ↦ push r` is weakly continuous, so the set of stationary
-   distributions has closed graph; with UNIQUENESS (`stationary_unique_of_exhausts`) a
-   convergent subnet argument on the compact space of probability measures gives continuity
-   of `r ↦ μ r`.
-4. `continuous_aggregateCapital` then gives continuity of `S`, since the asset coordinate is
-   bounded and continuous. This step is proved.
-
-Step 1 is the substantial one: it needs a sup-norm (not pointwise) estimate, uniform over the
-state space, and the extended-real reward makes it delicate near zero consumption, where
-utility falls to `-∞`. The estimate is true -- the optimum keeps consumption bounded away
-from zero because the value is finite -- but proving it uniformly in `r` is real work.
-
-A second obstacle is structural rather than mathematical: `assetCap` is a FIELD of
-`IncomeFluctuation`, so `(Pf r).State` is a different type for each `r`. Any statement
-quantifying over the family across rates has to either fix the cap across the family or carry
-transports. That is why the theorem above quantifies the distribution inside an existential,
-where the dependence causes no trouble.
+For a zero borrowing floor, `IncomeFluctuation.continuousOn_capitalSupply` in
+`Equilibrium/AiyagariContinuity.lean` proves rate continuity from a selection of stationary
+distributions and uniqueness at every rate of a closed interval. Its
+`IncomeFluctuation.exists_equilibrium_of_selection` then applies the intermediate value
+theorem, assuming a continuous capital-demand schedule and endpoint sign inequalities.
+The stationary selection, its uniqueness and the endpoint inequalities remain explicit
+hypotheses of that result. The more abstract theorem in this file also allows other fixed
+borrowing floors, while taking continuity of the realised supply schedule as a hypothesis.
 -/
