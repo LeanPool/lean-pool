@@ -151,13 +151,13 @@ theorem unconditionalSelectedGaugeRetainedPOVMNaturality_effect
   rcases p with ⟨⟨φ, i⟩, k⟩
   rcases q with ⟨⟨ψ, j⟩, l⟩
   by_cases phase : φ = ψ <;> by_cases work : k = l <;>
-    simp [directDSVActualReindexedRetainedPOVM_effect,
-      physical8SelectedGlobalTargetWorkEquiv,
-      unitaryConjugatePOVM, Matrix.mul_apply,
-      Matrix.conjTranspose_apply, Fintype.sum_sigma,
-      Fintype.sum_prod_type,
-      unconditionalMixedConjugateSigmaAtomLift_apply,
-      mul_assoc, ite_and, phase, work, eq_comm]
+    simp only [physical8SelectedGlobalTargetWorkEquiv, unitaryConjugatePOVM, mul_assoc, phase,
+      work, directDSVActualReindexedRetainedPOVM_effect, Equiv.coe_fn_mk, Matrix.mul_apply,
+      conjTranspose_apply, RCLike.star_def, ↓reduceIte, mul_one, Prod.mk.injEq, ite_and, mul_ite,
+      mul_zero, ite_mul, zero_mul, Fintype.sum_sigma, eq_comm, sum_ite_irrel, sum_ite_eq',
+      mem_univ, sum_const_zero, Fintype.sum_prod_type,
+      unconditionalMixedConjugateSigmaAtomLift_apply, sum_ite_eq, and_true, and_false, map_zero,
+      ite_self, and_self]
 
 theorem unconditionalSelectedGaugeRetainedPOVMNaturality
     {C : Type} [Fintype C]
@@ -580,7 +580,7 @@ theorem unconditionalWeightedClippedMatchedVerifierAndMassLoss
         have loss := mul_nonneg
           (sub_nonneg.mpr (source_row_mass i))
           (sub_nonneg.mpr (win_bounded i))
-        linarith
+        linarith only [loss]
   have clean_verifier_signed :
       (∑ i : I, weight i *
         ∑ k : K,
@@ -609,7 +609,8 @@ theorem unconditionalWeightedClippedMatchedVerifierAndMassLoss
         2 * Real.sqrt Δclean := by
     simpa only [same_work_mass] using
       ((le_abs_self _).trans clean_mass_gap)
-  linarith
+  linarith only [actual_success, ideal_payoff, clean_verifier_signed, clip_verifier_signed,
+    clean_mass_signed]
 
 end
 
@@ -819,7 +820,6 @@ theorem unconditionalFairPhysicalFlaggedStoppingTransfer
       ExactSourceSharedFlag X Y A B D denominator × (X × Y)) :
       flagPhysical outcome ≤ 1 :=
     history_born_bounded (history outcome)
-  have variation : Pinsker.finiteTotalVariation p q ≤ lam := by simpa only using total_variation
   have transferred := winning_expectation_transfer p q flagPhysical p_normalized q_normalized
     flagPhysical_nonnegative flagPhysical_bounded
   have p_nonnegative (outcome :
@@ -845,7 +845,7 @@ theorem unconditionalFairPhysicalFlaggedStoppingTransfer
           exactSourceConditionalWinningProbability G n S D h) -
           bad - 4 * Real.sqrt deviation - 2 * Real.sqrt clipping ≤
         ∑ outcome, q outcome * flagPhysical outcome at fair_verifier
-    linarith
+    linarith only [total_variation, mismatch, fair_win, transferred, discarded, fair_verifier]
   let stop := fun outcome :
       ExactSourceSharedFlag X Y A B D denominator × (X × Y) =>
       ∑ j : Fin L,
@@ -1006,7 +1006,7 @@ private theorem unconditionalActualLocalPOVMWinningEffect_add_losingEffect
       rw [← Finset.sum_add_distrib]
       apply Finset.sum_congr rfl
       intro b _
-      split <;> simp
+      split <;> simp only [add_zero, zero_add]
     _ = (∑ a : A, PA.effect a) ⊗ₖ
           (∑ b : B, PB.effect b) := by
       ext ⟨i, j⟩ ⟨k, l⟩
@@ -1510,7 +1510,7 @@ theorem unconditionalActualFairCleanedRow_le_one
   have terminal :=
     dSVDensityRationalHeterogeneousPhysicalTerminalMass_nonneg
       N width schedule ξ ζ
-  linarith
+  linarith only [partition, asynchronous, terminal]
 
 theorem unconditionalActualFairWeightedCleanedMass_le_one
     {I : Type} [Fintype I]
@@ -1592,12 +1592,12 @@ theorem unconditionalActualFairWeightedStoppedSuccess
         intro h _
         rw [dSVDensityRationalHeterogeneousPhysicalStopped_mass_partition
           grid dimension width schedule (ξ h) (ζ h)]
-        ring
+        ac_rfl
       _ = 1 := weight_normalized
   simp_rw [unconditionalActualFairCleanedRow_eq_stoppedSuccess
     phases grid dimension harmonic width width_positive
     schedule _ _ Q A C]
-  linarith
+  linarith only [asynchronous_bound, terminal_bound, partition]
 
 end
 
@@ -1760,13 +1760,7 @@ theorem unconditionalActualFairSourceCanonicalVector_norm
   have squared :=
     unconditionalActualFairSourceCanonicalVector_norm_sq
       phases grid harmonic width schedule ξ ζ ψ unit j positive fine
-  nlinarith [
-    norm_nonneg (integratorActualC485SourceVector
-      (S := S) (B := B) (N := N) (d := d) (L := L) (m := m)
-      width schedule ξ ζ ψ j),
-    norm_nonneg (integratorActualC485CanonicalVector
-      (S := S) (B := B) (N := N) (d := d) (L := L) (m := m)
-      (width := width) schedule ξ ζ j positive grid fine)]
+  exact (sq_eq_sq₀ (norm_nonneg _) (norm_nonneg _)).mp squared
 
 end
 
@@ -1881,7 +1875,7 @@ theorem unconditionalSourcePhysicalSameGridWeightedStoppingLedger
             4 * rho ^ 2 +
               (16 * (Real.exp 1 - 1) + 4) * t) := by
   classical
-  have w_nonnegative : 0 ≤ w := by linarith
+  have w_nonnegative : 0 ≤ w := by linarith only [large]
   obtain ⟨L, horizon_positive, tail⟩ :=
     dSVDensityRationalHeterogeneousPhysical_exists_positive_horizon
       dimension w_nonnegative precision
@@ -1903,10 +1897,10 @@ theorem unconditionalSourcePhysicalSameGridWeightedStoppingLedger
     intro s
     have denominator : 0 < 2 * (width s + 1) := by
       dsimp [width]
-      linarith
+      linarith only [large]
     apply (le_div_iff₀ denominator).mpr
     dsimp [width]
-    linarith [grid_budget, bounded]
+    linarith only [bounded, grid_budget]
   have asynchronous (i : ι) :
       dSVDensityRationalHeterogeneousPhysicalStoppedAsynchronousMass
           N width schedule (ξ i) (ζ i) ≤
@@ -1917,7 +1911,7 @@ theorem unconditionalSourcePhysicalSameGridWeightedStoppingLedger
         dSVDensityRationalHeterogeneousPhysicalStoppedAsynchronousMass_le_targetDistance
           grid dimension width width_large fine upper w_nonnegative
           schedule (ξ i) (ζ i)
-      _ ≤ _ := by linarith
+      _ ≤ _ := by linarith only [grid_budget]
   have terminal (i : ι) :
       dSVDensityRationalHeterogeneousPhysicalTerminalMass
           N width schedule (ξ i) (ζ i) ≤ δ ^ 2 :=
@@ -1960,7 +1954,7 @@ theorem unconditionalSourcePhysicalSameGridWeightedStoppingLedger
     have actual := selected width schedule (ξ i) (ζ i)
     rw [dSVDensityRationalHeterogeneousActualAsynchronousFlagMass_eq_stoppedAsynchronousMass
       grid dimension width schedule (ξ i) (ζ i)] at actual
-    linarith
+    linarith only [actual]
   have mean_hazard :=
     unconditionalSelectedCopy_weightedAffine
       weight
@@ -1978,7 +1972,7 @@ theorem unconditionalSourcePhysicalSameGridWeightedStoppingLedger
   refine ⟨asynchronous, terminal, mean_asynchronous, mean_terminal, ?_⟩
   have scaled := mul_le_mul_of_nonneg_left mean_asynchronous
     (show 0 ≤ (34 : ℝ) / t by positivity)
-  linarith
+  linarith only [mean_hazard, scaled]
 
 end
 
@@ -1992,9 +1986,10 @@ private theorem unconditionalSmallSource_eta_le_one
     eta ≤ 1 := by
   have delta_nonnegative : 0 ≤ alpha ^ (1 / 3 : ℝ) :=
     Real.rpow_nonneg alpha_positive.le _
-  have root_nonnegative := Real.sqrt_nonneg eta
-  have root_square := Real.sq_sqrt eta_nonnegative
-  nlinarith
+  calc
+    eta = Real.sqrt eta ^ 2 := (Real.sq_sqrt eta_nonnegative).symm
+    _ ≤ 1 := pow_le_one₀ (Real.sqrt_nonneg _) (by
+      linarith only [small, delta_nonnegative])
 
 private theorem unconditionalSmallSource_eta_scaled_root
     (eta : ℝ) (eta_nonnegative : 0 ≤ eta) :
@@ -2040,7 +2035,7 @@ private theorem unconditionalSmallSource_root_estimates
       (by norm_num : (1 / 12 : ℝ) ≤ 1 / 2)
   have eta_bound : Real.sqrt eta ≤ R := by
     dsimp [R]
-    linarith
+    linarith only [alpha_root_nonnegative, eta_scaled, eta_root]
   have delta_root : δ ≤ alpha ^ (1 / 12 : ℝ) := by
     dsimp [δ]
     exact Real.rpow_le_rpow_of_exponent_ge'
@@ -2049,10 +2044,10 @@ private theorem unconditionalSmallSource_root_estimates
       (by norm_num : (1 / 12 : ℝ) ≤ 1 / 3)
   have delta_bound : δ ≤ R := by
     dsimp [R]
-    linarith
+    linarith only [scaled_nonnegative, delta_root]
   have delta_sq_bound : δ ^ 2 ≤ R := by
-    linarith [mul_nonneg delta_nonnegative
-      (sub_nonneg.mpr delta_bounded)]
+    linarith only [scaled_nonnegative, delta_root,
+      mul_nonneg delta_nonnegative (sub_nonneg.mpr delta_bounded)]
   have delta_sqrt_eq : Real.sqrt δ = alpha ^ (1 / 6 : ℝ) := by
     dsimp [δ]
     rw [Real.sqrt_eq_rpow, ← Real.rpow_mul alpha_positive.le]
@@ -2066,7 +2061,7 @@ private theorem unconditionalSmallSource_root_estimates
         (by norm_num : (0 : ℝ) ≤ 1 / 12)
         (by norm_num : (1 / 12 : ℝ) ≤ 1 / 6)
     dsimp [R]
-    linarith
+    linarith only [scaled_nonnegative, root_compare]
   exact ⟨root_nonnegative, eta_bound, delta_bound,
     delta_sq_bound, delta_sqrt_bound⟩
 
@@ -2093,27 +2088,19 @@ private theorem unconditionalSmallSource_clipping_sqrt_le
   have clip_bound : clipping ≤ 16 * eta + 12 * δ := by
     change clipping ≤ 16 * eta + 8 * (3 * δ / 2)
       at actual_clipping
-    linarith
-  have clip_base_nonnegative : 0 ≤ 16 * eta + 12 * δ := by
-    positivity
+    linarith only [actual_clipping]
   have clip_sqrt_base :
       Real.sqrt (16 * eta + 12 * δ) ≤
         4 * Real.sqrt eta + 4 * Real.sqrt δ := by
-    have eta_square := Real.sq_sqrt eta_nonnegative
-    have delta_square := Real.sq_sqrt delta_nonnegative
-    have clip_square := Real.sq_sqrt clip_base_nonnegative
-    have cross :=
-      mul_nonneg (Real.sqrt_nonneg eta) (Real.sqrt_nonneg δ)
-    have clip_root_nonnegative := Real.sqrt_nonneg (16 * eta + 12 * δ)
-    have eta_root_nonnegative := Real.sqrt_nonneg eta
-    have delta_root_nonnegative := Real.sqrt_nonneg δ
-    nlinarith
+    apply (Real.sqrt_le_left (by positivity)).mpr
+    nlinarith only [Real.sq_sqrt eta_nonnegative, Real.sq_sqrt delta_nonnegative,
+      mul_nonneg (Real.sqrt_nonneg eta) (Real.sqrt_nonneg δ), delta_nonnegative]
   change Real.sqrt clipping ≤ 8 * R
   calc
     Real.sqrt clipping ≤ Real.sqrt (16 * eta + 12 * δ) :=
       Real.sqrt_le_sqrt clip_bound
     _ ≤ 4 * Real.sqrt eta + 4 * Real.sqrt δ := clip_sqrt_base
-    _ ≤ 8 * R := by linarith [bounds.2.1, bounds.2.2.2.2]
+    _ ≤ 8 * R := by linarith only [bounds]
 
 private theorem unconditionalSmallSource_deviation_sqrt_le
     (eta alpha deviation : ℝ)
@@ -2163,7 +2150,7 @@ private theorem unconditionalSmallSource_deviation_sqrt_le
     _ ≤ k * R := by
       apply mul_le_mul_of_nonneg_left _ k_nonnegative
       dsimp [R]
-      linarith
+      linarith only [scaled]
 
 theorem unconditionalSmallSourcePhysicalLoss
     (K eta alpha deviation clipping : ℝ)
@@ -2203,9 +2190,6 @@ theorem unconditionalSmallSourcePhysicalLoss
   change 0 ≤ R ∧ Real.sqrt eta ≤ R ∧ δ ≤ R ∧ δ ^ 2 ≤ R ∧
     Real.sqrt δ ≤ R at bounds
   have R_nonnegative := bounds.1
-  have eta_sqrt_le_R := bounds.2.1
-  have delta_le_R := bounds.2.2.1
-  have delta_sq_le_R := bounds.2.2.2.1
   have clip_sqrt_le :=
     unconditionalSmallSource_clipping_sqrt_le
       eta alpha clipping eta_nonnegative alpha_positive alpha_bounded
@@ -2219,9 +2203,6 @@ theorem unconditionalSmallSourcePhysicalLoss
       eta alpha deviation eta_nonnegative alpha_positive small
       actual_deviation
   change Real.sqrt deviation ≤ k * R at deviation_sqrt_le
-  have source_loss :
-      64 * Real.sqrt eta + δ + δ ^ 2 ≤ 66 * R := by
-    linarith
   change
     (64 * Real.sqrt eta + δ + δ ^ 2) +
       4 * Real.sqrt deviation + 4 * Real.sqrt clipping ≤ K * R
@@ -2229,9 +2210,9 @@ theorem unconditionalSmallSourcePhysicalLoss
     (64 * Real.sqrt eta + δ + δ ^ 2) +
         4 * Real.sqrt deviation + 4 * Real.sqrt clipping ≤
       66 * R + 4 * (k * R) + 4 * (8 * R) := by
-        linarith
+        linarith only [bounds, clip_sqrt_le, deviation_sqrt_le]
     _ ≤ (1024 + 8 * k) * R := by
-      linarith [mul_nonneg k_nonnegative R_nonnegative]
+      linarith only [bounds, mul_nonneg k_nonnegative R_nonnegative]
     _ ≤ K * R := by
       apply mul_le_mul_of_nonneg_right _ R_nonnegative
       simpa only [k] using lowerBound
@@ -2275,7 +2256,7 @@ theorem unconditionalSmallSourcePhysicalRoundedLower
   have K_nonnegative : 0 ≤ K := by
     have root_nonnegative :=
       Real.sqrt_nonneg (34 + unconditionalPrefactorBucketCoefficient)
-    linarith
+    linarith only [lowerBound, root_nonnegative]
   have R_nonnegative : 0 ≤ R := by
     dsimp [R]
     exact add_nonneg
@@ -2302,7 +2283,7 @@ theorem unconditionalSmallSourcePhysicalRoundedLower
       (5 * lam +
         2 * (K * R + Real.sqrt (8 * eta) +
           universalErrorCeiling K * lam)) ≤ actual
-  linarith
+  linarith only [actual_original_verifier, transfer_nonnegative, quantum_nonnegative, loss]
 
 end
 
@@ -2320,7 +2301,7 @@ theorem pdfGreedyCeilingHorizon_le
   apply (div_le_iff₀ threshold).mpr
   have actual := mul_le_mul_of_nonneg_right small
     (Nat.cast_nonneg n : (0 : ℝ) ≤ n)
-  nlinarith
+  nlinarith only [actual, threshold]
 
 theorem pdfGreedyCeilingHorizon_pow_le_exp
     (n : ℕ) (τ d : ℝ)
@@ -2332,12 +2313,12 @@ theorem pdfGreedyCeilingHorizon_pow_le_exp
   have base_nonnegative : 0 ≤ 1 - τ := sub_nonneg.mpr at_most_one
   have base_le : 1 - τ ≤ Real.exp (-τ) := by
     have actual := Real.add_one_le_exp (-τ)
-    linarith
+    linarith only [actual]
   have ceiling : d * (n : ℝ) / τ ≤ (T : ℝ) := by
     exact Nat.le_ceil (d * (n : ℝ) / τ)
   have exponent : -τ * (T : ℝ) ≤ -d * (n : ℝ) := by
     have cleared := (div_le_iff₀ threshold).mp ceiling
-    linarith
+    linarith only [cleared]
   change (1 - τ) ^ T ≤ Real.exp (-d * (n : ℝ))
   calc
     (1 - τ) ^ T ≤ Real.exp (-τ) ^ T := by
@@ -2345,7 +2326,7 @@ theorem pdfGreedyCeilingHorizon_pow_le_exp
     _ = Real.exp (-τ * (T : ℝ)) := by
       rw [← Real.exp_nat_mul]
       congr 1
-      ring
+      ac_rfl
     _ ≤ Real.exp (-d * (n : ℝ)) := Real.exp_le_exp.mpr exponent
 
 theorem pdfGreedyCard_lt_of_ceil
@@ -2394,7 +2375,7 @@ theorem pdfQuantitativeGreedyConditioning
     apply (div_le_iff₀ threshold).mpr
     have actual := mul_le_mul_of_nonneg_right rate_small
       (Nat.cast_nonneg n : (0 : ℝ) ≤ n)
-    linarith
+    linarith only [actual]
   have selected_le : D.card ≤ n := by
     have actual := Finset.card_le_card (Finset.subset_univ D)
     simpa only [ge_iff_le, card_univ, Fintype.card_fin] using actual
@@ -2405,7 +2386,7 @@ theorem pdfQuantitativeGreedyConditioning
   have more_than_half :
       (n : ℝ) / 2 < ((Finset.univ \ D).card : ℝ) := by
     rw [remaining_real]
-    linarith
+    linarith only [strict_card, half_rate]
   exact ⟨D, strict_card, more_than_half,
     realized.trans floor, floor, positive, remaining, failure⟩
 
@@ -2444,8 +2425,6 @@ private theorem pdfGapRate_eq_scaled_twelfth_power
     (lowerBound : 0 < B) (gap : 0 < ε) (alphabet : 0 ≤ ell) :
     pdfGapRate B ε ell =
       ε / (8 * (ε + ell)) * (ε / (4 * B)) ^ 12 := by
-  have nonzero : B ≠ 0 := ne_of_gt lowerBound
-  have denominator : ε + ell ≠ 0 := ne_of_gt (by linarith)
   unfold pdfGapRate pdfUniversalRate
   field_simp
 
@@ -2457,7 +2436,7 @@ theorem pdfGapBase_le_gap
   constructor
   · exact div_pos gap denominator
   · apply (div_le_iff₀ denominator).2
-    nlinarith
+    exact le_mul_of_one_le_right gap.le (by linarith only [lowerBound])
 
 theorem pdfGapBase_twelfth_le_gap
     {B ε : ℝ}
@@ -2472,7 +2451,7 @@ theorem pdfGapBase_twelfth_le_gap
     _ ≤ ε * 1 :=
       mul_le_mul_of_nonneg_left
         (pow_le_one₀ gap.le unit) gap.le
-    _ = ε := by ring
+    _ = ε := by ac_rfl
 
 theorem pdfGapBase_twelfth_le_one
     {B ε : ℝ}
@@ -2486,10 +2465,10 @@ private theorem pdfGapRate_le_gap_div_eight
     (unit : ε ≤ 1) (alphabet : 0 ≤ ell) :
     pdfGapRate B ε ell ≤ ε / 8 := by
   have Bpositive : 0 < B := lt_of_lt_of_le (by norm_num) lowerBound
-  have denominator : 0 < ε + ell := by linarith
+  have denominator : 0 < ε + ell := by linarith only [gap, alphabet]
   have fraction : ε / (ε + ell) ≤ 1 := by
     apply (div_le_iff₀ denominator).2
-    linarith
+    linarith only [alphabet]
   have root := pdfGapBase_twelfth_le_gap lowerBound gap unit
   rw [pdfGapRate_eq_scaled_twelfth_power
     Bpositive gap alphabet]
@@ -2500,7 +2479,7 @@ private theorem pdfGapRate_le_gap_div_eight
           field_simp [ne_of_gt denominator, ne_of_gt Bpositive]
     _ ≤ 1 * ε / 8 := by
           gcongr
-    _ = ε / 8 := by ring
+    _ = ε / 8 := by ac_rfl
 
 private theorem pdfConditioningTolerance_bounds
     {ε : ℝ} (gap : 0 < ε) (unit : ε ≤ 1) :
@@ -2529,9 +2508,6 @@ private theorem pdfGapRate_entropy_factor
     2 * pdfGapRate B ε ell * (1 + 4 * ell / ε) =
       (ε / (4 * B)) ^ 12 *
         ((ε + 4 * ell) / (4 * (ε + ell))) := by
-  have nonzero : B ≠ 0 := ne_of_gt lowerBound
-  have gap_nonzero : ε ≠ 0 := ne_of_gt gap
-  have denominator : ε + ell ≠ 0 := ne_of_gt (by linarith)
   rw [pdfGapRate_eq_scaled_twelfth_power
     lowerBound gap alphabet]
   field_simp
@@ -2559,7 +2535,7 @@ private theorem pdfGapRate_entropy_le_twelfth_power
           mul_le_mul_of_nonneg_left
             (pdfAlphabetEntropyFactor_le_one gap alphabet)
             nonnegative
-    _ = _ := by ring
+    _ = _ := by ac_rfl
 
 private theorem pdfCatalystAccuracy_bounds
     {K ε : ℝ}
@@ -2570,7 +2546,7 @@ private theorem pdfCatalystAccuracy_bounds
   have ratio : 0 < ε / (16 * K) := div_pos gap denominator
   have bounded : ε / (16 * K) ≤ 1 := by
     apply (div_le_iff₀ denominator).2
-    linarith
+    linarith only [lowerBound, unit]
   unfold pdfCatalystAccuracy
   exact ⟨pow_pos ratio 12, pow_le_one₀ ratio.le bounded⟩
 
@@ -2584,11 +2560,11 @@ theorem pdfQuantitativeEntropyRate_lt
     (t + (k : ℝ) * ell) / (m : ℝ) <
       2 * d * (1 + ell / τ) := by
   have length_real : (0 : ℝ) < (n : ℝ) := by exact_mod_cast length
-  have mpositive : (0 : ℝ) < (m : ℝ) := by linarith
+  have mpositive : (0 : ℝ) < (m : ℝ) := by linarith only [remaining, length_real]
   have ratio_nonnegative : 0 ≤ ell / τ :=
     div_nonneg alphabet tolerance.le
   have factor : 0 < d * (1 + ell / τ) := by
-    exact mul_pos rate (by linarith)
+    exact mul_pos rate (by linarith only [ratio_nonnegative])
   have alphabet_bound :
       (k : ℝ) * ell ≤ (d * (n : ℝ) / τ) * ell :=
     mul_le_mul_of_nonneg_right (le_of_lt conditioned) alphabet
@@ -2600,9 +2576,9 @@ theorem pdfQuantitativeEntropyRate_lt
         add_lt_add_of_lt_of_le postselection alphabet_bound
       _ = d * (n : ℝ) * (1 + ell / τ) := by ring
   apply (div_lt_iff₀ mpositive).2
-  have horizon : (n : ℝ) < 2 * (m : ℝ) := by linarith
+  have horizon : (n : ℝ) < 2 * (m : ℝ) := by linarith only [remaining]
   have scaled := mul_lt_mul_of_pos_left horizon factor
-  linarith
+  linarith only [numerator, scaled]
 
 private theorem pdfQuantitativeEntropyRate_lt_twelfth_power
     {B ε ell : ℝ} {n m k : ℕ} {t : ℝ}
@@ -2630,7 +2606,6 @@ private theorem pdfQuantitativeEntropyRate_lt_twelfth_power
           (1 + ell / pdfConditioningTolerance ε) =
         2 * pdfGapRate B ε ell * (1 + 4 * ell / ε) := by
     unfold pdfConditioningTolerance
-    have nonzero : ε ≠ 0 := ne_of_gt gap
     field_simp
   rw [rewrite] at entropy
   exact lt_of_lt_of_le entropy
@@ -2675,7 +2650,7 @@ theorem pdfEntropyRoundingLoss_lt_gapQuarter
     (entropy : 0 ≤ η)
     (small : η < (ε / (4 * B)) ^ (12 : ℕ)) :
     B * η ^ (1 / 12 : ℝ) < ε / 4 := by
-  have coefficient : 0 < B := by linarith
+  have coefficient : 0 < B := by linarith only [lowerBound]
   calc
     B * η ^ (1 / 12 : ℝ) < B * (ε / (4 * B)) :=
       mul_lt_mul_of_pos_left
@@ -2688,7 +2663,6 @@ private theorem pdfCatalystAccuracy_samplingLoss
     {K ε : ℝ} (lowerBound : 1 ≤ K) (gap : 0 < ε) :
     2 * K * (pdfCatalystAccuracy K ε) ^ (1 / 12 : ℝ) =
       ε / 8 := by
-  have coefficient : 0 < K := by linarith
   rw [pdfCatalystAccuracy_twelfth_root lowerBound gap]
   field_simp
   norm_num
@@ -2708,7 +2682,6 @@ private def pdfRoundingCoefficient (K : ℝ) : ℝ :=
 theorem pdfUniversalErrorCeiling_pos
     {K : ℝ} (lowerBound : 1 ≤ K) :
     0 < universalErrorCeiling K := by
-  have nonnegative : 0 ≤ K := by linarith
   unfold universalErrorCeiling
   positivity
 
@@ -2726,7 +2699,7 @@ private theorem pdfRoundingCoefficient_two_le
   have eight : 1 ≤ Real.sqrt (8 : ℝ) :=
     Real.one_le_sqrt.mpr (by norm_num)
   unfold pdfRoundingCoefficient
-  linarith
+  linarith only [first_nonnegative, quantum_nonnegative, eight]
 
 private theorem pdfRoundingCoefficient_one_le
     {K : ℝ} (lowerBound : 1 ≤ K) :
@@ -2788,7 +2761,7 @@ private theorem pdfQuantitativeRoundingLoss
     positivity
   have classical_coefficient :
       0 ≤ 5 + 2 * universalErrorCeiling K := by
-    linarith
+    linarith only [ceiling]
   have pinsker_bound :=
     pdfPinskerRoot_le_twelfthRoot nonnegative bounded pinsker
   have weighted_pinsker :
@@ -2802,7 +2775,6 @@ private theorem pdfQuantitativeRoundingLoss
       2 * Real.sqrt (8 * eta) ≤
         2 * (Real.sqrt (8 : ℝ) * eta ^ (1 / 12 : ℝ)) :=
     mul_le_mul_of_nonneg_left sqrt_bound (by norm_num)
-  have source_bounds := add_le_add weighted_pinsker weighted_sqrt
   calc
     totalSamplingLoss K alpha eta (kappa + gamma) =
         2 * K * alpha ^ (1 / 12 : ℝ) +
@@ -2943,7 +2915,10 @@ private theorem pdfConstantStrategy_outcomeProbability
         ((if a' = a then (1 : Matrix PUnit PUnit ℂ) else 0) ⊗ₖ
           (if b' = b then (1 : Matrix PUnit PUnit ℂ) else 0)))).re = _
   by_cases alice : a' = a <;> by_cases bob : b' = b <;>
-    simp [alice, bob, Matrix.trace_one]
+    simp only [alice, ↓reduceIte, bob, zero_mul, implies_true, mul_zero, mul_one,
+      kroneckerMap_one_one, trace_one, Fintype.card_prod, Fintype.card_unique, Nat.cast_one,
+      one_re, and_self, kroneckerMap_zero_right, trace_zero, zero_re, and_false,
+      kroneckerMap_zero_left, and_true]
 
 private theorem pdfConstantStrategy_winProbability
     (G : Game X Y A B) (a : A) (b : B) :
@@ -2985,7 +2960,7 @@ private theorem pdfQuestionWeight_le_constantStrategy
           exact Finset.single_le_sum
             (f := fun y' : Y =>
               if G.predicate x y' a b = true then G.questionWeight x y' else 0)
-            (fun y' _ => by split_ifs <;> simp [G.weight_nonneg])
+            (fun y' _ => by split_ifs <;> simp only [G.weight_nonneg, Std.le_refl])
             (Finset.mem_univ y)
     _ ≤ ∑ x' : X, ∑ y' : Y,
         if G.predicate x' y' a b = true then G.questionWeight x' y' else 0 := by
@@ -2993,7 +2968,7 @@ private theorem pdfQuestionWeight_le_constantStrategy
             (f := fun x' : X => ∑ y' : Y,
               if G.predicate x' y' a b = true then G.questionWeight x' y' else 0)
             (fun x' _ => Finset.sum_nonneg
-              (fun y' _ => by split_ifs <;> simp [G.weight_nonneg]))
+              (fun y' _ => by split_ifs <;> simp only [G.weight_nonneg, Std.le_refl]))
             (Finset.mem_univ x)
 
 theorem pdfPredicate_not_accepted_of_entangledValue_eq_zero
@@ -3011,7 +2986,7 @@ theorem pdfPredicate_not_accepted_of_entangledValue_eq_zero
     unfold entangledValue
     exact le_csSup (winProbabilities_bddAbove G)
       ⟨pdfConstantStrategy G a b, rfl⟩
-  linarith
+  linarith only [zero, supported, lower, upper]
 
 theorem pdfRepeatedEntangledValue_eq_zero_of_entangledValue_eq_zero
     (G : Game X Y A B)
@@ -3064,8 +3039,8 @@ theorem pdfAlphabetEntropy_nonneg
   have bob_real : (1 : ℝ) ≤ (Fintype.card B : ℝ) := by
     exact_mod_cast bob_card
   apply Real.log_nonneg
-  linarith [mul_nonneg (sub_nonneg.mpr alice_real)
-    (sub_nonneg.mpr bob_real)]
+  linarith only [alice_real, bob_real,
+    mul_nonneg (sub_nonneg.mpr alice_real) (sub_nonneg.mpr bob_real)]
 
 theorem pdfGap_le_one
     {X Y A B : Type}
@@ -3088,7 +3063,7 @@ theorem pdfPostselectionLogCost_lt_of_exponential
   rw [Real.log_exp] at logarithm
   unfold postselectionLogCost
   rw [one_div, Real.log_inv]
-  linarith
+  linarith only [logarithm]
 
 theorem pdfPinskerRate_le_sqrt_martingaleRate
     {X Y A B : Type}
@@ -3159,7 +3134,7 @@ private theorem pdfFullQuantitativeSamplingLoss
     (K := K) (alpha := pdfCatalystAccuracy K ε)
     (eta := eta) (kappa := kappa)
     (gamma := ε / (16 * (5 + 2 * universalErrorCeiling K)))
-    (by linarith) entropy bounded pinsker
+    (by linarith only [lowerBound]) entropy bounded pinsker
   have entropy_loss :
       pdfRoundingCoefficient K * eta ^ (1 / 12 : ℝ) <
         ε / 4 :=
@@ -3177,7 +3152,7 @@ private theorem pdfFullQuantitativeSamplingLoss
           (ε / (16 * (5 + 2 * universalErrorCeiling K))) =
         ε / 16 := by
     field_simp
-  linarith
+  linarith only [gap, loss, entropy_loss, catalyst_loss, gamma_loss]
 
 theorem pdf_distributionUniformExponential_of_uniform_source_rounding
     (rounding :
@@ -3242,9 +3217,9 @@ theorem pdf_distributionUniformExponential_of_uniform_source_rounding
     have tolerance_lt_one : τ < 1 := by
       have at_most := tolerance.2
       dsimp [τ]
-      linarith
+      linarith only [tolerance]
     have rate_positive : 0 < d :=
-      pdfGapRate_pos (by linarith) gap alphabet
+      pdfGapRate_pos (by linarith only [coefficient, tolerance]) gap alphabet
     have rate_small : d ≤ τ / 2 :=
       pdfGapRate_le_half_conditioningTolerance
         coefficient gap unit alphabet
@@ -3305,7 +3280,7 @@ theorem pdf_distributionUniformExponential_of_uniform_source_rounding
                 (strategyEventLaw (G.repeat n) S)
                 (repeatedCoordinateWin G n) D < ε / 4 := by
           simpa [τ, pdfConditioningTolerance] using failure
-        linarith
+        linarith only [game_gap, actual]
       obtain ⟨rounded, rounded_bound⟩ :=
         round G n S D remaining positive alpha gamma
           alpha_positive alpha_at_most_one gamma_positive source_failure
@@ -3491,8 +3466,6 @@ theorem unconditionalSourcePhysicalRounding_exists_fairStoppingHazard
   let delta : ℝ := alpha ^ (1 / 3 : ℝ)
   let t : ℝ := Real.sqrt (64 * Real.sqrt eta + delta)
   let rho : ℝ := alpha ^ (1 / 12 : ℝ)
-  have eta_nonnegative : 0 ≤ eta :=
-    martingaleRate_nonneg G n S D remaining positive
   have delta_positive : 0 < delta :=
     Real.rpow_pos_of_pos alpha_positive _
   have delta_bounded : delta ≤ 1 :=
@@ -3500,14 +3473,10 @@ theorem unconditionalSourcePhysicalRounding_exists_fairStoppingHazard
   have t_positive : 0 < t := by
     dsimp [t]
     apply Real.sqrt_pos.2
-    linarith [Real.sqrt_nonneg eta]
+    linarith only [delta_positive, Real.sqrt_nonneg eta]
   have t_bounded : t ≤ 1 := by
-    dsimp [t]
-    have bound : 64 * Real.sqrt eta + delta ≤ 1 := by
-      simpa [eta, delta] using small
-    nlinarith [Real.sqrt_nonneg
-      (64 * Real.sqrt eta + delta),
-      Real.sq_sqrt (show 0 ≤ 64 * Real.sqrt eta + delta by positivity)]
+    dsimp only [t]
+    exact Real.sqrt_le_one.mpr small
   have rho_positive : 0 < rho :=
     Real.rpow_pos_of_pos alpha_positive _
   obtain ⟨w, N, width_large, grid, budget, scalar, canonical, _⟩ :=
@@ -3580,17 +3549,15 @@ theorem unconditionalSourcePhysicalRounding_largeVerifierBound
     Real.rpow_nonneg eta_nonnegative _
   have alpha_root_nonnegative : 0 ≤ alpha ^ (1 / 12 : ℝ) :=
     Real.rpow_nonneg alpha_positive.le _
-  have scaled_nonnegative : 0 ≤ (32 * eta) ^ (1 / 12 : ℝ) :=
-    Real.rpow_nonneg (by positivity) _
   have root_scaled : eta ^ (1 / 12 : ℝ) ≤
       (32 * eta) ^ (1 / 12 : ℝ) := by
     apply Real.rpow_le_rpow eta_nonnegative
-    · linarith
+    · linarith only [eta_nonnegative]
     · norm_num
   have root_sum_nonnegative :
       0 ≤ eta ^ (1 / 12 : ℝ) + alpha ^ (1 / 12 : ℝ) :=
     add_nonneg eta_root_nonnegative alpha_root_nonnegative
-  have constant_nonnegative : 0 ≤ K := by linarith
+  have constant_nonnegative : 0 ≤ K := by linarith only [lowerBound]
   have universal_nonnegative : 0 ≤ universalErrorCeiling K := by
     unfold universalErrorCeiling
     positivity
@@ -3607,7 +3574,7 @@ theorem unconditionalSourcePhysicalRounding_largeVerifierBound
       _ ≤ K *
           (alpha ^ (1 / 12 : ℝ) + (32 * eta) ^ (1 / 12 : ℝ)) := by
         apply mul_le_mul lowerBound
-        · linarith
+        · linarith only [root_scaled]
         · exact root_sum_nonnegative
         · exact constant_nonnegative
   have lam_error : 0 ≤ universalErrorCeiling K * lam :=
@@ -3615,7 +3582,7 @@ theorem unconditionalSourcePhysicalRounding_largeVerifierBound
   have sqrt_error : 0 ≤ Real.sqrt (8 * eta) :=
     Real.sqrt_nonneg _
   unfold roundedWinningLowerBound totalSamplingLoss
-  linarith
+  linarith only [lam_nonnegative, epsilon_nonnegative, quantum, lam_error, sqrt_error]
 
 theorem unconditionalSourcePhysicalRounding_exists_large
     {X Y A B : Type}
@@ -3647,7 +3614,7 @@ theorem unconditionalSourcePhysicalRounding_exists_large
   have eta_nonnegative :=
     martingaleRate_nonneg G n S D remaining positive
   have epsilon_nonnegative : 0 ≤ 1 - entangledValue G := by
-    linarith [entangledValue_le_one G]
+    linarith only [entangledValue_le_one G]
   have pinsker_nonnegative :
       0 ≤ exactSourcePinskerRate G n S D := by
     unfold exactSourcePinskerRate
@@ -3658,7 +3625,7 @@ theorem unconditionalSourcePhysicalRounding_exists_large
       (exactSourcePinskerRate G n S D + gamma)
       (1 - entangledValue G)
       lowerBound eta_nonnegative alpha_positive alpha_bounded
-      (by linarith) epsilon_nonnegative large
+      (by linarith only [gamma_positive, pinsker_nonnegative]) epsilon_nonnegative large
   exact source_bound.trans rounded.winProbability_nonneg
 
 theorem unconditionalSourcePhysicalRounding_smallRoundedLower
@@ -3724,7 +3691,7 @@ theorem unconditionalSourcePhysicalRounding_smallRoundedLower
         0 ≤ exactSourcePinskerRate G n S D := by
       unfold exactSourcePinskerRate
       positivity
-    linarith
+    linarith only [gamma_positive, pinsker_nonnegative]
   · exact actual_original_verifier
 
 theorem
@@ -3776,7 +3743,7 @@ theorem
     G n S D remaining positive alpha gamma deviation clipping
     alpha_positive alpha_bounded gamma_positive small
     actual_deviation actual_clipping rounded
-  linarith [Real.sqrt_nonneg clipping,
+  linarith only [stopped_verifier, Real.sqrt_nonneg clipping,
     Real.sqrt_nonneg (8 * martingaleRate G n S D)]
 
 theorem unconditionalSourceOneGameRounding_uniform_of_small

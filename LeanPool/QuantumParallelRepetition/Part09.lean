@@ -38,7 +38,7 @@ theorem gameQuestionX_nonempty
     apply Finset.sum_eq_zero
     intro x _
     exact (empty ⟨x⟩).elim
-  linarith [G.weight_normalized]
+  linarith only [zero, G.weight_normalized]
 
 theorem gameQuestionY_nonempty
     (G : Game X Y A B) : Nonempty Y := by
@@ -133,12 +133,12 @@ theorem exact_totalSamplingLoss_mono
         (32 * η₂) ^ (1 / 12 : ℝ) := by
     apply Real.rpow_le_rpow
     · positivity
-    · linarith
+    · linarith only [eta_le]
     · norm_num
   have eta_sqrt :
       Real.sqrt (8 * η₁) ≤ Real.sqrt (8 * η₂) := by
     apply Real.sqrt_le_sqrt
-    linarith
+    linarith only [eta_le]
   unfold totalSamplingLoss
   gcongr
 
@@ -153,9 +153,6 @@ theorem exact_standardQuantumParallelRepetition_of_source_rounding
       no_exponential_bound
   obtain ⟨K₀, constant_nonnegative, construct⟩ := rounding
   let gapValue : ℝ := 1 - entangledValue G
-  have gap_positive : 0 < gapValue := by
-    dsimp [gapValue]
-    linarith
   let failureTolerance : ℝ := min (gapValue / 2) (1 / 2)
   have failure_positive : 0 < failureTolerance := by
     dsimp [failureTolerance]
@@ -163,7 +160,7 @@ theorem exact_standardQuantumParallelRepetition_of_source_rounding
   have failure_at_most_one : failureTolerance ≤ 1 := by
     have half := min_le_right (gapValue / 2) (1 / 2 : ℝ)
     dsimp [failureTolerance]
-    linarith
+    linarith only [failure_positive, half]
   let rate : ℕ → ℝ := fun k => 1 / ((k : ℝ) + 1)
   have rate_positive (k : ℕ) : 0 < rate k := by
     dsimp [rate]
@@ -171,8 +168,7 @@ theorem exact_standardQuantumParallelRepetition_of_source_rounding
   have rate_at_most_one (k : ℕ) : rate k ≤ 1 := by
     dsimp [rate]
     apply (div_le_iff₀ (by positivity : (0 : ℝ) < (k : ℝ) + 1)).2
-    have nonnegative : (0 : ℝ) ≤ (k : ℝ) := by positivity
-    linarith
+    linarith only []
   have rate_tendsto : Tendsto rate atTop (𝓝 0) := by
     exact tendsto_one_div_add_atTop_nhds_zero_nat
   have martingale_tendsto :
@@ -220,7 +216,7 @@ theorem exact_standardQuantumParallelRepetition_of_source_rounding
     apply exact_totalSamplingLoss_mono
       constant_nonnegative (rate_positive k).le (le_refl _)
       martingale_nonnegative martingale_small
-    linarith
+    linarith only [pinsker_small]
   exact source_equation_twenty_nine_contradiction G rounded
     K₀ (rate k) (martingaleRate G n S D)
     (exactSourcePinskerRate G n S D + rate k)
@@ -345,7 +341,7 @@ theorem residualIdentity_quadratic
           apply Finset.sum_congr rfl
           intro k _
           simp only [star_mul]
-          ring
+          ac_rfl
     _ = ∑ i : s, (∑ j : s, M i j * z j) * star (z i) := by
           rw [residual_complex]
           simp only [RCLike.star_def, mul_one]
@@ -738,10 +734,9 @@ theorem unconditionalMatchedVerifierTensor_norm
       ‖target‖ * ‖work‖ := by
   have squared :=
     unconditionalMatchedVerifierTensor_norm_sq target work
-  nlinarith [
-    norm_nonneg (unconditionalMatchedVerifierTensor target work),
-    norm_nonneg target, norm_nonneg work,
-    mul_nonneg (norm_nonneg target) (norm_nonneg work)]
+  exact (sq_eq_sq₀ (norm_nonneg _)
+    (mul_nonneg (norm_nonneg target) (norm_nonneg work))).mp (by
+      simpa only [mul_pow] using squared)
 
 theorem unconditionalMatchedVerifierEffect_tensor_complement
     {s t : Type*} [DecidableEq s] [DecidableEq t]
@@ -856,7 +851,7 @@ theorem unconditionalMatchedVerifierEffect_tensor_quadratic
             apply Finset.sum_congr rfl
             intro k _
             simp only [star_mul]
-            ring
+            ac_rfl
       _ = (∑ i : s,
           (∑ j : s, effect i j * target j) * star (target i)) *
           (↑(‖work‖ ^ 2) : ℂ) := by
@@ -1044,10 +1039,10 @@ theorem unconditionalSelectedCopy_weightedAffine
             congr 1
             apply Finset.sum_congr rfl
             intro i _
-            ring
+            ac_rfl
     _ = coefficient * (∑ i, weight i * asynchronous i) + residual := by
           rw [normalized]
-          ring
+          ac_rfl
 
 end
 
@@ -1143,28 +1138,12 @@ theorem unconditionalMatchedVerifierAggregate_dependent_le
     |(∑ j : J, weight j * quadraticExpectation (effect j) (actual j)) -
       (∑ j : J, weight j * quadraticExpectation (effect j) (ideal j))| ≤
       2 * Real.sqrt Δ := by
-  have actual_nonnegative :
-      0 ≤ ∑ j : J, weight j * ‖actual j‖ ^ 2 :=
-    Finset.sum_nonneg
-      (fun j _ => mul_nonneg (nonnegative j) (sq_nonneg _))
-  have ideal_nonnegative :
-      0 ≤ ∑ j : J, weight j * ‖ideal j‖ ^ 2 :=
-    Finset.sum_nonneg
-      (fun j _ => mul_nonneg (nonnegative j) (sq_nonneg _))
-  have error_nonnegative :
-      0 ≤ ∑ j : J, weight j * ‖actual j - ideal j‖ ^ 2 :=
-    Finset.sum_nonneg
-      (fun j _ => mul_nonneg (nonnegative j) (sq_nonneg _))
   have actual_root :
-      Real.sqrt (∑ j : J, weight j * ‖actual j‖ ^ 2) ≤ 1 := by
-    nlinarith [
-      Real.sq_sqrt actual_nonnegative,
-      Real.sqrt_nonneg (∑ j : J, weight j * ‖actual j‖ ^ 2)]
+      Real.sqrt (∑ j : J, weight j * ‖actual j‖ ^ 2) ≤ 1 :=
+    Real.sqrt_le_one.mpr actual_mass
   have ideal_root :
-      Real.sqrt (∑ j : J, weight j * ‖ideal j‖ ^ 2) ≤ 1 := by
-    nlinarith [
-      Real.sq_sqrt ideal_nonnegative,
-      Real.sqrt_nonneg (∑ j : J, weight j * ‖ideal j‖ ^ 2)]
+      Real.sqrt (∑ j : J, weight j * ‖ideal j‖ ^ 2) ≤ 1 :=
+    Real.sqrt_le_one.mpr ideal_mass
   calc
     |(∑ j : J, weight j * quadraticExpectation (effect j) (actual j)) -
         (∑ j : J, weight j * quadraticExpectation (effect j) (ideal j))| ≤
@@ -1175,7 +1154,7 @@ theorem unconditionalMatchedVerifierAggregate_dependent_le
             weight nonnegative effect contraction actual ideal
     _ ≤ 2 * Real.sqrt Δ := by
       apply mul_le_mul
-      · linarith
+      · linarith only [actual_root, ideal_root]
       · exact Real.sqrt_le_sqrt deviation
       · exact Real.sqrt_nonneg _
       · norm_num
@@ -1213,8 +1192,7 @@ theorem unconditionalConjugatePureVector_norm
     {ι : Type*} [Fintype ι] (z : EuclideanSpace ℂ ι) :
     ‖unconditionalConjugatePureVector z‖ = ‖z‖ := by
   have squares := unconditionalConjugatePureVector_norm_sq z
-  nlinarith [norm_nonneg (unconditionalConjugatePureVector z),
-    norm_nonneg z]
+  exact (sq_eq_sq₀ (norm_nonneg _) (norm_nonneg _)).mp squares
 
 /-- Transpose every effect of a POVM to obtain the conjugate measurement. -/
 def unconditionalConjugatePOVM
@@ -1247,7 +1225,7 @@ theorem unconditionalConjugatePureVector_transpose_quadratic
   intro i _
   apply Finset.sum_congr rfl
   intro j _
-  ring
+  ac_rfl
 
 private theorem unconditionalConjugatePOVM_jointEffect
     {A B ι κ : Type*} [Fintype A] [Fintype B]
@@ -1446,19 +1424,6 @@ theorem unconditionalCanonicalAcceptedCoefficient_sourceScale
           ((dSVDensityRationalPhysicalAcceptedRank
             w N ξ i).val : ℝ) =
       dSVDensityRationalCanonicalAcceptedCoefficient w N ξ i := by
-  have d_nonzero : (d : ℝ) ≠ 0 := by
-    exact_mod_cast (Nat.ne_of_gt dimension)
-  have n_nonzero : (N : ℝ) ≠ 0 := by
-    exact_mod_cast (Nat.ne_of_gt grid)
-  have source_positive :
-      0 < ‖sharedThresholdResourceRaw (d := Fin d)
-        (fun _ : Fin N => (1 : ℝ))‖ := by
-    have source_sq := dSVUniformDensityThresholdRaw_norm_sq N d
-    have product_positive : (0 : ℝ) < (d : ℝ) * (N : ℝ) := by
-      positivity
-    nlinarith [norm_nonneg
-      (sharedThresholdResourceRaw (d := Fin d)
-        (fun _ : Fin N => (1 : ℝ)))]
   have left_nonnegative :
       0 ≤ Real.sqrt (w * (d : ℝ)) *
         (‖sharedThresholdResourceRaw (d := Fin d)
@@ -1489,7 +1454,7 @@ theorem unconditionalCanonicalAcceptedCoefficient_sourceScale
       dSVDensityRationalPhysicalAcceptedRank_targetCoefficient_sq
         width N ξ i]
     field_simp
-  nlinarith
+  exact (sq_eq_sq₀ left_nonnegative right_nonnegative).mp same_square
 
 theorem unconditionalConjugateTranspose_eq_inverse
     {d : ℕ} (U : Matrix.unitaryGroup (Fin d) ℂ) :
@@ -1624,7 +1589,7 @@ theorem unconditionalMixedConjugateCanonicalAcceptedTarget_sum
           rw [Finset.mul_sum]
           apply Finset.sum_congr rfl
           intro j _
-          ring
+          ac_rfl
     _ =
         ∑ i : Fin d,
           (dSVDensityRationalCanonicalAcceptedCoefficient
@@ -1644,7 +1609,7 @@ theorem unconditionalMixedConjugateCanonicalAcceptedTarget_sum
           push_cast at coefficient
           rw [← coefficient]
           push_cast
-          ring
+          ac_rfl
     _ = _ :=
       (unconditionalConjugateCanonicalAcceptedTarget_apply
         w ξ a b).symm
@@ -1703,8 +1668,10 @@ theorem unconditionalMixedConjugateSigmaAtomLift_apply
   classical
   by_cases phase : φ = ψ <;>
     by_cases work : a = b <;>
-      simp [unconditionalMixedConjugateSigmaAtomLift,
-        Matrix.reindex_apply, Matrix.kroneckerMap_apply, phase, work]
+      simp only [unconditionalMixedConjugateSigmaAtomLift, reindex_apply, Equiv.symm_symm, phase,
+        work, submatrix_apply, Equiv.sigmaEquivProd_apply, kroneckerMap_apply, one_apply_eq,
+        one_mul, mul_one, and_self, ↓reduceIte, ne_eq, not_false_eq_true, one_apply_ne, mul_zero,
+        and_false, zero_mul, and_true]
 
 private def unconditionalMixedConjugateSigmaLocalAction
     {d m : ℕ} (B : ℕ)
@@ -1795,7 +1762,7 @@ private theorem unconditionalMixedConjugateTargetCovariance
   intro k _
   apply Finset.sum_congr rfl
   intro l _
-  ring
+  ac_rfl
 
 end
 
@@ -1822,8 +1789,6 @@ theorem unconditionalSelectedCopy_coherentPhaseSigma_norm_sq
   simp_rw [
     dSVDensityRationalPublicBucketCoherentPhaseHistory_apply_norm_sq
       phases]
-  have phase_ne : (B : ℝ) ≠ 0 := by
-    exact_mod_cast (Nat.ne_of_gt phases)
   calc
     (∑ φ : Fin B, ∑ i : H, ∑ ψ : Fin B, ∑ j : H,
         (if φ = ψ then (B : ℝ)⁻¹ else 0) *
@@ -1850,7 +1815,7 @@ theorem unconditionalSelectedCopy_coherentPhaseSigma_norm_sq
               intro i _
               apply Finset.sum_congr rfl
               intro j _
-              ring
+              ac_rfl
         _ = _ := by
           rw [Finset.sum_const, Finset.card_univ,
             Fintype.card_fin, nsmul_eq_mul]
@@ -2070,7 +2035,7 @@ theorem unconditionalMixedConjugateSelectedBranch_tensor_smul
   ext ⟨a, b⟩
   change (c : ℂ) * (stage a * work b) =
     ((c : ℂ) * stage a) * work b
-  ring
+  ac_rfl
 
 private theorem unconditionalMixedConjugateSelectedBranchCovariance
     {S N d L B m : ℕ} {τ : Type*} [Fintype τ] [DecidableEq τ]
@@ -2140,7 +2105,7 @@ theorem unconditionalPhysicalAcceptedCoherentStage_apply
   rw [unconditionalPhysicalAcceptedCoherentStage_eq_phaseSigma,
     dSVDensityRationalMixedCanonicalPrefixPhysicalAcceptedSigmaState_apply
       width grid]
-  ring
+  ac_rfl
 
 end
 
@@ -2574,7 +2539,7 @@ theorem actualStoppingQuestionLocalWinningProbability_ge_matched
           rw [Fin.sum_univ_succ]
           have nonnegative := actualStoppingBranchBorn_nonneg
             G PA PB stopped (0 : Fin (L + 1)) 0 x y
-          linarith
+          linarith only [nonnegative]
     _ ≤ ∑ r : Fin (L + 1), ∑ s : Fin (L + 1),
           quadraticExpectation
             (Matrix.toEuclideanCLM (n := ι r × ι s) (𝕜 := ℂ)
@@ -4201,32 +4166,36 @@ private theorem unconditionalActualPhysicalMixedAcceptedSpectralGauge_stage
     unconditionalActualPhysicalMixedAcceptedRawStage,
     Equiv.symm_apply_apply, ite_mul, mul_ite, zero_mul, mul_zero,
     mul_one]
-  simp only [UnitaryGroup.inv_val, star_apply, RCLike.star_def, ePRState, ofReal_inv, ite_mul,
-    zero_mul, mul_comm, mul_ite, mul_left_comm, mul_assoc, sum_ite_irrel, sum_ite_eq, mem_univ,
-    ↓reduceIte, sum_const_zero, dSVDensityRationalCanonicalPrefixSpectralOutcome, mulVec,
-    dotProduct, kroneckerMap_apply, Fintype.sum_prod_type, mul_sum]
-  let alice : Matrix
-      (DSVUniformDensityThresholdLocalIndex N d)
-      (DSVUniformDensityThresholdLocalIndex N d) ℂ :=
-    dSVUniformDensityAliceHistorySpectralCopy (N := N) ξ
-  let bob : Matrix
-      (DSVUniformDensityThresholdLocalIndex N d)
-      (DSVUniformDensityThresholdLocalIndex N d) ℂ :=
-    dSVUniformDensityBobHistoryCopyBasis (N := N) ζ
+  simp only [sum_ite_irrel, sum_ite_eq, mem_univ, ↓reduceIte, sum_const_zero]
   let summand :
       DSVUniformDensityThresholdLocalIndex N d →
         DSVUniformDensityThresholdLocalIndex N d → ℂ :=
     fun x y =>
-      (↑(Real.sqrt (B : ℝ)) : ℂ)⁻¹ *
-        (embezzlementState m (a, b) *
-          (dSVDensityRationalPhysicalAcceptedOutcome
-            w N ξ ζ (x, y) *
-            (alice ⟨k, i⟩ x * (starRingEnd ℂ) (bob y ⟨l, j⟩))))
-  by_cases phases : φ = ψ
-  · simp only [ite_eq_left phases]
-    exact unconditionalActualPhysicalMixedAcceptedSpectralGauge_sum
-      summand
-  · simp only [ite_eq_right phases]
+      (dSVUniformDensityAliceHistorySpectralCopy (N := N) ξ :
+        Matrix (DSVUniformDensityThresholdLocalIndex N d)
+          (DSVUniformDensityThresholdLocalIndex N d) ℂ) ⟨k, i⟩ x *
+      (((dSVUniformDensityBobHistoryCopyBasis (N := N) ζ)⁻¹ :
+        Matrix.unitaryGroup (DSVUniformDensityThresholdLocalIndex N d) ℂ) :
+        Matrix (DSVUniformDensityThresholdLocalIndex N d)
+          (DSVUniformDensityThresholdLocalIndex N d) ℂ) ⟨l, j⟩ y *
+      dSVDensityRationalPhysicalAcceptedOutcome w N ξ ζ (x, y)
+  simp only [dSVDensityRationalCanonicalPrefixSpectralOutcome,
+    mulVec, dotProduct, kroneckerMap_apply, Fintype.sum_prod_type]
+  change _ = ePRState B (φ, ψ) *
+    (∑ x, ∑ y, summand x y) * embezzlementState m (a, b)
+  calc
+    _ = ∑ i' : Fin d, ∑ k' : Fin N, ∑ j' : Fin d, ∑ l' : Fin N,
+        ePRState B (φ, ψ) * summand ⟨k', i'⟩ ⟨l', j'⟩ *
+          embezzlementState m (a, b) := by
+      refine Finset.sum_congr rfl fun i' _ => Finset.sum_congr rfl fun k' _ =>
+        Finset.sum_congr rfl fun j' _ => Finset.sum_congr rfl fun l' _ => ?_
+      dsimp only [summand]
+      ac_rfl
+    _ = ePRState B (φ, ψ) *
+        (∑ i' : Fin d, ∑ k' : Fin N, ∑ j' : Fin d, ∑ l' : Fin N,
+          summand ⟨k', i'⟩ ⟨l', j'⟩) * embezzlementState m (a, b) := by
+      simp only [Finset.mul_sum, Finset.sum_mul]
+    _ = _ := by rw [unconditionalActualPhysicalMixedAcceptedSpectralGauge_sum]
 
 end
 
@@ -4403,7 +4372,7 @@ private theorem unconditionalActualCanonicalFullSource_eq_rawSelectedStage
           j _ _ _ _]
   rw [directDSVActualStoppingSelectedHistory_sourceProduct]
   unfold dSVDensityRationalPhysicalAcceptedOutcome
-  ring
+  ac_rfl
 
 private theorem unconditionalActualCanonicalRawSelectedPhysicalStage_eq
     {B N d m : ℕ} (w : ℝ)
@@ -4503,14 +4472,14 @@ theorem directDSVActualReindexedRetainedPOVMWinningEffect
   ext ⟨i, k⟩ ⟨j, l⟩
   by_cases alice_work : (eA i).2 = (eA j).2 <;>
     by_cases bob_work : (eB k).2 = (eB l).2 <;>
-      simp [directDSVActualLocalPOVMWinningEffect,
-        directDSVActualReindexedRetainedPOVM,
-        reindexedPOVM, purificationAlicePOVM,
-        directDSVActualBilateralRetainedIndexEquiv,
-        Matrix.reindex_apply, Matrix.sum_apply, Matrix.ite_apply,
-        Matrix.submatrix_apply,
-        Matrix.kroneckerMap_apply, Matrix.one_apply,
-        Equiv.prodProdProdComm_apply, alice_work, bob_work]
+      simp only [directDSVActualLocalPOVMWinningEffect, directDSVActualReindexedRetainedPOVM,
+        reindexedPOVM, purificationAlicePOVM, Equiv.symm_symm, Matrix.sum_apply, Matrix.ite_apply,
+        kroneckerMap_apply, submatrix_apply, Matrix.one_apply, alice_work, ↓reduceIte, mul_one,
+        bob_work, Matrix.zero_apply, directDSVActualBilateralRetainedIndexEquiv, Equiv.symm_trans,
+        Equiv.prodProdProdComm_symm, Equiv.prodCongr_symm, reindex_apply, Equiv.coe_trans,
+        Equiv.prodCongr_apply, Function.comp_apply, Prod.map_apply, Equiv.prodProdProdComm_apply,
+        mul_zero, ite_self, sum_const_zero,
+        Prod.mk.injEq, and_false, zero_mul, and_true, and_self]
 
 theorem directDSVActualReindexedWinningEffect_quadratic
     {ι κ : Type*} [Fintype ι] [Fintype κ]
@@ -5338,13 +5307,9 @@ theorem unconditionalClippedConjugateUnitTarget_distance_sq_le
       ‖gamma.val -
         (dSVDensityRationalCanonicalAcceptedUnitTarget
           width grid fine gamma).val‖ ^ 2 ≤ _
-    nlinarith [
-      norm_nonneg
-        (gamma.val -
-          (dSVDensityRationalCanonicalAcceptedUnitTarget
-            width grid fine gamma).val),
-      Real.sqrt_nonneg (1 / w + (d : ℝ) * w / (N : ℝ)),
-      Real.sq_sqrt clipping_nonnegative]
+    have squared := pow_le_pow_left₀ (norm_nonneg _) clipping 2
+    simpa only [mul_pow, Real.sq_sqrt clipping_nonnegative,
+      show (2 : ℝ) ^ 2 = 4 by norm_num] using squared
   change ‖psi - accepted.val‖ ^ 2 ≤ _
   nlinarith [norm_nonneg (psi - accepted.val),
     norm_nonneg (psi - gamma.val),
@@ -5403,7 +5368,7 @@ theorem
       ring
     _ ≤ 2 * energy + 8 * (1 / w + (d : ℝ) * w / (N : ℝ)) := by
       dsimp [clip]
-      linarith
+      linarith only [energy_bound]
 
 variable {X Y A B : Type*}
 variable [Fintype X] [Fintype Y] [Fintype A] [Fintype B]
@@ -5739,7 +5704,7 @@ theorem unconditionalPhaseCanonicalRaw_eq_norm_smul_unit
         star ((dSVDensityRationalCanonicalAcceptedUnitTarget
           width grid fine gamma).val (i, j)) at coefficient
   rw [coefficient]
-  ring
+  ac_rfl
 
 theorem unconditionalMatchedTensor_real_smul_work
     {s t : Type*}
@@ -5751,7 +5716,7 @@ theorem unconditionalMatchedTensor_real_smul_work
   ext q
   change (c : ℂ) * (stage q.1 * work q.2) =
     stage q.1 * ((c : ℂ) * work q.2)
-  ring
+  ac_rfl
 
 theorem unconditionalPhaseCanonical_sourceScale_absorbed
     {d N B m : ℕ} {w : ℝ}
@@ -5788,8 +5753,6 @@ theorem unconditionalPhaseCanonical_sourceScale_absorbed
         (dSVDensityRationalCanonicalAcceptedUnitTarget
           width grid fine gamma).val)
       (fun _ _ _ => embezzlementState m)
-  have real_dimension : 0 < (d : ℝ) := by
-    exact_mod_cast dimension
   have scale_positive : 0 < scale := by
     dsimp [scale]
     positivity
@@ -6214,7 +6177,7 @@ theorem unconditionalActualSelectedBranchLocalAction_norm
     simp only [quadraticExpectation, map_one, one_apply_eq_self, inner_self_eq_norm_sq_to_K,
       coe_algebraMap, ← ofReal_pow, ofReal_re]
   change ‖toLp 2 (M.mulVec (ofLp z))‖ = ‖z‖
-  nlinarith [norm_nonneg (toLp 2 (M.mulVec (ofLp z))), norm_nonneg z]
+  exact (sq_eq_sq₀ (norm_nonneg _) (norm_nonneg _)).mp squared
 
 theorem unconditionalActualSelectedBranchLocalAction_sub
     {ι τ : Type*} [Fintype ι] [DecidableEq ι]

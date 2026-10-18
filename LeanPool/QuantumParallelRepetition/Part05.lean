@@ -210,7 +210,7 @@ theorem exactFixedBobQuestionMass_insert
   simp only [Finset.mem_insert_self, ↓reduceIte,
     Function.update_self, fresh]
   rw [← G.marginalX_mul_conditionalYGivenX (xs j) y]
-  ring
+  ac_rfl
 
 theorem exactFixedAliceQuestionMass_insert
     (G : Game X Y A B) (n : ℕ)
@@ -252,7 +252,7 @@ theorem exactFixedAliceQuestionMass_insert
   simp only [Finset.mem_insert_self, ↓reduceIte,
     Function.update_self, fresh]
   rw [← G.marginalY_mul_conditionalXGivenY x (ys j)]
-  ring
+  ac_rfl
 
 end
 
@@ -431,7 +431,7 @@ private theorem exactReverseLeftSeedWeight_eq_forward
     Nat.cast_mul, Nat.cast_add, Nat.cast_one,
     Nat.cast_pow]
   field_simp
-  ring
+  ac_rfl
 
 private theorem exactReverseRightSeedWeight_eq_forward
     {M : Type*} [Fintype M] [DecidableEq M]
@@ -448,7 +448,7 @@ private theorem exactReverseRightSeedWeight_eq_forward
     Nat.cast_mul, Nat.cast_add, Nat.cast_one,
     Nat.cast_pow]
   field_simp
-  ring
+  ac_rfl
 
 variable {X Y A B : Type*}
 variable [Fintype X] [Fintype Y] [Fintype A] [Fintype B]
@@ -979,7 +979,7 @@ private theorem exactFairAliceHistoryVariation_le_entropy
       have hle := G.questionWeight_le_marginalY x y
       have hnonneg := G.weight_nonneg x y
       rw [hy] at hle
-      linarith
+      linarith only [hnonneg, hle]
     simp only [hzero, zero_mul, sum_const_zero, hy, Std.le_refl]
   · have hypos : 0 < G.marginalY y :=
       lt_of_le_of_ne (G.marginalY_nonneg y) (Ne.symm hy)
@@ -997,7 +997,7 @@ private theorem exactFairAliceHistoryVariation_le_entropy
                 apply Finset.sum_congr rfl
                 intro x _
                 rw [← G.marginalY_mul_conditionalXGivenY x y]
-                ring
+                ac_rfl
       _ ≤ _ := mul_le_mul_of_nonneg_left hlocal (G.marginalY_nonneg y)
 
 private theorem exactFairBobHistoryVariation_le_entropy
@@ -1015,7 +1015,7 @@ private theorem exactFairBobHistoryVariation_le_entropy
       have hle := G.questionWeight_le_marginalX x y
       have hnonneg := G.weight_nonneg x y
       rw [hx] at hle
-      linarith
+      linarith only [hnonneg, hle]
     simp only [hzero, zero_mul, sum_const_zero, hx, Std.le_refl]
   · have hxpos : 0 < G.marginalX x :=
       lt_of_le_of_ne (G.marginalX_nonneg x) (Ne.symm hx)
@@ -1033,7 +1033,7 @@ private theorem exactFairBobHistoryVariation_le_entropy
                 apply Finset.sum_congr rfl
                 intro y _
                 rw [← G.marginalX_mul_conditionalYGivenX x y]
-                ring
+                ac_rfl
       _ ≤ _ := mul_le_mul_of_nonneg_left hlocal (G.marginalX_nonneg x)
 
 /-- The probability weight for exact fair history prior. -/
@@ -2067,8 +2067,9 @@ theorem exactReverseLeftSide_complement
     simp only [exactRight, ne_eq, mem_filter, mem_univ, not_true_eq_false, false_and, and_false,
       exactReverseLeftSide, mem_sdiff, mem_insert, true_or]
   · cases hbit : seed.partition j <;>
-      simp [exactRight, exactLeft,
-        exactReverseLeftSide, hcoordinate, hbit]
+      simp only [exactRight, ne_eq, mem_filter, mem_univ, hcoordinate, not_false_eq_true, hbit,
+        Bool.false_eq_true, and_false, exactReverseLeftSide, exactLeft, mem_sdiff, mem_insert,
+        and_self, or_true, not_true_eq_false, Bool.true_eq_false, or_self]
 
 theorem exactReverseRightSide_complement
     {M : Type*} [Fintype M] [DecidableEq M]
@@ -2081,8 +2082,9 @@ theorem exactReverseRightSide_complement
     simp only [exactLeft, ne_eq, mem_filter, mem_univ, not_true_eq_false, false_and, and_false,
       exactReverseRightSide, mem_sdiff, mem_insert, true_or]
   · cases hbit : seed.partition j <;>
-      simp [exactRight, exactLeft,
-        exactReverseRightSide, hcoordinate, hbit]
+      simp only [exactLeft, ne_eq, mem_filter, mem_univ, hcoordinate, not_false_eq_true, hbit,
+        and_self, exactReverseRightSide, exactRight, mem_sdiff, mem_insert, Bool.false_eq_true,
+        and_false, or_self, Bool.true_eq_false, or_true, not_true_eq_false]
 
 /-- The data context recording exact reverse alice. -/
 def exactReverseAliceContext
@@ -2661,7 +2663,7 @@ theorem exactPrefixEntropyIncrement_eq_conditional
             finiteRelativeEntropy
               (jointConditional nextJoint context)
               (jointConditional nextPrior context) at hchain
-  linarith
+  linarith only [hnext_entropy, hchain]
 
 end
 
@@ -2694,9 +2696,10 @@ theorem exactReverseAliceCanonicalPartition_side
   · subst j
     simp only [mem_insert, true_or, member]
   · by_cases hs : j ∈ side <;>
-      simp [exactLeft,
-        exactReverseAliceCanonicalPartition,
-        hj, hs]
+      simp only [exactLeft, ne_eq, exactReverseAliceCanonicalPartition, Bool.ite_true_right,
+        Bool.or_false, Bool.ite_eq_false_distrib, Bool.not_eq_eq_eq_not, Bool.not_false,
+        decide_eq_true_eq, mem_insert, hj, mem_filter, mem_univ, not_false_eq_true, ↓reduceIte,
+        hs, and_self, or_true, and_false, or_self]
 
 private theorem exactReverseAliceCanonicalPartition_unique
     {M : Type*} [Fintype M] [DecidableEq M]
@@ -2761,9 +2764,9 @@ theorem exactReverseBobCanonicalPartition_side
   · subst j
     simp only [mem_insert, true_or, member]
   · by_cases hs : j ∈ side <;>
-      simp [exactRight,
-        exactReverseBobCanonicalPartition,
-        hj, hs]
+      simp only [exactRight, ne_eq, exactReverseBobCanonicalPartition, Bool.ite_false_right,
+        Bool.and_true, Bool.ite_eq_true_distrib, decide_eq_true_eq, mem_insert, hj, mem_filter,
+        mem_univ, not_false_eq_true, ↓reduceIte, hs, and_self, or_true, and_false, or_self]
 
 private theorem exactReverseBobCanonicalPartition_unique
     {M : Type*} [Fintype M] [DecidableEq M]
@@ -2845,7 +2848,7 @@ theorem exactFiniteIndicator_sum
           rw [Finset.sum_mul]
           apply Finset.sum_congr rfl
           intro t _
-          split_ifs <;> simp
+          split_ifs <;> simp only [one_mul, zero_mul]
     _ = (Fintype.card {t : T // predicate t} : ℝ) * weight := by
       simp only [sum_boole, Fintype.card_subtype]
 
@@ -3166,7 +3169,7 @@ theorem exactReverseAliceConditionalSeedWeight_sum
             apply Finset.sum_congr rfl
             intro seed _
             unfold exactReverseAliceConditionalSeedWeight
-            split_ifs <;> simp
+            split_ifs <;> simp only [zero_div]
     _ = groupedMass exactReverseLeftSide
         exactSeedWeight side /
           reversePartitionWeight side := by
@@ -3196,7 +3199,7 @@ theorem exactReverseBobConditionalSeedWeight_sum
             apply Finset.sum_congr rfl
             intro seed _
             unfold exactReverseBobConditionalSeedWeight
-            split_ifs <;> simp
+            split_ifs <;> simp only [zero_div]
     _ = groupedMass exactReverseRightSide
         exactSeedWeight side /
           reversePartitionWeight side := by
@@ -3334,7 +3337,7 @@ theorem reweightedSeedWinEventMass
     rw [Finset.mul_sum]
     apply Finset.sum_congr rfl
     intro outcome _
-    split_ifs <;> simp
+    split_ifs <;> simp only [mul_zero]
   simp_rw [hinner]
   rw [← Finset.sum_mul, seedLaw.weight_sum]
   simp only [sum_ite_mem, univ_inter, one_mul]
@@ -4710,9 +4713,10 @@ theorem exactReverseAliceCanonicalPartition_otherSide
     simp only [exactRight, ne_eq, mem_filter, mem_univ, not_true_eq_false, false_and, and_false,
       mem_sdiff, member]
   · by_cases belongs : j ∈ side <;>
-      simp [exactRight,
-        exactReverseAliceCanonicalPartition,
-        marked, belongs]
+      simp only [exactRight, ne_eq, exactReverseAliceCanonicalPartition, Bool.ite_true_right,
+        Bool.or_false, Bool.ite_eq_true_distrib, Bool.not_eq_eq_eq_not, Bool.not_true,
+        decide_eq_false_iff_not, mem_filter, mem_univ, marked, not_false_eq_true, ↓reduceIte,
+        belongs, not_true_eq_false, and_false, mem_sdiff, and_self]
 
 theorem exactReverseBobCanonicalPartition_otherSide
     {M : Type*} [Fintype M] [DecidableEq M]
@@ -4728,9 +4732,10 @@ theorem exactReverseBobCanonicalPartition_otherSide
     simp only [exactLeft, ne_eq, mem_filter, mem_univ, not_true_eq_false, false_and, and_false,
       mem_sdiff, member]
   · by_cases belongs : j ∈ side <;>
-      simp [exactLeft,
-        exactReverseBobCanonicalPartition,
-        marked, belongs]
+      simp only [exactLeft, ne_eq, exactReverseBobCanonicalPartition, Bool.ite_false_right,
+        Bool.and_true, Bool.ite_eq_false_distrib, decide_eq_false_iff_not, mem_filter, mem_univ,
+        marked, not_false_eq_true, ↓reduceIte, belongs, not_true_eq_false, and_false, mem_sdiff,
+        and_self]
 
 theorem exactReverseAliceCanonicalPartition_card
     {M : Type*} [Fintype M] [DecidableEq M]
@@ -6332,16 +6337,14 @@ theorem exactRevealCode_splitAt_independent
     have different : j.val ≠ seed.coordinate.val := by
       intro h
       exact hiD (h ▸ j.property)
-    simp only [ne_eq, Equiv.funSplitAt, Equiv.piSplitAt, eq_rec_constant, Equiv.symm_mk,
-      Equiv.coe_fn_mk, different, ↓reduceDIte]
+    simp only [ne_eq, Equiv.funSplitAt_symm_apply, different, ↓reduceDIte]
   · funext j
     have hiD : seed.coordinate.val ∉ D :=
       (Finset.mem_sdiff.mp seed.coordinate.property).2
     have different : j.val ≠ seed.coordinate.val := by
       intro h
       exact hiD (h ▸ j.property)
-    simp only [ne_eq, Equiv.funSplitAt, Equiv.piSplitAt, eq_rec_constant, Equiv.symm_mk,
-      Equiv.coe_fn_mk, different, ↓reduceDIte]
+    simp only [ne_eq, Equiv.funSplitAt_symm_apply, different, ↓reduceDIte]
   · funext j
     have different : j.val.val ≠ seed.coordinate.val := by
       intro h
@@ -6351,8 +6354,7 @@ theorem exactRevealCode_splitAt_independent
         simpa only [same] using j.property
       exact exactLeft_coordinate_not_mem
         seed.coordinate seed.partition mem
-    simp only [ne_eq, Equiv.funSplitAt, Equiv.piSplitAt, eq_rec_constant, Equiv.symm_mk,
-      Equiv.coe_fn_mk, different, ↓reduceDIte]
+    simp only [ne_eq, Equiv.funSplitAt_symm_apply, different, ↓reduceDIte]
   · funext j
     have different : j.val.val ≠ seed.coordinate.val := by
       intro h
@@ -6362,8 +6364,7 @@ theorem exactRevealCode_splitAt_independent
         simpa only [same] using j.property
       exact exactRight_coordinate_not_mem
         seed.coordinate seed.partition mem
-    simp only [ne_eq, Equiv.funSplitAt, Equiv.piSplitAt, eq_rec_constant, Equiv.symm_mk,
-      Equiv.coe_fn_mk, different, ↓reduceDIte]
+    simp only [ne_eq, Equiv.funSplitAt_symm_apply, different, ↓reduceDIte]
   · funext j
     have different : j.val.val ≠ seed.coordinate.val := by
       intro h
@@ -6371,8 +6372,7 @@ theorem exactRevealCode_splitAt_independent
       have hleft := exactLeftPrefix_subset seed j.property
       exact exactLeft_coordinate_not_mem
         seed.coordinate seed.partition (same ▸ hleft)
-    simp only [ne_eq, Equiv.funSplitAt, Equiv.piSplitAt, eq_rec_constant, Equiv.symm_mk,
-      Equiv.coe_fn_mk, different, ↓reduceDIte]
+    simp only [ne_eq, Equiv.funSplitAt_symm_apply, different, ↓reduceDIte]
   · funext j
     have different : j.val.val ≠ seed.coordinate.val := by
       intro h
@@ -6380,8 +6380,7 @@ theorem exactRevealCode_splitAt_independent
       have hright := exactRightPrefix_subset seed j.property
       exact exactRight_coordinate_not_mem
         seed.coordinate seed.partition (same ▸ hright)
-    simp only [ne_eq, Equiv.funSplitAt, Equiv.piSplitAt, eq_rec_constant, Equiv.symm_mk,
-      Equiv.coe_fn_mk, different, ↓reduceDIte]
+    simp only [ne_eq, Equiv.funSplitAt_symm_apply, different, ↓reduceDIte]
 
 theorem exactRepeatedQuestionWeight_splitAt_joint
     (G : Game X Y A B) (n : ℕ) (i : Fin n)
@@ -6720,7 +6719,7 @@ theorem exactJointQuestionMass_eq_reveal_mul_question
             simp only [one_mul]
   rw [exactJointQuestionMass_eq_question_mul_tail,
     ← htail]
-  ring
+  ac_rfl
 
 end
 
@@ -7091,7 +7090,7 @@ theorem exactLocallySampleableLaw_eq_fair_born
             · simp only [code, ↓reduceIte, mul_zero, zero_div]
           _ = _ := by
             rw [exactFairFullOutcomeBornMass_eq_reveal_question_norm]
-            ring
+            ac_rfl
       convert hcalc using 1
       apply Finset.sum_congr rfl
       intro o _
@@ -7334,7 +7333,7 @@ private theorem exactFairPsiPhiDistance_mul_postselection_le
             have hscaled := mul_le_mul_of_nonneg_left hnorm hw
             unfold exactFairHistoryPriorWeight at hscaled ⊢
             field_simp [positive.ne']
-            linarith
+            linarith only [hscaled]
           · rw [ite_eq_right accepted,
               exactLocallySampleableLaw_eq_fair_born,
               ite_eq_right accepted]
@@ -7351,7 +7350,7 @@ private theorem exactFairPsiPhiDistance_mul_postselection_le
         intro y _
         apply Finset.sum_congr rfl
         intro x _
-        ring
+        ac_rfl
       · simp only [accepted, ↓reduceIte, sum_const_zero, mul_zero]
 
 private theorem exactFairGammaPsiDistance_mul_postselection_le
@@ -7415,7 +7414,7 @@ private theorem exactFairGammaPsiDistance_mul_postselection_le
             have hscaled := mul_le_mul_of_nonneg_left hnorm hw
             unfold exactFairHistoryPriorWeight at hscaled ⊢
             field_simp [positive.ne']
-            linarith
+            linarith only [hscaled]
           · rw [ite_eq_right accepted,
               exactLocallySampleableLaw_eq_fair_born,
               ite_eq_right accepted]
@@ -7434,7 +7433,7 @@ private theorem exactFairGammaPsiDistance_mul_postselection_le
         apply Finset.sum_congr rfl
         intro y _
         rw [norm_sub_rev]
-        ring
+        ac_rfl
       · simp only [accepted, ↓reduceIte, sum_const_zero, mul_zero]
 
 /-- The numerical bound for exact fair operator entropy. -/
@@ -7468,7 +7467,7 @@ theorem exactSourceStateDistanceBound_of_fair_operator_entropy
         exactLocallySampleableLaw G n S D t *
           ‖exactSourceTupleGamma G n S D t -
             exactSourceTuplePsi G n S D t‖ ^ 2) ≤ 8 * η
-    nlinarith
+    nlinarith only [hv, hj, hb, positive]
   · have hv := exactFairPsiPhiDistance_mul_postselection_le
       G n S D positive
     have hj := exactAcceptedFairAliceVariation_le_entropy
@@ -7483,7 +7482,7 @@ theorem exactSourceStateDistanceBound_of_fair_operator_entropy
         exactLocallySampleableLaw G n S D t *
           ‖exactSourceTuplePsi G n S D t -
             exactSourceTuplePhi G n S D t‖ ^ 2) ≤ 8 * η
-    nlinarith
+    nlinarith only [hv, hj, ha, positive]
 
 end
 
