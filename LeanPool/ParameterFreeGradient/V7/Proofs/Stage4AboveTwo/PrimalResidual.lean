@@ -158,10 +158,7 @@ theorem scalar_power_deficit_le {p t y : ℝ} (hp : 2 < p)
             _ = t ^ (1 + 2 / (p - 2)) := (Real.rpow_add htpos _ _).symm
             _ = t ^ (p / (p - 2)) := by rw [hexp]
         field_simp [ht0, htpow.ne', htwopow.ne', hpapow.ne', hpa.ne']
-        calc
-          t * (p - 2) * t ^ (2 / (p - 2)) =
-              (p - 2) * (t * t ^ (2 / (p - 2))) := by ring
-          _ = (p - 2) * t ^ (p / (p - 2)) := by rw [htpower]
+        exact htpower
 
 theorem mixedResidual_lower {p u d x y : ℝ} (hp : 2 < p)
     (hu : 0 < u) (hy : 0 ≤ y) :
