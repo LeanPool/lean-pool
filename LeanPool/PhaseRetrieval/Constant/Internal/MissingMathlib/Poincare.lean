@@ -162,7 +162,7 @@ private lemma cauchy_schwarz_interval {a b : ℝ} (hab : a ≤ b) {g : ℝ → �
     rw [h_int_eq]; ring
   rw [hexpand, hint_linear] at hvar
   -- Now hvar: 0 ≤ ∫g² + (-c²(b-a)) = ∫g² - c²(b-a)
-  have h_ineq : c ^ 2 * (b - a) ≤ ∫ t in a..b, g t ^ 2 := by linarith
+  have h_ineq : c ^ 2 * (b - a) ≤ ∫ t in a..b, g t ^ 2 := by linarith only [hvar]
   -- And S² = c²·(b-a)², so S² ≤ (b-a)·∫g²
   calc S ^ 2 = (c * (b - a)) ^ 2 := by rw [hcba]
     _ = c ^ 2 * (b - a) * (b - a) := by ring
@@ -188,7 +188,8 @@ theorem poincare_interval {h : ℝ} (hh : 0 < h) {f f' : ℝ → ℂ}
   have hpw : ∀ x ∈ Icc 0 h, ‖f x - f_bar‖ ^ 2 ≤ M ^ 2 := by
     intro x hx
     apply sq_le_sq'
-    · linarith [norm_nonneg (f x - f_bar), pointwise_bound hh hf hf_cont hf'_cont hx]
+    · linarith only [hh, hf, hf_cont, hf'_cont, hx, norm_nonneg (f x - f_bar),
+        pointwise_bound hh hf hf_cont hf'_cont hx]
     · exact pointwise_bound hh hf hf_cont hf'_cont hx
   -- Step 2: ∫₀ʰ ‖f x - f_bar‖² dx ≤ ∫₀ʰ M² dx = h * M²
   have hint_bound : ∫ x in (0 : ℝ)..h, ‖f x - f_bar‖ ^ 2 ≤ h * M ^ 2 := by

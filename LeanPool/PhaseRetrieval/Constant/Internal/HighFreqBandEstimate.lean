@@ -91,7 +91,7 @@ private lemma rho_sq_lower (α w z : ℂ)
   have h2 : ‖α * w - α * z‖ = ‖w - z‖ := by rw [← mul_sub, norm_mul, hα, one_mul]
   exact nonneg_safe_square _ _ _
     (rho_nonneg' _) (rho_nonneg' _)
-    (norm_nonneg _) (by linarith)
+    (norm_nonneg _) (by linarith only [h1, h2])
 
 /-! ## Interval partition quantities -/
 
@@ -200,7 +200,7 @@ private lemma bias_variance_interval (a b : ℝ) (hab : a < b)
   have h_pw : ∀ t, ‖g t‖ ^ 2 - ‖g t - c‖ ^ 2 =
       2 * @inner ℝ ℂ _ c (g t - c) + ‖c‖ ^ 2 := by
     intro t; have := norm_add_sq_real c (g t - c)
-    simp only [add_sub_cancel] at this; linarith
+    simp only [add_sub_cancel] at this; linarith only [this]
   -- Step 4: Integrate and combine
   have h1 : ∫ t in a..b,
       (‖g t‖ ^ 2 - ‖g t - c‖ ^ 2) =
@@ -234,7 +234,7 @@ private lemma bias_variance_interval (a b : ℝ) (hab : a < b)
       intervalIntegral.integral_const_mul,
       intervalIntegral.integral_const, smul_eq_mul]
   -- Combine
-  linarith [h1, h_split, h_rhs, h_cross]
+  linarith only [h1, h_split, h_rhs, h_cross]
 
 /-- 4.1b: Parseval partition identity.
     On each I_k, ∫|Q|² = |q_k|²·(T/N)/T + ∫|Q−q_k|²
@@ -510,7 +510,7 @@ private lemma deriv_norm_le_circleNormSq {N L : ℕ} (hN : 1 ≤ N)
   apply mul_le_mul_of_nonneg_right _ (sq_nonneg _)
   have hm : (m.val : ℝ) ≤ ↑L - 1 := by
     have := m.isLt; exact_mod_cast (show (m.val : ℤ) ≤ (L : ℤ) - 1 by omega)
-  exact sq_le_sq' (by linarith [Nat.cast_nonneg (α := ℝ) m.val]) hm
+  exact sq_le_sq' (by linarith only [hm, Nat.cast_nonneg (α := ℝ) m.val]) hm
 
 
 /-- Interval integral shift: ∫_a^{a+h} g = ∫_0^h g(·+a). -/
@@ -546,7 +546,7 @@ private lemma hasDerivAt_slowFactor_shift {L : ℕ} (b : Fin L → ℂ) (a x : �
         (hasDerivAt_id x |>.add (hasDerivAt_const x a))
     simp only [add_zero, one_smul] at hd
     exact hd.const_mul _
-  simpa only [slowFactor] using
+  exact
     HasDerivAt.fun_sum (u := Finset.univ) fun m _ => hterm m
 
 /-- Poincaré on each subinterval: shifted to [0, h] and
@@ -586,7 +586,7 @@ private lemma poincare_per_interval {N L : ℕ} (hN : 1 ≤ N)
       ∫ x in (0 : ℝ)..h, ‖f' x‖ ^ 2 := by
     simp only [f']
     exact integral_shift (fun t => ‖Q' t‖ ^ 2) a h
-  have h_ak : iLeft N (k.val + 1) = a + h := by simp only [a, h]; linarith [iLeft_diff N k.val]
+  have h_ak : iLeft N (k.val + 1) = a + h := by simp only [a, h]; linarith only [iLeft_diff N k.val]
   rw [h_ak, h_shift_lhs, h_shift_rhs]
   have hf_deriv :
       ∀ x ∈ Set.Icc 0 h,
@@ -898,7 +898,7 @@ private lemma assembly {N L : ℕ} (hN : 1 ≤ N)
       rw [hPQ]; change _ ≤ (rho (fourier (↑↑N) ↑t * slowFactor b ↑t)) ^ 2
       have := rho_sq_lower (fourier (N : ℤ) (↑t : AddCircle T))
         (slowFactor b (↑t : AddCircle T)) (qAvg b N k) (norm_fourier_apply _ _)
-      linarith
+      linarith only [this]
     -- Integrate the pointwise bound
     have hT_inv_pos : (0 : ℝ) < 1 / T := div_pos one_pos hT_pos
     have hi1 : IntervalIntegrable (fun t => (rho (P (↑t : AddCircle T))) ^ 2)
@@ -944,7 +944,7 @@ private lemma assembly {N L : ℕ} (hN : 1 ≤ N)
     -- Expand 1/T * (1/2 * A - B) = 1/2 * (1/T * A) - 1/T * B
     have h_expand : 1 / T * (1 / 2 * A - B) = 1 / 2 * (1 / T * A) - 1 / T * B := by ring
     rw [h_expand] at h_mul
-    linarith
+    linarith only [h_mul, h_frozen]
   -- Sum over k
   have h_sum : (1 / T) • ∑ k : Fin N,
       ∫ t in iLeft N k.val..iLeft N (k.val + 1),
@@ -970,11 +970,11 @@ private lemma assembly {N L : ℕ} (hN : 1 ≤ N)
         rw [← Finset.mul_sum]
         have : (↑N : ℝ) ≠ 0 := ne_of_gt hN_pos; field_simp
       · unfold totalDelta; rw [Finset.mul_sum]
-    linarith
+    linarith only [h_sum_ge, h_rhs_eq]
   -- Apply parseval_partition
   have h_parseval := parseval_partition hN b
   -- h_parseval: C = (1/N)∑|q_k|² + δ, so (1/N)∑|q_k|² = C - δ
-  linarith
+  linarith only [h_sum, h_parseval]
 
 /-! ## Auxiliary -/
 
@@ -1000,7 +1000,7 @@ The hypothesis `1343 * L^2 ≤ N^2` implies `136π²(L-1)² ≤ 136π²L² ≤ 1
 private lemma pi_sq_bound : 136 * Real.pi ^ 2 < 1343 := by
   have hpi : Real.pi < 3.141593 := Real.pi_lt_d6
   have hpi_pos : (0 : ℝ) < Real.pi := Real.pi_pos
-  nlinarith [sq_nonneg (3.141593 - Real.pi)]
+  nlinarith only [hpi, hpi_pos, sq_nonneg (3.141593 - Real.pi)]
 
 private lemma rho_integral_lower_bound {N L : ℕ}
     (hN : 1 ≤ N) (hL : 1 ≤ L)
@@ -1028,7 +1028,7 @@ private lemma rho_integral_lower_bound {N L : ℕ}
   -- Since (L-1)² ≤ L² and 136π² < 1343: 136π²(L-1)² ≤ 1343L² ≤ N²
   have hpi2 := pi_sq_bound
   have hL_real : (1 : ℝ) ≤ (↑L : ℝ) := Nat.one_le_cast.mpr hL
-  have hL_cast : (0 : ℝ) ≤ (↑L : ℝ) - 1 := by linarith
+  have hL_cast : (0 : ℝ) ≤ (↑L : ℝ) - 1 := by linarith only [hL_real]
   have hN_pos : (0 : ℝ) < (↑N : ℝ) := Nat.cast_pos.mpr (by omega)
   have hN2_pos : (0 : ℝ) < (↑N : ℝ) ^ 2 := by positivity
   have hNL_cast : (1343 : ℝ) * (↑L : ℝ) ^ 2 ≤ (↑N : ℝ) ^ 2 := by
@@ -1038,17 +1038,17 @@ private lemma rho_integral_lower_bound {N L : ℕ}
   have h_rate_bound : 34 * (4 * Real.pi ^ 2 * (↑L - 1) ^ 2) ≤ (↑N : ℝ) ^ 2 := by
     have hLm1_sq : ((↑L : ℝ) - 1) ^ 2 ≤ (↑L : ℝ) ^ 2 := by apply sq_le_sq' <;> linarith
     -- 34 * 4π² * (L-1)² ≤ 136π² * L² < 1343 * L² ≤ N²
-    nlinarith [sq_nonneg Real.pi, sq_nonneg (↑L : ℝ)]
+    nlinarith only [hpi2, hL_real, hNL_cast, sq_nonneg Real.pi, sq_nonneg (↑L : ℝ)]
   -- r·C ≤ C/34 where r = 4π²(L-1)²/N²
   have h_key : 4 * Real.pi ^ 2 * (↑L - 1) ^ 2 / ↑N ^ 2 * C ≤ C / 34 := by
     have h1 : 4 * Real.pi ^ 2 * (↑L - 1) ^ 2 / ↑N ^ 2 ≤ 1 / 34 := by
       rw [div_le_div_iff₀ hN2_pos (by norm_num : (0:ℝ) < 34)]
-      linarith
+      linarith only [h_rate_bound]
     calc 4 * Real.pi ^ 2 * (↑L - 1) ^ 2 / ↑N ^ 2 * C
-        ≤ (1 / 34) * C := by nlinarith
+        ≤ (1 / 34) * C := by nlinarith only [h_nn, h1]
       _ = C / 34 := by ring
   -- Combine: ∫ρ² ≥ C/16 - (17/16)δ ≥ C/16 - (17/16)·(C/34) = C/16 - C/32 = C/32
-  linarith
+  linarith only [h_asm, h_poi, h_key]
 
 /-! ## Main theorem -/
 
@@ -1070,6 +1070,6 @@ theorem high_freq_band_estimate {N L : ℕ}
   have h_eq := circleNormSq_P_eq_Q b P hP
   have h_lb :=
     rho_integral_lower_bound hN hL hNL b P hP
-  linarith
+  linarith only [h_eq, h_lb]
 
 end FockSPR

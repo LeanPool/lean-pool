@@ -47,7 +47,7 @@ theorem high_frequency_circle_estimate
     (hband : 1343 * (L : ℝ) ^ 2 ≤ (N : ℝ) ^ 2) :
     circleL2Sq (positiveTrigonometricPolynomial (frequencyBand N L) c)
       ≤ 32 * circleRhoNormSq (positiveTrigonometricPolynomial (frequencyBand N L) c) := by
-  simpa [circleL2Sq, circleRhoNormSq, positiveTrigonometricPolynomial, frequencyBand] using
+  exact
     HermiteLEAN.high_frequency_circle_estimate N L hN hL c hband
 
 /-- Imported phase-normalized orthogonal reduction. -/
@@ -69,7 +69,7 @@ theorem phase_normalized_orthogonal_reduction
       ∀ h : H, ∀ a : ℝ, defect (h - (a : ℂ) • f0) ≤ |a| + defect h) :
     ∃ δ Mloc : ℝ, 0 < δ ∧ 0 < Mloc ∧
       ∀ h : H, ‖h‖ ≤ δ → (inner ℂ h f0).im = 0 → ‖h‖ ≤ Mloc * defect h := by
-  simpa using
+  exact
     HermiteLEAN.phase_normalized_orthogonal_reduction
       defect hdefect_nonneg f0 hf0 C hC horth hscalar hcompare
 

@@ -37,7 +37,7 @@ For all `a, b : ℝ`: `(a + b)² ≥ (1/2) a² − b²`.
 **Proof**: `(a + b)² − (1/2)a² + b² = (1/2)(a + 2b)² ≥ 0`.
 -/
 theorem safe_square (a b : ℝ) : (a + b) ^ 2 ≥ (1 / 2) * a ^ 2 - b ^ 2 := by
-  nlinarith [sq_nonneg (a + 2 * b)]
+  nlinarith only [sq_nonneg (a + 2 * b)]
 
 /-! ## Theorem 2.2: Nonneg safe-square inequality
 
@@ -54,7 +54,7 @@ For `a, b, c : ℝ` with `a ≥ 0`, `b ≥ 0`, `c ≥ 0`, and `a ≥ b − c`:
 theorem nonneg_safe_square (a b c : ℝ) (ha : 0 ≤ a) (hb : 0 ≤ b) (hc : 0 ≤ c)
     (hab : a ≥ b - c) : a ^ 2 ≥ (1 / 2) * b ^ 2 - c ^ 2 := by
   by_cases h : b ≤ c
-  · nlinarith [sq_nonneg a, sq_nonneg c]
-  · nlinarith [sq_nonneg (b - 2 * c)]
+  · nlinarith only [hb, hc, h, sq_nonneg a, sq_nonneg c]
+  · nlinarith only [ha, hab, h, sq_nonneg (b - 2 * c)]
 
 end FockSPR

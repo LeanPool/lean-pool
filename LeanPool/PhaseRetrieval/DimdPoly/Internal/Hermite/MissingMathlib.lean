@@ -49,8 +49,8 @@ theorem annulus_distance_lower_bound (j : ℕ) (x : ℝ) :
       simp_all
     simpa [a, b, hrhs] using h
   rw [le_min_iff]
-  refine ⟨max_le (by linarith) ha0, max_le ?_ hb0⟩
-  linarith [(abs_sub_le_iff.mp habs).1]
+  refine ⟨max_le (by linarith only []) ha0, max_le ?_ hb0⟩
+  linarith only [habs, (abs_sub_le_iff.mp habs).1]
 
 -- to_mathlib: Mathlib/Analysis/SpecialFunctions/Gaussian/Basic
 /-- A reusable Gaussian absorption lemma. -/
@@ -66,7 +66,7 @@ theorem polynomial_times_gaussian_le_gaussian
   have hsq : Tendsto (fun x : ℝ => x ^ 2) Filter.atTop Filter.atTop :=
     tendsto_pow_atTop (by norm_num : (2 : ℕ) ≠ 0)
   have hexp : Tendsto (fun x : ℝ => Real.exp (-(a / 2) * x ^ 2)) Filter.atTop (𝓝 0) :=
-    Real.tendsto_exp_atBot.comp (hsq.const_mul_atTop_of_neg (by nlinarith [ha]))
+    Real.tendsto_exp_atBot.comp (hsq.const_mul_atTop_of_neg (by linarith only [ha]))
   have hpoly : Tendsto (fun x : ℝ => x ^ k * Real.exp (-(a / 2) * x ^ 2)) Filter.atTop (𝓝 0) := by
     refine Tendsto.congr' ?_
       ((tendsto_rpow_mul_exp_neg_mul_atTop_nhds_zero ((k : ℝ) / 2) (a / 2) (by positivity)).comp
@@ -100,9 +100,9 @@ theorem polynomial_times_gaussian_le_gaussian
         simpa [Real.norm_eq_abs, g, abs_of_nonneg (by positivity : 0 ≤ 1 + x ^ k)] using
           hC0 x ⟨hx, hxr⟩
       simp only [C]
-      linarith [le_abs_self C0]
+      linarith only [hcompact, le_abs_self C0]
     · simp only [C]
-      nlinarith [hR x (le_of_not_ge hxr), abs_nonneg C0]
+      linarith only [hR, hxr, hR x (le_of_not_ge hxr), abs_nonneg C0]
   have hsplit :
       Real.exp (-a * x ^ 2) =
         Real.exp (-(a / 2) * x ^ 2) * Real.exp (-(a / 2) * x ^ 2) := by

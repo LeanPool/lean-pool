@@ -298,11 +298,11 @@ theorem evalPkappa_rotateCoord_circle_phase_sum
       = F alpha *
           ((fourier ((kappa q0 : Nat) : Int) x : ℂ) *
             Phi kappa alpha
-              (Function.update z q0 ((fourier (1 : Int) x : ℂ) * z q0))) := by ring_nf
+              (Function.update z q0 ((fourier (1 : Int) x : ℂ) * z q0))) := by ring
     _ = F alpha * ((fourier ((alpha q0 : Nat) : Int) x : ℂ) * Phi kappa alpha z) := by rw [hphase]
     _ = F alpha * Phi kappa alpha z * circleChar (alpha q0) x := by
           rw [hchar]
-          ring_nf
+          ring
 
 private theorem evalPkappa_eq_evalHermiteSum
     {d : Nat} (kappa : MultiIndex d) (F : Pkappa d kappa) :
@@ -397,8 +397,10 @@ private theorem summable_sq_hermite_phi_eval
   have hSle : S <= C ^ 2 := by
     have hev' : ‖HermitekLEAN.finiteHermiteSum k a' z‖ <= C * Real.sqrt S := by
       simpa [hWN] using hev
-    nlinarith [Real.sq_sqrt hS_nonneg, sq_nonneg (Real.sqrt S - C), hFz_bound,
-      hev', hC_nonneg]
+    linarith only [
+      hS_nonneg, hFz_bound, hev', Real.sq_sqrt hS_nonneg, sq_nonneg (Real.sqrt S - C),
+      hC_nonneg
+    ]
   calc
     Finset.sum (Finset.range J) (fun n => ‖HermitekLEAN.Phi k n z‖ ^ 2)
         = S := (Fin.sum_univ_eq_sum_range (fun n : Nat => ‖HermitekLEAN.Phi k n z‖ ^ 2) J).symm
@@ -475,7 +477,7 @@ theorem summable_skappa_eval_mul_of_phi_sq
     (hPhi : Summable (fun alpha : Idx d => ‖Phi kappa alpha z‖ ^ 2)) :
     Summable (fun alpha : Idx d => coeffSkappa U alpha * Phi kappa alpha z) := by
   have hU : Summable (fun alpha : Idx d => ‖coeffSkappa U alpha‖ ^ 2) := by
-    simpa [coeffSkappa] using U.summable_norm_sq
+    exact U.summable_norm_sq
   refine Summable.of_norm_bounded
     (g := fun alpha : Idx d =>
       (‖coeffSkappa U alpha‖ ^ 2 + ‖Phi kappa alpha z‖ ^ 2) / 2)
@@ -488,7 +490,7 @@ theorem summable_skappa_eval_mul_of_phi_sq
   have hsq :
       ‖coeffSkappa U alpha‖ * ‖Phi kappa alpha z‖ <=
         (‖coeffSkappa U alpha‖ ^ 2 + ‖Phi kappa alpha z‖ ^ 2) / 2 := by
-    nlinarith [sq_nonneg (‖coeffSkappa U alpha‖ - ‖Phi kappa alpha z‖)]
+    nlinarith only [sq_nonneg (‖coeffSkappa U alpha‖ - ‖Phi kappa alpha z‖)]
   exact le_trans hmul hsq
 
 theorem summable_skappa_eval_mul
@@ -668,7 +670,7 @@ theorem integrable_evalPkappa_sq
       change (Real.sqrt (Finset.sum F.support (fun beta => ‖F beta‖ ^ 2))) = 0 at hnorm
       have hsum_zero : Finset.sum F.support (fun beta => ‖F beta‖ ^ 2) = 0 :=
         (Real.sqrt_eq_zero (by positivity)).mp hnorm
-      nlinarith
+      linarith only [hterm_pos, hle, hsum_zero]
     simp_all
 
 theorem memLp_two_evalPkappa
@@ -796,8 +798,8 @@ theorem summable_PhiL2_coeff_smul
   let hOrthonormal := PhiL2_orthonormal_family hd kappa
   have hOrthogonalFamily := hOrthonormal.orthogonalFamily
   have hcoeff : Summable (fun alpha : Idx d => ‖coeffSkappa U alpha‖ ^ 2) := by
-    simpa [coeffSkappa] using U.summable_norm_sq
-  simpa using
+    exact U.summable_norm_sq
+  exact
     (hOrthogonalFamily.summable_iff_norm_sq_summable
       (fun alpha : Idx d => coeffSkappa U alpha)).2 hcoeff
 
@@ -813,7 +815,7 @@ theorem evalPkappaL2_truncateFinset
   | insert alpha E hnot hE =>
       have hE' :
           evalPkappaL2 kappa (∑ beta ∈ E, Finsupp.single beta (coeffSkappa U beta)) =
-            ∑ beta ∈ E, coeffSkappa U beta • PhiL2 kappa beta := by simpa [truncateFinset] using hE
+            ∑ beta ∈ E, coeffSkappa U beta • PhiL2 kappa beta := by exact hE
       simp [truncateFinset, Finset.sum_insert hnot, evalPkappaL2_add hd kappa,
         evalPkappaL2_single hd kappa, hE']
 
@@ -844,7 +846,7 @@ theorem evalPkappa_truncateFinset
           Finsupp.sum (∑ beta ∈ E, Finsupp.single beta (coeffSkappa U beta))
               (fun beta c => c * Phi kappa beta z) =
             ∑ beta ∈ E, coeffSkappa U beta * Phi kappa beta z := by
-        simpa [truncateFinset, evalPkappa] using congrFun hE z
+        exact congrFun hE z
       rw [show truncateFinset (insert alpha E) U =
           Finsupp.single alpha (coeffSkappa U alpha) +
             (∑ beta ∈ E, Finsupp.single beta (coeffSkappa U beta)) by
@@ -905,7 +907,7 @@ private lemma summable_nat_pow_mul_pow_div_factorial_nonneg
       calc
         ((n + m + 1 : ℝ) ^ m) ≤ (((m + 1 : ℝ) * (n + 1)) ^ m) := by
           gcongr
-          nlinarith
+          nlinarith only []
         _ = (m + 1 : ℝ) ^ m * (n + 1 : ℝ) ^ m := by rw [mul_pow]
         _ ≤ (m + 1 : ℝ) ^ m * (((n + m).descFactorial m : ℕ) : ℝ) := by gcongr
     have hfact :
@@ -1181,7 +1183,7 @@ private theorem uniformCauchySeqOn_of_summable_bound
     _ = dist (partialSum kappa U J z) (partialSum kappa U J0 z) +
           dist (partialSum kappa U L z) (partialSum kappa U J0 z) := by
           rw [dist_comm (partialSum kappa U J0 z) (partialSum kappa U L z)]
-    _ < ε := by linarith
+    _ < ε := by linarith only [hJtail, hLtail]
 
 private lemma compact_exists_coord_bound
     {d : Nat} {K : Set (Cd d)} (hK : IsCompact K) :
@@ -1209,14 +1211,14 @@ private lemma partialSum_uniformCauchy_on_compact
     exact Finset.prod_nonneg fun q _ => phiMajorant_nonneg hR_nonneg
   have hM_summable : Summable M := by
     have hcoeff : Summable (fun alpha : Idx d => ‖coeffSkappa U alpha‖ ^ 2) := by
-      simpa [coeffSkappa] using U.summable_norm_sq
+      exact U.summable_norm_sq
     have hBsq : Summable (fun alpha : Idx d => Bprod alpha ^ 2) := by
-      simpa [Bprod] using phiMajorant_multi_sq_summable kappa hR
+      exact phiMajorant_multi_sq_summable kappa hR
     refine Summable.of_nonneg_of_le (fun alpha => ?_) ?_ ((hcoeff.add hBsq).div_const 2)
     · exact mul_nonneg (norm_nonneg _) (hBprod_nonneg alpha)
     · intro alpha
       dsimp [M]
-      nlinarith [sq_nonneg (‖coeffSkappa U alpha‖ - Bprod alpha)]
+      nlinarith only [sq_nonneg (‖coeffSkappa U alpha‖ - Bprod alpha)]
   refine uniformCauchySeqOn_of_summable_bound kappa U hM_summable ?_
   intro alpha z hzK
   have hPhi : ‖Phi kappa alpha z‖ ≤ Bprod alpha := by

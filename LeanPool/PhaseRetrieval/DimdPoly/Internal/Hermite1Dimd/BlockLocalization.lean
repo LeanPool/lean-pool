@@ -427,7 +427,7 @@ private lemma block_decay_compare_coord
   have hclose : |Real.sqrt (α q : ℝ) - ((ℓ q : ℕ) : ℝ)| < 1 := by
     rw [abs_of_nonneg (sub_nonneg.mpr hle)]
     push_cast at hlt ⊢
-    linarith
+    linarith only [hlt]
   have hdist_eq : ((Nat.dist (j q) (ℓ q) : ℕ) : ℝ) = |((j q : ℕ) : ℝ) - ((ℓ q : ℕ) : ℝ)| := by
     rcases Nat.le_total (j q) (ℓ q) with hj | hℓ
     · rw [Nat.dist_eq_sub_of_le hj, abs_of_nonpos]
@@ -453,11 +453,11 @@ private lemma block_decay_compare_coord
       ((Nat.dist (j q) (ℓ q) : ℕ) : ℝ)
         ≤ |((j q : ℕ) : ℝ) - Real.sqrt (α q : ℝ)| + 1 := by
     rw [hdist_eq]
-    linarith
+    linarith only [hclose, htri]
   have hk : (((κ q + 5 : ℕ) : ℝ)) = (((κ q + 4 : ℕ) : ℝ)) + 1 := by
     push_cast
     ring
-  exact max_le_max (by linarith) le_rfl
+  exact max_le_max (by linarith only [hclose, hdist_eq, htri, hk]) le_rfl
 
 private lemma sup_coord_exists
     {d : ℕ} (hd : d ≠ 0) (j ℓ : MultiIndex d) :
@@ -684,8 +684,10 @@ theorem productBasisLocalization
       have hsq :
           max (((Nat.dist (j q) (ℓ q) : ℕ) : ℝ) - ((κ q + 5 : ℕ) : ℝ)) 0 ^ 2 ≤
             max (|((j q : ℕ) : ℝ) - Real.sqrt (α q : ℝ)| - ((κ q + 4 : ℕ) : ℝ)) 0 ^ 2 := by
-        nlinarith [hcmp, le_max_right (((Nat.dist (j q) (ℓ q) : ℕ) : ℝ) - ((κ q + 5 : ℕ) : ℝ)) 0,
-          le_max_right (|((j q : ℕ) : ℝ) - Real.sqrt (α q : ℝ)| - ((κ q + 4 : ℕ) : ℝ)) 0]
+        nlinarith only [
+          hcmp, le_max_right (((Nat.dist (j q) (ℓ q) : ℕ) : ℝ) - ((κ q + 5 : ℕ) : ℝ)) 0,
+          le_max_right (|((j q : ℕ) : ℝ) - Real.sqrt (α q : ℝ)| - ((κ q + 4 : ℕ) : ℝ)) 0
+        ]
       have hexp :
           Real.exp
               (-(cq q) *
@@ -733,8 +735,10 @@ theorem productBasisLocalization
       have hsq0 :
           max (((blockDistance j ℓ : ℕ) : ℝ) - B) 0 ^ 2 ≤
             max (((Nat.dist (j q0) (ℓ q0) : ℕ) : ℝ) - ((κ q0 + 5 : ℕ) : ℝ)) 0 ^ 2 := by
-        nlinarith [hmax, le_max_right (((blockDistance j ℓ : ℕ) : ℝ) - B) 0,
-          le_max_right (((Nat.dist (j q0) (ℓ q0) : ℕ) : ℝ) - ((κ q0 + 5 : ℕ) : ℝ)) 0]
+        nlinarith only [
+          hmax, le_max_right (((blockDistance j ℓ : ℕ) : ℝ) - B) 0,
+          le_max_right (((Nat.dist (j q0) (ℓ q0) : ℕ) : ℝ) - ((κ q0 + 5 : ℕ) : ℝ)) 0
+        ]
       have hsingle :
           max (((Nat.dist (j q0) (ℓ q0) : ℕ) : ℝ) - ((κ q0 + 5 : ℕ) : ℝ)) 0 ^ 2 ≤
             ∑ q : Fin d, max (((Nat.dist (j q) (ℓ q) : ℕ) : ℝ) - ((κ q + 5 : ℕ) : ℝ)) 0 ^ 2 := by
@@ -772,9 +776,9 @@ theorem productBasisLocalization
                           ^ 2 := by
                 rw [Finset.mul_sum]
                 refine Finset.sum_le_sum fun q _ => ?_
-                nlinarith [hcsmall q,
-                  sq_nonneg (max (((Nat.dist (j q) (ℓ q) : ℕ) : ℝ) - ((κ q + 5 : ℕ) : ℝ)) 0)]
-              nlinarith [hsum_term, hsq_ge, hc_pos]
+                nlinarith only [hcsmall, hcsmall q,
+                    sq_nonneg (max (((Nat.dist (j q) (ℓ q) : ℕ) : ℝ) - ((κ q + 5 : ℕ) : ℝ)) 0)]
+              nlinarith only [hc_pos, hsq_ge, hsum_term]
             exact mul_le_mul_of_nonneg_left (Real.exp_le_exp.mpr hsum_le) (le_of_lt hC_pos)
 
 /-- Quantitative block localization estimate. -/
@@ -846,7 +850,7 @@ theorem shellCountingFormula
 private lemma summable_exp_neg_mul_sq {a : ℝ} (ha : 0 < a) :
     Summable (fun r : ℕ => Real.exp (-a * (r : ℝ) ^ 2)) := by
   refine Real.summable_exp_nat_mul_of_ge ?_ ?_
-  · linarith
+  · linarith only [ha]
   · intro i
     have hreal : (i : ℝ) ≤ (i : ℝ) * (i : ℝ) := by exact_mod_cast Nat.le_mul_self i
     simpa [pow_two] using hreal
@@ -861,7 +865,7 @@ private lemma polynomialGaussianTailMajorant_summable
       (g := fun r : ℕ => (1 + (r : ℝ) ^ k) * Real.exp (-a * (r : ℝ) ^ 2))
       (fun r => by positivity)
       (fun r => hbound (r : ℝ) (by positivity))
-      ((summable_exp_neg_mul_sq (by linarith)).mul_left C)
+      ((summable_exp_neg_mul_sq (by linarith only [ha])).mul_left C)
 
 /-- Gaussian tails with polynomial weights are summable. -/
 theorem polynomialGaussianSeriesSummable
@@ -871,7 +875,7 @@ theorem polynomialGaussianSeriesSummable
     (f := fun r : ℕ => (1 + (r : ℝ) ^ m) * Real.exp (-c * (r : ℝ) ^ 2))
     (g := fun r : ℕ => (r : ℝ) ^ m * Real.exp (-c * (r : ℝ) ^ 2))
     (fun r => by positivity)
-    (fun r => mul_le_mul_of_nonneg_right (by linarith) (by positivity))
+    (fun r => mul_le_mul_of_nonneg_right (by linarith only []) (by positivity))
     (polynomialGaussianTailMajorant_summable hc m)
 
 private lemma tailIndicator_tendsto_zero
@@ -929,7 +933,7 @@ private lemma tailIndicator_tendsto_zero
           (∑' k : ℕ, u (k + (M + 1))) =
         ∑' i : ℕ, u i := by simpa using hu.sum_add_tsum_nat_add (M + 1)
   have hEq : (∑' r : ℕ, if M < r then u r else 0) = ∑' k : ℕ, u (k + (M + 1)) := by
-    linarith [h1, h2]
+    linarith only [h1, h2]
   simpa [Nat.succ_le_iff] using hEq.symm
 
 private lemma shellExp_global_majorant
@@ -949,12 +953,15 @@ private lemma shellExp_global_majorant
         exact_mod_cast (by simp [shellCardinality] : shellCardinality d 0 ≤ 1)
       have hpow1 : (1 : ℝ) ≤ (3 : ℝ) ^ d := one_le_pow₀ (by norm_num)
       have hfac : (1 : ℝ) ≤ 1 + (((0 : ℕ) : ℝ) ^ d) := by
-        linarith [show (0 : ℝ) ≤ (((0 : ℕ) : ℝ) ^ d) by positivity]
-      nlinarith [hzero, mul_le_mul hpow1 hfac (by norm_num) (by positivity)]
+        linarith only [show (0 : ℝ) ≤ (((0 : ℕ) : ℝ) ^ d) by positivity]
+      linarith only [hzero, hpow1, hfac, mul_le_mul hpow1 hfac (by norm_num) (by positivity)]
     · have hr1 : 1 ≤ r := Nat.succ_le_of_lt (Nat.pos_iff_ne_zero.mpr hr0)
       have hs : (shellCardinality d r : ℝ) ≤ ((2 * r + 1) ^ d : ℕ) := by
         exact_mod_cast shellCountingFormula d r
-      have hbase : (2 * r + 1 : ℝ) ≤ 3 * r := by nlinarith [show (1 : ℝ) ≤ r by exact_mod_cast hr1]
+      have hbase : (2 * r + 1 : ℝ) ≤ 3 * r := by
+        linarith only [
+          hr1, show (1 : ℝ) ≤ r by exact_mod_cast hr1
+        ]
       have hpow : (2 * r + 1 : ℝ) ^ d ≤ (3 * r : ℝ) ^ d := by gcongr
       have hshell' : (shellCardinality d r : ℝ) ≤ (3 : ℝ) ^ d * (r : ℝ) ^ d := by
         calc
@@ -962,7 +969,7 @@ private lemma shellExp_global_majorant
           _ ≤ (3 * r : ℝ) ^ d := hpow
           _ = (3 : ℝ) ^ d * (r : ℝ) ^ d := by rw [mul_pow]
       have hrpow_nonneg : 0 ≤ (r : ℝ) ^ d := by positivity
-      exact le_trans hshell' <| mul_le_mul_of_nonneg_left (by nlinarith) (by positivity)
+      exact le_trans hshell' <| mul_le_mul_of_nonneg_left (by linarith only []) (by positivity)
   have hexp :
       Real.exp (-(c) * max ((r : ℝ) - B) 0 ^ 2) ≤
         Real.exp (c * B ^ 2) * Real.exp (-(c / 8) * (r : ℝ) ^ 2) := by
@@ -970,19 +977,22 @@ private lemma shellExp_global_majorant
     have hsq :
         (r : ℝ) ^ 2 / 8 - B ^ 2 ≤ max ((r : ℝ) - B) 0 ^ 2 := by
       by_cases hsmall : (r : ℝ) ≤ 2 * B
-      · have hrhs_nonpos : (r : ℝ) ^ 2 / 8 - B ^ 2 ≤ 0 := by nlinarith
+      · have hrhs_nonpos : (r : ℝ) ^ 2 / 8 - B ^ 2 ≤ 0 := by nlinarith only [hB, hsmall]
         have hnonneg : 0 ≤ max ((r : ℝ) - B) 0 ^ 2 := by positivity
-        linarith
-      · have hlarge : 2 * B < (r : ℝ) := by linarith
-        have hhalf : (r : ℝ) / 2 ≤ (r : ℝ) - B := by nlinarith
+        linarith only [hrhs_nonpos, hnonneg]
+      · have hlarge : 2 * B < (r : ℝ) := by linarith only [hsmall]
+        have hhalf : (r : ℝ) / 2 ≤ (r : ℝ) - B := by linarith only [hsmall]
         have hmaxeq : max ((r : ℝ) - B) 0 = (r : ℝ) - B := by
           apply max_eq_left
-          linarith
+          linarith only [hB, hsmall]
         rw [hmaxeq]
-        have hsquare_half : ((r : ℝ) / 2) ^ 2 ≤ ((r : ℝ) - B) ^ 2 := by nlinarith
-        nlinarith [hsquare_half]
+        have hsquare_half : ((r : ℝ) / 2) ^ 2 ≤ ((r : ℝ) - B) ^ 2 := by nlinarith only [hsmall]
+        nlinarith only [hsquare_half]
     have hlog :
-        -(c) * max ((r : ℝ) - B) 0 ^ 2 ≤ c * B ^ 2 - (c / 8) * (r : ℝ) ^ 2 := by nlinarith [hsq, hc]
+        -(c) * max ((r : ℝ) - B) 0 ^ 2 ≤ c * B ^ 2 - (c / 8) * (r : ℝ) ^ 2 := by
+          nlinarith only [
+            hc, hsq
+          ]
     calc
       Real.exp (-(c) * max ((r : ℝ) - B) 0 ^ 2)
         ≤ Real.exp (c * B ^ 2 - (c / 8) * (r : ℝ) ^ 2) := Real.exp_le_exp.mpr hlog
@@ -1010,7 +1020,7 @@ private lemma localizationLeakageSeriesSummable
     simpa [mul_assoc, mul_left_comm, mul_comm] using
       (polynomialGaussianTailMajorant_summable
         (a := c / 8)
-        (by linarith)
+        (by linarith only [hc])
         d).mul_left K
   exact Summable.of_nonneg_of_le
       (f := fun r : ℕ =>
@@ -1021,7 +1031,7 @@ private lemma localizationLeakageSeriesSummable
       (fun r => by positivity)
       (fun r => by
         have := hmajor r
-        nlinarith [this, hC])
+        nlinarith only [hC, this])
       (hsum.mul_right C)
 
 private lemma localizationLeakageCoefficient_tendsto_zero

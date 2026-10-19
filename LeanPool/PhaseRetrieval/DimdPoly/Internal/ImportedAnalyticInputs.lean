@@ -57,7 +57,7 @@ def Crot : ℝ := 64 * Real.pi
 
 theorem Crot_pos : 0 < Crot := by
   unfold Crot
-  nlinarith [Real.pi_pos]
+  nlinarith only [Real.pi_pos]
 
 /-- `zeta`: zeta. -/
 noncomputable def zeta (x : Circle) : ℂ :=
@@ -150,7 +150,7 @@ theorem carrierArc_left_lt_right {N : Nat} (k : Fin N) :
     (carrierArc N k).left < (carrierArc N k).right := by
   have hlen := carrierArc_length_pos k
   dsimp [arcLength] at hlen
-  linarith
+  linarith only [hlen]
 
 theorem carrierArc_arcSet_eq_mk_image_Icc {N : Nat} (k : Fin N) :
     arcSet (carrierArc N k) =
@@ -165,9 +165,9 @@ theorem carrierArc_arcSet_eq_mk_image_Icc {N : Nat} (k : Fin N) :
       le_of_lt (carrierArc_length_pos k)
     constructor
     · dsimp [arcLength] at hlen_nonneg ⊢
-      nlinarith [ht.1, hlen_nonneg]
+      nlinarith only [ht.1, hlen_nonneg]
     · dsimp [arcLength] at hlen_nonneg ⊢
-      nlinarith [ht.2, hlen_nonneg]
+      nlinarith only [ht.2, hlen_nonneg]
   · intro hx
     rcases hx with ⟨y, hy, rfl⟩
     let t : ℝ := (y - (carrierArc N k).left) / arcLength (carrierArc N k)
@@ -180,7 +180,7 @@ theorem carrierArc_arcSet_eq_mk_image_Icc {N : Nat} (k : Fin N) :
       · dsimp [t]
         rw [div_le_one hlen_pos]
         dsimp [arcLength]
-        linarith [hy.2]
+        linarith only [hy.2]
     · dsimp [arcParam, t]
       have hlen_pos : 0 < arcLength (carrierArc N k) :=
         carrierArc_length_pos k
@@ -807,13 +807,13 @@ theorem constantCenter_fastRotate_carrierArc_sq_le_defectSq
     have hlen_nonneg : 0 <= arcLength (carrierArc N k) :=
       arcLength_nonneg (carrierArc N k)
     have hnorm_nonneg : 0 <= ‖u‖ ^ 2 := sq_nonneg ‖u‖
-    nlinarith
+    nlinarith only [hlen_nonneg]
   have hJ_nonneg : 0 <= J := le_trans hleft_nonneg hJ_lower
   calc
     arcLength (carrierArc N k) * ‖u‖ ^ 2
         = 8 * (arcLength (carrierArc N k) * ‖u‖ ^ 2 / 8) := by ring
     _ <= 8 * J := by exact mul_le_mul_of_nonneg_left hJ_lower (by norm_num)
-    _ <= 32 * J := by nlinarith
+    _ <= 32 * J := by linarith only [hJ_lower, hleft_nonneg]
     _ = Crot * ((2 * Real.pi)⁻¹ * J) := by
       unfold Crot
       have hpi_ne : Real.pi ≠ 0 := ne_of_gt Real.pi_pos
@@ -2257,24 +2257,20 @@ theorem norm_star_L2 {d : Nat} (f : L2Real d) :
 private theorem lpPairing_mul_norm_le {d : Nat} (f g : L2Real d) :
     ‖((ContinuousLinearMap.mul ℂ ℂ).lpPairing
         (MeasureTheory.volume : MeasureTheory.Measure (RealVec d)) 2 2) f g‖ ≤ ‖f‖ * ‖g‖ := by
-  let μ : MeasureTheory.Measure (RealVec d) := MeasureTheory.volume
-  let B := (ContinuousLinearMap.mul ℂ ℂ)
-  have hB : ‖B‖ ≤ (1 : ℝ) := by simp [B]
-  rw [ContinuousLinearMap.lpPairing_eq_integral]
-  let H : MeasureTheory.Lp ℂ 1 μ := B.holder (1 : ENNReal) f g
-  have hHae : H =ᵐ[μ] fun x => B (f x) (g x) := by exact ContinuousLinearMap.coeFn_holder B f g
-  have hnorm_int : ‖∫ x, B (f x) (g x) ∂μ‖ ≤ ‖H‖ := by
-    calc
-      ‖∫ x, B (f x) (g x) ∂μ‖ = ‖∫ x, H x ∂μ‖ := congrArg norm (integral_congr_ae hHae.symm)
-      _ ≤ ∫ x, ‖H x‖ ∂μ := norm_integral_le_integral_norm _
-      _ = ‖H‖ := by rw [MeasureTheory.L1.norm_eq_integral_norm]
-  have hholder : ‖H‖ ≤ ‖B‖ * ‖f‖ * ‖g‖ := by
-    simpa [H] using ContinuousLinearMap.norm_holder_apply_apply_le B f g
-  have hmul : ‖B‖ * ‖f‖ * ‖g‖ ≤ ‖f‖ * ‖g‖ := by
-    calc
-      ‖B‖ * ‖f‖ * ‖g‖ ≤ 1 * ‖f‖ * ‖g‖ := by gcongr
-      _ = ‖f‖ * ‖g‖ := by ring
-  exact hnorm_int.trans (hholder.trans hmul)
+  let B := ContinuousLinearMap.mul ℂ ℂ
+  have hleft : B.lpPairing (volume : Measure (RealVec d)) 2 2 f g =
+      MeasureTheory.L1.integral (B.holder 1 f g) := by
+    rw [MeasureTheory.L1.integral_eq' ℂ]
+    rfl
+  rw [hleft]
+  calc
+    _ ≤ ‖B.holder 1 f g‖ := MeasureTheory.L1.norm_integral_le _
+    _ ≤ ‖B‖ * ‖f‖ * ‖g‖ := ContinuousLinearMap.norm_holder_apply_apply_le B f g
+    _ ≤ 1 * ‖f‖ * ‖g‖ :=
+      mul_le_mul_of_nonneg_right
+        (mul_le_mul_of_nonneg_right (ContinuousLinearMap.opNorm_mul_le ℂ ℂ) (norm_nonneg f))
+        (norm_nonneg g)
+    _ = ‖f‖ * ‖g‖ := by rw [one_mul]
 
 theorem norm_ambiguityRep_le {d : Nat} (f g : L2Real d) (ξ : PhaseSpace d) :
     ‖ambiguityRep f g ξ‖ ≤ ‖f‖ * ‖g‖ := by
@@ -2324,6 +2320,23 @@ theorem norm_stftRep_le {d : Nat} (h f : L2Real d) (ξ : PhaseSpace d) :
         ≤ ‖f‖ * ‖modulateL2 ξ.2 (star (translateL2 (-ξ.1) h))‖ := hpair
     _ = ‖f‖ * ‖h‖ := by rw [norm_modulateL2, norm_star_L2, norm_translateL2]
 
+private theorem bilinear_sub
+    {E F G : Type*} [NormedAddCommGroup E] [NormedAddCommGroup F] [NormedAddCommGroup G]
+    [NormedSpace ℂ E] [NormedSpace ℂ F] [NormedSpace ℂ G]
+    (B : E →L[ℂ] F →L[ℂ] G) (f₁ f₂ : E) (g₁ g₂ : F) :
+    B f₁ g₁ - B f₂ g₂ = B (f₁ - f₂) g₁ + B f₂ (g₁ - g₂) := by
+  simp only [map_sub, sub_apply]
+  abel
+
+private theorem norm_bilinear_sub_le
+    {E F G : Type*} [NormedAddCommGroup E] [NormedAddCommGroup F] [NormedAddCommGroup G]
+    [NormedSpace ℂ E] [NormedSpace ℂ F] [NormedSpace ℂ G]
+    (B : E →L[ℂ] F →L[ℂ] G) (hB : ∀ f g, ‖B f g‖ ≤ ‖f‖ * ‖g‖)
+    (f₁ f₂ : E) (g₁ g₂ : F) :
+    ‖B f₁ g₁ - B f₂ g₂‖ ≤ ‖f₁ - f₂‖ * ‖g₁‖ + ‖f₂‖ * ‖g₁ - g₂‖ := by
+  rw [bilinear_sub]
+  exact (norm_add_le _ _).trans (add_le_add (hB _ _) (hB _ _))
+
 private theorem norm_stftRep_sub_le {d : Nat}
     (h₁ h₂ f₁ f₂ : L2Real d) (ξ : PhaseSpace d) :
     ‖stftRep h₁ f₁ ξ - stftRep h₂ f₂ ξ‖ ≤
@@ -2344,17 +2357,8 @@ private theorem norm_stftRep_sub_le {d : Nat}
   rw [stftRep_eq_lpPairing h₁ f₁ ξ, stftRep_eq_lpPairing h₂ f₂ ξ]
   change ‖P f₁ (T h₁) - P f₂ (T h₂)‖ ≤
     ‖f₁ - f₂‖ * ‖h₁‖ + ‖f₂‖ * ‖h₁ - h₂‖
-  have hsplit :
-      P f₁ (T h₁) - P f₂ (T h₂) =
-        P (f₁ - f₂) (T h₁) + P f₂ (T h₁ - T h₂) := by simp [P]
-  calc
-    ‖P f₁ (T h₁) - P f₂ (T h₂)‖
-        = ‖P (f₁ - f₂) (T h₁) + P f₂ (T h₁ - T h₂)‖ := by rw [hsplit]
-    _ ≤ ‖P (f₁ - f₂) (T h₁)‖ + ‖P f₂ (T h₁ - T h₂)‖ := norm_add_le _ _
-    _ ≤ ‖f₁ - f₂‖ * ‖T h₁‖ + ‖f₂‖ * ‖T h₁ - T h₂‖ := by
-      exact add_le_add (lpPairing_mul_norm_le (f₁ - f₂) (T h₁))
-        (lpPairing_mul_norm_le f₂ (T h₁ - T h₂))
-    _ = ‖f₁ - f₂‖ * ‖h₁‖ + ‖f₂‖ * ‖h₁ - h₂‖ := by rw [hT_norm, hT_sub_norm]
+  simpa only [hT_norm, hT_sub_norm] using
+    norm_bilinear_sub_le P (fun f g => lpPairing_mul_norm_le f g) f₁ f₂ (T h₁) (T h₂)
 
 theorem continuous_stftRep
     {d : Nat} (h f : L2Real d) :
@@ -2401,10 +2405,10 @@ private theorem stftRep_sq_integrable_schwartz_realVec {d : Nat}
   constructor
   · refine Filter.Eventually.of_forall ?_
     intro x
-    simpa [F, hLp, fLp, μ] using integrable_stftRep_sq_slice_schwartz_realVec h f x
+    exact integrable_stftRep_sq_slice_schwartz_realVec h f x
   · have hkernel : Integrable
         (fun p : RealVec d × RealVec d => ‖f p.1‖ ^ 2 * ‖h (p.1 - p.2)‖ ^ 2)
-        (μ.prod μ) := by simpa [μ] using integrable_stft_kernel_schwartz_realVec h f
+        (μ.prod μ) := integrable_stft_kernel_schwartz_realVec h f
     have h_outer :
         (fun x : RealVec d => ∫ ω : RealVec d, ‖F (x, ω)‖ ∂μ) =
           fun x : RealVec d => ∫ t : RealVec d, ‖f t‖ ^ 2 * ‖h (t - x)‖ ^ 2 ∂μ := by
@@ -2414,12 +2418,12 @@ private theorem stftRep_sq_integrable_schwartz_realVec {d : Nat}
             = ∫ ω : RealVec d, ‖stftRep hLp fLp (x, ω)‖ ^ 2 ∂μ := by
               refine integral_congr_ae ?_
               filter_upwards with ω
-              simp [F]
+              exact Real.norm_of_nonneg (sq_nonneg _)
         _ = ∫ t : RealVec d, ‖f t‖ ^ 2 * ‖h (t - x)‖ ^ 2 ∂μ := by
           rw [integral_norm_sq_stft_slice_schwartz_realVec h f x]
           refine integral_congr_ae ?_
           filter_upwards with t
-          simp [stftSliceSchwartz_apply, pow_two, mul_assoc, mul_left_comm, mul_comm]
+          rw [stftSliceSchwartz_apply, norm_mul, norm_star, mul_pow]
     rw [h_outer]
     simpa only [norm_mul, norm_pow, norm_norm] using hkernel.integral_norm_prod_right
 
@@ -2474,10 +2478,8 @@ private theorem integral_stftRep_sq_schwartz_realVec {d : Nat}
   let hLp : L2Real d := h.toLp 2 μ
   let fLp : L2Real d := f.toLp 2 μ
   let K : RealVec d → RealVec d → ℝ := fun x t => ‖f t‖ ^ 2 * ‖h (t - x)‖ ^ 2
-  have hK : Integrable (Function.uncurry K) (μ.prod μ) := by
-    refine ((integrable_stft_kernel_schwartz_realVec h f).swap).congr ?_
-    filter_upwards with p
-    simp [K, Function.uncurry, Function.comp_apply, Prod.fst_swap, Prod.snd_swap, mul_comm]
+  have hK : Integrable (Function.uncurry K) (μ.prod μ) :=
+    (integrable_stft_kernel_schwartz_realVec h f).swap
   calc
     ∫ p : PhaseSpace d, ‖stftRep (h.toLp 2 μ) (f.toLp 2 μ) p‖ ^ 2
         = ∫ x : RealVec d, ∫ ω : RealVec d, ‖stftRep hLp fLp (x, ω)‖ ^ 2 := by
@@ -2498,7 +2500,7 @@ private theorem integral_stftRep_sq_schwartz_realVec {d : Nat}
             ‖stftSliceSchwartz h f x t‖ ^ 2
                 = ‖f t * star (h (t - x))‖ ^ 2 := by rw [stftSliceSchwartz_apply]
             _ = (‖f t‖ * ‖h (t - x)‖) ^ 2 := by rw [norm_mul, norm_star]
-            _ = K x t := by simp [K, pow_two, mul_assoc, mul_left_comm, mul_comm]
+            _ = K x t := mul_pow _ _ _
     _ = ∫ t : RealVec d, ∫ x : RealVec d, K x t := by exact MeasureTheory.integral_integral_swap hK
     _ = ∫ t : RealVec d, ‖f t‖ ^ 2 * ∫ x : RealVec d, ‖h x‖ ^ 2 := by
           refine integral_congr_ae ?_
@@ -2804,6 +2806,8 @@ private theorem stftRep_sub_eq_add {d : Nat}
       stftRep h₁ (f₁ - f₂) ξ + stftRep (h₁ - h₂) f₂ ξ := by
   let P := ((ContinuousLinearMap.mul ℂ ℂ).lpPairing
     (MeasureTheory.volume : MeasureTheory.Measure (RealVec d)) 2 2)
+  -- Generate the existing congruence theorem on a small application for import compatibility.
+  have hpairing_zero : P 0 0 = 0 := by simp [P]
   let T : L2Real d → L2Real d := fun h =>
     modulateL2 ξ.2 (star (translateL2 (-ξ.1) h))
   have hT_sub : T (h₁ - h₂) = T h₁ - T h₂ := by
@@ -2814,7 +2818,7 @@ private theorem stftRep_sub_eq_add {d : Nat}
   change P f₁ (T h₁) - P f₂ (T h₂) =
     P (f₁ - f₂) (T h₁) + P f₂ (T (h₁ - h₂))
   rw [hT_sub]
-  simp [P]
+  exact bilinear_sub P f₁ f₂ (T h₁) (T h₂)
 
 private theorem lpNorm_stftRep_sub_le {d : Nat}
     (h₁ h₂ f₁ f₂ : L2Real d) :
@@ -2878,53 +2882,43 @@ private theorem lpNorm_mul_le_real
     (hf : MeasureTheory.MemLp f 2 μ) (hg : MeasureTheory.MemLp g 2 μ) :
     MeasureTheory.lpNorm (fun x => f x * g x) 1 μ ≤
       MeasureTheory.lpNorm f 2 μ * MeasureTheory.lpNorm g 2 μ := by
-  have hmem : MeasureTheory.MemLp (fun x => f x * g x) 1 μ := by
-    refine MeasureTheory.MemLp.ae_eq ?_ (hg.mul hf)
-    filter_upwards with x
-    simp [Pi.mul_apply, mul_comm]
-  rw [MeasureTheory.lpNorm_one_eq_integral_norm hmem.aestronglyMeasurable]
-  have hpq : Real.HolderConjugate 2 2 := by constructor <;> norm_num
-  have hf_abs : MeasureTheory.MemLp (fun x => |f x|) (ENNReal.ofReal (2 : ℝ)) μ := by
-    simpa only [ENNReal.ofReal_ofNat, Real.norm_eq_abs] using hf.norm
-  have hg_abs : MeasureTheory.MemLp (fun x => |g x|) (ENNReal.ofReal (2 : ℝ)) μ := by
-    simpa only [ENNReal.ofReal_ofNat, Real.norm_eq_abs] using hg.norm
-  have hf_nonneg : 0 ≤ᵐ[μ] fun x => |f x| :=
-    Filter.Eventually.of_forall fun _ => abs_nonneg _
-  have hg_nonneg : 0 ≤ᵐ[μ] fun x => |g x| :=
-    Filter.Eventually.of_forall fun _ => abs_nonneg _
-  have hholder := @MeasureTheory.integral_mul_le_Lp_mul_Lq_of_nonneg α _ μ 2 2 hpq
-    (fun x => |f x|) (fun x => |g x|) hf_nonneg hg_nonneg hf_abs hg_abs
-  have hf_lp :
-      (∫ x, |f x| ^ (2 : ℝ) ∂μ) ^ (1 / (2 : ℝ)) =
-        MeasureTheory.lpNorm f 2 μ := by
-    have h := hf.eLpNorm_eq_integral_rpow_norm (μ := μ) (p := (2 : ENNReal))
-      (by norm_num : (2 : ENNReal) ≠ 0) (by norm_num : (2 : ENNReal) ≠ ⊤)
-    norm_num at h
-    have h' := congrArg ENNReal.toReal h
-    rw [ENNReal.toReal_ofReal (by positivity),
-      MeasureTheory.toReal_eLpNorm] at h'
-    simpa only [Real.rpow_ofNat, sq_abs, one_div, Real.norm_eq_abs] using h'.symm
-  have hg_lp :
-      (∫ x, |g x| ^ (2 : ℝ) ∂μ) ^ (1 / (2 : ℝ)) =
-        MeasureTheory.lpNorm g 2 μ := by
-    have h := hg.eLpNorm_eq_integral_rpow_norm (μ := μ) (p := (2 : ENNReal))
-      (by norm_num : (2 : ENNReal) ≠ 0) (by norm_num : (2 : ENNReal) ≠ ⊤)
-    norm_num at h
-    have h' := congrArg ENNReal.toReal h
-    rw [ENNReal.toReal_ofReal (by positivity),
-      MeasureTheory.toReal_eLpNorm] at h'
-    simpa only [Real.rpow_ofNat, sq_abs, one_div, Real.norm_eq_abs] using h'.symm
-  have hleft :
-      ∫ x, ‖f x * g x‖ ∂μ = ∫ x, |f x| * |g x| ∂μ := by
-    refine integral_congr_ae ?_
-    filter_upwards with x
-    simp [Real.norm_eq_abs]
-  rw [hleft]
-  rw [hf_lp, hg_lp] at hholder
-  exact hholder
+  change (eLpNorm (fun x => f x * g x) 1 μ).toReal ≤
+    (eLpNorm f 2 μ).toReal * (eLpNorm g 2 μ).toReal
+  rw [← ENNReal.toReal_mul]
+  exact ENNReal.toReal_mono (ENNReal.mul_ne_top hf.eLpNorm_ne_top hg.eLpNorm_ne_top)
+    (eLpNorm_smul_le_mul_eLpNorm hf.aestronglyMeasurable hg.aestronglyMeasurable)
 
--- This is the Hölder/square-difference estimate over phase space; the proof is copied
--- from the one-dimensional STFT route but with vector-valued `L2Real` approximants.
+private theorem lpNorm_norm_sq_sub_le
+    {α : Type*} [MeasurableSpace α] {μ : Measure α} {F G : α → ℂ}
+    (hF : MemLp F 2 μ) (hG : MemLp G 2 μ) :
+    lpNorm (fun x => ((‖F x‖ ^ 2 : ℝ) : ℂ) - ((‖G x‖ ^ 2 : ℝ) : ℂ)) 1 μ ≤
+      (lpNorm F 2 μ + lpNorm G 2 μ) * lpNorm (fun x => F x - G x) 2 μ := by
+  let A : α → ℝ := fun x => ‖F x‖ + ‖G x‖
+  let B : α → ℝ := fun x => ‖F x - G x‖
+  have hA : MemLp A 2 μ := hF.norm.add hG.norm
+  have hB : MemLp B 2 μ := (hF.sub hG).norm
+  have hproduct : MemLp (fun x => A x * B x) 1 μ := hA.mul hB
+  have hpoint : ∀ x,
+      ‖((‖F x‖ ^ 2 : ℝ) : ℂ) - ((‖G x‖ ^ 2 : ℝ) : ℂ)‖ ≤ A x * B x := by
+    intro x
+    have hnonnegative : 0 ≤ ‖F x‖ + ‖G x‖ := add_nonneg (norm_nonneg _) (norm_nonneg _)
+    rw [← Complex.ofReal_sub, Complex.norm_real, Real.norm_eq_abs, sq_sub_sq,
+      abs_mul, abs_of_nonneg hnonnegative]
+    exact mul_le_mul_of_nonneg_left (abs_norm_sub_norm_le _ _) hnonnegative
+  have hsum : lpNorm A 2 μ ≤ lpNorm F 2 μ + lpNorm G 2 μ := by
+    calc
+      _ ≤ lpNorm (fun x => ‖F x‖) 2 μ + lpNorm (fun x => ‖G x‖) 2 μ :=
+        lpNorm_add_le hF.norm (by norm_num)
+      _ = _ := by rw [lpNorm_norm hF.aestronglyMeasurable, lpNorm_norm hG.aestronglyMeasurable]
+  have hnorm : lpNorm B 2 μ = lpNorm (fun x => F x - G x) 2 μ :=
+    lpNorm_norm (hF.sub hG).aestronglyMeasurable 2
+  calc
+    _ ≤ lpNorm (fun x => A x * B x) 1 μ := lpNorm_mono_real hproduct hpoint
+    _ ≤ lpNorm A 2 μ * lpNorm B 2 μ := lpNorm_mul_le_real hA hB
+    _ ≤ (lpNorm F 2 μ + lpNorm G 2 μ) * lpNorm (fun x => F x - G x) 2 μ := by
+      rw [hnorm]
+      exact mul_le_mul_of_nonneg_right hsum lpNorm_nonneg
+
 private theorem lpNorm_stftRep_sq_sub_tendsto_zero {d : Nat}
     (h f : L2Real d) :
     Tendsto
@@ -2947,10 +2941,6 @@ private theorem lpNorm_stftRep_sq_sub_tendsto_zero {d : Nat}
     (schwartzApproxRealVec (MeasureTheory.Lp.memLp f) n).toLp 2 μ
   let F : PhaseSpace d → ℂ := stftRep h f
   let Fₙ : Nat → PhaseSpace d → ℂ := fun n => stftRep (hN n) (fN n)
-  let Dₙ : Nat → PhaseSpace d → ℂ := fun n ξ =>
-    (((‖Fₙ n ξ‖ ^ 2 : ℝ) : ℂ) - ((‖F ξ‖ ^ 2 : ℝ) : ℂ))
-  let Aₙ : Nat → PhaseSpace d → ℝ := fun n ξ => ‖Fₙ n ξ‖ + ‖F ξ‖
-  let Bₙ : Nat → PhaseSpace d → ℝ := fun n ξ => ‖Fₙ n ξ - F ξ‖
   let Cₙ : Nat → ℝ := fun n => ‖fN n‖ * ‖hN n‖ + ‖f‖ * ‖h‖
   have hhN : Tendsto hN atTop (nhds h) := by
     exact schwartzApproxRealVec_toLp_tendsto h
@@ -2973,70 +2963,12 @@ private theorem lpNorm_stftRep_sq_sub_tendsto_zero {d : Nat}
         atTop (nhds 0) := by simpa only [mul_zero] using hC_tendsto.mul hdiff
   refine squeeze_zero (fun _ => MeasureTheory.lpNorm_nonneg) ?_ hCtendsto
   intro n
-  have hmemFn : MeasureTheory.MemLp (Fₙ n) 2 μP := by
-    dsimp [Fₙ]
-    exact stftRep_memLp (hN n) (fN n)
-  have hmemF : MeasureTheory.MemLp F 2 μP := by
-    dsimp [F]
-    exact stftRep_memLp h f
-  have hmemDiff : MeasureTheory.MemLp (fun ξ : PhaseSpace d => Fₙ n ξ - F ξ) 2 μP :=
-    hmemFn.sub hmemF
-  have hAmem : MeasureTheory.MemLp (Aₙ n) 2 μP := by
-    dsimp [Aₙ]
-    exact hmemFn.norm.add hmemF.norm
-  have hBmem : MeasureTheory.MemLp (Bₙ n) 2 μP := by
-    dsimp [Bₙ]
-    exact hmemDiff.norm
-  have hHmem : MeasureTheory.MemLp (fun ξ : PhaseSpace d => Aₙ n ξ * Bₙ n ξ) 1 μP := by
-    refine MeasureTheory.MemLp.ae_eq ?_ (hBmem.mul hAmem)
-    filter_upwards with ξ
-    simp [Pi.mul_apply, mul_comm]
-  have hpoint : ∀ ξ : PhaseSpace d, ‖Dₙ n ξ‖ ≤ Aₙ n ξ * Bₙ n ξ := by
-    intro ξ
-    have hsum_nonneg : 0 ≤ ‖Fₙ n ξ‖ + ‖F ξ‖ := by positivity
-    calc
-      ‖Dₙ n ξ‖ =
-          ‖(((‖Fₙ n ξ‖ ^ 2 : ℝ) : ℂ) - ((‖F ξ‖ ^ 2 : ℝ) : ℂ))‖ := by rfl
-      _ = |‖Fₙ n ξ‖ ^ 2 - ‖F ξ‖ ^ 2| := by
-            rw [← Complex.ofReal_sub, Complex.norm_real, Real.norm_eq_abs]
-      _ = (‖Fₙ n ξ‖ + ‖F ξ‖) * |‖Fₙ n ξ‖ - ‖F ξ‖| := by
-            rw [sq_sub_sq, abs_mul, abs_of_nonneg hsum_nonneg]
-      _ ≤ (‖Fₙ n ξ‖ + ‖F ξ‖) * ‖Fₙ n ξ - F ξ‖ :=
-            mul_le_mul_of_nonneg_left (abs_norm_sub_norm_le _ _) hsum_nonneg
-      _ = Aₙ n ξ * Bₙ n ξ := by simp [Aₙ, Bₙ]
-  have hD_le :
-      MeasureTheory.lpNorm (Dₙ n) 1 μP ≤
-        MeasureTheory.lpNorm (fun ξ : PhaseSpace d => Aₙ n ξ * Bₙ n ξ) 1 μP :=
-    MeasureTheory.lpNorm_mono_real hHmem hpoint
-  have hAB_le :
-      MeasureTheory.lpNorm (fun ξ : PhaseSpace d => Aₙ n ξ * Bₙ n ξ) 1 μP ≤
-        MeasureTheory.lpNorm (Aₙ n) 2 μP * MeasureTheory.lpNorm (Bₙ n) 2 μP :=
-    lpNorm_mul_le_real hAmem hBmem
-  have hA_le : MeasureTheory.lpNorm (Aₙ n) 2 μP ≤ Cₙ n := by
-    calc
-      MeasureTheory.lpNorm (Aₙ n) 2 μP
-          ≤ MeasureTheory.lpNorm (fun ξ : PhaseSpace d => ‖Fₙ n ξ‖) 2 μP +
-              MeasureTheory.lpNorm (fun ξ : PhaseSpace d => ‖F ξ‖) 2 μP := by
-              dsimp [Aₙ]
-              exact
-                MeasureTheory.lpNorm_add_le hmemFn.norm
-                  (g := fun ξ : PhaseSpace d => ‖F ξ‖) (by norm_num)
-      _ = MeasureTheory.lpNorm (Fₙ n) 2 μP + MeasureTheory.lpNorm F 2 μP := by
-            simp [MeasureTheory.lpNorm_norm, hmemFn.aestronglyMeasurable,
-              hmemF.aestronglyMeasurable]
-      _ ≤ ‖fN n‖ * ‖hN n‖ + ‖f‖ * ‖h‖ := by
-            gcongr
-            · exact lpNorm_stftRep_le (hN n) (fN n)
-            · exact lpNorm_stftRep_le h f
-  calc
-    MeasureTheory.lpNorm (Dₙ n) 1 μP
-        ≤ MeasureTheory.lpNorm (fun ξ : PhaseSpace d => Aₙ n ξ * Bₙ n ξ) 1 μP := hD_le
-    _ ≤ MeasureTheory.lpNorm (Aₙ n) 2 μP * MeasureTheory.lpNorm (Bₙ n) 2 μP := hAB_le
-    _ ≤ Cₙ n * MeasureTheory.lpNorm (fun ξ : PhaseSpace d => Fₙ n ξ - F ξ) 2 μP := by
-          rw [show MeasureTheory.lpNorm (Bₙ n) 2 μP =
-              MeasureTheory.lpNorm (fun ξ : PhaseSpace d => Fₙ n ξ - F ξ) 2 μP by
-                simp [Bₙ, MeasureTheory.lpNorm_norm, hmemDiff.aestronglyMeasurable]]
-          exact mul_le_mul_of_nonneg_right hA_le MeasureTheory.lpNorm_nonneg
+  have hmemFn : MemLp (Fₙ n) 2 μP := stftRep_memLp (hN n) (fN n)
+  have hmemF : MemLp F 2 μP := stftRep_memLp h f
+  have hsum : lpNorm (Fₙ n) 2 μP + lpNorm F 2 μP ≤ Cₙ n :=
+    add_le_add (lpNorm_stftRep_le (hN n) (fN n)) (lpNorm_stftRep_le h f)
+  exact (lpNorm_norm_sq_sub_le hmemFn hmemF).trans
+    (mul_le_mul_of_nonneg_right hsum lpNorm_nonneg)
 
 private theorem norm_ambiguityRep_sub_le {d : Nat}
     (f₁ f₂ g₁ g₂ : L2Real d) (ξ : PhaseSpace d) :
@@ -3066,20 +2998,9 @@ private theorem norm_ambiguityRep_sub_le {d : Nat}
   rw [ambiguityRep_eq_lpPairing f₁ g₁ ξ, ambiguityRep_eq_lpPairing f₂ g₂ ξ]
   change ‖P (T₁ f₁) (T₂ g₁) - P (T₁ f₂) (T₂ g₂)‖ ≤
     ‖f₁ - f₂‖ * ‖g₁‖ + ‖f₂‖ * ‖g₁ - g₂‖
-  have hsplit :
-      P (T₁ f₁) (T₂ g₁) - P (T₁ f₂) (T₂ g₂) =
-        P (T₁ f₁ - T₁ f₂) (T₂ g₁) + P (T₁ f₂) (T₂ g₁ - T₂ g₂) := by simp [P]
-  calc
-    ‖P (T₁ f₁) (T₂ g₁) - P (T₁ f₂) (T₂ g₂)‖
-        = ‖P (T₁ f₁ - T₁ f₂) (T₂ g₁) + P (T₁ f₂) (T₂ g₁ - T₂ g₂)‖ := by rw [hsplit]
-    _ ≤ ‖P (T₁ f₁ - T₁ f₂) (T₂ g₁)‖ +
-          ‖P (T₁ f₂) (T₂ g₁ - T₂ g₂)‖ := norm_add_le _ _
-    _ ≤ ‖T₁ f₁ - T₁ f₂‖ * ‖T₂ g₁‖ +
-          ‖T₁ f₂‖ * ‖T₂ g₁ - T₂ g₂‖ := by
-          exact add_le_add (lpPairing_mul_norm_le (T₁ f₁ - T₁ f₂) (T₂ g₁))
-            (lpPairing_mul_norm_le (T₁ f₂) (T₂ g₁ - T₂ g₂))
-    _ = ‖f₁ - f₂‖ * ‖g₁‖ + ‖f₂‖ * ‖g₁ - g₂‖ := by
-          rw [hT₁_sub_norm, hT₂_norm, hT₁_norm, hT₂_sub_norm]
+  simpa only [hT₁_sub_norm, hT₂_norm, hT₁_norm, hT₂_sub_norm] using
+    norm_bilinear_sub_le P (fun f g => lpPairing_mul_norm_le f g)
+      (T₁ f₁) (T₁ f₂) (T₂ g₁) (T₂ g₂)
 
 private theorem ambiguityRep_tendsto_schwartzApprox {d : Nat}
     (f : L2Real d) (ξ : PhaseSpace d) :

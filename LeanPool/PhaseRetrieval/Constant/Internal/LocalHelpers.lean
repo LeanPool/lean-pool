@@ -156,9 +156,9 @@ theorem LocalFockSPR_of_small_norm_exists_phase
     have hnorm : ‖w0 - lam0‖ ≤ ‖w0 - 1‖ := by
       simpa [lam0] using norm_sub_phaseAnchor_le w0 1 (by simp)
     have hsq : ‖w0 - lam0‖ ^ 2 ≤ ‖w0 - 1‖ ^ 2 := by
-      nlinarith [hnorm, norm_nonneg (w0 - lam0), norm_nonneg (w0 - 1)]
+      nlinarith only [hnorm, norm_nonneg (w0 - lam0), norm_nonneg (w0 - 1)]
     rw [phaseDistanceSqNorm_eq_centered, phaseDistanceSqNorm_eq_centered]
-    nlinarith
+    linarith only [hsq]
   have hsmall0 : phaseDistanceSqNorm p lam0 ≤ (1 / 4601 : ℝ) ^ 2 :=
     le_trans (le_trans hphase_le_one (by rw [phaseDistanceSqNorm_one_eq])) hsmall
   let q : Polynomial ℂ :=

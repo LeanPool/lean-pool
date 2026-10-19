@@ -123,7 +123,7 @@ private lemma gaussianInner_finite_sum_basis
   rw [MeasureTheory.integral_finsetSum]
   · simp_rw [MeasureTheory.integral_const_mul]
   · intro α hα
-    simpa [mul_assoc] using (integrable_productBasis_cross κ α β).const_mul (c α)
+    exact (integrable_productBasis_cross κ α β).const_mul (c α)
 
 private lemma gaussianInner_finite_sum
     {d : ℕ} (κ : MultiIndex d)
@@ -165,7 +165,7 @@ private lemma gaussianInner_finite_sum
       simp_rw [Finset.sum_mul, mul_assoc]
       exact MeasureTheory.integrable_finsetSum _ fun α _ =>
         (integrable_productBasis_cross κ α β).const_mul (a α)
-    simpa [mul_assoc] using (hsumInt.const_mul (conj (b β)))
+    exact (hsumInt.const_mul (conj (b β)))
 
 private lemma measurableSet_productAnnulus
     {d : ℕ} (j : MultiIndex d) :
@@ -221,7 +221,7 @@ private lemma integrable_evalHermiteSum_cross
   intro α hα
   refine MeasureTheory.integrable_finsetSum _ ?_
   intro β hβ
-  simpa [mul_assoc] using
+  exact
     (integrable_productBasis_cross κ α β).const_mul (G.coeff α * conj (H.coeff β))
 
 /-- Product basis orthonormality at fixed multi-index `κ`. -/
@@ -395,7 +395,7 @@ theorem productBasisPhaseLaw
         congr 1
         push_cast
         ring
-  simpa [totalDegree, mul_assoc] using
+  exact
     congrArg (fun c : ℂ => c * ∏ q, oneDimPhi (κ q) (α q) (z q)) haux
 
 /-- The same phase law for a fixed total-degree piece. -/
@@ -673,7 +673,7 @@ private lemma gaussian_lintegral_rotate_eq
     simp [f, gaussianDensity, hω]
   have hgauss : MeasurePreserving f (gaussianMeasure d) (gaussianMeasure d) :=
     ⟨hmeas.measurable, gaussianMeasure_map_eq_of_density hvol hmeas hdens⟩
-  simpa [f] using hgauss.lintegral_comp_emb hmeas g
+  exact hgauss.lintegral_comp_emb hmeas g
 
 private lemma fourier_mk_eq_exp
     (n : ℤ) (θ : ℝ) :
@@ -775,7 +775,7 @@ private lemma rotate_one_gaussian_preserving
   classical
   let f : CSpace d → CSpace d := fun z => Function.update z q0 ((ω : ℂ) * z q0)
   have hvol : MeasurePreserving f (volume : Measure (CSpace d)) (volume : Measure (CSpace d)) := by
-    simpa [f] using (rotate_one_volume_preserving (q0 := q0) (ω := ω))
+    exact (rotate_one_volume_preserving (q0 := q0) (ω := ω))
   have hmeas : MeasurableEmbedding f := rotate_one_measurableEmbedding (q0 := q0) (ω := ω)
   have hdens : ∀ z : CSpace d,
       ENNReal.ofReal (gaussianDensity d (f z)) = ENNReal.ofReal (gaussianDensity d z) := by

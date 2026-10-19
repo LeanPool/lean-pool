@@ -317,7 +317,7 @@ private lemma integrable_oneDimBasis_cross
       (fun z : CSpace 1 =>
         oneDimLift (oneDimPhi k (α 0)) z * conj (oneDimLift (oneDimPhi k (β 0)) z))
       (gaussianMeasure 1) := by
-  simpa [oneDimLift] using integrable_oneDimPhi_cross_gaussian k (α 0) (β 0)
+  exact integrable_oneDimPhi_cross_gaussian k (α 0) (β 0)
 
 private lemma gaussianInner_finite_sum_basis_one
     (k : ℕ) (β : MultiIndex 1)
@@ -335,12 +335,12 @@ private lemma gaussianInner_finite_sum_basis_one
   rw [MeasureTheory.integral_finsetSum]
   · refine Finset.sum_congr rfl ?_
     intro α hα
-    simpa [mul_assoc] using
+    exact
       (MeasureTheory.integral_const_mul (c α)
         (fun z : CSpace 1 =>
           oneDimLift (oneDimPhi k (α 0)) z * conj (oneDimLift (oneDimPhi k (β 0)) z)))
   · intro α hα
-    simpa [mul_assoc] using (integrable_oneDimBasis_cross k α β).const_mul (c α)
+    exact (integrable_oneDimBasis_cross k α β).const_mul (c α)
 
 private lemma gaussianInner_finite_sum_one
     (k : ℕ)
@@ -373,7 +373,7 @@ private lemma gaussianInner_finite_sum_one
   rw [hfun, MeasureTheory.integral_finsetSum]
   · refine Finset.sum_congr rfl ?_
     intro β hβ
-    simpa [mul_assoc] using
+    exact
       (MeasureTheory.integral_const_mul (conj (b β))
         (fun z : CSpace 1 =>
           (Finset.sum s (fun α => a α * oneDimLift (oneDimPhi k (α 0)) z)) *
@@ -398,8 +398,8 @@ private lemma gaussianInner_finite_sum_one
             intro α hα
             ring]
       refine MeasureTheory.integrable_finsetSum _ (fun α hα => ?_)
-      simpa [mul_assoc] using (integrable_oneDimBasis_cross k α β).const_mul (a α)
-    simpa [mul_assoc] using hsumInt.const_mul (conj (b β))
+      exact (integrable_oneDimBasis_cross k α β).const_mul (a α)
+    exact hsumInt.const_mul (conj (b β))
 
 /-!
 # ImportedAnalyticInputs
@@ -419,7 +419,7 @@ theorem oneVariableBasisOrthonormal
   Downstream files only use orthonormality and finite Parseval consequences.
   -/
   rw [gaussianInner_oneDimPhi_eq_weightedInner]
-  simpa using (HermitekLEAN.phi_orthonormal (k := k) (m := m) (n := n))
+  exact (HermitekLEAN.phi_orthonormal (k := k) (m := m) (n := n))
 
 /-- Imported one-variable Parseval statement for finite coefficient families. -/
 theorem oneVariableFiniteParseval
@@ -523,7 +523,7 @@ theorem oneVariableLocalization
   refine ⟨C, c, hC, hc, ?_⟩
   intro n j hn
   rw [annulusMass_oneDimPhi_eq_annulusIntegralSq]
-  simpa [oneDimPhi, HermitekLEAN.posPart, HermiteLEAN.posPart] using hloc n j hn
+  exact hloc n j hn
 
 private lemma zero_shift_exp_compare
     (k j : ℕ) (c0 : ℝ) (hc0 : 0 < c0) :
@@ -557,14 +557,14 @@ private lemma zero_shift_exp_compare
     rw [hx, hy, ← Real.exp_add]
     apply Real.exp_le_exp.mpr
     let y : ℝ := (j : ℝ) - ((k + 5 : ℕ) : ℝ)
-    have hybound : 2 * y ≤ y ^ 2 + 1 := by nlinarith [sq_nonneg (y - 1)]
-    have hsq : (y + 1) ^ 2 ≤ 4 * (y ^ 2 + 1) := by nlinarith
+    have hybound : 2 * y ≤ y ^ 2 + 1 := by nlinarith only [sq_nonneg (y - 1)]
+    have hsq : (y + 1) ^ 2 ≤ 4 * (y ^ 2 + 1) := by nlinarith only [hybound]
     have hsq' :
         ((j : ℝ) - ((k + 4 : ℕ) : ℝ)) ^ 2 ≤
           4 * (((j : ℝ) - ((k + 5 : ℕ) : ℝ)) ^ 2 + 1) := by
       rw [hrel]
       simpa [y] using hsq
-    nlinarith [hc0, hsq']
+    nlinarith only [hc0, hsq']
 
 /-- Imported positive-frequency circle estimate with frozen constant `144`. -/
 theorem positiveFrequencyCircleEstimate
@@ -585,7 +585,7 @@ theorem positiveFrequencyCircleEstimate
       HermiteLEAN.circleRhoNormSq (HermiteLEAN.positiveTrigonometricPolynomial E b) by
       simp [circleL2NormSq, rho, positiveFrequencyPolynomial, HermiteLEAN.circleRhoNormSq,
         HermiteLEAN.positiveTrigonometricPolynomial, HermiteLEAN.rho, sq_abs]]
-  simpa using
+  exact
     HermitekLEAN.local_circle_estimate E
       (by
         intro n hn
@@ -686,7 +686,7 @@ theorem localizationIncludingZero
         _ ≤ C * Real.exp (-(c * (posPart ((j : ℝ) - ((k + 4 : ℕ) : ℝ))) ^ 2)) := by
               refine mul_le_mul_of_nonneg_left ?_ (by positivity)
               apply Real.exp_le_exp.mpr
-              nlinarith [hcle, sq_nonneg (posPart ((j : ℝ) - ((k + 4 : ℕ) : ℝ)))]
+              nlinarith only [hcle, sq_nonneg (posPart ((j : ℝ) - ((k + 4 : ℕ) : ℝ)))]
         _ = C * Real.exp (-c *
               max (|((j : ℕ) : ℝ) - Real.sqrt ((0 : ℕ) : ℝ)| - ((k + 4 : ℕ) : ℝ)) 0 ^ 2) := by
               simp_all
@@ -716,8 +716,10 @@ theorem localizationIncludingZero
                   max (|((j : ℕ) : ℝ) - Real.sqrt (n : ℝ)| - ((k + 4 : ℕ) : ℝ)) 0 ^ 2) := by
               refine mul_le_mul_of_nonneg_left ?_ (by positivity)
               apply Real.exp_le_exp.mpr
-              nlinarith [hcle,
-                sq_nonneg (max (|((j : ℕ) : ℝ) - Real.sqrt (n : ℝ)| - ((k + 4 : ℕ) : ℝ)) 0)]
+              nlinarith only [
+                hcle,
+                sq_nonneg (max (|((j : ℕ) : ℝ) - Real.sqrt (n : ℝ)| - ((k + 4 : ℕ) : ℝ)) 0)
+              ]
 
 /-- Scalar-rescaled positive-frequency estimate for an arbitrary background `a`. -/
 theorem scaledPositiveFrequencyCircleEstimate
@@ -741,7 +743,7 @@ theorem scaledPositiveFrequencyCircleEstimate
         positivity
       have hcard : 0 < E.card := Finset.card_pos.mpr (Finset.nonempty_iff_ne_empty.mpr hE)
       have honeR : (1 : ℝ) ≤ E.card := by exact_mod_cast (Nat.succ_le_of_lt hcard)
-      have hfac : (1 : ℝ) ≤ 144 * (E.card : ℝ) := by nlinarith
+      have hfac : (1 : ℝ) ≤ 144 * (E.card : ℝ) := by linarith only [honeR]
       calc
         circleL2NormSq (positiveFrequencyPolynomial E b)
             ≤ 144 * E.card * circleL2NormSq (positiveFrequencyPolynomial E b) :=
@@ -792,7 +794,7 @@ theorem scaledHighFrequencyBandEstimate
       unfold circleL2NormSq
       positivity
     calc
-      circleL2NormSq P ≤ 32 * circleL2NormSq P := by nlinarith
+      circleL2NormSq P ≤ 32 * circleL2NormSq P := by linarith only [hnonneg]
       _ = 32 * circleL2NormSq (fun t => rho 0 (P t)) := by simp [circleL2NormSq, rho]
   · rcases hP with ⟨c, rfl⟩
     let Q : Circle → ℂ := bandLimitedPolynomial N L (fun m => a⁻¹ * c m)

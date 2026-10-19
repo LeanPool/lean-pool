@@ -297,12 +297,11 @@ private theorem phase_alignment
     have hcomp_sq :
         ‖((phase * β - 1 : ℂ) • f0)‖ * ‖((phase * β - 1 : ℂ) • f0)‖
           ≤ ‖a • f0‖ * ‖a • f0‖ := by
-      nlinarith [hcomp, norm_nonneg (((phase * β - 1 : ℂ) • f0)),
-        norm_nonneg (a • f0)]
-    linarith
+      nlinarith only [hcomp, norm_nonneg (((phase * β - 1 : ℂ) • f0)), norm_nonneg (a • f0)]
+    linarith only [hcomp_sq]
   constructor
   · exact himag
-  · nlinarith [hnorm_sq_le, norm_nonneg (phase • (f0 + u) - f0), norm_nonneg u]
+  · nlinarith only [hnorm_sq_le, norm_nonneg (phase • (f0 + u) - f0), norm_nonneg u]
 
 /--
 Local stability after only fixing the real phase gauge.
@@ -374,7 +373,7 @@ theorem realGaugeLocalStability
     have hnorm : ‖h‖ = ‖H‖ := by
       change ‖(h : L2Tensor d)‖ = ‖H‖
       simp [h, evalPkappaL2_norm hd kappa H]
-    linarith
+    linarith only [hHδ, hnorm]
   have him_h : (inner ℂ h f0).im = 0 := by
     have hstar_im : (star (pkappaInner H F)).im = 0 := by
       simp_all

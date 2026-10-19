@@ -91,7 +91,7 @@ private theorem norm_ne_zero_of_ne_zero_pkappa_wip
   · have hcoeff_ne : F alpha ≠ 0 := Finsupp.mem_support_iff.mp hmem
     have hle :
         ‖F alpha‖ ^ 2 ≤ Finset.sum F.support (fun a : Idx d => ‖F a‖ ^ 2) := by
-      simpa using
+      exact
         (Finset.single_le_sum (f := fun a : Idx d => ‖F a‖ ^ 2) (s := F.support) (a := alpha)
           (fun a _ => by positivity) hmem)
     have hterm_pos : 0 < ‖F alpha‖ ^ 2 := pow_pos (norm_pos_iff.mpr hcoeff_ne) 2
@@ -101,7 +101,7 @@ private theorem norm_ne_zero_of_ne_zero_pkappa_wip
     have hsqrt_pos :
         0 < Real.sqrt (Finset.sum F.support (fun a : Idx d => ‖F a‖ ^ 2) ) :=
       Real.sqrt_pos.mpr hsum_pos
-    linarith
+    linarith only [hnorm, hsqrt_pos]
   · exact Finsupp.notMem_support_iff.mp hmem
 
 private theorem norm_smul_pkappa_wip
@@ -311,7 +311,7 @@ private lemma integrable_evalPkappa_cross_wip
   intro alpha halpha
   refine MeasureTheory.integrable_finsetSum _ ?_
   intro beta hbeta
-  simpa [mul_assoc] using
+  exact
     (integrable_productBasis_cross_wip kappa alpha beta).const_mul
       (F alpha * (starRingEnd ℂ) (G beta))
 
@@ -407,7 +407,7 @@ private theorem memLp_two_defectFunctionPkappa_wip
       unfold defectFunctionPkappa_wip
       have : (‖evalPkappa kappa (F + G) z‖ - ‖evalPkappa kappa F z‖) ^ 2 ≤
           2 * ‖evalPkappa kappa (F + G) z‖ ^ 2 + 2 * ‖evalPkappa kappa F z‖ ^ 2 := by
-        nlinarith [sq_nonneg (‖evalPkappa kappa (F + G) z‖ + ‖evalPkappa kappa F z‖)]
+        linarith only [sq_nonneg (‖evalPkappa kappa (F + G) z‖ + ‖evalPkappa kappa F z‖)]
       simpa [sq_abs] using this
     simp_all
   simpa [Real.norm_eq_abs, abs_of_nonneg] using
@@ -446,7 +446,7 @@ private lemma evalPkappa_pointwise_bound_wip
     ‖evalPkappa kappa G z‖ = ‖evalPkappa kappa (F + G) z - evalPkappa kappa F z‖ := by rw [hsub]
     _ ≤ ‖evalPkappa kappa (F + G) z‖ + ‖evalPkappa kappa F z‖ := norm_sub_le _ _
     _ ≤ defectFunctionPkappa_wip kappa F G z + ‖evalPkappa kappa F z‖ + ‖evalPkappa kappa F z‖ := by
-          linarith
+          linarith only [haux]
     _ = defectFunctionPkappa_wip kappa F G z + 2 * ‖evalPkappa kappa F z‖ := by ring
 
 private theorem norm_le_defect_add_two_wip
@@ -576,10 +576,10 @@ theorem orthogonal_coercivity
         have hpartition := annulusMassPartition hd kappa J H
         have hsum_le :
             lowAnnulusMass J (ofPkappa kappa H) + highAnnulusMass J (ofPkappa kappa H) ≤ 1 / 2 := by
-          linarith
+          linarith only [hhigh_mass, hlow_mass]
         have hnorm_sq : ‖H‖ ^ 2 = 1 := by
           simp_all
-        linarith
+        linarith only [hhigh_mass, hlow_mass, hpartition, hnorm_sq]
       · have hdelta_inv_le : delta⁻¹ ≤ C_F_perp := by
           dsimp [C_F_perp]
           exact le_max_right _ _
@@ -596,7 +596,7 @@ theorem orthogonal_coercivity
             mul_le_mul_of_nonneg_right hdelta_inv_le (defect_nonneg_wip hd F G)
     · have hge4 : 4 ≤ t := le_of_not_gt hlt4
       have htwo_defect : t ≤ 2 * defectPk kappa F G := by
-        nlinarith [defect_nonneg_wip hd F G]
+        linarith only [hlarge_bridge, hlt4, defect_nonneg_wip hd F G]
       have htwo_le_C : 2 ≤ C_F_perp := by
         dsimp [C_F_perp]
         exact le_max_left _ _

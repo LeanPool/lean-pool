@@ -64,7 +64,7 @@ private theorem norm_ne_zero_of_ne_zero_pkappa_wip
   · have hcoeff_ne : F alpha ≠ 0 := Finsupp.mem_support_iff.mp hmem
     have hle :
         ‖F alpha‖ ^ 2 ≤ Finset.sum F.support (fun a : Idx d => ‖F a‖ ^ 2) := by
-      simpa using
+      exact
         (Finset.single_le_sum (f := fun a : Idx d => ‖F a‖ ^ 2) (s := F.support) (a := alpha)
           (fun a _ => by positivity) hmem)
     have hterm_pos : 0 < ‖F alpha‖ ^ 2 := pow_pos (norm_pos_iff.mpr hcoeff_ne) 2
@@ -74,7 +74,7 @@ private theorem norm_ne_zero_of_ne_zero_pkappa_wip
     have hsqrt_pos :
         0 < Real.sqrt (Finset.sum F.support (fun a : Idx d => ‖F a‖ ^ 2)) :=
       Real.sqrt_pos.mpr hsum_pos
-    linarith
+    linarith only [hnorm, hsqrt_pos]
   · exact Finsupp.notMem_support_iff.mp hmem
 
 private lemma continuous_Phi_wip
@@ -607,7 +607,7 @@ theorem lowAnnulusProjection
           finite_sum_annulusMass_le_wip hd kappa Hnear (lowAnnuli d J)
       _ = Finset.sum E (fun alpha => ‖coeffPkappa H alpha‖ ^ 2) := hnear_norm_sq
       _ ≤ rho := hcoeff_small
-  have hH_sq : ‖H‖ ^ 2 = 1 := by nlinarith [hH_norm]
+  have hH_sq : ‖H‖ ^ 2 = 1 := by nlinarith only [hH_norm]
   have hfar_norm_sq_le_one : ‖Hfar‖ ^ 2 ≤ 1 := by
     calc
       ‖Hfar‖ ^ 2 ≤ ‖H‖ ^ 2 := by simpa [Hfar, Hnear] using norm_sq_farPart_le_wip kappa E H
@@ -663,14 +663,14 @@ theorem lowAnnulusProjection
       _ = Hermite1DimdLEAN.localizationLeakageCoefficient C c B d M * ‖Hfar‖ ^ 2 := by
             rw [hermiteNormSq_eq_norm_sq_wip kappa Hfar]
       _ ≤ Hermite1DimdLEAN.localizationLeakageCoefficient C c B d M := by
-            nlinarith [hloc_nonneg, hfar_norm_sq_nonneg, hfar_norm_sq_le_one]
+            nlinarith only [hfar_norm_sq_le_one, hloc_nonneg, hfar_norm_sq_nonneg]
       _ ≤ rho := hloc_small
   calc
     lowAnnulusMass J (ofPkappa kappa H)
       ≤ 2 * lowAnnulusMass J (ofPkappa kappa Hnear) +
           2 * lowAnnulusMass J (ofPkappa kappa Hfar) := by
             simpa [hdecomp] using lowAnnulusMass_add_le_two_wip hd kappa J Hnear Hfar
-    _ ≤ 2 * rho + 2 * rho := by nlinarith [hnear_low, hfar_low]
+    _ ≤ 2 * rho + 2 * rho := by linarith only [hnear_low, hfar_low]
     _ = 1 / 4 := by norm_num [rho]
 
 end DimdPolyLEAN

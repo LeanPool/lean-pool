@@ -98,7 +98,7 @@ private lemma freqBlock_unique {n ℓ₁ ℓ₂ : ℕ}
 /-- Every natural number belongs to `freqBlock (Nat.sqrt n)`. -/
 private lemma mem_freqBlock_sqrt (n : ℕ) : n ∈ freqBlock (Nat.sqrt n) := by
   simp only [freqBlock, Finset.mem_Icc]
-  exact ⟨by have := Nat.sqrt_le n; nlinarith,
+  exact ⟨by have := Nat.sqrt_le n; linarith only [this],
          by have h1 := Nat.lt_succ_sqrt' n; simp only [Nat.succ_eq_add_one] at h1; omega⟩
 
 /-- The cardinality of `freqBlock ℓ` is `2ℓ + 1`. -/
@@ -115,7 +115,7 @@ private lemma fourier_pow (t : AddCircle T) (n : ℕ) :
     ((fourier 1 t : ℂ)) ^ n = (fourier (↑n : ℤ) t : ℂ) := by
   induction n with
   | zero => simp
-  | succ n ih => rw [pow_succ, ih, ← fourier_add]; push_cast; ring_nf
+  | succ n ih => rw [pow_succ, ih, ← fourier_add]; push_cast; ring
 
 -- to_mathlib: Mathlib.Analysis.Fourier.AddCircle
 /-- Power of `fourier (-1)` equals the corresponding negative Fourier mode. -/
@@ -234,7 +234,7 @@ theorem blocks_cover (D : ℕ) (n : ℕ) (hn : 1 ≤ n) (_hnD : n ≤ D) :
   · exact Nat.sqrt_pos.mpr (by omega)
   · simp only [freqBlock, Finset.mem_Icc]
     refine ⟨?_, ?_⟩
-    · have := Nat.sqrt_le n; nlinarith
+    · have := Nat.sqrt_le n; linarith only [this]
     · have h1 := Nat.lt_succ_sqrt' n
       simp only [Nat.succ_eq_add_one] at h1; omega
 
@@ -354,15 +354,15 @@ theorem monomial_peak_localization {n ℓ : ℕ} (hℓ : 1 ≤ ℓ)
       rw [Real.sqrt_sq (by positivity)]]
     apply Real.sqrt_lt_sqrt (by positivity)
     have : (ℓ : ℝ) ^ 2 ≤ (n : ℝ) := by exact_mod_cast hn.1
-    linarith
+    linarith only [this]
   · rw [show (ℓ + 1 : ℝ) = Real.sqrt ((ℓ + 1 : ℝ) ^ 2) from by
       rw [Real.sqrt_sq (by positivity)]]
     apply Real.sqrt_lt_sqrt
-      (by linarith [show (0 : ℝ) ≤ n from Nat.cast_nonneg n])
+      (by linarith only [show (0 : ℝ) ≤ n from Nat.cast_nonneg n])
     have h1 : n + 1 ≤ (ℓ + 1) ^ 2 := by
       have : 0 < (ℓ + 1) ^ 2 := Nat.pos_of_ne_zero (by positivity)
       omega
     have : (n : ℝ) + 1 ≤ ((ℓ + 1 : ℕ) : ℝ) ^ 2 := by exact_mod_cast h1
-    push_cast at this ⊢; linarith
+    push_cast at this ⊢; linarith only [this]
 
 end FockSPR

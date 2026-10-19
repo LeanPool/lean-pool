@@ -40,14 +40,14 @@ private lemma normSq_one_add (r θ : ℝ) :
     Complex.ofReal_re, Complex.exp_mul_I, Complex.add_im, Complex.one_im, Complex.mul_im,
     Complex.ofReal_im, Complex.cos_ofReal_re, Complex.cos_ofReal_im,
     Complex.sin_ofReal_re, Complex.sin_ofReal_im, Complex.I_re, Complex.I_im]
-  nlinarith [Real.sin_sq_add_cos_sq θ]
+  nlinarith only [Real.sin_sq_add_cos_sq θ]
 
 /-- `cos(θ) ≥ √2/2` whenever `|θ| ≤ π/4`. -/
 private lemma cos_ge_sqrt2_div2 {θ : ℝ} (hθ : |θ| ≤ Real.pi / 4) :
     Real.cos θ ≥ Real.sqrt 2 / 2 := by
   rw [ge_iff_le, ← Real.cos_pi_div_four, ← Real.cos_abs θ]
   exact Real.cos_le_cos_of_nonneg_of_le_pi (abs_nonneg θ)
-    (by linarith [Real.pi_pos]) hθ
+    (by linarith only [Real.pi_pos]) hθ
 
 /-- `‖1 + r exp(iθ)‖ ≥ 1` for `r ≥ 0` and `|θ| ≤ π/4`. -/
 private lemma norm_one_add_ge_one {r : ℝ} (hr : 0 ≤ r) {θ : ℝ}
@@ -55,11 +55,11 @@ private lemma norm_one_add_ge_one {r : ℝ} (hr : 0 ≤ r) {θ : ℝ}
     ‖(1 : ℂ) + ↑r * Complex.exp (Complex.I * ↑θ)‖ ≥ 1 := by
   rw [ge_iff_le, ← Real.sqrt_one, ← Real.sqrt_sq (norm_nonneg _)]
   exact Real.sqrt_le_sqrt
-    (by rw [normSq_one_add]; nlinarith [cos_ge_sqrt2_div2 hθ, Real.sqrt_nonneg 2])
+    (by rw [normSq_one_add]; nlinarith only [hr, hθ, cos_ge_sqrt2_div2 hθ, Real.sqrt_nonneg 2])
 
 /-- When `‖1 + w‖ ≥ 1`, `rho(w) = ‖1 + w‖ − 1`. -/
 private lemma rho_eq_norm_sub {w : ℂ} (hw : ‖(1 : ℂ) + w‖ ≥ 1) :
-    rho w = ‖(1 : ℂ) + w‖ - 1 := by simp only [rho]; rw [abs_of_nonneg]; linarith
+    rho w = ‖(1 : ℂ) + w‖ - 1 := by simp only [rho]; rw [abs_of_nonneg]; linarith only [hw]
 
 /-- `‖r * exp(iθ)‖ = r` for `r ≥ 0`. -/
 private lemma norm_r_exp (r θ : ℝ) (hr : 0 ≤ r) :
@@ -92,14 +92,14 @@ private lemma rho_arc_lower_bound {r : ℝ} (hr : 0 ≤ r) {θ : ℝ} (hθ : |θ
     calc ‖(1 : ℂ) + w‖ ≤ ‖(1 : ℂ)‖ + ‖w‖ := norm_add_le _ _
       _ = 1 + r := by rw [norm_one, norm_r_exp r θ hr]
   have hcos : Real.cos θ ≥ Real.sqrt 2 / 2 := cos_ge_sqrt2_div2 hθ
-  have h1 : 0 ≤ a - 1 := by linarith
+  have h1 : 0 ≤ a - 1 := by linarith only [ha1]
   have h2 : (a - 1) * (r + 2) ≥ r * (r + Real.sqrt 2) := by
-    have hprod : (a - 1) * (a + 1) = r ^ 2 + 2 * r * Real.cos θ := by nlinarith
-    nlinarith [Real.sqrt_nonneg 2]
+    have hprod : (a - 1) * (a + 1) = r ^ 2 + 2 * r * Real.cos θ := by linarith only [hsq]
+    nlinarith only [hr, ha1, hsq, ha_le, hcos, Real.sqrt_nonneg 2]
   rw [ge_iff_le, div_le_iff₀ (by positivity : (0 : ℝ) < Real.sqrt 2)]
-  nlinarith [mul_nonneg h1 (Real.sqrt_nonneg 2), mul_nonneg hr (Real.sqrt_nonneg 2),
-    mul_nonneg hr h1, sq_nonneg (a - 1 - r / Real.sqrt 2),
-    Real.sq_sqrt (show (2 : ℝ) ≥ 0 by norm_num), Real.sqrt_nonneg 2]
+  nlinarith only [hr, hsq, ha_le, hcos, h1, mul_nonneg h1 (Real.sqrt_nonneg 2),
+      mul_nonneg hr (Real.sqrt_nonneg 2), mul_nonneg hr h1, sq_nonneg (a - 1 - r / Real.sqrt 2),
+      Real.sq_sqrt (show (2 : ℝ) ≥ 0 by norm_num), Real.sqrt_nonneg 2]
 
 /-! ### Auxiliary lemmas for the integral bound -/
 
@@ -164,7 +164,7 @@ theorem rotational_averaging_bound {r : ℝ} (hr : 0 ≤ r) :
                       (rho_arc_lower_bound hr habs).le 2)
         ((integrand_continuous r).continuousOn.integrableOn_compact isCompact_Icc)
     rwa [Measure.real, Real.volume_Icc,
-      ENNReal.toReal_ofReal (by linarith [Real.pi_pos]),
+      ENNReal.toReal_ofReal (by linarith only [Real.pi_pos]),
       show Real.pi / 4 - -(Real.pi / 4) = Real.pi / 2 from by ring] at h1
   -- Icc integral ≤ Ioc integral (integrand ≥ 0)
   have h_mono :
@@ -175,8 +175,8 @@ theorem rotational_averaging_bound {r : ℝ} (hr : 0 ≤ r) :
         isCompact_Icc).mono_set Set.Ioc_subset_Icc_self
     · exact ae_of_all _ fun θ => by positivity
     · exact ae_of_all _ fun θ hθ =>
-        ⟨by linarith [hθ.1, Real.pi_pos],
-         by linarith [hθ.2, Real.pi_pos]⟩
+        ⟨by linarith only [hθ.1, Real.pi_pos],
+         by linarith only [hθ.2, Real.pi_pos]⟩
   -- Combine with T⁻¹ factor
   rw [smul_eq_mul]
   calc r ^ 2 / 8

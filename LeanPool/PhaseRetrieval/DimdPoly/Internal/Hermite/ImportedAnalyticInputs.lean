@@ -115,9 +115,9 @@ theorem phase_normalized_orthogonal_reduction
   - the conclusion is local in `h`, with the phase normalization encoded by `(inner h f0).im = 0`.
   -/
   refine ⟨1 / (C + 1), 5 * C + 3, ?_, ?_, ?_⟩
-  · have hCp1 : 0 < C + 1 := by linarith
+  · have hCp1 : 0 < C + 1 := by linarith only [hC]
     exact one_div_pos.mpr hCp1
-  · nlinarith
+  · linarith only [hC]
   · intro h hhδ him
     set a : ℝ := (inner ℂ h f0).re
     set g : H := h - (a : ℂ) • f0
@@ -144,14 +144,14 @@ theorem phase_normalized_orthogonal_reduction
         ‖h‖ = ‖g + (a : ℂ) • f0‖ := by rw [← hg_add]
         _ ≤ ‖g‖ + ‖(a : ℂ) • f0‖ := norm_add_le _ _
         _ = ‖g‖ + |a| := by simp [norm_smul, hf0, Real.norm_eq_abs]
-    have hh_main : ‖h‖ ≤ (C + 1) * |a| + C * defect h := by nlinarith
-    have hCp1 : 0 < C + 1 := by linarith
-    have hx_le_one : ‖h‖ ≤ 1 := hhδ.trans (by rw [div_le_iff₀ hCp1]; nlinarith)
+    have hh_main : ‖h‖ ≤ (C + 1) * |a| + C * defect h := by linarith only [hg_bound, hsplit]
+    have hCp1 : 0 < C + 1 := by linarith only [hC]
+    have hx_le_one : ‖h‖ ≤ 1 := hhδ.trans (by rw [div_le_iff₀ hCp1]; linarith only [hC])
     have ha_simple : |a| ≤ (3 : ℝ) / 2 * defect h + ‖h‖ ^ 2 / 2 := by
-      nlinarith [htwoa, hx_le_one, hdefect_nonneg h, norm_nonneg h]
+      nlinarith only [hdefect_nonneg, htwoa, hx_le_one, hdefect_nonneg h, norm_nonneg h]
     have hx_sq : (C + 1) * ‖h‖ ^ 2 ≤ ‖h‖ := by
       rw [le_div_iff₀ hCp1] at hhδ
-      nlinarith [hhδ, norm_nonneg h, hCp1]
-    nlinarith [hh_main, ha_simple, hx_sq, hdefect_nonneg h, hC, abs_nonneg a]
+      nlinarith only [hhδ, norm_nonneg h, hCp1]
+    nlinarith only [hC, hg_bound, hsplit, ha_simple, hx_sq, hh_main, hdefect_nonneg h, abs_nonneg a]
 
 end HermiteLEAN
