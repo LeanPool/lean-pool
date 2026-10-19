@@ -119,15 +119,8 @@ theorem eval_codePartrecPayload_canonicalPartrecCompIndex {M : Type*} [ORingStru
     (hd : Semiformula.Evalb ((canonicalPartrecCompIndex fCode gCode : M) :> v) (code d)) :
     Semiformula.Evalb (((Nat.pair fCode gCode : ℕ) : M) :> v) (code (codePartrecPayload d)) :=
   by
-  have hrr :=
-    eval_codeSub_natCast d (codeConst 4) (canonicalPartrecCompIndex fCode gCode) 4 v hd
-      (by simpa using eval_codeConst (M := M) 4 v)
-  have hq2 := eval_codeDiv2_natCast _ _ v (eval_codeDiv2_natCast _ _ v hrr)
-  have hval :
-    Nat.div2 (Nat.div2 (canonicalPartrecCompIndex fCode gCode - 4)) = Nat.pair fCode gCode :=
-    partrecCodePayload_canonicalPartrecCompIndex fCode gCode
-  rw [hval] at hq2
-  simpa only [codePartrecPayload] using hq2
+  simpa only [partrecCodePayload_canonicalPartrecCompIndex] using
+    IndexDecoder.eval_codePartrecPayload_natCast d (canonicalPartrecCompIndex fCode gCode) v hd
 
 /-- The constructor number of the canonical composition index, read inside a
 model: it is `5`, the number of composition. -/
@@ -136,88 +129,27 @@ theorem eval_codePartrecTag_canonicalPartrecCompIndex {M : Type*} [ORingStructur
     (hd : Semiformula.Evalb ((canonicalPartrecCompIndex fCode gCode : M) :> v) (code d)) :
     Semiformula.Evalb ((5 : M) :> v) (code (codePartrecTag d)) :=
   by
-  set c := canonicalPartrecCompIndex fCode gCode with hcdef
-  have hceq : c = 2 * (2 * Nat.pair fCode gCode + 1) + 4 :=
-    canonicalPartrecCompIndex_eq fCode gCode
-  have hsub : c - 4 = 2 * (2 * Nat.pair fCode gCode + 1) := by rw [hceq]; omega
-  have hnlt : ¬c < 4 := by rw [hceq]; omega
-  have hb0 : (c - 4) % 2 = 0 := by rw [hsub]; omega
-  have hd2 : Nat.div2 (c - 4) = 2 * Nat.pair fCode gCode + 1 :=
-    by
-    rw [hsub]
-    simp only [Nat.div2_val]
-    omega
-  have hb1 : Nat.div2 (c - 4) % 2 = 1 := by rw [hd2]; omega
-  have h4 : Semiformula.Evalb (((4 : ℕ) : M) :> v) (code (codeConst (n := r) 4)) :=
-    eval_codeConst 4 v
-  have h2 : Semiformula.Evalb (((2 : ℕ) : M) :> v) (code (codeConst (n := r) 2)) :=
-    eval_codeConst 2 v
-  have hrr := eval_codeSub_natCast d (codeConst 4) c 4 v hd (by simpa using h4)
-  have hbodd0 :
-    Semiformula.Evalb (((0 : ℕ) : M) :> v) (code (codeBodd (codeSub d (codeConst 4)))) :=
-    by
-    have := eval_codeBodd_natCast _ (c - 4) v hrr
-    rwa [hb0] at this
-  have hbodd1 :
-    Semiformula.Evalb (((1 : ℕ) : M) :> v)
-      (code (codeBodd (codeDiv2 (codeSub d (codeConst 4))))) :=
-    by
-    have := eval_codeBodd_natCast _ (Nat.div2 (c - 4)) v (eval_codeDiv2_natCast _ (c - 4) v hrr)
-    rwa [hb1] at this
-  have hmul :
-    Semiformula.Evalb ((((2 * 0 : ℕ)) : M) :> v)
-      (code (codeMul (codeConst 2) (codeBodd (codeSub d (codeConst 4))))) :=
-    by
-    refine (eval_codeMul_iff _ _ _ _).mpr ⟨_, _, h2, hbodd0, ?_⟩
-    push_cast
-    norm_num
-  have hadd1 :
-    Semiformula.Evalb ((((4 + 2 * 0 : ℕ)) : M) :> v)
-      (code
-        (codeAdd (codeConst 4) (codeMul (codeConst 2) (codeBodd (codeSub d (codeConst 4)))))) :=
-    by
-    refine (eval_codeAdd_iff _ _ _ _).mpr ⟨_, _, h4, hmul, ?_⟩
-    push_cast
-    norm_num
-  have hbig :
-    Semiformula.Evalb ((((4 + 2 * 0 + 1 : ℕ)) : M) :> v)
-      (code
-        (codeAdd
-          (codeAdd (codeConst 4) (codeMul (codeConst 2) (codeBodd (codeSub d (codeConst 4)))))
-          (codeBodd (codeDiv2 (codeSub d (codeConst 4)))))) :=
-    by
-    refine (eval_codeAdd_iff _ _ _ _).mpr ⟨_, _, hadd1, hbodd1, ?_⟩
-    push_cast
-    norm_num
-  have hfive : (((4 + 2 * 0 + 1 : ℕ)) : M) = (5 : M) := by norm_num
-  rw [hfive] at hbig
-  have hlt0 : Semiformula.Evalb ((0 : M) :> v) (code (codeLt d (codeConst 4))) :=
-    by
-    refine (eval_codeLt_iff _ _ _ _).mpr ⟨_, _, hd, by simpa using h4, Or.inr ⟨?_, rfl⟩⟩
-    intro hc
-    have : c < 4 := by exact_mod_cast hc
-    exact hnlt this
-  simp only [codePartrecTag]
-  exact
-    eval_codeIfPos_of _ _ _ (0 : M) ((c : ℕ) : M) (5 : M) _ v hlt0 hd hbig (Or.inr ⟨rfl, rfl⟩)
+  simpa only [Nat.succ_eq_add_one, canonicalPartrecCompIndex_constructor_number,
+    Nat.cast_ofNat] using
+    IndexDecoder.eval_codePartrecTag_natCast d (canonicalPartrecCompIndex fCode gCode) v hd
 
 /-- The outer subcode of the canonical composition index, read inside a model. -/
 theorem eval_codePartrecPayload₁_canonicalPartrecCompIndex {M : Type*} [ORingStructure M]
     [M↓[ℒₒᵣ] ⊧* 𝐏𝐀⁻] {r : ℕ} (d : Code r) (fCode gCode : ℕ) (v : Fin r → M)
     (hd : Semiformula.Evalb ((canonicalPartrecCompIndex fCode gCode : M) :> v) (code d)) :
-    Semiformula.Evalb (((fCode : ℕ) : M) :> v) (code (codePartrecPayload₁ d)) := by
-  simpa only [codePartrecPayload₁, Nat.unpair_pair] using
-    eval_codeUnpair₁_natCast (M := M) (codePartrecPayload d) (Nat.pair fCode gCode) v
-      (eval_codePartrecPayload_canonicalPartrecCompIndex d fCode gCode v hd)
+    Semiformula.Evalb (((fCode : ℕ) : M) :> v) (code (codePartrecPayload₁ d)) :=
+  by
+  simpa only [canonicalPartrecCompIndex_outer_index] using
+    IndexDecoder.eval_codePartrecPayload₁_natCast d (canonicalPartrecCompIndex fCode gCode) v hd
 
 /-- The inner subcode of the canonical composition index, read inside a model. -/
 theorem eval_codePartrecPayload₂_canonicalPartrecCompIndex {M : Type*} [ORingStructure M]
     [M↓[ℒₒᵣ] ⊧* 𝐏𝐀⁻] {r : ℕ} (d : Code r) (fCode gCode : ℕ) (v : Fin r → M)
     (hd : Semiformula.Evalb ((canonicalPartrecCompIndex fCode gCode : M) :> v) (code d)) :
-    Semiformula.Evalb (((gCode : ℕ) : M) :> v) (code (codePartrecPayload₂ d)) := by
-  simpa only [codePartrecPayload₂, Nat.unpair_pair] using
-    eval_codeUnpair₂_natCast (M := M) (codePartrecPayload d) (Nat.pair fCode gCode) v
-      (eval_codePartrecPayload_canonicalPartrecCompIndex d fCode gCode v hd)
+    Semiformula.Evalb (((gCode : ℕ) : M) :> v) (code (codePartrecPayload₂ d)) :=
+  by
+  simpa only [canonicalPartrecCompIndex_inner_index] using
+    IndexDecoder.eval_codePartrecPayload₂_natCast d (canonicalPartrecCompIndex fCode gCode) v hd
 
 end PartialRecursive
 end CategoricalRiceShapiro

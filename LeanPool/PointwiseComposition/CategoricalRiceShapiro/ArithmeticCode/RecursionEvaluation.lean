@@ -1660,6 +1660,17 @@ private theorem beta_to_pair [M↓[ℒₒᵣ] ⊧* 𝐏𝐀⁻] {l : ℕ} (N' I'
 ### Sigma-one definability of a literal code graph in two argument slots -/
 
 open HierarchySymbol in
+/-- Substituting terms with model parameters into a code graph preserves Sigma-one definability. -/
+theorem definable_code_graph_arguments {k n : ℕ} (A : Code k)
+    (arguments : Fin (k + 1) → Semiterm ℒₒᵣ M n) :
+    Σ-[1].Definable (fun w : Fin n → M =>
+      Semiformula.Evalb (Semiterm.val w id ∘ arguments) (code A)) := by
+  refine ⟨HierarchySymbol.Semiformula.mkSigma ((Rew.embSubsts arguments) ▹ code A)
+    (Hierarchy.rew _ (code_sigma_one A)), ?_⟩
+  intro w
+  simp only [HierarchySymbol.Semiformula.val_mkSigma, Semiformula.eval_embSubsts]
+
+open HierarchySymbol in
 /-- Varying the first two arguments of the graph formula of a code, with the
 output and the remaining arguments fixed as parameters, is a Sigma-one
 condition. -/
@@ -1668,35 +1679,12 @@ private theorem definable_code_two_slots {m : ℕ} (A : Code (m + 2)) (out : M)
     Σ-[1].Definable
       (fun w : Fin 2 → M => Semiformula.Evalb (out :> w 0 :> w 1 :> par) (code A)) :=
   by
-  refine
-    ⟨HierarchySymbol.Semiformula.mkSigma
-        ((Rew.embSubsts
-            ((&out : Semiterm ℒₒᵣ M 2) :>
-              (#0 : Semiterm ℒₒᵣ M 2) :>
-                (#1 : Semiterm ℒₒᵣ M 2) :> fun j => (&(par j) : Semiterm ℒₒᵣ M 2))) ▹
-          (code A))
-        (Hierarchy.rew _ (code_sigma_one A)),
-      ?_⟩
-  intro w
-  simp only [HierarchySymbol.Semiformula.val_mkSigma, Semiformula.eval_embSubsts]
-  have hv :
-    (Semiterm.val w id ∘
-        ((&out : Semiterm ℒₒᵣ M 2) :>
-          (#0 : Semiterm ℒₒᵣ M 2) :>
-            (#1 : Semiterm ℒₒᵣ M 2) :> fun j => (&(par j) : Semiterm ℒₒᵣ M 2))) =
-      (out :> w 0 :> w 1 :> par) :=
-    by
-    funext j
-    refine Fin.cases ?_ ?_ j
-    · simp
-    · intro j1
-      refine Fin.cases ?_ ?_ j1
-      · simp
-      · intro j2
-        refine Fin.cases ?_ ?_ j2
-        · simp
-        · intro j3; simp
-  rw [hv]
+  simpa only [Nat.succ_eq_add_one, Fin.isValue, Function.comp_def, Matrix.comp_vecCons',
+    Semiterm.val_fvar, id_eq, Semiterm.val_bvar] using
+    definable_code_graph_arguments A
+      ((&out : Semiterm ℒₒᵣ M 2) :>
+        (#0 : Semiterm ℒₒᵣ M 2) :>
+          (#1 : Semiterm ℒₒᵣ M 2) :> fun j => (&(par j) : Semiterm ℒₒᵣ M 2))
 
 open HierarchySymbol in
 /-- Existence of a history at which a literal code graph holds is a Sigma-one

@@ -1162,6 +1162,118 @@ theorem eval_codeBeta_of_values [M↓[ℒₒᵣ] ⊧* 𝐈𝐎𝐩𝐞𝐧] {k :
   simp only [codeBeta]
   exact eval_codeRem _ _ _ _ v h1 hsucc
 
+/-- The eager conditional has a value once its test and both of its branches
+have one.  Both branches are evaluated whichever way the test goes. -/
+theorem eval_codeIfPos_exists [M↓[ℒₒᵣ] ⊧* 𝐏𝐀⁻] {n : ℕ} (df dg dh : Code n)
+    (v : Fin n → M) (hf : ∃ f : M, Semiformula.Evalb (f :> v) (code df))
+    (hg : ∃ g : M, Semiformula.Evalb (g :> v) (code dg))
+    (hh : ∃ h : M, Semiformula.Evalb (h :> v) (code dh)) :
+    ∃ z : M, Semiformula.Evalb (z :> v) (code (codeIfPos df dg dh)) :=
+  by
+  obtain ⟨f, hf⟩ := hf
+  obtain ⟨g, hg⟩ := hg
+  obtain ⟨h, hh⟩ := hh
+  by_cases hpos : 0 < f
+  · exact ⟨g, eval_codeIfPos_of _ _ _ f g h g v hf hg hh (Or.inl ⟨hpos, rfl⟩)⟩
+  · exact
+      ⟨h,
+        eval_codeIfPos_of _ _ _ f g h h v hf hg hh
+          (Or.inr ⟨le_antisymm (not_lt.mp hpos) (by simp), rfl⟩)⟩
+
+namespace IndexDecoder
+
+/-- The parity bit as a remainder. -/
+private theorem bodd_toNat_eq_mod_two (n : ℕ) : n.bodd.toNat = n % 2 := by
+  rw [Nat.mod_two_of_bodd]
+
+/-- The production tag decoder, written with remainders. -/
+theorem partrecCodeTag_eq (q : ℕ) :
+    partrecCodeTag q = if q < 4 then q else 4 + 2 * ((q - 4) % 2) + Nat.div2 (q - 4) % 2 := by
+  simp only [partrecCodeTag, bodd_toNat_eq_mod_two]
+
+/-- The constructor number of a standard index, read inside a model. -/
+theorem eval_codePartrecTag_natCast [M↓[ℒₒᵣ] ⊧* 𝐏𝐀⁻] {r : ℕ} (d : Code r) (q : ℕ)
+    (v : Fin r → M) (hd : Semiformula.Evalb (((q : ℕ) : M) :> v) (code d)) :
+    Semiformula.Evalb (((partrecCodeTag q : ℕ) : M) :> v) (code (codePartrecTag d)) :=
+  by
+  have h4 : Semiformula.Evalb (((4 : ℕ) : M) :> v) (code (codeConst (n := r) 4)) :=
+    eval_codeConst 4 v
+  have h2 : Semiformula.Evalb (((2 : ℕ) : M) :> v) (code (codeConst (n := r) 2)) :=
+    eval_codeConst 2 v
+  have hrr := eval_codeSub_natCast d (codeConst 4) q 4 v hd (by simpa using h4)
+  have hbodd0 := eval_codeBodd_natCast (codeSub d (codeConst 4)) (q - 4) v hrr
+  have hbodd1 :=
+    eval_codeBodd_natCast (codeDiv2 (codeSub d (codeConst 4))) (Nat.div2 (q - 4)) v
+      (eval_codeDiv2_natCast _ (q - 4) v hrr)
+  have hmul :
+    Semiformula.Evalb ((((2 * ((q - 4) % 2) : ℕ)) : M) :> v)
+      (code (codeMul (codeConst 2) (codeBodd (codeSub d (codeConst 4))))) :=
+    by
+    refine (eval_codeMul_iff _ _ _ v).mpr ⟨_, _, h2, hbodd0, ?_⟩
+    push_cast
+    norm_num
+  have hadd1 :
+    Semiformula.Evalb ((((4 + 2 * ((q - 4) % 2) : ℕ)) : M) :> v)
+      (code
+        (codeAdd (codeConst 4) (codeMul (codeConst 2) (codeBodd (codeSub d (codeConst 4)))))) :=
+    by
+    refine (eval_codeAdd_iff _ _ _ v).mpr ⟨_, _, h4, hmul, ?_⟩
+    push_cast
+    norm_num
+  have hbig :
+    Semiformula.Evalb ((((4 + 2 * ((q - 4) % 2) + Nat.div2 (q - 4) % 2 : ℕ)) : M) :> v)
+      (code
+        (codeAdd
+          (codeAdd (codeConst 4) (codeMul (codeConst 2) (codeBodd (codeSub d (codeConst 4)))))
+          (codeBodd (codeDiv2 (codeSub d (codeConst 4)))))) :=
+    by
+    refine (eval_codeAdd_iff _ _ _ v).mpr ⟨_, _, hadd1, hbodd1, ?_⟩
+    push_cast
+    norm_num
+  rw [partrecCodeTag_eq]
+  simp only [codePartrecTag]
+  by_cases hq : q < 4
+  · have hlt1 : Semiformula.Evalb ((1 : M) :> v) (code (codeLt d (codeConst 4))) :=
+      by
+      refine (eval_codeLt_iff _ _ _ v).mpr ⟨_, _, hd, by simpa using h4, Or.inl ⟨?_, rfl⟩⟩
+      exact_mod_cast hq
+    rw [ite_eq_left hq]
+    exact
+      eval_codeIfPos_of _ _ _ (1 : M) (((q : ℕ)) : M) _ _ v hlt1 hd hbig
+        (Or.inl ⟨_root_.zero_lt_one, rfl⟩)
+  · have hlt0 : Semiformula.Evalb ((0 : M) :> v) (code (codeLt d (codeConst 4))) :=
+      by
+      refine (eval_codeLt_iff _ _ _ v).mpr ⟨_, _, hd, by simpa using h4, Or.inr ⟨?_, rfl⟩⟩
+      intro hc
+      exact hq (by exact_mod_cast hc)
+    rw [ite_eq_right hq]
+    exact eval_codeIfPos_of _ _ _ (0 : M) (((q : ℕ)) : M) _ _ v hlt0 hd hbig (Or.inr ⟨rfl, rfl⟩)
+
+/-- The payload of a standard compound index, read inside a model. -/
+theorem eval_codePartrecPayload_natCast [M↓[ℒₒᵣ] ⊧* 𝐏𝐀⁻] {r : ℕ} (d : Code r) (q : ℕ)
+    (v : Fin r → M) (hd : Semiformula.Evalb (((q : ℕ) : M) :> v) (code d)) :
+    Semiformula.Evalb (((partrecCodePayload q : ℕ) : M) :> v) (code (codePartrecPayload d)) :=
+  by
+  have h4 : Semiformula.Evalb (((4 : ℕ) : M) :> v) (code (codeConst (n := r) 4)) :=
+    eval_codeConst 4 v
+  have hrr := eval_codeSub_natCast d (codeConst 4) q 4 v hd (by simpa using h4)
+  simpa only [codePartrecPayload, partrecCodePayload] using
+    eval_codeDiv2_natCast _ _ v (eval_codeDiv2_natCast _ (q - 4) v hrr)
+
+/-- The first subcode of a standard index, read inside a model. -/
+theorem eval_codePartrecPayload₁_natCast [M↓[ℒₒᵣ] ⊧* 𝐏𝐀⁻] {r : ℕ} (d : Code r) (q : ℕ)
+    (v : Fin r → M) (hd : Semiformula.Evalb (((q : ℕ) : M) :> v) (code d)) :
+    Semiformula.Evalb (((partrecCodePayload₁ q : ℕ) : M) :> v) (code (codePartrecPayload₁ d)) :=
+  eval_codeUnpair₁_natCast (codePartrecPayload d) _ v (eval_codePartrecPayload_natCast d q v hd)
+
+/-- The second subcode of a standard index, read inside a model. -/
+theorem eval_codePartrecPayload₂_natCast [M↓[ℒₒᵣ] ⊧* 𝐏𝐀⁻] {r : ℕ} (d : Code r) (q : ℕ)
+    (v : Fin r → M) (hd : Semiformula.Evalb (((q : ℕ) : M) :> v) (code d)) :
+    Semiformula.Evalb (((partrecCodePayload₂ q : ℕ) : M) :> v) (code (codePartrecPayload₂ d)) :=
+  eval_codeUnpair₂_natCast (codePartrecPayload d) _ v (eval_codePartrecPayload_natCast d q v hd)
+
+end IndexDecoder
+
 end ArithmeticCode
 end CategoricalRiceShapiro
 

@@ -182,15 +182,8 @@ theorem eval_codePartrecPayload_canonicalPartrecPrecIndex {M : Type*} [ORingStru
     (hd : Semiformula.Evalb ((canonicalPartrecPrecIndex fCode gCode : M) :> v) (code d)) :
     Semiformula.Evalb (((Nat.pair fCode gCode : ℕ) : M) :> v) (code (codePartrecPayload d)) :=
   by
-  have hrr :=
-    eval_codeSub_natCast d (codeConst 4) (canonicalPartrecPrecIndex fCode gCode) 4 v hd
-      (by simpa using eval_codeConst (M := M) 4 v)
-  have hq2 := eval_codeDiv2_natCast _ _ v (eval_codeDiv2_natCast _ _ v hrr)
-  have hval :
-    Nat.div2 (Nat.div2 (canonicalPartrecPrecIndex fCode gCode - 4)) = Nat.pair fCode gCode :=
-    partrecCodePayload_canonicalPartrecPrecIndex fCode gCode
-  rw [hval] at hq2
-  simpa only [codePartrecPayload] using hq2
+  simpa only [partrecCodePayload_canonicalPartrecPrecIndex] using
+    IndexDecoder.eval_codePartrecPayload_natCast d (canonicalPartrecPrecIndex fCode gCode) v hd
 
 /-- The constructor number of the canonical primitive-recursion index, read
 inside a model: it is `6`, the number of primitive recursion. -/
@@ -199,90 +192,29 @@ theorem eval_codePartrecTag_canonicalPartrecPrecIndex {M : Type*} [ORingStructur
     (hd : Semiformula.Evalb ((canonicalPartrecPrecIndex fCode gCode : M) :> v) (code d)) :
     Semiformula.Evalb ((6 : M) :> v) (code (codePartrecTag d)) :=
   by
-  set c := canonicalPartrecPrecIndex fCode gCode with hcdef
-  have hceq : c = 2 * (2 * Nat.pair fCode gCode) + 1 + 4 :=
-    canonicalPartrecPrecIndex_eq fCode gCode
-  have hsub : c - 4 = 2 * (2 * Nat.pair fCode gCode) + 1 := by rw [hceq]; omega
-  have hnlt : ¬c < 4 := by rw [hceq]; omega
-  have hb1 : (c - 4) % 2 = 1 := by rw [hsub]; omega
-  have hd2 : Nat.div2 (c - 4) = 2 * Nat.pair fCode gCode :=
-    by
-    rw [hsub]
-    simp only [Nat.div2_val]
-    omega
-  have hb0 : Nat.div2 (c - 4) % 2 = 0 := by rw [hd2]; omega
-  have h4 : Semiformula.Evalb (((4 : ℕ) : M) :> v) (code (codeConst (n := r) 4)) :=
-    eval_codeConst 4 v
-  have h2 : Semiformula.Evalb (((2 : ℕ) : M) :> v) (code (codeConst (n := r) 2)) :=
-    eval_codeConst 2 v
-  have hrr := eval_codeSub_natCast d (codeConst 4) c 4 v hd (by simpa using h4)
-  have hboddLow :
-    Semiformula.Evalb (((1 : ℕ) : M) :> v) (code (codeBodd (codeSub d (codeConst 4)))) :=
-    by
-    have := eval_codeBodd_natCast _ (c - 4) v hrr
-    rwa [hb1] at this
-  have hboddHigh :
-    Semiformula.Evalb (((0 : ℕ) : M) :> v)
-      (code (codeBodd (codeDiv2 (codeSub d (codeConst 4))))) :=
-    by
-    have := eval_codeBodd_natCast _ (Nat.div2 (c - 4)) v (eval_codeDiv2_natCast _ (c - 4) v hrr)
-    rwa [hb0] at this
-  have hmul :
-    Semiformula.Evalb ((((2 * 1 : ℕ)) : M) :> v)
-      (code (codeMul (codeConst 2) (codeBodd (codeSub d (codeConst 4))))) :=
-    by
-    refine (eval_codeMul_iff _ _ _ _).mpr ⟨_, _, h2, hboddLow, ?_⟩
-    push_cast
-    norm_num
-  have hadd1 :
-    Semiformula.Evalb ((((4 + 2 * 1 : ℕ)) : M) :> v)
-      (code
-        (codeAdd (codeConst 4) (codeMul (codeConst 2) (codeBodd (codeSub d (codeConst 4)))))) :=
-    by
-    refine (eval_codeAdd_iff _ _ _ _).mpr ⟨_, _, h4, hmul, ?_⟩
-    push_cast
-    norm_num
-  have hbig :
-    Semiformula.Evalb ((((4 + 2 * 1 + 0 : ℕ)) : M) :> v)
-      (code
-        (codeAdd
-          (codeAdd (codeConst 4) (codeMul (codeConst 2) (codeBodd (codeSub d (codeConst 4)))))
-          (codeBodd (codeDiv2 (codeSub d (codeConst 4)))))) :=
-    by
-    refine (eval_codeAdd_iff _ _ _ _).mpr ⟨_, _, hadd1, hboddHigh, ?_⟩
-    push_cast
-    norm_num
-  have hsix : (((4 + 2 * 1 + 0 : ℕ)) : M) = (6 : M) := by norm_num
-  rw [hsix] at hbig
-  have hlt0 : Semiformula.Evalb ((0 : M) :> v) (code (codeLt d (codeConst 4))) :=
-    by
-    refine (eval_codeLt_iff _ _ _ _).mpr ⟨_, _, hd, by simpa using h4, Or.inr ⟨?_, rfl⟩⟩
-    intro hc
-    have : c < 4 := by exact_mod_cast hc
-    exact hnlt this
-  simp only [codePartrecTag]
-  exact
-    eval_codeIfPos_of _ _ _ (0 : M) ((c : ℕ) : M) (6 : M) _ v hlt0 hd hbig (Or.inr ⟨rfl, rfl⟩)
+  simpa only [Nat.succ_eq_add_one, canonicalPartrecPrecIndex_constructor_number,
+    Nat.cast_ofNat] using
+    IndexDecoder.eval_codePartrecTag_natCast d (canonicalPartrecPrecIndex fCode gCode) v hd
 
 /-- The base subcode of the canonical primitive-recursion index, read inside a
 model. -/
 theorem eval_codePartrecPayload₁_canonicalPartrecPrecIndex {M : Type*} [ORingStructure M]
     [M↓[ℒₒᵣ] ⊧* 𝐏𝐀⁻] {r : ℕ} (d : Code r) (fCode gCode : ℕ) (v : Fin r → M)
     (hd : Semiformula.Evalb ((canonicalPartrecPrecIndex fCode gCode : M) :> v) (code d)) :
-    Semiformula.Evalb (((fCode : ℕ) : M) :> v) (code (codePartrecPayload₁ d)) := by
-  simpa only [codePartrecPayload₁, Nat.unpair_pair] using
-    eval_codeUnpair₁_natCast (M := M) (codePartrecPayload d) (Nat.pair fCode gCode) v
-      (eval_codePartrecPayload_canonicalPartrecPrecIndex d fCode gCode v hd)
+    Semiformula.Evalb (((fCode : ℕ) : M) :> v) (code (codePartrecPayload₁ d)) :=
+  by
+  simpa only [canonicalPartrecPrecIndex_base_index] using
+    IndexDecoder.eval_codePartrecPayload₁_natCast d (canonicalPartrecPrecIndex fCode gCode) v hd
 
 /-- The step subcode of the canonical primitive-recursion index, read inside a
 model. -/
 theorem eval_codePartrecPayload₂_canonicalPartrecPrecIndex {M : Type*} [ORingStructure M]
     [M↓[ℒₒᵣ] ⊧* 𝐏𝐀⁻] {r : ℕ} (d : Code r) (fCode gCode : ℕ) (v : Fin r → M)
     (hd : Semiformula.Evalb ((canonicalPartrecPrecIndex fCode gCode : M) :> v) (code d)) :
-    Semiformula.Evalb (((gCode : ℕ) : M) :> v) (code (codePartrecPayload₂ d)) := by
-  simpa only [codePartrecPayload₂, Nat.unpair_pair] using
-    eval_codeUnpair₂_natCast (M := M) (codePartrecPayload d) (Nat.pair fCode gCode) v
-      (eval_codePartrecPayload_canonicalPartrecPrecIndex d fCode gCode v hd)
+    Semiformula.Evalb (((gCode : ℕ) : M) :> v) (code (codePartrecPayload₂ d)) :=
+  by
+  simpa only [canonicalPartrecPrecIndex_step_index] using
+    IndexDecoder.eval_codePartrecPayload₂_natCast d (canonicalPartrecPrecIndex fCode gCode) v hd
 
 end PartialRecursive
 end CategoricalRiceShapiro
@@ -302,67 +234,6 @@ open scoped FFL.FirstOrder.Arithmetic
 open Nat.ArithPart₁
 
 variable {M : Type*} [ORingStructure M]
-
-/-- The eager conditional has a value once its test and both branches have one. -/
-private theorem precProbe_ifPos_exists [M↓[ℒₒᵣ] ⊧* 𝐏𝐀⁻] {n : ℕ} (df dg dh : Code n)
-    (v : Fin n → M) (hf : ∃ f : M, Semiformula.Evalb (f :> v) (code df))
-    (hg : ∃ g : M, Semiformula.Evalb (g :> v) (code dg))
-    (hh : ∃ h : M, Semiformula.Evalb (h :> v) (code dh)) :
-    ∃ z : M, Semiformula.Evalb (z :> v) (code (codeIfPos df dg dh)) :=
-  by
-  obtain ⟨f, hf⟩ := hf
-  obtain ⟨g, hg⟩ := hg
-  obtain ⟨h, hh⟩ := hh
-  by_cases hpos : 0 < f
-  · exact ⟨g, eval_codeIfPos_of _ _ _ f g h g v hf hg hh (Or.inl ⟨hpos, rfl⟩)⟩
-  · exact
-      ⟨h,
-        eval_codeIfPos_of _ _ _ f g h h v hf hg hh
-          (Or.inr ⟨le_antisymm (not_lt.mp hpos) (by simp), rfl⟩)⟩
-
-/-- The primitive-recursion cell has a value: both arms of its eager
-conditional are evaluated from the supplied code values. -/
-private theorem precProbe_cell_exists [M↓[ℒₒᵣ] ⊧* 𝐏𝐀] [M↓[ℒₒᵣ] ⊧* 𝐈𝐎𝐩𝐞𝐧] {r : ℕ}
-    (dtable dk' dq dcf dcg dn : Code r) (table k' qv cf cg index : M) (v : Fin r → M)
-    (htable : Semiformula.Evalb (table :> v) (code dtable))
-    (hk' : Semiformula.Evalb (k' :> v) (code dk')) (hq : Semiformula.Evalb (qv :> v) (code dq))
-    (hcf : Semiformula.Evalb (cf :> v) (code dcf))
-    (hcg : Semiformula.Evalb (cg :> v) (code dcg))
-    (hn : Semiformula.Evalb (index :> v) (code dn)) :
-    ∃ z : M,
-      Semiformula.Evalb (z :> v) (code (codePrecEvaluatorCell dtable dk' dq dcf dcg dn)) :=
-  by
-  have hz := eval_codeUnpair₁ dn index v hn
-  have ht := eval_codeUnpair₂ dn index v hn
-  have hy := eval_codeSub (codeUnpair₂ dn) (codeConst 1) _ _ v ht (eval_codeConst 1 v)
-  have hdk : Semiformula.Evalb ((k' + 1) :> v) (code (codeSucc dk')) :=
-    (eval_codeSucc_iff _ _ _).mpr ⟨k', hk', rfl⟩
-  have hzy :=
-    eval_codePair (codeUnpair₁ dn) (codeSub (codeUnpair₂ dn) (codeConst 1)) _ _ v hz hy
-  refine precProbe_ifPos_exists _ _ _ v ⟨_, ht⟩ ?_ ?_
-  · obtain ⟨o₁, ho₁⟩ :=
-      eval_codeTableLookup_exists_of_values dtable dk' dq
-        (codePair (codeUnpair₁ dn) (codeSub (codeUnpair₂ dn) (codeConst 1))) table k' qv _ v
-        htable hk' hq hzy
-    refine eval_codeOptionBind_exists_of_value _ _ o₁ v ho₁ ?_
-    have hL :
-      ∀ (X : Code r) (x : M),
-        Semiformula.Evalb (x :> v) (code X) →
-          Semiformula.Evalb (x :> (o₁ - 1) :> v) (code (codeLift X)) :=
-      fun X x hx => (eval_codeLift_iff X x (o₁ - 1) v).mpr hx
-    have hinner :=
-      eval_codePair (codeLift (codeSub (codeUnpair₂ dn) (codeConst 1))) (codeHead (n := r)) _
-        (o₁ - 1) ((o₁ - 1) :> v) (hL _ _ hy) ((eval_codeHead_iff _ _).mpr rfl)
-    exact
-      eval_codeTableLookup_exists_of_values (codeLift dtable) (codeLift (codeSucc dk'))
-        (codeLift dcg)
-        (codePair (codeLift (codeUnpair₁ dn))
-          (codePair (codeLift (codeSub (codeUnpair₂ dn) (codeConst 1))) (codeHead (n := r))))
-        table (k' + 1) cg _ ((o₁ - 1) :> v) (hL _ _ htable) (hL _ _ hdk) (hL _ _ hcg)
-        (eval_codePair _ _ _ _ ((o₁ - 1) :> v) (hL _ _ hz) hinner)
-  · exact
-      eval_codeTableLookup_exists_of_values dtable (codeSucc dk') dcf (codeUnpair₁ dn) table
-        (k' + 1) cf _ v htable hdk hcf hz
 
 /-- **Zero recursion argument.**  When the argument code `dn` evaluates to
 `⟪z, 0⟫`, the primitive-recursion cell succeeds with output `y + 1` exactly when
@@ -393,8 +264,8 @@ theorem eval_codePrecEvaluatorCell_succ_iff_of_zero [M↓[ℒₒᵣ] ⊧* 𝐏�
     · exact hbase
   · intro hbase
     obtain ⟨w, hw⟩ :=
-      precProbe_cell_exists dtable dk' dq dcf dcg dn table k' qv cf cg _ v htable hk' hq hcf hcg
-        hn
+      eval_codePrecEvaluatorCell_exists dtable dk' dq dcf dcg dn table k' qv cf cg _ v htable
+        hk' hq hcf hcg hn
     have hw' := hw
     simp only [codePrecEvaluatorCell] at hw'
     obtain ⟨f, hf, hcase⟩ := eval_codeIfPos_cases _ _ _ _ v hw'
@@ -446,8 +317,8 @@ theorem eval_codePrecEvaluatorCell_succ_iff_of_succ [M↓[ℒₒᵣ] ⊧* 𝐏�
   · intro hx
     have hstep := (eval_codeOptionBind_succ_iff _ _ y v).mpr hx
     obtain ⟨w, hw⟩ :=
-      precProbe_cell_exists dtable dk' dq dcf dcg dn table k' qv cf cg _ v htable hk' hq hcf hcg
-        hn
+      eval_codePrecEvaluatorCell_exists dtable dk' dq dcf dcg dn table k' qv cf cg _ v htable
+        hk' hq hcf hcg hn
     have hw' := hw
     simp only [codePrecEvaluatorCell] at hw'
     obtain ⟨f, hf, hcase⟩ := eval_codeIfPos_cases _ _ _ _ v hw'
@@ -457,6 +328,36 @@ theorem eval_codePrecEvaluatorCell_succ_iff_of_succ [M↓[ℒₒᵣ] ⊧* 𝐏�
       rw [hwy] at hw
       exact hw
     · exact absurd (by rw [← hfa]; exact hf0) hnz
+
+/-- The predecessor lookup reads the argument `pair z a` from `pair z (a + 1)`. -/
+theorem eval_prec_predecessor_argument [M↓[ℒₒᵣ] ⊧* 𝐏𝐀] [M↓[ℒₒᵣ] ⊧* 𝐈𝐎𝐩𝐞𝐧]
+    (s qCode z a : M) :
+    Semiformula.Evalb
+      ((FFL.FirstOrder.Arithmetic.pair z a) :>
+        ![s, qCode, FFL.FirstOrder.Arithmetic.pair z (a + 1)])
+      (code
+        (codePair (codeUnpair₁ (Code.proj (2 : Fin 3)))
+          (codeSub (codeUnpair₂ (Code.proj (2 : Fin 3))) (codeConst 1)))) :=
+  by
+  let : M↓[ℒₒᵣ] ⊧* 𝐏𝐀⁻ := models_of_subtheory (show M↓[ℒₒᵣ] ⊧* 𝐏𝐀 from inferInstance)
+  have hproj :
+    Semiformula.Evalb
+      (FFL.FirstOrder.Arithmetic.pair z (a + 1) :>
+        ![s, qCode, FFL.FirstOrder.Arithmetic.pair z (a + 1)])
+      (code (Code.proj (2 : Fin 3))) :=
+    (eval_proj_iff _ _ _).mpr rfl
+  have h1 := eval_codeUnpair₁ (Code.proj (2 : Fin 3)) _ _ hproj
+  rw [FFL.FirstOrder.Arithmetic.pi₁_pair] at h1
+  have h2 := eval_codeUnpair₂ (Code.proj (2 : Fin 3)) _ _ hproj
+  rw [FFL.FirstOrder.Arithmetic.pi₂_pair] at h2
+  have hone :
+    Semiformula.Evalb ((1 : M) :> ![s, qCode, FFL.FirstOrder.Arithmetic.pair z (a + 1)])
+      (code (codeConst (n := 3) 1)) :=
+    by rw [eval_codeConst_iff]; simp
+  have h3 := eval_codeSub _ (codeConst 1) (a + 1) 1 _ h2 hone
+  rw [add_sub_self] at h3
+  exact eval_codePair _ _ z a _ h1 h3
+
 
 /-!
 ### The same-index lookup of the successor branch -/
@@ -481,28 +382,8 @@ theorem eval_prec_predecessor_lookup_succ_iff_codeHistoryEvaluator [M↓[ℒₒ�
               (codeSub (codeUnpair₂ (Code.proj (2 : Fin 3))) (codeConst 1))))) ↔
       Semiformula.Evalb ![x + 1, k, ((q : ℕ) : M), FFL.FirstOrder.Arithmetic.pair z a]
         (code codeHistoryEvaluator) :=
-  by
-  let : M↓[ℒₒᵣ] ⊧* 𝐏𝐀⁻ := models_of_subtheory (show M↓[ℒₒᵣ] ⊧* 𝐏𝐀 from inferInstance)
-  have hproj :
-    Semiformula.Evalb
-      (FFL.FirstOrder.Arithmetic.pair z (a + 1) :>
-        ![k + 1, ((q : ℕ) : M), FFL.FirstOrder.Arithmetic.pair z (a + 1)])
-      (code (Code.proj (2 : Fin 3))) :=
-    (eval_proj_iff _ _ _).mpr rfl
-  have h1 := eval_codeUnpair₁ (Code.proj (2 : Fin 3)) _ _ hproj
-  rw [FFL.FirstOrder.Arithmetic.pi₁_pair] at h1
-  have h2 := eval_codeUnpair₂ (Code.proj (2 : Fin 3)) _ _ hproj
-  rw [FFL.FirstOrder.Arithmetic.pi₂_pair] at h2
-  have hone :
-    Semiformula.Evalb
-      ((1 : M) :> ![k + 1, ((q : ℕ) : M), FFL.FirstOrder.Arithmetic.pair z (a + 1)])
-      (code (codeConst (n := 3) 1)) :=
-    by rw [eval_codeConst_iff]; simp
-  have h3 := eval_codeSub _ (codeConst 1) (a + 1) 1 _ h2 hone
-  rw [add_sub_self] at h3
-  exact
-    eval_predecessor_lookup_succ_iff_codeHistoryEvaluator k _ _ x q _
-      (eval_codePair _ _ z a _ h1 h3)
+  eval_predecessor_lookup_succ_iff_codeHistoryEvaluator k _ _ x q _
+    (eval_prec_predecessor_argument (k + 1) ((q : ℕ) : M) z a)
 
 end Evaluator
 end CategoricalRiceShapiro

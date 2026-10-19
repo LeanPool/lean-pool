@@ -620,36 +620,7 @@ theorem evalnCertificateFormula_natCode_persist_of_tag_six_zero [M↓[ℒₒᵣ]
       target_history
 
 /-!
-### The two argument readings of the successor branch -/
-
-/-- The predecessor lookup reads the argument `pair z a` from `pair z (a + 1)`. -/
-private theorem tagSix_predecessor_argument [M↓[ℒₒᵣ] ⊧* 𝐏𝐀] [M↓[ℒₒᵣ] ⊧* 𝐈𝐎𝐩𝐞𝐧]
-    (s qCode z a : M) :
-    Semiformula.Evalb
-      ((FFL.FirstOrder.Arithmetic.pair z a) :>
-        ![s, qCode, FFL.FirstOrder.Arithmetic.pair z (a + 1)])
-      (code
-        (codePair (codeUnpair₁ (Code.proj (2 : Fin 3)))
-          (codeSub (codeUnpair₂ (Code.proj (2 : Fin 3))) (codeConst 1)))) :=
-  by
-  let : M↓[ℒₒᵣ] ⊧* 𝐏𝐀⁻ := models_of_subtheory (show M↓[ℒₒᵣ] ⊧* 𝐏𝐀 from inferInstance)
-  have hproj :
-    Semiformula.Evalb
-      (FFL.FirstOrder.Arithmetic.pair z (a + 1) :>
-        ![s, qCode, FFL.FirstOrder.Arithmetic.pair z (a + 1)])
-      (code (Code.proj (2 : Fin 3))) :=
-    (eval_proj_iff _ _ _).mpr rfl
-  have h1 := eval_codeUnpair₁ (Code.proj (2 : Fin 3)) _ _ hproj
-  rw [FFL.FirstOrder.Arithmetic.pi₁_pair] at h1
-  have h2 := eval_codeUnpair₂ (Code.proj (2 : Fin 3)) _ _ hproj
-  rw [FFL.FirstOrder.Arithmetic.pi₂_pair] at h2
-  have hone :
-    Semiformula.Evalb ((1 : M) :> ![s, qCode, FFL.FirstOrder.Arithmetic.pair z (a + 1)])
-      (code (codeConst (n := 3) 1)) :=
-    by rw [eval_codeConst_iff]; simp
-  have h3 := eval_codeSub _ (codeConst 1) (a + 1) 1 _ h2 hone
-  rw [add_sub_self] at h3
-  exact eval_codePair _ _ z a _ h1 h3
+### The step argument of the successor branch -/
 
 /-- The step lookup reads the argument `pair z (pair a x)` in the lifted
 environment, where the intermediate value `x` is the new head. -/
@@ -829,7 +800,7 @@ theorem evalnCertificateFormula_natCode_persist_of_tag_six_succ_step [M↓[ℒ�
           (FFL.FirstOrder.Arithmetic.pair_lt_pair_left htpred_lt
             _)
           hHt (tagSix_decremented_fuel t ((q : ℕ) : M) u) hidx_t
-          (tagSix_predecessor_argument t ((q : ℕ) : M) z a)).mpr
+          (eval_prec_predecessor_argument t ((q : ℕ) : M) z a)).mpr
       hist_pred_tgt
   have hpayload₂_lt : partrecCodePayload₂ q < q := (partrecCodePayloads_lt_of_tag_six q hq).2
   have hrow_step :

@@ -231,24 +231,6 @@ theorem eval_codeCompEvaluatorCell_succ_iff [M↓[ℒₒᵣ] ⊧* 𝐏𝐀⁻] {
 /-!
 ### Totality of an evaluator cell -/
 
-/-- The eager conditional has a value once its test and both of its branches
-have one.  Both branches are evaluated whichever way the test goes. -/
-private theorem eval_codeIfPos_exists [M↓[ℒₒᵣ] ⊧* 𝐏𝐀⁻] {n : ℕ} (df dg dh : Code n)
-    (v : Fin n → M) (hf : ∃ f : M, Semiformula.Evalb (f :> v) (code df))
-    (hg : ∃ g : M, Semiformula.Evalb (g :> v) (code dg))
-    (hh : ∃ h : M, Semiformula.Evalb (h :> v) (code dh)) :
-    ∃ z : M, Semiformula.Evalb (z :> v) (code (codeIfPos df dg dh)) :=
-  by
-  obtain ⟨f, hf⟩ := hf
-  obtain ⟨g, hg⟩ := hg
-  obtain ⟨h, hh⟩ := hh
-  by_cases hpos : 0 < f
-  · exact ⟨g, eval_codeIfPos_of _ _ _ f g h g v hf hg hh (Or.inl ⟨hpos, rfl⟩)⟩
-  · exact
-      ⟨h,
-        eval_codeIfPos_of _ _ _ f g h h v hf hg hh
-          (Or.inr ⟨le_antisymm (not_lt.mp hpos) (by simp), rfl⟩)⟩
-
 /-- The characteristic value of an equality exists once both sides have one. -/
 private theorem eval_codeEq_exists [M↓[ℒₒᵣ] ⊧* 𝐏𝐀⁻] {n : ℕ} (A B : Code n) (a b : M)
     (v : Fin n → M) (hA : Semiformula.Evalb (a :> v) (code A))
@@ -363,7 +345,7 @@ private theorem eval_codeCompEvaluatorCell_exists [M↓[ℒₒᵣ] ⊧* 𝐏𝐀
 /-- The primitive-recursion cell has a value.  Both arms of its eager
 conditional are evaluated: the step lookup with its continuation, and the base
 lookup. -/
-private theorem eval_codePrecEvaluatorCell_exists [M↓[ℒₒᵣ] ⊧* 𝐏𝐀] {r : ℕ}
+theorem eval_codePrecEvaluatorCell_exists [M↓[ℒₒᵣ] ⊧* 𝐏𝐀] {r : ℕ}
     (dtable dk' dq dcf dcg dn : Code r) (table k' qv cf cg index : M) (v : Fin r → M)
     (htable : Semiformula.Evalb (table :> v) (code dtable))
     (hk' : Semiformula.Evalb (k' :> v) (code dk')) (hq : Semiformula.Evalb (qv :> v) (code dq))

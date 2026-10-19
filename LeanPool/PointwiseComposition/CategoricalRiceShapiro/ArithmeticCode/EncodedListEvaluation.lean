@@ -185,30 +185,11 @@ private theorem definable_code_head_slot {m : ℕ} (A : Code (m + 1)) (out : M)
     (par : Fin m → M) :
     Σ-[1].DefinablePred (fun c : M => Semiformula.Evalb (out :> c :> par) (code A)) :=
   by
-  refine
-    ⟨HierarchySymbol.Semiformula.mkSigma
-        ((Rew.embSubsts
-            ((&out : Semiterm ℒₒᵣ M 1) :>
-              (#0 : Semiterm ℒₒᵣ M 1) :> fun j => (&(par j) : Semiterm ℒₒᵣ M 1))) ▹
-          (code A))
-        (Hierarchy.rew _ (code_sigma_one A)),
-      ?_⟩
-  intro w
-  simp only [HierarchySymbol.Semiformula.val_mkSigma, Semiformula.eval_embSubsts]
-  have hv :
-    (Semiterm.val w id ∘
-        ((&out : Semiterm ℒₒᵣ M 1) :>
-          (#0 : Semiterm ℒₒᵣ M 1) :> fun j => (&(par j) : Semiterm ℒₒᵣ M 1))) =
-      (out :> w 0 :> par) :=
-    by
-    funext j
-    refine Fin.cases ?_ ?_ j
-    · simp
-    · intro j1
-      refine Fin.cases ?_ ?_ j1
-      · simp
-      · intro j2; simp
-  rw [hv]
+  simpa only [Nat.succ_eq_add_one, Fin.isValue, Function.comp_def, Matrix.comp_vecCons',
+    Semiterm.val_fvar, id_eq, Semiterm.val_bvar] using
+    definable_code_graph_arguments A
+      ((&out : Semiterm ℒₒᵣ M 1) :>
+        (#0 : Semiterm ℒₒᵣ M 1) :> fun j => (&(par j) : Semiterm ℒₒᵣ M 1))
 
 open HierarchySymbol in
 /-- Varying the output and the first argument of the graph formula of a code,
@@ -216,30 +197,11 @@ with the remaining arguments fixed as parameters, is a Sigma-one condition. -/
 private theorem definable_code_out_head_slot {m : ℕ} (A : Code (m + 1)) (par : Fin m → M) :
     Σ-[1].Definable (fun w : Fin 2 → M => Semiformula.Evalb (w 0 :> w 1 :> par) (code A)) :=
   by
-  refine
-    ⟨HierarchySymbol.Semiformula.mkSigma
-        ((Rew.embSubsts
-            ((#0 : Semiterm ℒₒᵣ M 2) :>
-              (#1 : Semiterm ℒₒᵣ M 2) :> fun j => (&(par j) : Semiterm ℒₒᵣ M 2))) ▹
-          (code A))
-        (Hierarchy.rew _ (code_sigma_one A)),
-      ?_⟩
-  intro w
-  simp only [HierarchySymbol.Semiformula.val_mkSigma, Semiformula.eval_embSubsts]
-  have hv :
-    (Semiterm.val w id ∘
-        ((#0 : Semiterm ℒₒᵣ M 2) :>
-          (#1 : Semiterm ℒₒᵣ M 2) :> fun j => (&(par j) : Semiterm ℒₒᵣ M 2))) =
-      (w 0 :> w 1 :> par) :=
-    by
-    funext j
-    refine Fin.cases ?_ ?_ j
-    · simp
-    · intro j1
-      refine Fin.cases ?_ ?_ j1
-      · simp
-      · intro j2; simp
-  rw [hv]
+  simpa only [Nat.succ_eq_add_one, Fin.isValue, Function.comp_def, Matrix.comp_vecCons',
+    Semiterm.val_fvar, id_eq, Semiterm.val_bvar] using
+    definable_code_graph_arguments A
+      ((#0 : Semiterm ℒₒᵣ M 2) :>
+        (#1 : Semiterm ℒₒᵣ M 2) :> fun j => (&(par j) : Semiterm ℒₒᵣ M 2))
 
 /-!
 ### The iterated tail decreases -/
