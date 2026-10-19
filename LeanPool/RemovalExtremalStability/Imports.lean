@@ -14,5 +14,6 @@ public import LeanPool.RemovalExtremalStability.FewCopiesStability
 public import LeanPool.RemovalExtremalStability.Furedi
 public import LeanPool.RemovalExtremalStability.GeneralGraphRemoval
 public import LeanPool.RemovalExtremalStability.GraphRemoval
+public import LeanPool.RemovalExtremalStability.PartialEmbedding
 public import LeanPool.RemovalExtremalStability.StabilityGeneral
 public import LeanPool.RemovalExtremalStability.TuranStability

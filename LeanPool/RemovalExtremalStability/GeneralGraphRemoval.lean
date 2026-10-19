@@ -10,6 +10,7 @@ public import Mathlib.Combinatorics.SimpleGraph.Copy
 public import Mathlib.Combinatorics.SimpleGraph.DeleteEdges
 public import Mathlib.Tactic
 public import LeanPool.RemovalExtremalStability.CliqueRemoval
+public import LeanPool.RemovalExtremalStability.PartialEmbedding
 
 /-!
 
@@ -83,6 +84,10 @@ theorem card_copies_ge {α β : Type*} [Fintype β] (L : SimpleGraph β)
     linarith
   let Cand : (β → α) → Finset β → β → Finset α := fun f S y =>
     {w ∈ s y | ∀ z ∈ S, L.Adj z y → G.Adj (f z) w}
+  have hCandEq : ∀ f S y, Cand f S y = PartialEmbedding.candidates G L s f S y := by
+    intros f S y
+    ext w
+    simp [Cand, PartialEmbedding.candidates]
   let Good : Finset β → Finset (β → α) := fun S =>
     {f ∈ Fintype.piFinset (fun y => if y ∈ S then s y else {a₀}) | Set.InjOn f S ∧
       (∀ x ∈ S, ∀ y ∈ S, L.Adj x y → G.Adj (f x) (f y)) ∧
@@ -154,11 +159,32 @@ theorem card_copies_ge {α β : Type*} [Fintype β] (L : SimpleGraph β)
         rw [Fintype.mem_piFinset] at hpi
         obtain ⟨hvC, hvS, hvB⟩ := mem_filter.1 hv
         have hvC' := mem_filter.1 hvC
+        have hmemS : ∀ z ∈ S, f z ∈ s z := by
+          intro z hz
+          simpa [hz] using hpi z
+        have hgood : ∀ y, y ∉ insert x S → L.Adj x y →
+            d * #(Cand f S y) ≤ #{w ∈ Cand f S y | G.Adj v w} := by
+          intro y hy hxy
+          have hyY : y ∈ Y := by simp [Y, hy, hxy]
+          exact le_of_not_gt fun h => hvB y hyY (mem_filter.2 ⟨hvC'.1, h⟩)
+        have hcandShared : ∀ y ∉ S, d ^ #S * #(s y) ≤
+            #(PartialEmbedding.candidates G L s f S y) := by
+          simpa only [← hCandEq] using hcand
+        have hvCShared : v ∈ PartialEmbedding.candidates G L s f S x := by
+          simpa only [← hCandEq] using hvC
+        have hgoodShared : ∀ y, y ∉ insert x S → L.Adj x y →
+            d * #(PartialEmbedding.candidates G L s f S y) ≤
+              #{w ∈ PartialEmbedding.candidates G L s f S y | G.Adj v w} := by
+          simpa only [← hCandEq] using hgood
+        obtain ⟨hinj', -, hadj', hcand'⟩ :=
+          PartialEmbedding.extend G L s hd hd₁ S x hxS f v
+            hinj hmemS hadj hcandShared hvCShared hvS hgoodShared
+        have hcandFinal : ∀ y ∉ insert x S,
+            d ^ #(insert x S) * #(s y) ≤ #(Cand (Function.update f x v) (insert x S) y) := by
+          simpa only [← hCandEq] using hcand'
         have hfS : ∀ z, z ≠ x → Function.update f x v z = f z := fun z hz =>
           Function.update_of_ne hz _ _
-        have hfS' : ∀ z ∈ S, Function.update f x v z = f z := fun z hz =>
-          hfS z (by rintro rfl; exact hxS hz)
-        refine mem_filter.2 ⟨Fintype.mem_piFinset.2 fun y => ?_, ?_, ?_, ?_⟩
+        refine mem_filter.2 ⟨Fintype.mem_piFinset.2 (fun y => ?_), hinj', hadj', hcandFinal⟩
         · by_cases hyx : y = x
           · subst hyx; simpa using hvC'.1
           · rw [hfS y hyx]
@@ -166,50 +192,6 @@ theorem card_copies_ge {α β : Type*} [Fintype β] (L : SimpleGraph β)
             by_cases hyS : y ∈ S
             · simpa [hyS] using this
             · simpa [hyS, hyx] using this
-        · rw [coe_insert, Set.injOn_insert (by simpa using hxS)]
-          refine ⟨fun a ha b hb h => hinj ha hb ?_, ?_⟩
-          · rwa [hfS' a ha, hfS' b hb] at h
-          · rintro ⟨z, hz, hzv⟩
-            rw [Function.update_self, hfS' z hz] at hzv
-            exact hvS (mem_image.2 ⟨z, hz, hzv⟩)
-        · have key : ∀ z ∈ S, L.Adj z x → G.Adj (f z) v := fun z hz h => hvC'.2 z hz h
-          intro a ha b hb hab
-          rcases mem_insert.1 ha with hax | ha' <;> rcases mem_insert.1 hb with hbx | hb'
-          · subst hax; subst hbx; exact absurd hab (SimpleGraph.irrefl _)
-          · subst hax; rw [Function.update_self, hfS' b hb']; exact (key b hb' hab.symm).symm
-          · subst hbx; rw [Function.update_self, hfS' a ha']; exact key a ha' hab
-          · rw [hfS' a ha', hfS' b hb']; exact hadj a ha' b hb' hab
-        · intro y hy
-          rw [mem_insert, not_or] at hy
-          rw [card_insert_of_notMem hxS, pow_succ]
-          by_cases hxy : L.Adj x y
-          · have hyY : y ∈ Y := by simp [Y, hy.1, hy.2, hxy]
-            have h1 : ¬ ((#{w ∈ Cand f S y | G.Adj v w} : ℝ) < d * #(Cand f S y)) := fun h =>
-              hvB y hyY (mem_filter.2 ⟨hvC'.1, h⟩)
-            push Not at h1
-            have hsub : {w ∈ Cand f S y | G.Adj v w} ⊆
-                Cand (Function.update f x v) (insert x S) y := by
-              intro w hw
-              simp only [Cand, mem_filter, mem_insert] at hw ⊢
-              refine ⟨hw.1.1, ?_⟩
-              rintro z (rfl | hz) hzy
-              · simpa using hw.2
-              · rw [hfS' z hz]; exact hw.1.2 z hz hzy
-            calc d ^ #S * d * (#(s y) : ℝ) = d * (d ^ #S * #(s y)) := by ring
-              _ ≤ d * #(Cand f S y) := by gcongr; exact hcand y hy.2
-              _ ≤ _ := h1
-              _ ≤ _ := by exact_mod_cast card_le_card hsub
-          · have hsub : Cand f S y ⊆ Cand (Function.update f x v) (insert x S) y := by
-              intro w hw
-              simp only [Cand, mem_filter, mem_insert] at hw ⊢
-              refine ⟨hw.1, ?_⟩
-              rintro z (rfl | hz) hzy
-              · exact absurd hzy hxy
-              · rw [hfS' z hz]; exact hw.2 z hz hzy
-            calc d ^ #S * d * (#(s y) : ℝ) ≤ d ^ #S * 1 * #(s y) := by gcongr
-              _ = d ^ #S * #(s y) := by ring
-              _ ≤ _ := hcand y hy.2
-              _ ≤ _ := by exact_mod_cast card_le_card hsub
       have hinj : #((Good S).sigma Ext) ≤ #(Good (insert x S)) := by
         refine card_le_card_of_injOn (fun p => Function.update p.1 x p.2) ?_ ?_
         · rintro ⟨f, v⟩ hp
