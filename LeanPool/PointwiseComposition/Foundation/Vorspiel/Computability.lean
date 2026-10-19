@@ -1,0 +1,325 @@
+/-
+Copyright (c) 2026 Formalized Formal Logic contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Formalized Formal Logic contributors
+-/
+
+module
+
+-- Ported and adapted for Lean Pool from the upstream revision recorded in the project card.
+
+public import Mathlib.Computability.Halting
+public import Mathlib.Computability.Primrec.List
+public import LeanPool.PointwiseComposition.Foundation.Vorspiel.Nat.Matrix
+public import LeanPool.PointwiseComposition.Foundation.Vorspiel.Part
+
+/-!
+Supporting results for pointwise provable equality. -/
+
+namespace PointwiseComposition
+
+@[expose] public section
+
+namespace Nat
+namespace Partrec
+
+open _root_.Nat
+
+open _root_.Nat.Partrec
+
+open _root_.Part Part _root_.Primrec
+
+lemma projection {f : ℕ →. ℕ} (hf : Nat.Partrec f)
+    (unif : ∀ {m n₁ n₂ a₁ a₂ : ℕ}, a₁ ∈ f (m.pair n₁) → a₂ ∈ f (m.pair n₂) → a₁ = a₂) :
+    ∃ g : ℕ →. ℕ, Nat.Partrec g ∧ (∀ a m, a ∈ g m ↔ ∃ z, a ∈ f (m.pair z)) :=
+  by
+  obtain ⟨cf, rfl⟩ := Code.exists_code.1 hf
+  let F : ℕ → ℕ → Option ℕ := fun m n ↦
+    Nat.rec .none (fun x ih ↦ ih.casesOn (cf.evaln n (m.pair x)) .some) n
+  have : Primrec₂ F :=
+    .to₂ <|
+      Primrec.nat_rec' Primrec.snd (.const Option.none)
+        (Primrec.option_casesOn (Primrec.snd.comp .snd)
+            (Code.primrec_evaln.comp <|
+              _root_.Primrec.pair (_root_.Primrec.pair (snd.comp .fst) (.const cf))
+                (Primrec₂.natPair.comp (fst.comp fst) (fst.comp snd)))
+            (Primrec.option_some.comp snd).to₂).to₂
+  have hF : ∀ {m n a}, a ∈ F m n ↔ ∃ x < n, a ∈ cf.evaln n (m.pair x) :=
+    by
+    suffices
+      ∀ m n s a : ℕ,
+        Nat.rec Option.none (fun x ih ↦ ih.casesOn (cf.evaln s (m.pair x)) Option.some) n =
+            Option.some a ↔
+          ∃ x < n, cf.evaln s (m.pair x) = .some a
+      from fun m n a ↦ this m n n a
+    intro m n s a
+    induction n generalizing a
+    case zero => simp
+    case succ n
+      ih =>
+      cases hC :
+        @Nat.rec (fun _ ↦ Option ℕ) Option.none
+          (fun x ih ↦ ih.rec (cf.evaln s (m.pair x)) Option.some) n
+      · suffices
+          Code.evaln s cf (Nat.pair m n) = Option.some a ↔
+            ∃ x < n + 1, Code.evaln s cf (Nat.pair m x) = Option.some a
+          by simpa [hC]
+        constructor
+        · intro h; exact ⟨n, by simp, h⟩
+        · rintro ⟨x, hx, Hx⟩
+          rcases eq_or_lt_of_le (le_of_lt_succ hx) with (rfl | hx)
+          · exact Hx
+          · exfalso; simpa using ((ih _).mpr ⟨x, hx, Hx⟩).symm.trans hC
+      case some
+        i =>
+        suffices i = a ↔ ∃ x < n + 1, Code.evaln s cf (Nat.pair m x) = Option.some a by
+          simpa [hC]
+        constructor
+        · rintro rfl; rcases (ih _).mp hC with ⟨x, hx, Hx⟩
+          exact ⟨x, lt_trans hx (by simp), Hx⟩
+        · rintro ⟨x, _, Hx⟩
+          rcases (ih _).mp hC with ⟨y, _, Hy⟩
+          exact unif (Nat.Partrec.Code.evaln_sound Hy) (Nat.Partrec.Code.evaln_sound Hx)
+  have mono : ∀ {a m n₁ n₂ : ℕ}, n₁ ≤ n₂ → a ∈ F m n₁ → a ∈ F m n₂ :=
+    by
+    intro a m n₁ n₂ hn h₁
+    rcases hF.mp h₁ with ⟨x, hx, H⟩
+    apply hF.mpr ⟨x, lt_of_lt_of_le hx hn, Code.evaln_mono hn H⟩
+  have : Partrec (fun m ↦ rfindOpt (F m)) := Partrec.rfindOpt <| this.to_comp
+  exact
+    ⟨_, this, by
+      intro a m
+      suffices (∃ n, F m n = .some a) ↔ ∃ z, a ∈ cf.eval (m.pair z) by
+        simpa [Nat.rfindOpt_mono mono]
+      constructor
+      · rintro ⟨n, H⟩
+        obtain ⟨x, _, H⟩ := hF.mp H
+        exact ⟨x, Code.evaln_sound H⟩
+      · rintro ⟨x, H⟩
+        obtain ⟨s, Hs⟩ := Code.evaln_complete.mp H
+        exact
+          ⟨max s x + 1,
+            (@hF m (max s x + 1) a).mpr
+              ⟨x, by simp [Nat.lt_succ_iff],
+                Code.evaln_mono (le_trans (Nat.le_max_left s x) (le_add_right (max s x) 1))
+                  Hs⟩⟩⟩
+
+end Partrec
+end Nat
+
+namespace Partrec
+
+open _root_.Partrec
+
+variable {α β γ : Type*} [Primcodable α] [Primcodable β] [Primcodable γ]
+
+lemma projection {f : α → β →. γ} (hf : Partrec₂ f)
+    (unif : ∀ {a b₁ b₂ c₁ c₂}, c₁ ∈ f a b₁ → c₂ ∈ f a b₂ → c₁ = c₂) :
+    ∃ g : α →. γ, Partrec g ∧ (∀ c a, c ∈ g a ↔ ∃ b, c ∈ f a b) :=
+  by
+  have :=
+    Nat.Partrec.projection (Partrec.bind_decode₂_iff.mp hf)
+      (by
+        intro m n₁ n₂ c₁ c₂;
+        simp only [Part.mem_bind_iff, Part.mem_ofOption, Option.mem_def,
+          Encodable.decode₂_eq_some, Part.mem_map_iff, Prod.exists, Encodable.encode_prod_val,
+          Nat.pair_eq_pair, forall_exists_index, and_imp]
+        rintro a b₁ rfl rfl c₁ h₁ rfl a b₂ e rfl c₂ h₂ rfl
+        rcases Encodable.encode_inj.mp e
+        rw [unif h₁ h₂])
+  rcases this with ⟨g, hg, H⟩
+  let g' : α →. γ := fun a ↦ (g (Encodable.encode a)).bind fun n ↦ Encodable.decode (α := γ) n
+  refine
+    ⟨g',
+      ((nat_iff.2 hg).comp Computable.encode).bind
+        (Computable.decode.ofOption.comp Computable.snd).to₂,
+      ?_⟩
+  have H :
+    ∀ {c a : ℕ},
+      c ∈ g a ↔ ∃ a' b, Encodable.encode a' = a ∧ ∃ c' ∈ f a' b, Encodable.encode c' = c :=
+    by
+    have H :
+      ∀ (a m : ℕ),
+        a ∈ g m ↔
+          ∃ z a' b,
+            (Encodable.encode a' = m ∧ Encodable.encode b = z) ∧
+              ∃ a'' ∈ f a' b, Encodable.encode a'' = a :=
+      by simpa [Encodable.decode₂_eq_some] using H
+    intro c a; constructor
+    · intro h; rcases (H c a).mp h with ⟨b, a, b, ⟨rfl, rfl⟩, ⟨c, H, rfl⟩⟩
+      exact ⟨a, b, rfl, c, H, rfl⟩
+    · rintro ⟨a, b, rfl, c, hc, rfl⟩
+      exact (H _ _).mpr ⟨Encodable.encode b, a, b, ⟨rfl, rfl⟩, c, hc, rfl⟩
+  intro c a
+  suffices (∃ c' ∈ g (Encodable.encode a), Encodable.decode c' = some c) ↔ ∃ b, c ∈ f a b by
+    simpa [g']
+  constructor
+  · rintro ⟨c', h, hc⟩
+    rcases H.mp h with ⟨a, b, ae, c, habc, rfl⟩; rcases by simpa using hc
+    rcases Encodable.encode_inj.mp ae
+    exact ⟨b, habc⟩
+  · rintro ⟨b, habc⟩
+    exact ⟨Encodable.encode c, H.mpr ⟨a, b, rfl, c, habc, rfl⟩, by simp⟩
+
+end Partrec
+
+namespace REPred
+
+open _root_.REPred
+
+variable {α β : Type*} [Primcodable α] [Primcodable β] {p q : α → Prop}
+
+@[simp]
+protected lemma const (p : Prop) : REPred fun _ : α ↦ p :=
+  by
+  by_cases h : p
+  · simpa [h] using Partrec.some.dom_re
+  · simpa [h] using (Partrec.none (α := α) (σ := α)).dom_re
+
+lemma iff : REPred p ↔ ∃ f : α →. Unit, Partrec f ∧ p = fun x ↦ (f x).Dom :=
+  ⟨fun h ↦ ⟨_, h, by ext x; simp [Part.assert]⟩, by rintro ⟨f, hf, rfl⟩; exact hf.dom_re⟩
+
+lemma iff' : REPred p ↔ ∃ f : α →. Unit, Partrec f ∧ ∀ x, p x ↔ (f x).Dom :=
+  by
+  constructor
+  · intro h
+    exact ⟨_, h, by intro x; simp [Part.assert]⟩
+  · rintro ⟨f, hf, h⟩
+    exact hf.dom_re.of_eq (by simp [h])
+
+lemma and (hp : REPred p) (hq : REPred q) : REPred fun x ↦ p x ∧ q x :=
+  by
+  rcases REPred.iff.mp hp with ⟨f, hf, rfl⟩
+  rcases REPred.iff.mp hq with ⟨g, hg, rfl⟩
+  let h : α →. Unit := fun x ↦ (f x).bind fun _ ↦ (g x).map fun _ ↦ ()
+  have : Partrec h :=
+    Partrec.bind hf <|
+      Partrec.to₂ <| Partrec.map (hg.comp Computable.fst) (Computable.const ()).to₂
+  exact REPred.iff.mpr ⟨_, this, by funext x; simp [h]⟩
+
+lemma or (hp : REPred p) (hq : REPred q) : REPred fun x ↦ p x ∨ q x :=
+  by
+  rcases REPred.iff.mp hp with ⟨f, hf, rfl⟩
+  rcases REPred.iff.mp hq with ⟨g, hg, rfl⟩
+  rcases hf.merge hg (by intro a x; simp) with ⟨k, hk, h⟩
+  exact REPred.iff.mpr ⟨k, hk, by funext x; simp [Part.unit_dom_iff, h]⟩
+
+lemma projection {p : α × β → Prop} (hp : REPred p) : REPred fun x ↦ ∃ y, p (x, y) :=
+  by
+  rcases REPred.iff.mp hp with ⟨f, hf, rfl⟩
+  have : Partrec₂ fun a b ↦ f (a, b) := hf.comp <| Computable.pair .fst .snd
+  obtain ⟨g, hg, Hg⟩ := Partrec.projection this (by simp)
+  exact REPred.iff.mpr ⟨g, hg, by funext x; simp [Part.unit_dom_iff, Hg]⟩
+
+protected lemma comp {f : α → β} (hf : Computable f) {p : β → Prop} (hp : REPred p) :
+    REPred fun x ↦ p (f x) :=
+  by
+  rcases REPred.iff.mp hp with ⟨p, pp, rfl⟩
+  exact REPred.iff'.mpr ⟨_, pp.comp hf, by intro x; simp⟩
+
+end REPred
+
+namespace ComputablePred
+
+open _root_.ComputablePred
+
+variable {α β : Type*} [Primcodable α] [Primcodable β] {p q : α → Prop}
+
+@[simp]
+protected lemma const (p : Prop) : ComputablePred fun _ : α ↦ p :=
+  computable_iff_re_compl_re'.mpr ⟨REPred.const _, REPred.const _⟩
+
+lemma and : ComputablePred p → ComputablePred q → ComputablePred fun x ↦ p x ∧ q x :=
+  by
+  simp_rw [computable_iff_re_compl_re']
+  rintro ⟨hp, hnp⟩
+  rintro ⟨hq, hnq⟩
+  refine
+    ⟨(PointwiseComposition.REPred.and hp) hq,
+      ((PointwiseComposition.REPred.or hnp) hnq).of_eq <| by grind⟩
+
+lemma or : ComputablePred p → ComputablePred q → ComputablePred fun x ↦ p x ∨ q x :=
+  by
+  simp_rw [computable_iff_re_compl_re']
+  rintro ⟨hp, hnp⟩
+  rintro ⟨hq, hnq⟩
+  refine
+    ⟨(PointwiseComposition.REPred.or hp) hq,
+      ((PointwiseComposition.REPred.and hnp) hnq).of_eq <| by grind⟩
+
+lemma of_graph_rePred {g : α → ℕ} (h : REPred fun p : α × ℕ ↦ p.2 = g p.1) : Computable g :=
+  by
+  have hF :
+    Partrec₂ fun (a : α) (b : ℕ) ↦ (Part.assert (b = g a) fun _ ↦ Part.some ()).map fun _ ↦ b :=
+    (Partrec.map h ((Computable.snd.comp Computable.fst).to₂)).to₂
+  obtain ⟨k, hk, Hk⟩ :=
+    Partrec.projection hF
+      (by
+        rintro a b₁ b₂ c₁ c₂ h₁ h₂
+        simp only [Part.mem_map_iff, Part.mem_assert_iff] at h₁ h₂
+        obtain ⟨-, ⟨rfl, -⟩, rfl⟩ := h₁
+        obtain ⟨-, ⟨rfl, -⟩, rfl⟩ := h₂
+        rfl)
+  refine hk.of_eq_tot fun a ↦ ?_
+  exact (Hk (g a) a).mpr ⟨g a, by simp [Part.mem_map_iff, Part.mem_assert_iff]⟩
+
+end ComputablePred
+
+namespace Nat
+
+open _root_.Nat
+
+variable {f : ℕ → ℕ}
+
+/-- The bounded Max construction in `Nat`. -/
+def boundedMax (f : ℕ → ℕ) (n : ℕ) : ℕ :=
+  Nat.rec (f 0) (fun k ih ↦ max ih (f (k + 1))) n
+
+lemma computable_boundedMax (hf : Computable f) : Computable (boundedMax f) :=
+  by
+  have h : Computable fun q : ℕ × (ℕ × ℕ) ↦ max q.2.2 (f (q.2.1 + 1)) :=
+    Computable₂.comp Primrec.nat_max.to_comp (Computable.snd.comp Computable.snd)
+      (hf.comp (Computable.succ.comp (Computable.fst.comp Computable.snd)))
+  exact Computable.nat_rec Computable.id (Computable.const (f 0)) h.to₂
+
+lemma le_boundedMax {k n : ℕ} (h : k ≤ n) : f k ≤ boundedMax f n := by
+  induction n with
+  | zero => simp_all [boundedMax]
+  | succ n ih =>
+    rcases Nat.eq_or_lt_of_le h with rfl | h
+    · simp [boundedMax]
+    · exact (ih (Nat.le_of_lt_succ h)).trans (Nat.le_max_left _ _)
+
+end Nat
+
+section
+
+open _root_.Primrec Primrec
+
+theorem Primrec.nat_natToList : Primrec Nat.natToList :=
+  by
+  have step :
+    Primrec₂ fun (_ : Unit) (l : List (List ℕ)) ↦
+      (Nat.casesOn l.length (some []) fun e ↦ (l[e.unpair.2]?).map fun t ↦ e.unpair.1 :: t :
+        Option (List ℕ)) :=
+    Primrec.to₂ <|
+      Primrec.nat_casesOn (list_length.comp <| snd.comp .id) (const (some ([] : List ℕ)))
+        (Primrec.to₂ <|
+          option_map (list_getElem?.comp (snd.comp fst) (snd.comp <| Primrec.unpair.comp snd))
+            (Primrec.to₂ <|
+              list_cons.comp (fst.comp <| Primrec.unpair.comp <| snd.comp fst) snd))
+  have main : Primrec₂ fun (_ : Unit) (n : ℕ) ↦ Nat.natToList n :=
+    by
+    refine Primrec.nat_strong_rec _ step ?_
+    rintro ⟨⟩ (_ | e)
+    · simp [Nat.natToList]
+    · have hlen : ((List.range (e + 1)).map Nat.natToList).length = e + 1 := by simp
+      have hlt : e.unpair.2 < e + 1 := Nat.lt_succ_of_le (Nat.unpair_right_le e)
+      simp [hlen, List.getElem?_map, hlt, Nat.natToList]
+  simpa using main.comp (const ()) Primrec.id
+
+end
+
+end
+
+end PointwiseComposition
