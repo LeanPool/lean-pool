@@ -5,6 +5,7 @@ Authors: William M. Feldman
 -/
 module
 
+public import Mathlib.Geometry.Manifold.PartitionOfUnity
 public import LeanPool.ViscositySolutionTheory.ViscositySolns.Applications.Laplace.WeakHarmonic.Subsolution
 
 /-!

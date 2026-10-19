@@ -5,6 +5,8 @@ Authors: William M. Feldman
 -/
 module
 
+public import Mathlib.Analysis.Calculus.ContDiff.Comp
+public import Mathlib.Analysis.Calculus.Deriv.Comp
 public import Mathlib.Analysis.Calculus.MeanValue
 public import Mathlib.MeasureTheory.Group.Integral
 public import Mathlib.MeasureTheory.Integral.Bochner.Set

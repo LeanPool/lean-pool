@@ -43,7 +43,7 @@ theorem prod_measure_diff_eq_zero_of_ae_ae_restrict_section
   have hsx : MeasurableSet {y : β | (x, y) ∈ s} :=
     measurable_prodMk_left hs
   rw [ae_iff] at hxsection
-  rw [Measure.restrict_apply_eq_zero' hsx] at hxsection
+  rw [Measure.restrict_apply_eq_zero' hsx.nullMeasurableSet] at hxsection
   have hset :
       {y : β | ¬(x, y) ∈ G} ∩ {y : β | (x, y) ∈ s} =
         Prod.mk x ⁻¹' (s \ G) := by
@@ -70,7 +70,7 @@ theorem prod_measure_diff_eq_zero_of_ae_ae_restrict_section₀
     have hsx : MeasurableSet {y : β | (x, y) ∈ s} :=
       measurable_prodMk_left hs
     rw [ae_iff] at hxsection
-    rw [Measure.restrict_apply_eq_zero' hsx] at hxsection
+    rw [Measure.restrict_apply_eq_zero' hsx.nullMeasurableSet] at hxsection
     have hset :
         {y : β | ¬(x, y) ∈ G} ∩ {y : β | (x, y) ∈ s} =
           Prod.mk x ⁻¹' (s \ G) := by
@@ -171,7 +171,7 @@ theorem prod_measure_diff_eq_zero_of_ae_ae_restrict_horizontal_section
   have hsy : MeasurableSet {x : α | (x, y) ∈ s} :=
     measurable_prodMk_right hs
   rw [ae_iff] at hysection
-  rw [Measure.restrict_apply_eq_zero' hsy] at hysection
+  rw [Measure.restrict_apply_eq_zero' hsy.nullMeasurableSet] at hysection
   have hset :
       {x : α | ¬(x, y) ∈ G} ∩ {x : α | (x, y) ∈ s} =
         (fun x : α => (x, y)) ⁻¹' (s \ G) := by
@@ -196,7 +196,7 @@ theorem prod_measure_diff_eq_zero_of_ae_ae_restrict_horizontal_section₀
     have hsy : MeasurableSet {x : α | (x, y) ∈ s} :=
       measurable_prodMk_right hs
     rw [ae_iff] at hysection
-    rw [Measure.restrict_apply_eq_zero' hsy] at hysection
+    rw [Measure.restrict_apply_eq_zero' hsy.nullMeasurableSet] at hysection
     have hset :
         {x : α | ¬(x, y) ∈ G} ∩ {x : α | (x, y) ∈ s} =
           (fun x : α => (x, y)) ⁻¹' (s \ G) := by
@@ -351,7 +351,7 @@ theorem secondOrderDifferentiableAEOn_iff_measure_secondOrderBadSetOn_eq_zero
     {μ : Measure E} {s : Set E} {u : E → ℝ} (hs : MeasurableSet s) :
     SecondOrderDifferentiableAEOn μ s u ↔ μ (secondOrderBadSetOn s u) = 0 := by
   rw [secondOrderDifferentiableAEOn_iff_restrict_measure_secondOrderBadSet_eq_zero]
-  rw [Measure.restrict_apply_eq_zero' hs]
+  rw [Measure.restrict_apply_eq_zero' hs.nullMeasurableSet]
   rw [secondOrderBadSet_inter_eq_secondOrderBadSetOn]
 
 omit [MeasurableSpace E] in
@@ -524,7 +524,7 @@ theorem ae_restrict_mem_of_measure_diff_eq_zero
     {μ : Measure E} {s G : Set E} (hs : MeasurableSet s) (hnull : μ (s \ G) = 0) :
     ∀ᵐ x ∂μ.restrict s, x ∈ G := by
   rw [ae_iff]
-  rw [Measure.restrict_apply_eq_zero' hs]
+  rw [Measure.restrict_apply_eq_zero' hs.nullMeasurableSet]
   have hset : {x : E | ¬x ∈ G} ∩ s = s \ G := by
     ext x
     simp [and_comm]
@@ -538,7 +538,7 @@ theorem measure_diff_eq_zero_of_ae_restrict_mem
     (hmem : ∀ᵐ x ∂μ.restrict s, x ∈ G) :
     μ (s \ G) = 0 := by
   rw [ae_iff] at hmem
-  rw [Measure.restrict_apply_eq_zero' hs] at hmem
+  rw [Measure.restrict_apply_eq_zero' hs.nullMeasurableSet] at hmem
   have hset : {x : E | ¬x ∈ G} ∩ s = s \ G := by
     ext x
     simp [and_comm]

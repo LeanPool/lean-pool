@@ -5,6 +5,7 @@ Authors: William M. Feldman
 -/
 module
 
+public import Mathlib.Analysis.Calculus.TangentCone.Real
 public import LeanPool.ViscositySolutionTheory.ViscositySolns.Foundation
 
 /-!
