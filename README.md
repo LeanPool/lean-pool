@@ -19,9 +19,7 @@ Lean Pool sits between [`mathlib`](https://github.com/leanprover-community/mathl
 Semantic search is also available via the [API](https://search.octo.axiomatic-ai.com/api/search).
 
 Explore compile costs in the [LeanPool source profile](https://vilin97.github.io/lean-source-profiler/pool/),
-from projects and files down to declarations and source lines. The
-[weekly profiling job](scripts/weekly-profile/README.md) runs on our Azure VM;
-the badge shows the date of the latest completed recording.
+from projects and files down to declarations and source lines.
 
 <!-- BEGIN STATS -->
 **310** formalization projects · **11,739,826** lines of Lean
@@ -30,10 +28,6 @@ the badge shows the date of the latest completed recording.
 <sub>(stats above are refreshed automatically by the [generated-metadata workflow](.github/workflows/notice.yml) — edit [`python/lean_pool/stats.py`](python/lean_pool/stats.py), not the numbers)</sub>
 
 So far, projects have been added by hand: each is a suitable, permissively licensed (Apache-2.0 or MIT) Lean repository, bumped to the latest Lean and Mathlib, made to pass [CI](.github/workflows/lean_action_ci.yml) — it builds warning-free and clears Mathlib's linters, the style checker, and the repository quality gates (no `sorry`/`admit`, no axioms beyond `Classical.choice`/`propext`/`Quot.sound`, no `unsafe`/`partial`, file headers, size limits) — and an [LLM review](.github/REVIEW_RULES.md) of fit and significance, then merged.
-
-LLM reviews use GPT-6-Astra at `xhigh` reasoning effort through a privately operated Codex worker, without paid OpenAI API requests or an API fallback. Reviews also show an estimated dollar cost at official Standard API token rates, labeled separately from Codex quota billing. See [review operations](python/review-operations.md) for deployment and diagnostics.
-
-Project PRs also receive an advisory Greptile review, configured in [`.greptile/`](.greptile/), for cross-file integration, reusable abstractions, completeness, maintainability, and measured cost. It supplements rather than replaces the independent LLM verdict.
 
 ### Getting started
 
@@ -45,12 +39,6 @@ make setup    # pull Mathlib oleans, build the whole pool (~1.5h), install Pytho
 
 To work on a single project you don't need the whole pool built — see the
 [fast per-project build](CONTRIBUTING.md#dev-setup) in `CONTRIBUTING.md`.
-
-To regenerate the preserved Zeta5 numerical certificates, see the
-[certificate reproduction guide](scripts/zeta5-certificates/README.md).
-
-The [moving-sofa certificate recipe](python/lean_pool/sofa_certificates/README.md)
-regenerates its optimized certificate modules from pinned public inputs.
 
 ### Contributing
 
