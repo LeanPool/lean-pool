@@ -94,7 +94,9 @@ main_results:
   informal: >-
     Every independent set in a finite regular graph of positive degree
     satisfies Hoffman's adjacency-eigenvalue ratio bound.
-  source_ref: Hoffman (1970); PALOMAR-2026-10-18-000016.
+  source_ref: >-
+    Hoffman's ratio bound, stated in Haemers (2021), Theorem 1,
+    https://arxiv.org/abs/2102.05529v2; PALOMAR-2026-10-18-000016.
 - declaration: ClassicalGraphColouring.hoffman_le_directed_path_bound
   informal: >-
     Hoffman's spectral lower bound for chromatic number bounds the maximum
