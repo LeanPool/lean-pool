@@ -8,6 +8,7 @@ module
 public import Mathlib.Analysis.Calculus.Deriv.Inv
 
 public import Mathlib.Analysis.Calculus.FDeriv.Add
+public import Mathlib.Analysis.Calculus.FDeriv.Mul
 
 public import LeanPool.RiemannMappingTheorem.Defs
 import Mathlib.Analysis.Complex.Schwarz
