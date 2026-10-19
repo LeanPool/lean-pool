@@ -8,7 +8,7 @@ module
 public import LeanPool.OddPrimeValuationDistribution.CarryArithmetic
 public import Mathlib.Algebra.Polynomial.Basic
 public import Mathlib.Logic.Equiv.Fin.Basic
-import Mathlib.Data.Nat.SuccPred
+import Mathlib.Order.SuccPred.Nat
 
 /-!
 # Carry polynomials in an arbitrary odd base
