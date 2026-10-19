@@ -11,7 +11,7 @@ import Mathlib.RingTheory.Int.Basic
 public import LeanPool.Zeta5Irrational.Arith.TEntry
 import LeanPool.Zeta5Irrational.Arith.Unimodular
 import Mathlib.Algebra.Ring.IsFormallyReal
-import Mathlib.Data.Rat.Star
+import Mathlib.Algebra.Order.Star.Rat
 import Mathlib.Tactic.Polynomial.Basic
 import Mathlib.Tactic.ReduceModChar
 import Mathlib.Tactic.NormNum.Ineq

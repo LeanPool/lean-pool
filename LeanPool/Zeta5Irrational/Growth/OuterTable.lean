@@ -10,7 +10,7 @@ import LeanPool.Zeta5Irrational.Growth.TableGen
 public import LeanPool.Zeta5Irrational.Growth.OuterPrime
 import Mathlib.Tactic.ReduceModChar
 import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Data.Rat.Star
+import Mathlib.Algebra.Order.Star.Rat
 import Mathlib.Tactic.Linarith
 import Mathlib.Tactic.NormNum.Ineq
 import Mathlib.Tactic.NormNum.Inv

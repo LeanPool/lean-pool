@@ -10,7 +10,7 @@ public import LeanPool.Zeta5Irrational.Arith.BinomBasis
 public import LeanPool.Zeta5Irrational.Arith.Val
 public import LeanPool.Zeta5Irrational.Construction
 import LeanPool.Zeta5Irrational.Arith.TauBound
-import Mathlib.Data.Rat.Star
+import Mathlib.Algebra.Order.Star.Rat
 import Mathlib.Tactic.ENatToNat
 import Mathlib.Tactic.ReduceModChar
 import Mathlib.Tactic.Linarith

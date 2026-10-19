@@ -168,7 +168,6 @@ lemma hasDerivAt_F0 {y : ℝ} (hy : 0 < y) : HasDerivAt F0 (F1 y) y := by
   refine
     HasDerivAt.congr_deriv
       (HasDerivAt.congr_of_eventuallyEq this (Filter.Eventually.of_forall fun _ => rfl)) ?_
-  try simp only [Pi.pow_apply, Pi.mul_apply, Pi.div_apply, Pi.sub_apply, Pi.add_apply]
   field_simp
 
 lemma hasDerivAt_F1 {y : ℝ} (hy : 0 < y) : HasDerivAt F1 (F2 y) y := by
@@ -235,7 +234,6 @@ lemma wS_eq {y : ℝ} (hy : 0 < y) :
   have hxne : x ≠ 0 := (Real.exp_pos _).ne'
   have h1x : 1 - x ≠ 0 := by linarith
   field_simp
-  try ring
 
 /-- `w(y) = y⁵ F₄(y) / 12` for `y > 0`. -/
 lemma w_eq_F4 {y : ℝ} (hy : 0 < y) : w y = y ^ 5 * F4 y / 12 := by
@@ -272,7 +270,6 @@ lemma hasDerivAt_g0 {a : ℝ} (ha : 0 < a) (y : ℝ) : HasDerivAt (g0 a) (g1 a y
   refine
     HasDerivAt.congr_deriv
       (HasDerivAt.congr_of_eventuallyEq hd (Filter.Eventually.of_forall fun _ => rfl)) ?_
-  try simp only [Pi.pow_apply, Pi.mul_apply, Pi.div_apply, Pi.sub_apply, Pi.add_apply]
   field_simp
   ring
 

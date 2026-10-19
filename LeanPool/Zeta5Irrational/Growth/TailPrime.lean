@@ -8,8 +8,8 @@ module
 
 import Mathlib.Tactic.ReduceModChar
 import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Data.Rat.Star
-import Mathlib.Data.Int.Star
+import Mathlib.Algebra.Order.Star.Rat
+import Mathlib.Algebra.Order.Star.Int
 import Mathlib.Tactic.ENatToNat
 public import LeanPool.Zeta5Irrational.Growth.InnerPrime
 import Mathlib.Tactic.FieldSimp

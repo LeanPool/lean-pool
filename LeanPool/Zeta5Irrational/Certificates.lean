@@ -8,7 +8,7 @@ module
 
 public import Mathlib.Analysis.SpecialFunctions.Trigonometric.Arctan
 import Mathlib.Analysis.SpecialFunctions.Complex.Arctan
-import Mathlib.Data.Int.Star
+import Mathlib.Algebra.Order.Star.Int
 import Mathlib.Tactic.ENatToNat
 import Mathlib.Tactic.FieldSimp
 import Mathlib.Tactic.Linarith

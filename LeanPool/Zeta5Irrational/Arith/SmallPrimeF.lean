@@ -13,8 +13,8 @@ import LeanPool.Zeta5Irrational.Arith.SmallPrime
 import LeanPool.Zeta5Irrational.Arith.SmallPrimeTau
 import LeanPool.Zeta5Irrational.PartialFractions
 import Mathlib.Algebra.Ring.IsFormallyReal
-import Mathlib.Data.Int.Star
-import Mathlib.Data.Rat.Star
+import Mathlib.Algebra.Order.Star.Int
+import Mathlib.Algebra.Order.Star.Rat
 import Mathlib.Tactic.ENatToNat
 import Mathlib.Tactic.Polynomial.Basic
 import Mathlib.Tactic.ReduceModChar

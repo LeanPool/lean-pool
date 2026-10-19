@@ -9,6 +9,7 @@ module
 public import Mathlib.LinearAlgebra.Complex.FiniteDimensional
 public import Mathlib.MeasureTheory.Integral.IntervalIntegral.Basic
 import Mathlib.Analysis.SpecialFunctions.Gaussian.GaussianIntegral
+import Mathlib.MeasureTheory.Measure.Lebesgue.Complex
 import Mathlib.Tactic.Positivity.Basic
 import Mathlib.Tactic.Ring.Basic
 
