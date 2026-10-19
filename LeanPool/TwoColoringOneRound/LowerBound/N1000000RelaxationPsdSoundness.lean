@@ -9,7 +9,7 @@ module
 public import LeanPool.TwoColoringOneRound.LowerBound.CorrAvgMatrix
 public import LeanPool.TwoColoringOneRound.LowerBound.N1000000Relaxation
 public import LeanPool.TwoColoringOneRound.LowerBound.N1000000WedderburnData
-import Mathlib.Data.Rat.Star
+import Mathlib.Algebra.Order.Star.Rat
 import Mathlib.Tactic.Positivity.Finset
 
 /-!

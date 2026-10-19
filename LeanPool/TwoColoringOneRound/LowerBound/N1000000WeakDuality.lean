@@ -7,7 +7,7 @@ module
 
 public import LeanPool.TwoColoringOneRound.LowerBound.Certificate
 public import LeanPool.TwoColoringOneRound.LowerBound.N1000000Z
-import Mathlib.Data.Rat.Star
+import Mathlib.Algebra.Order.Star.Rat
 import Mathlib.Tactic.Positivity.Finset
 
 /-!
