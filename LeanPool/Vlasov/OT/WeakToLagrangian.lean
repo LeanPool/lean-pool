@@ -11,7 +11,10 @@ public import LeanPool.Vlasov.OT.CharacteristicFlow
 public import Mathlib.Analysis.Calculus.BumpFunction.Normed
 import Mathlib.Algebra.Order.Ring.Star
 import Mathlib.Analysis.Calculus.BumpFunction.Convolution
+import Mathlib.Analysis.Calculus.Deriv.Prod
 import Mathlib.Analysis.Calculus.InverseFunctionTheorem.ContDiff
+import Mathlib.Analysis.Calculus.ParametricIntegral
+import Mathlib.Analysis.Calculus.UniformLimitsDeriv
 import Mathlib.Analysis.SpecialFunctions.Integrals.Basic
 import Mathlib.MeasureTheory.Integral.RieszMarkovKakutani.Real
 

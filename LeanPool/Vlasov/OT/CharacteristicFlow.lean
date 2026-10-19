@@ -10,6 +10,7 @@ public import LeanPool.Vlasov.OT.Coupling
 public import Mathlib.Analysis.ODE.Gronwall
 import LeanPool.Vlasov.ForMathlib.PicardLindelof
 import Mathlib.Algebra.Order.Field.GeomSum
+import Mathlib.Analysis.Calculus.Deriv.Prod
 import Mathlib.Analysis.Calculus.ParametricIntegral
 import Mathlib.MeasureTheory.Integral.Prod
 
