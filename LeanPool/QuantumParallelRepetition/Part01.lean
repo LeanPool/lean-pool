@@ -10,6 +10,7 @@ public import Mathlib.Analysis.CStarAlgebra.Module.Constructions
 public import Mathlib.Analysis.InnerProductSpace.StarOrder
 public import Mathlib.Analysis.Matrix.Order
 public import Mathlib.Analysis.SpecialFunctions.ImproperIntegrals
+public import Mathlib.Analysis.SpecialFunctions.Log.NegMulLog
 public import Mathlib.LinearAlgebra.FreeModule.PID
 public import Mathlib.MeasureTheory.Function.L2Space
 public import Mathlib.MeasureTheory.SpecificCodomains.Pi
@@ -27,19 +28,15 @@ namespace QuantumParallelRepetition
 noncomputable local instance matrixComplexContinuousENormPartOne
     {m n : Type*} [Fintype m] [Fintype n] :
     ContinuousENorm (Matrix m n ℂ) :=
-  @SeminormedAddGroup.toContinuousENorm (Matrix m n ℂ)
-    (Matrix.normedAddCommGroup.toSeminormedAddCommGroup.toSeminormedAddGroup)
+  (@SeminormedAddGroup.toESeminormedAddMonoid (Matrix m n ℂ)
+    Matrix.normedAddCommGroup.toSeminormedAddCommGroup.toSeminormedAddGroup).toContinuousENorm
 
 /-- The local matrix norm instance used while elaborating part one. -/
 noncomputable local instance matrixComplexESeminormedAddCommMonoidPartOne
     {m n : Type*} [Fintype m] [Fintype n] :
     ESeminormedAddCommMonoid (Matrix m n ℂ) :=
-  let base := @NormedAddCommGroup.toENormedAddCommMonoid (Matrix m n ℂ)
-    Matrix.normedAddCommGroup
-  { toContinuousENorm := inferInstance
-    toAddCommMonoid := base.toAddCommMonoid
-    enorm_zero := base.enorm_zero
-    enorm_add_le := base.enorm_add_le }
+  (@NormedAddCommGroup.toENormedAddCommMonoid (Matrix m n ℂ)
+    Matrix.normedAddCommGroup).toESeminormedAddCommMonoid
 
 section
 

@@ -7,6 +7,7 @@ module
 
 public import LeanPool.QuantumParallelRepetition.Part09
 import Mathlib.Analysis.CStarAlgebra.ContinuousFunctionalCalculus.Order
+import Mathlib.Analysis.CStarAlgebra.ContinuousLinearMap
 
 /-! # Quantum parallel repetition, part 10 -/
 
