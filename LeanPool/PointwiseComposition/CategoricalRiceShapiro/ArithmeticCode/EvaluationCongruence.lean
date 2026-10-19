@@ -24,9 +24,9 @@ assignment for composition and for the constructors built directly from the
 primitives.  This module continues the same discipline through the constructors
 defined by minimization.
 
-Every statement fixes one assignment `v`, quantifies the hypothesis over the
-possible values of the argument codes, and assumes only `ORingStructure M`.  No
-result here assumes `𝐏𝐀⁻`, and none quantifies over assignments.
+The congruence laws assume only `ORingStructure M`.  The general laws compare
+two arities and assignments; their fixed-assignment specializations quantify
+only over possible values of the argument codes.
 
 The minimization step is the substantive one.  `Nat.ArithPart₁.Code.rfind`
 translates to a conjunction of two occurrences of the body formula, one at the
@@ -64,20 +64,6 @@ private theorem eval_rfind_iff {k : ℕ} (c : Code (k + 1)) (z : M) (v : Fin k �
   by
   simp only [evalb_iff_evalf]
   simp [codeAux, Semiformula.eval_rew, Function.comp_def, Matrix.empty_eq, Matrix.comp_vecCons']
-
-/-- Equivalent search bodies determine equivalent searches. -/
-private theorem eval_rfind_congr {k : ℕ} (c c' : Code (k + 1)) (z : M) (v : Fin k → M)
-    (h :
-      ∀ x t : M,
-        Semiformula.Evalb (x :> t :> v) (code c) ↔ Semiformula.Evalb (x :> t :> v) (code c')) :
-    Semiformula.Evalb (z :> v) (code (Code.rfind c)) ↔
-      Semiformula.Evalb (z :> v) (code (Code.rfind c')) :=
-  by
-  rw [eval_rfind_iff, eval_rfind_iff]
-  exact
-    and_congr (h 0 z)
-      (forall_congr' fun t =>
-        imp_congr Iff.rfl (exists_congr fun x => and_congr Iff.rfl (h x t)))
 
 /-- Evaluation of a substitution: the body holds at the value the substituted
 code takes.
@@ -174,205 +160,10 @@ theorem eval_codeRfindPos_iff [M↓[ℒₒᵣ] ⊧* 𝐏𝐀⁻] {k : ℕ} (d : 
     · intro hd
       exact ⟨1, _root_.one_ne_zero, (hinv 1 (t :> v)).mpr (Or.inl ⟨rfl, hd⟩)⟩
 
-/-- Equivalent bodies determine equivalent minimizations.
-
-This is the congruence law for the minimization context, stated at the
-assignment `v` and quantified over the value and the search argument. -/
-theorem eval_codeRfindPos_congr {k : ℕ} (A A' : Code (k + 1)) (z : M) (v : Fin k → M)
-    (hA :
-      ∀ x t : M,
-        Semiformula.Evalb (x :> t :> v) (code A) ↔ Semiformula.Evalb (x :> t :> v) (code A')) :
-    Semiformula.Evalb (z :> v) (code (codeRfindPos A)) ↔
-      Semiformula.Evalb (z :> v) (code (codeRfindPos A')) :=
-  by
-  simp only [codeRfindPos]
-  refine eval_rfind_congr _ _ z v ?_
-  intro x t
-  exact
-    eval_codeInv_congr _ _ x (t :> v)
-      (fun y => eval_codePos_congr _ _ y (t :> v) (fun w => hA w t))
-
-/-!
-### Constructors defined by minimization -/
-
-theorem eval_codeSub_congr {k : ℕ} (A A' B B' : Code k) (z : M) (v : Fin k → M)
-    (hA : ∀ x : M, Semiformula.Evalb (x :> v) (code A) ↔ Semiformula.Evalb (x :> v) (code A'))
-    (hB : ∀ x : M, Semiformula.Evalb (x :> v) (code B) ↔ Semiformula.Evalb (x :> v) (code B')) :
-    Semiformula.Evalb (z :> v) (code (codeSub A B)) ↔
-      Semiformula.Evalb (z :> v) (code (codeSub A' B')) :=
-  by
-  simp only [codeSub]
-  refine eval_codeRfindPos_congr _ _ z v ?_
-  intro x t
-  refine eval_codeOr_congr _ _ _ _ x (t :> v) ?_ ?_
-  · intro y
-    exact
-      eval_codeEq_congr _ _ _ _ y (t :> v)
-        (fun w =>
-          eval_codeAdd_congr _ _ _ _ w (t :> v) (fun _ => Iff.rfl)
-            (fun u => eval_codeLift_congr B B' u t v hB))
-        (fun w => eval_codeLift_congr A A' w t v hA)
-  · intro y
-    exact
-      eval_codeAnd_congr _ _ _ _ y (t :> v)
-        (fun w =>
-          eval_codeLt_congr _ _ _ _ w (t :> v) (fun u => eval_codeLift_congr A A' u t v hA)
-            (fun u => eval_codeLift_congr B B' u t v hB))
-        (fun _ => Iff.rfl)
-
-theorem eval_codeSqrt_congr {k : ℕ} (A A' : Code k) (z : M) (v : Fin k → M)
-    (hA : ∀ x : M, Semiformula.Evalb (x :> v) (code A) ↔ Semiformula.Evalb (x :> v) (code A')) :
-    Semiformula.Evalb (z :> v) (code (codeSqrt A)) ↔
-      Semiformula.Evalb (z :> v) (code (codeSqrt A')) :=
-  by
-  simp only [codeSqrt]
-  refine eval_codeRfindPos_congr _ _ z v ?_
-  intro x t
-  refine eval_codeAnd_congr _ _ _ _ x (t :> v) ?_ ?_
-  · intro y
-    exact
-      eval_codeOr_congr _ _ _ _ y (t :> v)
-        (fun w =>
-          eval_codeLt_congr _ _ _ _ w (t :> v) (fun _ => Iff.rfl)
-            (fun u => eval_codeLift_congr A A' u t v hA))
-        (fun w =>
-          eval_codeEq_congr _ _ _ _ w (t :> v) (fun _ => Iff.rfl)
-            (fun u => eval_codeLift_congr A A' u t v hA))
-  · intro y
-    exact
-      eval_codeLt_congr _ _ _ _ y (t :> v) (fun u => eval_codeLift_congr A A' u t v hA)
-        (fun _ => Iff.rfl)
-
-theorem eval_codeIfPos_congr {k : ℕ} (F F' G G' H H' : Code k) (z : M) (v : Fin k → M)
-    (hF : ∀ x : M, Semiformula.Evalb (x :> v) (code F) ↔ Semiformula.Evalb (x :> v) (code F'))
-    (hG : ∀ x : M, Semiformula.Evalb (x :> v) (code G) ↔ Semiformula.Evalb (x :> v) (code G'))
-    (hH : ∀ x : M, Semiformula.Evalb (x :> v) (code H) ↔ Semiformula.Evalb (x :> v) (code H')) :
-    Semiformula.Evalb (z :> v) (code (codeIfPos F G H)) ↔
-      Semiformula.Evalb (z :> v) (code (codeIfPos F' G' H')) :=
-  by
-  simp only [codeIfPos]
-  exact
-    eval_codeAdd_congr _ _ _ _ z v
-      (fun x => eval_codeMul_congr _ _ _ _ x v (fun y => eval_codePos_congr _ _ y v hF) hG)
-      (fun x => eval_codeMul_congr _ _ _ _ x v (fun y => eval_codeInv_congr _ _ y v hF) hH)
-
-theorem eval_codeUnpair₁_congr {k : ℕ} (A A' : Code k) (z : M) (v : Fin k → M)
-    (hA : ∀ x : M, Semiformula.Evalb (x :> v) (code A) ↔ Semiformula.Evalb (x :> v) (code A')) :
-    Semiformula.Evalb (z :> v) (code (codeUnpair₁ A)) ↔
-      Semiformula.Evalb (z :> v) (code (codeUnpair₁ A')) :=
-  by
-  have hsq :
-    ∀ x : M,
-      Semiformula.Evalb (x :> v) (code (codeSqrt A)) ↔
-        Semiformula.Evalb (x :> v) (code (codeSqrt A')) :=
-    fun x => eval_codeSqrt_congr A A' x v hA
-  have hdiff :
-    ∀ x : M,
-      Semiformula.Evalb (x :> v) (code (codeSub A (codeMul (codeSqrt A) (codeSqrt A)))) ↔
-        Semiformula.Evalb (x :> v) (code (codeSub A' (codeMul (codeSqrt A') (codeSqrt A')))) :=
-    fun x => eval_codeSub_congr _ _ _ _ x v hA (fun y => eval_codeMul_congr _ _ _ _ y v hsq hsq)
-  simp only [codeUnpair₁]
-  exact
-    eval_codeIfPos_congr _ _ _ _ _ _ z v (fun x => eval_codeLt_congr _ _ _ _ x v hdiff hsq)
-      hdiff hsq
-
-theorem eval_codeUnpair₂_congr {k : ℕ} (A A' : Code k) (z : M) (v : Fin k → M)
-    (hA : ∀ x : M, Semiformula.Evalb (x :> v) (code A) ↔ Semiformula.Evalb (x :> v) (code A')) :
-    Semiformula.Evalb (z :> v) (code (codeUnpair₂ A)) ↔
-      Semiformula.Evalb (z :> v) (code (codeUnpair₂ A')) :=
-  by
-  have hsq :
-    ∀ x : M,
-      Semiformula.Evalb (x :> v) (code (codeSqrt A)) ↔
-        Semiformula.Evalb (x :> v) (code (codeSqrt A')) :=
-    fun x => eval_codeSqrt_congr A A' x v hA
-  have hdiff :
-    ∀ x : M,
-      Semiformula.Evalb (x :> v) (code (codeSub A (codeMul (codeSqrt A) (codeSqrt A)))) ↔
-        Semiformula.Evalb (x :> v) (code (codeSub A' (codeMul (codeSqrt A') (codeSqrt A')))) :=
-    fun x => eval_codeSub_congr _ _ _ _ x v hA (fun y => eval_codeMul_congr _ _ _ _ y v hsq hsq)
-  simp only [codeUnpair₂]
-  exact
-    eval_codeIfPos_congr _ _ _ _ _ _ z v (fun x => eval_codeLt_congr _ _ _ _ x v hdiff hsq) hsq
-      (fun x => eval_codeSub_congr _ _ _ _ x v hdiff hsq)
-
-/-!
-### Pairing -/
-
-theorem eval_codePair_congr {k : ℕ} (A A' B B' : Code k) (z : M) (v : Fin k → M)
-    (hA : ∀ x : M, Semiformula.Evalb (x :> v) (code A) ↔ Semiformula.Evalb (x :> v) (code A'))
-    (hB : ∀ x : M, Semiformula.Evalb (x :> v) (code B) ↔ Semiformula.Evalb (x :> v) (code B')) :
-    Semiformula.Evalb (z :> v) (code (codePair A B)) ↔
-      Semiformula.Evalb (z :> v) (code (codePair A' B')) :=
-  by
-  simp only [codePair]
-  exact
-    eval_codeIfPos_congr _ _ _ _ _ _ z v (fun x => eval_codeLt_congr _ _ _ _ x v hA hB)
-      (fun x =>
-        eval_codeAdd_congr _ _ _ _ x v (fun y => eval_codeMul_congr _ _ _ _ y v hB hB) hA)
-      (fun x =>
-        eval_codeAdd_congr _ _ _ _ x v
-          (fun y =>
-            eval_codeAdd_congr _ _ _ _ y v (fun w => eval_codeMul_congr _ _ _ _ w v hA hA) hA)
-          hB)
-
-/-!
-### Encoded lists -/
-
-theorem eval_codeListHeadOptional_congr {k : ℕ} (A A' : Code k) (z : M) (v : Fin k → M)
-    (hA : ∀ x : M, Semiformula.Evalb (x :> v) (code A) ↔ Semiformula.Evalb (x :> v) (code A')) :
-    Semiformula.Evalb (z :> v) (code (codeListHeadOptional A)) ↔
-      Semiformula.Evalb (z :> v) (code (codeListHeadOptional A')) :=
-  by
-  simp only [codeListHeadOptional]
-  exact
-    eval_codeIfPos_congr _ _ _ _ _ _ z v hA
-      (fun x =>
-        eval_codeSucc_congr _ _ x v
-          (fun y =>
-            eval_codeUnpair₁_congr _ _ y v
-              (fun w => eval_codeSub_congr _ _ _ _ w v hA (fun _ => Iff.rfl))))
-      (fun _ => Iff.rfl)
-
-theorem eval_codeListTail_congr {k : ℕ} (A A' : Code k) (z : M) (v : Fin k → M)
-    (hA : ∀ x : M, Semiformula.Evalb (x :> v) (code A) ↔ Semiformula.Evalb (x :> v) (code A')) :
-    Semiformula.Evalb (z :> v) (code (codeListTail A)) ↔
-      Semiformula.Evalb (z :> v) (code (codeListTail A')) :=
-  by
-  simp only [codeListTail]
-  exact
-    eval_codeUnpair₂_congr _ _ z v
-      (fun x => eval_codeSub_congr _ _ _ _ x v hA (fun _ => Iff.rfl))
-
-theorem eval_codeListDrop_congr {k : ℕ} (L L' I I' : Code k) (z : M) (v : Fin k → M)
-    (hL : ∀ x : M, Semiformula.Evalb (x :> v) (code L) ↔ Semiformula.Evalb (x :> v) (code L'))
-    (hI : ∀ x : M, Semiformula.Evalb (x :> v) (code I) ↔ Semiformula.Evalb (x :> v) (code I')) :
-    Semiformula.Evalb (z :> v) (code (codeListDrop L I)) ↔
-      Semiformula.Evalb (z :> v) (code (codeListDrop L' I')) :=
-  by
-  rw [codeListDrop_eq_comp, codeListDrop_eq_comp]
-  refine eval_comp_congr _ _ _ z v ?_
-  refine Fin.forall_fin_two.mpr ⟨?_, ?_⟩
-  · intro x
-    simpa using hI x
-  · intro x
-    simpa using hL x
-
-theorem eval_codeListGetOptional_congr {k : ℕ} (L L' I I' : Code k) (z : M) (v : Fin k → M)
-    (hL : ∀ x : M, Semiformula.Evalb (x :> v) (code L) ↔ Semiformula.Evalb (x :> v) (code L'))
-    (hI : ∀ x : M, Semiformula.Evalb (x :> v) (code I) ↔ Semiformula.Evalb (x :> v) (code I')) :
-    Semiformula.Evalb (z :> v) (code (codeListGetOptional L I)) ↔
-      Semiformula.Evalb (z :> v) (code (codeListGetOptional L' I')) :=
-  by
-  simp only [codeListGetOptional]
-  exact
-    eval_codeListHeadOptional_congr _ _ z v
-      (fun x => eval_codeListDrop_congr L L' I I' x v hL hI)
-
 /-!
 ### Congruence across two arities and two assignments
 
-The congruence laws above compare two codes of one arity under one assignment.
+Congruence at a fixed assignment compares two codes of one arity.
 Relating an entry that `codePrec` reads with the entry its step relation supplies
 needs more: the two `codeBeta` applications there have different argument codes,
 different arities and different assignments, and agree only through the values
@@ -382,139 +173,6 @@ lemmas below propagate it.
 Nothing here evaluates a code in the model, and no arithmetic meaning is
 attached to remainder, unpairing or `codeBeta`; each is delta-reduced as a syntax
 tree.  No arithmetic theory is assumed. -/
-
-/-- Two codes have the same graph, each under its own assignment. -/
-abbrev EvalEq {k l : ℕ} (A : Code k) (v : Fin k → M) (A' : Code l) (v' : Fin l → M) :
-    Prop :=
-  ∀ x : M, Semiformula.Evalb (x :> v) (code A) ↔ Semiformula.Evalb (x :> v') (code A')
-
-/-- Projections agree when the selected assignment entries agree. -/
-theorem evalEq_proj {k l : ℕ} (i : Fin k) (j : Fin l) (v : Fin k → M) (v' : Fin l → M)
-    (h : v i = v' j) : EvalEq (Code.proj i) v (Code.proj j) v' :=
-  by
-  intro x
-  rw [eval_proj_iff, eval_proj_iff, h]
-
-/-- Zero codes have the same graph under any two assignments. -/
-theorem evalEq_zero {k l : ℕ} (v : Fin k → M) (v' : Fin l → M) :
-    EvalEq (Code.zero k) v (Code.zero l) v' :=
-  by
-  intro x
-  rw [eval_zero_iff, eval_zero_iff]
-
-/-- Head codes agree under assignments with the same head. -/
-theorem evalEq_codeHead {k l : ℕ} (t : M) (v : Fin k → M) (v' : Fin l → M) :
-    EvalEq (codeHead (n := k)) (t :> v) (codeHead (n := l)) (t :> v') :=
-  evalEq_proj 0 0 _ _ rfl
-
-/-- Successor-code construction preserves heterogeneous graph agreement. -/
-theorem evalEq_codeSucc {k l : ℕ} {A : Code k} {A' : Code l} {v : Fin k → M}
-    {v' : Fin l → M} (hA : EvalEq A v A' v') : EvalEq (codeSucc A) v (codeSucc A') v' :=
-  by
-  intro x
-  rw [eval_codeSucc_iff, eval_codeSucc_iff]
-  exact exists_congr fun a => and_congr (hA a) Iff.rfl
-
-/-- Positive-test code construction preserves heterogeneous graph agreement. -/
-theorem evalEq_codePos {k l : ℕ} {A : Code k} {A' : Code l} {v : Fin k → M}
-    {v' : Fin l → M} (hA : EvalEq A v A' v') : EvalEq (codePos A) v (codePos A') v' :=
-  by
-  intro x
-  rw [eval_codePos_iff, eval_codePos_iff]
-  exact exists_congr fun a => and_congr (hA a) Iff.rfl
-
-/-- Boolean-inverse code construction preserves heterogeneous graph agreement. -/
-theorem evalEq_codeInv {k l : ℕ} {A : Code k} {A' : Code l} {v : Fin k → M}
-    {v' : Fin l → M} (hA : EvalEq A v A' v') : EvalEq (codeInv A) v (codeInv A') v' :=
-  by
-  intro x
-  rw [eval_codeInv_iff, eval_codeInv_iff]
-  exact exists_congr fun a => and_congr (hA a) Iff.rfl
-
-/-- Addition-code construction preserves heterogeneous graph agreement. -/
-theorem evalEq_codeAdd {k l : ℕ} {A B : Code k} {A' B' : Code l} {v : Fin k → M}
-    {v' : Fin l → M} (hA : EvalEq A v A' v') (hB : EvalEq B v B' v') :
-    EvalEq (codeAdd A B) v (codeAdd A' B') v' :=
-  by
-  intro x
-  rw [eval_codeAdd_iff, eval_codeAdd_iff]
-  exact exists_congr fun a => exists_congr fun b => and_congr (hA a) (and_congr (hB b) Iff.rfl)
-
-/-- Multiplication-code construction preserves heterogeneous graph agreement. -/
-theorem evalEq_codeMul {k l : ℕ} {A B : Code k} {A' B' : Code l} {v : Fin k → M}
-    {v' : Fin l → M} (hA : EvalEq A v A' v') (hB : EvalEq B v B' v') :
-    EvalEq (codeMul A B) v (codeMul A' B') v' :=
-  by
-  intro x
-  rw [eval_codeMul_iff, eval_codeMul_iff]
-  exact exists_congr fun a => exists_congr fun b => and_congr (hA a) (and_congr (hB b) Iff.rfl)
-
-/-- Equality-test code construction preserves heterogeneous graph agreement. -/
-theorem evalEq_codeEq {k l : ℕ} {A B : Code k} {A' B' : Code l} {v : Fin k → M}
-    {v' : Fin l → M} (hA : EvalEq A v A' v') (hB : EvalEq B v B' v') :
-    EvalEq (codeEq A B) v (codeEq A' B') v' :=
-  by
-  intro x
-  rw [eval_codeEq_iff, eval_codeEq_iff]
-  exact exists_congr fun a => exists_congr fun b => and_congr (hA a) (and_congr (hB b) Iff.rfl)
-
-/-- Order-test code construction preserves heterogeneous graph agreement. -/
-theorem evalEq_codeLt {k l : ℕ} {A B : Code k} {A' B' : Code l} {v : Fin k → M}
-    {v' : Fin l → M} (hA : EvalEq A v A' v') (hB : EvalEq B v B' v') :
-    EvalEq (codeLt A B) v (codeLt A' B') v' :=
-  by
-  intro x
-  rw [eval_codeLt_iff, eval_codeLt_iff]
-  exact exists_congr fun a => exists_congr fun b => and_congr (hA a) (and_congr (hB b) Iff.rfl)
-
-/-- Conjunction-code construction preserves heterogeneous graph agreement. -/
-theorem evalEq_codeAnd {k l : ℕ} {A B : Code k} {A' B' : Code l} {v : Fin k → M}
-    {v' : Fin l → M} (hA : EvalEq A v A' v') (hB : EvalEq B v B' v') :
-    EvalEq (codeAnd A B) v (codeAnd A' B') v' :=
-  by
-  intro x
-  rw [eval_codeAnd_iff, eval_codeAnd_iff]
-  exact exists_congr fun a => exists_congr fun b => and_congr (hA a) (and_congr (hB b) Iff.rfl)
-
-/-- Disjunction-code construction preserves heterogeneous graph agreement. -/
-theorem evalEq_codeOr {k l : ℕ} {A B : Code k} {A' B' : Code l} {v : Fin k → M}
-    {v' : Fin l → M} (hA : EvalEq A v A' v') (hB : EvalEq B v B' v') :
-    EvalEq (codeOr A B) v (codeOr A' B') v' :=
-  by
-  intro x
-  rw [eval_codeOr_iff, eval_codeOr_iff]
-  exact exists_congr fun a => exists_congr fun b => and_congr (hA a) (and_congr (hB b) Iff.rfl)
-
-/-- A lift ignores its head, so the two heads need not agree. -/
-theorem evalEq_codeLift {k l : ℕ} {A : Code k} {A' : Code l} {v : Fin k → M}
-    {v' : Fin l → M} (t t' : M) (hA : EvalEq A v A' v') :
-    EvalEq (codeLift A) (t :> v) (codeLift A') (t' :> v') :=
-  by
-  intro x
-  rw [eval_codeLift_iff, eval_codeLift_iff]
-  exact hA x
-
-/-- One codes have the same graph under any two assignments. -/
-theorem evalEq_one {k l : ℕ} (v : Fin k → M) (v' : Fin l → M) :
-    EvalEq (Code.one k) v (Code.one l) v' := by intro x; rw [eval_one_iff, eval_one_iff]
-
-/-- Composition with a shared outer code. -/
-theorem evalEq_comp {k l m : ℕ} (c : Code m) (ds : Fin m → Code k)
-    (ds' : Fin m → Code l) {v : Fin k → M} {v' : Fin l → M}
-    (h : ∀ i, EvalEq (ds i) v (ds' i) v') : EvalEq (c.comp ds) v (c.comp ds') v' :=
-  by
-  intro x
-  rw [eval_comp_iff, eval_comp_iff]
-  constructor
-  · rintro ⟨w, hw, hwi⟩; exact ⟨w, hw, fun i => (h i (w i)).mp (hwi i)⟩
-  · rintro ⟨w, hw, hwi⟩; exact ⟨w, hw, fun i => (h i (w i)).mpr (hwi i)⟩
-
-/-- Constant codes agree under assignments of any arities. -/
-theorem evalEq_codeConst {k l : ℕ} (m : ℕ) (v : Fin k → M) (v' : Fin l → M) :
-    EvalEq (codeConst (n := k) m) v (codeConst (n := l) m) v' := by
-  induction m with
-  | zero => exact evalEq_zero v v'
-  | succ m ih => exact evalEq_codeSucc ih
 
 /-- Minimization preserves graph agreement under every extra search input. -/
 theorem evalEq_rfind {k l : ℕ} {A : Code (k + 1)} {A' : Code (l + 1)} {v : Fin k → M}
@@ -668,6 +326,117 @@ theorem eval_codeBeta_congr_at {k l : ℕ} (N I : Code k) (N' I' : Code l) (z : 
   exact
     evalEq_codeRem (evalEq_codeUnpair₁ hN)
       (evalEq_codeSucc (evalEq_codeMul (evalEq_codeSucc hI) (evalEq_codeUnpair₂ hN))) z
+
+/-- Equivalent bodies determine equivalent minimizations.
+
+This is the congruence law for the minimization context, stated at the
+assignment `v` and quantified over the value and the search argument. -/
+theorem eval_codeRfindPos_congr {k : ℕ} (A A' : Code (k + 1)) (z : M) (v : Fin k → M)
+    (hA :
+      ∀ x t : M,
+        Semiformula.Evalb (x :> t :> v) (code A) ↔ Semiformula.Evalb (x :> t :> v) (code A')) :
+    Semiformula.Evalb (z :> v) (code (codeRfindPos A)) ↔
+      Semiformula.Evalb (z :> v) (code (codeRfindPos A')) :=
+  evalEq_codeRfindPos (fun t x => hA x t) z
+
+/-!
+### Constructors defined by minimization -/
+
+theorem eval_codeSub_congr {k : ℕ} (A A' B B' : Code k) (z : M) (v : Fin k → M)
+    (hA : ∀ x : M, Semiformula.Evalb (x :> v) (code A) ↔ Semiformula.Evalb (x :> v) (code A'))
+    (hB : ∀ x : M, Semiformula.Evalb (x :> v) (code B) ↔ Semiformula.Evalb (x :> v) (code B')) :
+    Semiformula.Evalb (z :> v) (code (codeSub A B)) ↔
+      Semiformula.Evalb (z :> v) (code (codeSub A' B')) :=
+  evalEq_codeSub hA hB z
+
+theorem eval_codeSqrt_congr {k : ℕ} (A A' : Code k) (z : M) (v : Fin k → M)
+    (hA : ∀ x : M, Semiformula.Evalb (x :> v) (code A) ↔ Semiformula.Evalb (x :> v) (code A')) :
+    Semiformula.Evalb (z :> v) (code (codeSqrt A)) ↔
+      Semiformula.Evalb (z :> v) (code (codeSqrt A')) :=
+  evalEq_codeSqrt hA z
+
+theorem eval_codeIfPos_congr {k : ℕ} (F F' G G' H H' : Code k) (z : M) (v : Fin k → M)
+    (hF : ∀ x : M, Semiformula.Evalb (x :> v) (code F) ↔ Semiformula.Evalb (x :> v) (code F'))
+    (hG : ∀ x : M, Semiformula.Evalb (x :> v) (code G) ↔ Semiformula.Evalb (x :> v) (code G'))
+    (hH : ∀ x : M, Semiformula.Evalb (x :> v) (code H) ↔ Semiformula.Evalb (x :> v) (code H')) :
+    Semiformula.Evalb (z :> v) (code (codeIfPos F G H)) ↔
+      Semiformula.Evalb (z :> v) (code (codeIfPos F' G' H')) :=
+  evalEq_codeIfPos hF hG hH z
+
+theorem eval_codeUnpair₁_congr {k : ℕ} (A A' : Code k) (z : M) (v : Fin k → M)
+    (hA : ∀ x : M, Semiformula.Evalb (x :> v) (code A) ↔ Semiformula.Evalb (x :> v) (code A')) :
+    Semiformula.Evalb (z :> v) (code (codeUnpair₁ A)) ↔
+      Semiformula.Evalb (z :> v) (code (codeUnpair₁ A')) :=
+  evalEq_codeUnpair₁ hA z
+
+theorem eval_codeUnpair₂_congr {k : ℕ} (A A' : Code k) (z : M) (v : Fin k → M)
+    (hA : ∀ x : M, Semiformula.Evalb (x :> v) (code A) ↔ Semiformula.Evalb (x :> v) (code A')) :
+    Semiformula.Evalb (z :> v) (code (codeUnpair₂ A)) ↔
+      Semiformula.Evalb (z :> v) (code (codeUnpair₂ A')) :=
+  evalEq_codeUnpair₂ hA z
+
+/-!
+### Pairing -/
+
+theorem eval_codePair_congr {k : ℕ} (A A' B B' : Code k) (z : M) (v : Fin k → M)
+    (hA : ∀ x : M, Semiformula.Evalb (x :> v) (code A) ↔ Semiformula.Evalb (x :> v) (code A'))
+    (hB : ∀ x : M, Semiformula.Evalb (x :> v) (code B) ↔ Semiformula.Evalb (x :> v) (code B')) :
+    Semiformula.Evalb (z :> v) (code (codePair A B)) ↔
+      Semiformula.Evalb (z :> v) (code (codePair A' B')) :=
+  evalEq_codePair hA hB z
+
+/-!
+### Encoded lists -/
+
+theorem eval_codeListHeadOptional_congr {k : ℕ} (A A' : Code k) (z : M) (v : Fin k → M)
+    (hA : ∀ x : M, Semiformula.Evalb (x :> v) (code A) ↔ Semiformula.Evalb (x :> v) (code A')) :
+    Semiformula.Evalb (z :> v) (code (codeListHeadOptional A)) ↔
+      Semiformula.Evalb (z :> v) (code (codeListHeadOptional A')) :=
+  by
+  simp only [codeListHeadOptional]
+  exact
+    eval_codeIfPos_congr _ _ _ _ _ _ z v hA
+      (fun x =>
+        eval_codeSucc_congr _ _ x v
+          (fun y =>
+            eval_codeUnpair₁_congr _ _ y v
+              (fun w => eval_codeSub_congr _ _ _ _ w v hA (fun _ => Iff.rfl))))
+      (fun _ => Iff.rfl)
+
+theorem eval_codeListTail_congr {k : ℕ} (A A' : Code k) (z : M) (v : Fin k → M)
+    (hA : ∀ x : M, Semiformula.Evalb (x :> v) (code A) ↔ Semiformula.Evalb (x :> v) (code A')) :
+    Semiformula.Evalb (z :> v) (code (codeListTail A)) ↔
+      Semiformula.Evalb (z :> v) (code (codeListTail A')) :=
+  by
+  simp only [codeListTail]
+  exact
+    eval_codeUnpair₂_congr _ _ z v
+      (fun x => eval_codeSub_congr _ _ _ _ x v hA (fun _ => Iff.rfl))
+
+theorem eval_codeListDrop_congr {k : ℕ} (L L' I I' : Code k) (z : M) (v : Fin k → M)
+    (hL : ∀ x : M, Semiformula.Evalb (x :> v) (code L) ↔ Semiformula.Evalb (x :> v) (code L'))
+    (hI : ∀ x : M, Semiformula.Evalb (x :> v) (code I) ↔ Semiformula.Evalb (x :> v) (code I')) :
+    Semiformula.Evalb (z :> v) (code (codeListDrop L I)) ↔
+      Semiformula.Evalb (z :> v) (code (codeListDrop L' I')) :=
+  by
+  rw [codeListDrop_eq_comp, codeListDrop_eq_comp]
+  refine eval_comp_congr _ _ _ z v ?_
+  refine Fin.forall_fin_two.mpr ⟨?_, ?_⟩
+  · intro x
+    simpa using hI x
+  · intro x
+    simpa using hL x
+
+theorem eval_codeListGetOptional_congr {k : ℕ} (L L' I I' : Code k) (z : M) (v : Fin k → M)
+    (hL : ∀ x : M, Semiformula.Evalb (x :> v) (code L) ↔ Semiformula.Evalb (x :> v) (code L'))
+    (hI : ∀ x : M, Semiformula.Evalb (x :> v) (code I) ↔ Semiformula.Evalb (x :> v) (code I')) :
+    Semiformula.Evalb (z :> v) (code (codeListGetOptional L I)) ↔
+      Semiformula.Evalb (z :> v) (code (codeListGetOptional L' I')) :=
+  by
+  simp only [codeListGetOptional]
+  exact
+    eval_codeListHeadOptional_congr _ _ z v
+      (fun x => eval_codeListDrop_congr L L' I I' x v hL hI)
 
 end ArithmeticCode
 end CategoricalRiceShapiro
