@@ -14,7 +14,7 @@ import LeanPool.QuadraticIterates.Mathlib.Data.Int.DvdSequence
 import LeanPool.QuadraticIterates.Mathlib.Data.ZMod
 import LeanPool.QuadraticIterates.Mathlib.NumberTheory.Moebius
 import LeanPool.QuadraticIterates.Mathlib.RingTheory.UniqueFactorizationDomain
-import Mathlib.Data.Int.Star
+import Mathlib.Algebra.Order.Star.Int
 import Mathlib.Data.Nat.Totient
 import Mathlib.Data.Rat.Floor
 import Mathlib.Data.Sym.Sym2.Init

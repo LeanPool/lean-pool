@@ -10,8 +10,8 @@ public import Mathlib.Data.Nat.Notation
 public import Mathlib.Tactic.ToAdditive
 public import Mathlib.Tactic.ToDual
 import Mathlib.Algebra.Order.Ring.Star
-import Mathlib.Data.Int.ConditionallyCompleteOrder
-import Mathlib.Data.Int.Star
+import Mathlib.Order.Int.ConditionallyCompleteOrder
+import Mathlib.Algebra.Order.Star.Int
 import Mathlib.Order.ConditionallyCompleteLattice.Basic
 import Mathlib.Tactic.Linarith.Frontend
 
