@@ -49,8 +49,7 @@ theorem OneSidedLocalRule.heq_of_precond_eq : ∀ {X B X' B' : _}
       | exact absurd h (pair_neg_ne_singleton _ _)
       | exact absurd h.symm (pair_neg_ne_singleton _ _)
       | (cases pair_neg_inj h; rfl)
-      | (exfalso; simp_all; done)
-      | (rw [Finset.singleton_inj] at h; injections; subst_eqs; rfl)
+      | (rw [Finset.singleton_inj] at h; injections <;> subst_eqs <;> rfl)
 
 instance oneSidedLocalRuleSubsingleton (X B) : Subsingleton (OneSidedLocalRule X B) :=
   ⟨fun a b => eq_of_heq (OneSidedLocalRule.heq_of_precond_eq a b rfl)⟩

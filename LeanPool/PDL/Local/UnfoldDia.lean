@@ -6,8 +6,8 @@ Authors: PDL formalization contributors (see project card)
 
 module
 
-public import Mathlib.Tactic.Linarith
 
+public import LeanPool.PDL.General.NaturalBounds
 public import LeanPool.PDL.Substitution
 public import LeanPool.PDL.Star
 
@@ -267,24 +267,43 @@ theorem Dset_goes_down_prog (α : Program) {Fs δ} (in_D : (Fs, δ) ∈ Dset α)
       cases β
       all_goals
         simp_all [Dset, lengthOfProgram, Program.isAtomic, Program.isStar]
-        try linarith
+        try
+          aesop (rule_sets := [-default]) (config := { enableSimp := false })
+            (add 50% apply [NaturalBounds.lt_sum_left, NaturalBounds.lt_sum_right,
+              NaturalBounds.lt_one_add, Nat.le_of_lt])
+            (add safe apply [NaturalBounds.one_lt_two_add, Nat.le_refl, Nat.zero_le])
     · simp_all only [ite_false, List.mem_singleton, Prod.mk.injEq, List.mem_append]
       rcases in_δ with bla | γ_eq_β
       · have IHα := Dset_goes_down_prog α Fs'_in bla
         cases α
         all_goals
           simp_all [Dset, lengthOfProgram, Program.isAtomic, Program.isStar]
-          try linarith
+          try
+            aesop (rule_sets := [-default]) (config := { enableSimp := false })
+              (add 50% apply [NaturalBounds.lt_sum_left, NaturalBounds.lt_sum_right,
+                NaturalBounds.lt_one_add, Nat.le_of_lt])
+              (add safe apply [NaturalBounds.one_lt_two_add, Nat.le_refl, Nat.zero_le])
       · subst γ_eq_β
-        linarith
+        aesop (rule_sets := [-default]) (config := { enableSimp := false })
+          (add 50% apply [NaturalBounds.lt_sum_left, NaturalBounds.lt_sum_right,
+            NaturalBounds.lt_one_add, Nat.le_of_lt])
+          (add safe apply [NaturalBounds.one_lt_two_add, Nat.le_refl, Nat.zero_le])
   case union α β =>
     simp only [Program.isAtomic, Bool.false_eq_true, ↓reduceIte, Program.isStar, lengthOfProgram]
     simp only [Dset, List.mem_union_iff] at in_D
     rcases in_D with hyp | hyp
     · have IHα := Dset_goes_down_prog α hyp in_δ
-      by_cases α.isAtomic <;> by_cases α.isStar <;> simp_all <;> linarith
+      by_cases α.isAtomic <;> by_cases α.isStar <;> simp_all <;>
+        aesop (rule_sets := [-default]) (config := { enableSimp := false })
+          (add 50% apply [NaturalBounds.lt_sum_left, NaturalBounds.lt_sum_right,
+            NaturalBounds.lt_one_add, Nat.le_of_lt])
+          (add safe apply [NaturalBounds.one_lt_two_add, Nat.le_refl, Nat.zero_le])
     · have IHβ := Dset_goes_down_prog β hyp in_δ
-      by_cases β.isAtomic <;> by_cases β.isStar <;> simp_all <;> linarith
+      by_cases β.isAtomic <;> by_cases β.isStar <;> simp_all <;>
+        aesop (rule_sets := [-default]) (config := { enableSimp := false })
+          (add 50% apply [NaturalBounds.lt_sum_left, NaturalBounds.lt_sum_right,
+            NaturalBounds.lt_one_add, Nat.le_of_lt])
+          (add safe apply [NaturalBounds.one_lt_two_add, Nat.le_refl, Nat.zero_le])
   case star α =>
     simp only [Program.isAtomic, Bool.false_eq_true, ↓reduceIte, Program.isStar, lengthOfProgram]
     simp only [Dset, List.empty_eq, List.cons_union, List.nil_union, List.mem_insert_iff,
@@ -299,11 +318,36 @@ theorem Dset_goes_down_prog (α : Program) {Fs δ} (in_D : (Fs, δ) ∈ Dset α)
         subst_eqs
         rcases in_δ with hyp | hyp
         · have IHα := Dset_goes_down_prog α in_D' hyp
-          by_cases α.isAtomic <;> by_cases α.isStar <;> simp_all <;> linarith
+          by_cases α.isAtomic <;> by_cases α.isStar <;> simp_all <;>
+            aesop (rule_sets := [-default]) (config := { enableSimp := false })
+              (add 50% apply [NaturalBounds.lt_sum_left, NaturalBounds.lt_sum_right,
+                NaturalBounds.lt_one_add, Nat.le_of_lt])
+              (add safe apply [NaturalBounds.one_lt_two_add, Nat.le_refl, Nat.zero_le])
         · subst hyp
           simp [lengthOfProgram]
   case test τ =>
     simp_all [Dset]
+
+
+-- Keep the existing private helper names when arithmetic proof search changes its cache order.
+section
+universe u_1
+
+private theorem Dset_goes_down_prog._simp_1_14 {α : Type u_1} {a b : α} :
+    (a ∈ [b]) = (a = b) := propext List.mem_singleton
+
+private theorem Dset_goes_down_prog._simp_1_15 {α : Type u_1} {a : α} {s t : List α} :
+    (a ∈ s ++ t) = (a ∈ s ∨ a ∈ t) := propext List.mem_append
+
+private theorem Dset_goes_down_prog._simp_1_16 {α : Type u_1}
+    [inst : BEq α] [inst : LawfulBEq α] {x : α} {l₁ l₂ : List α} :
+    (x ∈ l₁ ∪ l₂) = (x ∈ l₁ ∨ x ∈ l₂) := propext List.mem_union_iff
+
+private theorem Dset_goes_down_prog._simp_1_17 {α : Type u_1}
+    [inst : BEq α] [inst : LawfulBEq α] {b a : α} {l : List α} :
+    (a ∈ List.insert b l) = (a = b ∨ a ∈ l) := propext List.mem_insert_iff
+
+end
 
 /-- An intermediate step to define `unfoldDiamond`. This is not used in the paper. -/
 def Yset : (List Formula × List Program) → Formula → List Formula
