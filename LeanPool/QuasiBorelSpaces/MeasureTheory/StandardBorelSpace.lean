@@ -6,6 +6,7 @@ Authors: Anthony Vandikas, Kiarash Sotoudeh
 module
 
 public import Mathlib.MeasureTheory.Constructions.Polish.Basic
+import Mathlib.Analysis.Real.Cardinality
 import Mathlib.MeasureTheory.Constructions.Polish.EmbeddingReal
 
 /-!
