@@ -12,7 +12,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Aristotle (Harmonic), Claude Fable 5 (Anthropic), Claude Opus 4.7 (Anthropic)
   — at the request of David Wiygul
 -/
-public import Mathlib.Data.Int.Star
+public import Mathlib.Algebra.Order.Star.Int
 public import Mathlib.LinearAlgebra.Complex.FiniteDimensional
 public import Mathlib.Tactic
 public import Mathlib.Topology.Separation.CompletelyRegular
@@ -504,7 +504,7 @@ theorem riemannSum_convergence (φ : (Fin n → ℝ) → ℂ)
   have h_dom : Summable (fun m : Fin n → ℤ => weight n s m * (2 * ∑' k : Fin n → ℤ,
       ‖fourierCoeffDistrib u k‖) ^ 2 * ‖ftRn n φ (fun j => (m j : ℝ))‖ ^ 2) := by
     convert hφ_rd s |> Summable.mul_left ( ( 2 * ∑' k : Fin n → ℤ, ‖fourierCoeffDistrib u k‖ ) ^
-        2 ) using 2; first | rfl | ring;
+        2 ) using 2; ring;
   have h_ab : ∀ m : Fin n → ℤ, Filter.Tendsto (fun M : ℕ => weight n s m * ‖fourierCoeffDistrib
       (riemannSumDistrib n φ u M - convDistrib n φ u) m‖ ^ 2) Filter.atTop (nhds 0) :=
     fun m => by simpa using Filter.Tendsto.const_mul _ ( ‹∀ m : Fin n → ℤ, Filter.Tendsto ( fun

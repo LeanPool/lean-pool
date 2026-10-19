@@ -641,7 +641,7 @@ theorem realize_fB (hn : 0 < n) {f : (Fin n → ℝ) → ℝ} (hf : SmoothPeriod
     rw [gram_dot_reindex e hU0_d, gram_bumpFamily hχε_sm hχε_supp hχε_cube hf0 hM_pos]
     simp only [Matrix.smul_apply, smul_eq_mul, pe]
     congr 2
-    all_goals first | rfl | ring
+    all_goals ring
   -- smoothness and periodicity of the defect function (real part)
   have hpe_sm : ContDiff ℝ ∞ (pe n χε) := pe_contDiff hχε_sm hχε_supp
   have hdef_sm : ∀ i j : Fin n, ContDiff ℝ ∞ (fun x : Fin n → ℝ =>
@@ -654,7 +654,8 @@ theorem realize_fB (hn : 0 < n) {f : (Fin n → ℝ) → ℝ} (hf : SmoothPeriod
         (NashEmbedding.Sobolev.periodicExtension_contDiff (hFε_sm i j) (hFε_supp i j))
     refine ContDiff.sub (contDiff_const.mul (ContDiff.sum fun k _ => ?_))
       (contDiff_const.mul hf.smooth)
-    exact (hpeF.comp (contDiff_pi.mpr fun l => (contDiff_apply ℝ ℝ l).sub contDiff_const)).mul
+    exact (hpeF.comp (contDiff_pi.mpr fun l =>
+      (contDiff_apply ℝ (fun _ => ℝ) l).sub contDiff_const)).mul
       contDiff_const
   have hdef_per : ∀ i j : Fin n, IsPeriodic2Pi (fun x : Fin n → ℝ =>
       (2 * π / (M : ℝ)) ^ n * ∑ k : Fin n → Fin M,
@@ -673,7 +674,7 @@ theorem realize_fB (hn : 0 < n) {f : (Fin n → ℝ) → ℝ} (hf : SmoothPeriod
   refine ⟨_, U, ?_, ?_, ?_⟩
   · -- smooth periodic
     constructor
-    · exact contDiff_pi.mpr fun m => (contDiff_apply ℝ ℝ (e.symm m)).comp hU0_sp.smooth
+    · exact contDiff_pi.mpr fun m => (contDiff_apply ℝ (fun _ => ℝ) (e.symm m)).comp hU0_sp.smooth
     · intro x k; funext m; simp only [hU]; rw [hU0_sp.periodic x k]
   · -- membership
     intro i j

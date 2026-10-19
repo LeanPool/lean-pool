@@ -71,7 +71,8 @@ lemma bumpyMetric_isPosDefSmoothMetric {n : ℕ} (hn : 0 < n) :
     refine ⟨?_, ?_⟩
     · -- smooth: scalar function times a constant matrix
       have hs : ContDiff ℝ ∞ (fun x : Fin n → ℝ => 2 + Real.sin (x ⟨0, hn⟩)) :=
-        contDiff_const.add (Real.contDiff_sin.comp (contDiff_apply ℝ ℝ (⟨0, hn⟩ : Fin n)))
+        contDiff_const.add
+          (Real.contDiff_sin.comp (contDiff_apply ℝ (fun _ => ℝ) (⟨0, hn⟩ : Fin n)))
       exact hs.smul contDiff_const
     · intro x k
       change (2 + Real.sin ((x + periodicShift n k) ⟨0, hn⟩)) • (1 : Matrix (Fin n) (Fin n) ℝ)

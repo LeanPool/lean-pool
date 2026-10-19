@@ -170,14 +170,12 @@ lemma integral_dil_sq (n : ℕ) {β : ℝ} (hβ : 0 < β) :
     ∫ t, dil n β t ^ 2 = etaMass n / β := by
   unfold dil etaMass
   have h := Measure.integral_comp_mul_left (fun t => eta n t ^ 2) β
-  try simp only at h
   rw [h, abs_of_pos (inv_pos.mpr hβ), smul_eq_mul, inv_mul_eq_div]
 
 lemma integral_deriv_dil_sq (n : ℕ) {β : ℝ} (hβ : 0 < β) :
     ∫ t, deriv (dil n β) t ^ 2 = β * etaDerivMass n := by
   simp_rw [deriv_dil]
   have h := Measure.integral_comp_mul_left (fun t => deriv (eta n) t ^ 2) β
-  try simp only at h
   simp_rw [mul_pow]
   rw [integral_const_mul, h, abs_of_pos (inv_pos.mpr hβ), smul_eq_mul]
   unfold etaDerivMass
@@ -212,7 +210,7 @@ lemma prodBump_contDiff (β : Fin n → ℝ) : ContDiff ℝ ∞ (prodBump n β) 
   have h : prodBump n β = ∏ k : Fin n, (fun y : Fin n → ℝ => dil n (β k) (y k)) := by
     funext y; simp [prodBump, Finset.prod_apply]
   rw [h]
-  exact contDiff_prod' fun k _ => (dil_contDiff n (β k)).comp (contDiff_apply ℝ ℝ k)
+  exact contDiff_prod' fun k _ => (dil_contDiff n (β k)).comp (contDiff_apply ℝ (fun _ => ℝ) k)
 
 lemma prodBump_continuous (β : Fin n → ℝ) : Continuous (prodBump n β) :=
   (prodBump_contDiff β).continuous

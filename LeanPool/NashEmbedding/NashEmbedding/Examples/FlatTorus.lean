@@ -112,8 +112,8 @@ def torus2Wrap : (Fin 2 → ℝ) → Circle × Circle :=
 /-- **L2a.** `torus2Wrap` is smooth as a map of manifolds. -/
 theorem torus2Wrap_contMDiff :
     ContMDiff 𝓘(ℝ, Fin 2 → ℝ) ((𝓡 1).prod (𝓡 1)) ∞ torus2Wrap :=
-  (contMDiff_circleExp.comp (contDiff_apply ℝ ℝ 0).contMDiff).prodMk
-    (contMDiff_circleExp.comp (contDiff_apply ℝ ℝ 1).contMDiff)
+  (contMDiff_circleExp.comp (contDiff_apply ℝ (fun _ => ℝ) 0).contMDiff).prodMk
+    (contMDiff_circleExp.comp (contDiff_apply ℝ (fun _ => ℝ) 1).contMDiff)
 
 /-- **L2b.** `torus2Wrap θ = torus2Wrap θ'` iff `θ − θ' ∈ 2πℤ²`
   (`Circle.exp_eq_exp` on each factor). -/

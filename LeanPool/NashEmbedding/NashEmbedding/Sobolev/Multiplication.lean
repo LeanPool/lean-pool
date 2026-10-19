@@ -13,7 +13,7 @@ Authors: Aristotle (Harmonic), Claude Fable 5 (Anthropic), Claude Opus 4.7 (Anth
   — at the request of David Wiygul
 -/
 public import Mathlib.Algebra.Ring.IsFormallyReal
-public import Mathlib.Data.Int.Star
+public import Mathlib.Algebra.Order.Star.Int
 public import Mathlib.LinearAlgebra.Complex.FiniteDimensional
 public import Mathlib.Tactic
 public import Mathlib.Topology.Separation.CompletelyRegular
@@ -285,7 +285,7 @@ theorem sobolev_mul_seq {s : ℝ}
             Real.sqrt_sq (by positivity), Real.sqrt_sq (weight_nonneg _ _)]
         convert mul_le_mul_of_nonneg_right h_peetre_step ( norm_nonneg ( b i * a ( m - i ) ) )
             using 1
-        all_goals (first | rfl | (norm_num; ring))
+        all_goals ((norm_num; ring))
       by_cases h : Summable ( fun i => b i * a ( m - i ) ) <;> simp_all +decide only [ge_iff_le];
       · refine le_trans ( mul_le_mul_of_nonneg_left ( norm_tsum_le_tsum_norm ?_ ) (
           Real.sqrt_nonneg _ ) ) ?_;
@@ -323,7 +323,6 @@ theorem sobolev_mul_seq {s : ℝ}
             (Real.sqrt_nonneg _)) (norm_nonneg _))
     convert pow_le_pow_left₀ ( by positivity ) h_peetre_step 2 using 1
     all_goals (first
-      | rfl
       | (rw [ mul_pow, Real.sq_sqrt <| weight_nonneg _ _ ])
       | ring)
   have h_young : Summable (fun m => (∑' i, ‖b i‖ * (weight n (|s| / 2) i) * Real.sqrt (weight n
