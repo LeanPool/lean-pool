@@ -6,8 +6,11 @@ Authors: OpenAI, Dean Cureton
 module
 
 public import LeanPool.MetricCodes.Branching
-public import Mathlib.Algebra.Lie.Basic
-public import Mathlib.RingTheory.Derivation.Basic
+import Mathlib.Algebra.MvPolynomial.Monad
+import Mathlib.Algebra.Order.Floor.Semifield
+import Mathlib.Algebra.Order.Star.Real
+import Mathlib.RingTheory.MvPolynomial.EulerIdentity
+import Mathlib.Tactic.NormNum.RealSqrt
 
 /-!
 # Arbitrary-rank interlacing

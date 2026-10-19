@@ -6,6 +6,10 @@ Authors: OpenAI, Dean Cureton
 module
 
 public import LeanPool.MetricCodes.Interlacing
+import Mathlib.Algebra.MvPolynomial.Monad
+import Mathlib.Algebra.Order.Floor.Semifield
+import Mathlib.Algebra.Order.Star.Real
+import Mathlib.Tactic.NormNum.RealSqrt
 
 /-!
 # Highest-weight identities

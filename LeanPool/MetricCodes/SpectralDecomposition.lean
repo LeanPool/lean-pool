@@ -6,6 +6,11 @@ Authors: OpenAI, Dean Cureton
 module
 
 public import LeanPool.MetricCodes.Rigidity
+public import Mathlib.LinearAlgebra.Lagrange
+import Mathlib.Algebra.Order.Floor.Semifield
+import Mathlib.Algebra.Ring.IsFormallyReal
+import Mathlib.LinearAlgebra.Eigenspace.Minpoly
+import Mathlib.Tactic.NormNum.RealSqrt
 
 /-!
 # Canonical spectral decomposition

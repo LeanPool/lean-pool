@@ -6,11 +6,15 @@ Authors: OpenAI, Dean Cureton
 module
 
 public import LeanPool.MetricCodes.Binary
-public import Mathlib.Tactic.NormNum.RealSqrt
 public import Mathlib.Analysis.SpecialFunctions.Trigonometric.Chebyshev.Orthogonality
-public import Mathlib.Analysis.SpecialFunctions.Trigonometric.InverseDeriv
-public import Mathlib.LinearAlgebra.Lagrange
 public import Mathlib.Probability.Distributions.Beta
+import Mathlib.Algebra.Order.Archimedean.Real.Hom
+import Mathlib.Algebra.Order.Floor.Semifield
+import Mathlib.Algebra.Order.Star.Real
+import Mathlib.Algebra.Ring.IsFormallyReal
+import Mathlib.Analysis.SpecialFunctions.Trigonometric.InverseDeriv
+import Mathlib.LinearAlgebra.Lagrange
+import Mathlib.Tactic.NormNum.RealSqrt
 
 /-!
 # Strict rate improvements

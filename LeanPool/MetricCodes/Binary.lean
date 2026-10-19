@@ -7,6 +7,9 @@ module
 
 public import LeanPool.MetricCodes.Foundations
 import all Mathlib.Analysis.SpecialFunctions.BinaryEntropy
+import Mathlib.Algebra.Order.Floor.Semifield
+import Mathlib.Algebra.Order.Ring.Star
+import Mathlib.Algebra.Order.Star.Real
 
 /-!
 # Binary-code asymptotics

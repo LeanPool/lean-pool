@@ -7,17 +7,20 @@ module
 
 public import LeanPool.MetricCodes.MatrixPerron
 public import Mathlib.InformationTheory.Hamming
-public import Mathlib.Algebra.Order.Chebyshev
-public import Mathlib.Algebra.Ring.IsFormallyReal
 public import Mathlib.Analysis.SpecialFunctions.BinaryEntropy
 import all Mathlib.Analysis.SpecialFunctions.BinaryEntropy
 public import Mathlib.Analysis.SpecialFunctions.Stirling
-public import Mathlib.Data.Nat.Dist
-public import Mathlib.LinearAlgebra.Matrix.PosDef
 public import Mathlib.LinearAlgebra.Matrix.Rank
-public import Mathlib.Algebra.Order.Floor.Semifield
-public import Mathlib.Algebra.Order.Star.Real
 public import Mathlib.Analysis.SpecialFunctions.Log.Base
+public import Mathlib.LinearAlgebra.Matrix.Hermitian
+import Mathlib.Algebra.Order.Archimedean.Real.Hom
+import Mathlib.Algebra.Order.Chebyshev
+import Mathlib.Algebra.Order.Floor.Semifield
+import Mathlib.Algebra.Order.Star.Real
+import Mathlib.Algebra.Ring.IsFormallyReal
+import Mathlib.Analysis.Matrix.Hermitian
+import Mathlib.Data.Nat.Dist
+import Mathlib.LinearAlgebra.Matrix.PosDef
 
 /-!
 # Foundations for binary and spherical code bounds
@@ -7551,49 +7554,52 @@ theorem associatedEdge_pos {n w p q j : ℕ}
       Nat.cast_add, Nat.cast_sub (by omega : w ≤ n)] using hcast
   have hJ : 0 < MetricCodes.johnsonJ n j := by
     unfold MetricCodes.johnsonJ
-    nlinarith
+    linarith only [hhalf', hjw']
   have hM : 0 < MetricCodes.johnsonM n w := by
     unfold MetricCodes.johnsonM
-    nlinarith
+    linarith only [hhalf']
   have hJminusM : 0 < MetricCodes.johnsonJ n j - MetricCodes.johnsonM n w := by
     unfold MetricCodes.johnsonJ MetricCodes.johnsonM
-    linarith
+    linarith only [hjw']
   have hJplusM : 0 < MetricCodes.johnsonJ n j + MetricCodes.johnsonM n w := by
-    linarith
+    exact add_pos hJ hM
   have hJminusDelta :
       0 < MetricCodes.johnsonJ n j - MetricCodes.johnsonDelta n w p q := by
     unfold MetricCodes.johnsonJ MetricCodes.johnsonDelta
       MetricCodes.johnsonJ2 MetricCodes.johnsonJ1
     rw [Nat.cast_sub (by omega : w ≤ n)]
-    linarith
+    linarith only [hjleft']
   have hJplusDelta :
       0 < MetricCodes.johnsonJ n j + MetricCodes.johnsonDelta n w p q := by
     unfold MetricCodes.johnsonJ MetricCodes.johnsonDelta
       MetricCodes.johnsonJ2 MetricCodes.johnsonJ1
     rw [Nat.cast_sub (by omega : w ≤ n)]
-    linarith
+    linarith only [hjright']
   have hSigmaMinus :
       0 < MetricCodes.johnsonSigma n w p q + 1 -
         MetricCodes.johnsonJ n j := by
     unfold MetricCodes.johnsonSigma MetricCodes.johnsonJ1 MetricCodes.johnsonJ2
       MetricCodes.johnsonJ
     rw [Nat.cast_sub (by omega : w ≤ n)]
-    linarith
+    linarith only [hfirst']
   have hSigmaPlus :
       0 < MetricCodes.johnsonSigma n w p q + 1 +
         MetricCodes.johnsonJ n j := by
-    linarith
+    linarith only [hSigmaMinus, hJ]
   have hJM :
       0 < MetricCodes.johnsonJ n j ^ 2 - MetricCodes.johnsonM n w ^ 2 := by
-    nlinarith [mul_pos hJminusM hJplusM]
+    rw [sq_sub_sq]
+    exact mul_pos hJplusM hJminusM
   have hJDelta :
       0 < MetricCodes.johnsonJ n j ^ 2 -
         MetricCodes.johnsonDelta n w p q ^ 2 := by
-    nlinarith [mul_pos hJminusDelta hJplusDelta]
+    rw [sq_sub_sq]
+    exact mul_pos hJplusDelta hJminusDelta
   have hSigma :
       0 < (MetricCodes.johnsonSigma n w p q + 1) ^ 2 -
         MetricCodes.johnsonJ n j ^ 2 := by
-    nlinarith [mul_pos hSigmaMinus hSigmaPlus]
+    rw [sq_sub_sq]
+    exact mul_pos hSigmaPlus hSigmaMinus
   have hjstep : (j : ℝ) + 1 ≤ (w : ℝ) := by
     exact_mod_cast Nat.succ_le_of_lt hjw
   have hhalfstep :
@@ -7601,9 +7607,9 @@ theorem associatedEdge_pos {n w p q j : ℕ}
     exact_mod_cast (show 2 * w + 1 ≤ n by omega)
   have hdenleft : 0 < 2 * MetricCodes.johnsonJ n j - 1 := by
     unfold MetricCodes.johnsonJ
-    nlinarith
+    linarith only [hjstep, hhalfstep]
   have hdenright : 0 < 2 * MetricCodes.johnsonJ n j + 1 := by
-    linarith
+    linarith only [hJ]
   have hnu : 0 < MetricCodes.johnsonNu n w p q j := by
     unfold MetricCodes.johnsonNu
     apply div_pos
@@ -8491,9 +8497,7 @@ def shellRate (α β γ u : ℝ) : ℝ :=
 
 theorem binaryEntropy_eq_binEntropy_div_log (u : ℝ) :
     MetricCodes.binaryEntropy u = Real.binEntropy u / Real.log 2 := by
-  simp only [MetricCodes.binaryEntropy, Real.logb, Real.binEntropy,
-    Real.log_inv]
-  ring
+  exact MetricCodes.Hamming.binaryEntropy_eq_binEntropy_div_log u
 
 theorem binaryEntropy_le_one (u : ℝ) :
     MetricCodes.binaryEntropy u ≤ 1 := by

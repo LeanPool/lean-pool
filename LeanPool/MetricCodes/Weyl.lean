@@ -6,6 +6,9 @@ Authors: OpenAI, Dean Cureton
 module
 
 public import LeanPool.MetricCodes.RootComplex
+import Mathlib.Algebra.Order.Floor.Semifield
+import Mathlib.Algebra.Order.Ring.Star
+import Mathlib.Tactic.NormNum.RealSqrt
 
 /-!
 # Weyl and root-complex identities
