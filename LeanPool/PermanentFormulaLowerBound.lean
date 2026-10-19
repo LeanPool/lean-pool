@@ -443,7 +443,7 @@ private theorem coefficient_adjoin_mem_rationalSkeletonField [Field F]
     splitCoefficientHom (Y := Y) (Z := Z) (F := F) c ∈
       rationalSkeletonField (Y := Y) s := by
   refine IntermediateField.adjoin_induction F
-    (p := fun x _ =>
+    (motive := fun x _ =>
       splitCoefficientHom (Y := Y) (Z := Z) (F := F) x ∈
         rationalSkeletonField (Y := Y) s)
     ?_ ?_ ?_ ?_ ?_ hc
