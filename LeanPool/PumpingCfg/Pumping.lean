@@ -9,7 +9,7 @@ public import LeanPool.PumpingCfg.Utils
 public import LeanPool.PumpingCfg.ParseTree
 import LeanPool.PumpingCfg.ChomskyNormalForm.Translation
 import Mathlib.Algebra.Order.Ring.Nat
-import Mathlib.Data.Nat.SuccPred
+import Mathlib.Order.SuccPred.Nat
 
 /-!
 # Pumping Lemma for Context-Free Grammars
