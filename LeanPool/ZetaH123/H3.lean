@@ -12,8 +12,8 @@ public import Mathlib.Order.Lattice.Nat
 import Mathlib.Algebra.Order.Ring.Star
 import Mathlib.Analysis.Normed.Group.Basic
 import Mathlib.Data.EReal.Operations
-import Mathlib.Data.Int.ConditionallyCompleteOrder
-import Mathlib.Data.Int.Star
+import Mathlib.Order.Int.ConditionallyCompleteOrder
+import Mathlib.Algebra.Order.Star.Int
 import Mathlib.Data.List.GetD
 import Mathlib.Data.Nat.Digits.Lemmas
 import Mathlib.Tactic.Positivity.Finset

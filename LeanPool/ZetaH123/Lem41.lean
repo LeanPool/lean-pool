@@ -6,12 +6,12 @@ Authors: Evan Chen, Kenny Lau, Ken Ono, Jujian Zhang
 module
 
 public import Mathlib.RingTheory.LaurentSeries
-public import Mathlib.Data.Int.ConditionallyCompleteOrder
+public import Mathlib.Order.Int.ConditionallyCompleteOrder
 public import Mathlib.Data.Nat.Choose.Multinomial
 import Mathlib.Algebra.Order.Ring.Star
 import Mathlib.Analysis.Normed.Group.Basic
 import Mathlib.Data.EReal.Operations
-import Mathlib.Data.Int.Star
+import Mathlib.Algebra.Order.Star.Int
 import Mathlib.FieldTheory.Finite.Basic
 import Mathlib.Order.CompletePartialOrder
 import Mathlib.RingTheory.Henselian

@@ -14,8 +14,8 @@ import Mathlib.Algebra.Ring.GeomSum
 import Mathlib.Analysis.Normed.Group.Basic
 import Mathlib.CategoryTheory.Category.Init
 import Mathlib.Data.EReal.Operations
-import Mathlib.Data.Int.ConditionallyCompleteOrder
-import Mathlib.Data.Int.Star
+import Mathlib.Order.Int.ConditionallyCompleteOrder
+import Mathlib.Algebra.Order.Star.Int
 import Mathlib.Tactic.FinCases
 import Mathlib.Tactic.Positivity.Finset
 import Mathlib.Topology.Algebra.InfiniteSum.Order
