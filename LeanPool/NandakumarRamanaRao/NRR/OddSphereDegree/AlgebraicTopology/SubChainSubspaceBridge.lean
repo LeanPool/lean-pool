@@ -9,6 +9,7 @@ module
 public import LeanPool.NandakumarRamanaRao.NRR.OddSphereDegree.AlgebraicTopology.MayerVietoris
 public import LeanPool.NandakumarRamanaRao.NRR.OddSphereDegree.AlgebraicTopology.BarycentricSubdivisionHomotopyFormula
 public import LeanPool.NandakumarRamanaRao.NRR.OddSphereDegree.BallBoundaryLES
+public import Mathlib.CategoryTheory.Limits.MonoCoprod
 
 /-! # Sub Chain Subspace Bridge -/
 

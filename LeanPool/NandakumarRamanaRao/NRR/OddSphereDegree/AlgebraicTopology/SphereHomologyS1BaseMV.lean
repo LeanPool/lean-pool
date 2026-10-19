@@ -18,7 +18,7 @@ public import Mathlib.RingTheory.PicardGroup
 public import Mathlib.RingTheory.RegularLocalRing.Defs
 public import Mathlib.RingTheory.TotallySplit
 public import Mathlib.Tactic
-public import Mathlib.Topology.Separation.Lemmas
+public import Mathlib.Topology.Separation.CompletelyRegular
 /-!
 # Mayer–Vietoris base case: `H₁(S¹; ℤ) ≅ ℤ`
 

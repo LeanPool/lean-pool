@@ -11,7 +11,7 @@ public import Mathlib.Algebra.Order.Ring.Star
 public import Mathlib.Algebra.Order.Star.Real
 public import Mathlib.Analysis.InnerProductSpace.Basic
 public import Mathlib.Analysis.Normed.Module.Convex
-public import Mathlib.Data.Int.Star
+public import Mathlib.Algebra.Order.Star.Int
 public import Mathlib.Tactic
 
 /-!

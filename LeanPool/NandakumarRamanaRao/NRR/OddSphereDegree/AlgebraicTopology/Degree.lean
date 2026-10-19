@@ -91,28 +91,31 @@ of `Sphere n`, through the model transport and the integral singular homology
 functor. -/
 def inducedOnTopHomology {n : ℕ} (f : C(Sphere n, Sphere n)) :
     End ((singularHomologyℤ n).obj (TopCat.sphere.{0} n)) :=
-  (singularHomologyℤ n).map (toTopCatSphereSelfMap f)
+  .of ((singularHomologyℤ n).map (toTopCatSphereSelfMap f))
 
 /-- The induced endomorphism of the identity is the identity. -/
 @[simp]
 theorem inducedOnTopHomology_id (n : ℕ) :
-    inducedOnTopHomology (ContinuousMap.id (Sphere n)) = 𝟙 _ := by
-  dsimp [inducedOnTopHomology]
+    inducedOnTopHomology (ContinuousMap.id (Sphere n)) = 1 := by
+  apply End.ext
+  change (singularHomologyℤ n).map (toTopCatSphereSelfMap _) = 𝟙 _
   rw [toTopCatSphereSelfMap_id]
   exact (singularHomologyℤ n).map_id _
 
 /-- Functoriality of the induced endomorphism, in categorical composition form. -/
 theorem inducedOnTopHomology_comp {n : ℕ} (f g : C(Sphere n, Sphere n)) :
-    inducedOnTopHomology (g.comp f)
-      = inducedOnTopHomology f ≫ inducedOnTopHomology g := by
+    (inducedOnTopHomology (g.comp f)).asHom
+      = (inducedOnTopHomology f).asHom ≫ (inducedOnTopHomology g).asHom := by
   simp [inducedOnTopHomology, toTopCatSphereSelfMap_comp]
 
 /-- Functoriality of the induced endomorphism, in `End`-monoid product form.
-Note that in `End X` the product `a * b` is `b ≫ a`, so the order reverses. -/
+Note that in `End X` the product `a * b` has underlying morphism
+`b.asHom ≫ a.asHom`, so the order reverses. -/
 theorem inducedOnTopHomology_comp_mul {n : ℕ} (f g : C(Sphere n, Sphere n)) :
     inducedOnTopHomology (g.comp f)
       = inducedOnTopHomology g * inducedOnTopHomology f := by
-  rw [inducedOnTopHomology_comp, End.mul_def]
+  apply End.ext
+  rw [End.mul_asHom, inducedOnTopHomology_comp]
 
 /-! ## The ℤ-endomorphism scalar API -/
 
@@ -250,7 +253,8 @@ theorem inducedOnTopHomology_eq_of_homotopic
     (prism : SingularPrismOperator) {n : ℕ} {f g : C(Sphere n, Sphere n)}
     (h : ContinuousMap.Homotopic f g) :
     inducedOnTopHomology f = inducedOnTopHomology g :=
-  singularHomologyMap_eq_of_homotopic prism (toTopCatSphereSelfMap_hom_homotopic h) n
+  congrArg End.of
+    (singularHomologyMap_eq_of_homotopic prism (toTopCatSphereSelfMap_hom_homotopic h) n)
 
 /-- **Conditional homotopy invariance of the degree.**
 
