@@ -21,6 +21,8 @@ open Finset SimpleGraph
 
 namespace PartialEmbedding
 
+/-- Vertices in `parts y` compatible with the partial edge map `f` on `S`.
+Exclusion of already used vertices is handled separately when extending the embedding. -/
 noncomputable def candidates {α β : Type*} (G : SimpleGraph α) (L : SimpleGraph β)
     (parts : β → Finset α) (f : β → α) (S : Finset β) (y : β) : Finset α := by
   classical
