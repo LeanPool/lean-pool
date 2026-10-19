@@ -1,0 +1,1122 @@
+/-
+Copyright (c) 2026 Formalized Formal Logic contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Formalized Formal Logic contributors
+-/
+
+module
+
+-- Ported and adapted for Lean Pool from the upstream revision recorded in the project card.
+
+public import LeanPool.PointwiseComposition.Foundation.Vorspiel.List.Basic
+public import LeanPool.PointwiseComposition.Foundation.Vorspiel.Multiset
+public import LeanPool.PointwiseComposition.Foundation.Vorspiel.NotationClass
+
+/-! Supporting results for pointwise provable equality. -/
+
+namespace PointwiseComposition
+
+@[expose] public section
+
+/-!
+# Logic Symbols
+
+This file defines structure that has logical connectives $\top, \bot, \land, \lor, \to, \lnot$
+and their homomorphisms.
+
+## Main Definitions
+* `FFL.LogicalConnective` is defined so that `FFL.LogicalConnective F` is a type that has
+logical connectives $\top, \bot, \land, \lor, \to, \lnot$.
+* `FFL.LogicalConnective.Hom` is defined so that `f : F →ˡᶜ G` is a homomorphism from `F` to
+`G`, i.e.,
+a function that preserves logical connectives.
+
+-/
+
+namespace FFL
+
+/-- A class for types with logical connectives $\top, \bot, \land, \lor, \to, \lnot$.
+-/
+class LogicalConnective (α : Type*) extends Tilde α, Arrow α, Wedge α, Vee α
+
+/-- Truth and falsity constants for formulas. -/
+class LogicalNeutral (α : Type*) extends Top α, Bot α
+
+/-- Data and laws for Tilde Involutive in `FFL`. -/
+class TildeInvolutive (F : Type*) [Tilde F] where
+  tilde_involutive (φ : F) : ∼∼φ = φ
+
+/-- Data and laws for De Morgan in `FFL.LogicalConnective`. -/
+class LogicalConnective.DeMorgan (F : Type*) [LogicalConnective F] where
+  imply (φ ψ : F) : φ ⇒ₗ ψ = ∼φ ⋎ ψ
+  and (φ ψ : F) : ∼(φ ⋏ ψ) = ∼φ ⋎ ∼ψ
+  or (φ ψ : F) : ∼(φ ⋎ ψ) = ∼φ ⋏ ∼ψ
+
+/-- Data and laws for De Morgan in `FFL.LogicalNeutral`. -/
+class LogicalNeutral.DeMorgan (F : Type*) [LogicalNeutral F] [Tilde F] where
+  verum : ∼(⊤ : F) = ⊥
+  falsum : ∼(⊥ : F) = ⊤
+
+alias LogicalNeutral.DeMorgan.neg := TildeInvolutive.tilde_involutive
+
+attribute [simp, grind =] TildeInvolutive.tilde_involutive
+attribute [simp, grind =] LogicalNeutral.DeMorgan.verum LogicalNeutral.DeMorgan.falsum
+  LogicalConnective.DeMorgan.and LogicalConnective.DeMorgan.or
+
+/-- Introducing `∼φ` as an abbreviation of `φ ⇒ₗ ⊥`. -/
+class NegAbbrev (F : Type*) [Tilde F] [Arrow F] [Bot F] where
+  protected neg {φ : F} : ∼φ = φ ⇒ₗ ⊥
+
+attribute [grind =] NegAbbrev.neg
+
+/-- Introducing `∼φ`, `φ ⋎ ψ`, `φ ⋏ ψ`, `⊤` as abbreviation. -/
+class ŁukasiewiczAbbrev (F : Type*) [LogicalNeutral F] [LogicalConnective F] extends
+    NegAbbrev F where
+  protected top : ⊤ = ∼(⊥ : F)
+  protected or {φ ψ : F} : φ ⋎ ψ = ∼φ ⇒ₗ ψ
+  protected and {φ ψ : F} : φ ⋏ ψ = ∼(φ ⇒ₗ ∼ψ)
+
+attribute [grind =] ŁukasiewiczAbbrev.and ŁukasiewiczAbbrev.or ŁukasiewiczAbbrev.top
+
+section tilde
+
+variable {α : Type*} [Tilde α] [TildeInvolutive α]
+
+@[simp]
+lemma TildeInvolutive.tilde_injective : Function.Injective (∼· : α → α) :=
+  by
+  intro φ ψ h
+  simpa using congr_arg (∼·) h
+
+@[simp]
+lemma TildeInvolutive.tilde_eq_tilde_iff_eq {φ ψ : α} : ∼φ = ∼ψ ↔ φ = ψ :=
+  Function.Injective.eq_iff TildeInvolutive.tilde_injective
+
+/-- The invol construction in `FFL.Tilde`. -/
+def Tilde.invol : α ↪ α :=
+  ⟨(∼·), TildeInvolutive.tilde_injective⟩
+
+@[simp]
+lemma Tilde.invol_app (φ : α) : Tilde.invol φ = ∼φ :=
+  rfl
+
+end tilde
+
+namespace LogicalConnective
+
+section
+variable {α : Type*} [LogicalConnective α]
+
+/-- The iff construction in `FFL.LogicalConnective`. -/
+@[match_pattern]
+def iff (a b : α) :=
+  (a ⇒ₗ b) ⋏ (b ⇒ₗ a)
+
+/-- A defined logical connective for "iff", defined from the logical connectives `⇒ₗ` and `⋏`.
+-/
+infix:61 " ⇔ₗ " => LogicalConnective.iff
+
+end
+
+@[reducible]
+instance PropLogicSymbols : LogicalConnective Prop
+    where
+  arrow := fun P Q => (P → Q)
+  wedge := And
+  vee := Or
+  tilde := Not
+
+instance PropLogicalNeutral : LogicalNeutral Prop
+    where
+  top := True
+  bot := False
+
+@[simp]
+lemma «Prop».top_eq : ⊤ = True :=
+  rfl
+
+@[simp]
+lemma «Prop».bot_eq : ⊥ = False :=
+  rfl
+
+@[simp]
+lemma «Prop».neg_eq (φ : Prop) : ∼φ = ¬φ :=
+  rfl
+
+@[simp]
+lemma «Prop».arrow_eq (φ ψ : Prop) : (φ ⇒ₗ ψ) = (φ → ψ) :=
+  rfl
+
+@[simp]
+lemma «Prop».and_eq (φ ψ : Prop) : (φ ⋏ ψ) = (φ ∧ ψ) :=
+  rfl
+
+@[simp]
+lemma «Prop».or_eq (φ ψ : Prop) : (φ ⋎ ψ) = (φ ∨ ψ) :=
+  rfl
+
+@[simp]
+lemma «Prop».iff_eq (φ ψ : Prop) : (φ ⇔ₗ ψ) = (φ ↔ ψ) := by
+  simp [LogicalConnective.iff, iff_iff_implies_and_implies]
+
+instance : TildeInvolutive Prop where tilde_involutive := fun _ => by simp
+
+instance : LogicalConnective.DeMorgan Prop
+    where
+  imply := fun _ _ => by simp [imp_iff_not_or]
+  and := fun _ _ => by simp [-not_and, not_and_or]
+  or := fun _ _ => by simp [not_or]
+
+instance : LogicalNeutral.DeMorgan Prop
+    where
+  verum := by simp
+  falsum := by simp
+
+/--
+A class for a type `F` which contains homomorphisms (for logical connectives) from `α` to `β`.
+-/
+class HomClass (F : Type*) (α β : outParam Type*) [LogicalConnective α] [LogicalNeutral α]
+    [LogicalConnective β] [LogicalNeutral β] [FunLike F α β] where
+  map_top : ∀ (f : F), f ⊤ = ⊤
+  map_bot : ∀ (f : F), f ⊥ = ⊥
+  map_neg : ∀ (f : F) (φ : α), f (∼φ) = ∼f φ
+  map_imply : ∀ (f : F) (φ ψ : α), f (φ ⇒ₗ ψ) = f φ ⇒ₗ f ψ
+  map_and : ∀ (f : F) (φ ψ : α), f (φ ⋏ ψ) = f φ ⋏ f ψ
+  map_or : ∀ (f : F) (φ ψ : α), f (φ ⋎ ψ) = f φ ⋎ f ψ
+
+attribute [simp, grind =] HomClass.map_top HomClass.map_bot HomClass.map_neg HomClass.map_imply
+  HomClass.map_and HomClass.map_or
+
+namespace HomClass
+
+variable (F : Type*) (α β : outParam Type*) [LogicalConnective α] [LogicalNeutral α]
+  [LogicalConnective β] [LogicalNeutral β] [FunLike F α β]
+variable [HomClass F α β]
+variable (f : F) (a b : α)
+
+instance : CoeFun F (fun _ => α → β) :=
+  ⟨DFunLike.coe⟩
+
+@[simp]
+lemma map_iff : f (a ⇔ₗ b) = f a ⇔ₗ f b := by simp [LogicalConnective.iff]
+
+end HomClass
+
+variable (α β γ : Type*) [LogicalConnective α] [LogicalConnective β] [LogicalConnective γ]
+  [LogicalNeutral α] [LogicalNeutral β] [LogicalNeutral γ]
+
+/-- Data and laws for Hom in `FFL.LogicalConnective`. -/
+structure Hom where
+  /-- The to Tr construction in `FFL.LogicalConnective.Hom`. -/
+  toTr : α → β
+  map_top' : toTr ⊤ = ⊤
+  map_bot' : toTr ⊥ = ⊥
+  map_neg' : ∀ φ, toTr (∼φ) = ∼toTr φ
+  map_imply' : ∀ φ ψ, toTr (φ ⇒ₗ ψ) = toTr φ ⇒ₗ toTr ψ
+  map_and' : ∀ φ ψ, toTr (φ ⋏ ψ) = toTr φ ⋏ toTr ψ
+  map_or' : ∀ φ ψ, toTr (φ ⋎ ψ) = toTr φ ⋎ toTr ψ
+
+/-- A structure for homomorphisms (for logical connectives) from `α` to `β`.
+-/
+infix:25 " →ˡᶜ " => Hom
+
+namespace Hom
+variable {α β γ}
+
+instance : FunLike (α →ˡᶜ β) α β where
+  coe := toTr
+  coe_injective := by intro f g h; rcases f; rcases g; simpa using h
+
+instance : CoeFun (α →ˡᶜ β) (fun _ => α → β) :=
+  DFunLike.toCoeFun
+
+@[ext]
+lemma ext (f g : α →ˡᶜ β) (h : ∀ x, f x = g x) : f = g :=
+  DFunLike.ext f g h
+
+instance : HomClass (α →ˡᶜ β) α β where
+  map_top := map_top'
+  map_bot := map_bot'
+  map_neg := map_neg'
+  map_imply := map_imply'
+  map_and := map_and'
+  map_or := map_or'
+
+variable (f : α →ˡᶜ β) (a b : α)
+
+/-- The id construction in `FFL.LogicalConnective.Hom`. -/
+protected def id : α →ˡᶜ α where
+  toTr := id
+  map_top' := by simp
+  map_bot' := by simp
+  map_neg' := by simp
+  map_imply' := by simp
+  map_and' := by simp
+  map_or' := by simp
+
+@[simp]
+lemma app_id (a : α) : LogicalConnective.Hom.id a = a :=
+  rfl
+
+/-- The comp construction in `FFL.LogicalConnective.Hom`. -/
+def comp (g : β →ˡᶜ γ) (f : α →ˡᶜ β) : α →ˡᶜ γ
+    where
+  toTr := g ∘ f
+  map_top' := by simp
+  map_bot' := by simp
+  map_neg' := by simp
+  map_imply' := by simp
+  map_and' := by simp
+  map_or' := by simp
+
+@[simp]
+lemma app_comp (g : β →ˡᶜ γ) (f : α →ˡᶜ β) (a : α) : g.comp f a = g (f a) :=
+  rfl
+
+end Hom
+
+/-- Data and laws for And Or Closed in `FFL.LogicalConnective`. -/
+class AndOrClosed {F} [LogicalConnective F] [LogicalNeutral F] (C : F → Prop) where
+  verum : C ⊤
+  falsum : C ⊥
+  and {f g : F} : C f → C g → C (f ⋏ g)
+  or {f g : F} : C f → C g → C (f ⋎ g)
+
+/-- Data and laws for Closed in `FFL.LogicalConnective`. -/
+class Closed {F} [LogicalConnective F] [LogicalNeutral F] (C : F → Prop) extends
+    AndOrClosed C where
+  not {f : F} : C f → C (∼f)
+  imply {f g : F} : C f → C g → C (f ⇒ₗ g)
+
+end LogicalConnective
+
+/-
+section Subclosed
+
+class Tilde.Subclosed [Tilde F] (C : F → Prop) where
+  tilde_closed : C (∼φ) → C φ
+
+class Arrow.Subclosed [Arrow F] (C : F → Prop) where
+  arrow_closed : C (φ ⇒ₗ ψ) → C φ ∧ C ψ
+
+class Wedge.Subclosed [Wedge F] (C : F → Prop) where
+  wedge_closed : C (φ ⋏ ψ) → C φ ∧ C ψ
+
+class Vee.Subclosed [Vee F] (C : F → Prop) where
+  vee_closed : C (φ ⋎ ψ) → C φ ∧ C ψ
+
+attribute [aesop safe 5 forward]
+  Tilde.Subclosed.tilde_closed
+  Arrow.Subclosed.arrow_closed
+  Wedge.Subclosed.wedge_closed
+  Vee.Subclosed.vee_closed
+
+class LogicalConnective.Subclosed [LogicalConnective F] (C : F → Prop) extends
+  Tilde.Subclosed C,
+  Arrow.Subclosed C,
+  Wedge.Subclosed C,
+  Vee.Subclosed C
+
+end Subclosed
+-/
+
+section conjdisj
+
+variable {α β : Type*} [LogicalConnective α] [LogicalConnective β] [LogicalNeutral α]
+  [LogicalNeutral β]
+
+/-- The conj Lt construction in `FFL`. -/
+def conjLt (φ : ℕ → α) : ℕ → α
+  | 0 => ⊤
+  | k + 1 => φ k ⋏ conjLt φ k
+
+@[simp]
+lemma conjLt_zero (φ : ℕ → α) : conjLt φ 0 = ⊤ :=
+  rfl
+
+@[simp]
+lemma conjLt_succ (φ : ℕ → α) (k) : conjLt φ (k + 1) = φ k ⋏ conjLt φ k :=
+  rfl
+
+/-- Homomorphisms commute with `k`-ary conjunctions.
+-/
+@[simp]
+lemma hom_conj_prop [FunLike F α Prop] [LogicalConnective.HomClass F α Prop] (f : F)
+    (φ : ℕ → α) : f (conjLt φ k) ↔ ∀ i < k, f (φ i) := by
+  induction k with
+  | zero => simp [*]
+  | succ k
+    ih =>
+    suffices (f (φ k) ∧ ∀ i < k, f (φ i)) ↔ ∀ i < k + 1, f (φ i) by simp [*]
+    constructor
+    · rintro ⟨hk, h⟩
+      intro i hi
+      rcases Nat.eq_or_lt_of_le (Nat.le_of_lt_succ hi) with (rfl | hi)
+      · exact hk
+      · exact h i hi
+    · grind
+
+/-- The disj Lt construction in `FFL`. -/
+def disjLt (φ : ℕ → α) : ℕ → α
+  | 0 => ⊥
+  | k + 1 => φ k ⋎ disjLt φ k
+
+@[simp]
+lemma disjLt_zero (φ : ℕ → α) : disjLt φ 0 = ⊥ :=
+  rfl
+
+@[simp]
+lemma disjLt_succ (φ : ℕ → α) (k) : disjLt φ (k + 1) = φ k ⋎ disjLt φ k :=
+  rfl
+
+/-- Homomorphisms commute with `k`-ary disjunctions.
+-/
+@[simp]
+lemma hom_disj_prop [FunLike F α Prop] [LogicalConnective.HomClass F α Prop] (f : F)
+    (φ : ℕ → α) : f (disjLt φ k) ↔ ∃ i < k, f (φ i) := by
+  induction k with
+  | zero => simp [*]
+  | succ k
+    ih =>
+    suffices (f (φ k) ∨ ∃ i < k, f (φ i)) ↔ ∃ i < k + 1, f (φ i) by simp [*]
+    grind
+
+end conjdisj
+
+end FFL
+
+open FFL
+
+namespace Matrix
+
+open _root_.Matrix
+variable {α : Type*}
+
+section conjunction
+
+variable [Top α] [Wedge α]
+
+/-- The conjunction of a vector of elements of type `α`, where `α` is a type with `Wedge α`. -/
+def conj : {n : ℕ} → (Fin n → α) → α
+  | 0, _ => ⊤
+  | _ + 1, v => v 0 ⋏ conj (vecTail v)
+
+@[simp]
+lemma conj_nil (v : Fin 0 → α) : conj v = ⊤ :=
+  rfl
+
+@[simp]
+lemma conj_cons {a : α} {v : Fin n → α} : conj (a :> v) = a ⋏ conj v :=
+  rfl
+
+end conjunction
+
+section disjunction
+
+variable [Bot α] [Vee α]
+
+/-- The disjunction of a vector of elements of type `α`, where `α` is a type with `Vee α`. -/
+def disj : {n : ℕ} → (Fin n → α) → α
+  | 0, _ => ⊥
+  | _ + 1, v => v 0 ⋎ disj (vecTail v)
+
+@[simp]
+lemma disj_nil (v : Fin 0 → α) : disj v = ⊥ :=
+  rfl
+
+@[simp]
+lemma disj_cons {a : α} {v : Fin n → α} : disj (a :> v) = a ⋎ disj v :=
+  rfl
+
+end disjunction
+
+variable [LogicalConnective α] [LogicalConnective β] [LogicalNeutral α] [LogicalNeutral β]
+
+/-- Homomorphisms commute with `k`-ary conjunctions (vector version).
+-/
+@[simp]
+lemma conj_hom_prop [FunLike F α Prop] [LogicalConnective.HomClass F α Prop] (f : F)
+    (v : Fin n → α) : f (conj v) = ∀ i, f (v i) := by
+  induction n with
+  | zero => simp [conj]
+  | succ n
+    ih =>
+    suffices (f (v 0) ∧ ∀ (i : Fin n), f (vecTail v i)) ↔ ∀ (i : Fin (n + 1)), f (v i) by
+      simpa [conj, ih]
+    constructor
+    · intro ⟨hz, hs⟩ i; cases i using Fin.cases;
+      { exact hz
+      };
+      { exact hs _
+      }
+    · intro h; exact ⟨h 0, fun i => h _⟩
+
+/-- Homomorphisms commute with `k`-ary disjunctions (vector version).
+-/
+@[simp]
+lemma disj_hom_prop [FunLike F α Prop] [LogicalConnective.HomClass F α Prop] (f : F)
+    (v : Fin n → α) : f (disj v) = ∃ i, f (v i) := by
+  induction n with
+  | zero => simp [disj]
+  | succ n
+    ih =>
+    suffices (f (v 0) ∨ ∃ i, f (vecTail v i)) ↔ ∃ i, f (v i) by simpa [disj, ih]
+    constructor
+    · rintro (H | ⟨i, H⟩);
+      { exact ⟨0, H⟩
+      };
+      { exact ⟨i.succ, H⟩
+      }
+    · rintro ⟨i, h⟩
+      cases i using Fin.cases;
+      { left; exact h
+      };
+      { right; exact ⟨_, h⟩
+      }
+
+@[simp]
+lemma hom_conj [FunLike F α β] [LogicalConnective.HomClass F α β] (f : F) (v : Fin n → α) :
+    f (conj v) = conj (f ∘ v) := by
+  induction n with
+  | zero => simp [conj]
+  | succ n ih => simp [conj, ih]
+
+lemma hom_conj₂ [FunLike F α β] [LogicalConnective.HomClass F α β] (f : F) (v : Fin n → α) :
+    f (conj v) = conj fun i => f (v i) :=
+  hom_conj f v
+
+@[simp]
+lemma hom_disj [FunLike F α β] [LogicalConnective.HomClass F α β] (f : F) (v : Fin n → α) :
+    f (disj v) = disj (f ∘ v) := by
+  induction n with
+  | zero => simp [disj]
+  | succ n ih => simp [disj, ih]
+
+lemma hom_disj' [FunLike F α β] [LogicalConnective.HomClass F α β] (f : F) (v : Fin n → α) :
+    f (disj v) = disj fun i => f (v i) :=
+  hom_disj f v
+
+end Matrix
+
+namespace List
+
+open _root_.List
+variable {α : Type*}
+
+variable {φ ψ : α}
+
+section tilde
+
+variable [Tilde α]
+
+instance : Tilde (List α) :=
+  ⟨fun l ↦ l.map (∼·)⟩
+
+lemma tilde_def (l : List α) : ∼l = l.map (∼·) :=
+  rfl
+
+@[simp]
+lemma tilde_nil : ∼([] : List α) = [] :=
+  rfl
+
+@[simp]
+lemma tilde_cons (a : α) (l : List α) : ∼(a :: l) = ∼a :: ∼l :=
+  rfl
+
+@[simp]
+lemma tilde_append (l k : List α) : ∼(l ++ k) = ∼l ++ ∼k := by
+  induction l with
+  | nil => simp [*]
+  | cons a as ih => simp [*, List.cons_append]
+
+@[simp]
+lemma mem_tilde_iff [TildeInvolutive α] {a : α} {l : List α} : a ∈ ∼l ↔ ∼a ∈ l := by
+  induction l with
+  | nil => simp [*]
+  | cons b bs ih =>
+    suffices a = ∼b ↔ ∼a = b by simp [ih, this]
+    constructor <;>
+      { rintro rfl; simp
+      }
+
+instance [TildeInvolutive α] : TildeInvolutive (List α) where
+  tilde_involutive
+    l := by
+    induction l with
+    | nil => simp [*]
+    | cons a as ih => simp [ih, TildeInvolutive.tilde_involutive a]
+
+end tilde
+
+section conjunction
+
+variable [Top α] [Wedge α]
+
+/-- The conj construction in `List`. -/
+def conj : List α → α
+  | [] => ⊤
+  | a :: as => a ⋏ (PointwiseComposition.List.conj as)
+
+@[simp]
+lemma conj_nil : conj (α := α) [] = ⊤ :=
+  rfl
+
+@[simp]
+lemma conj_cons {a : α} {as : List α} :
+    conj (a :: as) = a ⋏ (PointwiseComposition.List.conj as) :=
+  rfl
+
+/-- Remark: `[φ].conj₂ = φ ≠ φ ⋏ ⊤ = [φ].conj`. -/
+def conj₂ : List α → α
+  | [] => ⊤
+  | [φ] => φ
+  | φ :: ψ :: rs => φ ⋏ (PointwiseComposition.List.conj₂ (ψ :: rs))
+
+/-- The conjunction of a list of members of type `α`.
+-/
+prefix:80 "⋀" => List.conj₂
+
+@[simp]
+lemma conj₂_nil : ⋀[] = (⊤ : α) :=
+  rfl
+
+@[simp]
+lemma conj₂_singleton : ⋀[φ] = φ :=
+  rfl
+
+@[simp]
+lemma conj₂_doubleton : ⋀[φ, ψ] = φ ⋏ ψ :=
+  rfl
+
+@[simp]
+lemma conj₂_cons_nonempty {a : α} {as : List α} (h : as ≠ [] := by assumption) :
+    ⋀(a :: as) = a ⋏ ⋀as := by
+  cases as with
+  | nil => contradiction;
+  | cons ψ rs => simp [List.conj₂]
+
+/-- The conj' construction in `List`. -/
+def conj' (f : ι → α) (l : List ι) : α :=
+  (PointwiseComposition.List.conj₂ (l.map f))
+
+@[simp]
+lemma conj'_nil (f : ι → α) : conj' f [] = ⊤ :=
+  rfl
+
+@[simp]
+lemma conj'_singleton (f : ι → α) (i : ι) : conj' f [i] = f i :=
+  rfl
+
+@[simp]
+lemma conj'_cons (f : ι → α) (i j : ι) (is : List ι) :
+    conj' f (i :: j :: is) = f i ⋏ conj' f (j :: is) :=
+  rfl
+
+end conjunction
+
+section disjunction
+
+variable [Bot α] [Vee α]
+
+/-- The disj construction in `List`. -/
+def disj : List α → α
+  | [] => ⊥
+  | a :: as => a ⋎ (PointwiseComposition.List.disj as)
+
+@[simp]
+lemma disj_nil : disj (α := α) [] = ⊥ :=
+  rfl
+
+@[simp]
+lemma disj_cons {a : α} {as : List α} :
+    disj (a :: as) = a ⋎ (PointwiseComposition.List.disj as) :=
+  rfl
+
+/-- Remark: `[φ].disj₂ = φ ≠ φ ⋎ ⊥ = [φ].disj`. -/
+def disj₂ : List α → α
+  | [] => ⊥
+  | [φ] => φ
+  | φ :: ψ :: rs => φ ⋎ (PointwiseComposition.List.disj₂ (ψ :: rs))
+
+/-- The disjunction of a list of members of type `α`.
+-/
+prefix:80 "⋁" => disj₂
+
+@[simp]
+lemma disj₂_nil : ⋁[] = (⊥ : α) :=
+  rfl
+
+@[simp]
+lemma disj₂_singleton : ⋁[φ] = φ :=
+  rfl
+
+@[simp]
+lemma disj₂_doubleton : ⋁[φ, ψ] = φ ⋎ ψ :=
+  rfl
+
+@[simp]
+lemma disj₂_cons_nonempty {a : α} {as : List α} (h : as ≠ [] := by assumption) :
+    ⋁(a :: as) = a ⋎ ⋁as := by
+  cases as with
+  | nil => contradiction;
+  | cons ψ rs => simp [disj₂]
+
+/-- The disj' construction in `List`. -/
+def disj' (f : ι → α) (l : List ι) : α :=
+  (PointwiseComposition.List.disj₂ (l.map f))
+
+@[simp]
+lemma disj'_nil (f : ι → α) : disj' f [] = ⊥ :=
+  rfl
+
+@[simp]
+lemma disj'_singleton (f : ι → α) (i : ι) : disj' f [i] = f i :=
+  rfl
+
+@[simp]
+lemma disj'_cons (f : ι → α) (i j : ι) (is : List ι) :
+    disj' f (i :: j :: is) = f i ⋎ disj' f (j :: is) :=
+  rfl
+
+end disjunction
+
+section tilde
+
+variable [LogicalConnective α] [LogicalNeutral α] [LogicalNeutral.DeMorgan α]
+  [LogicalConnective.DeMorgan α]
+
+/-- Variadic de Morgan's law for lists of elements of type `α`.
+-/
+@[simp]
+lemma tilde_conj (l : List α) :
+    ∼(PointwiseComposition.List.disj l) = (PointwiseComposition.List.conj (∼l)) := by
+  match l with
+  | [] => simp
+  | a :: l => simp [tilde_conj l]
+
+/-- Variadic de Morgan's law for lists of elements of type `α`.
+-/
+@[simp]
+lemma tilde_disj (l : List α) :
+    ∼(PointwiseComposition.List.conj l) = (PointwiseComposition.List.disj (∼l)) := by
+  match l with
+  | [] => simp
+  | a :: l => simp [tilde_disj l]
+
+/-- Variadic de Morgan's law for lists of elements of type `α`.
+-/
+@[simp]
+lemma tilde_conj₂ (l : List α) : ∼⋁l = ⋀(∼l) := by
+  match l with
+  | [] => simp
+  | [a] => simp
+  | a :: b :: l => simp [tilde_conj₂ (b :: l)]
+
+/-- Variadic de Morgan's law for lists of elements of type `α`.
+-/
+@[simp]
+lemma tilde_disj₂ (l : List α) : ∼⋀l = ⋁(∼l) := by
+  match l with
+  | [] => simp
+  | [a] => simp
+  | a :: b :: l => simp [tilde_disj₂ (b :: l)]
+
+end tilde
+
+section
+
+variable [LogicalConnective α] [LogicalNeutral α] [LogicalConnective β] [LogicalNeutral β]
+  [FunLike G α β] [LogicalConnective.HomClass G α β]
+
+lemma map_tilde (f : G) (l : List α) : (∼l : List α).map f = ∼(l.map f) := by
+  induction l <;> simp [*]
+
+lemma map_conj (f : G) (l : List α) :
+    f (PointwiseComposition.List.conj l) = (PointwiseComposition.List.conj (l.map f)) := by
+  induction l <;> simp [*]
+
+lemma map_conj₂ (f : G) (l : List α) :
+    f (PointwiseComposition.List.conj₂ l) = (PointwiseComposition.List.conj₂ (l.map f)) := by
+  induction l using List.inductionWithSingleton' <;> simp [*]
+
+lemma map_conj' (F : G) (l : List ι) (f : ι → α) :
+    F ((PointwiseComposition.List.conj' · l) f) =
+      (PointwiseComposition.List.conj' · l) (F ∘ f) :=
+  by induction l using List.inductionWithSingleton' <;> simp [*]
+
+lemma map_disj (f : G) (l : List α) :
+    f (PointwiseComposition.List.disj l) = (PointwiseComposition.List.disj (l.map f)) := by
+  induction l <;> simp [*]
+
+lemma map_disj₂ (f : G) (l : List α) :
+    f (PointwiseComposition.List.disj₂ l) = (PointwiseComposition.List.disj₂ (l.map f)) := by
+  induction l using List.inductionWithSingleton' <;> simp [*]
+
+lemma map_disj' (F : G) (l : List ι) (f : ι → α) :
+    F ((PointwiseComposition.List.disj' · l) f) =
+      (PointwiseComposition.List.disj' · l) (F ∘ f) :=
+  by induction l using List.inductionWithSingleton' <;> simp [*]
+
+end
+
+section
+
+variable [LogicalConnective α] [LogicalNeutral α] [FunLike G α Prop]
+  [LogicalConnective.HomClass G α Prop]
+
+@[simp]
+lemma map_conj_prop {f : G} {l : List α} :
+    f (PointwiseComposition.List.conj l) ↔ ∀ a ∈ l, f a := by induction l <;> simp [*]
+
+@[simp]
+lemma map_conj₂_prop {f : G} {l : List α} :
+    f (PointwiseComposition.List.conj₂ l) ↔ ∀ a ∈ l, f a := by
+  induction l using List.inductionWithSingleton' <;> simp [*]
+
+lemma map_conj_append_prop (f : G) (l₁ l₂ : List α) :
+    f (PointwiseComposition.List.conj (l₁ ++ l₂)) ↔
+      f ((PointwiseComposition.List.conj l₁) ⋏ (PointwiseComposition.List.conj l₂)) :=
+  by induction l₁ <;> induction l₂ <;> aesop;
+
+@[simp]
+lemma map_conj'_prop {F : G} {l : List ι} {f : ι → α} :
+    F ((PointwiseComposition.List.conj' · l) f) ↔ ∀ i ∈ l, F (f i) := by
+  induction l using List.inductionWithSingleton' <;> simp [*]
+
+@[simp]
+lemma map_disj_prop {f : G} {l : List α} :
+    f (PointwiseComposition.List.disj l) ↔ ∃ a ∈ l, f a := by induction l <;> simp [*]
+
+@[simp]
+lemma map_disj₂_prop {f : G} {l : List α} :
+    f (PointwiseComposition.List.disj₂ l) ↔ ∃ a ∈ l, f a := by
+  induction l using List.inductionWithSingleton' <;> simp [*]
+
+lemma map_disj_append_prop (f : G) (l₁ l₂ : List α) :
+    f (PointwiseComposition.List.disj (l₁ ++ l₂)) ↔
+      f ((PointwiseComposition.List.disj l₁) ⋎ (PointwiseComposition.List.disj l₂)) :=
+  by induction l₁ <;> induction l₂ <;> aesop;
+
+@[simp]
+lemma map_disj'_prop {F : G} {l : List ι} {f : ι → α} :
+    F ((PointwiseComposition.List.disj' · l) f) ↔ ∃ i ∈ l, F (f i) := by
+  induction l using List.inductionWithSingleton' <;> simp [*]
+
+end
+
+end List
+
+namespace Multiset
+
+open _root_.Multiset
+section
+
+variable {α : Type*} [Tilde α]
+
+instance : Tilde (Multiset α) :=
+  ⟨fun Γ ↦ Γ.map (∼·)⟩
+
+lemma tilde_def (Γ : Multiset α) : ∼Γ = Γ.map (∼·) :=
+  rfl
+
+@[simp]
+lemma tilde_zero : ∼(0 : Multiset α) = 0 :=
+  rfl
+
+@[simp]
+lemma tilde_add (Γ Δ : Multiset α) : ∼(Γ + Δ) = ∼Γ + ∼Δ := by simp [tilde_def]
+
+@[simp]
+lemma tilde_atom (φ : α) : ∼(⦃φ⦄ : Multiset α) = ⦃∼φ⦄ := by simp [tilde_def]
+
+@[simp]
+lemma mem_tilde_iff [TildeInvolutive α] {φ : α} {Γ : Multiset α} : φ ∈ ∼Γ ↔ ∼φ ∈ Γ :=
+  by
+  rw [tilde_def]
+  constructor
+  · intro h
+    rcases Multiset.mem_map.mp h with ⟨ψ, hψ, rfl⟩
+    simpa using hψ
+  · intro hφ
+    simpa using Multiset.mem_map_of_mem (fun ψ ↦ ∼ψ) hφ
+
+instance [TildeInvolutive α] : TildeInvolutive (Multiset α) where
+  tilde_involutive Γ := by simp [tilde_def, Multiset.map_map]
+
+end
+
+lemma map_tilde_comm [LogicalNeutral α] [LogicalConnective α] [LogicalNeutral β]
+    [LogicalConnective β] {Γ : Multiset α} (f : α →ˡᶜ β) : (∼Γ).map f = ∼Γ.map f := by
+  simp [Multiset.tilde_def]
+
+end Multiset
+
+namespace Finset
+
+open _root_.Finset
+
+variable {α : Type*}
+
+section tilde
+
+variable [Tilde α] [TildeInvolutive α]
+
+instance : Tilde (Finset α) :=
+  ⟨fun l ↦ l.map Tilde.invol⟩
+
+lemma tilde_def (s : Finset α) : ∼s = s.map Tilde.invol :=
+  rfl
+
+@[simp]
+lemma mem_tilde_iff {a : α} {s : Finset α} : a ∈ ∼s ↔ ∼a ∈ s := by simp [tilde_def]; grind
+
+instance : TildeInvolutive (Finset α) where tilde_involutive s := by ext a; simp
+
+@[simp]
+lemma tilde_empty : ∼(∅ : Finset α) = ∅ :=
+  rfl
+
+open _root_.Classical in
+@[simp]
+lemma tilde_insert (a : α) (s : Finset α) : ∼(insert a s) = insert (∼a) (∼s) := by
+  simp [tilde_def]
+
+open _root_.Classical in
+@[simp]
+lemma tilde_union (s t : Finset α) : ∼(s ∪ t) = ∼s ∪ ∼t := by simp [tilde_def, Finset.map_union]
+
+end tilde
+
+/-- The conj construction in `Finset`. -/
+noncomputable def conj [Top α] [Wedge α] (s : Finset α) : α :=
+  (PointwiseComposition.List.conj₂ s.toList)
+
+/-- The conj' construction in `Finset`. -/
+noncomputable def conj' [Top α] [Wedge α] (s : Finset ι) (f : ι → α) : α :=
+  (PointwiseComposition.List.conj' · s.toList) f
+
+/-- The uconj construction in `Finset`. -/
+noncomputable def uconj [Top α] [Wedge α] [Fintype ι] (f : ι → α) : α :=
+  (PointwiseComposition.Finset.conj' (Finset.univ : Finset ι)) f
+
+/-- The disj construction in `Finset`. -/
+noncomputable def disj [Bot α] [Vee α] (s : Finset α) : α :=
+  (PointwiseComposition.List.disj₂ s.toList)
+
+/-- The disj' construction in `Finset`. -/
+noncomputable def disj' [Bot α] [Vee α] (s : Finset ι) (f : ι → α) : α :=
+  (PointwiseComposition.List.disj' · s.toList) f
+
+/-- The udisj construction in `Finset`. -/
+noncomputable def udisj [Bot α] [Vee α] [Fintype ι] (f : ι → α) : α :=
+  (PointwiseComposition.Finset.disj' (Finset.univ : Finset ι)) f
+
+section
+
+open _root_.Lean Lean PrettyPrinter Delaborator SubExpr
+
+/-- - `⋀ i ∈ s, φ i` is notation for `s.conj' fun i ↦ φ i`
+- `⋀ i, φ i` is notation for `uconj fun i ↦ φ i`
+-/
+syntax (name := biguconj) "⋀ " Parser.Term.funBinder (" : "term)? (" ∈ "term)? ", " term:0 :
+  term
+
+macro_rules (kind := biguconj)
+  |           `(⋀ $i:ident : $ι, $v) => `(uconj fun $i : $ι ↦ $v)
+  |                `(⋀ $i:ident, $v) => `(uconj fun $i ↦ $v)
+  | `(⋀ $i:ident : $ι ∈ $s:term, $v) => `(Finset.conj' $s fun $i : $ι ↦ $v)
+  |      `(⋀ $i:ident ∈ $s:term, $v) => `(Finset.conj' $s fun $i ↦ $v)
+
+
+
+
+
+
+
+/-- The uconj Unexpsnder construction in `Finset`. -/
+@[app_unexpander uconj]
+meta def uconjUnexpsnder : Unexpander
+  | `($_ fun $i ↦ $v) => `(⋀ $i, $v)
+  |                 _ => throw ()
+
+
+
+
+
+
+
+/-- The conj'Unexpsnder construction in `Finset`. -/
+@[app_unexpander Finset.conj']
+meta def conj'Unexpsnder : Unexpander
+  | `($_ $s fun $i ↦ $v) => `(⋀ $i ∈ $s, $v)
+  |                    _ => throw ()
+
+
+
+
+
+
+
+/-- - `⋁ i ∈ s, φ i` is notation for `s.disj' fun i ↦ φ i`
+- `⋁ i, φ i` is notation for `udisj fun i ↦ φ i`
+-/
+syntax (name := bigudisj) "⋁ " Parser.Term.funBinder (" : "term)? (" ∈ "term)? ", " term:0 :
+  term
+
+macro_rules (kind := bigudisj)
+  |           `(⋁ $i:ident : $ι, $v) => `(udisj fun $i : $ι ↦ $v)
+  |                `(⋁ $i:ident, $v) => `(udisj fun $i ↦ $v)
+  | `(⋁ $i:ident : $ι ∈ $s:term, $v) => `(Finset.disj' $s fun $i : $ι ↦ $v)
+  |      `(⋁ $i:ident ∈ $s:term, $v) => `(Finset.disj' $s fun $i ↦ $v)
+
+
+
+
+
+
+
+/-- The udisj Unexpsnder construction in `Finset`. -/
+@[app_unexpander udisj]
+meta def udisjUnexpsnder : Unexpander
+  | `($_ fun $i ↦ $v) => `(⋁ $i, $v)
+  |                 _ => throw ()
+
+
+
+
+
+
+
+/-- The disj'Unexpsnder construction in `Finset`. -/
+@[app_unexpander Finset.disj']
+meta def disj'Unexpsnder : Unexpander
+  | `($_ $s fun $i ↦ $v) => `(⋁ $i ∈ $s, $v)
+  |                    _ => throw ()
+
+
+
+
+
+
+
+end
+
+section conjunction
+
+variable [Top α] [Wedge α]
+
+@[simp]
+lemma conj_empty : conj (∅ : Finset α) = ⊤ := by simp [conj]
+
+@[simp]
+lemma conj_singleton (a : α) : conj { a } = a := by simp [conj]
+
+@[simp]
+lemma conj'_empty (f : ι → α) : (PointwiseComposition.Finset.conj' (∅ : Finset ι)) f = ⊤ := by
+  simp [conj']
+
+@[simp]
+lemma conj'_singleton (f : ι → α) {i : ι} :
+    (PointwiseComposition.Finset.conj' ({ i } : Finset ι)) f = f i := by simp [conj']
+
+@[simp]
+lemma uconj_empty [Fintype ι] [IsEmpty ι] (f : ι → α) : uconj f = ⊤ := by simp [uconj]
+
+@[simp]
+lemma uconj_singleton [Fintype ι] [Unique ι] (f : ι → α) : uconj f = f default := by
+  simp [uconj]
+
+end conjunction
+
+section disjunction
+
+variable [Bot α] [Vee α]
+
+@[simp]
+lemma disj_empty : (PointwiseComposition.Finset.disj (∅ : Finset α)) = ⊥ := by simp [disj]
+
+@[simp]
+lemma disj_singleton (a : α) : (PointwiseComposition.Finset.disj ({ a } : Finset α)) = a := by
+  simp [disj]
+
+@[simp]
+lemma disj'_empty (f : ι → α) : (PointwiseComposition.Finset.disj' (∅ : Finset ι)) f = ⊥ := by
+  simp [disj']
+
+@[simp]
+lemma disj'_singleton (f : ι → α) (i : ι) :
+    (PointwiseComposition.Finset.disj' ({ i } : Finset ι)) f = f i := by simp [disj']
+
+@[simp]
+lemma udisj_empty [Fintype ι] [IsEmpty ι] (f : ι → α) : udisj f = ⊥ := by simp [udisj]
+
+@[simp]
+lemma udisj_singleton [Fintype ι] [Unique ι] (f : ι → α) : udisj f = f default := by
+  simp [udisj]
+
+end disjunction
+
+variable [LogicalConnective α] [LogicalNeutral α] [LogicalConnective β] [LogicalNeutral β]
+
+@[simp]
+lemma map_conj_prop [FunLike F α Prop] [LogicalConnective.HomClass F α Prop] {f : F}
+    {s : Finset α} : f (PointwiseComposition.Finset.conj s) ↔ ∀ a ∈ s, f a := by simp [conj]
+
+lemma map_conj_union [DecidableEq α] [FunLike F α Prop] [LogicalConnective.HomClass F α Prop]
+    (f : F) (s₁ s₂ : Finset α) :
+    f (PointwiseComposition.Finset.conj (s₁ ∪ s₂)) ↔
+      f ((PointwiseComposition.Finset.conj s₁) ⋏ (PointwiseComposition.Finset.conj s₂)) :=
+  by
+  suffices (∀ (a : α), a ∈ s₁ ∨ a ∈ s₂ → f a) ↔ (∀ a ∈ s₁, f a) ∧ ∀ a ∈ s₂, f a by simpa
+  grind
+
+lemma map_conj' [FunLike F α β] [LogicalConnective.HomClass F α β] (Φ : F) (s : Finset ι)
+    (f : ι → α) : Φ (⋀ i ∈ s, f i) = ⋀ i ∈ s, Φ (f i) := by
+  simp [conj', Function.comp_def, List.map_conj']
+
+@[simp]
+lemma map_conj'_prop [FunLike F α Prop] [LogicalConnective.HomClass F α Prop] {f : F}
+    {s : Finset ι} {p : ι → α} :
+    f ((PointwiseComposition.Finset.conj' s) p) ↔ ∀ i ∈ s, f (p i) := by simp [conj']
+
+lemma map_uconj [FunLike F α β] [LogicalConnective.HomClass F α β] (Φ : F) [Fintype ι]
+    (f : ι → α) : Φ (⋀ i, f i) = ⋀ i, Φ (f i) := by simp [uconj, map_conj']
+
+@[simp]
+lemma map_uconj_prop [FunLike F α Prop] [LogicalConnective.HomClass F α Prop] {Φ : F}
+    [Fintype ι] {f : ι → α} : Φ (uconj f) ↔ ∀ i, Φ (f i) := by simp [uconj]
+
+@[simp]
+lemma map_disj_prop [FunLike F α Prop] [LogicalConnective.HomClass F α Prop] (f : F)
+    (s : Finset α) : f (PointwiseComposition.Finset.disj s) ↔ ∃ a ∈ s, f a := by simp [disj]
+
+lemma map_disj_union [DecidableEq α] [FunLike F α Prop] [LogicalConnective.HomClass F α Prop]
+    (f : F) (s₁ s₂ : Finset α) :
+    f (PointwiseComposition.Finset.disj (s₁ ∪ s₂)) ↔
+      f ((PointwiseComposition.Finset.disj s₁) ⋎ (PointwiseComposition.Finset.disj s₂)) :=
+  by
+  suffices (∃ a, (a ∈ s₁ ∨ a ∈ s₂) ∧ f a) ↔ (∃ a ∈ s₁, f a) ∨ ∃ a ∈ s₂, f a by
+    simpa [map_disj_prop]
+  grind
+
+lemma map_disj' [FunLike F α β] [LogicalConnective.HomClass F α β] (Φ : F) (s : Finset ι)
+    (f : ι → α) : Φ (⋁ i ∈ s, f i) = ⋁ i ∈ s, Φ (f i) := by
+  simp [disj', List.map_disj', Function.comp_def]
+
+@[simp]
+lemma map_disj'_prop [FunLike F α Prop] [LogicalConnective.HomClass F α Prop] {f : F}
+    {s : Finset ι} {p : ι → α} :
+    f ((PointwiseComposition.Finset.disj' s) p) ↔ ∃ i ∈ s, f (p i) := by simp [disj']
+
+lemma map_udisj [FunLike F α β] [LogicalConnective.HomClass F α β] (Φ : F) [Fintype ι]
+    (f : ι → α) : Φ (⋁ i, f i) = ⋁ i, Φ (f i) := by simp [udisj, map_disj']
+
+@[simp]
+lemma map_udisj_prop [FunLike F α Prop] [LogicalConnective.HomClass F α Prop] {Φ : F}
+    [Fintype ι] {f : ι → α} : Φ (udisj f) ↔ ∃ i, Φ (f i) := by simp [udisj]
+
+end Finset
+
+end
+
+end PointwiseComposition

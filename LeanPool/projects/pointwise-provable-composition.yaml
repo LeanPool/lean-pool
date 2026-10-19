@@ -1,0 +1,72 @@
+slug: pointwise-provable-composition
+title: Pointwise provable equality and the failure of composition
+summary: For every consistent recursively enumerable extension of Peano arithmetic, pointwise provable
+  equality of unary programs fails to respect composition. Separate productive-set and Goedel incompleteness
+  proofs establish the obstruction. For consistent extensions, compatibility is equivalent to Pi-one
+  completeness. For every extension, the generated composition congruence is extensional equality
+  in the Sigma-one sound case and universal otherwise. The development also proves weak-totality
+  and range obstructions and identifies the sound generated quotient with actual unary partial recursive
+  functions. Its coherent dependency closure preserves the concrete evaluator, arithmetization, first-order
+  syntax, semantics and provability infrastructure. Main-result proofs were produced by AI agents
+  under Florian Lengyel's direction; the Foundation dependency includes substantial human formalization
+  by the Formalized Formal Logic contributors.
+branch: mathematical logic
+entry_module: LeanPool.PointwiseComposition
+authors:
+- Florian Lengyel
+contributors:
+- Shogo Saitou
+- Mashu Noguchi
+- Formalized Formal Logic contributors
+source:
+  title: Pointwise provable equality and the failure of composition
+  authors:
+  - Florian Lengyel
+  arxiv: '2609.25556'
+  url: https://github.com/flengyel/FailureOfComposition
+  github_repo: flengyel/FailureOfComposition
+  commit: 506d1f1494d6c05b0ba304edf5fe0bfa6c32864b
+  announcement: https://arxiv.org/abs/2609.25556
+  announcement_date: '2026-09-22T01:43:45Z'
+  dependency_url: https://github.com/flengyel/foundation
+  dependency_commit: 01f617fbe240a84aaf1c45b31b9d65e0a2e21c1d
+  dependency_license: Apache-2.0
+  completion_record: https://github.com/flengyel/FailureOfComposition/blob/506d1f1494d6c05b0ba304edf5fe0bfa6c32864b/Lean/FailureOfComposition/Porting/STYLE_CLEANUP_VALIDATION.json
+  completion_date: '2026-09-25T13:45:25.762222Z'
+  verified_source_commit: dea04886088894fa919b54249b4e97ad59d56d54
+license: Apache-2.0
+status: verified
+provenance: mix
+main_declarations:
+- PointwiseComposition.no_quotient_of_enumerable_axioms
+main_results:
+- declaration: PointwiseComposition.no_quotient_of_enumerable_axioms
+  informal: For every consistent extension T of Peano arithmetic with recursively enumerable axiom
+    codes, no binary operation on the pointwise-provability quotient of actual natural-number program
+    indices respects their actual composition.
+- declaration: PointwiseComposition.FailureOfComposition.ConcreteIndices.no_index_quotient_of_re_axioms
+  informal: For every consistent extension T of Peano arithmetic with recursively enumerable axiom
+    codes, no binary operation on the pointwise-provability quotient of actual natural-number program
+    indices respects their actual composition.
+- declaration: PointwiseComposition.FailureOfComposition.ConcreteIndices.pi_one_characterization
+  informal: For every consistent extension of Peano arithmetic, right compatibility, composition
+    congruence, completeness for true Pi-one sentences, and agreement with extensional equality of
+    partial functions are equivalent.
+- declaration: PointwiseComposition.FailureOfComposition.ConcreteIndices.generated_congruence_classification
+  informal: For every extension of Peano arithmetic, with no consistency or enumerability hypothesis,
+    the least composition congruence containing pointwise provable equality is extensional equality
+    if the theory is Sigma-one sound and the universal relation otherwise.
+- declaration: PointwiseComposition.FailureOfComposition.ConcreteIndices.generatedQuotientPartialRecursiveEquiv
+  informal: For every Sigma-one sound extension of Peano arithmetic, the generated quotient is a
+    monoid isomorphic to actual unary partial recursive functions with partial-function composition.
+tags:
+- computability
+- provability
+- first-order-arithmetic
+- quotient-congruences
+- mathematical-logic
+msc:
+- 03D75
+- 03F40
+- 08A30
+- 18B10

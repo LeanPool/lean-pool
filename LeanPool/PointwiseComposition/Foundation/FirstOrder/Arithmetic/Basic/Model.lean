@@ -1,0 +1,165 @@
+/-
+Copyright (c) 2026 Formalized Formal Logic contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Formalized Formal Logic contributors
+-/
+
+module
+
+-- Ported and adapted for Lean Pool from the upstream revision recorded in the project card.
+
+public import LeanPool.PointwiseComposition.Foundation.FirstOrder.Arithmetic.Basic.Misc
+
+/-!
+Supporting results for pointwise provable equality. -/
+
+namespace PointwiseComposition
+
+@[expose] public section
+
+namespace FFL
+namespace FirstOrder
+namespace Arithmetic
+
+private lemma complete_aux (T : ArithmeticTheory) [𝐄𝐐 ℒₒᵣ ≼ T] (φ : ArithmeticSentence)
+    (H :
+      ∀ (M : Type w) [ORingStructure M] [Tarski.Structure ℒₒᵣ M] [Tarski.Structure.ORing ℒₒᵣ M]
+        [M↓[ℒₒᵣ] ⊧* T], M↓[ℒₒᵣ] ⊧ φ) :
+    T ⊢ φ :=
+  Theory.Proof.complete <|
+    consequence_iff_eq.mpr fun M _ _ _ hT ↦
+      letI : (Tarski.Structure.Model ℒₒᵣ M)↓[ℒₒᵣ] ⊧* T :=
+        Tarski.Structure.ElementaryEquiv.modelsTheory.mp hT
+      Tarski.Structure.ElementaryEquiv.models.mpr (H (Tarski.Structure.Model ℒₒᵣ M))
+
+open Language
+
+section semantics
+
+variable (M : Type*) [ORingStructure M]
+
+instance standardModel : Tarski.Structure ℒₒᵣ M
+    where
+  func := fun _ f ↦
+    match f with
+    | ORing.Func.zero => fun _ ↦ 0
+    | ORing.Func.one => fun _ ↦ 1
+    | ORing.Func.add => fun v ↦ v 0 + v 1
+    | ORing.Func.mul => fun v ↦ v 0 * v 1
+  rel := fun _ r ↦
+    match r with
+    | ORing.Rel.eq => fun v ↦ v 0 = v 1
+    | ORing.Rel.lt => fun v ↦ v 0 < v 1
+
+instance : Tarski.Structure.Eq ℒₒᵣ M where
+  eq a
+    b := by
+    unfold standardModel
+    simp [Semiformula.Operator.val, Semiformula.Operator.Eq.sentence_eq]
+
+instance : Tarski.Structure.Zero ℒₒᵣ M :=
+  ⟨rfl⟩
+
+instance : Tarski.Structure.One ℒₒᵣ M :=
+  ⟨rfl⟩
+
+instance : Tarski.Structure.Add ℒₒᵣ M :=
+  ⟨fun _ _ ↦ rfl⟩
+
+instance : Tarski.Structure.Mul ℒₒᵣ M :=
+  ⟨fun _ _ ↦ rfl⟩
+
+instance : Tarski.Structure.Eq ℒₒᵣ M :=
+  ⟨fun _ _ ↦ iff_of_eq rfl⟩
+
+instance : Tarski.Structure.LT ℒₒᵣ M :=
+  ⟨fun _ _ ↦ iff_of_eq rfl⟩
+
+instance : ORing ℒₒᵣ :=
+  ORing.mk
+
+lemma standardModel_unique' (s : Tarski.Structure ℒₒᵣ M) (hZero : Tarski.Structure.Zero ℒₒᵣ M)
+    (hOne : Tarski.Structure.One ℒₒᵣ M) (hAdd : Tarski.Structure.Add ℒₒᵣ M)
+    (hMul : Tarski.Structure.Mul ℒₒᵣ M) (hEq : Tarski.Structure.Eq ℒₒᵣ M)
+    (hLT : Tarski.Structure.LT ℒₒᵣ M) : s = standardModel M :=
+  Tarski.Structure.ext
+    (funext₃ fun k f _ ↦
+      match k, f with
+      | _, Language.Zero.zero => by simp [Matrix.empty_eq]
+      | _, Language.One.one => by simp [Matrix.empty_eq]
+      | _, Language.Add.add => by simp
+      | _, Language.Mul.mul => by simp)
+    (funext₃ fun k r _ =>
+      match k, r with
+      | _, Language.Eq.eq => by simp
+      | _, Language.LT.lt => by simp)
+
+lemma standardModel_unique (s : Tarski.Structure ℒₒᵣ M) [hZero : Tarski.Structure.Zero ℒₒᵣ M]
+    [hOne : Tarski.Structure.One ℒₒᵣ M] [hAdd : Tarski.Structure.Add ℒₒᵣ M]
+    [hMul : Tarski.Structure.Mul ℒₒᵣ M] [hEq : Tarski.Structure.Eq ℒₒᵣ M]
+    [hLT : Tarski.Structure.LT ℒₒᵣ M] : s = standardModel M :=
+  standardModel_unique' M s hZero hOne hAdd hMul hEq hLT
+
+end semantics
+
+/-- provable_of_models -/
+lemma complete (T : ArithmeticTheory) [𝐄𝐐 ℒₒᵣ ≼ T] (φ : ArithmeticSentence)
+    (H : ∀ (M : Type*) [ORingStructure M] [M↓[ℒₒᵣ] ⊧* T], M↓[ℒₒᵣ] ⊧ φ) : T ⊢ φ :=
+  complete_aux T φ fun M _ s _ _ ↦
+    by
+    rcases standardModel_unique M s
+    exact H M
+
+lemma provable_iff_of_models_iff {T : ArithmeticTheory} [𝐄𝐐 ℒₒᵣ ≼ T] {n}
+    {φ ψ : ArithmeticSemisentence n}
+    (h : ∀ (V : Type) [ORingStructure V] [V↓[ℒₒᵣ] ⊧* T] (e : Fin n → V), V ⊧/e φ ↔ V ⊧/e ψ) :
+    T ⊢ ∀¹* (φ ⇔ₗ ψ) := by
+  apply Arithmetic.complete T _
+  intro V _ _
+  simpa [models_iff] using h V
+
+lemma models_iff_of_provable_iff {T : ArithmeticTheory} {n} {φ ψ : ArithmeticSemisentence n}
+    (h : T ⊢ ∀¹* (φ ⇔ₗ ψ)) (V : Type*) [ORingStructure V] [V↓[ℒₒᵣ] ⊧* T] (e : Fin n → V) :
+    V ⊧/e φ ↔ V ⊧/e ψ :=
+  by
+  have h' := consequence_iff.mp (Theory.Proof.sound h) V inferInstance
+  simp only [models_iff, Semiformula.eval_allClosure] at h'
+  simpa using h' e
+
+lemma weakerThan_of_models (T S : ArithmeticTheory) [𝐄𝐐 ℒₒᵣ ≼ S]
+    (H : ∀ (M : Type*) [ORingStructure M] [M↓[ℒₒᵣ] ⊧* S], M↓[ℒₒᵣ] ⊧* T) : T ≼ S :=
+  Entailment.weakerThan_iff.mpr fun h ↦ complete _ _ fun M _ _ ↦ Theory.Proof.sound h (H M)
+
+lemma equiv_of_models {T S : ArithmeticTheory} [𝐄𝐐 ℒₒᵣ ≼ S] [𝐄𝐐 ℒₒᵣ ≼ T]
+    (hTS : ∀ (M : Type*) [ORingStructure M] [M↓[ℒₒᵣ] ⊧* S], M↓[ℒₒᵣ] ⊧* T)
+    (hST : ∀ (M : Type*) [ORingStructure M] [M↓[ℒₒᵣ] ⊧* T], M↓[ℒₒᵣ] ⊧* S) : T ≊ S :=
+  Entailment.Equiv.antisymm ⟨weakerThan_of_models T S hTS, weakerThan_of_models S T hST⟩
+
+end Arithmetic
+
+/-- Data and laws for Sound On in `FFL.FirstOrder.ArithmeticTheory`. -/
+class ArithmeticTheory.SoundOn (T : ArithmeticTheory) (F : ArithmeticSentence → Prop) where
+  sound : ∀ {σ}, T ⊢ σ → F σ → ℕ↓[ℒₒᵣ] ⊧ σ
+
+namespace ArithmeticTheory
+
+variable (T : ArithmeticTheory) (F : ArithmeticSentence → Prop)
+
+instance [ℕ↓[ℒₒᵣ] ⊧* T] : T.SoundOn F :=
+  ⟨fun b _ ↦ consequence_iff.mp (Theory.Proof.sound b) ℕ inferInstance⟩
+
+lemma SoundOn.of_weakerThan (F : ArithmeticSentence → Prop) (T U : ArithmeticTheory) [U ≼ T]
+    [T.SoundOn F] : U.SoundOn F :=
+  ⟨fun h ↦ SoundOn.sound (Entailment.WeakerThan.pbl (𝓢 := U) (𝓣 := T) h)⟩
+
+lemma consistent_of_sound [SoundOn T F] (hF : F ⊥) : Entailment.Consistent T :=
+  Entailment.consistent_iff_unprovable_bot.mpr fun b ↦ SoundOn.sound b hF
+
+end ArithmeticTheory
+
+end FirstOrder
+end FFL
+
+end
+
+end PointwiseComposition
