@@ -11,7 +11,18 @@ public import LeanPool.ClassicalGraphColouring.Orientations.GallaiRoy
 public import LeanPool.ClassicalGraphColouring.Spectrum.Bounds
 
 /-!
-# Classical graph colouring by degree, orientations, lists and eigenvalues
+# Classical graph colouring through lists, orientations and spectra
+
+Source: doi:10.1006/jctb.1995.1011, url:https://github.com/jtraverso/galvin-dinitz/tree/0aa98fc17e1e96ec408f7bad3198ce37a08d26fc
+Authors: Juan Pablo Traverso Gianini
+Status: verified
+Main declarations: `Konig.lineGraph_colorable_of_colorable_two`, `Galvin.galvin`, `GallaiRoy.colorable_of_orientation`, `SpectralBounds.hoffman_chromatic`
+Tags: graph-theory, bipartite-graphs, edge-colouring, list-colouring, stable-matchings, orientations, spectral-graph-theory
+MSC: 05C15, 05C70, 91B68, 05C50
+-/
+
+/-!
+## Mathematical overview
 
 Kőnig's edge-colouring theorem supplies a proper colouring of a finite bipartite graph with
 `Δ(G)` colours. Galvin's orientation and kernel argument upgrades this to a colouring from
@@ -26,15 +37,6 @@ path statements.
 The proof of Kőnig's theorem reuses `LeanPool.Vizing` directly. The matching-cover and finite
 poset results from the registered Kőnig source are already available in
 `LeanPool.ClassicalMatchingFactors` and are not duplicated here.
-
-Source: doi:10.1006/jctb.1995.1011,
-url:https://github.com/jtraverso/galvin-dinitz/tree/0aa98fc17e1e96ec408f7bad3198ce37a08d26fc
-Authors: Juan Pablo Traverso Gianini
-Status: verified
-Main declarations: `Konig.lineGraph_colorable_of_colorable_two`, `Galvin.galvin`,
-  `GallaiRoy.colorable_of_orientation`, `SpectralBounds.hoffman_chromatic`
-Tags: graph-theory, graph-colouring, edge-colouring, orientations, spectral-graph-theory
-MSC: 05C15, 05C20, 05C50, 91B68
 -/
 
 @[expose] public section
