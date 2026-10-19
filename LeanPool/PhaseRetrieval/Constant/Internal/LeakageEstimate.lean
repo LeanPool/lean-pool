@@ -39,7 +39,7 @@ private lemma fourier_pow (n : ℕ) (t : AddCircle T) :
     ((fourier 1 t : ℂ) ^ n : ℂ) = (fourier (n : ℤ) t : ℂ) := by
   induction n with
   | zero => simp
-  | succ n ih => rw [pow_succ, ih, ← fourier_add]; push_cast; ring_nf
+  | succ n ih => rw [pow_succ, ih, ← fourier_add]; push_cast; ring
 
 /-- `∫ fourier n = δ_{n,0}` w.r.t. normalized Haar. -/
 private lemma integral_fourier (n : ℤ) :
@@ -95,17 +95,17 @@ private lemma dist_peak_to_interval {n ℓ : ℕ} (hℓ : 1 ≤ ℓ) (hn : n ∈
   by_cases hjl : j ≥ ℓ + 1
   · left; left
     constructor
-    · linarith
+    · linarith only [hhi]
     · have : (j : ℝ) ≥ ℓ + 1 := by exact_mod_cast hjl
-      linarith
+      linarith only [hlo, hhi, this]
   · push Not at hjl
     by_cases hjl2 : j + 1 ≤ ℓ
     · left; right
       constructor
       · have : (j : ℝ) + 1 ≤ ℓ := by exact_mod_cast hjl2
-        linarith
+        linarith only [hlo, hhi, this]
       · have : (j : ℝ) + 1 ≤ ℓ := by exact_mod_cast hjl2
-        linarith
+        linarith only [hlo]
     · push Not at hjl2
       have hje : j = ℓ := by omega
       simp_all
@@ -341,9 +341,8 @@ theorem block_annulus_leakage {D : ℕ} (a : Fin D → ℂ) {ℓ : ℕ} (hℓ : 
             exact_mod_cast (Nat.factorial_pos (k.val + 1)).le
           · norm_num
     -- Combine: 2 * ‖a_k‖² * ∫ ≤ exp(1/4) * exp(-d²) * ‖a_k‖² * (k+1)!
-    nlinarith [sq_nonneg (‖a k‖), Real.exp_pos (1 / 4 : ℝ),
-               Real.exp_pos (-(max ((j : ℤ) - ℓ - 1) 0 : ℤ) ^ 2 : ℝ),
-               Nat.factorial_pos (k.val + 1)]
+    nlinarith only [hint_bound, sq_nonneg (‖a k‖), Real.exp_pos (1 / 4 : ℝ),
+        Real.exp_pos (-(max ((j : ℤ) - ℓ - 1) 0 : ℤ) ^ 2 : ℝ), Nat.factorial_pos (k.val + 1)]
   -- Step 4: Exchange integral and sum, then apply per-k bounds
   -- First, prove integrability of each summand
   have hint : ∀ k : Fin D, IntervalIntegrable
@@ -461,9 +460,12 @@ private lemma block_annulus_leakage_symmetric {D : ℕ} (a : Fin D → ℂ) {ℓ
           · apply mul_nonneg (le_of_lt (Real.exp_pos _))
             exact_mod_cast (Nat.factorial_pos (k.val + 1)).le
           · norm_num
-    nlinarith [sq_nonneg (‖a k‖), Real.exp_pos (1 / 4 : ℝ),
-               Real.exp_pos (-(max (max ((j : ℤ) - ℓ - 1) ((ℓ : ℤ) - j - 1)) 0 : ℤ) ^ 2 : ℝ),
-               Nat.factorial_pos (k.val + 1)]
+    nlinarith only [
+      hint_bound, sq_nonneg (‖a k‖), Real.exp_pos (1 / 4 : ℝ),
+      Real.exp_pos
+        (-(max (max ((j : ℤ) - ℓ - 1) ((ℓ : ℤ) - j - 1)) 0 : ℤ) ^ 2 : ℝ),
+      Nat.factorial_pos (k.val + 1)
+    ]
   -- Exchange integral and sum
   have hint : ∀ k : Fin D, IntervalIntegrable
       (fun r : ℝ => if (k.val + 1) ∈ freqBlock ℓ
@@ -695,9 +697,9 @@ private lemma remainder_annulus_le_far_blocks {D : ℕ} (a : Fin D → ℂ) {M :
         ∂AddCircle.haarAddCircle) := by
     apply intervalIntegral.integral_congr
     intro r hr
-    rw [Set.uIcc_of_le (show (j : ℝ) ≤ j + 1 by linarith)] at hr
+    rw [Set.uIcc_of_le (show (j : ℝ) ≤ j + 1 by linarith only [])] at hr
     have hr0 : (0 : ℝ) ≤ r := le_trans (Nat.cast_nonneg j) hr.1
-    simp_all
+    simp_all only []
   rw [heq]
   -- Step 3: Distribute weight over the sum inside the integral
   have integrand_eq : ∀ r : ℝ,
@@ -839,7 +841,7 @@ theorem total_leakage_bound {D : ℕ} (a : Fin D → ℂ) {M : ℕ} (hM : 2 ≤ 
     calc _ ≤ etaCoeff M J * fockNormSq a := h
       _ ≤ (etaCoeff M J + ε) * fockNormSq a := by
         apply mul_le_mul_of_nonneg_right
-        · linarith
+        · linarith only [hε]
         · exact Finset.sum_nonneg fun k _ =>
             mul_nonneg (sq_nonneg _) (by exact_mod_cast (Nat.factorial_pos _).le)
   -- Main bound: ∑_j 2∫ r exp(-r²) ∫_circle ‖R_j‖² ≤ etaCoeff M J * fockNormSq a
@@ -954,13 +956,13 @@ Split the sum at `m = 5`, bound the tail by `95 · exp(-36)`.
 private lemma exp_quarter_lt : Real.exp (1 / 4 : ℝ) < 13 / 10 := by
   have h := Real.exp_bound'
     (by norm_num : (0:ℝ) ≤ 1/4) (by norm_num : (1:ℝ)/4 ≤ 1) (n := 5) (by norm_num)
-  simp [Finset.sum_range_succ] at h; linarith
+  simp [Finset.sum_range_succ] at h; linarith only [h]
 
 private lemma exp_neg_25_lt : Real.exp (-25 : ℝ) < 14 / 10 ^ 12 := by
   have h5 : (1484 : ℝ) / 10 ≤ Real.exp 5 := by
     have := Real.sum_le_exp_of_nonneg (by norm_num : (0:ℝ) ≤ 5) 18
     simp only [Finset.sum_range_succ, Finset.sum_range_zero] at this
-    norm_num at this ⊢; linarith
+    norm_num at this ⊢; linarith only [this]
   rw [show (-25 : ℝ) = (5 : ℕ) * (-5 : ℝ) from by norm_num,
       Real.exp_nat_mul, Real.exp_neg, inv_pow]
   calc (Real.exp 5 ^ 5)⁻¹
@@ -972,7 +974,7 @@ private lemma exp_neg_36_lt : Real.exp (-36 : ℝ) < 1 / 10 ^ 14 := by
   have h6 : (403 : ℝ) ≤ Real.exp 6 := by
     have := Real.sum_le_exp_of_nonneg (by norm_num : (0:ℝ) ≤ 6) 16
     simp only [Finset.sum_range_succ, Finset.sum_range_zero] at this
-    norm_num at this ⊢; linarith
+    norm_num at this ⊢; linarith only [this]
   rw [show (-36 : ℝ) = (6 : ℕ) * (-6 : ℝ) from by norm_num,
       Real.exp_nat_mul, Real.exp_neg, inv_pow]
   calc (Real.exp 6 ^ 6)⁻¹
@@ -1000,14 +1002,14 @@ theorem eta_5_bound : etaCoeff 5 100 < 4 / (10 : ℝ) ^ 11 := by
             apply Real.exp_le_exp.mpr
             simp only [Finset.mem_Icc] at hm
             have hm6 : (6 : ℝ) ≤ (m : ℝ) := by exact_mod_cast hm.1
-            nlinarith [sq_nonneg ((m : ℝ) - 6)]
+            linarith only [hm6, sq_nonneg ((m : ℝ) - 6)]
       _ = 95 * Real.exp (-36) := by simp [Finset.sum_const]
   -- Combine bounds
   have htail_bound : ∑ m ∈ (Finset.Icc 6 100 : Finset ℕ), Real.exp (-(m : ℝ) ^ 2) <
-      95 / 10 ^ 14 := by linarith [exp_neg_36_lt]
+      95 / 10 ^ 14 := by linarith only [htail, exp_neg_36_lt]
   have hsum_bound :
       Real.exp (-25) + ∑ m ∈ (Finset.Icc 6 100 : Finset ℕ), Real.exp (-(m : ℝ) ^ 2) <
-      14 / 10 ^ 12 + 95 / 10 ^ 14 := by linarith [exp_neg_25_lt]
+      14 / 10 ^ 12 + 95 / 10 ^ 14 := by linarith only [htail_bound, exp_neg_25_lt]
   have hsum_pos :
       0 ≤ Real.exp (-25) +
         ∑ m ∈ (Finset.Icc 6 100 : Finset ℕ), Real.exp (-(m : ℝ) ^ 2) :=
@@ -1017,8 +1019,10 @@ theorem eta_5_bound : etaCoeff 5 100 < 4 / (10 : ℝ) ^ 11 := by
   have step1 : 2 * Real.exp (1 / 4) *
       (Real.exp (-25) + ∑ m ∈ (Finset.Icc 6 100 : Finset ℕ), Real.exp (-(m : ℝ) ^ 2)) <
       2 * (13 / 10) * (14 / 10 ^ 12 + 95 / 10 ^ 14) := by
-    nlinarith [exp_quarter_lt, Real.exp_pos (1 / 4 : ℝ)]
-  linarith [show (2 : ℝ) * (13 / 10) * (14 / 10 ^ 12 + 95 / 10 ^ 14) < 4 / 10 ^ 11
-    from by norm_num]
+    nlinarith only [hsum_bound, exp_quarter_lt, Real.exp_pos (1 / 4 : ℝ)]
+  linarith only [
+    step1,
+    show (2 : ℝ) * (13 / 10) * (14 / 10 ^ 12 + 95 / 10 ^ 14) < 4 / 10 ^ 11 from by norm_num
+  ]
 
 end FockSPR

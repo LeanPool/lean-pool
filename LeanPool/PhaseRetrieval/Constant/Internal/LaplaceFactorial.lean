@@ -54,7 +54,7 @@ private lemma rStar_gt_one {n : ℕ} (hn : 1 ≤ n) : rStar n > 1 := by
   unfold rStar
   calc (1 : ℝ) = Real.sqrt 1 := Real.sqrt_one.symm
     _ < Real.sqrt (↑n + 1 / 2) := Real.sqrt_lt_sqrt (by norm_num)
-        (by have : (1 : ℝ) ≤ (n : ℝ) := Nat.one_le_cast.mpr hn; linarith)
+        (by have : (1 : ℝ) ≤ (n : ℝ) := Nat.one_le_cast.mpr hn; linarith only [this])
 
 private lemma rStar_pos {n : ℕ} (hn : 1 ≤ n) : 0 < rStar n :=
   lt_trans one_pos (rStar_gt_one hn)
@@ -89,7 +89,7 @@ theorem phiFunc_concavity {n : ℕ} (hn : 1 ≤ n) :
     have hb' : (0 : ℝ) < b := hb
     rw [(hasDerivAt_phiFunc n ha').deriv, (hasDerivAt_phiFunc n hb').deriv]
     have hnn : (0 : ℝ) < 2 * ↑n + 1 := by positivity
-    linarith [div_lt_div_of_pos_left hnn ha' hab]
+    linarith only [hab, ha', hnn, div_lt_div_of_pos_left hnn ha' hab]
 
 /-! ## Theorem 2.8: Quadratic upper bound
 
@@ -138,7 +138,7 @@ private lemma hFunc_concaveOn {n : ℕ} (hn : 1 ≤ n) :
     intro a ha b hb hab
     rw [(hasDerivAt_hFunc n (show (0:ℝ) < a from ha)).deriv,
         (hasDerivAt_hFunc n (show (0:ℝ) < b from hb)).deriv]
-    linarith [div_lt_div_of_pos_left
+    linarith only [div_lt_div_of_pos_left
       (show (0 : ℝ) < 2 * ↑n + 1 from by positivity)
       (show (0:ℝ) < a from ha) hab]
 
@@ -159,7 +159,7 @@ theorem phiFunc_quad_bound {n : ℕ} (hn : 1 ≤ n) {r : ℝ} (hr : 0 < r) :
     phiFunc n r ≤ phiFunc n (rStar n) - (r - rStar n) ^ 2 := by
   have h := hFunc_le hn hr
   unfold hFunc at h
-  linarith [sq_nonneg (r - rStar n)]
+  linarith only [h, sq_nonneg (r - rStar n)]
 
 /-! ## Theorem 2.9: Factorial upper bound on exp(φ_n(r_n))
 
@@ -196,14 +196,14 @@ private lemma phiFunc_rStar_le {n : ℕ} (hn : 1 ≤ n) :
     calc ((n : ℝ) + 1 / 2) * Real.log (1 + 1 / (2 * (n : ℝ)))
         ≤ ((n : ℝ) + 1 / 2) * (1 / (2 * (n : ℝ))) :=
           mul_le_mul_of_nonneg_left
-            (by linarith [Real.log_le_sub_one_of_pos h1]) (by linarith)
+            (by linarith only [h1, Real.log_le_sub_one_of_pos h1]) (by linarith only [hn_pos])
       _ = 1 / 2 + 1 / (4 * (n : ℝ)) := by field_simp; ring
       _ ≤ 3 / 4 := by
           linarith [div_le_div_of_nonneg_left (by norm_num : (0:ℝ) ≤ 1)
             (by norm_num : (0:ℝ) < 4)
             (show (4:ℝ) ≤ 4 * (n:ℝ) from by
               nlinarith [show (1:ℝ) ≤ (n:ℝ) from by exact_mod_cast hn])]
-  linarith [h_expand]
+  linarith only [h_expand, h_log_bound]
 
 private lemma stirling_log_bound {n : ℕ} (hn : 1 ≤ n) :
     (n : ℝ) * Real.log (n : ℝ) + (1 / 2) * Real.log (n : ℝ) - (n : ℝ) ≤
@@ -211,18 +211,20 @@ private lemma stirling_log_bound {n : ℕ} (hn : 1 ≤ n) :
   have h_stirling := @Stirling.le_log_factorial_stirling n (by omega)
   have h_pi : Real.log 2 ≤ (1 / 2) * Real.log (2 * π) := by
     have : Real.log 4 ≤ Real.log (2 * π) :=
-      Real.log_le_log (by norm_num) (by linarith [Real.two_le_pi])
-    linarith [show Real.log 4 = 2 * Real.log 2 from by
-      rw [show (4:ℝ) = 2 ^ 2 from by norm_num, Real.log_pow]
-      simp only [Nat.cast_ofNat]]
-  linarith
+      Real.log_le_log (by norm_num) (by linarith only [Real.two_le_pi])
+    linarith only [this,
+        show Real.log 4 = 2 * Real.log 2 from
+          by
+          rw [show (4 : ℝ) = 2 ^ 2 from by norm_num, Real.log_pow]
+          simp only [Nat.cast_ofNat]]
+  linarith only [h_stirling, h_pi]
 
 theorem exp_phi_le_factorial {n : ℕ} (hn : 1 ≤ n) :
     Real.exp (phiFunc n (rStar n)) ≤
     Real.exp (1 / 4) * (Nat.factorial n : ℝ) / 2 := by
   have h3 : phiFunc n (rStar n) ≤
       Real.log (n.factorial : ℝ) - Real.log 2 + 1 / 4 := by
-    linarith [phiFunc_rStar_le hn, stirling_log_bound hn]
+    linarith only [phiFunc_rStar_le hn, stirling_log_bound hn]
   have h_fact_pos : (0 : ℝ) < (n.factorial : ℝ) :=
     Nat.cast_pos.mpr n.factorial_pos
   calc Real.exp (phiFunc n (rStar n))
@@ -260,7 +262,10 @@ private lemma distToInterval_le_abs_sub (x r : ℝ) (j : ℕ)
     distToInterval x j ≤ |r - x| := by
   unfold distToInterval
   exact max_le
-    (max_le (by linarith [le_abs_self (r - x)]) (by linarith [neg_le_abs (r - x)]))
+    (max_le (by
+      linarith only [
+        hrj, le_abs_self (r - x)
+      ]) (by linarith only [hrj1, neg_le_abs (r - x)]))
     (abs_nonneg _)
 
 private lemma distToInterval_sq_le_sq (x r : ℝ) (j : ℕ)
@@ -269,7 +274,7 @@ private lemma distToInterval_sq_le_sq (x r : ℝ) (j : ℕ)
   have h1 := distToInterval_le_abs_sub x r j hrj hrj1
   have h2 := distToInterval_nonneg x j
   calc distToInterval x j ^ 2
-      ≤ |r - x| ^ 2 := by nlinarith [sq_nonneg (|r - x| - distToInterval x j)]
+      ≤ |r - x| ^ 2 := by nlinarith only [h1, h2, sq_nonneg (|r - x| - distToInterval x j)]
     _ = (r - x) ^ 2 := sq_abs _
 
 /-- Pointwise integrand bound for `r ∈ [j, j+1]`. -/
@@ -295,7 +300,7 @@ private lemma pointwise_bound {n : ℕ} (hn : 1 ≤ n) {r : ℝ}
     calc Real.exp (phiFunc n r)
         ≤ Real.exp (phiFunc n (rStar n) - distToInterval (rStar n) j ^ 2) :=
           Real.exp_le_exp.mpr
-            (by linarith [phiFunc_quad_bound hn hr_pos,
+            (by linarith only [phiFunc_quad_bound hn hr_pos,
                 distToInterval_sq_le_sq (rStar n) r j hrj hrj1])
       _ = Real.exp (phiFunc n (rStar n)) *
           Real.exp (-(distToInterval (rStar n) j ^ 2)) := by rw [sub_eq_add_neg, Real.exp_add]
@@ -314,7 +319,7 @@ theorem monomial_integral_bound {n : ℕ} (hn : 1 ≤ n) (j : ℕ) :
     Real.exp (-(distToInterval (rStar n) j) ^ 2)
   have h_const : ∫ r in (j : ℝ)..(↑j + 1), C = C := integral_const_on_unit_interval
   rw [← h_const]
-  apply intervalIntegral.integral_mono_on (by linarith : (j : ℝ) ≤ ↑j + 1)
+  apply intervalIntegral.integral_mono_on (by linarith only [] : (j : ℝ) ≤ ↑j + 1)
   · apply ContinuousOn.intervalIntegrable
     exact (continuousOn_pow _).mul
       ((Real.continuous_exp.comp

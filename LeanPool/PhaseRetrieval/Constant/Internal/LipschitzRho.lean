@@ -64,13 +64,13 @@ theorem rho_lipschitz : LipschitzWith 1 rho := by
 theorem rho_pointwise_upper (w z : ℂ) : rho w ≤ rho z + ‖w - z‖ := by
   have h := rho_lipschitz.dist_le_mul w z
   rw [NNReal.coe_one, one_mul, Real.dist_eq, dist_eq_norm] at h
-  linarith [le_abs_self (rho w - rho z)]
+  linarith only [h, le_abs_self (rho w - rho z)]
 
 /-- `rho(w) ≥ rho(z) − ‖w − z‖` -/
 theorem rho_pointwise_lower (w z : ℂ) : rho w ≥ rho z - ‖w - z‖ := by
   have h := rho_lipschitz.dist_le_mul w z
   rw [NNReal.coe_one, one_mul, Real.dist_eq, dist_eq_norm] at h
-  linarith [neg_abs_le (rho w - rho z)]
+  linarith only [h, neg_abs_le (rho w - rho z)]
 
 /-! ## Corollary 2.5: `rho(w) ≤ ‖w‖`
 

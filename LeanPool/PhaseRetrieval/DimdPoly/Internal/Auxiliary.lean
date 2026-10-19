@@ -238,7 +238,7 @@ theorem stablePhaseRetrievalCoefficients
       explicitPkappaNorm (θ • Q - F) ^ 2 ≤ C_F ^ 2 * modulusDefect κ F Q ^ 2 := by
     have hdist_nonneg : 0 ≤ explicitPkappaNorm (θ • Q - F) := Real.sqrt_nonneg _
     have hdef_nonneg : 0 ≤ modulusDefect κ F Q := Real.sqrt_nonneg _
-    nlinarith [hbound, hC_F_pos, hdist_nonneg, hdef_nonneg]
+    nlinarith only [hbound, hC_F_pos, hdist_nonneg, hdef_nonneg]
   have hleft :
       ∫ z, ‖explicitEvalPkappa κ F z - θ * explicitEvalPkappa κ Q z‖ ^ 2
           ∂ explicitGamma d =
@@ -255,8 +255,8 @@ theorem stablePhaseRetrievalCoefficients
             have heval :
                 explicitEvalPkappa κ (θ • Q - F) z =
                   θ * explicitEvalPkappa κ Q z - explicitEvalPkappa κ F z := by
-              simpa [explicitEvalPkappa, explicitPhi, explicitPhi1D, explicitComplexHermite,
-                evalPkappa, Phi, phi1D, complexHermite] using hsub
+              exact
+                                                              hsub
             rw [heval, norm_sub_rev]
       _ = explicitPkappaNorm (θ • Q - F) ^ 2 := by
             rw [← explicitPkappaNorm_sq_eq_integral hd κ (θ • Q - F)]
@@ -735,7 +735,7 @@ private theorem explicitPhaseOptimized_bound_of_l2_closure
         have hδ_nonneg : 0 ≤ δ n := Real.sqrt_nonneg _
         have hsqrtM_nonneg : 0 ≤ Real.sqrt M := Real.sqrt_nonneg _
         dsimp [B]
-        nlinarith [hC_P_pos, hδ_nonneg, hsqrtM_nonneg]
+        nlinarith only [hC_P_pos, hδ_nonneg, hsqrtM_nonneg]
       have hg_nonneg :
           0 ≤ explicitGaussianL2DistanceSq P (fun z => θ * Q z) :=
         explicitGaussianL2DistanceSq_nonneg P (fun z => θ * Q z)
@@ -824,7 +824,7 @@ theorem stablePhaseRetrievalExplicitLpClosure_exists
       hP_mem hQ_mem with
     ⟨θ, hθ, hθ_eq⟩
   refine ⟨θ, hθ, ?_⟩
-  simp_all
+  simp_all only []
 
 private theorem explicitHermiteLpPolys_eq_ae
     {d : ℕ} (κ : Fin d -> ℕ) :

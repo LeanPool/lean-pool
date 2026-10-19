@@ -303,7 +303,7 @@ private lemma gaussian_monomial_moments_off_diag {a b : ℕ} (hab : a ≠ b) :
   have hrot_neg : ∀ z, f (rot z) = -f z := hI
   simp_rw [hrot_neg] at hrot_eq
   rw [integral_neg] at hrot_eq
-  linarith
+  linarith only [hrot_eq]
 
 /-- Diagonal case: z^a * conj(z)^a = ‖z‖^{2a}. -/
 private lemma zpow_conj_diag_re (z : ℂ) (a : ℕ) :
@@ -319,9 +319,9 @@ private lemma integral_norm_pow_exp_gaussian (a : ℕ) :
     intro z; exact (rpow_natCast ‖z‖ (2 * a)).symm
   have h_exp : ∀ z : ℂ, Real.exp (-‖z‖ ^ 2) = Real.exp (-‖z‖ ^ (2 : ℝ)) := by intro z; norm_num
   simp_rw [h_rpow, h_exp]
-  rw [Complex.integral_rpow_mul_exp_neg_rpow (show (1 : ℝ) ≤ 2 from by linarith)
+  rw [Complex.integral_rpow_mul_exp_neg_rpow (show (1 : ℝ) ≤ 2 from by linarith only [])
     (show (-2 : ℝ) < ((2 * a : ℕ) : ℝ) from by
-      have : (0 : ℝ) ≤ ((2 * a : ℕ) : ℝ) := Nat.cast_nonneg _; linarith)]
+      have : (0 : ℝ) ≤ ((2 * a : ℕ) : ℝ) := Nat.cast_nonneg _; linarith only [])]
   rw [show ((2 * a : ℕ) : ℝ) + 2 = 2 * ((a : ℝ) + 1) from by push_cast; ring,
     show 2 * ((a : ℝ) + 1) / 2 = (a : ℝ) + 1 from by ring,
     show 2 * π / 2 = π from by ring,
@@ -472,7 +472,7 @@ theorem qkn_structure :
 /-- The circle coefficients `qkn` remain fixed by complex conjugation. -/
 @[simp] theorem qkn_real :
     ∀ {k n : ℕ} {r : ℝ}, star (qkn k n r : ℂ) = (qkn k n r : ℂ) := by
-  simp_all only [RCLike.star_def, conj_ofReal, implies_true]
+  simp only [RCLike.star_def, conj_ofReal, implies_true]
 
 -- Helper: r ^ (-2 : ℤ) = 1 / r ^ 2
 private lemma zpow_neg_two_eq (r : ℝ) :
@@ -603,17 +603,17 @@ private lemma qkn_div_rn_bound (k n : ℕ) :
         · have hMpos : 0 < M := lt_of_le_of_ne hM_nn (Ne.symm hM0)
           have hge : r ≥ Real.sqrt (M / ε) + 1 := le_trans (le_max_left _ _) hr
           have hr_sq : r ^ 2 ≥ M / ε := by
-            have : r ≥ Real.sqrt (M / ε) := by linarith
+            have : r ≥ Real.sqrt (M / ε) := by linarith only [hge]
             calc r ^ 2 = r * r := by ring
               _ ≥ Real.sqrt (M / ε) * Real.sqrt (M / ε) := by
                   apply mul_le_mul this this
                   · exact Real.sqrt_nonneg _
-                  · linarith
+                  · linarith only [hr1]
               _ = M / ε := by rw [Real.mul_self_sqrt (le_of_lt (div_pos hMpos hε))]
           have : ε * r ^ 2 ≥ ε * (M / ε) :=
             mul_le_mul_of_nonneg_left hr_sq (le_of_lt hε)
           rw [mul_div_cancel₀ M (ne_of_gt hε)] at this
-          linarith
+          linarith only [this]
 
 theorem qkn_top_term_asymptotic :
     ∀ k n : ℕ,
@@ -673,14 +673,14 @@ theorem qkn_eventual_lower_bound :
     -- h1 : ‖c₀‖ - ‖qkn/r^n‖ ≤ ‖c₀ - qkn/r^n‖
     rw [norm_sub_rev] at h1
     -- h1 : ‖c₀‖ - ‖qkn/r^n‖ ≤ ‖qkn/r^n - c₀‖
-    linarith
+    linarith only [hε_def, hspec, h1]
   rw [norm_div] at h_tri
   have hrn_norm : ‖(r ^ n : ℂ)‖ = r ^ n := by
     rw [show (r : ℂ) ^ n = ((r ^ n : ℝ) : ℂ) from by push_cast; ring,
       Complex.norm_real, Real.norm_of_nonneg (le_of_lt hrn_pos)]
   rw [hrn_norm] at h_tri
   rw [le_div_iff₀ hrn_pos] at h_tri
-  linarith [Complex.norm_real (qkn k n r)]
+  linarith only [h_tri, Complex.norm_real (qkn k n r)]
 
 /-- The radial coefficient `qkn k n` is eventually nonvanishing on large radii. -/
 theorem qkn_eventually_nonzero :
@@ -694,7 +694,7 @@ theorem qkn_eventually_nonzero :
   have h1 := hbound r hr
   rw [hqkn, Complex.ofReal_zero, norm_zero] at h1
   have h2 : 0 < r := lt_of_lt_of_le (lt_of_lt_of_le zero_lt_one hR) hr
-  linarith [mul_pos hc (pow_pos h2 n)]
+  linarith only [hc, h1, h2, mul_pos hc (pow_pos h2 n)]
 
 /-- Lower modes are eventually suppressed by at least one power of `r`. -/
 theorem qkn_ratio_control :
@@ -728,7 +728,7 @@ theorem qkn_ratio_control :
       have h2 := norm_sub_norm_le ((qkn k n r : ℂ) / ((r : ℂ) ^ n)) ((cn : ℝ) : ℂ)
       rw [Complex.norm_real] at h2
       have : ‖cn‖ = cn := Real.norm_of_nonneg (le_of_lt hcn_pos)
-      linarith
+      linarith only [hnum_spec, h2, this]
     rw [norm_div, show ‖((r : ℂ) ^ n)‖ = r ^ n from by
       rw [show (r : ℂ) ^ n = ((r ^ n : ℝ) : ℂ) from by push_cast; ring]
       rw [Complex.norm_real, Real.norm_of_nonneg (pow_nonneg (le_of_lt hr_pos) n)]] at h1
@@ -739,7 +739,7 @@ theorem qkn_ratio_control :
   have hden_ne : (qkn k d r : ℂ) ≠ 0 := by
     intro h
     rw [h, norm_zero] at hden_lower
-    linarith [mul_pos hcd (pow_pos hr_pos d)]
+    linarith only [hcd, hr_pos, hden_lower, mul_pos hcd (pow_pos hr_pos d)]
   -- The ratio bound
   rw [norm_div, div_le_div_iff₀ (norm_pos_iff.mpr hden_ne) hr_pos]
   -- ‖qkn n‖ * r ≤ (cn+1)*r^(n+1) ≤ (cn+1)*r^d = C*cd*r^d ≤ C*‖qkn d‖
@@ -751,7 +751,7 @@ theorem qkn_ratio_control :
     _ ≤ (cn + 1) * r ^ d := by
           apply mul_le_mul_of_nonneg_left
           · exact pow_le_pow_right₀ hr1 hnd
-          · linarith
+          · linarith only [hcn_pos]
     _ = C * (cd * r ^ d) := by
           simp only [C]
           field_simp
@@ -883,7 +883,7 @@ private lemma alternating_vandermonde_coeff (k s N : ℕ) :
         ((((Polynomial.C (1 : ℤ)) + Polynomial.X) ^ s * Polynomial.X ^ k).coeff N) :=
       alternating_vandermonde_coeff_poly k s N
     _ = if k ≤ N then (((Polynomial.C (1 : ℤ)) + Polynomial.X) ^ s).coeff (N - k) else 0 := by
-          simpa only [eq_intCast, Int.cast_one] using
+          exact
             (Polynomial.coeff_mul_X_pow' (((Polynomial.C (1 : ℤ)) + Polynomial.X) ^ s) k N)
     _ = if k ≤ N then ↑(s.choose (N - k)) else 0 := by
           by_cases h : k ≤ N <;> simp [h, Polynomial.coeff_one_add_X_pow]
@@ -1033,7 +1033,15 @@ private lemma integrable_norm_pow_exp (a : ℕ) :
   by_contra h
   have hint := integral_norm_pow_exp_gaussian a
   rw [MeasureTheory.integral_undef h] at hint
-  linarith [show (0 : ℝ) < π * (Nat.factorial a : ℝ) from by positivity]
+  linarith only [hint, show (0 : ℝ) < π * (Nat.factorial a : ℝ) from by positivity]
+
+-- Keep the established auxiliary name while using its range argument directly.
+private theorem norm_sq_phi_integral._proof_1_10 (k m i : ℕ)
+    (hi : i < k + 1)
+    (hi' : @LE.le ℕ (@Preorder.toLE ℕ
+      (@PartialOrder.toPreorder ℕ (@LinearOrder.toPartialOrder ℕ Nat.instLinearOrder)))
+      (min k m + 1) i) : ¬ m < i → False := by
+  omega
 
 -- The main diagonal integral computation
 -- The integral proof unfolds the diagonal formula and runs the full double-sum normalization.
@@ -1202,7 +1210,12 @@ private theorem norm_sq_phi_integral (k m : ℕ) :
       (Nat.factorial (m + k - i - j) : ℝ) := by
     intro i
     apply Finset.sum_subset (Finset.range_mono (by omega : min k m + 1 ≤ k + 1))
-    simp_all
+    intro j hj hj'
+    have hmj : m < j := by
+      by_contra hnot
+      exact norm_sq_phi_integral._proof_1_10 k m j (Finset.mem_range.mp hj)
+        (Nat.le_of_not_gt (fun h => hj' (Finset.mem_range.mpr h))) hnot
+    simp only [Nat.descFactorial_eq_zero_iff_lt.mpr hmj, Nat.cast_zero, mul_zero, zero_mul]
   simp_rw [hext_j]
   have hext_i : ∑ i ∈ Finset.range (min k m + 1), ∑ j ∈ Finset.range (k + 1),
       (-1 : ℝ) ^ (i + j) * (Nat.choose k i : ℝ) * (Nat.choose k j : ℝ) *
@@ -1408,7 +1421,7 @@ theorem integrable_weightedCross (k m n : ℕ) :
                 2 * (‖Phi k m z‖ * ‖Phi k n z‖) ≤ ‖Phi k m z‖ ^ 2 + ‖Phi k n z‖ ^ 2 := by
               linarith only [sq_nonneg (‖Phi k m z‖ - ‖Phi k n z‖)]
             have hexp_nonneg : 0 ≤ Real.exp (-‖z‖ ^ 2) := by positivity
-            nlinarith
+            nlinarith only [hsq, hexp_nonneg]
       _ = g z := by simp [g]
   exact MeasureTheory.Integrable.mono' hg hf_meas (Filter.Eventually.of_forall hbound)
 
@@ -1475,14 +1488,14 @@ private lemma integrable_finiteHermiteSum_weightedCross
   rw [hEq]
   refine MeasureTheory.integrable_finsetSum (Finset.univ : Finset (Fin D)) ?_
   intro m hm
-  simpa only [ofReal_exp, ofReal_neg, ofReal_pow, mul_comm, mul_left_comm, mul_assoc] using
+  exact
     (integrable_weightedCross k m.1 n).const_mul (a m)
 
 private lemma integrable_truncate_weightedCross
     (k J n : ℕ) (G : ℂ → ℂ) :
     Integrable (fun z : ℂ =>
       truncate k J G z * (starRingEnd ℂ) (Phi k n z) * (Real.exp (-‖z‖ ^ 2) : ℂ)) := by
-  simpa only [truncate, ofReal_exp, ofReal_neg, ofReal_pow] using
+  exact
     (integrable_finiteHermiteSum_weightedCross (k := k) (n := n)
       (a := fun m : Fin (J + 1) => hermiteCoeff k G m.1))
 
@@ -1823,7 +1836,7 @@ private lemma weightedInner_finiteHermiteSum_coeff (k : ℕ) {D : ℕ} (a : Fin 
           refine Finset.sum_congr rfl ?_; intro x _
           by_cases hx : x = m
           · subst hx; simp [m]
-          · have : x.1 ≠ n := fun hEq => hx (Fin.ext (by simpa only [m] using hEq))
+          · have : x.1 ≠ n := fun hEq => hx (Fin.ext (by exact hEq))
             simp [this, hx]
       _ = a m := by simp
     simp [m, h]
@@ -1853,7 +1866,7 @@ theorem finiteHermiteSum_mem_Hk :
       have :=
         (Finset.sum_eq_zero_iff_of_nonneg (fun i _ => sq_nonneg ‖a i‖)).mp hzero n
             (Finset.mem_univ n)
-      exact norm_eq_zero.mp (by nlinarith [sq_nonneg ‖a n‖])
+      exact norm_eq_zero.mp (by nlinarith only [this, sq_nonneg ‖a n‖])
     have hzero_fun : (fun z : ℂ => ‖finiteHermiteSum k a z‖ ^ 2 * rexp (-‖z‖ ^ 2)) = 0 := by
       ext z
       simp [finiteHermiteSum, hall_zero]
@@ -2013,7 +2026,7 @@ private lemma hermiteCoeff_sub_truncate
 theorem truncate_mem_Hk :
     ∀ (k J : ℕ) (G : ℂ → ℂ), truncate k J G ∈ Hk k := by
   intro k J G
-  simpa only [truncate] using
+  exact
     (finiteHermiteSum_mem_Hk k (a := fun n : Fin (J + 1) => hermiteCoeff k G n.1))
 
 /-- Exact finite Parseval identity for Hermite truncations. -/
@@ -2022,7 +2035,7 @@ theorem truncate_normSq :
       weightedNormSq (truncate k J G) =
         ∑ n : Fin (J + 1), ‖hermiteCoeff k G n.1‖ ^ 2 := by
   intro k J G
-  simpa only [truncate_eq_finiteHermiteSum] using
+  exact
     (finiteHermiteSum_normSq (k := k) (a := fun n : Fin (J + 1) => hermiteCoeff k G n.1))
 
 /-- Finite Hermite sums admit a finite circle representation. -/
@@ -2147,8 +2160,7 @@ theorem truncate_circle :
               (fourier (-(k : ℤ)) t : ℂ) *
                 truncCirclePoly k r J G t := by
   intro k J G r hr t
-  simpa only [truncate, fourier_apply, neg_smul, natCast_zsmul,
-    truncCirclePoly_eq_finiteCirclePoly] using
+  exact
     (finiteHermiteSum_circle (k := k) (D := J + 1)
       (a := fun n : Fin (J + 1) => hermiteCoeff k G n.1) (r := r) hr t)
 
@@ -2183,7 +2195,7 @@ theorem truncCirclePoly_l2_identity :
       circleL2Sq (truncCirclePoly k r J G) =
         ∑ n : Fin (J + 1), ‖hermiteCoeff k G n.1‖ ^ 2 * |qkn k n.1 r| ^ 2 := by
   intro k J r G
-  simpa only [truncCirclePoly_eq_finiteCirclePoly, sq_abs] using
+  exact
     (finiteCirclePoly_l2_identity (k := k) (D := J + 1) (r := r)
       (a := fun n : Fin (J + 1) => hermiteCoeff k G n.1))
 
@@ -2208,7 +2220,7 @@ private lemma summable_nat_pow_mul_pow_div_factorial_nonneg (m : ℕ) {x : ℝ} 
       calc
         ((n + m + 1 : ℝ) ^ m) ≤ (((m + 1 : ℝ) * (n + 1)) ^ m) := by
           gcongr
-          nlinarith
+          nlinarith only []
         _ = (m + 1 : ℝ) ^ m * (n + 1 : ℝ) ^ m := by rw [mul_pow]
         _ ≤ (m + 1 : ℝ) ^ m * (((n + m).descFactorial m : ℕ) : ℝ) := by gcongr
     have hfact :
@@ -2428,7 +2440,7 @@ private theorem aestronglyMeasurable_of_mem_Hk {k : ℕ} {G : ℂ → ℂ} (hG :
 /-- Integrability of truncation norm squared with Gaussian weight. -/
 theorem integrable_truncate_normSq_exp (k J : ℕ) (G : ℂ → ℂ) :
     Integrable (fun z : ℂ => ‖truncate k J G z‖ ^ 2 * rexp (-‖z‖ ^ 2)) := by
-  simpa using (truncate_mem_Hk k J G).1
+  exact (truncate_mem_Hk k J G).1
 
 /-- Cross integrability: Phi_n * conj(G) * exp is integrable when ‖G‖² exp is.
     Uses AM-GM: |ab| ≤ (a² + b²)/2 with the Gaussian split. -/
@@ -2456,6 +2468,246 @@ private lemma integrable_Phi_conj_G_exp {k : ℕ} {G : ℂ → ℂ} (n : ℕ)
     simp only [norm_mul, Complex.norm_conj, Complex.norm_real,
       Real.norm_of_nonneg (exp_nonneg _)]
     nlinarith only [sq_nonneg (‖Phi k n z‖ - ‖G z‖), exp_nonneg (-‖z‖ ^ 2 : ℝ)]
+
+/-- Gaussian weight used to identify weighted Hermite norms with ordinary `L²`. -/
+private def gaussianWeight (z : ℂ) : ℝ :=
+  Real.exp (-(‖z‖ ^ 2) / 2) / Real.sqrt Real.pi
+
+/-- Gaussian rescaling into the usual `L²` space. -/
+private def gaussianScale (F : ℂ → ℂ) : ℂ → ℂ :=
+  fun z => ((gaussianWeight z : ℝ) : ℂ) * F z
+
+private theorem gaussianWeight_nonneg (z : ℂ) : 0 ≤ gaussianWeight z := by
+  unfold gaussianWeight
+  positivity
+
+private theorem gaussianWeight_sq (z : ℂ) :
+    gaussianWeight z ^ 2 = (1 / Real.pi) * Real.exp (-‖z‖ ^ 2) := by
+  unfold gaussianWeight
+  have hpi : 0 ≤ Real.pi := le_of_lt Real.pi_pos
+  have hsqrt : Real.sqrt Real.pi ^ 2 = Real.pi := by rw [Real.sq_sqrt hpi]
+  have hexp :
+      Real.exp (-(‖z‖ ^ 2) / 2) ^ 2 = Real.exp (-‖z‖ ^ 2) := by
+    calc
+      Real.exp (-(‖z‖ ^ 2) / 2) ^ 2
+          = Real.exp (-(‖z‖ ^ 2) / 2) * Real.exp (-(‖z‖ ^ 2) / 2) := by ring
+      _ = Real.exp (-(‖z‖ ^ 2) / 2 + -(‖z‖ ^ 2) / 2) := by rw [← Real.exp_add]
+      _ = Real.exp (-‖z‖ ^ 2) := by congr 1; ring
+  rw [div_pow, hexp, hsqrt]
+  field_simp [Real.pi_ne_zero]
+
+private theorem continuous_gaussianWeight : Continuous gaussianWeight := by
+  unfold gaussianWeight
+  exact
+    (Real.continuous_exp.comp
+      ((continuous_neg.comp (continuous_norm.pow 2)).div_const 2)).div_const _
+
+private theorem aestronglyMeasurable_gaussianScale
+    {F : ℂ → ℂ}
+    (hF : AEStronglyMeasurable F volume) :
+    AEStronglyMeasurable (gaussianScale F) volume :=
+  (Complex.continuous_ofReal.comp continuous_gaussianWeight).aestronglyMeasurable.mul hF
+
+private theorem weightedNormSq_eq_integral_sq_norm_gaussianScale
+    (G : ℂ → ℂ) :
+    weightedNormSq G = ∫ z : ℂ, ‖gaussianScale G z‖ ^ 2 := by
+  unfold weightedNormSq HermiteLEAN.weightedNormSq
+  have hEq :
+      (fun z : ℂ => ‖gaussianScale G z‖ ^ 2) =
+        fun z : ℂ => (1 / Real.pi) * (‖G z‖ ^ 2 * Real.exp (-‖z‖ ^ 2)) := by
+    funext z
+    rw [show ‖gaussianScale G z‖ ^ 2 =
+        gaussianWeight z ^ 2 * ‖G z‖ ^ 2 by
+          unfold gaussianScale
+          rw [norm_mul, Complex.norm_real, Real.norm_eq_abs,
+            abs_of_nonneg (gaussianWeight_nonneg z)]
+          ring]
+    rw [gaussianWeight_sq]
+    ac_rfl
+  rw [hEq, MeasureTheory.integral_const_mul]
+
+private theorem memLp_two_gaussianScale_of_integrable
+    {F : ℂ → ℂ}
+    (hF : AEStronglyMeasurable F volume)
+    (hInt : Integrable (fun z : ℂ => ‖F z‖ ^ 2 * Real.exp (-‖z‖ ^ 2))) :
+    MeasureTheory.MemLp (gaussianScale F) 2 volume := by
+  refine (MeasureTheory.memLp_two_iff_integrable_sq_norm ?_).2 ?_
+  · exact aestronglyMeasurable_gaussianScale hF
+  · refine hInt.const_mul (1 / Real.pi) |>.congr ?_
+    filter_upwards with z
+    rw [show ‖gaussianScale F z‖ ^ 2 =
+        gaussianWeight z ^ 2 * ‖F z‖ ^ 2 by
+          unfold gaussianScale
+          rw [norm_mul, Complex.norm_real, Real.norm_eq_abs,
+            abs_of_nonneg (gaussianWeight_nonneg z)]
+          ring]
+    rw [gaussianWeight_sq]
+    ac_rfl
+
+private theorem integrable_of_memLp_two_gaussianScale
+    {F : ℂ → ℂ} (hF : MeasureTheory.MemLp (gaussianScale F) 2 volume) :
+    Integrable (fun z : ℂ => ‖F z‖ ^ 2 * Real.exp (-‖z‖ ^ 2)) := by
+  have hint := (MeasureTheory.memLp_two_iff_integrable_sq_norm hF.aestronglyMeasurable).1 hF
+  refine (hint.const_mul Real.pi).congr ?_
+  filter_upwards with z
+  simp only [gaussianScale, norm_mul, Complex.norm_real, Real.norm_eq_abs,
+    abs_of_nonneg (gaussianWeight_nonneg z), mul_pow, gaussianWeight_sq]
+  field_simp [Real.pi_ne_zero]
+
+private theorem integrable_weighted_square_sub
+    {F G : ℂ → ℂ} (hF : AEStronglyMeasurable F volume)
+    (hG : AEStronglyMeasurable G volume)
+    (hIntF : Integrable (fun z : ℂ => ‖F z‖ ^ 2 * Real.exp (-‖z‖ ^ 2)))
+    (hIntG : Integrable (fun z : ℂ => ‖G z‖ ^ 2 * Real.exp (-‖z‖ ^ 2))) :
+    Integrable (fun z : ℂ => ‖F z - G z‖ ^ 2 * Real.exp (-‖z‖ ^ 2)) := by
+  have hscale : gaussianScale (fun z => F z - G z) = gaussianScale F - gaussianScale G := by
+    funext z
+    exact mul_sub _ _ _
+  apply integrable_of_memLp_two_gaussianScale
+  rw [hscale]
+  exact (memLp_two_gaussianScale_of_integrable hF hIntF).sub
+    (memLp_two_gaussianScale_of_integrable hG hIntG)
+
+private theorem weightedNorm_eq_lpNorm_gaussianScale
+    {F : ℂ → ℂ}
+    (hF : AEStronglyMeasurable F volume)
+    (_hInt : Integrable (fun z : ℂ => ‖F z‖ ^ 2 * Real.exp (-‖z‖ ^ 2))) :
+    weightedNorm F = MeasureTheory.lpNorm (gaussianScale F) 2 volume := by
+  have hmeas : AEStronglyMeasurable (gaussianScale F) volume :=
+    aestronglyMeasurable_gaussianScale hF
+  have htwo : (2 : NNReal) ≠ 0 := by norm_num
+  have hlp := MeasureTheory.lpNorm_nnreal_eq_integral_norm_rpow
+    (μ := volume) (p := (2 : NNReal)) (f := gaussianScale F) htwo hmeas
+  change weightedNorm F = MeasureTheory.lpNorm (gaussianScale F) (↑(2 : NNReal)) volume
+  rw [hlp]
+  change weightedNorm F = (∫ z : ℂ, ‖gaussianScale F z‖ ^ (2 : ℝ)) ^ ((2 : ℝ)⁻¹)
+  have hsq :
+      (∫ z : ℂ, ‖gaussianScale F z‖ ^ (2 : ℝ)) = weightedNormSq F := by
+    simpa only [rpow_ofNat] using (weightedNormSq_eq_integral_sq_norm_gaussianScale F).symm
+  rw [hsq]
+  unfold weightedNorm HermiteLEAN.weightedNorm
+  rw [Real.sqrt_eq_rpow]
+  norm_num
+
+private theorem integrable_weightedCross_of_memLp
+    (F G : ℂ → ℂ)
+    (hF : MeasureTheory.MemLp (gaussianScale F) 2 volume)
+    (hG : MeasureTheory.MemLp (gaussianScale G) 2 volume) :
+    Integrable
+      (fun z : ℂ => F z * (starRingEnd ℂ) (G z) * (Real.exp (-‖z‖ ^ 2) : ℂ)) := by
+  let FLp : MeasureTheory.Lp ℂ 2 volume := hF.toLp (gaussianScale F)
+  let GLp : MeasureTheory.Lp ℂ 2 volume := hG.toLp (gaussianScale G)
+  have hscaled :
+      Integrable
+        (fun z : ℂ =>
+          ((1 / Real.pi : ℂ) *
+            (F z * (starRingEnd ℂ) (G z) * (Real.exp (-‖z‖ ^ 2) : ℂ)))) := by
+    have hint :
+        Integrable (fun z : ℂ => inner ℂ (GLp z) (FLp z)) := by
+      simpa only [RCLike.inner_apply, FLp, GLp] using
+        MeasureTheory.L2.integrable_inner (𝕜 := ℂ) GLp FLp
+    have hEq :
+        (fun z : ℂ => inner ℂ (GLp z) (FLp z)) =ᵐ[volume]
+          (fun z : ℂ => inner ℂ (gaussianScale G z) (gaussianScale F z)) := by
+      filter_upwards [hG.coeFn_toLp, hF.coeFn_toLp] with z hzG hzF
+      rw [hzG, hzF]
+    have hint' :
+        Integrable (fun z : ℂ => inner ℂ (gaussianScale G z) (gaussianScale F z)) := hint.congr hEq
+    convert hint' using 1
+    ext z
+    rw [RCLike.inner_apply']
+    unfold gaussianScale
+    have hgw :
+        (((gaussianWeight z : ℝ) : ℂ) * ((gaussianWeight z : ℝ) : ℂ)) =
+          (((1 / Real.pi) * Real.exp (-‖z‖ ^ 2) : ℝ) : ℂ) := by
+      have hsq := gaussianWeight_sq z
+      rw [sq] at hsq
+      exact_mod_cast hsq
+    rw [show (starRingEnd ℂ) (↑(gaussianWeight z) * G z) * (↑(gaussianWeight z) * F z) =
+      ↑(gaussianWeight z) * ↑(gaussianWeight z) * (F z * (starRingEnd ℂ) (G z)) from by
+        simp [map_mul]
+        ring, hgw]
+    push_cast
+    ac_rfl
+  have hpi_ne : (Real.pi : ℂ) ≠ 0 := by exact_mod_cast Real.pi_ne_zero
+  simpa only [ofReal_exp, ofReal_neg, ofReal_pow, mul_comm, mul_left_comm, one_div, ne_eq, hpi_ne,
+    not_false_eq_true, mul_inv_cancel_left₀, mul_assoc] using hscaled.const_mul (Real.pi : ℂ)
+
+private theorem weightedInner_eq_l2Inner
+    (F G : ℂ → ℂ)
+    (hF : MeasureTheory.MemLp (gaussianScale F) 2 volume)
+    (hG : MeasureTheory.MemLp (gaussianScale G) 2 volume) :
+    weightedInner F G = @inner ℂ _ _ (hG.toLp (gaussianScale G)) (hF.toLp (gaussianScale F)) := by
+  let FLp : MeasureTheory.Lp ℂ 2 volume := hF.toLp (gaussianScale F)
+  let GLp : MeasureTheory.Lp ℂ 2 volume := hG.toLp (gaussianScale G)
+  have hEq :
+      (fun z : ℂ => inner ℂ (GLp z) (FLp z)) =ᵐ[volume]
+        (fun z : ℂ =>
+          ((1 / Real.pi : ℂ) *
+            (F z * (starRingEnd ℂ) (G z) * (Real.exp (-‖z‖ ^ 2) : ℂ)))) := by
+    filter_upwards [hG.coeFn_toLp, hF.coeFn_toLp] with z hzG hzF
+    rw [hzG, hzF, RCLike.inner_apply']
+    unfold gaussianScale
+    have hgw :
+        (((gaussianWeight z : ℝ) : ℂ) * ((gaussianWeight z : ℝ) : ℂ)) =
+          (((1 / Real.pi) * Real.exp (-‖z‖ ^ 2) : ℝ) : ℂ) := by
+      have hsq := gaussianWeight_sq z
+      rw [sq] at hsq
+      exact_mod_cast hsq
+    rw [show (starRingEnd ℂ) (↑(gaussianWeight z) * G z) * (↑(gaussianWeight z) * F z) =
+      ↑(gaussianWeight z) * ↑(gaussianWeight z) * (F z * (starRingEnd ℂ) (G z)) from by
+        simp [map_mul]
+        ring, hgw]
+    push_cast
+    ac_rfl
+  calc
+    weightedInner F G
+        = ∫ z : ℂ, ((1 / Real.pi : ℂ) *
+            (F z * (starRingEnd ℂ) (G z) * (Real.exp (-‖z‖ ^ 2) : ℂ))) := by
+              unfold weightedInner HermiteLEAN.weightedInner
+              exact
+                (MeasureTheory.integral_const_mul
+                  (r := (1 / Real.pi : ℂ))
+                  (f := fun z : ℂ =>
+                    F z * (starRingEnd ℂ) (G z) * (Real.exp (-‖z‖ ^ 2) : ℂ))).symm
+    _ = ∫ z : ℂ, inner ℂ (GLp z) (FLp z) := by
+          symm
+          exact integral_congr_ae hEq
+    _ = @inner ℂ _ _ GLp FLp := by
+          exact
+            (MeasureTheory.L2.inner_def (𝕜 := ℂ) GLp FLp).symm
+
+private theorem weightedInner_norm_le_of_integrable
+    {F G : ℂ → ℂ}
+    (hFmeas : AEStronglyMeasurable F volume)
+    (hGmeas : AEStronglyMeasurable G volume)
+    (hFint : Integrable (fun z : ℂ => ‖F z‖ ^ 2 * Real.exp (-‖z‖ ^ 2)))
+    (hGint : Integrable (fun z : ℂ => ‖G z‖ ^ 2 * Real.exp (-‖z‖ ^ 2))) :
+    ‖weightedInner F G‖ ≤ weightedNorm F * weightedNorm G := by
+  let hFmem := memLp_two_gaussianScale_of_integrable hFmeas hFint
+  let hGmem := memLp_two_gaussianScale_of_integrable hGmeas hGint
+  calc
+    ‖weightedInner F G‖
+        = ‖@inner ℂ _ _ (hGmem.toLp (gaussianScale G)) (hFmem.toLp (gaussianScale F))‖ := by
+            rw [weightedInner_eq_l2Inner F G hFmem hGmem]
+    _ ≤ ‖hGmem.toLp (gaussianScale G)‖ * ‖hFmem.toLp (gaussianScale F)‖ := norm_inner_le_norm _ _
+    _ = MeasureTheory.lpNorm (gaussianScale G) 2 volume *
+          MeasureTheory.lpNorm (gaussianScale F) 2 volume := by
+            rw [MeasureTheory.Lp.norm_toLp, MeasureTheory.Lp.norm_toLp,
+              ← MeasureTheory.toReal_eLpNorm, ← MeasureTheory.toReal_eLpNorm]
+    _ = weightedNorm G * weightedNorm F := by
+          rw [← weightedNorm_eq_lpNorm_gaussianScale hGmeas hGint,
+            ← weightedNorm_eq_lpNorm_gaussianScale hFmeas hFint]
+    _ = weightedNorm F * weightedNorm G := by ring
+
+-- Preserve the existing generated declarations while reusing weighted Cauchy–Schwarz.
+private theorem bessel_truncate_le._simp_1_1.{u_3}
+    {G₀ : Type u_3} [inst : GroupWithZero G₀] [inst_1 : PartialOrder G₀]
+    [PosMulReflectLT G₀] {a : G₀} : (0 ≤ a⁻¹) = (0 ≤ a) :=
+  propext inv_nonneg
+
+private theorem bessel_truncate_le._simp_1_2.{u_1}
+    {α : Type u_1} [inst : LE α] {x y : α} : (x ≥ y) = (y ≤ x) := rfl
 
 private lemma bessel_truncate_le {k : ℕ} {G : ℂ → ℂ} (hG : G ∈ Hk k)
     (hInt : Integrable (fun z : ℂ => ‖G z‖ ^ 2 * rexp (-‖z‖ ^ 2))) (J : ℕ) :
@@ -2519,85 +2771,34 @@ private lemma bessel_truncate_le {k : ℕ} {G : ℂ → ℂ} (hG : G ∈ Hk k)
   -- From the equalities: ⟨trunc, G⟩ = ⟨trunc, trunc⟩ (= ∑ ‖a_n‖²)
   have hCrossZero : weightedInner (truncate k J G) G =
       weightedInner (truncate k J G) (truncate k J G) := by rw [hInnerTG', hInnerTT]
-  -- weightedNormSq T = Re⟨T, T⟩ = Re⟨T, G⟩
-  rw [weightedNormSq_eq_re_weightedInner, ← hCrossZero]
-  let Tfun : ℂ → ℂ := truncate k J G
-  have hTInt : Integrable (fun z : ℂ => ‖Tfun z‖ ^ 2 * rexp (-‖z‖ ^ 2)) := by
-    simpa [Tfun] using integrable_truncate_normSq_exp k J G
-  have hAvgInt : Integrable (fun z : ℂ =>
-      ((‖Tfun z‖ ^ 2 + ‖G z‖ ^ 2) / 2) * rexp (-‖z‖ ^ 2)) := by
-    have hsum : Integrable (fun z : ℂ =>
-        ‖Tfun z‖ ^ 2 * rexp (-‖z‖ ^ 2) + ‖G z‖ ^ 2 * rexp (-‖z‖ ^ 2)) := hTInt.add hInt
-    have hEq :
-        (fun z : ℂ => ((‖Tfun z‖ ^ 2 + ‖G z‖ ^ 2) / 2) * rexp (-‖z‖ ^ 2)) =
-          (fun z : ℂ =>
-            (1 / 2 : ℝ) *
-              (‖Tfun z‖ ^ 2 * rexp (-‖z‖ ^ 2) + ‖G z‖ ^ 2 * rexp (-‖z‖ ^ 2))) := by
-      funext z
-      ring
-    rw [hEq]
-    exact hsum.const_mul (1 / 2 : ℝ)
-  have hInnerNormLe :
-      ‖weightedInner Tfun G‖ ≤ (weightedNormSq Tfun + weightedNormSq G) / 2 := by
-    have hpt :
-        ∀ᵐ z : ℂ ∂volume,
-          ‖Tfun z * (starRingEnd ℂ) (G z) * (Real.exp (-‖z‖ ^ 2) : ℂ)‖ ≤
-            ((‖Tfun z‖ ^ 2 + ‖G z‖ ^ 2) / 2) * rexp (-‖z‖ ^ 2) := by
-      refine Filter.Eventually.of_forall ?_
-      intro z
-      calc
-        ‖Tfun z * (starRingEnd ℂ) (G z) * (Real.exp (-‖z‖ ^ 2) : ℂ)‖
-            = (‖Tfun z‖ * ‖G z‖) * rexp (-‖z‖ ^ 2) := by
-                rw [norm_mul, norm_mul,
-                  show ‖(starRingEnd ℂ) (G z)‖ = ‖G z‖ by simp,
-                  Complex.norm_real, Real.norm_eq_abs, abs_of_nonneg (exp_nonneg _)]
-        _ ≤ ((‖Tfun z‖ ^ 2 + ‖G z‖ ^ 2) / 2) * rexp (-‖z‖ ^ 2) := by
-              nlinarith only [sq_nonneg (‖Tfun z‖ - ‖G z‖), exp_nonneg (-‖z‖ ^ 2 : ℝ)]
-    have hIntLe :
-        ‖∫ z : ℂ, Tfun z * (starRingEnd ℂ) (G z) * (Real.exp (-‖z‖ ^ 2) : ℂ)‖ ≤
-          ∫ z : ℂ, ((‖Tfun z‖ ^ 2 + ‖G z‖ ^ 2) / 2) * rexp (-‖z‖ ^ 2) :=
-      MeasureTheory.norm_integral_le_of_norm_le hAvgInt hpt
-    have hpi_nonneg : 0 ≤ (1 / Real.pi : ℝ) := by positivity
-    have hAvgEq :
-        (1 / Real.pi) * ∫ z : ℂ, ((‖Tfun z‖ ^ 2 + ‖G z‖ ^ 2) / 2) * rexp (-‖z‖ ^ 2) =
-          (weightedNormSq Tfun + weightedNormSq G) / 2 := by
-      unfold weightedNormSq HermiteLEAN.weightedNormSq
-      have hEq :
-          (fun z : ℂ => ((‖Tfun z‖ ^ 2 + ‖G z‖ ^ 2) / 2) * rexp (-‖z‖ ^ 2)) =
-            (fun z : ℂ =>
-              (1 / 2 : ℝ) *
-                (‖Tfun z‖ ^ 2 * rexp (-‖z‖ ^ 2) + ‖G z‖ ^ 2 * rexp (-‖z‖ ^ 2))) := by
-        funext z
-        ring
-      rw [hEq, MeasureTheory.integral_const_mul, MeasureTheory.integral_add hTInt hInt]
-      ring
-    have hpi_norm : ‖(1 / Real.pi : ℂ)‖ = (1 / Real.pi : ℝ) := by
-      simp_all only [ofReal_exp, ofReal_neg, ofReal_pow, ofReal_sum, Complex.norm_mul,
-        RCLike.norm_conj, one_div, inv_nonneg, norm_inv, norm_real, norm_eq_abs, abs_pi]
-    calc
-      ‖weightedInner Tfun G‖
-          = ‖(1 / Real.pi : ℂ) *
-              ∫ z : ℂ, Tfun z * (starRingEnd ℂ) (G z) * (Real.exp (-‖z‖ ^ 2) : ℂ)‖ := by rfl
-      _ = (1 / Real.pi : ℝ) *
-          ‖∫ z : ℂ, Tfun z * (starRingEnd ℂ) (G z) * (Real.exp (-‖z‖ ^ 2) : ℂ)‖ := by
-            rw [norm_mul, hpi_norm]
-      _ ≤ (1 / Real.pi : ℝ) *
-          ∫ z : ℂ, ((‖Tfun z‖ ^ 2 + ‖G z‖ ^ 2) / 2) * rexp (-‖z‖ ^ 2) :=
-            mul_le_mul_of_nonneg_left hIntLe hpi_nonneg
-      _ = (weightedNormSq Tfun + weightedNormSq G) / 2 := hAvgEq
-  have hReEq : (weightedInner Tfun G).re = weightedNormSq Tfun := by
-    calc
-      (weightedInner Tfun G).re = (weightedInner Tfun Tfun).re := by
-        simpa only [Tfun] using congrArg Complex.re hCrossZero
-      _ = weightedNormSq Tfun := (weightedNormSq_eq_re_weightedInner Tfun).symm
-  have hTle : weightedNormSq Tfun ≤ weightedNormSq G := by
-    have hmid : weightedNormSq Tfun ≤ (weightedNormSq Tfun + weightedNormSq G) / 2 := by
-      calc
-        weightedNormSq Tfun = (weightedInner Tfun G).re := hReEq.symm
-        _ ≤ ‖weightedInner Tfun G‖ := Complex.re_le_norm _
-        _ ≤ (weightedNormSq Tfun + weightedNormSq G) / 2 := hInnerNormLe
-    linarith
-  simpa only [hReEq, ge_iff_le, Tfun] using hTle
+  have hpi_nonneg : 0 ≤ (1 / Real.pi : ℝ) := by
+    rw [one_div, bessel_truncate_le._simp_1_1]
+    exact Real.pi_pos.le
+  have hnonnegative (F : ℂ → ℂ) : 0 ≤ weightedNormSq F := by
+    unfold weightedNormSq HermiteLEAN.weightedNormSq
+    exact mul_nonneg hpi_nonneg (integral_nonneg fun z =>
+      mul_nonneg (sq_nonneg _) (Real.exp_nonneg _))
+  have hreal : weightedNormSq (truncate k J G) ≤ ‖weightedInner (truncate k J G) G‖ := by
+    rw [weightedNormSq_eq_re_weightedInner, ← hCrossZero]
+    exact Complex.re_le_norm _
+  have hbound := weightedInner_norm_le_of_integrable (F := truncate k J G) (G := G)
+    (continuous_finiteHermiteSum k _).aestronglyMeasurable
+    (aestronglyMeasurable_of_mem_Hk hG)
+    (integrable_truncate_normSq_exp k J G) hInt
+  have hT_square : weightedNorm (truncate k J G) ^ 2 = weightedNormSq (truncate k J G) :=
+    Real.sq_sqrt (hnonnegative _)
+  have hG_square : weightedNorm G ^ 2 = weightedNormSq G := Real.sq_sqrt (hnonnegative _)
+  have hT_nonnegative : 0 ≤ weightedNorm (truncate k J G) := Real.sqrt_nonneg _
+  by_cases hzero : weightedNorm (truncate k J G) = 0
+  · rw [← hT_square, hzero, zero_pow (by decide)]
+    exact hnonnegative G
+  · have hpositive : 0 < weightedNorm (truncate k J G) :=
+      lt_of_le_of_ne hT_nonnegative (Ne.symm hzero)
+    have hnorm_le : weightedNorm (truncate k J G) ≤ weightedNorm G :=
+      le_of_mul_le_mul_left (by
+        simpa only [← hT_square, pow_two] using hreal.trans hbound) hpositive
+    rw [← hT_square, ← hG_square]
+    exact pow_le_pow_left₀ hT_nonnegative hnorm_le 2
 
 /-- The Gaussian-weighted lintegral of `‖F J‖²` equals `π` times its weighted
 norm square. -/
@@ -3009,7 +3210,7 @@ theorem point_eval_bounded :
       _ ≤
           Real.sqrt (∑ n ∈ Finset.range J, ‖hermiteCoeff k G n‖ ^ 2) *
             Real.sqrt (∑ n ∈ Finset.range J, ‖Phi k n z‖ ^ 2) := by
-              simpa using
+              exact
                 Real.sum_mul_le_sqrt_mul_sqrt (Finset.range J)
                   (fun n => ‖hermiteCoeff k G n‖) (fun n => ‖Phi k n z‖)
       _ ≤ Real.sqrt (weightedNormSq G) * Real.sqrt (∑' n : ℕ, ‖Phi k n z‖ ^ 2) := by
@@ -3021,9 +3222,9 @@ theorem point_eval_bounded :
             rw [mul_comm]
   have hu_summable : Summable u := summable_of_sum_range_le (fun n => norm_nonneg _) hu_range
   have hnorm_series : Summable (fun n : ℕ => ‖hermiteCoeff k G n * Phi k n z‖) := by
-    simpa only [Complex.norm_mul, u] using hu_summable
+    exact hu_summable
   have htsum : (∑' n : ℕ, hermiteCoeff k G n * Phi k n z) = G z := by
-    simpa only [hermiteCoeff] using (hG.2 z).tsum_eq
+    exact (hG.2 z).tsum_eq
   calc
     ‖G z‖ = ‖∑' n : ℕ, hermiteCoeff k G n * Phi k n z‖ := by rw [← htsum]
     _ ≤ ∑' n : ℕ, u n := by
@@ -3176,7 +3377,7 @@ private theorem circleSeries_l2_identity_canonical :
                 ‖hermiteCoeff k G n.1 * (qkn k n.1 r : ℂ) * fourier (n.1 : ℤ) t‖
                     = ‖c n.1‖ * ‖fourier (n.1 : ℤ) t‖ := by simp [c, mul_assoc]
                 _ = ‖c n.1‖ := by
-                      simp_all [fourier_apply, Circle.norm_coe]
+                      simp only [fourier_apply, Circle.norm_coe, mul_one]
         _ = ∑ n ∈ Finset.range (J + 1), ‖c n‖ := by rw [Finset.sum_range]
         _ ≤ M := by exact hc_norm.sum_le_tsum _ (fun n hn => norm_nonneg _)
     have hnonneg : 0 ≤ ‖truncCirclePoly k r J G t‖ ^ 2 := sq_nonneg _
@@ -3336,7 +3537,7 @@ theorem circleSeries_l2_identity :
                 ‖g n.1 * (qkn k n.1 r : ℂ) * fourier (n.1 : ℤ) t‖ = ‖c n.1‖ * ‖fourier (n.1 : ℤ)
                     t‖ := by simp [c, mul_assoc]
                 _ = ‖c n.1‖ := by
-                  simp_all [fourier_apply, Circle.norm_coe]
+                  simp only [fourier_apply, Circle.norm_coe, mul_one]
         _ = ∑ n ∈ Finset.range (J + 1), ‖c n‖ := by rw [Finset.sum_range]
         _ ≤ M := by exact hc_norm.sum_le_tsum _ (fun n hn => norm_nonneg _)
     have hnonneg : 0 ≤ ‖finiteCirclePoly k r (fun n : Fin (J + 1) => g n.1) t‖ ^ 2 := sq_nonneg _
@@ -3365,7 +3566,7 @@ theorem circleSeries_l2_identity :
         calc
           ‖a n‖ = ‖c n‖ * ‖fourier (n : ℤ) t‖ := by simp [a, c, mul_assoc]
           _ = ‖c n‖ := by
-            simp_all [fourier_apply, Circle.norm_coe]
+            simp only [fourier_apply, Circle.norm_coe, mul_one]
       exact haeq.le
     have hconv :
         Filter.Tendsto (fun J => ∑ n ∈ Finset.range J, a n) Filter.atTop (nhds (circleSeries k g r
@@ -3535,56 +3736,15 @@ theorem h_k_expansion_perp_phi0 :
               g 0 = 0 := by
   intro k G hG hperp
   refine ⟨hermiteCoeff k G, hermiteCoeff_expansion (k := k) (G := G) hG, ?_⟩
-  simpa only [hermiteCoeff_phi0, phi0] using
+  exact
     (orthogonal_phi0_iff_hermiteCoeff_zero (k := k) (G := G)).mp hperp
 
 private lemma sub_truncate_mem_Hk {k : ℕ} {G : ℂ → ℂ} (hG : G ∈ Hk k) (J : ℕ) :
     (fun z => G z - truncate k J G z) ∈ Hk k := by
   refine ⟨?_, ?_⟩
-  · have hG_aesm : AEStronglyMeasurable G volume := aestronglyMeasurable_of_mem_Hk hG
-    have hT_aesm : AEStronglyMeasurable (truncate k J G) volume :=
-      (continuous_finiteHermiteSum k _).aestronglyMeasurable
-    have hbound :
-        Integrable
-          (fun z : ℂ =>
-            (2 : ℝ) *
-              (‖G z‖ ^ 2 * rexp (-‖z‖ ^ 2) +
-                ‖truncate k J G z‖ ^ 2 * rexp (-‖z‖ ^ 2))) := by
-      simpa only [mul_add, mul_left_comm, two_mul, add_assoc, Pi.add_apply, add_comm, add_left_comm,
-        mul_comm, mul_assoc] using
-          (hG.1.add (integrable_truncate_normSq_exp k J G)).const_mul (2 : ℝ)
-    have hExp_aesm : AEStronglyMeasurable (fun z : ℂ => rexp (-‖z‖ ^ 2)) volume :=
-      (continuous_neg.comp ((continuous_pow 2).comp continuous_norm)).rexp.aestronglyMeasurable
-    have hmeas :
-        AEStronglyMeasurable
-          (fun z : ℂ => ‖G z - truncate k J G z‖ ^ 2 * rexp (-‖z‖ ^ 2)) volume :=
-      ((hG_aesm.sub hT_aesm).norm.pow 2).mul hExp_aesm
-    refine MeasureTheory.Integrable.mono' hbound hmeas ?_
-    filter_upwards with z
-    have hsub : ‖G z - truncate k J G z‖ ≤ ‖G z‖ + ‖truncate k J G z‖ := norm_sub_le _ _
-    have hexp : 0 ≤ rexp (-‖z‖ ^ 2) := exp_nonneg _
-    have hsq :
-        ‖G z - truncate k J G z‖ ^ 2 ≤ 2 * (‖G z‖ ^ 2 + ‖truncate k J G z‖ ^ 2) := by
-      have hsubsq :
-          ‖G z - truncate k J G z‖ ^ 2 ≤ (‖G z‖ + ‖truncate k J G z‖) ^ 2 :=
-        pow_le_pow_left₀ (norm_nonneg _) hsub 2
-      have hab :
-          (‖G z‖ + ‖truncate k J G z‖) ^ 2 ≤ 2 * (‖G z‖ ^ 2 + ‖truncate k J G z‖ ^ 2) := by
-        linarith only [sq_nonneg (‖G z‖ - ‖truncate k J G z‖)]
-      exact le_trans hsubsq hab
-    have hmul :
-        ‖G z - truncate k J G z‖ ^ 2 * rexp (-‖z‖ ^ 2) ≤
-          (2 * (‖G z‖ ^ 2 + ‖truncate k J G z‖ ^ 2)) * rexp (-‖z‖ ^ 2) :=
-      mul_le_mul_of_nonneg_right hsq hexp
-    have hnonneg :
-        0 ≤ ‖G z - truncate k J G z‖ ^ 2 * rexp (-‖z‖ ^ 2) := by positivity
-    rw [Real.norm_of_nonneg hnonneg]
-    calc
-      ‖G z - truncate k J G z‖ ^ 2 * rexp (-‖z‖ ^ 2)
-          ≤ (2 * (‖G z‖ ^ 2 + ‖truncate k J G z‖ ^ 2)) * rexp (-‖z‖ ^ 2) := hmul
-      _ = (2 : ℝ) *
-            (‖G z‖ ^ 2 * rexp (-‖z‖ ^ 2) +
-              ‖truncate k J G z‖ ^ 2 * rexp (-‖z‖ ^ 2)) := by ring
+  · exact integrable_weighted_square_sub (aestronglyMeasurable_of_mem_Hk hG)
+      (continuous_finiteHermiteSum k _).aestronglyMeasurable hG.1
+      (integrable_truncate_normSq_exp k J G)
   · intro z
     have hGz := hG.2 z
     have hTzH := (truncate_mem_Hk k J G).2 z
@@ -3693,7 +3853,7 @@ theorem truncate_tendsto :
   rw [hDiffNormSq, hShift]
   have hJN := hN (J + 1) (by omega)
   rw [dist_zero_right] at hJN
-  linarith [abs_nonneg (∑' n, ‖hermiteCoeff k G (n + (J + 1))‖ ^ 2),
+  linarith only [abs_nonneg (∑' n, ‖hermiteCoeff k G (n + (J + 1))‖ ^ 2),
     (abs_lt.mp hJN).2]
 
 /-- Truncations converge locally uniformly on bounded sets. -/
@@ -3982,7 +4142,7 @@ theorem hermite_series_locally_uniform :
   -- Use locally uniform convergence: for R = ‖z₀‖ + 1, ε/3, get J0
   set R := ‖z₀‖ + 1 with hR_def
   have hRpos : 0 < R := by positivity
-  have hε3 : (0 : ℝ) < ε / 3 := by linarith
+  have hε3 : (0 : ℝ) < ε / 3 := by linarith only [hε]
   obtain ⟨J0, hJ0⟩ := truncate_locally_uniform hG R (ε / 3) hRpos hε3
   -- truncate k J0 G is continuous
   have hcont_trunc : Continuous (truncate k J0 G) := continuous_finiteHermiteSum k _
@@ -3997,8 +4157,8 @@ theorem hermite_series_locally_uniform :
   have hz_R : ‖z‖ ≤ R := by
     have h1 : ‖z‖ ≤ ‖z₀‖ + ‖z - z₀‖ := norm_le_insert' z z₀
     have h2 : ‖z - z₀‖ = dist z z₀ := by rw [dist_eq_norm]
-    linarith [hz, min_le_right δ₁ 1]
-  have hz₀_R : ‖z₀‖ ≤ R := by linarith
+    linarith only [hz, h1, h2, min_le_right δ₁ 1]
+  have hz₀_R : ‖z₀‖ ≤ R := by linarith only []
   have hclose_z : ‖truncate k J0 G z - G z‖ ≤ ε / 3 := hJ0 J0 (le_refl _) z hz_R
   have hclose_z₀ : ‖truncate k J0 G z₀ - G z₀‖ ≤ ε / 3 := hJ0 J0 (le_refl _) z₀ hz₀_R
   have hclose_trunc : dist (truncate k J0 G z) (truncate k J0 G z₀) < ε / 3 :=
@@ -4010,14 +4170,12 @@ theorem hermite_series_locally_uniform :
           (truncate k J0 G z₀ - G z₀)‖ := by ring_nf
     _ ≤ ‖G z - truncate k J0 G z‖ + ‖truncate k J0 G z - truncate k J0 G z₀‖ +
           ‖truncate k J0 G z₀ - G z₀‖ := by
-        linarith [norm_add_le (G z - truncate k J0 G z + (truncate k J0 G z - truncate k J0 G z₀))
-            (truncate k J0 G z₀ - G z₀),
-          norm_add_le (G z - truncate k J0 G z) (truncate k J0 G z - truncate k J0 G z₀)]
+        exact norm_add₃_le
     _ < ε / 3 + ε / 3 + ε / 3 := by
         have h1 : ‖G z - truncate k J0 G z‖ ≤ ε / 3 := by
           rw [show G z - truncate k J0 G z = -(truncate k J0 G z - G z) by ring, norm_neg]
           exact hclose_z
-        linarith
+        linarith only [hclose_z₀, hclose_trunc, h1]
     _ = ε := by ring
 
 /-- Every element of `H_k` is continuous. -/
@@ -4230,7 +4388,7 @@ private lemma summable_hermite_eval_mul
     (k : ℕ) (h : ℕ → ℂ) (_hbdd : ∀ n, ‖h n‖ ≤ 1)
     (hl2 : Summable (fun n => ‖h n‖ ^ 2)) (z : ℂ) :
     Summable (fun n => h n * Phi k n z) := by
-  obtain ⟨Cz, _, hCz⟩ := point_eval_bounded (k := k) z
+  obtain ⟨Cz, hCz_nonnegative, hCz⟩ := point_eval_bounded (k := k) z
   have hRK_partial : ∀ J : ℕ, ∑ n : Fin (J + 1), ‖Phi k n z‖ ^ 2 ≤ Cz ^ 2 := by
     intro J
     let a : Fin (J + 1) → ℂ := fun n => starRingEnd ℂ (Phi k n z)
@@ -4271,7 +4429,7 @@ private lemma summable_hermite_eval_mul
         have hsqS : Real.sqrt S * Real.sqrt S = S := by linarith only [Real.sq_sqrt hS_nn]
         nlinarith only [hSqLe, hsqS, hsqrt_pos]
       have hCz_nn : 0 ≤ Cz := le_trans (by simp [hS_def]) hsqrt_le
-      nlinarith [hsqrt_le, hCz_nn]
+      nlinarith only [hCz_nonnegative, hSqLe, hsqrt_le, hCz_nn]
   have hRK_range : ∀ J : ℕ, ∑ n ∈ Finset.range J, ‖Phi k n z‖ ^ 2 ≤ Cz ^ 2 := by
     intro J
     by_cases hJ : J = 0
@@ -4307,10 +4465,10 @@ private lemma finiteHermiteSum_tendsto_hermiteSeries
   have hsumm := summable_hermite_eval_mul k h hbdd hl2 z
   have hconv :
       Filter.Tendsto (fun J : ℕ => ∑ n ∈ Finset.range J, h n * Phi k n z) Filter.atTop
-        (𝓝 (hermiteSeries k h z)) := by simpa only [hermiteSeries] using
+        (𝓝 (hermiteSeries k h z)) := by exact
           hsumm.hasSum.tendsto_sum_nat
   have hshift : Filter.Tendsto (fun J : ℕ => J + 1) Filter.atTop Filter.atTop := by
-    simpa using (Filter.tendsto_add_atTop_nat 1)
+    exact (Filter.tendsto_add_atTop_nat 1)
   have hconv' := hconv.comp hshift
   have hconv'' :
       Filter.Tendsto (fun J : ℕ => ∑ n ∈ Finset.range (J + 1), h n * Phi k n z) Filter.atTop
@@ -4324,11 +4482,11 @@ private lemma finiteHermiteSum_tendsto_hermiteSeries
     ext J
     change ∑ n : Fin (J + 1), h n.1 * Phi k n.1 z =
       ∑ n ∈ Finset.range (J + 1), h n * Phi k n z
-    simpa using
+    exact
       (Fin.sum_univ_eq_sum_range
         (f := fun n : ℕ => h n * Phi k n z)
         (J + 1))
-  simpa using hmain
+  exact hmain
 
 /-- The explicit Hermite series is a.e. strongly measurable. -/
 private theorem hermiteSeries_aestronglyMeasurable
@@ -4340,213 +4498,6 @@ private theorem hermiteSeries_aestronglyMeasurable
   · exact fun J => (continuous_finiteHermiteSum k _).aestronglyMeasurable
   · exact Filter.Eventually.of_forall
       (finiteHermiteSum_tendsto_hermiteSeries k h hbdd hl2)
-
-/-- Gaussian weight used to identify weighted Hermite norms with ordinary `L²`. -/
-private def gaussianWeight (z : ℂ) : ℝ :=
-  Real.exp (-(‖z‖ ^ 2) / 2) / Real.sqrt Real.pi
-
-/-- Gaussian rescaling into the usual `L²` space. -/
-private def gaussianScale (F : ℂ → ℂ) : ℂ → ℂ :=
-  fun z => ((gaussianWeight z : ℝ) : ℂ) * F z
-
-private theorem gaussianWeight_nonneg (z : ℂ) : 0 ≤ gaussianWeight z := by
-  unfold gaussianWeight
-  positivity
-
-private theorem gaussianWeight_sq (z : ℂ) :
-    gaussianWeight z ^ 2 = (1 / Real.pi) * Real.exp (-‖z‖ ^ 2) := by
-  unfold gaussianWeight
-  have hpi : 0 ≤ Real.pi := le_of_lt Real.pi_pos
-  have hsqrt : Real.sqrt Real.pi ^ 2 = Real.pi := by rw [Real.sq_sqrt hpi]
-  have hexp :
-      Real.exp (-(‖z‖ ^ 2) / 2) ^ 2 = Real.exp (-‖z‖ ^ 2) := by
-    calc
-      Real.exp (-(‖z‖ ^ 2) / 2) ^ 2
-          = Real.exp (-(‖z‖ ^ 2) / 2) * Real.exp (-(‖z‖ ^ 2) / 2) := by ring
-      _ = Real.exp (-(‖z‖ ^ 2) / 2 + -(‖z‖ ^ 2) / 2) := by rw [← Real.exp_add]
-      _ = Real.exp (-‖z‖ ^ 2) := by congr 1; ring
-  rw [div_pow, hexp, hsqrt]
-  field_simp [Real.pi_ne_zero]
-
-private theorem continuous_gaussianWeight : Continuous gaussianWeight := by
-  unfold gaussianWeight
-  exact
-    (Real.continuous_exp.comp
-      ((continuous_neg.comp (continuous_norm.pow 2)).div_const 2)).div_const _
-
-private theorem aestronglyMeasurable_gaussianScale
-    {F : ℂ → ℂ}
-    (hF : AEStronglyMeasurable F volume) :
-    AEStronglyMeasurable (gaussianScale F) volume :=
-  (Complex.continuous_ofReal.comp continuous_gaussianWeight).aestronglyMeasurable.mul hF
-
-private theorem weightedNormSq_eq_integral_sq_norm_gaussianScale
-    (G : ℂ → ℂ) :
-    weightedNormSq G = ∫ z : ℂ, ‖gaussianScale G z‖ ^ 2 := by
-  unfold weightedNormSq HermiteLEAN.weightedNormSq
-  have hEq :
-      (fun z : ℂ => ‖gaussianScale G z‖ ^ 2) =
-        fun z : ℂ => (1 / Real.pi) * (‖G z‖ ^ 2 * Real.exp (-‖z‖ ^ 2)) := by
-    funext z
-    rw [show ‖gaussianScale G z‖ ^ 2 =
-        gaussianWeight z ^ 2 * ‖G z‖ ^ 2 by
-          unfold gaussianScale
-          rw [norm_mul, Complex.norm_real, Real.norm_eq_abs,
-            abs_of_nonneg (gaussianWeight_nonneg z)]
-          ring]
-    rw [gaussianWeight_sq]
-    ac_rfl
-  rw [hEq, MeasureTheory.integral_const_mul]
-
-private theorem memLp_two_gaussianScale_of_integrable
-    {F : ℂ → ℂ}
-    (hF : AEStronglyMeasurable F volume)
-    (hInt : Integrable (fun z : ℂ => ‖F z‖ ^ 2 * Real.exp (-‖z‖ ^ 2))) :
-    MeasureTheory.MemLp (gaussianScale F) 2 volume := by
-  refine (MeasureTheory.memLp_two_iff_integrable_sq_norm ?_).2 ?_
-  · exact aestronglyMeasurable_gaussianScale hF
-  · refine hInt.const_mul (1 / Real.pi) |>.congr ?_
-    filter_upwards with z
-    rw [show ‖gaussianScale F z‖ ^ 2 =
-        gaussianWeight z ^ 2 * ‖F z‖ ^ 2 by
-          unfold gaussianScale
-          rw [norm_mul, Complex.norm_real, Real.norm_eq_abs,
-            abs_of_nonneg (gaussianWeight_nonneg z)]
-          ring]
-    rw [gaussianWeight_sq]
-    ac_rfl
-
-private theorem weightedNorm_eq_lpNorm_gaussianScale
-    {F : ℂ → ℂ}
-    (hF : AEStronglyMeasurable F volume)
-    (_hInt : Integrable (fun z : ℂ => ‖F z‖ ^ 2 * Real.exp (-‖z‖ ^ 2))) :
-    weightedNorm F = MeasureTheory.lpNorm (gaussianScale F) 2 volume := by
-  have hmeas : AEStronglyMeasurable (gaussianScale F) volume :=
-    aestronglyMeasurable_gaussianScale hF
-  have htwo : (2 : NNReal) ≠ 0 := by norm_num
-  have hlp := MeasureTheory.lpNorm_nnreal_eq_integral_norm_rpow
-    (μ := volume) (p := (2 : NNReal)) (f := gaussianScale F) htwo hmeas
-  change weightedNorm F = MeasureTheory.lpNorm (gaussianScale F) (↑(2 : NNReal)) volume
-  rw [hlp]
-  change weightedNorm F = (∫ z : ℂ, ‖gaussianScale F z‖ ^ (2 : ℝ)) ^ ((2 : ℝ)⁻¹)
-  have hsq :
-      (∫ z : ℂ, ‖gaussianScale F z‖ ^ (2 : ℝ)) = weightedNormSq F := by
-    simpa only [rpow_ofNat] using (weightedNormSq_eq_integral_sq_norm_gaussianScale F).symm
-  rw [hsq]
-  unfold weightedNorm HermiteLEAN.weightedNorm
-  rw [Real.sqrt_eq_rpow]
-  norm_num
-
-private theorem integrable_weightedCross_of_memLp
-    (F G : ℂ → ℂ)
-    (hF : MeasureTheory.MemLp (gaussianScale F) 2 volume)
-    (hG : MeasureTheory.MemLp (gaussianScale G) 2 volume) :
-    Integrable
-      (fun z : ℂ => F z * (starRingEnd ℂ) (G z) * (Real.exp (-‖z‖ ^ 2) : ℂ)) := by
-  let FLp : MeasureTheory.Lp ℂ 2 volume := hF.toLp (gaussianScale F)
-  let GLp : MeasureTheory.Lp ℂ 2 volume := hG.toLp (gaussianScale G)
-  have hscaled :
-      Integrable
-        (fun z : ℂ =>
-          ((1 / Real.pi : ℂ) *
-            (F z * (starRingEnd ℂ) (G z) * (Real.exp (-‖z‖ ^ 2) : ℂ)))) := by
-    have hint :
-        Integrable (fun z : ℂ => inner ℂ (GLp z) (FLp z)) := by
-      simpa only [RCLike.inner_apply, FLp, GLp] using
-        MeasureTheory.L2.integrable_inner (𝕜 := ℂ) GLp FLp
-    have hEq :
-        (fun z : ℂ => inner ℂ (GLp z) (FLp z)) =ᵐ[volume]
-          (fun z : ℂ => inner ℂ (gaussianScale G z) (gaussianScale F z)) := by
-      filter_upwards [hG.coeFn_toLp, hF.coeFn_toLp] with z hzG hzF
-      rw [hzG, hzF]
-    have hint' :
-        Integrable (fun z : ℂ => inner ℂ (gaussianScale G z) (gaussianScale F z)) := hint.congr hEq
-    convert hint' using 1
-    ext z
-    rw [RCLike.inner_apply']
-    unfold gaussianScale
-    have hgw :
-        (((gaussianWeight z : ℝ) : ℂ) * ((gaussianWeight z : ℝ) : ℂ)) =
-          (((1 / Real.pi) * Real.exp (-‖z‖ ^ 2) : ℝ) : ℂ) := by
-      have hsq := gaussianWeight_sq z
-      rw [sq] at hsq
-      exact_mod_cast hsq
-    rw [show (starRingEnd ℂ) (↑(gaussianWeight z) * G z) * (↑(gaussianWeight z) * F z) =
-      ↑(gaussianWeight z) * ↑(gaussianWeight z) * (F z * (starRingEnd ℂ) (G z)) from by
-        simp [map_mul]
-        ring, hgw]
-    push_cast
-    ac_rfl
-  have hpi_ne : (Real.pi : ℂ) ≠ 0 := by exact_mod_cast Real.pi_ne_zero
-  simpa only [ofReal_exp, ofReal_neg, ofReal_pow, mul_comm, mul_left_comm, one_div, ne_eq, hpi_ne,
-    not_false_eq_true, mul_inv_cancel_left₀, mul_assoc] using hscaled.const_mul (Real.pi : ℂ)
-
-private theorem weightedInner_eq_l2Inner
-    (F G : ℂ → ℂ)
-    (hF : MeasureTheory.MemLp (gaussianScale F) 2 volume)
-    (hG : MeasureTheory.MemLp (gaussianScale G) 2 volume) :
-    weightedInner F G = @inner ℂ _ _ (hG.toLp (gaussianScale G)) (hF.toLp (gaussianScale F)) := by
-  let FLp : MeasureTheory.Lp ℂ 2 volume := hF.toLp (gaussianScale F)
-  let GLp : MeasureTheory.Lp ℂ 2 volume := hG.toLp (gaussianScale G)
-  have hEq :
-      (fun z : ℂ => inner ℂ (GLp z) (FLp z)) =ᵐ[volume]
-        (fun z : ℂ =>
-          ((1 / Real.pi : ℂ) *
-            (F z * (starRingEnd ℂ) (G z) * (Real.exp (-‖z‖ ^ 2) : ℂ)))) := by
-    filter_upwards [hG.coeFn_toLp, hF.coeFn_toLp] with z hzG hzF
-    rw [hzG, hzF, RCLike.inner_apply']
-    unfold gaussianScale
-    have hgw :
-        (((gaussianWeight z : ℝ) : ℂ) * ((gaussianWeight z : ℝ) : ℂ)) =
-          (((1 / Real.pi) * Real.exp (-‖z‖ ^ 2) : ℝ) : ℂ) := by
-      have hsq := gaussianWeight_sq z
-      rw [sq] at hsq
-      exact_mod_cast hsq
-    rw [show (starRingEnd ℂ) (↑(gaussianWeight z) * G z) * (↑(gaussianWeight z) * F z) =
-      ↑(gaussianWeight z) * ↑(gaussianWeight z) * (F z * (starRingEnd ℂ) (G z)) from by
-        simp [map_mul]
-        ring, hgw]
-    push_cast
-    ac_rfl
-  calc
-    weightedInner F G
-        = ∫ z : ℂ, ((1 / Real.pi : ℂ) *
-            (F z * (starRingEnd ℂ) (G z) * (Real.exp (-‖z‖ ^ 2) : ℂ))) := by
-              unfold weightedInner HermiteLEAN.weightedInner
-              exact
-                (MeasureTheory.integral_const_mul
-                  (r := (1 / Real.pi : ℂ))
-                  (f := fun z : ℂ =>
-                    F z * (starRingEnd ℂ) (G z) * (Real.exp (-‖z‖ ^ 2) : ℂ))).symm
-    _ = ∫ z : ℂ, inner ℂ (GLp z) (FLp z) := by
-          symm
-          exact integral_congr_ae hEq
-    _ = @inner ℂ _ _ GLp FLp := by
-          simpa only [RCLike.inner_apply, GLp, FLp] using
-            (MeasureTheory.L2.inner_def (𝕜 := ℂ) GLp FLp).symm
-
-private theorem weightedInner_norm_le_of_integrable
-    {F G : ℂ → ℂ}
-    (hFmeas : AEStronglyMeasurable F volume)
-    (hGmeas : AEStronglyMeasurable G volume)
-    (hFint : Integrable (fun z : ℂ => ‖F z‖ ^ 2 * Real.exp (-‖z‖ ^ 2)))
-    (hGint : Integrable (fun z : ℂ => ‖G z‖ ^ 2 * Real.exp (-‖z‖ ^ 2))) :
-    ‖weightedInner F G‖ ≤ weightedNorm F * weightedNorm G := by
-  let hFmem := memLp_two_gaussianScale_of_integrable hFmeas hFint
-  let hGmem := memLp_two_gaussianScale_of_integrable hGmeas hGint
-  calc
-    ‖weightedInner F G‖
-        = ‖@inner ℂ _ _ (hGmem.toLp (gaussianScale G)) (hFmem.toLp (gaussianScale F))‖ := by
-            rw [weightedInner_eq_l2Inner F G hFmem hGmem]
-    _ ≤ ‖hGmem.toLp (gaussianScale G)‖ * ‖hFmem.toLp (gaussianScale F)‖ := norm_inner_le_norm _ _
-    _ = MeasureTheory.lpNorm (gaussianScale G) 2 volume *
-          MeasureTheory.lpNorm (gaussianScale F) 2 volume := by
-            rw [MeasureTheory.Lp.norm_toLp, MeasureTheory.Lp.norm_toLp,
-              ← MeasureTheory.toReal_eLpNorm, ← MeasureTheory.toReal_eLpNorm]
-    _ = weightedNorm G * weightedNorm F := by
-          rw [← weightedNorm_eq_lpNorm_gaussianScale hGmeas hGint,
-            ← weightedNorm_eq_lpNorm_gaussianScale hFmeas hFint]
-    _ = weightedNorm F * weightedNorm G := by ring
 
 /-- The Hermite series `G = hermiteSeries k h` of a square-summable bounded
 sequence has integrable squared Gaussian density.  Extracted from
@@ -4854,44 +4805,7 @@ private lemma hermiteSeries_weightedInner_eq {k : ℕ} (h : ℕ → ℂ)
     (continuous_finiteHermiteSum k _).aestronglyMeasurable
   have hDiff_int :
       Integrable (fun z : ℂ => ‖G z - SJ z‖ ^ 2 * rexp (-‖z‖ ^ 2)) := by
-    have hbound :
-        Integrable
-          (fun z : ℂ =>
-            (2 : ℝ) *
-              (‖G z‖ ^ 2 * rexp (-‖z‖ ^ 2) +
-                ‖SJ z‖ ^ 2 * rexp (-‖z‖ ^ 2))) := by
-      simpa only [mul_comm, mul_add, mul_left_comm, two_mul, add_assoc, Pi.add_apply, add_comm,
-        add_left_comm, mul_assoc] using (hIntG.add hSJ_int).const_mul (2 : ℝ)
-    have hExp_aesm : AEStronglyMeasurable (fun z : ℂ => rexp (-‖z‖ ^ 2)) volume :=
-      (continuous_neg.comp ((continuous_pow 2).comp continuous_norm)).rexp.aestronglyMeasurable
-    have hmeas :
-        AEStronglyMeasurable
-          (fun z : ℂ => ‖G z - SJ z‖ ^ 2 * rexp (-‖z‖ ^ 2)) volume :=
-      ((hG_aesm.sub hSJ_aesm).norm.pow 2).mul hExp_aesm
-    refine MeasureTheory.Integrable.mono' hbound hmeas ?_
-    filter_upwards with z
-    have hsub : ‖G z - SJ z‖ ≤ ‖G z‖ + ‖SJ z‖ := norm_sub_le _ _
-    have hexp : 0 ≤ rexp (-‖z‖ ^ 2) := exp_nonneg _
-    have hsq :
-        ‖G z - SJ z‖ ^ 2 ≤ 2 * (‖G z‖ ^ 2 + ‖SJ z‖ ^ 2) := by
-      have hsubsq :
-          ‖G z - SJ z‖ ^ 2 ≤ (‖G z‖ + ‖SJ z‖) ^ 2 := pow_le_pow_left₀ (norm_nonneg _) hsub 2
-      have hab :
-          (‖G z‖ + ‖SJ z‖) ^ 2 ≤ 2 * (‖G z‖ ^ 2 + ‖SJ z‖ ^ 2) := by
-        linarith only [sq_nonneg (‖G z‖ - ‖SJ z‖)]
-      exact le_trans hsubsq hab
-    have hmul :
-        ‖G z - SJ z‖ ^ 2 * rexp (-‖z‖ ^ 2) ≤
-          (2 * (‖G z‖ ^ 2 + ‖SJ z‖ ^ 2)) * rexp (-‖z‖ ^ 2) := mul_le_mul_of_nonneg_right hsq hexp
-    have hnonneg :
-        0 ≤ ‖G z - SJ z‖ ^ 2 * rexp (-‖z‖ ^ 2) := by positivity
-    rw [Real.norm_of_nonneg hnonneg]
-    calc
-      ‖G z - SJ z‖ ^ 2 * rexp (-‖z‖ ^ 2)
-          ≤ (2 * (‖G z‖ ^ 2 + ‖SJ z‖ ^ 2)) * rexp (-‖z‖ ^ 2) := hmul
-      _ = (2 : ℝ) *
-            (‖G z‖ ^ 2 * rexp (-‖z‖ ^ 2) +
-              ‖SJ z‖ ^ 2 * rexp (-‖z‖ ^ 2)) := by ring
+    exact integrable_weighted_square_sub hG_aesm hSJ_aesm hIntG hSJ_int
   have hDiff_sq_le :
       weightedNormSq (fun z : ℂ => G z - SJ z) ≤
         ∑' m : ℕ, ‖h (m + (J + 1))‖ ^ 2 :=
@@ -4967,7 +4881,7 @@ private lemma hermiteSeries_weightedInner_eq {k : ℕ} (h : ℕ → ℂ)
             weightedNorm (fun z : ℂ => G z - SJ z) := by simpa only [hPhi_norm, mul_one] using
               hnorm_le
       exact lt_of_le_of_lt hnorm_le' hDiff_small
-    linarith
+    linarith only [hdist_pos, this]
   simp_all only [gt_iff_lt, ge_iff_le, dist_zero_right, norm_eq_abs, ne_eq, norm_pos_iff,
     Order.lt_add_one_iff, ofReal_exp, ofReal_neg, ofReal_pow, add_sub_cancel_left,
     lt_self_iff_false]

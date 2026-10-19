@@ -182,7 +182,7 @@ private lemma norm_polyEvalCircle_le {D : ℕ} (a : Fin D → ℂ) (r : ℝ) (t 
     Actually, we prove the simpler bound: ≤ (∑ ‖a_k‖ * |r|^{k+1})² . -/
 private lemma norm_sq_polyEvalCircle_le {D : ℕ} (a : Fin D → ℂ) (r : ℝ) (t : AddCircle T) :
     ‖polyEvalCircle a r t‖ ^ 2 ≤ (∑ k : Fin D, ‖a k‖ * |r| ^ (k.val + 1)) ^ 2 :=
-  sq_le_sq' (by linarith [norm_nonneg (polyEvalCircle a r t),
+  sq_le_sq' (by linarith only [norm_nonneg (polyEvalCircle a r t),
     Finset.sum_nonneg (fun k (_ : k ∈ Finset.univ) =>
       mul_nonneg (norm_nonneg (a k)) (pow_nonneg (abs_nonneg r) (k.val + 1)))])
     (norm_polyEvalCircle_le a r t)
@@ -375,7 +375,7 @@ private lemma integrableOn_polar_norm {D : ℕ} (a : Fin D → ℂ) :
             -- Goal: r³ * (∑ x, r^x.val * ‖a x‖)² ≤ 4*C²*r^{2D+1} + 4*C²*r³
             have hC_nn : 0 ≤ C := Finset.sum_nonneg (fun k _ => norm_nonneg (a k))
             by_cases hD : D = 0
-            · subst hD; simp; nlinarith [sq_nonneg C, pow_nonneg hr.le 3]
+            · subst hD; simp; nlinarith only [hr, sq_nonneg C, pow_nonneg hr.le 3]
             · -- D ≥ 1
               have hD_pos : 0 < D := Nat.pos_of_ne_zero hD
               -- Each r^k ≤ 1 + r^(D-1) for k ∈ {0,...,D-1}
@@ -384,11 +384,11 @@ private lemma integrableOn_polar_norm {D : ℕ} (a : Fin D → ℂ) :
                 intro k
                 by_cases hr1 : r ≤ 1
                 · have : r ^ k.val ≤ 1 := pow_le_one₀ (n := k.val) hr_nn hr1
-                  linarith [pow_nonneg hr_nn (D - 1)]
+                  linarith only [hr_nn, this, pow_nonneg hr_nn (D - 1)]
                 · push Not at hr1
                   have : r ^ k.val ≤ r ^ (D - 1) :=
                     pow_le_pow_right₀ hr1.le (by omega : k.val ≤ D - 1)
-                  linarith
+                  linarith only [this]
               -- ∑ r^k * ‖a k‖ ≤ (1 + r^(D-1)) * C
               have hsum_le : ∑ x : Fin D, r ^ x.val * ‖a x‖ ≤
                   (1 + r ^ (D - 1)) * C := by
@@ -402,17 +402,20 @@ private lemma integrableOn_polar_norm {D : ℕ} (a : Fin D → ℂ) :
                 Finset.sum_nonneg (fun k _ =>
                   mul_nonneg (pow_nonneg hr_nn k.val) (norm_nonneg _))
               have hfact_nn : 0 ≤ (1 + r ^ (D - 1)) * C :=
-                mul_nonneg (by linarith [pow_nonneg hr_nn (D - 1)]) hC_nn
+                mul_nonneg (by linarith only [hr_nn, pow_nonneg hr_nn (D - 1)]) hC_nn
               have hsq : (∑ x : Fin D, r ^ x.val * ‖a x‖) ^ 2 ≤
                   ((1 + r ^ (D - 1)) * C) ^ 2 :=
-                sq_le_sq' (by linarith) hsum_le
+                sq_le_sq' (by linarith only [hsum_le, hsum_nn]) hsum_le
               -- ((1+a)*b)² = (1+a)²*b²
               -- (1+a)² = 1 + 2a + a² ≤ 2 + 2a² = 2(1+a²)
               -- So ((1+a)*b)² ≤ 2(1+a²)*b²
               -- With a = r^(D-1): (1+r^(D-1))²*C² ≤ 2*(1+(r^(D-1))²)*C² = 2*(1+r^(2*(D-1)))*C²
               have hrd := pow_nonneg hr_nn (D - 1)
               have hsq2 : ((1 + r ^ (D - 1)) * C) ^ 2 ≤
-                  2 * (1 + (r ^ (D - 1)) ^ 2) * C ^ 2 := by nlinarith [sq_nonneg (1 - r ^ (D - 1))]
+                  2 * (1 + (r ^ (D - 1)) ^ 2) * C ^ 2 := by
+                    nlinarith only [
+                      sq_nonneg (1 - r ^ (D - 1))
+                    ]
               -- r^3 * 2 * (1 + (r^(D-1))²) * C² ≤ 4 * (r^3 + r^3*(r^(D-1))²) * C²
               -- r^3 * (r^(D-1))² = r^(2D+1)
               have hpow_eq : r ^ 3 * (r ^ (D - 1)) ^ 2 = r * r ^ (D * 2) := by
@@ -425,9 +428,10 @@ private lemma integrableOn_polar_norm {D : ℕ} (a : Fin D → ℂ) :
                 _ = 2 * C ^ 2 * (r ^ 3 + r ^ 3 * (r ^ (D - 1)) ^ 2) := by ring
                 _ = 2 * C ^ 2 * (r ^ 3 + r * r ^ (D * 2)) := by rw [hpow_eq]
                 _ ≤ r * r ^ (D * 2) * C ^ 2 * 4 + r ^ 3 * C ^ 2 * 4 := by
-                    nlinarith [pow_nonneg hr_nn 3,
-                      mul_nonneg hr_nn (pow_nonneg hr_nn (D * 2)),
-                      sq_nonneg C]
+                    nlinarith only [
+                      hr_nn, pow_nonneg hr_nn 3, mul_nonneg hr_nn (pow_nonneg hr_nn (D * 2)),
+                      sq_nonneg C
+                    ]
 
 /-- IntegrableOn for the polar-coordinate integrand with ρ(polyEvalCircle)². -/
 private lemma integrableOn_polar_rho {D : ℕ} (a : Fin D → ℂ) :
@@ -461,7 +465,7 @@ private lemma integrableOn_polar_rho {D : ℕ} (a : Fin D → ℂ) :
     have hle := rho_le_norm (polyEvalCircle a r (QuotientAddGroup.mk θ))
     have hnn := norm_nonneg (polyEvalCircle a r (QuotientAddGroup.mk θ))
     have hrho_nn : 0 ≤ rho (polyEvalCircle a r (QuotientAddGroup.mk θ)) := abs_nonneg _
-    exact sq_le_sq' (by linarith) hle
+    exact sq_le_sq' (by linarith only [hnn, hrho_nn]) hle
 
 /-! ## Lemma 1.7: Polar-coordinate decomposition of the Fock norm -/
 
@@ -667,7 +671,7 @@ private lemma radial_gaussian_integral (n : ℕ) :
     (n.factorial : ℝ) := by
   -- Use integral_rpow_mul_exp_neg_rpow with p = 2, q = 2*n + 1
   have hp : (0 : ℝ) < 2 := two_pos
-  have hq : (-1 : ℝ) < (2 * (n : ℝ) + 1) := by linarith [Nat.cast_nonneg (α := ℝ) n]
+  have hq : (-1 : ℝ) < (2 * (n : ℝ) + 1) := by linarith only [Nat.cast_nonneg (α := ℝ) n]
   -- First convert ℕ powers to ℝ powers so we can apply integral_rpow_mul_exp_neg_rpow
   have pow_eq : ∀ (r : ℝ), r ∈ Set.Ioi (0 : ℝ) →
       r ^ (2 * n + 1) * Real.exp (-r ^ 2) =

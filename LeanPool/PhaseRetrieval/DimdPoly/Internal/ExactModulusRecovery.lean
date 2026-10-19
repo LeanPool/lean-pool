@@ -15,7 +15,6 @@ import Mathlib.MeasureTheory.Integral.Gamma
 import Mathlib.Probability.Distributions.Gaussian.Real
 import Mathlib.RingTheory.Finiteness.Prod
 import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Topology.Algebra.Module.Cardinality
 
 /-! # ExactModulusRecovery -/
 
@@ -85,7 +84,7 @@ private lemma star_sub_div_sqrtTwo (x ω : ℝ) :
         (Real.sqrt 2 : ℂ)) =
       ((x : ℂ) + (2 * Real.pi : ℂ) * Complex.I * (ω : ℂ)) /
         (Real.sqrt 2 : ℂ) := by
-  simp_all only [star_div₀, star_sub, RCLike.star_def, Complex.conj_ofReal, star_mul', star_ofNat,
+  simp only [star_div₀, star_sub, RCLike.star_def, Complex.conj_ofReal, star_mul', star_ofNat,
     Complex.conj_I, mul_neg, neg_mul, sub_neg_eq_add]
 
 /-- `realHermiteGenerating`: real Hermite Generating. -/
@@ -465,7 +464,7 @@ theorem realHermiteGenerating_ambiguity_integral_conj_raw
           (((Real.sqrt 2 : ℂ) * (u + star v) -
               (2 * Real.pi : ℂ) * Complex.I * (ω : ℂ)) ^ 2) / 4) := by
   simp_rw [realHermiteGenerating_conj]
-  simpa using realHermiteGenerating_ambiguity_integral_raw x ω u (star v)
+  exact realHermiteGenerating_ambiguity_integral_raw x ω u (star v)
 
 theorem realHermiteGenerating_ambiguity_integral_conj_kernel
     (x ω : ℝ) (u v : ℂ) :
@@ -509,7 +508,7 @@ theorem realHermiteGenerating_ambiguity_integral_independent_kernel
               (Real.sqrt 2 : ℂ)) * w) *
         Complex.ofReal
           (Real.exp (-((x ^ 2 + (2 * Real.pi) ^ 2 * ω ^ 2) / 4))) := by
-  simpa using realHermiteGenerating_ambiguity_integral_kernel x ω u w
+  exact realHermiteGenerating_ambiguity_integral_kernel x ω u w
 
 /-- `shiftedGeneratingRightDerivBoundConstant`: shifted Generating Right Deriv Bound Constant. -/
 noncomputable def shiftedGeneratingRightDerivBoundConstant
@@ -585,7 +584,7 @@ theorem hasDerivAt_integral_fixed_mul_shifted_modulated_realHermiteGenerating_ri
           ((inner ℝ ω t : ℝ) : ℂ)))
     (bound := bound) hs hF_meas hF_int hF'_meas h_bound bound_integrable ?_).2
   exact ae_of_all _ fun t z _ => by
-    simpa [mul_assoc] using
+    exact
       ((realHermiteGenerating_hasDerivAt (t - (1 / 2 : ℝ) * x) z).const_mul
         (phi t)).mul_const
           (Complex.exp (-(2 * Real.pi : ℂ) * Complex.I *
@@ -969,7 +968,7 @@ theorem realHermite1D_zero (t : ℝ) :
 theorem realHermite1D_one (t : ℝ) :
     realHermite1D 1 t = (Real.sqrt 2 : ℂ) * (t : ℂ) * realHermiteGenerating t 0 := by
   simp [realHermite1D, realHermiteGenerating_deriv_zero, realHermiteGenerating]
-  ring_nf
+  ring
 
 theorem realHermite1D_inner_zero_zero :
     (∫ t : ℝ, realHermite1D 0 t * star (realHermite1D 0 t)) = 1 := by
@@ -1011,7 +1010,7 @@ theorem integral_real_mul_exp_neg_sq :
     simp_all only [even_two, Even.neg_pow, neg_mul]]
     at h
   rw [MeasureTheory.integral_neg] at h
-  linarith
+  linarith only [h]
 
 theorem realHermite1D_inner_one_one :
     (∫ t : ℝ, realHermite1D 1 t * star (realHermite1D 1 t)) = 1 := by
@@ -1113,7 +1112,7 @@ theorem realHermite1D_inner_one_zero :
           funext t
           simp [RCLike.star_def, mul_comm]
     _ = conj (∫ t : ℝ, realHermite1D 0 t * star (realHermite1D 1 t)) := by
-      simpa [RCLike.star_def] using
+      exact
         (integral_conj (μ := (volume : MeasureTheory.Measure ℝ))
           (f := fun t : ℝ => realHermite1D 0 t * star (realHermite1D 1 t)))
     _ = 0 := by
@@ -1447,7 +1446,7 @@ private theorem iteratedDeriv_cexp_neg_sq_div_two_zero_of_odd
   have hder := iteratedDeriv_comp_neg n q (0 : ℂ)
   rw [hfun] at hder
   simp only [neg_zero] at hder
-  have hneg : ((-1 : ℂ) ^ n) = -1 := by simpa using hodd.neg_one_pow
+  have hneg : ((-1 : ℂ) ^ n) = -1 := by exact hodd.neg_one_pow
   rw [hneg, neg_smul, one_smul] at hder
   exact CharZero.neg_eq_self_iff.mp hder.symm
 
@@ -1555,7 +1554,7 @@ theorem realHermiteGenerating_iteratedDeriv_zero_expansion
             b ^ k *
               iteratedDeriv (n - k) q 0 := by
       rw [hfun, iteratedDeriv_const_mul_field, iteratedDeriv_fun_mul]
-      · simp_all only [iteratedDeriv_cexp_const_mul, mul_zero, Complex.exp_zero, mul_one]
+      · simp only [iteratedDeriv_cexp_const_mul, mul_zero, Complex.exp_zero, mul_one]
       · fun_prop
       · fun_prop
     _ = ∑ k ∈ Finset.range (n + 1),
@@ -1568,7 +1567,7 @@ theorem realHermiteGenerating_iteratedDeriv_zero_expansion
       apply Finset.sum_congr rfl
       intro k hk
       simp only [a, b, q]
-      ring_nf
+      ring
 
 /-- `realHermiteGeneratingExpansionCoeff`: real Hermite Generating Expansion Coeff. -/
 noncomputable def realHermiteGeneratingExpansionCoeff (n k : ℕ) : ℂ :=
@@ -1746,7 +1745,7 @@ private lemma gaussianMomentFunctional_add (p q : Polynomial ℤ) :
       gaussianMomentFunctional p + gaussianMomentFunctional q := by
   unfold gaussianMomentFunctional
   rw [Polynomial.sum_add_index]
-  · simp_all only [Int.cast_zero, zero_mul, implies_true]
+  · simp only [Int.cast_zero, zero_mul, implies_true]
   · intro i a b
     norm_num
     ring
@@ -1755,7 +1754,7 @@ private lemma gaussianMomentFunctional_monomial (k : ℕ) (a : ℤ) :
     gaussianMomentFunctional (Polynomial.monomial k a) =
       (a : ℂ) * standardGaussianMoment k := by
   unfold gaussianMomentFunctional
-  simp_all only [Int.cast_zero, zero_mul, Polynomial.sum_monomial_index]
+  simp only [Int.cast_zero, zero_mul, Polynomial.sum_monomial_index]
 
 private lemma gaussianMomentFunctional_neg (p : Polynomial ℤ) :
     gaussianMomentFunctional (-p) = -gaussianMomentFunctional p := by
@@ -1766,7 +1765,7 @@ private lemma gaussianMomentFunctional_neg (p : Polynomial ℤ) :
   | monomial k a =>
       rw [← Polynomial.monomial_neg, gaussianMomentFunctional_monomial,
         gaussianMomentFunctional_monomial]
-      simp_all only [Int.cast_neg, neg_mul]
+      simp only [Int.cast_neg, neg_mul]
 
 private lemma gaussianMomentFunctional_sub (p q : Polynomial ℤ) :
     gaussianMomentFunctional (p - q) =
@@ -1868,7 +1867,7 @@ private lemma derivative_hermite_int (n : ℕ) :
 
 private lemma derivative_hermite_succ_int (n : ℕ) :
     Polynomial.derivative (Polynomial.hermite (n + 1)) =
-      ((n + 1 : ℕ) : ℤ) • Polynomial.hermite n := by simpa using derivative_hermite_int (n + 1)
+      ((n + 1 : ℕ) : ℤ) • Polynomial.hermite n := by exact derivative_hermite_int (n + 1)
 
 private noncomputable def hermiteStandardInner (n m : ℕ) : ℂ :=
   gaussianMomentFunctional (Polynomial.hermite n * Polynomial.hermite m)
@@ -3020,8 +3019,8 @@ theorem summable_realHermiteTensorL2_coeff_smul_of_orthonormal
   classical
   have hOrthogonalFamily := horth.orthogonalFamily
   have hcoeff : Summable (fun alpha : Idx d => ‖coeffSkappa U alpha‖ ^ 2) := by
-    simpa [coeffSkappa] using U.summable_norm_sq
-  simpa using
+    exact U.summable_norm_sq
+  exact
     (hOrthogonalFamily.summable_iff_norm_sq_summable
       (fun alpha : Idx d => coeffSkappa U alpha)).2 hcoeff
 
@@ -3112,7 +3111,7 @@ private theorem ambiguityRep_varphiKappa_eq_tensorRep_integral
         =ᵐ[(volume : Measure (RealVec d))]
           fun t : RealVec d =>
             realHermiteTensorRep kappa (t + ((1 / 2 : ℝ) • ξ.1)) := by
-    simpa [Function.comp_def] using
+    exact
       ((MeasureTheory.measurePreserving_add_right
         (volume : Measure (RealVec d))
         (((1 / 2 : ℝ) • ξ.1))).quasiMeasurePreserving).ae_eq_comp hcoe
@@ -3123,7 +3122,7 @@ private theorem ambiguityRep_varphiKappa_eq_tensorRep_integral
         =ᵐ[(volume : Measure (RealVec d))]
           fun t : RealVec d =>
             realHermiteTensorRep kappa (t - ((1 / 2 : ℝ) • ξ.1)) := by
-    simpa [Function.comp_def, sub_eq_add_neg] using
+    exact
       ((MeasureTheory.measurePreserving_add_right
         (volume : Measure (RealVec d))
         (-((1 / 2 : ℝ) • ξ.1))).quasiMeasurePreserving).ae_eq_comp hcoe
@@ -3284,7 +3283,7 @@ private lemma Phi_self_zero_ne {d : Nat} (kappa : MultiIndex d) :
   unfold Phi
   apply Finset.prod_ne_zero_iff.mpr
   intro q _hq
-  simpa using phi1D_self_zero_ne (kappa q)
+  exact phi1D_self_zero_ne (kappa q)
 
 private lemma TKappa_zero {d : Nat} :
     TKappa ((0, 0) : PhaseSpace d) = 0 := by
@@ -4159,7 +4158,7 @@ private theorem shifted_mgf_mixed_derivative_expansion_unscaled
       intro i hi
       have hFi := contDiff_iteratedDeriv_cexp_sq_div_four i m
       fun_prop
-    simpa using ContDiffAt.const_smul
+    exact ContDiffAt.const_smul
       ((Nat.choose n k : ℂ) * (Real.sqrt 2 : ℂ) ^ k *
         iteratedDeriv (n - k) (fun u : ℂ => Complex.exp (-(u ^ 2) / 2)) 0) hsum
 
@@ -4427,7 +4426,7 @@ private theorem gaussian_half_shifted_monomial_pair_exp_integrable
             a ^ (k - i) * b ^ (l - j) *
               ((t : ℂ) ^ (i + j) * Complex.exp (lam * (t : ℂ))) := by
     funext t
-    simpa [a, b, lam] using shifted_monomial_pair_modulated_expansion k l x ω t
+    exact shifted_monomial_pair_modulated_expansion k l x ω t
   rw [hpoint]
   apply integrable_finsetSum
   intro i hi
@@ -4761,7 +4760,7 @@ private theorem iteratedDeriv_generating_cross_ambiguity_integral_moment_sum
                       (fun z : ℂ => Complex.exp (z ^ 2 / 4))
                       (-(2 * Real.pi : ℂ) * Complex.I * (ω : ℂ))))) := by
   let cπ : ℂ := ((Real.pi ^ (-(1 / 2 : ℝ)) : ℝ) : ℂ)
-  have hcπ : cπ ≠ 0 := by simpa [cπ] using real_pi_neg_half_complex_ne_zero
+  have hcπ : cπ ≠ 0 := by exact real_pi_neg_half_complex_ne_zero
   have h :=
     iteratedDeriv_generating_cross_ambiguity_pi_neg_half_mul_integral_moment_sum n m x ω
   calc
@@ -4816,7 +4815,7 @@ private theorem iteratedDeriv_generating_cross_ambiguity_moment_sum_eq_kernel_co
   rw [← shifted_mgf_coefficient_eq_kernel_coefficient n m x ω,
     scaled_moment_sum_eq_shifted_mgf_unscaled_sum,
     ← shifted_mgf_mixed_derivative_expansion_unscaled]
-  simp_all only [neg_mul, iteratedDeriv_const_mul_field]
+  simp only [neg_mul, iteratedDeriv_const_mul_field]
 
 private theorem iteratedDeriv_generating_cross_ambiguity_integral_eq_kernel_coefficient
     (n m : ℕ) (x ω : ℝ) :
@@ -5261,7 +5260,7 @@ theorem windowAmbiguity_factorization
   rw [ambiguityRep_varphiKappa_eq_tensorRep_integral]
   apply tensorRep_windowAmbiguity_integral_eq_PKappa_exp_of_oneD
   intro q
-  simpa [TKappa] using
+  exact
     oneDWindowAmbiguityFactor_closed (kappa q) (ξ.1 q) (ξ.2 q)
 
 theorem windowAmbiguity_polynomial_nonzero
@@ -5325,18 +5324,21 @@ private lemma dense_ne_zero_of_phaseSpace_polynomial
     simp_all only [Prod.forall, Prod.mk.eta, ne_eq, gt_iff_lt, Polynomial.eval_zero,
       Complex.ofReal_one, not_true_eq_false]
   let rootsReal : Set ℝ := {t : ℝ | qpoly.eval (t : ℂ) = 0}
-  have hroots_countable : rootsReal.Countable := by
+  have hroots_finite : rootsReal.Finite := by
     have hroots_complex : ({z : ℂ | qpoly.IsRoot z}).Finite :=
       Polynomial.finite_setOfPred_isRoot hq_ne
-    have hroots_complex_countable : ({z : ℂ | qpoly.IsRoot z}).Countable :=
-      hroots_complex.countable
     have hpre : rootsReal = Complex.ofReal ⁻¹' {z : ℂ | qpoly.IsRoot z} := by
       ext t
       simp [rootsReal, Polynomial.IsRoot]
     rw [hpre]
-    exact hroots_complex_countable.preimage Complex.ofReal_injective
+    exact Set.Finite.preimage Complex.ofReal_injective.injOn hroots_complex
   have hnonroots_dense : Dense {t : ℝ | qpoly.eval (t : ℂ) ≠ 0} := by
-    simpa [rootsReal, Set.compl_ofPred] using hroots_countable.dense_compl ℝ
+    apply dense_iff_inter_open.2
+    intro U hU hUne
+    obtain ⟨x, hx⟩ := hUne
+    have hU_infinite : U.Infinite := infinite_of_mem_nhds x (hU.mem_nhds hx)
+    obtain ⟨t, htU, htroot⟩ := (hU_infinite.sdiff hroots_finite).nonempty
+    exact ⟨t, htU, htroot⟩
   have hline_cont : Continuous line := by fun_prop
   have hline0 : line 0 = ξ := by ext q <;> simp [line]
   have hpre_ball : line ⁻¹' Metric.ball ξ ε ∈ nhds (0 : ℝ) := by
@@ -5536,7 +5538,7 @@ private lemma shifted_conj_mul_integrable
   have hf_shift :
       MemLp (fun t : RealVec d => f (t + a)) 2
         (volume : Measure (RealVec d)) := by
-    simpa [Function.comp_def] using
+    exact
       hf.comp_measurePreserving
         (MeasureTheory.measurePreserving_add_right
           (volume : Measure (RealVec d)) a)
@@ -5546,7 +5548,7 @@ private lemma shifted_conj_mul_integrable
     have hg0 :
         MemLp (fun t : RealVec d => g (t + b)) 2
           (volume : Measure (RealVec d)) := by
-      simpa [Function.comp_def] using
+      exact
         hg.comp_measurePreserving
           (MeasureTheory.measurePreserving_add_right
             (volume : Measure (RealVec d)) b)
@@ -5594,7 +5596,7 @@ private lemma centerKernel_memLp_two
   let μ : Measure (RealVec d) := volume
   let K : PhaseSpace d -> ℂ := fun p => f p.1 * star (f p.2)
   have hK : MemLp K 2 (μ.prod μ) := by
-    simpa [K, μ] using
+    exact
       (rankOneKernel_memLp_two (d := d) (f := f) (g := f) hf hf)
   have hdet : LinearMap.det (L : PhaseSpace d →ₗ[ℝ] PhaseSpace d) ≠ 0 :=
     (LinearEquiv.isUnit_det' L).ne_zero
@@ -5604,7 +5606,7 @@ private lemma centerKernel_memLp_two
       ENNReal.ofReal
           |(LinearMap.det (L : PhaseSpace d →ₗ[ℝ] PhaseSpace d))⁻¹| •
         (μ.prod μ) := by
-    simpa using
+    exact
       (MeasureTheory.Measure.map_linearMap_addHaar_eq_smul_addHaar
         (μ := μ.prod μ)
         (f := (L : PhaseSpace d →ₗ[ℝ] PhaseSpace d)) hdet)
@@ -5623,8 +5625,8 @@ private lemma centerKernel_memLp_two
       (LinearMap.continuous_of_finiteDimensional
         (L : PhaseSpace d →ₗ[ℝ] PhaseSpace d)).measurable.aemeasurable
     exact hK_map.comp_of_map hL_aemeasurable
-  simpa [K, L, μ, centerToEndpointsLinearEquiv, Function.comp_def,
-    MeasureTheory.Measure.volume_eq_prod] using hcomp
+  exact
+                                                hcomp
 
 private lemma memLp_two_prod_right_ae
     {d : Nat} {F : PhaseSpace d -> ℂ}
@@ -5657,19 +5659,16 @@ private lemma ae_prod_of_ae_ae_of_aestronglyMeasurable
     (hF_meas : AEStronglyMeasurable F (μ.prod ν))
     (hsec : ∀ᵐ x ∂μ, (fun y : β => F (x, y)) =ᵐ[ν] fun _ => (0 : E)) :
     F =ᵐ[μ.prod ν] fun _ => (0 : E) := by
-  let Fm : α × β -> E := hF_meas.mk F
-  have hF_eq_mk_sections :
-      ∀ᵐ x ∂μ, (fun y : β => F (x, y)) =ᵐ[ν] fun y => Fm (x, y) :=
-    MeasureTheory.Measure.ae_ae_of_ae_prod hF_meas.ae_eq_mk
-  have hmk_sec_zero :
-      ∀ᵐ x ∂μ, (fun y : β => Fm (x, y)) =ᵐ[ν] fun _ => (0 : E) := by
-    filter_upwards [hsec, hF_eq_mk_sections] with x hx hxm
-    exact hxm.symm.trans hx
+  let Fm : α × β → E := hF_meas.aemeasurable.mk F
+  have hF_eq : F =ᵐ[μ.prod ν] Fm := hF_meas.aemeasurable.ae_eq_mk
   have hmeas_zero : MeasurableSet {p : α × β | Fm p = 0} :=
-    hF_meas.stronglyMeasurable_mk.measurable (measurableSet_singleton (0 : E))
-  have hmk_prod : Fm =ᵐ[μ.prod ν] fun _ => (0 : E) :=
-    (MeasureTheory.Measure.ae_prod_iff_ae_ae hmeas_zero).2 hmk_sec_zero
-  exact hF_meas.ae_eq_mk.trans hmk_prod
+    hF_meas.aemeasurable.measurable_mk (measurableSet_singleton (0 : E))
+  have hsections :
+      ∀ᵐ x ∂μ, (fun y : β => F (x, y)) =ᵐ[ν] fun y => Fm (x, y) :=
+    MeasureTheory.Measure.ae_ae_of_ae_prod hF_eq
+  refine hF_eq.trans ((MeasureTheory.Measure.ae_prod_iff_ae_ae hmeas_zero).2 ?_)
+  filter_upwards [hsec, hsections] with x hx hxm
+  exact hxm.symm.trans hx
 
 private lemma sectionDiff_fourier_eq_ambiguity_sub
     {d : Nat} (f g : L2Real d) (x ω : RealVec d)
@@ -5901,7 +5900,38 @@ private lemma norm_eq_one_of_mul_star_eq_one {w : ℂ}
   have h' := congrArg norm h
   simp at h'
   have hw_nonneg : 0 ≤ ‖w‖ := norm_nonneg w
-  nlinarith
+  nlinarith only [h', hw_nonneg]
+
+-- Retain the original generated declarations when replacing broad simplification.
+private theorem rankOneKernel_ae_to_unimodular_phase._simp_1_1.{u_2}
+    {α : Type u_2} [inst : Zero α] [inst_1 : OfNat α 2] [NeZero (2 : α)] :
+    ((2 : α) = 0) = False := propext (iff_false_intro (NeZero.ne (2 : α)))
+
+private theorem rankOneKernel_ae_to_unimodular_phase._simp_1_2.{u_2}
+    {α : Type u_2} [inst : Zero α] [inst_1 : OfNat α 3] [NeZero (3 : α)] :
+    ((3 : α) = 0) = False := propext (iff_false_intro (NeZero.ne (3 : α)))
+
+private theorem rankOneKernel_ae_to_unimodular_phase._simp_1_3.{u_2}
+    {α : Type u_2} [inst : Zero α] [inst_1 : OfNat α 4] [NeZero (4 : α)] :
+    ((4 : α) = 0) = False := propext (iff_false_intro (NeZero.ne (4 : α)))
+
+private theorem rankOneKernel_ae_to_unimodular_phase._simp_1_4.{u_1}
+    {M₀ : Type u_1} [inst : Mul M₀] [inst_1 : Zero M₀] [NoZeroDivisors M₀]
+    {a b : M₀} (ha : a ≠ 0) (hb : b ≠ 0) : (a * b = 0) = False :=
+  propext (iff_false_intro (mul_ne_zero ha hb))
+
+private theorem rankOneKernel_ae_to_unimodular_phase._simp_1_5.{u_1}
+    {M₀ : Type u_1} [inst : MonoidWithZero M₀] {a : M₀} [IsReduced M₀]
+    (n : ℕ) (h : a ≠ 0) : (a ^ n = 0) = False :=
+  propext (iff_false_intro (pow_ne_zero n h))
+
+private theorem rankOneKernel_ae_to_unimodular_phase._simp_1_6.{u_3}
+    {G₀ : Type u_3} [inst : GroupWithZero G₀] {a : G₀} (n : ℤ) (h : a ≠ 0) :
+    (a ^ n = 0) = False := propext (iff_false_intro (zpow_ne_zero n h))
+
+private theorem rankOneKernel_ae_to_unimodular_phase._simp_1_7.{u_1}
+    {R : Type u_1} [inst : AddMonoidWithOne R] [CharZero R] (n : ℕ) :
+    ((n : R) + 1 = 0) = False := propext (iff_false_intro (Nat.cast_add_one_ne_zero n))
 
 theorem rankOneKernel_ae_to_unimodular_phase
     {d : Nat} {f g : L2Real d} {fRep gRep : RealVec d -> ℂ}
@@ -5915,12 +5945,12 @@ theorem rankOneKernel_ae_to_unimodular_phase
   have hkernel_prod :
       (fun p : RealVec d × RealVec d => fRep p.1 * star (fRep p.2))
         =ᵐ[μ.prod μ] fun p => gRep p.1 * star (gRep p.2) := by
-    simpa [μ, MeasureTheory.Measure.volume_eq_prod (RealVec d) (RealVec d)]
+    simpa only [μ, MeasureTheory.Measure.volume_eq_prod (RealVec d) (RealVec d)]
       using hkernel
   have hrow_ae :
       ∀ᵐ u ∂μ, ∀ᵐ v ∂μ,
         fRep u * star (fRep v) = gRep u * star (gRep v) := by
-    simpa using MeasureTheory.Measure.ae_ae_of_ae_prod hkernel_prod
+    exact MeasureTheory.Measure.ae_ae_of_ae_prod hkernel_prod
   by_cases hf_zero : f = 0
   · left
     refine ⟨hf_zero, ?_⟩
@@ -5938,7 +5968,9 @@ theorem rankOneKernel_ae_to_unimodular_phase
     rcases hgood_u0 with ⟨hrow_u0, hf0⟩
     have hgRep_zero : gRep =ᵐ[μ] fun _ => (0 : ℂ) := by
       filter_upwards [hrow_u0] with v hv
-      simp_all
+      have hproduct : gRep u0 * star (gRep v) = 0 := by
+        simpa only [hf0, zero_mul] using hv.symm
+      exact star_eq_zero.mp ((mul_eq_zero.mp hproduct).resolve_left hg0_ne)
     exact hg_ne (L2_eq_zero_of_rep_ae_eq_zero hg_rep hgRep_zero)
   · right
     have hfRep_not_zero : ¬ fRep =ᵐ[μ] fun _ => (0 : ℂ) := by
@@ -5950,7 +5982,9 @@ theorem rankOneKernel_ae_to_unimodular_phase
       by_contra hg0
       apply hfRep_not_zero
       filter_upwards [hrow_u0] with v hv
-      simp_all
+      have hproduct : fRep u0 * star (fRep v) = 0 := by
+        simpa only [hg0, zero_mul] using hv
+      exact star_eq_zero.mp ((mul_eq_zero.mp hproduct).resolve_left hf0_ne)
     let w : ℂ := star (fRep u0 / gRep u0)
     have hphase : gRep =ᵐ[μ] fun v => w * fRep v := by
       filter_upwards [hrow_u0] with v hv
@@ -5961,10 +5995,11 @@ theorem rankOneKernel_ae_to_unimodular_phase
               ((gRep u0)⁻¹ * gRep u0) * star (gRep v) := by rw [inv_mul_cancel₀ hg0_ne, one_mul]
           _ = (gRep u0)⁻¹ * (gRep u0 * star (gRep v)) := by ring
           _ = (gRep u0)⁻¹ * (fRep u0 * star (fRep v)) := by rw [← hv]
-          _ = (fRep u0 / gRep u0) * star (fRep v) := by field_simp [div_eq_mul_inv]
+          _ = (fRep u0 / gRep u0) * star (fRep v) := by rw [div_eq_mul_inv]; ac_rfl
       have hconj := congrArg star hstar
       calc
-        gRep v = fRep v * star (fRep u0 / gRep u0) := by simpa [star_mul] using hconj
+        gRep v = fRep v * star (fRep u0 / gRep u0) := by
+          simpa only [star_mul, star_star] using hconj
         _ = w * fRep v := by ring
     have hL2 : g = w • f :=
       ae_unimodular_phase_to_L2_eq hf_rep hg_rep hphase
@@ -5991,7 +6026,7 @@ theorem rankOneKernel_ae_to_unimodular_phase
         ∀ᵐ u ∂μ, ∀ᵐ v ∂μ,
           fRep u * star (fRep v) =
             (w * star w) * (fRep u * star (fRep v)) := by
-      simpa using MeasureTheory.Measure.ae_ae_of_ae_prod hscale_prod
+      exact MeasureTheory.Measure.ae_ae_of_ae_prod hscale_prod
     rcases exists_eventually_and_ne_zero hscale_rows hfRep_not_zero with
       ⟨u1, hscale_u1, hu1_ne⟩
     rcases exists_eventually_and_ne_zero hscale_u1 hfRep_not_zero with
@@ -5999,7 +6034,7 @@ theorem rankOneKernel_ae_to_unimodular_phase
     have hF_ne : fRep u1 * star (fRep v1) ≠ 0 :=
       mul_ne_zero hu1_ne (star_ne_zero.mpr hv1_ne)
     have hunit_mul : w * star w = 1 := by
-      simp_all
+      exact mul_right_cancel₀ hF_ne (by simpa only [one_mul] using hscale_u1v1.symm)
     exact ⟨w, norm_eq_one_of_mul_star_eq_one hunit_mul, hL2⟩
 
 theorem rankOneRecoveryFromAmbiguity
@@ -6113,7 +6148,7 @@ private theorem pkappa_eq_zero_of_eval_zero_wip
   have hmass := evalPkappa_total_mass hd kappa F
   have hintegral_zero :
       (∫ z, ‖evalPkappa kappa F z‖ ^ 2 ∂ gammaD d) = 0 := by simp [hF_eval]
-  have hnorm_sq : ‖F‖ ^ 2 = 0 := by linarith
+  have hnorm_sq : ‖F‖ ^ 2 = 0 := by linarith only [hmass, hintegral_zero]
   exact pkappa_eq_zero_of_norm_sq_eq_zero_wip hnorm_sq
 
 private theorem skappa_ext_coeff_exact_wip

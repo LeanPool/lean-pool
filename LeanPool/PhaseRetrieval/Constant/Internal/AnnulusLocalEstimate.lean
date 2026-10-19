@@ -49,10 +49,10 @@ private lemma freqBlock_pairwiseDisjoint :
   simp only [Function.onFun, freqBlock, Finset.disjoint_left, Finset.mem_Icc]
   intro n hn₁ hn₂
   rcases Nat.lt_or_gt_of_ne hne with h | h
-  · have : (ℓ₁ + 1) ^ 2 ≤ ℓ₂ ^ 2 := by nlinarith
+  · have : (ℓ₁ + 1) ^ 2 ≤ ℓ₂ ^ 2 := by nlinarith only [h]
     have := Nat.pos_of_ne_zero (show (ℓ₁ + 1) ^ 2 ≠ 0 by positivity)
     omega
-  · have : (ℓ₂ + 1) ^ 2 ≤ ℓ₁ ^ 2 := by nlinarith
+  · have : (ℓ₂ + 1) ^ 2 ≤ ℓ₁ ^ 2 := by nlinarith only [h]
     have := Nat.pos_of_ne_zero (show (ℓ₂ + 1) ^ 2 ≠ 0 by positivity)
     omega
 
@@ -80,7 +80,7 @@ private lemma sum_odd_sq (a b : ℕ) (h : a ≤ b) :
     by_cases ha' : a ≤ n
     · rw [Finset.sum_Icc_succ_top (by omega)]
       have := ih ha'
-      nlinarith [show (n + 2) ^ 2 = (n + 1) ^ 2 + 2 * (n + 1) + 1 from by ring]
+      linarith only [this, show (n + 2) ^ 2 = (n + 1) ^ 2 + 2 * (n + 1) + 1 from by ring]
     · have : a = n + 1 := by omega
       subst this; simp; ring
 
@@ -89,7 +89,7 @@ private lemma card_biUnion_freqBlock (a b : ℕ) (h : a ≤ b) :
     ((Finset.Icc a b).biUnion freqBlock).card = (b + 1) ^ 2 - a ^ 2 := by
   rw [Finset.card_biUnion (freqBlock_pairwiseDisjoint _)]
   simp_rw [FockSPR.freqBlock_card]
-  have h1 : a ^ 2 ≤ (b + 1) ^ 2 := by nlinarith
+  have h1 : a ^ 2 ≤ (b + 1) ^ 2 := by nlinarith only [h]
   have h2 := sum_odd_sq a b h
   omega
 
@@ -119,7 +119,7 @@ private lemma activeFreqSet_pos {D j n : ℕ} (hn : n ∈ activeFreqSet D j) :
     Finset.mem_Icc] at hn
   obtain ⟨⟨ℓ, hℓ, hn_block⟩, _⟩ := hn
   simp only [freqBlock, Finset.mem_Icc] at hn_block
-  nlinarith [sq_nonneg ℓ, show 1 ≤ ℓ by omega]
+  nlinarith only [hℓ, hn_block, sq_nonneg ℓ, show 1 ≤ ℓ by omega]
 
 /-- `localPoly a 5 j (r * fourier 1 t)` equals a Fourier sum over `activeFreqSet`.
     This is a mechanical reindexing of the `Fin D` sum into a `Finset ℕ` sum. -/
@@ -207,16 +207,22 @@ private lemma activeFreqSet_card_le {D : ℕ} (_hD : 1 ≤ D) {j : ℕ} (hj : j 
       rw [hmax]
       -- (min(Λ,j+5)+1)^2 - (j-5)^2 ≤ (j+6)^2 - (j-5)^2 = 11*(2j+1) ≤ 17985
       have h_ub : min (maxBlockIndex D) (j + 5) + 1 ≤ j + 6 := by omega
-      have h_sq : (min (maxBlockIndex D) (j + 5) + 1) ^ 2 ≤ (j + 6) ^ 2 := by nlinarith
+      have h_sq : (min (maxBlockIndex D) (j + 5) + 1) ^ 2 ≤ (j + 6) ^ 2 := by
+        nlinarith only [
+          hrange, hmax, h_ub
+        ]
       suffices (j + 6) ^ 2 - (j - 5) ^ 2 ≤ 17985 by omega
       suffices (j + 6) ^ 2 = (j - 5) ^ 2 + 11 * (2 * j + 1) by omega
-      nlinarith [sq_nonneg (j - 5), Nat.sub_add_cancel (show 5 ≤ j by omega)]
+      nlinarith only [sq_nonneg (j - 5), Nat.sub_add_cancel (show 5 ≤ j by omega)]
     · -- j < 6: max(1,j-5) = 1
       have hmax : max 1 (j - 5) = 1 := by omega
       rw [hmax]
       have h_ub : min (maxBlockIndex D) (j + 5) + 1 ≤ j + 6 := by omega
-      have h_sq : (min (maxBlockIndex D) (j + 5) + 1) ^ 2 ≤ (j + 6) ^ 2 := by nlinarith
-      have h_jsm : (j + 6) ^ 2 ≤ 11 ^ 2 := by nlinarith
+      have h_sq : (min (maxBlockIndex D) (j + 5) + 1) ^ 2 ≤ (j + 6) ^ 2 := by
+        nlinarith only [
+          hrange, hmax, h_ub
+        ]
+      have h_jsm : (j + 6) ^ 2 ≤ 11 ^ 2 := by nlinarith only [hj6]
       omega
   · -- Empty range
     have : Finset.Icc (max 1 (j - 5)) (min (maxBlockIndex D) (j + 5)) = ∅ :=
@@ -276,7 +282,7 @@ private lemma high_freq_NL_condition (j : ℕ) (hj : 818 ≤ j) :
   have hk : 0 ≤ k := by omega
   rw [show (j : ℤ) - 5 = k + 813 from by omega,
       show 2 * (j : ℤ) + 1 = 2 * k + 1637 from by omega]
-  nlinarith [sq_nonneg k, sq_nonneg (k * k),
+  nlinarith only [sq_nonneg k, sq_nonneg (k * k),
     sq_nonneg (k * (k + 813)), hk]
 
 /-- `activeFreqSet` is contained in `Icc (j-5)² ((j+6)²-1)` for `j ≥ 6`. -/
@@ -290,7 +296,7 @@ private lemma activeFreqSet_subset_Icc {D j : ℕ} (hj6 : 6 ≤ j) :
   simp only [freqBlock, Finset.mem_Icc] at hn_block hℓ_range
   refine Finset.mem_Icc.mpr ⟨?_, ?_⟩
   · have : j - 5 ≤ ℓ := by omega
-    nlinarith
+    nlinarith only [hn_block, this]
   · have : ℓ + 1 ≤ j + 6 := by omega
     have : (ℓ + 1) ^ 2 ≤ (j + 6) ^ 2 :=
       Nat.pow_le_pow_left this 2
@@ -339,8 +345,8 @@ private lemma sum_Icc_eq_sum_Fin {α : Type*} [AddCommMonoid α]
 /-- `(j+6)^2 - 1 = (j-5)^2 + (11*(2*j+1)) - 1` for `j ≥ 5`. -/
 private lemma freq_range_eq (j : ℕ) (hj : 5 ≤ j) :
     (j + 6) ^ 2 - 1 = (j - 5) ^ 2 + (11 * (2 * j + 1)) - 1 := by
-  zify [show (j - 5) ^ 2 + (11 * (2 * j + 1)) ≥ 1 from by nlinarith,
-        show (j + 6) ^ 2 ≥ 1 from by nlinarith, show 5 ≤ j from hj]
+  zify [show (j - 5) ^ 2 + (11 * (2 * j + 1)) ≥ 1 from by nlinarith only [hj],
+        show (j + 6) ^ 2 ≥ 1 from by nlinarith only [hj], show 5 ≤ j from hj]
   ring
 
 /-- Case 2 (j ≥ 818): Apply `high_freq_band_estimate`. The high-frequency condition

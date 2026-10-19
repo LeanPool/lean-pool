@@ -52,7 +52,7 @@ private theorem highAnnulusMass_le_norm_sq_wip
     {d : Nat} (hd : 0 < d) (kappa : MultiIndex d)
     (J : Nat) (H : Pkappa d kappa) :
     highAnnulusMass J (ofPkappa kappa H) <= ‖H‖ ^ 2 := by
-  linarith [annulusMassPartition hd kappa J H,
+  linarith only [annulusMassPartition hd kappa J H,
     lowAnnulusMass_nonneg_wip J (ofPkappa kappa H)]
 
 private theorem defect_nonneg_annulus
@@ -230,7 +230,7 @@ private lemma gamma_lintegral_rotate_one_eq_annulus
       ∫⁻ z : Cd d, g z ∂ gammaD d := by
   have hgauss := rotate_one_gamma_preserving_annulus (d := d) (q0 := q0) (ω := ω)
   have hmeas := rotate_one_measurableEmbedding_annulus (d := d) (q0 := q0) (ω := ω)
-  simpa using hgauss.lintegral_comp_emb hmeas g
+  exact hgauss.lintegral_comp_emb hmeas g
 
 private theorem annulusCoordinateRotationAveraging
     {d : Nat} (j : Idx d) (q0 : Fin d) (F : Cd d → ENNReal) (hF : Measurable F) :
@@ -404,7 +404,7 @@ private theorem norm_ne_zero_of_ne_zero_pkappa_annulus
   · have hcoeff_ne : F alpha ≠ 0 := Finsupp.mem_support_iff.mp hmem
     have hle :
         ‖F alpha‖ ^ 2 ≤ Finset.sum F.support (fun a : Idx d => ‖F a‖ ^ 2) := by
-      simpa using
+      exact
         (Finset.single_le_sum
           (f := fun a : Idx d => ‖F a‖ ^ 2) (s := F.support) (a := alpha)
           (fun a _ => by positivity) hmem)
@@ -415,7 +415,7 @@ private theorem norm_ne_zero_of_ne_zero_pkappa_annulus
     have hsqrt_pos :
         0 < Real.sqrt (Finset.sum F.support (fun a : Idx d => ‖F a‖ ^ 2)) :=
       Real.sqrt_pos.mpr hsum_pos
-    linarith
+    linarith only [hnorm, hsqrt_pos]
   · exact Finsupp.notMem_support_iff.mp hmem
 
 private theorem integrable_evalPkappa_sq_annulus
@@ -715,19 +715,19 @@ private theorem annulusBandSeparation_of_large_coord
     omega
   have hA_ge_2M : 2 * M + 1 ≤ A := by
     have hstep : 2 * M + 1 ≤ 4 * K * (2 * M + 1) * (M + 1) := by
-      have hfactor : 1 ≤ 4 * K * (M + 1) := by nlinarith
+      have hfactor : 1 ≤ 4 * K * (M + 1) := by nlinarith only [hK_ge]
       have hmul := Nat.mul_le_mul_right (2 * M + 1) hfactor
       simpa [mul_assoc, mul_left_comm, mul_comm] using hmul
     exact le_trans hstep hA_large
   have hA_ge_3K : 3 * K * (2 * M + 1) ≤ A := by
     have hstep : 3 * K * (2 * M + 1) ≤ 4 * K * (2 * M + 1) * (M + 1) := by
-      have hfactor : 3 ≤ 4 * (M + 1) := by nlinarith
+      have hfactor : 3 ≤ 4 * (M + 1) := by linarith only []
       have hmul := Nat.mul_le_mul_right (K * (2 * M + 1)) hfactor
       simpa [mul_assoc, mul_left_comm, mul_comm] using hmul
     exact le_trans hstep hA_large
-  have htwo : 2 * R + 1 ≤ 3 * A := by nlinarith
+  have htwo : 2 * R + 1 ≤ 3 * A := by linarith only [hR, hA_ge_2M]
   change K * ((2 * M + 1) * (2 * R + 1)) ≤ A ^ 2
-  nlinarith
+  nlinarith only [hlarge, hA_large, hK_ge, hR, hA_ge_2M, hA_ge_3K]
 
 private theorem highAnnulusBandSeparation_annulus
     {d : Nat} (hd : 0 < d) (D M : Nat) :
@@ -785,10 +785,8 @@ private theorem annulus_mass_split_pointwise
               ‖evalPkappa kappa (remainderPartPkappa j M G) z‖ ≤
             ‖evalPkappa kappa (localPartPkappa j M G) z‖ ^ 2 +
               ‖evalPkappa kappa (remainderPartPkappa j M G) z‖ ^ 2 := by
-        nlinarith [sq_nonneg
-          (‖evalPkappa kappa (localPartPkappa j M G) z‖ -
-            ‖evalPkappa kappa (remainderPartPkappa j M G) z‖)]
-      nlinarith
+        exact two_mul_le_add_sq _ _
+      linarith only [hsq_norm, hxy]
     exact hsq
   · simp [Set.indicator, hz]
 
@@ -905,9 +903,9 @@ private theorem integrable_baseDefectSq_annulus
           2 * ‖evalPkappa kappa (F + G) z‖ ^ 2 +
             2 * ‖evalPkappa kappa F z‖ ^ 2 := by
       rw [evalPkappa_add_apply_annulus kappa F G z]
-      nlinarith
-        [sq_nonneg (‖evalPkappa kappa F z + evalPkappa kappa G z‖ +
-          ‖evalPkappa kappa F z‖)]
+      linarith only [
+        sq_nonneg (‖evalPkappa kappa F z + evalPkappa kappa G z‖ + ‖evalPkappa kappa F z‖)
+      ]
     simp_all
   simpa [Real.norm_eq_abs, abs_of_nonneg] using
     MeasureTheory.Integrable.mono' hsq hmeasSq hbound
@@ -1164,11 +1162,11 @@ private theorem productAnnulus_eq_of_mem_annulus
   · by_contra hlt
     have hlt' : ℓ q + 1 ≤ j q := Nat.succ_le_of_lt (Nat.lt_of_not_ge hlt)
     have hlt_real : ((ℓ q : Nat) : ℝ) + 1 ≤ j q := by exact_mod_cast hlt'
-    linarith
+    linarith only [hj_lower, hℓ_upper, hlt_real]
   · by_contra hlt
     have hlt' : j q + 1 ≤ ℓ q := Nat.succ_le_of_lt (Nat.lt_of_not_ge hlt)
     have hlt_real : ((j q : Nat) : ℝ) + 1 ≤ ℓ q := by exact_mod_cast hlt'
-    linarith
+    linarith only [hj_upper, hℓ_lower, hlt_real]
 
 private theorem sum_indicator_productAnnulus_le_annulus
     {d : Nat} (s : Finset (Idx d)) (z : Cd d) (a : ℝ)
@@ -1241,7 +1239,7 @@ private theorem finite_sum_baseDefectAnnulusMass_le
             ‖evalPkappa kappa F z‖) ^ 2 ∂ gammaD d := by
           refine MeasureTheory.integral_mono_ae hIntSum hIntGlobal ?_
           filter_upwards with z
-          simpa [Set.indicator] using
+          exact
             sum_indicator_productAnnulus_le_annulus s z
               ((‖evalPkappa kappa F z + evalPkappa kappa G z‖ -
                 ‖evalPkappa kappa F z‖) ^ 2)
@@ -1279,10 +1277,10 @@ private theorem finite_sum_annulusMass_le_annulus
     _ ≤ ∫ z : Cd d, ‖evalPkappa kappa G z‖ ^ 2 ∂ gammaD d := by
           refine MeasureTheory.integral_mono_ae hInt hnorm ?_
           filter_upwards with z
-          simpa [Set.indicator] using
+          exact
             sum_indicator_productAnnulus_le_annulus s z
               (‖evalPkappa kappa G z‖ ^ 2) (by positivity)
-    _ = ‖G‖ ^ 2 := by simpa using evalPkappa_total_mass hd kappa G
+    _ = ‖G‖ ^ 2 := by exact evalPkappa_total_mass hd kappa G
 
 private theorem phi1D_eq_oneDimPhi_annulus
     (k n : Nat) (z : ℂ) :
@@ -1495,11 +1493,11 @@ private theorem evalPkappa_rotateCoord_circle_phase_sum_annulus
       = F alpha *
           ((fourier ((kappa q0 : Nat) : Int) x : ℂ) *
             Phi kappa alpha
-              (Function.update z q0 ((fourier (1 : Int) x : ℂ) * z q0))) := by ring_nf
+              (Function.update z q0 ((fourier (1 : Int) x : ℂ) * z q0))) := by ring
     _ = F alpha * ((fourier ((alpha q0 : Nat) : Int) x : ℂ) * Phi kappa alpha z) := by rw [hphase]
     _ = F alpha * Phi kappa alpha z * circleChar (alpha q0) x := by
           rw [hchar]
-          ring_nf
+          ring
 
 private theorem lowPoly_fiberCoeffLow_eq_sum_annulus
     {d : Nat} {kappa : MultiIndex d}
@@ -1962,7 +1960,7 @@ private theorem high_annulus_coercive_step_annulus
   have hbase_nonneg :
       0 ≤ baseDefectAnnulusMass kappa j F G :=
     baseDefectAnnulusMass_nonneg_annulus kappa j F G
-  nlinarith
+  nlinarith only [hCnonneg, hsplit, hloc, hdef]
 
 private theorem evalPkappa_eq_evalHermiteSum_annulus
     {d : Nat} (kappa : MultiIndex d) (F : Pkappa d kappa) :
@@ -2056,7 +2054,7 @@ private theorem summable_annulusMass_ofPkappa_annulus
     (G : Pkappa d kappa) :
     Summable (fun j : Idx d => annulusMass j (ofPkappa kappa G)) := summable_of_sum_le
     (fun j => annulusMass_nonneg_annulus j (ofPkappa kappa G))
-    (fun s => by simpa using finite_sum_annulusMass_le_annulus hd kappa G s)
+    (fun s => by exact finite_sum_annulusMass_le_annulus hd kappa G s)
 
 private theorem mem_lowAnnuli_iff_annulus
     {d J : Nat} {j : Idx d} :
@@ -2130,7 +2128,7 @@ private theorem highAnnulusMass_eq_tsum_high_annulus
         ‖G‖ ^ 2 - ∑ j ∈ lowAnnuli d J, a j := by
     rw [← hsub]
     dsimp [a] at hsplit htotal
-    linarith
+    linarith only [hsplit, htotal]
   unfold highAnnulusMass lowAnnulusMass
   rw [htotal_int, ← htail_max]
   exact htail_eq.symm
@@ -2290,7 +2288,7 @@ private theorem finite_base_product_annulus_estimate_large_eps
     highAnnulusMass_le_norm_sq_wip hd kappa 0 G
   have hnorm_sq_nonneg : 0 <= ‖G‖ ^ 2 := by positivity
   have hdef_sq_nonneg : 0 <= defect F G ^ 2 := by positivity
-  nlinarith
+  nlinarith only [h_eps_large, hhigh_le]
 
 theorem finite_base_product_annulus_estimate
     {d : Nat} (hd : 0 < d) (kappa : MultiIndex d)
@@ -2321,7 +2319,7 @@ theorem finite_base_product_annulus_estimate
     have hCloc_nonneg : 0 ≤ Cloc := le_of_lt hCloc_pos
     have hCrem_pos : 0 < Crem := by
       dsimp [Crem]
-      nlinarith
+      linarith only [h_eps, heps_large, hCloc_pos]
     have hCrem_nonneg : 0 ≤ Crem := le_of_lt hCrem_pos
     have hprod_tend :
         Filter.Tendsto
@@ -2356,7 +2354,7 @@ theorem finite_base_product_annulus_estimate
               Cloc * baseDefectAnnulusMass kappa j F (localPartPkappa j M G) := by
       intro j G hlarge
       simpa [Cloc, hCgot_eq] using hlocal_got j G hlarge
-    refine ⟨Jloc, M, hM_one, 4 * Cloc, by nlinarith, ?_⟩
+    refine ⟨Jloc, M, hM_one, 4 * Cloc, by linarith only [hCloc_pos], ?_⟩
     intro G
     have htail_eq := highAnnulusMass_eq_tsum_high_annulus hd kappa Jloc G
     have htail_bound :
@@ -2397,7 +2395,10 @@ theorem finite_base_product_annulus_estimate
                 0 ≤
                   4 * Cloc * baseDefectAnnulusMass kappa j F G +
                     Crem *
-                      annulusMass j (ofPkappa kappa (remainderPartPkappa j M G)) := by nlinarith
+                      annulusMass j (ofPkappa kappa (remainderPartPkappa j M G)) := by
+                        nlinarith only [
+                          h_eps, heps_large, hCloc_pos, hrem_nonneg, hbase_nonneg
+                        ]
             simpa [hlarge] using hrhs_nonneg
         calc
           ∑ j ∈ s,
@@ -2423,7 +2424,7 @@ theorem finite_base_product_annulus_estimate
               exact add_le_add
                 (mul_le_mul_of_nonneg_left
                   (finite_sum_baseDefectAnnulusMass_le hd kappa F G s)
-                  (by nlinarith))
+                  (by linarith only [hCloc_pos]))
                 (mul_le_mul_of_nonneg_left
                   (by
                     dsimp [L]
@@ -2464,8 +2465,8 @@ theorem finite_base_annulus_estimate
     intro H t eta hH_norm ht_pos ht_le_four heta_nonneg hdefect
     have hhigh_le : highAnnulusMass 0 (ofPkappa kappa H) <= ‖H‖ ^ 2 :=
       highAnnulusMass_le_norm_sq_wip hd kappa 0 H
-    have hH_sq : ‖H‖ ^ 2 = 1 := by nlinarith [hH_norm]
-    nlinarith [sq_nonneg eta]
+    have hH_sq : ‖H‖ ^ 2 = 1 := by nlinarith only [hH_norm]
+    linarith only [heps_large, hhigh_le, hH_sq, sq_nonneg eta]
   · obtain ⟨J, M, hM, C, hC_pos, hann⟩ :=
       finite_base_product_annulus_estimate hd kappa F hF eps h_eps
     refine ⟨J, C, hC_pos, ?_⟩
@@ -2474,10 +2475,10 @@ theorem finite_base_annulus_estimate
     rw [highAnnulusMass_ofPkappa_smul_real hd kappa J t H,
       norm_smul_pkappa_real_sq_annulus hd t H] at hprod
     have ht_sq_pos : 0 < t ^ 2 := by positivity
-    have hH_sq : ‖H‖ ^ 2 = 1 := by nlinarith [hH_norm]
+    have hH_sq : ‖H‖ ^ 2 = 1 := by nlinarith only [h_eps, heps_large, hH_norm]
     have hdef_nonneg : 0 <= defect F (t • H) := defect_nonneg_annulus F (t • H)
     have hdef_sq : defect F (t • H) ^ 2 <= (eta * t) ^ 2 :=
-      sq_le_sq' (by nlinarith [heta_nonneg, ht_pos]) hdefect
+      sq_le_sq' (by linarith only [hdefect, hdef_nonneg, heta_nonneg, ht_pos]) hdefect
     have hdef_mul : C * defect F (t • H) ^ 2 <= C * (eta * t) ^ 2 :=
       mul_le_mul_of_nonneg_left hdef_sq (le_of_lt hC_pos)
     have hscaled :
@@ -2490,7 +2491,7 @@ theorem finite_base_annulus_estimate
         _ = t ^ 2 * (C * eta ^ 2 + eps) := by
           rw [hH_sq]
           ring
-    nlinarith
+    nlinarith only [ht_sq_pos, hscaled]
 
 theorem highAnnulusControl
     {d : Nat} (hd : 0 < d) (kappa : MultiIndex d)
@@ -2524,7 +2525,10 @@ theorem highAnnulusControl
     have hmul := mul_le_mul_of_nonneg_left hdelta_le_inv (le_of_lt hC_pos)
     have hC_ne : C ≠ 0 := ne_of_gt hC_pos
     simp_all
-  have hdelta_sq_le : delta_high ^ 2 <= delta_high := by nlinarith [sq_nonneg delta_high]
+  have hdelta_sq_le : delta_high ^ 2 <= delta_high := by
+    nlinarith only [
+      hdelta_high_pos, hdelta_le_one, sq_nonneg delta_high
+    ]
   have hCdelta_sq_le : C * delta_high ^ 2 <= 1 / 8 := by
     calc
       C * delta_high ^ 2 <= C * delta_high :=
@@ -2533,6 +2537,6 @@ theorem highAnnulusControl
   have hhigh :
       highAnnulusMass J (ofPkappa kappa H) <= C * delta_high ^ 2 + 1 / 8 :=
     hann hH_norm ht_pos ht_le_four hdelta_nonneg hdefect
-  nlinarith
+  linarith only [hCdelta_sq_le, hhigh]
 
 end DimdPolyLEAN

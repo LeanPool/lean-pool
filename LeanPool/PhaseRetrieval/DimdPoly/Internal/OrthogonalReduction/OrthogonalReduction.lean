@@ -68,7 +68,7 @@ private lemma lpNorm_norm_l2 (F : MeasureTheory.Lp ℂ 2 μ) :
 omit [SigmaFinite μ] in
 private lemma memLp_norm_l2 (F : MeasureTheory.Lp ℂ 2 μ) :
     MeasureTheory.MemLp (fun x : Ω => ‖(F : Ω → ℂ) x‖) 2 μ := by
-  simpa using (MeasureTheory.Lp.memLp F).norm
+  exact (MeasureTheory.Lp.memLp F).norm
 
 private lemma abs_norm_sq_sub_norm_sq_le {E : Type*} [NormedAddCommGroup E]
     [InnerProductSpace ℝ E] (x y : E) :
@@ -76,7 +76,7 @@ private lemma abs_norm_sq_sub_norm_sq_le {E : Type*} [NormedAddCommGroup E]
   have hident : ‖x‖ ^ 2 - ‖y‖ ^ 2 = inner ℝ (x - y) (x + y) := by
     simp [inner_sub_left, inner_add_right, real_inner_comm]
   rw [hident]
-  simpa using norm_inner_le_norm (𝕜 := ℝ) (x - y) (x + y)
+  exact norm_inner_le_norm (𝕜 := ℝ) (x - y) (x + y)
 
 omit [CompleteSpace H] [SigmaFinite μ] in
 private lemma compare_pointwise_ae
