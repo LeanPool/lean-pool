@@ -40,9 +40,7 @@ license: Apache-2.0
 status: verified
 provenance: AI
 main_declarations:
-- Konig.lineGraph_colorable_of_colorable_two
 - Galvin.galvin
-- GallaiRoy.colorable_of_orientation
 - SpectralBounds.hoffman_chromatic
 main_results:
 - declaration: Konig.lineGraph_colorable_of_colorable_two
@@ -109,10 +107,8 @@ main_results:
   source_ref: Interface corollary of the proved Wilf and Gallai–Roy theorems.
 tags:
 - graph-theory
-- bipartite-graphs
 - edge-colouring
 - list-colouring
-- stable-matchings
 - orientations
 - spectral-graph-theory
 msc:

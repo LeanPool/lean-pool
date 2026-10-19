@@ -16,8 +16,8 @@ public import LeanPool.ClassicalGraphColouring.Spectrum.Bounds
 Source: doi:10.1006/jctb.1995.1011, url:https://github.com/jtraverso/galvin-dinitz/tree/0aa98fc17e1e96ec408f7bad3198ce37a08d26fc
 Authors: Juan Pablo Traverso Gianini
 Status: verified
-Main declarations: `Konig.lineGraph_colorable_of_colorable_two`, `Galvin.galvin`, `GallaiRoy.colorable_of_orientation`, `SpectralBounds.hoffman_chromatic`
-Tags: graph-theory, bipartite-graphs, edge-colouring, list-colouring, stable-matchings, orientations, spectral-graph-theory
+Main declarations: `Galvin.galvin`, `SpectralBounds.hoffman_chromatic`
+Tags: graph-theory, edge-colouring, list-colouring, orientations, spectral-graph-theory
 MSC: 05C15, 05C70, 91B68, 05C50
 -/
 
