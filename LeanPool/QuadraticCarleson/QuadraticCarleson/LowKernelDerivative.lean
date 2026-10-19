@@ -7,6 +7,7 @@ module
 
 
 public import LeanPool.QuadraticCarleson.QuadraticCarleson.PositiveDyadicKernel
+public import Mathlib.Analysis.Calculus.Deriv.Inv
 public import Mathlib.Analysis.Calculus.Deriv.Support
 public import Mathlib.Analysis.SpecialFunctions.ExpDeriv
 

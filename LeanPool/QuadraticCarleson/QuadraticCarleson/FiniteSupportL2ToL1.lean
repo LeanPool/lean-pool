@@ -35,7 +35,7 @@ theorem integral_norm_le_sqIntegral_mul_measureReal_sqrt
       (∫ x, ‖f x‖ ^ (2 : ℝ)) ^ (1 / (2 : ℝ)) *
         (volume.real s) ^ (1 / (2 : ℝ)) := by
   let g : ℝ → ℂ := s.indicator (fun _ ↦ 1)
-  have hg : MemLp g 2 volume := memLp_indicator_const 2 hs 1 (Or.inr hμs)
+  have hg : MemLp g 2 volume := memLp_indicator_const 2 hs.nullMeasurableSet 1 (Or.inr hμs)
   have hf' : MemLp f (ENNReal.ofReal 2) volume := by simpa using hf
   have hg' : MemLp g (ENNReal.ofReal 2) volume := by simpa using hg
   have hholder := integral_mul_norm_le_Lp_mul_Lq

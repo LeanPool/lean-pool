@@ -1066,7 +1066,8 @@ theorem finiteSparse_common_normalization
   rw [hinv, ENNReal.rpow_one]
   have hcoef_norm : holderConjugate r * (-1 + holderConjugate r)⁻¹ * 4 =
       4 * holderConjugate r / (holderConjugate r - 1) := by
-    field_simp; ring
+    rw [show -1 + holderConjugate r = holderConjugate r - 1 by ring]
+    ring
   rw [hcoef_norm]
   rw [ENNReal.ofReal_rpow_of_nonneg (p := (holderConjugate r)⁻¹)
       hcoef (inv_nonneg.mpr hq.le)]

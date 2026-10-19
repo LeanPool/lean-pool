@@ -387,7 +387,7 @@ theorem krauseLaceyFixedScaleLocalizedSum_eq_convolution
   have hint (I : RealInterval) (hI : I ∈ S) :
       Integrable (fun t ↦ κ (x - t) * I.centralThird.indicator f t) :=
     integrable_convolution_row_of_memLp hκc hκs
-      (MeasureTheory.MemLp.indicator I.measurableSet_centralThird hf) x
+      (MeasureTheory.MemLp.indicator I.measurableSet_centralThird.nullMeasurableSet hf) x
   unfold krauseLaceyFixedScaleLocalizedSum
   simp_rw [krauseLaceyLocalizedPiece_eq_positiveDyadicConvolution]
   calc
@@ -417,7 +417,7 @@ theorem memLp_krauseLaceyFixedScaleInput
         funext x
         simp [krauseLaceyFixedScaleInput, hI]
       rw [hadd]
-      exact (MeasureTheory.MemLp.indicator I.measurableSet_centralThird hf).add ih
+      exact (MeasureTheory.MemLp.indicator I.measurableSet_centralThird.nullMeasurableSet hf).add ih
 
 /-- Disjoint central thirds prevent any multiplicity loss in the fixed-scale
 input assembled from the shifted dyadic grid. -/
@@ -503,6 +503,6 @@ theorem krauseLaceyLocalizedPiece_sq_lintegral_le
   dsimp only
   simp_rw [krauseLaceyLocalizedPiece_eq_positiveDyadicConvolution]
   exact krauseLacey_positiveDyadicConvolution_sq_lintegral_le j
-    (MeasureTheory.MemLp.indicator I.measurableSet_centralThird hf)
+    (MeasureTheory.MemLp.indicator I.measurableSet_centralThird.nullMeasurableSet hf)
 
 end QuadraticCarleson
