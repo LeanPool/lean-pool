@@ -20,7 +20,7 @@ import Mathlib.Dynamics.Ergodic.Action.Regular
 import Mathlib.LinearAlgebra.BilinearForm.DualLattice
 import Mathlib.Topology.Connected.Separation
 import Mathlib.Topology.Instances.ENat
-import Mathlib.Topology.Separation.Lemmas
+import Mathlib.Topology.Separation.CompletelyRegular
 
 /-!
 # PackingBound
@@ -1600,8 +1600,8 @@ private lemma translated_ball_subset_translated_region {Λ : Submodule ℤ (Eucl
       (- (g : EuclideanSpace ℝ (Fin d))) +ᵥ y ∈
         (- (g : EuclideanSpace ℝ (Fin d))) +ᵥ ball (g +ᵥ x) r :=
     Set.mem_vadd_set.2 ⟨y, by simpa only [Submodule.vadd_def, vadd_eq_add, mem_ball] using! hy, rfl⟩
-  simpa only [Submodule.vadd_def, NegMemClass.coe_neg, vadd_eq_add, mem_ball, gt_iff_lt, vadd_ball,
-    neg_add_cancel_left] using! this
+  simpa only [Submodule.vadd_def, NegMemClass.coe_neg, vadd_eq_add, mem_ball, gt_iff_lt,
+    Metric.vadd_ball, neg_add_cancel_left] using! this
 
 private noncomputable def replicate_to_periodic_packing
     (S : SpherePacking d)

@@ -10,6 +10,7 @@ public import Mathlib.Analysis.Distribution.SchwartzSpace.Basic
 import Mathlib.AlgebraicTopology.FundamentalGroupoid.SimplyConnected
 import Mathlib.Analysis.Complex.RemovableSingularity
 import Mathlib.Analysis.Convex.Contractible
+import Mathlib.Analysis.Convex.SpecificFunctions.Deriv
 import Mathlib.Analysis.Distribution.SchwartzSpace.Fourier
 import Mathlib.Analysis.InnerProductSpace.Calculus
 import Mathlib.Analysis.MellinInversion
