@@ -32,7 +32,9 @@ main_results:
 - declaration: RemovalLemma.graph_removal
   informal: Few labelled copies of any fixed graph H can be destroyed by deleting
     few edges.
-  source_ref: Erdős–Frankl–Rödl graph removal lemma; formal source
+  source_ref: Conlon–Fox, Graph removal lemmas, Theorem 1.1
+    (https://arxiv.org/pdf/1211.3487v1); Erdős–Frankl–Rödl (1986), Theorems 1.5
+    and 1.5′, are related precursors; formal source
     https://github.com/jtraverso/graph-removal-lemma/tree/589cf03ef1e4c80ea8cdd6be77778232c62dd37c.
 - declaration: RemovalExtremalStability.stability_of_few_copies
   informal: A graph near the Turán density with few labelled L copies is close

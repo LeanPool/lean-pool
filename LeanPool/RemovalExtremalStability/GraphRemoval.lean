@@ -46,9 +46,11 @@ theorem card_copies_ge {α β : Type*} [Fintype β] (L : SimpleGraph β)
       Nat.card {f : β ↪ α // (∀ x, f x ∈ s x) ∧ ∀ x y, L.Adj x y → G.Adj (f x) (f y)} :=
   GraphRemoval.card_copies_ge L G s hη hη₁ hd hd₁ hηd hsize hs
 
-/-- **Graph removal lemma, far form** (Erdős–Frankl–Rödl 1986). For every finite graph `H` and
-every `ε > 0` there is `δ > 0` such that every finite graph on `n` vertices that is `ε n²`-far from
-being `H`-free has at least `δ n ^ (card β)` labelled copies of `H`. -/
+/-- **Graph removal lemma, far form.** The contrapositive of Conlon–Fox,
+*Graph removal lemmas*, [Theorem 1.1](https://arxiv.org/pdf/1211.3487v1).
+For every finite graph `H` and every `ε > 0` there is `δ > 0` such that every finite graph on `n`
+vertices that is `ε n²`-far from being `H`-free has at least `δ n ^ (card β)` labelled copies of
+`H`. -/
 theorem le_labelledCopyCount_of_deleteFar {β : Type} [Fintype β] (H : SimpleGraph β) {ε : ℝ}
     (hε : 0 < ε) :
     ∃ δ : ℝ, 0 < δ ∧ ∀ (α : Type) [Fintype α] [DecidableEq α] (G : SimpleGraph α)
@@ -56,10 +58,11 @@ theorem le_labelledCopyCount_of_deleteFar {β : Type} [Fintype β] (H : SimpleGr
         δ * card α ^ card β ≤ G.labelledCopyCount H :=
   GraphRemoval.le_labelledCopyCount_of_deleteFar H hε
 
-/-- **Graph removal lemma** (Erdős–Frankl–Rödl 1986). For every finite graph `H` and every
-`ε > 0` there is `δ > 0` such that every finite graph on `n` vertices with fewer than
-`δ n ^ (card β)` labelled copies of `H` has an `H`-free subgraph obtained by deleting fewer than
-`ε n²` edges. -/
+/-- **Graph removal lemma.** See Conlon–Fox, *Graph removal lemmas*,
+[Theorem 1.1](https://arxiv.org/pdf/1211.3487v1).
+For every finite graph `H` and every `ε > 0` there is `δ > 0` such that every finite graph on `n`
+vertices with fewer than `δ n ^ (card β)` labelled copies of `H` has an `H`-free subgraph obtained
+by deleting fewer than `ε n²` edges. -/
 theorem graph_removal {β : Type} [Fintype β] (H : SimpleGraph β) {ε : ℝ} (hε : 0 < ε) :
     ∃ δ : ℝ, 0 < δ ∧ ∀ (α : Type) [Fintype α] [DecidableEq α] (G : SimpleGraph α)
       [DecidableRel G.Adj], (G.labelledCopyCount H : ℝ) < δ * card α ^ card β →
