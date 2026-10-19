@@ -8,6 +8,7 @@ module
 public import LeanPool.PoincareThreeBody.AnalyticNormalization
 import LeanPool.PoincareThreeBody.Analytic
 import Mathlib.Analysis.Calculus.ContDiff.Comp
+import Mathlib.Analysis.Calculus.FDeriv.Mul
 import Mathlib.Analysis.Normed.Module.FiniteDimension
 import Mathlib.Analysis.SpecialFunctions.Trigonometric.Arctan
 import Mathlib.MeasureTheory.Covering.Besicovitch

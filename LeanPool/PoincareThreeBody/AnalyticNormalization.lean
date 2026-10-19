@@ -11,6 +11,7 @@ public import Mathlib.Analysis.Calculus.DSlope
 public import Mathlib.Analysis.InnerProductSpace.Basic
 import LeanPool.PoincareThreeBody.Analytic
 import Mathlib.Analysis.Analytic.IsolatedZeros
+import Mathlib.Analysis.Calculus.Deriv.Comp
 import Mathlib.Analysis.SpecialFunctions.Trigonometric.Arctan
 import Mathlib.MeasureTheory.Covering.Besicovitch
 
