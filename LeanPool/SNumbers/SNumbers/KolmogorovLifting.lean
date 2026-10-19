@@ -479,7 +479,7 @@ private lemma one_le_norm_Q_sub_L (n : ℕ) (h_dim : n < Module.finrank 𝕜 X)
     lt_of_le_of_lt (Module.finrank_le_of_rank_le hL) h_dim
   have hV_ne_top : V ≠ ⊤ := fun h => by rw [h, finrank_top] at hV_lt; exact lt_irrefl _ hV_lt
   have hV_closed : IsClosed (V : Set X) := V.closed_of_finiteDimensional
-  have hV_exists : ∃ x : X, x ∉ V := SetLike.exists_not_mem_of_ne_top V hV_ne_top
+  have hV_exists : ∃ x : X, x ∉ V := SetLike.exists_notMem_of_ne_top V hV_ne_top
   -- Limit `r → 1`: enough to show `1 ≤ ‖Q − L‖ + ε` for every `ε > 0`. The
   -- `ε ≥ 1` case is trivial; for `ε ∈ (0, 1)` we run Riesz at level `1 − ε/2`.
   refine le_of_forall_pos_le_add fun ε hε => ?_
