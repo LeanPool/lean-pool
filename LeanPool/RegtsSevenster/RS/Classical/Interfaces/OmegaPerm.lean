@@ -82,7 +82,7 @@ noncomputable def omegaSkeinRep (n : ℕ) :
 `ω.map (permClass f n σ)`. -/
 theorem omegaSkeinRep_of (n : ℕ) (σ : Equiv.Perm (Fin n)) :
     omegaSkeinRep f P n (MonoidAlgebra.of ℂ (Equiv.Perm (Fin n)) σ) =
-      P.ω.map (permClass f n σ) :=
+      End.of (P.ω.map (permClass f n σ).asHom) :=
   MonoidAlgebra.lift_of (omegaPermHom f P n) σ
 
 /-- **Equivariance**: the transported representation agrees with
@@ -90,7 +90,7 @@ applying `ω.map` to the skein representation element by element.
 Both sides are algebra homs agreeing on generators, hence equal
 on all elements by the universal property. -/
 theorem omegaSkeinRep_eq (n : ℕ) (x : SymGroupAlgebra n) :
-    omegaSkeinRep f P n x = P.ω.map (skeinRep f n x) := by
+    omegaSkeinRep f P n x = End.of (P.ω.map (skeinRep f n x).asHom) := by
   let := P.additive
   let := P.linear
   -- Both sides are equal on generators and respect the algebra
@@ -103,13 +103,13 @@ theorem omegaSkeinRep_eq (n : ℕ) (x : SymGroupAlgebra n) :
   · -- Addition case
     intro a b ha hb
     simp only [map_add, ha, hb]
-    exact (Functor.map_add (F := P.ω)
-      (f := skeinRep f n a) (g := skeinRep f n b)).symm
+    exact End.ext (Functor.map_add (F := P.ω)
+      (f := (skeinRep f n a).asHom) (g := (skeinRep f n b).asHom)).symm
   · -- Scalar multiplication case
     intro c a ha
     simp only [map_smul, ha]
-    exact (Functor.map_smul (F := P.ω)
-      (r := c) (f := skeinRep f n a)).symm
+    exact End.ext (Functor.map_smul (F := P.ω)
+      (r := c) (f := (skeinRep f n a).asHom)).symm
 
 end RS
 

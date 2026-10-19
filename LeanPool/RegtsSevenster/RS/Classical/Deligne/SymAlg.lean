@@ -1770,9 +1770,9 @@ noncomputable def modPowPermHom
     [HasCoequalizers D]
     (n : ℕ) :
     Equiv.Perm (Fin n) →* End (modPow A X n) where
-  toFun := modPowPerm n
-  map_one' := modPowPerm_one n
-  map_mul' := modPowPerm_mul n
+  toFun σ := .of (modPowPerm n σ)
+  map_one' := End.ext (modPowPerm_one n)
+  map_mul' σ τ := End.ext (modPowPerm_mul n σ τ)
 
 end Descent
 
@@ -1848,7 +1848,7 @@ theorem modPowAlg_single
     [HasCoequalizers D] [Linear ℂ D]
     (n : ℕ) (σ : Equiv.Perm (Fin n)) :
     modPowAlg A X n (MonoidAlgebra.single σ (1 : ℂ)) =
-      modPowPerm (A := A) (X := X) n σ := by
+      End.of (modPowPerm (A := A) (X := X) n σ) := by
   rw [modPowAlg, MonoidAlgebra.lift_single, one_smul]
   rfl
 
@@ -1858,7 +1858,7 @@ noncomputable def symPowIdem
     [MonObj A] (X : D) [ModObj A X] [Preadditive D] [HasFiniteBiproducts D]
     [HasCoequalizers D] [Linear ℂ D]
     (n : ℕ) : modPow A X n ⟶ modPow A X n :=
-  modPowAlg A X n (symmetriser n)
+  (modPowAlg A X n (symmetriser n)).asHom
 
 /-- The symmetriser's action is idempotent. -/
 theorem symPowIdem_idem
@@ -1869,7 +1869,7 @@ theorem symPowIdem_idem
     symPowIdem A X n ≫ symPowIdem A X n = symPowIdem A X n := by
   have h := congrArg (modPowAlg A X n) (symmetriser_idem n)
   rw [map_mul] at h
-  exact h
+  exact congrArg End.asHom h
 
 /-- **The symmetric power**: the coinvariants of the symmetriser's
 action — the coequalizer of the action against the identity.  The

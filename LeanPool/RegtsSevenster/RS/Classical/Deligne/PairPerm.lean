@@ -1030,12 +1030,12 @@ theorem symPowIdem_pairPow
       ((n.factorial : ℂ))⁻¹ • ∑ σ : Equiv.Perm (Fin n),
         modPowPerm (A := A) (X := M'.X) n σ := by
     rw [symPowIdem, symmetriser, map_smul, map_sum]
-    simp only [modPowAlg_single]
+    simp only [modPowAlg_single, End.smul_asHom, End.sum_asHom]
   have hexpR : symPowIdem A M.X n =
       ((n.factorial : ℂ))⁻¹ • ∑ σ : Equiv.Perm (Fin n),
         modPowPerm (A := A) (X := M.X) n σ := by
     rw [symPowIdem, symmetriser, map_smul, map_sum]
-    simp only [modPowAlg_single]
+    simp only [modPowAlg_single, End.smul_asHom, End.sum_asHom]
   rw [hexpL, hexpR, MonoidalLinear.smul_whiskerRight,
     MonoidalLinear.whiskerLeft_smul, Linear.smul_comp,
     Linear.smul_comp]

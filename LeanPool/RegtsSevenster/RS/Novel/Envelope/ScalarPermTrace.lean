@@ -37,10 +37,10 @@ theorem scalarTrace_permMor_powHom
     (hu : HasScalarUnit A) (X : A)
     (g : End X) {n : ℕ} (π : Equiv.Perm (Fin n)) :
     scalarTrace hu (tensorPow A X n)
-        (permMor X n π ≫ powHom X g n) =
+        (End.of (permMor X n π ≫ (powHom X g n).asHom)) =
       ((fullCycleType π).map
         (fun c => scalarTrace hu X (g ^ c))).prod := by
-  change unitScalar hu (catTrace (permMor X n π ≫ powHom X g n)) = _
+  change unitScalar hu (catTrace (permMor X n π ≫ (powHom X g n).asHom)) = _
   rw [catTrace_permMor_powHom, map_multiset_prod, Multiset.map_map]
   rfl
 

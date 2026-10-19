@@ -987,8 +987,14 @@ theorem schurKilled_iff_indOf_map_permAlg_eq_zero
     [Preadditive C] [Linear ℂ C] [HasFiniteColimits C]
     (P : SchurPackage.{v}) (X : C) (μ : YoungDiagram) :
     SchurKilled P X μ ↔
-      indOf.map (permAlg X μ.card (P.e μ)) = 0 :=
-  (indOf_map_eq_zero_iff (permAlg X μ.card (P.e μ))).symm
+      indOf.map (permAlg X μ.card (P.e μ)).asHom = 0 :=
+by
+  change permAlg X μ.card (P.e μ) = 0 ↔ _
+  constructor
+  · intro h
+    exact (indOf_map_eq_zero_iff _).mpr (congrArg End.asHom h)
+  · intro h
+    exact End.ext ((indOf_map_eq_zero_iff _).mp h)
 
 end SchurBridge
 

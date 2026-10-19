@@ -52,13 +52,14 @@ theorem block_frobenius (P : SchurPackage.{1}) (n : ℕ)
   have hlin_smul : ∀ (c : ℂ) (x : skeinEnd f (n * μ.card)),
       skeinTrace f (n * μ.card) (c • x) =
         c * skeinTrace f (n * μ.card) x := fun c x =>
-    (map_smul (HomSpace.traceMap f.val (n * μ.card)) c x).trans
+    (map_smul (HomSpace.traceMap f.val (n * μ.card)) c x.asHom).trans
       (smul_eq_mul _ _)
   have hlin_sum : ∀ (h : Equiv.Perm (Fin μ.card) →
         skeinEnd f (n * μ.card)),
       skeinTrace f (n * μ.card) (∑ π, h π) =
         ∑ π, skeinTrace f (n * μ.card) (h π) := fun h =>
-    map_sum (HomSpace.traceMap f.val (n * μ.card)) h
+    map_sum ((HomSpace.traceMap f.val (n * μ.card)).comp
+      (End.linearEquiv (R := ℂ)).toLinearMap) h
       Finset.univ
   rw [hexp, hlin_smul, hlin_sum]
   rw [show (∑ π : Equiv.Perm (Fin μ.card),
@@ -82,8 +83,8 @@ noncomputable def blockFrobeniusTower (P : SchurPackage.{1})
     FrobeniusTower P (fun k => skeinEnd f (n * k)) (((R : ℝ) ^ n) ^ 2)
       (skeinEnd f n) where
   toPermTower := blockPermTower f n
-  traceA := HomSpace.traceMap f.val n
-  trace k := HomSpace.traceMap f.val (n * k)
+  traceA := (HomSpace.traceMap f.val n).comp (End.linearEquiv (R := ℂ)).toLinearMap
+  trace k := (HomSpace.traceMap f.val (n * k)).comp (End.linearEquiv (R := ℂ)).toLinearMap
   pow k g := blockPow f n g k
   frobenius μ g := block_frobenius f P n μ g
 

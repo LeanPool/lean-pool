@@ -45,12 +45,13 @@ noncomputable def whiskerLeftAlg
     [MonoidalPreadditive A] [MonoidalLinear ℂ A]
     (P X : A) :
     End X →ₐ[ℂ] End (P ⊗ X) where
-  toFun f := P ◁ f
-  map_one' := MonoidalCategory.whiskerLeft_id P X
-  map_mul' f g := MonoidalCategory.whiskerLeft_comp P g f
-  map_zero' := MonoidalPreadditive.whiskerLeft_zero
-  map_add' f g := MonoidalPreadditive.whiskerLeft_add f g
+  toFun f := .of (P ◁ f.asHom)
+  map_one' := End.ext (MonoidalCategory.whiskerLeft_id P X)
+  map_mul' f g := End.ext (MonoidalCategory.whiskerLeft_comp P g.asHom f.asHom)
+  map_zero' := End.ext MonoidalPreadditive.whiskerLeft_zero
+  map_add' f g := End.ext (MonoidalPreadditive.whiskerLeft_add f.asHom g.asHom)
   commutes' c := by
+    apply End.ext
     change P ◁ (c • 𝟙 X) = c • 𝟙 (P ⊗ X)
     rw [MonoidalLinear.whiskerLeft_smul,
       MonoidalCategory.whiskerLeft_id]
@@ -65,12 +66,14 @@ noncomputable def pairPermHom
     (X Y : A) (n : ℕ) :
     Equiv.Perm (Fin n) × Equiv.Perm (Fin n) →*
       End (tensorPow A X n ⊗ tensorPow A Y n) where
-  toFun g := permMor X n g.1 ⊗ₘ permMor Y n g.2
+  toFun g := .of (permMor X n g.1 ⊗ₘ permMor Y n g.2)
   map_one' := by
+    apply End.ext
     change permMor X n 1 ⊗ₘ permMor Y n 1 =
       𝟙 (tensorPow A X n ⊗ tensorPow A Y n)
     rw [permMor_one, permMor_one, MonoidalCategory.id_tensorHom_id]
   map_mul' g h := by
+    apply End.ext
     change permMor X n (g.1 * h.1) ⊗ₘ permMor Y n (g.2 * h.2) =
       (permMor X n h.1 ⊗ₘ permMor Y n h.2) ≫
         (permMor X n g.1 ⊗ₘ permMor Y n g.2)
@@ -100,7 +103,7 @@ theorem pairAlg_single
     (X Y : A) (n : ℕ)
     (σ τ : Equiv.Perm (Fin n)) :
     pairAlg X Y n (MonoidAlgebra.single (σ, τ) (1 : ℂ)) =
-      permMor X n σ ⊗ₘ permMor Y n τ := by
+      End.of (permMor X n σ ⊗ₘ permMor Y n τ) := by
   rw [pairAlg, MonoidAlgebra.lift_single, one_smul]
   rfl
 
@@ -136,7 +139,7 @@ theorem pairAlg_extFst
     (X Y : A) (n : ℕ) (x : SymGroupAlgebra n) :
     pairAlg X Y n
         (MonoidAlgebra.mapDomainAlgHom ℂ ℂ (extFstHom n) x) =
-      permAlg X n x ▷ tensorPow A Y n := by
+      End.of ((permAlg X n x).asHom ▷ tensorPow A Y n) := by
   have hext : (pairAlg X Y n).comp
       (MonoidAlgebra.mapDomainAlgHom ℂ ℂ (extFstHom n)) =
       (whiskerAlg (tensorPow A X n) (tensorPow A Y n)).comp
@@ -168,7 +171,7 @@ theorem pairAlg_extSnd
     (X Y : A) (n : ℕ) (y : SymGroupAlgebra n) :
     pairAlg X Y n
         (MonoidAlgebra.mapDomainAlgHom ℂ ℂ (extSndHom n) y) =
-      tensorPow A X n ◁ permAlg Y n y := by
+      End.of (tensorPow A X n ◁ (permAlg Y n y).asHom) := by
   have hext : (pairAlg X Y n).comp
       (MonoidAlgebra.mapDomainAlgHom ℂ ℂ (extSndHom n)) =
       (whiskerLeftAlg (tensorPow A X n) (tensorPow A Y n)).comp
@@ -202,8 +205,8 @@ theorem pairAlg_extProd
     (X Y : A) (n : ℕ)
     (x y : SymGroupAlgebra n) :
     pairAlg X Y n (extProd x y) =
-      (tensorPow A X n ◁ permAlg Y n y) ≫
-        (permAlg X n x ▷ tensorPow A Y n) := by
+      End.of ((tensorPow A X n ◁ (permAlg Y n y).asHom) ≫
+        ((permAlg X n x).asHom ▷ tensorPow A Y n)) := by
   unfold extProd
   rw [map_mul, pairAlg_extFst, pairAlg_extSnd]
   rfl
@@ -245,15 +248,17 @@ theorem SchurKilled.tensorObj
     SchurKilled P (X ⊗ Y) lam := by
   classical
   rw [SchurKilled]
+  apply End.ext
+  rw [End.zero_asHom]
   -- The recast idempotent at size `lam.card` is the idempotent.
   have heS : Shape.e P (⟨lam, rfl⟩ : Shape lam.card) = P.e lam := by
     unfold Shape.e
     erw [symCast_le_refl]
   -- Each external term of the double action dies.
   have hterm : ∀ μ' ν' : Shape lam.card,
-      (pairAlg X Y lam.card
+      ((pairAlg X Y lam.card
           (extProd (Shape.e P μ') (Shape.e P ν') *
-            diagEmbed (P.e lam)) :
+            diagEmbed (P.e lam))).asHom :
         tensorPow A X lam.card ⊗ tensorPow A Y lam.card ⟶
           tensorPow A X lam.card ⊗ tensorPow A Y lam.card) =
       0 := by
@@ -266,43 +271,43 @@ theorem SchurKilled.tensorObj
             Shape.e P (⟨lam, rfl⟩ : Shape lam.card) from heS.symm]
         exact extProd_mul_diagEmbed_eq_zero P ⟨lam, rfl⟩ μ' ν' hk
       rw [hz0]
-      exact map_zero _
+      exact congrArg End.asHom (map_zero _)
     · -- A bounding-box cell lands in `μ'` or `ν'`; that factor is
       -- killed and its whiskering propagates the zero.
       have hcell' := cell_of_kronMult_ne_zero
         (⟨lam, rfl⟩ : Shape lam.card) μ' ν'
         (p := p) (q := q) (r := r) (s := s) hk hcell
-      have hsplit : pairAlg X Y lam.card
+      have hsplit : (pairAlg X Y lam.card
           (extProd (Shape.e P μ') (Shape.e P ν') *
-            diagEmbed (P.e lam)) =
-          pairAlg X Y lam.card (diagEmbed (P.e lam)) ≫
-            pairAlg X Y lam.card
-              (extProd (Shape.e P μ') (Shape.e P ν')) := by
+            diagEmbed (P.e lam))).asHom =
+          (pairAlg X Y lam.card (diagEmbed (P.e lam))).asHom ≫
+            (pairAlg X Y lam.card
+              (extProd (Shape.e P μ') (Shape.e P ν'))).asHom := by
         rw [map_mul]
         rfl
       rw [hsplit, pairAlg_extProd]
       rcases hcell' with hcμ | hcν
       · have hkilled : SchurKilled P X μ'.val :=
           hX.mono P (le_of_box_of_cell hμc hμr hcμ)
-        have hz : permAlg X lam.card (Shape.e P μ') =
+        have hz : (permAlg X lam.card (Shape.e P μ')).asHom =
             (0 : tensorPow A X lam.card ⟶
               tensorPow A X lam.card) := by
           rw [Shape.e]
-          exact permAlg_compat X _ _ hkilled
+          exact congrArg End.asHom (permAlg_compat X _ _ hkilled)
         rw [hz, MonoidalPreadditive.zero_whiskerRight,
           Limits.comp_zero, Limits.comp_zero]
       · have hkilled : SchurKilled P Y ν'.val :=
           hY.mono P (le_of_box_of_cell hνc hνr hcν)
-        have hz : permAlg Y lam.card (Shape.e P ν') =
+        have hz : (permAlg Y lam.card (Shape.e P ν')).asHom =
             (0 : tensorPow A Y lam.card ⟶
               tensorPow A Y lam.card) := by
           rw [Shape.e]
-          exact permAlg_compat Y _ _ hkilled
+          exact congrArg End.asHom (permAlg_compat Y _ _ hkilled)
         rw [hz, MonoidalPreadditive.whiskerLeft_zero,
           Limits.zero_comp, Limits.comp_zero]
   -- The diagonal double action of the idempotent vanishes: expand
   -- the diagonal image over the complete external family.
-  have hdiag : (diagAlg X Y lam.card (P.e lam) :
+  have hdiag : ((diagAlg X Y lam.card (P.e lam)).asHom :
       tensorPow A X lam.card ⊗ tensorPow A Y lam.card ⟶
         tensorPow A X lam.card ⊗ tensorPow A Y lam.card) = 0 := by
     rw [← pairAlg_diagEmbed]
@@ -315,27 +320,26 @@ theorem SchurKilled.tensorObj
         ← sum_extProd_shape_e P lam.card]
       rw [Finset.sum_mul]
       exact Finset.sum_congr rfl fun μ' _ => Finset.sum_mul _ _ _
-    have hdist : (pairAlg X Y lam.card (diagEmbed (P.e lam)) :
+    have hdist : ((pairAlg X Y lam.card (diagEmbed (P.e lam))).asHom :
         tensorPow A X lam.card ⊗ tensorPow A Y lam.card ⟶
           tensorPow A X lam.card ⊗ tensorPow A Y lam.card) =
         ∑ μ' : Shape lam.card, ∑ ν' : Shape lam.card,
-          pairAlg X Y lam.card
+          (pairAlg X Y lam.card
             (extProd (Shape.e P μ') (Shape.e P ν') *
-              diagEmbed (P.e lam)) := by
+              diagEmbed (P.e lam))).asHom := by
       conv_lhs => rw [hexp]
-      rw [map_sum]
-      exact Finset.sum_congr rfl fun μ' _ => map_sum _ _ _
+      simp only [map_sum, End.sum_asHom]
     rw [hdist]
     refine Finset.sum_eq_zero fun μ' _ => ?_
     refine Finset.sum_eq_zero fun ν' _ => ?_
     exact hterm μ' ν'
   -- Transport back through the distribution isomorphism.
-  have hcomp : permAlg (X ⊗ Y) lam.card (P.e lam) ≫
+  have hcomp : (permAlg (X ⊗ Y) lam.card (P.e lam)).asHom ≫
       (tensorPowDistrib X Y lam.card).hom = 0 := by
     rw [tensorPowDistrib_permAlg, hdiag]
     exact Limits.comp_zero
-  calc permAlg (X ⊗ Y) lam.card (P.e lam)
-      = (permAlg (X ⊗ Y) lam.card (P.e lam) ≫
+  calc (permAlg (X ⊗ Y) lam.card (P.e lam)).asHom
+      = ((permAlg (X ⊗ Y) lam.card (P.e lam)).asHom ≫
           (tensorPowDistrib X Y lam.card).hom) ≫
           (tensorPowDistrib X Y lam.card).inv := by
         rw [Category.assoc, Iso.hom_inv_id, Category.comp_id]

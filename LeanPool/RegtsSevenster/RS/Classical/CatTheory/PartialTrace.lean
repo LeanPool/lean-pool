@@ -214,9 +214,10 @@ private theorem catTrace_eq_ptl_trace
     pairTrace_eq
       (ExactPairing.tensor : ExactPairing (P ⊗ X) (Xᘁ ⊗ Pᘁ))
       HasRightDual.exact f]
+  apply End.ext
   change η_ (P ⊗ X) (Xᘁ ⊗ Pᘁ) ≫ f ▷ (Xᘁ ⊗ Pᘁ) ≫
       (β_ (P ⊗ X) (Xᘁ ⊗ Pᘁ)).hom ≫ ε_ (P ⊗ X) (Xᘁ ⊗ Pᘁ) =
-    catTrace (ptl f)
+    (catTrace (ptl f)).asHom
   calc
     η_ (P ⊗ X) (Xᘁ ⊗ Pᘁ) ≫ f ▷ (Xᘁ ⊗ Pᘁ) ≫
         (β_ (P ⊗ X) (Xᘁ ⊗ Pᘁ)).hom ≫ ε_ (P ⊗ X) (Xᘁ ⊗ Pᘁ)
@@ -245,7 +246,8 @@ private theorem catTrace_eq_ptl_trace
     _ = η_ X Xᘁ ≫ (β_ X Xᘁ).hom ≫ Xᘁ ◁ ptl f ≫ ε_ X Xᘁ := by
         simp only [ptl, whiskerLeft_comp, Category.assoc]
         monoidal
-    _ = catTrace (ptl f) := (catTrace_eq_loop (ptl f)).symm
+    _ = (catTrace (ptl f)).asHom :=
+        congrArg End.asHom (catTrace_eq_loop (ptl f)).symm
 
 /-- The full trace of the last-factor partial trace is the full
 trace of the first-factor partial trace: the two cups are disjoint,
@@ -258,6 +260,7 @@ private theorem ptr_trace_eq_ptl_trace
     (f : P ⊗ X ⟶ P ⊗ X) :
     catTrace (ptr f) = catTrace (ptl f) := by
   rw [catTrace_eq_loop (ptr f)]
+  apply End.ext
   calc
     η_ P Pᘁ ≫ (β_ P Pᘁ).hom ≫ Pᘁ ◁ ptr f ≫ ε_ P Pᘁ
       -- Unfold the partial trace; group cup with cup, cap with cap.
@@ -286,7 +289,7 @@ private theorem ptr_trace_eq_ptl_trace
     _ = η_ X Xᘁ ≫ ptl f ▷ Xᘁ ≫ (β_ X Xᘁ).hom ≫ ε_ X Xᘁ := by
         simp only [ptl, comp_whiskerRight, Category.assoc]
         monoidal
-    _ = catTrace (ptl f) := rfl
+    _ = (catTrace (ptl f)).asHom := rfl
 
 /-- **The full trace of a partial trace is the full trace**: closing
 the remaining strand of `ptr f` into a loop closes both strands of

@@ -34,7 +34,7 @@ theorem skeinRep_zero_imp_superPermAction_zero (n : ℕ)
   let := P.additive
   let := P.linear
   rw [superPermAction_eq_zero_iff, omegaSkeinRep_eq, hx]
-  exact P.ω.map_zero _ _
+  exact CategoryTheory.End.ext (P.ω.map_zero _ _)
 
 /-- **Square death at the super level**: at any side `s > 2eR` the
 super permutation action kills the square block idempotent. -/

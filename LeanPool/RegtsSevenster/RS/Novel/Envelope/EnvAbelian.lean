@@ -80,21 +80,15 @@ variable (E : Env f)
 
 /-- The envelope corner trace. -/
 noncomputable def envTrace : End E →ₗ[ℂ] ℂ where
-  toFun x := matTrace f E.X x.f
-  map_add' x y := by
-    change matTrace f E.X (x + y).f = _
-    rw [show (x + y).f = x.f + y.f from rfl]
-    exact (matTrace f E.X).map_add _ _
-  map_smul' c x := by
-    change matTrace f E.X (c • x).f = _
-    rw [show (c • x).f = c • x.f from rfl, RingHom.id_apply]
-    exact (matTrace f E.X).map_smul _ _
+  toFun x := matTrace f E.X (End.of x.asHom.f)
+  map_add' x y := (matTrace f E.X).map_add (End.of x.asHom.f) (End.of y.asHom.f)
+  map_smul' c x := (matTrace f E.X).map_smul c (End.of x.asHom.f)
 
 /-- **Semisimplicity of envelope endomorphism algebras.** -/
 theorem envEnd_isSemisimpleRing : IsSemisimpleRing (End E) :=
   karoubiEnd_isSemisimpleRing_of_trace E (matTrace f E.X)
     (fun _ hx => matTrace_eq_zero_of_isNilpotent' hx)
-    (matTrace_comp_comm f)
+    (fun a b => matTrace_comp_comm f a.asHom b.asHom)
     (matEnd_eq_zero_of_traces_vanish f)
 
 /-! ### Regularity of envelope morphisms -/
@@ -108,11 +102,11 @@ theorem env_hom_regular {M N : Env f} (u : M ⟶ N) :
   have := envEnd_isSemisimpleRing f (M ⊞ N)
   obtain ⟨G, hG⟩ := exists_mul_mul_self
     (A := End (M ⊞ N))
-    ((biprod.fst ≫ u ≫ biprod.inr : End (M ⊞ N)))
-  have hG' : (biprod.fst ≫ u ≫ biprod.inr) ≫ G ≫
+    (End.of (biprod.fst ≫ u ≫ biprod.inr : M ⊞ N ⟶ M ⊞ N))
+  have hG' : (biprod.fst ≫ u ≫ biprod.inr) ≫ G.asHom ≫
       (biprod.fst ≫ u ≫ biprod.inr) =
-      biprod.fst ≫ u ≫ biprod.inr := hG
-  refine ⟨biprod.inr ≫ G ≫ biprod.fst, ?_⟩
+      biprod.fst ≫ u ≫ biprod.inr := congrArg End.asHom hG
+  refine ⟨biprod.inr ≫ G.asHom ≫ biprod.fst, ?_⟩
   have h := congrArg
     (fun z => (biprod.inl : M ⟶ M ⊞ N) ≫ z ≫
       (biprod.snd : M ⊞ N ⟶ N)) hG'

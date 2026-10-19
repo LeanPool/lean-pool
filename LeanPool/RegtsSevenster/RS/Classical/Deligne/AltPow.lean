@@ -139,7 +139,7 @@ noncomputable def altPowIdem
     [MonObj A] (X : D) [ModObj A X] [Preadditive D] [HasFiniteBiproducts D]
     [HasCoequalizers D] [Linear ℂ D]
     (n : ℕ) : modPow A X n ⟶ modPow A X n :=
-  modPowAlg A X n (antisymmetriser n)
+  (modPowAlg A X n (antisymmetriser n)).asHom
 
 /-- The antisymmetriser's action is idempotent. -/
 theorem altPowIdem_idem
@@ -150,7 +150,7 @@ theorem altPowIdem_idem
     altPowIdem A X n ≫ altPowIdem A X n = altPowIdem A X n := by
   have h := congrArg (modPowAlg A X n) (antisymmetriser_idem n)
   rw [map_mul] at h
-  exact h
+  exact congrArg End.asHom h
 
 /-- **The alternating power**: the coinvariants of the
 antisymmetriser's action — the coequalizer of the action against

@@ -336,12 +336,14 @@ noncomputable def diagPermHom
     (X Y : A) (n : ℕ) :
     Equiv.Perm (Fin n) →* End (tensorPow A X n ⊗ tensorPow A Y n)
     where
-  toFun σ := permMor X n σ ⊗ₘ permMor Y n σ
+  toFun σ := .of (permMor X n σ ⊗ₘ permMor Y n σ)
   map_one' := by
+    apply End.ext
     change permMor X n 1 ⊗ₘ permMor Y n 1 =
       𝟙 (tensorPow A X n ⊗ tensorPow A Y n)
     rw [permMor_one, permMor_one, MonoidalCategory.id_tensorHom_id]
   map_mul' σ τ := by
+    apply End.ext
     change permMor X n (σ * τ) ⊗ₘ permMor Y n (σ * τ) =
       (permMor X n τ ⊗ₘ permMor Y n τ) ≫
         (permMor X n σ ⊗ₘ permMor Y n σ)
@@ -369,7 +371,7 @@ theorem diagAlg_single
     [Preadditive A] [Linear ℂ A]
     (X Y : A) (n : ℕ) (σ : Equiv.Perm (Fin n)) :
     diagAlg X Y n (MonoidAlgebra.single σ (1 : ℂ)) =
-      permMor X n σ ⊗ₘ permMor Y n σ := by
+      End.of (permMor X n σ ⊗ₘ permMor Y n σ) := by
   rw [diagAlg, MonoidAlgebra.lift_single, one_smul]
   rfl
 
@@ -381,7 +383,7 @@ theorem diagAlg_apply
     (X Y : A) (n : ℕ) (x : SymGroupAlgebra n) :
     diagAlg X Y n x =
       Finsupp.sum x.coeff fun σ c =>
-        c • (permMor X n σ ⊗ₘ permMor Y n σ) := by
+        c • End.of (permMor X n σ ⊗ₘ permMor Y n σ) := by
   rw [diagAlg, MonoidAlgebra.lift_apply]
   rfl
 
@@ -397,8 +399,8 @@ theorem tensorPowDistrib_permAlg
     [Preadditive A] [Linear ℂ A]
     (X Y : A) {n : ℕ}
     (x : SymGroupAlgebra n) :
-    permAlg (X ⊗ Y) n x ≫ (tensorPowDistrib X Y n).hom =
-      (tensorPowDistrib X Y n).hom ≫ diagAlg X Y n x := by
+    (permAlg (X ⊗ Y) n x).asHom ≫ (tensorPowDistrib X Y n).hom =
+      (tensorPowDistrib X Y n).hom ≫ (diagAlg X Y n x).asHom := by
   induction x using MonoidAlgebra.induction_on with
   | of σ =>
     rw [show (MonoidAlgebra.of ℂ (Equiv.Perm (Fin n))) σ =
@@ -406,10 +408,10 @@ theorem tensorPowDistrib_permAlg
       permAlg_single, diagAlg_single]
     exact tensorPowDistrib_permMor X Y n σ
   | add x y hx hy =>
-    rw [map_add, map_add]
+    rw [map_add, map_add, End.add_asHom, End.add_asHom]
     exact intertwine_add hx hy
   | smul r x hx =>
-    rw [map_smul, map_smul]
+    rw [map_smul, map_smul, End.smul_asHom, End.smul_asHom]
     exact intertwine_smul r hx
 
 end Linear

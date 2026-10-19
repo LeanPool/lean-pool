@@ -424,8 +424,9 @@ theorem assocPairs_wf (s t u v : ℕ) :
   have hj := j.isLt
   have hk := k.isLt
   rcases hxp with rfl | rfl <;> rcases hyq with h | h <;>
-    (simp only [Sum.inl.injEq, Sum.inr.injEq, Fin.mk.injEq,
-      reduceCtorEq] at h <;> omega)
+    simp only [Sum.inl.injEq, Sum.inr.injEq, Fin.mk.injEq,
+      reduceCtorEq] at h
+  omega
 
 namespace Fragment
 
@@ -566,8 +567,9 @@ theorem assocPairsR_wf (s t u v : ℕ) :
   have hj := j.isLt
   have hk := k.isLt
   rcases hxp with rfl | rfl <;> rcases hyq with h | h <;>
-    (simp only [Sum.inl.injEq, Sum.inr.injEq, Fin.mk.injEq,
-      reduceCtorEq] at h <;> omega)
+    simp only [Sum.inl.injEq, Sum.inr.injEq, Fin.mk.injEq,
+      reduceCtorEq] at h
+  omega
 
 /-- The associativity-transported right-embedded `u`-interface
 pairs are the ambient `u`-interface pairs (generalized over the

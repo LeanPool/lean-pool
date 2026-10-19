@@ -74,7 +74,8 @@ theorem isZero_modPow_of_cuts
     (P : SchurPackage.{v}) {k : ℕ}
     (h : ∀ μ : Shape k, modPowAlg A X k (Shape.e P μ) = 0) :
     IsZero (modPow A X k) := by
-  rw [Limits.IsZero.iff_id_eq_zero, ← End.one_def]
+  rw [Limits.IsZero.iff_id_eq_zero]
+  suffices h : (1 : End (modPow A X k)) = 0 from congrArg End.asHom h
   calc (1 : End (modPow A X k))
       = modPowAlg A X k 1 := (map_one _).symm
     _ = modPowAlg A X k (∑ μ : Shape k, Shape.e P μ) := by
@@ -111,7 +112,7 @@ theorem modSchurKilled_row_of_isZero_symPow
     (h : IsZero (symPow A X (n + 1))) :
     ModSchurKilled A X P (rowShape (n + 1)).val := by
   have h0 : modPowAlg A X (n + 1) (symmetriser (n + 1)) = 0 :=
-    (symPowIdem_eq_zero_iff A X (n + 1)).mpr h
+    End.ext ((symPowIdem_eq_zero_iff A X (n + 1)).mpr h)
   have hgen : ∀ {k : ℕ}, k = n + 1 →
       modPowAlg A X k (symmetriser k) = 0 := by
     rintro k rfl
@@ -184,7 +185,7 @@ theorem modSchurKilled_col_of_isZero_altPow
     ModSchurKilled A X P (colShape (m + 1)).val := by
   have h0 : modPowAlg A X (m + 1)
       (antisymmetriser (m + 1)) = 0 :=
-    (altPowIdem_eq_zero_iff A X (m + 1)).mpr h
+    End.ext ((altPowIdem_eq_zero_iff A X (m + 1)).mpr h)
   have hgen : ∀ {k : ℕ}, k = m + 1 →
       modPowAlg A X k (antisymmetriser k) = 0 := by
     rintro k rfl
@@ -227,7 +228,7 @@ theorem modPowCutIdem_eq_zero_iff
           modPowCutπ A X n e = modPowCutπ A X n e :=
         modPowCutIdem_π A X n e
       rw [show modPowCutIdem A X n e =
-        (0 : modPow A X n ⟶ modPow A X n) from h0] at h1
+        (0 : modPow A X n ⟶ modPow A X n) from congrArg End.asHom h0] at h1
       rw [Limits.zero_comp] at h1
       exact h1.symm
     rw [hπ, Limits.comp_zero]
@@ -235,6 +236,6 @@ theorem modPowCutIdem_eq_zero_iff
     have hσ : modPowCutσ A X n e he = 0 := hz.eq_of_src _ _
     have h := modPowCutπ_σ A X n e he
     rw [hσ, Limits.comp_zero] at h
-    exact h.symm
+    exact End.ext h.symm
 
 end RS

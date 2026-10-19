@@ -57,11 +57,9 @@ theorem freeCollapse_permAlg
     [Preadditive D] [MonoidalPreadditive D] [Linear ℂ D]
     [MonoidalLinear ℂ D] (A : D) [MonObj A] [IsCommMonObj A] (V : D)
     (n : ℕ) (z : SymGroupAlgebra n) :
-    (permAlg (A ⊗ V) n z : tensorPow D (A ⊗ V) n ⟶
-        tensorPow D (A ⊗ V) n) ≫ freeCollapse A V n =
+    (permAlg (A ⊗ V) n z).asHom ≫ freeCollapse A V n =
       freeCollapse A V n ≫
-        (A ◁ (permAlg V n z : tensorPow D V n ⟶
-          tensorPow D V n)) := by
+        (A ◁ (permAlg V n z).asHom) := by
   induction z using MonoidAlgebra.induction_on with
   | of σ =>
     rw [show (MonoidAlgebra.of ℂ (Equiv.Perm (Fin n))) σ =
@@ -69,10 +67,10 @@ theorem freeCollapse_permAlg
       permAlg_single]
     exact freeCollapse_permMor A V n σ
   | add z₁ z₂ h₁ h₂ =>
-    rw [map_add, map_add]
+    rw [map_add, map_add, End.add_asHom, End.add_asHom]
     exact add_pass_free h₁ h₂
   | smul r z h =>
-    rw [map_smul, map_smul]
+    rw [map_smul, map_smul, End.smul_asHom, End.smul_asHom]
     exact smul_pass_free r h
 
 end RS

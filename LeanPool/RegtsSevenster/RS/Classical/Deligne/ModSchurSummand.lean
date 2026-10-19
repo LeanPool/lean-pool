@@ -44,16 +44,16 @@ theorem ModSchurKilled.of_split
     rw [modPowπ_map_assoc, modPowπ_map, Category.comp_id,
       ← Category.assoc, ← tensorPowMap_comp, hsr, tensorPowMap_id,
       Category.id_comp]
-  have key : (modPowAlg A X lam.card (P.e lam) :
+  have key : ((modPowAlg A X lam.card (P.e lam)).asHom :
       modPow A X lam.card ⟶ modPow A X lam.card) ≫
       modPowMap A s lam.card = 0 := by
-    rw [← modPowMap_alg A s lam.card (P.e lam), h]
+    rw [← modPowMap_alg A s lam.card (P.e lam), h, End.zero_asHom]
     exact Limits.comp_zero
   have hpost := congrArg
     (fun t => t ≫ modPowMap A r lam.card) key
   simp only [Category.assoc, hmap, Category.comp_id,
     Limits.zero_comp] at hpost
-  exact hpost
+  exact End.ext hpost
 
 attribute [local instance]
   hasBinaryBiproducts_of_finite_biproducts

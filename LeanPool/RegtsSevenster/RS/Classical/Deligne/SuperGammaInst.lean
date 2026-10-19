@@ -583,17 +583,18 @@ noncomputable instance : MonoidalPreadditive SmallSuperVect :=
 /-- The even component of a unit endomorphism, at the scalar
 type. -/
 def unitEvenMap (f : End (𝟙_ SuperVect)) : ℂ →ₗ[ℂ] ℂ :=
-  f.evenMap
+  f.asHom.evenMap
 
 /-- **The scalar unit of `SuperVect`**: endomorphisms of the
 monoidal unit are the scalars. -/
 def superVectScalarUnit : ℂ ≃+* End (𝟙_ SuperVect) where
-  toFun c := ⟨c • (LinearMap.id : ℂ →ₗ[ℂ] ℂ), 0⟩
+  toFun c := .of ⟨c • (LinearMap.id : ℂ →ₗ[ℂ] ℂ), 0⟩
   invFun f := unitEvenMap f 1
   left_inv c := by
     change (c • (LinearMap.id : ℂ →ₗ[ℂ] ℂ)) 1 = c
     simp
   right_inv f := by
+    apply End.ext
     apply SuperVect.hom_ext
     · change (unitEvenMap f 1) • (LinearMap.id : ℂ →ₗ[ℂ] ℂ) =
         unitEvenMap f
@@ -608,6 +609,7 @@ def superVectScalarUnit : ℂ ≃+* End (𝟙_ SuperVect) where
             rw [smul_eq_mul, mul_one]
     · exact Subsingleton.elim _ _
   map_mul' a b := by
+    apply End.ext
     apply SuperVect.hom_ext
     · change (a * b) • (LinearMap.id : ℂ →ₗ[ℂ] ℂ) =
         (a • (LinearMap.id : ℂ →ₗ[ℂ] ℂ)) ∘ₗ
@@ -617,6 +619,7 @@ def superVectScalarUnit : ℂ ≃+* End (𝟙_ SuperVect) where
       rw [mul_assoc]
     · exact Subsingleton.elim _ _
   map_add' a b := by
+    apply End.ext
     apply SuperVect.hom_ext
     · change (a + b) • (LinearMap.id : ℂ →ₗ[ℂ] ℂ) =
         a • (LinearMap.id : ℂ →ₗ[ℂ] ℂ) +
@@ -629,8 +632,9 @@ isomorphism; `End`-multiplication is reversed composition on both
 sides, and the inclusion is functorial on the nose. -/
 def smallEndRingEquiv (x : SmallSuperVect) :
     End x ≃+* End (smallSuperInclusion.obj x) :=
-  { InducedCategory.homAddEquiv (C := SuperVect)
-      (F := SuperVect.stdObj) (X := x) (Y := x) with
+  { End.addEquiv.trans
+      ((InducedCategory.homAddEquiv (C := SuperVect)
+        (F := SuperVect.stdObj) (X := x) (Y := x)).trans End.addEquiv.symm) with
     map_mul' := fun _ _ => rfl }
 
 /-- **The scalar unit of the small model**: transport the scalar

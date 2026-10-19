@@ -142,8 +142,8 @@ theorem modPowπ_permAlg
     [MonObj A] (X : D) [ModObj A X] [Preadditive D] [HasFiniteBiproducts D]
     [HasCoequalizers D] [Linear ℂ D]
     (n : ℕ) (x : SymGroupAlgebra n) :
-    modPowπ A X n ≫ modPowAlg A X n x =
-      permAlg X n x ≫ modPowπ A X n := by
+    modPowπ A X n ≫ (modPowAlg A X n x).asHom =
+      (permAlg X n x).asHom ≫ modPowπ A X n := by
   induction x using MonoidAlgebra.induction_on with
   | of σ =>
       rw [show (MonoidAlgebra.of ℂ (Equiv.Perm (Fin n))) σ =
@@ -151,10 +151,10 @@ theorem modPowπ_permAlg
         modPowAlg_single, permAlg_single]
       exact modPowπ_perm n σ
   | add x₁ x₂ h₁ h₂ =>
-      rw [map_add, map_add]
+      rw [map_add, map_add, End.add_asHom, End.add_asHom]
       exact add_pass h₁ h₂
   | smul r y hy =>
-      rw [map_smul, map_smul]
+      rw [map_smul, map_smul, End.smul_asHom, End.smul_asHom]
       exact smul_pass r hy
 
 /-- **Iterated whiskered vanishing**: an endomorphism of the ambient
@@ -169,7 +169,7 @@ theorem whiskerPowAlg_modPowπ_zero
     (m k : ℕ)
     (f : tensorPow D X m ⟶ tensorPow D X m)
     (hf : f ≫ modPowπ A X m = 0) :
-    whiskerPowAlg X m k f ≫ modPowπ A X (m + k) = 0 := by
+    (whiskerPowAlg X m k (End.of f)).asHom ≫ modPowπ A X (m + k) = 0 := by
   induction k with
   | zero => exact hf
   | succ k ih => exact whiskerRight_modPowπ_zero A X ih
@@ -189,12 +189,14 @@ theorem modPowAlg_compat
     (x : SymGroupAlgebra m) (hx : modPowAlg A X m x = 0) :
     modPowAlg A X n (symCast h x) = 0 := by
   obtain ⟨k, rfl⟩ := Nat.exists_eq_add_of_le h
-  have hπ : permAlg X m x ≫ modPowπ A X m = 0 := by
-    rw [← modPowπ_permAlg A X m x, hx]
+  have hπ : (permAlg X m x).asHom ≫ modPowπ A X m = 0 := by
+    rw [← modPowπ_permAlg A X m x, hx, End.zero_asHom]
     exact Limits.comp_zero
-  have h0 : whiskerPowAlg X m k (permAlg X m x) ≫
+  have h0 : (whiskerPowAlg X m k (permAlg X m x)).asHom ≫
       modPowπ A X (m + k) = 0 :=
-    whiskerPowAlg_modPowπ_zero A X m k (permAlg X m x) hπ
+    whiskerPowAlg_modPowπ_zero A X m k (permAlg X m x).asHom hπ
+  apply End.ext
+  rw [End.zero_asHom]
   apply modPow_hom_ext A X
   rw [modPowπ_permAlg, permAlg_symCast, h0]
   exact Limits.comp_zero.symm

@@ -648,9 +648,9 @@ noncomputable def permHom
     [Category.{v} A] [MonoidalCategory A] [SymmetricCategory A]
     (X : A) (n : ℕ) :
     Equiv.Perm (Fin n) →* End (tensorPow A X n) where
-  toFun := permMor X n
-  map_one' := permMor_one X n
-  map_mul' := permMor_mul X n
+  toFun σ := .of (permMor X n σ)
+  map_one' := End.ext (permMor_one X n)
+  map_mul' σ τ := End.ext (permMor_mul X n σ τ)
 
 section Linear
 
@@ -669,7 +669,7 @@ theorem permAlg_single
     [Category.{v} A] [MonoidalCategory A] [SymmetricCategory A]
     [Preadditive A] [Linear ℂ A]
     (X : A) (n : ℕ) (σ : Equiv.Perm (Fin n)) :
-    permAlg X n (MonoidAlgebra.single σ (1 : ℂ)) = permMor X n σ := by
+    permAlg X n (MonoidAlgebra.single σ (1 : ℂ)) = End.of (permMor X n σ) := by
   rw [permAlg, MonoidAlgebra.lift_single, one_smul]
   rfl
 

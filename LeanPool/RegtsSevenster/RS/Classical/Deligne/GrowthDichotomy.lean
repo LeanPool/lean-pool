@@ -191,7 +191,8 @@ theorem isZero_tensorPow_of_schurKilled
     (P : SchurPackage.{v}) {X : A} {k : ℕ}
     (h : ∀ μ : Shape k, SchurKilled P X μ.val) :
     Limits.IsZero (tensorPow A X k) := by
-  rw [Limits.IsZero.iff_id_eq_zero, ← End.one_def]
+  rw [Limits.IsZero.iff_id_eq_zero]
+  suffices h : (1 : End (tensorPow A X k)) = 0 from congrArg End.asHom h
   calc (1 : End (tensorPow A X k))
       = permAlg X k 1 := (map_one _).symm
     _ = permAlg X k (∑ μ : Shape k, Shape.e P μ) := by
@@ -243,7 +244,7 @@ theorem SchurKilled.of_isZero
     rw [Limits.IsZero.iff_id_eq_zero] at hX
     rw [hX, MonoidalPreadditive.whiskerLeft_zero]
     rfl
-  exact hzero.eq_of_src _ _
+  exact End.ext (hzero.eq_of_src _ _)
 
 /-- **Every object is Schur-killed under moderate growth** — the
 hypothesis of Deligne 2.1 in the form the pinned statement

@@ -108,11 +108,8 @@ theorem blockTensorEnd_mul {a b : ℕ}
     (u₁ u₂ : skeinEnd f a) (v₁ v₂ : skeinEnd f b) :
     blockTensorEnd f u₁ v₁ * blockTensorEnd f u₂ v₂ =
       blockTensorEnd f (u₁ * u₂) (v₁ * v₂) :=
-  MonoidalCategory.tensorHom_comp_tensorHom
-    (u₂ : SkeinObj.mk (f := f) a ⟶ SkeinObj.mk a)
-    (v₂ : SkeinObj.mk (f := f) b ⟶ SkeinObj.mk b)
-    (u₁ : SkeinObj.mk (f := f) a ⟶ SkeinObj.mk a)
-    (v₁ : SkeinObj.mk (f := f) b ⟶ SkeinObj.mk b)
+  End.ext (MonoidalCategory.tensorHom_comp_tensorHom
+    u₂.asHom v₂.asHom u₁.asHom v₁.asHom)
 
 /-! ### The rotation step at fragments -/
 
@@ -205,6 +202,8 @@ theorem skeinTrace_block_rot_step (K n : ℕ) (A : skeinEnd f (K + n))
     skeinTrace f (K + n)
       (permClass f (K + n) (blockRot K n) *
         (blockTensorEnd f (1 : skeinEnd f K) g * A)) := by
+  rcases A with ⟨A⟩
+  rcases g with ⟨g⟩
   -- Unfold definitions to HomSpace operations
   change HomSpace.traceMap f.val (K + n + n)
     (HomSpace.comp f (K + n + n) (K + n + n) (K + n + n)

@@ -60,7 +60,7 @@ noncomputable def modPowCutIdem
     [HasCoequalizers D] [Linear ℂ D]
     (n : ℕ) (e : SymGroupAlgebra n) :
     modPow A X n ⟶ modPow A X n :=
-  modPowAlg A X n e
+  (modPowAlg A X n e).asHom
 
 /-- An idempotent's action is idempotent. -/
 theorem modPowCutIdem_idem
@@ -73,7 +73,7 @@ theorem modPowCutIdem_idem
       modPowCutIdem A X n e := by
   have h := congrArg (modPowAlg A X n) he
   rw [map_mul] at h
-  exact h
+  exact congrArg End.asHom h
 
 /-- **The cut of the module power by an idempotent**: the
 coequalizer of the idempotent's action against the identity.  The
@@ -601,8 +601,8 @@ theorem modPowMap_alg
     [Linear ℂ D] {X : D} {Y : D} [ModObj A X] [ModObj A Y]
     (f : X ⟶ Y) [IsModHom A f] (n : ℕ)
     (z : SymGroupAlgebra n) :
-    modPowMap A f n ≫ (modPowAlg A Y n z : End (modPow A Y n)) =
-      (modPowAlg A X n z : End (modPow A X n)) ≫
+    modPowMap A f n ≫ (modPowAlg A Y n z).asHom =
+      (modPowAlg A X n z).asHom ≫
         modPowMap A f n := by
   induction z using MonoidAlgebra.induction_on with
   | of σ =>
@@ -611,10 +611,10 @@ theorem modPowMap_alg
       modPowAlg_single]
     exact modPowMap_perm A f n σ
   | add z₁ z₂ h₁ h₂ =>
-    rw [map_add, map_add]
+    rw [map_add, map_add, End.add_asHom, End.add_asHom]
     exact (intertwine_add h₁.symm h₂.symm).symm
   | smul r z h =>
-    rw [map_smul, map_smul]
+    rw [map_smul, map_smul, End.smul_asHom, End.smul_asHom]
     exact (intertwine_smul r h.symm).symm
 
 /-- The module-power map passes the idempotent's action. -/

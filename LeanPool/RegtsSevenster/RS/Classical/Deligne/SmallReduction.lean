@@ -217,15 +217,17 @@ theorem hasScalarUnit_of_fullyFaithful {A : Type u₁} [Category.{v₁} A]
   change Function.Bijective (fun c : ℂ => (c • 𝟙 (𝟙_ B) : 𝟙_ B ⟶ 𝟙_ B))
   set α : G.obj (𝟙_ B) ≅ 𝟙_ A := (Functor.Monoidal.εIso G).symm
   have hcomp : (fun c : ℂ => (c • 𝟙 (𝟙_ A) : 𝟙_ A ⟶ 𝟙_ A)) =
-      (fun g : G.obj (𝟙_ B) ⟶ G.obj (𝟙_ B) => α.conj g) ∘
+      (fun g : G.obj (𝟙_ B) ⟶ G.obj (𝟙_ B) => (α.conj (End.of g)).asHom) ∘
         (fun f : 𝟙_ B ⟶ 𝟙_ B => G.map f) ∘
           (fun c : ℂ => (c • 𝟙 (𝟙_ B) : 𝟙_ B ⟶ 𝟙_ B)) := by
     funext c
-    simp [Iso.conj_apply, Functor.map_smul]
+    simp [Functor.map_smul]
   have hbij : Function.Bijective
-      ((fun g : G.obj (𝟙_ B) ⟶ G.obj (𝟙_ B) => α.conj g) ∘
+      ((fun g : G.obj (𝟙_ B) ⟶ G.obj (𝟙_ B) => (α.conj (End.of g)).asHom) ∘
         (fun f : 𝟙_ B ⟶ 𝟙_ B => G.map f)) :=
-    Function.Bijective.comp α.conj.bijective hG.homEquiv.bijective
+    Function.Bijective.comp
+      (End.homEquiv.bijective.comp (α.conj.bijective.comp End.homEquiv.symm.bijective))
+      hG.homEquiv.bijective
   rw [hcomp] at h'
   exact (Function.Bijective.of_comp_iff' hbij _).mp h'
 

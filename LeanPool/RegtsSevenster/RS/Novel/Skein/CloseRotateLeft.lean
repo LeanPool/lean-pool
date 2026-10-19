@@ -51,9 +51,9 @@ theorem wkPairs_wf (s t u : ℕ) :
     or_false] at hxj hxk
   rcases hxj with rfl | rfl <;>
     rcases hxk with h | h <;>
-    (simp only [Sum.inl.injEq, Sum.inr.injEq,
-      Fin.mk.injEq, reduceCtorEq] at h <;>
-     exact hkj (Fin.ext (by omega)).symm)
+    simp only [Sum.inl.injEq, Sum.inr.injEq,
+      Fin.mk.injEq, reduceCtorEq] at h
+  all_goals exact hkj (Fin.ext (by omega)).symm
 
 /-- The transpose-pullback gives wkPairs
 (generalized over the index list). -/
@@ -430,9 +430,9 @@ theorem leftRotPairsR_wf (s t u : ℕ) :
       List.not_mem_nil, or_false] at hx₁ hy₁
     rcases hx₁ with rfl | rfl <;>
       rcases hy₁ with h | h <;>
-      (simp only [Sum.inl.injEq, Sum.inr.injEq,
-        Fin.mk.injEq, reduceCtorEq] at h <;>
-       omega)
+      simp only [Sum.inl.injEq, Sum.inr.injEq,
+        Fin.mk.injEq, reduceCtorEq] at h
+    omega
   · intro x hx hy
     obtain ⟨q₁, hq₁, hx₁⟩ :=
       List.mem_flatMap.mp hx
@@ -451,9 +451,9 @@ theorem leftRotPairsR_wf (s t u : ℕ) :
         List.not_mem_nil, or_false] at hy₁
       rcases hx₁ with rfl | rfl <;>
         rcases hy₁ with h | h <;>
-        (simp only [Sum.inl.injEq, Sum.inr.injEq,
-          Fin.mk.injEq, reduceCtorEq] at h <;>
-         omega)
+        simp only [Sum.inl.injEq, Sum.inr.injEq,
+          Fin.mk.injEq, reduceCtorEq] at h
+      omega
     · obtain ⟨q₂, hq₂, hy₁⟩ :=
         List.mem_flatMap.mp hy
       obtain ⟨j, rfl⟩ :=
@@ -463,9 +463,9 @@ theorem leftRotPairsR_wf (s t u : ℕ) :
         List.not_mem_nil, or_false] at hy₁
       rcases hx₁ with rfl | rfl <;>
         rcases hy₁ with h | h <;>
-        (simp only [Sum.inl.injEq,
-          Fin.mk.injEq, reduceCtorEq] at h <;>
-         omega)
+        simp only [Sum.inl.injEq,
+          Fin.mk.injEq, reduceCtorEq] at h
+      omega
 
 /-- The transported closure pairs are the lifted
 right-side blocks. -/

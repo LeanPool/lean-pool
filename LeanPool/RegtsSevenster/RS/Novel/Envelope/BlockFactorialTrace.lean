@@ -24,13 +24,15 @@ The Schur and trace-zeta proof remains in `BlockAssembly`.
 
 namespace RS
 
+open CategoryTheory
+
 variable {R : ℕ} (f : EdgeRankParameter R)
 
 /-- The cycle-trace tower at an arbitrary strand arity. -/
 noncomputable def blockCycleTraceTower (n : ℕ) :
     CycleTraceTower (fun k => skeinEnd f (n * k)) (skeinEnd f n) where
-  traceA := HomSpace.traceMap f.val n
-  trace k := HomSpace.traceMap f.val (n * k)
+  traceA := (HomSpace.traceMap f.val n).comp End.linearEquiv.toLinearMap
+  trace k := (HomSpace.traceMap f.val (n * k)).comp End.linearEquiv.toLinearMap
   rep k := (permToEnd f (n * k)).comp (blockPermHom n k)
   pow k g := blockPow f n g k
   cycleTrace k π g := by
@@ -56,10 +58,12 @@ theorem skeinTrace_eq_zero_of_isNilpotent_factorial (n : ℕ)
 factorial trace obstruction and the connection pairing. -/
 theorem skeinEnd_isSemisimpleRing_factorial (n : ℕ) :
     IsSemisimpleRing (skeinEnd f n) := by
-  refine isSemisimpleRing_of_trace (HomSpace.traceMap f.val n)
+  refine isSemisimpleRing_of_trace
+    ((HomSpace.traceMap f.val n).comp End.linearEquiv.toLinearMap)
     (fun _ hg => skeinTrace_eq_zero_of_isNilpotent_factorial f n hg) ?_
   intro a ha
-  exact HomSpace.eq_zero_of_traces_vanish f a
-    (fun G => ha (HomSpace.ofFragment f.val G))
+  apply End.ext
+  exact HomSpace.eq_zero_of_traces_vanish f a.asHom
+    (fun G => ha (End.of (HomSpace.ofFragment f.val G)))
 
 end RS

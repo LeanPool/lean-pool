@@ -36,22 +36,22 @@ variable {A : Type u}
 noncomputable def powHom [Category.{v} A] [MonoidalCategory A]
     (X : A) (g : End X) :
     (n : ℕ) → End (tensorPow A X n)
-  | 0 => 𝟙 _
-  | n + 1 => powHom X g n ⊗ₘ g
+  | 0 => 1
+  | n + 1 => .of ((powHom X g n).asHom ⊗ₘ g.asHom)
 
 /-- On the empty tensor power the endomorphism power is the
 identity of the unit. -/
 @[simp]
 theorem powHom_zero [Category.{v} A] [MonoidalCategory A]
     (X : A) (g : End X) :
-    powHom X g 0 = 𝟙 (𝟙_ A) := rfl
+    powHom X g 0 = 1 := rfl
 
 /-- The recursion equation: the endomorphism power on one more
 factor tensors on one more copy of `g`. -/
 @[simp]
 theorem powHom_succ [Category.{v} A] [MonoidalCategory A]
     (X : A) (g : End X) (n : ℕ) :
-    powHom X g (n + 1) = powHom X g n ⊗ₘ g := rfl
+    powHom X g (n + 1) = End.of ((powHom X g n).asHom ⊗ₘ g.asHom) := rfl
 
 /-! ## Commutation with whiskering -/
 
@@ -80,9 +80,9 @@ power. -/
 theorem whiskerRight_comp_powHom [Category.{v} A] [MonoidalCategory A]
     (X : A) (g : End X) (n : ℕ)
     (f : tensorPow A X n ⟶ tensorPow A X n)
-    (h : f ≫ powHom X g n = powHom X g n ≫ f) :
-    (f ▷ X) ≫ powHom X g (n + 1) =
-      powHom X g (n + 1) ≫ (f ▷ X) :=
+    (h : f ≫ (powHom X g n).asHom = (powHom X g n).asHom ≫ f) :
+    (f ▷ X) ≫ (powHom X g (n + 1)).asHom =
+      (powHom X g (n + 1)).asHom ≫ (f ▷ X) :=
   whisker_tensor_comm h
 
 /-! ## Equivariance -/
@@ -111,17 +111,17 @@ braided factors carry the same endomorphism. -/
 theorem swapTop_comp_powHom
     [Category.{v} A] [MonoidalCategory A] [SymmetricCategory A]
     (X : A) (g : End X) (n : ℕ) :
-    swapTop X n ≫ powHom X g (n + 2) =
-      powHom X g (n + 2) ≫ swapTop X n :=
-  (tensor_swap_comm (powHom X g n) g g).symm
+    swapTop X n ≫ (powHom X g (n + 2)).asHom =
+      (powHom X g (n + 2)).asHom ≫ swapTop X n :=
+  (tensor_swap_comm ((powHom X g n).asHom) g.asHom g.asHom).symm
 
 /-- Bubbling the top factor down commutes with the endomorphism
 power, one braiding step at a time. -/
 theorem insertTop_comp_powHom
     [Category.{v} A] [MonoidalCategory A] [SymmetricCategory A]
     (X : A) (g : End X) :
-    ∀ (n k : ℕ), insertTop X n k ≫ powHom X g (n + 1) =
-      powHom X g (n + 1) ≫ insertTop X n k
+    ∀ (n k : ℕ), insertTop X n k ≫ (powHom X g (n + 1)).asHom =
+      (powHom X g (n + 1)).asHom ≫ insertTop X n k
   | n, 0 => by
       rw [insertTop_zero, Category.id_comp, Category.comp_id]
   | 0, _ + 1 => by
@@ -140,7 +140,7 @@ theorem permMor_comp_powHom
     [Category.{v} A] [MonoidalCategory A] [SymmetricCategory A]
     (X : A) (g : End X) (n : ℕ)
     (σ : Equiv.Perm (Fin n)) :
-    permMor X n σ ≫ powHom X g n = powHom X g n ≫ permMor X n σ := by
+    permMor X n σ ≫ (powHom X g n).asHom = (powHom X g n).asHom ≫ permMor X n σ := by
   induction n with
   | zero => rfl
   | succ n ih =>

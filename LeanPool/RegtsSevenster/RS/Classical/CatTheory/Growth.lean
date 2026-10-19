@@ -58,6 +58,8 @@ theorem moderateLengthGrowth_of_endGrowth [Category.{v} A] [MonoidalCategory A]
   intro Y
   obtain ⟨C, c, hC⟩ := hgrow Y
   exact ⟨C, c, fun N =>
-    (lengthLE_finrank_end hab hss hfd (tensorPow A Y N)).mono (hC N)⟩
+    (lengthLE_finrank_end hab hss hfd (tensorPow A Y N)).mono (by
+      rw [LinearEquiv.finrank_eq (End.linearEquiv (R := ℂ))]
+      exact hC N)⟩
 
 end RS

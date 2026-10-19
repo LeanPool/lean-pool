@@ -7,6 +7,7 @@ Authors: William Whistler
 module
 
 public import LeanPool.RegtsSevenster.RS.Classical.Deligne.DayCalculus
+public import Mathlib.CategoryTheory.Limits.Indization.FilteredColimits
 
 /-!
 # Ind-objects are closed under Day convolution

@@ -44,7 +44,7 @@ theorem OddLine.whisker_permAlg_mix_ne_zero'
     {lam : YoungDiagram}
     (hW : ∀ k : ℕ, 𝟙 (W ⊗ tensorPow D L.obj k) ≠ 0)
     (hcell : ((r, s) : ℕ × ℕ) ∉ lam) :
-    W ◁ permAlg (L.mix r s) lam.card (P.e lam) ≠ 0 := by
+    W ◁ (permAlg (L.mix r s) lam.card (P.e lam)).asHom ≠ 0 := by
   intro hkill
   have he : P.e lam = P₀.e lam := by
     rw [P.e_eq_nProjector lam, P₀.e_eq_nProjector lam]

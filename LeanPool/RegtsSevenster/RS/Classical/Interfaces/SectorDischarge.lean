@@ -69,7 +69,7 @@ private theorem transport_perm_eq {R : ℕ} (f : EdgeRankParameter R)
     (n : ℕ) (σ : Equiv.Perm (Fin n)) :
     letI := P.additive; letI := P.linear; letI := P.braided
     (stdToOmega f P e n ≫ omegaPowInv f P n) ≫
-      (superPermAction f P n (MonoidAlgebra.of ℂ _ σ)) ≫
+      (superPermAction f P n (MonoidAlgebra.of ℂ _ σ)).asHom ≫
       (omegaPowHom f P n ≫ stdFromOmega f P e' n) =
     modelPermMap σ := by
   let := P.additive

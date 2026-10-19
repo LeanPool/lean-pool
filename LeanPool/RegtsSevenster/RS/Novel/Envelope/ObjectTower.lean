@@ -75,7 +75,7 @@ theorem frobenius_powHom
     intro π
     have hmor : permAlg X μ.card (MonoidAlgebra.single π (1 : ℂ)) *
         powHom X g μ.card =
-        powHom X g μ.card ≫ permMor X μ.card π := by
+        End.of ((powHom X g μ.card).asHom ≫ permMor X μ.card π) := by
       rw [permAlg_single]
       rfl
     rw [hmor, map_smul, smul_eq_mul]

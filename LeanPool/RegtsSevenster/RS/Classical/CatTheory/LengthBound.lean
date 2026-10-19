@@ -144,10 +144,11 @@ private lemma card_le_finrank_end [Category.{v} C]
     exact hcalc.symm
   have hli :=
     linearIndependent_of_orthogonal_idempotents p hne hidem horth
-  have : FiniteDimensional ℂ (Y ⟶ Y) := hfd
+  have : FiniteDimensional ℂ (Y ⟶ Y) :=
+    Module.Finite.equiv (End.linearEquiv (R := ℂ))
   have hcard := hli.fintype_card_le_finrank
   rw [Fintype.card_fin] at hcard
-  exact hcard
+  simpa only [LinearEquiv.finrank_eq (End.linearEquiv (R := ℂ))] using hcard
 
 /-! ### Reconciling independently supplied structures
 
@@ -192,7 +193,9 @@ theorem lengthLE_finrank_end [Category.{v} C]
     (hss : IsSemisimple C) (hfd : HasFinDimHom C) (Y : C) :
     LengthLE Y (Module.finrank ℂ (End Y)) := by
   obtain ⟨n, S, hS, ⟨e⟩⟩ := hss Y
-  have hfin : FiniteDimensional ℂ (End Y) := hfd Y Y
+  have : FiniteDimensional ℂ (Y ⟶ Y) := hfd Y Y
+  have hfin : FiniteDimensional ℂ (End Y) :=
+    Module.Finite.equiv (End.linearEquiv (R := ℂ)).symm
   let : Abelian C := abelianOver hab
   exact ((lengthLE_biproduct_of_simple S hS).of_iso e.symm).mono
     (card_le_finrank_end hS e hfin)
