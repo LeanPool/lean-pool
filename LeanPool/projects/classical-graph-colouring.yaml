@@ -1,0 +1,120 @@
+slug: classical-graph-colouring
+title: Classical graph colouring through lists, orientations and spectra
+summary: >-
+  Proves Kőnig's edge-colouring theorem for finite bipartite simple graphs by
+  reusing Lean Pool's Vizing partial-colouring and Kempe-chain infrastructure.
+  A stable-matching theorem for strict preferences and incomplete acceptability
+  lists supplies kernels for Galvin's orientation of the line graph. This gives
+  list edge colouring from lists of size at least the maximum degree and the
+  Dinitz array theorem. Gallai–Hasse–Roy–Vitaver relates graph colourings to
+  directed paths (with a bridge to Lean Pool's digraph simple-path API), while
+  Wilf's and Hoffman's eigenvalue bounds control the
+  chromatic and independence numbers. Two interface corollaries turn the
+  spectral colouring bounds into directed-path bounds. Existing Vizing,
+  matching-cover, poset and equitable-colouring results are reused or left
+  in their established Lean Pool projects rather than copied.
+branch: graph theory and combinatorics
+entry_module: LeanPool.ClassicalGraphColouring
+authors:
+- Juan Pablo Traverso Gianini
+source:
+  title: The List Chromatic Index of a Bipartite Multigraph
+  authors:
+  - Fred Galvin
+  doi: 10.1006/jctb.1995.1011
+  url: https://github.com/jtraverso/galvin-dinitz/tree/0aa98fc17e1e96ec408f7bad3198ce37a08d26fc
+  github_repo: jtraverso/galvin-dinitz
+  commit: 0aa98fc17e1e96ec408f7bad3198ce37a08d26fc
+  note: >-
+    Formalizes the finite simple-graph case. The Kőnig edge-colouring proof
+    comes from jtraverso/konig-edge-colouring at
+    7c60f7efb69c1747aaf39e5dfa7a89d907cd84ef (Palomar
+    PALOMAR-2026-10-15-000019). The Galvin, Dinitz and stable-matching
+    proofs come from PALOMAR-2026-10-18-000029. Gallai–Roy comes from
+    jtraverso/gallai-roy at e737218bf80c3d3684d670f5f8aa9a8257e1a52f
+    (PALOMAR-2026-10-16-000015), and the spectral bounds from
+    jtraverso/spectral-graph-bounds at 8d8b4ce17e56165b5f1ad3b285fb141666804e1c
+    (PALOMAR-2026-10-18-000016). The source's copied Vizing files are omitted
+    in favour of the existing Lean Pool project.
+license: Apache-2.0
+status: verified
+provenance: AI
+main_declarations:
+- Galvin.galvin
+- SpectralBounds.hoffman_chromatic
+main_results:
+- declaration: Konig.lineGraph_colorable_of_colorable_two
+  informal: >-
+    A finite bipartite simple graph has a proper edge colouring using its
+    maximum degree many colours.
+  source_ref: Kőnig (1916), doi:10.1007/BF01456961; PALOMAR-2026-10-15-000019.
+- declaration: Konig.lineGraph_chromaticNumber_of_colorable_two
+  informal: The chromatic index of a finite bipartite simple graph equals its maximum degree.
+  source_ref: Kőnig (1916), doi:10.1007/BF01456961; PALOMAR-2026-10-15-000019.
+- declaration: Galvin.gale_shapley
+  informal: >-
+    Finite strict-preference matching instances with incomplete acceptability
+    lists have a stable matching.
+  source_ref: Gale and Shapley (1962), doi:10.1080/00029890.1962.11989827; PALOMAR-2026-10-18-000029.
+- declaration: Galvin.galvin
+  informal: >-
+    Every finite bipartite simple graph admits a proper edge colouring from
+    arbitrary edge lists of size at least its maximum degree.
+  source_ref: Galvin (1995), doi:10.1006/jctb.1995.1011; PALOMAR-2026-10-18-000029.
+- declaration: Galvin.dinitz
+  informal: >-
+    An n by n array of lists of at least n symbols per cell admits a choice
+    of symbols distinct within every row and every column.
+  source_ref: Galvin (1995), doi:10.1006/jctb.1995.1011; PALOMAR-2026-10-18-000029.
+- declaration: GallaiRoy.colorable_of_orientation
+  informal: >-
+    If every directed path in an orientation of a finite graph has at most k
+    vertices, then the graph is k-colourable.
+  source_ref: Gallai (1968), Hasse (1965), Roy (1967), Vitaver (1962); PALOMAR-2026-10-16-000015.
+- declaration: GallaiRoy.exists_orientation_of_colorable
+  informal: >-
+    Every k-colourable finite graph has an orientation with no directed path
+    on more than k vertices.
+  source_ref: Gallai–Hasse–Roy–Vitaver theorem; PALOMAR-2026-10-16-000015.
+- declaration: SpectralBounds.average_degree_le
+  informal: The average degree of a finite graph is at most its largest adjacency eigenvalue.
+  source_ref: Collatz–Sinogowitz; PALOMAR-2026-10-18-000016.
+- declaration: SpectralBounds.le_maxDegree
+  informal: The largest adjacency eigenvalue is at most the maximum degree.
+  source_ref: Collatz–Sinogowitz; PALOMAR-2026-10-18-000016.
+- declaration: SpectralBounds.wilf
+  informal: A finite graph is colourable with floor of its largest adjacency eigenvalue plus one colours.
+  source_ref: Wilf (1967); PALOMAR-2026-10-18-000016.
+- declaration: SpectralBounds.hoffman_chromatic
+  informal: >-
+    If a finite graph has an edge, every proper colouring uses at least one
+    minus the ratio of the largest and smallest adjacency eigenvalues colours.
+  source_ref: Hoffman (1970); PALOMAR-2026-10-18-000016.
+- declaration: SpectralBounds.hoffman_ratio
+  informal: >-
+    Every independent set in a finite regular graph of positive degree
+    satisfies Hoffman's adjacency-eigenvalue ratio bound.
+  source_ref: >-
+    Hoffman's ratio bound, stated in Haemers (2021), Theorem 1,
+    https://arxiv.org/abs/2102.05529v2; PALOMAR-2026-10-18-000016.
+- declaration: ClassicalGraphColouring.hoffman_le_directed_path_bound
+  informal: >-
+    Hoffman's spectral lower bound for chromatic number bounds the maximum
+    directed path length in every orientation.
+  source_ref: Interface corollary of the proved Hoffman and Gallai–Roy theorems.
+- declaration: ClassicalGraphColouring.exists_orientation_of_wilf_bound
+  informal: >-
+    Every finite graph has an orientation whose directed paths have at most
+    floor of its largest adjacency eigenvalue plus one vertices.
+  source_ref: Interface corollary of the proved Wilf and Gallai–Roy theorems.
+tags:
+- graph-theory
+- edge-colouring
+- list-colouring
+- orientations
+- spectral-graph-theory
+msc:
+- 05C15
+- 05C70
+- 91B68
+- 05C50
