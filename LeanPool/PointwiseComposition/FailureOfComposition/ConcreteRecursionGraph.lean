@@ -35,46 +35,6 @@ namespace ConcreteEvaluator
 
 variable {M : Type*} [ORingStructure M]
 
-/-- A standard tag-6 index, cast into the model, is the canonical
-primitive-recursion index of its decoded payloads. -/
-private theorem tagSix_canonical_cast [M↓[ℒₒᵣ] ⊧* 𝐏𝐀⁻] (q : ℕ) (hq : partrecCodeTag q = 6) :
-    ((q : ℕ) : M) =
-      ((canonicalPartrecPrecIndex (partrecCodePayload₁ q) (partrecCodePayload₂ q) : ℕ) : M) :=
-  by conv_lhs => rw [partrecCode_eq_canonicalPartrecPrecIndex_of_tag_six q hq]
-
-/-- The constructor number `6`, read at a standard tag-6 index. -/
-private theorem tagSix_read_tag [M↓[ℒₒᵣ] ⊧* 𝐏𝐀⁻] {r : ℕ} (d : Code r) (q : ℕ)
-    (hq : partrecCodeTag q = 6) (v : Fin r → M)
-    (hd : Semiformula.Evalb (((q : ℕ) : M) :> v) (code d)) :
-    Semiformula.Evalb ((6 : M) :> v) (code (codePartrecTag d)) :=
-  by
-  rw [tagSix_canonical_cast (M := M) q hq] at hd
-  exact
-    eval_codePartrecTag_canonicalPartrecPrecIndex d (partrecCodePayload₁ q)
-      (partrecCodePayload₂ q) v hd
-
-/-- The base payload, read at a standard tag-6 index. -/
-private theorem tagSix_read_payload₁ [M↓[ℒₒᵣ] ⊧* 𝐏𝐀⁻] {r : ℕ} (d : Code r) (q : ℕ)
-    (hq : partrecCodeTag q = 6) (v : Fin r → M)
-    (hd : Semiformula.Evalb (((q : ℕ) : M) :> v) (code d)) :
-    Semiformula.Evalb (((partrecCodePayload₁ q : ℕ) : M) :> v) (code (codePartrecPayload₁ d)) :=
-  by
-  rw [tagSix_canonical_cast (M := M) q hq] at hd
-  exact
-    eval_codePartrecPayload₁_canonicalPartrecPrecIndex d (partrecCodePayload₁ q)
-      (partrecCodePayload₂ q) v hd
-
-/-- The step payload, read at a standard tag-6 index. -/
-private theorem tagSix_read_payload₂ [M↓[ℒₒᵣ] ⊧* 𝐏𝐀⁻] {r : ℕ} (d : Code r) (q : ℕ)
-    (hq : partrecCodeTag q = 6) (v : Fin r → M)
-    (hd : Semiformula.Evalb (((q : ℕ) : M) :> v) (code d)) :
-    Semiformula.Evalb (((partrecCodePayload₂ q : ℕ) : M) :> v) (code (codePartrecPayload₂ d)) :=
-  by
-  rw [tagSix_canonical_cast (M := M) q hq] at hd
-  exact
-    eval_codePartrecPayload₂_canonicalPartrecPrecIndex d (partrecCodePayload₁ q)
-      (partrecCodePayload₂ q) v hd
-
 /-!
 ### The constructor-6 branch of the eager dispatcher -/
 

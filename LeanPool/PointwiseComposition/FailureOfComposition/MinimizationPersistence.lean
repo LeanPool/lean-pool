@@ -37,83 +37,6 @@ namespace Evaluator
 
 variable {M : Type*} [ORingStructure M]
 
-private theorem bodd_toNat_eq_mod_two (n : ℕ) : n.bodd.toNat = n % 2 := by
-  rw [Nat.mod_two_of_bodd]
-
-/-- The production tag decoder, written with remainders. -/
-private theorem partrecCodeTag_eq (q : ℕ) :
-    partrecCodeTag q = if q < 4 then q else 4 + 2 * ((q - 4) % 2) + Nat.div2 (q - 4) % 2 := by
-  simp only [partrecCodeTag, bodd_toNat_eq_mod_two]
-
-/-- The constructor number of a standard index, read inside a model. -/
-private theorem read_tag [M↓[ℒₒᵣ] ⊧* 𝐏𝐀⁻] {r : ℕ} (d : Code r) (q : ℕ) (v : Fin r → M)
-    (hd : Semiformula.Evalb (((q : ℕ) : M) :> v) (code d)) :
-    Semiformula.Evalb (((partrecCodeTag q : ℕ) : M) :> v) (code (codePartrecTag d)) :=
-  by
-  have h4 : Semiformula.Evalb (((4 : ℕ) : M) :> v) (code (codeConst (n := r) 4)) :=
-    eval_codeConst 4 v
-  have h2 : Semiformula.Evalb (((2 : ℕ) : M) :> v) (code (codeConst (n := r) 2)) :=
-    eval_codeConst 2 v
-  have hrr := eval_codeSub_natCast d (codeConst 4) q 4 v hd (by simpa using h4)
-  have hbodd0 := eval_codeBodd_natCast (codeSub d (codeConst 4)) (q - 4) v hrr
-  have hbodd1 :=
-    eval_codeBodd_natCast (codeDiv2 (codeSub d (codeConst 4))) (Nat.div2 (q - 4)) v
-      (eval_codeDiv2_natCast _ (q - 4) v hrr)
-  have hmul :
-    Semiformula.Evalb ((((2 * ((q - 4) % 2) : ℕ)) : M) :> v)
-      (code (codeMul (codeConst 2) (codeBodd (codeSub d (codeConst 4))))) :=
-    by
-    refine (eval_codeMul_iff _ _ _ v).mpr ⟨_, _, h2, hbodd0, ?_⟩
-    push_cast
-    norm_num
-  have hadd1 :
-    Semiformula.Evalb ((((4 + 2 * ((q - 4) % 2) : ℕ)) : M) :> v)
-      (code
-        (codeAdd (codeConst 4) (codeMul (codeConst 2) (codeBodd (codeSub d (codeConst 4)))))) :=
-    by
-    refine (eval_codeAdd_iff _ _ _ v).mpr ⟨_, _, h4, hmul, ?_⟩
-    push_cast
-    norm_num
-  have hbig :
-    Semiformula.Evalb ((((4 + 2 * ((q - 4) % 2) + Nat.div2 (q - 4) % 2 : ℕ)) : M) :> v)
-      (code
-        (codeAdd
-          (codeAdd (codeConst 4) (codeMul (codeConst 2) (codeBodd (codeSub d (codeConst 4)))))
-          (codeBodd (codeDiv2 (codeSub d (codeConst 4)))))) :=
-    by
-    refine (eval_codeAdd_iff _ _ _ v).mpr ⟨_, _, hadd1, hbodd1, ?_⟩
-    push_cast
-    norm_num
-  rw [partrecCodeTag_eq]
-  simp only [codePartrecTag]
-  by_cases hq : q < 4
-  · have hlt1 : Semiformula.Evalb ((1 : M) :> v) (code (codeLt d (codeConst 4))) :=
-      by
-      refine (eval_codeLt_iff _ _ _ v).mpr ⟨_, _, hd, by simpa using h4, Or.inl ⟨?_, rfl⟩⟩
-      exact_mod_cast hq
-    rw [ite_eq_left hq]
-    exact
-      eval_codeIfPos_of _ _ _ (1 : M) (((q : ℕ)) : M) _ _ v hlt1 hd hbig
-        (Or.inl ⟨_root_.zero_lt_one, rfl⟩)
-  · have hlt0 : Semiformula.Evalb ((0 : M) :> v) (code (codeLt d (codeConst 4))) :=
-      by
-      refine (eval_codeLt_iff _ _ _ v).mpr ⟨_, _, hd, by simpa using h4, Or.inr ⟨?_, rfl⟩⟩
-      intro hc
-      exact hq (by exact_mod_cast hc)
-    rw [ite_eq_right hq]
-    exact eval_codeIfPos_of _ _ _ (0 : M) (((q : ℕ)) : M) _ _ v hlt0 hd hbig (Or.inr ⟨rfl, rfl⟩)
-
-/-- The payload of a standard compound index, read inside a model. -/
-private theorem read_payload [M↓[ℒₒᵣ] ⊧* 𝐏𝐀⁻] {r : ℕ} (d : Code r) (q : ℕ) (v : Fin r → M)
-    (hd : Semiformula.Evalb (((q : ℕ) : M) :> v) (code d)) :
-    Semiformula.Evalb (((partrecCodePayload q : ℕ) : M) :> v) (code (codePartrecPayload d)) :=
-  by
-  have h4 : Semiformula.Evalb (((4 : ℕ) : M) :> v) (code (codeConst (n := r) 4)) :=
-    eval_codeConst 4 v
-  have hrr := eval_codeSub_natCast d (codeConst 4) q 4 v hd (by simpa using h4)
-  simpa only [codePartrecPayload, partrecCodePayload] using
-    eval_codeDiv2_natCast _ _ v (eval_codeDiv2_natCast _ (q - 4) v hrr)
-
 private theorem min_succ_pred [M↓[ℒₒᵣ] ⊧* 𝐏𝐀⁻] {k : M} (hk : 0 < k) : k - 1 + 1 = k :=
   FFL.FirstOrder.Arithmetic.sub_add_self_of_le
     (FFL.FirstOrder.Arithmetic.one_le_of_zero_lt k hk)
@@ -298,11 +221,11 @@ theorem evalnCertificateFormula_tag_seven_iff [M↓[ℒₒᵣ] ⊧* 𝐏𝐀] [M
   have hn : Semiformula.Evalb (u :> ![s, ((q : ℕ) : M), u]) (code min_input) :=
     (eval_proj_iff _ _ _).mpr rfl
   have hi := eval_codeEvaluatorCell_index s ((q : ℕ) : M) u
-  have hp := read_payload min_index q ![s, ((q : ℕ) : M), u] hi
+  have hp := eval_codePartrecPayload_natCast min_index q ![s, ((q : ℕ) : M), u] hi
   have htag :
     Semiformula.Evalb ((7 : M) :> ![s, ((q : ℕ) : M), u]) (code (codePartrecTag min_index)) :=
     by
-    have h := read_tag min_index q ![s, ((q : ℕ) : M), u] hi
+    have h := eval_codePartrecTag_natCast min_index q ![s, ((q : ℕ) : M), u] hi
     simpa only [hq, Nat.cast_ofNat] using h
   have hprev : s - 1 < s := by
     have h := lt_add_one (s - 1)

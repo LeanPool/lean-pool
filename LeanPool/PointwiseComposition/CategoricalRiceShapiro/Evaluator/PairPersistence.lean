@@ -30,9 +30,10 @@ The proof decomposes a successful source cell into certificates for the two
 payload subcodes at stage `s`, applies the induction hypothesis once to each,
 rebuilds the two table lookups at stage `t` with
 `eval_prefix_lookup_succ_of_codeHistoryEvaluator`, and reconstructs the target
-cell with `eval_codeEvaluatorCell_succ_of_pair_component_lookups`.  The private
-helpers relate `partrecCodeTag` to its remainder form, bound both payloads
-strictly below `q`, and read the decoders inside a model.  The fuel and the
+cell with `eval_codeEvaluatorCell_succ_of_pair_component_lookups`.  The shared
+helpers bound both payloads strictly below `q` and decompose the pairing branch.
+The shared decoder readings and dispatcher branch theorem come from
+`Evaluator.CompositionDispatch`.  The fuel and the
 program index that the cell reads are supplied by the generic public readings
 `eval_codeEvaluatorCell_fuel` and `eval_codeEvaluatorCell_index` of
 `Evaluator.HistoryEvaluation`.
@@ -56,24 +57,13 @@ namespace Evaluator
 
 variable {M : Type*} [ORingStructure M]
 
-/-!
-### Decoder bridge and ranking, over `ℕ` -/
-
-/-- Production's tag decoder, written with remainders.  `bodd.toNat` and `% 2`
-are related by `Nat.mod_two_of_bodd`, not assumed definitionally equal. -/
-private theorem tagFour_tag_remainders (q : ℕ) :
-    partrecCodeTag q = if q < 4 then q else 4 + 2 * ((q - 4) % 2) + Nat.div2 (q - 4) % 2 :=
-  by
-  have hb : ∀ n : ℕ, n.bodd.toNat = n % 2 := fun n => by rw [Nat.mod_two_of_bodd]
-  simp only [partrecCodeTag, hb]
-
 /-- Both subcodes of a standard constructor-`4` index lie strictly below it. -/
-private theorem tagFour_payloads_lt (q : ℕ) (hq : partrecCodeTag q = 4) :
+theorem tagFour_payloads_lt (q : ℕ) (hq : partrecCodeTag q = 4) :
     partrecCodePayload₁ q < q ∧ partrecCodePayload₂ q < q :=
   by
   have h4 : 4 ≤ q := by
     rcases Nat.lt_or_ge q 4 with hlt | hge
-    · rw [tagFour_tag_remainders, ite_eq_left hlt] at hq
+    · rw [partrecCodeTag_eq, ite_eq_left hlt] at hq
       omega
     · exact hge
   have hdd : partrecCodePayload q ≤ q - 4 :=
@@ -87,139 +77,12 @@ private theorem tagFour_payloads_lt (q : ℕ) (hq : partrecCodeTag q = 4) :
   omega
 
 /-!
-### Decoder readings inside a model -/
-
-/-- The constructor number of a standard index, read inside a model. -/
-private theorem tagFour_read_tag [M↓[ℒₒᵣ] ⊧* 𝐏𝐀⁻] {r : ℕ} (d : Code r) (q : ℕ) (v : Fin r → M)
-    (hd : Semiformula.Evalb (((q : ℕ) : M) :> v) (code d)) :
-    Semiformula.Evalb (((partrecCodeTag q : ℕ) : M) :> v) (code (codePartrecTag d)) :=
-  by
-  have h4 : Semiformula.Evalb (((4 : ℕ) : M) :> v) (code (codeConst (n := r) 4)) :=
-    eval_codeConst 4 v
-  have h2 : Semiformula.Evalb (((2 : ℕ) : M) :> v) (code (codeConst (n := r) 2)) :=
-    eval_codeConst 2 v
-  have hrr := eval_codeSub_natCast d (codeConst 4) q 4 v hd (by simpa using h4)
-  have hbodd0 := eval_codeBodd_natCast (codeSub d (codeConst 4)) (q - 4) v hrr
-  have hbodd1 :=
-    eval_codeBodd_natCast (codeDiv2 (codeSub d (codeConst 4))) (Nat.div2 (q - 4)) v
-      (eval_codeDiv2_natCast _ (q - 4) v hrr)
-  have hmul :
-    Semiformula.Evalb ((((2 * ((q - 4) % 2) : ℕ)) : M) :> v)
-      (code (codeMul (codeConst 2) (codeBodd (codeSub d (codeConst 4))))) :=
-    by
-    refine (eval_codeMul_iff _ _ _ v).mpr ⟨_, _, h2, hbodd0, ?_⟩
-    push_cast
-    norm_num
-  have hadd1 :
-    Semiformula.Evalb ((((4 + 2 * ((q - 4) % 2) : ℕ)) : M) :> v)
-      (code
-        (codeAdd (codeConst 4) (codeMul (codeConst 2) (codeBodd (codeSub d (codeConst 4)))))) :=
-    by
-    refine (eval_codeAdd_iff _ _ _ v).mpr ⟨_, _, h4, hmul, ?_⟩
-    push_cast
-    norm_num
-  have hbig :
-    Semiformula.Evalb ((((4 + 2 * ((q - 4) % 2) + Nat.div2 (q - 4) % 2 : ℕ)) : M) :> v)
-      (code
-        (codeAdd
-          (codeAdd (codeConst 4) (codeMul (codeConst 2) (codeBodd (codeSub d (codeConst 4)))))
-          (codeBodd (codeDiv2 (codeSub d (codeConst 4)))))) :=
-    by
-    refine (eval_codeAdd_iff _ _ _ v).mpr ⟨_, _, hadd1, hbodd1, ?_⟩
-    push_cast
-    norm_num
-  rw [tagFour_tag_remainders]
-  simp only [codePartrecTag]
-  by_cases hq : q < 4
-  · have hlt1 : Semiformula.Evalb ((1 : M) :> v) (code (codeLt d (codeConst 4))) :=
-      by
-      refine (eval_codeLt_iff _ _ _ v).mpr ⟨_, _, hd, by simpa using h4, Or.inl ⟨?_, rfl⟩⟩
-      exact_mod_cast hq
-    rw [ite_eq_left hq]
-    exact
-      eval_codeIfPos_of _ _ _ (1 : M) (((q : ℕ)) : M) _ _ v hlt1 hd hbig
-        (Or.inl ⟨_root_.zero_lt_one, rfl⟩)
-  · have hlt0 : Semiformula.Evalb ((0 : M) :> v) (code (codeLt d (codeConst 4))) :=
-      by
-      refine (eval_codeLt_iff _ _ _ v).mpr ⟨_, _, hd, by simpa using h4, Or.inr ⟨?_, rfl⟩⟩
-      intro hc
-      exact hq (by exact_mod_cast hc)
-    rw [ite_eq_right hq]
-    exact eval_codeIfPos_of _ _ _ (0 : M) (((q : ℕ)) : M) _ _ v hlt0 hd hbig (Or.inr ⟨rfl, rfl⟩)
-
-/-- The payload of a standard index, read inside a model. -/
-private theorem tagFour_read_payload [M↓[ℒₒᵣ] ⊧* 𝐏𝐀⁻] {r : ℕ} (d : Code r) (q : ℕ)
-    (v : Fin r → M) (hd : Semiformula.Evalb (((q : ℕ) : M) :> v) (code d)) :
-    Semiformula.Evalb (((partrecCodePayload q : ℕ) : M) :> v) (code (codePartrecPayload d)) :=
-  by
-  have h4 : Semiformula.Evalb (((4 : ℕ) : M) :> v) (code (codeConst (n := r) 4)) :=
-    eval_codeConst 4 v
-  have hrr := eval_codeSub_natCast d (codeConst 4) q 4 v hd (by simpa using h4)
-  simpa only [codePartrecPayload, partrecCodePayload] using
-    eval_codeDiv2_natCast _ _ v (eval_codeDiv2_natCast _ (q - 4) v hrr)
-
-/-- The first subcode of a standard index, read inside a model. -/
-private theorem tagFour_read_payload₁ [M↓[ℒₒᵣ] ⊧* 𝐏𝐀⁻] {r : ℕ} (d : Code r) (q : ℕ)
-    (v : Fin r → M) (hd : Semiformula.Evalb (((q : ℕ) : M) :> v) (code d)) :
-    Semiformula.Evalb (((partrecCodePayload₁ q : ℕ) : M) :> v) (code (codePartrecPayload₁ d)) :=
-  eval_codeUnpair₁_natCast (codePartrecPayload d) _ v (tagFour_read_payload d q v hd)
-
-/-- The second subcode of a standard index, read inside a model. -/
-private theorem tagFour_read_payload₂ [M↓[ℒₒᵣ] ⊧* 𝐏𝐀⁻] {r : ℕ} (d : Code r) (q : ℕ)
-    (v : Fin r → M) (hd : Semiformula.Evalb (((q : ℕ) : M) :> v) (code d)) :
-    Semiformula.Evalb (((partrecCodePayload₂ q : ℕ) : M) :> v) (code (codePartrecPayload₂ d)) :=
-  eval_codeUnpair₂_natCast (codePartrecPayload d) _ v (tagFour_read_payload d q v hd)
-
-/-!
-### The pairing branch of the dispatcher -/
-
-/-- A successful evaluator cell whose constructor number is `4` is the value of
-its pairing branch. -/
-private theorem tagFour_pair_branch [M↓[ℒₒᵣ] ⊧* 𝐏𝐀⁻] {r : ℕ} (dtable dn : Code r)
-    (v : Fin r → M) (z k tag : M)
-    (hk : Semiformula.Evalb (k :> v) (code (codeUnpair₁ (codeListLength dtable))))
-    (hkpos : 0 < k)
-    (htag :
-      Semiformula.Evalb (tag :> v)
-        (code (codePartrecTag (codeUnpair₂ (codeListLength dtable)))))
-    (h4 : tag = ((4 : ℕ) : M))
-    (hcell : Semiformula.Evalb (z :> v) (code (codeEvaluatorCell dtable dn))) :
-    Semiformula.Evalb (z :> v)
-      (code
-        (codePairEvaluatorCell dtable (codeUnpair₁ (codeListLength dtable))
-          (codePartrecPayload₁ (codeUnpair₂ (codeListLength dtable)))
-          (codePartrecPayload₂ (codeUnpair₂ (codeListLength dtable))) dn)) :=
-  by
-  have hval :
-    ∀ (m : ℕ) (x : M),
-      Semiformula.Evalb (x :> v) (code (codeConst (n := r) m)) → x = ((m : ℕ) : M) :=
-    fun m x hx => eval_unique hx (eval_codeConst m v)
-  simp only [codeEvaluatorCell] at hcell
-  obtain ⟨f0, hf0, hc0⟩ := eval_codeIfPos_cases _ _ _ z v hcell
-  have hf0k : f0 = k := eval_unique hf0 hk
-  rcases hc0 with ⟨-, hbig⟩ | ⟨h0, -⟩
-  swap
-  · exact absurd (hf0k ▸ h0 : k = 0) (ne_of_gt hkpos)
-  obtain ⟨e4, he4, hcase4⟩ := eval_codeIfPos_cases _ _ _ z v hbig
-  rw [eval_codeEq_iff] at he4
-  obtain ⟨x, w, hx, hw, hxw⟩ := he4
-  have hxt : x = tag := eval_unique hx htag
-  have hw4 : w = ((4 : ℕ) : M) := hval 4 w hw
-  have he41 : e4 = 1 := by
-    rcases hxw with ⟨-, h1⟩ | ⟨hne, -⟩
-    · exact h1
-    · exact absurd (by rw [hxt, hw4]; exact h4) hne
-  rcases hcase4 with ⟨-, hpair⟩ | ⟨h0, -⟩
-  · exact hpair
-  · exact absurd (he41 ▸ h0 : (1 : M) = 0) _root_.one_ne_zero
-
-/-!
 ### Forward decomposition of a source tag-4 cell -/
 
 /-- A successful source cell at a standard constructor-`4` index yields a
 history success for each subcode at the same stage, and the Cantor pair of the
 two outputs. -/
-private theorem tagFour_source_subcode_histories [M↓[ℒₒᵣ] ⊧* 𝐏𝐀] [M↓[ℒₒᵣ] ⊧* 𝐈𝐎𝐩𝐞𝐧]
+theorem tagFour_source_subcode_histories [M↓[ℒₒᵣ] ⊧* 𝐏𝐀] [M↓[ℒₒᵣ] ⊧* 𝐈𝐎𝐩𝐞𝐧]
     [M↓[ℒₒᵣ] ⊧* 𝐏𝐀⁻] (q : ℕ) (hq : partrecCodeTag q = 4) (s u y : M) (hs : 0 < s)
     (hcell :
       Semiformula.Evalb ((y + 1) :> ![s, ((q : ℕ) : M), u])
@@ -237,10 +100,10 @@ private theorem tagFour_source_subcode_histories [M↓[ℒₒᵣ] ⊧* 𝐏𝐀]
     Semiformula.Evalb (((4 : ℕ) : M) :> ![s, ((q : ℕ) : M), u])
       (code (codePartrecTag (codeUnpair₂ (codeListLength codeEvaluatorHistoryBeforeCell)))) :=
     by
-    have h := tagFour_read_tag _ q ![s, ((q : ℕ) : M), u] hidx
+    have h := eval_codePartrecTag_natCast _ q ![s, ((q : ℕ) : M), u] hidx
     rwa [hq] at h
   have hbranch :=
-    tagFour_pair_branch codeEvaluatorHistoryBeforeCell (Code.proj (2 : Fin 3))
+    cell_pair_branch codeEvaluatorHistoryBeforeCell (Code.proj (2 : Fin 3))
       ![s, ((q : ℕ) : M), u] (y + 1) s (((4 : ℕ) : M)) hk hs htag rfl hcell
   obtain ⟨a, b, hla, hlb, hy⟩ :=
     (eval_codePairEvaluatorCell_succ_iff codeEvaluatorHistoryBeforeCell
@@ -249,8 +112,8 @@ private theorem tagFour_source_subcode_histories [M↓[ℒₒᵣ] ⊧* 𝐏𝐀]
           (codePartrecPayload₂ (codeUnpair₂ (codeListLength codeEvaluatorHistoryBeforeCell)))
           (Code.proj (2 : Fin 3)) y ![s, ((q : ℕ) : M), u]).mp
       hbranch
-  have hp1 := tagFour_read_payload₁ _ q ![s, ((q : ℕ) : M), u] hidx
-  have hp2 := tagFour_read_payload₂ _ q ![s, ((q : ℕ) : M), u] hidx
+  have hp1 := eval_codePartrecPayload₁_natCast _ q ![s, ((q : ℕ) : M), u] hidx
+  have hp2 := eval_codePartrecPayload₂_natCast _ q ![s, ((q : ℕ) : M), u] hidx
   have hq1 := eval_iff_codeConst_of_eval _ (partrecCodePayload₁ q) ![s, ((q : ℕ) : M), u] hp1
   have hq2 := eval_iff_codeConst_of_eval _ (partrecCodePayload₂ q) ![s, ((q : ℕ) : M), u] hp2
   have hlaC :=

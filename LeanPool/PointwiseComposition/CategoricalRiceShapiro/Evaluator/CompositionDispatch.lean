@@ -390,12 +390,12 @@ private theorem bodd_toNat_eq_mod_two (n : ℕ) : n.bodd.toNat = n % 2 := by
   rw [Nat.mod_two_of_bodd]
 
 /-- The production tag decoder, written with remainders. -/
-private theorem partrecCodeTag_eq (q : ℕ) :
+theorem partrecCodeTag_eq (q : ℕ) :
     partrecCodeTag q = if q < 4 then q else 4 + 2 * ((q - 4) % 2) + Nat.div2 (q - 4) % 2 := by
   simp only [partrecCodeTag, bodd_toNat_eq_mod_two]
 
 /-- The constructor number of a standard index, read inside a model. -/
-private theorem eval_codePartrecTag_natCast [M↓[ℒₒᵣ] ⊧* 𝐏𝐀⁻] {r : ℕ} (d : Code r) (q : ℕ)
+theorem eval_codePartrecTag_natCast [M↓[ℒₒᵣ] ⊧* 𝐏𝐀⁻] {r : ℕ} (d : Code r) (q : ℕ)
     (v : Fin r → M) (hd : Semiformula.Evalb (((q : ℕ) : M) :> v) (code d)) :
     Semiformula.Evalb (((partrecCodeTag q : ℕ) : M) :> v) (code (codePartrecTag d)) :=
   by
@@ -453,7 +453,7 @@ private theorem eval_codePartrecTag_natCast [M↓[ℒₒᵣ] ⊧* 𝐏𝐀⁻] {
     exact eval_codeIfPos_of _ _ _ (0 : M) (((q : ℕ)) : M) _ _ v hlt0 hd hbig (Or.inr ⟨rfl, rfl⟩)
 
 /-- The payload of a standard compound index, read inside a model. -/
-private theorem eval_codePartrecPayload_natCast [M↓[ℒₒᵣ] ⊧* 𝐏𝐀⁻] {r : ℕ} (d : Code r) (q : ℕ)
+theorem eval_codePartrecPayload_natCast [M↓[ℒₒᵣ] ⊧* 𝐏𝐀⁻] {r : ℕ} (d : Code r) (q : ℕ)
     (v : Fin r → M) (hd : Semiformula.Evalb (((q : ℕ) : M) :> v) (code d)) :
     Semiformula.Evalb (((partrecCodePayload q : ℕ) : M) :> v) (code (codePartrecPayload d)) :=
   by
@@ -464,20 +464,20 @@ private theorem eval_codePartrecPayload_natCast [M↓[ℒₒᵣ] ⊧* 𝐏𝐀�
     eval_codeDiv2_natCast _ _ v (eval_codeDiv2_natCast _ (q - 4) v hrr)
 
 /-- The first subcode of a standard index, read inside a model. -/
-private theorem eval_codePartrecPayload₁_natCast [M↓[ℒₒᵣ] ⊧* 𝐏𝐀⁻] {r : ℕ} (d : Code r) (q : ℕ)
+theorem eval_codePartrecPayload₁_natCast [M↓[ℒₒᵣ] ⊧* 𝐏𝐀⁻] {r : ℕ} (d : Code r) (q : ℕ)
     (v : Fin r → M) (hd : Semiformula.Evalb (((q : ℕ) : M) :> v) (code d)) :
     Semiformula.Evalb (((partrecCodePayload₁ q : ℕ) : M) :> v) (code (codePartrecPayload₁ d)) :=
   eval_codeUnpair₁_natCast (codePartrecPayload d) _ v (eval_codePartrecPayload_natCast d q v hd)
 
 /-- The second subcode of a standard index, read inside a model. -/
-private theorem eval_codePartrecPayload₂_natCast [M↓[ℒₒᵣ] ⊧* 𝐏𝐀⁻] {r : ℕ} (d : Code r) (q : ℕ)
+theorem eval_codePartrecPayload₂_natCast [M↓[ℒₒᵣ] ⊧* 𝐏𝐀⁻] {r : ℕ} (d : Code r) (q : ℕ)
     (v : Fin r → M) (hd : Semiformula.Evalb (((q : ℕ) : M) :> v) (code d)) :
     Semiformula.Evalb (((partrecCodePayload₂ q : ℕ) : M) :> v) (code (codePartrecPayload₂ d)) :=
   eval_codeUnpair₂_natCast (codePartrecPayload d) _ v (eval_codePartrecPayload_natCast d q v hd)
 
 /-- A successful evaluator cell whose constructor number is `4` is the value of
 the pairing branch.  Adapted from the accepted external tag-4 probe. -/
-private theorem cell_pair_branch [M↓[ℒₒᵣ] ⊧* 𝐏𝐀⁻] {r : ℕ} (dtable dn : Code r) (v : Fin r → M)
+theorem cell_pair_branch [M↓[ℒₒᵣ] ⊧* 𝐏𝐀⁻] {r : ℕ} (dtable dn : Code r) (v : Fin r → M)
     (z k tag : M) (hk : Semiformula.Evalb (k :> v) (code (codeUnpair₁ (codeListLength dtable))))
     (hkpos : 0 < k)
     (htag :
