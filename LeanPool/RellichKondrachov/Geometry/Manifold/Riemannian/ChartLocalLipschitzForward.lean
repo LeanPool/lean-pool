@@ -6,6 +6,7 @@ Authors: Adam Benenson
 module
 
 public import Mathlib.Geometry.Manifold.Riemannian.Basic
+import Mathlib.MeasureTheory.Integral.IntervalIntegral.ContDiff
 
 /-!
 # `RellichKondrachov.Geometry.Manifold.Riemannian.ChartLocalLipschitzForward`

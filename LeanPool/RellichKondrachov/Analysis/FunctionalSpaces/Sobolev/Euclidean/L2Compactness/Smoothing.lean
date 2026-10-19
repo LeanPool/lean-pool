@@ -104,7 +104,7 @@ noncomputable def extendByZeroL2 (hKm : MeasurableSet K)
       MeasureTheory.MemLp (extendByZeroFun (K := K) u) (2 : ℝ≥0∞) (volume : Measure E) := by
     simpa [extendByZeroFun] using
       (MeasureTheory.memLp_indicator_iff_restrict (μ := (volume : Measure E)) (p := (2 : ℝ≥0∞))
-          (s := K) (f := fun x : E => u x) hKm).2 hu
+          (s := K) (f := fun x : E => u x) hKm.nullMeasurableSet).2 hu
   exact hm.toLp (extendByZeroFun (K := K) u)
 
 lemma extendByZeroL2_ae_eq (hKm : MeasurableSet K)
@@ -167,7 +167,7 @@ lemma continuous_smoothFun
       MeasureTheory.Lp.memLp u
     simpa [extendByZeroFun] using
       (MeasureTheory.memLp_indicator_iff_restrict (μ := (volume : Measure E)) (p := (2 : ℝ≥0∞))
-          (s := K) (f := fun x : E => u x) hKm).2 hu
+          (s := K) (f := fun x : E => u x) hKm.nullMeasurableSet).2 hu
   have hf_loc :
       MeasureTheory.LocallyIntegrable (extendByZeroFun (K := K) u)
         (volume : Measure E) := by
