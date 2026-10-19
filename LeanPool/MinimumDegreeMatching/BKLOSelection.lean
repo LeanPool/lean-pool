@@ -7,6 +7,7 @@ module
 public import LeanPool.MinimumDegreeMatching.BKLOInfrastructure
 public import Mathlib.Basic.Real.Basic
 import LeanPool.MinimumDegreeMatching.Spread
+import Mathlib.Algebra.BigOperators.Ring.Finset
 import Mathlib.Tactic.Positivity.Finset
 import Mathlib.Tactic.NormNum.OfScientific
 import Mathlib.Tactic.NormNum.DivMod
