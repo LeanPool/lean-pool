@@ -416,7 +416,7 @@ theorem good_loop_of_generator
     let T := flatGeodesicSubtree P r
     leftMulEquiv H
         (actionScalar (IsFreeGroupoid.SpanningTree.loopOfHom T
-          (IsFreeGroupoid.of (G := ActionCategory (FreeGroup α) O) e))) (q (root T).back) = q
+          (IsFreeGroupoid.of (G := ActionCategory (FreeGroup α) O) e)).asHom) (q (root T).back) = q
               (root T).back := by
   let T := flatGeodesicSubtree P r
   have hT : ∀ {a b} (f : a ⟶ b), f ∈ T a b →

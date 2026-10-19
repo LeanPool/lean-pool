@@ -27,17 +27,21 @@ variable {α : Type u} [DecidableEq α]
 
 private theorem loopOfHom_root {G : Type u} [Groupoid.{u} G] [IsFreeGroupoid G]
     (T : WideSubquiver (Symmetrify (IsFreeGroupoid.Generators G))) [Arborescence T]
-    (p : End (spanningTreeRoot T)) : IsFreeGroupoid.SpanningTree.loopOfHom T p = p := by
+    (p : End (spanningTreeRoot T)) :
+    IsFreeGroupoid.SpanningTree.loopOfHom T p.asHom = p := by
   have ht : IsFreeGroupoid.SpanningTree.treeHom T (spanningTreeRoot T) = 𝟙 _ :=
     IsFreeGroupoid.SpanningTree.treeHom_root T
-  change IsFreeGroupoid.SpanningTree.treeHom T _ ≫ p ≫
-    inv (IsFreeGroupoid.SpanningTree.treeHom T _) = p
-  have hi := congrArg (fun f : End (spanningTreeRoot T) =>
+  ext : 1
+  change IsFreeGroupoid.SpanningTree.treeHom T _ ≫ p.asHom ≫
+    inv (IsFreeGroupoid.SpanningTree.treeHom T _) = p.asHom
+  have hi := congrArg (fun f : spanningTreeRoot T ⟶ spanningTreeRoot T =>
     @CategoryTheory.inv G _ _ _ f (@IsIso.of_groupoid G _ _ _ f)) ht
-  exact (congrArg₂ (fun f g : End (spanningTreeRoot T) => f ≫ p ≫ g) ht hi).trans
+  exact (congrArg₂ (fun f g : spanningTreeRoot T ⟶ spanningTreeRoot T =>
+      f ≫ p.asHom ≫ g) ht hi).trans
     ((Category.id_comp _).trans
-      ((congrArg (fun g : End (spanningTreeRoot T) => p ≫ g)
-        (@CategoryTheory.IsIso.inv_id G _ (spanningTreeRoot T))).trans (Category.comp_id p)))
+      ((congrArg (fun g : spanningTreeRoot T ⟶ spanningTreeRoot T => p.asHom ≫ g)
+        (@CategoryTheory.IsIso.inv_id G _ (spanningTreeRoot T))).trans
+          (Category.comp_id p.asHom)))
 
 omit [DecidableEq α] in
 /-- Fixed generators of a basis retraction provide the free-factor witness in a finite-index
@@ -253,7 +257,7 @@ theorem finite_core_free_factor
       exact hyP
     have hloop := good_loop_of_generator H q P r hP y.1.1.hom heGood
     have hloopH : (actionScalar (IsFreeGroupoid.SpanningTree.loopOfHom T
-        (IsFreeGroupoid.of y.1.1.hom))) ∈ H := by
+        (IsFreeGroupoid.of y.1.1.hom)).asHom) ∈ H := by
       apply (leftCoset_mk_eq_one_iff H _).1
       dsimp at hloop
       have hroot' : (root T).back =
@@ -306,10 +310,10 @@ theorem finite_core_free_factor
                   O)) from
                 (show T from root T)))
               (forgetSubquiverPath (P := P) p_root)) =
-          symPathHom (G := (ActionCategory (FreeGroup α) O))
+          End.of (symPathHom (G := (ActionCategory (FreeGroup α) O))
             (a := (show Symmetrify (IsFreeGroupoid.Generators (ActionCategory (FreeGroup α) O)) from
               (show T from root T)))
-            (forgetSubquiverPath (P := P) p_root) := by
+            (forgetSubquiverPath (P := P) p_root)) := by
       exact loopOfHom_root T _
     have hplabel :
         (actionScalar (symPathHom (G := (ActionCategory (FreeGroup α) O))
@@ -352,6 +356,7 @@ theorem finite_core_free_factor
                   O)) from
                 (show T from root T)))
               (forgetSubquiverPath (P := P) p_root)) := by
+      apply End.ext
       apply Functor.Elements.hom_ext
       change s = _
       rw [hloop]
