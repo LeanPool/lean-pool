@@ -76,7 +76,8 @@ theorem true_graph_instance_provable (F : Graph) (n m : ℕ) (h : F.val.Evalb ![
   apply sigma_one_completeness (graphInstance_sigma_one F n m)
   simpa only [models_iff, graphInstance_eval, natCast_nat] using h
 
-private theorem ground_proof_of_pointwise (T : ArithmeticTheory) [𝐏𝐀 ≼ T] (F G : Graph)
+/-- Pointwise provability transports a true ground graph instance to a proof in the theory. -/
+theorem ground_proof_of_pointwise (T : ArithmeticTheory) [𝐏𝐀 ≼ T] (F G : Graph)
     (hFG : Pointwise T F G) (n m : ℕ) (hF : F.val.Evalb ![n, m]) : T ⊢ graphInstance G n m :=
   by
   have hpF : T ⊢ graphInstance F n m := WeakerThan.pbl (true_graph_instance_provable F n m hF)

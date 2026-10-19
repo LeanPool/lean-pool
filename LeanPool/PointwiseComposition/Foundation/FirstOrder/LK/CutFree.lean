@@ -48,91 +48,59 @@ attribute [simp] IsCutFree.identity IsCutFree.verum
 
 variable {Γ Δ : LK.Sequent L}
 
-@[simp]
-lemma isCutFree_or_iff {d : ⊢ᴸᴷ¹ Γ + ⦃φ, ψ⦄} : IsCutFree d.or ↔ IsCutFree d :=
-  by
+-- One characterization avoids repeated dependent elimination through quotient-indexed contexts.
+private def cutFreeStep {Γ : LK.Sequent L} : (⊢ᴸᴷ¹ Γ) → Prop
+  | .identity _ _ => True
+  | .verum => True
+  | .or d => IsCutFree d
+  | .and d e => IsCutFree d ∧ IsCutFree e
+  | .all d => IsCutFree d
+  | .exs d => IsCutFree d
+  | .contraction d => IsCutFree d
+  | .weakening d => IsCutFree d
+  | .cut _ _ => False
+
+private theorem isCutFree_iff_step {Γ : LK.Sequent L} (d : ⊢ᴸᴷ¹ Γ) :
+    IsCutFree d ↔ cutFreeStep d := by
   constructor
   · intro h
-    refine
-      h.rec (motive := fun {_} d _ ↦
-        match d with
-        | .or d => IsCutFree d
-        | _ => True)
-        ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_
-    all_goals simp_all
-  · exact .or
+    induction h <;> first | exact True.intro | assumption | constructor <;> assumption
+  · intro h
+    cases d with
+    | identity r v => exact .identity r v
+    | verum => exact .verum
+    | or d => exact .or h
+    | and d e => exact .and h.1 h.2
+    | all d => exact .all h
+    | exs d => exact .exs _ h
+    | contraction d => exact .contraction h
+    | weakening d => exact .weakening h
+    | cut d e => exact False.elim h
+
+@[simp]
+lemma isCutFree_or_iff {d : ⊢ᴸᴷ¹ Γ + ⦃φ, ψ⦄} : IsCutFree d.or ↔ IsCutFree d :=
+  isCutFree_iff_step d.or
 
 @[simp]
 lemma isCutFree_and_iff {dφ : ⊢ᴸᴷ¹ Γ + ⦃φ⦄} {dψ : ⊢ᴸᴷ¹ Γ + ⦃ψ⦄} :
     IsCutFree (dφ.and dψ) ↔ IsCutFree dφ ∧ IsCutFree dψ :=
-  by
-  constructor
-  · rintro h
-    refine
-      h.rec (motive := fun {_} d _ ↦
-        match d with
-        | .and dφ dψ => IsCutFree dφ ∧ IsCutFree dψ
-        | _ => True)
-        ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_
-    all_goals simp_all
-  · rintro ⟨hφ, hψ⟩
-    exact hφ.and hψ
+  isCutFree_iff_step (dφ.and dψ)
 
 @[simp]
 lemma isCutFree_all_iff {d : ⊢ᴸᴷ¹ Γ⁺ + ⦃Rewriting.free φ⦄} : IsCutFree d.all ↔ IsCutFree d :=
-  by
-  constructor
-  · intro h
-    refine
-      h.rec (motive := fun {_} d _ ↦
-        match d with
-        | .all d => IsCutFree d
-        | _ => True)
-        ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_
-    all_goals simp_all
-  · exact .all
+  isCutFree_iff_step d.all
 
 @[simp]
 lemma isCutFree_exs_iff {d : ⊢ᴸᴷ¹ Γ + ⦃φ/[t]⦄} : IsCutFree d.exs ↔ IsCutFree d :=
-  by
-  constructor
-  · intro h
-    refine
-      h.rec (motive := fun {_} d _ ↦
-        match d with
-        | .exs d => IsCutFree d
-        | _ => True)
-        ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_
-    all_goals simp_all
-  · exact .exs t
+  isCutFree_iff_step d.exs
 
 @[simp]
 lemma isCutFree_contraction_iff {d : ⊢ᴸᴷ¹ Γ + ⦃φ, φ⦄} : IsCutFree d.contraction ↔ IsCutFree d :=
-  by
-  constructor
-  · intro h
-    refine
-      h.rec (motive := fun {_} d _ ↦
-        match d with
-        | .contraction d => IsCutFree d
-        | _ => True)
-        ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_
-    all_goals simp_all
-  · exact .contraction
+  isCutFree_iff_step d.contraction
 
 @[simp]
 lemma isCutFree_weakening_iff {d : ⊢ᴸᴷ¹ Γ} : IsCutFree (d.weakening (φ := φ)) ↔ IsCutFree d :=
-  by
-  constructor;
-  · intro h;
-    refine
-      h.rec (motive := fun {_} d _ ↦
-        match d with
-        | .weakening d => IsCutFree d
-        | _ => True)
-        ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_;
-    all_goals simp_all;
-  · exact .weakening;
+  isCutFree_iff_step (d.weakening (φ := φ))
 
 @[simp]
 lemma IsCutFree.cast {d : ⊢ᴸᴷ¹ Γ} {e : Γ = Δ} : IsCutFree (.cast d e) ↔ IsCutFree d := by
@@ -140,15 +108,7 @@ lemma IsCutFree.cast {d : ⊢ᴸᴷ¹ Γ} {e : Γ = Δ} : IsCutFree (.cast d e) 
 
 @[simp]
 lemma IsCutFree.not_cut (dp : ⊢ᴸᴷ¹ Γ + ⦃φ⦄) (dn : ⊢ᴸᴷ¹ Δ + ⦃∼φ⦄) : ¬IsCutFree (dp.cut dn) :=
-  by
-  intro h
-  refine
-    h.rec (motive := fun {_} d _ ↦
-      match d with
-      | .cut _ _ => False
-      | _ => True)
-      ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_
-  all_goals simp
+  (isCutFree_iff_step (dp.cut dn)).mp
 
 @[simp]
 lemma isCutFree_rewrite_iff_isCutFree {f : ℕ → SyntacticTerm L} {d : ⊢ᴸᴷ¹ Γ} :

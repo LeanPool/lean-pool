@@ -384,48 +384,55 @@ attached to remainder, unpairing or `codeBeta`; each is delta-reduced as a synta
 tree.  No arithmetic theory is assumed. -/
 
 /-- Two codes have the same graph, each under its own assignment. -/
-private abbrev EvalEq {k l : ℕ} (A : Code k) (v : Fin k → M) (A' : Code l) (v' : Fin l → M) :
+abbrev EvalEq {k l : ℕ} (A : Code k) (v : Fin k → M) (A' : Code l) (v' : Fin l → M) :
     Prop :=
   ∀ x : M, Semiformula.Evalb (x :> v) (code A) ↔ Semiformula.Evalb (x :> v') (code A')
 
-private theorem evalEq_proj {k l : ℕ} (i : Fin k) (j : Fin l) (v : Fin k → M) (v' : Fin l → M)
+/-- Projections agree when the selected assignment entries agree. -/
+theorem evalEq_proj {k l : ℕ} (i : Fin k) (j : Fin l) (v : Fin k → M) (v' : Fin l → M)
     (h : v i = v' j) : EvalEq (Code.proj i) v (Code.proj j) v' :=
   by
   intro x
   rw [eval_proj_iff, eval_proj_iff, h]
 
-private theorem evalEq_zero {k l : ℕ} (v : Fin k → M) (v' : Fin l → M) :
+/-- Zero codes have the same graph under any two assignments. -/
+theorem evalEq_zero {k l : ℕ} (v : Fin k → M) (v' : Fin l → M) :
     EvalEq (Code.zero k) v (Code.zero l) v' :=
   by
   intro x
   rw [eval_zero_iff, eval_zero_iff]
 
-private theorem evalEq_codeHead {k l : ℕ} (t : M) (v : Fin k → M) (v' : Fin l → M) :
+/-- Head codes agree under assignments with the same head. -/
+theorem evalEq_codeHead {k l : ℕ} (t : M) (v : Fin k → M) (v' : Fin l → M) :
     EvalEq (codeHead (n := k)) (t :> v) (codeHead (n := l)) (t :> v') :=
   evalEq_proj 0 0 _ _ rfl
 
-private theorem evalEq_codeSucc {k l : ℕ} {A : Code k} {A' : Code l} {v : Fin k → M}
+/-- Successor-code construction preserves heterogeneous graph agreement. -/
+theorem evalEq_codeSucc {k l : ℕ} {A : Code k} {A' : Code l} {v : Fin k → M}
     {v' : Fin l → M} (hA : EvalEq A v A' v') : EvalEq (codeSucc A) v (codeSucc A') v' :=
   by
   intro x
   rw [eval_codeSucc_iff, eval_codeSucc_iff]
   exact exists_congr fun a => and_congr (hA a) Iff.rfl
 
-private theorem evalEq_codePos {k l : ℕ} {A : Code k} {A' : Code l} {v : Fin k → M}
+/-- Positive-test code construction preserves heterogeneous graph agreement. -/
+theorem evalEq_codePos {k l : ℕ} {A : Code k} {A' : Code l} {v : Fin k → M}
     {v' : Fin l → M} (hA : EvalEq A v A' v') : EvalEq (codePos A) v (codePos A') v' :=
   by
   intro x
   rw [eval_codePos_iff, eval_codePos_iff]
   exact exists_congr fun a => and_congr (hA a) Iff.rfl
 
-private theorem evalEq_codeInv {k l : ℕ} {A : Code k} {A' : Code l} {v : Fin k → M}
+/-- Boolean-inverse code construction preserves heterogeneous graph agreement. -/
+theorem evalEq_codeInv {k l : ℕ} {A : Code k} {A' : Code l} {v : Fin k → M}
     {v' : Fin l → M} (hA : EvalEq A v A' v') : EvalEq (codeInv A) v (codeInv A') v' :=
   by
   intro x
   rw [eval_codeInv_iff, eval_codeInv_iff]
   exact exists_congr fun a => and_congr (hA a) Iff.rfl
 
-private theorem evalEq_codeAdd {k l : ℕ} {A B : Code k} {A' B' : Code l} {v : Fin k → M}
+/-- Addition-code construction preserves heterogeneous graph agreement. -/
+theorem evalEq_codeAdd {k l : ℕ} {A B : Code k} {A' B' : Code l} {v : Fin k → M}
     {v' : Fin l → M} (hA : EvalEq A v A' v') (hB : EvalEq B v B' v') :
     EvalEq (codeAdd A B) v (codeAdd A' B') v' :=
   by
@@ -433,7 +440,8 @@ private theorem evalEq_codeAdd {k l : ℕ} {A B : Code k} {A' B' : Code l} {v : 
   rw [eval_codeAdd_iff, eval_codeAdd_iff]
   exact exists_congr fun a => exists_congr fun b => and_congr (hA a) (and_congr (hB b) Iff.rfl)
 
-private theorem evalEq_codeMul {k l : ℕ} {A B : Code k} {A' B' : Code l} {v : Fin k → M}
+/-- Multiplication-code construction preserves heterogeneous graph agreement. -/
+theorem evalEq_codeMul {k l : ℕ} {A B : Code k} {A' B' : Code l} {v : Fin k → M}
     {v' : Fin l → M} (hA : EvalEq A v A' v') (hB : EvalEq B v B' v') :
     EvalEq (codeMul A B) v (codeMul A' B') v' :=
   by
@@ -441,7 +449,8 @@ private theorem evalEq_codeMul {k l : ℕ} {A B : Code k} {A' B' : Code l} {v : 
   rw [eval_codeMul_iff, eval_codeMul_iff]
   exact exists_congr fun a => exists_congr fun b => and_congr (hA a) (and_congr (hB b) Iff.rfl)
 
-private theorem evalEq_codeEq {k l : ℕ} {A B : Code k} {A' B' : Code l} {v : Fin k → M}
+/-- Equality-test code construction preserves heterogeneous graph agreement. -/
+theorem evalEq_codeEq {k l : ℕ} {A B : Code k} {A' B' : Code l} {v : Fin k → M}
     {v' : Fin l → M} (hA : EvalEq A v A' v') (hB : EvalEq B v B' v') :
     EvalEq (codeEq A B) v (codeEq A' B') v' :=
   by
@@ -449,7 +458,8 @@ private theorem evalEq_codeEq {k l : ℕ} {A B : Code k} {A' B' : Code l} {v : F
   rw [eval_codeEq_iff, eval_codeEq_iff]
   exact exists_congr fun a => exists_congr fun b => and_congr (hA a) (and_congr (hB b) Iff.rfl)
 
-private theorem evalEq_codeLt {k l : ℕ} {A B : Code k} {A' B' : Code l} {v : Fin k → M}
+/-- Order-test code construction preserves heterogeneous graph agreement. -/
+theorem evalEq_codeLt {k l : ℕ} {A B : Code k} {A' B' : Code l} {v : Fin k → M}
     {v' : Fin l → M} (hA : EvalEq A v A' v') (hB : EvalEq B v B' v') :
     EvalEq (codeLt A B) v (codeLt A' B') v' :=
   by
@@ -457,7 +467,8 @@ private theorem evalEq_codeLt {k l : ℕ} {A B : Code k} {A' B' : Code l} {v : F
   rw [eval_codeLt_iff, eval_codeLt_iff]
   exact exists_congr fun a => exists_congr fun b => and_congr (hA a) (and_congr (hB b) Iff.rfl)
 
-private theorem evalEq_codeAnd {k l : ℕ} {A B : Code k} {A' B' : Code l} {v : Fin k → M}
+/-- Conjunction-code construction preserves heterogeneous graph agreement. -/
+theorem evalEq_codeAnd {k l : ℕ} {A B : Code k} {A' B' : Code l} {v : Fin k → M}
     {v' : Fin l → M} (hA : EvalEq A v A' v') (hB : EvalEq B v B' v') :
     EvalEq (codeAnd A B) v (codeAnd A' B') v' :=
   by
@@ -465,7 +476,8 @@ private theorem evalEq_codeAnd {k l : ℕ} {A B : Code k} {A' B' : Code l} {v : 
   rw [eval_codeAnd_iff, eval_codeAnd_iff]
   exact exists_congr fun a => exists_congr fun b => and_congr (hA a) (and_congr (hB b) Iff.rfl)
 
-private theorem evalEq_codeOr {k l : ℕ} {A B : Code k} {A' B' : Code l} {v : Fin k → M}
+/-- Disjunction-code construction preserves heterogeneous graph agreement. -/
+theorem evalEq_codeOr {k l : ℕ} {A B : Code k} {A' B' : Code l} {v : Fin k → M}
     {v' : Fin l → M} (hA : EvalEq A v A' v') (hB : EvalEq B v B' v') :
     EvalEq (codeOr A B) v (codeOr A' B') v' :=
   by
@@ -474,7 +486,7 @@ private theorem evalEq_codeOr {k l : ℕ} {A B : Code k} {A' B' : Code l} {v : F
   exact exists_congr fun a => exists_congr fun b => and_congr (hA a) (and_congr (hB b) Iff.rfl)
 
 /-- A lift ignores its head, so the two heads need not agree. -/
-private theorem evalEq_codeLift {k l : ℕ} {A : Code k} {A' : Code l} {v : Fin k → M}
+theorem evalEq_codeLift {k l : ℕ} {A : Code k} {A' : Code l} {v : Fin k → M}
     {v' : Fin l → M} (t t' : M) (hA : EvalEq A v A' v') :
     EvalEq (codeLift A) (t :> v) (codeLift A') (t' :> v') :=
   by
@@ -482,32 +494,50 @@ private theorem evalEq_codeLift {k l : ℕ} {A : Code k} {A' : Code l} {v : Fin 
   rw [eval_codeLift_iff, eval_codeLift_iff]
   exact hA x
 
-/-- The raw search, across two arities and assignments. -/
-private theorem eval_rfind_congr_at {k l : ℕ} (c : Code (k + 1)) (c' : Code (l + 1)) (z : M)
-    (v : Fin k → M) (v' : Fin l → M)
-    (h :
-      ∀ x t : M,
-        Semiformula.Evalb (x :> t :> v) (code c) ↔ Semiformula.Evalb (x :> t :> v') (code c')) :
-    Semiformula.Evalb (z :> v) (code (Code.rfind c)) ↔
-      Semiformula.Evalb (z :> v') (code (Code.rfind c')) :=
+/-- One codes have the same graph under any two assignments. -/
+theorem evalEq_one {k l : ℕ} (v : Fin k → M) (v' : Fin l → M) :
+    EvalEq (Code.one k) v (Code.one l) v' := by intro x; rw [eval_one_iff, eval_one_iff]
+
+/-- Composition with a shared outer code. -/
+theorem evalEq_comp {k l m : ℕ} (c : Code m) (ds : Fin m → Code k)
+    (ds' : Fin m → Code l) {v : Fin k → M} {v' : Fin l → M}
+    (h : ∀ i, EvalEq (ds i) v (ds' i) v') : EvalEq (c.comp ds) v (c.comp ds') v' :=
   by
+  intro x
+  rw [eval_comp_iff, eval_comp_iff]
+  constructor
+  · rintro ⟨w, hw, hwi⟩; exact ⟨w, hw, fun i => (h i (w i)).mp (hwi i)⟩
+  · rintro ⟨w, hw, hwi⟩; exact ⟨w, hw, fun i => (h i (w i)).mpr (hwi i)⟩
+
+/-- Constant codes agree under assignments of any arities. -/
+theorem evalEq_codeConst {k l : ℕ} (m : ℕ) (v : Fin k → M) (v' : Fin l → M) :
+    EvalEq (codeConst (n := k) m) v (codeConst (n := l) m) v' := by
+  induction m with
+  | zero => exact evalEq_zero v v'
+  | succ m ih => exact evalEq_codeSucc ih
+
+/-- Minimization preserves graph agreement under every extra search input. -/
+theorem evalEq_rfind {k l : ℕ} {A : Code (k + 1)} {A' : Code (l + 1)} {v : Fin k → M}
+    {v' : Fin l → M} (hA : ∀ t : M, EvalEq A (t :> v) A' (t :> v')) :
+    EvalEq (Code.rfind A) v (Code.rfind A') v' :=
+  by
+  intro x
   rw [eval_rfind_iff, eval_rfind_iff]
   exact
-    and_congr (h 0 z)
+    and_congr (hA x 0)
       (forall_congr' fun t =>
-        imp_congr Iff.rfl (exists_congr fun x => and_congr Iff.rfl (h x t)))
+        imp_congr Iff.rfl (exists_congr fun y => and_congr Iff.rfl (hA t y)))
 
-private theorem evalEq_codeRfindPos {k l : ℕ} {A : Code (k + 1)} {A' : Code (l + 1)}
+/-- Positive-test minimization preserves agreement at every extra search input. -/
+theorem evalEq_codeRfindPos {k l : ℕ} {A : Code (k + 1)} {A' : Code (l + 1)}
     {v : Fin k → M} {v' : Fin l → M} (hA : ∀ t : M, EvalEq A (t :> v) A' (t :> v')) :
     EvalEq (codeRfindPos A) v (codeRfindPos A') v' :=
   by
-  intro x
   simp only [codeRfindPos]
-  refine eval_rfind_congr_at _ _ x v v' ?_
-  intro y t
-  exact evalEq_codeInv (evalEq_codePos (hA t)) y
+  exact evalEq_rfind (fun t => evalEq_codeInv (evalEq_codePos (hA t)))
 
-private theorem evalEq_codeBind {k l : ℕ} {dg : Code k} {dc : Code (k + 1)} {dg' : Code l}
+/-- Code binding preserves heterogeneous graph agreement. -/
+theorem evalEq_codeBind {k l : ℕ} {dg : Code k} {dc : Code (k + 1)} {dg' : Code l}
     {dc' : Code (l + 1)} {v : Fin k → M} {v' : Fin l → M} (hg : EvalEq dg v dg' v')
     (hc : ∀ t : M, EvalEq dc (t :> v) dc' (t :> v')) :
     EvalEq (codeBind dg dc) v (codeBind dg' dc') v' :=
@@ -519,7 +549,8 @@ private theorem evalEq_codeBind {k l : ℕ} {dg : Code k} {dc : Code (k + 1)} {d
 /-!
 ### The derived constructors, across two arities and assignments -/
 
-private theorem evalEq_codeSub {k l : ℕ} {A B : Code k} {A' B' : Code l} {v : Fin k → M}
+/-- Subtraction-code construction preserves heterogeneous graph agreement. -/
+theorem evalEq_codeSub {k l : ℕ} {A B : Code k} {A' B' : Code l} {v : Fin k → M}
     {v' : Fin l → M} (hA : EvalEq A v A' v') (hB : EvalEq B v B' v') :
     EvalEq (codeSub A B) v (codeSub A' B') v' :=
   by
@@ -532,7 +563,8 @@ private theorem evalEq_codeSub {k l : ℕ} {A B : Code k} {A' B' : Code l} {v : 
       (evalEq_codeAnd (evalEq_codeLt (evalEq_codeLift t t hA) (evalEq_codeLift t t hB))
         (evalEq_codeEq (evalEq_codeHead t v v') (evalEq_zero _ _)))
 
-private theorem evalEq_codeSqrt {k l : ℕ} {A : Code k} {A' : Code l} {v : Fin k → M}
+/-- Square-root-code construction preserves heterogeneous graph agreement. -/
+theorem evalEq_codeSqrt {k l : ℕ} {A : Code k} {A' : Code l} {v : Fin k → M}
     {v' : Fin l → M} (hA : EvalEq A v A' v') : EvalEq (codeSqrt A) v (codeSqrt A') v' :=
   by
   simp only [codeSqrt]
@@ -548,7 +580,8 @@ private theorem evalEq_codeSqrt {k l : ℕ} {A : Code k} {A' : Code l} {v : Fin 
         (evalEq_codeMul (evalEq_codeSucc (evalEq_codeHead t v v'))
           (evalEq_codeSucc (evalEq_codeHead t v v'))))
 
-private theorem evalEq_codeIfPos {k l : ℕ} {F G H : Code k} {F' G' H' : Code l} {v : Fin k → M}
+/-- Conditional-code construction preserves heterogeneous graph agreement. -/
+theorem evalEq_codeIfPos {k l : ℕ} {F G H : Code k} {F' G' H' : Code l} {v : Fin k → M}
     {v' : Fin l → M} (hF : EvalEq F v F' v') (hG : EvalEq G v G' v') (hH : EvalEq H v H' v') :
     EvalEq (codeIfPos F G H) v (codeIfPos F' G' H') v' :=
   by
@@ -557,14 +590,16 @@ private theorem evalEq_codeIfPos {k l : ℕ} {F G H : Code k} {F' G' H' : Code l
     evalEq_codeAdd (evalEq_codeMul (evalEq_codePos hF) hG)
       (evalEq_codeMul (evalEq_codeInv hF) hH)
 
-private theorem evalEq_codeLe {k l : ℕ} {A B : Code k} {A' B' : Code l} {v : Fin k → M}
+/-- Non-strict order-test code construction preserves heterogeneous graph agreement. -/
+theorem evalEq_codeLe {k l : ℕ} {A B : Code k} {A' B' : Code l} {v : Fin k → M}
     {v' : Fin l → M} (hA : EvalEq A v A' v') (hB : EvalEq B v B' v') :
     EvalEq (codeLe A B) v (codeLe A' B') v' :=
   by
   simp only [codeLe]
   exact evalEq_codeOr (evalEq_codeLt hA hB) (evalEq_codeEq hA hB)
 
-private theorem evalEq_codeUnpair₁ {k l : ℕ} {A : Code k} {A' : Code l} {v : Fin k → M}
+/-- First-unpairing code construction preserves heterogeneous graph agreement. -/
+theorem evalEq_codeUnpair₁ {k l : ℕ} {A : Code k} {A' : Code l} {v : Fin k → M}
     {v' : Fin l → M} (hA : EvalEq A v A' v') : EvalEq (codeUnpair₁ A) v (codeUnpair₁ A') v' :=
   by
   simp only [codeUnpair₁]
@@ -572,7 +607,8 @@ private theorem evalEq_codeUnpair₁ {k l : ℕ} {A : Code k} {A' : Code l} {v :
   have hdiff := evalEq_codeSub hA (evalEq_codeMul hsq hsq)
   exact evalEq_codeIfPos (evalEq_codeLt hdiff hsq) hdiff hsq
 
-private theorem evalEq_codeUnpair₂ {k l : ℕ} {A : Code k} {A' : Code l} {v : Fin k → M}
+/-- Second-unpairing code construction preserves heterogeneous graph agreement. -/
+theorem evalEq_codeUnpair₂ {k l : ℕ} {A : Code k} {A' : Code l} {v : Fin k → M}
     {v' : Fin l → M} (hA : EvalEq A v A' v') : EvalEq (codeUnpair₂ A) v (codeUnpair₂ A') v' :=
   by
   simp only [codeUnpair₂]
@@ -580,7 +616,18 @@ private theorem evalEq_codeUnpair₂ {k l : ℕ} {A : Code k} {A' : Code l} {v :
   have hdiff := evalEq_codeSub hA (evalEq_codeMul hsq hsq)
   exact evalEq_codeIfPos (evalEq_codeLt hdiff hsq) hsq (evalEq_codeSub hdiff hsq)
 
-private theorem evalEq_codeDvd {k l : ℕ} {A B : Code k} {A' B' : Code l} {v : Fin k → M}
+/-- Pairing-code construction preserves heterogeneous graph agreement. -/
+theorem evalEq_codePair {k l : ℕ} {A B : Code k} {A' B' : Code l} {v : Fin k → M}
+    {v' : Fin l → M} (hA : EvalEq A v A' v') (hB : EvalEq B v B' v') :
+    EvalEq (codePair A B) v (codePair A' B') v' :=
+  by
+  simp only [codePair]
+  exact
+    evalEq_codeIfPos (evalEq_codeLt hA hB) (evalEq_codeAdd (evalEq_codeMul hB hB) hA)
+      (evalEq_codeAdd (evalEq_codeAdd (evalEq_codeMul hA hA) hA) hB)
+
+/-- Divisibility-test code construction preserves heterogeneous graph agreement. -/
+theorem evalEq_codeDvd {k l : ℕ} {A B : Code k} {A' B' : Code l} {v : Fin k → M}
     {v' : Fin l → M} (hA : EvalEq A v A' v') (hB : EvalEq B v B' v') :
     EvalEq (codeDvd A B) v (codeDvd A' B') v' :=
   by
@@ -593,7 +640,8 @@ private theorem evalEq_codeDvd {k l : ℕ} {A B : Code k} {A' B' : Code l} {v : 
         (evalEq_codeLt (evalEq_codeLift t t hB) (evalEq_codeHead t v v'))
   · exact evalEq_codeLe (evalEq_codeHead t v v') (evalEq_codeLift t t hB)
 
-private theorem evalEq_codeRem {k l : ℕ} {A B : Code k} {A' B' : Code l} {v : Fin k → M}
+/-- Remainder-code construction preserves heterogeneous graph agreement. -/
+theorem evalEq_codeRem {k l : ℕ} {A B : Code k} {A' B' : Code l} {v : Fin k → M}
     {v' : Fin l → M} (hA : EvalEq A v A' v') (hB : EvalEq B v B' v') :
     EvalEq (codeRem A B) v (codeRem A' B') v' :=
   by

@@ -178,7 +178,7 @@ theorem tagSix_read_payload₂ [M↓[ℒₒᵣ] ⊧* 𝐏𝐀⁻] {r : ℕ} (d :
 /-- With positive fuel and a tag reading of `6`, the cell value is the value of
 the primitive-recursion branch.  The first comparison of the dispatcher, with
 `4`, and the second, with `5`, both fail, and the third, with `6`, succeeds. -/
-private theorem tagSix_prec_branch [M↓[ℒₒᵣ] ⊧* 𝐏𝐀⁻] {r : ℕ} (dtable dn : Code r) (v : Fin r → M)
+theorem tagSix_prec_branch [M↓[ℒₒᵣ] ⊧* 𝐏𝐀⁻] {r : ℕ} (dtable dn : Code r) (v : Fin r → M)
     (z k : M) (hk : Semiformula.Evalb (k :> v) (code (codeUnpair₁ (codeListLength dtable))))
     (hkpos : 0 < k)
     (htag :
@@ -264,12 +264,12 @@ private theorem tagSix_prec_branch [M↓[ℒₒᵣ] ⊧* 𝐏𝐀⁻] {r : ℕ} 
 
 /-- The dispatcher evaluates the branch at the decremented fuel `k - 1`; for
 positive `k`, its successor, the key of the base lookup, is `k`. -/
-private theorem tagSix_succ_pred [M↓[ℒₒᵣ] ⊧* 𝐏𝐀⁻] {k : M} (hk : 0 < k) : k - 1 + 1 = k :=
+theorem tagSix_succ_pred [M↓[ℒₒᵣ] ⊧* 𝐏𝐀⁻] {k : M} (hk : 0 < k) : k - 1 + 1 = k :=
   FFL.FirstOrder.Arithmetic.sub_add_self_of_le
     (FFL.FirstOrder.Arithmetic.one_le_of_zero_lt k hk)
 
 /-- The decremented fuel, as the dispatcher computes it. -/
-private theorem tagSix_decremented_fuel [M↓[ℒₒᵣ] ⊧* 𝐏𝐀] [M↓[ℒₒᵣ] ⊧* 𝐈𝐎𝐩𝐞𝐧] [M↓[ℒₒᵣ] ⊧* 𝐏𝐀⁻]
+theorem tagSix_decremented_fuel [M↓[ℒₒᵣ] ⊧* 𝐏𝐀] [M↓[ℒₒᵣ] ⊧* 𝐈𝐎𝐩𝐞𝐧] [M↓[ℒₒᵣ] ⊧* 𝐏𝐀⁻]
     (s qCode u : M) :
     Semiformula.Evalb ((s - 1) :> ![s, qCode, u])
       (code
@@ -286,7 +286,7 @@ private theorem tagSix_decremented_fuel [M↓[ℒₒᵣ] ⊧* 𝐏𝐀] [M↓[�
       (eval_codeEvaluatorCell_fuel s qCode u) hone
 
 /-- The key of the base lookup is the fuel. -/
-private theorem tagSix_base_key [M↓[ℒₒᵣ] ⊧* 𝐏𝐀] [M↓[ℒₒᵣ] ⊧* 𝐈𝐎𝐩𝐞𝐧] [M↓[ℒₒᵣ] ⊧* 𝐏𝐀⁻]
+theorem tagSix_base_key [M↓[ℒₒᵣ] ⊧* 𝐏𝐀] [M↓[ℒₒᵣ] ⊧* 𝐈𝐎𝐩𝐞𝐧] [M↓[ℒₒᵣ] ⊧* 𝐏𝐀⁻]
     (s qCode u : M) (hs : 0 < s) :
     Semiformula.Evalb (s :> ![s, qCode, u])
       (code
@@ -304,7 +304,8 @@ The branch reads its table, key, query and argument through decoded codes; the
 history bridges use the fuel key, a constant query and the argument itself.  The
 four congruences below prove that the two forms have the same values. -/
 
-private theorem tagSix_table_congr [M↓[ℒₒᵣ] ⊧* 𝐏𝐀] [M↓[ℒₒᵣ] ⊧* 𝐈𝐎𝐩𝐞𝐧] (s qCode u z x : M) :
+/-- The branch table readings agree when the caller argument changes. -/
+theorem tagSix_table_congr [M↓[ℒₒᵣ] ⊧* 𝐏𝐀] [M↓[ℒₒᵣ] ⊧* 𝐈𝐎𝐩𝐞𝐧] (s qCode u z x : M) :
     Semiformula.Evalb (x :> ![s, qCode, u]) (code codeEvaluatorHistoryBeforeCell) ↔
       Semiformula.Evalb (x :> ![s, qCode, z]) (code codeEvaluatorHistoryBeforeCell) :=
   by
@@ -332,7 +333,8 @@ private theorem tagSix_table_congr [M↓[ℒₒᵣ] ⊧* 𝐏𝐀] [M↓[ℒₒ�
     have : w 0 = FFL.FirstOrder.Arithmetic.pair s qCode := eval_unique h0 (hpair z)
     simpa [this] using hpair u
 
-private theorem tagSix_key_congr [M↓[ℒₒᵣ] ⊧* 𝐏𝐀] [M↓[ℒₒᵣ] ⊧* 𝐈𝐎𝐩𝐞𝐧] [M↓[ℒₒᵣ] ⊧* 𝐏𝐀⁻]
+/-- The branch key reading agrees with the source-stage constant. -/
+theorem tagSix_key_congr [M↓[ℒₒᵣ] ⊧* 𝐏𝐀] [M↓[ℒₒᵣ] ⊧* 𝐈𝐎𝐩𝐞𝐧] [M↓[ℒₒᵣ] ⊧* 𝐏𝐀⁻]
     (s qCode u z : M) (hs : 0 < s) (x : M) :
     Semiformula.Evalb (x :> ![s, qCode, u])
         (code
@@ -352,7 +354,8 @@ private theorem tagSix_key_congr [M↓[ℒₒᵣ] ⊧* 𝐏𝐀] [M↓[ℒₒᵣ
     rw [hxs]
     exact tagSix_base_key s qCode u hs
 
-private theorem tagSix_query_congr [M↓[ℒₒᵣ] ⊧* 𝐏𝐀] [M↓[ℒₒᵣ] ⊧* 𝐈𝐎𝐩𝐞𝐧] [M↓[ℒₒᵣ] ⊧* 𝐏𝐀⁻]
+/-- The decoded base-program query agrees with its constant index. -/
+theorem tagSix_query_congr [M↓[ℒₒᵣ] ⊧* 𝐏𝐀] [M↓[ℒₒᵣ] ⊧* 𝐈𝐎𝐩𝐞𝐧] [M↓[ℒₒᵣ] ⊧* 𝐏𝐀⁻]
     (s u z : M) (q : ℕ) (hq : partrecCodeTag q = 6) (x : M) :
     Semiformula.Evalb (x :> ![s, ((q : ℕ) : M), u])
         (code
@@ -375,7 +378,8 @@ private theorem tagSix_query_congr [M↓[ℒₒᵣ] ⊧* 𝐏𝐀] [M↓[ℒₒ�
     rw [hxv]
     exact hleft
 
-private theorem tagSix_argument_congr [M↓[ℒₒᵣ] ⊧* 𝐏𝐀] [M↓[ℒₒᵣ] ⊧* 𝐈𝐎𝐩𝐞𝐧] (s qCode z x : M) :
+/-- The base-program argument agrees with the caller pair first component. -/
+theorem tagSix_argument_congr [M↓[ℒₒᵣ] ⊧* 𝐏𝐀] [M↓[ℒₒᵣ] ⊧* 𝐈𝐎𝐩𝐞𝐧] (s qCode z x : M) :
     Semiformula.Evalb (x :> ![s, qCode, FFL.FirstOrder.Arithmetic.pair z 0])
         (code (codeUnpair₁ (Code.proj (2 : Fin 3)))) ↔
       Semiformula.Evalb (x :> ![s, qCode, z]) (code (Code.proj (2 : Fin 3))) :=
@@ -649,7 +653,7 @@ private theorem tagSix_predecessor_argument [M↓[ℒₒᵣ] ⊧* 𝐏𝐀] [M�
 
 /-- The step lookup reads the argument `pair z (pair a x)` in the lifted
 environment, where the intermediate value `x` is the new head. -/
-private theorem tagSix_step_argument [M↓[ℒₒᵣ] ⊧* 𝐏𝐀] [M↓[ℒₒᵣ] ⊧* 𝐈𝐎𝐩𝐞𝐧] (s qCode z a x : M) :
+theorem tagSix_step_argument [M↓[ℒₒᵣ] ⊧* 𝐏𝐀] [M↓[ℒₒᵣ] ⊧* 𝐈𝐎𝐩𝐞𝐧] (s qCode z a x : M) :
     Semiformula.Evalb
       ((FFL.FirstOrder.Arithmetic.pair z (FFL.FirstOrder.Arithmetic.pair a x)) :>
         (x :> ![s, qCode, FFL.FirstOrder.Arithmetic.pair z (a + 1)]))

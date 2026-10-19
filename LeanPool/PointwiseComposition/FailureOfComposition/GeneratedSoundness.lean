@@ -50,21 +50,6 @@ theorem sigmaOneSound_iff_nonempty_soundOnHierarchy (T : ArithmeticTheory) :
   · rintro ⟨h⟩ σ hσ hp
     exact h.sound hp hσ
 
-private theorem ground_proof_of_pointwise (T : ArithmeticTheory) [𝐏𝐀 ≼ T] (F G : Graph)
-    (hFG : Pointwise T F G) (n m : ℕ) (hF : F.val.Evalb ![n, m]) : T ⊢ graphInstance G n m :=
-  by
-  have hpF : T ⊢ graphInstance F n m := WeakerThan.pbl (true_graph_instance_provable F n m hF)
-  apply complete.{0} T
-  intro M _ _
-  have : M↓[ℒₒᵣ] ⊧* 𝐏𝐀 := models_of_subtheory (U := T) inferInstance
-  have : M↓[ℒₒᵣ] ⊧* 𝐈Σ₁ := models_of_subtheory (U := 𝐏𝐀) inferInstance
-  have hEq : M↓[ℒₒᵣ] ⊧ eqAt F G n :=
-    consequence_iff.mp (Theory.Proof.sound (hFG n)) M inferInstance
-  have hVal : M↓[ℒₒᵣ] ⊧ graphInstance F n m :=
-    consequence_iff.mp (Theory.Proof.sound hpF) M inferInstance
-  simp only [models_iff, eqAt_eval] at hEq
-  simp only [models_iff, graphInstance_eval] at hVal ⊢
-  exact (hEq (m : M)).mp hVal
 
 /-- Sigma-one soundness turns each pointwise proof into equality of standard
 graphs, without assuming that either graph is functional. -/
