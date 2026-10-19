@@ -71,7 +71,7 @@ theorem exists_selectedMinor_det_ne_zero_of_rank_eq_card
     rw [hfamily]
     exact he
   have hunit : IsUnit (selectedMinor B rows) :=
-    Matrix.linearIndependent_rows_iff_isUnit.mp hli
+    Matrix.linearIndependent_row_iff_isUnit.mp hli
   exact ⟨rows, ((Matrix.isUnit_iff_isUnit_det _).mp hunit).ne_zero⟩
 
 /-- Injectivity of the residue matrix on column vectors is the usual

@@ -90,7 +90,7 @@ theorem intermediateAdjoin_isAlgebraic_over_algebraAdjoin
   let : Algebra R E := (Subalgebra.inclusion hRE).toAlgebra
   refine ⟨fun y ↦ ?_⟩
   apply IntermediateField.adjoin_induction k
-      (p := fun z hz ↦ IsAlgebraic R (⟨z, hz⟩ : E))
+      (motive := fun z hz ↦ IsAlgebraic R (⟨z, hz⟩ : E))
   · intro z hz
     have hmem : z ∈ E := IntermediateField.subset_adjoin k t hz
     have heq : (⟨z, hmem⟩ : E) = algebraMap R E
@@ -187,7 +187,7 @@ theorem finiteDimensional_over_adjoin_transcendenceBasis
       rw [ht]
       trivial
     apply IntermediateField.adjoin_induction k
-        (p := fun z _ ↦ z ∈ IntermediateField.adjoin B (t : Set K))
+        (motive := fun z _ ↦ z ∈ IntermediateField.adjoin B (t : Set K))
     · intro z hz
       exact IntermediateField.subset_adjoin B (t : Set K) hz
     · intro a
