@@ -9,7 +9,7 @@ public import LeanPool.MisereGames.GameGraph
 public import LeanPool.MisereGames.Misere.Stride
 public import Mathlib.Combinatorics.SimpleGraph.Connectivity.Connected
 import LeanPool.MisereGames.Mathlib.SimpleGraph
-import Mathlib.Data.Nat.SuccPred
+import Mathlib.Order.SuccPred.Nat
 import Mathlib.Data.Rat.Cast.Order
 import Mathlib.Order.Lattice.Nat
 import Mathlib.Tactic.NormNum.Abs
