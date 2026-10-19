@@ -44,8 +44,10 @@ To work on a single project you don't need the whole pool built — see the
 
 See [`CONTRIBUTING.md`](CONTRIBUTING.md).
 
-The PR author or a maintainer can comment `/profile` to request an advisory
-compile-cost report. Failed or zero-phase timed runs show unavailable timing
+Every PR, including drafts, gets an advisory compile-cost comment, refreshed
+after pushes. PRs without added or modified Lean files get a no-files report.
+The PR author or a maintainer can also comment `/profile` to rerun it.
+Failed or zero-phase timed runs show unavailable timing
 and are excluded from totals; errors and any successfully measured heartbeat
 counts remain visible.
 
