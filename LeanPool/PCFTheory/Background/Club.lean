@@ -143,7 +143,7 @@ theorem exists_above_of_lt_cof {p : Ordinal} (h : p < o) (hSemp : Nonempty S)
   use q', lift_lt.mp (hq' ▸ qlto)
   have fltq : ∀ U, f U < q := fun U ↦ by
     convert lt_of_le_of_lt (le_ciSup (by apply bddAbove_of_small) U) (qdef ▸ lt_add_one (iSup f))
-  constructor <;> try constructor
+  constructor
   · rcases hSemp with ⟨U, hU⟩
     have pltf : lift.{u + 1, u} p < f ⟨U, hU⟩ :=
       lift_lt.mpr (mem_of_mem_inter_right (infMem ⟨U, hU⟩)).1
