@@ -29,6 +29,7 @@ public import Mathlib.MeasureTheory.Integral.IntervalIntegral.ContDiff
 public import Mathlib.MeasureTheory.SetSemiring
 public import Mathlib.MeasureTheory.VectorMeasure.BoundedVariation
 public import Mathlib.MeasureTheory.VectorMeasure.IntegrationByParts
+public import Mathlib.MeasureTheory.VectorMeasure.Prod
 public import Mathlib.MeasureTheory.VectorMeasure.WithDensityVec
 public import Mathlib.SetTheory.Cardinal.Finite
 public import Mathlib.Tactic
