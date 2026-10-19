@@ -7,6 +7,7 @@ module
 
 public import LeanPool.RiemannRochFunctionFields.FunctionField.Divisor
 import Mathlib.Analysis.SpecialFunctions.Pow.Real
+import Mathlib.FieldTheory.RatFunc.IntermediateField
 
 /-!
 # Basic divisor API aliases

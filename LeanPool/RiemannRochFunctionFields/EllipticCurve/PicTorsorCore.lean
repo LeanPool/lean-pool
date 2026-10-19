@@ -7,6 +7,7 @@ module
 
 public import LeanPool.RiemannRochFunctionFields.EllipticCurve.PlaceDictionary
 public import LeanPool.RiemannRochFunctionFields.WeilDifferential.Basic
+public import Mathlib.RingTheory.ClassGroup.ExtendedHom
 import LeanPool.RiemannRochFunctionFields.EllipticCurve.Dedekind
 import LeanPool.RiemannRochFunctionFields.EllipticCurve.DegreeOneDictionary
 import LeanPool.RiemannRochFunctionFields.EllipticCurve.GenusOne
@@ -257,37 +258,7 @@ lemma classGroup_mulEquiv_mk0 (e : R ≃+* S) (I : (Ideal R)⁰) :
           rw [mem_nonZeroDivisors_iff_ne_zero]
           exact (Ideal.map_eq_bot_iff_of_injective e.injective).not.mpr
             (mem_nonZeroDivisors_iff_ne_zero.mp I.2)⟩ := by
-  let : RingHomInvPair (e : R →+* S) e.symm :=
-    RingHomInvPair.of_ringEquiv e
-  let : RingHomInvPair (e.symm : S →+* R) e :=
-    RingHomInvPair.of_ringEquiv_symm e
-  apply (ClassGroup.equiv (FractionRing S)).injective
-  simp only [ClassGroup.mulEquiv, MulEquiv.trans_apply, ClassGroup.equiv_mk0,
-    QuotientGroup.mk'_apply, MulEquiv.apply_symm_apply]
-  refine congrArg QuotientGroup.mk ?_
-  ext x
-  change x ∈ Submodule.map
-      (IsFractionRing.semilinearEquivOfRingEquiv (FractionRing R) (FractionRing S) e).toLinearMap
-      (IsLocalization.coeSubmodule (FractionRing R) (I : Ideal R)) ↔
-    x ∈ IsLocalization.coeSubmodule (FractionRing S) (Ideal.map e (I : Ideal R))
-  rw [Submodule.mem_map, IsLocalization.mem_coeSubmodule]
-  constructor
-  · rintro ⟨z, hz, hzx⟩
-    obtain ⟨r, hr, hrz⟩ :=
-      (IsLocalization.mem_coeSubmodule (FractionRing R) (I : Ideal R)).mp hz
-    refine ⟨e r, (Ideal.mem_map_of_equiv e (e r)).mpr ⟨r, hr, rfl⟩, ?_⟩
-    rw [← hzx, ← hrz]
-    exact (IsFractionRing.semilinearEquivOfRingEquiv_algebraMap
-      (FractionRing R) (FractionRing S) e r).symm
-  · rintro ⟨s, hs, hsx⟩
-    obtain ⟨r, hr, hrs⟩ :=
-      (Ideal.mem_map_iff_of_surjective e e.surjective).mp hs
-    refine ⟨algebraMap R (FractionRing R) r,
-      (IsLocalization.mem_coeSubmodule (FractionRing R) (I : Ideal R)).mpr
-        ⟨r, hr, rfl⟩, ?_⟩
-    rw [← hsx, ← hrs]
-    exact IsFractionRing.semilinearEquivOfRingEquiv_algebraMap
-      (FractionRing R) (FractionRing S) e r
+  exact ClassGroup.mulEquiv_mk0 e I
 
 end Transport
 
