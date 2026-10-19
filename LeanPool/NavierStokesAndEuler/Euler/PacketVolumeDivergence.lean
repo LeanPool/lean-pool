@@ -85,7 +85,7 @@ theorem determinant_derivative_trace_zero (F : Space → Space →L[ℝ] Space)
       HasDerivAt (fun s => L s i j) ((M*L 0) i j) 0 := by
     rw [hmat]
     exact (EuclideanSpace.proj (𝕜 := ℝ) i).hasFDerivAt.comp_hasDerivAt 0
-      ((ContinuousLinearMap.apply (E := Space) ℝ Space
+      ((ContinuousLinearMap.apply (E' := Space) ℝ Space
         (EuclideanSpace.single j 1)).hasFDerivAt.comp_hasDerivAt 0 hline)
   have hd := EulerDeformationVolume.determinant_hasDerivAt L (fun _ => M) 0 hentry
   have hlim : Tendsto (fun s : ℝ => x+s•v) (𝓝 0) (𝓝 x) := by

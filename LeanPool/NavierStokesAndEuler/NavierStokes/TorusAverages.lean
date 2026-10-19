@@ -587,9 +587,9 @@ theorem contDiffOn_universal_weights :
   apply contDiffOn_pi.mpr
   apply contDiffOn_weights
   · intro i j
-    exact ((contDiff_apply_apply ℝ ℝ i j).comp contDiff_fst).contDiffOn
+    exact ((contDiff_apply_apply (𝕜 := ℝ) (E := ℝ) i j).comp contDiff_fst).contDiffOn
   · intro i
-    exact ((contDiff_apply ℝ ℝ i).comp contDiff_snd).contDiffOn
+    exact ((contDiff_apply ℝ (fun _ => ℝ) i).comp contDiff_snd).contDiffOn
   · intro z hz
     exact StrictCone.det_ne_zero hz
 
@@ -598,9 +598,9 @@ theorem contDiffOn_universal_amplitudes :
     ContDiffOn ℝ ∞ (fun z : Datum => amplitudes z.1 z.2) strictConeRegion := by
   apply contDiffOn_amplitude_vector
   · intro i j
-    exact ((contDiff_apply_apply ℝ ℝ i j).comp contDiff_fst).contDiffOn
+    exact ((contDiff_apply_apply (𝕜 := ℝ) (E := ℝ) i j).comp contDiff_fst).contDiffOn
   · intro i
-    exact ((contDiff_apply ℝ ℝ i).comp contDiff_snd).contDiffOn
+    exact ((contDiff_apply ℝ (fun _ => ℝ) i).comp contDiff_snd).contDiffOn
   · intro z hz
     exact hz
 

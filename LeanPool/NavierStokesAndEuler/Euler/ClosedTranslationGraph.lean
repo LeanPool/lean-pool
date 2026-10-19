@@ -7,6 +7,7 @@ Authors: OpenAI
 module
 
 public import LeanPool.NavierStokesAndEuler.Euler.Foundations.PressureSpatialRegularity
+import Mathlib.Analysis.Calculus.Deriv.Comp
 import Mathlib.Analysis.Calculus.UniformLimitsDeriv
 
 /-! Closed graphs of the genuine strong cylinder translation derivatives. -/

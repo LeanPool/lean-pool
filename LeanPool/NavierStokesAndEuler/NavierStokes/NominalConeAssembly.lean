@@ -6,6 +6,7 @@ Authors: OpenAI
 module
 
 public import LeanPool.NavierStokesAndEuler.NavierStokes.HeatSwitchCone
+import Mathlib.Analysis.SpecialFunctions.Sqrt
 public import LeanPool.NavierStokesAndEuler.NavierStokes.ModulatedCone
 import LeanPool.NavierStokesAndEuler.NavierStokes.RepairConeBounds
 import LeanPool.NavierStokesAndEuler.NavierStokes.TerminalHistoryBridge

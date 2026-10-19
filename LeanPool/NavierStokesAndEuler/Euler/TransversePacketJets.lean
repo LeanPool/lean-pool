@@ -7,6 +7,7 @@ Authors: OpenAI
 module
 
 public import LeanPool.NavierStokesAndEuler.Euler.TransversePacketProvider
+import Mathlib.Analysis.Calculus.Deriv.Prod
 
 /-! The constructed forward transverse provider in the literal packet jet equation. -/
 

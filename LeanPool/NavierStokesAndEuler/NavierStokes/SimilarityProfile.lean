@@ -7,6 +7,7 @@ Authors: OpenAI
 module
 
 public import LeanPool.NavierStokesAndEuler.NavierStokes.SimilarityCoordinates
+import Mathlib.Analysis.Calculus.Deriv.Prod
 public import LeanPool.NavierStokesAndEuler.NavierStokes.CoordinateAlgebra
 import Mathlib.Analysis.SpecialFunctions.Pow.Deriv
 

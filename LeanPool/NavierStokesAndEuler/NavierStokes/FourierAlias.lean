@@ -7,6 +7,7 @@ Authors: OpenAI
 module
 
 public import LeanPool.NavierStokesAndEuler.NavierStokes.TransportPrimitive
+import Mathlib.MeasureTheory.Integral.Prod
 public import LeanPool.NavierStokesAndEuler.NavierStokes.ParametricTorusInverse
 public import LeanPool.NavierStokesAndEuler.NavierStokes.ChartScales
 import Mathlib.Analysis.Calculus.ContDiff.Bounds

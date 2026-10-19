@@ -7,6 +7,8 @@ Authors: OpenAI
 module
 
 public import LeanPool.NavierStokesAndEuler.NavierStokes.OutgoingSchedule
+import Mathlib.Analysis.SpecialFunctions.Pow.Deriv
+import Mathlib.Analysis.SpecialFunctions.Sqrt
 import LeanPool.NavierStokesAndEuler.NavierStokes.ParametricFlatFactor
 import Mathlib.Analysis.Calculus.ContDiff.Bounds
 import Mathlib.Analysis.SpecialFunctions.Integrals.Basic

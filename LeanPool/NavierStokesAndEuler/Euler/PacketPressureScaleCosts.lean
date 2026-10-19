@@ -84,7 +84,8 @@ theorem initial_history_size_le_difference :
     unfold frameDifferenceCost
     linarith only [mul_le_mul_of_nonneg_left hR (frameAmplitude_nonneg L.K)]
   apply historyCost_le_differenceCost τ D.frameLower _ _ _ _ _ _ _ _ hτ.le D.frameLower_pos.le
-    (norm_nonneg _) (norm_nonneg _) (by positivity) (by positivity)
+    (norm_nonneg _) (norm_nonneg _)
+    (add_nonneg (mul_nonneg hτ.le (norm_nonneg _)) (norm_nonneg _)) (by positivity)
     (historyTransportCost_nonneg (D := D)) hx
   · unfold firstDifferenceCost
     positivity [gradientAmplitude_nonneg L.K,coefficientRadius_nonneg L.K]
@@ -429,8 +430,8 @@ theorem goodCost_bound (J : ℕ) (hJ : 1 ≤ J) (X CM M δ hchild : ℝ)
     (hMb : M ≤ CM * previousShear J X n) (hδb : δ ≤ spike J X n) (hhb : hchild ≤ shear J X n) :
     2*M*hchild*(δ*goodRatio) ≤ 2*CM*goodRatio*goodCost J (scaleSequence J X) n := by
   have hg := goodRatio_pos.le
-  have hsp := (exp_pos (-scaleSequence J X n/((J+n : ℕ) : ℝ)^3)).le
-  have hsh := (exp_pos (scaleSequence J X n/((J+n : ℕ) : ℝ)^5)).le
+  have hsp : 0 ≤ spike J X n := (exp_pos _).le
+  have hsh : 0 ≤ shear J X n := (exp_pos _).le
   have hprev : 0 ≤ previousShear J X n := by
     cases n with
     | zero => change 0 ≤ X^1000; positivity

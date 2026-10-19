@@ -6,6 +6,7 @@ Authors: OpenAI
 module
 
 public import LeanPool.NavierStokesAndEuler.NavierStokes.SlowRecursion
+import Mathlib.Analysis.Calculus.Deriv.Prod
 public import LeanPool.NavierStokesAndEuler.NavierStokes.TransitionRamp
 public import LeanPool.NavierStokesAndEuler.NavierStokes.ReferenceJetBounds
 public import LeanPool.NavierStokesAndEuler.NavierStokes.StressActivation

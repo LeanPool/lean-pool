@@ -44,7 +44,7 @@ local instance instPacketCurlCoordinates2 : NormedSpace ℝ (Space →L[ℝ] Spa
 
 /-- The coefficient of one genuine spatial derivative in the slow curl. -/
 def curlCoefficient (i : Fin 3) : (Space →L[ℝ] Space) →L[ℝ] (Space →L[ℝ] Space) :=
-  crossOperator.comp ((ContinuousLinearMap.apply (E := EuclideanSpace ℝ (Fin 3)) ℝ Space
+  crossOperator.comp ((ContinuousLinearMap.apply (E' := EuclideanSpace ℝ (Fin 3)) ℝ Space
       (EuclideanSpace.single i 1)).comp
     (ContinuousLinearMap.adjoint.toContinuousLinearEquiv.toContinuousLinearMap
       : (Space →L[ℝ] Space) →L[ℝ] (Space →L[ℝ] Space)))

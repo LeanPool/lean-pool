@@ -7,6 +7,7 @@ Authors: OpenAI
 module
 
 public import LeanPool.NavierStokesAndEuler.NavierStokes.SimilarityProfile
+import Mathlib.Analysis.SpecialFunctions.Sqrt
 public import LeanPool.NavierStokesAndEuler.NavierStokes.HeatedOutgoing
 public import LeanPool.NavierStokesAndEuler.NavierStokes.SmoothParameterIntegral
 import LeanPool.NavierStokesAndEuler.NavierStokes.ParametricRephase

@@ -7,6 +7,7 @@ Authors: OpenAI
 module
 
 public import Mathlib.Analysis.SpecialFunctions.SmoothTransition
+import Mathlib.Analysis.Calculus.Deriv.Inv
 public import LeanPool.NavierStokesAndEuler.ForMathlib.ElaborationShortcuts
 
 /-!

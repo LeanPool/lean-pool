@@ -6,6 +6,7 @@ Authors: OpenAI
 module
 
 public import LeanPool.NavierStokesAndEuler.NavierStokes.ChartScales
+import Mathlib.Analysis.Calculus.Deriv.Linear
 public import LeanPool.NavierStokesAndEuler.NavierStokes.AxisymmetricFields
 public import LeanPool.NavierStokesAndEuler.NavierStokes.PhaseCalculus
 public import LeanPool.NavierStokesAndEuler.NavierStokes.CoordinateAlgebra

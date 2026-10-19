@@ -7,6 +7,8 @@ Authors: OpenAI
 module
 
 public import LeanPool.NavierStokesAndEuler.NavierStokes.NominalProfile
+import Mathlib.Analysis.SpecialFunctions.Sqrt
+import Mathlib.Analysis.Calculus.Deriv.Prod
 public import LeanPool.NavierStokesAndEuler.NavierStokes.OutgoingHistories
 import LeanPool.NavierStokesAndEuler.NavierStokes.HeatSwitchCone
 
@@ -73,7 +75,7 @@ theorem freeE_contDiff (F : Profile) : ContDiff ℝ ∞ (freeE F) := by
     unfold FiveProfileMoments.e FiveProfileMoments.correction
     apply ContDiff.sum
     intro i _
-    exact ((contDiff_apply ℝ ℝ i).comp contDiff_fst.snd.snd).mul
+    exact ((contDiff_apply ℝ (fun _ => ℝ) i).comp contDiff_fst.snd.snd).mul
       ((FiveProfileMoments.bump_contDiff NominalProfile.resetPatch.rightHalf i).comp
           contDiff_snd.fst.exp)
   exact ((NominalProfile.idealAmplitude_smooth F).comp contDiff_snd.snd).mul

@@ -7,6 +7,7 @@ Authors: OpenAI
 module
 
 import LeanPool.NavierStokesAndEuler.ForMathlib.StronglyMeasurable
+import Mathlib.Analysis.Calculus.ContDiff.WithLp
 
 public import LeanPool.NavierStokesAndEuler.ForMathlib.SobolevThreeDimensional
 public import LeanPool.NavierStokesAndEuler.Euler.Foundations.VectorCalculus

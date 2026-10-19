@@ -7,6 +7,7 @@ Authors: OpenAI
 module
 
 public import LeanPool.NavierStokesAndEuler.NavierStokes.ActualInitialExcluded
+import Mathlib.Analysis.Calculus.ContDiff.WithLp
 public import LeanPool.NavierStokesAndEuler.NavierStokes.ActualInitialCoherence
 import LeanPool.NavierStokesAndEuler.NavierStokes.ActualInitialMeanEquation
 import LeanPool.NavierStokesAndEuler.NavierStokes.GaugeRadialResidualBounds

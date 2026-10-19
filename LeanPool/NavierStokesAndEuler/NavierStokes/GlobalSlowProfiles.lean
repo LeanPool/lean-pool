@@ -7,6 +7,8 @@ Authors: OpenAI
 module
 
 public import LeanPool.NavierStokesAndEuler.NavierStokes.TransportPrimitive
+import Mathlib.Analysis.Calculus.Deriv.Prod
+import Mathlib.Analysis.SpecialFunctions.Sqrt
 public import LeanPool.NavierStokesAndEuler.NavierStokes.SlowResidualMatching
 public import LeanPool.NavierStokesAndEuler.NavierStokes.ParametricRephase
 

@@ -7,6 +7,7 @@ Authors: OpenAI
 module
 
 public import LeanPool.NavierStokesAndEuler.Euler.MeanCutoffCurlBound
+import Mathlib.Analysis.Calculus.ContDiff.WithLp
 public import LeanPool.NavierStokesAndEuler.Euler.SolutionDefinitions
 public import LeanPool.NavierStokesAndEuler.Euler.ClassicalBridge
 import LeanPool.NavierStokesAndEuler.Euler.CurlTimeDerivative

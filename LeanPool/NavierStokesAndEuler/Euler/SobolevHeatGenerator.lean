@@ -6,6 +6,9 @@ Authors: OpenAI
 module
 
 import Mathlib.Probability.Distributions.Gaussian.Real
+import Mathlib.Analysis.Calculus.FDeriv.Extend
+import Mathlib.Analysis.Calculus.ParametricIntegral
+import Mathlib.Analysis.SpecialFunctions.Sqrt
 
 import LeanPool.NavierStokesAndEuler.ForMathlib.StronglyMeasurable
 

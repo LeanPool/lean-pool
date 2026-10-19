@@ -7,6 +7,8 @@ Authors: OpenAI
 module
 
 public import LeanPool.NavierStokesAndEuler.NavierStokes.RadialHeatProfile
+import Mathlib.Analysis.SpecialFunctions.Sqrt
+import Mathlib.Analysis.Calculus.Deriv.Prod
 public import LeanPool.NavierStokesAndEuler.NavierStokes.OutgoingTail
 public import LeanPool.NavierStokesAndEuler.NavierStokes.ParametricFlatFactor
 public import LeanPool.NavierStokesAndEuler.NavierStokes.AxisymmetricResidual

@@ -7,6 +7,7 @@ Authors: OpenAI
 module
 
 public import LeanPool.NavierStokesAndEuler.NavierStokes.TangentProjection
+import Mathlib.Topology.Algebra.Order.Floor
 public import Mathlib.MeasureTheory.Integral.IntervalIntegral.Basic
 public import Mathlib.Topology.MetricSpace.Contracting
 import Mathlib.Analysis.ODE.ExistUnique

@@ -104,7 +104,7 @@ theorem wordSum_clm_apply_le (directions : ι → P) (A : P → E →L[ℝ] F)
     wordSum directions (fun y => A y (f y)) n x ≤
       leibnizConvolution (fun k => wordSum directions A k x)
         (fun k => wordSum directions f k x) n := by
-  let B := (ContinuousLinearMap.apply ℝ F (E := E)).flip
+  let B := (ContinuousLinearMap.apply ℝ F (E' := E)).flip
   have hB : ‖B‖ ≤ 1 := by
     simp only [B, opNorm_flip, ContinuousLinearMap.apply]
     apply opNorm_le_bound _ zero_le_one

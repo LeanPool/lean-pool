@@ -6,6 +6,7 @@ Authors: OpenAI
 module
 
 public import LeanPool.NavierStokesAndEuler.Euler.SmoothCoefficientPathMap
+import Mathlib.Analysis.Calculus.Deriv.Comp
 public import LeanPool.NavierStokesAndEuler.Euler.TransverseSourceCoefficientPath
 
 /-!

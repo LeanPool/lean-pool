@@ -7,6 +7,7 @@ Authors: OpenAI
 module
 
 public import LeanPool.NavierStokesAndEuler.NavierStokes.BorelExtension
+import Mathlib.Analysis.Calculus.SmoothSeries
 public import LeanPool.NavierStokesAndEuler.ForMathlib.FiniteDimensionalBumps
 import Mathlib.Analysis.Calculus.BumpFunction.FiniteDimension
 

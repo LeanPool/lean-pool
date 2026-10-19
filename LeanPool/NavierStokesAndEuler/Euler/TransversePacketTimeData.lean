@@ -655,7 +655,7 @@ theorem potentialTimePath_hasDerivWithinAt (t : Icc (0 : ℝ) T) (y : Space) :
     linarith
   have h := potentialMultiplier_hasDerivWithinAt (Icc (0 : ℝ) T) t
     (fun r => extendPath T hT m.field r y) (extendPath T hT m₁ t y) (hmt t t.property y) hn
-  convert h using 1 <;> try rfl
+  convert h using 1
   · funext r
     exact potentialCoefficient_apply m c hc hm (projIcc 0 T hT r) y
   · rw [potentialTimePath_apply]

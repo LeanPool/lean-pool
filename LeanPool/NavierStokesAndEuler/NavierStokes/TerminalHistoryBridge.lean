@@ -6,6 +6,8 @@ Authors: OpenAI
 module
 
 public import LeanPool.NavierStokesAndEuler.NavierStokes.TerminalCone
+import Mathlib.Analysis.Calculus.Deriv.Prod
+import Mathlib.Analysis.SpecialFunctions.Sqrt
 import LeanPool.NavierStokesAndEuler.NavierStokes.HeatTailHistoryLimits
 import LeanPool.NavierStokesAndEuler.NavierStokes.LeadingStress
 import LeanPool.NavierStokesAndEuler.NavierStokes.PhysicalHeatCoordinates

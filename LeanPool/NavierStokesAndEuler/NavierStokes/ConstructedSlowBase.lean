@@ -6,6 +6,8 @@ Authors: OpenAI
 module
 
 public import LeanPool.NavierStokesAndEuler.NavierStokes.TerminalHistoryBridge
+import Mathlib.Analysis.SpecialFunctions.Sqrt
+import Mathlib.Analysis.Calculus.Deriv.Prod
 public import LeanPool.NavierStokesAndEuler.NavierStokes.ModulatedProfileAssembly
 import LeanPool.NavierStokesAndEuler.NavierStokes.FirstOrderBaseEdge
 import LeanPool.NavierStokesAndEuler.NavierStokes.NaturalCore

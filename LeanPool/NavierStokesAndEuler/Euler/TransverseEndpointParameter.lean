@@ -6,6 +6,7 @@ Authors: OpenAI
 module
 
 public import LeanPool.NavierStokesAndEuler.Euler.InitialH1OperatorProduct
+import Mathlib.Analysis.Calculus.ContDiff.Operations
 import LeanPool.NavierStokesAndEuler.Euler.HilbertCoerciveParameter
 import LeanPool.NavierStokesAndEuler.Euler.TimeLpCoefficientMap
 import LeanPool.NavierStokesAndEuler.Euler.TransverseParameterRegularity

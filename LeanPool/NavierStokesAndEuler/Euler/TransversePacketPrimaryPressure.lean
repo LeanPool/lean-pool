@@ -97,10 +97,9 @@ theorem normalResidual_smooth (t : Icc (0 : ℝ) D.T) (x : LiftDomain P) :
   have h := ((contDiff_const (c := (2 : ℝ))).mul (hm.inner ℝ (hM.clm_apply hA))).neg.div
     (hm.inner ℝ hm) hd
   convert! h using 1
-  first
-    | rfl
-    | (funext z; simp only [localFieldLift,normalResidual,Function.comp_apply,
-        real_inner_self_eq_norm_sq,Pi.div_apply])
+  funext z
+  simp only [localFieldLift, normalResidual, Function.comp_apply,
+    real_inner_self_eq_norm_sq, Pi.div_apply]
 
 theorem residualPath_ae (t : Icc (0 : ℝ) D.T) :
     residualPath τ hτ hτT B Y t =ᵐ[liftMeasure P] normalResidual τ hτ hτT B Y t := by
