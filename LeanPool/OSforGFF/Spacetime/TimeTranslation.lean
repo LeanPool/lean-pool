@@ -113,7 +113,7 @@ lemma timeShift_contDiff (s : ℝ) : ContDiff ℝ (⊤ : ℕ∞) (timeShift s) :
   apply contDiff_piLp'
   intro i
   have hcoord : ContDiff ℝ (⊤ : ℕ∞) (fun x : SpaceTime => x.ofLp i) :=
-    (contDiff_apply ℝ ℝ i).comp PiLp.contDiff_ofLp
+    contDiff_piLp_apply (p := 2)
   change ContDiff ℝ (⊤ : ℕ∞) (fun x : SpaceTime => if i.val = 0 then x.ofLp i + s else x.ofLp i)
   split_ifs with h
   · exact hcoord.add contDiff_const

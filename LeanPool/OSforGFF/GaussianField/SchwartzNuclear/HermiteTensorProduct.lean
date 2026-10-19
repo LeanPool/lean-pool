@@ -12,6 +12,7 @@ public import Mathlib.Analysis.InnerProductSpace.EuclideanDist
 import LeanPool.OSforGFF.GaussianField.SchwartzNuclear.Basis1D
 import Mathlib.Algebra.Order.Chebyshev
 import Mathlib.Analysis.Calculus.ContDiff.Bounds
+import Mathlib.Analysis.Calculus.ContDiff.WithLp
 import Mathlib.Analysis.Calculus.SmoothSeries
 import Mathlib.Analysis.PSeries
 import Mathlib.Analysis.SpecialFunctions.Bernstein
