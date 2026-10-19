@@ -53,7 +53,7 @@ theorem hoffman_le_directed_path_bound {V : Type*} [Fintype V] [DecidableEq V] [
     (GallaiRoy.colorable_of_orientation G o ho k hk)
 
 /-- Wilf's spectral colouring bound gives an orientation with the same bound on directed paths. -/
-theorem exists_orientation_of_wilf_bound {V : Type*} [Fintype V] [DecidableEq V] [Nonempty V]
+theorem exists_orientation_of_wilf_bound {V : Type*} [Fintype V] [DecidableEq V]
     (G : SimpleGraph V) [DecidableRel G.Adj] (hA : (G.adjMatrix ℝ).IsHermitian) :
     ∃ o : V → V → Prop, GallaiRoy.IsOrientation G o ∧
       ∀ (m : ℕ) (f : Fin m → V), GallaiRoy.IsDirectedPath o f →
