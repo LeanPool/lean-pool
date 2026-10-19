@@ -81,7 +81,7 @@ theorem summable_pow_succ_mul_norm_pow_choose_two {q : ℂ} (hq : ‖q‖ < 1) (
 theorem hasSum_pow_choose_two_mul_pow_mul_qPochhammerInf' {q z : ℂ} (hq : ‖q‖ < 1) :
     HasSum (fun n : ℕ => q ^ n.choose 2 * z ^ n * qPochhammerInf (q * q ^ n) q)
       (qPochhammerInf q q * qPochhammerInf (-z) q) := by
-  (convert HasSum.mul_left (qPochhammerInf q q) (euler_second_identity' hq) using 1; try rfl)
+  convert HasSum.mul_left (qPochhammerInf q q) (euler_second_identity' hq) using 1
   ext n
   by_cases hn : qPochhammer q q n = 0
   · exact absurd hn <| qPochhammer_ne_zero hq (by linarith) n
@@ -408,7 +408,7 @@ theorem jacobiBilateral_mul_eq_div' {q z : ℂ} (hq : ‖q‖ < 1) (hq' : q ≠ 
             simp +arith +decide [Nat.choose]]; ring_nf
       simp +decide [mul_assoc, mul_comm, mul_left_comm, hq']
     · have := summable_inv_pow_mul_pow_choose_two (z := q * z) hq
-      (convert this.mul_left (q * z) using 2; first | rfl | ring_nf)
+      (convert this.mul_left (q * z) using 2; ring_nf)
       simp +decide [hq', hz', mul_assoc, mul_comm q]
   rw [h_split, h_pos, h_neg,
       show jacobiBilateral q z = jacobiBilateralPos q z + jacobiBilateralNeg q z from rfl]
