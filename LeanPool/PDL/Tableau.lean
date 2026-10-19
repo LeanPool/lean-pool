@@ -362,7 +362,6 @@ instance Tableau.instDecidableEq {Hist X} {tab1 tab2 : Tableau Hist X} :
   all_goals
     try simp_all only [reduceCtorEq, pdl.injEq, lrep.injEq]
     try exact instDecidableFalse
-    try exact instDecidableTrue
     try infer_instance
   case pdl.pdl =>
     by_cases h : Y1 = Y2
