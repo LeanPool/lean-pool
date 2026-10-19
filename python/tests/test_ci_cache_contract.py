@@ -695,10 +695,11 @@ def test_dependency_tracking_tests_scope(
         assert tracking["if"] == "needs.plan.outputs.dependency_tests == 'true'"
 
 
-def test_profiling_is_opt_in_and_cache_pruning_is_scheduled() -> None:
-    """Advisory compilation and maintenance do not run on ordinary PR events."""
+def test_profiling_is_automatic_and_cache_pruning_is_scheduled() -> None:
+    """PRs get advisory profiles while cache maintenance stays scheduled."""
     profiling = yaml.safe_load((WORKFLOWS / "proof-profile.yml").read_text())
     assert set(profiling.get("on", profiling.get(True))) == {
+        "pull_request",
         "issue_comment",
         "workflow_dispatch",
     }
