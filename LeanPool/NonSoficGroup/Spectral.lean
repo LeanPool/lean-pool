@@ -5851,7 +5851,7 @@ private theorem ofKernel_kerFun_one_eq_coe_single
     RKHS.kerFun (RKHS.OfKernel L) i (1 : ℂ) =
       ((Finsupp.single (i, (1 : ℂ)) (1 : ℂ) : RKHS.H₀ L) :
         RKHS.OfKernel L) := by
-  simp only [RKHS.kerFun, RKHS.coeCLM, ContinuousLinearMap.proj_pi,
+  simp only [RKHS.kerFun, RKHS.eval, RKHS.coeCLM, ContinuousLinearMap.proj_pi,
     ContinuousLinearMap.adjoint_adjoint,
     LinearMap.mkContinuous_apply, LinearMap.coe_mk, AddHom.coe_mk]
 
