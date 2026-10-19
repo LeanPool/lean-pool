@@ -6,6 +6,7 @@ Authors: OpenAI, Dean Cureton
 module
 
 public import LeanPool.MetricCodes.Binary
+public import Mathlib.Analysis.SpecialFunctions.Sqrt
 public import Mathlib.Tactic.NormNum.RealSqrt
 public import Mathlib.Analysis.SpecialFunctions.Trigonometric.Chebyshev.Orthogonality
 public import Mathlib.Analysis.SpecialFunctions.Trigonometric.InverseDeriv

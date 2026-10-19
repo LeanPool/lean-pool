@@ -1960,7 +1960,8 @@ theorem ScaledOpeningDerivative.mul {η : ℝ}
     change HasDerivAt (fun t => f t * g t)
       ((η * d) * g 0 + f 0 * (η * e)) 0 at hmul
     rw [hvalue, hvalue'] at hmul
-    convert hmul using 1; first | rfl | ring
+    convert hmul using 1
+    ring
   · exact hD.fun_mul hE
 
 theorem ScaledOpeningDerivative.inv {η : ℝ}
@@ -1976,7 +1977,8 @@ theorem ScaledOpeningDerivative.inv {η : ℝ}
     change HasDerivAt (fun t => (f t)⁻¹)
       (-(η * d) / (f 0) ^ 2) 0 at hinv
     rw [hvalue] at hinv
-    convert hinv using 1; first | rfl | ring
+    convert hinv using 1
+    ring
   · have hinv := hD.fun_inv hne
     change HasDerivAt (fun t => (F t)⁻¹)
       (-d / (F 0) ^ 2) 0 at hinv
@@ -2003,11 +2005,13 @@ theorem ScaledOpeningDerivative.sqrt {η : ℝ}
     change HasDerivAt (fun t => Real.sqrt (f t))
       (1 / (2 * Real.sqrt (f 0)) * (η * d)) 0 at hsqrt
     rw [hvalue] at hsqrt
-    convert hsqrt using 1; first | rfl | ring
+    convert hsqrt using 1
+    ring
   · have hsqrt := (Real.hasDerivAt_sqrt hne).comp 0 hD
     change HasDerivAt (fun t => Real.sqrt (F t))
       (1 / (2 * Real.sqrt (F 0)) * d) 0 at hsqrt
-    convert hsqrt using 1; first | rfl | ring
+    convert hsqrt using 1
+    ring
 
 theorem ScaledOpeningDerivative.finset_sum {ι : Type*} {η : ℝ}
     (s : Finset ι) {f F : ι → ℝ → ℝ}

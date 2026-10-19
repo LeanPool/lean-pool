@@ -4018,7 +4018,7 @@ theorem traceOperator_polarization_harmonicLift {r n : ℕ}
       all_goals
         simp only [ha, hb, ite_true, ite_false, Finset.sum_add_distrib,
           zero_add, add_zero, traceOperator_apply,
-          map_sum] <;> try abel
+          map_sum]; try abel
 
 theorem traceFree_of_firstTrace_and_highestWeight {r n : ℕ}
     (p : PolynomialSpace r n)
