@@ -2006,7 +2006,8 @@ private lemma measurableSet_boxAt (hπ : Irreducible π) (hint : IsIntegral 𝒪
     (η : ↥(integers (IntermediateField.adjoin K {x}))) :
     MeasurableSet (boxAt hπ hint hei ρ η) := by
   unfold boxAt
-  exact ((isCompact_imageLattice _).isClosed.vadd _).measurableSet
+  exact ((isCompact_imageLattice _).image
+    (uniformContinuous_const.add uniformContinuous_id).continuous).measurableSet
 
 omit [IsUniformAddGroup K] in
 /-- The multiplier of a root box has the expected norm order. -/
