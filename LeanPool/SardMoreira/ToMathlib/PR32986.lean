@@ -26,5 +26,5 @@ instance IsLocallyFiniteMeasure.prod {X Y : Type*} [TopologicalSpace X] [Topolog
     rcases finiteAt_nhds μ x with ⟨s, hs, hμs⟩
     rcases finiteAt_nhds ν y with ⟨t, ht, hνt⟩
     use s ×ˢ t, prod_mem_nhds hs ht
-    grw [prod_prod_le]
+    rw [prod_prod]
     exact ENNReal.mul_lt_top hμs hνt
