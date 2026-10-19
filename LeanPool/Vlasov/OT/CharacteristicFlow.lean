@@ -66,57 +66,6 @@ private alias charFlowTight_window_step :=
 private alias charFlowTight_window_velocity_carry :=
   _root_.Vlasov.charFlowTight_window_velocity_carry
 
-private alias exists_vlasov_characteristicFlow_twoWindow._simp_1_2 :=
-  _root_.Vlasov.exists_vlasov_characteristicFlow_twoWindow._simp_1_2
-
-private alias exists_vlasov_characteristicFlow_twoWindow._simp_1_3 :=
-  _root_.Vlasov.exists_vlasov_characteristicFlow_twoWindow._simp_1_3
-
-private alias exists_vlasov_characteristicFlow_twoWindow._simp_1_4 :=
-  _root_.Vlasov.exists_vlasov_characteristicFlow_twoWindow._simp_1_4
-
-private alias exists_vlasov_characteristicFlow_twoWindow._simp_1_5 :=
-  _root_.Vlasov.exists_vlasov_characteristicFlow_twoWindow._simp_1_5
-
-private alias exists_vlasov_characteristicFlow_twoWindow._simp_1_6 :=
-  _root_.Vlasov.exists_vlasov_characteristicFlow_twoWindow._simp_1_6
-
-private alias exists_vlasov_characteristicFlow_twoWindow._simp_1_7 :=
-  _root_.Vlasov.exists_vlasov_characteristicFlow_twoWindow._simp_1_7
-
-private alias exists_vlasov_characteristicFlow_twoWindow._simp_1_8 :=
-  _root_.Vlasov.exists_vlasov_characteristicFlow_twoWindow._simp_1_8
-
-private alias flow_difference_growth_bound._abel_1_1 :=
-  _root_.Vlasov.flow_difference_growth_bound._abel_1_1
-
-private alias flow_difference_mild_bound._abel_1_1 :=
-  _root_.Vlasov.flow_difference_mild_bound._abel_1_1
-
-private alias flow_difference_mild_bound._abel_1_2 :=
-  _root_.Vlasov.flow_difference_mild_bound._abel_1_2
-
-private alias gronwall_envelope_exists._simp_1_1 :=
-  _root_.Vlasov.gronwall_envelope_exists._simp_1_1
-
-private alias gronwall_envelope_exists._simp_1_2 :=
-  _root_.Vlasov.gronwall_envelope_exists._simp_1_2
-
-private alias gronwall_envelope_exists._simp_1_3 :=
-  _root_.Vlasov.gronwall_envelope_exists._simp_1_3
-
-private alias gronwall_envelope_exists._simp_1_4 :=
-  _root_.Vlasov.gronwall_envelope_exists._simp_1_4
-
-private alias gronwall_envelope_exists._simp_1_5 :=
-  _root_.Vlasov.gronwall_envelope_exists._simp_1_5
-
-private alias gronwall_envelope_exists._simp_1_6 :=
-  _root_.Vlasov.gronwall_envelope_exists._simp_1_6
-
-private alias gronwall_envelope_exists._simp_1_7 :=
-  _root_.Vlasov.gronwall_envelope_exists._simp_1_7
-
 private alias hasDerivWithinAt_Icc_self :=
   _root_.Vlasov.hasDerivWithinAt_Icc_self
 

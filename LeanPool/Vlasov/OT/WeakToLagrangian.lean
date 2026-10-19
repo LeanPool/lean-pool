@@ -87,60 +87,7 @@ namespace Vlasov
 
 open MeasureTheory
 
--- Retain the compiled auxiliary theorem names from before the analysis module was extracted.
-private alias picardIter_continuousOn_and_bound._simp_1_1 :=
-  _root_.Vlasov.picardIter_continuousOn_and_bound._simp_1_1
-
-private alias picardIter_continuousOn_and_bound._simp_1_2 :=
-  _root_.Vlasov.picardIter_continuousOn_and_bound._simp_1_2
-
-private alias picardIter_continuousOn_and_bound._simp_1_3 :=
-  _root_.Vlasov.picardIter_continuousOn_and_bound._simp_1_3
-
-private alias picardIter_continuousOn_and_bound._simp_1_4 :=
-  _root_.Vlasov.picardIter_continuousOn_and_bound._simp_1_4
-
-private alias picardIter_continuousOn_and_bound._simp_1_5 :=
-  _root_.Vlasov.picardIter_continuousOn_and_bound._simp_1_5
-
-private alias picardIter_continuousOn_and_bound._simp_1_6 :=
-  _root_.Vlasov.picardIter_continuousOn_and_bound._simp_1_6
-
-private alias picardIter_continuousOn_and_bound._simp_1_7 :=
-  _root_.Vlasov.picardIter_continuousOn_and_bound._simp_1_7
-
-private alias hasFDerivAt_of_continuous_partials._abel_1_1 :=
-  _root_.Vlasov.hasFDerivAt_of_continuous_partials._abel_1_1
-
-private alias hasFDerivAt_of_continuous_partials_open._abel_1_1 :=
-  _root_.Vlasov.hasFDerivAt_of_continuous_partials_open._abel_1_1
-
-
 variable {d : ℕ} [NeZero d]
-
-private alias convolveFunctionMeasure_hasFDerivAt._abel_1_2 :=
-  _root_.Vlasov.convolveFunctionMeasure_hasFDerivAt._abel_1_2
-
-private alias exists_frozenField_charFlow_On._simp_1_1 :=
-  _root_.Vlasov.exists_frozenField_charFlow_On._simp_1_1
-
-private alias charFlow_hasFDerivAt_of_fundamentalMatrix._simp_1_1 :=
-  _root_.Vlasov.charFlow_hasFDerivAt_of_fundamentalMatrix._simp_1_1
-
-private alias vlasovField_taylorRemainder_uniform._abel_1_4 :=
-  _root_.Vlasov.vlasovField_taylorRemainder_uniform._abel_1_4
-
-private alias vlasovField_taylorRemainder_uniform._simp_1_2 :=
-  _root_.Vlasov.vlasovField_taylorRemainder_uniform._simp_1_2
-
-private alias vlasovField_taylorRemainder_uniform._simp_1_3 :=
-  _root_.Vlasov.vlasovField_taylorRemainder_uniform._simp_1_3
-
-private alias inner_integrand_integrable._simp_1_1 :=
-  _root_.Vlasov.inner_integrand_integrable._simp_1_1
-
-private alias inner_integrand_integrable._simp_1_2 :=
-  _root_.Vlasov.inner_integrand_integrable._simp_1_2
 
 -- ── Helpers for `transportedIntegral_hasDerivAt_zero`, extracted from its proof body. ──
 

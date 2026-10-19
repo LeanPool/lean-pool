@@ -68,27 +68,6 @@ private alias vlasovWellPosedness_local_picard_sequence :=
 private alias dobrushinFlow_marginal_gradW_integrable :=
   _root_.Vlasov.dobrushinFlow_marginal_gradW_integrable
 
-private alias exists_localSmallness_window._simp_1_1 :=
-  _root_.Vlasov.exists_localSmallness_window._simp_1_1
-
-private alias exists_localSmallness_window._simp_1_2 :=
-  _root_.Vlasov.exists_localSmallness_window._simp_1_2
-
-private alias exists_localSmallness_window._simp_1_3 :=
-  _root_.Vlasov.exists_localSmallness_window._simp_1_3
-
-private alias exists_localSmallness_window._simp_1_4 :=
-  _root_.Vlasov.exists_localSmallness_window._simp_1_4
-
-private alias exists_localSmallness_window._simp_1_5 :=
-  _root_.Vlasov.exists_localSmallness_window._simp_1_5
-
-private alias exists_localSmallness_window._simp_1_6 :=
-  _root_.Vlasov.exists_localSmallness_window._simp_1_6
-
-private alias exists_localSmallness_window._simp_1_7 :=
-  _root_.Vlasov.exists_localSmallness_window._simp_1_7
-
 private alias vlasovGlue_composed_integral_eq :=
   _root_.Vlasov.vlasovGlue_composed_integral_eq
 
@@ -112,9 +91,6 @@ private alias vlasovGlue_flow_aemeasurable :=
 
 private alias vlasovGlue_flow_growthBound :=
   _root_.Vlasov.vlasovGlue_flow_growthBound
-
-private alias vlasovGlue_flow_growthBound._simp_1_1 :=
-  _root_.Vlasov.vlasovGlue_flow_growthBound._simp_1_1
 
 private alias vlasovGlue_gradVφ_continuous :=
   _root_.Vlasov.vlasovGlue_gradVφ_continuous
