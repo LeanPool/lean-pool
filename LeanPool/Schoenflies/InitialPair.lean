@@ -1057,8 +1057,6 @@ theorem tgtOuter_meet (hα : |α| < 1) (hβ : |β| < 1) (i j : Fin 6) (hij : i �
           first
             | (exfalso; linarith)
             | exact ⟨Or.inl (Plane.eq_mk (by linarith) (by linarith)),
-                Or.inl (Plane.eq_mk (by linarith) (by linarith))⟩
-            | exact ⟨Or.inl (Plane.eq_mk (by linarith) (by linarith)),
                 Or.inr (Plane.eq_mk (by linarith) (by linarith))⟩
             | exact ⟨Or.inr (Plane.eq_mk (by linarith) (by linarith)),
                 Or.inl (Plane.eq_mk (by linarith) (by linarith))⟩
