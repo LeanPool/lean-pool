@@ -8,6 +8,7 @@ module
 public import LeanPool.PolylogIntegrals.Defs
 public import Mathlib.Analysis.PSeries
 public import Mathlib.Analysis.SpecialFunctions.Integrals.Log
+public import Mathlib.Analysis.SpecialFunctions.Log.NegMulLog
 public import Mathlib.Analysis.SpecialFunctions.Trigonometric.ArctanDeriv
 public import Mathlib.MeasureTheory.Integral.IntervalIntegral.IntegrationByParts
 
