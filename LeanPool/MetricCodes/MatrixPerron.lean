@@ -5,10 +5,10 @@ Authors: OpenAI, Dean Cureton
 -/
 module
 
-public import Mathlib.Algebra.Order.Archimedean.Real.Hom
 public import Mathlib.Analysis.InnerProductSpace.Rayleigh
-public import Mathlib.Analysis.Matrix.Hermitian
 public import Mathlib.Combinatorics.Quiver.ConnectedComponent
+import Mathlib.Algebra.Order.Archimedean.Real.Hom
+import Mathlib.Analysis.Matrix.Hermitian
 
 /-!
 # Perron eigenvectors of finite nonnegative symmetric matrices

@@ -6,6 +6,9 @@ Authors: OpenAI, Dean Cureton
 module
 
 public import LeanPool.MetricCodes.SpectralDecomposition
+import Mathlib.Algebra.Order.Floor.Semifield
+import Mathlib.LinearAlgebra.Eigenspace.Minpoly
+import Mathlib.Tactic.NormNum.RealSqrt
 
 /-!
 # Binary and spherical code bounds
@@ -206,7 +209,7 @@ theorem fixedLevelHierarchyCodeBound_of_actualCharacteristicMinor
     exact (boxSignature_interlaces a b hstable high).antitone_ambient
   intro p
   exact allRankCartanCharacteristicProjector_canonicalAxis_eq_physicalClebsch
-    lam mu h hgram hfinite hdom row hhigh hn p
+    (n := n) lam mu h hgram hfinite hdom row hhigh hn p
 
 end HigherYoungAllRankActualProjectedAxisCompletion
 
@@ -543,7 +546,7 @@ theorem physicalPaddedPieriChannel_adjoint_canonicalAxis_eq_zero_of_not_interlac
       (appendZeroWeight_antitone mu
         (interlaces_antitone_stabilizer h)) hbad
     intro a b
-    apply pieri_crossGram_intertwines_of_skew lam mu i C A
+    apply pieri_crossGram_intertwines_of_skew (n := n) lam mu i C A
       (youngAmbientRotation
         (paddedPieriSource (appendZeroWeight lam) i)
           a.castSucc b.castSucc)

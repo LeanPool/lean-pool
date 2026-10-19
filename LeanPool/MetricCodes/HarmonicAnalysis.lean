@@ -6,10 +6,21 @@ Authors: OpenAI, Dean Cureton
 module
 
 public import LeanPool.MetricCodes.Rates
-public import Mathlib.Algebra.Order.Antidiag.FinsuppEquiv
-public import Mathlib.Analysis.InnerProductSpace.Trace
-public import Mathlib.RingTheory.MvPolynomial.EulerIdentity
-public import Mathlib.Topology.MetricSpace.CoveringNumbers
+public import Mathlib.Algebra.MvPolynomial.PDeriv
+public import Mathlib.Algebra.Order.Archimedean.Real.Hom
+public import Mathlib.LinearAlgebra.Trace
+public import Mathlib.RingTheory.MvPolynomial.Homogeneous
+import Mathlib.Algebra.MvPolynomial.CommRing
+import Mathlib.Algebra.Order.Antidiag.FinsuppEquiv
+import Mathlib.Algebra.Order.Floor.Semifield
+import Mathlib.Algebra.Order.Star.Real
+import Mathlib.Algebra.Ring.IsFormallyReal
+import Mathlib.Analysis.InnerProductSpace.Trace
+import Mathlib.Analysis.Matrix.Hermitian
+import Mathlib.Data.Nat.Dist
+import Mathlib.RingTheory.MvPolynomial.EulerIdentity
+import Mathlib.Tactic.NormNum.RealSqrt
+import Mathlib.Topology.MetricSpace.CoveringNumbers
 
 /-!
 # Harmonic analysis for spherical codes
@@ -2693,7 +2704,7 @@ theorem harmonicAxisLift_injective
   have hc := harmonicAxisProjection_correction_nonneg hn k
   have hproduct := mul_nonneg hc hdnonneg
   have hpzero : Fischer.harmonicInner n (k + 1) p p = 0 := by
-    nlinarith
+    exact le_antisymm ((le_add_of_nonneg_right hproduct).trans_eq hidentity.symm) hpnonneg
   exact (fischer_harmonicInner_self_eq_zero_iff
     n (k + 1) p).mp hpzero
 
@@ -5384,7 +5395,7 @@ theorem harmonicDimension_scaled_choose
       simp only [harmonicDimension]
       rw [htop, Nat.choose_succ_succ, hshift, hfactor]
       simp only [Nat.succ_eq_add_one] at hchoose ⊢
-      nlinarith
+      nlinarith only [hchoose, hnsub]
 
 theorem harmonicDimension_cross_mul
     {n : ℕ} (hn : 3 ≤ n) (i : ℕ) :

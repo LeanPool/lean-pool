@@ -8,8 +8,14 @@ module
 public import LeanPool.MetricCodes.MatrixPerron
 public import LeanPool.MetricCodes.Representation
 public import Mathlib.Combinatorics.SimpleGraph.Connectivity.Connected
-public import Mathlib.RingTheory.MvPolynomial.Groebner
 public import Mathlib.RingTheory.Regular.RegularSequence
+public import Mathlib.RingTheory.MvPolynomial.MonomialOrder
+import Mathlib.Algebra.Order.Floor.Semifield
+import Mathlib.Algebra.Order.Ring.Star
+import Mathlib.Algebra.Order.Star.Real
+import Mathlib.Algebra.Ring.IsFormallyReal
+import Mathlib.RingTheory.MvPolynomial.Groebner
+import Mathlib.Tactic.NormNum.RealSqrt
 
 /-!
 # Harmonic Young branching

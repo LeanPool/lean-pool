@@ -6,9 +6,17 @@ Authors: OpenAI, Dean Cureton
 module
 
 public import LeanPool.MetricCodes.Hierarchy
-public import Mathlib.Algebra.MvPolynomial.Funext
-public import Mathlib.Algebra.MvPolynomial.Monad
 public import Mathlib.Analysis.InnerProductSpace.TensorProduct
+import Mathlib.Algebra.MvPolynomial.CommRing
+import Mathlib.Algebra.MvPolynomial.Funext
+import Mathlib.Algebra.MvPolynomial.Monad
+import Mathlib.Algebra.Order.Antidiag.FinsuppEquiv
+import Mathlib.Algebra.Order.Floor.Semifield
+import Mathlib.Algebra.Order.Ring.Star
+import Mathlib.Algebra.Order.Star.Real
+import Mathlib.Algebra.Ring.IsFormallyReal
+import Mathlib.RingTheory.MvPolynomial.EulerIdentity
+import Mathlib.Tactic.NormNum.RealSqrt
 
 /-!
 # Representation-theoretic foundations
