@@ -5,13 +5,15 @@ Authors: Juan Pablo Traverso Gianini
 -/
 module
 
-public import LeanPool.ClassicalMatchingFactors.Regular.EulerCircuit
+public import Mathlib.Combinatorics.SimpleGraph.Trails
+public import Mathlib.Combinatorics.SimpleGraph.Connectivity.Connected
+public import Mathlib.Combinatorics.SimpleGraph.Finite
 
 /-!
 
-Imported from [jtraverso/euler-petersen](https://github.com/jtraverso/euler-petersen/blob/02c3f1a5327c5f066938860bb07e9fce226b36ca/Euler/Trail.lean), registered as PALOMAR-2026-10-16-000016. The original proof is retained; module paths and imports are adapted for this collection.
+Imported from [jtraverso/euler-petersen](https://github.com/jtraverso/euler-petersen/blob/02c3f1a5327c5f066938860bb07e9fce226b36ca/Euler/Trail.lean), registered as PALOMAR-2026-10-16-000016. The parity proof is retained, with shared circuit helpers and compatibility results consolidated here to avoid parallel circuit-existence proofs.
 
-# Caminos eulerianos abiertos
+# Circuitos y caminos eulerianos
 
 Un grafo finito conexo admite un trail euleriano (camino que recorre cada arista exactamente una
 vez, no necesariamente cerrado) si y sólo si tiene 0 ó 2 vértices de grado impar. Más
@@ -66,6 +68,38 @@ lemma exists_adj_not_mem_of_countP_ne {L : List (Sym2 V)} (hL : L.Nodup)
     ∃ y, G.Adj x y ∧ s(x, y) ∉ L := by
   by_contra! h'
   exact h (countP_eq_degree_of_forall_adj_mem hL hsub h')
+
+/-- Si el número de aristas de un trail incidentes en `x` no tiene la paridad de `deg x`,
+hay una arista en `x` que el trail no usa. -/
+lemma exists_adj_not_mem_edges_of_not_even {u v x : V} {p : G.Walk u v} (hp : p.IsTrail)
+    (hx : Even (G.degree x)) (hodd : ¬ Even (p.edges.countP fun e => x ∈ e)) :
+    ∃ y, G.Adj x y ∧ s(x, y) ∉ p.edges := by
+  apply exists_adj_not_mem_of_countP_ne hp.edges_nodup (fun e he => p.edges_subset_edgeSet he)
+  intro hcount
+  apply hodd
+  rwa [hcount]
+
+omit [Fintype V] [DecidableRel G.Adj] in
+/-- En un grafo conexo, si un trail no es euleriano, algún vértice del trail tiene
+una arista que el trail no usa. -/
+lemma exists_mem_support_adj_not_mem_edges (hconn : G.Connected) {u v : V} {p : G.Walk u v}
+    (hp : p.IsTrail) (hne : ¬ p.IsEulerian) :
+    ∃ x ∈ p.support, ∃ y, G.Adj x y ∧ s(x, y) ∉ p.edges := by
+  by_contra! h
+  apply hne
+  -- Todo vértice alcanzable desde el soporte está en el soporte.
+  have hclosed : ∀ a b (q : G.Walk a b), a ∈ p.support → b ∈ p.support := by
+    intro a b q
+    induction q with
+    | nil => exact id
+    | cons hab q ih =>
+      intro ha
+      exact ih (p.snd_mem_support_of_mem_edges (h _ ha _ hab))
+  have hall : ∀ w, w ∈ p.support := fun w =>
+    hclosed u w (hconn.preconnected u w).some p.start_mem_support
+  refine hp.isEulerian_of_forall_mem fun e he => ?_
+  induction e using Sym2.ind with
+  | _ a b => exact h a (hall a) b he
 
 /-- Sea `S` una lista de aristas que en cada vértice tiene la paridad del grado. Si `x` tiene
 una arista fuera de `S`, existe un trail cerrado en `x`, de longitud positiva, que no usa
@@ -174,6 +208,30 @@ cualquier vértice prefijado. -/
 theorem exists_isEulerian_circuit_at (hconn : G.Connected) (heven : ∀ v, Even (G.degree v))
     (a : V) : ∃ p : G.Walk a a, p.IsEulerian :=
   exists_isEulerian_of_parity hconn fun x => iff_of_true (heven x) fun h => absurd rfl h
+
+/-- **Euler (suficiencia).** Un grafo finito conexo con todos sus grados pares admite un
+circuito euleriano. -/
+theorem exists_isEulerian_of_forall_even_degree (hconn : G.Connected)
+    (heven : ∀ v, Even (G.degree v)) : ∃ u, ∃ p : G.Walk u u, p.IsEulerian := by
+  obtain ⟨u⟩ := hconn.nonempty
+  obtain ⟨p, hp⟩ := exists_isEulerian_circuit_at hconn heven u
+  exact ⟨u, p, hp⟩
+
+/-- **Teorema de Euler.** Un grafo finito conexo admite un circuito euleriano si y sólo si
+todos sus vértices tienen grado par. -/
+theorem exists_isEulerian_iff_forall_even_degree (hconn : G.Connected) :
+    (∃ u, ∃ p : G.Walk u u, p.IsEulerian) ↔ ∀ v, Even (G.degree v) := by
+  constructor
+  · rintro ⟨u, p, hp⟩ v
+    exact hp.even_degree_iff.mpr fun h => absurd rfl h
+  · exact exists_isEulerian_of_forall_even_degree hconn
+
+/-- Compatibility form of circuit existence, with the original trail-extension conclusion. -/
+lemma exists_isEulerian_or_longer_trail (hconn : G.Connected)
+    (heven : ∀ v, Even (G.degree v)) {u v : V} (p : G.Walk u v) (_hp : p.IsTrail) :
+    (∃ w, ∃ q : G.Walk w w, q.IsEulerian) ∨
+      ∃ a b, ∃ q : G.Walk a b, q.IsTrail ∧ p.length < q.length := by
+  exact Or.inl (exists_isEulerian_of_forall_even_degree hconn heven)
 
 /-- **Teorema de Euler (trails).** Un grafo finito conexo admite un trail euleriano si y sólo
 si tiene 0 ó 2 vértices de grado impar. -/

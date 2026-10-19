@@ -79,7 +79,7 @@ theorem outer_notMem_of_inner_all (hmin : ∀ x ∈ U, ¬ TwoComp (gadget G f) U
 
 open Classical in
 theorem outer_notMem_of_outer_notMem (hmin : ∀ x ∈ U, ¬ TwoComp (gadget G f) U x) {v : V}
-    (hT : ∀ i, (.inr ⟨v, i⟩ : GV G f) ∉ U) {z : G.Dart} (hz : z.fst = v)
+    {z : G.Dart} (hz : z.fst = v)
     (hzU : (.inl z : GV G f) ∉ U) {d : G.Dart} (hd : d.fst = v) :
     (.inl d : GV G f) ∉ U := by
   intro hdU
@@ -158,7 +158,7 @@ theorem F3 (hmin : ∀ x ∈ U, ¬ TwoComp (gadget G f) U x) {v : V} (hvT : v �
     hvS (mem_Sset.mpr ⟨hvT, h⟩)
   push Not at this
   obtain ⟨z, hz, hzU⟩ := this
-  exact outer_notMem_of_outer_notMem hmin (F1 hmin hvT) hz hzU hd
+  exact outer_notMem_of_outer_notMem hmin hz hzU hd
 
 open Classical in
 theorem F4 {v : V} (hv : v ∈ Sset G f U) {d : G.Dart} (hd : d.fst = v) :
