@@ -45,11 +45,9 @@ lemma integral_equality_help (s t : ℝ) (s0 : 0 < s) (s1 : s < 1) (t0 : 0 < t) 
       rw[div_eq_div_iff]
       · ring_nf
       · apply ne_of_gt
-        apply mul_pos
-        · apply mul_pos <;> nlinarith
-        · nlinarith
+        nlinarith only [h4]
       · apply ne_of_gt
-        apply mul_pos <;> nlinarith
+        nlinarith only [h4]
     · linarith
     · linarith
   rw[← intervalIntegral.integral_congr]
