@@ -17,7 +17,7 @@ import Mathlib.Algebra.BigOperators.Field
 import Mathlib.Algebra.Order.Star.Real
 import Mathlib.Analysis.Complex.Order
 import Mathlib.Analysis.RCLike.Basic
-import Mathlib.Data.Rat.Star
+import Mathlib.Algebra.Order.Star.Rat
 import Mathlib.Tactic.Positivity.Finset
 
 /-!
