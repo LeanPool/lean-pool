@@ -5,6 +5,7 @@ Authors: Bastiaan J Braams
 -/
 module
 
+public import Mathlib.Analysis.Analytic.Constructions
 public import Mathlib.RingTheory.Ideal.Quotient.Operations
 public import Mathlib.RingTheory.LocalRing.MaximalIdeal.Basic
 public import Mathlib.Topology.Germ
