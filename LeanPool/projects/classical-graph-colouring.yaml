@@ -7,7 +7,8 @@ summary: >-
   lists supplies kernels for Galvin's orientation of the line graph. This gives
   list edge colouring from lists of size at least the maximum degree and the
   Dinitz array theorem. Gallai–Hasse–Roy–Vitaver relates graph colourings to
-  directed paths, while Wilf's and Hoffman's eigenvalue bounds control the
+  directed paths (with a bridge to Lean Pool's digraph simple-path API), while
+  Wilf's and Hoffman's eigenvalue bounds control the
   chromatic and independence numbers. Two interface corollaries turn the
   spectral colouring bounds into directed-path bounds. Existing Vizing,
   matching-cover, poset and equitable-colouring results are reused or left
@@ -93,8 +94,8 @@ main_results:
   source_ref: Hoffman (1970); PALOMAR-2026-10-18-000016.
 - declaration: SpectralBounds.hoffman_ratio
   informal: >-
-    Every independent set in a finite regular graph satisfies Hoffman's
-    adjacency-eigenvalue ratio bound.
+    Every independent set in a finite regular graph of positive degree
+    satisfies Hoffman's adjacency-eigenvalue ratio bound.
   source_ref: Hoffman (1970); PALOMAR-2026-10-18-000016.
 - declaration: ClassicalGraphColouring.hoffman_le_directed_path_bound
   informal: >-

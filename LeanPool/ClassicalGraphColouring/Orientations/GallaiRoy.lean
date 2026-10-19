@@ -6,6 +6,7 @@ Authors: Juan Pablo Traverso Gianini
 module
 
 public import Mathlib.Combinatorics.SimpleGraph.Coloring.Vertex
+public import LeanPool.CircuitComplexity.Digraph.Defs
 public import Mathlib.Tactic
 
 /-!
@@ -20,7 +21,7 @@ for all consecutive indices.
   Vitaver (1962).** If some orientation of `G` has no directed path with more than `k` vertices,
   then `G` is `k`-colourable.
 * `GallaiRoy.exists_orientation_of_colorable`: conversely, a `k`-colourable graph has an
-  (acyclic) orientation without directed paths on more than `k` vertices. Together: the
+  orientation without directed paths on more than `k` vertices. Together: the
   chromatic number is the minimum, over orientations, of the number of vertices of a longest
   directed path.
 -/
@@ -41,6 +42,15 @@ def IsOrientation (G : SimpleGraph V) (o : V → V → Prop) : Prop :=
 /-- `f` is a directed path of `o` with `m` vertices. -/
 def IsDirectedPath (o : V → V → Prop) {m : ℕ} (f : Fin m → V) : Prop :=
   Function.Injective f ∧ ∀ (i : ℕ) (h : i + 1 < m), o (f ⟨i, by omega⟩) (f ⟨i + 1, h⟩)
+
+/-- The relation-based path predicate agrees with Lean Pool's digraph simple-path API. -/
+theorem isDirectedPath_iff_isSimplePath (D : Digraph V) {m : ℕ} (f : Fin m → V) :
+    IsDirectedPath D.Adj f ↔ D.IsSimplePath f := by
+  constructor
+  · rintro ⟨hinj, hstep⟩
+    exact ⟨fun i hi => hstep i.val hi, hinj⟩
+  · rintro ⟨hstep, hinj⟩
+    exact ⟨hinj, fun i hi => hstep ⟨i, by omega⟩ hi⟩
 
 private lemma transGen_of_mem_isChain {D : V → V → Prop} :
     ∀ {a : V} {l : List V}, List.IsChain D (a :: l) → ∀ w ∈ l, Relation.TransGen D a w

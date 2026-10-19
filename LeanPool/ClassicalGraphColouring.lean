@@ -18,6 +18,7 @@ Kőnig's edge-colouring theorem supplies a proper colouring of a finite bipartit
 arbitrary edge lists of size at least `Δ(G)`. The development also proves the Gale–Shapley
 stable-matching theorem used to construct the kernels and deduces the Dinitz array theorem.
 Gallai–Hasse–Roy–Vitaver relates proper colourings to longest directed paths in orientations.
+Its path predicate is bridged to Lean Pool's `Digraph.IsSimplePath` API.
 Wilf's and Hoffman's bounds compare the chromatic and independence numbers with adjacency
 eigenvalues. Two interface corollaries below transfer the spectral colouring bounds to directed
 path statements.
