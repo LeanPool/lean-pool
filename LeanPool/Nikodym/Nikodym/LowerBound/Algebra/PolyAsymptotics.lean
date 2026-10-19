@@ -8,7 +8,7 @@ module
 
 public import Mathlib.Algebra.Order.Ring.Star
 public import Mathlib.Analysis.Polynomial.Basic
-public import Mathlib.Data.Rat.Star
+public import Mathlib.Algebra.Order.Star.Rat
 public import Mathlib.Tactic
 
 /-!

@@ -9,7 +9,7 @@ module
 public import Mathlib.Algebra.Order.Ring.Star
 public import Mathlib.Analysis.Normed.Field.Lemmas
 public import Mathlib.Data.Nat.Factorial.BigOperators
-public import Mathlib.Data.Rat.Star
+public import Mathlib.Algebra.Order.Star.Rat
 public import Mathlib.Tactic
 
 /-!

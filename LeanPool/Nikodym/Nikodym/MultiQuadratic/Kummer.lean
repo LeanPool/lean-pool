@@ -9,7 +9,7 @@ module
 public import Mathlib.Algebra.Order.Ring.Star
 public import Mathlib.Algebra.Order.Star.Real
 public import Mathlib.Analysis.RCLike.Basic
-public import Mathlib.Data.Int.Star
+public import Mathlib.Algebra.Order.Star.Int
 public import Mathlib.Data.Nat.Squarefree
 public import Mathlib.NumberTheory.Real.Irrational
 public import Mathlib.RingTheory.Algebraic.Integral
