@@ -2955,9 +2955,7 @@ omit [DecidableEq K] [DecidableEq R] [DecidableEq σ] [Fintype K] [Fintype R] [F
   obtain ⟨i, a, w⟩ := q
   cases i <;> cases a <;> cases w <;>
     simp only [uRealize, Pi.zero_apply];
-    first
-      | rfl
-      | (split_ifs <;> simp)
+    split_ifs <;> simp
 
 omit [DecidableEq K] [DecidableEq R] [DecidableEq σ] [Fintype K] [Fintype R] [Fintype ι]
     [Fintype σ] in
@@ -2968,7 +2966,6 @@ lemma uRealize_add (ψ φ : UBasis R ι σ K → ℂ) :
   cases i <;> cases a <;> cases w <;>
     simp only [uRealize, Pi.add_apply] <;>
     first
-      | rfl
       | (split_ifs <;> simp)
       | simp
 
@@ -2981,7 +2978,6 @@ lemma uRealize_sub (ψ φ : UBasis R ι σ K → ℂ) :
   cases i <;> cases a <;> cases w <;>
     simp only [uRealize, Pi.sub_apply] <;>
     first
-      | rfl
       | (split_ifs <;> simp)
       | simp
 
@@ -3004,7 +3000,6 @@ lemma uRealize_smul (c : ℂ) (ψ : UBasis R ι σ K → ℂ) :
   cases i <;> cases a <;> cases w <;>
     simp only [uRealize, Pi.smul_apply, smul_eq_mul] <;>
     first
-      | rfl
       | (split_ifs <;> simp)
       | simp
 
