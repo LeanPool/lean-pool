@@ -21,6 +21,7 @@ Authors: Susanna Bertolini, Jaume de Dios Pont
 module
 
 public import Mathlib.MeasureTheory.Integral.IntervalIntegral.Basic
+import Mathlib.Analysis.Convex.Deriv
 import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
 import Mathlib.Analysis.SpecialFunctions.Stirling
 import Mathlib.Tactic.NormNum.Parity
