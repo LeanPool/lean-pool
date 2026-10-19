@@ -176,8 +176,7 @@ lemma step1_double :
       · rw [abs_of_pos hp.1.1]
         exact hp.1.2.trans (by norm_num)
       · exact mul_le_mul (extremalTest_abs_le _) (extremalTest_abs_le _) (abs_nonneg _) hCnn
-    · rw [Measure.volume_eq_prod]
-      refine lt_of_le_of_lt (Measure.prod_prod_le _ _) ?_
+    · rw [Measure.volume_eq_prod, Measure.prod_prod]
       apply ENNReal.mul_lt_top
       · rw [Set.uIoc]; exact measure_Ioc_lt_top
       · rw [Set.uIoc]; exact measure_Ioc_lt_top
@@ -278,8 +277,7 @@ lemma step1_double :
           exact ⟨by linarith [hp.1.2, hp.2.1], by norm_num⟩
         · positivity
         · positivity
-      · rw [Measure.volume_eq_prod]
-        refine lt_of_le_of_lt (Measure.prod_prod_le _ _) ?_
+      · rw [Measure.volume_eq_prod, Measure.prod_prod]
         apply ENNReal.mul_lt_top
         · rw [Set.uIoc]; exact measure_Ioc_lt_top
         · rw [Set.uIoc]; exact measure_Ioc_lt_top
