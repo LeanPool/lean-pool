@@ -12,6 +12,7 @@ public import Mathlib.MeasureTheory.Integral.Bochner.Basic
 public import Mathlib.MeasureTheory.Measure.Haar.OfBasis
 import LeanPool.SpectralPositivity.Matrix.MetzlerExp
 import Mathlib.Algebra.Group.Pi.Units
+import Mathlib.Analysis.Matrix.Normed
 import Mathlib.Analysis.Matrix.PosDef
 import Mathlib.Analysis.Normed.Algebra.MatrixExponential
 import Mathlib.Analysis.SpecialFunctions.ImproperIntegrals
