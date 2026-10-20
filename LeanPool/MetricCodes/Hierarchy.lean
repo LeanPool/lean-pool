@@ -136,7 +136,7 @@ theorem normalizedCoefficient_eq_Gamma
           (a * (1 + a)) * (1 + 2 * a) ^ 2 := by
       ring
     rw [hpoly, Real.sqrt_mul hfactor, Real.sqrt_sq hlin]
-    ring
+    ac_rfl
   rw [hrad]
   congr 1
   ring
@@ -170,8 +170,8 @@ theorem tendsto_terminal_coefficient {a b : ℝ}
           (2 * a + 1 - 2 * 0) * (2 * a + 1)) ≠ 0 := by
     apply ne_of_gt
     apply Real.sqrt_pos.2
-    have hone : 0 < a + 1 := by linarith
-    have htwo : 0 < 2 * a + 1 := by linarith
+    have hone : 0 < a + 1 := by linarith only [ha]
+    have htwo : 0 < 2 * a + 1 := by linarith only [ha]
     simpa only [add_zero, mul_zero, sub_zero,
       gt_iff_lt] using mul_pos (mul_pos (mul_pos ha hone) htwo) htwo
   have hnorm := hnum.div hroot hrootne
@@ -206,10 +206,10 @@ theorem eventually_transverse_add_le_longitudinal
   let δ : ℝ := (a - b) / 2
   have hδ : 0 < δ := by
     dsimp [δ]
-    linarith
+    linarith only [hba]
   have hδlt : δ < a - b := by
     dsimp [δ]
-    linarith
+    linarith only [hba]
   have hratio :=
     ((tendsto_longitudinal_ratio ha.le).sub
       (tendsto_transverse_ratio hb)).eventually
@@ -234,7 +234,7 @@ theorem eventually_transverse_add_le_longitudinal
   have hreal :
       (transverseDegree b n : ℝ) + (m : ℝ) ≤
         (longitudinalDegree a n : ℝ) := by
-    linarith
+    linarith only [hnlarge, hmul]
   exact_mod_cast hreal
 
 /-- The terminal edge rayleigh used in the spherical-code argument. -/
@@ -307,20 +307,18 @@ theorem eventually_topEigenvalue_gt {a b s : ℝ}
       s < SpherePacking.Jacobi.topEigenvalue
         n (transverseDegree b n) (longitudinalDegree a n) := by
   have ha : 0 < a := lt_of_le_of_lt hb hba
-  have hgamma : 0 < 2 * MetricCodes.Gamma a b := by
-    exact mul_pos (by norm_num) (MetricCodes.Gamma_pos hb hba)
   let g : ℝ := 2 * MetricCodes.Gamma a b
   let ε : ℝ := (g - s) / 2
   have hε : 0 < ε := by
     dsimp [ε, g]
-    linarith
+    linarith only [hs]
   obtain ⟨m, hm⟩ := exists_nat_gt (g / ε)
   have hprod : g < (m : ℝ) * ε :=
     (div_lt_iff₀ hε).mp hm
   have hden : 0 < (m : ℝ) + 1 := by positivity
   have hrem : g / ((m : ℝ) + 1) < ε := by
     apply (div_lt_iff₀ hden).2
-    nlinarith [hgamma]
+    linarith only [hε, hprod]
   have hidentity :
       ((m : ℝ) / ((m : ℝ) + 1)) * g =
         g - g / ((m : ℝ) + 1) := by
@@ -329,7 +327,7 @@ theorem eventually_topEigenvalue_gt {a b s : ℝ}
       s < ((m : ℝ) / ((m : ℝ) + 1)) * g := by
     rw [hidentity]
     dsimp [ε] at hrem
-    linarith
+    linarith only [hs, hrem]
   have hquot :=
     (tendsto_terminalEdgeRayleigh ha hb m).eventually
       (lt_mem_nhds (show
@@ -349,7 +347,7 @@ theorem spectralGap_pos {s a b : ℝ}
     (h : s < 2 * MetricCodes.Gamma a b) :
     0 < spectralGap s a b := by
   unfold spectralGap
-  linarith
+  linarith only [h]
 
 theorem eventually_topEigenvalue_uniform_gap {a b s : ℝ}
     (hb : 0 ≤ b) (hba : b < a)
@@ -360,7 +358,7 @@ theorem eventually_topEigenvalue_uniform_gap {a b s : ℝ}
           n (transverseDegree b n) (longitudinalDegree a n) := by
   apply eventually_topEigenvalue_gt hb hba
   unfold spectralGap
-  linarith
+  linarith only [hs]
 
 /-- The spectral prefactor used in the spherical-code argument. -/
 def spectralPrefactor (s a b : ℝ) : ℝ :=
@@ -399,7 +397,7 @@ theorem eventually_sphericalCode_card_le_harmonicQuotient
   have heigengap :
       s < SpherePacking.Jacobi.topEigenvalue
         n (transverseDegree b n) (longitudinalDegree a n) := by
-    linarith
+    linarith only [hgap, heigen]
   have hactual := sphericalCode_bound_of_actual_harmonic_channels
     hn hkl hs.le heigengap C
   change
@@ -411,7 +409,7 @@ theorem eventually_sphericalCode_card_le_harmonicQuotient
   have hden :
       0 < SpherePacking.Jacobi.topEigenvalue
         n (transverseDegree b n) (longitudinalDegree a n) - s := by
-    linarith
+    linarith only [hgap, heigen]
   have hfrac :
       (1 - s) /
           (SpherePacking.Jacobi.topEigenvalue
@@ -420,8 +418,8 @@ theorem eventually_sphericalCode_card_le_harmonicQuotient
     unfold spectralPrefactor
     apply (div_le_div_iff₀ hden hgap).2
     apply mul_le_mul_of_nonneg_left
-    · linarith
-    · linarith
+    · linarith only [heigen]
+    · linarith only [hs]
   have htruncated :
       0 ≤ SpherePacking.truncatedDimensionQuotient a b n := by
     unfold SpherePacking.truncatedDimensionQuotient
@@ -755,9 +753,9 @@ theorem exists_oneRow_certificate_better_than_levelZero
       with b hγ hbentropy (hb : 0 < b)
     refine ⟨hb, ?_, ?_, hbentropy⟩
     · unfold MetricCodes.Spherical.sphericalImprovementPath
-      nlinarith [mul_pos (sub_pos.mpr hslope) hb]
+      linarith only [ha, mul_pos (sub_pos.mpr hslope) hb]
     · rw [hclassical] at hγ
-      nlinarith
+      linarith only [hspectral, hγ]
   obtain ⟨b, hb, hba, hgap, hcost⟩ := hgood.exists
   exact ⟨MetricCodes.Spherical.sphericalImprovementPath a b,
     b, hb, hba, hgap, hcost⟩
@@ -776,7 +774,7 @@ theorem eventually_sphericalCode_card_lt_levelZero
     have hazero : a 0 = 0 := le_antisymm (le_of_not_gt hnot) ha_nonneg
     rw [Gamma_zero, hazero] at hspectral
     norm_num [spectralAtom] at hspectral
-    linarith
+    linarith only [hs, hspectral]
   rw [Gamma_zero] at hspectral
   obtain ⟨A, B, hB, hBA, hgap, hcost⟩ :=
     exists_oneRow_certificate_better_than_levelZero ha hspectral
@@ -801,7 +799,7 @@ theorem zero_fibre_spectral_iff_classicalThreshold_lt
   have hroot : 0 < Real.sqrt (a * (1 + a)) :=
     Real.sqrt_pos.mpr hvariance
   have hroot_sq := Real.sq_sqrt hvariance.le
-  have hradical : 0 < 1 - s ^ 2 := by nlinarith
+  have hradical : 0 < 1 - s ^ 2 := by nlinarith only [hs', hs]
   have hclassical : 0 < Real.sqrt (1 - s ^ 2) :=
     Real.sqrt_pos.mpr hradical
   have hclassical_sq := Real.sq_sqrt hradical.le
@@ -828,27 +826,27 @@ theorem zero_fibre_spectral_iff_classicalThreshold_lt
         (mul_nonneg (by norm_num : (0 : ℝ) ≤ 2) hroot.le)).mpr h
       apply (sq_lt_sq₀ (by norm_num : (0 : ℝ) ≤ 1)
         (mul_nonneg hclassical.le hlinear.le)).mp
-      nlinarith [hsquares]
+      linarith only [hsq, hsquares]
     · intro h
       have hsq := (sq_lt_sq₀ (by norm_num : (0 : ℝ) ≤ 1)
         (mul_nonneg hclassical.le hlinear.le)).mpr h
       apply (sq_lt_sq₀
         (mul_nonneg hs.le hlinear.le)
         (mul_nonneg (by norm_num : (0 : ℝ) ≤ 2) hroot.le)).mp
-      nlinarith [hsquares]
+      linarith only [hsq, hsquares]
   rw [hcompare]
   unfold MetricCodes.classicalThreshold
   constructor
   · intro h
     have hdiv : 1 / Real.sqrt (1 - s ^ 2) < 1 + 2 * a := by
       apply (div_lt_iff₀ hclassical).mpr
-      nlinarith
-    linarith
+      linarith only [h]
+    linarith only [hdiv]
   · intro h
     have hdiv : 1 / Real.sqrt (1 - s ^ 2) < 1 + 2 * a := by
-      linarith
+      linarith only [h]
     have hmul := (div_lt_iff₀ hclassical).mp hdiv
-    nlinarith
+    linarith only [hmul]
 
 theorem boundaryQuadratic_pos_iff_classicalThreshold_lt
     {s a : ℝ} (hs : 0 < s) (hs' : s < 1) (ha : 0 < a) :
@@ -862,15 +860,13 @@ theorem boundaryDegree_lt_longitudinal
     {s a : ℝ} (hs : 0 < s) (ha : 0 < a)
     (hquadratic : 0 < boundaryQuadratic s a) :
     boundaryDegree s a < a := by
-  have hb := boundaryDegree_pos hquadratic
   have heq := boundaryDegree_mul_one_add hquadratic.le
-  have hroot : 0 < Real.sqrt (a * (1 + a)) := by positivity
   have hstrict : boundaryQuadratic s a < a * (1 + a) := by
     unfold boundaryQuadratic
     have hterm : 0 < (s / 2) * (1 + 2 * a) *
         Real.sqrt (a * (1 + a)) := by positivity
-    linarith
-  nlinarith [sq_nonneg (a - boundaryDegree s a)]
+    linarith only [hterm]
+  nlinarith only [heq, hstrict, ha]
 
 theorem feasible_iff_boundary
     {s a b : ℝ} (hs : 0 < s) (hs' : s < 1) :
@@ -882,7 +878,7 @@ theorem feasible_iff_boundary
     have ha : 0 < a := hb.trans hba
     have hquadratic : 0 < boundaryQuadratic s a := by
       have hstrict := (spectral_iff_quadratic ha).mp hspectral
-      nlinarith [mul_pos hb (by linarith : 0 < 1 + b)]
+      linarith only [hstrict, mul_pos hb (by linarith : 0 < 1 + b)]
     exact ⟨(boundaryQuadratic_pos_iff_classicalThreshold_lt
       hs hs' ha).mp hquadratic, hb,
       (quadratic_iff_boundaryDegree hb.le hquadratic).mp
@@ -1025,7 +1021,7 @@ theorem sphericalEntropy_upper_logb_add
         1 / Real.log 2 := by
     rw [← mul_div_assoc]
     exact (div_le_div_iff_of_pos_right hlogtwo).mpr hupper
-  linarith
+  linarith only [hfraction]
 
 end
 
@@ -1050,7 +1046,7 @@ theorem sliceCost_nonneg {s t : ℝ}
 @[simp] theorem sliceCost_self {s : ℝ} (hs : s < 1) :
     sliceCost s s = 0 := by
   unfold sliceCost
-  rw [div_self (by linarith : 1 - s ≠ 0)]
+  rw [div_self (by linarith only [hs] : 1 - s ≠ 0)]
   simp only [one_div, Real.logb_one, mul_zero]
 
 /-- The localized envelope used in the spherical-code argument. -/
@@ -1209,18 +1205,16 @@ theorem scaleCoordinate_nonneg {c u : ℝ}
   have hsquare := Real.sq_sqrt hrad
   have hsqrt := Real.sqrt_nonneg (1 + 4 * c * (u * (1 + u)))
   unfold scaleCoordinate
-  nlinarith [mul_nonneg hc hx]
+  nlinarith only [hsquare, hsqrt, mul_nonneg hc hx]
 
 theorem quadraticCoordinate_scaleCoordinate {c u : ℝ}
     (hc : 0 ≤ c) (hu : 0 ≤ u) :
     ((scaleCoordinate c u) * (1 + (scaleCoordinate c u))) =
       c * (u * (1 + u)) := by
-  have hx : 0 ≤ (u * (1 + u)) := by
-    positivity
   have hrad : 0 ≤ 1 + 4 * c * (u * (1 + u)) := by positivity
   have hsquare := Real.sq_sqrt hrad
   unfold scaleCoordinate at *
-  nlinarith
+  linarith only [hsquare]
 
 @[simp] theorem scaleCoordinate_one {u : ℝ} (hu : 0 ≤ u) :
     scaleCoordinate 1 u = u := by
@@ -1314,36 +1308,31 @@ theorem spectralAtom_strictMonoOn :
   change 0 ≤ u at hu
   change 0 ≤ v at hv
   have hquad := quadraticCoordinate_strictMonoOn hu hv huv
-  have hqu : 0 ≤ (u * (1 + u)) := by
-    positivity
-  have hqv : 0 ≤ (v * (1 + v)) := by
-    positivity
   have hdenu : 0 < 1 + 4 * (u * (1 + u)) := by positivity
   have hdenv : 0 < 1 + 4 * (v * (1 + v)) := by positivity
   have hsquare : spectralAtom u ^ 2 < spectralAtom v ^ 2 := by
     rw [spectralAtom_sq hu, spectralAtom_sq hv]
     apply (div_lt_div_iff₀ hdenu hdenv).mpr
-    nlinarith
-  have hnonneg := spectralAtom_nonneg hu
+    linarith only [hquad]
   have hnonneg' := spectralAtom_nonneg hv
-  nlinarith
+  nlinarith only [hsquare, hnonneg']
 
 theorem spectralAtom_scale_lt {c u : ℝ} (hc : 1 < c) (hu : 0 < u) :
     spectralAtom u < spectralAtom (scaleCoordinate c u) := by
   have hquad : (u * (1 + u)) <
       ((scaleCoordinate c u) * (1 + (scaleCoordinate c u))) := by
-    rw [quadraticCoordinate_scaleCoordinate (by linarith) hu.le]
+    rw [quadraticCoordinate_scaleCoordinate (by linarith only [hc]) hu.le]
     have hx : 0 < (u * (1 + u)) := by
       positivity
-    nlinarith
+    nlinarith only [hc, hx]
   have hcoord : u < scaleCoordinate c u := by
     by_contra hnot
     have hrev : scaleCoordinate c u ≤ u := le_of_not_gt hnot
     exact (not_le_of_gt hquad)
       (quadraticCoordinate_strictMonoOn.monotoneOn
-        (scaleCoordinate_nonneg (by linarith) hu.le) hu.le hrev)
+        (scaleCoordinate_nonneg (by linarith only [hc]) hu.le) hu.le hrev)
   exact spectralAtom_strictMonoOn hu.le
-    (scaleCoordinate_nonneg (by linarith) hu.le) hcoord
+    (scaleCoordinate_nonneg (by linarith only [hc]) hu.le) hcoord
 
 theorem Gamma_scale_gt {r : ℕ}
     {a : Fin (r + 1) → ℝ} {b : Fin r → ℝ}
@@ -1354,7 +1343,7 @@ theorem Gamma_scale_gt {r : ℕ}
   apply Finset.sum_lt_sum_of_nonempty
     (Finset.univ_nonempty : (Finset.univ : Finset (Fin (r + 1))).Nonempty)
   intro i _
-  rw [lagrangeWeight_scale h (by linarith) i]
+  rw [lagrangeWeight_scale h (by linarith only [hc]) i]
   apply mul_lt_mul_of_pos_left _ (h.lagrangeWeight_pos i)
   exact spectralAtom_scale_lt hc
     (hlast.trans_le (h.strictAnti_ambient.antitone i.le_last))
@@ -1371,7 +1360,7 @@ theorem spectralAtom_scale_sub_lower_bound {c u : ℝ}
   have hx : 0 ≤ x := by
     dsimp [x]
     positivity
-  have hcpos : 0 < c := by linarith
+  have hcpos : 0 < c := by linarith only [hc]
   have hscale : 0 ≤ scaleCoordinate c u :=
     scaleCoordinate_nonneg hcpos.le hu
   have hsq : Q ^ 2 - q ^ 2 =
@@ -1384,8 +1373,6 @@ theorem spectralAtom_scale_sub_lower_bound {c u : ℝ}
     have hden₂ : 1 + 4 * x ≠ 0 := by positivity
     field_simp [hden₁, hden₂]
     ring
-  have hqu : 0 ≤ q := spectralAtom_nonneg hu
-  have hQ : 0 ≤ Q := spectralAtom_nonneg hscale
   have hqhalf : q < (1 / 2 : ℝ) := spectralAtom_lt_half hu
   have hQhalf : Q < (1 / 2 : ℝ) := spectralAtom_lt_half hscale
   have hqle : q ≤ Q := by
@@ -1393,7 +1380,7 @@ theorem spectralAtom_scale_sub_lower_bound {c u : ℝ}
         ((scaleCoordinate c u) * (1 + (scaleCoordinate c u))) := by
       rw [quadraticCoordinate_scaleCoordinate hcpos.le hu]
       dsimp [x] at hx ⊢
-      nlinarith
+      nlinarith only [hc, hx]
     by_contra hnot
     have hreverse : Q < q := lt_of_not_ge hnot
     have hreverse' : scaleCoordinate c u < u := by
@@ -1404,22 +1391,21 @@ theorem spectralAtom_scale_sub_lower_bound {c u : ℝ}
     exact (not_le_of_gt (quadraticCoordinate_strictMonoOn hscale hu hreverse'))
       hquad
   have hfactor : Q ^ 2 - q ^ 2 ≤ Q - q := by
-    nlinarith [mul_nonneg (sub_nonneg.mpr hqle)
-      (show 0 ≤ 1 - (Q + q) by linarith)]
+    nlinarith only [mul_nonneg (sub_nonneg.mpr hqle) (show 0 ≤ 1 - (Q + q) by linarith)]
   have hden₁ : 0 < (1 + 4 * c * x) * (1 + 4 * x) := by positivity
   have hden₂ : 0 < (1 + 8 * x) * (1 + 4 * x) := by positivity
   have hnum : 0 ≤ x * (c - 1) := mul_nonneg hx (sub_nonneg.mpr hc)
   have hdenle :
       (1 + 4 * c * x) * (1 + 4 * x) ≤
         (1 + 8 * x) * (1 + 4 * x) := by
-    nlinarith [mul_nonneg (sub_nonneg.mpr hc') hx]
+    nlinarith only [hx, mul_nonneg (sub_nonneg.mpr hc') hx]
   have hfractions :
       x * (c - 1) / ((1 + 8 * x) * (1 + 4 * x)) ≤
         x * (c - 1) / ((1 + 4 * c * x) * (1 + 4 * x)) := by
     exact (div_le_div_iff₀ hden₂ hden₁).mpr
       (mul_le_mul_of_nonneg_left hdenle hnum)
   dsimp [x, Q, q] at hfractions hfactor hsq ⊢
-  linarith
+  linarith only [hsq, hfactor, hfractions]
 
 /-- The positive weighted coefficient controlling the spectral gain under parameter scaling. -/
 def scalingGainCoefficient {r : ℕ}
@@ -1459,7 +1445,7 @@ theorem Gamma_scale_sub_lower_bound {r : ℕ}
   rw [Finset.mul_sum, ← Finset.sum_sub_distrib]
   apply Finset.sum_le_sum
   intro i _
-  rw [lagrangeWeight_scale h (by linarith) i]
+  rw [lagrangeWeight_scale h (by linarith only [hc]) i]
   have hbound := spectralAtom_scale_sub_lower_bound
     hc hc' (h.ambient_nonneg i)
   have hweighted := mul_le_mul_of_nonneg_left hbound
@@ -1516,15 +1502,11 @@ theorem append_scaled_spectralLoss_le {r : ℕ}
     hlast.trans_le (h.strictAnti_ambient.antitone i.le_last)
   have hx : 0 < ((a i) * (1 + (a i))) := by
     positivity
-  have he : 0 ≤ (ε * (1 + ε)) := by
-    positivity
   have hatom := spectralAtom_lt_half
     (scaleCoordinate_nonneg hc.le hai.le)
   have hweight := h.lagrangeWeight_pos i
   field_simp [hc.ne', hx.ne']
-  nlinarith [mul_nonneg he hweight.le,
-    mul_nonneg (mul_nonneg he hweight.le)
-      (sub_nonneg.mpr hatom.le)]
+  nlinarith only [hε, hatom]
 
 /-- The scaling slope chosen to exceed the upper bound on the appended spectral loss. -/
 def compensatedScalingSlope {r : ℕ}
@@ -1536,7 +1518,7 @@ theorem compensatedScalingSlope_pos {r : ℕ}
     (h : Interlacing a b) (hlast : 0 < a (Fin.last r)) :
     0 < compensatedScalingSlope a b := by
   unfold compensatedScalingSlope
-  exact div_pos (by linarith [appendSpectralLossUpper_pos h hlast])
+  exact div_pos (by linarith only [appendSpectralLossUpper_pos h hlast])
     (scalingGainCoefficient_pos h hlast)
 
 /-- The parameter scaling factor compensating for an appended stabilizer coordinate `ε`. -/
@@ -1562,27 +1544,25 @@ theorem Gamma_compensated_append_gt {r : ℕ}
   have he : 0 < e := by
     dsimp [e]
     positivity
-  have hD : 0 < D := scalingGainCoefficient_pos h hlast
-  have hM : 0 < M := appendSpectralLossUpper_pos h hlast
   have hslope : 0 < compensatedScalingSlope a b :=
     compensatedScalingSlope_pos h hlast
   have hc : 1 < c := by
     dsimp [c, compensatedScalingFactor]
-    nlinarith
+    nlinarith only [he, hslope]
   have hscale : Interlacing (scaleAmbient c a) (scaleStabilizer c b) :=
-    h.scale (by linarith)
+    h.scale (by linarith only [hc])
   have hlast' : 0 < scaleAmbient c a (Fin.last r) :=
-    scaleCoordinate_pos (by linarith) hlast
+    scaleCoordinate_pos (by linarith only [hc]) hlast
   have hgain := Gamma_scale_sub_lower_bound h hc.le hmoderate
   have hloss := append_scaled_spectralLoss_le h hlast
-    (show 0 < c by linarith) hε.le
+    (show 0 < c by linarith only [hc]) hε.le
   have hrelation : (c - 1) * D = e * (M + 1) := by
     dsimp [c, D, M, compensatedScalingFactor, compensatedScalingSlope]
     field_simp [(scalingGainCoefficient_pos h hlast).ne']
     ring
   rw [Gamma_append hscale hlast']
   dsimp [c] at hgain hloss hrelation ⊢
-  nlinarith
+  linarith only [he, hgain, hloss, hrelation]
 
 @[simp] theorem compensatedScalingFactor_zero {r : ℕ}
     (a : Fin (r + 1) → ℝ) (b : Fin r → ℝ) :
@@ -1600,8 +1580,6 @@ theorem scaleCoordinate_compensated_differentiableAt_zero {r : ℕ}
     {u : ℝ} (hu : 0 ≤ u) :
     DifferentiableAt ℝ
       (fun ε => scaleCoordinate (compensatedScalingFactor a b ε) u) 0 := by
-  have hquad : 0 ≤ (u * (1 + u)) := by
-    positivity
   have hinner : DifferentiableAt ℝ
       (fun ε => 1 + 4 * compensatedScalingFactor a b ε * (u * (1 + u)))
       0 := by
@@ -1674,7 +1652,7 @@ theorem eventually_sub_sphericalEntropy_lt_of_differentiable
   let M : ℝ := deriv f 0 + 1
   have hM : deriv f 0 < M := by
     dsimp [M]
-    linarith
+    linarith only []
   have hslope := hf.hasDerivAt.tendsto_slope_zero_right
   have hupper :
       ∀ᶠ ε : ℝ in 𝓝[>] 0, ε⁻¹ * (f ε - f 0) < M := by
@@ -1698,21 +1676,21 @@ theorem eventually_sub_sphericalEntropy_lt_of_differentiable
     mul_lt_mul_of_pos_left hlogε hε
   have hentropy :=
     MetricCodes.Spherical.neg_mul_logb_le_sphericalEntropy hε.le
-  linarith
+  linarith only [hold, hnew, hentropy]
 
 theorem le_scaleCoordinate_of_one_le {c u : ℝ}
     (hc : 1 ≤ c) (hu : 0 ≤ u) : u ≤ scaleCoordinate c u := by
   have hquad : (u * (1 + u)) ≤
       ((scaleCoordinate c u) * (1 + (scaleCoordinate c u))) := by
-    rw [quadraticCoordinate_scaleCoordinate (by linarith) hu]
+    rw [quadraticCoordinate_scaleCoordinate (by linarith only [hc]) hu]
     have hx : 0 ≤ (u * (1 + u)) := by
       positivity
-    nlinarith
+    nlinarith only [hc, hx]
   by_contra hnot
   have hreverse : scaleCoordinate c u < u := lt_of_not_ge hnot
   exact (not_le_of_gt
     (quadraticCoordinate_strictMonoOn
-      (scaleCoordinate_nonneg (by linarith) hu) hu hreverse)) hquad
+      (scaleCoordinate_nonneg (by linarith only [hc]) hu) hu hreverse)) hquad
 
 theorem eventually_Phi_compensated_append_lt {r : ℕ}
     {a : Fin (r + 1) → ℝ} {b : Fin r → ℝ}
@@ -1733,19 +1711,20 @@ theorem eventually_Phi_compensated_append_lt {r : ℕ}
     positivity
   have hc : 1 ≤ c := by
     dsimp [c, compensatedScalingFactor]
-    nlinarith
+    nlinarith only [hslope, hquad]
   have hcoordinate : ε ≤ scaleCoordinate c ε :=
     le_scaleCoordinate_of_one_le hc hε.le
   have hentropy :
       MetricCodes.sphericalEntropy ε ≤
         MetricCodes.sphericalEntropy (scaleCoordinate c ε) :=
     MetricCodes.Spherical.sphericalEntropy_strictMono.monotoneOn
-      hε.le (scaleCoordinate_nonneg (by linarith) hε.le) hcoordinate
+      hε.le (scaleCoordinate_nonneg
+        (by linarith only [hc]) hε.le) hcoordinate
   rw [Phi_append]
   change compensatedPhiPath a b ε -
       MetricCodes.sphericalEntropy (scaleCoordinate c ε) < Phi a b
   rw [← compensatedPhiPath_zero h]
-  linarith
+  linarith only [hεbound, hentropy]
 
 theorem exists_nextLevel_strict_refinement {r : ℕ}
     {a : Fin (r + 1) → ℝ} {b : Fin r → ℝ}
@@ -1778,7 +1757,7 @@ theorem exists_nextLevel_strict_refinement {r : ℕ}
       have hquad : 0 < (ε * (1 + ε)) := by
         positivity
       dsimp [c, compensatedScalingFactor]
-      nlinarith
+      nlinarith only [hslope, hquad]
     let A := appendAmbient (scaleAmbient c a)
     let B := appendStabilizer (scaleStabilizer c b) (scaleCoordinate c ε)
     refine ⟨A, B, ?_, ?_, ?_⟩
@@ -1851,20 +1830,20 @@ theorem classical_le_levelRate_zero {s : ℝ}
   have ha : Interlacing a b := by
     constructor
     · dsimp [a]
-      linarith
+      linarith only [ha₀]
     · intro i
       exact Fin.elim0 i
   have hboundary : spectralAtom (MetricCodes.classicalThreshold s) = s / 2 := by
     have h := MetricCodes.Spherical.classicalThreshold_spectral hs hs'
     rw [MetricCodes.Spherical.Gamma_zero ha₀] at h
     change 2 * spectralAtom (MetricCodes.classicalThreshold s) = s at h
-    linarith
+    linarith only [h]
   have hgap : s < 2 * Gamma a b := by
     rw [Gamma_zero]
     have hmono := spectralAtom_strictMonoOn ha₀.le
-      (show 0 ≤ a 0 by dsimp [a]; linarith)
-      (show MetricCodes.classicalThreshold s < a 0 by dsimp [a]; linarith)
-    linarith
+      (show 0 ≤ a 0 by dsimp [a]; linarith only [ha₀])
+      (show MetricCodes.classicalThreshold s < a 0 by dsimp [a]; linarith only [])
+    linarith only [hboundary, hmono]
   have hnonempty : (levelRateSet 0 s).Nonempty :=
     ⟨Phi a b, a, b, ha, hgap, rfl⟩
   unfold levelRate
@@ -1878,7 +1857,7 @@ theorem classical_le_levelRate_zero {s : ℝ}
     have hle : A 0 ≤ MetricCodes.classicalThreshold s := le_of_not_gt hnot
     have hmono := spectralAtom_strictMonoOn.monotoneOn
       hAnonneg ha₀.le hle
-    linarith
+    linarith only [hboundary, hgapA, hmono]
   exact (MetricCodes.Spherical.sphericalEntropy_strictMono
     ha₀.le hAnonneg hstrict).le
 
@@ -1896,7 +1875,7 @@ theorem localizedEnvelope_lt_of_minimizer
         κ' t + MetricCodes.Spherical.SidelnikovLocalization.sliceCost s t :=
       MetricCodes.Spherical.SidelnikovLocalization.localizedEnvelope_le hs ht hκ'
     _ < κ t + MetricCodes.Spherical.SidelnikovLocalization.sliceCost s t := by
-      linarith
+      linarith only [hstrict]
     _ = MetricCodes.Spherical.SidelnikovLocalization.localizedEnvelope κ s :=
       hmin.symm
 
@@ -2340,7 +2319,7 @@ theorem sum_sphericalEntropy_update {n : ℕ}
   rw [Finset.sdiff_singleton_eq_erase]
   have hsplit := Finset.add_sum_erase (Finset.univ : Finset (Fin n))
     (fun j => MetricCodes.sphericalEntropy (a j)) (Finset.mem_univ i)
-  linarith
+  linarith only [hsplit]
 
 theorem Phi_opening_eq {r : ℕ}
     (hr : 0 < r)
@@ -2374,7 +2353,7 @@ theorem eventually_Phi_opening_lt {r : ℕ}
     simpa [i] using hi
   have hlog : 0 < Real.logb 2 ((1 + a 0) / a 0) := by
     apply Real.logb_pos (by norm_num : (1 : ℝ) < 2)
-    exact (lt_div_iff₀ ha).mpr (by linarith)
+    exact (lt_div_iff₀ ha).mpr (by linarith only [])
   have hnegative : -(η * Real.logb 2 ((1 + a 0) / a 0)) < 0 := by
     exact neg_neg_of_pos (mul_pos hη hlog)
   have hlimit := tendsto_opening_entropy_slope (η := η) ha
@@ -2382,7 +2361,7 @@ theorem eventually_Phi_opening_lt {r : ℕ}
   filter_upwards [hevent, self_mem_nhdsWithin] with t ht (htpos : 0 < t)
   have hnegative' := (div_lt_iff₀ htpos).mp ht
   have hphi := Phi_opening_eq (b := b) hr hzero η t
-  linarith
+  linarith only [hnegative', hphi]
 
 /-- The positive opening speed bounded using the derivative of the regular spectral sum. -/
 def openingContractionSpeed {r : ℕ}
@@ -2413,7 +2392,7 @@ theorem opening_spectralSlope_pos {r : ℕ}
   have hbound : -|D| ≤ D := neg_abs_le D
   have hηbound := mul_le_mul_of_nonneg_left hbound hη.le
   dsimp [η, D, w] at hidentity hηbound ⊢
-  nlinarith [abs_nonneg (deriv (openingRegularGamma a b 1) 0)]
+  linarith only [hw, hη, hidentity, hηbound]
 
 theorem eventually_Gamma_opening_gt {r : ℕ}
     {a : Fin (r + 1) → ℝ} {b : Fin r → ℝ}
@@ -2431,7 +2410,7 @@ theorem eventually_Gamma_opening_gt {r : ℕ}
     with t ht (htpos : 0 < t)
   have hdiff := (lt_div_iff₀ htpos).mp ht
   dsimp [η] at hdiff ⊢
-  linarith
+  linarith only [hdiff]
 
 theorem eventually_opening_interlacing {r : ℕ}
     {a : Fin (r + 1) → ℝ} {b : Fin r → ℝ}
@@ -2501,7 +2480,7 @@ theorem exists_nextLevel_feasible_lt {r : ℕ} {s : ℝ}
   by_cases hlast : 0 < a (Fin.last r)
   · obtain ⟨A, B, hAB, hGamma, hPhi⟩ :=
       exists_nextLevel_strict_refinement h hlast
-    exact ⟨A, B, hAB, by linarith, hPhi⟩
+    exact ⟨A, B, hAB, by linarith only [hgap, hGamma], hPhi⟩
   · have hzero : a (Fin.last r) = 0 :=
       le_antisymm (le_of_not_gt hlast) (h.ambient_nonneg _)
     cases r with
@@ -2510,13 +2489,13 @@ theorem exists_nextLevel_feasible_lt {r : ℕ} {s : ℝ}
         have ha : a 0 = 0 := by simpa only [Fin.isValue, Fin.last_zero] using hzero
         simp only [spectralAtom, Fin.isValue, ha, add_zero, mul_one,
           Real.sqrt_zero, mul_zero, div_one] at hgap
-        linarith
+        linarith only [hs, hgap]
     | succ r =>
         obtain ⟨A, hlastA, hA, hGammaA, hPhiA⟩ :=
           exists_sameLevel_opening_strict_refinement (Nat.zero_lt_succ r) h hzero
         obtain ⟨C, D, hCD, hGammaC, hPhiC⟩ :=
           exists_nextLevel_strict_refinement hA hlastA
-        exact ⟨C, D, hCD, by linarith, lt_trans hPhiC hPhiA⟩
+        exact ⟨C, D, hCD, by linarith only [hgap, hGammaA, hGammaC], lt_trans hPhiC hPhiA⟩
 
 theorem levelRate_nonneg_of_nonempty {r : ℕ} {s : ℝ}
     (h : (levelRateSet r s).Nonempty) :
@@ -2546,20 +2525,20 @@ theorem levelRateSet_zero_nonempty_of_interior {s : ℝ}
   have ha : Interlacing a b := by
     constructor
     · dsimp [a]
-      linarith
+      linarith only [hthreshold]
     · intro i
       exact Fin.elim0 i
   have hboundary : spectralAtom (MetricCodes.classicalThreshold s) = s / 2 := by
     have h := MetricCodes.Spherical.classicalThreshold_spectral hs hs'
     rw [MetricCodes.Spherical.Gamma_zero hthreshold] at h
     change 2 * spectralAtom (MetricCodes.classicalThreshold s) = s at h
-    linarith
+    linarith only [h]
   refine ⟨Phi a b, a, b, ha, ?_, rfl⟩
   rw [Gamma_zero]
   have hmono := spectralAtom_strictMonoOn hthreshold.le
-    (show 0 ≤ a 0 by dsimp [a]; linarith)
-    (show MetricCodes.classicalThreshold s < a 0 by dsimp [a]; linarith)
-  linarith
+    (show 0 ≤ a 0 by dsimp [a]; linarith only [hthreshold])
+    (show MetricCodes.classicalThreshold s < a 0 by dsimp [a]; linarith only [])
+  linarith only [hboundary, hmono]
 
 theorem levelRateSet_nonempty_of_interior (r : ℕ) {s : ℝ}
     (hs : 0 < s) (hs' : s < 1) :
@@ -2662,7 +2641,7 @@ theorem exists_positive_localized_minimizer_of_lowerSemicontinuous
   have htpos : 0 < t := by
     rcases lt_or_eq_of_le ht.1 with htpos | rfl
     · exact htpos
-    · linarith
+    · linarith only [huzero, htu]
   exact ⟨t, ⟨htpos, ht.2⟩, heq⟩
 
 theorem sliceCost_sub_zero {s t : ℝ}
@@ -2670,8 +2649,8 @@ theorem sliceCost_sub_zero {s t : ℝ}
     MetricCodes.Spherical.SidelnikovLocalization.sliceCost s t -
         MetricCodes.Spherical.SidelnikovLocalization.sliceCost s 0 =
       (1 / 2 : ℝ) * Real.logb 2 (1 - t) := by
-  have hs' : 1 - s ≠ 0 := by linarith
-  have ht' : 1 - t ≠ 0 := by linarith
+  have hs' : 1 - s ≠ 0 := by linarith only [hs]
+  have ht' : 1 - t ≠ 0 := by linarith only [ht]
   unfold MetricCodes.Spherical.SidelnikovLocalization.sliceCost
   norm_num only [sub_zero]
   rw [Real.logb_div ht' hs',
@@ -2686,8 +2665,8 @@ theorem sliceCost_sub_zero_le_neg_linear {s t : ℝ}
       -t / (2 * Real.log 2) := by
   rw [sliceCost_sub_zero hs ht]
   have hlog : Real.log (1 - t) ≤ -t := by
-    simpa only [sub_sub_cancel_left] using Real.log_le_sub_one_of_pos (by linarith : 0 < 1 - t)
-  have hbase : 0 < Real.log 2 := Real.log_pos (by norm_num)
+    simpa only [sub_sub_cancel_left] using
+      Real.log_le_sub_one_of_pos (by linarith only [ht] : 0 < 1 - t)
   unfold Real.logb
   calc
     (1 / 2 : ℝ) * (Real.log (1 - t) / Real.log 2) =
@@ -2734,7 +2713,7 @@ theorem eventually_squared_spectralCertificate :
       (Ioi_mem_nhds (by norm_num : (1 / 2 : ℝ) < 1))
   filter_upwards [hratio, self_mem_nhdsWithin] with t hratio (ht : 0 < t)
   have hmul := (lt_div_iff₀ ht).mp hratio
-  linarith
+  linarith only [hmul]
 
 theorem eventually_levelRate_zero_le_squared_entropy :
     ∀ᶠ t : ℝ in 𝓝[>] 0,
@@ -2777,9 +2756,9 @@ theorem exists_sliceCost_endpoint_improvement_of_smallEntropy
     simpa only [neg_div] using hcost
   have hlinear : t / (4 * Real.log 2) < t / (2 * Real.log 2) := by
     exact (div_lt_div_iff_of_pos_left htpos (by positivity) (by positivity)).2
-      (by nlinarith)
+      (by linarith only [hbase])
   rw [hzero]
-  linarith
+  linarith only [hκ, hent', hcost', hlinear]
 
 theorem exists_positive_localized_minimizer_of_lsc_and_smallEntropy
     {κ : ℝ → ℝ} {s : ℝ} (hs : 0 < s) (hs' : s < 1)
@@ -2872,10 +2851,10 @@ theorem logb_one_add_le_sphericalEntropy {u : ℝ} (hu : 0 ≤ u) :
   · rw [MetricCodes.sphericalEntropy_eq_log_add hu]
     have hratio : 1 ≤ (1 + u) / u := by
       apply (le_div_iff₀ hu).2
-      linarith
+      linarith only []
     have hlog : 0 ≤ Real.logb 2 ((1 + u) / u) :=
       Real.logb_nonneg (by norm_num : (1 : ℝ) < 2) hratio
-    nlinarith [mul_nonneg hu.le hlog]
+    linarith only [mul_nonneg hu.le hlog]
 
 theorem entropy_gap_nonneg {r : ℕ}
     {a : Fin (r + 1) → ℝ} {b : Fin r → ℝ}
@@ -2894,7 +2873,7 @@ theorem terminal_entropy_le_Phi {r : ℕ}
       (MetricCodes.sphericalEntropy (a i.castSucc) -
         MetricCodes.sphericalEntropy (b i)) :=
     Finset.sum_nonneg fun i _ => entropy_gap_nonneg h i
-  linarith
+  linarith only [hsum]
 
 theorem entropy_gap_le_Phi {r : ℕ}
     {a : Fin (r + 1) → ℝ} {b : Fin r → ℝ}
@@ -2916,7 +2895,7 @@ theorem entropy_gap_le_Phi {r : ℕ}
             MetricCodes.sphericalEntropy (b j)) := by
     exact Finset.single_le_sum
       (fun j _ => entropy_gap_nonneg h j) (Finset.mem_univ i)
-  linarith
+  linarith only [hterminal, hsum]
 
 theorem degree_le_rpow_sub_one_of_sphericalEntropy_le
     {u C : ℝ} (hu : 0 ≤ u)
@@ -2926,8 +2905,8 @@ theorem degree_le_rpow_sub_one_of_sphericalEntropy_le
     (logb_one_add_le_sphericalEntropy hu).trans hC
   have hpow : 1 + u ≤ (2 : ℝ) ^ C :=
     (Real.logb_le_iff_le_rpow (by norm_num : (1 : ℝ) < 2)
-      (by linarith : 0 < 1 + u)).mp hlog
-  linarith
+      (by linarith only [hu] : 0 < 1 + u)).mp hlog
+  linarith only [hpow]
 
 theorem terminal_degree_le_rpow_sub_one_of_Phi_le {r : ℕ}
     {a : Fin (r + 1) → ℝ} {b : Fin r → ℝ}
@@ -2949,7 +2928,7 @@ theorem shifted_degree_ratio_le_rpow_of_entropy_gap_le
   have hlog :
       Real.logb 2 (1 + a) - Real.logb 2 (1 + b) ≤
         C + 1 / Real.log 2 := by
-    linarith
+    linarith only [hC, hlower, hupper]
   have hratio :
       Real.logb 2 ((1 + a) / (1 + b)) ≤
         C + 1 / Real.log 2 := by
@@ -2971,10 +2950,10 @@ theorem degree_ratio_lower_bound_of_entropy_gap_le
     shifted_degree_ratio_le_rpow_of_entropy_gap_le hb₀ hba hC
   have hshift : 1 + a ≤ D * (1 + b) :=
     (div_le_iff₀ (by positivity : 0 < 1 + b)).mp hratio
-  have hdouble : 1 + b ≤ 2 * b := by linarith
+  have hdouble : 1 + b ≤ 2 * b := by linarith only [hb]
   have hbound : a ≤ (2 * D) * b := by
     have hmul := mul_le_mul_of_nonneg_left hdouble hD.le
-    nlinarith
+    linarith only [hshift, hmul]
   apply (le_div_iff₀ ha).2
   calc
     (2 * D)⁻¹ * a = a / (2 * D) := by ring
@@ -2992,7 +2971,7 @@ theorem tendsto_sphericalEntropy_sub_logb_one_add :
   rw [MetricCodes.sphericalEntropy_eq_log_add ha]
   have hratio : (1 + a) / a = 1 + 1 / a := by
     field_simp
-    ring
+    ac_rfl
   rw [hratio]
   unfold Real.logb
   ring
@@ -3050,7 +3029,7 @@ theorem sqrt_degree_mul_one_add_eq
     Real.sqrt (a * (1 + a)) = a * Real.sqrt (1 + a⁻¹) := by
   have hfactor : a * (1 + a) = a ^ 2 * (1 + a⁻¹) := by
     field_simp
-    ring
+    ac_rfl
   rw [hfactor, Real.sqrt_mul (sq_nonneg a), Real.sqrt_sq ha.le]
 
 theorem boundaryQuadratic_eq_sq_mul_normalized
@@ -3061,7 +3040,7 @@ theorem boundaryQuadratic_eq_sq_mul_normalized
     normalizedBoundaryQuadratic
   rw [sqrt_degree_mul_one_add_eq ha]
   field_simp
-  ring
+  ac_rfl
 
 theorem boundaryDegree_div_eq_normalized
     {s a : ℝ} (ha : 0 < a) :
@@ -3151,7 +3130,7 @@ def compactifiedHierarchyCoordinate (u : ℝ) : ℝ := (1 + u)⁻¹
 theorem compactifiedHierarchyCoordinate_mem_Ioc {u : ℝ} (hu : 0 ≤ u) :
     compactifiedHierarchyCoordinate u ∈ Set.Ioc (0 : ℝ) 1 := by
   constructor
-  · exact inv_pos.mpr (by linarith)
+  · exact inv_pos.mpr (by linarith only [hu])
   · exact (inv_le_one₀ (by linarith)).2 (by linarith)
 
 theorem compactifiedHierarchyCoordinate_mem_Icc {u : ℝ} (hu : 0 ≤ u) :
@@ -3189,18 +3168,18 @@ theorem tendsto_atTop_of_compactifiedHierarchyCoordinate_zero
   let T : ℝ := max M 0
   have hT : 0 < 1 + T := by
     dsimp [T]
-    linarith [le_max_right M 0]
+    linarith only [le_max_right M 0]
   have hevent :
       ∀ᶠ k in atTop,
         compactifiedHierarchyCoordinate (f k) < (1 + T)⁻¹ :=
     (tendsto_order.1 h).2 _ (inv_pos.mpr hT)
   filter_upwards [hevent] with k hk
-  have hfk : 0 < 1 + f k := by linarith [hf k]
+  have hfk : 0 < 1 + f k := by linarith only [hf k]
   have hlt : T < f k := by
     have hinv : (1 + f k)⁻¹ < (1 + T)⁻¹ := hk
     have hraw : 1 + T < 1 + f k :=
       (inv_lt_inv₀ hfk hT).mp hinv
-    linarith
+    linarith only [hraw]
   exact (le_max_left M 0).trans hlt.le
 
 theorem compactifiedHierarchyCoordinate_limit_pos_of_bddAbove
@@ -3211,7 +3190,7 @@ theorem compactifiedHierarchyCoordinate_limit_pos_of_bddAbove
       atTop (nhds x)) :
     0 < x := by
   have hC₀ : 0 ≤ C := (hf 0).trans (hC 0)
-  have hCpos : 0 < 1 + C := by linarith
+  have hCpos : 0 < 1 + C := by linarith only [hC₀]
   have hlower : (1 + C)⁻¹ ≤ x := by
     apply ge_of_tendsto h
     exact Filter.Eventually.of_forall fun k =>
@@ -3221,7 +3200,7 @@ theorem compactifiedHierarchyCoordinate_limit_pos_of_bddAbove
 theorem compactifiedHierarchyCoordinate_antitone
     {u v : ℝ} (hu : 0 ≤ u) (hv : 0 ≤ v) (h : u ≤ v) :
     compactifiedHierarchyCoordinate v ≤ compactifiedHierarchyCoordinate u := by
-  exact (inv_le_inv₀ (by linarith : 0 < 1 + v)
+  exact (inv_le_inv₀ (by linarith only [hv] : 0 < 1 + v)
     (by linarith : 0 < 1 + u)).mpr (by linarith)
 
 theorem compactifiedHierarchyCoordinate_recovered_nonneg
@@ -3229,13 +3208,13 @@ theorem compactifiedHierarchyCoordinate_recovered_nonneg
     0 ≤ x⁻¹ - 1 := by
   have hinv : (1 : ℝ) ≤ x⁻¹ := by
     simpa only [inv_one] using (inv_le_inv₀ (by norm_num : (0 : ℝ) < 1) hx).mpr hx'
-  linarith
+  linarith only [hinv]
 
 theorem compactifiedHierarchyCoordinate_recovered_antitone
     {x y : ℝ} (hx : 0 < x) (hy : 0 < y) (hxy : x ≤ y) :
     y⁻¹ - 1 ≤ x⁻¹ - 1 := by
   have hinv := (inv_le_inv₀ hy hx).mpr hxy
-  linarith
+  linarith only [hinv]
 
 theorem exists_levelRate_minimizing_sequence {r : ℕ} {s : ℝ}
     (hne : (levelRateSet r s).Nonempty) :
@@ -3337,7 +3316,7 @@ theorem compactifiedHierarchyTuple_limit_weak_interlacing {r : ℕ}
           ((h (φ k)).stabilizer_pos i).le
           ((h (φ k)).ambient_nonneg i.castSucc)
           ((h (φ k)).2 i).1.le)
-    linarith
+    linarith only [hle]
   · have hlim := (hB i).sub (hA i.succ)
     have hle : B i - A i.succ ≤ 0 := by
       apply le_of_tendsto hlim
@@ -3346,7 +3325,7 @@ theorem compactifiedHierarchyTuple_limit_weak_interlacing {r : ℕ}
           ((h (φ k)).ambient_nonneg i.succ)
           ((h (φ k)).stabilizer_pos i).le
           ((h (φ k)).2 i).2.le)
-    linarith
+    linarith only [hle]
 
 theorem compactifiedHierarchyTuple_recovered_weak_interlacing {r : ℕ}
     {A : Fin (r + 1) → ℝ} {B : Fin r → ℝ}
@@ -3607,8 +3586,6 @@ theorem tendsto_scaleCoordinate_sq_div_atTop {c : ℝ} (hc : 0 < c) :
       simp [hroot]
   apply hlimit.congr'
   filter_upwards [eventually_gt_atTop (0 : ℝ)] with u hu
-  have hquadratic : 0 ≤ (u * (1 + u)) := by
-    positivity
   have hrad : 0 ≤ 1 + 4 * c ^ 2 * (u * (1 + u)) := by positivity
   have hsmall :
       0 ≤ u⁻¹ ^ 2 + 4 * c ^ 2 * (u⁻¹ + 1) := by positivity
@@ -3628,7 +3605,7 @@ theorem tendsto_scaleCoordinate_sq_atTop {c : ℝ} (hc : 0 < c) :
   have hratio := tendsto_scaleCoordinate_sq_div_atTop hc
   have hevent :
       ∀ᶠ u : ℝ in atTop, c / 2 < scaleCoordinate (c ^ 2) u / u :=
-    hratio.eventually (Ioi_mem_nhds (by linarith))
+    hratio.eventually (Ioi_mem_nhds (by linarith only [hc]))
   have hle :
       (fun u : ℝ => (c / 2) * u) ≤ᶠ[atTop]
         (fun u : ℝ => scaleCoordinate (c ^ 2) u) := by
@@ -3636,7 +3613,7 @@ theorem tendsto_scaleCoordinate_sq_atTop {c : ℝ} (hc : 0 < c) :
     have hmul := (lt_div_iff₀ hupos).mp hu
     exact hmul.le
   exact tendsto_atTop_mono' atTop hle
-    (tendsto_id.const_mul_atTop (by linarith))
+    (tendsto_id.const_mul_atTop (by linarith only [hc]))
 
 theorem scaleCoordinate_sq_lt_self {c u : ℝ}
     (hc : 0 < c) (hc' : c < 1) (hu : 0 < u) :
@@ -3649,7 +3626,7 @@ theorem scaleCoordinate_sq_lt_self {c u : ℝ}
   have hle : u ≤ scaleCoordinate (c ^ 2) u := le_of_not_gt hnot
   have hmon := quadraticCoordinate_strictMonoOn.monotoneOn hu.le hscale hle
   rw [quadraticCoordinate_scaleCoordinate (sq_nonneg c) hu.le] at hmon
-  nlinarith [mul_pos (sub_pos.mpr hc') (by linarith : 0 < 1 + c)]
+  nlinarith only [hmon, hquad, mul_pos (sub_pos.mpr hc') (by linarith : 0 < 1 + c)]
 
 theorem eventually_interlacing_prepend_scale {r : ℕ}
     {a : Fin (r + 1) → ℝ} {b : Fin r → ℝ}
@@ -3704,7 +3681,7 @@ theorem tendsto_spectralAtom_atTop_half :
   unfold spectralAtom
   have hfactor : u * (1 + u) = u ^ 2 * (1 + u⁻¹) := by
     field_simp [hu.ne']
-    ring
+    ac_rfl
   rw [hfactor, Real.sqrt_mul (sq_nonneg u), Real.sqrt_sq_eq_abs,
     abs_of_pos hu]
   field_simp [hu.ne']
@@ -3775,7 +3752,7 @@ theorem Gamma_prepend_eq_spectralAtom_add_retained
   change lagrangeWeight (Fin.cons u a) (prependStabilizer v b) 0 +
     ∑ i : Fin (r + 1), lagrangeWeight (Fin.cons u a)
       (prependStabilizer v b) i.succ = 1 at hweights
-  nlinarith [congrArg (fun z : ℝ => z * spectralAtom u) hweights]
+  linarith only [congrArg (fun z : ℝ => z * spectralAtom u) hweights]
 
 theorem tendsto_lagrangeWeight_prepend_scale_succ
     {r : ℕ}
@@ -3802,7 +3779,7 @@ theorem tendsto_lagrangeWeight_prepend_scale_succ
   have hquad : ((a i) * (1 + (a i))) < (u * (1 + u)) :=
     quadraticCoordinate_strictMonoOn (h.ambient_nonneg i) hu0.le hau
   have hne : ((a i) * (1 + (a i))) - (u * (1 + u)) ≠ 0 := by
-    linarith
+    linarith only [hquad]
   rw [lagrangeWeight_prepend_succ h u
     (scaleCoordinate (c ^ 2) u) i hne,
     quadraticCoordinate_scaleCoordinate (sq_nonneg c) hu0.le]
@@ -3921,7 +3898,7 @@ theorem exists_nextLevel_compactified_certificate_lt_of_spectral_limit
       Interlacing A B ∧ s < 2 * Gamma A B ∧ Phi A B < R := by
   have htarget :
       s < 2 * (((1 - c ^ 2) / 2) + c ^ 2 * Gamma a b) := by
-    nlinarith
+    linarith only [hscaled]
   have hspectral :
       ∀ᶠ u : ℝ in atTop,
         s < 2 * Gamma (prependAmbient u a)
@@ -3954,7 +3931,7 @@ theorem hierarchyVariationalRate_le_compactified_certificate_of_spectral_limit
   obtain ⟨A, B, hAB, hgap, hPhi⟩ :=
     exists_nextLevel_compactified_certificate_lt_of_spectral_limit
       (R := Phi a b - Real.logb 2 c + ε)
-      hc hc' a b h hscaled (by linarith) hGamma
+      hc hc' a b h hscaled (by linarith only [hε]) hGamma
   exact (hierarchyVariationalRate_le_of_feasible hAB hgap).trans hPhi.le
 
 theorem exists_nextLevel_compactified_certificate_lt
@@ -3981,7 +3958,7 @@ theorem levelRate_succ_le_compactified_certificate
   obtain ⟨A, B, hAB, hgap, hPhi⟩ :=
     exists_nextLevel_compactified_certificate_lt
       (R := Phi a b - Real.logb 2 c + ε)
-      hc hc' a b h hscaled (by linarith)
+      hc hc' a b h hscaled (by linarith only [hε])
   exact (levelRate_le hAB hgap).trans hPhi.le
 
 theorem levelRate_antitone_level
@@ -4005,7 +3982,7 @@ theorem levelRate_le_compactified_datum
   rcases hlevels with ⟨rfl, hjk⟩ | ⟨hc', hjk⟩
   · have hgap : s < 2 * Gamma a b := by
       norm_num at hscaled ⊢
-      linarith
+      linarith only [hscaled]
     simpa only [Real.logb_one, sub_zero, ge_iff_le] using
       (levelRate_antitone_level hs hs' hjk).trans (levelRate_le h hgap)
   · exact (levelRate_antitone_level hs hs' hjk).trans
@@ -4065,14 +4042,14 @@ theorem levelRate_le_of_non_strict_spectral
     let : (𝓝[>] (1 : ℝ)).NeBot := nhdsWithin_Ioi_neBot le_rfl
     obtain ⟨t, ht, hPhi⟩ :=
       (hside.and hcost).exists
-    have htpos : 0 < t := by linarith
+    have htpos : 0 < t := by linarith only [ht]
     have hinter :
         Interlacing (scaleAmbient t a) (scaleStabilizer t b) :=
       h.scale htpos
     have hgain := Gamma_scale_gt h hlast ht
     have hgap :
         s < 2 * Gamma (scaleAmbient t a) (scaleStabilizer t b) := by
-      linarith
+      linarith only [hboundary, hgain]
     exact (levelRate_le hinter hgap).trans hPhi.le
   · have hzero : a (Fin.last j) = 0 :=
       le_antisymm (le_of_not_gt hlast) h.1
@@ -4081,12 +4058,12 @@ theorem levelRate_le_of_non_strict_spectral
         have ha0 : a 0 = 0 := by simpa only [Fin.isValue, Fin.last_zero] using hzero
         rw [Gamma_zero, ha0] at hboundary
         norm_num [spectralAtom] at hboundary
-        linarith
+        linarith only [hs, hboundary]
     | succ j =>
         obtain ⟨A, _, hA, hGamma, hPhi⟩ :=
           exists_sameLevel_opening_strict_refinement
             (Nat.succ_pos j) h hzero
-        exact (levelRate_le hA (by linarith)).trans hPhi.le
+        exact (levelRate_le hA (by linarith only [hboundary, hGamma])).trans hPhi.le
 
 theorem levelRate_le_compactified_boundary_datum
     {r j : ℕ} {s c : ℝ}
@@ -4100,12 +4077,12 @@ theorem levelRate_le_compactified_boundary_datum
   rcases hlevels with ⟨rfl, hjr⟩ | ⟨hc_lt, hjr⟩
   · have hboundary : s ≤ 2 * Gamma a b := by
       norm_num at hscaled ⊢
-      linarith
+      linarith only [hscaled]
     simpa only [Real.logb_one, sub_zero, ge_iff_le] using
       (levelRate_antitone_level hs hs' hjr).trans (levelRate_le_of_non_strict_spectral hs a b h
         hboundary)
   · have hpositive : 0 < 1 - 2 * Gamma a b := by
-      linarith [h.Gamma_lt_half]
+      linarith only [h.Gamma_lt_half]
     have hlog :
         Tendsto (fun d : ℝ => Phi a b - Real.logb 2 d)
           (𝓝[<] c) (𝓝 (Phi a b - Real.logb 2 c)) := by
@@ -4127,10 +4104,9 @@ theorem levelRate_le_compactified_boundary_datum
       (hside.and (hpos.and hcost)).exists
     have hd_one : d < 1 := hd_lt.trans hc_lt
     have hsquare : d ^ 2 < c ^ 2 := by
-      nlinarith [mul_pos hd_pos (sub_pos.mpr hd_lt),
-        mul_pos hc (sub_pos.mpr hd_lt)]
+      nlinarith only [mul_pos hd_pos (sub_pos.mpr hd_lt)]
     have hstrict : s < 1 - d ^ 2 * (1 - 2 * Gamma a b) := by
-      nlinarith [mul_pos (sub_pos.mpr hsquare) hpositive]
+      nlinarith only [hscaled, mul_pos (sub_pos.mpr hsquare) hpositive]
     exact
       (levelRate_le_compactified_datum hs hs' hd_pos a b h hstrict
         (Or.inr ⟨hd_one, hjr⟩)).trans hd_cost.le
@@ -4161,8 +4137,8 @@ theorem stieltjesPhase_nonneg {r : ℕ}
   · apply Finset.sum_nonneg
     intro i _
     apply Real.log_nonneg
-    apply (le_div_iff₀ (by linarith [h.stabilizer_quadratic_pos i])).2
-    nlinarith [h.quadratic_phase_interval i]
+    apply (le_div_iff₀ (by linarith only [ht, h.stabilizer_quadratic_pos i])).2
+    linarith only [h.quadratic_phase_interval i]
 
 theorem stieltjesPhaseProduct_pos {r : ℕ}
     {a : Fin (r + 1) → ℝ} {b : Fin r → ℝ}
@@ -4172,9 +4148,9 @@ theorem stieltjesPhaseProduct_pos {r : ℕ}
   apply div_pos
   · apply mul_pos ht
     exact Finset.prod_pos fun i _ => by
-      linarith [h.stabilizer_quadratic_pos i]
+      linarith only [ht, h.stabilizer_quadratic_pos i]
   · exact Finset.prod_pos fun i _ => by
-      linarith [h.ambient_quadratic_nonneg i]
+      linarith only [ht, h.ambient_quadratic_nonneg i]
 
 theorem stieltjesPhaseProduct_le_one {r : ℕ}
     {a : Fin (r + 1) → ℝ} {b : Fin r → ℝ}
@@ -4290,7 +4266,7 @@ private theorem cancel_common_quadratic_factor_metriccodes2_79e88af7
     (x * A) / (B * (x * C)) =
         (x * x⁻¹) * (A * (C⁻¹ * B⁻¹)) := by
       simp only [div_eq_mul_inv, mul_inv_rev]
-      ring
+      ac_rfl
     _ = A / (B * C) := by
       rw [mul_inv_cancel₀ hx]
       simp only [one_mul, div_eq_mul_inv, mul_inv_rev]
@@ -4309,7 +4285,7 @@ theorem hierarchyStieltjesRatio_tail_of_head_collision {r : ℕ}
   rw [hierarchyStieltjesRatio_prepend]
   have hfactor : t + ((a 0) * (1 + (a 0))) ≠ 0 := by
     have ha := h.ambient_nonneg 0
-    nlinarith [mul_nonneg ha (by linarith : 0 ≤ 1 + a 0)]
+    linarith only [ht, mul_nonneg ha (by linarith : 0 ≤ 1 + a 0)]
   rw [← hcollision]
   simp only [ne_eq, hfactor, not_false_eq_true, div_self, one_mul]
 
@@ -4323,8 +4299,7 @@ theorem hierarchyStieltjesRatio_drop_second_of_collision {r : ℕ}
         (Fin.cons (a 0) (Fin.tail (Fin.tail a))) (Fin.tail b) t := by
   have hfactor : t + ((a (1 : Fin (r + 2))) * (1 + (a (1 : Fin (r + 2))))) ≠ 0 := by
     have ha := h.ambient_nonneg (1 : Fin (r + 2))
-    nlinarith [mul_nonneg ha
-      (by linarith : 0 ≤ 1 + a (1 : Fin (r + 2)))]
+    nlinarith only [ht, mul_nonneg ha (by linarith : 0 ≤ 1 + a (1 : Fin (r + 2)))]
   simp only [hierarchyStieltjesRatio, Fin.prod_univ_succ, Fin.cons_zero,
     Fin.cons_succ, Fin.tail]
   rw [hcollision]
@@ -4510,10 +4485,10 @@ theorem paired_stabilizer_tendsto_atTop_of_ambient
     have hmul : 1 + a (φ n) i.castSucc ≤
         D * (1 + b (φ n) i) :=
       (div_le_iff₀
-        (by linarith [(h (φ n)).stabilizer_pos i])).mp hratio
+        (by linarith only [(h (φ n)).stabilizer_pos i])).mp hratio
     apply (sub_le_iff_le_add).mpr
     apply (div_le_iff₀ hD).mpr
-    nlinarith
+    linarith only [hmul]
   have hleft : Tendsto
       (fun n => a (φ n) i.castSucc / D - 1) atTop atTop := by
     convert tendsto_atTop_add_const_right atTop (-1)
@@ -4836,7 +4811,6 @@ theorem exists_compactified_residual_of_closure_sequence
   have hbound : ∀ n, Phi (a n) (b n) ≤ R + 1 := by
     intro n
     refine (hPhi n).trans ?_
-    have hn : 0 ≤ (n : ℝ) := Nat.cast_nonneg n
     have hden : 0 < (n : ℝ) + 1 := by linarith
     have hfrac : 1 / ((n : ℝ) + 1) ≤ (1 : ℝ) :=
       (div_le_one hden).2 (by linarith)
@@ -5311,11 +5285,10 @@ theorem exists_forward_residual_entropy_of_closure_sequence
   have hbound : ∀ n, Phi (a n) (b n) ≤ R + 1 := by
     intro n
     refine (hPhi n).trans ?_
-    have hn : 0 ≤ (n : ℝ) := Nat.cast_nonneg n
-    have hden : 0 < (n : ℝ) + 1 := by linarith
+    have hden : 0 < (n : ℝ) + 1 := by linarith only []
     have hfrac : 1 / ((n : ℝ) + 1) ≤ (1 : ℝ) :=
-      (div_le_one hden).2 (by linarith)
-    linarith
+      (div_le_one hden).2 (by linarith only [])
+    linarith only [hfrac]
   have hlast : 0 < A (Fin.last r) := by
     have h := (hpositiveA (Fin.last j)).1
     have hindex :
@@ -5508,7 +5481,7 @@ theorem hierarchyStieltjesRatio_append {k r : ℕ}
   simp only [Fin.append_left, Fin.append_right]
   rw [Finset.prod_div_distrib]
   simp only [div_eq_mul_inv, mul_inv_rev]
-  ring
+  ac_rfl
 
 theorem tendsto_quadraticCoordinate_of_tendsto
     {u : ℕ → ℝ} {x : ℝ}
@@ -5568,8 +5541,8 @@ theorem tendsto_hierarchyStieltjesRatio_of_coordinatewise
     apply Finset.prod_ne_zero_iff.mpr
     intro i _
     have hq : 0 ≤ ((A i) * (1 + (A i))) := by
-      exact mul_nonneg (hA i) (by linarith [hA i])
-    linarith
+      exact mul_nonneg (hA i) (by linarith only [hA i])
+    linarith only [ht, hq]
   exact hnum.div hden hnonzero
 
 theorem tendsto_hierarchyStieltjesRatio_append_of_escaping
@@ -5864,22 +5837,7 @@ theorem compactifiedEscapingRatioProduct_eq_filtered_prefix
     {R k j : ℕ} (hkj : k + j = R) (d : Fin R → ℝ) :
     compactifiedEscapingRatioProduct hkj d =
       ∏ i ∈ Finset.univ.filter (fun i : Fin R => i.val < k), d i := by
-  classical
-  subst R
-  unfold compactifiedEscapingRatioProduct
-  apply Finset.prod_bij
-    (fun i _ => (i.castAdd j : Fin (k + j)))
-  · intro i _
-    exact Finset.mem_filter.mpr ⟨Finset.mem_univ _, i.isLt⟩
-  · intro i₁ _ i₂ _ heq
-    apply Fin.ext
-    simpa only [Fin.val_castAdd] using congrArg (fun z : Fin (k + j) => z.val) heq
-  · intro i hi
-    have hik : i.val < k := (Finset.mem_filter.mp hi).2
-    refine ⟨⟨i.val, hik⟩, Finset.mem_univ _, ?_⟩
-    exact Fin.ext rfl
-  · intro i _
-    rfl
+  exact @compactifiedEscapingRatioProduct_eq_filtered R k j hkj d
 
 theorem tendsto_Gamma_of_compactified_suffix
     {R k j q : ℕ} (hkj : k + j = R)
@@ -5993,7 +5951,7 @@ theorem compactified_certificate_residual_threshold_le
     s ≤ 1 - c ^ 2 * (1 - 2 * Gamma A B) := by
   have h := compactified_certificate_threshold_le
     hφ hthreshold hfeasible hspectral
-  nlinarith
+  linarith only [h]
 
 /-- Subsequential compactification of fixed-level families with bounded entropy into a residual
 hierarchy. -/
@@ -6056,12 +6014,12 @@ theorem fixedLevelForwardCompactifiedResidualLimit
   intro C a b hinter hbound
   have hnegative : ∀ n, (-1 : ℝ) < 2 * Gamma (a n) (b n) := by
     intro n
-    linarith [(hinter n).Gamma_nonneg]
+    linarith only [(hinter n).Gamma_nonneg]
   have herror : ∀ n : ℕ,
       Phi (a n) (b n) ≤ C + 1 / ((n : ℝ) + 1) := by
     intro n
     have hpos : 0 ≤ (1 : ℝ) / ((n : ℝ) + 1) := by positivity
-    linarith [hbound n]
+    linarith only [hpos, hbound n]
   obtain ⟨L, X, Y, d, φ, k, j, hkj, q, A, B, c,
       hφ, hLnonneg, hLC, hX, hY, hXlim, hYlim,
       hthreshold, hnegativeφ, hPhilim, hd, hdlim,
@@ -6118,7 +6076,7 @@ theorem levelRate_succ_lt_of_compactified_positive_minimizer
     exists_nextLevel_strict_refinement h hlast
   have hc2 : 0 < c ^ 2 := sq_pos_of_pos hc
   have hgap : s < 1 - c ^ 2 * (1 - 2 * Gamma A B) := by
-    nlinarith
+    nlinarith only [hfeasible, hGamma, hc2]
   have hlevels :
       (c = 1 ∧ j + 1 ≤ r + 1) ∨
         (c < 1 ∧ (j + 1) + 1 ≤ r + 1) := by
@@ -6129,7 +6087,7 @@ theorem levelRate_succ_lt_of_compactified_positive_minimizer
   calc
     levelRate (r + 1) s ≤ Phi A B - Real.logb 2 c :=
       htransfer A B hAB hgap hlevels
-    _ < Phi a b - Real.logb 2 c := by linarith
+    _ < Phi a b - Real.logb 2 c := by linarith only [hPhi]
     _ = levelRate r s := hmin.symm
 
 end
@@ -6145,7 +6103,7 @@ theorem log_inv_lt_half_inv_sub_self {t : ℝ}
   have hx' : x < 1 := by
     dsimp [x]
     exact (div_lt_one (by linarith)).mpr (by linarith)
-  have hden : 0 < 1 - x ^ 2 := by nlinarith
+  have hden : 0 < 1 - x ^ 2 := by nlinarith only [hx', hx]
   have hratio : (1 + x) / (1 - x) = 1 / t := by
     dsimp [x]
     field_simp [ht.ne']
@@ -6186,7 +6144,7 @@ theorem lt_log_one_add_add_half_log_one_add_sq {t : ℝ}
   have hy : 0 ≤ y := by dsimp [y]; positivity
   have hy' : y < 1 := by
     dsimp [y]
-    exact (div_lt_one (by positivity)).mpr (by linarith)
+    exact (div_lt_one (by positivity)).mpr (by linarith only [])
   have hxratio : (1 + x) / (1 - x) = 1 + t := by
     dsimp [x]
     field_simp
@@ -6207,7 +6165,7 @@ theorem lt_log_one_add_add_half_log_one_add_sq {t : ℝ}
       mul_zero, zero_add, pow_one, CharP.cast_eq_zero, div_one] using h
   have hrational : t < 2 * x + y := by
     dsimp [x, y]
-    have hden₁ : 0 < 2 + t := by linarith
+    have hden₁ : 0 < 2 + t := by linarith only [ht]
     have hden₂ : 0 < 2 + t ^ 2 := by positivity
     apply sub_pos.mp
     have hidentity :
@@ -6219,7 +6177,7 @@ theorem lt_log_one_add_add_half_log_one_add_sq {t : ℝ}
     exact div_pos
       (mul_pos (pow_pos ht 3) (sub_pos.mpr ht'))
       (mul_pos hden₁ hden₂)
-  nlinarith
+  linarith only [hxlog, hylog, hrational]
 
 theorem classicalThreshold_entropy_lt_half_neg_logb
     {s : ℝ} (hs : 0 < s) (hs' : s < 1) :
@@ -6228,24 +6186,24 @@ theorem classicalThreshold_entropy_lt_half_neg_logb
   let u : ℝ := Real.sqrt (1 - s ^ 2)
   let t : ℝ := s / (1 + u)
   let a : ℝ := MetricCodes.classicalThreshold s
-  have hrad : 0 < 1 - s ^ 2 := by nlinarith
+  have hrad : 0 < 1 - s ^ 2 := by nlinarith only [hs', hs]
   have hu : 0 < u := Real.sqrt_pos.mpr hrad
   have hu_sq : u ^ 2 = 1 - s ^ 2 := Real.sq_sqrt hrad.le
   have ht : 0 < t := by dsimp [t]; positivity
   have ht' : t < 1 := by
     dsimp [t]
     apply (div_lt_one (by positivity)).mpr
-    linarith
-  have htden : 0 < 1 - t ^ 2 := by nlinarith
+    linarith only [hs', hu]
+  have htden : 0 < 1 - t ^ 2 := by nlinarith only [ht', ht]
   have hsparam : s = 2 * t / (1 + t ^ 2) := by
     dsimp [t]
     field_simp
-    nlinarith [hu_sq]
+    linarith only [hu_sq]
   have ha : 0 < a := MetricCodes.classicalThreshold_pos hs hs'
   have ht_sq : t ^ 2 = (1 - u) / (1 + u) := by
     dsimp [t]
     field_simp
-    nlinarith [hu_sq]
+    linarith only [hu_sq]
   have haparam : a = t ^ 2 / (1 - t ^ 2) := by
     change (1 / u - 1) / 2 = t ^ 2 / (1 - t ^ 2)
     rw [ht_sq]
@@ -6303,7 +6261,7 @@ theorem classicalThreshold_entropy_lt_half_neg_logb
   have hgap : 0 < Real.log (1 + t) +
       (1 / 2 : ℝ) * Real.log (1 + t ^ 2) -
         2 * t ^ 2 / (1 - t ^ 2) * Real.log (1 / t) := by
-    linarith
+    linarith only [hfirst, hlast]
   have hidentity :
       Real.log 2 *
           (-(1 / 2 : ℝ) * Real.logb 2 (1 - s) -
@@ -6339,13 +6297,13 @@ theorem compactified_zero_residual_cost_le
     (hc : 0 < c) (hfeasible : s ≤ 1 - c ^ 2) :
     -(1 / 2 : ℝ) * Real.logb 2 (1 - s) ≤ -Real.logb 2 c := by
   have hcsquare : 0 < c ^ 2 := sq_pos_of_pos hc
-  have hsquare : c ^ 2 ≤ 1 - s := by linarith
+  have hsquare : c ^ 2 ≤ 1 - s := by linarith only [hfeasible]
   have hlog : Real.logb 2 (c ^ 2) ≤ Real.logb 2 (1 - s) :=
     Real.logb_le_logb_of_le (by norm_num : (1 : ℝ) < 2)
       hcsquare hsquare
   rw [Real.logb_pow] at hlog
   norm_num at hlog ⊢
-  linarith
+  linarith only [hlog]
 
 theorem classicalThreshold_entropy_lt_neg_logb_of_compactified_zero
     {s c : ℝ} (hs : 0 < s) (hs' : s < 1)
@@ -6372,20 +6330,20 @@ theorem levelRate_zero_le_entropy_of_classicalThreshold_lt
   have hA : Interlacing A B := by
     constructor
     · dsimp [A]
-      linarith
+      linarith only [ha, hthreshold]
     · intro i
       exact Fin.elim0 i
   have hboundary : spectralAtom (MetricCodes.classicalThreshold s) = s / 2 := by
     have h := MetricCodes.Spherical.classicalThreshold_spectral hs hs'
     rw [MetricCodes.Spherical.Gamma_zero hthreshold] at h
     change 2 * spectralAtom (MetricCodes.classicalThreshold s) = s at h
-    linarith
+    linarith only [h]
   have hmono := spectralAtom_strictMonoOn hthreshold.le
-    (show 0 ≤ a by linarith) ha
+    (show 0 ≤ a by linarith only [ha, hthreshold]) ha
   have hgap : s < 2 * Gamma A B := by
     rw [Gamma_zero]
     change s < 2 * spectralAtom a
-    linarith
+    linarith only [hboundary, hmono]
   simpa only [ge_iff_le, Phi_zero] using levelRate_le hA hgap
 
 theorem levelRate_zero_eq_classical_of_pos
@@ -6459,7 +6417,7 @@ theorem exists_compactified_positive_levelRate_minimizer
   have hdrop : c < 1 → j < r := by
     intro hclt
     rcases hlevels with ⟨hcone, _⟩ | ⟨_, hj⟩
-    · linarith
+    · linarith only [hclt, hcone]
     · omega
   have hlast : 0 < a (Fin.last j) := by
     by_contra hnot
@@ -6475,7 +6433,7 @@ theorem exists_compactified_positive_levelRate_minimizer
           simp only [Phi_zero, Fin.isValue, ha, sphericalEntropy_zero]
         have hscaled : s ≤ 1 - c ^ 2 := by
           rw [hGamma] at hfeasible
-          nlinarith
+          linarith only [hfeasible]
         have hclassical :=
           classicalThreshold_entropy_lt_neg_logb_of_compactified_zero
             hs hs' hc hscaled
@@ -6488,17 +6446,17 @@ theorem exists_compactified_positive_levelRate_minimizer
                   (MetricCodes.classicalThreshold s) :=
               levelRate_zero_eq_classical hs.le hs'
         rw [hPhi] at hmin
-        linarith
+        linarith only [hmin, hclassical, hupper]
     | succ j =>
         obtain ⟨A, _, hA, hGamma, hPhi⟩ :=
           exists_sameLevel_opening_strict_refinement
             (Nat.succ_pos j) h hzero
         have hstrict :
             s < 1 - c ^ 2 * (1 - 2 * Gamma A b) := by
-          nlinarith [sq_pos_of_pos hc]
+          nlinarith only [hfeasible, hGamma, sq_pos_of_pos hc]
         have hupper := levelRate_le_compactified_datum
           hs hs' hc A b hA hstrict hlevels
-        linarith
+        linarith only [hmin, hPhi, hupper]
   exact ⟨j, c, a, b, hj, hc, hc', hdrop, h,
     hlast, hfeasible, hmin⟩
 
@@ -6549,7 +6507,7 @@ theorem boundaryQuadratic_classicalThreshold_eq_zero
     (fun x : ℝ => x * Real.sqrt (a * (1 + a))) hspectral
   change MetricCodes.Spherical.boundaryQuadratic s a = 0
   unfold MetricCodes.Spherical.boundaryQuadratic
-  nlinarith
+  linarith only [hroot_sq, hmult]
 
 theorem boundaryDegree_classicalThreshold_eq_zero
     {s : ℝ} (hs : 0 < s) (hs' : s < 1) :
@@ -6577,7 +6535,7 @@ theorem boundaryDegree_spectral_eq
   rw [MetricCodes.Gamma_eq_sub, ← mul_div_assoc,
     div_eq_iff hden.ne']
   unfold MetricCodes.Spherical.boundaryQuadratic at hroot
-  nlinarith
+  linarith only [hroot]
 
 theorem exists_variationalRate_boundary_minimizer_of_limit
     {s L : ℝ} (hs : 0 < s) (hs' : s < 1)
@@ -6609,7 +6567,7 @@ theorem exists_variationalRate_boundary_minimizer_of_limit
       oneRowBoundaryObjective s u <
         MetricCodes.sphericalEntropy (MetricCodes.classicalThreshold s) := by
     unfold oneRowBoundaryObjective
-    linarith
+    linarith only [himprove, hboundary]
   have hgood_limit : oneRowBoundaryObjective s u < L :=
     hgood.trans hendpoint
   obtain ⟨A, hA⟩ :=
@@ -6693,7 +6651,7 @@ theorem levelRate_one_lt_variationalRate_of_boundary_minimizer
     rw [Gamma_oneRow ha]
     exact boundaryDegree_spectral_eq ha hquadratic.le
   have hspectral : s < 2 * Gamma A (![b]) := by
-    linarith
+    linarith only [hgamma, heq]
   calc
     levelRate 1 s ≤ Phi A (![b]) :=
       levelRate_le hA hspectral
@@ -6735,7 +6693,7 @@ theorem classicalHierarchyProfile_continuousOn_Icc
   exact
     (MetricCodes.Spherical.sphericalEntropy_continuous.continuousAt.comp
       (MetricCodes.Spherical.classicalThreshold_continuousAt
-        (by linarith [ht.1]) (lt_of_le_of_lt ht.2 hs))).continuousWithinAt
+        (by linarith only [ht.1]) (lt_of_le_of_lt ht.2 hs))).continuousWithinAt
 
 theorem levelRate_zero_continuousOn_Icc
     {s : ℝ} (hs : s < 1) :
@@ -6840,15 +6798,15 @@ theorem rowVariationalRate_zero :
   let b : ℝ := a / 2
   have ha : 0 < a := by dsimp [a]; positivity
   have hb : 0 < b := by dsimp [b]; positivity
-  have hba : b < a := by dsimp [b]; linarith
+  have hba : b < a := by dsimp [b]; linarith only [ha]
   have hgamma : 0 < MetricCodes.Gamma a b :=
     MetricCodes.Gamma_pos hb.le hba
   have hfeasible : MetricCodes.Spherical.Feasible 0 a b :=
-    ⟨hb, hba, by linarith⟩
+    ⟨hb, hba, by linarith only [hgamma]⟩
   have hbound := MetricCodes.Spherical.variationalRate_le_of_feasible hfeasible
   have hbentropy := MetricCodes.sphericalEntropy_pos hb
   dsimp [a] at hbound ⊢
-  linarith
+  linarith only [hbound, hbentropy]
 
 theorem eventually_rowVariationalRate_le_squared_entropy :
     ∀ᶠ t : ℝ in 𝓝[>] 0,
@@ -7075,15 +7033,15 @@ private theorem rowProfile_zero_metriccodes2_a5c70490 :
   let b : ℝ := a / 2
   have ha : 0 < a := by dsimp [a]; positivity
   have hb : 0 < b := by dsimp [b]; positivity
-  have hba : b < a := by dsimp [b]; linarith
+  have hba : b < a := by dsimp [b]; linarith only [ha]
   have hgamma : 0 < MetricCodes.Gamma a b :=
     MetricCodes.Gamma_pos hb.le hba
   have hfeasible : MetricCodes.Spherical.Feasible 0 a b :=
-    ⟨hb, hba, by linarith⟩
+    ⟨hb, hba, by linarith only [hgamma]⟩
   have hbound := MetricCodes.Spherical.variationalRate_le_of_feasible hfeasible
   have hbentropy := MetricCodes.sphericalEntropy_pos hb
   dsimp [a] at hbound ⊢
-  linarith
+  linarith only [hbound, hbentropy]
 
 theorem oneRowBoundaryObjective_joint_continuous :
     Continuous (fun p : ℝ × ℝ => oneRowBoundaryObjective p.1 p.2) := by
@@ -7182,13 +7140,14 @@ theorem variationalRate_lowerSemicontinuousOn_Icc_of_jointEscape
             (fun n => MetricCodes.classicalThreshold (v (φ n)))
               atTop (nhds (MetricCodes.classicalThreshold x)) :=
           (MetricCodes.Spherical.classicalThreshold_continuousAt
-            (by linarith : -1 < x) hxone).tendsto.comp hvsub
+            (by linarith only [hs, hs', hxpos, hx, hxzero, hux, hu] : -1 < x)
+            hxone).tendsto.comp hvsub
         have hdiff := hthresholdlim.sub halim
         have hle : MetricCodes.classicalThreshold x ≤ A := by
           have hnonpos : MetricCodes.classicalThreshold x - A ≤ 0 :=
             le_of_tendsto hdiff (Filter.Eventually.of_forall
               (fun n => (sub_nonpos.mpr (hthreshold (φ n)).le)))
-          linarith
+          linarith only [hnonpos]
         have hpair : Tendsto
             (fun n => (v (φ n), a (φ n))) atTop (nhds (x, A)) :=
           hvsub.prodMk_nhds halim
@@ -7273,7 +7232,7 @@ theorem exists_strict_hierarchy_refinement_of_closed
   by_cases hlast : 0 < a (Fin.last r)
   · obtain ⟨A, B, hAB, hGamma, hPhi⟩ :=
       exists_nextLevel_strict_refinement hinterlacing hlast
-    exact ⟨r + 1, A, B, hAB, by linarith, hPhi⟩
+    exact ⟨r + 1, A, B, hAB, by linarith only [hspectral, hGamma], hPhi⟩
   · have hzero : a (Fin.last r) = 0 :=
       le_antisymm (le_of_not_gt hlast) hinterlacing.1
     cases r with
@@ -7284,12 +7243,12 @@ theorem exists_strict_hierarchy_refinement_of_closed
           norm_num [spectralAtom]
         rw [hgamma] at hspectral
         norm_num at hspectral
-        linarith
+        linarith only [hs, hspectral]
     | succ r =>
         obtain ⟨A, _, hA, hGamma, hPhi⟩ :=
           exists_sameLevel_opening_strict_refinement
             (Nat.succ_pos r) hinterlacing hzero
-        exact ⟨r + 1, A, b, hA, by linarith, hPhi⟩
+        exact ⟨r + 1, A, b, hA, by linarith only [hspectral, hGamma], hPhi⟩
 
 theorem closedHierarchyVariationalRate_eq_hierarchyVariationalRate
     {s : ℝ} (hs : 0 < s) (hs' : s < 1) :
@@ -7369,7 +7328,7 @@ theorem eventually_sphericalCodeNumber_lt_hierarchyVariationalRate_of_code_bound
   have hlt :
       sInf (hierarchyRateSet s) < hierarchyVariationalRate s + ε := by
     change hierarchyVariationalRate s < hierarchyVariationalRate s + ε
-    linarith
+    linarith only [hε]
   obtain ⟨z, ⟨r, a, b, hinterlacing, hspectral, rfl⟩, hrate⟩ :=
     exists_lt_of_csInf_lt hnonempty hlt
   filter_upwards [hcode hs hs' a b hinterlacing hspectral hrate]
@@ -7386,7 +7345,7 @@ theorem sphericalCodeRate_le_closedHierarchyVariationalRate_of_code_bound
   apply le_of_forall_pos_le_add
   intro ε hε
   exact sphericalCodeRate_le_of_eventually_exponential
-    (by linarith [hierarchyVariationalRate_nonneg hs hs'])
+    (by linarith only [hε, hierarchyVariationalRate_nonneg hs hs'])
     (eventually_sphericalCodeNumber_lt_hierarchyVariationalRate_of_code_bound
       hcode hs hs' hε)
 
@@ -7419,13 +7378,11 @@ theorem compactificationCapFactor_sq
 theorem compactificationCapFactor_lt_one
     {s t : ℝ} (hs : s < 1) (hts : t < s) :
     compactificationCapFactor s t < 1 := by
-  have hden : 0 < 1 - t := by linarith
+  have hden : 0 < 1 - t := by linarith only [hs, hts]
   have hratio : (1 - s) / (1 - t) < 1 := by
-    exact (div_lt_one hden).2 (by linarith)
+    exact (div_lt_one hden).2 (by linarith only [hts])
   have hsq := compactificationCapFactor_sq hs hts.le
-  have hnonneg : 0 ≤ compactificationCapFactor s t :=
-    (compactificationCapFactor_pos hs hts.le).le
-  nlinarith
+  nlinarith only [hratio, hsq]
 
 theorem neg_logb_compactificationCapFactor_eq_sliceCost
     {s t : ℝ} (hs : s < 1) (hts : t ≤ s) :
@@ -7437,10 +7394,10 @@ theorem neg_logb_compactificationCapFactor_eq_sliceCost
   unfold compactificationCapFactor
     MetricCodes.Spherical.SidelnikovLocalization.sliceCost Real.logb
   rw [Real.log_sqrt hratio]
-  rw [Real.log_div (by linarith : 1 - s ≠ 0)
-    (by linarith : 1 - t ≠ 0),
-    Real.log_div (by linarith : 1 - t ≠ 0)
-      (by linarith : 1 - s ≠ 0)]
+  rw [Real.log_div (by linarith only [hs] : 1 - s ≠ 0)
+    (by linarith only [ht] : 1 - t ≠ 0),
+    Real.log_div (by linarith only [ht] : 1 - t ≠ 0)
+      (by linarith only [hs] : 1 - s ≠ 0)]
   ring
 
 theorem compactificationCapFactor_scaled_spectral
@@ -7450,7 +7407,7 @@ theorem compactificationCapFactor_scaled_spectral
     (hgap : t < 2 * Gamma a b) :
     s < 1 - compactificationCapFactor s t ^ 2 *
       (1 - 2 * Gamma a b) := by
-  have hden : 0 < 1 - t := by linarith
+  have hden : 0 < 1 - t := by linarith only [hs, hts]
   rw [compactificationCapFactor_sq hs hts]
   have hrewrite :
       1 - (1 - s) / (1 - t) * (1 - 2 * Gamma a b) =
@@ -7459,7 +7416,7 @@ theorem compactificationCapFactor_scaled_spectral
     field_simp [hden.ne']
   rw [hrewrite]
   apply (lt_div_iff₀ hden).2
-  nlinarith [mul_pos (sub_pos.mpr hs) (sub_pos.mpr hgap)]
+  linarith only [mul_pos (sub_pos.mpr hs) (sub_pos.mpr hgap)]
 
 end
 
@@ -7570,7 +7527,7 @@ theorem hierarchyVariationalRate_le_localizedEnvelope_of_compactification
     _ = Phi a b +
           MetricCodes.Spherical.SidelnikovLocalization.sliceCost s t := by
       rw [← neg_logb_compactificationCapFactor_eq_sliceCost hs' hts.le]
-      ring
+      ac_rfl
 
 theorem hierarchyVariationalRate_le_localizedHierarchyInf_of_compactification
     (hcompact : GenuineCompactifiedHierarchyTransfer)

@@ -34,6 +34,15 @@ noncomputable section MetricCodesNoncomputable
 
 namespace MetricCodes
 
+private theorem one_sub_centered_square (x : ℝ) :
+    1 - (1 - 2 * x) ^ 2 = 4 * (x * (1 - x)) := by
+  ring
+
+private theorem centered_square_difference (x y : ℝ) :
+    (1 - 2 * x) ^ 2 - (1 - 2 * y) ^ 2 =
+      4 * (y * (1 - y) - x * (1 - x)) := by
+  ring
+
 section
 
 open scoped BigOperators InnerProductSpace
@@ -85,8 +94,8 @@ theorem hammingCorrelation_le_of_dist_le
   have hdiv :
       2 * (d : ℝ) / (n : ℝ) ≤
         2 * (hammingDist x y : ℝ) / (n : ℝ) := by
-    exact (div_le_div_iff_of_pos_right hn').2 (by linarith)
-  linarith
+    exact (div_le_div_iff_of_pos_right hn').2 (by linarith only [hd'])
+  linarith only [hdiv]
 
 /-- The spherical entropy used in the metric-code argument. -/
 def sphericalEntropy (u : ℝ) : ℝ :=
@@ -100,7 +109,7 @@ theorem sphericalEntropy_eq_log_add {u : ℝ} (hu : 0 < u) :
       Real.logb 2 (1 + u) +
         u * Real.logb 2 ((1 + u) / u) := by
   have hu' : u ≠ 0 := hu.ne'
-  have hone : 1 + u ≠ 0 := by linarith
+  have hone : 1 + u ≠ 0 := by linarith only [hu]
   rw [Real.logb_div hone hu']
   unfold sphericalEntropy
   ring
@@ -124,8 +133,8 @@ theorem binaryEntropy_nonneg {u : ℝ} (hu : 0 ≤ u) (hu' : u ≤ 1) :
   have hleft : u * Real.logb 2 u ≤ 0 :=
     mul_nonpos_of_nonneg_of_nonpos hu h₁
   have hright : (1 - u) * Real.logb 2 (1 - u) ≤ 0 :=
-    mul_nonpos_of_nonneg_of_nonpos (by linarith) h₂
-  linarith
+    mul_nonpos_of_nonneg_of_nonpos (by linarith only [hu']) h₂
+  linarith only [hleft, hright]
 
 /-- The gamma used in the metric-code argument. -/
 def Gamma (a b : ℝ) : ℝ :=
@@ -150,16 +159,16 @@ def classicalThreshold (s : ℝ) : ℝ :=
 
 theorem classicalThreshold_pos {s : ℝ} (hs : 0 < s) (hs' : s < 1) :
     0 < classicalThreshold s := by
-  have hrad : 0 < 1 - s ^ 2 := by nlinarith
+  have hrad : 0 < 1 - s ^ 2 := by nlinarith only [hs', hs]
   have hsqrt : 0 < Real.sqrt (1 - s ^ 2) := Real.sqrt_pos.2 hrad
   have hsqrt' : Real.sqrt (1 - s ^ 2) < 1 := by
     apply (Real.sqrt_lt' (by norm_num : (0 : ℝ) < 1)).2
-    nlinarith
+    nlinarith only [hs]
   have hrecip : 1 < 1 / Real.sqrt (1 - s ^ 2) := by
     apply (lt_div_iff₀ hsqrt).2
     simpa only [one_mul] using hsqrt'
   unfold classicalThreshold
-  linarith
+  linarith only [hrecip]
 
 /-- The boolean harmonic dimension used in the metric-code argument. -/
 def booleanHarmonicDimension (n : ℕ) : ℕ → ℕ
@@ -208,7 +217,6 @@ theorem hammingJacobiEntry_pos {n k i : ℕ}
   have hn' : (0 : ℝ) < n := by exact_mod_cast hn
   have hki' : (k : ℝ) ≤ i := by exact_mod_cast hki
   have hi' : (i : ℝ) + (k : ℝ) < n := by exact_mod_cast hi
-  have hzero : (0 : ℝ) ≤ k := Nat.cast_nonneg k
   unfold hammingJacobiEntry
   apply div_pos
   · apply mul_pos <;> linarith
@@ -737,7 +745,7 @@ theorem dot_smul_right (f g : Function n) (c : ℝ) :
   simp only [dot, Pi.smul_apply, smul_eq_mul, Finset.mul_sum]
   apply Finset.sum_congr rfl
   intro S _
-  ring
+  ac_rfl
 
 theorem normSq_nonneg (f : Function n) : 0 ≤ (dot f f) := by
   unfold dot
@@ -1228,7 +1236,7 @@ theorem sum_dot_raiseAt (f g : Function n) :
       apply Finset.sum_congr rfl
       intro S _
       rw [← Finset.mul_sum, sum_not_mem_indicator]
-      ring
+      ac_rfl
 
 theorem sum_dot_lowerAt_of_level {i : ℕ} (f g : Function n)
     (hf : IsLevel i f) :
@@ -1248,7 +1256,7 @@ theorem sum_dot_lowerAt_of_level {i : ℕ} (f g : Function n)
       simp only [dot, Finset.mul_sum]
       apply Finset.sum_congr rfl
       intro S _
-      ring
+      ac_rfl
 
 theorem sum_dot_raiseAt_of_level {i : ℕ} (f g : Function n)
     (hf : IsLevel i f) :
@@ -1270,7 +1278,7 @@ theorem sum_dot_raiseAt_of_level {i : ℕ} (f g : Function n)
       simp only [dot, Finset.mul_sum]
       apply Finset.sum_congr rfl
       intro S _
-      ring
+      ac_rfl
 
 theorem dot_smul_left (f g : Function n) (c : ℝ) :
     dot (c • f) g = c * dot f g := by
@@ -1320,10 +1328,9 @@ theorem raise_eq_zero_iff_of_level {i : ℕ}
     rw [hzero] at hidentity
     have hi' : (2 : ℝ) * (i : ℝ) < (n : ℝ) := by
       exact_mod_cast hi
-    have hpos : 0 < (n : ℝ) - 2 * (i : ℝ) := by linarith
     have hnonneg := normSq_nonneg (lower f)
     have hfn := normSq_nonneg f
-    have hnorm : (dot f f) = 0 := by nlinarith
+    have hnorm : (dot f f) = 0 := by nlinarith only [hfn, hidentity, hnonneg, hi']
     exact (normSq_eq_zero_iff f).mp hnorm
   · intro hfzero
     subst f
@@ -1609,7 +1616,7 @@ theorem deleteChannel_isometry {i : ℕ} (hi : 0 < i)
         dot_smul_right, Finset.mul_sum]
       apply Finset.sum_congr rfl
       intro a _
-      ring
+      ac_rfl
     _ = ((Real.sqrt (i : ℝ))⁻¹ * (Real.sqrt (i : ℝ))⁻¹) *
           ((i : ℝ) * dot f g) := by rw [sum_dot_lowerAt_of_level f g hf]
     _ = ((Real.sqrt (i : ℝ))⁻¹ * (Real.sqrt (i : ℝ))⁻¹ *
@@ -1650,7 +1657,7 @@ theorem addChannel_isometry {i : ℕ} (hi : i < n)
         dot_smul_right, Finset.mul_sum]
       apply Finset.sum_congr rfl
       intro a _
-      ring
+      ac_rfl
     _ = ((Real.sqrt ((n : ℝ) - (i : ℝ)))⁻¹ *
           (Real.sqrt ((n : ℝ) - (i : ℝ)))⁻¹) *
             (((n : ℝ) - (i : ℝ)) * dot f g) := by
@@ -1695,7 +1702,7 @@ theorem harmonicCoefficient_pos {n k r : ℕ}
     exact_mod_cast hbound
   unfold harmonicCoefficient
   apply mul_pos hr'
-  linarith
+  linarith only [hbound']
 
 theorem harmonicNormFactor_pos {n k r : ℕ}
     (hbound : 2 * k + r ≤ n) :
@@ -1734,7 +1741,7 @@ theorem dot_raised_of_harmonic {k : ℕ}
   | succ r ih =>
       rw [dot_raised_succ_of_harmonic f g hg r, ih]
       simp only [harmonicNormFactor, Finset.prod_range_succ]
-      ring
+      ac_rfl
 
 /-- The harmonic embedding used in the binary-code argument. -/
 def harmonicEmbedding (k r : ℕ) (f : Function n) : Function n :=
@@ -1778,7 +1785,7 @@ theorem harmonicEmbedding_isometry {k : ℕ}
           (Real.sqrt (harmonicNormFactor n k r))⁻¹) *
             dot (raised f r) (raised g r) := by
       simp only [harmonicEmbedding, dot_smul_left, dot_smul_right]
-      ring
+      ac_rfl
     _ = ((Real.sqrt (harmonicNormFactor n k r))⁻¹ *
           (Real.sqrt (harmonicNormFactor n k r))⁻¹) *
             (harmonicNormFactor n k r * dot f g) := by
@@ -2326,7 +2333,7 @@ theorem hammingAxis_inner {n : ℕ} (hn : 0 < n)
         rw [sum_sign_mul_eq_hammingDist]
     _ = MetricCodes.hammingCorrelation x y := by
         unfold MetricCodes.hammingCorrelation
-        field_simp [hsne, hn'.ne']; nlinarith [hs]
+        field_simp [hsne, hn'.ne']; nlinarith only [hs]
 
 theorem character_insert
     (x : BinaryWord n) (a : Fin n) (S : Finset (Fin n))
@@ -2372,7 +2379,7 @@ theorem raiseAt_twist
       _ = sign (x a) *
           ((sign (x a) * character x (S.erase a)) *
             f (S.erase a)) := by
-        ring
+        ac_rfl
   · simp only [raiseAt, ha, ↓reduceIte, Pi.smul_apply, twist, mul_zero, smul_eq_mul]
 
 /-- The Euclidean vector of matrix entries used to express the Hilbert–Schmidt inner product. -/
@@ -2438,7 +2445,7 @@ theorem matrixAxisLift_transpose_mul
   rw [Finset.mul_sum]
   apply Finset.sum_congr rfl
   intro r _
-  ring
+  ac_rfl
 
 /-- The axis-lifted projection minus the scaled channel image of that projection. -/
 def matrixAxisResidual
@@ -2610,7 +2617,7 @@ theorem lower_harmonicEmbedding {k : ℕ}
     Real.sqrt_mul hfactor.le]
   congr 1
   field_simp [hfactorne, hcoefficientne];
-    nlinarith [Real.sq_sqrt hcoefficient.le]
+    linarith only [Real.sq_sqrt hcoefficient.le]
 
 /-- The Hamming Jacobi entry rescaled by the square roots of the source and target layer
 dimensions. -/
@@ -2693,13 +2700,13 @@ theorem hammingRecurrenceWeight_eigenrecurrence
                   (Real.sqrt (n.choose (k + i.val) : ℝ) * v i) =
                 (hammingSourceChannelCoefficient n k L m i *
                   Real.sqrt (n.choose (k + i.val) : ℝ)) * v i := by
-                    ring
+                    ac_rfl
               _ = (MetricCodes.hammingJacobiMatrix n k L m i *
                     Real.sqrt (n.choose (k + m.val) : ℝ)) * v i := by
                       rw [h]
               _ = (MetricCodes.hammingJacobiMatrix n k L m i * v i) *
                     Real.sqrt (n.choose (k + m.val) : ℝ) := by
-                      ring
+                      ac_rfl
     _ = (∑ i : Fin (L - k + 1),
           MetricCodes.hammingJacobiMatrix n k L m i * v i) *
         Real.sqrt (n.choose (k + m.val) : ℝ) := by
@@ -2707,7 +2714,7 @@ theorem hammingRecurrenceWeight_eigenrecurrence
     _ = lam * hammingRecurrenceWeight n k L v m := by
           rw [hcoordinate]
           unfold hammingRecurrenceWeight
-          ring
+          ac_rfl
 
 theorem hammingRecurrenceWeight_pos_of_pos
     {n k L : ℕ} (hkL : k ≤ L) (hLn : L + k ≤ n)
@@ -2846,7 +2853,7 @@ theorem hammingAdjacentBlockCoefficient_amplitude_identity
       hammingFibreAmplitude_sq
         hkL hLn v hunit (fun i => (hv i).le) source]
     field_simp [hlam.ne', hsource.ne', hnormal.ne']
-  nlinarith
+  exact (sq_eq_sq₀ hleft hright).mp hsquare
 
 theorem hammingAdjacentBlockCoefficient_amplitude_sum
     {n k L : ℕ} (hn : 0 < n)
@@ -2974,7 +2981,6 @@ theorem hammingAdjacentChannel_isometry
       (hammingAdjacentChannel n k L target source f)
       (hammingAdjacentChannel n k L target source g) =
       dot f g := by
-  have hs := source.isLt
   have ht := target.isLt
   rcases hadjacent with hdelete | hadd
   · simp only [hammingAdjacentChannel, hdelete, ↓reduceIte]
@@ -3150,7 +3156,7 @@ theorem hammingWindowChannelMatrix_pairing
           rw [Finset.mul_sum]
           apply Finset.sum_congr rfl
           intro S _
-          ring
+          ac_rfl
     _ = (hammingAdjacentBlockCoefficient n k L v lam target Q.1 *
         hammingAdjacentBlockCoefficient n k L v lam target R.1) *
         coordinateDot
@@ -3446,8 +3452,6 @@ theorem hammingSourceChannelCoefficient_eq_deletion
     (hadjacent : target.val + 1 = source.val) :
     hammingSourceChannelCoefficient n k L source target =
       hammingDeletionChannelSquare n k (k + target.val) := by
-  have hs := source.isLt
-  have ht := target.isLt
   have hboundary : k + target.val + k < n := by omega
   have hdimension : 0 < (n.choose (k + target.val) : ℝ) := by
     exact_mod_cast Nat.choose_pos (show k + target.val ≤ n by omega)
@@ -3469,8 +3473,6 @@ theorem hammingSourceChannelCoefficient_eq_insertion
     (hadjacent : source.val + 1 = target.val) :
     hammingSourceChannelCoefficient n k L source target =
       hammingInsertionChannelSquare n k (k + source.val) := by
-  have hs := source.isLt
-  have ht := target.isLt
   have hboundary : k + source.val + k < n := by omega
   have hdimension : 0 < (n.choose (k + target.val) : ℝ) := by
     exact_mod_cast Nat.choose_pos (show k + target.val ≤ n by omega)
@@ -3548,7 +3550,7 @@ theorem coordinateDot_deleteChannel_hammingAxisTensor
                 (Real.sqrt (n : ℝ))⁻¹) *
                   ((sign (x a) * sign (x a)) *
                     dot f (twist x (raiseAt a g))) := by
-                      ring
+                      ac_rfl
             _ = ((Real.sqrt (i : ℝ))⁻¹ *
                 (Real.sqrt (n : ℝ))⁻¹) *
                   dot f (twist x (raiseAt a g)) := by
@@ -3590,7 +3592,7 @@ theorem coordinateDot_addChannel_hammingAxisTensor
                 (Real.sqrt (n : ℝ))⁻¹) *
                   ((sign (x a) * sign (x a)) *
                     dot f (twist x (lowerAt a g))) := by
-                      ring
+                      ac_rfl
             _ = ((Real.sqrt ((n : ℝ) - (i : ℝ)))⁻¹ *
                 (Real.sqrt (n : ℝ))⁻¹) *
                   dot f (twist x (lowerAt a g)) := by
@@ -3617,7 +3619,6 @@ theorem hammingSourceChannelCoefficient_sqrt_deletion
       (Real.sqrt (n : ℝ))⁻¹ *
         (Real.sqrt (k + source.val : ℝ))⁻¹ *
           Real.sqrt (harmonicCoefficient n k source.val) := by
-  have hs := source.isLt
   have hcoefficient : 0 < harmonicCoefficient n k source.val :=
     harmonicCoefficient_pos (by omega) (by omega)
   have hnreal : 0 < (n : ℝ) := by exact_mod_cast hn
@@ -3651,8 +3652,6 @@ theorem hammingSourceChannelCoefficient_sqrt_insertion
       (Real.sqrt (n : ℝ))⁻¹ *
         (Real.sqrt ((n : ℝ) - (k + source.val : ℝ)))⁻¹ *
           Real.sqrt (harmonicCoefficient n k target.val) := by
-  have hs := source.isLt
-  have ht := target.isLt
   have hcoefficient : 0 < harmonicCoefficient n k target.val :=
     harmonicCoefficient_pos (by omega) (by omega)
   have hnreal : 0 < (n : ℝ) := by exact_mod_cast hn
@@ -3825,7 +3824,7 @@ theorem hammingWindowChannelMatrix_transpose_axis_fibre
           rw [Finset.mul_sum]
           apply Finset.sum_congr rfl
           intro S _
-          ring
+          ac_rfl
     _ = (∑ target : Fin (L - k + 1),
           hammingAdjacentBlockCoefficient n k L v lam target Q.1 *
             hammingFibreAmplitude n k L v target *
@@ -3839,14 +3838,14 @@ theorem hammingWindowChannelMatrix_transpose_axis_fibre
           rw [Finset.sum_mul]
           apply Finset.sum_congr rfl
           intro target _
-          ring
+          ac_rfl
     _ = Real.sqrt lam *
           (hammingFibreAmplitude n k L v Q.1 *
             wordHarmonicEmbedding x k Q.1.val h Q.2.val) := by
           rw [hammingAdjacentBlockCoefficient_amplitude_sum
             hn hkL hLn v hunit hv lam hlam heigen Q.1,
             dot_hammingWindowBasis_apply]
-          ring
+          ac_rfl
 
 theorem hammingChannelMatrix_transpose_axis_fibre
     {n k L : ℕ} (hn : 0 < n) (hk : 2 * k ≤ n)
@@ -3922,7 +3921,7 @@ theorem matrixAxisLift_mul
   rw [Finset.mul_sum]
   apply Finset.sum_congr rfl
   intro r _
-  ring
+  ac_rfl
 
 theorem hammingChannelMatrix_transpose_axis_projection
     {n k L : ℕ} (hn : 0 < n) (hk : 2 * k ≤ n)
@@ -4473,13 +4472,10 @@ theorem factorialLogError_eq (n : ℕ) (hn : n ≠ 0) :
         (1 / 2 : ℝ) * Real.log (2 * (n : ℝ)) / (n : ℝ) := by
   have hn' : (n : ℝ) ≠ 0 := by exact_mod_cast hn
   have he : Real.exp (1 : ℝ) ≠ 0 := (Real.exp_pos 1).ne'
-  have hst := Stirling.log_stirlingSeq_formula n
-  rw [Real.log_div hn' he, Real.log_exp] at hst
-  have hlog : Real.log ((n : ℝ) * 2) = Real.log (2 * (n : ℝ)) := by
-    rw [mul_comm]
   unfold factorialLogError
+  rw [Stirling.log_stirlingSeq_formula, Real.log_div hn' he, Real.log_exp]
   field_simp [hn']
-  nlinarith [hst, hlog]
+  ring
 
 theorem tendsto_factorialLogError :
     Tendsto factorialLogError atTop (nhds 0) := by
@@ -4704,11 +4700,9 @@ def threshold (n d : ℕ) : ℝ :=
 
 theorem threshold_lt_one {n d : ℕ} (hn : 0 < n) (hd : 0 < d) :
     threshold n d < 1 := by
-  have hn' : (0 : ℝ) < (n : ℝ) := by exact_mod_cast hn
-  have hd' : (0 : ℝ) < (d : ℝ) := by exact_mod_cast hd
   unfold threshold
   have hpos : 0 < 2 * (d : ℝ) / (n : ℝ) := by positivity
-  linarith
+  linarith only [hpos]
 
 /-- The index used in the binary-code argument. -/
 abbrev Index (k L : ℕ) := Fin (L - k + 1)
@@ -5132,10 +5126,10 @@ theorem rateSet_bddBelow (δ : ℝ) : BddBelow (rateSet δ) := by
   rintro r ⟨a, b, hfeasible, rfl⟩
   obtain ⟨hb, hba, ha, hgamma⟩ := hfeasible
   have ha0 : 0 ≤ a := (lt_of_le_of_lt hb hba).le
-  have ha1 : a ≤ 1 := by linarith
+  have ha1 : a ≤ 1 := by linarith only [ha]
   have hapos := MetricCodes.binaryEntropy_nonneg ha0 ha1
   have hble := binaryEntropy_le_one b
-  linarith
+  linarith only [hapos, hble]
 
 theorem variationalRate_le_of_feasible {δ a b : ℝ}
     (h : Feasible δ a b) :
@@ -5153,33 +5147,33 @@ def classicalRate (δ : ℝ) : ℝ :=
 theorem classicalParameter_lt_half {δ : ℝ}
     (hδ : 0 < δ) (hδ' : δ < (1 : ℝ) / 2) :
     classicalParameter δ < (1 : ℝ) / 2 := by
-  have hrad : 0 < δ * (1 - δ) := mul_pos hδ (by linarith)
+  have hrad : 0 < δ * (1 - δ) := mul_pos hδ (by linarith only [hδ'])
   unfold classicalParameter
   have hsqrt := Real.sqrt_pos.2 hrad
-  linarith
+  linarith only [hsqrt]
 
 theorem classicalParameter_pos {δ : ℝ}
     (hδ : 0 < δ) (hδ' : δ < (1 : ℝ) / 2) :
     0 < classicalParameter δ := by
   have hsquare : 0 < (δ - (1 : ℝ) / 2) ^ 2 :=
-    sq_pos_of_ne_zero (by linarith)
-  have hrad : 0 < δ * (1 - δ) := mul_pos hδ (by linarith)
+    sq_pos_of_ne_zero (by linarith only [hδ'])
+  have hrad : 0 < δ * (1 - δ) := mul_pos hδ (by linarith only [hδ'])
   have hrad_lt : δ * (1 - δ) < ((1 : ℝ) / 2) ^ 2 := by
-    nlinarith
+    linarith only [hsquare]
   have hroot : Real.sqrt (δ * (1 - δ)) < (1 : ℝ) / 2 := by
     exact (Real.sqrt_lt' (by norm_num)).2 hrad_lt
   unfold classicalParameter
-  linarith
+  linarith only [hroot]
 
 theorem classicalParameter_mul_one_sub {δ : ℝ}
     (hδ : 0 < δ) (hδ' : δ < (1 : ℝ) / 2) :
     classicalParameter δ * (1 - classicalParameter δ) =
       ((1 : ℝ) / 2 - δ) ^ 2 := by
   have hrad : 0 ≤ δ * (1 - δ) :=
-    (mul_pos hδ (by linarith)).le
+    (mul_pos hδ (by linarith only [hδ'])).le
   have hsqrt := Real.sq_sqrt hrad
   unfold classicalParameter
-  nlinarith
+  linarith only [hsqrt]
 
 theorem hammingGamma_zero {a : ℝ} (ha : 0 < a) (ha' : a < 1) :
     MetricCodes.hammingGamma a 0 = 2 * Real.sqrt (a * (1 - a)) := by
@@ -5190,7 +5184,7 @@ theorem hammingGamma_zero {a : ℝ} (ha : 0 < a) (ha' : a < 1) :
   unfold MetricCodes.hammingGamma
   simp only [sub_zero]
   field_simp [hsqrt]
-  nlinarith
+  linarith only [hsquare]
 
 theorem hammingGamma_classicalParameter {δ : ℝ}
     (hδ : 0 < δ) (hδ' : δ < (1 : ℝ) / 2) :
@@ -5200,7 +5194,7 @@ theorem hammingGamma_classicalParameter {δ : ℝ}
     (classicalParameter_lt_half hδ hδ').trans (by norm_num)
   rw [hammingGamma_zero ha ha',
     classicalParameter_mul_one_sub hδ hδ',
-    Real.sqrt_sq (by linarith : 0 ≤ (1 : ℝ) / 2 - δ)]
+    Real.sqrt_sq (by linarith only [hδ'] : 0 ≤ (1 : ℝ) / 2 - δ)]
   ring
 
 /-- The slope `2 / (1 - 2 * a) + 1` used to perturb the Hamming bound parameters. -/
@@ -5213,10 +5207,10 @@ def improvementPath (a b : ℝ) : ℝ :=
 
 theorem improvementSlope_gt_one {a : ℝ} (ha : a < (1 : ℝ) / 2) :
     1 < improvementSlope a := by
-  have hden : 0 < 1 - 2 * a := by linarith
+  have hden : 0 < 1 - 2 * a := by linarith only [ha]
   have hfrac : 0 < 2 / (1 - 2 * a) := by positivity
   unfold improvementSlope
-  linarith
+  linarith only [hfrac]
 
 theorem tendsto_improvementPath_zero (a : ℝ) :
     Tendsto (improvementPath a) (𝓝[>] (0 : ℝ)) (nhds a) := by
@@ -5252,7 +5246,7 @@ theorem spectralMarginPolynomial_improvement_zero {a : ℝ}
     (ha : a < (1 : ℝ) / 2) :
     spectralMarginPolynomial a (improvementSlope a) 0 =
       a * (1 - a) * (1 - 2 * a) := by
-  have hden : 1 - 2 * a ≠ 0 := by linarith
+  have hden : 1 - 2 * a ≠ 0 := by linarith only [ha]
   have hden' : 1 - a * 2 ≠ 0 := by
     simpa only [ne_eq, mul_comm] using hden
   unfold spectralMarginPolynomial improvementSlope
@@ -5265,8 +5259,8 @@ theorem eventually_hammingGamma_improvement {a : ℝ}
         MetricCodes.hammingGamma (improvementPath a b) b := by
   have hzero : 0 < spectralMarginPolynomial a (improvementSlope a) 0 := by
     rw [spectralMarginPolynomial_improvement_zero ha']
-    have ha1 : 0 < 1 - a := by linarith
-    have hhalf : 0 < 1 - 2 * a := by linarith
+    have ha1 : 0 < 1 - a := by linarith only [ha']
+    have hhalf : 0 < 1 - 2 * a := by linarith only [ha']
     exact mul_pos (mul_pos ha ha1) hhalf
   have hpoly :
       ∀ᶠ b : ℝ in 𝓝[>] 0,
@@ -5286,13 +5280,13 @@ theorem eventually_hammingGamma_improvement {a : ℝ}
     with b hbpoly hbhalf (hb : 0 < b)
   have hbpath : b < improvementPath a b := by
     unfold improvementPath
-    nlinarith [mul_pos (sub_pos.mpr hc) hb]
+    linarith only [ha, mul_pos (sub_pos.mpr hc) hb]
   have hpath : 0 < improvementPath a b := lt_trans hb hbpath
   have hpath1 : improvementPath a b < 1 :=
     hbhalf.trans (by norm_num)
   have htail : 0 < 1 - improvementPath a b - b := by
-    linarith
-  have hbase : 0 < a * (1 - a) := mul_pos ha (by linarith)
+    linarith only [hbhalf, hbpath]
+  have hbase : 0 < a * (1 - a) := mul_pos ha (by linarith only [ha'])
   have hrad : 0 < improvementPath a b * (1 - improvementPath a b) :=
     mul_pos hpath (sub_pos.mpr hpath1)
   have hfactor :
@@ -5331,7 +5325,9 @@ theorem eventually_hammingGamma_improvement {a : ℝ}
           Real.sqrt (improvementPath a b *
             (1 - improvementPath a b)) :=
       mul_nonneg (Real.sqrt_nonneg _) (Real.sqrt_nonneg _)
-    nlinarith
+    apply (sq_lt_sq₀ hnonneg htarget.le).mp
+    rw [hsquare]
+    exact sub_pos.mp hmargin
   have hquot :
       Real.sqrt (a * (1 - a)) <
         ((improvementPath a b - b) *
@@ -5339,7 +5335,7 @@ theorem eventually_hammingGamma_improvement {a : ℝ}
             Real.sqrt
               (improvementPath a b * (1 - improvementPath a b)) :=
     (lt_div_iff₀ (Real.sqrt_pos.2 hrad)).2 hroot
-  rw [hammingGamma_zero ha (by linarith)]
+  rw [hammingGamma_zero ha (by linarith only [ha'])]
   unfold MetricCodes.hammingGamma
   calc
     2 * Real.sqrt (a * (1 - a)) <
@@ -5370,9 +5366,9 @@ theorem neg_mul_logb_le_binaryEntropy {b : ℝ}
   have hlog : Real.logb 2 (1 - b) ≤ 0 :=
     Real.logb_nonpos (by norm_num) (by linarith) (by linarith)
   have hterm : (1 - b) * Real.logb 2 (1 - b) ≤ 0 :=
-    mul_nonpos_of_nonneg_of_nonpos (by linarith) hlog
+    mul_nonpos_of_nonneg_of_nonpos (by linarith only [hb']) hlog
   unfold MetricCodes.binaryEntropy
-  nlinarith
+  linarith only [hterm]
 
 theorem eventually_binaryEntropy_improvement {a : ℝ}
     (ha : 0 < a) (ha' : a < (1 : ℝ) / 2) :
@@ -5393,7 +5389,7 @@ theorem eventually_binaryEntropy_improvement {a : ℝ}
   let M : ℝ := deriv f 0 + 1
   have hM : deriv f 0 < M := by
     dsimp [M]
-    linarith
+    linarith only []
   have hslope := hf.hasDerivAt.tendsto_slope_zero_right
   have hupper :
       ∀ᶠ b : ℝ in 𝓝[>] 0,
@@ -5427,7 +5423,7 @@ theorem eventually_binaryEntropy_improvement {a : ℝ}
       b * M < b * (-Real.logb 2 b) :=
     mul_lt_mul_of_pos_left hlogb hb
   have hentropy := neg_mul_logb_le_binaryEntropy hb.le hb1.le
-  linarith
+  linarith only [houter_bound, hsingular, hentropy]
 
 theorem exists_strict_improving_feasible {δ : ℝ}
     (hδ : 0 < δ) (hδ' : δ < (1 : ℝ) / 2) :
@@ -5455,7 +5451,7 @@ theorem exists_strict_improving_feasible {δ : ℝ}
       with b hgamma' hentropy' hhalf' (hb : 0 < b)
     have hbpath : b < improvementPath a₀ b := by
       unfold improvementPath
-      nlinarith [mul_pos (sub_pos.mpr hc) hb]
+      linarith only [ha₀, mul_pos (sub_pos.mpr hc) hb]
     constructor
     · refine ⟨hb.le, hbpath, hhalf'.le, ?_⟩
       have hboundary : MetricCodes.hammingGamma a₀ 0 = 1 - 2 * δ := by
@@ -5831,10 +5827,10 @@ theorem eventually_transverse_add_le_longitudinal
   let ε : ℝ := (a - b) / 2
   have hε : 0 < ε := by
     dsimp [ε]
-    linarith
+    linarith only [hba]
   have hεlt : ε < a - b := by
     dsimp [ε]
-    linarith
+    linarith only [hba]
   have ha : 0 ≤ a := (lt_of_le_of_lt hb hba).le
   have hratio :=
     ((tendsto_longitudinal_ratio ha).sub
@@ -5859,7 +5855,7 @@ theorem eventually_transverse_add_le_longitudinal
   have hreal :
       (transverseDegree b n : ℝ) + (m : ℝ) ≤
         (longitudinalDegree a n : ℝ) := by
-    linarith
+    linarith only [hnlarge, hmul]
   exact_mod_cast hreal
 
 /-- The terminal edge rayleigh used in the binary-code argument. -/
@@ -5927,7 +5923,7 @@ theorem eventually_topEigenvalue_gt {a b s : ℝ}
         (transverseDegree b n) (longitudinalDegree a n) := by
   have ha0 : 0 < a := lt_of_le_of_lt hb hba
   have ha1 : a < 1 := lt_of_le_of_lt ha (by norm_num)
-  have hsecond : 0 < 1 - a - b := by linarith
+  have hsecond : 0 < 1 - a - b := by linarith only [hba, ha]
   have hgamma : 0 < MetricCodes.hammingGamma a b := by
     unfold MetricCodes.hammingGamma
     apply div_pos
@@ -5936,14 +5932,14 @@ theorem eventually_topEigenvalue_gt {a b s : ℝ}
   let ε : ℝ := (MetricCodes.hammingGamma a b - s) / 2
   have hε : 0 < ε := by
     dsimp [ε]
-    linarith
+    linarith only [hs]
   obtain ⟨m, hm⟩ := exists_nat_gt (MetricCodes.hammingGamma a b / ε)
   have hprod : MetricCodes.hammingGamma a b < (m : ℝ) * ε :=
     (div_lt_iff₀ hε).mp hm
   have hden : 0 < (m : ℝ) + 1 := by positivity
   have hrem : MetricCodes.hammingGamma a b / ((m : ℝ) + 1) < ε := by
     apply (div_lt_iff₀ hden).2
-    nlinarith
+    linarith only [hε, hprod]
   have hidentity :
       ((m : ℝ) / ((m : ℝ) + 1)) * MetricCodes.hammingGamma a b =
         MetricCodes.hammingGamma a b -
@@ -5953,7 +5949,7 @@ theorem eventually_topEigenvalue_gt {a b s : ℝ}
       s < ((m : ℝ) / ((m : ℝ) + 1)) * MetricCodes.hammingGamma a b := by
     rw [hidentity]
     dsimp [ε] at hrem
-    linarith
+    linarith only [hs, hrem]
   have hquot := (tendsto_terminalEdgeRayleigh ha0 ha1 hb m).eventually
     (lt_mem_nhds hbelow)
   filter_upwards [hquot,
@@ -5980,7 +5976,7 @@ theorem complement_longitudinalDegree_floor_le {a : ℝ}
   change (1 - a) * (n : ℝ) ≤
     ((n - longitudinalDegree a n : ℕ) : ℝ)
   rw [Nat.cast_sub hk]
-  nlinarith
+  linarith only [hfloor]
 
 theorem tendsto_complement_longitudinalDegree {a : ℝ}
     (ha : 0 ≤ a) (ha' : a < 1) :
@@ -6068,7 +6064,7 @@ theorem longitudinalDegree_le_half {a : ℝ}
     Nat.floor (a * (n : ℝ)) ≤ Nat.floor ((n : ℝ) / 2) := by
       apply Nat.floor_mono
       have h := mul_le_mul_of_nonneg_right ha (Nat.cast_nonneg n)
-      linarith
+      linarith only [h]
     _ = n / 2 := by
       simpa only [Nat.cast_ofNat] using (Nat.floor_div_eq_div (K := ℝ) n 2)
 
@@ -6144,13 +6140,13 @@ theorem choose_le_mul_hammingFibreDimension
           norm_num
         rw [hcastj]
         push_cast at hcast
-        linarith
+        linarith only [hcast]
       have hlower :
           (n.choose (j + 1) : ℝ) ≤
             ((n.choose (j + 1) - n.choose j : ℕ) : ℝ) *
               ((n - j : ℕ) : ℝ) := by
         rw [hidentity]
-        nlinarith [Nat.cast_nonneg (α := ℝ) (n.choose (j + 1))]
+        exact le_mul_of_one_le_right (Nat.cast_nonneg _) hfactorReal
       have hrange :
           ((n - j : ℕ) : ℝ) ≤ ((n + 1 : ℕ) : ℝ) := by
         exact_mod_cast (show n - j ≤ n + 1 by omega)
@@ -6363,7 +6359,7 @@ theorem tendsto_logb_hammingFibreDimension {b : ℝ}
           (MetricCodes.hammingFibreDimension n
             (transverseDegree b n) : ℝ) / (n : ℝ) := by
         apply (div_le_div_iff_of_pos_right hnreal).2
-        linarith
+        linarith only [hlog]
   have hupper :
       ∀ᶠ n : ℕ in atTop,
         Real.logb 2
@@ -6438,7 +6434,7 @@ theorem windowFibreQuotient_pos_of_fit {a b : ℝ} {n : ℕ}
   have hfibre :
       0 < (MetricCodes.hammingFibreDimension n (transverseDegree b n) : ℝ) := by
     exact_mod_cast hammingFibreDimension_pos hkhalf
-  have haone : a ≤ 1 := by linarith
+  have haone : a ≤ 1 := by linarith only [ha]
   have hchoose : 0 < (n.choose (longitudinalDegree a n) : ℝ) := by
     exact_mod_cast
       Nat.choose_pos (longitudinalDegree_le_dimension haone n)
@@ -6476,7 +6472,7 @@ theorem tendsto_logb_windowFibreQuotient {a b : ℝ}
   have hfibre :
       0 < (MetricCodes.hammingFibreDimension n (transverseDegree b n) : ℝ) := by
     exact_mod_cast hammingFibreDimension_pos hkhalf
-  have haone : a ≤ 1 := by linarith
+  have haone : a ≤ 1 := by linarith only [ha]
   have hchoose : 0 < (n.choose (longitudinalDegree a n) : ℝ) := by
     exact_mod_cast
       Nat.choose_pos (longitudinalDegree_le_dimension haone n)
@@ -6559,7 +6555,7 @@ theorem threshold_ceil_numerator_le_two {δ : ℝ}
     apply (div_le_iff₀ hnreal).2
     exact mul_le_mul_of_nonneg_left hdreal (by norm_num)
   unfold threshold
-  linarith
+  linarith only [hquot]
 
 /-- The spectral gap used in the binary-code argument. -/
 def spectralGap (δ a b : ℝ) : ℝ :=
@@ -6568,7 +6564,7 @@ def spectralGap (δ a b : ℝ) : ℝ :=
 theorem spectralGap_pos {δ a b : ℝ} (h : Feasible δ a b) :
     0 < spectralGap δ a b := by
   unfold spectralGap
-  linarith [h.2.2.2]
+  linarith only [h.2.2.2]
 
 theorem eventually_topEigenvalue_uniform_gap_ceil {δ a b : ℝ}
     (hδ : 0 ≤ δ) (h : Feasible δ a b) :
@@ -6584,7 +6580,7 @@ theorem eventually_topEigenvalue_uniform_gap_ceil {δ a b : ℝ}
       1 - 2 * δ + 2 * spectralGap δ a b <
         MetricCodes.hammingGamma a b := by
     unfold spectralGap
-    linarith
+    linarith only [hgamma]
   have heigen :=
     eventually_topEigenvalue_gt hb hba ha hstrict
   have hthreshold :
@@ -6592,9 +6588,9 @@ theorem eventually_topEigenvalue_uniform_gap_ceil {δ a b : ℝ}
         threshold n (Nat.ceil (δ * (n : ℝ))) <
           1 - 2 * δ + spectralGap δ a b :=
     (tendsto_threshold_ceil hδ).eventually
-      (gt_mem_nhds (by linarith))
+      (gt_mem_nhds (by linarith only [hgap]))
   filter_upwards [heigen, hthreshold] with n he hn
-  linarith
+  linarith only [he, hn]
 
 /-- The spectral prefactor used in the binary-code argument. -/
 def spectralPrefactor (δ a b : ℝ) : ℝ :=
@@ -6706,7 +6702,7 @@ theorem binaryRate_le_variationalRate_of_positive_feasible_bounds
       have hcunit : c ≤ 1 := by
         have hca := hfeasible'.2.1
         have hahalf := hfeasible'.2.2.1
-        linarith
+        linarith only [hca, hahalf]
       have hentropy : 0 ≤ MetricCodes.binaryEntropy c :=
         MetricCodes.binaryEntropy_nonneg hc.le hcunit
       calc
@@ -6761,7 +6757,7 @@ theorem eventually_codeNumber_le_spectralPrefactor_mul_windowFibreQuotient
     ∀ᶠ n : ℕ in atTop,
       (codeNumber n (Nat.ceil (δ * (n : ℝ))) : ℝ) ≤
         spectralPrefactor δ a b * windowFibreQuotient a b n := by
-  have hδone : δ ≤ 1 := by linarith
+  have hδone : δ ≤ 1 := by linarith only [hδ']
   filter_upwards [
     eventually_gt_atTop (0 : ℕ),
     eventually_transverse_add_le_longitudinal h.1 h.2.1 1,
@@ -6781,7 +6777,7 @@ theorem eventually_codeNumber_le_spectralPrefactor_mul_windowFibreQuotient
         topEigenvalue n (transverseDegree b n)
           (longitudinalDegree a n) := by
     have hpositive := spectralGap_pos h
-    linarith
+    linarith only [hmargin, hpositive]
   have hfinite := finite_bound hn hd hkL hLn hgap
   have hquotient : 0 ≤ windowFibreQuotient a b n :=
     (windowFibreQuotient_pos_of_fit h.2.2.1 hkL.le).le
@@ -7031,7 +7027,7 @@ theorem threshold_lt_one {n w d : ℕ}
     positivity
   unfold threshold
   have hfrac := div_pos hnum hden
-  linarith
+  linarith only [hfrac]
 
 theorem correlation_le_threshold {n w d : ℕ}
     (hw : 0 < w) (hwn : w < n)
@@ -7053,7 +7049,7 @@ theorem correlation_le_threshold {n w d : ℕ}
   have hfrac :=
     (div_le_div_iff_of_pos_right hden).mpr hnum
   unfold threshold
-  linarith
+  linarith only [hfrac]
 
 theorem correlation_le_threshold_of_code {n w d : ℕ}
     (hw : 0 < w) (hwn : w < n)
@@ -7462,29 +7458,15 @@ theorem zonalDiagonal_eq {n w j : ℕ}
     exact_mod_cast hhalf
   have hj' : (j : ℝ) ≤ (w : ℝ) := by
     exact_mod_cast hj
-  have hsmall : (2 : ℝ) * (j : ℝ) < (n : ℝ) := by
-    nlinarith
   have hw' : (w : ℝ) ≠ 0 := by
     exact_mod_cast Nat.ne_of_gt hw
   have hN' : (n : ℝ) - (w : ℝ) ≠ 0 := by
-    have hwn' : (w : ℝ) < (n : ℝ) := by exact_mod_cast hwn
-    linarith
+    linarith only [hhalf']
   have hJ : 0 < MetricCodes.johnsonJ n j := by
     unfold MetricCodes.johnsonJ
-    nlinarith
+    linarith only [hhalf', hj']
   have hJone : MetricCodes.johnsonJ n j + 1 ≠ 0 := by
-    linarith
-  have hD :
-      (n : ℝ) * 2 - (n : ℝ) * (j : ℝ) * 4 +
-          (n : ℝ) ^ 2 - (j : ℝ) * 4 + (j : ℝ) ^ 2 * 4 ≠ 0 := by
-    have hfactor :
-        (n : ℝ) * 2 - (n : ℝ) * (j : ℝ) * 4 +
-            (n : ℝ) ^ 2 - (j : ℝ) * 4 + (j : ℝ) ^ 2 * 4 =
-          ((n : ℝ) - 2 * (j : ℝ)) *
-            ((n : ℝ) - 2 * (j : ℝ) + 2) := by
-      ring
-    rw [hfactor]
-    exact (mul_pos (by linarith) (by linarith)).ne'
+    linarith only [hJ]
   unfold MetricCodes.johnsonZonalDiagonal MetricCodes.johnsonDiagonal
     MetricCodes.johnsonMu MetricCodes.johnsonM
     MetricCodes.johnsonJ1 MetricCodes.johnsonJ2
@@ -7505,13 +7487,13 @@ theorem zonalDiagonal_pos {n w j : ℕ}
     exact_mod_cast hjw
   have hM : 0 < MetricCodes.johnsonM n w := by
     unfold MetricCodes.johnsonM
-    nlinarith
+    linarith only [hhalf']
   have hJ : 0 < MetricCodes.johnsonJ n j := by
     unfold MetricCodes.johnsonJ
-    nlinarith
+    linarith only [hhalf', hjw']
   have hN : 0 < n - w := Nat.sub_pos_of_lt hwn
   have hlast : 0 < (n : ℝ) - (j : ℝ) + 1 := by
-    nlinarith
+    linarith only [hhalf', hjw']
   positivity
 
 theorem associatedEdge_pos {n w p q j : ℕ}
@@ -8052,7 +8034,7 @@ theorem johnsonRecurrenceWeight_eigenrecurrence
                   Real.sqrt
                     (MetricCodes.booleanHarmonicDimension
                       n (p + q + i.val) : ℝ)) * v i := by
-                    ring
+                    ac_rfl
               _ = (matrix n w p q L m i *
                     Real.sqrt
                       (MetricCodes.booleanHarmonicDimension
@@ -8062,7 +8044,7 @@ theorem johnsonRecurrenceWeight_eigenrecurrence
                     Real.sqrt
                       (MetricCodes.booleanHarmonicDimension
                         n (p + q + m.val) : ℝ) := by
-                      ring
+                      ac_rfl
     _ = (∑ i : Index p q L,
           matrix n w p q L m i * v i) *
         Real.sqrt
@@ -8071,7 +8053,7 @@ theorem johnsonRecurrenceWeight_eigenrecurrence
     _ = lam * johnsonRecurrenceWeight n w p q L v m := by
           rw [hcoordinate]
           unfold johnsonRecurrenceWeight
-          ring
+          ac_rfl
 
 /-- The johnson adjacent block coefficient used in the Johnson-code argument. -/
 def johnsonAdjacentBlockCoefficient
@@ -8233,7 +8215,7 @@ theorem johnsonAdjacentBlockCoefficient_amplitude_identity
       Real.sq_sqrt hlam.le,
       johnsonFibreAmplitude_sq h v hv source]
     field_simp [hlam.ne', hsource.ne', hnormal.ne']
-  nlinarith
+  exact (sq_eq_sq₀ hleft hright).mp hsquare
 
 theorem johnsonAdjacentBlockCoefficient_amplitude_sum
     {n w p q L : ℕ} (h : AdmissibleDegrees n w p q L)
@@ -8362,12 +8344,10 @@ theorem sqrt_one_sub_centeredDegree_sq {u : ℝ}
     Real.sqrt (1 - (1 - 2 * u) ^ 2) =
       2 * Real.sqrt (u * (1 - u)) := by
   have hvariance : 0 < u * (1 - u) :=
-    mul_pos hu (by linarith)
-  have hrad : 0 ≤ 1 - (1 - 2 * u) ^ 2 := by
-    nlinarith
-  have hsquare := Real.sq_sqrt hvariance.le
-  apply (Real.sqrt_eq_iff_eq_sq hrad (by positivity)).mpr
-  nlinarith
+    mul_pos hu (by linarith only [hhalf])
+  rw [one_sub_centered_square, Real.sqrt_mul' _ hvariance.le,
+    show (4 : ℝ) = (2 : ℝ) ^ 2 by norm_num,
+    Real.sqrt_sq (by norm_num : (0 : ℝ) ≤ 2)]
 
 theorem zero_fibre_spectral_algebra
     (z m s : ℝ)
@@ -8382,7 +8362,7 @@ theorem zero_fibre_spectral_algebra
       (z ^ 2 - m ^ 2) /
         ((1 - m ^ 2) * (1 + 2 * s)) := by
   have hzsq : z ^ 2 = 1 - 4 * s ^ 2 := by
-    nlinarith [hsquare]
+    linarith only [hsquare]
   have hzsqne : 1 - 4 * s ^ 2 ≠ 0 := by
     rw [← hzsq]
     exact pow_ne_zero 2 hz
@@ -8406,16 +8386,16 @@ theorem spectralLimit_zero_fibre_boundary {α u : ℝ}
   let m : ℝ := (1 - 2 * α)
   let s : ℝ := Real.sqrt (u * (1 - u))
   have ha0 : 0 < α := lt_trans hu hua
-  have haone : 0 < 1 - α := by linarith
-  have huone : 0 < 1 - u := by linarith
+  have haone : 0 < 1 - α := by linarith only [ha]
+  have huone : 0 < 1 - u := by linarith only [hua, ha]
   have hvariance : 0 < u * (1 - u) := mul_pos hu huone
   have hz : z ≠ 0 := by
     dsimp [z]
-    nlinarith
+    linarith only [hua, ha]
   have hm : 1 - m ^ 2 ≠ 0 := by
-    have hprod : 0 < α * (1 - α) := mul_pos ha0 haone
     dsimp [m]
-    nlinarith
+    rw [one_sub_centered_square]
+    exact mul_ne_zero (by norm_num) (mul_pos ha0 haone).ne'
   have hs : s ≠ 0 := by
     dsimp [s]
     exact (Real.sqrt_pos.mpr hvariance).ne'
@@ -8423,11 +8403,10 @@ theorem spectralLimit_zero_fibre_boundary {α u : ℝ}
     have hsnonneg : 0 ≤ s := by
       dsimp [s]
       exact Real.sqrt_nonneg _
-    nlinarith
+    linarith only [hsnonneg]
   have hsquare : 4 * s ^ 2 = 1 - z ^ 2 := by
-    have hsqrt := Real.sq_sqrt hvariance.le
     dsimp [s, z]
-    nlinarith
+    rw [one_sub_centered_square, Real.sq_sqrt hvariance.le]
   have hradical : Real.sqrt (1 - z ^ 2) = 2 * s := by
     simpa only using sqrt_one_sub_centeredDegree_sq hu (lt_trans hua ha)
   have hsig : (1 - 2 * 0 - 2 * 0 : ℝ) = 1 := by
@@ -8459,16 +8438,6 @@ theorem spectralLimit_zero_fibre_boundary {α u : ℝ}
         ((z ^ 2 - m ^ 2) * (1 - z ^ 2)) /
           (z ^ 2 * (1 - m ^ 2) * Real.sqrt (1 - z ^ 2)) = _
     rw [hradical]
-  have hA : α * (1 - α) ≠ 0 :=
-    (mul_pos ha0 haone).ne'
-  have hfourA : α * 4 - α ^ 2 * 4 ≠ 0 := by
-    have hp : 0 < α * (1 - α) := mul_pos ha0 haone
-    nlinarith
-  have hmraw : 1 - (1 - 2 * α) ^ 2 ≠ 0 := by
-    simpa [m] using hm
-  have hplusraw :
-      1 + 2 * Real.sqrt (u * (1 - u)) ≠ 0 := by
-    simpa only [ne_eq] using hplus
   calc
     1 - spectralLimit α 0 0 u =
         (z ^ 2 - m ^ 2) /
@@ -8479,7 +8448,8 @@ theorem spectralLimit_zero_fibre_boundary {α u : ℝ}
         (α * (1 - α) *
           (1 + 2 * Real.sqrt (u * (1 - u)))) := by
       dsimp [z, m, s]
-      field_simp [hmraw, hA, hfourA, hplusraw]; ring
+      rw [centered_square_difference, one_sub_centered_square,
+        mul_assoc, mul_div_mul_left _ _ (by norm_num : (4 : ℝ) ≠ 0)]
 
 /-- The asymptotic threshold used in the Johnson-code argument. -/
 def asymptoticThreshold (δ α : ℝ) : ℝ :=
@@ -8527,32 +8497,31 @@ variable {δ α β γ u : ℝ}
 
 theorem weight_pos (h : AsymptoticParameters δ α β γ u) :
     0 < α := by
-  nlinarith [h.distance_pos, h.weight_gt_distance]
+  linarith only [h.distance_pos, h.weight_gt_distance]
 
 theorem weight_complement_pos
     (h : AsymptoticParameters δ α β γ u) :
     0 < 1 - α := by
-  nlinarith [h.weight_lt_half]
+  linarith only [h.weight_lt_half]
 
 theorem degree_pos (h : AsymptoticParameters δ α β γ u) :
     0 < u := by
-  nlinarith [h.support_nonneg, h.complement_nonneg,
-    h.first_lt_degree]
+  linarith only [h.support_nonneg, h.complement_nonneg, h.first_lt_degree]
 
 theorem centeredDegree_pos
     (h : AsymptoticParameters δ α β γ u) :
     0 < (1 - 2 * u) := by
-  nlinarith [h.degree_lt_weight, h.weight_lt_half]
+  linarith only [h.degree_lt_weight, h.weight_lt_half]
 
 theorem centeredWeight_pos
     (h : AsymptoticParameters δ α β γ u) :
     0 < (1 - 2 * α) := by
-  nlinarith [h.weight_lt_half]
+  linarith only [h.weight_lt_half]
 
 theorem centeredSigma_gt_degree
     (h : AsymptoticParameters δ α β γ u) :
     (1 - 2 * u) < (1 - 2 * β - 2 * γ) := by
-  nlinarith [h.first_lt_degree]
+  linarith only [h.first_lt_degree]
 
 theorem centeredSigma_pos
     (h : AsymptoticParameters δ α β γ u) :
@@ -8563,28 +8532,28 @@ theorem centeredEta_lt_degree
     (h : AsymptoticParameters δ α β γ u) :
     centeredEta α β γ < (1 - 2 * u) := by
   unfold centeredEta
-  nlinarith [h.degree_lt_left]
+  linarith only [h.degree_lt_left]
 
 theorem neg_degree_lt_centeredEta
     (h : AsymptoticParameters δ α β γ u) :
     -(1 - 2 * u) < centeredEta α β γ := by
   unfold centeredEta
-  nlinarith [h.degree_lt_right]
+  linarith only [h.degree_lt_right]
 
 theorem one_sub_centeredWeight_sq_pos
     (h : AsymptoticParameters δ α β γ u) :
     0 < 1 - (1 - 2 * α) ^ 2 := by
   have hprod : 0 < α * (1 - α) :=
     mul_pos h.weight_pos h.weight_complement_pos
-  nlinarith
+  linarith only [hprod]
 
 theorem one_sub_centeredDegree_sq_pos
     (h : AsymptoticParameters δ α β γ u) :
     0 < 1 - (1 - 2 * u) ^ 2 := by
   have huone : 0 < 1 - u := by
-    nlinarith [h.degree_lt_weight, h.weight_lt_half]
+    linarith only [h.degree_lt_weight, h.weight_lt_half]
   have hprod : 0 < u * (1 - u) := mul_pos h.degree_pos huone
-  nlinarith
+  linarith only [hprod]
 
 theorem degree_sq_sub_eta_sq_pos
     (h : AsymptoticParameters δ α β γ u) :
@@ -8592,8 +8561,9 @@ theorem degree_sq_sub_eta_sq_pos
   have hleft : 0 < (1 - 2 * u) - centeredEta α β γ :=
     sub_pos.mpr h.centeredEta_lt_degree
   have hright : 0 < (1 - 2 * u) + centeredEta α β γ := by
-    linarith [h.neg_degree_lt_centeredEta]
-  nlinarith [mul_pos hleft hright]
+    linarith only [h.neg_degree_lt_centeredEta]
+  rw [sq_sub_sq]
+  exact mul_pos hright hleft
 
 theorem sigma_sq_sub_degree_sq_pos
     (h : AsymptoticParameters δ α β γ u) :
@@ -8602,7 +8572,8 @@ theorem sigma_sq_sub_degree_sq_pos
     sub_pos.mpr h.centeredSigma_gt_degree
   have hright : 0 < (1 - 2 * β - 2 * γ) + (1 - 2 * u) :=
     add_pos h.centeredSigma_pos h.centeredDegree_pos
-  nlinarith [mul_pos hleft hright]
+  rw [sq_sub_sq]
+  exact mul_pos hright hleft
 
 theorem rankPenalty_le_one
     (h : AsymptoticParameters δ α β γ u) :
@@ -8613,17 +8584,17 @@ theorem rankPenalty_le_one
     (binaryEntropy_le_one (γ / (1 - α)))
     h.weight_complement_pos.le
   unfold rankPenalty
-  nlinarith
+  linarith only [hsupport, hcomplement]
 
 theorem shellRate_lower
     (h : AsymptoticParameters δ α β γ u) :
     -1 ≤ shellRate α β γ u := by
   have hαentropy := binaryEntropy_le_one α
   have huone : u ≤ 1 := by
-    nlinarith [h.degree_lt_weight, h.weight_lt_half]
+    linarith only [h.degree_lt_weight, h.weight_lt_half]
   have huentropy := MetricCodes.binaryEntropy_nonneg h.degree_pos.le huone
   unfold shellRate
-  nlinarith [h.rankPenalty_le_one]
+  linarith only [hαentropy, huentropy, h.rankPenalty_le_one]
 
 end AsymptoticParameters
 
@@ -8681,13 +8652,13 @@ theorem mrrwG_continuous : Continuous mrrwG := by
 theorem mrrwG_nonneg {v : ℝ} (hv : 0 ≤ v) :
     0 ≤ mrrwG v := by
   have hroot : Real.sqrt (1 - v) ≤ 1 :=
-    Real.sqrt_le_one.mpr (by linarith)
+    Real.sqrt_le_one.mpr (by linarith only [hv])
   have hroot' : 0 ≤ Real.sqrt (1 - v) :=
     Real.sqrt_nonneg _
   unfold mrrwG
   apply MetricCodes.binaryEntropy_nonneg
-  · linarith
-  · linarith
+  · linarith only [hroot]
+  · linarith only [hroot']
 
 /-- The mrrw objective used in the Johnson-code argument. -/
 def mrrwObjective (δ r : ℝ) : ℝ :=
@@ -8738,7 +8709,7 @@ theorem mrrwG_variance {u : ℝ}
     ring
   have hroot :
       Real.sqrt (1 - 4 * u * (1 - u)) = 1 - 2 * u := by
-    rw [hrad, Real.sqrt_sq (by linarith)]
+    rw [hrad, Real.sqrt_sq (by linarith only [hu])]
   unfold mrrwG
   rw [hroot]
   congr 1
@@ -8753,14 +8724,14 @@ theorem zero_fibre_boundary_variance {δ α u : ℝ}
       (2 * Real.sqrt (u * (1 - u))) ^ 2 +
         2 * δ * (2 * Real.sqrt (u * (1 - u))) + 2 * δ := by
   have hα : 0 < α := lt_trans hu hua
-  have hαone : 0 < 1 - α := by linarith
-  have huone : 0 < 1 - u := by linarith
+  have hαone : 0 < 1 - α := by linarith only [ha]
+  have huone : 0 < 1 - u := by linarith only [hua, ha]
   have hA : α * (1 - α) ≠ 0 :=
     (mul_pos hα hαone).ne'
   have hs : 0 ≤ Real.sqrt (u * (1 - u)) :=
     Real.sqrt_nonneg _
   have hplus : 1 + 2 * Real.sqrt (u * (1 - u)) ≠ 0 := by
-    nlinarith
+    linarith only [hs]
   have hrel :
       δ / (2 * α * (1 - α)) =
         (α * (1 - α) - u * (1 - u)) /
@@ -8775,7 +8746,7 @@ theorem zero_fibre_boundary_variance {δ α u : ℝ}
       _ = _ := spectralLimit_zero_fibre_boundary hu hua ha
   have hsquare := Real.sq_sqrt (mul_pos hu huone).le
   field_simp [hA, hα.ne', hαone.ne', hplus] at hrel
-  nlinarith [hsquare]
+  linarith only [hrel, hsquare]
 
 theorem mrrwObjective_zero_fibre_boundary {δ α u : ℝ}
     (hu : 0 < u) (hua : u < α)
@@ -8784,22 +8755,22 @@ theorem mrrwObjective_zero_fibre_boundary {δ α u : ℝ}
       spectralLimit α 0 0 u = asymptoticThreshold δ α) :
     mrrwObjective δ (2 * Real.sqrt (u * (1 - u))) =
       shellRate α 0 0 u := by
-  have huone : 0 < 1 - u := by linarith
+  have huone : 0 < 1 - u := by linarith only [hua, ha]
   have hsquare := Real.sq_sqrt (mul_pos hu huone).le
   have hvariance :
       (2 * Real.sqrt (u * (1 - u))) ^ 2 =
         4 * u * (1 - u) := by
-    nlinarith [hsquare]
+    linarith only [hsquare]
   have hboundary' :=
     zero_fibre_boundary_variance hu hua ha hboundary
   have hargument :
       4 * u * (1 - u) +
         2 * δ * (2 * Real.sqrt (u * (1 - u))) + 2 * δ =
         4 * α * (1 - α) := by
-    nlinarith [hboundary', hvariance]
+    linarith only [hboundary', hvariance]
   unfold mrrwObjective
   rw [hvariance, hargument,
-    mrrwG_variance (by linarith : u ≤ (1 : ℝ) / 2),
+    mrrwG_variance (by linarith only [hua, ha] : u ≤ (1 : ℝ) / 2),
     mrrwG_variance ha.le, shellRate_zero_fibre]
   ring
 
@@ -8818,7 +8789,7 @@ theorem mrrwRateSet_bddBelow (δ : ℝ) :
     unfold mrrwG
     exact binaryEntropy_le_one _
   unfold mrrwObjective
-  linarith
+  linarith only [hfirst, hsecond]
 
 /-- The mrrw rate used in the Johnson-code argument. -/
 def mrrwRate (δ : ℝ) : ℝ :=
@@ -8839,7 +8810,7 @@ theorem exists_mrrw_minimizer {δ : ℝ}
     refine ⟨0, ?_⟩
     constructor
     · exact le_rfl
-    · linarith
+    · linarith only [hhalf]
   obtain ⟨r, hr, hmin⟩ :=
     isCompact_Icc.exists_isMinOn hnonempty
       (mrrwObjective_continuous δ).continuousOn
@@ -8865,7 +8836,7 @@ theorem mrrwRate_le_classicalRate {δ : ℝ}
     mrrwRate δ ≤ MetricCodes.Hamming.classicalRate δ := by
   calc
     mrrwRate δ ≤ mrrwObjective δ (1 - 2 * δ) :=
-      mrrwRate_le_objective (by linarith) (le_refl _)
+      mrrwRate_le_objective (by linarith only [hhalf]) (le_refl _)
     _ = MetricCodes.Hamming.classicalRate δ :=
       mrrwObjective_endpoint hδ hhalf
 

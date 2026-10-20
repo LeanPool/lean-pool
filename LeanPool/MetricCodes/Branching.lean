@@ -296,7 +296,7 @@ theorem polarization_chain_commutator
     intro a _
     rw [SpherePacking.mvPolynomial_pderiv_commute
       (variableIndex j a) (variableIndex k b) p]
-    ring
+    ac_rfl
   have hleft :
       polarization r n i j (polarization r n j k p) =
         polarization r n i k p +
@@ -1005,7 +1005,7 @@ theorem actual_weyl_detailed_balance {r n : ℕ}
         minusProbability n (raiseWeight lam ℓ) mu ℓ := by
   rw [plusProbability_eq_weylEdgeRatio_mul_minus ℓ h hraise,
     weylDimension_raiseWeight ℓ h]
-  ring
+  ac_rfl
 
 end
 
@@ -1832,7 +1832,7 @@ theorem tendsto_plusProbability_of_ratios {r : ℕ}
     rw [mul_div_mul_comm, ← Finset.prod_div_distrib]
     congr 2
     funext j
-    ring
+    ac_rfl
   · unfold lagrangeWeight lagrangeNumerator lagrangeDenominator
     rw [Finset.prod_div_distrib]
 
@@ -2114,8 +2114,8 @@ theorem reachable_zero {r m : ℕ} (v : Vertex r m) :
         exact hreach.trans hedge
 
 theorem grid_connected (r m : ℕ) : (grid r m).Connected := by
-  apply (grid r m).connected_iff_exists_forall_reachable.mpr
-  exact ⟨(fun _ => 0), reachable_zero⟩
+  exact (SimpleGraph.connected_iff_exists_forall_reachable (grid r m)).mpr
+      (Exists.intro (fun _ ↦ 0) reachable_zero)
 
 private theorem forwardMatrix_nextVertex_pos_metriccodes2_dbb1ceac {r m : ℕ}
     (edge : Vertex r m → Fin (r + 1) → ℝ)
@@ -2901,7 +2901,7 @@ theorem eventually_const_mul_lt_rpow_of_logRate
       (Real.exp_log hpositive).symm
     _ < Real.exp (Real.log 2 * (R * (n : ℝ))) := by
       apply Real.exp_lt_exp.mpr
-      nlinarith
+      linarith
     _ = (2 : ℝ) ^ (R * (n : ℝ)) :=
       (Real.rpow_def_of_pos (by norm_num) _).symm
 
@@ -2982,7 +2982,7 @@ theorem fixedLevelHierarchyCodeBound_levelZero
   refine (hn C).trans ?_
   apply Real.strictMono_rpow_of_base_gt_one (by norm_num : (1 : ℝ) < 2)
   have hnreal : 0 < (n : ℝ) := by exact_mod_cast hnpos
-  nlinarith [mul_pos (sub_pos.mpr hR) hnreal]
+  linarith [mul_pos (sub_pos.mpr hR) hnreal]
 
 theorem fixedLevelHierarchyCodeBound_of_positiveTerminal
     (hpositive : ∀ {r : ℕ} {s R : ℝ}, 0 < s → s < 1 →
@@ -3008,7 +3008,7 @@ theorem fixedLevelHierarchyCodeBound_of_positiveTerminal
           exists_sameLevel_opening_strict_refinement
             (Nat.succ_pos r) hinterlacing hzero
         exact hpositive hs hs' A b hA hApos
-          (by nlinarith) (by linarith)
+          (by linarith) (by linarith)
 
 theorem fixedLevelHierarchyCodeBound_of_actualRectangularGraphs
     (hboxes : ∀ {r : ℕ} {s R : ℝ}, 0 < s → s < 1 →
@@ -3189,6 +3189,22 @@ def liftChannel {I : Type*} [Fintype I] [DecidableEq I]
   ((coordinateInclusion (n := n) lam target).toLinearMap.comp T.toLinearMap).comp
     (vertexInclusion (YoungVertex (n := n) lam) source).adjoint
 
+private theorem adjoint_comp_composed_maps
+    {E F F' G G' H : Type*}
+    [NormedAddCommGroup E] [InnerProductSpace ℝ E] [FiniteDimensional ℝ E]
+    [NormedAddCommGroup F] [InnerProductSpace ℝ F] [FiniteDimensional ℝ F]
+    [AddCommMonoid F'] [Module ℝ F']
+    [NormedAddCommGroup G] [InnerProductSpace ℝ G] [FiniteDimensional ℝ G]
+    [NormedAddCommGroup G'] [InnerProductSpace ℝ G'] [FiniteDimensional ℝ G']
+    [NormedAddCommGroup H] [InnerProductSpace ℝ H] [FiniteDimensional ℝ H]
+    (C : F →ₗ[ℝ] E) (T : G →ₗ[ℝ] F) (V : G →ₗ[ℝ] H)
+    (C' : F' →ₗ[ℝ] E) (T' : G' →ₗ[ℝ] F') (V' : G' →ₗ[ℝ] H) :
+    ((C.comp T).comp V.adjoint).adjoint.comp
+      ((C'.comp T').comp V'.adjoint) =
+        V.comp ((T.adjoint.comp ((C.adjoint.comp C').comp T')).comp V'.adjoint) := by
+  rw [LinearMap.adjoint_comp, LinearMap.adjoint_comp, LinearMap.adjoint_adjoint]
+  simp only [LinearMap.comp_assoc]
+
 theorem liftChannel_adjoint_comp_self
     {I : Type*} [Fintype I] [DecidableEq I]
     {r n : ℕ} (lam : I → Fin (r + 1) → ℕ) (target source : I)
@@ -3197,36 +3213,11 @@ theorem liftChannel_adjoint_comp_self
     (liftChannel lam target source T).adjoint.comp
       (liftChannel lam target source T) =
         vertexProjection (YoungVertex (n := n) lam) source := by
-  apply LinearMap.ext
-  intro v
-  apply ext_inner_right ℝ
-  intro w
-  change
-    ⟪(liftChannel lam target source T).adjoint
-        (liftChannel lam target source T v), w⟫_ℝ =
-      ⟪vertexInclusion (YoungVertex (n := n) lam) source
-        ((vertexInclusion (YoungVertex (n := n) lam) source).adjoint v),
-          w⟫_ℝ
-  rw [LinearMap.adjoint_inner_left]
-  calc
-    ⟪liftChannel lam target source T v,
-      liftChannel lam target source T w⟫_ℝ =
-        ⟪(vertexInclusion (YoungVertex (n := n) lam) source).adjoint v,
-          (vertexInclusion (YoungVertex (n := n) lam) source).adjoint w⟫_ℝ := by
-            change
-              ⟪coordinateInclusion (n := n) lam target
-                  (T ((vertexInclusion (YoungVertex (n := n) lam) source).adjoint v)),
-                coordinateInclusion (n := n) lam target
-                  (T ((vertexInclusion (YoungVertex (n := n) lam) source).adjoint w))⟫_ℝ = _
-            rw [(coordinateInclusion (n := n) lam target).inner_map_map,
-              T.inner_map_map]
-            rfl
-    _ = ⟪vertexInclusion (YoungVertex (n := n) lam) source
-          ((vertexInclusion (YoungVertex (n := n) lam) source).adjoint v),
-            w⟫_ℝ :=
-            LinearMap.adjoint_inner_right
-              (vertexInclusion (YoungVertex (n := n) lam) source).toLinearMap
-                ((vertexInclusion (YoungVertex (n := n) lam) source).adjoint v) w
+  unfold liftChannel
+  rw [adjoint_comp_composed_maps,
+    (coordinateInclusion (n := n) lam target).adjoint_comp_self',
+    LinearMap.id_comp, T.adjoint_comp_self', LinearMap.id_comp]
+  rfl
 
 theorem liftChannel_orthogonal_of_target_ne
     {I : Type*} [Fintype I] [DecidableEq I]
@@ -3239,40 +3230,10 @@ theorem liftChannel_orthogonal_of_target_ne
     (hne : target ≠ target') :
     (liftChannel lam target source T).adjoint.comp
       (liftChannel lam target' source' T') = 0 := by
-  apply LinearMap.ext
-  intro v
-  apply ext_inner_right ℝ
-  intro w
-  rw [LinearMap.zero_apply, inner_zero_left]
-  change
-    ⟪(liftChannel lam target source T).adjoint
-      (liftChannel lam target' source' T' v), w⟫_ℝ = 0
-  rw [LinearMap.adjoint_inner_left]
-  change
-    ⟪coordinateInclusion (n := n) lam target'
-        (T' ((vertexInclusion (YoungVertex (n := n) lam) source').adjoint v)),
-      coordinateInclusion (n := n) lam target
-        (T ((vertexInclusion (YoungVertex (n := n) lam) source).adjoint w))⟫_ℝ = 0
-  let z := T' ((vertexInclusion (YoungVertex (n := n) lam) source').adjoint v)
-  let q := T ((vertexInclusion (YoungVertex (n := n) lam) source).adjoint w)
-  have hzero := congrArg
-    (fun A : (SpherePacking.Euclidean n ⊗[ℝ]
-      YoungVertex (n := n) lam target') →ₗ[ℝ]
-        (SpherePacking.Euclidean n ⊗[ℝ]
-          YoungVertex (n := n) lam target) => A z)
-    (coordinateInclusion_orthogonal lam hne)
-  change
-    (coordinateInclusion (n := n) lam target).adjoint
-      (coordinateInclusion (n := n) lam target' z) = 0 at hzero
-  calc
-    ⟪coordinateInclusion (n := n) lam target' z,
-      coordinateInclusion (n := n) lam target q⟫_ℝ =
-        ⟪(coordinateInclusion (n := n) lam target).adjoint
-          (coordinateInclusion (n := n) lam target' z), q⟫_ℝ :=
-            (LinearMap.adjoint_inner_left
-              (coordinateInclusion (n := n) lam target).toLinearMap q
-                (coordinateInclusion (n := n) lam target' z)).symm
-    _ = 0 := by simp only [hzero, inner_zero_left]
+  unfold liftChannel
+  rw [adjoint_comp_composed_maps, coordinateInclusion_orthogonal lam hne,
+    LinearMap.zero_comp, LinearMap.comp_zero, LinearMap.zero_comp,
+    LinearMap.comp_zero]
 
 theorem liftChannel_orthogonal_of_clebsch
     {I : Type*} [Fintype I] [DecidableEq I]
@@ -3285,34 +3246,10 @@ theorem liftChannel_orthogonal_of_clebsch
     (horthogonal : T.adjoint.comp T'.toLinearMap = 0) :
     (liftChannel lam target source T).adjoint.comp
       (liftChannel lam target source' T') = 0 := by
-  apply LinearMap.ext
-  intro v
-  apply ext_inner_right ℝ
-  intro w
-  rw [LinearMap.zero_apply, inner_zero_left]
-  change
-    ⟪(liftChannel lam target source T).adjoint
-      (liftChannel lam target source' T' v), w⟫_ℝ = 0
-  rw [LinearMap.adjoint_inner_left]
-  change
-    ⟪coordinateInclusion (n := n) lam target
-        (T' ((vertexInclusion (YoungVertex (n := n) lam) source').adjoint v)),
-      coordinateInclusion (n := n) lam target
-        (T ((vertexInclusion (YoungVertex (n := n) lam) source).adjoint w))⟫_ℝ = 0
-  rw [(coordinateInclusion (n := n) lam target).inner_map_map]
-  let z := (vertexInclusion (YoungVertex (n := n) lam) source').adjoint v
-  let q := (vertexInclusion (YoungVertex (n := n) lam) source).adjoint w
-  have hzero := congrArg
-    (fun A : YoungVertex (n := n) lam source' →ₗ[ℝ]
-      YoungVertex (n := n) lam source => A z)
-    horthogonal
-  change T.adjoint (T' z) = 0 at hzero
-  calc
-    ⟪T' z, T q⟫_ℝ = ⟪T.adjoint (T' z), q⟫_ℝ :=
-      (LinearMap.adjoint_inner_left T.toLinearMap q (T' z)).symm
-    _ = 0 := by
-      rw [hzero]
-      exact inner_zero_left q
+  unfold liftChannel
+  rw [adjoint_comp_composed_maps,
+    (coordinateInclusion (n := n) lam target).adjoint_comp_self',
+    LinearMap.id_comp, horthogonal, LinearMap.zero_comp, LinearMap.comp_zero]
 
 theorem liftChannel_adjoint_axis_self
     {I : Type*} [Fintype I] [DecidableEq I]
@@ -4372,8 +4309,6 @@ theorem gramPivot_pair_eq_of_variable_eq {r n : ℕ}
     a b (gramPivot hn z) (gramPivot hn w)).mp h
   have hrow := congrArg Fin.val hindex.1
   have hcolumn := congrArg Fin.val hindex.2
-  have hz := z.property
-  have hw := w.property
   apply Subtype.ext
   apply Prod.ext
   · apply Fin.ext
@@ -4671,7 +4606,7 @@ theorem gramVariableWeight_nonneg {r n : ℕ}
     push_cast
     omega
   unfold gramVariableWeight
-  nlinarith [mul_nonneg (sub_nonneg.mpr hupp)
+  linarith [mul_nonneg (sub_nonneg.mpr hupp)
     (show 0 ≤ ((n + 2 * r : ℕ) : ℤ) +
       ((k.val : ℤ) - 2 * (i.val : ℤ)) by linarith)]
 
@@ -5114,10 +5049,8 @@ theorem representationDegree_add_sum_sum_lt
       representationDegree m b (g a a') < d) :
     representationDegree m b
       (r + ∑ a ∈ s, ∑ a' ∈ t, g a a') < d := by
-  apply lt_of_le_of_lt
-    (representationDegree_add_le m b r (∑ a ∈ s, ∑ a' ∈ t, g a a'))
-  exact (max_lt_iff).mpr
-    ⟨hr, representationDegree_sum_sum_lt m b s t g d hd hterm⟩
+  exact lt_of_le_of_lt (representationDegree_add_le m b r (∑ a ∈ s, ∑ a' ∈ t, g a a'))
+      (max_lt_iff.mpr ⟨hr, representationDegree_sum_sum_lt m b s t g d hd hterm⟩)
 
 theorem representationDegree_single_lt
     {σ K ι : Type*} [Field K]
@@ -5526,7 +5459,7 @@ private theorem buchberger_correction_pair_lt
               MvPolynomial.C cij *
                 (Pij * ((m.leadingTerm (b j) - b j) * b i)) := by
           simp only [Algebra.smul_def, algebraMap_eq]
-          ring
+          ac_rfl
         rw [hrewrite, m.degree_mul
           (MvPolynomial.C_ne_zero.mpr hc0) hterm,
           m.degree_C, zero_add]
@@ -5603,7 +5536,7 @@ private theorem buchberger_correction_pair_lt
               MvPolynomial.C cij *
                 (Pij * ((b i - m.leadingTerm (b i)) * b j)) := by
           simp only [Algebra.smul_def, algebraMap_eq]
-          ring
+          ac_rfl
         rw [hrewrite, m.degree_mul
           (MvPolynomial.C_ne_zero.mpr hc0) hterm,
           m.degree_C, zero_add]
@@ -6330,7 +6263,7 @@ theorem rowEuler_axialCoordinate_lowerPolarizationPath
   · subst a
     by_cases hstart : row = polarizationPathStart row S
     · rw [← hstart]
-      simp only [ite_true, raiseWeight, Function.update_self,
+      simp only [ite_true, raiseWeight.eq_1, Function.update_self,
         Nat.cast_add, Nat.cast_one, MvPolynomial.smul_eq_C_mul,
         map_add, map_one]
       ring
@@ -6346,7 +6279,7 @@ theorem rowEuler_axialCoordinate_lowerPolarizationPath
       ring
     · simp only [hastart, ↓reduceIte, zero_mul, MvPolynomial.smul_eq_C_mul, map_natCast, harow,
         add_zero, sub_zero, zero_add, raiseWeight, ne_eq, not_false_eq_true, Function.update_of_ne]
-      ring
+      ac_rfl
 
 theorem arbitraryRowAxialRaise_rowEuler
     {r n : ℕ} (lam : Fin (r + 1) → ℕ)
@@ -6902,7 +6835,7 @@ theorem simpleRoot_coordinate_both
     a b j hab hbj q A B hq hqa hqb]
   simp only [polarization_apply, MvPolynomial.smul_eq_C_mul, MvPolynomial.C_add, MvPolynomial.C_sub,
     MvPolynomial.C_1]
-  ring
+  ac_rfl
 
 end ArbitraryRowMickelssonSimpleRoot
 

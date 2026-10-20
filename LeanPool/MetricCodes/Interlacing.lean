@@ -374,7 +374,6 @@ theorem sorted_subset_first
       exact hia
     · have hbj : b < j := (Finset.mem_filter.mp hj).2
       change i.val < j.val
-      have hia' : i.val < a.val := hia
       have hbj' : b.val < j.val := hbj
       omega
   have hsort : (insert a U).sort (· ≤ ·) =
@@ -387,7 +386,6 @@ theorem sorted_subset_first
       omega
     · intro h
       have hba : b < a := (Finset.mem_filter.mp h).2
-      have hba' : b.val < a.val := hba
       omega
   rw [hins, sort_union_of_forall_lt L (insert a U) hsep, hsort]
 
@@ -418,7 +416,6 @@ theorem sorted_subset_second
     · have hbj : b < j := (Finset.mem_filter.mp hj).2
       change i.val < j.val
       have hia' : i.val < a.val := hia
-      have hbj' : b.val < j.val := hbj
       omega
   have hsort : (insert b U).sort (· ≤ ·) =
       b :: U.sort (· ≤ ·) := by
@@ -485,7 +482,6 @@ theorem sorted_subset_both
       · have h' : a.val = b.val := congrArg Fin.val h
         omega
       · have hba : b < a := (Finset.mem_filter.mp h).2
-        have hba' : b.val < a.val := hba
         omega
   rw [hins, sort_union_of_forall_lt L (insert a (insert b U)) hsep,
     hsorta, hsortb]
@@ -804,7 +800,7 @@ theorem simpleRoot_coordinate_path_both
       hia hab hbj hfront hbefore htail hafter p A B hp ha hb]
   simp only [MvPolynomial.smul_eq_C_mul, MvPolynomial.C_add, MvPolynomial.C_sub, MvPolynomial.C_1,
     coordinateToggleBridge]
-  ring
+  ac_rfl
 
 theorem simpleRoot_coordinate_path_four_states
     {r n : ℕ} (front : List (Fin (r + 1)))
@@ -2080,8 +2076,7 @@ def lowerAxisGramIdeal {r n : ℕ} (k : Fin n) (row : Fin (r + 1)) :
 theorem axisPolynomial_mem_lowerAxisIdeal {r n : ℕ}
     (k : Fin n) (row i : Fin (r + 1)) (hi : i < row) :
     MvPolynomial.X (variableIndex i k) ∈ lowerAxisIdeal k row := by
-  apply Ideal.subset_span
-  exact ⟨i, hi, rfl⟩
+  exact Ideal.subset_span (Exists.intro i ⟨hi, rfl⟩)
 
 theorem gram_le_lowerAxisGramIdeal {r n : ℕ}
     (k : Fin n) (row : Fin (r + 1)) :
@@ -3688,33 +3683,7 @@ theorem youngClebschLower_adjoint_tmul {r n : ℕ}
     (youngClebschLower mu lam hdeg row).adjoint
         (v ⊗ₜ[ℝ] q) =
       projectedCoordinateRaise lam mu hdeg row v q := by
-  let b := EuclideanSpace.basisFun (Fin n) ℝ
-  have hv : (∑ j : Fin n, v j • b j) = v := by
-    simpa [b] using b.sum_repr v
-  calc
-    (youngClebschLower mu lam hdeg row).adjoint (v ⊗ₜ[ℝ] q) =
-        (youngClebschLower mu lam hdeg row).adjoint
-          ((∑ j : Fin n, v j • b j) ⊗ₜ[ℝ] q) := by rw [hv]
-    _ = ∑ j : Fin n,
-        v j • (youngClebschLower mu lam hdeg row).adjoint
-          (b j ⊗ₜ[ℝ] q) := by
-      rw [TensorProduct.sum_tmul, map_sum]
-      apply Finset.sum_congr rfl
-      intro j _
-      rw [← TensorProduct.smul_tmul', map_smul]
-    _ = ∑ j : Fin n,
-        v j • projectedCoordinateRaise lam mu hdeg row (b j) q := by
-      apply Finset.sum_congr rfl
-      intro j _
-      rw [youngClebschLower_adjoint_basis_tmul]
-    _ = projectedCoordinateRaiseAxis lam mu hdeg row q
-          (∑ j : Fin n, v j • b j) := by
-      rw [map_sum]
-      apply Finset.sum_congr rfl
-      intro j _
-      rw [map_smul]
-      rfl
-    _ = projectedCoordinateRaise lam mu hdeg row v q := by rw [hv]; rfl
+  exact @MultiplicityFreeClebsch.youngClebschLower_adjoint_tmul r n mu lam hdeg row v q
 
 namespace ClebschRotation
 
@@ -3747,7 +3716,7 @@ theorem euclideanAmbientRotation_inner {n : ℕ}
   simp only [euclideanAmbientRotation_apply, EuclideanSpace.basisFun_apply, inner_sub_left,
     real_inner_smul_left, EuclideanSpace.inner_single_left, Real.ringHom_apply, one_mul,
     inner_sub_right, real_inner_smul_right, EuclideanSpace.inner_single_right, neg_sub]
-  ring
+  ac_rfl
 
 theorem euclideanAmbientRotation_adjoint {n : ℕ}
     (a b : Fin n) :
@@ -3897,7 +3866,7 @@ theorem projectedCoordinateRaise_rotation {r n : ℕ}
       simp only [ambientRotation_apply, ambientCoordinateDerivation_apply, smul_eq_mul,
         euclideanAmbientRotation_apply, EuclideanSpace.basisFun_apply,
         youngAmbientRotation_apply_coe]
-      ring
+      ac_rfl
     _ = ⟪projectedCoordinateRaise mu lam hdeg row
           (euclideanAmbientRotation a b v) p +
         projectedCoordinateRaise mu lam hdeg row v
@@ -3999,7 +3968,7 @@ theorem projectedCoordinateLower_rotation {r n : ℕ}
                   (euclideanAmbientRotation a b v) p, q⟫_ℝ +
                 ⟪projectedCoordinateLower mu lam hdeg row v
                   (youngAmbientRotation lam a b p), q⟫_ℝ := by
-              ring
+              ac_rfl
             _ = _ := (inner_add_left _ _ _).symm
 
 theorem channel_rotation_intertwine_of_adjoint {r n : ℕ}
@@ -4670,7 +4639,7 @@ theorem boundaryYoungRotationIntertwiner_casimir
       (youngAmbientCasimir (n := n) mu).comp A := by
   apply LinearMap.ext
   intro p
-  simp only [LinearMap.comp_apply, youngAmbientCasimir,
+  simp only [LinearMap.comp_apply, youngAmbientCasimir.eq_1,
     LinearMap.smul_apply, LinearMap.sum_apply, LinearMap.neg_apply,
     map_smul, map_sum, map_neg]
   congr 1
@@ -5095,8 +5064,6 @@ theorem adjacentCasimirEigenvalue_lower_lt_raise {r n : ℕ}
     exact_mod_cast (show i.val ≤ r by omega)
   have hjR : (j.val : ℝ) ≤ r := by
     exact_mod_cast (show j.val ≤ r by omega)
-  have ht : 0 ≤ (target i : ℝ) := Nat.cast_nonneg _
-  have hs : 0 ≤ (source j : ℝ) := Nat.cast_nonneg _
   linarith
 
 theorem adjacentCasimirEigenvalue_ne_of_distinct_oneBox_neighbors
@@ -5538,7 +5505,6 @@ theorem phaseCorrectedYoungChannel_adjoint_eq_sqrt {E G : Type*}
     nlinarith [Real.sq_sqrt hp, Real.sqrt_nonneg p]
   · rw [phaseNegatedChannel_adjoint_apply, haxis, ← neg_smul]
     congr 1
-    have hnegative : c < 0 := lt_of_not_ge h
     nlinarith [Real.sq_sqrt hp, Real.sqrt_nonneg p]
 
 theorem phaseCorrectedYoungChannel_rotation
@@ -6340,8 +6306,6 @@ theorem reverseInterlacingHarmonicBranchGram_scalar_pos
   change 0 < ⟪c • p, p⟫_ℝ at hpositive
   have hfactor : ⟪c • p, p⟫_ℝ = c * ⟪p, p⟫_ℝ :=
     real_inner_smul_left p p c
-  have hproduct : 0 < c * ⟪p, p⟫_ℝ := by
-    exact hfactor ▸ hpositive
   have hself : 0 < ⟪p, p⟫_ℝ := real_inner_self_pos.mpr hp
   nlinarith
 
@@ -7510,9 +7474,9 @@ theorem downstreamCorrectedDerivative_source_mem_multihomogeneous
     downstreamCorrectedDerivative lam a p k a ∈
       youngMultihomogeneousSubmodule n
         (loweredInternalYoungWeight lam a) := by
-  apply (mem_youngMultihomogeneousSubmodule_iff_rowEuler
-    (loweredInternalYoungWeight lam a) _).mpr
-  exact downstreamCorrectedDerivative_source_rowEuler lam a ha p k
+  exact (mem_youngMultihomogeneousSubmodule_iff_rowEuler (loweredInternalYoungWeight lam a)
+          (downstreamCorrectedDerivative lam a p k a)).mpr
+      (downstreamCorrectedDerivative_source_rowEuler lam a ha p k)
 
 theorem downstreamCorrectedDerivative_source_mem_harmonicYoung_of_simpleRoots
     {r n : ℕ} (lam : Fin (r + 1) → ℕ)
@@ -8845,7 +8809,7 @@ theorem reverseCoefficient_sq_of_forward_sq_and_weylRatio
       minusProbability n (raiseWeight low row) mu row := by
   rw [hforward, hgramRatio,
     plusProbability_eq_weylEdgeRatio_mul_minus row h hraise]
-  ring
+  ac_rfl
 
 /-- Construct the raising projected-axis witness from the forward Gelfand–Tsetlin coefficient,
 the Weyl Gram ratio, and the reverse projected-axis identity. -/
@@ -9694,8 +9658,6 @@ theorem canonicalFibreAxisCoefficient_sq
     (hsource : 0 < sourceGram) (htarget : 0 < targetGram) :
     (raw * Real.sqrt targetGram / Real.sqrt sourceGram) ^ 2 =
       raw ^ 2 * targetGram / sourceGram := by
-  have hs : Real.sqrt sourceGram ≠ 0 :=
-    (Real.sqrt_pos.mpr hsource).ne'
   rw [div_pow, mul_pow, Real.sq_sqrt htarget.le,
     Real.sq_sqrt hsource.le]
 

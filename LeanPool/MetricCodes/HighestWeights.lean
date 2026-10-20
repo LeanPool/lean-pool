@@ -629,9 +629,9 @@ theorem canonicalAdjacentProjectedRaiseCoefficient_sq_iff_fischerGram
       low mu hlow hlowGram).ne'
   constructor <;> intro h
   · field_simp [hgap, hlowpos] at h ⊢
-    nlinarith [h]
+    linarith [h]
   · field_simp [hgap, hlowpos] at h ⊢
-    nlinarith [h]
+    linarith [h]
 
 theorem canonicalAdjacentProjectedRaiseCoefficient_sq_of_fischerGram
     {r n : ℕ} (low : Fin (r + 2) → ℕ)
@@ -3314,11 +3314,11 @@ theorem arbitraryRowAxialRaise_sameAxis_diamond
         (arbitraryRowAxialRaise lam i k p) =
       arbitraryRowAxialRaise (raiseWeight lam j) i k
         (arbitraryRowAxialRaise lam j k p) := by
-  apply LinearMap.congr_fun
-    ((arbitraryRowAxialRaise_sameAxis_diamond_iff_commutator
-      lam i j hij (hdom hij.le) k).mpr ?_) p
-  exact arbitraryRowAxialRaise_sameAxis_commutator
-    lam hdom i j hij k
+  exact LinearMap.congr_fun
+      ((arbitraryRowAxialRaise_sameAxis_diamond_iff_commutator lam i j hij (hdom (LT.lt.le hij))
+        k).mpr
+        (arbitraryRowAxialRaise_sameAxis_commutator lam hdom i j hij k))
+      p
 
 end ArbitraryRowSameAxisDiamondSpectralSuffixClosure
 
@@ -3775,7 +3775,6 @@ theorem coeff_X_mul_pderiv_ne {σ : Type*}
   · have hma : a ∈ d.support :=
       Finsupp.mem_support_iff.mpr ha
     rw [ite_eq_left hma, MvPolynomial.coeff_pderiv, ite_eq_right ha]
-    have hneq : a ≠ b := hab
     have hsub :
         (d - (Finsupp.single a 1 : σ →₀ ℕ)) b = d b := by
       simp only [Finsupp.coe_tsub, Pi.sub_apply, Finsupp.single_eq_of_ne hab.symm, tsub_zero]
@@ -3860,7 +3859,6 @@ theorem sourceRowRoot_sourceLeadingMinor_self {r : ℕ}
       intro heq
       have hv := congrArg Fin.val heq
       change i.val = a.val at hv
-      have ha := a.isLt
       omega
     simp only [hne, ↓reduceIte]
 
@@ -3916,7 +3914,6 @@ theorem sourceColumnRoot_sourceLeadingMinor_self {r : ℕ}
       intro heq
       have hv := congrArg Fin.val heq
       change i.val = b.val at hv
-      have hb := b.isLt
       omega
     simp only [hne, ↓reduceIte]
 
@@ -3979,7 +3976,6 @@ theorem sourceRowRoot_sourceLeadingMinor_upper {r : ℕ}
       intro heq
       have hv := congrArg Fin.val heq
       change j.val = a.val at hv
-      have ha := a.isLt
       omega
     simp only [hne, ↓reduceIte]
 
@@ -4872,7 +4868,7 @@ theorem ambientPositiveRoot_nullSubstitution_sourceColumnRoot
       · simp only [Algebra.algebraMap_self, RingHom.id_apply, hjb, ↓reduceIte, mul_zero,
           isotropicVariable_eq_nullRowLinearForm, sourceColumnRoot_apply, map_sum, map_mul,
           nullSubstitution_X, Algebra.smul_def, MvPolynomial.algebraMap_eq, zero_add, map_zero]
-        ring
+        ac_rfl
 
 theorem ambientCartan_nullSubstitution_sourceColumnRoot
     {r n : ℕ} (h : 2 * (r + 1) ≤ n)
@@ -5143,7 +5139,6 @@ theorem sourceColumnRoot_sourceLeadingMinor_upper {r : ℕ}
       intro heq
       have hv := congrArg Fin.val heq
       change j.val = b.val at hv
-      have hb := b.isLt
       omega
     simp only [hne, ↓reduceIte]
 
@@ -5601,7 +5596,6 @@ theorem exists_minimalBelowColumn_of_mass_pos {m : ℕ}
   have hpos : 0 < d (a, b) := Nat.pos_of_ne_zero hzero
   have hcandidate : P b.val := ⟨a, b, rfl, hba, hpos⟩
   have hleast : Nat.find hex ≤ b.val := Nat.find_min' hex hcandidate
-  have hlt : b.val < i'.val := hbi
   omega
 
 theorem eq_zero_of_upperRoots_of_massZero_coeff
@@ -5647,7 +5641,6 @@ theorem belowDiagonal_entry_eq_zero_of_mass_eq_zero {m : ℕ}
   have hproduct : belowDiagonalWeight (i, j) * d (i, j) = 0 := by omega
   have hweight : belowDiagonalWeight (i, j) ≠ 0 := by
     change i.val - j.val ≠ 0
-    have hvals : j.val < i.val := hji
     omega
   exact (mul_eq_zero.mp hproduct).resolve_left hweight
 
@@ -7102,7 +7095,6 @@ theorem pderiv_even_X_unused {r n : ℕ}
     intro heq
     have hv := congrArg Fin.val heq
     simp only [evenCoordinate_val] at hv
-    have hp := p.isLt
     omega
   simp only [MvPolynomial.pderiv_X, ne_eq, DeterminantVectors.variableIndex_eq_iff, he, and_false,
     not_false_eq_true, Pi.single_eq_of_ne']
@@ -7118,7 +7110,6 @@ theorem pderiv_odd_X_unused {r n : ℕ}
     intro heq
     have hv := congrArg Fin.val heq
     simp only [oddCoordinate_val] at hv
-    have hp := p.isLt
     omega
   simp only [MvPolynomial.pderiv_X, ne_eq, DeterminantVectors.variableIndex_eq_iff, ho, and_false,
     not_false_eq_true, Pi.single_eq_of_ne']

@@ -191,7 +191,7 @@ theorem actualExteriorRootCreation_contraction_contraction_cubic_anticommute
   split_ifs <;>
     simp only [mul_one, mul_zero, zero_mul, sub_zero, zero_sub, add_zero,
       zero_add, sub_self] <;>
-    noncomm_ring
+    ac_rfl
 
 end
 
@@ -280,14 +280,6 @@ theorem fullRootExteriorBracketUnordered_eq_two_smul
     apply Finset.sum_congr rfl
     intro γ hγ
     exact fullRootExteriorBracket_weightedAtom_swap α β γ
-  have hdiag : ∀ α : PositiveRoot r, F α α = 0 := by
-    intro α
-    dsimp [F]
-    apply Finset.sum_eq_zero
-    intro γ hγ
-    have h := rootStructureConstant_swap α α γ
-    have hz : rootStructureConstant α α γ = 0 := by linarith
-    simp only [hz, zero_smul]
   have hincomparable : ∀ α β : PositiveRoot r,
       (¬ α < β) → (¬ β < α) → F α β = 0 := by
     intro α β hαβ hβα
@@ -941,7 +933,7 @@ theorem fullRootExteriorBracketAtom_single_apply
           rw [hSα, ← hW]
           simp only [smul_smul]
           congr 1
-          ring
+          ac_rfl
         · have hnot : ¬ (α ∈ S.val ∧ β ∈ S.val.erase α ∧
               γ ∉ (S.val.erase α).erase β ∧
               T.val = insert γ ((S.val.erase α).erase β)) := by
@@ -1096,7 +1088,7 @@ theorem smul_operator_anticommutator
   intro x
   simp only [LinearMap.add_apply, Module.End.mul_apply,
     LinearMap.smul_apply, map_smul, smul_smul, smul_add]
-  module
+  ac_rfl
 
 end
 
@@ -1179,7 +1171,7 @@ theorem fullRootExteriorBracketUnordered_square_eq_cubicIncidences
   simp only [I, Fintype.sum_prod_type] at *
   dsimp [A]
   simp_rw [smul_operator_anticommutator]
-  simp only [fullRootExteriorBracketAtom]
+  simp only [fullRootExteriorBracketAtom.eq_1]
   simp_rw [actualExteriorRootCreation_contraction_contraction_cubic_anticommute]
   simp only [smul_add, smul_sub, Finset.sum_add_distrib,
     Finset.sum_sub_distrib, smul_ite, smul_zero]
@@ -2402,26 +2394,7 @@ theorem rootJointHarmonicActionUpperRootStructureCross_apply_coe
                       PolynomialSpace r n)
             else 0
         else 0 := by
-  classical
-  rw [rootJointHarmonicActionUpperRootStructureCross_apply]
-  simp only [Submodule.coe_sum]
-  apply Finset.sum_congr rfl
-  intro α _
-  split_ifs with hα
-  · simp only [Submodule.coe_sum]
-    apply Finset.sum_congr rfl
-    intro β _
-    split_ifs with hβ hadm
-    · simp only [ZeroMemClass.coe_zero]
-    · simp only [Submodule.coe_sum]
-      apply Finset.sum_congr rfl
-      intro γ _
-      split_ifs with hγ
-      · simp only [ZeroMemClass.coe_zero]
-      · simp only [Submodule.coe_smul]
-        rw [rootSwapUpperStructureEdge_coe]
-    · simp only [ZeroMemClass.coe_zero]
-  · simp only [ZeroMemClass.coe_zero]
+  exact @rootJointHarmonicActionUpperRootStructureCross_polynomial_apply r n k lam f S
 
 end
 
@@ -2875,43 +2848,14 @@ theorem weightedChevalleyEilenbergDifferential_comp_self_of_unweighted
       (rootChevalleyEilenbergBoundary r n (k + 1)) = 0) :
     (weightedChevalleyEilenbergDifferential n lam k).comp
       (weightedChevalleyEilenbergDifferential n lam (k + 1)) = 0 := by
-  apply LinearMap.ext
-  intro f
-  apply (rootJointHarmonicPolynomialInclusion_injective lam)
-  change
-    rootJointHarmonicPolynomialInclusion n lam k
-        (weightedChevalleyEilenbergDifferential n lam k
-          (weightedChevalleyEilenbergDifferential n lam (k + 1) f)) =
-      rootJointHarmonicPolynomialInclusion n lam k 0
-  rw [map_zero]
-  have hfirst := LinearMap.congr_fun
-    (rootJointHarmonicPolynomialInclusion_chevalley_intertwines
-      (n := n) (k := k) lam)
-      (weightedChevalleyEilenbergDifferential n lam (k + 1) f)
-  change
-    rootJointHarmonicPolynomialInclusion n lam k
-        (weightedChevalleyEilenbergDifferential n lam k
-          (weightedChevalleyEilenbergDifferential n lam (k + 1) f)) =
-      rootChevalleyEilenbergBoundary r n k
-        (rootJointHarmonicPolynomialInclusion n lam (k + 1)
-          (weightedChevalleyEilenbergDifferential n lam (k + 1) f))
-    at hfirst
-  have hsecond := LinearMap.congr_fun
-    (rootJointHarmonicPolynomialInclusion_chevalley_intertwines
-      (n := n) (k := k + 1) lam) f
-  change
-    rootJointHarmonicPolynomialInclusion n lam (k + 1)
-        (weightedChevalleyEilenbergDifferential n lam (k + 1) f) =
-      rootChevalleyEilenbergBoundary r n (k + 1)
-        (rootJointHarmonicPolynomialInclusion n lam (k + 2) f)
-    at hsecond
-  change
-    rootJointHarmonicPolynomialInclusion n lam k
-        (weightedChevalleyEilenbergDifferential n lam k
-          (weightedChevalleyEilenbergDifferential n lam (k + 1) f)) = 0
-  rw [hfirst, hsecond]
-  exact LinearMap.congr_fun h
-    (rootJointHarmonicPolynomialInclusion n lam (k + 2) f)
+  apply (LinearMap.cancel_left
+    (f := rootJointHarmonicPolynomialInclusion n lam k)
+    (rootJointHarmonicPolynomialInclusion_injective lam)).mp
+  rw [LinearMap.comp_zero, ← LinearMap.comp_assoc,
+    rootJointHarmonicPolynomialInclusion_chevalley_intertwines,
+    LinearMap.comp_assoc,
+    rootJointHarmonicPolynomialInclusion_chevalley_intertwines,
+    ← LinearMap.comp_assoc, h, LinearMap.zero_comp]
 
 end
 
@@ -3389,12 +3333,8 @@ open MetricCodes.Spherical.HigherYoungPenultimateRowProjectedLower
 theorem loweredInternalYoungWeight_raiseWeight
     {r : ℕ} (low : Fin (r + 1) → ℕ) (row : Fin (r + 1)) :
     loweredInternalYoungWeight (raiseWeight low row) row = low := by
-  funext j
-  by_cases hj : j = row
-  · subst j
-    simp only [loweredInternalYoungWeight, raiseWeight, Function.update_self, add_tsub_cancel_right]
-  · simp only [loweredInternalYoungWeight, raiseWeight, Function.update_self, add_tsub_cancel_right,
-      ne_eq, hj, not_false_eq_true, Function.update_of_ne]
+  exact @HigherYoungArbitraryRowLoweringProjectedAxisWitness.loweredInternalYoungWeight_raiseWeight
+    r low row
 
 theorem finrank_raiseWeight_eq_finrank_mul_weylEdgeRatio
     {r n : ℕ} (low : Fin (r + 1) → ℕ) (mu : Fin r → ℕ)
@@ -5386,9 +5326,8 @@ theorem unusedMixedHessian_of_mem_fullYoungComplexPolynomialSpan
             (antiholomorphicDerivative h b p f) +
             antiholomorphicDerivative h a p
               (holomorphicDerivative h b p f)))) := by
-  apply unusedMixedHessian_eq_neg_isotropicDerivative_of_traceFree
-  exact complexTraceOperator_of_mem_fullYoungComplexPolynomialSpan
-    lam hf a b
+  exact unusedMixedHessian_eq_neg_isotropicDerivative_of_traceFree h a b f
+      (complexTraceOperator_of_mem_fullYoungComplexPolynomialSpan lam hf a b)
 
 end
 
@@ -5949,7 +5888,7 @@ theorem ambientPositiveRoot_antiholomorphicDerivative_commutator_apply
           MvPolynomial.algebraMap_eq]
         rw [map_ofNat (MvPolynomial.C :
           ℂ →+* MvPolynomial (Fin ((r + 1) * n)) ℂ) 2]
-        ring
+        ac_rfl
       · simp only [HigherYoungIsotropicComplexTraceDecomposition.antiholomorphicDerivative_apply,
           map_add, Derivation.leibniz, smul_eq_mul, MvPolynomial.derivation_C, mul_zero, add_zero,
           hsq, and_false, ↓reduceIte, sub_self]
@@ -6240,7 +6179,7 @@ theorem sum_ambientSumPositiveRoot_holomorphicDerivative_of_all_positive_root_hi
           rw [hcount]
           congr 1
           push_cast
-          ring
+          ac_rfl
 
 end HigherYoungAmbientSumRootAllHighestHolomorphicEvaluation
 
@@ -7482,7 +7421,7 @@ theorem coeff_signedDiagonalDerivation
   rw [Finset.mul_sum, Finset.sum_mul]
   apply Finset.sum_congr rfl
   intro i _
-  ring
+  ac_rfl
 
 theorem signedDiagonal_weightedHomogeneousComponent
     {ι : Type*} [Finite ι] {m : ℕ}

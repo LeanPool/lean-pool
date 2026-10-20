@@ -1353,7 +1353,6 @@ theorem weylTargetExponent_sub_reversePermutationExponent_apply
     (weylTargetExponent lam - reversePermutationExponent σ) i =
       (weylShift lam σ i).toNat := by
   have h := hσ i
-  have hi := i.isLt
   have hσi := (σ i).isLt
   simp only [reversePermutationExponent_apply, weylTargetExponent_apply, tsub_le_iff_right,
     Finsupp.coe_tsub, Pi.sub_apply, weylShift] at h ⊢
@@ -1652,7 +1651,7 @@ theorem alternatingGramKoszulCoefficient_eq_orthogonalJacobiTrudiDimension
                 (r + j.val + 2))).coeff (weylTargetExponent lam) := by
       rw [hdenominator]
       congr 2
-      ring
+      ac_rfl
     _ = orthogonalJacobiTrudiDimension n lam :=
       coeff_ambientBinomialPolynomial_mul_orthogonalDenominator lam hB
 
@@ -1673,7 +1672,7 @@ theorem risingFactorProduct_eq_ascFactorial (M q : ℕ) :
   apply Finset.prod_congr rfl
   intro a _
   simp only [Nat.cast_add, Nat.cast_one]
-  ring
+  ac_rfl
 
 theorem risingFactorProduct_pos (M q : ℕ) :
     0 < risingFactorProduct M q := by
@@ -1989,7 +1988,7 @@ def centeredProduct (x : ℝ) (j : ℕ) : ℝ :=
 @[simp] theorem centeredProduct_zero (x : ℝ) :
     centeredProduct x 0 = (x - 1) * x := by
   norm_num [centeredProduct, Finset.prod_range_succ]
-  ring
+  ac_rfl
 
 theorem centeredProduct_succ (x : ℝ) (j : ℕ) :
     centeredProduct x (j + 1) =
@@ -2920,7 +2919,7 @@ theorem orthogonalJacobiTrudiMatrix_entry_of_factored_transport
     (risingFactorProduct_pos _ _).ne'
   unfold orthogonalRowScale
   field_simp [hD]
-  nlinarith [hfact]
+  linarith [hfact]
 
 /-- The difference of the two reflected factorial products in an orthogonal determinant entry. -/
 def orthogonalReflectedBracket (n z : ℝ) (r j : ℕ) : ℝ :=
@@ -4500,7 +4499,9 @@ def rootJointHarmonicIncludedDescendingFischerLaplacian {r : ℕ}
     (f : RootJointHarmonicChain n lam k)
     (S : AdmissibleRootWedge lam k) :
     rootJointHarmonicIncludedDescendingFischerLaplacian n lam k f S =
-      includedDescendingPositiveRootFischerLaplacian n lam S (f S) := rfl
+      includedDescendingPositiveRootFischerLaplacian n lam S (f S) := by
+  simp only [rootJointHarmonicIncludedDescendingFischerLaplacian,
+    LinearMap.pi_apply, LinearMap.comp_apply, LinearMap.proj_apply]
 
 theorem rootJointHarmonicIncludedDescendingFischerLaplacian_energy_ge_self
     {r n k : ℕ} (lam : Fin (r + 1) → ℕ)
@@ -4698,7 +4699,9 @@ def rootJointHarmonicHodgeDiagonal {r : ℕ}
     rootJointHarmonicHodgeDiagonal n lam k f S =
       includedDescendingPositiveRootFischerLaplacian n lam S (f S) +
         includedNondescendingPositiveRootFischerLaplacian n lam S (f S) +
-        excludedActivePositiveRootFischerLaplacian n lam S (f S) := rfl
+        excludedActivePositiveRootFischerLaplacian n lam S (f S) := by
+  simp only [rootJointHarmonicHodgeDiagonal, LinearMap.pi_apply,
+    LinearMap.comp_apply, LinearMap.proj_apply, LinearMap.add_apply]
 
 theorem includedNondescendingPositiveRootFischerLaplacian_energy
     {r n k : ℕ} (lam : Fin (r + 1) → ℕ)
@@ -7534,10 +7537,6 @@ theorem rootActionCoboundary_eq_exteriorCreation_zeroExtension
   · have hcard : (S.val.erase α).card = k := by
       rw [Finset.card_erase_of_mem hα, S.property]
       omega
-    have hwedge : rootWedgeErase S α hα =
-        (⟨S.val.erase α, hcard⟩ : RootWedge r k) := by
-      apply Subtype.ext
-      rfl
     simp only [hα, ↓reduceDIte, actualExteriorRootCreation_apply,
       ↓reduceIte, rootPolynomialChainZeroExtension_apply,
       map_smul]
@@ -8070,7 +8069,7 @@ theorem fullRootExteriorPolynomialAction_orderedBracketCoboundary_commute
           actualExteriorRootCreation (PolynomialSpace r n) α) *
         (actualExteriorRootCreation (PolynomialSpace r n) β *
           actualExteriorRootContraction (PolynomialSpace r n) δ) := by
-          noncomm_ring
+          ac_rfl
     _ = (actualExteriorRootCreation (PolynomialSpace r n) α *
           fullRootExteriorPolynomialAction r n γ) *
         (actualExteriorRootCreation (PolynomialSpace r n) β *
@@ -8080,7 +8079,7 @@ theorem fullRootExteriorPolynomialAction_orderedBracketCoboundary_commute
         (fullRootExteriorPolynomialAction r n γ *
           actualExteriorRootCreation (PolynomialSpace r n) β) *
           actualExteriorRootContraction (PolynomialSpace r n) δ := by
-          noncomm_ring
+          ac_rfl
     _ = actualExteriorRootCreation (PolynomialSpace r n) α *
         (actualExteriorRootCreation (PolynomialSpace r n) β *
           fullRootExteriorPolynomialAction r n γ) *
@@ -8090,7 +8089,7 @@ theorem fullRootExteriorPolynomialAction_orderedBracketCoboundary_commute
         actualExteriorRootCreation (PolynomialSpace r n) β *
         (fullRootExteriorPolynomialAction r n γ *
           actualExteriorRootContraction (PolynomialSpace r n) δ) := by
-          noncomm_ring
+          ac_rfl
     _ = actualExteriorRootCreation (PolynomialSpace r n) α *
         actualExteriorRootCreation (PolynomialSpace r n) β *
         (actualExteriorRootContraction (PolynomialSpace r n) δ *
@@ -8208,26 +8207,7 @@ theorem rootJointHarmonicActionLowerRootStructureCross_apply_coe
                       PolynomialSpace r n)
             else 0
         else 0 := by
-  classical
-  rw [rootJointHarmonicActionLowerRootStructureCross_apply]
-  simp only [Submodule.coe_sum]
-  apply Finset.sum_congr rfl
-  intro α _
-  split_ifs with hα
-  · simp only [Submodule.coe_sum]
-    apply Finset.sum_congr rfl
-    intro β _
-    split_ifs with hβ hadm
-    · simp only [ZeroMemClass.coe_zero]
-    · simp only [Submodule.coe_sum]
-      apply Finset.sum_congr rfl
-      intro γ _
-      split_ifs with hγ
-      · simp only [ZeroMemClass.coe_zero]
-      · simp only [Submodule.coe_smul]
-        rw [rootSwapLowerStructureEdge_coe]
-    · simp only [ZeroMemClass.coe_zero]
-  · simp only [ZeroMemClass.coe_zero]
+  exact @rootJointHarmonicActionLowerRootStructureCross_polynomial_apply r n k lam f S
 
 end
 
