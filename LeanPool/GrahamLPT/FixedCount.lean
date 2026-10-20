@@ -95,27 +95,31 @@ theorem fc_antitone (m n : ℕ) (ε : ℝ) (hε : ε ≤ m) : Antitone (paddedJo
         exact h1
     · simp only [fc_len_gt m ε a (by omega), fc_len_gt m ε b (by omega), le_refl]
 
-/-- The pairs `j, 2m − 1 − j` of the first `2m` jobs sum to `3m − 1`. -/
+/-- The unpadded jobs agree with Graham's original instance. -/
+theorem paddedJobLength_eq_grahamJobs (m : ℕ) (ε : ℝ) (j : Fin (2 * m + 1)) :
+    paddedJobLength m ε j = grahamJobs m j := by
+  by_cases h : (j : ℕ) < 2 * m
+  · simp only [paddedJobLength, grahamJobs, h, ite_true]
+  · have hj : (j : ℕ) = 2 * m := by omega
+    simp only [paddedJobLength, grahamJobs, hj, ite_true]
+
+/-- Restriction to the original job count removes the small-job tail. -/
+theorem paddedJobs_restrict (m n : ℕ) (ε : ℝ) (hn : 2 * m + 1 ≤ n) :
+    paddedJobs m n ε ∘ Fin.castLE hn = grahamJobs m := by
+  funext j
+  exact paddedJobLength_eq_grahamJobs m ε j
+
+/-- The pairs `j, 2m − 1 − j` among the original jobs sum to `3m − 1`. -/
 theorem fc_pair (m : ℕ) (ε : ℝ) (j : ℕ) (h : j < 2 * m) :
     paddedJobLength m ε j + paddedJobLength m ε (2 * m - 1 - j) = 3 * m - 1 := by
-  have key : ∀ a b : ℕ, a + b + 1 = m →
-      2 * (m : ℝ) - 1 - (a : ℝ) + (2 * (m : ℝ) - 1 - (b : ℝ)) = 3 * m - 1 := by
-    intro a b hab
-    have : (a : ℝ) + b + 1 = m := by exact_mod_cast hab
-    linarith
-  rw [fc_len_lt m ε j h, fc_len_lt m ε (2 * m - 1 - j) (by omega)]
-  exact key _ _ (by omega)
+  simpa only [← paddedJobLength_eq_grahamJobs m ε] using
+    tg_pair m ⟨j, by omega⟩ h
 
-/-- The pairs `j, 2m − 3 − j` of the first `2m − 2` jobs sum to `3m`. -/
+/-- The optimal pairs `j, 2m − 3 − j` among the original jobs sum to `3m`. -/
 theorem fc_pair' (m : ℕ) (ε : ℝ) (j : ℕ) (h : j < 2 * m - 2) :
     paddedJobLength m ε j + paddedJobLength m ε (2 * m - 3 - j) = 3 * m := by
-  have key : ∀ a b : ℕ, a + b + 2 = m →
-      2 * (m : ℝ) - 1 - (a : ℝ) + (2 * (m : ℝ) - 1 - (b : ℝ)) = 3 * m := by
-    intro a b hab
-    have : (a : ℝ) + b + 2 = m := by exact_mod_cast hab
-    linarith
-  rw [fc_len_lt m ε j (by omega), fc_len_lt m ε (2 * m - 3 - j) (by omega)]
-  exact key _ _ (by omega)
+  simpa only [← paddedJobLength_eq_grahamJobs m ε] using
+    tg_pair' m ⟨j, by omega⟩ h
 
 /-- The first `2m` jobs sum to `3m² − m`. -/
 theorem fc_sum_lt (m n : ℕ) (ε : ℝ) (hn : 2 * m ≤ n) :
@@ -141,71 +145,46 @@ theorem fc_sum_lt (m n : ℕ) (ε : ℝ) (hn : 2 * m ≤ n) :
 index `2m`. -/
 theorem fc_exists_prefix_pairing (m n : ℕ) [NeZero m] (ε : ℝ) (hn : 2 * m ≤ n) :
     ∃ τ : Fin n → Fin m, ∀ i, loadBefore (paddedJobs m n ε) τ (2 * m) i = 3 * m - 1 := by
-  have hm : 0 < m := NeZero.pos m
-  refine ⟨fun j => if h : (j : ℕ) < 2 * m then ⟨min (j : ℕ) (2 * m - 1 - j), by omega⟩
-    else ⟨0, hm⟩, fun i => ?_⟩
-  have hi := i.isLt
-  unfold loadBefore
-  have hfib : univ.filter (fun j : Fin n => (j : ℕ) < 2 * m ∧
-      (if h : (j : ℕ) < 2 * m then (⟨min (j : ℕ) (2 * m - 1 - j), by omega⟩ : Fin m) else ⟨0, hm⟩)
-        = i) =
-      {(⟨i, by omega⟩ : Fin n), ⟨2 * m - 1 - i, by omega⟩} := by
-    ext j
-    have hj := j.isLt
-    simp only [mem_filter, mem_univ, true_and, mem_insert, mem_singleton, Fin.ext_iff]
-    split_ifs with h1 <;> dsimp only <;> omega
-  rw [hfib, sum_pair (by rw [Ne, Fin.ext_iff]; dsimp only; omega)]
-  exact fc_pair m ε i (by omega)
+  obtain ⟨ρ, hρ⟩ := tg_exists_prefix_pairing m
+  let τ : Fin n → Fin m := fun j =>
+    if hj : (j : ℕ) < 2 * m then ρ ⟨j, by omega⟩ else 0
+  have hsmall : 2 * m ≤ 2 * m + 1 := by omega
+  have hp : paddedJobs m n ε ∘ Fin.castLE hn = grahamJobs m ∘ Fin.castLE hsmall := by
+    funext j
+    exact paddedJobLength_eq_grahamJobs m ε (Fin.castLE hsmall j)
+  have hτ : τ ∘ Fin.castLE hn = ρ ∘ Fin.castLE hsmall := by
+    funext j
+    simp only [τ, Function.comp_apply, Fin.val_castLE, j.isLt, ↓reduceDIte]
+    congr 1
+  refine ⟨τ, fun i => ?_⟩
+  rw [← loadBefore_restrict hn _ τ (2 * m) le_rfl i, hp, hτ,
+    loadBefore_restrict hsmall _ ρ (2 * m) le_rfl i, hρ i]
 
-/-- Every list schedule of the family in its own order has every load `3m − 1` after the first
-`2m` jobs (the
-key lemma at `T = 3m − 1`, then the sum `m(3m − 1)`). -/
-theorem fc_loadBefore_two_mul (m n : ℕ) [NeZero m] (ε : ℝ) (hε0 : 0 < ε) (hε1 : ε ≤ m)
-    (hn : 2 * m + 1 ≤ n) (σ : Fin n → Fin m) (hσ : IsListSchedule (paddedJobs m n ε) σ) (i : Fin
-        m) :
-    loadBefore (paddedJobs m n ε) σ (2 * m) i = 3 * m - 1 := by
-  have hm : 0 < m := NeZero.pos m
-  have hmR : (1 : ℝ) ≤ m := by exact_mod_cast hm
-  have hp : ∀ j, 0 ≤ paddedJobs m n ε j := fun j => (fc_jobs_pos m n ε hm hε0 j).le
-  obtain ⟨τ, hτ⟩ := fc_exists_prefix_pairing m n ε (by omega)
-  have hle : ∀ i', loadBefore (paddedJobs m n ε) σ (2 * m) i' ≤ 3 * m - 1 := by
-    intro i'
-    by_cases hex : ∃ j : Fin n, (j : ℕ) < 2 * m ∧ σ j = i'
-    · obtain ⟨k, hk, hσk, heq⟩ := bs_exists_last_job_before (paddedJobs m n ε) σ (2 * m) i' hex
-      rw [heq, ← hσk]
-      apply key_lemma (paddedJobs m n ε) hp (fc_antitone m n ε hε1) σ hσ k τ (3 * m - 1)
-      · intro i''
-        rw [← hτ i'']
-        exact bs_loadBefore_mono _ hp τ (by omega) i''
-      · have := fc_le_len m ε k (by omega)
-        change (3 : ℝ) * m - 1 < 3 * paddedJobLength m ε k
-        linarith
-    · push Not at hex
-      rw [bs_loadBefore_eq_zero _ σ _ i' hex]
-      linarith
-  have htot := fc_sum_lt m n ε (by omega)
-  have hsum := bs_sum_loadBefore (paddedJobs m n ε) σ (2 * m)
-  by_contra hne
-  have hlt : loadBefore (paddedJobs m n ε) σ (2 * m) i < 3 * m - 1 := lt_of_le_of_ne (hle i) hne
-  have hs : ∑ i', loadBefore (paddedJobs m n ε) σ (2 * m) i' < ∑ _i' : Fin m, (3 * (m : ℝ) - 1) :=
-    sum_lt_sum (fun i' _ => hle i') ⟨i, mem_univ _, hlt⟩
-  rw [sum_const, card_univ, Fintype.card_fin, nsmul_eq_mul] at hs
-  nlinarith
+/-- The original prefix loads are unaffected by the lengths of later jobs. -/
+theorem fc_loadBefore_two_mul (m n : ℕ) [NeZero m] (ε : ℝ)
+    (hn : 2 * m + 1 ≤ n) (σ : Fin n → Fin m) (hσ : IsListSchedule (paddedJobs m n ε) σ)
+    (i : Fin m) : loadBefore (paddedJobs m n ε) σ (2 * m) i = 3 * m - 1 := by
+  have hrestricted := IsListSchedule.restrict hn (paddedJobs m n ε) σ hσ
+  rw [paddedJobs_restrict m n ε hn] at hrestricted
+  have hload := tg_loadBefore_two_mul m (σ ∘ Fin.castLE hn) hrestricted i
+  rw [← paddedJobs_restrict m n ε hn,
+    loadBefore_restrict hn (paddedJobs m n ε) σ (2 * m) (by omega) i] at hload
+  exact hload
 
 /-- Every list schedule of the family in its own order has makespan at least `4m − 1`: the job
 `2m`, of length
 `m`, lands on a machine of load `3m − 1`. -/
-theorem fc_le_makespan_listSchedule (m n : ℕ) [NeZero m] (ε : ℝ) (hε0 : 0 < ε) (hε1 : ε ≤ m)
+theorem fc_le_makespan_listSchedule (m n : ℕ) [NeZero m] (ε : ℝ) (hε0 : 0 < ε)
     (hn : 2 * m + 1 ≤ n) (σ : Fin n → Fin m) (hσ : IsListSchedule (paddedJobs m n ε) σ) :
     4 * (m : ℝ) - 1 ≤ makespan (paddedJobs m n ε) σ := by
   have hm : 0 < m := NeZero.pos m
   have hp : ∀ j, 0 ≤ paddedJobs m n ε j := fun j => (fc_jobs_pos m n ε hm hε0 j).le
   obtain ⟨k, hk⟩ : ∃ k : Fin n, (k : ℕ) = 2 * m := ⟨⟨2 * m, by omega⟩, rfl⟩
-  have h1 := fc_loadBefore_two_mul m n ε hε0 hε1 hn σ hσ (σ k)
+  have h1 := fc_loadBefore_two_mul m n ε hn σ hσ (σ k)
   have h2 := bs_loadBefore_succ (paddedJobs m n ε) σ k (σ k)
   rw [hk, ite_eq_left rfl] at h2
   have h3 := bs_loadBefore_le_load (paddedJobs m n ε) hp σ (2 * m + 1) (σ k)
-  have h4 := load_le_makespan_internal (paddedJobs m n ε) σ (σ k)
+  have h4 := load_le_makespan (paddedJobs m n ε) σ (σ k)
   have h5 : paddedJobs m n ε k = m := by
     change paddedJobLength m ε k = m
     rw [hk]
@@ -227,8 +206,8 @@ theorem fc_le_makespan_lpt (m n : ℕ) [NeZero m] (ε : ℝ) (hε0 : 0 < ε) (h�
   obtain ⟨π, hanti, hls⟩ := hσ
   have hc := fc_comp_eq m n ε hε1 π hanti
   rw [hc] at hls
-  have h1 := fc_le_makespan_listSchedule m n ε hε0 hε1 hn (σ ∘ π) hls
-  rw [← makespan_comp_internal (paddedJobs m n ε) σ π, hc]
+  have h1 := fc_le_makespan_listSchedule m n ε hε0 hn (σ ∘ π) hls
+  rw [← makespan_comp (paddedJobs m n ε) σ π, hc]
   exact h1
 
 /-- The pairing `j ↦ min (j, 2m − 3 − j)` of the first `2m − 2` jobs, the three jobs of length `m`
@@ -312,14 +291,14 @@ theorem fc_exists_opt (m n : ℕ) [NeZero m] (ε : ℝ) (hε0 : 0 ≤ ε) (hn : 
 theorem fc_optMakespan_le (m n : ℕ) [NeZero m] (ε : ℝ) (hε0 : 0 ≤ ε) (hn : 2 * m + 1 ≤ n) :
     optMakespan m (paddedJobs m n ε) ≤ 3 * m + n * ε := by
   obtain ⟨τ, hτ⟩ := fc_exists_opt m n ε hε0 hn
-  exact (optMakespan_le_internal _ τ).trans ((bs_makespan_le_iff _ _ _).2 hτ)
+  exact (optMakespan_le _ τ).trans ((bs_makespan_le_iff _ _ _).2 hτ)
 
 /-- A positive instance with a job has a positive optimum. -/
 theorem fc_optMakespan_pos {m n : ℕ} [NeZero m] (hn : 0 < n) (p : Fin n → ℝ) (hp : ∀ j, 0 < p j) :
     0 < optMakespan m p := by
-  obtain ⟨τ, hτ⟩ := exists_makespan_eq_optMakespan_internal (m := m) p
+  obtain ⟨τ, hτ⟩ := exists_makespan_eq_optMakespan (m := m) p
   rw [← hτ]
-  exact lt_of_lt_of_le (hp ⟨0, hn⟩) (le_makespan_of_nonneg_internal p (fun j => (hp j).le) τ ⟨0,
+  exact lt_of_lt_of_le (hp ⟨0, hn⟩) (le_makespan_of_nonneg p (fun j => (hp j).le) τ ⟨0,
     hn⟩)
 
 /-- For every fixed number `n ≥ 2m + 1` of jobs, Graham's constant `4/3 − 1/(3m)` is still the
@@ -327,7 +306,7 @@ supremum of
 `C(σ)/optMakespan` over the LPT schedules of the positive instances with `n` jobs (for `m ≥ 2` it
 is attained only at
 `n = 2m + 1`, `lpt_lt_bound_of_card_ne`). -/
-theorem isLUB_lpt_ratio_of_card_internal {m n : ℕ} [NeZero m] (hn : 2 * m + 1 ≤ n) :
+theorem isLUB_lpt_ratio_of_card {m n : ℕ} [NeZero m] (hn : 2 * m + 1 ≤ n) :
     IsLUB {r : ℝ | ∃ (p : Fin n → ℝ) (σ : Fin n → Fin m), (∀ j, 0 < p j) ∧ IsLPTSchedule p σ ∧
       r = makespan p σ / optMakespan m p} (4 / 3 - 1 / (3 * m)) := by
   have hm : 0 < m := NeZero.pos m
@@ -340,7 +319,7 @@ theorem isLUB_lpt_ratio_of_card_internal {m n : ℕ} [NeZero m] (hn : 2 * m + 1 
     rintro r ⟨p, σ, hp, hσ, rfl⟩
     have hopt := fc_optMakespan_pos (m := m) hn0 p hp
     rw [div_le_iff₀ hopt]
-    exact lpt_le_optMakespan_internal p (fun j => (hp j).le) σ hσ
+    exact lpt_le_optMakespan p (fun j => (hp j).le) σ hσ
   · rw [mem_lowerBounds]
     intro b hb
     rw [mem_upperBounds] at hb
@@ -356,7 +335,7 @@ theorem isLUB_lpt_ratio_of_card_internal {m n : ℕ} [NeZero m] (hn : 2 * m + 1 
     have hε1 : ε ≤ 1 := by rw [hε, div_le_one hden]; linarith only [hbn]
     have hεm : ε ≤ m := by linarith only [hε1, hmR]
     have hεeq : ε * (D + |b| * n + 1) = D := by rw [hε]; exact div_mul_cancel₀ D hden.ne'
-    obtain ⟨σ, hσ⟩ := exists_isLPTSchedule_internal (m := m) (paddedJobs m n ε)
+    obtain ⟨σ, hσ⟩ := exists_isLPTSchedule (m := m) (paddedJobs m n ε)
     have hpos : ∀ j, 0 < paddedJobs m n ε j := fc_jobs_pos m n ε hm hε0
     have hmem := hb _ ⟨paddedJobs m n ε, σ, hpos, hσ, rfl⟩
     have hopt := fc_optMakespan_pos (m := m) hn0 _ hpos

@@ -16,8 +16,6 @@ import Mathlib.Tactic.Positivity.Finset
 
 The order `grahamOrder` of Graham's family, its lengths, and the optimum attained by a list
 schedule in that order.
-Helpers carry the prefix `ol_`; the `_internal` twins of the Challenge theorems are closed in
-`Contracts.lean`.
 -/
 
 @[expose] public section
@@ -27,7 +25,7 @@ namespace GrahamLPT
 open Finset
 
 /-- The order `grahamOrder m` is a permutation of the `2m + 1` jobs. -/
-theorem grahamOrder_bijective_internal (m : ℕ) : Function.Bijective (grahamOrder m) := by
+theorem grahamOrder_bijective (m : ℕ) : Function.Bijective (grahamOrder m) := by
   rw [← Finite.injective_iff_bijective]
   intro a b h
   have ha := a.isLt
@@ -100,7 +98,7 @@ theorem ol_q (m : ℕ) [NeZero m] (j : Fin (2 * m + 1)) : grahamJobs m (grahamOr
 `2m − 1, …, m + 1, m, m, 2m − 1, …, m + 1, m`: position `i` holds length `2m − 1 − i` for `i < m −
 1`, `m` for
 `i = m − 1` and `i = m`, `3m − i` for `m < i < 2m`, and `m` for `i = 2m`. -/
-theorem grahamJobs_grahamOrder_internal (m : ℕ) (i : Fin (2 * m + 1)) :
+theorem grahamJobs_grahamOrder (m : ℕ) (i : Fin (2 * m + 1)) :
     grahamJobs m (grahamOrder m i) =
       if (i : ℕ) < m - 1 then 2 * (m : ℝ) - 1 - ((i : ℕ) : ℝ)
       else if (i : ℕ) ≤ m then (m : ℝ)
@@ -203,18 +201,18 @@ theorem ol_makespan (m : ℕ) [NeZero m] :
     intro i
     rw [ol_load]
   · rw [← ol_load m ⟨0, NeZero.pos m⟩]
-    exact load_le_makespan_internal _ _ _
+    exact load_le_makespan _ _ _
 
 /-- The optimum `3m` of Graham's instance is attained by a list schedule in the order `grahamOrder
 m`, that is
 `2m − 1, …, m + 1, m, m, 2m − 1, …, m + 1, m` (`grahamJobs_grahamOrder`): some assignment `σ` is a
 list schedule of
 the jobs taken in that order and has makespan `3m`. -/
-theorem grahamJobs_exists_optimal_listSchedule_internal (m : ℕ) [NeZero m] :
+theorem grahamJobs_exists_optimal_listSchedule (m : ℕ) [NeZero m] :
     ∃ σ : Fin (2 * m + 1) → Fin m,
       IsListSchedule (grahamJobs m ∘ grahamOrder m) (σ ∘ grahamOrder m) ∧ makespan (grahamJobs m)
         σ = 3 * m := by
-  let π : Equiv.Perm (Fin (2 * m + 1)) := Equiv.ofBijective _ (grahamOrder_bijective_internal m)
+  let π : Equiv.Perm (Fin (2 * m + 1)) := Equiv.ofBijective _ (grahamOrder_bijective m)
   have hπ : (π : Fin (2 * m + 1) → Fin (2 * m + 1)) = grahamOrder m := rfl
   have hσ : (optimalMachine m ∘ π.symm) ∘ π = optimalMachine m := by
     funext j
@@ -222,7 +220,7 @@ theorem grahamJobs_exists_optimal_listSchedule_internal (m : ℕ) [NeZero m] :
   refine ⟨optimalMachine m ∘ π.symm, ?_, ?_⟩
   · rw [← hπ, hσ, hπ]
     exact ol_isListSchedule m
-  · rw [← makespan_comp_internal (grahamJobs m) (optimalMachine m ∘ π.symm) π, hσ, hπ]
+  · rw [← makespan_comp (grahamJobs m) (optimalMachine m ∘ π.symm) π, hσ, hπ]
     exact ol_makespan m
 
 end GrahamLPT

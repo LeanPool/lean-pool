@@ -398,21 +398,21 @@ corrected by Chen 1993, as
 Della Croce and Scatamacchia restate it; the literature states it for `q ≥ 3`; for `m ≥ 2` it is
 weaker than
 `lpt_bound` at `q ≤ 2`, and its attainment is not proved here). -/
-theorem lpt_bound_of_card_internal {m n : ℕ} [NeZero m] (p : Fin n → ℝ) (hp : ∀ j, 0 ≤ p j)
+theorem lpt_bound_of_card {m n : ℕ} [NeZero m] (p : Fin n → ℝ) (hp : ∀ j, 0 ≤ p j)
     (σ : Fin n → Fin m) (hσ : IsLPTSchedule p σ) (τ : Fin n → Fin m) (i : Fin m)
     (hi : load p σ i = makespan p σ) :
     ((univ.filter (fun j : Fin n => σ j = i)).card : ℝ) * m * makespan p σ ≤
       (((univ.filter (fun j : Fin n => σ j = i)).card + 1) * m - 1) * makespan p τ := by
   obtain ⟨π, hanti, hl⟩ := hσ
   have hi' : load (p ∘ π) (σ ∘ π) i = makespan (p ∘ π) (σ ∘ π) := by
-    rw [bs_load_comp, makespan_comp_internal, hi]
+    rw [bs_load_comp, makespan_comp, hi]
   have h := cs_bound (p ∘ π) (fun j => hp _) hanti (σ ∘ π) hl (τ ∘ π) i hi'
   have hcard : (univ.filter (fun j : Fin n => (σ ∘ π) j = i)).card =
       (univ.filter (fun j : Fin n => σ j = i)).card :=
     Finset.card_equiv π (fun j => by simp)
-  rwa [hcard, makespan_comp_internal, makespan_comp_internal] at h
+  rwa [hcard, makespan_comp, makespan_comp] at h
 
-theorem lpt_job_position_le_internal {m n : ℕ} [NeZero m] (p : Fin n → ℝ) (hp : ∀ j, 0 ≤ p j)
+theorem lpt_job_position_le {m n : ℕ} [NeZero m] (p : Fin n → ℝ) (hp : ∀ j, 0 ≤ p j)
   (hanti : Antitone p)
     (σ : Fin n → Fin m) (hσ : IsListSchedule p σ) (k : Fin n) (τ : Fin n → Fin m) :
     (((univ.filter (fun j : Fin n => (j : ℕ) < k ∧ σ j = σ k)).card : ℝ) + 1) * p k ≤ makespan p τ

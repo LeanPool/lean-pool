@@ -16,8 +16,6 @@ import Mathlib.Tactic.Positivity.Finset
 # Key
 
 The key lemma by counting, and the optimality of LPT when every job exceeds a third of the optimum.
-Helpers carry the prefix `key_`; the `_internal` twins of the Challenge theorems are closed in
-`Contracts.lean`.
 -/
 
 @[expose] public section
@@ -39,7 +37,7 @@ theorem key_card_mul_le_sum {n : ℕ} (p : Fin n → ℝ) (hanti : Antitone p) (
     exact Fin.le_iff_val_le_val.mpr (by omega)
   simpa [Finset.sum_const, nsmul_eq_mul] using h
 
-/-- The key lemma (PROOF.md §3): `p` nonincreasing and nonnegative, `σ` a list schedule, `τ` any
+/-- The counting lemma: `p` nonincreasing and nonnegative, `σ` a list schedule, `τ` any
 assignment
 whose loads from the jobs of index `≤ k` are at most `T`, and `T < 3 p_k`: then the machine of `k`
 ends by `T`. -/
@@ -182,30 +180,30 @@ theorem key_optimal_sorted {m n : ℕ} [NeZero m] (p : Fin n → ℝ) (hp : ∀ 
     rw [hload]
     subst hk
     refine key_lemma p hp hanti σ hσ k τ (makespan p τ) (fun i' => ?_) (h k)
-    exact (bs_loadBefore_le_load p hp τ _ i').trans (load_le_makespan_internal p τ i')
+    exact (bs_loadBefore_le_load p hp τ _ i').trans (load_le_makespan p τ i')
   · push Not at hi
     rw [bs_load_eq_zero p σ i hi]
     exact bs_makespan_nonneg p hp τ
 
 /-- When every job is longer than a third of the makespan of `τ`, every LPT schedule is at least
 as good as `τ`. -/
-theorem lpt_optimal_of_third_lt_internal {m n : ℕ} [NeZero m] (p : Fin n → ℝ) (hp : ∀ j, 0 ≤ p j)
+theorem lpt_optimal_of_third_lt {m n : ℕ} [NeZero m] (p : Fin n → ℝ) (hp : ∀ j, 0 ≤ p j)
     (σ : Fin n → Fin m) (hσ : IsLPTSchedule p σ) (τ : Fin n → Fin m)
     (h : ∀ j, makespan p τ < 3 * p j) : makespan p σ ≤ makespan p τ := by
   obtain ⟨π, hπ, hlist⟩ := hσ
   have hs := key_optimal_sorted (p ∘ π) (fun j => hp (π j)) hπ (σ ∘ π) hlist (τ ∘ π)
-    (fun j => by rw [makespan_comp_internal]; exact h (π j))
-  rwa [makespan_comp_internal, makespan_comp_internal] at hs
+    (fun j => by rw [makespan_comp]; exact h (π j))
+  rwa [makespan_comp, makespan_comp] at hs
 
 /-- LPT is optimal when every job is longer than a third of the optimal makespan. -/
-theorem lpt_eq_optMakespan_of_third_lt_internal {m n : ℕ} [NeZero m] (p : Fin n → ℝ) (hp : ∀ j, 0
+theorem lpt_eq_optMakespan_of_third_lt {m n : ℕ} [NeZero m] (p : Fin n → ℝ) (hp : ∀ j, 0
   ≤ p j)
     (σ : Fin n → Fin m) (hσ : IsLPTSchedule p σ) (h : ∀ j, optMakespan m p < 3 * p j) :
     makespan p σ = optMakespan m p := by
-  obtain ⟨τ, hτ⟩ := exists_makespan_eq_optMakespan_internal (m := m) p
+  obtain ⟨τ, hτ⟩ := exists_makespan_eq_optMakespan (m := m) p
   apply le_antisymm
   · rw [← hτ]
-    exact lpt_optimal_of_third_lt_internal p hp σ hσ τ (fun j => by rw [hτ]; exact h j)
-  · exact optMakespan_le_internal p σ
+    exact lpt_optimal_of_third_lt p hp σ hσ τ (fun j => by rw [hτ]; exact h j)
+  · exact optMakespan_le p σ
 
 end GrahamLPT

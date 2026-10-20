@@ -17,8 +17,6 @@ import Mathlib.Tactic.Positivity.Finset
 # TightList
 
 The unit-job family: optimum `m`, list-schedule makespan `2m − 1`.
-Helpers carry the prefix `tl_`; the `_internal` twins of the Challenge theorems are closed in
-`Contracts.lean`.
 -/
 
 @[expose] public section
@@ -122,7 +120,7 @@ theorem tl_loadBefore_units (m : ℕ) [NeZero m] (σ : Fin (m * (m - 1) + 1) →
 
 theorem tl_le_makespan (m : ℕ) [NeZero m] (τ : Fin (m * (m - 1) + 1) → Fin m) :
     (m : ℝ) ≤ makespan (unitJobs m) τ := by
-  have h := le_makespan_of_nonneg_internal (unitJobs m) (tl_unitJobs_nonneg m) τ (Fin.last _)
+  have h := le_makespan_of_nonneg (unitJobs m) (tl_unitJobs_nonneg m) τ (Fin.last _)
   rwa [tl_unitJobs_apply_last m _ (by simp)] at h
 
 /-- An assignment of makespan `m`: the unit jobs spread `m` per machine over `m − 1` machines, the
@@ -193,23 +191,23 @@ theorem tl_exists_makespan_eq (m : ℕ) [NeZero m] :
     exact_mod_cast hcard
 
 /-- The `m(m − 1)` unit jobs with one job of length `m` have optimal makespan `m`. -/
-theorem unitJobs_optMakespan_internal (m : ℕ) [NeZero m] : optMakespan m (unitJobs m) = m := by
+theorem unitJobs_optMakespan (m : ℕ) [NeZero m] : optMakespan m (unitJobs m) = m := by
   apply le_antisymm
   · obtain ⟨τ, hτ⟩ := tl_exists_makespan_eq m
     rw [← hτ]
-    exact optMakespan_le_internal _ τ
-  · obtain ⟨τ, hτ⟩ := exists_makespan_eq_optMakespan_internal (m := m) (unitJobs m)
+    exact optMakespan_le _ τ
+  · obtain ⟨τ, hτ⟩ := exists_makespan_eq_optMakespan (m := m) (unitJobs m)
     rw [← hτ]
     exact tl_le_makespan m τ
 
 /-- Every list schedule of the unit jobs followed by the job of length `m` has makespan `2m − 1`. -/
-theorem unitJobs_listSchedule_makespan_internal (m : ℕ) [NeZero m] (σ : Fin (m * (m - 1) + 1) →
+theorem unitJobs_listSchedule_makespan (m : ℕ) [NeZero m] (σ : Fin (m * (m - 1) + 1) →
   Fin m)
     (hσ : IsListSchedule (unitJobs m) σ) : makespan (unitJobs m) σ = 2 * m - 1 := by
   have hm : (1 : ℝ) ≤ m := by exact_mod_cast (NeZero.one_le : 1 ≤ m)
   obtain ⟨τ, hτ⟩ := tl_exists_makespan_eq m
   apply le_antisymm
-  · have h := listSchedule_bound_internal (unitJobs m) (tl_unitJobs_nonneg m) σ hσ τ
+  · have h := listSchedule_bound (unitJobs m) (tl_unitJobs_nonneg m) σ hσ τ
     rw [hτ] at h
     exact le_of_mul_le_mul_left (a := (m : ℝ)) (by linarith) (by linarith)
   · have h1 := bs_loadBefore_succ (unitJobs m) σ (Fin.last _) (σ (Fin.last _))
@@ -217,7 +215,7 @@ theorem unitJobs_listSchedule_makespan_internal (m : ℕ) [NeZero m] (σ : Fin (
     simp only [Fin.val_last] at h1
     rw [bs_loadBefore_of_le (unitJobs m) σ (m * (m - 1) + 1) le_rfl, tl_loadBefore_units m σ hσ]
       at h1
-    have h2 := load_le_makespan_internal (unitJobs m) σ (σ (Fin.last _))
+    have h2 := load_le_makespan (unitJobs m) σ (σ (Fin.last _))
     linarith
 
 end GrahamLPT

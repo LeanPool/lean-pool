@@ -19,8 +19,6 @@ import Mathlib.Tactic.Positivity.Finset
 # TightLPT
 
 Graham's family: optimum `3m`, LPT makespan `4m − 1`.
-Helpers carry the prefix `tg_`; the `_internal` twins of the Challenge theorems are closed in
-`Contracts.lean`.
 -/
 
 @[expose] public section
@@ -143,7 +141,7 @@ theorem tg_exists_opt (m : ℕ) [NeZero m] :
 theorem tg_le_makespan (m : ℕ) [NeZero m] (τ : Fin (2 * m + 1) → Fin m) :
     3 * (m : ℝ) ≤ makespan (grahamJobs m) τ := by
   have hm : (0 : ℝ) < m := by exact_mod_cast NeZero.pos m
-  have h := sum_le_mul_makespan_internal (grahamJobs m) τ
+  have h := sum_le_mul_makespan (grahamJobs m) τ
   rw [tg_grahamJobs_sum] at h
   have h' : (m : ℝ) * (3 * m) ≤ (m : ℝ) * makespan (grahamJobs m) τ := by linarith
   exact le_of_mul_le_mul_left h' hm
@@ -169,7 +167,7 @@ theorem tg_exists_prefix_pairing (m : ℕ) [NeZero m] :
   exact tg_pair m ⟨i, by omega⟩ (by dsimp only; omega)
 
 /-- Graham's instance is listed in nonincreasing order. -/
-theorem grahamJobs_antitone_internal (m : ℕ) : Antitone (grahamJobs m) := by
+theorem grahamJobs_antitone (m : ℕ) : Antitone (grahamJobs m) := by
   intro a b hab
   have hab' : (a : ℕ) ≤ b := hab
   by_cases hb : (b : ℕ) < 2 * m
@@ -196,7 +194,7 @@ theorem tg_loadBefore_two_mul (m : ℕ) [NeZero m] (σ : Fin (2 * m + 1) → Fin
     by_cases hex : ∃ j : Fin (2 * m + 1), (j : ℕ) < 2 * m ∧ σ j = i'
     · obtain ⟨k, hk, hσk, heq⟩ := bs_exists_last_job_before (grahamJobs m) σ (2 * m) i' hex
       rw [heq, ← hσk]
-      apply key_lemma (grahamJobs m) hp (grahamJobs_antitone_internal m) σ hσ k τ (3 * m - 1)
+      apply key_lemma (grahamJobs m) hp (grahamJobs_antitone m) σ hσ k τ (3 * m - 1)
       · intro i''
         rw [← hτ i'']
         exact bs_loadBefore_mono _ hp τ (by omega) i''
@@ -229,8 +227,8 @@ theorem tg_listSchedule_makespan (m : ℕ) [NeZero m] (σ : Fin (2 * m + 1) → 
   have hmR : (0 : ℝ) < m := by exact_mod_cast hm
   apply le_antisymm
   · obtain ⟨τ, hτ⟩ := tg_exists_opt m
-    have h1 := lpt_bound_internal (grahamJobs m) (tg_grahamJobs_nonneg m) σ
-      ⟨1, by simpa using grahamJobs_antitone_internal m, by simpa using hσ⟩ τ
+    have h1 := lpt_bound (grahamJobs m) (tg_grahamJobs_nonneg m) σ
+      ⟨1, by simpa using grahamJobs_antitone m, by simpa using hσ⟩ τ
     have h2 : makespan (grahamJobs m) τ = 3 * m :=
       le_antisymm ((bs_makespan_le_iff _ _ _).2 (fun i => (hτ i).le)) (tg_le_makespan m τ)
     rw [h2] at h1
@@ -244,7 +242,7 @@ theorem tg_listSchedule_makespan (m : ℕ) [NeZero m] (σ : Fin (2 * m + 1) → 
       rw [ite_eq_left rfl] at this
       exact this
     have h3 := bs_loadBefore_of_le (grahamJobs m) σ (2 * m + 1) le_rfl (σ ⟨2 * m, by omega⟩)
-    have h4 := load_le_makespan_internal (grahamJobs m) σ (σ ⟨2 * m, by omega⟩)
+    have h4 := load_le_makespan (grahamJobs m) σ (σ ⟨2 * m, by omega⟩)
     have h5 := tg_grahamJobs_apply_last m ⟨2 * m, by omega⟩ (by dsimp only; omega)
     linarith
 
@@ -253,29 +251,29 @@ theorem tg_listSchedule_makespan (m : ℕ) [NeZero m] (σ : Fin (2 * m + 1) → 
 theorem tg_comp_eq (m : ℕ) (π : Equiv.Perm (Fin (2 * m + 1))) (h : Antitone (grahamJobs m ∘ π)) :
     grahamJobs m ∘ π = grahamJobs m := by
   have h1 : Antitone (grahamJobs m ∘ ⇑(1 : Equiv.Perm (Fin (2 * m + 1)))) := by
-    simpa using grahamJobs_antitone_internal m
+    simpa using grahamJobs_antitone m
   have h2 := Tuple.unique_antitone h h1
   simpa using h2
 
 /-- Graham's instance has optimal makespan `3m`. -/
-theorem grahamJobs_optMakespan_internal (m : ℕ) [NeZero m] : optMakespan m (grahamJobs m) = 3 * m
+theorem grahamJobs_optMakespan (m : ℕ) [NeZero m] : optMakespan m (grahamJobs m) = 3 * m
   := by
   obtain ⟨τ, hτ⟩ := tg_exists_opt m
   apply le_antisymm
-  · calc optMakespan m (grahamJobs m) ≤ makespan (grahamJobs m) τ := optMakespan_le_internal _ τ
+  · calc optMakespan m (grahamJobs m) ≤ makespan (grahamJobs m) τ := optMakespan_le _ τ
       _ ≤ 3 * m := (bs_makespan_le_iff _ _ _).2 (fun i => (hτ i).le)
-  · obtain ⟨τ', hτ'⟩ := exists_makespan_eq_optMakespan_internal (m := m) (grahamJobs m)
+  · obtain ⟨τ', hτ'⟩ := exists_makespan_eq_optMakespan (m := m) (grahamJobs m)
     rw [← hτ']
     exact tg_le_makespan m τ'
 
 /-- Every LPT schedule of Graham's instance has makespan `4m − 1`: the bound `4/3 − 1/(3m)` is
 attained for every `m`. -/
-theorem grahamJobs_lpt_makespan_internal (m : ℕ) [NeZero m] (σ : Fin (2 * m + 1) → Fin m)
+theorem grahamJobs_lpt_makespan (m : ℕ) [NeZero m] (σ : Fin (2 * m + 1) → Fin m)
     (hσ : IsLPTSchedule (grahamJobs m) σ) : makespan (grahamJobs m) σ = 4 * m - 1 := by
   obtain ⟨π, hanti, hls⟩ := hσ
   have hc := tg_comp_eq m π hanti
   rw [hc] at hls
   have h1 := tg_listSchedule_makespan m (σ ∘ π) hls
-  rw [← makespan_comp_internal (grahamJobs m) σ π, hc, h1]
+  rw [← makespan_comp (grahamJobs m) σ π, hc, h1]
 
 end GrahamLPT

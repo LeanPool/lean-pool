@@ -534,7 +534,7 @@ theorem eq_count_eq {m : ℕ} (hm : 0 < m) (p : Fin (2 * m + 1) → ℝ) (k : Fi
 attains Graham's bound against the optimum only for Graham's instance: then `n = 2m + 1` and `p`
 is a positive
 multiple of `grahamJobs m`. -/
-theorem graham_of_listSchedule_eq_bound_internal {m n : ℕ} [NeZero m] (hm : 2 ≤ m) (hn : 0 < n) (p
+theorem graham_of_listSchedule_eq_bound {m n : ℕ} [NeZero m] (hm : 2 ≤ m) (hn : 0 < n) (p
   : Fin n → ℝ)
     (hp : ∀ j, 0 < p j) (hanti : Antitone p) (σ : Fin n → Fin m) (hσ : IsListSchedule p σ)
     (heq : 3 * m * makespan p σ = (4 * m - 1) * optMakespan m p) :
@@ -543,10 +543,10 @@ theorem graham_of_listSchedule_eq_bound_internal {m n : ℕ} [NeZero m] (hm : 2 
   have hmR : (2 : ℝ) ≤ m := by exact_mod_cast hm
   have hp0 : ∀ j, 0 ≤ p j := fun j => (hp j).le
   -- Step 1: the optimum and the critical job
-  obtain ⟨τ, hτ⟩ := exists_makespan_eq_optMakespan_internal (m := m) p
+  obtain ⟨τ, hτ⟩ := exists_makespan_eq_optMakespan (m := m) p
   rw [← hτ] at heq
   have hT : 0 < makespan p τ :=
-    lt_of_lt_of_le (hp ⟨0, hn⟩) (le_makespan_of_nonneg_internal p hp0 τ ⟨0, hn⟩)
+    lt_of_lt_of_le (hp ⟨0, hn⟩) (le_makespan_of_nonneg p hp0 τ ⟨0, hn⟩)
   have hCT : makespan p τ < makespan p σ := by
     by_contra h
     push Not at h
@@ -562,7 +562,7 @@ theorem graham_of_listSchedule_eq_bound_internal {m n : ℕ} [NeZero m] (hm : 2 
   obtain ⟨k, hk, hload⟩ := bs_exists_last_job p σ i₀ hex
   have hk' : makespan p σ = loadBefore p σ k (σ k) + p k := by rw [← hi₀, hload, hk]
   -- Step 2: the structure
-  obtain ⟨h3, hLB, hloadτ, hzero⟩ := lpt_eq_bound_structure_internal hm p hp0 hanti σ hσ k hk' τ heq
+  obtain ⟨h3, hLB, hloadτ, hzero⟩ := lpt_eq_bound_structure hm p hp0 hanti σ hσ k hk' τ heq
   have hlast : ∀ j : Fin n, (j : ℕ) ≤ k := fun j => by
     by_contra h
     push Not at h
@@ -620,7 +620,7 @@ theorem graham_of_listSchedule_eq_bound_internal {m n : ℕ} [NeZero m] (hm : 2 
   simp only [Fin.cast_refl, id]
   have hcount := eq_count_eq hm0 p k t δ hδ hmδ hpk hlast hfib hlat
   have hg_anti : Antitone (fun j => δ * grahamJobs m j) := fun a b hab =>
-    mul_le_mul_of_nonneg_left (grahamJobs_antitone_internal m hab) hδ.le
+    mul_le_mul_of_nonneg_left (grahamJobs_antitone m hab) hδ.le
   exact congrFun (eq_antitone_eq_of_count p (fun j => δ * grahamJobs m j) hanti hg_anti hcount) j
 
 end GrahamLPT

@@ -17,8 +17,6 @@ import Mathlib.Tactic.Positivity.Finset
 # Basic
 
 Loads, makespans, the existence of list and LPT schedules, the attained optimum, relabeling.
-Helpers carry the prefix `bs_`; the `_internal` twins of the Challenge theorems are closed in
-`Contracts.lean`.
 -/
 
 @[expose] public section
@@ -63,6 +61,36 @@ theorem bs_loadBefore_of_le {m n : ℕ} (p : Fin n → ℝ) (σ : Fin n → Fin 
   simp only [Finset.mem_filter, Finset.mem_univ, true_and]
   have := j.isLt
   exact ⟨fun h => h.2, fun h => ⟨by omega, h⟩⟩
+
+/-- Restricting a job vector and assignment preserves every load in the retained prefix. -/
+theorem loadBefore_restrict {m n N : ℕ} (h : n ≤ N) (p : Fin N → ℝ)
+    (σ : Fin N → Fin m) (k : ℕ) (hk : k ≤ n) (i : Fin m) :
+    loadBefore (p ∘ Fin.castLE h) (σ ∘ Fin.castLE h) k i = loadBefore p σ k i := by
+  unfold loadBefore
+  refine Finset.sum_bij (fun j _ => Fin.castLE h j) ?_ ?_ ?_ ?_
+  · intro j hj
+    simpa only [mem_filter, mem_univ, true_and, Function.comp_apply, Fin.val_castLE] using hj
+  · intro a _ b _ hab
+    apply Fin.ext
+    simpa only [Fin.val_castLE] using congrArg (fun j : Fin N => (j : ℕ)) hab
+  · intro j hj
+    have hj' := (mem_filter.mp hj).2
+    have hcast : Fin.castLE h (⟨j, lt_of_lt_of_le hj'.1 hk⟩ : Fin n) = j := by
+      apply Fin.ext
+      simp only [Fin.val_castLE]
+    refine ⟨⟨j, lt_of_lt_of_le hj'.1 hk⟩, ?_, hcast⟩
+    simpa only [mem_filter, mem_univ, true_and, Function.comp_apply, hcast] using hj'
+  · intro j _
+    rfl
+
+/-- A list schedule restricts to a list schedule of any initial segment of the jobs. -/
+theorem IsListSchedule.restrict {m n N : ℕ} (h : n ≤ N) (p : Fin N → ℝ)
+    (σ : Fin N → Fin m) (hσ : IsListSchedule p σ) :
+    IsListSchedule (p ∘ Fin.castLE h) (σ ∘ Fin.castLE h) := by
+  intro k i
+  rw [loadBefore_restrict h p σ k k.isLt.le,
+    loadBefore_restrict h p σ k k.isLt.le]
+  simpa only [Fin.val_castLE, Function.comp_apply] using hσ (Fin.castLE h k) i
 
 /-- The loads before `k` sum to the lengths of the jobs before `k`. -/
 theorem bs_sum_loadBefore {m n : ℕ} (p : Fin n → ℝ) (σ : Fin n → Fin m) (k : ℕ) :
@@ -251,14 +279,14 @@ theorem bs_loadBefore_greedy {m n : ℕ} [NeZero m] (p : Fin n → ℝ) :
       simp [hi, hi']
 
 /-- A list schedule exists. -/
-theorem exists_isListSchedule_internal {m n : ℕ} [NeZero m] (p : Fin n → ℝ) :
+theorem exists_isListSchedule {m n : ℕ} [NeZero m] (p : Fin n → ℝ) :
     ∃ σ : Fin n → Fin m, IsListSchedule p σ := by
   refine ⟨fun j : Fin n => leastLoadedMachine (greedyLoads p (j : ℕ)), fun k i => ?_⟩
   rw [bs_loadBefore_greedy p k k.isLt.le, bs_loadBefore_greedy p k k.isLt.le]
   exact bs_argmin_le _ i
 
 /-- An LPT schedule exists. -/
-theorem exists_isLPTSchedule_internal {m n : ℕ} [NeZero m] (p : Fin n → ℝ) :
+theorem exists_isLPTSchedule {m n : ℕ} [NeZero m] (p : Fin n → ℝ) :
     ∃ σ : Fin n → Fin m, IsLPTSchedule p σ := by
   set π := Tuple.sort (fun j => -p j) with hπ
   have hanti : Antitone (p ∘ π) := by
@@ -266,7 +294,7 @@ theorem exists_isLPTSchedule_internal {m n : ℕ} [NeZero m] (p : Fin n → ℝ)
     have := Tuple.monotone_sort (fun j => -p j) hab
     simp only [Function.comp] at this ⊢
     linarith
-  obtain ⟨σ', hσ'⟩ := exists_isListSchedule_internal (m := m) (p ∘ π)
+  obtain ⟨σ', hσ'⟩ := exists_isListSchedule (m := m) (p ∘ π)
   refine ⟨σ' ∘ π.symm, π, hanti, ?_⟩
   have e : (σ' ∘ ⇑π.symm) ∘ ⇑π = σ' := by
     funext j
@@ -275,35 +303,35 @@ theorem exists_isLPTSchedule_internal {m n : ℕ} [NeZero m] (p : Fin n → ℝ)
   exact hσ'
 
 /-- The optimal makespan is at most the makespan of every assignment. -/
-theorem optMakespan_le_internal {m n : ℕ} [NeZero m] (p : Fin n → ℝ) (τ : Fin n → Fin m) :
+theorem optMakespan_le {m n : ℕ} [NeZero m] (p : Fin n → ℝ) (τ : Fin n → Fin m) :
     optMakespan m p ≤ makespan p τ :=
   Finset.inf'_le (fun σ : Fin n → Fin m => makespan p σ) (mem_univ τ)
 
 /-- The optimal makespan is attained. -/
-theorem exists_makespan_eq_optMakespan_internal {m n : ℕ} [NeZero m] (p : Fin n → ℝ) :
+theorem exists_makespan_eq_optMakespan {m n : ℕ} [NeZero m] (p : Fin n → ℝ) :
     ∃ τ : Fin n → Fin m, makespan p τ = optMakespan m p :=
   bs_exists_makespan_eq_opt p
 
 /-- Every machine load is at most the makespan. -/
-theorem load_le_makespan_internal {m n : ℕ} [NeZero m] (p : Fin n → ℝ) (σ : Fin n → Fin m) (i :
+theorem load_le_makespan {m n : ℕ} [NeZero m] (p : Fin n → ℝ) (σ : Fin n → Fin m) (i :
   Fin m) :
     load p σ i ≤ makespan p σ :=
   bs_load_le_makespan p σ i
 
 /-- For nonnegative lengths every job is at most the makespan. -/
-theorem le_makespan_of_nonneg_internal {m n : ℕ} [NeZero m] (p : Fin n → ℝ) (hp : ∀ j, 0 ≤ p j)
+theorem le_makespan_of_nonneg {m n : ℕ} [NeZero m] (p : Fin n → ℝ) (hp : ∀ j, 0 ≤ p j)
     (σ : Fin n → Fin m) (j : Fin n) : p j ≤ makespan p σ := by
   refine le_trans ?_ (bs_load_le_makespan p σ (σ j))
   exact Finset.single_le_sum (fun j _ => hp j) (by simp : j ∈ univ.filter (fun j' : Fin n => σ j'
     = σ j))
 
 /-- The total length is at most `m` times the makespan. -/
-theorem sum_le_mul_makespan_internal {m n : ℕ} [NeZero m] (p : Fin n → ℝ) (σ : Fin n → Fin m) :
+theorem sum_le_mul_makespan {m n : ℕ} [NeZero m] (p : Fin n → ℝ) (σ : Fin n → Fin m) :
     ∑ j, p j ≤ (m : ℝ) * makespan p σ :=
   bs_sum_le_mul_makespan p σ
 
 /-- Relabeling the jobs by a permutation does not change the makespan. -/
-theorem makespan_comp_internal {m n : ℕ} [NeZero m] (p : Fin n → ℝ) (σ : Fin n → Fin m) (π :
+theorem makespan_comp {m n : ℕ} [NeZero m] (p : Fin n → ℝ) (σ : Fin n → Fin m) (π :
   Equiv.Perm (Fin n)) :
     makespan (p ∘ π) (σ ∘ π) = makespan p σ := by
   have h : load (p ∘ π) (σ ∘ π) = load p σ := funext (bs_load_comp p σ π)

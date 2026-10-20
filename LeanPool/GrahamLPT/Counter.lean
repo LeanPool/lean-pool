@@ -163,7 +163,7 @@ theorem cx_twelve_le_makespan (τ : Fin 6 → Fin 3) :
 2, 2, 2`. -/
 theorem cx_opt_twelve : optMakespan 3 (![9, 5, 5, 4, 4, 4] : Fin 6 → ℝ) = 12 := by
   apply le_antisymm
-  · refine le_trans (optMakespan_le_internal _ (![0, 1, 1, 2, 2, 2] : Fin 6 → Fin 3)) ?_
+  · refine le_trans (optMakespan_le _ (![0, 1, 1, 2, 2, 2] : Fin 6 → Fin 3)) ?_
     rw [bs_makespan_le_iff]
     intro i
     fin_cases i <;> norm_num [load, Finset.sum_filter, Fin.sum_univ_six]
@@ -187,16 +187,16 @@ theorem cx_third_le_not_optimal :
   · rw [cx_opt_twelve, cx_lpt_thirteen.2]
     norm_num
 
-theorem nine_five_four_lpt_thirteen_internal :
+theorem nine_five_four_lpt_thirteen :
     IsLPTSchedule (![9, 5, 5, 4, 4, 4] : Fin 6 → ℝ) (![0, 1, 2, 1, 2, 0] : Fin 6 → Fin 3) ∧
       makespan (![9, 5, 5, 4, 4, 4] : Fin 6 → ℝ) (![0, 1, 2, 1, 2, 0] : Fin 6 → Fin 3) = 13 :=
   cx_lpt_thirteen
 
-theorem nine_five_four_optMakespan_internal : optMakespan 3 (![9, 5, 5, 4, 4, 4] : Fin 6 → ℝ) = 12
+theorem nine_five_four_optMakespan : optMakespan 3 (![9, 5, 5, 4, 4, 4] : Fin 6 → ℝ) = 12
   :=
   cx_opt_twelve
 
-theorem lpt_third_le_not_optimal_internal :
+theorem lpt_third_le_not_optimal :
     ∃ (p : Fin 6 → ℝ) (σ : Fin 6 → Fin 3), (∀ j, 0 ≤ p j) ∧ IsLPTSchedule p σ ∧
       (∀ j, optMakespan 3 p ≤ 3 * p j) ∧ optMakespan 3 p < makespan p σ :=
   cx_third_le_not_optimal

@@ -35,7 +35,7 @@ theorem ct_key_le {m n : ℕ} [NeZero m] (p : Fin n → ℝ) (hp : ∀ j, 0 ≤ 
     (σ : Fin n → Fin m) (hσ : IsListSchedule p σ) (k : Fin n) (τ : Fin n → Fin m)
     (h3 : makespan p τ < 3 * p k) : loadBefore p σ k (σ k) + p k ≤ makespan p τ :=
   key_lemma p hp hanti σ hσ k τ (makespan p τ)
-    (fun i => (bs_loadBefore_le_load p hp τ _ i).trans (load_le_makespan_internal p τ i)) h3
+    (fun i => (bs_loadBefore_le_load p hp τ _ i).trans (load_le_makespan p τ i)) h3
 
 /-- The scalar step of the equality structure for `T > 0`: `L` the least load before `k`, `P =
 p_k`, `S` the
@@ -79,7 +79,7 @@ completion time is
 the makespan, the smaller of `C(σ)` and `3 p_k` is at most `C(τ)` for every assignment `τ` (the
 key lemma read as a
 lower bound on every comparison schedule). -/
-theorem lpt_critical_min_le_internal {m n : ℕ} [NeZero m] (p : Fin n → ℝ) (hp : ∀ j, 0 ≤ p j)
+theorem lpt_critical_min_le {m n : ℕ} [NeZero m] (p : Fin n → ℝ) (hp : ∀ j, 0 ≤ p j)
   (hanti : Antitone p)
     (σ : Fin n → Fin m) (hσ : IsListSchedule p σ) (k : Fin n) (hk : makespan p σ = loadBefore p σ
       k (σ k) + p k)
@@ -95,15 +95,15 @@ theorem lpt_critical_min_le_internal {m n : ℕ} [NeZero m] (p : Fin n → ℝ) 
 third of the makespan it completes, the schedule is optimal (`lpt_eq_optMakespan_of_third_lt` asks
 every job to exceed
 a third of the unknown optimum). -/
-theorem lpt_eq_optMakespan_of_critical_third_internal {m n : ℕ} [NeZero m] (p : Fin n → ℝ) (hp : ∀
+theorem lpt_eq_optMakespan_of_critical_third {m n : ℕ} [NeZero m] (p : Fin n → ℝ) (hp : ∀
   j, 0 ≤ p j)
     (hanti : Antitone p) (σ : Fin n → Fin m) (hσ : IsListSchedule p σ) (k : Fin n)
     (hk : makespan p σ = loadBefore p σ k (σ k) + p k) (h3 : makespan p σ ≤ 3 * p k) :
     makespan p σ = optMakespan m p := by
-  obtain ⟨τ, hτ⟩ := exists_makespan_eq_optMakespan_internal (m := m) p
-  have h := lpt_critical_min_le_internal p hp hanti σ hσ k hk τ
+  obtain ⟨τ, hτ⟩ := exists_makespan_eq_optMakespan (m := m) p
+  have h := lpt_critical_min_le p hp hanti σ hσ k hk τ
   rw [min_eq_left h3, hτ] at h
-  exact le_antisymm h (optMakespan_le_internal p σ)
+  exact le_antisymm h (optMakespan_le p σ)
 
 /-- In a list schedule `σ` of a nonincreasing `p` on `m ≥ 2` machines, with `k` a critical job,
 equality in Graham's
@@ -112,7 +112,7 @@ every machine of
 `σ` carries the least load before `k`, every machine of `τ` carries exactly `C(τ)`, and every job
 after `k` has
 length `0`. -/
-theorem lpt_eq_bound_structure_internal {m n : ℕ} [NeZero m] (hm : 2 ≤ m) (p : Fin n → ℝ) (hp : ∀
+theorem lpt_eq_bound_structure {m n : ℕ} [NeZero m] (hm : 2 ≤ m) (p : Fin n → ℝ) (hp : ∀
   j, 0 ≤ p j)
     (hanti : Antitone p) (σ : Fin n → Fin m) (hσ : IsListSchedule p σ) (k : Fin n)
     (hk : makespan p σ = loadBefore p σ k (σ k) + p k) (τ : Fin n → Fin m)
@@ -129,7 +129,7 @@ theorem lpt_eq_bound_structure_internal {m n : ℕ} [NeZero m] (hm : 2 ≤ m) (p
       exact (mul_eq_zero.mp heq).resolve_left h3m.ne'
     have hz : ∀ j, p j = 0 := by
       intro j
-      have h := le_makespan_of_nonneg_internal p hp σ j
+      have h := le_makespan_of_nonneg p hp σ j
       rw [hC0] at h
       exact le_antisymm h (hp j)
     refine ⟨?_, ?_, ?_, fun j _ => hz j⟩
@@ -145,7 +145,7 @@ theorem lpt_eq_bound_structure_internal {m n : ℕ} [NeZero m] (hm : 2 ≤ m) (p
   · -- `C(τ) > 0`: the scalar step, then each tight inequality read off
     obtain ⟨hP, hS, hW, hWT⟩ := ct_eq_scalar (m : ℝ) (loadBefore p σ k (σ k)) (p k)
       (∑ j ∈ univ.filter (fun j : Fin n => (j : ℕ) < k), p j) (∑ j, p j) (makespan p τ) hm' hT
-      (bs_mul_loadBefore_le p σ hσ k) (bs_sum_filter_add_le p hp k) (sum_le_mul_makespan_internal
+      (bs_mul_loadBefore_le p σ hσ k) (bs_sum_filter_add_le p hp k) (sum_le_mul_makespan
         p τ)
       (ct_key_le p hp hanti σ hσ k τ) (by rw [← hk]; exact heq)
     refine ⟨hP, ?_, ?_, ?_⟩
@@ -165,7 +165,7 @@ theorem lpt_eq_bound_structure_internal {m n : ℕ} [NeZero m] (hm : 2 ≤ m) (p
           nsmul_eq_mul]
         linarith
       have h := (Finset.sum_eq_zero_iff_of_nonneg
-        (fun i _ => sub_nonneg.2 (load_le_makespan_internal p τ i))).mp hsum
+        (fun i _ => sub_nonneg.2 (load_le_makespan p τ i))).mp hsum
       intro i
       have hi := h i (mem_univ i)
       linarith
@@ -186,7 +186,7 @@ nonincreasing `p`, if a
 machine `i` other than the critical job's holds at least `q` jobs before the critical job `k`, and
 `q + 2 ≤ m`, then
 `q(m − 1) · C(σ) ≤ ((q + 1)(m − 1) − 1) · C(τ)` for every assignment `τ`. -/
-theorem lpt_bound_of_other_card_internal {m n : ℕ} [NeZero m] (p : Fin n → ℝ) (hp : ∀ j, 0 ≤ p j)
+theorem lpt_bound_of_other_card {m n : ℕ} [NeZero m] (p : Fin n → ℝ) (hp : ∀ j, 0 ≤ p j)
   (hanti : Antitone p)
     (σ : Fin n → Fin m) (hσ : IsListSchedule p σ) (k : Fin n) (hk : makespan p σ = loadBefore p σ
       k (σ k) + p k)
@@ -228,7 +228,7 @@ theorem lpt_bound_of_other_card_internal {m n : ℕ} [NeZero m] (p : Fin n → �
         rw [eF, card_insert_of_notMem hnot]
         push_cast
         ring
-      have hchen := lpt_job_position_le_internal p hp hanti σ hσ j₀ τ
+      have hchen := lpt_job_position_le p hp hanti σ hσ j₀ τ
       rw [← hcard] at hchen
       have hpk : p k ≤ p j₀ := hanti (Fin.le_iff_val_le_val.mpr hj₀.1.le)
       calc (q : ℝ) * p k ≤ (q : ℝ) * p j₀ := mul_le_mul_of_nonneg_left hpk hq0
@@ -270,6 +270,6 @@ theorem lpt_bound_of_other_card_internal {m n : ℕ} [NeZero m] (p : Fin n → �
     exact h
   rw [hk]
   exact ct_other_scalar (m : ℝ) q (loadBefore p σ k (σ k)) (p k) (∑ j, p j) (makespan p τ) hq0 hm'
-    (by linarith) (sum_le_mul_makespan_internal p τ) hqP
+    (by linarith) (sum_le_mul_makespan p τ) hqP
 
 end GrahamLPT
