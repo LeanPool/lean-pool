@@ -62,6 +62,26 @@ theorem bs_loadBefore_of_le {m n : ℕ} (p : Fin n → ℝ) (σ : Fin n → Fin 
   have := j.isLt
   exact ⟨fun h => h.2, fun h => ⟨by omega, h⟩⟩
 
+/-- If every later job has length at most `ε ≥ 0`, a full load exceeds its prefix by at most
+`nε`. -/
+theorem load_le_loadBefore_add {m n : ℕ} (p : Fin n → ℝ) (σ : Fin n → Fin m)
+    (k : ℕ) (ε : ℝ) (hε : 0 ≤ ε) (htail : ∀ j : Fin n, k ≤ (j : ℕ) → p j ≤ ε)
+    (i : Fin m) : load p σ i ≤ loadBefore p σ k i + n * ε := by
+  calc
+    load p σ i = ∑ j : Fin n, if σ j = i then p j else 0 := by rw [load, sum_filter]
+    _ ≤ ∑ j : Fin n, ((if (j : ℕ) < k ∧ σ j = i then p j else 0) + ε) := by
+      refine sum_le_sum fun j _ => ?_
+      by_cases hji : σ j = i
+      · by_cases hj : (j : ℕ) < k
+        · simpa only [hji, hj, and_self, ↓reduceIte] using
+            (le_add_of_nonneg_right hε : p j ≤ p j + ε)
+        · simpa only [hji, hj, false_and, ↓reduceIte, zero_add] using
+            htail j (Nat.le_of_not_gt hj)
+      · simpa only [hji, and_false, ↓reduceIte, zero_add] using hε
+    _ = loadBefore p σ k i + n * ε := by
+      simp only [sum_add_distrib, sum_const, card_univ, Fintype.card_fin,
+        nsmul_eq_mul, loadBefore, sum_filter]
+
 /-- Restricting a job vector and assignment preserves every load in the retained prefix. -/
 theorem loadBefore_restrict {m n N : ℕ} (h : n ≤ N) (p : Fin N → ℝ)
     (σ : Fin N → Fin m) (k : ℕ) (hk : k ≤ n) (i : Fin m) :

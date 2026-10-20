@@ -36,6 +36,20 @@ noncomputable def paddedJobLength (m : ℕ) (ε : ℝ) (j : ℕ) : ℝ :=
 /-- Graham's `2m + 1` jobs followed by `n − 2m − 1` jobs of length `ε`. -/
 noncomputable def paddedJobs (m n : ℕ) (ε : ℝ) : Fin n → ℝ := fun j => paddedJobLength m ε j
 
+/-- The unpadded jobs agree with Graham's original instance. -/
+theorem paddedJobLength_eq_grahamJobs (m : ℕ) (ε : ℝ) (j : Fin (2 * m + 1)) :
+    paddedJobLength m ε j = grahamJobs m j := by
+  by_cases h : (j : ℕ) < 2 * m
+  · simp only [paddedJobLength, grahamJobs, h, ite_true]
+  · have hj : (j : ℕ) = 2 * m := by omega
+    simp only [paddedJobLength, grahamJobs, hj, ite_true]
+
+/-- Restriction to the original job count removes the small-job tail. -/
+theorem paddedJobs_restrict (m n : ℕ) (ε : ℝ) (hn : 2 * m + 1 ≤ n) :
+    paddedJobs m n ε ∘ Fin.castLE hn = grahamJobs m := by
+  funext j
+  exact paddedJobLength_eq_grahamJobs m ε j
+
 theorem fc_len_lt (m : ℕ) (ε : ℝ) (j : ℕ) (h : j < 2 * m) :
     paddedJobLength m ε j = 2 * (m : ℝ) - 1 - ((j / 2 : ℕ) : ℝ) := by
   unfold paddedJobLength
@@ -53,14 +67,8 @@ theorem fc_len_gt (m : ℕ) (ε : ℝ) (j : ℕ) (h : 2 * m < j) : paddedJobLeng
 
 /-- Each of Graham's jobs is at least `m`. -/
 theorem fc_le_len (m : ℕ) (ε : ℝ) (j : ℕ) (h : j ≤ 2 * m) : (m : ℝ) ≤ paddedJobLength m ε j := by
-  rcases Nat.lt_or_ge j (2 * m) with h1 | h1
-  · rw [fc_len_lt m ε j h1]
-    have h2 : j / 2 + 1 ≤ m := by omega
-    have h3 : ((j / 2 : ℕ) : ℝ) + 1 ≤ (m : ℝ) := by exact_mod_cast h2
-    linarith
-  · have h2 : j = 2 * m := by omega
-    rw [h2]
-    exact (fc_len_two_mul m ε).ge
+  rw [paddedJobLength_eq_grahamJobs m ε ⟨j, by omega⟩]
+  exact tg_le_grahamJobs m _
 
 theorem fc_len_pos (m : ℕ) (ε : ℝ) (hm : 0 < m) (hε : 0 < ε) (j : ℕ) : 0 < paddedJobLength m ε j
     := by
@@ -94,20 +102,6 @@ theorem fc_antitone (m n : ℕ) (ε : ℝ) (hε : ε ≤ m) : Antitone (paddedJo
         rw [h2, fc_len_two_mul]
         exact h1
     · simp only [fc_len_gt m ε a (by omega), fc_len_gt m ε b (by omega), le_refl]
-
-/-- The unpadded jobs agree with Graham's original instance. -/
-theorem paddedJobLength_eq_grahamJobs (m : ℕ) (ε : ℝ) (j : Fin (2 * m + 1)) :
-    paddedJobLength m ε j = grahamJobs m j := by
-  by_cases h : (j : ℕ) < 2 * m
-  · simp only [paddedJobLength, grahamJobs, h, ite_true]
-  · have hj : (j : ℕ) = 2 * m := by omega
-    simp only [paddedJobLength, grahamJobs, hj, ite_true]
-
-/-- Restriction to the original job count removes the small-job tail. -/
-theorem paddedJobs_restrict (m n : ℕ) (ε : ℝ) (hn : 2 * m + 1 ≤ n) :
-    paddedJobs m n ε ∘ Fin.castLE hn = grahamJobs m := by
-  funext j
-  exact paddedJobLength_eq_grahamJobs m ε j
 
 /-- The pairs `j, 2m − 1 − j` among the original jobs sum to `3m − 1`. -/
 theorem fc_pair (m : ℕ) (ε : ℝ) (j : ℕ) (h : j < 2 * m) :
@@ -210,82 +204,26 @@ theorem fc_le_makespan_lpt (m n : ℕ) [NeZero m] (ε : ℝ) (hε0 : 0 < ε) (h�
   rw [← makespan_comp (paddedJobs m n ε) σ π, hc]
   exact h1
 
-/-- The pairing `j ↦ min (j, 2m − 3 − j)` of the first `2m − 2` jobs, the three jobs of length `m`
-and every
-small job on the last machine: every load is at most `3m + nε`. -/
+/-- Extend an optimal assignment of the original jobs by assigning the small-job tail to
+machine zero; each load is at most `3m + nε`. -/
 theorem fc_exists_opt (m n : ℕ) [NeZero m] (ε : ℝ) (hε0 : 0 ≤ ε) (hn : 2 * m + 1 ≤ n) :
     ∃ τ : Fin n → Fin m, ∀ i, load (paddedJobs m n ε) τ i ≤ 3 * m + n * ε := by
-  have hm : 0 < m := NeZero.pos m
-  refine ⟨fun j => if h : (j : ℕ) < 2 * m - 2 then ⟨min (j : ℕ) (2 * m - 3 - j), by omega⟩
-    else ⟨m - 1, by omega⟩, fun i => ?_⟩
-  have hi := i.isLt
-  have hnε : 0 ≤ (n : ℝ) * ε := mul_nonneg (Nat.cast_nonneg n) hε0
-  unfold load
-  by_cases hlt : (i : ℕ) < m - 1
-  · have hfib : univ.filter (fun j : Fin n =>
-        (if h : (j : ℕ) < 2 * m - 2 then (⟨min (j : ℕ) (2 * m - 3 - j), by omega⟩ : Fin m)
-          else ⟨m - 1, by omega⟩) = i) =
-        {(⟨i, by omega⟩ : Fin n), ⟨2 * m - 3 - i, by omega⟩} := by
-      ext j
-      have hj := j.isLt
-      simp only [mem_filter, mem_univ, true_and, mem_insert, mem_singleton, Fin.ext_iff]
-      split_ifs with h1 <;> dsimp only <;> omega
-    rw [hfib, sum_pair (by rw [Ne, Fin.ext_iff]; dsimp only; omega)]
-    have := fc_pair' m ε i (by omega)
-    change paddedJobLength m ε i + paddedJobLength m ε (2 * m - 3 - i) ≤ 3 * m + n * ε
-    linarith only [this, hnε]
-  · have hfib : univ.filter (fun j : Fin n =>
-        (if h : (j : ℕ) < 2 * m - 2 then (⟨min (j : ℕ) (2 * m - 3 - j), by omega⟩ : Fin m)
-          else ⟨m - 1, by omega⟩) = i) =
-        univ.filter (fun j : Fin n => 2 * m - 2 ≤ (j : ℕ)) := by
-      ext j
-      have hj := j.isLt
-      simp only [mem_filter, mem_univ, true_and, Fin.ext_iff]
-      split_ifs with h1 <;> dsimp only <;> omega
-    rw [hfib, ← sum_filter_add_sum_filter_not (univ.filter (fun j : Fin n => 2 * m - 2 ≤ (j : ℕ)))
-      (fun j : Fin n => (j : ℕ) < 2 * m + 1)]
-    have hA : (univ.filter (fun j : Fin n => 2 * m - 2 ≤ (j : ℕ))).filter
-        (fun j : Fin n => (j : ℕ) < 2 * m + 1) =
-        {(⟨2 * m - 2, by omega⟩ : Fin n), ⟨2 * m - 1, by omega⟩, ⟨2 * m, by omega⟩} := by
-      ext j
-      have hj := j.isLt
-      simp only [mem_filter, mem_univ, true_and, mem_insert, mem_singleton, Fin.ext_iff]
-      omega
-    have hB : ∑ j ∈ (univ.filter (fun j : Fin n => 2 * m - 2 ≤ (j : ℕ))).filter
-        (fun j : Fin n => ¬ (j : ℕ) < 2 * m + 1), paddedJobs m n ε j ≤ n * ε := by
-      calc ∑ j ∈ (univ.filter (fun j : Fin n => 2 * m - 2 ≤ (j : ℕ))).filter
-            (fun j : Fin n => ¬ (j : ℕ) < 2 * m + 1), paddedJobs m n ε j
-          = ∑ _j ∈ (univ.filter (fun j : Fin n => 2 * m - 2 ≤ (j : ℕ))).filter
-            (fun j : Fin n => ¬ (j : ℕ) < 2 * m + 1), ε := by
-            refine sum_congr rfl fun j hj => ?_
-            simp only [mem_filter, mem_univ, true_and] at hj
-            exact fc_len_gt m ε j (by omega)
-        _ = (((univ.filter (fun j : Fin n => 2 * m - 2 ≤ (j : ℕ))).filter
-            (fun j : Fin n => ¬ (j : ℕ) < 2 * m + 1)).card : ℝ) * ε := by
-            rw [sum_const, nsmul_eq_mul]
-        _ ≤ n * ε := by
-            apply mul_le_mul_of_nonneg_right _ hε0
-            have := card_le_univ ((univ.filter (fun j : Fin n => 2 * m - 2 ≤ (j : ℕ))).filter
-              (fun j : Fin n => ¬ (j : ℕ) < 2 * m + 1))
-            rw [Fintype.card_fin] at this
-            exact_mod_cast this
-    rw [hA, sum_insert (by simp only [mem_insert, mem_singleton, Fin.ext_iff]; omega),
-      sum_pair (by rw [Ne, Fin.ext_iff]; dsimp only; omega)]
-    have e1 : paddedJobs m n ε ⟨2 * m - 2, by omega⟩ = m := by
-      change paddedJobLength m ε (2 * m - 2) = m
-      rw [fc_len_lt m ε (2 * m - 2) (by omega)]
-      have h : (2 * m - 2) / 2 + 1 = m := by omega
-      have h' : (((2 * m - 2) / 2 : ℕ) : ℝ) + 1 = m := by exact_mod_cast h
-      linarith only [h']
-    have e2 : paddedJobs m n ε ⟨2 * m - 1, by omega⟩ = m := by
-      change paddedJobLength m ε (2 * m - 1) = m
-      rw [fc_len_lt m ε (2 * m - 1) (by omega)]
-      have h : (2 * m - 1) / 2 + 1 = m := by omega
-      have h' : (((2 * m - 1) / 2 : ℕ) : ℝ) + 1 = m := by exact_mod_cast h
-      linarith only [h']
-    have e3 : paddedJobs m n ε ⟨2 * m, by omega⟩ = m := fc_len_two_mul m ε
-    rw [e1, e2, e3]
-    linarith only [hB]
+  obtain ⟨ρ, hρ⟩ := tg_exists_opt m
+  let τ : Fin n → Fin m := fun j =>
+    if hj : (j : ℕ) < 2 * m + 1 then ρ ⟨j, hj⟩ else 0
+  have hτ : τ ∘ Fin.castLE hn = ρ := by
+    funext j
+    simp only [τ, Function.comp_apply, Fin.val_castLE, j.isLt, ↓reduceDIte]
+  have hprefix (i : Fin m) : loadBefore (paddedJobs m n ε) τ (2 * m + 1) i = 3 * m := by
+    rw [← loadBefore_restrict hn _ τ (2 * m + 1) le_rfl i,
+      paddedJobs_restrict m n ε hn, hτ, bs_loadBefore_of_le _ _ _ le_rfl]
+    exact hρ i
+  refine ⟨τ, fun i => ?_⟩
+  have hload := load_le_loadBefore_add (paddedJobs m n ε) τ (2 * m + 1) ε hε0
+    (fun j hj => by
+      change paddedJobLength m ε j ≤ ε
+      rw [fc_len_gt m ε j (by omega)]) i
+  rwa [hprefix i] at hload
 
 /-- The optimum of the family is at most `3m + nε`. -/
 theorem fc_optMakespan_le (m n : ℕ) [NeZero m] (ε : ℝ) (hε0 : 0 ≤ ε) (hn : 2 * m + 1 ≤ n) :
