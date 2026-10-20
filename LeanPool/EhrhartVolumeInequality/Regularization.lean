@@ -16,6 +16,7 @@ import Mathlib.Analysis.CStarAlgebra.ContinuousFunctionalCalculus.Continuity
 import Mathlib.Analysis.Calculus.DerivativeTest
 import Mathlib.Analysis.Convex.Integral
 import Mathlib.Analysis.Matrix.Order
+import Mathlib.Analysis.SpecialFunctions.Complex.LogDeriv
 
 /-!
 # Ehrhart volume inequality: Regularization
@@ -48,7 +49,6 @@ private theorem angularFundamentalCell_set_measurable (n : ℕ) :
         ∀ i : Fin n, t i ∈ Set.Ioc (0 : ℝ) ((0 : ℝ) + 1)} := by
   have hbox : MeasurableSet
       (angularFundamentalBox (0 : Space n)) := by
-    unfold angularFundamentalBox
     exact MeasurableSet.univ_pi' (fun _ => measurableSet_Ioc)
   simpa only [zero_add, mem_Ioc, measurableSet_setOfPred, angularFundamentalBox,
     Pi.zero_apply] using hbox
@@ -76,14 +76,6 @@ private theorem realFundamentalEmbedding_measurePreserving (n : ℕ) :
           ∀ i : Fin n, t i ∈ Set.Ioc (0 : ℝ) ((0 : ℝ) + 1)}) := by
     exact measurePreserving_subtype_coe
       (angularFundamentalCell_set_measurable n)
-  change MeasurePreserving
-    (Prod.map id (Subtype.val : angularFundamentalCell n → Space n))
-    ((volume : Measure (Space n)).prod
-      (angularFundamentalMeasure n))
-    ((volume : Measure (Space n)).prod
-      ((volume : Measure (Space n)).restrict
-        {t : Space n |
-          ∀ i : Fin n, t i ∈ Set.Ioc (0 : ℝ) ((0 : ℝ) + 1)}))
   exact (MeasurePreserving.id
     (volume : Measure (Space n))).prod hsub
 
@@ -99,10 +91,6 @@ private theorem unweightedTorus_representative_ae_of_complexCover
   have hpush : F =ᵐ[logarithmicCoverPushforward n]
       complexTorusCoverLift f := by
     rw [logarithmicCoverPushforward_eq_smul_volume]
-    change F =ᵐ[
-      ((logarithmicCoverJacobianFactor n : ℝ≥0∞) •
-        (volume : Measure (TorusCharacters.LogSpace n)))]
-      complexTorusCoverLift f
     exact (Measure.ae_ennreal_smul_measure_iff
       (ENNReal.coe_ne_zero.mpr
         (logarithmicCoverJacobianFactor_pos n).ne')).mpr hcover
@@ -200,8 +188,7 @@ private theorem weightOne_integerExponent_eq_zero {n : ℕ}
     K (u : Space n)).mp u.property
   rw [hu]
   funext i
-  simp only [integerPoint, Pi.zero_apply, Int.cast_zero, Nat.cast_one, Pi.smul_apply, smul_eq_mul,
-    mul_zero]
+  simp only [integerPoint, Pi.zero_apply, Int.cast_zero, Pi.smul_apply, smul_eq_mul, mul_zero]
 
 private theorem torusMonomial_zero {n : ℕ}
     (p : WeightedTorusHilbert.LogTorus n) :
@@ -249,7 +236,6 @@ private theorem radialZeroGraph_weightOne_eq_constantMonomial
     ∃ c : ℂ,
       f = c • indexedMonomialLp K (by decide) hφ hbounded
         (weightOneZeroIndex K) := by
-  classical
   let := (BergmanMonomials.monomialIndex_finite
     K (by decide : 0 < (1 : ℕ))).fintype
   obtain ⟨F, hF, hperiod, hcover⟩ :=
@@ -411,7 +397,7 @@ private theorem angularWeakScalarResolventCLM_fixed_iff_graph_zero
             angularDolbeaultGraphAmbient a))
           (WithLp.snd (angularWeakDolbeaultResolvent a f :
             angularDolbeaultGraphAmbient a)) = 0 := by
-      linear_combination hvar
+      exact add_eq_left.mp hvar
     have hgradient :
         WithLp.snd (angularWeakDolbeaultResolvent a f :
           angularDolbeaultGraphAmbient a) = 0 :=
@@ -440,34 +426,8 @@ private theorem angularWeakScalarResolventCLM_defect_range_closure
     ((ContinuousLinearMap.id ℂ (angularWeightedScalarL2 a) -
       angularWeakScalarResolventCLM a).range).topologicalClosure =
       (angularWeakResolventFixedSpace a)ᗮ := by
-  let T : angularWeightedScalarL2 a →L[ℂ]
-      angularWeightedScalarL2 a :=
-    ContinuousLinearMap.id ℂ (angularWeightedScalarL2 a) -
-      angularWeakScalarResolventCLM a
-  have hTadj : T.adjoint = T := by
-    symm
-    apply (ContinuousLinearMap.eq_adjoint_iff T T).2
-    intro x y
-    change
-      @inner ℂ (angularWeightedScalarL2 a) _
-        (x - angularWeakScalarResolventCLM a x) y =
-        @inner ℂ (angularWeightedScalarL2 a) _ x
-          (y - angularWeakScalarResolventCLM a y)
-    rw [inner_sub_left, inner_sub_right,
-      angularWeakScalarResolventCLM_selfAdjoint]
-  have hker : T.ker = angularWeakResolventFixedSpace a := by
-    ext x
-    change
-      x - angularWeakScalarResolventCLM a x = 0 ↔
-        angularWeakScalarResolventCLM a x = x
-    rw [sub_eq_zero]
-    exact eq_comm
-  change T.range.topologicalClosure =
-    (angularWeakResolventFixedSpace a)ᗮ
-  calc
-    T.range.topologicalClosure = T.kerᗮ := by
-      simpa only [hTadj] using (T.orthogonal_ker).symm
-    _ = (angularWeakResolventFixedSpace a)ᗮ := by rw [hker]
+  exact continuousLinearMap_id_sub_range_closure_eq_fixedSpace_orthogonal
+    (angularWeakScalarResolventCLM a) (angularWeakScalarResolventCLM_selfAdjoint a)
 
 end WeightedTorusBrascampLieb
 
@@ -519,8 +479,7 @@ private theorem radialWeightedTorusMeasure_le_angular_of_upper
     ENNReal.ofReal_ne_top]
   apply MeasureTheory.withDensity_mono
   filter_upwards [] with q
-  simpa only [Pi.smul_apply, smul_eq_mul] using
-    radialWeightedTorusDensity_le_angular_of_upper hupper q
+  exact radialWeightedTorusDensity_le_angular_of_upper hupper q
 
 private theorem memLp_radial_of_angular_upper
     {n : ℕ} {E : Type*} [NormedAddCommGroup E]
@@ -696,21 +655,9 @@ private theorem angularToRadialGraphAmbientCLMOfUpper_graph_le
     (angularDolbeaultGraph a).map
       (angularToRadialGraphAmbientCLMOfUpper hφ hupper).toLinearMap ≤
         functionDolbeaultGraph 1 φ := by
-  change
-    ((Submodule.span ℂ
-      (smoothAngularDolbeaultGraphSet a)).topologicalClosure).map
-        (angularToRadialGraphAmbientCLMOfUpper hφ hupper).toLinearMap ≤
-      (Submodule.span ℂ
-        (smoothFunctionDolbeaultGraphSet 1 φ)).topologicalClosure
-  refine (Submodule.topologicalClosure_map
+  exact continuousLinearMap_map_topologicalClosure_span_le
     (angularToRadialGraphAmbientCLMOfUpper hφ hupper)
-    (Submodule.span ℂ (smoothAngularDolbeaultGraphSet a))).trans ?_
-  apply Submodule.topologicalClosure_mono
-  rw [Submodule.map_span]
-  apply Submodule.span_mono
-  rintro _ ⟨v, hv, rfl⟩
-  exact angularToRadialGraphAmbientCLMOfUpper_smooth_mem
-    hφ hupper hv
+    (fun _ hv => angularToRadialGraphAmbientCLMOfUpper_smooth_mem hφ hupper hv)
 
 private theorem angularZeroGraph_mem_radialZeroGraph_of_upper
     {n : ℕ} {a : LogTorus n → ℝ}
@@ -764,7 +711,6 @@ private theorem radial_ae_iff_angular_of_continuous
     filter_upwards [hP] with q hq hne
     apply hq
     have hpos : 0 < radialWeight 1 φ q.1 := by
-      unfold radialWeight
       exact ENNReal.ofReal_pos.mpr (Real.exp_pos _)
     exact hpos.ne'
   · intro hP
@@ -938,7 +884,6 @@ private theorem angularWeightedTorusMeasure_isFinite_of_integrable
       Integrable (angularWeightedTorusDensity a)
         (sourceTorusBaseMeasure n)) :
     IsFiniteMeasure (angularWeightedTorusMeasure a) := by
-  unfold angularWeightedTorusMeasure
   exact isFiniteMeasure_withDensity_ofReal
     hintegrable.hasFiniteIntegral
 
@@ -1229,7 +1174,6 @@ private theorem momentSignedMonomialLowerConstant_le_coercivityConstant
     (σ : Fin n → Bool) :
     momentSignedMonomialLowerConstant K F htransport σ ≤
       momentTorusEnvelopeCoercivityConstant K F htransport := by
-  unfold momentTorusEnvelopeCoercivityConstant
   calc
     momentSignedMonomialLowerConstant K F htransport σ ≤
       |momentSignedMonomialLowerConstant
@@ -1257,7 +1201,6 @@ private theorem pairing_momentSignedUnitVector_spatialSign
       (momentSignedUnitVector k
         (momentSpatialSign x)) x =
       (k : ℝ)⁻¹ * ∑ i, |x i| := by
-  classical
   unfold pairing momentSignedUnitVector momentSpatialSign
   rw [Finset.mul_sum]
   apply Finset.sum_congr rfl
@@ -1403,7 +1346,7 @@ private theorem integrable_exp_neg_momentTorusEnvelopeTimeSlice
       apply hrad.congr
       filter_upwards [] with x
       simp only [monomialWeight, pairing, Pi.zero_apply, zero_mul, Finset.sum_const_zero, zero_sub,
-        mul_neg, one_mul]
+        one_mul]
     have hang :
         Integrable
           (fun _ : TorusCharacters.AngularTorus n =>
@@ -1495,8 +1438,6 @@ private theorem isOpenMap_sourceJointCoverExp (n : ℕ) :
       (fun z : TorusCharacters.LogSpace n => z) := by
     intro s hs
     simpa only [image_id'] using hs
-  change IsOpenMap (Prod.map
-    (fun z : TorusCharacters.LogSpace n => z) Complex.exp)
   exact hid.prodMap Complex.isOpenMap_exp
 
 private abbrev PositiveSourceJointComplexCover (n : ℕ) :=
@@ -1724,8 +1665,7 @@ private theorem exists_sourceJointCoverCircle_uniform_bounds
   have hzmem : z ∈ Metric.closedBall q S := by
     apply Metric.mem_closedBall.mpr
     dsimp [S]
-    nlinarith [abs_nonneg R, norm_nonneg v,
-      mul_nonneg (abs_nonneg R) (norm_nonneg v)]
+    linarith only [hz, abs_nonneg R, norm_nonneg v, mul_nonneg (abs_nonneg R) (norm_nonneg v)]
   refine ⟨⟨hL ⟨_, hzmem, rfl⟩,
     hC ⟨_, hzmem, rfl⟩⟩, ?_⟩
   intro θ
@@ -1744,7 +1684,7 @@ private theorem exists_sourceJointCoverCircle_uniform_bounds
         rw [norm_smul, norm_circleMap_zero]
       _ ≤ S := by
         dsimp [S]
-        linarith
+        linarith only [hz]
   exact ⟨hL ⟨_, hmem, rfl⟩,
     hC ⟨_, hmem, rfl⟩⟩
 
@@ -1827,13 +1767,13 @@ private theorem sourceJointCover_complex_line_submean_of_convergent_finite_appro
     have hmprod :
         (2 * Real.pi) * F (i m) (q m) ≤
           ∫ θ in 0..2 * Real.pi, u (γ m θ) := by
-      nlinarith [(le_div_iff₀ Real.two_pi_pos).mp hmdiv]
+      linarith only [(le_div_iff₀ Real.two_pi_pos).mp hmdiv]
     rw [← intervalIntegral.integral_of_le Real.two_pi_pos.le,
       intervalIntegral.integral_sub
         (hangleint m) intervalIntegrable_const]
     simp only [intervalIntegral.integral_const,
       sub_zero, smul_eq_mul]
-    nlinarith
+    linarith only [hmprod]
   have hshiftint (m : ℕ) :
       Integrable
         (fun θ : ℝ => u (γ m θ) - L)
@@ -1922,13 +1862,13 @@ private theorem sourceJointCover_complex_line_submean_of_convergent_finite_appro
   have hprod :
       (2 * Real.pi) * u q₀ ≤
         ∫ θ in 0..2 * Real.pi, u (γ₀ θ) := by
-    nlinarith
+    linarith only [hmaininterval]
   have hdiv :
       u q₀ ≤
         (∫ θ in 0..2 * Real.pi, u (γ₀ θ)) /
           (2 * Real.pi) := by
     apply (le_div_iff₀ Real.two_pi_pos).mpr
-    nlinarith
+    linarith only [hprod]
   simpa only [mul_comm, mul_inv_rev, ge_iff_le, div_eq_mul_inv] using hdiv
 
 private theorem sourceJointCover_upperRegularization_family_complex_line_submean_all_radius
@@ -2080,7 +2020,6 @@ private theorem contDiff_sourceJointRadialNormSq (n : ℕ) :
 private theorem sourceJointRadialNormSq_coordinate_le {n : ℕ}
     (q : SourceJointComplexCover n) (i : Fin n) :
     Complex.normSq (q.1 i) ≤ sourceJointRadialNormSq q := by
-  unfold sourceJointRadialNormSq
   calc
     Complex.normSq (q.1 i) ≤
       ∑ j : Fin n, Complex.normSq (q.1 j) :=
@@ -2094,7 +2033,6 @@ private theorem sourceJointRadialNormSq_coordinate_le {n : ℕ}
 private theorem sourceJointRadialNormSq_auxiliary_le {n : ℕ}
     (q : SourceJointComplexCover n) :
     Complex.normSq q.2 ≤ sourceJointRadialNormSq q := by
-  unfold sourceJointRadialNormSq
   exact le_add_of_nonneg_left
     (Finset.sum_nonneg fun _ _ => Complex.normSq_nonneg _)
 
@@ -2105,7 +2043,6 @@ private def sourceJointTrueRadialBump (n k : ℕ)
 
 private theorem contDiff_sourceJointTrueRadialBump (n k : ℕ) :
     ContDiff ℝ ∞ (sourceJointTrueRadialBump n k) := by
-  unfold sourceJointTrueRadialBump
   exact Real.smoothTransition.contDiff.comp
     (contDiff_const.sub
       (contDiff_const.mul (contDiff_sourceJointRadialNormSq n)))
@@ -2132,7 +2069,7 @@ private theorem support_sourceJointTrueRadialBump_subset_closedBall
     exact Real.smoothTransition.zero_iff_nonpos.mpr h
   have hrad :
       (((k + 1 : ℕ) : ℝ) ^ 2) * sourceJointRadialNormSq q < 1 := by
-    linarith
+    exact sub_pos.mp harg
   have hcoord (i : Fin n) :
       ‖q.1 i‖ ≤ 1 / ((k + 1 : ℕ) : ℝ) := by
     have hs := sourceJointRadialNormSq_coordinate_le q i
@@ -2145,7 +2082,7 @@ private theorem support_sourceJointTrueRadialBump_subset_closedBall
     have hprod : 0 ≤ (((k + 1 : ℕ) : ℝ) * ‖q.1 i‖) :=
       mul_nonneg hk.le (norm_nonneg _)
     apply (le_div_iff₀ hk).mpr
-    nlinarith
+    nlinarith only [hsq, hprod]
   have haux :
       ‖q.2‖ ≤ 1 / ((k + 1 : ℕ) : ℝ) := by
     have hs := sourceJointRadialNormSq_auxiliary_le q
@@ -2158,7 +2095,7 @@ private theorem support_sourceJointTrueRadialBump_subset_closedBall
     have hprod : 0 ≤ (((k + 1 : ℕ) : ℝ) * ‖q.2‖) :=
       mul_nonneg hk.le (norm_nonneg _)
     apply (le_div_iff₀ hk).mpr
-    nlinarith
+    nlinarith only [hsq, hprod]
   rw [Metric.mem_closedBall, dist_zero_right, Prod.norm_def,
     max_le_iff]
   exact ⟨(pi_norm_le_iff_of_nonneg (by positivity)).mpr hcoord,
@@ -2177,7 +2114,6 @@ private def sourceJointTrueRadialBumpMass (n k : ℕ) : ℝ :=
 
 private theorem sourceJointTrueRadialBumpMass_pos (n k : ℕ) :
     0 < sourceJointTrueRadialBumpMass n k := by
-  unfold sourceJointTrueRadialBumpMass
   apply (contDiff_sourceJointTrueRadialBump n
     k).continuous.integral_pos_of_hasCompactSupport_nonneg_nonzero
     (hasCompactSupport_sourceJointTrueRadialBump n k)
@@ -2193,7 +2129,6 @@ private def sourceJointTrueRadialMollifier (n k : ℕ)
 
 private theorem contDiff_sourceJointTrueRadialMollifier (n k : ℕ) :
     ContDiff ℝ ∞ (sourceJointTrueRadialMollifier n k) := by
-  unfold sourceJointTrueRadialMollifier
   exact (contDiff_sourceJointTrueRadialBump n k).div_const _
 
 private theorem sourceJointTrueRadialMollifier_nonneg (n k : ℕ)
@@ -2231,8 +2166,6 @@ private theorem integral_sourceJointTrueRadialMollifier (n k : ℕ) :
       sourceJointTrueRadialMollifier n k q) = 1 := by
   unfold sourceJointTrueRadialMollifier
   rw [integral_div]
-  change sourceJointTrueRadialBumpMass n k /
-    sourceJointTrueRadialBumpMass n k = 1
   exact div_self (ne_of_gt (sourceJointTrueRadialBumpMass_pos n k))
 
 private theorem tendsto_sourceJointTrueRadialRadius :
@@ -2245,7 +2178,6 @@ private theorem sourceJointRadialNormSq_phase {n : ℕ}
     (u : ℂ) (hu : ‖u‖ = 1)
     (q : SourceJointComplexCover n) :
     sourceJointRadialNormSq (u • q) = sourceJointRadialNormSq q := by
-  unfold sourceJointRadialNormSq
   change
     (∑ i : Fin n, Complex.normSq (u * q.1 i)) +
       Complex.normSq (u * q.2) =
@@ -2257,8 +2189,7 @@ private theorem sourceJointTrueRadialBump_phase {n : ℕ}
     (q : SourceJointComplexCover n) :
     sourceJointTrueRadialBump n k (u • q) =
       sourceJointTrueRadialBump n k q := by
-  simp only [sourceJointTrueRadialBump, Nat.cast_add, Nat.cast_one,
-    sourceJointRadialNormSq_phase u hu q]
+  simp only [sourceJointTrueRadialBump, sourceJointRadialNormSq_phase u hu q]
 
 private theorem sourceJointTrueRadialMollifier_phase {n : ℕ}
     (k : ℕ) (u : ℂ) (hu : ‖u‖ = 1)
@@ -2281,8 +2212,6 @@ private theorem measurePreserving_sourceJointComplexPhase {n : ℕ}
     have hrotation : MeasurePreserving (rotation a)
         (volume : Measure ℂ) (volume : Measure ℂ) :=
       (rotation a).measurePreserving
-    change MeasurePreserving (rotation a)
-      (volume : Measure ℂ) (volume : Measure ℂ)
     exact hrotation
   have hp : MeasurePreserving
       (fun z : Fin n → ℂ => fun i => u * z i)
@@ -2415,7 +2344,7 @@ private theorem tendsto_sourceJointTrueRadialSmoothed_of_upperSemicontinuousAt_a
     filter_upwards
       [eventually_sourceJointTrueRadialSmoothed_le_of_upperSemicontinuousAt
         hf q hupper hε] with k hk
-    linarith
+    linarith only [hε, hk]
 
 private theorem contDiff_sourceJointTrueRadialSmoothed {n : ℕ}
     {f : SourceJointComplexCover n → ℝ}
@@ -2469,10 +2398,10 @@ theorem hasDerivAt_intervalIntegral_of_joint_continuous
       (∫ θ in a..b, F' x₀ θ) x₀ := by
   have hFslice (x : ℝ) : Continuous (F x) := by
     change Continuous (fun θ : ℝ => (Function.uncurry F) (x, θ))
-    fun_prop
+    exact Continuous.comp' hF (Continuous.prodMk continuous_const continuous_id')
   have hF'slice (x : ℝ) : Continuous (F' x) := by
     change Continuous (fun θ : ℝ => (Function.uncurry F') (x, θ))
-    fun_prop
+    exact Continuous.comp' hF' (Continuous.prodMk continuous_const continuous_id')
   obtain ⟨C, hC⟩ :=
     (((isCompact_closedBall x₀ (1 : ℝ)).prod
       (isCompact_uIcc : IsCompact (Set.uIcc a b))).image
@@ -2481,7 +2410,7 @@ theorem hasDerivAt_intervalIntegral_of_joint_continuous
     (μ := (volume : Measure ℝ))
     (s := Metric.closedBall x₀ (1 : ℝ))
     (bound := fun _ : ℝ => C)
-    (Metric.closedBall_mem_nhds x₀ (by norm_num))
+    (Metric.closedBall_mem_nhds x₀ (by exact zero_lt_one))
     (Eventually.of_forall fun x =>
       (hFslice x).measurable.aestronglyMeasurable)
     ((hFslice x₀).intervalIntegrable a b)
@@ -2534,7 +2463,7 @@ private theorem hasDerivAt_sourceJointCircleLine {n : ℕ}
     (q d : SourceJointComplexCover n) (r : ℝ) :
     HasDerivAt (fun x : ℝ => f (q + x • d))
       ((fderiv ℝ f (q + r • d)) d) r := by
-  exact ((hf.differentiable (by norm_num) (q + r • d)).hasFDerivAt).comp_hasDerivAt
+  exact ((hf.differentiable (by decide) (q + r • d)).hasFDerivAt).comp_hasDerivAt
     r (hasDerivAt_sourceJointRealAffine q d r)
 
 private theorem hasDerivAt_sourceJointCircleLineDerivative {n : ℕ}
@@ -2544,7 +2473,7 @@ private theorem hasDerivAt_sourceJointCircleLineDerivative {n : ℕ}
     HasDerivAt (fun x : ℝ => (fderiv ℝ f (q + x • d)) d)
       (((fderiv ℝ (fderiv ℝ f) (q + r • d)) d) d) r := by
   have hfd : ContDiff ℝ 1 (fderiv ℝ f) :=
-    hf.fderiv_right (by norm_num)
+    hf.fderiv_right (by rfl)
   have heval : HasFDerivAt
       (fun y : SourceJointComplexCover n => (fderiv ℝ f y) d)
       ((ContinuousLinearMap.apply ℝ ℝ d).comp
@@ -2552,7 +2481,7 @@ private theorem hasDerivAt_sourceJointCircleLineDerivative {n : ℕ}
       (q + r • d) := by
     exact (ContinuousLinearMap.apply ℝ ℝ d).hasFDerivAt.comp
       (q + r • d)
-      (hfd.differentiable (by norm_num) (q + r • d)).hasFDerivAt
+      (hfd.differentiable (by decide) (q + r • d)).hasFDerivAt
   have hcomp : HasDerivAt
       ((fun y : SourceJointComplexCover n => (fderiv ℝ f y) d) ∘
         (fun x : ℝ => q + x • d))
@@ -2560,8 +2489,7 @@ private theorem hasDerivAt_sourceJointCircleLineDerivative {n : ℕ}
         (fderiv ℝ (fderiv ℝ f) (q + r • d))) d) r := by
     exact heval.comp_hasDerivAt r
       (hasDerivAt_sourceJointRealAffine q d r)
-  refine (hcomp.congr_of_eventuallyEq
-    (Filter.Eventually.of_forall fun _ => rfl)).congr_deriv ?_
+  refine hcomp.congr_deriv ?_
   rfl
 
 private theorem local_min_second_derivative_nonnegative
@@ -2580,7 +2508,7 @@ private theorem local_min_second_derivative_nonnegative
   have hsecond : deriv (deriv g) r = 0 := by
     have hd := heq.deriv.deriv_eq
     simpa only [deriv_const'] using hd
-  linarith
+  linarith only [hsecond, hneg]
 
 private def sourceJointCircleRadiusProfile {n : ℕ}
     (f : SourceJointComplexCover n → ℝ)
@@ -2602,9 +2530,6 @@ private theorem continuous_sourceJointCircleRadiusProfile {n : ℕ}
       (μ := (volume : Measure ℝ)) hjoint 0 (2 * Real.pi)
   unfold sourceJointCircleRadiusProfile
   simp_rw [Real.circleAverage_def]
-  change Continuous
-    (fun r : ℝ => (2 * Real.pi)⁻¹ •
-      ∫ θ in 0..2 * Real.pi, F r θ)
   exact hint.fun_const_smul ((2 * Real.pi)⁻¹)
 
 private theorem sourceJointCircleRadiusProfile_zero {n : ℕ}
@@ -2634,38 +2559,20 @@ private theorem sourceJointCircleRadiusProfile_second_eq_integral
       ((fderiv ℝ (fderiv ℝ f) (q + r • d θ)) (d θ)) (d θ)
   have hd : Continuous d := by
     dsimp [d]
-    fun_prop
+    exact Continuous.fun_smul (continuous_circleMap 0 1) continuous_const
   have hpoint :
-      Continuous (fun x : ℝ × ℝ => q + x.1 • d x.2) := by
-    have heq :
-        (fun x : ℝ × ℝ => q + x.1 • d x.2) =
-          (fun x : ℝ × ℝ => q + circleMap 0 x.1 x.2 • v) := by
-      funext x
-      change q + x.1 • (circleMap 0 1 x.2 • v) =
-        q + circleMap 0 x.1 x.2 • v
-      exact congrArg
-        (fun w : SourceJointComplexCover n => q + w)
-        (sourceJointCircleMap_radius_smul v x.1 x.2).symm
-    rw [heq]
-    fun_prop
+      Continuous (fun x : ℝ × ℝ => q + x.1 • d x.2) :=
+    continuous_const.add (continuous_fst.smul (hd.comp continuous_snd))
   have hdir : Continuous (fun x : ℝ × ℝ => d x.2) :=
     hd.comp continuous_snd
   have hF : Continuous (Function.uncurry F) := by
-    change Continuous (fun x : ℝ × ℝ => f (q + x.1 • d x.2))
     exact hf.continuous.comp hpoint
   have hF' : Continuous (Function.uncurry F') := by
-    change Continuous
-      (fun x : ℝ × ℝ =>
-        (fderiv ℝ f (q + x.1 • d x.2)) (d x.2))
-    exact ((hf.continuous_fderiv (by norm_num)).comp hpoint).clm_apply hdir
+    exact ((hf.continuous_fderiv (by decide)).comp hpoint).clm_apply hdir
   have hfd : ContDiff ℝ 1 (fderiv ℝ f) :=
-    hf.fderiv_right (by norm_num)
+    hf.fderiv_right (by rfl)
   have hF'' : Continuous (Function.uncurry F'') := by
-    change Continuous
-      (fun x : ℝ × ℝ =>
-        ((fderiv ℝ (fderiv ℝ f) (q + x.1 • d x.2))
-          (d x.2)) (d x.2))
-    exact (((hfd.continuous_fderiv (by norm_num)).comp hpoint).clm_apply
+    exact (((hfd.continuous_fderiv (by decide)).comp hpoint).clm_apply
       hdir).clm_apply hdir
   have hdiff (r θ : ℝ) :
       HasDerivAt (fun x : ℝ => F x θ) (F' r θ) r := by
@@ -2720,7 +2627,6 @@ private theorem sourceJointCircleRadiusProfile_second_eq_integral
         ((fderiv ℝ (fderiv ℝ f) q) (d θ)) (d θ)
       have hz : (0 : ℝ) • d θ =
           (0 : SourceJointComplexCover n) := by
-        change (0 : ℂ) • d θ = 0
         exact zero_smul ℂ (d θ)
       rw [hz, add_zero]
 
@@ -2740,14 +2646,14 @@ private theorem sourceJointCircleQuadratic_expand {n : ℕ}
 private theorem sourceJointIntegral_cos_sq_two_pi :
     (∫ θ in 0..2 * Real.pi, Real.cos θ ^ 2) = Real.pi := by
   rw [integral_cos_sq]
-  simp only [Real.cos_two_pi, Real.sin_two_pi, mul_zero, Real.cos_zero, Real.sin_zero, sub_self,
-    zero_add, sub_zero, ne_eq, OfNat.ofNat_ne_zero, not_false_eq_true, mul_div_cancel_left₀]
+  simp only [Real.sin_two_pi, mul_zero, Real.sin_zero, zero_add, sub_zero, ne_eq,
+    OfNat.ofNat_ne_zero, not_false_eq_true, mul_div_cancel_left₀]
 
 private theorem sourceJointIntegral_sin_sq_two_pi :
     (∫ θ in 0..2 * Real.pi, Real.sin θ ^ 2) = Real.pi := by
   rw [integral_sin_sq]
-  simp only [Real.sin_zero, Real.cos_zero, mul_one, Real.sin_two_pi, Real.cos_two_pi, sub_self,
-    zero_add, sub_zero, ne_eq, OfNat.ofNat_ne_zero, not_false_eq_true, mul_div_cancel_left₀]
+  simp only [Real.sin_zero, Real.cos_zero, mul_one, Real.sin_two_pi, Real.cos_two_pi, zero_add,
+    sub_zero, ne_eq, OfNat.ofNat_ne_zero, not_false_eq_true, mul_div_cancel_left₀]
 
 private theorem sourceJointIntegral_sin_mul_cos_two_pi :
     (∫ θ in 0..2 * Real.pi,
@@ -2771,17 +2677,21 @@ private theorem sourceJointCircleQuadratic_average {n : ℕ}
       (fun θ : ℝ => Real.cos θ ^ 2 * A)
       (volume : Measure ℝ) 0 (2 * Real.pi) := by
     apply Continuous.intervalIntegrable
-    fun_prop
+    exact Continuous.comp' (continuous_mul_const A)
+        (Continuous.comp' (Continuous.fun_pow continuous_id' 2) Real.continuous_cos)
   have hC : IntervalIntegrable
       (fun θ : ℝ => (Real.sin θ * Real.cos θ) * C)
       (volume : Measure ℝ) 0 (2 * Real.pi) := by
     apply Continuous.intervalIntegrable
-    fun_prop
+    exact Continuous.comp' (continuous_mul_const C)
+        (Continuous.comp' continuous_mul
+          (Continuous.prodMk Real.continuous_sin Real.continuous_cos))
   have hD : IntervalIntegrable
       (fun θ : ℝ => Real.sin θ ^ 2 * D)
       (volume : Measure ℝ) 0 (2 * Real.pi) := by
     apply Continuous.intervalIntegrable
-    fun_prop
+    exact Continuous.comp' (continuous_mul_const D)
+        (Continuous.comp' (Continuous.fun_pow continuous_id' 2) Real.continuous_sin)
   calc
     _ = (2 * Real.pi)⁻¹ *
       (∫ θ in 0..2 * Real.pi,
@@ -2846,7 +2756,7 @@ private theorem contDiff_sourceSpatialRealDirectional {n : ℕ}
     ContDiff ℝ 1
       (fun z : TorusCharacters.LogSpace n =>
         (fderiv ℝ a z) u) := by
-  exact (ha.fderiv_right (by norm_num)).clm_apply contDiff_const
+  exact (ha.fderiv_right (by rfl)).clm_apply contDiff_const
 
 private theorem fderiv_sourceSpatialRealDirectional {n : ℕ}
     {a : TorusCharacters.LogSpace n → ℝ}
@@ -2857,8 +2767,8 @@ private theorem fderiv_sourceSpatialRealDirectional {n : ℕ}
         (fderiv ℝ a ξ) u) z) w =
       ((fderiv ℝ (fderiv ℝ a) z) w) u := by
   have hd : DifferentiableAt ℝ (fderiv ℝ a) z :=
-    (ha.fderiv_right (m := 1) (by norm_num)).differentiable
-      (by norm_num) z
+    (ha.fderiv_right (m := 1) (by rfl)).differentiable
+      (by decide) z
   have he := fderiv_clm_apply hd
     (differentiableAt_const (c := u))
   have happly := congrArg
@@ -2877,7 +2787,7 @@ private theorem fderiv_sourceSpatialComplexRealDirectional {n : ℕ}
       (((fderiv ℝ (fderiv ℝ a) z) w) u : ℂ) := by
   rw [fderiv_complexOfReal
     ((contDiff_sourceSpatialRealDirectional ha u).differentiable
-      (by norm_num))]
+      (by decide))]
   rw [fderiv_sourceSpatialRealDirectional ha z u w]
 
 private theorem fderiv_holomorphicCoordinate_sourceSpatialReal {n : ℕ}
@@ -2904,15 +2814,15 @@ private theorem fderiv_holomorphicCoordinate_sourceSpatialReal {n : ℕ}
   let h : TorusCharacters.LogSpace n → ℂ :=
     fun ξ => ((fderiv ℝ a ξ) ie : ℂ)
   have had : Differentiable ℝ a :=
-    ha.differentiable (by norm_num)
+    ha.differentiable (by decide)
   have hg : Differentiable ℝ g :=
     (Complex.ofRealCLM.contDiff.comp
       (contDiff_sourceSpatialRealDirectional ha e)).differentiable
-      (by norm_num)
+      (by decide)
   have hh : Differentiable ℝ h :=
     (Complex.ofRealCLM.contDiff.comp
       (contDiff_sourceSpatialRealDirectional ha ie)).differentiable
-      (by norm_num)
+      (by decide)
   have hfun :
       (fun ξ : TorusCharacters.LogSpace n =>
         holomorphicCoordinate
@@ -2937,8 +2847,7 @@ private theorem fderiv_holomorphicCoordinate_sourceSpatialReal {n : ℕ}
     _ = ((2 : ℂ)⁻¹) *
         ((fderiv ℝ g z) w -
           Complex.I * (fderiv ℝ h z) w) := by
-      simpa only [Pi.sub_apply, _root_.smul_apply, _root_.sub_apply, smul_eq_mul]
-        using heval
+      exact heval
     _ = _ := by
       change
         ((2 : ℂ)⁻¹) *
@@ -3053,8 +2962,7 @@ private theorem fderiv_sourceJointSpatialSlice_apply {n : ℕ}
   have heval := congrArg
     (fun L : TorusCharacters.LogSpace n →L[ℝ] F => L v)
     hcomp.fderiv
-  simpa only [id_eq, comp_def, ContinuousLinearMap.comp_apply, ContinuousLinearMap.prod_apply,
-    ContinuousLinearMap.id_apply, _root_.zero_apply] using heval
+  exact heval
 
 private theorem fderiv_sourceJointRealDirectional {n : ℕ}
     {f : SourceJointComplexCover n → ℝ}
@@ -3064,8 +2972,8 @@ private theorem fderiv_sourceJointRealDirectional {n : ℕ}
       (fun ξ : SourceJointComplexCover n => (fderiv ℝ f ξ) u) q) w =
       ((fderiv ℝ (fderiv ℝ f) q) w) u := by
   have hd : DifferentiableAt ℝ (fderiv ℝ f) q :=
-    (hf.fderiv_right (m := 1) (by norm_num)).differentiable
-      (by norm_num) q
+    (hf.fderiv_right (m := 1) (by rfl)).differentiable
+      (by decide) q
   have he := fderiv_clm_apply hd
     (differentiableAt_const (c := u))
   have happly := congrArg
@@ -3089,12 +2997,12 @@ private theorem sndFDeriv_sourceJointSpatialSlice {n : ℕ}
         (fderiv ℝ f (ξ, τ)) (v, 0)) := by
     funext ξ
     exact fderiv_sourceJointSpatialSlice_apply
-      (hf.differentiable (by norm_num)) τ ξ v
+      (hf.differentiable (by decide)) τ ξ v
   have hdirectional : Differentiable ℝ
       (fun q : SourceJointComplexCover n =>
         (fderiv ℝ f q) (v, 0)) :=
-    ((hf.fderiv_right (m := 1) (by norm_num)).clm_apply
-      contDiff_const).differentiable (by norm_num)
+    ((hf.fderiv_right (m := 1) (by rfl)).clm_apply
+      contDiff_const).differentiable (by decide)
   calc
     _ = (fderiv ℝ
       (fun ξ : TorusCharacters.LogSpace n =>
@@ -3123,7 +3031,6 @@ private theorem sourceJointSpatialComplexHessian_isHermitian {n : ℕ}
     (τ : ℂ)
     (z : TorusCharacters.LogSpace n) :
     (sourceJointSpatialComplexHessian f τ z).IsHermitian := by
-  unfold sourceJointSpatialComplexHessian
   exact sourceCoverComplexHessian_isHermitian
     (contDiff_sourceJointSpatialSlice hf τ) z
 
@@ -3143,7 +3050,6 @@ private theorem sourceSpatialRealBasis_decomposition {n : ℕ}
           (Pi.single i (1 : ℂ) : TorusCharacters.LogSpace n) +
         (x i).im •
           (Pi.single i Complex.I : TorusCharacters.LogSpace n)) := by
-  classical
   calc
     x = ∑ i : Fin n, Pi.single i (x i) :=
       (Finset.univ_sum_single x).symm
@@ -3214,7 +3120,6 @@ private theorem sourceSpatialComplexHessianOfRealBilinear_quadratic {n : ℕ}
         (sourceSpatialComplexHessianOfRealBilinear B *ᵥ x) =
       (((B (star x) (star x) +
         B (Complex.I • star x) (Complex.I • star x)) / 4 : ℝ) : ℂ) := by
-  classical
   let Q : Fin n → Fin n → ℂ := fun i j =>
     star (x i) * (sourceSpatialComplexHessianOfRealBilinear B i j) * x j
   have hswap :
@@ -3325,8 +3230,7 @@ private theorem sourceJointSpatialComplexHessian_quadratic_eq_realLevi
   rw [sndFDeriv_sourceJointSpatialSlice hf τ z (star x) (star x),
     sndFDeriv_sourceJointSpatialSlice hf τ z
       (Complex.I • star x) (Complex.I • star x)]
-  simp only [Complex.ofReal_div, Complex.ofReal_add, Complex.ofReal_ofNat, Prod.smul_mk,
-    smul_eq_mul, mul_zero]
+  simp only [Prod.smul_mk, smul_eq_mul, mul_zero]
 
 end JetEnvelopeTrueRadialComplexHessianPositivity
 
@@ -3350,9 +3254,9 @@ private theorem sndFDeriv_sourceSpatialRealAffine {n : ℕ}
       c * ((fderiv ℝ (fderiv ℝ a) z) u) v +
         d * ((fderiv ℝ (fderiv ℝ b) z) u) v := by
   have hda : Differentiable ℝ a :=
-    ha.differentiable (by norm_num)
+    ha.differentiable (by decide)
   have hdb : Differentiable ℝ b :=
-    hb.differentiable (by norm_num)
+    hb.differentiable (by decide)
   have hcomb : ContDiff ℝ 2
       (fun ξ : TorusCharacters.LogSpace n =>
         c * a ξ + d * b ξ) :=
@@ -3377,12 +3281,12 @@ private theorem sndFDeriv_sourceSpatialRealAffine {n : ℕ}
       (fun ξ : TorusCharacters.LogSpace n =>
         (fderiv ℝ a ξ) v) :=
     (contDiff_sourceSpatialRealDirectional ha v).differentiable
-      (by norm_num)
+      (by decide)
   have hgb : Differentiable ℝ
       (fun ξ : TorusCharacters.LogSpace n =>
         (fderiv ℝ b ξ) v) :=
     (contDiff_sourceSpatialRealDirectional hb v).differentiable
-      (by norm_num)
+      (by decide)
   calc
     _ = (fderiv ℝ
       (fun ξ : TorusCharacters.LogSpace n =>
@@ -3466,7 +3370,6 @@ private theorem hasDerivAt_sourceJointTimeEmbedding
     HasDerivAt
       (fun s : ℝ => sourceJointTimeEmbedding z s)
       (sourceJointTimeDirection n) t := by
-  unfold sourceJointTimeEmbedding sourceJointTimeDirection
   exact (hasDerivAt_const t z).prodMk
     (Complex.ofRealCLM.hasDerivAt.div_const (2 : ℂ))
 
@@ -3502,10 +3405,8 @@ private theorem continuous_jointSourceCoverTimeSlice {n : ℕ}
     {F : SourceJointComplexCover n → ℝ}
     (hF : Continuous F) (t : ℝ) :
     Continuous (jointSourceCoverTimeSlice F t) := by
-  unfold jointSourceCoverTimeSlice
   apply hF.comp
-  unfold sourceJointTimeEmbedding
-  fun_prop
+  exact Continuous.prodMk continuous_id' continuous_const
 
 private theorem jointSourceCoverTimeSlice_spatial_periodic {n : ℕ}
     {F : SourceJointComplexCover n → ℝ}
@@ -3541,7 +3442,6 @@ private theorem continuous_jointSourceTorusWeight {n : ℕ}
         (TorusCharacters.imaginaryShift m, (0 : ℂ)))
     (t : ℝ) :
     Continuous (jointSourceTorusWeight F t) := by
-  unfold jointSourceTorusWeight
   apply Complex.continuous_re.comp
   apply continuous_torusScalarRepresentative_of_periodic
   · exact Complex.continuous_ofReal.comp
@@ -3565,17 +3465,15 @@ private theorem contDiff_jointSourceCoverVelocity {n : ℕ}
     {F : SourceJointComplexCover n → ℝ}
     (hF : ContDiff ℝ 2 F) :
     ContDiff ℝ 1 (jointSourceCoverVelocity F) := by
-  unfold jointSourceCoverVelocity
-  exact (hF.fderiv_right (m := 1) (by norm_num)).clm_apply
+  exact (hF.fderiv_right (m := 1) (by rfl)).clm_apply
     contDiff_const
 
 private theorem continuous_jointSourceCoverAcceleration {n : ℕ}
     {F : SourceJointComplexCover n → ℝ}
     (hF : ContDiff ℝ 2 F) :
     Continuous (jointSourceCoverAcceleration F) := by
-  unfold jointSourceCoverAcceleration
   exact ((contDiff_jointSourceCoverVelocity hF).continuous_fderiv
-    (by norm_num)).clm_apply continuous_const
+    (by decide)).clm_apply continuous_const
 
 private theorem jointSourceCoverVelocity_spatial_periodic {n : ℕ}
     {F : SourceJointComplexCover n → ℝ}
@@ -3586,7 +3484,6 @@ private theorem jointSourceCoverVelocity_spatial_periodic {n : ℕ}
     Function.Periodic (jointSourceCoverVelocity F)
       (TorusCharacters.imaginaryShift m, (0 : ℂ)) := by
   intro q
-  unfold jointSourceCoverVelocity
   exact congrArg (fun L => L (sourceJointTimeDirection n))
     (sourceRealFderiv_periodic F
       (TorusCharacters.imaginaryShift m, (0 : ℂ))
@@ -3601,7 +3498,6 @@ private theorem jointSourceCoverAcceleration_spatial_periodic {n : ℕ}
     Function.Periodic (jointSourceCoverAcceleration F)
       (TorusCharacters.imaginaryShift m, (0 : ℂ)) := by
   intro q
-  unfold jointSourceCoverAcceleration
   exact congrArg (fun L => L (sourceJointTimeDirection n))
     (sourceRealFderiv_periodic (jointSourceCoverVelocity F)
       (TorusCharacters.imaginaryShift m, (0 : ℂ))
@@ -3641,7 +3537,6 @@ private theorem continuous_jointSourceTorusVelocity {n : ℕ}
         (TorusCharacters.imaginaryShift m, (0 : ℂ)))
     (t : ℝ) :
     Continuous (jointSourceTorusVelocity F t) := by
-  unfold jointSourceTorusVelocity
   exact continuous_jointSourceTorusWeight
     (contDiff_jointSourceCoverVelocity hF).continuous
     (jointSourceCoverVelocity_spatial_periodic hperiod) t
@@ -3654,7 +3549,6 @@ private theorem continuous_jointSourceTorusAcceleration {n : ℕ}
         (TorusCharacters.imaginaryShift m, (0 : ℂ)))
     (t : ℝ) :
     Continuous (jointSourceTorusAcceleration F t) := by
-  unfold jointSourceTorusAcceleration
   exact continuous_jointSourceTorusWeight
     (continuous_jointSourceCoverAcceleration hF)
     (jointSourceCoverAcceleration_spatial_periodic hperiod) t
@@ -3672,7 +3566,7 @@ private theorem hasDerivAt_jointSourceTorusWeight {n : ℕ}
     funext s
     exact jointSourceTorusWeight_eq_cover F s q
   rw [heq, jointSourceTorusVelocity_eq_cover]
-  exact (hF.differentiable (by norm_num)
+  exact (hF.differentiable (by decide)
     (sourceJointTimeEmbedding (sourceTorusCoverPoint q) t)).hasFDerivAt
       |>.comp_hasDerivAt t
         (hasDerivAt_sourceJointTimeEmbedding
@@ -3692,7 +3586,7 @@ private theorem hasDerivAt_jointSourceTorusVelocity {n : ℕ}
     exact jointSourceTorusVelocity_eq_cover F s q
   rw [heq, jointSourceTorusAcceleration_eq_cover]
   exact ((contDiff_jointSourceCoverVelocity hF).differentiable
-    (by norm_num)
+    (by decide)
     (sourceJointTimeEmbedding (sourceTorusCoverPoint q) t)).hasFDerivAt
       |>.comp_hasDerivAt t
         (hasDerivAt_sourceJointTimeEmbedding
@@ -3861,7 +3755,6 @@ private theorem momentStrictRadialCoordinate_denominator_pos
 
 private theorem contDiff_momentStrictRadialCoordinate :
     ContDiff ℝ ∞ momentStrictRadialCoordinate := by
-  unfold momentStrictRadialCoordinate
   apply (Real.contDiff_exp.add
     (Real.contDiff_exp.comp contDiff_neg)).log
   intro y
@@ -3881,8 +3774,7 @@ private theorem hasDerivAt_momentStrictRadialCoordinate (y : ℝ) :
         (Real.exp (-y) * (-1)) y :=
       (Real.hasDerivAt_exp (-y)).comp y
         (hasDerivAt_id y).neg
-    refine (hcomp.congr_of_eventuallyEq
-      (Filter.Eventually.of_forall fun _ => rfl)).congr_deriv ?_
+    refine hcomp.congr_deriv ?_
     ring
   have hsum : HasDerivAt
       (fun x : ℝ => Real.exp x + Real.exp (-x))
@@ -3906,8 +3798,7 @@ private theorem hasDerivAt_momentStrictRadialCoordinateDerivative
         (Real.exp (-y) * (-1)) y :=
       (Real.hasDerivAt_exp (-y)).comp y
         (hasDerivAt_id y).neg
-    refine (hcomp.congr_of_eventuallyEq
-      (Filter.Eventually.of_forall fun _ => rfl)).congr_deriv ?_
+    refine hcomp.congr_deriv ?_
     ring
   have hnum : HasDerivAt
       (fun x : ℝ => Real.exp x - Real.exp (-x))
@@ -3931,7 +3822,7 @@ private theorem hasDerivAt_momentStrictRadialCoordinateDerivative
     simp only [neg_add_cancel, Real.exp_zero]
   refine h.congr_deriv ?_
   congr 1
-  nlinarith [he]
+  linarith only [he]
 
 private theorem momentStrictRadialCoordinateSecond_pos (y : ℝ) :
     0 < momentStrictRadialCoordinateSecond y := by
@@ -3965,7 +3856,7 @@ private theorem momentStrictRadialCoordinate_le_abs_add_log_two
   have hneg : Real.exp (-y) ≤ Real.exp |y| :=
     Real.exp_le_exp.mpr hnegarg
   have hsum : Real.exp y + Real.exp (-y) ≤
-      2 * Real.exp |y| := by linarith
+      2 * Real.exp |y| := by linarith only [hneg, hpos]
   calc
     momentStrictRadialCoordinate y =
         Real.log (Real.exp y + Real.exp (-y)) := rfl
@@ -3991,7 +3882,6 @@ private def momentBodyStrictRadialPotential
 private theorem contDiff_momentBodyStrictRadialPotential
     {n : ℕ} (K : CenteredBody n) :
     ContDiff ℝ ∞ (momentBodyStrictRadialPotential K) := by
-  unfold momentBodyStrictRadialPotential
   apply ContDiff.sum
   intro i _
   exact contDiff_momentStrictRadialCoordinate.comp
@@ -4090,7 +3980,6 @@ private theorem momentBodyStrictRadialHessianDiagonal_pos
     {n : ℕ} (K : CenteredBody n)
     (x : Space n) (i : Fin n) :
     0 < momentBodyStrictRadialHessianDiagonal K x i := by
-  unfold momentBodyStrictRadialHessianDiagonal
   exact mul_pos (sq_pos_of_pos (momentBodyStrictScale_pos K))
     (momentStrictRadialCoordinateSecond_pos _)
 
@@ -4132,7 +4021,6 @@ private theorem fderiv_momentBodyStrictRadialGradient_apply
           (ContinuousLinearMap.proj i : Space n →L[ℝ] ℝ)).smulRight
             (ContinuousLinearMap.proj i : Space n →L[ℝ] ℝ))
       x := by
-    unfold momentBodyStrictRadialGradient
     have hterm (i : Fin n) :
         HasFDerivAt
           (fun y : Space n =>
@@ -4151,7 +4039,7 @@ private theorem fderiv_momentBodyStrictRadialGradient_apply
       (u := Finset.univ) (fun i _ => hterm i)
   rw [h.fderiv]
   simp only [_root_.sum_apply, ContinuousLinearMap.smulRight_apply, _root_.smul_apply,
-    ContinuousLinearMap.proj_apply, smul_eq_mul, mul_assoc]
+    ContinuousLinearMap.proj_apply, smul_eq_mul]
 
 private theorem fderiv_fderiv_momentBodyStrictRadialPotential_apply
     {n : ℕ} (K : CenteredBody n)
@@ -4175,7 +4063,6 @@ private theorem sourceMatrixHessian_momentBodyStrictRadialPotential_eq_diagonal
     sourceMatrixHessian (momentBodyStrictRadialPotential K) x =
       Matrix.diagonal
         (momentBodyStrictRadialHessianDiagonal K x) := by
-  classical
   ext i j
   unfold sourceMatrixHessian actualHessianMatrix
   rw [LinearMap.toMatrix₂'_apply]
@@ -4217,7 +4104,6 @@ private theorem sourceCoverComplexHessian_momentBodyStrictRadialPotential_eq_dia
         (fun i : Fin n =>
           (momentBodyStrictRadialHessianDiagonal K
             (sourceCoverRadialLinear n z) i : ℂ)) := by
-  classical
   ext i j
   change
     complexHessian
@@ -4358,7 +4244,6 @@ private theorem momentBodyPartition_of_nonpositive
               (momentBodyOptimizer K) q.1) * (1 : ℝ)
           ∂((volume : Measure (Space n)).prod
             (angularMeasure n)) := by
-          unfold sourceTorusBaseMeasure
           apply MeasureTheory.integral_congr_ae
           filter_upwards [] with q
           rw [momentBodyTorusWeight_of_nonpositive K p ht q]
@@ -4515,7 +4400,6 @@ private theorem continuous_momentNormalizedTorusMonomial
     (F : SourceFiniteEnergyPotential K)
     (u : monomialIndex K k) :
     Continuous (momentNormalizedTorusMonomial K hk F u) := by
-  unfold momentNormalizedTorusMonomial
   exact continuous_const.mul
     (continuous_torusMonomial (integerExponent K hk u))
 
@@ -4562,7 +4446,6 @@ private theorem continuous_momentTorusRepresentative
       normalizedTargetBodyMeasure K)
     (s : momentMonomialSpan K hk F htransport) :
     Continuous (momentTorusRepresentative K hk F htransport s) := by
-  classical
   unfold momentTorusRepresentative
   rw [LinearMap.comp_apply, Finsupp.linearCombination_apply]
   unfold Finsupp.sum
@@ -4584,7 +4467,6 @@ private theorem momentTorusRepresentative_ae
         LogTorus n → ℂ) q)
       =ᵐ[weightedTorusMeasure k (momentNormalizedPotential F)]
         momentTorusRepresentative K hk F htransport s := by
-  classical
   let := (monomialIndex_finite K hk).fintype
   let b := momentLatticeMonomialBasis K hk F htransport
   let c : monomialIndex K k → ℂ := fun u => b.repr s u
@@ -4747,7 +4629,6 @@ private theorem continuous_momentTorusJetBasisWeight
     (p : LogSpace n) (i : Fin (bergmanDimension K k)) :
     Continuous (fun q : LogTorus n =>
       momentTorusJetBasisWeight K hk F htransport p q i) := by
-  unfold momentTorusJetBasisWeight
   exact Complex.continuous_normSq.comp
     (continuous_momentTorusRepresentative K hk F htransport
       (momentSimultaneousJetBasis K hk F htransport p i))
@@ -4771,7 +4652,6 @@ private theorem continuous_momentTorusTruncatedJetOrderDensity
     Continuous
       (momentTorusTruncatedJetOrderDensity
         K hk F htransport p N) := by
-  unfold momentTorusTruncatedJetOrderDensity
   exact continuous_finsetSum _ (fun i _ =>
     continuous_const.mul
       (continuous_momentTorusJetBasisWeight
@@ -4815,7 +4695,6 @@ private theorem momentTorusRepresentative_eq_holomorphicRepresentative_cover
     momentTorusRepresentative K hk F htransport s q =
       momentHolomorphicRepresentative K hk F htransport s
         (sourceTorusCoverPoint q) := by
-  classical
   unfold momentTorusRepresentative
     momentHolomorphicRepresentative
   rw [LinearMap.comp_apply, LinearMap.comp_apply,
@@ -4937,7 +4816,6 @@ private theorem continuous_momentDiagonalKernel
     {n k : ℕ} (K : CenteredBody n) (hk : 0 < k)
     (F : SourceFiniteEnergyPotential K) :
     Continuous (diagonalKernel K k (momentNormalizedPotential F)) := by
-  classical
   let := (monomialIndex_finite K hk).fintype
   unfold diagonalKernel
   simp_rw [tsum_fintype]
@@ -5169,7 +5047,7 @@ private theorem sourceJointRealLeviQuadratic_nonnegative_of_local_circle_submean
   rw [sourceJointCircleRadiusProfile_second_eq_realHessian
     hf q v] at hsecond
   unfold sourceJointRealLeviQuadratic
-  linarith
+  linarith only [hsecond]
 
 private theorem sourceJointSpatialComplexHessian_posSemidef_of_local_circle_submean
     {n : ℕ}
@@ -5190,8 +5068,7 @@ private theorem sourceJointSpatialComplexHessian_posSemidef_of_local_circle_subm
     hf τ z x]
   apply (Complex.nonneg_iff).2
   constructor
-  · simpa only [Complex.ofReal_re] using
-      sourceJointRealLeviQuadratic_nonnegative_of_local_circle_submean
+  · exact sourceJointRealLeviQuadratic_nonnegative_of_local_circle_submean
         hf (z, τ) (star x, 0) (hmean (z, τ) (star x, 0))
   · simp only [Complex.ofReal_im]
 
@@ -5235,7 +5112,6 @@ private theorem sourceComplexRowSchurBlock_isHermitian {n : ℕ}
     (hA : A.IsHermitian)
     (b : Fin n → ℂ) (c : ℝ) :
     (sourceComplexRowSchurBlock A b c).IsHermitian := by
-  unfold sourceComplexRowSchurBlock
   apply Matrix.IsHermitian.fromBlocks hA rfl
   ext i j
   simp only [conjTranspose_apply, complexSchurScalar, RCLike.star_def, Complex.conj_ofReal]
@@ -5277,7 +5153,7 @@ private theorem star_sourceJointCoverAntiholomorphicVelocityGradient
         jointSourceCoverVelocity F (w, τ)) :=
     ((contDiff_jointSourceCoverVelocity hF).comp
       (contDiff_id.prodMk contDiff_const)).differentiable
-        (by norm_num)
+        (by decide)
   ext i
   exact conj_barPartialCoordinate_real hv z i
 
@@ -5346,15 +5222,15 @@ private theorem sourceJointImaginaryTime_fderiv_eq_zero
           (r : ℂ) * Complex.I) := by
       apply Prod.ext
       · ext i
-        simp only [Prod.smul_mk, smul_zero, Complex.real_smul, Pi.zero_apply, v]
-      · simp only [Prod.smul_mk, smul_zero, Complex.real_smul, v]
+        simp only [Prod.smul_mk, smul_zero, v]
+      · simp only [Prod.smul_mk, Complex.real_smul, v]
     rw [hr]
     exact hperiod r q
   have hzero : q + (0 : ℝ) • v = q := by
     apply Prod.ext
     · ext i
-      simp only [zero_smul, add_zero, v]
-    · simp only [zero_smul, add_zero, v]
+      simp only [zero_smul, add_zero]
+    · simp only [zero_smul, add_zero]
   have hder :=
     (hasDerivAt_sourceJointCircleLine hF q v 0).deriv
   rw [hline, hzero] at hder
@@ -5402,7 +5278,7 @@ private theorem sourceJointCoverHolomorphicVelocityGradient_eq_sndFDeriv
         jointSourceCoverVelocity F (w, τ)) :=
     ((contDiff_jointSourceCoverVelocity hF).comp
       (contDiff_id.prodMk contDiff_const)).differentiable
-        (by norm_num)
+        (by decide)
   unfold sourceJointCoverHolomorphicVelocityGradient
     holomorphicCoordinate
   rw [DolbeaultGraphDistributionBridge.fderiv_complexOfReal
@@ -5411,10 +5287,10 @@ private theorem sourceJointCoverHolomorphicVelocityGradient_eq_sndFDeriv
       hv z (Pi.single i Complex.I)]
   rw [fderiv_sourceJointSpatialSlice_apply
       ((contDiff_jointSourceCoverVelocity hF).differentiable
-        (by norm_num)) τ z (Pi.single i (1 : ℂ)),
+        (by decide)) τ z (Pi.single i (1 : ℂ)),
     fderiv_sourceJointSpatialSlice_apply
       ((contDiff_jointSourceCoverVelocity hF).differentiable
-        (by norm_num)) τ z (Pi.single i Complex.I)]
+        (by decide)) τ z (Pi.single i Complex.I)]
   unfold jointSourceCoverVelocity
   rw [fderiv_sourceJointRealDirectional hF (z, τ)
       (sourceJointTimeDirection n)
@@ -5443,75 +5319,17 @@ private theorem sourceJointRealBilinear_spatial_apply_eq_realBasis_sum
       ∑ i : Fin n,
         ((u i).re * (B (Pi.single i (1 : ℂ), 0)) t +
           (u i).im * (B (Pi.single i Complex.I, 0)) t) := by
-  classical
-  let U : Fin n → SourceJointComplexCover n := fun i =>
-    ((u i).re •
-        (Pi.single i (1 : ℂ) : TorusCharacters.LogSpace n) +
-      (u i).im •
-        (Pi.single i Complex.I : TorusCharacters.LogSpace n), 0)
-  have hu : (u, (0 : ℂ)) = ∑ i, U i := by
-    apply Prod.ext
-    · change u = (∑ i, U i).1
-      have hfst :
-          (∑ i, U i).1 = ∑ i, (U i).1 := by
-        change
-          (ContinuousLinearMap.fst ℝ
-            (TorusCharacters.LogSpace n) ℂ) (∑ i, U i) =
-            ∑ i,
-              (ContinuousLinearMap.fst ℝ
-                (TorusCharacters.LogSpace n) ℂ) (U i)
-        exact map_sum
-          (ContinuousLinearMap.fst ℝ
-            (TorusCharacters.LogSpace n) ℂ)
-          U Finset.univ
-      rw [hfst]
-      simpa only [U] using sourceSpatialRealBasis_decomposition u
-    · change (0 : ℂ) = (∑ i, U i).2
-      have hsnd :
-          (∑ i, U i).2 = ∑ i, (U i).2 := by
-        change
-          (ContinuousLinearMap.snd ℝ
-            (TorusCharacters.LogSpace n) ℂ) (∑ i, U i) =
-            ∑ i,
-              (ContinuousLinearMap.snd ℝ
-                (TorusCharacters.LogSpace n) ℂ) (U i)
-        exact map_sum
-          (ContinuousLinearMap.snd ℝ
-            (TorusCharacters.LogSpace n) ℂ)
-          U Finset.univ
-      rw [hsnd]
-      simp only [Finset.sum_const_zero, U]
+  let L : TorusCharacters.LogSpace n →L[ℝ] ℝ :=
+    (B.flip t).comp (ContinuousLinearMap.inl ℝ (TorusCharacters.LogSpace n) ℂ)
+  change L u = ∑ i : Fin n,
+    ((u i).re * L (Pi.single i (1 : ℂ)) +
+      (u i).im * L (Pi.single i Complex.I))
   calc
-    (B (u, 0)) t = (B (∑ i, U i)) t := by rw [hu]
-    _ = ∑ i, (B (U i)) t := by
-      simpa only [ContinuousLinearMap.flip_apply] using
-        (map_sum (B.flip t) U Finset.univ)
-    _ = _ := by
-      apply Finset.sum_congr rfl
-      intro i _
-      have hp :
-          U i =
-            (u i).re •
-                ((Pi.single i (1 : ℂ) :
-                  TorusCharacters.LogSpace n), (0 : ℂ)) +
-              (u i).im •
-                ((Pi.single i Complex.I :
-                  TorusCharacters.LogSpace n), (0 : ℂ)) := by
-        apply Prod.ext
-        · rfl
-        · simp only [Prod.smul_mk, smul_zero, Prod.mk_add_mk, add_zero, U]
-      calc
-        (B (U i)) t =
-            (B ((u i).re •
-              ((Pi.single i (1 : ℂ) :
-                TorusCharacters.LogSpace n), (0 : ℂ)) +
-                (u i).im •
-                  ((Pi.single i Complex.I :
-                    TorusCharacters.LogSpace n), (0 : ℂ)))) t := by
-              rw [hp]
-        _ = _ := by
-          rw [map_add, map_smul, map_smul]
-          simp only [_root_.add_apply, _root_.smul_apply, smul_eq_mul]
+    L u = L (∑ i : Fin n,
+      ((u i).re • (Pi.single i (1 : ℂ) : TorusCharacters.LogSpace n) +
+        (u i).im • (Pi.single i Complex.I : TorusCharacters.LogSpace n))) :=
+      congrArg L (sourceSpatialRealBasis_decomposition u)
+    _ = _ := by simp only [map_sum, map_add, map_smul, smul_eq_mul]
 
 private theorem sourceJointCoverHolomorphicVelocityGradient_dot_eq_sndFDeriv
     {n : ℕ}
@@ -5526,7 +5344,6 @@ private theorem sourceJointCoverHolomorphicVelocityGradient_dot_eq_sndFDeriv
           (↑(((fderiv ℝ (fderiv ℝ F) (z, τ))
             (Complex.I • u, 0))
             (sourceJointTimeDirection n)) : ℂ)) / 2 := by
-  classical
   simp only [dotProduct]
   simp_rw [sourceJointCoverHolomorphicVelocityGradient_eq_sndFDeriv hF τ z]
   rw [sourceJointRealBilinear_spatial_apply_eq_realBasis_sum
@@ -5585,7 +5402,6 @@ private theorem jointSourceCoverAcceleration_eq_sndFDeriv
       ((fderiv ℝ (fderiv ℝ F) q)
         (sourceJointTimeDirection n))
         (sourceJointTimeDirection n) := by
-  unfold jointSourceCoverAcceleration jointSourceCoverVelocity
   exact fderiv_sourceJointRealDirectional hF q
     (sourceJointTimeDirection n) (sourceJointTimeDirection n)
 
@@ -5596,8 +5412,7 @@ private theorem sourceJointComplexTime_decomposition
         s.im • ((0 : TorusCharacters.LogSpace n), Complex.I) := by
   apply Prod.ext
   · ext i
-    simp only [Pi.zero_apply, sourceJointTimeDirection, one_div, Prod.smul_mk, smul_zero,
-      Complex.real_smul, Complex.ofReal_mul, Complex.ofReal_ofNat, Prod.mk_add_mk, add_zero]
+    simp only [sourceJointTimeDirection, Prod.smul_mk, smul_zero, Prod.mk_add_mk, add_zero]
   · simp only [sourceJointTimeDirection, one_div, Prod.smul_mk, smul_zero, Complex.real_smul,
       Complex.ofReal_mul, Complex.ofReal_ofNat, Prod.mk_add_mk, add_zero]
     simpa only [mul_comm, ne_eq, OfNat.ofNat_ne_zero, not_false_eq_true,
@@ -5683,7 +5498,6 @@ private theorem sourceJointRealLeviQuadratic_eq_spatial_mixed_time
         module
   have hIU : Complex.I • U = V := by
     ext <;> simp [U, V]
-  unfold sourceJointRealLeviQuadratic
   change
     ((B (u, s)) (u, s) +
       (B (Complex.I • (u, s))) (Complex.I • (u, s))) / 4 =
@@ -6083,11 +5897,9 @@ private theorem momentWeakJointCoverFiniteGeodesic_complex_line_submean_all_radi
               K (Nat.zero_lt_succ k) F htransport p N
                 (sourceJointCoverExp (q + w • v)))) by
         funext w
-        simp only [Nat.succ_eq_add_one, Nat.cast_add, Nat.cast_one, div_eq_mul_inv, mul_comm,
-          smul_eq_mul],
+        simp only [div_eq_mul_inv, mul_comm, smul_eq_mul],
       Real.circleAverage_fun_smul]
-    simp only [Nat.succ_eq_add_one, Nat.cast_add, Nat.cast_one, div_eq_mul_inv, mul_comm,
-      smul_eq_mul]
+    simp only [div_eq_mul_inv, mul_comm, smul_eq_mul]
   rw [momentWeakJointCoverFiniteGeodesic_eq_log_diagonal
     K F htransport p k q]
   change
@@ -6135,7 +5947,6 @@ private theorem differentiable_momentWeakBodyScaleJetGeodesic
           (Nat.floor (BodyScale.canonicalScale K *
             ((k + 1 : ℕ) : ℝ))) z) := by
   intro t
-  unfold momentJetGeodesic
   exact (hasDerivAt_logarithmicPotential
     (momentHolomorphicBasisWeight
       K (Nat.zero_lt_succ k) F htransport
@@ -6172,8 +5983,7 @@ private theorem momentWeakBodyScaleJetGeodesic_time_shift_le
             ((k + 1 : ℕ) : ℝ))) z s +
         BodyScale.canonicalScale K * (t - s) := by
   rcases hst.eq_or_lt with rfl | hst
-  · simp only [Nat.succ_eq_add_one, Nat.cast_add, Nat.cast_one, sub_self, mul_zero, add_zero,
-      Std.le_refl]
+  · simp only [sub_self, mul_zero, add_zero, Std.le_refl]
   · let g := momentJetGeodesic K (Nat.zero_lt_succ k)
       F htransport p
         (Nat.floor (BodyScale.canonicalScale K *
@@ -6191,7 +6001,7 @@ private theorem momentWeakBodyScaleJetGeodesic_time_shift_le
     have hpositive : 0 < t - s := sub_pos.mpr hst
     have hmul := (div_le_iff₀ hpositive).mp hbound
     change g t ≤ g s + BodyScale.canonicalScale K * (t - s)
-    linarith
+    linarith only [hmul]
 
 private theorem momentJointGlobalLowerBound_le_coverFiniteGeodesic_zero
     {n : ℕ} (K : CenteredBody n)
@@ -6233,7 +6043,6 @@ private theorem continuous_momentWeakJointCoverFiniteMinorant
     {n : ℕ} (K : CenteredBody n)
     (F : SourceFiniteEnergyPotential K) :
     Continuous (momentWeakJointCoverFiniteMinorant K F) := by
-  unfold momentWeakJointCoverFiniteMinorant
   exact continuous_const.add
     (continuous_const.mul
       ((continuous_sourceJointCoverTime n).min continuous_const))
@@ -6265,7 +6074,7 @@ private theorem momentWeakJointCoverFiniteMinorant_le_finiteGeodesic
     unfold momentWeakJointCoverFiniteMinorant
       momentWeakJointCoverFiniteGeodesic
     rw [min_eq_left hneg]
-    linarith
+    linarith only [hshift, hzero]
 
 private theorem momentWeakJointCoverFiniteGeodesic_zero_le_of_tail
     {n : ℕ} (K : CenteredBody n)
@@ -6280,7 +6089,7 @@ private theorem momentWeakJointCoverFiniteGeodesic_zero_le_of_tail
           ((k + 1 : ℕ) : ℝ))) z 0 ≤
       momentNormalizedPotential F (realLogCoordinate z) +
         BodyScale.canonicalScale K + 1 := by
-  let hunit : (0 : ℝ) < 1 := by norm_num
+  let hunit : (0 : ℝ) < 1 := by exact zero_lt_one
   let q₁ : PositiveJointLogSpace n :=
     sourcePositiveJointTimePoint z 1 hunit
   have htail := momentPositiveJointGeodesic_le_majorant_add_one_of_tail
@@ -6289,7 +6098,7 @@ private theorem momentWeakJointCoverFiniteGeodesic_zero_le_of_tail
     K (Nat.zero_lt_succ k) F htransport p z
       (Nat.floor (BodyScale.canonicalScale K *
         ((k + 1 : ℕ) : ℝ)))
-      (show (0 : ℝ) ≤ 1 by norm_num)
+      (show (0 : ℝ) ≤ 1 by exact zero_le_one)
   have htime :
       momentPositiveJointGeodesic K F htransport p k q₁ =
         momentJetGeodesic K (Nat.zero_lt_succ k)
@@ -6328,7 +6137,6 @@ private theorem continuous_momentWeakJointCoverFiniteMajorant
     {n : ℕ} (K : CenteredBody n)
     (F : SourceFiniteEnergyPotential K) :
     Continuous (momentWeakJointCoverFiniteMajorant K F) := by
-  unfold momentWeakJointCoverFiniteMajorant
   exact (((((continuous_momentNormalizedPotential F).comp
     (continuous_momentWeakJointRealLogCoordinate n)).add
       continuous_const).add continuous_const)).add
@@ -6353,7 +6161,7 @@ private theorem momentWeakJointCoverFiniteGeodesic_le_majorant_of_tail
     unfold momentWeakJointCoverFiniteGeodesic
       momentWeakJointCoverFiniteMajorant
     rw [max_eq_left ht]
-    linarith
+    linarith only [hshift, hzero]
   · have hneg : sourceJointCoverTime q ≤ 0 := le_of_not_ge ht
     have hmono := monotone_momentJetGeodesic
       K (Nat.zero_lt_succ k) F htransport p q.1
@@ -6482,7 +6290,6 @@ private theorem momentWeakJointCoverFiniteMinorant_le_tailSup
         K F htransport p
           (momentJointTailStart K F htransport p + r) q
     _ ≤ momentWeakJointCoverTailSup K F htransport p r q := by
-      unfold momentWeakJointCoverTailSup
       apply le_csSup
         (momentWeakJointCoverTailSup_range_bddAbove
           K F htransport p r q)
@@ -6924,7 +6731,6 @@ private theorem continuous_momentWeakHolomorphicJointAbsoluteMajorant
     {n : ℕ} (K : CenteredBody n)
     (F : SourceFiniteEnergyPotential K) :
     Continuous (momentWeakHolomorphicJointAbsoluteMajorant K F) := by
-  unfold momentWeakHolomorphicJointAbsoluteMajorant
   exact (continuous_momentWeakJointCoverFiniteMinorant K F).abs.add
     (continuous_momentWeakJointCoverFiniteMajorant K F).abs
 
@@ -6951,7 +6757,7 @@ private theorem norm_momentWeakJointCoverUpperEnvelope_le_majorant
     (momentWeakJointCoverFiniteMinorant K F q)
   have hM := abs_nonneg
     (momentWeakJointCoverFiniteMajorant K F q)
-  exact abs_le.mpr ⟨by linarith, by linarith⟩
+  exact abs_le.mpr ⟨by linarith only [hM, hminor, hl], by linarith⟩
 
 private theorem measurable_momentWeakJointCoverUpperEnvelope
     {n : ℕ} (K : CenteredBody n)
@@ -7052,8 +6858,6 @@ private theorem integrable_momentWeakHolomorphicJointComplexLineIntegrand
       measurable_fst).mul
         ((measurable_momentWeakJointCoverUpperEnvelope
           K F htransport p).comp hmap.measurable)
-  change Integrable _
-    ((volume : Measure (SourceJointComplexCover n)).prod ν)
   apply hdom.mono' hmeas.aestronglyMeasurable
   exact Eventually.of_forall fun z => by
     by_cases hz : sourceJointTrueRadialMollifier n k z.1 = 0
@@ -7075,8 +6879,7 @@ private theorem integrable_momentWeakHolomorphicJointComplexLineIntegrand
       have hmaj :
           momentWeakHolomorphicJointAbsoluteMajorant K F
             ((q - z.1) + circleMap 0 R z.2 • v) ≤ C := by
-        simpa only [sourceJointCoverCirclePoint] using
-          ((hbound (q - z.1) hdist).2 z.2).2
+        exact ((hbound (q - z.1) hdist).2 z.2).2
       rw [norm_mul, Real.norm_eq_abs,
         abs_of_nonneg (sourceJointTrueRadialMollifier_nonneg n k z.1)]
       exact mul_le_mul_of_nonneg_left
@@ -7286,17 +7089,6 @@ private theorem momentWeakHolomorphicJointTrueRadialMollification_complex_line_s
   unfold momentWeakHolomorphicJointTrueRadialMollification
     sourceJointTrueRadialSmoothed
   rw [MeasureTheory.convolution_def]
-  change
-    (∫ y : SourceJointComplexCover n,
-      sourceJointTrueRadialMollifier n k y *
-        momentWeakJointCoverUpperEnvelope
-          K F htransport p (q - y)) ≤
-      ∫ y : SourceJointComplexCover n,
-        sourceJointTrueRadialMollifier n k y *
-          Real.circleAverage
-            (fun w : ℂ =>
-              momentWeakJointCoverUpperEnvelope
-                K F htransport p ((q - y) + w • v)) 0 R
   apply MeasureTheory.integral_mono
     (integrable_sourceJointTrueRadialMollifier_mul_translate
       (locallyIntegrable_momentWeakJointCoverUpperEnvelope
@@ -7525,7 +7317,7 @@ private theorem sourceComplexHessian_radialMollification_posSemidef
       (contDiff_momentWeakHolomorphicJointTrueRadialMollification
         K F htransport p k)) 2)
   intro q v
-  refine ⟨1, by norm_num, ?_⟩
+  refine ⟨1, by exact zero_lt_one, ?_⟩
   intro r _
   exact
     momentWeakHolomorphicJointTrueRadialMollification_complex_line_submean_all_radius
@@ -7554,8 +7346,7 @@ private theorem contDiff_momentWeakHolomorphicStrictJointCoverWeight
         K F htransport p ε k) := by
   have hfst : ContDiff ℝ ∞
       (fun q : SourceJointComplexCover n => q.1) := by
-    fun_prop
-  unfold momentWeakHolomorphicStrictJointCoverWeight
+    exact ContDiff.fst contDiff_id
   exact (contDiff_const.mul
     (contDiff_momentWeakHolomorphicJointTrueRadialMollification
       K F htransport p k)).add
@@ -7615,21 +7406,6 @@ private theorem sourceJointSpatialComplexHessian_momentWeakHolomorphicStrictJoin
       ε • sourceCoverComplexHessian
         (matrixSourceCoverPotential
           (momentBodyStrictRadialPotential K)) z := by
-  change
-    sourceCoverComplexHessian
-      (fun ξ : LogSpace n =>
-        (1 - ε) *
-          momentWeakHolomorphicJointTrueRadialMollification
-            K F htransport p k (ξ, τ) +
-        ε * matrixSourceCoverPotential
-          (momentBodyStrictRadialPotential K) ξ) z =
-      (1 - ε) • sourceCoverComplexHessian
-        (fun ξ : LogSpace n =>
-          momentWeakHolomorphicJointTrueRadialMollification
-            K F htransport p k (ξ, τ)) z +
-      ε • sourceCoverComplexHessian
-        (matrixSourceCoverPotential
-          (momentBodyStrictRadialPotential K)) z
   exact sourceCoverComplexHessian_realAffine
     (contDiff_sourceJointSpatialSlice
       ((contDiff_infty.mp
@@ -7803,7 +7579,6 @@ private theorem convexOn_momentStrictRadialCoordinate :
 private theorem convexOn_momentBodyStrictRadialPotential
     {n : ℕ} (K : CenteredBody n) :
     ConvexOn ℝ Set.univ (momentBodyStrictRadialPotential K) := by
-  classical
   have hcoord (i : Fin n) :
       ConvexOn ℝ (Set.univ : Set (Space n))
         (fun x : Space n =>
@@ -7812,8 +7587,7 @@ private theorem convexOn_momentBodyStrictRadialPotential
     let L : Space n →ₗ[ℝ] ℝ :=
       momentBodyStrictScale K • (LinearMap.proj i)
     have h := convexOn_momentStrictRadialCoordinate.comp_linearMap L
-    simpa only [L, LinearMap.coe_smul, LinearMap.coe_proj, preimage_univ, comp_def, Pi.smul_apply,
-      eval, smul_eq_mul] using h
+    exact h
   have hsum (s : Finset (Fin n)) :
       ConvexOn ℝ (Set.univ : Set (Space n))
         (fun x : Space n =>
@@ -7822,8 +7596,7 @@ private theorem convexOn_momentBodyStrictRadialPotential
               (momentBodyStrictScale K * x i)) := by
     induction s using Finset.induction_on with
     | empty =>
-        simpa only [Finset.sum_empty] using
-          (convexOn_const (0 : ℝ)
+        exact (convexOn_const (0 : ℝ)
             (convex_univ : Convex ℝ
               (Set.univ : Set (Space n))))
     | @insert i s hi ih =>
@@ -7863,7 +7636,6 @@ private def momentBodyStrictJointCoverReference
 private theorem continuous_momentBodyStrictJointCoverReference
     {n : ℕ} (K : CenteredBody n) :
     Continuous (momentBodyStrictJointCoverReference K) := by
-  unfold momentBodyStrictJointCoverReference
   exact (continuous_matrixSourceCoverPotential
     (contDiff_momentBodyStrictRadialPotential K).continuous).comp
       continuous_fst
@@ -7878,8 +7650,8 @@ private theorem momentBodyStrictJointCoverReference_complex_line_submean_all_rad
   let f : ℂ → Space n := fun w =>
     sourceCoverRadialLinear n ((q + w • v).1)
   have hf : Continuous f := by
-    unfold f
-    fun_prop
+    exact Continuous.clm_apply continuous_const
+        (Continuous.const_add (Continuous.fun_smul continuous_id' continuous_const) q.1)
   have hangle : Continuous
       (fun θ : ℝ => f (circleMap 0 R θ)) :=
     hf.comp (continuous_circleMap 0 R)
@@ -7981,15 +7753,12 @@ private theorem momentWeakHolomorphicStrictJointCoverWeight_complex_line_submean
         (1 - ε) *
           momentWeakHolomorphicJointTrueRadialMollification
             K F htransport p k (q + w • v)) 0 R := by
-    simpa only [smul_eq_mul] using
-      (hm.const_fun_smul (a := 1 - ε))
+    exact (hm.const_fun_smul (a := 1 - ε))
   have hp' : CircleIntegrable
       (fun w : ℂ =>
         ε * momentBodyStrictJointCoverReference
           K (q + w • v)) 0 R := by
-    simpa only [smul_eq_mul] using
-      (hp.const_fun_smul (a := ε))
-  unfold momentWeakHolomorphicStrictJointCoverWeight
+    exact (hp.const_fun_smul (a := ε))
   change
     (1 - ε) *
         momentWeakHolomorphicJointTrueRadialMollification
@@ -8018,21 +7787,6 @@ private theorem momentWeakHolomorphicStrictJointCoverWeight_complex_line_submean
             K (q + w • v)) 0 R
   rw [Real.circleAverage_fun_smul,
     Real.circleAverage_fun_smul]
-  change
-    (1 - ε) *
-        momentWeakHolomorphicJointTrueRadialMollification
-          K F htransport p k q +
-      ε * momentBodyStrictJointCoverReference K q ≤
-      (1 - ε) *
-          Real.circleAverage
-            (fun w : ℂ =>
-              momentWeakHolomorphicJointTrueRadialMollification
-                K F htransport p k (q + w • v)) 0 R +
-        ε *
-          Real.circleAverage
-            (fun w : ℂ =>
-              momentBodyStrictJointCoverReference
-                K (q + w • v)) 0 R
   exact add_le_add
     (mul_le_mul_of_nonneg_left
       (momentWeakHolomorphicJointTrueRadialMollification_complex_line_submean_all_radius
@@ -8057,7 +7811,7 @@ private theorem sourceJointRealLeviQuadratic_momentWeakHolomorphicStrictJointCov
     ((contDiff_infty.mp
       (contDiff_momentWeakHolomorphicStrictJointCoverWeight
         K F htransport p ε k)) 2)
-  refine ⟨1, by norm_num, ?_⟩
+  refine ⟨1, by exact zero_lt_one, ?_⟩
   intro r _
   exact
     momentWeakHolomorphicStrictJointCoverWeight_complex_line_submean_all_radius
@@ -8091,7 +7845,6 @@ private theorem momentWeakHolomorphicStrictJointCoverSchurBlock_isHermitian
     (τ : ℂ) (z : LogSpace n) :
     (momentWeakHolomorphicStrictJointCoverSchurBlock
       K F htransport p ε k τ z).IsHermitian := by
-  unfold momentWeakHolomorphicStrictJointCoverSchurBlock
   apply sourceComplexRowSchurBlock_isHermitian
   exact sourceJointSpatialComplexHessian_isHermitian
     ((contDiff_infty.mp
@@ -8113,7 +7866,6 @@ private theorem momentWeakHolomorphicStrictJointCoverSchurBlock_quadratic_eq_rea
         (momentWeakHolomorphicStrictJointCoverWeight
           K F htransport p ε k) (z, τ)
         (star (x ∘ Sum.inl), star (x (Sum.inr 0))) : ℂ) := by
-  unfold momentWeakHolomorphicStrictJointCoverSchurBlock
   exact sourceJointCoverRowSchurBlock_quadratic_eq_realLevi
     ((contDiff_infty.mp
       (contDiff_momentWeakHolomorphicStrictJointCoverWeight
@@ -8144,7 +7896,7 @@ private theorem momentWeakHolomorphicStrictJointCoverSchurBlock_posSemidef
       sourceJointRealLeviQuadratic_momentWeakHolomorphicStrictJointCoverWeight_nonneg
         K F htransport p ε hε₀ hε₁ k (z, τ)
           (star (x ∘ Sum.inl), star (x (Sum.inr 0)))
-  · simp only [Fin.isValue, RCLike.star_def, Complex.ofReal_im]
+  · simp only [Complex.ofReal_im]
 
 private theorem momentWeakHolomorphicStrictJointCover_rowSchurEnergy_le_acceleration
     {n : ℕ} (K : CenteredBody n)
@@ -8225,7 +7977,10 @@ private theorem integrable_momentWeakHolomorphicJointRadialEnvelopeCircleIntegra
   have hmap : Continuous
       (fun z : SourceJointComplexCover n × ℝ =>
         q - circleMap 0 1 z.2 • z.1) := by
-    fun_prop
+    exact Continuous.fun_sub continuous_const
+        (Continuous.fun_smul
+          (Continuous.comp' (continuous_circleMap 0 1) (Continuous.snd continuous_id'))
+          (Continuous.fst continuous_id'))
   have hmeas : Measurable
       (fun z : SourceJointComplexCover n × ℝ =>
         sourceJointTrueRadialMollifier n k z.1 *
@@ -8235,8 +7990,6 @@ private theorem integrable_momentWeakHolomorphicJointRadialEnvelopeCircleIntegra
       measurable_fst).mul
         ((measurable_momentWeakJointCoverUpperEnvelope
           K F htransport p).comp hmap.measurable)
-  change Integrable _ ((volume : Measure
-    (SourceJointComplexCover n)).prod ν)
   apply hdom.mono' hmeas.aestronglyMeasurable
   exact Eventually.of_forall fun z => by
     by_cases hz : sourceJointTrueRadialMollifier n k z.1 = 0
@@ -8653,7 +8406,7 @@ private theorem angularSourceRadialCutoff_smul_squared_error_integrals_tendsto_z
       have hone := sourceRadialCutoff_le_one m q
       have hscalar : |sourceRadialCutoff m q - 1| ≤ 1 := by
         rw [abs_of_nonpos (sub_nonpos.mpr hone)]
-        linarith
+        linarith only [hzero]
       have hrewrite :
           (sourceRadialCutoff m q : ℂ) • F q - F q =
             ((sourceRadialCutoff m q - 1 : ℝ) : ℂ) • F q := by
@@ -8749,9 +8502,9 @@ private theorem angularTorusWeightedHolomorphicDerivative_cutoffPhysicalField
     exact weightedHolomorphicDerivative_mul
       (angularCoverPotential a)
       ((contDiff_complexSourceCoverRadialCutoff m).differentiable
-        (by norm_num))
+        (by decide))
       ((contDiff_pi.mp hW i).differentiable
-        (by norm_num)) z i
+        (by decide)) z i
   unfold angularTorusWeightedHolomorphicDerivative
   change
     torusScalarRepresentative
@@ -8771,16 +8524,9 @@ private theorem torusHolomorphicDerivative_complexSourceCoverRadialCutoff
         (complexSourceCoverRadialCutoff m) z i) q =
       conj (sourceTorusBarPartial
         (complexSourceCoverRadialCutoff m) i q) := by
-  change
-    holomorphicCoordinate
-      (fun z => (sourceCoverRadialCutoff m z : ℂ))
-        (sourceTorusCoverPoint q) i =
-      conj (barPartialCoordinate
-        (fun z => (sourceCoverRadialCutoff m z : ℂ))
-          (sourceTorusCoverPoint q) i)
   exact (conj_barPartialCoordinate_real
     ((contDiff_sourceCoverRadialCutoff m).differentiable
-      (by norm_num)) (sourceTorusCoverPoint q) i).symm
+      (by decide)) (sourceTorusCoverPoint q) i).symm
 
 private def angularSourceCutoffAdjointCommutator
     {n : ℕ} (m : ℕ)
@@ -8860,7 +8606,6 @@ private theorem hasCompactSupport_sourceJointTrueRadialTimeKernel (n k : ℕ) :
 
 private theorem continuous_sourceJointTrueRadialTimeKernel (n k : ℕ) :
     Continuous (sourceJointTrueRadialTimeKernel n k) := by
-  unfold sourceJointTrueRadialTimeKernel
   exact ((contDiff_sourceJointTrueRadialMollifier n k).continuous_fderiv
     (by simp only [ne_eq, WithTop.coe_eq_zero, ENat.top_ne_zero,
           not_false_eq_true])).clm_apply continuous_const
@@ -8916,8 +8661,7 @@ private theorem jointSourceCoverVelocity_sourceJointTrueRadialSmoothed
     MeasureTheory.convolution_def]
   apply integral_congr_ae
   filter_upwards [] with y
-  simp only [ContinuousLinearMap.precompL_apply, ContinuousLinearMap.lsmul_apply, smul_eq_mul,
-    sourceJointTrueRadialTimeKernel, L, κ, v]
+  simp only [ContinuousLinearMap.precompL_apply, sourceJointTrueRadialTimeKernel, κ, v]
 
 end RadialAccelerationBounds
 
@@ -9081,9 +8825,6 @@ private theorem contDiff_normalizedCoverMollification
     (complexShrinkingBump (n := n) k).contDiff_normed
   have hκcompact : HasCompactSupport κ :=
     (complexShrinkingBump (n := n) k).hasCompactSupport_normed
-  change ContDiff ℝ r
-    (κ ⋆[ContinuousLinearMap.lsmul ℝ ℝ,
-      (volume : Measure (TorusCharacters.LogSpace n))] g)
   exact hκcompact.contDiff_convolution_left
     (ContinuousLinearMap.lsmul ℝ ℝ) hκ hg
 
