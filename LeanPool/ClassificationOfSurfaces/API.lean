@@ -3,7 +3,7 @@ Copyright (c) 2026 ClassificationOfSurfaces contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Ryan McCorvie, Jack McCarthy
 -/
-module
+module -- shake: keep-all
 
 public import LeanPool.ClassificationOfSurfaces.CellComplexQuotient
 public import LeanPool.ClassificationOfSurfaces.CanonicalCoordinates
@@ -58,10 +58,6 @@ public import LeanPool.ClassificationOfSurfaces.SphereQuotientHomeomorph
 public import LeanPool.ClassificationOfSurfaces.StrongVertexStar
 public import LeanPool.ClassificationOfSurfaces.TriangleCell
 
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.CategoryTheory.Category.Init
-import Mathlib.Combinatorics.SimpleGraph.Init
-import Mathlib.MeasureTheory.Covering.Besicovitch
 
 /-!
 # Public API map

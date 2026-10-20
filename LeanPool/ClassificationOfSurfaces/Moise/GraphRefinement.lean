@@ -6,7 +6,6 @@ Authors: Ryan McCorvie, Jack McCarthy
 module
 
 public import LeanPool.ClassificationOfSurfaces.Moise.GraphSubdivision
-import Mathlib.LinearAlgebra.AffineSpace.FiniteDimensional
 
 /-!
 # Finite marked refinements of plane graphs

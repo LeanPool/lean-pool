@@ -169,22 +169,17 @@ theorem endpoint_not_mem_openSegment_of_mem_segment {a b x y : Plane}
       _ = AffineMap.lineMap (k := ℝ) (AffineMap.lineMap (k := ℝ) a b s)
           (AffineMap.lineMap (k := ℝ) a b t) u := huEq.symm
       _ = AffineMap.lineMap (k := ℝ) a b c := by
-        ext i
-        simp [c, AffineMap.lineMap_apply_module]
-        ring
+        simpa only [c, AffineMap.lineMap_apply_ring] using
+          ((AffineMap.lineMap a b).apply_lineMap s t u).symm
   have hc : c = 0 := by
     exact (AffineMap.lineMap_injective ℝ hab hmaps).symm
   have hcoeff : 0 < 1 - u := sub_pos.mpr hu.2
   have htermS : 0 ≤ (1 - u) * s := mul_nonneg hcoeff.le hs.1
   have htermT : 0 ≤ u * t := mul_nonneg hu.1.le ht.1
-  have htermS0 : (1 - u) * s = 0 := by
-    dsimp [c] at hc
-    nlinarith
-  have htermT0 : u * t = 0 := by
-    dsimp [c] at hc
-    nlinarith
-  have hs0 : s = 0 := (mul_eq_zero.mp htermS0).resolve_left hcoeff.ne'
-  have ht0 : t = 0 := (mul_eq_zero.mp htermT0).resolve_left hu.1.ne'
+  have hterms : (1 - u) * s = 0 ∧ u * t = 0 :=
+    (add_eq_zero_iff_of_nonneg htermS htermT).mp hc
+  have hs0 : s = 0 := (mul_eq_zero.mp hterms.1).resolve_left hcoeff.ne'
+  have ht0 : t = 0 := (mul_eq_zero.mp hterms.2).resolve_left hu.1.ne'
   apply hxy
   rw [hs0, ht0]
 
@@ -206,9 +201,8 @@ theorem segment_subset_of_midpoint_mem_openSegment
       AffineMap.lineMap A B u =
         AffineMap.lineMap P Q ((1 - u) * a + u * b) := by
     rw [← ha, ← hb]
-    ext k
-    simp [AffineMap.lineMap_apply_module]
-    ring
+    simpa only [AffineMap.lineMap_apply_ring] using
+      ((AffineMap.lineMap P Q).apply_lineMap a b u).symm
   have hparam : (1 - u) * a + u * b = 1 / 2 := by
     apply AffineMap.lineMap_injective ℝ hPQ
     rw [← hcompose]
@@ -234,7 +228,7 @@ theorem segment_subset_of_midpoint_mem_openSegment
       have hright : u * b ≤ 0 := mul_nonpos_of_nonneg_of_nonpos hu.1.le hb0
       exfalso
       norm_num at hparam
-      linarith
+      linarith only [hleft, hright, hparam]
     · exact Or.inl ⟨ha0, hb1⟩
     · exact Or.inr ⟨hb0, ha1⟩
     · have hleft : 0 ≤ (1 - u) * (a - 1) :=
@@ -243,8 +237,10 @@ theorem segment_subset_of_midpoint_mem_openSegment
         mul_nonneg hu.1.le (sub_nonneg.mpr hb1)
       exfalso
       norm_num at hparam
-      nlinarith only [hleft, hright, hparam]
-  have endpoints_mem (h : a ≤ 0 ∧ 1 ≤ b) :
+      linarith only [hleft, hright, hparam]
+  have endpoints_mem (a b : ℝ) (A B : Plane)
+      (ha : AffineMap.lineMap P Q a = A) (hb : AffineMap.lineMap P Q b = B)
+      (h : a ≤ 0 ∧ 1 ≤ b) :
       P ∈ segment ℝ A B ∧ Q ∈ segment ℝ A B := by
     have hab : a ≤ b := (h.1.trans (by norm_num : (0 : ℝ) ≤ 1)).trans h.2
     have hpScalar : Wbtw ℝ a 0 b :=
@@ -255,21 +251,10 @@ theorem segment_subset_of_midpoint_mem_openSegment
     have hq := hqScalar.map (AffineMap.lineMap P Q)
     rw [ha, hb] at hp hq
     simpa using And.intro hp.mem_segment hq.mem_segment
-  have endpoints_mem_rev (h : b ≤ 0 ∧ 1 ≤ a) :
-      P ∈ segment ℝ B A ∧ Q ∈ segment ℝ B A := by
-    have hba : b ≤ a := (h.1.trans (by norm_num : (0 : ℝ) ≤ 1)).trans h.2
-    have hpScalar : Wbtw ℝ b 0 a :=
-      (wbtw_iff_of_le hba).mpr ⟨h.1, (by norm_num : (0 : ℝ) ≤ 1).trans h.2⟩
-    have hqScalar : Wbtw ℝ b 1 a :=
-      (wbtw_iff_of_le hba).mpr ⟨h.1.trans (by norm_num), h.2⟩
-    have hp := hpScalar.map (AffineMap.lineMap P Q)
-    have hq := hqScalar.map (AffineMap.lineMap P Q)
-    rw [ha, hb] at hp hq
-    simpa using And.intro hp.mem_segment hq.mem_segment
   rcases hbracket with hab | hba
-  · obtain ⟨hp, hq⟩ := endpoints_mem hab
+  · obtain ⟨hp, hq⟩ := endpoints_mem a b A B ha hb hab
     exact (convex_segment A B).segment_subset hp hq
-  · obtain ⟨hp, hq⟩ := endpoints_mem_rev hba
+  · obtain ⟨hp, hq⟩ := endpoints_mem b a B A hb ha hba
     rw [segment_symm] at hp hq
     exact (convex_segment A B).segment_subset hp hq
 

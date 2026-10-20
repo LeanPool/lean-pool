@@ -8,9 +8,6 @@ module
 public import LeanPool.ClassificationOfSurfaces.Surface
 public import LeanPool.ClassificationOfSurfaces.Moise.PlaneComplex
 import LeanPool.ClassificationOfSurfaces.Moise.Brouwer
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.CategoryTheory.Category.Init
-import Mathlib.MeasureTheory.Covering.Besicovitch
 
 /-!
 # Boundary invariance for C0 surface charts

@@ -86,15 +86,10 @@ theorem no_retraction_closedUnitDisk :
       simpa [γ] using h
     rw [hΓ0, one_mul]
   have hΓ0 : Γ 0 = Λ 0 := by simp [Λ]
-  have hΓeq : Γ = Circle.isCoveringMap_exp.liftPath γ (Γ 0) (by
-      simpa using (congrFun hΓlift 0).symm) :=
-    (Circle.isCoveringMap_exp.eq_liftPath_iff' (by
-      simpa using (congrFun hΓlift 0).symm)).mpr ⟨hΓlift, rfl⟩
-  have hΛeq : Λ = Circle.isCoveringMap_exp.liftPath γ (Γ 0) (by
-      simpa using (congrFun hΓlift 0).symm) :=
-    (Circle.isCoveringMap_exp.eq_liftPath_iff' (by
-      simpa using (congrFun hΓlift 0).symm)).mpr ⟨hΛlift, hΓ0.symm⟩
-  have hend : Γ 1 = Λ 1 := by rw [hΓeq, hΛeq]
+  have hΓΛ : (Γ : I → ℝ) = Λ :=
+    Circle.isCoveringMap_exp.eq_of_comp_eq Γ.continuous Λ.continuous
+      (hΓlift.trans hΛlift.symm) 0 hΓ0
+  have hend : Γ 1 = Λ 1 := congrFun hΓΛ 1
   have hloop : Γ 1 = Γ 0 := by
     change F (circleToClosedUnitDisk (γ 1)) = F (circleToClosedUnitDisk (γ 0))
     congr 2
@@ -103,8 +98,7 @@ theorem no_retraction_closedUnitDisk :
   rw [hloop] at hend
   have hend' : Γ 0 = Γ 0 + 2 * Real.pi := by simp [Λ] at hend
   have hpi : (2 : ℝ) * Real.pi ≠ 0 := mul_ne_zero (by norm_num) Real.pi_ne_zero
-  apply hpi
-  linarith
+  exact hpi (add_eq_left.mp hend'.symm)
 
 /-- The Euclidean plane and the complex plane are linearly isometric, using the orthonormal
 basis `(1, I)` of `ℂ` over `ℝ`. -/

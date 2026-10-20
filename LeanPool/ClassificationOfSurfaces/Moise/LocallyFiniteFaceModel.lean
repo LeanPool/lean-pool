@@ -7,7 +7,6 @@ module
 
 public import LeanPool.ClassificationOfSurfaces.Moise.IntrinsicFaceModel
 public import LeanPool.ClassificationOfSurfaces.Moise.LocallyFiniteTriangulation
-import Mathlib.Combinatorics.SimpleGraph.Init
 
 /-!
 # Standard plane models for locally finite faces

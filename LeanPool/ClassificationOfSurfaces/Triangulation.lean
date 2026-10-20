@@ -9,9 +9,6 @@ public import LeanPool.ClassificationOfSurfaces.Moise.IntrinsicComplex
 public import Mathlib.Geometry.Manifold.Instances.Real
 import LeanPool.ClassificationOfSurfaces.Moise.ChartInduction
 import LeanPool.ClassificationOfSurfaces.Moise.DualConnectivity
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.CategoryTheory.Category.Init
-import Mathlib.MeasureTheory.Covering.Besicovitch
 
 /-!
 # Finite surface triangulations

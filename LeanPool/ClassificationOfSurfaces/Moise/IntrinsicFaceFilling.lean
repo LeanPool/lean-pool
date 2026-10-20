@@ -8,7 +8,6 @@ module
 public import LeanPool.ClassificationOfSurfaces.Moise.IntrinsicFaceExtension
 public import LeanPool.ClassificationOfSurfaces.Moise.FinitePLHomeomorph
 import LeanPool.ClassificationOfSurfaces.Moise.PLApproximation
-import Mathlib.CategoryTheory.Category.Init
 
 /-!
 # PL fillings of intrinsic polygonal face boundaries

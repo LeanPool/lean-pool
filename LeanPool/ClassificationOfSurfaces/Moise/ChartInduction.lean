@@ -8,9 +8,6 @@ module
 public import LeanPool.ClassificationOfSurfaces.Moise.ChartInductionCore
 import LeanPool.ClassificationOfSurfaces.Moise.FineSubdivision
 import LeanPool.ClassificationOfSurfaces.Moise.IntrinsicMarkedFan
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.CategoryTheory.Category.Init
-import Mathlib.MeasureTheory.Covering.Besicovitch
 
 /-!
 # The Radó crossing weld and chart induction
@@ -1792,7 +1789,9 @@ private theorem MixedLocalFanCertificate.hasLocalCommonCoordinates_iff
       (pushGeometricRealization C.oldCompactToCommon
           C.mixedOldComplex.compactIntrinsic.faces x).1 =
         (pushGeometricRealization M.targetToCommon M.localComplex.faces z).1 := by
-  rfl
+  simp only [MixedLocalFanCertificate.hasLocalCommonCoordinates,
+    pushGeometricRealization_val, stdSimplex.map]
+  exact Iff.rfl
 
 /-- A local realization lifts canonically to the compact mixed complex, with the same coordinates
 after amalgamating the local vertices. -/
@@ -2110,8 +2109,6 @@ private theorem MixedLocalFanCertificate.positive_usedOld_isLocal_of_common
     (hv : 0 < xb.1 (C.compactVertexEquiv.symm v)) :
     ∃ u : M.localComplex.UsedVertex, M.localUsedOldEmbedding u = v := by
   classical
-  let : Fintype M.UsedOldVertex :=
-    C.mixedOldComplex.compactIntrinsic.vertexFintype
   apply exists_local_of_positive_of_amalgamated_coordinates
     M.localUsedOldEmbedding M.localUsedVertexEmbedding
     (fun w ↦ xb.1 (C.compactVertexEquiv.symm w))
@@ -4645,11 +4642,6 @@ private theorem chartInduction_relabel_agree
   let R := ChartInductionGeometry.subdivision P
   let source := ChartInductionGeometry.source P G.anchorLines
   intro x y hxy
-  change
-    (G.oldEmbed C ∘ (relabelGeometricRealizationHomeomorph C.oldCompactToCommon
-      (G.mixedOldComplex C).compactIntrinsic.faces).symm) x =
-    (G.targetEmbed ∘ (relabelGeometricRealizationHomeomorph M.targetToCommon
-      G.targetMesh.triangles).symm) y
   exact MixedLocalFanCertificate.common_relabel_agree_small
     M C G.targetMesh.triangles (G.oldEmbed C) G.targetEmbed
     (fun tf xb yb hxb hcoords ↦

@@ -9,9 +9,6 @@ public import LeanPool.ClassificationOfSurfaces.Moise.ChartInductionCore
 import LeanPool.ClassificationOfSurfaces.Moise.EmbeddedComplexValence
 import LeanPool.ClassificationOfSurfaces.Moise.IntrinsicMarkedFan
 import LeanPool.ClassificationOfSurfaces.Moise.PuncturedSurface
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.CategoryTheory.Category.Init
-import Mathlib.MeasureTheory.Covering.Besicovitch
 
 /-!
 # Dual connectivity of completed surface triangulations
