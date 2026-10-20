@@ -1,0 +1,57 @@
+slug: graham-lpt
+title: Sharp list-scheduling and longest-processing-time bounds
+summary: Formalizes identical-machine scheduling for arbitrary finite job sets
+  with real processing times. Proves Graham's sharp list-scheduling and LPT
+  approximation bounds, constructs their tight instances, characterizes all
+  positive instances attaining the LPT bound, and establishes the supremum
+  for every sufficiently large fixed job count.
+branch: approximation algorithms and scheduling
+entry_module: LeanPool.GrahamLPT
+authors:
+- JD Jones
+source:
+  title: Graham's bounds for list scheduling and LPT on identical machines
+  authors:
+  - JD Jones
+  url: https://github.com/JD-Jones-ASES/graham-lpt-lean/tree/c8ed035b407cc554faf4b68df0cf3edc70058977
+  github_repo: JD-Jones-ASES/graham-lpt-lean
+  commit: c8ed035b407cc554faf4b68df0cf3edc70058977
+license: MIT
+status: verified
+provenance: AI
+main_declarations:
+- GrahamLPT.lpt_le_optMakespan
+- GrahamLPT.lpt_eq_bound_iff_graham
+main_results:
+- declaration: GrahamLPT.listSchedule_le_optMakespan
+  informal: For nonnegative processing times on m nonzero identical machines,
+    every list schedule has makespan at most (2 - 1/m) times the optimal makespan.
+- declaration: GrahamLPT.lpt_le_optMakespan
+  informal: For nonnegative processing times on m nonzero identical machines,
+    every longest-processing-time-first schedule has makespan at most
+    (4/3 - 1/(3m)) times the optimal makespan.
+- declaration: GrahamLPT.isLeast_lpt_ratio
+  informal: For each nonzero machine count, 4/3 - 1/(3m) is the least universal
+    approximation factor for LPT, over all finite nonnegative real job sets.
+- declaration: GrahamLPT.lpt_eq_bound_iff_graham
+  informal: For at least two machines and a nonempty set of positive-length
+    jobs, an LPT schedule attains Graham's bound exactly if the instance is
+    a positive scalar multiple and permutation of Graham's 2m + 1 jobs.
+- declaration: GrahamLPT.isLUB_lpt_ratio_of_card
+  informal: For a nonzero machine count and every fixed job count n at least
+    2m + 1, the supremum of LPT-to-optimum makespan ratios over positive
+    instances with n jobs remains 4/3 - 1/(3m).
+- declaration: GrahamLPT.exists_isLPTSchedule
+  informal: Every finite real job-length vector on a nonzero number of
+    machines admits an LPT schedule.
+- declaration: GrahamLPT.exists_listSchedule_le
+  informal: Every assignment of nonnegative-length jobs is matched or
+    improved by a list schedule in some ordering of the jobs.
+tags:
+- scheduling
+- approximation-algorithms
+- combinatorial-optimization
+msc:
+- 68M20
+- 90B35
+- 68W25
