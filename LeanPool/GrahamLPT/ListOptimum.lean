@@ -157,7 +157,7 @@ theorem lo_makespan_le {m n : ℕ} [NeZero m] (q : Fin n → ℝ) (hq : ∀ j, 0
 by a list schedule
 in some order (the jobs listed by their start times when each machine of `τ` runs its jobs in
 index order). -/
-theorem lo_exists_listSchedule_le {m n : ℕ} [NeZero m] (p : Fin n → ℝ) (hp : ∀ j, 0 ≤ p j)
+theorem exists_listSchedule_le {m n : ℕ} [NeZero m] (p : Fin n → ℝ) (hp : ∀ j, 0 ≤ p j)
     (τ : Fin n → Fin m) :
     ∃ (π : Equiv.Perm (Fin n)) (σ : Fin n → Fin m),
       IsListSchedule (p ∘ π) (σ ∘ π) ∧ makespan p σ ≤ makespan p τ := by
@@ -183,7 +183,7 @@ theorem lo_exists_listSchedule_le {m n : ℕ} [NeZero m] (p : Fin n → ℝ) (hp
   have hC : ∀ j, s j + p j ≤ makespan p τ := by
     intro j
     rw [hsucc j]
-    exact (bs_loadBefore_le_load p hp τ _ _).trans (bs_load_le_makespan p τ _)
+    exact (bs_loadBefore_le_load p hp τ _ _).trans (load_le_makespan p τ _)
   set π := Tuple.sort s with hπ
   have hmono : Monotone (s ∘ π) := Tuple.monotone_sort s
   obtain ⟨σ', hσ'⟩ := exists_isListSchedule (m := m) (p ∘ π)
@@ -201,28 +201,16 @@ theorem lo_exists_listSchedule_le {m n : ℕ} [NeZero m] (p : Fin n → ℝ) (hp
 
 /-- The optimal makespan is the least makespan over the list schedules in all orders (Graham's
 `ω₀` equals `optMakespan`). -/
-theorem lo_optMakespan_eq {m n : ℕ} [NeZero m] (p : Fin n → ℝ) (hp : ∀ j, 0 ≤ p j) :
+theorem isLeast_listSchedule_makespan {m n : ℕ} [NeZero m] (p : Fin n → ℝ) (hp : ∀ j, 0 ≤ p j) :
     IsLeast ((fun σ : Fin n → Fin m => makespan p σ) ''
       {σ | ∃ π : Equiv.Perm (Fin n), IsListSchedule (p ∘ π) (σ ∘ π)}) (optMakespan m p) := by
   constructor
   · obtain ⟨τ, hτ⟩ := exists_makespan_eq_optMakespan (m := m) p
-    obtain ⟨π, σ, hσ, hle⟩ := lo_exists_listSchedule_le p hp τ
+    obtain ⟨π, σ, hσ, hle⟩ := exists_listSchedule_le p hp τ
     refine ⟨σ, ⟨π, hσ⟩, le_antisymm ?_ (optMakespan_le p σ)⟩
     rw [← hτ]
     exact hle
   · rintro c ⟨σ, -, rfl⟩
     exact optMakespan_le p σ
-
-theorem exists_listSchedule_le {m n : ℕ} [NeZero m] (p : Fin n → ℝ) (hp : ∀ j, 0 ≤ p j)
-    (τ : Fin n → Fin m) :
-    ∃ (π : Equiv.Perm (Fin n)) (σ : Fin n → Fin m),
-      IsListSchedule (p ∘ π) (σ ∘ π) ∧ makespan p σ ≤ makespan p τ :=
-  lo_exists_listSchedule_le p hp τ
-
-theorem isLeast_listSchedule_makespan {m n : ℕ} [NeZero m] (p : Fin n → ℝ) (hp : ∀ j, 0 ≤
-  p j) :
-    IsLeast ((fun σ : Fin n → Fin m => makespan p σ) ''
-      {σ | ∃ π : Equiv.Perm (Fin n), IsListSchedule (p ∘ π) (σ ∘ π)}) (optMakespan m p) :=
-  lo_optMakespan_eq p hp
 
 end GrahamLPT

@@ -207,15 +207,15 @@ theorem bs_exists_load_eq_makespan {m n : ℕ} [NeZero m] (p : Fin n → ℝ) (�
   obtain ⟨i, -, h⟩ := Finset.exists_mem_eq_sup' (univ_nonempty (α := Fin m)) (load p σ)
   exact ⟨i, h.symm⟩
 
-/-- Every machine load is at most the makespan (the helper behind the twin). -/
-theorem bs_load_le_makespan {m n : ℕ} [NeZero m] (p : Fin n → ℝ) (σ : Fin n → Fin m) (i : Fin m) :
+/-- Every machine load is at most the makespan. -/
+theorem load_le_makespan {m n : ℕ} [NeZero m] (p : Fin n → ℝ) (σ : Fin n → Fin m) (i : Fin m) :
     load p σ i ≤ makespan p σ :=
   Finset.le_sup' (load p σ) (mem_univ i)
 
 theorem bs_makespan_nonneg {m n : ℕ} [NeZero m] (p : Fin n → ℝ) (hp : ∀ j, 0 ≤ p j) (σ : Fin n →
   Fin m) :
     0 ≤ makespan p σ :=
-  le_trans (Finset.sum_nonneg fun j _ => hp j) (bs_load_le_makespan p σ 0)
+  le_trans (Finset.sum_nonneg fun j _ => hp j) (load_le_makespan p σ 0)
 
 /-- Relabeling the jobs by a permutation changes no load. -/
 theorem bs_load_comp {m n : ℕ} (p : Fin n → ℝ) (σ : Fin n → Fin m) (π : Equiv.Perm (Fin n)) (i :
@@ -225,16 +225,16 @@ theorem bs_load_comp {m n : ℕ} (p : Fin n → ℝ) (σ : Fin n → Fin m) (π 
   rw [Finset.sum_filter, Finset.sum_filter]
   exact Equiv.sum_comp π (fun j => if σ j = i then p j else 0)
 
-/-- The total length is at most `m` times the makespan (the helper behind the twin). -/
-theorem bs_sum_le_mul_makespan {m n : ℕ} [NeZero m] (p : Fin n → ℝ) (σ : Fin n → Fin m) :
+/-- The total length is at most `m` times the makespan. -/
+theorem sum_le_mul_makespan {m n : ℕ} [NeZero m] (p : Fin n → ℝ) (σ : Fin n → Fin m) :
     ∑ j, p j ≤ (m : ℝ) * makespan p σ := by
   rw [← bs_sum_load p σ]
   have h : ∑ i, load p σ i ≤ ∑ _i : Fin m, makespan p σ :=
-    Finset.sum_le_sum fun i _ => bs_load_le_makespan p σ i
+    Finset.sum_le_sum fun i _ => load_le_makespan p σ i
   simpa [Finset.sum_const, Finset.card_univ, Fintype.card_fin, nsmul_eq_mul] using h
 
-/-- The optimal makespan is attained (the helper behind the twin). -/
-theorem bs_exists_makespan_eq_opt {m n : ℕ} [NeZero m] (p : Fin n → ℝ) :
+/-- The optimal makespan is attained. -/
+theorem exists_makespan_eq_optMakespan {m n : ℕ} [NeZero m] (p : Fin n → ℝ) :
     ∃ τ : Fin n → Fin m, makespan p τ = optMakespan m p := by
   obtain ⟨τ, -, h⟩ := Finset.exists_mem_eq_inf' (univ_nonempty (α := Fin n → Fin m))
     (fun σ : Fin n → Fin m => makespan p σ)
@@ -307,28 +307,12 @@ theorem optMakespan_le {m n : ℕ} [NeZero m] (p : Fin n → ℝ) (τ : Fin n �
     optMakespan m p ≤ makespan p τ :=
   Finset.inf'_le (fun σ : Fin n → Fin m => makespan p σ) (mem_univ τ)
 
-/-- The optimal makespan is attained. -/
-theorem exists_makespan_eq_optMakespan {m n : ℕ} [NeZero m] (p : Fin n → ℝ) :
-    ∃ τ : Fin n → Fin m, makespan p τ = optMakespan m p :=
-  bs_exists_makespan_eq_opt p
-
-/-- Every machine load is at most the makespan. -/
-theorem load_le_makespan {m n : ℕ} [NeZero m] (p : Fin n → ℝ) (σ : Fin n → Fin m) (i :
-  Fin m) :
-    load p σ i ≤ makespan p σ :=
-  bs_load_le_makespan p σ i
-
 /-- For nonnegative lengths every job is at most the makespan. -/
 theorem le_makespan_of_nonneg {m n : ℕ} [NeZero m] (p : Fin n → ℝ) (hp : ∀ j, 0 ≤ p j)
     (σ : Fin n → Fin m) (j : Fin n) : p j ≤ makespan p σ := by
-  refine le_trans ?_ (bs_load_le_makespan p σ (σ j))
+  refine le_trans ?_ (load_le_makespan p σ (σ j))
   exact Finset.single_le_sum (fun j _ => hp j) (by simp : j ∈ univ.filter (fun j' : Fin n => σ j'
     = σ j))
-
-/-- The total length is at most `m` times the makespan. -/
-theorem sum_le_mul_makespan {m n : ℕ} [NeZero m] (p : Fin n → ℝ) (σ : Fin n → Fin m) :
-    ∑ j, p j ≤ (m : ℝ) * makespan p σ :=
-  bs_sum_le_mul_makespan p σ
 
 /-- Relabeling the jobs by a permutation does not change the makespan. -/
 theorem makespan_comp {m n : ℕ} [NeZero m] (p : Fin n → ℝ) (σ : Fin n → Fin m) (π :

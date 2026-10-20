@@ -69,7 +69,7 @@ theorem cx_antitone : Antitone (![9, 5, 5, 4, 4, 4] : Fin 6 → ℝ) := by
 /-- The assignment `0, 1, 2, 1, 2, 0` of the jobs `9, 5, 5, 4, 4, 4` to `3` machines is an LPT
 schedule (the
 identity order) and has makespan `13`. -/
-theorem cx_lpt_thirteen :
+theorem nine_five_four_lpt_thirteen :
     IsLPTSchedule (![9, 5, 5, 4, 4, 4] : Fin 6 → ℝ) (![0, 1, 2, 1, 2, 0] : Fin 6 → Fin 3) ∧
       makespan (![9, 5, 5, 4, 4, 4] : Fin 6 → ℝ) (![0, 1, 2, 1, 2, 0] : Fin 6 → Fin 3) = 13 := by
   refine ⟨⟨1, ?_, ?_⟩, ?_⟩
@@ -81,7 +81,7 @@ theorem cx_lpt_thirteen :
     · rw [bs_makespan_le_iff]
       intro i
       fin_cases i <;> norm_num [load, Finset.sum_filter, Fin.sum_univ_six]
-    · refine le_trans (le_of_eq ?_) (bs_load_le_makespan _ _ 0)
+    · refine le_trans (le_of_eq ?_) (load_le_makespan _ _ 0)
       norm_num [load, Finset.sum_filter, Fin.sum_univ_six]
 
 /-- Every assignment of the jobs `9, 5, 5, 4, 4, 4` to `3` machines has a machine of load at least
@@ -97,7 +97,7 @@ theorem cx_twelve_le_makespan (τ : Fin 6 → Fin 3) :
     by
     intro i S hS h12
     have h1 := cx_sum_le_load p hp τ i S hS
-    have h2 := bs_load_le_makespan p τ i
+    have h2 := load_le_makespan p τ i
     linarith
   -- job `0` (length `9`) shares its machine with no other job
   by_cases h1 : τ 1 = τ 0
@@ -161,13 +161,13 @@ theorem cx_twelve_le_makespan (τ : Fin 6 → Fin 3) :
 
 /-- The jobs `9, 5, 5, 4, 4, 4` have optimal makespan `12` on `3` machines, attained by `0, 1, 1,
 2, 2, 2`. -/
-theorem cx_opt_twelve : optMakespan 3 (![9, 5, 5, 4, 4, 4] : Fin 6 → ℝ) = 12 := by
+theorem nine_five_four_optMakespan : optMakespan 3 (![9, 5, 5, 4, 4, 4] : Fin 6 → ℝ) = 12 := by
   apply le_antisymm
   · refine le_trans (optMakespan_le _ (![0, 1, 1, 2, 2, 2] : Fin 6 → Fin 3)) ?_
     rw [bs_makespan_le_iff]
     intro i
     fin_cases i <;> norm_num [load, Finset.sum_filter, Fin.sum_univ_six]
-  · obtain ⟨τ, hτ⟩ := bs_exists_makespan_eq_opt (m := 3) (![9, 5, 5, 4, 4, 4] : Fin 6 → ℝ)
+  · obtain ⟨τ, hτ⟩ := exists_makespan_eq_optMakespan (m := 3) (![9, 5, 5, 4, 4, 4] : Fin 6 → ℝ)
     rw [← hτ]
     exact cx_twelve_le_makespan τ
 
@@ -176,29 +176,15 @@ jobs do not make LPT
 optimal: on `3` machines the six jobs `9, 5, 5, 4, 4, 4` are each at least a third of the optimal
 makespan `12`,
 yet an LPT schedule of them has makespan `13`. -/
-theorem cx_third_le_not_optimal :
-    ∃ (p : Fin 6 → ℝ) (σ : Fin 6 → Fin 3), (∀ j, 0 ≤ p j) ∧ IsLPTSchedule p σ ∧
-      (∀ j, optMakespan 3 p ≤ 3 * p j) ∧ optMakespan 3 p < makespan p σ := by
-  refine ⟨![9, 5, 5, 4, 4, 4], ![0, 1, 2, 1, 2, 0], ?_, cx_lpt_thirteen.1, ?_, ?_⟩
-  · intro j; fin_cases j <;> norm_num
-  · intro j
-    rw [cx_opt_twelve]
-    fin_cases j <;> norm_num
-  · rw [cx_opt_twelve, cx_lpt_thirteen.2]
-    norm_num
-
-theorem nine_five_four_lpt_thirteen :
-    IsLPTSchedule (![9, 5, 5, 4, 4, 4] : Fin 6 → ℝ) (![0, 1, 2, 1, 2, 0] : Fin 6 → Fin 3) ∧
-      makespan (![9, 5, 5, 4, 4, 4] : Fin 6 → ℝ) (![0, 1, 2, 1, 2, 0] : Fin 6 → Fin 3) = 13 :=
-  cx_lpt_thirteen
-
-theorem nine_five_four_optMakespan : optMakespan 3 (![9, 5, 5, 4, 4, 4] : Fin 6 → ℝ) = 12
-  :=
-  cx_opt_twelve
-
 theorem lpt_third_le_not_optimal :
     ∃ (p : Fin 6 → ℝ) (σ : Fin 6 → Fin 3), (∀ j, 0 ≤ p j) ∧ IsLPTSchedule p σ ∧
-      (∀ j, optMakespan 3 p ≤ 3 * p j) ∧ optMakespan 3 p < makespan p σ :=
-  cx_third_le_not_optimal
+      (∀ j, optMakespan 3 p ≤ 3 * p j) ∧ optMakespan 3 p < makespan p σ := by
+  refine ⟨![9, 5, 5, 4, 4, 4], ![0, 1, 2, 1, 2, 0], ?_, nine_five_four_lpt_thirteen.1, ?_, ?_⟩
+  · intro j; fin_cases j <;> norm_num
+  · intro j
+    rw [nine_five_four_optMakespan]
+    fin_cases j <;> norm_num
+  · rw [nine_five_four_optMakespan, nine_five_four_lpt_thirteen.2]
+    norm_num
 
 end GrahamLPT

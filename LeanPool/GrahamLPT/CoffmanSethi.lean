@@ -6,7 +6,6 @@ Authors: JD Jones
 
 module
 
-
 import Mathlib.Algebra.BigOperators.Field
 public import LeanPool.GrahamLPT.Defs
 public import Mathlib.Algebra.Order.Archimedean.Real.Basic
@@ -261,7 +260,8 @@ theorem cs_cnt_le_fl_of_min {m n : ℕ} (p : Fin n → ℝ) (hanti : Antitone p)
 /-- Chen's property, sorted form: job `k` is the `(c + 1)`-th job on its machine, `c` the jobs of
 smaller index
 there; then `(c + 1) · p_k ≤ C(τ)` for every assignment `τ`. -/
-theorem cs_job_le {m n : ℕ} [NeZero m] (p : Fin n → ℝ) (hp : ∀ j, 0 ≤ p j) (hanti : Antitone p)
+theorem lpt_job_position_le {m n : ℕ} [NeZero m] (p : Fin n → ℝ) (hp : ∀ j, 0 ≤ p j)
+    (hanti : Antitone p)
     (σ : Fin n → Fin m) (hσ : IsListSchedule p σ) (k : Fin n) (τ : Fin n → Fin m) :
     (((univ.filter (fun j : Fin n => (j : ℕ) < k ∧ σ j = σ k)).card : ℝ) + 1) * p k ≤ makespan p τ
       := by
@@ -310,7 +310,7 @@ theorem cs_job_le {m n : ℕ} [NeZero m] (p : Fin n → ℝ) (hp : ∀ j, 0 ≤ 
       unfold loadBefore
       rw [sum_div]
       exact sum_le_sum fun j _ => Int.floor_le _
-    have h2 := (bs_loadBefore_le_load p hp τ ((k : ℕ) + 1) g).trans (bs_load_le_makespan p τ g)
+    have h2 := (bs_loadBefore_le_load p hp τ ((k : ℕ) + 1) g).trans (load_le_makespan p τ g)
     have h3 : loadBefore p τ ((k : ℕ) + 1) g / p k < (c : ℝ) + 1 := by
       rw [div_lt_iff₀ hpos]
       linarith
@@ -378,11 +378,11 @@ theorem cs_bound {m n : ℕ} [NeZero m] (p : Fin n → ℝ) (hp : ∀ j, 0 ≤ p
       unfold load loadBefore
       rw [eF, sum_insert hknot]
       ring
-    have hchen := cs_job_le p hp hanti σ hσ k τ
+    have hchen := lpt_job_position_le p hp hanti σ hσ k τ
     rw [← hcard] at hchen
     have h1 := bs_mul_loadBefore_le p σ hσ k
     have h2 := bs_sum_filter_add_le p hp k
-    have h3 := bs_sum_le_mul_makespan p τ
+    have h3 := sum_le_mul_makespan p τ
     have hmC : (m : ℝ) * makespan p σ ≤ m * makespan p τ + (m - 1) * p k := by
       rw [hload]
       linarith
@@ -411,12 +411,5 @@ theorem lpt_bound_of_card {m n : ℕ} [NeZero m] (p : Fin n → ℝ) (hp : ∀ j
       (univ.filter (fun j : Fin n => σ j = i)).card :=
     Finset.card_equiv π (fun j => by simp)
   rwa [hcard, makespan_comp, makespan_comp] at h
-
-theorem lpt_job_position_le {m n : ℕ} [NeZero m] (p : Fin n → ℝ) (hp : ∀ j, 0 ≤ p j)
-  (hanti : Antitone p)
-    (σ : Fin n → Fin m) (hσ : IsListSchedule p σ) (k : Fin n) (τ : Fin n → Fin m) :
-    (((univ.filter (fun j : Fin n => (j : ℕ) < k ∧ σ j = σ k)).card : ℝ) + 1) * p k ≤ makespan p τ
-      :=
-  cs_job_le p hp hanti σ hσ k τ
 
 end GrahamLPT

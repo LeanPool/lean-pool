@@ -47,10 +47,10 @@ theorem gs_makespan_smul {m n : ℕ} [NeZero m] (p : Fin n → ℝ) (a : ℝ) (h
   · rw [bs_makespan_le_iff]
     intro i
     rw [gs_load_smul]
-    exact mul_le_mul_of_nonneg_left (bs_load_le_makespan p σ i) ha
+    exact mul_le_mul_of_nonneg_left (load_le_makespan p σ i) ha
   · obtain ⟨i, hi⟩ := bs_exists_load_eq_makespan p σ
     rw [← hi, ← gs_load_smul p a σ i]
-    exact bs_load_le_makespan _ σ i
+    exact load_le_makespan _ σ i
 
 /-- Scaling the lengths by `a ≥ 0` scales the optimal makespan. -/
 theorem gs_optMakespan_smul {m n : ℕ} [NeZero m] (p : Fin n → ℝ) (a : ℝ) (ha : 0 ≤ a) :
