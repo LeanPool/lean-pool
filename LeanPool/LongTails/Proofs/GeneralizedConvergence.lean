@@ -82,55 +82,14 @@ lemma run_count_positive {f : E → ℝ} {g : E → E} {L0 L1 R : ℝ}
   let low := Q.filter (fun b => M b ≤ 8 * L0)
   let high := Q.filter (fun b => ¬M b ≤ 8 * L0)
   let Afinal := (run L0 L1 g s (n + 1)).A
-  have hv (i : ℕ) := run_valid (g := g) hL0 hL1.le s hA.le hG i
-  have hbase (i : ℕ) : s.A ≤ (run L0 L1 g s i).A :=
-    run_weight_mono (g := g) hL0 hL1.le s hA.le hG (Nat.zero_le i)
+  obtain ⟨hbase, hguess, hlow, henergy, hweights, hprefix, hinj, hsplit⟩ :=
+    run_charging_geometry hL0 hL1 hc hg hgd hH s u hmin hA hG hE hfirst n
   have hAF : s.A ≤ Afinal := hbase _
-  have hcharge := run_charging_bound (g := g) hL0 hL1.le s hA.le hG hfirst.le n
-  have hweights : (∑ b ∈ Q, (2 : ℝ) ^ b.2 / Real.sqrt (G b)) ≤ 32 * Real.sqrt Afinal := by
-    simpa only [chargeValue, mul_one_div] using hcharge.1
-  have hsubset (T : Finset (ℕ × ℕ)) (hT : T ⊆ Q) :
-      (∑ b ∈ T, (2 : ℝ) ^ b.2 / Real.sqrt (G b)) ≤ 32 * Real.sqrt Afinal := by
-    apply le_trans (sum_le_sum_of_subset_of_nonneg hT ?_) hweights
-    intro b _ _
-    positivity
-  have hlow := low_count_sqrt_bound low G Prod.snd hL0.le
-    (fun b _ => (hv b.1).2)
-    (fun b hb => (charging_selected_curvature s hfirst n b (mem_filter.mp hb).1).trans
-      (mem_filter.mp hb).2)
-    (hsubset low (filter_subset _ _))
-  have henergy : (∑ b ∈ high, A b * G b) ≤ (512 / 3) * (L1 * R) ^ 2 := by
-    have he := charged_high_energy hL0 hL1 hc hg hgd hH s u hmin hA.le hG hfirst n high
-      (filter_subset _ _) (fun b hb => lt_of_not_ge (mem_filter.mp hb).2)
-    have hm := mul_le_mul_of_nonneg_left hE (show 0 ≤ (512 / 3) * L1 ^ 2 by positivity)
-    change (∑ b ∈ high, A b * G b) ≤ _ at he
-    nlinarith only [he, hm]
-  have hprefix : ∀ b ∈ high,
-      (∑ a ∈ high.filter (fun a => a.1 < b.1), (2 : ℝ) ^ a.2 / Real.sqrt (G a)) ≤
-        32 * Real.sqrt (A b) := by
-    intro b hb
-    have hsub : high.filter (fun a => a.1 < b.1) ⊆ Q.filter (fun a => a.1 < b.1) := by
-      intro a ha
-      exact mem_filter.mpr ⟨(mem_filter.mp (mem_filter.mp ha).1).1, (mem_filter.mp ha).2⟩
-    have hs := sum_le_sum_of_subset_of_nonneg
-      (f := fun a => (2 : ℝ) ^ a.2 / Real.sqrt (G a)) hsub (fun a _ _ => by positivity)
-    have hp := hcharge.2 b (mem_filter.mp hb).1
-    simp only [chargeValue, mul_one_div] at hp
-    exact hs.trans hp
-  have hinj : Set.InjOn Prod.fst (high : Set (ℕ × ℕ)) := by
-    intro a ha b hb hab
-    exact charging_unique_index _ n (List.mem_toFinset.mp (mem_filter.mp ha).1)
-      (List.mem_toFinset.mp (mem_filter.mp hb).1) hab
   have htune := mixed_tuning (mul_nonneg hL1.le hR)
   have hh := high_count_log_bound high Prod.fst A G Prod.snd hA hAF
-    (fun b _ => hbase _) (fun b _ => (hv b.1).2) (by positivity) htune.1 htune.2.1
-    hinj henergy (hsubset high (filter_subset _ _)) hprefix htune.2.2
+    (fun b _ => hbase _) (fun b _ => hguess b.1) (by positivity) htune.1 htune.2.1
+    hinj henergy hweights hprefix htune.2.2
   have hhigh := hh.trans (high_log_simplify hA hAF (mul_nonneg hL1.le hR))
-  have hcount : (∑ b ∈ Q, (b.2 : ℝ)) = n := by
-    exact_mod_cast charging_sum_count (runUp L0 L1 g s) n
-  have hsplit : (∑ b ∈ low, (b.2 : ℝ)) + (∑ b ∈ high, (b.2 : ℝ)) = n := by
-    rw [← hcount]
-    exact sum_filter_add_sum_filter_not Q _ _
   change (n : ℝ) ≤ 96 * Real.sqrt (L0 * Afinal) + _
   linarith only [hlow, hhigh, hsplit]
 
@@ -191,23 +150,11 @@ lemma run_accuracy {f : E → ℝ} {g : E → E} {L0 L1 R Δ ε : ℝ}
   by_contra hfail
   have hfail' : ε < f (run L0 L1 g s (n + 1)).x - f u := lt_of_not_ge hfail
   let Afinal := (run L0 L1 g s (n + 1)).A
-  have hAF : s.A ≤ Afinal := run_weight_mono (g := g) hL0 hL1 s hA.le hG (Nat.zero_le _)
+  have hAF : s.A ≤ Afinal :=
+    run_weight_mono (g := g) hL0 hL1 s hA.le hG (Nat.zero_le _)
   have hAFpos : 0 < Afinal := hA.trans_le hAF
-  have henergy := run_energy hL0 hL1 hc hg hgd hH s u hA.le hG (n + 1)
-  have hsum : 0 ≤ ∑ k ∈ range (n + 1), dissipation L0 L1 g (run L0 L1 g s k) := by
-    apply sum_nonneg
-    intro k _
-    have hv := run_valid (g := g) hL0 hL1 s hA.le hG k
-    exact dissipation_nonneg hL0 hL1 _ hv.1 hv.2
-  have hsmall : Afinal ≤ R ^ 2 / ε := by
-    apply (le_div_iff₀ hε).mpr
-    have hm := mul_le_mul_of_nonneg_left hfail'.le hAFpos.le
-    change Afinal * ε ≤ Afinal * (f (run L0 L1 g s (n + 1)).x - f u) at hm
-    have hE' := hE
-    dsimp [energy] at henergy hE'
-    change Afinal * _ + _ + _ ≤ _ at henergy
-    linarith only [hm, henergy, hE', hsum,
-      sq_nonneg ‖(run L0 L1 g s (n + 1)).z - u‖]
+  have hsmall : Afinal ≤ R ^ 2 / ε :=
+    run_weight_le_of_inaccurate hL0 hL1 hc hg hgd hH s u hA.le hG hE hε (n + 1) hfail'
   have hsqrt : Real.sqrt (L0 * Afinal) ≤ S := by
     apply Real.sqrt_le_sqrt
     have hm := mul_le_mul_of_nonneg_left hsmall hL0.le

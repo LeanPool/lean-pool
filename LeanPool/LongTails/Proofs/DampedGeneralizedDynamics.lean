@@ -380,4 +380,26 @@ lemma initial_first_down {g : E → E} {L0 L1 R Δ : ℝ}
     (by positivity) (localCurvature_pos hL0 hL1 _)
   simp only [initialIterate, he]
 
+/-- A failed target accuracy bounds the accumulated weight using the common energy estimate. -/
+lemma run_weight_le_of_inaccurate {f : E → ℝ} {g : E → E} {L0 L1 R ε : ℝ}
+    (hL0 : 0 < L0) (hL1 : 0 ≤ L1)
+    (hc : ConvexOn ℝ univ f) (hg : ∀ x, HasGradientAt f (g x) x)
+    (hgd : Differentiable ℝ g)
+    (hH : ∀ x, ‖fderiv ℝ g x‖ ≤ L0 + L1 * ‖g x‖)
+    (s : Iterate E) (u : E) (hA : 0 ≤ s.A) (hG : 0 < s.guess)
+    (hE : energy f u s ≤ R ^ 2) (hε : 0 < ε) (N : ℕ)
+    (hfail : ε < f (run L0 L1 g s N).x - f u) :
+    (run L0 L1 g s N).A ≤ R ^ 2 / ε := by
+  have hweight := (run_valid (g := g) hL0 hL1 s hA hG N).1
+  have hm := mul_le_mul_of_nonneg_left hfail.le hweight
+  have he := run_energy hL0 hL1 hc hg hgd hH s u hA hG N
+  have hsum : 0 ≤ ∑ k ∈ Finset.range N, dissipation L0 L1 g (run L0 L1 g s k) := by
+    apply Finset.sum_nonneg
+    intro k _
+    have hv := run_valid (g := g) hL0 hL1 s hA hG k
+    exact dissipation_nonneg hL0 hL1 _ hv.1 hv.2
+  dsimp only [energy] at he hE
+  apply (le_div_iff₀ hε).mpr
+  linarith only [hm, he, hE, hsum, sq_nonneg ‖(run L0 L1 g s N).z - u‖]
+
 end LongTails.OracleTemplate.GeneralizedAccelerated

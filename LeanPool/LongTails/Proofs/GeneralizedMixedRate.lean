@@ -389,4 +389,84 @@ lemma charged_high_energy {f : E → ℝ} {g : E → E} {L0 L1 : ℝ}
   rw [sum_image hinj] at he
   exact he
 
+/-- Shared low/high-curvature charging facts for both accelerated iteration-count bounds. -/
+lemma run_charging_geometry {f : E → ℝ} {g : E → E} {L0 L1 R : ℝ}
+    (hL0 : 0 < L0) (hL1 : 0 < L1)
+    (hc : ConvexOn ℝ Set.univ f) (hg : ∀ x, HasGradientAt f (g x) x)
+    (hgd : Differentiable ℝ g)
+    (hH : ∀ x, ‖fderiv ℝ g x‖ ≤ L0 + L1 * ‖g x‖)
+    (s : Iterate E) (u : E) (hmin : IsMinOn f Set.univ u)
+    (hA : 0 < s.A) (hG : 0 < s.guess) (hE : energy f u s ≤ R ^ 2)
+    (hfirst : localCurvature L0 L1 (g (coupling s)) = s.guess) (n : ℕ) :
+    let Q := chargingSet (runUp L0 L1 g s) n
+    let A := fun b : ℕ × ℕ => (run L0 L1 g s (b.1 + 1)).A
+    let G := fun b : ℕ × ℕ => (run L0 L1 g s b.1).guess
+    let M := fun b : ℕ × ℕ => localCurvature L0 L1 (g (coupling (run L0 L1 g s b.1)))
+    let low := Q.filter (fun b => M b ≤ 8 * L0)
+    let high := Q.filter (fun b => ¬M b ≤ 8 * L0)
+    let Afinal := (run L0 L1 g s (n + 1)).A
+    (∀ i, s.A ≤ (run L0 L1 g s i).A) ∧
+    (∀ i, 0 < (run L0 L1 g s i).guess) ∧
+    (∑ b ∈ low, (b.2 : ℝ)) ≤ 96 * Real.sqrt (L0 * Afinal) ∧
+    (∑ b ∈ high, A b * G b) ≤ (512 / 3) * (L1 * R) ^ 2 ∧
+    (∑ b ∈ high, (2 : ℝ) ^ b.2 / Real.sqrt (G b)) ≤ 32 * Real.sqrt Afinal ∧
+    (∀ b ∈ high,
+      (∑ a ∈ high.filter (fun a => a.1 < b.1), (2 : ℝ) ^ a.2 / Real.sqrt (G a)) ≤
+        32 * Real.sqrt (A b)) ∧
+    Set.InjOn Prod.fst (high : Set (ℕ × ℕ)) ∧
+    (∑ b ∈ low, (b.2 : ℝ)) + (∑ b ∈ high, (b.2 : ℝ)) = n := by
+  classical
+  let Q := chargingSet (runUp L0 L1 g s) n
+  let A := fun b : ℕ × ℕ => (run L0 L1 g s (b.1 + 1)).A
+  let G := fun b : ℕ × ℕ => (run L0 L1 g s b.1).guess
+  let M := fun b : ℕ × ℕ => localCurvature L0 L1 (g (coupling (run L0 L1 g s b.1)))
+  let low := Q.filter (fun b => M b ≤ 8 * L0)
+  let high := Q.filter (fun b => ¬M b ≤ 8 * L0)
+  let Afinal := (run L0 L1 g s (n + 1)).A
+  have hv (i : ℕ) := run_valid (g := g) hL0 hL1.le s hA.le hG i
+  have hbase (i : ℕ) : s.A ≤ (run L0 L1 g s i).A :=
+    run_weight_mono (g := g) hL0 hL1.le s hA.le hG (Nat.zero_le i)
+  have hcharge := run_charging_bound (g := g) hL0 hL1.le s hA.le hG hfirst.le n
+  have hweights : (∑ b ∈ Q, (2 : ℝ) ^ b.2 / Real.sqrt (G b)) ≤ 32 * Real.sqrt Afinal := by
+    simpa only [chargeValue, mul_one_div] using hcharge.1
+  have hsubset (T : Finset (ℕ × ℕ)) (hT : T ⊆ Q) :
+      (∑ b ∈ T, (2 : ℝ) ^ b.2 / Real.sqrt (G b)) ≤ 32 * Real.sqrt Afinal := by
+    apply le_trans (sum_le_sum_of_subset_of_nonneg hT ?_) hweights
+    intro b _ _
+    positivity
+  have hlow := low_count_sqrt_bound low G Prod.snd hL0.le
+    (fun b _ => (hv b.1).2)
+    (fun b hb => (charging_selected_curvature s hfirst n b (mem_filter.mp hb).1).trans
+      (mem_filter.mp hb).2)
+    (hsubset low (filter_subset _ _))
+  have henergy : (∑ b ∈ high, A b * G b) ≤ (512 / 3) * (L1 * R) ^ 2 := by
+    have he := charged_high_energy hL0 hL1 hc hg hgd hH s u hmin hA.le hG hfirst n high
+      (filter_subset _ _) (fun b hb => lt_of_not_ge (mem_filter.mp hb).2)
+    have hm := mul_le_mul_of_nonneg_left hE (show 0 ≤ (512 / 3) * L1 ^ 2 by positivity)
+    change (∑ b ∈ high, A b * G b) ≤ _ at he
+    nlinarith only [he, hm]
+  have hprefix : ∀ b ∈ high,
+      (∑ a ∈ high.filter (fun a => a.1 < b.1), (2 : ℝ) ^ a.2 / Real.sqrt (G a)) ≤
+        32 * Real.sqrt (A b) := by
+    intro b hb
+    have hsub : high.filter (fun a => a.1 < b.1) ⊆ Q.filter (fun a => a.1 < b.1) := by
+      intro a ha
+      exact mem_filter.mpr ⟨(mem_filter.mp (mem_filter.mp ha).1).1, (mem_filter.mp ha).2⟩
+    have hs := sum_le_sum_of_subset_of_nonneg
+      (f := fun a => (2 : ℝ) ^ a.2 / Real.sqrt (G a)) hsub (fun a _ _ => by positivity)
+    have hp := hcharge.2 b (mem_filter.mp hb).1
+    simp only [chargeValue, mul_one_div] at hp
+    exact hs.trans hp
+  have hinj : Set.InjOn Prod.fst (high : Set (ℕ × ℕ)) := by
+    intro a ha b hb hab
+    exact charging_unique_index _ n (List.mem_toFinset.mp (mem_filter.mp ha).1)
+      (List.mem_toFinset.mp (mem_filter.mp hb).1) hab
+  have hcount : (∑ b ∈ Q, (b.2 : ℝ)) = n := by
+    exact_mod_cast charging_sum_count (runUp L0 L1 g s) n
+  have hsplit : (∑ b ∈ low, (b.2 : ℝ)) + (∑ b ∈ high, (b.2 : ℝ)) = n := by
+    rw [← hcount]
+    exact sum_filter_add_sum_filter_not Q _ _
+  exact ⟨hbase, fun i => (hv i).2, hlow, henergy,
+    hsubset high (filter_subset _ _), hprefix, hinj, hsplit⟩
+
 end LongTails.OracleTemplate.GeneralizedAccelerated
