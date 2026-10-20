@@ -176,6 +176,7 @@ Apache License, Version 2.0, and are redistributed here under the same license.
   LeanPool/ListEdgeColoringComplete  https://github.com/jtraverso/haggkvist-janssen
   LeanPool/LocalComplexGeometry      https://github.com/BochaoKong/nullstellensatz
   LeanPool/LongGapsBetweenPrimes     https://github.com/openai/LongGapsBetweenPrimes
+  LeanPool/LongTails                 https://github.com/k3nfalt/longtails
   LeanPool/LowDimSolvClassification  https://github.com/LieLean/LowDimSolvClassification
   LeanPool/LowWeightPauliDynamics    https://github.com/Jue-Xu/Lean4LPD
   LeanPool/MRiscX                    https://github.com/JulsDE/MRiscX
