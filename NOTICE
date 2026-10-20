@@ -233,6 +233,7 @@ Apache License, Version 2.0, and are redistributed here under the same license.
   LeanPool/PhaseRetrieval            https://github.com/susannabertolini/PhaseRetrieval
   LeanPool/PoincareThreeBody         https://github.com/gersh/lean-pool
   LeanPool/PointwiseBirkhoff         https://github.com/lua-vr/pointwise-birkhoff
+  LeanPool/PointwiseComposition      https://github.com/flengyel/FailureOfComposition
   LeanPool/Polylean                  https://github.com/siddhartha-gadgil/Polylean
   LeanPool/PolylogIntegrals          https://github.com/rainrzk/LeanPolyLog
   LeanPool/PolynomialMethodRestrictedSums
