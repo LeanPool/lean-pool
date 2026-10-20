@@ -48,9 +48,10 @@ main_results:
     gradient queries equals the N-step accelerated iterate, for every seed.
 - declaration: LongTails.OracleTemplate.Gradient.gd_accuracy
   informal: >-
-    For a convex function with an exact L-Lipschitz gradient and initial distance
-    at most R from a comparison point, ordinary gradient descent reaches
-    objective gap epsilon after max(1, ceil(L*R^2/(2*epsilon))) queries.
+    For L > 0, R >= 0 and epsilon > 0, a convex function with an exact
+    L-Lipschitz gradient and initial distance at most R from a comparison point,
+    ordinary gradient descent reaches objective gap epsilon after
+    max(1, ceil(L*R^2/(2*epsilon))) queries.
 tags:
 - convex-optimization
 - gradient-methods
