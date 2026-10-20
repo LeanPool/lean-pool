@@ -11,9 +11,6 @@ public import LeanPool.ClassificationOfSurfaces.Moise.RelativeSynchronizedArrang
 import LeanPool.ClassificationOfSurfaces.Moise.AdaptiveFanAffine
 import LeanPool.ClassificationOfSurfaces.Moise.Brouwer
 import LeanPool.ClassificationOfSurfaces.Moise.EmbeddedComplexValence
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.CategoryTheory.Category.Init
-import Mathlib.MeasureTheory.Covering.Besicovitch
 import Mathlib.Topology.Metrizable.Urysohn
 
 /-!
@@ -69,6 +66,23 @@ private theorem TriangleMesh.baryEval_eq_iff_of_triangles_subset (R : TriangleMe
     exact congrArg Subtype.val (R.isEmbedding_coordinateEmbed.injective
       (show R.coordinateEmbed xR = R.coordinateEmbed yR from hxy))
   · exact congrArg R.toPlaneComplex.baryEval
+
+/-- Compare two restrictions before specializing their ambient mesh and predicates. -/
+private theorem TriangleMesh.restrictTriangles_coordinateEmbed_eq_iff (R : TriangleMesh)
+    (p q : Finset R.Vertex → Prop) [DecidablePred p] [DecidablePred q]
+    (x : GeometricRealization (R.restrictTriangles p).Vertex
+      (R.restrictTriangles p).triangles)
+    (y : GeometricRealization (R.restrictTriangles q).Vertex
+      (R.restrictTriangles q).triangles) :
+    (R.restrictTriangles p).coordinateEmbed x =
+        (R.restrictTriangles q).coordinateEmbed y ↔
+      (x : (R.restrictTriangles p).Vertex → ℝ) =
+        (y : (R.restrictTriangles q).Vertex → ℝ) := by
+  refine TriangleMesh.baryEval_eq_iff_of_triangles_subset R ?_ ?_ x y
+  · intro t ht
+    exact ((R.mem_restrictTriangles_triangles p).mp ht).1
+  · intro t ht
+    exact ((R.mem_restrictTriangles_triangles q).mp ht).1
 
 /-- A finite two-dimensional complex embedded in `S`, not necessarily covering it.  The
 realization is computed from the combinatorial data (as in `GeometricTriangulation`), so the
@@ -2563,15 +2577,13 @@ theorem patchMeshes_coordinateEmbed_eq_iff (k : ChartKind)
         (Q.patchNewMesh k).coordinateEmbed y ↔
       (x : (Q.patchOldMesh k).Vertex → ℝ) =
         (y : (Q.patchNewMesh k).Vertex → ℝ) := by
-  refine TriangleMesh.baryEval_eq_iff_of_triangles_subset
+  classical
+  exact TriangleMesh.restrictTriangles_coordinateEmbed_eq_iff
     (PolygonalFamily.synchronizedArrangement (Q.patchFacePolygon k) (patchTriangleMesh k))
-    ?_ ?_ x y
-  · intro t ht
-    exact ((PolygonalFamily.selectedSynchronizedMesh_triangle_mem
-      (Q.patchFacePolygon k) (patchTriangleMesh k) (fun _ ↦ True)).mp ht).1
-  · intro t ht
-    exact ((PolygonalFamily.targetSynchronizedMesh_triangle_mem
-      (Q.patchFacePolygon k) (patchTriangleMesh k)).mp ht).1
+    (PolygonalFamily.IsSelectedSynchronizedTriangle
+      (Q.patchFacePolygon k) (patchTriangleMesh k) (fun _ ↦ True))
+    (PolygonalFamily.IsTargetSynchronizedTriangle
+      (Q.patchFacePolygon k) (patchTriangleMesh k)) x y
 
 /-- If the retained source coordinates land in a closed model region, the whole replacement
 support does too. -/
@@ -2843,14 +2855,12 @@ theorem synchronizedPatchMeshes_coordinateEmbed_eq_iff (k : ChartKind)
         (synchronizedPatchNewMesh k J).coordinateEmbed y ↔
       (x : (synchronizedPatchOldMesh k J).Vertex → ℝ) =
         (y : (synchronizedPatchNewMesh k J).Vertex → ℝ) := by
-  refine TriangleMesh.baryEval_eq_iff_of_triangles_subset
-    (PolygonalFamily.synchronizedArrangement J k.patchComplex.toTriangleMesh) ?_ ?_ x y
-  · intro t ht
-    exact ((PolygonalFamily.selectedSynchronizedMesh_triangle_mem J
-      k.patchComplex.toTriangleMesh (fun _ ↦ True)).mp ht).1
-  · intro t ht
-    exact ((PolygonalFamily.targetSynchronizedMesh_triangle_mem J
-      k.patchComplex.toTriangleMesh).mp ht).1
+  classical
+  exact TriangleMesh.restrictTriangles_coordinateEmbed_eq_iff
+    (PolygonalFamily.synchronizedArrangement J k.patchComplex.toTriangleMesh)
+    (PolygonalFamily.IsSelectedSynchronizedTriangle J k.patchComplex.toTriangleMesh
+      (fun _ ↦ True))
+    (PolygonalFamily.IsTargetSynchronizedTriangle J k.patchComplex.toTriangleMesh) x y
 
 /-- Transport the finite polygonal member of a synchronized patch weld to the surface. -/
 noncomputable def synchronizedPatchOldSurfaceEmbed
@@ -3030,13 +3040,11 @@ theorem meshes_coordinateEmbed_eq_iff (J : ι → PolygonalCircle) (N : Triangle
     (oldMesh J N).coordinateEmbed x = (newMesh J N).coordinateEmbed y ↔
       (x : (oldMesh J N).Vertex → ℝ) =
         (y : (newMesh J N).Vertex → ℝ) := by
-  refine TriangleMesh.baryEval_eq_iff_of_triangles_subset
-    (PolygonalFamily.synchronizedArrangement J N) ?_ ?_ x y
-  · intro t ht
-    exact ((PolygonalFamily.selectedSynchronizedMesh_triangle_mem J N
-      (fun _ ↦ True)).mp ht).1
-  · intro t ht
-    exact ((PolygonalFamily.targetSynchronizedMesh_triangle_mem J N).mp ht).1
+  classical
+  exact TriangleMesh.restrictTriangles_coordinateEmbed_eq_iff
+    (PolygonalFamily.synchronizedArrangement J N)
+    (PolygonalFamily.IsSelectedSynchronizedTriangle J N (fun _ ↦ True))
+    (PolygonalFamily.IsTargetSynchronizedTriangle J N) x y
 
 /-- Transport the selected polygonal member of an arbitrary synchronized weld to the surface. -/
 noncomputable def oldSurfaceEmbed
@@ -3353,13 +3361,11 @@ theorem meshes_coordinateEmbed_eq_iff
         (newMesh J N lines).coordinateEmbed y ↔
       (x : (oldMesh J N lines).Vertex → ℝ) =
         (y : (newMesh J N lines).Vertex → ℝ) := by
-  refine TriangleMesh.baryEval_eq_iff_of_triangles_subset
-    (PolygonalFamily.relativeSynchronizedArrangement J N lines) ?_ ?_ x y
-  · intro t ht
-    exact ((PolygonalFamily.selectedRelativeSynchronizedMesh_triangle_mem
-      J N lines (fun _ ↦ True)).mp ht).1
-  · intro t ht
-    exact ((PolygonalFamily.targetRelativeSynchronizedMesh_triangle_mem J N lines).mp ht).1
+  classical
+  exact TriangleMesh.restrictTriangles_coordinateEmbed_eq_iff
+    (PolygonalFamily.relativeSynchronizedArrangement J N lines)
+    (PolygonalFamily.IsSelectedRelativeSynchronizedTriangle J N lines (fun _ ↦ True))
+    (PolygonalFamily.IsTargetRelativeSynchronizedTriangle J N lines) x y
 
 /-- The `oldSurfaceEmbed` declaration. -/
 noncomputable def oldSurfaceEmbed

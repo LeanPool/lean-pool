@@ -8,10 +8,6 @@ module
 public import LeanPool.ClassificationOfSurfaces.FiniteCyclicMoves
 import LeanPool.ClassificationOfSurfaces.FiniteCyclicP1Realization
 import LeanPool.ClassificationOfSurfaces.FiniteCyclicP2Realization
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.CategoryTheory.Category.Init
-import Mathlib.Combinatorics.SimpleGraph.Init
-import Mathlib.MeasureTheory.Covering.Besicovitch
 
 /-!
 # Realization invariance for finite cyclic move closures

@@ -210,7 +210,9 @@ theorem adaptiveGlobalFanMapStandardAffine_apply
   have hpoint := K.adaptiveGlobalFanFaceMap_standardAffine_point hU f
     (K.adaptiveGlobalFanAffinePiece hU f) haQ
       (K.adaptiveGlobalFanLinearPiece hU f) hb x
-  exact hpoint
+  simpa only [adaptiveGlobalFanFaceMapValue, adaptiveGlobalFanFaceMap,
+    adaptiveFanFaceMap, adaptiveGlobalFanMapStandardAffine, AffineMap.comp_apply,
+    LinearMap.coe_toAffineMap] using hpoint
 
 /- One adaptive global fan face is affine, in original intrinsic barycentric coordinates, as a
 function of its standard planar face coordinates. -/
@@ -236,52 +238,21 @@ theorem adaptiveFanFaceMap_val_eq_vertex_sum
   classical
   let Q := K.safeSubdivision f.1.1
   obtain ⟨a, ha⟩ := Q.affineOnFace f.1.2.1.1 f.1.2.1.2
-  let point :
-      {p // p ∈ K.adaptiveFanFaceVertices U hU f} →
-        (Q.refined.Vertex → ℝ) :=
-    fun p ↦ (K.adaptiveFanVertexSource U hU f p).1
-  let weight : {p // p ∈ K.adaptiveFanFaceVertices U hU f} → ℝ :=
-    fun p ↦ x p
-  have hweight : ∑ p, weight p = 1 := x.2.2
-  let zfun : Q.refined.Vertex → ℝ :=
-    (Finset.univ : Finset
-      {p // p ∈ K.adaptiveFanFaceVertices U hU f}
-    ).affineCombination ℝ point weight
-  have hzfun :
-      zfun = (K.adaptiveFanSourcePoint U hU f x).1 := by
-    rw [K.adaptiveFanSourcePoint_val]
-    rw [show zfun =
-        ∑ p, weight p • point p by
-      exact Finset.affineCombination_eq_linear_combination
-        Finset.univ point weight hweight]
-    funext v
-    simp only [weight, point, Finset.sum_apply, Pi.smul_apply, smul_eq_mul]
-  have hsourceCarrier :
-      K.adaptiveFanSourcePoint U hU f x ∈
-        Q.refined.faceCarrier f.1.2.1.1 :=
+  have hsourceCarrier : K.adaptiveFanSourcePoint U hU f x ∈
+      Q.refined.faceCarrier f.1.2.1.1 :=
     K.adaptiveFanSourcePoint_mem_carrier U hU f x
   have hvertex (p : {p // p ∈ K.adaptiveFanFaceVertices U hU f}) :
-      a (point p) = p.1.1 := by
-    have hpCarrier :=
-      K.adaptiveFanVertexSource_mem_carrier U hU f p
+      a (K.adaptiveFanVertexSource U hU f p).1 = p.1.1 := by
+    have hpCarrier := K.adaptiveFanVertexSource_mem_carrier U hU f p
     have hpAffine := ha (K.adaptiveFanVertexSource U hU f p) hpCarrier
     rw [← hpAffine]
-    exact congrArg Subtype.val
-      (Q.homeo.apply_symm_apply p.1)
-  change
-    (Q.homeo (K.adaptiveFanSourcePoint U hU f x)).1 =
-      fun v ↦ ∑ p, x p * p.1.1 v
-  rw [ha _ hsourceCarrier]
-  change a (K.adaptiveFanSourcePoint U hU f x).1 = _
-  rw [← hzfun,
-    (Finset.univ : Finset
-      {p // p ∈ K.adaptiveFanFaceVertices U hU f}
-    ).map_affineCombination point weight hweight a,
-    Finset.affineCombination_eq_linear_combination
-      Finset.univ (a ∘ point) weight hweight]
+    exact congrArg Subtype.val (Q.homeo.apply_symm_apply p.1)
+  change (Q.homeo (K.adaptiveFanSourcePoint U hU f x)).1 =
+    fun v ↦ ∑ p, x p * p.1.1 v
+  rw [ha _ hsourceCarrier, K.adaptiveFanSourcePoint_val U hU f x,
+    affineMap_apply_weighted_sum a
+      (fun p ↦ (K.adaptiveFanVertexSource U hU f p).1) x]
   funext v
-  simp only [Function.comp_apply, Finset.sum_apply, Pi.smul_apply,
-    smul_eq_mul, weight]
   apply Finset.sum_congr rfl
   intro p _
   rw [hvertex p]

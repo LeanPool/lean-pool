@@ -9,9 +9,6 @@ public import LeanPool.ClassificationOfSurfaces.Moise.ChartExtraction
 public import LeanPool.ClassificationOfSurfaces.Moise.LocallyFinitePLApproximation
 import LeanPool.ClassificationOfSurfaces.Moise.HalfPlanePolygon
 import LeanPool.ClassificationOfSurfaces.Moise.LocallyFiniteSidePreservation
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.CategoryTheory.Category.Init
-import Mathlib.MeasureTheory.Covering.Besicovitch
 
 /-!
 # Controlled locally finite PL replacement

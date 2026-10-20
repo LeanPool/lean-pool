@@ -7,10 +7,6 @@ module
 
 public import LeanPool.ClassificationOfSurfaces.CanonicalWords
 public import LeanPool.ClassificationOfSurfaces.FiniteCyclicPresentation
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.CategoryTheory.Category.Init
-import Mathlib.Combinatorics.SimpleGraph.Init
-import Mathlib.MeasureTheory.Covering.Besicovitch
 
 /-!
 # Canonical finite cyclic presentations

@@ -7,7 +7,6 @@ module
 
 public import LeanPool.ClassificationOfSurfaces.Moise.LocallyFiniteCellwiseExtension
 import LeanPool.ClassificationOfSurfaces.Moise.PLApproximation
-import Mathlib.CategoryTheory.Category.Init
 
 /-!
 # Quantitative locally finite PL approximation

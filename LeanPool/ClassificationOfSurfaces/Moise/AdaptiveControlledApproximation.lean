@@ -9,9 +9,6 @@ public import LeanPool.ClassificationOfSurfaces.Moise.AdaptiveOpenCover
 public import LeanPool.ClassificationOfSurfaces.Moise.LocallyFiniteControlledApproximation
 import LeanPool.ClassificationOfSurfaces.Moise.FacewiseComparison
 import LeanPool.ClassificationOfSurfaces.Moise.HalfPlanePolygon
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.CategoryTheory.Category.Init
-import Mathlib.MeasureTheory.Covering.Besicovitch
 
 /-!
 # Adaptive meshes for strongly-positive metric controls

@@ -9,10 +9,6 @@ public import LeanPool.ClassificationOfSurfaces.Moise.ChartExtraction
 public import LeanPool.ClassificationOfSurfaces.Moise.PolygonalJordan
 import LeanPool.ClassificationOfSurfaces.Moise.LineSubdivision
 import Mathlib.Analysis.Normed.Affine.AddTorsor
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.CategoryTheory.Category.Init
-import Mathlib.Combinatorics.SimpleGraph.Init
-import Mathlib.MeasureTheory.Covering.Besicovitch
 
 /-!
 # Polygonal disks in a half-plane
