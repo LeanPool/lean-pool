@@ -61,6 +61,7 @@ Apache License, Version 2.0, and are redistributed here under the same license.
   LeanPool/Chudnovsky                https://github.com/ldct/lean-eval-chudnovsky
   LeanPool/CircuitComplexity         https://github.com/SamuelSchlesinger/circuit-complexity
   LeanPool/Circuitlib                https://github.com/matthunz/circuitlib
+  LeanPool/ClassicalGraphColouring   https://github.com/jtraverso/galvin-dinitz
   LeanPool/ClassicalMatchingFactors  https://github.com/jtraverso/tutte-f-factor
   LeanPool/ClassificationOfSurfaces  https://github.com/mccorvie/classification-of-surfaces
   LeanPool/CompactSpectral           https://github.com/abenenson/compact-spectral
