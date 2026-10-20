@@ -6,6 +6,7 @@ Authors: Lean Pool contributors
 module  -- shake: keep-all --deprecated_module: ignore
 
 -- Generated project imports; run `lake exe mk_all`.
+public import LeanPool.FLTEichlerShimura
 public import LeanPool.FLTEichlerShimura.Definitions.Def_AdicCompletionLocalRing
 public import LeanPool.FLTEichlerShimura.Definitions.Def_AlgebraicCurve_AdelicIndex
 public import LeanPool.FLTEichlerShimura.Definitions.Def_AlgebraicCurve_BaseChangeGalois

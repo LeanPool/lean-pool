@@ -22,7 +22,8 @@ main_results:
 - declaration: HeckeEis.exists_eichlerShimura_coeffH1par_binaryFormRepSL_forall_prime
   informal: The Eichler-Shimura isomorphism for Gamma_0(N), identifying parabolic
     cohomology with binary-form coefficients with the direct sum of holomorphic
-    and antiholomorphic cusp forms, compatibly with Hecke operators at all primes.
+    and antiholomorphic cusp forms, with Hecke compatibility at every prime conditional
+    on the supplied cohomology operator descending from the explicit cochain Hecke formula.
 - declaration: HeckeEis.isCompl_range_eichlerShimuraMap_range_conj
   informal: The images of the canonical Eichler-Shimura map and its complex
     conjugate are complementary subspaces of parabolic cohomology.
