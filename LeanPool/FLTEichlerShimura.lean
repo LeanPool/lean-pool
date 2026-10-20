@@ -6,7 +6,7 @@ Authors: Lean Pool contributors
 
 module
 
-public import LeanPool.FLTEichlerShimura.Theorems.Thm_HeckeEis_exists_eichlerShimura_coeffH1par_binaryFormRepSL_forall_prime
+public import LeanPool.FLTEichlerShimura.Theorems.Thm_HeckeEis_exists_eichlerShimura_heckeEquivariant
 public import LeanPool.FLTEichlerShimura.Theorems.Thm_HeckeEis_isCompl_range_eichlerShimuraMap_range_conj
 public import LeanPool.FLTEichlerShimura.Theorems.Thm_WeierstrassCurve_tateModuleRep_charpoly_frobenius
 public import LeanPool.FLTEichlerShimura.Theorems.Thm_WeierstrassCurve_tateModuleRep_isUnramifiedAt_of_isGoodPrimeFor
@@ -17,7 +17,7 @@ public import LeanPool.FLTEichlerShimura.Theorems.Thm_WeierstrassCurve_tateModul
 Source: url:https://github.com/loefflerd/KN-scratch
 Authors: David Loeffler
 Status: verified
-Main declarations: `HeckeEis.exists_eichlerShimura_coeffH1par_binaryFormRepSL_forall_prime`, `HeckeEis.isCompl_range_eichlerShimuraMap_range_conj`, `WeierstrassCurve.tateModuleRep_charpoly_frobenius`, `WeierstrassCurve.tateModuleRep_isUnramifiedAt_of_isGoodPrimeFor`
+Main declarations: `HeckeEis.exists_eichlerShimura_heckeEquivariant`, `HeckeEis.isCompl_range_eichlerShimuraMap_range_conj`, `WeierstrassCurve.tateModuleRep_charpoly_frobenius`, `WeierstrassCurve.tateModuleRep_isUnramifiedAt_of_isGoodPrimeFor`
 Tags: number-theory, modular-forms, elliptic-curves, galois-representations
 MSC: 11F11
 -/
