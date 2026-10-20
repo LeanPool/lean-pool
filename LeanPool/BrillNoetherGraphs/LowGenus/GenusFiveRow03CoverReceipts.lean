@@ -6,6 +6,7 @@ Authors: Nathan Pflueger
 module
 
 public import LeanPool.BrillNoetherGraphs.Utilities.Subdivision.AffineCover
+public import LeanPool.BrillNoetherGraphs.Utilities.Foundations.ChunkedLookup
 
 /-!
 # Sparse Farkas receipts for the row-03 closed cover
@@ -1768,5 +1769,35 @@ def farkasReceipts6 : List Certificate.AffineCover.FarkasData :=
 def farkasReceipts : List Certificate.AffineCover.FarkasData :=
   farkasReceipts0 ++ farkasReceipts1 ++ farkasReceipts2 ++ farkasReceipts3 ++ farkasReceipts4 ++
   farkasReceipts5 ++ farkasReceipts6
+
+/-- Existing receipt blocks with their checked sizes, avoiding repeated prefix traversal. -/
+def farkasReceiptChunks : List (ℕ × List Certificate.AffineCover.FarkasData) :=
+  [(128, farkasReceipts0),
+   (128, farkasReceipts1),
+   (128, farkasReceipts2),
+   (128, farkasReceipts3),
+   (128, farkasReceipts4),
+   (128, farkasReceipts5),
+   (28, farkasReceipts6)]
+
+private theorem farkasReceiptChunks_sizes :
+    ∀ chunk ∈ farkasReceiptChunks, chunk.1 = chunk.2.length := by
+  intro chunk hMem
+  simp only [farkasReceiptChunks, List.mem_cons, List.not_mem_nil, or_false] at hMem
+  rcases hMem with rfl | rfl | rfl | rfl | rfl | rfl | rfl <;> rfl
+
+/-- Block lookup keeps the original table, order, and out-of-range default. -/
+def farkasReceiptLookup (index : ℕ) : Certificate.AffineCover.FarkasData :=
+  List.lookupChunks farkasReceiptChunks index { terms := [] }
+
+theorem farkasReceiptLookup_eq_getD (index : ℕ) :
+    farkasReceiptLookup index = farkasReceipts.getD index { terms := [] } := by
+  have hTable : farkasReceiptChunks.flatMap Prod.snd = farkasReceipts := by
+    simp only [farkasReceiptChunks, List.flatMap_cons, List.flatMap_nil, List.append_nil,
+      List.append_assoc, farkasReceipts]
+  have hLookup := List.lookupChunks_eq_getD_flatMap farkasReceiptChunks
+    farkasReceiptChunks_sizes index { terms := [] }
+  rw [hTable] at hLookup
+  exact hLookup
 
 end AtanasovRanganathan.GenusFiveRow03FixedCover
