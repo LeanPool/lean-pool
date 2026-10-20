@@ -84,7 +84,7 @@ lemma hasDerivAt_arc_exp (α β c t : ℝ) :
     Complex.ofRealCLM.hasDerivAt.sub_const (c : ℂ)
   have h_inner : HasDerivAt (fun t' : ℝ => (α : ℂ) + ((t' : ℂ) - c) * (β : ℂ)) (β : ℂ) t := by
     have h_mul := h_shift.mul_const (β : ℂ)
-    simp_all
+    simp_all only [hasDerivAt_sub_const_iff, one_mul, hasDerivAt_const_add_iff]
   have h := (Complex.hasDerivAt_exp (((α : ℂ) + ((t : ℂ) - c) * (β : ℂ)) * I)).comp t
     (h_inner.mul_const I)
   simp only [mul_comm (Complex.exp _)] at h
@@ -117,7 +117,7 @@ lemma exp_pi_div_three_eq_rho' :
 
 lemma exp_pi_div_two_eq_I :
     Complex.exp (↑(Real.pi / 2) * I) = I := by
-  simp_all
+  simp_all only [ofReal_div, ofReal_ofNat, exp_pi_div_two_mul_I]
 
 lemma exp_two_pi_div_three_eq_rho :
     Complex.exp (↑(2 * Real.pi / 3) * I) = rho := by
@@ -214,12 +214,12 @@ lemma fdBoundaryToPolygonHomotopy_continuous :
 lemma fdBoundaryToPolygonHomotopy_at_zero (t : ℝ) (_ht : t ∈ Icc 0 5) :
     fdBoundaryToPolygonHomotopy (t, 0) = fdBoundary t := by
   simp only [fdBoundaryToPolygonHomotopy, fdBoundary]
-  simp_all
+  simp_all only [mem_Icc, one_div, sub_zero, one_smul, zero_smul, add_zero]
 
 lemma fdBoundaryToPolygonHomotopy_at_one (t : ℝ) (_ht : t ∈ Icc 0 5) :
     fdBoundaryToPolygonHomotopy (t, 1) = fdPolygon t := by
   simp only [fdBoundaryToPolygonHomotopy, fdPolygon]
-  simp_all
+  simp_all only [mem_Icc, one_div, sub_self, zero_smul, one_smul, zero_add]
 
 lemma fdBoundaryToPolygonHomotopy_avoids (p : ℂ) (hp_norm : ‖p‖ > 1) (hp_re : |p.re| < 1 / 2)
     (hp_im : p.im < HHeight) (t : ℝ) (_ht : t ∈ Icc 0 5) (s : ℝ)
@@ -238,8 +238,8 @@ lemma fdBoundaryToPolygonHomotopy_avoids (p : ℂ) (hp_norm : ‖p‖ > 1) (hp_r
         Complex.ofReal_im, Complex.div_ofNat_im,
         Complex.mul_im]
       norm_num
-    simp_all
-  · have ht2 : t - 1 ∈ Icc 0 1 := by constructor <;> linarith [h1, h2]
+    simp_all only [gt_iff_lt, one_div, mem_Icc, abs_inv, Nat.abs_ofNat, lt_self_iff_false]
+  · have ht2 : t - 1 ∈ Icc 0 1 := by constructor <;> linarith only [h1, h2]
     have h_arc_in := segment2_arc_in_closed_unit_ball t
     have h_chord_in := chord1_in_closed_unit_ball (t - 1) ht2
     have h_in_ball : (1 - s) • Complex.exp
@@ -250,7 +250,7 @@ lemma fdBoundaryToPolygonHomotopy_avoids (p : ℂ) (hp_norm : ‖p‖ > 1) (hp_r
         h_arc_in h_chord_in s hs
     have hp_out := outside_closed_unit_ball p hp_norm
     exact fun h => hp_out (h ▸ h_in_ball)
-  · have ht3 : t - 2 ∈ Icc 0 1 := by constructor <;> linarith [h2, h3]
+  · have ht3 : t - 2 ∈ Icc 0 1 := by constructor <;> linarith only [h2, h3]
     have h_arc_in := segment3_arc_in_closed_unit_ball t
     have h_chord_in := chord2_in_closed_unit_ball (t - 2) ht3
     have h_in_ball : (1 - s) • Complex.exp
@@ -274,7 +274,7 @@ lemma fdBoundaryToPolygonHomotopy_avoids (p : ℂ) (hp_norm : ‖p‖ > 1) (hp_r
       norm_num
     rw [heq] at hre
     have : |p.re| = 1/2 := by rw [hre]; norm_num
-    linarith
+    linarith only [hp_re, this]
   · intro heq
     have him : (↑t - 9/2 + ↑HHeight * I : ℂ).im =
           HHeight := by
@@ -282,8 +282,9 @@ lemma fdBoundaryToPolygonHomotopy_avoids (p : ℂ) (hp_norm : ‖p‖ > 1) (hp_r
         Complex.ofReal_im, Complex.div_ofNat_im,
         Complex.mul_im, Complex.ofReal_re, Complex.I_re,
         mul_zero, Complex.I_im, mul_one]
-      simp_all
-    rw [heq] at him; linarith
+      simp_all only [gt_iff_lt, one_div, mem_Icc, not_le, im_ofNat, zero_div, sub_self, add_zero,
+        zero_add]
+    rw [heq] at him; linarith only [hp_im, him]
 
 lemma fdBoundaryToPolygonHomotopy_closed (s : ℝ) (_hs : s ∈ Icc 0 1) :
     fdBoundaryToPolygonHomotopy (0, s) =
@@ -302,7 +303,9 @@ noncomputable def circleAround (p : ℂ) (ε : ℝ) :
 lemma circleAround_closed (p : ℂ) (ε : ℝ) :
     circleAround p ε 0 = circleAround p ε 5 := by
   simp only [circleAround, Complex.ofReal_zero, mul_zero, zero_div, Complex.ofReal_ofNat]
-  simp_all
+  simp_all only [exp_zero, mul_one, ne_eq, OfNat.ofNat_ne_zero, not_false_eq_true,
+    mul_div_cancel_right₀,
+      exp_two_pi_mul_I]
 
 lemma circleAround_continuous (p : ℂ) (ε : ℝ) :
     Continuous (circleAround p ε) := by unfold circleAround; continuity

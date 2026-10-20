@@ -130,8 +130,12 @@ private lemma measurableSet_multipoint_goodset {γ : ℝ → ℂ} {a b ε : ℝ}
   have h_eq : {t | ∀ s ∈ S, ε < ‖γ t - s‖} ∩ Icc a b =
       Icc a b \ ({t | ∃ s ∈ S, ‖γ t - s‖ ≤ ε} ∩ Icc a b) := by
     ext t; constructor
-    · simp_all
-    · simp_all
+    · simp_all only [mem_inter_iff, mem_ofPred_eq, mem_Icc, sdiff_inter_self_eq_sdiff,
+      Set.mem_sdiff, and_self,
+          not_exists, not_and, not_le, implies_true]
+    · simp_all only [sdiff_inter_self_eq_sdiff, Set.mem_sdiff, mem_Icc, mem_ofPred_eq,
+      not_exists, not_and, not_le,
+          mem_inter_iff, implies_true, and_self]
   rw [h_eq]; exact isClosed_Icc.measurableSet.diff (measurableSet_multipoint_condition S hγ)
 
 private lemma goodset_piecewise_ae_eq_multipoint {g : ℂ → ℂ} {γ : ℝ → ℂ} {a b ε : ℝ}
@@ -362,7 +366,7 @@ lemma disjoint_balls_of_small_epsilon (S0 : Finset ℂ) (ε : ℝ) (_hε : 0 < �
   intro s hs s' hs' hne; apply Metric.ball_disjoint_ball
   have h2 : δ ≤ dist s s' := by
     rw [dist_eq_norm, norm_sub_rev]; exact h_sep s hs s' hs' hne
-  linarith
+  linarith only [hε_small, h2]
 
 /-! ## Boundedness Lemmas -/
 
@@ -443,7 +447,7 @@ lemma intervalIntegrable_cauchyPrincipalValueIntegrandOn {S0 : Finset ℂ} {f : 
             · exact le_trans (hMγ' t ht) (le_abs_self _)
             · exact norm_nonneg _
             · positivity
-        _ ≤ |Mf| * |Mγ'| + 1 := by linarith
+        _ ≤ |Mf| * |Mγ'| + 1 := by linarith only []
   let M := |Mf| * |Mγ'| + 1
   have h_meas :
       AEStronglyMeasurable
@@ -495,7 +499,7 @@ lemma intervalIntegrable_residueTerm
                 (le_abs_self _)
             · exact norm_nonneg _
             · positivity
-        _ ≤ M := by simp only [M]; linarith
+        _ ≤ M := by simp only [M]; linarith only []
     · simp only [norm_zero, M]; positivity
   have hγ_cont :=
     γ.toPiecewiseC1Curve.continuous_toFun

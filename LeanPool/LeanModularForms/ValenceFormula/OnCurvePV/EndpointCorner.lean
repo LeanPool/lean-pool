@@ -8,7 +8,6 @@ module
 public import LeanPool.LeanModularForms.GeneralizedResidueTheory.Basic
 public import LeanPool.LeanModularForms.ValenceFormula.Boundary.Basic
 import LeanPool.LeanModularForms.GeneralizedResidueTheory.OnCurvePV.Basic
-import LeanPool.LeanModularForms.ValenceFormula.Boundary.Bounds
 import LeanPool.LeanModularForms.ValenceFormula.Boundary.Smooth
 import LeanPool.LeanModularForms.ValenceFormula.OnCurvePV.Basic
 import LeanPool.LeanModularForms.ValenceFormula.WindingWeights.Common
@@ -92,7 +91,7 @@ private lemma endpoint_avoid_14 (H : ℝ) (hH : Real.sqrt 3 / 2 < H) :
         UpperHalfPlane.coe_mk, Complex.add_im, Complex.ofReal_im,
         Complex.mul_im, Complex.I_re, Complex.I_im, Complex.ofReal_re,
         Complex.div_ofNat, mul_zero, mul_one, s] at h_im
-      linarith
+      linarith only [hH, h_im]
     · have ht1' : 1 < t := lt_of_le_of_ne ht.1 (Ne.symm ht1)
       have h_norm : ‖fdBoundaryH H t‖ = 1 :=
         fdBoundary_H_eq_arc ht1' (lt_of_le_of_ne ht3 (by
@@ -102,7 +101,7 @@ private lemma endpoint_avoid_14 (H : ℝ) (hH : Real.sqrt 3 / 2 < H) :
           simp [ellipticPointRho, ellipticPointRho', UpperHalfPlane.coe_mk,
             Complex.add_im, Complex.neg_im, Complex.ofReal_im, Complex.mul_im,
             Complex.I_re, Complex.I_im, Complex.ofReal_re, Complex.div_ofNat, s] at him
-          linarith [Real.sqrt_pos.mpr (show (0 : ℝ) < 3 from by norm_num)])) |>.symm ▸
+          linarith only [hH, him, Real.sqrt_pos.mpr (show (0 : ℝ) < 3 from by norm_num)])) |>.symm ▸
         Complex.norm_exp_ofReal_mul_I _
       rw [habs] at h_norm
       have : 1 < ‖s‖ := one_lt_norm_of_one_lt_normSq (by
@@ -110,10 +109,12 @@ private lemma endpoint_avoid_14 (H : ℝ) (hH : Real.sqrt 3 / 2 < H) :
           Complex.mul_re, Complex.I_re, Complex.I_im, Complex.ofReal_im,
           Complex.add_im, Complex.mul_im, Complex.one_re, Complex.one_im,
           Complex.div_ofNat]
-        have hH0 : 0 < H := by linarith [Real.sqrt_pos.mpr (show (0 : ℝ) < 3 from by norm_num)]
-        nlinarith [mul_lt_mul hH hH.le (by positivity : (0 : ℝ) < Real.sqrt 3 / 2) hH0.le,
-                   Real.mul_self_sqrt (show (0 : ℝ) ≤ 3 from by norm_num)])
-      linarith
+        have hH0 : 0 < H := by
+          linarith only [hH, Real.sqrt_pos.mpr (show (0 : ℝ) < 3 from by norm_num)]
+        nlinarith only [hH, hH0,
+          mul_lt_mul hH hH.le (by positivity : (0 : ℝ) < Real.sqrt 3 / 2) hH0.le,
+          Real.mul_self_sqrt (show (0 : ℝ) ≤ 3 from by norm_num)])
+      linarith only [h_norm, this]
   · push Not at ht3
     have h_re_t := fdBoundary_H_seg4_re' H ht3 ht.2
     rw [habs] at h_re_t
@@ -156,7 +157,8 @@ private lemma endpoint_norm_seg1 (H : ℝ) (s : ℂ) (hs_def : s = (1 / 2 : ℂ)
     (t : ℝ) (ht0 : 0 ≤ t) (ht1 : t ≤ 1) :
     ‖fdBoundaryH H t - s‖ = t * c := by
   rw [endpoint_diff_seg1 H s hs_def c hc_def t ht0 ht1, norm_mul, Complex.norm_real,
-    Complex.norm_I, mul_one, Real.norm_eq_abs, abs_of_nonpos (by nlinarith : (-t) * c ≤ 0)]
+    Complex.norm_I, mul_one, Real.norm_eq_abs, abs_of_nonpos (by nlinarith only [hc,
+      ht0] : (-t) * c ≤ 0)]
   ring
 
 /-- Norm on seg5: `‖fdBoundaryH H t - s‖ = 5 - t` for the endpoint. -/
@@ -164,7 +166,7 @@ private lemma endpoint_norm_seg5 (H : ℝ) (s : ℂ) (hs_def : s = (1 / 2 : ℂ)
     (t : ℝ) (ht4 : 4 < t) (ht5 : t ≤ 5) :
     ‖fdBoundaryH H t - s‖ = 5 - t := by
   rw [endpoint_diff_seg5 H s hs_def t ht4, Complex.norm_real, Real.norm_eq_abs,
-    abs_of_nonpos (by linarith)]
+    abs_of_nonpos (by linarith only [ht5])]
   ring
 
 /-- Integrand on seg1: `(γ t - s)⁻¹ * γ'(t) = t⁻¹` for the endpoint. -/
@@ -377,7 +379,7 @@ private lemma corner_cpv_03 (H : ℝ) (hH : Real.sqrt 3 / 2 < H) :
     rw [habs, hs_def] at hre
     simp only [Complex.add_re, Complex.neg_re, Complex.ofReal_re, Complex.mul_re,
       Complex.I_re, Complex.I_im, Complex.ofReal_im, Complex.one_re, Complex.div_ofNat] at hre
-    linarith
+    linarith only [hre]
   · push Not at ht1
     by_cases ht3 : t < 3
     · have h_norm : ‖fdBoundaryH H t‖ = 1 := by
@@ -388,21 +390,27 @@ private lemma corner_cpv_03 (H : ℝ) (hH : Real.sqrt 3 / 2 < H) :
           Complex.ofReal_re, Complex.mul_re, Complex.I_re, Complex.I_im, Complex.ofReal_im,
           Complex.add_im, Complex.neg_im, Complex.mul_im, Complex.one_re, Complex.one_im,
           Complex.div_ofNat]
-        have hH0 : 0 < H := by linarith [Real.sqrt_pos.mpr (show (0 : ℝ) < 3 from by norm_num)]
-        nlinarith [mul_lt_mul hH hH.le (by positivity : (0 : ℝ) < Real.sqrt 3 / 2) hH0.le,
-                   Real.mul_self_sqrt (show (0 : ℝ) ≤ 3 from by norm_num)])
-      linarith
-    · have ht3_eq : t = 3 := le_antisymm ht.2 (by linarith)
+        have hH0 : 0 < H := by
+          linarith only [hH, Real.sqrt_pos.mpr (show (0 : ℝ) < 3 from by norm_num)]
+        nlinarith only [hH, hH0,
+          mul_lt_mul hH hH.le (by positivity : (0 : ℝ) < Real.sqrt 3 / 2) hH0.le,
+          Real.mul_self_sqrt (show (0 : ℝ) ≤ 3 from by norm_num)])
+      linarith only [h_norm, this]
+    · have ht3_eq : t = 3 := le_antisymm ht.2 (by linarith only [ht3])
       subst ht3_eq
       rw [fdBoundary_H_at_three] at habs
       have him_s : s.im = H := by
-        simp_all
+        simp_all only [one_div, Nat.ofNat_nonneg, Std.le_refl, and_self, Nat.one_lt_ofNat,
+          lt_self_iff_false,
+            not_false_eq_true, add_im, neg_im, inv_im, im_ofNat, neg_zero, normSq_ofNat,
+              zero_div, mul_im, ofReal_re, I_im,
+            mul_one, ofReal_im, I_re, mul_zero, add_zero, zero_add]
       rw [← habs] at him_s
       have him_rho : (ellipticPointRho : ℂ).im = Real.sqrt 3 / 2 := by
         simp [ellipticPointRho, ellipticPointRho', UpperHalfPlane.coe_mk,
           Complex.add_im, Complex.neg_im, Complex.ofReal_im, Complex.mul_im,
           Complex.I_re, Complex.I_im, Complex.ofReal_re, Complex.div_ofNat]
-      linarith [him_rho]
+      linarith only [hH, him_s, him_rho]
 
 private lemma integral_inv_shift_four (a b : ℝ) :
     (∫ t in a..b, (↑(t - 4) : ℂ)⁻¹) = ∫ u in (a - 4)..(b - 4), (↑u : ℂ)⁻¹ := by

@@ -10,11 +10,9 @@ public import LeanPool.LeanModularForms.Modularforms.JacobiTheta
 public import LeanPool.LeanModularForms.Modularforms.Derivative
 import LeanPool.LeanModularForms.Modularforms.DimensionFormulas
 import LeanPool.LeanModularForms.Modularforms.EisensteinAsymptotics
-import LeanPool.LeanModularForms.Modularforms.ForMathlibCusps
 import Mathlib.Data.Int.Star
 
 /-! # ThetaDerivIdentities -/
-
 
 @[expose] public section
 
@@ -686,7 +684,9 @@ lemma f₂_eq_zero : f₂ = 0 := by
     funext z
     have hz := congrFun hh z
     unfold thetaH at hz
-    simp_all
+    simp_all only [mul_zero, add_zero, ne_eq, OfNat.ofNat_ne_zero, not_false_eq_true, zero_pow,
+      Pi.add_apply,
+        Pi.pow_apply, Pi.zero_apply, pow_eq_zero_iff]
   -- From f₄_sq_mul_eq and thetaH = 0: f₄² * (3 * HSumSq) = 0
   have h_f₄_sq_3H : f₄ ^ 2 * (fun z => 3 * HSumSq z) = 0 := by
     ext z
@@ -702,7 +702,7 @@ lemma f₂_eq_zero : f₂ = 0 := by
     ((UpperHalfPlane.mul_eq_zero_iff f₄_sq_MDiff three_H_sum_sq_MDifferentiable).mp h_f₄_sq_3H
       ).resolve_right three_H_sum_sq_ne_zero
   -- From f₄² = f₄ * f₄ = 0: f₄ = 0
-  simp_all
+  simp_all only [zero_mul, ne_eq, OfNat.ofNat_ne_zero, not_false_eq_true, pow_eq_zero_iff]
 
 /-- From f₂ = 0 and h = 0, deduce f₄ = 0 -/
 lemma f₄_eq_zero : f₄ = 0 := by

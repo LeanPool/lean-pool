@@ -290,20 +290,20 @@ theorem exists_isolated_crossing_interval
   set b' := (t₀ + min u γ.b) / 2 with hb'_def
   have h_max_lt : max l γ.a < t₀ := max_lt hl_lt ht₀.1
   have h_t₀_lt_min : t₀ < min u γ.b := lt_min hlt_u ht₀.2
-  have ha'_lt : a' < t₀ := by linarith
-  have ht₀_lt_b' : t₀ < b' := by linarith
+  have ha'_lt : a' < t₀ := by linarith only [ha'_def, h_max_lt]
+  have ht₀_lt_b' : t₀ < b' := by linarith only [hb'_def, h_t₀_lt_min]
   have hl_lt_a' : l < a' := by
     have : l ≤ max l γ.a := le_max_left _ _
-    linarith
+    linarith only [ha'_def, ha'_lt, this]
   have hb'_lt_u : b' < u := by
     have : min u γ.b ≤ u := min_le_left _ _
-    linarith
+    linarith only [hb'_def, ht₀_lt_b', this]
   have ha_le_a' : γ.a ≤ a' := by
     have : γ.a ≤ max l γ.a := le_max_right _ _
-    linarith
+    linarith only [ha'_def, ha'_lt, this]
   have hb'_le_b : b' ≤ γ.b := by
     have : min u γ.b ≤ γ.b := min_le_right _ _
-    linarith
+    linarith only [hb'_def, ht₀_lt_b', this]
   refine ⟨a', b', ha'_lt, ht₀_lt_b', ?_, ?_, ?_⟩
   · intro t ht
     exact ⟨le_trans ha_le_a' ht.1, le_trans ht.2 hb'_le_b⟩

@@ -8,7 +8,6 @@ module
 public import LeanPool.LeanModularForms.GeneralizedResidueTheory.Basic
 public import LeanPool.LeanModularForms.ValenceFormula.Boundary.Basic
 import LeanPool.LeanModularForms.GeneralizedResidueTheory.OnCurvePV.Basic
-import LeanPool.LeanModularForms.ValenceFormula.Boundary.Bounds
 import LeanPool.LeanModularForms.ValenceFormula.Boundary.Smooth
 import LeanPool.LeanModularForms.ValenceFormula.WindingWeights.Common
 import LeanPool.LeanModularForms.ValenceFormula.WindingWeights.I
@@ -183,7 +182,7 @@ lemma cpv_extend_to_full_interval (H : ℝ) (hH : Real.sqrt 3 / 2 < H)
     apply cpv_concat _ _ 0 a' b' s h_cpv_left h_sub ha' (le_of_lt hab')
     intro ε hε
     exact (fdBoundary_H_cutout_ii H hH s ε hε).mono_set (by
-      rw [Set.uIcc_of_le (by linarith : (0 : ℝ) ≤ b'),
+      rw [Set.uIcc_of_le (by linarith only [ha', hab'] : (0 : ℝ) ≤ b'),
         Set.uIcc_of_le (by norm_num : (0 : ℝ) ≤ 5)]
       exact Set.Icc_subset_Icc_right hb')
   apply cpv_concat _ _ 0 b' 5 s h_cpv_0b' h_cpv_right (le_trans ha' (le_of_lt hab')) hb'

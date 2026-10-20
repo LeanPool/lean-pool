@@ -8,10 +8,6 @@ module
 public import Mathlib.NumberTheory.ModularForms.Bounds
 public import LeanPool.LeanModularForms.ForMathlib.Petersson
 
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Combinatorics.Matroid.Init
-import Mathlib.MeasureTheory.Integral.Bochner.Basic
-import Mathlib.Tactic.Positivity.Finset
 
 /-!
 # Bounds for modular forms

@@ -164,7 +164,7 @@ private lemma tsum_pnat_eq_r_times (r : ℝ) :
   have h1 : ∑' (n : ℕ+), (↑↑n : ℝ) * r ^ (n : ℕ) =
       ∑' (m : ℕ), (↑(m + 1) : ℝ) * r ^ (m + 1) := by
     rw [← Equiv.tsum_eq Equiv.pnatEquivNat]
-    simp_all
+    simp_all only [Equiv.pnatEquivNat_apply, PNat.natPred_add_one]
   rw [h1, ← tsum_mul_left]; congr 1; ext m; ring
 
 private lemma norm_term_le_two_mul {q : ℂ} (hq : ‖q‖ ≤ 1 / 2) (n : ℕ+) :
@@ -175,8 +175,8 @@ private lemma norm_term_le_two_mul {q : ℂ} (hq : ‖q‖ ≤ 1 / 2) (n : ℕ+)
     (pow_le_pow_left₀ (norm_nonneg q) hq n).trans
       ((pow_le_pow_of_le_one (by norm_num) (by norm_num) n.2).trans (by norm_num))
   have h1_sub : 1/2 ≤ ‖1 - q ^ (n : ℕ)‖ := by
-    linarith [norm_sub_norm_le (1 : ℂ) (q ^ (n : ℕ)), norm_one (α := ℂ),
-      show ‖q ^ (n : ℕ)‖ ≤ 1/2 from norm_pow q n ▸ hqn_le]
+    linarith only [hqn_le, norm_sub_norm_le (1 : ℂ) (q ^ (n : ℕ)), norm_one (α := ℂ),
+      show ‖q ^ (n : ℕ)‖ ≤ 1 / 2 from norm_pow q n ▸ hqn_le]
   calc (n : ℝ) * ‖q‖ ^ (n : ℕ) / ‖1 - q ^ ↑n‖
       ≤ (n : ℝ) * ‖q‖ ^ (n : ℕ) / (1/2) :=
         div_le_div_of_nonneg_left (by positivity) (by positivity) h1_sub
@@ -203,7 +203,8 @@ private lemma summable_norm_E2_terms {q : ℂ} (hq : ‖q‖ ≤ 1 / 2) :
 private lemma tsum_succ_mul_pow {r : ℝ} (hr : ‖r‖ < 1) :
     ∑' m : ℕ, (↑(m + 1) : ℝ) * r ^ m = 1 / (1 - r) ^ 2 := by
   have := tsum_choose_mul_geometric_of_norm_lt_one 1 hr
-  simp_all
+  simp_all only [Real.norm_eq_abs, Nat.choose_one_right, Nat.cast_add, Nat.cast_one,
+    Nat.reduceAdd, one_div]
 
 private lemma tsum_two_mul_pnat_pow {r : ℝ} (hr : ‖r‖ < 1) :
     ∑' (n : ℕ+), 2 * (↑↑n : ℝ) * r ^ (n : ℕ) = 2 * (r / (1 - r) ^ 2) := by
@@ -225,8 +226,8 @@ private lemma tsum_E2_series_bound {q : ℂ} (hq : ‖q‖ ≤ 1 / 2) :
           (norm_term_le_two_mul hq) (summable_two_mul_pnat_pow hnn)) (by norm_num)
     _ = 24 * (2 * (‖q‖ / (1 - ‖q‖) ^ 2)) := by rw [tsum_two_mul_pnat_pow hnn]
     _ ≤ 24 * (2 * (4 * ‖q‖)) := by
-        gcongr; rw [div_le_iff₀ (pow_pos (by linarith) 2)]
-        nlinarith [norm_nonneg q, sq_nonneg (1 - 2 * ‖q‖)]
+        gcongr; rw [div_le_iff₀ (pow_pos (by linarith only [hq_lt]) 2)]
+        nlinarith only [hq, norm_nonneg q, sq_nonneg (1 - 2 * ‖q‖)]
     _ = 192 * ‖q‖ := by ring
 
 private lemma E2_sub_one_bound (z : UpperHalfPlane)
@@ -284,15 +285,16 @@ private lemma E2_sub_one_eventually_le :
     ‖E₂ z - 1‖ ≤ 192 * ‖Function.Periodic.qParam 1 (z : ℂ)‖ :=
   (tendsto_qParam_atImInfty.eventually
     (Metric.ball_mem_nhds 0 (by norm_num : (0 : ℝ) < 1/2))).mono fun z hz =>
-    E2_sub_one_bound z (by simp only [dist_zero_right] at hz; linarith)
+    E2_sub_one_bound z (by simp only [dist_zero_right] at hz; linarith only [hz])
 
 /-- `‖E₄ z‖ ≤ 2` eventually (since `E₄ → 1`). -/
 private lemma E4_eventually_bounded :
     ∀ᶠ z : UpperHalfPlane in UpperHalfPlane.atImInfty, ‖E₄ z‖ ≤ 2 :=
   (E₄_tendsto_one_atImInfty_SP.eventually
     (Metric.ball_mem_nhds 1 (by norm_num : (0 : ℝ) < 1))).mono fun z hz =>
-    by linarith [show ‖E₄ z - 1‖ < 1 from by rwa [dist_eq_norm] at hz,
-      norm_le_insert' (E₄ z) 1, norm_one (α := ℂ)]
+    by
+      linarith only [hz, show ‖E₄ z - 1‖ < 1 from by rwa [dist_eq_norm] at hz,
+        norm_le_insert' (E₄ z) 1, norm_one (α := ℂ)]
 
 /-- `‖q(z)‖ < 1` eventually (since `q → 0`). -/
 private lemma qParam_eventually_lt_one :
@@ -313,15 +315,15 @@ private lemma E2E4_sub_E6_bound {z : UpperHalfPlane} {C₁ C₂ : ℝ} (_hC₁ :
   set qz := Function.Periodic.qParam 1 (z : ℂ)
   have hE2_norm : ‖E₂ z‖ ≤ 193 :=
     calc ‖E₂ z‖ ≤ ‖(1 : ℂ)‖ + ‖E₂ z - 1‖ := norm_le_insert' _ _
-      _ ≤ 1 + 192 * ‖qz‖ := by linarith [norm_one (α := ℂ)]
-      _ ≤ 1 + 192 * 1 := by nlinarith [norm_nonneg qz]
+      _ ≤ 1 + 192 * ‖qz‖ := by linarith only [hE2, norm_one (α := ℂ)]
+      _ ≤ 1 + 192 * 1 := by nlinarith only [hq_lt, norm_nonneg qz]
       _ = 193 := by norm_num
   rw [show E₂ z * E₄ z - E₆ z =
     E₂ z * (E₄ z - 1) + (E₂ z - 1) - (E₆ z - 1) from by ring]
   calc ‖E₂ z * (E₄ z - 1) + (E₂ z - 1) - (E₆ z - 1)‖
       ≤ ‖E₂ z * (E₄ z - 1)‖ + ‖E₂ z - 1‖ + ‖E₆ z - 1‖ := by
-        linarith [norm_sub_le (E₂ z * (E₄ z - 1) + (E₂ z - 1)) (E₆ z - 1),
-                  norm_add_le (E₂ z * (E₄ z - 1)) (E₂ z - 1)]
+        linarith only [norm_sub_le (E₂ z * (E₄ z - 1) + (E₂ z - 1)) (E₆ z - 1),
+          norm_add_le (E₂ z * (E₄ z - 1)) (E₂ z - 1)]
     _ ≤ ‖E₂ z‖ * (C₁ * ‖qz‖) + 192 * ‖qz‖ + C₂ * ‖qz‖ := by
         gcongr; rw [norm_mul]; exact mul_le_mul_of_nonneg_left hE4 (norm_nonneg _)
     _ = (‖E₂ z‖ * C₁ + 192 + C₂) * ‖qz‖ := by ring
@@ -364,9 +366,11 @@ private lemma Delta_lower_bound : ∃ r > 0, ∀ z : UpperHalfPlane,
   have hdist := hδ hqz_ne (by rwa [dist_zero_right])
   rw [dist_eq_norm, div_sub_one hqz_ne, norm_div] at hdist
   have hcF_close : ‖cFDelta qz - qz‖ < 1/2 * ‖qz‖ := by rwa [div_lt_iff₀ hq_pos] at hdist
-  linarith [show ‖qz‖ ≤ ‖cFDelta qz‖ + ‖cFDelta qz - qz‖ from
-    calc ‖qz‖ = ‖cFDelta qz - (cFDelta qz - qz)‖ := by ring_nf
-      _ ≤ ‖cFDelta qz‖ + ‖cFDelta qz - qz‖ := norm_sub_le _ _]
+  linarith only [hcF_close,
+    show ‖qz‖ ≤ ‖cFDelta qz‖ + ‖cFDelta qz - qz‖ from
+      calc
+        ‖qz‖ = ‖cFDelta qz - (cFDelta qz - qz)‖ := by ring_nf
+        _ ≤ ‖cFDelta qz‖ + ‖cFDelta qz - qz‖ := norm_sub_le _ _]
 
 /-- phi0 is bounded at `Im -> infinity`. -/
 theorem phi0_isBoundedAtImInfty :

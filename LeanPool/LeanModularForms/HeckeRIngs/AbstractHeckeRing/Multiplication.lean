@@ -13,7 +13,6 @@ public meta import Mathlib.Tactic.ToAdditive
 import Mathlib.Analysis.Normed.Group.Basic
 import Mathlib.Data.EReal.Operations
 import Mathlib.Data.Finsupp.SMulWithZero
-import Mathlib.Data.Int.ConditionallyCompleteOrder
 import Mathlib.Tactic.ContinuousFunctionalCalculus
 import Mathlib.Topology.Algebra.InfiniteSum.Order
 import Mathlib.Topology.MetricSpace.Bounded
@@ -178,7 +177,7 @@ lemma set_singleton_mul_left_cancel (a : G) {S T : Set G}
   · intro hx
     have hax : a * x ∈ ({a} : Set G) * T := by
       rw [← h]; exact Set.mul_mem_mul (Set.mem_singleton a) hx
-    simp_all
+    simp_all only [singleton_mul, image_mul_left, mem_preimage, inv_mul_cancel_left]
   · intro hx
     have hax : a * x ∈ ({a} : Set G) * S := by
       rw [h]; exact Set.mul_mem_mul (Set.mem_singleton a) hx
@@ -542,7 +541,7 @@ lemma mul_singleton_𝕋 (D1 D2 : HeckeCoset P) (a b : ℤ) :
     TSingle P ℤ D1 a * TSingle P ℤ D2 b =
       a • b • m P (HeckeCoset.rep D1) (HeckeCoset.rep D2) := by
   simp_rw [TSingle, mul_def]
-  simp_all
+  simp_all only [zero_smul, smul_zero, Finsupp.sum_single_index]
 
 open Finsupp
 

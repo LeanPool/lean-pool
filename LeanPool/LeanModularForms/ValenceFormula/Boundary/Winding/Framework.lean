@@ -125,7 +125,7 @@ private theorem pv_convert {γ : ℝ → ℂ} {a b : ℝ} {s : ℂ} {L : ℂ}
     Tendsto (fun ε => ∫ t in a..b,
       if (ε < ‖(γ t - s : ℂ) - 0‖) then (γ t - s)⁻¹ * deriv (fun t => γ t - s) t else 0)
       (nhdsWithin 0 (Ioi 0)) (nhds L) := by
-  simp_all
+  simp_all only [gt_iff_lt, sub_zero, deriv_sub_const_fun]
 
 /-- Master theorem: compute `generalizedWindingNumber'` from single-crossing data.
 

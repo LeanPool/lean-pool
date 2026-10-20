@@ -55,12 +55,21 @@ theorem unitArc_at_end (θ₁ θ₂ a b : ℝ) (hab : a ≠ b) :
     unitArc θ₁ θ₂ a b b = exp (↑θ₂ * I) := by
   simp only [unitArc]
   have hba : b - a ≠ 0 := sub_ne_zero.mpr (Ne.symm hab)
-  simp_all
+  simp_all only [ne_eq, not_false_eq_true, div_self, one_mul, add_sub_cancel]
 
 /-- The unit arc is continuous. -/
 theorem unitArc_continuous (θ₁ θ₂ a b : ℝ) : Continuous (unitArc θ₁ θ₂ a b) := by
   unfold unitArc
-  fun_prop
+  exact Continuous.cexp
+      (Continuous.mul_const
+        (Continuous.comp' continuous_ofReal
+          (Continuous.const_add
+            (Continuous.mul_const
+              (Continuous.comp' (Continuous.div_const continuous_id' (b - a))
+                (Continuous.fun_sub continuous_id' continuous_const))
+              (θ₂ - θ₁))
+            θ₁))
+        I)
 
 /-- Helper: the angle function for the unit arc has a specific derivative. -/
 private lemma unitArc_angle_hasDerivAt (θ₁ θ₂ a b t : ℝ) (_hab : b - a ≠ 0) :
@@ -107,8 +116,8 @@ theorem exp_sub_norm_sq (θ₁ θ₂ : ℝ) :
   have hc1 := Real.sin_sq_add_cos_sq θ₁
   have hc2 := Real.sin_sq_add_cos_sq θ₂
   rw [Real.cos_sub]
-  nlinarith [sq_nonneg (Real.cos θ₁ - Real.cos θ₂),
-             sq_nonneg (Real.sin θ₁ - Real.sin θ₂)]
+  nlinarith only [hc1, hc2, sq_nonneg (Real.cos θ₁ - Real.cos θ₂),
+    sq_nonneg (Real.sin θ₁ - Real.sin θ₂)]
 
 /-- sin is positive on the open interval (0, π). -/
 theorem sin_pos_of_mem_Ioo_zero_pi {θ : ℝ} (hθ : θ ∈ Ioo 0 π) : 0 < Real.sin θ :=
@@ -122,12 +131,12 @@ theorem abs_cos_le_half_of_mem_Icc {θ : ℝ} (hθ : θ ∈ Icc (π / 3) (2 * π
   have h2 : θ ≤ 2 * π / 3 := hθ.2
   rw [abs_le]; constructor
   · have : Real.cos (2 * π / 3) ≤ Real.cos θ :=
-      Real.cos_le_cos_of_nonneg_of_le_pi (by linarith) (by linarith) h2
+      Real.cos_le_cos_of_nonneg_of_le_pi (by linarith only [hpi, h1]) (by linarith only [hpi]) h2
     rw [show (2 * π / 3 : ℝ) = π - π / 3 from by ring,
       Real.cos_pi_sub, Real.cos_pi_div_three] at this
-    linarith
+    linarith only [this]
   · have : Real.cos θ ≤ Real.cos (π / 3) :=
-      Real.cos_le_cos_of_nonneg_of_le_pi (by linarith) (by linarith) h1
-    simp_all
+      Real.cos_le_cos_of_nonneg_of_le_pi (by linarith only [hpi]) (by linarith only [hpi, h2]) h1
+    simp_all only [mem_Icc, and_self, cos_pi_div_three, one_div]
 
 end ArcCalculus

@@ -294,7 +294,8 @@ private theorem heckeSlash_comp (k : ℤ) (D₁ D₂ : HeckeCoset (GLPair 2)) (f
       (∑ j : decompQuot (GLPair 2) (HeckeCoset.rep D₂),
         f ∣[k] tRep D₂ j) ∣[k] tRep D₁ i) =
       ∑ i, ∑ j, (f ∣[k] tRep D₂ j) ∣[k] tRep D₁ i from by
-    simp_all]
+    simp_all only [MonoidHom.mem_range, forall_exists_index, forall_apply_eq_imp_iff,
+      SlashAction.sum_slash]]
   have h_slash_mul :
       ∀ (i : decompQuot (GLPair 2) (HeckeCoset.rep D₁))
         (j : decompQuot (GLPair 2) (HeckeCoset.rep D₂)),

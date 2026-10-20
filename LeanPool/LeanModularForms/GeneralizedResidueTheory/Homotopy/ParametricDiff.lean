@@ -9,7 +9,6 @@ public import Mathlib.Analysis.Calculus.ContDiff.Defs
 public import Mathlib.MeasureTheory.Integral.IntervalIntegral.Basic
 import Mathlib.Analysis.Calculus.Deriv.Prod
 import Mathlib.Analysis.Calculus.FDeriv.Symmetric
-import Mathlib.Analysis.Calculus.ParametricIntervalIntegral
 import Mathlib.Analysis.Complex.CauchyIntegral
 
 /-!
@@ -76,7 +75,7 @@ theorem intervalIntegral_continuous_on_param
   obtain ⟨M, hM⟩ := hbound
   apply intervalIntegral.continuousAt_of_dominated_interval
   · filter_upwards with s; exact hmeas s
-  · have h_nhd : Ioo (s₀ - 1) (s₀ + 1) ∈ 𝓝 s₀ := by apply Ioo_mem_nhds <;> linarith
+  · have h_nhd : Ioo (s₀ - 1) (s₀ + 1) ∈ 𝓝 s₀ := by apply Ioo_mem_nhds <;> linarith only []
     filter_upwards [h_nhd] with s hs
     filter_upwards with t
     intro ht
@@ -620,6 +619,6 @@ theorem hasDerivAt_homotopy_integral_zero
     rw [← h_ftc]
     exact hasDerivAt_homotopy_param f H a b s hab hH_smooth hf_diff hfH_cont hs
       hf_differentiable (fun t ht => h_schwarz t ht)
-  simp_all
+  simp_all only [mem_Icc, and_imp]
 
 end

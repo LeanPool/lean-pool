@@ -952,7 +952,7 @@ lemma norm_exp_two_pi_I_le_exp_neg_two_pi (z : ℍ) (hz : 1 ≤ z.im) :
     rw [show (2 : ℂ) * ↑π * Complex.I * z = Complex.I * (2 * π * z) by ring]
     simp [Complex.I_re, Complex.I_im, mul_comm]
   rw [Complex.norm_exp, h, Real.exp_le_exp]
-  nlinarith [Real.pi_pos]
+  nlinarith only [hz, Real.pi_pos]
 
 /-- Bound on the q-series ∑ n·qⁿ/(1-qⁿ) that appears in E₂.
 
@@ -1017,7 +1017,7 @@ For im(z) ≥ 1, |q| ≤ exp(-2π), so by `norm_tsum_logDeriv_expo_le`,
 lemma E₂_isBoundedAtImInfty : IsBoundedAtImInfty E₂ := by
   rw [UpperHalfPlane.isBoundedAtImInfty_iff]
   set r₀ : ℝ := Real.exp (-2 * π)
-  have hr₀_lt_one : r₀ < 1 := Real.exp_lt_one_iff.mpr (by linarith [Real.pi_pos])
+  have hr₀_lt_one : r₀ < 1 := Real.exp_lt_one_iff.mpr (by linarith only [Real.pi_pos])
   refine ⟨1 + 24 * (r₀ / (1 - r₀) ^ 3), 1, fun z hz => ?_⟩
   rw [E₂_eq]
   set q : ℂ := cexp (2 * π * Complex.I * z)

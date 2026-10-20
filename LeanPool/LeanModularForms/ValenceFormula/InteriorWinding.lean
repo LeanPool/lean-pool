@@ -9,7 +9,6 @@ public import LeanPool.LeanModularForms.GeneralizedResidueTheory.Basic
 public import LeanPool.LeanModularForms.ValenceFormula.Boundary.Basic
 import LeanPool.LeanModularForms.GeneralizedResidueTheory.Homotopy.Invariance
 import LeanPool.LeanModularForms.GeneralizedResidueTheory.Residue
-import LeanPool.LeanModularForms.ValenceFormula.Boundary.Bounds
 import LeanPool.LeanModularForms.ValenceFormula.Boundary.Smooth
 import LeanPool.LeanModularForms.ValenceFormula.RectHomotopy.MainTheorem
 import Mathlib.CategoryTheory.Category.Init
@@ -66,7 +65,7 @@ theorem fdBoundary_H_avoids_interior (p : ℂ) (hp_norm : ‖p‖ > 1) (hp_re : 
         I_re, I_im, div_ofNat, one_re]
       norm_num
     rw [habs] at hre
-    have := abs_lt.mp hp_re; linarith
+    have := abs_lt.mp hp_re; linarith only [hre, this]
   · push Not at h1
     by_cases h3 : t ≤ 3
     · have hnorm : ‖fdBoundaryH H t‖ = 1 := by
@@ -74,7 +73,7 @@ theorem fdBoundary_H_avoids_interior (p : ℂ) (hp_norm : ‖p‖ > 1) (hp_re : 
         · rw [fdBoundary_H_at_three H]
           exact ellipticPointRho_norm
         · exact fdBoundary_H_norm_eq_one_arc h1 h3'
-      rw [habs] at hnorm; linarith
+      rw [habs] at hnorm; linarith only [hp_norm, hnorm]
     · push Not at h3
       by_cases h4 : t ≤ 4
       · have hre : (fdBoundaryH H t).re = -1 / 2 := by
@@ -84,7 +83,7 @@ theorem fdBoundary_H_avoids_interior (p : ℂ) (hp_norm : ‖p‖ > 1) (hp_re : 
             ofReal_im, I_re, I_im, div_ofNat, one_re]
           norm_num
         rw [habs] at hre
-        have := abs_lt.mp hp_re; linarith
+        have := abs_lt.mp hp_re; linarith only [hre, this]
       · push Not at h4
         have him : (fdBoundaryH H t).im = H := by
           rw [fdBoundary_H_eq_seg5_H h4,
@@ -92,11 +91,11 @@ theorem fdBoundary_H_avoids_interior (p : ℂ) (hp_norm : ‖p‖ > 1) (hp_re : 
           simp only [add_im, mul_im, ofReal_re, ofReal_im,
             I_re, I_im, div_ofNat]
           norm_num
-        rw [habs] at him; linarith
+        rw [habs] at him; linarith only [hp_im, him]
 
 private lemma fdBoundary_H_eq_arc' {H : ℝ} {t : ℝ} (ht1 : 1 < t) (ht3 : t < 3) :
     fdBoundaryH H t = Complex.exp (↑(Real.pi * (1 + t) / 6) * I) := by
-  simp only [fdBoundaryH, show ¬(t ≤ 1) from by linarith, ↓reduceIte]
+  simp only [fdBoundaryH, show ¬(t ≤ 1) from by linarith only [ht1], ↓reduceIte]
   by_cases h2 : t ≤ 2
   · simp only [h2, ↓reduceIte]; congr 1; push_cast; ring
   · simp only [h2, ↓reduceIte, show t ≤ 3 from le_of_lt ht3]; congr 1; push_cast; ring
@@ -153,11 +152,13 @@ private lemma fdBoundary_H_decomp (H₀ H' : ℝ) (t : ℝ) :
   unfold fdBoundaryH heightSens
   by_cases h2 : t ≤ 2
   · by_cases h1 : t ≤ 1 <;>
-      simp only [h1, h2, ↓reduceIte, show t ≤ 3 from by linarith] <;> push_cast <;> ring
+      simp only [h1, h2, ↓reduceIte, show t ≤ 3 from by linarith only [h1,
+        h2] ] <;> push_cast <;> ring
   · push Not at h2
-    have h1 : ¬ t ≤ 1 := by linarith
+    have h1 : ¬ t ≤ 1 := by linarith only [h2]
     by_cases h3 : t ≤ 3 <;> by_cases h4 : t ≤ 4 <;>
-      simp only [show ¬ t ≤ 2 from by linarith, h1, h3, h4, ↓reduceIte] <;> push_cast <;> ring
+      simp only [show ¬ t ≤ 2 from by linarith only [h2, h3, h4], h1, h3, h4,
+        ↓reduceIte] <;> push_cast <;> ring
 
 private lemma fdHomot_continuous (H₀ H₁ : ℝ) :
     Continuous (fun (q : ℝ × ℝ) => fdBoundaryH (H₀ + q.2 * (H₁ - H₀)) q.1) := by
@@ -284,7 +285,7 @@ private lemma fdBoundary_H_piecewise_homotopic (p : ℂ) (hp_norm : ‖p‖ > 1)
   · intro s _; exact fdBoundary_H_closed _
   · intro t ht s hs
     exact fdBoundary_H_avoids_interior p hp_norm hp_re hp_im_pos
-      (lt_of_lt_of_le hp_im (by nlinarith [hs.1] : heightCutoff ≤ _)) t ht
+      (lt_of_lt_of_le hp_im (by nlinarith only [hH, hs, hs.1] : heightCutoff ≤ _)) t ht
   · exact fun t _ ht_not_P s _ =>
       fdBoundary_H_differentiableAt_off_partition (heightCutoff + s * (H - heightCutoff)) t ht_not_P
   · exact fun p₁ p₂ _ hfree _ =>

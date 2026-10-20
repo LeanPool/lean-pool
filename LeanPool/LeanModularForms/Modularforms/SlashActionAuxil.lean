@@ -330,7 +330,8 @@ theorem slashaction_generators_SL2Z
     (∀ γ : SL(2, ℤ), f ∣[k] γ = f) := by
   intro γ
   refine (slashaction_generators f ⊤ _ SL2Z_generate k).mpr ?_ ⟨γ, by simp⟩
-  simp_all
+  simp_all only [Set.mem_insert_iff, Set.mem_singleton_iff, forall_eq_or_imp, implies_true,
+    and_self]
 
 theorem slashaction_generators_GL2R
     (f : ℍ → ℂ) (k : ℤ) (hS : f ∣[k] S = f) (hT : f ∣[k] T = f) :

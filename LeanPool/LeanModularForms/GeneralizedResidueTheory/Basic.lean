@@ -161,7 +161,7 @@ private theorem exists_min_above_in_finite_union
       ((Set.Finite.mem_toFinset hS_above_finite).mpr hs)
   exact ⟨s_min, hs_min_in.2,
     hs_min_le b ⟨Set.mem_union_left _ rfl, ht_lt_b⟩,
-    fun x hx hxS => by linarith [hs_min_le x ⟨hxS, hx.1⟩, hx.2]⟩
+    fun x hx hxS => by linarith only [hs_min_le, hx, hxS, hs_min_le x ⟨hxS, hx.1⟩, hx.2]⟩
 
 private theorem eq_on_Ioo_of_deriv_zero
     {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
@@ -176,7 +176,7 @@ private theorem eq_on_Ioo_of_deriv_zero
       f x = f y :=
     fun x hx y hy => IsOpen.is_const_of_deriv_eq_zero
       isOpen_Ioo isPreconnected_Ioo h_diff h_dz hx hy
-  have h_mid : (t + s_min) / 2 ∈ Ioo t s_min := by constructor <;> linarith
+  have h_mid : (t + s_min) / 2 ∈ Ioo t s_min := by constructor <;> linarith only [ht_lt_s]
   have h_eq_mid : ∀ x ∈ Ioo t s_min, f x = f ((t + s_min) / 2) :=
     fun x hx => h_const x hx _ h_mid
   have h_cont_Ioo : ContinuousWithinAt f (Ioo t s_min) t :=

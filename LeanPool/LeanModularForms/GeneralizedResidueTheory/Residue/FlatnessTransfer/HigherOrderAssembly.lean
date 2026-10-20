@@ -409,7 +409,7 @@ private theorem cpv_tendsto_zero_of_add_split_set
         intro hmem
         have hmem' := Finset.mem_coe.mp hmem
         have := h_near (γ.toFun t) hmem'
-        rw [sub_self, norm_zero] at this; linarith
+        rw [sub_self, norm_zero] at this; linarith only [hε, this]
       congr 1; exact h_off_S0 (γ.toFun t) hγt_not_S0
   rw [show (fun t => cauchyPrincipalValueIntegrandOn S0 g γ.toFun ε t) =
       fun t => cauchyPrincipalValueIntegrandOn S0

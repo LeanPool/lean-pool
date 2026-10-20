@@ -92,7 +92,7 @@ private lemma contourIntegral_eq_of_agree_on_curve (f g : ℂ → ℂ)
   apply intervalIntegral.integral_congr
   intro t ht
   rw [Set.uIcc_of_le (le_of_lt γ.hab)] at ht
-  simp_all
+  simp_all only [mem_Icc, and_imp]
 
 private lemma contourIntegral_add_principalPart_regularPart (f : ℂ → ℂ) (s : ℂ)
     (hf : MeromorphicAt f s) (U : Set ℂ) (hf_diff : DifferentiableOn ℂ f (U \ {s}))

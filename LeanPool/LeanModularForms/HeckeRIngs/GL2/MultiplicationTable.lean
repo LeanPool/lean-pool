@@ -13,7 +13,6 @@ import LeanPool.LeanModularForms.HeckeRIngs.GLn.TransposeAntiInvolution
 import Mathlib.Analysis.Normed.Group.Basic
 import Mathlib.Data.EReal.Operations
 import Mathlib.Data.Finset.NatDivisors
-import Mathlib.Data.Int.ConditionallyCompleteOrder
 import Mathlib.Data.Int.Star
 import Mathlib.NumberTheory.ArithmeticFunction.Misc
 import Mathlib.Tactic.Positivity.Finset
@@ -234,7 +233,7 @@ private lemma mulSupport_pp_det_eq (k : ℕ) (a : Fin 2 → ℕ) (ha_pos : ∀ i
   have h_rhs : (g₁ * g₂ * (g₃ * g₄)).val.det = (a 0 : ℚ) * (a 1 : ℚ) := by
     rw [h_eq, Units.val_mul, Units.val_mul, Matrix.det_mul, Matrix.det_mul]
     simp only [SLnZ_to_GLnQ_det, diagMat_det 2 _ ha_pos, Fin.prod_univ_two, one_mul, mul_one]
-  exact_mod_cast show (a 0 : ℚ) * (a 1 : ℚ) = (p : ℚ) ^ (k + 1) by linarith
+  exact_mod_cast show (a 0 : ℚ) * (a 1 : ℚ) = (p : ℚ) ^ (k + 1) by linarith only [h_lhs, h_rhs]
 
 include hp in
 private lemma mulSupport_pp_dvd_p_aux

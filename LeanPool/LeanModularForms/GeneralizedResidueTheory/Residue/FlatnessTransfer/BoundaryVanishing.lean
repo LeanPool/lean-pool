@@ -158,7 +158,7 @@ private lemma slope_tendsto_right_of_deriv
   have h_no_part : ∀ t ∈ Ioo t₀ δ, t ∉ γ.toPiecewiseC1Curve.partition := by
     intro t ht htp
     have ht_in : t ∈ P := Finset.mem_filter.mpr ⟨htp, ht.1⟩
-    linarith [Finset.min'_le P t ht_in, ht.2]
+    linarith only [ht, ht_in, Finset.min'_le P t ht_in, ht.2]
   have h_sub : Ioo t₀ δ ⊆ Icc γ.a γ.b :=
     fun t ht => ⟨le_of_lt (lt_trans ht₀.1 ht.1), le_trans (le_of_lt ht.2) hδ_le_b⟩
   have h_diff : DifferentiableOn ℝ γ.toFun (Ioo t₀ δ) := fun t ht =>
@@ -233,7 +233,7 @@ private lemma slope_tendsto_left_of_deriv
   have h_no_part : ∀ t ∈ Ioo δ t₀, t ∉ γ.toPiecewiseC1Curve.partition := by
     intro t ht htp
     have ht_in : t ∈ P := Finset.mem_filter.mpr ⟨htp, ht.2⟩
-    linarith [Finset.le_max' P t ht_in, ht.1]
+    linarith only [ht, ht_in, Finset.le_max' P t ht_in, ht.1]
   have h_sub : Ioo δ t₀ ⊆ Icc γ.a γ.b :=
     fun t ht => ⟨le_of_lt (lt_of_le_of_lt ha_le_δ ht.1), le_of_lt (lt_trans ht.2 ht₀.2)⟩
   have h_diff : DifferentiableOn ℝ γ.toFun (Ioo δ t₀) := fun t ht =>
@@ -420,18 +420,19 @@ theorem norm_sub_le_tangentDeviation_of_unit (u v : ℂ)
             Complex.abs_re_le_norm _
         _ = 1 := by rw [norm_mul, hu, starRingEnd_apply, norm_star, hv, mul_one]
     exact le_of_abs_le h1
-  have h_re_bound : 1 - (u * starRingEnd ℂ v).re = ‖u - v‖ ^ 2 / 2 := by linarith
+  have h_re_bound : 1 - (u * starRingEnd ℂ v).re = ‖u - v‖ ^ 2 / 2 := by linarith only [h_normSq]
   have h_tri := norm_add_le (tangentDeviation u v) (((u * starRingEnd ℂ v).re - 1) • v)
   rw [← h_decomp] at h_tri
   have h_smul_norm : ‖((u * starRingEnd ℂ v).re - 1) • v‖ = ‖u - v‖ ^ 2 / 2 := by
-    rw [norm_smul, Real.norm_eq_abs, hv, mul_one, abs_of_nonpos (by linarith), neg_sub,
+    rw [norm_smul, Real.norm_eq_abs, hv, mul_one, abs_of_nonpos (by linarith only [h_re_le]),
+      neg_sub,
       h_re_bound]
   have h_sq_le : ‖u - v‖ ^ 2 / 2 ≤ ‖u - v‖ / 2 := by
     rw [div_le_div_iff_of_pos_right two_pos]
     calc ‖u - v‖ ^ 2 = ‖u - v‖ * ‖u - v‖ := sq _
       _ ≤ ‖u - v‖ * 1 := mul_le_mul_of_nonneg_left h_close (norm_nonneg _)
       _ = ‖u - v‖ := mul_one _
-  linarith [h_smul_norm, h_sq_le, h_tri]
+  linarith only [h_tri, h_smul_norm, h_sq_le]
 
 private lemma eq_exp_arg_mul_I_of_norm_one (z : ℂ) (hz : ‖z‖ = 1) :
     z = exp (↑(arg z) * I) := by
@@ -457,7 +458,7 @@ lemma unit_zpow_eq_of_angle_multiple
   rw [h_eq, mul_eq_zero]
   left
   rw [ofReal_eq_zero]
-  linarith
+  linarith only [hn]
 
 private lemma orthogonalProjectionComplex_real_smul_left (c : ℝ) (w L : ℂ) :
     orthogonalProjectionComplex (c • w) L = c • orthogonalProjectionComplex w L := by
@@ -514,8 +515,8 @@ private lemma unit_sq_le_two_mul_tangentDeviation_sq
       rw [← mul_assoc, mul_comm u (↑R : ℂ), mul_assoc,
         Complex.mul_re, Complex.ofReal_re, Complex.ofReal_im, zero_mul, sub_zero]
     rw [hre]; ring
-  have hR_le : R ≤ 1 := by nlinarith [sq_nonneg (‖tangentDeviation u v₀‖)]
-  rw [h_lhs, h_rhs]; nlinarith [hR_pos.le, hR_le]
+  have hR_le : R ≤ 1 := by nlinarith only [h_lhs, sq_nonneg (‖tangentDeviation u v₀‖)]
+  rw [h_lhs, h_rhs]; nlinarith only [hR_pos, h_lhs, hR_pos.le, hR_le]
 
 private lemma norm_sub_le_sqrt2_tangentDeviation
     (u v₀ : ℂ) (hu : ‖u‖ = 1) (hv₀ : ‖v₀‖ = 1)

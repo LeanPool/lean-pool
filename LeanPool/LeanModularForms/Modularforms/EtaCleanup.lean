@@ -86,7 +86,9 @@ theorem Summable_eta_q (z : ℍ) : Summable fun n : ℕ ↦ ‖-etaQ n z‖ := b
 @[fun_prop]
 lemma qParam_differentiable (n : ℝ) : Differentiable ℂ (𝕢 n) := by
     rw [show 𝕢 n = fun x => exp (2 * π * Complex.I * x / n)  by rfl]
-    fun_prop
+    exact Differentiable.cexp
+      (Differentiable.div_const
+        (Differentiable.const_mul differentiable_id (2 * ↑π * Complex.I)) (↑n : ℂ))
 
 @[fun_prop]
 lemma qParam_ContDiff (n : ℝ) (m : WithTop ℕ∞) : ContDiff ℂ m (𝕢 n) := by
@@ -140,7 +142,10 @@ lemma logDeriv_one_sub_mul_cexp_comp (r : ℂ) {g : ℂ → ℂ} (hg : Different
     logDeriv ((fun z ↦ 1 - r * cexp z) ∘ g) =
     fun z ↦ -r * (deriv g z) * cexp (g z) / (1 - r * cexp (g z)) := by
   ext y
-  rw [logDeriv_comp (by fun_prop) (hg y), logDeriv_one_sub_exp]
+  rw [logDeriv_comp (by
+    exact DifferentiableAt.const_sub
+      (DifferentiableAt.const_mul (DifferentiableAt.cexp differentiableAt_id) r) 1) (hg y),
+      logDeriv_one_sub_exp]
   ring
 
 
@@ -151,7 +156,7 @@ theorem one_add_eta_logDeriv_eq (z : ℂ) (i : ℕ) :
       ((fun z ↦ 1 - 1 * cexp z) ∘ fun x ↦ 2 * ↑π * Complex.I * (↑i + 1) * x) := by aesop
   have h3 : deriv (fun x : ℂ ↦ (2 * π * Complex.I * (i + 1) * x)) =
         fun _ ↦ 2 * π * Complex.I * (i + 1) := by
-      simp_all
+      simp_all only [one_mul, deriv_const_mul_id']
   simp_rw [eta_q_eq_exp, h2, logDeriv_one_sub_mul_cexp_comp 1
     (g := fun x => (2 * π * Complex.I * (i + 1) * x)) (by fun_prop), h3]
   simp
@@ -174,7 +179,9 @@ lemma logDeriv_q' (n : ℝ) (z : ℂ) : logDeriv (𝕢 n) z = 2 * ↑π * Comple
     ext y
     simp only [Periodic.qParam, comp_apply]
     ring_nf
-  rw [this, logDeriv_comp (by fun_prop) (by fun_prop), deriv_const_mul _ (by fun_prop)]
+  rw [this, logDeriv_comp (by
+    exact DifferentiableAt.cexp differentiableAt_id) (by fun_prop), deriv_const_mul _ (by
+    exact differentiableAt_id)]
   simp only [logDeriv_exp, Pi.one_apply, deriv_id'', mul_one, one_mul]
 
 lemma logDeriv_z_term' (z : ℍ) : logDeriv (𝕢 24) ↑z  =  2 * ↑π * Complex.I / 24 := by
@@ -189,12 +196,19 @@ theorem etaProdTerm_differentiableAt (z : ℍ) : DifferentiableAt ℂ ηₚ ↑z
   · filter_upwards with b y
     apply (DifferentiableOn.finsetProd (u := Finset.range b)
       (f := fun i x => 1 - cexp (2 * ↑π * Complex.I * (↑i + 1) * x))
-      (by fun_prop)).congr
+      (by
+        exact fun i a ↦
+            DifferentiableOn.const_sub
+              (Differentiable.comp_differentiableOn (Differentiable.cexp differentiable_id)
+                (DifferentiableOn.const_mul differentiableOn_id (2 * ↑π * Complex.I * (↑i + 1))))
+              1)).congr
     intro x hx
     simp [sub_eq_add_neg, eta_q_eq_exp]
 
 lemma eta_DifferentiableAt_UpperHalfPlane' (z : ℍ) : DifferentiableAt ℂ dedekindEtaFun' z := by
-  apply DifferentiableAt.mul (by fun_prop) (etaProdTerm_differentiableAt z)
+  apply DifferentiableAt.mul (by
+    exact Differentiable.differentiableAt
+      (qParam_differentiable 24)) (etaProdTerm_differentiableAt z)
 
 lemma eta_logDeriv' (z : ℍ) : logDeriv dedekindEtaFun' z = (π * Complex.I / 12) * E₂ z := by
   unfold dedekindEtaFun' etaProdTerm
@@ -221,7 +235,8 @@ lemma eta_logDeriv' (z : ℍ) : logDeriv dedekindEtaFun' z = (π * Complex.I / 1
         apply tsum_congr; intro n; push_cast; ring
     · intro i x hx
       simp_rw [eta_q_eq_exp]
-      fun_prop
+      exact ((differentiableAt_const (1 : ℂ)).sub
+        (((differentiableAt_const (𝕜 := ℂ) _).mul differentiableAt_id).cexp)).differentiableWithinAt
     · simp only [one_add_eta_logDeriv_eq]
       apply ((summable_nat_add_iff 1).mpr ((logDeriv_q_expo_summable (𝕢₁ z)
         (by simpa [Periodic.qParam] using exp_upperHalfPlane_lt_one z)).mul_left
@@ -380,4 +395,6 @@ lemma eta_equality' : {z : ℂ | 0 < z.im}.EqOn ((η ∘ (fun z : ℂ => -1/z)))
   have hcd := (mul_eq_right₀ he).mp (_root_.id (Eq.symm h3))
   rw [mul_eq_one_iff_inv_eq₀ hz] at hcd
   rw [@inv_eq_iff_eq_inv] at hcd
-  simp_all
+  simp_all only [ne_eq, inv_eq_zero, mem_ofPred_eq, comp_apply, Pi.smul_apply, Pi.mul_apply,
+    smul_eq_mul,
+      Complex.I_im, zero_lt_one, not_false_eq_true, inv_mul_cancel₀, one_mul]
