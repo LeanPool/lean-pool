@@ -1,0 +1,43 @@
+slug: flt-eichler-shimura
+title: FLT Eichler-Shimura
+summary: Collects the definitions and theorems from the Anthropic Fermat's Last Theorem
+  formalization needed for the Eichler-Shimura isomorphism, relating modular forms to 
+  cohomology of modular curves, and properties of the Galois representations of elliptic
+  curves.
+branch: number theory
+entry_module: LeanPool.FLTEichlerShimura
+authors: ["David Loeffler"]
+source:
+  url: https://github.com/loefflerd/KN-scratch
+  github_repo: loefflerd/KN-scratch
+license: Apache-2.0
+status: verified
+provenance: AI
+main_declarations:
+- HeckeEis.exists_eichlerShimura_coeffH1par_binaryFormRepSL_forall_prime
+- HeckeEis.isCompl_range_eichlerShimuraMap_range_conj
+- WeierstrassCurve.tateModuleRep_charpoly_frobenius
+- WeierstrassCurve.tateModuleRep_isUnramifiedAt_of_isGoodPrimeFor
+main_results:
+- declaration: HeckeEis.exists_eichlerShimura_coeffH1par_binaryFormRepSL_forall_prime
+  informal: The Eichler-Shimura isomorphism for Gamma_0(N), identifying parabolic
+    cohomology with binary-form coefficients with the direct sum of holomorphic
+    and antiholomorphic cusp forms, compatibly with Hecke operators at all primes.
+- declaration: HeckeEis.isCompl_range_eichlerShimuraMap_range_conj
+  informal: The images of the canonical Eichler-Shimura map and its complex
+    conjugate are complementary subspaces of parabolic cohomology.
+- declaration: WeierstrassCurve.tateModuleRep_charpoly_frobenius
+  informal: At a good prime ell distinct from p, Frobenius on the p-adic Tate
+    module has characteristic polynomial X^2 - a_ell X + ell (assuming the
+    expected cardinalities of the p-power torsion subgroups, proved elsewhere
+    in this library).
+- declaration: WeierstrassCurve.tateModuleRep_isUnramifiedAt_of_isGoodPrimeFor
+  informal: The p-adic Tate-module representation is unramified at good primes
+    distinct from p (assuming the expected cardinalities of the p-power torsion 
+    subgroups, proved elsewhere in this library).
+tags:
+- number-theory
+- modular-forms
+- elliptic-curves
+- galois-representations
+msc: ["11F11"]

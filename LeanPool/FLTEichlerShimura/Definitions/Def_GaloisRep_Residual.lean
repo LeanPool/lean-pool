@@ -1,0 +1,172 @@
+/-
+Based on Prove2Me node GaloisRep_Residual
+(9f203110-aa25-59ba-bd12-df090d83ea51) by Claude (2026-09-05).
+
+Licensed under Apache License 2.0
+(https://www.apache.org/licenses/LICENSE-2.0).
+-/
+
+module
+
+public import LeanPool.FLTEichlerShimura.Definitions.Def_EllipticCurve_FrobeniusTrace
+public import LeanPool.FLTEichlerShimura.Definitions.Def_FLTPrelim_Modularity
+public import Mathlib.RingTheory.IntegralClosure.Algebra.Basic
+public import Mathlib.LinearAlgebra.Charpoly.Basic
+public import Mathlib.LinearAlgebra.Determinant
+public import Mathlib.LinearAlgebra.TensorProduct.Tower
+public import Mathlib.LinearAlgebra.Dimension.Constructions
+public import Mathlib.FieldTheory.Finiteness
+
+/-!
+# Two-dimensional residual Galois representations and their properties
+
+Definition: `GaloisRep_Residual` (`9f203110-aa25-59ba-bd12-df090d83ea51`), by Claude, 2026-09-05.
+
+[`GaloisFactorsThroughFiniteLevel ρ`](../def/GaloisRep_Residual.html#L17), for a monoid homomorphism
+$\rho$ from $\mathrm{Gal}(\overline{\mathbb{Q}}/\mathbb{Q}) =
+\mathrm{Aut}_{\mathbb{Q}}(\overline{\mathbb{Q}})$ to any monoid, asserts the existence of an
+intermediate field $L$ of $\overline{\mathbb{Q}}/\mathbb{Q}$, finite-dimensional over $\mathbb{Q}$,
+such that $\rho\sigma = 1$ whenever $\sigma$ fixes $L$ pointwise; this replaces continuity for the
+Krull topology with a discrete target, stated without any topology. [`ResidualGaloisRep
+k`](../def/GaloisRep_Residual.html#L22), for a field $k$, bundles a carrier type `V` with an abelian
+group and $k$-module structure, a field `finrank_eq` recording $\dim_k V = 2$, a monoid homomorphism
+$\rho$ from $\mathrm{Gal}(\overline{\mathbb{Q}}/\mathbb{Q})$ to $\mathrm{End}_k(V)$
+(multiplicativity forces each $\rho\sigma$ to be invertible), and a field asserting
+[`GaloisFactorsThroughFiniteLevel`](../def/GaloisRep_Residual.html#L17) for $\rho$. A
+`Module.Finite` instance is derived from the rank.
+
+The predicates on $\rho :$ [`ResidualGaloisRep k`](../def/GaloisRep_Residual.html#L22) are:
+`IsUnramifiedAt ρ q`, for an arbitrary natural number $q$ (no primality is assumed), saying that for
+every valuation subring $A$ of $\overline{\mathbb{Q}}$ with $q$ a nonunit of $A$, every element of
+the image of the inertia subgroup of $A$ over $\mathbb{Q}$ acts as the identity; `IsAttachedTo ρ f
+φ`, for a weight-two cusp form $f$ on $\Gamma_0(N)$ and a ring homomorphism $\varphi$ from the
+algebraic integers in $\mathbb{C}$ to $k$, saying that for every prime $\ell \nmid N$ with $\ell
+\neq 0$ in $k$, every valuation subring $A$ over $\ell$ and every $\sigma$ which is a Frobenius at
+$A$ for $\ell$ (in the decomposition group, acting on the residue field by $x \mapsto x^{\ell}$),
+the $\ell$-th $q$-expansion coefficient of $f$ is an algebraic integer $a$ and $\rho\sigma$ has
+characteristic polynomial $X^2 - \varphi(a)X + \ell$ — nothing is required at $\ell \mid N$ or at
+the residue characteristic, and unramifiedness is not implied; `IsOdd`, that $\det \rho(c) = -1$ for
+every involution $c \neq 1$ of $\overline{\mathbb{Q}}/\mathbb{Q}$; `IsIrreducible`, that every
+$k$-submodule stable under all $\rho\sigma$ is $0$ or $V$; and `IsAbsolutelyIrreducible`,
+irreducibility after base change to $\overline{k}$. `baseChange k'` forms $k' \otimes_k V$ with
+$\rho\sigma$ base-changed (same finite level), `baseChangeAlong φ` does so along a ring
+homomorphism.
+
+Finally, [`WeierstrassCurve.residualGaloisRepOf W p hcard hker`](../def/GaloisRep_Residual.html#L87)
+packages, for a Weierstrass curve $W$ over $\mathbb{Q}$ and a prime $p$, the Galois action on the
+$p$-torsion of $W(\overline{\mathbb{Q}})$ as a [`ResidualGaloisRep (ZMod
+p)`](../def/GaloisRep_Residual.html#L22): the carrier is `Submodule.torsionBy ℤ (W⁄(AlgebraicClosure
+ℚ)).Point p`, the homomorphism is the action of $\mathrm{Gal}(\overline{\mathbb{Q}}/\mathbb{Q})$ on
+torsion points by functoriality of $W$-points, and the two arithmetic inputs — that the $p$-torsion
+has exactly $p^2$ elements (whence rank $2$ over $\mathbb{Z}/p$) and that the action factors through
+a finite level — are taken as hypotheses rather than proved here.
+
+**Relation to Mathlib.** Mathlib has no notion of Galois representation; the structure and all of
+these predicates are the project's own, as is the Galois action on the torsion of the points of a
+Weierstrass curve. Mathlib supplies the ambient ingredients: decomposition and inertia subgroups of
+a valuation subring, `CuspForm` on congruence subgroups with its $q$-expansion,
+`LinearMap.charpoly`, `LinearMap.det` and `LinearMap.baseChange`.
+
+**Where it is used.** These definitions are the interface through which the mod-$p$ representation
+attached to the $p$-torsion of the Frey curve is handled: irreducibility and oddness of that
+representation, its unramifiedness away from the bad primes, and its attachment to a weight-two cusp
+form on $\Gamma_0(N)$ are the hypotheses and conclusions of the modularity and level-lowering steps.
+
+<!-- Generated by add_prove2me_provenance.py -->
+-/
+
+@[expose] public section publicSection
+
+noncomputable section
+
+open scoped WeierstrassCurve.Affine TensorProduct
+open Polynomial
+
+def GaloisFactorsThroughFiniteLevel {M : Type} [MulOneClass M]
+    (ρ : (AlgebraicClosure ℚ ≃ₐ[ℚ] AlgebraicClosure ℚ) →* M) : Prop :=
+  ∃ L : IntermediateField ℚ (AlgebraicClosure ℚ), FiniteDimensional ℚ L ∧
+    ∀ σ : AlgebraicClosure ℚ ≃ₐ[ℚ] AlgebraicClosure ℚ, (∀ x ∈ L, σ x = x) → ρ σ = 1
+
+structure ResidualGaloisRep (k : Type) [Field k] : Type 1 where
+  V : Type
+  [instAddCommGroup : AddCommGroup V]
+  [instModule : Module k V]
+  finrank_eq : Module.finrank k V = 2
+  ρ : (AlgebraicClosure ℚ ≃ₐ[ℚ] AlgebraicClosure ℚ) →* Module.End k V
+  factorsThroughFiniteLevel : GaloisFactorsThroughFiniteLevel ρ
+
+attribute [instance] ResidualGaloisRep.instAddCommGroup ResidualGaloisRep.instModule
+
+instance ResidualGaloisRep.instModuleFinite {k : Type} [Field k] (ρ : ResidualGaloisRep k) :
+    Module.Finite k ρ.V :=
+  Module.finite_of_finrank_eq_succ ρ.finrank_eq
+
+namespace ResidualGaloisRep
+
+variable {k : Type} [Field k]
+
+def IsUnramifiedAt (ρ : ResidualGaloisRep k) (q : ℕ) : Prop :=
+  ∀ A : ValuationSubring (AlgebraicClosure ℚ), A.LiesOverPrime q →
+    ∀ σ ∈ A.inertiaSubgroupIn ℚ, ρ.ρ σ = 1
+
+def IsAttachedTo (ρ : ResidualGaloisRep k) {N : ℕ}
+    (f : CuspForm (CongruenceSubgroup.Gamma0 N) 2)
+    (φ : integralClosure ℤ ℂ →+* k) : Prop :=
+  ∀ ℓ : ℕ, ℓ.Prime → ¬ ℓ ∣ N → (ℓ : k) ≠ 0 →
+    ∀ A : ValuationSubring (AlgebraicClosure ℚ), A.LiesOverPrime ℓ →
+      ∀ σ : AlgebraicClosure ℚ ≃ₐ[ℚ] AlgebraicClosure ℚ, A.IsFrobeniusAt σ ℓ →
+        ∃ a : integralClosure ℤ ℂ, (a : ℂ) = ModularFormClass.qCoeff f ℓ ∧
+          LinearMap.charpoly (ρ.ρ σ) = X ^ 2 - C (φ a) * X + C ((ℓ : k))
+
+def IsOdd (ρ : ResidualGaloisRep k) : Prop :=
+  ∀ c : AlgebraicClosure ℚ ≃ₐ[ℚ] AlgebraicClosure ℚ, c * c = 1 → c ≠ 1 →
+    LinearMap.det (ρ.ρ c) = -1
+
+def IsIrreducible (ρ : ResidualGaloisRep k) : Prop :=
+  ∀ W : Submodule k ρ.V, (∀ σ : AlgebraicClosure ℚ ≃ₐ[ℚ] AlgebraicClosure ℚ,
+    ∀ x ∈ W, ρ.ρ σ x ∈ W) → W = ⊥ ∨ W = ⊤
+
+abbrev baseChange (k' : Type) [Field k'] [Algebra k k'] (ρ : ResidualGaloisRep k) :
+    ResidualGaloisRep k' :=
+  { V := k' ⊗[k] ρ.V
+    finrank_eq := by rw [Module.finrank_baseChange, ρ.finrank_eq]
+    ρ := { toFun := fun σ => (ρ.ρ σ).baseChange k'
+           map_one' := by rw [map_one, LinearMap.baseChange_one]
+           map_mul' := fun σ τ => by rw [map_mul, LinearMap.baseChange_mul] }
+    factorsThroughFiniteLevel := by
+      obtain ⟨L, hL, h1⟩ := ρ.factorsThroughFiniteLevel
+      exact ⟨L, hL, fun σ hσ => by
+        rw [MonoidHom.coe_mk, OneHom.coe_mk, h1 σ hσ, LinearMap.baseChange_one]⟩ }
+
+def baseChangeAlong {k' : Type} [Field k'] (φ : k →+* k') (ρ : ResidualGaloisRep k) :
+    ResidualGaloisRep k' :=
+  letI : Algebra k k' := φ.toAlgebra
+  ρ.baseChange k'
+
+def IsAbsolutelyIrreducible (ρ : ResidualGaloisRep k) : Prop :=
+  (ρ.baseChange (AlgebraicClosure k)).IsIrreducible
+
+end ResidualGaloisRep
+
+def WeierstrassCurve.residualGaloisRepOf (W : WeierstrassCurve ℚ) (p : ℕ) [Fact p.Prime]
+    (hcard : Nat.card (Submodule.torsionBy ℤ (W⁄(AlgebraicClosure ℚ)).Point p) = p ^ 2)
+    (hker : GaloisFactorsThroughFiniteLevel
+      (WeierstrassCurve.Affine.Point.galoisRepModuleEnd (K := AlgebraicClosure ℚ) ℚ W p)) :
+    ResidualGaloisRep (ZMod p) :=
+  haveI hfin : Finite (Submodule.torsionBy ℤ (W⁄(AlgebraicClosure ℚ)).Point p) :=
+    Nat.finite_of_card_ne_zero
+      (hcard ▸ pow_ne_zero 2 (Fact.out (p := p.Prime)).pos.ne')
+  { V := Submodule.torsionBy ℤ (W⁄(AlgebraicClosure ℚ)).Point p
+    finrank_eq := by
+      have hp : p.Prime := Fact.out
+      have h := Module.natCard_eq_pow_finrank (K := ZMod p)
+        (V := Submodule.torsionBy ℤ (W⁄(AlgebraicClosure ℚ)).Point p)
+      rw [hcard, Nat.card_zmod] at h
+      exact (Nat.pow_right_injective hp.two_le h).symm
+    ρ := WeierstrassCurve.Affine.Point.galoisRepModuleEnd (K := AlgebraicClosure ℚ) ℚ W p
+    factorsThroughFiniteLevel := hker }
+
+end
+
+
+end publicSection
