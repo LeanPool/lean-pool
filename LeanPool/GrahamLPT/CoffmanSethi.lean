@@ -59,52 +59,6 @@ count. -/
 def loadDifferenceInvariant (P D y : ℝ) (Φ : ℤ) : Prop :=
   (0 ≤ D → ⌊D / P⌋ ≤ Φ) ∧ (D < 0 → -1 ≤ Φ ∧ ⌊(D + y) / P⌋ - 1 ≤ Φ)
 
-theorem cs_sum_succ {M : Type*} [AddCommMonoid M] {m n : ℕ} (f : Fin n → M) (σ : Fin n → Fin m) (k
-  : Fin n)
-    (i : Fin m) :
-    ∑ j ∈ univ.filter (fun j : Fin n => (j : ℕ) < (k : ℕ) + 1 ∧ σ j = i), f j =
-      (∑ j ∈ univ.filter (fun j : Fin n => (j : ℕ) < k ∧ σ j = i), f j) + if σ k = i then f k else
-        0 := by
-  by_cases h : σ k = i
-  · have e : univ.filter (fun j : Fin n => (j : ℕ) < (k : ℕ) + 1 ∧ σ j = i) =
-        insert k (univ.filter (fun j : Fin n => (j : ℕ) < k ∧ σ j = i)) := by
-      ext j
-      simp only [mem_filter, mem_univ, true_and, mem_insert]
-      constructor
-      · rintro ⟨h1, h2⟩
-        by_cases hjk : j = k
-        · exact Or.inl hjk
-        · have : (j : ℕ) ≠ k := fun e => hjk (Fin.ext e)
-          exact Or.inr ⟨by omega, h2⟩
-      · rintro (rfl | ⟨h1, h2⟩)
-        · exact ⟨by omega, h⟩
-        · exact ⟨by omega, h2⟩
-    rw [e, sum_insert (by simp), ite_eq_left h, add_comm]
-  · have e : univ.filter (fun j : Fin n => (j : ℕ) < (k : ℕ) + 1 ∧ σ j = i) =
-        univ.filter (fun j : Fin n => (j : ℕ) < k ∧ σ j = i) := by
-      ext j
-      simp only [mem_filter, mem_univ, true_and]
-      constructor
-      · rintro ⟨h1, h2⟩
-        have hjk : j ≠ k := fun e => h (e ▸ h2)
-        have : (j : ℕ) ≠ k := fun e => hjk (Fin.ext e)
-        exact ⟨by omega, h2⟩
-      · rintro ⟨h1, h2⟩
-        exact ⟨by omega, h2⟩
-    rw [e, ite_eq_right h, add_zero]
-
-theorem cs_sum_fiber {M : Type*} [AddCommMonoid M] {m n : ℕ} (f : Fin n → M) (σ : Fin n → Fin m)
-  (k : ℕ) :
-    ∑ i, ∑ j ∈ univ.filter (fun j : Fin n => (j : ℕ) < k ∧ σ j = i), f j =
-      ∑ j ∈ univ.filter (fun j : Fin n => (j : ℕ) < k), f j := by
-  simp only [Finset.sum_filter]
-  rw [Finset.sum_comm]
-  refine Finset.sum_congr rfl fun j _ => ?_
-  simp only [ite_and]
-  by_cases h : (j : ℕ) < k
-  · simp [h, Finset.sum_ite_eq]
-  · simp [h]
-
 theorem cs_inv_mono {P D y y' : ℝ} {Φ : ℤ} (hP : 0 < P) (h : loadDifferenceInvariant P D y Φ) (hy
     : y' ≤ y) :
     loadDifferenceInvariant P D y' Φ := by
@@ -207,9 +161,9 @@ theorem cs_inv_all {m n : ℕ} (p : Fin n → ℝ) (hanti : Antitone p) (σ : Fi
       fun i => bs_loadBefore_succ p σ kk i
     have eF : ∀ i, prefixJobWeight p P σ (k + 1) i = prefixJobWeight p P σ k i + if σ kk = i then
         ⌊p kk / P⌋ else 0 :=
-      fun i => cs_sum_succ (fun j => ⌊p j / P⌋) σ kk i
+      fun i => sum_prefix_succ (fun j => ⌊p j / P⌋) σ kk i
     have eC : ∀ i, prefixJobCount σ (k + 1) i = prefixJobCount σ k i + if σ kk = i then 1 else 0 :=
-      fun i => cs_sum_succ (fun _ => (1 : ℤ)) σ kk i
+      fun i => sum_prefix_succ (fun _ => (1 : ℤ)) σ kk i
     have hmin : ∀ i, loadBefore p σ k (σ kk) ≤ loadBefore p σ k i := fun i => hσ kk i
     rw [eL h, eL g, eF h, eC g]
     by_cases h1 : σ kk = h
@@ -290,7 +244,7 @@ theorem lpt_job_position_le {m n : ℕ} [NeZero m] (p : Fin n → ℝ) (hp : ∀
   have hlow : (m : ℤ) * c + 1 ≤ ∑ j ∈ univ.filter (fun j : Fin n => (j : ℕ) < (k : ℕ) + 1), ⌊p j /
     p k⌋ := by
     rw [e, sum_insert (by simp), div_self hpos.ne', Int.floor_one,
-      ← cs_sum_fiber (fun j => ⌊p j / p k⌋) σ k]
+      ← sum_prefix_fiber (fun j => ⌊p j / p k⌋) σ k]
     have h1 : ∑ _i : Fin m, (c : ℤ) ≤
         ∑ i, ∑ j ∈ univ.filter (fun j : Fin n => (j : ℕ) < k ∧ σ j = i), ⌊p j / p k⌋ :=
       Finset.sum_le_sum fun i _ => by
@@ -326,7 +280,7 @@ theorem lpt_job_position_le {m n : ℕ} [NeZero m] (p : Fin n → ℝ) (hp : ∀
     omega
   have hup : ∑ j ∈ univ.filter (fun j : Fin n => (j : ℕ) < (k : ℕ) + 1), ⌊p j / p k⌋ ≤ (m : ℤ) * c
     := by
-    rw [← cs_sum_fiber (fun j => ⌊p j / p k⌋) τ ((k : ℕ) + 1)]
+    rw [← sum_prefix_fiber (fun j => ⌊p j / p k⌋) τ ((k : ℕ) + 1)]
     have h1 := Finset.sum_le_sum fun g (_ : g ∈ (univ : Finset (Fin m))) => hfib g
     simp only [sum_const, card_univ, Fintype.card_fin, nsmul_eq_mul] at h1
     exact h1

@@ -25,18 +25,15 @@ namespace GrahamLPT
 
 open Finset
 
-/-- No job has index below `0`. -/
-theorem bs_loadBefore_zero {m n : ℕ} (p : Fin n → ℝ) (σ : Fin n → Fin m) (i : Fin m) :
-    loadBefore p σ 0 i = 0 := by
-  simp [loadBefore]
-
-/-- Adding the job `k`. -/
-theorem bs_loadBefore_succ {m n : ℕ} (p : Fin n → ℝ) (σ : Fin n → Fin m) (k : Fin n) (i : Fin m) :
-    loadBefore p σ (k + 1) i = loadBefore p σ k i + if σ k = i then p k else 0 := by
-  unfold loadBefore
+/-- Adding one job to a prefix sum, for arbitrary commutative additive values. -/
+theorem sum_prefix_succ {M : Type*} [AddCommMonoid M] {m n : ℕ} (f : Fin n → M)
+    (σ : Fin n → Fin m) (k : Fin n) (i : Fin m) :
+    ∑ j ∈ univ.filter (fun j : Fin n => (j : ℕ) < (k : ℕ) + 1 ∧ σ j = i), f j =
+      (∑ j ∈ univ.filter (fun j : Fin n => (j : ℕ) < k ∧ σ j = i), f j) + if σ k = i then f k else
+        0 := by
   rw [Finset.sum_filter, Finset.sum_filter]
-  have e : (if σ k = i then p k else 0) =
-      ∑ j : Fin n, if j = k then (if σ j = i then p j else 0) else 0 := by
+  have e : (if σ k = i then f k else 0) =
+      ∑ j : Fin n, if j = k then (if σ j = i then f j else 0) else 0 := by
     rw [Finset.sum_ite_eq']
     simp
   rw [e, ← Finset.sum_add_distrib]
@@ -50,6 +47,29 @@ theorem bs_loadBefore_succ {m n : ℕ} (p : Fin n → ℝ) (σ : Fin n → Fin m
       simp [hjk, h1, h2]
     · have h2 : ¬ (j : ℕ) < k + 1 := by omega
       simp [hjk, h1, h2]
+
+/-- Summing the machine fibers recovers the total prefix weight. -/
+theorem sum_prefix_fiber {M : Type*} [AddCommMonoid M] {m n : ℕ} (f : Fin n → M) (σ : Fin n → Fin m)
+  (k : ℕ) :
+    ∑ i, ∑ j ∈ univ.filter (fun j : Fin n => (j : ℕ) < k ∧ σ j = i), f j =
+      ∑ j ∈ univ.filter (fun j : Fin n => (j : ℕ) < k), f j := by
+  simp only [Finset.sum_filter]
+  rw [Finset.sum_comm]
+  refine Finset.sum_congr rfl fun j _ => ?_
+  simp only [ite_and]
+  by_cases h : (j : ℕ) < k
+  · simp [h, Finset.sum_ite_eq]
+  · simp [h]
+
+/-- No job has index below `0`. -/
+theorem bs_loadBefore_zero {m n : ℕ} (p : Fin n → ℝ) (σ : Fin n → Fin m) (i : Fin m) :
+    loadBefore p σ 0 i = 0 := by
+  simp [loadBefore]
+
+/-- Adding the job `k`. -/
+theorem bs_loadBefore_succ {m n : ℕ} (p : Fin n → ℝ) (σ : Fin n → Fin m) (k : Fin n) (i : Fin m) :
+    loadBefore p σ (k + 1) i = loadBefore p σ k i + if σ k = i then p k else 0 :=
+  sum_prefix_succ p σ k i
 
 /-- At or beyond the last index, `loadBefore` is the load. -/
 theorem bs_loadBefore_of_le {m n : ℕ} (p : Fin n → ℝ) (σ : Fin n → Fin m) (k : ℕ) (hk : n ≤ k) (i
@@ -114,23 +134,13 @@ theorem IsListSchedule.restrict {m n N : ℕ} (h : n ≤ N) (p : Fin N → ℝ)
 
 /-- The loads before `k` sum to the lengths of the jobs before `k`. -/
 theorem bs_sum_loadBefore {m n : ℕ} (p : Fin n → ℝ) (σ : Fin n → Fin m) (k : ℕ) :
-    ∑ i, loadBefore p σ k i = ∑ j ∈ univ.filter (fun j : Fin n => (j : ℕ) < k), p j := by
-  unfold loadBefore
-  simp only [Finset.sum_filter]
-  rw [Finset.sum_comm]
-  refine Finset.sum_congr rfl fun j _ => ?_
-  simp only [ite_and]
-  by_cases h : (j : ℕ) < k
-  · simp [h, Finset.sum_ite_eq]
-  · simp [h]
+    ∑ i, loadBefore p σ k i = ∑ j ∈ univ.filter (fun j : Fin n => (j : ℕ) < k), p j :=
+  sum_prefix_fiber p σ k
 
 /-- The loads sum to the total length. -/
 theorem bs_sum_load {m n : ℕ} (p : Fin n → ℝ) (σ : Fin n → Fin m) : ∑ i, load p σ i = ∑ j, p j := by
-  unfold load
-  simp only [Finset.sum_filter]
-  rw [Finset.sum_comm]
-  refine Finset.sum_congr rfl fun j _ => ?_
-  simp [Finset.sum_ite_eq]
+  simpa only [bs_loadBefore_of_le p σ n le_rfl, Fin.isLt, filter_true] using
+    bs_sum_loadBefore p σ n
 
 /-- The lengths of the jobs before `k`, plus `p k`, are at most the total (nonnegative lengths). -/
 theorem bs_sum_filter_add_le {n : ℕ} (p : Fin n → ℝ) (hp : ∀ j, 0 ≤ p j) (k : Fin n) :
