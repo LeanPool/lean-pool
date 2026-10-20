@@ -55,9 +55,8 @@ def normalizedSequence (n : ℕ) (hn : 2 ≤ n) : Polynomial.Sequence ℝ where
 theorem normalizedSequence_leadingCoeff_isUnit
     (n : ℕ) (hn : 2 ≤ n) (i : ℕ) :
     IsUnit ((normalizedSequence n hn i).leadingCoeff) := by
-  apply isUnit_iff_ne_zero.mpr
-  exact Polynomial.leadingCoeff_ne_zero.mpr
-    (Polynomial.Sequence.ne_zero (normalizedSequence n hn) i)
+  exact isUnit_iff_ne_zero.mpr (leadingCoeff_ne_zero.mpr (Sequence.ne_zero (normalizedSequence n hn)
+    i))
 
 /-- The basis of real polynomials given by the normalized Gegenbauer sequence. -/
 def normalizedBasis (n : ℕ) (hn : 2 ≤ n) :
@@ -1575,7 +1574,6 @@ theorem rowFactor_pos {r n : ℕ}
   · apply mul_pos
     · apply div_pos
       · have h := linearDenominator_pos hn i
-        have hlam : 0 ≤ (lam i : ℝ) := Nat.cast_nonneg _
         linarith
       · exact linearDenominator_pos hn i
     · positivity
@@ -1614,8 +1612,6 @@ theorem pairFactor_pos {r n : ℕ}
     linarith
   · apply div_pos
     · have hden := sumDenominator_pos hn i j
-      have hi : 0 ≤ (lam i : ℝ) := Nat.cast_nonneg _
-      have hj : 0 ≤ (lam j : ℝ) := Nat.cast_nonneg _
       linarith
     · exact sumDenominator_pos hn i j
 
@@ -1680,7 +1676,6 @@ theorem rowFactor_update_succ_self {r n : ℕ}
   have hsmall : ((lam ell + rowTail ell).factorial : ℝ) ≠ 0 := by positivity
   have hsmalllin : (lam ell : ℝ) + (rowTail ell : ℝ) + 1 ≠ 0 := by
     have hl : 0 ≤ (lam ell : ℝ) := Nat.cast_nonneg _
-    have hr : 0 ≤ (rowTail ell : ℝ) := Nat.cast_nonneg _
     linarith
   have hargbig :
       lam ell + 1 + tailLength n r ell =
@@ -2697,7 +2692,7 @@ theorem weighted_eigenvector_equation (source : I) :
               A.eigenvalue *
                 (Real.sqrt (A.dimension source : ℝ) *
                   A.eigenvector source)
-          ring
+          ac_rfl
 
 /-- The square root of the vertex weight divided by the total weight. -/
 def amplitude (i : I) : ℝ :=
@@ -2925,7 +2920,7 @@ theorem edgeCoefficient_axis_sum [Nonempty I] (source : I) :
   have ha : A.amplitude source ≠ 0 :=
     (A.amplitude_pos source).ne'
   field_simp
-  nlinarith [Real.sq_sqrt A.eigenvalue_pos.le]
+  linarith [Real.sq_sqrt A.eigenvalue_pos.le]
 
 theorem assembledChannel_axis [Nonempty I] (x : X) :
     (A.assembledChannel)ᵀ * A.axis x * A.combinedFibre x =
@@ -3697,10 +3692,10 @@ theorem rowEuler_mul {r n : ℕ} (i : Fin (r + 1))
   congr 1
   · apply Finset.sum_congr rfl
     intro j _
-    ring
+    ac_rfl
   · apply Finset.sum_congr rfl
     intro j _
-    ring
+    ac_rfl
 
 theorem polarization_mul {r n : ℕ} (i j : Fin (r + 1))
     (p q : PolynomialSpace r n) :
@@ -3712,10 +3707,10 @@ theorem polarization_mul {r n : ℕ} (i j : Fin (r + 1))
   congr 1
   · apply Finset.sum_congr rfl
     intro k _
-    ring
+    ac_rfl
   · apply Finset.sum_congr rfl
     intro k _
-    ring
+    ac_rfl
 
 end HigherHarmonicYoung.GelfandTsetlin
 
@@ -4350,15 +4345,7 @@ theorem polynomialInner_sub_left_harmonicLift {N : ℕ}
     SpherePacking.Fischer.polynomialInner N (p - q) s =
       SpherePacking.Fischer.polynomialInner N p s -
         SpherePacking.Fischer.polynomialInner N q s := by
-  rw [sub_eq_add_neg, SpherePacking.Fischer.polynomialInner_add_left]
-  have hneg :
-      SpherePacking.Fischer.polynomialInner N (-q) s =
-        -SpherePacking.Fischer.polynomialInner N q s := by
-    rw [← neg_one_smul ℝ q,
-      SpherePacking.Fischer.polynomialInner_smul_left]
-    ring
-  rw [hneg]
-  rfl
+  exact @SpherePacking.fischer_polynomialInner_sub_left N p q s
 
 theorem simultaneousHarmonicProjection_polarization
     {r n m : ℕ} (i j : Fin (r + 1))
@@ -4615,16 +4602,7 @@ theorem polarization_mul_euler {r n : ℕ}
     (i j : Fin (r + 1)) (p q : PolynomialSpace r n) :
     polarization r n i j (p * q) =
       polarization r n i j p * q + p * polarization r n i j q := by
-  classical
-  simp only [polarization_apply, MvPolynomial.pderiv_mul,
-    mul_add, Finset.sum_add_distrib, Finset.sum_mul, Finset.mul_sum]
-  apply congrArg₂ (· + ·)
-  · apply Finset.sum_congr rfl
-    intro k _
-    ring
-  · apply Finset.sum_congr rfl
-    intro k _
-    ring
+  exact @GelfandTsetlin.polarization_mul r n i j p q
 
 theorem polarization_X_euler {r n : ℕ}
     (i j a : Fin (r + 1)) (k : Fin n) :
@@ -4714,7 +4692,6 @@ theorem polarization_mem_youngMultihomogeneous_transfer
       simp only [Function.update, ↓reduceDIte, Nat.cast_add, Nat.cast_one, polarization_apply,
         add_smul, one_smul, hji, ↓reduceIte, add_zero, add_sub_cancel_right]
     · have hki' : i ≠ k := Ne.symm hki
-      have hkj' : j ≠ k := Ne.symm hkj
       simp only [Function.update, hkj, ↓reduceDIte, polarization_apply, hki, ↓reduceIte, add_zero,
         sub_zero]
 
@@ -5220,13 +5197,7 @@ theorem sum_nullCoordinateCoefficient_mul {m n : ℕ}
 theorem variableIndex_eq_iff {r n : ℕ}
     (i j : Fin (r + 1)) (k l : Fin n) :
     variableIndex i k = variableIndex j l ↔ i = j ∧ k = l := by
-  constructor
-  · intro h
-    have hp : (i, k) = (j, l) :=
-      variableIndex_injective (r := r) (n := n) h
-    exact ⟨congrArg Prod.fst hp, congrArg Prod.snd hp⟩
-  · rintro ⟨rfl, rfl⟩
-    rfl
+  exact @variableIndex_eq_iff_harmonicLift r n i j k l
 
 /-- The null row linear form used in the spherical-code argument. -/
 def nullRowLinearForm {r m n : ℕ} (hn : 2 * m ≤ n)
@@ -5300,7 +5271,7 @@ theorem pderiv_nullSubstitution {r m n : ℕ}
         · rw [Finset.sum_mul]
           apply Finset.sum_congr rfl
           intro x _
-          ring
+          ac_rfl
         · simp only [↓reduceIte, mul_comm, true_and, MonoidWithZeroHom.map_ite_one_zero, ite_mul,
             one_mul, zero_mul, mul_ite, Finset.sum_ite_eq, Finset.mem_univ]
       · have hrow' : h ≠ i := Ne.symm hrow
@@ -5309,7 +5280,7 @@ theorem pderiv_nullSubstitution {r m n : ℕ}
         rw [Finset.sum_mul]
         apply Finset.sum_congr rfl
         intro x _
-        ring
+        ac_rfl
 
 theorem complexTraceOperator_nullSubstitution {r m n : ℕ}
     (hn : 2 * m ≤ n) (i j : Fin (r + 1))
@@ -5360,7 +5331,7 @@ theorem complexPolarization_nullSubstitution {r m n : ℕ}
   rw [nullRowLinearForm, Finset.sum_mul]
   apply Finset.sum_congr rfl
   intro k _
-  ring
+  ac_rfl
 
 theorem nullRowLinearForm_eq_even_add_I_odd {r m n : ℕ}
     (hn : 2 * m ≤ n) (i : Fin (r + 1)) (j : Fin m) :
@@ -5514,12 +5485,7 @@ theorem evenCoordinate_ne_oddCoordinate {r n : ℕ}
 @[simp] theorem variableIndex_eq_iff {r n : ℕ}
     (i j : Fin (r + 1)) (a b : Fin n) :
     variableIndex i a = variableIndex j b ↔ i = j ∧ a = b := by
-  constructor
-  · intro heq
-    have hpair : (i, a) = (j, b) := variableIndex_injective heq
-    exact ⟨congrArg Prod.fst hpair, congrArg Prod.snd hpair⟩
-  · rintro ⟨rfl, rfl⟩
-    rfl
+  exact @variableIndex_eq_iff_harmonicLift r n i j a b
 
 /-- The isotropic variable used in the spherical-code argument. -/
 def isotropicVariable {r n : ℕ} (h : 2 * (r + 1) ≤ n)
@@ -5753,7 +5719,6 @@ theorem rowDerivation_leadingMinor_upper {r n : ℕ}
       intro heq
       have hv := congrArg Fin.val heq
       change j.val = a.val at hv
-      have ha := a.isLt
       omega
     simp only [hne, ↓reduceIte]
 
@@ -5809,7 +5774,6 @@ theorem rowDerivation_leadingMinor_self {r n : ℕ}
       intro heq
       have hv := congrArg Fin.val heq
       change i.val = a.val at hv
-      have ha := a.isLt
       omega
     simp only [hne, ↓reduceIte]
 
@@ -6693,7 +6657,7 @@ theorem ambientCartan_highestWeightPolynomial {r n : ℕ}
                 mul_zero, CharP.cast_eq_zero, zero_smul]
     | succ m =>
         simp [Algebra.smul_def, pow_succ, smul_eq_mul]
-        ring
+        ac_rfl
   · simp only [hpk, ↓reduceIte, smul_eq_mul, mul_zero, nsmul_zero, CharP.cast_eq_zero, zero_smul]
 
 theorem ambientCartan_dominantHighestWeightWitness {r n : ℕ}

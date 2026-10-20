@@ -28,6 +28,43 @@ namespace Spherical
 
 section
 
+open scoped InnerProductSpace
+
+/-- Spanning ranges detect vanishing of an adjoint composition. -/
+theorem adjoint_composition_eq_zero_of_spanning_ranges
+    {ι E F G : Type*}
+    [NormedAddCommGroup E] [InnerProductSpace ℝ E] [FiniteDimensional ℝ E]
+    [NormedAddCommGroup F] [InnerProductSpace ℝ F] [FiniteDimensional ℝ F]
+    [AddCommGroup G] [Module ℝ G]
+    (V : ι → Type*) [∀ i, AddCommGroup (V i)] [∀ i, Module ℝ (V i)]
+    (L : (i : ι) → V i →ₗ[ℝ] E)
+    (hspan : (⨆ i, LinearMap.range (L i)) = ⊤)
+    (C : E →ₗ[ℝ] F) (A : G →ₗ[ℝ] F)
+    (hzero : ∀ i x p, ⟪C (L i x), A p⟫_ℝ = 0) :
+    C.adjoint.comp A = 0 := by
+  apply LinearMap.ext
+  intro p
+  change C.adjoint (A p) = 0
+  apply ext_inner_left ℝ
+  intro q
+  rw [inner_zero_right]
+  have hq : q ∈ ⨆ i, LinearMap.range (L i) := by
+    rw [hspan]
+    trivial
+  refine Submodule.iSup_induction
+    (motive := fun z => ⟪z, C.adjoint (A p)⟫_ℝ = 0) _ hq ?_ ?_ ?_
+  · intro i z hz
+    obtain ⟨x, rfl⟩ := hz
+    exact (LinearMap.adjoint_inner_right C _ _).trans (hzero i x p)
+  · exact inner_zero_left _
+  · intro u v hu hv
+    exact (inner_add_left (𝕜 := ℝ) u v (C.adjoint (A p))).trans
+      (by rw [hu, hv, add_zero])
+
+end
+
+section
+
 
 namespace HigherYoungAllRankInvariantPositiveRootKernel
 
@@ -376,11 +413,11 @@ theorem dominantHighestRotationWordSpan_eq_top_of_orthogonalPositiveRootRigidity
         orthogonalPositiveRootDerivation hn α z = 0) →
       z ∈ ambientIsotropicHighestSubmodule hn lam) :
     dominantHighestRotationWordSpan hn lam hdom = ⊤ := by
-  apply (allRankRotationIrreducible_of_orthogonalPositiveRootRigidity
-    hn lam hdom N hnil hhighest
-    (dominantHighestRotationWordSpan hn lam hdom)
-    (dominantHighestRotationWordSpan_rotationInvariant hn lam hdom)).resolve_left
-  exact dominantHighestRotationWordSpan_ne_bot hn lam hdom
+  exact Or.resolve_left
+      (allRankRotationIrreducible_of_orthogonalPositiveRootRigidity hn lam hdom N hnil hhighest
+        (dominantHighestRotationWordSpan hn lam hdom)
+          (dominantHighestRotationWordSpan_rotationInvariant hn lam hdom))
+      (dominantHighestRotationWordSpan_ne_bot hn lam hdom)
 
 theorem orthogonalPositiveRootWord_eq_zero_of_mem_fullYoungComplexPolynomialSpan
     {r n : ℕ} (hn : 2 * (r + 1) ≤ n)
@@ -472,12 +509,8 @@ theorem finiteInterlacing_two_mul_row_count_le
 theorem canonicalEdge_loweredInternalYoungWeight_raiseWeight
     {r : ℕ} (low : Fin (r + 1) → ℕ) (row : Fin (r + 1)) :
     loweredInternalYoungWeight (raiseWeight low row) row = low := by
-  funext j
-  by_cases hj : j = row
-  · subst j
-    simp only [loweredInternalYoungWeight, raiseWeight, Function.update_self, add_tsub_cancel_right]
-  · simp only [loweredInternalYoungWeight, raiseWeight, Function.update_self, add_tsub_cancel_right,
-      ne_eq, hj, not_false_eq_true, Function.update_of_ne]
+  exact @HigherYoungArbitraryRowLoweringProjectedAxisWitness.loweredInternalYoungWeight_raiseWeight
+    r low row
 
 theorem canonicalEdge_raiseWeight_strictly_removable
     {r : ℕ} (low : Fin (r + 1) → ℕ) (hdom : Antitone low)
@@ -3190,7 +3223,7 @@ theorem cartanCharacteristicInterpolationBasis_mul_eq_nodal
   rw [Lagrange.basis_eq_prod_sub_inv_mul_nodal_div (Finset.mem_univ i),
     ← Lagrange.nodal_erase_eq_nodal_div (Finset.mem_univ i),
     Lagrange.nodal_eq_mul_nodal_erase (Finset.mem_univ i)]
-  ring
+  ac_rfl
 
 theorem signedAmbientCharacteristicNodes_injective
     {r n : ℕ} {lam : Fin (r + 1) → ℕ} {mu : Fin r → ℕ}
@@ -3667,9 +3700,9 @@ theorem allRankCartanCharacteristicProjector_raise_channel
     (p : HarmonicYoungSpace (n := n) (raiseWeight target row)) :
     allRankCartanCharacteristicProjector target selected (A p) =
       if selected = (row, true) then A p else 0 := by
-  apply allRankCartanCharacteristicProjector_apply_eigenvector
-    target mu h selected (row, true) (A p)
-  exact gtRelativeCasimir_raise_channel target row A hA p
+  exact allRankCartanCharacteristicProjector_apply_eigenvector target mu h selected (row, true) (A
+    p)
+      (gtRelativeCasimir_raise_channel target row A hA p)
 
 theorem allRankCartanCharacteristicProjector_lower_channel
     {r n : ℕ} (target : Fin (r + 1) → ℕ)
@@ -3686,9 +3719,9 @@ theorem allRankCartanCharacteristicProjector_lower_channel
     (p : HarmonicYoungSpace (n := n) source) :
     allRankCartanCharacteristicProjector target selected (A p) =
       if selected = (row, false) then A p else 0 := by
-  apply allRankCartanCharacteristicProjector_apply_eigenvector
-    target mu h selected (row, false) (A p)
-  exact gtRelativeCasimir_lower_channel target source row hsource A hA p
+  exact allRankCartanCharacteristicProjector_apply_eigenvector target mu h selected (row, false) (A
+    p)
+      (gtRelativeCasimir_lower_channel target source row hsource A hA p)
 
 theorem allRankCartanCharacteristicProjector_youngClebschLower
     {r n : ℕ} (target : Fin (r + 1) → ℕ)
@@ -4232,11 +4265,17 @@ theorem canonicalGelfandTsetlinFibre_selectedClebschCompression_iff_reverse
               (reverseInterlacingHarmonicBranch low mu hlow p))) =
       plusProbability (n + 1) low mu row •
         reverseInterlacingHarmonicBranch low mu hlow p := by
-  have hscalar := (canonicalGelfandTsetlinFibre_phase_pos
-    low mu hlow hgram).ne'
-  simp only [canonicalGelfandTsetlinFibre_apply, map_smul, smul_smul]
-  rw [mul_comm (plusProbability (n + 1) low mu row), mul_smul,
-    smul_right_inj hscalar]
+  let A := gtYoungAxisTensor low
+    (EuclideanSpace.basisFun (Fin (n + 1)) ℝ (Fin.last n))
+  let T := A.adjoint.comp ((gtSelectedRowClebschRangeProjector low row).comp A)
+  let c : ℝ := (Real.sqrt (canonicalGelfandTsetlinFischerGram
+    low mu hlow hgram))⁻¹
+  let d := plusProbability (n + 1) low mu row
+  let x := reverseInterlacingHarmonicBranch low mu hlow p
+  have hc : c ≠ 0 := (canonicalGelfandTsetlinFibre_phase_pos low mu hlow hgram).ne'
+  rw [canonicalGelfandTsetlinFibre_apply]
+  change T (c • x) = d • (c • x) ↔ T x = d • x
+  rw [map_smul, smul_comm d c, smul_right_inj hc]
 
 theorem gtSelectedRowClebschRangeProjector_axisCompression_mem_reverseBranch_range
     {r n : ℕ} (low : Fin (r + 2) → ℕ)
@@ -4434,7 +4473,7 @@ theorem gtSelectedProjectorCompression_eq_plusProbability_of_minor
             (plusProbability (n + 1) lam mu row •
               (q : PolynomialSpace r n))
       rw [SpherePacking.Fischer.polynomialInner_smul_right]
-      ring
+      ac_rfl
 
 /-- The selected Clebsch range projector compressed along tensoring with the last coordinate
 axis. -/
@@ -4913,7 +4952,6 @@ theorem orthogonalTensorPieriCoefficient_padded_zero_lt
     (n r j : ℕ) (hj : j < r) :
     orthogonalTensorPieriCoefficient n (-(r : ℤ)) (j : ℤ) = 0 := by
   unfold orthogonalTensorPieriCoefficient
-  have hj' : (j : ℤ) < (r : ℤ) := by exact_mod_cast hj
   have hfirst : -(r : ℤ) + (j : ℤ) < 0 := by omega
   have hsecond : -(r : ℤ) - (j : ℤ) - 2 < 0 := by omega
   rw [orthogonalCompleteSymmetricCoefficient_of_neg n hfirst,
@@ -6102,7 +6140,7 @@ theorem orthogonalTensorPieriNextColumn_last
   rw [harg]
   convert orthogonalTensorPieriCoefficient_padded_zero_succ n r using 1
   push_cast
-  ring
+  ac_rfl
 
 theorem sum_det_updateRow_orthogonalTensorPieriSignedShiftMatrix
     {r : ℕ} (n : ℕ) (lam : Fin (r + 1) → ℕ)
@@ -6537,7 +6575,7 @@ theorem zeroRowTensorIsometryEquiv_symm_tensorCasimir_intertwine
           ((zeroRowTensorIsometryEquiv (n := n) lam).symm.toLinearMap y) :=
     LinearMap.congr_fun
       (zeroRowTensorIsometryEquiv_symm_rotation_intertwine lam a b) y
-  simp only [LinearMap.comp_apply, gtTensorCasimir, LinearMap.smul_apply,
+  simp only [LinearMap.comp_apply, gtTensorCasimir.eq_1, LinearMap.smul_apply,
     LinearMap.sum_apply, LinearMap.neg_apply, map_smul, map_sum, map_neg]
   simp_rw [hrot]
 
@@ -6552,7 +6590,7 @@ theorem zeroRowTensorIsometryEquiv_symm_relativeCasimir_intertwine
   have h := LinearMap.congr_fun
     (zeroRowTensorIsometryEquiv_symm_tensorCasimir_intertwine lam) x
   simp only [LinearMap.comp_apply] at h
-  simp only [gtRelativeCasimir, LinearMap.comp_apply, LinearMap.smul_apply,
+  simp only [gtRelativeCasimir.eq_1, LinearMap.comp_apply, LinearMap.smul_apply,
     LinearMap.sub_apply, LinearMap.id_apply, map_smul, map_sub]
   rw [allRankCasimirEigenvalue_appendZeroWeight, h]
 
@@ -8529,27 +8567,15 @@ theorem appendedPaddedPieriLower_adjoint_originalPaddedSelectedAxisTensor_eq_zer
   let C := (normalizedPaddedPieriLower (n := n + 1)
     (appendZeroWeight lam) hdominant (Fin.last (r + 2)) hsource).toLinearMap
   let A := originalPaddedSelectedAxisTensor lam mu h hgram
-  apply LinearMap.ext
-  intro p
-  change C.adjoint (A p) = 0
-  apply ext_inner_left ℝ
-  intro q
-  rw [inner_zero_right]
-  have hsum := canonicalFullBranch_sum_projection source hn hsource q
-  rw [← hsum, sum_inner]
-  apply Finset.sum_eq_zero
-  intro nu _
-  let F := (canonicalFullBranchFibre source hn nu).toLinearMap
-  obtain ⟨z, hz⟩ := Submodule.starProjection_apply_mem
-    (LinearMap.range F) q
-  change F z = (LinearMap.range F).starProjection q at hz
-  rw [← hz]
-  calc
-    ⟪F z, C.adjoint (A p)⟫_ℝ = ⟪C (F z), A p⟫_ℝ :=
-      LinearMap.adjoint_inner_right C (F z) (A p)
-    _ = ⟪A p, C (F z)⟫_ℝ := real_inner_comm (A p) (C (F z))
-    _ = 0 := originalAppendedFullBranchAxis_inner_eq_zero
-      lam mu h hgram hdominant hsource hn nu p z
+  apply adjoint_composition_eq_zero_of_spanning_ranges
+    (fun nu : FullBranchWeight source =>
+      HarmonicYoungSpace (n := n) (fullBranchSignature nu))
+    (fun nu => (canonicalFullBranchFibre source hn nu).toLinearMap)
+    (canonicalFullBranch_iSup_range_eq_top_unconditional source hn hsource) C A
+  intro nu x p
+  exact (real_inner_comm _ _).trans
+    (originalAppendedFullBranchAxis_inner_eq_zero
+      lam mu h hgram hdominant hsource hn nu p x)
 
 theorem appendedPaddedPieriLower_originalCanonicalAxis_orthogonal
     {r n : ℕ} (lam : Fin (r + 2) → ℕ)

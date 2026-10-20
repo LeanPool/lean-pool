@@ -65,23 +65,19 @@ theorem inverseVarianceFactor_continuous :
   apply Continuous.inv₀
   · fun_prop
   · intro r
-    have hroot : 0 ≤ Real.sqrt (1 - r ^ 2) :=
-      Real.sqrt_nonneg _
     positivity
 
 theorem inverseDegree_eq_sq_mul_factor
     {r : ℝ} (hr : r ^ 2 ≤ 1) :
     inverseDegree r = r * (r * inverseVarianceFactor r) := by
-  have hradical : 0 ≤ 1 - r ^ 2 := by linarith
+  have hradical : 0 ≤ 1 - r ^ 2 := by linarith only [hr]
   have hsquare := Real.sq_sqrt hradical
-  have hroot : 0 ≤ Real.sqrt (1 - r ^ 2) :=
-    Real.sqrt_nonneg _
   have hdenominator :
       1 + Real.sqrt (1 - r ^ 2) ≠ 0 := by
     positivity
   unfold inverseDegree inverseVarianceFactor
   field_simp [hdenominator]
-  nlinarith
+  linarith only [hsquare]
 
 /-- The combination of negative logarithmic terms used in the inverse-degree entropy estimate. -/
 def inverseEntropyFactor (r : ℝ) : ℝ :=
@@ -196,26 +192,26 @@ theorem lowerEndpointRoot_pos {δ : ℝ}
     0 < lowerEndpointRoot δ := by
   unfold lowerEndpointRoot
   apply Real.sqrt_pos.mpr
-  linarith
+  linarith only [hhalf]
 
 theorem lowerEndpointRoot_lt_one {δ : ℝ}
     (hδ : 0 < δ) :
     lowerEndpointRoot δ < 1 := by
   unfold lowerEndpointRoot
   apply (Real.sqrt_lt' (by norm_num : (0 : ℝ) < 1)).2
-  linarith
+  linarith only [hδ]
 
 theorem lowerEndpointWeight_pos {δ : ℝ}
     (hδ : 0 < δ) :
     0 < lowerEndpointWeight δ := by
   unfold lowerEndpointWeight
-  linarith [lowerEndpointRoot_lt_one hδ]
+  linarith only [lowerEndpointRoot_lt_one hδ]
 
 theorem lowerEndpointWeight_lt_half {δ : ℝ}
     (hhalf : δ < (1 : ℝ) / 2) :
     lowerEndpointWeight δ < (1 : ℝ) / 2 := by
   unfold lowerEndpointWeight
-  linarith [lowerEndpointRoot_pos hhalf]
+  linarith only [lowerEndpointRoot_pos hhalf]
 
 theorem lowerEndpointDerivative_pos {δ : ℝ}
     (hδ : 0 < δ) (hhalf : δ < (1 : ℝ) / 2) :
@@ -225,10 +221,8 @@ theorem lowerEndpointDerivative_pos {δ : ℝ}
   have hlog :
       Real.log (lowerEndpointWeight δ) <
         Real.log (1 - lowerEndpointWeight δ) :=
-    Real.log_lt_log hweight (by linarith)
+    Real.log_lt_log hweight (by linarith only [hhalfweight])
   have hroot := lowerEndpointRoot_pos hhalf
-  have hlogtwo : 0 < Real.log (2 : ℝ) :=
-    Real.log_pos (by norm_num)
   unfold lowerEndpointDerivative
   exact div_pos
     (mul_pos hδ (sub_pos.mpr hlog))
@@ -257,7 +251,7 @@ theorem hasDerivAt_mrrwG_boundary_quadratic_zero
     simpa only [neg_mul] using hquadratic.const_sub (1 : ℝ)
   have hradicalzero :
       1 - ((0 : ℝ) ^ 2 + 2 * δ * 0 + 2 * δ) ≠ 0 := by
-    have hpositive : 0 < 1 - 2 * δ := by linarith
+    have hpositive : 0 < 1 - 2 * δ := by linarith only [hhalf]
     simpa only [ne_eq, OfNat.ofNat_ne_zero, not_false_eq_true, zero_pow, mul_zero, add_zero,
       zero_add] using
       hpositive.ne'
@@ -295,7 +289,7 @@ theorem hasDerivAt_mrrwG_boundary_quadratic_zero
   have hweightone :
       lowerEndpointWeight δ ≠ 1 := by
     have h := lowerEndpointWeight_lt_half hhalf
-    linarith
+    linarith only [h]
   have hentropyfun :
       MetricCodes.binaryEntropy =
         (fun a : ℝ => Real.binEntropy a / Real.log 2) :=
@@ -365,14 +359,14 @@ theorem exists_mrrwObjective_lt_zero
             MetricCodes.Johnson.mrrwObjective δ 0) < 0 := by
     have h :=
       hslope.eventually
-        (gt_mem_nhds (by linarith :
+        (gt_mem_nhds (by linarith only [hderivative] :
           -lowerEndpointDerivative δ < 0))
     filter_upwards [h] with r hr
     simpa only [zero_add, smul_eq_mul] using hr
   have hupper :
       ∀ᶠ r : ℝ in 𝓝[>] 0, r < 1 - 2 * δ :=
     nhdsWithin_le_nhds
-      (gt_mem_nhds (by linarith : (0 : ℝ) < 1 - 2 * δ))
+      (gt_mem_nhds (by linarith only [hhalf] : (0 : ℝ) < 1 - 2 * δ))
   have hwitness :
       ∀ᶠ r : ℝ in 𝓝[>] 0,
         0 < r ∧ r < 1 - 2 * δ ∧
@@ -440,9 +434,9 @@ theorem inverse_zero_fibre_boundary
         MetricCodes.Johnson.asymptoticThreshold δ a ∧
       MetricCodes.Johnson.mrrwObjective δ r =
         MetricCodes.Johnson.shellRate a 0 0 u := by
-  have hrplus : 0 < 1 + r := by linarith
-  have hrminus : 0 < 1 - r := by linarith
-  have hmargin : 0 < 1 - 2 * δ - r := by linarith
+  have hrplus : 0 < 1 + r := by linarith only [hr]
+  have hrminus : 0 < 1 - r := by linarith only [hδ, hupper]
+  have hmargin : 0 < 1 - 2 * δ - r := by linarith only [hupper]
   have hrvariance : 0 < 1 - r ^ 2 := by
     nlinarith only [mul_pos hrminus hrplus]
   have hquadratic :
@@ -474,13 +468,13 @@ theorem inverse_zero_fibre_boundary
   let a : ℝ := inverseWeight δ r
   have hu : 0 < u := by
     dsimp [u, inverseDegree]
-    linarith
+    linarith only [hrootlt]
   have hua : u < a := by
     dsimp [u, a, inverseDegree, inverseWeight]
-    linarith
+    linarith only [hrootorder]
   have ha : a < (1 : ℝ) / 2 := by
     dsimp [a, inverseWeight]
-    linarith
+    linarith only [hsmallroot]
   have ha0 : 0 < a := lt_trans hu hua
   have haone : 0 < 1 - a := by linarith
   have huone : 0 < 1 - u := by linarith
@@ -494,7 +488,7 @@ theorem inverse_zero_fibre_boundary
     nlinarith only [hweightsquare]
   have hdistancevariance : 2 * δ < 4 * a * (1 - a) := by
     rw [hvariancea]
-    nlinarith only [mul_pos hδ hr, sq_nonneg r]
+    nlinarith only [mul_pos hδ hr]
   have hvarianceweight : 4 * a * (1 - a) < 4 * a := by
     nlinarith only [mul_pos ha0 ha0]
   have hweightdistance : δ / 2 < a := by
@@ -516,8 +510,11 @@ theorem inverse_zero_fibre_boundary
       (a * (1 - a) - u * (1 - u)) /
         (a * (1 - a) * (1 + r)) =
         δ / (2 * a * (1 - a)) := by
-    field_simp [ha0.ne', haone.ne', hplus];
-      nlinarith only [hvariancea, hvarianceu]
+    have hdifference :
+        a * (1 - a) - u * (1 - u) = δ * (1 + r) / 2 := by
+      linarith only [hvariancea, hvarianceu]
+    rw [hdifference]
+    field_simp [ha0.ne', haone.ne', hplus]
   have hspectral :
       1 - MetricCodes.Johnson.spectralLimit a 0 0 u =
         (a * (1 - a) - u * (1 - u)) /
@@ -665,7 +662,7 @@ theorem eventually_binaryEntropy_inward_improvement
   let M : ℝ := deriv f 0 + 1
   have hM : deriv f 0 < M := by
     dsimp [M]
-    linarith
+    linarith only []
   have hslope := hf.hasDerivAt.tendsto_slope_zero_right
   have hupper :
       ∀ᶠ e : ℝ in 𝓝[>] 0,
@@ -697,7 +694,7 @@ theorem eventually_binaryEntropy_inward_improvement
     mul_lt_mul_of_pos_left hlog' he
   have hentropy :=
     MetricCodes.Hamming.neg_mul_logb_le_binaryEntropy he.le heone.le
-  linarith
+  linarith only [houter_bound, hsingular, hentropy]
 
 theorem eventually_shellRate_interior_improvement
     {a u : ℝ} (ha : 0 < a) (ha' : a < (1 : ℝ) / 2) :
@@ -725,7 +722,7 @@ theorem eventually_shellRate_interior_improvement
     1 - MetricCodes.binaryEntropy (a - interiorSlope a u * e) +
         MetricCodes.binaryEntropy u - MetricCodes.binaryEntropy e <
       1 - MetricCodes.binaryEntropy a + MetricCodes.binaryEntropy u
-  linarith
+  linarith only [he]
 
 /-- The perturbed Johnson spectral limit minus its asymptotic code-distance threshold. -/
 def interiorSpectralMargin (δ a u e : ℝ) : ℝ :=
@@ -750,11 +747,11 @@ theorem interior_boundary_delta_relation {δ a u : ℝ}
         MetricCodes.Johnson.asymptoticThreshold δ a) :
     δ * (1 + 2 * Real.sqrt (u * (1 - u))) =
       2 * (a * (1 - a) - u * (1 - u)) := by
-  have huone : 0 < 1 - u := by linarith
+  have huone : 0 < 1 - u := by linarith only [hua, ha]
   have hsquare := Real.sq_sqrt (mul_pos hu huone).le
   have hvariance := MetricCodes.Johnson.zero_fibre_boundary_variance
     hu hua ha hboundary
-  nlinarith
+  linarith only [hsquare, hvariance]
 
 theorem interior_boundary_weight_gt_distance {δ a u : ℝ}
     (hδ : 0 < δ)
@@ -764,15 +761,12 @@ theorem interior_boundary_weight_gt_distance {δ a u : ℝ}
         MetricCodes.Johnson.asymptoticThreshold δ a) :
     δ / 2 < a := by
   have ha0 : 0 < a := lt_trans hu hua
-  have huone : 0 < 1 - u := by linarith
-  have hs : 0 < Real.sqrt (u * (1 - u)) :=
-    Real.sqrt_pos.mpr (mul_pos hu huone)
+  have huone : 0 < 1 - u := by linarith only [hua, ha]
   have hvariance := MetricCodes.Johnson.zero_fibre_boundary_variance
     hu hua ha hboundary
   have hcross : 0 < δ * (2 * Real.sqrt (u * (1 - u))) := by
     positivity
-  nlinarith [sq_nonneg (2 * Real.sqrt (u * (1 - u))),
-    sq_pos_of_pos ha0]
+  linarith only [hvariance, hcross, sq_nonneg (2 * Real.sqrt (u * (1 - u))), sq_pos_of_pos ha0]
 
 theorem spectralLimit_interior_eq (a u e : ℝ) :
     MetricCodes.Johnson.spectralLimit
@@ -850,7 +844,7 @@ theorem eventually_interior_parameters
     simpa only [interiorWeight_zero, interiorSupport_zero, add_zero, interiorComplement_zero,
       sub_zero] using
       hrightcontinuous.continuousAt.tendsto.mono_left (nhdsWithin_le_nhds : 𝓝[>] (0 : ℝ) ≤ 𝓝 0)
-  have huright : u < 1 - a := by linarith
+  have huright : u < 1 - a := by linarith only [hua, ha]
   have hright : ∀ᶠ e : ℝ in 𝓝[>] 0,
       u < 1 - interiorWeight a u e + interiorSupport a u e -
         interiorComplement a u e :=
@@ -859,9 +853,9 @@ theorem eventually_interior_parameters
     hehalf, hedegree, hleft, hright, self_mem_nhdsWithin]
     with e hwd hwh hwu heh heu hel her (he : 0 < e)
   have hwpos : 0 < interiorWeight a u e := by
-    nlinarith
+    linarith only [hwu, heu, he]
   have hwcomplement : 0 < 1 - interiorWeight a u e := by
-    linarith
+    linarith only [hwh]
   refine {
     distance_pos := hδ
     distance_lt_half := hδ'
@@ -879,11 +873,11 @@ theorem eventually_interior_parameters
   · unfold interiorSupport
     exact mul_nonneg hwpos.le he.le
   · unfold interiorSupport
-    nlinarith [mul_lt_mul_of_pos_left heh hwpos]
+    linarith only [mul_lt_mul_of_pos_left heh hwpos]
   · unfold interiorComplement
     exact mul_nonneg hwcomplement.le he.le
   · unfold interiorComplement
-    nlinarith [mul_lt_mul_of_pos_left heh hwcomplement]
+    linarith only [mul_lt_mul_of_pos_left heh hwcomplement]
   · rw [interiorSupport_add_complement]
     exact heu
 
@@ -899,14 +893,14 @@ theorem hasDerivAt_interiorSpectralMargin
         (a * (1 - a) * Real.sqrt (u * (1 - u)) *
           (1 + 2 * Real.sqrt (u * (1 - u))))) 0 := by
   have ha0 : 0 < a := lt_trans hu hua
-  have ha1 : 0 < 1 - a := by linarith
-  have hu1 : 0 < 1 - u := by linarith
-  have hz0 : 0 < 1 - 2 * u := by linarith
-  have hm0 : 0 < 1 - 2 * a := by linarith
+  have ha1 : 0 < 1 - a := by linarith only [ha]
+  have hu1 : 0 < 1 - u := by linarith only [hua, ha]
+  have hz0 : 0 < 1 - 2 * u := by linarith only [hua, ha]
+  have hm0 : 0 < 1 - 2 * a := by linarith only [ha]
   have hrad : 0 < 1 - (1 - 2 * u) ^ 2 := by
-    nlinarith [mul_pos hu hu1]
+    linarith only [mul_pos hu hu1]
   have hmrad : 0 < 1 - (1 - 2 * a) ^ 2 := by
-    nlinarith [mul_pos ha0 ha1]
+    linarith only [mul_pos ha0 ha1]
   have hs : 0 < Real.sqrt (u * (1 - u)) :=
     Real.sqrt_pos.mpr (mul_pos hu hu1)
   have hsquare := Real.sq_sqrt (mul_pos hu hu1).le
@@ -1026,14 +1020,18 @@ theorem hasDerivAt_interiorSpectralMargin
     apply (eq_div_iff (by positivity)).2
     exact hdelta
   rw [hdelta_div]
-  field_simp [ha0.ne', ha1.ne', hu.ne', hu1.ne',
-    hz0.ne', hm0.ne', hs.ne', hrad.ne', hmrad.ne']
-  ring_nf at hsquare ⊢
-  linear_combination
-    ((-128 * a ^ 3 * (a - 1) ^ 3 * (2 * a - 1) ^ 3 *
-        Real.sqrt (u - u ^ 2)) +
-      (64 * a ^ 2 * u * (a - 1) ^ 2 * (2 * a - 1) * (u - 1))) *
-      hsquare
+  have hdegree :
+      (1 - 2 * u) ^ 2 = 1 - 4 * Real.sqrt (u * (1 - u)) ^ 2 := by
+    linarith only [hsquare]
+  rw [hdegree]
+  generalize hradical : Real.sqrt (u * (1 - u)) = s at hsquare hs hdegree ⊢
+  rw [← hsquare]
+  have hdegree_nonzero : 1 - 4 * s ^ 2 ≠ 0 := by
+    rw [← hdegree]
+    exact pow_ne_zero 2 hz0.ne'
+  field_simp [ha0.ne', ha1.ne', hm0.ne', hs.ne',
+    hmrad.ne', hdegree_nonzero]
+  ring
 
 theorem interiorSpectralMargin_derivative_pos
     {a u : ℝ}
@@ -1044,19 +1042,17 @@ theorem interiorSpectralMargin_derivative_pos
         (a * (1 - a) * Real.sqrt (u * (1 - u)) *
           (1 + 2 * Real.sqrt (u * (1 - u)))) := by
   have ha0 : 0 < a := lt_trans hu hua
-  have ha1 : 0 < 1 - a := by linarith
-  have hu1 : 0 < 1 - u := by linarith
-  have hs : 0 < Real.sqrt (u * (1 - u)) :=
-    Real.sqrt_pos.mpr (mul_pos hu hu1)
+  have ha1 : 0 < 1 - a := by linarith only [ha]
+  have hu1 : 0 < 1 - u := by linarith only [hua, ha]
   have hvariance : u * (1 - u) < (1 : ℝ) / 4 := by
-    nlinarith [sq_pos_of_pos (by linarith : 0 < 1 - 2 * u)]
+    linarith only [sq_pos_of_pos (by linarith : 0 < 1 - 2 * u)]
   have hshalf : Real.sqrt (u * (1 - u)) < (1 : ℝ) / 2 := by
     exact (Real.sqrt_lt' (by norm_num : (0 : ℝ) < 1 / 2)).mpr
-      (by nlinarith)
+      (by linarith only [hvariance])
   have hweight : 0 < 1 - 2 * (a * (1 - a)) := by
-    nlinarith [sq_nonneg (a - (1 : ℝ) / 2)]
+    linarith only [sq_nonneg (a - (1 : ℝ) / 2)]
   exact div_pos
-    (mul_pos hweight (by linarith))
+    (mul_pos hweight (by linarith only [hshalf]))
     (by positivity)
 
 theorem eventually_interiorSpectralMargin_pos
@@ -1131,9 +1127,9 @@ theorem interior_shell_improvement
       ∀ᶠ e : ℝ in 𝓝[>] 0, 0 < 1 - interiorWeight a u e := by
     filter_upwards
       [hweight.eventually
-        (gt_mem_nhds (show a < (1 : ℝ) by linarith))]
+        (gt_mem_nhds (show a < (1 : ℝ) by linarith only [ha]))]
       with e he
-    linarith
+    linarith only [he]
   have hall : ∀ᶠ e : ℝ in 𝓝[>] 0,
       0 < interiorSupport a u e ∧
       0 < interiorComplement a u e ∧
@@ -1406,7 +1402,7 @@ theorem johnsonWindowChannelMatrix_pairing
         rw [Finset.mul_sum]
         apply Finset.sum_congr rfl
         intro b _
-        ring
+        ac_rfl
     _ = _ := by
       unfold MetricCodes.Boolean.coordinateDot
       congr 1
@@ -1640,7 +1636,7 @@ theorem johnsonAdjacentChannel_coordinate_axisDot
         intro b _
         simp only [coupledDegreeCoordinates,
           johnsonHarmonicCoordinates, coupledDegreeVector]
-        ring
+        ac_rfl
     _ = geometricAxis x k *
         MetricCodes.Boolean.dot
           (johnsonAdjacentChannel n w p q L target source f k)
@@ -1751,7 +1747,7 @@ theorem johnsonWindowChannelMatrix_transpose_axis_fibre
           rw [Finset.mul_sum]
           apply Finset.sum_congr rfl
           intro b _
-          ring
+          ac_rfl
     _ = ∑ target : Index p q L,
         (johnsonAdjacentBlockCoefficient n w p q L v lam target Q.1 *
           johnsonFibreAmplitude n w p q L v target) *
@@ -1782,14 +1778,14 @@ theorem johnsonWindowChannelMatrix_transpose_axis_fibre
       rw [Finset.sum_mul]
       apply Finset.sum_congr rfl
       intro target _
-      ring
+      ac_rfl
     _ = Real.sqrt lam *
         (johnsonFibreAmplitude n w p q L v Q.1 *
           coupledDegreeCoordinates h x Q.1 a Q.2) := by
       rw [johnsonAdjacentBlockCoefficient_amplitude_sum
         h hstrict v hv lam hlam heigen Q.1,
         johnsonWindowBasis_dot_coupled h x Q.1 a Q.2]
-      ring
+      ac_rfl
 
 theorem johnsonChannelMatrix_transpose_axis_fibre
     {n w p q L : ℕ}
@@ -2290,7 +2286,7 @@ theorem tendsto_johnsonMu_div
           (supportDegree b n) (complementDegree g n)
           (terminalIndex u r n) / (n : ℝ))
       atTop (nhds (muLimit a b g u)) := by
-  have haone : a ≤ 1 := by linarith [h.weight_lt_half]
+  have haone : a ≤ 1 := by linarith only [h.weight_lt_half]
   have hj₁ := tendsto_johnsonJ1_ratio
     h.weight_pos.le h.support_nonneg
   have hj₂ := tendsto_johnsonJ2_ratio
@@ -2406,7 +2402,7 @@ theorem tendsto_johnsonDiagonal
           (supportDegree b n) (complementDegree g n)
           (terminalIndex u r n))
       atTop (nhds (diagonalLimit a b g u)) := by
-  have haone : a ≤ 1 := by linarith [h.weight_lt_half]
+  have haone : a ≤ 1 := by linarith only [h.weight_lt_half]
   have hmu := tendsto_johnsonMu_div h r
   have hm := tendsto_johnsonM_ratio h.weight_pos.le
   have hw := tendsto_shellWeight_ratio h.weight_pos.le
@@ -2495,7 +2491,7 @@ theorem normalizedNu_scale
           ((2 * (J / N) - 1 / N) *
             (2 * (J / N) + 1 / N)) := by
     field_simp [hN.ne']
-  have hJ : 0 < J := by linarith
+  have hJ : 0 < J := by linarith only [hstep]
   have hleft : 0 < 2 * (J / N) - 1 / N := by
     have heq :
         2 * (J / N) - 1 / N = (2 * J - 1) / N := by
@@ -2507,7 +2503,7 @@ theorem normalizedNu_scale
         2 * (J / N) + 1 / N = (2 * J + 1) / N := by
       field_simp [hN.ne']
     rw [heq]
-    exact div_pos (by linarith) hN
+    exact div_pos (by linarith only [hstep]) hN
   have hroot :
       Real.sqrt
         ((2 * (J / N) - 1 / N) *
@@ -2596,7 +2592,7 @@ theorem tendsto_johnsonNu_div
           (supportDegree b n) (complementDegree g n)
           (terminalIndex u r n) / (n : ℝ))
       atTop (nhds (nuLimit a b g u)) := by
-  have haone : a ≤ 1 := by linarith [h.weight_lt_half]
+  have haone : a ≤ 1 := by linarith only [h.weight_lt_half]
   have hj := tendsto_johnsonJ_ratio h.degree_pos r
   have hm := tendsto_johnsonM_ratio h.weight_pos.le
   have heta := tendsto_johnsonDelta_ratio
@@ -2626,7 +2622,7 @@ theorem tendsto_johnsonNu_div
         0 <
           (2 * ((1 - 2 * u) / 2) - 0) *
             (2 * ((1 - 2 * u) / 2) + 0) := by
-      apply mul_pos <;> linarith
+      apply mul_pos <;> linarith only [hz]
     exact
       (mul_pos (mul_pos (by norm_num) hhalf)
         (Real.sqrt_pos.mpr hrad)).ne'
@@ -2661,7 +2657,7 @@ theorem tendsto_johnsonNu_div
     have hscaled := (htwo.mul hj).sub he
     have hlimit :
         0 < 2 * ((1 - 2 * u) / 2) - 0 := by
-      linarith [h.centeredDegree_pos]
+      linarith only [h.centeredDegree_pos]
     filter_upwards [hscaled.eventually (Ioi_mem_nhds hlimit),
       eventually_gt_atTop (0 : ℕ)] with n hscaled' hn
     have hnreal : (0 : ℝ) < (n : ℝ) := by exact_mod_cast hn
@@ -2714,7 +2710,7 @@ theorem tendsto_johnsonEdge
           (supportDegree b n) (complementDegree g n)
           (terminalIndex u r n))
       atTop (nhds (edgeLimit a b g u)) := by
-  have haone : a ≤ 1 := by linarith [h.weight_lt_half]
+  have haone : a ≤ 1 := by linarith only [h.weight_lt_half]
   have hnu := tendsto_johnsonNu_div h r
   have hw := tendsto_shellWeight_ratio h.weight_pos.le
   have hc := tendsto_complementWeight_ratio
@@ -2754,11 +2750,11 @@ theorem zeroFibreParameters
   refine ⟨h.distance_pos, h.distance_lt_half,
     h.weight_gt_distance, h.weight_lt_half,
     le_rfl, ?_, le_rfl, ?_, ?_, h.degree_lt_weight, ?_, ?_⟩
-  · linarith [h.weight_pos]
-  · linarith [h.weight_complement_pos]
+  · linarith only [h.weight_pos]
+  · linarith only [h.weight_complement_pos]
   · simpa only [add_zero] using h.degree_pos
   · simpa only [sub_zero, add_zero] using h.degree_lt_weight
-  · nlinarith [h.degree_lt_weight, h.weight_lt_half]
+  · linarith only [h.degree_lt_weight, h.weight_lt_half]
 
 /-- The limiting hatted Johnson diagonal coefficient under proportional degree scaling. -/
 def hattedDiagonalLimit (a b g u : ℝ) : ℝ :=
@@ -3325,17 +3321,16 @@ theorem eventually_topEigenvalue_gt
   let E : ℝ := hattedEdgeLimit a b g u
   let S : ℝ := MetricCodes.Johnson.spectralLimit a b g u
   let ε : ℝ := (S - s) / 2
-  have hE : 0 < E := hattedEdgeLimit_pos h
   have hε : 0 < ε := by
     dsimp [ε, S]
-    linarith
+    linarith only [hs]
   obtain ⟨m, hm⟩ := exists_nat_gt (2 * E / ε)
   have hprod : 2 * E < (m : ℝ) * ε :=
     (div_lt_iff₀ hε).mp hm
   have hden : 0 < (m : ℝ) + 1 := by positivity
   have hrem : 2 * E / ((m : ℝ) + 1) < ε := by
     apply (div_lt_iff₀ hden).mpr
-    nlinarith
+    linarith only [hε, hprod]
   have hidentity :
       (((m : ℝ) + 1) * hattedDiagonalLimit a b g u +
         2 * (m : ℝ) * hattedEdgeLimit a b g u) /
@@ -3351,7 +3346,7 @@ theorem eventually_topEigenvalue_gt
             ((m : ℝ) + 1) := by
     rw [hidentity]
     dsimp [ε] at hrem
-    linarith
+    linarith only [hs, hrem]
   have hquot := (tendsto_terminalRayleigh h m).eventually
     (lt_mem_nhds hbelow)
   filter_upwards [hquot, eventually_terminal_block_fit h m]
@@ -3372,7 +3367,7 @@ theorem spectralGap_pos
       MetricCodes.Johnson.asymptoticThreshold d a <
         MetricCodes.Johnson.spectralLimit a b g u := h.2
   unfold spectralGap
-  linarith
+  linarith only [hgap]
 
 theorem eventually_spectralGap_lt
     {d a b g u : ℝ}
@@ -3388,9 +3383,9 @@ theorem eventually_spectralGap_lt
   let A := MetricCodes.Johnson.asymptoticThreshold d a
   let S := MetricCodes.Johnson.spectralLimit a b g u
   have hupper : S - spectralGap d a b g u < S := by
-    linarith
+    linarith only [hpositive]
   have hlower : A < A + spectralGap d a b g u := by
-    linarith
+    linarith only [hpositive]
   have heigen := eventually_topEigenvalue_gt h.1 hupper
   have hthreshold :=
     (MetricCodes.Johnson.Asymptotics.tendsto_threshold_ceil h.1).eventually
@@ -3398,7 +3393,7 @@ theorem eventually_spectralGap_lt
   filter_upwards [heigen, hthreshold] with n hn ht
   dsimp [A, S] at hn ht
   unfold spectralGap at hpositive hn ht ⊢
-  linarith
+  linarith only [hpositive, hn, ht]
 
 theorem asymptoticThreshold_lt_one
     {d a b g u : ℝ}
@@ -3409,7 +3404,7 @@ theorem asymptoticThreshold_lt_one
     exact mul_pos (mul_pos (by norm_num) h.weight_pos)
       h.weight_complement_pos
   have hquot := div_pos h.distance_pos hden
-  linarith
+  linarith only [hquot]
 
 theorem eventually_one_sub_threshold_lt
     {d a b g u : ℝ}
@@ -3420,12 +3415,12 @@ theorem eventually_one_sub_threshold_lt
         2 - MetricCodes.Johnson.asymptoticThreshold d a := by
   have hlimit :
       MetricCodes.Johnson.asymptoticThreshold d a - 1 <
-        MetricCodes.Johnson.asymptoticThreshold d a := by linarith
+        MetricCodes.Johnson.asymptoticThreshold d a := by linarith only []
   have hthreshold :=
     (MetricCodes.Johnson.Asymptotics.tendsto_threshold_ceil h).eventually
       (Ioi_mem_nhds hlimit)
   filter_upwards [hthreshold] with n hn
-  linarith
+  linarith only [hn]
 
 end
 
@@ -3454,7 +3449,7 @@ theorem certificateConstant_pos
     0 < certificateConstant d a b g u := by
   unfold certificateConstant
   apply div_pos
-  · linarith [asymptoticThreshold_lt_one h.1]
+  · linarith only [asymptoticThreshold_lt_one h.1]
   · exact spectralGap_pos h
 
 theorem exists_zero_fibre_feasible
@@ -3464,26 +3459,26 @@ theorem exists_zero_fibre_feasible
   let u : ℝ := d / 4 + 1 / 4
   have ha : a < (1 : ℝ) / 2 := by
     dsimp [a]
-    linarith
+    linarith only [hdhalf]
   have hu : 0 < u := by
     dsimp [u]
-    linarith
+    linarith only [hd]
   have hua : u < a := by
     dsimp [a, u]
-    linarith
+    linarith only [hd]
   have ha0 : 0 < a := lt_trans hu hua
-  have hac : 0 < 1 - a := by linarith
+  have hac : 0 < 1 - a := by linarith only [ha]
   have hparams : MetricCodes.Johnson.AsymptoticParameters d a 0 0 u := by
     refine ⟨hd, hdhalf, ?_, ha, by norm_num, ?_, by norm_num,
       ?_, ?_, hua, ?_, ?_⟩
     · dsimp [a]
-      linarith
-    · linarith
-    · linarith
+      linarith only []
+    · linarith only [hu, hua]
+    · linarith only [ha]
     · simpa only [add_zero] using hu
     · simpa only [sub_zero, add_zero] using hua
     · norm_num
-      linarith
+      linarith only [ha, hua]
   let A := a * (1 - a)
   let U := u * (1 - u)
   have hA : 0 < A := by
@@ -3493,10 +3488,10 @@ theorem exists_zero_fibre_feasible
   have hsden : 0 < 1 + 2 * Real.sqrt U := by positivity
   have hdiff : 2 * (A - U) < d := by
     dsimp [A, U, a, u]
-    nlinarith [sq_nonneg d]
+    linarith only [hd, sq_nonneg d]
   have hinner : (A - U) / (1 + 2 * Real.sqrt U) < d / 2 := by
     apply (div_lt_iff₀ hsden).mpr
-    nlinarith [mul_nonneg hd.le hs]
+    linarith only [hdiff, mul_nonneg hd.le hs]
   have hquot :
       (A - U) / (A * (1 + 2 * Real.sqrt U)) < d / (2 * A) := by
     calc
@@ -3518,7 +3513,7 @@ theorem exists_zero_fibre_feasible
           (a * (1 - a) * (1 + 2 * Real.sqrt (u * (1 - u)))) <
         d / (2 * a * (1 - a)) := by
     convert hquot using 1; ring
-  linarith
+  linarith only [hboundary, hquot']
 
 theorem rateSet_nonempty_of_interior
     {d : ℝ} (hd : 0 < d) (hdhalf : d < (1 : ℝ) / 2) :
@@ -3534,7 +3529,7 @@ theorem eventually_strict_weight_half
   have hw := tendsto_shellWeight_ratio h.weight_pos.le
   have hww := tendsto_add_degree_ratio hw hw
   have hstrict := eventually_degree_lt_of_ratio hww
-    tendsto_dimension_ratio (by linarith [h.weight_lt_half])
+    tendsto_dimension_ratio (by linarith only [h.weight_lt_half])
   filter_upwards [hstrict] with n hn
   omega
 
@@ -3566,15 +3561,10 @@ theorem binaryRate_le_shellRate_of_projectionGrams
   have hG : 0 < G := spectralGap_pos h
   have hB : 0 < B := by
     dsimp [B]
-    linarith [asymptoticThreshold_lt_one h.1]
+    linarith only [asymptoticThreshold_lt_one h.1]
   have hden : 0 < lam - t := by
     dsimp [lam, t, G] at hgap ⊢
-    linarith [spectralGap_pos h]
-  have ht : 0 < 1 - t := by
-    dsimp [t]
-    exact sub_pos.mpr
-      (MetricCodes.Johnson.threshold_lt_one hadmissible.weight_pos
-        hadmissible.weight_lt hd)
+    linarith only [hgap, spectralGap_pos h]
   have hratio : (1 - t) / (lam - t) ≤ B / G := by
     apply (div_le_div_iff₀ hden hG).mpr
     calc
@@ -3614,7 +3604,7 @@ theorem binaryRate_le_shellRate_of_projectionGrams
           bassalygoWindowFibreQuotient a b g u n := by
       unfold certificateConstant bassalygoWindowFibreQuotient
       dsimp [B, G]
-      ring
+      ac_rfl
 
 theorem binaryRate_le_variationalRate_of_projectionGrams
     {d : ℝ} (hd : 0 < d) (hdhalf : d < (1 : ℝ) / 2)
@@ -3714,13 +3704,13 @@ theorem log_ratio_lower {x : ℝ} (hx : 0 ≤ x) (hx' : x < 1) (m : ℕ) :
     logSeriesLower x m ≤ Real.log ((1 + x) / (1 - x)) := by
   have h := Real.sum_range_le_log_div hx hx' m
   unfold logSeriesLower
-  nlinarith
+  linarith only [h]
 
 theorem log_ratio_upper {x : ℝ} (hx : 0 ≤ x) (hx' : x < 1) (m : ℕ) :
     Real.log ((1 + x) / (1 - x)) ≤ logSeriesUpper x m := by
   have h := Real.log_div_le_sum_range_add hx hx' m
   unfold logSeriesUpper logSeriesLower
-  nlinarith
+  linarith only [h]
 
 theorem log_interval_of_series {r x lo hi : ℝ} (m : ℕ)
     (hx : 0 ≤ x) (hx' : x < 1)
@@ -3815,7 +3805,7 @@ theorem kissing_spectral_certificate :
   apply (lt_div_iff₀ hden).2
   have hupper := kissing_sqrt_upper
   norm_num [kissingA, kissingB] at hupper ⊢
-  nlinarith
+  linarith only [hupper]
 
 theorem log_kissing_a :
     Real.log kissingA = Real.log (16 * kissingA) - 4 * Real.log 2 := by
@@ -3826,7 +3816,7 @@ theorem log_kissing_a :
     convert Real.log_pow (2 : ℝ) 4 using 1
     norm_num
   rw [hpow] at hmul
-  linarith
+  linarith only [hmul]
 
 theorem log_kissing_b :
     Real.log kissingB =
@@ -3841,7 +3831,7 @@ theorem log_kissing_b :
       -Real.log (256 * kissingB) := by
     rw [one_div, Real.log_inv]
   rw [hpow] at hmul
-  linarith
+  linarith only [hmul, hinv]
 
 theorem kissing_entropy_certificate :
     MetricCodes.sphericalEntropy kissingA - MetricCodes.sphericalEntropy kissingB <
@@ -3859,7 +3849,7 @@ theorem kissing_entropy_certificate :
               (-8 * Real.log 2 - Real.log (1 / (256 * kissingB)))) <
         (0.397305601680 : ℝ) * Real.log 2 := by
     norm_num [kissingA, kissingB] at htwo h1a hsa h1b hib ⊢
-    linarith
+    linarith only [htwo, h1a, hsa, h1b, hib]
   have hlog : 0 < Real.log 2 := Real.log_pos (by norm_num)
   calc
     MetricCodes.sphericalEntropy kissingA - MetricCodes.sphericalEntropy kissingB =
@@ -3902,7 +3892,7 @@ theorem hasDerivAt_sphericalEntropy {u : ℝ} (hu : 0 < u) :
     HasDerivAt MetricCodes.sphericalEntropy
       (Real.logb 2 ((1 + u) / u)) u := by
   have hplus :=
-    (Real.hasDerivAt_mul_log (by linarith : 1 + u ≠ 0)).comp u
+    (Real.hasDerivAt_mul_log (by linarith only [hu] : 1 + u ≠ 0)).comp u
       ((hasDerivAt_const u (1 : ℝ)).add (hasDerivAt_id u))
   have hself := Real.hasDerivAt_mul_log hu.ne'
   have hderiv := (hplus.sub hself).div_const (Real.log 2)
@@ -3918,7 +3908,7 @@ theorem hasDerivAt_sphericalEntropy {u : ℝ} (hu : 0 < u) :
         (((Real.log (1 + u) + 1) * (0 + 1) -
           (Real.log u + 1)) / Real.log 2) := by
     unfold Real.logb
-    rw [Real.log_div (by linarith : 1 + u ≠ 0) hu.ne']
+    rw [Real.log_div (by linarith only [hu] : 1 + u ≠ 0) hu.ne']
     ring
   rw [hfun, hvalue]
   simpa only [Function.comp_apply, Pi.sub_apply] using hderiv
@@ -3933,7 +3923,7 @@ theorem sphericalEntropy_strictMono :
   rw [(hasDerivAt_sphericalEntropy hu').deriv]
   apply Real.logb_pos (by norm_num : (1 : ℝ) < 2)
   apply (lt_div_iff₀ hu').2
-  linarith
+  linarith only []
 
 theorem sphericalEntropy_sub_nonneg {a b : ℝ}
     (hb : 0 ≤ b) (hba : b ≤ a) :
@@ -3983,14 +3973,14 @@ theorem Gamma_zero {a : ℝ} (ha : 0 < a) :
   rw [MetricCodes.Gamma_eq_sub]
   simp only [zero_mul, add_zero, sub_zero]
   field_simp [hroot, hlin]
-  nlinarith
+  linarith only [hsquare]
 
 theorem classicalThreshold_spectral
     {s : ℝ} (hs : 0 < s) (hs' : s < 1) :
     2 * MetricCodes.Gamma (MetricCodes.classicalThreshold s) 0 = s := by
   have ha : 0 < MetricCodes.classicalThreshold s :=
     MetricCodes.classicalThreshold_pos hs hs'
-  have hrad : 0 < 1 - s ^ 2 := by nlinarith
+  have hrad : 0 < 1 - s ^ 2 := by nlinarith only [hs', hs]
   have hroot : 0 < Real.sqrt (1 - s ^ 2) :=
     Real.sqrt_pos.2 hrad
   have hrootsq := Real.sq_sqrt hrad.le
@@ -4000,7 +3990,7 @@ theorem classicalThreshold_spectral
         s ^ 2 * (1 + 2 * MetricCodes.classicalThreshold s) ^ 2 := by
     unfold MetricCodes.classicalThreshold
     field_simp [hroot.ne']
-    nlinarith
+    linarith only [hrootsq]
   have hinner :
       0 < MetricCodes.classicalThreshold s *
         (1 + MetricCodes.classicalThreshold s) := by positivity
@@ -4033,7 +4023,7 @@ def sphericalImprovementPath (a b : ℝ) : ℝ :=
 
 theorem sphericalImprovementSlope_gt_one {a : ℝ} (ha : 0 < a) :
     1 < (4 * a + 3) := by
-  linarith
+  linarith only [ha]
 
 /-- The polynomial expression used to certify positivity of the spherical spectral margin. -/
 def sphericalSpectralMarginPolynomial (a c b : ℝ) : ℝ :=
@@ -4097,7 +4087,7 @@ theorem eventually_Gamma_improvement {a : ℝ} (ha : 0 < a) :
     with b hbpoly (hb : 0 < b)
   have hbpath : b < sphericalImprovementPath a b := by
     unfold sphericalImprovementPath
-    nlinarith [mul_pos (sub_pos.mpr hc) hb]
+    linarith only [ha, mul_pos (sub_pos.mpr hc) hb]
   have hpath : 0 < sphericalImprovementPath a b :=
     hb.trans hbpath
   have hbase : 0 < a * (1 + a) := by positivity
@@ -4110,7 +4100,7 @@ theorem eventually_Gamma_improvement {a : ℝ} (ha : 0 < a) :
     have hfactor :
         0 < (sphericalImprovementPath a b - b) *
           (1 + sphericalImprovementPath a b + b) := by positivity
-    nlinarith
+    linarith only [hfactor]
   have hmargin :
       0 <
         ((sphericalImprovementPath a b *
@@ -4155,7 +4145,7 @@ theorem eventually_Gamma_improvement {a : ℝ} (ha : 0 < a) :
               (1 + sphericalImprovementPath a b)) := by
     rw [mul_pow, mul_pow, Real.sq_sqrt hbase.le,
       Real.sq_sqrt hrad.le]
-    ring
+    ac_rfl
   have hcross :
       Real.sqrt (a * (1 + a)) *
         ((1 + 2 * sphericalImprovementPath a b) *
@@ -4165,7 +4155,9 @@ theorem eventually_Gamma_improvement {a : ℝ} (ha : 0 < a) :
         (sphericalImprovementPath a b *
           (1 + sphericalImprovementPath a b) - b * (1 + b)) *
             (1 + 2 * a) := by
-    nlinarith
+    apply (sq_lt_sq₀ hleftnonneg hrightpos.le).mp
+    rw [hsquare]
+    exact sub_pos.mp hmargin
   rw [Gamma_zero ha, MetricCodes.Gamma_eq_sub]
   have hlin : 0 < 1 + 2 * a := by positivity
   have hden :
@@ -4178,11 +4170,11 @@ theorem eventually_Gamma_improvement {a : ℝ} (ha : 0 < a) :
 theorem neg_mul_logb_le_sphericalEntropy {b : ℝ} (hb : 0 ≤ b) :
     b * (-Real.logb 2 b) ≤ MetricCodes.sphericalEntropy b := by
   have hlog : 0 ≤ Real.logb 2 (1 + b) :=
-    Real.logb_nonneg (by norm_num) (by linarith)
+    Real.logb_nonneg (by norm_num) (by linarith only [hb])
   have hterm : 0 ≤ (1 + b) * Real.logb 2 (1 + b) := by
-    exact mul_nonneg (by linarith) hlog
+    exact mul_nonneg (by linarith only [hb]) hlog
   unfold MetricCodes.sphericalEntropy
-  nlinarith
+  linarith only [hterm]
 
 theorem eventually_sphericalEntropy_improvement {a : ℝ} (ha : 0 < a) :
     ∀ᶠ b : ℝ in 𝓝[>] 0,
@@ -4203,7 +4195,7 @@ theorem eventually_sphericalEntropy_improvement {a : ℝ} (ha : 0 < a) :
   let M : ℝ := deriv f 0 + 1
   have hM : deriv f 0 < M := by
     dsimp [M]
-    linarith
+    linarith only []
   have hslope := hf.hasDerivAt.tendsto_slope_zero_right
   have hupper :
       ∀ᶠ b : ℝ in 𝓝[>] 0,
@@ -4237,7 +4229,7 @@ theorem eventually_sphericalEntropy_improvement {a : ℝ} (ha : 0 < a) :
       b * M < b * (-Real.logb 2 b) :=
     mul_lt_mul_of_pos_left hlogb hb
   have hentropy := neg_mul_logb_le_sphericalEntropy hb.le
-  linarith
+  linarith only [houter_bound, hsingular, hentropy]
 
 theorem exists_strict_improving_spherical_feasible
     {s : ℝ} (hs : 0 < s) (hs' : s < 1) :
@@ -4260,13 +4252,13 @@ theorem exists_strict_improving_spherical_feasible
       with b hgamma' hentropy' (hb : 0 < b)
     have hbpath : b < sphericalImprovementPath a₀ b := by
       unfold sphericalImprovementPath
-      nlinarith [mul_pos (sub_pos.mpr hc) hb]
+      linarith only [ha₀, mul_pos (sub_pos.mpr hc) hb]
     constructor
     · refine ⟨hb, hbpath, ?_⟩
       have hboundary : 2 * MetricCodes.Gamma a₀ 0 = s := by
         dsimp [a₀]
         exact classicalThreshold_spectral hs hs'
-      nlinarith
+      linarith only [hgamma', hboundary]
     · simpa only using hentropy'
   obtain ⟨b, hb⟩ := hall.exists
   exact ⟨sphericalImprovementPath a₀ b, b, hb⟩
@@ -4291,7 +4283,7 @@ open scoped Topology
 theorem classicalThreshold_continuousAt
     {s : ℝ} (hs : -1 < s) (hs' : s < 1) :
     ContinuousAt MetricCodes.classicalThreshold s := by
-  have hrad : 0 < 1 - s ^ 2 := by nlinarith
+  have hrad : 0 < 1 - s ^ 2 := by nlinarith only [hs, hs']
   have hroot : Real.sqrt (1 - s ^ 2) ≠ 0 :=
     (Real.sqrt_pos.mpr hrad).ne'
   unfold MetricCodes.classicalThreshold
@@ -4375,7 +4367,7 @@ theorem quadraticCoordinate_strictMonoOn :
   change 0 ≤ x at hx
   change 0 ≤ y at hy
   change x * (1 + x) < y * (1 + y)
-  nlinarith [mul_pos (sub_pos.mpr hxy) (by linarith : 0 < 1 + x + y)]
+  linarith only [mul_pos (sub_pos.mpr hxy) (by linarith : 0 < 1 + x + y)]
 
 theorem Interlacing.quadratic_injective {r : ℕ}
     {a : Fin (r + 1) → ℝ} {b : Fin r → ℝ}
@@ -4568,17 +4560,17 @@ theorem integral_inv_add_mul_cos (a b : ℝ) (h : |b| < a) :
     (∫ θ in (0 : ℝ)..Real.pi, (a + b * Real.cos θ)⁻¹) =
       Real.pi / Real.sqrt (a ^ 2 - b ^ 2) := by
   have hab : -a < b ∧ b < a := abs_lt.mp h
-  have hplus : 0 < a + b := by linarith [hab.1]
-  have hminus : 0 < a - b := by linarith [hab.2]
+  have hplus : 0 < a + b := by linarith only [hab.1]
+  have hminus : 0 < a - b := by linarith only [hab.2]
   have hdisc : 0 < a ^ 2 - b ^ 2 := by
-    nlinarith [mul_pos hplus hminus]
+    linarith only [mul_pos hplus hminus]
   let c : ℝ := Real.sqrt (a ^ 2 - b ^ 2)
   have hc : 0 < c := Real.sqrt_pos.2 hdisc
   have hden (θ : ℝ) : 0 < a + b * Real.cos θ := by
     have hbound : |b * Real.cos θ| ≤ |b| := by
       rw [abs_mul]
       simpa only [mul_one] using mul_le_mul_of_nonneg_left (Real.abs_cos_le_one θ) (abs_nonneg b)
-    linarith [neg_le_of_abs_le hbound]
+    linarith only [h, neg_le_of_abs_le hbound]
   let q : ℝ → ℝ := fun θ =>
     (a * Real.cos θ + b) / (a + b * Real.cos θ)
   let F : ℝ → ℝ := fun θ => -Real.arcsin (q θ) / c
@@ -4605,7 +4597,7 @@ theorem integral_inv_add_mul_cos (a b : ℝ) (h : |b| < a) :
           (a ^ 2 - b ^ 2) * (Real.sin θ) ^ 2 /
             (a + b * Real.cos θ) ^ 2 := by
       have htrig : (Real.sin θ) ^ 2 = 1 - (Real.cos θ) ^ 2 := by
-        linarith [Real.sin_sq_add_cos_sq θ]
+        linarith only [Real.sin_sq_add_cos_sq θ]
       have hd2 : (a + b * Real.cos θ) ^ 2 ≠ 0 :=
         pow_ne_zero 2 (hden θ).ne'
       rw [htrig]
@@ -4627,9 +4619,9 @@ theorem integral_inv_add_mul_cos (a b : ℝ) (h : |b| < a) :
             (a + b * Real.cos θ) ^ 2 :=
         div_pos (mul_pos hdisc (sq_pos_of_pos hsin))
           (sq_pos_of_pos (hden θ))
-      linarith [hqidentity]
-    have hqlower : -1 < q θ := by nlinarith [sq_nonneg (q θ + 1)]
-    have hqupper : q θ < 1 := by nlinarith [sq_nonneg (q θ - 1)]
+      linarith only [hpos, hqidentity]
+    have hqlower : -1 < q θ := by linarith [sq_nonneg (q θ + 1)]
+    have hqupper : q θ < 1 := by linarith [sq_nonneg (q θ - 1)]
     have hroot :
         Real.sqrt (1 - (q θ) ^ 2) =
           c * Real.sin θ / (a + b * Real.cos θ) := by
@@ -4659,7 +4651,7 @@ theorem integral_inv_add_mul_cos (a b : ℝ) (h : |b| < a) :
     have hcsq : c ^ 2 = a ^ 2 - b ^ 2 :=
       Real.sq_sqrt hdisc.le
     field_simp [hc.ne', (hden θ).ne', hsin.ne']
-    nlinarith
+    linarith only [hcsq]
   rw [intervalIntegral.integral_eq_sub_of_hasDerivAt_of_le
     Real.pi_pos.le hFcont.continuousOn hderiv hintegrable]
   dsimp [F, q]
@@ -4694,7 +4686,7 @@ theorem betaPDFReal_half_half_eq (u : ℝ) (hu₀ : 0 < u) (hu₁ : u < 1) :
   rw [betaPDFReal, ite_eq_left ⟨hu₀, hu₁⟩,
     MetricCodes.Spherical.HigherHierarchy.Arcsine.beta_half_half_eq_pi]
   have hu : 0 ≤ u := hu₀.le
-  have hv : 0 ≤ 1 - u := by linarith
+  have hv : 0 ≤ 1 - u := by linarith only [hu₁]
   have hpow₁ : u ^ ((1 / 2 : ℝ) - 1) = (Real.sqrt u)⁻¹ := by
     convert Real.rpow_neg hu (1 / 2 : ℝ) using 1 <;>
       norm_num [Real.sqrt_eq_rpow]
@@ -4703,7 +4695,7 @@ theorem betaPDFReal_half_half_eq (u : ℝ) (hu₀ : 0 < u) (hu₁ : u < 1) :
     convert Real.rpow_neg hv (1 / 2 : ℝ) using 1 <;>
       norm_num [Real.sqrt_eq_rpow]
   rw [hpow₁, hpow₂, Real.sqrt_mul hu, mul_inv_rev]
-  ring
+  ac_rfl
 
 theorem integral_beta_half_half_eq_integral_measureT (f : ℝ → ℝ) :
     (∫ u, f u ∂betaMeasure (1 / 2 : ℝ) (1 / 2 : ℝ)) =
@@ -4810,7 +4802,7 @@ theorem betaMap_half_half_ae_pos :
   by_contra hnot
   have htzero : t ≤ 0 := by
     have : t / 4 ≤ 0 := le_of_not_gt hnot
-    linarith
+    linarith only [hnot]
   apply ht
   simp only [betaPDF, betaPDFReal, not_lt_of_ge htzero, false_and, ↓reduceIte, ENNReal.ofReal_zero]
 
@@ -4828,10 +4820,9 @@ theorem arcsine_stieltjes_integrable {x : ℝ} (hx : 0 ≤ x) :
   apply (integrable_const (1 : ℝ)).mono'
     ((by fun_prop : Measurable (fun t : ℝ => x / (x + t))).aestronglyMeasurable)
   filter_upwards [betaMap_half_half_ae_pos] with t ht
-  have hden : 0 < x + t := by linarith
-  have hnonneg : 0 ≤ x / (x + t) := div_nonneg hx hden.le
+  have hden : 0 < x + t := by linarith only [hx, ht]
   simpa only [norm_div, norm_eq_abs, abs_of_nonneg hx, abs_of_pos hden, ge_iff_le] using
-    ((div_le_one hden).2 (by linarith : x ≤ x + t))
+    ((div_le_one hden).2 (by linarith only [ht] : x ≤ x + t))
 
 theorem arcsine_integral_x_div_add {x : ℝ} (hx : 0 < x) :
     (∫ t, x / (x + t) ∂(betaMeasure (1 / 2 : ℝ) (1 / 2 : ℝ)).map
@@ -4855,15 +4846,15 @@ theorem arcsine_integral_x_div_add {x : ℝ} (hx : 0 < x) :
     MetricCodes.Spherical.HigherHierarchy.ArcsineIntegral.integral_inv_add_mul_cos
       (x + 1 / 8) (1 / 8) (by
       norm_num [abs_of_nonneg (by norm_num : (0 : ℝ) ≤ 1 / 8)]
-      linarith)]
+      linarith only [hx])]
   have hquad : (x + 1 / 8) ^ 2 - (1 / 8 : ℝ) ^ 2 =
       x * (x + 1 / 4) := by ring
   rw [hquad, Real.sqrt_mul hx.le, Real.sqrt_div hx.le]
   have hsx : Real.sqrt x ≠ 0 := (Real.sqrt_pos.mpr hx).ne'
   have hsy : Real.sqrt (x + 1 / 4) ≠ 0 :=
-    (Real.sqrt_pos.mpr (by linarith)).ne'
+    (Real.sqrt_pos.mpr (by linarith only [hx])).ne'
   field_simp [Real.pi_pos.ne', hsx, hsy]
-  nlinarith [Real.sq_sqrt hx.le]
+  linarith only [Real.sq_sqrt hx.le]
 
 theorem arcsine_integral_self_div_add {x : ℝ} (hx : 0 ≤ x) :
     (∫ t, t / (t + x) ∂(betaMeasure (1 / 2 : ℝ) (1 / 2 : ℝ)).map
@@ -4888,7 +4879,7 @@ theorem arcsine_integral_self_div_add {x : ℝ} (hx : 0 ≤ x) :
             (1 / 2 : ℝ)).map (fun t : ℝ => t / 4) := by
             apply integral_congr_ae
             filter_upwards [betaMap_half_half_ae_pos] with t ht
-            have hden : x + t ≠ 0 := ne_of_gt (by linarith)
+            have hden : x + t ≠ 0 := ne_of_gt (by linarith only [ht, hx])
             field_simp
             ring
       _ = 1 - (∫ t, x / (x + t) ∂(betaMeasure (1 / 2 : ℝ)
@@ -5015,16 +5006,16 @@ theorem kissing_spectral_certificate :
     lagrangeDenominator,
     Fin.prod_univ_two]
     at h₀ h₁ h₂ ⊢
-  linarith
+  linarith only [h₀, h₁, h₂]
 
 theorem rational_log_lower {r lo : ℝ} (hr : 1 ≤ r) (m : ℕ)
     (hlo : lo < MetricCodes.Numerics.logSeriesLower
       ((r - 1) / (r + 1)) m) : lo < Real.log r := by
-  have hden : 0 < r + 1 := by linarith
+  have hden : 0 < r + 1 := by linarith only [hr]
   have hx : 0 ≤ (r - 1) / (r + 1) :=
     div_nonneg (sub_nonneg.mpr hr) hden.le
   have hx' : (r - 1) / (r + 1) < 1 :=
-    (div_lt_one hden).mpr (by linarith)
+    (div_lt_one hden).mpr (by linarith only [])
   calc
     lo < MetricCodes.Numerics.logSeriesLower
       ((r - 1) / (r + 1)) m := hlo
@@ -5038,11 +5029,11 @@ theorem rational_log_lower {r lo : ℝ} (hr : 1 ≤ r) (m : ℕ)
 theorem rational_log_upper {r hi : ℝ} (hr : 1 ≤ r) (m : ℕ)
     (hhi : MetricCodes.Numerics.logSeriesUpper
       ((r - 1) / (r + 1)) m < hi) : Real.log r < hi := by
-  have hden : 0 < r + 1 := by linarith
+  have hden : 0 < r + 1 := by linarith only [hr]
   have hx : 0 ≤ (r - 1) / (r + 1) :=
     div_nonneg (sub_nonneg.mpr hr) hden.le
   have hx' : (r - 1) / (r + 1) < 1 :=
-    (div_lt_one hden).mpr (by linarith)
+    (div_lt_one hden).mpr (by linarith only [])
   calc
     Real.log r = Real.log
       ((1 + (r - 1) / (r + 1)) / (1 - (r - 1) / (r + 1))) := by
@@ -5058,7 +5049,7 @@ theorem log_scaled_pow_two {u : ℝ} (hu : u ≠ 0) (k : ℕ) :
   have h := Real.log_mul
     (pow_ne_zero k (by norm_num : (2 : ℝ) ≠ 0)) hu
   rw [Real.log_pow] at h
-  linarith
+  linarith only [h]
 
 theorem kissing_entropy_certificate :
     Phi kissingAmbient kissingStabilizer < (0.396605 : ℝ) := by
@@ -5132,7 +5123,18 @@ theorem kissing_entropy_certificate :
           (0.396605 : ℝ) * Real.log 2 := by
     norm_num at htwo ha₀plus ha₀scale ha₁plus ha₁scale ha₂plus ha₂scale
     norm_num at hb₀plus hb₀scale hb₁plus hb₁scale ⊢
-    linarith
+    linarith only [
+      htwo,
+      ha₀plus,
+      ha₀scale,
+      ha₁plus,
+      ha₁scale,
+      ha₂plus,
+      ha₂scale,
+      hb₀plus,
+      hb₀scale,
+      hb₁plus,
+      hb₁scale]
   have hlog : 0 < Real.log 2 := Real.log_pos (by norm_num)
   calc
     Phi kissingAmbient kissingStabilizer =
@@ -5247,13 +5249,13 @@ theorem Interlacing.ambient_quadratic_nonneg {r : ℕ}
     {a : Fin (r + 1) → ℝ} {b : Fin r → ℝ}
     (h : Interlacing a b) (i : Fin (r + 1)) :
     0 ≤ ((a i) * (1 + (a i))) := by
-  exact mul_nonneg (h.ambient_nonneg i) (by linarith [h.ambient_nonneg i])
+  exact mul_nonneg (h.ambient_nonneg i) (by linarith only [h.ambient_nonneg i])
 
 theorem Interlacing.stabilizer_quadratic_pos {r : ℕ}
     {a : Fin (r + 1) → ℝ} {b : Fin r → ℝ}
     (h : Interlacing a b) (i : Fin r) :
     0 < ((b i) * (1 + (b i))) := by
-  exact mul_pos (h.stabilizer_pos i) (by linarith [h.stabilizer_pos i])
+  exact mul_pos (h.stabilizer_pos i) (by linarith only [h.stabilizer_pos i])
 
 theorem integral_inv_add_eq_log_div
     {t p q : ℝ} (hp : 0 < t + p) (hq : 0 < t + q) :
@@ -5297,13 +5299,13 @@ theorem exp_neg_stieltjesPhase_eq_product {r : ℕ}
     Real.exp (-stieltjesPhase a b t) =
       stieltjesPhaseProduct a b t := by
   have hlast : 0 < t + ((a (Fin.last r)) * (1 + (a (Fin.last r)))) := by
-    linarith [h.ambient_quadratic_nonneg (Fin.last r)]
+    linarith only [ht, h.ambient_quadratic_nonneg (Fin.last r)]
   have hambient (i : Fin (r + 1)) :
       0 < t + ((a i) * (1 + (a i))) := by
-    linarith [h.ambient_quadratic_nonneg i]
+    linarith only [ht, h.ambient_quadratic_nonneg i]
   have hstabilizer (i : Fin r) :
       0 < t + ((b i) * (1 + (b i))) := by
-    linarith [h.stabilizer_quadratic_pos i]
+    linarith only [ht, h.stabilizer_quadratic_pos i]
   have hexp :
       Real.exp (stieltjesPhase a b t) =
         ((t + ((a (Fin.last r)) * (1 + (a (Fin.last r))))) / t) *
@@ -5389,7 +5391,7 @@ theorem stieltjesPartialFraction {r : ℕ}
   have hraw := polynomial_partialFraction h.quadratic_injective P hdegree
     (z := -t) (fun i => by
       have hnode := h.ambient_quadratic_nonneg i
-      linarith)
+      linarith only [ht, hnode])
   have hrewrite :
       (∏ i : Fin r, (-t - ((b i) * (1 + (b i))))) /
           (∏ i : Fin (r + 1), (-t - ((a i) * (1 + (a i))))) =
@@ -5414,7 +5416,7 @@ theorem stieltjesPartialFraction {r : ℕ}
     apply Finset.prod_ne_zero_iff.mpr
     intro i _
     have hnode := h.ambient_quadratic_nonneg i
-    exact ne_of_gt (by linarith)
+    exact ne_of_gt (by linarith only [ht, hnode])
   have hleft :
       ((-1 : ℝ) ^ r * (∏ i : Fin r,
           (t + ((b i) * (1 + (b i)))))) /
@@ -5452,8 +5454,7 @@ theorem quadratic_spectralAtom_identity {u : ℝ} (hu : 0 ≤ u) :
         2 * spectralAtom u := by
   have hA : 0 ≤ (u * (1 + u)) := by
     positivity
-  have hlinear : 0 < 1 + 2 * u := by linarith
-  have hden : 0 < (u * (1 + u)) + 1 / 4 := by linarith
+  have hden : 0 < (u * (1 + u)) + 1 / 4 := by linarith only [hA]
   have hroot :
       Real.sqrt ((u * (1 + u)) + 1 / 4) =
         (1 + 2 * u) / 2 := by
@@ -5463,7 +5464,8 @@ theorem quadratic_spectralAtom_identity {u : ℝ} (hu : 0 ≤ u) :
     have htarget :
         ((1 + 2 * u) / 2) ^ 2 = (u * (1 + u)) + 1 / 4 := by
       ring
-    nlinarith
+    apply (sq_eq_sq₀ hnonneg (by positivity)).mp
+    exact hsquare.trans htarget.symm
   rw [Real.sqrt_div hA, hroot]
   unfold spectralAtom
   field_simp
@@ -5476,11 +5478,11 @@ theorem stieltjesKernel_integrable
   apply (integrable_const (α := ℝ) (μ := μ) (c := (1 : ℝ))).mono'
     (measurable_id.div (measurable_id.add measurable_const)).aestronglyMeasurable
   filter_upwards [hpositive] with t ht
-  have hden : 0 < t + x := by linarith
+  have hden : 0 < t + x := by linarith only [hx, ht]
   have hnonneg : 0 ≤ t / (t + x) := div_nonneg ht.le hden.le
   simp only [Pi.div_apply, Pi.add_apply, id_eq]
   rw [Real.norm_eq_abs, abs_of_nonneg hnonneg]
-  simpa only [ge_iff_le] using (div_le_one hden).mpr (by linarith)
+  simpa only [ge_iff_le] using (div_le_one hden).mpr (by linarith only [hx])
 
 theorem integral_exp_neg_stieltjesPhase_eq_one_sub_two_Gamma
     {r : ℕ} {a : Fin (r + 1) → ℝ} {b : Fin r → ℝ}
@@ -5527,7 +5529,7 @@ theorem integral_exp_neg_stieltjesPhase_eq_one_sub_two_Gamma
           rw [Finset.mul_sum]
           apply Finset.sum_congr rfl
           intro i _
-          ring
+          ac_rfl
 
 end
 

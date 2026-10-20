@@ -845,7 +845,7 @@ theorem naturalDiagonalDerivation_coeff {ι : Type*} [Fintype ι]
   rw [Finset.sum_mul]
   apply Finset.sum_congr rfl
   intro i _
-  ring
+  ac_rfl
 
 theorem conjugatedTotalAmbientCartan_X {r n : ℕ}
     (h : 2 * (r + 1) ≤ n)
@@ -1167,7 +1167,7 @@ theorem complex_smul_youngComplexPair
     Complex.I • polynomialComplexification
       ((q : PolynomialSpace r n) + (q' : PolynomialSpace r n)) = _
   rw [map_add, map_add, smul_add]
-  module
+  ac_rfl
 
 theorem complexRotationCombination_youngComplexPair
     {r n k : ℕ} (lam : Fin (r + 1) → ℕ)
@@ -4590,7 +4590,7 @@ theorem det_orthogonal_denominator
       det_chebyshev_geometric_sum,
       det_quadratic_projective_vandermonde,
       ← upper_gram_pair_product]
-    ring
+    ac_rfl
 
 end OrthogonalDenominator
 
@@ -5495,8 +5495,6 @@ theorem rootJointHarmonicChainDifferential_top_eq_zero
   rw [weightedRootBracketBoundary_apply]
   apply Finset.sum_eq_zero
   intro S _
-  have hzero : rootBracketBoundaryCoefficient S.val T.val = 0 :=
-    rootBracketBoundaryCoefficient_degree_zero S.val T.val
   simp only [Nat.reduceAdd, rootBracketBoundaryCoefficient_degree_zero, ↓reduceDIte]
 
 @[simp] theorem weightedChevalleyEilenbergDifferential_degree_zero
@@ -5540,12 +5538,6 @@ theorem finrank_harmonicYoung_eq_rootExteriorEulerCharacteristic_of_rootExact
   change rootExteriorEulerCharacteristic n lam =
     (Module.finrank ℝ (RootJointHarmonicChain n lam 0) : ℤ) -
       (Module.finrank ℝ (LinearMap.range (d 0)) : ℤ) at h
-  have hzero' :
-      (Module.finrank ℝ
-          (LinearMap.ker (rootDegreeZeroPositiveCochain n lam)) : ℤ) +
-        (Module.finrank ℝ (LinearMap.range (d 0)) : ℤ) =
-          (Module.finrank ℝ (RootJointHarmonicChain n lam 0) : ℤ) := by
-    exact_mod_cast hzero
   have hker := finrank_rootDegreeZeroPositiveCochain_kernel
     (n := n) lam
   omega

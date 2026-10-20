@@ -103,16 +103,20 @@ theorem sphericalCodeNumber_lt_top {n : ℕ} {s : ℝ}
       have hinner : sphericalInner u v ≤ s := C.inner_le hu hv huv
       have hsq : 2 * (1 - s) ≤ dist (u : Ambient n) (v : Ambient n) ^ 2 := by
         rw [dist_eq_norm, spherical_dist_sq]
-        nlinarith
+        linarith only [hinner]
       have hsqrt : 0 < Real.sqrt (2 * (1 - s)) := by
         positivity
       have hsqrt_sq : Real.sqrt (2 * (1 - s)) ^ 2 = 2 * (1 - s) :=
-        Real.sq_sqrt (by nlinarith)
+        Real.sq_sqrt (by linarith only [hs])
       have hreal : ((2 * ε : NNReal) : ℝ) <
           dist (u : Ambient n) (v : Ambient n) := by
         change 2 * (Real.sqrt (2 * (1 - s)) / 4) <
           dist (u : Ambient n) (v : Ambient n)
-        nlinarith [show 0 ≤ dist (u : Ambient n) (v : Ambient n) from dist_nonneg]
+        nlinarith only [
+          hsq,
+          hsqrt_sq,
+          hsqrt,
+          show 0 ≤ dist (u : Ambient n) (v : Ambient n) from dist_nonneg]
       calc
         (↑(2 * ε) : ENNReal) =
             ENNReal.ofReal (((2 * ε : NNReal) : ℝ)) :=
@@ -144,22 +148,22 @@ theorem sphericalEntropy_pos {u : ℝ} (hu : 0 < u) :
     0 < sphericalEntropy u := by
   rw [sphericalEntropy_eq_log_add hu]
   have hfirst : 0 < Real.logb 2 (1 + u) :=
-    Real.logb_pos (by norm_num : (1 : ℝ) < 2) (by linarith)
+    Real.logb_pos (by norm_num : (1 : ℝ) < 2) (by linarith only [hu])
   have hratio : 1 < (1 + u) / u := by
     apply (lt_div_iff₀ hu).2
-    linarith
+    linarith only []
   have hsecond : 0 < Real.logb 2 ((1 + u) / u) :=
     Real.logb_pos (by norm_num : (1 : ℝ) < 2) hratio
-  nlinarith
+  nlinarith only [hfirst, hu, hsecond]
 
 theorem Gamma_pos {a b : ℝ} (hb : 0 ≤ b) (hab : b < a) :
     0 < Gamma a b := by
   have ha : 0 < a := lt_of_le_of_lt hb hab
   unfold Gamma
   apply div_pos
-  · exact mul_pos (sub_pos.mpr hab) (by linarith)
-  · exact mul_pos (by linarith)
-      (Real.sqrt_pos.2 (mul_pos ha (by linarith)))
+  · exact mul_pos (sub_pos.mpr hab) (by linarith only [hb, hab])
+  · exact mul_pos (by linarith only [hb, hab])
+      (Real.sqrt_pos.2 (mul_pos ha (by linarith only [hb, hab])))
 
 /-- The harmonic dimension used in the metric-code argument. -/
 def harmonicDimension (n : ℕ) : ℕ → ℕ
@@ -277,7 +281,7 @@ theorem finite_linear_programming_bound {α : Type*}
   · have hcard : 0 < (C.card : ℝ) := by
       exact_mod_cast Nat.pos_of_ne_zero hC
     apply (le_div_iff₀ hc).2
-    nlinarith [hpositive, hsum]
+    nlinarith only [hcard, hpositive, hsum]
 
 /-- The polynomial laplacian used in the spherical-code argument. -/
 def polynomialLaplacian (n : ℕ) :
@@ -481,7 +485,7 @@ theorem recurrenceDenominator_pos {n i : ℕ}
   have hn' : (2 : ℝ) ≤ n := by exact_mod_cast hn
   have hi' : (0 : ℝ) < i := by exact_mod_cast hi
   unfold recurrenceDenominator
-  linarith
+  linarith only [hn', hi']
 
 theorem forwardCoefficient_pos {n i : ℕ}
     (hn : 2 ≤ n) (hi : 0 < i) : 0 < forwardCoefficient n i := by
@@ -489,7 +493,7 @@ theorem forwardCoefficient_pos {n i : ℕ}
   have hi' : (0 : ℝ) < i := by exact_mod_cast hi
   unfold forwardCoefficient
   apply div_pos
-  · linarith
+  · linarith only [hn', hi']
   · exact recurrenceDenominator_pos hn hi
 
 theorem backwardCoefficient_pos {n i : ℕ}
@@ -638,8 +642,6 @@ theorem alphaSq_pos {n k i : ℕ}
     (hn : 3 ≤ n) (hki : k ≤ i) : 0 < alphaSq n k i := by
   have hn' : (3 : ℝ) ≤ n := by exact_mod_cast hn
   have hki' : (k : ℝ) ≤ i := by exact_mod_cast hki
-  have hi' : (0 : ℝ) ≤ i := Nat.cast_nonneg i
-  have hk' : (0 : ℝ) ≤ k := Nat.cast_nonneg k
   unfold alphaSq
   apply div_pos
   · apply mul_pos <;> linarith
@@ -649,16 +651,14 @@ theorem jacobiCoefficient_pos {n k i : ℕ}
     (hn : 3 ≤ n) (hki : k ≤ i) : 0 < jacobiCoefficient n k i := by
   have hn' : (3 : ℝ) ≤ n := by exact_mod_cast hn
   have hki' : (k : ℝ) ≤ i := by exact_mod_cast hki
-  have hi' : (0 : ℝ) ≤ i := Nat.cast_nonneg i
-  have hk' : (0 : ℝ) ≤ k := Nat.cast_nonneg k
   unfold jacobiCoefficient
   apply div_pos
   · apply mul_pos <;> linarith
   · apply Real.sqrt_pos.2
-    have h₁ : 0 < (i : ℝ) + 1 := by linarith
-    have h₂ : 0 < (i : ℝ) + (n : ℝ) - 2 := by linarith
-    have h₃ : 0 < 2 * (i : ℝ) + (n : ℝ) - 2 := by linarith
-    have h₄ : 0 < 2 * (i : ℝ) + (n : ℝ) := by linarith
+    have h₁ : 0 < (i : ℝ) + 1 := by linarith only []
+    have h₂ : 0 < (i : ℝ) + (n : ℝ) - 2 := by linarith only [hn']
+    have h₃ : 0 < 2 * (i : ℝ) + (n : ℝ) - 2 := by linarith only [hn']
+    have h₄ : 0 < 2 * (i : ℝ) + (n : ℝ) := by linarith only [hn']
     exact mul_pos (mul_pos (mul_pos h₁ h₂) h₃) h₄
 
 /-- The symmetric tridiagonal matrix with Gegenbauer Jacobi coefficients between adjacent
@@ -761,7 +761,7 @@ theorem directionalDerivative_mul
               smul_add] using h
     _ = directionalDerivative n x p * q +
           p * directionalDerivative n x q := by
-            ring
+            ac_rfl
 
 /-- The axis polynomial used in the spherical-code argument. -/
 def axisPolynomial (n : ℕ) (x : Euclidean n) :
@@ -1073,7 +1073,7 @@ theorem polynomialInner_comm (n : ℕ)
           rw [Finset.union_comm]
           apply Finset.sum_congr rfl
           intro a ha
-          ring
+          ac_rfl
     _ = ∑ a ∈ q.support,
         multiFactorial a *
           q.coeff a * p.coeff a := by
@@ -1141,7 +1141,7 @@ theorem polynomialInner_smul_left (n : ℕ) (c : ℝ)
       change
         multiFactorial a * (c * d) * q.coeff a =
           c * (multiFactorial a * d * q.coeff a)
-      ring
+      ac_rfl
   | add p q hp hq =>
       rw [smul_add, polynomialInner_add_left,
         polynomialInner_add_left, hp, hq]
@@ -1156,7 +1156,7 @@ theorem polynomialInner_smul_right (n : ℕ) (c : ℝ)
   rw [Finset.mul_sum]
   apply Finset.sum_congr rfl
   intro a ha
-  ring
+  ac_rfl
 
 theorem polynomialInner_sum_left {ι : Type*} (n : ℕ)
     (s : Finset ι) (f : ι → MvPolynomial (Fin n) ℝ)
@@ -1203,7 +1203,7 @@ theorem polynomialInner_X_mul (n : ℕ) (i : Fin n)
       rw [hmono, polynomialInner_monomial,
         polynomialInner_monomial, coeff_pderiv, hshift,
         multiFactorial_add_single]
-      ring
+      ac_rfl
   | add p q hp hq =>
       rw [mul_add, polynomialInner_add_left,
         polynomialInner_add_left, hp, hq]
@@ -1261,7 +1261,7 @@ theorem polynomialInner_axis_directional (n : ℕ)
           congr 1
           apply Finset.sum_congr rfl
           intro i hi
-          ring
+          ac_rfl
     _ = ∑ i : Fin n,
         polynomialInner n
           (MvPolynomial.C (x i) *
@@ -2100,7 +2100,7 @@ theorem polynomialLaplacian_radialPolynomial (n : ℕ) :
     MvPolynomial.pderiv_X, Pi.single_eq_same, smul_eq_mul, mul_one, MvPolynomial.derivation_C,
     mul_zero, add_zero, Finset.sum_const, Finset.card_univ, Fintype.card_fin, nsmul_eq_mul,
     MvPolynomial.C_mul, map_natCast]
-  ring
+  ac_rfl
 
 theorem polynomialLaplacian_mul {n : ℕ}
     (p q : MvPolynomial (Fin n) ℝ) :
@@ -2152,7 +2152,7 @@ theorem polynomialLaplacian_radial_mul {n m : ℕ}
               rw [Finset.mul_sum]
               apply Finset.sum_congr rfl
               intro i hi
-              ring
+              ac_rfl
       _ = _ := by rw [heuler]
   rw [polynomialLaplacian_mul,
     polynomialLaplacian_radialPolynomial]
@@ -2202,7 +2202,7 @@ theorem directionalDerivative_radialPolynomial
           apply Finset.sum_congr rfl
           intro i hi
           rw [← MvPolynomial.C_mul']
-          ring
+          ac_rfl
     _ = 2 * axisPolynomial n x := rfl
 
 theorem directionalDerivative_radial_mul
@@ -2325,17 +2325,7 @@ theorem fischer_harmonicInner_eq_polynomialInner
       Fischer.polynomialInner n
         (p : MvPolynomial (Fin n) ℝ)
         (q : MvPolynomial (Fin n) ℝ) := by
-  change
-    Fischer.homogeneousInner n k
-      (Submodule.inclusion
-        (show harmonicHomogeneousSubmodule n k ≤
-          MvPolynomial.homogeneousSubmodule (Fin n) ℝ k from
-          inf_le_left) p)
-      (Submodule.inclusion
-        (show harmonicHomogeneousSubmodule n k ≤
-          MvPolynomial.homogeneousSubmodule (Fin n) ℝ k from
-          inf_le_left) q) = _
-  exact Fischer.homogeneousInner_eq_polynomialInner n k _ _
+  exact @Fischer.harmonicInner_eq_polynomialInner n k p q
 
 theorem fischer_harmonicInner_self_nonneg
     (n k : ℕ) (p : harmonicHomogeneousSubmodule n k) :
@@ -2416,14 +2406,7 @@ theorem polynomialLaplacian_axis_mul_for_tangent
     polynomialLaplacian n (axisPolynomial n x * p) =
       2 * directionalDerivative n x p +
         axisPolynomial n x * polynomialLaplacian n p := by
-  rw [polynomialLaplacian_mul,
-    polynomialLaplacian_axisPolynomial]
-  simp only [zero_mul, zero_add, pderiv_axisPolynomial]
-  rw [directionalDerivative_apply]
-  congr 2
-  apply Finset.sum_congr rfl
-  intro i hi
-  exact MvPolynomial.C_mul'
+  exact @solidHarmonicAxis_polynomialLaplacian_axis_mul n x p
 
 /-- The denominator `2 * k + n` used to remove the radial part of an axis projection. -/
 def harmonicAxisProjectionDenominator (n k : ℕ) : ℝ :=
@@ -2658,17 +2641,16 @@ theorem harmonicAxisProjection_correction_nonneg
     0 ≤ 1 - 2 * (harmonicAxisProjectionDenominator n k)⁻¹ := by
   have hnreal : (2 : ℝ) ≤ (n : ℝ) := by
     exact_mod_cast hn
-  have hkreal : 0 ≤ (k : ℝ) := by positivity
   have hden :
       (2 : ℝ) ≤ harmonicAxisProjectionDenominator n k := by
     unfold harmonicAxisProjectionDenominator
-    nlinarith
+    linarith only [hnreal]
   have hpos := harmonicAxisProjectionDenominator_pos
     (show 0 < n by omega) k
   apply sub_nonneg.mpr
   rw [← div_eq_mul_inv]
   apply (div_le_iff₀ hpos).mpr
-  nlinarith
+  linarith only [hden]
 
 theorem harmonicAxisLift_injective
     {n : ℕ} (hn : 2 ≤ n) (k : ℕ)
@@ -3009,30 +2991,30 @@ def boundaryDegree (s a : ℝ) : ℝ :=
 theorem spectral_iff_quadratic {s a b : ℝ} (ha : 0 < a) :
     s < 2 * MetricCodes.Gamma a b ↔
       b * (1 + b) < boundaryQuadratic s a := by
-  have hrad : 0 < a * (1 + a) := mul_pos ha (by linarith)
+  have hrad : 0 < a * (1 + a) := mul_pos ha (by linarith only [ha])
   have hden : 0 < (1 + 2 * a) * Real.sqrt (a * (1 + a)) :=
-    mul_pos (by linarith) (Real.sqrt_pos.2 hrad)
+    mul_pos (by linarith only [ha]) (Real.sqrt_pos.2 hrad)
   rw [MetricCodes.Gamma_eq_sub, ← mul_div_assoc, lt_div_iff₀ hden]
   unfold boundaryQuadratic
-  constructor <;> intro h <;> nlinarith
+  constructor <;> intro h <;> linarith only [h]
 
 theorem boundaryDegree_pos {s a : ℝ}
     (hQ : 0 < boundaryQuadratic s a) :
     0 < boundaryDegree s a := by
-  have hrad : 0 ≤ 1 + 4 * boundaryQuadratic s a := by linarith
+  have hrad : 0 ≤ 1 + 4 * boundaryQuadratic s a := by linarith only [hQ]
   have hsquare := Real.sq_sqrt hrad
   have hsqrt := Real.sqrt_nonneg (1 + 4 * boundaryQuadratic s a)
   unfold boundaryDegree
-  nlinarith
+  nlinarith only [hQ, hsquare, hsqrt]
 
 theorem boundaryDegree_mul_one_add {s a : ℝ}
     (hQ : 0 ≤ boundaryQuadratic s a) :
     boundaryDegree s a * (1 + boundaryDegree s a) =
       boundaryQuadratic s a := by
-  have hrad : 0 ≤ 1 + 4 * boundaryQuadratic s a := by linarith
+  have hrad : 0 ≤ 1 + 4 * boundaryQuadratic s a := by linarith only [hQ]
   have hsquare := Real.sq_sqrt hrad
   unfold boundaryDegree
-  nlinarith
+  linarith only [hsquare]
 
 theorem quadratic_iff_boundaryDegree {s a b : ℝ}
     (hb : 0 ≤ b) (hQ : 0 < boundaryQuadratic s a) :
@@ -3042,10 +3024,9 @@ theorem quadratic_iff_boundaryDegree {s a b : ℝ}
   constructor
   · intro h
     by_contra hnot
-    have hge : boundaryDegree s a ≤ b := le_of_not_gt hnot
-    nlinarith [sq_nonneg (b - boundaryDegree s a)]
+    nlinarith only [hroot, h, hnot, hpositive]
   · intro h
-    nlinarith [sq_nonneg (b - boundaryDegree s a)]
+    nlinarith only [hroot, h, hb]
 
 end
 
@@ -3108,15 +3089,11 @@ theorem Phi_oneRow (a b : ℝ) :
 theorem spectralAtom_lt_half {u : ℝ} (hu : 0 ≤ u) :
     spectralAtom u < (1 / 2 : ℝ) := by
   have hrad : 0 ≤ u * (1 + u) := by positivity
-  have hroot : 0 ≤ Real.sqrt (u * (1 + u)) := Real.sqrt_nonneg _
   have hlinear : 0 < 1 + 2 * u := by positivity
   have hsquare := Real.sq_sqrt hrad
-  have hgap :
-      (2 * Real.sqrt (u * (1 + u))) ^ 2 < (1 + 2 * u) ^ 2 := by
-    nlinarith
   unfold spectralAtom
   apply (div_lt_iff₀ hlinear).mpr
-  nlinarith
+  nlinarith only [hsquare, hu]
 
 theorem Interlacing.Gamma_nonneg {r : ℕ}
     {a : Fin (r + 1) → ℝ} {b : Fin r → ℝ}
@@ -3334,13 +3311,7 @@ open scoped BigOperators Nat Topology
 theorem tendsto_natCast_div_self :
     Tendsto (fun n : ℕ => (n : ℝ) / (n : ℝ))
       atTop (nhds 1) := by
-  have heq :
-      (fun _ : ℕ => (1 : ℝ)) =ᶠ[atTop]
-        (fun n : ℕ => (n : ℝ) / (n : ℝ)) := by
-    filter_upwards [eventually_ne_atTop (0 : ℕ)] with n hn
-    have hn' : (n : ℝ) ≠ 0 := by exact_mod_cast hn
-    exact (div_self hn').symm
-  exact tendsto_const_nhds.congr' heq
+  exact MetricCodes.Johnson.Asymptotics.tendsto_dimension_ratio
 
 theorem tendsto_nat_succ_cast_div :
     Tendsto (fun n : ℕ => ((n + 1 : ℕ) : ℝ) / (n : ℝ))
@@ -4187,7 +4158,7 @@ theorem finiteGramFibreAmplitudeVector_unit
     simpa only [finiteGramFibreAmplitudeVector] using finiteGramFibreAmplitude_sq_sum hn k L v
       hunit hv
   rw [← EuclideanSpace.real_norm_sq_eq] at hsum
-  nlinarith [norm_nonneg (finiteGramFibreAmplitudeVector n k L v)]
+  nlinarith only [hsum, norm_nonneg (finiteGramFibreAmplitudeVector n k L v)]
 
 /-- Data encoding the finite gram certificate construction. -/
 structure FiniteGramCertificate (n k L : ℕ) where
@@ -4314,7 +4285,7 @@ theorem finiteGramCertificate_shift_identity
   rw [certificate.lift_kernel x hx y hy,
     certificate.bulk_kernel x hx y hy,
     certificate.spectralCoefficient_sq] at hdecomp
-  linarith
+  linarith only [hdecomp]
 
 theorem isometricPackingKernel_nonneg
     {n k L : ℕ}
@@ -4450,7 +4421,7 @@ theorem finiteGramCertificate_sphericalCode_bound
         ∑ x ∈ C.points, ∑ y ∈ C.points,
           isometricPackingKernel certificate.fibre x y := by
     apply (div_le_iff₀ hD).2
-    nlinarith [htrace]
+    linarith only [htrace]
   have hpositive :
       (C.points.card : ℝ) ^ 2 *
         ((Jacobi.topEigenvalue n k L - s) *
@@ -5128,7 +5099,7 @@ theorem solidHarmonicAxisFischerScale_succ
         ((r : ℝ) + 1) *
         ((r : ℝ) + harmonicAxisParameter n k - 2) := by
   simp only [solidHarmonicAxisFischerScale, Finset.prod_range_succ]
-  ring
+  ac_rfl
 
 theorem solidHarmonicAxisFischerScale_pos
     {n : ℕ} (hn : 3 ≤ n) (k r : ℕ) :
@@ -5137,17 +5108,15 @@ theorem solidHarmonicAxisFischerScale_pos
   apply Finset.prod_pos
   intro j hj
   have hnreal : (3 : ℝ) ≤ (n : ℝ) := by exact_mod_cast hn
-  have hjreal : (0 : ℝ) ≤ (j : ℝ) := by positivity
-  have hkreal : (0 : ℝ) ≤ (k : ℝ) := by positivity
   have hfirst :
       0 < 2 * (j : ℝ) + harmonicAxisParameter n k - 2 := by
     unfold harmonicAxisParameter
-    linarith
+    linarith only [hnreal]
   have hmiddle : 0 < (j : ℝ) + 1 := by positivity
   have hlast :
       0 < (j : ℝ) + harmonicAxisParameter n k - 2 := by
     unfold harmonicAxisParameter
-    linarith
+    linarith only [hnreal]
   exact mul_pos (mul_pos hfirst hmiddle) hlast
 
 theorem fischer_polynomialInner_constant_mul_left
@@ -5254,7 +5223,7 @@ theorem solidHarmonicAxisLift_fischer_inner
   | succ r ihr =>
       rw [solidHarmonicAxisLift_fischer_inner_succ x hx p q r,
         ihr, solidHarmonicAxisFischerScale_succ]
-      ring
+      ac_rfl
 
 /-- The solid harmonic axis lift restricted from tangent harmonics to the target harmonic
 degree. -/
@@ -5472,7 +5441,7 @@ theorem positiveRadicalSymmetrization
   have hright : 0 ≤
       (r / Real.sqrt (a * b * p * q)) * Real.sqrt e := by
     positivity
-  nlinarith
+  nlinarith only [hsquare, hleft, hright]
 
 theorem alphaSq_sqrt_harmonicDimension
     {n k i : ℕ} (hn : 3 ≤ n) (hki : k ≤ i) :
@@ -5481,7 +5450,6 @@ theorem alphaSq_sqrt_harmonicDimension
       Gegenbauer.jacobiCoefficient n k i *
         Real.sqrt (Gegenbauer.harmonicDimension n (i + 1) : ℝ) := by
   have hnreal : (3 : ℝ) ≤ n := by exact_mod_cast hn
-  have hireal : (0 : ℝ) ≤ i := Nat.cast_nonneg _
   have hkreal : (k : ℝ) ≤ i := by exact_mod_cast hki
   have hd : (0 : ℝ) < Gegenbauer.harmonicDimension n i := by
     exact_mod_cast
@@ -5490,12 +5458,11 @@ theorem alphaSq_sqrt_harmonicDimension
     exact_mod_cast
       Gegenbauer.harmonicDimension_pos (by omega : 2 ≤ n) (i + 1)
   have ha : 0 < (i : ℝ) + 1 := by positivity
-  have hb : 0 < (i : ℝ) + n - 2 := by linarith
-  have hp : 0 < 2 * (i : ℝ) + n - 2 := by linarith
-  have hq : 0 < 2 * (i : ℝ) + n := by linarith
+  have hb : 0 < (i : ℝ) + n - 2 := by linarith only [hnreal]
+  have hp : 0 < 2 * (i : ℝ) + n - 2 := by linarith only [hnreal]
+  have hq : 0 < 2 * (i : ℝ) + n := by linarith only [hnreal]
   have hr : 0 ≤
       ((i : ℝ) - k + 1) * ((i : ℝ) + k + n - 2) := by
-    have hkzero : (0 : ℝ) ≤ k := Nat.cast_nonneg _
     exact mul_nonneg (by linarith) (by linarith)
   have hcross0 :=
     JacobiSymmetrization.harmonicDimension_cross_mul hn i
@@ -5519,7 +5486,6 @@ theorem betaSq_sqrt_harmonicDimension
       Gegenbauer.jacobiCoefficient n k i *
         Real.sqrt (Gegenbauer.harmonicDimension n i : ℝ) := by
   have hnreal : (3 : ℝ) ≤ n := by exact_mod_cast hn
-  have hireal : (0 : ℝ) ≤ i := Nat.cast_nonneg _
   have hkreal : (k : ℝ) ≤ i := by exact_mod_cast hki
   have hd : (0 : ℝ) < Gegenbauer.harmonicDimension n i := by
     exact_mod_cast
@@ -5528,12 +5494,11 @@ theorem betaSq_sqrt_harmonicDimension
     exact_mod_cast
       Gegenbauer.harmonicDimension_pos (by omega : 2 ≤ n) (i + 1)
   have ha : 0 < (i : ℝ) + 1 := by positivity
-  have hb : 0 < (i : ℝ) + n - 2 := by linarith
-  have hp : 0 < 2 * (i : ℝ) + n - 2 := by linarith
-  have hq : 0 < 2 * (i : ℝ) + n := by linarith
+  have hb : 0 < (i : ℝ) + n - 2 := by linarith only [hnreal]
+  have hp : 0 < 2 * (i : ℝ) + n - 2 := by linarith only [hnreal]
+  have hq : 0 < 2 * (i : ℝ) + n := by linarith only [hnreal]
   have hr : 0 ≤
       ((i : ℝ) - k + 1) * ((i : ℝ) + k + n - 2) := by
-    have hkzero : (0 : ℝ) ≤ k := Nat.cast_nonneg _
     exact mul_nonneg (by linarith) (by linarith)
   have hcross0 :=
     JacobiSymmetrization.harmonicDimension_cross_mul hn i
@@ -5620,7 +5585,7 @@ theorem finiteGramRecurrenceWeight_eigenrecurrence
             (sourceChannelCoefficient n k L m i *
               Real.sqrt
                 (Gegenbauer.harmonicDimension n (k + i.val) : ℝ)) * v i := by
-                ring
+                ac_rfl
           _ = (Gegenbauer.jacobiMatrix n k L m i *
                 Real.sqrt
                   (Gegenbauer.harmonicDimension n (k + m.val) : ℝ)) *
@@ -5629,7 +5594,7 @@ theorem finiteGramRecurrenceWeight_eigenrecurrence
           _ = (Gegenbauer.jacobiMatrix n k L m i * v i) *
                 Real.sqrt
                   (Gegenbauer.harmonicDimension n (k + m.val) : ℝ) := by
-                  ring
+                  ac_rfl
     _ = (∑ i : Jacobi.Index k L,
           Gegenbauer.jacobiMatrix n k L m i * v i) *
         Real.sqrt
@@ -5638,7 +5603,7 @@ theorem finiteGramRecurrenceWeight_eigenrecurrence
     _ = eigenvalue * finiteGramRecurrenceWeight n k L v m := by
         rw [hcoordinate]
         unfold finiteGramRecurrenceWeight
-        ring
+        ac_rfl
 
 theorem jacobiMatrix_adjacent_pos
     {n k L : ℕ} (hn : 3 ≤ n)
@@ -5937,7 +5902,7 @@ theorem sourceChannelCoefficient_nonneg
           (Gegenbauer.harmonicDimension n (k + i.val) : ℝ) := by
     rw [← hsource]
     exact mul_nonneg hmatrix (Real.sqrt_nonneg _)
-  nlinarith
+  nlinarith only [hproduct, hdimension]
 
 /-- The adjacent-block amplitude normalized by Perron recurrence weights and the top Jacobi
 eigenvalue. -/
@@ -6070,7 +6035,7 @@ theorem sourceAdjacentBlockCoefficient_amplitude_identity
       HarmonicCertificateAssembly.harmonicFibreAmplitudes_sq
         n k L hn source]
     field_simp [heigen.ne', hsource.ne', hnormal.ne']
-  nlinarith
+  nlinarith only [hsquare, hleft, hright]
 
 theorem sourceAdjacentBlockCoefficient_amplitude_sum
     {n k L : ℕ} (hn : 3 ≤ n) (hkl : k < L)
@@ -6529,7 +6494,7 @@ theorem sourceAdjacentChannel_inner_degreeAxisTensor
         (degreeFibre target x u)),
     adjacent.axis_projection x hx target source u,
     real_inner_smul_right]
-  ring
+  ac_rfl
 
 theorem harmonicWeightedFibre_ambient_inner
     (n k L : ℕ) (hn : 3 ≤ n) (hkl : k ≤ L)
@@ -6615,7 +6580,7 @@ theorem sourceAdjacentHarmonicRow_inner_axis_fibre
           (block source) u
           (HarmonicCertificateAssembly.harmonicFibreAmplitudes
             n k L hn target)]
-      ring
+      ac_rfl
     _ = ∑ source : Jacobi.Index k L,
           (∑ target : Jacobi.Index k L,
             sourceAdjacentBlockCoefficient
@@ -6639,7 +6604,7 @@ theorem sourceAdjacentHarmonicRow_inner_axis_fibre
       rw [Finset.mul_sum]
       apply Finset.sum_congr rfl
       intro source hsource
-      ring
+      ac_rfl
     _ = _ := by
       rw [harmonicWeightedFibre_ambient_inner]
 
@@ -6821,7 +6786,7 @@ theorem rawLiftChannel_inner {n k L : ℕ}
         rw [Finset.sum_mul]
         apply Finset.sum_congr rfl
         intro a ha
-        ring
+        ac_rfl
     _ = ⟪x, y⟫_ℝ * isometricPackingKernel f x y := by
       rw [projectionMatrixFeature_inner]
       congr 1
@@ -7197,7 +7162,7 @@ theorem sourceSpectralBulk_lift_basis_inner
     euclideanChannelFeatureMap_inner,
     sourceSpectralBulk_lift_inner fibre source x y hy,
     embeddedBulkChannel_inner]
-  ring
+  ac_rfl
 
 /-- Data encoding the spectral channel remainder construction. -/
 structure SpectralChannelRemainder
@@ -7676,7 +7641,6 @@ theorem upperChannelDenominator_pos
     {n : ℕ} (hn : 0 < n) (m : ℕ) :
     0 < upperChannelDenominator n m := by
   unfold upperChannelDenominator
-  have hnreal : 0 < (n : ℝ) := by exact_mod_cast hn
   positivity
 
 theorem upperChannelWeight_pos
@@ -7794,8 +7758,7 @@ theorem lowerChannelWeight_pos
     0 < lowerChannelWeight n m := by
   unfold lowerChannelWeight
   have hnreal : (3 : ℝ) ≤ n := by exact_mod_cast hn
-  have hmreal : 0 ≤ (m : ℝ) := by positivity
-  apply div_pos <;> linarith
+  apply div_pos <;> linarith only [hnreal]
 
 /-- The harmonic co-gradient scaled by the inverse square root of the channel denominator. -/
 def lowerChannelAdjoint (n m : ℕ) :
@@ -7863,7 +7826,7 @@ theorem radialGradient_derivative_sum
   apply congrArg₂ (· + ·)
   · apply Finset.sum_congr rfl
     intro j hj
-    ring
+    ac_rfl
   · rfl
 
 theorem harmonicCoordinateMultiplication_derivative_sum
@@ -7985,18 +7948,17 @@ theorem lowerFischerGradientWeight_eq
   cases m with
   | zero =>
       have hnne : (n : ℝ) ≠ 0 := by positivity
-      have hnsub : (n : ℝ) - 2 ≠ 0 := by linarith
+      have hnsub : (n : ℝ) - 2 ≠ 0 := by linarith only [hnreal]
       unfold lowerFischerGradientWeight upperChannelDenominator
         lowerChannelWeight
       norm_num
       field_simp
   | succ k =>
-      have hkreal : 0 ≤ (k : ℝ) := by positivity
       have hden : 2 * (k : ℝ) + n ≠ 0 := by
-        have : 0 < 2 * (k : ℝ) + n := by linarith
+        have : 0 < 2 * (k : ℝ) + n := by linarith only [hnreal]
         exact ne_of_gt this
       have hden' : (n : ℝ) + (k : ℝ) * 2 ≠ 0 := by
-        have : 0 < (n : ℝ) + (k : ℝ) * 2 := by nlinarith
+        have : 0 < (n : ℝ) + (k : ℝ) * 2 := by linarith only [hnreal]
         exact ne_of_gt this
       unfold lowerFischerGradientWeight upperChannelDenominator
         lowerChannelWeight
@@ -8074,7 +8036,7 @@ theorem harmonicCoordinateRaising_derivative_sum
             smul_smul, smul_smul, ← sub_smul]
           unfold lowerFischerGradientWeight
           congr 1
-          ring
+          ac_rfl
 
 theorem harmonicCoGradient_inner
     {n : ℕ} (hn : 3 ≤ n) (m : ℕ)
@@ -8271,7 +8233,7 @@ theorem upperChannel_harmonicAxisTensor_inner
       SpherePacking.Fischer.polynomialInner_smul_left,
       SpherePacking.Fischer.polynomialInner_smul_right,
       SpherePacking.Fischer.polynomialInner_smul_right]
-    ring
+    ac_rfl
   calc
     ⟪upperChannel n m (harmonicAxisTensor n m x p), q⟫_ℝ =
       ⟪harmonicAxisTensor n m x p,
@@ -8356,13 +8318,11 @@ theorem upperChannel_solidHarmonicSource
         SpherePacking.solidHarmonicAxisPolynomialIsometry
           hn k (r + 1) x hx p := by
   have hnreal : (3 : ℝ) ≤ (n : ℝ) := by exact_mod_cast hn
-  have hkreal : (0 : ℝ) ≤ (k : ℝ) := by positivity
-  have hrreal : (0 : ℝ) ≤ (r : ℝ) := by positivity
   have hraise :
       0 < 2 * (r : ℝ) +
         SpherePacking.harmonicAxisParameter n k - 2 := by
     unfold SpherePacking.harmonicAxisParameter
-    linarith
+    linarith only [hnreal]
   have hscale :=
     SpherePacking.solidHarmonicAxisFischerScale_pos hn k r
   have hscale_next :=
@@ -8423,13 +8383,11 @@ theorem solidHarmonicSourceUpperCoefficient_pos
     {n : ℕ} (hn : 3 ≤ n) (k r : ℕ) :
     0 < solidHarmonicSourceUpperCoefficient n k r := by
   have hnreal : (3 : ℝ) ≤ (n : ℝ) := by exact_mod_cast hn
-  have hkreal : (0 : ℝ) ≤ (k : ℝ) := by positivity
-  have hrreal : (0 : ℝ) ≤ (r : ℝ) := by positivity
   have hraise :
       0 < 2 * (r : ℝ) +
         SpherePacking.harmonicAxisParameter n k - 2 := by
     unfold SpherePacking.harmonicAxisParameter
-    linarith
+    linarith only [hnreal]
   unfold solidHarmonicSourceUpperCoefficient
   apply div_pos
   · exact Real.sqrt_pos.mpr
@@ -8456,13 +8414,11 @@ theorem solidHarmonicSourceUpperCoefficient_sq
           SpherePacking.harmonicAxisParameter n k - 2) *
           upperChannelDenominator n (k + r)) := by
   have hnreal : (3 : ℝ) ≤ (n : ℝ) := by exact_mod_cast hn
-  have hkreal : (0 : ℝ) ≤ (k : ℝ) := by positivity
-  have hrreal : (0 : ℝ) ≤ (r : ℝ) := by positivity
   have hraise :
       0 < 2 * (r : ℝ) +
         SpherePacking.harmonicAxisParameter n k - 2 := by
     unfold SpherePacking.harmonicAxisParameter
-    linarith
+    linarith only [hnreal]
   have hscale :=
     SpherePacking.solidHarmonicAxisFischerScale_pos hn k r
   have hscale_next :=
@@ -8483,15 +8439,6 @@ theorem solidHarmonicSourceUpperIsometryCoefficient_sq
     solidHarmonicSourceUpperIsometryCoefficient n k r ^ 2 =
       SpherePacking.Gegenbauer.alphaSq n k (k + r) := by
   have hnreal : (3 : ℝ) ≤ (n : ℝ) := by exact_mod_cast hn
-  have hkreal : (0 : ℝ) ≤ (k : ℝ) := by positivity
-  have hrreal : (0 : ℝ) ≤ (r : ℝ) := by positivity
-  have hraise :
-      0 < 2 * (r : ℝ) +
-        SpherePacking.harmonicAxisParameter n k - 2 := by
-    unfold SpherePacking.harmonicAxisParameter
-    linarith
-  have hden :=
-    upperChannelDenominator_pos (by omega : 0 < n) (k + r)
   have hweight :=
     upperChannelWeight_pos (by omega : 0 < n) (k + r)
   unfold solidHarmonicSourceUpperIsometryCoefficient
@@ -8525,7 +8472,7 @@ theorem solidHarmonicSourceUpperIsometryCoefficient_eq_sqrt
   have hroot := Real.sq_sqrt halpha.le
   have hroot_nonneg :=
     Real.sqrt_nonneg (SpherePacking.Gegenbauer.alphaSq n k (k + r))
-  nlinarith
+  nlinarith only [hsquare, hroot, hcoef, hroot_nonneg]
 
 theorem harmonic_inner_smul_right
     (n m : ℕ) (p q : HarmonicSpace n m) (c : ℝ) :
@@ -8668,7 +8615,7 @@ theorem lowerChannel_harmonicAxisTensor_inner
       SpherePacking.Fischer.harmonicInner_eq_polynomialInner,
       harmonicCoordinateDerivative_apply,
       SpherePacking.Fischer.polynomialInner_smul_left]
-    ring
+    ac_rfl
   calc
     ⟪lowerChannel n m (harmonicAxisTensor n (m + 1) x p), q⟫_ℝ =
       ⟪harmonicAxisTensor n (m + 1) x p,
@@ -8791,13 +8738,11 @@ theorem solidHarmonicSourceLowerCoefficient_pos
     {n : ℕ} (hn : 3 ≤ n) (k r : ℕ) :
     0 < solidHarmonicSourceLowerCoefficient n k r := by
   have hnreal : (3 : ℝ) ≤ (n : ℝ) := by exact_mod_cast hn
-  have hkreal : (0 : ℝ) ≤ (k : ℝ) := by positivity
-  have hrreal : (0 : ℝ) ≤ (r : ℝ) := by positivity
   have hlast :
       0 < (r : ℝ) +
         SpherePacking.harmonicAxisParameter n k - 2 := by
     unfold SpherePacking.harmonicAxisParameter
-    linarith
+    linarith only [hnreal]
   unfold solidHarmonicSourceLowerCoefficient
   apply div_pos
   · exact mul_pos
@@ -8820,13 +8765,11 @@ theorem solidHarmonicSourceLowerCoefficient_sq
           SpherePacking.harmonicAxisParameter n k - 2) *
           upperChannelDenominator n (k + r)) := by
   have hnreal : (3 : ℝ) ≤ (n : ℝ) := by exact_mod_cast hn
-  have hkreal : (0 : ℝ) ≤ (k : ℝ) := by positivity
-  have hrreal : (0 : ℝ) ≤ (r : ℝ) := by positivity
   have hraise :
       0 < 2 * (r : ℝ) +
         SpherePacking.harmonicAxisParameter n k - 2 := by
     unfold SpherePacking.harmonicAxisParameter
-    linarith
+    linarith only [hnreal]
   have hscale :=
     SpherePacking.solidHarmonicAxisFischerScale_pos hn k r
   have hscale_next :=
@@ -8847,39 +8790,30 @@ theorem solidHarmonicSourceLowerIsometryCoefficient_sq
     solidHarmonicSourceLowerIsometryCoefficient n k r ^ 2 =
       SpherePacking.Gegenbauer.betaSq n k (k + (r + 1)) := by
   have hnreal : (3 : ℝ) ≤ (n : ℝ) := by exact_mod_cast hn
-  have hkreal : (0 : ℝ) ≤ (k : ℝ) := by positivity
-  have hrreal : (0 : ℝ) ≤ (r : ℝ) := by positivity
-  have hraise :
-      0 < 2 * (r : ℝ) +
-        SpherePacking.harmonicAxisParameter n k - 2 := by
-    unfold SpherePacking.harmonicAxisParameter
-    linarith
-  have hden :=
-    upperChannelDenominator_pos (by omega : 0 < n) (k + r)
   have hweight := lowerChannelWeight_pos hn (k + r)
   have hmiddle :
       0 < (k : ℝ) + (r : ℝ) + (n : ℝ) - 2 := by
-    linarith
+    linarith only [hnreal]
   have hlowerden :
       0 < 2 * ((k : ℝ) + (r : ℝ)) + (n : ℝ) - 2 := by
-    linarith
+    linarith only [hnreal]
   have hupperden :
       0 < 2 * ((k : ℝ) + (r : ℝ)) + (n : ℝ) := by
-    linarith
+    linarith only [hnreal]
   have hfirstden :
       0 < 2 * (r : ℝ) +
         ((n : ℝ) + 2 * (k : ℝ)) - 2 := by
-    linarith
+    linarith only [hnreal]
   have hfirstden_rev :
       0 < (r : ℝ) * 2 +
         ((n : ℝ) + 2 * (k : ℝ)) - 2 := by
-    linarith
+    linarith only [hnreal]
   have hbetafirst :
       0 < (k : ℝ) + ((r : ℝ) + 1) + (n : ℝ) - 3 := by
-    linarith
+    linarith only [hnreal]
   have hbetasecond :
       0 < 2 * ((k : ℝ) + ((r : ℝ) + 1)) + (n : ℝ) - 2 := by
-    linarith
+    linarith only [hnreal]
   unfold solidHarmonicSourceLowerIsometryCoefficient
   rw [div_pow, Real.sq_sqrt hweight.le,
     solidHarmonicSourceLowerCoefficient_sq hn k r]
@@ -8916,7 +8850,7 @@ theorem solidHarmonicSourceLowerIsometryCoefficient_eq_sqrt
   have hroot := Real.sq_sqrt hbeta
   have hroot_nonneg := Real.sqrt_nonneg
     (SpherePacking.Gegenbauer.betaSq n k (k + (r + 1)))
-  nlinarith
+  nlinarith only [hsquare, hroot, hcoef, hroot_nonneg]
 
 theorem lowerChannelIsometry_adjoint_solidHarmonicSource
     {n : ℕ} (hn : 3 ≤ n) (k r : ℕ)
