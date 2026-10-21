@@ -7,7 +7,12 @@ module
 
 public import LeanPool.ConwaySoifer.Geometry.Cap
 public import LeanPool.ConwaySoifer.Geometry.Canonical
-import Mathlib.Tactic
+import Mathlib.Tactic.FieldSimp
+import Mathlib.Tactic.FunProp
+import Mathlib.Tactic.Linarith
+import Mathlib.Tactic.NormNum.Basic
+import Mathlib.Tactic.Positivity
+import Mathlib.Tactic.Ring
 
 /-!
 # The universal corner cap and the external-midpoint cost

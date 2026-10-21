@@ -7,7 +7,10 @@ module
 
 public import LeanPool.ConwaySoifer.Simplified.Geometry.CoreLocal
 public import LeanPool.ConwaySoifer.Simplified.Geometry.HexSymmetry
-import Mathlib.Tactic
+import Mathlib.Tactic.Convert
+import Mathlib.Tactic.FinCases
+import Mathlib.Tactic.Linarith
+import Mathlib.Tactic.Ring
 
 /-!
 # Core

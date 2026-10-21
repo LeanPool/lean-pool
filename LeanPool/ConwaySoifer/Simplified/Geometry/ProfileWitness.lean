@@ -30,7 +30,10 @@ public import LeanPool.ConwaySoifer.Simplified.Geometry.Profile7Q0
 public import LeanPool.ConwaySoifer.Simplified.Geometry.Profile7Q1
 public import LeanPool.ConwaySoifer.Simplified.Geometry.Profile7Q2
 public import LeanPool.ConwaySoifer.Simplified.Geometry.Receiver
-import Mathlib.Tactic
+import Mathlib.Tactic.Convert
+import Mathlib.Tactic.FinCases
+import Mathlib.Tactic.NormNum.Basic
+import Mathlib.Tactic.Ring
 
 /-!
 # ProfileWitness

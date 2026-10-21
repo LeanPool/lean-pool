@@ -7,7 +7,14 @@ module
 
 public import LeanPool.ConwaySoifer.SevenTriangles.Geometry.Basic
 public import Mathlib.Analysis.Real.Sqrt
-import Mathlib.Tactic
+import Mathlib.Tactic.Convert
+import Mathlib.Tactic.FieldSimp
+import Mathlib.Tactic.FinCases
+import Mathlib.Tactic.Linarith
+import Mathlib.Tactic.NormNum.Basic
+import Mathlib.Tactic.NormNum.RealSqrt
+import Mathlib.Tactic.Positivity
+import Mathlib.Tactic.Ring
 
 /-!
 # Algebra of support forms

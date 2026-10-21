@@ -8,7 +8,11 @@ module
 public import Mathlib.Analysis.Convex.Hull
 public import Mathlib.Basic.Real.Basic
 public import Mathlib.Data.Fin.VecNotation
-import Mathlib.Tactic
+import Mathlib.Tactic.FinCases
+import Mathlib.Tactic.NormNum.Basic
+import Mathlib.Tactic.NormNum.RealSqrt
+import Mathlib.Tactic.Positivity
+import Mathlib.Tactic.Ring
 
 /-!
 # Rational coordinates for the covering problem

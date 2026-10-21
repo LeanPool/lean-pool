@@ -8,7 +8,12 @@ module
 public import LeanPool.ConwaySoifer.Certificates.Model
 public import LeanPool.ConwaySoifer.Geometry.Support
 public import LeanPool.ConwaySoifer.Geometry.Owners
-import Mathlib.Tactic
+import Mathlib.Tactic.FieldSimp
+import Mathlib.Tactic.FinCases
+import Mathlib.Tactic.Linarith
+import Mathlib.Tactic.NormNum.Basic
+import Mathlib.Tactic.Positivity
+import Mathlib.Tactic.Ring
 
 /-!
 # Soundness of the contact-sensitive checker

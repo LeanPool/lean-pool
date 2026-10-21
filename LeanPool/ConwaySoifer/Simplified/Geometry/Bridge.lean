@@ -7,7 +7,9 @@ module
 
 public import LeanPool.ConwaySoifer.Simplified.Geometry.BridgeLocal
 public import LeanPool.ConwaySoifer.Simplified.Geometry.HexSymmetry
-import Mathlib.Tactic
+import Mathlib.Tactic.Convert
+import Mathlib.Tactic.FinCases
+import Mathlib.Tactic.Ring
 
 /-!
 # Bridge

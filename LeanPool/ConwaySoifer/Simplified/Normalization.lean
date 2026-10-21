@@ -9,7 +9,6 @@ public import LeanPool.ConwaySoifer.Geometry.Normalization
 public import LeanPool.ConwaySoifer.Simplified.Geometry.Core
 public import LeanPool.ConwaySoifer.Simplified.Geometry.Bridge
 public import LeanPool.ConwaySoifer.Simplified.Geometry.Midpoint
-import Mathlib.Tactic
 
 /-!
 # Normalization
