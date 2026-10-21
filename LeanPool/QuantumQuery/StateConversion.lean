@@ -787,7 +787,9 @@ theorem effective_chord_gap_sq {P L : Matrix H H ℂ} (hP : IsQProjector P)
     norm_num
   have hbound := chordNear_bound_sq U Δ w
   have hproj := (isQProjector_chordNearProj U Δ).qNormSq_mulVec_le w
-  nlinarith [sq_nonneg Δ, qNormSq_nonneg (N *ᵥ (P *ᵥ w)), qNormSq_nonneg w]
+  have htotal := h4.le.trans
+    (hbound.trans (mul_le_mul_of_nonneg_left hproj (sq_nonneg Δ)))
+  linarith only [htotal]
 
 end QuantumQueryComplexity
 
@@ -4950,7 +4952,7 @@ theorem qNormSq_uniformConvError_le_sixteenth (P : DualPairOn read K f)
     {c : ℝ} (hP : P.IsCostLe c) (hc : 0 ≤ c) (x : X) :
     qNormSq (uniformConvError P (uniformAlpha c) (uniformT c) x)
       ≤ 1 / 16 := by
-  have hB0 : (0 : ℝ) < 1 + c := by linarith
+  have hB0 : (0 : ℝ) < 1 + c := by linarith only [hc]
   have hα := uniformAlpha_ne_zero hc
   have hαsq := uniformAlpha_sq hc
   have hT := uniformT_pos hc
@@ -4961,12 +4963,12 @@ theorem qNormSq_uniformConvError_le_sixteenth (P : DualPairOn read K f)
     rw [hαsq, show (8 : ℝ) * (128 * (1 + c))⁻¹ * c
           = 8 * c / (128 * (1 + c)) from by rw [div_eq_mul_inv]; ring,
       div_le_div_iff₀ (by linarith) (by norm_num : (0 : ℝ) < 16)]
-    linarith
+    linarith only
   -- the near coefficient: `1 + c/(2α²) = 1 + 64c(1+c) ≤ 64(1+c)²`
   have hval : 1 + c / (2 * uniformAlpha c ^ 2) ≤ 64 * (1 + c) ^ 2 := by
     rw [hαsq, show c / (2 * (128 * (1 + c))⁻¹) = 64 * c * (1 + c) from by
       rw [div_eq_mul_inv, mul_inv, inv_inv]; ring]
-    nlinarith
+    nlinarith only [hc]
   have hsqrt : Real.sqrt (1 + c / (2 * uniformAlpha c ^ 2))
       ≤ 8 * (1 + c) := by
     calc Real.sqrt (1 + c / (2 * uniformAlpha c ^ 2))
@@ -5000,19 +5002,19 @@ theorem qNormSq_uniformConvError_le_sixteenth (P : DualPairOn read K f)
       _ ≤ (uniformT c : ℝ) * uniformDelta c :=
           mul_le_mul_of_nonneg_right hTge hΔ.le
   have hfar : 4 / ((uniformT c : ℝ) * uniformDelta c) ≤ 1 / 8 := by
-    rw [div_le_div_iff₀ (by linarith) (by norm_num : (0 : ℝ) < 8)]
-    linarith
+    rw [div_le_div_iff₀ (lt_of_lt_of_le (by norm_num : (0 : ℝ) < 32) hTΔ)
+      (by norm_num : (0 : ℝ) < 8)]
+    linarith only [hTΔ]
   -- square the `e₋` budget and combine through the exact half-sum
   have hn0 : 0 ≤ uniformDelta c
       * Real.sqrt (1 + c / (2 * uniformAlpha c ^ 2)) :=
     mul_nonneg hΔ.le (Real.sqrt_nonneg _)
-  have hf0 : 0 ≤ 4 / ((uniformT c : ℝ) * uniformDelta c) := by
-    have : (0 : ℝ) < (uniformT c : ℝ) * uniformDelta c := by linarith
-    positivity
+  have hf0 : 0 ≤ 4 / ((uniformT c : ℝ) * uniformDelta c) :=
+    div_nonneg (by norm_num) (le_trans (by norm_num) hTΔ)
   have hsq : (uniformDelta c * Real.sqrt (1 + c / (2 * uniformAlpha c ^ 2))
       + 4 / ((uniformT c : ℝ) * uniformDelta c)) ^ 2 ≤ 1 / 16 := by
-    nlinarith [hnear, hfar, hn0, hf0]
-  linarith
+    nlinarith only [hnear, hfar, hn0, hf0]
+  linarith only [h, h1, hsq]
 
 /-- **The detector at the chosen clock stays within the acceptance
 budget**: `4(T − 1) ≤ 8192(1 + c)` — the
@@ -5347,7 +5349,8 @@ theorem exists_algorithm_of_dualPairOn {c : ℝ} (P : DualPairOn read K f)
   set B : ℝ := 1 + 16 * (Fintype.card σ : ℝ) * c ^ 2 with hB
   have hB1 : (1 : ℝ) ≤ B := by
     rw [hB]
-    nlinarith [hσ, sq_nonneg c]
+    have hnonneg : 0 ≤ 16 * (Fintype.card σ : ℝ) * c ^ 2 := by positivity
+    linarith only [hnonneg]
   have hBs1 : (1 : ℝ) ≤ Real.sqrt B := by
     rw [show (1 : ℝ) = Real.sqrt 1 from (Real.sqrt_one).symm]
     exact Real.sqrt_le_sqrt hB1
@@ -5373,21 +5376,21 @@ theorem exists_algorithm_of_dualPairOn {c : ℝ} (P : DualPairOn read K f)
           = (((Fintype.card σ : ℝ) - 1) / (Fintype.card σ : ℝ)) * 16⁻¹ from by
         rw [mul_inv]; ring]
       have h2 : ((Fintype.card σ : ℝ) - 1) / (Fintype.card σ : ℝ) ≤ 1 := by
-        rw [div_le_one hσ]; linarith
-      nlinarith [h2]
+        rw [div_le_one hσ]; linarith only
+      linarith only [h2]
     have hden : (0 : ℝ) < 1 + ((Fintype.card σ : ℝ) - 1)
         * (16 * (Fintype.card σ : ℝ))⁻¹ := by
       have h0 : (0 : ℝ) ≤ ((Fintype.card σ : ℝ) - 1)
           * (16 * (Fintype.card σ : ℝ))⁻¹ := by
         have h1 : (1 : ℝ) ≤ (Fintype.card σ : ℝ) := by
           exact_mod_cast Fintype.card_pos_iff.mpr ‹Nonempty σ›
-        have : (0 : ℝ) ≤ (Fintype.card σ : ℝ) - 1 := by linarith
+        have : (0 : ℝ) ≤ (Fintype.card σ : ℝ) - 1 := sub_nonneg.mpr h1
         positivity
-      linarith
+      linarith only [h0]
     rw [le_div_iff₀ hden]
-    nlinarith [hle]
+    linarith only [hle]
   have hsqB : Real.sqrt B * Real.sqrt B = B :=
-    Real.mul_self_sqrt (by linarith)
+    Real.mul_self_sqrt (zero_le_one.trans hB1)
   have hneg : Δ / 4 * Real.sqrt (1 + 16 * (Fintype.card σ : ℝ) * c ^ 2)
       + 2 / ((T : ℝ) * Δ) + Δ ^ 2 / 8
         * (1 + 16 * (Fintype.card σ : ℝ) * c ^ 2) ≤ 1 / 16 := by
@@ -5395,12 +5398,12 @@ theorem exists_algorithm_of_dualPairOn {c : ℝ} (P : DualPairOn read K f)
     have e1 : Δ / 4 * Real.sqrt B = 1 / 64 := by
       rw [hΔdef]
       field_simp
-      linarith [hsqB]
+      linarith only [hsqB]
     have e2 : Δ ^ 2 / 8 * B = 1 / 2048 := by
-      rw [hΔdef, inv_pow, mul_pow, Real.sq_sqrt (by linarith : (0 : ℝ) ≤ B)]
+      rw [hΔdef, inv_pow, mul_pow, Real.sq_sqrt (zero_le_one.trans hB1)]
       rw [show ((16 : ℝ) ^ 2 * B)⁻¹ / 8 * B = B / B * (2048 : ℝ)⁻¹ from by
         rw [mul_inv]; ring]
-      rw [div_self (by linarith : B ≠ 0)]
+      rw [div_self (lt_of_lt_of_le one_pos hB1).ne']
       norm_num
     have e3 : 2 / ((T : ℝ) * Δ) ≤ 1 / 64 := by
       have hT0 : (0 : ℝ) < (T : ℝ) := by exact_mod_cast hT
@@ -5411,7 +5414,7 @@ theorem exists_algorithm_of_dualPairOn {c : ℝ} (P : DualPairOn read K f)
       calc 2 * (16 * Real.sqrt B) * 64 = 2048 * Real.sqrt B := by ring
         _ ≤ (T : ℝ) := hTge
         _ = 1 * (T : ℝ) := (one_mul _).symm
-    linarith [e1, e2, e3]
+    linarith only [e1, e2, e3]
   -- assemble
   have halg := scAlg_computes read f Q hT hΔ hcu hcv hpos hneg
   refine ⟨4 * (T - 1), mem_queryCounts halg, ?_⟩
@@ -5421,19 +5424,21 @@ theorem exists_algorithm_of_dualPairOn {c : ℝ} (P : DualPairOn read K f)
     norm_num
   have hBle : Real.sqrt B ≤ 1 + 4 * Real.sqrt (Fintype.card σ) * c := by
     have hsq : B ≤ (1 + 4 * Real.sqrt (Fintype.card σ) * c) ^ 2 := by
-      have hs : Real.sqrt (Fintype.card σ) * Real.sqrt (Fintype.card σ)
-          = (Fintype.card σ : ℝ) := Real.mul_self_sqrt hσ.le
-      have hs0 : (0 : ℝ) ≤ Real.sqrt (Fintype.card σ) := Real.sqrt_nonneg _
-      rw [hB]
-      nlinarith [hs, hs0, hc.le]
+      have hs : (4 * Real.sqrt (Fintype.card σ) * c) ^ 2
+          = 16 * (Fintype.card σ : ℝ) * c ^ 2 := by
+        rw [mul_pow, mul_pow, Real.sq_sqrt hσ.le]
+        norm_num
+      rw [hB, ← hs]
+      nlinarith only [mul_nonneg (Real.sqrt_nonneg (Fintype.card σ : ℝ)) hc.le]
     calc Real.sqrt B ≤ Real.sqrt ((1 + 4 * Real.sqrt (Fintype.card σ) * c) ^ 2) :=
         Real.sqrt_le_sqrt hsq
       _ = 1 + 4 * Real.sqrt (Fintype.card σ) * c := by
           rw [Real.sqrt_sq (by positivity)]
   rw [hT1]
-  calc 4 * ((T : ℝ) - 1) ≤ 4 * (2048 * Real.sqrt B) := by linarith [hTle]
+  calc 4 * ((T : ℝ) - 1) ≤ 4 * (2048 * Real.sqrt B) := by linarith only [hTle]
     _ = 8192 * Real.sqrt B := by ring
-    _ ≤ 8192 * (1 + 4 * Real.sqrt (Fintype.card σ) * c) := by linarith [hBle]
+    _ ≤ 8192 * (1 + 4 * Real.sqrt (Fintype.card σ) * c) :=
+      mul_le_mul_of_nonneg_left hBle (by norm_num)
 
 omit [DecidableEq K] [DecidableEq X] in
 /-- **The `qQueryOn` corollary**: `Q_{1/16}(f) ≤ 8192(1 + 4√|σ|·c)` for any
