@@ -1126,7 +1126,7 @@ private theorem phi0AnnulusIntegrand_le_shell
               r ^ (2 * k + 1) * Real.exp (-r ^ 2)
                 ≤
               (((j + 1 : ℕ) : ℝ) ^ (2 * k + 1)) * Real.exp (-(j : ℝ) ^ 2) := by gcongr
-          simpa [mul_assoc, mul_left_comm, mul_comm] using
+          simpa only [mul_assoc] using
             (mul_le_mul_of_nonneg_left hprod hcoeff_nonneg)
 
 private theorem annulusIntegralSq_phi0_shell_bound

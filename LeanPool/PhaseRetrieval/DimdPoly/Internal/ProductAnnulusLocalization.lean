@@ -80,16 +80,12 @@ private theorem norm_ne_zero_of_ne_zero_pkappa_wip
 private lemma continuous_Phi_wip
     {d : Nat} (kappa alpha : MultiIndex d) :
     Continuous (Phi kappa alpha) := by
-  unfold Phi phi1D complexHermite
-  continuity
+  exact DimdPolyLEAN.continuous_Phi kappa alpha
 
 private lemma continuous_evalPkappa_wip
     {d : Nat} (kappa : MultiIndex d) (F : Pkappa d kappa) :
     Continuous (evalPkappa kappa F) := by
-  unfold evalPkappa
-  refine continuous_finsetSum _ ?_
-  intro alpha halpha
-  exact continuous_const.mul (continuous_Phi_wip kappa alpha)
+  exact DimdPolyLEAN.continuous_evalPkappa kappa F
 
 private lemma measurableSet_productAnnulus_wip
     {d : Nat} (j : Idx d) :
@@ -136,21 +132,7 @@ private lemma sum_indicator_productAnnulus_le_wip
 private theorem integrable_evalPkappa_sq_wip
     {d : Nat} (hd : 0 < d) (kappa : MultiIndex d) (F : Pkappa d kappa) :
     Integrable (fun z : Cd d => ‖evalPkappa kappa F z‖ ^ 2) (gammaD d) := by
-  by_cases hF : F = 0
-  · subst hF
-    simp [evalPkappa]
-  · have hmeas :
-        AEStronglyMeasurable (fun z : Cd d => ‖evalPkappa kappa F z‖ ^ 2) (gammaD d) :=
-      ((continuous_evalPkappa_wip kappa F).norm.pow 2).stronglyMeasurable.aestronglyMeasurable
-    by_contra hInt
-    have hundef :
-        (∫ z : Cd d, ‖evalPkappa kappa F z‖ ^ 2 ∂ gammaD d) = 0 :=
-      MeasureTheory.integral_undef hInt
-    have hmass :
-        (∫ z : Cd d, ‖evalPkappa kappa F z‖ ^ 2 ∂ gammaD d) = ‖F‖ ^ 2 :=
-      evalPkappa_total_mass hd kappa F
-    have hnorm_ne : ‖F‖ ≠ 0 := norm_ne_zero_of_ne_zero_pkappa_wip hd hF
-    simp_all
+  exact DimdPolyLEAN.integrable_evalPkappa_sq hd kappa F
 
 private theorem finite_sum_annulusMass_le_wip
     {d : Nat} (hd : 0 < d) (kappa : MultiIndex d)

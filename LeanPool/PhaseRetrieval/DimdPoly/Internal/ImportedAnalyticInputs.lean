@@ -1420,7 +1420,9 @@ private theorem stftRep_schwartz_eq_fourier_apply {d : Nat}
         (h.coeFn_toLp 2 (MeasureTheory.volume : MeasureTheory.Measure (RealVec d)))
   filter_upwards [hf_ae, hh_ae] with t hft hht
   rw [hft, hht]
-  simp [Real.fourierChar_apply, Circle.smul_def, real_inner_comm, mul_assoc, mul_comm]
+  simp only [Real.fourierChar_apply, Circle.smul_def, stftSliceSchwartz_apply,
+    Complex.ofReal_neg, Complex.ofReal_mul, Complex.ofReal_ofNat, smul_eq_mul,
+    real_inner_comm, mul_neg, neg_mul, mul_assoc, mul_comm]
 
 private theorem integral_fourier_sq_phase_schwartz_realVec {d : Nat}
     (f : SchwartzMap (RealVec d) ℂ) (x : RealVec d) :
@@ -1593,6 +1595,34 @@ private theorem integrable_stftRep_sq_slice_schwartz_realVec {d : Nat}
   simp_rw [stftRep_schwartz_eq_fourier_apply h f x]
   exact h_fourier
 
+/-- The ambiguity integral may use any almost-everywhere equal representatives. -/
+theorem ambiguityRep_eq_integral_of_ae_eq
+    {d : ℕ} {f g : L2Real d} {F G : RealVec d → ℂ}
+    (hf : (f : RealVec d → ℂ) =ᵐ[volume] F)
+    (hg : (g : RealVec d → ℂ) =ᵐ[volume] G) (ξ : PhaseSpace d) :
+    ambiguityRep f g ξ = ∫ t : RealVec d,
+      F (t + (1 / 2 : ℝ) • ξ.1) * star (G (t - (1 / 2 : ℝ) • ξ.1)) *
+        modulationPhase ξ.2 t := by
+  have hplus := ((measurePreserving_add_right volume
+    ((1 / 2 : ℝ) • ξ.1)).quasiMeasurePreserving).ae_eq_comp hf
+  have hminus : (fun t : RealVec d => (g : RealVec d → ℂ)
+      (t - (1 / 2 : ℝ) • ξ.1)) =ᵐ[volume]
+      fun t => G (t - (1 / 2 : ℝ) • ξ.1) := by
+    simpa only [sub_eq_add_neg, Function.comp_def] using
+      ((measurePreserving_add_right volume
+        (-((1 / 2 : ℝ) • ξ.1))).quasiMeasurePreserving).ae_eq_comp hg
+  apply integral_congr_ae
+  filter_upwards [hplus, hminus] with t htF htG
+  exact congrArg (fun a : ℂ => a * modulationPhase ξ.2 t)
+    (congrArg₂ (fun a b : ℂ => a * star b) htF htG)
+
+private theorem ambiguityRep_schwartz_eq_integral {d : ℕ}
+    (f g : SchwartzMap (RealVec d) ℂ) (ξ : PhaseSpace d) :
+    ambiguityRep (f.toLp 2 volume) (g.toLp 2 volume) ξ = ∫ t : RealVec d,
+      f (t + (1 / 2 : ℝ) • ξ.1) * star (g (t - (1 / 2 : ℝ) • ξ.1)) *
+        modulationPhase ξ.2 t :=
+  ambiguityRep_eq_integral_of_ae_eq (f.coeFn_toLp 2 volume) (g.coeFn_toLp 2 volume) ξ
+
 private theorem integral_signal_autocorr_phase_schwartz_realVec {d : Nat}
     (f : SchwartzMap (RealVec d) ℂ) (x ω : RealVec d) :
     ∫ t, star (f t) * f (t + x) * modulationPhase ω (t + (1 / 2 : ℝ) • x) =
@@ -1615,27 +1645,8 @@ private theorem integral_signal_autocorr_phase_schwartz_realVec {d : Nat}
         ac_rfl
       _ = _ := integral_add_right_eq_self (μ := μ)
         (f := fun t : RealVec d => f (t + a) * star (f (t - a)) * modulationPhase ω t) a
-  unfold ambiguityRep
-  rw [hshift]
-  have hf_ae :
-      (f.toLp 2 μ : RealVec d -> ℂ) =ᵐ[μ] f :=
-    f.coeFn_toLp 2 μ
-  have hplus :
-      (fun t : RealVec d => (f.toLp 2 μ : RealVec d -> ℂ) (t + a)) =ᵐ[μ]
-        fun t : RealVec d => f (t + a) := by
-    simpa only [Function.comp_def] using
-      ((MeasureTheory.measurePreserving_add_right μ a).quasiMeasurePreserving).ae_eq_comp
-        hf_ae
-  have hminus :
-      (fun t : RealVec d => (f.toLp 2 μ : RealVec d -> ℂ) (t - a)) =ᵐ[μ]
-        fun t : RealVec d => f (t - a) := by
-    simpa only [sub_eq_add_neg, Function.comp_def] using
-      ((MeasureTheory.measurePreserving_add_right μ (-a)).quasiMeasurePreserving).ae_eq_comp
-        hf_ae
-  apply integral_congr_ae
-  filter_upwards [hplus, hminus] with t hplus_t hminus_t
-  rw [hplus_t, hminus_t]
-  simp [modulationPhase]
+  rw [ambiguityRep_schwartz_eq_integral]
+  exact hshift
 
 private theorem signal_autocorr_integrable_schwartz_realVec {d : Nat}
     (f : SchwartzMap (RealVec d) ℂ) (x : RealVec d) :
@@ -1657,7 +1668,7 @@ private theorem window_autocorr_integrable_schwartz_realVec {d : Nat}
       (MeasureTheory.volume : MeasureTheory.Measure (RealVec d)) := by
   let μ : MeasureTheory.Measure (RealVec d) := MeasureTheory.volume
   have hneg : MemLp (fun y : RealVec d => h (-y)) 2 μ := by
-    simpa [μ] using reflected_memLp_schwartz_realVec h
+    exact reflected_memLp_schwartz_realVec h
   have hleft' : MemLp (fun y : RealVec d => h (-(y - t))) 2 μ := by
     simpa only [neg_sub, Function.comp_def, μ] using
       hneg.comp_measurePreserving (MeasureTheory.measurePreserving_sub_right μ t)
@@ -1736,77 +1747,12 @@ private theorem ambiguityRep_neg_neg_schwartz_realVec {d : Nat}
       star (ambiguityRep
         (f.toLp 2 (MeasureTheory.volume : MeasureTheory.Measure (RealVec d)))
         (f.toLp 2 (MeasureTheory.volume : MeasureTheory.Measure (RealVec d))) (x, ω)) := by
-  let μ : MeasureTheory.Measure (RealVec d) := MeasureTheory.volume
-  let a : RealVec d := (1 / 2 : ℝ) • x
-  have hneg_half : (1 / 2 : ℝ) • (-x) = -a := by simp [a]
-  unfold ambiguityRep
-  have hf_ae :
-      (f.toLp 2 μ : RealVec d -> ℂ) =ᵐ[μ] f :=
-    f.coeFn_toLp 2 μ
-  have hleft_plus :
-      (fun t : RealVec d =>
-        (f.toLp 2 μ : RealVec d -> ℂ) (t + (1 / 2 : ℝ) • (-x)))
-        =ᵐ[μ] fun t : RealVec d => f (t - a) := by
-    have h :=
-      ((MeasureTheory.measurePreserving_add_right μ (-a)).quasiMeasurePreserving).ae_eq_comp
-        hf_ae
-    filter_upwards [h] with t ht
-    rw [hneg_half]
-    simpa only [sub_eq_add_neg, Function.comp_apply, Function.comp_def] using ht
-  have hleft_minus :
-      (fun t : RealVec d =>
-        (f.toLp 2 μ : RealVec d -> ℂ) (t - (1 / 2 : ℝ) • (-x)))
-        =ᵐ[μ] fun t : RealVec d => f (t + a) := by
-    have h :=
-      ((MeasureTheory.measurePreserving_add_right μ a).quasiMeasurePreserving).ae_eq_comp
-        hf_ae
-    filter_upwards [h] with t ht
-    rw [hneg_half]
-    simpa only [sub_eq_add_neg, neg_neg, Function.comp_apply, Function.comp_def] using ht
-  have hright_plus :
-      (fun t : RealVec d => (f.toLp 2 μ : RealVec d -> ℂ) (t + a)) =ᵐ[μ]
-        fun t : RealVec d => f (t + a) := by
-    simpa only [Function.comp_def] using
-      ((MeasureTheory.measurePreserving_add_right μ a).quasiMeasurePreserving).ae_eq_comp
-        hf_ae
-  have hright_minus :
-      (fun t : RealVec d => (f.toLp 2 μ : RealVec d -> ℂ) (t - a)) =ᵐ[μ]
-        fun t : RealVec d => f (t - a) := by
-    simpa only [sub_eq_add_neg, Function.comp_def] using
-      ((MeasureTheory.measurePreserving_add_right μ (-a)).quasiMeasurePreserving).ae_eq_comp
-        hf_ae
-  calc
-    ∫ t : RealVec d,
-        (f.toLp 2 μ : RealVec d -> ℂ) (t + (1 / 2 : ℝ) • (-x)) *
-          star ((f.toLp 2 μ : RealVec d -> ℂ) (t - (1 / 2 : ℝ) • (-x))) *
-          Complex.exp (-(2 * Real.pi : ℂ) * Complex.I * ↑(inner ℝ (-ω) t))
-        = ∫ t : RealVec d, f (t - a) * star (f (t + a)) *
-            modulationPhase (-ω) t := by
-            apply integral_congr_ae
-            filter_upwards [hleft_plus, hleft_minus] with t ht1 ht2
-            rw [ht1, ht2]
-            simp [modulationPhase]
-    _ = star (∫ t : RealVec d, f (t + a) * star (f (t - a)) *
-          modulationPhase ω t) := by
-            calc
-              ∫ t : RealVec d, f (t - a) * star (f (t + a)) *
-                  modulationPhase (-ω) t =
-                ∫ t : RealVec d, star (f (t + a) * star (f (t - a)) *
-                  modulationPhase ω t) := by
-                    apply integral_congr_ae
-                    filter_upwards with t
-                    simp [star_mul, star_modulationPhase, mul_comm]
-              _ = star (∫ t : RealVec d, f (t + a) * star (f (t - a)) *
-                    modulationPhase ω t) := integral_conj
-    _ = star (∫ t : RealVec d,
-        (f.toLp 2 μ : RealVec d -> ℂ) (t + (1 / 2 : ℝ) • x) *
-          star ((f.toLp 2 μ : RealVec d -> ℂ) (t - (1 / 2 : ℝ) • x)) *
-          Complex.exp (-(2 * Real.pi : ℂ) * Complex.I * ↑(inner ℝ ω t))) := by
-            congr 1
-            apply integral_congr_ae
-            filter_upwards [hright_plus, hright_minus] with t ht1 ht2
-            rw [ht1, ht2]
-            simp [modulationPhase, a]
+  rw [ambiguityRep_schwartz_eq_integral, ambiguityRep_schwartz_eq_integral]
+  refine Eq.trans ?_ integral_conj
+  apply integral_congr_ae
+  filter_upwards with t
+  simp only [← Complex.star_def, smul_neg, sub_eq_add_neg, neg_neg, star_mul, star_star,
+    star_modulationPhase, mul_comm]
 
 private theorem integral_window_autocorr_phase_schwartz_realVec {d : Nat}
     (h : SchwartzMap (RealVec d) ℂ) (t x ω : RealVec d) :
@@ -1902,33 +1848,8 @@ private theorem integral_window_autocorr_phase_schwartz_realVec {d : Nat}
   have hamb :
       ∫ y : RealVec d, h (y - a) * star (h (y + a)) * modulationPhase (-ω) y =
         ambiguityRep (h.toLp 2 μ) (h.toLp 2 μ) (-x, -ω) := by
-    unfold ambiguityRep
-    have hh_ae : (h.toLp 2 μ : RealVec d -> ℂ) =ᵐ[μ] h := h.coeFn_toLp 2 μ
-    have hplus :
-        (fun y : RealVec d =>
-          (h.toLp 2 μ : RealVec d -> ℂ) (y + (1 / 2 : ℝ) • (-x)))
-          =ᵐ[μ] fun y : RealVec d => h (y - a) := by
-      have hq :=
-        ((MeasureTheory.measurePreserving_add_right μ (-a)).quasiMeasurePreserving).ae_eq_comp
-          hh_ae
-      filter_upwards [hq] with y hy
-      rw [hneg_half]
-      simpa only [sub_eq_add_neg, Function.comp_apply, Function.comp_def] using hy
-    have hminus :
-        (fun y : RealVec d =>
-          (h.toLp 2 μ : RealVec d -> ℂ) (y - (1 / 2 : ℝ) • (-x)))
-          =ᵐ[μ] fun y : RealVec d => h (y + a) := by
-      have hq :=
-        ((MeasureTheory.measurePreserving_add_right μ a).quasiMeasurePreserving).ae_eq_comp
-          hh_ae
-      filter_upwards [hq] with y hy
-      rw [hneg_half]
-      simpa only [sub_eq_add_neg, neg_neg, Function.comp_apply, Function.comp_def] using hy
-    symm
-    apply integral_congr_ae
-    filter_upwards [hplus, hminus] with y hy1 hy2
-    rw [hy1, hy2]
-    simp [modulationPhase]
+    rw [ambiguityRep_schwartz_eq_integral]
+    simp only [hneg_half, sub_eq_add_neg, neg_neg]
   calc
     ∫ y : RealVec d, h (t - y) * star (h (t + x - y)) * modulationPhase ω y
         = modulationPhase ω t *
@@ -2345,20 +2266,23 @@ private theorem norm_stftRep_sub_le {d : Nat}
     (MeasureTheory.volume : MeasureTheory.Measure (RealVec d)) 2 2)
   let T : L2Real d → L2Real d := fun h =>
     modulateL2 ξ.2 (star (translateL2 (-ξ.1) h))
-  have hT_norm : ‖T h₁‖ = ‖h₁‖ := by simp [T, norm_modulateL2, norm_star_L2, norm_translateL2]
+  have hT_norm : ‖T h₁‖ = ‖h₁‖ :=
+    (norm_modulateL2 ξ.2 _).trans ((norm_star_L2 _).trans (norm_translateL2 (-ξ.1) h₁))
   have hT_sub_norm : ‖T h₁ - T h₂‖ = ‖h₁ - h₂‖ := by
     calc
       ‖T h₁ - T h₂‖ = dist (T h₁) (T h₂) := by rw [dist_eq_norm]
       _ = dist (star (translateL2 (-ξ.1) h₁)) (star (translateL2 (-ξ.1) h₂)) := by
-        simp [T, dist_modulateL2]
+        exact dist_modulateL2 ξ.2 _ _
       _ = dist (translateL2 (-ξ.1) h₁) (translateL2 (-ξ.1) h₂) := by rw [dist_star_L2]
       _ = dist h₁ h₂ := by rw [dist_translateL2]
       _ = ‖h₁ - h₂‖ := by rw [dist_eq_norm]
-  rw [stftRep_eq_lpPairing h₁ f₁ ξ, stftRep_eq_lpPairing h₂ f₂ ξ]
-  change ‖P f₁ (T h₁) - P f₂ (T h₂)‖ ≤
-    ‖f₁ - f₂‖ * ‖h₁‖ + ‖f₂‖ * ‖h₁ - h₂‖
-  simpa only [hT_norm, hT_sub_norm] using
-    norm_bilinear_sub_le P (fun f g => lpPairing_mul_norm_le f g) f₁ f₂ (T h₁) (T h₂)
+  calc
+    ‖stftRep h₁ f₁ ξ - stftRep h₂ f₂ ξ‖ = ‖P f₁ (T h₁) - P f₂ (T h₂)‖ :=
+      congrArg norm (congrArg₂ (fun a b : ℂ => a - b)
+        (stftRep_eq_lpPairing h₁ f₁ ξ) (stftRep_eq_lpPairing h₂ f₂ ξ))
+    _ ≤ ‖f₁ - f₂‖ * ‖h₁‖ + ‖f₂‖ * ‖h₁ - h₂‖ := by
+      simpa only [hT_norm, hT_sub_norm] using
+        norm_bilinear_sub_le P (fun f g => lpPairing_mul_norm_le f g) f₁ f₂ (T h₁) (T h₂)
 
 theorem continuous_stftRep
     {d : Nat} (h f : L2Real d) :
@@ -2812,13 +2736,17 @@ private theorem stftRep_sub_eq_add {d : Nat}
     modulateL2 ξ.2 (star (translateL2 (-ξ.1) h))
   have hT_sub : T (h₁ - h₂) = T h₁ - T h₂ := by
     simp [T, translateL2_sub, star_L2_sub, modulateL2_sub]
-  rw [stftRep_eq_lpPairing h₁ f₁ ξ, stftRep_eq_lpPairing h₂ f₂ ξ,
-    stftRep_eq_lpPairing h₁ (f₁ - f₂) ξ,
-    stftRep_eq_lpPairing (h₁ - h₂) f₂ ξ]
-  change P f₁ (T h₁) - P f₂ (T h₂) =
-    P (f₁ - f₂) (T h₁) + P f₂ (T (h₁ - h₂))
-  rw [hT_sub]
-  exact bilinear_sub P f₁ f₂ (T h₁) (T h₂)
+  calc
+    stftRep h₁ f₁ ξ - stftRep h₂ f₂ ξ = P f₁ (T h₁) - P f₂ (T h₂) :=
+      congrArg₂ (fun a b : ℂ => a - b)
+        (stftRep_eq_lpPairing h₁ f₁ ξ) (stftRep_eq_lpPairing h₂ f₂ ξ)
+    _ = P (f₁ - f₂) (T h₁) + P f₂ (T h₁ - T h₂) :=
+      bilinear_sub P f₁ f₂ (T h₁) (T h₂)
+    _ = stftRep h₁ (f₁ - f₂) ξ + stftRep (h₁ - h₂) f₂ ξ :=
+      congrArg₂ (fun a b : ℂ => a + b)
+        (stftRep_eq_lpPairing h₁ (f₁ - f₂) ξ).symm
+        ((congrArg (P f₂) hT_sub.symm).trans
+          (stftRep_eq_lpPairing (h₁ - h₂) f₂ ξ).symm)
 
 private theorem lpNorm_stftRep_sub_le {d : Nat}
     (h₁ h₂ f₁ f₂ : L2Real d) :
@@ -2842,10 +2770,8 @@ private theorem lpNorm_stftRep_sub_le {d : Nat}
     _ ≤ MeasureTheory.lpNorm (stftRep h₁ (f₁ - f₂)) 2 μP +
           MeasureTheory.lpNorm (stftRep (h₁ - h₂) f₂) 2 μP :=
           MeasureTheory.lpNorm_add_le hmem₁ (by norm_num)
-    _ ≤ ‖f₁ - f₂‖ * ‖h₁‖ + ‖f₂‖ * ‖h₁ - h₂‖ := by
-          gcongr
-          · exact lpNorm_stftRep_le h₁ (f₁ - f₂)
-          · exact lpNorm_stftRep_le (h₁ - h₂) f₂
+    _ ≤ ‖f₁ - f₂‖ * ‖h₁‖ + ‖f₂‖ * ‖h₁ - h₂‖ :=
+      add_le_add (lpNorm_stftRep_le h₁ (f₁ - f₂)) (lpNorm_stftRep_le (h₁ - h₂) f₂)
 
 -- This convergence proof has a large phase-space `lpNorm` expression; the algebra is direct,
 -- but normalization exceeds the default heartbeat budget.
@@ -2886,7 +2812,8 @@ private theorem lpNorm_mul_le_real
     (eLpNorm f 2 μ).toReal * (eLpNorm g 2 μ).toReal
   rw [← ENNReal.toReal_mul]
   exact ENNReal.toReal_mono (ENNReal.mul_ne_top hf.eLpNorm_ne_top hg.eLpNorm_ne_top)
-    (eLpNorm_smul_le_mul_eLpNorm hf.aestronglyMeasurable hg.aestronglyMeasurable)
+    (eLpNorm_smul_le_mul_eLpNorm (p := 2) (q := 2) (r := 1)
+      hf.aestronglyMeasurable hg.aestronglyMeasurable)
 
 private theorem lpNorm_norm_sq_sub_le
     {α : Type*} [MeasurableSpace α] {μ : Measure α} {F G : α → ℂ}
@@ -2950,7 +2877,7 @@ private theorem lpNorm_stftRep_sq_sub_tendsto_zero {d : Nat}
       Tendsto
         (fun n : Nat => MeasureTheory.lpNorm (fun ξ : PhaseSpace d => Fₙ n ξ - F ξ) 2 μP)
         atTop (nhds 0) := by
-    simpa [F, Fₙ, hN, fN, μ, μP] using lpNorm_stftRep_tendsto_schwartzApprox h f
+    exact lpNorm_stftRep_tendsto_schwartzApprox h f
   have hC_tendsto :
       Tendsto Cₙ atTop (nhds (‖f‖ * ‖h‖ + ‖f‖ * ‖h‖)) := by
     have hprod : Tendsto (fun n : Nat => ‖fN n‖ * ‖hN n‖) atTop
@@ -2979,28 +2906,32 @@ private theorem norm_ambiguityRep_sub_le {d : Nat}
   let T₁ : L2Real d → L2Real d := fun f => translateL2 ((1 / 2 : ℝ) • ξ.1) f
   let T₂ : L2Real d → L2Real d := fun g =>
     modulateL2 ξ.2 (star (translateL2 (-((1 / 2 : ℝ) • ξ.1)) g))
-  have hT₁_norm : ‖T₁ f₂‖ = ‖f₂‖ := by simp [T₁, norm_translateL2]
-  have hT₂_norm : ‖T₂ g₁‖ = ‖g₁‖ := by simp [T₂, norm_modulateL2, norm_star_L2, norm_translateL2]
+  have hT₁_norm : ‖T₁ f₂‖ = ‖f₂‖ := norm_translateL2 _ f₂
+  have hT₂_norm : ‖T₂ g₁‖ = ‖g₁‖ :=
+    (norm_modulateL2 ξ.2 _).trans ((norm_star_L2 _).trans (norm_translateL2 _ g₁))
   have hT₁_sub_norm : ‖T₁ f₁ - T₁ f₂‖ = ‖f₁ - f₂‖ := by
     calc
       ‖T₁ f₁ - T₁ f₂‖ = dist (T₁ f₁) (T₁ f₂) := by rw [dist_eq_norm]
-      _ = dist f₁ f₂ := by simp [T₁, dist_translateL2]
+      _ = dist f₁ f₂ := dist_translateL2 _ f₁ f₂
       _ = ‖f₁ - f₂‖ := by rw [dist_eq_norm]
   have hT₂_sub_norm : ‖T₂ g₁ - T₂ g₂‖ = ‖g₁ - g₂‖ := by
     calc
       ‖T₂ g₁ - T₂ g₂‖ = dist (T₂ g₁) (T₂ g₂) := by rw [dist_eq_norm]
       _ = dist (star (translateL2 (-((1 / 2 : ℝ) • ξ.1)) g₁))
-            (star (translateL2 (-((1 / 2 : ℝ) • ξ.1)) g₂)) := by simp [T₂, dist_modulateL2]
+            (star (translateL2 (-((1 / 2 : ℝ) • ξ.1)) g₂)) := dist_modulateL2 ξ.2 _ _
       _ = dist (translateL2 (-((1 / 2 : ℝ) • ξ.1)) g₁)
             (translateL2 (-((1 / 2 : ℝ) • ξ.1)) g₂) := by rw [dist_star_L2]
       _ = dist g₁ g₂ := by rw [dist_translateL2]
       _ = ‖g₁ - g₂‖ := by rw [dist_eq_norm]
-  rw [ambiguityRep_eq_lpPairing f₁ g₁ ξ, ambiguityRep_eq_lpPairing f₂ g₂ ξ]
-  change ‖P (T₁ f₁) (T₂ g₁) - P (T₁ f₂) (T₂ g₂)‖ ≤
-    ‖f₁ - f₂‖ * ‖g₁‖ + ‖f₂‖ * ‖g₁ - g₂‖
-  simpa only [hT₁_sub_norm, hT₂_norm, hT₁_norm, hT₂_sub_norm] using
-    norm_bilinear_sub_le P (fun f g => lpPairing_mul_norm_le f g)
-      (T₁ f₁) (T₁ f₂) (T₂ g₁) (T₂ g₂)
+  calc
+    ‖ambiguityRep f₁ g₁ ξ - ambiguityRep f₂ g₂ ξ‖ =
+        ‖P (T₁ f₁) (T₂ g₁) - P (T₁ f₂) (T₂ g₂)‖ :=
+      congrArg norm (congrArg₂ (fun a b : ℂ => a - b)
+        (ambiguityRep_eq_lpPairing f₁ g₁ ξ) (ambiguityRep_eq_lpPairing f₂ g₂ ξ))
+    _ ≤ ‖f₁ - f₂‖ * ‖g₁‖ + ‖f₂‖ * ‖g₁ - g₂‖ := by
+      simpa only [hT₁_sub_norm, hT₂_norm, hT₁_norm, hT₂_sub_norm] using
+        norm_bilinear_sub_le P (fun f g => lpPairing_mul_norm_le f g)
+          (T₁ f₁) (T₁ f₂) (T₂ g₁) (T₂ g₂)
 
 private theorem ambiguityRep_tendsto_schwartzApprox {d : Nat}
     (f : L2Real d) (ξ : PhaseSpace d) :
@@ -3021,7 +2952,7 @@ private theorem ambiguityRep_tendsto_schwartzApprox {d : Nat}
   refine squeeze_zero (fun _ => dist_nonneg) ?_ (cross_norm_bound_tendsto_zero hfN hfN)
   intro n
   rw [dist_eq_norm]
-  simpa [fN, μ] using norm_ambiguityRep_sub_le (fN n) f (fN n) f ξ
+  exact norm_ambiguityRep_sub_le (fN n) f (fN n) f ξ
 
 /-- Fubini/phase unfolding of `symplecticFourierRep` applied to the spectrogram
 density: it rewrites the phase-space integral as the iterated integral with the
@@ -3339,39 +3270,36 @@ theorem spectrogram_ambiguity_identity
   let A : ℂ := ambiguityRep f f ξ * star (ambiguityRep h h ξ)
   let Aₙ : Nat → ℂ := fun n => ambiguityRep (fN n) (fN n) ξ *
     star (ambiguityRep (hN n) (hN n) ξ)
-  have hG : Integrable G μP := by simpa [G, μP] using stftRep_sq_complex_integrable h f
+  have hG : Integrable G μP := by exact stftRep_sq_complex_integrable h f
   have hGₙ : ∀ n : Nat, Integrable (Gₙ n) μP := by
     intro n
-    simpa [Gₙ, hN, fN, μ, μP] using
-      stftRep_sq_complex_integrable_schwartz_realVec
+    exact stftRep_sq_complex_integrable_schwartz_realVec
         (schwartzApproxRealVec (MeasureTheory.Lp.memLp h) n)
         (schwartzApproxRealVec (MeasureTheory.Lp.memLp f) n)
   have hLp :
       Tendsto
         (fun n : Nat => MeasureTheory.lpNorm (fun η : PhaseSpace d => Gₙ n η - G η) 1 μP)
         atTop (nhds 0) := by
-    simpa [G, Gₙ, hN, fN, μ, μP] using lpNorm_stftRep_sq_sub_tendsto_zero h f
+    exact lpNorm_stftRep_sq_sub_tendsto_zero h f
   have hfAmb :
       Tendsto (fun n : Nat => ambiguityRep (fN n) (fN n) ξ) atTop
         (nhds (ambiguityRep f f ξ)) := by
-    simpa [fN, μ] using ambiguityRep_tendsto_schwartzApprox f ξ
+    exact ambiguityRep_tendsto_schwartzApprox f ξ
   have hhAmb :
       Tendsto (fun n : Nat => ambiguityRep (hN n) (hN n) ξ) atTop
         (nhds (ambiguityRep h h ξ)) := by
-    simpa [hN, μ] using ambiguityRep_tendsto_schwartzApprox h ξ
+    exact ambiguityRep_tendsto_schwartzApprox h ξ
   have hA : Tendsto Aₙ atTop (nhds A) := by
     have hhAmbStar :
         Tendsto (fun n : Nat => star (ambiguityRep (hN n) (hN n) ξ)) atTop
           (nhds (star (ambiguityRep h h ξ))) := hhAmb.star
-    simpa [A, Aₙ] using hfAmb.mul hhAmbStar
+    exact hfAmb.mul hhAmbStar
   have hEq : ∀ n : Nat, symplecticFourierRep (Gₙ n) ξ = Aₙ n := by
     intro n
-    simpa [Gₙ, Aₙ, hN, fN, μ] using
-      symplecticFourier_stft_sq_schwartz_realVec
+    exact symplecticFourier_stft_sq_schwartz_realVec
         (schwartzApproxRealVec (MeasureTheory.Lp.memLp h) n)
         (schwartzApproxRealVec (MeasureTheory.Lp.memLp f) n) ξ.1 ξ.2
-  simpa [G, A, μP] using
-    symplecticFourierRep_eq_of_lpNorm_one_approx
+  exact symplecticFourierRep_eq_of_lpNorm_one_approx
       (G := G) (Gₙ := Gₙ) (A := A) (Aₙ := Aₙ) hG hGₙ hLp hA ξ hEq
 
 theorem continuous_ambiguityRep
