@@ -1,0 +1,2755 @@
+/-
+Copyright (c) 2026 PrimeNumberTheoremAnd contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: PrimeNumberTheoremAnd contributors
+-/
+
+module
+
+public import Mathlib.Analysis.Analytic.Order
+public import Mathlib.Analysis.CStarAlgebra.Classes
+public import LeanPool.IwaniecLinearSieve.Vendor.PrimeNumberTheoremAnd.MediumPNT
+import Mathlib.Algebra.Order.Star.Real
+import Mathlib.Analysis.Complex.BorelCaratheodory
+import Mathlib.Analysis.Complex.HasPrimitives
+import Mathlib.MeasureTheory.Order.Group.Lattice
+import Mathlib.NumberTheory.LSeries.Nonvanishing
+import Mathlib.RingTheory.SimpleRing.Principal
+
+/-!
+Adapted from PrimeNumberTheoremAnd revision
+`127b50e33f6033e2147921167a117af96d9ba4ea`, via Jason Davies's
+Iwaniec linear sieve snapshot `c8d01549d2ae640b36ec198c1f0f6495f1b036cf`
+(both Apache-2.0). Blueprint-only machinery is omitted.
+
+Supporting lemmas for Iwaniec's sieve and its prime-number-theorem input.
+-/
+
+@[expose] public section
+
+namespace IwaniecLinearSievePNT
+
+
+
+open Nat Filter Topology Set Function Complex Real ComplexConjugate MeasureTheory
+
+open ArithmeticFunction (vonMangoldt)
+
+local notation (name := mellintransform2) "𝓜" => mellin
+
+local notation "Λ" => vonMangoldt
+
+local notation "ζ" => riemannZeta
+
+local notation "ζ'" => deriv ζ
+
+local notation "ψ" => ChebyshevPsi
+
+--open scoped ArithmeticFunction
+
+
+
+/-
+An application of the Maximum modulus principle.
+This is standard in the literature.
+-/
+lemma _root_.AnalyticOn.norm_le_of_norm_le_on_sphere {C r R : ℝ} {f : ℂ → ℂ} {w : ℂ}
+    (hyp_r : r ≤ R)
+    (analytic : AnalyticOn ℂ f (Metric.closedBall 0 R))
+    (cond : ∀ z ∈ Metric.sphere 0 r, ‖f z‖ ≤ C)
+    (wInS : w ∈ Metric.closedBall 0 r) :
+    ‖f w‖ ≤ C := by
+  apply Complex.norm_le_of_forall_mem_frontier_norm_le
+    (U := Metric.closedBall 0 r) Metric.isBounded_closedBall
+  · apply DifferentiableOn.diffContOnCl
+    rw [Metric.closure_closedBall]
+    exact AnalyticOn.differentiableOn
+      (AnalyticOn.mono analytic
+        (Metric.closedBall_subset_closedBall hyp_r))
+  · rw [frontier_closedBall']
+    exact cond
+  · rw [Metric.closure_closedBall]
+    exact wInS
+
+
+
+/-
+An application of
+    \begin{verbatim}
+      Complex.borelCaratheodory_zero.
+    \end{verbatim}
+This is standard in the literature.
+-/
+theorem borelCaratheodory' {M r R : ℝ} {f : ℂ → ℂ} {z : ℂ}
+    (Mpos : 0 < M) (Rpos : 0 < R) (hyp_r : r < R)
+    (analytic : AnalyticOn ℂ f (Metric.ball 0 R))
+    (zeroAtZero : f 0 = 0)
+    (realPartBounded : ∀ z ∈ Metric.ball 0 R, (f z).re ≤ M)
+    (hyp_z : z ∈ Metric.closedBall 0 r) :
+    ‖f z‖ ≤ (2 * M * r) / (R - r) := by
+  have h_borelCaratheodory : ∀ ε > 0, ‖f z‖ ≤ (2 * (M + ε) * ‖z‖) / (R - ‖z‖) := by
+    intro ε εpos;
+    apply Complex.borelCaratheodory_zero;
+    exacts [by linarith, analytic.differentiableOn,
+      fun z hz => by rw [Set.mem_ofPred_eq]; linarith [realPartBounded z hz],
+      Rpos, by exact Metric.mem_ball.mpr (lt_of_le_of_lt (Metric.mem_closedBall.mp hyp_z) hyp_r),
+      zeroAtZero]
+  have h_limit : ‖f z‖ ≤ (2 * M * ‖z‖) / (R - ‖z‖) := by
+    have h_limit : Filter.Tendsto (fun ε => (2 * (M + ε) * ‖z‖) / (R - ‖z‖))
+        (nhdsWithin 0 (Set.Ioi 0)) (nhds ((2 * M * ‖z‖) / (R - ‖z‖))) := by
+      refine tendsto_nhdsWithin_of_tendsto_nhds (Continuous.tendsto' ?_ _ _ (by ring_nf))
+      exact Continuous.div_const
+        ((continuous_const.mul (continuous_const.add continuous_id)).mul continuous_const) _
+    refine le_of_tendsto_of_tendsto tendsto_const_nhds h_limit ?_
+    exact Filter.eventually_of_mem self_mem_nhdsWithin fun ε hε => h_borelCaratheodory ε hε
+  rw [mem_closedBall_iff_norm, sub_zero] at hyp_z
+  refine le_trans h_limit ?_;
+  gcongr
+  exact mul_nonneg (mul_nonneg (zero_le_two) (le_of_lt Mpos)) (le_trans (norm_nonneg z) hyp_z)
+
+
+
+/-
+    This upstreamed from https://github.com/math-inc/strongpnt/tree/main
+-/
+
+
+
+/-
+Let $f$ be analytic on $|z|\leq R$. For any $z$ with $|z|\leq r$ and any $r'$
+    with $0 < r < r' < R$ we have
+    $$f'(z)=\frac{1}{2\pi i}\oint_{|w|=r'}\frac{f(w)}{(w-z)^2}\,dw=\frac{1}{2\pi}
+    \int_0^{2\pi}\frac{r'e^{it}\,f(r'e^{it})}{(r'e^{it}-z)^2}\,dt.$$
+This is just Cauchy's integral formula for derivatives.
+-/
+lemma cauchy_formula_deriv {r r' R : ℝ} {f : ℂ → ℂ} {z : ℂ}
+    (r_lt_r' : r < r') (r'_lt_R : r' < R)
+    (hf_on_ball : DifferentiableOn ℂ f (Metric.ball 0 R))
+    (hz : z ∈ Metric.closedBall 0 r) :
+    deriv f z = (1 / (2 * Real.pi * I)) • ∮ w in C(0, r'), (w - z)⁻¹ ^ 2 • f w := by
+  have hz_in_ball : z ∈ Metric.ball 0 r' :=
+    Metric.mem_ball.mpr <| (Metric.mem_closedBall.mp hz).trans_lt r_lt_r'
+  simp [← Complex.two_pi_I_inv_smul_circleIntegral_sub_sq_inv_smul_of_differentiable
+      Metric.isOpen_ball (Metric.closedBall_subset_ball r'_lt_R) hf_on_ball hz_in_ball]
+
+
+
+/-
+Let $R,\,M>0$ and $0 < r < r' < R$. Let $f$ be analytic on $|z|\leq R$ such that
+    $f(0)=0$ and suppose $\Re f(z)\leq M$ for all $|z|\leq R$. Then we have that
+    $$|f'(z)|\leq\frac{2M(r')^2}{(R-r')(r'-r)^2}$$
+    for all $|z|\leq r$.
+By Lemma \ref{cauchy_formula_deriv} we know that
+    $$f'(z)=\frac{1}{2\pi i}\oint_{|w|=r'}\frac{f(w)}{(w-z)^2}\,dw
+      =\frac{1}{2\pi }\int_0^{2\pi}\frac{r'e^{it}\,f(r'e^{it})}{(r'e^{it}-z)^2}\,dt.$$
+    Thus,
+    \begin{equation}\label{pickupPoint1}
+        |f'(z)|=\left|\frac{1}{2\pi}\int_0^{2\pi}
+          \frac{r'e^{it}\,f(r'e^{it})}{(r'e^{it}-z)^2}\,dt\right|
+          \leq\frac{1}{2\pi}\int_0^{2\pi}
+          \left|\frac{r'e^{it}\,f(r'e^{it})}{(r'e^{it}-z)^2}\right|\,dt.
+    \end{equation}
+    Now applying Theorem \ref{borelCaratheodory'}, and noting that
+    $r'-r\leq|r'e^{it}-z|$, we have that
+    $$\left|\frac{r'e^{it}\,f(r'e^{it})}{(r'e^{it}-z)^2}\right|
+      \leq\frac{2M(r')^2}{(R-r')(r'-r)^2}.$$
+    Substituting this into Equation (\ref{pickupPoint1}) and evaluating the integral
+    completes the proof.
+-/
+lemma DerivativeBound {M r r' R : ℝ} {f : ℂ → ℂ} {z : ℂ}
+    (Mpos : 0 < M) (pos_r : 0 < r) (r_lt_r' : r < r') (r'_lt_R : r' < R)
+    (analytic_f : AnalyticOn ℂ f (Metric.ball 0 R))
+    (f_zero_at_zero : f 0 = 0)
+    (re_f_le_M : ∀ z ∈ Metric.ball 0 R, (f z).re ≤ M)
+    (z_in_r : z ∈ Metric.closedBall 0 r) :
+    ‖(deriv f) z‖ ≤ 2 * M * (r') ^ 2 / ((R - r') * (r' - r) ^ 2) := by
+  rw [cauchy_formula_deriv r_lt_r' r'_lt_R analytic_f.differentiableOn  z_in_r, one_div]
+  grw [circleIntegral.norm_two_pi_i_inv_smul_integral_le_of_norm_le_const (by linarith)
+    (C := 2 * M * r' / ((R - r') * (r' - r) ^ 2))]
+  · exact le_of_eq (by ring)
+  · intro z' hz'
+    rw [smul_eq_mul, norm_mul]
+    grw[borelCaratheodory' Mpos (by grind) r'_lt_R analytic_f f_zero_at_zero  re_f_le_M
+      (Metric.sphere_subset_closedBall hz')]
+    suffices ‖(z' - z)⁻¹ ^ 2‖ ≤ 1 / (r' - r) ^ 2 by
+      grw [this]
+      · exact le_of_eq (by field)
+      · refine mul_nonneg (mul_nonneg ?_ ?_) (inv_nonneg.mpr ?_) <;> linarith
+    have hdist : r' - r ≤ ‖z' - z‖ := by
+      simp only [mem_sphere_iff_norm, sub_zero, Metric.mem_closedBall,
+        dist_zero_right] at hz' z_in_r
+      rw [← hz']
+      exact le_trans (by linarith) (norm_sub_norm_le z' z)
+    rw [norm_pow, norm_inv, one_div, inv_pow]
+    gcongr
+
+
+
+/-
+Let $R,\,M>0$. Let $f$ be analytic on $|z|\leq R$ such that $f(0)=0$ and suppose
+    $\Re f(z)\leq M$ for all $|z|\leq R$. Then for any $0 < r < R$,
+    $$|f'(z)|\leq\frac{16MR^2}{(R-r)^3}$$
+    for all $|z|\leq r$.
+Using Lemma \ref{DerivativeBound} with $r'=(R+r)/2$, and noting that $r < R$,
+    we have that
+    $$|f'(z)|\leq\frac{4M(R+r)^2}{(R-r)^3}\leq\frac{16MR^2}{(R-r)^3}.$$
+-/
+theorem BorelCaratheodoryDeriv {M r R : ℝ} {f : ℂ → ℂ} {z : ℂ}
+    (Mpos : 0 < M) (rpos : 0 < r) (hyp_r : r < R)
+    (analytic_f : AnalyticOn ℂ f (Metric.ball 0 R))
+    (zeroAtZero : f 0 = 0)
+    (realPartBounded : ∀ z ∈ Metric.ball 0 R, (f z).re ≤ M)
+    (hyp_z : z ∈ Metric.closedBall 0 r) :
+    ‖deriv f z‖ ≤ 16 * M * R ^ 2 / (R - r) ^ 3 := by
+  have hr' : 2 * M * ((R + r) / 2) ^ 2 / ((R - (R + r) / 2) * ((R + r) / 2 - r) ^ 2) =
+      4 * M * (R + r) ^ 2 / (R - r) ^ 3 := by
+    rw [div_eq_div_iff (mul_ne_zero (by linarith) (pow_ne_zero _ (by linarith)))
+      (pow_ne_zero _ (by linarith))]
+    ring
+  calc ‖deriv f z‖
+    _ ≤ 4 * M * (R + r) ^ 2 / (R - r) ^ 3 := hr' ▸
+      DerivativeBound Mpos rpos (by linarith) (by linarith)
+        analytic_f zeroAtZero realPartBounded hyp_z
+    _ ≤ 16 * M * R ^ 2 / (R - r) ^ 3 := by
+      have : 16 * M * R ^ 2 = 4 * M * (2 * R) ^ 2 := by ring_nf
+      rw [this]; bound
+
+
+
+/-
+\begin{definition}[TaxicabIntegral]\label{TaxicabIntegral}
+  Let $0 < R$. Let $f:\overline{\mathbb{D}_R}\to\mathbb{C}$ be analytic on neighborhoods of points
+  in $\overline{\mathbb{D}_R}$. Define the functon $I_f:\mathbb{D}_R\to\mathbb{C}$ by
+    $$I_f(z)=z\int_0^1f(tz)\,dt.$$
+\end{definition}
+-/
+
+
+
+/-
+Let $0<r<R$. Let $B:\overline{\mathbb{D}_{R}}\to\mathbb{C}$ be analytic on neighborhoods of
+    points in $\overline{\mathbb{D}_{R}}$ with $B(z)\neq 0$ for all
+    $z\in\overline{\mathbb{D}_{R}}$.Then there exists $J_B:\mathbb{D}_R\to\mathbb{C}$ that is
+    analytic on neighborhoods of points in $\mathbb{D}_R$ such that
+    \begin{itemize}
+        \item $J_B(0)=0$
+        \item $J_B'(z)=B'(z)/B(z)$ for all $z\in\overline{\mathbb{D}_r}$
+        \item $\log|B(z)|-\log|B(0)|=\mathfrak{R}J_B(z)$ for all $z\in\mathbb{D}_R$.
+    \end{itemize}
+We let $J_B(z)=I_{B'/B}(z)$. Then clearly, $J_B(0)=0$. Now note that
+    \begin{align*}
+        I_{B'/B}(z)=z\int_0^1(B'/B)(tz)\,dt=\int_0^z(B'/B)(u)\,du.
+    \end{align*}
+    Thus by the fundamental theorem of calculus we have that $J_B'(z)=B'(z)/B(z)$. Now let
+    $H(z)=\exp(J_B(z))/B(z)$ and note that
+    $$H'(z)=(B(z)\,J_B'(z)-B'(z))\left(\frac{\exp(J_B(z))}{(B(z))^2}\right).$$
+    Thus, $H$ is constant since we know that $B(z)\,J_B'(z)-B'(z)=0$ from $J_B'(z)=B'(z)/B(z)$. So
+    since $H(0)=\exp(J_B(0))/B(0)=1/B(0)$ we know $H(z)=1/B(0)$ for all $z$. So we have,
+    $$\frac{1}{B(0)}=\frac{\exp(J_B(z))}{B(z)}\implies\left|\frac{B(z)}{B(0)}\right|
+      =\exp(\mathfrak{R}J_B(z)).$$
+    Taking the logarithm of both sides completes the proof.
+-/
+theorem LogOfAnalyticFunction {r R : ℝ} {B : ℂ → ℂ}
+    (zero_lt_r : 0 < r) (r_lt_R : r < R)
+    (BanalyticOnNhdOfDR : AnalyticOnNhd ℂ B (Metric.closedBall (0 : ℂ) R))
+    (Bnonzero : ∀ z ∈ Metric.closedBall (0 : ℂ) R, B z ≠ 0) :
+    ∃ (J_B : ℂ → ℂ), (AnalyticOnNhd ℂ J_B (Metric.ball 0 R)) ∧
+      (J_B 0 = 0) ∧
+      (∀ z ∈ Metric.closedBall 0 r, (deriv J_B) z = (deriv B) z / (B z)) ∧
+      (∀ z ∈ Metric.ball 0 R, Real.log ‖B z‖ - Real.log ‖B 0‖ = (J_B z).re) := by
+  obtain ⟨J_B, hJB⟩ : ∃ J_B : ℂ → ℂ, (∀ z ∈ Metric.ball 0 R, (HasDerivAt J_B (deriv B z / B z) z)) ∧
+      J_B 0 = 0 ∧ (∀ z ∈ Metric.ball 0 R, Real.log ‖B z‖ - Real.log ‖B 0‖ = (J_B z).re) := by
+    set f : ℂ → ℂ := fun z => deriv B z / B z;
+    have hf : AnalyticOnNhd ℂ f (Metric.ball 0 R) :=
+      (BanalyticOnNhdOfDR.deriv.mono Metric.ball_subset_closedBall).div
+        (BanalyticOnNhdOfDR.mono Metric.ball_subset_closedBall)
+        (fun z hz => Bnonzero z <| Metric.ball_subset_closedBall hz)
+    obtain ⟨J, hJ⟩ := DifferentiableOn.isExactOn_ball hf.differentiableOn
+    refine ⟨fun z ↦ J z - J 0, fun z hz ↦ (hJ z hz).sub_const _, by simp, ?_⟩
+    set H : ℂ → ℂ := fun z => Complex.exp (J z - J 0) / B z
+    have hJB_deriv : ∀ z ∈ Metric.ball 0 R, HasDerivAt (fun z ↦ J z - J 0) (f z) z :=
+      fun z hz ↦ (hJ z hz).sub_const _
+    have hH_deriv : ∀ z ∈ Metric.ball 0 R, HasDerivAt H 0 z := by
+      intro z hz
+      have := (Complex.hasDerivAt_exp _).comp z (hJB_deriv z hz)
+      convert! this.div (BanalyticOnNhdOfDR.differentiableOn.differentiableAt
+        (Metric.closedBall_mem_nhds_of_mem hz) |>.hasDerivAt)
+        (Bnonzero z <| Metric.ball_subset_closedBall hz) using 1
+      ring_nf!; grind
+    have hH_const : ∀ z ∈ Metric.ball 0 R, H z = H 0 := by
+      intro z hz
+      have h_diffOn : DifferentiableOn ℂ H (Metric.ball 0 R) :=
+        fun z hz ↦ (hH_deriv z hz).differentiableAt.differentiableWithinAt
+      refine Convex.is_const_of_fderivWithin_eq_zero (convex_ball 0 R) h_diffOn ?_ hz
+        (Metric.mem_ball_self (Metric.pos_of_mem_ball hz))
+      intro x hx
+      rw [fderivWithin_of_isOpen Metric.isOpen_ball hx,
+        ← ContinuousLinearMap.toSpanSingleton_zero]
+      exact (hH_deriv x hx).hasFDerivAt.fderiv
+    have h_exp_re : ∀ z ∈ Metric.ball 0 R, Real.exp (J z - J 0).re = ‖B z‖ / ‖B 0‖ := by
+      intro z hz
+      have hc := hH_const z hz
+      simp only [H, sub_self, Complex.exp_zero, one_div] at hc
+      rw [div_eq_iff (Bnonzero z (Metric.ball_subset_closedBall hz)), mul_comm] at hc
+      rw [← Complex.norm_exp, ← norm_div, div_eq_mul_inv]
+      exact enorm_eq_iff_norm_eq.mp (congrArg enorm hc)
+    intro z hz
+    have hBz := Bnonzero z (Metric.ball_subset_closedBall hz)
+    have hB0 := Bnonzero 0 (by norm_num; linarith)
+    rw [← Real.log_div (norm_ne_zero_iff.mpr hBz) (norm_ne_zero_iff.mpr hB0),
+      ← h_exp_re z hz, Real.log_exp]
+  have hmem : ∀ z, z ∈ Metric.ball (0 : ℂ) r → z ∈ Metric.closedBall (0 : ℂ) R := by
+    intro z hz
+    apply Metric.mem_closedBall.mpr
+    rw [Metric.mem_ball] at hz
+    linarith
+  refine ⟨J_B, fun z hz => ?_, hJB.2.1, fun z hz => ?_, hJB.2.2⟩
+  · exact DifferentiableOn.analyticAt
+      (fun w hw ↦ (hJB.1 w hw).differentiableAt.differentiableWithinAt)
+      (IsOpen.mem_nhds Metric.isOpen_ball hz)
+  · exact (hJB.1 z (Metric.closedBall_subset_ball r_lt_R hz)).deriv
+
+
+
+/-
+A wrapper of the above theorem that will be useful later on.
+See above.
+-/
+theorem LogOfAnalyticFunction' {r' r R : ℝ} {B : ℂ → ℂ}
+    (r'_pos : 0 < r') (r'_lt_r : r' < r) (r_lt_R : r < R)
+    (BanalyticOnNhdOfDR : AnalyticOnNhd ℂ B (Metric.closedBall (0 : ℂ) R))
+    (Bnonzero : ∀ z ∈ Metric.closedBall (0 : ℂ) r, B z ≠ 0) :
+    ∃ (J_B : ℂ → ℂ), (AnalyticOnNhd ℂ J_B (Metric.ball 0 r)) ∧
+      (J_B 0 = 0) ∧
+      (∀ z ∈ Metric.closedBall 0 r', (deriv J_B) z = (deriv B) z / (B z)) ∧
+      (∀ z ∈ Metric.ball 0 r, Real.log ‖B z‖ - Real.log ‖B 0‖ = (J_B z).re) := by
+  have BanalyticOnNhdOfDr : AnalyticOnNhd ℂ B (Metric.closedBall (0 : ℂ) r) :=
+    BanalyticOnNhdOfDR.mono (Metric.closedBall_subset_closedBall r_lt_R.le)
+  exact LogOfAnalyticFunction r'_pos r'_lt_r BanalyticOnNhdOfDr Bnonzero
+
+
+
+/-
+Let $R>0$ and $f:\mathbb{C}\to\mathbb{C}$. Define the set of zeros
+    $\mathcal{K}_f(R)=\{\rho\in\mathbb{C}:|\rho|\leq R,\,f(\rho)=0\}$.
+-/
+/-- The zeros of `f` in the closed disk of radius `R` about the origin. -/
+def SetOfZeros (R : ℝ) (f : ℂ → ℂ) : Set ℂ := {ρ : ℂ | ‖ρ‖ ≤ R ∧ f ρ = 0}
+
+
+
+lemma finiteSetOfZeros_mono {r : ℝ} {f : ℂ → ℂ}
+    (r_lt_one : r < 1)
+    (finiteZeros : (SetOfZeros 1 f).Finite) :
+    (SetOfZeros r f).Finite := by
+  apply Set.Finite.subset finiteZeros
+  unfold SetOfZeros
+  refine ofPred_subset_ofPred.mpr ?_
+  intro z hz
+  exact ⟨by linarith, hz.2⟩
+
+
+
+/-
+\begin{definition}[ZeroOrder]\label{ZeroOrder}
+  Let $f:\mathbb{C}\to\mathbb{C}$.
+  We define $m_f(\rho)$ as the order of the zero $\rho$ w.r.t $f$.
+\end{definition}
+  In LEAN, this corresponds exactly with analyticOrderAt/analyticOrderNatAt.
+-/
+
+
+
+/-
+Let $f:\mathbb{C}\to\mathbb{C}$ and $\rho\in\mathbb{C}$. Then there exists $h_\rho$ such that
+    $$f(z)=(z-\rho)^{m_f(\rho)}\,h_\rho(z).$$
+    In LEAN, this corresponds exactly with (-.analyticOrderAt-ne-top.mp -).choose,
+    but this serves as a wrapper of that with the necessary conditions.
+-/
+open Classical in
+/-- The analytic factor remaining after removing the zero at `z`, evaluated at `z`. -/
+noncomputable def ZeroFactor (f : ℂ → ℂ) (z : ℂ) : ℂ :=
+  if h1 : AnalyticAt ℂ f z then
+    if h2 : analyticOrderAt f z ≠ ⊤ then
+      (h1.analyticOrderAt_ne_top.mp h2).choose z
+    else 0
+  else 0
+
+
+
+/-
+Let $f:\mathbb{C}\to\mathbb{C}$ be analytic on $\overline{\mathbb{D}_1}$ with $f(0)\neq 0$.
+    For all $\rho\in\mathcal{K}_f(R)$ with $R<1$ there exists $h_\rho(z)$ such that
+    $h_\rho(z)$ is analytic at $\rho$, $h_\rho(\rho)\neq 0$, and
+    $f(z)=(z-\rho)^{m_f(\rho)}\,h_\rho(z)$.
+Since $f$ is analytic on neighborhoods of points in $\overline{\mathbb{D}_1}$ we know
+    that there exists a series expansion about $\rho$:
+    $$f(z)=\sum_{0\leq n}a_n\,(z-\rho)^n.$$
+    Now if we let $m$ be the smallest number such that $a_m\neq 0$, then
+    $$f(z)=\sum_{0\leq n}a_n\,(z-\rho)^n=\sum_{m\leq n}a_n\,(z-\rho)^n
+      =(z-\rho)^m\sum_{m\leq n}a_n\,(z-\rho)^{n-m}=(z-\rho)^m\,h_\rho(z).$$
+    Trivially, $h_\rho(z)$ is analytic at $\rho$ (we have written down the series
+    expansion); now note that
+    $$h_\rho(\rho)=\sum_{m\leq n}a_n(\rho-\rho)^{n-m}=\sum_{m\leq n}a_n0^{n-m}=a_m\neq 0.$$
+-/
+lemma ZeroFactorization {R : ℝ} {f : ℂ → ℂ} {ρ : ℂ}
+    (RleOne : R < 1)
+    (hfAnalytic : AnalyticOnNhd ℂ f (Metric.closedBall (0 : ℂ) 1))
+    (hf_neq_zero_at_zero : f 0 ≠ 0)
+    (hρ : ρ ∈ SetOfZeros R f) :
+    ∃ h_ρ : ℂ → ℂ, AnalyticAt ℂ h_ρ ρ ∧ h_ρ ρ ≠ 0 ∧ ZeroFactor f ρ = h_ρ ρ ∧
+      f =ᶠ[nhds ρ] fun z ↦ (z - ρ) ^ analyticOrderNatAt f ρ * h_ρ z := by
+  have zero_mem_closedBall : 0 ∈ Metric.closedBall (0 : ℂ) 1 := by
+    rw[mem_closedBall_iff_norm, sub_zero, norm_zero]
+    exact zero_le_one
+  have ρ_mem_closedBall : ρ ∈ Metric.closedBall (0 : ℂ) 1 := by
+    rw[mem_closedBall_iff_norm, sub_zero]
+    linarith[hρ.1]
+  have orderAtZeroIsZero : analyticOrderAt f 0 = 0 := by
+    rw[analyticOrderAt_eq_zero]
+    exact Or.symm (Decidable.not_or_of_imp fun a a_1 ↦ hf_neq_zero_at_zero a)
+  have finiteOrder : analyticOrderAt f ρ ≠ ⊤ := by
+    refine AnalyticOnNhd.analyticOrderAt_ne_top_of_isPreconnected hfAnalytic
+      (Metric.isPreconnected_closedBall) zero_mem_closedBall ρ_mem_closedBall
+      (lt_top_iff_ne_top.mp ?_)
+    rw[orderAtZeroIsZero]
+    exact ENat.top_pos
+  have AnalyticAt_ρ : AnalyticAt ℂ f ρ := by exact (hfAnalytic ρ ρ_mem_closedBall)
+  obtain ⟨h_ρ, h_ρ_neq_zero_at_zero, f_eq⟩ :=
+    (AnalyticAt_ρ.analyticOrderAt_ne_top.mp finiteOrder).choose_spec
+  set g := (AnalyticAt_ρ.analyticOrderAt_ne_top.mp finiteOrder).choose
+  refine ⟨g, h_ρ, h_ρ_neq_zero_at_zero, ?_, f_eq⟩
+  simp only [ZeroFactor, AnalyticAt_ρ, ↓reduceDIte, ne_eq, finiteOrder, not_false_eq_true,
+    smul_eq_mul, g]
+
+
+
+/-
+Let $0 < r < 1$, and $f:\mathbb{C}\to\mathbb{C}$ be analytic on $\overline{\mathbb{D}_1}$ with
+    $f(0)\neq 0$. We define a function $C_f:\mathbb{C}\to\mathbb{C}$ as follows. This function is
+    constructed by dividing $f(z)$ by a polynomial whose roots are the zeros of $f$ inside
+    $\overline{\mathbb{D}_r}$.
+    $$C_f(z)=\begin{cases}
+        \displaystyle\frac{f(z)}{\prod_{\rho\in\mathcal{K}_f(r)}(z-\rho)^{m_f(\rho)}}
+          \qquad\text{for }z\not\in\mathcal{K}_f(r) \\
+        \displaystyle\frac{h_z(z)}{\prod_{\rho\in\mathcal{K}_f(r)\setminus\{z\}}
+          (z-\rho)^{m_f(\rho)}}\qquad\text{for }z\in\mathcal{K}_f(r)
+    \end{cases}$$
+    where $h_z(z)$ comes from Lemma \ref{ZeroFactorization}.
+-/
+open Classical in
+/-- The analytic function obtained by removing the zeros of `f` in the disk of radius `r`. -/
+noncomputable def Cf (r : ℝ) (f : ℂ → ℂ) (z : ℂ) : ℂ :=
+  if finite_zeros_mono : (SetOfZeros r f).Finite then
+    if _ : z ∈ SetOfZeros r f then
+      ZeroFactor f z / ∏ ρ ∈ (finite_zeros_mono.toFinset \ {z}), (z - ρ) ^ (analyticOrderNatAt f ρ)
+    else
+      f z / ∏ ρ ∈ (finite_zeros_mono.toFinset), (z - ρ) ^ (analyticOrderNatAt f ρ)
+  else 1
+
+
+
+lemma analyticAt_finset_prod_sub_pow (s : Finset ℂ) (g : ℂ → ℕ) (w : ℂ) :
+    AnalyticAt ℂ (fun z => ∏ ρ ∈ s, (z - ρ) ^ g ρ) w := by
+  induction s using Finset.induction with
+  | empty =>
+    simp only [Finset.prod_empty]
+    exact analyticAt_const
+  | @insert a s' hne ih =>
+    have : (fun z => ∏ ρ ∈ insert a s', (z - ρ) ^ g ρ) =
+      fun z => (z - a) ^ g a * ∏ ρ ∈ s', (z - ρ) ^ g ρ :=
+      funext fun z => Finset.prod_insert hne
+    rw [this]
+    exact ((analyticAt_id.sub analyticAt_const).pow _).mul ih
+
+
+
+/-
+If $f:\mathbb{C}\to\mathbb{C}$ is analytic on $\overline{\mathbb{D}_1}$ then so too is $C_f$.
+Look at the definition of $C_f$ and apply ZeroFactorization.
+-/
+lemma CfAnalytic {r R : ℝ} {f : ℂ → ℂ}
+    (r_lt_R : r < R) (R_lt_one : R < 1)
+    (hfAnalytic : AnalyticOnNhd ℂ f (Metric.closedBall (0 : ℂ) 1))
+    (hf_neq_zero_at_zero : f 0 ≠ 0) :
+    AnalyticOnNhd ℂ (Cf r f) (Metric.closedBall (0 : ℂ) R) := by
+  classical
+  intro w hw
+  unfold Cf
+  by_cases finite_zeros_mono : (SetOfZeros r f).Finite
+  · simp only [finite_zeros_mono, ↓reduceDIte]
+    by_cases w_in_zeros : w ∈ SetOfZeros r f
+    · obtain ⟨hW, hhWanalytic, hhWne_zero, hhWeq⟩ :=
+        ZeroFactorization (by linarith)
+          (hfAnalytic.mono (Metric.closedBall_subset_closedBall (by linarith))) hf_neq_zero_at_zero
+          w_in_zeros
+      have h_eq : ∀ᶠ z in nhds w,
+          (if h : z ∈ SetOfZeros r f then ZeroFactor f z / ∏ ρ ∈ finite_zeros_mono.toFinset \ {z},
+          (z - ρ) ^ analyticOrderNatAt f ρ else f z / ∏ ρ ∈ finite_zeros_mono.toFinset,
+          (z - ρ) ^ analyticOrderNatAt f ρ) =
+          hW z / ∏ ρ ∈ finite_zeros_mono.toFinset \ {w}, (z - ρ) ^ analyticOrderNatAt f ρ := by
+        filter_upwards [hhWeq.2, hhWanalytic.continuousAt.eventually_ne hhWne_zero] with z hz hz'
+        by_cases h : z = w
+        · subst h
+          rw [dite_eq_left w_in_zeros]
+          congr 1
+          exact hhWeq.1
+        · have z_not_in : z ∉ SetOfZeros r f := by
+            intro hmem
+            have hfz : f z = 0 := hmem.2
+            rw [hz] at hfz
+            exact absurd hfz (mul_ne_zero (pow_ne_zero _ (sub_ne_zero_of_ne h)) hz')
+          rw [dite_eq_right z_not_in, hz]
+          have hw_mem : w ∈ finite_zeros_mono.toFinset :=
+            finite_zeros_mono.mem_toFinset.mpr w_in_zeros
+          rw [Finset.prod_eq_prod_sdiff_singleton_mul hw_mem
+            (fun ρ => (z - ρ) ^ analyticOrderNatAt f ρ)]
+          rw [mul_comm ((z - w) ^ analyticOrderNatAt f w) (hW z)]
+          rw [mul_div_mul_right _ _ (pow_ne_zero _ (sub_ne_zero_of_ne h))]
+      apply hhWanalytic.div _ _ |> fun h => h.congr _;
+      · use fun z => ∏ ρ ∈ finite_zeros_mono.toFinset \ { w }, ( z - ρ ) ^ analyticOrderNatAt f ρ;
+      · exact analyticAt_finset_prod_sub_pow _ _ _
+      · simp only [Finset.prod_eq_zero_iff, ne_eq, pow_eq_zero_iff', Finset.mem_sdiff, and_imp,
+          Finite.mem_toFinset, Finset.mem_singleton, not_exists, not_and, Decidable.not_not]
+        intro x _ h_ne_w
+        exact fun h_eq_w => absurd (sub_eq_zero.mp h_eq_w).symm h_ne_w
+      · filter_upwards [ h_eq ] with z hz using hz.symm
+    · apply AnalyticAt.congr _ _
+      · exact fun z => f z / ∏ ρ ∈ finite_zeros_mono.toFinset, ( z - ρ ) ^ analyticOrderNatAt f ρ
+      · refine AnalyticAt.div ?_ ?_ ?_
+        · exact hfAnalytic w ( Metric.mem_closedBall.mpr <| le_trans hw.out <| by linarith )
+        · exact analyticAt_finset_prod_sub_pow _ _ _
+        · simp only [ ne_eq, Finset.prod_eq_zero_iff, Finite.mem_toFinset, pow_eq_zero_iff',
+          sub_eq_zero, ↓existsAndEq, true_and, not_and, Decidable.not_not]
+          exact fun h => absurd h w_in_zeros
+      · filter_upwards [IsOpen.mem_nhds (isOpen_compl_iff.mpr finite_zeros_mono.isClosed)
+          w_in_zeros] with z hz
+        split_ifs with h
+        · exact absurd h hz
+        · rfl
+  · simp only [finite_zeros_mono, ↓reduceDIte]
+    exact analyticAt_const
+
+
+
+/-
+Let $0 < r < R < 1$, and $f:\mathbb{C}\to\mathbb{C}$ be analytic $\overline{\mathbb{D}_1}$ with
+    $f(0)\neq 0$. We define a function $B_f:\mathbb{C}\to\mathbb{C}$ as follows.
+    $$B_f(z)=C_f(z)\prod_{\rho\in\mathcal{K}_f(r)}
+      \left(R-\frac{z\overline{\rho}}{R}\right)^{m_f(\rho)}$$
+-/
+open Classical in
+/-- The zero-removed function multiplied by the reflected zero factors at radius `R`. -/
+noncomputable def BlaschkeB (r R : ℝ) (f : ℂ → ℂ) (z : ℂ) : ℂ :=
+  if finite_zeros_mono : (SetOfZeros r f).Finite then (Cf r f) z *
+    (∏ ρ ∈ finite_zeros_mono.toFinset, (R - z * (conj ρ) / R) ^ (analyticOrderNatAt f ρ))
+  else 1
+
+
+
+/-
+If $f:\mathbb{C}\to\mathbb{C}$ is analytic on $\overline{\mathbb{D}_R}$ then so too is $B_f$.
+Expand out $B_f$ as a product, and observe that each part is analytic on
+    $\overline{\mathbb{D}_R}$.
+-/
+lemma BlaschkeAnalytic {r R : ℝ} {f : ℂ → ℂ}
+    (r_pos : 0 < r) (r_lt_R : r < R) (R_lt_one : R < 1)
+    (finiteZeros : (SetOfZeros 1 f).Finite)
+    (hfAnalytic : AnalyticOnNhd ℂ f (Metric.closedBall (0 : ℂ) 1))
+    (hf_neq_zero_at_zero : f 0 ≠ 0) :
+    AnalyticOnNhd ℂ (BlaschkeB r R f) (Metric.closedBall (0 : ℂ) R) := by
+  have R_pos : 0 < R := lt_trans r_pos r_lt_R
+  have r_lt_one : r < 1 := lt_trans r_lt_R R_lt_one
+  unfold BlaschkeB
+  by_cases finite_zeros_mono : (SetOfZeros r f).Finite
+  · simp only [finite_zeros_mono, ↓reduceDIte]
+    refine AnalyticOnNhd.mul (CfAnalytic r_lt_R R_lt_one hfAnalytic hf_neq_zero_at_zero)
+      (Finset.analyticOnNhd_fun_prod (finiteSetOfZeros_mono r_lt_one finiteZeros).toFinset ?_)
+    intro w hw
+    refine AnalyticOnNhd.fun_pow
+      (AnalyticOnNhd.sub analyticOnNhd_const
+        (AnalyticOnNhd.div (AnalyticOnNhd.mul analyticOnNhd_id analyticOnNhd_const)
+          analyticOnNhd_const ?_)) _
+    intro w' hw'
+    exact_mod_cast ne_of_gt R_pos
+  · simp only [finite_zeros_mono, ↓reduceDIte]
+    exact analyticOnNhd_const
+
+
+
+/-
+Let $0 < r < R<1$, and $f:\mathbb{C}\to\mathbb{C}$ be analytic on $\overline{\mathbb{D}_1}$ with
+    $f(0)\neq 0$. Then
+    $$|B_f(0)|=|f(0)|\prod_{\rho\in\mathcal{K}_f(r)}
+      \left(\frac{R}{|\rho|}\right)^{m_f(\rho)}.$$
+Since $f(0)\neq 0$, we know that $0\not\in\mathcal{K}_f(r)$. Thus,
+    $$C_f(0)=\frac{f(0)}{\displaystyle\prod_{\rho\in\mathcal{K}_f(r)}(-\rho)^{m_f(\rho)}}.$$
+    Thus, substituting this into Definition \ref{BlaschkeB},
+    $$|B_f(0)|=|C_f(0)|\prod_{\rho\in\mathcal{K}_f(r)}R^{m_f(\rho)}
+      =|f(0)|\prod_{\rho\in\mathcal{K}_f(r)}\left(\frac{R}{|\rho|}\right)^{m_f(\rho)}.$$
+-/
+lemma BlaschkeOfZero {r R : ℝ} {f : ℂ → ℂ}
+    (r_pos : 0 < r) (r_lt_one : r < 1) (r_lt_R : r < R)
+    (finiteZeros : (SetOfZeros 1 f).Finite)
+    (hf_neq_zero_at_zero : f 0 ≠ 0) :
+    ‖BlaschkeB r R f 0‖ = ‖f 0‖ *
+      (∏ ρ ∈ (finiteSetOfZeros_mono r_lt_one finiteZeros).toFinset,
+        (R / ‖ρ‖) ^ (analyticOrderNatAt f ρ)) := by
+  have zero_not_zero : ¬(0 ∈ SetOfZeros r f) := by
+    apply notMem_ofPred_iff.mpr
+    simp only [norm_zero, not_and]
+    intro r
+    exact mem_support.mp hf_neq_zero_at_zero
+  unfold BlaschkeB Cf
+  simp only [finiteSetOfZeros_mono r_lt_one finiteZeros, zero_not_zero, ↓reduceDIte, zero_sub,
+    zero_mul, zero_div, sub_zero, Complex.norm_mul, Complex.norm_div, norm_prod, norm_pow, norm_neg,
+    norm_real, norm_eq_abs]
+  rw[div_eq_mul_inv, mul_assoc, abs_of_pos (by linarith)]
+  refine (mul_right_inj' (norm_ne_zero_iff.mpr hf_neq_zero_at_zero)).mpr ?_
+  rw[← Finset.prod_inv_distrib, ← Finset.prod_mul_distrib]
+  simp only [div_eq_inv_mul, mul_pow, inv_pow]
+
+
+
+/-
+Let $0 < r < R<1$, and $f:\mathbb{C}\to\mathbb{C}$ be analytic on $\overline{\mathbb{D}_1}$ with
+    $f(0)\neq 0$. Then
+    $$|f(0)|\leq|B_f(0)|.$$
+Applying lemma \ref{BlaschkeOfZero} we know that
+    $$|B_f(0)|=|f(0)|\prod_{\rho\in\mathcal{K}_f(r)}
+      \left(\frac{R}{|\rho|}\right)^{m_f(\rho)}.$$
+    Note that for all $\rho\in\mathcal{K}_f(r)$ that $1<R/|\rho|$ since $r<R$.
+    Thus, the result follows.
+-/
+lemma norm_fOfZero_le_norm_BlaschkeOfZero {r R : ℝ} {f : ℂ → ℂ}
+    (r_pos : 0 < r) (r_lt_R : r < R) (R_lt_one : R < 1)
+    (finiteZeros : (SetOfZeros 1 f).Finite)
+    (hf_neq_zero_at_zero : f 0 ≠ 0) :
+    ‖f 0‖ ≤ ‖BlaschkeB r R f 0‖ := by
+  have r_lt_one : r < 1 := lt_trans r_lt_R R_lt_one
+  rw [BlaschkeOfZero r_pos r_lt_one r_lt_R finiteZeros hf_neq_zero_at_zero, ← mul_one ‖f 0‖]
+  refine mul_le_mul (by rw[mul_one]) ?_ (zero_le_one) (mul_nonneg (norm_nonneg (f 0)) zero_le_one)
+  rw [← Finset.prod_const_one (s := (finiteSetOfZeros_mono r_lt_one finiteZeros).toFinset)]
+  apply Finset.prod_le_prod₀
+  · intro ρ hρ
+    exact zero_le_one
+  · intro ρ hρ
+    simp only [SetOfZeros, Finite.mem_toFinset, mem_ofPred_eq] at hρ
+    apply one_le_pow₀
+    rw[one_le_div]
+    · linarith
+    · rw [norm_pos_iff]
+      by_contra h
+      rw [h] at hρ
+      exact hf_neq_zero_at_zero hρ.2
+
+
+
+/-
+Let $0 < r < R<1$. If $f:\mathbb{C}\to\mathbb{C}$ is a function analytic on
+    $\overline{\mathbb{D}_1}$ with $f(0)\neq0$ such that $|f(z)|\leq B$ for $|z|\leq R$,
+    then $|B_f(z)|\leq B$ for $|z|\leq R$ also.
+For $|z|=R$, we know that $z\not\in\mathcal{K}_f(r)$. Thus,
+    $$C_f(z)=\frac{f(z)}{\displaystyle\prod_{\rho\in\mathcal{K}_f(r)}(z-\rho)^{m_f(\rho)}}.$$
+    Thus, substituting this into Definition \ref{BlaschkeB},
+    $$|B_f(z)|=|f(z)|\prod_{\rho\in\mathcal{K}_f(r)}
+      \left|\frac{R-z\overline{\rho}/R}{z-\rho}\right|^{m_f(\rho)}.$$
+    But note that
+    $$\left|\frac{R-z\overline{\rho}/R}{z-\rho}\right|
+      =\frac{|R^2-z\overline{\rho}|/R}{|z-\rho|}
+      =\frac{|z|\cdot|\overline{z-\rho}|/R}{|z-\rho|}=1.$$
+    So we have that $|B_f(z)|=|f(z)|\leq B$ when $|z|=R$. Now by the maximum modulus
+    principle, we know that the maximum of $|B_f|$ must occur on the boundary where
+    $|z|=R$. Thus $|B_f(z)|\leq B$ for all $|z|\leq R$.
+-/
+lemma DiskBound {B r R : ℝ} {f : ℂ → ℂ} {z : ℂ}
+    (r_pos : 0 < r) (r_lt_R : r < R) (R_lt_one : R < 1)
+    (finiteZeros : (SetOfZeros 1 f).Finite)
+    (hfAnalytic : AnalyticOnNhd ℂ f (Metric.closedBall (0 : ℂ) 1))
+    (hf_neq_zero_at_zero : f 0 ≠ 0) (fz_bound : ∀ (z : ℂ), ‖z‖ ≤ R → ‖f z‖ ≤ B)
+    (hz : z ∈ Metric.closedBall (0 : ℂ) R) :
+    ‖BlaschkeB r R f z‖ ≤ B := by
+  have r_lt_one : r < 1 := lt_trans r_lt_R R_lt_one
+  have R_pos : 0 < R := lt_trans r_pos r_lt_R
+  refine AnalyticOn.norm_le_of_norm_le_on_sphere (le_refl R) (AnalyticOnNhd.analyticOn
+    (BlaschkeAnalytic r_pos r_lt_R R_lt_one finiteZeros hfAnalytic hf_neq_zero_at_zero)) ?_ hz
+  intro w hw
+  rw[mem_sphere_iff_norm, sub_zero] at hw
+  have hw_not_in : ¬(w ∈ SetOfZeros r f) := by
+    apply notMem_ofPred_iff.mpr
+    intro le_r
+    linarith
+  have Bf_eq_f_at_w : ‖BlaschkeB r R f w‖ = ‖f w‖ := by
+    unfold BlaschkeB Cf
+    simp only [finiteSetOfZeros_mono r_lt_one finiteZeros, hw_not_in, ↓reduceDIte, Complex.norm_mul,
+      Complex.norm_div, norm_prod, norm_pow]
+    rw[div_eq_mul_inv, mul_assoc, mul_right_eq_self₀]
+    by_cases fw_normZero : ‖f w‖ = 0
+    · exact Or.inr fw_normZero
+    · apply Or.inl
+      rw[← Finset.prod_inv_distrib, ← Finset.prod_mul_distrib]
+      apply Finset.prod_eq_one
+      intro w' hw'_in
+      have hfact : (R : ℂ) - w * starRingEnd ℂ w' / R = (conj w - conj w') * w / R := by
+        rw[sub_mul, ← Complex.normSq_eq_conj_mul_self, Complex.normSq_eq_norm_sq, hw, ofReal_pow]
+        field_simp
+      rw [hfact, norm_div, norm_mul, ← map_sub, norm_conj, Complex.norm_real, hw,
+        Real.norm_of_nonneg (le_of_lt R_pos)]
+      field_simp
+      rw[← div_pow, div_self, one_pow]
+      rw[Set.Finite.mem_toFinset] at hw'_in
+      exact norm_ne_zero_iff.mpr (sub_ne_zero.mpr (fun h => hw_not_in (h ▸ hw'_in)))
+  rw[Bf_eq_f_at_w]
+  exact fz_bound w (le_of_eq hw)
+
+
+
+/-
+Let $0 < r < R<1$ and $f:\overline{\mathbb{D}_1}\to\mathbb{C}$ be analytic on
+    neighborhoods of points in $\overline{\mathbb{D}_1}$ with $f(0)\neq 0$. Then $B_f(z)\neq 0$
+    for all $z\in\overline{\mathbb{D}_r}$.
+Suppose that $z\in\mathcal{K}_f(r)$. Then we have that
+    $$C_f(z)=\frac{h_z(z)}{\displaystyle\prod_{\rho\in\mathcal{K}_f(r)\setminus\{z\}}
+      (z-\rho)^{m_f(\rho)}}.$$
+    where $h_z(z)\neq 0$ according to Lemma \ref{ZeroFactorization}. Thus, substituting
+    this into Definition \ref{BlaschkeB},
+    \begin{equation}\label{pickupPoint2}
+        |B_f(z)|=|h_z(z)|\cdot\left|R-\frac{|z|^2}{R}\right|^{m_f(z)}
+          \prod_{\rho\in\mathcal{K}_f(r)\setminus\{z\}}
+          \left|\frac{R-z\overline{\rho}/R}{z-\rho}\right|^{m_f(\rho)}.
+    \end{equation}
+    Trivially, $|h_z(z)|\neq 0$. Now note that
+    $$\left|R-\frac{|z|^2}{R}\right|=0\implies|z|=R.$$
+    However, this is a contradiction because $z\in\overline{\mathbb{D}_r}$ tells us that
+    $|z|\leq r < R$. Similarly, note that
+    $$\left|\frac{R-z\overline{\rho}/R}{z-\rho}\right|=0\implies|z|=\frac{R^2}{|\overline{\rho}|}.$$
+    However, this is also a contradiction because $\rho\in\mathcal{K}_f(r)$ tells us that
+    $R < R^2/|\overline{\rho}|=|z|$, but $z\in\overline{\mathbb{D}_r}$ tells us that
+    $|z|\leq r < R$. So, we know that
+    $$\left|R-\frac{|z|^2}{R}\right|\neq 0\qquad\text{and}\qquad
+      \left|\frac{R-z\overline{\rho}/R}{z-\rho}\right|\neq 0
+      \quad\text{for all}\quad\rho\in\mathcal{K}_f(r)\setminus\{z\}.$$
+    Applying this to Equation (\ref{pickupPoint2}) we have that $|B_f(z)|\neq 0$.
+    So, $B_f(z)\neq 0$.
+    Now suppose that $z\not\in\mathcal{K}_f(r)$. Then we have that
+    $$C_f(z)=\frac{f(z)}{\displaystyle\prod_{\rho\in\mathcal{K}_f(r)}(z-\rho)^{m_f(\rho)}}.$$
+    Thus, substituting this into Definition \ref{BlaschkeB},
+    \begin{equation}\label{pickupPoint3}
+        |B_f(z)|=|f(z)|\prod_{\rho\in\mathcal{K}_f(r)}
+          \left|\frac{R-z\overline{\rho}/R}{z-\rho}\right|^{m_f(\rho)}.
+    \end{equation}
+    We know that $|f(z)|\neq 0$ since $z\not\in\mathcal{K}_f(r)$. Now note that
+    $$\left|\frac{R-z\overline{\rho}/R}{z-\rho}\right|=0\implies|z|=\frac{R^2}{|\overline{\rho}|}.$$
+    However, this is a contradiction because $\rho\in\mathcal{K}_f(r)$ tells us that
+    $R < R^2/|\overline{\rho}|=|z|$, but $z\in\overline{\mathbb{D}_r}$ tells us that
+    $|z|\leq r < R$. So, we know that
+    $$\left|\frac{R-z\overline{\rho}/R}{z-\rho}\right|\neq 0
+      \quad\text{for all}\quad\rho\in\mathcal{K}_f(r).$$
+    Applying this to Equation (\ref{pickupPoint3}) we have that $|B_f(z)|\neq 0$.
+    So, $B_f(z)\neq 0$.
+    We have shown that $B_f(z)\neq 0$ for both $z\in\mathcal{K}_f(r)$ and
+    $z\not\in\mathcal{K}_f(r)$, so the result follows.
+-/
+lemma BlaschkeNonzero {r R : ℝ} {f : ℂ → ℂ}
+    (r_pos : 0 < r) (r_lt_R : r < R) (R_lt_one : R < 1)
+    (finiteZeros : (SetOfZeros 1 f).Finite)
+    (hfAnalytic : AnalyticOnNhd ℂ f (Metric.closedBall (0 : ℂ) 1))
+    (hf_neq_zero_at_zero : f 0 ≠ 0) :
+    ∀ z ∈ Metric.closedBall (0 : ℂ) r, BlaschkeB r R f z ≠ 0 := by
+  have r_lt_one : r < 1 := lt_trans r_lt_R R_lt_one
+  have R_pos : 0 < R := lt_trans r_pos r_lt_R
+  intro z hz
+  have hz_norm_le_r : ‖z‖ ≤ r := by rwa [mem_closedBall_iff_norm, sub_zero] at hz
+  have hz_norm_lt_R : ‖z‖ < R := by linarith
+  let hFin := finiteSetOfZeros_mono r_lt_one finiteZeros
+  have hBProd : ∏ ρ ∈ hFin.toFinset,
+      (↑R - z * (starRingEnd ℂ) ρ / ↑R) ^ analyticOrderNatAt f ρ ≠ 0 := by
+    apply Finset.prod_ne_zero_iff.mpr
+    intro ρ hρ
+    apply pow_ne_zero
+    norm_num [ sub_eq_zero, Complex.ext_iff ];
+    simp only [SetOfZeros, Finite.mem_toFinset, mem_ofPred_eq] at hρ
+    rw [ eq_div_iff ] <;> norm_num [ Complex.normSq, Complex.norm_def ] at *;
+    · rw [Real.sqrt_lt' (by linarith)] at hz_norm_lt_R
+      rw [ Real.sqrt_le_iff ] at hρ
+      refine fun h => absurd h ?_
+      nlinarith [sq_nonneg ( z.re - ρ.re ), sq_nonneg ( z.im - ρ.im ),
+        mul_lt_mul_of_pos_left r_lt_R R_pos]
+    · linarith
+  unfold BlaschkeB Cf
+  by_cases z_in_zeros : z ∈ SetOfZeros r f
+  · simp only [hFin, z_in_zeros, ↓reduceDIte]
+    obtain ⟨_, _, hne, heq⟩ := ZeroFactorization (by linarith)
+      (hfAnalytic.mono (Metric.closedBall_subset_closedBall (by linarith))) hf_neq_zero_at_zero
+      z_in_zeros
+    rw [heq.1]
+    refine mul_ne_zero (div_ne_zero hne (Finset.prod_ne_zero_iff.mpr fun ρ hρ =>
+      pow_ne_zero _ (sub_ne_zero.mpr fun h =>
+        (Finset.mem_sdiff.mp hρ).2 (Finset.mem_singleton.mpr h.symm)))) hBProd
+  · simp only [hFin, z_in_zeros, ↓reduceDIte]
+    refine mul_ne_zero (div_ne_zero (fun hfz => z_in_zeros ⟨hz_norm_le_r, hfz⟩)
+      (Finset.prod_ne_zero_iff.mpr fun ρ hρ =>
+        pow_ne_zero _ (sub_ne_zero.mpr fun h => z_in_zeros (h ▸ hFin.mem_toFinset.mp hρ)))) hBProd
+
+
+
+/-
+Let $0< r < R<1$. If $f:\mathbb{C}\to\mathbb{C}$ is a function analytic on
+    neighborhoods of points in $\overline{\mathbb{D}_1}$ with $f(0)=1$ and $|f(z)|\leq B$
+    for $|z|\leq R$, then
+    $$\sum_{\rho\in\mathcal{K}_f(r)}m_f(\rho)\leq\frac{\log B}{\log(R/r)}.$$
+Since $f(0)=1$, by Lemma \ref{BlaschkeOfZero} we know that
+    $$|B_f(0)|
+      =|f(0)|\prod_{\rho\in\mathcal{K}_f(r)}\left(\frac{R}{|\rho|}\right)^{m_f(\rho)}
+      =\prod_{\rho\in\mathcal{K}_f(r)}\left(\frac{R}{|\rho|}\right)^{m_f(\rho)}.$$
+    Thus, substituting this into Definition \ref{BlaschkeB},
+    $$(R/r)^{\sum_{\rho\in\mathcal{K}_f(r)}m_f(\rho)}
+      =\prod_{\rho\in\mathcal{K}_f(r)}\left(\frac{R}{r}\right)^{m_f(\rho)}
+      \leq\prod_{\rho\in\mathcal{K}_f(r)}\left(\frac{R}{|\rho|}\right)^{m_f(\rho)}
+      =|B_f(0)|\leq B$$
+    whereby Lemma \ref{DiskBound} we know that $|B_f(z)|\leq B$ for all $|z|\leq R$.
+    Taking the logarithm of both sides and rearranging gives the desired result.
+-/
+theorem ZerosBound {B r R : ℝ} {f : ℂ → ℂ}
+    (r_pos : 0 < r) (r_lt_one : r < 1) (r_lt_R : r < R) (R_lt_one : R < 1)
+    (hfAnalytic : AnalyticOnNhd ℂ f (Metric.closedBall (0 : ℂ) 1)) (hf0_eq_one : f 0 = 1)
+    (finiteZeros : (SetOfZeros 1 f).Finite) (fz_bound : ∀ z : ℂ, ‖z‖ ≤ R → ‖f z‖ ≤ B) :
+    ∑ ρ ∈ (finiteSetOfZeros_mono r_lt_one finiteZeros).toFinset, analyticOrderNatAt f ρ ≤
+      1 / Real.log (R / r) * Real.log B := by
+  have R_pos : 0 < R := lt_trans r_pos r_lt_R
+  have hf0_ne_zero : f 0 ≠ 0 := by rw [hf0_eq_one]; exact one_ne_zero
+  have blaschke_eq := BlaschkeOfZero r_pos r_lt_one r_lt_R finiteZeros hf0_ne_zero
+  rw[hf0_eq_one, norm_one, one_mul] at blaschke_eq
+  rw [one_div, inv_mul_eq_div,
+    le_div_iff₀ (Real.log_pos (by simp only [lt_div_iff₀ r_pos, one_mul, r_lt_R])), ← Real.log_pow]
+  refine Real.log_le_log (pow_pos (div_pos R_pos r_pos) _) ?_
+  calc (R / r) ^ ∑ ρ ∈ (finiteSetOfZeros_mono r_lt_one finiteZeros).toFinset, analyticOrderNatAt f ρ
+      = ∏ ρ ∈ (finiteSetOfZeros_mono r_lt_one finiteZeros).toFinset,
+        (R / r) ^ analyticOrderNatAt f ρ := by
+        rw [Finset.prod_pow_eq_pow_sum]
+    _ ≤ ∏ ρ ∈ (finiteSetOfZeros_mono r_lt_one finiteZeros).toFinset,
+        (R / ‖ρ‖) ^ analyticOrderNatAt f ρ := by
+      apply Finset.prod_le_prod₀
+      · intro ρ _
+        exact pow_nonneg (div_nonneg (le_of_lt R_pos) (le_of_lt r_pos)) _
+      · intro ρ hρ
+        have hρ_mem := (finiteSetOfZeros_mono r_lt_one finiteZeros).mem_toFinset.mp hρ
+        refine pow_le_pow_left₀ (div_nonneg (le_of_lt R_pos) (le_of_lt r_pos)) ?_ _
+        refine div_le_div_of_nonneg_left (le_of_lt R_pos) (norm_pos_iff.mpr ?_) (hρ_mem.1)
+        rintro rfl
+        exact hf0_ne_zero hρ_mem.2
+    _ ≤ B := by
+      rw[← blaschke_eq]
+      exact DiskBound r_pos r_lt_R R_lt_one finiteZeros hfAnalytic
+        hf0_ne_zero fz_bound (Metric.mem_closedBall_self (le_of_lt R_pos))
+
+
+
+/-
+Let $0 < r < R<1$. If $f:\mathbb{C}\to\mathbb{C}$ is a function analytic on
+    neighborhoods of points in $\overline{\mathbb{D}_1}$ with $f(0)=1$, define
+    $L_f(z)=J_{B_f}(z)$ where $J$ is from Theorem \ref{LogOfAnalyticFunction} and $B_f$
+    is from Definition \ref{BlaschkeB}.
+-/
+/-- An analytic logarithm of `BlaschkeB` on the smaller disk. -/
+noncomputable def JBlaschke {r' r R : ℝ} {f : ℂ → ℂ}
+  (r'_pos : 0 < r') (r'_lt_r : r' < r) (r_pos : 0 < r) (r_lt_R : r < R) (R_lt_one : R < 1)
+  (hfAnalytic : AnalyticOnNhd ℂ f (Metric.closedBall (0 : ℂ) 1)) (hf0_eq_one : f 0 = 1)
+  (finiteZeros : (SetOfZeros 1 f).Finite)
+  (z : ℂ) : ℂ := (LogOfAnalyticFunction' r'_pos r'_lt_r r_lt_R
+    (BlaschkeAnalytic
+      r_pos r_lt_R R_lt_one finiteZeros hfAnalytic (hf0_eq_one ▸ one_ne_zero))
+    (BlaschkeNonzero
+      r_pos r_lt_R R_lt_one finiteZeros hfAnalytic (hf0_eq_one ▸ one_ne_zero))).choose z
+
+
+
+/-
+Let $B>1$ and $0 < r' < r < R<1$. If $f:\mathbb{C}\to\mathbb{C}$ is a function analytic
+    on neighborhoods of points in $\overline{\mathbb{D}_1}$ with $f(0)=1$ and $|f(z)|\leq B$
+    for all $|z|\leq R$, then for all $|z|\leq r'$
+    $$|L_f'(z)|\leq\frac{16\log(B)\,r^2}{(r-r')^3}.$$
+By Lemma \ref{DiskBound} we immediately know that $|B_f(z)|\leq B$ for all $|z|\leq R$.
+    Now since $L_f=J_{B_f}$ by Definition \ref{JBlaschke}, by Theorem
+    \ref{LogOfAnalyticFunction} we know that
+    $$L_f(0)=0\qquad\text{and}\qquad
+      \Re L_f(z)=\log|B_f(z)|-\log|B_f(0)|\leq\log|B_f(z)|\leq\log B$$
+    for all $|z|\leq r$. Note that in the above
+    $$0=\log|f(0)|\leq\log|B_f(0)|$$
+    because of Lemma \ref{norm_fOfZero_le_norm_BlaschkeOfZero}. So by
+    Theorem \ref{BorelCaratheodoryDeriv}, it follows that
+    $$|L_f'(z)|\leq\frac{16\log(B)\,r^2}{(r-r')^3}$$
+    for all $|z|\leq r'$.
+-/
+theorem JBlaschkeDerivBound {B r' r R : ℝ} {f : ℂ → ℂ} {z : ℂ}
+    (one_lt_B : 1 < B)
+    (r'_pos : 0 < r') (r'_lt_r : r' < r) (r_pos : 0 < r) (r_lt_R : r < R) (R_lt_one : R < 1)
+    (hfAnalytic : AnalyticOnNhd ℂ f (Metric.closedBall (0 : ℂ) 1)) (hf0_eq_one : f 0 = 1)
+    (finiteZeros : (SetOfZeros 1 f).Finite) (fz_bound : ∀ z : ℂ, ‖z‖ ≤ R → ‖f z‖ ≤ B)
+    (hz : z ∈ Metric.closedBall (0 : ℂ) r') :
+    ‖deriv (JBlaschke r'_pos r'_lt_r r_pos r_lt_R R_lt_one hfAnalytic hf0_eq_one finiteZeros) z‖
+      ≤ 16 * Real.log (B) * r ^ 2 / (r - r') ^ 3 := by
+  have r_pos : 0 < r := lt_trans r'_pos r'_lt_r
+  let blaschkeAnalytic := BlaschkeAnalytic r_pos r_lt_R R_lt_one finiteZeros hfAnalytic
+    (hf0_eq_one ▸ one_ne_zero)
+  let blaschkeNonzero := BlaschkeNonzero r_pos r_lt_R R_lt_one finiteZeros hfAnalytic
+    (hf0_eq_one ▸ one_ne_zero)
+  let logOfAnalytic := LogOfAnalyticFunction' r'_pos r'_lt_r r_lt_R blaschkeAnalytic blaschkeNonzero
+  set JB := logOfAnalytic.choose with JB_def
+  obtain ⟨JB_Analytic, JB_0_eq_0, deriv_JB_eq, JB_re⟩ := logOfAnalytic.choose_spec
+  rw [← JB_def] at JB_Analytic JB_0_eq_0 deriv_JB_eq JB_re
+  have JB_def' : JB =
+    (JBlaschke r'_pos r'_lt_r r_pos r_lt_R R_lt_one hfAnalytic hf0_eq_one finiteZeros) := by
+    unfold JBlaschke
+    rw [← JB_def]
+  rw[← JB_def']
+  refine BorelCaratheodoryDeriv (Real.log_pos one_lt_B) r'_pos r'_lt_r (JB_Analytic.analyticOn)
+    JB_0_eq_0 ?_ hz
+  intro w hw
+  rw[← JB_re w hw]
+  have hwr : w ∈ Metric.closedBall (0 : ℂ) r := by exact Metric.ball_subset_closedBall hw
+  have hlog : 0 ≤ Real.log ‖BlaschkeB r R f 0‖ := by
+    rw [← Real.log_one]
+    apply Real.log_le_log zero_lt_one
+    rw [← norm_one (α := ℂ), ← hf0_eq_one]
+    exact norm_fOfZero_le_norm_BlaschkeOfZero r_pos r_lt_R R_lt_one finiteZeros
+      (hf0_eq_one ▸ one_ne_zero)
+  suffices h : Real.log ‖BlaschkeB r R f w‖ ≤ Real.log B by linarith
+  exact Real.log_le_log (norm_pos_iff.mpr (blaschkeNonzero w hwr))
+    (DiskBound r_pos r_lt_R R_lt_one finiteZeros hfAnalytic (hf0_eq_one ▸ one_ne_zero) fz_bound
+      (Metric.closedBall_subset_closedBall r_lt_R.le hwr))
+
+
+
+/-
+Let $B>1$ and $0 < r' < r < R' < R<1$. If $f:\mathbb{C}\to\mathbb{C}$ is a function
+    analytic on neighborhoods of points in $\overline{\mathbb{D}_1}$ with $f(0)=1$ and
+    $|f(z)|\leq B$ for all $|z|\leq R$, then for all
+    $z\in\overline{\mathbb{D}_{r'}}\setminus\mathcal{K}_f(R')$ we have
+    $$\left|\frac{f'}{f}(z)-\sum_{\rho\in\mathcal{K}_f(r)}\frac{m_f(\rho)}{z-\rho}\right|
+      \leq\left(\frac{16r^2}{(r-r')^3}+\frac{1}{(R^2/R'-R')\,\log(R/R')}\right)\log B.$$
+Since $z\in\overline{\mathbb{D}_{r'}}\setminus\mathcal{K}_f(R')$ we know that
+    $z\not\in\mathcal{K}_f(R')$; thus, by Definition \ref{CFunction} we know that
+    $$C_f(z)=\frac{f(z)}{\displaystyle\prod_{\rho\in\mathcal{K}_f(r)}(z-\rho)^{m_f(\rho)}}.$$
+    Substituting this into Definition \ref{BlaschkeB} we have that
+    $$B_f(z)=f(z)\prod_{\rho\in\mathcal{K}_f(r)}
+      \left(\frac{R-z\overline{\rho}/R}{z-\rho}\right)^{m_f(\rho)}.$$
+    Taking the complex logarithm of both sides we have that
+    $$\mathrm{Log}\,B_f(z)=\mathrm{Log}\,f(z)
+      +\sum_{\rho\in\mathcal{K}_f(r)}m_f(\rho)\,\mathrm{Log}(R-z\overline{\rho}/R)
+      -\sum_{\rho\in\mathcal{K}_f(r)}m_f(\rho)\,\mathrm{Log}(z-\rho).$$
+    Taking the derivative of both sides we have that
+    $$\frac{B_f'}{B_f}(z)=\frac{f'}{f}(z)
+      +\sum_{\rho\in\mathcal{K}_f(r)}\frac{m_f(\rho)}{z-R^2/\overline{\rho}}
+      -\sum_{\rho\in\mathcal{K}_f(r)}\frac{m_f(\rho)}{z-\rho}.$$
+    By Definition \ref{JBlaschke} and Theorem \ref{LogOfAnalyticFunction},
+    since $L_f(z)=J_{B_f}(z)$ we have $L_f'(z)=J'_{B_f}(z)=(B_f'/B_f)(z)$. Thus,
+    $$\frac{f'}{f}(z)-\sum_{\rho\in\mathcal{K}_f(r)}\frac{m_f(\rho)}{z-\rho}
+      =L_f'(z)-\sum_{\rho\in\mathcal{K}_f(r)}\frac{m_f(\rho)}{z-R^2/\overline{\rho}}.$$
+    Now since $z\in\overline{\mathbb{D}_{r'}}\subseteq\overline{\mathbb{D}_{R'}}$ and
+    $\rho\in\mathcal{K}_f(r)\subseteq\mathcal{K}_f(R')$, we know that
+    $R^2/R'-R'\leq|z-R^2/\overline{\rho}|$. Thus by the triangle inequality we have
+    $$\left|\frac{f'}{f}(z)-\sum_{\rho\in\mathcal{K}_f(r)}\frac{m_f(\rho)}{z-\rho}\right|
+      \leq|L_f'(z)|+\left(\frac{1}{R^2/R'-R'}\right)\sum_{\rho\in\mathcal{K}_f(r)}m_f(\rho).$$
+    Now by Theorem \ref{ZerosBound} and \ref{JBlaschkeDerivBound} we get our desired result
+    with a little algebraic manipulation.
+-/
+theorem FinalBound {B r' r R' R : ℝ} {f : ℂ → ℂ} {z : ℂ}
+    (one_lt_B : 1 < B) (r'_pos : 0 < r') (r'_lt_r : r' < r) (r_lt_one : r < 1) (r_lt_R' : r < R')
+    (R'_lt_R : R' < R) (R_lt_one : R < 1)
+    (hfAnalytic : AnalyticOnNhd ℂ f (Metric.closedBall (0 : ℂ) 1)) (hf0_eq_one : f 0 = 1)
+    (finiteZeros : (SetOfZeros 1 f).Finite) (fz_bound : ∀ z : ℂ, ‖z‖ ≤ R → ‖f z‖ ≤ B)
+    (hz : z ∈ Metric.closedBall (0 : ℂ) r' \ SetOfZeros R' f) :
+    ‖(deriv f z / f z) - ∑ ρ ∈ (finiteSetOfZeros_mono r_lt_one finiteZeros).toFinset,
+      analyticOrderNatAt f ρ / (z - ρ)‖ ≤
+      (16 * r ^ 2 / (r - r') ^ 3 + 1 / ((R ^ 2 / R' - R') * Real.log (R / R'))) * Real.log B := by
+  classical
+  have r'_lt_one : r' < 1 := lt_trans r'_lt_r r_lt_one
+  have r_pos : 0 < r := lt_trans r'_pos r'_lt_r
+  have R'_pos : 0 < R' := lt_trans r_pos r_lt_R'
+  have R_pos : 0 < R := lt_trans R'_pos R'_lt_R
+  have r_lt_R : r < R := lt_trans r_lt_R' R'_lt_R
+  have r'_lt_R : r' < R := lt_trans r'_lt_r r_lt_R
+  have rFiniteZeros: (SetOfZeros r f).Finite := finiteSetOfZeros_mono r_lt_one finiteZeros
+  have zNotInZeros : ¬(z ∈ SetOfZeros r f) := (fun hmem => hz.2 ⟨hmem.1.trans r_lt_R'.le, hmem.2⟩)
+  have z_norm : ‖z‖ ≤ r' := by simpa [Metric.mem_closedBall, dist_zero_right] using hz.1
+  have ρ_mem : ∀ ρ ∈ rFiniteZeros.toFinset, ‖ρ‖ ≤ r ∧ f ρ = 0 :=
+    fun ρ hρ => rFiniteZeros.mem_toFinset.mp hρ
+  have ρ_ne_zero : ∀ ρ ∈ rFiniteZeros.toFinset, ρ ≠ 0 :=
+    fun ρ hρ h => one_ne_zero (hf0_eq_one ▸ h ▸ (ρ_mem ρ hρ).2)
+  have blaschke_sub_ne : ∀ ρ ∈ rFiniteZeros.toFinset,
+    (↑R : ℂ) - z * (starRingEnd ℂ) ρ / ↑R ≠ 0 := by
+    intro ρ hρ h
+    have : ‖z * (starRingEnd ℂ) ρ / (↑R : ℂ)‖ < R := by
+      rw [norm_div, Complex.norm_real, Real.norm_eq_abs, abs_of_pos R_pos, div_lt_iff₀ R_pos,
+        norm_mul, norm_conj]
+      exact mul_lt_mul (z_norm.trans_lt r'_lt_R) ((ρ_mem ρ hρ).1.trans_lt r_lt_R).le
+        (norm_pos_iff.mpr (ρ_ne_zero ρ hρ)) R_pos.le
+    rw [← sub_eq_zero.mp h] at this
+    simp [Complex.norm_real, abs_of_pos R_pos] at this
+  have fz_ne : f z ≠ 0 := fun h => zNotInZeros ⟨z_norm.trans r'_lt_r.le, h⟩
+  have blaschke_prod_ne : ∀ ρ ∈ rFiniteZeros.toFinset,
+    ((↑R : ℂ) - z * (starRingEnd ℂ) ρ / ↑R) ^ analyticOrderNatAt f ρ ≠ 0 :=
+      fun ρ hρ => pow_ne_zero _ (blaschke_sub_ne ρ hρ)
+  have hDiff_blaschke : ∀ ρ ∈ rFiniteZeros.toFinset,
+    DifferentiableAt ℂ
+      (fun w => ((↑R : ℂ) - w * (starRingEnd ℂ) ρ / ↑R) ^ analyticOrderNatAt f ρ) z := fun ρ _ =>
+        ((differentiableAt_const _).sub ((differentiableAt_id.mul_const _).div_const _)).pow _
+  have hDiff_sub : ∀ ρ ∈ rFiniteZeros.toFinset,
+    DifferentiableAt ℂ (fun w => (w - (ρ : ℂ)) ^ analyticOrderNatAt f ρ) z := fun ρ _ =>
+      (differentiableAt_id.sub (differentiableAt_const _)).pow _
+  have hpos : 0 < R ^ 2 / R' - R' := by
+    rw [sub_pos, lt_div_iff₀ R'_pos, ← sq]
+    apply pow_lt_pow_left₀ R'_lt_R R'_pos.le two_ne_zero
+  have LfBound := JBlaschkeDerivBound one_lt_B r'_pos r'_lt_r r_pos r_lt_R R_lt_one hfAnalytic
+    hf0_eq_one finiteZeros fz_bound hz.1
+  have zerosBound : ↑(∑ ρ ∈ (finiteSetOfZeros_mono r_lt_one finiteZeros).toFinset,
+    analyticOrderNatAt f ρ) ≤ 1 / Real.log (R / R') * Real.log B := by
+    apply (ZerosBound r_pos r_lt_one r_lt_R R_lt_one hfAnalytic
+      hf0_eq_one finiteZeros fz_bound).trans
+    refine mul_le_mul_of_nonneg_right (one_div_le_one_div_of_le ?_ ?_)
+      (Real.log_nonneg (le_of_lt one_lt_B))
+    · rw [← Real.log_one, Real.log_lt_log_iff zero_lt_one (div_pos R_pos R'_pos), one_lt_div R'_pos]
+      exact R'_lt_R
+    · rw [Real.log_le_log_iff (div_pos R_pos R'_pos) (div_pos R_pos r_pos)]
+      exact div_le_div_of_nonneg_left (le_of_lt R_pos) r_pos (le_of_lt r_lt_R')
+  suffices h1 : ‖deriv f z / f z - ∑ ρ ∈ (finiteSetOfZeros_mono r_lt_one finiteZeros).toFinset,
+    ↑(analyticOrderNatAt f ρ) / (z - ρ)‖ ≤
+      ‖deriv (JBlaschke r'_pos r'_lt_r r_pos r_lt_R R_lt_one hfAnalytic hf0_eq_one finiteZeros) z‖
+    + 1 / (R ^ 2 / R' - R') * ↑(∑ ρ ∈ (finiteSetOfZeros_mono r_lt_one finiteZeros).toFinset,
+      analyticOrderNatAt f ρ) by
+    calc ‖deriv f z / f z - ∑ ρ ∈ (finiteSetOfZeros_mono r_lt_one finiteZeros).toFinset,
+      ↑(analyticOrderNatAt f ρ) / (z - ρ)‖
+      ≤ ‖deriv (JBlaschke r'_pos r'_lt_r r_pos r_lt_R R_lt_one hfAnalytic hf0_eq_one finiteZeros) z‖
+        + 1 / (R ^ 2 / R' - R') * ↑(∑ ρ ∈ (finiteSetOfZeros_mono r_lt_one finiteZeros).toFinset,
+          analyticOrderNatAt f ρ) := h1
+    _ ≤ 16 * Real.log B * r ^ 2 / (r - r') ^ 3
+        + 1 / (R ^ 2 / R' - R') * (1 / Real.log (R / R') * Real.log B) := by
+      linarith [mul_le_mul_of_nonneg_left zerosBound (div_nonneg zero_le_one (le_of_lt hpos))]
+    _ = (16 * r ^ 2 / (r - r') ^ 3 + 1 / ((R ^ 2 / R' - R') * Real.log (R / R'))) * Real.log B := by
+      field_simp
+  suffices h2 : deriv f z / f z - ∑ ρ ∈ (finiteSetOfZeros_mono r_lt_one finiteZeros).toFinset,
+    ↑(analyticOrderNatAt f ρ) / (z - ρ) =
+    deriv (JBlaschke r'_pos r'_lt_r r_pos r_lt_R R_lt_one hfAnalytic hf0_eq_one finiteZeros) z
+    - ∑ ρ ∈ (finiteSetOfZeros_mono r_lt_one finiteZeros).toFinset,
+      ↑(analyticOrderNatAt f ρ) / (z - R ^ 2 / conj ρ) by
+    rw [h2, sub_eq_add_neg]
+    apply norm_add_le_of_le (le_rfl)
+    simp only [norm_neg, cast_sum, Finset.mul_sum, one_div_mul_eq_div]
+    apply (norm_sum_le _ _).trans (Finset.sum_le_sum (fun ρ hρ => ?_))
+    rw [norm_div, RCLike.norm_natCast]
+    apply div_le_div_of_nonneg_left (Nat.cast_nonneg _) hpos
+    simp only [Set.mem_sdiff, Metric.mem_closedBall, dist_zero_right, SetOfZeros,
+      Finite.mem_toFinset, mem_ofPred_eq] at hρ hz
+    rw [norm_sub_rev]
+    calc R ^ 2 / R' - R'
+        ≤ ‖↑R ^ 2 / conj ρ‖ - ‖z‖ := by
+          refine sub_le_sub ?_ (hz.1.trans (r'_lt_r.le.trans r_lt_R'.le))
+          rw [norm_div, norm_pow, norm_real, norm_eq_abs, abs_of_nonneg (le_of_lt R_pos)]
+          apply div_le_div_of_nonneg_left (sq_nonneg R)
+            (norm_pos_iff.mpr (star_ne_zero.mpr (fun h => one_ne_zero (hf0_eq_one ▸ h ▸ hρ.2))))
+          rw [norm_star]
+          linarith [hρ.1]
+      _ ≤ ‖↑R ^ 2 / conj ρ - z‖ := norm_sub_norm_le _ _
+  suffices h3 : deriv (BlaschkeB r R f) z / BlaschkeB r R f z = deriv f z / f z
+    + ∑ ρ ∈ (finiteSetOfZeros_mono r_lt_one finiteZeros).toFinset,
+      ↑(analyticOrderNatAt f ρ) / (z - R ^ 2 / conj ρ)
+    - ∑ ρ ∈ (finiteSetOfZeros_mono r_lt_one finiteZeros).toFinset,
+      ↑(analyticOrderNatAt f ρ) / (z - ρ) by
+    let blaschkeAnalytic := BlaschkeAnalytic r_pos r_lt_R R_lt_one finiteZeros hfAnalytic
+      (hf0_eq_one ▸ one_ne_zero)
+    let blaschkeNonzero := BlaschkeNonzero r_pos r_lt_R R_lt_one finiteZeros hfAnalytic
+      (hf0_eq_one ▸ one_ne_zero)
+    let logAnalytic := LogOfAnalyticFunction' r'_pos r'_lt_r r_lt_R blaschkeAnalytic blaschkeNonzero
+    set JB := logAnalytic.choose with JB_def
+    obtain ⟨JB_Analytic, JB_0_eq_0, deriv_JB_eq, JB_re⟩ := logAnalytic.choose_spec
+    rw [← JB_def] at JB_Analytic JB_0_eq_0 deriv_JB_eq JB_re
+    have JB_def' : JB =
+      (JBlaschke r'_pos r'_lt_r r_pos r_lt_R R_lt_one hfAnalytic hf0_eq_one finiteZeros) := by
+      unfold JBlaschke
+      rw [JB_def]
+    rw [eq_sub_iff_add_eq, sub_add_eq_add_sub, ← h3, ← JB_def', eq_comm]
+    exact deriv_JB_eq z hz.1
+  suffices h4 : BlaschkeB r R f z = f z *
+    ∏ ρ ∈ (finiteSetOfZeros_mono r_lt_one finiteZeros).toFinset,
+      ((R - z * conj ρ / R) / (z - ρ)) ^ (analyticOrderNatAt f ρ) by
+    have sum1 : ∑ ρ ∈ (finiteSetOfZeros_mono r_lt_one finiteZeros).toFinset,
+      logDeriv (fun z ↦ (R - z * conj ρ / R) ^ ↑(analyticOrderNatAt f ρ)) z =
+      ∑ ρ ∈ (finiteSetOfZeros_mono r_lt_one finiteZeros).toFinset,
+      ↑(analyticOrderNatAt f ρ) / (z - R ^ 2 / conj ρ) := by
+      refine Finset.sum_congr rfl (fun ρ hρ => ?_)
+      rw [← logDeriv_pow, logDeriv_fun_pow, logDeriv_fun_pow, logDeriv_id', mul_eq_mul_left_iff]
+      · left
+        simp only [logDeriv, Pi.div_apply]
+        rw [deriv_fun_sub (differentiableAt_const _) ?_, deriv_div_const,
+          deriv_mul_const (differentiableAt_fun_id)]
+        · simp only [deriv_const', deriv_id'', one_mul, zero_sub]
+          rw [div_eq_div_iff (blaschke_sub_ne ρ hρ), one_mul, neg_mul, mul_sub, mul_div, neg_sub,
+            mul_comm _ z, ← mul_div_assoc, sub_left_inj]
+          · field_simp
+            exact mul_div_cancel_left₀ _ (star_ne_zero.mpr (ρ_ne_zero ρ hρ))
+          · intro h; apply blaschke_sub_ne ρ hρ
+            have hconj : (starRingEnd ℂ) ρ ≠ 0 := star_ne_zero.mpr (ρ_ne_zero ρ hρ)
+            have hR : (↑R : ℂ) ≠ 0 := Complex.ofReal_ne_zero.mpr (ne_of_gt R_pos)
+            rw [sub_eq_zero.mp h, div_mul_cancel₀ _ hconj, sq, mul_div_cancel_right₀ _ hR, sub_self]
+        · simp only [differentiableAt_fun_id, differentiableAt_const, DifferentiableAt.fun_mul,
+          DifferentiableAt.div_const]
+      · simp only [differentiableAt_fun_id]
+      · simp only [differentiableAt_const, DifferentiableAt.fun_sub_iff_right,
+          differentiableAt_fun_id, DifferentiableAt.fun_mul, DifferentiableAt.div_const]
+    have sum2 : ∑ ρ ∈ (finiteSetOfZeros_mono r_lt_one finiteZeros).toFinset,
+      logDeriv (fun z ↦ (z - ρ) ^ ↑(analyticOrderNatAt f ρ)) z =
+      ∑ ρ ∈ (finiteSetOfZeros_mono r_lt_one finiteZeros).toFinset,
+      ↑(analyticOrderNatAt f ρ) / (z - ρ) := by
+      refine Finset.sum_congr rfl (fun ρ _ => ?_)
+      have : (fun z ↦ (z - ρ) ^ analyticOrderNatAt f ρ) =
+        (fun x ↦ x ^ analyticOrderNatAt f ρ) ∘ (fun z ↦ z - ρ) := by rfl
+      rw[← logDeriv_pow, this, logDeriv_comp]
+      · simp only [logDeriv_pow, differentiableAt_fun_id, differentiableAt_const, deriv_fun_sub,
+          deriv_id'', deriv_const', sub_zero, mul_one]
+      · simp only [differentiableAt_fun_id, DifferentiableAt.fun_pow]
+      · simp only [differentiableAt_fun_id, differentiableAt_const, DifferentiableAt.fun_sub]
+    unfold BlaschkeB Cf
+    simp only [rFiniteZeros, ↓reduceDIte, dite_eq_ite, ite_mul, ← logDeriv_apply, ← sum1, ← sum2]
+    rw [← logDeriv_fun_prod blaschke_prod_ne hDiff_blaschke,
+      ← logDeriv_fun_prod ?_ hDiff_sub,
+      ← logDeriv_mul _ fz_ne (Finset.prod_ne_zero_iff.mpr blaschke_prod_ne)
+        ((hfAnalytic z (Metric.closedBall_subset_closedBall r'_lt_one.le hz.1)).differentiableAt)
+        (DifferentiableAt.fun_finsetProd hDiff_blaschke),
+      ← logDeriv_div _ ?_ ?_ ?_ (DifferentiableAt.fun_finsetProd hDiff_sub)]
+    · have h_eq : ∀ᶠ w in nhds z, (if w ∈ SetOfZeros r f then
+        (ZeroFactor f w / ∏ ρ ∈ rFiniteZeros.toFinset \ {w}, (w - ρ) ^ analyticOrderNatAt f ρ) *
+        ∏ ρ ∈ rFiniteZeros.toFinset, (R - w * (starRingEnd ℂ) ρ / R) ^ analyticOrderNatAt f ρ
+        else (f w / ∏ ρ ∈ rFiniteZeros.toFinset, (w - ρ) ^ analyticOrderNatAt f ρ) *
+        ∏ ρ ∈ rFiniteZeros.toFinset, (R - w * (starRingEnd ℂ) ρ / R) ^ analyticOrderNatAt f ρ) =
+        (f w * ∏ ρ ∈ rFiniteZeros.toFinset,
+        (R - w * (starRingEnd ℂ) ρ / R) ^ analyticOrderNatAt f ρ) / ∏ ρ ∈ rFiniteZeros.toFinset,
+        (w - ρ) ^ analyticOrderNatAt f ρ := by
+        filter_upwards [(isOpen_compl_iff.mpr rFiniteZeros.isClosed).mem_nhds zNotInZeros]
+          with w hw using by rw [ite_eq_right hw]; ring
+      simp only [logDeriv, Pi.div_apply]
+      congr 1
+      · apply Filter.EventuallyEq.deriv_eq h_eq
+      · convert h_eq.self_of_nhds using 1
+    · exact mul_ne_zero fz_ne (Finset.prod_ne_zero_iff.mpr blaschke_prod_ne)
+    · simp only [ne_eq, Finset.prod_eq_zero_iff, Finite.mem_toFinset, pow_eq_zero_iff',
+        sub_eq_zero, ↓existsAndEq, zNotInZeros, true_and, false_and, not_false_eq_true]
+    · exact DifferentiableAt.mul
+        (hfAnalytic z (Metric.closedBall_subset_closedBall r'_lt_one.le hz.1)).differentiableAt
+        (DifferentiableAt.fun_finsetProd hDiff_blaschke)
+    · exact (fun ρ hρ => pow_ne_zero _ (sub_ne_zero.mpr fun h =>
+        zNotInZeros (h ▸ rFiniteZeros.mem_toFinset.mp hρ)))
+  simp only [BlaschkeB, Cf, rFiniteZeros, ↓reduceDIte, zNotInZeros, div_mul_eq_mul_div,
+    mul_div_assoc, ← Finset.prod_div_distrib, div_pow]
+
+
+
+/- API analogous to HasProd.norm, Multipliable.norm, Multipliable.norm-tprod -/
+
+variable {α R : Type*} [SeminormedCommRing R] [NormMulClass R] [NormOneClass R]
+ {f : α → R} {x : R}
+
+lemma _root_.HasProd.nnnorm (hfx : HasProd f x) : HasProd (‖f ·‖₊) ‖x‖₊ := by
+  simp only [HasProd, ← nnnorm_prod, SummationFilter.unconditional_filter] at ⊢ hfx
+  exact hfx.nnnorm
+
+theorem _root_.Multipliable.nnnorm (hf : Multipliable f) : Multipliable (‖f ·‖₊) :=
+  let ⟨x, hx⟩ := hf; ⟨‖x‖₊, hx.nnnorm⟩
+
+lemma _root_.Multipliable.nnnorm_tprod (hf : Multipliable f) : ‖∏' i, f i‖₊ = ∏' i, ‖f i‖₊ :=
+  hf.hasProd.nnnorm.tprod_eq.symm
+
+
+
+/-
+For all $t\in\mathbb{R}$ one has
+    $$|\zeta(3/2+it)|\geq\frac{\zeta(3)}{\zeta(3/2)}.$$
+From the Euler product expansion of $\zeta$, we have that for $\Re s>1$
+    $$\zeta(s)=\prod_p\frac{1}{1-p^{-s}}.$$
+    Thus, we have that
+    $$\frac{\zeta(2s)}{\zeta(s)}=\prod_p\frac{1-p^{-s}}{1-p^{-2s}}=\prod_p\frac{1}{1+p^{-s}}.$$
+    Now note that $|1-p^{-(3/2+it)}|\leq 1+|p^{-(3/2+it)}|=1+p^{-3/2}$. Thus,
+    $$|\zeta(3/2+it)|=\prod_p\frac{1}{|1-p^{-(3/2+it)}|}
+      \geq\prod_p\frac{1}{1+p^{-3/2}}=\frac{\zeta(3)}{\zeta(3/2)}$$
+    for all $t\in\mathbb{R}$ as desired.
+-/
+lemma ZetaFixedLowerBound (t : ℝ) :
+    ‖ζ (3/2 + I * t)‖₊ ≥ ‖ζ 3 / ζ (3 / 2)‖₊ := by
+  have mp : ∀ {s : ℂ}, 1 < s.re → Multipliable fun p : Primes ↦ (1 - (p : ℂ) ^ (-s))⁻¹ := by
+    intro s hs
+    exact ⟨ζ s, riemannZeta_eulerProduct_hasProd hs⟩
+  have h₁ : 1 < ((3 : ℂ) / 2).re := by norm_num
+  have h₂ : 1 < (3 : ℂ).re := by norm_num
+  have h₃ : 1 < (3 / 2 + I * (t : ℂ)).re := by norm_num
+  rw [nnnorm_div, ge_iff_le,
+    div_le_iff₀ (nnnorm_pos.mpr (riemannZeta_ne_zero_of_one_le_re (by norm_num))),
+    ← riemannZeta_eulerProduct_tprod h₁, ← riemannZeta_eulerProduct_tprod h₂,
+    ← riemannZeta_eulerProduct_tprod h₃, (mp h₁).nnnorm_tprod, (mp h₂).nnnorm_tprod,
+    (mp h₃).nnnorm_tprod, ← (mp h₃).nnnorm.tprod_mul (mp h₁).nnnorm]
+  refine (mp h₂).nnnorm.tprod_le_tprod (fun p ↦ ?_) ((mp h₃).nnnorm.mul (mp h₁).nnnorm)
+  simp only [nnnorm_inv, ← mul_inv]
+  have hfact : ‖1 - (p : ℂ) ^ (-3 : ℂ)‖₊ =
+      ‖1 + (p : ℂ) ^ ((-3 : ℂ) / 2)‖₊ * ‖1 - (p : ℂ) ^ (-((3 : ℂ) / 2))‖₊ := by
+    rw [← nnnorm_mul]; congr 1; ring_nf; rw [← Complex.cpow_nat_mul]; ring_nf
+  have hne : ∀ {s : ℂ}, 1 < s.re → (1 - (p : ℂ) ^ (-s)) ≠ 0 :=
+    fun hs ↦ Complex.one_sub_prime_cpow_ne_zero p.2 hs
+  rw [inv_le_inv₀, hfact]
+  · apply _root_.mul_le_mul_left
+    rw [← norm_toNNReal, ← norm_toNNReal]
+    apply Real.toNNReal_le_toNNReal
+    calc ‖1 - (p : ℂ) ^ (-(3 / 2 + I * ↑t))‖
+        ≤ 1 + ‖(p : ℂ) ^ (-(3 / 2 + I * ↑t))‖ := by
+          rw [← Complex.norm_of_nonneg zero_le_one]; exact norm_sub_le _ _
+      _ = ‖1 + (p : ℂ) ^ (-(3 : ℂ) / 2)‖ := by
+          have : 0 ≤ 1 + (p : ℝ) ^ (-(3 : ℝ) / 2) :=
+            by linarith [Real.rpow_nonneg (cast_nonneg' ↑p) (-3 / 2)]
+          simp only [Complex.norm_natCast_cpow_of_pos (Nat.Prime.pos p.2), add_re, neg_re, mul_re,
+            I_re, ofReal_re, zero_mul, I_im, ofReal_im, mul_zero, sub_self, div_ofNat_re, re_ofNat,
+            neg_div', add_zero]
+          rw [← Real.norm_of_nonneg this, ← Complex.norm_real, Complex.ofReal_add,
+            Complex.ofReal_cpow (cast_nonneg' ↑p)]
+          push_cast; rfl
+  · exact norm_pos_iff.mpr (hne h₂)
+  · exact mul_pos (norm_pos_iff.mpr (hne h₃)) (norm_pos_iff.mpr (hne h₁))
+
+
+
+/-
+Let
+    $$\zeta_1(s)=1+\frac{1}{s-1}-s\int_1^\infty\{x\}\,x^{-s}\,\frac{dx}{x}.$$
+-/
+/-- The integral continuation of zeta to positive real part, with its pole at `1` separated. -/
+noncomputable def riemannZeta1 (s : ℂ) := 1 + 1 / (s - 1) - s * ∫ u in Ioi (1 : ℝ),
+  (Int.fract u : ℝ) * (u : ℂ) ^ (-s - 1)
+
+local notation "ζ₁" => riemannZeta1
+
+
+
+/-
+We have that
+    $$\zeta_1(s)=\zeta_0(1,s)$$
+    where $\zeta_0(1,s)$ comes from Definition \ref{riemannZeta0}.
+Note that
+    $$\zeta_0(1,s)=1+\frac{-1}{1-s}+\frac{-1}{2}+
+      s\int_1^\infty\frac{\lfloor x\rfloor+1/2-x}{x^{s+1}}\,dx.$$
+    With minor simplifications we have
+    $$\zeta_0(1,s)=1+\frac{1}{s-1}-\frac{1}{2}+
+      \frac{s}{2}\int_1^\infty x^{-s-1}\,dx-s\int_1^\infty\{x\}\,x^{-s-1}\,dx.$$
+    The first integral evaluates to $1/s$ (when $0<\mathfrak{R}s$), so this term when multiplied
+    by the $s/2$ cancels with the $-1/2$. This exactly gives $\zeta_1$.
+-/
+lemma Zeta1AltFormula {s : ℂ} (hs : 0 < s.re) :
+    ζ₁ s = riemannZeta0 1 s := by
+  have := Int.self_sub_floor (R := ℝ)
+  have s_ne_zero : s ≠ 0 := by
+    intro h; have : s.re = 0 := by simp only [h, zero_re]
+    linarith
+  simp only [riemannZeta1, riemannZeta0, Finset.sum_range_succ, Finset.sum_range_zero, div_zero,
+    CharP.cast_eq_zero, zero_add, cast_one, one_cpow, ne_eq, one_ne_zero, not_false_eq_true,
+    div_self, Complex.zero_cpow s_ne_zero, zero_add, ← div_neg_eq_neg_div', neg_sub, Int.fract]
+  rw [sub_eq_add_neg, ← mul_neg, ← MeasureTheory.integral_neg]
+  nth_rewrite 2 [add_assoc]
+  rw [add_left_cancel_iff, neg_sub_left, add_comm 1 s]
+  simp only [← neg_mul, ← Complex.ofReal_neg, neg_sub, div_eq_mul_inv, one_mul, add_sub_right_comm,
+    add_mul, ← Complex.cpow_neg, neg_add, ← sub_eq_add_neg]
+  rw [MeasureTheory.integral_add, MeasureTheory.integral_const_mul,
+    integral_Ioi_cpow_of_lt _ zero_lt_one]
+  · push_cast; simp only [inv_neg, sub_add_cancel, one_cpow,
+      neg_div_neg_eq, one_div, mul_add, ← mul_assoc, mul_right_comm, mul_inv_cancel₀ s_ne_zero]
+    norm_num
+  · simp only [neg_re, one_re, sub_re]
+    linarith
+  · refine MeasureTheory.Integrable.mono' (integrableOn_Ioi_rpow_of_lt (by linarith) (by linarith))
+      ?_ ?_ (g := fun u => u ^ ( -s.re - 1 ))
+    · apply Measurable.aestronglyMeasurable
+      refine Measurable.mul ?_ (Complex.measurable_ofReal.pow_const _)
+      exact (Measurable.of_discrete.comp Int.measurable_floor).sub Complex.measurable_ofReal
+    · filter_upwards [MeasureTheory.ae_restrict_mem measurableSet_Ioi] with x hx
+      norm_num [Complex.norm_cpow_eq_rpow_re_of_pos ( zero_lt_one.trans hx )]
+      apply mul_le_of_le_one_left (Real.rpow_nonneg (by linarith [hx.out]) _)
+      norm_cast; rw [← norm_neg, neg_sub, ← Int.fract, Real.norm_of_nonneg (Int.fract_nonneg _)]
+      exact (Int.fract_lt_one _).le
+  · refine MeasureTheory.Integrable.mono' (integrableOn_Ioi_rpow_of_lt (by linarith) (by linarith))
+      ?_ ?_ (g := fun u => u ^ ( -s.re - 1 ))
+    · apply Measurable.aestronglyMeasurable
+      exact measurable_const.mul (Complex.measurable_ofReal.pow_const _)
+    · filter_upwards [MeasureTheory.ae_restrict_mem measurableSet_Ioi] with x hx
+      norm_num [Complex.norm_cpow_eq_rpow_re_of_pos ( zero_lt_one.trans hx )]
+      exact mul_le_of_le_one_left (Real.rpow_nonneg (by linarith [hx.out]) _) (one_half_lt_one).le
+
+
+
+/-
+We have that
+    $$\zeta(s)=\zeta_1(s)$$
+    for all $s\in S$ with $S=\{s\in\mathbb{C}:0<\mathfrak{R}s,\,s\neq 1\}$.
+This immediately follows from Lemmas \ref{Zeta1AltFormula} and \ref{Zeta0EqZeta}.
+-/
+lemma ZetaAltFormula {s : ℂ} (hs : 0 < s.re) (hs' : s ≠ 1) :
+    ζ s = ζ₁ s:= by
+  rw [Zeta1AltFormula hs, ← Zeta0EqZeta zero_lt_one hs hs']
+
+
+
+/-
+For all $s\in\mathbb{C}$ with $|s|\leq 1$ and $t\in\mathbb{R}$ with $|t|\geq 2$, we have that
+    $$|\zeta(s+3/2+it)|\leq 7+2\,|t|.$$
+For the sake of clearer proof writing let $z=s+3/2+it$. Since $|s|\leq 1$ we know that
+    $1/2\leq\mathfrak{R}z$; additionally, as $|t|\geq 2$, we know $1\leq|\mathfrak{I}z|$.
+    So, $z\in S$. Thus, from Lemma \ref{ZetaAltFormula} we know that
+    $$|\zeta(z)|\leq 1+\frac{1}{|z-1|}
+      +|z|\cdot\left|\int_1^\infty\{x\}\,x^{-z}\,\frac{dx}{x}\right|$$
+    by applying the triangle inequality. Now note that $|z-1|\geq 1$. Likewise,
+    $$|z|\cdot\left|\int_1^\infty\{x\}\,x^{-z}\,\frac{dx}{x}\right|
+      \leq|z|\int_1^\infty|\{x\}\,x^{-z-1}|\,dx
+      \leq|z|\int_1^\infty x^{-\Re z-1}\,dx=\frac{|z|}{\Re z}\leq 2\,|z|.$$
+    Thus we have that,
+    $$|\zeta(s+3/2+it)|=|\zeta(z)|\leq 1+1+2\,|z|=2+2\,|s+3/2+it|
+      \leq2+2\,|s|+3+2\,|it|\leq 7+2\,|t|.$$
+-/
+theorem GlobalBound
+    {s : ℂ} (hs : ‖s‖ ≤ 1) {t : ℝ} (ht : |t| ≥ 2) :
+    ‖ζ (s + 3 / 2 + I * t)‖ ≤ 7 + 2 * |t| := by
+  have sReLB : -1 ≤ s.re := by linarith [abs_le.mp ((Complex.abs_re_le_norm s).trans hs)]
+  have hz : s + 3 / 2 + I * ↑t ∈ {s | 0 < s.re ∧ s ≠ 1} := by
+    simp only [ne_eq, Complex.ext_iff, one_re, one_im, not_and, mem_ofPred_eq, add_re, div_ofNat_re,
+      re_ofNat, mul_re, I_re, ofReal_re, zero_mul, I_im, ofReal_im, mul_zero, sub_self, add_zero,
+      add_im, div_ofNat_im, im_ofNat, zero_div, mul_im, one_mul, zero_add]
+    refine ⟨by linarith, fun hs => ?_⟩
+    cases abs_cases t <;>  linarith [abs_le.mp (Complex.abs_re_le_norm s),
+      abs_le.mp (Complex.abs_im_le_norm s)]
+  have leadingTerms : ‖1 + 1 / (s + 3 / 2 + I * ↑t - 1)‖ ≤ 2 := by
+    rw [← one_add_one_eq_two (R := ℝ)]
+    apply norm_add_le_of_le (norm_one.le)
+    rw [norm_div, norm_one, div_le_one (norm_pos_iff.mpr (sub_ne_zero.mpr hz.2))]
+    simp only [norm_def, normSq, MonoidWithZeroHom.coe_mk, ZeroHom.coe_mk, sqrt_le_one, sub_re,
+      add_re, div_ofNat_re, re_ofNat, mul_re, I_re, ofReal_re, zero_mul, I_im, ofReal_im, mul_zero,
+      sub_self, add_zero, one_re, sub_im, add_im, div_ofNat_im, im_ofNat, zero_div, mul_im, one_mul,
+      zero_add, one_im, sub_zero, one_le_sqrt] at ⊢ hs
+    cases abs_cases t <;> nlinarith [sq_nonneg (s.re + 1 / 2), sq_nonneg (s.im + t - 1),
+      sq_nonneg (s.im + t + 1)]
+  have domBound {x : ℝ} (hu : x ∈ Ioi 1) : |Int.fract x| * ‖(x : ℂ) ^ (-(s + 3 / 2 + I * ↑t) - 1)‖
+    ≤ x ^ (-(s.re + 3 / 2) - 1) := by
+    rw [mem_Ioi] at hu
+    rw [Complex.norm_cpow_eq_rpow_re_of_pos (by linarith)]
+    simp only [neg_add_rev, sub_re, add_re, neg_re, mul_re, I_re, ofReal_re, zero_mul, I_im, one_re,
+      ofReal_im, mul_zero, sub_self, neg_zero, div_ofNat_re, re_ofNat, zero_add, Int.abs_fract]
+    refine mul_le_of_le_one_left (by apply Real.rpow_nonneg (by linarith)) ((Int.fract_lt_one x).le)
+  have domIntegral : Integrable (fun x : ℝ => x ^ (-(s.re + 3 / 2) - 1))
+    (volume.restrict (Set.Ioi 1)) := integrableOn_Ioi_rpow_of_lt (by linarith) zero_lt_one
+  have hint : ‖∫ (u : ℝ) in Ioi 1, (↑(Int.fract u) : ℂ) * (u : ℂ) ^ (-(s + 3 / 2 + I * ↑t) - 1)‖
+    ≤ 1 / (s.re + 3 / 2) := by
+    refine (MeasureTheory.norm_integral_le_integral_norm _).trans ?_
+    have hI := integral_Ioi_rpow_of_lt (a := -(s.re + 3 / 2) - 1) (by linarith) one_pos
+    simp only [sub_add_cancel, one_rpow, neg_div_neg_eq] at hI
+    simp only [Complex.norm_mul, norm_real, norm_eq_abs, ← hI]
+    refine integral_mono_ae (domIntegral.mono' (((measurable_fract.abs).mul
+      ((Complex.measurable_ofReal.pow_const _).norm)).aestronglyMeasurable) ?_) domIntegral
+      (by filter_upwards [self_mem_ae_restrict measurableSet_Ioi] with x hx using domBound hx)
+    filter_upwards [ae_restrict_mem measurableSet_Ioi] with x hx
+    rw [norm_mul, norm_eq_abs, abs_abs, norm_norm]
+    exact domBound hx
+  have z_norm : ‖s + 3 / 2 + I * ↑t‖ ≤ 5 / 2 + |t| := by
+    have It_norm : ‖I * (↑t : ℂ)‖ = |t| :=
+      by rw [norm_mul, norm_I, one_mul, Complex.norm_real, Real.norm_eq_abs]
+    have threeHalves_norm : ‖(3 / 2 : ℂ)‖ = 3 / 2 :=
+      by rw [norm_div, Complex.norm_ofNat, Complex.norm_ofNat]
+    apply le_trans
+      (norm_add_le_of_le (norm_add_le_of_le hs (le_of_eq threeHalves_norm)) (le_of_eq It_norm))
+    linarith
+  have hmul : ‖(s + 3 / 2 + I * ↑t) * ∫ (u : ℝ) in Ioi 1,
+    (↑(Int.fract u) : ℂ) * (u : ℂ) ^ (-(s + 3 / 2 + I * ↑t) - 1)‖ ≤ 5 + 2 * |t| := by
+    rw [norm_mul]
+    have hinv : (1 : ℝ) / (s.re + 3 / 2) ≤ 2 := by rw [div_le_iff₀ (by linarith)]; linarith
+    apply le_trans
+      (mul_le_mul z_norm (hint.trans hinv) (norm_nonneg _) (by linarith [abs_nonneg t]))
+    linarith
+  rw [ZetaAltFormula hz.1 hz.2]
+  exact (norm_sub_le_of_le leadingTerms hmul).trans (by linarith)
+
+
+
+/-
+If $a,b\in\mathbb{R}$ with $1<b<a$, then
+    $$|\zeta(a)|<|\zeta(b)|.$$
+Expand out $\zeta$ as a summation (we can do this as we are in the region of convergence) and
+    ignore the norm as every term is positive and real. Comparing term by term proves the result.
+-/
+lemma norm_zeta_strict_mono_ofReal {a b : ℝ} (hb : 1 < b) (hab : b < a) :
+    ‖ζ a‖ < ‖ζ b‖ := by
+  have zeta_rw {c : ℝ} (hc : 1 < c) : ζ c = ((∑' (n : ℕ), (1 : ℝ) / (n + 1 : ℝ).rpow c) : ℝ) := by
+    simp only [rpow_eq_pow]
+    rw [zeta_eq_tsum_one_div_nat_add_one_cpow (by norm_num [hc])]
+    push_cast; congr; funext n
+    rw [Complex.ofReal_cpow (by linarith)]
+    push_cast; rfl
+  have hsum {c : ℝ} (hc : 1 < c) : Summable (fun n : ℕ => ((n + 2 : ℝ) ^ c)⁻¹) := by
+    exact_mod_cast (summable_nat_add_iff 2).2 (Real.summable_nat_rpow_inv.2 hc)
+  simp only [zeta_rw (hb.trans hab), rpow_eq_pow, one_div, norm_real, norm_eq_abs, zeta_rw hb,
+    gt_iff_lt]
+  repeat rw [abs_of_nonneg]
+  · rw [tsum_eq_zero_add' (f := fun n : ℕ => (_ ^ a)⁻¹),
+        tsum_eq_zero_add' (f := fun n : ℕ => (_ ^ b)⁻¹)]
+    · simp only [CharP.cast_eq_zero, zero_add, one_rpow, inv_one, cast_add, cast_one,
+        add_lt_add_iff_left, add_assoc, one_add_one_eq_two]
+      have h : ∀ n : ℕ, ((n + 2 : ℝ) ^ a)⁻¹ < ((n + 2 : ℝ) ^ b)⁻¹ := fun _ =>
+        inv_strictAnti₀ (Real.rpow_pos_of_pos (by positivity) b)
+          (Real.rpow_lt_rpow_of_exponent_lt (by linarith) hab)
+      exact Summable.tsum_strict_mono (hsum (hb.trans hab)) (hsum hb)
+        (Pi.lt_def.mpr ⟨fun n => (h n).le, 0, h 0⟩)
+    · push_cast; simpa [add_assoc, one_add_one_eq_two] using hsum hb
+    · push_cast; simpa [add_assoc, one_add_one_eq_two] using hsum (hb.trans hab)
+  all_goals exact tsum_nonneg fun n => inv_nonneg.mpr (rpow_nonneg (by positivity) _)
+
+
+
+/- API for analyticOrderNatAt -/
+lemma analyticOrderNatAt_fun_div_const {c z : ℂ} {f : ℂ → ℂ}
+  (hc : c ≠ 0) (hfAnalytic : AnalyticAt ℂ f z) :
+    analyticOrderNatAt (fun z => f z / c) z = analyticOrderNatAt f z := by
+  simp only [analyticOrderNatAt, div_eq_inv_mul, ← Pi.mul_def]
+  rw [analyticOrderAt_mul analyticAt_const hfAnalytic, analyticOrderAt_eq_zero.mpr, zero_add]
+  exact .inr (inv_ne_zero hc)
+
+
+
+/-
+Let $t\in\mathbb{R}$ with $|t|\geq 2$ and $0 < r' < r < R' < R<1$. If
+    $f(z)=\zeta(z+3/2+it)$, then for all
+    $z\in\overline{\mathbb{D}_{r'}}\setminus\mathcal{K}_f(R')$ we have that
+    $$\left|\frac{f'}{f}(z)-\sum_{\rho\in\mathcal{K}_f(r)}\frac{m_f(\rho)}{z-\rho}\right|
+      \ll\left(\frac{16r^2}{(r-r')^3}+\frac{1}{(R^2/R'-R')\,\log(R/R')}\right)\log|t|.$$
+Let $g(z)=\zeta(z+3/2+it)/\zeta(3/2+it)$. Note that $g(0)=1$ and for $|z|\leq R$
+    $$|g(z)|=\frac{|\zeta(z+3/2+it)|}{|\zeta(3/2+it)|}
+      \leq\frac{\zeta(3/2)}{\zeta(3)}\cdot(7+2\,|t|)\leq\frac{13\,\zeta(3/2)}{3\,\zeta(3)}\,|t|$$
+    by Theorems \ref{ZetaFixedLowerBound} and \ref{GlobalBound}. Thus by Theorem
+    \ref{FinalBound} we have that
+    $$\left|\frac{g'}{g}(z)-\sum_{\rho\in\mathcal{K}_g(r)}\frac{m_g(\rho)}{z-\rho}\right|
+      \leq\left(\frac{16r^2}{(r-r')^3}+\frac{1}{(R^2/R'-R')\,\log(R/R')}\right)
+      \left(\log|t|+\log\left(\frac{13\,\zeta(3/2)}{3\,\zeta(3)}\right)\right).$$
+    Now note that $f'/f=g'/g$, $\mathcal{K}_f(r)=\mathcal{K}_g(r)$, and
+    $m_g(\rho)=m_f(\rho)$ for all $\rho\in\mathcal{K}_f(r)$. Thus we have that,
+    $$\left|\frac{f'}{f}(z)-\sum_{\rho\in\mathcal{K}_f(r)}\frac{m_f(\rho)}{z-\rho}\right|
+      \ll\left(\frac{16r^2}{(r-r')^3}+\frac{1}{(R^2/R'-R')\,\log(R/R')}\right)\log|t|$$
+    where the implied constant $C$ is taken to be
+    $$C\geq 1+\frac{\log(11\,\zeta(3/2)/\zeta(3))}{\log 2}.$$
+-/
+theorem LogDerivZetaFinalBound {r' r R' R : ℝ} (r'_pos : 0 < r') (r'_lt_r : r' < r)
+    (r_lt_one : r < 1) (r_lt_R' : r < R') (R'_lt_R : R' < R) (R_lt_one : R < 1) :
+    ∃ (C : ℝ), C > 0 ∧
+      ∀ (t : ℝ), |t| ≥ 2 →
+        let f : ℂ → ℂ := fun z ↦ ζ (z + 3 / 2 + I * (t : ℂ));
+          (finiteZeros : (SetOfZeros 1 f).Finite) →
+            ∀ (z : ℂ), z ∈ Metric.closedBall (0 : ℂ) r' \ SetOfZeros R' f →
+    ‖(deriv f z / f z) - ∑ ρ ∈ (finiteSetOfZeros_mono r_lt_one finiteZeros).toFinset,
+      analyticOrderNatAt f ρ / (z - ρ)‖ ≤ (16 * r ^ 2 / (r - r') ^ 3 +
+      1 / ((R ^ 2 / R' - R') * Real.log (R / R'))) * (C * Real.log |t|) := by
+  have one_lt_zeta_div : (1 : ℝ) < ‖ζ ((3 / 2) : ℝ)‖₊ / ‖ζ (3 : ℝ)‖₊ := by
+    rw [coe_nnnorm, coe_nnnorm,
+      one_lt_div (norm_pos_iff.mpr (riemannZeta_ne_zero_of_one_lt_re (by norm_num)))]
+    exact norm_zeta_strict_mono_ofReal (by linarith) (by linarith)
+  have hzd : (1 : ℝ) < (‖ζ (3 / 2)‖₊ / ‖ζ 3‖₊ : ℝ) := by
+    simpa only [ofReal_div, ofReal_ofNat] using one_lt_zeta_div
+  set C : ℝ := 1 + Real.log (11 * (‖ζ (3 / 2)‖₊ / ‖ζ 3‖₊)) / Real.log 2 with C_def
+  refine ⟨C, ?_, ?_⟩
+  · rw [C_def, Real.log_mul (Ne.symm (OfNat.zero_ne_ofNat 11)) (by linarith)]
+    exact add_pos zero_lt_one
+      (div_pos (add_pos (Real.log_pos one_lt_ofNat) (Real.log_pos hzd)) (Real.log_pos one_lt_two))
+  · intro t ht f finiteZeros z hz
+    set g : ℂ → ℂ := f / (fun z ↦ f 0) with g_def
+    have g_def' : g = fun z ↦ f z / f 0 := rfl
+    set B : ℝ := (7 + 2 * |t|) * (‖ζ (3 / 2)‖₊ / ‖ζ 3‖₊) with B_def
+    have one_lt_B : 1 < B := one_lt_mul (by linarith) hzd
+    have one_le_C : (1 : ℝ) ≤ 11 * (‖ζ (3 / 2)‖₊ / ‖ζ 3‖₊) := (one_lt_mul (by linarith) hzd).le
+    have f0nonzero : ¬f 0 = 0 := by
+      simp only [f, zero_add]
+      exact riemannZeta_ne_zero_of_one_lt_re (by norm_num)
+    have ifInStripNotOne {z : ℂ} (hnorm: ‖z‖ ≤ 1) : (z.re + 3 / 2 = 1 → ¬z.im + t = 0) := by
+      rw [← sq_le_one_iff₀ (norm_nonneg _), ← Complex.normSq_eq_norm_sq,
+        Complex.normSq_apply] at hnorm
+      intro hre him
+      have hre' : z.re = -(1/2 : ℝ) := by linarith
+      have him' : z.im = -t := by linarith
+      simp only [hre', him', neg_mul_neg] at hnorm
+      rw [← abs_two, ge_iff_le, ← sq_le_sq] at ht
+      nlinarith [hnorm, ht]
+    have gAnalytic : AnalyticOnNhd ℂ g (Metric.closedBall (0 : ℂ) 1) := by
+      simp only [g_def, f, zero_add]
+      intro z hz; rw [Metric.mem_closedBall, _root_.dist_zero_right] at hz
+      refine AnalyticAt.div_const
+        (AnalyticAt.comp (AnalyticAt.comp (analyticAt_riemannZeta ?_) analyticAt_id)
+          (AnalyticAt.add (AnalyticAt.add analyticAt_id analyticAt_const) analyticAt_const))
+      simp only [Pi.add_apply, id_eq, ne_eq, Complex.ext_iff, add_re, div_ofNat_re, re_ofNat,
+        mul_re, I_re, ofReal_re, zero_mul, I_im, ofReal_im, mul_zero, sub_self, add_zero, one_re,
+        add_im, div_ofNat_im, im_ofNat, zero_div, mul_im, one_mul, zero_add, one_im, not_and]
+      exact ifInStripNotOne hz
+    have g0_eq_one : g 0 = 1 := by
+      simp only [g_def, Pi.div_apply, ne_eq, f0nonzero, not_false_eq_true, div_self]
+    have gFiniteZeros : (SetOfZeros 1 g).Finite := by
+      simp only [SetOfZeros, g_def, Pi.div_apply, div_eq_zero_iff,
+        or_iff_left f0nonzero] at ⊢ finiteZeros
+      exact finiteZeros
+    have gBound : ∀ z : ℂ, ‖z‖ ≤ R → ‖g z‖ ≤ B := by
+      intro z' hz'
+      simp only [B_def, g_def, f, zero_add, Pi.div_apply, Complex.norm_div]
+      rw [div_eq_mul_one_div]
+      refine mul_le_mul (GlobalBound (le_trans hz' R_lt_one.le) ht) ?_
+        (one_div_nonneg.mpr (norm_nonneg _)) (by linarith)
+      rw [one_div_le (norm_pos_iff.mpr (riemannZeta_ne_zero_of_one_lt_re (by norm_num))), one_div,
+        inv_div, ← toReal_coe_nnnorm, ENNReal.coe_toReal, ← NNReal.coe_div, ← nnnorm_div]
+      · exact_mod_cast ZetaFixedLowerBound t
+      · simp only [coe_nnnorm, ← norm_div, norm_pos_iff, div_ne_zero_iff]
+        exact ⟨riemannZeta_ne_zero_of_one_lt_re (by norm_num),
+          riemannZeta_ne_zero_of_one_lt_re (by norm_num)⟩
+    have ghz : z ∈ Metric.closedBall (0 : ℂ) r' \ SetOfZeros R' g := by
+      simp only [Set.mem_sdiff, Metric.mem_closedBall, _root_.dist_zero_right, SetOfZeros,
+        mem_ofPred_eq, not_and, g_def, Pi.div_apply, div_eq_zero_iff, not_or] at ⊢ hz
+      exact ⟨hz.1, fun hz' => ⟨hz.2 hz', f0nonzero⟩⟩
+    have gFinalBound := FinalBound one_lt_B r'_pos r'_lt_r r_lt_one r_lt_R' R'_lt_R R_lt_one
+      gAnalytic g0_eq_one gFiniteZeros gBound ghz
+    have gFiniteZeros' : (finiteSetOfZeros_mono r_lt_one gFiniteZeros).toFinset =
+      (finiteSetOfZeros_mono r_lt_one finiteZeros).toFinset := by
+      simp only [SetOfZeros, g_def, Pi.div_apply, div_eq_zero_iff, or_iff_left f0nonzero]
+    suffices h1 : Real.log B ≤ C * Real.log |t| by
+      refine le_trans (le_of_eq ?_) (gFinalBound.trans ?_)
+      · apply congrArg norm
+        rw [gFiniteZeros']
+        congr 1
+        · simp only [g_def', deriv_div_const, div_div_div_cancel_right₀ f0nonzero]
+        · refine Finset.sum_congr rfl fun ρ hρ => ?_
+          rw [div_left_inj', Nat.cast_inj, g_def', analyticOrderNatAt_fun_div_const f0nonzero]
+          · simp only [f]
+            refine AnalyticAt.comp (analyticAt_riemannZeta ?_)
+              (AnalyticAt.add (AnalyticAt.add analyticAt_id analyticAt_const)
+                (AnalyticAt.mul analyticAt_const analyticAt_const))
+            simp only [SetOfZeros, Complex.ext_iff, zero_re, zero_im, Finite.mem_toFinset, add_re,
+              mem_ofPred_eq, ne_eq, div_ofNat_re, re_ofNat, mul_re, I_re, ofReal_re, zero_mul,
+              I_im, ofReal_im, mul_zero, sub_self, add_zero, one_re, add_im, div_ofNat_im, im_ofNat,
+              zero_div, mul_im, one_mul, zero_add, one_im, not_and] at ⊢ hρ
+            exact ifInStripNotOne (le_trans hρ.1 r_lt_one.le)
+          · simp only [SetOfZeros, Set.mem_sdiff, Metric.mem_closedBall, _root_.dist_zero_right,
+              mem_ofPred_eq, not_and, Finite.mem_toFinset] at hz hρ
+            intro h; rw [sub_eq_zero] at h; rw [h] at hz
+            exact (hz.2 (le_trans hρ.1 r_lt_R'.le)) hρ.2
+      · refine mul_le_mul (by rfl) h1 (Real.log_nonneg one_lt_B.le)
+          (add_nonneg (div_nonneg (mul_nonneg (ofNat_nonneg' _) (sq_nonneg _))
+              (pow_nonneg (sub_nonneg.mpr r'_lt_r.le) _))
+            (div_nonneg zero_le_one (mul_nonneg (sub_nonneg.mpr ?_)
+                (Real.log_nonneg ((one_le_div (by linarith)).mpr R'_lt_R.le)))))
+        rw [le_div_iff₀ (by linarith)]; nlinarith
+    rw [add_mul, one_mul, div_mul_eq_mul_div, mul_div_assoc]
+    suffices h2 : Real.log B ≤ Real.log |t| + Real.log (11 * (↑‖ζ (3 / 2)‖₊ / ↑‖ζ 3‖₊)) by
+      exact le_trans h2 ((add_le_add_iff_left _).mpr (le_mul_of_one_le_right
+        (Real.log_nonneg one_le_C) ((one_le_div (Real.log_pos one_lt_two)).mpr
+        (log_le_log zero_lt_two (RCLike.ofReal_le_ofReal.mp ht)))))
+    rw [← Real.log_mul (by linarith) (by linarith),
+      log_le_log_iff (by linarith) (mul_pos (by linarith) (by linarith))]
+    simp only [← mul_assoc, B_def, coe_nnnorm]
+    exact mul_le_mul_of_nonneg_right (by linarith) (div_nonneg (norm_nonneg _) (norm_nonneg _))
+
+
+
+/-
+For all $|t|\geq 2$, if $f(z)=\zeta(z+3/2+it)$, then $f(z)$ has a finite number of zeros in
+    $\overline{\mathbb{D}_1}$.
+If we suppose the opposite, i.e. that there are an infinite number of zeros in this region, then
+    $f\equiv 0$ by the identity theorem. This is a contradiction, so the statement must be true.
+-/
+lemma ZetaShiftFiniteZeros {t : ℝ} (ht : |t| ≥ 2)
+    {f : ℂ → ℂ} (hf : f = fun z ↦ ζ (z + 3 / 2 + I * t)) : (SetOfZeros 1 f).Finite := by
+  by_contra hinf; rw [Set.not_finite] at hinf
+  have zerosSubset : SetOfZeros 1 f ⊆ Metric.closedBall (0 : ℂ) 1 := fun _ hx => by
+    simpa only [Metric.mem_closedBall, dist_zero_right] using hx.1
+  obtain ⟨x, hxK, hacc⟩ :=
+    hinf.exists_accPt_of_subset_isCompact (isCompact_closedBall 0 1) zerosSubset
+  have hfAnalytic : AnalyticOnNhd ℂ f (Metric.ball (0 : ℂ) 2) := by
+    intro z hz; simp only [Metric.mem_ball, Complex.dist_eq, sub_zero] at hz
+    simp only [hf, add_assoc]
+    refine AnalyticAt.fun_comp (analyticAt_riemannZeta fun h => ?_)
+      (analyticAt_id.fun_add analyticAt_const)
+    have him : z.im = -t := by
+      have := congr_arg Complex.im h; simp only [add_im, div_ofNat_im, im_ofNat, zero_div, mul_im,
+        I_re, ofReal_im, mul_zero, I_im, ofReal_re, one_mul, zero_add, one_im] at this
+      linarith
+    have abs_z_im := Complex.abs_im_le_norm z
+    rw [him, abs_neg] at abs_z_im
+    linarith
+  have hfeq : Set.EqOn f 0 (Metric.ball (0 : ℂ) 2) := by
+    refine AnalyticOnNhd.eqOn_zero_of_preconnected_of_mem_closure hfAnalytic
+      Metric.isPreconnected_ball (z₀ := x) ?_ ?_
+    · simp only [Metric.mem_ball, Metric.mem_closedBall, dist_zero_right] at hxK ⊢
+      linarith
+    · simp only [mem_closure_iff_clusterPt, ← accPt_principal_iff_clusterPt]
+      exact hacc.mono (principal_mono.mpr fun _ h => h.2)
+  have hne : f 0 ≠ 0 := by
+    simp only [hf, zero_add, ne_eq]
+    exact riemannZeta_ne_zero_of_one_lt_re (by norm_num)
+  exact hne (hfeq (Metric.mem_ball_self (by linarith)))
+
+
+
+/-
+Let $\mathcal{Z}_t=\{\rho\in\mathbb{C}:\zeta(\rho)=0,\,|\rho-(3/2+it)|\leq 3/4\}$.
+-/
+/-- The zeros of zeta within distance `3 / 4` of `3 / 2 + I * t`. -/
+def ZeroWindow (t : ℝ) : Set ℂ := {ρ : ℂ | ζ ρ = 0 ∧ ‖ρ - (3 / 2 + I * t)‖ ≤ 3 / 4}
+
+
+
+/- API for analyticOrderNatAt -/
+lemma analyticOrderNatAt_fun_comp_add_left (g : ℂ → ℂ) (c z : ℂ) :
+    analyticOrderNatAt (fun z : ℂ => g (c + z)) z = analyticOrderNatAt g (c + z) := by
+  have asComp : analyticOrderAt (g ∘ fun z : ℂ => c + z) z = analyticOrderAt g (c + z) := by
+    apply analyticOrderAt_comp_of_deriv_ne_zero (AnalyticAt.add analyticAt_const analyticAt_id)
+    simp only [differentiableAt_const, differentiableAt_id, deriv_add, deriv_const', deriv_id',
+      zero_add, ne_eq, one_ne_zero, not_false_eq_true]
+  simp only [analyticOrderNatAt, ← asComp, comp_def]
+
+lemma analyticOrderNatAt_fun_comp_add_right (g : ℂ → ℂ) (c z : ℂ) :
+    analyticOrderNatAt (fun z : ℂ => g (z + c)) z = analyticOrderNatAt g (z + c) := by
+  have asComp : analyticOrderAt (g ∘ fun z : ℂ => z + c) z = analyticOrderAt g (z + c) := by
+    apply analyticOrderAt_comp_of_deriv_ne_zero (AnalyticAt.add analyticAt_id analyticAt_const)
+    simp only [differentiableAt_const, differentiableAt_id, deriv_add, deriv_const', deriv_id',
+      ne_eq, add_zero, one_ne_zero, not_false_eq_true]
+  simp only [analyticOrderNatAt, ← asComp, comp_def]
+
+
+
+/-
+For all $\delta\in (0,1)$ and $t\in\mathbb{R}$ with $|t|\geq 2$ we have
+    $$\left|\frac{\zeta'}{\zeta}(1+\delta+it)
+      -\sum_{\rho\in\mathcal{Z}_t}\frac{m_\zeta(\rho)}{1+\delta+it-\rho}\right|\ll\log|t|.$$
+We apply Theorem \ref{LogDerivZetaFinalBound} where $r'=2/3$, $r=3/4$, $R'=4/5$, and
+    $R=5/6$. Thus, for all $z\in\overline{\mathbb{D}_{2/3}}\setminus\mathcal{K}_f(4/5)$
+    we have that
+    $$\left|\frac{\zeta'}{\zeta}(z+3/2+it)
+      -\sum_{\rho\in\mathcal{K}_f(3/4)}\frac{m_f(\rho)}{z-\rho}\right|\ll\log|t|$$
+    where $f(z)=\zeta(z+3/2+it)$ for $t\in\mathbb{R}$ with $|t|\geq 2$. Now if we let
+    $z=-1/2+\delta$, then $z\in(-1/2,1/2)\subseteq\overline{\mathbb{D}_{2/3}}$.
+    Additionally, $f(z)=\zeta(1+\delta+it)$, where $1+\delta+it$ lies in the zero-free
+    region where $\sigma>1$. Thus, $z\not\in\mathcal{K}_f(4/5)$. So,
+    $$\left|\frac{\zeta'}{\zeta}(1+\delta+it)
+      -\sum_{\rho\in\mathcal{K}_f(3/4)}\frac{m_f(\rho)}{-1/2+\delta-\rho}\right|
+      \ll\log|t|.$$
+    But now note that if $\rho\in\mathcal{K}_f(3/4)$, then $\zeta(\rho+3/2+it)=0$ and
+    $|\rho|\leq 3/4$. Thus, $\rho+3/2+it\in\mathcal{Z}_t$ (the argument works in reverse as well).
+    Additionally, note that $m_f(\rho)=m_\zeta(\rho+3/2+it)$. So changing variables using these
+    facts gives us that
+    $$\left|\frac{\zeta'}{\zeta}(1+\delta+it)
+      -\sum_{\rho\in\mathcal{Z}_t}\frac{m_\zeta(\rho)}{1+\delta+it-\rho}\right|
+      \ll\log|t|.$$
+-/
+lemma SumBoundI :
+    ∃ (C : ℝ), C > 0 ∧
+      ∀ (δ : ℝ), δ ∈ Ioo 0 1 →
+        ∀ (t : ℝ), |t| ≥ 2 →
+          ∀ (finiteZeros : (ZeroWindow t).Finite),
+    ‖ζ' (1 + δ + I * t) / ζ (1 + δ + I * t) - ∑ ρ ∈ finiteZeros.toFinset,
+      analyticOrderNatAt ζ ρ / (1 + δ + I * t - ρ)‖ ≤ C * Real.log |t| := by
+  let r' : ℝ := 2 / 3
+  let r : ℝ := 3 / 4
+  let R' : ℝ := 4 / 5
+  let R : ℝ := 5 / 6
+  have r'_pos : 0 < r' := by norm_num
+  have r'_lt_r : r' < r := by norm_num
+  have r_lt_one : r < 1 := by norm_num
+  have r_lt_R' : r < R' := by norm_num
+  have R'_lt_R : R' < R := by norm_num
+  have R_lt_one : R < 1 := by norm_num
+  obtain ⟨C, hC, LogDerivBound⟩ :=
+    LogDerivZetaFinalBound r'_pos r'_lt_r r_lt_one r_lt_R' R'_lt_R R_lt_one
+  refine ⟨(16 * r ^ 2 / (r - r') ^ 3 + 1 / ((R ^ 2 / R' - R') * Real.log (R / R'))) * C,
+    by positivity, ?_⟩
+  intro δ hd t ht finiteZeros
+  have LogDerivBound := LogDerivBound t ht
+  extract_lets f at LogDerivBound
+  have finiteZeros' : (SetOfZeros 1 f).Finite := by
+    apply ZetaShiftFiniteZeros ht
+    simp only [f]
+  have hd' : ‖(δ : ℂ) - 1 / 2‖ < 1 / 2 := by
+    obtain ⟨d0, d1⟩ := hd
+    simp only [← Complex.ofReal_one, ← Complex.ofReal_ofNat, ← Complex.ofReal_div,
+      ← Complex.ofReal_sub, Complex.norm_real, Real.norm_eq_abs, abs_lt]
+    exact ⟨by linarith, by linarith⟩
+  set z : ℂ := δ - 1 / 2 with hz
+  have hz' : z ∈ Metric.closedBall (0 : ℂ) r' \ SetOfZeros R' f := by
+    simp only [SetOfZeros, f, Set.mem_sdiff, Metric.mem_closedBall, dist_zero_right, mem_ofPred_eq,
+      not_and]
+    refine ⟨le_of_lt (lt_trans hd' (by linarith)), fun _ => riemannZeta_ne_zero_of_one_lt_re ?_⟩
+    simp only [add_re, div_ofNat_re, re_ofNat, mul_re, I_re, ofReal_re, zero_mul, I_im, ofReal_im,
+      mul_zero, sub_self, add_zero]
+    linarith [abs_lt.mp (lt_of_le_of_lt (Complex.abs_re_le_norm z) hd')]
+  have LogDerivBound := LogDerivBound finiteZeros' z hz'
+  refine le_trans (le_of_eq ?_) (LogDerivBound.trans (by rw [mul_assoc]))
+  apply congrArg norm
+  congr 1
+  · simp only [f, hz, add_assoc, deriv_comp_add_const]
+    ring_nf
+  · simp only [f, hz]
+    refine Finset.sum_nbij' (fun ρ => ρ - (3 / 2 + I * t)) (fun ρ => ρ + (3 / 2 + I * t))
+      (fun ρ hρ => ?_) (fun ρ hρ => ?_) (fun ρ hρ => by ring_nf) (fun ρ hρ => by ring_nf)
+      (fun ρ hρ => ?_)
+    · simp only [Set.Finite.mem_toFinset, SetOfZeros, ZeroWindow, Set.mem_ofPred_eq] at hρ ⊢
+      refine ⟨?_, ?_⟩
+      · simp only [r, hρ.2]
+      · simp only [add_assoc, sub_add_cancel, hρ.1]
+    · simp only [Set.Finite.mem_toFinset, SetOfZeros, ZeroWindow, Set.mem_ofPred_eq] at hρ ⊢
+      refine ⟨?_, ?_⟩
+      · simp only [← add_assoc, hρ.2]
+      · simp only [add_sub_cancel_right, r, hρ.1]
+    · ring_nf
+      rw [mul_comm, analyticOrderNatAt_fun_comp_add_left]
+      ring_nf
+
+
+
+/-
+For all $\delta\in (0,1)$ and $t\in\mathbb{R}$ with $|t|\geq 2$ we have
+    $$-\Re \left(\frac{\zeta'}{\zeta}(1+\delta+2it)\right)\ll\log|t|.$$
+Note that, for $\rho\in\mathcal{Z}_{2t}$
+    \begin{align*}
+        \Re \left(\frac{1}{1+\delta+2it-\rho}\right)
+          &=\Re \left(\frac{1+\delta-2it-\overline{\rho}}
+            {(1+\delta+2it-\rho)(1+\delta-2it-\overline{\rho})}\right) \\
+          &=\frac{\Re (1+\delta-2it-\overline{\rho})}{|1+\delta+2it-\rho|^2}
+            =\frac{1+\delta-\Re \rho}{(1+\delta-\Re \rho)^2+(2t-\mathfrak{I}\rho)^2}.
+    \end{align*}
+    Now since $\rho\in\mathcal{Z}_{2t}$, we have that $|\rho-(3/2+2it)|\leq 3/4$. So,
+    we have $\Re \rho\in[3/4,9/4]$ and $\mathfrak{I}\rho\in[2t-3/4,2t+3/4]$. Additionally,
+    we know that $\zeta(\rho)=0$. This implies the stronger condition that $\Re \rho\in[3/4,1]$.
+    Thus,
+    $$\delta\leq 1+\delta-\Re \rho\qquad\text{and}\qquad
+      (1+\delta-\Re \rho)^2+(2t-\mathfrak{I}\rho)^2\leq 25/16+9/16=17/8.$$
+    Which implies that
+    \begin{equation}\label{pickupPoint4}
+        0<\frac{8}{17}\,\delta
+          \leq\frac{1+\delta-\Re \rho}{(1+\delta-\Re \rho)^2+(2t-\mathfrak{I}\rho)^2}
+          =\Re \left(\frac{1}{1+\delta+2it-\rho}\right).
+    \end{equation}
+    Note that, from Lemma \ref{SumBoundI}, we have
+    $$\sum_{\rho\in\mathcal{Z}_{2t}}m_\zeta(\rho)\,
+      \Re \left(\frac{1}{1+\delta+2it-\rho}\right)
+      -\Re \left(\frac{\zeta'}{\zeta}(1+\delta+2it)\right)
+      \leq\left|\frac{\zeta'}{\zeta}(1+\delta+2it)
+      -\sum_{\rho\in\mathcal{Z}_{2t}}\frac{m_\zeta(\rho)}{1+\delta+2it-\rho}\right|
+      \ll\log|2t|.$$
+    Since $m_\zeta(\rho)\geq 0$ for all $\rho\in\mathcal{Z}_{2t}$, the inequality from
+    Equation (\ref{pickupPoint4}) tells us that by subtracting the sum from both sides
+    we have
+    $$-\Re \left(\frac{\zeta'}{\zeta}(1+\delta+2it)\right)\ll\log|2t|.$$
+    Noting that $\log|2t|=\log(2)+\log|t|\leq2\log|t|$ completes the proof.
+-/
+lemma ShiftTwoBound :
+    ∃ (C : ℝ), C > 0 ∧
+      ∀ (δ : ℝ), δ ∈ Ioo 0 1 →
+        ∀ (t : ℝ), |t| ≥ 2 →
+          (ZeroWindow (2 * t)).Finite →
+    -(ζ' (1 + δ + 2 * I * t) / ζ (1 + δ + 2 * I * t)).re ≤ C * log |t| := by
+  obtain ⟨C, hC, SumBound⟩ := SumBoundI
+  refine ⟨C * 2, by positivity, ?_⟩
+  intro δ hd t ht finiteZeros
+  suffices h1 : -(ζ' (1 + δ + 2 * I * t) / ζ (1 + δ + 2 * I * t)).re ≤ C * log |2 * t| by
+    refine le_trans h1 ?_
+    rw [mul_assoc C, abs_mul, Real.log_mul (by norm_num) (by linarith [ht]), two_mul]
+    exact mul_le_mul (by rfl) (add_le_add (log_le_log (by norm_num) (by norm_num [ht])) (by rfl))
+      (add_nonneg (Real.log_nonneg (by norm_num)) (Real.log_nonneg (by linarith [ht]))) hC.le
+  have ht' : |2 * t| ≥ 2 := by
+    simp only [abs_mul, abs_ofNat, ofNat_pos, le_mul_iff_one_le_right]
+    linarith
+  have SumBound := SumBound δ hd _ ht' finiteZeros; rw [← Complex.norm_neg', neg_sub] at SumBound
+  refine le_trans ?_ (le_trans (Complex.re_le_norm _) SumBound)
+  simp only [ofReal_mul, ofReal_ofNat, sub_re, re_sum, ← mul_assoc, mul_comm]
+  rw [sub_eq_add_neg, le_add_iff_nonneg_left]
+  refine Finset.sum_nonneg (fun ρ hρ => ?_); simp only [ZeroWindow, ofReal_mul, ofReal_ofNat,
+    Finite.mem_toFinset, mem_ofPred_eq] at hρ
+  have hρ_re: ρ.re ≤ 1 := by
+    by_contra hre; simp only [not_le] at hre
+    exact riemannZeta_ne_zero_of_one_lt_re hre hρ.1
+  simp only [div_re, natCast_re, sub_re, add_re, one_re, ofReal_re, mul_re, I_re, zero_mul, I_im,
+    ofReal_im, mul_zero, sub_self, re_ofNat, mul_im, ← sq, ne_eq, OfNat.ofNat_ne_zero,
+    not_false_eq_true, zero_pow, one_mul, zero_add, im_ofNat, add_zero, normSq_apply, sub_im,
+    add_im, one_im, natCast_im, zero_div]
+  exact div_nonneg (mul_nonneg (cast_nonneg' _) (by linarith [hd.1]))
+    (add_nonneg (sq_nonneg _) (sq_nonneg _))
+
+
+
+/-
+There exists $C>0$ such that for all $\delta\in(0,1)$ and $t\in\mathbb{R}$ with
+    $|t|\geq 2$; if $\zeta(\rho)=0$ with $\rho=\sigma+it$, then
+    $$-\Re \left(\frac{\zeta'}{\zeta}(1+\delta+it)\right)
+      \leq -\frac{1}{1+\delta-\sigma}+C\log|t|.$$
+Note that for $\rho'\in\mathcal{Z}_t$
+    \begin{align*}
+      \mathfrak{R}\left(\frac{1}{1+\delta+it-\rho'}\right)&=\mathfrak{R}\left(
+      \frac{1+\delta-it-\overline{\rho'}}{(1+\delta+it-\rho')(1+\delta-it-\overline{\rho'})}\right)
+      \\
+      &=\frac{\mathfrak{R}(1+\delta-it-\overline{\rho'})}{|1+\delta+it-\rho'|^2}
+      =\frac{1+\delta-\mathfrak{R}\rho'}{(1+\delta-\mathfrak{R}\rho')^2+(t-\mathfrak{I}\rho')^2}.
+    \end{align*}
+    Now since $\rho'\in\mathcal{Z}_t$, we have that $|\rho'-(3/2+it)|\leq 3/4$. So, we have
+    $\mathfrak{R}\rho'\in[3/4,9/4]$ and $\mathfrak{I}\rho'\in[t-3/4,t+3/4]$. Additionally, we know
+    that $\zeta(\rho')=0$. This implies the stronger condition that $\mathfrak{R}\rho'\in[3/4,1]$.
+    Thus,
+    $$\delta\leq 1+\delta-\mathfrak{R}\rho'
+      \qquad\text{and}\qquad
+      (1+\delta-\mathfrak{R}\rho')^2+(t-\mathfrak{I}\rho')^2\leq 25/16+9/16=17/8.$$
+    Which implies that
+    \begin{equation}\label{pickupPoint5}
+        0<\frac{8}{17}\,\delta\leq\frac{1+\delta-\mathfrak{R}\rho'}{(1+\delta-\mathfrak{R}\rho')^2
+        +(t-\mathfrak{I}\rho')^2}=\mathfrak{R}\left(\frac{1}{1+\delta+it-\rho'}\right).
+    \end{equation}
+    Note that, from Lemma \ref{SumBoundI}, we have
+    $$\sum_{\rho'\in\mathcal{Z}_t}m_\zeta(\rho')\,\mathfrak{R}\left(
+      \frac{1}{1+\delta+it-\rho'}\right)-\mathfrak{R}\left(
+      \frac{\zeta'}{\zeta}(1+\delta+it)\right)\leq
+      \left|\frac{\zeta'}{\zeta}(1+\delta+it)
+      -\sum_{\rho'\in\mathcal{Z}_t}\frac{m_\zeta(\rho')}{1+\delta+it-\rho'}\right|\ll\log|t|.$$
+    Now we proceed via cases. If $\rho\in\mathcal{Z}_t$, then
+    $\mathcal{Z}_t=\rho\sqcup(\mathcal{Z}_t\setminus\rho)$ and the inequality from Equation
+    (\ref{pickupPoint5}) tells us that by subtracting the sum over all
+    $\rho'\in\mathcal{Z}_t\setminus\{\rho\}$ from both sides we have
+    $$\frac{m_\zeta(\rho)}{\mathfrak{R}(1+\delta+it-\rho)}
+      -\mathfrak{R}\left(\frac{\zeta'}{\zeta}(1+\delta+it)\right)\ll\log|t|.$$
+    But of course we have that $\mathfrak{R}(1+\delta+it-\rho)=1+\delta-\sigma$. So subtracting this
+    term from both sides and recalling the implied constant we have
+    $$-\mathfrak{R}\left(\frac{\zeta'}{\zeta}(1+\delta+it)\right)\leq
+      -\frac{m_\zeta(\rho)}{1+\delta-\sigma}+C\log|t|.$$
+    We have that $\sigma\leq 1$ since $\zeta$ is zero free on the right half plane $\sigma>1$. Thus,
+    $0<1+\delta-\sigma$. Noting this in combination with the fact that $1\leq m_\zeta(\rho)$ gives
+    us that
+    $$-\mathfrak{R}\left(\frac{\zeta'}{\zeta}(1+\delta+it)\right)\leq
+      -\frac{m_\zeta(\rho)}{1+\delta-\sigma}+C\log|t|\leq-\frac{1}{1+\delta-\rho}+(7+C)\log|t|.$$
+    Now if $\rho\not\in\mathcal{Z}_t$, then $|\sigma-3/2|=|\rho-(3/2+it)|>3/4$ since
+    $\zeta(\rho)=0$. Additionally, $\sigma\leq 1$ since $\zeta(\rho)=0$, thus
+    $3/2-\sigma=|\sigma-3/2|>3/4$. So it follows that
+    $$\frac{1}{1+\delta-\sigma}<4<7\log 2\leq 7\log|t|.$$
+    Thus, by subtracting the sum over $\rho'\in\mathcal{Z}_t$ from both sides we have
+    $$-\mathfrak{R}\left(\frac{\zeta'}{\zeta}(1+\delta+it)\right)\leq
+      C\log|t|\leq-\frac{1}{1+\delta-\rho}+(7+C)\log|t|.$$
+-/
+lemma ShiftOneBound :
+    ∃ (C : ℝ), C > 0 ∧
+      ∀ (δ : ℝ), δ ∈ Ioo 0 1 →
+        ∀ (t : ℝ), |t| ≥ 2 →
+          (ZeroWindow t).Finite →
+            ∀ (ρ : ℂ), ζ ρ = 0 →
+              t = ρ.im →
+    -(ζ' (1 + δ + I * t) / ζ (1 + δ + I * t)).re ≤ C * Real.log |t| - 1 / (1 + δ - ρ.re) := by
+  obtain ⟨C, hC, SumBound⟩ := SumBoundI
+  refine ⟨7 + C, by linarith, ?_⟩
+  intro δ hd t ht finiteZeros ρ hρzero hρim
+  have SumBound := SumBound δ hd t ht finiteZeros; rw [← Complex.norm_neg', neg_sub] at SumBound
+  have SumBound := le_trans (Complex.re_le_norm _) SumBound
+  have hρre : ρ.re < 1 := lt_of_not_ge fun h => riemannZeta_ne_zero_of_one_le_re h hρzero
+  have ρ_ne_one : ρ ≠ 1 := by rintro rfl; simp only [one_re, lt_self_iff_false] at hρre
+  have analyticOnNhdZeta : AnalyticOnNhd ℂ ζ {z : ℂ | z ≠ 1} := by
+    intro z hz; simp only [ne_eq, mem_ofPred_eq] at hz
+    exact DifferentiableOn.analyticAt (s := {z : ℂ | z ≠ 1})
+      (fun z' hz' => (differentiableAt_riemannZeta hz').differentiableWithinAt)
+      ((isOpen_ne).mem_nhds hz)
+  have hTermNonneg {ρ' : ℂ} (hρ' : ρ' ∈ finiteZeros.toFinset) :
+    0 ≤ ((analyticOrderNatAt ζ ρ') / (1 + ↑δ + I * ↑t - ρ')).re := by
+    simp only [div_re, natCast_re, add_re, one_re, ofReal_re, sub_re, mul_re, I_re, zero_mul, I_im,
+      ofReal_im, mul_zero, sub_self, natCast_im, add_im, one_im, add_zero, sub_im, mul_im,
+      one_mul, zero_add, zero_div]
+    refine div_nonneg (mul_nonneg (by positivity) ?_) (normSq_nonneg _)
+    by_contra h; push Not at h
+    simp only [ZeroWindow, Finite.mem_toFinset, mem_ofPred_eq] at hρ'
+    exact riemannZeta_ne_zero_of_one_le_re (by linarith [hd.1]) hρ'.1
+  by_cases hρZt : ρ ∈ finiteZeros.toFinset
+  · have obvious : C * log |t| ≤ (7 + C) * log |t| := mul_le_mul (by linarith) (by rfl)
+      (Real.log_nonneg (by linarith)) (by linarith)
+    have SumBound := le_trans SumBound obvious
+    rw [← Finset.insert_erase hρZt, ← Finset.singleton_union, ← Finset.sdiff_singleton_eq_erase,
+      Finset.sum_union (by simp), Finset.sum_singleton] at SumBound
+    simp only [sub_re, add_re, re_sum, add_sub_assoc] at SumBound
+    rw [div_re] at SumBound
+    simp only [natCast_re, add_re, one_re, ofReal_re, sub_re, mul_re, I_re, zero_mul, I_im, add_im,
+      ofReal_im, mul_zero, sub_self, zero_sub, natCast_im, one_im, add_zero, sub_im, mul_im, ← hρim,
+      one_mul, zero_add, zero_div, normSq_apply, mul_div_assoc, div_self_mul_self',
+      ← one_div] at SumBound
+    refine le_sub_left_of_add_le (le_trans (add_le_add ?_ ?_) SumBound)
+    · rw [← mul_div_assoc, mul_one]
+      refine div_le_div_of_nonneg_right ?_ (by linarith [hd.1])
+      simp only [one_le_cast, Nat.one_le_iff_ne_zero, analyticOrderNatAt, ne_eq, ENat.toNat_eq_zero,
+        analyticOrderAt_eq_zero, analyticOrderAt_eq_top, not_or, not_not]
+      refine ⟨⟨DifferentiableOn.analyticAt (s := {z : ℂ | z ≠ 1})
+        (fun z hz => (differentiableAt_riemannZeta hz).differentiableWithinAt)
+        ((isOpen_ne).mem_nhds ρ_ne_one), hρzero⟩,
+        (fun h => riemannZeta_ne_zero_of_one_le_re (s := 2) (by norm_num)
+        (AnalyticOnNhd.eqOn_zero_of_preconnected_of_eventuallyEq_zero analyticOnNhdZeta (z₀ := ρ)
+        ((isConnected_compl_singleton_of_one_lt_rank ?_ 1).isPreconnected) ?_ ?_ ?_))⟩
+      · simp only [rank_real_complex, one_lt_ofNat]
+      · simp only [ne_eq, mem_ofPred_eq, ρ_ne_one, not_false_eq_true]
+      · simp only [EventuallyEq, Pi.zero_apply, h]
+      · simp only [ne_eq, mem_ofPred_eq, OfNat.ofNat_ne_one, not_false_eq_true]
+    · simp only [← add_sub_assoc, neg_le_sub_iff_le_add, le_add_iff_nonneg_left]
+      refine Finset.sum_nonneg (fun ρ' hρ' => hTermNonneg ?_)
+      simp only [Finset.mem_sdiff] at hρ'
+      exact hρ'.1
+  · have logBound : -(ζ' (1 + ↑δ + I * ↑t) / ζ (1 + ↑δ + I * ↑t)).re ≤ C * Real.log |t| := by
+      refine le_trans ?_ SumBound
+      rw [sub_eq_add_neg, add_re, neg_re, re_sum, le_add_iff_nonneg_left]
+      exact Finset.sum_nonneg (fun ρ' hρ' => hTermNonneg hρ')
+    have invBound : 1 / (1 + δ - ρ.re) ≤ 7 * Real.log |t| := by
+      suffices h1 : 1 / (1 + δ - ρ.re) ≤ 4 by
+        have explicitEstimate : 4 ≤ 7 * Real.log 2 := by linarith [Real.log_two_gt_d9]
+        exact le_trans h1 (le_trans explicitEstimate ((mul_le_mul_iff_of_pos_left ofNat_pos').mpr
+          (Real.log_le_log ofNat_pos' ht)))
+      simp only [ZeroWindow, Finite.mem_toFinset, mem_ofPred_eq, hρzero, true_and, not_le] at hρZt
+      rw [← Complex.re_add_im ρ, hρim] at hρZt
+      ring_nf at hρZt
+      have : - (3 : ℂ) / 2 + ρ.re = (((ρ.re - 3 / 2) : ℝ) : ℂ) := by
+        simp only [ofReal_sub, ofReal_div, ofReal_ofNat, neg_add_eq_sub, neg_div, neg_add_eq_sub]
+      rw [this, Complex.norm_real, Real.norm_eq_abs] at hρZt
+      have hρreImproved : ρ.re < 3 / 4 := by rcases lt_abs.mp hρZt with _ | _ <;> linarith
+      rw [one_div_le (by linarith [hd.1]) four_pos]
+      linarith [hd.1]
+    linarith
+
+
+
+/-
+For all $\delta\in(0,1)$ we have
+    $$-\Re \left(\frac{\zeta'}{\zeta}(1+\delta)\right)\leq\frac{1}{\delta}+O(1).$$
+From Theorem \ref{riemannZetaLogDerivResidue} we know that
+    $$-\frac{\zeta'}{\zeta}(s)=\frac{1}{s-1}+O(1).$$
+    Changing variables $s\mapsto 1+\delta$ and applying the triangle inequality we have that
+    $$-\Re \left(\frac{\zeta'}{\zeta}(1+\delta)\right)\leq\left|
+      -\frac{\zeta'}{\zeta}(1+\delta)\right|\leq\frac{1}{\delta}+O(1).$$
+-/
+lemma ShiftZeroBound :
+    ∃ (C : ℝ), C ≥ 1 ∧
+      ∀ (δ : ℝ), δ ∈ Ioo 0 1 →
+        -(ζ' (1 + δ) / ζ (1 + δ)).re ≤ 1 / δ + C := by
+  have zetaAnalyticOnNhd : AnalyticOnNhd ℂ ζ {(1 : ℂ)}ᶜ := DifferentiableOn.analyticOnNhd
+    (fun _ hs => (differentiableAt_riemannZeta hs).differentiableWithinAt) isOpen_compl_singleton
+  have oneAddContinuous : Continuous (fun x : ℝ => (1 + (x : ℂ))) :=
+    Continuous.add continuous_const continuous_ofReal
+  have ShiftZeroBoundNear :
+      ∃ (C r : ℝ), r ∈ Ioo 0 1 ∧
+        ∀ (δ : ℝ), δ ∈ Ioo 0 r →
+          -(ζ' (1 + δ) / ζ (1 + δ)).re ≤ 1 / δ + C := by
+    obtain ⟨C, hC⟩ := riemannZetaLogDerivResidueBigO.bound
+    rcases Metric.mem_nhdsWithin_iff.mp hC with ⟨ε, εpos, hε⟩
+    refine ⟨C, min ε (1 / 2), ⟨?_, fun δ δrange => ?_⟩⟩
+    · simp only [one_div, mem_Ioo, lt_inf_iff, inv_pos, ofNat_pos, and_true, inf_lt_iff]
+      exact ⟨εpos, Or.inr two_inv_lt_one⟩
+    · have δin : ((1 : ℂ) + δ) ∈ Metric.ball 1 ε ∩ {1}ᶜ := by
+        simp only [mem_inter_iff, Metric.mem_ball, dist_self_add_left, norm_real, norm_eq_abs,
+          mem_compl_iff, mem_singleton_iff, add_eq_left, ofReal_eq_zero, abs_lt]
+        exact ⟨⟨by linarith [δrange.1], by linarith [δrange.2, min_le_left ε (1 / 2)]⟩,
+          by linarith [δrange.1]⟩
+      have reBound := (Complex.re_le_norm _).trans (hε δin)
+      simp only [Pi.sub_apply, Pi.div_apply, Pi.neg_apply, add_sub_cancel_left, sub_re, inv_re,
+        ofReal_re, normSq_ofReal, div_self_mul_self', Pi.one_apply, norm_one, mul_one,
+        tsub_le_iff_right] at reBound
+      simp only [one_div, ← Complex.neg_re, ← neg_div, add_comm _ C, reBound]
+  obtain ⟨C₀, r, rIn, boundNear⟩ := ShiftZeroBoundNear
+  have ShiftZeroBoundCompact :
+      ∃ (C : ℝ), ∀ (δ : ℝ), δ ∈ Icc r 1 →
+        -(ζ' (1 + δ) / ζ (1 + δ)).re ≤ 1 / δ + C := by
+    simp only [← sub_le_iff_le_add', ← Complex.neg_re]
+    refine ⟨_, fun δ hδ => le_csSup (IsCompact.bddAbove (isCompact_Icc.image_of_continuousOn ?_))
+      (Set.mem_image_of_mem _ hδ)⟩
+    refine ContinuousOn.add (Complex.continuous_re.comp_continuousOn
+      (ContinuousOn.neg (ContinuousOn.div (ContinuousOn.comp zetaAnalyticOnNhd.deriv.continuousOn
+        (by apply fun x hx => oneAddContinuous.continuousOn) ?_)
+      (ContinuousOn.comp zetaAnalyticOnNhd.continuousOn
+        (by apply fun x hx => oneAddContinuous.continuousOn) ?_)
+      (fun x hx => riemannZeta_ne_zero_of_one_lt_re ?_)))) (ContinuousOn.neg
+        (ContinuousOn.div continuousOn_const continuousOn_id ?_))
+    · simp only [MapsTo, mem_Icc, mem_compl_iff, mem_singleton_iff, add_eq_left,
+        ofReal_eq_zero, and_imp]
+      exact fun x hx _ => by linarith [rIn.1, hx]
+    · simp only [MapsTo, mem_Icc, mem_compl_iff, mem_singleton_iff, add_eq_left,
+        ofReal_eq_zero, and_imp]
+      exact fun x hx _ => by linarith [rIn.1, hx]
+    · simp only [add_re, one_re, ofReal_re, lt_add_iff_pos_right]
+      linarith [rIn.1, hx.1]
+    · simp only [ne_eq]
+      exact fun x hx => by linarith [rIn.1, hx.1]
+  obtain ⟨C₁, boundCompact⟩ := ShiftZeroBoundCompact
+  refine ⟨1 + max |C₀| |C₁|, ?_, fun δ δrange => ?_⟩
+  · simp only [ge_iff_le, le_add_iff_nonneg_right, le_sup_iff, abs_nonneg, or_self]
+  · by_cases δ_lt_r : δ < r
+    · have δIn : δ ∈ Ioo 0 r := by simp only [mem_Ioo, δrange.1, δ_lt_r, and_self]
+      apply le_trans (boundNear δ δIn)
+      simp only [one_div, add_le_add_iff_left]
+      linarith [le_abs_self C₀, le_max_left |C₀| |C₁|]
+    · have δIn : δ ∈ Icc r 1 := by
+        simp only [mem_Icc, δrange.2.le, ← not_lt, δ_lt_r, not_false_eq_true, and_self]
+      apply le_trans (boundCompact δ δIn)
+      simp only [one_div, add_le_add_iff_left]
+      linarith [le_abs_self C₁, le_max_right |C₀| |C₁|]
+
+
+
+/-
+The series
+    $$\sum_{n=1}^\infty\frac{\Lambda(n)}{n^s}$$
+    converges when $1<\mathfrak{R}(s)$.
+We know that $\Lambda(n)$ is $O(n^\varepsilon)$ since it is bounded above by $\log(n)$. Thus,
+    $$\left|\sum_{n=1}^\infty\frac{\Lambda(n)}{n^s}\right|\leq
+      \sum_{n=1}^\infty\left|\frac{\Lambda(n)}{n^s}\right|\ll
+      \sum_{n=1}^\infty\frac{1}{n^{\mathfrak{R}(s)-\varepsilon}}.$$
+    Since $\varepsilon$ can be arbitrarily small, we know the left hand side converges by the
+    $p$-test.
+-/
+lemma vonMangoldtLSeriesSummable {s : ℂ} (hs : 1 < s.re) :
+    Summable (fun n : ℕ => (Λ n : ℂ) / (n : ℂ) ^ s) := by
+  refine (ArithmeticFunction.LSeriesSummable_vonMangoldt hs).congr (fun n => ?_)
+  by_cases heq0 : n = 0 <;> simp only [LSeries.term, heq0, ↓reduceIte, ArithmeticFunction.map_zero,
+    ofReal_zero, CharP.cast_eq_zero, zero_div]
+
+
+
+/-
+For all $|t|\geq 2$, $\mathcal{Z}(t)$ contains a finite number of points.
+If we suppose the opposite, i.e. that there are an infinite number of zeta zeros in this region,
+    then $\zeta\equiv 0$ by the identity theorem. This is a contradiction, so the statement must be
+    true.
+-/
+lemma ZeroWindowFinite {t : ℝ} (ht : |t| ≥ 2) : (ZeroWindow t).Finite := by
+  by_contra hinf; rw [Set.not_finite] at hinf
+  have zerosSubset : ZeroWindow t ⊆ Metric.closedBall (3 / 2 + I * t) (3 / 4) := fun _ hx => by
+    simpa only [dist_eq_norm, Metric.mem_closedBall, ge_iff_le] using hx.2
+  obtain ⟨x, hxK, hacc⟩ :=
+    hinf.exists_accPt_of_subset_isCompact (isCompact_closedBall (3 / 2 + I * t) (3 / 4)) zerosSubset
+  have hfAnalytic : AnalyticOnNhd ℂ ζ (Metric.ball (3 / 2 + I * t) 1) := by
+    intro z hz; simp only [Metric.mem_ball, Complex.dist_eq] at hz
+    have him : |z.im| > 1 := by
+      have := abs_lt.mp (lt_of_le_of_lt (Complex.abs_im_le_norm (z - (3 / 2 + I * ↑t))) hz)
+      simp only [sub_im, add_im, div_ofNat_im, im_ofNat, zero_div, mul_im, I_re, ofReal_im,
+        mul_zero, I_im, ofReal_re, one_mul, zero_add, neg_lt_sub_iff_lt_add] at this
+      simp only [gt_iff_lt, lt_abs]
+      by_cases tpos : 0 < t
+      · rw [abs_of_pos tpos] at ht
+        exact Or.inl (by linarith)
+      · rw [abs_of_nonpos (not_lt.mp tpos)] at ht
+        exact Or.inr (by linarith)
+    refine analyticAt_riemannZeta (fun h => ?_)
+    simp only [h, one_im, gt_iff_lt, abs_zero] at him
+    linarith
+  have hfeq : Set.EqOn ζ 0 (Metric.ball (3 / 2 + I * t) 1) := by
+    refine AnalyticOnNhd.eqOn_zero_of_preconnected_of_mem_closure hfAnalytic
+      Metric.isPreconnected_ball (z₀ := x) ?_ ?_
+    · simp only [Metric.mem_ball, Metric.mem_closedBall] at hxK ⊢
+      linarith
+    · simp only [mem_closure_iff_clusterPt, ← accPt_principal_iff_clusterPt]
+      refine hacc.mono (principal_mono.mpr fun _ h => h.1)
+  have hne : ζ (3 / 2 + I * t) ≠ 0 := by
+    exact riemannZeta_ne_zero_of_one_lt_re (by norm_num)
+  exact hne (hfeq (Metric.mem_ball_self (by linarith)))
+
+
+
+/-
+There exists a constant $0 < E<1/14$ such that for all $\rho=\sigma+it$ with $\zeta(\rho)=0$
+    and $|t|\geq 2$, one has
+    $$\sigma\leq 1-\frac{E}{\log|t|}.$$
+From Theorem \ref{LogDerivativeDirichlet} when $\Re s>1$ we have
+    $$-\frac{\zeta'}{\zeta}(s)=\sum_{1\leq n}\frac{\Lambda(n)}{n^s}.$$
+    Thus,
+    $$-3\,\frac{\zeta'}{\zeta}(1+\delta)
+        -4\,\frac{\zeta'}{\zeta}(1+\delta+it)
+        -\frac{\zeta'}{\zeta}(1+\delta+2it)
+        =\sum_{1\leq n}\Lambda(n)\,n^{-(1+\delta)}\left(3+4n^{-it}+n^{-2it}\right).$$
+    Now applying Euler's identity
+    \begin{align*}
+        -3\,\Re \left(\frac{\zeta'}{\zeta}(1+\delta)\right)&
+            -4\,\Re \left(\frac{\zeta'}{\zeta}(1+\delta+it)\right)
+            -\Re \left(\frac{\zeta'}{\zeta}(1+\delta+2it)\right) \\
+        &\qquad\qquad\qquad=\sum_{1\leq n}\Lambda(n)\,n^{-(1+\delta)}
+            \left(3+4\cos(-t\log n)+\cos(-2t\log n)\right)
+    \end{align*}
+    Since
+    $$3+4\cos(-t\log n)+\cos(-2t\log n)=2\,(1+\cos(-t\log n))^2\geq 0,$$
+    we know that the series on the right hand side is bounded below by $0$,
+    and by Lemmas \ref{ShiftTwoBound}, \ref{ShiftOneBound}, and \ref{ShiftZeroBound}
+    we have an upper bound on the left hand side. So,
+    $$0\leq\frac{3}{\delta}+3A-\frac{4}{1+\delta-\sigma}+4B\log|t|+C\log|t|$$
+    where $A$, $B$, and $C$ are the implied constants coming from Lemmas
+    \ref{ShiftZeroBound}, \ref{ShiftOneBound}, and \ref{ShiftTwoBound} respectively.
+    By choosing $D\geq 5A+4B+C\geq 3A/\log 2+4B+C$ we have
+    $$\frac{4}{1+\delta-\sigma}\leq\frac{3}{\delta}+D\log|t|$$
+    by some manipulation. Now if we choose $\delta=(2D\log|t|)^{-1}$ then we have
+    $$\frac{4}{1-\sigma+1/(2D\log|t|)}\leq7D\log|t|.$$
+    So with some manipulation we have that
+    $$\sigma\leq 1-\frac{1}{14D\log|t|}.$$
+    This is exactly the desired result with the constant $E=(14D)^{-1}$. Since
+    $D\geq 5A+4B+C\geq 1$ we have that $E\in(0,1/14)$.
+-/
+theorem ZeroInequality : ∃ (E : ℝ), E ∈ Ioo (0 : ℝ) (1 / 14 : ℝ) ∧
+    ∀ (ρ : ℂ), ζ ρ = 0 →
+      ∀ (σ : ℝ), σ = ρ.re →
+        ∀ (t : ℝ), t = ρ.im → |t| ≥ 2 →
+          σ ≤ 1 - E / log |t| := by
+  obtain ⟨A, Age, ShiftZero⟩ := ShiftZeroBound
+  obtain ⟨B, Bpos, ShiftOne⟩ := ShiftOneBound
+  obtain ⟨C, Cpos, ShiftTwo⟩ := ShiftTwoBound
+  set D : ℝ := 5 * A + 4 * B + C with D_def
+  set E : ℝ := (14 * D)⁻¹ with E_def
+  have Dge1 : 1 ≤ D := by linarith
+  refine ⟨E, ⟨?_, ?_⟩, fun ρ hρzero σ ρre t ρim ht => ?_⟩
+  · rw [E_def, mul_inv_rev, mul_pos_iff_of_pos_right (inv_pos.mpr ofNat_pos'), inv_pos]
+    linarith
+  · rw [E_def, one_div, inv_lt_inv₀ (by linarith) (by linarith)]
+    linarith
+  · set δ : ℝ := 1 / (2 * D * Real.log |t|) with δ_def
+    have δrange : δ ∈ Ioo 0 1 := by
+      simp only [mem_Ioo, δ_def, one_div_pos]
+      rw [div_lt_one (by nlinarith [Real.log_le_log zero_lt_two ht, Real.log_two_gt_d9])]
+      exact ⟨by nlinarith [Real.log_le_log zero_lt_two ht, Real.log_two_gt_d9],
+        by nlinarith [Real.log_le_log zero_lt_two ht, Real.log_two_gt_d9]⟩
+    have hugeEq :
+        3 * (-ζ' (1 + δ) / ζ (1 + δ)) +
+        4 * (-ζ' (1 + δ + I * t) / ζ (1 + δ + I * t)) +
+        (-ζ' (1 + δ + 2 * I * t) / ζ (1 + δ + 2 * I * t))
+      = ∑' (n : ℕ), Λ (n) * n ^ (-(1 : ℂ) - δ)
+        * ((3 : ℂ) + 4 * n ^ (-I * t) + n ^ (-2 * I * t)) := by
+      rw [LogDerivativeDirichlet (s := 1 + δ) (by simp [δrange.1]),
+          LogDerivativeDirichlet (s := 1 + δ + I * t) (by simp [δrange.1]),
+          LogDerivativeDirichlet (s := 1 + δ + 2 * I * t) (by simp [δrange.1])]
+      simp only [← tsum_mul_left, ← neg_add', mul_add]; repeat rw [← Summable.tsum_add]
+      · congr 1; funext n; by_cases heq0 : n = 0
+        · simp only [heq0, ArithmeticFunction.map_zero, ofReal_zero, CharP.cast_eq_zero,
+            zero_div, mul_zero, add_zero, neg_add_rev, zero_mul, neg_mul]
+        · simp only [div_eq_mul_inv, mul_assoc, neg_mul]
+          congr 2
+          · simp only [← cpow_neg, neg_add_rev]
+            ring_nf
+          · simp only [← cpow_neg, neg_add_rev]
+            rw [cpow_add _ _ ((cast_ne_zero (R := ℂ)).mpr heq0), mul_comm]
+            ring_nf
+          · simp only [← cpow_neg, neg_add_rev]
+            rw [cpow_add _ _ ((cast_ne_zero (R := ℂ)).mpr heq0), mul_comm]
+      · refine Summable.add (Summable.mul_left _ (vonMangoldtLSeriesSummable ?_))
+          (Summable.mul_left _ (vonMangoldtLSeriesSummable ?_))
+        · simp only [add_re, one_re, ofReal_re, lt_add_iff_pos_right, δrange.1]
+        · simp only [add_re, one_re, ofReal_re, mul_re, I_re, zero_mul, I_im, ofReal_im, mul_zero,
+            sub_self, add_zero, lt_add_iff_pos_right, δrange.1]
+      · refine vonMangoldtLSeriesSummable ?_
+        simp only [add_re, one_re, ofReal_re, mul_re, re_ofNat, I_re, mul_zero, im_ofNat, I_im,
+          mul_one, sub_self, zero_mul, mul_im, add_zero, ofReal_im, lt_add_iff_pos_right, δrange.1]
+      · refine Summable.mul_left _ (vonMangoldtLSeriesSummable ?_)
+        simp only [add_re, one_re, ofReal_re, lt_add_iff_pos_right, δrange.1]
+      · refine Summable.mul_left _ (vonMangoldtLSeriesSummable ?_)
+        simp only [add_re, one_re, ofReal_re, mul_re, I_re, zero_mul, I_im, ofReal_im, mul_zero,
+          sub_self, add_zero, lt_add_iff_pos_right, δrange.1]
+    have hugeEqRe :
+        3 * -(ζ' (1 + δ) / ζ (1 + δ)).re +
+        4 * -(ζ' (1 + δ + I * t) / ζ (1 + δ + I * t)).re +
+        -(ζ' (1 + δ + 2 * I * t) / ζ (1 + δ + 2 * I * t)).re
+      = 2 * ∑' (n : ℕ), Λ (n) * n ^ (-1 - δ) * (1 + Real.cos (-t * Real.log n)) ^ 2 := by
+      have re_eq := congr_arg Complex.re hugeEq
+      simp only [add_re, mul_re, re_ofNat, im_ofNat, zero_mul, sub_zero, neg_mul, neg_div,
+        Complex.neg_re] at re_eq
+      rw [re_eq, Complex.re_tsum, ← tsum_mul_left]
+      · refine tsum_congr (fun n => ?_)
+        by_cases heq0 : n = 0
+        · simp [heq0]
+        · repeat rw [Complex.cpow_def_of_ne_zero (cast_ne_zero (R := ℂ).mpr heq0)]
+          simp only [← natCast_log, mul_neg, mul_re, ofReal_re, exp_re, sub_re, neg_re, one_re,
+            ofReal_im, sub_im, neg_im, one_im, neg_zero, sub_self, mul_zero, sub_zero, mul_im,
+            zero_mul, add_zero, Real.cos_zero, mul_one, exp_im, Real.sin_zero, add_re, re_ofNat,
+            I_re, I_im, one_mul, zero_add, Real.exp_zero, Real.cos_neg, im_ofNat, Real.sin_neg,
+            add_im, neg_mul, add_sq, one_pow, Real.cos_sq, one_div]
+          rw [← Real.rpow_def_of_pos (Nat.cast_pos.mpr (Nat.pos_of_ne_zero heq0))]
+          ring_nf
+      · simp only [mul_add, mul_assoc]; ring_nf
+        refine Summable.add (Summable.add (Summable.mul_right _ ?_) (Summable.mul_right _ ?_)) ?_
+        · refine (ArithmeticFunction.LSeriesSummable_vonMangoldt
+            (s := 1 + δ) (by simp [δrange.1])).congr (fun n => ?_)
+          by_cases heq0 : n = 0
+          · simp only [heq0, LSeries.term_zero, ArithmeticFunction.map_zero, ofReal_zero,
+              CharP.cast_eq_zero, zero_mul]
+          · simp only [ne_eq, heq0, not_false_eq_true, LSeries.term_of_ne_zero]
+            rw [div_eq_mul_inv, ← Complex.cpow_neg, neg_add']
+        · refine (ArithmeticFunction.LSeriesSummable_vonMangoldt
+            (s := 1 + δ + I * t) (by simp [δrange.1])).congr (fun n => ?_)
+          by_cases heq0 : n = 0
+          · simp only [heq0, LSeries.term_zero, ArithmeticFunction.map_zero, ofReal_zero,
+              CharP.cast_eq_zero, zero_mul]
+          · simp only [ne_eq, heq0, not_false_eq_true, LSeries.term_of_ne_zero]
+            rw [div_eq_mul_inv, ← Complex.cpow_neg, neg_add,
+              Complex.cpow_add _  _ ((cast_ne_zero (R := ℂ)).mpr heq0)]
+            ring_nf
+        · refine (ArithmeticFunction.LSeriesSummable_vonMangoldt
+            (s := 1 + δ + 2 * I * t) (by simp [δrange.1])).congr (fun n => ?_)
+          by_cases heq0 : n = 0
+          · simp only [heq0, LSeries.term_zero, ArithmeticFunction.map_zero, ofReal_zero,
+              CharP.cast_eq_zero, zero_mul]
+          · simp only [ne_eq, heq0, not_false_eq_true, LSeries.term_of_ne_zero]
+            rw [div_eq_mul_inv, ← Complex.cpow_neg, neg_add,
+              Complex.cpow_add _  _ ((cast_ne_zero (R := ℂ)).mpr heq0)]
+            ring_nf
+    have ZeroWindowOneFinite : (ZeroWindow t).Finite := ZeroWindowFinite ht
+    have ZeroWindowTwoFinite : (ZeroWindow (2 * t)).Finite := by
+      apply ZeroWindowFinite
+      simp only [abs_mul, abs_ofNat, ge_iff_le, ofNat_pos, le_mul_iff_one_le_right]
+      linarith
+    have ShiftZero := ShiftZero δ δrange
+    have ShiftOne := ShiftOne δ δrange t ht ZeroWindowOneFinite ρ hρzero ρim
+    have ShiftTwo := ShiftTwo δ δrange t ht ZeroWindowTwoFinite
+    suffices h1 : 4 / (1 + δ - σ) ≤ 3 / δ + D * Real.log |t| by
+      simp only [δ_def, div_eq_mul_inv, mul_inv_rev, one_mul, inv_inv] at h1
+      rw [mul_inv_le_iff₀] at h1
+      · ring_nf at h1; field_simp at h1; ring_nf at h1; field_simp at h1
+        rw [mul_div_cancel_left₀ _
+          (Real.log_ne_zero_of_pos_of_ne_one (by linarith) (by linarith))] at h1
+        rw [E_def, ← inv_mul', le_sub_comm,
+          inv_le_iff_one_le_mul₀' (mul_pos (by linarith) (Real.log_pos (by linarith)))]
+        linarith
+      · rw [add_sub_right_comm]
+        apply add_pos_of_nonneg_of_pos
+        · by_contra hσ; simp only [sub_nonneg, not_le, ρre] at hσ
+          exact (riemannZeta_ne_zero_of_one_lt_re hσ) hρzero
+        · exact mul_pos (inv_pos.mpr (Real.log_pos (by linarith))) (by positivity)
+    suffices h2 :  0 ≤ 3 / δ + 3 * A - 4 / (1 + δ - σ) + 4 * B * Real.log |t| + C * Real.log |t| by
+      simp only [sub_eq_neg_add, add_assoc, le_neg_add_iff_add_le, add_zero, ge_iff_le] at ⊢ h2
+      apply le_trans h2
+      simp only [← add_assoc, D_def, add_mul, add_le_add_iff_right, add_le_add_iff_left]
+      nlinarith [Real.log_le_log zero_lt_two ht, Real.log_two_gt_d9]
+    calc 0 ≤ 2 * ∑' (n : ℕ), Λ (n) * n ^ (-1 - δ) * (1 + Real.cos (-t * Real.log n)) ^ 2 := by
+          rw [mul_nonneg_iff_of_pos_left two_pos]
+          exact tsum_nonneg (fun n => mul_nonneg (mul_nonneg ArithmeticFunction.vonMangoldt_nonneg
+            (Real.rpow_nonneg (Nat.cast_nonneg n) _)) (sq_nonneg _))
+      _ = 3 * -(ζ' (1 + δ) / ζ (1 + δ)).re +
+          4 * -(ζ' (1 + δ + I * t) / ζ (1 + δ + I * t)).re +
+          -(ζ' (1 + δ + 2 * I * t) / ζ (1 + δ + 2 * I * t)).re :=
+          hugeEqRe.symm
+      _ ≤ 3 / δ + 3 * A - 4 / (1 + δ - σ) + 4 * B * Real.log |t| + C * Real.log |t| := by
+          rw [← ρre] at ShiftOne
+          ring_nf at ShiftZero ShiftOne ShiftTwo ⊢
+          linarith
+
+
+
+/-- A positive constant in the zero-free-region inequality `ZeroInequality`. -/
+noncomputable def E : ℝ := ZeroInequality.choose
+lemma EinIoo : E ∈ Ioo (0 : ℝ) (1 / 14 : ℝ) := ZeroInequality.choose_spec.1
+theorem ZeroInequalitySpec : ∀ (ρ : ℂ), ζ ρ = 0 →
+    ∀ (σ : ℝ), σ = ρ.re →
+      ∀ (t : ℝ), t = ρ.im → |t| ≥ 2 →
+        σ ≤ 1 - E / log |t| := ZeroInequality.choose_spec.2
+
+
+
+/-
+Let $\delta_t=E/\log|t|$ where $E$ is the constant coming from Theorem \ref{ZeroInequality}.
+-/
+/-- The width `E / log |t|` of the zero-free region at height `t`. -/
+noncomputable def DeltaT (t : ℝ) : ℝ := E / log |t|
+
+
+
+/-
+For all $t\in\mathbb{R}$ with $|t|\geq 2$ we have that $$\delta_t<1/9.$$
+Note that $\delta_t=E/\log|t|$ where $E$ is the implied constant from
+    Lemma \ref{ZeroInequality}. But we know that $E=(14D)^{-1}$ where $D\geq 5A+4B+C$
+    where $A$, $B$, and $C$ are the constants coming from
+    Lemmas \ref{ShiftZeroBound}, \ref{ShiftOneBound}, and \ref{ShiftTwoBound} respectively. Thus,
+    $$E\leq\frac{1}{14\,(5A+4B+C)}.$$
+    But note that $A\geq 1$, $B>0$, and $C>0$ by Lemmas \ref{ShiftZeroBound}, \ref{ShiftOneBound},
+    and \ref{ShiftTwoBound} respectively. So, by a very lazy estimate we have $E\leq 1/14$. Thus,
+    $$\delta_t=\frac{E}{\log|t|}\leq\frac{1}{14\,\log2}<\frac{1}{9}.$$
+-/
+lemma DeltaRange : ∀ (t : ℝ),
+    |t| ≥ 2 →
+      DeltaT t < (1 : ℝ) / 9 := by
+  intro t ht
+  rw [DeltaT, div_lt_div_iff₀ (Real.log_pos (by linarith)) (ofNat_pos'), one_mul]
+  exact lt_of_lt_of_le (by linarith [EinIoo.2, Real.log_two_gt_d9]) (Real.log_le_log zero_lt_two ht)
+
+
+
+/-
+For all $t\in\mathbb{R}$ with $|t|\geq 2$ and $z=\sigma+it$
+    where $1-\delta_t/3\leq\sigma\leq 3/2$, we have that
+    $$\left|\frac{\zeta'}{\zeta}(z)
+      -\sum_{\rho\in\mathcal{Z}_t}\frac{m_\zeta(\rho)}{z-\rho}\right|\ll\log|t|.$$
+By Lemma \ref{DeltaRange} we have that
+    $$-29/54<-1/2-\delta_t/3\leq\sigma-3/2\leq0.$$
+    We apply Theorem \ref{LogDerivZetaFinalBound} where $r'=2/3$, $r=3/4$, $R'=4/5$, and $R=5/6$.
+    Thus for all $z\in\overline{\mathbb{D}_{2/3}}\setminus\mathcal{K}_f(4/5)$ we have that
+    $$\left|\frac{\zeta'}{\zeta}(z+3/2+it)
+      -\sum_{\rho\in\mathcal{K}_f(3/4)}\frac{m_f(\rho)}{z-\rho}\right|\ll\log|t|$$
+    where $f(z)=\zeta(z+3/2+it)$ for $t\in\mathbb{R}$ with $|t|\geq 2$.
+    Now if we let $z=\sigma-3/2$, then $z\in(-29/54,0)\subseteq\overline{\mathbb{D}_{2/3}}$.
+    Additionally, $f(z)=\zeta(\sigma+it)$, where $\sigma+it$ lies in the zero free region given by
+    Lemma \ref{ZeroInequality} since $\sigma\geq 1-\delta_t/3\geq 1-\delta_t$.
+    Thus, $z\not\in\mathcal{K}_f(4/5)$. So,
+    $$\left|\frac{\zeta'}{\zeta}(\sigma+it)
+      -\sum_{\rho\in\mathcal{K}_f(3/4)}\frac{m_f(\rho)}{\sigma-3/2-\rho}\right|\ll\log|t|.$$
+    But now note that if $\rho\in\mathcal{K}_f(3/4)$, then $\zeta(\rho+3/2+it)=0$
+    and $|\rho|\leq 3/4$ (and the argument works in reverse). Additionally, note that
+    $m_f(\rho)=m_\zeta(\rho+3/2+it)$. So changing variables using these facts gives us that
+    $$\left|\frac{\zeta'}{\zeta}(\sigma+it)
+      -\sum_{\rho\in\mathcal{Z}_t}\frac{m_\zeta(\rho)}{\sigma+it-\rho}\right|\ll\log|t|.$$
+-/
+lemma SumBoundII :
+    ∃ (C : ℝ), C > 0 ∧
+      ∀ (t : ℝ), |t| ≥ 2 →
+        ∀ (z : ℂ), (hzIm : t = z.im) → (hzRe : z.re ∈ Icc (1 - DeltaT t / 3) (3 / 2)) →
+          ∀ (finiteZeros : (ZeroWindow t).Finite),
+    ‖ζ' (z) / ζ (z) - ∑ ρ ∈ finiteZeros.toFinset,
+      analyticOrderNatAt ζ ρ / (z - ρ)‖ ≤ C * Real.log |t| := by
+  let r' : ℝ := 2 / 3
+  let r : ℝ := 3 / 4
+  let R' : ℝ := 4 / 5
+  let R : ℝ := 5 / 6
+  have r'_pos : 0 < r' := by norm_num
+  have r'_lt_r : r' < r := by norm_num
+  have r_lt_one : r < 1 := by norm_num
+  have r_lt_R' : r < R' := by norm_num
+  have R'_lt_R : R' < R := by norm_num
+  have R_lt_one : R < 1 := by norm_num
+  obtain ⟨C, hC, LogDerivBound⟩ :=
+    LogDerivZetaFinalBound r'_pos r'_lt_r r_lt_one r_lt_R' R'_lt_R R_lt_one
+  refine ⟨(16 * r ^ 2 / (r - r') ^ 3 + 1 / ((R ^ 2 / R' - R') * Real.log (R / R'))) * C,
+    by positivity, ?_⟩
+  intro t ht z hzIm hzRe finiteZeros
+  have LogDerivBound := LogDerivBound t ht
+  extract_lets f at LogDerivBound
+  have finiteZeros' : (SetOfZeros 1 f).Finite := by
+    apply ZetaShiftFiniteZeros ht
+    simp only [f]
+  have hz : I * t + z.re = z := by
+    rw [← Complex.re_add_im z]
+    simp only [hzIm, add_re, ofReal_re, mul_re, I_re, mul_zero, ofReal_im, I_im, mul_one, sub_self,
+      add_zero, mul_comm, add_comm]
+  set Z : ℂ := z.re - 3 / 2 with hZ
+  have hZ' : Z ∈ Metric.closedBall (0 : ℂ) r' \ SetOfZeros R' f := by
+    simp only [SetOfZeros, f, Set.mem_sdiff, Metric.mem_closedBall, dist_zero_right, mem_ofPred_eq,
+      not_and, hZ]
+    ring_nf
+    refine ⟨?_, fun _ => ?_⟩
+    · suffices h1 : ‖-3 / 2 + z.re‖ ≤ r' by exact_mod_cast h1
+      rw [Real.norm_eq_abs, abs_le]
+      exact ⟨by linarith [hzRe.1, DeltaRange t ht], by linarith [hzRe.2]⟩
+    · rw [add_comm, hz]
+      by_contra zZetaZero
+      suffices h1 : 1 - E / Real.log |t| < 1 - DeltaT t / 3 by
+        linarith [hzRe.1, ZeroInequalitySpec z zZetaZero z.re rfl t hzIm ht]
+      simp only [DeltaT, sub_lt_sub_iff_left]
+      exact _root_.div_lt_self (_root_.div_pos EinIoo.1 (Real.log_pos (by linarith))) one_lt_ofNat
+  have LogDerivBound := LogDerivBound finiteZeros' Z hZ'
+  refine le_trans (le_of_eq ?_) (LogDerivBound.trans (by rw [mul_assoc]))
+  apply congrArg norm
+  congr 1
+  · simp only [f, hZ, add_assoc, deriv_comp_add_const]
+    ring_nf
+    rw [add_comm, hz]
+  · simp only [f]
+    refine Finset.sum_nbij' (fun ρ => ρ - (3 / 2 + I * t)) (fun ρ => ρ + (3 / 2 + I * t))
+      (fun ρ hρ => ?_) (fun ρ hρ => ?_) (fun ρ hρ => by ring_nf) (fun ρ hρ => by ring_nf)
+      (fun ρ hρ => ?_)
+    · simp only [Set.Finite.mem_toFinset, SetOfZeros, ZeroWindow, Set.mem_ofPred_eq] at hρ ⊢
+      refine ⟨?_, ?_⟩
+      · simp only [r, hρ.2]
+      · simp only [add_assoc, sub_add_cancel, hρ.1]
+    · simp only [Set.Finite.mem_toFinset, SetOfZeros, ZeroWindow, Set.mem_ofPred_eq] at hρ ⊢
+      refine ⟨?_, ?_⟩
+      · simp only [← add_assoc, hρ.2]
+      · simp only [add_sub_cancel_right, r, hρ.1]
+    · ring_nf
+      simp only [add_assoc _ _ (I * t), add_comm _ (I * t), ← add_assoc _ (I * t) _]
+      rw [mul_comm, analyticOrderNatAt_fun_comp_add_left, hZ]
+      ring_nf
+      simp only [add_assoc, hz, neg_add_eq_sub ρ z, mul_comm]
+
+
+
+/-
+Let $t\in\mathbb{R}$ with $|t|\geq 3$ and $z=\sigma+it$ where $1-\delta_t/3\leq\sigma\leq 3/2$.
+   Additionally, let $\rho\in\mathcal{Z}_t$. Then we have that
+   $$|z-\rho|\geq\delta_t/6.$$
+Let $\rho=\sigma'+it'$ and note that since $\rho\in\mathcal{Z}_t$, we have $t'\in(t-3/4,t+3/4)$.
+    Thus, if $t>1$ we have
+    $$\log|t'|\leq\log|t+3/4|\leq\log|2t|=\log 2+\log|t|\leq 2\log|t|.$$
+    And otherwise if $t<-1$ we have
+    $$\log|t'|\leq\log|t-3/4|\leq\log|2t|=\log 2+\log|t|\leq 2\log|t|.$$
+    So by taking reciprocals and multiplying through by a constant we have
+    that $\delta_t\leq2\delta_{t'}$. Now note that since $\rho\in\mathcal{Z}_t$
+    we know that $\sigma'\leq 1-\delta_{t'}$ by Theorem \ref{ZeroInequality}
+    (here we use the fact that $|t|\geq 3$ to give us that $|t'|\geq 2$). Thus,
+    $$\delta_t/6\leq\delta_{t'}-\delta_t/3
+      =1-\delta_t/3-(1-\delta_{t'})\leq\sigma-\sigma'\leq|z-\rho|.$$
+-/
+lemma GapSize (t : ℝ) (ht : |t| ≥ 3)
+    (z : ℂ) (hzRe : z.re ∈ Icc (1 - DeltaT t / 3) (3 / 2))
+    (ρ : ℂ) (hρ : ρ ∈ ZeroWindow t) :
+    ‖z - ρ‖ ≥ DeltaT t / 6 := by
+  simp only [ZeroWindow, mem_ofPred_eq] at hρ
+  have := abs_sub_abs_le_abs_sub t ρ.im; rw [abs_sub_comm] at this
+  have ρImDiffBound : |ρ.im - t| ≤ 3 / 4 := by
+    have h := Complex.abs_im_le_norm (ρ - (3 / 2 + I * t))
+    simp only [sub_im, add_im, div_ofNat_im, im_ofNat, zero_div, mul_im, I_re, ofReal_im, mul_zero,
+      I_im, ofReal_re, one_mul, zero_add] at h
+    exact h.trans hρ.2
+  have ρImAbsUpperBound : Real.log |ρ.im| ≤ 2 * Real.log |t| := by
+    have moveTwo : Real.log (2 * |t|) ≤ 2 * Real.log |t| := by
+      rw [← Real.log_rpow (by linarith)]
+      have := mul_le_mul_of_nonneg_right ht (abs_nonneg t); rw [← sq, ← Real.rpow_two] at this
+      exact Real.log_le_log (by linarith) (by linarith)
+    refine le_trans (Real.log_le_log (by linarith) ?_) moveTwo
+    linarith [abs_sub_abs_le_abs_sub ρ.im t]
+  have deltaRelation : DeltaT t ≤ 2 * (DeltaT ρ.im) := by
+    simp only [DeltaT, mul_div, mul_comm]
+    rw [div_le_div_iff₀ (Real.log_pos (by linarith)) (Real.log_pos (by linarith)), mul_assoc]
+    nlinarith [EinIoo.1, EinIoo.2]
+  have hρRe := ZeroInequalitySpec ρ hρ.1 ρ.re rfl ρ.im rfl (by linarith); rw [← DeltaT] at hρRe
+  calc DeltaT t / 6 ≤ (1 - DeltaT t / 3) - (1 - DeltaT ρ.im) := by linarith
+    _ ≤ z.re - ρ.re := by linarith [hzRe.1, hρRe]
+    _ = (z - ρ).re := by rw [Complex.sub_re]
+    _ ≤ ‖z - ρ‖ := Complex.re_le_norm _
+
+
+
+/-
+There exists a constant $F\in(0,1/42)$ such that
+    for all $t\in\mathbb{R}$ with $|t|\geq 3$ one has
+    $$1-\frac{F}{\log|t|}\leq\sigma\leq 3/2
+      \implies\left|\frac{\zeta'}{\zeta}(\sigma+it)\right|\ll\log^2|t|$$
+    where the implied constant is uniform in $\sigma$.
+Take $F=E/3$ where $E$ comes from Theorem \ref{ZeroInequality}.
+    Then we have that $\sigma\geq 1-\delta_t/3$. So, we apply Lemma \ref{SumBoundII},
+    which gives us that
+    $$\left|\frac{\zeta'}{\zeta}(z)
+      -\sum_{\rho\in\mathcal{Z}_t}\frac{m_\zeta(\rho)}{z-\rho}\right|\ll\log|t|.$$
+    Using the reverse triangle inequality and rearranging, we have that
+    $$\left|\frac{\zeta'}{\zeta}(z)\right|
+      \leq\sum_{\rho\in\mathcal{Z}_t}\frac{m_\zeta(\rho)}{|z-\rho|}+C\,\log|t|$$
+    where $C$ is the implied constant in Lemma \ref{SumBoundII}.
+    Now applying Lemma \ref{GapSize} we have that
+    $$\left|\frac{\zeta'}{\zeta}(z)\right|
+      \leq\frac{6}{\delta_t}\sum_{\rho\in\mathcal{Z}_t}m_\zeta(\rho)+C\,\log|t|.$$
+    Now let $f(z)=\zeta(z+3/2+it)/\zeta(3/2+it)$ with $\rho=\rho'+3/2+it$.
+    Then if $\rho\in\mathcal{Z}_t$ we have that
+    $$0=\zeta(\rho)=\zeta(\rho'+3/2+it)=f(\rho')$$
+    with the same multiplicity of zero, that is $m_\zeta(\rho)=m_f(\rho')$.
+    And also if $\rho\in\mathcal{Z}_t$ then
+    $$3/4\geq|\rho-(3/2+it)|=|\rho'|.$$
+    Thus we change variables to have that
+    $$\left|\frac{\zeta'}{\zeta}(z)\right|
+      \leq\frac{6}{\delta_t}\sum_{\rho'\in\mathcal{K}_f(3/4)}m_f(\rho')+C\,\log|t|.$$
+    Now note that $f(0)=1$ and for $|z|\leq 5/6$ we have
+    $$|f(z)|=\frac{|\zeta(z+3/2+it)|}{|\zeta(3/2+it)|}
+      \leq\frac{\zeta(3/2)}{\zeta(3)}\cdot(7+2\,|t|)\leq\frac{13\,\zeta(3/2)}{3\,\zeta(3)}\,|t|$$
+    by Theorems \ref{ZetaFixedLowerBound} and \ref{GlobalBound}.
+    Thus by Theorem \ref{ZerosBound} we have that
+    $$\sum_{\rho'\in\mathcal{K}_f(3/4)}m_f(\rho')
+      \leq\frac{\log|t|+\log(13\,\zeta(3/2)/(3\,\zeta(3)))}{\log((5/6)/(3/4))}\leq D\log|t|$$
+    where $D$ is taken to be sufficiently large.
+    Recall, by definition that, $\delta_t=E/\log|t|$ with $E$ coming from
+    Theorem \ref{ZeroInequality}. By using this fact and the above, we have that
+    $$\left|\frac{\zeta'}{\zeta}(z)\right|\ll\log^2|t|+\log|t|$$
+    where the implied constant is taken to be bigger than $6D/E+C$.
+    We know that the RHS is bounded above by $\ll\log^2|t|$; so the result follows.
+-/
+lemma LogDerivZetaUniformLogSquaredBoundStrip : ∃ (F : ℝ) (_ : F = E / 3)
+    (C : ℝ) (_ : 0 < C),
+      ∀ (t : ℝ), 3 ≤ |t| →
+        ∀ (σ : ℝ), σ ∈ Set.Icc (1 - F / Real.log |t|) (3 / 2) →
+          ‖ζ' (σ + t * I) / ζ (σ + t * I)‖ ≤ C * (Real.log |t|) ^ 2 := by
+  obtain ⟨C, Cpos, SumBoundII⟩ := SumBoundII
+  set d : ℝ := ‖13 * ζ (3 / 2) / (3 * ζ 3)‖ with hd
+  have d_gt_one : 1 < d := by
+    simp only [hd, Complex.norm_div, Complex.norm_mul, Complex.norm_ofNat]
+    rw [one_lt_div]
+    · refine mul_lt_mul (by linarith) ?_ ?_ (ofNat_nonneg' _)
+      · have ζNormLe := norm_zeta_strict_mono_ofReal (a := 3) (b := (3 / 2))
+        simp only [half_lt_self_iff, ofNat_pos, ofReal_ofNat, ofReal_div, forall_const] at ζNormLe
+        refine le_of_lt (ζNormLe (by linarith))
+      · simp only [norm_pos_iff, ne_eq]
+        exact riemannZeta_ne_zero_of_one_lt_re (by norm_num)
+    · simp only [ofNat_pos, mul_pos_iff_of_pos_left, norm_pos_iff, ne_eq]
+      exact riemannZeta_ne_zero_of_one_lt_re (by norm_num)
+  set D : ℝ := (1 + Real.log d / Real.log 3) / Real.log (10 / 9) with hD
+  have Dpos : D > 0 := by
+    rw [hD, add_div]
+    refine add_pos ?_ (_root_.div_pos (_root_.div_pos (Real.log_pos d_gt_one) (Real.log_pos
+      one_lt_ofNat))
+        (Real.log_pos ?_))
+    · rw [one_div_pos]
+      exact Real.log_pos (by norm_num)
+    · rw [one_lt_div ofNat_pos']
+      linarith
+  refine ⟨E / 3, rfl, ⟨6 * D / E + C,
+    add_pos (mul_pos (mul_pos ofNat_pos' Dpos) (inv_pos.mpr EinIoo.1)) Cpos, ?_⟩⟩
+  intro t ht σ hσ
+  set r : ℝ := 3 / 4 with rwr
+  set R : ℝ := 5 / 6 with rwR
+  have R_over_r : R / r = 10 / 9 := by norm_num
+  have r_pos : 0 < r := by norm_num
+  have r_lt_one : r < 1 := by norm_num
+  have r_lt_R : r < R := by norm_num
+  have R_lt_one : R < 1 := by norm_num
+  set B : ℝ := d * |t| with hB
+  set g : ℂ → ℂ := fun z ↦ ζ (z + 3 / 2 + I * t) with hg
+  set f : ℂ → ℂ := fun z ↦ g z / ζ (3 / 2 + I * t) with hf
+  have fAnalytic : AnalyticOnNhd ℂ f (Metric.closedBall (0 : ℂ) 1) := by
+    intro z hz; simp only [Metric.mem_closedBall, dist_zero_right] at hz
+    simp only [hf, hg]
+    refine AnalyticAt.div_const (AnalyticAt.comp (DifferentiableOn.analyticAt (s := {z : ℂ | z ≠ 1})
+      (fun z' hz' => (differentiableAt_riemannZeta hz').differentiableWithinAt)
+      ((isOpen_ne).mem_nhds ?_)) (AnalyticAt.add (AnalyticAt.add analyticAt_id analyticAt_const)
+      analyticAt_const))
+    simp only [ne_eq, Pi.add_apply, id_eq, mem_ofPred_eq]
+    by_contra h; rw [Complex.ext_iff] at h
+    obtain ⟨_, hIm⟩ := h; simp only [add_im, div_ofNat_im, im_ofNat, zero_div, add_zero, mul_im,
+      I_re, ofReal_im, mul_zero, I_im, ofReal_re, one_mul, zero_add, one_im] at hIm
+    rw [add_eq_zero_iff_eq_neg] at hIm
+    have h := Complex.abs_im_le_norm z; rw [hIm, abs_neg] at h
+    linarith
+  have zetaThreeHalfNonzero : ¬ζ (3 / 2 + I * ↑t) = 0 := by
+    exact riemannZeta_ne_zero_of_one_lt_re (by norm_num)
+  have f0_1 : f 0 = 1 := by
+    simp only [hg, hf, zero_add, div_self_eq_one₀, ne_eq, zetaThreeHalfNonzero, not_false_eq_true]
+  have finiteSetOf0s : (SetOfZeros 1 f).Finite := by
+    have gFiniteSetOf0s := ZetaShiftFiniteZeros (t := t) (by linarith) hg
+    simp only [SetOfZeros, hf, div_eq_zero_iff, zetaThreeHalfNonzero, or_false] at gFiniteSetOf0s ⊢
+    exact gFiniteSetOf0s
+  have rFinite0s:= finiteSetOfZeros_mono r_lt_one finiteSetOf0s
+  have finite0s := ZeroWindowFinite (t := t) (by linarith)
+  have fz_bound : ∀ z : ℂ, ‖z‖ ≤ R → ‖f z‖ ≤ B := by
+    intro z hz
+    simp only [hf, hg, Complex.norm_div, hB, hd, Complex.norm_mul, Complex.norm_ofNat]
+    rw [mul_comm 3 _, div_mul_eq_div_mul_one_div, mul_comm _ |t|, mul_comm _ (1 / 3), ← mul_div,
+      ← mul_assoc, ← mul_assoc]
+    refine mul_le_mul (le_trans (GlobalBound (s := z) (t := t) (by linarith) (by linarith)) (by
+      linarith)) ?_ (inv_nonneg.mpr (Complex.norm_nonneg _)) (by linarith)
+    rw [← inv_le_inv₀ (_root_.div_pos (norm_pos_iff.mpr (riemannZeta_ne_zero_of_one_lt_re (by
+      norm_num)))
+      (norm_pos_iff.mpr (riemannZeta_ne_zero_of_one_lt_re (by norm_num)))) (inv_pos.mpr
+        (norm_pos_iff.mpr zetaThreeHalfNonzero)), inv_div, inv_inv]
+    have zetaLowerBound := ZetaFixedLowerBound t
+    simp only [nnnorm_div, ge_iff_le] at zetaLowerBound
+    exact_mod_cast zetaLowerBound
+  have ZerosBound := ZerosBound r_pos r_lt_one r_lt_R R_lt_one fAnalytic f0_1 finiteSetOf0s fz_bound
+  rw [hB, one_div_mul_eq_div, cast_sum, R_over_r,
+    Real.log_mul (by linarith) (by linarith), add_div] at ZerosBound
+  have ZerosBound : ∑ ρ ∈ finite0s.toFinset, ↑(analyticOrderNatAt ζ ρ) ≤ Real.log |t| * D := by
+    rw [mul_comm, Finset.sum_nbij' (t := rFinite0s.toFinset) (g := fun ρ ↦ ↑(analyticOrderNatAt f
+      ρ))
+      (fun ρ => ρ - (3 / 2 + I * t)) (fun ρ => ρ + (3 / 2 + I * t))]
+    · apply le_trans ZerosBound
+      rw [hd, div_mul_eq_mul_div, add_mul, one_mul, add_div, add_comm, add_le_add_iff_left]
+      gcongr
+      rw [div_mul_eq_mul_div, le_div_iff₀ (Real.log_pos one_lt_ofNat)]
+      exact mul_le_mul_of_nonneg_left (Real.log_le_log three_pos ht) (Real.log_nonneg d_gt_one.le)
+    · simp only [ZeroWindow, Finite.mem_toFinset, mem_ofPred_eq, SetOfZeros, and_imp, rwr, hf, hg]
+      ring_nf
+      intro z hzZero hzBound
+      simp only [_root_.mul_eq_zero, inv_eq_zero, zetaThreeHalfNonzero, or_false]
+      exact ⟨hzBound, hzZero⟩
+    · simp only [SetOfZeros, Finite.mem_toFinset, mem_ofPred_eq, ZeroWindow, add_sub_cancel_right,
+        and_imp, rwr, hf, hg]
+      ring_nf
+      intro z hzBound hzZero
+      simp only [_root_.mul_eq_zero, inv_eq_zero, zetaThreeHalfNonzero, or_false] at hzZero
+      exact ⟨hzZero, hzBound⟩
+    · simp only [Finite.mem_toFinset, implies_true, sub_add_cancel]
+    · simp only [Finite.mem_toFinset, implies_true, add_sub_cancel_right]
+    · simp only [ZeroWindow, Finite.mem_toFinset, mem_ofPred_eq, hf, hg, Nat.cast_inj, and_imp]
+      intro z hzZero hzBound
+      rw [analyticOrderNatAt_fun_div_const zetaThreeHalfNonzero]
+      · simp only [add_assoc, analyticOrderNatAt_fun_comp_add_right, sub_add_cancel]
+      · apply AnalyticAt.comp (DifferentiableOn.analyticAt (s := {z : ℂ | z ≠ 1})
+          (fun z' hz' => (differentiableAt_riemannZeta hz').differentiableWithinAt)
+          ((isOpen_ne).mem_nhds ?_))
+          (AnalyticAt.add (AnalyticAt.add analyticAt_id analyticAt_const) analyticAt_const)
+        simp only [ne_eq, Pi.add_apply, id_eq, mem_ofPred_eq]; ring_nf
+        by_contra z1
+        simp [z1] at hzBound; ring_nf at hzBound
+        have h := Complex.abs_im_le_norm (-1 / 2 - I * t); simp only [sub_im, div_ofNat_im, neg_im,
+          one_im, neg_zero, zero_div, mul_im, I_re, ofReal_im, mul_zero, I_im, ofReal_re, one_mul,
+          zero_add, zero_sub, abs_neg] at h
+        linarith
+  set z : ℂ := σ + t * I with hz
+  have zIm : t = z.im := by
+    simp only [hz, add_im, ofReal_im, mul_im, ofReal_re, I_im, mul_one, I_re, mul_zero, add_zero,
+      zero_add]
+  have zRe : z.re ∈ Icc (1 - DeltaT t / 3) (3 / 2) := by
+    simp only [hz, DeltaT, div_right_comm, add_re, ofReal_re, mul_re, I_re, zero_mul, I_im,
+      ofReal_im, mul_zero, sub_self, add_zero, hσ]
+  have one_le_logt : 1 ≤ Real.log |t| := by
+    rw [← Real.log_exp 1]
+    apply Real.log_le_log (Real.exp_pos _)
+    linarith [Real.exp_one_lt_three]
+  calc ‖ζ' z / ζ z‖ ≤ _ := norm_le_norm_sub_add _ (∑ ρ ∈ finite0s.toFinset, analyticOrderNatAt ζ ρ
+    / (z - ρ))
+    _ ≤ ‖∑ ρ ∈ finite0s.toFinset, ↑(analyticOrderNatAt ζ ρ) / (z - ρ)‖ + C * Real.log |t| := by
+      linarith [SumBoundII t (by linarith) z zIm zRe finite0s]
+    _ ≤ ∑ ρ ∈ finite0s.toFinset, ↑(analyticOrderNatAt ζ ρ) / ‖z - ρ‖ + C * Real.log |t| := by
+      rw [add_le_add_iff_right]
+      apply norm_sum_le_of_le
+      intro ρ hρ
+      simp only [Complex.norm_div, RCLike.norm_natCast, Std.le_refl]
+    _ ≤ (6 / DeltaT t) * ∑ ρ ∈ finite0s.toFinset, ↑(analyticOrderNatAt ζ ρ) + C * Real.log |t| := by
+      rw [add_le_add_iff_right, Finset.mul_sum]
+      apply Finset.sum_le_sum
+      intro ρ hρ; rw [Finite.mem_toFinset] at hρ
+      rw [mul_comm, mul_div, ← div_div_eq_mul_div]
+      refine div_le_div_of_nonneg_left (cast_nonneg' _) ?_ (GapSize t ht z zRe ρ hρ)
+      simp only [DeltaT, ofNat_pos, div_pos_iff_of_pos_right]
+      refine _root_.div_pos EinIoo.1 (Real.log_pos ?_)
+      linarith
+    _ ≤ 6 * D / E * Real.log |t| ^ 2 + C * Real.log |t| := by
+      simp only [DeltaT, add_le_add_iff_right, ← div_mul, mul_comm]
+      field_simp
+      exact div_le_div_of_nonneg_right ZerosBound EinIoo.1.le
+    _ ≤ _ := by
+      simp only [add_mul, add_le_add_iff_left]
+      refine mul_le_mul_of_nonneg_left ?_ Cpos.le
+      nlinarith [one_le_logt]
+
+
+
+/-- The zero-free-strip constant used in the uniform log-squared bound. -/
+noncomputable def F : ℝ := LogDerivZetaUniformLogSquaredBoundStrip.choose
+lemma Fequ : F = E / 3 := LogDerivZetaUniformLogSquaredBoundStrip.choose_spec.1
+lemma FinIoo : F ∈ Ioo (0 : ℝ) (1 / 42 : ℝ) := by
+  simp only [one_div, Fequ, mem_Ioo, EinIoo.1, div_pos_iff_of_pos_left, ofNat_pos, true_and]
+  linarith [EinIoo.2]
+lemma LogDerivZetaUniformLogSquaredBoundStripSpec : ∃ (C : ℝ) (_ : 0 < C),
+    ∀ (t : ℝ), 3 ≤ |t| →
+      ∀ (σ : ℝ), σ ∈ Set.Icc (1 - F / Real.log |t|) (3 / 2) →
+          ‖ζ' (σ + t * I) / ζ (σ + t * I)‖ ≤ C * (Real.log |t|) ^ 2 :=
+            LogDerivZetaUniformLogSquaredBoundStrip.choose_spec.2
+lemma FLogTtoDeltaT : ∀ (t : ℝ),
+    DeltaT t / 3 = F / Real.log |t| := fun _ ↦ by simp [DeltaT, Fequ]; ring
+
+
+
+/-
+There exists a uniform constant $C$ such that for $z=\sigma+it$ one has
+    $$3/2\leq\sigma\implies\left|\frac{\zeta'}{\zeta}(z)\right|\leq C.$$
+Note that
+    $$\left|\frac{\zeta'}{\zeta}(z)\right|=\left|\sum_{n=1}^\infty\frac{\Lambda(n)}{n^z}\right|\leq
+      \sum_{n=1}^\infty\frac{\Lambda(n)}{|n^z|}=\sum_{n=1}^\infty\frac{\Lambda(n)}{n^\sigma}\leq
+      \sum_{n=1}^\infty\frac{\Lambda(n)}{n^{3/2}}<\infty$$
+    by \ref{vonMangoldtLSeriesSummable}.
+-/
+lemma LogDerivZetaBdd_of_Re_ge_three_halves :
+    ∃ C, ∀ (s : ℂ), 3/2 ≤ s.re → ‖deriv riemannZeta s / riemannZeta s‖ ≤ C := by
+  have threeHalvesRe : 1 < ((3 / 2) : ℂ).re := by norm_num
+  have h_sum_converges : Summable (fun n : ℕ ↦ vonMangoldt n / (n : ℝ) ^ (3 / 2 : ℝ)) := by
+    apply Complex.summable_ofReal.mp
+    convert (vonMangoldtLSeriesSummable threeHalvesRe) using 2 with n
+    rw [ofReal_div, Complex.ofReal_cpow, ofReal_natCast, ofReal_div, ofReal_ofNat 3, ofReal_ofNat 2]
+    exact cast_nonneg' n
+  have h_log_deriv_sum : ∀ s : ℂ, 3 / 2 ≤ s.re →
+      deriv riemannZeta s / riemannZeta s = -∑' n : ℕ, (vonMangoldt n : ℂ) / (n : ℂ) ^ s := by
+    intro s hs; have h := LogDerivativeDirichlet s (by grind); linear_combination -h
+  have h_triangle : ∀ s : ℂ,
+      ‖∑' n : ℕ, (vonMangoldt n : ℂ) / (n : ℂ) ^ s‖ ≤
+        ∑' n : ℕ, ‖(vonMangoldt n : ℂ) / (n : ℂ) ^ s‖ := fun s ↦ by
+    by_cases h : Summable fun n ↦ (ArithmeticFunction.vonMangoldt n : ℂ) / (n : ℂ) ^ s
+    · exact norm_tsum_le_tsum_norm h.norm
+    · simp only [tsum_eq_zero_of_not_summable h, norm_zero]
+      exact tsum_nonneg fun _ ↦ by positivity
+  have h_norm_summand : ∀ s : ℂ, 3 / 2 ≤ s.re → ∀ n : ℕ,
+      ‖(vonMangoldt n : ℂ) / (n : ℂ) ^ s‖ ≤ (vonMangoldt n : ℝ) / (n : ℝ) ^ (3 / 2 : ℝ) := by
+    intro s hs n
+    by_cases hn : n = 0 <;> simp_all [Complex.norm_cpow_of_ne_zero]
+    ring_nf; norm_num
+    rw [abs_of_nonneg ArithmeticFunction.vonMangoldt_nonneg]
+    exact mul_le_mul_of_nonneg_left (inv_anti₀ (by positivity)
+      (Real.rpow_le_rpow_of_exponent_le (mod_cast Nat.one_le_iff_ne_zero.mpr hn) hs))
+      ArithmeticFunction.vonMangoldt_nonneg
+  refine ⟨∑' n : ℕ, (ArithmeticFunction.vonMangoldt n : ℝ) / (n : ℝ) ^ (3 / 2 : ℝ),
+    fun s hs ↦ ?_⟩
+  have hSum : Summable fun n ↦ ‖(vonMangoldt n : ℂ) / (n : ℂ) ^ s‖ :=
+    Summable.of_nonneg_of_le (fun n ↦ by positivity)
+      (fun n ↦ h_norm_summand s hs n) h_sum_converges
+  simpa [neg_div, h_log_deriv_sum s hs] using (h_triangle s).trans
+    (hSum.tsum_le_tsum (fun n ↦ h_norm_summand s hs n) h_sum_converges)
+
+
+
+/-
+There exists a constant $F\in(0,1/42)$ such that for all $t\in\mathbb{R}$ with $|t|\geq 3$ one has
+    $$1-\frac{F}{\log|t|}\leq\sigma\implies
+      \left|\frac{\zeta'}{\zeta}(\sigma+it)\right|\ll\log^2|t|$$
+    where the implied constant is uniform in $\sigma$.
+Put the previous two Lemmas together.
+-/
+theorem LogDerivZetaUniformLogSquaredBound : ∃ (C : ℝ) (_ : 0 < C),
+    ∀ (σ t : ℝ), 3 < |t| → σ ∈ Set.Ici (1 - F / Real.log |t|) →
+      ‖ζ' (σ + t * I) / ζ (σ + t * I)‖ ≤ C * Real.log |t| ^ (2 : ℝ) := by
+  obtain ⟨C1, hC1⟩ := LogDerivZetaUniformLogSquaredBoundStripSpec
+  obtain ⟨C2, hC2⟩ := LogDerivZetaBdd_of_Re_ge_three_halves
+  have hC2pos := (norm_nonneg _).trans (hC2 2 (by norm_num))
+  use max C1 C2, lt_max_of_lt_left hC1.1
+  intro σ t ht hσ
+  by_cases hσ' : σ ≤ 3 / 2
+  · apply (hC1.2 t (by grind) σ ⟨hσ, hσ'⟩).trans
+    gcongr
+    · exact le_max_left _ _
+    · simp only [log_abs, rpow_ofNat, Std.le_refl]
+  · refine (hC2 _ ?_).trans ?_
+    · norm_num; linarith
+    · nth_rewrite 1 [← mul_one C2, ← mul_one 1, ← sq]
+      refine mul_le_mul (le_max_right _ _) ?_ (sq_nonneg _) ?_
+      · rw [one_pow, rpow_ofNat, one_le_sq_iff_one_le_abs, abs_of_pos (Real.log_pos (by
+        linarith)), Real.le_log_iff_exp_le (by linarith)]
+        linarith [Real.exp_one_lt_d9]
+      · linarith [le_max_right C1 C2]
+
+
+
+/-- A wrapper for the above theorem -/
+lemma LogDerivZetaBndUnif12 : LogDerivZetaBndUnifGenProp 1 2 := by
+  refine ⟨F, ⟨FinIoo.1, by linarith [FinIoo.2]⟩, ?_⟩
+  simp only [rpow_one]
+  apply LogDerivZetaUniformLogSquaredBound
+
+
+
+-- analouge from ZetaBounds
+lemma ZetaZeroFree1 :
+    ZetaZeroFreeGenProp 1 := by
+  refine ⟨F, ⟨FinIoo.1, by linarith [FinIoo.2]⟩, ?_⟩
+  intro σ t ht hσ
+  by_contra h
+  have ZeroInequalityThing := ZeroInequalitySpec (σ + t * I) h
+  simp only [add_re, ofReal_re, mul_re, I_re, mul_zero, ofReal_im, I_im, mul_one, sub_self,
+    add_zero, add_im, mul_im, zero_add, ge_iff_le, forall_eq] at ZeroInequalityThing
+  have contra := hσ.1; rw [Fequ] at contra
+  have contra := le_trans contra (ZeroInequalityThing (by linarith))
+  have log_pos : 0 < Real.log |t| := by exact Real.log_pos (by linarith)
+  rw [rpow_one, sub_le_sub_iff_left, div_div, div_le_div_iff_of_pos_left EinIoo.1 log_pos (mul_pos
+    three_pos (Real.log_pos (lt_trans one_lt_ofNat ht)))] at contra
+  linarith
+
+
+
+-- analouge from ZetaBounds
+theorem LogDerivZetaHolcLargeT1 : LogDerivZetaHolcLargeTGenProp 1 := by
+  exact LogDerivZetaHolcLargeTGen ZetaZeroFree1 zero_lt_one
+
+
+
+-- analouge from MediumPNT
+lemma LogDerivZetaBoundedAndHolo12 : LogDerivZetaBoundedAndHoloGenProp 1 2 := by
+  exact LogDerivZetaBoundedAndHoloGen LogDerivZetaBndUnif12 LogDerivZetaHolcLargeT1
+
+
+
+/-
+We have
+    $$\sum_{n \leq x}\Lambda(n)=x+O(x \exp(-c(\log x)^{1/2})).$$
+This follows as a corollary of
+    Theorems \ref{GenStrengthPNT} and \ref{LogDerivZetaUniformLogSquaredBound}.
+-/
+theorem StrongPNT : ∃ c > 0,
+    (ψ - id) =O[atTop]
+      fun (x : ℝ) ↦ x * Real.exp (-c * (Real.log x) ^ ((1 : ℝ) / 2)) := by
+  have := GenStrengthPNT LogDerivZetaBoundedAndHolo12 (by linarith) (by linarith); ring_nf at this
+  simpa only [gt_iff_lt, one_div, neg_mul] using this
+
+end IwaniecLinearSievePNT
