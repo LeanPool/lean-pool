@@ -162,7 +162,7 @@ lemma zero_smul_HeckeModule (z : HeckeModule P Z) : (0 : 𝕋 P Z) • z = 0 := 
 /-- Any Hecke ring element acts as zero on the zero module element. -/
 lemma smul_zero_HeckeModule (T : 𝕋 P Z) : T • (0 : HeckeModule P Z) = 0 := by
   simp only [smul_eq_sum]
-  simp_all
+  simp_all only [single_mul, sum_zero_index, sum_fun_zero]
 
 /-- The module action is additive in the module argument. -/
 lemma smul_add_right (T : 𝕋 P Z) (m₁ m₂ : HeckeModule P Z) :

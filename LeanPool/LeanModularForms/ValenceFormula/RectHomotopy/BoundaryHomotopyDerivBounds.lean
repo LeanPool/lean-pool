@@ -31,13 +31,13 @@ private lemma norm_deriv_arc_chord_le (α c : ℝ) (a b : ℂ) (hab : ‖b - a�
     ‖deriv (fun t' : ℝ =>
       (1 - s) • Complex.exp (((α : ℝ) + (t' - c) * (Real.pi / 6)) * I) +
         s • chordSegment a b (t' - c)) t‖ ≤ 5 := by
-  have h1s : |1 - s| ≤ 1 := by rw [abs_le]; constructor <;> linarith [hs.1, hs.2]
-  have hs' : |s| ≤ 1 := by rw [abs_le]; constructor <;> linarith [hs.1, hs.2]
-  have hpi6 : Real.pi / 6 ≤ 1 := by have := Real.pi_le_four; linarith
+  have h1s : |1 - s| ≤ 1 := by rw [abs_le]; constructor <;> linarith only [hs, hs.1, hs.2]
+  have hs' : |s| ≤ 1 := by rw [abs_le]; constructor <;> linarith only [hs, hs.1, hs.2]
+  have hpi6 : Real.pi / 6 ≤ 1 := by have := Real.pi_le_four; linarith only [this]
   have h_arc : HasDerivAt (fun t' : ℝ => Complex.exp (((α : ℝ) + (t' - c) * (Real.pi / 6)) * I))
       (((Real.pi : ℝ) / 6) * I * Complex.exp (((α : ℝ) + (t - c) * (Real.pi / 6)) * I)) t := by
     have := hasDerivAt_arc_exp α (Real.pi / 6) c t
-    simp_all
+    simp_all only [mem_Icc, ofReal_div, ofReal_ofNat]
   have h_chord : HasDerivAt (fun t' : ℝ => chordSegment a b (t' - c)) (b - a) t :=
     hasDerivAt_chordSegment_shift a b c t
   have h_combined : HasDerivAt (fun t' : ℝ =>
@@ -64,10 +64,11 @@ private lemma norm_deriv_arc_chord_le (α c : ℝ) (a b : ℂ) (hab : ‖b - a�
     _ = |1 - s| * (Real.pi / 6) + |s| * ‖b - a‖ := by
         rw [norm_smul, norm_smul, Real.norm_eq_abs, Real.norm_eq_abs, harc_norm]
     _ ≤ 1 * 1 + 1 * 2 := by
-        have hb1 : |1 - s| * (Real.pi / 6) ≤ 1 * 1 := by nlinarith [abs_nonneg (1 - s)]
+        have hb1 : |1 - s| * (Real.pi / 6) ≤ 1 * 1 := by
+          nlinarith only [h1s, hpi6, abs_nonneg (1 - s)]
         have hb2 : |s| * ‖b - a‖ ≤ 1 * 2 :=
           mul_le_mul hs' hab (norm_nonneg _) (by norm_num)
-        linarith
+        linarith only [hb1, hb2]
     _ ≤ 5 := by norm_num
 
 /-- Norm bound for segment 2 derivative. -/
@@ -166,7 +167,7 @@ lemma norm_deriv_H_seg1_le (t : ℝ) (_s : ℝ) :
         ((HHeight : ℂ) - Real.sqrt 3 / 2) t := by
       simpa using Complex.ofRealCLM.hasDerivAt.mul_const ((HHeight : ℂ) - Real.sqrt 3 / 2)
     have h4 := (((hasDerivAt_const t (HHeight : ℂ)).sub h2).mul_const I)
-    simp_all
+    simp_all only [Pi.sub_apply, zero_sub, neg_sub, one_div, hasDerivAt_const_add_iff]
   rw [h_deriv.deriv, HHeight_sub_sqrt3_div2]
   simp only [neg_one_mul, norm_neg, Complex.norm_I]; norm_num
 
@@ -185,7 +186,7 @@ lemma norm_deriv_H_seg4_le (t : ℝ) (_s : ℝ) :
       simpa using (Complex.ofRealCLM.hasDerivAt.sub_const 3).mul_const
         ((HHeight : ℂ) - Real.sqrt 3 / 2)
     have h5 := (((hasDerivAt_const t (Real.sqrt 3 / 2 : ℂ)).add h3).mul_const I)
-    simp_all
+    simp_all only [Pi.add_apply, zero_add, hasDerivAt_const_add_iff]
   rw [h_deriv.deriv, HHeight_sub_sqrt3_div2]
   simp only [one_mul, Complex.norm_I]; norm_num
 

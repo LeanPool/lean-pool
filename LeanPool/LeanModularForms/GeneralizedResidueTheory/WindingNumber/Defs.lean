@@ -109,7 +109,7 @@ theorem windingNumber_corner_crossing
       (singleton_at_crossing γ t₀ z₀ hcross) =
     α / (2 * Real.pi) := by
   simp only [windingNumberWithAngles']
-  simp_all
+  simp_all only [Finset.univ_unique, Finset.sum_singleton, Finset.default_singleton]
 
 /-- When γ avoids z₀, the PV cutoff is trivial below minimum distance. -/
 theorem cauchyPrincipalValue_eq_classical_off_curve'

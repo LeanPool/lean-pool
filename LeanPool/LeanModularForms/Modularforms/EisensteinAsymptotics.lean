@@ -8,13 +8,11 @@ module
 
 public import LeanPool.LeanModularForms.Modularforms.Derivative
 import LeanPool.LeanModularForms.ForMathlib.AtImInfty
-import LeanPool.LeanModularForms.Modularforms.ForMathlibCusps
 import LeanPool.LeanModularForms.Modularforms.SerreDerivativeSlash
 import Mathlib.Algebra.Order.Star.Real
 import Mathlib.Analysis.Real.Pi.Bounds
 
 /-! # EisensteinAsymptotics -/
-
 
 @[expose] public section
 
@@ -87,23 +85,27 @@ lemma E₂_sub_one_isBigO_exp : (fun z : ℍ => E₂ z - 1) =O[atImInfty]
   -- Key bounds: ‖q‖ ≤ exp(-2π) < 1/2
   have hq_bound : ‖q‖ ≤ Real.exp (-2 * π) := norm_exp_two_pi_I_le_exp_neg_two_pi z hz
   have hexp_lt_half : Real.exp (-2 * π) < 1 / 2 := by
-    have : 1 < 2 * π := by nlinarith [pi_gt_three]
-    calc Real.exp (-2 * π) < Real.exp (-1) := Real.exp_strictMono (by linarith)
+    have : 1 < 2 * π := by nlinarith only [pi_gt_three]
+    calc Real.exp (-2 * π) < Real.exp (-1) := Real.exp_strictMono (by linarith only [this])
       _ < 1 / 2 := by
         rw [Real.exp_neg, one_div, inv_lt_inv₀ (Real.exp_pos _) (by norm_num : (0 : ℝ) < 2)]
-        have := Real.add_one_lt_exp (by norm_num : (1 : ℝ) ≠ 0); linarith
+        have := Real.add_one_lt_exp (by norm_num : (1 : ℝ) ≠ 0); linarith only [this]
   have hq_lt_half : ‖q‖ < 1 / 2 := lt_of_le_of_lt hq_bound hexp_lt_half
-  have hone_sub_q_gt_half : 1 / 2 < 1 - ‖q‖ := by linarith
+  have hone_sub_q_gt_half : 1 / 2 < 1 - ‖q‖ := by linarith only [hq_bound, hexp_lt_half]
   -- Use norm_tsum_logDeriv_expo_le and bound r/(1-r)³ ≤ 8r for r < 1/2
   have htsum_bound := norm_tsum_logDeriv_expo_le (norm_exp_two_pi_I_lt_one z)
   have hsum_le_8q : ‖q‖ / (1 - ‖q‖) ^ 3 ≤ 8 * ‖q‖ := by
-    have h1 : (1 / 8 : ℝ) ≤ (1 - ‖q‖) ^ 3 := by nlinarith [sq_nonneg (1 - ‖q‖)]
+    have h1 : (1 / 8 : ℝ) ≤ (1 - ‖q‖) ^ 3 := by
+      nlinarith only [hq_bound, hexp_lt_half, sq_nonneg (1 - ‖q‖)]
     calc ‖q‖ / (1 - ‖q‖) ^ 3 ≤ ‖q‖ / (1 / 8) := by
           apply div_le_div_of_nonneg_left (norm_nonneg _) (by positivity) h1
       _ = 8 * ‖q‖ := by ring
   have hq_eq_exp : ‖q‖ = Real.exp (-2 * π * z.im) := by
     have hre : (2 * ↑π * Complex.I * (z : ℂ)).re = -2 * π * z.im := by
-      simp_all
+      simp_all only [neg_mul, one_div, mul_re, re_ofNat, ofReal_re, im_ofNat, ofReal_im,
+        mul_zero, sub_zero,
+          Complex.I_re, mul_im, zero_mul, add_zero, Complex.I_im, mul_one, sub_self, coe_re,
+            coe_im, zero_sub]
     rw [Complex.norm_exp, hre]
   calc 24 * ‖∑' n : ℕ+, ↑n * q ^ (n : ℕ) / (1 - q ^ (n : ℕ))‖
       ≤ 24 * (‖q‖ / (1 - ‖q‖) ^ 3) := by gcongr

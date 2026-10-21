@@ -43,11 +43,11 @@ private lemma ite_const_eq_iff_of_ne {P Q : Prop} [Decidable P] [Decidable Q] {c
     (hc : c ≠ 0) (h : (if P then c else 0) = if Q then c else 0) : P ↔ Q := by
   constructor
   · intro hp
-    simp_all
+    simp_all only [ne_eq, ↓reduceIte, left_eq_ite_iff, imp_false, Decidable.not_not]
   · intro hq
     rw [ite_eq_left hq] at h
     by_contra hp
-    simp_all
+    simp_all only [ne_eq, ↓reduceIte, not_true_eq_false]
 
 /-- The `h'`-thresholded singular indicator is measurable, given `h'` strongly measurable. -/
 private lemma singular_annulus_fγ'_measurable {t₀ ε₁ ε₂ : ℝ} {h' : ℝ → ℝ}
@@ -78,7 +78,7 @@ private lemma singular_annulus_final_ratio {Kmeas ε₁ ε₂ : ℝ} {L : ℂ}
     show 4 * Kmeas / ‖L‖ ^ 2 * ε₁ = 4 * Kmeas * ε₁ / ‖L‖ ^ 2 from by ring,
     div_le_div_iff₀ (mul_pos (by positivity : (0 : ℝ) < ‖L‖ ^ 3) hε₂_pos)
       (by positivity : (0 : ℝ) < ‖L‖ ^ 2)]
-  nlinarith [mul_pos hKmeas_pos (pow_pos hL_pos 3),
+  nlinarith only [hKmeas_pos, hL_pos, hε₁_pos, h_ratio, mul_pos hKmeas_pos (pow_pos hL_pos 3),
     show ε₁ ^ 2 ≤ ε₁ * (2 * ε₂) from by rw [sq]; exact mul_le_mul_of_nonneg_left h_ratio hε₁_pos.le]
 
 /-- The symmetric difference of the two localized annulus regions is measurable, given that the
@@ -203,7 +203,7 @@ lemma singular_tAnnLin_inside_interval
     lt_of_lt_of_le h_abs_lt (min_le_right _ _)
   rw [abs_lt] at h1 h2
   exact Set.mem_Icc.mpr
-    ⟨by linarith [h1.1], by linarith [h2.2]⟩
+    ⟨by linarith only [h1, h1.1], by linarith only [h2, h2.2]⟩
 
 lemma singular_tAnnLin_cancel (t₀ : ℝ)
     {L : ℂ} (hL_pos : 0 < ‖L‖)
@@ -259,7 +259,7 @@ private lemma singular_annulus_f_lin_bound
   · rw [ite_eq_left hcond]
     have hlo : ε₂ / (2 * ‖L‖) < |t - t₀| := by
       calc ε₂ / (2 * ‖L‖)
-          < ε₂ / ‖L‖ := div_lt_div_of_pos_left hε₂_pos hL_pos (by linarith)
+          < ε₂ / ‖L‖ := div_lt_div_of_pos_left hε₂_pos hL_pos (by linarith only [hL_pos])
         _ ≤ |t - t₀| := by rw [div_le_iff₀ hL_pos, mul_comm]; exact le_of_lt hcond.1
     exact inv_norm_le_of_half_lower hL_pos hε₂_pos hlo.le
   · simp only [hcond, ite_false, norm_zero]; positivity
@@ -345,11 +345,11 @@ private lemma lin_indicator_eq_inv_left
       (MeasureTheory.measure_singleton _)
   filter_upwards [h_ne] with t ht_ne ht_mem
   rw [Set.uIoc_of_le hmc₂_le_mc₁] at ht_mem
-  have h_np : t - t₀ ≤ 0 := by linarith [ht_mem.2]
+  have h_np : t - t₀ ≤ 0 := by linarith only [hc₁_nonneg, ht_mem, ht_mem.2]
   exact hφ_val t
     ⟨by rw [abs_of_nonpos h_np]
-        linarith [lt_of_le_of_ne ht_mem.2 ht_ne],
-     by rw [abs_of_nonpos h_np]; linarith [ht_mem.1]⟩
+        linarith only [ht_ne, ht_mem, lt_of_le_of_ne ht_mem.2 ht_ne],
+     by rw [abs_of_nonpos h_np]; linarith only [ht_mem, ht_mem.1]⟩
 
 /-- On `(t₀ + c₁, t₀ + c₂)`, the indicator equals `(t - t₀)⁻¹` (right annular wing). -/
 private lemma lin_indicator_eq_inv_right
@@ -363,10 +363,10 @@ private lemma lin_indicator_eq_inv_right
   apply intervalIntegral.integral_congr_ae
   filter_upwards with t ht_mem
   rw [Set.uIoc_of_le hpc₁_le_pc₂] at ht_mem
-  have h_nn : 0 ≤ t - t₀ := by linarith [ht_mem.1]
+  have h_nn : 0 ≤ t - t₀ := by linarith only [hc₁_nonneg, ht_mem, ht_mem.1]
   exact hφ_val t
-    ⟨by rw [abs_of_nonneg h_nn]; linarith [ht_mem.1],
-     by rw [abs_of_nonneg h_nn]; linarith [ht_mem.2]⟩
+    ⟨by rw [abs_of_nonneg h_nn]; linarith only [ht_mem, ht_mem.1],
+     by rw [abs_of_nonneg h_nn]; linarith only [ht_mem, ht_mem.2]⟩
 
 private lemma singular_annulus_lin_integral_zero
     {a b t₀ : ℝ} {L : ℂ} {ε₁ ε₂ : ℝ}
@@ -386,7 +386,7 @@ private lemma singular_annulus_lin_integral_zero
     div_le_div_of_nonneg_right hε₂_le (le_of_lt hL_pos)
   have hc₂_lt_dist : c₂ < min (t₀ - a) (b - t₀) := by
     rw [show c₂ = ε₁ / ‖L‖ from rfl, div_lt_iff₀ hL_pos]
-    linarith [mul_comm ‖L‖ (min (t₀ - a) (b - t₀))]
+    linarith only [hε₁_lt_Ldist, mul_comm ‖L‖ (min (t₀ - a) (b - t₀))]
   set φ : ℝ → ℂ := fun t =>
     if ε₂ < ‖L‖ * |t - t₀| ∧ ‖L‖ * |t - t₀| ≤ ε₁
     then (↑(t - t₀) : ℂ)⁻¹ else 0
@@ -398,8 +398,10 @@ private lemma singular_annulus_lin_integral_zero
     fun t hnt => ite_eq_right (mt (h_cond_iff t).mp hnt)
   have hφ_val : ∀ t, c₁ < |t - t₀| ∧ |t - t₀| ≤ c₂ → φ t = (↑(t - t₀) : ℂ)⁻¹ :=
     fun t ht => ite_eq_left ((h_cond_iff t).mpr ht)
-  have ha_lt_mc₂ : a < t₀ - c₂ := by linarith [lt_of_lt_of_le hc₂_lt_dist (min_le_left _ _)]
-  have hpc₂_lt_b : t₀ + c₂ < b := by linarith [lt_of_lt_of_le hc₂_lt_dist (min_le_right _ _)]
+  have ha_lt_mc₂ : a < t₀ - c₂ := by
+    linarith only [hc₂_lt_dist, lt_of_lt_of_le hc₂_lt_dist (min_le_left _ _)]
+  have hpc₂_lt_b : t₀ + c₂ < b := by
+    linarith only [hc₂_lt_dist, lt_of_lt_of_le hc₂_lt_dist (min_le_right _ _)]
   have h_split := integral_split_five
     (hφ_int a (t₀ - c₂)) (hφ_int (t₀ - c₂) (t₀ - c₁))
     (hφ_int (t₀ - c₁) (t₀ + c₁)) (hφ_int (t₀ + c₁) (t₀ + c₂))
@@ -407,9 +409,11 @@ private lemma singular_annulus_lin_integral_zero
   have hc₂_pos : 0 < c₂ := div_pos (lt_of_lt_of_le hε₂_pos hε₂_le) hL_pos
   have h0_L := lin_indicator_zero_left hc₂_pos.le ha_lt_mc₂ (hφ_int a (t₀ - c₂)) hφ_zero
   have h0_R := lin_indicator_zero_right hc₂_pos.le hpc₂_lt_b (hφ_int (t₀ + c₂) b) hφ_zero
-  have h0_M := lin_indicator_zero_middle (by linarith : t₀ - c₁ ≤ t₀ + c₁) hφ_zero
-  have hE_L := lin_indicator_eq_inv_left hc₁_pos.le (by linarith : t₀ - c₂ ≤ t₀ - c₁) hφ_val
-  have hE_R := lin_indicator_eq_inv_right hc₁_pos.le (by linarith : t₀ + c₁ ≤ t₀ + c₂) hφ_val
+  have h0_M := lin_indicator_zero_middle (by linarith only [hc₁_pos] : t₀ - c₁ ≤ t₀ + c₁) hφ_zero
+  have hE_L :=
+    lin_indicator_eq_inv_left hc₁_pos.le (by linarith only [hc₁_le_c₂] : t₀ - c₂ ≤ t₀ - c₁) hφ_val
+  have hE_R :=
+    lin_indicator_eq_inv_right hc₁_pos.le (by linarith only [hc₁_le_c₂] : t₀ + c₁ ≤ t₀ + c₂) hφ_val
   rw [h_split, h0_L, h0_R, h0_M, hE_L, hE_R]
   simpa only [zero_add, add_zero] using singular_tAnnLin_cancel t₀ hL_pos ε₁ ε₂ hε₂_pos hε₂_le
 
@@ -565,8 +569,8 @@ lemma singular_annulus_bound_explicit
     no_return_of_inj_continuous hδ₁_pos hγ_cont h_inj
   have ht₀_mem := Set.mem_Ioo.mp hat₀
   have h_dist_pos :
-      0 < min (t₀ - a) (b - t₀) := by
-    simp_all
+      0 < min (t₀ - a) (b - t₀) :=
+    lt_min (sub_pos.mpr ht₀_mem.1) (sub_pos.mpr ht₀_mem.2)
   let δ := min (min δ_meas ρ)
     (min (‖L‖ * min (t₀ - a) (b - t₀)) (‖L‖ * δ₀'))
   have hδ_pos : 0 < δ :=
@@ -594,7 +598,7 @@ lemma singular_annulus_bound_explicit
     by_contra h_not_lt
     push Not at h_not_lt
     have h_far := h_far_bound t ht h_not_lt
-    linarith
+    linarith only [hε₁_lt_ρ, hγt, h_far]
   have hJ_lin_zero :
       (∫ t in a..b,
         if ε₂ < ‖L‖ * |t - t₀| ∧

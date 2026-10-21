@@ -225,15 +225,15 @@ private theorem pv_uniform_bound_of_continuous_aux
     le_trans (norm_nonneg _) (hMg' _ ⟨a, left_mem_Icc.mpr hab.le, rfl⟩)
   have hMγ_nn : (0 : ℝ) ≤ Mγ' :=
     le_trans (norm_nonneg _) (hMγ'' a (left_mem_Icc.mpr hab.le))
-  refine ⟨Mg * Mγ' + 1, by linarith [mul_nonneg hMg_nn hMγ_nn],
+  refine ⟨Mg * Mγ' + 1, by linarith only [hMg_nn, hMγ_nn, mul_nonneg hMg_nn hMγ_nn],
     fun ε _ t ht => ?_⟩
   unfold cauchyPrincipalValueIntegrand'; split_ifs with h
   · calc ‖g (γ t) * deriv γ t‖
         = ‖g (γ t)‖ * ‖deriv γ t‖ := norm_mul _ _
       _ ≤ Mg * Mγ' := mul_le_mul (hMg' _ ⟨t, ht, rfl⟩) (hMγ'' t ht)
           (norm_nonneg _) hMg_nn
-      _ ≤ Mg * Mγ' + 1 := by linarith
-  · simp only [norm_zero]; linarith [mul_nonneg hMg_nn hMγ_nn]
+      _ ≤ Mg * Mγ' + 1 := by linarith only []
+  · simp only [norm_zero]; linarith only [hMg_nn, hMγ_nn, mul_nonneg hMg_nn hMγ_nn]
 
 /-- PV exists for continuous integrands on C¹ curves. -/
 theorem cauchyPrincipalValueExists_of_continuous
@@ -259,7 +259,8 @@ theorem cauchyPrincipalValueExists_of_continuous
         exact ⟨Ioo 0 ‖γ t - z₀‖,
           Ioo_mem_nhdsGT (norm_pos_iff.mpr (sub_ne_zero.mpr h)),
           fun ε hε => by
-            simp_all⟩) tendsto_const_nhds⟩
+            simp_all only [gt_iff_lt, mem_Icc, and_imp, mem_Ioo,
+              cauchyPrincipalValueIntegrand'_of_gt]⟩) tendsto_const_nhds⟩
   · filter_upwards [self_mem_nhdsWithin] with ε _
     exact (aEStronglyMeasurable_pv_integrand
       (hg.mono sdiff_subset) hγ hγ').mono_measure

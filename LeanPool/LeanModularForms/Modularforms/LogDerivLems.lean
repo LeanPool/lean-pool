@@ -85,7 +85,9 @@ lemma logDeriv_one_sub_exp (r : ℂ) : logDeriv (fun z => 1 - r * cexp (z)) =
     fun z => -r * cexp z / (1 - r * cexp ( z)) := by
   ext z
   rw [logDeriv]
-  simp_all
+  simp_all only [deriv_const_sub', differentiableAt_const, differentiableAt_exp, deriv_fun_mul,
+    deriv_const',
+      zero_mul, Complex.deriv_exp, zero_add, Pi.div_apply, neg_mul]
 
 lemma logDeriv_one_sub_exp_comp (r : ℂ) (g : ℂ → ℂ) (hg : Differentiable ℂ g) :
     logDeriv ((fun z => 1 - r * cexp (z)) ∘ g) =
@@ -94,7 +96,8 @@ lemma logDeriv_one_sub_exp_comp (r : ℂ) (g : ℂ → ℂ) (hg : Differentiable
   rw  [logDeriv_comp, logDeriv_one_sub_exp]
   · simp only [neg_mul]
     ring
-  · simp_all
+  · simp_all only [differentiableAt_const, differentiableAt_exp, DifferentiableAt.fun_mul,
+        DifferentiableAt.fun_sub]
   · exact hg y
 
 lemma logDeriv_q_expo_summable (r : ℂ) (hr : ‖r‖ < 1) : Summable fun n : ℕ =>

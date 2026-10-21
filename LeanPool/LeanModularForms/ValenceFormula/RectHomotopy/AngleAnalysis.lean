@@ -68,7 +68,11 @@ lemma v0_quadrant (p : ℂ) (hp_re : |p.re| < 1 / 2) (hp_im : p.im < HHeight) :
     (fdPolygon 0 - p).re > 0 ∧ (fdPolygon 0 - p).im > 0 := by
   rw [fdPolygon_at_zero]
   have hpre : p.re < 1/2 := (abs_lt.mp hp_re).2
-  simp_all
+  simp_all only [one_div, sub_re, add_re, inv_re, re_ofNat, normSq_ofNat, div_self_mul_self',
+    mul_re, ofReal_re,
+      I_re, mul_zero, ofReal_im, I_im, mul_one, sub_self, add_zero, gt_iff_lt, sub_pos, sub_im,
+        add_im, inv_im, im_ofNat,
+      neg_zero, zero_div, mul_im, zero_add, and_self]
 
 /-- For interior points with ‖p‖ > 1, |p.re| < 1/2, 0 < p.im, we have p.im > √3/2. -/
 lemma interior_point_im_bound (p : ℂ) (hp_norm : ‖p‖ > 1)
@@ -76,20 +80,20 @@ lemma interior_point_im_bound (p : ℂ) (hp_norm : ‖p‖ > 1)
     p.im > Real.sqrt 3 / 2 := by
   have hpre_sq : p.re ^ 2 < 1/4 := by
     have h := abs_lt.mp hp_re
-    nlinarith [sq_abs p.re]
+    nlinarith only [h, sq_abs p.re]
   have hnorm_sq : p.re ^ 2 + p.im ^ 2 > 1 := by
     rw [Complex.norm_eq_sqrt_sq_add_sq] at hp_norm
     have h_sum_nonneg : 0 ≤ p.re^2 + p.im^2 := by positivity
     calc p.re^2 + p.im^2 = (Real.sqrt (p.re^2 + p.im^2))^2 := (Real.sq_sqrt h_sum_nonneg).symm
-      _ > 1^2 := by nlinarith
+      _ > 1^2 := by nlinarith only [hp_norm]
       _ = 1 := by ring
-  have hp_im_sq : p.im ^ 2 > 3/4 := by linarith
+  have hp_im_sq : p.im ^ 2 > 3/4 := by linarith only [hpre_sq, hnorm_sq]
   have h4 : Real.sqrt 4 = 2 := by
     rw [show (4 : ℝ) = 2^2 by norm_num, Real.sqrt_sq (by norm_num : (0 : ℝ) ≤ 2)]
   have h3 : Real.sqrt (3/4) = Real.sqrt 3 / 2 := by
     rw [Real.sqrt_div (by norm_num : (3 : ℝ) ≥ 0), h4]
   rw [← h3, gt_iff_lt, Real.sqrt_lt' hp_im_pos]
-  linarith
+  linarith only [hpre_sq, hnorm_sq]
 
 /-- Direction from p to fdPolygon 1 (= rho') is in Q4 (re > 0, im < 0). -/
 lemma v1_quadrant (p : ℂ) (hp_norm : ‖p‖ > 1) (hp_re : |p.re| < 1 / 2)
@@ -99,7 +103,7 @@ lemma v1_quadrant (p : ℂ) (hp_norm : ‖p‖ > 1) (hp_re : |p.re| < 1 / 2)
   have hbound := interior_point_im_bound p hp_norm hp_re hp_im_pos
   have hre : (rho' - p).re = 1/2 - p.re := by simp [rho']
   have him : (rho' - p).im = Real.sqrt 3 / 2 - p.im := by simp [rho']
-  exact ⟨by linarith, by linarith⟩
+  exact ⟨by linarith only [hpre, hre], by linarith only [hbound, him]⟩
 
 /-- Polygon vertex at t=3: rho. -/
 lemma fdPolygon_at_three : fdPolygon 3 = rho := by
@@ -110,19 +114,23 @@ lemma fdPolygon_at_three : fdPolygon 3 = rho := by
 lemma v3_quadrant (p : ℂ) (hp_norm : ‖p‖ > 1) (hp_re : |p.re| < 1 / 2)
     (hp_im_pos : 0 < p.im) : (fdPolygon 3 - p).re < 0 ∧ (fdPolygon 3 - p).im < 0 := by
   rw [fdPolygon_at_three]
-  have hpre : -1/2 < p.re := by linarith [(abs_lt.mp hp_re).1]
+  have hpre : -1/2 < p.re := by linarith only [hp_re, (abs_lt.mp hp_re).1]
   have hbound := interior_point_im_bound p hp_norm hp_re hp_im_pos
   have hre : (rho - p).re = -1/2 - p.re := by simp [rho]
   have him : (rho - p).im = Real.sqrt 3 / 2 - p.im := by simp [rho]
-  exact ⟨by linarith, by linarith⟩
+  exact ⟨by linarith only [hpre, hre], by linarith only [hbound, him]⟩
 
 /-- Direction from p to fdPolygon 4 is in Q2 (re < 0, im > 0). -/
 lemma v4_quadrant (p : ℂ) (hp_re : |p.re| < 1 / 2) (hp_im : p.im < HHeight) :
     (fdPolygon 4 - p).re < 0 ∧ (fdPolygon 4 - p).im > 0 := by
   rw [fdPolygon_at_four]
   have hpre_neg : -(1/2) < p.re := (abs_lt.mp hp_re).1
-  have hpre : -1/2 < p.re := by linarith
-  simp_all
+  have hpre : -1/2 < p.re := by linarith only [hpre_neg]
+  simp_all only [one_div, sub_re, add_re, div_ofNat_re, neg_re, one_re, mul_re, ofReal_re, I_re,
+    mul_zero,
+      ofReal_im, I_im, mul_one, sub_self, add_zero, sub_neg, sub_im, add_im, div_ofNat_im,
+        neg_im, one_im, neg_zero,
+      zero_div, mul_im, zero_add, gt_iff_lt, sub_pos, and_self]
 
 /-- Q1: re > 0, im > 0 → 0 < arg < π/2. -/
 lemma arg_Q1 (z : ℂ) (hz_re : 0 < z.re) (hz_im : 0 < z.im) :
@@ -132,7 +140,7 @@ lemma arg_Q1 (z : ℂ) (hz_re : 0 < z.re) (hz_im : 0 < z.im) :
     have h_ne : z.arg ≠ 0 := by
       intro h_eq
       rw [Complex.arg_eq_zero_iff] at h_eq
-      linarith [h_eq.2]
+      linarith only [hz_im, h_eq, h_eq.2]
     exact lt_of_le_of_ne h_nonneg (Ne.symm h_ne)
   · rw [Complex.arg_lt_pi_div_two_iff]
     left; exact hz_re
@@ -143,14 +151,14 @@ lemma arg_Q4 (z : ℂ) (hz_re : 0 < z.re) (hz_im : z.im < 0) :
   constructor
   · rw [Complex.neg_pi_div_two_lt_arg_iff]
     left; exact hz_re
-  · simp_all
+  · simp_all only [arg_neg_iff]
 
 /-- Q3: im < 0 → -π < arg < 0. -/
 lemma arg_Q3 (z : ℂ) (hz_im : z.im < 0) :
     -Real.pi < z.arg ∧ z.arg < 0 := by
   constructor
   · exact (Complex.arg_mem_Ioc z).1
-  · simp_all
+  · simp_all only [arg_neg_iff]
 
 /-- Q2: re < 0, im > 0 → π/2 < arg ≤ π. -/
 lemma arg_Q2 (z : ℂ) (hz_re : z.re < 0) (hz_im : 0 < z.im) :
@@ -160,8 +168,8 @@ lemma arg_Q2 (z : ℂ) (hz_re : z.re < 0) (hz_im : 0 < z.im) :
     push Not at h
     rw [Complex.arg_le_pi_div_two_iff] at h
     cases h with
-    | inl h_re_pos => linarith
-    | inr h_im_neg => linarith
+    | inl h_re_pos => linarith only [hz_re, h_re_pos]
+    | inr h_im_neg => linarith only [hz_im, h_im_neg]
   · exact (Complex.arg_mem_Ioc z).2
 
 /-- The unique time on seg4 where (fdPolygon t - p) crosses the negative real axis. -/
@@ -185,27 +193,27 @@ lemma tL_mem_Ioo (p : ℂ) (hp_norm : ‖p‖ > 1) (hp_re : |p.re| < 1 / 2)
 /-- On seg4, (fdPolygon t - p).re < 0. -/
 lemma seg4_vec_re_neg (p : ℂ) (hp_re : |p.re| < 1 / 2) (t : ℝ)
     (ht : t ∈ Set.Ioc (3 : ℝ) 4) : (fdPolygon t - p).re < 0 := by
-  have hpre : -1/2 < p.re := by linarith [(abs_lt.mp hp_re).1]
+  have hpre : -1/2 < p.re := by linarith only [hp_re, (abs_lt.mp hp_re).1]
   have hseg4_re : (fdPolygon t).re = -1/2 := by
     simp only [fdPolygon]
     split_ifs with h1 h2 h3 h4
-    · linarith [ht.1]
-    · linarith [ht.1]
-    · linarith [ht.1]
+    · linarith only [ht, h1, ht.1]
+    · linarith only [ht, h2, ht.1]
+    · linarith only [ht, h3, ht.1]
     · simp
-    · linarith [ht.2]
-  simp_all
+    · linarith only [ht, h4, ht.2]
+  simp_all only [one_div, mem_Ioc, sub_re, sub_neg]
 
 /-- On seg4, the imaginary part of fdPolygon t. -/
 lemma seg4_im_formula (t : ℝ) (ht : t ∈ Set.Ioc (3 : ℝ) 4) : (fdPolygon t).im =
       Real.sqrt 3 / 2 + (t - 3) * (HHeight - Real.sqrt 3 / 2) := by
   simp only [fdPolygon]
   split_ifs with h1 h2 h3 h4
-  · linarith [ht.1]
-  · linarith [ht.1]
-  · linarith [ht.1]
+  · linarith only [ht, h1, ht.1]
+  · linarith only [ht, h2, ht.1]
+  · linarith only [ht, h3, ht.1]
   · simp [Complex.add_im, Complex.mul_im, Complex.I_re, Complex.I_im, Complex.ofReal_im]
-  · linarith [ht.2]
+  · linarith only [ht, h4, ht.2]
 
 /-- Sign of (fdPolygon t - p).im on seg4: negative before tL, zero at tL,
     positive after. -/
@@ -214,8 +222,8 @@ lemma seg4_vec_im_sign (p : ℂ) (hp_norm : ‖p‖ > 1) (hp_re : |p.re| < 1 / 2
     (t < tL p → (fdPolygon t - p).im < 0) ∧ (t = tL p → (fdPolygon t - p).im = 0) ∧
     (tL p < t → 0 < (fdPolygon t - p).im) := by
   have hbound := interior_point_im_bound p hp_norm hp_re hp_im_pos
-  have hH : HHeight = Real.sqrt 3 / 2 + 1 := rfl
-  have hdenom_pos : HHeight - Real.sqrt 3 / 2 > 0 := by rw [hH]; linarith
+  have hdenom_pos : HHeight - Real.sqrt 3 / 2 > 0 :=
+    sub_pos.mpr (lt_trans hbound hp_im)
   have hdenom_ne : HHeight - Real.sqrt 3 / 2 ≠ 0 := ne_of_gt hdenom_pos
   have him := seg4_im_formula t ht
   set D := HHeight - Real.sqrt 3 / 2 with hD_def
@@ -231,9 +239,11 @@ lemma seg4_vec_im_sign (p : ℂ) (hp_norm : ‖p‖ > 1) (hp_re : |p.re| < 1 / 2
     rw [h2, mul_div_cancel₀ _ hdenom_ne]
     ring
   refine ⟨?_, ?_, ?_⟩
-  · simp_all
+  · intro hlt
+    rw [him_eq]
+    exact mul_neg_of_pos_of_neg hdenom_pos (sub_neg.mpr hlt)
   · intro heq; rw [him_eq, heq, sub_self, mul_zero]
-  · intro hgt; rw [him_eq]; exact mul_pos hdenom_pos (by linarith)
+  · intro hgt; rw [him_eq]; exact mul_pos hdenom_pos (by linarith only [hgt])
 
 /-- At tL, the vector fdPolygon t - p is a nonzero negative real. -/
 lemma seg4_vec_at_tL (p : ℂ) (hp_norm : ‖p‖ > 1) (hp_re : |p.re| < 1 / 2) (hp_im_pos : 0 < p.im)
@@ -264,7 +274,7 @@ lemma arg_seg4_after (p : ℂ) (hp_norm : ‖p‖ > 1) (hp_re : |p.re| < 1 / 2) 
     0 < Complex.arg (fdPolygon t - p) := by
   have hre := seg4_vec_re_neg p hp_re t ht
   have him := (seg4_vec_im_sign p hp_norm hp_re hp_im_pos hp_im t ht).2.2 htL
-  linarith [(arg_Q2 (fdPolygon t - p) hre him).1, Real.pi_pos]
+  linarith only [hre, him, (arg_Q2 (fdPolygon t - p) hre him).1, Real.pi_pos]
 
 /-- arg is preserved under normalization. -/
 lemma arg_normalize_eq (z : ℂ) (hz : z ≠ 0) :
@@ -298,7 +308,7 @@ lemma fdPolygon_zero_ne_interior (p : ℂ) (hp_im : p.im < HHeight) : fdPolygon 
     simp only [Complex.add_im, Complex.mul_im, Complex.ofReal_re, Complex.I_re, Complex.I_im,
                Complex.ofReal_im, mul_one, zero_mul, Complex.div_ofNat_im, Complex.one_im,
                zero_div, zero_add, add_zero]
-  simp_all
+  simp_all only [one_div, lt_self_iff_false]
 
 /-- fdPolygon 5 ≠ p for interior points. -/
 lemma fdPolygon_five_ne_interior (p : ℂ) (hp_im : p.im < HHeight) : fdPolygon 5 ≠ p := by
@@ -314,7 +324,7 @@ lemma lifted_angle_at_zero (p : ℂ) (hp_norm : ‖p‖ > 1) (hp_re : |p.re| < 1
       fdPolygonRadialCircleAngle p 0 := by
   have htL := tL_mem_Ioo p hp_norm hp_re hp_im_pos hp_im
   simp only [fdPolygonRadialCircleAngleLifted]
-  rw [ite_eq_left (by linarith [htL.1] : (0 : ℝ) < tL p)]
+  rw [ite_eq_left (by linarith only [htL, htL.1] : (0 : ℝ) < tL p)]
   rw [← fdPolygonRadialCircle_angle_eq_arg p 0 (fdPolygon_zero_ne_interior p hp_im)]
 
 /-- At t=5, the lifted angle is raw angle minus 2π (5 > tL). -/
@@ -325,7 +335,7 @@ lemma lifted_angle_at_five (p : ℂ) (hp_norm : ‖p‖ > 1) (hp_re : |p.re| < 1
       fdPolygonRadialCircleAngle p 5 - 2 * Real.pi := by
   have htL := tL_mem_Ioo p hp_norm hp_re hp_im_pos hp_im
   simp only [fdPolygonRadialCircleAngleLifted]
-  rw [ite_eq_right (by linarith [htL.2] : ¬(5 : ℝ) < tL p)]
+  rw [ite_eq_right (by linarith only [htL, htL.2] : ¬(5 : ℝ) < tL p)]
   rw [← fdPolygonRadialCircle_angle_eq_arg p 5 (fdPolygon_five_ne_interior p hp_im)]
 
 /-- fdPolygon is periodic with period 5. -/
@@ -381,15 +391,15 @@ noncomputable def refP₀ : ℂ := Complex.I * (refY₀ : ℂ)
 
 lemma ref_Y₀_pos : 0 < refY₀ := by
   unfold refY₀ HHeight
-  linarith [Real.sqrt_pos_of_pos (by norm_num : (0 : ℝ) < 3)]
+  linarith only [Real.sqrt_pos_of_pos (by norm_num : (0 : ℝ) < 3)]
 
 lemma ref_Y₀_gt_one : 1 < refY₀ := by
   unfold refY₀ HHeight
-  linarith [Real.sqrt_pos_of_pos (by norm_num : (0 : ℝ) < 3)]
+  linarith only [Real.sqrt_pos_of_pos (by norm_num : (0 : ℝ) < 3)]
 
 lemma ref_Y₀_lt_H : refY₀ < HHeight := by
   unfold refY₀ HHeight
-  linarith [Real.sqrt_pos_of_pos (by norm_num : (0 : ℝ) < 3)]
+  linarith only [Real.sqrt_pos_of_pos (by norm_num : (0 : ℝ) < 3)]
 
 lemma ref_p₀_norm : ‖refP₀‖ > 1 := by
   unfold refP₀
@@ -399,19 +409,21 @@ lemma ref_p₀_norm : ‖refP₀‖ > 1 := by
 
 lemma ref_p₀_re : |refP₀.re| < 1 / 2 := by
   unfold refP₀
-  simp_all
+  simp_all only [mul_re, I_re, ofReal_re, zero_mul, I_im, ofReal_im, mul_zero, sub_self,
+    abs_zero, one_div,
+      inv_pos, Nat.ofNat_pos]
 
 lemma ref_p₀_im_pos : 0 < refP₀.im := by
   unfold refP₀
   simp only [Complex.mul_im, Complex.I_re, Complex.I_im,
     Complex.ofReal_re, Complex.ofReal_im, zero_mul, one_mul]
-  linarith [ref_Y₀_pos]
+  linarith only [ref_Y₀_pos]
 
 lemma ref_p₀_im : refP₀.im < HHeight := by
   unfold refP₀
   simp only [Complex.mul_im, Complex.I_re, Complex.I_im,
     Complex.ofReal_re, Complex.ofReal_im, zero_mul, one_mul]
-  linarith [ref_Y₀_lt_H]
+  linarith only [ref_Y₀_lt_H]
 
 /-- Center-translation homotopy invariance of winding number. -/
 lemma winding_fdPolygon_center_invariant (p₁ p₂ : ℂ)

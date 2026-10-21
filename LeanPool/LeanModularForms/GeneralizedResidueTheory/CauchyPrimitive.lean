@@ -8,7 +8,6 @@ module
 public import Mathlib.Analysis.Calculus.Deriv.Basic
 public import Mathlib.Analysis.Complex.Basic
 public import Mathlib.Topology.Algebra.Module.ModuleTopology
-import Mathlib.Analysis.Calculus.ParametricIntervalIntegral
 import Mathlib.Analysis.Complex.CauchyIntegral
 import Mathlib.MeasureTheory.Integral.IntervalIntegral.IntegrationByParts
 
@@ -47,7 +46,7 @@ private lemma segment_subset_convex {S : Set ℂ} (hS : Convex ℝ S)
     {c z : ℂ} (hc : c ∈ S) (hz : z ∈ S) :
     ∀ t ∈ Icc (0 : ℝ) 1, c + t • (z - c) ∈ S := fun t ht => by
   rw [show c + t • (z - c) = (1 - t) • c + t • z from by module]
-  exact hS hc hz (by linarith [ht.2]) ht.1 (by linarith [ht.1])
+  exact hS hc hz (by linarith only [ht, ht.2]) ht.1 (by linarith only [ht.1])
 
 private lemma integral_t_mul_deriv_eq {f : ℂ → ℂ} {S : Set ℂ}
     {c z : ℂ} (hS_open : IsOpen S)
@@ -109,7 +108,10 @@ private lemma integral_t_mul_deriv_eq {f : ℂ → ℂ} {S : Set ℂ}
     intervalIntegral.integral_mul_deriv_eq_deriv_mul_of_hasDerivAt
       hu_cont hv_cont hu_deriv hv_deriv hu'_int hv'_int
   simp only [u, v, u', v'] at h_parts
-  simp_all
+  simp_all only [mem_Icc, real_smul, and_imp, zero_le_one, uIcc_of_le, inf_of_le_left,
+    sup_of_le_right, mem_Ioo,
+      ofReal_one, one_smul, add_sub_cancel, one_mul, ofReal_zero, zero_smul, add_zero, zero_mul,
+        sub_zero]
 
 private lemma continuous_segmentMap (c w : ℂ) :
     Continuous (fun t : ℝ => c + t • (w - c)) :=
@@ -236,7 +238,10 @@ private lemma segmentIntegrand_lipschitzOnWith {f : ℂ → ℂ}
     _ = |t| * M * ‖x - y‖ := by ring
     _ = |t| * M * dist x y := by rw [dist_eq_norm]
     _ ≤ Real.toNNReal (|t| * M) * dist x y := by
-        simp_all
+        simp_all only [mem_Icc, Metric.mem_ball, real_smul, add_sub_add_left_eq_sub,
+          Complex.norm_mul, norm_real,
+            Real.norm_eq_abs, Real.coe_toNNReal', mul_nonneg_iff_of_pos_right, abs_nonneg,
+              sup_of_le_left, Std.le_refl]
 
 private lemma hasDerivAt_segmentIntegral_aux {f : ℂ → ℂ}
     {S : Set ℂ} {c z : ℂ} {ε : ℝ}
@@ -381,7 +386,8 @@ private lemma hasDerivAt_segmentIntegral {f : ℂ → ℂ}
   suffices hH : HasDerivAt H (H' z) z by
     have h_prod := hH.mul h1
     refine h_prod.congr_deriv ?_
-    simp_all
+    simp_all only [mem_Icc, real_smul, and_imp, gt_iff_lt, intervalIntegral.integral_mul_const,
+        mul_eq_mul_right_iff, hasDerivAt_sub_const_iff, mul_one, sub_add_cancel]
   exact hasDerivAt_segmentIntegral_aux hε_pos hS_convex
     hS_open hc hz hf hε_ball
 

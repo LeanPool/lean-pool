@@ -405,14 +405,14 @@ private lemma gcd_2x2_mul (a b : ℤ) :
   intro g s t p q
   have hpg : p * g = a := Int.ediv_mul_cancel (Int.gcd_dvd_left a b)
   have hqg : q * g = b := Int.ediv_mul_cancel (Int.gcd_dvd_right a b)
-  have hbez : s * a + t * b = g := by linarith [Int.gcd_eq_gcd_ab a b]
+  have hbez : s * a + t * b = g := by linarith only [Int.gcd_eq_gcd_ab a b]
   have h1 : !![s, t; -q, p] * (!![a, (0 : ℤ); 0, b] : Matrix (Fin 2) (Fin 2) ℤ) =
       !![s * a, t * b; -(q * a), p * b] := by
     ext i j; fin_cases i <;> fin_cases j <;> simp [mul_apply, Fin.sum_univ_two]
   rw [h1]; ext i j; fin_cases i <;> fin_cases j <;>
     simp only [Fin.zero_eta, Fin.isValue, mul_apply, of_apply, cons_val', cons_val_fin_one,
       cons_val_zero, Fin.sum_univ_two, mul_one, cons_val_one, Fin.mk_one, mul_neg, neg_mul, neg_neg]
-  · linarith
+  · linarith only [hbez]
   · have key : -(s * a * (t * q)) + t * b * (1 - t * q) =
         (1 - (s * p + t * q)) * (t * q * g) := by rw [← hpg, ← hqg]; ring
     rw [key]
@@ -421,9 +421,9 @@ private lemma gcd_2x2_mul (a b : ℤ) :
         calc (s * p + t * q) * g = s * (p * g) + t * (q * g) := by ring
           _ = s * a + t * b := by rw [hpg, hqg]
           _ = g := hbez
-      linarith
+      linarith only [this]
     have : (1 - (s * p + t * q)) * (t * q * g) = t * q * ((1 - (s * p + t * q)) * g) := by ring
-    linarith [mul_eq_zero_of_right (t * q) h2]
+    linarith only [h2, mul_eq_zero_of_right (t * q) h2]
   · rw [← hpg, ← hqg]; ring
   · rw [← hpg, ← hqg]; ring
 
@@ -601,7 +601,9 @@ private lemma make_first_divide_all (k : ℕ) (d : Fin (k + 2) → ℤ) (hd : �
       obtain ⟨L₁, R₁, d₁, hd₁_pos, hd₁_zero, hd₁_rest, _, hlt, hmul₁⟩ :=
         gcd_step_general k d hd j hj_ne
       have hN₁ : (d₁ (0 : Fin (k + 2))).natAbs < N := by
-        simp_all
+        simp_all only [exists_prop, forall_const, ne_eq, Fin.val_eq_zero_iff,
+          Fin.zero_eta,
+            Int.natAbs_natCast, not_false_eq_true]
       obtain ⟨d₂, hd₂_pos, hd₂_div, L₂, R₂, hmul₂⟩ :=
         ih _ hN₁ d₁ hd₁_pos (hd₁_pos 0) rfl
       refine ⟨d₂, hd₂_pos, hd₂_div, L₂ * L₁, R₁ * R₂, ?_⟩

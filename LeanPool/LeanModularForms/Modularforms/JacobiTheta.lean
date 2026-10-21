@@ -13,15 +13,12 @@ import LeanPool.LeanModularForms.ForMathlib.FunctionsBoundedAtInfty
 import LeanPool.LeanModularForms.ForMathlib.SlashActions
 import LeanPool.LeanModularForms.ForMathlib.UpperHalfPlane
 import LeanPool.LeanModularForms.Modularforms.DimensionFormulas
-import LeanPool.LeanModularForms.Modularforms.ForMathlibCusps
-import LeanPool.LeanModularForms.Modularforms.ForMathlibFunctionsBoundedAtInfty
 import Mathlib.Algebra.Order.Star.Real
 import Mathlib.Analysis.Normed.Group.Tannery
 import Mathlib.Data.Int.Star
 import Mathlib.Order.CompletePartialOrder
 
 /-! # JacobiTheta -/
-
 
 @[expose] public section
 
@@ -795,16 +792,19 @@ theorem jacobiTheta₂_half_apply_tendsto_atImInfty :
   · exact summable_ofReal.mp summable_ofReal_exp_neg_pi_sq
   · intro k
     split_ifs with hk
-    · simp_all
+    · simp_all only [one_div, neg_mul, Int.cast_zero, mul_zero, zero_mul, ne_eq,
+      OfNat.ofNat_ne_zero,
+          not_false_eq_true, zero_pow, add_zero, Complex.exp_zero, tendsto_const_nhds_iff]
     · rw [tendsto_zero_iff_norm_tendsto_zero]
       simp_rw [hnorm]
       have hk2_pos : 0 < (k : ℝ) ^ 2 := sq_pos_of_ne_zero (Int.cast_ne_zero.mpr hk)
       exact (Real.tendsto_exp_atBot).comp
-        (tendsto_im_atImInfty.const_mul_atTop_of_neg (by nlinarith [Real.pi_pos, hk2_pos]))
+        (tendsto_im_atImInfty.const_mul_atTop_of_neg (by nlinarith only [hk2_pos, Real.pi_pos]))
   · rw [eventually_atImInfty]
     use 1, fun z hz k ↦ ?_
     rw [hnorm]
-    have hcoef_nonpos : (-π * (k : ℝ) ^ 2) ≤ 0 := by nlinarith [Real.pi_pos, sq_nonneg (k : ℝ)]
+    have hcoef_nonpos : (-π * (k : ℝ) ^ 2) ≤ 0 := by
+      nlinarith only [Real.pi_pos, sq_nonneg (k : ℝ)]
     have hmul : (-π * (k : ℝ) ^ 2) * z.im ≤ (-π * (k : ℝ) ^ 2) * 1 := by
       exact mul_le_mul_of_nonpos_left hz hcoef_nonpos
     simpa using Real.exp_le_exp.mpr hmul
@@ -1057,7 +1057,7 @@ lemma Θ₄_term_imag_axis_real (n : ℤ) (t : ℝ) (ht : 0 < t) :
       (-(Real.pi * (n : ℝ) ^ 2 * t) : ℝ) := by
     push_cast
     ring_nf
-    simp_all
+    simp_all only [I_sq, mul_neg, mul_one, neg_mul]
   rw [hexpr]
   simp only [Complex.mul_im, neg_one_zpow_im_eq_zero n, exp_ofReal_im, mul_zero, zero_mul, add_zero]
 
@@ -1140,7 +1140,7 @@ theorem H₂_imag_axis_pos : ResToImagAxis.Pos H₂ := by
       have hz_eq : z = (z.re : ℂ) := Complex.ext (by simp) (by simp [hΘ₂_im])
       rw [hz_eq]
       norm_cast
-    simp_all
+    simp_all only [pow_succ_pos]
 
 /--
 `H₄(it)` is real for all `t > 0`.
@@ -1181,14 +1181,21 @@ theorem H₄_imag_axis_pos : ResToImagAxis.Pos H₄ := by
       simp only [Function.resToImagAxis_apply, ResToImagAxis, h1t_pos, ↓reduceDIte, Pi.neg_apply]
     rw [hNeg, hI_neg2, h1t_neg2, h1_div_1t] at hSlash
     have hEq : H₂.resToImagAxis (1 / t) = (t : ℂ) ^ 2 * H₄.resToImagAxis t := by
-      simp_all
+      simp_all only [one_div, inv_pos, Function.resToImagAxis_apply, neg_mul, one_mul, neg_inj,
+        Int.reduceNeg,
+          _root_.zpow_neg, zpow_ofNat, I_sq, inv_neg, inv_one, ofReal_inv, inv_pow, inv_inv,
+            div_inv_eq_mul]
     have hH₂_pos := H₂_imag_axis_pos.2 (1 / t) h1t_pos
     have hH₄_real := H₄_imag_axis_real t ht
     have hProd_re : ((t : ℂ) ^ 2 * H₄.resToImagAxis t).re =
         (t : ℝ) ^ 2 * (H₄.resToImagAxis t).re := by
       simp only [Function.resToImagAxis_apply, ResToImagAxis, ht, ↓reduceDIte] at hH₄_real ⊢
       simp only [sq, Complex.mul_re, ofReal_re, ofReal_im, zero_mul, sub_zero]
-      simp_all
+      simp_all only [one_div, inv_pos, Function.resToImagAxis_apply, neg_mul, one_mul, neg_inj,
+        Int.reduceNeg,
+          _root_.zpow_neg, zpow_ofNat, I_sq, inv_neg, inv_one, ofReal_inv, inv_pow, inv_inv,
+            div_inv_eq_mul, mul_re, sub_pos,
+          mul_im, ofReal_re, ofReal_im, mul_zero, zero_mul, add_zero, sub_zero]
     rw [hEq, hProd_re, mul_comm] at hH₂_pos
     exact pos_of_mul_pos_left hH₂_pos (le_of_lt (sq_pos_of_pos ht))
 

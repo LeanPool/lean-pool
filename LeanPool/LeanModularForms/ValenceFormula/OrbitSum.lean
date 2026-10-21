@@ -131,7 +131,7 @@ theorem orderOfVanishingAt'_ne_zero_of_eq_zero (hf : f ≠ 0) (p : ℍ) (hp : f 
   have h_ord_ne : meromorphicOrderAt
       (fun w : ℂ => if h : 0 < w.im then f ⟨w, h⟩ else 0) (↑p) ≠ (0 : WithTop ℤ) := by
     intro h0; apply h_nf.meromorphicOrderAt_eq_zero_iff.mp h0
-    simp_all
+    simp_all only [ne_eq, WithTop.untop₀_zero, UpperHalfPlane.coe_im, dite_eq_ite, ite_self]
   have h_top := (WithTop.untop₀_eq_zero.mp h_untop_eq).resolve_left h_ord_ne
   rw [meromorphicOrderAt_eq_top_iff] at h_top
   have h_analOn : AnalyticOnNhd ℂ (fun w : ℂ => if h : 0 < w.im then f ⟨w, h⟩ else 0)
@@ -154,12 +154,13 @@ theorem fd_im_gt_half (p : ℍ) (hp : p ∈ 𝒟) : (1 : ℝ)/2 < (p : ℂ).im :
   have hre_bridge : UpperHalfPlane.re p = (↑p : ℂ).re := rfl
   have him_bridge : p.im = (↑p : ℂ).im := rfl
   have h_nsq : 1 ≤ (p : ℂ).re * (p : ℂ).re + (p : ℂ).im * (p : ℂ).im := by
-    have := normSq_apply (↑p : ℂ); linarith [this]
+    have := normSq_apply (↑p : ℂ); linarith only [hnormSq, this]
   have h_re_sq : (p : ℂ).re * (p : ℂ).re ≤ 1/4 := by
     have hre := abs_le.mp habs_re
-    nlinarith [mul_self_nonneg (p : ℂ).re, hre_bridge]
-  have him_sq : (p : ℂ).im * (p : ℂ).im ≤ 1/4 := by nlinarith [p.im_pos, him_bridge]
-  linarith
+    nlinarith only [hre_bridge, hre, mul_self_nonneg (p : ℂ).re]
+  have him_sq : (p : ℂ).im * (p : ℂ).im ≤ 1/4 := by
+    nlinarith only [h_le, him_bridge, h_nsq, h_re_sq, p.im_pos]
+  linarith only [h_nsq, h_re_sq, him_sq]
 
 private theorem no_zeros_above_height' (hf : f ≠ 0) :
     ∃ H₀ : ℝ, Real.sqrt 3 / 2 < H₀ ∧
@@ -171,7 +172,7 @@ private theorem no_zeros_above_height' (hf : f ≠ 0) :
   have h_qParam_mem : Function.Periodic.qParam (1 : ℝ) (↑p : ℂ) ∈
       Metric.closedBall (0 : ℂ) (Real.exp (-2 * Real.pi * H₀)) := by
     rw [Metric.mem_closedBall, dist_zero_right, Function.Periodic.norm_qParam]
-    simpa only [div_one] using Real.exp_le_exp.mpr (by nlinarith [Real.pi_pos])
+    simpa only [div_one] using Real.exp_le_exp.mpr (by nlinarith only [hp, Real.pi_pos])
   have h_qParam_ne : Function.Periodic.qParam (1 : ℝ) (↑p : ℂ) ≠ 0 := by
     simpa only [Function.Periodic.qParam, ne_eq] using Complex.exp_ne_zero _
   exact hH₀_nonvan _ h_qParam_mem h_qParam_ne (h_eq ▸ hfp)

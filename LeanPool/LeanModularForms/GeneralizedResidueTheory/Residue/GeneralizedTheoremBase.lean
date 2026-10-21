@@ -67,10 +67,12 @@ private lemma cpv_crossing_null
       ⋃ s ∈ (↑S0 : Set ℂ),
         {t | t ∈ Icc γ.a γ.b ∧ γ.toFun t = s} := by
     ext t
-    simp_all
+    simp_all only [mem_Icc, SetLike.mem_coe, mem_ofPred_eq, mem_iUnion, exists_and_left,
+      exists_prop,
+        ↓existsAndEq, and_true]
   rw [h_eq, MeasureTheory.measure_biUnion_null_iff
     (Set.Finite.countable (Finset.finite_toSet S0))]
-  simp_all
+  simp_all only [mem_Icc, SetLike.mem_coe, implies_true]
 
 private lemma finset_min_sep (S0 : Finset ℂ)
     (hS0_nonempty : S0.Nonempty) :
@@ -147,7 +149,7 @@ private lemma cpv_cauchy_of_sum_and_regular (S0 : Finset ℂ) (f : ℂ → ℂ)
             (residueSimplePole f s.val / (γ.toFun t - s.val)) * deriv γ.toFun t
           else 0) (𝓝[>] 0) (𝓝 L) := by
     apply tendsto_finsetSum
-    simp_all
+    simp_all only [gt_iff_lt, ne_eq, Finset.mem_attach, imp_self, implies_true]
   let M := fun ε => ∫ t in γ.a..γ.b,
     cauchyPrincipalValueIntegrandOn S0 f γ.toFun ε t
   let S' := fun ε => ∑ s ∈ S0.attach,
@@ -185,7 +187,9 @@ lemma cauchyPrincipalValueOn_singular_sum (S0 : Finset ℂ) (f : ℂ → ℂ)
   · subst hS0_empty
     unfold CauchyPrincipalValueExistsOn
       cauchyPrincipalValueIntegrandOn
-    simp_all
+    simp_all only [Finset.notMem_empty, IsEmpty.forall_iff, implies_true, Finset.sum_empty,
+      sub_zero, false_and,
+        exists_const, ↓reduceIte, tendsto_const_nhds_iff, exists_eq']
   · have hS0_nonempty : S0.Nonempty :=
       Finset.nonempty_iff_ne_empty.mpr hS0_empty
     unfold CauchyPrincipalValueExistsOn
@@ -220,7 +224,9 @@ private lemma holomorphic_closed_integral_zero (U : Set ℂ) (hU : IsOpen U)
   have h_deriv' :
       ∀ t ∈ Ioo γ.a γ.b \ (↑γ.partition ∩ Ioo γ.a γ.b),
         HasDerivAt (F ∘ γ.toFun) (g (γ.toFun t) * deriv γ.toFun t) t := by
-    simp_all
+    simp_all only [mem_Icc, and_imp, mem_Ioo, sdiff_inter_self_eq_sdiff, Set.mem_sdiff,
+      SetLike.mem_coe,
+        not_false_eq_true, implies_true]
   have h_int :
       IntervalIntegrable (fun t => g (γ.toFun t) * deriv γ.toFun t)
         MeasureTheory.volume γ.a γ.b := by
@@ -376,7 +382,7 @@ private lemma generalizedResidueTheorem'_crossing_formula
       unfold cauchyPrincipalValue'
       simp only [zero_mul]
       apply limUnder_eventually_eq_const
-      simp_all
+      simp_all only [gt_iff_lt, ite_self, intervalIntegral.integral_zero, eventually_true]
     · exact pv_integral_simple_pole γ.toPiecewiseC1Curve s (residueSimplePole f s)
         (single_pole_pv_base_exists γ s (residueSimplePole f s) hc (hPV_singular s hs))
   have h_multipoint_eq_sum :
@@ -603,7 +609,7 @@ holds near `s` (on a punctured neighborhood). -/
 private lemma sum_div_sub_decomp (S0 : Finset ℂ) (c : ℂ → ℂ) (s : ℂ) (hs : s ∈ S0) :
     ∀ᶠ z in 𝓝[≠] s, (fun z => ∑ s' ∈ S0, c s' / (z - s')) z =
       c s / (z - s) + ∑ s' ∈ S0.erase s, c s' / (z - s') := by
-  simp_all
+  simp_all only [Finset.sum_erase_eq_sub, add_sub_cancel, eventually_true]
 
 /-- The sum `∑ s ∈ S0, c(s) / (z - s)` has a simple pole at each `s ∈ S0`,
 with coefficient `c(s)` and analytic remainder `∑ s' ∈ S0.erase s, c(s') / (z - s')`. -/

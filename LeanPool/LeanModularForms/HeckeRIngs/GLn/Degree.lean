@@ -486,7 +486,7 @@ private lemma diagMat_comm_of_const (a : Fin n → ℕ) (ha : ∀ i, 0 < a i)
       (a 0 : ℚ) • (1 : Matrix (Fin n) (Fin n) ℚ) := by
     ext i j
     simp only [Matrix.diagonal_apply, Matrix.smul_apply, Matrix.one_apply, smul_eq_mul]
-    simp_all
+    simp_all only [forall_const, mul_ite, mul_one, mul_zero]
   rw [h_diag, smul_mul_assoc, mul_smul_comm, one_mul, mul_one]
 
 /-- For `n = 2`, scalar case: `deg(T(c, c)) = 1`. -/

@@ -9,13 +9,11 @@ module
 public import LeanPool.LeanModularForms.Modularforms.MDifferentiableFunProp
 
 import LeanPool.LeanModularForms.ForMathlib.AtImInfty
-import LeanPool.LeanModularForms.Modularforms.ForMathlibCusps
 import LeanPool.LeanModularForms.Modularforms.SummableLems
 import Mathlib.Algebra.Order.Star.Real
 import Mathlib.Analysis.Complex.Liouville
 
 /-! # Derivative -/
-
 
 @[expose] public section
 
@@ -181,7 +179,8 @@ lemma MDifferentiable_div {F G : ℍ → ℂ}
     simp [Function.comp, Pi.div_apply, ofComplex_apply_of_im_pos hw]
   exact ((MDifferentiableAt_DifferentiableAt (hF τ)).div
     (MDifferentiableAt_DifferentiableAt (hG τ))
-    (by simp_all)).congr_of_eventuallyEq h_eq.symm
+    (by simp_all only [ne_eq, Function.comp_apply, ofComplex_apply,
+      not_false_eq_true])).congr_of_eventuallyEq h_eq.symm
 
 @[simp]
 theorem D_const (c : ℂ) : D (Function.const ℍ c) = 0 := by
@@ -541,7 +540,11 @@ lemma D_slash (k : ℤ) (F : ℍ → ℂ) (hF : MDiff F) (γ : SL(2, ℤ)) :
   simp only [ModularForm.SL_slash_apply, hF_mob, hmob_eq]
   have hpow_combine : 1 / (denom γ z) ^ 2 * (denom γ z) ^ (-k) = (denom γ z) ^ (-(k + 2)) := by
     rw [one_div, ← zpow_natCast (denom γ z) 2, ← zpow_neg, ← zpow_add₀ hz_denom_ne]
-    simp_all
+    simp_all only [ne_eq, denom_ne_zero, not_false_eq_true,
+      Matrix.SpecialLinearGroup.coeToGL_det, Units.val_one,
+        zero_lt_one, Function.comp_apply, zpow_neg, gt_iff_lt, deriv_mul, one_div, Fin.isValue,
+          neg_mul,
+        ModularGroup.sl_moeb, Nat.cast_ofNat, Int.reduceNeg, neg_add_rev]
   have hpow_m1 : (denom γ z) ^ (-k - 1) = (denom γ z) ^ (-1 : ℤ) * (denom γ z) ^ (-k) := by
     rw [← zpow_add₀ hz_denom_ne]
     congr 1
@@ -655,7 +658,9 @@ theorem D_real_of_real {F : ℍ → ℂ} (hF_real : ResToImagAxis.Real F)
     im_deriv_eq_zero_of_im_eq_zero (ResToImagAxis.Differentiable F hF_diff t ht) him
   have h_im_eq : (deriv F.resToImagAxis t).im = -2 * π * ((D F).resToImagAxis t).im := by
     simpa [mul_assoc, ofReal_mul] using congrArg Complex.im (deriv_resToImagAxis_eq F hF_diff ht)
-  simp_all
+  simp_all only [resToImagAxis_apply, resToImagAxis_eq_resToImagAxis, neg_mul, zero_eq_neg,
+    mul_eq_zero,
+      OfNat.ofNat_ne_zero, pi_ne_zero, or_self, false_or]
 
 /-- The real part of F.resToImagAxis has derivative -2π * ((D F).resToImagAxis t).re at t. -/
 lemma hasDerivAt_resToImagAxis_re {F : ℍ → ℂ} (hdiff : MDiff F)
@@ -675,7 +680,7 @@ theorem D_nonneg_from_antitone {F : ℍ → ℂ}
   have hderiv_nonpos : deriv (fun s => (F.resToImagAxis s).re) t ≤ 0 :=
     (derivWithin_of_isOpen isOpen_Ioi ht).symm.trans_le hanti.derivWithin_nonpos
   rw [(hasDerivAt_resToImagAxis_re hdiff ht).deriv] at hderiv_nonpos
-  nlinarith [Real.pi_pos]
+  nlinarith only [hderiv_nonpos, Real.pi_pos]
 
 /-- If F is real on the imaginary axis, MDifferentiable, and has strictly negative derivative
 on the imaginary axis, then D F is positive on the imaginary axis.
@@ -691,7 +696,7 @@ theorem D_pos_from_deriv_neg {F : ℍ → ℂ}
   refine ⟨D_real_of_real hreal hdiff, fun t ht => ?_⟩
   have hderiv := hderiv_neg t ht
   rw [(hasDerivAt_resToImagAxis_re hdiff ht).deriv] at hderiv
-  nlinarith [Real.pi_pos]
+  nlinarith only [hderiv, Real.pi_pos]
 
 /--
 If $F$ is a modular form where $F(it)$ is positive for sufficiently large $t$ (i.e. constant term
@@ -708,7 +713,7 @@ theorem antiDerPos {F : ℍ → ℂ} (hFderiv : MDiff F)
   have hn : ∀ t ∈ Set.Ioi (0 : ℝ), deriv g t < 0 := fun t (ht : 0 < t) => by
     rw [(hg t ht).deriv]
     have ht' : 0 < (ResToImagAxis (D F) t).re := hDF_pos t ht
-    nlinarith [Real.pi_pos]
+    nlinarith only [ht', Real.pi_pos]
   have gpos := fun t ht =>
     StrictAntiOn.eventuallyPos_Ioi (strictAntiOn_of_deriv_neg (convex_Ioi 0)
     (fun x hx => (hg x hx).continuousAt.continuousWithinAt)
@@ -741,8 +746,8 @@ lemma closedBall_center_subset_upperHalfPlane (z : ℍ) :
     _ ≤ ‖w - z‖ := abs_im_le_norm _
     _ = dist w z := (dist_eq_norm _ _).symm
     _ ≤ z.im / 2 := hdist
-  have hlower : z.im / 2 ≤ w.im := by linarith [(abs_le.mp habs).1]
-  exact lt_of_lt_of_le (by linarith [z.im_pos] : 0 < z.im / 2) hlower
+  have hlower : z.im / 2 ≤ w.im := by linarith only [habs, (abs_le.mp habs).1]
+  exact lt_of_lt_of_le (by linarith only [z.im_pos] : 0 < z.im / 2) hlower
 
 /-- Cauchy estimate for the D-derivative: if `f ∘ ofComplex` is holomorphic on a disk
 of radius `r` around `z` and bounded by `M` on the boundary sphere,
@@ -770,7 +775,7 @@ lemma D_isBoundedAtImInfty_of_bounded {f : ℍ → ℂ}
   obtain ⟨M, A, hMA⟩ := hbdd
   use M / π, 2 * max A 0 + 1
   intro z hz
-  have hR_pos : 0 < z.im / 2 := by linarith [z.im_pos]
+  have hR_pos : 0 < z.im / 2 := by linarith only [z.im_pos]
   have hclosed := closedBall_center_subset_upperHalfPlane z
   have hDiff : DiffContOnCl ℂ (f ∘ ofComplex) (Metric.ball (z : ℂ) (z.im / 2)) :=
     diffContOnCl_comp_ofComplex_of_mdifferentiable hf hclosed
@@ -783,10 +788,11 @@ lemma D_isBoundedAtImInfty_of_bounded {f : ℍ → ℂ}
         _ ≤ ‖w - z‖ := abs_im_le_norm _
         _ = dist w z := (dist_eq_norm _ _).symm
         _ = z.im / 2 := hdist
-    have hw_im_ge_A : A ≤ w.im := by linarith [(abs_le.mp habs).1, le_max_left A 0]
+    have hw_im_ge_A : A ≤ w.im := by linarith only [hz, habs, (abs_le.mp habs).1, le_max_left A 0]
     simpa [ofComplex_apply_of_im_pos hw_im_pos] using hMA ⟨w, hw_im_pos⟩ hw_im_ge_A
-  have hz_im_ge_1 : 1 ≤ z.im := by linarith [le_max_right A 0]
-  have hM_nonneg : 0 ≤ M := le_trans (norm_nonneg _) (hMA z (by linarith [le_max_left A 0]))
+  have hz_im_ge_1 : 1 ≤ z.im := by linarith only [hz, le_max_right A 0]
+  have hM_nonneg : 0 ≤ M := le_trans (norm_nonneg _) (hMA z (by
+    linarith only [hz, hR_pos, le_max_left A 0]))
   calc ‖D f z‖ ≤ M / (2 * π * (z.im / 2)) := norm_D_le_of_sphere_bound hR_pos hDiff hf_bdd_sphere
     _ = M / (π * z.im) := by ring
     _ ≤ M / (π * 1) := by gcongr

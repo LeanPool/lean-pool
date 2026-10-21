@@ -214,7 +214,7 @@ lemma piecewiseC1_deriv_intervalIntegrable (γ : PiecewiseC1Curve)
   obtain ⟨M, hM⟩ := h_bdd
   rw [intervalIntegrable_iff]
   refine MeasureTheory.IntegrableOn.of_bound ?_ ?_ M ?_
-  · simp_all
+  · simp_all only [mem_Icc, and_imp, Real.volume_uIoc, ENNReal.ofReal_lt_top]
   · exact (aestronglyMeasurable_deriv γ.toFun _).restrict
   · rw [MeasureTheory.ae_restrict_iff' measurableSet_uIoc]
     apply Filter.Eventually.of_forall
@@ -369,7 +369,8 @@ private lemma diff_punctured_of_diff_off_poles
       (fun h => (Set.mem_compl_singleton_iff.mp hw_ne)
         (Set.mem_singleton_iff.mp (h_S0_singleton h)))⟩
   · have h_S0_non : ∃ s' ∈ S0, s' ≠ z := by
-      simp_all
+      obtain ⟨s', hs', hne⟩ := Set.not_subset.mp h_S0_singleton
+      exact ⟨s', hs', fun h => hne (Set.mem_singleton_iff.mpr h)⟩
     obtain ⟨s', hs'_in, hs'_ne⟩ := h_S0_non
     have h_ne : (S0.filter (· ≠ z)).Nonempty :=
       ⟨s', Finset.mem_filter.mpr ⟨hs'_in, hs'_ne⟩⟩
@@ -383,10 +384,11 @@ private lemma diff_punctured_of_diff_off_poles
     intro hw_in_S0
     rcases eq_or_ne w z with rfl | hw_eq
     · exact hw_ne_z rfl
-    · linarith [Finset.inf'_le (fun s => ‖s - z‖) (show w ∈ S0.filter (· ≠ z) from
-        Finset.mem_filter.mpr ⟨Finset.mem_coe.mp hw_in_S0, hw_eq⟩),
-        (dist_eq_norm w z ▸ show dist w z < δ from
-          lt_of_lt_of_le hw (min_le_right _ _) : ‖w - z‖ < δ)]
+    · have h_dist_ge : δ ≤ ‖w - z‖ := Finset.inf'_le (fun s => ‖s - z‖)
+        (Finset.mem_filter.mpr ⟨Finset.mem_coe.mp hw_in_S0, hw_eq⟩)
+      have h_dist_lt : ‖w - z‖ < δ := dist_eq_norm w z ▸
+        lt_of_lt_of_le hw (min_le_right _ _)
+      exact (not_lt_of_ge h_dist_ge) h_dist_lt
 
 lemma simple_poles_decomposition
     (U : Set ℂ) (hU : IsOpen U)
@@ -510,14 +512,14 @@ lemma cauchyPrincipalValueIntegrandOn_eq_of_far
     cauchyPrincipalValueIntegrandOn S0 f γ ε t =
       f (γ t) * deriv γ t := by
   unfold cauchyPrincipalValueIntegrandOn
-  rw [ite_eq_right]; push Not; intro s hs; linarith [h_far s hs]
+  rw [ite_eq_right]; push Not; intro s hs; linarith only [h_far, hs, h_far s hs]
 
 lemma cauchyPrincipalValueIntegrandOn_empty
     (f : ℂ → ℂ) (γ : ℝ → ℂ) (ε : ℝ) (t : ℝ) :
     cauchyPrincipalValueIntegrandOn ∅ f γ ε t =
       f (γ t) * deriv γ t := by
   unfold cauchyPrincipalValueIntegrandOn
-  simp_all
+  simp_all only [Finset.notMem_empty, false_and, exists_const, ↓reduceIte]
 
 lemma cauchyPrincipalValueIntegrandOn_singleton
     (f : ℂ → ℂ) (γ : ℝ → ℂ) (z₀ : ℂ) (ε : ℝ) (t : ℝ) :
@@ -526,8 +528,12 @@ lemma cauchyPrincipalValueIntegrandOn_singleton
       else 0 := by
   unfold cauchyPrincipalValueIntegrandOn
   by_cases h : ‖γ t - z₀‖ ≤ ε
-  · simp_all
-  · simp_all
+  · simp_all only [Finset.mem_singleton, exists_eq_left, ↓reduceIte, gt_iff_lt, right_eq_ite_iff,
+    zero_eq_mul,
+        isEmpty_Prop, not_lt, IsEmpty.forall_iff]
+  · simp_all only [not_le, Finset.mem_singleton, exists_eq_left, gt_iff_lt, ↓reduceIte,
+    ite_eq_right_iff,
+        zero_eq_mul, isEmpty_Prop, IsEmpty.forall_iff]
 
 lemma cauchyPrincipalValueOn_empty
     (f : ℂ → ℂ) (γ : ℝ → ℂ) (a b : ℝ) :
@@ -676,7 +682,7 @@ theorem pv_integral_simple_pole
           then (·⁻¹) ((fun s => γ.toFun s - z₀) t) *
             deriv (fun s => γ.toFun s - z₀) t
           else 0)).symm]
-    simp_all
+    simp_all only [sub_zero, gt_iff_lt, deriv_sub_const_fun, implies_true, ite_mul, zero_mul]
   simp_rw [h_integral']
   obtain ⟨L, hL⟩ := hPV
   exact (hL.mul_const c).limUnder_eq ▸

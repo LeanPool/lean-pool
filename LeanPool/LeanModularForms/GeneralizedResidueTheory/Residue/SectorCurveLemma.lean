@@ -172,7 +172,7 @@ private theorem φ_sectorCurve_integrableOn_01 (r : ℝ) (hr : 0 < r) (α : ℝ)
     · exact hg.continuousOn.comp
         ((continuous_ofReal.comp (continuous_id.mul continuous_const)).continuousOn)
         (fun t ht => by
-          have := hγ_in_ball t ⟨ht.1, by linarith [ht.2]⟩
+          have := hγ_in_ball t ⟨ht.1, by linarith only [ht, ht.2]⟩
           rwa [sectorCurve_seg1 r α t ht] at this)
     · exact continuousOn_const
   exact (hc.intervalIntegrable_of_Icc (by norm_num)).congr_ae (by
@@ -195,7 +195,7 @@ private theorem φ_sectorCurve_integrableOn_12 (r : ℝ) (hr : 0 < r) (α : ℝ)
           (continuous_const.mul (continuous_ofReal.comp
             ((continuous_id.sub continuous_const).mul continuous_const))))).continuousOn)
         (fun t ht => by
-          have := hγ_in_ball t ⟨by linarith [ht.1], by linarith [ht.2]⟩
+          have := hγ_in_ball t ⟨by linarith only [ht, ht.1], by linarith only [ht, ht.2]⟩
           rwa [sectorCurve_seg2 r α t ht] at this)
     · exact (continuous_const.mul (continuous_exp.comp
         (continuous_const.mul (continuous_ofReal.comp
@@ -219,7 +219,7 @@ private theorem φ_sectorCurve_integrableOn_23 (r : ℝ) (hr : 0 < r) (α : ℝ)
         ((continuous_ofReal.comp ((continuous_const.sub continuous_id).mul
           continuous_const)).mul continuous_const).continuousOn
         (fun t ht => by
-          have := hγ_in_ball t ⟨by linarith [ht.1], ht.2⟩
+          have := hγ_in_ball t ⟨by linarith only [ht, ht.1], ht.2⟩
           rwa [sectorCurve_seg3 r α t ht] at this)
     · exact continuousOn_const
   exact (hc.intervalIntegrable_of_Icc (by norm_num)).congr_ae (by
@@ -338,13 +338,13 @@ private theorem cauchyPV_inv_integrableOn_3δ3 (r : ℝ) (hr : 0 < r) (α : ℝ)
   (intervalIntegrable_const (c := (0 : ℂ))).congr (fun t ht => by
     have hεr_pos : ε / r > 0 := div_pos hε_pos hr
     have hεr_lt_one : ε / r < 1 := (div_lt_one hr).mpr hε_lt_r
-    rw [Set.uIoc_of_le (by linarith : 3 - ε / r ≤ 3)] at ht
+    rw [Set.uIoc_of_le (by linarith only [hεr_pos] : 3 - ε / r ≤ 3)] at ht
     simp only [cauchyPrincipalValueIntegrand', sub_zero]
     rw [ite_eq_right (not_lt.mpr _)]
-    rw [sectorCurve_norm_seg3' r hr α t ⟨by linarith [ht.1], ht.2⟩]
+    rw [sectorCurve_norm_seg3' r hr α t ⟨by linarith only [ht, hεr_lt_one, ht.1], ht.2⟩]
     have : (3 - t) * r ≤ ε / r * r :=
-      mul_le_mul_of_nonneg_right (by linarith [ht.1]) hr.le
-    linarith [div_mul_cancel₀ ε (ne_of_gt hr)])
+      mul_le_mul_of_nonneg_right (by linarith only [ht, ht.1]) hr.le
+    linarith only [hr, this, div_mul_cancel₀ ε (ne_of_gt hr)])
 
 private theorem cauchyPV_inv_integrableOn_δ1 (r : ℝ) (hr : 0 < r) (α : ℝ)
     (ε : ℝ) (hε_pos : 0 < ε) (hε_lt_r : ε < r) :
@@ -476,7 +476,9 @@ private theorem cauchyPV_g_tendsto_zero (r : ℝ) (hr : 0 < r) (α : ℝ)
         exact tendsto_const_nhds.congr' (by
           filter_upwards [Ioo_mem_nhdsGT
             (norm_pos_iff.mpr (sub_ne_zero.mpr h_ne))] with ε hε
-          simp_all))
+          simp_all only [mem_Icc, and_false, not_false_eq_true, Nat.ofNat_nonneg, uIoc_of_le,
+            mem_Ioc, ne_eq, sub_zero,
+              mem_Ioo, cauchyPrincipalValueIntegrand'_of_gt]))
 
 private theorem cauchyPV_simplePole_integral_split (r : ℝ) (hr : 0 < r) (α : ℝ)
     (c : ℂ) (g : ℂ → ℂ) (hg : AnalyticOnNhd ℂ g (Metric.ball 0 (↑r + 1))) :
@@ -553,7 +555,7 @@ theorem cauchyPV_sectorCurve_eq_mul_residueSimplePole (r : ℝ) (hr : 0 < r) (α
           deriv (sectorCurve r α) t
         else 0) := by
     intro ε hε t; split_ifs with h
-    · have hne : sectorCurve r α t ≠ 0 := by intro heq; simp [heq] at h; linarith
+    · have hne : sectorCurve r α t ≠ 0 := by intro heq; simp [heq] at h; linarith only [hε, h]
       rw [hf_eq _ hne]
     · rfl
   have h_sp := cauchyPV_sectorCurve_simplePole r hr α hα_nonneg hα_le c g hg
@@ -579,17 +581,19 @@ private theorem sectorCurve_ne_zero_of_Icc_δ (r : ℝ) (hr : 0 < r) (α : ℝ)
   · rw [sectorCurve_seg1 r α t ⟨le_trans hδ_pos.le ht.1, h1⟩] at h0
     have : t * r = 0 := Complex.ofReal_eq_zero.mp h0
     rcases mul_eq_zero.mp this with ht0 | hr0
-    · linarith [ht.1]
-    · linarith
+    · linarith only [hδ_pos, ht, ht0, ht.1]
+    · linarith only [hr, hr0]
   · rcases le_or_gt t 2 with h2 | h2
     · rw [sectorCurve_seg2 r α t ⟨le_of_lt h1, h2⟩] at h0
-      simp_all
-    · rw [sectorCurve_seg3 r α t ⟨le_of_lt h2, by linarith [ht.2]⟩] at h0
+      simp_all only [mem_Icc, ofReal_mul, ofReal_sub, ofReal_one, mul_eq_zero, ofReal_eq_zero,
+        exp_ne_zero,
+          or_false, lt_self_iff_false]
+    · rw [sectorCurve_seg3 r α t ⟨le_of_lt h2, by linarith only [hδ_pos, ht, ht.2]⟩] at h0
       rcases mul_eq_zero.mp h0 with h3t | hexp0
       · have : (3 - t) * r = 0 := Complex.ofReal_eq_zero.mp h3t
         rcases mul_eq_zero.mp this with ht3 | hr0
-        · linarith [ht.2]
-        · linarith
+        · linarith only [hδ_pos, ht, ht3, ht.2]
+        · linarith only [hr, hr0]
       · exact absurd hexp0 (Complex.exp_ne_zero _)
 
 private theorem sectorCurve_norm_le_near_zero (r : ℝ) (hr : 0 < r) (α : ℝ)
@@ -604,8 +608,10 @@ private theorem sectorCurve_norm_le_near_three (r : ℝ) (hr : 0 < r) (α : ℝ)
     (δ : ℝ) (hδ_lt_1 : δ < 1) (ε : ℝ) (hδr_eq : δ * r = ε) :
     ∀ t ∈ Icc (3 - δ) 3, ‖sectorCurve r α t‖ ≤ ε := by
   intro t ht
-  rw [sectorCurve_norm_seg3' r hr α t ⟨le_trans (by linarith : 2 ≤ 3 - δ) ht.1, ht.2⟩]
-  calc (3 - t) * r ≤ δ * r := by apply mul_le_mul_of_nonneg_right _ hr.le; linarith [ht.1]
+  rw [sectorCurve_norm_seg3' r hr α t ⟨le_trans (by linarith only [hδ_lt_1] : 2 ≤ 3 - δ) ht.1,
+    ht.2⟩]
+  calc (3 - t) * r ≤ δ * r := by apply mul_le_mul_of_nonneg_right _ hr.le; linarith only [ht,
+    ht.1]
     _ = ε := hδr_eq
 
 private theorem sectorCurve_norm_gt_mid (r : ℝ) (hr : 0 < r) (α : ℝ)
@@ -621,9 +627,9 @@ private theorem sectorCurve_norm_gt_mid (r : ℝ) (hr : 0 < r) (α : ℝ)
     · have : ‖sectorCurve r α t‖ = r :=
         sectorCurve_norm_on_arc r hr α t ⟨le_of_lt h1, h2⟩
       rw [this]; exact hε_lt_r
-    · rw [sectorCurve_norm_seg3' r hr α t ⟨le_of_lt h2, by linarith [ht.2]⟩]
+    · rw [sectorCurve_norm_seg3' r hr α t ⟨le_of_lt h2, by linarith only [hδ_pos, ht, ht.2]⟩]
       calc ε = δ * r := hδr_eq.symm
-        _ < (3 - t) * r := by apply mul_lt_mul_of_pos_right _ hr; linarith [ht.2]
+        _ < (3 - t) * r := by apply mul_lt_mul_of_pos_right _ hr; linarith only [ht, ht.2]
 
 private theorem zpow_integrableOn_δ1 (r : ℝ) (hr : 0 < r) (α : ℝ)
     (n : ℕ) (δ : ℝ) (hδ_pos : 0 < δ) (hδ_lt_1 : δ < 1) :
@@ -633,7 +639,8 @@ private theorem zpow_integrableOn_δ1 (r : ℝ) (hr : 0 < r) (α : ℝ)
       (Icc δ 1) := by
     apply ContinuousOn.mul
     · apply ContinuousOn.zpow₀
-      · fun_prop
+      · exact Continuous.comp_continuousOn' continuous_ofReal
+          (ContinuousOn.mul_const (continuousOn_id' (Icc δ 1)) r)
       · intro t ht
         left; exact Complex.ofReal_ne_zero.mpr (ne_of_gt (mul_pos (lt_of_lt_of_le hδ_pos ht.1) hr))
     · exact continuousOn_const
@@ -650,10 +657,24 @@ private theorem zpow_integrableOn_12 (r : ℝ) (hr : 0 < r) (α : ℝ) (n : ℕ)
       (↑r * (I * ↑α) * exp (I * ↑((t - 1) * α)))) (Icc 1 2) := by
     apply ContinuousOn.mul
     · apply ContinuousOn.zpow₀
-      · fun_prop
+      · exact ContinuousOn.const_mul
+            (ContinuousOn.cexp
+              (ContinuousOn.const_mul
+                (Continuous.comp_continuousOn' continuous_ofReal
+                  (ContinuousOn.mul_const
+                    (ContinuousOn.fun_sub (continuousOn_id' (Icc 1 2)) continuousOn_const) α))
+                I))
+            ↑r
       · intro t _; left
         exact mul_ne_zero (Complex.ofReal_ne_zero.mpr (ne_of_gt hr)) (Complex.exp_ne_zero _)
-    · fun_prop
+    · exact ContinuousOn.const_mul
+          (ContinuousOn.cexp
+            (ContinuousOn.const_mul
+              (Continuous.comp_continuousOn' continuous_ofReal
+                (ContinuousOn.mul_const
+                  (ContinuousOn.fun_sub (continuousOn_id' (Icc 1 2)) continuousOn_const) α))
+              I))
+          (↑r * (I * ↑α))
   exact (this.intervalIntegrable_of_Icc (by norm_num)).congr_ae (by
     rw [Set.uIoc_of_le (by norm_num : (1 : ℝ) ≤ 2),
       ← Measure.restrict_congr_set Ioo_ae_eq_Ioc]
@@ -665,22 +686,27 @@ private theorem zpow_integrableOn_23δ (r : ℝ) (hr : 0 < r) (α : ℝ)
     (n : ℕ) (δ : ℝ) (hδ_pos : 0 < δ) (hδ_lt_1 : δ < 1) :
     IntervalIntegrable (fun t => (sectorCurve r α t) ^ (-(↑n : ℤ)) *
       deriv (sectorCurve r α) t) volume 2 (3 - δ) := by
-  have h3δ_gt_2 : 2 < 3 - δ := by linarith
+  have h3δ_gt_2 : 2 < 3 - δ := by linarith only [hδ_lt_1]
   have : ContinuousOn (fun t => (↑((3 - t) * r) * exp (I * ↑α)) ^ (-(↑n : ℤ)) *
       (-(↑r) * exp (I * ↑α))) (Icc 2 (3 - δ)) := by
     apply ContinuousOn.mul
     · apply ContinuousOn.zpow₀
-      · fun_prop
+      · exact ContinuousOn.mul_const
+            (Continuous.comp_continuousOn' continuous_ofReal
+              (ContinuousOn.mul_const
+                (ContinuousOn.fun_sub continuousOn_const (continuousOn_id' (Icc 2 (3 - δ)))) r))
+            (cexp (I * ↑α))
       · intro t ht; left
-        exact mul_ne_zero (Complex.ofReal_ne_zero.mpr (ne_of_gt (mul_pos (by linarith [ht.2]) hr)))
+        exact mul_ne_zero (Complex.ofReal_ne_zero.mpr (ne_of_gt (mul_pos (by
+          linarith only [hδ_pos, ht, ht.2]) hr)))
           (Complex.exp_ne_zero _)
     · exact continuousOn_const
   exact (this.intervalIntegrable_of_Icc h3δ_gt_2.le).congr_ae (by
     rw [Set.uIoc_of_le h3δ_gt_2.le,
       ← Measure.restrict_congr_set Ioo_ae_eq_Ioc]
     filter_upwards [ae_restrict_mem measurableSet_Ioo] with t ht
-    simp only [sectorCurve_seg3 r α t ⟨le_of_lt ht.1, by linarith [ht.2]⟩,
-      deriv_sectorCurve_seg3 r α t ⟨ht.1, by linarith [ht.2]⟩])
+    simp only [sectorCurve_seg3 r α t ⟨le_of_lt ht.1, by linarith only [hδ_pos, ht, ht.2]⟩,
+      deriv_sectorCurve_seg3 r α t ⟨ht.1, by linarith only [hδ_pos, ht, ht.2]⟩])
 
 private theorem zpow_primitive_hasDerivAt (r : ℝ) (hr : 0 < r) (α : ℝ) (n : ℕ) (hn : 2 ≤ n)
     (δ : ℝ) (hδ_pos : 0 < δ) (hδ_lt_1 : δ < 1) :
@@ -715,10 +741,10 @@ private theorem zpow_ftc_vanishes (r : ℝ) (_hr : 0 < r) (α : ℝ) (n : ℕ) (
     let F := fun t => (γ t) ^ m / (m : ℂ)
     F (3 - δ) - F δ = 0 := by
   intro m γ F
-  have h3δ_gt_2 : 2 < 3 - δ := by linarith
+  have h3δ_gt_2 : 2 < 3 - δ := by linarith only [hδ_lt_1]
   have hγ_δ : γ δ = ↑(δ * r) := sectorCurve_seg1 r α δ ⟨hδ_pos.le, hδ_lt_1.le⟩
   have hγ_3δ : γ (3 - δ) = ↑(δ * r) * exp (I * ↑α) := by
-    have := sectorCurve_seg3 r α (3 - δ) ⟨h3δ_gt_2.le, by linarith⟩
+    have := sectorCurve_seg3 r α (3 - δ) ⟨h3δ_gt_2.le, by linarith only [hδ_pos]⟩
     simp only [show 3 - (3 - δ) = δ from by ring] at this; exact this
   simp only [F, hγ_δ, hγ_3δ, mul_zpow]
   rw [show (exp (I * ↑α)) ^ m = exp (I * ↑((1 - (↑n : ℤ)) * α)) from by

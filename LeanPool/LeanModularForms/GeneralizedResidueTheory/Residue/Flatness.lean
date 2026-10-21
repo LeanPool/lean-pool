@@ -102,7 +102,7 @@ theorem norm_tangentDeviation_le (w L : ℂ) (hL : L ≠ 0) :
   have hns : 0 < Complex.normSq L := Complex.normSq_pos.mpr hL
   unfold tangentDeviation orthogonalProjectionComplex
   suffices h : ‖((w * starRingEnd ℂ L).re / Complex.normSq L) • L‖ ≤ ‖w‖ by
-    linarith [norm_sub_le w (((w * starRingEnd ℂ L).re / Complex.normSq L) • L)]
+    linarith only [h, norm_sub_le w (((w * starRingEnd ℂ L).re / Complex.normSq L) • L)]
   rw [norm_smul, Real.norm_eq_abs]
   calc |(w * starRingEnd ℂ L).re / Complex.normSq L| * ‖L‖
       ≤ (‖w‖ * ‖L‖ / Complex.normSq L) * ‖L‖ := by
@@ -187,7 +187,7 @@ private theorem tangentDeviation_isLittleO_of_remainder
     have h2 : ‖(t - t₀) • L‖ ≤ ‖γ t - γ t₀‖ + ‖r t‖ :=
       (show (t - t₀) • L = (γ t - γ t₀) - r t by simp [hr_def]) ▸ norm_sub_le _ _
     rw [div_mul_eq_mul_div, le_div_iff₀ hL_pos]
-    nlinarith [norm_nonneg (γ t - γ t₀), ht]
+    nlinarith only [ht, h1, h2, norm_nonneg (γ t - γ t₀)]
   exact (ho1.trans_isBigO hO2).congr_left fun t => (h_eq t).symm
 
 /-- Key lemma: if gamma has derivative L at t_0, then the tangent deviation of
@@ -392,7 +392,8 @@ theorem satisfiesConditionB_of_simple_poles
     · -- Smooth point: angle = pi = 1*pi/1
       refine ⟨1, 1, one_ne_zero, Nat.coprime_one_left 1, ?_⟩
       rw [angleAtCrossing_smooth γ t₀ ht₀_Ioo hp]
-      simp_all
+      simp_all only [mem_Icc, mem_Ioo, ne_eq, Nat.exists_ne_zero, Nat.cast_add, Nat.cast_one,
+        forall_and_index, one_mul, div_one]
   · intro s hs t₀ _ht₀ _hcross _ht₀_Ioo
     obtain ⟨c, g, hg, hf_eq⟩ := _hSimplePoles s hs
     refine ⟨1, ![c], g, hg, ?_, ?_⟩
@@ -400,7 +401,12 @@ theorem satisfiesConditionB_of_simple_poles
       rw [hz]
       simp [pow_one]
       ring
-    · simp_all
+    · simp_all only [mem_Icc, mem_Ioo, ne_eq, Nat.exists_ne_zero, Nat.cast_add, Nat.cast_one,
+      forall_and_index, Matrix.cons_val_fin_one, Fin.val_eq_zero, ge_iff_le, nonpos_iff_eq_zero,
+            one_ne_zero, CharP.cast_eq_zero,
+          zero_mul, zero_eq_mul, Int.cast_eq_zero, mul_eq_zero, OfNat.ofNat_ne_zero,
+            Real.pi_ne_zero, or_self, or_true,
+          not_isEmpty_of_nonempty, IsEmpty.exists_iff, implies_true]
 
 /-- Both conditions (A) and (B) are satisfied for simple poles, provided
 corner crossing angles are rational multiples of π. Condition (A) is fully
