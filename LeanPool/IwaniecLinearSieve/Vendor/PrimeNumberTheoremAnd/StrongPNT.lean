@@ -6,6 +6,7 @@ Authors: PrimeNumberTheoremAnd contributors
 
 module
 
+public import Mathlib.Analysis.Analytic.Order
 public import Mathlib.Analysis.CStarAlgebra.Classes
 public import LeanPool.IwaniecLinearSieve.Vendor.PrimeNumberTheoremAnd.MediumPNT
 import Mathlib.Algebra.Order.Star.Real
