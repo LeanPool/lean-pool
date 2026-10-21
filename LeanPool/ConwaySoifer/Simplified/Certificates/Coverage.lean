@@ -7,7 +7,8 @@ module
 
 public import LeanPool.ConwaySoifer.Certificates.IntervalCover
 public import LeanPool.ConwaySoifer.Simplified.Certificates.AllChecked
-import Mathlib.Tactic
+import Mathlib.Tactic.Linarith
+import Mathlib.Tactic.NormNum.Basic
 
 /-! Exact half-open interval cover for the third-pass selection only. -/
 

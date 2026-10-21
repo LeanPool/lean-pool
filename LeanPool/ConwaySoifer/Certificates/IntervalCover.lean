@@ -6,7 +6,8 @@ Authors: Vladislav Kuznetsov
 module
 
 public import LeanPool.ConwaySoifer.Certificates.ModelSound
-import Mathlib.Tactic
+import Mathlib.Tactic.Linarith
+import Mathlib.Tactic.NormNum.Basic
 
 /-!
 # IntervalCover

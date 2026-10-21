@@ -106,8 +106,6 @@ public import LeanPool.ConwaySoifer.Simplified.Certificates.Checked.Across102500
 public import LeanPool.ConwaySoifer.Simplified.Certificates.Checked.Across107500112500
 public import LeanPool.ConwaySoifer.Simplified.Certificates.Checked.Across112500117500
 public import LeanPool.ConwaySoifer.Simplified.Certificates.Checked.Across117500122500
-import Mathlib.Tactic
-import Mathlib.Tactic.FinCases
 
 /-!
 # AllChecked

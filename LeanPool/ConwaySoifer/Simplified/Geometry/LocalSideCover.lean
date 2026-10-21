@@ -6,7 +6,7 @@ Authors: Vladislav Kuznetsov
 module
 
 public import LeanPool.ConwaySoifer.Simplified.Geometry.CentralWitnesses
-import Mathlib.Tactic
+import Mathlib.Tactic.FinCases
 
 /-!
 # LocalSideCover

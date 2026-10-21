@@ -8,7 +8,12 @@ module
 public import LeanPool.ConwaySoifer.Geometry.Budget
 public import LeanPool.ConwaySoifer.Geometry.Locality
 public import LeanPool.ConwaySoifer.Geometry.Canonical
-import Mathlib.Tactic
+import Mathlib.Tactic.Convert
+import Mathlib.Tactic.FieldSimp
+import Mathlib.Tactic.FinCases
+import Mathlib.Tactic.Linarith
+import Mathlib.Tactic.NormNum.Basic
+import Mathlib.Tactic.Ring
 
 /-!
 # Geometric normalization: every subunit cover is a canonical contact case

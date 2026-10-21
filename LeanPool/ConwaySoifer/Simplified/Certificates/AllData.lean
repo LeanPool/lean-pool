@@ -105,7 +105,6 @@ public import LeanPool.ConwaySoifer.Simplified.Certificates.Data.Across102500107
 public import LeanPool.ConwaySoifer.Simplified.Certificates.Data.Across107500112500
 public import LeanPool.ConwaySoifer.Simplified.Certificates.Data.Across112500117500
 public import LeanPool.ConwaySoifer.Simplified.Certificates.Data.Across117500122500
-import Mathlib.Tactic
 
 /-!
 # AllData

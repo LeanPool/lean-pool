@@ -6,7 +6,6 @@ Authors: Vladislav Kuznetsov
 module
 
 public import LeanPool.ConwaySoifer.Simplified.Theorem
-import Mathlib.Tactic
 
 /-!
 # Conway–Soifer covering conjecture for n = 3
