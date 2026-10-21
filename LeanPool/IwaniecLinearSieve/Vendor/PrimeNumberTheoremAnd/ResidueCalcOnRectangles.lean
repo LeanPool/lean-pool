@@ -278,30 +278,7 @@ lemma RectangleIntegralHSplit {a x₀ x₁ y₀ y₁ : ℝ}
     Complex.I_im, mul_one, mul_zero, add_zero, zero_add, sub_self]
   have h₁ := integral_add_adjacent_intervals f_int_x₀_a_bot f_int_a_x₁_bot
   have h₂ := integral_add_adjacent_intervals f_int_x₀_a_top f_int_a_x₁_top
-  have h₁' :
-      (∫ (x : ℝ) in x₀..a, f (↑x + ↑y₀ * I)) +
-          ∫ (x : ℝ) in a..x₁, f (↑y₀ * I + ↑x) =
-        ∫ (x : ℝ) in x₀..x₁, f (↑x + ↑y₀ * I) := by
-    simpa [add_comm] using h₁
-  have h₂' :
-      (∫ (x : ℝ) in x₀..a, f (↑x + ↑y₁ * I)) +
-          ∫ (x : ℝ) in a..x₁, f (↑y₁ * I + ↑x) =
-        ∫ (x : ℝ) in x₀..x₁, f (↑x + ↑y₁ * I) := by
-    simpa [add_comm] using h₂
-  rw [← h₁', ← h₂']
-  have hcomm₁ :
-      ∫ (x : ℝ) in a..x₁, f (↑y₀ * I + ↑x) =
-        ∫ (x : ℝ) in a..x₁, f (↑x + ↑y₀ * I) := by
-    apply intervalIntegral.integral_congr
-    intro x _
-    exact congrArg f (by ring)
-  have hcomm₂ :
-      ∫ (x : ℝ) in a..x₁, f (↑y₁ * I + ↑x) =
-        ∫ (x : ℝ) in a..x₁, f (↑x + ↑y₁ * I) := by
-    apply intervalIntegral.integral_congr
-    intro x _
-    exact congrArg f (by ring)
-  rw [hcomm₁, hcomm₂]
+  rw [← h₁, ← h₂]
   abel
 
 lemma RectangleIntegralHSplit' {a x₀ x₁ y₀ y₁ : ℝ}

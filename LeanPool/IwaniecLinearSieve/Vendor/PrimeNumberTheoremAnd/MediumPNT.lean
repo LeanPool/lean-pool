@@ -1806,13 +1806,7 @@ theorem I1Bound
     rw [trivialize] at final_bound_pointwise
     exact final_bound_pointwise
   have σ₀_gt : 1 < pts_re := pts_re_ge_1
-  have σ₀_le_2 : pts_re ≤ 2 := by
-    unfold pts_re
-    -- LOL!
-    exact
-      Preorder.le_trans (1 + (Real.log X)⁻¹) (pts (SmoothingF (SmoothingF M))).re 2
-        (triv_pts_lo_bound (SmoothingF (SmoothingF M)))
-        (triv_pts_up_bound (SmoothingF (SmoothingF M)))
+  have σ₀_le_2 : pts_re ≤ 2 := pts_re_le_one.le
   have f_integrable := SmoothedChebyshevPull1_aux_integrable eps_pos eps_less_one X_large σ₀_gt
     σ₀_le_2 suppSmoothingF SmoothingFnonneg mass_one ContDiffSmoothingF
   have S : X^pts_re = rexp 1 * X := by
