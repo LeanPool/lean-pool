@@ -1,0 +1,56 @@
+slug: iwaniec-linear-sieve
+title: Iwaniec's linear sieve and Jacobsthal's bound
+summary: >-
+  Proves an absolute O((r log r)^2) bound for any run of consecutive integers
+  covered by r distinct primes, using the Rosser-Iwaniec linear sieve at the
+  sifting limit. Preserves the combinatorial sieve, delay-equation majorants,
+  prime-sum estimates and the proved strong prime-number-theorem dependency.
+  This imports the dependency closure of the Jacobsthal corollary, rather than
+  claiming the upstream formalizations of both papers in full.
+branch: analytic number theory
+entry_module: LeanPool.IwaniecLinearSieve
+authors:
+- Jason Davies
+- PrimeNumberTheoremAnd contributors
+source:
+  title: On the problem of Jacobsthal
+  authors:
+  - Henryk Iwaniec
+  doi: 10.1515/dema-1978-0121
+  url: https://github.com/jasondavies/iwaniec-linear-sieve/tree/c8d01549d2ae640b36ec198c1f0f6495f1b036cf
+  github_repo: jasondavies/iwaniec-linear-sieve
+  commit: c8d01549d2ae640b36ec198c1f0f6495f1b036cf
+  announcement_url: https://leanprover.zulipchat.com/#narrow/channel/583339/near/633293145
+  announcement_date: '2026-10-20'
+  dependency_repository: https://github.com/AlexKontorovich/PrimeNumberTheoremAnd
+  dependency_commit: 127b50e33f6033e2147921167a117af96d9ba4ea
+license: Apache-2.0
+status: verified
+provenance: AI
+main_declarations:
+- IwaniecLinearSieve.iwaniecBound
+main_results:
+- declaration: IwaniecLinearSieve.iwaniecBound
+  informal: >-
+    There is an absolute real constant C such that, for every finite set S of
+    at least two primes and every interval of m consecutive integers each
+    divisible by a prime in S, m is at most C times (|S| log |S|)^2.
+- declaration: IwaniecLinearSieve.shiftedSieve
+  informal: >-
+    Rosser's lower-bound sieve for the first r primes transfers to any set of
+    r primes, bounding the number of integers avoiding all those primes.
+- declaration: IwaniecLinearSieve.linearSieveEstimate
+  informal: >-
+    At a fixed constant times z squared, Rosser's lower-bound sieve has main
+    term bounded below by a positive constant times R(z)/log z and support
+    bounded above by a constant times z squared divided by log squared z,
+    for all sufficiently large z.
+tags:
+- analytic-number-theory
+- sieve-theory
+- jacobsthal-function
+- prime-number-theorem
+msc:
+- 11N35
+- 11N36
+- 11N25
