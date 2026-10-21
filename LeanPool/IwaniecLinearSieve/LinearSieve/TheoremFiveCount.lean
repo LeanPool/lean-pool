@@ -434,11 +434,16 @@ theorem exists_card_small : ∃ y₀ : ℝ, ∀ y ≥ y₀, ∀ (lower : Bool) (
   have hxl : 4 * (xi y * lam y ^ 2) ≤ log y := by
     have hsplit : lam y ^ (11 / 5 : ℝ) = lam y ^ 2 * lam y ^ (1 / 5 : ℝ) := by
       rw [← rpow_natCast, ← rpow_add hm0]; norm_num
-    rw [xi_eq_lam, hsplit]
     have hμ0 : 0 < lam y ^ (1 / 5 : ℝ) := rpow_pos_of_pos hm0 _
-    rw [div_mul_eq_mul_div, mul_div_assoc', div_le_iff₀ (by positivity)]
-    have : 4 ≤ lam y ^ (1 / 5 : ℝ) := by linarith
-    nlinarith [mul_pos hL0 (pow_pos hm0 2)]
+    have hμ4 : 4 ≤ lam y ^ (1 / 5 : ℝ) :=
+      (show (4 : ℝ) ≤ 100 by norm_num).trans (hc1.trans hμ)
+    rw [xi_eq_lam, hsplit]
+    calc
+      4 * (log y / (lam y ^ 2 * lam y ^ (1 / 5 : ℝ)) * lam y ^ 2) =
+          (4 / lam y ^ (1 / 5 : ℝ)) * log y := by
+        field_simp [hm0.ne', hμ0.ne']
+      _ ≤ 1 * log y := mul_le_mul_of_nonneg_right ((div_le_one hμ0).2 hμ4) hL0.le
+      _ = log y := one_mul _
   have hcrude := crude_exponent_le hL0 rfl hℓ1 (by linarith) (a := log (lam y)) (by linarith)
     hxl h24 h16 h10
   have hB := exp_le_delta_errMaj hcG0 hG hy1 (by linarith) (by linarith) h8 (by linarith) h10
@@ -450,7 +455,9 @@ theorem exists_card_small : ∃ y₀ : ℝ, ∀ y ≥ y₀, ∀ (lower : Bool) (
   calc (1 + (#(rosserSet lower y (y ^ (1 / (xi y - 1)))) : ℝ)) * (8 * log y ^ 4)
       ≤ 8 * log y ^ 4 * (1 + exp (log y + 2 * xi y - log y / lam y) +
           2 * exp (log y - xi y * log (xi y) + xi y * log (lam y) + 5 * xi y)) := by
-        nlinarith [pow_pos hL0 4]
+        simpa only [add_comm, add_left_comm, add_assoc, mul_comm] using
+          mul_le_mul_of_nonneg_left (add_le_add_left hcard 1)
+            (by positivity : 0 ≤ 8 * log y ^ 4)
     _ ≤ y * exp (-(xi y * log (xi y)) + 3 / 2 * xi y * log (lam y)) := hcrude.trans hy'.le
     _ ≤ y * (delta s y * errMaj lower s) := by gcongr
     _ = delta s y * errMaj lower s * y := by ring
