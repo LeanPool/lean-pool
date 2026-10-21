@@ -4,11 +4,13 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Boris Alexeev
 -/
 module
+public import Mathlib.Tactic.NormNum.Parity
+import all Mathlib.Topology.Homotopy.Lifting
 
-public import LeanPool.HopfProblem.Prelude
+public import LeanPool.HopfProblem.InternalPrelude
 public import LeanPool.HopfProblem.Foundations.TrianglePeriodFamilyHomologySplitting
 public import LeanPool.HopfProblem.PeriodFamily.Core4
-import all LeanPool.HopfProblem.Foundations.Core1
+import LeanPool.HopfProblem.Foundations.Core1
 import all LeanPool.HopfProblem.HomologyTheory.SingularMayerVietoris
 import all LeanPool.HopfProblem.Lattice.Core1
 import all LeanPool.HopfProblem.TorusHomology.PeriodTorusHigherHomology1
@@ -42,10 +44,8 @@ Supporting definitions and proofs for this stage of the six-sphere construction.
 
 open Set Function Filter Manifold Topology
 
-open scoped BigOperators CategoryTheory Complex.UnitDisc ComplexConjugate ContDiff ContinuousMap
-  Convolution ENNReal EuclideanSpace Fin.NatCast InnerProductSpace Interval Matrix MatrixGroups
-  Modular NNReal Pointwise RealInnerProductSpace TensorProduct UniformConvergence Uniformity
-  UpperHalfPlane
+open scoped BigOperators ComplexConjugate ContDiff ContinuousMap ENNReal EuclideanSpace Fin.NatCast
+  InnerProductSpace Interval Matrix NNReal Pointwise RealInnerProductSpace
 
 universe u v
 

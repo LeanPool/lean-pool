@@ -4,12 +4,13 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Boris Alexeev
 -/
 module
+public import LeanPool.HopfProblem.Uniformization.CuspUniformization1
 
-public import LeanPool.HopfProblem.Prelude
+public import LeanPool.HopfProblem.InternalPrelude
 public import LeanPool.HopfProblem.Uniformization.SpecialPeriods3
-import all LeanPool.HopfProblem.Foundations.Core2
+import LeanPool.HopfProblem.Foundations.Core2
 import all LeanPool.HopfProblem.Uniformization.CuspUniformization1
-import all LeanPool.HopfProblem.Elliptic.Core1
+import LeanPool.HopfProblem.Elliptic.Core1
 import all LeanPool.HopfProblem.Threefold.SpecialPeriods1
 import all LeanPool.HopfProblem.Uniformization.SpecialPeriods2
 import all LeanPool.HopfProblem.Uniformization.SpecialPeriods3
@@ -23,10 +24,8 @@ Supporting definitions and proofs for this stage of the six-sphere construction.
 
 open Set Function Filter Manifold Topology
 
-open scoped BigOperators CategoryTheory Complex.UnitDisc ComplexConjugate ContDiff ContinuousMap
-  Convolution ENNReal EuclideanSpace Fin.NatCast InnerProductSpace Interval Matrix MatrixGroups
-  Modular NNReal Pointwise RealInnerProductSpace TensorProduct UniformConvergence Uniformity
-  UpperHalfPlane
+open scoped BigOperators ComplexConjugate ContDiff ContinuousMap ENNReal EuclideanSpace Fin.NatCast
+  InnerProductSpace Interval Matrix NNReal Pointwise RealInnerProductSpace UpperHalfPlane
 
 universe u v
 

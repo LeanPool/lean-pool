@@ -4,11 +4,13 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Boris Alexeev
 -/
 module
+public import Mathlib.NumberTheory.ModularForms.ProperlyDiscontinuous
+public import Mathlib.NumberTheory.ModularForms.Derivative
+public import Mathlib.Geometry.Manifold.LocalDiffeomorph
 
-public import LeanPool.HopfProblem.Prelude
+public import LeanPool.HopfProblem.InternalPrelude
 public import LeanPool.HopfProblem.Foundations.TwoAffineCharts
 public import LeanPool.HopfProblem.Uniformization.SpecialPeriods2
-import all LeanPool.HopfProblem.Recognition.Smale1
 import all LeanPool.HopfProblem.Foundations.Core2
 import all LeanPool.HopfProblem.Foundations.Core3
 import all LeanPool.HopfProblem.Elliptic.Core1
@@ -27,9 +29,8 @@ Supporting definitions and proofs for this stage of the six-sphere construction.
 
 open Set Function Filter Manifold Topology
 
-open scoped BigOperators CategoryTheory Complex.UnitDisc ComplexConjugate ContDiff ContinuousMap
-  Convolution ENNReal EuclideanSpace Fin.NatCast InnerProductSpace Interval Matrix MatrixGroups
-  Modular NNReal Pointwise RealInnerProductSpace TensorProduct UniformConvergence Uniformity
+open scoped BigOperators ComplexConjugate ContDiff ContinuousMap ENNReal EuclideanSpace Fin.NatCast
+  InnerProductSpace Interval Matrix MatrixGroups NNReal Pointwise RealInnerProductSpace
   UpperHalfPlane
 
 universe u v

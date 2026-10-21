@@ -4,15 +4,20 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Boris Alexeev
 -/
 module
+public import Mathlib.Tactic.NormNum.Parity
+public import Mathlib.Geometry.Manifold.Complex
+public import Mathlib.Analysis.SpecialFunctions.Pow.Integral
+public import Mathlib.Analysis.Complex.Conformal
+import all LeanPool.HopfProblem.CuspFibre.CuspCentralHomology2
 
-public import LeanPool.HopfProblem.Prelude
+public import LeanPool.HopfProblem.InternalPrelude
 public import LeanPool.HopfProblem.Threefold.SpecialPeriods5
 public import LeanPool.HopfProblem.CuspFibre.CuspCentralHomology1
-import all LeanPool.HopfProblem.Uniformization.HolomorphicCousin
+import LeanPool.HopfProblem.Uniformization.HolomorphicCousin
 import all LeanPool.HopfProblem.Foundations.Core2
 import all LeanPool.HopfProblem.PeriodFamily.PeriodPoint
 import all LeanPool.HopfProblem.Uniformization.CuspUniformization1
-import all LeanPool.HopfProblem.Elliptic.Core1
+import LeanPool.HopfProblem.Elliptic.Core1
 import all LeanPool.HopfProblem.Uniformization.SpecialPeriods1
 import all LeanPool.HopfProblem.Foundations.LocalOrbitQuotient
 import all LeanPool.HopfProblem.Uniformization.SpecialPeriods2
@@ -20,7 +25,6 @@ import all LeanPool.HopfProblem.Uniformization.SpecialPeriods3
 import all LeanPool.HopfProblem.Threefold.SpecialPeriods4
 import all LeanPool.HopfProblem.Uniformization.SpecialPeriods4
 import all LeanPool.HopfProblem.Threefold.SpecialPeriods5
-import all LeanPool.HopfProblem.CuspFibre.CuspCentralHomology1
 
 /-!
 # Hopf problem: uniformization · special periods 5
@@ -31,9 +35,8 @@ Supporting definitions and proofs for this stage of the six-sphere construction.
 
 open Set Function Filter Manifold Topology
 
-open scoped BigOperators CategoryTheory Complex.UnitDisc ComplexConjugate ContDiff ContinuousMap
-  Convolution ENNReal EuclideanSpace Fin.NatCast InnerProductSpace Interval Matrix MatrixGroups
-  Modular NNReal Pointwise RealInnerProductSpace TensorProduct UniformConvergence Uniformity
+open scoped BigOperators ComplexConjugate ContDiff ContinuousMap Convolution ENNReal EuclideanSpace
+  Fin.NatCast InnerProductSpace Interval Matrix MatrixGroups NNReal Pointwise RealInnerProductSpace
   UpperHalfPlane
 
 universe u v

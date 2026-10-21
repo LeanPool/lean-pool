@@ -4,15 +4,19 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Boris Alexeev
 -/
 module
+public import Mathlib.Tactic.NormNum.Parity
+public import Mathlib.Analysis.SpecialFunctions.Complex.Analytic
+public import Mathlib.Analysis.InnerProductSpace.OfNorm
+public import Mathlib.Analysis.Calculus.Deriv.Star
+import all LeanPool.HopfProblem.CuspFibre.CuspCentralHomology2
 
-public import LeanPool.HopfProblem.Prelude
+public import LeanPool.HopfProblem.InternalPrelude
 public import LeanPool.HopfProblem.PeriodFamily.Core2
 import all LeanPool.HopfProblem.Foundations.Core2
 import all LeanPool.HopfProblem.Uniformization.SpecialPeriods1
 import all LeanPool.HopfProblem.Uniformization.SpecialPeriods2
 import all LeanPool.HopfProblem.Uniformization.SpecialPeriods6
 import all LeanPool.HopfProblem.Foundations.Complex
-import all LeanPool.HopfProblem.PeriodFamily.Core2
 
 /-!
 # Hopf problem: uniformization · special periods 7
@@ -23,9 +27,8 @@ Supporting definitions and proofs for this stage of the six-sphere construction.
 
 open Set Function Filter Manifold Topology
 
-open scoped BigOperators CategoryTheory Complex.UnitDisc ComplexConjugate ContDiff ContinuousMap
-  Convolution ENNReal EuclideanSpace Fin.NatCast InnerProductSpace Interval Matrix MatrixGroups
-  Modular NNReal Pointwise RealInnerProductSpace TensorProduct UniformConvergence Uniformity
+open scoped BigOperators ComplexConjugate ContDiff ContinuousMap ENNReal EuclideanSpace Fin.NatCast
+  InnerProductSpace Interval Matrix MatrixGroups NNReal Pointwise RealInnerProductSpace
   UpperHalfPlane
 
 universe u v

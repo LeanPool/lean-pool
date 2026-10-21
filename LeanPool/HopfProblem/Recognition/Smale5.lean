@@ -4,14 +4,20 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Boris Alexeev
 -/
 module
+public import Mathlib.Topology.Connected.Separation
+public import Mathlib.Tactic.NormNum.Parity
+public import Mathlib.Topology.Algebra.Group.Matrix
+public import Mathlib.Geometry.Manifold.Instances.Icc
+-- Reuse Mathlib's congruence helper for `LinearEquiv.toContinuousLinearEquiv`.
+import all Mathlib.Algebra.Module.ZLattice.Summable -- shake: keep
+import all LeanPool.HopfProblem.CuspFibre.CuspCentralHomology2
 
-public import LeanPool.HopfProblem.Prelude
+public import LeanPool.HopfProblem.InternalPrelude
 public import LeanPool.HopfProblem.TorusHomology.PeriodTorusHigherHomology6
 import all LeanPool.HopfProblem.Recognition.Smale1
 import all LeanPool.HopfProblem.Recognition.Smale2
 import all LeanPool.HopfProblem.Recognition.Smale3
 import all LeanPool.HopfProblem.Recognition.Smale4
-import all LeanPool.HopfProblem.TorusHomology.PeriodTorusHigherHomology6
 
 /-!
 # Hopf problem: recognition · smale 5
@@ -22,10 +28,8 @@ Supporting definitions and proofs for this stage of the six-sphere construction.
 
 open Set Function Filter Manifold Topology
 
-open scoped BigOperators CategoryTheory Complex.UnitDisc ComplexConjugate ContDiff ContinuousMap
-  Convolution ENNReal EuclideanSpace Fin.NatCast InnerProductSpace Interval Matrix MatrixGroups
-  Modular NNReal Pointwise RealInnerProductSpace TensorProduct UniformConvergence Uniformity
-  UpperHalfPlane
+open scoped BigOperators ComplexConjugate ContDiff ContinuousMap ENNReal EuclideanSpace Fin.NatCast
+  InnerProductSpace Interval Matrix NNReal Pointwise RealInnerProductSpace
 
 universe u v
 
