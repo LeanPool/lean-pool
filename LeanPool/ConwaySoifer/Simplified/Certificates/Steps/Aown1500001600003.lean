@@ -736,24 +736,6 @@ private theorem checkedFan24Owner0Part3Checks :
     all_goals decide +kernel
   exact ⟨checkedTail0, checkedTail1, checkedTail2, checkedTail3⟩
 
-private theorem checkedFan24Owner0Part0 :
-    fan24Owner0Part0.check (model24.B 0 ++ [step24.q]) 9000000000000
-      (model24.caps 0) 0 1 100 12
-      ([-1005000000000], [2880000000000]) = true := by
-  exact checkedFan24Owner0Part3Checks.1
-
-private theorem checkedFan24Owner0Part1 :
-    fan24Owner0Part1.check (model24.B 0 ++ [step24.q]) 9000000000000
-      (model24.caps 0) 0 1 100 12
-      ([0, 0], [1134000000000, 7560000000000]) = true := by
-  exact checkedFan24Owner0Part3Checks.2.1
-
-private theorem checkedFan24Owner0Part2 :
-    fan24Owner0Part2.check (model24.B 0 ++ [step24.q]) 9000000000000
-      (model24.caps 0) 0 1 100 12
-      ([3075000000000], [2100000000000]) = true := by
-  exact checkedFan24Owner0Part3Checks.2.2.1
-
 private theorem checkedFan24Owner0Part3 :
     fan24Owner0Part3.check (model24.B 0 ++ [step24.q]) 9000000000000
       (model24.caps 0) 0 1 100 12
@@ -985,24 +967,6 @@ private theorem checkedFan26Owner0Part3Checks :
     all_goals decide +kernel
   exact ⟨checkedTail0, checkedTail1, checkedTail2, checkedTail3⟩
 
-private theorem checkedFan26Owner0Part0 :
-    fan26Owner0Part0.check (model26.B 0 ++ [step26.q]) 9000000000000
-      (model26.caps 0) 0 1 100 12
-      ([-3000000000000], [9450000000000]) = true := by
-  exact checkedFan26Owner0Part3Checks.1
-
-private theorem checkedFan26Owner0Part1 :
-    fan26Owner0Part1.check (model26.B 0 ++ [step26.q]) 9000000000000
-      (model26.caps 0) 0 1 100 12
-      ([-45000000000], [4320000000000]) = true := by
-  exact checkedFan26Owner0Part3Checks.2.1
-
-private theorem checkedFan26Owner0Part2 :
-    fan26Owner0Part2.check (model26.B 0 ++ [step26.q]) 9000000000000
-      (model26.caps 0) 0 1 100 12
-      ([1875000000000], [1005000000000]) = true := by
-  exact checkedFan26Owner0Part3Checks.2.2.1
-
 private theorem checkedFan26Owner0Part3 :
     fan26Owner0Part3.check (model26.B 0 ++ [step26.q]) 9000000000000
       (model26.caps 0) 0 1 100 12
@@ -1147,18 +1111,6 @@ private theorem checkedFan27Owner0Part2Checks :
     repeat' apply And.intro
     all_goals decide +kernel
   exact ⟨checkedTail0, checkedTail1, checkedTail2⟩
-
-private theorem checkedFan27Owner0Part0 :
-    fan27Owner0Part0.check (model27.B 0 ++ [step27.q]) 9000000000000
-      (model27.caps 0) 0 1 100 12
-      ([-2025000000000], [8700000000000]) = true := by
-  exact checkedFan27Owner0Part2Checks.1
-
-private theorem checkedFan27Owner0Part1 :
-    fan27Owner0Part1.check (model27.B 0 ++ [step27.q]) 9000000000000
-      (model27.caps 0) 0 1 100 12
-      ([705000000000], [5295000000000]) = true := by
-  exact checkedFan27Owner0Part2Checks.2.1
 
 private theorem checkedFan27Owner0Part2 :
     fan27Owner0Part2.check (model27.B 0 ++ [step27.q]) 9000000000000
@@ -1323,18 +1275,6 @@ private theorem checkedFan28Owner0Part2Checks :
     repeat' apply And.intro
     all_goals decide +kernel
   exact ⟨checkedTail0, checkedTail1, checkedTail2⟩
-
-private theorem checkedFan28Owner0Part0 :
-    fan28Owner0Part0.check (model28.B 0 ++ [step28.q]) 9000000000000
-      (model28.caps 0) 0 1 100 12
-      ([-1800000000000], [7500000000000]) = true := by
-  exact checkedFan28Owner0Part2Checks.1
-
-private theorem checkedFan28Owner0Part1 :
-    fan28Owner0Part1.check (model28.B 0 ++ [step28.q]) 9000000000000
-      (model28.caps 0) 0 1 100 12
-      ([150000000000], [7050000000000]) = true := by
-  exact checkedFan28Owner0Part2Checks.2.1
 
 private theorem checkedFan28Owner0Part2 :
     fan28Owner0Part2.check (model28.B 0 ++ [step28.q]) 9000000000000
@@ -1563,47 +1503,11 @@ private theorem checkedFan29Owner0Part7Checks :
   exact ⟨checkedTail0, checkedTail1, checkedTail2, checkedTail3, checkedTail4, checkedTail5,
     checkedTail6, checkedTail7⟩
 
-private theorem checkedFan29Owner0Part0 :
-    fan29Owner0Part0.check (model29.B 0 ++ [step29.q]) 9000000000000
-      (model29.caps 0) 0 485 95100 12
-      ([-3900000000000], [9750000000000]) = true := by
-  exact checkedFan29Owner0Part7Checks.1
-
-private theorem checkedFan29Owner0Part1 :
-    fan29Owner0Part1.check (model29.B 0 ++ [step29.q]) 9000000000000
-      (model29.caps 0) 0 485 95100 12
-      ([-45000000000], [4320000000000]) = true := by
-  exact checkedFan29Owner0Part7Checks.2.1
-
-private theorem checkedFan29Owner0Part2 :
-    fan29Owner0Part2.check (model29.B 0 ++ [step29.q]) 9000000000000
-      (model29.caps 0) 0 485 95100 12
-      ([2997000000000, -2520000000000], [2106000000000, 5040000000000]) = true := by
-  exact checkedFan29Owner0Part7Checks.2.2.1
-
 private theorem checkedFan29Owner0Part3 :
     fan29Owner0Part3.check (model29.B 0 ++ [step29.q]) 9000000000000
       (model29.caps 0) 0 485 95100 12
       ([2250000000000], [45000000000]) = true := by
   exact checkedFan29Owner0Part7Checks.2.2.2.1
-
-private theorem checkedFan29Owner0Part4 :
-    fan29Owner0Part4.check (model29.B 0 ++ [step29.q]) 9000000000000
-      (model29.caps 0) 485 951 95100 12
-      ([-3828000000000, -2520000000000], [9756000000000, 5040000000000]) = true := by
-  exact checkedFan29Owner0Part7Checks.2.2.2.2.1
-
-private theorem checkedFan29Owner0Part5 :
-    fan29Owner0Part5.check (model29.B 0 ++ [step29.q]) 9000000000000
-      (model29.caps 0) 485 951 95100 12
-      ([-192000000000, 2520000000000], [6948000000000, 2520000000000]) = true := by
-  exact checkedFan29Owner0Part7Checks.2.2.2.2.2.1
-
-private theorem checkedFan29Owner0Part6 :
-    fan29Owner0Part6.check (model29.B 0 ++ [step29.q]) 9000000000000
-      (model29.caps 0) 485 951 95100 12
-      ([5100000000000], [4200000000000]) = true := by
-  exact checkedFan29Owner0Part7Checks.2.2.2.2.2.2.1
 
 private theorem checkedFan29Owner0Part7 :
     fan29Owner0Part7.check (model29.B 0 ++ [step29.q]) 9000000000000
