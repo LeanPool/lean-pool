@@ -26,7 +26,7 @@ source:
   dependency_commit: 127b50e33f6033e2147921167a117af96d9ba4ea
 license: Apache-2.0
 status: verified
-provenance: AI
+provenance: mix
 main_declarations:
 - IwaniecLinearSieve.iwaniecBound
 main_results:
