@@ -30,7 +30,7 @@ main_results:
   informal: On the p-adic Tate module of an elliptic curve, for a good prime
     ell distinct from p, the characteristic polynoimal of Frobenius at l is
     X^2 - a_ell X + ell. (This formulation assumes the expected cardinalities 
-    of the p-power torsion subgroups, proved elsewhere in this library).
+    of the p-power torsion subgroups, proved elsewhere in this library.)
 tags:
 - number-theory
 - modular-forms
