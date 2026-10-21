@@ -54,7 +54,6 @@ section privateSection
 
 set_option backward.isDefEq.respectTransparency.types false
 
-set_option linter.unusedVariables false
 
 
 open Polynomial IsDedekindDomain IsLocalRing WithZero

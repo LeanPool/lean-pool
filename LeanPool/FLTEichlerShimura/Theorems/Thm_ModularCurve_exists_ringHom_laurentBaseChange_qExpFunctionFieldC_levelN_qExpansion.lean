@@ -86,7 +86,6 @@ set_option backward.isDefEq.respectTransparency.types false
 
 namespace P2MW.S_ModularCurve_exists_ringHom_laurentBaseChange_qExpFunctionFieldC_levelN_qExpansion
 
-set_option linter.unusedVariables false
 
 open UpperHalfPlane Filter Topology Function
 open scoped MatrixGroups Manifold Real ModularForm
@@ -291,7 +290,7 @@ abbrev redMat (γ : SL(2, ℤ)) : Matrix (Fin 2) (Fin 2) (ZMod N) :=
 
 theorem fricke_smul_of_mem (v : Fin 2 → ZMod N) {γ : SL(2, ℤ)}
     (hγ : γ ∈ CongruenceSubgroup.Gamma N) (τ : ℍ) : fricke N v (γ • τ) = fricke N v τ :=
-  (WLight.frickeFunction_modularity_package N PeriodPair.ofTau (fun τ => ⟨rfl, rfl⟩)).2.2.2.2.2.2.1
+  (WLight.frickeFunction_modularity_package N PeriodPair.ofTau (fun _ => ⟨rfl, rfl⟩)).2.2.2.2.2.2.1
     v γ hγ τ
 
 omit [NeZero N] in
@@ -672,7 +671,7 @@ variable {Γ : Subgroup SL(2, ℤ)} {k : ℤ}
 omit [NeZero M] in
 theorem FF_mem_famS (hΓ : CongruenceSubgroup.Gamma M ≤ Γ) [Γ.FiniteIndex]
     (f g : ModularForm (Γ : Subgroup (GL (Fin 2) ℝ)) k) : FF k f g ∈ famS M :=
-  ⟨mdifferentiable_FF k f.holo' g.holo', fun δ hδ τ => FF_smul_of_mem f g (hΓ hδ) τ,
+  ⟨mdifferentiable_FF k f.holo' g.holo', fun _ hδ τ => FF_smul_of_mem f g (hΓ hδ) τ,
     fun γ => ⟨k.toNat, isBoundedAtImInfty_FF_smul f g γ⟩⟩
 
 theorem periodic_FF (hT : ModularGroup.T ∈ Γ) [Γ.FiniteIndex]
@@ -864,7 +863,7 @@ def fixedSub : Subfield K where
 
 omit [NeZero M] [IsScalarTower ℂ (↥(ring M)) K] [IsFractionRing (↥(ring M)) K] in
 theorem algebraMap_mem_fixedSub (c : ℂ) : algebraMap ℂ K c ∈ fixedSub M K Γ :=
-  fun γ hγ hst φ hφ => φ.commutes c
+  fun _ _ _ φ _ => φ.commutes c
 
 def goodSeries : Subfield (LaurentSeries ℂ) := (fixedSub M K Γ).map (E M K).toRingHom
 

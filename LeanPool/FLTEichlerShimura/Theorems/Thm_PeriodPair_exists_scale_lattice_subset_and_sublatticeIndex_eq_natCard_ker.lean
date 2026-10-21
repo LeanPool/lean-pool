@@ -68,7 +68,6 @@ set_option backward.isDefEq.respectTransparency.types false
 
 namespace P2MW.S_PeriodPair_exists_scale_lattice_subset_and_sublatticeIndex_eq_natCard_ker
 
-set_option linter.unusedVariables false
 
 namespace PeriodPair
 p2m_export "PeriodPair" "lattice ω₁ mk latticeEquivProd g₃ derivWeierstrassP_sq ω₂ G g₂ \

@@ -96,7 +96,6 @@ set_option backward.isDefEq.respectTransparency.types false
 
 namespace P2MW.S_OVERLONG_302e4807
 
-set_option linter.unusedVariables false
 
 noncomputable section
 
@@ -757,7 +756,6 @@ theorem kw_fdn2_qephod_hend7_pmopKerCard_proved
   natCard_ker_pointMapOfPushforward_eq_finrankAlong E E' ι hι hfin _
 end ModularCurve
 
-set_option linter.unusedVariables false
 
 section
 p2m_open "Complex Filter \

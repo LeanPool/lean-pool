@@ -69,7 +69,6 @@ set_option backward.isDefEq.respectTransparency.types false
 
 namespace P2MW.S_ModularCurve_LevelN_isZeroAtImInfty_slash_of_mem_regularDifferentials
 
-set_option linter.unusedVariables false
 
 noncomputable section
 
@@ -119,12 +118,12 @@ theorem jAnalytic_transcendental (P : Polynomial ℂ) (hP : ∀ τ : ℍ, P.eval
 
 theorem fricke_smul (v : Fin 2 → ZMod N) (γ : SL(2, ℤ)) (τ : ℍ) :
     fricke N v (γ • τ) = fricke N (Matrix.vecMul v (redMat N γ)) τ :=
-  (WLight.frickeFunction_modularity_package N PeriodPair.ofTau (fun τ => ⟨rfl, rfl⟩)).1 v γ τ
+  (WLight.frickeFunction_modularity_package N PeriodPair.ofTau (fun _ => ⟨rfl, rfl⟩)).1 v γ τ
 
 theorem fricke_smul_of_mem (v : Fin 2 → ZMod N) {γ : SL(2, ℤ)}
     (hγ : γ ∈ CongruenceSubgroup.Gamma N) (τ : ℍ) : fricke N v (γ • τ) = fricke N v τ :=
   (WLight.frickeFunction_modularity_package N PeriodPair.ofTau
-    (fun τ => ⟨rfl, rfl⟩)).2.2.2.2.2.2.1 v γ hγ τ
+    (fun _ => ⟨rfl, rfl⟩)).2.2.2.2.2.2.1 v γ hγ τ
 
 theorem orbit_pkg :
     (∃ m : ℕ, IsBoundedAtImInfty (jAnalytic * ModularForm.discriminant ^ m)) ∧
@@ -807,7 +806,7 @@ theorem quot_eq_comp_qParam {P Q : ℍ → ℂ} (hP : P ∈ ring N) (hQ : Q ∈ 
   simp only [comp_apply, cfδ] at hP' hQ' ⊢
   rw [hP', hQ', up_apply_of_mem _ hz, up_apply_of_mem _ hz]
 
-theorem slash_apply_eq {F : ℍ → ℂ} {a b c e : ℍ → ℂ} (hb : b ∈ ring N) (hc : c ∈ ring N)
+theorem slash_apply_eq {F : ℍ → ℂ} {a b c e : ℍ → ℂ} (hc : c ∈ ring N)
     (he : e ∈ ring N)
     (hid : ∀ τ : ℍ, F τ * b τ * e τ ^ 2 =
       a τ * (e τ * deriv (c ∘ ofComplex) τ - c τ * deriv (e ∘ ofComplex) τ))
@@ -881,7 +880,7 @@ theorem isZeroAtImInfty_slash {ω : Ω[K⁄ℂ]} (hω : ω ∈ AlgebraicCurve.re
       have := cf_qParam N (precomp_mem N δ e.2) τ
       rw [precomp_apply] at this
       rwa [← this]
-    rw [slash_apply_eq N δ b.2 c.2 e.2 hid τ hbτ heτ]
+    rw [slash_apply_eq N δ c.2 e.2 hid τ hbτ heτ]
     have hΦq : (a : ℍ → ℂ) (δ • τ) / (b : ℍ → ℂ) (δ • τ) = Φ (𝕢 N τ) := by
       rw [← hfq]
       have ha' := cf_qParam N (precomp_mem N δ a.2) τ

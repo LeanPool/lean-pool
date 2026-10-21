@@ -17,7 +17,6 @@ main_declarations:
 - HeckeEis.exists_eichlerShimura_heckeEquivariant
 - HeckeEis.isCompl_range_eichlerShimuraMap_range_conj
 - WeierstrassCurve.tateModuleRep_charpoly_frobenius
-- WeierstrassCurve.tateModuleRep_isUnramifiedAt_of_isGoodPrimeFor
 main_results:
 - declaration: HeckeEis.exists_eichlerShimura_heckeEquivariant
   informal: The Eichler-Shimura isomorphism for Gamma_0(N), identifying parabolic
@@ -28,14 +27,10 @@ main_results:
   informal: The images of the canonical Eichler-Shimura map and its complex
     conjugate are complementary subspaces of parabolic cohomology.
 - declaration: WeierstrassCurve.tateModuleRep_charpoly_frobenius
-  informal: At a good prime ell distinct from p, Frobenius on the p-adic Tate
-    module has characteristic polynomial X^2 - a_ell X + ell (assuming the
-    expected cardinalities of the p-power torsion subgroups, proved elsewhere
-    in this library).
-- declaration: WeierstrassCurve.tateModuleRep_isUnramifiedAt_of_isGoodPrimeFor
-  informal: The p-adic Tate-module representation is unramified at good primes
-    distinct from p (assuming the expected cardinalities of the p-power torsion 
-    subgroups, proved elsewhere in this library).
+  informal: On the p-adic Tate module of an elliptic curve, for a good prime
+    ell distinct from p, the characteristic polynoimal of Frobenius at l is
+    X^2 - a_ell X + ell. (This formulation assumes the expected cardinalities 
+    of the p-power torsion subgroups, proved elsewhere in this library).
 tags:
 - number-theory
 - modular-forms

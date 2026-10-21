@@ -75,7 +75,6 @@ set_option backward.isDefEq.respectTransparency.types false
 
 namespace P2MW.S_ModularCurve_LevelN_twelve_mul_add_mul_index_le_genusFF
 
-set_option linter.unusedVariables false
 
 open UpperHalfPlane
 open scoped MatrixGroups IntermediateField

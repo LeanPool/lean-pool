@@ -73,7 +73,6 @@ set_option backward.isDefEq.respectTransparency.types false
 
 namespace P2MW.S_ModularCurve_LevelN_exists_linearMap_regularDifferentials_mdifferentiable
 
-set_option linter.unusedVariables false
 
 noncomputable section
 
@@ -680,7 +679,7 @@ theorem glue_eq {m : Gm N K} {z : ℂ} (hz : z ∈ 𝕌) {g G : ℂ → ℂ} (hg
 
 omit [NeZero N] [Field K] [Algebra ℂ K] [Algebra (↥(ring N)) K] [IsScalarTower ℂ (↥(ring N)) K]
   [IsFractionRing (↥(ring N)) K] in
-theorem glue_eventuallyEq {m : Gm N K} (hm : LocAnalytic N K m) {z : ℂ} (hz : z ∈ 𝕌) {g G : ℂ → ℂ}
+theorem glue_eventuallyEq {m : Gm N K} {z : ℂ} (hz : z ∈ 𝕌) {g G : ℂ → ℂ}
     (hg : germ N K g = m) (hG : AnalyticAt ℂ G z) (hgG : g =ᶠ[𝓝[≠] z] G) :
     glue N K m =ᶠ[𝓝 z] G := by
   have hp : ∀ᶠ w in 𝓝[≠] z, glue N K m w = G w := by
@@ -701,7 +700,7 @@ theorem analyticOnNhd_glue {m : Gm N K} (hm : LocAnalytic N K m) :
     AnalyticOnNhd ℂ (glue N K m) 𝕌 := by
   intro z hz
   obtain ⟨g, G, hg, hG, hgG⟩ := hm z hz
-  exact hG.congr (glue_eventuallyEq N K hm hz hg hG hgG).symm
+  exact hG.congr (glue_eventuallyEq N K hz hg hG hgG).symm
 
 omit [NeZero N] [Field K] [Algebra ℂ K] [Algebra (↥(ring N)) K] [IsScalarTower ℂ (↥(ring N)) K]
   [IsFractionRing (↥(ring N)) K] in
@@ -712,7 +711,7 @@ theorem germ_glue {m : Gm N K} (hm : LocAnalytic N K m) : germ N K (glue N K m) 
   intro z hz
   obtain ⟨g, G, hg, hG, hgG⟩ := hm z hz
   have h1 : glue N K m =ᶠ[𝓝[≠] z] G :=
-    (glue_eventuallyEq N K hm hz hg hG hgG).filter_mono nhdsWithin_le_nhds
+    (glue_eventuallyEq N K hz hg hG hgG).filter_mono nhdsWithin_le_nhds
   have h2 : g₀ =ᶠ[𝓝[≠] z] g :=
     eventuallyEq_𝓕_iff.mp ((germ_eq_iff N K).mp (hg₀.trans hg.symm)) z hz
   exact h1.trans (hgG.symm.trans h2.symm)

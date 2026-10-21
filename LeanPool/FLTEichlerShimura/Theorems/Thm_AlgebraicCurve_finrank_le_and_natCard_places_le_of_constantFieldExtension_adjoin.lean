@@ -79,7 +79,6 @@ set_option backward.isDefEq.respectTransparency.types false
 
 namespace P2MW.S_AlgebraicCurve_finrank_le_and_natCard_places_le_of_constantFieldExtension_adjoin
 
-set_option linter.unusedVariables false
 
 open scoped IntermediateField
 

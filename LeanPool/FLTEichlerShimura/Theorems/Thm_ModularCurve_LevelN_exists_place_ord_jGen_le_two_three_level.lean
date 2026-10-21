@@ -68,7 +68,6 @@ set_option backward.isDefEq.respectTransparency.types false
 
 namespace P2MW.S_ModularCurve_LevelN_exists_place_ord_jGen_le_two_three_level
 
-set_option linter.unusedVariables false
 
 open UpperHalfPlane
 open scoped MatrixGroups IntermediateField Manifold

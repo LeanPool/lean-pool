@@ -71,7 +71,6 @@ set_option backward.isDefEq.respectTransparency.types false
 
 namespace P2MW.S_OVERLONG_d9a2a124
 
-set_option linter.unusedVariables false
 
 p2m_open "UpperHalfPlane AlgebraicCurve \
   P2MW.S_OVERLONG_d9a2a124.Algeb\
@@ -680,7 +679,7 @@ theorem restrictScalars_liftGal (t : K) (φ : K ≃ₐ[ℂ] K) (hφ : ∀ z ∈ 
 def rS (t : K) : (K ≃ₐ[ℂ⟮t⟯] K) →* (K ≃ₐ[ℂ] K) where
   toFun g := g.restrictScalars ℂ
   map_one' := AlgEquiv.ext fun _ => rfl
-  map_mul' g h := AlgEquiv.ext fun _ => rfl
+  map_mul' _ _ := AlgEquiv.ext fun _ => rfl
 
 theorem rS_injective (t : K) : Function.Injective (rS K t) := fun g h hgh =>
   AlgEquiv.ext fun y => by

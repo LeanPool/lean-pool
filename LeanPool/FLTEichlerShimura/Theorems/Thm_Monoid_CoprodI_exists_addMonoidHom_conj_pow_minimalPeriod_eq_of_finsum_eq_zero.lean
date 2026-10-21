@@ -21,7 +21,6 @@ import Mathlib.Data.Finsupp.Basic
 import Mathlib.LinearAlgebra.Span.Basic
 import Mathlib.Data.ZMod.QuotientGroup
 import Mathlib.GroupTheory.SemidirectProduct
-import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
 
 /-!
 # Sum-zero cusp functions arise from characters of H
@@ -64,11 +63,6 @@ https://github.com/anthropics/fermats-last-theorem/blob/aa2d8b34692b16c70f699536
 -/
 
 section privateSection
-
-set_option backward.isDefEq.respectTransparency.types false
-
-namespace P2MW.S_Monoid_CoprodI_exists_addMonoidHom_conj_pow_minimalPeriod_eq_of_finsum_eq_zero
-
 
 open Subgroup Monoid Monoid.CoprodI MulAction
 
@@ -453,9 +447,8 @@ section Eval
 
 variable (H : Subgroup Gp) [H.FiniteIndex]
 
-open scoped Classical
-
-theorem sum_ite_enum_eq (g : Gp) (y : X H) :
+theorem sum_ite_enum_eq (g : Gp) (y : X H)
+    [DecidableEq (X H)] [DecidableEq (Cu H)] :
     (∑ j ∈ Finset.range (wd H (g : X H)), if enum H g j = y then (1 : ℤ) else 0)
       = if cusp H y = cusp H (g : X H) then 1 else 0 := by
   by_cases h : cusp H y = cusp H (g : X H)
@@ -471,10 +464,11 @@ theorem sum_ite_enum_eq (g : Gp) (y : X H) :
     refine Finset.sum_eq_zero fun j _ => ite_eq_right fun hjy => h ?_
     rw [← hjy, cusp_enum]
 
-theorem edgeChainHom_genAt_apply (g : Gp) (e : X H) :
+theorem edgeChainHom_genAt_apply [DecidableEq (Cu H)] (g : Gp) (e : X H) :
     edgeChainHom H (Additive.ofMul (genAt H g)) e
       = (if cusp H (flip H e) = cusp H (g : X H) then 1 else 0)
         - (if cusp H e = cusp H (g : X H) then 1 else 0) := by
+  classical
   rw [edgeChainHom_genAt_raw]
   simp only [Finsupp.coe_sub, Finsupp.finsetSum_apply, Pi.sub_apply,
     Finsupp.single_apply, Finset.sum_sub_distrib]
@@ -489,19 +483,19 @@ theorem edgeChainHom_genAt_apply (g : Gp) (e : X H) :
         exact propext ⟨fun h => by rw [← h, flip_flip], fun h => by rw [h, flip_flip]⟩
     _ = if cusp H (flip H e) = cusp H (g : X H) then 1 else 0 := sum_ite_enum_eq H g (flip H e)
 
-def cuspDiffAt (e : X H) : Cu H → ℤ :=
+def cuspDiffAt [DecidableEq (Cu H)] (e : X H) : Cu H → ℤ :=
   Pi.single (cusp H (flip H e)) 1 - Pi.single (cusp H e) 1
 
 def edgeChar (e : X H) : Additive H →+ ℤ := (Finsupp.applyAddHom e).comp (edgeChainHom H)
 
-theorem edgeChar_genAt (e : X H) (g : Gp) :
+theorem edgeChar_genAt [DecidableEq (Cu H)] (e : X H) (g : Gp) :
     edgeChar H e (Additive.ofMul (genAt H g)) = cuspDiffAt H e (cusp H (g : X H)) := by
   change edgeChainHom H (Additive.ofMul (genAt H g)) e = _
   rw [edgeChainHom_genAt_apply, cuspDiffAt, Pi.sub_apply, Pi.single_apply, Pi.single_apply]
   simp only [@eq_comm _ (cusp H (g : X H))]
 
 omit [H.FiniteIndex] in
-theorem single_sub_single_mem_span_of_smul (k : Gp) (e : X H) :
+theorem single_sub_single_mem_span_of_smul [DecidableEq (Cu H)] (k : Gp) (e : X H) :
     (Pi.single (cusp H (k • e)) 1 - Pi.single (cusp H e) 1 : Cu H → ℤ)
       ∈ Submodule.span ℤ (Set.range (cuspDiffAt H)) := by
   have htop : k ∈ (⊤ : Subgroup Gp) := mem_top k
@@ -529,7 +523,7 @@ theorem single_sub_single_mem_span_of_smul (k : Gp) (e : X H) :
   exact key e
 
 omit [H.FiniteIndex] in
-theorem single_sub_single_mem_span_cuspDiffAt (c c' : Cu H) :
+theorem single_sub_single_mem_span_cuspDiffAt [DecidableEq (Cu H)] (c c' : Cu H) :
     (Pi.single c' 1 - Pi.single c 1 : Cu H → ℤ)
       ∈ Submodule.span ℤ (Set.range (cuspDiffAt H)) := by
   obtain ⟨e, rfl⟩ := cusp_surjective H c
@@ -542,7 +536,7 @@ theorem single_sub_single_mem_span_cuspDiffAt (c c' : Cu H) :
   rw [heq]
   exact single_sub_single_mem_span_of_smul H (k' * k⁻¹) _
 
-theorem exists_addChar_of_mem_span {v : Cu H → ℤ}
+theorem exists_addChar_of_mem_span [DecidableEq (Cu H)] {v : Cu H → ℤ}
     (hv : v ∈ Submodule.span ℤ (Set.range (cuspDiffAt H))) :
     ∃ φ : Additive H →+ ℤ, ∀ g : Gp, φ (Additive.ofMul (genAt H g)) = v (cusp H (g : X H)) := by
   induction hv using Submodule.span_induction with
@@ -616,34 +610,25 @@ theorem solution
   exact ⟨φ, fun g hg => hφ g⟩
 
 end
-end S_Monoid_CoprodI_exists_addMonoidHom_conj_pow_minimalPeriod_eq_of_finsum_eq_zero
-end P2MW
-export P2MW.S_Monoid_CoprodI_exists_addMonoidHom_conj_pow_minimalPeriod_eq_of_finsum_eq_zero
-  (solution)
 
 end privateSection
 
 public section publicSection
 
 theorem Monoid.CoprodI.exists_addMonoidHom_conj_pow_minimalPeriod_eq_of_finsum_eq_zero
-    (t : Monoid.CoprodI (fun i : Fin 2 => Multiplicative (ZMod (i.val + 2))))
-    (ht : t = Monoid.CoprodI.of (M := fun i : Fin 2 => Multiplicative (ZMod (i.val + 2))) (i := 0)
-                (Multiplicative.ofAdd 1) *
-              Monoid.CoprodI.of (M := fun i : Fin 2 => Multiplicative (ZMod (i.val + 2))) (i := 1)
-                (Multiplicative.ofAdd 1))
-    (H : Subgroup (Monoid.CoprodI (fun i : Fin 2 => Multiplicative (ZMod (i.val + 2)))))
+    (t : CoprodI (fun i : Fin 2 => Multiplicative (ZMod (i.val + 2))))
+    (ht : t = of (M := fun i : Fin 2 => Multiplicative (ZMod (i.val + 2))) (i := 0)
+      (.ofAdd 1) * of (M := fun i : Fin 2 => Multiplicative (ZMod (i.val + 2))) (i := 1) (.ofAdd 1))
+    (H : Subgroup (CoprodI (fun i : Fin 2 => Multiplicative (ZMod (i.val + 2)))))
     [H.FiniteIndex] (R : Type) [AddCommGroup R]
     (a : MulAction.orbitRel.Quotient (Subgroup.zpowers t)
-          (Monoid.CoprodI (fun i : Fin 2 => Multiplicative (ZMod (i.val + 2))) ⧸ H) → R)
+        (CoprodI (fun i : Fin 2 => Multiplicative (ZMod (i.val + 2))) ⧸ H) → R)
     (ha : ∑ᶠ c, a c = 0) :
     ∃ φ : Additive H →+ R,
-      ∀ (g : Monoid.CoprodI (fun i : Fin 2 => Multiplicative (ZMod (i.val + 2))))
+      ∀ (g : CoprodI (fun i : Fin 2 => Multiplicative (ZMod (i.val + 2))))
         (hg : g⁻¹ * t ^ Function.minimalPeriod (fun x => t • x)
-                (g : Monoid.CoprodI (fun i : Fin 2 => Multiplicative (ZMod (i.val + 2))) ⧸ H) * g ∈
-                  H),
-        φ (Additive.ofMul ⟨_, hg⟩)
-          = a (Quotient.mk (MulAction.orbitRel (Subgroup.zpowers t) _)
-              (g : Monoid.CoprodI (fun i : Fin 2 => Multiplicative (ZMod (i.val + 2))) ⧸ H)) :=
+          (g : CoprodI (fun i : Fin 2 => Multiplicative (ZMod (i.val + 2))) ⧸ H) * g ∈ H),
+        φ (.ofMul ⟨_, hg⟩) = a (⟦g⟧) :=
   solution t ht H R a ha
 
 end publicSection

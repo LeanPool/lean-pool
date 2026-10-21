@@ -78,7 +78,6 @@ set_option backward.isDefEq.respectTransparency.types false
 
 namespace P2MW.S_ModularCurve_exists_ringHom_place_order_eq_mul_ord_of_qExpansion_slash
 
-set_option linter.unusedVariables false
 
 open UpperHalfPlane ModularForm Filter Function Complex Matrix.SpecialLinearGroup OnePoint
 open scoped MatrixGroups Topology CongruenceSubgroup Pointwise Manifold

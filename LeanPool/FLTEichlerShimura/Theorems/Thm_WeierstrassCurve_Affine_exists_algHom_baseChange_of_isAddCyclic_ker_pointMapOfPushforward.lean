@@ -93,7 +93,6 @@ set_option backward.isDefEq.respectTransparency.types false
 
 namespace P2MW.S_OVERLONG_c68ce07f
 
-set_option linter.unusedVariables false
 
 noncomputable section
 
@@ -803,7 +802,6 @@ theorem kw_fdn2_qephod_hend7_pmopKerCard_proved
   natCard_ker_pointMapOfPushforward_eq_finrankAlong E E' ι hι hfin _
 end ModularCurve
 
-set_option linter.unusedVariables false
 
 section
 open Complex Filter Set
@@ -1181,7 +1179,6 @@ end ModularCurve
 
 section
 
-set_option linter.unusedVariables false
 
 section
 
@@ -2579,7 +2576,6 @@ end
 
 section
 
-set_option linter.unusedVariables false
 
 section
 

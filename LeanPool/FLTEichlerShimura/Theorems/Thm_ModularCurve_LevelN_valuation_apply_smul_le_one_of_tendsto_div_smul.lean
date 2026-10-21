@@ -71,7 +71,6 @@ set_option backward.isDefEq.respectTransparency.types false
 
 namespace P2MW.S_ModularCurve_LevelN_valuation_apply_smul_le_one_of_tendsto_div_smul
 
-set_option linter.unusedVariables false
 
 open UpperHalfPlane Filter Topology Function
 open scoped MatrixGroups Manifold Real
@@ -272,7 +271,7 @@ abbrev redMat (γ : SL(2, ℤ)) : Matrix (Fin 2) (Fin 2) (ZMod N) :=
 
 theorem fricke_smul_of_mem (v : Fin 2 → ZMod N) {γ : SL(2, ℤ)}
     (hγ : γ ∈ CongruenceSubgroup.Gamma N) (τ : ℍ) : fricke N v (γ • τ) = fricke N v τ :=
-  (WLight.frickeFunction_modularity_package N PeriodPair.ofTau (fun τ => ⟨rfl, rfl⟩)).2.2.2.2.2.2.1
+  (WLight.frickeFunction_modularity_package N PeriodPair.ofTau (fun _ => ⟨rfl, rfl⟩)).2.2.2.2.2.2.1
     v γ hγ τ
 
 omit [NeZero N] in
@@ -723,8 +722,6 @@ theorem solution
         algebraMap (ModularCurve.LevelN.ring M) K
           ⟨fun τ : UpperHalfPlane => F (γ⁻¹ • τ), hst γ⁻¹ F hF⟩)
     (E : K →ₐ[ℂ] LaurentSeries ℂ)
-    (hEj : E (algebraMap (ModularCurve.LevelN.ring M) K (ModularCurve.LevelN.jGen M)) =
-      ModularCurve.qExpand ℂ M (ModularCurve.jqModC ℂ))
     (hEq : ∀ (F : UpperHalfPlane → ℂ) (hF : F ∈ ModularCurve.LevelN.ring M) (m : ℕ),
       UpperHalfPlane.IsBoundedAtImInfty (F * ModularForm.discriminant ^ m) →
         E (algebraMap (ModularCurve.LevelN.ring M) K ⟨F, hF⟩) *
@@ -732,9 +729,9 @@ theorem solution
               (UpperHalfPlane.qExpansion M (ModularForm.discriminant : UpperHalfPlane → ℂ)) ^ m =
           HahnSeries.ofPowerSeries ℤ ℂ (UpperHalfPlane.qExpansion M (F * ModularForm.discriminant ^
             m)))
-    (Γ : Subgroup SL(2, ℤ)) [Γ.FiniteIndex] (hΓ : CongruenceSubgroup.Gamma M ≤ Γ)
+    (Γ : Subgroup SL(2, ℤ)) [Γ.FiniteIndex]
     (hT : ModularGroup.T ∈ Γ)
-    {k : ℤ} (g h : ModularForm (Γ : Subgroup (GL (Fin 2) ℝ)) k) (hh : h ≠ 0) (z : K)
+    {k : ℤ} (g h : ModularForm (Γ : Subgroup (GL (Fin 2) ℝ)) k) (z : K)
     (hz : E z * ModularCurve.qExpand ℂ M
         ((UpperHalfPlane.qExpansion 1 (h : UpperHalfPlane → ℂ) : PowerSeries ℂ) : LaurentSeries ℂ) =
       ModularCurve.qExpand ℂ M
@@ -926,8 +923,6 @@ theorem ModularCurve.LevelN.valuation_apply_smul_le_one_of_tendsto_div_smul
         algebraMap (ModularCurve.LevelN.ring M) K
           ⟨fun τ : UpperHalfPlane => F (γ⁻¹ • τ), hst γ⁻¹ F hF⟩)
     (E : K →ₐ[ℂ] LaurentSeries ℂ)
-    (hEj : E (algebraMap (ModularCurve.LevelN.ring M) K (ModularCurve.LevelN.jGen M)) =
-      ModularCurve.qExpand ℂ M (ModularCurve.jqModC ℂ))
     (hEq : ∀ (F : UpperHalfPlane → ℂ) (hF : F ∈ ModularCurve.LevelN.ring M) (m : ℕ),
       UpperHalfPlane.IsBoundedAtImInfty (F * ModularForm.discriminant ^ m) →
         E (algebraMap (ModularCurve.LevelN.ring M) K ⟨F, hF⟩) *
@@ -935,9 +930,9 @@ theorem ModularCurve.LevelN.valuation_apply_smul_le_one_of_tendsto_div_smul
               (UpperHalfPlane.qExpansion M (ModularForm.discriminant : UpperHalfPlane → ℂ)) ^ m =
           HahnSeries.ofPowerSeries ℤ ℂ (UpperHalfPlane.qExpansion M (F * ModularForm.discriminant ^
             m)))
-    (Γ : Subgroup SL(2, ℤ)) [Γ.FiniteIndex] (hΓ : CongruenceSubgroup.Gamma M ≤ Γ)
+    (Γ : Subgroup SL(2, ℤ)) [Γ.FiniteIndex]
     (hT : ModularGroup.T ∈ Γ)
-    {k : ℤ} (g h : ModularForm (Γ : Subgroup (GL (Fin 2) ℝ)) k) (hh : h ≠ 0) (z : K)
+    {k : ℤ} (g h : ModularForm (Γ : Subgroup (GL (Fin 2) ℝ)) k) (z : K)
     (hz : E z * ModularCurve.qExpand ℂ M
         ((UpperHalfPlane.qExpansion 1 (h : UpperHalfPlane → ℂ) : PowerSeries ℂ) : LaurentSeries ℂ) =
       ModularCurve.qExpand ℂ M
@@ -948,6 +943,6 @@ theorem ModularCurve.LevelN.valuation_apply_smul_le_one_of_tendsto_div_smul
         • τ))
       atImInfty (𝓝 L)) :
     Valued.v (E (σ γ z)) ≤ 1 :=
-  solution M K hst σ hσ E hEj hEq Γ hΓ hT g h hh z hz γ L hL hlim
+  solution M K hst σ hσ E hEq Γ hT g h z hz γ L hL hlim
 
 end publicSection

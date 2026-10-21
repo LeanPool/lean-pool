@@ -77,7 +77,6 @@ set_option backward.isDefEq.respectTransparency.types false
 
 namespace P2MW.S_OVERLONG_6989a05c
 
-set_option linter.unusedVariables false
 
 noncomputable section
 
@@ -2759,7 +2758,7 @@ theorem solution {K : Type uK} [Field K] [CharZero K] [IsAlgClosed K]
         ∃ (ι₀ : (E₀.baseChange (AlgebraicClosure K₀)).toAffine.FunctionField →ₐ[AlgebraicClosure K₀]
             (E₀.baseChange (AlgebraicClosure K₀)).toAffine.FunctionField),
           ι₀.toRingHom.IsIntegral ∧
-          ∃ (hfin₀ : FiniteAlong (AlgebraicClosure K₀) ι₀),
+          ∃ (_ : FiniteAlong (AlgebraicClosure K₀) ι₀),
             finrankAlong (AlgebraicClosure K₀) ι₀ = finrankAlong K ι := by
   classical
   obtain ⟨K₀, hK₀, E₀, hE₀, hmap, D₀, hdeg⟩ :=

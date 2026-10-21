@@ -71,7 +71,6 @@ set_option backward.isDefEq.respectTransparency.types false
 
 namespace P2MW.S_ModularCurve_LevelN_Descent_fixer_le
 
-set_option linter.unusedVariables false
 
 p2m_open "ModularCurve P2MW.S_ModularCurve_LevelN_Descent_fixer_le.ModularCurve"
 open scoped MatrixGroups IntermediateField

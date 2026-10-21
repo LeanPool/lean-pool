@@ -84,7 +84,6 @@ section privateSection
 
 namespace P2MW.S_ModularCurve_natCard_place_ord_neg_laurentBaseChange_gamma1_eq_natCard_doubleCoset
 
-set_option linter.unusedVariables false
 
 open UpperHalfPlane
 open scoped MatrixGroups IntermediateField Manifold

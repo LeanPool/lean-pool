@@ -1714,7 +1714,6 @@ end
 
 section
 
-set_option linter.unusedVariables false
 
 p2m_open "AlgebraicCurve P2MW.S_AlgebraicCurve_tateAgreement.AlgebraicCurve AlgebraicCurve.Place \
   P2MW.S_AlgebraicCurve_tateAgreement.AlgebraicCurve.Place LinearMap \
@@ -1768,7 +1767,7 @@ variable {K L : Type*} [Field K] [Field L] [Algebra K L] (u : Place K L)
 variable (pA' : u.adicCompletion →ₗ[K] u.adicCompletion)
 
 def KwF4gRRTateCommFiniteGen : Prop :=
-  ∀ (h : SameRangeIdemProjectors (tateProj u) pA') (fh gh : u.adicCompletion),
+  ∀ (_ : SameRangeIdemProjectors (tateProj u) pA') (fh gh : u.adicCompletion),
     FiniteDimensional K
       (LinearMap.range (tateCommRestrict pA' (lmulK u fh) (lmulK u gh)))
 
@@ -1861,7 +1860,6 @@ end
 
 section
 
-set_option linter.unusedVariables false
 
 p2m_open "AlgebraicCurve P2MW.S_AlgebraicCurve_tateAgreement.AlgebraicCurve AlgebraicCurve.Place \
   P2MW.S_AlgebraicCurve_tateAgreement.AlgebraicCurve.Place LinearMap \
@@ -1999,7 +1997,6 @@ end
 
 section
 
-set_option linter.unusedVariables false
 
 p2m_open "AlgebraicCurve P2MW.S_AlgebraicCurve_tateAgreement.AlgebraicCurve AlgebraicCurve.Place \
   P2MW.S_AlgebraicCurve_tateAgreement.AlgebraicCurve.Place LinearMap \
@@ -2268,7 +2265,6 @@ end
 
 section
 
-set_option linter.unusedVariables false
 
 p2m_open "AlgebraicCurve P2MW.S_AlgebraicCurve_tateAgreement.AlgebraicCurve AlgebraicCurve.Place \
   P2MW.S_AlgebraicCurve_tateAgreement.AlgebraicCurve.Place LinearMap \
@@ -2294,7 +2290,7 @@ variable [HasCanonicalLocalResidueKStar K L]
 def KwF4gRRTateCohenTateAgreement : Prop :=
   ∀ (u : Place K L) [u.FiniteResidue],
     ∃ (pC : u.adicCompletion →ₗ[K] u.adicCompletion)
-      (hpC : SameRangeIdemProjectors (tateProj u) pC),
+      (_ : SameRangeIdemProjectors (tateProj u) pC),
     ∀ (fh : u.adicCompletion)
       [FiniteDimensional K (LinearMap.range
         (tateCommRestrict pC (lmulK u fh)
@@ -2337,7 +2333,6 @@ end
 
 section
 
-set_option linter.unusedVariables false
 
 p2m_open "AlgebraicCurve P2MW.S_AlgebraicCurve_tateAgreement.AlgebraicCurve AlgebraicCurve.Place \
   P2MW.S_AlgebraicCurve_tateAgreement.AlgebraicCurve.Place LinearMap \
@@ -2532,7 +2527,6 @@ end
 
 section
 
-set_option linter.unusedVariables false
 
 p2m_open "AlgebraicCurve P2MW.S_AlgebraicCurve_tateAgreement.AlgebraicCurve AlgebraicCurve.Place \
   P2MW.S_AlgebraicCurve_tateAgreement.AlgebraicCurve.Place LinearMap \
@@ -2625,7 +2619,7 @@ theorem cohenProjC_idem (B : Submodule K u.adicCompletion)
 theorem range_cohenProjC (B : Submodule K u.adicCompletion)
     (hcompl : IsCompl (adicIntegersKSubmod u) B) :
     LinearMap.range (cohenProjC u B hcompl) = adicIntegersKSubmod u :=
-  le_antisymm (fun x ⟨y, hy⟩ => hy ▸ cohenProjC_mem_integers u B hcompl y)
+  le_antisymm (fun _ ⟨y, hy⟩ => hy ▸ cohenProjC_mem_integers u B hcompl y)
     (fun x hx => ⟨x, cohenProjC_of_mem u B hcompl hx⟩)
 
 theorem sub_cohenProjC_mem_B (B : Submodule K u.adicCompletion)
@@ -3211,7 +3205,6 @@ end
 
 section
 
-set_option linter.unusedVariables false
 
 p2m_open "AlgebraicCurve P2MW.S_AlgebraicCurve_tateAgreement.AlgebraicCurve AlgebraicCurve.Place \
   P2MW.S_AlgebraicCurve_tateAgreement.AlgebraicCurve.Place LinearMap \
@@ -3503,7 +3496,6 @@ end
 
 section
 
-set_option linter.unusedVariables false
 
 p2m_open "AlgebraicCurve P2MW.S_AlgebraicCurve_tateAgreement.AlgebraicCurve AlgebraicCurve.Place \
   P2MW.S_AlgebraicCurve_tateAgreement.AlgebraicCurve.Place LinearMap \

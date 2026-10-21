@@ -62,7 +62,6 @@ set_option backward.isDefEq.respectTransparency.types false
 
 namespace P2MW.S_ModularCurve_finiteDimensional_and_finrank_adjoin_le_of_eq_coeffMap
 
-set_option linter.unusedVariables false
 
 noncomputable section
 
@@ -114,9 +113,9 @@ theorem coeffMap_mem {x : LaurentSeries K₀} (hx : x ∈ qExpFunctionFieldC K�
 def iota : qExpFunctionFieldC K₀ Γ →+* qExpFunctionFieldC K Γ where
   toFun y := ⟨coeffMap φ y, coeffMap_mem φ Γ y.2⟩
   map_one' := Subtype.ext (map_one _)
-  map_mul' a b := Subtype.ext (map_mul _ _ _)
+  map_mul' _ _ := Subtype.ext (map_mul _ _ _)
   map_zero' := Subtype.ext (map_zero _)
-  map_add' a b := Subtype.ext (map_add _ _ _)
+  map_add' _ _ := Subtype.ext (map_add _ _ _)
 
 @[scoped simp] theorem coe_iota (y : qExpFunctionFieldC K₀ Γ) :
     ((iota φ Γ y : qExpFunctionFieldC K Γ) : LaurentSeries K) = coeffMap φ y := rfl

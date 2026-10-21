@@ -79,7 +79,6 @@ attribute [-instance] DivisionRing.toRatAlgebra
 
 namespace P2MW.S_ModularCurve_finrank_adjoin_jqModC_laurentBaseChange_qExpFunctionFieldC_le_index
 
-set_option linter.unusedVariables false
 
 namespace FIdxAlg
 
@@ -221,7 +220,7 @@ theorem q4_coeff_zero : PowerSeries.coeff 0 q4 = 1 :=
   E_qExpansion_coeff_zero (by norm_num) (by decide)
 
 theorem qExpansion_mem_monomialSpan (m : ℕ) :
-    ∀ (k : ℤ) (hk : k = 12 * (m : ℤ)) (h : ModularForm 𝒮ℒ k)
+    ∀ (k : ℤ) (_ : k = 12 * (m : ℤ)) (h : ModularForm 𝒮ℒ k)
       , qExpansion 1 (h : ℍ → ℂ) ∈ monomialSpan m := by
   induction m with
   | zero =>

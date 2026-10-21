@@ -67,7 +67,6 @@ set_option backward.isDefEq.respectTransparency.types false
 
 namespace P2MW.S_ModularCurve_exists_tendsto_div_smul_of_eventuallyEq_realizeOf_of_tendsto
 
-set_option linter.unusedVariables false
 
 p2m_open "UpperHalfPlane ModularForm Filter Function Complex Function.Complex \
   Matrix.SpecialLinearGroup OnePoint"

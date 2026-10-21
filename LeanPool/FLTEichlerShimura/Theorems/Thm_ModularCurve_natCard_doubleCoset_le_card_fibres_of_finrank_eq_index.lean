@@ -84,7 +84,6 @@ set_option backward.isDefEq.respectTransparency.types false
 
 namespace P2MW.S_ModularCurve_natCard_doubleCoset_le_card_fibres_of_finrank_eq_index
 
-set_option linter.unusedVariables false
 
 open UpperHalfPlane
 open scoped MatrixGroups IntermediateField Manifold

@@ -700,7 +700,6 @@ theorem restrictAlong_placeOfPoint_veluPointMap2
 
 end Velu2FFPort
 
-set_option linter.unusedVariables false in
 open Velu2FFPort in
 theorem solution
     {F : Type*} [Field F] [DecidableEq F] [CharZero F] [IsAlgClosed F]
@@ -715,7 +714,7 @@ theorem solution
     [WeierstrassCurve.Affine.GenusOnePlaceGate.IsCentred (W.veluQuotient2 x₀ y₀).toAffine]
     [WeierstrassCurve.Affine.AbelTheorem (W.veluQuotient2 x₀ y₀).toAffine] :
     ∃ (ι : (W.veluQuotient2 x₀ y₀).toAffine.FunctionField →ₐ[F] W.toAffine.FunctionField)
-      (hι : ι.toRingHom.IsIntegral) (hfin : AlgebraicCurve.FiniteAlong F ι),
+      (hι : ι.toRingHom.IsIntegral) (_ : AlgebraicCurve.FiniteAlong F ι),
       ∀ P : W.toAffine.Point,
         (WeierstrassCurve.Affine.placeOfPoint P).restrictAlong ι hι
           = WeierstrassCurve.Affine.placeOfPoint

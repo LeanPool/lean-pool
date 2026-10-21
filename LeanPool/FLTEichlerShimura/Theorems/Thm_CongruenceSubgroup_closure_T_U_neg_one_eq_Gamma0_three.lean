@@ -63,7 +63,6 @@ set_option backward.isDefEq.respectTransparency.types false
 
 namespace P2MW.S_CongruenceSubgroup_closure_T_U_neg_one_eq_Gamma0_three
 
-set_option linter.unusedVariables false
 
 open Matrix CongruenceSubgroup Subgroup ModularForm UpperHalfPlane
 open scoped MatrixGroups ModularForm Manifold Pointwise

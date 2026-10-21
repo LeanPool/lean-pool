@@ -68,7 +68,6 @@ set_option backward.isDefEq.respectTransparency.types false
 
 namespace P2MW.S_HexagonalLattice_summable_thetaTerm_and_tsum_neg_inv_three_mul
 
-set_option linter.unusedVariables false
 
 open Complex Real
 

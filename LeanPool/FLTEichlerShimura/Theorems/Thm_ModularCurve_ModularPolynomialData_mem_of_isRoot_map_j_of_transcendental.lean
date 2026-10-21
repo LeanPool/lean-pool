@@ -79,7 +79,6 @@ set_option backward.isDefEq.respectTransparency.types false
 
 namespace P2MW.S_ModularCurve_ModularPolynomialData_mem_of_isRoot_map_j_of_transcendental
 
-set_option linter.unusedVariables false
 
 noncomputable section
 

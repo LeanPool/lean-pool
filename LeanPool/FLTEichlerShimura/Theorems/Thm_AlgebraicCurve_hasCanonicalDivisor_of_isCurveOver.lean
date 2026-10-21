@@ -69,7 +69,6 @@ set_option backward.isDefEq.respectTransparency.types false
 
 namespace P2MW.S_AlgebraicCurve_hasCanonicalDivisor_of_isCurveOver
 
-set_option linter.unusedVariables false
 
 open IsDedekindDomain
 namespace AlgebraicCurve

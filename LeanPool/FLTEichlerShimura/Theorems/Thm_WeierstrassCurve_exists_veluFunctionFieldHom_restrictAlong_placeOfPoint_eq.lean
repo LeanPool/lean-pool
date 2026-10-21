@@ -79,7 +79,6 @@ section privateSection
 
 set_option backward.isDefEq.respectTransparency.types false
 
-set_option linter.unusedVariables false
 
 open AlgebraicCurve Place WeierstrassCurve Polynomial IsDedekindDomain Affine CoordinateRing
   WithZero IsLocalRing
@@ -254,7 +253,7 @@ noncomputable def kwVeluPointMap (hmapeq : W.KwVeluMapEquationAt S)
     (hΔ : (W.veluQuotient S).Δ ≠ 0) :
     W.toAffine.Point → (W.veluQuotient S).toAffine.Point
   | .zero => .zero
-  | .some x y h =>
+  | .some x _ h =>
     if hx : ∀ Q ∈ S, x ≠ Q.1 then
       .some _ _ (kw_velu_map_nonsingular hmapeq hΔ h.1 hx)
     else .zero
@@ -263,7 +262,6 @@ variable (hmapeq : W.KwVeluMapEquationAt S) (hΔ : (W.veluQuotient S).Δ ≠ 0)
 
 @[scoped simp] lemma kwVeluPointMap_zero : kwVeluPointMap hmapeq hΔ .zero = .zero := rfl
 
-set_option linter.unusedVariables false in
 lemma kwVeluPointMap_some_of_mem {x y : F} (h : W.toAffine.Nonsingular x y)
     {Q : F × F} (hQ : Q ∈ S) (hx : x = Q.1) :
     kwVeluPointMap hmapeq hΔ (.some x y h) = 0 := by
@@ -1676,7 +1674,7 @@ theorem s2c_key (hp3 : 3 ≤ p) (hpodd : Odd p) (hord : addOrderOf Q = p)
 
 omit [CharZero F] in
 theorem s2c_zero (V : WeierstrassCurve F) (hVW : V = W)
-    [instV : V.toAffine.IsElliptic]
+    [V.toAffine.IsElliptic]
     [gW : GenusOnePlaceGate W.toAffine] [cW : GenusOnePlaceGate.IsCentred W.toAffine]
     [aW : AbelTheorem W.toAffine]
     [gV : GenusOnePlaceGate V.toAffine] [cV : GenusOnePlaceGate.IsCentred V.toAffine]

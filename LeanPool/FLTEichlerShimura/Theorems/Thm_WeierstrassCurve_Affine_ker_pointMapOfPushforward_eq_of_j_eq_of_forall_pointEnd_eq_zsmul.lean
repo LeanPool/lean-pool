@@ -83,7 +83,6 @@ set_option backward.isDefEq.respectTransparency.types false
 
 namespace P2MW.S_OVERLONG_072510fc
 
-set_option linter.unusedVariables false
 
 noncomputable section
 

@@ -66,7 +66,6 @@ section privateSection
 
 namespace P2MW.S_OVERLONG_7837151f
 
-set_option linter.unusedVariables false
 
 noncomputable section
 
@@ -1414,7 +1413,7 @@ theorem solution
     (ι : (W.baseChange F).toAffine.FunctionField →ₐ[F] (W.baseChange F).toAffine.FunctionField)
     (hι : ι.toRingHom.IsIntegral) (hfin : FiniteAlong F ι) :
     ∃ ι' : (W.baseChange F').toAffine.FunctionField →ₐ[F'] (W.baseChange F').toAffine.FunctionField,
-      ι'.toRingHom.IsIntegral ∧ ∃ hfin' : FiniteAlong F' ι', finrankAlong F' ι' = finrankAlong F ι
+      ι'.toRingHom.IsIntegral ∧ ∃ _ : FiniteAlong F' ι', finrankAlong F' ι' = finrankAlong F ι
         := by
   classical
   obtain ⟨D', hD'⟩ := ModularCurve.kw_isogenyEndDatumBaseChangeAlong_dischargeGeneral W F F'

@@ -67,7 +67,6 @@ set_option backward.isDefEq.respectTransparency.types false
 
 namespace P2MW.S_ModularForm_exists_weight_one_gamma1_three_slash_fricke_eq_smul
 
-set_option linter.unusedVariables false
 
 open Complex Real Set
 

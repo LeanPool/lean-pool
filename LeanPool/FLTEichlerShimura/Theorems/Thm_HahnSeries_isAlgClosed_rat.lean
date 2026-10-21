@@ -68,7 +68,6 @@ set_option backward.isDefEq.respectTransparency.types false
 namespace P2MW.S_HahnSeries_isAlgClosed_rat
 
 open Polynomial HahnSeries
-open scoped Classical
 
 noncomputable section
 
@@ -181,11 +180,11 @@ theorem newtonStep_addVal_lt {f : (HahnSeries ℚ K)[X]} {γ : ℚ}
       HahnSeries.addVal ℚ K (f.eval (HahnSeries.single γ c)) := by
   rw [HahnSeries.addVal_apply]; exact newtonStep_orderTop_lt hslope hc
 
-private def slopeSupport (f : (HahnSeries ℚ K)[X]) : Finset ℕ :=
+private def slopeSupport (f : (HahnSeries ℚ K)[X]) [DecidablePred (f.coeff · ≠ 0)] : Finset ℕ :=
   (Finset.range f.natDegree).filter (fun j => f.coeff j ≠ 0)
 
-private theorem slopeSupport_nonempty {f : (HahnSeries ℚ K)[X]} (hdeg : 1 ≤ f.natDegree)
-    (h0 : f.coeff 0 ≠ 0) : (slopeSupport f).Nonempty :=
+private theorem slopeSupport_nonempty {f : (HahnSeries ℚ K)[X]} [DecidablePred (f.coeff · ≠ 0)]
+    (hdeg : 1 ≤ f.natDegree) (h0 : f.coeff 0 ≠ 0) : (slopeSupport f).Nonempty :=
   ⟨0, Finset.mem_filter.mpr ⟨Finset.mem_range.mpr hdeg, h0⟩⟩
 
 theorem exists_newtonSlope {f : (HahnSeries ℚ K)[X]} (hf : f.Monic)
@@ -266,7 +265,6 @@ end DorgePuiseux
 end
 
 open Polynomial HahnSeries
-open scoped Classical
 
 noncomputable section
 
@@ -274,15 +272,17 @@ namespace DorgePuiseux
 
 variable {K : Type*} [Field K]
 
-private def evalSlopeSupport (f : (HahnSeries ℚ K)[X]) : Finset ℕ :=
+private def evalSlopeSupport (f : (HahnSeries ℚ K)[X])
+    [DecidablePred (f.coeff · ≠ 0)] : Finset ℕ :=
   (Finset.range (f.natDegree + 1)).filter (fun j => 1 ≤ j ∧ f.coeff j ≠ 0)
 
-private theorem evalSlopeSupport_nonempty {f : (HahnSeries ℚ K)[X]} (hf : f.Monic)
-    (hdeg : 1 ≤ f.natDegree) : (evalSlopeSupport f).Nonempty :=
+private theorem evalSlopeSupport_nonempty {f : (HahnSeries ℚ K)[X]} [DecidablePred (f.coeff · ≠ 0)]
+    (hf : f.Monic) (hdeg : 1 ≤ f.natDegree) : (evalSlopeSupport f).Nonempty :=
   ⟨f.natDegree, Finset.mem_filter.mpr
     ⟨Finset.self_mem_range_succ _, hdeg, by rw [hf.coeff_natDegree]; exact one_ne_zero⟩⟩
 
-private theorem mem_evalSlopeSupport {f : (HahnSeries ℚ K)[X]} {j : ℕ} :
+private theorem mem_evalSlopeSupport {f : (HahnSeries ℚ K)[X]} {j : ℕ}
+    [DecidablePred (f.coeff · ≠ 0)] :
     j ∈ evalSlopeSupport f ↔ j ≤ f.natDegree ∧ 1 ≤ j ∧ f.coeff j ≠ 0 := by
   simp only [evalSlopeSupport, Finset.mem_filter, Finset.mem_range, Nat.lt_succ_iff]
 
@@ -413,7 +413,7 @@ structure IsBallChain {ι : Type*} [LinearOrder ι]
   mem_ball : ∀ ⦃i j : ι⦄, i ≤ j → δ i ≤ (r j - r i).orderTop
 
 def pseudoLimitCoeff {ι : Type*} [LinearOrder ι]
-    (r : ι → HahnSeries Γ K) (δ : ι → WithTop Γ) (g : Γ) : K :=
+    (r : ι → HahnSeries Γ K) (δ : ι → WithTop Γ) (g : Γ) [Decidable (∃ i, g < δ i)] : K :=
   if h : ∃ i, (g : WithTop Γ) < δ i then (r h.choose).coeff g else 0
 
 theorem IsBallChain.coeff_eq_of_lt {ι : Type*} [LinearOrder ι]
@@ -428,16 +428,17 @@ theorem IsBallChain.coeff_eq_of_lt {ι : Type*} [LinearOrder ι]
   exact hdiff.symm
 
 theorem IsBallChain.pseudoLimitCoeff_eq {ι : Type*} [LinearOrder ι]
-    {r : ι → HahnSeries Γ K} {δ : ι → WithTop Γ} (h : IsBallChain r δ)
-    {g : Γ} {i : ι} (hgi : (g : WithTop Γ) < δ i) :
+    {r : ι → HahnSeries Γ K} {δ : ι → WithTop Γ} (h : IsBallChain r δ) {g : Γ}
+    [Decidable (∃ i, g < δ i)] {i : ι} (hgi : (g : WithTop Γ) < δ i) :
     pseudoLimitCoeff r δ g = (r i).coeff g := by
   unfold pseudoLimitCoeff
   rw [dite_eq_left ⟨i, hgi⟩]
   exact h.coeff_eq_of_lt (Exists.choose_spec (p := fun i => (g : WithTop Γ) < δ i) ⟨i, hgi⟩) hgi
 
 theorem IsBallChain.isPWO_support_pseudoLimitCoeff {ι : Type*} [LinearOrder ι]
-    {r : ι → HahnSeries Γ K} {δ : ι → WithTop Γ} (h : IsBallChain r δ) :
-    (Function.support (pseudoLimitCoeff r δ)).IsPWO := by
+    {r : ι → HahnSeries Γ K} {δ : ι → WithTop Γ} [∀ g, Decidable (∃ i, g < δ i)]
+    (h : IsBallChain r δ) :
+    (Function.support (pseudoLimitCoeff r δ ·)).IsPWO := by
   refine Set.IsWF.isPWO ?_
   rw [Set.isWF_iff_no_descending_seq]
   intro f hanti hf
@@ -459,19 +460,21 @@ theorem IsBallChain.isPWO_support_pseudoLimitCoeff {ι : Type*} [LinearOrder ι]
   exact hWF f hanti hfk
 
 def IsBallChain.pseudoLimit {ι : Type*} [LinearOrder ι]
-    {r : ι → HahnSeries Γ K} {δ : ι → WithTop Γ} (h : IsBallChain r δ) :
+    {r : ι → HahnSeries Γ K} {δ : ι → WithTop Γ} [∀ g, Decidable (∃ i, g < δ i)]
+    (h : IsBallChain r δ) :
     HahnSeries Γ K where
-  coeff := pseudoLimitCoeff r δ
+  coeff := (pseudoLimitCoeff r δ ·)
   isPWO_support' := h.isPWO_support_pseudoLimitCoeff
 
 theorem IsBallChain.coeff_pseudoLimit {ι : Type*} [LinearOrder ι]
     {r : ι → HahnSeries Γ K} {δ : ι → WithTop Γ} (h : IsBallChain r δ)
-    {g : Γ} {i : ι} (hgi : (g : WithTop Γ) < δ i) :
+    {g : Γ} {i : ι} [∀ G, Decidable (∃ i, G < δ i)] (hgi : (g : WithTop Γ) < δ i) :
     h.pseudoLimit.coeff g = (r i).coeff g :=
   h.pseudoLimitCoeff_eq hgi
 
 theorem IsBallChain.le_orderTop_sub_pseudoLimit {ι : Type*} [LinearOrder ι]
-    {r : ι → HahnSeries Γ K} {δ : ι → WithTop Γ} (h : IsBallChain r δ) (i : ι) :
+    {r : ι → HahnSeries Γ K} {δ : ι → WithTop Γ} [∀ g, Decidable (∃ i, g < δ i)]
+    (h : IsBallChain r δ) (i : ι) :
     δ i ≤ (h.pseudoLimit - r i).orderTop := by
   rw [HahnSeries.le_orderTop_iff_forall]
   intro g hg
@@ -479,8 +482,9 @@ theorem IsBallChain.le_orderTop_sub_pseudoLimit {ι : Type*} [LinearOrder ι]
 
 theorem exists_pseudoLimit {ι : Type*} [LinearOrder ι]
     {r : ι → HahnSeries Γ K} {δ : ι → WithTop Γ} (h : IsBallChain r δ) :
-    ∃ r' : HahnSeries Γ K, ∀ i, δ i ≤ (r' - r i).orderTop :=
-  ⟨h.pseudoLimit, h.le_orderTop_sub_pseudoLimit⟩
+    ∃ r' : HahnSeries Γ K, ∀ i, δ i ≤ (r' - r i).orderTop := by
+  classical
+  exact ⟨h.pseudoLimit, h.le_orderTop_sub_pseudoLimit⟩
 
 theorem monic_taylor {f : (HahnSeries ℚ K)[X]} (hf : f.Monic) (r : HahnSeries ℚ K) :
     (Polynomial.taylor r f).Monic := by
@@ -522,7 +526,6 @@ end DorgePuiseux
 end
 
 open Polynomial HahnSeries
-open scoped Classical
 
 noncomputable section
 
@@ -874,11 +877,13 @@ theorem kaplanskyChain_coeff_eq {C : Set (HahnSeries ℚ K)}
     rw [HahnSeries.coeff_sub, sub_eq_zero] at hdiff
     exact hdiff
 
-def kaplanskyLimitCoeff (C : Set (HahnSeries ℚ K)) (g : ℚ) : K :=
+def kaplanskyLimitCoeff (C : Set (HahnSeries ℚ K)) (g : ℚ)
+    [Decidable (∃ a ∈ C, KaplanskyBelowSlope f a g)] : K :=
   if h : ∃ a ∈ C, KaplanskyBelowSlope f a g then h.choose.coeff g else 0
 
 theorem kaplanskyLimitCoeff_eq {C : Set (HahnSeries ℚ K)} (hC : IsChain (KaplanskyLE f) C)
-    {a : HahnSeries ℚ K} (ha : a ∈ C) {g : ℚ} (hga : KaplanskyBelowSlope f a g) :
+    {a : HahnSeries ℚ K} (ha : a ∈ C) {g : ℚ} (hga : KaplanskyBelowSlope f a g)
+    [Decidable (∃ a ∈ C, KaplanskyBelowSlope f a g)] :
     kaplanskyLimitCoeff (f := f) C g = a.coeff g := by
   unfold kaplanskyLimitCoeff
   rw [dite_eq_left ⟨a, ha, hga⟩]
@@ -886,8 +891,8 @@ theorem kaplanskyLimitCoeff_eq {C : Set (HahnSeries ℚ K)} (hC : IsChain (Kapla
   exact kaplanskyChain_coeff_eq hC hb ha hgb hga
 
 theorem kaplanskyLimitCoeff_isPWO_support {C : Set (HahnSeries ℚ K)}
-    (hC : IsChain (KaplanskyLE f) C) :
-    (Function.support (kaplanskyLimitCoeff (f := f) C)).IsPWO := by
+    (hC : IsChain (KaplanskyLE f) C) [∀ g, Decidable (∃ a ∈ C, KaplanskyBelowSlope f a g)] :
+    (Function.support (kaplanskyLimitCoeff (f := f) C ·)).IsPWO := by
   refine Set.IsWF.isPWO ?_
   rw [Set.isWF_iff_no_descending_seq]
   intro s hanti hs
@@ -910,13 +915,15 @@ theorem kaplanskyLimitCoeff_isPWO_support {C : Set (HahnSeries ℚ K)}
   rw [Set.isWF_iff_no_descending_seq] at hWF
   exact hWF s hanti hsk
 
-def kaplanskyLimit {C : Set (HahnSeries ℚ K)} (hC : IsChain (KaplanskyLE f) C) :
+def kaplanskyLimit {C : Set (HahnSeries ℚ K)} (hC : IsChain (KaplanskyLE f) C)
+    [∀ g, Decidable (∃ a ∈ C, KaplanskyBelowSlope f a g)] :
     HahnSeries ℚ K where
-  coeff := kaplanskyLimitCoeff (f := f) C
+  coeff := (kaplanskyLimitCoeff (f := f) C ·)
   isPWO_support' := kaplanskyLimitCoeff_isPWO_support hC
 
 theorem kaplanskySlope_kaplanskyLimit {C : Set (HahnSeries ℚ K)}
-    (hC : IsChain (KaplanskyLE f) C) {a : HahnSeries ℚ K} (ha : a ∈ C) :
+    (hC : IsChain (KaplanskyLE f) C) {a : HahnSeries ℚ K} (ha : a ∈ C)
+    [∀ g, Decidable (∃ a ∈ C, KaplanskyBelowSlope f a g)] :
     KaplanskySlope f a (kaplanskyLimit hC) := by
   intro j hj hjle
   by_contra hlt
@@ -940,6 +947,7 @@ theorem kaplanskySlope_kaplanskyLimit {C : Set (HahnSeries ℚ K)}
 theorem exists_kaplanskyLE_upperBound {C : Set (HahnSeries ℚ K)}
     (hC : IsChain (KaplanskyLE f) C) :
     ∃ ub, ∀ a ∈ C, KaplanskyLE f a ub := by
+  classical
   by_cases hmax : ∃ m ∈ C, ∀ a ∈ C, KaplanskyLE f a m
   · obtain ⟨m, _, hm⟩ := hmax; exact ⟨m, hm⟩
   push Not at hmax

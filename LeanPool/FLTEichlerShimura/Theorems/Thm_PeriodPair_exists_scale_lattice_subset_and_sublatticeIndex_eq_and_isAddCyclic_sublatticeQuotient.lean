@@ -89,7 +89,6 @@ set_option backward.isDefEq.respectTransparency.types false
 
 namespace P2MW.S_OVERLONG_96bd748a
 
-set_option linter.unusedVariables false
 
 noncomputable section
 
@@ -527,7 +526,6 @@ p2m_export "AlgebraicCurve.Place" "restrictAlong ext deg ord ord_unit_smul_zpow 
 end Place
 end AlgebraicCurve
 
-set_option linter.unusedVariables false
 
 section
 open Complex Filter Set

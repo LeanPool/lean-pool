@@ -1253,7 +1253,6 @@ end
 
 section
 
-set_option linter.unusedVariables false
 
 p2m_open "AlgebraicCurve P2MW.S_AlgebraicCurve_tateChainRule.AlgebraicCurve AlgebraicCurve.Place \
   P2MW.S_AlgebraicCurve_tateChainRule.AlgebraicCurve.Place LinearMap \
@@ -1369,7 +1368,6 @@ end
 
 section
 
-set_option linter.unusedVariables false
 
 p2m_open "AlgebraicCurve P2MW.S_AlgebraicCurve_tateChainRule.AlgebraicCurve AlgebraicCurve.Place \
   P2MW.S_AlgebraicCurve_tateChainRule.AlgebraicCurve.Place LinearMap \
@@ -1468,7 +1466,6 @@ end
 
 section
 
-set_option linter.unusedVariables false
 
 p2m_open "AlgebraicCurve P2MW.S_AlgebraicCurve_tateChainRule.AlgebraicCurve AlgebraicCurve.Place \
   P2MW.S_AlgebraicCurve_tateChainRule.AlgebraicCurve.Place LinearMap \
@@ -1604,7 +1601,6 @@ end
 
 section
 
-set_option linter.unusedVariables false
 
 p2m_open "AlgebraicCurve P2MW.S_AlgebraicCurve_tateChainRule.AlgebraicCurve AlgebraicCurve.Place \
   P2MW.S_AlgebraicCurve_tateChainRule.AlgebraicCurve.Place LinearMap \
@@ -1689,7 +1685,7 @@ theorem piRestrict_apply (pA φ : V →ₗ[K] V) (a : LinearMap.range pA) :
 
 def epsRestrict (pA φ ψ : V →ₗ[K] V) : LinearMap.range pA →ₗ[K] LinearMap.range pA :=
   (pA ∘ₗ φ ∘ₗ (LinearMap.id - pA) ∘ₗ ψ).restrict
-    (fun x _ => LinearMap.mem_range_self pA _)
+    (fun _ _ => LinearMap.mem_range_self pA _)
 
 theorem epsRestrict_apply (pA φ ψ : V →ₗ[K] V) (a : LinearMap.range pA) :
     (epsRestrict pA φ ψ a : V) = pA (φ (ψ (a : V) - pA (ψ (a : V)))) := by
@@ -1984,7 +1980,6 @@ end
 
 section
 
-set_option linter.unusedVariables false
 
 p2m_open "AlgebraicCurve P2MW.S_AlgebraicCurve_tateChainRule.AlgebraicCurve AlgebraicCurve.Place \
   P2MW.S_AlgebraicCurve_tateChainRule.AlgebraicCurve.Place LinearMap \

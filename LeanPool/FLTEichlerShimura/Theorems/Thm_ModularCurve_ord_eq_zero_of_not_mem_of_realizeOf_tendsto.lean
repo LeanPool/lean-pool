@@ -217,8 +217,8 @@ theorem ModularCurve.CuspPlaceGlue.ord_eq_zero_aux
   have hpole : ∀ γ : SL(2, ℤ), Valued.v (E (σ γ z)) ≤ 1 := by
     intro γ
     obtain ⟨L, hL, hlimγ⟩ := hlim γ⁻¹
-    exact ModularCurve.LevelN.valuation_apply_smul_le_one_of_tendsto_div_smul M K hst σ hσ E hEj hEq
-      Γ hΓM hT g h hh z hz γ L hL hlimγ
+    exact ModularCurve.LevelN.valuation_apply_smul_le_one_of_tendsto_div_smul M K hst σ hσ E hEq
+      Γ hT g h z hz γ L hL hlimγ
   have hg : g ≠ 0 := by
     intro hg0
     apply hEz
@@ -252,8 +252,8 @@ theorem ModularCurve.CuspPlaceGlue.ord_eq_zero_aux
         atImInfty (𝓝 L⁻¹) := by
       have := hlimγ.inv₀ hL
       simpa only [inv_div] using this
-    exact ModularCurve.LevelN.valuation_apply_smul_le_one_of_tendsto_div_smul M K hst σ hσ E hEj hEq
-      Γ hΓM hT h g hg z⁻¹ hz' γ L⁻¹ (inv_ne_zero hL) hlim'
+    exact ModularCurve.LevelN.valuation_apply_smul_le_one_of_tendsto_div_smul M K hst σ hσ E hEq
+      Γ hT h g z⁻¹ hz' γ L⁻¹ (inv_ne_zero hL) hlim'
   obtain ⟨P, hPm, hPz, hPc⟩ :=
     ModularCurve.LevelN.exists_monic_eval_eq_zero_coeff_eq_aeval_inv_div_of_forall_valuation_le_one
       M K σ hker hfixed E hEj z hpole

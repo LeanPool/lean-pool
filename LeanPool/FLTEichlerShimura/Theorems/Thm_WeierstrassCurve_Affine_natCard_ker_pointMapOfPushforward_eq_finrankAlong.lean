@@ -74,7 +74,6 @@ set_option backward.isDefEq.respectTransparency.types false
 
 namespace P2MW.S_OVERLONG_45662e8e
 
-set_option linter.unusedVariables false
 
 noncomputable section
 

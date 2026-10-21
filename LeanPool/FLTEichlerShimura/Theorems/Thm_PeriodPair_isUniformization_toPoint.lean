@@ -73,7 +73,6 @@ set_option backward.isDefEq.respectTransparency.types false
 
 namespace P2MW.S_PeriodPair_isUniformization_toPoint
 
-set_option linter.unusedVariables false
 
 namespace Bornology
 p2m_export "Bornology" "IsBounded.subset ext induced IsBounded cobounded"

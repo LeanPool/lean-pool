@@ -86,7 +86,6 @@ set_option backward.isDefEq.respectTransparency.types false
 
 namespace P2MW.S_ModularCurve_ord_eq_neg_width_of_order_eq_mul_ord_of_qExpansion_slash
 
-set_option linter.unusedVariables false
 
 open ModularCurve UpperHalfPlane ModularForm Filter Function Complex
   Matrix.SpecialLinearGroup

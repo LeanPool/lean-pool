@@ -103,7 +103,6 @@ open WeierstrassCurve Affine AlgebraicCurve Polynomial
 
 set_option backward.isDefEq.respectTransparency.types false
 
-set_option linter.unusedVariables false
 
 noncomputable section
 

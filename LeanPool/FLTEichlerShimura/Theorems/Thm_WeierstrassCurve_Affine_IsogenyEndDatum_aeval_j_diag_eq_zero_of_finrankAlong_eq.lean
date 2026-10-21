@@ -86,7 +86,6 @@ set_option backward.isDefEq.respectTransparency.types false
 
 namespace P2MW.S_OVERLONG_e162e25a
 
-set_option linter.unusedVariables false
 
 noncomputable section
 
@@ -260,7 +259,6 @@ theorem kw_fdn2_qephod_hend21_finrankAlong_conj
 end ConjHelpers
 end ModularCurve
 
-set_option linter.unusedVariables false
 
 section
 open Complex Filter Set

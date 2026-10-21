@@ -99,7 +99,6 @@ open scoped Polynomial.Bivariate TensorProduct
 
 set_option backward.isDefEq.respectTransparency.types false
 
-set_option linter.unusedVariables false
 
 noncomputable section
 

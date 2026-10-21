@@ -62,7 +62,6 @@ set_option backward.isDefEq.respectTransparency.types false
 
 namespace P2MW.S_ModularCurve_LevelN_slash_eq_self_of_mem_Gamma_of_mul_eq
 
-set_option linter.unusedVariables false
 
 noncomputable section
 
@@ -95,7 +94,7 @@ theorem eq_zero_or_eq_zero_of_mul_eq_zero {a b : ℍ → ℂ} (ha : a ∈ ring N
 theorem fricke_smul_of_mem (v : Fin 2 → ZMod N) {γ : SL(2, ℤ)}
     (hγ : γ ∈ CongruenceSubgroup.Gamma N) (τ : ℍ) : fricke N v (γ • τ) = fricke N v τ :=
   (WLight.frickeFunction_modularity_package N PeriodPair.ofTau
-    (fun τ => ⟨rfl, rfl⟩)).2.2.2.2.2.2.1 v γ hγ τ
+    (fun _ => ⟨rfl, rfl⟩)).2.2.2.2.2.2.1 v γ hγ τ
 
 omit [NeZero N] in
 theorem jAnalytic_smul (γ : SL(2, ℤ)) (τ : ℍ) : jAnalytic (γ • τ) = jAnalytic τ := by

@@ -66,7 +66,6 @@ set_option backward.isDefEq.respectTransparency.types false
 
 namespace P2MW.S_ModularCurve_LevelN_exists_place_ord_neg_forall_smul_eq
 
-set_option linter.unusedVariables false
 
 open UpperHalfPlane Filter Topology Function
 open scoped MatrixGroups Manifold Real
@@ -399,7 +398,7 @@ abbrev redMat (γ : SL(2, ℤ)) : Matrix (Fin 2) (Fin 2) (ZMod N) :=
 
 theorem fricke_smul_of_mem (v : Fin 2 → ZMod N) {γ : SL(2, ℤ)}
     (hγ : γ ∈ CongruenceSubgroup.Gamma N) (τ : ℍ) : fricke N v (γ • τ) = fricke N v τ :=
-  (WLight.frickeFunction_modularity_package N PeriodPair.ofTau (fun τ => ⟨rfl, rfl⟩)).2.2.2.2.2.2.1
+  (WLight.frickeFunction_modularity_package N PeriodPair.ofTau (fun _ => ⟨rfl, rfl⟩)).2.2.2.2.2.2.1
     v γ hγ τ
 
 omit [NeZero N] in

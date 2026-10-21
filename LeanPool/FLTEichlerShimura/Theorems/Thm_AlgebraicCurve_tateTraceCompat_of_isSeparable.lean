@@ -1860,7 +1860,6 @@ end
 
 section
 
-set_option linter.unusedVariables false
 
 p2m_open "AlgebraicCurve P2MW.S_AlgebraicCurve_tateTraceCompat_of_isSeparable.AlgebraicCurve \
   AlgebraicCurve.Place P2MW.S_AlgebraicCurve_tateTraceCompat_of_isSeparable.AlgebraicCurve.Place \
@@ -1915,7 +1914,7 @@ variable {K L : Type*} [Field K] [Field L] [Algebra K L] (u : Place K L)
 variable (pA' : u.adicCompletion →ₗ[K] u.adicCompletion)
 
 def KwF4gRRTateCommFiniteGen : Prop :=
-  ∀ (h : SameRangeIdemProjectors (tateProj u) pA') (fh gh : u.adicCompletion),
+  ∀ (_ : SameRangeIdemProjectors (tateProj u) pA') (fh gh : u.adicCompletion),
     FiniteDimensional K
       (LinearMap.range (tateCommRestrict pA' (lmulK u fh) (lmulK u gh)))
 
@@ -2007,7 +2006,6 @@ end
 
 section
 
-set_option linter.unusedVariables false
 
 p2m_open "AlgebraicCurve P2MW.S_AlgebraicCurve_tateTraceCompat_of_isSeparable.AlgebraicCurve \
   AlgebraicCurve.Place P2MW.S_AlgebraicCurve_tateTraceCompat_of_isSeparable.AlgebraicCurve.Place \
@@ -2145,7 +2143,6 @@ end
 
 section
 
-set_option linter.unusedVariables false
 
 p2m_open "AlgebraicCurve P2MW.S_AlgebraicCurve_tateTraceCompat_of_isSeparable.AlgebraicCurve \
   AlgebraicCurve.Place P2MW.S_AlgebraicCurve_tateTraceCompat_of_isSeparable.AlgebraicCurve.Place \
@@ -2414,7 +2411,6 @@ end
 
 section
 
-set_option linter.unusedVariables false
 
 p2m_open "AlgebraicCurve P2MW.S_AlgebraicCurve_tateTraceCompat_of_isSeparable.AlgebraicCurve \
   AlgebraicCurve.Place P2MW.S_AlgebraicCurve_tateTraceCompat_of_isSeparable.AlgebraicCurve.Place \
@@ -2551,7 +2547,6 @@ end
 
 section
 
-set_option linter.unusedVariables false
 
 p2m_open "AlgebraicCurve P2MW.S_AlgebraicCurve_tateTraceCompat_of_isSeparable.AlgebraicCurve \
   AlgebraicCurve.Place P2MW.S_AlgebraicCurve_tateTraceCompat_of_isSeparable.AlgebraicCurve.Place \
@@ -2732,7 +2727,7 @@ variable [Algebra.IsIntegral E F]
 def KwF4gRRTateTraceCompatBlockSum (hfinF : KwF4gRRTateCommFinite K F)
     (hfinE : KwF4gRRTateCommFinite K E) : Prop :=
   ∀ [HasPrincipalDivisors K E] [HasPrincipalDivisors K F] [FiniteDimensional E F]
-    (v : Place K E) (w : Place K F) (hw : w ∈ v.fiber F) (g : F),
+    (v : Place K E) (w : Place K F) (_ : w ∈ v.fiber F) (g : F),
     haveI := hfinF w (algebraMap F w.adicCompletion g)
       (algebraMap F w.adicCompletion (algebraMap E F v.uniformizer))
     let b := Module.finBasis (w.restrict E).adicCompletion w.adicCompletion
@@ -2794,7 +2789,6 @@ end
 
 section
 
-set_option linter.unusedVariables false
 
 p2m_open "AlgebraicCurve P2MW.S_AlgebraicCurve_tateTraceCompat_of_isSeparable.AlgebraicCurve \
   AlgebraicCurve.Place P2MW.S_AlgebraicCurve_tateTraceCompat_of_isSeparable.AlgebraicCurve.Place \
@@ -2989,7 +2983,6 @@ end
 
 section
 
-set_option linter.unusedVariables false
 
 p2m_open "AlgebraicCurve P2MW.S_AlgebraicCurve_tateTraceCompat_of_isSeparable.AlgebraicCurve \
   AlgebraicCurve.Place P2MW.S_AlgebraicCurve_tateTraceCompat_of_isSeparable.AlgebraicCurve.Place \
@@ -3311,7 +3304,6 @@ end
 
 section
 
-set_option linter.unusedVariables false
 
 p2m_open "AlgebraicCurve P2MW.S_AlgebraicCurve_tateTraceCompat_of_isSeparable.AlgebraicCurve \
   AlgebraicCurve.Place P2MW.S_AlgebraicCurve_tateTraceCompat_of_isSeparable.AlgebraicCurve.Place \
@@ -3614,7 +3606,6 @@ end
 
 section
 
-set_option linter.unusedVariables false
 
 p2m_open "AlgebraicCurve P2MW.S_AlgebraicCurve_tateTraceCompat_of_isSeparable.AlgebraicCurve \
   AlgebraicCurve.Place P2MW.S_AlgebraicCurve_tateTraceCompat_of_isSeparable.AlgebraicCurve.Place \
