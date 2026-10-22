@@ -216,7 +216,7 @@ theorem absMulHeight_eq_of_mem {E : IntermediateField ℚ K} [NumberField E] {x 
     IsScalarTower.of_algebraMap_eq fun r ↦ ((inclusion hFE).commutes r).symm
   have : Module.Finite (adjoin ℚ (Set.range x)) E :=
     Module.Finite.of_restrictScalars_finite ℚ _ E
-  letI : Module.Free (adjoin ℚ (Set.range x)) E := Module.Free.of_divisionRing _ _
+  let : Module.Free (adjoin ℚ (Set.range x)) E := Module.Free.of_divisionRing _ _
   have hcomp : (algebraMap (adjoin ℚ (Set.range x)) E) ∘
       (fun i ↦ (⟨x i, subset_adjoin ℚ _ ⟨i, rfl⟩⟩ : adjoin ℚ (Set.range x)))
       = fun i ↦ (⟨x i, hx i⟩ : E) := rfl
