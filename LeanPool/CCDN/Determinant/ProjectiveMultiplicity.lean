@@ -61,7 +61,7 @@ private theorem projective_singular_residue_card_le {p d : ℕ} [Fact p.Prime]
     have hzero (r : T k) : eval (z r) q = 0 := by
       have h := projectiveResidueChartLift_zero f hf r.val.val r.val.property
       rw [hk r] at h
-      simpa only [q, z, eval_map, projectivePlaneChart] using h
+      simpa only [q, z, eval_map, projectivePlaneChart, projectiveChart] using h
     have hsing (r : T k) (j : Fin 2) : eval (z r) (pderiv j q) = 0 := by
       have h := projectivePlaneResidueMultiplicity_singular f hf hir.ne_zero r.val
         (Finset.mem_filter.mp (Finset.mem_filter.mp r.property).1).2 j

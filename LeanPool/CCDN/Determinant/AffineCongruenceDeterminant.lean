@@ -72,8 +72,8 @@ theorem exists_affine_congruence_determinant_log_lower {n s N M : ℕ} (hs : 0 <
     rw [he]
     exact hrows
   have hchart : projectiveHypersurfaceChart (0 : Fin (n + 3)) F = f := by
-    simp only [projectiveHypersurfaceChart, Equiv.swap_self, Equiv.coe_refl, rename_id_apply, F,
-      affineChart_scaledHomogenize_one]
+    simp only [projectiveHypersurfaceChart, projectiveChart, Equiv.swap_self, Equiv.coe_refl,
+      rename_id_apply, F, affineChart_scaledHomogenize_one]
   obtain ⟨bad, hbad, hbound⟩ := exists_smooth_congruence_determinant_log_lower hs F hF hd hFir
     ⟨hH, fun i => primitive_affine_integer_coordinates (x i), hz, hrows'⟩ P hres.prime
     (fun _ => 0) a (by simpa only [hchart] using hres.eval_eq_zero)
