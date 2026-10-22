@@ -7,6 +7,7 @@ module
 
 public import LeanPool.QuantumParallelRepetition.Part09
 import Mathlib.Analysis.CStarAlgebra.ContinuousFunctionalCalculus.Order
+import Mathlib.Analysis.InnerProductSpace.StarOrder
 
 /-! # Quantum parallel repetition, part 10 -/
 
@@ -909,7 +910,7 @@ theorem unconditionalFairPhysicalFlaggedStoppingTransfer
     refine Finset.sum_congr rfl fun flag _ => ?_
     refine Finset.sum_congr rfl fun x _ => ?_
     refine Finset.sum_congr rfl fun y _ => ?_
-    ring_nf
+    ac_rfl
   change
     1 - epsilon / 2 - 5 * lam -
         (bad + 4 * Real.sqrt deviation + 2 * Real.sqrt clipping) ≤
@@ -1427,9 +1428,9 @@ theorem unconditionalActualFairSelectedLocalAction_norm_sq
         (unconditionalMixedConjugateSelectedBranchUnitary
           (τ := τ) U V).property)
   change ‖toLp 2 (M.mulVec (ofLp z))‖ ^ 2 = ‖z‖ ^ 2
-  rw [rectangularMatrix_norm_sq, gram]
-  simp only [quadraticExpectation, map_one, one_apply_eq_self, inner_self_eq_norm_sq_to_K,
-    coe_algebraMap, ← ofReal_pow, ofReal_re]
+  simpa only [inner_self_eq_norm_sq_to_K, Complex.coe_algebraMap,
+    ← Complex.ofReal_pow, Complex.ofReal_re] using
+    congrArg Complex.re (matrix_mulVec_inner_self_of_gram M gram z)
 
 theorem unconditionalActualFairCleanedVector_norm_sq
     {S B N d L m : Nat}
@@ -2266,8 +2267,9 @@ theorem unconditionalSmallSourcePhysicalRoundedLower
     unfold universalErrorCeiling
     have root_nonnegative :=
       Real.rpow_nonneg (by norm_num : (0 : ℝ) ≤ 2) (1 / 6 : ℝ)
-    linarith [mul_nonneg K_nonnegative
-      (show 0 ≤ 1 + (2 : ℝ) ^ (1 / 6 : ℝ) by positivity)]
+    exact add_nonneg
+      (mul_nonneg K_nonnegative (add_nonneg zero_le_one root_nonnegative))
+      (by norm_num)
   have transfer_nonnegative : 0 ≤ universalErrorCeiling K * lam :=
     mul_nonneg ceiling_nonnegative lam_nonnegative
   have quantum_nonnegative : 0 ≤ K * R :=
@@ -2688,7 +2690,7 @@ theorem pdfUniversalErrorCeiling_pos
 private theorem pdfRoundingCoefficient_two_le
     {K : ℝ} (lowerBound : 1 ≤ K) :
     2 ≤ pdfRoundingCoefficient K := by
-  have nonnegative : 0 ≤ K := by linarith
+  have nonnegative : 0 ≤ K := zero_le_one.trans lowerBound
   have ceiling_nonnegative : 0 ≤ universalErrorCeiling K :=
     (pdfUniversalErrorCeiling_pos lowerBound).le
   have first_nonnegative :
@@ -2705,7 +2707,7 @@ private theorem pdfRoundingCoefficient_one_le
     {K : ℝ} (lowerBound : 1 ≤ K) :
     1 ≤ pdfRoundingCoefficient K := by
   have lower := pdfRoundingCoefficient_two_le lowerBound
-  linarith
+  exact one_le_two.trans lower
 
 end
 
@@ -3195,7 +3197,7 @@ theorem pdf_distributionUniformExponential_of_uniform_source_rounding
   have coefficient : 1 ≤ Bqs :=
     pdfRoundingCoefficient_one_le lowerBound
   refine ⟨pdfUniversalRate Bqs,
-    pdfUniversalRate_pos (by linarith), ?_⟩
+    pdfUniversalRate_pos (lt_of_lt_of_le zero_lt_one coefficient), ?_⟩
   intro X Y A B _ _ _ _ G alice bob game_gap n length
   by_cases zero : entangledValue G = 0
   · rw [pdfRepeatedEntangledValue_eq_zero_of_entangledValue_eq_zero
@@ -3514,26 +3516,9 @@ theorem unconditionalSourcePhysicalRounding_exists_fairStoppingHazard
       (exactLocallySampleableLaw_sum G n S D remaining positive)
       gamma phi eta energy
   refine ⟨w, N, L, B', Q, m, width_large, grid, horizon,
-    phases, resolution, harmonic, ?_, ?_, ?_, UA, UB, ?_⟩
-  · exact budget
-  · exact grid_fine
-  · exact scalar
-  dsimp only
-  refine ⟨?_, ?_, ?_, ?_⟩
-  · exact canonical
-  · exact asynchronous
-  · exact terminal
-  · change
-      (∑ h : ExactLocallySampleableTuple X Y A B D,
-        law h *
-          dSVDensityRationalHeterogeneousStoppedCommonPrefixHazard
-            Q m (fun _ : Fin 1 => w) (fun _ : Fin L => 0)
-            (gamma h) (phi h) UA UB) ≤
-        (34 / t) * (64 * Real.sqrt eta + delta) +
-          4 * rho ^ 2 +
-            unconditionalPrefactorBucketCoefficient * t
-    simpa only [unconditionalPrefactorBucketCoefficient]
-      using hazard
+    phases, resolution, harmonic, budget, grid_fine, scalar, UA, UB,
+    canonical, asynchronous, terminal, ?_⟩
+  simpa only [unconditionalPrefactorBucketCoefficient] using hazard
 
 theorem unconditionalSourcePhysicalRounding_largeVerifierBound
     (K eta alpha lam epsilon : ℝ)
