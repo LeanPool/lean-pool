@@ -40,7 +40,7 @@ theorem hypersurface_large_height_log_degree_bound {r d M s : ℕ}
         (Real.log s - (r : ℝ) * (4 * Real.log d + Real.log (1 + Real.log H / (d : ℝ) ^ 2)) - E) ≤
       Real.log B - ((r + 1 + (M - d)).choose (M - d) : ℝ) / ((M : ℝ) * s) * Real.log L) :
     Real.log M ≤ hypersurfaceLargeHeightError r E T + (4 - 1 / (r : ℝ)) * Real.log d := by
-  have hM2 : 2 * d ≤ M := by nlinarith
+  have hM2 : 2 * d ≤ M := by nlinarith only [hM, Nat.zero_le (d * r)]
   have hdM : d ≤ M := by omega
   have hd0 : (0 : ℝ) < d := by exact_mod_cast hd
   have hd1 : (1 : ℝ) ≤ d := by exact_mod_cast hd
@@ -52,7 +52,7 @@ theorem hypersurface_large_height_log_degree_bound {r d M s : ℕ}
   have halow : (d : ℝ) ^ (1 / (r : ℝ)) * ((M : ℝ) - d) / ((r + 1 : ℝ) * M) ≤
       (r.factorial : ℝ) ^ (1 / (r : ℝ)) * (s : ℝ) ^ (1 / (r : ℝ)) / ((r + 1 : ℝ) * M) := by
     apply div_le_div_of_nonneg_right _ (by positivity)
-    nlinarith
+    nlinarith only [hl, hX]
   have haup := div_le_div_of_nonneg_right hu (show 0 ≤ (r + 1 : ℝ) * M by positivity)
   have hk := (hypersurface_kernel_ratio_bounds hd hdM hr).1
   have hh := auxiliary_large_height_bracket_bound (r := (r : ℝ)) (Nat.cast_nonneg r)
@@ -71,13 +71,16 @@ theorem hypersurface_large_height_log_degree_bound {r d M s : ℕ}
       Real.log H / (8 * (d : ℝ) ^ 2) := by field_simp
   have hcancel : (r : ℝ) * Real.log (1 + Real.log H / (d : ℝ) ^ 2) -
       Real.log H / (8 * d * (d : ℝ) ^ (1 / (r : ℝ))) ≤ r * Real.log (8 * (r : ℝ)) := by
-    have hden : 8 * (d : ℝ) * (d : ℝ) ^ (1 / (r : ℝ)) ≤ 8 * (d : ℝ) ^ 2 := by nlinarith
+    have hden : 8 * (d : ℝ) * (d : ℝ) ^ (1 / (r : ℝ)) ≤ 8 * (d : ℝ) ^ 2 := by
+      simpa only [pow_two, mul_assoc] using
+        mul_le_mul_of_nonneg_left hXle (show 0 ≤ 8 * (d : ℝ) by positivity)
     have hdiv := div_le_div_of_nonneg_left hHlog
       (show 0 < 8 * d * (d : ℝ) ^ (1 / (r : ℝ)) by positivity) hden
     rw [mul_add, he] at hcost'
-    linarith
+    linarith only [hcost', hdiv]
   have hraw : (r : ℝ) * Real.log M ≤ (4 * (r : ℝ) - 1) * Real.log d +
-      r * Real.log (8 * (r : ℝ)) + E + hypersurfaceRankLogError r + T := by nlinarith
+      r * Real.log (8 * (r : ℝ)) + E + hypersurfaceRankLogError r + T := by
+    linarith only [hh, hlog, hcancel]
   have hdiv := div_le_div_of_nonneg_right hraw hr0.le
   rw [mul_div_cancel_left₀ (Real.log M) hr0.ne'] at hdiv
   convert hdiv using 1
