@@ -32,6 +32,13 @@ attribute [local instance] Classical.propDecidable
 variable {X Y A B : Type}
 variable [Fintype X] [Fintype Y] [Fintype A] [Fintype B]
 
+private theorem groupedMass_eq_classical
+    {Ω κ : Type*} [Fintype Ω]
+    (decision : DecidableEq κ) (projection : Ω → κ) (mass : Ω → ℝ) :
+    @groupedMass Ω _ κ decision projection mass =
+      @groupedMass Ω _ κ (Classical.decEq κ) projection mass :=
+  exactGroupedMass_decidableEq_irrel _ _ _ _
+
 theorem exactPermutationOutputUniformPushforward
     {R : Type*} [Fintype R] [DecidableEq R]
     (denominator : ℕ) (numerator : R → ℕ)
@@ -2818,17 +2825,8 @@ theorem reweightedSeedPrefixEntropyIncrement_eq_actual_atom_sum
       apply Finset.sum_congr rfl
       intro context _
       congr 1
-      convert (congrFun
-        (exactPrefixNext_firstMarginal joint default k)
-        context).symm using 1
-      · exact congrFun
-          (exactGroupedMass_decidableEq_irrel _ _
-            (finitePrefixMask default k.castSucc) joint)
-          context
-      · exact congrArg
-          (fun law => jointFirstMarginal law context)
-          (exactGroupedMass_decidableEq_irrel _ _
-            (exactPrefixNextCode default k) joint)
+      simpa only [groupedMass_eq_classical] using
+        (congrFun (exactPrefixNext_firstMarginal joint default k) context).symm
     _ = ∑ target :
         (Ω × ConditionedAnswerFlag A B D) ×
           (Fin h → V),
@@ -3690,7 +3688,7 @@ theorem exactAliceSourcePosteriorConditional_eq_fixedSeedFiber
               exactHistoryCode D (seed, reference))) := fiber
     _ = _ := by
       unfold exactPostselectedJointLaw
-      convert (jointConditional_product_context_seed
+      simpa only [groupedMass_eq_classical] using (jointConditional_product_context_seed
           (fun (source : ExactRemainingSeed D)
             (outcome : ExactOutcome X Y A B n) =>
             (outcome.1 source.coordinate.val,
@@ -3703,11 +3701,7 @@ theorem exactAliceSourcePosteriorConditional_eq_fixedSeedFiber
           seed
           (reference.1 seed.coordinate.val,
             exactHistoryCode D (seed, reference))
-          (ne_of_gt (exactSeedWeight_pos_of_seed seed))) using 1
-      · congr 1
-        exact exactGroupedMass_decidableEq_irrel _ _ _ _
-      · congr 1
-        exact exactGroupedMass_decidableEq_irrel _ _ _ _
+          (ne_of_gt (exactSeedWeight_pos_of_seed seed)))
 
 theorem exactBobSourcePosteriorConditional_eq_fixedSeedFiber
     (G : Game X Y A B) (n : ℕ) (S : Strategy (G.repeat n))
@@ -3830,7 +3824,7 @@ theorem exactBobSourcePosteriorConditional_eq_fixedSeedFiber
               exactHistoryCode D (seed, reference))) := fiber
     _ = _ := by
       unfold exactPostselectedJointLaw
-      convert (jointConditional_product_context_seed
+      simpa only [groupedMass_eq_classical] using (jointConditional_product_context_seed
           (fun (source : ExactRemainingSeed D)
             (outcome : ExactOutcome X Y A B n) =>
             (outcome.2.1 source.coordinate.val,
@@ -3843,11 +3837,7 @@ theorem exactBobSourcePosteriorConditional_eq_fixedSeedFiber
           seed
           (reference.2.1 seed.coordinate.val,
             exactHistoryCode D (seed, reference))
-          (ne_of_gt (exactSeedWeight_pos_of_seed seed))) using 1
-      · congr 1
-        exact exactGroupedMass_decidableEq_irrel _ _ _ _
-      · congr 1
-        exact exactGroupedMass_decidableEq_irrel _ _ _ _
+          (ne_of_gt (exactSeedWeight_pos_of_seed seed)))
 
 theorem exactReverseAliceMarkedPosteriorConditional_eq_sourcePosterior
     (G : Game X Y A B) (n : ℕ) (S : Strategy (G.repeat n))
@@ -4566,13 +4556,6 @@ private theorem exactReverseAliceMaskedQuestionRegister_stable
     rw [context.otherSide_eq_complement]
     simp only [univ_eq_attach, mem_sdiff, mem_attach, (context.sideRank.symm marker).property,
       not_true_eq_false, and_false, not_false_eq_true, marked]
-  change
-    exactReverseAliceMaskedQuestionRegister
-        D side default marker flag seed xs
-        ((Equiv.funSplitAt coordinate Y).symm (y, tail)) =
-      exactReverseAliceMaskedQuestionRegister
-        D side default marker flag seed xs
-        ((Equiv.funSplitAt coordinate Y).symm (y', tail))
   unfold exactReverseAliceMaskedQuestionRegister
     finitePrefixMask
   apply Prod.ext
@@ -4587,6 +4570,7 @@ private theorem exactReverseAliceMaskedQuestionRegister_stable
           have different : j.val ≠ coordinate := by
             intro same
             exact outsideD (same ▸ j.property)
+          dsimp only [coordinate, marked, context] at different
           simp only [ne_eq, Equiv.funSplitAt_symm_apply, different, ↓reduceDIte]
         apply Prod.ext
         · rfl
@@ -4599,6 +4583,7 @@ private theorem exactReverseAliceMaskedQuestionRegister_stable
               apply Subtype.ext
               exact same
             exact actual ▸ j.property
+          dsimp only [coordinate, marked, context] at different
           simp only [ne_eq, Equiv.funSplitAt_symm_apply, different, ↓reduceDIte]
         · rfl
     · rfl
@@ -4617,8 +4602,9 @@ private theorem exactReverseAliceMaskedQuestionRegister_stable
           context.sideRank.symm.injective sameMarked
         exact (Nat.ne_of_lt before)
           (congrArg Fin.val samePosition)
+      dsimp only [coordinate, marked, context] at different
       simp only [Fin.val_castSucc, before, ↓reduceIte, ne_eq, Equiv.funSplitAt_symm_apply,
-        different, ↓reduceDIte, context]
+        different, ↓reduceDIte]
     · simp only [Fin.val_castSucc, before, ↓reduceIte]
 
 private theorem exactConditionedReverseAliceNextPrior_flagged_mixture
@@ -4815,43 +4801,9 @@ theorem exactConditionedReverseAliceNextPrior_marked_joint_factor
   have mixed := mixedStableBobQuestionCode_joint_factor
     G n S mixedWeight coordinate code target question next
     stable determines
-  rw [exactConditionedReverseAliceNextPrior_flagged_mixture
-    G n S D remaining side default marker]
-  change
-    groupedMass
-        (fun point :
-          (ConditionedAnswerFlag A B D ×
-            ExactRemainingSeed D) ×
-              ExactOutcome X Y A B n =>
-          (code point.1 point.2.1 point.2.2.1,
-            point.2.2.1 (coordinate point.1)))
-        (fun point :
-          (ConditionedAnswerFlag A B D ×
-            ExactRemainingSeed D) ×
-              ExactOutcome X Y A B n =>
-          mixedWeight point.1 *
-            (strategyEventLaw (G.repeat n) S).weight point.2)
-        (target, next) =
-      G.conditionalYGivenX question next *
-        jointFirstMarginal
-          (groupedMass
-            (fun point :
-              (ConditionedAnswerFlag A B D ×
-                ExactRemainingSeed D) ×
-                  ExactOutcome X Y A B n =>
-              (code point.1 point.2.1 point.2.2.1,
-                point.2.2.1 (coordinate point.1)))
-            (fun point :
-              (ConditionedAnswerFlag A B D ×
-                ExactRemainingSeed D) ×
-                  ExactOutcome X Y A B n =>
-              mixedWeight point.1 *
-                (strategyEventLaw (G.repeat n) S).weight point.2))
-          target
-  rw [jointFirstMarginal_groupedContextNext]
-  convert mixed using 1
-  exact congrFun (exactGroupedMass_decidableEq_irrel
-    _ _ _ _) (target, next)
+  simpa only [exactConditionedReverseAliceNextPrior_flagged_mixture
+    G n S D remaining side default marker,
+    jointFirstMarginal_groupedContextNext, groupedMass_eq_classical] using mixed
 
 theorem exactConditionedReverseAliceNextPrior_marked_conditional
     (G : Game X Y A B) (n : ℕ) (S : Strategy (G.repeat n))
@@ -5129,71 +5081,21 @@ theorem exactReverseAliceSideMarkedPosteriorConditional_eq_fixedSeedFiber
       index context next extract extracts law.weight
       (repeatedConditionedOutcomeLaw G n S D)
       seed target target_index (ne_of_gt positive)
+  have actual :
+      (fun outcome : ExactOutcome X Y A B n =>
+        (context (index seed) outcome, next (index seed) outcome)) =
+      (fun outcome : ExactOutcome X Y A B n =>
+        (exactReverseAliceMarkedHistoryContext G n S D default seed outcome,
+          outcome.2.1 seed.coordinate.val)) := by
+    funext outcome
+    apply Prod.ext
+    · exact exactReverseAliceMaskedOutcomeContext_actual
+        G n S D default seed outcome
+    · simp only [exactReverseAliceContextAt_actual, Equiv.symm_apply_apply, next, side,
+        marker, index]
   rw [exactConditionedReverseAliceNextJoint_marked_mixture
     G n S D remaining side default marker]
-  change
-    jointConditional
-        (groupedMass
-          (fun point : ExactJointOutcome X Y A B D =>
-            (context (index point.1) point.2,
-              next (index point.1) point.2))
-          (fun point : ExactJointOutcome X Y A B D =>
-            law.weight point.1 *
-              repeatedConditionedOutcomeLaw
-                G n S D point.2))
-        target =
-      jointConditional
-        (groupedMass
-          (fun outcome : ExactOutcome X Y A B n =>
-            (exactReverseAliceMarkedHistoryContext
-              G n S D default seed outcome,
-              outcome.2.1 seed.coordinate.val))
-          (repeatedConditionedOutcomeLaw G n S D))
-        target
-  calc
-    jointConditional
-        (groupedMass
-          (fun point : ExactJointOutcome X Y A B D =>
-            (context (index point.1) point.2,
-              next (index point.1) point.2))
-          (fun point : ExactJointOutcome X Y A B D =>
-            law.weight point.1 *
-              repeatedConditionedOutcomeLaw
-                G n S D point.2))
-        target =
-      jointConditional
-        (groupedMass
-          (fun outcome : ExactOutcome X Y A B n =>
-            (context (index seed) outcome,
-              next (index seed) outcome))
-          (repeatedConditionedOutcomeLaw G n S D))
-        target := by
-          convert stable using 1
-          · congr 1
-            exact exactGroupedMass_decidableEq_irrel
-              _ _ _ _
-          · congr 1
-            exact exactGroupedMass_decidableEq_irrel
-              _ _ _ _
-    _ = jointConditional
-        (groupedMass
-          (fun outcome : ExactOutcome X Y A B n =>
-            (exactReverseAliceMarkedHistoryContext
-              G n S D default seed outcome,
-              outcome.2.1 seed.coordinate.val))
-          (repeatedConditionedOutcomeLaw G n S D))
-        target := by
-          refine congrArg (fun j => jointConditional j target) ?_
-          apply congrArg
-            (fun code =>
-              groupedMass code
-                (repeatedConditionedOutcomeLaw G n S D))
-          funext outcome
-          apply Prod.ext
-          · exact exactReverseAliceMaskedOutcomeContext_actual
-              G n S D default seed outcome
-          · simp only [exactReverseAliceContextAt_actual, Equiv.symm_apply_apply, next, side,
-              marker, index]
+  simpa only [actual, groupedMass_eq_classical] using stable
 
 theorem exactReverseAliceSideMarkedPosteriorConditional_eq_sourcePosterior
     (G : Game X Y A B) (n : ℕ) (S : Strategy (G.repeat n))
@@ -5314,17 +5216,7 @@ theorem reweightedSeedPrefixPriorMarginal_ne_zero_of_positive_atom
         jointFirstMarginal
           (groupedMass (exactPrefixNextCode default marker)
             prior) target := by
-          convert first.symm using 1
-          · exact congrFun
-              (exactGroupedMass_decidableEq_irrel
-                _ _ (finitePrefixMask
-                  default marker.castSucc) prior)
-              target
-          · exact congrArg
-              (fun mass => jointFirstMarginal mass target)
-              (exactGroupedMass_decidableEq_irrel
-                _ _ (exactPrefixNextCode
-                  default marker) prior)
+          simpa only [groupedMass_eq_classical] using first.symm
       _ = 0 := zero
   have masked_posterior_zero :
       groupedMass
@@ -5671,7 +5563,8 @@ private theorem exactReverseAliceMarkedContextInformation_eq_source
           exactReverseAliceMaskedOutcomeContext_actual
             G n S D default seed outcome
     rw [actual_context]
-    congr 1
+    apply congrArg (fun score : ℝ =>
+      repeatedConditionedOutcomeLaw G n S D outcome * score)
     exact congrArg₂ finiteRelativeEntropy
       (exactReverseAliceSideMarkedPosteriorConditional_eq_sourcePosterior
         G n S D remaining default seed outcome)
@@ -5771,13 +5664,6 @@ private theorem exactReverseBobMaskedQuestionRegister_stable
     rw [context.otherSide_eq_complement]
     simp only [univ_eq_attach, mem_sdiff, mem_attach, (context.sideRank.symm marker).property,
       not_true_eq_false, and_false, not_false_eq_true, marked]
-  change
-    exactReverseBobMaskedQuestionRegister
-        D side default marker flag seed
-        ((Equiv.funSplitAt coordinate X).symm (x, tail)) ys =
-      exactReverseBobMaskedQuestionRegister
-        D side default marker flag seed
-        ((Equiv.funSplitAt coordinate X).symm (x', tail)) ys
   unfold exactReverseBobMaskedQuestionRegister
     finitePrefixMask
   apply Prod.ext
@@ -5790,6 +5676,7 @@ private theorem exactReverseBobMaskedQuestionRegister_stable
           have different : j.val ≠ coordinate := by
             intro same
             exact outsideD (same ▸ j.property)
+          dsimp only [coordinate, marked, context] at different
           simp only [ne_eq, Equiv.funSplitAt_symm_apply, different, ↓reduceDIte]
         apply Prod.ext
         · rfl
@@ -5804,6 +5691,7 @@ private theorem exactReverseBobMaskedQuestionRegister_stable
               apply Subtype.ext
               exact same
             exact actual ▸ j.property
+          dsimp only [coordinate, marked, context] at different
           simp only [ne_eq, Equiv.funSplitAt_symm_apply, different, ↓reduceDIte]
         · rfl
     · rfl
@@ -5822,8 +5710,9 @@ private theorem exactReverseBobMaskedQuestionRegister_stable
           context.sideRank.symm.injective sameMarked
         exact (Nat.ne_of_lt before)
           (congrArg Fin.val samePosition)
+      dsimp only [coordinate, marked, context] at different
       simp only [Fin.val_castSucc, before, ↓reduceIte, ne_eq, Equiv.funSplitAt_symm_apply,
-        different, ↓reduceDIte, context]
+        different, ↓reduceDIte]
     · simp only [Fin.val_castSucc, before, ↓reduceIte]
 
 private theorem exactConditionedReverseBobNextPrior_flagged_mixture
@@ -6020,43 +5909,9 @@ theorem exactConditionedReverseBobNextPrior_marked_joint_factor
   have mixed := mixedStableAliceQuestionCode_joint_factor
     G n S mixedWeight coordinate code target question next
     stable determines
-  rw [exactConditionedReverseBobNextPrior_flagged_mixture
-    G n S D remaining side default marker]
-  change
-    groupedMass
-        (fun point :
-          (ConditionedAnswerFlag A B D ×
-            ExactRemainingSeed D) ×
-              ExactOutcome X Y A B n =>
-          (code point.1 point.2.1 point.2.2.1,
-            point.2.1 (coordinate point.1)))
-        (fun point :
-          (ConditionedAnswerFlag A B D ×
-            ExactRemainingSeed D) ×
-              ExactOutcome X Y A B n =>
-          mixedWeight point.1 *
-            (strategyEventLaw (G.repeat n) S).weight point.2)
-        (target, next) =
-      G.conditionalXGivenY question next *
-        jointFirstMarginal
-          (groupedMass
-            (fun point :
-              (ConditionedAnswerFlag A B D ×
-                ExactRemainingSeed D) ×
-                  ExactOutcome X Y A B n =>
-              (code point.1 point.2.1 point.2.2.1,
-                point.2.1 (coordinate point.1)))
-            (fun point :
-              (ConditionedAnswerFlag A B D ×
-                ExactRemainingSeed D) ×
-                  ExactOutcome X Y A B n =>
-              mixedWeight point.1 *
-                (strategyEventLaw (G.repeat n) S).weight point.2))
-          target
-  rw [jointFirstMarginal_groupedContextNext]
-  convert mixed using 1
-  exact congrFun (exactGroupedMass_decidableEq_irrel
-    _ _ _ _) (target, next)
+  simpa only [exactConditionedReverseBobNextPrior_flagged_mixture
+    G n S D remaining side default marker,
+    jointFirstMarginal_groupedContextNext, groupedMass_eq_classical] using mixed
 
 theorem exactConditionedReverseBobNextPrior_marked_conditional
     (G : Game X Y A B) (n : ℕ) (S : Strategy (G.repeat n))
@@ -6336,71 +6191,21 @@ theorem exactConditionedReverseBobNextJoint_marked_conditional_eq_fixedOutcome
     index context next extract extract_context
     law.weight (repeatedConditionedOutcomeLaw G n S D)
     seed target target_index (ne_of_gt positive)
+  have actual :
+      (fun outcome : ExactOutcome X Y A B n =>
+        (context (index seed) outcome, next (index seed) outcome)) =
+      (fun outcome : ExactOutcome X Y A B n =>
+        (exactReverseBobMarkedHistoryContext G n S D default seed outcome,
+          outcome.1 seed.coordinate.val)) := by
+    funext outcome
+    apply Prod.ext
+    · exact exactReverseBobMaskedOutcomeContext_actual
+        G n S D default seed outcome
+    · simp only [exactReverseBobContextAt_actual, Equiv.symm_apply_apply, next, side,
+        marker, index]
   rw [exactConditionedReverseBobNextJoint_marked_mixture
     G n S D remaining side default marker]
-  change
-    jointConditional
-        (groupedMass
-          (fun point : ExactJointOutcome X Y A B D =>
-            (context (index point.1) point.2,
-              next (index point.1) point.2))
-          (fun point : ExactJointOutcome X Y A B D =>
-            law.weight point.1 *
-              repeatedConditionedOutcomeLaw
-                G n S D point.2))
-        target =
-      jointConditional
-        (groupedMass
-          (fun outcome : ExactOutcome X Y A B n =>
-            (exactReverseBobMarkedHistoryContext
-              G n S D default seed outcome,
-              outcome.1 seed.coordinate.val))
-          (repeatedConditionedOutcomeLaw G n S D))
-        target
-  calc
-    jointConditional
-        (groupedMass
-          (fun point : ExactJointOutcome X Y A B D =>
-            (context (index point.1) point.2,
-              next (index point.1) point.2))
-          (fun point : ExactJointOutcome X Y A B D =>
-            law.weight point.1 *
-              repeatedConditionedOutcomeLaw
-                G n S D point.2))
-        target =
-      jointConditional
-        (groupedMass
-          (fun outcome : ExactOutcome X Y A B n =>
-            (context (index seed) outcome,
-              next (index seed) outcome))
-          (repeatedConditionedOutcomeLaw G n S D))
-        target := by
-          convert stable using 1
-          · congr 1
-            exact exactGroupedMass_decidableEq_irrel
-              _ _ _ _
-          · congr 1
-            exact exactGroupedMass_decidableEq_irrel
-              _ _ _ _
-    _ = jointConditional
-        (groupedMass
-          (fun outcome : ExactOutcome X Y A B n =>
-            (exactReverseBobMarkedHistoryContext
-              G n S D default seed outcome,
-              outcome.1 seed.coordinate.val))
-          (repeatedConditionedOutcomeLaw G n S D))
-        target := by
-          refine congrArg (fun j => jointConditional j target) ?_
-          apply congrArg
-            (fun code =>
-              groupedMass code
-                (repeatedConditionedOutcomeLaw G n S D))
-          funext outcome
-          apply Prod.ext
-          · exact exactReverseBobMaskedOutcomeContext_actual
-              G n S D default seed outcome
-          · simp only [exactReverseBobContextAt_actual, Equiv.symm_apply_apply, next, side,
-              marker, index]
+  simpa only [actual, groupedMass_eq_classical] using stable
 
 theorem exactConditionedReverseBobNextJoint_marked_conditional_eq_sourcePosterior
     (G : Game X Y A B) (n : ℕ) (S : Strategy (G.repeat n))

@@ -391,8 +391,7 @@ theorem exactFairAliceHistoryHighOperatorPotential_nonpos
               G n S D r.seed r.history r.aliceAnswer x))
           (exactBobQuestionFilter
             G n S D r.seed r.history r.bobAnswer y) := by
-              simp only [map_sum, map_smul, LinearMap.sum_apply,
-                LinearMap.smul_apply, smul_eq_mul]
+              simp only [LinearMap.map_sum₂, LinearMap.map_smul₂, smul_eq_mul]
     _ ≤ 0 := by
       apply Finset.sum_nonpos
       intro x _
@@ -436,7 +435,7 @@ theorem exactFairBobHistoryHighOperatorPotential_nonpos
           (cfc (fun z : ℝ => z * Real.log z)
             (exactBobQuestionFilter
               G n S D r.seed r.history r.bobAnswer y)) := by
-              simp only [map_sum, map_smul, smul_eq_mul]
+              simp only [map_sum, LinearMap.map_smul, smul_eq_mul]
     _ ≤ 0 := by
       apply Finset.sum_nonpos
       intro y _
@@ -1836,8 +1835,7 @@ theorem exactFairAliceHistoryHighOperatorPotential_eq_joint
             G n S D r.seed r.history r.bobAnswer y) := by
   classical
   unfold exactFairAliceHistoryHighOperatorPotential
-  simp only [map_sum, map_smul, LinearMap.sum_apply,
-    LinearMap.smul_apply, smul_eq_mul]
+  simp only [LinearMap.map_sum₂, LinearMap.map_smul₂, smul_eq_mul]
   calc
     (∑ y : Y, G.marginalY y *
       (∑ x : X, G.conditionalXGivenY y x *
@@ -1889,7 +1887,7 @@ theorem exactFairBobHistoryHighOperatorPotential_eq_joint
               G n S D r.seed r.history r.bobAnswer y)) := by
   classical
   unfold exactFairBobHistoryHighOperatorPotential
-  simp only [map_sum, map_smul, smul_eq_mul]
+  simp only [map_sum, LinearMap.map_smul, smul_eq_mul]
   apply Finset.sum_congr rfl
   intro x _
   rw [Finset.mul_sum]
@@ -4264,8 +4262,7 @@ theorem exactFairAliceMeanBorn_eq_conditional
           (exactBobQuestionFilter
             G n S D r.seed r.history r.bobAnswer y) := by
   unfold exactAliceMeanFilter
-  simp only [map_sum, map_smul, LinearMap.sum_apply,
-    LinearMap.smul_apply, smul_eq_mul]
+  simp only [LinearMap.map_sum₂, LinearMap.map_smul₂, smul_eq_mul]
 
 theorem exactFairBobMeanBorn_eq_conditional
     (G : Game X Y A B) (n : ℕ) (S : Strategy (G.repeat n))
@@ -4284,7 +4281,7 @@ theorem exactFairBobMeanBorn_eq_conditional
           (exactBobQuestionFilter
             G n S D r.seed r.history r.bobAnswer y) := by
   unfold exactBobMeanFilter
-  simp only [map_sum, map_smul, smul_eq_mul]
+  simp only [map_sum, LinearMap.map_smul, smul_eq_mul]
 
 theorem exactFairAliceMeanBornMass_eq_fullOutcome_sum
     (G : Game X Y A B) (n : ℕ) (S : Strategy (G.repeat n))

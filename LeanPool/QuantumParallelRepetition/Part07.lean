@@ -2662,7 +2662,7 @@ theorem unconditionalPrefactor_balancedHazard_sqrt_le
       (Real.sqrt
         (34 + unconditionalPrefactorBucketCoefficient)) ^ 2 =
         34 + unconditionalPrefactorBucketCoefficient :=
-    Real.sq_sqrt (by linarith)
+    Real.sq_sqrt (add_nonneg (by norm_num) coefficient_nonnegative)
   have fourth_square :=
     unconditionalPrefactor_fourthRoot_sq positive.le
   have product_square :
@@ -5732,6 +5732,17 @@ def exactConditionedReverseBobNextPrior
     (exactReverseBobSourceProjection
       (X := X) (Y := Y) (A := A) (B := B) D side)
 
+private theorem exactRevealCode_eq_of_same_history
+    {n : ℕ} (D : Finset (Fin n)) (seed : ExactRemainingSeed D)
+    (outcome outcome' : ExactOutcome X Y A B n)
+    (same_history : exactHistoryCode D (seed, outcome) =
+      exactHistoryCode D (seed, outcome')) :
+    exactRevealCode D seed (outcome.1, outcome.2.1) =
+      exactRevealCode D seed (outcome'.1, outcome'.2.1) := by
+  have htuple := congrArg
+    (exactHistoryFlagEquiv (X := X) (Y := Y) (A := A) (B := B) D) same_history
+  exact congrArg Prod.fst (eq_of_heq (Sigma.mk.inj htuple).2)
+
 theorem exactReverseAliceMaskedProjection_eq_of_history
     {n : ℕ} (D : Finset (Fin n))
     (default : Y)
@@ -5764,30 +5775,8 @@ theorem exactReverseAliceMaskedProjection_eq_of_history
     congrArg (fun r : ExactHistoryFlag X Y A B D => r.seed)
       same_history
   subst seed'
-  have htuple := congrArg
-    (exactHistoryFlagEquiv
-      (X := X) (Y := Y) (A := A) (B := B) D)
-    same_history
-  change
-    (⟨seed,
-       (exactRevealCode D seed
-         (outcome.1, outcome.2.1),
-        (fun j : {j : Fin n // j ∈ D} => outcome.2.2.1 j.val),
-        (fun j : {j : Fin n // j ∈ D} => outcome.2.2.2 j.val))⟩ :
-      ExactHistoryFlagTuple X Y A B D) =
-    (⟨seed,
-       (exactRevealCode D seed
-         (outcome'.1, outcome'.2.1),
-        (fun j : {j : Fin n // j ∈ D} => outcome'.2.2.1 j.val),
-        (fun j : {j : Fin n // j ∈ D} => outcome'.2.2.2 j.val))⟩ :
-      ExactHistoryFlagTuple X Y A B D) at htuple
-  have hpair := eq_of_heq (Sigma.mk.inj htuple).2
-  have hreveal :
-      exactRevealCode D seed
-          (outcome.1, outcome.2.1) =
-        exactRevealCode D seed
-          (outcome'.1, outcome'.2.1) :=
-    congrArg Prod.fst hpair
+  have hreveal := exactRevealCode_eq_of_same_history
+    D seed outcome outcome' same_history
   have hac := congrArg
     (fun r : ExactRevealHistory X Y D seed =>
       r.aliceConditioned) hreveal
@@ -5931,30 +5920,8 @@ theorem exactReverseBobMaskedProjection_eq_of_history
     congrArg (fun r : ExactHistoryFlag X Y A B D => r.seed)
       same_history
   subst seed'
-  have htuple := congrArg
-    (exactHistoryFlagEquiv
-      (X := X) (Y := Y) (A := A) (B := B) D)
-    same_history
-  change
-    (⟨seed,
-       (exactRevealCode D seed
-         (outcome.1, outcome.2.1),
-        (fun j : {j : Fin n // j ∈ D} => outcome.2.2.1 j.val),
-        (fun j : {j : Fin n // j ∈ D} => outcome.2.2.2 j.val))⟩ :
-      ExactHistoryFlagTuple X Y A B D) =
-    (⟨seed,
-       (exactRevealCode D seed
-         (outcome'.1, outcome'.2.1),
-        (fun j : {j : Fin n // j ∈ D} => outcome'.2.2.1 j.val),
-        (fun j : {j : Fin n // j ∈ D} => outcome'.2.2.2 j.val))⟩ :
-      ExactHistoryFlagTuple X Y A B D) at htuple
-  have hpair := eq_of_heq (Sigma.mk.inj htuple).2
-  have hreveal :
-      exactRevealCode D seed
-          (outcome.1, outcome.2.1) =
-        exactRevealCode D seed
-          (outcome'.1, outcome'.2.1) :=
-    congrArg Prod.fst hpair
+  have hreveal := exactRevealCode_eq_of_same_history
+    D seed outcome outcome' same_history
   have hac := congrArg
     (fun r : ExactRevealHistory X Y D seed =>
       r.aliceConditioned) hreveal
@@ -6417,10 +6384,10 @@ theorem exactReverseAlice_history_of_marked_context
             exact exactReverseAliceContext_marked_rank seed
       have h := congrFun hprefix position
       change outcome.2.1 j.val.val = outcome'.2.1 j.val.val
-      simpa [finitePrefixMask,
-        exactReverseAliceSourceProjection,
-        exactReverseAliceContextAt, side,
-        context, marker, position, hlt, hltCut] using h
+      simpa only [finitePrefixMask, exactReverseAliceSourceProjection,
+        exactReverseAliceContextAt, dite_eq_ite, ↓reduceDIte, Fin.val_castSucc,
+        exactReverseAliceContext_marked_rank, hltCut, ↓reduceIte,
+        Equiv.symm_apply_apply, side, context, marker, position, hlt] using h
     · funext j
       have hotherPrefix :
           exactReverseContextOtherPrefix
@@ -6440,17 +6407,6 @@ theorem exactReverseAlice_history_of_marked_context
   refine ⟨hquestion, ?_⟩
   apply (exactHistoryFlagEquiv
     (X := X) (Y := Y) (A := A) (B := B) D).injective
-  change
-    (⟨seed,
-       (exactRevealCode D seed (outcome.1, outcome.2.1),
-        (fun j : {j : Fin n // j ∈ D} => outcome.2.2.1 j.val),
-        (fun j : {j : Fin n // j ∈ D} => outcome.2.2.2 j.val))⟩ :
-      ExactHistoryFlagTuple X Y A B D) =
-    (⟨seed,
-       (exactRevealCode D seed (outcome'.1, outcome'.2.1),
-        (fun j : {j : Fin n // j ∈ D} => outcome'.2.2.1 j.val),
-        (fun j : {j : Fin n // j ∈ D} => outcome'.2.2.2 j.val))⟩ :
-      ExactHistoryFlagTuple X Y A B D)
   apply Sigma.ext
   · rfl
   · apply heq_of_eq
@@ -6607,24 +6563,13 @@ theorem exactReverseBob_history_of_marked_context
             exact exactReverseBobContext_marked_rank seed
       have h := congrFun hprefix position
       change outcome.1 j.val.val = outcome'.1 j.val.val
-      simpa [finitePrefixMask,
-        exactReverseBobSourceProjection,
-        exactReverseBobContextAt, side,
-        context, marker, position, hlt, hltCut] using h
+      simpa only [finitePrefixMask, exactReverseBobSourceProjection,
+        exactReverseBobContextAt, dite_eq_ite, ↓reduceDIte, Fin.val_castSucc,
+        exactReverseBobContext_marked_rank, hltCut, ↓reduceIte,
+        Equiv.symm_apply_apply, side, context, marker, position, hlt] using h
   refine ⟨hquestion, ?_⟩
   apply (exactHistoryFlagEquiv
     (X := X) (Y := Y) (A := A) (B := B) D).injective
-  change
-    (⟨seed,
-       (exactRevealCode D seed (outcome.1, outcome.2.1),
-        (fun j : {j : Fin n // j ∈ D} => outcome.2.2.1 j.val),
-        (fun j : {j : Fin n // j ∈ D} => outcome.2.2.2 j.val))⟩ :
-      ExactHistoryFlagTuple X Y A B D) =
-    (⟨seed,
-       (exactRevealCode D seed (outcome'.1, outcome'.2.1),
-        (fun j : {j : Fin n // j ∈ D} => outcome'.2.2.1 j.val),
-        (fun j : {j : Fin n // j ∈ D} => outcome'.2.2.2 j.val))⟩ :
-      ExactHistoryFlagTuple X Y A B D)
   apply Sigma.ext
   · rfl
   · apply heq_of_eq
