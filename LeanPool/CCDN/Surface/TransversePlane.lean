@@ -97,7 +97,7 @@ private lemma universalPlaneSection_eq_affinePlaneMap {K σ : Type*} [CommRing K
 
 /-- The `3 × 3` matrix with columns `b`, `c` and `v`; over a field, its determinant is nonzero
 exactly when `b`, `c` and `v` are linearly independent. -/
-def planeDirectionMatrix {K : Type*} [CommRing K] (b c v : Fin 3 → K) :
+def planeDirectionMatrix {K : Type*} (b c v : Fin 3 → K) :
     Matrix (Fin 3) (Fin 3) K :=
   fun i j => ![b i, c i, v i] j
 

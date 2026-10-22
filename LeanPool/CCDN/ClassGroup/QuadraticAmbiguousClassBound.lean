@@ -26,7 +26,7 @@ open NumberField
 open scoped NumberField nonZeroDivisors
 
 private theorem card_le_subgroup_mul_obstruction
-    {G Q : Type*} [CommGroup G] [Finite G] [Finite Q]
+    {G Q : Type*} [CommGroup G] [Finite Q]
     (S : Subgroup G) (o : G → Q)
     (ho : ∀ x y, o x = o y → x / y ∈ S) :
     Nat.card G ≤ Nat.card S * Nat.card Q := by

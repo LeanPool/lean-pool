@@ -42,7 +42,7 @@ private theorem curve_coordinate_embeddings_injective {K R F L σ : Type*}
     [Field K] [Field R] [Field F] [Field L]
     [Algebra K R] [Algebra K F] [Algebra R F] [IsScalarTower K R F]
     [Algebra K L] [Algebra R L] [IsScalarTower K R L]
-    (I : Ideal (MvPolynomial σ K)) [I.IsPrime]
+    (I : Ideal (MvPolynomial σ K))
     [Algebra (MvPolynomial σ K ⧸ I) F] [IsScalarTower K (MvPolynomial σ K ⧸ I) F]
     [IsFractionRing (MvPolynomial σ K ⧸ I) F] :
     Function.Injective (fun φ : F →ₐ[R] L => fun j : σ =>
@@ -67,7 +67,7 @@ theorem exists_bounded_curve_primitive_element {K R F : Type*}
     [Field K] [Field R] [CharZero R] [Field F]
     [Algebra K R] [Algebra K F] [Algebra R F] [IsScalarTower K R F]
     [Module.Finite R F] {n : ℕ}
-    (I : Ideal (MvPolynomial (Fin n) K)) [I.IsPrime]
+    (I : Ideal (MvPolynomial (Fin n) K))
     [Algebra (MvPolynomial (Fin n) K ⧸ I) F]
     [IsScalarTower K (MvPolynomial (Fin n) K ⧸ I) F]
     [IsFractionRing (MvPolynomial (Fin n) K ⧸ I) F] :

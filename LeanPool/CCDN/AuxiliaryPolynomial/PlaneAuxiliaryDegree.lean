@@ -9,7 +9,7 @@ module
 Upstream: jasondavies/ccdn-dimension-growth @ bb025e7207f3a35a21b898629f5678b72aa7e44f. -/
 
 public import Mathlib.Analysis.SpecialFunctions.Pow.Real
-import LeanPool.CCDN.Algebra.HomogeneousRankDichotomy
+import Mathlib.Data.Nat.Choose.Cast
 import LeanPool.CCDN.ForMathlib.Log
 
 /-! Quantitative degree control from the plane determinant comparison. -/
@@ -46,15 +46,18 @@ lemma plane_rank_archimedean_error {s d M : ℕ} (hd : 0 < d) (hdM : d ≤ M)
   have hn : (0 : ℝ) < (2 + M).choose M := by
     exact_mod_cast Nat.choose_pos (show M ≤ 2 + M by omega)
   have hdim : 2 * ((2 + M).choose M : ℝ) = ((M : ℝ) + 2) * (M + 1) := by
-    exact_mod_cast ternary_homogeneous_dimension M
-  have hbound : ((2 + M).choose M : ℝ) ≤ ((M : ℝ) + 2) ^ 2 := by nlinarith
+    rw [← Nat.choose_symm_add, Nat.cast_choose_two]
+    push_cast
+    ring
+  have hbound : ((2 + M).choose M : ℝ) ≤ ((M : ℝ) + 2) ^ 2 := by
+    nlinarith only [hdim, hMR]
   have hlog : Real.log ((2 + M).choose M) ≤ 4 * s := by
     have h := Real.log_le_log hn hbound
     rw [Real.log_pow] at h
     norm_num only [Nat.cast_ofNat] at h
     have h' := Real.log_le_sub_one_of_pos (show (0 : ℝ) < M + 2 by positivity)
-    nlinarith
-  nlinarith [mul_le_mul_of_nonneg_left hl hsR.le,
+    linarith only [h, h', hMsR, hMR]
+  nlinarith only [hf, mul_le_mul_of_nonneg_left hl hsR.le,
     mul_le_mul_of_nonneg_left hlog hsR.le]
 
 /-- The small-height case of the plane auxiliary-degree calculation. The
@@ -77,13 +80,19 @@ theorem plane_auxiliary_log_degree_bound {s d M : ℕ} {B L A K : ℝ}
   have hMs := plane_rank_ge_degree_parameter hd hdM hr
   have hsR : (0 : ℝ) < s := by exact_mod_cast lt_of_lt_of_le (lt_of_lt_of_le hd hdM) hMs
   have he : 2 * (s : ℝ) + (d : ℝ) ^ 2 = d * (2 * M + 3) := by exact_mod_cast hr
-  have hslo : (d : ℝ) * M ≤ 2 * s := by nlinarith
-  have hshi : (s : ℝ) ≤ d * (M + 1) := by nlinarith [sq_nonneg ((d : ℝ) - 1)]
+  have hslo : (d : ℝ) * M ≤ 2 * s := by
+    nlinarith only [he, hdR, mul_nonneg hdR.le (sub_nonneg.mpr hdMR)]
+  have hshi : (s : ℝ) ≤ d * (M + 1) := by
+    nlinarith only [he, mul_nonneg hdR.le (sub_nonneg.mpr hd1)]
   have hdim : 2 * ((2 + M).choose M : ℝ) = ((M : ℝ) + 2) * (M + 1) := by
-    exact_mod_cast ternary_homogeneous_dimension M
+    rw [← Nat.choose_symm_add, Nat.cast_choose_two]
+    push_cast
+    ring
   have hsquare : (s : ℝ) ^ 2 ≤ 2 * (d : ℝ) ^ 2 * ((2 + M).choose M) := by
     have hsq := pow_le_pow_left₀ hsR.le hshi 2
-    nlinarith [mul_nonneg (sq_nonneg (d : ℝ)) (show 0 ≤ (M : ℝ) + 1 by positivity)]
+    have hscaled := congrArg (fun x : ℝ => (d : ℝ) ^ 2 * x) hdim
+    nlinarith only [hsq, hscaled,
+      mul_nonneg (sq_nonneg (d : ℝ)) (show 0 ≤ (M : ℝ) + 1 by positivity)]
   have hlogB := Real.log_nonneg hB
   have hlogL := Real.log_nonneg hL
   have harch := plane_rank_archimedean_error hd hdM hr
@@ -105,32 +114,35 @@ theorem plane_auxiliary_log_degree_bound {s d M : ℕ} {B L A K : ℝ}
     have hrat : 2 * (M : ℝ) / s ≤ 2 / d + 2 / M := by
       apply (div_le_iff₀ hsR).mpr
       field_simp
-      nlinarith
+      have hscaled := congrArg (fun x : ℝ => x * ((M : ℝ) + d)) he
+      nlinarith only [hscaled, mul_nonneg (sq_nonneg (d : ℝ)) (sub_nonneg.mpr hdMR),
+        mul_nonneg hdR.le hMR.le, sq_nonneg (d : ℝ)]
     have hh := mul_le_mul_of_nonneg_right hrat hlogB
     have hrem : 2 / (M : ℝ) * Real.log B ≤ 2 := by
       rw [div_mul_eq_mul_div]
-      exact (div_le_iff₀ hMR).mpr (by linarith)
-    nlinarith
+      exact (div_le_iff₀ hMR).mpr (by linarith only [hML])
+    rw [add_mul] at hh
+    linarith only [hh, hrem]
   have hcoef : Real.log L / (d : ℝ) ^ 2 - 16 ≤
       2 * (((2 + M).choose M : ℝ) - s) / (s : ℝ) ^ 2 * Real.log L := by
     have hrat : 1 / (d : ℝ) ^ 2 - 2 / s ≤
         2 * (((2 + M).choose M : ℝ) - s) / (s : ℝ) ^ 2 := by
       apply (le_div_iff₀ (show (0 : ℝ) < (s : ℝ) ^ 2 by positivity)).mpr
       field_simp
-      nlinarith
+      nlinarith only [hsquare]
     have hh := mul_le_mul_of_nonneg_right hrat hlogL
     have hrem : 2 / (s : ℝ) * Real.log L ≤ 16 := by
       rw [div_mul_eq_mul_div]
       apply (div_le_iff₀ hsR).mpr
       have hh := mul_le_mul_of_nonneg_left hML hdR.le
-      nlinarith
+      linarith only [hheight, hh, hslo]
     simp only [sub_mul, one_div, inv_mul_eq_div] at hh
-    linarith
+    linarith only [hh, hrem]
   have hlogs : Real.log d + Real.log M - Real.log 2 ≤ Real.log s := by
     have h := Real.log_le_log (show (0 : ℝ) < d * M / 2 by positivity)
-      (show (d : ℝ) * M / 2 ≤ s by linarith)
+      (show (d : ℝ) * M / 2 ≤ s by linarith only [hslo])
     rwa [Real.log_div (by positivity) (by norm_num), Real.log_mul hdR.ne' hMR.ne'] at h
-  linarith
+  linarith only [hbasic, hbox, hcoef, hlogs]
 
 /-- Exponentiation of the logarithmic degree bound, keeping the coefficient
 saving and the leading box exponent unchanged. -/

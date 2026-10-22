@@ -27,14 +27,15 @@ namespace CCDN
 noncomputable section
 
 /-- Full coordinate rays with uniquely normalized base points. -/
-private def fullExponentRays {σ : Type*} [Fintype σ] [DecidableEq σ]
+private def fullExponentRays {σ : Type*} [Fintype σ]
     (S : Set (σ →₀ ℕ)) (B : ℕ) :=
   {p : σ × (σ → Fin B) // (p.2 p.1).val = 0 ∧
     ∀ n, exponentRay B p.1 p.2 n ∈ S}
 
-private lemma exponentRay_degree {σ : Type*} [Fintype σ] [DecidableEq σ]
+private lemma exponentRay_degree {σ : Type*} [Fintype σ]
     (B : ℕ) (j : σ) (b : σ → Fin B) (n : ℕ) (hb : (b j).val = 0) :
     Finsupp.degree (exponentRay B j b n) = n + ∑ k, (b k).val := by
+  classical
   have h := Finsupp.sum_update_add
     (Finsupp.equivFunOnFinite.symm (fun k => (b k).val)) j n
     (fun _ v => v) (fun _ => rfl) (fun _ _ _ => rfl)
@@ -49,7 +50,7 @@ private lemma rayBase_weight_le {σ : Type*} [Fintype σ] {B : ℕ} (b : σ → 
 
 /-- A lower monomial set confined to coordinate rays has eventually constant
 shell cardinalities. -/
-private theorem lowerSet_shell_card_eventually_constant {σ : Type*} [Fintype σ] [DecidableEq σ]
+private theorem lowerSet_shell_card_eventually_constant {σ : Type*} [Fintype σ]
     (S : Set (σ →₀ ℕ)) (hS : IsLowerSet S) (B : ℕ) (hB : 0 < B)
     (hunique : ∀ a ∈ S, ∀ i j, B ≤ a i → B ≤ a j → i = j) :
     ∃ N, ∀ n ≥ N,

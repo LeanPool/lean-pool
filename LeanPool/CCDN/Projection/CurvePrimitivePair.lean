@@ -33,10 +33,10 @@ lemma momentCoordinate_degree (K : Type*) [CommRing K] [Nontrivial K] (n k : ℕ
 
 /-- In any field `F` receiving the quotient by `I` compatibly with `K`, the image of the moment
 coordinate with parameter `k` is `∑ j, x j * k ^ j`, where `x j` is the image of `X j`. -/
-lemma momentCoordinate_fraction {K F : Type*} [Field K] [Field F] [Algebra K F]
+lemma momentCoordinate_fraction {K F : Type*} [Field K] [Field F]
     {n : ℕ} (I : Ideal (MvPolynomial (Fin n) K))
     [Algebra (MvPolynomial (Fin n) K ⧸ I) F]
-    [IsScalarTower K (MvPolynomial (Fin n) K ⧸ I) F] (k : ℕ) :
+    (k : ℕ) :
     algebraMap (MvPolynomial (Fin n) K ⧸ I) F
       ((Ideal.Quotient.mk I) (momentCoordinate K n k)) =
       ∑ j : Fin n, algebraMap (MvPolynomial (Fin n) K ⧸ I) F

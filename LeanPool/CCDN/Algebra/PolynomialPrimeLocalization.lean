@@ -43,7 +43,7 @@ private theorem mvPolynomial_not_dvd_nonzero_constant
 /-- Prime polynomials of positive variable degree survive coefficient
 localization at nonzero elements. -/
 theorem prime_mvPolynomial_map_localization
-    {R S σ : Type*} [CommRing R] [IsDomain R] [CommRing S] [IsDomain S]
+    {R S σ : Type*} [CommRing R] [IsDomain R] [CommRing S]
     [Algebra R S] (M : Submonoid R) [IsLocalization M S]
     (hM : M ≤ nonZeroDivisors R)
     (f : MvPolynomial σ R) (hf : Prime f) (hd : 0 < f.totalDegree) :

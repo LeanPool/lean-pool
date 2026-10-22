@@ -92,7 +92,7 @@ theorem standard_at_most_one_large {K σ : Type*} [Field K] [Finite σ]
   nlinarith
 
 /-- A coordinate ray whose other coordinates lie in a finite box. -/
-def exponentRay {σ : Type*} [Fintype σ] [DecidableEq σ] (B : ℕ)
+def exponentRay {σ : Type*} [Fintype σ] (B : ℕ)
     (j : σ) (b : σ → Fin B) (n : ℕ) : σ →₀ ℕ :=
   (Finsupp.equivFunOnFinite.symm (fun k => (b k).val)).update j n
 
@@ -105,7 +105,7 @@ every other `k`. -/
 
 /-- Uniformly over all rays based in a finite box, membership in a lower set
 stabilizes to either the whole ray or the empty tail. -/
-theorem lowerSet_rays_eventually_full {σ : Type*} [Fintype σ] [DecidableEq σ]
+theorem lowerSet_rays_eventually_full {σ : Type*} [Fintype σ]
     (S : Set (σ →₀ ℕ)) (hS : IsLowerSet S) (B : ℕ) :
     ∃ M ≥ B, ∀ (j : σ) (b : σ → Fin B) (n : ℕ), M ≤ n →
       (exponentRay B j b n ∈ S ↔ ∀ k, exponentRay B j b k ∈ S) := by

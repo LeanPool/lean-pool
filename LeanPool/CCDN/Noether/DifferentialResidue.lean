@@ -94,7 +94,7 @@ in the root field. -/
 theorem closed_form_eq_constant_gradient_of_residue_mem_base
     {F K L : Type*} [Field F] [Field K] [Field L]
     [Algebra F K] [Algebra K L] [Algebra F L] [IsScalarTower F K L]
-    [Differential K] [Differential L] [DifferentialAlgebra K L]
+    [Differential K]
     (f p q : K[X]) (hf : Irreducible f) (hm : f.Monic) (c : L)
     (hc : aeval c f = 0) (hsimple : aeval c f.derivative ≠ 0)
     (hpdeg : p.degree < f.degree) (hqdeg : q.degree < f.degree)

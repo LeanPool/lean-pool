@@ -65,10 +65,11 @@ theorem surface_weight_root_bound {d M s W : ℝ}
     W ≤ (2 / 3 : ℝ) * s * R + (2 * d + 2) * s := by
   have ht : 0 ≤ M - d := sub_nonneg.mpr hM
   have htR : (M - d) ^ 2 ≤ R ^ 2 := pow_le_pow_left₀ ht hlo 2
-  have hprod : R * (M - d) ≤ R ^ 2 := by nlinarith
+  have hprod : R * (M - d) ≤ R ^ 2 := by
+    simpa only [pow_two] using mul_le_mul_of_nonneg_left hlo hR
   have hdiff : 0 ≤ R - (M - d) := sub_nonneg.mpr hlo
   have hfactor : R ^ 2 + R * (M - d) + (M - d) ^ 2 ≤ 3 * R ^ 2 := by
-    linarith
+    linarith only [htR, hprod]
   have hcube : R ^ 3 - (M - d) ^ 3 ≤ 3 * (d + 2) * R ^ 2 := by
     calc
       _ = (R - (M - d)) * (R ^ 2 + R * (M - d) + (M - d) ^ 2) := by ring
@@ -78,12 +79,18 @@ theorem surface_weight_root_bound {d M s W : ℝ}
         mul_le_mul_of_nonneg_right (by linarith) (by positivity)
       _ = _ := by ring
   have hc := mul_le_mul_of_nonneg_left hcube hd.le
-  have hr3 : d * R ^ 3 = 2 * s * R := by nlinarith [congrArg (fun x : ℝ => x * R) hroot]
+  have hr3 : d * R ^ 3 = 2 * s * R := by
+    calc
+      _ = (d * R ^ 2) * R := by ring
+      _ = _ := congrArg (fun x : ℝ => x * R) hroot
   have hr2 : 3 * d * (d + 2) * R ^ 2 = 6 * (d + 2) * s := by
-    nlinarith [congrArg (fun x : ℝ => 3 * (d + 2) * x) hroot]
+    calc
+      _ = 3 * (d + 2) * (d * R ^ 2) := by ring
+      _ = 3 * (d + 2) * (2 * s) := congrArg (fun x : ℝ => 3 * (d + 2) * x) hroot
+      _ = _ := by ring
   have hMs : M * s ≤ (R + d) * s :=
     mul_le_mul_of_nonneg_right (by linarith) hs
-  nlinarith
+  nlinarith only [hweight, hc, hr3, hr2, hMs]
 
 end
 end CCDN

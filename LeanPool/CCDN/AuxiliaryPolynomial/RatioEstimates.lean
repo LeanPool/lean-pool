@@ -36,7 +36,7 @@ lemma auxiliary_reciprocal_bound {r d M X a : ℝ} (hr : 0 ≤ r) (hd : 1 ≤ d)
   have hprod : 1 ≤ (r + 1) / X * (1 + 2 * d / M) *
       (X * (M - d) / ((r + 1) * M)) := by
     field_simp
-    nlinarith [mul_nonneg hd0.le (sub_nonneg.mpr hM)]
+    nlinarith only [mul_nonneg hd0.le (sub_nonneg.mpr hM)]
   exact hprod.trans (mul_le_mul_of_nonneg_left ha (by positivity))
 
 /-- If `0 < a ≤ X (M + r) / ((r + 1) M)` and `k ≥ 1 / (d (r + 1)) - 1 / M` is nonnegative, then
@@ -60,7 +60,7 @@ lemma auxiliary_kernel_quotient_bound {r d M X a k : ℝ}
     field_simp
     have h1 := mul_nonneg (mul_nonneg hr hM.le) (show 0 ≤ d - 1 by linarith)
     have h2 := mul_nonneg (mul_nonneg hd0.le hr) (show 0 ≤ 2 * r + 1 by linarith)
-    nlinarith
+    nlinarith only [h1, h2]
   exact hh.trans (hcalc.trans hlower)
 
 /-- Solve the normalized inequality without imposing a sign on its bracket.
@@ -78,7 +78,7 @@ theorem auxiliary_small_height_bracket_bound {r d M X a k u b l : ℝ}
   obtain ⟨ha, hrecip⟩ := auxiliary_reciprocal_bound hr hd hM hX halow
   have hquot := auxiliary_kernel_quotient_bound hr hd hM0 hX ha hk haup hklow
   have hu : u ≤ b / a - (k / a) * l := by
-    have hh := (le_div_iff₀ ha).mpr (by nlinarith [hcomparison] : u * a ≤ b - k * l)
+    have hh := (le_div_iff₀ ha).mpr (by simpa only [mul_comm] using hcomparison)
     convert hh using 1
     ring
   have hb' : b / a ≤ ((r + 1) / X * (1 + 2 * d / M)) * b := by
@@ -87,21 +87,21 @@ theorem auxiliary_small_height_bracket_bound {r d M X a k u b l : ℝ}
   have hl' := mul_le_mul_of_nonneg_right hquot hl
   have herr1 : 2 * (r + 1) * d * b / (X * M) ≤ 2 * (r + 1) := by
     apply (div_le_iff₀ (mul_pos hX hM0)).mpr
-    nlinarith [mul_le_mul_of_nonneg_left hscale (show 0 ≤ 2 * (r + 1) by linarith)]
+    nlinarith only [mul_le_mul_of_nonneg_left hscale (show 0 ≤ 2 * (r + 1) by linarith)]
   have herr2 : (2 * r + 1) * l / (X * M) ≤ 2 * (2 * r + 1) * (r + 1) := by
     apply (div_le_iff₀ (mul_pos hX hM0)).mpr
     have hh := mul_le_mul_of_nonneg_left hheight (show 0 ≤ 2 * r + 1 by linarith)
     have hh' := mul_le_mul_of_nonneg_left hscale (show 0 ≤ 2 * (2 * r + 1) * (r + 1) by positivity)
-    nlinarith
+    nlinarith only [hh, hh']
   have he : ((r + 1) / X * (1 + 2 * d / M)) * b -
       (1 / (d * X) - (2 * r + 1) / (X * M)) * l =
         (r + 1) / X * b - l / (d * X) +
           2 * (r + 1) * d * b / (X * M) + (2 * r + 1) * l / (X * M) := by ring
   have hbound : u ≤ ((r + 1) / X * (1 + 2 * d / M)) * b -
       (1 / (d * X) - (2 * r + 1) / (X * M)) * l := by
-    nlinarith [hb', hl']
+    linarith only [hu, hb', hl']
   rw [he] at hbound
-  nlinarith
+  linarith only [hbound, herr1, herr2, sq_nonneg r]
 
 end
 end CCDN

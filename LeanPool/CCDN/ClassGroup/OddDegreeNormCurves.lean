@@ -52,7 +52,7 @@ lemma odd_degree_double_cover_irreducible {F : Type*} [Field F]
 
 /-- For a polynomial `p` of degree at least `2`, the double-cover polynomial `Y ^ 2 - p` has total
 degree `deg p`. -/
-lemma double_cover_bivariateTotalDegree {R : Type*} [CommRing R] [Nontrivial R]
+lemma double_cover_bivariateTotalDegree {R : Type*} [CommRing R]
     (p : R[X]) (hp : 2 ≤ p.natDegree) :
     bivariateTotalDegree (X ^ 2 - C p : R[X][X]) = p.natDegree := by
   apply le_antisymm

@@ -51,7 +51,7 @@ namespace IsFractionRing
 
 /-- A localization of a domain embeds compatibly in any fraction field of the domain. -/
 def liftOfLocalization {R S F : Type*}
-    [CommRing R] [IsDomain R] [CommRing S] [Nontrivial S]
+    [CommRing R] [CommRing S] [Nontrivial S]
     [Field F] [Algebra R S] [Algebra R F]
     (M : Submonoid R) [IsLocalization M S] [IsFractionRing R F] : S →+* F :=
   IsLocalization.lift (fun y : M => isUnit_iff_ne_zero.mpr
@@ -61,7 +61,7 @@ def liftOfLocalization {R S F : Type*}
 /-- The embedding `liftOfLocalization M` of the localization `S` into a fraction field `F` of `R`
 restricts to the algebra map `R → F` along `R → S`. -/
 theorem liftOfLocalization_comp {R S F : Type*}
-    [CommRing R] [IsDomain R] [CommRing S] [Nontrivial S]
+    [CommRing R] [CommRing S] [Nontrivial S]
     [Field F] [Algebra R S] [Algebra R F]
     (M : Submonoid R) [IsLocalization M S] [IsFractionRing R F] :
     (liftOfLocalization (S := S) (F := F) M).comp (algebraMap R S) =
@@ -85,7 +85,7 @@ namespace MvPolynomial
 
 /-- The coefficients embed in a fraction field of a polynomial ring over a domain. -/
 theorem algebraMap_injective_of_isFractionRing
-    {A E σ : Type*} [CommRing A] [IsDomain A] [Field E]
+    {A E σ : Type*} [CommRing A] [Field E]
     [Algebra A E] [Algebra (MvPolynomial σ A) E]
     [IsScalarTower A (MvPolynomial σ A) E]
     [IsFractionRing (MvPolynomial σ A) E] :
@@ -93,7 +93,7 @@ theorem algebraMap_injective_of_isFractionRing
   rw [IsScalarTower.algebraMap_eq A (MvPolynomial σ A) E]
   exact (IsFractionRing.injective (MvPolynomial σ A) E).comp (C_injective σ A)
 
-variable {K A F E σ : Type*} [Field K] [CommRing A] [IsDomain A]
+variable {K A F E σ : Type*} [Field K] [CommRing A]
   [Field F] [Field E] [Algebra K A] [Algebra K F] [Algebra K E]
   [Algebra A F] [IsFractionRing A F] [IsScalarTower K A F]
   [Algebra A E] [IsScalarTower K A E]
@@ -139,7 +139,7 @@ attribute [local instance] MvPolynomial.algebraMvPolynomial
 /-- Extend polynomial coefficients inside the ambient fraction field. -/
 def fractionRingCoeffMap
     {A K F σ : Type*} [CommRing A] [Field K] [Field F]
-    [Algebra A K] [Algebra A F] [Algebra K F]
+    [Algebra K F]
     [Algebra (MvPolynomial σ A) F] : MvPolynomial σ K →+* F :=
   eval₂Hom (algebraMap K F) (fun i => algebraMap (MvPolynomial σ A) F (X i))
 
@@ -184,7 +184,7 @@ namespace IsFractionRing
 
 /-- A common nonzero denominator for a finite birational extension. -/
 theorem exists_ne_zero_mul_mem_range_of_finite
-    (R A F : Type*) [CommRing R] [IsDomain R] [CommRing A] [IsDomain A] [Field F]
+    (R A F : Type*) [CommRing R] [IsDomain R] [CommRing A] [Field F]
     [Algebra R A] [Algebra R F] [Algebra A F] [IsScalarTower R A F]
     [IsFractionRing R F] [IsFractionRing A F] [Module.Finite R A] :
     ∃ c : R, c ≠ 0 ∧ ∀ a : A, ∃ r : R,

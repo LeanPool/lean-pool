@@ -70,9 +70,14 @@ lemma natAbs_coeff_le_l1Norm (f : MvPolynomial σ ℤ) (m : σ →₀ ℕ) :
   simp
 
 /-- The `ℓ¹`-norm of the constant polynomial `C c` is the absolute value of `c`. -/
-@[simp] lemma l1Norm_C (c : ℤ) :
+lemma l1Norm_C (c : ℤ) :
     l1Norm (C c : MvPolynomial σ ℤ) = c.natAbs := by
   exact l1Norm_monomial 0 c
+
+/-- An integer cast has `ℓ¹`-norm equal to its absolute value. -/
+@[simp] lemma l1Norm_intCast (c : ℤ) :
+    l1Norm (c : MvPolynomial σ ℤ) = c.natAbs := by
+  simpa only [eq_intCast] using l1Norm_C (σ := σ) c
 
 /-- The constant polynomial `1` has `ℓ¹`-norm one. -/
 @[simp] lemma l1Norm_one : l1Norm (1 : MvPolynomial σ ℤ) = 1 := by

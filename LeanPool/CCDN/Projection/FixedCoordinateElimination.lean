@@ -103,7 +103,7 @@ def closurePivotEquiv (n : ℕ) : Fin (n + 2) ≃ Option (Fin (n + 1)) :=
   simp [closurePivotEquiv]
 
 /-- The pivot reindexing sends coordinate `1` to `none`. -/
-@[simp] lemma closurePivotEquiv_one (n : ℕ) : closurePivotEquiv n (Fin.succ 0) = none := by
+@[simp] lemma closurePivotEquiv_one (n : ℕ) : closurePivotEquiv n 1 = none := by
   simp [closurePivotEquiv]
 
 /-- The pivot reindexing sends coordinate `i + 2` to `some (i + 1)`. -/
@@ -142,7 +142,9 @@ private lemma closureEliminationDirection_comp {n : ℕ} (b : Option (Fin n) →
   refine Fin.cases ?_ (fun j => ?_) i
   · simp [closureEliminationDirection]
   · refine Fin.cases ?_ (fun j => ?_) j
-    · rw [closurePivotEquiv_one]
+    · have hpivot : closurePivotEquiv n (Fin.succ 0) = none := by
+        simpa only [Fin.succ_zero_eq_one] using closurePivotEquiv_one n
+      rw [hpivot]
       rfl
     · rw [closurePivotEquiv_succ_succ]
       rfl

@@ -157,8 +157,9 @@ private lemma prime_sqrt_tail_le_of_pow_bound (n : ℕ) {L : ℝ} (hL : 1 ≤ L)
         (sum_sdiff (filter_subset (fun p : ℕ => (p : ℝ) ≤ 4 * L) S)
           (f := fun p : ℕ => Real.log p / p / Real.sqrt p)).symm
     have hsqrt : Real.sqrt (4 * L) = 2 * Real.sqrt L := by
-      rw [Real.sqrt_mul (by norm_num)]
-      norm_num
+      have hfour : Real.sqrt (4 : ℝ) = 2 :=
+        (Real.sqrt_eq_iff_eq_sq (by norm_num) (by norm_num)).mpr (by norm_num)
+      rw [Real.sqrt_mul (by norm_num), hfour]
     rw [he]
     rw [hsqrt] at hB
     have hL0 : Real.sqrt L ≠ 0 := ne_of_gt (Real.sqrt_pos.mpr (by linarith))

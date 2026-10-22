@@ -44,7 +44,7 @@ private lemma coordinate_mul_filtered_mem {K σ : Type*} [Field K]
 /-- Affine coordinate formulas in a prime quotient give polynomial containment
 of an affine line through each base-field-valued point. -/
 private theorem affine_coordinates_line_polynomial_identity {K : Type*} [Field K]
-    (p : Ideal (MvPolynomial (Fin 3) K)) [p.IsPrime]
+    (p : Ideal (MvPolynomial (Fin 3) K))
     (j : Fin 3) (c d : Fin 3 → K)
     (hj : Transcendental K ((Ideal.Quotient.mk p) (X j)))
     (hcd : ∀ k, (Ideal.Quotient.mk p) (X k) =
@@ -145,7 +145,7 @@ private theorem degree_one_coordinates_affine_of_point {K : Type*} [Field K]
 /-- Affine coordinate identities identify the entire base-field zero set
 with the parameterized line, in both directions. -/
 private theorem zeroLocus_eq_line_of_affine_coordinates {K : Type*} [Field K]
-    (p : Ideal (MvPolynomial (Fin 3) K)) [p.IsPrime]
+    (p : Ideal (MvPolynomial (Fin 3) K))
     (j : Fin 3) (c d : Fin 3 → K)
     (hj : Transcendental K ((Ideal.Quotient.mk p) (X j)))
     (hcd : ∀ k, (Ideal.Quotient.mk p) (X k) =

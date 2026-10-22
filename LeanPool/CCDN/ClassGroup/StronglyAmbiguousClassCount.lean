@@ -42,9 +42,13 @@ private lemma integralIdealClass_eq (I : Ideal R) (hI : I ≠ 0) :
   simp only [integralIdealClass, dite_eq_right hI]
 
 /-- The unit ideal has trivial ideal class. -/
-@[simp] lemma integralIdealClass_one : integralIdealClass (1 : Ideal R) = 1 := by
+lemma integralIdealClass_one : integralIdealClass (1 : Ideal R) = 1 := by
   rw [integralIdealClass_eq _ one_ne_zero]
   exact map_one ClassGroup.mk0
+
+/-- The top ideal has trivial ideal class. -/
+@[simp] lemma integralIdealClass_top : integralIdealClass (⊤ : Ideal R) = 1 := by
+  simpa only [Ideal.one_eq_top] using (integralIdealClass_one (R := R))
 
 private lemma integralIdealClass_mk0 (I : (Ideal R)⁰) :
     integralIdealClass (I : Ideal R) = ClassGroup.mk0 I := by

@@ -11,11 +11,16 @@ Upstream: jasondavies/ccdn-dimension-growth @ bb025e7207f3a35a21b898629f5678b72a
 public import Mathlib.Algebra.Order.Field.GeomSum
 public import Mathlib.Analysis.SumIntegralComparisons
 public import Mathlib.NumberTheory.Chebyshev
-public import Mathlib.Analysis.SpecialFunctions.Log.Summable
 public import Mathlib.Analysis.SpecialFunctions.Integrals.Basic
-public import Mathlib.Tactic
 public import Mathlib.Analysis.PSeries
-public import Mathlib.Algebra.Order.Floor.Semifield
+import Mathlib.Tactic.Convert
+import Mathlib.Tactic.FieldSimp
+import Mathlib.Tactic.GCongr
+import Mathlib.Tactic.Linarith
+import Mathlib.Tactic.NormNum
+import Mathlib.Tactic.NthRewrite
+import Mathlib.Tactic.Positivity
+import Mathlib.Tactic.Ring
 
 /-!
 Adapted from PrimeNumberTheoremAnd/IEANTN/Mertens.lean,
@@ -105,6 +110,7 @@ theorem sum_log_eq_sum_mangoldt {x : ℝ} :
   have : ∀ n : ℕ, log n = (Λ * zeta) n := by simp [vonMangoldt_mul_zeta]
   simp_rw [this, sum_Ioc_mul_zeta_eq_sum, ← Nat.floor_div_natCast]
 
+/-- The error in the logarithmically weighted von Mangoldt sum. -/
 noncomputable abbrev E₁Λ (x : ℝ) : ℝ := ∑ d ∈ Ioc 0 ⌊ x ⌋₊, (Λ d) / d - log x
 
 theorem sum_mangoldt_div_eq (x : ℝ) : ∑ d ∈ Ioc 0 ⌊ x ⌋₊, (Λ d) / d = log x + E₁Λ x := by
@@ -172,6 +178,7 @@ theorem sum_mangoldt_div_eq_log' :
     apply IsLittleO.isEquivalent (IsBigO.trans_isLittleO _ one_eq_o_log)
     convert! E₁Λ.bounded using 1
 
+/-- The error in the prime sum of `log p / p`. -/
 noncomputable abbrev E₁p (x : ℝ) : ℝ := ∑ p ∈ Ioc 0 ⌊ x ⌋₊ with p.Prime, (log p) / p - log x
 
 theorem sum_log_prime_div_eq (x : ℝ) :
@@ -191,6 +198,7 @@ theorem E₁p.le {x : ℝ} (hx : 1 ≤ x) :
     E₁p x ≤ log 4 + 4 := by
     linarith [E₁Λ.le hx, E₁p.le_E₁Λ x]
 
+/-- The convergent prime-power correction between the prime and von Mangoldt sums. -/
 noncomputable abbrev E₁ : ℝ := ∑' p : ℕ, if p.Prime then (log p) / (p*(p-1)) else 0
 
 lemma E₁.summand_nonneg (p : ℕ) : 0 ≤ if p.Prime then (log p) / (p*(p-1)) else 0 := by
