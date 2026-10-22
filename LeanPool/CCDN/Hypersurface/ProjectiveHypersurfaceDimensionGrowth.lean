@@ -98,8 +98,8 @@ private theorem RationalAffineHypersurfaceGrowth.projective {n e : ℕ}
         linarith
 
 /-- CCDN Theorem 1 for rationally irreducible projective hypersurfaces of degree at least
-five in `ℙ^(n+2)`, with degree exponent `18 + 3n`. Unlike the paper, the equation may split
-over `the algebraic closure of ℚ`. -/
+five in `ℙ^(n+2)`, with degree exponent `18 + 3n`. As in the paper (Corollary 4.1.4 and
+Remark 4.1.5), the equation may split over `the algebraic closure of ℚ`. -/
 theorem projective_hypersurface_dimension_growth (n : ℕ) :
     ProjectiveHypersurfaceGrowth n (18 + 3 * n) :=
   (affineHypersurfaceGrowth n).rational.projective (by omega)
