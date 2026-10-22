@@ -27,7 +27,6 @@ import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_nonempty_modularPoly
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_B3_specialisationEquivariance_level
 import Mathlib.RingTheory.HahnSeries.PowerSeries
 import Mathlib.SetTheory.Cardinal.Finite
-import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
 
 /-!
 # Orbit correspondence for cyclic N-subgroups over a given j₀
@@ -80,27 +79,15 @@ https://github.com/anthropics/fermats-last-theorem/blob/aa2d8b34692b16c70f699536
 
 section privateSection
 
-set_option backward.isDefEq.respectTransparency.types false
-
-namespace P2MW.S_ModularCurve_exists_elliptic_cycSub_orbitMap_of_props
-
 noncomputable section
 
-open scoped Classical
-
-p2m_open "ModularCurve P2MW.S_ModularCurve_exists_elliptic_cycSub_orbitMap_of_props.ModularCurve \
-  ModularCurve.TatePoint AlgebraicCurve WeierstrassCurve Polynomial"
+open  ModularCurve TatePoint AlgebraicCurve WeierstrassCurve Polynomial
 
 attribute [local instance] ModularCurve.TatePoint.isAlgClosed_H ModularCurve.TatePoint.charZero_H
 
 namespace ModularCurve
-p2m_export "ModularCurve" "Emb Induces SamePlace CycSub SameOrbit EMD jBar jpBar \
-  modularFunctionFieldBar ModularPolynomialData TatePoint.dictN TatePoint.isAlgClosed_H \
-  TatePoint.charZero_H B3.nearTransport B3.b3Act exists_place_of_emb \
-  samePlace_iff_exists_monodromy natCard_normalized_algHom_jBar_eq_toNat_ord place_eq_of_induces \
-  exists_emb_equiv_rootsAt nonempty_modularPolynomialData B3.specialisationEquivariance_level"
+
 namespace WiringB2
-p2m_open "ModularCurve"
 
 private theorem algebraMap_eq_C (r : Qbar) :
     algebraMap Qbar H r = HahnSeries.C r := by
@@ -143,6 +130,7 @@ theorem samePlace_iff_twistEmb {p : ℕ} [NeZero p] {j₀ : Qbar} (ψ ψ' : Emb 
   · rintro ⟨m, hm⟩
     exact ⟨m.1, m.2, congrArg Subtype.val hm⟩
 
+open scoped Classical in
 theorem emd_of_alphaN (p : ℕ) [NeZero p] (data : ModularPolynomialData p)
     (j₀ : Qbar)
     (hB1 : {e : Emb p j₀ ≃ RootsAt data (nearCurve j₀).j //
@@ -178,14 +166,6 @@ theorem emd_of_alphaN (p : ℕ) [NeZero p] (data : ModularPolynomialData p)
 
 end ModularCurve.WiringB2
 
-namespace ModularCurve
-p2m_export "ModularCurve" "Emb Induces SamePlace CycSub SameOrbit EMD jBar jpBar \
-  modularFunctionFieldBar ModularPolynomialData TatePoint.dictN TatePoint.isAlgClosed_H \
-  TatePoint.charZero_H B3.nearTransport B3.b3Act exists_place_of_emb \
-  samePlace_iff_exists_monodromy natCard_normalized_algHom_jBar_eq_toNat_ord place_eq_of_induces \
-  exists_emb_equiv_rootsAt nonempty_modularPolynomialData B3.specialisationEquivariance_level"
-end ModularCurve
-p2m_open_scoped "ModularCurve" in
 theorem ModularCurve.hbeta_of_emd_docks (N : ℕ) [NeZero N] (j₀ : AlgebraicClosure ℚ)
     (hEP : ∀ ψ : {ψ : ↥(modularFunctionFieldBar N) →ₐ[AlgebraicClosure ℚ]
           HahnSeries ℚ (AlgebraicClosure ℚ) //
@@ -318,6 +298,7 @@ theorem solution (N : ℕ) [NeZero N]
           ((w : Place (AlgebraicClosure ℚ) (modularFunctionFieldBar N)).ord
               (jBar N - algebraMap (AlgebraicClosure ℚ) (modularFunctionFieldBar N) j₀)).toNat =
             Nat.card {H : CycSub E₀ N // f H = w} := by
+  classical
   obtain ⟨data⟩ := ModularCurve.nonempty_modularPolynomialData N
   exact ModularCurve.hbeta_of_emd_docks N j₀
     (fun ψ => ModularCurve.exists_place_of_emb N j₀ ψ)
@@ -331,16 +312,9 @@ theorem solution (N : ℕ) [NeZero N]
 
 end
 
-end S_ModularCurve_exists_elliptic_cycSub_orbitMap_of_props
-end P2MW
-export P2MW.S_ModularCurve_exists_elliptic_cycSub_orbitMap_of_props (solution)
-
 end privateSection
 
 public section publicSection
-
-
-open scoped Classical
 
 open ModularCurve ModularCurve.TatePoint AlgebraicCurve
 theorem ModularCurve.exists_elliptic_cycSub_orbitMap_of_props (N : ℕ) [NeZero N]
@@ -349,8 +323,7 @@ theorem ModularCurve.exists_elliptic_cycSub_orbitMap_of_props (N : ℕ) [NeZero 
     (hequivN : ∀ data : ModularPolynomialData N,
       ∀ (m : HahnSeries.monodromy Qbar) (r r' : RootsAt data (nearCurve j₀).j),
         r'.1 = (m : H ≃ₐ[Qbar] H) r.1 →
-        B3.b3Act j₀ m (dictN N data j₀ hW1 hW2 hW3 r).1 = (dictN N data j₀ hW1 hW2 hW3 r').1)
-    :
+        B3.b3Act j₀ m (dictN N data j₀ hW1 hW2 hW3 r).1 = (dictN N data j₀ hW1 hW2 hW3 r').1) :
     ∃ (E₀ : WeierstrassCurve (AlgebraicClosure ℚ)) (_ : E₀.IsElliptic), E₀.j = j₀ ∧
       ∃ f : CycSub E₀ N →
           {w : Place (AlgebraicClosure ℚ) (modularFunctionFieldBar N) //

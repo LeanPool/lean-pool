@@ -276,7 +276,6 @@ namespace ModularCurve.HahnSpecialise
 open ModularCurve.B3
 
 open WeierstrassCurve
-open scoped Classical
 
 @[reducible] def algebraQbar : Algebra valuationSubringH Qbar := resH.toAlgebra
 
@@ -290,15 +289,18 @@ def residueAlgEquiv : ResidueField valuationSubringH ≃ₐ[valuationSubringH] Q
 
 variable (E : WeierstrassCurve H) (hE : IntegralCoeffs E)
 
+open scoped Classical in
 def specialFibrePointMap :
     ((liftModel E hE).map (residue valuationSubringH)).toAffine.Point →+
       (specialFibre E).toAffine.Point :=
   (Affine.Point.map (W' := (liftModel E hE).toAffine)
     (residueAlgEquiv : ResidueField valuationSubringH →ₐ[valuationSubringH] Qbar) :)
 
-theorem specialFibrePointMap_injective : Function.Injective (specialFibrePointMap E hE) :=
-  Affine.Point.map_injective _
+theorem specialFibrePointMap_injective : Function.Injective (specialFibrePointMap E hE) := by
+  classical
+  exact Affine.Point.map_injective _
 
+open scoped Classical in
 def specialise (hΔ : (specialFibre E).Δ ≠ 0) :
     E.toAffine.Point →+ (specialFibre E).toAffine.Point :=
   (specialFibrePointMap E hE).comp
@@ -352,6 +354,7 @@ theorem natCast_residueField_ne_zero {N : ℕ} (hN : N ≠ 0) :
   rw [map_natCast, map_zero] at this
   exact (Nat.cast_ne_zero.mpr hN) this
 
+open scoped Classical in
 theorem specialise_injOn_nsmul_eq_zero (hΔ : (specialFibre E).Δ ≠ 0) {N : ℕ} (hN : N ≠ 0)
     {P Q : E.toAffine.Point} (hP : N • P = 0) (hQ : N • Q = 0)
     (h : specialise E hE hΔ P = specialise E hE hΔ Q) : P = Q :=
@@ -359,6 +362,7 @@ theorem specialise_injOn_nsmul_eq_zero (hΔ : (specialFibre E).Δ ≠ 0) {N : �
     hΔ)
     (natCast_residueField_ne_zero hN) hP hQ (specialFibrePointMap_injective E hE h)
 
+open scoped Classical in
 theorem addOrderOf_specialise (hΔ : (specialFibre E).Δ ≠ 0) {N : ℕ} (hN : N ≠ 0)
     {g : E.toAffine.Point} (hg : addOrderOf g = N) : addOrderOf (specialise E hE hΔ g) = N :=
   CycSubOf.addOrderOf_map_of_injOn (specialise E hE hΔ)
@@ -370,14 +374,14 @@ namespace ModularCurve.HahnSpecialise
 
 open ModularCurve.B3
 
-open scoped Classical
-
 variable (E : WeierstrassCurve H) (hE : IntegralCoeffs E) (hΔ : (specialFibre E).Δ ≠ 0)
 
+open scoped Classical in
 def specialiseCycSub (N : ℕ) [NeZero N] : CycSubH E N → CycSub (specialFibre E) N :=
   (CycSubOf.map (specialise E hE hΔ)
     (fun _ _ hP hQ h => specialise_injOn_nsmul_eq_zero E hE hΔ (NeZero.ne N) hP hQ h) :)
 
+open scoped Classical in
 @[simp] theorem coe_specialiseCycSub (N : ℕ) [NeZero N] (S : CycSubH E N) :
     (specialiseCycSub E hE hΔ N S).1 = S.1.map (specialise E hE hΔ) := rfl
 

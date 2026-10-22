@@ -67,7 +67,6 @@ Chris Birkbeck; Authors: Chris Birkbeck). See ATTRIBUTION.md and NOTICE in the s
 
 section privateSection
 
-set_option backward.isDefEq.respectTransparency.types false
 
 namespace P2MW.S_EisensteinSeries_exists_modularForm_coe_eq_eisensteinG
 

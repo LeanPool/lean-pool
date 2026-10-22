@@ -70,11 +70,10 @@ https://github.com/anthropics/fermats-last-theorem/blob/aa2d8b34692b16c70f699536
 
 section privateSection
 
-set_option backward.isDefEq.respectTransparency.types false
 
 namespace P2MW.S_ModularCurve_eventually_norm_slash_le_of_isIntegral_adjoin_coeffEmb_jq_inv_pow
 
-p2m_open "UpperHalfPlane ModularCurve~coeffEmb_jq"
+p2m_open "UpperHalfPlane ModularCurve"
 open scoped MatrixGroups ModularForm Manifold
 
 noncomputable section

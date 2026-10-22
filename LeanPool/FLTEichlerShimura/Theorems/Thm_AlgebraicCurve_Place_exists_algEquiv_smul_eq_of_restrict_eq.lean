@@ -59,14 +59,11 @@ https://github.com/anthropics/fermats-last-theorem/blob/aa2d8b34692b16c70f699536
 
 section privateSection
 
-set_option backward.isDefEq.respectTransparency.types false
 
 namespace P2MW.S_AlgebraicCurve_Place_exists_algEquiv_smul_eq_of_restrict_eq
 
 noncomputable section
-p2m_open "AlgebraicCurve \
-  P2MW.S_AlgebraicCurve_Place_exists_algEquiv_smul_eq_of_restrict_eq.AlgebraicCurve \
-  IsDedekindDomain"
+p2m_open "AlgebraicCurve IsDedekindDomain"
 open scoped Pointwise
 
 namespace AlgebraicCurve

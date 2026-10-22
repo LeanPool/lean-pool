@@ -61,12 +61,11 @@ https://github.com/anthropics/fermats-last-theorem/blob/aa2d8b34692b16c70f699536
 
 section privateSection
 
-set_option backward.isDefEq.respectTransparency.types false
 
 namespace P2MW.S_WeierstrassCurve_Affine_valuation_placeOf_neg_transEquiv_algebraMap
 
 open scoped WithZero Polynomial.Bivariate
-p2m_open "Polynomial Polynomial.Bivariate.Polynomial IsDedekindDomain"
+p2m_open "Polynomial IsDedekindDomain"
 
 namespace Valuation
 p2m_export "Valuation" "map_add_eq_of_lt_left valuationSubring ext mem_valuationSubring_iff \

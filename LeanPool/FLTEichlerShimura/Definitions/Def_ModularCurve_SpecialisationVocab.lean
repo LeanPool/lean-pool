@@ -61,8 +61,6 @@ are transported to an elliptic curve over $\bar{\mathbb{Q}}$, as required by the
 
 @[expose] public section publicSection
 
-open scoped Classical
-
 noncomputable section
 
 open ModularCurve WeierstrassCurve Polynomial
@@ -199,6 +197,5 @@ theorem goodModel_eq_nearCurve {j₀ : Qbar} (h0 : j₀ ≠ 0) (h1728 : j₀ ≠
 end ModularCurve.B3
 
 end
-
 
 end publicSection

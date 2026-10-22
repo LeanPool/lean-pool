@@ -15,7 +15,6 @@ public import LeanPool.FLTEichlerShimura.Definitions.Def_ModularCurve_Specialisa
 public import LeanPool.FLTEichlerShimura.Definitions.Def_ModularCurve_TatePoint
 
 import Mathlib.RingTheory.SimpleRing.Principal
-import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
 
 /-!
 # Ellipticity of the special fibre of the good model
@@ -56,12 +55,6 @@ https://github.com/anthropics/fermats-last-theorem/blob/aa2d8b34692b16c70f699536
 
 section privateSection
 
-set_option backward.isDefEq.respectTransparency.types false
-
-namespace P2MW.S_ModularCurve_B3_isElliptic_specialFibre_goodModel
-
-
-open scoped Classical
 open ModularCurve.TatePoint ModularCurve.B3 WeierstrassCurve
 
 noncomputable section
@@ -104,7 +97,7 @@ theorem jNear_ne_1728 (j₀ : Qbar) : jNear j₀ ≠ 1728 := by
   rw [← C_ofNat]; exact jNear_ne_C j₀ _
 
 theorem nearCurve_eq (j₀ : Qbar) : nearCurve j₀ = ofJNe0Or1728 (jNear j₀) := by
-  unfold nearCurve
+  classical
   exact ofJ_ne_0_ne_1728 _ (jNear_ne_zero j₀) (jNear_ne_1728 j₀)
 
 theorem jNear_sub (j₀ : Qbar) : jNear j₀ - 1728 = HahnSeries.C (j₀ - 1728) + sMon := by
@@ -463,10 +456,6 @@ theorem solution (j₀ : Qbar) :
   rcases eq_or_ne j₀ 1728 with rfl | h1728
   · exact S12B3.isGood_1728.2.1
   exact (S12B3.isGood_generic h0 h1728).2.1
-
-end S_ModularCurve_B3_isElliptic_specialFibre_goodModel
-end P2MW
-export P2MW.S_ModularCurve_B3_isElliptic_specialFibre_goodModel (solution)
 
 end privateSection
 

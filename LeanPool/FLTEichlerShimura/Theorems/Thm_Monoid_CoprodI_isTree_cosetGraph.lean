@@ -55,11 +55,10 @@ https://github.com/anthropics/fermats-last-theorem/blob/aa2d8b34692b16c70f699536
 
 section privateSection
 
-set_option backward.isDefEq.respectTransparency.types false
 
 namespace P2MW.S_Monoid_CoprodI_isTree_cosetGraph
 
-p2m_open "Subgroup SimpleGraph P2MW.S_Monoid_CoprodI_isTree_cosetGraph.SimpleGraph"
+p2m_open "Subgroup SimpleGraph"
 
 namespace GroupTheory
 
@@ -229,7 +228,7 @@ theorem isTree_of_isAcyclic [Nonempty ι] (h : (graph G).IsAcyclic) : (graph G).
 end BassSerre
 end GroupTheory
 
-p2m_open "Subgroup SimpleGraph P2MW.S_Monoid_CoprodI_isTree_cosetGraph.SimpleGraph"
+p2m_open "Subgroup SimpleGraph"
 
 namespace SimpleGraph
 p2m_export "SimpleGraph" "IsAcyclic loopless connected_iff_exists_forall_reachable \
@@ -363,7 +362,7 @@ omit [DecidableEq ι] [(i : ι) → DecidableEq (G i)] in
 theorem isBridge_mk_mk (htwo : ∀ a b c : ι, a = b ∨ a = c ∨ b = c) {i j : ι} (hij : i ≠ j)
     (g : CoprodI G) : (graph G).IsBridge s(Vertex.mk i g, Vertex.mk j g) := by
   classical
-  refine isBridge_of_separating (fun v => side (g⁻¹ • v)) ?_ ?_
+  refine SimpleGraph.isBridge_of_separating (fun v => side (g⁻¹ • v)) ?_ ?_
   · change side (g⁻¹ • Vertex.mk i g) ≠ side (g⁻¹ • Vertex.mk j g)
     rw [smul_mk, smul_mk, inv_mul_cancel, side_mk_one, side_mk_one]
     exact hij

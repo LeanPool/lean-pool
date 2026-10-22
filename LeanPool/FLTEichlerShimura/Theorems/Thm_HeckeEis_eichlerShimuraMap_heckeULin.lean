@@ -69,7 +69,6 @@ https://github.com/anthropics/fermats-last-theorem/blob/aa2d8b34692b16c70f699536
 
 section privateSection
 
-set_option backward.isDefEq.respectTransparency.types false
 
 namespace P2MW.S_HeckeEis_eichlerShimuraMap_heckeULin
 
@@ -287,7 +286,6 @@ section URepresentatives
 
 def unipotentUpper (N : ℕ) (t : ℤ) : Gamma0 N :=
   ⟨⟨!![1, t; 0, 1], by rw [Matrix.det_fin_two_of]; ring⟩, by
-    rw [Gamma0_mem]
     change ((0 : ℤ) : ZMod N) = 0
     exact Int.cast_zero⟩
 

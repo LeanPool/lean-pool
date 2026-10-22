@@ -57,7 +57,6 @@ https://github.com/anthropics/fermats-last-theorem/blob/aa2d8b34692b16c70f699536
 
 section privateSection
 
-set_option backward.isDefEq.respectTransparency.types false
 
 namespace P2MW.S_CuspForm_eq_zero_of_prime_not_dvd_of_qCoeff_eq_zero
 
@@ -162,8 +161,7 @@ theorem exists_inv_cocycle {q R : ℕ} {γ : SL(2, ℤ)}
   have hdetδ : Matrix.det !![a, b₁; c * (q : ℤ), e] = 1 := by
     rw [Matrix.det_fin_two_of]; linear_combination hdet + c * hb₁
   refine ⟨⟨_, hdetδ⟩, ?_, ?_⟩
-  · rw [CongruenceSubgroup.Gamma0_mem]
-    change ((c * (q : ℤ) : ℤ) : ZMod (q * R)) = 0
+  · change ((c * (q : ℤ) : ℤ) : ZMod (q * R)) = 0
     rw [ZMod.intCast_zmod_eq_zero_iff_dvd, hc₁]
     exact ⟨c₁, by push_cast; ring⟩
   · change (γ : Matrix (Fin 2) (Fin 2) ℤ) * FreyPackage.ModMCarrier.diagMatInt q

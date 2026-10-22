@@ -67,7 +67,6 @@ local notation "Δ" => ModularForm.discriminant
 
 section privateSection
 
-set_option backward.isDefEq.respectTransparency.types false
 
 open UpperHalfPlane
 open scoped MatrixGroups

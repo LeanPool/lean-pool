@@ -65,7 +65,6 @@ https://github.com/anthropics/fermats-last-theorem/blob/aa2d8b34692b16c70f699536
 
 section privateSection
 
-set_option backward.isDefEq.respectTransparency.types false
 
 namespace P2MW.S_AlgebraicCurve_hasCanonicalDivisor_of_isCurveOver
 
@@ -918,9 +917,7 @@ theorem gate_adjoin_subset_valuationSubring_of_mem (v : Place K F) {t : F}
 end Gates
 end AlgebraicCurve
 
-p2m_open "IsLocalRing IntermediateField \
-  P2MW.S_AlgebraicCurve_hasCanonicalDivisor_of_isCurveOver.IntermediateField \
-  IntermediateField.algebraAdjoinAdjoin"
+p2m_open "IsLocalRing IntermediateField IntermediateField.algebraAdjoinAdjoin"
 
 namespace AlgebraicCurve
 p2m_export "AlgebraicCurve" "IsCurveOver Place Place.FiniteResidue HasPrincipalDivisors \
@@ -1091,8 +1088,7 @@ theorem valSubringDedekindModel_of_hasSeparatingTranscendental
 end SeparatingTranscendental
 end AlgebraicCurve
 
-p2m_open "IntermediateField \
-  P2MW.S_AlgebraicCurve_hasCanonicalDivisor_of_isCurveOver.IntermediateField"
+p2m_open "IntermediateField"
 
 namespace IntermediateField
 p2m_export "IntermediateField" "toAlgebra inclusion_injective val inclusion ext \

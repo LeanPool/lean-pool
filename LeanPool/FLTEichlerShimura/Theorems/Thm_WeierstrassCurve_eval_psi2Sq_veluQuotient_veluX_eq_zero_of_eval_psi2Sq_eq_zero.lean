@@ -61,13 +61,10 @@ https://github.com/anthropics/fermats-last-theorem/blob/aa2d8b34692b16c70f699536
 
 section privateSection
 
-set_option backward.isDefEq.respectTransparency.types false
 
 namespace P2MW.S_WeierstrassCurve_eval_psi2Sq_veluQuotient_veluX_eq_zero_of_eval_psi2Sq_eq_zero
 
-p2m_open "Polynomial WeierstrassCurve \
-  P2MW.S_WeierstrassCurve_eval_psi2Sq_veluQuotient_veluX_eq_zero_of_eval_psi2Sq_eq_zero.Weierstrass\
-  Curve WeierstrassCurve.Affine WeierstrassCurve.Affine.Point"
+p2m_open "Polynomial WeierstrassCurve WeierstrassCurve.Affine WeierstrassCurve.Affine.Point"
 
 noncomputable section
 

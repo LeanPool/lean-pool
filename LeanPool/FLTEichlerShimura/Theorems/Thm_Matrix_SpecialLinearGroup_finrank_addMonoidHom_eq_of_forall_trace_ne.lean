@@ -60,7 +60,6 @@ https://github.com/anthropics/fermats-last-theorem/blob/aa2d8b34692b16c70f699536
 
 section privateSection
 
-set_option backward.isDefEq.respectTransparency.types false
 
 namespace P2MW.S_Matrix_SpecialLinearGroup_finrank_addMonoidHom_eq_of_forall_trace_ne
 

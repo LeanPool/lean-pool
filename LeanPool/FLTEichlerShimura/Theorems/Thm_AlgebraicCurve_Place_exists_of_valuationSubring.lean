@@ -61,12 +61,10 @@ https://github.com/anthropics/fermats-last-theorem/blob/aa2d8b34692b16c70f699536
 
 section privateSection
 
-set_option backward.isDefEq.respectTransparency.types false
 
 namespace P2MW.S_AlgebraicCurve_Place_exists_of_valuationSubring
 
-p2m_open "AlgebraicCurve P2MW.S_AlgebraicCurve_Place_exists_of_valuationSubring.AlgebraicCurve \
-  IsDedekindDomain"
+p2m_open "AlgebraicCurve IsDedekindDomain"
 open scoped IntermediateField.algebraAdjoinAdjoin
 
 section Crux

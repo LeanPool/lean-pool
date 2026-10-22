@@ -77,7 +77,6 @@ Salvatore Mercuri, Kevin Buzzard). See ATTRIBUTION.md and NOTICE in the source r
 
 section privateSection
 
-set_option backward.isDefEq.respectTransparency.types false
 
 namespace P2MW.S_AlgebraicCurve_tateTraceCompat_of_isSeparable
 
@@ -892,7 +891,6 @@ section
 
 
 p2m_open "AlgebraicCurve P2MW.S_AlgebraicCurve_tateTraceCompat_of_isSeparable.AlgebraicCurve \
-  P2MW.S_AlgebraicCurve_tateTraceCompat_of_isSeparable.ModularCurve.GF24a9RRDx \
   AlgebraicCurve.Place P2MW.S_AlgebraicCurve_tateTraceCompat_of_isSeparable.AlgebraicCurve.Place \
   IsDedekindDomain P2MW.S_AlgebraicCurve_tateTraceCompat_of_isSeparable.IsDedekindDomain"
 
@@ -1056,8 +1054,7 @@ section
 
 
 p2m_open_scoped "WithZero P2MW.S_AlgebraicCurve_tateTraceCompat_of_isSeparable.WithZero \
-  Multiplicative P2MW.S_AlgebraicCurve_tateTraceCompat_of_isSeparable.Multiplicative Topology \
-  P2MW.S_AlgebraicCurve_tateTraceCompat_of_isSeparable.Topology"
+  Multiplicative P2MW.S_AlgebraicCurve_tateTraceCompat_of_isSeparable.Multiplicative Topology"
 p2m_open "Filter P2MW.S_AlgebraicCurve_tateTraceCompat_of_isSeparable.Filter"
 
 namespace IsDedekindDomain
@@ -1107,9 +1104,8 @@ p2m_open "IsDedekindDomain P2MW.S_AlgebraicCurve_tateTraceCompat_of_isSeparable.
   P2MW.S_AlgebraicCurve_tateTraceCompat_of_isSeparable.IsDedekindDomain.HeightOneSpectrum \
   IsLocalRing P2MW.S_AlgebraicCurve_tateTraceCompat_of_isSeparable.IsLocalRing WithZero \
   P2MW.S_AlgebraicCurve_tateTraceCompat_of_isSeparable.WithZero"
-p2m_open "P2MW.S_AlgebraicCurve_tateTraceCompat_of_isSeparable.ModularCurve.Lg37 AlgebraicCurve \
-  P2MW.S_AlgebraicCurve_tateTraceCompat_of_isSeparable.AlgebraicCurve AlgebraicCurve.Place \
-  P2MW.S_AlgebraicCurve_tateTraceCompat_of_isSeparable.AlgebraicCurve.Place"
+p2m_open "AlgebraicCurve P2MW.S_AlgebraicCurve_tateTraceCompat_of_isSeparable.AlgebraicCurve \
+  AlgebraicCurve.Place P2MW.S_AlgebraicCurve_tateTraceCompat_of_isSeparable.AlgebraicCurve.Place"
 
 namespace ModularCurve
 p2m_export "ModularCurve" "KwF4gRRTate.KwF4gRRTateCommFinite KwF4gRRTate.KwF4gRRTateTraceCompat"
@@ -1195,7 +1191,8 @@ def kwF4R1V410a_quotientEquiv (n : ℕ) :
       obtain ⟨y', rfl⟩ := Ideal.Quotient.mk_surjective y
       obtain ⟨x, hx⟩ := kwF4R1V410a_exists_sub_mem_completionIdeal_pow w n y'
       refine ⟨Ideal.Quotient.mk _ x, ?_⟩
-      rw [Ideal.quotientMap_mk]
+      change Ideal.Quotient.mk ((𝔪_W) ^ n) (algebraMap (O_w) (O_W) x) =
+        Ideal.Quotient.mk ((𝔪_W) ^ n) y'
       exact (Ideal.Quotient.mk_eq_mk_iff_sub_mem _ _).mpr (by
         rw [← neg_sub, neg_mem_iff]; exact hx)⟩
 
@@ -3457,8 +3454,6 @@ theorem kwF4R1V384a_semilocalComponent_tmul (v : Place K E) (w' : v.fiber F)
     kwF4R1V384a_semilocalComponent F v w' (c ⊗ₜ[E] g)
       = algebraMap v.adicCompletion w'.1.adicCompletion c
           * algebraMap F w'.1.adicCompletion g := by
-  unfold kwF4R1V384a_semilocalComponent
-  rw [Algebra.TensorProduct.lift_tmul]
   rfl
 
 end SemilocalDiag

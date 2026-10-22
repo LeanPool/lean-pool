@@ -159,7 +159,7 @@ theorem idx_apply (x : X) :
       rw [← hstep, heq]
       exact (isPeriodicPt_minimalPeriod f _).eq
     unfold idx
-    rw [Nat.find_eq_zero]
+    apply (Nat.find_eq_zero (rel_base f hf (f x))).mpr
     show f^[0] (base f hf (f x)) = f x
     rw [hb, iterate_zero_apply, this]
 
@@ -196,8 +196,6 @@ export P2MW.S_Function_exists_eq_apply_sub_of_sum_range_minimalPeriod_eq_zero (s
 end privateSection
 
 public section publicSection
-
-
 
 theorem Function.exists_eq_apply_sub_of_sum_range_minimalPeriod_eq_zero {X : Type*} {A : Type*}
   [AddCommGroup A]

@@ -65,7 +65,6 @@ curves and their modular equations used in the modularity route to Fermat's Last
 noncomputable section
 
 open ModularCurve WeierstrassCurve Polynomial
-open scoped Classical
 
 namespace ModularCurve.TatePoint
 
@@ -93,18 +92,22 @@ variable (E : WeierstrassCurve H) {p : ℕ}
 
 def cycSubGen (G : CycSubH E p) : E.toAffine.Point := Classical.choose G.2
 
+open scoped Classical in
 theorem addOrderOf_cycSubGen (G : CycSubH E p) : addOrderOf (cycSubGen E G) = p :=
   (Classical.choose_spec G.2).1
 
+open scoped Classical in
 theorem coe_eq_zmultiples_cycSubGen (G : CycSubH E p) :
     G.1 = AddSubgroup.zmultiples (cycSubGen E G) :=
   (Classical.choose_spec G.2).2
 
 theorem CycSubH.ext {G G' : CycSubH E p} (h : G.1 = G'.1) : G = G' := Subtype.ext h
 
+open scoped Classical in
 def cycSubSummingSet (G : CycSubH E p) : Finset (H × H) :=
   E.oddOrderSummingSet (cycSubGen E G) ((p - 1) / 2)
 
+open scoped Classical in
 theorem cycSubSummingSet_def (G : CycSubH E p) :
     cycSubSummingSet E G = E.oddOrderSummingSet (cycSubGen E G) ((p - 1) / 2) := rfl
 
@@ -115,12 +118,14 @@ section Root
 variable (E : WeierstrassCurve H) [E.IsElliptic] {p : ℕ} [Fact p.Prime]
 
 theorem isElliptic_veluQuotient_cycSubSummingSet (hp2 : p ≠ 2) (G : CycSubH E p) :
-    (E.veluQuotient (cycSubSummingSet E G)).IsElliptic :=
-  ⟨isUnit_iff_ne_zero.mpr
+    (E.veluQuotient (cycSubSummingSet E G)).IsElliptic := by
+  classical
+  exact ⟨isUnit_iff_ne_zero.mpr
     (WeierstrassCurve.veluQuotient_oddOrderSummingSet_discriminant_ne_zero (L := H) two_ne_zero E
       ((p - 1) / 2) (cycSubGen E G)
       (by rw [addOrderOf_cycSubGen, two_mul_pred_div_two_add_one hp2]))⟩
 
+open scoped Classical in
 theorem isRoot_map_j_veluQuotient_j_of_eq {N : ℕ} [NeZero N] (n : ℕ) (hN : 2 * n + 1 = N)
     (data : ModularPolynomialData N) (Q : E.toAffine.Point) (hQ : addOrderOf Q = N)
     (hΔ : (E.veluQuotient (E.oddOrderSummingSet Q n)).Δ ≠ 0) :
@@ -145,6 +150,7 @@ theorem cycSubRoot_coe (hp2 : p ≠ 2) (data : ModularPolynomialData p) (G : Cyc
 
 theorem cycSubRoot_injective (hp2 : p ≠ 2) (data : ModularPolynomialData p)
     (hj : Transcendental Qbar E.j) : Function.Injective (cycSubRoot E hp2 data) := by
+  classical
   intro G G' h
   have hjj := congrArg Subtype.val h
   simp only [cycSubRoot_coe] at hjj
@@ -175,6 +181,7 @@ theorem exists_addOrderOf_eq_and_eq_zmultiples_iff {A : Type*} [AddCommGroup A] 
     exact ⟨g, by rw [← Nat.card_zmultiples, hg, hcard], hg.symm⟩
 
 theorem natCard_cycSubH [E.IsElliptic] [NeZero p] : Nat.card (CycSubH E p) = dedekindPsi p := by
+  classical
   have h := WeierstrassCurve.natCard_addSubgroup_isAddCyclic_card_eq_dedekindPsi_of_isAlgClosed
     (K := H) E (n := p) (by exact_mod_cast NeZero.ne p)
   have hW : WeierstrassCurve.Affine.baseChange E H = E.toAffine := by
@@ -198,12 +205,12 @@ theorem finite_cycSubH [E.IsElliptic] [NeZero p] : Finite (CycSubH E p) :=
     exact (Nat.lt_of_lt_of_le (Nat.pos_of_ne_zero (NeZero.ne p)) (le_dedekindPsi p (NeZero.ne
       p))).ne')
 
+open scoped Classical in
 def rootsAtEquivMemRootsToFinset [NeZero p] (data : ModularPolynomialData p) (jv : H) :
     RootsAt data jv ≃
       {y : H // y ∈ (data.Φ.map (Polynomial.eval₂RingHom (Int.castRingHom H) jv)).roots.toFinset}
-        := by
-  unfold RootsAt
-  exact Equiv.subtypeEquivRight fun y => by
+        :=
+  Equiv.subtypeEquivRight fun y => by
     rw [Multiset.mem_toFinset, Polynomial.mem_roots ((data.monic.map _).ne_zero)]
 
 theorem finite_rootsAt [NeZero p] (data : ModularPolynomialData p) (jv : H) :
@@ -212,6 +219,7 @@ theorem finite_rootsAt [NeZero p] (data : ModularPolynomialData p) (jv : H) :
 
 theorem natCard_rootsAt_le [NeZero p] (data : ModularPolynomialData p) (jv : H) :
     Nat.card (RootsAt data jv) ≤ dedekindPsi p := by
+  classical
   rw [Nat.card_congr (rootsAtEquivMemRootsToFinset data jv), Nat.card_eq_finsetCard]
   set f := data.Φ.map (Polynomial.eval₂RingHom (Int.castRingHom H) jv) with hf
   calc f.roots.toFinset.card ≤ Multiset.card f.roots := Multiset.toFinset_card_le _

@@ -57,9 +57,7 @@ section privateSection
 
 namespace P2MW.S_WeierstrassCurve_exists_addEquiv_point_of_variableChange_eq
 
-p2m_open "WeierstrassCurve \
-  P2MW.S_WeierstrassCurve_exists_addEquiv_point_of_variableChange_eq.WeierstrassCurve \
-  WeierstrassCurve.Affine WeierstrassCurve.Affine.Point"
+p2m_open "WeierstrassCurve WeierstrassCurve.Affine WeierstrassCurve.Affine.Point"
 
 namespace WeierstrassCurve
 p2m_export "WeierstrassCurve" "Affine Affine.Equation Affine.negY Affine.evalEval_polynomial \

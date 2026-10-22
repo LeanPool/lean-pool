@@ -55,14 +55,10 @@ https://github.com/anthropics/fermats-last-theorem/blob/aa2d8b34692b16c70f699536
 
 section privateSection
 
-set_option backward.isDefEq.respectTransparency.types false
 
 namespace P2MW.S_ModularCurve_exists_isFrickeAut_of_modularPolynomialData
 
-p2m_open "ModularCurve \
-  P2MW.S_ModularCurve_exists_isFrickeAut_of_modularPolynomialData.ModularCurve AlgebraicCurve \
-  IntermediateField \
-  P2MW.S_ModularCurve_exists_isFrickeAut_of_modularPolynomialData.IntermediateField"
+p2m_open "ModularCurve AlgebraicCurve IntermediateField"
 
 noncomputable section
 
@@ -76,6 +72,8 @@ scoped instance IntermediateField.W2B.instIsScalarTowerRatSubtypeMem {L : Type*}
   ℚ L]
     (F : IntermediateField ℚ L) : IsScalarTower ℚ F L :=
   IsScalarTower.of_algebraMap_eq' (by apply RingHom.ext_rat)
+
+open IntermediateField
 
 namespace ModularCurve
 p2m_export "ModularCurve" "IsFrickeAut qExpand jq jqN ModularPolynomialData modularFunctionField \

@@ -55,12 +55,10 @@ https://github.com/anthropics/fermats-last-theorem/blob/aa2d8b34692b16c70f699536
 
 section privateSection
 
-set_option backward.isDefEq.respectTransparency.types false
 
 namespace P2MW.S_ModularCurve_thetaL_jq_mul_eisenstein4_eq_neg_jq_mul_eisenstein6
 
-p2m_open "ModularCurve \
-  P2MW.S_ModularCurve_thetaL_jq_mul_eisenstein4_eq_neg_jq_mul_eisenstein6.ModularCurve"
+p2m_open "ModularCurve"
 
 namespace ModularCurve
 p2m_export "ModularCurve" "eisenstein6 laurentOfInt eisenstein4 dedekindEtaUnitInv \

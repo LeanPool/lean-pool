@@ -14,8 +14,6 @@ module
 public import LeanPool.FLTEichlerShimura.Definitions.Def_ModularCurve_CycSubRootBridgeN
 public import LeanPool.FLTEichlerShimura.Definitions.Def_ModularCurve_SpecialisationBridge
 
-import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
-
 /-!
 # Monodromy equivariance of the level-N dictionary
 
@@ -63,12 +61,6 @@ https://github.com/anthropics/fermats-last-theorem/blob/aa2d8b34692b16c70f699536
 
 section privateSection
 
-set_option backward.isDefEq.respectTransparency.types false
-
-namespace P2MW.S_ModularCurve_TatePoint_b3Act_dictN_of_monodromy
-
-open scoped Classical
-
 noncomputable section
 
 namespace S15CycSubN
@@ -106,6 +98,7 @@ variable (j₀ : Qbar) (m : HahnSeries.monodromy Qbar)
 theorem coordsOrZero_nearTransport (P : (nearCurve j₀).toAffine.Point) :
     (nearTransport j₀ m P).coordsOrZero =
       Prod.map ((m : H ≃ₐ[Qbar] H) : H →+* H) ((m : H ≃ₐ[Qbar] H) : H →+* H) P.coordsOrZero := by
+  classical
   rcases P with _ | ⟨x, y, h⟩
   · have h0 : nearTransport j₀ m (Affine.Point.zero) = Affine.Point.zero :=
       map_zero (nearTransport j₀ m)
@@ -114,6 +107,7 @@ theorem coordsOrZero_nearTransport (P : (nearCurve j₀).toAffine.Point) :
   · rw [nearTransport_some]
     rfl
 
+open scoped Classical in
 theorem oddOrderSummingSet_nearTransport (g : (nearCurve j₀).toAffine.Point) (n : ℕ) :
     (nearCurve j₀).oddOrderSummingSet (nearTransport j₀ m g) n =
       ((nearCurve j₀).oddOrderSummingSet g n).image
@@ -123,6 +117,7 @@ theorem oddOrderSummingSet_nearTransport (g : (nearCurve j₀).toAffine.Point) (
   funext k
   rw [Function.comp_apply, ← coordsOrZero_nearTransport, map_nsmul]
 
+open scoped Classical in
 theorem addOrderOf_nearTransport (P : (nearCurve j₀).toAffine.Point) :
     addOrderOf (nearTransport j₀ m P) = addOrderOf P := by
   rw [addOrderOf_eq_addOrderOf_iff]
@@ -132,6 +127,7 @@ theorem addOrderOf_nearTransport (P : (nearCurve j₀).toAffine.Point) :
     (show nearTransport j₀ m (n • P) = nearTransport j₀ m 0 ↔ n • P = 0 from
       (nearTransport j₀ m).injective.eq_iff)
 
+open scoped Classical in
 theorem fullKernelQuotient_nearTransport (Q : (nearCurve j₀).toAffine.Point) (N : ℕ) :
     (nearCurve j₀).fullKernelQuotient (nearTransport j₀ m Q) N =
       ((nearCurve j₀).fullKernelQuotient Q N).map ((m : H ≃ₐ[Qbar] H) : H →+* H) := by
@@ -166,6 +162,7 @@ theorem fullKernelQuotient_nearTransport (Q : (nearCurve j₀).toAffine.Point) (
       (m : H ≃ₐ[Qbar] H) (x * (nearCurve j₀).veluGx x y - y * (nearCurve j₀).veluGy x y)
     rw [map_sub, map_mul, map_mul, hgx, hgy]
 
+open scoped Classical in
 theorem j_fullKernelQuotient_nearTransport (Q : (nearCurve j₀).toAffine.Point) (N : ℕ)
     (hQ : ((nearCurve j₀).fullKernelQuotient Q N).IsElliptic)
     (hQ' : ((nearCurve j₀).fullKernelQuotient (nearTransport j₀ m Q) N).IsElliptic) :
@@ -183,6 +180,7 @@ theorem b3Act_dictN_of_monodromy (N : ℕ) [NeZero N] (j₀ : Qbar)
       r'.1 = (↑m : H ≃ₐ[Qbar] H) r.1 →
         B3.b3Act j₀ m (dictN N data j₀ hW1 hW2 hW3 r).1 =
           (dictN N data j₀ hW1 hW2 hW3 r').1 := by
+  classical
   intro data m r r' hr
   set G : CycSubH (nearCurve j₀) N := dictN N data j₀ hW1 hW2 hW3 r with hGdef
   set G'' : CycSubH (nearCurve j₀) N := dictN N data j₀ hW1 hW2 hW3 r' with hG''def
@@ -236,16 +234,10 @@ theorem solution (N : ℕ) [NeZero N] (j₀ : Qbar)
 
 end
 
-end S_ModularCurve_TatePoint_b3Act_dictN_of_monodromy
-end P2MW
-export P2MW.S_ModularCurve_TatePoint_b3Act_dictN_of_monodromy (solution)
-
 end privateSection
 
 public section publicSection
 
-
-open scoped Classical
 theorem ModularCurve.TatePoint.b3Act_dictN_of_monodromy (N : ℕ) [NeZero N] (j₀ : Qbar)
     (hW1 : FullKernelIsRootAt N) (hW2 : FullKernelInjAt N) (hW3 : FullKernelDiscAt N) :
     ∀ (data : ModularPolynomialData N) (m : HahnSeries.monodromy Qbar)

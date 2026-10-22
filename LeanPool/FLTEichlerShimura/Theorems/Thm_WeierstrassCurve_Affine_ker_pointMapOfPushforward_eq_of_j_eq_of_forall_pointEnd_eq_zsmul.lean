@@ -30,7 +30,6 @@ import LeanPool.FLTEichlerShimura.Theorems.Thm_WeierstrassCurve_Affine_natCard_k
 import LeanPool.FLTEichlerShimura.Theorems.Thm_WeierstrassCurve_Affine_pointMapOfPushforward_surjective
 import LeanPool.FLTEichlerShimura.Theorems.Thm_WeierstrassCurve_card_torsionBy_eq_sq_of_isAlgClosed
 import LeanPool.FLTEichlerShimura.Theorems.Thm_WeierstrassCurve_nonempty_functionField_algEquiv_of_variableChange
-import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
 
 /-!
 # Kernel rigidity for isogenies out of a curve with End=ℤ
@@ -78,11 +77,6 @@ https://github.com/anthropics/fermats-last-theorem/blob/aa2d8b34692b16c70f699536
 
 
 section privateSection
-
-set_option backward.isDefEq.respectTransparency.types false
-
-namespace P2MW.S_OVERLONG_072510fc
-
 
 noncomputable section
 
@@ -136,20 +130,8 @@ theorem cmm5_dp_natCard_ker_comp {A B C : Type*} [AddCommGroup A] [AddCommGroup 
 end ModularCurve
 
 namespace WeierstrassCurve
-p2m_export "WeierstrassCurve" "Affine map exists_variableChange_of_j_eq IsIntegral toAffine \
-  Affine.Point j Affine.pointMapOfPushforward Affine.IsogenyEndDatum Affine.GenusOnePlaceGate \
-  Affine.AbelTheorem Affine.GenusOnePlaceGate.IsCentred \
-  Affine.Point.exists_zsmul_eq_of_isAlgClosed card_torsionBy_eq_sq_of_isAlgClosed \
-  nonempty_functionField_algEquiv_of_variableChange"
+
 namespace Affine
-p2m_export "WeierstrassCurve.Affine" "map FunctionField Point pointMapOfPushforward \
-  pointMapOfPushforward_apply IsogenyEndDatum IsogenyHomDatum IsogenyHomDatum.ofEndDatum \
-  GenusOnePlaceGate pointClass AbelTheorem genusOnePic0Equiv genusOnePic0Equiv_symm_apply \
-  GenusOnePlaceGate.IsCentred IsogenyHomDatum.exists_pointHom_comp_eq_of_ker_le_of_isCentred \
-  natCard_ker_pointMapOfPushforward_eq_finrankAlong pointMapOfPushforward_surjective \
-  Point.exists_zsmul_eq_of_isAlgClosed IsogenyEndDatum.exists_pointEnd_eq_of_mem_isogenyEndSubring \
-  hasPrincipalDivisors_functionField"
-p2m_open "WeierstrassCurve.Affine~pointHom WeierstrassCurve"
 
 open AlgebraicCurve
 
@@ -368,23 +350,12 @@ theorem pointMapOfPushforward_injective_of_bijective
 
 end IsoInjective
 
-end WeierstrassCurve.Affine
+end Affine
+end WeierstrassCurve
 
 namespace WeierstrassCurve
-p2m_export "WeierstrassCurve" "Affine map exists_variableChange_of_j_eq IsIntegral toAffine \
-  Affine.Point j Affine.pointMapOfPushforward Affine.IsogenyEndDatum Affine.GenusOnePlaceGate \
-  Affine.AbelTheorem Affine.GenusOnePlaceGate.IsCentred \
-  Affine.Point.exists_zsmul_eq_of_isAlgClosed card_torsionBy_eq_sq_of_isAlgClosed \
-  nonempty_functionField_algEquiv_of_variableChange"
+
 namespace Affine
-p2m_export "WeierstrassCurve.Affine" "map FunctionField Point pointMapOfPushforward \
-  pointMapOfPushforward_apply IsogenyEndDatum IsogenyHomDatum IsogenyHomDatum.ofEndDatum \
-  GenusOnePlaceGate pointClass AbelTheorem genusOnePic0Equiv genusOnePic0Equiv_symm_apply \
-  GenusOnePlaceGate.IsCentred IsogenyHomDatum.exists_pointHom_comp_eq_of_ker_le_of_isCentred \
-  natCard_ker_pointMapOfPushforward_eq_finrankAlong pointMapOfPushforward_surjective \
-  Point.exists_zsmul_eq_of_isAlgClosed IsogenyEndDatum.exists_pointEnd_eq_of_mem_isogenyEndSubring \
-  hasPrincipalDivisors_functionField"
-p2m_open "WeierstrassCurve.Affine~pointHom WeierstrassCurve"
 
 open AlgebraicCurve
 
@@ -537,7 +508,8 @@ theorem ker_pointMapOfPushforward_eq_of_j_eq_of_forall_pointEnd_eq_zsmul_a68
         simp only [AddMonoidHom.mem_ker, AddMonoidHom.neg_apply, neg_eq_zero]
   exact hkerβ.symm.trans hkerβ'
 
-end WeierstrassCurve.Affine
+end Affine
+end WeierstrassCurve
 end
 
 universe u
@@ -570,12 +542,6 @@ theorem solution
       = (WeierstrassCurve.Affine.pointMapOfPushforward ι' hι' hfin' hN').ker :=
   WeierstrassCurve.Affine.ker_pointMapOfPushforward_eq_of_j_eq_of_forall_pointEnd_eq_zsmul_a68
     W hNs hEnd V V' ι hι hfin hN ι' hι' hfin' hN' hcard hj
-
-end S_OVERLONG_072510fc
-end P2MW
-export
-  P2MW.S_OVERLONG_072510fc
-  (solution)
 
 end privateSection
 

@@ -56,13 +56,10 @@ https://github.com/anthropics/fermats-last-theorem/blob/aa2d8b34692b16c70f699536
 
 section privateSection
 
-set_option backward.isDefEq.respectTransparency.types false
 
 namespace P2MW.S_WeierstrassCurve_Affine_CoordinateRing_natDegree_norm_eq_finsum_count
 
-p2m_open "IsDedekindDomain \
-  P2MW.S_WeierstrassCurve_Affine_CoordinateRing_natDegree_norm_eq_finsum_count.IsDedekindDomain \
-  Module"
+p2m_open "IsDedekindDomain Module"
 
 namespace IsDedekindDomain
 p2m_export "IsDedekindDomain" "HeightOneSpectrum.quotientEquivPiOfProdEq quotientEquivPiOfProdEq \

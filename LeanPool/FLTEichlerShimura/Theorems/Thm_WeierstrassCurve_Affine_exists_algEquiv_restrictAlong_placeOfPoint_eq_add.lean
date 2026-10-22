@@ -77,7 +77,6 @@ https://github.com/anthropics/fermats-last-theorem/blob/aa2d8b34692b16c70f699536
 
 section privateSection
 
-set_option backward.isDefEq.respectTransparency.types false
 
 namespace P2MW.S_OVERLONG_e431601d
 
@@ -112,19 +111,9 @@ p2m_export "WeierstrassCurve.Affine" "Equation negY evalEval_polynomial equation
   hasPrincipalDivisors_functionField"
 p2m_open "WeierstrassCurve.Affine~genericPoint WeierstrassCurve~Affine.genericPoint"
 
-p2m_open "Polynomial \
-  P2MW.S_OVERLONG_e431601d.Polynomial \
-  IsDedekindDomain \
-  P2MW.S_OVERLONG_e431601d.IsDedekindDomai\
-  n WeierstrassCurve.Affine.CoordinateRing \
-  P2MW.S_OVERLONG_e431601d.WeierstrassCurve\
-  .Affine.CoordinateRing \
-  AlgebraicCurve~Place.ord_nonneg_of_mem~Place.mem_of_ord_nonneg~Place.mem_iff_ord_nonneg~Place.ord\
-  _algebraMap~Place.ord_eq_neg_log_of_valuationSubring_eq \
-  P2MW.S_OVERLONG_e431601d.AlgebraicCurve"
-p2m_open_scoped "Polynomial.Bivariate \
-  P2MW.S_OVERLONG_e431601d.Polynomial.Bivar\
-  iate"
+p2m_open "Polynomial IsDedekindDomain WeierstrassCurve.Affine.CoordinateRing \
+  AlgebraicCurve"
+p2m_open_scoped "Polynomial.Bivariate"
 
 variable {F : Type*} [Field F] {W : Affine F}
 
@@ -446,11 +435,7 @@ p2m_export "WeierstrassCurve.Affine" "Equation negY evalEval_polynomial equation
   algebraMap_mk_C_X_notMem_toValuationSubring_placeOfPoint_zero CoordinateRing.isDedekindDomain \
   CoordinateRing.exists_eq_XYIdeal CoordinateRing.XYIdeal_isMaximal CoordinateRing.XYIdeal_ne_bot \
   hasPrincipalDivisors_functionField"
-p2m_open "WeierstrassCurve.Affine~genericPoint WeierstrassCurve~Affine.genericPoint"
-
-p2m_open "AlgebraicCurve~Place.ord_nonneg_of_mem~Place.mem_of_ord_nonneg~Place.mem_iff_ord_nonneg~P\
-  lace.ord_algebraMap~Place.ord_eq_neg_log_of_valuationSubring_eq \
-  P2MW.S_OVERLONG_e431601d.AlgebraicCurve"
+p2m_open "AlgebraicCurve WeierstrassCurve.Affine~genericPoint WeierstrassCurve~Affine.genericPoint"
 
 scoped instance instHasPrincipalDivisorsFunctionField_s13 {F : Type*} [Field F] [CharZero F]
     {W : Affine F} : HasPrincipalDivisors F W.FunctionField :=
@@ -743,9 +728,7 @@ p2m_open "Polynomial \
   P2MW.S_OVERLONG_e431601d.Polynomial \
   Ideal P2MW.S_OVERLONG_e431601d.Ideal"
 
-p2m_open_scoped "Polynomial.Bivariate \
-  P2MW.S_OVERLONG_e431601d.Polynomial.Bivar\
-  iate"
+p2m_open_scoped "Polynomial.Bivariate"
 
 local macro "C_simp" : tactic =>
   `(tactic| simp only [map_ofNat, C_0, C_1, C_neg, C_add, C_sub, C_mul, C_pow])
@@ -874,14 +857,7 @@ end
 section
 
 
-p2m_open "AlgebraicCurve~Place.ord_nonneg_of_mem~Place.mem_of_ord_nonneg~Place.mem_iff_ord_nonneg~P\
-  lace.ord_algebraMap~Place.ord_eq_neg_log_of_valuationSubring_eq \
-  P2MW.S_OVERLONG_e431601d.AlgebraicCurve \
-  WeierstrassCurve~Affine.genericPoint \
-  P2MW.S_OVERLONG_e431601d.WeierstrassCurv\
-  e WeierstrassCurve.Affine~genericPoint \
-  P2MW.S_OVERLONG_e431601d.WeierstrassCurve\
-  .Affine"
+p2m_open "AlgebraicCurve"
 
 namespace WeierstrassCurve
 p2m_export "WeierstrassCurve" "Affine Affine.negY Affine.slope_of_X_ne Affine.equation_neg a₃ a₁ \
@@ -976,10 +952,7 @@ p2m_open "IsDedekindDomain \
   n Polynomial \
   P2MW.S_OVERLONG_e431601d.Polynomial"
 
-p2m_open_scoped "Polynomial.Bivariate \
-  P2MW.S_OVERLONG_e431601d.Polynomial.Bivar\
-  iate WeierstrassCurve \
-  P2MW.S_OVERLONG_e431601d.WeierstrassCurve"
+p2m_open_scoped "Polynomial.Bivariate WeierstrassCurve P2MW.S_OVERLONG_e431601d.WeierstrassCurve"
 
 namespace WeierstrassCurve
 p2m_export "WeierstrassCurve" "Affine Affine.negY Affine.slope_of_X_ne Affine.equation_neg a₃ a₁ \
@@ -1165,8 +1138,7 @@ p2m_export "AlgebraicCurve" "Pic0.pushforwardAlongHom algebraAlong isScalarTower
   Place.ext Place.ord Place.ord_zero HasPrincipalDivisors Pic0 Place.ofHeightOneSpectrum \
   Place.ofHeightOneSpectrum_toValuationSubring Place.toValuationSubring \
   Place.ofHeightOneSpectrum_injective Place.ord_ofHeightOneSpectrum_ne_zero_iff normFormulaAlong"
-p2m_open "AlgebraicCurve~Place.ord_nonneg_of_mem~Place.mem_of_ord_nonneg~Place.mem_iff_ord_nonneg~P\
-  lace.ord_algebraMap~Place.ord_eq_neg_log_of_valuationSubring_eq"
+p2m_open "AlgebraicCurve"
 
 namespace Place
 p2m_export "AlgebraicCurve.Place" "restrictAlong ramificationIndexAlong ord_restrictAlong \
@@ -1199,8 +1171,7 @@ p2m_export "AlgebraicCurve" "Pic0.pushforwardAlongHom algebraAlong isScalarTower
   Place.ext Place.ord Place.ord_zero HasPrincipalDivisors Pic0 Place.ofHeightOneSpectrum \
   Place.ofHeightOneSpectrum_toValuationSubring Place.toValuationSubring \
   Place.ofHeightOneSpectrum_injective Place.ord_ofHeightOneSpectrum_ne_zero_iff normFormulaAlong"
-p2m_open "AlgebraicCurve~Place.ord_nonneg_of_mem~Place.mem_of_ord_nonneg~Place.mem_iff_ord_nonneg~P\
-  lace.ord_algebraMap~Place.ord_eq_neg_log_of_valuationSubring_eq"
+p2m_open "AlgebraicCurve"
 
 theorem le_exp_neg_one_of_lt_one {x : ℤᵐ⁰} (hx : x < 1) : x ≤ exp (-1 : ℤ) := by
   rcases eq_or_ne x 0 with rfl | hx0
@@ -1219,8 +1190,7 @@ p2m_export "AlgebraicCurve.Place" "restrictAlong ramificationIndexAlong ord_rest
   mem_of_eval_monic_eq_zero isEquiv_adicValuation_of_valuationSubring_eq \
   ord_eq_zero_iff_adicValuation_eq_one ofHeightOneSpectrum_injective \
   ord_ofHeightOneSpectrum_ne_zero_iff"
-p2m_open "AlgebraicCurve.Place~ord_nonneg_of_mem~mem_of_ord_nonneg~mem_iff_ord_nonneg~ord_algebraMa\
-  p~ord_eq_neg_log_of_valuationSubring_eq"
+p2m_open "AlgebraicCurve.Place"
 
 variable {K F : Type*} [Field K] [Field F] [Algebra K F] (v : Place K F)
 
@@ -1283,9 +1253,7 @@ p2m_open "Polynomial \
   IsDedekindDomain \
   P2MW.S_OVERLONG_e431601d.IsDedekindDomain"
 
-p2m_open_scoped "Polynomial.Bivariate \
-  P2MW.S_OVERLONG_e431601d.Polynomial.Bivar\
-  iate"
+p2m_open_scoped "Polynomial.Bivariate"
 
 namespace AlgebraicCurve
 p2m_export "AlgebraicCurve" "Pic0.pushforwardAlongHom algebraAlong isScalarTower_along \
@@ -1795,9 +1763,7 @@ p2m_open "AlgebraicCurve~Place.ord_nonneg_of_mem~Place.mem_of_ord_nonneg~Place.m
   Polynomial \
   P2MW.S_OVERLONG_e431601d.Polynomial"
 
-p2m_open_scoped "nonZeroDivisors Polynomial.Bivariate \
-  P2MW.S_OVERLONG_e431601d.Polynomial.Bivar\
-  iate"
+p2m_open_scoped "nonZeroDivisors Polynomial.Bivariate"
 
 namespace FractionalIdeal
 p2m_export "FractionalIdeal" "mul_mem_mul zero_mem ext map mem_coe num"
@@ -1876,9 +1842,7 @@ p2m_open "Polynomial \
   IsDedekindDomain \
   P2MW.S_OVERLONG_e431601d.IsDedekindDomain"
 
-p2m_open_scoped "Polynomial.Bivariate \
-  P2MW.S_OVERLONG_e431601d.Polynomial.Bivar\
-  iate"
+p2m_open_scoped "Polynomial.Bivariate"
 
 namespace AlgebraicCurve
 p2m_export "AlgebraicCurve" "Pic0.pushforwardAlongHom algebraAlong isScalarTower_along \
@@ -2162,9 +2126,7 @@ p2m_open "Polynomial \
   n WithZero \
   P2MW.S_OVERLONG_e431601d.WithZero"
 
-p2m_open_scoped "Polynomial.Bivariate \
-  P2MW.S_OVERLONG_e431601d.Polynomial.Bivar\
-  iate"
+p2m_open_scoped "Polynomial.Bivariate"
 
 namespace AlgebraicCurve
 p2m_export "AlgebraicCurve" "Pic0.pushforwardAlongHom algebraAlong isScalarTower_along \
@@ -2411,9 +2373,7 @@ p2m_open "Polynomial \
   IsDedekindDomain \
   P2MW.S_OVERLONG_e431601d.IsDedekindDomain"
 
-p2m_open_scoped "Polynomial.Bivariate \
-  P2MW.S_OVERLONG_e431601d.Polynomial.Bivar\
-  iate"
+p2m_open_scoped "Polynomial.Bivariate"
 
 namespace WeierstrassCurve
 p2m_export "WeierstrassCurve" "Affine Affine.negY Affine.slope_of_X_ne Affine.equation_neg a₃ a₁ \
@@ -2503,9 +2463,7 @@ p2m_open "Polynomial \
   IsDedekindDomain \
   P2MW.S_OVERLONG_e431601d.IsDedekindDomain"
 
-p2m_open_scoped "Polynomial.Bivariate \
-  P2MW.S_OVERLONG_e431601d.Polynomial.Bivar\
-  iate"
+p2m_open_scoped "Polynomial.Bivariate"
 
 namespace WeierstrassCurve
 p2m_export "WeierstrassCurve" "Affine Affine.negY Affine.slope_of_X_ne Affine.equation_neg a₃ a₁ \
@@ -2593,15 +2551,10 @@ end AbstractSeam
 end Affine
 end WeierstrassCurve
 
-p2m_open "Polynomial \
-  P2MW.S_OVERLONG_e431601d.Polynomial \
-  Polynomial.Bivariate.Polynomial \
+p2m_open "Polynomial P2MW.S_OVERLONG_e431601d.Polynomial \
   AlgebraicCurve~Place.ord_nonneg_of_mem~Place.mem_of_ord_nonneg~Place.mem_iff_ord_nonneg~Place.ord\
-  _algebraMap~Place.ord_eq_neg_log_of_valuationSubring_eq \
-  P2MW.S_OVERLONG_e431601d.AlgebraicCurve \
-  WeierstrassCurve.Affine~genericPoint \
-  P2MW.S_OVERLONG_e431601d.WeierstrassCurve\
-  .Affine"
+  _algebraMap~Place.ord_eq_neg_log_of_valuationSubring_eq P2MW.S_OVERLONG_e431601d.AlgebraicCurve \
+  WeierstrassCurve.Affine~genericPoint P2MW.S_OVERLONG_e431601d.WeierstrassCurve.Affine"
 
 namespace WeierstrassCurve
 p2m_export "WeierstrassCurve" "Affine Affine.negY Affine.slope_of_X_ne Affine.equation_neg a₃ a₁ \
@@ -2629,10 +2582,7 @@ p2m_open "Polynomial \
   IsDedekindDomain \
   P2MW.S_OVERLONG_e431601d.IsDedekindDomain"
 
-p2m_open_scoped "Polynomial.Bivariate \
-  P2MW.S_OVERLONG_e431601d.Polynomial.Bivar\
-  iate WeierstrassCurve \
-  P2MW.S_OVERLONG_e431601d.WeierstrassCurve"
+p2m_open_scoped "Polynomial.Bivariate WeierstrassCurve P2MW.S_OVERLONG_e431601d.WeierstrassCurve"
 
 namespace WeierstrassCurve
 p2m_export "WeierstrassCurve" "Affine Affine.negY Affine.slope_of_X_ne Affine.equation_neg a₃ a₁ \
@@ -2775,11 +2725,8 @@ p2m_open "Polynomial \
   P2MW.S_OVERLONG_e431601d.WeierstrassCurve\
   .Affine.Point"
 
-p2m_open_scoped "WeierstrassCurve.Affine \
-  P2MW.S_OVERLONG_e431601d.WeierstrassCurve\
-  .Affine Polynomial.Bivariate \
-  P2MW.S_OVERLONG_e431601d.Polynomial.Bivar\
-  iate"
+p2m_open_scoped "WeierstrassCurve.Affine P2MW.S_OVERLONG_e431601d.WeierstrassCurve.Affine \
+  Polynomial.Bivariate"
 
 section
 
@@ -3160,12 +3107,8 @@ p2m_open "Polynomial \
   P2MW.S_OVERLONG_e431601d.WeierstrassCurve\
   .Affine.Point"
 
-p2m_open_scoped "WeierstrassCurve.Affine \
-  P2MW.S_OVERLONG_e431601d.WeierstrassCurve\
-  .Affine Polynomial.Bivariate \
-  P2MW.S_OVERLONG_e431601d.Polynomial.Bivar\
-  iate Pointwise \
-  P2MW.S_OVERLONG_e431601d.Pointwise"
+p2m_open_scoped "WeierstrassCurve.Affine P2MW.S_OVERLONG_e431601d.WeierstrassCurve.Affine \
+  Polynomial.Bivariate Pointwise"
 
 section
 
@@ -3291,9 +3234,7 @@ section
 
 p2m_open "Polynomial \
   P2MW.S_OVERLONG_e431601d.Polynomial"
-p2m_open_scoped "Polynomial.Bivariate \
-  P2MW.S_OVERLONG_e431601d.Polynomial.Bivar\
-  iate nonZeroDivisors"
+p2m_open_scoped "Polynomial.Bivariate nonZeroDivisors"
 
 universe u
 
@@ -3383,9 +3324,7 @@ p2m_open "Polynomial \
   P2MW.S_OVERLONG_e431601d.WeierstrassCurve\
   .Affine.CoordinateRing"
 
-p2m_open_scoped "Polynomial.Bivariate \
-  P2MW.S_OVERLONG_e431601d.Polynomial.Bivar\
-  iate"
+p2m_open_scoped "Polynomial.Bivariate"
 
 namespace WeierstrassCurve
 p2m_export "WeierstrassCurve" "Affine Affine.negY Affine.slope_of_X_ne Affine.equation_neg a₃ a₁ \
@@ -4405,17 +4344,8 @@ end WeierstrassCurve
 end
 end
 
-p2m_open "WeierstrassCurve~Affine.genericPoint" in
-p2m_open "WeierstrassCurve.Affine~genericPoint\
-  " in
-p2m_open "AlgebraicCurve~Place.ord_nonneg_of_mem~Place.mem_of_ord_nonneg~Place.mem_iff_ord_n\
-  onneg~Place.ord_algebraMap~Place.ord_eq_neg_log_of_valuationSubring_eq\
-  " in
-open
-  _root_.P2MW.S_OVERLONG_e431601d.WeierstrassCurve
-  _root_.P2MW.S_OVERLONG_e431601d.WeierstrassCurve.Affine
-  _root_.P2MW.S_OVERLONG_e431601d.AlgebraicCurve
-  in
+open P2MW.S_OVERLONG_e431601d.WeierstrassCurve P2MW.S_OVERLONG_e431601d.WeierstrassCurve.Affine
+  P2MW.S_OVERLONG_e431601d.AlgebraicCurve in
 universe u in
 theorem solution
     {F : Type u} [Field F] [DecidableEq F] [IsAlgClosed F] [CharZero F]

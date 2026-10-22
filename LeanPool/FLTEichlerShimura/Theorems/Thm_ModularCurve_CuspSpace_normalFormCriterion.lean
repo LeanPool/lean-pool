@@ -56,14 +56,12 @@ https://github.com/anthropics/fermats-last-theorem/blob/aa2d8b34692b16c70f699536
 
 section privateSection
 
-set_option backward.isDefEq.respectTransparency.types false
 
 namespace P2MW.S_ModularCurve_CuspSpace_normalFormCriterion
 
 open Matrix Matrix.SpecialLinearGroup OnePoint CongruenceSubgroup
 open scoped MatrixGroups
-p2m_open "ModularCurve P2MW.S_ModularCurve_CuspSpace_normalFormCriterion.ModularCurve \
-  ModularCurve.CuspSpace P2MW.S_ModularCurve_CuspSpace_normalFormCriterion.ModularCurve.CuspSpace"
+p2m_open "ModularCurve ModularCurve.CuspSpace"
 
 noncomputable section
 
@@ -126,6 +124,8 @@ lemma exists_smul_ratPoint_eq {e : ℕ} (he0 : (e : ℤ) ≠ 0) (a a' q r₁ : �
 end ModularCurve.CuspSpace
 
 end
+
+open ModularCurve.CuspSpace
 
 theorem solution {N : ℕ} (hN : N ≠ 0) :
     ModularCurve.CuspSpace.NormalFormCriterion N := by

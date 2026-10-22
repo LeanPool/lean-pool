@@ -61,7 +61,6 @@ https://github.com/anthropics/fermats-last-theorem/blob/aa2d8b34692b16c70f699536
 
 section privateSection
 
-set_option backward.isDefEq.respectTransparency.types false
 
 namespace P2MW.S_ModularCurve_exists_ratCast_qExpansion_slash_of_mem_Gamma0
 
@@ -135,7 +134,8 @@ section Level
 variable {M : ℕ} {k : ℤ}
 
 theorem T_mem_Gamma1 (M : ℕ) : ModularGroup.T ∈ Gamma1 M := by
-  simp [Gamma1_mem, ModularGroup.T]
+  apply (Gamma1_mem M ModularGroup.T).mpr
+  norm_num [ModularGroup.T]
 
 theorem one_mem_strictPeriods (M : ℕ) : (1 : ℝ) ∈ (Γ₁(M)).strictPeriods := by
   rw [Subgroup.strictPeriods_eq_zmultiples_one_of_T_mem (T_mem_Gamma1 M)]
@@ -218,8 +218,10 @@ theorem mul_inv_mem_Gamma1 {γ γ' : SL(2, ℤ)} (hγ : γ ∈ Gamma0 M) (hγ' :
   have hinv : (γ'⁻¹ : SL(2, ℤ)) = ⟨!![γ' 1 1, -(γ' 0 1); -(γ' 1 0), γ' 0 0], by
       rw [Matrix.det_fin_two_of]; have := γ'.det_coe; rw [Matrix.det_fin_two] at this
       linear_combination this⟩ := Matrix.SpecialLinearGroup.SL2_inv_expl γ'
-  rw [Gamma1_mem, hinv]
-  simp only [Matrix.SpecialLinearGroup.coe_mul, Matrix.mul_apply, Fin.sum_univ_two,
+  rw [Gamma1_mem]
+  simp only [Matrix.SpecialLinearGroup.coe_mul]
+  rw [hinv]
+  simp only [Matrix.mul_apply, Fin.sum_univ_two,
     Matrix.of_apply, Matrix.cons_val', Matrix.cons_val_zero, Matrix.cons_val_one,
     Matrix.cons_val_fin_one, Matrix.empty_val', Int.cast_add, Int.cast_mul, Int.cast_neg, hc, hc',
     Fin.isValue]

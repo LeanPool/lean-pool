@@ -71,11 +71,10 @@ https://github.com/anthropics/fermats-last-theorem/blob/aa2d8b34692b16c70f699536
 
 section privateSection
 
-set_option backward.isDefEq.respectTransparency.types false
 
 namespace P2MW.S_ModularCurve_eq_cuspInftyBar_or_eq_cuspZeroBar
 
-p2m_open "ModularCurve~dedekindPsi_prime AlgebraicCurve IntermediateField"
+p2m_open "ModularCurve AlgebraicCurve IntermediateField"
 open scoped Polynomial
 
 noncomputable section

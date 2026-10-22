@@ -75,7 +75,6 @@ set_option synthInstance.maxHeartbeats 80000
 
 section privateSection
 
-set_option backward.isDefEq.respectTransparency.types false
 
 local notation "ℚ̄" => AlgebraicClosure ℚ
 

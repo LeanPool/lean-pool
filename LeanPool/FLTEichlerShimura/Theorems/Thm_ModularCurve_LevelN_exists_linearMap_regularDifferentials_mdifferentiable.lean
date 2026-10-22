@@ -69,7 +69,6 @@ https://github.com/anthropics/fermats-last-theorem/blob/aa2d8b34692b16c70f699536
 
 section privateSection
 
-set_option backward.isDefEq.respectTransparency.types false
 
 namespace P2MW.S_ModularCurve_LevelN_exists_linearMap_regularDifferentials_mdifferentiable
 
@@ -360,7 +359,6 @@ section Germs
 variable (K : Type*) [Field K] [Algebra ℂ K] [Algebra (ring N) K] [IsScalarTower ℂ (ring N) K]
   [IsFractionRing (ring N) K]
 
-@[nolint unusedArguments]
 def Gm (_N : ℕ) (_K : Type*) : Type := Filter.Germ 𝓕 ℂ
 
 scoped instance instCommRingGm : CommRing (Gm N K) := inferInstanceAs (CommRing (Filter.Germ 𝓕 ℂ))

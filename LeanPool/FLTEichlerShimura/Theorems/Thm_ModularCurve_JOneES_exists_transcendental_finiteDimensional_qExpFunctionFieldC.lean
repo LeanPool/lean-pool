@@ -341,14 +341,15 @@ abbrev Cos (Γ : Subgroup SL(2, ℤ)) : Type := ↥𝒮ℒ ⧸ (Γ : Subgroup (G
 noncomputable scoped instance : Fintype (Cos Γ) := Fintype.ofFinite _
 
 omit [Γ.FiniteIndex] in
-set_option backward.isDefEq.respectTransparency.types false in
 theorem one_mem_strictPeriods (hT : ModularGroup.T ∈ Γ) :
     (1 : ℝ) ∈ (Γ : Subgroup (GL (Fin 2) ℝ)).strictPeriods := by
   rw [Subgroup.mem_strictPeriods_iff]
   refine ⟨ModularGroup.T, hT, ?_⟩
+  apply Units.ext
+  rw [Matrix.SpecialLinearGroup.mapGL_coe_matrix, Matrix.SpecialLinearGroup.map_apply_coe]
   ext i j
-  fin_cases i <;> fin_cases j <;>
-  simp [ModularGroup.T, Matrix.GeneralLinearGroup.upperRightHom]
+  fin_cases i <;> fin_cases j <;> norm_num [ModularGroup.T,
+    Matrix.GeneralLinearGroup.upperRightHom]
 
 section Linear
 

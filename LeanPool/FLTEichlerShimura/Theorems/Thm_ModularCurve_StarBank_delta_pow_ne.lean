@@ -56,7 +56,6 @@ https://github.com/anthropics/fermats-last-theorem/blob/aa2d8b34692b16c70f699536
 
 section privateSection
 
-set_option backward.isDefEq.respectTransparency.types false
 
 namespace P2MW.S_ModularCurve_StarBank_delta_pow_ne
 
@@ -64,7 +63,7 @@ noncomputable section
 
 open scoped PowerSeries.WithPiTopology
 
-p2m_open "ModularCurve P2MW.S_ModularCurve_StarBank_delta_pow_ne.ModularCurve"
+p2m_open "ModularCurve"
 
 namespace ModularCurve
 p2m_export "ModularCurve" "qExpand qExpand_coeff_mul qExpand_coeff_of_not_dvd qExpand_single \

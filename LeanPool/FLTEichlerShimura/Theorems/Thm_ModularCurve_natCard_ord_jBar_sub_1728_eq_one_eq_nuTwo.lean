@@ -86,15 +86,12 @@ https://github.com/anthropics/fermats-last-theorem/blob/aa2d8b34692b16c70f699536
 
 section privateSection
 
-set_option backward.isDefEq.respectTransparency.types false
 
 namespace P2MW.S_ModularCurve_natCard_ord_jBar_sub_1728_eq_one_eq_nuTwo
 
 noncomputable section
 
-p2m_open "AlgebraicCurve ModularCurve \
-  P2MW.S_ModularCurve_natCard_ord_jBar_sub_1728_eq_one_eq_nuTwo.ModularCurve IsDedekindDomain \
-  IsLocalRing"
+p2m_open "AlgebraicCurve ModularCurve IsDedekindDomain IsLocalRing"
 
 section Generic
 
@@ -704,7 +701,6 @@ private theorem DOM_fieldRangeEquiv_apply {E : Type*} [Field E] [Algebra ℚ E]
     (f : E →ₐ[ℚ] AlgebraicClosure ℚ) (z : E) :
     ((DOM_fieldRangeEquiv f z : f.fieldRange) : AlgebraicClosure ℚ) = f z := rfl
 
-set_option backward.isDefEq.respectTransparency false in
 private theorem DOM_exists_aut_comp_eq {E : Type*} [Field E] [Algebra ℚ E]
     (χ₀ σ₀ : E →ₐ[ℚ] AlgebraicClosure ℚ) :
     ∃ σ : AlgebraicClosure ℚ ≃ₐ[ℚ] AlgebraicClosure ℚ, ∀ z : E, σ (χ₀ z) = σ₀ z := by
@@ -774,7 +770,6 @@ private theorem DOM_jBar_ne_algebraMap (j₀ : AlgebraicClosure ℚ) :
   have hψ := ModularCurve.dedekindPsi_pos N (NeZero.ne N)
   omega
 
-set_option backward.isDefEq.respectTransparency false in
 private theorem DOM_isIntegral_qbar (c : AlgebraicClosure ℚ) : IsIntegral ℚ c :=
   isAlgebraic_iff_isIntegral.mp (Algebra.IsAlgebraic.isAlgebraic (R := ℚ) c)
 
@@ -1153,7 +1148,9 @@ private theorem CNT_jLinePlace1728_eq : jLinePlace1728 = CNT_base 1728 := rfl
 private theorem CNT_jLinePlaceZero_eq : jLinePlaceZero = CNT_base 0 := rfl
 
 private theorem CNT_deg_base (c : ℚ) : (CNT_base c).deg = 1 := by
-  rw [CNT_base, Place.deg_congrRingEquiv, deg_placeOfPoint]
+  exact (Place.deg_congrRingEquiv jLineRingEquiv
+    (RingHom.map_rat_algebraMap jLineRingEquiv.toRingHom) (placeOfPoint ℚ c)).trans
+      (deg_placeOfPoint ℚ c)
 
 private theorem CNT_jLineRingEquiv_X_sub (c : ℚ) :
     jLineRingEquiv ((RatFunc.X : RatFunc ℚ) - algebraMap ℚ (RatFunc ℚ) c) =
@@ -1163,7 +1160,10 @@ private theorem CNT_jLineRingEquiv_X_sub (c : ℚ) :
   exact RingHom.map_rat_algebraMap jLineRingEquiv.toRingHom c
 
 private theorem CNT_ord_base (c : ℚ) : (CNT_base c).ord (jGen - algebraMap ℚ ℚ⟮jq⟯ c) = 1 := by
-  rw [← CNT_jLineRingEquiv_X_sub, CNT_base, Place.ord_congrRingEquiv, CNT_ord_placeOfPoint]
+  rw [← CNT_jLineRingEquiv_X_sub]
+  exact (Place.ord_congrRingEquiv jLineRingEquiv
+    (RingHom.map_rat_algebraMap jLineRingEquiv.toRingHom) (placeOfPoint ℚ c)
+    (RatFunc.X - algebraMap ℚ (RatFunc ℚ) c)).trans (CNT_ord_placeOfPoint c)
 
 private theorem CNT_eq_base_of_ord_pos (q : Place ℚ ℚ⟮jq⟯) (c : ℚ)
     (h : 0 < q.ord (jGen - algebraMap ℚ ℚ⟮jq⟯ c)) : q = CNT_base c := by

@@ -77,7 +77,6 @@ https://github.com/anthropics/fermats-last-theorem/blob/aa2d8b34692b16c70f699536
 
 section privateSection
 
-set_option backward.isDefEq.respectTransparency.types false
 
 
 open AlgebraicCurve Place WeierstrassCurve Polynomial IsDedekindDomain Affine CoordinateRing
@@ -1133,8 +1132,7 @@ variable {W : WeierstrassCurve F} [W.toAffine.IsElliptic]
 variable (hp3 : 3 ≤ p) (hpodd : Odd p) (hord : addOrderOf Q = p)
 
 local notation "S_Q" => W.oddOrderSummingSet Q ((p - 1) / 2)
-set_option quotPrecheck false in
-local notation "V'" => (W.veluQuotient (W.oddOrderSummingSet Q ((p - 1) / 2))).toAffine
+local notation "V'" => WeierstrassCurve.toAffine (W.veluQuotient S_Q)
 local notation "ι" => kw_oddOrderSummingSetFunctionFieldHom_odd (W := W) hp3 hpodd hord
 
 include hp3 hpodd hord in
@@ -1286,8 +1284,7 @@ variable {W : WeierstrassCurve F} [W.toAffine.IsElliptic]
 variable (hp3 : 3 ≤ p) (hpodd : Odd p) (hord : addOrderOf Q = p)
 
 local notation "S_Q" => W.oddOrderSummingSet Q ((p - 1) / 2)
-set_option quotPrecheck false in
-local notation "V'" => (W.veluQuotient (W.oddOrderSummingSet Q ((p - 1) / 2))).toAffine
+local notation "V'" => WeierstrassCurve.toAffine (W.veluQuotient S_Q)
 local notation "ι" => kw_oddOrderSummingSetFunctionFieldHom_odd (W := W) hp3 hpodd hord
 local notation "hι" =>
   kw_oddOrderSummingSetFunctionFieldHom_odd_isIntegral (W := W) hp3 hpodd hord

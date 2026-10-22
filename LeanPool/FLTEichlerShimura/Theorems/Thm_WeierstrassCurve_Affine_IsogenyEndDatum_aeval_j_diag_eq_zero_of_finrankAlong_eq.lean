@@ -82,7 +82,6 @@ https://github.com/anthropics/fermats-last-theorem/blob/aa2d8b34692b16c70f699536
 
 section privateSection
 
-set_option backward.isDefEq.respectTransparency.types false
 
 namespace P2MW.S_OVERLONG_e162e25a
 
@@ -263,8 +262,7 @@ end ModularCurve
 section
 open Complex Filter Set
 
-p2m_open_scoped "PeriodPair \
-  P2MW.S_OVERLONG_e162e25a.PeriodPair"
+p2m_open_scoped "PeriodPair"
 
 namespace PeriodPair
 p2m_export "PeriodPair" "derivWeierstrassP_neg weierstrassP_neg lattice weierstrassP_add_coe \

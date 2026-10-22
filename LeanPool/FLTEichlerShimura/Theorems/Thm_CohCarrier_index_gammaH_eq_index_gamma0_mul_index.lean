@@ -61,7 +61,6 @@ https://github.com/anthropics/fermats-last-theorem/blob/aa2d8b34692b16c70f699536
 
 section privateSection
 
-set_option backward.isDefEq.respectTransparency.types false
 
 namespace P2MW.S_CohCarrier_index_gammaH_eq_index_gamma0_mul_index
 

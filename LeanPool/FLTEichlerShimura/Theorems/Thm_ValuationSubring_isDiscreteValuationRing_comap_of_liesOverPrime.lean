@@ -68,7 +68,6 @@ https://github.com/anthropics/fermats-last-theorem/blob/aa2d8b34692b16c70f699536
 
 section privateSection
 
-set_option backward.isDefEq.respectTransparency.types false
 
 namespace P2MW.S_ValuationSubring_isDiscreteValuationRing_comap_of_liesOverPrime
 
@@ -79,7 +78,6 @@ local notation "Qb" => AlgebraicClosure ℚ
 
 namespace ComapDVR
 
-set_option backward.isDefEq.respectTransparency false in
 set_option synthInstance.maxHeartbeats 800000 in
 theorem comap_isDiscreteValuationRing (L : IntermediateField ℚ Qb)
     [FiniteDimensional ℚ L] (A : ValuationSubring Qb) (q : ℕ) (hq_prime : q.Prime)

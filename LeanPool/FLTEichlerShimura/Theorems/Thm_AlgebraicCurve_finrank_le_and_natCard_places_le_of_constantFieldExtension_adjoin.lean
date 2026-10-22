@@ -75,7 +75,6 @@ set_option maxHeartbeats 1600000
 
 section privateSection
 
-set_option backward.isDefEq.respectTransparency.types false
 
 namespace P2MW.S_AlgebraicCurve_finrank_le_and_natCard_places_le_of_constantFieldExtension_adjoin
 

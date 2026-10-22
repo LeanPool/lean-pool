@@ -71,7 +71,6 @@ https://github.com/anthropics/fermats-last-theorem/blob/aa2d8b34692b16c70f699536
 
 section privateSection
 
-set_option backward.isDefEq.respectTransparency.types false
 
 namespace P2MW.S_ModularCurve_LevelN_twelve_mul_add_mul_index_le_genusFF
 
@@ -89,7 +88,7 @@ p2m_export "ModularCurve.LevelN" "jAnalytic ring jGen \
   exists_monoidHom_algEquiv_fixedField_eq_adjoin exists_place_ord_sub_pos_forall_smul_eq \
   exists_place_ord_neg_forall_smul_eq"
 namespace GenusBound
-p2m_open "ModularCurve.LevelN ModularCurve~jGen"
+p2m_open "ModularCurve.LevelN ModularCurve"
 
 def rho : ℍ := ⟨-1 / 2 + (Real.sqrt 3 / 2 : ℝ) * Complex.I, by
   simp only [Complex.add_im, Complex.div_ofNat_im, Complex.neg_im, Complex.one_im, neg_zero,

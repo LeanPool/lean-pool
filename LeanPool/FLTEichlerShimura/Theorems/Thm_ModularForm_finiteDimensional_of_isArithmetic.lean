@@ -59,15 +59,11 @@ https://github.com/anthropics/fermats-last-theorem/blob/aa2d8b34692b16c70f699536
 
 section privateSection
 
-set_option backward.isDefEq.respectTransparency.types false
 
 namespace P2MW.S_ModularForm_finiteDimensional_of_isArithmetic
 
-p2m_open "UpperHalfPlane ModularForm \
-  P2MW.S_ModularForm_finiteDimensional_of_isArithmetic.ModularForm SlashInvariantForm \
-  Matrix.SpecialLinearGroup ConjAct"
-p2m_open_scoped "MatrixGroups ModularForm \
-  P2MW.S_ModularForm_finiteDimensional_of_isArithmetic.ModularForm Topology Manifold Pointwise"
+p2m_open "UpperHalfPlane ModularForm SlashInvariantForm Matrix.SpecialLinearGroup ConjAct"
+p2m_open_scoped "MatrixGroups ModularForm Topology Manifold Pointwise"
 
 noncomputable section
 

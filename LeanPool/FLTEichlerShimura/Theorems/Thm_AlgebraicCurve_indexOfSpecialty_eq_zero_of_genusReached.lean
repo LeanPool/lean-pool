@@ -66,7 +66,6 @@ https://github.com/anthropics/fermats-last-theorem/blob/aa2d8b34692b16c70f699536
 
 section privateSection
 
-set_option backward.isDefEq.respectTransparency.types false
 
 namespace P2MW.S_AlgebraicCurve_indexOfSpecialty_eq_zero_of_genusReached
 
@@ -135,7 +134,7 @@ end AlgebraicCurve
 
 noncomputable section
 
-p2m_open "Module IsLocalRing Module.IsLocalRing IsDedekindDomain WithZero"
+p2m_open "Module IsLocalRing IsDedekindDomain WithZero"
 
 namespace AlgebraicCurve
 p2m_export "AlgebraicCurve" "Place Place.coe_algebraMap Divisor Divisor.degree \
@@ -388,7 +387,7 @@ end
 
 noncomputable section
 
-p2m_open "Module IsLocalRing Module.IsLocalRing IsDedekindDomain WithZero"
+p2m_open "Module IsLocalRing IsDedekindDomain WithZero"
 
 namespace Submodule
 p2m_export "Submodule" "quotEquivOfEq Quotient.eq inclusion mk mem_bot subtype_injective \

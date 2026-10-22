@@ -64,14 +64,10 @@ https://github.com/anthropics/fermats-last-theorem/blob/aa2d8b34692b16c70f699536
 
 section privateSection
 
-set_option backward.isDefEq.respectTransparency.types false
 
 namespace P2MW.S_WeierstrassCurve_Affine_valuation_placeOf_smul_of_algEquiv
 
-p2m_open "Polynomial WeierstrassCurve \
-  P2MW.S_WeierstrassCurve_Affine_valuation_placeOf_smul_of_algEquiv.WeierstrassCurve \
-  WeierstrassCurve.Affine \
-  P2MW.S_WeierstrassCurve_Affine_valuation_placeOf_smul_of_algEquiv.WeierstrassCurve.Affine"
+p2m_open "Polynomial WeierstrassCurve WeierstrassCurve.Affine"
 open scoped Polynomial.Bivariate
 open scoped nonZeroDivisors
 
@@ -226,7 +222,9 @@ theorem solution {F K : Type*} [Field F] [Field K] [Algebra F K] [DecidableEq K]
   have hv : (placeOf W K (σ • P) hσP).comap (φ : (W⁄K).CoordinateRing →+* (W⁄K).CoordinateRing)
       φ.surjective = placeOf W K P hP := by
     apply IsDedekindDomain.HeightOneSpectrum.ext
-    rw [IsDedekindDomain.HeightOneSpectrum.comap_asIdeal, placeOf_asIdeal, placeOf_asIdeal, xc_smul
+    change Ideal.comap (φ : (W⁄K).CoordinateRing →+* (W⁄K).CoordinateRing)
+      (placeOf W K (σ • P) hσP).asIdeal = (placeOf W K P hP).asIdeal
+    rw [placeOf_asIdeal, placeOf_asIdeal, xc_smul
       W σ,
       yc_smul W σ, ← galRing_map_XYIdeal W σ (φ : (W⁄K).CoordinateRing →+* (W⁄K).CoordinateRing) hφ]
     exact Ideal.comap_map_of_bijective _ φ.bijective

@@ -62,7 +62,6 @@ set_option maxHeartbeats 1600000
 
 section privateSection
 
-set_option backward.isDefEq.respectTransparency.types false
 
 namespace P2MW.S_HeckeEis_le_finrank_fixed_S_and_ST_binaryFormRepSL
 

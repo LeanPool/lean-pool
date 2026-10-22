@@ -62,14 +62,13 @@ https://github.com/anthropics/fermats-last-theorem/blob/aa2d8b34692b16c70f699536
 
 section privateSection
 
-set_option backward.isDefEq.respectTransparency.types false
 
 namespace P2MW.S_PeriodPair_lattice_eq_of_g2_eq_of_g3_eq
 
 noncomputable section
 
 open Complex Filter Topology
-p2m_open_scoped "PeriodPair P2MW.S_PeriodPair_lattice_eq_of_g2_eq_of_g3_eq.PeriodPair"
+p2m_open_scoped "PeriodPair"
 
 namespace PeriodPair
 p2m_export "PeriodPair" "analyticAt_weierstrassPExcept isClosed_lattice \

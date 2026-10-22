@@ -76,7 +76,6 @@ https://github.com/anthropics/fermats-last-theorem/blob/aa2d8b34692b16c70f699536
 
 section privateSection
 
-set_option backward.isDefEq.respectTransparency.types false
 
 namespace P2MW.S_OVERLONG_7915af21
 
@@ -106,18 +105,9 @@ p2m_export "WeierstrassCurve.Affine" "Equation negY CoordinateRing.smul_basis_eq
   hasPrincipalDivisors_functionField IsogenyEndDatum.exists_pointEnd_eq_add"
 p2m_open "WeierstrassCurve.Affine WeierstrassCurve"
 
-p2m_open "Polynomial \
-  P2MW.S_OVERLONG_7915af21.Polyno\
-  mial IsDedekindDomain \
-  P2MW.S_OVERLONG_7915af21.IsDede\
-  kindDomain WeierstrassCurve.Affine.CoordinateRing \
-  P2MW.S_OVERLONG_7915af21.Weiers\
-  trassCurve.Affine.CoordinateRing AlgebraicCurve~Place.ord_nonneg_of_mem~Place.mem_of_ord_nonneg \
-  P2MW.S_OVERLONG_7915af21.Algebr\
-  aicCurve"
-p2m_open_scoped "Polynomial.Bivariate \
-  P2MW.S_OVERLONG_7915af21.Polyno\
-  mial.Bivariate"
+p2m_open "Polynomial IsDedekindDomain WeierstrassCurve.Affine.CoordinateRing \
+  AlgebraicCurve~Place.ord_nonneg_of_mem~Place.mem_of_ord_nonneg"
+p2m_open_scoped "Polynomial.Bivariate"
 
 variable {F : Type*} [Field F] {W : Affine F}
 
@@ -435,9 +425,7 @@ p2m_export "WeierstrassCurve.Affine" "Equation negY CoordinateRing.smul_basis_eq
   hasPrincipalDivisors_functionField IsogenyEndDatum.exists_pointEnd_eq_add"
 p2m_open "WeierstrassCurve.Affine WeierstrassCurve"
 
-p2m_open "AlgebraicCurve~Place.ord_nonneg_of_mem~Place.mem_of_ord_nonneg \
-  P2MW.S_OVERLONG_7915af21.Algebr\
-  aicCurve"
+p2m_open "AlgebraicCurve~Place.ord_nonneg_of_mem~Place.mem_of_ord_nonneg"
 
 scoped instance instHasPrincipalDivisorsFunctionField_s13 {F : Type*} [Field F] [CharZero F]
     {W : Affine F} : HasPrincipalDivisors F W.FunctionField :=
@@ -1071,13 +1059,7 @@ theorem inertiaDegAlong_comp (hφ : φ.toRingHom.IsIntegral) (hχ : χ.toRingHom
       w.ResidueField W.ResidueField := by
     refine IsScalarTower.of_algebraMap_eq fun x => ?_
     obtain ⟨a, rfl⟩ := IsLocalRing.residue_surjective x
-    change restrictResidueMapAlong (χ.comp φ) hχφ W (IsLocalRing.residue _ a)
-      = restrictResidueMapAlong χ hχ W
-          (restrictResidueMapAlong φ hφ w (IsLocalRing.residue _ a))
-    rw [restrictResidueMapAlong, restrictResidueMapAlong, restrictResidueMapAlong,
-      IsLocalRing.ResidueField.map_residue, IsLocalRing.ResidueField.map_residue,
-      IsLocalRing.ResidueField.map_residue]
-    exact congrArg _ (Subtype.ext rfl)
+    rfl
   change Module.finrank (W.restrictAlong (χ.comp φ) hχφ).ResidueField W.ResidueField
     = Module.finrank w.ResidueField W.ResidueField
         * Module.finrank (W.restrictAlong (χ.comp φ) hχφ).ResidueField w.ResidueField
@@ -1206,9 +1188,7 @@ p2m_open "Polynomial \
   P2MW.S_OVERLONG_7915af21.IsDede\
   kindDomain"
 
-p2m_open_scoped "Polynomial.Bivariate \
-  P2MW.S_OVERLONG_7915af21.Polyno\
-  mial.Bivariate"
+p2m_open_scoped "Polynomial.Bivariate"
 
 namespace AlgebraicCurve
 p2m_export "AlgebraicCurve" "Pic0.pushforwardAlongDegZero Pic0.coe_pushforwardAlongDegZero \
@@ -1654,9 +1634,7 @@ p2m_open "Polynomial \
   P2MW.S_OVERLONG_7915af21.IsDede\
   kindDomain"
 
-p2m_open_scoped "Polynomial.Bivariate \
-  P2MW.S_OVERLONG_7915af21.Polyno\
-  mial.Bivariate"
+p2m_open_scoped "Polynomial.Bivariate"
 
 namespace AlgebraicCurve
 p2m_export "AlgebraicCurve" "Pic0.pushforwardAlongDegZero Pic0.coe_pushforwardAlongDegZero \
@@ -1899,9 +1877,7 @@ p2m_open "Polynomial \
   P2MW.S_OVERLONG_7915af21.Weiers\
   trassCurve.Affine"
 
-p2m_open_scoped "Polynomial.Bivariate \
-  P2MW.S_OVERLONG_7915af21.Polyno\
-  mial.Bivariate"
+p2m_open_scoped "Polynomial.Bivariate"
 
 universe u
 
@@ -2064,9 +2040,7 @@ p2m_open "Polynomial \
   P2MW.S_OVERLONG_7915af21.IsDede\
   kindDomain"
 
-p2m_open_scoped "Polynomial.Bivariate \
-  P2MW.S_OVERLONG_7915af21.Polyno\
-  mial.Bivariate"
+p2m_open_scoped "Polynomial.Bivariate"
 
 namespace WeierstrassCurve
 p2m_export "WeierstrassCurve" "Affine isUnit_Δ a₃ a₁ map mk a₄ Jacobian a₂ a₆ reduction IsIntegral \
@@ -2144,9 +2118,7 @@ p2m_open "Polynomial \
   P2MW.S_OVERLONG_7915af21.IsDede\
   kindDomain"
 
-p2m_open_scoped "Polynomial.Bivariate \
-  P2MW.S_OVERLONG_7915af21.Polyno\
-  mial.Bivariate"
+p2m_open_scoped "Polynomial.Bivariate"
 
 namespace WeierstrassCurve
 p2m_export "WeierstrassCurve" "Affine isUnit_Δ a₃ a₁ map mk a₄ Jacobian a₂ a₆ reduction IsIntegral \
@@ -2250,14 +2222,10 @@ end Cases
 end AbstractSeam
 end WeierstrassCurve.Affine
 
-p2m_open "Polynomial \
-  P2MW.S_OVERLONG_7915af21.Polyno\
-  mial Polynomial.Bivariate.Polynomial \
+p2m_open "Polynomial P2MW.S_OVERLONG_7915af21.Polynomial \
   AlgebraicCurve~Place.ord_nonneg_of_mem~Place.mem_of_ord_nonneg \
-  P2MW.S_OVERLONG_7915af21.Algebr\
-  aicCurve WeierstrassCurve.Affine \
-  P2MW.S_OVERLONG_7915af21.Weiers\
-  trassCurve.Affine"
+  P2MW.S_OVERLONG_7915af21.AlgebraicCurve WeierstrassCurve.Affine \
+  P2MW.S_OVERLONG_7915af21.WeierstrassCurve.Affine"
 
 namespace WeierstrassCurve
 p2m_export "WeierstrassCurve" "Affine isUnit_Δ a₃ a₁ map mk a₄ Jacobian a₂ a₆ reduction IsIntegral \
@@ -2277,11 +2245,8 @@ p2m_open "Polynomial \
   P2MW.S_OVERLONG_7915af21.Weiers\
   trassCurve.Affine.Point"
 
-p2m_open_scoped "WeierstrassCurve.Affine \
-  P2MW.S_OVERLONG_7915af21.Weiers\
-  trassCurve.Affine Polynomial.Bivariate \
-  P2MW.S_OVERLONG_7915af21.Polyno\
-  mial.Bivariate"
+p2m_open_scoped "WeierstrassCurve.Affine P2MW.S_OVERLONG_7915af21.WeierstrassCurve.Affine \
+  Polynomial.Bivariate"
 
 section
 
@@ -2368,9 +2333,7 @@ p2m_open "Polynomial \
   P2MW.S_OVERLONG_7915af21.AddMon\
   oid.End"
 
-p2m_open_scoped "Polynomial.Bivariate \
-  P2MW.S_OVERLONG_7915af21.Polyno\
-  mial.Bivariate"
+p2m_open_scoped "Polynomial.Bivariate"
 
 namespace ModularCurve
 namespace Es1a1

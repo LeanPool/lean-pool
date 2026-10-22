@@ -70,7 +70,6 @@ https://github.com/anthropics/fermats-last-theorem/blob/aa2d8b34692b16c70f699536
 
 section privateSection
 
-set_option backward.isDefEq.respectTransparency.types false
 
 namespace P2MW.S_OVERLONG_f6c119b3
 
@@ -79,9 +78,9 @@ p2m_export "ModularCurve" "intSeriesC intFormRatiosC qExpFunctionFieldC intFormR
   coeffMap_single coeffEmb coeffEmb_coeff laurentBaseChange jqModC coeffMap_ofPowerSeries \
   finiteDimensional_and_finrank_adjoin_jqModC_qExpFunctionFieldC_le_index transcendental_jqModC"
 namespace FullnessGamma1
-p2m_open "ModularCurve~coeffEmb_injective"
+p2m_open "ModularCurve"
 
-p2m_open "ModularCurve~coeffEmb_injective \
+p2m_open "ModularCurve \
   P2MW.S_OVERLONG_f6c119b3.ModularCurve IntermediateField"
 
 theorem finrank_adjoin_eq_relfinrank {K E : Type*} [Field K] [Field E] [Algebra K E]
@@ -184,7 +183,7 @@ end BaseChange
 
 end ModularCurve.FullnessGamma1
 
-p2m_open "ModularCurve~coeffEmb_injective \
+p2m_open "ModularCurve \
   P2MW.S_OVERLONG_f6c119b3.ModularCurve CongruenceSubgroup AlgebraicCurve"
 open scoped MatrixGroups
 

@@ -62,7 +62,6 @@ set_option maxHeartbeats 3200000
 
 section privateSection
 
-set_option backward.isDefEq.respectTransparency.types false
 
 namespace P2MW.S_IsIntegral_mem_span_of_adjoin_simple_constants_transcendental
 
@@ -406,7 +405,7 @@ theorem exists_clear_denominator (htS : t ∈ S) {a : K}
 variable {F t}
 
 set_option synthInstance.maxHeartbeats 4000000 in
-set_option maxSynthPendingDepth 3 in
+
 theorem mem_span_RSet_of_adjoin_simple_transcendental
     (ht : Transcendental ℂ t) (htS : t ∈ S) (hSfin : S.Finite)
     (hSint : ∀ s ∈ S, IsIntegral ↥(TRng F t) s)

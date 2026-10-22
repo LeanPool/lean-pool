@@ -71,7 +71,6 @@ https://github.com/anthropics/fermats-last-theorem/blob/aa2d8b34692b16c70f699536
 
 section privateSection
 
-set_option backward.isDefEq.respectTransparency.types false
 
 namespace P2MW.S_ModularCurve_exists_algHom_of_isRoot
 
@@ -85,7 +84,7 @@ p2m_export "ModularCurve" "qExpand jq jqN dedekindPsi evalAtJ evalAtJ_X ModularP
   relfinrank_laurentBaseChange_modularFunctionFieldFull jq_mem_full coeffEmb laurentBaseChange \
   coeffEmb_mem_laurentBaseChange relfinrank_full_eq_dedekindPsi laurentBaseChange_adjoin_pair \
   functionFieldGeneration coeffEmb_jq coeffEmb_jqN transcendental_jqModC"
-p2m_open "ModularCurve~jAdj"
+p2m_open "ModularCurve"
 
 namespace B1Zero
 
@@ -288,7 +287,7 @@ end ModularCurve
 
 end
 
-p2m_open "ModularCurve~jAdj\
+p2m_open "ModularCurve\
   " in
 open _root_.P2MW.S_ModularCurve_exists_algHom_of_isRoot.ModularCurve in
 theorem solution (L : Type*) [Field L] [Algebra ℚ L] (N : ℕ) [NeZero N]

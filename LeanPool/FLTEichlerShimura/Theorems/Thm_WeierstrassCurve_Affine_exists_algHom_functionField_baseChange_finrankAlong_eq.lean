@@ -151,13 +151,8 @@ section
 
 section
 
-p2m_open "WeierstrassCurve \
-  P2MW.S_OVERLONG_7837151f.Weierstrass\
-  Curve WeierstrassCurve.Affine \
-  P2MW.S_OVERLONG_7837151f.Weierstrass\
-  Curve.Affine \
-  P2MW.S_OVERLONG_7837151f.ModularCurv\
-  e"
+p2m_open "WeierstrassCurve P2MW.S_OVERLONG_7837151f.WeierstrassCurve WeierstrassCurve.Affine \
+  P2MW.S_OVERLONG_7837151f.WeierstrassCurve.Affine"
 p2m_open "Polynomial \
   P2MW.S_OVERLONG_7837151f.Polynomial"
 p2m_open_scoped "TensorProduct \
@@ -199,9 +194,7 @@ p2m_open "IsDedekindDomain \
   omain Polynomial \
   P2MW.S_OVERLONG_7837151f.Polynomial"
 
-p2m_open_scoped "Polynomial.Bivariate \
-  P2MW.S_OVERLONG_7837151f.Polynomial.\
-  Bivariate"
+p2m_open_scoped "Polynomial.Bivariate"
 
 namespace AlgebraicCurve
 p2m_export "AlgebraicCurve" "algebraAlong FiniteAlong finrankAlong Place"
@@ -249,9 +242,7 @@ p2m_open "Polynomial \
   P2MW.S_OVERLONG_7837151f.IsDedekindD\
   omain"
 
-p2m_open_scoped "Polynomial.Bivariate \
-  P2MW.S_OVERLONG_7837151f.Polynomial.\
-  Bivariate"
+p2m_open_scoped "Polynomial.Bivariate"
 
 namespace AlgebraicCurve
 p2m_export "AlgebraicCurve" "algebraAlong FiniteAlong finrankAlong Place"
@@ -341,11 +332,7 @@ p2m_open "WeierstrassCurve \
   rve"
 p2m_open "Polynomial \
   P2MW.S_OVERLONG_7837151f.Polynomial"
-p2m_open_scoped "TensorProduct \
-  P2MW.S_OVERLONG_7837151f.TensorProdu\
-  ct Polynomial.Bivariate \
-  P2MW.S_OVERLONG_7837151f.Polynomial.\
-  Bivariate"
+p2m_open_scoped "TensorProduct P2MW.S_OVERLONG_7837151f.TensorProduct Polynomial.Bivariate"
 
 namespace WeierstrassCurve
 p2m_export "WeierstrassCurve" "Affine map_map map mk Jacobian IsIntegral toAffine Affine.Point \
@@ -429,9 +416,7 @@ p2m_open "Polynomial \
   P2MW.S_OVERLONG_7837151f.Weierstrass\
   Curve.Affine"
 
-p2m_open_scoped "Polynomial.Bivariate \
-  P2MW.S_OVERLONG_7837151f.Polynomial.\
-  Bivariate"
+p2m_open_scoped "Polynomial.Bivariate"
 
 namespace WeierstrassCurve
 p2m_export "WeierstrassCurve" "Affine map_map map mk Jacobian IsIntegral toAffine Affine.Point \
@@ -552,9 +537,7 @@ p2m_open "Polynomial \
   P2MW.S_OVERLONG_7837151f.IsDedekindD\
   omain"
 
-p2m_open_scoped "Polynomial.Bivariate \
-  P2MW.S_OVERLONG_7837151f.Polynomial.\
-  Bivariate"
+p2m_open_scoped "Polynomial.Bivariate"
 
 namespace WeierstrassCurve
 p2m_export "WeierstrassCurve" "Affine map_map map mk Jacobian IsIntegral toAffine Affine.Point \
@@ -624,11 +607,8 @@ p2m_open "Polynomial \
   P2MW.S_OVERLONG_7837151f.Weierstrass\
   Curve.Affine.Point"
 
-p2m_open_scoped "WeierstrassCurve.Affine \
-  P2MW.S_OVERLONG_7837151f.Weierstrass\
-  Curve.Affine Polynomial.Bivariate \
-  P2MW.S_OVERLONG_7837151f.Polynomial.\
-  Bivariate"
+p2m_open_scoped "WeierstrassCurve.Affine P2MW.S_OVERLONG_7837151f.WeierstrassCurve.Affine \
+  Polynomial.Bivariate"
 
 section
 
@@ -705,11 +685,7 @@ p2m_open "WeierstrassCurve \
   rve"
 p2m_open "Polynomial \
   P2MW.S_OVERLONG_7837151f.Polynomial"
-p2m_open_scoped "TensorProduct \
-  P2MW.S_OVERLONG_7837151f.TensorProdu\
-  ct Polynomial.Bivariate \
-  P2MW.S_OVERLONG_7837151f.Polynomial.\
-  Bivariate"
+p2m_open_scoped "TensorProduct P2MW.S_OVERLONG_7837151f.TensorProduct Polynomial.Bivariate"
 
 namespace ModularCurve
 

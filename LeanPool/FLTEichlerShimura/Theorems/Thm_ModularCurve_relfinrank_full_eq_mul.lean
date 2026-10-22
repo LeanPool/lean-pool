@@ -56,13 +56,12 @@ https://github.com/anthropics/fermats-last-theorem/blob/aa2d8b34692b16c70f699536
 
 section privateSection
 
-set_option backward.isDefEq.respectTransparency.types false
 
 namespace P2MW.S_ModularCurve_relfinrank_full_eq_mul
 
 noncomputable section
 
-p2m_open "ModularCurve P2MW.S_ModularCurve_relfinrank_full_eq_mul.ModularCurve"
+p2m_open "ModularCurve"
 
 namespace ModularCurve
 p2m_export "ModularCurve" "qExpand_one_apply jq jqN modularFunctionFieldFull jqd_mem_full \

@@ -64,12 +64,10 @@ https://github.com/anthropics/fermats-last-theorem/blob/aa2d8b34692b16c70f699536
 
 section privateSection
 
-set_option backward.isDefEq.respectTransparency.types false
 
 namespace P2MW.S_AlgebraicCurve_Place_sum_ramificationIndex_mul_inertiaDeg
 
-p2m_open "AlgebraicCurve \
-  P2MW.S_AlgebraicCurve_Place_sum_ramificationIndex_mul_inertiaDeg.AlgebraicCurve"
+p2m_open "AlgebraicCurve"
 
 
 noncomputable section

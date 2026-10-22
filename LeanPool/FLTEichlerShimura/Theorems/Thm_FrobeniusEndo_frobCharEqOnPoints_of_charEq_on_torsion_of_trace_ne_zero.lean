@@ -83,7 +83,6 @@ https://github.com/anthropics/fermats-last-theorem/blob/aa2d8b34692b16c70f699536
 
 section privateSection
 
-set_option backward.isDefEq.respectTransparency.types false
 
 namespace P2MW.S_FrobeniusEndo_frobCharEqOnPoints_of_charEq_on_torsion_of_trace_ne_zero
 
@@ -91,13 +90,7 @@ section PortCardMulX
 
 namespace PortCard
 
-p2m_open "WeierstrassCurve \
-  P2MW.S_FrobeniusEndo_frobCharEqOnPoints_of_charEq_on_torsion_of_trace_ne_zero.WeierstrassCurve \
-  WeierstrassCurve.Affine \
-  P2MW.S_FrobeniusEndo_frobCharEqOnPoints_of_charEq_on_torsion_of_trace_ne_zero.WeierstrassCurve.Af\
-  fine WeierstrassCurve.Affine.Point \
-  P2MW.S_FrobeniusEndo_frobCharEqOnPoints_of_charEq_on_torsion_of_trace_ne_zero.WeierstrassCurve.Af\
-  fine.Point Polynomial"
+p2m_open "WeierstrassCurve WeierstrassCurve.Affine WeierstrassCurve.Affine.Point Polynomial"
 open scoped Polynomial.Bivariate
 
 variable {F : Type*} [Field F] [DecidableEq F] (W : WeierstrassCurve F)

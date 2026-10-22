@@ -74,15 +74,12 @@ section privateSection
 
 open _root_.ModularCurve.W1
 
-set_option backward.isDefEq.respectTransparency.types false
 
 namespace P2MW.S_ModularCurve_finrank_adjoin_jqNModC_eq_dedekindPsi_of_socket
 
 noncomputable section
 
-p2m_open "ModularCurve \
-  P2MW.S_ModularCurve_finrank_adjoin_jqNModC_eq_dedekindPsi_of_socket.ModularCurve \
-  ModularCurve.PhiGen"
+p2m_open "ModularCurve ModularCurve.PhiGen"
 
 namespace ModularCurve
 p2m_export "ModularCurve" "qExpand qExpand_coeff_mul qExpand_coeff_of_not_dvd qExpand_one_apply \

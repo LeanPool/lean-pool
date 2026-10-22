@@ -97,7 +97,6 @@ open WeierstrassCurve Affine CoordinateRing
 
 open scoped Polynomial.Bivariate TensorProduct
 
-set_option backward.isDefEq.respectTransparency.types false
 
 
 noncomputable section
@@ -2142,7 +2141,10 @@ theorem kw_surgehgf4_hfgkd_hKD_of_kerTransport
             = (kw_functionFieldMapAlongGeneralNoAC E₀ (AlgebraicClosure (↥K₀)) K) (ι₀
               ((kw_functionFieldMapAlongGeneralNoAC E₀' (↥K₀) (AlgebraicClosure (↥K₀)))
               (polyToFunctionField (E₀'⁄(↥K₀)) X))) := by
-          rw [hD3, hχΦE, hχΦE']; exact hcompat _
+          exact (congrArg ι (hχΦE' _)).trans
+            ((hcompat _).trans ((hχΦE _).symm.trans
+              (congrArg (kw_functionFieldMapAlongGeneralNoAC E₀
+                (AlgebraicClosure (↥K₀)) K) (hD3 _)).symm))
         rw [kw_functionFieldMapAlongGeneralNoAC_polyToFunctionField_X] at key
         exact key)
       (by
@@ -2152,7 +2154,10 @@ theorem kw_surgehgf4_hfgkd_hKD_of_kerTransport
             = (kw_functionFieldMapAlongGeneralNoAC E₀ (AlgebraicClosure (↥K₀)) K) (ι₀
               ((kw_functionFieldMapAlongGeneralNoAC E₀' (↥K₀) (AlgebraicClosure (↥K₀))) (yGen
               (E₀'⁄(↥K₀))))) := by
-          rw [hD3, hχΦE, hχΦE']; exact hcompat _
+          exact (congrArg ι (hχΦE' _)).trans
+            ((hcompat _).trans ((hχΦE _).symm.trans
+              (congrArg (kw_functionFieldMapAlongGeneralNoAC E₀
+                (AlgebraicClosure (↥K₀)) K) (hD3 _)).symm))
         rw [kw_functionFieldMapAlongGeneralNoAC_yGen] at key
         exact key)
     exact fun x => DFunLike.congr_fun hext x
@@ -2828,17 +2833,19 @@ theorem kw_surgehgf4_cfe_bcIota₁NoAC_eq_ι :
         = kw_surgehgf4_hfgkd_bcIota₁NoAC E₀ E₀' (↥K₀) K ι'
             (kw_functionFieldMapAlongGeneralNoAC E₀' (↥K₀) K (polyToFunctionField
               (E₀'⁄(↥K₀)).toAffine X)) := by
-      rw [kw_surgehgf4_hfgkd_bcIota₁NoAC_compat, kw_surgehgf4_cfe_chi_eq_phi_apply E₀,
-        kw_surgehgf4_cfe_chi_eq_phi_apply E₀']
-      exact kw_surgehgf4_hSD_phiCompat_apply E₀ E₀' ι hcoeffs _
+      exact (congrArg ι (kw_surgehgf4_cfe_chi_eq_phi_apply E₀' _)).trans
+        ((kw_surgehgf4_hSD_phiCompat_apply E₀ E₀' ι hcoeffs _).trans
+          ((kw_surgehgf4_cfe_chi_eq_phi_apply E₀ _).symm.trans
+            (kw_surgehgf4_hfgkd_bcIota₁NoAC_compat E₀ E₀' (↥K₀) K ι' _).symm))
     rw [kw_functionFieldMapAlongGeneralNoAC_polyToFunctionField_X] at key
     exact key.symm
   · have key : ι (kw_functionFieldMapAlongGeneralNoAC E₀' (↥K₀) K (yGen (E₀'⁄(↥K₀)).toAffine))
         = kw_surgehgf4_hfgkd_bcIota₁NoAC E₀ E₀' (↥K₀) K ι'
             (kw_functionFieldMapAlongGeneralNoAC E₀' (↥K₀) K (yGen (E₀'⁄(↥K₀)).toAffine)) := by
-      rw [kw_surgehgf4_hfgkd_bcIota₁NoAC_compat, kw_surgehgf4_cfe_chi_eq_phi_apply E₀,
-        kw_surgehgf4_cfe_chi_eq_phi_apply E₀']
-      exact kw_surgehgf4_hSD_phiCompat_apply E₀ E₀' ι hcoeffs _
+      exact (congrArg ι (kw_surgehgf4_cfe_chi_eq_phi_apply E₀' _)).trans
+        ((kw_surgehgf4_hSD_phiCompat_apply E₀ E₀' ι hcoeffs _).trans
+          ((kw_surgehgf4_cfe_chi_eq_phi_apply E₀ _).symm.trans
+            (kw_surgehgf4_hfgkd_bcIota₁NoAC_compat E₀ E₀' (↥K₀) K ι' _).symm))
     rw [kw_functionFieldMapAlongGeneralNoAC_yGen] at key
     exact key.symm
 

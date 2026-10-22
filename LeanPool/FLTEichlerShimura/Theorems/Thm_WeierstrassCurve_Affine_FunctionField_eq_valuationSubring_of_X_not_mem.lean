@@ -56,12 +56,11 @@ https://github.com/anthropics/fermats-last-theorem/blob/aa2d8b34692b16c70f699536
 
 section privateSection
 
-set_option backward.isDefEq.respectTransparency.types false
 
 namespace P2MW.S_WeierstrassCurve_Affine_FunctionField_eq_valuationSubring_of_X_not_mem
 
 open scoped Polynomial.Bivariate WithZero nonZeroDivisors
-p2m_open "Polynomial Polynomial.Bivariate.Polynomial"
+p2m_open "Polynomial"
 
 namespace WeierstrassCurve
 p2m_export "WeierstrassCurve" "Affine a₃ a₁ Affine.CoordinateRing mk a₄ a₂ a₆ Affine.FunctionField \

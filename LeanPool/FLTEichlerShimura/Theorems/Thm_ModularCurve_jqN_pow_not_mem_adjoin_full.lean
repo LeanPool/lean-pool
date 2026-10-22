@@ -67,14 +67,12 @@ section privateSection
 
 open _root_.ModularCurve.W1
 
-set_option backward.isDefEq.respectTransparency.types false
 
 namespace P2MW.S_ModularCurve_jqN_pow_not_mem_adjoin_full
 
 noncomputable section
 
-p2m_open "ModularCurve~coeffEmb_qExpand \
-  P2MW.S_ModularCurve_jqN_pow_not_mem_adjoin_full.ModularCurve ModularCurve.PhiGen"
+p2m_open "ModularCurve ModularCurve.PhiGen"
 
 namespace ModularCurve
 p2m_export "ModularCurve" "qExpand qExpand_coeff_mul qExpand_coeff_of_not_dvd qExpand_one_apply \
@@ -83,7 +81,7 @@ p2m_export "ModularCurve" "qExpand qExpand_coeff_mul qExpand_coeff_of_not_dvd qE
   qTwist qTwist_coeff qTwist_one_apply qTwist_qTwist qTwist_qExpand EvalSymm coeffMap_qExpand \
   PhiGen.splits_prime_at_slot exists_phiIrreducible_evalSymm"
 namespace W1
-p2m_open "ModularCurve~coeffEmb_qExpand"
+p2m_open "ModularCurve"
 
 variable {K : Type*} [Field K] [Algebra ℚ K]
 
@@ -132,7 +130,7 @@ p2m_export "ModularCurve" "qExpand qExpand_coeff_mul qExpand_coeff_of_not_dvd qE
   qTwist qTwist_coeff qTwist_one_apply qTwist_qTwist qTwist_qExpand EvalSymm coeffMap_qExpand \
   PhiGen.splits_prime_at_slot exists_phiIrreducible_evalSymm"
 namespace W1
-p2m_open "ModularCurve~coeffEmb_qExpand"
+p2m_open "ModularCurve"
 
 variable {K : Type*} [Field K] [Algebra ℚ K]
 
@@ -239,7 +237,7 @@ p2m_export "ModularCurve" "qExpand qExpand_coeff_mul qExpand_coeff_of_not_dvd qE
   qTwist qTwist_coeff qTwist_one_apply qTwist_qTwist qTwist_qExpand EvalSymm coeffMap_qExpand \
   PhiGen.splits_prime_at_slot exists_phiIrreducible_evalSymm"
 namespace W1
-p2m_open "ModularCurve~coeffEmb_qExpand"
+p2m_open "ModularCurve"
 
 variable {K : Type*} [Field K]
 
@@ -268,7 +266,7 @@ p2m_export "ModularCurve" "qExpand qExpand_coeff_mul qExpand_coeff_of_not_dvd qE
   qTwist qTwist_coeff qTwist_one_apply qTwist_qTwist qTwist_qExpand EvalSymm coeffMap_qExpand \
   PhiGen.splits_prime_at_slot exists_phiIrreducible_evalSymm"
 namespace W1
-p2m_open "ModularCurve~coeffEmb_qExpand"
+p2m_open "ModularCurve"
 
 variable {K : Type*} [Field K] [Algebra ℚ K]
 
@@ -373,7 +371,7 @@ p2m_export "ModularCurve" "qExpand qExpand_coeff_mul qExpand_coeff_of_not_dvd qE
   qTwist qTwist_coeff qTwist_one_apply qTwist_qTwist qTwist_qExpand EvalSymm coeffMap_qExpand \
   PhiGen.splits_prime_at_slot exists_phiIrreducible_evalSymm"
 namespace W1
-p2m_open "ModularCurve~coeffEmb_qExpand"
+p2m_open "ModularCurve"
 
 
 
@@ -409,7 +407,7 @@ p2m_export "ModularCurve" "qExpand qExpand_coeff_mul qExpand_coeff_of_not_dvd qE
   qTwist qTwist_coeff qTwist_one_apply qTwist_qTwist qTwist_qExpand EvalSymm coeffMap_qExpand \
   PhiGen.splits_prime_at_slot exists_phiIrreducible_evalSymm"
 namespace W1
-p2m_open "ModularCurve~coeffEmb_qExpand"
+p2m_open "ModularCurve"
 
 variable {K : Type*} [Field K] [Algebra ℚ K]
 
@@ -715,7 +713,7 @@ p2m_export "ModularCurve" "qExpand qExpand_coeff_mul qExpand_coeff_of_not_dvd qE
   qTwist qTwist_coeff qTwist_one_apply qTwist_qTwist qTwist_qExpand EvalSymm coeffMap_qExpand \
   PhiGen.splits_prime_at_slot exists_phiIrreducible_evalSymm"
 namespace W1
-p2m_open "ModularCurve~coeffEmb_qExpand"
+p2m_open "ModularCurve"
 
 variable {K : Type*} [Field K] [Algebra ℚ K]
 
@@ -989,7 +987,7 @@ private theorem ModularCurve.jqN_pow_not_mem_adjoin_full (M : ℕ) [NeZero M] (p
 
 end
 
-p2m_open "ModularCurve~coeffEmb_qExpand\
+p2m_open "ModularCurve\
   " in
 open _root_.P2MW.S_ModularCurve_jqN_pow_not_mem_adjoin_full.ModularCurve in
 theorem solution (M : ℕ) [NeZero M] (p : ℕ) [hp : Fact (Nat.Prime p)] (a : ℕ)

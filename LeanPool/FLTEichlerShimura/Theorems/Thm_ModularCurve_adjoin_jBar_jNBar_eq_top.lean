@@ -71,13 +71,12 @@ https://github.com/anthropics/fermats-last-theorem/blob/aa2d8b34692b16c70f699536
 
 section privateSection
 
-set_option backward.isDefEq.respectTransparency.types false
 
 namespace P2MW.S_ModularCurve_adjoin_jBar_jNBar_eq_top
 
 noncomputable section
 
-p2m_open "ModularCurve P2MW.S_ModularCurve_adjoin_jBar_jNBar_eq_top.ModularCurve"
+p2m_open "ModularCurve"
 
 namespace HahnSeries
 p2m_export "HahnSeries" "support algebraMap_apply' ofPowerSeries_C support_embDomain_subset single \

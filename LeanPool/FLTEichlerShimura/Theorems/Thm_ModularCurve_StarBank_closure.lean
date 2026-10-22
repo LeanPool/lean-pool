@@ -57,13 +57,12 @@ https://github.com/anthropics/fermats-last-theorem/blob/aa2d8b34692b16c70f699536
 
 section privateSection
 
-set_option backward.isDefEq.respectTransparency.types false
 
 namespace P2MW.S_ModularCurve_StarBank_closure
 
 noncomputable section
 
-p2m_open "ModularCurve P2MW.S_ModularCurve_StarBank_closure.ModularCurve"
+p2m_open "ModularCurve"
 
 local notation "𝓓[" K "]" =>
   (HahnSeries.single (1 : ℤ) (1 : K) *

@@ -62,7 +62,6 @@ set_option maxHeartbeats 8000000
 
 section privateSection
 
-set_option backward.isDefEq.respectTransparency.types false
 
 namespace P2MW.S_AlgebraicCurve_Divisor_degree_le_finrank_adjoin_of_eq_max_neg_ord
 

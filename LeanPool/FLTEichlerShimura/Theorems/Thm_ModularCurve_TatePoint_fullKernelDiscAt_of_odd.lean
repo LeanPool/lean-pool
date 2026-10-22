@@ -15,7 +15,6 @@ public import LeanPool.FLTEichlerShimura.Definitions.Def_ModularCurve_CycSubRoot
 
 import LeanPool.FLTEichlerShimura.Definitions.Def_WeierstrassCurve_FullKernelQuotient
 import LeanPool.FLTEichlerShimura.Definitions.Def_ModularCurve_CycSubRootBridgeOdd
-import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
 
 /-!
 # Non-degeneracy of the full-kernel Vélu quotient at odd level
@@ -57,23 +56,11 @@ https://github.com/anthropics/fermats-last-theorem/blob/aa2d8b34692b16c70f699536
 
 section privateSection
 
-set_option backward.isDefEq.respectTransparency.types false
-
-namespace P2MW.S_ModularCurve_TatePoint_fullKernelDiscAt_of_odd
-
 noncomputable section
 
-p2m_open "ModularCurve P2MW.S_ModularCurve_TatePoint_fullKernelDiscAt_of_odd.ModularCurve \
-  WeierstrassCurve P2MW.S_ModularCurve_TatePoint_fullKernelDiscAt_of_odd.WeierstrassCurve \
-  Polynomial"
-open scoped Classical
+open ModularCurve WeierstrassCurve Polynomial
 
 namespace WeierstrassCurve
-p2m_export "WeierstrassCurve" "map toAffine Δ j fullKernelQuotient \
-  fullKernelQuotient_eq_veluQuotient_oddOrderSummingSet oddOrderSummingSet veluQuotient \
-  veluQuotient_oddOrderSummingSet_discriminant_ne_zero \
-  zmultiples_eq_of_veluQuotient_j_eq_of_transcendental"
-p2m_open "WeierstrassCurve"
 
 theorem j_congr {R : Type*} [CommRing R] {X Y : WeierstrassCurve R} (h : X = Y) (hX : X.IsElliptic)
     (hY : Y.IsElliptic) : @WeierstrassCurve.j R _ X hX = @WeierstrassCurve.j R _ Y hY := by
@@ -89,8 +76,6 @@ private theorem _root_.WeierstrassCurve.fullKernelQuotient_eq_veluQuotient_of_od
   rw [hm]
   exact W.fullKernelQuotient_eq_veluQuotient_oddOrderSummingSet Q m hQ
 
-p2m_export "WeierstrassCurve" "fullKernelQuotient_eq_veluQuotient_of_odd_aux"
-
 private theorem _root_.WeierstrassCurve.fullKernelQuotient_discriminant_ne_zero_of_odd {L : Type*}
     [Field L] [DecidableEq L] [IsAlgClosed L]
     (h2 : (2 : L) ≠ 0) (W : WeierstrassCurve L) [W.IsElliptic] (N : ℕ) [NeZero N] (hN : Odd N)
@@ -99,8 +84,6 @@ private theorem _root_.WeierstrassCurve.fullKernelQuotient_discriminant_ne_zero_
   obtain ⟨m, rfl⟩ := hN
   rw [W.fullKernelQuotient_eq_veluQuotient_oddOrderSummingSet Q m hQ]
   exact WeierstrassCurve.veluQuotient_oddOrderSummingSet_discriminant_ne_zero h2 W m Q hQ
-
-p2m_export "WeierstrassCurve" "fullKernelQuotient_discriminant_ne_zero_of_odd"
 
 private theorem
   _root_.WeierstrassCurve.zmultiples_eq_of_fullKernelQuotient_j_eq_of_transcendental_of_odd
@@ -124,17 +107,8 @@ private theorem
   exact WeierstrassCurve.zmultiples_eq_of_veluQuotient_j_eq_of_transcendental W ht m Q Q' hQ hQ' hΔ₁
     hΔ₂ hj
 
-p2m_export "WeierstrassCurve" "zmultiples_eq_of_fullKernelQuotient_j_eq_of_transcendental_of_odd"
 end WeierstrassCurve
 
-namespace ModularCurve
-p2m_export "ModularCurve" "TatePoint.dictOdd TatePoint.Qbar TatePoint.nearCurve TatePoint.CycSubH \
-  TatePoint.RootsAt ModularPolynomialData \
-  ModularPolynomialData.isRoot_map_j_veluQuotient_j_of_addOrderOf_eq TatePoint.dictN"
-namespace ModularPolynomialData
-p2m_export "ModularCurve.ModularPolynomialData" "Φ isRoot_map_j_veluQuotient_j_of_addOrderOf_eq"
-end ModularCurve.ModularPolynomialData
-p2m_open_scoped "ModularCurve ModularCurve.ModularPolynomialData" in
 theorem ModularCurve.ModularPolynomialData.isRoot_map_j_fullKernelQuotient_j_of_odd
     [DecidableEq (HahnSeries ℚ (AlgebraicClosure ℚ))]
     (W : WeierstrassCurve (HahnSeries ℚ (AlgebraicClosure ℚ))) [W.IsElliptic]
@@ -153,21 +127,15 @@ theorem ModularCurve.ModularPolynomialData.isRoot_map_j_fullKernelQuotient_j_of_
     data
 
 namespace ModularCurve
-p2m_export "ModularCurve" "TatePoint.dictOdd TatePoint.Qbar TatePoint.nearCurve TatePoint.CycSubH \
-  TatePoint.RootsAt ModularPolynomialData \
-  ModularPolynomialData.isRoot_map_j_veluQuotient_j_of_addOrderOf_eq TatePoint.dictN"
+
 namespace TatePoint
-p2m_export "ModularCurve.TatePoint" "cycSubRootOdd rootsEquivCycSubHOdd \
-  rootsEquivCycSubHOdd_apply_eq_iff dictOdd cycSubGen addOrderOf_cycSubGen Qbar H nearCurve \
-  CycSubH RootsAt nearCurve_j_transcendental FullKernelIsRootAt FullKernelInjAt FullKernelDiscAt \
-  cycSubRootN rootsEquivCycSubHN rootsEquivCycSubHN_apply_eq_iff dictN"
-p2m_open "ModularCurve.TatePoint ModularCurve"
 
 private theorem cycSubRootN_eq_cycSubRootOdd_aux (E : WeierstrassCurve H) [E.IsElliptic] {N : ℕ}
     [NeZero N] (hN : Odd N)
     (hW1 : FullKernelIsRootAt N) (hW3 : FullKernelDiscAt N) (data : ModularPolynomialData N)
-    (G : CycSubH E N) : cycSubRootN E hW1 hW3 data G = cycSubRootOdd E hN data G :=
-  Subtype.ext (WeierstrassCurve.j_congr
+    (G : CycSubH E N) : cycSubRootN E hW1 hW3 data G = cycSubRootOdd E hN data G := by
+  classical
+  exact Subtype.ext (WeierstrassCurve.j_congr
     (E.fullKernelQuotient_eq_veluQuotient_of_odd_aux (cycSubGen E G) hN (addOrderOf_cycSubGen E G))
       _ _)
 
@@ -220,23 +188,14 @@ noncomputable example (data : ModularCurve.ModularPolynomialData 3) (j₀ :
       ModularCurve.TatePoint.CycSubH (ModularCurve.TatePoint.nearCurve j₀) 3 :=
   ModularCurve.TatePoint.dictNOdd 3 (by decide) data j₀
 
-open scoped Classical
-open _root_.ModularCurve _root_.P2MW.S_ModularCurve_TatePoint_fullKernelDiscAt_of_odd.ModularCurve
-  _root_.ModularCurve.TatePoint
-  _root_.P2MW.S_ModularCurve_TatePoint_fullKernelDiscAt_of_odd.ModularCurve.TatePoint in
+open ModularCurve ModularCurve.TatePoint in
 theorem solution (N : ℕ) [NeZero N] (hN : Odd N) : FullKernelDiscAt N :=
   ModularCurve.TatePoint.fullKernelDiscAt_of_odd_aux N hN
-
-end S_ModularCurve_TatePoint_fullKernelDiscAt_of_odd
-end P2MW
-export P2MW.S_ModularCurve_TatePoint_fullKernelDiscAt_of_odd (solution)
 
 end privateSection
 
 public section publicSection
 
-
-open scoped Classical
 theorem ModularCurve.TatePoint.fullKernelDiscAt_of_odd (N : ℕ) [NeZero N] (hN : Odd N) :
     FullKernelDiscAt N :=
   solution N hN

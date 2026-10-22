@@ -66,7 +66,6 @@ https://github.com/anthropics/fermats-last-theorem/blob/aa2d8b34692b16c70f699536
 
 section privateSection
 
-set_option backward.isDefEq.respectTransparency.types false
 
 namespace P2MW.S_OVERLONG_63ec6564
 
@@ -144,8 +143,11 @@ theorem solution (N : ℕ) [NeZero N] :
   have hPp : P.asIdeal = Ideal.span {p} := by
     rw [hPg]; exact Ideal.span_singleton_eq_span_singleton.mpr hpg
   have hordv : (w.restrict ↥ℚ⟮ModularCurve.jq⟯).ord (Polynomial.aeval ModularCurve.jGen p) = 1 := by
-    rw [hv', ← equiv_algebraMap, Place.ord_congrRingEquiv]
-    exact ord_ofHeightOneSpectrum_of_span P hp0 hPp
+    rw [hv', ← equiv_algebraMap]
+    exact (Place.ord_congrRingEquiv ModularCurve.jLineRingEquiv
+      (RingHom.map_rat_algebraMap ModularCurve.jLineRingEquiv.toRingHom)
+      (Place.ofHeightOneSpectrum P) (algebraMap ℚ[X] (RatFunc ℚ) p)).trans
+        (ord_ofHeightOneSpectrum_of_span P hp0 hPp)
   have hj : algebraMap ↥ℚ⟮ModularCurve.jq⟯ ↥(ModularCurve.modularFunctionField N) ModularCurve.jGen
       = (⟨ModularCurve.jq, ModularCurve.jq_mem N⟩ : ↥(ModularCurve.modularFunctionField N)) :=
     Subtype.ext (ModularCurve.algebraMap_jGen_val N)

@@ -77,7 +77,6 @@ https://github.com/anthropics/fermats-last-theorem/blob/aa2d8b34692b16c70f699536
 
 section privateSection
 
-set_option backward.isDefEq.respectTransparency.types false
 
 namespace P2MW.S_ModularForm_exists_linearIndependent_gamma1_dimFormula_le_card_of_even
 
@@ -236,7 +235,7 @@ theorem solution
       htr hfin h0 h1728 m D hD
   rw [hfull] at hdeg
   have hg :=
-    twelve_mul_genusFF_laurentBaseChange_gamma1_add_six_mul_natCard_doubleCoset_eq_index_add_twelve_of_isAlgClosed
+    genusFF_gamma1_formula_of_isAlgClosed
       ℂ M hM
   set μ : ℕ := (CongruenceSubgroup.Gamma1 M ⊔ Subgroup.zpowers (-1 : SL(2, ℤ))).index with hμdef
   set cc : ℕ := Nat.card (DoubleCoset.Quotient (CongruenceSubgroup.Gamma1 M : Set SL(2, ℤ))

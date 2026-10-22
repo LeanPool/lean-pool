@@ -70,7 +70,6 @@ set_option maxHeartbeats 6400000
 
 section privateSection
 
-set_option backward.isDefEq.respectTransparency.types false
 
 namespace P2MW.S_OVERLONG_55825ce2
 

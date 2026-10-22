@@ -74,7 +74,6 @@ Salvatore Mercuri, Kevin Buzzard). See ATTRIBUTION.md and NOTICE in the source r
 
 section privateSection
 
-set_option backward.isDefEq.respectTransparency.types false
 
 namespace P2MW.S_AlgebraicCurve_tateChainRule
 
@@ -636,8 +635,7 @@ section
 
 
 p2m_open_scoped "WithZero P2MW.S_AlgebraicCurve_tateChainRule.WithZero Multiplicative \
-  P2MW.S_AlgebraicCurve_tateChainRule.Multiplicative Topology \
-  P2MW.S_AlgebraicCurve_tateChainRule.Topology"
+  P2MW.S_AlgebraicCurve_tateChainRule.Multiplicative Topology"
 p2m_open "Filter P2MW.S_AlgebraicCurve_tateChainRule.Filter"
 
 namespace IsDedekindDomain
@@ -686,8 +684,7 @@ p2m_open "IsDedekindDomain P2MW.S_AlgebraicCurve_tateChainRule.IsDedekindDomain 
   P2MW.S_AlgebraicCurve_tateChainRule.IsDedekindDomain.HeightOneSpectrum IsLocalRing \
   P2MW.S_AlgebraicCurve_tateChainRule.IsLocalRing WithZero \
   P2MW.S_AlgebraicCurve_tateChainRule.WithZero"
-p2m_open "P2MW.S_AlgebraicCurve_tateChainRule.ModularCurve.Lg37 AlgebraicCurve \
-  P2MW.S_AlgebraicCurve_tateChainRule.AlgebraicCurve AlgebraicCurve.Place \
+p2m_open "AlgebraicCurve P2MW.S_AlgebraicCurve_tateChainRule.AlgebraicCurve AlgebraicCurve.Place \
   P2MW.S_AlgebraicCurve_tateChainRule.AlgebraicCurve.Place"
 
 namespace ModularCurve
@@ -774,7 +771,8 @@ def kwF4R1V410a_quotientEquiv (n : ℕ) :
       obtain ⟨y', rfl⟩ := Ideal.Quotient.mk_surjective y
       obtain ⟨x, hx⟩ := kwF4R1V410a_exists_sub_mem_completionIdeal_pow w n y'
       refine ⟨Ideal.Quotient.mk _ x, ?_⟩
-      rw [Ideal.quotientMap_mk]
+      change Ideal.Quotient.mk ((𝔪_W) ^ n) (algebraMap (O_w) (O_W) x) =
+        Ideal.Quotient.mk ((𝔪_W) ^ n) y'
       exact (Ideal.Quotient.mk_eq_mk_iff_sub_mem _ _).mpr (by
         rw [← neg_sub, neg_mem_iff]; exact hx)⟩
 
@@ -1985,8 +1983,7 @@ p2m_open "AlgebraicCurve P2MW.S_AlgebraicCurve_tateChainRule.AlgebraicCurve Alge
   P2MW.S_AlgebraicCurve_tateChainRule.AlgebraicCurve.Place LinearMap \
   P2MW.S_AlgebraicCurve_tateChainRule.LinearMap Submodule \
   P2MW.S_AlgebraicCurve_tateChainRule.Submodule"
-p2m_open "ModularCurve.KwF4gRRTate P2MW.S_AlgebraicCurve_tateChainRule.ModularCurve.KwF4gRRTate \
-  P2MW.S_AlgebraicCurve_tateChainRule.ModularCurve.KwF4R1V473a"
+p2m_open "ModularCurve.KwF4gRRTate P2MW.S_AlgebraicCurve_tateChainRule.ModularCurve.KwF4gRRTate"
 
 noncomputable section
 

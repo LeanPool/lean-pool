@@ -62,7 +62,6 @@ https://github.com/anthropics/fermats-last-theorem/blob/aa2d8b34692b16c70f699536
 
 section privateSection
 
-set_option backward.isDefEq.respectTransparency.types false
 
 namespace P2MW.S_NumberField_exists_lift_mem_inertia_integralClosure
 
@@ -175,7 +174,6 @@ theorem solution
       convert hp0 using 2
       rfl
     refine ⟨⟨y, hyint⟩, Subtype.ext ?_⟩
-    rw [hf_coe]
     exact hy⟩
   have : Algebra.IsIntegral (𝓞 L) 𝔅 :=
     Algebra.IsInvariant.isIntegral_of_profinite (G := ℚ̄ ≃ₐ[L] ℚ̄)

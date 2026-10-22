@@ -101,7 +101,6 @@ section privateSection
 open WeierstrassCurve Affine AlgebraicCurve Polynomial
   ModularCurve AddMonoidHom AddMonoid.End IsDedekindDomain WithZero IsLocalRing
 
-set_option backward.isDefEq.respectTransparency.types false
 
 
 noncomputable section

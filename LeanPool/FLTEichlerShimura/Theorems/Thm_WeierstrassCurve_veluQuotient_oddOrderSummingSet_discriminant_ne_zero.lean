@@ -61,12 +61,10 @@ https://github.com/anthropics/fermats-last-theorem/blob/aa2d8b34692b16c70f699536
 
 section privateSection
 
-set_option backward.isDefEq.respectTransparency.types false
 
 namespace P2MW.S_WeierstrassCurve_veluQuotient_oddOrderSummingSet_discriminant_ne_zero
 
-p2m_open "WeierstrassCurve \
-  P2MW.S_WeierstrassCurve_veluQuotient_oddOrderSummingSet_discriminant_ne_zero.WeierstrassCurve"
+p2m_open "WeierstrassCurve"
 
 namespace WeierstrassCurve
 p2m_export "WeierstrassCurve" "twoTorsionPolynomial_discr map twoTorsionPolynomial Ψ₂Sq map_id \

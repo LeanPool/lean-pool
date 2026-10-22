@@ -55,14 +55,10 @@ https://github.com/anthropics/fermats-last-theorem/blob/aa2d8b34692b16c70f699536
 
 section privateSection
 
-set_option backward.isDefEq.respectTransparency.types false
 
 namespace P2MW.S_WeierstrassCurve_Affine_weilPairing0_add_left
 
-p2m_open "WeierstrassCurve P2MW.S_WeierstrassCurve_Affine_weilPairing0_add_left.WeierstrassCurve \
-  WeierstrassCurve.Affine \
-  P2MW.S_WeierstrassCurve_Affine_weilPairing0_add_left.WeierstrassCurve.Affine IsDedekindDomain \
-  WithZero"
+p2m_open "WeierstrassCurve WeierstrassCurve.Affine IsDedekindDomain WithZero"
 
 namespace WeierstrassCurve
 p2m_export "WeierstrassCurve" "Affine"

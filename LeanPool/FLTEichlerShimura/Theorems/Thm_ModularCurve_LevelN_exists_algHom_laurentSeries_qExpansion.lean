@@ -67,7 +67,6 @@ set_option maxHeartbeats 1600000
 
 section privateSection
 
-set_option backward.isDefEq.respectTransparency.types false
 
 namespace P2MW.S_ModularCurve_LevelN_exists_algHom_laurentSeries_qExpansion
 

@@ -55,14 +55,10 @@ https://github.com/anthropics/fermats-last-theorem/blob/aa2d8b34692b16c70f699536
 
 section privateSection
 
-set_option backward.isDefEq.respectTransparency.types false
 
 namespace P2MW.S_WeierstrassCurve_Affine_weilPairing0_galois
 
-p2m_open "WeierstrassCurve P2MW.S_WeierstrassCurve_Affine_weilPairing0_galois.WeierstrassCurve \
-  WeierstrassCurve.Affine \
-  P2MW.S_WeierstrassCurve_Affine_weilPairing0_galois.WeierstrassCurve.Affine IsDedekindDomain \
-  WithZero"
+p2m_open "WeierstrassCurve WeierstrassCurve.Affine IsDedekindDomain WithZero"
 open Polynomial
 open scoped Polynomial.Bivariate
 
@@ -247,6 +243,8 @@ end GalA
 
 end WeierstrassCurve.Affine
 
+open WeierstrassCurve.Affine
+
 namespace WeierstrassCurve
 p2m_export "WeierstrassCurve" "Affine map_map map mk map_id Affine.Point baseChange"
 namespace Affine
@@ -262,6 +260,8 @@ p2m_export "WeierstrassCurve.Affine.Point" "map_id baseChange map_map map map_so
 end Point
 end Affine
 end WeierstrassCurve
+open WeierstrassCurve
+
 p2m_open_scoped "WeierstrassCurve WeierstrassCurve.Affine WeierstrassCurve.Affine.Point" in
 theorem WeierstrassCurve.Affine.Point.smul_zsmul_comm {F K : Type*} [Field F] [Field K]
     [Algebra F K]

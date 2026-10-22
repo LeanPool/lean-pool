@@ -68,14 +68,12 @@ section privateSection
 
 open _root_.ModularCurve.W1
 
-set_option backward.isDefEq.respectTransparency.types false
 
 namespace P2MW.S_ModularCurve_finrank_adjoin_jqN_prime_of_not_mem
 
 noncomputable section
 
-p2m_open "ModularCurve~coeffEmb_qExpand \
-  P2MW.S_ModularCurve_finrank_adjoin_jqN_prime_of_not_mem.ModularCurve ModularCurve.PhiGen"
+p2m_open "ModularCurve ModularCurve.PhiGen"
 
 namespace ModularCurve
 p2m_export "ModularCurve" "qExpand qExpand_coeff_mul qExpand_coeff_of_not_dvd qExpand_injective \
@@ -84,7 +82,7 @@ p2m_export "ModularCurve" "qExpand qExpand_coeff_mul qExpand_coeff_of_not_dvd qE
   qTwist_qExpand coeffMap_qExpand PhiGen.splits_of_prime exists_phiIrreducible_evalSymm \
   dedekindPsi_prime"
 namespace W1
-p2m_open "ModularCurve~coeffEmb_qExpand"
+p2m_open "ModularCurve"
 
 variable {K : Type*} [Field K] [Algebra ℚ K]
 
@@ -133,7 +131,7 @@ p2m_export "ModularCurve" "qExpand qExpand_coeff_mul qExpand_coeff_of_not_dvd qE
   qTwist_qExpand coeffMap_qExpand PhiGen.splits_of_prime exists_phiIrreducible_evalSymm \
   dedekindPsi_prime"
 namespace W1
-p2m_open "ModularCurve~coeffEmb_qExpand"
+p2m_open "ModularCurve"
 
 variable {K : Type*} [Field K] [Algebra ℚ K]
 
@@ -240,7 +238,7 @@ p2m_export "ModularCurve" "qExpand qExpand_coeff_mul qExpand_coeff_of_not_dvd qE
   qTwist_qExpand coeffMap_qExpand PhiGen.splits_of_prime exists_phiIrreducible_evalSymm \
   dedekindPsi_prime"
 namespace W1
-p2m_open "ModularCurve~coeffEmb_qExpand"
+p2m_open "ModularCurve"
 
 
 
@@ -276,7 +274,7 @@ p2m_export "ModularCurve" "qExpand qExpand_coeff_mul qExpand_coeff_of_not_dvd qE
   qTwist_qExpand coeffMap_qExpand PhiGen.splits_of_prime exists_phiIrreducible_evalSymm \
   dedekindPsi_prime"
 namespace W1
-p2m_open "ModularCurve~coeffEmb_qExpand"
+p2m_open "ModularCurve"
 
 variable {K : Type*} [Field K] [Algebra ℚ K]
 
@@ -359,7 +357,7 @@ private theorem ModularCurve.finrank_adjoin_jqN_prime_of_not_mem
   have hmin : P = minpoly F (jqN p) := minpoly.eq_of_irreducible_of_monic hirr hProot hPmonic
   rw [IntermediateField.adjoin.finrank hα, ← hmin, hPdeg]
 
-p2m_open "ModularCurve~coeffEmb_qExpand\
+p2m_open "ModularCurve\
   " in
 open _root_.P2MW.S_ModularCurve_finrank_adjoin_jqN_prime_of_not_mem.ModularCurve in
 theorem solution (F : IntermediateField ℚ (LaurentSeries ℚ)) (hj : jq ∈ F) (p : ℕ)

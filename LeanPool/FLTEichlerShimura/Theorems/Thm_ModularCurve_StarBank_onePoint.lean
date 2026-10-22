@@ -53,11 +53,10 @@ https://github.com/anthropics/fermats-last-theorem/blob/aa2d8b34692b16c70f699536
 
 section privateSection
 
-set_option backward.isDefEq.respectTransparency.types false
 
 namespace P2MW.S_ModularCurve_StarBank_onePoint
 
-p2m_open "Polynomial HahnSeries ModularCurve P2MW.S_ModularCurve_StarBank_onePoint.ModularCurve"
+p2m_open "Polynomial HahnSeries ModularCurve"
 
 namespace ModularCurve
 p2m_export "ModularCurve" "jqModC etaProd"

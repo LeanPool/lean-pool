@@ -14,7 +14,6 @@ module
 public import LeanPool.FLTEichlerShimura.Definitions.Def_ModularCurve_SpecialisationVocab
 
 import Mathlib.RingTheory.SimpleRing.Principal
-import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
 
 /-!
 # Integral model at j₀=1728 with unit discriminant
@@ -54,12 +53,6 @@ https://github.com/anthropics/fermats-last-theorem/blob/aa2d8b34692b16c70f699536
 
 section privateSection
 
-set_option backward.isDefEq.respectTransparency.types false
-
-namespace P2MW.S_ModularCurve_B3_goodModel_1728_spec
-
-
-open scoped Classical
 open ModularCurve.TatePoint ModularCurve.B3 WeierstrassCurve
 
 noncomputable section
@@ -81,9 +74,6 @@ theorem coeff_zero_ofNat (n : ℕ) [n.AtLeastTwo] :
     (OfNat.ofNat n : H).coeff 0 = (OfNat.ofNat n : Qbar) := by
   rw [← C_ofNat, coeff_zero_C]
 
-theorem coeff_zero_sMon : sMon.coeff 0 = 0 :=
-  HahnSeries.coeff_single_of_ne (by norm_num)
-
 theorem coeff_one_jNear (j₀ : Qbar) : (jNear j₀).coeff 1 = 1 := by
   simp only [jNear, HahnSeries.C_apply, HahnSeries.coeff_add, HahnSeries.coeff_single_same,
     HahnSeries.coeff_single_of_ne (one_ne_zero : (1 : ℚ) ≠ 0), zero_add]
@@ -102,7 +92,7 @@ theorem jNear_ne_1728 (j₀ : Qbar) : jNear j₀ ≠ 1728 := by
   rw [← C_ofNat]; exact jNear_ne_C j₀ _
 
 theorem nearCurve_eq (j₀ : Qbar) : nearCurve j₀ = ofJNe0Or1728 (jNear j₀) := by
-  unfold nearCurve
+  classical
   exact ofJ_ne_0_ne_1728 _ (jNear_ne_zero j₀) (jNear_ne_1728 j₀)
 
 theorem jNear_sub (j₀ : Qbar) : jNear j₀ - 1728 = HahnSeries.C (j₀ - 1728) + sMon := by
@@ -117,29 +107,10 @@ theorem single_mem {q : ℚ} (hq : 0 ≤ q) (c : Qbar) : (HahnSeries.single q c 
 theorem C_mem (c : Qbar) : (HahnSeries.C c : H) ∈ integralO := by
   rw [HahnSeries.C_apply]; exact single_mem le_rfl c
 
-theorem sMon_mem : sMon ∈ integralO := single_mem zero_le_one 1
-
 theorem ofNat_mem (n : ℕ) [n.AtLeastTwo] : (OfNat.ofNat n : H) ∈ integralO := by
   rw [← C_ofNat]; exact C_mem _
 
-theorem inv_ofNat_mem (n : ℕ) [n.AtLeastTwo] : ((OfNat.ofNat n : H)⁻¹) ∈ integralO := by
-  rw [← C_ofNat, ← map_inv₀]; exact C_mem _
-
-theorem w_mem (j₀ : Qbar) : jNear j₀ - 1728 ∈ integralO := by
-  rw [jNear_sub]; exact Subring.add_mem _ (C_mem _) sMon_mem
-
-theorem coeff_zero_w (j₀ : Qbar) : (jNear j₀ - 1728).coeff 0 = j₀ - 1728 := by
-  rw [jNear_sub, HahnSeries.coeff_add, coeff_zero_C, coeff_zero_sMon, add_zero]
-
 theorem orderTop_nonneg_of_mem {x : H} (hx : x ∈ integralO) : 0 ≤ x.orderTop := mem_integralO.mp hx
-
-theorem coeff_zero_mul_mem {x y : H} (hx : x ∈ integralO) (hy : y ∈ integralO) :
-    (x * y).coeff 0 = x.coeff 0 * y.coeff 0 :=
-  coeff_zero_mul_of_integral (mem_integralO.mp hx) (mem_integralO.mp hy)
-
-theorem coeff_zero_pow_mem {x : H} (hx : x ∈ integralO) (k : ℕ) :
-    (x ^ k).coeff 0 = x.coeff 0 ^ k :=
-  coeff_zero_pow_of_integral (mem_integralO.mp hx) k
 
 theorem delta_j1728 : (⟨0, 0, 0, -36, 0⟩ : WeierstrassCurve Qbar).Δ = 2985984 := by
   simp only [WeierstrassCurve.Δ, WeierstrassCurve.b₂, WeierstrassCurve.b₄, WeierstrassCurve.b₆,
@@ -150,63 +121,8 @@ theorem c4_j1728 : (⟨0, 0, 0, -36, 0⟩ : WeierstrassCurve Qbar).c₄ = 1728 :
   simp only [WeierstrassCurve.c₄, WeierstrassCurve.b₂, WeierstrassCurve.b₄]
   norm_num
 
-theorem delta_j0 (a : Qbar) : (⟨0, 0, 0, 0, a⟩ : WeierstrassCurve Qbar).Δ = -432 * a ^ 2 := by
-  simp only [WeierstrassCurve.Δ, WeierstrassCurve.b₂, WeierstrassCurve.b₄, WeierstrassCurve.b₆,
-    WeierstrassCurve.b₈]
-  ring
-
-theorem c4_j0 (a : Qbar) : (⟨0, 0, 0, 0, a⟩ : WeierstrassCurve Qbar).c₄ = 0 := by
-  simp only [WeierstrassCurve.c₄, WeierstrassCurve.b₂, WeierstrassCurve.b₄]
-  ring
-
 theorem j_eq (E : WeierstrassCurve Qbar) [E.IsElliptic] : E.j = E.c₄ ^ 3 * E.Δ⁻¹ := by
   rw [WeierstrassCurve.j, Units.val_inv_eq_inv_val, WeierstrassCurve.coe_Δ', mul_comm]
-
-section Generic
-
-variable {j₀ : Qbar} (h0 : j₀ ≠ 0) (h1728 : j₀ ≠ 1728)
-include h0 h1728
-
-theorem goodModel_generic : goodModel j₀ = ofJNe0Or1728 (jNear j₀) := by
-  rw [goodModel_eq_nearCurve h0 h1728, nearCurve_eq]
-
-theorem specialFibre_generic : specialFibre (goodModel j₀) = ofJNe0Or1728 j₀ := by
-  rw [goodModel_generic h0 h1728]
-  have hw := w_mem j₀
-  have hc := coeff_zero_w j₀
-  ext
-  · change (jNear j₀ - 1728).coeff 0 = j₀ - 1728
-    exact hc
-  · change (0 : H).coeff 0 = 0
-    simp
-  · change (0 : H).coeff 0 = 0
-    simp
-  · change (-36 * (jNear j₀ - 1728) ^ 3).coeff 0 = -36 * (j₀ - 1728) ^ 3
-    rw [neg_mul, HahnSeries.coeff_neg, coeff_zero_mul_mem (ofNat_mem 36) (Subring.pow_mem _ hw 3),
-      coeff_zero_pow_mem hw, hc, coeff_zero_ofNat, neg_mul]
-  · change (-(jNear j₀ - 1728) ^ 5).coeff 0 = -(j₀ - 1728) ^ 5
-    rw [HahnSeries.coeff_neg, coeff_zero_pow_mem hw, hc]
-
-theorem integralCoeffs_generic : IntegralCoeffs (goodModel j₀) := by
-  rw [goodModel_generic h0 h1728]
-  have hw := w_mem j₀
-  refine ⟨orderTop_nonneg_of_mem hw, by simp [ofJNe0Or1728], by simp [ofJNe0Or1728],
-    orderTop_nonneg_of_mem ?_, orderTop_nonneg_of_mem ?_⟩
-  · change -36 * (jNear j₀ - 1728) ^ 3 ∈ integralO
-    exact Subring.mul_mem _ (Subring.neg_mem _ (ofNat_mem 36)) (Subring.pow_mem _ hw 3)
-  · change -(jNear j₀ - 1728) ^ 5 ∈ integralO
-    exact Subring.neg_mem _ (Subring.pow_mem _ hw 5)
-
-theorem isGood_generic : IntegralCoeffs (goodModel j₀) ∧
-    ∃ h : (specialFibre (goodModel j₀)).IsElliptic,
-      @WeierstrassCurve.j Qbar _ (specialFibre (goodModel j₀)) h = j₀ := by
-  refine ⟨integralCoeffs_generic h0 h1728, ?_⟩
-  rw [specialFibre_generic h0 h1728]
-  have : Fact (IsUnit j₀) := ⟨isUnit_iff_ne_zero.mpr h0⟩
-  have : Fact (IsUnit (j₀ - 1728)) := ⟨isUnit_iff_ne_zero.mpr (sub_ne_zero.mpr h1728)⟩
-  exact ⟨inferInstance, ofJNe0Or1728_j j₀⟩
-
-end Generic
 
 section J1728
 
@@ -279,120 +195,6 @@ theorem isGood_1728 : IntegralCoeffs (goodModel 1728) ∧
 
 end J1728
 
-section J0
-
-abbrev mEl : H := jNear 0 - 1728
-
-theorem jNear_zero : jNear 0 = sMon := by rw [jNear, map_zero, zero_add]
-
-theorem mEl_add : mEl + 1728 = sMon := by rw [mEl, jNear_zero]; ring
-
-theorem mEl_mem : mEl ∈ integralO := w_mem 0
-
-theorem coeff_zero_mEl : mEl.coeff 0 = -1728 := by rw [mEl, coeff_zero_w, zero_sub]
-
-theorem uInv_pow_mul_sMon_four :
-    (HahnSeries.single (-(2 / 12) : ℚ) (1 : Qbar) : H) ^ 4 * sMon = HahnSeries.single (1 / 3 : ℚ) 1
-      := by
-  rw [HahnSeries.single_pow, HahnSeries.single_mul_single]; norm_num
-
-theorem uInv_pow_mul_sMon_six :
-    (HahnSeries.single (-(2 / 12) : ℚ) (1 : Qbar) : H) ^ 6 * sMon = 1 := by
-  rw [HahnSeries.single_pow, HahnSeries.single_mul_single]; norm_num
-
-theorem goodModel_0_a₁ : (goodModel 0).a₁ = 0 := by
-  rw [goodModel, scaleVC_zero, nearCurve_eq, variableChange_a₁]
-  simp only [ofJNe0Or1728]
-  ring
-
-theorem goodModel_0_a₂ : (goodModel 0).a₂ = 0 := by
-  rw [goodModel, scaleVC_zero, nearCurve_eq, variableChange_a₂]
-  simp only [ofJNe0Or1728]
-  ring
-
-theorem goodModel_0_a₃ : (goodModel 0).a₃ = 0 := by
-  rw [goodModel, scaleVC_zero, nearCurve_eq, variableChange_a₃]
-  simp only [ofJNe0Or1728]
-  ring
-
-theorem goodModel_0_a₄ :
-    (goodModel 0).a₄ = HahnSeries.single (1 / 3 : ℚ) (1 : Qbar) * (-mEl ^ 3 / 48) := by
-  rw [goodModel, scaleVC_zero, nearCurve_eq, variableChange_a₄]
-  simp only [ofJNe0Or1728, val_inv_sU]
-  have key : (-36 * (jNear 0 - 1728) ^ 3 - -(jNear 0 - 1728) / 2 * 0 +
-      2 * (-(jNear 0 - 1728) ^ 2 / 12) * 0 -
-      ((jNear 0 - 1728) ^ 3 / 24 + -(jNear 0 - 1728) ^ 2 / 12 * (-(jNear 0 - 1728) / 2)) *
-        (jNear 0 - 1728) +
-      3 * (-(jNear 0 - 1728) ^ 2 / 12) ^ 2 - 2 * (-(jNear 0 - 1728) / 2) * ((jNear 0 - 1728) ^ 3 /
-        24))
-      = sMon * (-mEl ^ 3 / 48) := by
-    rw [← mEl_add]; simp only [mEl]; ring
-  rw [key, ← mul_assoc, uInv_pow_mul_sMon_four]
-
-theorem goodModel_0_a₆ : (goodModel 0).a₆ = mEl ^ 5 / 864 := by
-  rw [goodModel, scaleVC_zero, nearCurve_eq, variableChange_a₆]
-  simp only [ofJNe0Or1728, val_inv_sU]
-  have key : (-(jNear 0 - 1728) ^ 5 + -(jNear 0 - 1728) ^ 2 / 12 * (-36 * (jNear 0 - 1728) ^ 3) +
-      (-(jNear 0 - 1728) ^ 2 / 12) ^ 2 * 0 + (-(jNear 0 - 1728) ^ 2 / 12) ^ 3 -
-      (jNear 0 - 1728) ^ 3 / 24 * 0 - ((jNear 0 - 1728) ^ 3 / 24) ^ 2 -
-      -(jNear 0 - 1728) ^ 2 / 12 * ((jNear 0 - 1728) ^ 3 / 24) * (jNear 0 - 1728))
-      = sMon * (mEl ^ 5 / 864) := by
-    rw [← mEl_add]; simp only [mEl]; ring
-  rw [key, ← mul_assoc, uInv_pow_mul_sMon_six, one_mul]
-
-theorem a₄_0_mem : HahnSeries.single (1 / 3 : ℚ) (1 : Qbar) * (-mEl ^ 3 / 48) ∈ integralO := by
-  refine Subring.mul_mem _ (single_mem (by norm_num) _) ?_
-  rw [div_eq_mul_inv]
-  exact Subring.mul_mem _ (Subring.neg_mem _ (Subring.pow_mem _ mEl_mem 3)) (inv_ofNat_mem 48)
-
-theorem a₆_0_mem : mEl ^ 5 / 864 ∈ integralO := by
-  rw [div_eq_mul_inv]
-  exact Subring.mul_mem _ (Subring.pow_mem _ mEl_mem 5) (inv_ofNat_mem 864)
-
-theorem coeff_zero_a₆_0 : (mEl ^ 5 / 864).coeff 0 = (-1728) ^ 5 / 864 := by
-  rw [div_eq_mul_inv, coeff_zero_mul_mem (Subring.pow_mem _ mEl_mem 5) (inv_ofNat_mem 864),
-    coeff_zero_pow_mem mEl_mem, coeff_zero_mEl, ← C_ofNat, ← map_inv₀, coeff_zero_C, div_eq_mul_inv]
-
-theorem specialFibre_0 : specialFibre (goodModel 0) = ⟨0, 0, 0, 0, (-1728) ^ 5 / 864⟩ := by
-  ext
-  · change (goodModel 0).a₁.coeff 0 = 0
-    rw [goodModel_0_a₁]; simp
-  · change (goodModel 0).a₂.coeff 0 = 0
-    rw [goodModel_0_a₂]; simp
-  · change (goodModel 0).a₃.coeff 0 = 0
-    rw [goodModel_0_a₃]; simp
-  · change (goodModel 0).a₄.coeff 0 = 0
-    rw [goodModel_0_a₄, coeff_zero_mul_mem (single_mem (by norm_num) _)
-      (by simpa [div_eq_mul_inv] using
-        (Subring.mul_mem _ (Subring.neg_mem _ (Subring.pow_mem _ mEl_mem 3)) (inv_ofNat_mem 48))),
-      HahnSeries.coeff_single_of_ne (by norm_num), zero_mul]
-  · change (goodModel 0).a₆.coeff 0 = (-1728) ^ 5 / 864
-    rw [goodModel_0_a₆, coeff_zero_a₆_0]
-
-theorem integralCoeffs_0 : IntegralCoeffs (goodModel 0) := by
-  refine ⟨?_, ?_, ?_, ?_, ?_⟩
-  · rw [goodModel_0_a₁]; simp
-  · rw [goodModel_0_a₂]; simp
-  · rw [goodModel_0_a₃]; simp
-  · rw [goodModel_0_a₄]; exact orderTop_nonneg_of_mem a₄_0_mem
-  · rw [goodModel_0_a₆]; exact orderTop_nonneg_of_mem a₆_0_mem
-
-theorem isGood_0 : IntegralCoeffs (goodModel 0) ∧
-    ∃ h : (specialFibre (goodModel 0)).IsElliptic,
-      @WeierstrassCurve.j Qbar _ (specialFibre (goodModel 0)) h = 0 := by
-  refine ⟨integralCoeffs_0, ?_⟩
-  rw [specialFibre_0]
-  have ha : ((-1728 : Qbar) ^ 5 / 864) ≠ 0 := by norm_num
-  have hΔ : (⟨0, 0, 0, 0, (-1728 : Qbar) ^ 5 / 864⟩ : WeierstrassCurve Qbar).Δ ≠ 0 := by
-    rw [delta_j0]; exact mul_ne_zero (by norm_num) (pow_ne_zero _ ha)
-  have : (⟨0, 0, 0, 0, (-1728 : Qbar) ^ 5 / 864⟩ : WeierstrassCurve Qbar).IsElliptic :=
-    ⟨isUnit_iff_ne_zero.mpr hΔ⟩
-  refine ⟨inferInstance, ?_⟩
-  rw [j_eq, c4_j0]
-  ring
-
-end J0
-
 end S12B3
 
 namespace S12B3
@@ -407,9 +209,6 @@ theorem orderTop_C_add_sMon {a : Qbar} (ha : a ≠ 0) : (HahnSeries.C a + sMon :
 theorem orderTop_jNear {j₀ : Qbar} (h0 : j₀ ≠ 0) : (jNear j₀).orderTop = 0 := by
   rw [jNear]; exact orderTop_C_add_sMon h0
 
-theorem orderTop_w' {j₀ : Qbar} (h : j₀ ≠ 1728) : (jNear j₀ - 1728).orderTop = 0 := by
-  rw [jNear_sub]; exact orderTop_C_add_sMon (sub_ne_zero.mpr h)
-
 theorem orderTop_pow_of_eq_zero {x : H} (hx : x.orderTop = 0) (n : ℕ) : (x ^ n).orderTop = 0 := by
   induction n with
   | zero => rw [pow_zero, HahnSeries.orderTop_one]
@@ -418,24 +217,6 @@ theorem orderTop_pow_of_eq_zero {x : H} (hx : x.orderTop = 0) (n : ℕ) : (x ^ n
 theorem delta_nearCurve (j₀ : Qbar) :
     (nearCurve j₀).Δ = (jNear j₀) ^ 2 * (jNear j₀ - 1728) ^ 9 := by
   rw [nearCurve_eq, WeierstrassCurve.ofJNe0Or1728_Δ]
-
-theorem orderTop_delta_nearCurve_generic {j₀ : Qbar} (h0 : j₀ ≠ 0) (h1728 : j₀ ≠ 1728) :
-    (nearCurve j₀).Δ.orderTop = 0 := by
-  rw [delta_nearCurve, HahnSeries.orderTop_mul, orderTop_pow_of_eq_zero (orderTop_jNear h0),
-    orderTop_pow_of_eq_zero (orderTop_w' h1728), add_zero]
-
-theorem delta_goodModel_zero : (goodModel 0).Δ = mEl ^ 9 := by
-  rw [goodModel, WeierstrassCurve.variableChange_Δ, scaleVC_zero, delta_nearCurve, jNear_zero]
-  simp only [val_inv_sU]
-  rw [show (HahnSeries.single (-(2 / 12) : ℚ) (1 : Qbar) : H) ^ 12 * (sMon ^ 2 * (sMon - 1728) ^ 9)
-      = (HahnSeries.single (-(2 / 12) : ℚ) (1 : Qbar) ^ 12 * sMon ^ 2) * (sMon - 1728) ^ 9 by ring,
-    HahnSeries.single_pow, HahnSeries.single_pow, HahnSeries.single_mul_single]
-  norm_num
-  rw [mEl, jNear_zero]
-
-theorem orderTop_delta_goodModel_zero : (goodModel 0).Δ.orderTop = 0 := by
-  rw [delta_goodModel_zero]
-  exact orderTop_pow_of_eq_zero (by rw [mEl]; exact orderTop_w' (by norm_num)) 9
 
 theorem delta_goodModel_1728 : (goodModel 1728).Δ = (jNear 1728) ^ 2 := by
   rw [goodModel, WeierstrassCurve.variableChange_Δ, scaleVC_1728, delta_nearCurve, jNear_1728_sub]
@@ -452,18 +233,12 @@ theorem orderTop_delta_goodModel_1728 : (goodModel 1728).Δ.orderTop = 0 := by
 end S12B3
 end
 
-open ModularCurve.B3 ModularCurve.TatePoint WeierstrassCurve
-
 theorem solution :
     IntegralCoeffs (goodModel 1728) ∧ (goodModel 1728).Δ.orderTop = 0 ∧
       ∃ _ : (specialFibre (goodModel 1728)).IsElliptic,
         (specialFibre (goodModel 1728)).j = 1728 := by
   obtain ⟨hint, h, hj⟩ := S12B3.isGood_1728
   exact ⟨hint, S12B3.orderTop_delta_goodModel_1728, h, hj⟩
-
-end S_ModularCurve_B3_goodModel_1728_spec
-end P2MW
-export P2MW.S_ModularCurve_B3_goodModel_1728_spec (solution)
 
 end privateSection
 

@@ -53,7 +53,6 @@ https://github.com/anthropics/fermats-last-theorem/blob/aa2d8b34692b16c70f699536
 
 section privateSection
 
-set_option backward.isDefEq.respectTransparency.types false
 
 namespace P2MW.S_ModularCurve_deg_jLinePlace1728
 
@@ -63,9 +62,9 @@ attribute [local instance 2000] RatFunc.instAlgebraOfPolynomial
 attribute [local instance] ModularCurve.instDecidableEqRatFuncRat
 
 theorem solution : ModularCurve.jLinePlace1728.deg = 1 := by
-  unfold ModularCurve.jLinePlace1728
-  rw [Place.deg_congrRingEquiv]
-  exact deg_placeOfPoint ℚ 1728
+  exact (Place.deg_congrRingEquiv ModularCurve.jLineRingEquiv
+    (RingHom.map_rat_algebraMap ModularCurve.jLineRingEquiv.toRingHom)
+    (placeOfPoint ℚ 1728)).trans (deg_placeOfPoint ℚ 1728)
 
 end S_ModularCurve_deg_jLinePlace1728
 end P2MW

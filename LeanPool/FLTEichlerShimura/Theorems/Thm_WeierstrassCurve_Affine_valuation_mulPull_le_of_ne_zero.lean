@@ -68,15 +68,10 @@ https://github.com/anthropics/fermats-last-theorem/blob/aa2d8b34692b16c70f699536
 
 section privateSection
 
-set_option backward.isDefEq.respectTransparency.types false
 
 namespace P2MW.S_WeierstrassCurve_Affine_valuation_mulPull_le_of_ne_zero
 
-p2m_open "WeierstrassCurve \
-  P2MW.S_WeierstrassCurve_Affine_valuation_mulPull_le_of_ne_zero.WeierstrassCurve \
-  WeierstrassCurve.Affine \
-  P2MW.S_WeierstrassCurve_Affine_valuation_mulPull_le_of_ne_zero.WeierstrassCurve.Affine \
-  Polynomial IsDedekindDomain WithZero"
+p2m_open "WeierstrassCurve WeierstrassCurve.Affine Polynomial IsDedekindDomain WithZero"
 open scoped Polynomial.Bivariate
 
 namespace WeierstrassCurve

@@ -62,7 +62,6 @@ quotient with the Vélu quotient over a half-system of the kernel.
 noncomputable section
 
 open ModularCurve WeierstrassCurve Polynomial
-open scoped Classical
 
 namespace ModularCurve.TatePoint
 
@@ -96,12 +95,14 @@ abbrev FullKernelDiscAt (N : ℕ) [NeZero N] : Prop :=
 
 attribute [local instance] isAlgClosed_H charZero_H
 
+open scoped Classical in
 theorem isElliptic_fullKernelQuotient_cycSubGen (E : WeierstrassCurve H) [E.IsElliptic] {N : ℕ}
     [NeZero N]
     (hW3 : FullKernelDiscAt N) (G : CycSubH E N) :
     (E.fullKernelQuotient (cycSubGen E G) N).IsElliptic :=
   ⟨isUnit_iff_ne_zero.mpr (hW3 two_ne_zero E (cycSubGen E G) (addOrderOf_cycSubGen E G))⟩
 
+open scoped Classical in
 def cycSubRootN (E : WeierstrassCurve H) [E.IsElliptic] {N : ℕ} [NeZero N]
     (hW1 : FullKernelIsRootAt N)
     (hW3 : FullKernelDiscAt N) (data : ModularPolynomialData N) (G : CycSubH E N)
@@ -111,6 +112,7 @@ def cycSubRootN (E : WeierstrassCurve H) [E.IsElliptic] {N : ℕ} [NeZero N]
     hW1 E (cycSubGen E G) (addOrderOf_cycSubGen E G)
       (isElliptic_fullKernelQuotient_cycSubGen E hW3 G).isUnit.ne_zero data⟩
 
+open scoped Classical in
 theorem cycSubRootN_coe (E : WeierstrassCurve H) [E.IsElliptic] {N : ℕ} [NeZero N]
     (hW1 : FullKernelIsRootAt N) (hW3 : FullKernelDiscAt N) (data : ModularPolynomialData N)
     (G : CycSubH E N) :
@@ -122,6 +124,7 @@ theorem cycSubRootN_injective (E : WeierstrassCurve H) [E.IsElliptic] {N : ℕ} 
     (hW1 : FullKernelIsRootAt N) (hW2 : FullKernelInjAt N) (hW3 : FullKernelDiscAt N)
     (data : ModularPolynomialData N) (hj : Transcendental Qbar E.j) :
     Function.Injective (cycSubRootN E hW1 hW3 data) := by
+  classical
   intro G G' h
   have hjj := congrArg Subtype.val h
   simp only [cycSubRootN_coe] at hjj
@@ -166,6 +169,7 @@ def dictN (N : ℕ) [NeZero N] (data : ModularPolynomialData N) (j₀ : Qbar)
     RootsAt data (nearCurve j₀).j ≃ CycSubH (nearCurve j₀) N :=
   rootsEquivCycSubHN (nearCurve j₀) hW1 hW2 hW3 data (nearCurve_j_transcendental j₀)
 
+open scoped Classical in
 theorem dictN_symm_apply_coe (N : ℕ) [NeZero N] (data : ModularPolynomialData N) (j₀ : Qbar)
     (hW1 : FullKernelIsRootAt N) (hW2 : FullKernelInjAt N) (hW3 : FullKernelDiscAt N)
     (G : CycSubH (nearCurve j₀) N) :
@@ -183,55 +187,5 @@ theorem dictN_apply_eq_iff (N : ℕ) [NeZero N] (data : ModularPolynomialData N)
 end ModularCurve.TatePoint
 
 end
-
-example (N : ℕ) [NeZero N] (h : ∀ [DecidableEq (HahnSeries ℚ (AlgebraicClosure ℚ))]
-    (W : WeierstrassCurve (HahnSeries ℚ (AlgebraicClosure ℚ))) [W.IsElliptic]
-    (Q : W.toAffine.Point) (_ : addOrderOf Q = N)
-    (hΔ : (W.fullKernelQuotient Q N).Δ ≠ 0)
-    (data : ModularCurve.ModularPolynomialData N),
-    haveI : (W.fullKernelQuotient Q N).IsElliptic := ⟨isUnit_iff_ne_zero.mpr hΔ⟩
-    (data.Φ.map (Polynomial.eval₂RingHom
-      (Int.castRingHom (HahnSeries ℚ (AlgebraicClosure ℚ))) W.j)).IsRoot
-      (W.fullKernelQuotient Q N).j) : ModularCurve.TatePoint.FullKernelIsRootAt N := h
-example (N : ℕ) [NeZero N] (h : ModularCurve.TatePoint.FullKernelIsRootAt N)
-    [DecidableEq (HahnSeries ℚ (AlgebraicClosure ℚ))]
-    (W : WeierstrassCurve (HahnSeries ℚ (AlgebraicClosure ℚ))) [W.IsElliptic]
-    (Q : W.toAffine.Point) (hQ : addOrderOf Q = N) (hΔ : (W.fullKernelQuotient Q N).Δ ≠ 0)
-    (data : ModularCurve.ModularPolynomialData N) :
-    haveI : (W.fullKernelQuotient Q N).IsElliptic := ⟨isUnit_iff_ne_zero.mpr hΔ⟩
-    (data.Φ.map (Polynomial.eval₂RingHom
-      (Int.castRingHom (HahnSeries ℚ (AlgebraicClosure ℚ))) W.j)).IsRoot
-      (W.fullKernelQuotient Q N).j := h W Q hQ hΔ data
-example (N : ℕ) [NeZero N] (h : ∀ [DecidableEq (HahnSeries ℚ (AlgebraicClosure ℚ))]
-    (W : WeierstrassCurve (HahnSeries ℚ (AlgebraicClosure ℚ))) [W.IsElliptic]
-    (_ : Transcendental ℚ W.j) (Q Q' : W.toAffine.Point)
-    (_ : addOrderOf Q = N) (_ : addOrderOf Q' = N)
-    (hΔ : (W.fullKernelQuotient Q N).Δ ≠ 0)
-    (hΔ' : (W.fullKernelQuotient Q' N).Δ ≠ 0)
-    (_ : haveI : (W.fullKernelQuotient Q N).IsElliptic := ⟨isUnit_iff_ne_zero.mpr hΔ⟩
-      haveI : (W.fullKernelQuotient Q' N).IsElliptic := ⟨isUnit_iff_ne_zero.mpr hΔ'⟩
-      (W.fullKernelQuotient Q N).j = (W.fullKernelQuotient Q' N).j),
-    AddSubgroup.zmultiples Q = AddSubgroup.zmultiples Q') : ModularCurve.TatePoint.FullKernelInjAt N
-      := h
-example (N : ℕ) [NeZero N] (h : ModularCurve.TatePoint.FullKernelInjAt N)
-    [DecidableEq (HahnSeries ℚ (AlgebraicClosure ℚ))]
-    (W : WeierstrassCurve (HahnSeries ℚ (AlgebraicClosure ℚ))) [W.IsElliptic]
-    (ht : Transcendental ℚ W.j) (Q Q' : W.toAffine.Point)
-    (hQ : addOrderOf Q = N) (hQ' : addOrderOf Q' = N)
-    (hΔ : (W.fullKernelQuotient Q N).Δ ≠ 0) (hΔ' : (W.fullKernelQuotient Q' N).Δ ≠ 0)
-    (hj : haveI : (W.fullKernelQuotient Q N).IsElliptic := ⟨isUnit_iff_ne_zero.mpr hΔ⟩
-      haveI : (W.fullKernelQuotient Q' N).IsElliptic := ⟨isUnit_iff_ne_zero.mpr hΔ'⟩
-      (W.fullKernelQuotient Q N).j = (W.fullKernelQuotient Q' N).j) :
-    AddSubgroup.zmultiples Q = AddSubgroup.zmultiples Q' := h W ht Q Q' hQ hQ' hΔ hΔ' hj
-example (N : ℕ) [NeZero N] (h : ∀ {L : Type} [Field L] [DecidableEq L] [IsAlgClosed L], (2 : L) ≠ 0
-  →
-    ∀ (W : WeierstrassCurve L) [W.IsElliptic] (Q : W.toAffine.Point),
-      addOrderOf Q = N → (W.fullKernelQuotient Q N).Δ ≠ 0) : ModularCurve.TatePoint.FullKernelDiscAt
-        N := h
-example (N : ℕ) [NeZero N] (h : ModularCurve.TatePoint.FullKernelDiscAt N)
-    {L : Type} [Field L] [DecidableEq L] [IsAlgClosed L]
-    (h2 : (2 : L) ≠ 0) (W : WeierstrassCurve L) [W.IsElliptic] (Q : W.toAffine.Point)
-    (hQ : addOrderOf Q = N) :
-    (W.fullKernelQuotient Q N).Δ ≠ 0 := h h2 W Q hQ
 
 end publicSection

@@ -15,10 +15,9 @@ public import LeanPool.FLTEichlerShimura.Definitions.Def_ModularCurve_EMD
 
 import LeanPool.FLTEichlerShimura.Theorems.Thm_WeierstrassCurve_Affine_Point_vcInvFun_neg_heq_neg
 import LeanPool.FLTEichlerShimura.Theorems.Thm_WeierstrassCurve_variableChange_smul_eq_self_iff_of_c4_ne_zero_of_c6_ne_zero
-import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
 
 /-!
-# Orbit relation on cyclic subgroups is equality when c₄,c₆≠ 0
+# Orbit relation on cyclic subgroups is equality when c₄,c₆ ≠ 0
 
 Theorem statement: `ModularCurve.sameOrbit_iff_eq_of_c4_ne_zero_of_c6_ne_zero`
 (`11581efe-6a84-57cd-a5ff-529b072eee6a`), by Claude, 2026-09-05.
@@ -58,24 +57,7 @@ https://github.com/anthropics/fermats-last-theorem/blob/aa2d8b34692b16c70f699536
 
 section privateSection
 
-set_option backward.isDefEq.respectTransparency.types false
-
-namespace P2MW.S_ModularCurve_sameOrbit_iff_eq_of_c4_ne_zero_of_c6_ne_zero
-
-p2m_open "WeierstrassCurve \
-  P2MW.S_ModularCurve_sameOrbit_iff_eq_of_c4_ne_zero_of_c6_ne_zero.WeierstrassCurve \
-  WeierstrassCurve.Affine \
-  P2MW.S_ModularCurve_sameOrbit_iff_eq_of_c4_ne_zero_of_c6_ne_zero.WeierstrassCurve.Affine"
-open scoped Classical
-
-namespace WeierstrassCurve
-p2m_export "WeierstrassCurve" "Affine VariableChange.one_def a₃ a₁ c₆ toAffine Affine.Point c₄ \
-  VariableChange variableChange_smul_eq_self_iff_of_c4_ne_zero_of_c6_ne_zero"
-namespace Affine
-p2m_export "WeierstrassCurve.Affine" "Point vcXInv vcYInv"
-namespace Point
-p2m_export "WeierstrassCurve.Affine.Point" "some zero vcInvFun vcInvFun_neg_heq_neg"
-p2m_open "WeierstrassCurve.Affine.Point WeierstrassCurve.Affine WeierstrassCurve"
+namespace WeierstrassCurve.Affine.Point
 
 variable {F : Type*} [Field F] [DecidableEq F]
 
@@ -99,10 +81,7 @@ theorem zmultiples_eq_of_heq_vcInvFun_neg' (W : WeierstrassCurve F) (g g' : W.to
 
 end WeierstrassCurve.Affine.Point
 
-p2m_open "WeierstrassCurve.Affine.Point \
-  P2MW.S_ModularCurve_sameOrbit_iff_eq_of_c4_ne_zero_of_c6_ne_zero.WeierstrassCurve.Affine.Point"
-
-open ModularCurve
+open ModularCurve WeierstrassCurve.Affine.Point
 
 theorem solution (E₀ : WeierstrassCurve (AlgebraicClosure ℚ))
     (hc₄ : E₀.c₄ ≠ 0) (hc₆ : E₀.c₆ ≠ 0) (H H' : AddSubgroup E₀.toAffine.Point) :
@@ -120,18 +99,14 @@ theorem solution (E₀ : WeierstrassCurve (AlgebraicClosure ℚ))
   · rintro ⟨rfl, g, rfl⟩
     exact ⟨1, one_smul _ _, g, g, rfl, rfl, (vcInvFun_one_heq' E₀ g).symm⟩
 
-end S_ModularCurve_sameOrbit_iff_eq_of_c4_ne_zero_of_c6_ne_zero
-end P2MW
-export P2MW.S_ModularCurve_sameOrbit_iff_eq_of_c4_ne_zero_of_c6_ne_zero (solution)
-
 end privateSection
 
 public section publicSection
 
-
 open ModularCurve WeierstrassCurve
-theorem ModularCurve.sameOrbit_iff_eq_of_c4_ne_zero_of_c6_ne_zero (E₀ : WeierstrassCurve
-  (AlgebraicClosure ℚ))
+
+theorem ModularCurve.sameOrbit_iff_eq_of_c4_ne_zero_of_c6_ne_zero
+    (E₀ : WeierstrassCurve (AlgebraicClosure ℚ))
     (hc₄ : E₀.c₄ ≠ 0) (hc₆ : E₀.c₆ ≠ 0) (H H' : AddSubgroup E₀.toAffine.Point) :
     SameOrbit E₀ H H' ↔ H' = H ∧ ∃ g : E₀.toAffine.Point, H = AddSubgroup.zmultiples g :=
   solution E₀ hc₄ hc₆ H H'

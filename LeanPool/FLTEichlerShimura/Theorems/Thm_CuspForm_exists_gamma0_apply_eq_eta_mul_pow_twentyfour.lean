@@ -62,7 +62,6 @@ https://github.com/anthropics/fermats-last-theorem/blob/aa2d8b34692b16c70f699536
 
 section privateSection
 
-set_option backward.isDefEq.respectTransparency.types false
 
 namespace P2MW.S_CuspForm_exists_gamma0_apply_eq_eta_mul_pow_twentyfour
 
@@ -356,7 +355,9 @@ theorem etaMultiplier_T : etaMultiplier ModularGroup.T = 1 := by
     rw [modular_T_smul]
     simp [UpperHalfPlane.coe_vadd, add_comm]
   have hden : denom ModularGroup.T (UpperHalfPlane.I : ℂ) = 1 := by
-    simp [UpperHalfPlane.denom, ModularGroup.T]
+    change ((ModularGroup.T 1 0 : ℤ) : ℂ) * (UpperHalfPlane.I : ℂ) +
+      (ModularGroup.T 1 1 : ℤ) = 1
+    norm_num [ModularGroup.T]
   rw [hsmul, hden, etaProductEleven_T_invariant, one_zpow, one_mul, div_self]
   exact etaProductEleven_ne_zero (by simp [UpperHalfPlane.coe_I])
 

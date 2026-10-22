@@ -51,11 +51,10 @@ https://github.com/anthropics/fermats-last-theorem/blob/aa2d8b34692b16c70f699536
 
 section privateSection
 
-set_option backward.isDefEq.respectTransparency.types false
 
 namespace P2MW.S_Polynomial_mem_range_of_eval_eq_const
 
-p2m_open "Polynomial P2MW.S_Polynomial_mem_range_of_eval_eq_const.Polynomial"
+p2m_open "Polynomial"
 
 namespace Polynomial
 p2m_export "Polynomial" "C Splits.of_dvd card_roots' coeff_map natDegree_mul coeff unique aeval \

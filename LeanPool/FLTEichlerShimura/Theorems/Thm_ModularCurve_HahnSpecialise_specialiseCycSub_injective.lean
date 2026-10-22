@@ -13,8 +13,6 @@ module
 
 public import LeanPool.FLTEichlerShimura.Definitions.Def_ModularCurve_HahnSpecialise
 
-import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
-
 /-!
 # Specialisation is injective on cyclic subgroups of order N
 
@@ -56,19 +54,12 @@ https://github.com/anthropics/fermats-last-theorem/blob/aa2d8b34692b16c70f699536
 
 section privateSection
 
-set_option backward.isDefEq.respectTransparency.types false
-
-namespace P2MW.S_ModularCurve_HahnSpecialise_specialiseCycSub_injective
-
 noncomputable section
 
 open ModularCurve ModularCurve.B3 ModularCurve.HahnSpecialise
 open ModularCurve.TatePoint (Qbar H CycSubH)
-open scoped Classical
 
 namespace CycSubOf
-p2m_export "CycSubOf" "map coe_map"
-p2m_open "CycSubOf"
 
 variable {G G' : Type*} [AddCommGroup G] [AddCommGroup G'] (f : G →+ G') {N : ℕ}
 variable (hf : ∀ ⦃P Q : G⦄, N • P = 0 → N • Q = 0 → f P = f Q → P = Q)
@@ -106,23 +97,19 @@ end CycSubOf
 
 theorem solution (E : WeierstrassCurve H) (hE : IntegralCoeffs E)
     (hΔ : (specialFibre E).Δ ≠ 0) (N : ℕ) [NeZero N] :
-    Function.Injective (specialiseCycSub E hE hΔ N) :=
-  CycSubOf.map_injective _ _
+    Function.Injective (specialiseCycSub E hE hΔ N) := by
+  classical
+  exact CycSubOf.map_injective _ _
 
 end
-
-end S_ModularCurve_HahnSpecialise_specialiseCycSub_injective
-end P2MW
-export P2MW.S_ModularCurve_HahnSpecialise_specialiseCycSub_injective (solution)
 
 end privateSection
 
 public section publicSection
 
-
 open ModularCurve ModularCurve.B3 ModularCurve.HahnSpecialise
 open ModularCurve.TatePoint (Qbar H CycSubH)
-open scoped Classical
+
 theorem ModularCurve.HahnSpecialise.specialiseCycSub_injective (E : WeierstrassCurve H)
     (hE : IntegralCoeffs E)
     (hΔ : (specialFibre E).Δ ≠ 0) (N : ℕ) [NeZero N] :

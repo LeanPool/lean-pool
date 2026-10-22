@@ -58,15 +58,13 @@ https://github.com/anthropics/fermats-last-theorem/blob/aa2d8b34692b16c70f699536
 
 section privateSection
 
-set_option backward.isDefEq.respectTransparency.types false
 
 namespace P2MW.S_ModularForm_heckeU_slash_eq_self_of_mem_Gamma0
 
 noncomputable section
 
 open Matrix.SpecialLinearGroup UpperHalfPlane
-p2m_open_scoped "MatrixGroups ModularForm \
-  P2MW.S_ModularForm_heckeU_slash_eq_self_of_mem_Gamma0.ModularForm OnePoint"
+p2m_open_scoped "MatrixGroups ModularForm OnePoint"
 
 namespace ModularForm
 p2m_export "ModularForm" "rec ext heckeMatrix heckeDiagMatrix heckeU heckeT heckeU_def \
@@ -93,83 +91,99 @@ theorem heckeMatrix_mul_of_eq (g : SL(2, ℤ)) (j j' : ℕ) (e : ℤ)
     ∃ g' : SL(2, ℤ), g' 1 0 = p * g 1 0 ∧
       heckeMatrix p j * mapGL ℝ g = mapGL ℝ g' * heckeMatrix p j' := by
   have hdet := det_eq g
-  refine ⟨⟨!![g 0 0 + j * g 1 0, e; p * g 1 0, g 1 1 - g 1 0 * j'], ?_⟩, rfl, ?_⟩
-  · rw [Matrix.det_fin_two_of]
-    linear_combination hdet + (g 1 0) * he
-  · ext i j
-    fin_cases i <;> fin_cases j <;>
-      simp only [Fin.zero_eta, Fin.isValue, Units.val_mul, ne_eq, hp, not_false_eq_true,
-        val_heckeMatrix, mapGL_coe_matrix, algebraMap_int_eq, map_apply_coe,
-        RingHom.mapMatrix_apply, Int.coe_castRingHom, Matrix.mul_apply, Matrix.of_apply,
-        Matrix.cons_val', Matrix.cons_val_fin_one, Matrix.cons_val_zero, Matrix.map_apply,
-        Fin.sum_univ_two, one_mul, Matrix.cons_val_one, Int.cast_add, Int.cast_mul,
-        Int.cast_natCast, mul_one, mul_zero, add_zero, Fin.mk_one, zero_mul, zero_add, Int.cast_sub]
-    all_goals first
-      | (have := congrArg (Int.cast : ℤ → ℝ) he; push_cast at this ⊢; linear_combination this)
-      | (have := congrArg (Int.cast : ℤ → ℝ) he; push_cast at this ⊢; linear_combination -this)
-      | ring1
+  let g' : SL(2, ℤ) := ⟨!![g 0 0 + j * g 1 0, e; p * g 1 0, g 1 1 - g 1 0 * j'], by
+    rw [Matrix.det_fin_two_of]
+    linear_combination hdet + (g 1 0) * he⟩
+  refine ⟨g', rfl, ?_⟩
+  apply Units.ext
+  simp only [Units.val_mul, mapGL_coe_matrix, map_apply_coe]
+  dsimp only [g']
+  ext i j
+  fin_cases i <;> fin_cases j <;>
+    simp only [Fin.zero_eta, Fin.isValue, ne_eq, hp, not_false_eq_true,
+      val_heckeMatrix, algebraMap_int_eq,
+      RingHom.mapMatrix_apply, Int.coe_castRingHom, Matrix.mul_apply, Matrix.of_apply,
+      Matrix.cons_val', Matrix.cons_val_fin_one, Matrix.cons_val_zero, Matrix.map_apply,
+      Fin.sum_univ_two, one_mul, Matrix.cons_val_one, Int.cast_add, Int.cast_mul,
+      Int.cast_natCast, mul_one, mul_zero, add_zero, Fin.mk_one, zero_mul, zero_add, Int.cast_sub]
+  all_goals first
+    | (have := congrArg (Int.cast : ℤ → ℝ) he; push_cast at this ⊢; linear_combination this)
+    | (have := congrArg (Int.cast : ℤ → ℝ) he; push_cast at this ⊢; linear_combination -this)
+    | ring1
 
 theorem heckeMatrix_mul_of_eq' (g : SL(2, ℤ)) (j : ℕ) (e : ℤ)
     (he : g 0 0 + j * g 1 0 = p * e) :
     ∃ g' : SL(2, ℤ), g' 1 0 = g 1 0 ∧
       heckeMatrix p j * mapGL ℝ g = mapGL ℝ g' * heckeDiagMatrix p := by
   have hdet := det_eq g
-  refine ⟨⟨!![e, g 0 1 + j * g 1 1; g 1 0, p * g 1 1], ?_⟩, rfl, ?_⟩
-  · rw [Matrix.det_fin_two_of]
-    linear_combination hdet - (g 1 1) * he
-  · ext i j
-    fin_cases i <;> fin_cases j <;>
-      simp only [Fin.zero_eta, Fin.isValue, Units.val_mul, ne_eq, hp, not_false_eq_true,
-        val_heckeMatrix, mapGL_coe_matrix, algebraMap_int_eq, map_apply_coe,
-        RingHom.mapMatrix_apply, Int.coe_castRingHom, Matrix.mul_apply, Matrix.of_apply,
-        Matrix.cons_val', Matrix.cons_val_fin_one, Matrix.cons_val_zero, Matrix.map_apply,
-        Fin.sum_univ_two, one_mul, Matrix.cons_val_one, val_heckeDiagMatrix, Int.cast_add,
-        Int.cast_mul, Int.cast_natCast, mul_zero, add_zero, Fin.mk_one, mul_one, zero_add, zero_mul]
-    all_goals first
-      | (have := congrArg (Int.cast : ℤ → ℝ) he; push_cast at this ⊢; linear_combination this)
-      | (have := congrArg (Int.cast : ℤ → ℝ) he; push_cast at this ⊢; linear_combination -this)
-      | ring1
+  let g' : SL(2, ℤ) := ⟨!![e, g 0 1 + j * g 1 1; g 1 0, p * g 1 1], by
+    rw [Matrix.det_fin_two_of]
+    linear_combination hdet - (g 1 1) * he⟩
+  refine ⟨g', rfl, ?_⟩
+  apply Units.ext
+  simp only [Units.val_mul, mapGL_coe_matrix, map_apply_coe]
+  dsimp only [g']
+  ext i j
+  fin_cases i <;> fin_cases j <;>
+    simp only [Fin.zero_eta, Fin.isValue, ne_eq, hp, not_false_eq_true,
+      val_heckeMatrix, algebraMap_int_eq,
+      RingHom.mapMatrix_apply, Int.coe_castRingHom, Matrix.mul_apply, Matrix.of_apply,
+      Matrix.cons_val', Matrix.cons_val_fin_one, Matrix.cons_val_zero, Matrix.map_apply,
+      Fin.sum_univ_two, one_mul, Matrix.cons_val_one, val_heckeDiagMatrix, Int.cast_add,
+      Int.cast_mul, Int.cast_natCast, mul_zero, add_zero, Fin.mk_one, mul_one, zero_add, zero_mul]
+  all_goals first
+    | (have := congrArg (Int.cast : ℤ → ℝ) he; push_cast at this ⊢; linear_combination this)
+    | (have := congrArg (Int.cast : ℤ → ℝ) he; push_cast at this ⊢; linear_combination -this)
+    | ring1
 
 theorem heckeDiagMatrix_mul_of_eq (g : SL(2, ℤ)) (j' : ℕ) (e : ℤ)
     (he : g 1 1 = g 1 0 * j' + p * e) :
     ∃ g' : SL(2, ℤ), g' 1 0 = g 1 0 ∧
       heckeDiagMatrix p * mapGL ℝ g = mapGL ℝ g' * heckeMatrix p j' := by
   have hdet := det_eq g
-  refine ⟨⟨!![p * g 0 0, g 0 1 - g 0 0 * j'; g 1 0, e], ?_⟩, rfl, ?_⟩
-  · rw [Matrix.det_fin_two_of]
-    linear_combination hdet - (g 0 0) * he
-  · ext i j
-    fin_cases i <;> fin_cases j <;>
-      simp only [Fin.zero_eta, Fin.isValue, Units.val_mul, ne_eq, hp, not_false_eq_true,
-        val_heckeDiagMatrix, mapGL_coe_matrix, algebraMap_int_eq, map_apply_coe,
-        RingHom.mapMatrix_apply, Int.coe_castRingHom, Matrix.mul_apply, Matrix.of_apply,
-        Matrix.cons_val', Matrix.cons_val_fin_one, Matrix.cons_val_zero, Matrix.map_apply,
-        Fin.sum_univ_two, Matrix.cons_val_one, zero_mul, add_zero, val_heckeMatrix, Int.cast_mul,
-        Int.cast_natCast, mul_one, Int.cast_sub, mul_zero, Fin.mk_one, one_mul, zero_add]
-    all_goals first
-      | (have := congrArg (Int.cast : ℤ → ℝ) he; push_cast at this ⊢; linear_combination this)
-      | (have := congrArg (Int.cast : ℤ → ℝ) he; push_cast at this ⊢; linear_combination -this)
-      | ring1
+  let g' : SL(2, ℤ) := ⟨!![p * g 0 0, g 0 1 - g 0 0 * j'; g 1 0, e], by
+    rw [Matrix.det_fin_two_of]
+    linear_combination hdet - (g 0 0) * he⟩
+  refine ⟨g', rfl, ?_⟩
+  apply Units.ext
+  simp only [Units.val_mul, mapGL_coe_matrix, map_apply_coe]
+  dsimp only [g']
+  ext i j
+  fin_cases i <;> fin_cases j <;>
+    simp only [Fin.zero_eta, Fin.isValue, ne_eq, hp, not_false_eq_true,
+      val_heckeDiagMatrix, algebraMap_int_eq,
+      RingHom.mapMatrix_apply, Int.coe_castRingHom, Matrix.mul_apply, Matrix.of_apply,
+      Matrix.cons_val', Matrix.cons_val_fin_one, Matrix.cons_val_zero, Matrix.map_apply,
+      Fin.sum_univ_two, Matrix.cons_val_one, zero_mul, add_zero, val_heckeMatrix, Int.cast_mul,
+      Int.cast_natCast, mul_one, Int.cast_sub, mul_zero, Fin.mk_one, one_mul, zero_add]
+  all_goals first
+    | (have := congrArg (Int.cast : ℤ → ℝ) he; push_cast at this ⊢; linear_combination this)
+    | (have := congrArg (Int.cast : ℤ → ℝ) he; push_cast at this ⊢; linear_combination -this)
+    | ring1
 
 theorem heckeDiagMatrix_mul_of_eq' (g : SL(2, ℤ)) (e : ℤ) (he : g 1 0 = p * e) :
     ∃ g' : SL(2, ℤ), g' 1 0 = e ∧
       heckeDiagMatrix p * mapGL ℝ g = mapGL ℝ g' * heckeDiagMatrix p := by
   have hdet := det_eq g
-  refine ⟨⟨!![g 0 0, p * g 0 1; e, g 1 1], ?_⟩, rfl, ?_⟩
-  · rw [Matrix.det_fin_two_of]
-    linear_combination hdet + (g 0 1) * he
-  · ext i j
-    fin_cases i <;> fin_cases j <;>
-      simp only [Fin.zero_eta, Fin.isValue, Units.val_mul, ne_eq, hp, not_false_eq_true,
-        val_heckeDiagMatrix, mapGL_coe_matrix, algebraMap_int_eq, map_apply_coe,
-        RingHom.mapMatrix_apply, Int.coe_castRingHom, Matrix.mul_apply, Matrix.of_apply,
-        Matrix.cons_val', Matrix.cons_val_fin_one, Matrix.cons_val_zero, Matrix.map_apply,
-        Fin.sum_univ_two, Matrix.cons_val_one, zero_mul, add_zero, Int.cast_mul, Int.cast_natCast,
-        mul_zero, Fin.mk_one, mul_one, zero_add, one_mul]
-    all_goals first
-      | (have := congrArg (Int.cast : ℤ → ℝ) he; push_cast at this ⊢; linear_combination this)
-      | (have := congrArg (Int.cast : ℤ → ℝ) he; push_cast at this ⊢; linear_combination -this)
-      | ring1
+  let g' : SL(2, ℤ) := ⟨!![g 0 0, p * g 0 1; e, g 1 1], by
+    rw [Matrix.det_fin_two_of]
+    linear_combination hdet + (g 0 1) * he⟩
+  refine ⟨g', rfl, ?_⟩
+  apply Units.ext
+  simp only [Units.val_mul, mapGL_coe_matrix, map_apply_coe]
+  dsimp only [g']
+  ext i j
+  fin_cases i <;> fin_cases j <;>
+    simp only [Fin.zero_eta, Fin.isValue, ne_eq, hp, not_false_eq_true,
+      val_heckeDiagMatrix, algebraMap_int_eq,
+      RingHom.mapMatrix_apply, Int.coe_castRingHom, Matrix.mul_apply, Matrix.of_apply,
+      Matrix.cons_val', Matrix.cons_val_fin_one, Matrix.cons_val_zero, Matrix.map_apply,
+      Fin.sum_univ_two, Matrix.cons_val_one, zero_mul, add_zero, Int.cast_mul, Int.cast_natCast,
+      mul_zero, Fin.mk_one, mul_one, zero_add, one_mul]
+  all_goals first
+    | (have := congrArg (Int.cast : ℤ → ℝ) he; push_cast at this ⊢; linear_combination this)
+    | (have := congrArg (Int.cast : ℤ → ℝ) he; push_cast at this ⊢; linear_combination -this)
+    | ring1
 
 end commutation
 

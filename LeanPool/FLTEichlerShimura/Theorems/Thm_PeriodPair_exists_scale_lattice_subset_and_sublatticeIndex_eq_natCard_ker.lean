@@ -64,7 +64,6 @@ https://github.com/anthropics/fermats-last-theorem/blob/aa2d8b34692b16c70f699536
 
 section privateSection
 
-set_option backward.isDefEq.respectTransparency.types false
 
 namespace P2MW.S_PeriodPair_exists_scale_lattice_subset_and_sublatticeIndex_eq_natCard_ker
 
@@ -153,11 +152,7 @@ section
 
 noncomputable section
 
-p2m_open "WeierstrassCurve \
-  P2MW.S_PeriodPair_exists_scale_lattice_subset_and_sublatticeIndex_eq_natCard_ker.WeierstrassCurv\
-  e \
-  P2MW.S_PeriodPair_exists_scale_lattice_subset_and_sublatticeIndex_eq_natCard_ker.AlgebraicCurve \
-  P2MW.S_PeriodPair_exists_scale_lattice_subset_and_sublatticeIndex_eq_natCard_ker.ModularCurve"
+p2m_open "WeierstrassCurve"
 
 namespace ModularCurve
 
@@ -500,12 +495,9 @@ noncomputable section
 
 p2m_open "P2MW.S_PeriodPair_exists_scale_lattice_subset_and_sublatticeIndex_eq_natCard_ker.ModularC\
   urve WeierstrassCurve \
-  P2MW.S_PeriodPair_exists_scale_lattice_subset_and_sublatticeIndex_eq_natCard_ker.WeierstrassCurv\
-  e WeierstrassCurve.Affine \
   P2MW.S_PeriodPair_exists_scale_lattice_subset_and_sublatticeIndex_eq_natCard_ker.WeierstrassCurve\
   .Affine Polynomial \
   P2MW.S_PeriodPair_exists_scale_lattice_subset_and_sublatticeIndex_eq_natCard_ker.Polynomial \
-  P2MW.S_PeriodPair_exists_scale_lattice_subset_and_sublatticeIndex_eq_natCard_ker.AlgebraicCurve \
   PeriodPair \
   P2MW.S_PeriodPair_exists_scale_lattice_subset_and_sublatticeIndex_eq_natCard_ker.PeriodPair"
 

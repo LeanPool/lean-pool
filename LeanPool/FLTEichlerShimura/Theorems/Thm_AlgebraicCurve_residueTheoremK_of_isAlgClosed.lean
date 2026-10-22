@@ -1857,7 +1857,6 @@ def kwF4R1V384a_semilocalComponent (v : Place K E) (w' : v.fiber F) :
   Algebra.TensorProduct.lift (Algebra.ofId v.adicCompletion w'.1.adicCompletion)
     (IsScalarTower.toAlgHom E F w'.1.adicCompletion) (fun _ _ => mul_comm _ _)
 
-set_option backward.isDefEq.respectTransparency.types false in
 omit [HasPrincipalDivisors K E] in
 @[scoped simp]
 theorem kwF4R1V384a_semilocalComponent_tmul (v : Place K E) (w' : v.fiber F)
@@ -1865,8 +1864,6 @@ theorem kwF4R1V384a_semilocalComponent_tmul (v : Place K E) (w' : v.fiber F)
     kwF4R1V384a_semilocalComponent F v w' (c ⊗ₜ[E] g)
       = algebraMap v.adicCompletion w'.1.adicCompletion c
           * algebraMap F w'.1.adicCompletion g := by
-  unfold kwF4R1V384a_semilocalComponent
-  rw [Algebra.TensorProduct.lift_tmul]
   rfl
 
 def kwF4R1V384a_semilocalDiag (v : Place K E) :
@@ -2239,7 +2236,6 @@ theorem kwF4R1V386a_absoluteValue_algebraMap_le_one_iff
           Real.rpow_le_rpow (norm_nonneg _) hn hr.le
       _ = 1 := Real.one_rpow _
 
-set_option backward.isDefEq.respectTransparency.types false in
 theorem kwF4R1V386a_distinctKernels :
     KwF4R1V384aDistinctKernels K F E := by
   intro _ _ _ v w' w'' hne hker
@@ -2261,8 +2257,7 @@ theorem kwF4R1V386a_distinctKernels :
       rw [show kwF4R1V384a_semilocalComponent F v w' x
           = Ideal.quotientKerAlgEquivOfSurjective hsurj' (Ideal.Quotient.mk _ x) from rfl,
         AlgEquiv.symm_apply_apply]
-    simp only [σ, AlgHom.coe_comp, Function.comp_apply, Ideal.Quotient.liftₐ_apply]
-    erw [hstep1, Ideal.Quotient.lift_mk]
+    exact congrArg (Ideal.Quotient.liftₐ _ (kwF4R1V384a_semilocalComponent F v w'') hann) hstep1
   have hσF : ∀ g : F, σ (algebraMap F w'.1.adicCompletion g)
       = algebraMap F w''.1.adicCompletion g := by
     intro g

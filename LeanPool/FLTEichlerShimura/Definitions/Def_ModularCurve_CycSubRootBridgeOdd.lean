@@ -53,7 +53,6 @@ curves entering the modularity argument.
 noncomputable section
 
 open ModularCurve WeierstrassCurve Polynomial
-open scoped Classical
 
 namespace ModularCurve.TatePoint
 
@@ -66,8 +65,9 @@ theorem two_mul_pred_div_two_add_one_of_odd {N : ℕ} (hN : Odd N) : 2 * ((N - 1
 theorem isElliptic_veluQuotient_cycSubSummingSet_of_odd (E : WeierstrassCurve H) [E.IsElliptic]
     {N : ℕ}
     (hN : Odd N) (G : CycSubH E N) :
-    (E.veluQuotient (cycSubSummingSet E G)).IsElliptic :=
-  ⟨isUnit_iff_ne_zero.mpr
+    (E.veluQuotient (cycSubSummingSet E G)).IsElliptic := by
+  classical
+  exact ⟨isUnit_iff_ne_zero.mpr
     (WeierstrassCurve.veluQuotient_oddOrderSummingSet_discriminant_ne_zero (L := H) two_ne_zero E
       ((N - 1) / 2) (cycSubGen E G)
       (by rw [addOrderOf_cycSubGen, two_mul_pred_div_two_add_one_of_odd hN]))⟩
@@ -90,6 +90,7 @@ theorem cycSubRootOdd_injective (E : WeierstrassCurve H) [E.IsElliptic] {N : ℕ
     (hN : Odd N)
     (data : ModularPolynomialData N) (hj : Transcendental Qbar E.j) :
     Function.Injective (cycSubRootOdd E hN data) := by
+  classical
   intro G G' h
   have hjj := congrArg Subtype.val h
   simp only [cycSubRootOdd_coe] at hjj

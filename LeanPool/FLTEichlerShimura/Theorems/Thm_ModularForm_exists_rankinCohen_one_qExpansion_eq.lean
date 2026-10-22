@@ -58,14 +58,12 @@ https://github.com/anthropics/fermats-last-theorem/blob/aa2d8b34692b16c70f699536
 
 section privateSection
 
-set_option backward.isDefEq.respectTransparency.types false
 
 namespace P2MW.S_ModularForm_exists_rankinCohen_one_qExpansion_eq
 
 open UpperHalfPlane Filter
 open scoped Real
-p2m_open_scoped "MatrixGroups Manifold Topology ModularForm \
-  P2MW.S_ModularForm_exists_rankinCohen_one_qExpansion_eq.ModularForm"
+p2m_open_scoped "MatrixGroups Manifold Topology ModularForm"
 
 noncomputable section
 

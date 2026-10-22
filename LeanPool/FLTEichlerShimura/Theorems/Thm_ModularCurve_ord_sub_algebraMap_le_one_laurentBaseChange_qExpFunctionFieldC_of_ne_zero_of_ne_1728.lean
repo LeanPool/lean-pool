@@ -71,7 +71,6 @@ https://github.com/anthropics/fermats-last-theorem/blob/aa2d8b34692b16c70f699536
 
 section privateSection
 
-set_option backward.isDefEq.respectTransparency.types false
 
 namespace P2MW.S_OVERLONG_29084bdf
 
@@ -103,8 +102,11 @@ theorem one_mem_strictPeriods (hT : ModularGroup.T ∈ Γ) :
     (1 : ℝ) ∈ ((Γ : Subgroup SL(2, ℤ)) : Subgroup (GL (Fin 2) ℝ)).strictPeriods := by
   rw [Subgroup.mem_strictPeriods_iff]
   refine ⟨ModularGroup.T, hT, ?_⟩
+  apply Units.ext
+  rw [Matrix.SpecialLinearGroup.mapGL_coe_matrix, Matrix.SpecialLinearGroup.map_apply_coe]
   ext i j
-  fin_cases i <;> fin_cases j <;> simp [ModularGroup.T, Matrix.GeneralLinearGroup.upperRightHom]
+  fin_cases i <;> fin_cases j <;> norm_num [ModularGroup.T,
+    Matrix.GeneralLinearGroup.upperRightHom]
 
 abbrev qL {k : ℤ} (f : ModularForm (Γ : Subgroup (GL (Fin 2) ℝ)) k) : LaurentSeries ℂ :=
   ((qExpansion 1 (f : ℍ → ℂ) : PowerSeries ℂ) : LaurentSeries ℂ)

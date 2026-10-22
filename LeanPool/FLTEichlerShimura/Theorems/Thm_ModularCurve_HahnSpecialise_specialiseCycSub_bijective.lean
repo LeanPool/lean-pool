@@ -57,7 +57,6 @@ https://github.com/anthropics/fermats-last-theorem/blob/aa2d8b34692b16c70f699536
 
 section privateSection
 
-set_option backward.isDefEq.respectTransparency.types false
 
 namespace P2MW.S_ModularCurve_HahnSpecialise_specialiseCycSub_bijective
 
@@ -65,7 +64,6 @@ noncomputable section
 
 open ModularCurve ModularCurve.B3 ModularCurve.HahnSpecialise
 open ModularCurve.TatePoint (Qbar H CycSubH)
-open scoped Classical
 
 namespace CycSubOf
 p2m_export "CycSubOf" "map coe_map"
@@ -91,10 +89,12 @@ theorem map_surjective_of_surjOn
   obtain ⟨g, hgN, hgg'⟩ := hs g' (by rw [← hg']; exact addOrderOf_nsmul_eq_zero g')
   have hg : addOrderOf g = N := by rw [← addOrderOf_map_eq_of_injOn f hf hgN, hgg', hg']
   refine ⟨⟨AddSubgroup.zmultiples g, g, hg, rfl⟩, Subtype.ext ?_⟩
-  rw [coe_map, hT, AddMonoidHom.map_zmultiples, hgg']
+  change (AddSubgroup.zmultiples g).map f = T.1
+  rw [hT, AddMonoidHom.map_zmultiples, hgg']
 
 end CycSubOf
 
+open scoped Classical in
 theorem solution (E : WeierstrassCurve H) (hE : IntegralCoeffs E)
     (hΔ : (specialFibre E).Δ ≠ 0) (N : ℕ) [NeZero N] :
     Function.Bijective (specialiseCycSub E hE hΔ N) := by
@@ -117,7 +117,7 @@ public section publicSection
 
 open ModularCurve ModularCurve.B3 ModularCurve.HahnSpecialise
 open ModularCurve.TatePoint (Qbar H CycSubH)
-open scoped Classical
+
 theorem ModularCurve.HahnSpecialise.specialiseCycSub_bijective (E : WeierstrassCurve H)
     (hE : IntegralCoeffs E)
     (hΔ : (specialFibre E).Δ ≠ 0) (N : ℕ) [NeZero N] :

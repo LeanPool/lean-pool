@@ -72,7 +72,6 @@ https://github.com/anthropics/fermats-last-theorem/blob/aa2d8b34692b16c70f699536
 
 section privateSection
 
-set_option backward.isDefEq.respectTransparency.types false
 
 namespace P2MW.S_ModularCurve_ComplexPlaceDictionaryOf_ramification_eq_one_gamma1
 
@@ -315,8 +314,11 @@ theorem one_mem_strictPeriods [hT : Fact (ModularGroup.T ∈ Γ)] :
     (1 : ℝ) ∈ ((Γ : Subgroup SL(2, ℤ)) : Subgroup (GL (Fin 2) ℝ)).strictPeriods := by
   rw [Subgroup.mem_strictPeriods_iff]
   refine ⟨ModularGroup.T, hT.out, ?_⟩
+  apply Units.ext
+  rw [Matrix.SpecialLinearGroup.mapGL_coe_matrix, Matrix.SpecialLinearGroup.map_apply_coe]
   ext i j
-  fin_cases i <;> fin_cases j <;> simp [ModularGroup.T, Matrix.GeneralLinearGroup.upperRightHom]
+  fin_cases i <;> fin_cases j <;> norm_num [ModularGroup.T,
+    Matrix.GeneralLinearGroup.upperRightHom]
 
 theorem one_mem_strictPeriods_SL : (1 : ℝ) ∈ (𝒮ℒ : Subgroup (GL (Fin 2) ℝ)).strictPeriods := by
   simp

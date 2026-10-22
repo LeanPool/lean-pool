@@ -88,7 +88,6 @@ https://github.com/anthropics/fermats-last-theorem/blob/aa2d8b34692b16c70f699536
 
 section privateSection
 
-set_option backward.isDefEq.respectTransparency.types false
 
 namespace P2MW.S_OVERLONG_b277e395
 
@@ -116,11 +115,7 @@ p2m_export "WeierstrassCurve.Affine" "Equation negY CoordinateRing map baseChang
 p2m_open "WeierstrassCurve.Affine WeierstrassCurve"
 
 p2m_open "Polynomial IsDedekindDomain WeierstrassCurve.Affine.CoordinateRing~evalAt \
-  P2MW.S_OVERLONG_b277e395.Weierstrass\
-  Curve.Affine.CoordinateRing \
-  AlgebraicCurve~Place.ord_nonneg_of_mem~Place.mem_of_ord_nonneg~Place.mem_iff_ord_nonneg \
-  P2MW.S_OVERLONG_b277e395.AlgebraicCu\
-  rve"
+  AlgebraicCurve~Place.ord_nonneg_of_mem~Place.mem_of_ord_nonneg~Place.mem_iff_ord_nonneg"
 open scoped Polynomial.Bivariate
 
 variable {F : Type*} [Field F] {W : Affine F}
@@ -424,10 +419,7 @@ end
 
 section
 p2m_open "AlgebraicCurve~Place.ord_nonneg_of_mem~Place.mem_of_ord_nonneg~Place.mem_iff_ord_nonneg \
-  P2MW.S_OVERLONG_b277e395.AlgebraicCu\
-  rve WeierstrassCurve \
-  P2MW.S_OVERLONG_b277e395.Weierstrass\
-  Curve"
+  WeierstrassCurve P2MW.S_OVERLONG_b277e395.WeierstrassCurve"
 
 namespace WeierstrassCurve
 p2m_export "WeierstrassCurve" "Affine Affine.negY a₃ a₁ map mk a₄ a₂ a₆ Affine.Point.some \
@@ -447,9 +439,7 @@ p2m_export "WeierstrassCurve.Affine" "Equation negY CoordinateRing map baseChang
   algebraMap_smul_basis"
 p2m_open "WeierstrassCurve.Affine WeierstrassCurve"
 
-p2m_open "AlgebraicCurve~Place.ord_nonneg_of_mem~Place.mem_of_ord_nonneg~Place.mem_iff_ord_nonneg \
-  P2MW.S_OVERLONG_b277e395.AlgebraicCu\
-  rve"
+p2m_open "AlgebraicCurve~Place.ord_nonneg_of_mem~Place.mem_of_ord_nonneg~Place.mem_iff_ord_nonneg"
 
 scoped instance instHasPrincipalDivisorsFunctionField_s13 {F : Type*} [Field F] [CharZero F]
     {W : Affine F} : HasPrincipalDivisors F W.FunctionField :=
@@ -734,8 +724,7 @@ end ModularCurve
 section
 open Complex Filter Set
 
-p2m_open_scoped "PeriodPair \
-  P2MW.S_OVERLONG_b277e395.PeriodPair"
+p2m_open_scoped "PeriodPair"
 
 namespace PeriodPair
 p2m_export "PeriodPair" "derivWeierstrassP_neg weierstrassP_neg lattice weierstrassP_add_coe \
@@ -1297,13 +1286,7 @@ theorem inertiaDegAlong_comp (hφ : φ.toRingHom.IsIntegral) (hχ : χ.toRingHom
       w.ResidueField W.ResidueField := by
     refine IsScalarTower.of_algebraMap_eq fun x => ?_
     obtain ⟨a, rfl⟩ := IsLocalRing.residue_surjective x
-    change restrictResidueMapAlong (χ.comp φ) hχφ W (IsLocalRing.residue _ a)
-      = restrictResidueMapAlong χ hχ W
-          (restrictResidueMapAlong φ hφ w (IsLocalRing.residue _ a))
-    rw [restrictResidueMapAlong, restrictResidueMapAlong, restrictResidueMapAlong,
-      IsLocalRing.ResidueField.map_residue, IsLocalRing.ResidueField.map_residue,
-      IsLocalRing.ResidueField.map_residue]
-    exact congrArg _ (Subtype.ext rfl)
+    rfl
   change Module.finrank (W.restrictAlong (χ.comp φ) hχφ).ResidueField W.ResidueField
     = Module.finrank w.ResidueField W.ResidueField
         * Module.finrank (W.restrictAlong (χ.comp φ) hχφ).ResidueField w.ResidueField
@@ -1531,11 +1514,8 @@ section
 p2m_open_scoped "PeriodPair \
   P2MW.S_OVERLONG_b277e395.PeriodPair \
   UpperHalfPlane MatrixGroups"
-p2m_open "PeriodPair \
-  P2MW.S_OVERLONG_b277e395.PeriodPair \
-  Polynomial QuaternionAlgebra \
-  P2MW.S_OVERLONG_b277e395.ModularCurv\
-  e"
+p2m_open "PeriodPair P2MW.S_OVERLONG_b277e395.PeriodPair Polynomial \
+  P2MW.S_OVERLONG_b277e395.ModularCurve"
 p2m_open "AlgebraicCurve~Place.ord_nonneg_of_mem~Place.mem_of_ord_nonneg~Place.mem_iff_ord_nonneg \
   P2MW.S_OVERLONG_b277e395.AlgebraicCu\
   rve WeierstrassCurve \
@@ -1609,11 +1589,8 @@ section
 p2m_open_scoped "PeriodPair \
   P2MW.S_OVERLONG_b277e395.PeriodPair \
   UpperHalfPlane MatrixGroups"
-p2m_open "PeriodPair \
-  P2MW.S_OVERLONG_b277e395.PeriodPair \
-  Polynomial QuaternionAlgebra \
-  P2MW.S_OVERLONG_b277e395.ModularCurv\
-  e"
+p2m_open "PeriodPair P2MW.S_OVERLONG_b277e395.PeriodPair Polynomial \
+  P2MW.S_OVERLONG_b277e395.ModularCurve"
 p2m_open "AlgebraicCurve~Place.ord_nonneg_of_mem~Place.mem_of_ord_nonneg~Place.mem_iff_ord_nonneg \
   P2MW.S_OVERLONG_b277e395.AlgebraicCu\
   rve WeierstrassCurve \

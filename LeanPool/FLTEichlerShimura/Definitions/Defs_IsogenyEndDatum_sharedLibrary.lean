@@ -52,7 +52,6 @@ set_option maxHeartbeats 800000
 
 section privateSection
 
-set_option backward.isDefEq.respectTransparency.types false
 
 
 

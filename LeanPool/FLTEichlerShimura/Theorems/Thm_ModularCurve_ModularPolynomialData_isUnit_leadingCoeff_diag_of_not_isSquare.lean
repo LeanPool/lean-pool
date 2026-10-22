@@ -69,15 +69,12 @@ section privateSection
 
 open _root_.ModularCurve.W1
 
-set_option backward.isDefEq.respectTransparency.types false
 
 namespace P2MW.S_OVERLONG_9658fb33
 
 noncomputable section
 
-p2m_open "ModularCurve~coeffEmb_qExpand \
-  P2MW.S_OVERLONG_9658fb33.ModularCurve \
-  ModularCurve.PhiGen"
+p2m_open "ModularCurve ModularCurve.PhiGen"
 
 namespace ModularCurve
 p2m_export "ModularCurve" "qExpand qExpand_coeff_mul qExpand_coeff_of_not_dvd qExpand_one_apply \
@@ -87,7 +84,7 @@ p2m_export "ModularCurve" "qExpand qExpand_coeff_mul qExpand_coeff_of_not_dvd qE
   qTwist_qTwist qTwist_qExpand coeffMap_qExpand PhiGen.splits_prime_at_slot \
   minpoly_jqN_map_eq_prod_slots finrank_adjoin_jqN_eq_dedekindPsi modularFunctionField_eq_full"
 namespace W1
-p2m_open "ModularCurve~coeffEmb_qExpand"
+p2m_open "ModularCurve"
 
 variable {K : Type*} [Field K] [Algebra ℚ K]
 
@@ -137,7 +134,7 @@ p2m_export "ModularCurve" "qExpand qExpand_coeff_mul qExpand_coeff_of_not_dvd qE
   qTwist_qTwist qTwist_qExpand coeffMap_qExpand PhiGen.splits_prime_at_slot \
   minpoly_jqN_map_eq_prod_slots finrank_adjoin_jqN_eq_dedekindPsi modularFunctionField_eq_full"
 namespace W1
-p2m_open "ModularCurve~coeffEmb_qExpand"
+p2m_open "ModularCurve"
 
 variable {K : Type*} [Field K] [Algebra ℚ K]
 
@@ -245,7 +242,7 @@ p2m_export "ModularCurve" "qExpand qExpand_coeff_mul qExpand_coeff_of_not_dvd qE
   qTwist_qTwist qTwist_qExpand coeffMap_qExpand PhiGen.splits_prime_at_slot \
   minpoly_jqN_map_eq_prod_slots finrank_adjoin_jqN_eq_dedekindPsi modularFunctionField_eq_full"
 namespace W1
-p2m_open "ModularCurve~coeffEmb_qExpand"
+p2m_open "ModularCurve"
 
 variable {K : Type*} [Field K]
 
@@ -275,7 +272,7 @@ p2m_export "ModularCurve" "qExpand qExpand_coeff_mul qExpand_coeff_of_not_dvd qE
   qTwist_qTwist qTwist_qExpand coeffMap_qExpand PhiGen.splits_prime_at_slot \
   minpoly_jqN_map_eq_prod_slots finrank_adjoin_jqN_eq_dedekindPsi modularFunctionField_eq_full"
 namespace W1
-p2m_open "ModularCurve~coeffEmb_qExpand"
+p2m_open "ModularCurve"
 
 variable {K : Type*} [Field K] [Algebra ℚ K]
 
@@ -381,7 +378,7 @@ p2m_export "ModularCurve" "qExpand qExpand_coeff_mul qExpand_coeff_of_not_dvd qE
   qTwist_qTwist qTwist_qExpand coeffMap_qExpand PhiGen.splits_prime_at_slot \
   minpoly_jqN_map_eq_prod_slots finrank_adjoin_jqN_eq_dedekindPsi modularFunctionField_eq_full"
 namespace W1
-p2m_open "ModularCurve~coeffEmb_qExpand"
+p2m_open "ModularCurve"
 
 
 
@@ -418,7 +415,7 @@ p2m_export "ModularCurve" "qExpand qExpand_coeff_mul qExpand_coeff_of_not_dvd qE
   qTwist_qTwist qTwist_qExpand coeffMap_qExpand PhiGen.splits_prime_at_slot \
   minpoly_jqN_map_eq_prod_slots finrank_adjoin_jqN_eq_dedekindPsi modularFunctionField_eq_full"
 namespace W1
-p2m_open "ModularCurve~coeffEmb_qExpand"
+p2m_open "ModularCurve"
 
 section U2Kit
 
@@ -532,7 +529,7 @@ p2m_export "ModularCurve" "qExpand qExpand_coeff_mul qExpand_coeff_of_not_dvd qE
   qTwist_qTwist qTwist_qExpand coeffMap_qExpand PhiGen.splits_prime_at_slot \
   minpoly_jqN_map_eq_prod_slots finrank_adjoin_jqN_eq_dedekindPsi modularFunctionField_eq_full"
 namespace W1
-p2m_open "ModularCurve~coeffEmb_qExpand"
+p2m_open "ModularCurve"
 
 private theorem w1_evalAtJGen_injective : Function.Injective evalAtJGen := by
   have h : Function.Injective ((algebraMap ℚ⟮jq⟯ (LaurentSeries ℚ)) ∘ evalAtJGen) := by
@@ -728,7 +725,7 @@ theorem ModularCurve.ModularPolynomialData.leadingCoeff_diag_sq_eq_one
 
 end
 
-p2m_open "ModularCurve~coeffEmb_qExpand\
+p2m_open "ModularCurve\
   " in
 open
   _root_.P2MW.S_OVERLONG_9658fb33.ModularCurve

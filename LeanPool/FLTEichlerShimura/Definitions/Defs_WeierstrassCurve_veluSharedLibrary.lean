@@ -52,7 +52,6 @@ open Polynomial IsDedekindDomain WithZero IsLocalRing WeierstrassCurve Affine Po
 
 open scoped Polynomial.Bivariate Pointwise nonZeroDivisors
 
-set_option backward.isDefEq.respectTransparency.types false
 
 section
 

@@ -64,15 +64,13 @@ set_option maxHeartbeats 6400000
 
 section privateSection
 
-set_option backward.isDefEq.respectTransparency.types false
 
 namespace P2MW.S_ModularCurve_finrank_adjoin_qExpFunctionFieldC_le_of_valuationSubring
 
 
 noncomputable section
 
-p2m_open "Polynomial IntermediateField HahnSeries ModularCurve \
-  P2MW.S_ModularCurve_finrank_adjoin_qExpFunctionFieldC_le_of_valuationSubring.ModularCurve"
+p2m_open "Polynomial IntermediateField HahnSeries ModularCurve"
 open scoped BigOperators
 
 namespace ModularCurve

@@ -79,8 +79,7 @@ p2m_open "WLight"
 section R4bFloor
 open scoped UpperHalfPlane Manifold MatrixGroups
 p2m_open "UpperHalfPlane~I"
-p2m_open "ModularForm ModularFormClass CuspForm ModularForm.CuspForm Polynomial Real.Polynomial \
-  Filter"
+p2m_open "ModularForm ModularFormClass CuspForm Polynomial Real.Polynomial Filter"
 variable {N : ℕ}
 
 def periodPairOfTau (τ : ℍ) : PeriodPair where
@@ -416,8 +415,8 @@ end R4bFloor
 
 section B6Engine
 
-p2m_open "UpperHalfPlane ModularForm SlashInvariantForm ModularFormClass CuspForm \
-  ModularForm.CuspForm Polynomial Real.Polynomial"
+p2m_open "UpperHalfPlane ModularForm SlashInvariantForm ModularFormClass CuspForm Polynomial \
+  Real.Polynomial"
 open scoped MatrixGroups Manifold
 
 variable {I : Type*} [Fintype I] (h : I → ℍ → ℂ) (m : ℕ)
@@ -450,8 +449,8 @@ end B6Engine
 
 section B6Ring
 
-p2m_open "UpperHalfPlane ModularForm SlashInvariantForm ModularFormClass CuspForm \
-  ModularForm.CuspForm Polynomial Real.Polynomial Filter"
+p2m_open "UpperHalfPlane ModularForm SlashInvariantForm ModularFormClass CuspForm Polynomial \
+  Real.Polynomial Filter"
 open scoped MatrixGroups Manifold
 
 def PoleBounded (f : ℍ → ℂ) : Prop :=
@@ -491,7 +490,7 @@ end B6Ring
 
 section LevelRingK
 
-p2m_open "UpperHalfPlane ModularForm CuspForm ModularForm.CuspForm Polynomial Real.Polynomial"
+p2m_open "UpperHalfPlane ModularForm CuspForm Polynomial Real.Polynomial"
 open scoped MatrixGroups Manifold
 
 variable {N : ℕ}
@@ -514,7 +513,7 @@ end LevelRingK
 
 section B6InstanceK
 
-p2m_open "UpperHalfPlane ModularForm CuspForm ModularForm.CuspForm Polynomial Real.Polynomial"
+p2m_open "UpperHalfPlane ModularForm CuspForm Polynomial Real.Polynomial"
 open scoped MatrixGroups Manifold
 
 variable {N : ℕ}

@@ -62,7 +62,6 @@ https://github.com/anthropics/fermats-last-theorem/blob/aa2d8b34692b16c70f699536
 
 section privateSection
 
-set_option backward.isDefEq.respectTransparency.types false
 
 namespace P2MW.S_ModularCurve_PhiGen_PhiGenDescends_sum_mul_jqN_pow_eq_zero
 

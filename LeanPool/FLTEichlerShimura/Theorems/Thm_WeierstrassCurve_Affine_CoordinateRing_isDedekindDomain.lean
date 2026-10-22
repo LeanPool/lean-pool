@@ -55,13 +55,8 @@ section privateSection
 
 namespace P2MW.S_WeierstrassCurve_Affine_CoordinateRing_isDedekindDomain
 
-p2m_open "Polynomial WeierstrassCurve \
-  P2MW.S_WeierstrassCurve_Affine_CoordinateRing_isDedekindDomain.WeierstrassCurve \
-  WeierstrassCurve.Affine \
-  P2MW.S_WeierstrassCurve_Affine_CoordinateRing_isDedekindDomain.WeierstrassCurve.Affine \
-  WeierstrassCurve.Affine.CoordinateRing \
-  P2MW.S_WeierstrassCurve_Affine_CoordinateRing_isDedekindDomain.WeierstrassCurve.Affine.Coordinate\
-  Ring"
+p2m_open "Polynomial WeierstrassCurve WeierstrassCurve.Affine \
+  WeierstrassCurve.Affine.CoordinateRing"
 open scoped Polynomial.Bivariate
 
 local macro "C_simp" : tactic =>

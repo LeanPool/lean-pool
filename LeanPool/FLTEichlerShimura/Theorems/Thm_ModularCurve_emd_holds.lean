@@ -62,13 +62,12 @@ https://github.com/anthropics/fermats-last-theorem/blob/aa2d8b34692b16c70f699536
 
 section privateSection
 
-set_option backward.isDefEq.respectTransparency.types false
 
 namespace P2MW.S_ModularCurve_emd_holds
 
 noncomputable section
 
-p2m_open "ModularCurve P2MW.S_ModularCurve_emd_holds.ModularCurve"
+p2m_open "ModularCurve"
 
 namespace ModularCurve
 p2m_export "ModularCurve" "emd_of_beta_docks EMD exists_elliptic_cycSub_orbitMap finite_cycSub \

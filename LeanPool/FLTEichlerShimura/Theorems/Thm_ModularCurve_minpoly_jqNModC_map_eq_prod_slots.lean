@@ -78,14 +78,12 @@ section privateSection
 
 open _root_.ModularCurve.W1
 
-set_option backward.isDefEq.respectTransparency.types false
 
 namespace P2MW.S_ModularCurve_minpoly_jqNModC_map_eq_prod_slots
 
 noncomputable section
 
-p2m_open "ModularCurve~dedekindPsi_prime \
-  P2MW.S_ModularCurve_minpoly_jqNModC_map_eq_prod_slots.ModularCurve ModularCurve.PhiGen"
+p2m_open "ModularCurve ModularCurve.PhiGen"
 open scoped IntermediateField
 
 namespace ModularCurve
@@ -97,7 +95,7 @@ p2m_export "ModularCurve" "qExpand qExpand_coeff_mul qExpand_coeff_of_not_dvd qE
   PhiGen.splits_prime_at_slot_of_isPrimitiveRoot exists_phiIrreducible_evalSymm \
   dedekindPsi_prime_pow dedekindPsi_mul_of_coprime"
 namespace W1
-p2m_open "ModularCurve~dedekindPsi_prime"
+p2m_open "ModularCurve"
 
 variable {K : Type*} [Field K]
 
@@ -137,7 +135,7 @@ p2m_export "ModularCurve" "qExpand qExpand_coeff_mul qExpand_coeff_of_not_dvd qE
   PhiGen.splits_prime_at_slot_of_isPrimitiveRoot exists_phiIrreducible_evalSymm \
   dedekindPsi_prime_pow dedekindPsi_mul_of_coprime"
 namespace W1
-p2m_open "ModularCurve~dedekindPsi_prime"
+p2m_open "ModularCurve"
 
 section transport
 
@@ -215,7 +213,7 @@ p2m_export "ModularCurve" "qExpand qExpand_coeff_mul qExpand_coeff_of_not_dvd qE
   PhiGen.splits_prime_at_slot_of_isPrimitiveRoot exists_phiIrreducible_evalSymm \
   dedekindPsi_prime_pow dedekindPsi_mul_of_coprime"
 namespace W1
-p2m_open "ModularCurve~dedekindPsi_prime"
+p2m_open "ModularCurve"
 
 
 
@@ -263,7 +261,7 @@ p2m_export "ModularCurve" "qExpand qExpand_coeff_mul qExpand_coeff_of_not_dvd qE
   PhiGen.splits_prime_at_slot_of_isPrimitiveRoot exists_phiIrreducible_evalSymm \
   dedekindPsi_prime_pow dedekindPsi_mul_of_coprime"
 namespace W1
-p2m_open "ModularCurve~dedekindPsi_prime"
+p2m_open "ModularCurve"
 
 variable {K : Type*} [Field K]
 
@@ -364,7 +362,7 @@ p2m_export "ModularCurve" "qExpand qExpand_coeff_mul qExpand_coeff_of_not_dvd qE
   PhiGen.splits_prime_at_slot_of_isPrimitiveRoot exists_phiIrreducible_evalSymm \
   dedekindPsi_prime_pow dedekindPsi_mul_of_coprime"
 namespace W1
-p2m_open "ModularCurve~dedekindPsi_prime"
+p2m_open "ModularCurve"
 
 private def slotAt (n d : ℕ) : ℕ :=
   ((Finset.range d).filter fun b => Nat.gcd (Nat.gcd (n / d) b) d = 1).card
@@ -809,7 +807,7 @@ p2m_export "ModularCurve" "qExpand qExpand_coeff_mul qExpand_coeff_of_not_dvd qE
   PhiGen.splits_prime_at_slot_of_isPrimitiveRoot exists_phiIrreducible_evalSymm \
   dedekindPsi_prime_pow dedekindPsi_mul_of_coprime"
 namespace W1
-p2m_open "ModularCurve~dedekindPsi_prime"
+p2m_open "ModularCurve"
 
 section RValCore
 
@@ -1541,7 +1539,7 @@ p2m_export "ModularCurve" "qExpand qExpand_coeff_mul qExpand_coeff_of_not_dvd qE
   PhiGen.splits_prime_at_slot_of_isPrimitiveRoot exists_phiIrreducible_evalSymm \
   dedekindPsi_prime_pow dedekindPsi_mul_of_coprime"
 namespace W1
-p2m_open "ModularCurve~dedekindPsi_prime"
+p2m_open "ModularCurve"
 
 section NonMem0
 
@@ -1921,7 +1919,7 @@ private theorem ModularCurve.jqNModC_prime_not_mem_fullC {K : Type*} [Field K] (
 
 end
 
-p2m_open "ModularCurve~dedekindPsi_prime\
+p2m_open "ModularCurve\
   " in
 open _root_.P2MW.S_ModularCurve_minpoly_jqNModC_map_eq_prod_slots.ModularCurve in
 theorem solution {K : Type*} [Field K]

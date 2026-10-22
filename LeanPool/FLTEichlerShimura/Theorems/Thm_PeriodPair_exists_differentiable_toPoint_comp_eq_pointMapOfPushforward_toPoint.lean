@@ -92,7 +92,6 @@ https://github.com/anthropics/fermats-last-theorem/blob/aa2d8b34692b16c70f699536
 
 section privateSection
 
-set_option backward.isDefEq.respectTransparency.types false
 
 namespace P2MW.S_OVERLONG_302e4807
 
@@ -121,19 +120,9 @@ p2m_export "WeierstrassCurve.Affine" "Equation negY CoordinateRing.smul_basis_eq
   algebraMap_smul_basis"
 p2m_open "WeierstrassCurve.Affine WeierstrassCurve"
 
-p2m_open "Polynomial \
-  P2MW.S_OVERLONG_302e4807.Polynomial \
-  IsDedekindDomain \
-  P2MW.S_OVERLONG_302e4807.IsDedekindD\
-  omain WeierstrassCurve.Affine.CoordinateRing~evalAt \
-  P2MW.S_OVERLONG_302e4807.Weierstrass\
-  Curve.Affine.CoordinateRing \
-  AlgebraicCurve~Place.ord_nonneg_of_mem~Place.mem_of_ord_nonneg~Place.mem_iff_ord_nonneg \
-  P2MW.S_OVERLONG_302e4807.AlgebraicCu\
-  rve"
-p2m_open_scoped "Polynomial.Bivariate \
-  P2MW.S_OVERLONG_302e4807.Polynomial.\
-  Bivariate"
+p2m_open "Polynomial IsDedekindDomain WeierstrassCurve.Affine.CoordinateRing~evalAt \
+  AlgebraicCurve~Place.ord_nonneg_of_mem~Place.mem_of_ord_nonneg~Place.mem_iff_ord_nonneg"
+p2m_open_scoped "Polynomial.Bivariate"
 
 variable {F : Type*} [Field F] {W : Affine F}
 
@@ -455,9 +444,7 @@ p2m_export "WeierstrassCurve.Affine" "Equation negY CoordinateRing.smul_basis_eq
   algebraMap_smul_basis"
 p2m_open "WeierstrassCurve.Affine WeierstrassCurve"
 
-p2m_open "AlgebraicCurve~Place.ord_nonneg_of_mem~Place.mem_of_ord_nonneg~Place.mem_iff_ord_nonneg \
-  P2MW.S_OVERLONG_302e4807.AlgebraicCu\
-  rve"
+p2m_open "AlgebraicCurve~Place.ord_nonneg_of_mem~Place.mem_of_ord_nonneg~Place.mem_iff_ord_nonneg"
 
 scoped instance instHasPrincipalDivisorsFunctionField_s13 {F : Type*} [Field F] [CharZero F]
     {W : Affine F} : HasPrincipalDivisors F W.FunctionField :=
@@ -654,15 +641,10 @@ p2m_export "WeierstrassCurve.Affine" "Equation negY CoordinateRing.smul_basis_eq
   algebraMap_smul_basis"
 p2m_open "WeierstrassCurve.Affine WeierstrassCurve"
 p2m_open "WeierstrassCurve.Affine.CoordinateRing~evalAt \
-  P2MW.S_OVERLONG_302e4807.Weierstrass\
-  Curve.Affine.CoordinateRing \
+  P2MW.S_OVERLONG_302e4807.WeierstrassCurve.Affine.CoordinateRing \
   AlgebraicCurve~Place.ord_nonneg_of_mem~Place.mem_of_ord_nonneg~Place.mem_iff_ord_nonneg \
-  P2MW.S_OVERLONG_302e4807.AlgebraicCu\
-  rve Polynomial \
-  P2MW.S_OVERLONG_302e4807.Polynomial"
-p2m_open_scoped "Polynomial.Bivariate \
-  P2MW.S_OVERLONG_302e4807.Polynomial.\
-  Bivariate"
+  P2MW.S_OVERLONG_302e4807.AlgebraicCurve Polynomial"
+p2m_open_scoped "Polynomial.Bivariate"
 
 section FinitePlaceOfMem
 variable {F : Type*} [Field F] {W : Affine F}
@@ -758,11 +740,9 @@ end ModularCurve
 
 
 section
-p2m_open "Complex Filter \
-  P2MW.S_OVERLONG_302e4807.Filter Set"
+p2m_open "Complex Filter Set"
 
-p2m_open_scoped "PeriodPair \
-  P2MW.S_OVERLONG_302e4807.PeriodPair"
+p2m_open_scoped "PeriodPair"
 
 namespace PeriodPair
 p2m_export "PeriodPair" "isClosed_lattice derivWeierstrassP_neg weierstrassP_neg lattice \
@@ -1331,9 +1311,7 @@ p2m_open "Polynomial \
   P2MW.S_OVERLONG_302e4807.IsDedekindD\
   omain"
 
-p2m_open_scoped "Polynomial.Bivariate \
-  P2MW.S_OVERLONG_302e4807.Polynomial.\
-  Bivariate"
+p2m_open_scoped "Polynomial.Bivariate"
 
 namespace AlgebraicCurve
 p2m_export "AlgebraicCurve" "Pic0.pushforwardAlongDegZero Pic0.coe_pushforwardAlongDegZero \
@@ -1761,10 +1739,7 @@ p2m_open "WeierstrassCurve \
   P2MW.S_OVERLONG_302e4807.Filter \
   Polynomial \
   P2MW.S_OVERLONG_302e4807.Polynomial"
-p2m_open_scoped "PeriodPair \
-  P2MW.S_OVERLONG_302e4807.PeriodPair \
-  Topology \
-  P2MW.S_OVERLONG_302e4807.Topology"
+p2m_open_scoped "PeriodPair P2MW.S_OVERLONG_302e4807.PeriodPair Topology"
 
 namespace WeierstrassCurve
 p2m_export "WeierstrassCurve" "Affine isUnit_Δ Affine.negY a₃ a₁ map Affine.CoordinateRing mk a₄ \
@@ -1899,9 +1874,7 @@ p2m_open "Polynomial \
   P2MW.S_OVERLONG_302e4807.Weierstrass\
   Curve.Affine"
 
-p2m_open_scoped "Polynomial.Bivariate \
-  P2MW.S_OVERLONG_302e4807.Polynomial.\
-  Bivariate"
+p2m_open_scoped "Polynomial.Bivariate"
 
 namespace ModularCurve
 namespace Mmr73
@@ -2052,10 +2025,7 @@ p2m_open "WeierstrassCurve \
   P2MW.S_OVERLONG_302e4807.AlgebraicCu\
   rve Filter \
   P2MW.S_OVERLONG_302e4807.Filter"
-p2m_open_scoped "PeriodPair \
-  P2MW.S_OVERLONG_302e4807.PeriodPair \
-  Topology \
-  P2MW.S_OVERLONG_302e4807.Topology"
+p2m_open_scoped "PeriodPair P2MW.S_OVERLONG_302e4807.PeriodPair Topology"
 
 namespace WeierstrassCurve
 p2m_export "WeierstrassCurve" "Affine isUnit_Δ Affine.negY a₃ a₁ map Affine.CoordinateRing mk a₄ \
@@ -2278,10 +2248,7 @@ p2m_open "WeierstrassCurve \
   P2MW.S_OVERLONG_302e4807.PeriodPair \
   Filter \
   P2MW.S_OVERLONG_302e4807.Filter"
-p2m_open_scoped "PeriodPair \
-  P2MW.S_OVERLONG_302e4807.PeriodPair \
-  Topology \
-  P2MW.S_OVERLONG_302e4807.Topology"
+p2m_open_scoped "PeriodPair P2MW.S_OVERLONG_302e4807.PeriodPair Topology"
 
 namespace ModularCurve
 
@@ -2403,10 +2370,7 @@ p2m_open "WeierstrassCurve \
   P2MW.S_OVERLONG_302e4807.PeriodPair \
   Filter \
   P2MW.S_OVERLONG_302e4807.Filter"
-p2m_open_scoped "PeriodPair \
-  P2MW.S_OVERLONG_302e4807.PeriodPair \
-  Topology \
-  P2MW.S_OVERLONG_302e4807.Topology"
+p2m_open_scoped "PeriodPair P2MW.S_OVERLONG_302e4807.PeriodPair Topology"
 
 namespace ModularCurve
 
@@ -2501,13 +2465,7 @@ p2m_open "WeierstrassCurve \
   Polynomial \
   P2MW.S_OVERLONG_302e4807.Polynomial"
 
-p2m_open_scoped "PeriodPair \
-  P2MW.S_OVERLONG_302e4807.PeriodPair \
-  Topology \
-  P2MW.S_OVERLONG_302e4807.Topology \
-  Polynomial.Bivariate \
-  P2MW.S_OVERLONG_302e4807.Polynomial.\
-  Bivariate"
+p2m_open_scoped "PeriodPair P2MW.S_OVERLONG_302e4807.PeriodPair Topology Polynomial.Bivariate"
 
 namespace ModularCurve
 

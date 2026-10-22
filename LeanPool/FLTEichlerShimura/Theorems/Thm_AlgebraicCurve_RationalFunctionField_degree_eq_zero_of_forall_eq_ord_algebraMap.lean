@@ -64,13 +64,10 @@ https://github.com/anthropics/fermats-last-theorem/blob/aa2d8b34692b16c70f699536
 
 section privateSection
 
-set_option backward.isDefEq.respectTransparency.types false
 
 namespace P2MW.S_AlgebraicCurve_RationalFunctionField_degree_eq_zero_of_forall_eq_ord_algebraMap
 
-p2m_open "AlgebraicCurve \
-  P2MW.S_AlgebraicCurve_RationalFunctionField_degree_eq_zero_of_forall_eq_ord_algebraMap.AlgebraicC\
-  urve"
+p2m_open "AlgebraicCurve"
 open IsDedekindDomain WithZero IsLocalRing
 open scoped Polynomial
 

@@ -73,7 +73,6 @@ https://github.com/anthropics/fermats-last-theorem/blob/aa2d8b34692b16c70f699536
 
 section privateSection
 
-set_option backward.isDefEq.respectTransparency.types false
 
 namespace P2MW.S_ModularCurve_ord_jBar_sub_1728_dvd_two
 
@@ -97,9 +96,7 @@ def hahnExpMul (n : ℕ) (hn : 0 < n) : HahnSeries ℚ K →+* HahnSeries ℚ K 
 
 @[scoped simp] theorem hahnExpMul_single (n : ℕ) (hn : 0 < n) (q : ℚ) (c : K) :
     hahnExpMul n hn (HahnSeries.single q c) = HahnSeries.single (q * n) c := by
-  unfold hahnExpMul
-  rw [embDomainRingHom_apply, embDomain_single]
-  rfl
+  exact HahnSeries.embDomain_single
 
 @[scoped simp] theorem hahnExpMul_coeff_mul (n : ℕ) (hn : 0 < n) (r : HahnSeries ℚ K) (q : ℚ) :
     (hahnExpMul n hn r).coeff (q * n) = r.coeff q :=

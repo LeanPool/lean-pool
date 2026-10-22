@@ -75,7 +75,6 @@ https://github.com/anthropics/fermats-last-theorem/blob/aa2d8b34692b16c70f699536
 
 section privateSection
 
-set_option backward.isDefEq.respectTransparency.types false
 
 namespace P2MW.S_ModularCurve_ModularPolynomialData_mem_of_isRoot_map_j_of_transcendental
 
@@ -230,7 +229,6 @@ theorem exists_generator_of_isAddCyclic {G : Type*} [AddCommGroup G] (H : AddSub
   refine ⟨g, hzm, ?_⟩
   rw [← Nat.card_zmultiples g, hzm, hm]
 
-set_option genInjectivity false in
 structure IsoTarget (W : WeierstrassCurve F) [W.IsElliptic] [GenusOnePlaceGate W.toAffine]
     [AbelTheorem W.toAffine] (g : W.toAffine.Point) (L : Subfield F) where
   V : WeierstrassCurve F

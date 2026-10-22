@@ -25,7 +25,6 @@ import LeanPool.FLTEichlerShimura.Theorems.Thm_WeierstrassCurve_Affine_algHom_ex
 import LeanPool.FLTEichlerShimura.Theorems.Thm_WeierstrassCurve_Affine_exists_algEquiv_restrictAlong_placeOfPoint_eq_add
 import LeanPool.FLTEichlerShimura.Theorems.Thm_WeierstrassCurve_Affine_hasPrincipalDivisors_functionField
 import LeanPool.FLTEichlerShimura.Theorems.Thm_WeierstrassCurve_Affine_natCard_ker_pointMapOfPushforward_eq_finrankAlong
-import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
 
 /-!
 # Factoring an isogeny through one with smaller kernel
@@ -78,14 +77,9 @@ https://github.com/anthropics/fermats-last-theorem/blob/aa2d8b34692b16c70f699536
 
 section privateSection
 
-set_option backward.isDefEq.respectTransparency.types false
-
-namespace P2MW.S_OVERLONG_c76b33b5
-
-
 noncomputable section
 
-p2m_open "WeierstrassCurve WeierstrassCurve.Affine~pointHom AlgebraicCurve"
+open WeierstrassCurve WeierstrassCurve.Affine AlgebraicCurve
 
 universe u
 
@@ -246,11 +240,6 @@ theorem algEquiv_isIntegral (e : V₀.FunctionField ≃ₐ[F] V₀.FunctionField
     e.toAlgHom.toRingHom.IsIntegral :=
   RingHom.isIntegral_of_surjective _ e.surjective
 
-theorem restrictAlong_congr_proof {K A B : Type*} [Field K] [Field A] [Field B] [Algebra K A]
-    [Algebra K B]
-    (φ : A →ₐ[K] B) (h h' : φ.toRingHom.IsIntegral) (w : Place K B) :
-    w.restrictAlong φ h = w.restrictAlong φ h' := rfl
-
 theorem τ_add (S T : V₀.Point) : τ (S + T) = (τ S) * (τ T) := by
   apply AlgEquiv.ext
   intro f
@@ -301,10 +290,6 @@ def kerActHom :
     rw [toAdd_mul, AddSubgroup.coe_add, τ_add]
 
 omit [WeierstrassCurve.IsElliptic V₁] in
-theorem kerActHom_apply (T : (φ.pointHom hNφ).ker) :
-    kerActHom φ hNφ (Multiplicative.ofAdd T) = τ (T : V₀.Point) := rfl
-
-omit [WeierstrassCurve.IsElliptic V₁] in
 theorem kerActHom_injective : Function.Injective (kerActHom φ hNφ) := by
   rw [injective_iff_map_eq_one]
   intro T hT
@@ -315,10 +300,6 @@ theorem kerActHom_injective : Function.Injective (kerActHom φ hNφ) := by
 scoped instance instMulSemiringActionKer :
     MulSemiringAction (Multiplicative (φ.pointHom hNφ).ker) V₀.FunctionField :=
   MulSemiringAction.compHom _ (kerActHom φ hNφ)
-
-omit [WeierstrassCurve.IsElliptic V₁] in
-theorem ker_smul_def (T : Multiplicative (φ.pointHom hNφ).ker) (f : V₀.FunctionField) :
-    T • f = kerActHom φ hNφ T f := rfl
 
 scoped instance instFaithfulKer :
     FaithfulSMul (Multiplicative (φ.pointHom hNφ).ker) V₀.FunctionField where
@@ -369,8 +350,6 @@ theorem finrankAlong_pos : 0 < finrankAlong F φ.ι := by
 
 scoped instance instFiniteKer : Finite (φ.pointHom hNφ).ker :=
   Nat.finite_of_card_ne_zero (by rw [natCard_ker]; exact (finrankAlong_pos φ).ne')
-
-scoped instance instFintypeKer : Fintype (φ.pointHom hNφ).ker := Fintype.ofFinite _
 
 scoped instance instFintypeKerMul : Fintype (Multiplicative (φ.pointHom hNφ).ker) :=
   Fintype.ofFinite _
@@ -450,10 +429,6 @@ theorem solution
   abel
 
 end
-end S_OVERLONG_c76b33b5
-end P2MW
-export P2MW.S_OVERLONG_c76b33b5
-  (solution)
 
 end privateSection
 

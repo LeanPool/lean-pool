@@ -22,7 +22,7 @@ import LeanPool.FLTEichlerShimura.Theorems.Thm_WeierstrassCurve_Affine_Coordinat
 import LeanPool.FLTEichlerShimura.Theorems.Thm_WeierstrassCurve_Affine_algebraMap_mk_C_X_notMem_toValuationSubring_placeOfPoint_zero
 import LeanPool.FLTEichlerShimura.Theorems.Thm_WeierstrassCurve_Affine_eq_placeOfPoint_some_of_XClass_mem_nonunits_of_YClass_mem_nonunits
 import LeanPool.FLTEichlerShimura.Theorems.Thm_WeierstrassCurve_veluGx_ne_zero_of_two_torsion
-import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
+
 
 /-!
 # Vélu's 2-isogeny: function-field embedding matching places
@@ -68,18 +68,12 @@ https://github.com/anthropics/fermats-last-theorem/blob/aa2d8b34692b16c70f699536
 
 section privateSection
 
-set_option backward.isDefEq.respectTransparency.types false
-
-namespace P2MW.S_OVERLONG_6938b70c
-
 open Polynomial AlgebraicCurve
 open scoped Polynomial.Bivariate
 
 namespace Velu2FFPort
 
-p2m_open "WeierstrassCurve \
-  WeierstrassCurve.Affine~valuation_algebraMap_eq_one~valuation_algebraMap_le_one \
-  WeierstrassCurve.Affine.CoordinateRing~isIntegral"
+open WeierstrassCurve WeierstrassCurve.Affine WeierstrassCurve.Affine.CoordinateRing
 
 variable {F : Type*} [Field F]
 
@@ -98,9 +92,6 @@ noncomputable abbrev yK : W.FunctionField := yCoord W
 
 theorem algebraMap_polynomial_coordinateRing (p : F[X]) :
     algebraMap F[X] W.CoordinateRing p = CoordinateRing.mk W (C p) := rfl
-
-theorem xK_eq : xK W = algebraMap W.CoordinateRing W.FunctionField
-    (CoordinateRing.mk W (C X)) := rfl
 
 theorem algebraMap_XClass (x : F) :
     algebraMap W.CoordinateRing W.FunctionField (XClass W x)
@@ -131,19 +122,11 @@ section restrict
 
 variable {K K' : Type*} [Field K] [Field K'] [Algebra F K] [Algebra F K']
 
-theorem restrictAlong_toValuationSubring (ι : K' →ₐ[F] K) (hι : ι.toRingHom.IsIntegral)
-    (v : Place F K) :
-    (v.restrictAlong ι hι).toValuationSubring = v.toValuationSubring.comap ι.toRingHom := rfl
-
 theorem mem_nonunits_restrictAlong_iff (ι : K' →ₐ[F] K) (hι : ι.toRingHom.IsIntegral)
     (v : Place F K) (f : K') :
     f ∈ (v.restrictAlong ι hι).toValuationSubring.nonunits ↔
       ι f ∈ v.toValuationSubring.nonunits :=
   mem_nonunits_comap_iff _ _ _
-
-theorem mem_restrictAlong_iff (ι : K' →ₐ[F] K) (hι : ι.toRingHom.IsIntegral)
-    (v : Place F K) (f : K') :
-    f ∈ (v.restrictAlong ι hι).toValuationSubring ↔ ι f ∈ v.toValuationSubring := Iff.rfl
 
 end restrict
 
@@ -155,7 +138,6 @@ private theorem _root_.Velu2FFPort.algebraMap_mem (v : Place F K) (a : F) :
     algebraMap F K a ∈ v.toValuationSubring :=
   v.algebraMap_mem' a
 
-p2m_export "Velu2FFPort" "algebraMap_mem"
 theorem valuation_algebraMap_le_one (v : Place F K) (a : F) :
     v.toValuationSubring.valuation (algebraMap F K a) ≤ 1 :=
   (v.toValuationSubring.valuation_le_one_iff _).mpr (algebraMap_mem v a)
@@ -721,11 +703,6 @@ theorem solution
               (WeierstrassCurve.veluPointMap2 two_ne_zero hQ hgy hΔ' P) :=
   ⟨ffHom hQ hgy, isIntegral_ffHom hQ hgy, finiteAlong_ffHom hQ hgy,
     restrictAlong_placeOfPoint_veluPointMap2 hQ hgy hΔ' two_ne_zero⟩
-
-end S_OVERLONG_6938b70c
-end P2MW
-export P2MW.S_OVERLONG_6938b70c
-  (solution)
 
 end privateSection
 

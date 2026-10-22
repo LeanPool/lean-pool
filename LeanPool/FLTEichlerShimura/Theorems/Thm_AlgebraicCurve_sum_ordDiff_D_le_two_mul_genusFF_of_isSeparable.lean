@@ -86,7 +86,6 @@ https://github.com/anthropics/fermats-last-theorem/blob/aa2d8b34692b16c70f699536
 
 section privateSection
 
-set_option backward.isDefEq.respectTransparency.types false
 
 open AlgebraicCurve Divisor
 
@@ -94,9 +93,7 @@ namespace P2MW.S_AlgebraicCurve_sum_ordDiff_D_le_two_mul_genusFF_of_isSeparable
 
 noncomputable section
 
-p2m_open "AlgebraicCurve \
-  P2MW.S_AlgebraicCurve_sum_ordDiff_D_le_two_mul_genusFF_of_isSeparable.AlgebraicCurve \
-  IntermediateField KaehlerDifferential"
+p2m_open "AlgebraicCurve IntermediateField KaehlerDifferential"
 
 namespace AlgebraicCurve
 p2m_export "AlgebraicCurve" "genusFF Place Divisor Divisor.degree HasPrincipalDivisors \

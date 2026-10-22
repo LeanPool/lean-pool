@@ -58,14 +58,12 @@ https://github.com/anthropics/fermats-last-theorem/blob/aa2d8b34692b16c70f699536
 
 section privateSection
 
-set_option backward.isDefEq.respectTransparency.types false
 
 namespace P2MW.S_ModularCurve_ModularPolynomialData_eq_of_prime
 
 noncomputable section
 
-p2m_open "ModularCurve P2MW.S_ModularCurve_ModularPolynomialData_eq_of_prime.ModularCurve \
-  ModularCurve.PhiGen"
+p2m_open "ModularCurve ModularCurve.PhiGen"
 open scoped IntermediateField
 
 namespace ModularCurve

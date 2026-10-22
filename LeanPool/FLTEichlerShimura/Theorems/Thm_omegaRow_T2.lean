@@ -71,13 +71,12 @@ https://github.com/anthropics/fermats-last-theorem/blob/aa2d8b34692b16c70f699536
 
 section privateSection
 
-set_option backward.isDefEq.respectTransparency.types false
 
 namespace P2MW.S_omegaRow_T2
 
-p2m_open "UpperHalfPlane ModularCurve~coeffEmb_jq AlgebraicCurve"
+p2m_open "UpperHalfPlane ModularCurve AlgebraicCurve"
 
-p2m_open "UpperHalfPlane ModularCurve~coeffEmb_jq"
+p2m_open "UpperHalfPlane ModularCurve"
 open scoped MatrixGroups ModularForm Manifold
 
 noncomputable section

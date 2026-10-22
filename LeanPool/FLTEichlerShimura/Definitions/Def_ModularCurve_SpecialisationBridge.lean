@@ -87,8 +87,6 @@ monodromy action under which that transfer is equivariant.
 
 @[expose] public section publicSection
 
-open scoped Classical
-
 noncomputable section
 
 open ModularCurve WeierstrassCurve Polynomial
@@ -155,6 +153,7 @@ universe u
 def CycOf (A : Type u) [AddGroup A] (N : ℕ) : Type u :=
   {G : AddSubgroup A // ∃ g : A, addOrderOf g = N ∧ G = AddSubgroup.zmultiples g}
 
+open scoped Classical in
 theorem CycSubH_eq_CycOf (E : WeierstrassCurve H) (N : ℕ) :
     CycSubH E N = CycOf E.toAffine.Point N := rfl
 
@@ -258,6 +257,7 @@ theorem fibreVC_smul (j₀ : Qbar) :
     fibreVC j₀ • specialFibre (goodModel j₀) = WeierstrassCurve.ofJ j₀ :=
   Classical.choose_spec (exists_variableChange_specialFibre_goodModel j₀)
 
+open scoped Classical in
 def scaleAddEquiv (j₀ : Qbar) : (nearCurve j₀).toAffine.Point ≃+ (goodModel j₀).toAffine.Point :=
   vcAddEquiv (scaleVC j₀) (nearCurve j₀)
 
@@ -265,6 +265,7 @@ def scaleAddEquiv (j₀ : Qbar) : (nearCurve j₀).toAffine.Point ≃+ (goodMode
     scaleAddEquiv j₀ P =
       WeierstrassCurve.Affine.Point.vcInvFun (scaleVC j₀) (nearCurve j₀).toAffine P := rfl
 
+open scoped Classical in
 def cycScale (p : ℕ) (j₀ : Qbar) : CycSubH (nearCurve j₀) p ≃ CycSubH (goodModel j₀) p :=
   cycOfCongr (scaleAddEquiv j₀) p
 
@@ -279,12 +280,14 @@ theorem fibreAddEquiv_apply (j₀ : Qbar) (P : (specialFibre (goodModel j₀)).t
         (WeierstrassCurve.Affine.Point.vcInvFun (fibreVC j₀)
           (specialFibre (goodModel j₀)).toAffine P) := rfl
 
+open scoped Classical in
 def redTorsionEquiv (W : WeierstrassCurve H) [W.IsElliptic] (hW : IntegralCoeffs W)
     (hΔ : W.Δ.orderTop = 0) [(specialFibre W).IsElliptic] (p : ℕ) [Fact p.Prime] :
     Submodule.torsionBy ℤ W.toAffine.Point (p : ℤ) ≃+
       Submodule.torsionBy ℤ (specialFibre W).toAffine.Point (p : ℤ) :=
   Classical.choose (exists_torsionBy_reduction_addEquiv W hW hΔ p)
 
+open scoped Classical in
 theorem redTorsionEquiv_spec (W : WeierstrassCurve H) [W.IsElliptic] (hW : IntegralCoeffs W)
     (hΔ : W.Δ.orderTop = 0) [(specialFibre W).IsElliptic] (p : ℕ) [Fact p.Prime]
     (P : Submodule.torsionBy ℤ W.toAffine.Point (p : ℤ)) (x y : H)
@@ -297,6 +300,7 @@ theorem redTorsionEquiv_spec (W : WeierstrassCurve H) [W.IsElliptic] (hW : Integ
         WeierstrassCurve.Affine.Point.some (x.coeff 0) (y.coeff 0) h₀ :=
   Classical.choose_spec (exists_torsionBy_reduction_addEquiv W hW hΔ p) P x y h hP
 
+open scoped Classical in
 def cycRed (W : WeierstrassCurve H) [W.IsElliptic] (hW : IntegralCoeffs W) (hΔ : W.Δ.orderTop = 0)
     [(specialFibre W).IsElliptic] (p : ℕ) [Fact p.Prime] :
     CycSubH W p ≃ CycSub (specialFibre W) p :=
@@ -337,6 +341,7 @@ theorem nearCurve_map_of_mem_monodromy (j₀ : Qbar) {m : H ≃ₐ[Qbar] H}
     (fun q => by rw [← algebraMap_H_apply]; exact m.commutes q)
     (HahnSeries.fixes_single_one_of_mem_monodromy hm)
 
+open scoped Classical in
 def nearTransport (j₀ : Qbar) (m : HahnSeries.monodromy Qbar) :
     (nearCurve j₀).toAffine.Point ≃+ (nearCurve j₀).toAffine.Point :=
   WeierstrassCurve.Affine.Point.fixedTransport (m : H ≃ₐ[Qbar] H) (nearCurve j₀)
@@ -347,14 +352,17 @@ theorem nearTransport_some (j₀ : Qbar) (m : HahnSeries.monodromy Qbar) (x y : 
     nearTransport j₀ m (.some x y h) =
       .some ((m : H ≃ₐ[Qbar] H) x) ((m : H ≃ₐ[Qbar] H) y)
         (WeierstrassCurve.Affine.Point.nonsingular_of_fixed _ _
-          (nearCurve_map_of_mem_monodromy j₀ m.2) h) :=
-  WeierstrassCurve.Affine.Point.fixedTransport_some
+          (nearCurve_map_of_mem_monodromy j₀ m.2) h) := by
+  classical
+  exact WeierstrassCurve.Affine.Point.fixedTransport_some
     (m : H ≃ₐ[Qbar] H) (nearCurve j₀) (nearCurve_map_of_mem_monodromy j₀ m.2) x y h
 
+open scoped Classical in
 def b3Act (j₀ : Qbar) (m : HahnSeries.monodromy Qbar) :
     AddSubgroup (nearCurve j₀).toAffine.Point → AddSubgroup (nearCurve j₀).toAffine.Point :=
   AddSubgroup.map ((nearTransport j₀ m : _ ≃+ _) : _ →+ _)
 
+open scoped Classical in
 theorem b3Act_zmultiples (j₀ : Qbar) (m : HahnSeries.monodromy Qbar)
     (g : (nearCurve j₀).toAffine.Point) :
     b3Act j₀ m (AddSubgroup.zmultiples g) = AddSubgroup.zmultiples (nearTransport j₀ m g) :=

@@ -58,7 +58,6 @@ https://github.com/anthropics/fermats-last-theorem/blob/aa2d8b34692b16c70f699536
 
 section privateSection
 
-set_option backward.isDefEq.respectTransparency.types false
 
 namespace P2MW.S_ModularCurve_B3_exists_torsionBy_reduction_addEquiv
 
@@ -67,7 +66,6 @@ noncomputable section
 open ModularCurve ModularCurve.B3 ModularCurve.HahnSpecialise
 open ModularCurve.TatePoint (Qbar H CycSubH)
 open IsLocalRing WeierstrassCurve
-open scoped Classical
 
 namespace Sol3a
 
@@ -81,8 +79,8 @@ theorem mem_of_nsmul {M : Type*} [AddCommGroup M] {N : ℕ} {x : M}
     (hx : N • x = 0) : x ∈ Submodule.torsionBy ℤ M (N : ℤ) := by
   rw [Submodule.mem_torsionBy_iff, natCast_zsmul]; exact hx
 
-def torsHom (N : ℕ) :
-    Submodule.torsionBy ℤ W.toAffine.Point (N : ℤ) →+
+open scoped Classical in
+def torsHom (N : ℕ) : Submodule.torsionBy ℤ W.toAffine.Point (N : ℤ) →+
       Submodule.torsionBy ℤ (specialFibre W).toAffine.Point (N : ℤ) where
   toFun P := ⟨specialise W hW hΔ' P, by
     have hP := P.2
@@ -92,6 +90,7 @@ def torsHom (N : ℕ) :
   map_add' P Q := Subtype.ext (map_add _ _ _)
 
 theorem torsHom_bijective (N : ℕ) [NeZero N] : Function.Bijective (torsHom W hW hΔ' N) := by
+  classical
   have hb := ModularCurve.HahnSpecialise.specialise_bijOn_torsion W hW hΔ' N
   refine ⟨fun P Q h => Subtype.ext (hb.2.1 (nsmul_of_mem P.2) (nsmul_of_mem Q.2)
     (congrArg Subtype.val h)), fun Q => ?_⟩
@@ -100,6 +99,7 @@ theorem torsHom_bijective (N : ℕ) [NeZero N] : Function.Bijective (torsHom W h
 
 end Sol3a
 
+open scoped Classical in
 theorem solution (W : WeierstrassCurve H)
     [W.IsElliptic] (hW : IntegralCoeffs W) (hΔ : W.Δ.orderTop = 0)
     [(specialFibre W).IsElliptic] (p : ℕ) [Fact p.Prime] :
@@ -138,9 +138,9 @@ end privateSection
 
 public section publicSection
 
-
 open ModularCurve.TatePoint
-open scoped Classical
+
+open scoped Classical in
 theorem ModularCurve.B3.exists_torsionBy_reduction_addEquiv (W : WeierstrassCurve H)
     [W.IsElliptic] (hW : IntegralCoeffs W) (hΔ : W.Δ.orderTop = 0)
     [(specialFibre W).IsElliptic] (p : ℕ) [Fact p.Prime] :

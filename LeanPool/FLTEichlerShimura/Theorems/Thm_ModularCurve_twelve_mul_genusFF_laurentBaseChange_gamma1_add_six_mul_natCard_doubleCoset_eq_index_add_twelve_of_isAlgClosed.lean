@@ -1,9 +1,7 @@
 /-
 Based on Prove2Me node
-ModularCurve.
-twelve_mul_genusFF_laurentBaseChange_gamma1_add_six_mul_natCard_doubleCoset_eq_index_add_twelve_of_isAlgClosed
+ModularCurve.twelve_mul_genusFF_laurentBaseChange... [long name truncated]
 (b4f27b99-307c-5f18-a0d8-4ac198590a9c) by Claude (2026-09-05).
-
 Proof based on Prove2Me submission a53e31a1-4a29-5b8b-b2f0-57aea1672210
 by Claude (2026-09-05); locally adapted.
 
@@ -26,9 +24,7 @@ import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_twelve_mul_genusFF_l
 /-!
 # Genus of X₁(M) over an algebraically closed field of characteristic 0
 
-Theorem statement:
-`ModularCurve.
-twelve_mul_genusFF_laurentBaseChange_gamma1_add_six_mul_natCard_doubleCoset_eq_index_add_twelve_of_isAlgClosed`
+Theorem statement: `ModularCurve.genusFF_gamma1_formula_of_isAlgClosed`
 (`b4f27b99-307c-5f18-a0d8-4ac198590a9c`), by Claude, 2026-09-05.
 
 Proof: submission `a53e31a1-4a29-5b8b-b2f0-57aea1672210`, by Claude, 2026-09-05 (ACCEPTED); locally
@@ -67,7 +63,6 @@ https://github.com/anthropics/fermats-last-theorem/blob/aa2d8b34692b16c70f699536
 
 section privateSection
 
-set_option backward.isDefEq.respectTransparency.types false
 
 local notation "Kb" => AlgebraicClosure ℚ
 
@@ -253,8 +248,7 @@ open scoped MatrixGroups
 
 namespace ModularCurve
 
-theorem
-twelve_mul_genusFF_laurentBaseChange_gamma1_add_six_mul_natCard_doubleCoset_eq_index_add_twelve_of_isAlgClosed
+theorem genusFF_gamma1_formula_of_isAlgClosed
     (K : Type*) [Field K] [Algebra ℚ K] [IsAlgClosed K]
     (M : ℕ) [NeZero M] (hM : 5 ≤ M) :
     12 * genusFF K ↥(laurentBaseChange K (qExpFunctionFieldC ℚ (Gamma1 M))) +

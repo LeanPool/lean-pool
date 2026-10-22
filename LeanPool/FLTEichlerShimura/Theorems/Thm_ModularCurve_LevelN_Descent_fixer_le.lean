@@ -67,12 +67,11 @@ https://github.com/anthropics/fermats-last-theorem/blob/aa2d8b34692b16c70f699536
 
 section privateSection
 
-set_option backward.isDefEq.respectTransparency.types false
 
 namespace P2MW.S_ModularCurve_LevelN_Descent_fixer_le
 
 
-p2m_open "ModularCurve P2MW.S_ModularCurve_LevelN_Descent_fixer_le.ModularCurve"
+p2m_open "ModularCurve"
 open scoped MatrixGroups IntermediateField
 
 noncomputable section
@@ -85,7 +84,7 @@ p2m_export "ModularCurve" "qExpFunctionFieldC qExpand qExpand_single coeffMap co
   finrank_adjoin_jqModC_laurentBaseChange_qExpFunctionFieldC_gamma1_eq_index"
 namespace LevelN
 namespace Descent
-p2m_open "ModularCurve.LevelN ModularCurve"
+p2m_open "ModularCurve"
 
 local notation "ℚ̄" => AlgebraicClosure ℚ
 

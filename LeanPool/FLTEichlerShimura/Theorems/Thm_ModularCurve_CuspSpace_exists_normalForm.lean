@@ -53,14 +53,12 @@ https://github.com/anthropics/fermats-last-theorem/blob/aa2d8b34692b16c70f699536
 
 section privateSection
 
-set_option backward.isDefEq.respectTransparency.types false
 
 namespace P2MW.S_ModularCurve_CuspSpace_exists_normalForm
 
 open Matrix Matrix.SpecialLinearGroup OnePoint CongruenceSubgroup
 open scoped MatrixGroups
-p2m_open "ModularCurve P2MW.S_ModularCurve_CuspSpace_exists_normalForm.ModularCurve \
-  ModularCurve.CuspSpace P2MW.S_ModularCurve_CuspSpace_exists_normalForm.ModularCurve.CuspSpace"
+p2m_open "ModularCurve ModularCurve.CuspSpace"
 
 namespace ModularCurve
 p2m_export "ModularCurve" "ratPoint exists_ratPoint_eq mapGL_smul_ratPoint isCoprime_smul_pair \
@@ -148,7 +146,7 @@ theorem solution {N : ℕ} (hN : N ≠ 0) (x : ModularCurve.CuspSpace N) :
         x)) := by
   obtain ⟨y, rfl⟩ := mk_surjective N x
   obtain ⟨a, c, hac, rfl⟩ := exists_ratPoint_eq y
-  obtain ⟨r, s, hNr, hrs, hsum⟩ := exists_row_smul_eq_gcd hN hac
+  obtain ⟨r, s, hNr, hrs, hsum⟩ := ModularCurve.CuspSpace.exists_row_smul_eq_gcd hN hac
   obtain ⟨γ, hγ10, hγ11⟩ := hrs.exists_SL2_row 1
   have hγmem : γ ∈ Gamma0 N := Gamma0_mem_iff_dvd.mpr (by rw [hγ10]; exact hNr)
   have hkey : mapGL ℚ γ • ratPoint a c

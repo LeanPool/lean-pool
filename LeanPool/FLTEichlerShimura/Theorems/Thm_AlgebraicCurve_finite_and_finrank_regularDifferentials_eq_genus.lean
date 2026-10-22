@@ -68,15 +68,12 @@ https://github.com/anthropics/fermats-last-theorem/blob/aa2d8b34692b16c70f699536
 
 section privateSection
 
-set_option backward.isDefEq.respectTransparency.types false
 
 namespace P2MW.S_AlgebraicCurve_finite_and_finrank_regularDifferentials_eq_genus
 
 noncomputable section
 
-p2m_open "AlgebraicCurve \
-  P2MW.S_AlgebraicCurve_finite_and_finrank_regularDifferentials_eq_genus.AlgebraicCurve \
-  KaehlerDifferential IntermediateField"
+p2m_open "AlgebraicCurve KaehlerDifferential IntermediateField"
 
 namespace AlgebraicCurve
 p2m_export "AlgebraicCurve" "IsCurveOver IsCurveOver.finrank_kaehler Place Divisor \

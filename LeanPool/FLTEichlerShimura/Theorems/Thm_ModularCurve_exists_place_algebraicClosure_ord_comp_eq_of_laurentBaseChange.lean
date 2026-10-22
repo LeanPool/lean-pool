@@ -65,14 +65,12 @@ https://github.com/anthropics/fermats-last-theorem/blob/aa2d8b34692b16c70f699536
 
 section privateSection
 
-set_option backward.isDefEq.respectTransparency.types false
 
 namespace P2MW.S_ModularCurve_exists_place_algebraicClosure_ord_comp_eq_of_laurentBaseChange
 
 noncomputable section
 
-p2m_open "AlgebraicCurve ModularCurve \
-  P2MW.S_ModularCurve_exists_place_algebraicClosure_ord_comp_eq_of_laurentBaseChange.ModularCurve"
+p2m_open "AlgebraicCurve ModularCurve"
 open scoped MatrixGroups
 
 namespace ModularCurve

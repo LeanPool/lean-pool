@@ -23,7 +23,6 @@ import Mathlib.RingTheory.Flat.TorsionFree
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_qExpansion_discriminant_eq_map_X_mul_dedekindEtaUnit
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_relfinrank_laurentBaseChange
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_transcendental_jqModC
-import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
 
 /-!
 # Degree over L(j) bounded by the index of Γ'
@@ -72,13 +71,8 @@ https://github.com/anthropics/fermats-last-theorem/blob/aa2d8b34692b16c70f699536
 
 section privateSection
 
-set_option backward.isDefEq.respectTransparency.types false
-
 -- Avoid an instance diamond involving subfields.
 attribute [-instance] DivisionRing.toRatAlgebra
-
-namespace P2MW.S_ModularCurve_finrank_adjoin_jqModC_laurentBaseChange_qExpFunctionFieldC_le_index
-
 
 namespace FIdxAlg
 
@@ -308,8 +302,11 @@ theorem one_mem_strictPeriods (hT : ModularGroup.T ∈ Γ) :
     (1 : ℝ) ∈ (Γ : Subgroup (GL (Fin 2) ℝ)).strictPeriods := by
   rw [Subgroup.mem_strictPeriods_iff]
   refine ⟨ModularGroup.T, hT, ?_⟩
+  apply Units.ext
+  rw [Matrix.SpecialLinearGroup.mapGL_coe_matrix, Matrix.SpecialLinearGroup.map_apply_coe]
   ext i j
-  fin_cases i <;> fin_cases j <;> simp [ModularGroup.T, Matrix.GeneralLinearGroup.upperRightHom]
+  fin_cases i <;> fin_cases j <;> norm_num [ModularGroup.T,
+    Matrix.GeneralLinearGroup.upperRightHom]
 
 section Linear
 
@@ -554,7 +551,8 @@ end FIdxNorm
 
 namespace FIdxRat
 
-p2m_open "ModularForm UpperHalfPlane EisensteinSeries ModularCurve~IsCusp HahnSeries Polynomial"
+open ModularForm UpperHalfPlane EisensteinSeries ModularCurve HahnSeries Polynomial
+
 open scoped MatrixGroups ModularForm
 
 variable {Γ : Subgroup SL(2, ℤ)} [Γ.FiniteIndex]
@@ -701,11 +699,6 @@ theorem intSeriesC_add {K : Type*} [Field K] (p p' : PowerSeries ℤ) :
     intSeriesC K (p + p') = intSeriesC K p + intSeriesC K p' := by
   simp [intSeriesC]
 
-omit [Γ.FiniteIndex] in
-theorem intSeriesC_neg {K : Type*} [Field K] (p : PowerSeries ℤ) :
-    intSeriesC K (-p) = -intSeriesC K p := by
-  simp [intSeriesC]
-
 section Ratio
 variable (hT : ModularGroup.T ∈ Γ)
 include hT
@@ -742,15 +735,6 @@ theorem add_mem_intFormRatiosC {a b : LaurentSeries ℚ} (ha : a ∈ intFormRati
     exact (ModularForm.qExpansion_mul_coe one_pos (hper hT) g₁ g₂).symm
   · rw [intSeriesC_mul]; exact mul_ne_zero hg₁0 hg₂0
   · rw [intSeriesC_add, intSeriesC_mul, intSeriesC_mul, intSeriesC_mul, div_add_div _ _ hg₁0 hg₂0]
-
-omit [Γ.FiniteIndex] in
-theorem neg_mem_intFormRatiosC {a : LaurentSeries ℚ} (ha : a ∈ intFormRatiosC ℚ Γ) :
-    -a ∈ intFormRatiosC ℚ Γ := by
-  obtain ⟨k, f, g, pf, pg, hf, hg, hg0, rfl⟩ := ha
-  refine ⟨k, -f, g, -pf, pg, ?_, hg, hg0, ?_⟩
-  · rw [IsIntegralQExp, map_neg, hf, FunLike.coe_neg]
-    exact (ModularForm.qExpansion_neg one_pos (hper hT) f).symm
-  · rw [intSeriesC_neg, neg_div]
 
 omit [Γ.FiniteIndex] hT in
 theorem inv_mem_intFormRatiosC {a : LaurentSeries ℚ} (ha : a ∈ intFormRatiosC ℚ Γ) :
@@ -1101,7 +1085,7 @@ end FIdxRat
 
 namespace FIdxBC
 
-p2m_open "ModularCurve~IsCusp"
+open ModularCurve
 open scoped MatrixGroups
 
 variable (L : Type*) [Field L] [Algebra ℚ L]
@@ -1164,11 +1148,6 @@ theorem solution
           ({y} : Set (ModularCurve.laurentBaseChange L (ModularCurve.qExpFunctionFieldC ℚ Γ))))
         (ModularCurve.laurentBaseChange L (ModularCurve.qExpFunctionFieldC ℚ Γ)) ≤ Γ'.index :=
   FIdxBC.finrank_le L Γ hT Γ' hΓ' hneg y hy
-
-end S_ModularCurve_finrank_adjoin_jqModC_laurentBaseChange_qExpFunctionFieldC_le_index
-end P2MW
-export P2MW.S_ModularCurve_finrank_adjoin_jqModC_laurentBaseChange_qExpFunctionFieldC_le_index
-  (solution)
 
 end privateSection
 

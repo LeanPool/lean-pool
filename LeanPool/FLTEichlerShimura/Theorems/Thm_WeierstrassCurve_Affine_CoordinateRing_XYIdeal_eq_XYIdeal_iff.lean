@@ -51,17 +51,11 @@ https://github.com/anthropics/fermats-last-theorem/blob/aa2d8b34692b16c70f699536
 
 section privateSection
 
-set_option backward.isDefEq.respectTransparency.types false
 
 namespace P2MW.S_WeierstrassCurve_Affine_CoordinateRing_XYIdeal_eq_XYIdeal_iff
 
-p2m_open "Polynomial WeierstrassCurve \
-  P2MW.S_WeierstrassCurve_Affine_CoordinateRing_XYIdeal_eq_XYIdeal_iff.WeierstrassCurve \
-  WeierstrassCurve.Affine \
-  P2MW.S_WeierstrassCurve_Affine_CoordinateRing_XYIdeal_eq_XYIdeal_iff.WeierstrassCurve.Affine \
-  WeierstrassCurve.Affine.CoordinateRing \
-  P2MW.S_WeierstrassCurve_Affine_CoordinateRing_XYIdeal_eq_XYIdeal_iff.WeierstrassCurve.Affine.Coor\
-  dinateRing"
+p2m_open "Polynomial WeierstrassCurve WeierstrassCurve.Affine \
+  WeierstrassCurve.Affine.CoordinateRing"
 open scoped Polynomial.Bivariate
 
 namespace WeierstrassCurve

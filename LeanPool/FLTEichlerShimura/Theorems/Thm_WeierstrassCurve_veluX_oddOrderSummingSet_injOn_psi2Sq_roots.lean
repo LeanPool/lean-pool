@@ -54,16 +54,10 @@ https://github.com/anthropics/fermats-last-theorem/blob/aa2d8b34692b16c70f699536
 
 section privateSection
 
-set_option backward.isDefEq.respectTransparency.types false
 
 namespace P2MW.S_WeierstrassCurve_veluX_oddOrderSummingSet_injOn_psi2Sq_roots
 
-p2m_open "Polynomial WeierstrassCurve \
-  P2MW.S_WeierstrassCurve_veluX_oddOrderSummingSet_injOn_psi2Sq_roots.WeierstrassCurve \
-  WeierstrassCurve.Affine \
-  P2MW.S_WeierstrassCurve_veluX_oddOrderSummingSet_injOn_psi2Sq_roots.WeierstrassCurve.Affine \
-  WeierstrassCurve.Affine.Point \
-  P2MW.S_WeierstrassCurve_veluX_oddOrderSummingSet_injOn_psi2Sq_roots.WeierstrassCurve.Affine.Point"
+p2m_open "Polynomial WeierstrassCurve WeierstrassCurve.Affine WeierstrassCurve.Affine.Point"
 
 noncomputable section
 
@@ -104,6 +98,8 @@ lemma s18coordsOrZero_fst (P : W.Point) : P.coordsOrZero.1 = P.s18xOrZero := by
   cases P <;> rfl
 
 end Affine.Point
+
+open Affine.Point
 
 section OrderArithmetic
 

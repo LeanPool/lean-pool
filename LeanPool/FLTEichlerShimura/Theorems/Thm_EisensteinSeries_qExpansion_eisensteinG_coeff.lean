@@ -64,7 +64,6 @@ Chris Birkbeck; Authors: Chris Birkbeck). See ATTRIBUTION.md and NOTICE in the s
 
 section privateSection
 
-set_option backward.isDefEq.respectTransparency.types false
 
 namespace P2MW.S_EisensteinSeries_qExpansion_eisensteinG_coeff
 
@@ -521,7 +520,7 @@ lemma summable_divisorSum_mul_pow (hk : 1 ≤ k) (b b' : ZMod N) {r : ℂ} (hr :
   have hs : Summable fun n : ℕ => ‖((n : ℂ)) ^ k * r ^ n‖ :=
     summable_norm_pow_mul_geometric_of_norm_lt_one k hr
   refine Summable.of_norm_bounded (hs.subtype _) fun n => ?_
-  simp only [Function.comp_apply, norm_mul, norm_pow, Complex.norm_natCast]
+  simp only [norm_mul, norm_pow, Complex.norm_natCast]
   exact mul_le_mul_of_nonneg_right (norm_divisorSum_le hk b b' n) (by positivity)
 
 theorem eisensteinG_eq_expansion (hk : 3 ≤ k) (a : Fin 2 → ZMod N) (τ : ℍ) :
@@ -647,7 +646,11 @@ theorem qExpansion_coeff_formula (hk : 3 ≤ k) (a : Fin 2 → ZMod N) (n : ℕ)
     rfl
   · rw [dite_eq_right hn, ite_eq_right hn]
     have hN : (N : ℂ) ≠ 0 := by exact_mod_cast NeZero.ne N
-    simp only [kappa, Splus, Sminus]
+    let n' : ℕ+ := ⟨n, Nat.pos_of_ne_zero hn⟩
+    have hn' : (n' : ℕ) = n := rfl
+    change kappa N k * (Splus N k a n' + (-1) ^ k * Sminus N k a n') = _
+    clear_value n'
+    simp only [kappa, Splus, Sminus, hn']
     rw [Nat.sum_divisorsAntidiagonal' (fun i j : ℕ =>
         (if ((i : ℕ) : ZMod N) = a 0 then (1 : ℂ) else 0) * ZMod.stdAddChar (a 1 * ((j : ℕ) : ZMod
       N)) *
@@ -656,7 +659,6 @@ theorem qExpansion_coeff_formula (hk : 3 ≤ k) (a : Fin 2 → ZMod N) (n : ℕ)
         (if ((i : ℕ) : ZMod N) = -a 0 then (1 : ℂ) else 0) * ZMod.stdAddChar (-a 1 * ((j : ℕ) : ZMod
       N)) *
           ((j : ℕ) : ℂ) ^ (k - 1))]
-    simp only [PNat.mk_coe]
     rw [Finset.mul_sum, ← Finset.sum_add_distrib, Finset.mul_sum, Finset.mul_sum]
     refine Finset.sum_congr rfl fun m _ => ?_
     rw [neg_mul]

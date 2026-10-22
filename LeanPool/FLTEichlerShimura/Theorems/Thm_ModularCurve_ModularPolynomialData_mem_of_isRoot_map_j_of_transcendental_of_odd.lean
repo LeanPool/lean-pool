@@ -69,7 +69,6 @@ https://github.com/anthropics/fermats-last-theorem/blob/aa2d8b34692b16c70f699536
 
 section privateSection
 
-set_option backward.isDefEq.respectTransparency.types false
 
 namespace P2MW.S_ModularCurve_ModularPolynomialData_mem_of_isRoot_map_j_of_transcendental_of_odd
 

@@ -60,7 +60,6 @@ https://github.com/anthropics/fermats-last-theorem/blob/aa2d8b34692b16c70f699536
 
 section privateSection
 
-set_option backward.isDefEq.respectTransparency.types false
 
 namespace P2MW.S_LinearMap_trace_eq_of_sq_sub_smul_add_eq_zero_of_det_eq
 

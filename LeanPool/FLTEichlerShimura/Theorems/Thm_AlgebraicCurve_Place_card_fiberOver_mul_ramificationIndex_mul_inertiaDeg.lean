@@ -57,14 +57,11 @@ https://github.com/anthropics/fermats-last-theorem/blob/aa2d8b34692b16c70f699536
 
 section privateSection
 
-set_option backward.isDefEq.respectTransparency.types false
 
 namespace P2MW.S_OVERLONG_c0635b7f
 
 noncomputable section
-p2m_open "AlgebraicCurve \
-  P2MW.S_OVERLONG_c0635b7f.AlgebraicCurve \
-  IsDedekindDomain"
+p2m_open "AlgebraicCurve IsDedekindDomain"
 open scoped Pointwise
 
 namespace AlgebraicCurve

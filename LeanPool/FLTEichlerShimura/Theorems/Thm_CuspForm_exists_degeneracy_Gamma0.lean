@@ -54,12 +54,10 @@ https://github.com/anthropics/fermats-last-theorem/blob/aa2d8b34692b16c70f699536
 
 section privateSection
 
-set_option backward.isDefEq.respectTransparency.types false
 
 namespace P2MW.S_CuspForm_exists_degeneracy_Gamma0
 
-p2m_open_scoped "MatrixGroups ModularForm P2MW.S_CuspForm_exists_degeneracy_Gamma0.ModularForm \
-  Pointwise"
+p2m_open_scoped "MatrixGroups ModularForm Pointwise"
 
 noncomputable section
 
@@ -123,7 +121,8 @@ theorem Gamma0_le_conj_Gamma0 {M N d : ℕ} (hd : d ≠ 0) (hdiv : d * M ∣ N) 
     exact (ZMod.intCast_zmod_eq_zero_iff_dvd _ M).mpr hMc'
   · rw [eq_mul_inv_iff_mul_eq]
     apply Units.ext
-    simp only [Units.val_mul, Matrix.SpecialLinearGroup.mapGL_coe_matrix, val_heckeDiagMatrix hd]
+    simp only [Units.val_mul, Matrix.SpecialLinearGroup.mapGL_coe_matrix,
+      Matrix.SpecialLinearGroup.map_apply_coe, val_heckeDiagMatrix hd]
     ext i j
     fin_cases i <;> fin_cases j <;>
       simp [Matrix.mul_apply, Fin.sum_univ_two, B, hc', mul_comm]

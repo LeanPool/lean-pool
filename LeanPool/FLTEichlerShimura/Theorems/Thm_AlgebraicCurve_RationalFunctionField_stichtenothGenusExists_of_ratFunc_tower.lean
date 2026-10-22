@@ -29,7 +29,6 @@ import LeanPool.FLTEichlerShimura.Theorems.Thm_AlgebraicCurve_RationalFunctionFi
 import LeanPool.FLTEichlerShimura.Theorems.Thm_AlgebraicCurve_Divisor_degree_eq_sum_support
 import LeanPool.FLTEichlerShimura.Theorems.Thm_AlgebraicCurve_ell_eq_zero_of_degree_neg
 import LeanPool.FLTEichlerShimura.Theorems.Thm_AlgebraicCurve_indexOfSpecialty_eq_of_genusReached
-import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
 
 /-!
 # Riemann's theorem over a rational function subfield
@@ -76,134 +75,30 @@ https://github.com/anthropics/fermats-last-theorem/blob/aa2d8b34692b16c70f699536
 
 section privateSection
 
-set_option backward.isDefEq.respectTransparency.types false
-
-namespace P2MW.S_OVERLONG_f94f10e8
-
-
 open Polynomial
 
 namespace AlgebraicCurve
-p2m_export "AlgebraicCurve" "Place Place.coe_algebraMap Place.ord_zero Divisor Divisor.degree \
-  Divisor.degree_single HasPrincipalDivisors Place.ofHeightOneSpectrum \
-  HasPrincipalDivisors.exists_divisor Place.algebraMap_mem' Place.ord_restrict \
-  Place.deg_restrict_mul_inertiaDeg Place.mem_fiber Divisor.pullback Divisor.pullback_apply \
-  Divisor.degree_pullback SumRamificationInertia IsCurveOver IsCurveOver.finite_residueField \
-  LSpace ell mem_lSpace_iff_ord lSpace_mono one_mem_lSpace_zero ConstantsAreBase \
-  ell_zero_eq_one_of_constantsAreBase adeleBdd mem_adeleBdd adeleBdd_mono diagonalHom \
-  diagonalHom_injective diagonal_mem_adeleBdd_iff adeleSpace adeleBdd_le_adeleSpace \
-  diagonal_mem_adeleSpace globalSub diagonal_mem_globalSub map_diagonal_lSpace \
-  finrank_adeleBdd_inf_global_eq_ell indexOfSpecialty adeleBddPrincipal indexOfSpecialty_eq \
-  omegaSpace omegaSpace_antitone omegaSpaceEquivIndexDual finrank_omegaSpace_eq_indexOfSpecialty \
-  weilDifferentialModule omegaSpace_le_weilDifferentialModule mem_weilDifferentialModule_iff \
-  mulAdele_apply adeleSpaceMul adeleSpaceMul_coe weilSmul weilSmul_apply weilSmul_one weilSmul_mul \
-  weilSmul_injective weilSmul_mem_omegaSpace_add residuePairing residuePairing_apply_coe \
-  WeilDifferentialRankOne RiemannGenusReachedAt RiemannGenusReached StichtenothGenusExists \
-  RiemannGenusBounded IndexOfSpecialtyFinite PoleDivisorPackage HasPoleDivisorPackage \
-  TranscendenceTower TranscendenceTower.xF TranscendenceTower.poleDivisor IntegralBasisInLSpace \
-  HasIntegralBasisInLSpace HasIntegralBasisRegularOutside HasRegularFractionSubring \
-  TranscendenceTower.hx_indep Place.sum_ramificationIndex_mul_inertiaDeg \
-  RationalFunctionField.ord_placeInfty Place.exists_restrict_eq"
-p2m_open "AlgebraicCurve~Place.ord_nonneg_of_mem~Place.mem_of_ord_nonneg~Place.mem_iff_ord_nonneg"
-namespace Place
-p2m_export "AlgebraicCurve.Place" "ext coe_algebraMap ResidueField deg adicValuation \
-  adicValuation_coe_eq_one_iff ord ord_zero ord_mul ord_inv ord_coe_unit ord_coe_irreducible \
-  ord_zpow ord_unit_smul_zpow exists_unit_mul_zpow ofHeightOneSpectrum mk.injEq algebraMap_mem' \
-  toValuationSubring mk ramificationIndex ramificationIndex_pos restrict mem_restrict_iff \
-  ord_restrict deg_restrict_mul_inertiaDeg fiber mem_fiber adicValuation_eq_exp_neg_ord \
-  sum_ramificationIndex_mul_inertiaDeg exists_restrict_eq"
-end Place
-end AlgebraicCurve
 
-namespace AlgebraicCurve
-p2m_export "AlgebraicCurve" "Place Place.coe_algebraMap Place.ord_zero Divisor Divisor.degree \
-  Divisor.degree_single HasPrincipalDivisors Place.ofHeightOneSpectrum \
-  HasPrincipalDivisors.exists_divisor Place.algebraMap_mem' Place.ord_restrict \
-  Place.deg_restrict_mul_inertiaDeg Place.mem_fiber Divisor.pullback Divisor.pullback_apply \
-  Divisor.degree_pullback SumRamificationInertia IsCurveOver IsCurveOver.finite_residueField \
-  LSpace ell mem_lSpace_iff_ord lSpace_mono one_mem_lSpace_zero ConstantsAreBase \
-  ell_zero_eq_one_of_constantsAreBase adeleBdd mem_adeleBdd adeleBdd_mono diagonalHom \
-  diagonalHom_injective diagonal_mem_adeleBdd_iff adeleSpace adeleBdd_le_adeleSpace \
-  diagonal_mem_adeleSpace globalSub diagonal_mem_globalSub map_diagonal_lSpace \
-  finrank_adeleBdd_inf_global_eq_ell indexOfSpecialty adeleBddPrincipal indexOfSpecialty_eq \
-  omegaSpace omegaSpace_antitone omegaSpaceEquivIndexDual finrank_omegaSpace_eq_indexOfSpecialty \
-  weilDifferentialModule omegaSpace_le_weilDifferentialModule mem_weilDifferentialModule_iff \
-  mulAdele_apply adeleSpaceMul adeleSpaceMul_coe weilSmul weilSmul_apply weilSmul_one weilSmul_mul \
-  weilSmul_injective weilSmul_mem_omegaSpace_add residuePairing residuePairing_apply_coe \
-  WeilDifferentialRankOne RiemannGenusReachedAt RiemannGenusReached StichtenothGenusExists \
-  RiemannGenusBounded IndexOfSpecialtyFinite PoleDivisorPackage HasPoleDivisorPackage \
-  TranscendenceTower TranscendenceTower.xF TranscendenceTower.poleDivisor IntegralBasisInLSpace \
-  HasIntegralBasisInLSpace HasIntegralBasisRegularOutside HasRegularFractionSubring \
-  TranscendenceTower.hx_indep Place.sum_ramificationIndex_mul_inertiaDeg \
-  RationalFunctionField.ord_placeInfty Place.exists_restrict_eq"
-p2m_open "AlgebraicCurve~Place.ord_nonneg_of_mem~Place.mem_of_ord_nonneg~Place.mem_iff_ord_nonneg"
 variable {K F : Type*} [Field K] [Field F] [Algebra K F]
-namespace Divisor
-p2m_export "AlgebraicCurve.Divisor" "degree degree_single principal smul_def smul_apply pullback \
-  pullback_apply degree_pullback"
-end Divisor
 variable {D : Divisor K F}
-p2m_open_scoped "AlgebraicCurve.Divisor" in
+
+open scoped AlgebraicCurve.Divisor in
 theorem Divisor.degree_nonneg_of_nonneg [IsCurveOver K F]
     {D : Divisor K F} (hD : ∀ v, 0 ≤ D v) : 0 ≤ Divisor.degree D := by
   rw [Divisor.degree_eq_sum_support]
   exact Finset.sum_nonneg fun v _ => mul_nonneg (hD v) (Int.natCast_nonneg _)
-theorem lSpace_eq_bot_of_degree_neg [IsCurveOver K F]
-    (hD : Divisor.degree D < 0) : LSpace D = ⊥ := by
-  rw [eq_bot_iff]
-  intro f hf
-  rw [Submodule.mem_bot]
-  by_contra hf0
-  obtain ⟨P, hPord, hPdeg⟩ := HasPrincipalDivisors.exists_divisor (K := K) f hf0
-  have heff : ∀ v : Place K F, 0 ≤ (P + D) v := by
-    intro v
-    rw [Finsupp.add_apply, hPord]
-    rcases mem_lSpace_iff_ord.mp hf with rfl | h
-    · exact absurd rfl hf0
-    · linarith [h v]
-  have hdegPD : 0 ≤ Divisor.degree (P + D) := Divisor.degree_nonneg_of_nonneg heff
-  rw [map_add, hPdeg, zero_add] at hdegPD
-  exact absurd hdegPD (not_le.mpr hD)
+
 end AlgebraicCurve
 
 noncomputable section
 
-p2m_open "Module IsLocalRing Module.IsLocalRing IsDedekindDomain WithZero"
+open Module IsLocalRing Module.IsLocalRing IsDedekindDomain WithZero
 
 namespace AlgebraicCurve
-p2m_export "AlgebraicCurve" "Place Place.coe_algebraMap Place.ord_zero Divisor Divisor.degree \
-  Divisor.degree_single HasPrincipalDivisors Place.ofHeightOneSpectrum \
-  HasPrincipalDivisors.exists_divisor Place.algebraMap_mem' Place.ord_restrict \
-  Place.deg_restrict_mul_inertiaDeg Place.mem_fiber Divisor.pullback Divisor.pullback_apply \
-  Divisor.degree_pullback SumRamificationInertia IsCurveOver IsCurveOver.finite_residueField \
-  LSpace ell mem_lSpace_iff_ord lSpace_mono one_mem_lSpace_zero ConstantsAreBase \
-  ell_zero_eq_one_of_constantsAreBase adeleBdd mem_adeleBdd adeleBdd_mono diagonalHom \
-  diagonalHom_injective diagonal_mem_adeleBdd_iff adeleSpace adeleBdd_le_adeleSpace \
-  diagonal_mem_adeleSpace globalSub diagonal_mem_globalSub map_diagonal_lSpace \
-  finrank_adeleBdd_inf_global_eq_ell indexOfSpecialty adeleBddPrincipal indexOfSpecialty_eq \
-  omegaSpace omegaSpace_antitone omegaSpaceEquivIndexDual finrank_omegaSpace_eq_indexOfSpecialty \
-  weilDifferentialModule omegaSpace_le_weilDifferentialModule mem_weilDifferentialModule_iff \
-  mulAdele_apply adeleSpaceMul adeleSpaceMul_coe weilSmul weilSmul_apply weilSmul_one weilSmul_mul \
-  weilSmul_injective weilSmul_mem_omegaSpace_add residuePairing residuePairing_apply_coe \
-  WeilDifferentialRankOne RiemannGenusReachedAt RiemannGenusReached StichtenothGenusExists \
-  RiemannGenusBounded IndexOfSpecialtyFinite PoleDivisorPackage HasPoleDivisorPackage \
-  TranscendenceTower TranscendenceTower.xF TranscendenceTower.poleDivisor IntegralBasisInLSpace \
-  HasIntegralBasisInLSpace HasIntegralBasisRegularOutside HasRegularFractionSubring \
-  TranscendenceTower.hx_indep Place.sum_ramificationIndex_mul_inertiaDeg \
-  RationalFunctionField.ord_placeInfty Place.exists_restrict_eq"
-p2m_open "AlgebraicCurve~Place.ord_nonneg_of_mem~Place.mem_of_ord_nonneg~Place.mem_iff_ord_nonneg"
 
 variable {K F : Type*} [Field K] [Field F] [Algebra K F]
 
 namespace Place
-p2m_export "AlgebraicCurve.Place" "ext coe_algebraMap ResidueField deg adicValuation \
-  adicValuation_coe_eq_one_iff ord ord_zero ord_mul ord_inv ord_coe_unit ord_coe_irreducible \
-  ord_zpow ord_unit_smul_zpow exists_unit_mul_zpow ofHeightOneSpectrum mk.injEq algebraMap_mem' \
-  toValuationSubring mk ramificationIndex ramificationIndex_pos restrict mem_restrict_iff \
-  ord_restrict deg_restrict_mul_inertiaDeg fiber mem_fiber adicValuation_eq_exp_neg_ord \
-  sum_ramificationIndex_mul_inertiaDeg exists_restrict_eq"
-p2m_open "AlgebraicCurve.Place~ord_nonneg_of_mem~mem_of_ord_nonneg~mem_iff_ord_nonneg~restrict_plac\
-  eOfPrime~placeOfPrime~comap_algebraMap_ne_top"
 
 variable (v : Place K F)
 
@@ -234,148 +129,11 @@ private theorem _root_.AlgebraicCurve.Place.mk_mem_maximalIdeal_iff {f : F}
     · exact hne rfl
     · omega
 
-p2m_export "AlgebraicCurve.Place" "mk_mem_maximalIdeal_iff"
 end Place
-
-theorem ell_le_ell_sub_single_add_deg [IsCurveOver K F] (D : Divisor K F) (P : Place K F) :
-    ell D ≤ ell (D - Finsupp.single P 1) + P.deg := by
-  classical
-  have : Module.Finite K P.ResidueField := IsCurveOver.finite_residueField P
-  set E : Divisor K F := D - Finsupp.single P 1 with hE
-  have hEP : E P = D P - 1 := by rw [hE, Finsupp.sub_apply, Finsupp.single_eq_same]
-  have hEv : ∀ v, v ≠ P → E v = D v := by
-    intro v hv; rw [hE, Finsupp.sub_apply, Finsupp.single_eq_of_ne hv, sub_zero]
-  obtain ⟨π, hπ⟩ := IsDiscreteValuationRing.exists_irreducible P.toValuationSubring
-  set t : F := (π : F) with ht
-  have ht0 : t ≠ 0 := by
-    simpa [ht, ne_eq, ZeroMemClass.coe_eq_zero] using hπ.ne_zero
-  have ht1 : P.ord t = 1 := P.ord_coe_irreducible hπ
-  have htn0 : t ^ (D P) ≠ 0 := zpow_ne_zero _ ht0
-  have hordmul : ∀ {g : F}, g ≠ 0 → P.ord (t ^ (D P) * g) = D P + P.ord g := by
-    intro g hg
-    rw [P.ord_mul htn0 hg, P.ord_zpow, ht1, mul_one]
-  have hmem : ∀ g : F, g ∈ LSpace D → t ^ (D P) * g ∈ P.toValuationSubring := by
-    intro g hg
-    rcases eq_or_ne g 0 with rfl | hg0
-    · simp
-    · refine AlgebraicCurve.Place.mem_of_ord_nonneg P (mul_ne_zero htn0 hg0) ?_
-      rw [hordmul hg0]
-      have := (mem_lSpace_iff_ord.mp hg).resolve_left hg0 P
-      linarith
-  let ψ : LSpace D →ₗ[K] P.toValuationSubring :=
-    { toFun := fun f => ⟨t ^ (D P) * (f : F), hmem _ f.2⟩
-      map_add' := by intro f g; apply Subtype.ext; push_cast; ring
-      map_smul' := by
-        intro c f; apply Subtype.ext
-        simp only [RingHom.id_apply, SetLike.val_smul, Algebra.smul_def, MulMemClass.coe_mul,
-          Place.coe_algebraMap]
-        ring }
-  let res : P.toValuationSubring →ₗ[K] P.ResidueField :=
-    (Algebra.linearMap P.toValuationSubring P.ResidueField).restrictScalars K
-  have hres : ∀ x : P.toValuationSubring, res x = IsLocalRing.residue _ x := by
-    intro x
-    change (Algebra.linearMap P.toValuationSubring P.ResidueField).restrictScalars K x = _
-    rw [LinearMap.restrictScalars_apply, Algebra.linearMap_apply,
-      IsLocalRing.ResidueField.algebraMap_eq]
-  let φ : LSpace D →ₗ[K] P.ResidueField := res ∘ₗ ψ
-  have hphi : ∀ f : LSpace D, φ f = 0 ↔
-      (⟨t ^ (D P) * (f : F), hmem _ f.2⟩ : P.toValuationSubring)
-        ∈ IsLocalRing.maximalIdeal P.toValuationSubring := by
-    intro f
-    rw [show φ f = IsLocalRing.residue P.toValuationSubring ⟨t ^ (D P) * (f : F), hmem _ f.2⟩
-          from hres (ψ f),
-      IsLocalRing.residue_eq_zero_iff]
-  have hED : E ≤ D := by
-    rw [Finsupp.le_def]; intro v; rw [hE, Finsupp.sub_apply]
-    have : (0 : ℤ) ≤ Finsupp.single P 1 v := by
-      rcases eq_or_ne v P with rfl | hv
-      · simp
-      · simp [Finsupp.single_eq_of_ne hv]
-    linarith
-  have hsub : LSpace E ≤ LSpace D := lSpace_mono hED
-  have hker : LinearMap.ker φ = (LSpace E).comap (LSpace D).subtype := by
-    ext f
-    simp only [LinearMap.mem_ker, Submodule.mem_comap, Submodule.coe_subtype]
-    rw [hphi f, P.mk_mem_maximalIdeal_iff]
-    rcases eq_or_ne (f : F) 0 with hf0 | hf0
-    · simp only [hf0, mul_zero, true_or, true_iff]
-      exact (LSpace E).zero_mem
-    · rw [mem_lSpace_iff_ord]
-      have hfD := (mem_lSpace_iff_ord.mp f.2).resolve_left hf0
-      constructor
-      · rintro (h | h)
-        · exact absurd h (mul_ne_zero htn0 hf0)
-        · refine Or.inr (fun v => ?_)
-          rcases eq_or_ne v P with rfl | hv
-          · rw [hEP]; rw [hordmul hf0] at h; omega
-          · rw [hEv v hv]; exact hfD v
-      · rintro (h | h)
-        · exact absurd h hf0
-        · refine Or.inr ?_
-          have hP := h P
-          rw [hEP] at hP
-          rw [hordmul hf0]; omega
-  have hkerfin : finrank K (LinearMap.ker φ) = ell E := by
-    rw [hker, LinearEquiv.finrank_eq (Submodule.comapSubtypeEquivOfLe hsub)]
-  have hquot : finrank K (LSpace D ⧸ LinearMap.ker φ) ≤ P.deg := by
-    rw [LinearEquiv.finrank_eq φ.quotKerEquivRange]
-    exact Submodule.finrank_le (LinearMap.range φ)
-  by_cases hfin : FiniteDimensional K (LSpace D)
-  · have := hfin
-    have hrn := Submodule.finrank_quotient_add_finrank (LinearMap.ker φ)
-    rw [hkerfin] at hrn
-    have hb : ell D = finrank K (LSpace D) := rfl
-    omega
-  · have h0 : ell D = 0 := by rw [ell]; exact finrank_of_infinite_dimensional hfin
-    omega
 
 theorem one_le_deg [IsCurveOver K F] (P : Place K F) : 1 ≤ P.deg := by
   have : Module.Finite K P.ResidueField := IsCurveOver.finite_residueField P
   exact Module.finrank_pos
-
-theorem ell_le_degree_add_ellZero [IsCurveOver K F] {D : Divisor K F}
-    (hD : ∀ v, 0 ≤ D v) :
-    (ell D : ℤ) ≤ Divisor.degree D + ell (0 : Divisor K F) := by
-  classical
-  suffices H : ∀ m : ℕ, ∀ D : Divisor K F, (∀ v, 0 ≤ D v) →
-      (Divisor.degree D).toNat = m →
-      (ell D : ℤ) ≤ Divisor.degree D + ell (0 : Divisor K F) by
-    exact H (Divisor.degree D).toNat D hD rfl
-  intro m
-  induction m using Nat.strong_induction_on with
-  | _ m IH =>
-    intro D hD hm
-    by_cases hD0 : D = 0
-    · subst hD0; simp
-    · obtain ⟨P, hP⟩ := Finsupp.support_nonempty_iff.mpr hD0
-      have hPpos : 1 ≤ D P := by
-        have hne : D P ≠ 0 := Finsupp.mem_support_iff.mp hP
-        have := hD P; omega
-      set E : Divisor K F := D - Finsupp.single P 1 with hE
-      have hEeff : ∀ v, 0 ≤ E v := by
-        intro v; rw [hE, Finsupp.sub_apply]
-        rcases eq_or_ne v P with rfl | hv
-        · rw [Finsupp.single_eq_same]; omega
-        · rw [Finsupp.single_eq_of_ne hv, sub_zero]; exact hD v
-      have hdegE : Divisor.degree E = Divisor.degree D - P.deg := by
-        rw [hE, map_sub, Divisor.degree_single, one_mul]
-      have hPdeg1 : 1 ≤ (P.deg : ℤ) := by exact_mod_cast one_le_deg P
-      have hDnn : 0 ≤ Divisor.degree D := Divisor.degree_nonneg_of_nonneg hD
-      have hEnn : 0 ≤ Divisor.degree E := Divisor.degree_nonneg_of_nonneg hEeff
-      have hmlt : (Divisor.degree E).toNat < m := by rw [← hm]; omega
-      have hIH := IH _ hmlt E hEeff rfl
-      have hstep := ell_le_ell_sub_single_add_deg D P
-      rw [← hE] at hstep
-      have hstep' : (ell D : ℤ) ≤ (ell E : ℤ) + P.deg := by exact_mod_cast hstep
-      rw [hdegE] at hIH
-      linarith
-
-theorem ell_le_degree_add_one_of_effective [IsCurveOver K F]
-    (hC : ConstantsAreBase K F) {D : Divisor K F} (hD : ∀ v, 0 ≤ D v) :
-    (ell D : ℤ) ≤ Divisor.degree D + 1 := by
-  have h := ell_le_degree_add_ellZero hD
-  rw [ell_zero_eq_one_of_constantsAreBase hC] at h
-  exact_mod_cast h
 
 def lSpaceShiftEquiv (D : Divisor K F) {g : F} (hg : g ≠ 0)
     {Dg : Divisor K F} (hDg : ∀ v, Dg v = v.ord g) :
@@ -411,44 +169,15 @@ def lSpaceShiftEquiv (D : Divisor K F) {g : F} (hg : g ≠ 0)
     change (k : F) * g * g⁻¹ = (k : F)
     rw [mul_assoc, mul_inv_cancel₀ hg, mul_one]
 
-theorem ell_le_degree_add_one [IsCurveOver K F] (hC : ConstantsAreBase K F)
-    {D : Divisor K F} (hD : 0 ≤ Divisor.degree D) :
-    (ell D : ℤ) ≤ Divisor.degree D + 1 := by
-  rcases eq_or_ne (ell D) 0 with h0 | h0
-  · rw [h0]; push_cast; linarith
-  · have hbot : LSpace D ≠ ⊥ := fun h => h0 (by rw [ell, h, finrank_bot])
-    obtain ⟨g, hgL, hg0⟩ := (Submodule.ne_bot_iff _).mp hbot
-    obtain ⟨Dg, hDgord, hDgdeg⟩ := HasPrincipalDivisors.exists_divisor (K := K) g hg0
-    have heff : ∀ v, 0 ≤ (D + Dg) v := by
-      intro v; rw [Finsupp.add_apply, hDgord]
-      have := (mem_lSpace_iff_ord.mp hgL).resolve_left hg0 v
-      linarith
-    have hdeg : Divisor.degree (D + Dg) = Divisor.degree D := by
-      rw [map_add, hDgdeg, add_zero]
-    have hell : ell D = ell (D + Dg) :=
-      LinearEquiv.finrank_eq (lSpaceShiftEquiv D hg0 hDgord)
-    have hfin := ell_le_degree_add_one_of_effective hC heff
-    rw [hdeg] at hfin
-    rw [hell]; exact hfin
-
 end AlgebraicCurve
 
 end
 
 noncomputable section
 
-p2m_open "Module IsLocalRing Module.IsLocalRing IsDedekindDomain WithZero"
+open Module IsLocalRing Module.IsLocalRing IsDedekindDomain WithZero
 
 namespace Submodule
-p2m_export "Submodule" "quotEquivOfEq Quotient.eq inclusion factor mk mem_bot subtype_injective \
-  mk.injEq Quotient.subsingleton_iff Quotient.mk span restrictScalars inhabited \
-  inclusion_injective comapSubtypeEquivOfLe mem_comap finrank_quotient_add_finrank mem_top \
-  Quotient.equiv mkQ mem_map coe_subtype map_smul' zero one quotientQuotientEquivQuotient \
-  coe_eq_zero finrank_le range_subtype Quotient.mk_surjective map mem_inf mem_sup \
-  Quotient.mk_eq_zero topEquiv map_injective_of_injective comap_subtype_self mapQ subsingleton_iff \
-  module smul_def mk_eq_zero coe_add mkQ_apply ext ker_mkQ map_comap_subtype comap comap_mono \
-  map_sup coe_zero smul"
-p2m_open "Submodule"
 
 variable {K X : Type*} [Field K] [AddCommGroup X] [Module K X]
 
@@ -499,46 +228,10 @@ theorem finrank_quotient_chain {A B C : Submodule K X} (hAB : A ≤ B) (hBC : B 
   rw [LinearEquiv.finrank_eq e3, LinearEquiv.finrank_eq eK] at h
   omega
 
-theorem finrank_quotient_chain' {A B C : Submodule K X} (hAB : A ≤ B) (hBC : B ≤ C)
-    [hCA : Module.Finite K (C ⧸ A.comap C.subtype)] :
-    Module.Finite K (C ⧸ B.comap C.subtype) ∧
-      finrank K (C ⧸ B.comap C.subtype)
-        = finrank K (C ⧸ A.comap C.subtype) - finrank K (B ⧸ A.comap B.subtype) := by
-  set S := A.comap C.subtype
-  set T := B.comap C.subtype
-  have hST : S ≤ T := comap_mono hAB
-  have e3 := Submodule.quotientQuotientEquivQuotient S T hST
-  have eK := nestedComapMapMkQEquiv (K := K) hAB hBC
-  have : Module.Finite K (C ⧸ T) := Module.Finite.equiv e3
-  refine ⟨this, ?_⟩
-  have h := Submodule.finrank_quotient_add_finrank (R := K) (T.map S.mkQ)
-  rw [LinearEquiv.finrank_eq e3, LinearEquiv.finrank_eq eK] at h
-  omega
-
 end Submodule
 
 namespace AlgebraicCurve
-p2m_export "AlgebraicCurve" "Place Place.coe_algebraMap Place.ord_zero Divisor Divisor.degree \
-  Divisor.degree_single HasPrincipalDivisors Place.ofHeightOneSpectrum \
-  HasPrincipalDivisors.exists_divisor Place.algebraMap_mem' Place.ord_restrict \
-  Place.deg_restrict_mul_inertiaDeg Place.mem_fiber Divisor.pullback Divisor.pullback_apply \
-  Divisor.degree_pullback SumRamificationInertia IsCurveOver IsCurveOver.finite_residueField \
-  LSpace ell mem_lSpace_iff_ord lSpace_mono one_mem_lSpace_zero ConstantsAreBase \
-  ell_zero_eq_one_of_constantsAreBase adeleBdd mem_adeleBdd adeleBdd_mono diagonalHom \
-  diagonalHom_injective diagonal_mem_adeleBdd_iff adeleSpace adeleBdd_le_adeleSpace \
-  diagonal_mem_adeleSpace globalSub diagonal_mem_globalSub map_diagonal_lSpace \
-  finrank_adeleBdd_inf_global_eq_ell indexOfSpecialty adeleBddPrincipal indexOfSpecialty_eq \
-  omegaSpace omegaSpace_antitone omegaSpaceEquivIndexDual finrank_omegaSpace_eq_indexOfSpecialty \
-  weilDifferentialModule omegaSpace_le_weilDifferentialModule mem_weilDifferentialModule_iff \
-  mulAdele_apply adeleSpaceMul adeleSpaceMul_coe weilSmul weilSmul_apply weilSmul_one weilSmul_mul \
-  weilSmul_injective weilSmul_mem_omegaSpace_add residuePairing residuePairing_apply_coe \
-  WeilDifferentialRankOne RiemannGenusReachedAt RiemannGenusReached StichtenothGenusExists \
-  RiemannGenusBounded IndexOfSpecialtyFinite PoleDivisorPackage HasPoleDivisorPackage \
-  TranscendenceTower TranscendenceTower.xF TranscendenceTower.poleDivisor IntegralBasisInLSpace \
-  HasIntegralBasisInLSpace HasIntegralBasisRegularOutside HasRegularFractionSubring \
-  TranscendenceTower.hx_indep Place.sum_ramificationIndex_mul_inertiaDeg \
-  RationalFunctionField.ord_placeInfty Place.exists_restrict_eq"
-p2m_open "AlgebraicCurve~Place.ord_nonneg_of_mem~Place.mem_of_ord_nonneg~Place.mem_iff_ord_nonneg"
+
 
 variable {K F : Type*} [Field K] [Field F] [Algebra K F]
 
@@ -756,7 +449,6 @@ theorem lSpaceQuotientToAdeleBddQuotient_injective {D₁ D₂ : Divisor K F} (hD
     Submodule.Quotient.mk_eq_zero, Submodule.mem_comap, Submodule.coe_subtype] at hx
   exact diagonal_mem_adeleBdd_iff.mp hx
 
-
 theorem ell_sub_ell_le_degree_sub_degree [IsCurveOver K F] {D₁ D₂ : Divisor K F} (hD : D₁ ≤ D₂)
     [FiniteDimensional K (LSpace D₂)] :
     (ell D₂ : ℤ) - (ell D₁ : ℤ) ≤ Divisor.degree D₂ - Divisor.degree D₁ := by
@@ -776,26 +468,6 @@ theorem ell_sub_ell_le_degree_sub_degree [IsCurveOver K F] {D₁ D₂ : Divisor 
   rw [this, ← hloc]
   exact_mod_cast hemb
 
-theorem adeleBdd_inf_sup_globalSub {D₁ D₂ : Divisor K F} (hD : D₁ ≤ D₂) :
-    adeleBdd D₂ ⊓ (adeleBdd D₁ ⊔ globalSub K F)
-      = adeleBdd D₁ ⊔ adeleBdd D₂ ⊓ globalSub K F := by
-  rw [inf_comm, sup_inf_assoc_of_le _ (adeleBdd_mono hD), inf_comm]
-
-theorem map_diagonal_lSpace_inf_adeleBdd {D₁ D₂ : Divisor K F} (hD : D₁ ≤ D₂) :
-    (LSpace D₂).map (diagonalHom K F) ⊓ adeleBdd D₁ = (LSpace D₁).map (diagonalHom K F) := by
-  rw [map_diagonal_lSpace, map_diagonal_lSpace, inf_right_comm,
-    inf_eq_right.mpr (adeleBdd_mono hD)]
-
-theorem gate_finrank_adeleBdd_quotient_single_point [IsCurveOver K F] (P : Place K F) :
-    (finrank K (adeleBdd (Finsupp.single P 1 : Divisor K F)
-        ⧸ (adeleBdd (0 : Divisor K F)).comap (adeleBdd (Finsupp.single P 1)).subtype) : ℤ)
-      = (P.deg : ℤ) := by
-  classical
-  have h01 : (0 : Divisor K F) ≤ Finsupp.single P 1 := by
-    intro v; rw [Finsupp.zero_apply, Finsupp.single_apply]; split_ifs <;> omega
-  have h := finrank_adeleBdd_quotient_eq (K := K) h01
-  rw [h, map_zero, sub_zero, Divisor.degree_single, one_mul]
-
 end AlgebraicCurve
 
 end
@@ -804,91 +476,10 @@ noncomputable section
 
 open Module IsDedekindDomain WithZero
 
-namespace Submodule
-p2m_export "Submodule" "quotEquivOfEq Quotient.eq inclusion factor mk mem_bot subtype_injective \
-  mk.injEq Quotient.subsingleton_iff Quotient.mk span restrictScalars inhabited \
-  inclusion_injective comapSubtypeEquivOfLe mem_comap finrank_quotient_add_finrank mem_top \
-  Quotient.equiv mkQ mem_map coe_subtype map_smul' zero one quotientQuotientEquivQuotient \
-  coe_eq_zero finrank_le range_subtype Quotient.mk_surjective map mem_inf mem_sup \
-  Quotient.mk_eq_zero topEquiv map_injective_of_injective comap_subtype_self mapQ subsingleton_iff \
-  module smul_def mk_eq_zero coe_add mkQ_apply ext ker_mkQ map_comap_subtype comap comap_mono \
-  map_sup coe_zero smul"
-p2m_open "Submodule"
-
-variable {K X : Type*} [Field K] [AddCommGroup X] [Module K X]
-
-theorem comap_subtype_sup_of_le_of_le {S T C : Submodule K X} (hS : S ≤ C) (hT : T ≤ C) :
-    S.comap C.subtype ⊔ T.comap C.subtype = (S ⊔ T).comap C.subtype := by
-  apply Submodule.map_injective_of_injective (f := C.subtype) C.subtype_injective
-  rw [Submodule.map_sup, Submodule.map_comap_subtype, Submodule.map_comap_subtype,
-    Submodule.map_comap_subtype, inf_eq_right.mpr hS, inf_eq_right.mpr hT,
-    inf_eq_right.mpr (sup_le hS hT)]
-
-theorem finrank_quotient_chain_top {M : Type*} [AddCommGroup M] [Module K M]
-    {A B : Submodule K M} (hAB : A ≤ B)
-    [hMB : Module.Finite K (M ⧸ B)] [hBA : Module.Finite K (B ⧸ A.comap B.subtype)] :
-    Module.Finite K (M ⧸ A) ∧
-      finrank K (M ⧸ A) = finrank K (M ⧸ B) + finrank K (B ⧸ A.comap B.subtype) := by
-  have e3 := Submodule.quotientQuotientEquivQuotient A B hAB
-  let ψ : (B : Type _) →ₗ[K] (M ⧸ A) := A.mkQ ∘ₗ B.subtype
-  have hker : LinearMap.ker ψ = A.comap B.subtype := by
-    simp only [ψ, LinearMap.ker_comp, ker_mkQ]
-  have hran : LinearMap.range ψ = B.map A.mkQ := by
-    simp only [ψ, LinearMap.range_comp, range_subtype]
-  let eK : (B ⧸ A.comap B.subtype) ≃ₗ[K] (B.map A.mkQ : Submodule K (M ⧸ A)) :=
-    (Submodule.quotEquivOfEq _ _ hker.symm).trans
-      (ψ.quotKerEquivRange.trans (LinearEquiv.ofEq _ _ hran))
-  have : Module.Finite K (B.map A.mkQ : Submodule K (M ⧸ A)) := Module.Finite.equiv eK
-  have : Module.Finite K ((M ⧸ A) ⧸ B.map A.mkQ) := Module.Finite.equiv e3.symm
-  have hfin : Module.Finite K (M ⧸ A) := Module.Finite.of_submodule_quotient (B.map A.mkQ)
-  refine ⟨hfin, ?_⟩
-  have h := Submodule.finrank_quotient_add_finrank (R := K) (B.map A.mkQ)
-  rw [LinearEquiv.finrank_eq e3, ← LinearEquiv.finrank_eq eK] at h
-  omega
-
-end Submodule
 
 namespace AlgebraicCurve
-p2m_export "AlgebraicCurve" "Place Place.coe_algebraMap Place.ord_zero Divisor Divisor.degree \
-  Divisor.degree_single HasPrincipalDivisors Place.ofHeightOneSpectrum \
-  HasPrincipalDivisors.exists_divisor Place.algebraMap_mem' Place.ord_restrict \
-  Place.deg_restrict_mul_inertiaDeg Place.mem_fiber Divisor.pullback Divisor.pullback_apply \
-  Divisor.degree_pullback SumRamificationInertia IsCurveOver IsCurveOver.finite_residueField \
-  LSpace ell mem_lSpace_iff_ord lSpace_mono one_mem_lSpace_zero ConstantsAreBase \
-  ell_zero_eq_one_of_constantsAreBase adeleBdd mem_adeleBdd adeleBdd_mono diagonalHom \
-  diagonalHom_injective diagonal_mem_adeleBdd_iff adeleSpace adeleBdd_le_adeleSpace \
-  diagonal_mem_adeleSpace globalSub diagonal_mem_globalSub map_diagonal_lSpace \
-  finrank_adeleBdd_inf_global_eq_ell indexOfSpecialty adeleBddPrincipal indexOfSpecialty_eq \
-  omegaSpace omegaSpace_antitone omegaSpaceEquivIndexDual finrank_omegaSpace_eq_indexOfSpecialty \
-  weilDifferentialModule omegaSpace_le_weilDifferentialModule mem_weilDifferentialModule_iff \
-  mulAdele_apply adeleSpaceMul adeleSpaceMul_coe weilSmul weilSmul_apply weilSmul_one weilSmul_mul \
-  weilSmul_injective weilSmul_mem_omegaSpace_add residuePairing residuePairing_apply_coe \
-  WeilDifferentialRankOne RiemannGenusReachedAt RiemannGenusReached StichtenothGenusExists \
-  RiemannGenusBounded IndexOfSpecialtyFinite PoleDivisorPackage HasPoleDivisorPackage \
-  TranscendenceTower TranscendenceTower.xF TranscendenceTower.poleDivisor IntegralBasisInLSpace \
-  HasIntegralBasisInLSpace HasIntegralBasisRegularOutside HasRegularFractionSubring \
-  TranscendenceTower.hx_indep Place.sum_ramificationIndex_mul_inertiaDeg \
-  RationalFunctionField.ord_placeInfty Place.exists_restrict_eq"
-p2m_open "AlgebraicCurve~Place.ord_nonneg_of_mem~Place.mem_of_ord_nonneg~Place.mem_iff_ord_nonneg"
 
 variable {K F : Type*} [Field K] [Field F] [Algebra K F]
-
-theorem globalSub_le_adeleSpace [HasPrincipalDivisors K F] :
-    globalSub K F ≤ adeleSpace K F := by
-  rintro _ ⟨f, rfl⟩
-  exact diagonal_mem_adeleSpace f
-
-theorem adeleBdd_sup_globalSub_le_adeleSpace [HasPrincipalDivisors K F] (D : Divisor K F) :
-    adeleBdd D ⊔ globalSub K F ≤ adeleSpace K F :=
-  sup_le adeleBdd_le_adeleSpace globalSub_le_adeleSpace
-
-theorem adeleBddPrincipal_eq_comap [HasPrincipalDivisors K F] (D : Divisor K F) :
-    adeleBddPrincipal K F D = (adeleBdd D ⊔ globalSub K F).comap (adeleSpace K F).subtype :=
-  Submodule.comap_subtype_sup_of_le_of_le adeleBdd_le_adeleSpace globalSub_le_adeleSpace
-
-theorem adeleBddPrincipal_mono {D₁ D₂ : Divisor K F} (hD : D₁ ≤ D₂) :
-    adeleBddPrincipal K F D₁ ≤ adeleBddPrincipal K F D₂ :=
-  sup_le_sup_right (Submodule.comap_mono (adeleBdd_mono hD)) _
 
 section FiniteLSpace
 
@@ -913,507 +504,16 @@ theorem finiteDimensional_lSpace [hL0 : FiniteDimensional K (LSpace (0 : Divisor
 
 end FiniteLSpace
 
-
-theorem range_lSpaceQuotientToAdeleBddQuotient {D₁ D₂ : Divisor K F} (hD : D₁ ≤ D₂) :
-    LinearMap.range (lSpaceQuotientToAdeleBddQuotient hD)
-      = ((adeleBdd D₁ ⊔ globalSub K F).comap (adeleBdd D₂).subtype).map
-          ((adeleBdd D₁).comap (adeleBdd D₂).subtype).mkQ := by
-  classical
-  ext z
-  obtain ⟨α, rfl⟩ := Submodule.Quotient.mk_surjective _ z
-  simp only [LinearMap.mem_range, Submodule.mem_map, Submodule.mem_comap, Submodule.coe_subtype,
-    Submodule.mkQ_apply]
-  constructor
-  · rintro ⟨x, hx⟩
-    obtain ⟨f, rfl⟩ := Submodule.Quotient.mk_surjective _ x
-    have hxeq : Submodule.Quotient.mk
-        ((diagonalHom K F).restrict (fun g hg => diagonal_mem_adeleBdd_iff.mpr hg) f)
-        = (Submodule.Quotient.mk α :
-            adeleBdd D₂ ⧸ (adeleBdd D₁).comap (adeleBdd D₂).subtype) := hx
-    refine ⟨α, ?_, rfl⟩
-    have hdiag2 : (diagonalHom K F (f : F)) ∈ adeleBdd D₂ := diagonal_mem_adeleBdd_iff.mpr f.2
-    have hsub : (α : Place K F → F) - diagonalHom K F (f : F) ∈ adeleBdd D₁ := by
-      have hq := (Submodule.Quotient.eq _).mp hxeq.symm
-      simpa using hq
-    refine Submodule.mem_sup.mpr ⟨(α : Place K F → F) - diagonalHom K F (f : F), hsub,
-      diagonalHom K F (f : F), diagonal_mem_globalSub _, ?_⟩
-    abel
-  · rintro ⟨β, hβ, hβeq⟩
-    have hβ' : (β : Place K F → F) ∈ adeleBdd D₂ ⊓ (adeleBdd D₁ ⊔ globalSub K F) :=
-      Submodule.mem_inf.mpr ⟨β.2, hβ⟩
-    rw [adeleBdd_inf_sup_globalSub hD, ← map_diagonal_lSpace] at hβ'
-    obtain ⟨γ, hγ, δ, ⟨f, hf, hfδ⟩, hsum⟩ := Submodule.mem_sup.mp hβ'
-    refine ⟨Submodule.Quotient.mk ⟨f, hf⟩, ?_⟩
-    rw [show (lSpaceQuotientToAdeleBddQuotient hD) (Submodule.Quotient.mk ⟨f, hf⟩)
-          = Submodule.Quotient.mk ((diagonalHom K F).restrict
-              (fun g hg => diagonal_mem_adeleBdd_iff.mpr hg) ⟨f, hf⟩) from rfl,
-      ← hβeq, Submodule.Quotient.eq]
-    refine Submodule.mem_comap.mpr ?_
-    change diagonalHom K F f - (β : Place K F → F) ∈ adeleBdd D₁
-    have hβsub : diagonalHom K F f - (β : Place K F → F) = -γ := by
-      rw [← hsum, hfδ]; ring
-    rw [hβsub]; exact (adeleBdd D₁).neg_mem hγ
-
-
-theorem finrank_adeleBddSup_quotient [IsCurveOver K F] [Nonempty (Place K F)]
-    {D₁ D₂ : Divisor K F} (hD : D₁ ≤ D₂) [hL : FiniteDimensional K (LSpace D₂)] :
-    Module.Finite K (↥(adeleBdd D₂ ⊔ globalSub K F)
-        ⧸ (adeleBdd D₁ ⊔ globalSub K F).comap (adeleBdd D₂ ⊔ globalSub K F).subtype) ∧
-      (finrank K (↥(adeleBdd D₂ ⊔ globalSub K F)
-          ⧸ (adeleBdd D₁ ⊔ globalSub K F).comap (adeleBdd D₂ ⊔ globalSub K F).subtype) : ℤ)
-        = (Divisor.degree D₂ - ell D₂) - (Divisor.degree D₁ - ell D₁) := by
-  classical
-  let A : Submodule K (adeleBdd D₂) := (adeleBdd D₁).comap (adeleBdd D₂).subtype
-  let B : Submodule K (adeleBdd D₂) :=
-    (adeleBdd D₁ ⊔ globalSub K F).comap (adeleBdd D₂).subtype
-  have hAB : A ≤ B := Submodule.comap_mono le_sup_left
-  have hfinA : Module.Finite K (adeleBdd D₂ ⧸ A) := module_finite_adeleBdd_quotient hD
-  have hdimA : (finrank K (adeleBdd D₂ ⧸ A) : ℤ) = Divisor.degree D₂ - Divisor.degree D₁ :=
-    finrank_adeleBdd_quotient_eq hD
-  have hran : LinearMap.range (lSpaceQuotientToAdeleBddQuotient hD) = B.map A.mkQ :=
-    range_lSpaceQuotientToAdeleBddQuotient hD
-  have hℓ₁ : ell D₁ = finrank K ((LSpace D₁).comap (LSpace D₂).subtype) :=
-    (LinearEquiv.finrank_eq (Submodule.comapSubtypeEquivOfLe (lSpace_mono hD))).symm
-  have hdimL : ell D₂
-      = finrank K (LSpace D₂ ⧸ (LSpace D₁).comap (LSpace D₂).subtype) + ell D₁ := by
-    have h := Submodule.finrank_quotient_add_finrank (R := K)
-      ((LSpace D₁).comap (LSpace D₂).subtype)
-    rw [← hℓ₁] at h; exact h.symm
-  have hdimB : ell D₂ = finrank K (B.map A.mkQ : Submodule K (adeleBdd D₂ ⧸ A)) + ell D₁ := by
-    rw [← hran, LinearMap.finrank_range_of_inj
-      (lSpaceQuotientToAdeleBddQuotient_injective hD)]
-    exact hdimL
-  have e3 := Submodule.quotientQuotientEquivQuotient A B hAB
-  have hfinB : Module.Finite K (adeleBdd D₂ ⧸ B) := Module.Finite.equiv e3
-  have hdim2 : finrank K (adeleBdd D₂ ⧸ A)
-      = finrank K (adeleBdd D₂ ⧸ B) + finrank K (B.map A.mkQ : Submodule K _) := by
-    have h := Submodule.finrank_quotient_add_finrank (R := K) (M := adeleBdd D₂ ⧸ A)
-      (B.map A.mkQ)
-    rw [LinearEquiv.finrank_eq e3] at h; omega
-  have e2 := LinearMap.quotientInfEquivSupQuotient (R := K)
-    (adeleBdd D₂) (adeleBdd D₁ ⊔ globalSub K F)
-  have hsup : adeleBdd D₂ ⊔ (adeleBdd D₁ ⊔ globalSub K F) = adeleBdd D₂ ⊔ globalSub K F := by
-    rw [← sup_assoc, sup_eq_left.mpr (adeleBdd_mono hD)]
-  have hB' : (adeleBdd D₂).comap (adeleBdd D₂).subtype ⊓
-      (adeleBdd D₁ ⊔ globalSub K F).comap (adeleBdd D₂).subtype = B := by
-    rw [Submodule.comap_subtype_self, top_inf_eq]
-  let eL : (adeleBdd D₂ ⧸ B) ≃ₗ[K]
-      (adeleBdd D₂ ⧸ ((adeleBdd D₂).comap (adeleBdd D₂).subtype ⊓
-        (adeleBdd D₁ ⊔ globalSub K F).comap (adeleBdd D₂).subtype)) :=
-    Submodule.quotEquivOfEq _ _ hB'.symm
-  have hfin_iso : Module.Finite K (↥(adeleBdd D₂ ⊔ (adeleBdd D₁ ⊔ globalSub K F)) ⧸
-        (adeleBdd D₁ ⊔ globalSub K F).comap
-          (adeleBdd D₂ ⊔ (adeleBdd D₁ ⊔ globalSub K F)).subtype) :=
-    Module.Finite.equiv (eL.trans e2)
-  have hdim_iso : finrank K (↥(adeleBdd D₂ ⊔ (adeleBdd D₁ ⊔ globalSub K F)) ⧸
-        (adeleBdd D₁ ⊔ globalSub K F).comap
-          (adeleBdd D₂ ⊔ (adeleBdd D₁ ⊔ globalSub K F)).subtype)
-      = finrank K (adeleBdd D₂ ⧸ B) :=
-    (LinearEquiv.finrank_eq (eL.trans e2)).symm
-  have hcast : (finrank K (adeleBdd D₂ ⧸ A) : ℤ)
-      = (finrank K (adeleBdd D₂ ⧸ B) : ℤ) + ((ell D₂ : ℤ) - (ell D₁ : ℤ)) := by
-    have hb : (ell D₂ : ℤ)
-        = (finrank K (B.map A.mkQ : Submodule K (adeleBdd D₂ ⧸ A)) : ℤ) + (ell D₁ : ℤ) := by
-      exact_mod_cast hdimB
-    push_cast [hdim2]; linarith
-  have hgoal : (finrank K (adeleBdd D₂ ⧸ B) : ℤ)
-      = Divisor.degree D₂ - ↑(ell D₂) - (Divisor.degree D₁ - ↑(ell D₁)) := by
-    linarith [hdimA, hcast]
-  clear_value eL
-  exact hsup ▸ ⟨hfin_iso, by rw [hdim_iso]; exact hgoal⟩
-
-section Index
-
-variable [IsCurveOver K F] [Nonempty (Place K F)]
-
-theorem adeleBddSup_eq_of_degree_sub_ell_eq {D₁ D₂ : Divisor K F} (hD : D₁ ≤ D₂)
-    [FiniteDimensional K (LSpace D₂)]
-    (heq : Divisor.degree D₂ - ell D₂ = Divisor.degree D₁ - ell D₁) :
-    adeleBdd D₂ ⊔ globalSub K F = adeleBdd D₁ ⊔ globalSub K F := by
-  obtain ⟨hfin, hdim⟩ := finrank_adeleBddSup_quotient hD
-  rw [heq, sub_self] at hdim
-  refine le_antisymm ?_ (sup_le_sup_right (adeleBdd_mono hD) _)
-  have := hfin
-  have hd0 : finrank K (↥(adeleBdd D₂ ⊔ globalSub K F)
-      ⧸ (adeleBdd D₁ ⊔ globalSub K F).comap (adeleBdd D₂ ⊔ globalSub K F).subtype) = 0 := by
-    exact_mod_cast hdim
-  have hsub : Subsingleton (↥(adeleBdd D₂ ⊔ globalSub K F)
-      ⧸ (adeleBdd D₁ ⊔ globalSub K F).comap (adeleBdd D₂ ⊔ globalSub K F).subtype) :=
-    Module.finrank_zero_iff.mp hd0
-  have htop := Submodule.Quotient.subsingleton_iff.mp hsub
-  intro x hx
-  have hxc : (⟨x, hx⟩ : ↥(adeleBdd D₂ ⊔ globalSub K F)) ∈
-      (adeleBdd D₁ ⊔ globalSub K F).comap (adeleBdd D₂ ⊔ globalSub K F).subtype := by
-    rw [htop]; exact Submodule.mem_top
-  exact hxc
-
-end Index
-
-namespace RiemannGenusReachedAt
-p2m_export "AlgebraicCurve.RiemannGenusReachedAt" "finite mk eq isMax"
-end RiemannGenusReachedAt
-namespace RiemannGenusReachedAt
-p2m_open_scoped "AlgebraicCurve.RiemannGenusReachedAt" in
-private theorem _root_.AlgebraicCurve.RiemannGenusReachedAt.eq_of_ge [IsCurveOver K F]
-    [Nonempty (Place K F)]
-    [FiniteDimensional K (LSpace (0 : Divisor K F))]
-    {γ : ℤ} {D₀ : Divisor K F} (h : RiemannGenusReachedAt γ D₀)
-    {D : Divisor K F} (hD : D₀ ≤ D) :
-    Divisor.degree D - ell D = γ - 1 := by
-  have := finiteDimensional_lSpace (K := K) D
-  have hge : Divisor.degree D₀ - (ell D₀ : ℤ) ≤ Divisor.degree D - ell D := by
-    have := ell_sub_ell_le_degree_sub_degree (K := K) hD
-    linarith
-  exact le_antisymm (h.isMax D) (h.eq ▸ hge)
-
-end RiemannGenusReachedAt
-p2m_export "AlgebraicCurve" "RiemannGenusReachedAt.eq_of_ge"
-
-theorem adeleSpace_eq_of_genusReached [IsCurveOver K F] [Nonempty (Place K F)]
-    [FiniteDimensional K (LSpace (0 : Divisor K F))]
-    {γ : ℤ} {D₀ : Divisor K F} (h : RiemannGenusReachedAt γ D₀) :
-    adeleSpace K F = adeleBdd D₀ ⊔ globalSub K F := by
-  refine le_antisymm ?_ (adeleBdd_sup_globalSub_le_adeleSpace D₀)
-  rw [adeleSpace, iSup_le_iff]
-  intro D
-  refine le_trans (adeleBdd_mono (le_sup_left : D ≤ D ⊔ D₀)) ?_
-  have := finiteDimensional_lSpace (K := K) (D ⊔ D₀)
-  have heq : Divisor.degree (D ⊔ D₀) - ell (D ⊔ D₀) = Divisor.degree D₀ - ell D₀ :=
-    (h.eq_of_ge le_sup_right).trans h.eq.symm
-  have hsup := adeleBddSup_eq_of_degree_sub_ell_eq (K := K)
-    (le_sup_right : D₀ ≤ D ⊔ D₀) heq
-  rw [← hsup]
-  exact le_sup_left
-
-theorem indexOfSpecialty_eq_zero_of_genusReached [IsCurveOver K F] [Nonempty (Place K F)]
-    [FiniteDimensional K (LSpace (0 : Divisor K F))]
-    {γ : ℤ} {D₀ : Divisor K F} (h : RiemannGenusReachedAt γ D₀) :
-    indexOfSpecialty D₀ = 0 := by
-  rw [indexOfSpecialty_eq, adeleBddPrincipal_eq_comap, ← adeleSpace_eq_of_genusReached h,
-    Submodule.comap_subtype_self]
-  have : Subsingleton (adeleSpace K F ⧸ (⊤ : Submodule K (adeleSpace K F))) :=
-    Submodule.Quotient.subsingleton_iff.mpr rfl
-  exact Module.finrank_zero_of_subsingleton
-
-
-
-theorem gate_indexOfSpecialty_at_witness [IsCurveOver K F] [Nonempty (Place K F)]
-    [FiniteDimensional K (LSpace (0 : Divisor K F))]
-    {γ : ℤ} {D₀ : Divisor K F} (h : RiemannGenusReachedAt γ D₀) :
-    (indexOfSpecialty D₀ : ℤ) = 0 := by
-  have h1 := (indexOfSpecialty_eq_of_genusReached h D₀).2
-  have h2 := h.eq
-  have h3 := indexOfSpecialty_eq_zero_of_genusReached h
-  exact_mod_cast h3
-
-theorem gate_riemannInequality_of_genusReached [IsCurveOver K F] [Nonempty (Place K F)]
-    [FiniteDimensional K (LSpace (0 : Divisor K F))]
-    {γ : ℤ} {D₀ : Divisor K F} (h : RiemannGenusReachedAt γ D₀) (D : Divisor K F) :
-    Divisor.degree D + 1 - γ ≤ (ell D : ℤ) := by
-  have heq := (indexOfSpecialty_eq_of_genusReached h D).2
-  have hnn : (0 : ℤ) ≤ indexOfSpecialty D := Int.natCast_nonneg _
-  linarith
-
 end AlgebraicCurve
 
 end
+
 
 noncomputable section
 
 open Module IsDedekindDomain WithZero
 
 namespace AlgebraicCurve
-p2m_export "AlgebraicCurve" "Place Place.coe_algebraMap Place.ord_zero Divisor Divisor.degree \
-  Divisor.degree_single HasPrincipalDivisors Place.ofHeightOneSpectrum \
-  HasPrincipalDivisors.exists_divisor Place.algebraMap_mem' Place.ord_restrict \
-  Place.deg_restrict_mul_inertiaDeg Place.mem_fiber Divisor.pullback Divisor.pullback_apply \
-  Divisor.degree_pullback SumRamificationInertia IsCurveOver IsCurveOver.finite_residueField \
-  LSpace ell mem_lSpace_iff_ord lSpace_mono one_mem_lSpace_zero ConstantsAreBase \
-  ell_zero_eq_one_of_constantsAreBase adeleBdd mem_adeleBdd adeleBdd_mono diagonalHom \
-  diagonalHom_injective diagonal_mem_adeleBdd_iff adeleSpace adeleBdd_le_adeleSpace \
-  diagonal_mem_adeleSpace globalSub diagonal_mem_globalSub map_diagonal_lSpace \
-  finrank_adeleBdd_inf_global_eq_ell indexOfSpecialty adeleBddPrincipal indexOfSpecialty_eq \
-  omegaSpace omegaSpace_antitone omegaSpaceEquivIndexDual finrank_omegaSpace_eq_indexOfSpecialty \
-  weilDifferentialModule omegaSpace_le_weilDifferentialModule mem_weilDifferentialModule_iff \
-  mulAdele_apply adeleSpaceMul adeleSpaceMul_coe weilSmul weilSmul_apply weilSmul_one weilSmul_mul \
-  weilSmul_injective weilSmul_mem_omegaSpace_add residuePairing residuePairing_apply_coe \
-  WeilDifferentialRankOne RiemannGenusReachedAt RiemannGenusReached StichtenothGenusExists \
-  RiemannGenusBounded IndexOfSpecialtyFinite PoleDivisorPackage HasPoleDivisorPackage \
-  TranscendenceTower TranscendenceTower.xF TranscendenceTower.poleDivisor IntegralBasisInLSpace \
-  HasIntegralBasisInLSpace HasIntegralBasisRegularOutside HasRegularFractionSubring \
-  TranscendenceTower.hx_indep Place.sum_ramificationIndex_mul_inertiaDeg \
-  RationalFunctionField.ord_placeInfty Place.exists_restrict_eq"
-p2m_open "AlgebraicCurve~Place.ord_nonneg_of_mem~Place.mem_of_ord_nonneg~Place.mem_iff_ord_nonneg"
-
-variable {K F : Type*} [Field K] [Field F] [Algebra K F]
-
-theorem adeleSpaceMul_add [HasPrincipalDivisors K F] (f g : F) :
-    adeleSpaceMul K F (f + g) = adeleSpaceMul K F f + adeleSpaceMul K F g := by
-  refine LinearMap.ext fun α => Subtype.ext (funext fun v => ?_)
-  simp only [adeleSpaceMul_coe, mulAdele_apply, LinearMap.add_apply, Submodule.coe_add,
-    Pi.add_apply, add_mul]
-
-theorem adeleSpaceMul_zero [HasPrincipalDivisors K F] :
-    adeleSpaceMul K F (0 : F) = 0 := by
-  refine LinearMap.ext fun α => Subtype.ext (funext fun v => ?_)
-  simp only [adeleSpaceMul_coe, mulAdele_apply, zero_mul, LinearMap.zero_apply,
-    Submodule.coe_zero, Pi.zero_apply]
-
-theorem weilSmul_add_left [HasPrincipalDivisors K F] (f g : F)
-    (φ : Module.Dual K (adeleSpace K F)) :
-    weilSmul K F (f + g) φ = weilSmul K F f φ + weilSmul K F g φ := by
-  ext α
-  simp only [weilSmul_apply, adeleSpaceMul_add, LinearMap.add_apply, map_add]
-
-theorem weilSmul_zero_left [HasPrincipalDivisors K F]
-    (φ : Module.Dual K (adeleSpace K F)) :
-    weilSmul K F (0 : F) φ = 0 := by
-  ext α
-  simp only [weilSmul_apply, adeleSpaceMul_zero, LinearMap.zero_apply, map_zero]
-
-theorem weilSmul_neg_left [HasPrincipalDivisors K F] (f : F)
-    (φ : Module.Dual K (adeleSpace K F)) :
-    weilSmul K F (-f) φ = -weilSmul K F f φ := by
-  have h := weilSmul_add_left (K := K) (F := F) f (-f) φ
-  rw [add_neg_cancel, weilSmul_zero_left] at h
-  exact (neg_eq_of_add_eq_zero_right h.symm).symm
-
-theorem weilSmul_sub_left [HasPrincipalDivisors K F] (f g : F)
-    (φ : Module.Dual K (adeleSpace K F)) :
-    weilSmul K F (f - g) φ = weilSmul K F f φ - weilSmul K F g φ := by
-  rw [sub_eq_add_neg, weilSmul_add_left, weilSmul_neg_left, sub_eq_add_neg]
-
-theorem weilSmul_eq_zero_iff_left [HasPrincipalDivisors K F]
-    {f : F} {φ : Module.Dual K (adeleSpace K F)} (hφ : φ ≠ 0) :
-    weilSmul K F f φ = 0 ↔ f = 0 := by
-  refine ⟨fun h => ?_, fun h => h ▸ weilSmul_zero_left φ⟩
-  by_contra hf
-  exact hφ (weilSmul_injective hf (h.trans (map_zero (weilSmul K F f)).symm))
-
-theorem weilSmul_left_injective [HasPrincipalDivisors K F]
-    {φ : Module.Dual K (adeleSpace K F)} (hφ : φ ≠ 0) :
-    Function.Injective (fun f : F => weilSmul K F f φ) := by
-  intro f g hfg
-  have hsub : weilSmul K F (f - g) φ = 0 := by
-    rw [weilSmul_sub_left, sub_eq_zero]; exact hfg
-  exact sub_eq_zero.mp ((weilSmul_eq_zero_iff_left hφ).mp hsub)
-
-variable (K F) in
-def doubleResiduePairing [HasPrincipalDivisors K F] (W D : Divisor K F)
-    {φ μ : Module.Dual K (adeleSpace K F)}
-    (hφ : φ ∈ omegaSpace W) (hμ : μ ∈ omegaSpace W) :
-    LSpace (W - D) × LSpace (W - D) →ₗ[K] omegaSpace D :=
-  (residuePairing K F W D hφ).coprod (residuePairing K F W D hμ)
-
-theorem doubleResiduePairing_apply_coe [HasPrincipalDivisors K F] (W D : Divisor K F)
-    {φ μ : Module.Dual K (adeleSpace K F)}
-    (hφ : φ ∈ omegaSpace W) (hμ : μ ∈ omegaSpace W) (g h : LSpace (W - D)) :
-    (doubleResiduePairing K F W D hφ hμ (g, h) : Module.Dual K (adeleSpace K F))
-      = weilSmul K F (g : F) φ + weilSmul K F (h : F) μ := by
-  simp only [doubleResiduePairing, LinearMap.coprod_apply, Submodule.coe_add,
-    residuePairing_apply_coe]
-
-theorem doubleResiduePairing_injective [HasPrincipalDivisors K F] (W D : Divisor K F)
-    {φ μ : Module.Dual K (adeleSpace K F)}
-    (hφ : φ ∈ omegaSpace W) (hμ : μ ∈ omegaSpace W)
-    (hφ0 : φ ≠ 0) (hindep : ∀ f : F, μ ≠ weilSmul K F f φ) :
-    Function.Injective (doubleResiduePairing K F W D hφ hμ) := by
-  rw [injective_iff_map_eq_zero]
-  rintro ⟨g, h⟩ heq
-  have heq' : weilSmul K F (g : F) φ + weilSmul K F (h : F) μ = 0 := by
-    have hcoe := congrArg Subtype.val heq
-    rwa [doubleResiduePairing_apply_coe, Submodule.coe_zero] at hcoe
-  rcases eq_or_ne (h : F) 0 with hh0 | hh0
-  · rw [hh0, weilSmul_zero_left, add_zero] at heq'
-    have hg0 : (g : F) = 0 := (weilSmul_eq_zero_iff_left hφ0).mp heq'
-    exact Prod.ext (Subtype.ext hg0) (Subtype.ext hh0)
-  · exfalso
-    have hμeq : weilSmul K F (h : F) μ = -weilSmul K F (g : F) φ := by
-      have h2 : weilSmul K F (h : F) μ + weilSmul K F (g : F) φ = 0 := by
-        rw [add_comm]; exact heq'
-      exact eq_neg_of_add_eq_zero_left h2
-    have hLHS : weilSmul K F (h : F)⁻¹ (weilSmul K F (h : F) μ) = μ := by
-      rw [← LinearMap.comp_apply, ← weilSmul_mul, mul_inv_cancel₀ hh0, weilSmul_one,
-        LinearMap.id_apply]
-    have hRHS : weilSmul K F (h : F)⁻¹ (-weilSmul K F (g : F) φ)
-        = weilSmul K F (-(g : F) * (h : F)⁻¹) φ := by
-      rw [map_neg, ← LinearMap.comp_apply, ← weilSmul_mul, neg_mul, weilSmul_neg_left]
-    exact hindep (-(g : F) * (h : F)⁻¹) (by rw [← hLHS, hμeq, hRHS])
-
-theorem two_mul_ell_le_indexOfSpecialty [HasPrincipalDivisors K F] (W D : Divisor K F)
-    {φ μ : Module.Dual K (adeleSpace K F)}
-    (hφ : φ ∈ omegaSpace W) (hμ : μ ∈ omegaSpace W)
-    (hφ0 : φ ≠ 0) (hindep : ∀ f : F, μ ≠ weilSmul K F f φ)
-    [Module.Finite K (omegaSpace (K := K) (F := F) D)]
-    [Module.Finite K (LSpace (K := K) (F := F) (W - D))] :
-    2 * ell (W - D) ≤ indexOfSpecialty D := by
-  have hinj := doubleResiduePairing_injective W D hφ hμ hφ0 hindep
-  have hle := LinearMap.finrank_le_finrank_of_injective hinj
-  rw [Module.finrank_prod] at hle
-  rw [← finrank_omegaSpace_eq_indexOfSpecialty, two_mul]
-  exact hle
-
-end AlgebraicCurve
-
-end
-
-noncomputable section
-
-open Module IsDedekindDomain WithZero
-
-namespace AlgebraicCurve
-p2m_export "AlgebraicCurve" "Place Place.coe_algebraMap Place.ord_zero Divisor Divisor.degree \
-  Divisor.degree_single HasPrincipalDivisors Place.ofHeightOneSpectrum \
-  HasPrincipalDivisors.exists_divisor Place.algebraMap_mem' Place.ord_restrict \
-  Place.deg_restrict_mul_inertiaDeg Place.mem_fiber Divisor.pullback Divisor.pullback_apply \
-  Divisor.degree_pullback SumRamificationInertia IsCurveOver IsCurveOver.finite_residueField \
-  LSpace ell mem_lSpace_iff_ord lSpace_mono one_mem_lSpace_zero ConstantsAreBase \
-  ell_zero_eq_one_of_constantsAreBase adeleBdd mem_adeleBdd adeleBdd_mono diagonalHom \
-  diagonalHom_injective diagonal_mem_adeleBdd_iff adeleSpace adeleBdd_le_adeleSpace \
-  diagonal_mem_adeleSpace globalSub diagonal_mem_globalSub map_diagonal_lSpace \
-  finrank_adeleBdd_inf_global_eq_ell indexOfSpecialty adeleBddPrincipal indexOfSpecialty_eq \
-  omegaSpace omegaSpace_antitone omegaSpaceEquivIndexDual finrank_omegaSpace_eq_indexOfSpecialty \
-  weilDifferentialModule omegaSpace_le_weilDifferentialModule mem_weilDifferentialModule_iff \
-  mulAdele_apply adeleSpaceMul adeleSpaceMul_coe weilSmul weilSmul_apply weilSmul_one weilSmul_mul \
-  weilSmul_injective weilSmul_mem_omegaSpace_add residuePairing residuePairing_apply_coe \
-  WeilDifferentialRankOne RiemannGenusReachedAt RiemannGenusReached StichtenothGenusExists \
-  RiemannGenusBounded IndexOfSpecialtyFinite PoleDivisorPackage HasPoleDivisorPackage \
-  TranscendenceTower TranscendenceTower.xF TranscendenceTower.poleDivisor IntegralBasisInLSpace \
-  HasIntegralBasisInLSpace HasIntegralBasisRegularOutside HasRegularFractionSubring \
-  TranscendenceTower.hx_indep Place.sum_ramificationIndex_mul_inertiaDeg \
-  RationalFunctionField.ord_placeInfty Place.exists_restrict_eq"
-p2m_open "AlgebraicCurve~Place.ord_nonneg_of_mem~Place.mem_of_ord_nonneg~Place.mem_iff_ord_nonneg"
-
-variable {K F : Type*} [Field K] [Field F] [Algebra K F]
-
-section Finiteness
-
-variable [IsCurveOver K F] [Nonempty (Place K F)]
-  [FiniteDimensional K (LSpace (0 : Divisor K F))]
-
-theorem omegaSpace_finite_of_genusReached
-    {γ : ℤ} {D₀ : Divisor K F} (h : RiemannGenusReachedAt γ D₀) (D : Divisor K F) :
-    Module.Finite K (omegaSpace (K := K) (F := F) D) := by
-  have := (indexOfSpecialty_eq_of_genusReached h D).1
-  exact Module.Finite.equiv (omegaSpaceEquivIndexDual D).symm
-
-end Finiteness
-
-section ParametricRankOne
-
-variable [IsCurveOver K F] [Nonempty (Place K F)]
-  [FiniteDimensional K (LSpace (0 : Divisor K F))]
-
-
-theorem exists_weilSmul_eq_of_genusReached
-    {γ : ℤ} {D₀ : Divisor K F} (h : RiemannGenusReachedAt γ D₀)
-    {φ μ : Module.Dual K (adeleSpace K F)} {W : Divisor K F}
-    (hφ : φ ∈ omegaSpace W) (hμ : μ ∈ omegaSpace W) (hφ0 : φ ≠ 0) :
-    ∃ f : F, μ = weilSmul K F f φ := by
-  by_contra hcon
-  push Not at hcon
-  obtain ⟨P⟩ := ‹Nonempty (Place K F)›
-  set n : ℕ := 3 * γ.natAbs + 2 * (Divisor.degree W).natAbs + 4 with hn
-  set D : Divisor K F := -Finsupp.single P (n : ℤ) with hD
-  have hdegD : Divisor.degree D = -(n : ℤ) * (P.deg : ℤ) := by
-    rw [hD, map_neg, Divisor.degree_single]; ring
-  have hdegWD : Divisor.degree (W - D) = Divisor.degree W + (n : ℤ) * (P.deg : ℤ) := by
-    rw [map_sub, hdegD]; ring
-  have hPdeg1 : 1 ≤ (P.deg : ℤ) := by exact_mod_cast one_le_deg P
-  have habsγ : -(|γ|) ≤ γ ∧ γ ≤ |γ| := ⟨neg_abs_le _, le_abs_self _⟩
-  have habsW : -|Divisor.degree W| ≤ Divisor.degree W ∧
-      Divisor.degree W ≤ |Divisor.degree W| := ⟨neg_abs_le _, le_abs_self _⟩
-  have hn_ge : 3 * |γ| + 2 * |Divisor.degree W| + 4 ≤ (n : ℤ) := by
-    rw [hn]; push_cast [Int.natCast_natAbs]; ring_nf; omega
-  have hndegP : (n : ℤ) ≤ (n : ℤ) * (P.deg : ℤ) := by nlinarith [Int.natCast_nonneg n]
-  have hellD : ell D = 0 := ell_eq_zero_of_degree_neg (by rw [hdegD]; nlinarith)
-  have hiD : (indexOfSpecialty D : ℤ) = (n : ℤ) * (P.deg : ℤ) - 1 + γ := by
-    have hidx := (indexOfSpecialty_eq_of_genusReached h D).2
-    rw [hellD, hdegD] at hidx; push_cast at hidx; linarith
-  have hlowerWD : Divisor.degree W + (n : ℤ) * (P.deg : ℤ) + 1 - γ
-      ≤ (ell (W - D) : ℤ) := by
-    have hlow := gate_riemannInequality_of_genusReached h (W - D)
-    rw [hdegWD] at hlow; exact hlow
-  have := omegaSpace_finite_of_genusReached h D
-  have := finiteDimensional_lSpace (K := K) (W - D)
-  have hdbl : (2 * ell (W - D) : ℤ) ≤ (indexOfSpecialty D : ℤ) := by
-    exact_mod_cast two_mul_ell_le_indexOfSpecialty W D hφ hμ hφ0 hcon
-  rw [hiD] at hdbl
-  nlinarith [habsγ.1, habsγ.2, habsW.1, habsW.2]
-
-theorem weilDifferentialRankOne_of_genusReached
-    {γ : ℤ} {D₀ : Divisor K F} (h : RiemannGenusReachedAt γ D₀) :
-    WeilDifferentialRankOne K F := by
-  intro φ hφmem hφ0 μ hμmem
-  obtain ⟨W₁, hφW₁⟩ := mem_weilDifferentialModule_iff.mp hφmem
-  obtain ⟨W₂, hμW₂⟩ := mem_weilDifferentialModule_iff.mp hμmem
-  have hφW : φ ∈ omegaSpace (W₁ ⊓ W₂) := omegaSpace_antitone inf_le_left hφW₁
-  have hμW : μ ∈ omegaSpace (W₁ ⊓ W₂) := omegaSpace_antitone inf_le_right hμW₂
-  obtain ⟨f, hf⟩ := exists_weilSmul_eq_of_genusReached h hφW hμW hφ0
-  exact ⟨f, hf, fun f' hf' => weilSmul_left_injective hφ0 (hf'.symm.trans hf)⟩
-
-end ParametricRankOne
-
-theorem residuePairing_surjective_of_rankOne_max [HasPrincipalDivisors K F]
-    (hRankOne : WeilDifferentialRankOne K F)
-    {W : Divisor K F} {φ : Module.Dual K (adeleSpace K F)}
-    (hφ : φ ∈ omegaSpace W) (hφ0 : φ ≠ 0)
-    (hWmax : ∀ E : Divisor K F, φ ∈ omegaSpace E → E ≤ W) (D : Divisor K F) :
-    Function.Surjective (residuePairing K F W D hφ) := by
-  rintro ⟨μ, hμD⟩
-  have hφmem : φ ∈ weilDifferentialModule K F := omegaSpace_le_weilDifferentialModule W hφ
-  have hμmem : μ ∈ weilDifferentialModule K F := omegaSpace_le_weilDifferentialModule D hμD
-  obtain ⟨f, hf, -⟩ := hRankOne hφmem hφ0 hμmem
-  rcases eq_or_ne f 0 with rfl | hf0
-  · have hμ0 : (⟨μ, hμD⟩ : omegaSpace D) = 0 :=
-      Subtype.ext (hf.trans (weilSmul_zero_left φ))
-    exact ⟨0, (map_zero _).trans hμ0.symm⟩
-  · obtain ⟨P, hPord, _⟩ := HasPrincipalDivisors.exists_divisor (K := K) f hf0
-    have hPinv : ∀ v, (-P) v = v.ord f⁻¹ := fun v => by
-      rw [Finsupp.neg_apply, hPord v, v.ord_inv]
-    have hinv : weilSmul K F f⁻¹ μ = φ := by
-      rw [hf, ← LinearMap.comp_apply, ← weilSmul_mul, mul_inv_cancel₀ hf0, weilSmul_one,
-        LinearMap.id_apply]
-    have hφD : φ ∈ omegaSpace (D + -P) := by
-      rw [← hinv]; exact weilSmul_mem_omegaSpace_add (inv_ne_zero hf0) hPinv hμD
-    have hDP : D + -P ≤ W := hWmax _ hφD
-    have hfL : f ∈ LSpace (W - D) := by
-      rw [mem_lSpace_iff_ord]; refine Or.inr fun v => ?_
-      have hv := hDP v
-      rw [Finsupp.add_apply, Finsupp.neg_apply, hPord v] at hv
-      rw [Finsupp.sub_apply]; linarith
-    exact ⟨⟨f, hfL⟩, Subtype.ext hf.symm⟩
-
-end AlgebraicCurve
-
-end
-
-noncomputable section
-
-open Module IsDedekindDomain WithZero
-
-namespace AlgebraicCurve
-p2m_export "AlgebraicCurve" "Place Place.coe_algebraMap Place.ord_zero Divisor Divisor.degree \
-  Divisor.degree_single HasPrincipalDivisors Place.ofHeightOneSpectrum \
-  HasPrincipalDivisors.exists_divisor Place.algebraMap_mem' Place.ord_restrict \
-  Place.deg_restrict_mul_inertiaDeg Place.mem_fiber Divisor.pullback Divisor.pullback_apply \
-  Divisor.degree_pullback SumRamificationInertia IsCurveOver IsCurveOver.finite_residueField \
-  LSpace ell mem_lSpace_iff_ord lSpace_mono one_mem_lSpace_zero ConstantsAreBase \
-  ell_zero_eq_one_of_constantsAreBase adeleBdd mem_adeleBdd adeleBdd_mono diagonalHom \
-  diagonalHom_injective diagonal_mem_adeleBdd_iff adeleSpace adeleBdd_le_adeleSpace \
-  diagonal_mem_adeleSpace globalSub diagonal_mem_globalSub map_diagonal_lSpace \
-  finrank_adeleBdd_inf_global_eq_ell indexOfSpecialty adeleBddPrincipal indexOfSpecialty_eq \
-  omegaSpace omegaSpace_antitone omegaSpaceEquivIndexDual finrank_omegaSpace_eq_indexOfSpecialty \
-  weilDifferentialModule omegaSpace_le_weilDifferentialModule mem_weilDifferentialModule_iff \
-  mulAdele_apply adeleSpaceMul adeleSpaceMul_coe weilSmul weilSmul_apply weilSmul_one weilSmul_mul \
-  weilSmul_injective weilSmul_mem_omegaSpace_add residuePairing residuePairing_apply_coe \
-  WeilDifferentialRankOne RiemannGenusReachedAt RiemannGenusReached StichtenothGenusExists \
-  RiemannGenusBounded IndexOfSpecialtyFinite PoleDivisorPackage HasPoleDivisorPackage \
-  TranscendenceTower TranscendenceTower.xF TranscendenceTower.poleDivisor IntegralBasisInLSpace \
-  HasIntegralBasisInLSpace HasIntegralBasisRegularOutside HasRegularFractionSubring \
-  TranscendenceTower.hx_indep Place.sum_ramificationIndex_mul_inertiaDeg \
-  RationalFunctionField.ord_placeInfty Place.exists_restrict_eq"
-p2m_open "AlgebraicCurve~Place.ord_nonneg_of_mem~Place.mem_of_ord_nonneg~Place.mem_iff_ord_nonneg"
 
 variable {K F : Type*} [Field K] [Field F] [Algebra K F]
 
@@ -1441,130 +541,6 @@ theorem stichtenothGenusExists_of_bounded
     StichtenothGenusExists K F :=
   ⟨‹_›, ‹_›, exists_riemannGenusReachedAt_of_bounded hbdd⟩
 
-
-theorem indexOfSpecialty_sub_of_ge [IsCurveOver K F] [Nonempty (Place K F)]
-    {D₀ D : Divisor K F} (hD : D₀ ≤ D)
-    [FiniteDimensional K (LSpace D)]
-    [hfin : Module.Finite K (adeleSpace K F ⧸ adeleBddPrincipal K F D₀)] :
-    Module.Finite K (adeleSpace K F ⧸ adeleBddPrincipal K F D) ∧
-      (Divisor.degree D - ell D) - (Divisor.degree D₀ - ell D₀)
-        = (indexOfSpecialty D₀ : ℤ) - (indexOfSpecialty D : ℤ) := by
-  have hABsub : adeleBdd D₀ ⊔ globalSub K F ≤ adeleBdd D ⊔ globalSub K F :=
-    sup_le_sup_right (adeleBdd_mono hD) _
-  have hBCsub : adeleBdd D ⊔ globalSub K F ≤ adeleSpace K F :=
-    adeleBdd_sup_globalSub_le_adeleSpace _
-  obtain ⟨hfinBA, hdimBA⟩ := finrank_adeleBddSup_quotient (K := K) hD
-  have := hfinBA
-  have hfinCA : Module.Finite K (adeleSpace K F ⧸
-      (adeleBdd D₀ ⊔ globalSub K F).comap (adeleSpace K F).subtype) := by
-    rw [← adeleBddPrincipal_eq_comap]; exact hfin
-  obtain ⟨hfinCB, hdimCB⟩ := Submodule.finrank_quotient_chain'
-    (A := adeleBdd D₀ ⊔ globalSub K F) (B := adeleBdd D ⊔ globalSub K F)
-    (C := adeleSpace K F) hABsub hBCsub
-  have hi0 : indexOfSpecialty D₀
-      = finrank K (adeleSpace K F ⧸
-        (adeleBdd D₀ ⊔ globalSub K F).comap (adeleSpace K F).subtype) := by
-    rw [indexOfSpecialty_eq, adeleBddPrincipal_eq_comap]
-  have hiD : indexOfSpecialty D
-      = finrank K (adeleSpace K F ⧸
-        (adeleBdd D ⊔ globalSub K F).comap (adeleSpace K F).subtype) := by
-    rw [indexOfSpecialty_eq, adeleBddPrincipal_eq_comap]
-  have := hfinCB
-  obtain ⟨_, hdimCA⟩ := Submodule.finrank_quotient_chain
-    (A := adeleBdd D₀ ⊔ globalSub K F) (B := adeleBdd D ⊔ globalSub K F)
-    (C := adeleSpace K F) hABsub hBCsub
-  refine ⟨?_, ?_⟩
-  · rw [show adeleBddPrincipal K F D
-        = (adeleBdd D ⊔ globalSub K F).comap (adeleSpace K F).subtype
-      from adeleBddPrincipal_eq_comap D]
-    exact hfinCB
-  · have hcast : (indexOfSpecialty D₀ : ℤ)
-        = (indexOfSpecialty D : ℤ)
-          + (finrank K (↥(adeleBdd D ⊔ globalSub K F)
-              ⧸ (adeleBdd D₀ ⊔ globalSub K F).comap
-                (adeleBdd D ⊔ globalSub K F).subtype) : ℤ) := by
-      rw [hiD, hi0]; exact_mod_cast hdimCA
-    linarith [hdimBA, hcast]
-
-theorem degreeSub_ell_le_of_indexFinite [IsCurveOver K F] [Nonempty (Place K F)]
-    [FiniteDimensional K (LSpace (0 : Divisor K F))]
-    {D₀ : Divisor K F}
-    (hfin : Module.Finite K (adeleSpace K F ⧸ adeleBddPrincipal K F D₀))
-    (D : Divisor K F) :
-    Divisor.degree D - ell D ≤ (Divisor.degree D₀ - ell D₀) + indexOfSpecialty D₀ := by
-  have := hfin
-  have := finiteDimensional_lSpace (K := K) (D ⊔ D₀)
-  have hmono : Divisor.degree D - (ell D : ℤ)
-      ≤ Divisor.degree (D ⊔ D₀) - ell (D ⊔ D₀) := by
-    have h := ell_sub_ell_le_degree_sub_degree (K := K) (le_sup_left : D ≤ D ⊔ D₀)
-    linarith
-  obtain ⟨_, heq⟩ :=
-    indexOfSpecialty_sub_of_ge (K := K) (le_sup_right : D₀ ≤ D ⊔ D₀)
-  have hi0 : (0 : ℤ) ≤ indexOfSpecialty (D ⊔ D₀) := Int.natCast_nonneg _
-  linarith
-
-theorem riemannGenusBounded_of_indexFinite [IsCurveOver K F] [Nonempty (Place K F)]
-    [FiniteDimensional K (LSpace (0 : Divisor K F))]
-    (hfin : IndexOfSpecialtyFinite K F) :
-    RiemannGenusBounded K F := by
-  obtain ⟨D₀, hD₀⟩ := hfin
-  exact ⟨(Divisor.degree D₀ - ell D₀) + indexOfSpecialty D₀,
-    degreeSub_ell_le_of_indexFinite hD₀⟩
-
-theorem stichtenothGenusExists_of_indexFinite
-    [IsCurveOver K F] [Nonempty (Place K F)]
-    [FiniteDimensional K (LSpace (0 : Divisor K F))]
-    (hfin : IndexOfSpecialtyFinite K F) :
-    StichtenothGenusExists K F :=
-  stichtenothGenusExists_of_bounded (riemannGenusBounded_of_indexFinite hfin)
-
-theorem indexOfSpecialtyFinite_of_stichtenothGenusExists
-    [IsCurveOver K F] (hSG : StichtenothGenusExists K F) :
-    IndexOfSpecialtyFinite K F := by
-  obtain ⟨hne, hL0, γ, D₀, hD₀⟩ := hSG
-  have := hne; have := hL0
-  refine ⟨D₀, ?_⟩
-  rw [show adeleBddPrincipal K F D₀
-      = (adeleBdd D₀ ⊔ globalSub K F).comap (adeleSpace K F).subtype
-    from adeleBddPrincipal_eq_comap D₀, ← adeleSpace_eq_of_genusReached hD₀,
-    Submodule.comap_subtype_self]
-  have : Subsingleton (adeleSpace K F ⧸ (⊤ : Submodule K (adeleSpace K F))) :=
-    Submodule.Quotient.subsingleton_iff.mpr rfl
-  exact Module.Finite.of_finite
-
-theorem stichtenothGenusExists_iff_indexFinite
-    [IsCurveOver K F] [Nonempty (Place K F)]
-    [FiniteDimensional K (LSpace (0 : Divisor K F))] :
-    StichtenothGenusExists K F ↔ IndexOfSpecialtyFinite K F :=
-  ⟨indexOfSpecialtyFinite_of_stichtenothGenusExists,
-    stichtenothGenusExists_of_indexFinite⟩
-
-theorem gate_indexOfSpecialty_engine_at_witness [IsCurveOver K F] [Nonempty (Place K F)]
-    [FiniteDimensional K (LSpace (0 : Divisor K F))]
-    {γ : ℤ} {D₀ : Divisor K F} (h : RiemannGenusReachedAt γ D₀) :
-    (indexOfSpecialty D₀ : ℤ) = 0 := by
-  exact_mod_cast indexOfSpecialty_eq_zero_of_genusReached h
-
-theorem gate_stichtenothGenus_le_of_indexFinite [IsCurveOver K F] [Nonempty (Place K F)]
-    [FiniteDimensional K (LSpace (0 : Divisor K F))]
-    {D₀ : Divisor K F}
-    (hfin : Module.Finite K (adeleSpace K F ⧸ adeleBddPrincipal K F D₀))
-    {γ : ℤ} {D₁ : Divisor K F} (h : RiemannGenusReachedAt γ D₁) :
-    γ - 1 ≤ (Divisor.degree D₀ - ell D₀) + indexOfSpecialty D₀ := by
-  have := degreeSub_ell_le_of_indexFinite hfin D₁
-  rw [h.eq] at this; exact this
-
-theorem gate_riemannGenusBounded_of_reachedAt
-    {γ : ℤ} {D₀ : Divisor K F} (h : RiemannGenusReachedAt γ D₀) :
-    RiemannGenusBounded K F :=
-  ⟨γ - 1, h.isMax⟩
-
-theorem gate_indexOfSpecialtyFinite_at_zero [IsCurveOver K F] [Nonempty (Place K F)]
-    [FiniteDimensional K (LSpace (0 : Divisor K F))]
-    {γ : ℤ} {D₀ : Divisor K F} (h : RiemannGenusReachedAt γ D₀) :
-    Module.Finite K (adeleSpace K F ⧸ adeleBddPrincipal K F (0 : Divisor K F)) :=
-  (indexOfSpecialty_eq_of_genusReached h 0).1
-
 end AlgebraicCurve
 
 end
@@ -1574,27 +550,6 @@ noncomputable section
 open Module IsDedekindDomain WithZero
 
 namespace AlgebraicCurve
-p2m_export "AlgebraicCurve" "Place Place.coe_algebraMap Place.ord_zero Divisor Divisor.degree \
-  Divisor.degree_single HasPrincipalDivisors Place.ofHeightOneSpectrum \
-  HasPrincipalDivisors.exists_divisor Place.algebraMap_mem' Place.ord_restrict \
-  Place.deg_restrict_mul_inertiaDeg Place.mem_fiber Divisor.pullback Divisor.pullback_apply \
-  Divisor.degree_pullback SumRamificationInertia IsCurveOver IsCurveOver.finite_residueField \
-  LSpace ell mem_lSpace_iff_ord lSpace_mono one_mem_lSpace_zero ConstantsAreBase \
-  ell_zero_eq_one_of_constantsAreBase adeleBdd mem_adeleBdd adeleBdd_mono diagonalHom \
-  diagonalHom_injective diagonal_mem_adeleBdd_iff adeleSpace adeleBdd_le_adeleSpace \
-  diagonal_mem_adeleSpace globalSub diagonal_mem_globalSub map_diagonal_lSpace \
-  finrank_adeleBdd_inf_global_eq_ell indexOfSpecialty adeleBddPrincipal indexOfSpecialty_eq \
-  omegaSpace omegaSpace_antitone omegaSpaceEquivIndexDual finrank_omegaSpace_eq_indexOfSpecialty \
-  weilDifferentialModule omegaSpace_le_weilDifferentialModule mem_weilDifferentialModule_iff \
-  mulAdele_apply adeleSpaceMul adeleSpaceMul_coe weilSmul weilSmul_apply weilSmul_one weilSmul_mul \
-  weilSmul_injective weilSmul_mem_omegaSpace_add residuePairing residuePairing_apply_coe \
-  WeilDifferentialRankOne RiemannGenusReachedAt RiemannGenusReached StichtenothGenusExists \
-  RiemannGenusBounded IndexOfSpecialtyFinite PoleDivisorPackage HasPoleDivisorPackage \
-  TranscendenceTower TranscendenceTower.xF TranscendenceTower.poleDivisor IntegralBasisInLSpace \
-  HasIntegralBasisInLSpace HasIntegralBasisRegularOutside HasRegularFractionSubring \
-  TranscendenceTower.hx_indep Place.sum_ramificationIndex_mul_inertiaDeg \
-  RationalFunctionField.ord_placeInfty Place.exists_restrict_eq"
-p2m_open "AlgebraicCurve~Place.ord_nonneg_of_mem~Place.mem_of_ord_nonneg~Place.mem_iff_ord_nonneg"
 
 variable {K F : Type*} [Field K] [Field F] [Algebra K F]
 
@@ -1620,9 +575,6 @@ theorem pow_mem_lSpace_nsmul {B : Divisor K F} {f : F} (hf : f ∈ LSpace B) (j 
     exact mul_mem_lSpace_add ih hf
 
 namespace PoleDivisorPackage
-p2m_export "AlgebraicCurve.PoleDivisorPackage" "degB_eq u B hB_eff n lin_indep mk c x hn_pos \
-  hu_mem mk.injEq hx_mem"
-p2m_open "AlgebraicCurve.PoleDivisorPackage"
 
 variable (P : PoleDivisorPackage K F)
 
@@ -1631,8 +583,6 @@ private theorem _root_.AlgebraicCurve.PoleDivisorPackage.pow_mul_u_mem_lSpace (j
     P.x ^ j * P.u i ∈ LSpace ((j + P.c) • P.B) := by
   rw [add_nsmul]
   exact mul_mem_lSpace_add (pow_mem_lSpace_nsmul P.hx_mem j) (P.hu_mem i)
-
-p2m_export "AlgebraicCurve.PoleDivisorPackage" "pow_mul_u_mem_lSpace"
 
 private theorem _root_.AlgebraicCurve.PoleDivisorPackage.pow_mul_u_mem_lSpace_of_le {j m : ℕ}
     (hjm : j + P.c ≤ m) (i : Fin P.n) :
@@ -1643,8 +593,6 @@ private theorem _root_.AlgebraicCurve.PoleDivisorPackage.pow_mul_u_mem_lSpace_of
   change ((j + P.c) • P.B) v ≤ (m • P.B) v
   simp only [Finsupp.smul_apply, nsmul_eq_mul]
   exact mul_le_mul_of_nonneg_right (by exact_mod_cast hjm) hBv
-
-p2m_export "AlgebraicCurve.PoleDivisorPackage" "pow_mul_u_mem_lSpace_of_le"
 
 private theorem _root_.AlgebraicCurve.PoleDivisorPackage.ell_nsmul_poleDivisor_ge [IsCurveOver K F]
     [FiniteDimensional K (LSpace (0 : Divisor K F))] {m : ℕ} (hm : P.c ≤ m) :
@@ -1672,8 +620,6 @@ private theorem _root_.AlgebraicCurve.PoleDivisorPackage.ell_nsmul_poleDivisor_g
     rw [Nat.cast_add, Nat.cast_sub hm, Nat.cast_one]; ring
   linarith
 
-p2m_export "AlgebraicCurve.PoleDivisorPackage" "ell_nsmul_poleDivisor_ge"
-
 private theorem _root_.AlgebraicCurve.PoleDivisorPackage.degree_nsmul_sub_ell_le [IsCurveOver K F]
     [FiniteDimensional K (LSpace (0 : Divisor K F))] {m : ℕ} (hm : P.c ≤ m) :
     Divisor.degree (m • P.B) - ell (m • P.B) ≤ (P.n : ℤ) * (P.c - 1) := by
@@ -1683,15 +629,10 @@ private theorem _root_.AlgebraicCurve.PoleDivisorPackage.degree_nsmul_sub_ell_le
       Divisor.degree.map_zsmul, smul_eq_mul, P.degB_eq]
   linarith
 
-p2m_export "AlgebraicCurve.PoleDivisorPackage" "degree_nsmul_sub_ell_le"
 end PoleDivisorPackage
 
 namespace PoleDivisorPackage
-p2m_export "AlgebraicCurve.PoleDivisorPackage" "degB_eq u B hB_eff n lin_indep mk c x hn_pos \
-  hu_mem mk.injEq hx_mem"
-end PoleDivisorPackage
-namespace PoleDivisorPackage
-p2m_open_scoped "AlgebraicCurve.PoleDivisorPackage" in
+open scoped AlgebraicCurve.PoleDivisorPackage in
 private theorem _root_.AlgebraicCurve.PoleDivisorPackage.ell_nsmul_sub_pos [IsCurveOver K F]
     [FiniteDimensional K (LSpace (0 : Divisor K F))]
     (P : PoleDivisorPackage K F) {A : Divisor K F} (hA : 0 ≤ A) {m : ℕ} (hm : P.c ≤ m)
@@ -1710,9 +651,8 @@ private theorem _root_.AlgebraicCurve.PoleDivisorPackage.ell_nsmul_sub_pos [IsCu
   exact_mod_cast this
 
 end PoleDivisorPackage
-p2m_export "AlgebraicCurve" "PoleDivisorPackage.ell_nsmul_sub_pos"
 namespace PoleDivisorPackage
-p2m_open_scoped "AlgebraicCurve.PoleDivisorPackage" in
+open scoped AlgebraicCurve.PoleDivisorPackage in
 private theorem _root_.AlgebraicCurve.PoleDivisorPackage.degree_sub_ell_le [IsCurveOver K F]
     [Nonempty (Place K F)]
     [FiniteDimensional K (LSpace (0 : Divisor K F))]
@@ -1760,8 +700,6 @@ private theorem _root_.AlgebraicCurve.PoleDivisorPackage.degree_sub_ell_le [IsCu
   linarith
 
 end PoleDivisorPackage
-p2m_export "AlgebraicCurve" "PoleDivisorPackage.degree_sub_ell_le"
-
 theorem riemannGenusBounded_of_poleDivisorPackage [IsCurveOver K F] [Nonempty (Place K F)]
     [FiniteDimensional K (LSpace (0 : Divisor K F))]
     (P : PoleDivisorPackage K F) :
@@ -1774,81 +712,17 @@ theorem stichtenothGenusExists_of_poleDivisorPackage [IsCurveOver K F] [Nonempty
     StichtenothGenusExists K F :=
   stichtenothGenusExists_of_bounded (riemannGenusBounded_of_poleDivisorPackage P)
 
-theorem indexOfSpecialtyFinite_of_poleDivisorPackage [IsCurveOver K F] [Nonempty (Place K F)]
-    [FiniteDimensional K (LSpace (0 : Divisor K F))]
-    (P : PoleDivisorPackage K F) :
-    IndexOfSpecialtyFinite K F :=
-  indexOfSpecialtyFinite_of_stichtenothGenusExists
-    (stichtenothGenusExists_of_poleDivisorPackage P)
-
-theorem indexOfSpecialtyFinite_of_hasPoleDivisorPackage [IsCurveOver K F]
-    [Nonempty (Place K F)] [FiniteDimensional K (LSpace (0 : Divisor K F))]
-    (h : HasPoleDivisorPackage K F) :
-    IndexOfSpecialtyFinite K F :=
-  indexOfSpecialtyFinite_of_poleDivisorPackage h.some
-
 theorem stichtenothGenusExists_of_hasPoleDivisorPackage [IsCurveOver K F]
     [Nonempty (Place K F)] [FiniteDimensional K (LSpace (0 : Divisor K F))]
     (h : HasPoleDivisorPackage K F) :
     StichtenothGenusExists K F :=
   stichtenothGenusExists_of_poleDivisorPackage h.some
 
-theorem gate_stichtenothGenus_le_of_poleDivisorPackage [IsCurveOver K F]
-    [Nonempty (Place K F)] [FiniteDimensional K (LSpace (0 : Divisor K F))]
-    (P : PoleDivisorPackage K F)
-    {γ : ℤ} {D₀ : Divisor K F} (h : RiemannGenusReachedAt γ D₀) :
-    γ ≤ (P.n : ℤ) * (P.c - 1) + 1 := by
-  have := P.degree_sub_ell_le D₀
-  rw [h.eq] at this; linarith
-
-theorem gate_ell_c_nsmul_ge [IsCurveOver K F]
-    [FiniteDimensional K (LSpace (0 : Divisor K F))]
-    (P : PoleDivisorPackage K F) :
-    (P.n : ℤ) ≤ ell (P.c • P.B) := by
-  have h := P.ell_nsmul_poleDivisor_ge (le_refl P.c)
-  simp only [sub_self, zero_add, mul_one] at h
-  exact h
-
-theorem gate_x_transcendental_of_poleDivisorPackage (P : PoleDivisorPackage K F) :
-    LinearIndependent K (fun j : ℕ => P.x ^ j * P.u ⟨0, P.hn_pos⟩) := by
-  refine P.lin_indep.comp (fun j => (j, ⟨0, P.hn_pos⟩)) ?_
-  intro a b hab
-  exact (Prod.mk.injEq .. ▸ hab).1
-
-theorem gate_u_linearIndependent_of_poleDivisorPackage (P : PoleDivisorPackage K F) :
-    LinearIndependent K P.u := by
-  have h : LinearIndependent K (fun i : Fin P.n => P.x ^ (0 : ℕ) * P.u i) := by
-    refine P.lin_indep.comp (fun i => (0, i)) ?_
-    intro a b hab
-    exact (Prod.mk.injEq .. ▸ hab).2
-  simpa using h
-
 end AlgebraicCurve
 
 end
 
 namespace AlgebraicCurve
-p2m_export "AlgebraicCurve" "Place Place.coe_algebraMap Place.ord_zero Divisor Divisor.degree \
-  Divisor.degree_single HasPrincipalDivisors Place.ofHeightOneSpectrum \
-  HasPrincipalDivisors.exists_divisor Place.algebraMap_mem' Place.ord_restrict \
-  Place.deg_restrict_mul_inertiaDeg Place.mem_fiber Divisor.pullback Divisor.pullback_apply \
-  Divisor.degree_pullback SumRamificationInertia IsCurveOver IsCurveOver.finite_residueField \
-  LSpace ell mem_lSpace_iff_ord lSpace_mono one_mem_lSpace_zero ConstantsAreBase \
-  ell_zero_eq_one_of_constantsAreBase adeleBdd mem_adeleBdd adeleBdd_mono diagonalHom \
-  diagonalHom_injective diagonal_mem_adeleBdd_iff adeleSpace adeleBdd_le_adeleSpace \
-  diagonal_mem_adeleSpace globalSub diagonal_mem_globalSub map_diagonal_lSpace \
-  finrank_adeleBdd_inf_global_eq_ell indexOfSpecialty adeleBddPrincipal indexOfSpecialty_eq \
-  omegaSpace omegaSpace_antitone omegaSpaceEquivIndexDual finrank_omegaSpace_eq_indexOfSpecialty \
-  weilDifferentialModule omegaSpace_le_weilDifferentialModule mem_weilDifferentialModule_iff \
-  mulAdele_apply adeleSpaceMul adeleSpaceMul_coe weilSmul weilSmul_apply weilSmul_one weilSmul_mul \
-  weilSmul_injective weilSmul_mem_omegaSpace_add residuePairing residuePairing_apply_coe \
-  WeilDifferentialRankOne RiemannGenusReachedAt RiemannGenusReached StichtenothGenusExists \
-  RiemannGenusBounded IndexOfSpecialtyFinite PoleDivisorPackage HasPoleDivisorPackage \
-  TranscendenceTower TranscendenceTower.xF TranscendenceTower.poleDivisor IntegralBasisInLSpace \
-  HasIntegralBasisInLSpace HasIntegralBasisRegularOutside HasRegularFractionSubring \
-  TranscendenceTower.hx_indep Place.sum_ramificationIndex_mul_inertiaDeg \
-  RationalFunctionField.ord_placeInfty Place.exists_restrict_eq"
-p2m_open "AlgebraicCurve~Place.ord_nonneg_of_mem~Place.mem_of_ord_nonneg~Place.mem_iff_ord_nonneg"
 
 scoped instance instSumRamificationInertia_port {K F F' : Type*} [Field K] [Field F] [Field F']
   [Algebra K F] [Algebra K F']
@@ -1862,35 +736,11 @@ noncomputable section
 open Module IsDedekindDomain WithZero
 
 namespace AlgebraicCurve
-p2m_export "AlgebraicCurve" "Place Place.coe_algebraMap Place.ord_zero Divisor Divisor.degree \
-  Divisor.degree_single HasPrincipalDivisors Place.ofHeightOneSpectrum \
-  HasPrincipalDivisors.exists_divisor Place.algebraMap_mem' Place.ord_restrict \
-  Place.deg_restrict_mul_inertiaDeg Place.mem_fiber Divisor.pullback Divisor.pullback_apply \
-  Divisor.degree_pullback SumRamificationInertia IsCurveOver IsCurveOver.finite_residueField \
-  LSpace ell mem_lSpace_iff_ord lSpace_mono one_mem_lSpace_zero ConstantsAreBase \
-  ell_zero_eq_one_of_constantsAreBase adeleBdd mem_adeleBdd adeleBdd_mono diagonalHom \
-  diagonalHom_injective diagonal_mem_adeleBdd_iff adeleSpace adeleBdd_le_adeleSpace \
-  diagonal_mem_adeleSpace globalSub diagonal_mem_globalSub map_diagonal_lSpace \
-  finrank_adeleBdd_inf_global_eq_ell indexOfSpecialty adeleBddPrincipal indexOfSpecialty_eq \
-  omegaSpace omegaSpace_antitone omegaSpaceEquivIndexDual finrank_omegaSpace_eq_indexOfSpecialty \
-  weilDifferentialModule omegaSpace_le_weilDifferentialModule mem_weilDifferentialModule_iff \
-  mulAdele_apply adeleSpaceMul adeleSpaceMul_coe weilSmul weilSmul_apply weilSmul_one weilSmul_mul \
-  weilSmul_injective weilSmul_mem_omegaSpace_add residuePairing residuePairing_apply_coe \
-  WeilDifferentialRankOne RiemannGenusReachedAt RiemannGenusReached StichtenothGenusExists \
-  RiemannGenusBounded IndexOfSpecialtyFinite PoleDivisorPackage HasPoleDivisorPackage \
-  TranscendenceTower TranscendenceTower.xF TranscendenceTower.poleDivisor IntegralBasisInLSpace \
-  HasIntegralBasisInLSpace HasIntegralBasisRegularOutside HasRegularFractionSubring \
-  TranscendenceTower.hx_indep Place.sum_ramificationIndex_mul_inertiaDeg \
-  RationalFunctionField.ord_placeInfty Place.exists_restrict_eq"
-p2m_open "AlgebraicCurve~Place.ord_nonneg_of_mem~Place.mem_of_ord_nonneg~Place.mem_iff_ord_nonneg"
 
 variable {K E F : Type*} [Field K] [Field E] [Field F]
   [Algebra K E] [Algebra K F] [Algebra E F] [IsScalarTower K E F]
 
 namespace TranscendenceTower
-p2m_export "AlgebraicCurve.TranscendenceTower" "xF poleDivisor RegularOutside hx_indep hxreg v \
-  mk.injEq mk hvdeg x hxv"
-p2m_open "AlgebraicCurve.TranscendenceTower"
 
 variable [FiniteDimensional E F] [Algebra.IsSeparable E F] [HasPrincipalDivisors K F]
 variable (T : TranscendenceTower K E F)
@@ -1899,17 +749,11 @@ omit [FiniteDimensional E F] [Algebra.IsSeparable E F] [HasPrincipalDivisors K F
 private theorem _root_.AlgebraicCurve.TranscendenceTower.x_ne_zero : T.x ≠ 0 := fun h => by
   have := T.hxv; rw [h, Place.ord_zero] at this; exact absurd this (by decide)
 
-p2m_export "AlgebraicCurve.TranscendenceTower" "x_ne_zero"
-omit [FiniteDimensional E F] [Algebra.IsSeparable E F] [HasPrincipalDivisors K F] in
-theorem xF_ne_zero : T.xF ≠ 0 :=
-  fun h => T.x_ne_zero ((algebraMap E F).injective (by rwa [map_zero]))
-
 omit [FiniteDimensional E F] in
 private theorem _root_.AlgebraicCurve.TranscendenceTower.poleDivisor_apply (w : Place K F) :
     T.poleDivisor w = (w.ramificationIndex E : ℤ) * (Finsupp.single T.v 1) (w.restrict E) :=
   Divisor.pullback_apply (Finsupp.single T.v 1) w
 
-p2m_export "AlgebraicCurve.TranscendenceTower" "poleDivisor_apply"
 omit [FiniteDimensional E F] in
 private theorem _root_.AlgebraicCurve.TranscendenceTower.poleDivisor_nonneg :
     0 ≤ T.poleDivisor := by
@@ -1919,7 +763,6 @@ private theorem _root_.AlgebraicCurve.TranscendenceTower.poleDivisor_nonneg :
   refine mul_nonneg (Int.natCast_nonneg _) ?_
   split_ifs <;> simp
 
-p2m_export "AlgebraicCurve.TranscendenceTower" "poleDivisor_nonneg"
 omit [FiniteDimensional E F] in
 private theorem _root_.AlgebraicCurve.TranscendenceTower.xF_mem_lSpace_poleDivisor :
     T.xF ∈ LSpace T.poleDivisor := by
@@ -1932,14 +775,11 @@ private theorem _root_.AlgebraicCurve.TranscendenceTower.xF_mem_lSpace_poleDivis
   · simp only [ite_eq_right (Ne.symm hw), mul_zero, neg_zero]
     exact mul_nonneg (Int.natCast_nonneg _) (T.hxreg _ hw)
 
-p2m_export "AlgebraicCurve.TranscendenceTower" "xF_mem_lSpace_poleDivisor"
-
 private theorem _root_.AlgebraicCurve.TranscendenceTower.degree_poleDivisor_eq_finrank :
     Divisor.degree T.poleDivisor = (Module.finrank E F : ℤ) := by
   rw [poleDivisor, Divisor.degree_pullback, Divisor.degree_single, T.hvdeg]
   push_cast; ring
 
-p2m_export "AlgebraicCurve.TranscendenceTower" "degree_poleDivisor_eq_finrank"
 omit [FiniteDimensional E F] in
 private theorem
   _root_.AlgebraicCurve.TranscendenceTower.mem_lSpace_nsmul_poleDivisor_of_regular_outside {f : F}
@@ -1961,7 +801,6 @@ private theorem
   · simp only [ite_eq_right (Ne.symm hw), mul_zero, neg_zero]
     exact hreg w hw
 
-p2m_export "AlgebraicCurve.TranscendenceTower" "mem_lSpace_nsmul_poleDivisor_of_regular_outside"
 omit [FiniteDimensional E F] in
 private theorem _root_.AlgebraicCurve.TranscendenceTower.exists_forall_mem_lSpace_nsmul_poleDivisor
     {n : ℕ} (u : Fin n → F)
@@ -1983,7 +822,6 @@ private theorem _root_.AlgebraicCurve.TranscendenceTower.exists_forall_mem_lSpac
   have htnat : -(w.ord (u i)) ≤ ((-(w.ord (u i))).toNat : ℤ) := Int.self_le_toNat _
   omega
 
-p2m_export "AlgebraicCurve.TranscendenceTower" "exists_forall_mem_lSpace_nsmul_poleDivisor"
 end TranscendenceTower
 
 variable [FiniteDimensional E F] [Algebra.IsSeparable E F]
@@ -1992,10 +830,7 @@ section PrincipalDivisors
 
 variable [HasPrincipalDivisors K F]
 
-namespace IntegralBasisInLSpace
-p2m_export "AlgebraicCurve.IntegralBasisInLSpace" "hu_indep c u mk.injEq hu_mem mk"
-end IntegralBasisInLSpace
-p2m_open_scoped "AlgebraicCurve.IntegralBasisInLSpace" in
+open scoped AlgebraicCurve.IntegralBasisInLSpace in
 def IntegralBasisInLSpace.ofRegularOutside (T : TranscendenceTower K E F)
     (u : Fin (Module.finrank E F) → F) (hu_indep : LinearIndependent E u)
     (hreg : ∀ i, ∀ w : Place K F, w.restrict E ≠ T.v → 0 ≤ w.ord (u i)) :
@@ -2023,7 +858,7 @@ theorem linearIndependent_pow_mul {x : E} {n : ℕ} {u : Fin n → F}
   rw [heq]
   exact linearIndependent_smul (R := K) (S := E) (A := F) hx hu
 
-p2m_open_scoped "AlgebraicCurve.PoleDivisorPackage" in
+open scoped AlgebraicCurve.PoleDivisorPackage in
 def PoleDivisorPackage.ofTranscendenceTower (T : TranscendenceTower K E F)
     (IB : IntegralBasisInLSpace T) :
     PoleDivisorPackage K F where
@@ -2057,51 +892,6 @@ theorem hasPoleDivisorPackage_of_hasIntegralBasisRegularOutside
 
 end PrincipalDivisors
 
-theorem indexOfSpecialtyFinite_of_transcendenceTower [IsCurveOver K F] [Nonempty (Place K F)]
-    [FiniteDimensional K (LSpace (0 : Divisor K F))]
-    (T : TranscendenceTower K E F) (IB : IntegralBasisInLSpace T) :
-    IndexOfSpecialtyFinite K F :=
-  indexOfSpecialtyFinite_of_poleDivisorPackage
-    (PoleDivisorPackage.ofTranscendenceTower T IB)
-
-theorem stichtenothGenusExists_of_transcendenceTower [IsCurveOver K F] [Nonempty (Place K F)]
-    [FiniteDimensional K (LSpace (0 : Divisor K F))]
-    (T : TranscendenceTower K E F) (IB : IntegralBasisInLSpace T) :
-    StichtenothGenusExists K F :=
-  stichtenothGenusExists_of_poleDivisorPackage
-    (PoleDivisorPackage.ofTranscendenceTower T IB)
-
-theorem gate_ofTranscendenceTower_n_eq [HasPrincipalDivisors K F] (T : TranscendenceTower K E F)
-    (IB : IntegralBasisInLSpace T) :
-    (PoleDivisorPackage.ofTranscendenceTower T IB).n = Module.finrank E F := rfl
-
-theorem gate_ofTranscendenceTower_B_eq [HasPrincipalDivisors K F] (T : TranscendenceTower K E F)
-    (IB : IntegralBasisInLSpace T) :
-    (PoleDivisorPackage.ofTranscendenceTower T IB).B = T.poleDivisor := rfl
-
-theorem gate_ofTranscendenceTower_x_transcendental [HasPrincipalDivisors K F]
-    (T : TranscendenceTower K E F)
-    (IB : IntegralBasisInLSpace T) :
-    LinearIndependent K
-      (fun j : ℕ => T.xF ^ j *
-        (PoleDivisorPackage.ofTranscendenceTower T IB).u ⟨0, Module.finrank_pos⟩) :=
-  gate_x_transcendental_of_poleDivisorPackage
-    (PoleDivisorPackage.ofTranscendenceTower T IB)
-
-theorem gate_degree_pullback_single_of_deg_eq [HasPrincipalDivisors K F]
-    (v : Place K E) (d : ℕ) (hd : v.deg = d) :
-    Divisor.degree (Divisor.pullback F (Finsupp.single v (1 : ℤ)))
-      = (Module.finrank E F : ℤ) * d := by
-  rw [Divisor.degree_pullback, Divisor.degree_single, hd]; ring
-
-theorem gate_stichtenothGenus_le_of_transcendenceTower [IsCurveOver K F]
-    [Nonempty (Place K F)] [FiniteDimensional K (LSpace (0 : Divisor K F))]
-    (T : TranscendenceTower K E F) (IB : IntegralBasisInLSpace T)
-    {γ : ℤ} {D₀ : Divisor K F} (h : RiemannGenusReachedAt γ D₀) :
-    γ ≤ (Module.finrank E F : ℤ) * (IB.c - 1) + 1 :=
-  gate_stichtenothGenus_le_of_poleDivisorPackage
-    (PoleDivisorPackage.ofTranscendenceTower T IB) h
-
 end AlgebraicCurve
 end
 
@@ -2110,38 +900,8 @@ noncomputable section
 open Module
 
 namespace AlgebraicCurve
-p2m_export "AlgebraicCurve" "Place Place.coe_algebraMap Place.ord_zero Divisor Divisor.degree \
-  Divisor.degree_single HasPrincipalDivisors Place.ofHeightOneSpectrum \
-  HasPrincipalDivisors.exists_divisor Place.algebraMap_mem' Place.ord_restrict \
-  Place.deg_restrict_mul_inertiaDeg Place.mem_fiber Divisor.pullback Divisor.pullback_apply \
-  Divisor.degree_pullback SumRamificationInertia IsCurveOver IsCurveOver.finite_residueField \
-  LSpace ell mem_lSpace_iff_ord lSpace_mono one_mem_lSpace_zero ConstantsAreBase \
-  ell_zero_eq_one_of_constantsAreBase adeleBdd mem_adeleBdd adeleBdd_mono diagonalHom \
-  diagonalHom_injective diagonal_mem_adeleBdd_iff adeleSpace adeleBdd_le_adeleSpace \
-  diagonal_mem_adeleSpace globalSub diagonal_mem_globalSub map_diagonal_lSpace \
-  finrank_adeleBdd_inf_global_eq_ell indexOfSpecialty adeleBddPrincipal indexOfSpecialty_eq \
-  omegaSpace omegaSpace_antitone omegaSpaceEquivIndexDual finrank_omegaSpace_eq_indexOfSpecialty \
-  weilDifferentialModule omegaSpace_le_weilDifferentialModule mem_weilDifferentialModule_iff \
-  mulAdele_apply adeleSpaceMul adeleSpaceMul_coe weilSmul weilSmul_apply weilSmul_one weilSmul_mul \
-  weilSmul_injective weilSmul_mem_omegaSpace_add residuePairing residuePairing_apply_coe \
-  WeilDifferentialRankOne RiemannGenusReachedAt RiemannGenusReached StichtenothGenusExists \
-  RiemannGenusBounded IndexOfSpecialtyFinite PoleDivisorPackage HasPoleDivisorPackage \
-  TranscendenceTower TranscendenceTower.xF TranscendenceTower.poleDivisor IntegralBasisInLSpace \
-  HasIntegralBasisInLSpace HasIntegralBasisRegularOutside HasRegularFractionSubring \
-  TranscendenceTower.hx_indep Place.sum_ramificationIndex_mul_inertiaDeg \
-  RationalFunctionField.ord_placeInfty Place.exists_restrict_eq"
-p2m_open "AlgebraicCurve~Place.ord_nonneg_of_mem~Place.mem_of_ord_nonneg~Place.mem_iff_ord_nonneg"
 
 namespace Place
-p2m_export "AlgebraicCurve.Place" "ext coe_algebraMap ResidueField deg adicValuation \
-  adicValuation_coe_eq_one_iff ord ord_zero ord_mul ord_inv ord_coe_unit ord_coe_irreducible \
-  ord_zpow ord_unit_smul_zpow exists_unit_mul_zpow ofHeightOneSpectrum mk.injEq algebraMap_mem' \
-  toValuationSubring mk ramificationIndex ramificationIndex_pos restrict mem_restrict_iff \
-  ord_restrict deg_restrict_mul_inertiaDeg fiber mem_fiber adicValuation_eq_exp_neg_ord \
-  sum_ramificationIndex_mul_inertiaDeg exists_restrict_eq"
-p2m_open "AlgebraicCurve.Place~ord_nonneg_of_mem~mem_of_ord_nonneg~mem_iff_ord_nonneg~restrict_plac\
-  eOfPrime~placeOfPrime~comap_algebraMap_ne_top"
-
 variable {K F : Type*} [Field K] [Field F] [Algebra K F] (w : Place K F)
 
 private theorem _root_.AlgebraicCurve.Place.mem_of_isIntegral {f : F}
@@ -2149,12 +909,6 @@ private theorem _root_.AlgebraicCurve.Place.mem_of_isIntegral {f : F}
     f ∈ w.toValuationSubring := by
   obtain ⟨y, hy⟩ := IsIntegrallyClosed.isIntegral_iff.mp hf
   exact hy ▸ y.2
-
-p2m_export "AlgebraicCurve.Place" "mem_of_isIntegral"
-
-theorem ord_nonneg_of_isIntegral {f : F} (hf : IsIntegral w.toValuationSubring f) :
-    0 ≤ w.ord f :=
-  AlgebraicCurve.Place.ord_nonneg_of_mem w (w.mem_of_isIntegral hf)
 
 private theorem _root_.AlgebraicCurve.Place.mem_of_isIntegral_of_algebraMap_mem {A : Type*}
     [CommRing A] [Algebra A F]
@@ -2166,13 +920,6 @@ private theorem _root_.AlgebraicCurve.Place.mem_of_isIntegral_of_algebraMap_mem 
     IsScalarTower.of_algebraMap_eq fun a => rfl
   exact w.mem_of_isIntegral hf.tower_top
 
-p2m_export "AlgebraicCurve.Place" "mem_of_isIntegral_of_algebraMap_mem"
-
-theorem ord_nonneg_of_isIntegral_of_algebraMap_mem {A : Type*} [CommRing A] [Algebra A F]
-    (hA : ∀ a : A, algebraMap A F a ∈ w.toValuationSubring)
-    {f : F} (hf : IsIntegral A f) : 0 ≤ w.ord f :=
-  AlgebraicCurve.Place.ord_nonneg_of_mem w (w.mem_of_isIntegral_of_algebraMap_mem hA hf)
-
 end Place
 
 section Bridge
@@ -2182,15 +929,7 @@ variable {K E F : Type*} [Field K] [Field E] [Field F]
 variable {A : Type*} [CommRing A] [Algebra A E] [Algebra A F] [IsScalarTower A E F]
 
 namespace Place
-p2m_export "AlgebraicCurve.Place" "ext coe_algebraMap ResidueField deg adicValuation \
-  adicValuation_coe_eq_one_iff ord ord_zero ord_mul ord_inv ord_coe_unit ord_coe_irreducible \
-  ord_zpow ord_unit_smul_zpow exists_unit_mul_zpow ofHeightOneSpectrum mk.injEq algebraMap_mem' \
-  toValuationSubring mk ramificationIndex ramificationIndex_pos restrict mem_restrict_iff \
-  ord_restrict deg_restrict_mul_inertiaDeg fiber mem_fiber adicValuation_eq_exp_neg_ord \
-  sum_ramificationIndex_mul_inertiaDeg exists_restrict_eq"
-end Place
-namespace Place
-p2m_open_scoped "AlgebraicCurve.Place" in
+open scoped AlgebraicCurve.Place in
 private theorem _root_.AlgebraicCurve.Place.mem_of_isIntegral_of_restrict [Algebra.IsIntegral E F]
     (w : Place K F)
     {u : Place K E} (hw : w.restrict E = u)
@@ -2201,9 +940,8 @@ private theorem _root_.AlgebraicCurve.Place.mem_of_isIntegral_of_restrict [Algeb
   exact hA a
 
 end Place
-p2m_export "AlgebraicCurve" "Place.mem_of_isIntegral_of_restrict"
 namespace Place
-p2m_open_scoped "AlgebraicCurve.Place" in
+open scoped AlgebraicCurve.Place in
 private theorem _root_.AlgebraicCurve.Place.ord_nonneg_of_isIntegral_of_restrict
     [Algebra.IsIntegral E F] (w : Place K F)
     {u : Place K E} (hw : w.restrict E = u)
@@ -2212,13 +950,8 @@ private theorem _root_.AlgebraicCurve.Place.ord_nonneg_of_isIntegral_of_restrict
   AlgebraicCurve.Place.ord_nonneg_of_mem w (w.mem_of_isIntegral_of_restrict hw hA hf)
 
 end Place
-p2m_export "AlgebraicCurve" "Place.ord_nonneg_of_isIntegral_of_restrict"
 namespace TranscendenceTower
-p2m_export "AlgebraicCurve.TranscendenceTower" "xF poleDivisor RegularOutside hx_indep hxreg v \
-  mk.injEq mk hvdeg x hxv"
-end TranscendenceTower
-namespace TranscendenceTower
-p2m_open_scoped "AlgebraicCurve.TranscendenceTower" in
+open scoped AlgebraicCurve.TranscendenceTower in
 private theorem _root_.AlgebraicCurve.TranscendenceTower.ord_nonneg_of_isIntegral_of_regularOutside
     [Algebra.IsIntegral E F] (T : TranscendenceTower K E F) (hA : T.RegularOutside A)
     {f : F} (hf : IsIntegral A f) :
@@ -2226,7 +959,6 @@ private theorem _root_.AlgebraicCurve.TranscendenceTower.ord_nonneg_of_isIntegra
   w.ord_nonneg_of_isIntegral_of_restrict rfl (hA _ hw) hf
 
 end TranscendenceTower
-p2m_export "AlgebraicCurve" "TranscendenceTower.ord_nonneg_of_isIntegral_of_regularOutside"
 end Bridge
 
 section Headline
@@ -2260,23 +992,6 @@ theorem hasIntegralBasisRegularOutside_of_hasRegularFractionSubring
   exact hasIntegralBasisRegularOutside_of_isFractionRing (A := A) T
     (fun u hu a => hreg u hu (a : E) a.property)
 
-theorem hasPoleDivisorPackage_of_isFractionRing [HasPrincipalDivisors K F]
-    {A : Type*} [CommRing A] [IsDomain A] [Algebra A E] [IsFractionRing A E]
-    [Algebra A F] [IsScalarTower A E F]
-    (T : TranscendenceTower K E F) (hA : T.RegularOutside A) :
-    HasPoleDivisorPackage K F :=
-  hasPoleDivisorPackage_of_hasIntegralBasisRegularOutside T
-    (hasIntegralBasisRegularOutside_of_isFractionRing T hA)
-
-theorem stichtenothGenusExists_of_isFractionRing [IsCurveOver K F] [Nonempty (Place K F)]
-    [FiniteDimensional K (LSpace (0 : Divisor K F))]
-    {A : Type*} [CommRing A] [IsDomain A] [Algebra A E] [IsFractionRing A E]
-    [Algebra A F] [IsScalarTower A E F]
-    (T : TranscendenceTower K E F) (hA : T.RegularOutside A) :
-    StichtenothGenusExists K F :=
-  stichtenothGenusExists_of_hasPoleDivisorPackage
-    (hasPoleDivisorPackage_of_isFractionRing T hA)
-
 theorem hasPoleDivisorPackage_of_hasRegularFractionSubring [HasPrincipalDivisors K F]
     (T : TranscendenceTower K E F) (h : HasRegularFractionSubring K E F T) :
     HasPoleDivisorPackage K F :=
@@ -2291,7 +1006,7 @@ theorem stichtenothGenusExists_of_hasRegularFractionSubring [IsCurveOver K F]
     (hasPoleDivisorPackage_of_hasRegularFractionSubring T h)
 
 namespace TranscendenceTower
-p2m_open_scoped "AlgebraicCurve.TranscendenceTower" in
+open scoped AlgebraicCurve.TranscendenceTower in
 omit [FiniteDimensional E F] [Algebra.IsSeparable E F] in
 private theorem _root_.AlgebraicCurve.TranscendenceTower.adjoin_x_regularOutside (T :
   TranscendenceTower K E F) :
@@ -2310,20 +1025,12 @@ private theorem _root_.AlgebraicCurve.TranscendenceTower.adjoin_x_regularOutside
   exact AlgebraicCurve.Place.mem_of_ord_nonneg u T.x_ne_zero (T.hxreg u hu)
 
 end TranscendenceTower
-p2m_export "AlgebraicCurve" "TranscendenceTower.adjoin_x_regularOutside"
 omit [FiniteDimensional E F] [Algebra.IsSeparable E F] in
 theorem hasRegularFractionSubring_of_adjoin_x_isFractionRing
     (T : TranscendenceTower K E F)
     (hfrac : IsFractionRing (Algebra.adjoin K {T.x}) E) :
     HasRegularFractionSubring K E F T :=
   ⟨Algebra.adjoin K {T.x}, hfrac, T.adjoin_x_regularOutside⟩
-
-theorem hasIntegralBasisRegularOutside_of_adjoin_x_isFractionRing
-    (T : TranscendenceTower K E F)
-    (hfrac : IsFractionRing (Algebra.adjoin K {T.x}) E) :
-    HasIntegralBasisRegularOutside K E F T :=
-  hasIntegralBasisRegularOutside_of_hasRegularFractionSubring T
-    (hasRegularFractionSubring_of_adjoin_x_isFractionRing T hfrac)
 
 theorem stichtenothGenusExists_of_adjoin_x_isFractionRing [IsCurveOver K F]
     [Nonempty (Place K F)] [FiniteDimensional K (LSpace (0 : Divisor K F))]
@@ -2335,77 +1042,14 @@ theorem stichtenothGenusExists_of_adjoin_x_isFractionRing [IsCurveOver K F]
 
 end Headline
 
-section Gates
-
-variable {K F : Type*} [Field K] [Field F] [Algebra K F]
-
-theorem gate_mem_of_isIntegral_recovers_comap (w : Place K F) (E : Type*) [Field E]
-    [Algebra E F] [Algebra.IsIntegral E F]
-    (hE : ∀ a : E, algebraMap E F a ∈ w.toValuationSubring) (f : F) :
-    f ∈ w.toValuationSubring := by
-  let : Algebra E w.toValuationSubring :=
-    ((algebraMap E F).codRestrict w.toValuationSubring.toSubring hE).toAlgebra
-  have : IsScalarTower E w.toValuationSubring F :=
-    IsScalarTower.of_algebraMap_eq fun _ => rfl
-  exact w.mem_of_isIntegral (Algebra.IsIntegral.isIntegral (R := E) f).tower_top
-
-variable {E : Type*} [Field E] [Algebra K E] [Algebra E F] [IsScalarTower K E F]
-
-theorem gate_bridge_recovers_hxreg [Algebra.IsIntegral E F]
-    (T : TranscendenceTower K E F) (w : Place K F) (hw : w.restrict E ≠ T.v) :
-    0 ≤ w.ord T.xF := by
-  rw [TranscendenceTower.xF, Place.ord_restrict]
-  exact mul_nonneg (Int.natCast_nonneg _) (T.hxreg _ hw)
-
-theorem gate_regularOutside_mono (T : TranscendenceTower K E F) {A A' : Subalgebra K E}
-    (hle : A ≤ A')
-    (hA' : ∀ u : Place K E, u ≠ T.v → ∀ a ∈ A', a ∈ u.toValuationSubring) :
-    ∀ u : Place K E, u ≠ T.v → ∀ a ∈ A, a ∈ u.toValuationSubring :=
-  fun u hu a ha => hA' u hu a (hle ha)
-
-theorem gate_bot_regularOutside (T : TranscendenceTower K E F) :
-    ∀ u : Place K E, u ≠ T.v → ∀ a ∈ (⊥ : Subalgebra K E), a ∈ u.toValuationSubring := by
-  intro u _ a ha
-  obtain ⟨c, rfl⟩ := Algebra.mem_bot.mp ha
-  exact u.algebraMap_mem' c
-
-theorem gate_adjoin_x_not_regular_at_v (T : TranscendenceTower K E F) :
-    ¬ ∀ a ∈ Algebra.adjoin K {T.x}, a ∈ T.v.toValuationSubring := by
-  intro h
-  have hx := AlgebraicCurve.Place.ord_nonneg_of_mem T.v (h T.x (Algebra.subset_adjoin rfl))
-  rw [T.hxv] at hx
-  exact absurd hx (by decide)
-
-end Gates
 end AlgebraicCurve
 end
 
 noncomputable section
 
-open Module Polynomial
+open Module
 
 namespace AlgebraicCurve
-p2m_export "AlgebraicCurve" "Place Place.coe_algebraMap Place.ord_zero Divisor Divisor.degree \
-  Divisor.degree_single HasPrincipalDivisors Place.ofHeightOneSpectrum \
-  HasPrincipalDivisors.exists_divisor Place.algebraMap_mem' Place.ord_restrict \
-  Place.deg_restrict_mul_inertiaDeg Place.mem_fiber Divisor.pullback Divisor.pullback_apply \
-  Divisor.degree_pullback SumRamificationInertia IsCurveOver IsCurveOver.finite_residueField \
-  LSpace ell mem_lSpace_iff_ord lSpace_mono one_mem_lSpace_zero ConstantsAreBase \
-  ell_zero_eq_one_of_constantsAreBase adeleBdd mem_adeleBdd adeleBdd_mono diagonalHom \
-  diagonalHom_injective diagonal_mem_adeleBdd_iff adeleSpace adeleBdd_le_adeleSpace \
-  diagonal_mem_adeleSpace globalSub diagonal_mem_globalSub map_diagonal_lSpace \
-  finrank_adeleBdd_inf_global_eq_ell indexOfSpecialty adeleBddPrincipal indexOfSpecialty_eq \
-  omegaSpace omegaSpace_antitone omegaSpaceEquivIndexDual finrank_omegaSpace_eq_indexOfSpecialty \
-  weilDifferentialModule omegaSpace_le_weilDifferentialModule mem_weilDifferentialModule_iff \
-  mulAdele_apply adeleSpaceMul adeleSpaceMul_coe weilSmul weilSmul_apply weilSmul_one weilSmul_mul \
-  weilSmul_injective weilSmul_mem_omegaSpace_add residuePairing residuePairing_apply_coe \
-  WeilDifferentialRankOne RiemannGenusReachedAt RiemannGenusReached StichtenothGenusExists \
-  RiemannGenusBounded IndexOfSpecialtyFinite PoleDivisorPackage HasPoleDivisorPackage \
-  TranscendenceTower TranscendenceTower.xF TranscendenceTower.poleDivisor IntegralBasisInLSpace \
-  HasIntegralBasisInLSpace HasIntegralBasisRegularOutside HasRegularFractionSubring \
-  TranscendenceTower.hx_indep Place.sum_ramificationIndex_mul_inertiaDeg \
-  RationalFunctionField.ord_placeInfty Place.exists_restrict_eq"
-p2m_open "AlgebraicCurve~Place.ord_nonneg_of_mem~Place.mem_of_ord_nonneg~Place.mem_iff_ord_nonneg"
 
 section Transcendental
 
@@ -2427,25 +1071,9 @@ theorem linearIndependent_pow_of_transcendental {x : A} (hx : Transcendental K x
   exact hXj.map' (Polynomial.aeval x).toLinearMap
     (LinearMap.ker_eq_bot_of_injective hinj)
 
-theorem transcendental_of_linearIndependent_pow {x : A}
-    (hx : LinearIndependent K (fun j : ℕ => x ^ j)) :
-    Transcendental K x := by
-  rw [transcendental_iff]
-  intro p hp
-  rw [Polynomial.aeval_eq_sum_range, ← Fin.sum_univ_eq_sum_range] at hp
-  ext j
-  rcases lt_or_ge j (p.natDegree + 1) with hj | hj
-  · exact (Fintype.linearIndependent_iff.mp
-      (hx.comp (Fin.val : Fin (p.natDegree + 1) → ℕ) Fin.val_injective))
-      (fun i => p.coeff i) hp ⟨j, hj⟩
-  · exact p.coeff_eq_zero_of_natDegree_lt (Nat.lt_of_succ_le hj)
-
 end Transcendental
 
 namespace RationalFunctionField
-p2m_export "AlgebraicCurve.RationalFunctionField" "algebraMap_mem_ofHeightOneSpectrum placeInfty \
-  ord_placeInfty deg_placeInfty eq_ofHeightOneSpectrum_or_eq_placeInfty"
-p2m_open "AlgebraicCurve.RationalFunctionField"
 
 variable (K : Type*) [Field K] [DecidableEq (RatFunc K)]
 
@@ -2477,12 +1105,6 @@ def transcendenceTower : TranscendenceTower K (RatFunc K) F where
   hxv := ord_placeInfty_X K
   hxreg := fun _ hu => ord_X_nonneg_of_ne_placeInfty K hu
 
-@[scoped simp]
-theorem transcendenceTower_x : (transcendenceTower K F).x = RatFunc.X := rfl
-
-@[scoped simp]
-theorem transcendenceTower_v : (transcendenceTower K F).v = placeInfty K := rfl
-
 omit [DecidableEq (RatFunc K)] in
 theorem aeval_X_eq_algebraMap (q : K[X]) :
     (Polynomial.aeval (R := K) (RatFunc.X : RatFunc K)) q
@@ -2507,183 +1129,39 @@ theorem isFractionRing_adjoin_X :
   change z = algebraMap K[X] (RatFunc K) z.num / algebraMap K[X] (RatFunc K) z.denom
   exact z.num_div_denom.symm
 
-theorem hasRegularFractionSubring :
-    HasRegularFractionSubring K (RatFunc K) F (transcendenceTower K F) :=
-  hasRegularFractionSubring_of_adjoin_x_isFractionRing
-    (transcendenceTower K F) (isFractionRing_adjoin_X K)
-
 variable [FiniteDimensional (RatFunc K) F] [Algebra.IsSeparable (RatFunc K) F]
-
-theorem hasIntegralBasisRegularOutside :
-    HasIntegralBasisRegularOutside K (RatFunc K) F (transcendenceTower K F) :=
-  hasIntegralBasisRegularOutside_of_adjoin_x_isFractionRing
-    (transcendenceTower K F) (isFractionRing_adjoin_X K)
-
-section PrincipalDivisors
-
-variable [HasPrincipalDivisors K F]
+  [IsCurveOver K F] [Nonempty (Place K F)] [FiniteDimensional K (LSpace (0 : Divisor K F))]
 
 omit [DecidableEq (RatFunc K)] in
-theorem hasPoleDivisorPackage_of_ratFunc_tower :
-    HasPoleDivisorPackage K F := by
+theorem stichtenothGenusExists_of_ratFunc_tower_port : StichtenothGenusExists K F := by
   classical
-  exact
-    hasPoleDivisorPackage_of_hasRegularFractionSubring
-      (transcendenceTower K F) (hasRegularFractionSubring K F)
-
-end PrincipalDivisors
-
-variable [IsCurveOver K F] [Nonempty (Place K F)]
-  [FiniteDimensional K (LSpace (0 : Divisor K F))]
-
-omit [DecidableEq (RatFunc K)] in
-theorem stichtenothGenusExists_of_ratFunc_tower_port :
-    StichtenothGenusExists K F := by
-  classical
-  exact
-    stichtenothGenusExists_of_adjoin_x_isFractionRing
+  exact stichtenothGenusExists_of_adjoin_x_isFractionRing
       (transcendenceTower K F) (isFractionRing_adjoin_X K)
 
-omit [DecidableEq (RatFunc K)] in
-theorem indexOfSpecialtyFinite_of_ratFunc_tower :
-    IndexOfSpecialtyFinite K F := by
-  classical
-  exact
-    indexOfSpecialtyFinite_of_stichtenothGenusExists
-      (stichtenothGenusExists_of_ratFunc_tower_port K F)
-
 end RationalFunctionField
 end AlgebraicCurve
 end
 
-noncomputable section
+open AlgebraicCurve Polynomial
 
-open Module Polynomial IsDedekindDomain
-
-namespace AlgebraicCurve
-p2m_export "AlgebraicCurve" "Place Place.coe_algebraMap Place.ord_zero Divisor Divisor.degree \
-  Divisor.degree_single HasPrincipalDivisors Place.ofHeightOneSpectrum \
-  HasPrincipalDivisors.exists_divisor Place.algebraMap_mem' Place.ord_restrict \
-  Place.deg_restrict_mul_inertiaDeg Place.mem_fiber Divisor.pullback Divisor.pullback_apply \
-  Divisor.degree_pullback SumRamificationInertia IsCurveOver IsCurveOver.finite_residueField \
-  LSpace ell mem_lSpace_iff_ord lSpace_mono one_mem_lSpace_zero ConstantsAreBase \
-  ell_zero_eq_one_of_constantsAreBase adeleBdd mem_adeleBdd adeleBdd_mono diagonalHom \
-  diagonalHom_injective diagonal_mem_adeleBdd_iff adeleSpace adeleBdd_le_adeleSpace \
-  diagonal_mem_adeleSpace globalSub diagonal_mem_globalSub map_diagonal_lSpace \
-  finrank_adeleBdd_inf_global_eq_ell indexOfSpecialty adeleBddPrincipal indexOfSpecialty_eq \
-  omegaSpace omegaSpace_antitone omegaSpaceEquivIndexDual finrank_omegaSpace_eq_indexOfSpecialty \
-  weilDifferentialModule omegaSpace_le_weilDifferentialModule mem_weilDifferentialModule_iff \
-  mulAdele_apply adeleSpaceMul adeleSpaceMul_coe weilSmul weilSmul_apply weilSmul_one weilSmul_mul \
-  weilSmul_injective weilSmul_mem_omegaSpace_add residuePairing residuePairing_apply_coe \
-  WeilDifferentialRankOne RiemannGenusReachedAt RiemannGenusReached StichtenothGenusExists \
-  RiemannGenusBounded IndexOfSpecialtyFinite PoleDivisorPackage HasPoleDivisorPackage \
-  TranscendenceTower TranscendenceTower.xF TranscendenceTower.poleDivisor IntegralBasisInLSpace \
-  HasIntegralBasisInLSpace HasIntegralBasisRegularOutside HasRegularFractionSubring \
-  TranscendenceTower.hx_indep Place.sum_ramificationIndex_mul_inertiaDeg \
-  RationalFunctionField.ord_placeInfty Place.exists_restrict_eq"
-p2m_open "AlgebraicCurve~Place.ord_nonneg_of_mem~Place.mem_of_ord_nonneg~Place.mem_iff_ord_nonneg"
-
-namespace RationalFunctionField
-p2m_export "AlgebraicCurve.RationalFunctionField" "algebraMap_mem_ofHeightOneSpectrum placeInfty \
-  ord_placeInfty deg_placeInfty eq_ofHeightOneSpectrum_or_eq_placeInfty"
-p2m_open "AlgebraicCurve.RationalFunctionField"
-
-variable (K : Type*) [Field K] [DecidableEq (RatFunc K)]
-variable (F : Type*) [Field F] [Algebra K F] [Algebra (RatFunc K) F]
-  [IsScalarTower K (RatFunc K) F]
-
-section LyingOver
-
-variable [FiniteDimensional (RatFunc K) F] [Algebra.IsSeparable (RatFunc K) F]
-
-omit [DecidableEq (RatFunc K)] in
-omit [DecidableEq (RatFunc K)] in
-private theorem _root_.AlgebraicCurve.RationalFunctionField.exists_restrict_eq (v : Place K (RatFunc
-  K)) :
-    ∃ w : Place K F, w.restrict (RatFunc K) = v :=
-  Place.exists_restrict_eq v
-
-p2m_export "AlgebraicCurve.RationalFunctionField" "exists_restrict_eq"
-
-omit [DecidableEq (RatFunc K)] in
-theorem nonempty_place_of_ratFunc_tower : Nonempty (Place K F) := by
-  classical
-  exact
-    (exists_restrict_eq K F (placeInfty K)).nonempty
-
-end LyingOver
-
-omit [DecidableEq (RatFunc K)] [Algebra (RatFunc K) F] [IsScalarTower K (RatFunc K) F] in
-theorem finiteDimensional_lSpace_zero_of_constantsAreBase (hC : ConstantsAreBase K F) :
-    FiniteDimensional K (LSpace (0 : Divisor K F)) := by
-  rw [show LSpace (0 : Divisor K F) = LinearMap.range (Algebra.linearMap K F) from hC]
-  exact LinearMap.finiteDimensional_range _
-
-variable [FiniteDimensional (RatFunc K) F] [Algebra.IsSeparable (RatFunc K) F]
-variable [IsCurveOver K F]
-
-omit [DecidableEq (RatFunc K)] in
-theorem stichtenothGenusExists (hC : ConstantsAreBase K F) :
-    StichtenothGenusExists K F := by
-  classical
-  exact
-    haveI := nonempty_place_of_ratFunc_tower K F
-    haveI := finiteDimensional_lSpace_zero_of_constantsAreBase K F hC
-    stichtenothGenusExists_of_ratFunc_tower_port K F
-
-omit [DecidableEq (RatFunc K)] in
-theorem indexOfSpecialtyFinite (hC : ConstantsAreBase K F) :
-    IndexOfSpecialtyFinite K F := by
-  classical
-  exact
-    indexOfSpecialtyFinite_of_stichtenothGenusExists (stichtenothGenusExists K F hC)
-
-omit [DecidableEq (RatFunc K)] in
-theorem riemannGenusBounded (hC : ConstantsAreBase K F) : RiemannGenusBounded K F := by
-  classical
-  exact
-    haveI := nonempty_place_of_ratFunc_tower K F
-    haveI := finiteDimensional_lSpace_zero_of_constantsAreBase K F hC
-    riemannGenusBounded_of_poleDivisorPackage (hasPoleDivisorPackage_of_ratFunc_tower K F).some
-
-end RationalFunctionField
-end AlgebraicCurve
-end
-
-p2m_open "AlgebraicCurve~Place.ord_nonneg_of_mem~Place.mem_of_ord_nonneg~Place.mem_iff_ord_nonneg\
-  " in
-open
-  _root_.P2MW.S_OVERLONG_f94f10e8.AlgebraicCurve
-  Polynomial in
 theorem solution (K : Type*) [Field K] (F : Type*) [Field F] [Algebra K F]
     [Algebra (RatFunc K) F] [IsScalarTower K (RatFunc K) F] [FiniteDimensional (RatFunc K) F]
     [Algebra.IsSeparable (RatFunc K) F] [IsCurveOver K F] [Nonempty (Place K F)]
     [FiniteDimensional K (LSpace (0 : Divisor K F))] :
-    StichtenothGenusExists K F := by
-  classical
-  exact
-    AlgebraicCurve.RationalFunctionField.stichtenothGenusExists_of_ratFunc_tower_port (K := K) (F :=
-        F)
-
-end S_OVERLONG_f94f10e8
-end P2MW
-export P2MW.S_OVERLONG_f94f10e8
-  (solution)
+    StichtenothGenusExists K F :=
+  RationalFunctionField.stichtenothGenusExists_of_ratFunc_tower_port (K := K) (F := F)
 
 end privateSection
 
 public section publicSection
 
 theorem AlgebraicCurve.RationalFunctionField.stichtenothGenusExists_of_ratFunc_tower (K : Type*)
-    [Field K]
-    (F : Type*) [Field F] [Algebra K F] [Algebra (RatFunc K) F]
+    [Field K] (F : Type*) [Field F] [Algebra K F] [Algebra (RatFunc K) F]
     [IsScalarTower K (RatFunc K) F] [FiniteDimensional (RatFunc K) F]
     [Algebra.IsSeparable (RatFunc K) F]
     [AlgebraicCurve.IsCurveOver K F] [Nonempty (AlgebraicCurve.Place K F)]
     [FiniteDimensional K (AlgebraicCurve.LSpace (0 : AlgebraicCurve.Divisor K F))] :
-    AlgebraicCurve.StichtenothGenusExists K F := by
-  classical
-  exact
-    solution K F
+    AlgebraicCurve.StichtenothGenusExists K F :=
+  solution K F
 
 end publicSection

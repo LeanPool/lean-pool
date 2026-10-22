@@ -73,7 +73,6 @@ section privateSection
 
 open AlgebraicCurve Place
 
-set_option backward.isDefEq.respectTransparency.types false
 
 namespace P2MW.S_AlgebraicCurve_Place_ord_restrictAlong_eq_natCard_algHom_of_isGalois
 

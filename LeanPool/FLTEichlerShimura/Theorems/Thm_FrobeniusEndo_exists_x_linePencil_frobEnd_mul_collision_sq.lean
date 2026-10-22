@@ -63,13 +63,12 @@ https://github.com/anthropics/fermats-last-theorem/blob/aa2d8b34692b16c70f699536
 
 section privateSection
 
-set_option backward.isDefEq.respectTransparency.types false
 
 namespace P2MW.S_FrobeniusEndo_exists_x_linePencil_frobEnd_mul_collision_sq
 
 open Polynomial
 open scoped Polynomial.Bivariate
-p2m_open "WeierstrassCurve~evalEval_ψ_sq~evalEval_φ WeierstrassCurve.Affine \
+p2m_open "WeierstrassCurve WeierstrassCurve.Affine \
   WeierstrassCurve.Affine.Point FrobeniusEndo"
 
 namespace FrobLineH3
@@ -542,8 +541,9 @@ variable {K : Type*} [Field K] (W : WeierstrassCurve K)
 
 lemma evalEval_eq_of_mk_eq {x y : K} (h : W.toAffine.Equation x y) {a b : K[X][Y]}
     (hab : CoordinateRing.mk W a = CoordinateRing.mk W b) : a.evalEval x y = b.evalEval x y := by
-  have e := congrArg (AdjoinRoot.evalEval (p := W.toAffine.polynomial) h) hab
-  rwa [AdjoinRoot.evalEval_mk, AdjoinRoot.evalEval_mk] at e
+  exact (AdjoinRoot.evalEval_mk h a).symm.trans
+    ((congrArg (AdjoinRoot.evalEval (p := W.toAffine.polynomial) h) hab).trans
+      (AdjoinRoot.evalEval_mk h b))
 
 lemma evalEval_eq_zero_of_mk_eq_zero {x y : K} (h : W.toAffine.Equation x y) {a : K[X][Y]}
     (ha : CoordinateRing.mk W a = 0) : a.evalEval x y = 0 := by
@@ -857,7 +857,7 @@ end Main
 
 end FrobLineH3
 
-p2m_open "WeierstrassCurve~evalEval_ψ_sq~evalEval_φ" in
+p2m_open "WeierstrassCurve" in
 open WeierstrassCurve.Affine WeierstrassCurve.Affine.Point FrobeniusEndo in
 theorem solution {R : Type*} [CommRing R] {F : Type*} [Field F] [Fintype F] {k : Type*} [Field k]
     [DecidableEq k] [Algebra R F] [Algebra R k] [Algebra F k] [IsScalarTower R F k] [IsAlgClosed k]

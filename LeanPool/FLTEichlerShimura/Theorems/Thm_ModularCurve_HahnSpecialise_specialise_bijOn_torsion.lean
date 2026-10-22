@@ -15,7 +15,6 @@ public import LeanPool.FLTEichlerShimura.Definitions.Def_ModularCurve_HahnSpecia
 
 import LeanPool.FLTEichlerShimura.Theorems.Thm_WeierstrassCurve_card_torsionBy_eq_sq_of_isAlgClosed
 import LeanPool.FLTEichlerShimura.Theorems.Thm_HahnSeries_isAlgClosed_rat
-import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
 
 /-!
 # Specialisation is bijective on N-torsion
@@ -59,24 +58,13 @@ https://github.com/anthropics/fermats-last-theorem/blob/aa2d8b34692b16c70f699536
 
 section privateSection
 
-set_option backward.isDefEq.respectTransparency.types false
-
-namespace P2MW.S_ModularCurve_HahnSpecialise_specialise_bijOn_torsion
-
 noncomputable section
 
-p2m_open "ModularCurve P2MW.S_ModularCurve_HahnSpecialise_specialise_bijOn_torsion.ModularCurve \
-  ModularCurve.B3 ModularCurve.HahnSpecialise \
-  P2MW.S_ModularCurve_HahnSpecialise_specialise_bijOn_torsion.ModularCurve.HahnSpecialise"
-open IsLocalRing
+open ModularCurve ModularCurve.B3 ModularCurve.HahnSpecialise IsLocalRing
 open ModularCurve.TatePoint (Qbar H CycSubH)
-open scoped Classical
 
 namespace ModularCurve
 namespace HahnSpecialise
-p2m_export "ModularCurve.HahnSpecialise" "valuationSubringH liftModel liftModel_map_subtype \
-  map_residue_Δ_ne_zero_of_specialFibre specialise specialise_injOn_nsmul_eq_zero"
-p2m_open "ModularCurve.HahnSpecialise ModularCurve"
 
 open ModularCurve.B3
 
@@ -109,6 +97,7 @@ theorem natCast_H_ne_zero {n : ℕ} (hn : n ≠ 0) : (n : H) ≠ 0 := by
       HahnSeries.coeff_single_same]] at this
   exact (Nat.cast_ne_zero.mpr hn) this
 
+open scoped Classical in
 def specialiseTorsion (E : WeierstrassCurve H) (hE : IntegralCoeffs E)
     (hΔ : (specialFibre E).Δ ≠ 0) (N : ℕ) :
     Submodule.torsionBy ℤ E.toAffine.Point (N : ℤ) →
@@ -130,6 +119,7 @@ theorem mem_torsionBy_of_nsmul_eq_zero {M : Type*} [AddCommGroup M] {N : ℕ} {x
 theorem specialiseTorsion_injective (E : WeierstrassCurve H) (hE : IntegralCoeffs E)
     (hΔ : (specialFibre E).Δ ≠ 0) {N : ℕ} (hN : N ≠ 0) :
     Function.Injective (specialiseTorsion E hE hΔ N) := by
+  classical
   intro P Q h
   apply Subtype.ext
   exact specialise_injOn_nsmul_eq_zero E hE hΔ hN (nsmul_eq_zero_of_mem_torsionBy P.2)
@@ -138,6 +128,7 @@ theorem specialiseTorsion_injective (E : WeierstrassCurve H) (hE : IntegralCoeff
 theorem specialiseTorsion_bijective (E : WeierstrassCurve H) (hE : IntegralCoeffs E)
     (hΔ : (specialFibre E).Δ ≠ 0) {N : ℕ} (hN : N ≠ 0) :
     Function.Bijective (specialiseTorsion E hE hΔ N) := by
+  classical
   have : IsAlgClosed H := HahnSeries.isAlgClosed_rat
   have : E.IsElliptic := isElliptic_of_specialFibre E hE hΔ
   have : (specialFibre E).IsElliptic := isElliptic_specialFibre E hΔ
@@ -152,6 +143,7 @@ theorem specialiseTorsion_bijective (E : WeierstrassCurve H) (hE : IntegralCoeff
 
 end ModularCurve.HahnSpecialise
 
+open scoped Classical in
 theorem solution (E : WeierstrassCurve H) (hE : IntegralCoeffs E)
     (hΔ : (specialFibre E).Δ ≠ 0) (N : ℕ) [NeZero N] :
     Set.BijOn (specialise E hE hΔ) {P | N • P = 0} {Q | N • Q = 0} := by
@@ -167,18 +159,14 @@ theorem solution (E : WeierstrassCurve H) (hE : IntegralCoeffs E)
 
 end
 
-end S_ModularCurve_HahnSpecialise_specialise_bijOn_torsion
-end P2MW
-export P2MW.S_ModularCurve_HahnSpecialise_specialise_bijOn_torsion (solution)
-
 end privateSection
 
 public section publicSection
 
-
 open ModularCurve ModularCurve.B3 ModularCurve.HahnSpecialise
 open ModularCurve.TatePoint (Qbar H CycSubH)
-open scoped Classical
+
+open scoped Classical in
 theorem ModularCurve.HahnSpecialise.specialise_bijOn_torsion (E : WeierstrassCurve H)
     (hE : IntegralCoeffs E)
     (hΔ : (specialFibre E).Δ ≠ 0) (N : ℕ) [NeZero N] :

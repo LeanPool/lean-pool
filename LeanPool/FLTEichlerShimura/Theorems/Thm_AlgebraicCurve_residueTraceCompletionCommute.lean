@@ -64,7 +64,6 @@ https://github.com/anthropics/fermats-last-theorem/blob/aa2d8b34692b16c70f699536
 
 section privateSection
 
-set_option backward.isDefEq.respectTransparency.types false
 
 namespace P2MW.S_AlgebraicCurve_residueTraceCompletionCommute
 
@@ -169,8 +168,7 @@ end
 noncomputable section
 
 p2m_open "IsDedekindDomain P2MW.S_AlgebraicCurve_residueTraceCompletionCommute.IsDedekindDomain \
-  WithZero P2MW.S_AlgebraicCurve_residueTraceCompletionCommute.WithZero IsLocalRing \
-  P2MW.S_AlgebraicCurve_residueTraceCompletionCommute.IsLocalRing"
+  WithZero IsLocalRing"
 
 namespace AlgebraicCurve
 p2m_export "AlgebraicCurve" "Place Divisor HasPrincipalDivisors Pic0 IsCurveOver diagonalHom_apply \
@@ -219,8 +217,7 @@ end
 noncomputable section
 
 p2m_open "IsDedekindDomain P2MW.S_AlgebraicCurve_residueTraceCompletionCommute.IsDedekindDomain \
-  WithZero P2MW.S_AlgebraicCurve_residueTraceCompletionCommute.WithZero IsLocalRing \
-  P2MW.S_AlgebraicCurve_residueTraceCompletionCommute.IsLocalRing"
+  WithZero IsLocalRing"
 
 namespace AlgebraicCurve
 p2m_export "AlgebraicCurve" "Place Divisor HasPrincipalDivisors Pic0 IsCurveOver diagonalHom_apply \
@@ -316,8 +313,7 @@ noncomputable section
 p2m_open "IsDedekindDomain P2MW.S_AlgebraicCurve_residueTraceCompletionCommute.IsDedekindDomain \
   IsDedekindDomain.HeightOneSpectrum \
   P2MW.S_AlgebraicCurve_residueTraceCompletionCommute.IsDedekindDomain.HeightOneSpectrum \
-  IsLocalRing P2MW.S_AlgebraicCurve_residueTraceCompletionCommute.IsLocalRing WithZero \
-  P2MW.S_AlgebraicCurve_residueTraceCompletionCommute.WithZero MonoidWithZeroHom \
+  IsLocalRing WithZero MonoidWithZeroHom \
   P2MW.S_AlgebraicCurve_residueTraceCompletionCommute.MonoidWithZeroHom"
 
 namespace AlgebraicCurve
@@ -346,8 +342,7 @@ section
 noncomputable section
 
 p2m_open "Polynomial P2MW.S_AlgebraicCurve_residueTraceCompletionCommute.Polynomial IsLocalRing \
-  P2MW.S_AlgebraicCurve_residueTraceCompletionCommute.IsLocalRing IsDedekindDomain \
-  P2MW.S_AlgebraicCurve_residueTraceCompletionCommute.IsDedekindDomain"
+  IsDedekindDomain P2MW.S_AlgebraicCurve_residueTraceCompletionCommute.IsDedekindDomain"
 
 namespace AlgebraicCurve
 p2m_export "AlgebraicCurve" "Place Divisor HasPrincipalDivisors Pic0 IsCurveOver diagonalHom_apply \
@@ -377,11 +372,9 @@ noncomputable section
 p2m_open "IsDedekindDomain P2MW.S_AlgebraicCurve_residueTraceCompletionCommute.IsDedekindDomain \
   IsDedekindDomain.HeightOneSpectrum \
   P2MW.S_AlgebraicCurve_residueTraceCompletionCommute.IsDedekindDomain.HeightOneSpectrum \
-  IsLocalRing P2MW.S_AlgebraicCurve_residueTraceCompletionCommute.IsLocalRing WithZero \
-  P2MW.S_AlgebraicCurve_residueTraceCompletionCommute.WithZero"
+  IsLocalRing WithZero"
 
-p2m_open_scoped "Valued P2MW.S_AlgebraicCurve_residueTraceCompletionCommute.Valued WithZero \
-  P2MW.S_AlgebraicCurve_residueTraceCompletionCommute.WithZero"
+p2m_open_scoped "Valued P2MW.S_AlgebraicCurve_residueTraceCompletionCommute.Valued WithZero"
 
 namespace AlgebraicCurve
 p2m_export "AlgebraicCurve" "Place Divisor HasPrincipalDivisors Pic0 IsCurveOver diagonalHom_apply \
@@ -457,7 +450,7 @@ end
 noncomputable section
 
 p2m_open "IsDedekindDomain P2MW.S_AlgebraicCurve_residueTraceCompletionCommute.IsDedekindDomain \
-  WithZero P2MW.S_AlgebraicCurve_residueTraceCompletionCommute.WithZero"
+  WithZero"
 
 namespace AlgebraicCurve
 p2m_export "AlgebraicCurve" "Place Divisor HasPrincipalDivisors Pic0 IsCurveOver diagonalHom_apply \
@@ -479,9 +472,7 @@ section
 noncomputable section
 
 p2m_open "IsDedekindDomain P2MW.S_AlgebraicCurve_residueTraceCompletionCommute.IsDedekindDomain \
-  WithZero P2MW.S_AlgebraicCurve_residueTraceCompletionCommute.WithZero Module \
-  P2MW.S_AlgebraicCurve_residueTraceCompletionCommute.Module IsLocalRing \
-  P2MW.S_AlgebraicCurve_residueTraceCompletionCommute.IsLocalRing Module.IsLocalRing"
+  WithZero Module IsLocalRing Module.IsLocalRing"
 
 namespace AlgebraicCurve
 p2m_export "AlgebraicCurve" "Place Divisor HasPrincipalDivisors Pic0 IsCurveOver diagonalHom_apply \
@@ -506,9 +497,8 @@ section
 
 
 p2m_open "AlgebraicCurve P2MW.S_AlgebraicCurve_residueTraceCompletionCommute.AlgebraicCurve \
-  P2MW.S_AlgebraicCurve_residueTraceCompletionCommute.ModularCurve.GF24a9RRDx AlgebraicCurve.Place \
-  P2MW.S_AlgebraicCurve_residueTraceCompletionCommute.AlgebraicCurve.Place IsDedekindDomain \
-  P2MW.S_AlgebraicCurve_residueTraceCompletionCommute.IsDedekindDomain"
+  AlgebraicCurve.Place P2MW.S_AlgebraicCurve_residueTraceCompletionCommute.AlgebraicCurve.Place \
+  IsDedekindDomain P2MW.S_AlgebraicCurve_residueTraceCompletionCommute.IsDedekindDomain"
 
 noncomputable section
 
@@ -588,8 +578,7 @@ section
 
 
 p2m_open "AlgebraicCurve P2MW.S_AlgebraicCurve_residueTraceCompletionCommute.AlgebraicCurve \
-  AlgebraicCurve.Place P2MW.S_AlgebraicCurve_residueTraceCompletionCommute.AlgebraicCurve.Place \
-  P2MW.S_AlgebraicCurve_residueTraceCompletionCommute.ModularCurve.GF24a9RRDx"
+  AlgebraicCurve.Place P2MW.S_AlgebraicCurve_residueTraceCompletionCommute.AlgebraicCurve.Place"
 p2m_open "ModularCurve.KwF4R1V391a \
   P2MW.S_AlgebraicCurve_residueTraceCompletionCommute.ModularCurve.KwF4R1V391a \
   ModularCurve.KwF4gRRTate \

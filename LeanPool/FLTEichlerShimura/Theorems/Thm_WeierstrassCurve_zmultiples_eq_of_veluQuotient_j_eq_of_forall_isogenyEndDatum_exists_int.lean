@@ -36,7 +36,6 @@ import LeanPool.FLTEichlerShimura.Theorems.Thm_WeierstrassCurve_Affine_pointMapO
 import LeanPool.FLTEichlerShimura.Theorems.Thm_WeierstrassCurve_card_torsionBy_eq_sq_of_isAlgClosed
 import LeanPool.FLTEichlerShimura.Theorems.Thm_WeierstrassCurve_exists_veluFunctionFieldHom_pointMapOfPushforward_ker_eq_zmultiples
 import LeanPool.FLTEichlerShimura.Theorems.Thm_WeierstrassCurve_nonempty_functionField_algEquiv_of_variableChange
-import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
 
 /-!
 # Equal j of Vélu quotients forces equal cyclic subgroups
@@ -83,11 +82,6 @@ https://github.com/anthropics/fermats-last-theorem/blob/aa2d8b34692b16c70f699536
 
 
 section privateSection
-
-set_option backward.isDefEq.respectTransparency.types false
-
-namespace P2MW.S_OVERLONG_9421e021
-
 
 noncomputable section
 
@@ -141,21 +135,8 @@ theorem cmm5_dp_natCard_ker_comp {A B C : Type*} [AddCommGroup A] [AddCommGroup 
 end ModularCurve
 
 namespace WeierstrassCurve
-p2m_export "WeierstrassCurve" "Affine map exists_variableChange_of_j_eq IsIntegral toAffine \
-  Affine.Point Δ j veluQuotient oddOrderSummingSet \
-  exists_veluFunctionFieldHom_pointMapOfPushforward_ker_eq_zmultiples \
-  Affine.Point.exists_zsmul_eq_of_isAlgClosed card_torsionBy_eq_sq_of_isAlgClosed \
-  nonempty_functionField_algEquiv_of_variableChange"
+
 namespace Affine
-p2m_export "WeierstrassCurve.Affine" "CoordinateRing map FunctionField Point pointMapOfPushforward \
-  pointMapOfPushforward_apply IsogenyEndDatum IsogenyHomDatum IsogenyHomDatum.ofEndDatum \
-  GenusOnePlaceGate pointClass AbelTheorem genusOnePic0Equiv genusOnePic0Equiv_symm_apply \
-  GenusOnePlaceGate.IsCentred IsogenyHomDatum.exists_pointHom_comp_eq_of_ker_le_of_isCentred \
-  natCard_ker_pointMapOfPushforward_eq_finrankAlong pointMapOfPushforward_surjective \
-  Point.exists_zsmul_eq_of_isAlgClosed IsogenyEndDatum.exists_pointEnd_eq_of_mem_isogenyEndSubring \
-  exists_genusOnePlaceGate_isCentred_and_abelTheorem CoordinateRing.isDedekindDomain \
-  hasPrincipalDivisors_functionField"
-p2m_open "WeierstrassCurve.Affine~pointHom WeierstrassCurve"
 
 open AlgebraicCurve
 
@@ -369,15 +350,12 @@ theorem pointMapOfPushforward_injective_of_bijective
 
 end IsoInjective
 
-end WeierstrassCurve.Affine
+end Affine
+end WeierstrassCurve
 
 namespace ModularCurve
 
-p2m_open "WeierstrassCurve \
-  P2MW.S_OVERLONG_9421e021.W\
-  eierstrassCurve WeierstrassCurve.Affine~pointHom \
-  P2MW.S_OVERLONG_9421e021.W\
-  eierstrassCurve.Affine AlgebraicCurve"
+open WeierstrassCurve WeierstrassCurve.Affine AlgebraicCurve
 
 universe u
 
@@ -561,12 +539,7 @@ theorem kw_veluOddQuotientJInjOnCyclic_of_isogenyEndInt
 end ModularCurve
 end
 
-p2m_open "WeierstrassCurve.Affine~pointHom\
-  " in
-open _root_.WeierstrassCurve
-  _root_.P2MW.S_OVERLONG_9421e021.WeierstrassCurve
-  _root_.P2MW.S_OVERLONG_9421e021.WeierstrassCurve.Affine
-  AlgebraicCurve in
+open WeierstrassCurve.Affine WeierstrassCurve AlgebraicCurve in
 theorem solution
     [DecidableEq (HahnSeries ℚ (AlgebraicClosure ℚ))] [CharZero (HahnSeries ℚ (AlgebraicClosure ℚ))]
     [IsAlgClosed (HahnSeries ℚ (AlgebraicClosure ℚ))]
@@ -588,12 +561,6 @@ theorem solution
         n)).j) :
     AddSubgroup.zmultiples Q = AddSubgroup.zmultiples Q' :=
   ModularCurve.kw_veluOddQuotientJInjOnCyclic_of_isogenyEndInt W hNs hEnd n Q Q' hQ hQ' hΔ hΔ' hj
-
-end S_OVERLONG_9421e021
-end P2MW
-export
-  P2MW.S_OVERLONG_9421e021
-  (solution)
 
 end privateSection
 

@@ -57,13 +57,11 @@ https://github.com/anthropics/fermats-last-theorem/blob/aa2d8b34692b16c70f699536
 
 section privateSection
 
-set_option backward.isDefEq.respectTransparency.types false
 
 namespace P2MW.S_KaehlerDifferential_span_D_eq_top_of_transcendental
 
 noncomputable section
-p2m_open "Polynomial KaehlerDifferential \
-  P2MW.S_KaehlerDifferential_span_D_eq_top_of_transcendental.KaehlerDifferential"
+p2m_open "Polynomial KaehlerDifferential"
 
 namespace KaehlerDifferential
 p2m_export "KaehlerDifferential" "tensorKaehlerEquivOfFormallyEtale polynomialEquiv \

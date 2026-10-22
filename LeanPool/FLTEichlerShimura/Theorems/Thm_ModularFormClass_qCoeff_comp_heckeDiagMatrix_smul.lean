@@ -56,12 +56,10 @@ https://github.com/anthropics/fermats-last-theorem/blob/aa2d8b34692b16c70f699536
 
 section privateSection
 
-set_option backward.isDefEq.respectTransparency.types false
 
 namespace P2MW.S_ModularFormClass_qCoeff_comp_heckeDiagMatrix_smul
 
-p2m_open "Complex Filter Function UpperHalfPlane \
-  P2MW.S_ModularFormClass_qCoeff_comp_heckeDiagMatrix_smul.UpperHalfPlane ModularForm"
+p2m_open "Complex Filter Function UpperHalfPlane ModularForm"
 open scoped Real MatrixGroups Topology Manifold ModularForm
 
 noncomputable section

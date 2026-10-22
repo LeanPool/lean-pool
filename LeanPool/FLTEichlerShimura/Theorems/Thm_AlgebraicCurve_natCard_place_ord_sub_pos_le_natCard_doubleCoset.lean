@@ -60,12 +60,10 @@ https://github.com/anthropics/fermats-last-theorem/blob/aa2d8b34692b16c70f699536
 
 section privateSection
 
-set_option backward.isDefEq.respectTransparency.types false
 
 namespace P2MW.S_AlgebraicCurve_natCard_place_ord_sub_pos_le_natCard_doubleCoset
 
-p2m_open "AlgebraicCurve \
-  P2MW.S_AlgebraicCurve_natCard_place_ord_sub_pos_le_natCard_doubleCoset.AlgebraicCurve"
+p2m_open "AlgebraicCurve"
 open scoped IntermediateField
 
 namespace AlgebraicCurve

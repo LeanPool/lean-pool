@@ -58,7 +58,6 @@ https://github.com/anthropics/fermats-last-theorem/blob/aa2d8b34692b16c70f699536
 
 section privateSection
 
-set_option backward.isDefEq.respectTransparency.types false
 
 namespace P2MW.S_ModularCurve_exists_sl2_heckeDiagMatrix_smul_eq
 
@@ -85,13 +84,16 @@ private def conjSL {p : ℕ} (g : SL(2, ℤ)) (e : ℤ) (he : g 1 0 = p * e) : S
 private theorem heckeDiagMatrix_mul_mapGL {p : ℕ} (hp : p ≠ 0) (g : SL(2, ℤ)) (e : ℤ)
     (he : g 1 0 = p * e) :
     heckeDiagMatrix p * mapGL ℝ g = mapGL ℝ (conjSL g e he) * heckeDiagMatrix p := by
+  apply Units.ext
+  simp only [Units.val_mul, mapGL_coe_matrix, map_apply_coe]
+  dsimp only [conjSL]
   ext i j
   fin_cases i <;> fin_cases j <;>
-    simp only [Fin.zero_eta, Fin.isValue, Units.val_mul, ne_eq, hp, not_false_eq_true,
-      val_heckeDiagMatrix, mapGL_coe_matrix, algebraMap_int_eq, map_apply_coe,
+    simp only [Fin.zero_eta, Fin.isValue, ne_eq, hp, not_false_eq_true,
+      val_heckeDiagMatrix, algebraMap_int_eq,
       RingHom.mapMatrix_apply, Int.coe_castRingHom, Matrix.mul_apply, Matrix.of_apply,
       Matrix.cons_val', Matrix.cons_val_fin_one, Matrix.cons_val_zero, Matrix.map_apply,
-      Fin.sum_univ_two, Matrix.cons_val_one, zero_mul, add_zero, conjSL, Int.cast_mul,
+      Fin.sum_univ_two, Matrix.cons_val_one, zero_mul, add_zero, Int.cast_mul,
       Int.cast_natCast, mul_zero, Fin.mk_one, mul_one, zero_add, one_mul]
   all_goals first
     | (have := congrArg (Int.cast : ℤ → ℝ) he; push_cast at this ⊢; linear_combination this)

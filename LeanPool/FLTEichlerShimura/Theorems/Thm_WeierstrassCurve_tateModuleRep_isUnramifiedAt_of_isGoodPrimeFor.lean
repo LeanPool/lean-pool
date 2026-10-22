@@ -58,13 +58,10 @@ https://github.com/anthropics/fermats-last-theorem/blob/aa2d8b34692b16c70f699536
 
 section privateSection
 
-set_option backward.isDefEq.respectTransparency.types false
 
 namespace P2MW.S_WeierstrassCurve_tateModuleRep_isUnramifiedAt_of_isGoodPrimeFor
 
-p2m_open "WeierstrassCurve \
-  P2MW.S_WeierstrassCurve_tateModuleRep_isUnramifiedAt_of_isGoodPrimeFor.WeierstrassCurve \
-  WeierstrassCurve.Affine WeierstrassCurve.Affine.Point"
+p2m_open "WeierstrassCurve WeierstrassCurve.Affine WeierstrassCurve.Affine.Point"
 
 noncomputable section
 

@@ -74,16 +74,13 @@ section privateSection
 
 open AlgebraicCurve Place
 
-set_option backward.isDefEq.respectTransparency.types false
 
 namespace P2MW.S_ModularCurve_nonempty_equiv_place_pos_ord_algHom_integralClosure
 
 
 noncomputable section
 
-p2m_open "AlgebraicCurve ModularCurve \
-  P2MW.S_ModularCurve_nonempty_equiv_place_pos_ord_algHom_integralClosure.ModularCurve \
-  IsDedekindDomain"
+p2m_open "AlgebraicCurve ModularCurve IsDedekindDomain"
 
 namespace B2Places
 
@@ -250,8 +247,9 @@ theorem mem_center_iff_evalHom_eq_zero (w : Place K F) (hrat : w.IsRational)
     (ht : t ∈ w.toValuationSubring) (r : normalization K t) :
     r ∈ Place.center (normalization K t) w (forall_mem_of_mem t w ht) ↔
       evalHom t w hrat ht r = 0 := by
-  rw [Place.mem_center_iff, evalHom_eq_iff, map_zero, sub_zero]
-  rfl
+  change (⟨(r : F), forall_mem_of_mem t w ht r⟩ : w.toValuationSubring) ∈
+    IsLocalRing.maximalIdeal w.toValuationSubring ↔ _
+  rw [evalHom_eq_iff, map_zero, sub_zero]
 
 theorem eq_of_evalHom_eq {w₁ w₂ : Place K F} (h₁ : w₁.IsRational) (h₂ : w₂.IsRational)
     (ht₁ : t ∈ w₁.toValuationSubring) (ht₂ : t ∈ w₂.toValuationSubring)
@@ -509,7 +507,7 @@ public section publicSection
 
 
 open AlgebraicCurve ModularCurve
-set_option maxSynthPendingDepth 3
+
 theorem ModularCurve.nonempty_equiv_place_pos_ord_algHom_integralClosure (N : ℕ) [NeZero N]
     (j₀ : AlgebraicClosure ℚ)
     (hdeg : ∀ w : Place (AlgebraicClosure ℚ) (modularFunctionFieldBar N), w.deg = 1) :

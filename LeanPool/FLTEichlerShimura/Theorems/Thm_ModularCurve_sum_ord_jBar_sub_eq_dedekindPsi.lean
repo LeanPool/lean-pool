@@ -71,7 +71,6 @@ https://github.com/anthropics/fermats-last-theorem/blob/aa2d8b34692b16c70f699536
 
 section privateSection
 
-set_option backward.isDefEq.respectTransparency.types false
 
 open AlgebraicCurve Place
 
@@ -79,8 +78,7 @@ namespace P2MW.S_ModularCurve_sum_ord_jBar_sub_eq_dedekindPsi
 
 noncomputable section
 
-p2m_open "AlgebraicCurve ModularCurve \
-  P2MW.S_ModularCurve_sum_ord_jBar_sub_eq_dedekindPsi.ModularCurve IsDedekindDomain WithZero"
+p2m_open "AlgebraicCurve ModularCurve IsDedekindDomain WithZero"
 
 namespace B2Peo3
 

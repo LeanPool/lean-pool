@@ -69,7 +69,6 @@ https://github.com/anthropics/fermats-last-theorem/blob/aa2d8b34692b16c70f699536
 
 section privateSection
 
-set_option backward.isDefEq.respectTransparency.types false
 
 namespace P2MW.S_NumberField_exists_isFrobenius_lift_arithFrobAt
 
@@ -223,9 +222,8 @@ theorem solution
     have hcint : IsIntegral ℤ c := IsIntegral.of_pow hℓ.pos (by rw [hc]; exact b.2)
     refine ⟨Ideal.Quotient.mk Qt ⟨c, hcint⟩, ?_⟩
     change (Ideal.Quotient.mk Qt ⟨c, hcint⟩) ^ ℓ = _
-    rw [← map_pow]
-    congr 1
-    exact Subtype.ext hc
+    exact (map_pow (Ideal.Quotient.mk Qt) (⟨c, hcint⟩ : 𝓞 ℚ̄) ℓ).symm.trans
+      (congrArg (Ideal.Quotient.mk Qt) (Subtype.ext hc))
   have hle : ∀ τ : Γℚ, (∀ x : 𝓞 ℚ̄, τ • x ∈ Qt ↔ x ∈ Qt) →
       Qt ≤ Qt.comap (MulSemiringAction.toRingHom Γℚ (𝓞 ℚ̄) τ) := fun τ h x hx => (h x).mpr hx
   have hstab₁' : ∀ x : 𝓞 ℚ̄, τ₁⁻¹ • x ∈ Qt ↔ x ∈ Qt := fun x => by
