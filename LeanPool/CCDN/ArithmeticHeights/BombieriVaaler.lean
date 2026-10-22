@@ -110,9 +110,9 @@ E. Bombieri and J. Vaaler, "On Siegel's lemma", *Inventiones Mathematicae* **73*
 Theorems 1 and 2, and equation (2.5) for the invariance.
 
 I. Aliev and M. Henk, "Minkowski's successive minima in convex and discrete geometry",
-*Communications in Mathematics* **31** (2023), no. 2, 35–59,
-[arXiv:2304.00120](https://arxiv.org/abs/2304.00120), §6, Theorems 6.2–6.3, for the
-adele-free assembly and the rational kernel-lattice covolume identity.
+*Communications in Mathematics* **31**(2) (2023), 35–59, §6, Theorems 6.2–6.3
+(arXiv:2304.00120; doi:10.46298/cm.11155). This section gives an adele-free proof using
+the rational covolume identity stated before Theorem 6.3.
 
 E. Bombieri and W. Gubler, *Heights in Diophantine Geometry*, Cambridge University Press (2006),
 Theorem 2.9.4 and Remark 2.9.5 for the number-field statement this is the `K = ℚ` case of.
@@ -522,8 +522,8 @@ theorem exists_linearIndependent_mulVec_eq_zero_prod_mulHeight_le (A : _root_.Ma
   · have hne : Nonempty ι := Fintype.card_pos_iff.1 (by have := l.isLt; omega)
     exact Rat.mulHeight_intCast_le (hxind.ne_zero l)
 
-/-- **Bombieri–Vaaler's Theorem 1** (Bombieri–Vaaler 1983, Theorem 1;
-a consequence of Aliev–Henk 2023, §6, Theorem 6.2).
+/-- **Bombieri–Vaaler's Theorem 1** (Bombieri–Vaaler 1983, Theorem 1; also a one-vector
+consequence of the product bound in Aliev–Henk 2023, §6, Theorem 6.2).
 For an `M × N` integer matrix with linearly independent rows and `M < N` there is a nonzero
 integral solution of `A x = 0` with sup norm at most `(D⁻¹ √(det (A Aᵀ)))^{1/(N - M)}`.
 
