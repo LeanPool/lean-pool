@@ -687,7 +687,7 @@ theorem common_finite_purification_pair_jensen
             finitePurificationMatrix F anchor positive hanchor meanIndex).conjTranspose *
           (finitePurificationMatrix F anchor positive hanchor (choose a) -
             finitePurificationMatrix F anchor positive hanchor meanIndex)))).PosSemidef
-  simp_rw [hpair]
+  simp only [hpair]
   exact hlocal
 
 theorem commonFinitePurification_weighted_left_variation_le
@@ -1232,7 +1232,7 @@ theorem exactRevealMass_sum
   classical
   unfold exactRevealMass
   rw [Finset.sum_comm]
-  simp_rw [Fintype.sum_ite_eq]
+  simp only [Fintype.sum_ite_eq]
   exact exactPriorQuestionWeight_sum G n
 
 /-- The total probability mass of exact alice question. -/
@@ -2646,7 +2646,7 @@ theorem sum_positive_difference_eq_totalVariation
   have hzero : (∑ i, (p i - q i)) = 0 := by
     rw [Finset.sum_sub_distrib, hp, hq, sub_self]
   unfold finiteTotalVariation
-  simp_rw [hpoint]
+  simp only [hpoint]
   rw [← Finset.sum_div, Finset.sum_add_distrib, hzero, add_zero]
 
 theorem finiteTotalVariation_comm
@@ -2974,8 +2974,7 @@ theorem weighted_rpow_mean_le
     (∑ i, weight i * value i ^ r) ≤
       (∑ i, weight i * value i) ^ r := by
   classical
-  simpa only [smul_eq_mul] using
-    (Real.concaveOn_rpow hrzero hrone).le_map_sum
+  exact (Real.concaveOn_rpow hrzero hrone).le_map_sum
       (t := Finset.univ)
       (w := weight)
       (p := value)
@@ -3192,7 +3191,7 @@ private theorem fullCoordinateInsertedHistory_weight
         ((fullCoordinateInsertedHistory D L i r x y).bobRemaining j)) = _
   rw [finsetSubtype_prod_insert D i hiD]
   rw [hremaining]
-  simp_rw [hpair]
+  simp only [hpair]
   simp only [fullCoordinateInsertedHistory, fullCoordinateAnswerExtension, ↓reduceDIte,
     univ_eq_attach]
   ac_rfl
@@ -4644,7 +4643,7 @@ theorem sourceHistoryAcceptedMass_eq_remaining_average
   rw [sourceHistoryAcceptedMass_eq_uniform]
   have hperm := sourceRemainingPermutation_card_pos D
   unfold sourceUniformPermutationAverage
-  simp_rw [sourceRemainingPermutationCoordinate_sum D _
+  simp only [sourceRemainingPermutationCoordinate_sum D _
     (fun i : Fin n =>
       (strategyEventLaw (G.repeat n) S).eventMass
         (FiniteEventLaw.winEvent (repeatedCoordinateWin G n)
@@ -4934,9 +4933,9 @@ theorem localQuestionWeight_sum
         ∑ x : X, ∑ y : Y, G.questionWeight x y) /
         (Fintype.card (SourceRemainingCoordinate D) : ℝ) := by
       simp only [localQuestionWeight, Fintype.sum_prod_type]
-      simp_rw [← Finset.sum_div]
+      simp only [← Finset.sum_div]
     _ = 1 := by
-      simp_rw [G.weight_normalized]
+      simp only [G.weight_normalized]
       simp only [Finset.sum_const, Finset.card_univ,
         nsmul_eq_mul, mul_one]
       exact div_self hcard
@@ -5188,7 +5187,7 @@ theorem uniformFlagReference_sum
       uniformFlagReference (Z := Z) prior t) = 1 := by
   rw [Fintype.sum_prod_type]
   unfold uniformFlagReference
-  simp_rw [← Finset.mul_sum,
+  simp only [← Finset.mul_sum,
     finiteUniformWeight_sum positive, mul_one]
   exact normalized
 
@@ -5688,7 +5687,7 @@ theorem exactPostselectedJointLaw_sum
         exactSeedWeight seed *
           (∑ outcome : ExactOutcome X Y A B n,
             repeatedConditionedOutcomeLaw G n S D outcome) := by
-          simp_rw [Finset.mul_sum]
+          simp only [Finset.mul_sum]
     _ = ∑ seed : ExactRemainingSeed D,
         exactSeedWeight seed := by
           rw [hconditional_sum]
@@ -5837,7 +5836,7 @@ theorem exactLocallySampleableLaw_eq_zero_of_question_zero
   have hprod :
       (∏ j : Fin n,
         G.questionWeight (q.2.1 j) (q.2.2.1 j)) = 0 := by
-    simpa only [Game.repeat_questionWeight] using hproduct
+    exact hproduct
   simp only [exactPostselectedJointLaw, repeatedConditionedOutcomeLaw,
     conditionedEventDistribution, strategyEventLaw, Game.repeat_questionWeight, hprod, zero_mul,
     zero_div, ite_self, mul_zero]
@@ -6129,7 +6128,7 @@ theorem exactLocallySampleableJA_sum
         (Fintype.card (SourceRemainingCoordinate D) : ℝ) := by
       simp only [exactLocallySampleableJA,
         Fintype.sum_prod_type]
-      simp_rw [← Finset.sum_div]
+      simp only [← Finset.sum_div]
       refine congrArg₂ (· / ·) ?_ rfl
       apply Finset.sum_congr rfl
       intro i _
@@ -6141,9 +6140,9 @@ theorem exactLocallySampleableJA_sum
     _ = (∑ i : SourceRemainingCoordinate D,
         ∑ x : X, ∑ y : Y, G.questionWeight x y) /
         (Fintype.card (SourceRemainingCoordinate D) : ℝ) := by
-      simp_rw [exactAliceLocalConditional_sum, mul_one]
+      simp only [exactAliceLocalConditional_sum, mul_one]
     _ = 1 := by
-      simp_rw [G.weight_normalized]
+      simp only [G.weight_normalized]
       simp only [Finset.sum_const, Finset.card_univ,
         nsmul_eq_mul, mul_one]
       exact div_self hcard
@@ -6171,7 +6170,7 @@ theorem exactLocallySampleableJB_sum
         (Fintype.card (SourceRemainingCoordinate D) : ℝ) := by
       simp only [exactLocallySampleableJB,
         Fintype.sum_prod_type]
-      simp_rw [← Finset.sum_div]
+      simp only [← Finset.sum_div]
       refine congrArg₂ (· / ·) ?_ rfl
       apply Finset.sum_congr rfl
       intro i _
@@ -6183,9 +6182,9 @@ theorem exactLocallySampleableJB_sum
     _ = (∑ i : SourceRemainingCoordinate D,
         ∑ x : X, ∑ y : Y, G.questionWeight x y) /
         (Fintype.card (SourceRemainingCoordinate D) : ℝ) := by
-      simp_rw [exactBobLocalConditional_sum, mul_one]
+      simp only [exactBobLocalConditional_sum, mul_one]
     _ = 1 := by
-      simp_rw [G.weight_normalized]
+      simp only [G.weight_normalized]
       simp only [Finset.sum_const, Finset.card_univ,
         nsmul_eq_mul, mul_one]
       exact div_self hcard
@@ -6480,7 +6479,7 @@ private theorem exactFiber_born_of_rank_one
   simp only [map_sum, LinearMap.sum_apply,
     map_smul, LinearMap.smul_apply, smul_eq_mul,
     exactConditionalQuestionWeight]
-  simp_rw [Finset.mul_sum]
+  simp only [Finset.mul_sum]
   rw [Finset.sum_comm]
   apply Finset.sum_congr rfl
   intro xs _

@@ -543,7 +543,7 @@ theorem unconditionalWeightedClippedMatchedVerifierAndMassLoss
       by_cases zero : weight i = 0
       · simp only [zero, zero_mul]
       · congr 1
-        simp_rw [supported_born i zero]
+        simp only [supported_born i zero]
         rw [Finset.sum_mul]
     rw [born]
     have lost_mass :
@@ -905,7 +905,7 @@ theorem unconditionalFairPhysicalFlaggedStoppingTransfer
                   j.succ j.succ)) := by
     simp only [p, flaggedQuestionWeight, stop,
       Fintype.sum_prod_type]
-    simp_rw [Finset.mul_sum]
+    simp only [Finset.mul_sum]
     refine Finset.sum_congr rfl fun flag _ => ?_
     refine Finset.sum_congr rfl fun x _ => ?_
     refine Finset.sum_congr rfl fun y _ => ?_
@@ -1012,7 +1012,7 @@ private theorem unconditionalActualLocalPOVMWinningEffect_add_losingEffect
       ext ⟨i, j⟩ ⟨k, l⟩
       simp only [Matrix.sum_apply, Matrix.kroneckerMap_apply]
       rw [Finset.sum_mul]
-      simp_rw [Finset.mul_sum]
+      simp only [Finset.mul_sum]
     _ = 1 := by
       rw [PA.complete, PB.complete]
       exact Matrix.one_kronecker_one
@@ -1475,7 +1475,7 @@ theorem unconditionalActualFairCleanedRow_eq_stoppedSuccess
         Q width schedule ξ ζ A C j‖ ^ 2) =
       dSVDensityRationalHeterogeneousPhysicalStoppedSuccessMass
         N width schedule ξ ζ := by
-  simp_rw [unconditionalActualFairCleanedVector_norm_sq
+  simp only [unconditionalActualFairCleanedVector_norm_sq
     phases grid dimension harmonic width width_positive schedule ξ ζ Q A C]
   unfold dSVDensityRationalHeterogeneousPhysicalStoppedSuccessMass
   simpa only using
@@ -1586,7 +1586,7 @@ theorem unconditionalActualFairWeightedStoppedSuccess
             N width schedule (ξ h) (ζ h) +
           dSVDensityRationalHeterogeneousPhysicalTerminalMass
             N width schedule (ξ h) (ζ h)) := by
-            simp_rw [mul_add, Finset.sum_add_distrib]
+            simp only [mul_add, Finset.sum_add_distrib]
       _ = ∑ h : I, weight h := by
         apply Finset.sum_congr rfl
         intro h _
@@ -1594,7 +1594,7 @@ theorem unconditionalActualFairWeightedStoppedSuccess
           grid dimension width schedule (ξ h) (ζ h)]
         ac_rfl
       _ = 1 := weight_normalized
-  simp_rw [unconditionalActualFairCleanedRow_eq_stoppedSuccess
+  simp only [unconditionalActualFairCleanedRow_eq_stoppedSuccess
     phases grid dimension harmonic width width_positive
     schedule _ _ Q A C]
   linarith only [asynchronous_bound, terminal_bound, partition]
@@ -2938,8 +2938,8 @@ private theorem pdfConstantStrategy_winProbability
     by_cases alice : a' = a <;> by_cases bob : b' = b <;>
       simp_all
   unfold Strategy.winProbability
-  simp_rw [pdfConstantStrategy_outcomeProbability]
-  simp_rw [accepted_outcome]
+  simp only [pdfConstantStrategy_outcomeProbability]
+  simp only [accepted_outcome]
   simp only [sum_ite_irrel, sum_ite_eq', mem_univ, ↓reduceIte, sum_const_zero, mul_ite, mul_one,
     mul_zero]
 

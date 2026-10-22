@@ -157,7 +157,7 @@ private theorem dSVDensityRationalPhysicalProjectorSquare_grid_eq
       dSVDensityRationalLeftProjectiveThresholdAtomMismatch
         w N ξ ζ := by
   classical
-  simp_rw [dSVDensityRationalPhysicalProjectorSquare_eq_atomMismatch]
+  simp only [dSVDensityRationalPhysicalProjectorSquare_eq_atomMismatch]
   let F := dSVSoftBobLeftReducedDensity ξ
   let G := dSVSoftBobLeftReducedDensity ζ
   let hF := dSVSoftBobLeftReducedDensity_posSemidef ξ
@@ -202,7 +202,7 @@ private theorem dSVDensityRationalPhysicalProjectorSquare_grid_eq
             (hF.isHermitian.eigenvalues i))
           (dSVRationalSoftPass w
             (hG.isHermitian.eigenvalues j))
-  simp_rw [Finset.sum_div]
+  simp only [Finset.sum_div]
   apply Finset.sum_congr rfl
   intro i _
   apply Finset.sum_congr rfl
@@ -245,9 +245,9 @@ private theorem dSVDensityRationalPhysicalProjector_weighted_rank_eq
       ∑ i : Fin d, dSVUniformDensityGridPrefix N
         (dSVRationalSoftPass w
           (hF.isHermitian.eigenvalues i))
-  simp_rw [spectralPartitionPOVM_trace_eq_atom_count]
+  simp only [spectralPartitionPOVM_trace_eq_atom_count]
   unfold dSVUniformDensityGridPrefix
-  simp_rw [Finset.mul_sum]
+  simp only [Finset.mul_sum]
   rw [Finset.sum_comm]
   apply Finset.sum_congr rfl
   intro i _
@@ -570,7 +570,9 @@ theorem dSVDensityRationalCompleteProjectiveOutcome_norm_sq_eq
           (ofLp (sharedThresholdResource (d := Fin d) τ)))‖ ^ 2 =
       (∑ k : Fin N, (Matrix.trace (P k * R k)).re) /
         ((d : ℝ) * (N : ℝ))
-  simpa [τ] using
+  simpa only [τ, blockDiagonal'_transpose, one_pow, one_mul, Fintype.card_fin, sum_const, card_univ,
+    nsmul_eq_mul,
+    mul_one] using
     sharedThresholdResource_block_action_norm_sq
       τ P R
       (fun k =>
@@ -740,7 +742,7 @@ theorem dSVDensityRationalCanonicalAcceptedTarget_norm_sq
       w * dSVDensityRationalLeftProjectiveDiagonalMass w N ξ := by
   unfold dSVDensityRationalCanonicalAcceptedTarget
   rw [schmidtVector_norm_sq]
-  simp_rw [dSVDensityRationalCanonicalAcceptedCoefficient_sq width]
+  simp only [dSVDensityRationalCanonicalAcceptedCoefficient_sq width]
   unfold dSVDensityRationalLeftProjectiveDiagonalMass
   rw [Finset.mul_sum]
 
@@ -1576,7 +1578,7 @@ theorem dSVDensityRationalPrefixRankMismatch_eq_atomMismatch
         w N ξ ζ := by
   unfold dSVDensityRationalPrefixRankMismatch
     dSVDensityRationalLeftProjectiveThresholdAtomMismatch
-  simp_rw [Finset.sum_div]
+  simp only [Finset.sum_div]
   apply Finset.sum_congr rfl
   intro i _
   apply Finset.sum_congr rfl
@@ -1612,9 +1614,7 @@ theorem dSVDensityRationalPhysicalAcceptedRank_eq_floor
   have unit := dSVRationalSoftPass_mem_unit width
     ((dSVSoftBobLeftReducedDensity_posSemidef
       ξ).eigenvalues_nonneg i)
-  simpa only [dSVDensityRationalPhysicalAcceptedRank, dSVDensityRationalProjectiveThresholdBin,
-    decide_eq_true_eq] using
-    (dSVUniformDensityThresholdGrid_count_eq_floor grid
+  exact (dSVUniformDensityThresholdGrid_count_eq_floor grid
       (dSVRationalSoftPass w
         ((dSVSoftBobLeftReducedDensity_posSemidef
           ξ).isHermitian.eigenvalues i)) unit.1 unit.2)
@@ -1931,7 +1931,7 @@ theorem dSVDensityRationalMixedAcceptedPrefix_norm_sq
     rw [← dSVDensityRationalMixedSpectralAtomBlock_eq_projectorProduct]
     exact dSVDensityRationalMixedSpectralAtomBlock_trace_eq
       w N ξ ζ true true k
-  simp_rw [expand]
+  simp only [expand]
   calc
     (∑ k : Fin N, ∑ i : Fin d, ∑ j : Fin d,
       if dSVDensityRationalProjectiveThresholdBin w N k
@@ -2379,7 +2379,7 @@ theorem tensorEmbezzlementTarget_sub_norm
           (∑ q : Fin n × Fin n,
             ‖embezzlementState n q‖ ^ 2) := by
     rw [Fintype.sum_prod_type]
-    simp_rw [norm_mul, mul_pow]
+    simp only [norm_mul, mul_pow]
     exact (Fintype.sum_mul_sum
       (fun q : Fin d × Fin d => ‖(ξ.val - ζ.val) q‖ ^ 2)
       (fun q : Fin n × Fin n =>
@@ -2434,7 +2434,7 @@ theorem dSVBobTargetLocalHarmonicCleanup_stable
       rw [preserved]
       simpa only [add_comm] using add_le_add_left
         (show ‖reference - residual‖ ≤ ε by
-          simpa only [reference, residual] using clean)
+          exact clean)
         ‖ξ.val - ζ.val‖
 
 theorem dSVBobTargetLocalUniformHarmonicWorkCleanup
@@ -2810,7 +2810,7 @@ theorem dSVDensityRationalPublicBucketCoherentPhaseSigmaReset_distance_sq
   classical
   unfold dSVDensityRationalPublicBucketCoherentPhaseSigmaState
   rw [dSVUniformDensityCorrectedMatchedSigmaControlledReset_distance_sq]
-  simp_rw [Fintype.sum_prod_type]
+  simp only [Fintype.sum_prod_type]
   change
     (∑ φ : Fin B, ∑ a : H,
       ∑ ψ : Fin B, ∑ b : H,
@@ -2820,7 +2820,7 @@ theorem dSVDensityRationalPublicBucketCoherentPhaseSigmaReset_distance_sq
               (A φ (bucket φ (rankA a)))
               (C ψ (bucket ψ (rankB b)))
               (work φ a b) - target φ a b‖ ^ 2) = _
-  simp_rw [
+  simp only [
     dSVDensityRationalPublicBucketCoherentPhaseHistory_apply_norm_sq
       phase_positive]
   calc
@@ -2852,7 +2852,7 @@ theorem dSVDensityRationalPublicBucketCoherentPhaseSigmaReset_distance_sq
                 (A φ (bucket φ (rankA a)))
                 (C φ (bucket φ (rankB b)))
                 (work φ a b) - target φ a b‖ ^ 2) := by
-      simp_rw [Finset.mul_sum]
+      simp only [Finset.mul_sum]
     _ = _ := by ring
 
 end
@@ -6333,7 +6333,7 @@ theorem fullCoordinateOldHistory_weight
       G.marginalY
         ((fullCoordinateOldHistory D L i h y).bobRemaining j)) = _
   rw [fullHistoryRemaining_prod_split D L i hiD hiL]
-  simp_rw [hold]
+  simp only [hold]
   simp only [univ_eq_attach, fullCoordinateOldHistory, ↓reduceDIte]
   ac_rfl
 
@@ -6364,7 +6364,7 @@ theorem fullCoordinateNewHistory_weight
       j ∈ fullHistoryRemaining n D (insert i L)},
       G.marginalY (h.bobRemaining j)) = _
   rw [finsetSubtype_prod_insert L i hiL]
-  simp_rw [hnew]
+  simp only [hnew]
   simp only [univ_eq_attach, fullCoordinateNewHistory, ↓reduceDIte]
   ac_rfl
 
@@ -6528,7 +6528,7 @@ theorem finitePurificationMatrix_pair_difference_gram_eq_integral
           (spectralPurificationFilter (F a) (positive a) s -
             spectralPurificationFilter (F b) (positive b) s)) i j from
         MeasureTheory.eval_integral (fun k => (hrows i).eval k) j]
-  simp_rw [ensemblePurificationSubspaceEntry_pair_difference_inner_eq_integral]
+  simp only [ensemblePurificationSubspaceEntry_pair_difference_inner_eq_integral]
   have hproduct (r : d) :
       Integrable
         (fun s : ℝ =>
@@ -7100,7 +7100,7 @@ private theorem fullCoordinateAliceEntropyIncrement_eq
     (fullCoordinateAliceMeanFilter G n S D L i r α)
     (fullCoordinateBobQuestionFilter G n S D L i r β)
     (fun F => cfc (fun z : ℝ => z * Real.log z) F)
-  simp_rw [← fullCoordinateBobFilter_conditional_mean
+  simp only [← fullCoordinateBobFilter_conditional_mean
     G n S D L i hiD hiL r β] at h
   exact h
 

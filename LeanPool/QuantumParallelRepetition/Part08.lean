@@ -103,7 +103,7 @@ theorem exactPermutationOutputUniformExpectation
                 (R × Fin denominator)) : ℝ)) value).symm
     _ = ∑ letter : R,
       ((numerator letter : ℝ) / denominator) * value letter := by
-        simp_rw [exactPermutationOutputUniformPushforward
+        simp only [exactPermutationOutputUniformPushforward
           denominator numerator normalized nonempty]
 
 /-- The product encoding of exact source alice sample. -/
@@ -334,7 +334,7 @@ private theorem exactFiniteFiberLift_expectation
         (exactFiniteFiberLift projection original target)
         value).symm
     _ = ∑ point : T, target point * value point := by
-      simp_rw [exactFiniteFiberLift_groupedMass
+      simp only [exactFiniteFiberLift_groupedMass
         projection original target supported]
 
 omit [Fintype T] in
@@ -459,7 +459,7 @@ private theorem exactFiniteFiberLift_totalVariation
             (fun _ => (1 : ℝ))).symm
     _ = ∑ point : T,
       |groupedMass projection original point - target point| := by
-        simp_rw [exactFiniteFiberLift_absolute_groupedMass
+        simp only [exactFiniteFiberLift_absolute_groupedMass
           projection original target original_nonnegative supported]
 
 end
@@ -1093,7 +1093,7 @@ theorem exactSourceConditionalWinningProbability_expectation
         if repeatedCoordinateWin G n q.1.coordinate.val q.2 = true
         then exactPostselectedJointLaw G n S D q
         else 0 := by
-  simp_rw [exactSourceConditionalWinningProbability_mul_law
+  simp only [exactSourceConditionalWinningProbability_mul_law
     G n S D positive]
   exact exactSourceAcceptedCoordinateMass_sum G n S D
 
@@ -1631,7 +1631,7 @@ theorem exactFineCoordinateWinningBorn_collapse
       then S.outcomeProbability xs ys aa bb
       else 0 := by
   classical
-  simp_rw [conditionedCoordinateEffects_born_expansion G n S D]
+  simp only [conditionedCoordinateEffects_born_expansion G n S D]
   let f : A → B → (Fin n → A) → (Fin n → B) → ℝ :=
     fun a b aa bb =>
       if G.predicate x y a b = true then
@@ -3031,7 +3031,7 @@ theorem exactStrategyStableBobQuestionCode_joint_factor
       determines xs (split.symm (next, tail)) compatible
     have marked (y : Y) : split.symm (y, tail) coordinate = y := by
       simp only [ne_eq, Equiv.funSplitAt_symm_apply, ↓reduceDIte, split]
-    simp_rw [same_code, marked]
+    simp only [same_code, marked]
     simp only [compatible, Prod.mk.injEq, true_and, ↓reduceIte]
     simp only [Finset.sum_ite_eq', Finset.mem_univ, ↓reduceIte]
     have hweight (y : Y) :
@@ -3049,7 +3049,7 @@ theorem exactStrategyStableBobQuestionCode_joint_factor
             exact exactRepeatedQuestionWeight_splitAt_bob
               G n coordinate xs y tail
         _ = _ := by rw [same_tail y]
-    simp_rw [hweight]
+    simp only [hweight]
     rw [← Finset.sum_mul]
     change
       G.questionWeight (xs coordinate) next * _ =
@@ -3058,7 +3058,7 @@ theorem exactStrategyStableBobQuestionCode_joint_factor
     rw [hx]
     rw [← G.marginalX_mul_conditionalYGivenX question next]
     ac_rfl
-  · simp_rw [same_code]
+  · simp only [same_code]
     simp only [ne_eq, Prod.mk.injEq, compatible, false_and, ↓reduceIte, sum_const_zero, mul_zero]
 
 theorem exactRepeatedQuestionWeight_splitAt_alice
@@ -3178,7 +3178,7 @@ theorem exactStrategyStableAliceQuestionCode_joint_factor
       determines (split.symm (next, tail)) ys compatible
     have marked (x : X) : split.symm (x, tail) coordinate = x := by
       simp only [ne_eq, Equiv.funSplitAt_symm_apply, ↓reduceDIte, split]
-    simp_rw [same_code, marked]
+    simp only [same_code, marked]
     simp only [compatible, Prod.mk.injEq, true_and, ↓reduceIte]
     simp only [Finset.sum_ite_eq', Finset.mem_univ, ↓reduceIte]
     have hweight (x : X) :
@@ -3196,7 +3196,7 @@ theorem exactStrategyStableAliceQuestionCode_joint_factor
             exact exactRepeatedQuestionWeight_splitAt_alice
               G n coordinate ys x tail
         _ = _ := by rw [same_tail x]
-    simp_rw [hweight]
+    simp only [hweight]
     rw [← Finset.sum_mul]
     change
       G.questionWeight next (ys coordinate) * _ =
@@ -3205,7 +3205,7 @@ theorem exactStrategyStableAliceQuestionCode_joint_factor
     rw [hy]
     rw [← G.marginalY_mul_conditionalXGivenY next question]
     ac_rfl
-  · simp_rw [same_code]
+  · simp only [same_code]
     simp only [ne_eq, Prod.mk.injEq, compatible, false_and, ↓reduceIte, sum_const_zero, mul_zero]
 
 end
@@ -3510,7 +3510,7 @@ theorem jointConditional_product_context_seed
               seedWeight outcomeWeight seed (target, value)
   funext value
   unfold jointConditional jointFirstMarginal
-  simp_rw [atom]
+  simp only [atom]
   rw [← Finset.mul_sum]
   exact mul_div_mul_left _ _ nonzero
 
@@ -4144,7 +4144,7 @@ theorem jointConditional_product_stable_context_seed
         seedWeight outcomeWeight target value
   funext value
   unfold jointConditional jointFirstMarginal
-  simp_rw [atom]
+  simp only [atom]
   rw [← Finset.mul_sum]
   exact mul_div_mul_left _ _ nonzero
 
@@ -5169,12 +5169,10 @@ theorem exactReverseAliceSideMarkedPosteriorConditional_eq_fixedSeedFiber
           (repeatedConditionedOutcomeLaw G n S D))
         target := by
           convert stable using 1
-          · congr 1
-            exact exactGroupedMass_decidableEq_irrel
-              _ _ _ _
-          · congr 1
-            exact exactGroupedMass_decidableEq_irrel
-              _ _ _ _
+          · exact congrArg (fun mass => jointConditional mass target)
+              (exactGroupedMass_decidableEq_irrel _ _ _ _)
+          · exact congrArg (fun mass => jointConditional mass target)
+              (exactGroupedMass_decidableEq_irrel _ _ _ _)
     _ = jointConditional
         (groupedMass
           (fun outcome : ExactOutcome X Y A B n =>
@@ -5542,7 +5540,7 @@ private theorem exactReverseAlicePrefixInformation_eq_markedSeedAverage
               (exactReverseAliceContext seed)
               marker) /
             ((exactReverseLeftSide seed).card : ℝ)) := by
-        simp_rw [exactReverseAliceContextAt_actual]
+        simp only [exactReverseAliceContextAt_actual]
     _ = _ :=
       exactReverseAliceUniformMarkedSeed_sum
         (remainingCoordinate_card_pos D remaining)
@@ -6376,12 +6374,10 @@ theorem exactConditionedReverseBobNextJoint_marked_conditional_eq_fixedOutcome
           (repeatedConditionedOutcomeLaw G n S D))
         target := by
           convert stable using 1
-          · congr 1
-            exact exactGroupedMass_decidableEq_irrel
-              _ _ _ _
-          · congr 1
-            exact exactGroupedMass_decidableEq_irrel
-              _ _ _ _
+          · exact congrArg (fun mass => jointConditional mass target)
+              (exactGroupedMass_decidableEq_irrel _ _ _ _)
+          · exact congrArg (fun mass => jointConditional mass target)
+              (exactGroupedMass_decidableEq_irrel _ _ _ _)
     _ = jointConditional
         (groupedMass
           (fun outcome : ExactOutcome X Y A B n =>
@@ -6571,7 +6567,7 @@ private theorem exactConditionedReverseBobPrefixInformation_eq_sourceMarkerAvera
             ((exactReverseRightSide seed).card : ℝ)) := by
   classical
   unfold exactConditionedReverseBobPrefixInformation
-  simp_rw [
+  simp only [
     exactConditionedReverseBobPrefixEntropyIncrement_eq_markedOutcomeScore
       G n S D remaining positive]
   exact exactReverseBobSideWeightedPrefix_sum

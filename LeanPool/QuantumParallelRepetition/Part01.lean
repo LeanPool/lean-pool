@@ -171,7 +171,7 @@ theorem trace_mul_posSemidef_nonneg {d : Type*} [Fintype d]
   classical
   obtain ⟨K, rfl⟩ := CStarAlgebra.nonneg_iff_eq_star_mul_self.mp hR.nonneg
   have hpositive : (K * E * star K).PosSemidef := by
-    simpa only [star_eq_conjTranspose] using hE.mul_mul_conjTranspose_same K
+    exact hE.mul_mul_conjTranspose_same K
   have htrace : 0 ≤ (Matrix.trace (K * E * star K)).re :=
     (Complex.nonneg_iff.mp hpositive.trace_nonneg).1
   rw [Matrix.trace_mul_cycle] at htrace
@@ -212,7 +212,7 @@ private theorem jointEffect_complete (S : Strategy G) (x : X) (y : Y) :
             ext ⟨i, j⟩ ⟨k, l⟩
             simp only [jointEffect, Matrix.sum_apply, Matrix.kroneckerMap_apply]
             rw [Finset.sum_mul]
-            simp_rw [Finset.mul_sum]
+            simp only [Finset.mul_sum]
     _ = 1 := by
       rw [(S.aliceMeasurement x).complete, (S.bobMeasurement y).complete]
       exact Matrix.one_kronecker_one
@@ -376,8 +376,9 @@ theorem quadraticExpectation_sub_le
       norm_add_le _ _
     _ ≤ ‖z - w‖ * ‖W z‖ + ‖w‖ * ‖W (z - w)‖ :=
       add_le_add (norm_inner_le_norm _ _) (norm_inner_le_norm _ _)
-    _ ≤ ‖z - w‖ * ‖z‖ + ‖w‖ * ‖z - w‖ := by
-      gcongr
+    _ ≤ ‖z - w‖ * ‖z‖ + ‖w‖ * ‖z - w‖ :=
+      add_le_add (mul_le_mul_of_nonneg_left hz (norm_nonneg _))
+        (mul_le_mul_of_nonneg_left hdiff (norm_nonneg _))
     _ = (‖z‖ + ‖w‖) * ‖z - w‖ := by ring
 
 theorem weighted_real_cauchy
@@ -470,7 +471,7 @@ theorem winProbability_eq_winningEffect_born
       ∑ x : X, ∑ y : Y,
         G.questionWeight x y *
           (Matrix.trace (S.state.matrix * S.winningEffect x y)).re := by
-  simp_rw [S.winningEffect_born]
+  simp only [S.winningEffect_born]
   rfl
 
 end Strategy
@@ -790,9 +791,9 @@ private theorem convexMixtureStrategy_winProbability
       _ = ∑ j : J, ∑ x : X, ∑ y : Y, ∑ a : A, ∑ b : B,
             f x y a b j := Finset.sum_comm
   unfold Strategy.winProbability
-  simp_rw [convexMixtureStrategy_outcomeProbability p hp h_normalized S]
-  simp_rw [h_branch]
-  simp_rw [Finset.mul_sum]
+  simp only [convexMixtureStrategy_outcomeProbability p hp h_normalized S]
+  simp only [h_branch]
+  simp only [Finset.mul_sum]
   rw [h_swap (fun x y a b j =>
     G.questionWeight x y *
       (p j * (if G.predicate x y a b = true then
@@ -1302,8 +1303,7 @@ theorem finite_weighted_entropy_le
   have h_jensen :
       (∑ i ∈ s, (w i / W) * Real.negMulLog (h i))
         ≤ Real.negMulLog (∑ i ∈ s, (w i / W) * h i) := by
-    simpa only [smul_eq_mul] using
-      (Real.concaveOn_negMulLog.le_map_sum
+    exact (Real.concaveOn_negMulLog.le_map_sum
         (t := s) (w := fun i => w i / W) (p := h)
         (fun i hi => div_nonneg (hw i hi) hW.le)
         h_normalized
@@ -1442,14 +1442,15 @@ theorem noncommutative_weighted_resolvent_second_order
         weight i * RM -
           (weight i * RM) * (F i - M) * RM +
           (weight i * RM) * ((F i - M) * RF i * (F i - M)) * RM := by
-            noncomm_ring
+            rw [mul_add, mul_sub]
+            simp only [mul_assoc]
       _ = weight i * RM -
           (RM * weight i) * (F i - M) * RM +
           (RM * weight i) * ((F i - M) * RF i * (F i - M)) * RM := by
             rw [hw]
       _ = weight i * RM - RM * (weight i * (F i - M)) * RM +
           RM * (weight i * ((F i - M) * RF i * (F i - M))) * RM := by
-            noncomm_ring
+            simp only [mul_assoc]
   calc
     (∑ i : ι, weight i * RF i) - RM =
         (∑ i : ι,
@@ -1504,7 +1505,7 @@ theorem matrix_weighted_centered
     (normalized : (∑ i : ι, weight i) = 1)
     (mean : (∑ i : ι, weight i • F i) = M) :
     (∑ i : ι, weight i • (F i - M)) = 0 := by
-  simp_rw [smul_sub]
+  simp only [smul_sub]
   rw [Finset.sum_sub_distrib, mean, ← Finset.sum_smul, normalized]
   simp only [one_smul, sub_self]
 
@@ -1733,9 +1734,7 @@ private theorem integral_spectralPurificationGram
             rw [integral_diagonalPurificationGram eigenvalue
               (fun i => hF.eigenvalues_nonneg i)]
     _ = F := by
-          simpa only [spectralConjugationCLM_apply, Complex.coe_algebraMap, Function.comp_def,
-            Unitary.conjStarAlgAut_apply, U, eigenvalue] using
-            hF.isHermitian.spectral_theorem.symm
+          exact hF.isHermitian.spectral_theorem.symm
 
 end
 
@@ -1799,7 +1798,7 @@ theorem integral_spectralPurificationFilter_gram
     (∫ s in Ioi (0 : ℝ),
       star (spectralPurificationFilter F hF s) *
         spectralPurificationFilter F hF s) = F := by
-  simp_rw [spectralPurificationFilter_gram]
+  simp only [spectralPurificationFilter_gram]
   exact integral_spectralPurificationGram F hF
 
 theorem spectralPurificationFilter_gram_integrable
@@ -2165,7 +2164,7 @@ end RepeatedQuantumFilters
 theorem history_forward_telescope (E : ℕ → ℝ) (m : ℕ) :
     (∑ k ∈ Finset.range m, (E (k + 1) - E k))
       = E m - E 0 := by
-  simpa only [Finset.sum_sub_distrib] using Finset.sum_range_sub E m
+  exact Finset.sum_range_sub E m
 
 end
 
@@ -2228,21 +2227,11 @@ theorem spectralSupportFunctional_isHermitian
     (F : Matrix d d ℂ) (hF : F.PosSemidef)
     (f : ℝ → ℝ) :
     (spectralSupportFunctional F hF f).IsHermitian := by
-  classical
-  let e := Unitary.conjStarAlgAut ℂ (Matrix d d ℂ)
-    hF.isHermitian.eigenvectorUnitary
-  let D : Matrix d d ℂ :=
-    Matrix.diagonal fun i => (f (hF.isHermitian.eigenvalues i) : ℂ)
-  have hD : D.IsHermitian := by
-    apply Matrix.isHermitian_diagonal_iff.mpr
-    intro i
-    change star (f (hF.isHermitian.eigenvalues i) : ℂ) = _
-    simp only [RCLike.star_def, Complex.conj_ofReal]
-  have hDstar : star D = D := by
-    simpa only [Matrix.star_eq_conjTranspose] using hD.eq
-  change Matrix.conjTranspose (e D) = e D
-  simpa only [Matrix.star_eq_conjTranspose] using
-    (show star (e D) = e D by rw [← map_star, hDstar])
+  apply IsSelfAdjoint.isHermitian
+  apply IsSelfAdjoint.map (Unitary.conjStarAlgAut ℂ (Matrix d d ℂ)
+    hF.isHermitian.eigenvectorUnitary)
+  apply Matrix.IsHermitian.isSelfAdjoint
+  exact Matrix.isHermitian_diagonal_iff.mpr fun i => Complex.conj_ofReal _
 
 /-- Apply reciprocal eigenvalues to a positive matrix, with zero on its kernel. -/
 def spectralSupportInverse
@@ -3320,7 +3309,7 @@ private theorem conditionedEffects_postselection_sum
           G.predicate (xs i) (ys i) (aa i) (bb i) = true
         then S.outcomeProbability xs ys aa bb else 0 := by
   classical
-  simp_rw [conditionedEffects_born_expansion G n S D]
+  simp only [conditionedEffects_born_expansion G n S D]
   calc
     (∑ α : {i : Fin n // i ∈ D} → A,
       ∑ β : {i : Fin n // i ∈ D} → B,
@@ -3642,8 +3631,7 @@ theorem spectralPurificationFilter_mul_shift
   have hden (i : d) : eigenvalue i + s ≠ 0 :=
     ne_of_gt (add_pos_of_nonneg_of_pos (heigenvalue i) hs)
   have hFspec : F = e D := by
-    simpa [D, eigenvalue, e, Function.comp_def] using
-      hF.isHermitian.spectral_theorem
+    exact hF.isHermitian.spectral_theorem
   have hshift_inner :
       D + s • (1 : Matrix d d ℂ) =
         Matrix.diagonal fun i => ((eigenvalue i + s : ℝ) : ℂ) := by
@@ -3753,8 +3741,7 @@ theorem spectralPurificationFilter_square_contraction
   rw [← map_star, hDstar, ← map_mul, ← map_sub]
   change ((U : Matrix d d ℂ) * (D - D * D) *
     star (U : Matrix d d ℂ)).PosSemidef
-  simpa only [Matrix.star_eq_conjTranspose] using
-    hdiag.mul_mul_conjTranspose_same (U : Matrix d d ℂ)
+  exact hdiag.mul_mul_conjTranspose_same (U : Matrix d d ℂ)
 
 end
 
@@ -3814,7 +3801,7 @@ theorem bochner_integral_posSemidef
       matrixAdjointCLM hf).symm
   have hadjoint_ae : (fun t => star (f t)) =ᵐ[μ] f := by
     filter_upwards [hpos] with t ht
-    simpa only [Matrix.star_eq_conjTranspose] using ht.isHermitian.eq
+    exact ht.isHermitian.eq
   have hhermitian : (∫ t, f t ∂μ).IsHermitian := by
     change star (∫ t, f t ∂μ) = ∫ t, f t ∂μ
     exact hadjoint.trans (integral_congr_ae hadjoint_ae)
@@ -3936,11 +3923,9 @@ theorem spectralPurificationFilter_sub_gram
     simpa only [Matrix.star_eq_conjTranspose] using
       (shifted_posSemidef_matrix_inverse_posSemidef hF hs).isHermitian.eq
   have hRM : star RM = RM := by
-    simpa only [Matrix.star_eq_conjTranspose] using
-      (shifted_posSemidef_matrix_inverse_posSemidef hM hs).isHermitian.eq
+    exact (shifted_posSemidef_matrix_inverse_posSemidef hM hs).isHermitian.eq
   have hD : star D = D := by
-    simpa only [Matrix.star_eq_conjTranspose] using
-      (hF.isHermitian.sub hM.isHermitian).eq
+    exact (hF.isHermitian.sub hM.isHermitian).eq
   rw [spectralPurificationFilter_sub_resolvent F M hF hM hs]
   change star (s • (RF * D * RM)) * (s • (RF * D * RM)) =
     s ^ 2 • (RM * D * (RF * RF) * D * RM)
@@ -3988,7 +3973,7 @@ theorem weighted_shifted_inverse_second_order
     simp only [one_smul]
   have hW_centered : (∑ i : ι, W i * (F i - M)) = 0 := by
     dsimp [W]
-    simp_rw [smul_mul_assoc, one_mul]
+    simp only [smul_mul_assoc, one_mul]
     exact matrix_weighted_centered weight F M normalized mean
   have hW_commutes (i : ι) : W i * RM = RM * W i := by
     dsimp [W]
@@ -4290,9 +4275,7 @@ private theorem spectralEntropyKernel_eq_scalar_sub_filter
     ((eigenvalue i / (1 + s) -
       eigenvalue i / (eigenvalue i + s) : ℝ) : ℂ)
   have hFspec : F = L D := by
-    simpa [L, U, D, eigenvalue, Function.comp_def,
-      Unitary.conjStarAlgAut_apply] using
-      hF.isHermitian.spectral_theorem
+    exact hF.isHermitian.spectral_theorem
   have hdiag : K = (1 / (1 + s) : ℝ) • D - G := by
     ext i j
     by_cases hij : i = j
@@ -4362,7 +4345,7 @@ theorem weightedSpectralFilterVariance_integrable
   intro j
   apply Integrable.of_eval
   intro k
-  simpa only [Pi.smul_apply] using (hscaled.eval j).eval k
+  exact (hscaled.eval j).eval k
 
 private theorem weightedSpectralEntropyJensen_integrable
     {ι d : Type*} [Fintype ι] [Fintype d] [DecidableEq d]
@@ -4436,18 +4419,18 @@ private theorem weightedSpectralEntropyJensen_eq_shifted_inverse
             rw [spectralPurificationFilter_eq_one_sub_shifted_inverse
               (F i) (positive i) hs]
       _ = 1 - s • (∑ i : ι, weight i • RF i) := by
-            simp_rw [smul_sub]
+            simp only [smul_sub]
             rw [Finset.sum_sub_distrib, ← Finset.sum_smul,
               normalized, hscale]
             simp only [one_smul]
   unfold weightedSpectralEntropyJensen
-  simp_rw [spectralEntropyKernel_eq_scalar_sub_filter]
+  simp only [spectralEntropyKernel_eq_scalar_sub_filter]
   change
     (∑ i : ι, weight i •
       (c • F i - spectralPurificationFilter (F i) (positive i) s)) -
       (c • M - spectralPurificationFilter M hM s) =
     s • ((∑ i : ι, weight i • RF i) - RM)
-  simp_rw [smul_sub]
+  simp only [smul_sub]
   rw [Finset.sum_sub_distrib, hscalar, hfilter_sum,
     spectralPurificationFilter_eq_one_sub_shifted_inverse M hM hs]
   module
@@ -4897,9 +4880,9 @@ theorem fullHistoryAliceFilter_complement_posSemidef
       1 - (∑ x, w x • E x) =
         (1 - (∑ x, w x)) • (1 : Matrix S.Alice S.Alice ℂ) +
           ∑ x, w x • (1 - E x) := by
-    simp_rw [smul_sub]
-    rw [Finset.sum_sub_distrib, ← Finset.sum_smul]
-    module
+    simp only [smul_sub]
+    rw [Finset.sum_sub_distrib, ← Finset.sum_smul,
+      sub_smul, one_smul, sub_add_sub_cancel]
   change (1 - ∑ x, w x • E x).PosSemidef
   rw [hsplit]
   apply Matrix.PosSemidef.add
@@ -4928,9 +4911,9 @@ theorem fullHistoryBobFilter_complement_posSemidef
       1 - (∑ y, w y • E y) =
         (1 - (∑ y, w y)) • (1 : Matrix S.Bob S.Bob ℂ) +
           ∑ y, w y • (1 - E y) := by
-    simp_rw [smul_sub]
-    rw [Finset.sum_sub_distrib, ← Finset.sum_smul]
-    module
+    simp only [smul_sub]
+    rw [Finset.sum_sub_distrib, ← Finset.sum_smul,
+      sub_smul, one_smul, sub_add_sub_cancel]
   change (1 - ∑ y, w y • E y).PosSemidef
   rw [hsplit]
   apply Matrix.PosSemidef.add
@@ -5072,8 +5055,7 @@ theorem positiveMatrixSpectralAtom_posSemidef
     · simp only [Pi.zero_apply, ne_eq, hij, not_false_eq_true, Pi.single_eq_of_ne', Std.le_refl]
   unfold positiveMatrixSpectralAtom
   rw [spectralConjugationCLM_apply]
-  simpa only [star_eq_conjTranspose] using
-    hdiag.mul_mul_conjTranspose_same
+  exact hdiag.mul_mul_conjTranspose_same
       (hF.isHermitian.eigenvectorUnitary : Matrix d d ℂ)
 
 theorem positiveMatrixSpectralAtom_sum
@@ -5483,7 +5465,7 @@ theorem rawEmbezzlementState_norm_sq (n : ℕ) :
       else
         0‖ ^ 2) =
         ‖(↑((Real.sqrt ((i.val : ℝ) + 1))⁻¹) : ℂ)‖ ^ 2 := by
-          simp_rw [hterm]
+          simp only [hterm]
           simp only [Complex.ofReal_inv, norm_inv, Complex.norm_real, Real.norm_eq_abs, inv_pow,
             sq_abs, Finset.sum_ite_eq, Finset.mem_univ, ↓reduceIte]
     _ = ((i.val : ℝ) + 1)⁻¹ := hamp i
@@ -5722,7 +5704,7 @@ theorem finiteTensorVector_norm
     (hv : ∀ i, ‖v i‖ = 1) :
     ‖finiteTensorVector v‖ = 1 := by
   have hsquare := finiteTensorVector_norm_sq v
-  simp_rw [hv, one_pow, Finset.prod_const_one] at hsquare
+  simp only [hv, one_pow, Finset.prod_const_one] at hsquare
   exact (sq_eq_sq₀ (norm_nonneg _) zero_le_one).mp (by
     simpa only [one_pow] using hsquare)
 
@@ -5798,7 +5780,7 @@ theorem spectralAtomOverlap_schmidtMass_le_one
   have hf : (∑ q : d × d, w q * f q ^ 2) = 1 := by
     dsimp [w, f]
     rw [Fintype.sum_prod_type]
-    simp_rw [Real.sq_sqrt (hF.eigenvalues_nonneg _)]
+    simp only [Real.sq_sqrt (hF.eigenvalues_nonneg _)]
     calc
       (∑ i : d, ∑ j : d,
         spectralAtomOverlap F G hF hG i j *
@@ -5814,13 +5796,13 @@ theorem spectralAtomOverlap_schmidtMass_le_one
           intro j _
           ac_rfl
       _ = ∑ i : d, hF.isHermitian.eigenvalues i := by
-        simp_rw [spectralAtomOverlap_sum_right,
+        simp only [spectralAtomOverlap_sum_right,
           mul_one]
       _ = 1 := positiveDensity_eigenvalues_sum F hF hFtrace
   have hg : (∑ q : d × d, w q * g q ^ 2) = 1 := by
     dsimp [w, g]
     rw [Fintype.sum_prod_type]
-    simp_rw [Real.sq_sqrt (hG.eigenvalues_nonneg _)]
+    simp only [Real.sq_sqrt (hG.eigenvalues_nonneg _)]
     calc
       (∑ i : d, ∑ j : d,
         spectralAtomOverlap F G hF hG i j *
@@ -5837,7 +5819,7 @@ theorem spectralAtomOverlap_schmidtMass_le_one
           intro i _
           ac_rfl
       _ = ∑ j : d, hG.isHermitian.eigenvalues j := by
-        simp_rw [spectralAtomOverlap_sum_left,
+        simp only [spectralAtomOverlap_sum_left,
           mul_one]
       _ = 1 := positiveDensity_eigenvalues_sum G hG hGtrace
   calc
@@ -5890,7 +5872,7 @@ theorem binaryBornProbability_normalized
               simp only [Matrix.sum_apply,
                 Matrix.kroneckerMap_apply]
               rw [Finset.sum_mul]
-              simp_rw [Finset.mul_sum]
+              simp only [Finset.mul_sum]
       _ = 1 := by
         rw [P.complete, Q.complete]
         exact Matrix.one_kronecker_one
@@ -5995,12 +5977,12 @@ theorem sharedThresholdResourceRaw_norm_sq
     split_ifs <;>
       simp_all [Complex.norm_real, Real.norm_eq_abs, sq_abs]
   rw [EuclideanSpace.norm_sq_eq, Fintype.sum_prod_type]
-  simp_rw [Fintype.sum_sigma]
+  simp only [Fintype.sum_sigma]
   change
     (∑ k : κ, ∑ i : d, ∑ l : κ, ∑ j : d,
       ‖if k = l ∧ i = j then (τ k : ℂ) else 0‖ ^ 2) =
         (Fintype.card d : ℝ) * ∑ k : κ, τ k ^ 2
-  simp_rw [hterm]
+  simp only [hterm]
   simp only [Finset.sum_ite_irrel, Finset.sum_ite_eq, Finset.mem_univ, ↓reduceIte,
     Finset.sum_const_zero, Finset.sum_const, Finset.card_univ, nsmul_eq_mul, Finset.mul_sum]
 
@@ -6323,7 +6305,7 @@ theorem doublyStochasticSchmidtMass_le_one
             apply Finset.sum_congr rfl
             intro j _
             ring_nf
-      _ = ∑ i : ι, σ i ^ 2 := by simp_rw [hrow, mul_one]
+      _ = ∑ i : ι, σ i ^ 2 := by simp only [hrow, mul_one]
       _ = 1 := hσunit
   have hg : (∑ q : ι × κ, W q * g q ^ 2) = 1 := by
     dsimp [W, g]
@@ -6338,7 +6320,7 @@ theorem doublyStochasticSchmidtMass_le_one
             apply Finset.sum_congr rfl
             intro i _
             ac_rfl
-      _ = ∑ j : κ, μ j ^ 2 := by simp_rw [hcol, mul_one]
+      _ = ∑ j : κ, μ j ^ 2 := by simp only [hcol, mul_one]
       _ = 1 := hμunit
   calc
     (∑ i : ι, ∑ j : κ, σ i * μ j * w i j) =
@@ -6372,8 +6354,8 @@ theorem doublyStochasticSchmidtEnergy_eq
     calc
       (∑ i : ι, ∑ j : κ, σ i ^ 2 * w i j) =
           ∑ i : ι, σ i ^ 2 * (∑ j : κ, w i j) := by
-            simp_rw [Finset.mul_sum]
-      _ = ∑ i : ι, σ i ^ 2 := by simp_rw [hrow, mul_one]
+            simp only [Finset.mul_sum]
+      _ = ∑ i : ι, σ i ^ 2 := by simp only [hrow, mul_one]
       _ = 1 := hσunit
   have hsecond :
       (∑ i : ι, ∑ j : κ, μ j ^ 2 * w i j) = 1 := by
@@ -6381,15 +6363,15 @@ theorem doublyStochasticSchmidtEnergy_eq
       (∑ i : ι, ∑ j : κ, μ j ^ 2 * w i j) =
           ∑ j : κ, μ j ^ 2 * (∑ i : ι, w i j) := by
             rw [Finset.sum_comm]
-            simp_rw [Finset.mul_sum]
-      _ = ∑ j : κ, μ j ^ 2 := by simp_rw [hcol, mul_one]
+            simp only [Finset.mul_sum]
+      _ = ∑ j : κ, μ j ^ 2 := by simp only [hcol, mul_one]
       _ = 1 := hμunit
   calc
     (∑ i : ι, ∑ j : κ, (σ i - μ j) ^ 2 * w i j) =
       (∑ i : ι, ∑ j : κ, σ i ^ 2 * w i j) -
         2 * (∑ i : ι, ∑ j : κ, σ i * μ j * w i j) +
           (∑ i : ι, ∑ j : κ, μ j ^ 2 * w i j) := by
-            simp_rw [sub_sq]
+            simp only [sub_sq]
             simp only [sub_mul, add_mul,
               Finset.sum_add_distrib, Finset.sum_sub_distrib,
               Finset.mul_sum]
@@ -6570,7 +6552,7 @@ theorem tensorEmbezzlementTarget_norm
         (∑ b : Fin n × Fin n,
           ‖embezzlementState n b‖ ^ 2) := by
     rw [Fintype.sum_prod_type]
-    simp_rw [norm_mul, mul_pow]
+    simp only [norm_mul, mul_pow]
     exact (Fintype.sum_mul_sum
       (fun a : Fin d × Fin d => ‖ξ.val a‖ ^ 2)
       (fun b : Fin n × Fin n =>
@@ -6610,7 +6592,7 @@ theorem localUnitaryAction_norm {n : ℕ}
   have hM : M ∈ Matrix.unitaryGroup (Fin n × Fin n) ℂ :=
     localUnitaryAction_matrix_mem_unitary U V
   have gram : M.conjTranspose * M = 1 := by
-    simpa only [Matrix.star_eq_conjTranspose] using (Matrix.mem_unitaryGroup_iff'.mp hM)
+    exact (Matrix.mem_unitaryGroup_iff'.mp hM)
   apply (sq_eq_sq₀ (norm_nonneg _) (norm_nonneg _)).mp
   change ‖toLp 2 (M.mulVec (ofLp ψ))‖ ^ 2 = ‖ψ‖ ^ 2
   rw [rectangularMatrix_norm_sq, gram]
@@ -6674,7 +6656,7 @@ theorem diagonalSchmidtState_norm_sq
         if i = j then σ i ^ 2 else 0 := by
     split_ifs <;> simp only [Complex.norm_real, Real.norm_eq_abs, sq_abs, norm_zero, ne_eq,
                     OfNat.ofNat_ne_zero, not_false_eq_true, zero_pow]
-  simp_rw [hterm]
+  simp only [hterm]
   simp only [Finset.sum_ite_eq, Finset.mem_univ, ↓reduceIte]
 
 /-- The state vector representing schmidt. -/
@@ -6895,12 +6877,12 @@ theorem schmidtVector_spectralEnergy_le
     fun i j => unitaryBasisOverlap V Y i j
   have hLrow : ∀ i, (∑ j : Fin d, ‖L i j‖ ^ 2) = 1 := by
     intro i
-    simpa [L] using
+    simpa only [L, norm_star] using
       unitary_row_norm_sq_sum
         (unitaryBasisOverlap U X) i
   have hLcol : ∀ j, (∑ i : Fin d, ‖L i j‖ ^ 2) = 1 := by
     intro j
-    simpa [L] using
+    simpa only [L, norm_star] using
       unitary_col_norm_sq_sum
         (unitaryBasisOverlap U X) j
   have hRrow : ∀ i, (∑ j : Fin d, ‖R i j‖ ^ 2) = 1 := by
@@ -6921,9 +6903,8 @@ theorem schmidtVector_spectralEnergy_le
       σ μ hσ hμ
       (fun i j => unitaryBasisOverlap U X i j)
       (fun i j => unitaryBasisOverlap V Y i j)]
-    simpa only [unitaryBasisOverlap_apply] using
-      schmidtVector_inner σ μ U V X Y
-  simpa [L] using
+    exact schmidtVector_inner σ μ U V X Y
+  simpa only [L, norm_star] using
     twoSidedSchmidtSpectralEnergy_le
       (schmidtVector σ U V)
       (schmidtVector μ X Y)
@@ -7121,11 +7102,11 @@ theorem exists_proofSchmidtDecomposition
   rw [EuclideanSpace.basisFun_apply, PiLp.ofLp_single] at hcoord
   rw [Matrix.toLin'_apply] at hcoord
   rw [Matrix.mulVec_single_one, Matrix.col_apply] at hcoord
-  simpa [C, EuclideanSpace.basisFun_apply,
-    EuclideanSpace.inner_single_right,
-    conjugateUnitary_apply,
-    orthonormalBasisUnitary_apply, hsing,
-    mul_assoc, mul_left_comm, mul_comm] using hcoord
+  simpa only [conjugateUnitary_apply, orthonormalBasisUnitary_apply, RCLike.star_def, mul_comm,
+    mul_left_comm,
+    EuclideanSpace.inner_single_right, one_mul, hsing, Complex.coe_smul, WithLp.ofLp_sum,
+      WithLp.ofLp_smul,
+    Finset.sum_apply, Pi.smul_apply, real_smul, smul_eq_mul, mul_assoc] using hcoord
 
 theorem exists_proofUnitSchmidtDecomposition
     {d : ℕ}

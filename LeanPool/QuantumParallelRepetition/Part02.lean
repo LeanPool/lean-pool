@@ -171,7 +171,7 @@ theorem ePRState_norm (m : ℕ) (hm : 0 < m) :
           (↑((Real.sqrt (m : ℝ))⁻¹) : ℂ)
         else
           0‖ ^ 2) = 1
-    simp_rw [hterm]
+    simp only [hterm]
     simp only [sum_ite_eq, mem_univ, ↓reduceIte, sum_const, card_univ, Fintype.card_fin,
       nsmul_eq_mul, ne_eq, hmreal.ne', not_false_eq_true, mul_inv_cancel₀]
   exact (sq_eq_sq₀ (norm_nonneg _) zero_le_one).mp (by
@@ -275,7 +275,7 @@ theorem harmonicSchmidtFiber_count_sq_le
     have hscaled :
         x * Real.sqrt ((j.val : ℝ) + 1) ≤ a := by
       apply (le_div_iff₀ hsqrtpositive).mp
-      simpa only [div_eq_mul_inv] using hjthreshold
+      exact hjthreshold
     have hsquares :
         ((j.val : ℝ) + 1) * x ^ 2 ≤ a ^ 2 := by
       have hnonneg : 0 ≤ x * Real.sqrt ((j.val : ℝ) + 1) :=
@@ -544,9 +544,9 @@ private theorem harmonicTensorSchmidtAmplitude_sq_sum
         rw [Fintype.sum_prod_type]
         apply Finset.sum_congr rfl
         intro i _
-        simp_rw [harmonicTensorSchmidtAmplitude,
+        simp only [harmonicTensorSchmidtAmplitude,
           Equiv.symm_apply_apply]
-        simp_rw [hterm]
+        simp only [hterm]
         rw [← Finset.mul_sum]
         rfl
     _ = (∑ i : Fin d, σ i ^ 2) *
@@ -899,7 +899,7 @@ private theorem harmonicTargetLift_diagonal_action_apply
                 LV (finProdFinEquiv (b, j)) s * T (r, s))
     _ = schmidtVector σ U V (a, b) *
       embezzlementState n (i, j) := by
-        simp_rw [hT]
+        simp only [hT]
         simp only [ite_mul, zero_mul, mul_comm, mul_assoc, Fintype.sum_prod_type,
           harmonicTargetLiftUnitary_apply, mul_ite, mul_left_comm, mul_zero, sum_ite_irrel,
           sum_ite_eq, mem_univ, ↓reduceIte, sum_const_zero, schmidtVector_apply, LU, LV]
@@ -1248,7 +1248,7 @@ theorem spectralPartitionPOVM_weighted_trace_deficit_eq_mismatch
         (Matrix.trace
           ((spectralPartitionPOVM G hG binG).effect k)).re) =
         ∑ j : d, τ (binG j) ^ 2 := by
-    simp_rw [spectralPartitionPOVM_trace_eq_atom_count]
+    simp only [spectralPartitionPOVM_trace_eq_atom_count]
     calc
       (∑ k : κ, τ k ^ 2 *
         (∑ j : d, if binG j = k then (1 : ℝ) else 0)) =
@@ -1292,7 +1292,7 @@ theorem spectralPartitionPOVM_weighted_trace_deficit_eq_mismatch
       by_cases hi : binF i = k
       · simp only [hi, ↓reduceIte, true_and]
       · simp only [hi, ↓reduceIte, false_and, sum_const_zero]
-    simp_rw [hsingle]
+    simp only [hsingle]
     calc
       (∑ k : κ, ∑ i : d, ∑ j : d,
         if binF i = k ∧ binG j = k then
@@ -1327,7 +1327,7 @@ theorem spectralPartitionPOVM_weighted_trace_deficit_eq_mismatch
               · subst k
                 simp only [and_true, ↓reduceIte]
               · simp only [hk, and_false, ↓reduceIte]
-            simp_rw [reindex]
+            simp only [reindex]
             simp only [sum_ite_eq, mem_univ, ↓reduceIte]
   rw [hQ, hPQ]
   have hcolumn : ∀ j : d, (∑ i : d, w i j) = 1 :=
@@ -1340,11 +1340,11 @@ theorem spectralPartitionPOVM_weighted_trace_deficit_eq_mismatch
       (∑ j : d, τ (binG j) ^ 2) =
           ∑ j : d,
             τ (binG j) ^ 2 * (∑ i : d, w i j) := by
-              simp_rw [hcolumn]
+              simp only [hcolumn]
               simp only [mul_one]
       _ = ∑ i : d, ∑ j : d,
           τ (binG j) ^ 2 * w i j := by
-            simp_rw [Finset.mul_sum]
+            simp only [Finset.mul_sum]
             exact Finset.sum_comm
   rw [hfirst, ← Finset.sum_sub_distrib]
   apply Finset.sum_congr rfl
@@ -1563,7 +1563,7 @@ theorem targetSpectralAtomOverlap_eq_basis_norm_sq
     dsimp [z]
     rw [map_sum, Finset.sum_mul]
     simp only [map_mul]
-    simp_rw [Finset.mul_sum]
+    simp only [Finset.mul_sum]
     apply Finset.sum_congr rfl
     intro a _
     apply Finset.sum_congr rfl
@@ -1580,8 +1580,7 @@ theorem targetSpectralAtomOverlap_eq_basis_norm_sq
       IsHermitian.eigenvectorUnitary_apply, RCLike.star_def, z, U, V]
   rw [coeff, ← Complex.normSq_eq_norm_sq]
   change (star z * z).re = Complex.normSq z
-  simpa only [RCLike.star_def, mul_re, conj_re, conj_im, neg_mul, sub_neg_eq_add, ofReal_re] using
-    (congrArg Complex.re
+  exact (congrArg Complex.re
       (@Complex.normSq_eq_conj_mul_self z)).symm
 
 end
@@ -1608,7 +1607,7 @@ private theorem targetCanonicalSchmidtCoefficient_sq_sum
     {d : ℕ} (ξ : BipartiteUnitVector d) :
     (∑ i : Fin d, targetCanonicalSchmidtCoefficient ξ i ^ 2) = 1 := by
   unfold targetCanonicalSchmidtCoefficient
-  simp_rw [Real.sq_sqrt
+  simp only [Real.sq_sqrt
     ((targetReducedDensity_posSemidef ξ).eigenvalues_nonneg _)]
   exact positiveDensity_eigenvalues_sum
     (targetReducedDensity ξ)
@@ -1741,12 +1740,15 @@ private theorem exists_proofTargetCanonicalSpectralSchmidtDecomposition
           (orthonormalBasisUnitary v) := by
     rw [eigen_unitary]
   rw [replace]
-  simpa [T, C, σ, targetCoefficientMatrix, Matrix.toLpLin_apply,
-    EuclideanSpace.basisFun_apply, Matrix.mulVec_single_one,
-    Matrix.col_apply, EuclideanSpace.inner_single_right,
-    conjugateUnitary_apply,
-    orthonormalBasisUnitary_apply, singular,
-    mul_assoc, mul_left_comm, mul_comm] using coordinate
+  simpa only [T, C, σ, conjugateUnitary_apply, orthonormalBasisUnitary_apply,
+    RCLike.star_def, mul_comm,
+    mul_left_comm,
+    EuclideanSpace.basisFun_apply, toLpLin_apply, PiLp.ofLp_single, mulVec_single,
+      MulOpposite.op_one, one_smul,
+    col_apply, targetCoefficientMatrix, EuclideanSpace.inner_single_right, one_mul, singular,
+      Complex.coe_smul,
+    ofLp_sum, ofLp_smul, Finset.sum_apply, Pi.smul_apply, real_smul, smul_eq_mul, mul_assoc] using
+      coordinate
 
 end
 
@@ -1812,11 +1814,11 @@ private theorem targetCanonicalSpectralEnergy_le_of_canonicalSchmidt
     targetReducedDensity_trace ζ
   have hσunit :
       (∑ i : Fin d, (Real.sqrt (hF.isHermitian.eigenvalues i)) ^ 2) = 1 := by
-    simp_rw [Real.sq_sqrt (hF.eigenvalues_nonneg _)]
+    simp only [Real.sq_sqrt (hF.eigenvalues_nonneg _)]
     exact positiveDensity_eigenvalues_sum F hF hFtrace
   have hμunit :
       (∑ j : Fin d, (Real.sqrt (hG.isHermitian.eigenvalues j)) ^ 2) = 1 := by
-    simp_rw [Real.sq_sqrt (hG.eigenvalues_nonneg _)]
+    simp only [Real.sq_sqrt (hG.eigenvalues_nonneg _)]
     exact positiveDensity_eigenvalues_sum G hG hGtrace
   have henergy := schmidtVector_spectralEnergy_le
     (fun i => Real.sqrt (hF.isHermitian.eigenvalues i))
@@ -1826,7 +1828,7 @@ private theorem targetCanonicalSpectralEnergy_le_of_canonicalSchmidt
     hσunit hμunit
     (conjugateUnitary hF.isHermitian.eigenvectorUnitary) V
     (conjugateUnitary hG.isHermitian.eigenvectorUnitary) W
-  simp_rw [conjugateUnitaryBasisOverlap_norm_sq,
+  simp only [conjugateUnitaryBasisOverlap_norm_sq,
     ← targetSpectralAtomOverlap_eq_basis_norm_sq F G hF hG] at henergy
   change targetCanonicalSpectralEnergy ξ ζ ≤
     2 * ‖ξ.val - ζ.val‖ ^ 2
@@ -1973,7 +1975,7 @@ theorem dSVCanonicalFailurePrefix_norm_sq
                                             OfNat.ofNat_ne_zero, not_false_eq_true, zero_pow]
     · simp only [same, false_and, ↓reduceIte, norm_zero, ne_eq, OfNat.ofNat_ne_zero,
         not_false_eq_true, zero_pow]
-  simp_rw [atom]
+  simp only [atom]
   have count := dSVCanonicalFailurePrefix_card r
   simpa only [sum_ite_eq, mem_univ, ↓reduceIte, sum_boole, Nat.cast_inj] using congrArg
     (fun n : ℕ => (n : ℝ)) count
@@ -2052,7 +2054,8 @@ theorem dSVCanonicalFailurePrefix_inner
     omega⟩
   have counted := dSVCanonicalFailurePrefix_card t
   have cast_counted := congrArg (fun n : ℕ => (n : ℂ)) counted
-  simpa [t, Finset.sum_boole] using cast_counted
+  simpa only [t, lt_min_iff, sum_ite_eq, mem_univ, ↓reduceIte, sum_boole, Nat.cast_inj] using
+    cast_counted
 
 theorem dSVCanonicalFailurePrefix_sub_norm_sq
     {d : ℕ} (r s : Fin (d + 1)) :
@@ -2569,7 +2572,7 @@ theorem dSVUniformDensityThresholdShared_diagonalBorn_eq
         ((d : ℝ) * (N : ℝ)) := by
   rw [dSVUniformDensityThresholdShared_mixedBorn_eq
     grid dimension P P hP hPc hP hPc hPP hPP]
-  simp_rw [hPP]
+  simp only [hPP]
 
 /--
 The type used to represent DSV uniform density independent history local index in the exact
@@ -2715,8 +2718,8 @@ private theorem dSVUniformDensitySchmidtSumMass_le_four
     change
       (∑ i : Fin d, ∑ j : Fin d,
         (σ i + μ j) ^ 2 * overlap i j) = _
-    simp_rw [Finset.mul_sum]
-    simp_rw [← Finset.sum_add_distrib]
+    simp only [Finset.mul_sum]
+    simp only [← Finset.sum_add_distrib]
     apply Finset.sum_congr rfl
     intro i _
     apply Finset.sum_congr rfl
@@ -3261,8 +3264,7 @@ theorem rationalMarked_fiber_card
       · intro copy _
         rfl
     _ = min denominator (numerator letter) := by
-      simpa only using
-        (Fin.card_filter_val_lt (n := denominator)
+      exact (Fin.card_filter_val_lt (n := denominator)
           (m := numerator letter))
 
 omit [DecidableEq β] in
@@ -3285,8 +3287,7 @@ theorem rationalMarked_card
         ∑ letter : β,
           ((rationalMarked denominator numerator).filter
             fun point => point.1 = letter).card := by
-      simpa only using
-        (Finset.card_eq_sum_card_fiberwise
+      exact (Finset.card_eq_sum_card_fiberwise
           (f := fun point : β × Fin denominator => point.1)
           (s := rationalMarked denominator numerator)
           (t := (Finset.univ : Finset β))
@@ -3534,7 +3535,7 @@ theorem quadratic_le_klFun {x : ℝ} (hx : 0 ≤ x) :
     3 * (x - 1) ^ 2 / (2 * (x + 2)) ≤ InformationTheory.klFun x := by
   have h := pinskerScalarGap_nonneg hx
   dsimp [pinskerScalarGap] at h
-  linarith
+  linarith only [h, hx]
 
 /-- The entropy quantity for finite relative. -/
 def finiteRelativeEntropy {ι : Type*} [Fintype ι]
@@ -4081,8 +4082,7 @@ theorem finite_relative_entropy_data_processing
             absolute_continuity (lt_of_le_of_ne hreference (Ne.symm hzero))
     _ = ∑ i : ι,
         q i * InformationTheory.klFun (p i / q i) := by
-      simpa only [] using
-        (Finset.sum_fiberwise (Finset.univ : Finset ι) map
+      exact (Finset.sum_fiberwise (Finset.univ : Finset ι) map
           (fun i => q i * InformationTheory.klFun (p i / q i)))
 
 end CoarseGraining
@@ -4344,8 +4344,7 @@ theorem rationalMarked_inter_card
         ((rationalMarked denominator
           (fun i => min (left i) (right i))).filter
             fun point => point.1 = i).card := by
-      simpa only using
-        (Finset.card_eq_sum_card_fiberwise
+      exact (Finset.card_eq_sum_card_fiberwise
           (f := fun point : ι × Fin denominator => point.1)
           (s := rationalMarked denominator
             (fun i => min (left i) (right i)))
@@ -4446,7 +4445,7 @@ private theorem rationalMarked_markedTotalVariation_eq
         |(left i : ℝ) / denominator -
           (right i : ℝ) / denominator|) / 2
   rw [hsymmetric, hL]
-  simp_rw [hpointwise]
+  simp only [hpointwise]
   rw [← Finset.sum_div, Finset.sum_sub_distrib,
     Finset.sum_add_distrib, ← Finset.mul_sum,
     hleft_real, hright_real]
@@ -4571,7 +4570,7 @@ private theorem dSVUniformLeftDensityConjugateSwapVector_norm
       (∑ i : Fin d, ∑ j : Fin d,
         ‖star (z (j, i))‖ ^ 2) =
         ∑ i : Fin d, ∑ j : Fin d, ‖z (i, j)‖ ^ 2
-    simp_rw [norm_star]
+    simp only [norm_star]
     rw [Finset.sum_comm]
   exact (sq_eq_sq₀ (norm_nonneg _) (norm_nonneg _)).mp squares
 
@@ -4729,7 +4728,7 @@ theorem dSVUniformDensityGridPrefix_eq_count
   classical
   unfold dSVUniformDensityGridPrefix
     dSVUniformDensityThresholdWeight
-  simp_rw [mul_ite, mul_one, mul_zero]
+  simp only [mul_ite, mul_one, mul_zero]
   rw [← Finset.sum_filter]
   simp only [div_eq_mul_inv, mul_comm, mul_one, sum_const, nsmul_eq_mul]
 
@@ -4812,7 +4811,7 @@ theorem dSVUniformDensityThresholdMismatch_le
         _ = _ := by
           unfold dSVUniformDensityThresholdWeight
             dSVUniformDensityThresholdGrid
-          simp_rw [mul_ite, mul_one, mul_zero]
+          simp only [mul_ite, mul_one, mul_zero]
           rw [← Finset.sum_filter]
           simp only [div_eq_mul_inv, mul_comm, mul_one, inf_le_iff, le_sup_iff, sum_const,
             nsmul_eq_mul]
@@ -5154,9 +5153,8 @@ theorem finiteTensorLocalUnitaryMatrix_gram
       (U i).property
     have entry := congrArg
       (fun M : Matrix β β ℂ => M (p i) (q i)) gram
-    simpa only [RCLike.star_def, star_eq_conjTranspose, Matrix.mul_apply,
-      conjTranspose_apply] using entry
-  simp_rw [single]
+    exact entry
+  simp only [single]
   by_cases equal : p = q
   · subst q
     simp only [one_apply_eq, prod_const_one]
@@ -5421,7 +5419,7 @@ theorem dSVUniformDensityCompletePureHistory_zeroFlag_apply
             sharedThresholdResourceRaw, ofReal_one, PiLp.smul_apply, and_self, ↓reduceIte,
             real_smul, ofReal_inv, mul_one, single]
         rw [whole_amplitude]
-        simp_rw [single_amplitude]
+        simp only [single_amplitude]
         simpa only [ofReal_inv, Fin.coe_ofNat_eq_mod, Nat.zero_mod, ↓reduceIte, prod_inv_distrib,
           prod_const, card_univ, Fintype.card_fin, _root_.inv_inj, inv_pow,
           ofReal_pow] using complex_scalar
@@ -5634,7 +5632,7 @@ private theorem spectralPurificationFilterEntryLp_eq_eigen_sum
       star (U : Matrix d d ℂ)) i j =
       ∑ k : d, (coefficient k • generator k :
         Lp ℂ 2 (volume.restrict (Ioi (0 : ℝ)))) s
-  simp_rw [hg]
+  simp only [hg]
   simp only [Matrix.diagonal, ofReal_div, ofReal_add, Matrix.mul_apply, of_apply, mul_comm,
     ite_mul, zero_mul, sum_ite_eq', Finset.mem_univ, ↓reduceIte, star_apply, RCLike.star_def,
     mul_assoc, coefficient]
@@ -5850,7 +5848,7 @@ theorem finitePurificationMatrix_gram_eq_integral
         (star (spectralPurificationFilter (F a) (positive a) s) *
           spectralPurificationFilter (F a) (positive a) s) i j from
         MeasureTheory.eval_integral (fun k => (hrows i).eval k) j]
-  simp_rw [ensemblePurificationSubspaceEntry_inner_eq_integral]
+  simp only [ensemblePurificationSubspaceEntry_inner_eq_integral]
   have hproduct (r : d) :
       Integrable
         (fun s : ℝ =>
@@ -6031,7 +6029,7 @@ theorem finitePurificationMatrix_difference_gram_eq_integral
           (spectralPurificationFilter (F a) (positive a) s -
             spectralPurificationFilter M hM s)) i j from
         MeasureTheory.eval_integral (fun k => (hrows i).eval k) j]
-  simp_rw [purificationSubspaceEntry_difference_inner_eq_integral]
+  simp only [purificationSubspaceEntry_difference_inner_eq_integral]
   have hproduct (r : d) :
       Integrable
         (fun s : ℝ =>
@@ -6071,10 +6069,10 @@ theorem weighted_finitePurificationMatrix_difference_gram
         (volume.restrict (Ioi 0)) :=
     (spectralPurificationFilter_difference_gram_integrable
       (F a) M (positive a) hM).smul (weight a)
-  simp_rw [finitePurificationMatrix_difference_gram_eq_integral]
+  simp only [finitePurificationMatrix_difference_gram_eq_integral]
   unfold weightedSpectralFilterVariance
   rw [integral_finsetSum Finset.univ (fun a _ => hterm a)]
-  simp_rw [integral_smul]
+  simp only [integral_smul]
 
 end
 
@@ -6348,7 +6346,7 @@ theorem purifiedStrategy_winProbability
     {G : Game X Y A B} (S : Strategy G) :
     (purifiedStrategy S).winProbability = S.winProbability := by
   unfold Strategy.winProbability
-  simp_rw [purifiedStrategy_outcomeProbability]
+  simp only [purifiedStrategy_outcomeProbability]
 
 /-- The matrix representation of finite local purification joint. -/
 def finiteLocalPurificationJointMatrix
@@ -6427,8 +6425,7 @@ theorem dSVUniformDensityMixedProtocolLocalAction_norm
   have unitary : M ∈ Matrix.unitaryGroup (ι × ι) ℂ :=
     Matrix.kronecker_mem_unitary U.property V.property
   have gram : M.conjTranspose * M = 1 := by
-    simpa only [star_eq_conjTranspose] using
-      (Matrix.mem_unitaryGroup_iff'.mp unitary)
+    exact (Matrix.mem_unitaryGroup_iff'.mp unitary)
   have squared :
       ‖toLp 2 (M.mulVec (ofLp z))‖ ^ 2 = ‖z‖ ^ 2 := by
     rw [rectangularMatrix_norm_sq, gram]
@@ -6468,8 +6465,7 @@ theorem dSVUniformDensityPhysicalAsyncSigmaContinuation_norm
       ((Σ _ : ι, κ) × (Σ _ : ι, κ))) :
     ‖dSVUniformDensityPhysicalAsyncSigmaContinuation U V z‖ =
       ‖z‖ := by
-  simpa only [dSVUniformDensityPhysicalAsyncSigmaContinuation]
-    using dSVUniformDensityMixedProtocolLocalAction_norm
+  exact dSVUniformDensityMixedProtocolLocalAction_norm
       (coherentSharedRandomControlledUnitary U)
       (coherentSharedRandomControlledUnitary V) z
 
@@ -6823,7 +6819,7 @@ theorem dSVUniformDensityCorrectedMatchedSigmaWeightedResidual_controlled
     ite_mul, zero_mul, mul_comm, mul_zero, ite_self, mul_assoc, Fintype.sum_prod_type,
     Fintype.sum_sigma, sum_ite_irrel, sum_const_zero, sum_ite_eq, mem_univ, ↓reduceIte,
     localUnitaryAction]
-  simp_rw [Finset.mul_sum]
+  simp only [Finset.mul_sum]
 
 theorem
     dSVUniformDensityCorrectedMatchedSigmaControlledReset_distance_sq
@@ -6933,7 +6929,7 @@ theorem
   have overlap_mass :
       (∑ i : Fin d, ∑ j : Fin d,
         spectralAtomOverlap F G hF hG i j) = (d : ℝ) := by
-    simp_rw [spectralAtomOverlap_sum_right]
+    simp only [spectralAtomOverlap_sum_right]
     simp only [sum_const, card_univ, Fintype.card_fin, nsmul_eq_mul, mul_one]
   have discrepancy :
       (∑ i : Fin d, ∑ j : Fin d,
@@ -7001,7 +6997,7 @@ theorem
           intro j _
           ring
         _ = _ := by
-          simp_rw [Finset.sum_add_distrib, Finset.sum_div,
+          simp only [Finset.sum_add_distrib, Finset.sum_div,
             Finset.mul_sum]
     _ = dSVUniformLeftDensitySpectralAtomDiscrepancy ξ ζ / w +
           (d : ℝ) / N := by

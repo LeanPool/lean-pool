@@ -722,7 +722,7 @@ theorem unconditionalMatchedVerifierTensor_norm_sq
   change
     (∑ i : s, ∑ j : t, ‖target i * work j‖ ^ 2) =
       ‖target‖ ^ 2 * ‖work‖ ^ 2
-  simp_rw [norm_mul, mul_pow]
+  simp only [norm_mul, mul_pow]
   rw [← Fintype.sum_mul_sum, ← EuclideanSpace.norm_sq_eq,
     ← EuclideanSpace.norm_sq_eq]
 
@@ -1033,7 +1033,7 @@ theorem unconditionalSelectedCopy_weightedAffine
               (pointwise i) (nonnegative i)
     _ = coefficient * (∑ i, weight i * asynchronous i) +
           (∑ i, weight i) * residual := by
-            simp_rw [mul_add]
+            simp only [mul_add]
             rw [Finset.sum_add_distrib,
               Finset.mul_sum, Finset.sum_mul]
             congr 1
@@ -1081,7 +1081,7 @@ theorem unconditionalMatchedVerifierAggregate_dependent_continuity
         (quadraticExpectation (effect j) (actual j) -
           quadraticExpectation (effect j) (ideal j))| := by
             congr 1
-            simp_rw [mul_sub]
+            simp only [mul_sub]
             rw [Finset.sum_sub_distrib]
     _ ≤ ∑ j : J, |weight j *
       (quadraticExpectation (effect j) (actual j) -
@@ -1219,7 +1219,7 @@ theorem unconditionalConjugatePureVector_transpose_quadratic
   congr 1
   simp only [Matrix.transpose_apply,
     unconditionalConjugatePureVector_apply, star_star]
-  simp_rw [Finset.sum_mul]
+  simp only [Finset.sum_mul]
   rw [Finset.sum_comm]
   apply Finset.sum_congr rfl
   intro i _
@@ -1504,8 +1504,7 @@ theorem unconditionalConjugateBobBasisOverlap_sum
   have identity := congrArg
     (fun M : Matrix (Fin d) (Fin d) ℂ => M i b)
     (unconditionalConjugateBobBasisOverlapCancellation U V)
-  simpa only [unitaryBasisOverlap_apply, Matrix.mul_apply, conjTranspose_apply, RCLike.star_def,
-    transpose_apply, conjugateUnitary_apply] using identity
+  exact identity
 
 theorem unconditionalRationalMixedConjugateBobSpectral_sum
     {d : ℕ} (ξ ζ : BipartiteUnitVector d)
@@ -1753,11 +1752,11 @@ private theorem unconditionalMixedConjugateTargetCovariance
           w N ξ (i, j))) *
         embezzlementState (N * n) (a, b)
   rw [unconditionalMixedConjugateSigmaLocalAction_apply]
-  simp_rw [conjugateUnitary_apply,
+  simp only [conjugateUnitary_apply,
     unconditionalPublicBucketPhysicalCoherentTarget_apply]
   rw [← unconditionalMixedConjugateCanonicalAcceptedTarget_sum
     width grid dimension ξ ζ i j]
-  simp_rw [Finset.mul_sum, Finset.sum_mul]
+  simp only [Finset.mul_sum, Finset.sum_mul]
   apply Finset.sum_congr rfl
   intro k _
   apply Finset.sum_congr rfl
@@ -1786,7 +1785,7 @@ theorem unconditionalSelectedCopy_coherentPhaseSigma_norm_sq
   rw [dSVDensityRationalMixedCanonicalPrefixPhysicalSigmaWeighted_norm_sq,
     dSVDensityRationalMixedCanonicalPrefixPhysicalSigmaWeighted_norm_sq]
   simp only [Fintype.sum_prod_type]
-  simp_rw [
+  simp only [
     dSVDensityRationalPublicBucketCoherentPhaseHistory_apply_norm_sq
       phases]
   calc
@@ -1810,7 +1809,7 @@ theorem unconditionalSelectedCopy_coherentPhaseSigma_norm_sq
               ‖history (i, j)‖ ^ 2 * ‖work i j‖ ^ 2) := by
               apply Finset.sum_congr rfl
               intro φ _
-              simp_rw [Finset.mul_sum]
+              simp only [Finset.mul_sum]
               apply Finset.sum_congr rfl
               intro i _
               apply Finset.sum_congr rfl
@@ -1835,7 +1834,7 @@ theorem unconditionalSelectedCopy_coherentPhaseConstantWork_norm_sq
   calc
     (∑ i : H, ∑ j : H, ‖history (i, j)‖ ^ 2 * ‖work‖ ^ 2) =
         (∑ i : H, ∑ j : H, ‖history (i, j)‖ ^ 2) * ‖work‖ ^ 2 := by
-          simp_rw [Finset.sum_mul]
+          simp only [Finset.sum_mul]
     _ = _ := by
       congr 1
       rw [EuclideanSpace.norm_sq_eq, Fintype.sum_prod_type]
@@ -1861,8 +1860,7 @@ private theorem unconditionalSelectedCopy_mixedConjugateLocalAction_norm
       ((Σ _ : Fin B × Fin d, Fin m) ×
        (Σ _ : Fin B × Fin d, Fin m))) :
     ‖unconditionalMixedConjugateSigmaLocalAction B U V z‖ = ‖z‖ := by
-  simpa only [unconditionalMixedConjugateSigmaLocalAction] using
-    dSVUniformDensityMixedProtocolLocalAction_norm
+  exact dSVUniformDensityMixedProtocolLocalAction_norm
       (unconditionalMixedConjugateSigmaAtomLift (m := m) B U)
       (unconditionalMixedConjugateSigmaAtomLift (m := m) B V) z
 
@@ -2303,7 +2301,7 @@ private theorem actualStoppingGlobalBorn_eq_sum
       simp only [zero_mul]
     · simp only [mem_univ, not_true_eq_false, IsEmpty.forall_iff]
   rw [matrixQuadraticExpectation_expand]
-  simp_rw [matrixQuadraticExpectation_expand]
+  simp only [matrixQuadraticExpectation_expand]
   simp only [Fintype.sum_prod_type, Fintype.sum_sigma,
     Complex.re_sum]
   apply Finset.sum_congr rfl
@@ -4159,9 +4157,9 @@ private theorem unconditionalActualPhysicalMixedAcceptedSpectralGauge_stage
     width grid ξ ζ φ ψ i j k l a b]
   simp only [Matrix.mulVec, dotProduct, Matrix.kroneckerMap_apply,
     Fintype.sum_prod_type, Fintype.sum_sigma]
-  simp_rw [reindex_packed]
+  simp only [reindex_packed]
   simp only [Fintype.sum_prod_type]
-  simp_rw [unconditionalActualPhysicalMixedAcceptedSpectralGauge_apply]
+  simp only [unconditionalActualPhysicalMixedAcceptedSpectralGauge_apply]
   simp only [
     unconditionalActualPhysicalMixedAcceptedRawStage,
     Equiv.symm_apply_apply, ite_mul, mul_ite, zero_mul, mul_zero,
@@ -6168,8 +6166,7 @@ theorem unconditionalActualSelectedBranchLocalAction_norm
     (unconditionalMixedConjugateSelectedBranchUnitary
       (τ := τ) U V : Matrix ((ι × ι) × τ) ((ι × ι) × τ) ℂ)
   have gram : M.conjTranspose * M = 1 := by
-    simpa only [star_eq_conjTranspose] using
-      (Matrix.mem_unitaryGroup_iff'.mp
+    exact (Matrix.mem_unitaryGroup_iff'.mp
         (unconditionalMixedConjugateSelectedBranchUnitary
           (τ := τ) U V).property)
   have squared : ‖toLp 2 (M.mulVec (ofLp z))‖ ^ 2 = ‖z‖ ^ 2 := by
@@ -6244,10 +6241,10 @@ theorem unconditionalActualC485CleanDeviation_eq_hazard
       dSVDensityRationalHeterogeneousStoppedCommonPrefixHazard
         Q m width schedule ξ ζ A C := by
   classical
-  simp_rw [unconditionalActualC485CleanDeviation_sq
+  simp only [unconditionalActualC485CleanDeviation_sq
     Q width schedule ξ ζ A C _ (positive _) phases grid dimension (fine _)]
   unfold dSVDensityRationalHeterogeneousStoppedCommonPrefixHazard
-  simp_rw [
+  simp only [
     dSVDensityRationalHeterogeneousStoppedCommonPrefixFailureVector_norm_sq]
 
 theorem unconditionalActualC485WeightedCleanDeviation_eq_hazard
@@ -6595,9 +6592,7 @@ theorem
       z ((finCongr (Nat.mul_one d)) i,
          (finCongr (Nat.mul_one d)) j))
     (unconditionalActualFairSourceTensorEmbezzlementOne_reindex ξ)
-  simpa only [finCongr_apply, LinearIsometryEquiv.piLpCongrLeft_apply, Equiv.piCongrLeft'_apply,
-    Equiv.prodCongr_symm, finCongr_symm, Equiv.prodCongr_apply, Prod.map_apply, Fin.cast_cast,
-    Fin.cast_eq_self] using recovered.symm
+  exact recovered.symm
 
 private theorem unconditionalActualFairSourceWinningEffect_reindex
     {X Y A B : Type}

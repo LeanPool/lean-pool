@@ -479,10 +479,10 @@ theorem exactHistoryCode_accepted_iff
   rw [FiniteEventLaw.mem_winEvent_iff]
   constructor
   · intro h j hj
-    simpa only [repeatedCoordinateWin] using h ⟨j, hj⟩
+    exact h ⟨j, hj⟩
   · intro h j
     have hw := h j.val j.property
-    simpa only [repeatedCoordinateWin] using hw
+    exact hw
 
 theorem exactLocallySampleableLaw_zero_of_not_accepted
     (G : Game X Y A B) (n : ℕ) (S : Strategy (G.repeat n))
@@ -1501,7 +1501,7 @@ theorem exactSeedWeight_coordinate_sum
   rw [exactForwardSeed_sum]
   apply Finset.sum_congr (by ext; simp only [mem_univ])
   intro i _
-  simp_rw [← Finset.sum_mul]
+  simp only [← Finset.sum_mul]
   rw [exactSeedCoordinateFiber_sum i]
 
 theorem exactSeedWeight_coordinate_marginal
@@ -1591,7 +1591,7 @@ theorem exactAliceInformationReference_firstMarginal
       (∑ y : Y, G.questionWeight x y) /
         (Fintype.card (SourceRemainingCoordinate D) : ℝ)
   rw [Finset.sum_comm]
-  simp_rw [← Finset.sum_div, ← Finset.mul_sum,
+  simp only [← Finset.sum_div, ← Finset.mul_sum,
     exactAliceLocalConditional_sum, mul_one]
 
 theorem exactBobInformationReference_firstMarginal
@@ -1616,7 +1616,7 @@ theorem exactBobInformationReference_firstMarginal
       (∑ x : X, G.questionWeight x y) /
         (Fintype.card (SourceRemainingCoordinate D) : ℝ)
   rw [Finset.sum_comm]
-  simp_rw [← Finset.sum_div, ← Finset.mul_sum,
+  simp only [← Finset.sum_div, ← Finset.mul_sum,
     exactBobLocalConditional_sum, mul_one]
 
 end
@@ -2819,7 +2819,7 @@ theorem exactReverseAlicePartitionFiber_card
       {partition : M → Bool //
         insert coordinate
           (exactLeft coordinate partition) = side} = 2 := by
-  simpa only [Fintype.card_bool] using Fintype.card_congr
+  exact Fintype.card_congr
     (exactReverseAlicePartitionFiberEquiv
       side coordinate member)
 
@@ -2831,7 +2831,7 @@ theorem exactReverseBobPartitionFiber_card
       {partition : M → Bool //
         insert coordinate
           (exactRight coordinate partition) = side} = 2 := by
-  simpa only [Fintype.card_bool] using Fintype.card_congr
+  exact Fintype.card_congr
     (exactReverseBobPartitionFiberEquiv
       side coordinate member)
 
@@ -2988,7 +2988,7 @@ theorem exactReverseAliceSide_marginal
   classical
   unfold groupedMass
   rw [Finset.sum_filter, exactForwardSeed_sum]
-  simp_rw [exactReverseAlicePartition_orderCut_fiber_sum]
+  simp only [exactReverseAlicePartition_orderCut_fiber_sum]
   have hcoordinate (coordinate : M) :
       (∑ partition : M → Bool,
         if insert coordinate
@@ -3017,7 +3017,7 @@ theorem exactReverseAliceSide_marginal
         rw [← h]
         exact Finset.mem_insert_self _ _
       simp only [hnot, ↓reduceIte]
-  simp_rw [hcoordinate]
+  simp only [hcoordinate]
   rw [exactFiniteIndicator_sum]
   simp only [Fintype.card_coe, Fintype.card_fun,
     Fintype.card_bool, reversePartitionWeight,
@@ -3033,7 +3033,7 @@ theorem exactReverseBobSide_marginal
   classical
   unfold groupedMass
   rw [Finset.sum_filter, exactForwardSeed_sum]
-  simp_rw [exactReverseBobPartition_orderCut_fiber_sum]
+  simp only [exactReverseBobPartition_orderCut_fiber_sum]
   have hcoordinate (coordinate : M) :
       (∑ partition : M → Bool,
         if insert coordinate
@@ -3062,7 +3062,7 @@ theorem exactReverseBobSide_marginal
         rw [← h]
         exact Finset.mem_insert_self _ _
       simp only [hnot, ↓reduceIte]
-  simp_rw [hcoordinate]
+  simp only [hcoordinate]
   rw [exactFiniteIndicator_sum]
   simp only [Fintype.card_coe, Fintype.card_fun,
     Fintype.card_bool, reversePartitionWeight,
@@ -3338,7 +3338,7 @@ theorem reweightedSeedWinEventMass
     apply Finset.sum_congr rfl
     intro outcome _
     split_ifs <;> simp only [mul_zero]
-  simp_rw [hinner]
+  simp only [hinner]
   rw [← Finset.sum_mul, seedLaw.weight_sum]
   simp only [sum_ite_mem, univ_inter, one_mul]
 
@@ -5134,7 +5134,7 @@ theorem exactReverseAliceMarkerDecode_otherCut
   have transported := exactSigmaFinCutTransport
     (exactRight coordinate partition)
     context.otherSide other context.otherCut
-  simpa only [exactReverseAliceMarkerDecode] using transported
+  exact transported
 
 theorem exactReverseAliceMarkerDecode_sideRank
     {M : Type*} [Fintype M] [DecidableEq M]
@@ -5290,8 +5290,7 @@ theorem exactReverseAliceMarkerDecode_rightInverse
       have coordinate := congrArg
         (fun original : ExactForwardSeed M => original.coordinate)
         decoded
-      simpa only [exactReverseAliceMarkerDecode_coordinate]
-        using coordinate.symm
+      exact coordinate.symm
 
 end
 
@@ -5367,7 +5366,7 @@ theorem exactReverseBobMarkerDecode_otherCut
   have transported := exactSigmaFinCutTransport
     (exactLeft coordinate partition)
     context.otherSide other context.otherCut
-  simpa only [exactReverseBobMarkerDecode] using transported
+  exact transported
 
 theorem exactReverseBobMarkerDecode_sideRank
     {M : Type*} [Fintype M] [DecidableEq M]
@@ -5523,8 +5522,7 @@ theorem exactReverseBobMarkerDecode_rightInverse
       have coordinate := congrArg
         (fun original : ExactForwardSeed M => original.coordinate)
         decoded
-      simpa only [exactReverseBobMarkerDecode_coordinate]
-        using coordinate.symm
+      exact coordinate.symm
 
 end
 
@@ -6581,7 +6579,7 @@ private theorem exactJointQuestionMass_eq_question_mul_tail
                                (yy, tailY)) = history) := by
                           apply propext
                           tauto
-                    simp_rw [hcondition, ite_and]
+                    simp only [hcondition, ite_and]
                     simp only [ne_eq, Equiv.funSplitAt, Equiv.piSplitAt, eq_rec_constant,
                       Equiv.symm_mk, Equiv.coe_fn_mk, sum_ite_irrel, sum_ite_eq', mem_univ,
                       ↓reduceIte, sum_const_zero]
@@ -7284,7 +7282,7 @@ private theorem exactFairPsiPhiDistance_mul_postselection_le
       4 * exactFairAcceptedAliceVariation G n S D := by
   classical
   rw [exactFairPosteriorExpectation_reindex]
-  simp_rw [Finset.sum_mul]
+  simp only [Finset.sum_mul]
   calc
     (∑ r : ExactHistoryFlag X Y A B D,
       ∑ y : Y, ∑ x : X,
@@ -7365,7 +7363,7 @@ private theorem exactFairGammaPsiDistance_mul_postselection_le
       4 * exactFairAcceptedBobVariation G n S D := by
   classical
   rw [exactFairPosteriorExpectation_reindex]
-  simp_rw [Finset.sum_mul]
+  simp only [Finset.sum_mul]
   calc
     (∑ r : ExactHistoryFlag X Y A B D,
       ∑ y : Y, ∑ x : X,

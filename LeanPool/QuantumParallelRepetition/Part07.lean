@@ -280,7 +280,7 @@ theorem
             L flagBob i)‖ ^ 2 := by
   classical
   unfold dSVDensityRationalHeterogeneousActualPhysicalFlagMass
-  simp_rw [dSVDensityRationalHeterogeneousActualPhysicalFlagBornState_allFlags,
+  simp only [dSVDensityRationalHeterogeneousActualPhysicalFlagBornState_allFlags,
     norm_prod, ← Finset.prod_pow]
   calc
     _ = ∏ i : Fin (L + 1),
@@ -403,7 +403,7 @@ theorem
         dSVDensityRationalHeterogeneousPhysicalStageSuccess
           N width schedule ξ ζ j.val := by
   rw [dSVDensityRationalHeterogeneousActualPhysicalFlagMass_eq_optionalProduct]
-  simp_rw [dSVDensityRationalHeterogeneousActualPhysicalMatchedCopyBorn
+  simp only [dSVDensityRationalHeterogeneousActualPhysicalMatchedCopyBorn
     grid dimension width schedule ξ ζ j]
   exact dSVDensityRationalHeterogeneousActualPhysical_firstHitProduct
     (dSVDensityRationalHeterogeneousPhysicalStageContinue
@@ -449,7 +449,7 @@ theorem
       dSVDensityRationalHeterogeneousPhysicalTerminalMass
         N width schedule ξ ζ := by
   rw [dSVDensityRationalHeterogeneousActualPhysicalFlagMass_eq_optionalProduct]
-  simp_rw [dSVDensityRationalHeterogeneousActualPhysicalNoHitCopyBorn
+  simp only [dSVDensityRationalHeterogeneousActualPhysicalNoHitCopyBorn
     grid dimension width schedule ξ ζ]
   unfold dSVDensityRationalHeterogeneousPhysicalTerminalMass
     dSVDensityRationalHeterogeneousPhysicalSurvival
@@ -493,7 +493,7 @@ theorem
         N width schedule ξ ζ j.succ j.succ) =
       dSVDensityRationalHeterogeneousPhysicalStoppedSuccessMass
         N width schedule ξ ζ := by
-  simp_rw [dSVDensityRationalHeterogeneousActualPhysicalFlagMass_succ_succ_eq_stage
+  simp only [dSVDensityRationalHeterogeneousActualPhysicalFlagMass_succ_succ_eq_stage
     grid dimension width schedule ξ ζ]
   unfold dSVDensityRationalHeterogeneousPhysicalStoppedSuccessMass
   exact Fin.sum_univ_eq_sum_range
@@ -982,7 +982,7 @@ private theorem
     dSVDensityRationalPublicBucketPhysicalCoherentTargetState
   rw [dSVDensityRationalPublicBucketCoherentPhaseSigmaReset_distance_sq
     phases]
-  simp_rw [
+  simp only [
     dSVDensityRationalLocalSpectralPairHistory_apply_norm_sq]
   unfold
     dSVDensityRationalPublicBucketPhysicalPhaseWeightedMixedError
@@ -1596,8 +1596,7 @@ private theorem
                       (representative phase (bucket phase r)).val) : ℕ) : ℝ) +
               4 * (if bucket phase r = bucket phase s
                 then (0 : ℝ) else 1)) := by
-                simpa only [Nat.cast_max, Nat.cast_one, Nat.cast_min, mul_ite, mul_zero, mul_one,
-                  gap] using actual
+                exact actual
       _ = 2 * gap + 4 * (r.val : ℝ) * ε ^ 2 +
           16 * ((r.val : ℝ) *
             (|(r.val : ℝ) -
@@ -1659,7 +1658,7 @@ private theorem
                         B phase *
                         (if bucket phase r = bucket phase s
                           then (0 : ℝ) else 1)) := by
-                    simp_rw [Finset.mul_sum]
+                    simp only [Finset.mul_sum]
                     rw [← Finset.sum_add_distrib]
                     apply Finset.sum_congr rfl
                     intro phase _
@@ -1809,7 +1808,7 @@ private theorem finitePhaseWeightedDoubleSum_exchange
   calc
     _ = ∑ phase, ∑ i, ∑ j,
         phaseWeight phase * (coefficient i j * term phase i j) := by
-      simp_rw [Finset.mul_sum]
+      simp only [Finset.mul_sum]
     _ = ∑ i, ∑ j, ∑ phase,
         phaseWeight phase * (coefficient i j * term phase i j) := by
       rw [Finset.sum_comm]
@@ -1833,7 +1832,7 @@ private theorem finiteDoubleSum_mul_add
         (left * first i j + right * second i j)) =
       left * (∑ i, ∑ j, coefficient i j * first i j) +
         right * (∑ i, ∑ j, coefficient i j * second i j) := by
-  simp_rw [mul_add, Finset.sum_add_distrib, Finset.mul_sum]
+  simp only [mul_add, Finset.sum_add_distrib, Finset.mul_sum]
   congr 1
   · apply Finset.sum_congr rfl
     intro i _
@@ -2102,8 +2101,7 @@ theorem
             N width schedule ξ ζ k +
           dSVDensityRationalHeterogeneousPhysicalStageAsynchronous
             N width schedule ξ ζ k) := by
-      simpa only using
-        (Fin.sum_univ_eq_sum_range
+      exact (Fin.sum_univ_eq_sum_range
           (fun k : ℕ =>
             dSVDensityRationalHeterogeneousPhysicalSurvival
                 N width schedule ξ ζ k *
@@ -2205,7 +2203,7 @@ private theorem
               N width schedule ξ ζ k.val *
             dSVDensityRationalPhysicalDiagonalBornSuccess
               grid dimension (width (schedule k)) ξ) := by
-      simp_rw [Finset.mul_sum]
+      simp only [Finset.mul_sum]
       rw [← Finset.sum_add_distrib]
       apply Finset.sum_congr rfl
       intro k _
@@ -2354,7 +2352,7 @@ private theorem
         Q n width schedule ξ ζ A C := by
   unfold dSVDensityRationalHeterogeneousStoppedCommonPrefixHazard
     dSVDensityRationalHeterogeneousStoppedCommonStopGaugeError
-  simp_rw [
+  simp only [
     dSVDensityRationalHeterogeneousStoppedCommonPrefixFailureVector_norm_sq]
 
 theorem
@@ -2565,7 +2563,7 @@ theorem unconditionalPrefactorBucketCoefficient_nonneg :
     0 ≤ unconditionalPrefactorBucketCoefficient := by
   have exponential := Real.add_one_le_exp (1 : ℝ)
   unfold unconditionalPrefactorBucketCoefficient
-  linarith
+  linarith only [exponential]
 
 theorem unconditionalPrefactor_fourthRoot_sq
     {a : ℝ} (nonnegative : 0 ≤ a) :
@@ -3533,8 +3531,8 @@ theorem reweightedSeed_reverse_source_prefix_information_budget
       (seedLaw ∅) G n S D positive (projection ∅) default
     let : IsEmpty (Fin (∅ : Finset (SourceRemainingCoordinate D)).card) :=
       ⟨fun k => Nat.not_lt_zero k.val
-        (by simpa only [Finset.card_empty] using k.isLt)⟩
-    simpa only [Fintype.sum_empty] using hempty
+        (by exact k.isLt)⟩
+    exact hempty
   exact exactRemainingReverse_relativeEntropy_budget
     D remaining
     (fun side k => reweightedSeedPrefixEntropyIncrement
@@ -3748,7 +3746,7 @@ private theorem finiteProductMarginal_relativeEntropy_le
         exact Real.log_prod (fun i _ => hm_factor i)
       rw [Real.log_div hpx hq_product,
         Real.log_div hpx hm_product, hlogq, hlogm]
-      simp_rw [Real.log_div (hm_factor _) (hq_factor _)]
+      simp only [Real.log_div (hm_factor _) (hq_factor _)]
       rw [← Finset.mul_sum, Finset.sum_sub_distrib]
       ring
   have hidentity :
@@ -3766,7 +3764,7 @@ private theorem finiteProductMarginal_relativeEntropy_le
       (finiteIndependentProductWeight_nonneg marginal hm_nonnegative)
       hm_absolute hp_normalized
       (finiteIndependentProductWeight_sum marginal hm_normalized)]
-    simp_rw [finiteRelativeEntropy_eq_log_sum_of_absolute_continuity
+    simp only [finiteRelativeEntropy_eq_log_sum_of_absolute_continuity
       (marginal _) (q _) (hq _) (hq_absolute _)
       (hm_normalized _) (hq_normalized _)]
     calc
@@ -3860,7 +3858,7 @@ theorem exactIndependentCoordinateQuestion_marginal
     · simp only [Prod.mk.injEq, hc, false_and, ↓reduceIte, sum_const_zero]
   unfold groupedMass
   rw [Finset.sum_filter, Fintype.sum_prod_type]
-  simp_rw [hinner]
+  simp only [hinner]
   calc
     (∑ seed : ExactForwardSeed M,
       if seed.coordinate = i
@@ -3895,7 +3893,7 @@ theorem strategyAliceQuestionPrior_marginal
   unfold Game.marginalX
   apply Finset.sum_congr rfl
   intro y _
-  simp_rw [← Finset.mul_sum]
+  simp only [← Finset.mul_sum]
   rw [S.outcomeProbability_normalized x y]
   ac_rfl
 
@@ -3918,7 +3916,7 @@ theorem strategyBobQuestionPrior_marginal
   unfold Game.marginalY
   apply Finset.sum_congr rfl
   intro x _
-  simp_rw [← Finset.mul_sum]
+  simp only [← Finset.mul_sum]
   rw [S.outcomeProbability_normalized x y]
   ac_rfl
 
@@ -5182,7 +5180,7 @@ theorem finiteSupportedConditionalHistoryReferenceFirstMarginal_eq
     (∑ v : V,
       q (i, (r, v)) / jointFirstMarginal q i) =
       jointFirstMarginal (jointConditional p i) r
-  simp_rw [factor i supported r]
+  simp only [factor i supported r]
   calc
     (∑ v : V,
       (jointFirstMarginal q i *
@@ -7023,7 +7021,7 @@ theorem finiteNextInformation_eq_atom_sum
                 (fun source => (context source, next source)) mass)
               (context outcome))
             (reference (context outcome)) := by
-  simp_rw [jointFirstMarginal_groupedContextNext
+  simp only [jointFirstMarginal_groupedContextNext
     context next mass]
   exact finiteGroupedExpectation_eq_atom_sum
     context mass
@@ -7126,8 +7124,8 @@ theorem finiteNestedNextInformation_eq_atom_sum
               (point.1, point.2.1))
             (reference point.1) := by
   classical
-  simp_rw [Finset.mul_sum]
-  simp_rw [← mul_assoc,
+  simp only [Finset.mul_sum]
+  simp only [← mul_assoc,
     nestedFirstMarginal_mul_conditional mass nonnegative,
     nestedConditional_eq_flat mass nonnegative]
   let flat : (I × R) × V → ℝ :=
@@ -7145,7 +7143,7 @@ theorem finiteNestedNextInformation_eq_atom_sum
           flat target =
         jointFirstMarginal flat target := by
     exact congrFun (groupedMass_first flat) target
-  simp_rw [hfirst] at h
+  simp only [hfirst] at h
   change
     (∑ index : I, ∑ history : R,
       jointFirstMarginal flat (index, history) *

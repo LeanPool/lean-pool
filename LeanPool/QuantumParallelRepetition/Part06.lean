@@ -161,9 +161,9 @@ theorem exactAliceQuestionFilter_complement_posSemidef
         (1 - (∑ q, w q)) •
             (1 : Matrix S.Alice S.Alice ℂ) +
           ∑ q, w q • (1 - E q) := by
-    simp_rw [smul_sub]
-    rw [Finset.sum_sub_distrib, ← Finset.sum_smul]
-    module
+    simp only [smul_sub]
+    rw [Finset.sum_sub_distrib, ← Finset.sum_smul,
+      sub_smul, one_smul, sub_add_sub_cancel]
   rw [filter_eq, split]
   apply Matrix.PosSemidef.add
   · exact Matrix.PosSemidef.one.smul (sub_nonneg.mpr weights_sum)
@@ -224,9 +224,9 @@ theorem exactBobQuestionFilter_complement_posSemidef
         (1 - (∑ q, w q)) •
             (1 : Matrix S.Bob S.Bob ℂ) +
           ∑ q, w q • (1 - E q) := by
-    simp_rw [smul_sub]
-    rw [Finset.sum_sub_distrib, ← Finset.sum_smul]
-    module
+    simp only [smul_sub]
+    rw [Finset.sum_sub_distrib, ← Finset.sum_smul,
+      sub_smul, one_smul, sub_add_sub_cancel]
   rw [filter_eq, split]
   apply Matrix.PosSemidef.add
   · exact Matrix.PosSemidef.one.smul (sub_nonneg.mpr weights_sum)
@@ -255,9 +255,9 @@ theorem exactAliceMeanFilter_complement_posSemidef
         (1 - (∑ x, w x)) •
             (1 : Matrix S.Alice S.Alice ℂ) +
           ∑ x, w x • (1 - E x) := by
-    simp_rw [smul_sub]
-    rw [Finset.sum_sub_distrib, ← Finset.sum_smul]
-    module
+    simp only [smul_sub]
+    rw [Finset.sum_sub_distrib, ← Finset.sum_smul,
+      sub_smul, one_smul, sub_add_sub_cancel]
   change (1 - ∑ x, w x • E x).PosSemidef
   rw [split]
   apply Matrix.PosSemidef.add
@@ -288,9 +288,9 @@ theorem exactBobMeanFilter_complement_posSemidef
         (1 - (∑ y, w y)) •
             (1 : Matrix S.Bob S.Bob ℂ) +
           ∑ y, w y • (1 - E y) := by
-    simp_rw [smul_sub]
-    rw [Finset.sum_sub_distrib, ← Finset.sum_smul]
-    module
+    simp only [smul_sub]
+    rw [Finset.sum_sub_distrib, ← Finset.sum_smul,
+      sub_smul, one_smul, sub_add_sub_cancel]
   change (1 - ∑ y, w y • E y).PosSemidef
   rw [split]
   apply Matrix.PosSemidef.add
@@ -842,7 +842,7 @@ private theorem exactJointPrefixAliceOperatorMass_sum_insert
       intro xs _
       apply Finset.sum_congr rfl
       intro ys _
-      simp_rw [exactFixedQuestionPrefix_insert_iff
+      simp only [exactFixedQuestionPrefix_insert_iff
         fixedX j fresh xs knownX]
       by_cases compatible :
           (∀ k : Fin n, k ∈ fixedX → xs k = knownX k) ∧
@@ -907,7 +907,7 @@ private theorem exactJointPrefixBobOperatorMass_sum_insert
       intro xs _
       apply Finset.sum_congr rfl
       intro ys _
-      simp_rw [exactFixedQuestionPrefix_insert_iff
+      simp only [exactFixedQuestionPrefix_insert_iff
         fixedY j fresh ys knownY]
       by_cases compatible :
           (∀ k : Fin n, k ∈ fixedX → xs k = knownX k) ∧
@@ -1198,8 +1198,8 @@ private theorem exactRevealCode_eq_iff_fair_question_masks
         subst j
         exact congrFun bobLP ⟨k, hk⟩
   · rintro ⟨alice, bob⟩
-    unfold exactRevealCode
-    congr 1
+    simp only [exactRevealCode, ExactRevealHistory.mk.injEq]
+    refine ⟨?_, ?_, ?_, ?_, ?_, ?_⟩
     · funext j
       exact alice j.val <|
         Finset.mem_union_left _ <|
@@ -3867,9 +3867,9 @@ private theorem exactFixedSeedOutcomeCode_accepted_iff
   rw [FiniteEventLaw.mem_winEvent_iff]
   constructor
   · intro accepted j member
-    simpa only [repeatedCoordinateWin] using accepted ⟨j, member⟩
+    exact accepted ⟨j, member⟩
   · intro accepted j
-    simpa only [repeatedCoordinateWin] using accepted j.val j.property
+    exact accepted j.val j.property
 
 theorem exactFairFullOutcomeBornMass_accepted_sum
     (G : Game X Y A B) (n : ℕ) (S : Strategy (G.repeat n))
@@ -4139,7 +4139,7 @@ private theorem exactReverseBobFilterLowOperatorPotential_neg_le_scalarEntropy
   unfold exactReverseBobFilterLowOperatorPotential
     exactReverseBobAcceptedScalarEntropy
   dsimp only
-  simp_rw [← Finset.sum_neg_distrib]
+  simp only [← Finset.sum_neg_distrib]
   apply Finset.sum_le_sum
   intro history _
   apply Finset.sum_le_sum
@@ -6045,9 +6045,9 @@ theorem dSVDensityRationalHeterogeneousActualPhysicalState_apply_zeroFlag
     split_ifs <;> simp_all
   rw [dSVDensityRationalHeterogeneousActualPhysicalState_apply]
   simp only [Fintype.sum_sigma]
-  simp_rw [dSVUniformDensityCompletePureHistory_zeroFlag_apply,
+  simp only [dSVUniformDensityCompletePureHistory_zeroFlag_apply,
     mul_ite, mul_zero]
-  simp_rw [split_zero]
+  simp only [split_zero]
   simp only [Fin.val_eq_zero_iff, sum_ite_irrel, sum_const_zero, sum_ite_eq', mem_univ,
     ↓reduceIte]
 
@@ -6167,7 +6167,7 @@ theorem dSVDensityRationalHeterogeneousActualPhysicalLocalUnitary_apply
           (Σ _ : Fin (L + 1), Fin (L + 1) → β) ℂ))
         ⟨flag, output⟩ ⟨0, input⟩ = _
   rw [Matrix.mul_apply, Fintype.sum_sigma, Finset.sum_comm]
-  simp_rw [restoration,
+  simp only [restoration,
     dSVDensityRationalHeterogeneousActualSpectralStopping_apply]
   simp only [RCLike.star_def, mul_ite, ite_mul, zero_mul, mul_zero, sum_ite_eq', mem_univ,
     ↓reduceIte]
@@ -6486,9 +6486,7 @@ private theorem
   | none => simp only [UnitaryGroup.inv_val, mul_one, SetLike.coe_mem,
               Unitary.star_mul_self_of_mem, dSVDensityRationalCompleteStoppedOptionalLocalEffect]
   | some outcome =>
-      simpa only [UnitaryGroup.inv_val, dSVDensityRationalCompleteStoppedOptionalLocalEffect]
-        using
-          (dSVDensityRationalFirstAcceptPhysicalEffect_eq_spectralMask
+      exact (dSVDensityRationalFirstAcceptPhysicalEffect_eq_spectralMask
             (dSVDensityRationalHeterogeneousActualPhysicalFlagBornCopyWidth
               width schedule i) N ξ outcome).symm
 
@@ -6618,7 +6616,7 @@ theorem
           (dSVDensityRationalCompleteStoppedOptionalLocalSchedule
             L flagBob i) (alice i, bob i) := by
   rw [dSVDensityRationalHeterogeneousActualPhysicalState_apply_zeroFlag]
-  simp_rw [dSVUniformDensityIndependentSharedState_apply,
+  simp only [dSVUniformDensityIndependentSharedState_apply,
     dSVDensityRationalHeterogeneousActualPhysicalFlagBornAlice_sourceProduct,
     dSVDensityRationalHeterogeneousActualPhysicalFlagBornBob_sourceProduct]
   calc
@@ -6791,11 +6789,11 @@ theorem dSVDensityRationalPublicLogPhasePhysicalAlignedLocalAction_apply
                       (D : Matrix (Fin (d * n)) (Fin (d * n)) ℂ)
                         (e ((ψ, b), j)) (e ((υ, y), l)) *
                       source (e ((χ, x), k), e ((υ, y), l))) = _
-      simp_rw [left, right, resource]
+      simp only [left, right, resource]
       simp only [mul_ite, ite_mul, zero_mul, mul_zero, ofReal_inv, mul_assoc, sum_ite_irrel,
         sum_ite_eq, mem_univ, ↓reduceIte, sum_const_zero, sum_mul]
       split_ifs
-      · simp_rw [Finset.mul_sum]
+      · simp only [Finset.mul_sum]
         apply Finset.sum_congr rfl
         intro x _
         apply Finset.sum_congr rfl
@@ -7058,7 +7056,7 @@ theorem
           (∑ b : Fin n × Fin n,
             ‖embezzlementState n b‖ ^ 2) := by
           rw [Fintype.sum_prod_type]
-          simp_rw [norm_mul, mul_pow]
+          simp only [norm_mul, mul_pow]
           exact (Fintype.sum_mul_sum
             (fun a : Fin N × Fin N => ‖z a‖ ^ 2)
             (fun b : Fin n × Fin n =>
@@ -7131,7 +7129,7 @@ theorem
         w N ξ ζ true true‖ ^ 2 := by
   unfold dSVDensityRationalMixedCanonicalPrefixPhysicalAcceptedSigmaState
   rw [dSVDensityRationalMixedCanonicalPrefixPhysicalSigmaWeighted_norm_sq]
-  simp_rw [
+  simp only [
     dSVDensityRationalLocalSpectralPairHistory_apply_norm_sq,
     dSVDensityRationalMixedCanonicalPrefixPureHarmonicTensor_norm_sq
       residual,
@@ -7139,7 +7137,7 @@ theorem
   rw [dSVDensityRationalMixedAcceptedPrefix_norm_sq
     width grid ξ ζ]
   unfold dSVDensityRationalPrefixHarmonicSpectralOverlap
-  simp_rw [Finset.sum_div]
+  simp only [Finset.sum_div]
   apply Finset.sum_congr rfl
   intro i _
   apply Finset.sum_congr rfl
