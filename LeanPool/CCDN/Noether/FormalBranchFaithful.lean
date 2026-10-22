@@ -10,9 +10,7 @@ Upstream: jasondavies/ccdn-dimension-growth @ bb025e7207f3a35a21b898629f5678b72a
 
 public import Mathlib.Algebra.MvPolynomial.PDeriv
 public import Mathlib.RingTheory.PowerSeries.Basic
-import LeanPool.CCDN.Algebra.SectionImageRank
-import LeanPool.CCDN.ForMathlib.PowerSeries
-import LeanPool.CCDN.Hilbert.PlaneHilbert
+import LeanPool.CCDN.Noether.FormalBranchOrder
 import LeanPool.CCDN.Noether.FormalPlaneBranch
 import Mathlib.RingTheory.Polynomial.UniqueFactorization
 import Mathlib.RingTheory.SimpleRing.Principal
@@ -36,33 +34,8 @@ private theorem formal_plane_map_eq_zero_iff_dvd {K : Type*} [Field K]
   constructor
   · intro hg
     by_contra hnd
-    let p : Ideal (MvPolynomial (Fin 2) K) := Ideal.span {f}
-    have : p.IsPrime := Ideal.isPrime_span_singleton_of_prime hf.prime
-    let φ : (MvPolynomial (Fin 2) K ⧸ p) →ₐ[K] PowerSeries K :=
-      Ideal.Quotient.liftₐ p ψ (by
-        intro l hl
-        obtain ⟨q, rfl⟩ := Ideal.mem_span_singleton.mp hl
-        rw [map_mul, hψ, zero_mul])
-    have hφ (l : MvPolynomial (Fin 2) K) : φ ((Ideal.Quotient.mk p) l) = ψ l := by
-      rfl
-    let N := f.totalDegree * g.totalDegree + 1
-    let h : Fin N → MvPolynomial (Fin 2) K := fun i => (X j - C a) ^ i.val
-    have hi : LinearIndependent K (fun i => φ ((Ideal.Quotient.mk p) (h i))) := by
-      have he : (fun i => φ ((Ideal.Quotient.mk p) (h i))) =
-          (fun i : Fin N => (PowerSeries.X : PowerSeries K) ^ i.val) := by
-        funext i
-        rw [hφ]
-        simp only [h, map_pow, hparam]
-      rw [he]
-      exact PowerSeries.linearIndependent_of_order_injective _ Fin.val Fin.val_injective
-        (fun i => PowerSeries.order_X_pow i.val)
-    have hh := section_image_rank_le p f.totalDegree
-      ⟨f.totalDegree, (f.totalDegree : ℤ) - f.totalDegree.choose 2,
-        fun M hM => principal_plane_hilbert_function f hf.ne_zero hM⟩
-      φ h hi g (by simpa only [p, Ideal.mem_span_singleton] using hnd) g.totalDegree le_rfl
-      (by rw [hφ]; exact hg)
-    rw [Fintype.card_fin] at hh
-    dsimp only [N] at hh
+    have hbound := formal_plane_vanishing_order_bound f hf ψ hψ j a hparam g hnd
+      (N := f.totalDegree * g.totalDegree + 1) (by rw [hg]; exact dvd_zero _)
     omega
   · rintro ⟨q, rfl⟩
     rw [map_mul, hψ, zero_mul]

@@ -10,7 +10,7 @@ Upstream: jasondavies/ccdn-dimension-growth @ bb025e7207f3a35a21b898629f5678b72a
 
 public import LeanPool.CCDN.Projection.CurvePrimitivePair
 public import LeanPool.CCDN.Projection.InfinityParameterReduction
-import LeanPool.CCDN.Algebra.BoundedLinearSeparation
+public import LeanPool.CCDN.Algebra.BoundedLinearSeparation
 import LeanPool.CCDN.Algebra.CoordinatePowerGeneration
 import Mathlib.Algebra.Polynomial.OfFn
 
@@ -27,41 +27,6 @@ lemma momentCoordinate_homogeneous (K : Type*) [Field K] (n k : ℕ) :
   apply MvPolynomial.IsHomogeneous.sum
   intro j _
   exact MvPolynomial.isHomogeneous_C_mul_X _ _
-
-/-- A moment form with parameter at most n times the number of directions
-is nonzero on all those directions. -/
-theorem exists_bounded_moment_nonvanishing {K ι : Type*} [Field K] [CharZero K]
-    [Fintype ι] {n : ℕ} (v : ι → Fin n → K) (hv : ∀ i, v i ≠ 0) :
-    ∃ k : ℕ, k ≤ n * Fintype.card ι ∧
-      ∀ i, ∑ j : Fin n, v i j * (k : K) ^ j.val ≠ 0 := by
-  classical
-  let P (i : ι) : Polynomial K := Polynomial.ofFn n (v i)
-  have hPn (i : ι) : P i ≠ 0 := by
-    intro he
-    apply hv i
-    funext j
-    have hc := congrArg (fun q : Polynomial K => q.coeff j.val) he
-    simpa only [P, Polynomial.ofFn_coeff_eq_val_of_lt _ j.isLt, Polynomial.coeff_zero,
-      Pi.zero_apply] using hc
-  have hPd (i : ι) : (P i).natDegree ≤ n := by
-    cases n with
-    | zero => simp [P]
-    | succ n => exact Nat.le_of_lt (Polynomial.ofFn_natDegree_lt (by omega) _)
-  let Q := ∏ i, P i
-  have hQ : Q ≠ 0 := Finset.prod_ne_zero_iff.mpr (fun i _ => hPn i)
-  have hd : Q.natDegree ≤ n * Fintype.card ι := by
-    calc
-      _ ≤ ∑ _i : ι, n := (Polynomial.natDegree_prod_le _ _).trans
-        (Finset.sum_le_sum (fun i _ => hPd i))
-      _ = _ := by simp [Nat.mul_comm]
-  obtain ⟨k, hk, hval⟩ := polynomial_exists_small_nat_eval_ne_zero Q hQ
-  refine ⟨k, hk.trans hd, ?_⟩
-  intro i
-  have hp : (∏ i, (P i).eval (k : K)) ≠ 0 := by
-    simpa only [Q, Polynomial.eval_prod] using hval
-  have hi := (Finset.prod_ne_zero_iff.mp hp) i (Finset.mem_univ i)
-  simpa only [P, Polynomial.ofFn_eq_sum_monomial, Polynomial.eval_finsetSum,
-    Polynomial.eval_monomial] using hi
 
 /-- Avoiding infinity gives the eventual recurrence of the original
 coordinate filtration. -/

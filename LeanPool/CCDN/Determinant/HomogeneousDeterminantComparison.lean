@@ -10,8 +10,10 @@ Upstream: jasondavies/ccdn-dimension-growth @ bb025e7207f3a35a21b898629f5678b72a
 
 public import LeanPool.CCDN.ArithmeticHeights.BombieriVaaler
 public import LeanPool.CCDN.Algebra.HomogeneousMonomials
+public import LeanPool.CCDN.Height.IntegerCoefficientHeight
 public import Mathlib.RingTheory.MvPolynomial.MonomialOrder
 import LeanPool.CCDN.Algebra.HomogeneousEvaluation
+import LeanPool.CCDN.Algebra.HomogeneousRank
 import LeanPool.CCDN.Algebra.HomogeneousRankDichotomy
 import LeanPool.CCDN.Algebra.RowSelection
 import LeanPool.CCDN.AuxiliaryPolynomial.CoefficientBound
@@ -45,6 +47,52 @@ namespace CCDN
 noncomputable section
 open MvPolynomial Matrix
 
+/-- A homogeneous equation yields a small homogeneous polynomial
+vanishing at every given integral point. -/
+theorem exists_small_homogeneous_vanishing_polynomial {n d M t : ℕ}
+    (f : MvPolynomial (Fin (n + 1)) ℤ) (hf : f.IsHomogeneous d) (hf0 : f ≠ 0) (hdM : d ≤ M)
+    (points : Fin t → (Fin (n + 1) → ℤ)) (hzero : ∀ i, eval (points i) f = 0) :
+    ∃ (s : ℕ) (a : Fin s → Fin t), Function.Injective a ∧ s < (n + M).choose M ∧
+      s + (n + (M - d)).choose (M - d) ≤ (n + M).choose M ∧
+      LinearIndependent ℚ
+        ((evaluationMatrix (homogeneousMonomials n M) (points ∘ a)).map ((↑) : ℤ → ℚ)).row ∧
+      Submodule.span ℚ (Set.range
+        ((evaluationMatrix (homogeneousMonomials n M) (points ∘ a)).map ((↑) : ℤ → ℚ)).row) =
+      Submodule.span ℚ (Set.range
+        ((evaluationMatrix (homogeneousMonomials n M) points).map ((↑) : ℤ → ℚ)).row) ∧
+      ∃ g : MvPolynomial (Fin (n + 1)) ℤ, g ≠ 0 ∧ g.IsHomogeneous M ∧
+        (∀ i, eval (points i) g = 0) ∧ CoefficientHeightLE g
+          ((Real.sqrt (((evaluationMatrix (homogeneousMonomials n M) (points ∘ a) *
+            (evaluationMatrix (homogeneousMonomials n M) (points ∘ a))ᵀ).det : ℤ) : ℝ) /
+            (Int.Matrix.minorGcd (evaluationMatrix (homogeneousMonomials n M) (points ∘ a)) : ℝ)) ^
+              ((((n + M).choose M : ℝ) - s)⁻¹)) := by
+  classical
+  obtain ⟨s, a, ha, hli, hspan, hs⟩ :=
+    homogeneous_independent_evaluation_rows f hf hf0 hdM points hzero
+  have hdeficit := integer_homogeneous_rows_hilbert_bound f hf hf0 hdM (points ∘ a)
+    (fun i => hzero (a i)) hli
+  let mon := homogeneousMonomials n M
+  let A := evaluationMatrix mon (points ∘ a)
+  obtain ⟨v, hv, hAv, hsmall⟩ :=
+    Int.Matrix.exists_ne_zero_mulVec_eq_zero_iSup_abs_le_det_rpow A hli (by simpa using hs)
+  simp only [Fintype.card_fin] at hsmall
+  refine ⟨s, a, ha, hs, hdeficit, hli, hspan, polynomialOfCoefficients mon v,
+    polynomialOfCoefficients_ne_zero mon (homogeneousMonomials_injective n M) hv,
+    polynomialOfCoefficients_homogeneous n M v, ?_, ?_⟩
+  · intro i
+    apply vanishes_of_evaluation_row_mem_span mon (points ∘ a) v hAv (points i)
+    rw [hspan]
+    exact Submodule.subset_span ⟨i, rfl⟩
+  · apply abs_coefficient_polynomialOfCoefficients_le mon (homogeneousMonomials_injective n M) v
+    · apply Real.rpow_nonneg
+      have hD := Int.Matrix.one_le_minorGcd hli
+      exact div_nonneg (Real.sqrt_nonneg _) (by exact_mod_cast (show (0 : ℤ) ≤ _ by omega))
+    · intro j
+      have hj : |v j| ≤ ⨆ k, |v k| := le_ciSup (Set.finite_range (fun k => |v k|)).bddAbove j
+      have hjR : |(v j : ℝ)| ≤ ((⨆ k, |v k| : ℤ) : ℝ) := by exact_mod_cast hj
+      exact hjR.trans hsmall
+
+
 /-- Without an auxiliary polynomial, selected rows have exact Hilbert
 rank and their Bombieri--Vaaler bound is at least the leading coefficient. -/
 theorem homogeneous_no_auxiliary_comparison {n d M t : ℕ}
@@ -62,34 +110,8 @@ theorem homogeneous_no_auxiliary_comparison {n d M t : ℕ}
           (evaluationMatrix (homogeneousMonomials n M) (points ∘ a))ᵀ).det : ℤ) : ℝ) /
           (Int.Matrix.minorGcd (evaluationMatrix (homogeneousMonomials n M) (points ∘ a)) : ℝ)) ^
             ((((n + M).choose M : ℝ) - s)⁻¹) := by
-  classical
-  obtain ⟨s, a, ha, hli, hspan, hs⟩ :=
-    homogeneous_independent_evaluation_rows f hf hf0 hdM points hzero
-  let mon := homogeneousMonomials n M
-  let A := evaluationMatrix mon (points ∘ a)
-  obtain ⟨v, hv, hAv, hsmall⟩ :=
-    Int.Matrix.exists_ne_zero_mulVec_eq_zero_iSup_abs_le_det_rpow A hli (by simpa using hs)
-  simp only [Fintype.card_fin] at hsmall
-  let g := polynomialOfCoefficients mon v
-  have hg0 : g ≠ 0 := polynomialOfCoefficients_ne_zero mon (homogeneousMonomials_injective n M) hv
-  have hghom : g.IsHomogeneous M := polynomialOfCoefficients_homogeneous n M v
-  have hgvan : ∀ i, eval (points i) g = 0 := by
-    intro i
-    apply vanishes_of_evaluation_row_mem_span mon (points ∘ a) v hAv (points i)
-    rw [hspan]
-    exact Submodule.subset_span ⟨i, rfl⟩
-  have hcoeff : ∀ e, |(g.coeff e : ℝ)| ≤
-      (Real.sqrt (((A * Aᵀ).det : ℤ) : ℝ) / (Int.Matrix.minorGcd A : ℝ)) ^
-        ((((n + M).choose M : ℝ) - s)⁻¹) := by
-    apply abs_coefficient_polynomialOfCoefficients_le mon (homogeneousMonomials_injective n M) v
-    · apply Real.rpow_nonneg
-      have hD := Int.Matrix.one_le_minorGcd hli
-      change 1 ≤ Int.Matrix.minorGcd A at hD
-      exact div_nonneg (Real.sqrt_nonneg _) (by exact_mod_cast (show (0 : ℤ) ≤ _ by omega))
-    · intro j
-      have hj : |v j| ≤ ⨆ k, |v k| := le_ciSup (Set.finite_range (fun k => |v k|)).bddAbove j
-      have hjR : |(v j : ℝ)| ≤ ((⨆ k, |v k| : ℤ) : ℝ) := by exact_mod_cast hj
-      exact hjR.trans hsmall
+  obtain ⟨s, a, ha, hs, _, hli, hspan, g, hg0, hghom, hgvan, hcoeff⟩ :=
+    exists_small_homogeneous_vanishing_polynomial f hf hf0 hdM points hzero
   have hr := integer_homogeneous_evaluation_rank_eq f hf hf0 hdM points hzero hrel
   have he : ((evaluationMatrix (homogeneousMonomials n M) points).map ((↑) : ℤ → ℚ)).rank = s := by
     rw [Matrix.rank_eq_finrank_span_row, ← hspan, ← Matrix.rank_eq_finrank_span_row,

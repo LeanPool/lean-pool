@@ -8,6 +8,7 @@ module
 /- Modified for Lean Pool: module paths, toolchain compatibility, and quality repairs.
 Upstream: jasondavies/ccdn-dimension-growth @ bb025e7207f3a35a21b898629f5678b72aa7e44f. -/
 
+public import LeanPool.CCDN.Algebra.HomogeneousSlice
 public import LeanPool.CCDN.Algebra.ScaledHomogenization
 public import LeanPool.CCDN.AuxiliaryPolynomial.AbsoluteAuxiliary
 public import LeanPool.CCDN.AuxiliaryPolynomial.HypersurfaceBadPrimeFactor
@@ -23,6 +24,41 @@ homogeneous model. All point and nondivisibility transports are proved. -/
 namespace CCDN
 noncomputable section
 open MvPolynomial
+
+/-- A nonzero bounded scaling coordinate transfers projective vanishing to the affine box. -/
+lemma scaled_auxiliary_vanishes {n M : ℕ}
+    (f : MvPolynomial (Fin n) ℤ) (G : MvPolynomial (Fin (n + 1)) ℤ)
+    (hGhom : G.IsHomogeneous M) (h : ℤ) (hh : h ≠ 0)
+    {B : ℝ} (hscale : |(h : ℝ)| ≤ B)
+    (hGzero : ∀ P : ProjectivePoint n, P.mulHeight ≤ B →
+      P ∈ projectiveZeroLocus (map (Int.castRingHom ℚ) (scaledHomogenize f.totalDegree h f)) →
+      P ∈ projectiveZeroLocus (map (Int.castRingHom ℚ) G)) :
+    ∀ x : IntPoint n, InBox x B → eval x f = 0 →
+      eval x (homogeneousSlice n h G) = 0 := by
+  intro x hx hxf
+  let v : IntPoint (n + 1) := Fin.cons h x
+  have hv0 : v ≠ 0 := by
+    intro hz
+    exact hh (congrFun hz 0)
+  let P := Projectivization.mk ℚ (rationalPoint v) (rationalPoint_ne_zero hv0)
+  have hvbox (j : Fin (n + 1)) : |(v j : ℝ)| ≤ B := by
+    refine Fin.cases ?_ (fun k => hx k) j
+    simpa only [v, Fin.cons_zero] using hscale
+  have hPB : P.mulHeight ≤ B := projective_integer_height_le v hv0 hvbox
+  have hvF : eval v (scaledHomogenize f.totalDegree h f) = 0 := by
+    rw [scaledHomogenize_eval _ _ le_rfl, hxf, mul_zero]
+  have hPF : P ∈ projectiveZeroLocus
+      (map (Int.castRingHom ℚ) (scaledHomogenize f.totalDegree h f)) := by
+    apply (mem_projectiveZeroLocus_mk ((scaledHomogenize_homogeneous h f le_rfl).map _) _ _).mpr
+    have hh := congrArg (Int.castRingHom ℚ) hvF
+    rw [map_eval, map_zero] at hh
+    exact hh
+  have hcast := (mem_projectiveZeroLocus_mk (hGhom.map _) _ _).mp (hGzero P hPB hPF)
+  rw [homogeneousSlice_eval]
+  apply Int.cast_injective (α := ℚ)
+  change (Int.castRingHom ℚ) (eval v G) = (Int.castRingHom ℚ) 0
+  rw [map_eval, map_zero]
+  exact hcast
 
 /-- For any prime p<=B avoiding the constant coefficient, construct an
 affine auxiliary nonmultiple. The degree retains the exact height and bad-prime
@@ -48,36 +84,10 @@ theorem prime_scaled_affine_auxiliary {n : ℕ}
   swap
   · have hgM : (g.totalDegree : ℝ) ≤ M := by exact_mod_cast homogeneousSlice_degree_le (p : ℤ) hGhom
     exact hgM.trans hM
-  · intro x hx hxf
-    let v : IntPoint (n + 3) := Fin.cons (p : ℤ) x
-    have hv0 : v ≠ 0 := by
-      intro hz
-      have hh := congrFun hz 0
-      have hpZ : (p : ℤ) ≠ 0 := by exact_mod_cast hp.ne_zero
-      exact hpZ hh
-    let P := Projectivization.mk ℚ (rationalPoint v) (rationalPoint_ne_zero hv0)
-    have hvbox (j : Fin (n + 3)) : |(v j : ℝ)| ≤ B := by
-      refine Fin.cases ?_ (fun k => hx k) j
-      simpa only [v, Fin.cons_zero, Int.cast_natCast,
-        abs_of_nonneg (Nat.cast_nonneg (α := ℝ) p)] using hpB
-    have hPB : P.mulHeight ≤ B := projective_integer_height_le v hv0 hvbox
-    have hvF : eval v F = 0 := by
-      rw [scaledHomogenize_eval _ _ le_rfl, hxf, mul_zero]
-    have hPF : P ∈ projectiveZeroLocus (map (Int.castRingHom ℚ) F) := by
-      apply (mem_projectiveZeroLocus_mk (hFhom.map _) _ _).mpr
-      have hh := congrArg (Int.castRingHom ℚ) hvF
-      rw [map_eval, map_zero] at hh
-      exact hh
-    have hPG := hGzero P hPB hPF
-    have hcast := (mem_projectiveZeroLocus_mk (hGhom.map _) _ _).mp hPG
-    have hvG : eval v G = 0 := by
-      apply Int.cast_injective (α := ℚ)
-      have he := map_eval (Int.castRingHom ℚ) v G
-      change (Int.castRingHom ℚ) (eval v G) = (Int.castRingHom ℚ) 0
-      rw [he, map_zero]
-      exact hcast
-    rw [homogeneousSlice_eval]
-    exact hvG
+  · exact scaled_auxiliary_vanishes f G hGhom (p : ℤ)
+      (by exact_mod_cast hp.ne_zero)
+      (by simpa only [Int.cast_natCast, abs_of_nonneg (Nat.cast_nonneg (α := ℝ) p)] using hpB)
+      hGzero
 
 end
 end CCDN

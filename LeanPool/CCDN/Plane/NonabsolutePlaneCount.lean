@@ -93,16 +93,7 @@ theorem nonabsolute_plane_points_card_le {k K ι : Type*}
     have he := (MvPolynomial.isUnit_iff_totalDegree_of_isReduced.mp hu).2
     rw [totalDegree_map_of_injective (algebraMap k K).injective] at he
     exact (Nat.ne_of_gt hd) he
-  have hfac : ∃ g h : MvPolynomial (Fin 2) K,
-      MvPolynomial.map (algebraMap k K) f = g * h ∧ ¬ IsUnit g ∧ ¬ IsUnit h := by
-    by_contra! hn
-    apply hred
-    refine ⟨hmapu, ?_⟩
-    intro g h he
-    by_cases hu : IsUnit g
-    · exact Or.inl hu
-    · exact Or.inr (hn g h he hu)
-  obtain ⟨g, h, hfac, hgu, hhu⟩ := hfac
+  obtain ⟨g, h, hgu, hhu, hfac⟩ := (irreducible_or_factor hmapu).resolve_left hred
   have hg : g ≠ 0 := fun he => hmap0 (by simp [hfac, he])
   have hh : h ≠ 0 := fun he => hmap0 (by simp [hfac, he])
   exact plane_points_card_le_of_extension_factorization f hf g h hg hh

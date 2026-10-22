@@ -41,33 +41,6 @@ lemma prime_divisor_charge_le (P : Finset ℕ) {D : ℤ} (hD : 0 < D)
     _ = (∑ p ∈ P, Real.log p) / T := (sum_div _ _ _).symm
     _ ≤ _ := div_le_div_of_nonneg_right (prime_divisor_log_sum_le P hD hP hdiv) hT.le
 
-/-- Mertens bounds an arbitrary prime interval, with its logarithmic width
-and two absolute error terms. -/
-private lemma prime_interval_weight_le {L T : ℝ} (hL : 1 ≤ L) (hLT : L ≤ T)
-    (P : Finset ℕ) (hP : ∀ p ∈ P, p.Prime)
-    (hlo : ∀ p ∈ P, L < (p : ℝ)) (hhi : ∀ p ∈ P, (p : ℝ) ≤ T) :
-    (∑ p ∈ P, Real.log p / p) ≤ Real.log T - Real.log L + 2 * mertensError := by
-  let U := (Ioc 0 ⌊L⌋₊).filter Nat.Prime
-  let V := (Ioc 0 ⌊T⌋₊).filter Nat.Prime
-  have hUV : U ⊆ V := by
-    intro p hp
-    have hp' := (mem_filter.mp hp).2
-    exact (prime_mem_upto_iff (by linarith) hp').mpr
-      (((prime_mem_upto_iff (by linarith) hp').mp hp).trans hLT)
-  have hPV : P ⊆ V \ U := by
-    intro p hp
-    refine mem_sdiff.mpr ⟨(prime_mem_upto_iff (by linarith) (hP p hp)).mpr (hhi p hp), ?_⟩
-    intro hu
-    exact (not_le_of_gt (hlo p hp)) ((prime_mem_upto_iff (by linarith) (hP p hp)).mp hu)
-  have hsum : (∑ p ∈ P, Real.log p / p) ≤ ∑ p ∈ V \ U, Real.log p / p :=
-    sum_le_sum_of_subset_of_nonneg hPV (fun _ _ _ => by positivity)
-  have hsplit := sum_sdiff hUV (f := fun p : ℕ => Real.log p / p)
-  have hl := (abs_le.mp (Mertens.prime_sum_bounded_error hL)).1
-  have ht := (abs_le.mp (Mertens.prime_sum_bounded_error (hL.trans hLT))).2
-  change -mertensError ≤ (∑ p ∈ U, Real.log p / p) - Real.log L at hl
-  change (∑ p ∈ V, Real.log p / p) - Real.log T ≤ mertensError at ht
-  linarith
-
 /-- Split the bad primes at T. The low part costs log(T/L), while the high
 part is bounded using the integer witness. -/
 private theorem bad_prime_charge_split (P : Finset ℕ) {D : ℤ} (hD : 0 < D)

@@ -67,29 +67,25 @@ lemma two_mul_choose_add_two (n : ℕ) :
   norm_num [Nat.descFactorial_succ] at h
   nlinarith
 
-/-- The affine Hilbert function of a nonzero plane equation `f` of degree `d` is `d N + d -
-d(d-1)/2` for every `N ≥ d`. -/
-theorem principal_plane_hilbert_function {K : Type*} [Field K]
-    (f : MvPolynomial (Fin 2) K) (hf : f ≠ 0) {N : ℕ} (hN : f.totalDegree ≤ N) :
-    (Module.finrank K (filteredCoordinateSpace (Ideal.span {f}) N) : ℤ) =
-      (f.totalDegree : ℤ) * N + ((f.totalDegree : ℤ) - f.totalDegree.choose 2) := by
-  have h := principal_filtered_finrank f hf hN
-  rw [finrank_restrictTotalDegree_two, finrank_restrictTotalDegree_two] at h
+/-- Subtracting the two plane monomial counts gives the linear degree formula. -/
+lemma choose_two_difference_eq_linear {k d N : ℕ} (hN : d ≤ N)
+    (h : k + (N - d + 2).choose 2 = (N + 2).choose 2) :
+    (k : ℤ) = (d : ℤ) * N + ((d : ℤ) - d.choose 2) := by
   have h0 := two_mul_choose_add_two N
-  have h1 := two_mul_choose_add_two (N - f.totalDegree)
-  have h2 := Nat.descFactorial_eq_factorial_mul_choose f.totalDegree 2
+  have h1 := two_mul_choose_add_two (N - d)
+  have h2 := Nat.descFactorial_eq_factorial_mul_choose d 2
   norm_num [Nat.descFactorial_succ] at h2
-  have hsum : (Module.finrank K (filteredCoordinateSpace (Ideal.span {f}) N) : ℤ) +
-      ((N - f.totalDegree + 2).choose 2 : ℤ) = ((N + 2).choose 2 : ℤ) := by
+  have hsum : (k : ℤ) +
+      ((N - d + 2).choose 2 : ℤ) = ((N + 2).choose 2 : ℤ) := by
     exact_mod_cast h
   have hc0 : (2 : ℤ) * ((N + 2).choose 2 : ℤ) = ((N : ℤ) + 2) * (N + 1) := by
     exact_mod_cast h0
-  have hc1 : (2 : ℤ) * ((N - f.totalDegree + 2).choose 2 : ℤ) =
-      ((N : ℤ) - f.totalDegree + 2) * ((N : ℤ) - f.totalDegree + 1) := by
+  have hc1 : (2 : ℤ) * ((N - d + 2).choose 2 : ℤ) =
+      ((N : ℤ) - d + 2) * ((N : ℤ) - d + 1) := by
     exact_mod_cast h1
-  have hc2 : (2 : ℤ) * (f.totalDegree.choose 2 : ℤ) =
-      (f.totalDegree : ℤ) * ((f.totalDegree : ℤ) - 1) := by
-    cases hd : f.totalDegree with
+  have hc2 : (2 : ℤ) * (d.choose 2 : ℤ) =
+      (d : ℤ) * ((d : ℤ) - 1) := by
+    cases hd : d with
     | zero => simp
     | succ d =>
       rw [hd] at h2
@@ -99,6 +95,17 @@ theorem principal_plane_hilbert_function {K : Type*} [Field K]
         exact_mod_cast h2
       nlinarith
   nlinarith
+
+
+/-- The affine Hilbert function of a nonzero plane equation `f` of degree `d` is `d N + d -
+d(d-1)/2` for every `N ≥ d`. -/
+theorem principal_plane_hilbert_function {K : Type*} [Field K]
+    (f : MvPolynomial (Fin 2) K) (hf : f ≠ 0) {N : ℕ} (hN : f.totalDegree ≤ N) :
+    (Module.finrank K (filteredCoordinateSpace (Ideal.span {f}) N) : ℤ) =
+      (f.totalDegree : ℤ) * N + ((f.totalDegree : ℤ) - f.totalDegree.choose 2) := by
+  have h := principal_filtered_finrank f hf hN
+  rw [finrank_restrictTotalDegree_two, finrank_restrictTotalDegree_two] at h
+  exact choose_two_difference_eq_linear hN h
 
 end
 end CCDN

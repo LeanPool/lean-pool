@@ -36,6 +36,41 @@ lemma polynomial_exists_small_nat_eval_ne_zero {K : Type*} [Field K] [CharZero K
   · simp only [Fintype.card_fin]
     omega
 
+/-- A moment form with parameter at most n times the number of directions
+is nonzero on all those directions. -/
+theorem exists_bounded_moment_nonvanishing {K ι : Type*} [Field K] [CharZero K]
+    [Fintype ι] {n : ℕ} (v : ι → Fin n → K) (hv : ∀ i, v i ≠ 0) :
+    ∃ k : ℕ, k ≤ n * Fintype.card ι ∧
+      ∀ i, ∑ j : Fin n, v i j * (k : K) ^ j.val ≠ 0 := by
+  classical
+  let P (i : ι) : Polynomial K := Polynomial.ofFn n (v i)
+  have hPn (i : ι) : P i ≠ 0 := by
+    intro he
+    apply hv i
+    funext j
+    have hc := congrArg (fun q : Polynomial K => q.coeff j.val) he
+    simpa only [P, Polynomial.ofFn_coeff_eq_val_of_lt _ j.isLt, Polynomial.coeff_zero,
+      Pi.zero_apply] using hc
+  have hPd (i : ι) : (P i).natDegree ≤ n := by
+    cases n with
+    | zero => simp [P]
+    | succ n => exact Nat.le_of_lt (Polynomial.ofFn_natDegree_lt (by omega) _)
+  let Q := ∏ i, P i
+  have hQ : Q ≠ 0 := Finset.prod_ne_zero_iff.mpr (fun i _ => hPn i)
+  have hd : Q.natDegree ≤ n * Fintype.card ι := by
+    calc
+      _ ≤ ∑ _i : ι, n := (Polynomial.natDegree_prod_le _ _).trans
+        (Finset.sum_le_sum (fun i _ => hPd i))
+      _ = _ := by simp [Nat.mul_comm]
+  obtain ⟨k, hk, hval⟩ := polynomial_exists_small_nat_eval_ne_zero Q hQ
+  refine ⟨k, hk.trans hd, ?_⟩
+  intro i
+  have hp : (∏ i, (P i).eval (k : K)) ≠ 0 := by
+    simpa only [Q, Polynomial.eval_prod] using hval
+  have hi := (Finset.prod_ne_zero_iff.mp hp) i (Finset.mem_univ i)
+  simpa only [P, Polynomial.ofFn_eq_sum_monomial, Polynomial.eval_finsetSum,
+    Polynomial.eval_monomial] using hi
+
 /-- Bounded integer moment-curve coefficients separate every pair of a finite
 family of distinct vectors. -/
 theorem exists_bounded_moment_separation {K ι : Type*} [Field K] [CharZero K]
@@ -45,43 +80,18 @@ theorem exists_bounded_moment_separation {K ι : Type*} [Field K] [CharZero K]
       Function.Injective (fun i => ∑ j : Fin n, v i j * (k : K) ^ j.val) := by
   classical
   let T := {t : ι × ι // t.1 ≠ t.2}
-  let P (t : T) : Polynomial K := Polynomial.ofFn n (fun j => v t.val.1 j - v t.val.2 j)
-  have hPn (t : T) : P t ≠ 0 := by
-    intro he
-    apply t.property
-    apply hv
-    funext j
-    have hc := congrArg (fun q : Polynomial K => q.coeff j.val) he
-    simpa only [P, Polynomial.ofFn_coeff_eq_val_of_lt _ j.isLt, Polynomial.coeff_zero,
-      sub_eq_zero] using hc
-  have hPd (t : T) : (P t).natDegree ≤ n := by
-    cases n with
-    | zero => simp [P]
-    | succ n => exact Nat.le_of_lt (Polynomial.ofFn_natDegree_lt (by omega) _)
-  let Q := ∏ t : T, P t
-  have hQ : Q ≠ 0 := Finset.prod_ne_zero_iff.mpr (fun t _ => hPn t)
-  have hd : Q.natDegree ≤ n * (Fintype.card ι) ^ 2 := by
-    calc
-      _ ≤ ∑ _t : T, n := (Polynomial.natDegree_prod_le _ _).trans
-        (Finset.sum_le_sum (fun t _ => hPd t))
-      _ = Fintype.card T * n := by simp
-      _ ≤ (Fintype.card ι) ^ 2 * n := Nat.mul_le_mul_right n (by
-        have hh := Fintype.card_subtype_le (fun t : ι × ι => t.1 ≠ t.2)
-        simpa only [Fintype.card_prod, pow_two] using hh)
-      _ = _ := Nat.mul_comm _ _
-  obtain ⟨k, hk, hval⟩ := polynomial_exists_small_nat_eval_ne_zero Q hQ
-  refine ⟨k, hk.trans hd, ?_⟩
+  have hne (t : T) : v t.val.1 - v t.val.2 ≠ 0 :=
+    sub_ne_zero.mpr (fun he => t.property (hv he))
+  obtain ⟨k, hk, hnonzero⟩ := exists_bounded_moment_nonvanishing
+    (fun t : T => v t.val.1 - v t.val.2) hne
+  have hcard : Fintype.card T ≤ (Fintype.card ι) ^ 2 := by
+    have hh := Fintype.card_subtype_le (fun t : ι × ι => t.1 ≠ t.2)
+    simpa only [Fintype.card_prod, pow_two] using hh
+  refine ⟨k, hk.trans (Nat.mul_le_mul_left n hcard), ?_⟩
   intro i j he
   by_contra hij
-  let t : T := ⟨(i,j), hij⟩
-  have hv : (P t).eval (k : K) ≠ 0 := by
-    have hp : (∏ t : T, (P t).eval (k : K)) ≠ 0 := by
-      simpa only [Q, Polynomial.eval_prod] using hval
-    exact (Finset.prod_ne_zero_iff.mp hp) t (Finset.mem_univ t)
-  apply hv
-  simp only [P, Polynomial.ofFn_eq_sum_monomial, Polynomial.eval_finsetSum,
-    Polynomial.eval_monomial, t]
-  simpa only [sub_mul, Finset.sum_sub_distrib, sub_eq_zero] using he
+  apply hnonzero ⟨(i, j), hij⟩
+  simpa only [Pi.sub_apply, sub_mul, Finset.sum_sub_distrib, sub_eq_zero] using he
 
 end
 end CCDN

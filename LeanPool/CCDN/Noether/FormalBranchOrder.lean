@@ -48,7 +48,7 @@ lemma powerSeries_quotient_powers_independent {K : Type*} [Field K]
 
 /-- If a proper degree-m section vanishes to order N on a formal plane
 branch, then N<=d*m. The parameter map and its equation are maps. -/
-private theorem formal_plane_vanishing_order_bound {K : Type*} [Field K]
+theorem formal_plane_vanishing_order_bound {K : Type*} [Field K]
     (f : MvPolynomial (Fin 2) K) (hf : Irreducible f)
     (ψ : MvPolynomial (Fin 2) K →ₐ[K] PowerSeries K) (hψ : ψ f = 0)
     (j : Fin 2) (a : K) (hparam : ψ (X j - C a) = PowerSeries.X)

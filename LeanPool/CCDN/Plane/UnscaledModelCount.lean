@@ -67,64 +67,11 @@ theorem unscaled_plane_finite_count
       ((f.totalDegree : ℝ) * scaledPlaneAuxiliaryDegreeBound f.totalDegree C
         (((f.totalDegree : ℝ) + 1) * B) 1)
       ((34 + 8 * Real.exp (heightDeterminantError C + 20)) * (f.totalDegree : ℝ) ^ 4) := by
-  obtain ⟨hB, hz, hbox⟩ := hzB
-  let d := f.totalDegree
-  let R := ((d : ℝ) + 1) * B
-  have hdR : (0 : ℝ) < d := by exact_mod_cast hd
-  have hR : 1 ≤ R := one_le_mul_of_one_le_of_one_le (by linarith) hB
-  have hf0 : f ≠ 0 := fun h => hir.ne_zero (by simp [h])
-  obtain ⟨a, H, ha, hH, _, hc, hlo, hhi⟩ := exists_scaled_model_position f hf0 hd (h := 1) le_rfl
-  let model := homogeneousTranslation ℤ a (scaledHomogenize d 1 f)
-  have hmhom : model.IsHomogeneous d :=
-    homogeneousTranslation_homogeneous a (scaledHomogenize_homogeneous _ _ le_rfl)
-  have hm0 : model ≠ 0 := by
-    have he :=
-      (homogeneousTranslation ℤ a).injective.ne (scaledHomogenize_ne_zero d one_ne_zero hf0)
-    simpa only [map_zero] using he
-  let τ := scaledModelCoordinates 1 a
-  have hmodel : ∀ i, eval (fun j => eval (z i) (τ j)) model = 0 := by
-    intro i
-    change eval (fun j => eval (z i) (scaledModelCoordinates 1 a j))
-      (homogeneousTranslation ℤ a (scaledHomogenize f.totalDegree 1 f)) = 0
-    rw [scaledModelCoordinates_model_eval, hz i, mul_zero]
-  have himagebox : ∀ i j, |(eval (z i) (τ j) : ℝ)| ≤ R := by
-    intro i j
-    exact scaledModelCoordinates_box hB (by norm_num) (by simpa using hB) a (z i) ha (hbox i) j
-  have hirq := rational_irreducible_of_charZero_map f hir
-  by_cases hsmall : Real.log H ≤ 4 * d * Real.log R
-  · obtain ⟨M, hM, g, hg⟩ := polynomial_map_auxiliary_small_height_degree
-      MonomialOrder.lex model hmhom hm0 hd ⟨rfl, hir, hH, hc⟩ τ z hz ⟨hR, hmodel, himagebox⟩ hC
-      (hlo.trans hsmall) hcount
-    have ht := unscaled_positioned_points_card_le f hprim hirq a z hinj hz g hg
-    have htR : (t : ℝ) ≤ d * (M : ℝ) := by exact_mod_cast ht
-    have hL : 0 < |((MonomialOrder.lex.leadingCoeff model : ℤ) : ℝ)| :=
-      abs_pos.mpr (Int.cast_ne_zero.mpr (MonomialOrder.lex.leadingCoeff_ne_zero_iff.mpr hm0))
-    have hratio := scaled_positioned_height_ratio_le hd (h := 1) le_rfl (by simpa using hH) hL hhi
-    simp only [Real.log_one, zero_div, add_zero, Real.one_rpow, div_one] at hratio
-    have ht := mul_le_mul_of_nonneg_left hratio (show 0 ≤
-      2 * Real.exp (heightDeterminantError C + 23) * (d : ℝ) ^ 3 * R ^ (2 / (d : ℝ)) by positivity)
-    have hterm : 2 * Real.exp (heightDeterminantError C + 23) * (d : ℝ) ^ 3 *
-        (1 + Real.log H / (d : ℝ) ^ 2) * R ^ (2 / (d : ℝ)) /
-          |((MonomialOrder.lex.leadingCoeff model : ℤ) : ℝ)| ^ (1 / (d : ℝ) ^ 2) ≤
-        2 * Real.exp (heightDeterminantError C + 23) * Real.exp 14 * (d : ℝ) ^ 3 *
-          R ^ (2 / (d : ℝ)) := by
-      convert ht using 1 <;> ring
-    have hMb : (M : ℝ) ≤ scaledPlaneAuxiliaryDegreeBound d C R 1 := by
-      unfold scaledPlaneAuxiliaryDegreeBound
-      simp only [Real.log_one, zero_div, add_zero, mul_one, Real.one_rpow, div_one]
-      linarith
-    exact (htR.trans (mul_le_mul_of_nonneg_left hMb hdR.le)).trans (le_max_left _ _)
-  · obtain ⟨M, hM, g, hg⟩ := polynomial_map_auxiliary_large_height_degree
-      MonomialOrder.lex model hmhom hm0 hd ⟨rfl, hir, hH, hc⟩ τ z hz ⟨hR, hmodel, himagebox⟩ hC
-      14 (by norm_num) (le_of_lt (lt_of_not_ge hsmall)) hhi hcount
-    have ht := unscaled_positioned_points_card_le f hprim hirq a z hinj hz g hg
-    have htR : (t : ℝ) ≤ d * (M : ℝ) := by exact_mod_cast ht
-    apply (htR.trans (mul_le_mul_of_nonneg_left hM hdR.le)).trans
-    calc
-      _ = (34 + 8 * Real.exp (heightDeterminantError C + 20)) * (d : ℝ) ^ 4 := by
-        rw [show heightDeterminantError C + 6 + 14 = heightDeterminantError C + 20 by ring]
-        ring
-      _ ≤ _ := le_max_right _ _
+  simpa only [Int.cast_one] using
+    (scaled_model_plane_count_bounds f hir hd 1 le_rfl z hzB
+      (by simpa only [Int.cast_one] using hzB.one_le_radius) hC hcount (fun a M g hg =>
+        unscaled_positioned_points_card_le f hprim
+          (rational_irreducible_of_charZero_map f hir) a z hinj hzB.eval_eq_zero g hg)).1
 
 /-- A sufficiently large coefficient forces the large-height branch
 and gives O(d^4). -/
@@ -139,41 +86,12 @@ theorem unscaled_plane_finite_count_large_coefficient
       Real.log |(f.coeff m : ℝ)|)
     (hcount : PlaneResidueCountBound C f.totalDegree f) :
     (t : ℝ) ≤ (34 + 8 * Real.exp (heightDeterminantError C + 20)) * (f.totalDegree : ℝ) ^ 4 := by
-  obtain ⟨hB, hz, hbox⟩ := hzB
-  let d := f.totalDegree
-  let R := ((d : ℝ) + 1) * B
-  have hdR : (0 : ℝ) < d := by exact_mod_cast hd
-  have hR : 1 ≤ R := one_le_mul_of_one_le_of_one_le (by linarith) hB
-  have hf0 : f ≠ 0 := fun h => hir.ne_zero (by simp [h])
-  obtain ⟨a, H, ha, hH, _, hc, _, hhi⟩ := exists_scaled_model_position f hf0 hd (h := 1) le_rfl
-  let model := homogeneousTranslation ℤ a (scaledHomogenize d 1 f)
-  have hmhom : model.IsHomogeneous d :=
-    homogeneousTranslation_homogeneous a (scaledHomogenize_homogeneous _ _ le_rfl)
-  have hm0 : model ≠ 0 := by
-    have he :=
-      (homogeneousTranslation ℤ a).injective.ne (scaledHomogenize_ne_zero d one_ne_zero hf0)
-    simpa only [map_zero] using he
-  let τ := scaledModelCoordinates 1 a
-  have hmodel : ∀ i, eval (fun j => eval (z i) (τ j)) model = 0 := by
-    intro i
-    change eval (fun j => eval (z i) (scaledModelCoordinates 1 a j))
-      (homogeneousTranslation ℤ a (scaledHomogenize f.totalDegree 1 f)) = 0
-    rw [scaledModelCoordinates_model_eval, hz i, mul_zero]
-  have himagebox : ∀ i j, |(eval (z i) (τ j) : ℝ)| ≤ R := by
-    intro i j
-    exact scaledModelCoordinates_box hB (by norm_num) (by simpa using hB) a (z i) ha (hbox i) j
-  have hirq := rational_irreducible_of_charZero_map f hir
-  have hlarge : 4 * d * Real.log R ≤ Real.log H := hheight.trans
-    (Real.log_le_log (abs_pos.mpr (Int.cast_ne_zero.mpr hm)) (hc m))
-  obtain ⟨M, hM, g, hg⟩ := polynomial_map_auxiliary_large_height_degree
-    MonomialOrder.lex model hmhom hm0 hd ⟨rfl, hir, hH, hc⟩ τ z hz ⟨hR, hmodel, himagebox⟩ hC
-    14 (by norm_num) hlarge hhi hcount
-  have ht := unscaled_positioned_points_card_le f hprim hirq a z hinj hz g hg
-  have htR : (t : ℝ) ≤ d * (M : ℝ) := by exact_mod_cast ht
-  have ht' := htR.trans (mul_le_mul_of_nonneg_left hM hdR.le)
-  rw [show heightDeterminantError C + 6 + 14 = heightDeterminantError C + 20 by ring] at ht'
-  convert ht' using 1
-  ring
+  simpa only [Int.cast_one] using
+    (scaled_model_plane_count_bounds f hir hd 1 le_rfl z hzB
+      (by simpa only [Int.cast_one] using hzB.one_le_radius) hC hcount (fun a M g hg =>
+        unscaled_positioned_points_card_le f hprim
+          (rational_irreducible_of_charZero_map f hir) a z hinj
+          hzB.eval_eq_zero g hg)).2 m hm hheight
 
 end
 end CCDN

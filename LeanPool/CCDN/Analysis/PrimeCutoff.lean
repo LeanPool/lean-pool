@@ -71,34 +71,41 @@ lemma primeBlockMass_pos : 0 < primeBlockMass := by
   dsimp [primeBlockMass]
   linarith
 
+/-- Mertens bounds an arbitrary prime interval, with its logarithmic width
+and two absolute error terms. -/
+lemma prime_interval_weight_le {L T : ℝ} (hL : 1 ≤ L) (hLT : L ≤ T)
+    (P : Finset ℕ) (hP : ∀ p ∈ P, p.Prime)
+    (hlo : ∀ p ∈ P, L < (p : ℝ)) (hhi : ∀ p ∈ P, (p : ℝ) ≤ T) :
+    (∑ p ∈ P, Real.log p / p) ≤ Real.log T - Real.log L + 2 * mertensError := by
+  let U := (Ioc 0 ⌊L⌋₊).filter Nat.Prime
+  let V := (Ioc 0 ⌊T⌋₊).filter Nat.Prime
+  have hUV : U ⊆ V := by
+    intro p hp
+    have hp' := (mem_filter.mp hp).2
+    exact (prime_mem_upto_iff (by linarith) hp').mpr
+      (((prime_mem_upto_iff (by linarith) hp').mp hp).trans hLT)
+  have hPV : P ⊆ V \ U := by
+    intro p hp
+    refine mem_sdiff.mpr ⟨(prime_mem_upto_iff (by linarith) (hP p hp)).mpr (hhi p hp), ?_⟩
+    intro hu
+    exact (not_le_of_gt (hlo p hp)) ((prime_mem_upto_iff (by linarith) (hP p hp)).mp hu)
+  have hsum : (∑ p ∈ P, Real.log p / p) ≤ ∑ p ∈ V \ U, Real.log p / p :=
+    sum_le_sum_of_subset_of_nonneg hPV (fun _ _ _ => by positivity)
+  have hsplit := sum_sdiff hUV (f := fun p : ℕ => Real.log p / p)
+  have hl := (abs_le.mp (Mertens.prime_sum_bounded_error hL)).1
+  have ht := (abs_le.mp (Mertens.prime_sum_bounded_error (hL.trans hLT))).2
+  change -mertensError ≤ (∑ p ∈ U, Real.log p / p) - Real.log L at hl
+  change (∑ p ∈ V, Real.log p / p) - Real.log T ≤ mertensError at ht
+  linarith
+
 /-- The Mertens bounded error bounds every factor-four prime interval by a
 constant independent of its location. -/
 private lemma prime_block_weight_le {L : ℝ} (hL : 1 ≤ L) (S : Finset ℕ)
     (hprime : ∀ p ∈ S, p.Prime) (hlo : ∀ p ∈ S, L < (p : ℝ))
     (hhi : ∀ p ∈ S, (p : ℝ) ≤ 4 * L) :
     ∑ p ∈ S, Real.log p / p ≤ primeBlockMass := by
-  let T := (Ioc 0 ⌊4 * L⌋₊).filter Nat.Prime
-  let U := (Ioc 0 ⌊L⌋₊).filter Nat.Prime
-  have hUT : U ⊆ T := by
-    intro p hp
-    have hp' := (mem_filter.mp hp).2
-    apply (prime_mem_upto_iff (by linarith) hp').mpr
-    have hu := (prime_mem_upto_iff (by linarith) hp').mp hp
-    linarith
-  have hST : S ⊆ T \ U := by
-    intro p hp
-    apply mem_sdiff.mpr
-    refine ⟨(prime_mem_upto_iff (by linarith) (hprime p hp)).mpr (hhi p hp), ?_⟩
-    intro hu
-    exact (not_le_of_gt (hlo p hp)) ((prime_mem_upto_iff (by linarith) (hprime p hp)).mp hu)
-  have hs : (∑ p ∈ S, Real.log p / p) ≤ ∑ p ∈ T \ U, Real.log p / p :=
-    sum_le_sum_of_subset_of_nonneg hST (fun p _ _ => by positivity)
-  have hsplit := sum_sdiff hUT (f := fun p : ℕ => Real.log p / p)
-  have hlo' := (abs_le.mp (Mertens.prime_sum_bounded_error hL)).1
-  have hhi' := (abs_le.mp (Mertens.prime_sum_bounded_error (by linarith : 1 ≤ 4 * L))).2
-  change -mertensError ≤ (∑ p ∈ U, Real.log p / p) - Real.log L at hlo'
-  change (∑ p ∈ T, Real.log p / p) - Real.log (4 * L) ≤ mertensError at hhi'
-  rw [Real.log_mul (by norm_num) (by linarith : L ≠ 0)] at hhi'
+  have h := prime_interval_weight_le hL (by linarith : L ≤ 4 * L) S hprime hlo hhi
+  rw [Real.log_mul (by norm_num) (by linarith : L ≠ 0)] at h
   dsimp only [primeBlockMass]
   linarith
 

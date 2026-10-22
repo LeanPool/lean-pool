@@ -35,21 +35,14 @@ def boundedSquareNormTranslationClasses (B : ℝ) :
   exact (boundedSquareNormIntegers_finite K B).toFinset.image
     (fun α : 𝓞 K ↦ (α : IntegerTranslationQuotient K))
 
-/-- There is an injective family of algebraic integers `β q` bounded by `B` at every infinite place,
-indexed by the bounded square-norm translation classes, such that the number of bounded
-square-norm integers is at most the total number of points of height at most
-`max (2 * B) (√(B ^ n))` on the signed norm curves for `β q` with signs `±1`. -/
-theorem exists_norm_curve_family (B : ℝ) :
+/-- Bounded square-norm integers admit injective bounded representatives whose integer
+translation fibres cover the original set. -/
+theorem exists_norm_translate_cover (B : ℝ) :
     ∃ β : (boundedSquareNormTranslationClasses K B) → 𝓞 K,
       Function.Injective β ∧
       (∀ q, ∀ w : InfinitePlace K, w (β q : K) ≤ B) ∧
-      (boundedSquareNormIntegers K B).ncard ≤
-        ∑ q : boundedSquareNormTranslationClasses K B,
-          (count (signedNormCurveLocus K (β q) 1)
-            (max (2 * B) (Real.sqrt (B ^ Module.finrank ℚ K))) +
-          count (signedNormCurveLocus K (β q) (-1))
-            (max (2 * B) (Real.sqrt (B ^ Module.finrank ℚ K)))) := by
-  classical
+      ∀ α ∈ boundedSquareNormIntegers K B,
+        ∃ q, α ∈ squareNormTranslateFiber K (β q) B := by
   let S := boundedSquareNormIntegers K B
   let sf := (boundedSquareNormIntegers_finite K B).toFinset
   let Q := boundedSquareNormTranslationClasses K B
@@ -69,24 +62,47 @@ theorem exists_norm_curve_family (B : ℝ) :
     rw [AbsoluteValue.map_neg]
     exact (hr q).2.1 w
   refine ⟨β, hinj, hb, ?_⟩
+  intro α hα
+  have hαf : α ∈ sf := (boundedSquareNormIntegers_finite K B).mem_toFinset.mpr hα
+  let q : Q := ⟨(α : IntegerTranslationQuotient K),
+    Finset.mem_image.mpr ⟨α, hαf, rfl⟩⟩
+  have he : (α : IntegerTranslationQuotient K) = (r q : IntegerTranslationQuotient K) :=
+    (hq q).symm
+  obtain ⟨x, hx⟩ := AddSubgroup.mem_zmultiples_iff.mp
+    (QuotientAddGroup.eq_iff_sub_mem.mp he)
+  have hx' : (x : 𝓞 K) = α - r q := by simpa using hx
+  refine ⟨q, hα, x, ?_⟩
+  change α = algebraMap ℤ (𝓞 K) x - -r q
+  change (algebraMap ℤ (𝓞 K) x) = α - r q at hx'
+  rw [hx']
+  abel
+
+/-- There is an injective family of algebraic integers `β q` bounded by `B` at every infinite place,
+indexed by the bounded square-norm translation classes, such that the number of bounded
+square-norm integers is at most the total number of points of height at most
+`max (2 * B) (√(B ^ n))` on the signed norm curves for `β q` with signs `±1`. -/
+theorem exists_norm_curve_family (B : ℝ) :
+    ∃ β : (boundedSquareNormTranslationClasses K B) → 𝓞 K,
+      Function.Injective β ∧
+      (∀ q, ∀ w : InfinitePlace K, w (β q : K) ≤ B) ∧
+      (boundedSquareNormIntegers K B).ncard ≤
+        ∑ q : boundedSquareNormTranslationClasses K B,
+          (count (signedNormCurveLocus K (β q) 1)
+            (max (2 * B) (Real.sqrt (B ^ Module.finrank ℚ K))) +
+          count (signedNormCurveLocus K (β q) (-1))
+            (max (2 * B) (Real.sqrt (B ^ Module.finrank ℚ K)))) := by
+  classical
+  let S := boundedSquareNormIntegers K B
+  let sf := (boundedSquareNormIntegers_finite K B).toFinset
+  let Q := boundedSquareNormTranslationClasses K B
+  obtain ⟨β, hinj, hb, htranslate⟩ := exists_norm_translate_cover K B
+  refine ⟨β, hinj, hb, ?_⟩
   let tf (q : Q) := (squareNormTranslateFiber_finite K (β q) B).toFinset
   have hcover : sf ⊆ Finset.univ.biUnion tf := by
     intro α hα
-    have hαS : α ∈ S := (boundedSquareNormIntegers_finite K B).mem_toFinset.mp hα
-    let q : Q := ⟨(α : IntegerTranslationQuotient K),
-      Finset.mem_image.mpr ⟨α, hα, rfl⟩⟩
-    have he : (α : IntegerTranslationQuotient K) = (r q : IntegerTranslationQuotient K) :=
-      (hq q).symm
-    obtain ⟨x, hx⟩ := AddSubgroup.mem_zmultiples_iff.mp
-      (QuotientAddGroup.eq_iff_sub_mem.mp he)
-    have hx' : (x : 𝓞 K) = α - r q := by simpa using hx
-    apply Finset.mem_biUnion.mpr
-    refine ⟨q, Finset.mem_univ q,
-      (squareNormTranslateFiber_finite K (β q) B).mem_toFinset.mpr ⟨hαS, x, ?_⟩⟩
-    change α = algebraMap ℤ (𝓞 K) x - -r q
-    change (algebraMap ℤ (𝓞 K) x) = α - r q at hx'
-    rw [hx']
-    abel
+    obtain ⟨q, hq⟩ := htranslate α ((boundedSquareNormIntegers_finite K B).mem_toFinset.mp hα)
+    exact Finset.mem_biUnion.mpr ⟨q, Finset.mem_univ q,
+      (squareNormTranslateFiber_finite K (β q) B).mem_toFinset.mpr hq⟩
   calc
     S.ncard = sf.card := Set.ncard_eq_toFinset_card _ _
     _ ≤ (Finset.univ.biUnion tf).card := Finset.card_le_card hcover

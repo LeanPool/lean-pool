@@ -15,6 +15,7 @@ import LeanPool.CCDN.Algebra.IntegerRationalIrreducibility
 import LeanPool.CCDN.Algebra.ScaledHypersurfaceModel
 import LeanPool.CCDN.AuxiliaryPolynomial.HypersurfaceAuxiliaryTheorem
 import LeanPool.CCDN.AuxiliaryPolynomial.HypersurfaceCoefficientDichotomy
+import LeanPool.CCDN.AuxiliaryPolynomial.PrimeScaledAffineAuxiliary
 import LeanPool.CCDN.ForMathlib.MvPolynomial
 import LeanPool.CCDN.Height.ProjectiveIntegerHeight
 import LeanPool.CCDN.Plane.UnscaledModelCount
@@ -92,31 +93,7 @@ private lemma unscaled_auxiliary_vanishes {n M : ℕ}
       P ∈ projectiveZeroLocus (map (Int.castRingHom ℚ) G)) :
     ∀ x : IntPoint n, InBox x B → eval x f = 0 →
       eval x (homogeneousSlice n 1 G) = 0 := by
-  intro x hx hxf
-  let v : IntPoint (n + 1) := Fin.cons 1 x
-  have hv0 : v ≠ 0 := by
-    intro hz
-    have hh := congrFun hz 0
-    exact one_ne_zero hh
-  let P := Projectivization.mk ℚ (rationalPoint v) (rationalPoint_ne_zero hv0)
-  have hvbox (j : Fin (n + 1)) : |(v j : ℝ)| ≤ B := by
-    refine Fin.cases ?_ (fun k => hx k) j
-    simpa only [v, Fin.cons_zero, Int.cast_one, abs_one] using hB
-  have hPB : P.mulHeight ≤ B := projective_integer_height_le v hv0 hvbox
-  have hvF : eval v (scaledHomogenize f.totalDegree 1 f) = 0 := by
-    rw [scaledHomogenize_eval _ _ le_rfl, hxf, mul_zero]
-  have hPF : P ∈ projectiveZeroLocus
-      (map (Int.castRingHom ℚ) (scaledHomogenize f.totalDegree 1 f)) := by
-    apply (mem_projectiveZeroLocus_mk ((scaledHomogenize_homogeneous 1 f le_rfl).map _) _ _).mpr
-    have hh := congrArg (Int.castRingHom ℚ) hvF
-    rw [map_eval, map_zero] at hh
-    exact hh
-  have hcast := (mem_projectiveZeroLocus_mk (hGhom.map _) _ _).mp (hGzero P hPB hPF)
-  rw [homogeneousSlice_eval]
-  apply Int.cast_injective (α := ℚ)
-  change (Int.castRingHom ℚ) (eval v G) = (Int.castRingHom ℚ) 0
-  rw [map_eval, map_zero]
-  exact hcast
+  exact scaled_auxiliary_vanishes f G hGhom 1 one_ne_zero (by simpa using hB) hGzero
 
 /-- Ordinary homogenization gives an auxiliary in every affine
 box, with the height and bad-prime factor of the unscaled model. -/

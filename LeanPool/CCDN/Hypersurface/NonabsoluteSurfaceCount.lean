@@ -51,16 +51,7 @@ theorem nonabsolute_affine_auxiliary {k K : Type*}
     have he := (isUnit_iff_totalDegree_of_isReduced.mp hu).2
     rw [hmapd] at he
     omega
-  have hfac : ∃ g h : MvPolynomial (Fin n) K,
-      map (algebraMap k K) f = g * h ∧ ¬ IsUnit g ∧ ¬ IsUnit h := by
-    by_contra! hn
-    apply hred
-    refine ⟨hmapu, ?_⟩
-    intro g h he
-    by_cases hu : IsUnit g
-    · exact Or.inl hu
-    · exact Or.inr (hn g h he hu)
-  obtain ⟨g, h, hfac, hgu, hhu⟩ := hfac
+  obtain ⟨g, h, hgu, hhu, hfac⟩ := (irreducible_or_factor hmapu).resolve_left hred
   have hg0 : g ≠ 0 := fun he => hmap0 (by simp [hfac, he])
   have hh0 : h ≠ 0 := fun he => hmap0 (by simp [hfac, he])
   have hgd := totalDegree_pos_of_ne_zero_of_not_isUnit hg0 hgu

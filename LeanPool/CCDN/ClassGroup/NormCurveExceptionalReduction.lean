@@ -22,46 +22,6 @@ open scoped IntermediateField
 
 variable (K : Type*) [Field K] [NumberField K]
 
-private theorem exists_norm_translate_cover (B : ℝ) :
-    ∃ β : (boundedSquareNormTranslationClasses K B) → 𝓞 K,
-      Function.Injective β ∧
-      (∀ q, ∀ w : InfinitePlace K, w (β q : K) ≤ B) ∧
-      ∀ α ∈ boundedSquareNormIntegers K B,
-        ∃ q, α ∈ squareNormTranslateFiber K (β q) B := by
-  let S := boundedSquareNormIntegers K B
-  let sf := (boundedSquareNormIntegers_finite K B).toFinset
-  let Q := boundedSquareNormTranslationClasses K B
-  have hex (q : Q) : ∃ r : 𝓞 K, r ∈ S ∧
-      (r : IntegerTranslationQuotient K) = q.val := by
-    obtain ⟨r, hr, hq⟩ := Finset.mem_image.mp q.property
-    exact ⟨r, (boundedSquareNormIntegers_finite K B).mem_toFinset.mp hr, hq⟩
-  choose r hr hq using hex
-  let β : Q → 𝓞 K := fun q ↦ -r q
-  have hinj : Function.Injective β := by
-    intro q t h
-    have he : r q = r t := neg_injective h
-    apply Subtype.ext
-    rw [← hq q, ← hq t, he]
-  have hb (q : Q) (w : InfinitePlace K) : w (β q : K) ≤ B := by
-    change w.val (-((r q : 𝓞 K) : K)) ≤ B
-    rw [AbsoluteValue.map_neg]
-    exact (hr q).2.1 w
-  refine ⟨β, hinj, hb, ?_⟩
-  intro α hα
-  have hαf : α ∈ sf := (boundedSquareNormIntegers_finite K B).mem_toFinset.mpr hα
-  let q : Q := ⟨(α : IntegerTranslationQuotient K),
-    Finset.mem_image.mpr ⟨α, hαf, rfl⟩⟩
-  have he : (α : IntegerTranslationQuotient K) = (r q : IntegerTranslationQuotient K) :=
-    (hq q).symm
-  obtain ⟨x, hx⟩ := AddSubgroup.mem_zmultiples_iff.mp
-    (QuotientAddGroup.eq_iff_sub_mem.mp he)
-  have hx' : (x : 𝓞 K) = α - r q := by simpa using hx
-  refine ⟨q, hα, x, ?_⟩
-  change α = algebraMap ℤ (𝓞 K) x - -r q
-  change (algebraMap ℤ (𝓞 K) x) = α - r q at hx'
-  rw [hx']
-  abel
-
 private lemma even_index_translate_mem_smallSubfield
     (hnoTwo : ∀ L : IntermediateField ℚ K, Module.finrank L K ≠ 2)
     (β : 𝓞 K) (hindex : ¬ Odd (Module.finrank ℚ⟮(β : K)⟯ K))

@@ -120,7 +120,7 @@ private theorem projective_hypersurface_singular_residue_card_le {n p d : ℕ} [
 
 /-- Singular classes contribute only a lower-order correction to the
 projective point count; the leading term is not multiplied by the degree. -/
-private theorem projectiveHypersurfaceTotalMultiplicity_le_card_add_correction {n p d : ℕ}
+theorem projectiveHypersurfaceTotalMultiplicity_le_card_add_correction {n p d : ℕ}
     [Fact p.Prime] (f : MvPolynomial (Fin (n + 3)) ℤ) (hf : f.IsHomogeneous d)
     (hd : 2 ≤ d) (hir : Irreducible (map (Int.castRingHom (ZMod p)) f)) (hchar : d < p) :
     projectiveHypersurfaceTotalMultiplicity f hf hir.ne_zero ≤
