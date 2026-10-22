@@ -140,6 +140,31 @@ def HasFilteredCurveDegree {K σ : Type*} [Field K] (I : Ideal (MvPolynomial σ 
   ∃ N : ℕ, ∃ c : ℤ, ∀ M ≥ N,
     (Module.finrank K (filteredCoordinateSpace I M) : ℤ) = (d : ℤ) * M + c
 
+/-- A lower bound along positive-step filtered pieces cannot grow faster than the
+curve's eventual linear Hilbert function. -/
+theorem HasFilteredCurveDegree.le_mul_of_growth {K σ : Type*} [Field K]
+    {I : Ideal (MvPolynomial σ K)} {d r m D : ℕ} (hdegree : HasFilteredCurveDegree I d)
+    (hm : 0 < m)
+    (hlower : ∀ N : ℕ,
+      r * (N + 1) ≤ Module.finrank K (filteredCoordinateSpace I (D + m * N))) :
+    r ≤ d * m := by
+  obtain ⟨N₀, c, hN₀⟩ := hdegree
+  by_contra hbad
+  have hcard : d * m + 1 ≤ r := by omega
+  let N := d * D + c.natAbs + N₀ + 1
+  have he := hN₀ (D + m * N) (by
+    have hN : N₀ ≤ N := by dsimp [N]; omega
+    nlinarith)
+  push_cast at he
+  have hlo : (r : ℤ) * (N + 1) ≤ (d : ℤ) * (D + m * N) + c := by
+    rw [← he]
+    exact_mod_cast hlower N
+  have hmul : ((d : ℤ) * m + 1) * (N + 1) ≤ (r : ℤ) * (N + 1) := by
+    exact_mod_cast Nat.mul_le_mul_right (N + 1) hcard
+  have habs : c ≤ (c.natAbs : ℤ) := Int.le_natAbs
+  have hNeq : (N : ℤ) = d * D + c.natAbs + N₀ + 1 := by simp [N]
+  nlinarith
+
 /-- The filtered Koszul rank bound, before evaluating the monomial-space dimensions.
 It applies to every ideal containing the two equations. -/
 theorem filteredCoordinateSpace_finrank_bound {K σ : Type*} [Field K] [Finite σ]

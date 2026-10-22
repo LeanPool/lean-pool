@@ -92,21 +92,13 @@ theorem polynomial_parameter_rank_le {K R F σ ι : Type*} [Field K] [Field R] [
     have hv : LinearIndependent K v :=
       LinearIndependent.of_comp (φ.toLinearMap.comp (filteredCoordinateSpace I (D + N)).subtype) hli
     simpa only [Fintype.card_prod, Fintype.card_fin] using hv.fintype_card_le_finrank
-  obtain ⟨N₀, c, hN₀⟩ := hdegree
-  by_contra hbad
-  have hcard : d + 1 ≤ Fintype.card ι := by omega
-  let N := d * D + c.natAbs + N₀ + 1
-  have hn0 : N₀ ≤ D + N := by dsimp [N]; omega
-  have heq := hN₀ (D + N) hn0
-  push_cast at heq
-  have hlo : (Fintype.card ι : ℤ) * (N + 1) ≤ (d : ℤ) * (D + N) + c := by
-    rw [← heq]
-    exact_mod_cast hlow N
-  have hmul : ((d : ℤ) + 1) * (N + 1) ≤ (Fintype.card ι : ℤ) * (N + 1) := by
-    exact_mod_cast Nat.mul_le_mul_right (N + 1) hcard
-  have habs : c ≤ (c.natAbs : ℤ) := Int.le_natAbs
-  have hNeq : (N : ℤ) = d * D + c.natAbs + N₀ + 1 := by simp [N]
-  nlinarith
+  have hbound := hdegree.le_mul_of_growth (m := 1) (by decide)
+    (show ∀ N, Fintype.card ι * (N + 1) ≤
+      Module.finrank K (filteredCoordinateSpace I (D + 1 * N)) by
+      intro N
+      rw [Nat.one_mul]
+      exact hlow N)
+  simpa only [Nat.mul_one] using hbound
 
 end
 end CCDN
