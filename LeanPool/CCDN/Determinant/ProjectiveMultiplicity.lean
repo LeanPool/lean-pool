@@ -22,58 +22,6 @@ namespace CCDN
 noncomputable section
 open MvPolynomial
 
-private lemma projectiveResidueChart_normalized {p : ℕ} [Fact p.Prime]
-    (r : ProjectiveResidueSpace 2 p) :
-    (Fin.cons 1 (fun j => (projectiveResidueChartLift r j : ZMod p))) ∘
-      Equiv.swap 0 (projectiveResiduePivot r) =
-        (r.rep (projectiveResiduePivot r))⁻¹ • r.rep := by
-  have h : Fin.cons 1 (fun j => (projectiveResidueChartLift r j : ZMod p)) =
-      (r.rep (projectiveResiduePivot r))⁻¹ • (r.rep ∘ Equiv.swap 0 (projectiveResiduePivot r)) := by
-    funext j
-    refine Fin.cases ?_ (fun k => ?_) j
-    · simp [projectiveResiduePivot_ne_zero]
-    · simp [cast_projectiveResidueChartLift, div_eq_mul_inv, mul_comm]
-  rw [h]
-  funext j
-  simp
-
-private theorem projectiveResidueChart_injective_of_pivot_eq {p : ℕ} [Fact p.Prime]
-    {r t : ProjectiveResidueSpace 2 p}
-    (hk : projectiveResiduePivot r = projectiveResiduePivot t)
-    (ha : (fun j => (projectiveResidueChartLift r j : ZMod p)) =
-      (fun j => (projectiveResidueChartLift t j : ZMod p))) : r = t := by
-  have he : (r.rep (projectiveResiduePivot r))⁻¹ • r.rep =
-      (t.rep (projectiveResiduePivot t))⁻¹ • t.rep := by
-    rw [← projectiveResidueChart_normalized, ← projectiveResidueChart_normalized, hk, ha]
-  have hh := congrArg (fun v : Fin 3 → ZMod p => r.rep (projectiveResiduePivot r) • v) he
-  have hs : (r.rep (projectiveResiduePivot r) / t.rep (projectiveResiduePivot t)) • t.rep =
-      r.rep := by
-    simpa only [smul_smul, mul_inv_cancel₀ (projectiveResiduePivot_ne_zero r), one_smul,
-      div_eq_mul_inv] using hh.symm
-  calc
-    r = Projectivization.mk (ZMod p) r.rep r.rep_nonzero := r.mk_rep.symm
-    _ = Projectivization.mk (ZMod p) t.rep t.rep_nonzero := by
-      rw [Projectivization.mk_eq_mk_iff']
-      exact ⟨_, hs⟩
-    _ = t := t.mk_rep
-
-private theorem projectivePlaneChart_irreducible_degree {p d : ℕ} [Fact p.Prime]
-    (f : MvPolynomial (Fin 3) ℤ) (hf : f.IsHomogeneous d) (hd : 2 ≤ d)
-    (hir : Irreducible (map (Int.castRingHom (ZMod p)) f)) (k : Fin 3) :
-    Irreducible (map (Int.castRingHom (ZMod p)) (projectivePlaneChart k f)) ∧
-      (map (Int.castRingHom (ZMod p)) (projectivePlaneChart k f)).totalDegree = d := by
-  let q := rename (Equiv.swap 0 k) (map (Int.castRingHom (ZMod p)) f)
-  have hq : q.IsHomogeneous d := (hf.map _).rename_isHomogeneous
-  have hqi : Irreducible q :=
-    (MulEquiv.irreducible_iff (f := renameEquiv (ZMod p) (Equiv.swap 0 k))).mpr hir
-  have hX := variable_not_dvd_irreducible_homogeneous q hq hqi hd 0
-  have he : map (Int.castRingHom (ZMod p)) (projectivePlaneChart k f) = affineChart 2 q := by
-    change map _ (affineChart 2 (rename (Equiv.swap 0 k) f)) = _
-    rw [← affineChart_map, map_rename]
-  rw [he]
-  exact ⟨affineChart_irreducible_of_not_variable_dvd q hq hqi hX,
-    affineChart_degree_of_not_variable_dvd q hq hX⟩
-
 private lemma projectivePlaneResidueMultiplicity_singular {p d : ℕ} [Fact p.Prime]
     (f : MvPolynomial (Fin 3) ℤ) (hf : f.IsHomogeneous d)
     (hf0 : map (Int.castRingHom (ZMod p)) f ≠ 0) (r : ProjectivePlaneResidue f p)
@@ -102,7 +50,8 @@ private theorem projective_singular_residue_card_le {p d : ℕ} [Fact p.Prime]
     (Finset.mem_filter.mp r.property).2
   have hT (k : Fin 3) : (T k).card ≤ d * (d - 1) := by
     let q := map (Int.castRingHom (ZMod p)) (projectivePlaneChart k f)
-    have hq := projectivePlaneChart_irreducible_degree f hf hd hir k
+    have hq : Irreducible q ∧ q.totalDegree = d :=
+      affineChart_rename_swap_irreducible_degree (Int.castRingHom (ZMod p)) f hf hd hir k
     let z : T k → Fin 2 → ZMod p := fun r j => (projectiveResidueChartLift r.val.val j : ZMod p)
     have hz : Function.Injective z := by
       intro r t he
@@ -112,7 +61,7 @@ private theorem projective_singular_residue_card_le {p d : ℕ} [Fact p.Prime]
     have hzero (r : T k) : eval (z r) q = 0 := by
       have h := projectiveResidueChartLift_zero f hf r.val.val r.val.property
       rw [hk r] at h
-      simpa only [q, z, eval_map] using h
+      simpa only [q, z, eval_map, projectivePlaneChart] using h
     have hsing (r : T k) (j : Fin 2) : eval (z r) (pderiv j q) = 0 := by
       have h := projectivePlaneResidueMultiplicity_singular f hf hir.ne_zero r.val
         (Finset.mem_filter.mp (Finset.mem_filter.mp r.property).1).2 j

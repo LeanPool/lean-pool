@@ -60,60 +60,6 @@ namespace CCDN
 noncomputable section
 open MvPolynomial
 
-private lemma hypersurfaceResidueChart_normalized {n p : ℕ} [Fact p.Prime]
-    (r : ProjectiveResidueSpace (n + 2) p) :
-    (Fin.cons 1 (fun j => (hypersurfaceResidueChartLift r j : ZMod p))) ∘
-      Equiv.swap 0 (hypersurfaceResiduePivot r) =
-        (r.rep (hypersurfaceResiduePivot r))⁻¹ • r.rep := by
-  have h : Fin.cons 1 (fun j => (hypersurfaceResidueChartLift r j : ZMod p)) =
-      (r.rep (hypersurfaceResiduePivot r))⁻¹ •
-        (r.rep ∘ Equiv.swap 0 (hypersurfaceResiduePivot r)) := by
-    funext j
-    refine Fin.cases ?_ (fun k => ?_) j
-    · simp [hypersurfaceResiduePivot_ne_zero]
-    · simp [cast_hypersurfaceResidueChartLift, div_eq_mul_inv, mul_comm]
-  rw [h]
-  funext j
-  simp
-
-private theorem hypersurfaceResidueChart_injective_of_pivot_eq {n p : ℕ} [Fact p.Prime]
-    {r t : ProjectiveResidueSpace (n + 2) p}
-    (hk : hypersurfaceResiduePivot r = hypersurfaceResiduePivot t)
-    (ha : (fun j => (hypersurfaceResidueChartLift r j : ZMod p)) =
-      (fun j => (hypersurfaceResidueChartLift t j : ZMod p))) : r = t := by
-  have he : (r.rep (hypersurfaceResiduePivot r))⁻¹ • r.rep =
-      (t.rep (hypersurfaceResiduePivot t))⁻¹ • t.rep := by
-    rw [← hypersurfaceResidueChart_normalized, ← hypersurfaceResidueChart_normalized, hk, ha]
-  have hh := congrArg (fun v : Fin (n + 3) → ZMod p => r.rep (hypersurfaceResiduePivot r) • v) he
-  have hs : (r.rep (hypersurfaceResiduePivot r) / t.rep (hypersurfaceResiduePivot t)) • t.rep =
-      r.rep := by
-    simpa only [smul_smul, mul_inv_cancel₀ (hypersurfaceResiduePivot_ne_zero r), one_smul,
-      div_eq_mul_inv] using hh.symm
-  calc
-    r = Projectivization.mk (ZMod p) r.rep r.rep_nonzero := r.mk_rep.symm
-    _ = Projectivization.mk (ZMod p) t.rep t.rep_nonzero := by
-      rw [Projectivization.mk_eq_mk_iff']
-      exact ⟨_, hs⟩
-    _ = t := t.mk_rep
-
-private theorem projectiveHypersurfaceChart_irreducible_degree {n p d : ℕ} [Fact p.Prime]
-    (f : MvPolynomial (Fin (n + 3)) ℤ) (hf : f.IsHomogeneous d) (hd : 2 ≤ d)
-    (hir : Irreducible (map (Int.castRingHom (ZMod p)) f)) (k : Fin (n + 3)) :
-    Irreducible (map (Int.castRingHom (ZMod p)) (projectiveHypersurfaceChart k f)) ∧
-      (map (Int.castRingHom (ZMod p)) (projectiveHypersurfaceChart k f)).totalDegree = d := by
-  let q := rename (Equiv.swap 0 k) (map (Int.castRingHom (ZMod p)) f)
-  have hq : q.IsHomogeneous d := (hf.map _).rename_isHomogeneous
-  have hqi : Irreducible q :=
-    (MulEquiv.irreducible_iff (f := renameEquiv (ZMod p) (Equiv.swap 0 k))).mpr hir
-  have hX := variable_not_dvd_irreducible_homogeneous q hq hqi hd 0
-  have he :
-      map (Int.castRingHom (ZMod p)) (projectiveHypersurfaceChart k f) = affineChart (n + 2) q := by
-    change map _ (affineChart (n + 2) (rename (Equiv.swap 0 k) f)) = _
-    rw [← affineChart_map, map_rename]
-  rw [he]
-  exact ⟨affineChart_irreducible_of_not_variable_dvd q hq hqi hX,
-    affineChart_degree_of_not_variable_dvd q hq hX⟩
-
 private lemma projectiveHypersurfaceResidueMultiplicity_singular {n p d : ℕ} [Fact p.Prime]
     (f : MvPolynomial (Fin (n + 3)) ℤ) (hf : f.IsHomogeneous d)
     (hf0 : map (Int.castRingHom (ZMod p)) f ≠ 0) (r : ProjectiveHypersurfaceResidue f p)
@@ -143,14 +89,15 @@ private theorem projective_hypersurface_singular_residue_card_le {n p d : ℕ} [
     (Finset.mem_filter.mp r.property).2
   have hT (k : Fin (n + 3)) : (T k).card ≤ (n + 4) ^ n * d * (d - 1) * p ^ n := by
     let q := map (Int.castRingHom (ZMod p)) (projectiveHypersurfaceChart k f)
-    have hq := projectiveHypersurfaceChart_irreducible_degree f hf hd hir k
+    have hq : Irreducible q ∧ q.totalDegree = d :=
+      affineChart_rename_swap_irreducible_degree (Int.castRingHom (ZMod p)) f hf hd hir k
     let z : T k → Fin (n + 2) → ZMod p :=
       fun r j => (hypersurfaceResidueChartLift r.val.val j : ZMod p)
     have hz : Function.Injective z := by
       intro r t he
       apply Subtype.ext
       apply Subtype.ext
-      exact hypersurfaceResidueChart_injective_of_pivot_eq ((hk r).trans (hk t).symm) he
+      exact projectiveResidueChart_injective_of_pivot_eq ((hk r).trans (hk t).symm) he
     have hzero (r : T k) : eval (z r) q = 0 := by
       have h := hypersurfaceResidueChartLift_zero f hf r.val.val r.val.property
       rw [hk r] at h

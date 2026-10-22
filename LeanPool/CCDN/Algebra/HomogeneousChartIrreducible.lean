@@ -149,5 +149,25 @@ theorem affineChart_irreducible_of_not_variable_dvd {K : Type*} [Field K] {n d :
     · right
       simpa only [affineChart_scaledHomogenize_one] using hb.map (affineChart n)
 
+/-- After mapping coefficients into a field, every pivot chart of an irreducible homogeneous
+polynomial of degree at least two remains irreducible and has the original degree. -/
+theorem affineChart_rename_swap_irreducible_degree
+    {K R : Type*} [CommRing K] [Field R] {n d : ℕ}
+    (φ : K →+* R) (f : MvPolynomial (Fin (n + 1)) K)
+    (hf : f.IsHomogeneous d) (hd : 2 ≤ d)
+    (hir : Irreducible (map φ f)) (k : Fin (n + 1)) :
+    Irreducible (map φ (affineChart n (rename (Equiv.swap 0 k) f))) ∧
+      (map φ (affineChart n (rename (Equiv.swap 0 k) f))).totalDegree = d := by
+  let q := rename (Equiv.swap 0 k) (map φ f)
+  have hq : q.IsHomogeneous d := (hf.map _).rename_isHomogeneous
+  have hqi : Irreducible q :=
+    (MulEquiv.irreducible_iff (f := renameEquiv R (Equiv.swap 0 k))).mpr hir
+  have hX := variable_not_dvd_irreducible_homogeneous q hq hqi hd 0
+  have he : map φ (affineChart n (rename (Equiv.swap 0 k) f)) = affineChart n q := by
+    rw [← affineChart_map, map_rename]
+  rw [he]
+  exact ⟨affineChart_irreducible_of_not_variable_dvd q hq hqi hX,
+    affineChart_degree_of_not_variable_dvd q hq hX⟩
+
 end
 end CCDN
