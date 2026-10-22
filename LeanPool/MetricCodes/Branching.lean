@@ -5,7 +5,6 @@ Authors: OpenAI, Dean Cureton
 -/
 module
 
-public import LeanPool.MetricCodes.MatrixPerron
 public import LeanPool.MetricCodes.Representation
 public import Mathlib.Combinatorics.SimpleGraph.Connectivity.Connected
 public import Mathlib.RingTheory.Regular.RegularSequence
@@ -468,33 +467,15 @@ theorem youngClebschLower_adjoint_tmul {r n : ℕ}
     (youngClebschLower mu lam hdeg row).adjoint
         (v ⊗ₜ[ℝ] q) =
       projectedCoordinateRaise lam mu hdeg row v q := by
-  let b := EuclideanSpace.basisFun (Fin n) ℝ
-  have hv : (∑ j : Fin n, v j • b j) = v := by
-    simpa [b] using b.sum_repr v
-  calc
-    (youngClebschLower mu lam hdeg row).adjoint (v ⊗ₜ[ℝ] q) =
-        (youngClebschLower mu lam hdeg row).adjoint
-          ((∑ j : Fin n, v j • b j) ⊗ₜ[ℝ] q) := by rw [hv]
-    _ = ∑ j : Fin n,
-        v j • (youngClebschLower mu lam hdeg row).adjoint
-          (b j ⊗ₜ[ℝ] q) := by
-      rw [TensorProduct.sum_tmul, map_sum]
-      apply Finset.sum_congr rfl
-      intro j _
-      rw [← TensorProduct.smul_tmul', map_smul]
-    _ = ∑ j : Fin n,
-        v j • projectedCoordinateRaise lam mu hdeg row (b j) q := by
-      apply Finset.sum_congr rfl
-      intro j _
-      rw [youngClebschLower_adjoint_basis_tmul]
-    _ = projectedCoordinateRaiseAxis lam mu hdeg row q
-          (∑ j : Fin n, v j • b j) := by
-      rw [map_sum]
-      apply Finset.sum_congr rfl
-      intro j _
-      rw [map_smul]
-      rfl
-    _ = projectedCoordinateRaise lam mu hdeg row v q := by rw [hv]; rfl
+  have hmaps :
+      (youngClebschLower mu lam hdeg row).adjoint.comp
+          ((TensorProduct.mk ℝ (SpherePacking.Euclidean n)
+            (HarmonicYoungSpace (n := n) mu)).flip q) =
+        projectedCoordinateRaiseAxis lam mu hdeg row q := by
+    apply (EuclideanSpace.basisFun (Fin n) ℝ).toBasis.ext
+    intro j
+    exact youngClebschLower_adjoint_basis_tmul mu lam hdeg row j q
+  exact LinearMap.congr_fun hmaps v
 
 end MultiplicityFreeClebsch
 
@@ -3202,7 +3183,7 @@ private theorem adjoint_comp_composed_maps
     ((C.comp T).comp V.adjoint).adjoint.comp
       ((C'.comp T').comp V'.adjoint) =
         V.comp ((T.adjoint.comp ((C.adjoint.comp C').comp T')).comp V'.adjoint) := by
-  rw [LinearMap.adjoint_comp, LinearMap.adjoint_comp, LinearMap.adjoint_adjoint]
+  simp only [LinearMap.adjoint_comp, LinearMap.adjoint_adjoint]
   simp only [LinearMap.comp_assoc]
 
 theorem liftChannel_adjoint_comp_self
@@ -3214,7 +3195,7 @@ theorem liftChannel_adjoint_comp_self
       (liftChannel lam target source T) =
         vertexProjection (YoungVertex (n := n) lam) source := by
   unfold liftChannel
-  rw [adjoint_comp_composed_maps,
+  simp only [adjoint_comp_composed_maps,
     (coordinateInclusion (n := n) lam target).adjoint_comp_self',
     LinearMap.id_comp, T.adjoint_comp_self', LinearMap.id_comp]
   rfl
@@ -3231,9 +3212,8 @@ theorem liftChannel_orthogonal_of_target_ne
     (liftChannel lam target source T).adjoint.comp
       (liftChannel lam target' source' T') = 0 := by
   unfold liftChannel
-  rw [adjoint_comp_composed_maps, coordinateInclusion_orthogonal lam hne,
-    LinearMap.zero_comp, LinearMap.comp_zero, LinearMap.zero_comp,
-    LinearMap.comp_zero]
+  simp only [adjoint_comp_composed_maps, coordinateInclusion_orthogonal lam hne,
+    LinearMap.zero_comp, LinearMap.comp_zero]
 
 theorem liftChannel_orthogonal_of_clebsch
     {I : Type*} [Fintype I] [DecidableEq I]
@@ -3247,7 +3227,7 @@ theorem liftChannel_orthogonal_of_clebsch
     (liftChannel lam target source T).adjoint.comp
       (liftChannel lam target source' T') = 0 := by
   unfold liftChannel
-  rw [adjoint_comp_composed_maps,
+  simp only [adjoint_comp_composed_maps,
     (coordinateInclusion (n := n) lam target).adjoint_comp_self',
     LinearMap.id_comp, horthogonal, LinearMap.zero_comp, LinearMap.comp_zero]
 
@@ -3264,7 +3244,7 @@ theorem liftChannel_adjoint_axis_self
       vertexInclusion (YoungVertex (n := n) lam) source
         (T.adjoint (x.val ⊗ₜ[ℝ] v)) := by
   unfold liftChannel
-  rw [LinearMap.adjoint_comp, LinearMap.adjoint_comp,
+  simp only [LinearMap.adjoint_comp,
     LinearMap.adjoint_adjoint]
   change
     vertexInclusion (YoungVertex (n := n) lam) source
@@ -3272,7 +3252,7 @@ theorem liftChannel_adjoint_axis_self
         ((coordinateInclusion (n := n) lam target).adjoint
           (x.val ⊗ₜ[ℝ]
             vertexInclusion (YoungVertex (n := n) lam) target v))) = _
-  rw [coordinateInclusion_adjoint_axis_self]
+  simp only [coordinateInclusion_adjoint_axis_self]
 
 theorem liftChannel_adjoint_axis_ne
     {I : Type*} [Fintype I] [DecidableEq I]
@@ -3286,7 +3266,7 @@ theorem liftChannel_adjoint_axis_ne
       (axisTensor x
         (vertexInclusion (YoungVertex (n := n) lam) j v)) = 0 := by
   unfold liftChannel
-  rw [LinearMap.adjoint_comp, LinearMap.adjoint_comp,
+  simp only [LinearMap.adjoint_comp,
     LinearMap.adjoint_adjoint]
   change
     vertexInclusion (YoungVertex (n := n) lam) source
@@ -3294,7 +3274,7 @@ theorem liftChannel_adjoint_axis_ne
         ((coordinateInclusion (n := n) lam target).adjoint
           (x.val ⊗ₜ[ℝ]
             vertexInclusion (YoungVertex (n := n) lam) j v))) = 0
-  rw [coordinateInclusion_adjoint_axis_ne lam target j h,
+  simp only [coordinateInclusion_adjoint_axis_ne lam target j h,
     map_zero, map_zero]
 
 /-- The lifted Young edge channel when its transition probability is positive, and zero

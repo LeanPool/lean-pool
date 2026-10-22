@@ -699,18 +699,24 @@ section
 
 open scoped BigOperators InnerProductSpace
 
+/-- Partial derivatives commute over any commutative coefficient semiring. -/
+theorem polynomialPartialDerivatives_commute
+    {R σ : Type*} [CommSemiring R] (i j : σ) (p : MvPolynomial σ R) :
+    MvPolynomial.pderiv i (MvPolynomial.pderiv j p) =
+      MvPolynomial.pderiv j (MvPolynomial.pderiv i p) := by
+  classical
+  by_cases h : i = j
+  · subst j; rfl
+  ext m
+  simp only [MvPolynomial.coeff_pderiv, Finsupp.add_apply, Finsupp.single_eq_of_ne h,
+    Finsupp.single_eq_of_ne (Ne.symm h), add_zero]
+  rw [add_right_comm m, mul_right_comm]
+
 theorem mvPolynomial_pderiv_commute
     {n : ℕ} (i j : Fin n) (p : MvPolynomial (Fin n) ℝ) :
     MvPolynomial.pderiv i (MvPolynomial.pderiv j p) =
       MvPolynomial.pderiv j (MvPolynomial.pderiv i p) := by
-  classical
-  induction p using MvPolynomial.induction_on with
-  | C a => simp only [MvPolynomial.derivation_C, map_zero]
-  | add p q hp hq => simp only [map_add, hp, hq]
-  | mul_X p a hp =>
-      simp only [Derivation.leibniz, MvPolynomial.pderiv_X, Pi.single_apply, smul_eq_mul, mul_ite,
-        mul_one, mul_zero, map_add, hp]
-      split <;> split <;> simp_all <;> ring
+  exact polynomialPartialDerivatives_commute i j p
 
 /-- The directional derivative used in the spherical-code argument. -/
 def directionalDerivative (n : ℕ) (x : Euclidean n) :

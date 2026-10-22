@@ -2856,16 +2856,19 @@ theorem spectralPathOperator_succ_rtt_of
       Pi.single_eq_of_ne', mul_zero, add_zero, ne_of_lt hat, ↓reduceIte, sub_zero]
   have hcross : (x - y) • (C * F - F * C) = E * D - F * C := by
     rw [hdelta]
-    exact hrtt s t has.le hat.le w z
+    simpa only [Module.End.mul_eq_comp, C, D, E, F] using hrtt s t has.le hat.le w z
   have hCB : (x - y) • (C * B - B * C) = A * D - B * C := by
     rw [hdelta]
-    exact hrtt s a.castSucc has.le le_rfl w z
+    simpa only [Module.End.mul_eq_comp, A, B, C, D] using
+      hrtt s a.castSucc has.le le_rfl w z
   have hAF : (x - y) • (A * F - F * A) = E * B - F * A := by
     rw [hdelta]
-    exact hrtt a.castSucc t le_rfl hat.le w z
+    simpa only [Module.End.mul_eq_comp, A, B, E, F] using
+      hrtt a.castSucc t le_rfl hat.le w z
   have hEB : (x - y) • (E * B - B * E) = A * F - B * E := by
     rw [hdelta]
-    exact hrtt t a.castSucc hat.le le_rfl w z
+    simpa only [Module.End.mul_eq_comp, A, B, E, F] using
+      hrtt t a.castSucc hat.le le_rfl w z
   have hstep := spectralStep_rtt A B C D E F S T x y
     hAB hSB hTA hTB hSF hTC hTD hST hcross hCB hAF hEB
   rw [hdelta'] at hstep
@@ -2873,7 +2876,7 @@ theorem spectralPathOperator_succ_rtt_of
     spectralPathOperator_succ lam hdom a t k v,
     spectralPathOperator_succ lam hdom a t k u,
     spectralPathOperator_succ lam hdom a s k v]
-  exact hstep
+  simpa only [Module.End.mul_eq_comp, A, B, C, D, E, F, S, T, x, y, w, z, g] using hstep
 
 end ArbitraryRowSameAxisDiamondSpectralRTTStep
 
@@ -3056,7 +3059,8 @@ theorem spectralPathOperator_succ_same_target_commute_of
       lam a.castSucc target target hpos hpos k z
   have hcross : (x - y) • (C * B - B * C) = A * D - B * C := by
     rw [hdelta]
-    exact hrtt target a.castSucc hpos.le le_rfl w z
+    simpa only [Module.End.mul_eq_comp, A, B, C, D] using
+      hrtt target a.castSucc hpos.le le_rfl w z
   have hstep := spectralStep_same_target_commute A B C D R x y
     hAB hCD hRA hRB hRC hRD hcross
   rw [spectralPathOperator_succ lam hdom a target k u,
@@ -3064,7 +3068,7 @@ theorem spectralPathOperator_succ_same_target_commute_of
   change
     (x • C - A.comp R).comp (y • D - B.comp R) =
       (y • D - B.comp R).comp (x • C - A.comp R)
-  exact hstep
+  simpa only [Module.End.mul_eq_comp, A, B, C, D, R, x, y, w, z, g] using hstep
 
 end ArbitraryRowSameAxisDiamondSpectralSelfCommuteStep
 

@@ -7934,33 +7934,15 @@ theorem youngClebschRaise_adjoint_tmul {r n : ℕ}
     (youngClebschRaise mu lam hdeg row).adjoint
         (v ⊗ₜ[ℝ] q) =
       projectedCoordinateLower lam mu hdeg row v q := by
-  let b := EuclideanSpace.basisFun (Fin n) ℝ
-  have hv : (∑ j : Fin n, v j • b j) = v := by
-    simpa [b] using b.sum_repr v
-  calc
-    (youngClebschRaise mu lam hdeg row).adjoint (v ⊗ₜ[ℝ] q) =
-        (youngClebschRaise mu lam hdeg row).adjoint
-          ((∑ j : Fin n, v j • b j) ⊗ₜ[ℝ] q) := by rw [hv]
-    _ = ∑ j : Fin n,
-        v j • (youngClebschRaise mu lam hdeg row).adjoint
-          (b j ⊗ₜ[ℝ] q) := by
-      rw [TensorProduct.sum_tmul, map_sum]
-      apply Finset.sum_congr rfl
-      intro j _
-      rw [← TensorProduct.smul_tmul', map_smul]
-    _ = ∑ j : Fin n,
-        v j • projectedCoordinateLower lam mu hdeg row (b j) q := by
-      apply Finset.sum_congr rfl
-      intro j _
-      rw [youngClebschRaise_adjoint_basis_tmul]
-    _ = projectedCoordinateLowerAxis lam mu hdeg row q
-          (∑ j : Fin n, v j • b j) := by
-      rw [map_sum]
-      apply Finset.sum_congr rfl
-      intro j _
-      rw [map_smul]
-      rfl
-    _ = projectedCoordinateLower lam mu hdeg row v q := by rw [hv]; rfl
+  have hmaps :
+      (youngClebschRaise mu lam hdeg row).adjoint.comp
+          ((TensorProduct.mk ℝ (SpherePacking.Euclidean n)
+            (HarmonicYoungSpace (n := n) mu)).flip q) =
+        projectedCoordinateLowerAxis lam mu hdeg row q := by
+    apply (EuclideanSpace.basisFun (Fin n) ℝ).toBasis.ext
+    intro j
+    exact youngClebschRaise_adjoint_basis_tmul mu lam hdeg row j q
+  exact LinearMap.congr_fun hmaps v
 
 theorem youngClebschLower_adjoint_basis_tmul {r n : ℕ}
     (mu lam : Fin (r + 1) → ℕ)
