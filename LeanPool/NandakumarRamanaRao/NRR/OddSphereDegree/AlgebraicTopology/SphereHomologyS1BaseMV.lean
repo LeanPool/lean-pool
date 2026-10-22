@@ -8,17 +8,23 @@ module
 
 public import LeanPool.NandakumarRamanaRao.NRR.OddSphereDegree.AlgebraicTopology.SphereHomologyMVStep
 public import LeanPool.NandakumarRamanaRao.NRR.OddSphereDegree.AlgebraicTopology.SingularH0PathConnected
+import LeanPool.NandakumarRamanaRao.NRR.OddSphereDegree.RPnLowDimensional
+import Mathlib.Algebra.Category.FGModuleCat.Colimits
+import Mathlib.Algebra.Category.ModuleCat.Projective
+import Mathlib.Algebra.Order.Ring.Star
+import Mathlib.AlgebraicTopology.FundamentalGroupoid.SimplyConnected
+import Mathlib.LinearAlgebra.FreeModule.PID
+import Mathlib.RingTheory.Flat.TorsionFree
+import Mathlib.RingTheory.PicardGroup
+import Mathlib.RingTheory.RegularLocalRing.Defs
+import Mathlib.RingTheory.TotallySplit
+import Mathlib.Tactic.Basify
+import Mathlib.Tactic.ENatToNat
+import Mathlib.Tactic.Measurability.Init
+import Mathlib.Tactic.Polynomial.Basic
+import Mathlib.Tactic.ReduceModChar
+import Mathlib.Topology.Separation.Lemmas
 public import LeanPool.NandakumarRamanaRao.NRR.OddSphereDegree.AlgebraicTopology.MayerVietoris
-public import Mathlib.Algebra.AffineMonoid.Basic
-public import Mathlib.Algebra.Category.FGModuleCat.Colimits
-public import Mathlib.Algebra.Category.ModuleCat.Projective
-public import Mathlib.AlgebraicTopology.FundamentalGroupoid.SimplyConnected
-public import Mathlib.RingTheory.Flat.TorsionFree
-public import Mathlib.RingTheory.PicardGroup
-public import Mathlib.RingTheory.RegularLocalRing.Defs
-public import Mathlib.RingTheory.TotallySplit
-public import Mathlib.Tactic
-public import Mathlib.Topology.Separation.Lemmas
 /-!
 # Mayer–Vietoris base case: `H₁(S¹; ℤ) ≅ ℤ`
 

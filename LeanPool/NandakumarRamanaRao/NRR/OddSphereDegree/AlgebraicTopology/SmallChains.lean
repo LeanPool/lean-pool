@@ -7,6 +7,7 @@ module
 
 
 public import LeanPool.NandakumarRamanaRao.NRR.OddSphereDegree.AlgebraicTopology.SmallSimplices
+import Mathlib.Tactic.Measurability.Init
 
 /-!
 # The subcomplex of `𝒰`-small singular chains

@@ -7,6 +7,10 @@ module
 
 
 public import LeanPool.NandakumarRamanaRao.NRR.PrimeModel.BoundaryOrthants
+public import LeanPool.NandakumarRamanaRao.NRR.PrimeModel.CoordinateDecomposition
+import Mathlib.Combinatorics.Matroid.Init
+import Mathlib.Tactic.Positivity.Finset
+import Mathlib.Tactic.ReduceModChar
 /-!
 # Bounded augmented reference map
 

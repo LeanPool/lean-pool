@@ -6,6 +6,9 @@ Authors: Arseniy Akopyan
 module
 
 
+public import LeanPool.NandakumarRamanaRao.NRR.Geometry.ConvexBody.PlanarCircle
+public import Mathlib.Analysis.Convex.Body
+public import Mathlib.Analysis.Normed.Lp.MeasurableSpace
 public import LeanPool.NandakumarRamanaRao.NRR.ConvexBody
 
 /-!

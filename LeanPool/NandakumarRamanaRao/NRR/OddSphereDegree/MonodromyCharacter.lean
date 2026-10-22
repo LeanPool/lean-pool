@@ -6,6 +6,7 @@ Authors: Arseniy Akopyan
 module
 
 
+public import LeanPool.NandakumarRamanaRao.NRR.OddSphereDegree.DoubleCoverClass
 public import LeanPool.NandakumarRamanaRao.NRR.OddSphereDegree.MonodromyNontrivial
 
 /-!

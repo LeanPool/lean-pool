@@ -7,6 +7,7 @@ module
 
 
 public import LeanPool.NandakumarRamanaRao.NRR.OddSphereDegree.AlgebraicTopology.AlexanderWhitneyFaceMaps
+public import LeanPool.NandakumarRamanaRao.NRR.OddSphereDegree.AlgebraicTopology.CupProduct
 
 /-!
 # Alexander–Whitney cochain chain-map (Leibniz) identity

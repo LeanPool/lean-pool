@@ -6,6 +6,10 @@ Authors: Arseniy Akopyan
 module
 
 
+public import LeanPool.NandakumarRamanaRao.NRR.OddSphereDegree.AlgebraicTopology.HomotopyToChainHomotopy
+public import Mathlib.Algebra.Category.ModuleCat.Colimits
+public import Mathlib.Topology.Homotopy.Basic
+import Mathlib.Algebra.Order.Algebra
 public import LeanPool.NandakumarRamanaRao.NRR.OddSphereDegree.AlgebraicTopology.HomotopyInvarianceWrappers
 public import LeanPool.NandakumarRamanaRao.NRR.OddSphereDegree.AlgebraicTopology.PrismOperator
 

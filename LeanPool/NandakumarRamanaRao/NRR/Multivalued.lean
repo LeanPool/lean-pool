@@ -20,6 +20,8 @@ public import LeanPool.NandakumarRamanaRao.NRR.Multivalued.Separator.Distance
 public import LeanPool.NandakumarRamanaRao.NRR.Multivalued.Separator.SignedDistance
 public import LeanPool.NandakumarRamanaRao.NRR.Multivalued.Separator.ToNiceMV
 public import LeanPool.NandakumarRamanaRao.NRR.Multivalued.Separator.ObstructionValue
+import Mathlib.Combinatorics.Matroid.Init
+import Mathlib.Tactic.Positivity.Finset
 
 /-!
 # `NRR.Multivalued` — nice multivalued functions and top–bottom separators

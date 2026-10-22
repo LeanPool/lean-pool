@@ -6,9 +6,16 @@ Authors: Arseniy Akopyan
 module
 
 
+public import LeanPool.NandakumarRamanaRao.NRR.EMP.VariableBody.CanonicalCell
+import LeanPool.NandakumarRamanaRao.NRR.BodySpace.AreaContinuity
+public import LeanPool.NandakumarRamanaRao.NRR.BodySpace.AreaRigidity
+import LeanPool.NandakumarRamanaRao.NRR.BodySpace.Compactness
+import LeanPool.NandakumarRamanaRao.NRR.EMP.VariableBody.AreaVector
 public import LeanPool.NandakumarRamanaRao.NRR.EMP.VariableBody.CanonicalCellGraph
 public import LeanPool.NandakumarRamanaRao.NRR.EMP.VariableBody.ClosedGraph
-public import LeanPool.NandakumarRamanaRao.NRR.BodySpace.AreaRigidity
+import Mathlib.Algebra.Order.Ring.Star
+import Mathlib.Combinatorics.Matroid.Init
+import Mathlib.Tactic.Positivity.Finset
 
 /-!
 # `NRR.EMP.VariableBody.CanonicalCellContinuity` — closed graph and continuity of cells

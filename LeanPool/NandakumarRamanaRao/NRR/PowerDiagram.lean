@@ -14,6 +14,8 @@ public import LeanPool.NandakumarRamanaRao.NRR.PowerDiagram.BodyCells
 public import LeanPool.NandakumarRamanaRao.NRR.PowerDiagram.BodyCellPartition
 public import LeanPool.NandakumarRamanaRao.NRR.PowerDiagram.CellAreaContinuityWeights
 public import LeanPool.NandakumarRamanaRao.NRR.PowerDiagram.CellAreaVector
+import Mathlib.CategoryTheory.Category.Init
+import Mathlib.Tactic.Positivity.Finset
 
 /-!
 # `NRR.PowerDiagram` — weighted Voronoi / power diagrams

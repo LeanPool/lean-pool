@@ -7,7 +7,7 @@ module
 
 
 public import LeanPool.NandakumarRamanaRao.NRR.OddSphereDegree.Basic
-public import Mathlib.Analysis.Normed.Module.Ball.Action
+import Mathlib.Analysis.Normed.Module.Ball.Action
 
 /-!
 # Antipodal map API

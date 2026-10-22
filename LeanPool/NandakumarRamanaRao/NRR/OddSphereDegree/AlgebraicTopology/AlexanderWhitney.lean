@@ -6,8 +6,10 @@ Authors: Arseniy Akopyan
 module
 
 
+public import Mathlib.Algebra.Category.ModuleCat.Monoidal.Basic
+public import Mathlib.Algebra.Homology.Monoidal
+public import Mathlib.AlgebraicTopology.SingularHomology.Basic
 public import LeanPool.NandakumarRamanaRao.NRR.OddSphereDegree.AlgebraicTopology.CupProductScaffolding
-public import Mathlib.Data.Finset.NatAntidiagonal
 
 /-!
 # Alexander–Whitney diagonal — combinatorial and simplex-level layer

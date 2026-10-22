@@ -8,7 +8,9 @@ module
 
 public import LeanPool.NandakumarRamanaRao.NRR.OddSphereDegree.AlgebraicTopology.BarycentricSubdivisionChainMap
 public import LeanPool.NandakumarRamanaRao.NRR.OddSphereDegree.AlgebraicTopology.BarycentricSubdivisionHomotopyFormula
-public import Mathlib.Tactic
+import Mathlib.Analysis.Normed.Group.Basic
+import Mathlib.Tactic.Measurability.Init
+import Mathlib.Topology.Algebra.InfiniteSum.Order
 
 /-! # Barycentric Subdivision Chain Homotopy -/
 

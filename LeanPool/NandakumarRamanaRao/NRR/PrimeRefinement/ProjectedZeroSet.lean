@@ -6,6 +6,10 @@ Authors: Arseniy Akopyan
 module
 
 
+public import LeanPool.NandakumarRamanaRao.NRR.Multivalued.Separator.Basic
+public import LeanPool.NandakumarRamanaRao.NRR.PrimeModel.ChildTestMap
+import Mathlib.Combinatorics.Matroid.Init
+import Mathlib.Tactic.Positivity.Finset
 public import LeanPool.NandakumarRamanaRao.NRR.PrimeRefinement.SeparatorCertificate
 public import LeanPool.NandakumarRamanaRao.NRR.Multivalued.Separator.Complement
 

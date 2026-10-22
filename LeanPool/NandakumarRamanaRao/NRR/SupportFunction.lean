@@ -6,14 +6,14 @@ Authors: Arseniy Akopyan
 module
 
 
-public import LeanPool.NandakumarRamanaRao.NRR.Geometry.ConvexBody.SupportFunction
+public import LeanPool.NandakumarRamanaRao.NRR.Geometry.ConvexBody.PlanarCircle
 public import LeanPool.NandakumarRamanaRao.NRR.Geometry.ConvexBody.SupportFunctionBasic
 public import LeanPool.NandakumarRamanaRao.NRR.Geometry.ConvexBody.SupportFunctionContinuity
+public import LeanPool.NandakumarRamanaRao.NRR.Geometry.ConvexBody.WidthContinuity
+public import LeanPool.NandakumarRamanaRao.NRR.Geometry.ConvexBody.SupportFunction
 public import LeanPool.NandakumarRamanaRao.NRR.Geometry.ConvexBody.SupportFunctionTransform
 public import LeanPool.NandakumarRamanaRao.NRR.Geometry.ConvexBody.Width
-public import LeanPool.NandakumarRamanaRao.NRR.Geometry.ConvexBody.WidthContinuity
 public import LeanPool.NandakumarRamanaRao.NRR.Geometry.ConvexBody.WidthIdentities
-public import LeanPool.NandakumarRamanaRao.NRR.Geometry.ConvexBody.PlanarCircle
 
 /-!
 # `NRR.SupportFunction` — public support-function and width API

@@ -6,10 +6,11 @@ Authors: Arseniy Akopyan
 module
 
 
-public import Mathlib.MeasureTheory.Integral.IntervalIntegral.FundThmCalculus
 public import LeanPool.NandakumarRamanaRao.NRR.Geometry.ConvexBody.PlanarPerimeter
-public import LeanPool.NandakumarRamanaRao.NRR.Geometry.ConvexBody.PlanarPerimeterTransform
 public import LeanPool.NandakumarRamanaRao.NRR.Geometry.ConvexBody.WidthFamilies
+public import LeanPool.NandakumarRamanaRao.NRR.Geometry.ConvexBody.PlanarPerimeterTransform
+import LeanPool.NandakumarRamanaRao.NRR.Geometry.ConvexBody.WidthContinuity
+import Mathlib.MeasureTheory.Integral.DominatedConvergence
 
 /-!
 # `NRR.Geometry.ConvexBody` — continuity of the planar perimeter
@@ -88,7 +89,10 @@ its restriction to the angle parameterization `(a, θ) ↦ w_{K a}(circleVec θ)
 theorem AngleWidthContinuousFamily.of_widthFamily
     {K : α → ConvexBody Plane} (hK : WidthContinuousFamily K) :
     AngleWidthContinuousFamily K :=
-  hK.comp (continuous_fst.prodMk (continuous_circleVec.comp continuous_snd))
+  Continuous.comp
+    (g := fun p : α × Plane => widthFunction (K p.1) p.2)
+    (f := fun p : α × ℝ => (p.1, circleVec p.2)) hK
+    (continuous_fst.prodMk (continuous_circleVec.comp continuous_snd))
 
 /-- **Main theorem.** If a family of convex bodies has a continuous angle-width integrand, then
 its planar (Cauchy) perimeter is continuous in the parameter. This holds for an arbitrary

@@ -6,11 +6,13 @@ Authors: Arseniy Akopyan
 module
 
 
-public import Mathlib.Tactic
-public import LeanPool.NandakumarRamanaRao.NRR.ConvexBody
 public import LeanPool.NandakumarRamanaRao.NRR.EMP.EqualAreaWeights
-public import LeanPool.NandakumarRamanaRao.NRR.EMP.EqualAreaWeightCellRigidity
+public import LeanPool.NandakumarRamanaRao.NRR.EMP.WeightSpace
 public import LeanPool.NandakumarRamanaRao.NRR.EMP.EqualAreaWeightMaxUnion
+import Mathlib.CategoryTheory.Category.Init
+import Mathlib.Tactic.Positivity.Finset
+public import LeanPool.NandakumarRamanaRao.NRR.ConvexBody
+public import LeanPool.NandakumarRamanaRao.NRR.EMP.EqualAreaWeightCellRigidity
 /-!
 # `NRR.EMP.EqualAreaWeightsUniqueness` — uniqueness of equal-area power weights
 

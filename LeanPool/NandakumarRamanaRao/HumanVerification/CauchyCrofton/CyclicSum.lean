@@ -6,11 +6,13 @@ Authors: Arseniy Akopyan
 module
 
 
-public import Mathlib.Algebra.Order.Ring.Star
-public import Mathlib.Data.Int.Star
-public import Mathlib.MeasureTheory.Measure.Lebesgue.Basic
-public import Mathlib.Order.CompletePartialOrder
-public import Mathlib.Tactic
+public import Mathlib.Algebra.BigOperators.Group.Finset.Defs
+public import Mathlib.Basic.Real.Basic
+import Mathlib.Algebra.Order.Ring.Star
+import Mathlib.Data.Int.Star
+import Mathlib.MeasureTheory.Measure.Lebesgue.Basic
+import Mathlib.Order.CompletePartialOrder
+import Mathlib.Tactic.ReduceModChar
 
 /-!
 # Total variation of a cyclically unimodal sequence

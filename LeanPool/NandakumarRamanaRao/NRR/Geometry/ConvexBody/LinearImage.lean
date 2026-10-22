@@ -7,6 +7,8 @@ module
 
 
 public import LeanPool.NandakumarRamanaRao.NRR.Geometry.ConvexBody.Basic
+public import Mathlib.Analysis.Normed.Module.Basic
+import Mathlib.Tactic.Measurability.Init
 
 /-!
 # `NRR.Geometry.ConvexBody` — images under continuous linear equivalences
@@ -46,8 +48,8 @@ assume that `E`, `F` (and, for composition, `G`) are real normed spaces.
 
 ## Import policy
 
-Following the library-wide policy, `Basic.lean` already pulls in `import Mathlib`, so no extra
-imports are required here.
+The normed-space and continuous-linear-equivalence APIs are imported here, keeping those
+dependencies out of the basic body type.
 -/
 
 @[expose] public section

@@ -6,7 +6,6 @@ Authors: Arseniy Akopyan
 module
 
 
-public import Mathlib.Tactic
 public import Mathlib.Topology.MetricSpace.Closeds
 public import LeanPool.NandakumarRamanaRao.NRR.BodySpace.Basic
 

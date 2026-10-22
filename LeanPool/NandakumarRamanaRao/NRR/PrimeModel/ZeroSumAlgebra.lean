@@ -6,6 +6,12 @@ Authors: Arseniy Akopyan
 module
 
 
+public import LeanPool.NandakumarRamanaRao.NRR.Representation.ZeroSum
+public import Mathlib.LinearAlgebra.FiniteDimensional.Defs
+public import Mathlib.Topology.Algebra.MulAction
+import Mathlib.Algebra.Order.Archimedean.Real.Hom
+import Mathlib.Combinatorics.Matroid.Init
+import Mathlib.Tactic.Positivity.Finset
 public import LeanPool.NandakumarRamanaRao.NRR.PrimeModel.PhaseInterfaces
 
 /-!

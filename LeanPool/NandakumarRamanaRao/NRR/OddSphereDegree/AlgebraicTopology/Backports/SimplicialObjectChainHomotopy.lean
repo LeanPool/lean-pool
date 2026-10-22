@@ -6,7 +6,13 @@ Authors: Arseniy Akopyan
 module
 
 
-public import Mathlib.AlgebraicTopology.SimplicialObject.Homotopy
+import Mathlib.CategoryTheory.Category.Init
+import Mathlib.Data.Finset.Attr
+import Mathlib.Data.Rat.Cast.Order
+import Mathlib.Tactic.NormNum.Abs
+import Mathlib.Tactic.NormNum.DivMod
+import Mathlib.Tactic.NormNum.OfScientific
+import Mathlib.Tactic.NormNum.Pow
 
 /-! # Simplicial Object Chain Homotopy -/
 

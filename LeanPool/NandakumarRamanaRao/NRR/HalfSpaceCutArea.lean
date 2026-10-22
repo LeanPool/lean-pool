@@ -6,9 +6,6 @@ Authors: Arseniy Akopyan
 module
 
 
-public import Mathlib.Analysis.Normed.Lp.MeasurableSpace
-public import Mathlib.MeasureTheory.Measure.Haar.OfBasis
-public import Mathlib.Tactic
 public import LeanPool.NandakumarRamanaRao.NRR.ConvexBody
 public import LeanPool.NandakumarRamanaRao.NRR.Geometry.ConvexBody.HalfspaceCut
 

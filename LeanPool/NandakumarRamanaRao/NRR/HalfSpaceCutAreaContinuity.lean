@@ -6,12 +6,15 @@ Authors: Arseniy Akopyan
 module
 
 
-public import Mathlib.MeasureTheory.Function.SpecialFunctions.Inner
-public import Mathlib.Tactic
+public import LeanPool.NandakumarRamanaRao.NRR.HalfSpaceCutArea
+public import LeanPool.NandakumarRamanaRao.NRR.HalfSpace
+import Mathlib.MeasureTheory.Function.SpecialFunctions.Inner
+import Mathlib.Tactic.Basify
+import Mathlib.Tactic.ENatToNat
+import Mathlib.Tactic.Polynomial.Basic
+import Mathlib.Tactic.ReduceModChar
 public import LeanPool.NandakumarRamanaRao.NRR.ConvexBody
 public import LeanPool.NandakumarRamanaRao.NRR.Geometry.ConvexBody.HalfspaceCut
-public import LeanPool.NandakumarRamanaRao.NRR.HalfSpace
-public import LeanPool.NandakumarRamanaRao.NRR.HalfSpaceCutArea
 
 /-!
 # `NRR.HalfSpaceCutAreaContinuity` — continuity of fixed-normal cut areas

@@ -6,10 +6,12 @@ Authors: Arseniy Akopyan
 module
 
 
-public import Mathlib.Algebra.Homology.Opposite
 public import LeanPool.NandakumarRamanaRao.NRR.OddSphereDegree.AlgebraicTopology.SingularCohomology
-public import LeanPool.NandakumarRamanaRao.NRR.OddSphereDegree.AlgebraicTopology.HomotopyInvariance
+public import Mathlib.Algebra.Category.ModuleCat.Colimits
+public import Mathlib.Topology.Homotopy.Basic
 public import LeanPool.NandakumarRamanaRao.NRR.OddSphereDegree.AlgebraicTopology.Backports.PrismSimplicialHomotopy
+import Mathlib.Algebra.Order.Algebra
+public import LeanPool.NandakumarRamanaRao.NRR.OddSphereDegree.AlgebraicTopology.HomotopyInvariance
 
 /-!
 # Homotopy invariance of singular cohomology — UNCONDITIONAL
