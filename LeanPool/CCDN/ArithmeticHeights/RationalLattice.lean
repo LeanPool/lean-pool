@@ -105,9 +105,10 @@ the case `K = ℚ`. His Lemma 4 is the archimedean half — over `ℚ` it is the
 alone — and his Lemmas 5 and 6 the finite half, which over `ℚ` is the primitivity of the Plücker
 point.
 
-I. Aliev and M. Henk, "Successive minima and best simultaneous Diophantine approximations",
-*Monatshefte für Mathematik* **147** (2006), 95–101, §6, where the `ℚ` case is the identity quoted
-as folklore in the assembly of Siegel's lemma.
+I. Aliev and M. Henk, "Minkowski's successive minima in convex and discrete geometry",
+*Communications in Mathematics* **31**(2) (2023), 35–59, §6
+(arXiv:2304.00120; doi:10.46298/cm.11155). The rational covolume identity is stated
+immediately before Theorem 6.3 and used in the geometry-of-numbers proof of Siegel's lemma.
 
 This is Layer 4.3 of the `ArithmeticHeights` roadmap, over `ℚ`.
 -/
