@@ -54,9 +54,10 @@ type to `Module.finrank` is needed.
 
 ## References
 
-J. W. S. Cassels, *An Introduction to the Geometry of Numbers*, Springer (1959), Chapter III, §5,
-where the covolume of a lattice given by a basis matrix `A` is `|det A|`, and the Gram form
-`√(det (A Aᵀ))` is the one used when the lattice sits in a subspace of larger dimension.
+J. W. S. Cassels, *An Introduction to the Geometry of Numbers*, Springer (1959), Chapter I, §2.1,
+pp. 9–10, defines the lattice determinant as the absolute determinant of a basis matrix.
+The Gram formula proved here is the corresponding Euclidean computation for a lattice in a
+subspace, using orthonormal coordinates on its span.
 
 This is Layer 4.3 of the `ArithmeticHeights` roadmap, the infrastructure half: the covolume
 identity of that milestone is proved by computing both sides of it against a Gram determinant.

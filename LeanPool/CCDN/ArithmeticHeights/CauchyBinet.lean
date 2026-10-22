@@ -74,7 +74,8 @@ A. L. Cauchy (1812) and J. P. M. Binet (1812); the identity is Proposition 2.8.8
 E. Bombieri and W. Gubler, *Heights in Diophantine Geometry*, Cambridge University Press (2006),
 and §2 Lemma 1 of W. M. Schmidt, "On heights of algebraic subspaces and diophantine
 approximations", *Annals of Mathematics* **85** (1967), 430–472. It enters the Siegel-lemma
-literature as equation (2.4)(iv) of E. Bombieri and J. Vaaler, "On Siegel's lemma",
+literature as the local-height formula (iv) in §2, p. 15, of E. Bombieri and J. Vaaler,
+"On Siegel's lemma",
 *Inventiones Mathematicae* **73** (1983), 11–32, whose bound is stated in terms of
 `√|det (A Aᵀ)|`.
 

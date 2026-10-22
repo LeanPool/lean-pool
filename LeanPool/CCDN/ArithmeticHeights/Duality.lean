@@ -34,9 +34,9 @@ insensitive to exactly that much — a signed reindexing and a scalar.
   `Submodule.absMulHeight_comap_piEquiv_dualAnnihilator` and every logarithmic form: **the duality
   theorem**, the height of `V` against the height of its annihilator, transported back to `ι → K`
   along the standard basis.
-* `Matrix.mulHeight_ker_mulVecLin` and its five companions: **the height of a subspace is the
-  height of any matrix cutting it out** (Bombieri–Gubler, Corollary 2.8.12) — the solution space of
-  `A x = 0` and the row space of `A` have the same height. This is the form Layer 5 consumes.
+* `Matrix.mulHeight_ker_mulVecLin` and its five companions: the solution space of `A x = 0`
+  and the row space of `A` have the same height in each supported normalization.
+  The Arakelov case corresponds to Bombieri–Gubler Corollary 2.8.12.
 * `Submodule.exists_plucker_eq_plucker_compl`: the coordinate statement behind both. A subspace and
   its annihilator have bases whose Plücker coordinates agree at complementary indices up to a sign
   and one common nonzero factor — Schmidt's involution `τ`.
@@ -83,7 +83,9 @@ W. M. Schmidt, *On heights of algebraic subspaces and diophantine approximations
 Mathematics 85 (1967), §1, equations (2) and (4), where the involution on Grassmann coordinates
 that reverses the index order and attaches a sign is what makes the theorem hold in every
 normalization at once. E. Bombieri and W. Gubler, *Heights in Diophantine Geometry*, Cambridge
-University Press (2006), Proposition 2.8.10 and Corollary 2.8.12. The underlying linear algebra is
+University Press (2006), Proposition 2.8.10 and Corollary 2.8.12 for the absolute Arakelov
+version. The same Plücker identity also gives the sup-norm counterparts here.
+The underlying linear algebra is
 Hindry–Silverman, *Diophantine Geometry: An Introduction*, Exercise A.1.11(c).
 
 This is Layer 3.5 of the `ArithmeticHeights` roadmap.
@@ -580,10 +582,10 @@ section Relative
 
 variable [Height.AdmissibleAbsValues K]
 
-/-- **The duality theorem** (W. M. Schmidt 1967; Bombieri–Gubler, Proposition 2.8.10): a subspace
-and its annihilator have the same height, the annihilator being read back in `ι → K` along the
-standard basis. By `Submodule.mem_comap_piEquiv_dualAnnihilator` the subspace on the left is the
-orthogonal complement of `V` for the standard bilinear form. -/
+/-- **Sup-norm duality:** a subspace and its annihilator have the same height, with the annihilator
+read back in `ι → K` along the standard basis. This is the sup-norm counterpart of the Arakelov
+version in Bombieri–Gubler Proposition 2.8.10. By `Submodule.mem_comap_piEquiv_dualAnnihilator`
+the subspace on the left is the orthogonal complement of `V` for the standard bilinear form. -/
 theorem mulHeight_comap_piEquiv_dualAnnihilator (V : Submodule K (ι → K)) :
     (V.dualAnnihilator.comap (Module.piEquiv ι K K).toLinearMap).mulHeight = V.mulHeight := by
   obtain ⟨k, l, hlk, v, w, c, hc, hv, hw, hVv, hWw, hpl⟩ := exists_plucker_pair V
@@ -605,7 +607,7 @@ section Arakelov
 
 variable [NumberField K]
 
-/-- **The duality theorem in the Arakelov normalization** (Bombieri–Gubler, Proposition 2.8.10).
+/-- **The relative multiplicative form of Arakelov duality** (Bombieri–Gubler Proposition 2.8.10).
 Schmidt's mechanism gives both normalizations at once: the two coordinate tuples differ by a
 signed reindexing and a scalar, and no height in Layer 0 sees either. -/
 theorem arakelovMulHeight_comap_piEquiv_dualAnnihilator (V : Submodule K (ι → K)) :
@@ -690,9 +692,8 @@ section Relative
 
 variable [Height.AdmissibleAbsValues K]
 
-/-- **The height of a subspace is the height of any matrix cutting it out** (Bombieri–Gubler,
-Corollary 2.8.12): the solution space of `A x = 0` and the row space of `A` have the same height.
-This is the form Layer 5 consumes, the right-hand side being `H(A)` of Bombieri–Vaaler. -/
+/-- **The sup-norm heights of the solution space of `A x = 0` and the row space of `A` agree.**
+This is the sup-norm counterpart of the Arakelov duality in Bombieri–Gubler Corollary 2.8.12. -/
 theorem mulHeight_ker_mulVecLin (A : Matrix m ι K) :
     (LinearMap.ker A.mulVecLin).mulHeight = (Submodule.span K (Set.range A.row)).mulHeight := by
   rw [ker_mulVecLin_eq_comap_piEquiv_dualAnnihilator,
@@ -710,8 +711,9 @@ section Arakelov
 
 variable [NumberField K]
 
-/-- **The Arakelov height of a subspace is the Arakelov height of any matrix cutting it out**
-(Bombieri–Gubler, Corollary 2.8.12), `H_Ar^row(A)` of Bombieri–Vaaler. -/
+/-- **The relative Arakelov heights of the solution space and row space agree.**
+This is the relative multiplicative form of Bombieri–Gubler Corollary 2.8.12. In the full-row-rank
+number-field setting of Bombieri–Vaaler, the right-hand side is `H(A) ^ [K : ℚ]`. -/
 theorem arakelovMulHeight_ker_mulVecLin (A : Matrix m ι K) :
     (LinearMap.ker A.mulVecLin).arakelovMulHeight =
       (Submodule.span K (Set.range A.row)).arakelovMulHeight := by
@@ -783,8 +785,8 @@ private lemma mulHeight_zero_one : Height.mulHeight ![(0 : ℚ), 1] = 1 := by
 
 /-- **Acceptance test: the height of a solution space, computed from the matrix.** The line
 `x₀ + 3 x₁ = 0` in `ℚ²` has height `3`, the height of the single row `(1, 3)` that cuts it out —
-this is Corollary 2.8.12 on the smallest case where the answer is not `1`, and it is the step
-Layer 5 takes when it bounds the solutions of `A x = 0` by the height of the row space of `A`.
+this illustrates the sup-norm counterpart of Bombieri–Gubler Corollary 2.8.12. The Arakelov
+height in that source uses the Euclidean norm instead.
 A duality theorem that returned the height of the entries of the *solution*, or that returned `1`,
 is refuted here. -/
 example :

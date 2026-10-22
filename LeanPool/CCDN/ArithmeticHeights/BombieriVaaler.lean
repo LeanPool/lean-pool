@@ -96,13 +96,11 @@ solutions and is sharp at `N = M`, where both sides are `1`: the empty
 product on the left, and on the right the Arakelov height of the zero subspace. Only the one-vector
 form needs `M < N`, and there it is not removable — the exponent `1/(N - M)` requires it.
 
-⚠ **The left-hand side is the sup norm, and the height form is strictly weaker.** By Layer 5.1's
-`Rat.gcd_mul_mulHeight_intCast` the height of an integer tuple is its sup norm divided by the
-content, so `∏ H(x l) ≤ ∏ max |x l n|` with equality exactly when every `x l` is primitive. The
-basis produced here is *not* primitive in general — the minima vectors of a lattice need not be —
-so the height form recorded as
-`Int.Matrix.exists_linearIndependent_mulVec_eq_zero_prod_mulHeight_le` is a genuine weakening, and
-it is the form Layer 5.4 generalizes.
+⚠ **The proof passes from sup norms to heights pointwise.** By Layer 5.1's
+`Rat.gcd_mul_mulHeight_intCast` the height of a nonzero integer tuple is its sup norm divided by
+its content. Applying the resulting height-at-most-sup-norm inequality to each solution gives
+`Int.Matrix.exists_linearIndependent_mulVec_eq_zero_prod_mulHeight_le`, the height form that
+Layer 5.4 generalizes.
 
 ## References
 
@@ -508,9 +506,9 @@ theorem exists_linearIndependent_mulVec_eq_zero_prod_iSup_abs_le (A : _root_.Mat
     exact Finset.prod_le_prod₀ (fun l _ ↦ (hbound l).1) fun l _ ↦ (hbound l).2
 
 /-- **Bombieri–Vaaler's Theorem 2, in height form** — the `K = ℚ` case of the statement Layer 5.4
-makes over a number field, the discriminant being `1`. It is strictly weaker than the sup-norm form
-above, since by Layer 5.1's `Rat.gcd_mul_mulHeight_intCast` the height of an integer tuple is its
-sup norm divided by its content, and the basis produced is not primitive in general. -/
+makes over a number field, the discriminant being `1`. The proof applies the pointwise inequality
+`Rat.mulHeight_intCast_le` to the sup-norm form above: the height of a nonzero integer tuple is
+its sup norm divided by its content, by `Rat.gcd_mul_mulHeight_intCast`. -/
 theorem exists_linearIndependent_mulVec_eq_zero_prod_mulHeight_le (A : _root_.Matrix (Fin m) ι ℤ)
     (hA : LinearIndependent ℚ (A.map ((↑) : ℤ → ℚ)).row) :
     ∃ x : Fin (Fintype.card ι - m) → (ι → ℤ), LinearIndependent ℤ x ∧ (∀ l, A *ᵥ x l = 0) ∧

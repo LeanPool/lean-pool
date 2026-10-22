@@ -44,8 +44,8 @@ ones.** The functions that C.3.4 and C.3.7 apply it to are *measures of slices* 
 `y ↦ vol (B ∩ A_y)` in Bombieri–Gubler's own induction step — so `ℝ≥0∞` is where they naturally
 live, and there the
 statement carries no finiteness hypothesis at all. Bombieri–Gubler have to say "if the integral is
-always finite" in C.3.4; here that hypothesis is absent, and so is the nonnegativity hypothesis,
-because the codomain supplies both.
+always finite" in C.3.4; here that hypothesis is absent. The codomain supplies nonnegativity
+and permits infinite values.
 
 ⚠ **`0 ^ a = 0` for `a > 0` is what makes the characteristic function of a convex set log-concave**,
 with no case distinction beyond membership, and that is the whole of Bombieri–Gubler's step from

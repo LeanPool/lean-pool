@@ -40,13 +40,14 @@ statement to choose between three spellings of one object.
   identification, and `Matrix.plucker_row_eq_det_submatrix_orderIso` restates it with
   `Finset.orderIsoOfFin` in place of `Finset.orderEmbOfFin`.
 * `Matrix.plucker_row_mul`: `plucker m (U * A).row = U.det • plucker m A.row`, for *every* square
-  `U` and over any commutative ring — Bombieri–Vaaler (2.5), and the quantitative form of the
-  invariance.
+  `U` and over any commutative ring — the determinant identity underlying the height invariance
+  in Bombieri–Vaaler (2.5).
 * `Matrix.span_range_row_mul`: for `U` of unit determinant the row space itself is unchanged, whence
   `Matrix.mulHeight_span_range_row_mul` and its Arakelov and absolute companions.
 * `Matrix.mulHeight_span_range_row` and `Matrix.arakelovMulHeight_span_range_row`: the height of the
-  row space is the height of the tuple of maximal minors — `H(A)` and `H_Ar^row(A)` of the
-  literature, neither of which is `Matrix.mulHeight A`.
+  row space is the height of the tuple of maximal minors in each chosen normalization.
+  The relative Arakelov version corresponds to Bombieri–Vaaler's absolute `H(A)` after raising
+  to the number-field degree. These row-space heights differ from `Matrix.mulHeight A`.
 * `Matrix.linearIndependent_row_iff_rank_eq` and
   `Matrix.linearIndependent_row_iff_plucker_row_ne_zero`: full row rank, in the two forms that the
   statements above take as a hypothesis.
@@ -71,6 +72,8 @@ whose composition with the rows of `U` is the rows of `U * A` — by `rfl`.
 E. Bombieri and W. Gubler, *Heights in Diophantine Geometry*, Cambridge University Press (2006),
 Remark 2.8.7 for the dictionary, Definition 2.8.11 for the Arakelov normalization of the row-space
 height, and 2.9.8 for the height of the entries, which is a different number and is Layer 2.5 here.
+The book's `h_Ar` is absolute logarithmic; the relative multiplicative Arakelov height here is
+`exp([K : ℚ] · h_Ar(A))` in that convention.
 E. Bombieri and J. Vaaler, "On Siegel's lemma", *Inventiones Mathematicae* **73** (1983), 11–32,
 equation (2.5), where the invariance is the statement that the height is intrinsic on the
 Grassmannian. W. M. Schmidt, "On heights of algebraic subspaces and diophantine approximations",
@@ -157,8 +160,9 @@ section Plucker
 
 variable {R : Type*} [CommRing R] {ι : Type*} [Fintype ι] [LinearOrder ι] {m : ℕ}
 
-/-- **A row operation multiplies the tuple of maximal minors by the determinant**
-(Bombieri–Vaaler (2.5)). No hypothesis on `U` is needed: for `U` singular both sides vanish. -/
+/-- **A row operation multiplies the tuple of maximal minors by the determinant.** This identity
+underlies the height invariance in Bombieri–Vaaler (2.5). No hypothesis on `U` is needed:
+for `U` singular both sides vanish. -/
 theorem plucker_row_mul (U : Matrix (Fin m) (Fin m) R) (A : Matrix (Fin m) ι R) :
     plucker m (U * A).row = U.det • plucker m A.row :=
   (plucker_eq_smul_iff ..).2 (ιMulti_row_mul U A)
@@ -278,8 +282,8 @@ variable {K : Type*} [Field K] [Height.AdmissibleAbsValues K] {ι : Type*} [Fint
   [LinearOrder ι] {m : ℕ} {A : Matrix (Fin m) ι K} {U : Matrix (Fin m) (Fin m) K}
 
 /-- **The height of the row space is the height of the tuple of maximal minors** (Bombieri–Gubler,
-Remark 2.8.7). This is `H(A)` of Bombieri–Vaaler, and it is not `Matrix.mulHeight A`, which is the
-height of the entries. -/
+Remark 2.8.7). This uses sup norms, while Bombieri–Vaaler's `H(A)` uses the absolute Arakelov
+height of the minors. `Matrix.mulHeight A` instead measures the entries. -/
 theorem mulHeight_span_range_row (hA : LinearIndependent K A.row) :
     (span K (Set.range A.row)).mulHeight =
       Height.mulHeight fun s : Set.powersetCard ι m ↦
@@ -295,8 +299,8 @@ theorem logHeight_span_range_row (hA : LinearIndependent K A.row) :
   rw [Submodule.logHeight_span_range hA]
   exact congrArg _ (funext (plucker_row_eq_det_submatrix A))
 
-/-- **The height of the row space is invariant under row operations** (Bombieri–Vaaler (2.5)): it
-is a height on the Grassmannian and not a property of the matrix. -/
+/-- **The sup-norm height of the row space is invariant under row operations.** This is the
+sup-norm counterpart of the Arakelov height invariance in Bombieri–Vaaler (2.5). -/
 theorem mulHeight_span_range_row_mul (hU : IsUnit U.det) (A : Matrix (Fin m) ι K) :
     (span K (Set.range (U * A).row)).mulHeight = (span K (Set.range A.row)).mulHeight :=
   congrArg _ (span_range_row_mul hU A)
@@ -324,9 +328,10 @@ section ArakelovHeight
 variable {K : Type*} [Field K] [NumberField K] {ι : Type*} [Fintype ι] [LinearOrder ι] {m : ℕ}
   {A : Matrix (Fin m) ι K} {U : Matrix (Fin m) (Fin m) K}
 
-/-- **The Arakelov height of the row space is the Arakelov height of the tuple of maximal minors**,
-`H_Ar^row(A)` of Bombieri–Gubler Definition 2.8.11, which is the normalization the Siegel-lemma
-constants of Layer 5 are stated in. -/
+/-- **The relative Arakelov height of the row space is that of its tuple of maximal minors.**
+This is `exp([K : ℚ] · h_Ar(A))` for the absolute logarithmic matrix height of
+Bombieri–Gubler Definition 2.8.11. The Siegel-lemma constants of Layer 5 use the relative
+multiplicative normalization here. -/
 theorem arakelovMulHeight_span_range_row (hA : LinearIndependent K A.row) :
     (span K (Set.range A.row)).arakelovMulHeight =
       NumberField.arakelovMulHeight fun s : Set.powersetCard ι m ↦
@@ -359,8 +364,8 @@ section AbsoluteHeight
 variable {K : Type*} [Field K] [CharZero K] [Algebra.IsAlgebraic ℚ K] {ι : Type*} [Fintype ι]
   [LinearOrder ι] {m : ℕ} {A : Matrix (Fin m) ι K} {U : Matrix (Fin m) (Fin m) K}
 
-/-- **The absolute height of the row space is the absolute height of the tuple of maximal
-minors**, `H(A)` of Bombieri–Vaaler in their own normalization. -/
+/-- **The absolute sup-norm height of the row space is that of its tuple of maximal minors.**
+Bombieri–Vaaler's `H(A)` uses the Arakelov normalization instead. -/
 theorem absMulHeight_span_range_row (hA : LinearIndependent K A.row) :
     (span K (Set.range A.row)).absMulHeight =
       NumberField.absMulHeight fun s : Set.powersetCard ι m ↦

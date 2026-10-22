@@ -59,7 +59,8 @@ Brunn–Minkowski inequality for sets.
 
 ⚠ **The `ℝ≥0∞` codomain and the hypothesis form of the statement remove every side condition.**
 Bombieri–Gubler state C.3.3 with `r t := ⨆ {f x * g y | a • x + b • y = t}` on the right, and
-Prékopa's own erratum records that this sup-convolution is Lebesgue but not Borel measurable.
+Prékopa's own erratum records that this sup-convolution is only guaranteed to be Lebesgue
+measurable.
 Taking `h` as *given*, with `f x ^ a * g y ^ b ≤ h (a • x + b • y)` as a hypothesis, avoids that
 question entirely; and because `∫⁻` is defined for every measurable `ℝ≥0∞`-valued function, there
 is no integrability hypothesis either. Every statement below is therefore hypothesis-free beyond
@@ -78,7 +79,7 @@ predicate rather than around `ℝ ^ n`.
 `0 < t < 1` and satisfy `a • {f > t} + b • {g > t} ⊆ {h > t}`; the inequality then follows from
 `volume s + volume t ≤ volume (s + t)` on `ℝ` and the layer cake formula. The Brunn–Minkowski step
 is proved for compact sets by translating `s` by `sInf t` and `t` by `sSup s` — the two translates
-cover `s + t` and meet in a single point — and extended to measurable sets by inner regularity.
+lie in `s + t` and meet in a single point — and extended to measurable sets by inner regularity.
 
 ⚠ **The normalization is what forces the truncation.** The level-set argument needs `⨆ f` finite
 and nonzero; `⨆ f = ∞` is a genuine case, since an unbounded function can have a finite integral.

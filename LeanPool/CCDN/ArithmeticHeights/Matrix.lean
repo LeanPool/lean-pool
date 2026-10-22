@@ -16,10 +16,10 @@ import all Mathlib.NumberTheory.Height.Basic
 /-!
 # The height of a matrix
 
-The height of a matrix is the height of the tuple of its **entries**. It is not the height of its
-row space — the height of the tuple of maximal minors, which Bombieri–Vaaler also write `H(A)`;
-that one is the height of a point of a Grassmannian and belongs to Layer 3. The classical
-literature uses one symbol for both. This file uses `Matrix.mulHeight` for the first only.
+The height of a matrix here is the sup-norm height of the tuple of its **entries**.
+Row-space heights instead use the tuple of maximal minors and belong to Layer 3.
+Bombieri–Vaaler's `H(A)` is the absolute Arakelov height of those minors, using Euclidean norms
+at infinity. This file uses `Matrix.mulHeight` for the sup-norm entry height.
 
 The content of the file is four bounds.
 
@@ -84,7 +84,10 @@ it is here because the determinant is the only consumer so far.
 ## References
 
 E. Bombieri and W. Gubler, *Heights in Diophantine Geometry*, Cambridge University Press (2006),
-2.9.8 for the height of a matrix and 2.8.11 for the Arakelov normalization.
+2.9.8 (p. 75) for the entry-tuple height `H(A)`, and Definition 2.8.1 with 2.8.2–2.8.3
+(pp. 66–67) for the local Euclidean factors and absolute Arakelov normalization.
+Definition 2.8.11 instead concerns the Grassmannian row-space height, treated separately in
+`ArithmeticHeights.RowSpace`.
 
 This is Layer 2.5 of the `ArithmeticHeights` roadmap.
 -/
@@ -149,9 +152,9 @@ namespace Matrix
 
 variable {K : Type*} [Field K] [AdmissibleAbsValues K] {m n p m' n' : Type*}
 
-/-- **The height of a matrix** is the height of the tuple of its **entries** (Bombieri–Gubler
-2.9.8). The height of its row space — the height of the tuple of maximal minors, `H(A)` in
-Bombieri–Vaaler — is a height on a Grassmannian and is never called the height of `A` here. -/
+/-- **The height of a matrix** is the sup-norm height of the tuple of its **entries**,
+corresponding to the entry-tuple construction in Bombieri–Gubler 2.9.8.
+Bombieri–Vaaler's `H(A)` instead uses the absolute Arakelov height of the maximal minors. -/
 @[expose] noncomputable def mulHeight (A : Matrix m n K) : ℝ :=
   Height.mulHeight fun q : m × n ↦ A q.1 q.2
 
@@ -263,7 +266,7 @@ section Mul
 
 variable [Finite m] [Fintype n] [Finite p]
 
-/-- **The product bound** (Bombieri–Gubler 2.9.8). An entry of `A * B` is a sum of
+/-- **The product bound.** An entry of `A * B` is a sum of
 `Fintype.card n` entries of the multiplication table of the entries of `A` and of `B`, so the
 tuple sum bound of Layer 2.4 applies with `#s = Fintype.card n`, and the Segre relation evaluates
 the height of that table as `mulHeight A * mulHeight B`.

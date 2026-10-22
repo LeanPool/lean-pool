@@ -87,10 +87,10 @@ this file.
 ## References
 
 E. Bombieri and W. Gubler, *Heights in Diophantine Geometry*, Cambridge University Press
-(2006), Definition 2.8.1 and 2.8.2–2.8.3, where `H_u` is the local factor above and `h_Ar` the
-resulting height on projective space. Their `h_Ar` is the *absolute* height — its local
-exponent is `[F_w : ℚ_p] / [F : ℚ]` — whereas `arakelovMulHeight` here is *relative* to `K`,
-matching Mathlib's `Height.mulHeight`; the two differ by the exponent `[K : ℚ]`.
+(2006), Definition 2.8.1 and 2.8.2–2.8.3 for the local factors and the resulting projective
+height. Their `h_Ar` is the absolute logarithmic height, with degree-normalized local weights.
+Writing `H_Ar = exp(h_Ar)` for its absolute multiplicative form, `arakelovMulHeight` here is
+`H_Ar ^ [K : ℚ]`, relative to `K` and matching Mathlib's `Height.mulHeight` convention.
 
 This is Layers 0.1 and 0.2 of the `ArithmeticHeights` roadmap: the normalization and its
 comparison with `Height.mulHeight`.

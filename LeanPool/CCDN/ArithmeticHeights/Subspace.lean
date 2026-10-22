@@ -81,11 +81,13 @@ absolute one. As the roadmap's convention records, the duplication is in the sta
 ## References
 
 E. Bombieri and W. Gubler, *Heights in Diophantine Geometry*, Cambridge University Press (2006),
-2.8.4 for the height of a subspace and Definition 2.8.11 for its Arakelov normalization; their
-`h(V)` and `h_Ar(V)` are absolute, ours relative, as everywhere in this development.
+2.8.4 for the Plücker construction, Definition 1.5.4 for the absolute sup-norm height, and
+Definition 2.8.5 (p. 67) for the absolute Arakelov height of a subspace.
+The relative variants here use unnormalized place-weighted products. `absMulHeight` and
+`absLogHeight` give the absolute sup-norm variants; the Arakelov variants here remain relative.
 W. M. Schmidt, "On heights of algebraic subspaces and diophantine approximations", *Annals of
 Mathematics* **85** (1967), 430–472, §1, where the height of a subspace is defined through its
-Grassmann coordinates for the first time.
+Grassmann coordinates.
 
 This is Layer 3.2 of the `ArithmeticHeights` roadmap.
 -/
@@ -270,12 +272,14 @@ section Arakelov
 
 variable [NumberField K]
 
-/-- **The multiplicative Arakelov height of a linear subspace of `ι → K`**, `H_Ar(V)` of
-Bombieri–Gubler 2.8.11. -/
+/-- **The relative multiplicative Arakelov height of a linear subspace of `ι → K`**,
+`exp([K : ℚ] · h_Ar(V))` in the absolute logarithmic convention of
+Bombieri–Gubler Definition 2.8.5. -/
 noncomputable def arakelovMulHeight (V : Submodule K (ι → K)) : ℝ :=
   Projectivization.arakelovMulHeight (V.pluckerPoint rfl)
 
-/-- **The logarithmic Arakelov height of a linear subspace of `ι → K`.** -/
+/-- **The relative logarithmic Arakelov height of a linear subspace of `ι → K`**,
+`[K : ℚ] · h_Ar(V)` in the absolute convention of Bombieri–Gubler Definition 2.8.5. -/
 noncomputable def arakelovLogHeight (V : Submodule K (ι → K)) : ℝ :=
   Projectivization.arakelovLogHeight (V.pluckerPoint rfl)
 
@@ -379,20 +383,22 @@ end Arakelov
 /-!
 ### The absolute height of a subspace
 
-The variant that does not depend on the field the subspace is written over; it is the one the
-literature's `h(V)` is, and one of the six Northcott statements of 3.7.
+The sup-norm variant that does not depend on the field the subspace is written over.
+`absLogHeight` is the literature's `h(V)`, and `absMulHeight` is its exponential.
+This is one of the six Northcott statements of 3.7.
 -/
 
 section Absolute
 
 variable [CharZero K] [Algebra.IsAlgebraic ℚ K]
 
-/-- **The absolute multiplicative height of a linear subspace of `ι → K`**, `h(V)` of
-Bombieri–Gubler 2.8.4. -/
+/-- **The absolute multiplicative height of a linear subspace of `ι → K`**,
+`exp(h(V))` via Bombieri–Gubler 2.8.4 and Definition 1.5.4. -/
 noncomputable def absMulHeight (V : Submodule K (ι → K)) : ℝ :=
   Projectivization.absMulHeight (V.pluckerPoint rfl)
 
-/-- **The absolute logarithmic height of a linear subspace of `ι → K`.** -/
+/-- **The absolute logarithmic height of a linear subspace of `ι → K`**,
+`h(V)` via Bombieri–Gubler 2.8.4 and Definition 1.5.4. -/
 noncomputable def absLogHeight (V : Submodule K (ι → K)) : ℝ :=
   Projectivization.absLogHeight (V.pluckerPoint rfl)
 
