@@ -23,3 +23,4 @@ Tags: arithmetic-geometry, rational-points, determinant-method, class-groups
 MSC: 11D45, 14G05, 11R29
 -/
 
+-- Dependency licenses and upstream notices are recorded in CCDN/Attribution.lean.
