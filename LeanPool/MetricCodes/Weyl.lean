@@ -4419,7 +4419,8 @@ theorem includedDescendingPositiveRootFischerLaplacian_energy
             (lowerRootWeight (rootWedgeWeight lam S) α.val)).inner
               (includedDescendingPositiveRootOperator n lam S α p)
               (includedDescendingPositiveRootOperator n lam S α p) := by
-  exact finiteFischerRootLaplacian_energy
+  simpa only [includedDescendingPositiveRootFischerLaplacian] using
+    (finiteFischerRootLaplacian_energy
     (jointHarmonicWeightFischerCore n (rootWedgeWeight lam S))
     (fun α : IncludedDescendingPositiveRoot lam S =>
       JointHarmonicWeightSpace n
@@ -4428,7 +4429,7 @@ theorem includedDescendingPositiveRootFischerLaplacian_energy
       (lowerRootWeight (rootWedgeWeight lam S) α.val))
     (includedDescendingPositiveRootOperator n lam S)
     (includedDescendingPositiveRootOperatorStar n lam S)
-    (includedDescendingPositiveRoot_fischer_adjoint lam S) p
+    (includedDescendingPositiveRoot_fischer_adjoint lam S) p)
 
 theorem includedDescendingPositiveRootFischerLaplacian_energy_ge_self
     {r n k : ℕ} (lam : Fin (r + 1) → ℕ)
@@ -4714,7 +4715,8 @@ theorem includedNondescendingPositiveRootFischerLaplacian_energy
             (lowerRootWeight (rootWedgeWeight lam S) α.val)).inner
               (includedNondescendingPositiveRootOperator n lam S α p)
               (includedNondescendingPositiveRootOperator n lam S α p) := by
-  exact finiteFischerRootLaplacian_energy
+  simpa only [includedNondescendingPositiveRootFischerLaplacian] using
+    (finiteFischerRootLaplacian_energy
     (jointHarmonicWeightFischerCore n (rootWedgeWeight lam S))
     (fun α : IncludedNondescendingPositiveRoot lam S =>
       JointHarmonicWeightSpace n
@@ -4723,7 +4725,7 @@ theorem includedNondescendingPositiveRootFischerLaplacian_energy
       (lowerRootWeight (rootWedgeWeight lam S) α.val))
     (includedNondescendingPositiveRootOperator n lam S)
     (includedNondescendingPositiveRootOperatorStar n lam S)
-    (includedNondescendingPositiveRoot_fischer_adjoint lam S) p
+    (includedNondescendingPositiveRoot_fischer_adjoint lam S) p)
 
 theorem includedNondescendingPositiveRootFischerLaplacian_energy_nonneg
     {r n k : ℕ} (lam : Fin (r + 1) → ℕ)
@@ -4750,7 +4752,8 @@ theorem excludedActivePositiveRootFischerLaplacian_energy
               ⟨α.val, α.property.2⟩)).inner
                 (excludedActivePositiveRootOperator n lam S α p)
                 (excludedActivePositiveRootOperator n lam S α p) := by
-  exact finiteFischerRootLaplacian_energy
+  simpa only [excludedActivePositiveRootFischerLaplacian] using
+    (finiteFischerRootLaplacian_energy
     (jointHarmonicWeightFischerCore n (rootWedgeWeight lam S))
     (fun α : ExcludedActivePositiveRoot lam S =>
       JointHarmonicWeightSpace n
@@ -4761,7 +4764,7 @@ theorem excludedActivePositiveRootFischerLaplacian_energy
         ⟨α.val, α.property.2⟩))
     (excludedActivePositiveRootOperator n lam S)
     (excludedActivePositiveRootOperatorStar n lam S)
-    (excludedActivePositiveRoot_fischer_adjoint lam S) p
+    (excludedActivePositiveRoot_fischer_adjoint lam S) p)
 
 theorem excludedActivePositiveRootFischerLaplacian_energy_nonneg
     {r n k : ℕ} (lam : Fin (r + 1) → ℕ)
@@ -4902,6 +4905,14 @@ section
 open scoped BigOperators
 open MetricCodes.Spherical.HigherHarmonicYoung
 
+private theorem linearMap_dite_apply
+    {E F : Type*} [AddCommMonoid E] [Module ℝ E]
+    [AddCommMonoid F] [Module ℝ F]
+    (p : Prop) [Decidable p]
+    (A : p → E →ₗ[ℝ] F) (B : ¬p → E →ₗ[ℝ] F) (x : E) :
+    (dite p A B) x = dite p (fun h => A h x) (fun h => B h x) := by
+  split_ifs <;> rfl
+
 theorem rootJointHarmonicActionUpperRootStructureCross_apply
     {r n k : ℕ} (lam : Fin (r + 1) → ℕ)
     (f : RootJointHarmonicChain n lam k)
@@ -4922,40 +4933,9 @@ theorem rootJointHarmonicActionUpperRootStructureCross_apply
             else 0
         else 0 := by
   classical
-  unfold rootJointHarmonicActionUpperRootStructureCross
-  change
-    (∑ α : PositiveRoot r,
-      if hα : α ∈ S.val.val then
-        ∑ β : PositiveRoot r,
-          if hβ : β ∈ S.val.val then 0
-          else if hadm : ∀ i,
-              0 ≤ signedRootWeight lam (insert β (S.val.val.erase α)) i then
-            ∑ γ : PositiveRoot r,
-              if hγ : rootStructureConstant β γ α = 0 then 0
-              else (rootSwapExteriorHodgeSign S α β *
-                  rootStructureConstant β γ α) •
-                (rootSwapUpperStructureEdge n lam S α β γ hα hβ hadm hγ).comp
-                  (LinearMap.proj
-                    (rootAdmissibleSwap lam S α β hα hβ hadm))
-          else 0
-      else 0) f = _
-  rw [LinearMap.sum_apply]
-  apply Finset.sum_congr rfl
-  intro α _
-  split_ifs with hα
-  · rw [LinearMap.sum_apply]
-    apply Finset.sum_congr rfl
-    intro β _
-    split_ifs with hβ hadm
-    · rfl
-    · rw [LinearMap.sum_apply]
-      apply Finset.sum_congr rfl
-      intro γ _
-      split_ifs with hγ
-      · rfl
-      · rfl
-    · rfl
-  · rfl
+  simp only [rootJointHarmonicActionUpperRootStructureCross,
+    LinearMap.pi_apply, LinearMap.sum_apply, LinearMap.comp_apply, LinearMap.smul_apply,
+    LinearMap.zero_apply, LinearMap.proj_apply, linearMap_dite_apply]
 
 theorem rootJointHarmonicActionLowerRootStructureCross_apply
     {r n k : ℕ} (lam : Fin (r + 1) → ℕ)
@@ -4977,40 +4957,9 @@ theorem rootJointHarmonicActionLowerRootStructureCross_apply
             else 0
         else 0 := by
   classical
-  unfold rootJointHarmonicActionLowerRootStructureCross
-  change
-    (∑ α : PositiveRoot r,
-      if hα : α ∈ S.val.val then
-        ∑ β : PositiveRoot r,
-          if hβ : β ∈ S.val.val then 0
-          else if hadm : ∀ i,
-              0 ≤ signedRootWeight lam (insert β (S.val.val.erase α)) i then
-            ∑ γ : PositiveRoot r,
-              if hγ : rootStructureConstant α γ β = 0 then 0
-              else (rootSwapExteriorHodgeSign S α β *
-                  rootStructureConstant α γ β) •
-                (rootSwapLowerStructureEdge n lam S α β γ hα hβ hadm hγ).comp
-                  (LinearMap.proj
-                    (rootAdmissibleSwap lam S α β hα hβ hadm))
-          else 0
-      else 0) f = _
-  rw [LinearMap.sum_apply]
-  apply Finset.sum_congr rfl
-  intro α _
-  split_ifs with hα
-  · rw [LinearMap.sum_apply]
-    apply Finset.sum_congr rfl
-    intro β _
-    split_ifs with hβ hadm
-    · rfl
-    · rw [LinearMap.sum_apply]
-      apply Finset.sum_congr rfl
-      intro γ _
-      split_ifs with hγ
-      · rfl
-      · rfl
-    · rfl
-  · rfl
+  simp only [rootJointHarmonicActionLowerRootStructureCross,
+    LinearMap.pi_apply, LinearMap.sum_apply, LinearMap.comp_apply, LinearMap.smul_apply,
+    LinearMap.zero_apply, LinearMap.proj_apply, linearMap_dite_apply]
 
 theorem includedDescendingPositiveRootFischerLaplacian_apply_coe
     {r n k : ℕ} (lam : Fin (r + 1) → ℕ)
@@ -5025,21 +4974,8 @@ theorem includedDescendingPositiveRootFischerLaplacian_apply_coe
           (polarization r n (positiveRootSecond α.val)
             (positiveRootFirst α.val) (p.val : PolynomialSpace r n)) := by
   classical
-  unfold includedDescendingPositiveRootFischerLaplacian
-    finiteFischerRootLaplacian
-  rw [LinearMap.sum_apply]
-  change
-    (↑((∑ α : IncludedDescendingPositiveRoot lam S,
-      includedDescendingPositiveRootOperatorStar n lam S α
-        (includedDescendingPositiveRootOperator n lam S α p)).val) :
-      PolynomialSpace r n) = _
-  change
-    ((youngMultihomogeneousSubmodule n (rootWedgeWeight lam S)).subtype
-      ((jointHarmonicWeightSubmodule n (rootWedgeWeight lam S)).subtype
-        (∑ α : IncludedDescendingPositiveRoot lam S,
-          includedDescendingPositiveRootOperatorStar n lam S α
-            (includedDescendingPositiveRootOperator n lam S α p)))) = _
-  rw [map_sum, map_sum]
+  simp only [includedDescendingPositiveRootFischerLaplacian, finiteFischerRootLaplacian,
+    LinearMap.sum_apply, Submodule.coe_sum]
   apply Finset.sum_congr rfl
   intro α _
   rfl
@@ -5057,16 +4993,8 @@ theorem includedNondescendingPositiveRootFischerLaplacian_apply_coe
           (polarization r n (positiveRootSecond α.val)
             (positiveRootFirst α.val) (p.val : PolynomialSpace r n)) := by
   classical
-  unfold includedNondescendingPositiveRootFischerLaplacian
-    finiteFischerRootLaplacian
-  rw [LinearMap.sum_apply]
-  change
-    ((youngMultihomogeneousSubmodule n (rootWedgeWeight lam S)).subtype
-      ((jointHarmonicWeightSubmodule n (rootWedgeWeight lam S)).subtype
-        (∑ α : IncludedNondescendingPositiveRoot lam S,
-          includedNondescendingPositiveRootOperatorStar n lam S α
-            (includedNondescendingPositiveRootOperator n lam S α p)))) = _
-  rw [map_sum, map_sum]
+  simp only [includedNondescendingPositiveRootFischerLaplacian, finiteFischerRootLaplacian,
+    LinearMap.sum_apply, Submodule.coe_sum]
   apply Finset.sum_congr rfl
   intro α _
   rfl
@@ -5084,16 +5012,8 @@ theorem excludedActivePositiveRootFischerLaplacian_apply_coe
           (polarization r n (positiveRootFirst α.val)
             (positiveRootSecond α.val) (p.val : PolynomialSpace r n)) := by
   classical
-  unfold excludedActivePositiveRootFischerLaplacian
-    finiteFischerRootLaplacian
-  rw [LinearMap.sum_apply]
-  change
-    ((youngMultihomogeneousSubmodule n (rootWedgeWeight lam S)).subtype
-      ((jointHarmonicWeightSubmodule n (rootWedgeWeight lam S)).subtype
-        (∑ α : ExcludedActivePositiveRoot lam S,
-          excludedActivePositiveRootOperatorStar n lam S α
-            (excludedActivePositiveRootOperator n lam S α p)))) = _
-  rw [map_sum, map_sum]
+  simp only [excludedActivePositiveRootFischerLaplacian, finiteFischerRootLaplacian,
+    LinearMap.sum_apply, Submodule.coe_sum]
   apply Finset.sum_congr rfl
   intro α _
   rfl
@@ -6503,24 +6423,8 @@ theorem rootJointHarmonicActionUpperRootStructureCross_polynomial_apply
         else 0 := by
   classical
   rw [rootJointHarmonicActionUpperRootStructureCross_apply]
-  simp only [Submodule.coe_sum]
-  apply Finset.sum_congr rfl
-  intro α _
-  split_ifs with hα
-  · simp only [Submodule.coe_sum]
-    apply Finset.sum_congr rfl
-    intro β _
-    split_ifs with hβ hadm
-    · simp only [ZeroMemClass.coe_zero]
-    · simp only [Submodule.coe_sum]
-      apply Finset.sum_congr rfl
-      intro γ _
-      split_ifs with hγ
-      · simp only [ZeroMemClass.coe_zero]
-      · simp only [Submodule.coe_smul]
-        rw [rootSwapUpperStructureEdge_coe]
-    · simp only [ZeroMemClass.coe_zero]
-  · simp only [ZeroMemClass.coe_zero]
+  simp only [Submodule.coe_sum, apply_dite, ZeroMemClass.coe_zero,
+    Submodule.coe_smul, rootSwapUpperStructureEdge_coe]
 
 theorem rootJointHarmonicActionLowerRootStructureCross_polynomial_apply
     {r n k : ℕ} (lam : Fin (r + 1) → ℕ)
@@ -6546,24 +6450,8 @@ theorem rootJointHarmonicActionLowerRootStructureCross_polynomial_apply
         else 0 := by
   classical
   rw [rootJointHarmonicActionLowerRootStructureCross_apply]
-  simp only [Submodule.coe_sum]
-  apply Finset.sum_congr rfl
-  intro α _
-  split_ifs with hα
-  · simp only [Submodule.coe_sum]
-    apply Finset.sum_congr rfl
-    intro β _
-    split_ifs with hβ hadm
-    · simp only [ZeroMemClass.coe_zero]
-    · simp only [Submodule.coe_sum]
-      apply Finset.sum_congr rfl
-      intro γ _
-      split_ifs with hγ
-      · simp only [ZeroMemClass.coe_zero]
-      · simp only [Submodule.coe_smul]
-        rw [rootSwapLowerStructureEdge_coe]
-    · simp only [ZeroMemClass.coe_zero]
-  · simp only [ZeroMemClass.coe_zero]
+  simp only [Submodule.coe_sum, apply_dite, ZeroMemClass.coe_zero,
+    Submodule.coe_smul, rootSwapLowerStructureEdge_coe]
 
 end
 

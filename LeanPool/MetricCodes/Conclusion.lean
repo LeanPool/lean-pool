@@ -39,6 +39,27 @@ private theorem linearMap_comp_sum_comp
   intro x
   simp only [LinearMap.comp_apply, LinearMap.sum_apply, map_sum]
 
+private theorem scaled_sector_adjoint_eigen
+    {X Y Z : Type*}
+    [NormedAddCommGroup X] [InnerProductSpace ℝ X] [FiniteDimensional ℝ X]
+    [NormedAddCommGroup Y] [InnerProductSpace ℝ Y] [FiniteDimensional ℝ Y]
+    [AddCommMonoid Z] [Module ℝ Z]
+    (I : X →ₗᵢ[ℝ] Y) (C : Z →ₗ[ℝ] X) (B : Z →ₗ[ℝ] Y)
+    (T : Module.End ℝ Y) (phase node : ℝ)
+    (hphase : B = phase • I.toLinearMap.comp C)
+    (hnode : ∀ p : Z, I.toLinearMap.adjoint (T (I (C p))) = node • C p)
+    (p : Z) :
+    I.toLinearMap.adjoint (T (B p)) = node • I.toLinearMap.adjoint (B p) := by
+  rw [hphase]
+  simp only [LinearMap.smul_apply, LinearMap.comp_apply, map_smul]
+  change phase • I.toLinearMap.adjoint (T (I (C p))) =
+    node • phase • I.toLinearMap.adjoint (I (C p))
+  rw [hnode p]
+  have hself : I.toLinearMap.adjoint (I (C p)) = C p :=
+    LinearMap.congr_fun I.adjoint_comp_self' (C p)
+  rw [hself]
+  exact smul_comm _ _ _
+
 end
 
 section
@@ -589,29 +610,12 @@ theorem physicalPaddedPieriChannel_adjoint_canonicalAxis_eq_zero_of_not_interlac
     simpa only [canonicalGelfandTsetlinAxisTensor_apply, EuclideanSpace.basisFun_apply,
       canonicalGelfandTsetlinFibre_apply, TensorProduct.tmul_smul, map_smul, smul_eq_zero,
       inv_eq_zero, LinearIsometryEquiv.symm_apply_apply] using hz
-  apply ext_inner_left ℝ
-  intro q
-  rw [inner_zero_right, LinearMap.adjoint_inner_right]
-  change ⟪T.symm (C q),
-    canonicalGelfandTsetlinAxisTensor lam mu h hgram p⟫_ℝ = 0
-  calc
-    ⟪T.symm (C q),
-      canonicalGelfandTsetlinAxisTensor lam mu h hgram p⟫_ℝ =
-        ⟪canonicalGelfandTsetlinAxisTensor lam mu h hgram p,
-          T.symm (C q)⟫_ℝ :=
-            real_inner_comm
-              (canonicalGelfandTsetlinAxisTensor lam mu h hgram p)
-              (T.symm (C q))
-    _ = ⟪T (canonicalGelfandTsetlinAxisTensor lam mu h hgram p), C q⟫_ℝ := by
-          rw [← T.inner_map_map,
-            LinearIsometryEquiv.apply_symm_apply]
-    _ = ⟪C.adjoint
-        (T (canonicalGelfandTsetlinAxisTensor lam mu h hgram p)), q⟫_ℝ :=
-          (LinearMap.adjoint_inner_left C q _).symm
-    _ = 0 := by
-      rw [hC, young_inner_eq_polynomialInner,
-        SpherePacking.Fischer.polynomialInner_comm]
-      exact SpherePacking.fischer_polynomialInner_zero_right _ _
+  change (T.symm.toLinearMap.comp C).adjoint
+    (canonicalGelfandTsetlinAxisTensor lam mu h hgram p) = 0
+  simpa only [LinearMap.adjoint_comp, LinearIsometryEquiv.adjoint_toLinearMap_eq_symm,
+    LinearIsometryEquiv.symm_symm, LinearIsometryEquiv.coe_toLinearEquiv,
+    LinearEquiv.coe_toLinearMap,
+    LinearMap.comp_apply] using hC
 
 theorem canonicalAxis_mem_retainedPhysicalPieriSpan
     {r n : ℕ} (lam : Fin (r + 2) → ℕ)
@@ -1556,6 +1560,23 @@ theorem gtTransverseEuclideanIsometry_cross_rotation_compression_swap
     gtTransverseEuclideanIsometry_adjoint_basisFun_last,
     smul_zero]
 
+private theorem tensorProduct_adjoint_compression
+    {E F G H K : Type*}
+    [NormedAddCommGroup E] [InnerProductSpace ℝ E] [FiniteDimensional ℝ E]
+    [NormedAddCommGroup F] [InnerProductSpace ℝ F] [FiniteDimensional ℝ F]
+    [NormedAddCommGroup G] [InnerProductSpace ℝ G] [FiniteDimensional ℝ G]
+    [NormedAddCommGroup H] [InnerProductSpace ℝ H] [FiniteDimensional ℝ H]
+    [AddCommMonoid K] [Module ℝ K]
+    (I : E →ₗ[ℝ] F) (J : G →ₗ[ℝ] H) (L : K →ₗ[ℝ] H)
+    (A : F →ₗ[ℝ] F) (B : H →ₗ[ℝ] H) :
+    (TensorProduct.map I J).adjoint.comp
+        ((TensorProduct.map A B).comp (TensorProduct.map I L)) =
+      TensorProduct.map (I.adjoint.comp (A.comp I)) (J.adjoint.comp (B.comp L)) := by
+  rw [TensorProduct.adjoint_map]
+  apply TensorProduct.ext
+  ext v p
+  rfl
+
 theorem gtTransverseTensorEmbedding_rotationTerm_adjoint_compression
     {r n : ℕ} (lam : Fin (r + 2) → ℕ)
     (nu : Fin (r + 1) → ℕ) (h : Interlaces lam nu)
@@ -1572,19 +1593,11 @@ theorem gtTransverseTensorEmbedding_rotationTerm_adjoint_compression
         ((canonicalGelfandTsetlinFibre lam nu h hgram).toLinearMap.adjoint.comp
           ((youngAmbientRotation lam a b).comp
             (canonicalGelfandTsetlinFibre lam nu h hgram).toLinearMap)) := by
-  change
-    (TensorProduct.map
-      (gtTransverseEuclideanIsometry n).toLinearMap
-      (canonicalGelfandTsetlinFibre lam nu h hgram).toLinearMap).adjoint.comp
-        ((TensorProduct.map (euclideanAmbientRotation a b)
-          (youngAmbientRotation lam a b)).comp
-          (TensorProduct.map
-            (gtTransverseEuclideanIsometry n).toLinearMap
-            (canonicalGelfandTsetlinFibre lam nu h hgram).toLinearMap)) = _
-  rw [TensorProduct.adjoint_map]
-  apply TensorProduct.ext
-  ext v p
-  rfl
+  exact tensorProduct_adjoint_compression
+    (gtTransverseEuclideanIsometry n).toLinearMap
+    (canonicalGelfandTsetlinFibre lam nu h hgram).toLinearMap
+    (canonicalGelfandTsetlinFibre lam nu h hgram).toLinearMap
+    (euclideanAmbientRotation a b) (youngAmbientRotation lam a b)
 
 theorem gtTransverseTensorEmbedding_tangentialTerm_adjoint_compression
     {r n : ℕ} (lam : Fin (r + 2) → ℕ)
@@ -1662,26 +1675,13 @@ theorem gtTransverseTensorEmbedding_mixedRotation_adjoint_compression
         ((gtMixedRotationOperator (n := n + 1) lam).comp
           (gtTransverseTensorEmbedding lam nu h hgram).toLinearMap) =
       gtMixedRotationOperator (n := n) nu := by
-  unfold gtMixedRotationOperator
-  apply TensorProduct.ext'
-  intro v p
-  simp only [LinearMap.comp_apply, LinearMap.sum_apply, map_sum]
+  simp only [gtMixedRotationOperator, linearMap_comp_sum_comp]
   rw [Fin.sum_univ_castSucc]
   simp_rw [Fin.sum_univ_castSucc]
-  have htangential (a b : Fin n) := LinearMap.congr_fun
-    (gtTransverseTensorEmbedding_tangentialTerm_adjoint_compression
-      lam nu h hgram a b) (v ⊗ₜ[ℝ] p)
-  have hcross (a : Fin n) := LinearMap.congr_fun
-    (gtTransverseTensorEmbedding_crossTerm_adjoint_compression
-      lam nu h hgram a) (v ⊗ₜ[ℝ] p)
-  have hcrossSwap (a : Fin n) := LinearMap.congr_fun
-    (gtTransverseTensorEmbedding_crossTerm_adjoint_compression_swap
-      lam nu h hgram a) (v ⊗ₜ[ℝ] p)
-  have hlast := LinearMap.congr_fun
-    (gtTransverseTensorEmbedding_lastTerm_adjoint_compression
-      lam nu h hgram) (v ⊗ₜ[ℝ] p)
-  simp only [LinearMap.comp_apply, LinearMap.zero_apply] at htangential hcross hcrossSwap hlast
-  simp only [htangential, hcross, hcrossSwap, hlast,
+  simp only [gtTransverseTensorEmbedding_tangentialTerm_adjoint_compression,
+    gtTransverseTensorEmbedding_crossTerm_adjoint_compression,
+    gtTransverseTensorEmbedding_crossTerm_adjoint_compression_swap,
+    gtTransverseTensorEmbedding_lastTerm_adjoint_compression,
     Finset.sum_const_zero, add_zero]
 
 end AllRankGTTransverseTangentialCompression
@@ -1731,12 +1731,11 @@ theorem gtRelativeCasimir_transverse_compression_of_mixed
       gtMixedRotationOperator (n := n) nu) :
     I.adjoint.comp ((gtRelativeCasimir (n := n + 1) lam).comp I) =
       gtStabilizerShiftedRelativeCasimir nu := by
-  rw [gtRelativeCasimir_eq_scalar_sub_mixed (n := n + 1) lam,
+  simp only [gtRelativeCasimir_eq_scalar_sub_mixed (n := n + 1) lam,
     gtStabilizerShiftedRelativeCasimir,
-    gtRelativeCasimir_eq_scalar_sub_mixed (n := n) nu]
-  simp only [LinearMap.sub_comp, LinearMap.smul_comp,
-    LinearMap.id_comp, LinearMap.comp_sub, LinearMap.comp_smul]
-  rw [hisom, hmixed]
+    gtRelativeCasimir_eq_scalar_sub_mixed (n := n) nu,
+    LinearMap.sub_comp, LinearMap.smul_comp,
+    LinearMap.id_comp, LinearMap.comp_sub, LinearMap.comp_smul, hisom, hmixed]
   norm_num
   module
 
@@ -3183,17 +3182,9 @@ theorem transverseTensorEmbeddingOfStabilizerIsometry_rotationTerm
             (gtTransverseEuclideanIsometry n).toLinearMap))
         (F.toLinearMap.adjoint.comp
           ((youngAmbientRotation lam a b).comp F.toLinearMap)) := by
-  change
-    (TensorProduct.map
-      (gtTransverseEuclideanIsometry n).toLinearMap F.toLinearMap).adjoint.comp
-        ((TensorProduct.map (euclideanAmbientRotation a b)
-          (youngAmbientRotation lam a b)).comp
-          (TensorProduct.map
-            (gtTransverseEuclideanIsometry n).toLinearMap F.toLinearMap)) = _
-  rw [TensorProduct.adjoint_map]
-  apply TensorProduct.ext
-  ext v p
-  rfl
+  exact tensorProduct_adjoint_compression
+    (gtTransverseEuclideanIsometry n).toLinearMap F.toLinearMap F.toLinearMap
+    (euclideanAmbientRotation a b) (youngAmbientRotation lam a b)
 
 theorem transverseTensorEmbeddingOfStabilizerIsometry_mixedRotation
     {s r n : ℕ} (lam : Fin (r + 1) → ℕ)
@@ -3207,79 +3198,20 @@ theorem transverseTensorEmbeddingOfStabilizerIsometry_mixedRotation
         ((gtMixedRotationOperator (n := n + 1) lam).comp
           (transverseTensorEmbeddingOfStabilizerIsometry lam nu F).toLinearMap) =
       gtMixedRotationOperator (n := n) nu := by
-  let I := (transverseTensorEmbeddingOfStabilizerIsometry lam nu F).toLinearMap
-  have htangential (a b : Fin n) :
-      I.adjoint.comp
-          ((TensorProduct.map
-            (euclideanAmbientRotation a.castSucc b.castSucc)
-            (youngAmbientRotation lam a.castSucc b.castSucc)).comp I) =
-        TensorProduct.map (euclideanAmbientRotation a b)
-          (youngAmbientRotation nu a b) := by
-    change
-      (transverseTensorEmbeddingOfStabilizerIsometry lam nu F).toLinearMap.adjoint.comp
-          ((TensorProduct.map
-            (euclideanAmbientRotation a.castSucc b.castSucc)
-            (youngAmbientRotation lam a.castSucc b.castSucc)).comp
-            (transverseTensorEmbeddingOfStabilizerIsometry lam nu F).toLinearMap) = _
-    rw [transverseTensorEmbeddingOfStabilizerIsometry_rotationTerm,
-      gtTransverseEuclideanIsometry_rotation_adjoint_compression,
-      stabilizerIsometry_rotation_adjoint_compression lam nu F hF]
-  have hcross (a : Fin n) :
-      I.adjoint.comp
-          ((TensorProduct.map
-            (euclideanAmbientRotation a.castSucc (Fin.last n))
-            (youngAmbientRotation lam a.castSucc (Fin.last n))).comp I) = 0 := by
-    change
-      (transverseTensorEmbeddingOfStabilizerIsometry lam nu F).toLinearMap.adjoint.comp
-          ((TensorProduct.map
-            (euclideanAmbientRotation a.castSucc (Fin.last n))
-            (youngAmbientRotation lam a.castSucc (Fin.last n))).comp
-            (transverseTensorEmbeddingOfStabilizerIsometry lam nu F).toLinearMap) = 0
-    rw [transverseTensorEmbeddingOfStabilizerIsometry_rotationTerm,
-      gtTransverseEuclideanIsometry_cross_rotation_compression]
-    exact TensorProduct.map_zero_left _
-  have hcrossSwap (a : Fin n) :
-      I.adjoint.comp
-          ((TensorProduct.map
-            (euclideanAmbientRotation (Fin.last n) a.castSucc)
-            (youngAmbientRotation lam (Fin.last n) a.castSucc)).comp I) = 0 := by
-    change
-      (transverseTensorEmbeddingOfStabilizerIsometry lam nu F).toLinearMap.adjoint.comp
-          ((TensorProduct.map
-            (euclideanAmbientRotation (Fin.last n) a.castSucc)
-            (youngAmbientRotation lam (Fin.last n) a.castSucc)).comp
-            (transverseTensorEmbeddingOfStabilizerIsometry lam nu F).toLinearMap) = 0
-    rw [transverseTensorEmbeddingOfStabilizerIsometry_rotationTerm,
-      gtTransverseEuclideanIsometry_cross_rotation_compression_swap]
-    exact TensorProduct.map_zero_left _
-  have hlast :
-      I.adjoint.comp
-          ((TensorProduct.map
-            (euclideanAmbientRotation (Fin.last n) (Fin.last n))
-            (youngAmbientRotation lam (Fin.last n) (Fin.last n))).comp I) = 0 := by
-    change
-      (transverseTensorEmbeddingOfStabilizerIsometry lam nu F).toLinearMap.adjoint.comp
-          ((TensorProduct.map
-            (euclideanAmbientRotation (Fin.last n) (Fin.last n))
-            (youngAmbientRotation lam (Fin.last n) (Fin.last n))).comp
-            (transverseTensorEmbeddingOfStabilizerIsometry lam nu F).toLinearMap) = 0
-    rw [transverseTensorEmbeddingOfStabilizerIsometry_rotationTerm]
-    have hzero : euclideanAmbientRotation (Fin.last n) (Fin.last n) = 0 := by
-      apply LinearMap.ext
-      intro v
-      simp only [euclideanAmbientRotation_apply, EuclideanSpace.basisFun_apply, sub_self,
-        LinearMap.zero_apply]
-    rw [hzero]
-    simp only [LinearMap.zero_comp, LinearMap.comp_zero, TensorProduct.map_zero_left]
-  unfold gtMixedRotationOperator
-  change I.adjoint.comp ((∑ a : Fin (n + 1), ∑ b : Fin (n + 1),
-    TensorProduct.map (euclideanAmbientRotation a b)
-      (youngAmbientRotation lam a b)).comp I) = _
-  rw [linearMap_comp_sum_comp]
-  simp_rw [linearMap_comp_sum_comp]
+  have hlast : euclideanAmbientRotation (Fin.last n) (Fin.last n) = 0 := by
+    apply LinearMap.ext
+    intro v
+    simp only [euclideanAmbientRotation_apply, EuclideanSpace.basisFun_apply, sub_self,
+      LinearMap.zero_apply]
+  simp only [gtMixedRotationOperator, linearMap_comp_sum_comp,
+    transverseTensorEmbeddingOfStabilizerIsometry_rotationTerm]
   rw [Fin.sum_univ_castSucc]
   simp_rw [Fin.sum_univ_castSucc]
-  simp only [htangential, hcross, hcrossSwap, hlast,
+  simp only [gtTransverseEuclideanIsometry_rotation_adjoint_compression,
+    stabilizerIsometry_rotation_adjoint_compression lam nu F hF,
+    gtTransverseEuclideanIsometry_cross_rotation_compression,
+    gtTransverseEuclideanIsometry_cross_rotation_compression_swap,
+    hlast, LinearMap.zero_comp, LinearMap.comp_zero, TensorProduct.map_zero_left,
     Finset.sum_const_zero, add_zero]
 
 theorem transverseTensorEmbeddingOfStabilizerIsometry_relativeCasimir
@@ -3294,15 +3226,13 @@ theorem transverseTensorEmbeddingOfStabilizerIsometry_relativeCasimir
         ((gtRelativeCasimir (n := n + 1) lam).comp
           (transverseTensorEmbeddingOfStabilizerIsometry lam nu F).toLinearMap) =
       gtStabilizerShiftedRelativeCasimir nu := by
-  rw [gtRelativeCasimir_eq_scalar_sub_mixed (n := n + 1) lam,
+  simp only [gtRelativeCasimir_eq_scalar_sub_mixed (n := n + 1) lam,
     gtStabilizerShiftedRelativeCasimir,
-    gtRelativeCasimir_eq_scalar_sub_mixed (n := n) nu]
-  simp only [LinearMap.sub_comp, LinearMap.smul_comp,
-    LinearMap.id_comp, LinearMap.comp_sub, LinearMap.comp_smul]
-  rw [(transverseTensorEmbeddingOfStabilizerIsometry
-    lam nu F).adjoint_comp_self',
-    transverseTensorEmbeddingOfStabilizerIsometry_mixedRotation
-      lam nu F hF]
+    gtRelativeCasimir_eq_scalar_sub_mixed (n := n) nu,
+    LinearMap.sub_comp, LinearMap.smul_comp,
+    LinearMap.id_comp, LinearMap.comp_sub, LinearMap.comp_smul,
+    (transverseTensorEmbeddingOfStabilizerIsometry lam nu F).adjoint_comp_self',
+    transverseTensorEmbeddingOfStabilizerIsometry_mixedRotation lam nu F hF]
   norm_num
   module
 
@@ -4930,30 +4860,20 @@ theorem negativeSector_shortTensor_adjoint_eigen
       (gtRelativeCasimir (n := n + 1) lam (B p)) =
         d • I.toLinearMap.adjoint (B p) := by
   dsimp only
-  let c : ℝ := (Real.sqrt
-    (internalRowLowerGramScalar (raiseWeight mu row) row *
+  exact scaled_sector_adjoint_eigen
+    (gtTransverseTensorEmbedding lam (raiseWeight mu row) hnu hnuGram)
+    (youngClebschRaise (raiseWeight mu row) mu (sum_raiseWeight mu row) row)
+    (normalizedGTTransverseNegativeSector lam mu kappa row
+      hnu hnuGram hfinite hraise).toLinearMap
+    (gtRelativeCasimir lam)
+    (Real.sqrt (internalRowLowerGramScalar (raiseWeight mu row) row *
       weylEdgeRatio n mu row))⁻¹
-  let C := youngClebschRaise (n := n) (raiseWeight mu row) mu
-    (sum_raiseWeight mu row) row
-  have hphase :
-      normalizedGTTransverseNegativeSector lam mu kappa row
-          hnu hnuGram hfinite hraise p =
-        c • gtTransverseNegativeSector lam mu row hnu hnuGram p := by
-    change (normalizedGTTransverseNegativeSector lam mu kappa row
-      hnu hnuGram hfinite hraise).toLinearMap p = _
-    rw [normalizedGTTransverseNegativeSector_toLinearMap]
-    rfl
-  have hself :
-      (gtTransverseTensorEmbedding lam (raiseWeight mu row)
-          hnu hnuGram).toLinearMap.adjoint
-        (gtTransverseNegativeSector lam mu row hnu hnuGram p) = C p := by
-    exact LinearMap.congr_fun
-      (gtTransverseTensorEmbedding lam (raiseWeight mu row)
-        hnu hnuGram).adjoint_comp_self' (C p)
-  rw [hphase, map_smul, map_smul, map_smul,
-    gtTransverseNegativeSector_relativeCasimir_adjoint_compression,
-    hself]
-  exact smul_comm _ _ _
+    (gtStabilizerArrowheadNode (wallShift (n + 1) (r + 1))
+      (stabilizerShift (n + 1) mu) (.inr (row, false)))
+    (normalizedGTTransverseNegativeSector_toLinearMap
+      lam mu kappa row hnu hnuGram hfinite hraise)
+    (gtTransverseNegativeSector_relativeCasimir_adjoint_compression
+      lam mu row hnu hnuGram) p
 
 theorem negativeSector_selectedFullTensor_adjoint_eigen
     {r n : ℕ} (lam : Fin (r + 2) → ℕ)
@@ -5012,28 +4932,19 @@ theorem positiveSector_shortTensor_adjoint_eigen
       (gtRelativeCasimir (n := n + 1) lam (B p)) =
         d • I.toLinearMap.adjoint (B p) := by
   dsimp only
-  let c : ℝ := (Real.sqrt (internalRowLowerGramScalar mu row))⁻¹
-  let C := youngClebschLower (n := n) nu mu
-    (by rw [hmunu]; exact sum_raiseWeight nu row) row
-  have hphase :
-      normalizedGTTransversePositiveSector
-          lam mu nu row hmunu hmu hnu hnuGram p =
-        c • gtTransversePositiveSector lam mu nu row hmunu hnu hnuGram p := by
-    change (normalizedGTTransversePositiveSector
-      lam mu nu row hmunu hmu hnu hnuGram).toLinearMap p = _
-    rw [normalizedGTTransversePositiveSector_toLinearMap]
-    rfl
-  have hself :
-      (gtTransverseTensorEmbedding lam nu hnu hnuGram).toLinearMap.adjoint
-        (gtTransversePositiveSector lam mu nu row hmunu hnu hnuGram p) =
-          C p := by
-    exact LinearMap.congr_fun
-      (gtTransverseTensorEmbedding lam nu hnu hnuGram).adjoint_comp_self'
-      (C p)
-  rw [hphase, map_smul, map_smul, map_smul,
-    gtTransversePositiveSector_relativeCasimir_adjoint_compression,
-    hself]
-  exact smul_comm _ _ _
+  exact scaled_sector_adjoint_eigen
+    (gtTransverseTensorEmbedding lam nu hnu hnuGram)
+    (youngClebschLower nu mu (by rw [hmunu]; exact sum_raiseWeight nu row) row)
+    (normalizedGTTransversePositiveSector lam mu nu row
+      hmunu hmu hnu hnuGram).toLinearMap
+    (gtRelativeCasimir lam)
+    (Real.sqrt (internalRowLowerGramScalar mu row))⁻¹
+    (gtStabilizerArrowheadNode (wallShift (n + 1) (r + 1))
+      (stabilizerShift (n + 1) mu) (.inr (row, true)))
+    (normalizedGTTransversePositiveSector_toLinearMap
+      lam mu nu row hmunu hmu hnu hnuGram)
+    (gtTransversePositiveSector_relativeCasimir_adjoint_compression
+      lam mu nu row hmunu hnu hnuGram) p
 
 theorem positiveSector_selectedFullTensor_adjoint_eigen
     {r n : ℕ} (lam : Fin (r + 2) → ℕ)
@@ -5209,31 +5120,20 @@ theorem normalizedWallSector_shortTensor_adjoint_eigen
     I.toLinearMap.adjoint
       (gtRelativeCasimir (n := n + 1) lam (B p)) =
         d • I.toLinearMap.adjoint (B p) := by
-  dsimp
-  let c : ℝ := (Real.sqrt (gtWallSectorGram n mu))⁻¹
-  let C :=
-    (youngClebschRaise (n := n)
+  dsimp only
+  exact scaled_sector_adjoint_eigen
+    (gtTransverseWallTensorEmbedding lam mu h hn hlast)
+    ((youngClebschRaise
       (raiseWeight (appendZeroWeight mu) (Fin.last (r + 1)))
       (appendZeroWeight mu)
       (sum_raiseWeight (appendZeroWeight mu) (Fin.last (r + 1)))
       (Fin.last (r + 1))).comp
-        (appendZeroRowIsometryEquiv (n := n) mu).toLinearMap
-  have hphase :
-      normalizedGTTransverseWallSector lam mu h hn hlast p =
-        c • gtTransverseWallSector lam mu h hn hlast p := by
-    change (normalizedGTTransverseWallSector lam mu h hn hlast).toLinearMap p = _
-    rw [normalizedGTTransverseWallSector_toLinearMap]
-    rfl
-  have hself :
-      (gtTransverseWallTensorEmbedding lam mu h hn hlast).toLinearMap.adjoint
-        (gtTransverseWallSector lam mu h hn hlast p) = C p := by
-    exact LinearMap.congr_fun
-      (gtTransverseWallTensorEmbedding lam mu h hn hlast).adjoint_comp_self'
-      (C p)
-  rw [map_smul, map_smul, map_smul,
-    gtTransverseWallSector_relativeCasimir_compression,
-    hself]
-  exact smul_comm _ _ _
+        (appendZeroRowIsometryEquiv (n := n) mu).toLinearMap)
+    (normalizedGTTransverseWallSector lam mu h hn hlast).toLinearMap
+    (gtRelativeCasimir lam) (Real.sqrt (gtWallSectorGram n mu))⁻¹
+    (-wallShift (n + 1) (r + 1))
+    (normalizedGTTransverseWallSector_toLinearMap lam mu h hn hlast)
+    (gtTransverseWallSector_relativeCasimir_compression lam mu h hn hlast) p
 
 theorem normalizedWallSector_selectedFullTensor_adjoint_eigen
     {r n : ℕ} (lam : Fin (r + 2) → ℕ)
@@ -5335,17 +5235,9 @@ theorem transverseStabilizerIsometry_rotationTerm_cross
             (gtTransverseEuclideanIsometry n).toLinearMap))
         (F.toLinearMap.adjoint.comp
           ((youngAmbientRotation lam a b).comp G.toLinearMap)) := by
-  change
-    (TensorProduct.map (gtTransverseEuclideanIsometry n).toLinearMap
-      F.toLinearMap).adjoint.comp
-      ((TensorProduct.map (euclideanAmbientRotation a b)
-        (youngAmbientRotation lam a b)).comp
-        (TensorProduct.map (gtTransverseEuclideanIsometry n).toLinearMap
-          G.toLinearMap)) = _
-  rw [TensorProduct.adjoint_map]
-  apply TensorProduct.ext
-  ext v p
-  rfl
+  exact tensorProduct_adjoint_compression
+    (gtTransverseEuclideanIsometry n).toLinearMap F.toLinearMap G.toLinearMap
+    (euclideanAmbientRotation a b) (youngAmbientRotation lam a b)
 
 theorem transverseStabilizerIsometry_mixedRotation_cross_eq_zero
     {s t r n : ℕ} (lam : Fin (r + 1) → ℕ)
@@ -5363,91 +5255,22 @@ theorem transverseStabilizerIsometry_mixedRotation_cross_eq_zero
         ((gtMixedRotationOperator (n := n + 1) lam).comp
           (transverseTensorEmbeddingOfStabilizerIsometry
             lam target G).toLinearMap) = 0 := by
-  let I := (transverseTensorEmbeddingOfStabilizerIsometry
-    lam source F).toLinearMap
-  let J := (transverseTensorEmbeddingOfStabilizerIsometry
-    lam target G).toLinearMap
-  have htangential (a b : Fin n) :
-      I.adjoint.comp
-        ((TensorProduct.map
-          (euclideanAmbientRotation a.castSucc b.castSucc)
-          (youngAmbientRotation lam a.castSucc b.castSucc)).comp J) = 0 := by
-    change
-      (transverseTensorEmbeddingOfStabilizerIsometry
-        lam source F).toLinearMap.adjoint.comp
-        ((TensorProduct.map
-          (euclideanAmbientRotation a.castSucc b.castSucc)
-          (youngAmbientRotation lam a.castSucc b.castSucc)).comp
-          (transverseTensorEmbeddingOfStabilizerIsometry
-            lam target G).toLinearMap) = 0
-    rw [transverseStabilizerIsometry_rotationTerm_cross]
-    have hz : F.toLinearMap.adjoint.comp
-        ((youngAmbientRotation lam a.castSucc b.castSucc).comp G.toLinearMap) = 0 := by
-      rw [← hG a b, ← LinearMap.comp_assoc, horth, LinearMap.zero_comp]
-    rw [hz]
-    exact TensorProduct.map_zero_right _
-  have hcross (a : Fin n) :
-      I.adjoint.comp
-        ((TensorProduct.map
-          (euclideanAmbientRotation a.castSucc (Fin.last n))
-          (youngAmbientRotation lam a.castSucc (Fin.last n))).comp J) = 0 := by
-    change
-      (transverseTensorEmbeddingOfStabilizerIsometry
-        lam source F).toLinearMap.adjoint.comp
-        ((TensorProduct.map
-          (euclideanAmbientRotation a.castSucc (Fin.last n))
-          (youngAmbientRotation lam a.castSucc (Fin.last n))).comp
-          (transverseTensorEmbeddingOfStabilizerIsometry
-            lam target G).toLinearMap) = 0
-    rw [transverseStabilizerIsometry_rotationTerm_cross,
-      gtTransverseEuclideanIsometry_cross_rotation_compression]
-    exact TensorProduct.map_zero_left _
-  have hcrossSwap (a : Fin n) :
-      I.adjoint.comp
-        ((TensorProduct.map
-          (euclideanAmbientRotation (Fin.last n) a.castSucc)
-          (youngAmbientRotation lam (Fin.last n) a.castSucc)).comp J) = 0 := by
-    change
-      (transverseTensorEmbeddingOfStabilizerIsometry
-        lam source F).toLinearMap.adjoint.comp
-        ((TensorProduct.map
-          (euclideanAmbientRotation (Fin.last n) a.castSucc)
-          (youngAmbientRotation lam (Fin.last n) a.castSucc)).comp
-          (transverseTensorEmbeddingOfStabilizerIsometry
-            lam target G).toLinearMap) = 0
-    rw [transverseStabilizerIsometry_rotationTerm_cross,
-      gtTransverseEuclideanIsometry_cross_rotation_compression_swap]
-    exact TensorProduct.map_zero_left _
-  have hlast :
-      I.adjoint.comp
-        ((TensorProduct.map
-          (euclideanAmbientRotation (Fin.last n) (Fin.last n))
-          (youngAmbientRotation lam (Fin.last n) (Fin.last n))).comp J) = 0 := by
-    have hzero : euclideanAmbientRotation (Fin.last n) (Fin.last n) = 0 := by
-      apply LinearMap.ext
-      intro v
-      simp only [euclideanAmbientRotation_apply, EuclideanSpace.basisFun_apply, sub_self,
-        LinearMap.zero_apply]
-    change
-      (transverseTensorEmbeddingOfStabilizerIsometry
-        lam source F).toLinearMap.adjoint.comp
-        ((TensorProduct.map
-          (euclideanAmbientRotation (Fin.last n) (Fin.last n))
-          (youngAmbientRotation lam (Fin.last n) (Fin.last n))).comp
-          (transverseTensorEmbeddingOfStabilizerIsometry
-            lam target G).toLinearMap) = 0
-    rw [transverseStabilizerIsometry_rotationTerm_cross, hzero]
-    simp only [LinearMap.zero_comp, LinearMap.comp_zero, TensorProduct.map_zero_left]
-  unfold gtMixedRotationOperator
-  change I.adjoint.comp ((∑ a : Fin (n + 1), ∑ b : Fin (n + 1),
-    TensorProduct.map (euclideanAmbientRotation a b)
-      (youngAmbientRotation lam a b)).comp J) = 0
-  rw [linearMap_comp_sum_comp]
-  simp_rw [linearMap_comp_sum_comp]
+  have htangential (a b : Fin n) : F.toLinearMap.adjoint.comp
+      ((youngAmbientRotation lam a.castSucc b.castSucc).comp G.toLinearMap) = 0 := by
+    rw [← hG a b, ← LinearMap.comp_assoc, horth, LinearMap.zero_comp]
+  have hlast : euclideanAmbientRotation (Fin.last n) (Fin.last n) = 0 := by
+    apply LinearMap.ext
+    intro v
+    simp only [euclideanAmbientRotation_apply, EuclideanSpace.basisFun_apply, sub_self,
+      LinearMap.zero_apply]
+  simp only [gtMixedRotationOperator, linearMap_comp_sum_comp,
+    transverseStabilizerIsometry_rotationTerm_cross]
   rw [Fin.sum_univ_castSucc]
   simp_rw [Fin.sum_univ_castSucc]
-  simp only [htangential, hcross, hcrossSwap, hlast,
-    Finset.sum_const_zero, add_zero]
+  simp only [htangential, gtTransverseEuclideanIsometry_cross_rotation_compression,
+    gtTransverseEuclideanIsometry_cross_rotation_compression_swap,
+    hlast, LinearMap.zero_comp, LinearMap.comp_zero, TensorProduct.map_zero_left,
+    TensorProduct.map_zero_right, Finset.sum_const_zero, add_zero]
 
 theorem transverseStabilizerIsometry_relativeCasimir_cross_eq_zero
     {s t r n : ℕ} (lam : Fin (r + 1) → ℕ)
@@ -5465,14 +5288,11 @@ theorem transverseStabilizerIsometry_relativeCasimir_cross_eq_zero
         ((gtRelativeCasimir (n := n + 1) lam).comp
           (transverseTensorEmbeddingOfStabilizerIsometry
             lam target G).toLinearMap) = 0 := by
-  rw [gtRelativeCasimir_eq_scalar_sub_mixed]
-  simp only [LinearMap.sub_comp, LinearMap.smul_comp,
-    LinearMap.id_comp, LinearMap.comp_sub, LinearMap.comp_smul]
-  rw [transverseStabilizerIsometry_adjoint_comp_of_orthogonal
-    lam source target F G horth,
-    transverseStabilizerIsometry_mixedRotation_cross_eq_zero
-      lam source target F G horth hG]
-  simp only [Nat.cast_add, Nat.cast_one, smul_zero, sub_self]
+  simp only [gtRelativeCasimir_eq_scalar_sub_mixed, LinearMap.sub_comp,
+    LinearMap.smul_comp, LinearMap.id_comp, LinearMap.comp_sub, LinearMap.comp_smul,
+    transverseStabilizerIsometry_adjoint_comp_of_orthogonal lam source target F G horth,
+    transverseStabilizerIsometry_mixedRotation_cross_eq_zero lam source target F G horth hG,
+    Nat.cast_add, Nat.cast_one, smul_zero, sub_self]
 
 theorem canonicalFullBranchFibre_adjoint_comp_of_ne
     {r n : ℕ} (lam : Fin (r + 1) → ℕ)
@@ -5739,22 +5559,9 @@ theorem gtFullTransverseEmbedding_relativeCasimir_cross_wallSector_eq_zero
     (gtFullTransverseEmbedding lam hn branch).toLinearMap.adjoint.comp
       ((gtRelativeCasimir (n := n + 1) lam).comp
         (gtTransverseWallSector lam mu h hn hlast)) = 0 := by
-  unfold gtTransverseWallSector
-  calc
-    _ = ((gtFullTransverseEmbedding lam hn branch).toLinearMap.adjoint.comp
-      ((gtRelativeCasimir (n := n + 1) lam).comp
-        (gtTransverseWallTensorEmbedding lam mu h hn hlast).toLinearMap)).comp
-        ((youngClebschRaise
-          (raiseWeight (appendZeroWeight mu) (Fin.last (r + 1)))
-          (appendZeroWeight mu)
-          (sum_raiseWeight (appendZeroWeight mu) (Fin.last (r + 1)))
-          (Fin.last (r + 1))).comp
-            (appendZeroRowIsometryEquiv mu).toLinearMap) := by
-              ext p
-              rfl
-    _ = 0 := by
-      rw [gtFullTransverseEmbedding_relativeCasimir_cross_wallTensorEmbedding_eq_zero
-        lam mu h hn hlast branch hwrong, LinearMap.zero_comp]
+  simp only [gtTransverseWallSector, ← LinearMap.comp_assoc,
+    gtFullTransverseEmbedding_relativeCasimir_cross_wallTensorEmbedding_eq_zero
+      lam mu h hn hlast branch hwrong, LinearMap.zero_comp]
 
 theorem gtFullTransverseEmbedding_adjoint_normalizedWallSector_eq_zero
     {r n : ℕ} (lam : Fin (r + 2) → ℕ)
@@ -5765,7 +5572,7 @@ theorem gtFullTransverseEmbedding_adjoint_normalizedWallSector_eq_zero
     (hwrong : branch ≠ gtWallFullBranch lam mu h hlast) :
     (gtFullTransverseEmbedding lam hn branch).toLinearMap.adjoint.comp
       (normalizedGTTransverseWallSector lam mu h hn hlast).toLinearMap = 0 := by
-  rw [normalizedGTTransverseWallSector_toLinearMap, LinearMap.comp_smul,
+  simp only [normalizedGTTransverseWallSector_toLinearMap, LinearMap.comp_smul,
     gtFullTransverseEmbedding_adjoint_wallSector_eq_zero
       lam mu h hn hlast branch hwrong, smul_zero]
 
@@ -5779,8 +5586,7 @@ theorem gtFullTransverseEmbedding_relativeCasimir_cross_normalizedWallSector_eq_
     (gtFullTransverseEmbedding lam hn branch).toLinearMap.adjoint.comp
       ((gtRelativeCasimir (n := n + 1) lam).comp
         (normalizedGTTransverseWallSector lam mu h hn hlast).toLinearMap) = 0 := by
-  rw [normalizedGTTransverseWallSector_toLinearMap, LinearMap.comp_smul,
-    LinearMap.comp_smul,
+  simp only [normalizedGTTransverseWallSector_toLinearMap, LinearMap.comp_smul,
     gtFullTransverseEmbedding_relativeCasimir_cross_wallSector_eq_zero
       lam mu h hn hlast branch hwrong, smul_zero]
 
@@ -6121,17 +5927,9 @@ theorem gtFullTransverseEmbedding_range_eq_selectedTransverseTensorEmbedding
           (fullBranchOfInterlaces tau h)).toLinearMap =
       LinearMap.range
         (gtTransverseTensorEmbedding lam tau h hgram).toLinearMap := by
-  change
-    LinearMap.range
-        (TensorProduct.map (gtTransverseEuclideanIsometry n).toLinearMap
-          (canonicalFullBranchFibre lam hn
-            (fullBranchOfInterlaces tau h)).toLinearMap) =
-      LinearMap.range
-        (TensorProduct.map (gtTransverseEuclideanIsometry n).toLinearMap
-          (canonicalGelfandTsetlinFibre lam tau h hgram).toLinearMap)
-  rw [TensorProduct.range_map, TensorProduct.range_map,
-    canonicalGelfandTsetlinFibre_range_eq_selectedFullBranch
-      lam tau h hn hdom hgram]
+  simp only [gtFullTransverseEmbedding, gtTransverseTensorEmbedding,
+    TensorProduct.toLinearMap_mapIsometry, TensorProduct.range_map,
+    canonicalGelfandTsetlinFibre_range_eq_selectedFullBranch lam tau h hn hdom hgram]
 
 end AllRankGTFullySelectedTransverseBranchProjection
 
@@ -6734,11 +6532,10 @@ theorem gtAxisCompressedCharacteristicMinor_eval_eq_zero_of_arrowhead_operator_r
   change node • v - T v =
     (gtChannelCharacteristicPolynomial (n + 1) lam).eval node • A q at hresolvent
   have hprojected := congrArg B.adjoint hresolvent
-  rw [map_sub, map_smul, map_smul, horth, smul_zero,
-    hrow v] at hprojected
+  simp only [A, T, map_sub, map_smul, horth, smul_zero, hrow v] at hprojected
   have haxis : A.adjoint v = 0 := by
     apply hcoupling
-    simpa only [map_zero, sub_add_cancel_left, neg_eq_zero] using hprojected
+    simpa only [A, map_zero, sub_add_cancel_left, neg_eq_zero] using hprojected
   rw [gtAxisCompressedCharacteristicMinor_eval_eq_adjugate_inner
     lam mu h hgram hfinite p q node]
   change ⟪A p, v⟫_ℝ = 0

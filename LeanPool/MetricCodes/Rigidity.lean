@@ -3201,6 +3201,25 @@ section
 
 open MetricCodes.Spherical.HigherHarmonicYoung
 
+private theorem linearMap_comp_eq_zero_of_pointwise
+    {X Y Z ι : Type*}
+    [AddCommMonoid X] [Module ℝ X] [AddCommMonoid Y] [Module ℝ Y]
+    [AddCommMonoid Z] [Module ℝ Z]
+    (A : Y →ₗ[ℝ] (ι → Z)) (B : X →ₗ[ℝ] Y)
+    (h : ∀ x i, A (B x) i = 0) : A.comp B = 0 := by
+  ext x i
+  exact h x i
+
+private theorem linearMap_comp_add_comp_add_comp_eq_zero_of_pointwise
+    {X Y Z ι : Type*}
+    [AddCommMonoid X] [Module ℝ X] [AddCommMonoid Y] [Module ℝ Y]
+    [AddCommMonoid Z] [Module ℝ Z]
+    (A C : Y →ₗ[ℝ] (ι → Z)) (B D : X →ₗ[ℝ] Y)
+    (h : ∀ x i, A (B x) i + A (D x) i + C (B x) i = 0) :
+    A.comp B + A.comp D + C.comp B = 0 := by
+  ext x i
+  exact h x i
+
 theorem rootActionBracketBoundary_mixed_comp_self_zero
     (r n k : ℕ) :
     (rootActionBoundary r n k).comp
@@ -3209,18 +3228,17 @@ theorem rootActionBracketBoundary_mixed_comp_self_zero
         (rootBracketBoundary r n (k + 1)) +
       (rootBracketBoundary r n k).comp
         (rootActionBoundary r n (k + 1)) = 0 := by
-  apply LinearMap.ext
-  intro f
-  funext T
-  exact rootActionBracketBoundary_mixed_square_eq_zero f T
+  exact linearMap_comp_add_comp_add_comp_eq_zero_of_pointwise
+    (rootActionBoundary r n k) (rootBracketBoundary r n k)
+    (rootActionBoundary r n (k + 1)) (rootBracketBoundary r n (k + 1))
+    (@rootActionBracketBoundary_mixed_square_eq_zero r n k)
 
 theorem rootBracketBoundary_comp_self_zero (r n k : ℕ) :
     (rootBracketBoundary r n k).comp
       (rootBracketBoundary r n (k + 1)) = 0 := by
-  apply LinearMap.ext
-  intro f
-  funext T
-  exact rootBracketBoundary_comp_self_apply_eq_zero f T
+  exact linearMap_comp_eq_zero_of_pointwise
+    (rootBracketBoundary r n k) (rootBracketBoundary r n (k + 1))
+    (@rootBracketBoundary_comp_self_apply_eq_zero r n k)
 
 theorem rootChevalleyEilenbergBoundary_comp_self_zero (r n k : ℕ) :
     (rootChevalleyEilenbergBoundary r n k).comp
@@ -5347,14 +5365,7 @@ theorem complex_pderiv_commute
     {N : ℕ} (i j : Fin N) (f : MvPolynomial (Fin N) ℂ) :
     MvPolynomial.pderiv i (MvPolynomial.pderiv j f) =
       MvPolynomial.pderiv j (MvPolynomial.pderiv i f) := by
-  classical
-  induction f using MvPolynomial.induction_on with
-  | C a => simp only [MvPolynomial.derivation_C, map_zero]
-  | add f g hf hg => simp only [map_add, hf, hg]
-  | mul_X f a hf =>
-      simp only [Derivation.leibniz, MvPolynomial.pderiv_X, Pi.single_apply, smul_eq_mul, mul_ite,
-        mul_one, mul_zero, map_add, hf]
-      split <;> split <;> simp_all <;> ring
+  exact SpherePacking.polynomialPartialDerivatives_commute i j f
 
 theorem pderiv_rowDerivation
     {r n : ℕ} (a i j : Fin (r + 1)) (k : Fin n)
@@ -5694,14 +5705,7 @@ private theorem complexPolynomial_pderiv_commute_metriccodes2_3f70f505
     {N : ℕ} (i j : Fin N) (f : MvPolynomial (Fin N) ℂ) :
     MvPolynomial.pderiv i (MvPolynomial.pderiv j f) =
       MvPolynomial.pderiv j (MvPolynomial.pderiv i f) := by
-  classical
-  induction f using MvPolynomial.induction_on with
-  | C a => simp only [MvPolynomial.derivation_C, map_zero]
-  | add f g hf hg => simp only [map_add, hf, hg]
-  | mul_X f a hf =>
-      simp only [Derivation.leibniz, MvPolynomial.pderiv_X, Pi.single_apply, smul_eq_mul, mul_ite,
-        mul_one, mul_zero, map_add, hf]
-      split <;> split <;> simp_all <;> ring
+  exact SpherePacking.polynomialPartialDerivatives_commute i j f
 
 private def differenceHolomorphicDerivative_metriccodes2_3f70f505 {r n : ℕ}
     (h : 2 * (r + 1) ≤ n) (a p : Fin (r + 1)) :
@@ -5940,14 +5944,7 @@ theorem complexPolynomial_pderiv_commute {ι : Type*}
     (i j : ι) (f : MvPolynomial ι ℂ) :
     MvPolynomial.pderiv i (MvPolynomial.pderiv j f) =
       MvPolynomial.pderiv j (MvPolynomial.pderiv i f) := by
-  classical
-  induction f using MvPolynomial.induction_on with
-  | C a => simp only [MvPolynomial.derivation_C, map_zero]
-  | add p q hp hq => simp only [map_add, hp, hq]
-  | mul_X p a hp =>
-      simp only [Derivation.leibniz, MvPolynomial.pderiv_X, Pi.single_apply, smul_eq_mul, mul_ite,
-        mul_one, mul_zero, map_add, hp]
-      split <;> split <;> simp_all <;> ring
+  exact SpherePacking.polynomialPartialDerivatives_commute i j f
 
 theorem antiholomorphicDerivative_holomorphicDerivative_commute
     {r n : ℕ} (h : 2 * (r + 1) ≤ n)
