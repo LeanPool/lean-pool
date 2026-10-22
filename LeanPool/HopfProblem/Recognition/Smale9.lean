@@ -4,11 +4,13 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Boris Alexeev
 -/
 module
+public import Mathlib.Tactic.NormNum.Parity
+public import Mathlib.CategoryTheory.Countable
 
-public import LeanPool.HopfProblem.Prelude
+public import LeanPool.HopfProblem.InternalPrelude
 public import LeanPool.HopfProblem.Recognition.Smale8
 public import LeanPool.HopfProblem.Foundations.Core5
-import all LeanPool.HopfProblem.HomologyTheory.SingularMayerVietoris
+import LeanPool.HopfProblem.HomologyTheory.SingularMayerVietoris
 import all LeanPool.HopfProblem.Foundations.LineBundleTransport
 import all LeanPool.HopfProblem.TorusHomology.PeriodTorusHigherHomology1
 import all LeanPool.HopfProblem.Recognition.Smale1
@@ -22,7 +24,6 @@ import all LeanPool.HopfProblem.Recognition.Degree1
 import all LeanPool.HopfProblem.Recognition.Degree2
 import all LeanPool.HopfProblem.Recognition.Smale6
 import all LeanPool.HopfProblem.Recognition.Smale8
-import all LeanPool.HopfProblem.Foundations.Core5
 
 /-!
 # Hopf problem: recognition · smale 9
@@ -33,10 +34,8 @@ Supporting definitions and proofs for this stage of the six-sphere construction.
 
 open Set Function Filter Manifold Topology
 
-open scoped BigOperators CategoryTheory Complex.UnitDisc ComplexConjugate ContDiff ContinuousMap
-  Convolution ENNReal EuclideanSpace Fin.NatCast InnerProductSpace Interval Matrix MatrixGroups
-  Modular NNReal Pointwise RealInnerProductSpace TensorProduct UniformConvergence Uniformity
-  UpperHalfPlane
+open scoped BigOperators ComplexConjugate ContDiff ContinuousMap ENNReal EuclideanSpace Fin.NatCast
+  InnerProductSpace Interval Matrix NNReal Pointwise RealInnerProductSpace
 
 universe u v
 

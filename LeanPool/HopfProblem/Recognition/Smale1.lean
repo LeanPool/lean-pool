@@ -4,11 +4,25 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Boris Alexeev
 -/
 module
+public import Mathlib.Topology.Separation.CompletelyRegular
+public import Mathlib.Geometry.Manifold.Instances.Sphere
+public import Mathlib.RingTheory.SimpleRing.Principal
+public import Mathlib.RingTheory.RegularLocalRing.Defs
+public import Mathlib.RingTheory.Flat.TorsionFree
+public import Mathlib.Tactic.NormNum.Parity
+public import Mathlib.LinearAlgebra.QuadraticForm.Real
+public import Mathlib.Geometry.Manifold.VectorField.Pullback
+public import Mathlib.Geometry.Manifold.Sheaf.Basic
+public import Mathlib.Geometry.Manifold.IntegralCurve.UniformTime
+public import Mathlib.Dynamics.Flow
+public import Mathlib.Analysis.Normed.Module.Ball.RadialEquiv
+public import Mathlib.Analysis.Calculus.TaylorIntegral
+public import Mathlib.Analysis.Calculus.InverseFunctionTheorem.ContDiff
+public import Mathlib.LinearAlgebra.FreeModule.PID
 
-public import LeanPool.HopfProblem.Prelude
+public import LeanPool.HopfProblem.InternalPrelude
 public import LeanPool.HopfProblem.Foundations.TriangleRegularBaseFundamentalGroup
 import all LeanPool.HopfProblem.Foundations.LineBundleTransport
-import all LeanPool.HopfProblem.Foundations.TriangleRegularBaseFundamentalGroup
 import all Mathlib.Analysis.Calculus.Implicit
 import all Mathlib.Geometry.Manifold.LocalDiffeomorph
 
@@ -21,10 +35,8 @@ Supporting definitions and proofs for this stage of the six-sphere construction.
 
 open Set Function Filter Manifold Topology
 
-open scoped BigOperators CategoryTheory Complex.UnitDisc ComplexConjugate ContDiff ContinuousMap
-  Convolution ENNReal EuclideanSpace Fin.NatCast InnerProductSpace Interval Matrix MatrixGroups
-  Modular NNReal Pointwise RealInnerProductSpace TensorProduct UniformConvergence Uniformity
-  UpperHalfPlane
+open scoped BigOperators ComplexConjugate ContDiff ContinuousMap Convolution ENNReal EuclideanSpace
+  Fin.NatCast InnerProductSpace Interval Matrix NNReal Pointwise RealInnerProductSpace
 
 universe u v
 

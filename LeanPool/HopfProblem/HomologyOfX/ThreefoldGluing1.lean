@@ -4,14 +4,18 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Boris Alexeev
 -/
 module
+public import Mathlib.Topology.Gluing
+public import Mathlib.Tactic.NormNum.Parity
+public import Mathlib.Topology.Sets.OpenCover
+import all Mathlib.Topology.Homotopy.Lifting
 
-public import LeanPool.HopfProblem.Prelude
+public import LeanPool.HopfProblem.InternalPrelude
 public import LeanPool.HopfProblem.CuspFibre.CuspCentralHomology4
 public import LeanPool.HopfProblem.Elliptic.Core3
-import all LeanPool.HopfProblem.HomologyTheory.SingularMayerVietoris
+import LeanPool.HopfProblem.HomologyTheory.SingularMayerVietoris
 import all LeanPool.HopfProblem.Lattice.Core1
 import all LeanPool.HopfProblem.TorusHomology.PeriodTorusHigherHomology1
-import all LeanPool.HopfProblem.Foundations.Core2
+import LeanPool.HopfProblem.Foundations.Core2
 import all LeanPool.HopfProblem.Toric.ToricSpace1
 import all LeanPool.HopfProblem.PeriodFamily.PeriodPoint
 import all LeanPool.HopfProblem.Uniformization.CuspUniformization1
@@ -19,12 +23,11 @@ import all LeanPool.HopfProblem.Foundations.Core3
 import all LeanPool.HopfProblem.CuspFibre.CuspPositiveRetraction
 import all LeanPool.HopfProblem.Threefold.SpecialPeriods1
 import all LeanPool.HopfProblem.Pi1.MappingTorus
-import all LeanPool.HopfProblem.TorusHomology.PeriodTorusHigherHomology6
+import LeanPool.HopfProblem.TorusHomology.PeriodTorusHigherHomology6
 import all LeanPool.HopfProblem.TorusHomology.PeriodTorusHigherHomology7
 import all LeanPool.HopfProblem.CuspFibre.CuspSpecialization
 import all LeanPool.HopfProblem.HomologyOfX.CuspCoinvariants
 import all LeanPool.HopfProblem.CuspFibre.CuspCentralHomology4
-import all LeanPool.HopfProblem.Elliptic.Core3
 
 /-!
 # Hopf problem: homology of x · threefold gluing 1
@@ -35,10 +38,8 @@ Supporting definitions and proofs for this stage of the six-sphere construction.
 
 open Set Function Filter Manifold Topology
 
-open scoped BigOperators CategoryTheory Complex.UnitDisc ComplexConjugate ContDiff ContinuousMap
-  Convolution ENNReal EuclideanSpace Fin.NatCast InnerProductSpace Interval Matrix MatrixGroups
-  Modular NNReal Pointwise RealInnerProductSpace TensorProduct UniformConvergence Uniformity
-  UpperHalfPlane
+open scoped BigOperators ComplexConjugate ContDiff ContinuousMap ENNReal EuclideanSpace Fin.NatCast
+  InnerProductSpace Interval Matrix NNReal Pointwise RealInnerProductSpace
 
 universe u v
 

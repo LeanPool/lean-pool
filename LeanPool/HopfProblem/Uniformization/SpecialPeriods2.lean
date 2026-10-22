@@ -4,10 +4,19 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Boris Alexeev
 -/
 module
+public import Mathlib.Analysis.Complex.UpperHalfPlane.ProperAction
+public import Mathlib.NumberTheory.ModularForms.LevelOne.GradedRing
+public import Mathlib.GroupTheory.Coprod.Basic
+public import Mathlib.Analysis.Normed.Module.Connected
+public import Mathlib.Analysis.Complex.UpperHalfPlane.Metric
+public import Mathlib.Analysis.Complex.UpperHalfPlane.FixedPoints
+public import Mathlib.Analysis.Complex.OpenMapping
+public import Mathlib.Analysis.SpecialFunctions.Complex.LogDeriv
+public import Mathlib.Algebra.Ring.IsFormallyReal
+import all LeanPool.HopfProblem.CuspFibre.CuspCentralHomology2
 
-public import LeanPool.HopfProblem.Prelude
+public import LeanPool.HopfProblem.InternalPrelude
 public import LeanPool.HopfProblem.Threefold.SpecialPeriods3
-import all LeanPool.HopfProblem.Foundations.Core1
 import all LeanPool.HopfProblem.Lattice.Core1
 import all LeanPool.HopfProblem.Foundations.Core2
 import all LeanPool.HopfProblem.Elliptic.Core1
@@ -25,9 +34,8 @@ Supporting definitions and proofs for this stage of the six-sphere construction.
 
 open Set Function Filter Manifold Topology
 
-open scoped BigOperators CategoryTheory Complex.UnitDisc ComplexConjugate ContDiff ContinuousMap
-  Convolution ENNReal EuclideanSpace Fin.NatCast InnerProductSpace Interval Matrix MatrixGroups
-  Modular NNReal Pointwise RealInnerProductSpace TensorProduct UniformConvergence Uniformity
+open scoped BigOperators ComplexConjugate ContDiff ContinuousMap ENNReal EuclideanSpace Fin.NatCast
+  InnerProductSpace Interval Matrix MatrixGroups NNReal Pointwise RealInnerProductSpace
   UpperHalfPlane
 
 universe u v
@@ -170,6 +178,7 @@ private theorem SpecialPeriods.Triangle.fromDisc_val (a : ℍ) (z : SpecialPerio
     UpperHalfPlane.ofComplex_apply_of_im_pos
         (SpecialPeriods.cayley_im_pos a.im_pos (SpecialPeriods.disc_norm_lt_one z))]
 
+attribute [local instance high] NeZero.one in
 @[simp]
 private theorem SpecialPeriods.Triangle.toDisc_center (a : ℍ) :
     toDisc a a = (⟨0, by simp [SpecialPeriods.unitDisc]⟩ : SpecialPeriods.Disc) := by

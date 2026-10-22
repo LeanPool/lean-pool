@@ -4,16 +4,17 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Boris Alexeev
 -/
 module
+public import Mathlib.Tactic.NormNum.Parity
 
-public import LeanPool.HopfProblem.Prelude
+public import LeanPool.HopfProblem.InternalPrelude
 public import LeanPool.HopfProblem.Threefold.SpecialPeriods8
 public import LeanPool.HopfProblem.Recognition.Smale6
-import all LeanPool.HopfProblem.HomologyTheory.SingularMayerVietoris
+import LeanPool.HopfProblem.HomologyTheory.SingularMayerVietoris
 import all LeanPool.HopfProblem.TorusHomology.PeriodTorusHigherHomology1
-import all LeanPool.HopfProblem.Foundations.Core2
+import LeanPool.HopfProblem.Foundations.Core2
 import all LeanPool.HopfProblem.Toric.ToricSpace1
-import all LeanPool.HopfProblem.Foundations.Core3
-import all LeanPool.HopfProblem.Threefold.SpecialPeriods1
+import LeanPool.HopfProblem.Foundations.Core3
+import LeanPool.HopfProblem.Threefold.SpecialPeriods1
 import all LeanPool.HopfProblem.Pi1.MappingTorus
 import all LeanPool.HopfProblem.Uniformization.SpecialPeriods2
 import all LeanPool.HopfProblem.Threefold.SpecialPeriods4
@@ -25,7 +26,6 @@ import all LeanPool.HopfProblem.HomologyOfX.ThreefoldGluing1
 import all LeanPool.HopfProblem.Uniformization.TriangleUniformizationGluing
 import all LeanPool.HopfProblem.Threefold.SpecialPeriods7
 import all LeanPool.HopfProblem.Threefold.SpecialPeriods8
-import all LeanPool.HopfProblem.Recognition.Smale6
 
 /-!
 # Hopf problem: homology of x · threefold homology 1
@@ -36,10 +36,8 @@ Supporting definitions and proofs for this stage of the six-sphere construction.
 
 open Set Function Filter Manifold Topology
 
-open scoped BigOperators CategoryTheory Complex.UnitDisc ComplexConjugate ContDiff ContinuousMap
-  Convolution ENNReal EuclideanSpace Fin.NatCast InnerProductSpace Interval Matrix MatrixGroups
-  Modular NNReal Pointwise RealInnerProductSpace TensorProduct UniformConvergence Uniformity
-  UpperHalfPlane
+open scoped BigOperators ComplexConjugate ContDiff ContinuousMap ENNReal EuclideanSpace Fin.NatCast
+  InnerProductSpace Interval Matrix NNReal Pointwise RealInnerProductSpace
 
 universe u v
 

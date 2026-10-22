@@ -4,18 +4,18 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Boris Alexeev
 -/
 module
+public import LeanPool.HopfProblem.Uniformization.SpecialPeriods2
+public import LeanPool.HopfProblem.Lattice.Core1
 
-public import LeanPool.HopfProblem.Prelude
+public import LeanPool.HopfProblem.InternalPrelude
 public import LeanPool.HopfProblem.Threefold.SpecialPeriods9
 public import LeanPool.HopfProblem.Toric.DiagonalQuotient2
-import all LeanPool.HopfProblem.Foundations.Core1
-import all LeanPool.HopfProblem.Lattice.Core1
-import all LeanPool.HopfProblem.Foundations.Core2
+import LeanPool.HopfProblem.Lattice.Core1
+import LeanPool.HopfProblem.Foundations.Core2
 import all LeanPool.HopfProblem.Toric.ToricSpace1
 import all LeanPool.HopfProblem.Uniformization.CuspUniformization1
 import all LeanPool.HopfProblem.Threefold.SpecialPeriods1
-import all LeanPool.HopfProblem.Uniformization.SpecialPeriods2
-import all LeanPool.HopfProblem.Threefold.SpecialPeriods9
+import LeanPool.HopfProblem.Uniformization.SpecialPeriods2
 import all LeanPool.HopfProblem.Toric.DiagonalQuotient2
 
 /-!
@@ -27,10 +27,8 @@ Supporting definitions and proofs for this stage of the six-sphere construction.
 
 open Set Function Filter Manifold Topology
 
-open scoped BigOperators CategoryTheory Complex.UnitDisc ComplexConjugate ContDiff ContinuousMap
-  Convolution ENNReal EuclideanSpace Fin.NatCast InnerProductSpace Interval Matrix MatrixGroups
-  Modular NNReal Pointwise RealInnerProductSpace TensorProduct UniformConvergence Uniformity
-  UpperHalfPlane
+open scoped BigOperators ComplexConjugate ContDiff ContinuousMap ENNReal EuclideanSpace Fin.NatCast
+  InnerProductSpace Interval Matrix NNReal Pointwise RealInnerProductSpace
 
 universe u v
 

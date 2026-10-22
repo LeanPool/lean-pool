@@ -4,12 +4,15 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Boris Alexeev
 -/
 module
+public import Mathlib.Tactic.NormNum.Parity
+public import Mathlib.Geometry.Manifold.Instances.UnitsOfNormedAlgebra
+public import Mathlib.AlgebraicTopology.FundamentalGroupoid.FundamentalGroup
 
-public import LeanPool.HopfProblem.Prelude
+public import LeanPool.HopfProblem.InternalPrelude
 public import LeanPool.HopfProblem.MainTheorem.Core1
 public import LeanPool.HopfProblem.Recognition.Smale10
-import all LeanPool.HopfProblem.Foundations.Core1
-import all LeanPool.HopfProblem.HomologyTheory.SingularMayerVietoris
+import LeanPool.HopfProblem.Foundations.Core1
+import LeanPool.HopfProblem.HomologyTheory.SingularMayerVietoris
 import all LeanPool.HopfProblem.Lattice.Core1
 import all LeanPool.HopfProblem.TorusHomology.PeriodTorusHigherHomology1
 import all LeanPool.HopfProblem.Foundations.TriangleRegularBaseFundamentalGroup
@@ -25,7 +28,7 @@ import all LeanPool.HopfProblem.Elliptic.Core1
 import all LeanPool.HopfProblem.PeriodFamily.PeriodDomain
 import all LeanPool.HopfProblem.Threefold.SpecialPeriods1
 import all LeanPool.HopfProblem.Uniformization.CuspUniformization2
-import all LeanPool.HopfProblem.Uniformization.SpecialPeriods1
+import LeanPool.HopfProblem.Uniformization.SpecialPeriods1
 import all LeanPool.HopfProblem.Elliptic.Core2
 import all LeanPool.HopfProblem.Uniformization.SpecialPeriods2
 import all LeanPool.HopfProblem.Uniformization.SpecialPeriods3
@@ -47,14 +50,12 @@ import all LeanPool.HopfProblem.Uniformization.SpecialPeriods8
 import all LeanPool.HopfProblem.Threefold.SpecialPeriods9
 import all LeanPool.HopfProblem.Foundations.SplitGroupExtension
 import all LeanPool.HopfProblem.PeriodFamily.Core3
-import all LeanPool.HopfProblem.Elliptic.Core6
+import LeanPool.HopfProblem.Elliptic.Core6
 import all LeanPool.HopfProblem.Threefold.SpecialPeriods10
 import all LeanPool.HopfProblem.Uniformization.SpecialPeriods9
 import all LeanPool.HopfProblem.Pi1.TwistGroup
 import all LeanPool.HopfProblem.PeriodFamily.Core5
-import all LeanPool.HopfProblem.Recognition.Smale10
 import all LeanPool.HopfProblem.Foundations.CanonicalProduct
-import all LeanPool.HopfProblem.MainTheorem.Core1
 
 /-!
 # Hopf problem: threefold · special periods 11
@@ -65,10 +66,8 @@ Supporting definitions and proofs for this stage of the six-sphere construction.
 
 open Set Function Filter Manifold Topology
 
-open scoped BigOperators CategoryTheory Complex.UnitDisc ComplexConjugate ContDiff ContinuousMap
-  Convolution ENNReal EuclideanSpace Fin.NatCast InnerProductSpace Interval Matrix MatrixGroups
-  Modular NNReal Pointwise RealInnerProductSpace TensorProduct UniformConvergence Uniformity
-  UpperHalfPlane
+open scoped BigOperators ComplexConjugate ContDiff ContinuousMap ENNReal EuclideanSpace Fin.NatCast
+  InnerProductSpace Interval Matrix NNReal Pointwise RealInnerProductSpace UpperHalfPlane
 
 universe u v
 

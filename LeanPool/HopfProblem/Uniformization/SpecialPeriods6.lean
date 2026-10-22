@@ -4,14 +4,18 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Boris Alexeev
 -/
 module
+public import LeanPool.HopfProblem.Uniformization.SpecialPeriods2
+public import LeanPool.HopfProblem.Foundations.Core2
+public import Mathlib.Topology.UniformSpace.Ascoli
+public import Mathlib.Analysis.Complex.Schwarz
+import all LeanPool.HopfProblem.CuspFibre.CuspCentralHomology2
 
-public import LeanPool.HopfProblem.Prelude
+public import LeanPool.HopfProblem.InternalPrelude
 public import LeanPool.HopfProblem.PeriodFamily.Core1
-import all LeanPool.HopfProblem.Foundations.Core1
 import all LeanPool.HopfProblem.Lattice.Core1
-import all LeanPool.HopfProblem.Foundations.Core2
+import LeanPool.HopfProblem.Foundations.Core2
 import all LeanPool.HopfProblem.PeriodFamily.PeriodPoint
-import all LeanPool.HopfProblem.Foundations.Core3
+import LeanPool.HopfProblem.Foundations.Core3
 import all LeanPool.HopfProblem.Elliptic.Core1
 import all LeanPool.HopfProblem.Foundations.TwoAffineCharts
 import all LeanPool.HopfProblem.Uniformization.SpecialPeriods2
@@ -29,10 +33,9 @@ Supporting definitions and proofs for this stage of the six-sphere construction.
 
 open Set Function Filter Manifold Topology
 
-open scoped BigOperators CategoryTheory Complex.UnitDisc ComplexConjugate ContDiff ContinuousMap
-  Convolution ENNReal EuclideanSpace Fin.NatCast InnerProductSpace Interval Matrix MatrixGroups
-  Modular NNReal Pointwise RealInnerProductSpace TensorProduct UniformConvergence Uniformity
-  UpperHalfPlane
+open scoped BigOperators ComplexConjugate ContDiff ContinuousMap ENNReal EuclideanSpace Fin.NatCast
+  InnerProductSpace Interval Matrix MatrixGroups NNReal Pointwise RealInnerProductSpace
+  UniformConvergence Uniformity UpperHalfPlane
 
 universe u v
 
