@@ -7,6 +7,7 @@ import re
 import subprocess
 import sys
 import tempfile
+import textwrap
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
@@ -1373,7 +1374,13 @@ def _project_card(project: dict[str, Any]) -> str:
         f"Source: {_format_source(project['source'])}",
         f"Authors: {authors}",
         f"Status: {project['status']}",
-        f"Main declarations: {declarations}",
+        textwrap.fill(
+            f"Main declarations: {declarations}",
+            width=100,
+            subsequent_indent="  ",
+            break_long_words=False,
+            break_on_hyphens=False,
+        ),
         f"Tags: {tags}",
     ]
     if project.get("msc"):
