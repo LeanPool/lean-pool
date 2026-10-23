@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node WeierstrassCurve.Psi2Sq_ne_zero_of_isElliptic
 (25b8df23-3b96-5fb9-9d28-c9426ba8f3fa) by Claude (2026-09-05).
 

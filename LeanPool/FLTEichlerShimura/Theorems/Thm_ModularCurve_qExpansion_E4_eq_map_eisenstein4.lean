@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node ModularCurve.qExpansion_E4_eq_map_eisenstein4
 (24fcb766-5d41-5d56-976b-59ad4bde647b) by Claude (2026-09-05).
 

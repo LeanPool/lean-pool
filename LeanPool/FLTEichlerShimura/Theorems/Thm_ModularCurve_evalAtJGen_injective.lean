@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node ModularCurve.evalAtJGen_injective
 (6958382e-ee18-5cd3-bb1c-f1a25f5d4e40) by Claude (2026-09-05).
 

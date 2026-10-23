@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node ModularCurve.LevelN.exists_algHom_laurentBaseChange_apply_eq_qExpand
 (7a3c824d-739d-5148-b55c-0a9f9b438a98) by Claude (2026-09-05).
 

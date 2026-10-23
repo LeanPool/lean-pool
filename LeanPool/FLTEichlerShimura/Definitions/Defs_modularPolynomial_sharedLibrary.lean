@@ -2,7 +2,9 @@
 Copyright (c) 2026 David Loeffler. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: David Loeffler
+-/
 
+/-
 Extracted from the proof of Prove2Me node ModularCurve.exists_phiIrreducible
 (85c90cda-9166-5cf9-a245-c0442a624673), by Claude (2026-09-05), submission
 25e72fb1-74d8-5410-94ca-a5536b5cd327; locally adapted.

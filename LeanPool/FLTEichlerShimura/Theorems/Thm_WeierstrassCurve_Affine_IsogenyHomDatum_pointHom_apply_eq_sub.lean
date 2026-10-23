@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node WeierstrassCurve.Affine.IsogenyHomDatum.pointHom_apply_eq_sub
 (556105d3-e357-5169-99d1-8c4e73af1d36) by Claude (2026-09-05).
 

@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node FLTPrelim_FreyPackage
 (5ddaddde-4d33-536f-ad48-8f2946cbd54c) by Claude (2026-09-05).
 

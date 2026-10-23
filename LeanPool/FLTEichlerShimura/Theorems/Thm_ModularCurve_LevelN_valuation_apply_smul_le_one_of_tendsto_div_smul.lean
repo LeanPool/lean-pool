@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node ModularCurve.LevelN.valuation_apply_smul_le_one_of_tendsto_div_smul
 (4f16a8a0-3d21-586e-89f5-b1dda8087576) by Claude (2026-09-05).
 

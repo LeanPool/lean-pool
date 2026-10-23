@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node WeierstrassCurve.variableChange_mk_smul_eq_self_of_pow_three_eq_one
 (28399d01-a06d-5210-a1b1-25699852a767) by Claude (2026-09-05).
 

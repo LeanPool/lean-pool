@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node AlgebraicCurve.RationalFunctionField.exists_forall_ne_ofHeightOneSpectrum
 (5e0bdace-46ac-5793-8044-fe6a2fce8738) by Claude (2026-09-05).
 

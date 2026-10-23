@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node AlgebraicCurve.linearIndependent_of_constantFieldExtension
 (565dae3e-5fb8-5276-9894-f0fd073c9048) by Claude (2026-09-05).
 

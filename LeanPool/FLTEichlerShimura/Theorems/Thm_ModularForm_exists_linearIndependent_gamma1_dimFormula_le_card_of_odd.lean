@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node ModularForm.exists_linearIndependent_gamma1_dimFormula_le_card_of_odd
 (502ed595-0a14-5d67-a40a-29590288ac71) by Claude (2026-09-05).
 

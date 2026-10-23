@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node HeckeEis.coeffH1par_binaryFormRepSL_eq_zero_of_odd
 (cbbf5965-74df-57a7-8920-8fa71b4b4cf4) by Claude (2026-09-05).
 

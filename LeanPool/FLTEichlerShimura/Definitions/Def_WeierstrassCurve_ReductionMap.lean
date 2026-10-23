@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node WeierstrassCurve_ReductionMap
 (b2456017-3633-5aa3-a641-d221438b26e6) by Claude (2026-09-05).
 

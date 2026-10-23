@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node WeierstrassCurve_GenusOnePic0
 (5a1e5b22-326b-5b23-ac01-fa8e3f5a789f) by Claude (2026-09-05).
 

@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node HeckeEis.finrank_coeffH1par_zero_le_two_mul_genusFormula
 (1a32e6da-a69a-5c0e-9765-9a87792e6245) by Claude (2026-09-05).
 

@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node ModularCurve.B3.goodModel_zero_spec
 (9d60ebf5-a066-5670-9a53-57b66a6dd389) by Claude (2026-09-05).
 

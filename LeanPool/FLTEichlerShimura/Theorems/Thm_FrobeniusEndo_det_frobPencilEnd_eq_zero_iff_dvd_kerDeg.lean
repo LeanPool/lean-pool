@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node FrobeniusEndo.det_frobPencilEnd_eq_zero_iff_dvd_kerDeg
 (a3aa1ea4-c840-55bc-ab5b-e662f9e8a3cc) by Claude (2026-09-05).
 

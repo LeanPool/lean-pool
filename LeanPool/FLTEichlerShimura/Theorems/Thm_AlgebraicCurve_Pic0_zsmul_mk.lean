@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node AlgebraicCurve.Pic0.zsmul_mk
 (233f8b8e-9734-5a46-b2fc-b00da497bc2c) by Claude (2026-09-05).
 

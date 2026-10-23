@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node ModularFormClass.eq_of_forall_qCoeff_eq
 (fb97e0fa-1f4b-59f3-b303-c7736e494490) by Claude (2026-09-05).
 

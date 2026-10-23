@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node ModularForm.qExpansion_E4_mul_theta_discriminant_sub
 (73b2a8bf-533e-503c-95b3-770a40d8a71e) by Claude (2026-09-05).
 

@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node AlgebraicCurve.Place.exists_toValuationSubring_eq_comap
 (30a3796c-a370-52ad-a290-6d595cf72e66) by Claude (2026-09-05).
 

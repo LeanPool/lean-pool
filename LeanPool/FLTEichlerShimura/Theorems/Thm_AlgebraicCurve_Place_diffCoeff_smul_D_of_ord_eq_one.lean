@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node AlgebraicCurve.Place.diffCoeff_smul_D_of_ord_eq_one
 (7307b5be-2f4e-5309-9a33-edbe19cf9d59) by Claude (2026-09-05).
 

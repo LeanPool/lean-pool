@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node WeierstrassCurve.Affine.Point.vcInvFun_neg_heq_neg
 (691b27e9-1392-5e2c-93dd-4c11fbdcd810) by Claude (2026-09-05).
 

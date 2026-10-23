@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node AlgebraicCurve.Place.min_ord_le_ord_add
 (53d68399-5d09-50f9-b4eb-2f8e8477f42d) by Claude (2026-09-05).
 

@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node AlgebraicCurve.genusFF_eq_of_constantFieldExtension_of_isAlgClosed
 (729c32da-a2e4-5d19-9e97-4cb53850663c) by Claude (2026-09-05).
 

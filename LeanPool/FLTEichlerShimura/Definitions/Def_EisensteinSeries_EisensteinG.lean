@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node EisensteinSeries_EisensteinG
 (8b5efe3e-b5da-56f6-ad35-38b1fc8e8b51) by Claude (2026-09-05).
 

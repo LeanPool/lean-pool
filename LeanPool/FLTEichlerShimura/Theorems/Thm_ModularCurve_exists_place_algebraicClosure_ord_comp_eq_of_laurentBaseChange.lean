@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node ModularCurve.exists_place_algebraicClosure_ord_comp_eq_of_laurentBaseChange
 (f75c7e66-2f67-5579-a0cf-8fd32f6b5493) by Claude (2026-09-05).
 

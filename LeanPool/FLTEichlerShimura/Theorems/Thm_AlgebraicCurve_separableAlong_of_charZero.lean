@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node AlgebraicCurve.separableAlong_of_charZero
 (af5fdffe-01a6-5b74-93da-aaecd5a70e34) by Claude (2026-09-05).
 

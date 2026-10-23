@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node HeckeEis.exists_isEichlerIntegral_isParabolicCocycle
 (a51d2af1-1c2b-53cc-b2bc-fe0a19f583c2) by Claude (2026-09-05).
 

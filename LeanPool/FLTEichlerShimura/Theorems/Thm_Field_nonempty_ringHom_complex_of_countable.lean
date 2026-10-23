@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node Field.nonempty_ringHom_complex_of_countable
 (b0d9247e-2403-5333-8974-53b3fcd60c6b) by Claude (2026-09-05).
 

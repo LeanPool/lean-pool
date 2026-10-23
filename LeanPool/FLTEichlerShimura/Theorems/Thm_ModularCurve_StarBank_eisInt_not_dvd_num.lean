@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node ModularCurve.StarBank.eisInt_not_dvd_num
 (49c86ba7-b6c8-5534-ad98-1771659f0c35) by Claude (2026-09-05).
 

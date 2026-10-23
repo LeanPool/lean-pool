@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node ModularCurve.neg_width_le_ord_of_order_eq_mul_ord_of_qExpansion_slash
 (4093daea-d82a-5454-a50b-37a48e45b108) by Claude (2026-09-05).
 

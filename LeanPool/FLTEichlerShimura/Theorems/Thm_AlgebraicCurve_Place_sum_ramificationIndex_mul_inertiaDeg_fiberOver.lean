@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node AlgebraicCurve.Place.sum_ramificationIndex_mul_inertiaDeg_fiberOver
 (c174eb24-a14a-5429-afea-e03a5c710f13) by Claude (2026-09-05).
 

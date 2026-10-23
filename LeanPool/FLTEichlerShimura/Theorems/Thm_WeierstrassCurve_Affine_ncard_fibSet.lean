@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node WeierstrassCurve.Affine.ncard_fibSet
 (2481079f-7b1c-5850-82db-2e6507b11804) by Claude (2026-09-05).
 

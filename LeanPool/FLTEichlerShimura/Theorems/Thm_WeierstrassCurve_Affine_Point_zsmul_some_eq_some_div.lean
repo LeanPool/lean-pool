@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node WeierstrassCurve.Affine.Point.zsmul_some_eq_some_div
 (fe33ebe9-0d1c-5f57-8a6e-d0da19a58dae) by Claude (2026-09-05).
 

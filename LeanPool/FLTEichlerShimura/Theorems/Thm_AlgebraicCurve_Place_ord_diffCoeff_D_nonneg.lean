@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node AlgebraicCurve.Place.ord_diffCoeff_D_nonneg
 (15c05da3-b3ab-5a8f-94a8-a95db8b657ce) by Claude (2026-09-05).
 

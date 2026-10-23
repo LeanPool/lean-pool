@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node ModularCurve.coe_frickeInvolutionFull_modularUnitSeries
 (79408102-26d3-5260-b18d-9dc1e6671f44) by Claude (2026-09-05).
 

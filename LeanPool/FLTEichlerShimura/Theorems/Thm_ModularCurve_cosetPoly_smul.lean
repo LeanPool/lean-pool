@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node ModularCurve.cosetPoly_smul
 (99e07f35-34d4-566d-802a-a22d72644af5) by Claude (2026-09-05).
 

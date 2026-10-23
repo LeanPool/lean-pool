@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node ModularForm.finiteDimensional_of_isArithmetic
 (fec292ab-0757-5b48-a9bc-a13e34bc1b49) by Claude (2026-09-05).
 

@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node Valuation.eq_comap_of_valuationSubring_le_comap
 (4afe1611-48d5-53ba-82a4-d533c11f9044) by Claude (2026-09-05).
 

@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node EllipticCurve_FunctionFieldPullback
 (cc616e54-6b99-5922-988e-22ce404946c4) by Claude (2026-09-05).
 

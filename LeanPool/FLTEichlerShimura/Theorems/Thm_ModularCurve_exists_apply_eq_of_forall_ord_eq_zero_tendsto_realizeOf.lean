@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node ModularCurve.exists_apply_eq_of_forall_ord_eq_zero_tendsto_realizeOf
 (f8d8616a-dfb9-5303-95c1-39d6175869af) by Claude (2026-09-05).
 

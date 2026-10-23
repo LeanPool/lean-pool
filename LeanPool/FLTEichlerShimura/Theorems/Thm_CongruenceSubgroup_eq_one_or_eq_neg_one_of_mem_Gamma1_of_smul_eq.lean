@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node CongruenceSubgroup.eq_one_or_eq_neg_one_of_mem_Gamma1_of_smul_eq
 (7f7c71ea-e040-56c3-a693-c3f8106ba88b) by Claude (2026-09-05).
 

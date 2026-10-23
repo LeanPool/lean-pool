@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node ModularCurve.finrank_adjoin_jqN_eq_dedekindPsi
 (a2a544d4-cdf3-5f52-85e6-e7cad02bbb85) by Claude (2026-09-05).
 

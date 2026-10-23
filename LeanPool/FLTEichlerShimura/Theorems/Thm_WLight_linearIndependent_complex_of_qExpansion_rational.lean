@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node WLight.linearIndependent_complex_of_qExpansion_rational
 (489f1a10-dac1-5e31-a379-6120f1df6827) by Claude (2026-09-05).
 

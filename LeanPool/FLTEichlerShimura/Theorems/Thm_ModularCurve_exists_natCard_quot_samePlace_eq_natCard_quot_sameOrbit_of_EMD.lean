@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node ModularCurve.exists_natCard_quot_samePlace_eq_natCard_quot_sameOrbit_of_EMD
 (0a563c37-7a87-58af-8b6c-686de94c8c62) by Claude (2026-09-05).
 

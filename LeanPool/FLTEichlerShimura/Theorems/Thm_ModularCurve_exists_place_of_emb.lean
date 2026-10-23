@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node ModularCurve.exists_place_of_emb
 (78e864be-091d-51f3-b418-323cd2bbb50e) by Claude (2026-09-05).
 

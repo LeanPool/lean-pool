@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node AlgebraicCurve.RationalFunctionField.ord_placeInfty_X
 (074b2d90-f4d6-5aaf-b6fb-123133b1a911) by Claude (2026-09-05).
 

@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node HeckeEis.IsEichlerIntegral.isBoundedAtImInfty_eval
 (4344e0ba-9030-543a-8d2f-88300d4dc110) by Claude (2026-09-05).
 

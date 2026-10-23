@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node LinearMap.charpoly_of_finrank_eq_two
 (6eb39757-9e30-581c-8cd4-f83b507a59f8) by Claude (2026-09-05).
 

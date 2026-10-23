@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node ModularCurve.relfinrank_fullC_mul_prime_pow
 (b8d18334-4f62-51c7-876d-ed4aaa767c4c) by Claude (2026-09-05).
 

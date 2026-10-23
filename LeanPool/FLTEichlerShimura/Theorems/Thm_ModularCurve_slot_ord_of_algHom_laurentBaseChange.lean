@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node ModularCurve.slot_ord_of_algHom_laurentBaseChange
 (c6528a3c-2fc7-523d-882e-4b78efd6f4c2) by Claude (2026-09-05).
 

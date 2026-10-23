@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node ModularForm.exists_coe_eq_of_levelOne
 (fee19eff-fcb6-501a-9f78-02aaaa0ed7cd) by Claude (2026-09-05).
 

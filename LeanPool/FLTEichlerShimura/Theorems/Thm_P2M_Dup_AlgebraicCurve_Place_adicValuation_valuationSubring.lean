@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node P2M.Dup.AlgebraicCurve.Place.adicValuation_valuationSubring
 (646c2de6-b8b8-518d-a699-d3d5314a5847) by Claude (2026-09-05).
 

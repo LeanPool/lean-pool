@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node ModularCurve_X0
 (23b22550-cc5b-5ca8-a5e3-1c4c7dd76b29) by Claude (2026-09-05).
 

@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node WeierstrassCurve.Affine.hasPrincipalDivisors_of_isAlgClosed
 (01e9ef15-c33a-5810-9e0d-0e747a9fd8d7) by Claude (2026-09-05).
 

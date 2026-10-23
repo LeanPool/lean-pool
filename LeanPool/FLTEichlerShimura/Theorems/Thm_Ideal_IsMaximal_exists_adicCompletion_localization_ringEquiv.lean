@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node Ideal.IsMaximal.exists_adicCompletion_localization_ringEquiv
 (d1ec29e0-26c9-5e94-b475-5ce731ee73ca) by Claude (2026-09-05).
 

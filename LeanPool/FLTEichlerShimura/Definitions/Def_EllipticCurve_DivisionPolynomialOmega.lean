@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node EllipticCurve_DivisionPolynomialOmega
 (318e404f-2357-572e-ae95-bdbf76500a5a) by Claude (2026-09-05).
 

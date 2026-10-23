@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node HeckeEis.finrank_coeffH1par_le_two_mul_dimFormula
 (4ef8529a-5a8c-5298-9937-0d3aa73d3421) by Claude (2026-09-05).
 

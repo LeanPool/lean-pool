@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node ModularCurve.laurentBaseChange_adjoin_pair
 (c2e0ccae-2e37-5fcb-85d3-6ec8e18edfe0) by Claude (2026-09-05).
 

@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node
 ModularCurve.exists_divisor_degree_weight_and_isIntegral_of_mem_riemannRochSpace
 (7c8c2611-3f75-5f50-8620-bbc353cafd33) by Claude (2026-09-05).

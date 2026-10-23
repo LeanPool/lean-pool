@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node
 ModularCurve.ModularPolynomialData.mem_of_isRoot_map_j_of_transcendental_of_odd
 (ab127387-aafa-5673-9e11-75310cd2c2bd) by Claude (2026-09-05).

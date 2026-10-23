@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node ModularCurve.realizeOf_eq_div
 (189c50d4-7af7-5360-ad95-f58a8c9162f0) by Claude (2026-09-05).
 

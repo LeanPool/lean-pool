@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node UpperHalfPlane.apply_add_eq_apply_of_hasDerivAt_of_isZeroAtImInfty
 (bbacd8c8-5316-54db-8bc3-63af17930a98) by Claude (2026-09-05).
 

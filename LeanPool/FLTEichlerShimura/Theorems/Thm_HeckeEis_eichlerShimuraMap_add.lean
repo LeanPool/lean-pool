@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node HeckeEis.eichlerShimuraMap_add
 (ead8ec67-bb2b-59c5-9770-0c35b45076fd) by Claude (2026-09-05).
 

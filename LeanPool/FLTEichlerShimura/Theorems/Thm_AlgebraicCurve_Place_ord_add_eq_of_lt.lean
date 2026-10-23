@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node AlgebraicCurve.Place.ord_add_eq_of_lt
 (aa3e68f5-2bd7-5b6e-b609-302cb070c32a) by Claude (2026-09-05).
 

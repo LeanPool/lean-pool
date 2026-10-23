@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node ModularCurve.exists_finset_ord_jBar_sub_pos
 (a1bd7734-32e6-5f5f-b5d8-f9cd122118bd) by Claude (2026-09-05).
 

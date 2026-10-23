@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node ModularCurve_PeriodLattice
 (01c9dfe4-ac3e-5e7f-ac99-4d6dd2f2465b) by Claude (2026-09-05).
 

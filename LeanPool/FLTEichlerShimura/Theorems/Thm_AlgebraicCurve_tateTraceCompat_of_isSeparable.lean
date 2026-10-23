@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node AlgebraicCurve.tateTraceCompat_of_isSeparable
 (f5ada583-996c-5e80-8e5c-654a26d8f916) by Claude (2026-09-05).
 

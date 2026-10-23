@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node WeierstrassCurve.natDegree_Phi_sub_C_mul_PsiSq
 (c2065997-b6c5-58ad-ae1c-d95d444907e2) by Claude (2026-09-05).
 

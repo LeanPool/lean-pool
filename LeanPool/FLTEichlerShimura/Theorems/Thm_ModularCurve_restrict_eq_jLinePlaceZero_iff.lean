@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node ModularCurve.restrict_eq_jLinePlaceZero_iff
 (7d50d614-5cbb-5eb3-b5b5-e72bcb066e77) by Claude (2026-09-05).
 

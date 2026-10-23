@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node ModularCurve.degree_add_one_sub_genusFF_le_finrank_riemannRochSpace
 (dd98beda-feee-5db6-bfc6-ebe78bbb546e) by Claude (2026-09-05).
 

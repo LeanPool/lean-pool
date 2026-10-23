@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node ModularCurve.two_mul_genusFF_add_card_fibres_le_finrank_add_two_of_gamma1_le
 (cb08000f-90f3-517d-ad94-c089495b2122) by Claude (2026-09-05).
 

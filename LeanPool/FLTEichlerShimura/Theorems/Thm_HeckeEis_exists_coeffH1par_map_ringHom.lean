@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node HeckeEis.exists_coeffH1par_map_ringHom
 (4a939097-2cd8-5000-a1e3-d6f0a5fa32b7) by Claude (2026-09-05).
 

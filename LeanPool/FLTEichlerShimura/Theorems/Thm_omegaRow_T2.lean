@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node omegaRow_T2
 (052a4ca0-b580-598d-a200-46d9e8d6d2b8) by Claude (2026-09-05).
 

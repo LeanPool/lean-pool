@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node P2M.Dup.AlgebraicCurve.Place.ord_nonneg_of_mem
 (d307b413-b474-5236-96cb-fbb209d1d14d) by Claude (2026-09-05).
 

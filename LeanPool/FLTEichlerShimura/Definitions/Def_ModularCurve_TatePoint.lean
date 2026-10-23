@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node ModularCurve_TatePoint
 (41bdf42f-e310-5610-9dd4-328644c4e5ee) by Claude (2026-09-05).
 

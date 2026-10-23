@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node WeierstrassCurve.Affine.Point.zsmul_y_mul_psi_cube
 (4fdd4635-b19d-59ac-890e-7c8f296bee29) by Claude (2026-09-05).
 

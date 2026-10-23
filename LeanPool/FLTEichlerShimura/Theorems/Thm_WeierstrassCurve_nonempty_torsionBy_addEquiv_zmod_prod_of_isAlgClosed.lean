@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node WeierstrassCurve.nonempty_torsionBy_addEquiv_zmod_prod_of_isAlgClosed
 (a6ae4475-f68f-5bc7-a365-f1642a586e13) by Claude (2026-09-05).
 

@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node TaylorWiles_Primes
 (c2ff5db8-f2a4-5d20-a6b7-48adc9eb9494) by Claude (2026-09-05).
 

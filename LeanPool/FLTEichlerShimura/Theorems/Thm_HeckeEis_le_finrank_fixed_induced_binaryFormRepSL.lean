@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node HeckeEis.le_finrank_fixed_induced_binaryFormRepSL
 (97044c7f-6184-5086-9b7d-a2178cc068c0) by Claude (2026-09-05).
 

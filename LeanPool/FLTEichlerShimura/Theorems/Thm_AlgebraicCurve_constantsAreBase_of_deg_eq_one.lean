@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node AlgebraicCurve.constantsAreBase_of_deg_eq_one
 (51f0b069-efe1-5222-b0a8-29fba4c7735c) by Claude (2026-09-05).
 

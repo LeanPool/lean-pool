@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node ModularCurve.periodMapOf_apply_eq_periodOf
 (64275804-bdd6-56b8-a4b3-a0476cf18f03) by Claude (2026-09-05).
 

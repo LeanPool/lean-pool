@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node MvPolynomial.IsHomogeneous.iterate_pderiv_eq_zero_of_lt
 (6acf2c45-10bd-553c-81b2-a6163bfe51ad) by Claude (2026-09-05).
 

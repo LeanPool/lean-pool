@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node ModularCurve.relfinrank_laurentBaseChange_modularFunctionFieldFull
 (f5160626-abe0-5536-b5c5-7d203939f95e) by Claude (2026-09-05).
 

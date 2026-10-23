@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node HeckeEis.IsEichlerIntegral.exists_sub_eq_const
 (169dac0f-d214-5bde-beca-b80d527798bc) by Claude (2026-09-05).
 

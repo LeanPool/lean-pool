@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node AlgebraicCurve.Place.exists_ord_mul_eq_order_of_algHom_laurentSeries
 (a09cc34f-f4eb-5951-b5ff-76663dc0215e) by Claude (2026-09-05).
 

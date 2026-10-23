@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node ModularCurve.ord_jBar_sub_1728_dvd_two
 (ad7b8fd1-51b8-5a26-a7e1-ee7822d46f82) by Claude (2026-09-05).
 

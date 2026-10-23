@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node WeierstrassCurve.velu2_tangent_negAddY_cleared_identity
 (54cd4c04-2ad9-5a7f-83b4-5824129f7814) by Claude (2026-09-05).
 

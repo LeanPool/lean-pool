@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node AlgebraicCurve.finite_setOf_ord_ne_zero_of_finiteDimensional
 (8d6abb0c-e134-5f13-b229-4a15c978b445) by Claude (2026-09-05).
 

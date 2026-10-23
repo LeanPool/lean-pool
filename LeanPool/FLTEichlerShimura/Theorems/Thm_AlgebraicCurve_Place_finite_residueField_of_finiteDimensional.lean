@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node AlgebraicCurve.Place.finite_residueField_of_finiteDimensional
 (bbdfa1a3-22ad-54df-ab92-df7e9cd5811e) by Claude (2026-09-05).
 

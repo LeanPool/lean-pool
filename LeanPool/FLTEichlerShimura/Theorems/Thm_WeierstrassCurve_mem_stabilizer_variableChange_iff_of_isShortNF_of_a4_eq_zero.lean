@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node WeierstrassCurve.mem_stabilizer_variableChange_iff_of_isShortNF_of_a4_eq_zero
 (c9190df0-8485-5e33-bce4-f6976b5c8500) by Claude (2026-09-05).
 

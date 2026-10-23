@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node AutomorphicForm_Gamma0FundamentalSet
 (497188a5-a407-573a-8d6c-e24bc6a4ae43) by Claude (2026-09-05).
 

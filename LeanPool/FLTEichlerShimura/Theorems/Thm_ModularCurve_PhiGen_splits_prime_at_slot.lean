@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node ModularCurve.PhiGen.splits_prime_at_slot
 (6645bdfa-6ae3-5bd7-ad42-8762b3625fa3) by Claude (2026-09-05).
 

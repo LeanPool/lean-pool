@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node HeckeEis.jFactor_pow_mul_eval_binaryFormRepSL
 (494216ec-849a-5e02-bbdf-6d4fb405713d) by Claude (2026-09-05).
 

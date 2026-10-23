@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node AlgebraicCurve_DivisorClassGroup
 (10001017-d65a-5012-a2fd-602421b3ec65) by Claude (2026-09-05).
 

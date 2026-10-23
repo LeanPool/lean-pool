@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node AlgebraicCurve.RationalFunctionField.nonempty_place_of_ratFunc_tower
 (ca470c8c-3cff-5708-8cb2-bac339865b28) by Claude (2026-09-05).
 

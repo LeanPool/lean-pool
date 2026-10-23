@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node AlgebraicCurve_Repartitions
 (c6658b18-2512-5a01-9ac0-4b2e22e679b0) by Claude (2026-09-05).
 

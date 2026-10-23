@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node WeierstrassCurve.Affine.Point.two_smul_some_eq_zero_iff
 (4a97bf48-6b69-52ce-8cff-90d549d4705d) by Claude (2026-09-05).
 

@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node ModularCurve.ModularPolynomialData.hasRamBound_two_of_isRoot_at_1728_of_odd
 (2d2e6665-ed6a-52fe-a1dd-cf8924639f22) by Claude (2026-09-05).
 

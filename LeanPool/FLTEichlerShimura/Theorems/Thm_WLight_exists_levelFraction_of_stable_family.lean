@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node WLight.exists_levelFraction_of_stable_family
 (490607a5-50bf-5b84-bea7-42d3fd2f1404) by Claude (2026-09-05).
 

@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node WLight.exists_qExpansion_coeff_mem_of_mdifferentiable_levelFraction
 (a6665bad-44cd-5e14-be80-bf84ddc2d50a) by Claude (2026-09-05).
 

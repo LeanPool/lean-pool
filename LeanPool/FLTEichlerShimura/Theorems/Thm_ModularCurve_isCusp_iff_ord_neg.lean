@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node ModularCurve.isCusp_iff_ord_neg
 (6a851602-4ebf-5f58-93a9-0ac000883613) by Claude (2026-09-05).
 

@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node CuspForm.genusFormula_le_finrank_gamma0_weight_two
 (5abf5b1f-1c20-5f08-aca1-04c7c391943e) by Claude (2026-09-05).
 

@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node ModularCurve.PhiGen.aeval_jq_intCoeffs_descent
 (20bc4d07-b455-5870-b4a2-a361286e6d87) by Claude (2026-09-05).
 

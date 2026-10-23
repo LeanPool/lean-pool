@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node WeierstrassCurve.reducePoint_some_add_some_of_le_one
 (ca1cf78f-5d1e-51f5-974b-90f484c78720) by Claude (2026-09-05).
 

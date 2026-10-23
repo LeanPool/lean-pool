@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node Gamma0CoeffCohomology
 (077b1ce7-afc1-5e0a-bf2d-900e8ab21871) by Claude (2026-09-05).
 

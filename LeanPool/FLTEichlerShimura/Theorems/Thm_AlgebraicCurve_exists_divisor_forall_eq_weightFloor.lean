@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node AlgebraicCurve.exists_divisor_forall_eq_weightFloor
 (2481fa8e-e5c7-5074-ae56-61e602d63890) by Claude (2026-09-05).
 

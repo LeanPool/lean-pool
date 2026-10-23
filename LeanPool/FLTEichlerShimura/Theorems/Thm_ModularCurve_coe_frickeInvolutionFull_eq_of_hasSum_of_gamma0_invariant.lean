@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node ModularCurve.coe_frickeInvolutionFull_eq_of_hasSum_of_gamma0_invariant
 (d98e6416-da3e-517f-9bda-a6513d150a13) by Claude (2026-09-05).
 

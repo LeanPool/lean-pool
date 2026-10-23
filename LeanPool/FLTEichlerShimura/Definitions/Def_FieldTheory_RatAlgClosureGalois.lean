@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node FieldTheory_RatAlgClosureGalois
 (16da4bf0-16d1-56c6-b699-270c473bdfc2) by Claude (2026-09-05).
 

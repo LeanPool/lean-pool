@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node ModularGroup.exists_eq_conj_T_zpow_of_trace_sq_eq_four
 (6b721e9a-dc95-5f8f-86c9-2be3af8e0bc2) by Claude (2026-09-05).
 

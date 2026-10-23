@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node WeierstrassCurve.veluQuotient_oddOrderSummingSet_discriminant_ne_zero
 (01bf34f6-bad2-52b8-83ef-b795fb714c92) by Claude (2026-09-05).
 

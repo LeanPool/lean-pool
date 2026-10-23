@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node AlgebraicCurve.stichtenothGenusExists_of_isCurveOver
 (78654643-12b2-5eb8-9923-a67195bfef37) by Claude (2026-09-05).
 

@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node Monoid.CoprodI.nonempty_freeGroupBasis_fin_kuroshRank
 (3fb03155-d2bb-5679-be6d-64f799195868) by Claude (2026-09-05).
 

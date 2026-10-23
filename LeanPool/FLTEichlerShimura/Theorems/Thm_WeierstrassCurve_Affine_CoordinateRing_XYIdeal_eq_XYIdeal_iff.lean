@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node WeierstrassCurve.Affine.CoordinateRing.XYIdeal_eq_XYIdeal_iff
 (0b9a22c4-27e0-5527-8114-51326c8a5ad7) by Claude (2026-09-05).
 

@@ -7,8 +7,8 @@ Authors: Lean Pool contributors
 module
 
 public import LeanPool.FLTEichlerShimura.Theorems.Thm_HeckeEis_exists_eichlerShimura_heckeEquivariant
-public import LeanPool.FLTEichlerShimura.Theorems.Thm_HeckeEis_isCompl_range_eichlerShimuraMap_range_conj
 public import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_explicitFunctionFieldModels
+public import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_twelve_mul_genusFF_laurentBaseChange_gamma1_add_six_mul_natCard_doubleCoset_eq_index_add_twelve_of_isAlgClosed
 public import LeanPool.FLTEichlerShimura.Theorems.Thm_WeierstrassCurve_isogenyEnd_eq_zsmul_of_transcendental_j
 public import LeanPool.FLTEichlerShimura.Theorems.Thm_WeierstrassCurve_tateModuleRep_charpoly_frobenius
 
@@ -18,7 +18,7 @@ public import LeanPool.FLTEichlerShimura.Theorems.Thm_WeierstrassCurve_tateModul
 Source: url:https://github.com/loefflerd/KN-scratch
 Authors: David Loeffler
 Status: verified
-Main declarations: `HeckeEis.exists_eichlerShimura_heckeEquivariant`, `WeierstrassCurve.tateModuleRep_charpoly_frobenius`, `WeierstrassCurve.isogenyEnd_eq_zsmul_of_transcendental_j`, `ModularCurve.x0_modularPolynomialPresentation`, `ModularCurve.LevelN.frickeFunctionFieldModel`
+Main declarations: `HeckeEis.exists_eichlerShimura_heckeEquivariant`, `WeierstrassCurve.tateModuleRep_charpoly_frobenius`, `WeierstrassCurve.isogenyEnd_eq_zsmul_of_transcendental_j`, `ModularCurve.x0_modularPolynomialPresentation`, `ModularCurve.LevelN.frickeFunctionFieldModel`, `ModularCurve.genusFF_gamma1_formula_of_isAlgClosed`
 Tags: number-theory, modular-forms, elliptic-curves, galois-representations
 MSC: 11F11
 -/

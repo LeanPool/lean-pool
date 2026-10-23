@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node ModularCurve.modularFunctionFieldFullC_le_qExpFunctionFieldC_gamma0
 (7e38264d-3162-5273-927a-09b2aee32a0c) by Claude (2026-09-05).
 

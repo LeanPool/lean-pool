@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node WeierstrassCurve_VeluPointMap
 (9adbe525-66e5-519e-9c37-3d600c11d1a1) by Claude (2026-09-05).
 

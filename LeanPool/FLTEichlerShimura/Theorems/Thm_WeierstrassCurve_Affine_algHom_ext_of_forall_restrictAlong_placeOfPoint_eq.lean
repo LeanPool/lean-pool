@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node WeierstrassCurve.Affine.algHom_ext_of_forall_restrictAlong_placeOfPoint_eq
 (00c8479e-a9de-523d-aa65-d8e112a1ca60) by Claude (2026-09-05).
 

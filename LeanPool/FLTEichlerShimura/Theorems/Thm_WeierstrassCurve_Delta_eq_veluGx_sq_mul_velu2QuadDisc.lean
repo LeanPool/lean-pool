@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node WeierstrassCurve.Delta_eq_veluGx_sq_mul_velu2QuadDisc
 (588c210e-7262-5687-86db-d00cd5491399) by Claude (2026-09-05).
 

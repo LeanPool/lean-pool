@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node ModularCurve.mem_modularFunctionField_of_hasSum_of_gamma0_invariant
 (3ea17de2-905a-55cd-af34-bbc295dd6498) by Claude (2026-09-05).
 

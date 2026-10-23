@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node ModularCurve.exists_hasEquivariantPrimitiveOf
 (b21b1f0a-8a14-5943-be94-173ff5197938) by Claude (2026-09-05).
 

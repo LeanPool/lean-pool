@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node LinearMap.trace_eq_of_sq_sub_smul_add_eq_zero_of_det_eq
 (30b6f732-8aca-5287-9250-d1b13f6da6ea) by Claude (2026-09-05).
 

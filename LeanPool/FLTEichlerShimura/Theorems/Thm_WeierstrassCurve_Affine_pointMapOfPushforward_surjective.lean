@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node WeierstrassCurve.Affine.pointMapOfPushforward_surjective
 (da89fd8d-d346-53a0-8175-51c3792e69dc) by Claude (2026-09-05).
 

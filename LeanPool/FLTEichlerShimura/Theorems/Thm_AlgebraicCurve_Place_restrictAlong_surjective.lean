@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node AlgebraicCurve.Place.restrictAlong_surjective
 (f685dcec-8c0f-5ba0-96a3-c999ac4864ce) by Claude (2026-09-05).
 

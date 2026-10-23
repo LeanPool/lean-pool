@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node AlgebraicCurve.Place.ord_restrictAlong_eq_natCard_algHom_of_isGalois
 (8e50de98-6fdc-590e-b2ee-1ad607fe9b17) by Claude (2026-09-05).
 

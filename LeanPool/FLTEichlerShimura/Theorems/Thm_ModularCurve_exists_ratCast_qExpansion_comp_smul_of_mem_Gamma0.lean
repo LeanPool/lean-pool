@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node ModularCurve.exists_ratCast_qExpansion_comp_smul_of_mem_Gamma0
 (cb08ea2d-4876-503d-be52-c4d57dff919d) by Claude (2026-09-05).
 

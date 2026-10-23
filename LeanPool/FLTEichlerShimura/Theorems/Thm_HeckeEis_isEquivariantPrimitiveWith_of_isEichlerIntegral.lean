@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node HeckeEis.isEquivariantPrimitiveWith_of_isEichlerIntegral
 (daa1f7da-7620-5a5c-9047-44d2ff15d46b) by Claude (2026-09-05).
 

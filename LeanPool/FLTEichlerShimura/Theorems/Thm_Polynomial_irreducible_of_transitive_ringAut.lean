@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node Polynomial.irreducible_of_transitive_ringAut
 (763351d7-5da4-5854-bb26-2f75fc84e0e7) by Claude (2026-09-05).
 

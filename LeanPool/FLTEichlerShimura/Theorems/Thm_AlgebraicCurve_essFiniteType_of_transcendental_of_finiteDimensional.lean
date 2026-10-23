@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node AlgebraicCurve.essFiniteType_of_transcendental_of_finiteDimensional
 (da7d1dae-e045-52f9-9794-368f9eeed669) by Claude (2026-09-05).
 

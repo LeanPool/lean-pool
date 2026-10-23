@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node CuspForm.exists_degeneracy_Gamma0
 (cd45b6a6-d6e5-5d9d-90de-20b47b250822) by Claude (2026-09-05).
 

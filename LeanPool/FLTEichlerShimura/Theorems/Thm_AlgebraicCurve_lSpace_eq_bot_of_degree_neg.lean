@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node AlgebraicCurve.lSpace_eq_bot_of_degree_neg
 (193c3207-9415-57ea-b35e-c8a7e63242ce) by Claude (2026-09-05).
 

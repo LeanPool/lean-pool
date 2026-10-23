@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node WeierstrassCurve.exists_valuation_eq_exp_of_not_le_one
 (f89d942c-8e85-5294-aa47-5d6adf511407) by Claude (2026-09-05).
 

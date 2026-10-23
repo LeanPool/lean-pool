@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node EllipticCurve_WeilPairingFun
 (1bf92a85-c3e9-5b97-802c-d79bf412e655) by Claude (2026-09-05).
 

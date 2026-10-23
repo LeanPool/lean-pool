@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node ModularCurve.exists_tendsto_div_smul_of_eventuallyEq_realizeOf_of_tendsto
 (7370d638-21ce-5968-a661-67c17745520c) by Claude (2026-09-05).
 

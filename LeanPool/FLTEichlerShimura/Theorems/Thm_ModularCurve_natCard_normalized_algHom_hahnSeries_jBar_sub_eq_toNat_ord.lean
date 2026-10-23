@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node ModularCurve.natCard_normalized_algHom_hahnSeries_jBar_sub_eq_toNat_ord
 (8587e1e1-f8b9-5fed-a3fd-a5ba9f328005) by Claude (2026-09-05).
 

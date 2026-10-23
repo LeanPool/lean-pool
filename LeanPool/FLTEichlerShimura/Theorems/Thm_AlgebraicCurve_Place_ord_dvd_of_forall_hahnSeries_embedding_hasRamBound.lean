@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node AlgebraicCurve.Place.ord_dvd_of_forall_hahnSeries_embedding_hasRamBound
 (f165bcf6-81a8-5fab-9912-9eaa96ffdc12) by Claude (2026-09-05).
 

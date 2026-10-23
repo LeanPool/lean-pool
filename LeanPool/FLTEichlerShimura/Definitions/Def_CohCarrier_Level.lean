@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node CohCarrier_Level
 (2b4227ec-c42c-5d2f-b911-2f4e7742164b) by Claude (2026-09-05).
 

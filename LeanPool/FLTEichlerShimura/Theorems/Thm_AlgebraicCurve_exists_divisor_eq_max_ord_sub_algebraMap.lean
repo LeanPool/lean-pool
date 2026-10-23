@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node AlgebraicCurve.exists_divisor_eq_max_ord_sub_algebraMap
 (bfacb035-0084-5562-9e11-8a52d16fde3c) by Claude (2026-09-05).
 

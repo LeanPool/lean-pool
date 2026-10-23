@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node ModularFormClass.isBoundedAt_heckeT
 (25cbeda5-8d19-592d-8416-c64dd14fde75) by Claude (2026-09-05).
 

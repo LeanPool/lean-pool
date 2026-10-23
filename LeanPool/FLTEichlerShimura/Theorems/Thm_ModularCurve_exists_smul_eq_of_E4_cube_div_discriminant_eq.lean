@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node ModularCurve.exists_smul_eq_of_E4_cube_div_discriminant_eq
 (7effcae8-9a2b-5bc7-ac68-988dfd729842) by Claude (2026-09-05).
 

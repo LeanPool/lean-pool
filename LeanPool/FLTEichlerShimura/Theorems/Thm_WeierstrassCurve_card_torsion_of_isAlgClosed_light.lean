@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node WeierstrassCurve.card_torsion_of_isAlgClosed_light
 (529e87bd-4e4f-544a-9857-1db0b5091352) by Claude (2026-09-05).
 

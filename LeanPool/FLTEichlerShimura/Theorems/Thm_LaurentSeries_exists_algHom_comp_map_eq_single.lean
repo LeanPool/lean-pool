@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node LaurentSeries.exists_algHom_comp_map_eq_single
 (70dd59d7-5fd8-5e59-812a-b1c053ef17ff) by Claude (2026-09-05).
 

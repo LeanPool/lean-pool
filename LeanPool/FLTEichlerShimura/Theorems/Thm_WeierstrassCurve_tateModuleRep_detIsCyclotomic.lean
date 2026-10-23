@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node WeierstrassCurve.tateModuleRep_detIsCyclotomic
 (52a30335-e340-5197-bb05-519e1167f456) by Claude (2026-09-05).
 

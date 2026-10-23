@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node WeierstrassCurve.tateModuleRep_charpoly_frobenius
 (8f4634d9-5aa8-53ac-b6f3-426deb1a8659) by Claude (2026-09-05).
 

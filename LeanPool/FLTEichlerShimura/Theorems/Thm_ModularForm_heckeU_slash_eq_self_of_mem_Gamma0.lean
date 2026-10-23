@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node ModularForm.heckeU_slash_eq_self_of_mem_Gamma0
 (9f17ad58-ad6c-5a85-ac1d-ca32b4f24fd3) by Claude (2026-09-05).
 

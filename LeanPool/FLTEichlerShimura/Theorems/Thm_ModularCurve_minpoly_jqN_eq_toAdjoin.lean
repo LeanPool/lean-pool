@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node ModularCurve.minpoly_jqN_eq_toAdjoin
 (3868b11e-4b3e-517f-b111-3561f9579eda) by Claude (2026-09-05).
 

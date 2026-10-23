@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node WeierstrassCurve.Affine.Point.exists_zsmul_some_eq_some_baseChange
 (2098c45a-1264-59ac-a1e4-8401808ef3c9) by Claude (2026-09-05).
 

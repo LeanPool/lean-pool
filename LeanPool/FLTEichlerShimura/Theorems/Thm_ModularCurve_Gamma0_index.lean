@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node ModularCurve.Gamma0_index
 (c91d959d-2902-51d8-9891-dad35f4d75c5) by Claude (2026-09-05).
 

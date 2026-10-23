@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node Complex.integral_modularFundamentalDomain_eq_boundary_of_hasFDerivAt
 (9d9521ac-ade0-5beb-9c73-dcdf69ae7004) by Claude (2026-09-05).
 

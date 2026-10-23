@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node ModularCurve.jqModC_eq_qExpansion_E4_cube_div_discriminant
 (6b7bf396-6702-5f9a-988d-6db3bb11ca4d) by Claude (2026-09-05).
 

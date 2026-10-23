@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node ModularCurve.analyticOrderAt_le_of_isIntegral_adjoin_coeffEmb_jq_pow
 (23eee95d-3cbf-5f99-854c-52b9e5f2e643) by Claude (2026-09-05).
 

@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node ModularCurve.coeffEmb_injective
 (f6fc8541-669e-5884-8b15-9534e19b03e3) by Claude (2026-09-05).
 

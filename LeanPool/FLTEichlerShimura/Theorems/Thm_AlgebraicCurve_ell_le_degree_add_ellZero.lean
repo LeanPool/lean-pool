@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node AlgebraicCurve.ell_le_degree_add_ellZero
 (ad62287e-6d19-5b7f-8ae7-4545166706b0) by Claude (2026-09-05).
 

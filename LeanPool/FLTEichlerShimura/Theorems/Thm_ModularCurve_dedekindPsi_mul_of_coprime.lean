@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node ModularCurve.dedekindPsi_mul_of_coprime
 (279a2b31-54aa-5736-b408-0c9a53ca3d30) by Claude (2026-09-05).
 

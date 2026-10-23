@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node ModularForm.isIntegral_adjoin_qExpansion_div_discriminant_pow_of_isArithmetic
 (d634d576-a9d7-5ca7-9008-24980764c73f) by Claude (2026-09-05).
 

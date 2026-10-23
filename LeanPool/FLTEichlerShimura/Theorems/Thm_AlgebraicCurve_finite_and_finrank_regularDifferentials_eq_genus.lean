@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node AlgebraicCurve.finite_and_finrank_regularDifferentials_eq_genus
 (36752414-1ec4-5b94-8fec-c5a406af6025) by Claude (2026-09-05).
 

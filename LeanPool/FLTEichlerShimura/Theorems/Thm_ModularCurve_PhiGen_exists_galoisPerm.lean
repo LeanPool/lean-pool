@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node ModularCurve.PhiGen.exists_galoisPerm
 (372db64a-d7eb-5ae5-8db4-6cf5bef16d73) by Claude (2026-09-05).
 

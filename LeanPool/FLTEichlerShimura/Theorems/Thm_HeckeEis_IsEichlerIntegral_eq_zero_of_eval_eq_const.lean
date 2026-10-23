@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node HeckeEis.IsEichlerIntegral.eq_zero_of_eval_eq_const
 (fe5d2f3a-0740-57ed-8313-443b017b4ca1) by Claude (2026-09-05).
 

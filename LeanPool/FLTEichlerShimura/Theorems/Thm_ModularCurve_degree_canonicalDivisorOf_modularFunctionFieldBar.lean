@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node ModularCurve.degree_canonicalDivisorOf_modularFunctionFieldBar
 (98caf52b-11f8-5950-96a7-21cd2381921b) by Claude (2026-09-05).
 

@@ -2,7 +2,9 @@
 Copyright (c) 2026 David Loeffler. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: David Loeffler
+-/
 
+/-
 Extracted from Prove2Me proofs by Claude (2026-09-05):
 * WeierstrassCurve.Affine.IsogenyEndDatum.exists_dualEndData_dual_mem_and_norm_eq_finrankAlong
   (7adb32a2-3d95-5f94-8f9b-631ec0a69a45), submission

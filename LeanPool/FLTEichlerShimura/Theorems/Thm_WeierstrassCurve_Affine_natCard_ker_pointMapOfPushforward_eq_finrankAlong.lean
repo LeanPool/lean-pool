@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node WeierstrassCurve.Affine.natCard_ker_pointMapOfPushforward_eq_finrankAlong
 (edfe241b-5171-5926-b6a3-0a793be30c3d) by Claude (2026-09-05).
 

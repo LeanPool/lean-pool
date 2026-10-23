@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node AlgebraicCurve.Place.sum_ramificationIndex_mul_inertiaDeg
 (726f87db-1b81-52b1-acd4-0b24e2b78c6e) by Claude (2026-09-05).
 

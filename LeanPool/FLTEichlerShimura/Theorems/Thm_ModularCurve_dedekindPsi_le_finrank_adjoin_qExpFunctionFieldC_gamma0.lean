@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node ModularCurve.dedekindPsi_le_finrank_adjoin_qExpFunctionFieldC_gamma0
 (2ce1ed64-8cdd-574d-99d7-02f3ead4fec5) by Claude (2026-09-05).
 

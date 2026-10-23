@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node ModularCurve.natCard_ord_jBar_eq_one_eq_nuThree
 (aa4b0a7b-4024-51de-9e2d-607e2b149481) by Claude (2026-09-05).
 

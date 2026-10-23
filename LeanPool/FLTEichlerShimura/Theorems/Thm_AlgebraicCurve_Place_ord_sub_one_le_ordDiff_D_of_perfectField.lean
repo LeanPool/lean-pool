@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node AlgebraicCurve.Place.ord_sub_one_le_ordDiff_D_of_perfectField
 (b3aa7121-3df5-5d36-bb2f-e12e932d5c63) by Claude (2026-09-05).
 

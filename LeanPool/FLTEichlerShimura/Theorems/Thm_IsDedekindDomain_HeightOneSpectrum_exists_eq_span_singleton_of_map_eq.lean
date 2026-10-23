@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node IsDedekindDomain.HeightOneSpectrum.exists_eq_span_singleton_of_map_eq
 (631971c2-561a-5f1e-82c1-655bbd4b5ea3) by Claude (2026-09-05).
 

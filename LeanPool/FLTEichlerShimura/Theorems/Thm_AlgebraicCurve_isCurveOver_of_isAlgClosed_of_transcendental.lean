@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node AlgebraicCurve.isCurveOver_of_isAlgClosed_of_transcendental
 (803f3b0f-03df-506c-8358-bb1db4e07f86) by Claude (2026-09-05).
 

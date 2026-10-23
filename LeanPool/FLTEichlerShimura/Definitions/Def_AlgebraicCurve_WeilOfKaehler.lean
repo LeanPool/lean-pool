@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node AlgebraicCurve_WeilOfKaehler
 (fb3e70f4-0b96-5310-bd7f-172f850356e7) by Claude (2026-09-05).
 

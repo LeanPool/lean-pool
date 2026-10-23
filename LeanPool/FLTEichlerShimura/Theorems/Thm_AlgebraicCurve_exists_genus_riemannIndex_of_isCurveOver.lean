@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node AlgebraicCurve.exists_genus_riemannIndex_of_isCurveOver
 (9a2f9079-9764-5acf-ad36-06f9412f5986) by Claude (2026-09-05).
 

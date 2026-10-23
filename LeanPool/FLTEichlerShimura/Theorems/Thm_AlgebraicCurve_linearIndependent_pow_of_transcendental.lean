@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node AlgebraicCurve.linearIndependent_pow_of_transcendental
 (91b673f4-9d35-56a2-9173-4ba86b8a9b0f) by Claude (2026-09-05).
 

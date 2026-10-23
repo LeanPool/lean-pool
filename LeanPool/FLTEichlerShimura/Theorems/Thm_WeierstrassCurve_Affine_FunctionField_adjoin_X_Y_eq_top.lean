@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node WeierstrassCurve.Affine.FunctionField.adjoin_X_Y_eq_top
 (76a7f793-52a9-5d4b-9edd-47ed8f4898fa) by Claude (2026-09-05).
 

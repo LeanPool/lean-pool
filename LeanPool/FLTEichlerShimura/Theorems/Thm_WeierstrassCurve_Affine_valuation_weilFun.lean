@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node WeierstrassCurve.Affine.valuation_weilFun
 (d8912124-0fef-51f1-939c-c6cf5c2e1b07) by Claude (2026-09-05).
 

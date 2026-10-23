@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node ModularCurve.exists_algHom_of_isRoot
 (7a37c831-c213-5e25-982f-863e3a0bc5a2) by Claude (2026-09-05).
 

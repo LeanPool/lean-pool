@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node AlgebraicCurve.Place.ordDiff_eq_ordDifferential
 (09c76274-63ea-5dda-a3a7-31d65caf24cb) by Claude (2026-09-05).
 

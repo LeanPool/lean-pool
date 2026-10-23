@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node ModularCurve.PhiGen.mem_range_coeffEmb_qExpand_of_mem_inter
 (2bcc2b0e-71b3-551c-bfc5-30f24d78b8e7) by Claude (2026-09-05).
 

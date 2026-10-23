@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node WeierstrassCurve.Affine.valuation_placeOf_smul_of_algEquiv
 (960a1d3b-121f-50c9-9eb3-f6901fc02dd5) by Claude (2026-09-05).
 

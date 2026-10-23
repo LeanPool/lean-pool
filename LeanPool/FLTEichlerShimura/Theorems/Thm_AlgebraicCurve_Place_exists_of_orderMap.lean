@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node AlgebraicCurve.Place.exists_of_orderMap
 (f7694004-f5e3-581d-9a88-1005ec0c1bd0) by Claude (2026-09-05).
 

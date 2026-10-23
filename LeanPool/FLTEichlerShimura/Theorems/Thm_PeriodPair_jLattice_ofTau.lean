@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node PeriodPair.jLattice_ofTau
 (e347fa49-29e8-5478-bedd-7d8c08d463f9) by Claude (2026-09-05).
 

@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node AlgebraicCurve.ell_eq_zero_of_degree_neg
 (5cf85887-633a-5fb4-bf20-d6b446470e19) by Claude (2026-09-05).
 

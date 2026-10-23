@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node ModularCurve.cuspZeroBar_ne_cuspInftyBar
 (d2518335-7eea-5c45-a9c2-b57c920ec522) by Claude (2026-09-05).
 

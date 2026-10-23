@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node AlgebraicCurve.isCurveOver_of_transcendental_of_isSeparable
 (ce1046fd-9191-51fc-8f68-39fa53dc2bbf) by Claude (2026-09-05).
 

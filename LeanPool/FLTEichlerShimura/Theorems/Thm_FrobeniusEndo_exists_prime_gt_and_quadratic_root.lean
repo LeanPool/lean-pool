@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node FrobeniusEndo.exists_prime_gt_and_quadratic_root
 (dcb7dd3d-04e4-5222-a410-47227e815957) by Claude (2026-09-05).
 

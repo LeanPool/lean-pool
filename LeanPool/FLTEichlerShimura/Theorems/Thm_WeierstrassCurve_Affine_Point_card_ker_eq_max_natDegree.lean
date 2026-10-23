@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node WeierstrassCurve.Affine.Point.card_ker_eq_max_natDegree
 (cbe3a241-7687-58cc-a578-d49e3342986f) by Claude (2026-09-05).
 

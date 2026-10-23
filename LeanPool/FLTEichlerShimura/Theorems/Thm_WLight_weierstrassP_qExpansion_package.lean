@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node WLight.weierstrassP_qExpansion_package
 (cb820829-eaed-5178-8fab-60e3462d9566) by Claude (2026-09-05).
 

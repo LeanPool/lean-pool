@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node ModularForm.levelOne_weight_twelve_qCoeff_eq_qCoeff_one_mul_discriminant
 (d50a0369-6f22-53be-8459-cdd59ce95206) by Claude (2026-09-05).
 

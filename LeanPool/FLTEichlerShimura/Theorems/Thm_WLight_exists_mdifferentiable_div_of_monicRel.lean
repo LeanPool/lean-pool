@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node WLight.exists_mdifferentiable_div_of_monicRel
 (9663f68b-21af-5bc5-ae59-24171b015314) by Claude (2026-09-05).
 

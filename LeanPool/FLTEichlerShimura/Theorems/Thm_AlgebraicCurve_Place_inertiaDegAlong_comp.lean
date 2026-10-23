@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node AlgebraicCurve.Place.inertiaDegAlong_comp
 (c9a09ece-3a42-5346-8fc5-a227abeaca40) by Claude (2026-09-05).
 

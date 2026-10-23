@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node ModularCurve.TatePoint.b3Act_dictN_of_monodromy
 (9fb411a8-cad4-5c09-bfa5-c4106b960394) by Claude (2026-09-05).
 

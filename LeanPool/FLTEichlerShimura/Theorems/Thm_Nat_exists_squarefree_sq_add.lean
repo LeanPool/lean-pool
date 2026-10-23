@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node Nat.exists_squarefree_sq_add
 (cc2c6b12-9479-5ff7-8420-6713a3e98239) by Claude (2026-09-05).
 

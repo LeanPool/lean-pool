@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node ModularCurve.StarBank.eisInt_series
 (c94d7baa-e8cf-5c0b-a2c8-ce38cfa7f6ea) by Claude (2026-09-05).
 

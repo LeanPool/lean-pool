@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node ModularCurve.exists_complexPlaceDictionaryOf
 (8e86d257-e07b-5c73-b441-fc1bd9416747) by Claude (2026-09-05).
 

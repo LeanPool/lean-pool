@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node ModularCurve.samePlace_iff_exists_monodromy
 (e7630490-b841-57a1-ad5b-d275ba655cec) by Claude (2026-09-05).
 

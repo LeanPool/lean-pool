@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node IsAddCyclic.of_squarefree_natCard
 (14855747-d0f6-58c2-8d76-6caa8c9e1383) by Claude (2026-09-05).
 

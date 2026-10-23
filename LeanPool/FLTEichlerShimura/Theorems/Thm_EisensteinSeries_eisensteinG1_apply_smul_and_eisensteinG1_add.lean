@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node EisensteinSeries.eisensteinG1_apply_smul_and_eisensteinG1_add
 (37be3f3a-8caf-5da4-8af8-f54d5fd49f35) by Claude (2026-09-05).
 

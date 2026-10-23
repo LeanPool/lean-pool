@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node WeierstrassCurve.isElliptic_veluQuotient2_of_isElliptic
 (58581676-128b-54e4-af7c-3fd08fcd6b62) by Claude (2026-09-05).
 

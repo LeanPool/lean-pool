@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node CuspForm.finiteDimensional_Gamma0
 (d4990a57-82fa-5677-bf03-0541b34d4fe3) by Claude (2026-09-05).
 

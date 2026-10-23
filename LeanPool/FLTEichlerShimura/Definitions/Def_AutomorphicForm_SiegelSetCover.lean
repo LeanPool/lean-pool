@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node AutomorphicForm_SiegelSetCover
 (fc7b6f84-d9d8-5ae4-addb-5225f537339c) by Claude (2026-09-05).
 

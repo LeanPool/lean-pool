@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node FLTPrelim_Ramification
 (2f679d60-0c74-5493-b36f-16da20baed9a) by Claude (2026-09-05).
 

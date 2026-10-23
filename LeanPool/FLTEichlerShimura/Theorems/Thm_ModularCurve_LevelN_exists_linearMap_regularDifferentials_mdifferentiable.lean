@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node ModularCurve.LevelN.exists_linearMap_regularDifferentials_mdifferentiable
 (fc27f9fc-c074-52b0-905f-212471904b97) by Claude (2026-09-05).
 

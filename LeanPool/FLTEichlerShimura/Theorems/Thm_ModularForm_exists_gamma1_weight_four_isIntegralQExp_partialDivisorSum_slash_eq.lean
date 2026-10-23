@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node
 ModularForm.exists_gamma1_weight_four_isIntegralQExp_partialDivisorSum_slash_eq
 (e9b4b55b-7321-51fb-94da-15e460883231) by Claude (2026-09-05).

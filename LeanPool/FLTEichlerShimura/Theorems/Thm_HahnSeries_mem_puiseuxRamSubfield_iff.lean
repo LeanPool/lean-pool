@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node HahnSeries.mem_puiseuxRamSubfield_iff
 (81fd5298-524e-5e5a-b70c-9c519bf44611) by Claude (2026-09-05).
 

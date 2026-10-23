@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node ModularCurve.LevelN.exists_monoidHom_algEquiv_fixedField_eq_adjoin
 (05254901-c2d0-58c4-921f-8fa611dadbd3) by Claude (2026-09-05).
 

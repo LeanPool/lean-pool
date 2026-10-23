@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node ModularCurve.exists_intSeriesC_mul_ne_of_gamma0Units_not_mem
 (3a1b55d4-a20b-5dc0-a89e-e45ea5305b8c) by Claude (2026-09-05).
 

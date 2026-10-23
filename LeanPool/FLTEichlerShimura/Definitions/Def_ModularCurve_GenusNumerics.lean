@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node ModularCurve_GenusNumerics
 (d362fb70-1fb8-5c19-baf5-2f61f99a0836) by Claude (2026-09-05).
 

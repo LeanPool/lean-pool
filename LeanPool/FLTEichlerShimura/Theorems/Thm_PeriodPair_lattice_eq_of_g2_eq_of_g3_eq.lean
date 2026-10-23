@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node PeriodPair.lattice_eq_of_g2_eq_of_g3_eq
 (c7d8f57c-5169-5cf8-b285-6d3447415d83) by Claude (2026-09-05).
 

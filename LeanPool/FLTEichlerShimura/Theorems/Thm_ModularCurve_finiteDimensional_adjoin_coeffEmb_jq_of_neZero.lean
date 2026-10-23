@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node ModularCurve.finiteDimensional_adjoin_coeffEmb_jq_of_neZero
 (5a36e624-935b-5204-9d3e-4d7a975d19a0) by Claude (2026-09-05).
 

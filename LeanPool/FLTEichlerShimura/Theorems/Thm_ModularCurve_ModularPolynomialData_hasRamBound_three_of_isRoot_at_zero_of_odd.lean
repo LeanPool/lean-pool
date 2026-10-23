@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node ModularCurve.ModularPolynomialData.hasRamBound_three_of_isRoot_at_zero_of_odd
 (dbb0d3a2-2171-5545-9f0e-e7d76d439858) by Claude (2026-09-05).
 

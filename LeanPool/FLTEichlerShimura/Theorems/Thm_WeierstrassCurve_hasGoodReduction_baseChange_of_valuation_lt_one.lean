@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node WeierstrassCurve.hasGoodReduction_baseChange_of_valuation_lt_one
 (70db0309-04d0-5b09-8e2d-77163276da87) by Claude (2026-09-05).
 

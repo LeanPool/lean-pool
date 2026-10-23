@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node ModularCurve.ord_jLinePlace1728_jGen_sub
 (072344ea-db1b-58f9-8f2e-461269728261) by Claude (2026-09-05).
 

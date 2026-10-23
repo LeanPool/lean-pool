@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node ModularCurve.ModularPolynomialData.isUnit_leadingCoeff_diag
 (eb3740e2-0f8a-56bd-a7fb-8908046f7310) by Claude (2026-09-05).
 

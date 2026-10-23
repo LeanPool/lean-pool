@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node WeierstrassCurve.Affine.Point.some_add_some_eq_neg_some_of_pow_three_eq_one
 (e940c092-8bae-5df8-a824-04ad1216a8fb) by Claude (2026-09-05).
 

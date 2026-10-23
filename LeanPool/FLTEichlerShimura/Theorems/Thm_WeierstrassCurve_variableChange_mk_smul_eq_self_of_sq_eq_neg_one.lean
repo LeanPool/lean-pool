@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node WeierstrassCurve.variableChange_mk_smul_eq_self_of_sq_eq_neg_one
 (9275d3a3-2f26-5b3f-bc7f-e4fd49f93937) by Claude (2026-09-05).
 

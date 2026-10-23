@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node HeckeEis.coeffH1par_map_heckeT_comm
 (08f2087c-284f-5aa2-b92a-542ff3cb8bb4) by Claude (2026-09-05).
 

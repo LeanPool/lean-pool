@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node WeierstrassCurve.Affine.hasPrincipalDivisors_functionField
 (c0f259e5-85a4-5e9a-bc15-621436aa0746) by Claude (2026-09-05).
 

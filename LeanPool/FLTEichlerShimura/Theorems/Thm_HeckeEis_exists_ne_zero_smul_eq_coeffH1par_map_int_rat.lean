@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node HeckeEis.exists_ne_zero_smul_eq_coeffH1par_map_int_rat
 (5d43ce16-6cb1-5176-9b4c-6033bc24cf48) by Claude (2026-09-05).
 

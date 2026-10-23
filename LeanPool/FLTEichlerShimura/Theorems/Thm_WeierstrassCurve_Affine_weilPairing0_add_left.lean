@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node WeierstrassCurve.Affine.weilPairing0_add_left
 (d88a7ffc-2012-5fc9-875c-d348fbe7cc18) by Claude (2026-09-05).
 

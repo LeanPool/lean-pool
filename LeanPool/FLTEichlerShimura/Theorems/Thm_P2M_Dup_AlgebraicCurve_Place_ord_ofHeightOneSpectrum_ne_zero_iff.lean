@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node P2M.Dup.AlgebraicCurve.Place.ord_ofHeightOneSpectrum_ne_zero_iff
 (f4087ed2-76b0-55fc-b089-42687d780882) by Claude (2026-09-05).
 

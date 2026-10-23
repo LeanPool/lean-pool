@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node
 AlgebraicCurve.RationalFunctionField.finiteDimensional_lSpace_zero_of_constantsAreBase
 (5d4c35f9-694f-5610-aa74-d68bc8fe05e0) by Claude (2026-09-05).

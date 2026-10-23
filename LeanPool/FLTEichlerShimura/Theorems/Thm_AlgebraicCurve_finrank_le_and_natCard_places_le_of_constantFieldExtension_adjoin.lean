@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node
 AlgebraicCurve.finrank_le_and_natCard_places_le_of_constantFieldExtension_adjoin
 (a93a0fd6-b762-5620-a1c2-4211647c1f99) by Claude (2026-09-05).

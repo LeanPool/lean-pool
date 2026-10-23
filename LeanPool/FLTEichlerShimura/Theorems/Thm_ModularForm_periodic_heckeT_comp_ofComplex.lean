@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node ModularForm.periodic_heckeT_comp_ofComplex
 (10e2ffea-bcda-51ed-91d1-cd13ab4c5c96) by Claude (2026-09-05).
 

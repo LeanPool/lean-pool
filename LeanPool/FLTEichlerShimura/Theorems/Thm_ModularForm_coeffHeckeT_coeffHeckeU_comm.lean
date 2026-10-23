@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node ModularForm.coeffHeckeT_coeffHeckeU_comm
 (d67181b2-d9a8-52ab-ab08-d4ed37010b41) by Claude (2026-09-05).
 

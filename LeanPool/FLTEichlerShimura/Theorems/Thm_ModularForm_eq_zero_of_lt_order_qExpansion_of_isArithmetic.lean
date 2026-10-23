@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node ModularForm.eq_zero_of_lt_order_qExpansion_of_isArithmetic
 (333be7f0-9499-527a-a03d-8cbc1f0d21ea) by Claude (2026-09-05).
 

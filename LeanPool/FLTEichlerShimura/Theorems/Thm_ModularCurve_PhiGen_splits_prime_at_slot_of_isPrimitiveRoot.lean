@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node ModularCurve.PhiGen.splits_prime_at_slot_of_isPrimitiveRoot
 (d9095e24-91b1-5043-93c5-196e9d87e5b0) by Claude (2026-09-05).
 

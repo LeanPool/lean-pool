@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node CongruenceSubgroup.Gamma0_le_closure_T_union_setOf_dvd
 (168c8591-27b0-566d-a1ab-9f5ebc191205) by Claude (2026-09-05).
 

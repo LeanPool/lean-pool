@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node ModularCurve_SpecialisationVocab
 (b5563856-e1cf-5d26-9984-b922e6dffa13) by Claude (2026-09-05).
 

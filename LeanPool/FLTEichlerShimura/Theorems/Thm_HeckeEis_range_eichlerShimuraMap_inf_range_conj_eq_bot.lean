@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node HeckeEis.range_eichlerShimuraMap_inf_range_conj_eq_bot
 (08ca6524-3cdd-543d-8541-99b27558904b) by Claude (2026-09-05).
 

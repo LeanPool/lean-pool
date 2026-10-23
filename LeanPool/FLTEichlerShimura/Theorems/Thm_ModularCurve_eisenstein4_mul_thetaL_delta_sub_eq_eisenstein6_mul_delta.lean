@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node ModularCurve.eisenstein4_mul_thetaL_delta_sub_eq_eisenstein6_mul_delta
 (7851f343-ff91-55af-ad8e-ab6222852b74) by Claude (2026-09-05).
 

@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node ModularCurve.sameOrbit_iff_eq_of_c4_ne_zero_of_c6_ne_zero
 (11581efe-6a84-57cd-a5ff-529b072eee6a) by Claude (2026-09-05).
 

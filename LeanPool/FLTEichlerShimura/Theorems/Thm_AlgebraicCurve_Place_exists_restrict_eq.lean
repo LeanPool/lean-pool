@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node AlgebraicCurve.Place.exists_restrict_eq
 (f6b444ba-53d9-5bdc-92a4-aac9a9e883e6) by Claude (2026-09-05).
 

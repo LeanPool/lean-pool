@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node ModularCurve.dedekindPsi_of_squarefree
 (7d026fe4-23a4-5b1a-9f86-5ecdcf6436bc) by Claude (2026-09-05).
 

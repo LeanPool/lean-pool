@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node WeierstrassCurve.exists_addMonoidHom_coe_eq_veluPointMap2
 (16abb7e8-df12-51d9-abff-a0d86be1ab6d) by Claude (2026-09-05).
 

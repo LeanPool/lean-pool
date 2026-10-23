@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node ModularCurve.isIntegral_jqNModC_all
 (7b602140-edbb-5016-8c95-50c78314d067) by Claude (2026-09-05).
 

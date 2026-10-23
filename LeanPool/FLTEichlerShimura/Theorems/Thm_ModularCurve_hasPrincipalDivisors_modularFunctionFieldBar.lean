@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node ModularCurve.hasPrincipalDivisors_modularFunctionFieldBar
 (203f466e-501a-57ea-b9c6-211b1bfca7d2) by Claude (2026-09-05).
 

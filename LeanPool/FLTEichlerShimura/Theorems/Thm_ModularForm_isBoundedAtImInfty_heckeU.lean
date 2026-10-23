@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node ModularForm.isBoundedAtImInfty_heckeU
 (57c6f688-1f2d-5e58-9710-47fd4e400f56) by Claude (2026-09-05).
 

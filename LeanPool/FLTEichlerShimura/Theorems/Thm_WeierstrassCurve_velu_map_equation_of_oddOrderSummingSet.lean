@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node WeierstrassCurve.velu_map_equation_of_oddOrderSummingSet
 (99841a34-31c0-570f-ae9f-f8802f859369) by Claude (2026-09-05).
 

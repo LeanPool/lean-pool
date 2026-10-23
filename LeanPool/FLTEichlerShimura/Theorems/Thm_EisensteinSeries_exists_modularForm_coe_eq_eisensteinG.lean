@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node EisensteinSeries.exists_modularForm_coe_eq_eisensteinG
 (e1744b9b-f828-54d3-9880-5ef3bfb5dc4b) by Claude (2026-09-05).
 

@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node ModularCurve.finiteDimensional_and_finrank_adjoin_le_of_eq_coeffMap
 (79b963aa-eada-592a-846b-a690dd73f1d7) by Claude (2026-09-05).
 

@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node IsIntegral.mem_span_of_adjoin_simple_constants
 (334cf788-7019-5491-894a-0eed8ed1f5c0) by Claude (2026-09-05).
 

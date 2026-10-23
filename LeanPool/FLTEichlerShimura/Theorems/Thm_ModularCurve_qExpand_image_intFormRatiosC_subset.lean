@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node ModularCurve.qExpand_image_intFormRatiosC_subset
 (fb14d131-f259-581d-91cd-f5b2891d646b) by Claude (2026-09-05).
 

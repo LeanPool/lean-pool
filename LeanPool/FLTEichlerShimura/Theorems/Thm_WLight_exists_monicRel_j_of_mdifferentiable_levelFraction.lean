@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node WLight.exists_monicRel_j_of_mdifferentiable_levelFraction
 (384ea021-4486-5798-8a93-9d7cb91a90f0) by Claude (2026-09-05).
 

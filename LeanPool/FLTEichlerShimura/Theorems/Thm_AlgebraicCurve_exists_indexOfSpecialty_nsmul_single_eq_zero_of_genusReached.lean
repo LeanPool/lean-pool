@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node AlgebraicCurve.exists_indexOfSpecialty_nsmul_single_eq_zero_of_genusReached
 (42d1d42d-658c-50e6-a41f-6d40bc7f47b4) by Claude (2026-09-05).
 

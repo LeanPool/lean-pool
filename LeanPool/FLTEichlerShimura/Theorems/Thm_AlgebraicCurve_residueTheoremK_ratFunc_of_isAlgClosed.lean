@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node AlgebraicCurve.residueTheoremK_ratFunc_of_isAlgClosed
 (74e12376-4ca7-54f2-9fc3-7fcedc86b3f2) by Claude (2026-09-05).
 

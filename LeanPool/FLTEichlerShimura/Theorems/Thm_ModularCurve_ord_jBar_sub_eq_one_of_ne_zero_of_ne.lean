@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node ModularCurve.ord_jBar_sub_eq_one_of_ne_zero_of_ne
 (8450c858-176d-5738-8be9-66023ec86976) by Claude (2026-09-05).
 

@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node HeckeEis.finrank_coeffH1par_gamma0_le_finrank_coeffH1par_top_induced
 (3b95e6da-4049-5a35-810c-3de89df0e00e) by Claude (2026-09-05).
 

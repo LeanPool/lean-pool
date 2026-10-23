@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node WeierstrassCurve.Affine.IsogenyEndDatum.pointEnd_apply_eq_sub
 (2a48382c-2930-5c17-be93-7b0083958996) by Claude (2026-09-05).
 

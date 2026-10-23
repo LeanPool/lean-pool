@@ -2,7 +2,9 @@
 Copyright (c) 2026 David Loeffler. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: David Loeffler
+-/
 
+/-
 Extracted from Prove2Me proofs by Claude (2026-09-05):
 * WeierstrassCurve.velu_map_equation_of_oddOrderSummingSet
   (99841a34-31c0-570f-ae9f-f8802f859369), submission

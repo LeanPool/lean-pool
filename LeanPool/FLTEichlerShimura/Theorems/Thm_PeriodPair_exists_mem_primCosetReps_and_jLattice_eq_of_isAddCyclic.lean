@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node PeriodPair.exists_mem_primCosetReps_and_jLattice_eq_of_isAddCyclic
 (bebf56cf-67a5-5a93-a054-dbe2bcd6b4e4) by Claude (2026-09-05).
 

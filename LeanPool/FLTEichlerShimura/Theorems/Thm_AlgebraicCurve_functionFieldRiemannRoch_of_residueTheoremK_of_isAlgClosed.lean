@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node AlgebraicCurve.functionFieldRiemannRoch_of_residueTheoremK_of_isAlgClosed
 (8bd1b687-2d60-5640-816e-0d5b5cf62589) by Claude (2026-09-05).
 

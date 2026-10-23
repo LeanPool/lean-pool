@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node ModularCurve.mem_adjoin_jq_of_hasSum_of_slash_invariant
 (8dc4e43d-6a5b-5cf0-b976-4b85a75a17e2) by Claude (2026-09-05).
 

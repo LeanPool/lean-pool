@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node AlgebraicCurve.Divisor.evalFun_ne_zero
 (29cc4c02-b576-5ba0-87c4-3dccf09e4ec9) by Claude (2026-09-05).
 

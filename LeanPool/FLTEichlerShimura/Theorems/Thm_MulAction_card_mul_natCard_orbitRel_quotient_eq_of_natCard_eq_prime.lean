@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node MulAction.card_mul_natCard_orbitRel_quotient_eq_of_natCard_eq_prime
 (066fb680-60a4-5e46-ac13-417af1e630b1) by Claude (2026-09-05).
 

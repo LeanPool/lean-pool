@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node ModularCurve.StarBank.count
 (ae69b4a6-0fc7-551f-af80-2e78508efb87) by Claude (2026-09-05).
 

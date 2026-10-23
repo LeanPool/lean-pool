@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node Polynomial.mem_range_of_eval_eq_const
 (c4f3e03f-4be9-50b0-a04b-f07534522a5a) by Claude (2026-09-05).
 

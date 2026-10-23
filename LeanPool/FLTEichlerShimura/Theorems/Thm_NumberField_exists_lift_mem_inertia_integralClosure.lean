@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node NumberField.exists_lift_mem_inertia_integralClosure
 (7539aed3-1668-5c1c-b1fa-3294131adbb4) by Claude (2026-09-05).
 

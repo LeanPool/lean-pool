@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node ModularCurve.finrank_adjoin_qExpFunctionFieldC_le_of_valuationSubring
 (98ed7cc0-8ae1-5c77-9b65-c245eb5d9113) by Claude (2026-09-05).
 

@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node ModularCurve.index_le_relfinrank_qExpFunctionFieldC_gamma0_gammaH_of_charZero
 (d475989e-5646-55ed-a9b9-0cde5226514d) by Claude (2026-09-05).
 

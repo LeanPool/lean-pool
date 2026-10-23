@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node AlgebraicCurve.Place.ordDiff_smul_of_perfectField
 (5e0cf34b-828c-5cda-8931-efddc8b3afb5) by Claude (2026-09-05).
 

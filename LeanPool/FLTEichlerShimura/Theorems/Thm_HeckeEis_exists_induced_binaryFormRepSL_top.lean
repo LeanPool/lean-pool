@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node HeckeEis.exists_induced_binaryFormRepSL_top
 (84cf2b36-679f-5fd8-905a-3d592b27e37a) by Claude (2026-09-05).
 

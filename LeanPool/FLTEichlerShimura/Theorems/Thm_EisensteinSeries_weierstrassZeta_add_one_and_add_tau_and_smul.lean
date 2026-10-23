@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node EisensteinSeries.weierstrassZeta_add_one_and_add_tau_and_smul
 (9b5842de-612d-5bc9-94e6-354e3293212b) by Claude (2026-09-05).
 

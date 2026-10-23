@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node
 AlgebraicCurve.Place.exists_toValuationSubring_eq_comap_ringHom_of_isSeparable
 (c2700d3f-c07d-5588-8b25-09576fc6b229) by Claude (2026-09-05).

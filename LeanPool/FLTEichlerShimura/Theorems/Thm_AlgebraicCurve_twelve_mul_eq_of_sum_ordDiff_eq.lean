@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node AlgebraicCurve.twelve_mul_eq_of_sum_ordDiff_eq
 (87a3f72e-4e44-5a3f-a6bd-f44abfb9c185) by Claude (2026-09-05).
 

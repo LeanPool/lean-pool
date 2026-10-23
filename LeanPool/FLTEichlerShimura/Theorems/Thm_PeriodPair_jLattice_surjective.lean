@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node PeriodPair.jLattice_surjective
 (50646b81-ed3e-5faa-a8ed-15a3e3a886ef) by Claude (2026-09-05).
 

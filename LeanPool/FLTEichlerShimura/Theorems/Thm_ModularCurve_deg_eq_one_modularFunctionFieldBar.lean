@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node ModularCurve.deg_eq_one_modularFunctionFieldBar
 (462b7d63-c2fe-5723-b46e-ce8ae3eba2df) by Claude (2026-09-05).
 

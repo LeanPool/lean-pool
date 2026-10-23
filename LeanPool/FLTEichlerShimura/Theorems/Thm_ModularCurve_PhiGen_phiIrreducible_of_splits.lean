@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node ModularCurve.PhiGen.phiIrreducible_of_splits
 (6d9b2a8d-21b9-5a13-9633-e190468eaf8a) by Claude (2026-09-05).
 

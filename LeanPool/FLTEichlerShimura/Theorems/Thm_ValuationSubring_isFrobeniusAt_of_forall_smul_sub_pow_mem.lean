@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node ValuationSubring.isFrobeniusAt_of_forall_smul_sub_pow_mem
 (03d79368-0508-5492-b23d-a95b29617616) by Claude (2026-09-05).
 

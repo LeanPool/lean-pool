@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node ModularCurve.finrank_adjoin_jqN_eq_of_squarefree
 (1100f59a-254e-5df0-8408-1a35288cfc17) by Claude (2026-09-05).
 

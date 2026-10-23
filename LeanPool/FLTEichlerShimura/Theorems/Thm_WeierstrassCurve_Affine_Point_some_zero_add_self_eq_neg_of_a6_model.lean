@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node WeierstrassCurve.Affine.Point.some_zero_add_self_eq_neg_of_a6_model
 (d439f6e7-8f94-5d50-843c-e6b0444e5bf0) by Claude (2026-09-05).
 

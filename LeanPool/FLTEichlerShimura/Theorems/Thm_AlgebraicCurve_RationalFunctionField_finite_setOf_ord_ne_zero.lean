@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node AlgebraicCurve.RationalFunctionField.finite_setOf_ord_ne_zero
 (fdb7c420-9420-59be-b0d3-d85ceb56a7ea) by Claude (2026-09-05).
 

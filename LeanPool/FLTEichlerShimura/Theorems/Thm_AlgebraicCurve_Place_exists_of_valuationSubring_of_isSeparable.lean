@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node AlgebraicCurve.Place.exists_of_valuationSubring_of_isSeparable
 (f1b88959-3e78-5f9c-8580-6bf9743c30cb) by Claude (2026-09-05).
 

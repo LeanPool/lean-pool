@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node WeierstrassCurve.Affine.valuation_transEquiv_le_self
 (28ee300d-dfb9-52a4-beec-9f36ce5f8929) by Claude (2026-09-05).
 

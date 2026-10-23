@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node WeierstrassCurve.isCoprime_Phi_PsiSq
 (0f9a1d23-7366-54ec-bbbd-9af4a5dd2cbd) by Claude (2026-09-05).
 

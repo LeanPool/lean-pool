@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node Matrix.SpecialLinearGroup.finrank_addMonoidHom_eq_of_forall_trace_ne
 (245dc773-3bfc-5c53-b085-126353660e5b) by Claude (2026-09-05).
 

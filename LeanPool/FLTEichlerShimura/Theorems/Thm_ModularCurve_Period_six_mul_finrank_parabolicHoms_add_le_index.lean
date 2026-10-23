@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node ModularCurve.Period.six_mul_finrank_parabolicHoms_add_le_index
 (278088aa-c9e8-5f31-afbb-900e37712afb) by Claude (2026-09-05).
 

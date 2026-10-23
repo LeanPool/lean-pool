@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node ModularCurve.one_le_coeff_jq
 (1a092aee-6c1c-510a-a2b0-6a3ed4219d58) by Claude (2026-09-05).
 

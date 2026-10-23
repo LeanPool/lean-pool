@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node ModularForm.exists_tendsto_slash_div_qParam_pow_of_conj_T_pow_mem
 (9d753039-c1c3-58d5-a99e-0b93d94348bd) by Claude (2026-09-05).
 

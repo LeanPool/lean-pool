@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node AlgebraicCurve.Place.exists_forall_ord_eq_finset
 (b0296bf0-f966-5c0f-8ba5-91df92753aa8) by Claude (2026-09-05).
 

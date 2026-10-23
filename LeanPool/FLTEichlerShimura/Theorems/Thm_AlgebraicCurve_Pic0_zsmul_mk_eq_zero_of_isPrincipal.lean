@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node AlgebraicCurve.Pic0.zsmul_mk_eq_zero_of_isPrincipal
 (4f0e1d65-7950-5326-8f8f-b48a1d3ca923) by Claude (2026-09-05).
 

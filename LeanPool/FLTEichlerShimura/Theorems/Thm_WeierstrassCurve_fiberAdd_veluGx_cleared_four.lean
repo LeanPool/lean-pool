@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node WeierstrassCurve.fiberAdd_veluGx_cleared_four
 (79533ff4-8c82-5682-823c-0fc98de6640b) by Claude (2026-09-05).
 

@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node WLight.exists_analyticOnNhd_div_of_monicRel
 (abb58f54-78a6-5d86-b5be-f1cfead2bda8) by Claude (2026-09-05).
 

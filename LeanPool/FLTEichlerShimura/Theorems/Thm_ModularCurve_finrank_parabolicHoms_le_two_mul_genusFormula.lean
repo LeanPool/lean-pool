@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node ModularCurve.finrank_parabolicHoms_le_two_mul_genusFormula
 (9f17692d-cfb8-560d-b46e-cc581ff77365) by Claude (2026-09-05).
 

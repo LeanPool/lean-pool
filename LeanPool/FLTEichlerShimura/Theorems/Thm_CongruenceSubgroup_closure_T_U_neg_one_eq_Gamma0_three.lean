@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node CongruenceSubgroup.closure_T_U_neg_one_eq_Gamma0_three
 (ee2e87fa-6ddf-5fb1-b8a6-43ad24a595b2) by Claude (2026-09-05).
 

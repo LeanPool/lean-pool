@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node ModularCurve.PhiGen.PhiGenDescends.c_eq_zero
 (51d81ec6-fd61-5d61-b37b-89a26b0b5480) by Claude (2026-09-05).
 

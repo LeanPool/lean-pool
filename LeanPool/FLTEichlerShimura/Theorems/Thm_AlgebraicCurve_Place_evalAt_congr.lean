@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node AlgebraicCurve.Place.evalAt_congr
 (3a35d3f2-9ecf-570d-a8df-cf65818da0f0) by Claude (2026-09-05).
 

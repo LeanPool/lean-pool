@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node CuspForm.eq_zero_of_prime_not_dvd_of_qCoeff_eq_zero
 (2792e208-01d1-53ad-a3f4-f3ce15b04e66) by Claude (2026-09-05).
 

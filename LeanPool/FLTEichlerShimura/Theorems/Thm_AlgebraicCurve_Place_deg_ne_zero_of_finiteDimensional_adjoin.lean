@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node AlgebraicCurve.Place.deg_ne_zero_of_finiteDimensional_adjoin
 (b965f4d0-d894-5026-be6d-4fc55a721bb9) by Claude (2026-09-05).
 

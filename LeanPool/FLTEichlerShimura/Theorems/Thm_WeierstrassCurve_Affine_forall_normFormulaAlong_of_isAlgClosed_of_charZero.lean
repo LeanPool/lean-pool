@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node WeierstrassCurve.Affine.forall_normFormulaAlong_of_isAlgClosed_of_charZero
 (9070c374-bae9-55ea-b367-f90a004aaed5) by Claude (2026-09-05).
 

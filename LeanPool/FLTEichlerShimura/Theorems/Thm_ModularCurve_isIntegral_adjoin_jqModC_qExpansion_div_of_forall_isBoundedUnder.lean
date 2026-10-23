@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node ModularCurve.isIntegral_adjoin_jqModC_qExpansion_div_of_forall_isBoundedUnder
 (d1a01c5c-fdce-56e2-82d2-e708c74ac026) by Claude (2026-09-05).
 

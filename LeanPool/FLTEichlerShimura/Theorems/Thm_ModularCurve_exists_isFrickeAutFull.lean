@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node ModularCurve.exists_isFrickeAutFull
 (15ca057b-f5a1-5d87-b099-8eae7183423f) by Claude (2026-09-05).
 

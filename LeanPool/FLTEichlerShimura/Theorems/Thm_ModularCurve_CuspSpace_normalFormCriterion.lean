@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node ModularCurve.CuspSpace.normalFormCriterion
 (77fd4deb-4fd3-5641-a54e-7708f3776079) by Claude (2026-09-05).
 

@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node FrobeniusEndo.exists_x_linePencil_frobEnd_mul_collision_sq
 (f00d7229-dcf6-50af-ac82-30046e1d8e1c) by Claude (2026-09-05).
 

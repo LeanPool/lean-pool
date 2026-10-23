@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node WeierstrassCurve.Affine.evalEval_psi_sq
 (1ef4e8be-1ef8-5cfe-b53b-d1d6ef272cd4) by Claude (2026-09-05).
 

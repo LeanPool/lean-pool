@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node ModularCurve.ModularPolynomialData.eval_E4_cube_div_discriminant_smul_eq_zero
 (eccf1cb1-5baa-5df8-bcbf-cef680be6556) by Claude (2026-09-05).
 

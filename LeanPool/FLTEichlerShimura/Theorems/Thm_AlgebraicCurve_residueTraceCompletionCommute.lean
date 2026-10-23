@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node AlgebraicCurve.residueTraceCompletionCommute
 (f37f0322-59b0-5873-9a86-0b6e6e89bd53) by Claude (2026-09-05).
 

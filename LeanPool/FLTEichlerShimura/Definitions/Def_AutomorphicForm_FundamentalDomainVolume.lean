@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node AutomorphicForm_FundamentalDomainVolume
 (abeb7a91-a537-5f9a-8c53-db5d386a9102) by Claude (2026-09-05).
 

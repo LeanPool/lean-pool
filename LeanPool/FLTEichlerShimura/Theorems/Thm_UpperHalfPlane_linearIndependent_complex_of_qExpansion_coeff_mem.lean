@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node UpperHalfPlane.linearIndependent_complex_of_qExpansion_coeff_mem
 (86f7f158-b9cb-57fe-bb1f-df7bb12cab0e) by Claude (2026-09-05).
 

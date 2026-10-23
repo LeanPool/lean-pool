@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node ModularCurve.hasSum_modularUnitSeries_qParam
 (d56465a1-e65d-5b62-b228-0badbdd944c2) by Claude (2026-09-05).
 

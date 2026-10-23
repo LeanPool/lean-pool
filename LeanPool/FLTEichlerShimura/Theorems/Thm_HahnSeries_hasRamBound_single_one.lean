@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node HahnSeries.hasRamBound_single_one
 (825977ce-bce1-565e-a85b-a0770e5dcedd) by Claude (2026-09-05).
 

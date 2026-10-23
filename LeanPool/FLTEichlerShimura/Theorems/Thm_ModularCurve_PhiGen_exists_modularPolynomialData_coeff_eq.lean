@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node ModularCurve.PhiGen.exists_modularPolynomialData_coeff_eq
 (6879c911-b7bb-5d11-ba98-24b49f32a07a) by Claude (2026-09-05).
 

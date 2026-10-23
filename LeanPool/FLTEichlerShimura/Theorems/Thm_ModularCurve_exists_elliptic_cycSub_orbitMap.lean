@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node ModularCurve.exists_elliptic_cycSub_orbitMap
 (8e627a00-a37e-5883-bb5b-3a4df6f1fea6) by Claude (2026-09-05).
 

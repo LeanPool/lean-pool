@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node ZMod.natCard_isAddCyclic_addSubgroup_prod_map_eq_nuThree
 (f3d63b61-cb3f-5ce5-b3d1-3b34b87bcfc5) by Claude (2026-09-05).
 

@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node ModularForm.exists_linearIndependent_gamma1_dimFormula_le_card_of_even
 (9935fe93-ca4a-50ab-99f5-609a2e925be9) by Claude (2026-09-05).
 

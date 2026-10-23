@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node WeierstrassCurve.reducePoint_some_add_some_of_not_le_one
 (7fce584d-63e5-5ea3-8bd0-ee004dc655a2) by Claude (2026-09-05).
 

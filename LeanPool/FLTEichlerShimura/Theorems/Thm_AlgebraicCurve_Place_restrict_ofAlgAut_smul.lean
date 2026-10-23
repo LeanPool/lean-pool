@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node AlgebraicCurve.Place.restrict_ofAlgAut_smul
 (2e110162-9aa0-5bc2-a7ac-8b8e54efc63f) by Claude (2026-09-05).
 

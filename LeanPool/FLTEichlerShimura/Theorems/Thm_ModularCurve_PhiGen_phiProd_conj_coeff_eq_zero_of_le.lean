@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node ModularCurve.PhiGen.phiProd_conj_coeff_eq_zero_of_le
 (7c7804df-0623-5cbc-97b2-60df6540bc6b) by Claude (2026-09-05).
 

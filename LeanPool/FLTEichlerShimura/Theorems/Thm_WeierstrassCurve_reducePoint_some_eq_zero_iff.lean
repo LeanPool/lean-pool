@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node WeierstrassCurve.reducePoint_some_eq_zero_iff
 (dc6055ef-6a65-5c41-9d4e-0c7d06f343ee) by Claude (2026-09-05).
 

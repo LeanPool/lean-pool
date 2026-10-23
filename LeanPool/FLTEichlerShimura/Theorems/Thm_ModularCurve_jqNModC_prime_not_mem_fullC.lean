@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node ModularCurve.jqNModC_prime_not_mem_fullC
 (20304447-457e-591b-8484-0204b5d74aef) by Claude (2026-09-05).
 

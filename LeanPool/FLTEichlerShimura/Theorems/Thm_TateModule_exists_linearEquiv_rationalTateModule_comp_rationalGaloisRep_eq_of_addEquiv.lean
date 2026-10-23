@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node
 TateModule.exists_linearEquiv_rationalTateModule_comp_rationalGaloisRep_eq_of_addEquiv
 (64daf8fe-6f13-5b0e-94db-45282c874d70) by Claude (2026-09-05).

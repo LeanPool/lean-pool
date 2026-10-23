@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node ModularForm.exists_cuspForm_mul_eq_of_analyticOrderAt_le
 (845d9969-50b1-5115-b4d6-72ca22e7ace9) by Claude (2026-09-05).
 

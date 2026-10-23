@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node WeierstrassCurve.zmultiples_eq_of_veluQuotient_j_eq_of_transcendental
 (15e5edb3-b3ba-566c-a842-036261074c96) by Claude (2026-09-05).
 

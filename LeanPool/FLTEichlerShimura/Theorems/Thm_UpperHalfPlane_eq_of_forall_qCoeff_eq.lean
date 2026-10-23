@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node UpperHalfPlane.eq_of_forall_qCoeff_eq
 (156ca36b-a1ef-54a0-aeaa-bdac6bb4f1f0) by Claude (2026-09-05).
 

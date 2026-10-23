@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node ModularCurve.natCard_orbitRelQuotient_zpowers_T_gamma0_eq_cuspCount
 (de8edeb5-1768-53fb-b380-0c2868f38d86) by Claude (2026-09-05).
 

@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node ModularCurve.deg_jLinePlaceZero
 (6d6e0936-4104-597f-9f2e-43a465c2c9d8) by Claude (2026-09-05).
 

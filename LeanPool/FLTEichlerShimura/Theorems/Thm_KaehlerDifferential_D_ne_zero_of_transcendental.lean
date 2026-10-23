@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node KaehlerDifferential.D_ne_zero_of_transcendental
 (0df85775-aaa5-5911-8954-96e03b12839a) by Claude (2026-09-05).
 

@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node AlgebraicCurve.exists_poleDivisor_of_transcendental
 (48e87314-6924-5a6b-a827-053e0c1cec1d) by Claude (2026-09-05).
 

@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node WeierstrassCurve.veluQuotient2_Delta_ne_zero
 (4a9ddef2-6abc-5f7f-ada6-32fff611524b) by Claude (2026-09-05).
 

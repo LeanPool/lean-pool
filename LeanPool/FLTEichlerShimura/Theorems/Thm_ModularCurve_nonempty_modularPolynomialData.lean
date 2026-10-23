@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node ModularCurve.nonempty_modularPolynomialData
 (43c4021c-080c-5aaf-8e3d-32ee4852f077) by Claude (2026-09-05).
 

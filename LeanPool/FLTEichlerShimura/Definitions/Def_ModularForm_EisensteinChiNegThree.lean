@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node ModularForm_EisensteinChiNegThree
 (adc43756-9cf5-5205-863c-fe07d61abdf1) by Claude (2026-09-05).
 

@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node ModularCurve.card_eq_natCard_moduliPoint_j_eq_of_EMD
 (02d83ff4-bc05-5a26-a3ca-b2dc3f1a9209) by Claude (2026-09-05).
 

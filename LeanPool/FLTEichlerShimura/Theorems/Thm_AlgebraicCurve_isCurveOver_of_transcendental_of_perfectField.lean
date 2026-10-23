@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node AlgebraicCurve.isCurveOver_of_transcendental_of_perfectField
 (e7ba4d46-47a9-5639-b062-3daade338787) by Claude (2026-09-05).
 

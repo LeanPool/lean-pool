@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node TateModule.exists_linearMap_apply_eq_of_addMonoidHom
 (dfa4a18f-38e5-5670-9cca-25d1da811b68) by Claude (2026-09-05).
 

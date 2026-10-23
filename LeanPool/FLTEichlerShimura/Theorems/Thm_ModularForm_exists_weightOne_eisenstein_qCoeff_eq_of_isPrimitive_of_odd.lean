@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node ModularForm.exists_weightOne_eisenstein_qCoeff_eq_of_isPrimitive_of_odd
 (fac9a4fa-2696-5e7f-9f62-7db5aaaccd55) by Claude (2026-09-05).
 

@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node ModularCurve.ramificationIndex_eq_ord_sub_of_restrict_eq_jLinePlace1728
 (5f1a5448-3887-5ed9-a629-23d9fbc58e72) by Claude (2026-09-05).
 

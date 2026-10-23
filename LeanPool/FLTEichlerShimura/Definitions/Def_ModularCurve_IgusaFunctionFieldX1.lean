@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node ModularCurve_IgusaFunctionFieldX1
 (3a9ca178-5daa-5d7c-b964-993d1c37d27a) by Claude (2026-09-05).
 

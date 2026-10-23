@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node ModularCurve.sum_neg_ord_jBar_eq_dedekindPsi
 (b8399df5-1739-557d-b620-c21ac8c041a9) by Claude (2026-09-05).
 

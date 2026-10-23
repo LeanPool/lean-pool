@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node UpperHalfPlane.qCoeff_heckeU
 (5e125770-bc42-5e19-840f-ad504c602b22) by Claude (2026-09-05).
 

@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node CuspForm.heckeULin_comm
 (1a0bb677-dd7a-5d47-abbc-26825c474234) by Claude (2026-09-05).
 

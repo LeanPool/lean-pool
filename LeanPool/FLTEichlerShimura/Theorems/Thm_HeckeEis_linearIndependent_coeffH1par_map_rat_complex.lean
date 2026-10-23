@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node HeckeEis.linearIndependent_coeffH1par_map_rat_complex
 (3461fd1f-9592-5ee3-9e6e-e31d7a218762) by Claude (2026-09-05).
 

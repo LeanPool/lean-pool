@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node ModularCurve.functionFieldGeneration
 (02270e4f-19ed-5999-a205-8c9846a63f39) by Claude (2026-09-05).
 

@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node HeckeEis.exists_eichlerShimura_coeffH1par_binaryFormRepSL
 (4c20e75e-94cc-59a9-a6e0-3792a09ffb66) by Claude (2026-09-05).
 

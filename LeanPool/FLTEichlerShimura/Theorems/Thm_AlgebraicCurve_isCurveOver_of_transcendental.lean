@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node AlgebraicCurve.isCurveOver_of_transcendental
 (baea3bff-414e-5acc-adc4-353640d4fb58) by Claude (2026-09-05).
 

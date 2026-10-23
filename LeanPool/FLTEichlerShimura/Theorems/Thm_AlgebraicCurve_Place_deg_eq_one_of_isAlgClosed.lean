@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node AlgebraicCurve.Place.deg_eq_one_of_isAlgClosed
 (30b3cd0c-85fb-53b0-8fd2-3ee7661282e8) by Claude (2026-09-05).
 

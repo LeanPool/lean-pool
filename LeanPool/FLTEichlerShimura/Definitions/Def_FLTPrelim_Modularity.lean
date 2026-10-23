@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node FLTPrelim_Modularity
 (ddd45b70-a042-5d79-93f9-c52e6062e9d4) by Claude (2026-09-05).
 

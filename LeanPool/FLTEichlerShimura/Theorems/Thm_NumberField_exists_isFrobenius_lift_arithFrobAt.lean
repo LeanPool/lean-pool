@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node NumberField.exists_isFrobenius_lift_arithFrobAt
 (f08038fa-7fc0-5e28-b713-0a7ed0b5475f) by Claude (2026-09-05).
 

@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node HeckeEis.coeffH1par_binaryFormRepSL_int_eq_zero_of_smul_eq_zero
 (b8ca5bd8-e4bd-507a-b928-7ea9d7e6c033) by Claude (2026-09-05).
 

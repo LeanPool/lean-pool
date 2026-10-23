@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node EllipticCurve_TateModule
 (e3517e0d-3db6-5cee-a949-fb0cba7e3bee) by Claude (2026-09-05).
 

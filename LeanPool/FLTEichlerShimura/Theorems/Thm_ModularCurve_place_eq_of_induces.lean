@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node ModularCurve.place_eq_of_induces
 (3e5b60a8-b53e-5a31-b5d0-fd9932faeef9) by Claude (2026-09-05).
 

@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node AlgebraicCurve.exists_separating_transcendental_of_perfectField
 (a9b8b10c-f084-5a40-8677-5f0e6588bb12) by Claude (2026-09-05).
 

@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node ModularCurve.TatePoint.fullKernelInjAt
 (806a70f5-a83e-5cd1-ab7a-43f432d4d456) by Claude (2026-09-05).
 

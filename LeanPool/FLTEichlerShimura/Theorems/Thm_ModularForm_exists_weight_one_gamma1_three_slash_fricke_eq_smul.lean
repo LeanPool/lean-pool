@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node ModularForm.exists_weight_one_gamma1_three_slash_fricke_eq_smul
 (a769f48a-f454-5c49-a847-afeb9586a563) by Claude (2026-09-05).
 

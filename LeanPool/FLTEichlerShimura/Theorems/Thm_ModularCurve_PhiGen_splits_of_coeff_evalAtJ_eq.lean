@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node ModularCurve.PhiGen.splits_of_coeff_evalAtJ_eq
 (6cde1021-2e2d-529d-b0df-4dbbd8fd0215) by Claude (2026-09-05).
 

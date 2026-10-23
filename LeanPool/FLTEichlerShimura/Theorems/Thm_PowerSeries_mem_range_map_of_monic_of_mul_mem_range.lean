@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node PowerSeries.mem_range_map_of_monic_of_mul_mem_range
 (77b18431-9004-5889-81a8-ffc299d3cb96) by Claude (2026-09-05).
 

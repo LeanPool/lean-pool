@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node ModularCurve_PeriodMapBundled
 (d43bec83-2176-5d54-84a9-3d42beff39e5) by Claude (2026-09-05).
 

@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node ModularFormClass.heckeT_heckeU_comm
 (559509b8-2835-58a8-b392-183c8cf0ec41) by Claude (2026-09-05).
 

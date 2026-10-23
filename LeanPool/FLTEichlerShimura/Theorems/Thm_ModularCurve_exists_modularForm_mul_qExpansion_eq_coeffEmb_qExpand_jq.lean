@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node ModularCurve.exists_modularForm_mul_qExpansion_eq_coeffEmb_qExpand_jq
 (a5f4f1c9-dd49-5e6b-a2ab-eaf8e3b2d38c) by Claude (2026-09-05).
 

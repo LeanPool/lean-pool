@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node
 Matrix.SpecialLinearGroup.exists_generators_free_mod_neg_one_of_forall_trace_ne
 (3bd3e142-725c-544e-b864-4fd8b4d3ed7e) by Claude (2026-09-05).

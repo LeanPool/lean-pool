@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node EllipticCurve_FrobeniusEndo
 (460a2eaf-43a0-5271-b6de-7d072eb2b020) by Claude (2026-09-05).
 

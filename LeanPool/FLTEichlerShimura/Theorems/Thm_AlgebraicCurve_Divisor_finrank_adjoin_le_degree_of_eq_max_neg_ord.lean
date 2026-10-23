@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node AlgebraicCurve.Divisor.finrank_adjoin_le_degree_of_eq_max_neg_ord
 (7f949eeb-7178-5695-85e6-febaed1964aa) by Claude (2026-09-05).
 

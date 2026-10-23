@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node ModularCurve_Eisenstein
 (3999c6f9-f2ee-565f-9468-daa9d32b7c51) by Claude (2026-09-05).
 

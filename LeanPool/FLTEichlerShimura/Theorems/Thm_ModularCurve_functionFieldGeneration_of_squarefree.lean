@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node ModularCurve.functionFieldGeneration_of_squarefree
 (3024c339-8925-59b6-9af7-09c343513ffd) by Claude (2026-09-05).
 

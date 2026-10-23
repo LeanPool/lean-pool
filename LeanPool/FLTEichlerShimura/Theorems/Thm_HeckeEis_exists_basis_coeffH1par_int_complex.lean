@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node HeckeEis.exists_basis_coeffH1par_int_complex
 (7a666521-75ef-5177-b04f-d9e0e59dcc7b) by Claude (2026-09-05).
 

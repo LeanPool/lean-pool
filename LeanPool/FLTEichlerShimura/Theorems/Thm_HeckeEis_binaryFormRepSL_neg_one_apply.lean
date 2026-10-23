@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node HeckeEis.binaryFormRepSL_neg_one_apply
 (72e9a994-ff75-507c-834e-84b42c3f4cff) by Claude (2026-09-05).
 

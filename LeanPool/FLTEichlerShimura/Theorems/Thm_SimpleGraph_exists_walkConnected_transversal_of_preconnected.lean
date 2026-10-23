@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node SimpleGraph.exists_walkConnected_transversal_of_preconnected
 (3a345bde-711e-5ffe-854b-2b82dd8748d2) by Claude (2026-09-05).
 

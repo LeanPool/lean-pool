@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node EisensteinSeries.isBoundedAtImInfty_eisensteinG1_and_hasSum_eisensteinG1
 (e0e677e3-63c7-5e91-858c-f661bdd1468a) by Claude (2026-09-05).
 

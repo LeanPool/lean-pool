@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node ValuationSubring.isDiscreteValuationRing_comap_of_liesOverPrime
 (f9d2c7b0-3ee9-57e4-961e-19c9a3aa605e) by Claude (2026-09-05).
 

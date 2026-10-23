@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node ModularCurve.isIntegral_and_isIntegral_of_mem_riemannRochSpace_weightFloor
 (4378864a-6bf6-50e9-8e4b-cdec05b41d44) by Claude (2026-09-05).
 

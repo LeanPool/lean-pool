@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node ModularCurve_PrimCosetReps
 (174fa83c-01fe-5ba1-9e74-0108f10e27bb) by Claude (2026-09-05).
 

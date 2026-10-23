@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node FrobeniusEndo.frobCharEqOnPoints_of_line
 (cf41822f-465d-5a6a-bfb0-4562cc7041a4) by Claude (2026-09-05).
 

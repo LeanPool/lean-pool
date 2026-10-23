@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node ModularCurve.B3.isElliptic_specialFibre_goodModel
 (5bbe4276-f96f-548b-ac18-5f4b97033ed6) by Claude (2026-09-05).
 

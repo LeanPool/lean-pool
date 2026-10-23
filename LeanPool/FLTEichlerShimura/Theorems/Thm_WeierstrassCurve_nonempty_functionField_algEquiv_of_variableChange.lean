@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node WeierstrassCurve.nonempty_functionField_algEquiv_of_variableChange
 (3a47c5d0-7fb4-5cce-bd99-11dd0f3e9e6b) by Claude (2026-09-05).
 

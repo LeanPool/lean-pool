@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node ModularCurve.package_of_socket
 (e3f1941e-e249-507b-8bea-51cafb5aa8cf) by Claude (2026-09-05).
 

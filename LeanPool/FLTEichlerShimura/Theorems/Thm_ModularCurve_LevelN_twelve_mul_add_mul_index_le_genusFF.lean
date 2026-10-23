@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node ModularCurve.LevelN.twelve_mul_add_mul_index_le_genusFF
 (4d8ea939-d6e9-53f2-b8e0-64b3279c447c) by Claude (2026-09-05).
 

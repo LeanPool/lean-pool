@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node ModularCurve.Period.exists_basis_parabolicHoms_castAddHom_comp
 (63e31f11-3de3-5c5d-846a-f1f14017a610) by Claude (2026-09-05).
 

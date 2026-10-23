@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node AlgebraicCurve_PlaceEvaluation
 (d5fccec9-c50a-5b0f-9eb1-08b6be4c96f8) by Claude (2026-09-05).
 

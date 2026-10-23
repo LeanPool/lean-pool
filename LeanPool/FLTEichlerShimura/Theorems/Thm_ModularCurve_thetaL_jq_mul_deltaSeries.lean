@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node ModularCurve.thetaL_jq_mul_deltaSeries
 (024ea356-97da-57e2-b8b3-0fb6abb9f7ca) by Claude (2026-09-05).
 

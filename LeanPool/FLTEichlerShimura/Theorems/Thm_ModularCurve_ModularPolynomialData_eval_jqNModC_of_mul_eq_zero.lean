@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node ModularCurve.ModularPolynomialData.eval_jqNModC_of_mul_eq_zero
 (857041f0-823c-5465-a742-fd4e66afc586) by Claude (2026-09-05).
 

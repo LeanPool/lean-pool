@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node Subgroup.card_orbitRelQuotient_mul_card_eq_index
 (5c45036a-fa78-5e04-9231-abdaa4f44270) by Claude (2026-09-05).
 

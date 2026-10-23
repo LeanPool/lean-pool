@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node ModularCurve.functionFieldGeneration_of_prime
 (2cc5d6b3-de60-5d55-aac9-721826fd0e9a) by Claude (2026-09-05).
 

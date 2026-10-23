@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node AlgebraicCurve.TranscendenceTower.degree_poleDivisor_eq_finrank
 (ca060c2f-1709-5915-8b0f-48f771e7e8e3) by Claude (2026-09-05).
 

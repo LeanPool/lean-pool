@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node HeckeEis.IsEichlerIntegral.smul
 (e54577d3-520a-5111-8302-693dd938b73e) by Claude (2026-09-05).
 

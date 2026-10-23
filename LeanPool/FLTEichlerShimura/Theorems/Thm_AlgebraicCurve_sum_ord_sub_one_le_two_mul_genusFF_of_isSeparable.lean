@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node AlgebraicCurve.sum_ord_sub_one_le_two_mul_genusFF_of_isSeparable
 (c3b8311a-5293-58eb-8c4d-de3f0a048029) by Claude (2026-09-05).
 

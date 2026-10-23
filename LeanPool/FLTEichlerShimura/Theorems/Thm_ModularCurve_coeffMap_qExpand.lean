@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node ModularCurve.coeffMap_qExpand
 (39773b6e-30c2-5a33-a065-542cc042c58e) by Claude (2026-09-05).
 

@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node AlgebraicCurve.Place.isRational_of_isAlgClosed
 (e4c82b93-d311-5480-b6bd-5d53a5bfc0a1) by Claude (2026-09-05).
 

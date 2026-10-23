@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node HeckeEis.coeff_single_one_eq_eval_of_mem_binaryForm
 (0e2ead68-eae4-581f-bf18-2e1442075acd) by Claude (2026-09-05).
 

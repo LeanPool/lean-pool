@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node
 PeriodPair.exists_differentiable_toPoint_comp_eq_pointMapOfPushforward_toPoint
 (e5395f79-d46c-5b66-a6aa-c05a04dab723) by Claude (2026-09-05).

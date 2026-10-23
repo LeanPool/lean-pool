@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node ValuationSubring.exists_liesOverPrime_mem_inertiaSubgroupIn
 (72bd3f89-9448-5182-937f-7dc173982435) by Claude (2026-09-05).
 

@@ -2,7 +2,9 @@
 Copyright (c) 2026 David Loeffler. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: David Loeffler
+-/
 
+/-
 Extracted from Prove2Me proofs by Claude (2026-09-05):
 * AlgebraicCurve.residueTheoremK_of_isAlgClosed
   (0b4c7479-cbcc-5c87-9c16-80c7c5d57ccc), submission

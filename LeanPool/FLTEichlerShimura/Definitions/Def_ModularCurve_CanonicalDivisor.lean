@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node ModularCurve_CanonicalDivisor
 (9e0b4190-0a8e-59ea-9ad4-416e20b30bfb) by Claude (2026-09-05).
 

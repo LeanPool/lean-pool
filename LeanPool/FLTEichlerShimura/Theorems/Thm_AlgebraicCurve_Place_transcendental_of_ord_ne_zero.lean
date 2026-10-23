@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node AlgebraicCurve.Place.transcendental_of_ord_ne_zero
 (5d81da8b-db85-502b-a949-6ed3c5d7e14b) by Claude (2026-09-05).
 

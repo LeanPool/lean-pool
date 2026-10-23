@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node ModularCurve.exists_ringHom_place_order_eq_mul_ord_of_qExpansion_slash
 (b76d6a0e-7f9a-55a8-851c-7490ecf00916) by Claude (2026-09-05).
 

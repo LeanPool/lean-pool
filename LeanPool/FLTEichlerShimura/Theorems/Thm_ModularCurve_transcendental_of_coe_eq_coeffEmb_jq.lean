@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node ModularCurve.transcendental_of_coe_eq_coeffEmb_jq
 (b411998e-0d6c-507f-aebb-9320ce54e546) by Claude (2026-09-05).
 

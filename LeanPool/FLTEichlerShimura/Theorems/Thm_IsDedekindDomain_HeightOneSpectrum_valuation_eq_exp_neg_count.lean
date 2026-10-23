@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node IsDedekindDomain.HeightOneSpectrum.valuation_eq_exp_neg_count
 (bd555933-1cd7-5e0f-bba0-cf3d5fefac90) by Claude (2026-09-05).
 

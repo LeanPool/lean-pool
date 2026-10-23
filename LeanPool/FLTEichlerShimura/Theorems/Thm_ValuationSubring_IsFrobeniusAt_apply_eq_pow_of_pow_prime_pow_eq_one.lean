@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node ValuationSubring.IsFrobeniusAt.apply_eq_pow_of_pow_prime_pow_eq_one
 (c58ad5a7-6ae5-5475-aa55-66fbedd6bd4a) by Claude (2026-09-05).
 

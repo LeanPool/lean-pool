@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node AlgebraicCurve.Place.mem_toValuationSubring_of_isIntegral_adjoin
 (afab5c85-24ff-5086-95a7-9e4918ad135f) by Claude (2026-09-05).
 

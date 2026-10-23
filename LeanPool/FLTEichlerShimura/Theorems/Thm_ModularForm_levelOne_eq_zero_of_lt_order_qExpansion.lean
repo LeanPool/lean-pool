@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node ModularForm.levelOne_eq_zero_of_lt_order_qExpansion
 (e1585de7-1d2c-5b27-b930-e63ef4b550b7) by Claude (2026-09-05).
 

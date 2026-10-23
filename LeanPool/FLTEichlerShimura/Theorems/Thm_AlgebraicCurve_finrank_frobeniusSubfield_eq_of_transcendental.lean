@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node AlgebraicCurve.finrank_frobeniusSubfield_eq_of_transcendental
 (4399ba35-43e6-5b5d-8ef1-d153ef817153) by Claude (2026-09-05).
 

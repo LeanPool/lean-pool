@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node ModularCurve.exists_ringHom_laurentBaseChange_qExpFunctionFieldC_levelN
 (e2c25097-0cf2-5506-9a1a-38d7e157e4ca) by Claude (2026-09-05).
 

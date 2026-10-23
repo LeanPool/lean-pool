@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node ModularCurve.natCard_quot_sameOrbit_cycSub_eq_natCard_moduliPoint_j_eq
 (1b89bb0f-230d-5d09-84f4-b42679dcf6e6) by Claude (2026-09-05).
 

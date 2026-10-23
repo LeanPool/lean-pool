@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node HeckeEis.IsEichlerIntegral.hasDerivAt_eval_iterate_pderiv
 (4c48bd9d-6fab-56fd-ba21-25237f94d44e) by Claude (2026-09-05).
 
