@@ -42,7 +42,13 @@ def construction : Language.TermRec.Construction V L (blueprint pL) where
   bvar (param z)        := (param 1).[z]
   fvar (_     x)        := ^&x
   func (_     k f _ v') := ^func k f v'
-  bvar_defined := by intro v; simp [blueprint]
+  bvar_defined := by
+    intro v
+    simp only [blueprint]
+    -- Avoid reducing the large encoded formula during kernel conversion.
+    rw [HierarchySymbol.Semiformula.val_mkSigma]
+    rw [Semiformula.eval_substs]
+    simp
   fvar_defined := by intro v; simp [blueprint]
   func_defined := by intro v; simp [blueprint]
 
