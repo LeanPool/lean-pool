@@ -1438,70 +1438,25 @@ private theorem carrierBase_mem {N : Nat} (k : Fin N) :
 
 private theorem carrierArc_length_pos_wip {N : Nat} (k : Fin N) :
     0 < arcLength (carrierArc N k) := by
-  rw [carrierArc_length k]
-  have hNnat : 0 < N := Nat.lt_of_le_of_lt (Nat.zero_le k.1) k.2
-  have hNpos : (0 : ℝ) < (N : ℝ) := by exact_mod_cast hNnat
-  positivity
+  exact DimdPolyLEAN.carrierArc_length_pos k
 
 private theorem carrierArc_left_nonneg_wip {N : Nat} (k : Fin N) :
     0 <= (carrierArc N k).left := by
-  unfold carrierArc
-  positivity
+  exact DimdPolyLEAN.carrierArc_left_nonneg k
 
 private theorem carrierArc_right_le_period_wip {N : Nat} (k : Fin N) :
     (carrierArc N k).right <= 2 * Real.pi := by
-  unfold carrierArc
-  have hNnat : 0 < N := Nat.lt_of_le_of_lt (Nat.zero_le k.1) k.2
-  have hNpos : (0 : ℝ) < (N : ℝ) := by exact_mod_cast hNnat
-  have hle : ((k.1 + 1 : Nat) : ℝ) <= (N : ℝ) := by exact_mod_cast k.2
-  have hT_nonneg : 0 <= (2 * Real.pi : ℝ) := by positivity
-  calc
-    (2 * Real.pi) * ((k.1 + 1 : Nat) : ℝ) / (N : ℝ)
-        <= (2 * Real.pi) * (N : ℝ) / (N : ℝ) := div_le_div_of_nonneg_right
-        (mul_le_mul_of_nonneg_left hle hT_nonneg) (le_of_lt hNpos)
-    _ = 2 * Real.pi := by field_simp [ne_of_gt hNpos]
+  exact DimdPolyLEAN.carrierArc_right_le_period k
 
 private theorem carrierArc_left_lt_right_wip {N : Nat} (k : Fin N) :
     (carrierArc N k).left < (carrierArc N k).right := by
-  have hlen := carrierArc_length_pos_wip k
-  dsimp [arcLength] at hlen
-  linarith only [hlen]
+  exact DimdPolyLEAN.carrierArc_left_lt_right k
 
 private theorem carrierArc_arcSet_eq_mk_image_Icc_wip {N : Nat} (k : Fin N) :
     arcSet (carrierArc N k) =
       QuotientAddGroup.mk ''
         Set.Icc ((carrierArc N k).left) ((carrierArc N k).right) := by
-  ext x
-  constructor
-  · intro hx
-    rcases hx with ⟨t, ht, rfl⟩
-    refine ⟨(carrierArc N k).left + t * arcLength (carrierArc N k), ?_, rfl⟩
-    have hlen_nonneg : 0 <= arcLength (carrierArc N k) :=
-      le_of_lt (carrierArc_length_pos_wip k)
-    constructor
-    · dsimp [arcLength] at hlen_nonneg ⊢
-      nlinarith only [ht.1, hlen_nonneg]
-    · dsimp [arcLength] at hlen_nonneg ⊢
-      nlinarith only [ht.2, hlen_nonneg]
-  · intro hx
-    rcases hx with ⟨y, hy, rfl⟩
-    let t : ℝ := (y - (carrierArc N k).left) / arcLength (carrierArc N k)
-    refine ⟨t, ?_, ?_⟩
-    · have hlen_pos : 0 < arcLength (carrierArc N k) :=
-        carrierArc_length_pos_wip k
-      constructor
-      · dsimp [t]
-        exact div_nonneg (sub_nonneg.mpr hy.1) (le_of_lt hlen_pos)
-      · dsimp [t]
-        rw [div_le_one hlen_pos]
-        dsimp [arcLength]
-        linarith only [hy.2]
-    · dsimp [arcParam, t]
-      have hlen_pos : 0 < arcLength (carrierArc N k) :=
-        carrierArc_length_pos_wip k
-      apply congrArg (fun r : ℝ => (QuotientAddGroup.mk r : Circle))
-      field_simp [ne_of_gt hlen_pos]
-      ring
+  exact DimdPolyLEAN.carrierArc_arcSet_eq_mk_image_Icc k
 
 private theorem circle_dist_mk_le_abs_sub (a b : ℝ) :
     dist ((QuotientAddGroup.mk a : Circle)) (QuotientAddGroup.mk b) <= |a - b| := by
@@ -1617,23 +1572,7 @@ private theorem carrierArc_arcSet_eq_mk_image_Ioc_union_left_wip
       (QuotientAddGroup.mk ''
         Set.Ioc ((carrierArc N k).left) ((carrierArc N k).right)) ∪
         {(QuotientAddGroup.mk ((carrierArc N k).left) : Circle)} := by
-  rw [carrierArc_arcSet_eq_mk_image_Icc_wip k]
-  have hIcc :
-      Set.Icc ((carrierArc N k).left) ((carrierArc N k).right) =
-        Set.Ioc ((carrierArc N k).left) ((carrierArc N k).right) ∪
-          {((carrierArc N k).left)} := by
-    ext y
-    constructor
-    · intro hy
-      by_cases hleft : y = (carrierArc N k).left
-      · exact Or.inr hleft
-      · exact Or.inl ⟨lt_of_le_of_ne hy.1 (Ne.symm hleft), hy.2⟩
-    · intro hy
-      rcases hy with hy | hy
-      · exact ⟨le_of_lt hy.1, hy.2⟩
-      · rw [Set.mem_singleton_iff.mp hy]
-        exact ⟨le_rfl, le_of_lt (carrierArc_left_lt_right_wip k)⟩
-  rw [hIcc, Set.image_union, Set.image_singleton]
+  exact DimdPolyLEAN.carrierArc_arcSet_eq_mk_image_Ioc_union_left k
 
 private theorem quotient_mk_injOn_Ioc_zero_period_wip :
     Set.InjOn (fun t : ℝ => (QuotientAddGroup.mk t : Circle))
@@ -1658,21 +1597,7 @@ private theorem carrierArc_mk_preimage_image_Ioc_inter_fundamental_wip
           Set.Ioc ((carrierArc N k).left) ((carrierArc N k).right)) ∩
       Set.Ioc (0 : ℝ) (2 * Real.pi)) =
         Set.Ioc ((carrierArc N k).left) ((carrierArc N k).right) := by
-  ext x
-  constructor
-  · intro hx
-    rcases hx.1 with ⟨y, hy, hyx⟩
-    have hy_fund : y ∈ Set.Ioc (0 : ℝ) (2 * Real.pi) := by
-      exact ⟨lt_of_le_of_lt (carrierArc_left_nonneg_wip k) hy.1,
-        le_trans hy.2 (carrierArc_right_le_period_wip k)⟩
-    have hxy : y = x :=
-      quotient_mk_injOn_Ioc_zero_period_wip hy_fund hx.2 hyx
-    rwa [← hxy]
-  · intro hx
-    constructor
-    · exact ⟨x, hx, rfl⟩
-    · exact ⟨lt_of_le_of_lt (carrierArc_left_nonneg_wip k) hx.1,
-        le_trans hx.2 (carrierArc_right_le_period_wip k)⟩
+  exact DimdPolyLEAN.carrierArc_mk_preimage_image_Ioc_inter_fundamental k
 
 private theorem volume_singleton_circle_wip (x : Circle) :
     MeasureTheory.volume ({x} : Set Circle) = 0 := by
@@ -1695,81 +1620,21 @@ private theorem carrierArc_arcSet_ae_eq_mk_image_Ioc_wip {N : Nat} (k : Fin N) :
     arcSet (carrierArc N k) =ᵐ[μCircle]
       QuotientAddGroup.mk ''
         Set.Ioc ((carrierArc N k).left) ((carrierArc N k).right) := by
-  rw [carrierArc_arcSet_eq_mk_image_Ioc_union_left_wip k]
-  let A : Set Circle :=
-    QuotientAddGroup.mk ''
-      Set.Ioc ((carrierArc N k).left) ((carrierArc N k).right)
-  let e : Circle := QuotientAddGroup.mk ((carrierArc N k).left)
-  change (Set.union A ({e} : Set Circle)) =ᵐ[μCircle] A
-  rw [MeasureTheory.ae_eq_set]
-  constructor
-  · refine MeasureTheory.measure_mono_null (μ := μCircle) (t := {e}) ?_
-      (μCircle_singleton_wip e)
-    intro x hx
-    rcases hx.1 with hxIoc | hxleft
-    · exact False.elim (hx.2 hxIoc)
-    · exact hxleft
-  · refine MeasureTheory.measure_mono_null (μ := μCircle) (t := (∅ : Set Circle)) ?_ ?_
-    · intro x hx
-      exact False.elim (hx.2 (Or.inl hx.1))
-    · simp
+  exact DimdPolyLEAN.carrierArc_arcSet_ae_eq_mk_image_Ioc k
 
 private theorem carrierArc_arcSet_ae_eq_mk_image_Ioc_volume_wip
     {N : Nat} (k : Fin N) :
     arcSet (carrierArc N k) =ᵐ[(MeasureTheory.volume : MeasureTheory.Measure Circle)]
       QuotientAddGroup.mk ''
         Set.Ioc ((carrierArc N k).left) ((carrierArc N k).right) := by
-  rw [carrierArc_arcSet_eq_mk_image_Ioc_union_left_wip k]
-  let A : Set Circle :=
-    QuotientAddGroup.mk ''
-      Set.Ioc ((carrierArc N k).left) ((carrierArc N k).right)
-  let e : Circle := QuotientAddGroup.mk ((carrierArc N k).left)
-  change (Set.union A ({e} : Set Circle)) =ᵐ[(MeasureTheory.volume : MeasureTheory.Measure
-      Circle)] A
-  rw [MeasureTheory.ae_eq_set]
-  constructor
-  · refine MeasureTheory.measure_mono_null
-      (μ := (MeasureTheory.volume : MeasureTheory.Measure Circle)) (t := {e}) ?_
-      (volume_singleton_circle_wip e)
-    intro x hx
-    rcases hx.1 with hxIoc | hxleft
-    · exact False.elim (hx.2 hxIoc)
-    · exact hxleft
-  · refine MeasureTheory.measure_mono_null
-      (μ := (MeasureTheory.volume : MeasureTheory.Measure Circle)) (t := (∅ : Set Circle)) ?_ ?_
-    · intro x hx
-      exact False.elim (hx.2 (Or.inl hx.1))
-    · simp
+  exact DimdPolyLEAN.carrierArc_arcSet_ae_eq_mk_image_Ioc_volume k
 
 private theorem volume_mk_image_carrierArc_Ioc_wip {N : Nat} (k : Fin N) :
     MeasureTheory.volume
         ((fun t : ℝ => (QuotientAddGroup.mk t : Circle)) ''
           Set.Ioc ((carrierArc N k).left) ((carrierArc N k).right)) =
       ENNReal.ofReal (arcLength (carrierArc N k)) := by
-  let S : Set Circle :=
-    (fun t : ℝ => (QuotientAddGroup.mk t : Circle)) ''
-      Set.Ioc ((carrierArc N k).left) ((carrierArc N k).right)
-  have hS_null :
-      MeasureTheory.NullMeasurableSet S
-        (MeasureTheory.volume : MeasureTheory.Measure Circle) := by
-    exact (measurableSet_arcSet (carrierArc N k)).nullMeasurableSet.congr
-      (carrierArc_arcSet_ae_eq_mk_image_Ioc_volume_wip k)
-  have hpre :=
-    (AddCircle.measurePreserving_mk (T := 2 * Real.pi) (t := 0)).measure_preimage hS_null
-  rw [MeasureTheory.Measure.restrict_apply' measurableSet_Ioc] at hpre
-  change MeasureTheory.volume
-      (((fun t : ℝ => (QuotientAddGroup.mk t : Circle)) ⁻¹' S) ∩
-        Set.Ioc (0 : ℝ) (0 + 2 * Real.pi)) =
-      MeasureTheory.volume S at hpre
-  have hpre_set :
-      ((fun t : ℝ => (QuotientAddGroup.mk t : Circle)) ⁻¹' S) ∩
-        Set.Ioc (0 : ℝ) (0 + 2 * Real.pi) =
-          Set.Ioc ((carrierArc N k).left) ((carrierArc N k).right) := by
-    simpa only [zero_add, S] using carrierArc_mk_preimage_image_Ioc_inter_fundamental_wip k
-  rw [hpre_set, Real.volume_Ioc] at hpre
-  dsimp [arcLength]
-  symm
-  rw [← hpre]
+  exact DimdPolyLEAN.volume_mk_image_carrierArc_Ioc k
 
 private theorem period_smul_μCircle_mk_image_carrierArc_Ioc_wip
     {N : Nat} (k : Fin N) :
@@ -1778,22 +1643,13 @@ private theorem period_smul_μCircle_mk_image_carrierArc_Ioc_wip
           ((fun t : ℝ => (QuotientAddGroup.mk t : Circle)) ''
             Set.Ioc ((carrierArc N k).left) ((carrierArc N k).right)) =
       ENNReal.ofReal (arcLength (carrierArc N k)) := by
-  let S : Set Circle :=
-    (fun t : ℝ => (QuotientAddGroup.mk t : Circle)) ''
-      Set.Ioc ((carrierArc N k).left) ((carrierArc N k).right)
-  have hmeasure := congrArg (fun μ : MeasureTheory.Measure Circle => μ S)
-    (AddCircle.volume_eq_smul_haarAddCircle (T := 2 * Real.pi))
-  change MeasureTheory.volume S =
-    ENNReal.ofReal (2 * Real.pi) * μCircle S at hmeasure
-  rw [← hmeasure]
-  exact volume_mk_image_carrierArc_Ioc_wip k
+  exact DimdPolyLEAN.period_smul_μCircle_mk_image_carrierArc_Ioc k
 
 private theorem period_smul_μCircle_carrierArc_wip {N : Nat} (k : Fin N) :
     ENNReal.ofReal (2 * Real.pi) *
         μCircle (arcSet (carrierArc N k)) =
       ENNReal.ofReal (arcLength (carrierArc N k)) := by
-  rw [MeasureTheory.measure_congr (carrierArc_arcSet_ae_eq_mk_image_Ioc_wip k)]
-  exact period_smul_μCircle_mk_image_carrierArc_Ioc_wip k
+  exact DimdPolyLEAN.period_smul_μCircle_carrierArc k
 
 private theorem carrierArc_mu_real_eq_length_div_period
     {N : Nat} (k : Fin N) :
@@ -3600,97 +3456,25 @@ private theorem parseval_fin_fourier {L : Nat} (c : Fin L -> ℂ) :
     circleL2Sq (fun t : Circle =>
       ∑ m : Fin L, c m * fourier (m.val : ℤ) t) =
     ∑ m : Fin L, ‖c m‖ ^ 2 := by
-  let E := Finset.range L
-  let b' : Nat -> ℂ := fun n =>
-    if h : n < L then c ⟨n, h⟩ else 0
-  have h_func_eq :
-      (fun t : Circle =>
-        ∑ m : Fin L, c m * fourier (↑↑m : ℤ) t) =
-      fun t => ∑ n ∈ E, b' n * fourier (↑n : ℤ) t := by
-    ext t
-    simp only [E]
-    rw [Finset.sum_fin_eq_sum_range]
-    refine Finset.sum_congr rfl fun n hn => ?_
-    simp [b', Finset.mem_range.mp hn]
-  rw [h_func_eq]
-  let Pcont : C(Circle, ℂ) :=
-    ∑ n ∈ E, b' n • fourier (n : ℤ)
-  let PLp :=
-    (ContinuousMap.toLp (α := Circle) 2 AddCircle.haarAddCircle ℂ) Pcont
-  let E' :=
-    E.map ⟨(Nat.cast : Nat -> ℤ), Nat.cast_injective⟩
-  let d : ℤ -> ℂ := fun k => b' (Int.toNat k)
-  have hPLp : PLp = ∑ k ∈ E', d k • fourierLp 2 k := by
-    simp only [PLp, Pcont, E', d, fourierLp, map_sum, map_smul]
-    simp_all only [fourier_apply, natCast_zsmul, Finset.sum_map, Function.Embedding.coeFn_mk,
-      Int.toNat_natCast]
-  have hinner_orth :
-      @inner ℂ _ _ PLp PLp =
-        Complex.ofReal (∑ n ∈ E, ‖b' n‖ ^ 2) := by
-    rw [hPLp, orthonormal_fourier.inner_sum d d E',
-      show E' = E.map ⟨(Nat.cast : Nat -> ℤ), Nat.cast_injective⟩ from rfl,
-      Finset.sum_map, Complex.ofReal_sum]
-    congr 1
-    ext n
-    simp only [Function.Embedding.coeFn_mk, d, Int.toNat_natCast]
-    rw [mul_comm, Complex.mul_conj]
-    congr 1
-    exact (Complex.sq_norm (b' n)).symm
-  have hcombine :=
-    (MeasureTheory.L2.inner_def (𝕜 := ℂ) PLp PLp).symm.trans hinner_orth
-  have hae := ContinuousMap.coeFn_toLp
-    (μ := AddCircle.haarAddCircle) (𝕜 := ℂ) (p := 2) Pcont
-  have hPcont_eq :
-      ∀ t : Circle, (Pcont : Circle -> ℂ) t =
-        ∑ n ∈ E, b' n * (fourier (n : ℤ)) t := by
-    intro t
-    simp [Pcont, ContinuousMap.coe_sum, ContinuousMap.coe_smul, smul_eq_mul]
-  have h_sum_eq :
-      ∑ n ∈ E, ‖b' n‖ ^ 2 = ∑ m : Fin L, ‖c m‖ ^ 2 := by
-    simp only [E]
-    rw [Finset.sum_fin_eq_sum_range]
-    refine Finset.sum_congr rfl fun n hn => ?_
-    simp [b', Finset.mem_range.mp hn]
-  calc
-    circleL2Sq (fun t => ∑ n ∈ E, b' n * (fourier (↑n : ℤ)) t)
-        = ∫ t : Circle, ‖(↑↑PLp : Circle -> ℂ) t‖ ^ 2
-            ∂ AddCircle.haarAddCircle := by
-          unfold circleL2Sq
-          symm
-          apply MeasureTheory.integral_congr_ae
-          filter_upwards [hae] with t ht
-          rw [show (↑↑PLp : Circle -> ℂ) t = Pcont t from ht, hPcont_eq t]
-    _ = (∫ t : Circle,
-          @inner ℂ ℂ _
-            ((↑↑PLp : Circle -> ℂ) t)
-            ((↑↑PLp : Circle -> ℂ) t)
-            ∂ AddCircle.haarAddCircle).re := by
-          have hint := MeasureTheory.L2.integrable_inner (𝕜 := ℂ) PLp PLp
-          symm
-          calc
-            _ = Complex.reCLM (∫ t,
-                  @inner ℂ ℂ _
-                    ((↑↑PLp : Circle -> ℂ) t)
-                    ((↑↑PLp : Circle -> ℂ) t)
-                    ∂ AddCircle.haarAddCircle) := rfl
-            _ = ∫ t, Complex.reCLM
-                  (@inner ℂ ℂ _
-                    ((↑↑PLp : Circle -> ℂ) t)
-                    ((↑↑PLp : Circle -> ℂ) t))
-                  ∂ AddCircle.haarAddCircle := (ContinuousLinearMap.integral_comp_comm _ hint).symm
-            _ = _ := by
-                congr 1
-                ext t
-                exact @inner_self_eq_norm_sq ℂ ℂ _ _ _
-                  ((↑↑PLp : Circle -> ℂ) t)
-    _ = ∑ m : Fin L, ‖c m‖ ^ 2 := by
-          rw [show (∫ t : Circle,
-              @inner ℂ ℂ _
-                ((↑↑PLp : Circle -> ℂ) t)
-                ((↑↑PLp : Circle -> ℂ) t)
-                ∂ AddCircle.haarAddCircle) =
-              Complex.ofReal (∑ n ∈ E, ‖b' n‖ ^ 2)
-            from hcombine, Complex.ofReal_re, h_sum_eq]
+  let P : C(Circle, ℂ) := ∑ m : Fin L, c m • fourier (m.val : ℤ)
+  let f := ContinuousMap.toLp 2 AddCircle.haarAddCircle ℂ P
+  have horth := (orthonormal_fourier (T := 2 * Real.pi)).comp (fun m : Fin L => (m.val : ℤ))
+    (Nat.cast_injective.comp Fin.val_injective)
+  have hnorm : ‖f‖ ^ 2 = ∑ m : Fin L, ‖c m‖ ^ 2 := by
+    simpa only [f, P, map_sum, map_smul, Function.comp_apply, fourierLp,
+      LinearIsometry.toSpanSingleton_apply] using
+      horth.orthogonalFamily.norm_sum c Finset.univ
+  have hinner := congrArg RCLike.re (@MeasureTheory.L2.inner_def Circle ℂ ℂ _ _ _ _ _ f f)
+  rw [← integral_re (MeasureTheory.L2.integrable_inner f f)] at hinner
+  simp only [← norm_sq_eq_re_inner] at hinner
+  refine Eq.trans ?_ hnorm
+  rw [hinner]
+  apply MeasureTheory.integral_congr_ae
+  filter_upwards [ContinuousMap.coeFn_toLp (p := 2)
+    (μ := AddCircle.haarAddCircle) (𝕜 := ℂ) P] with t ht
+  rw [ht]
+  congr 1
+  simp only [P, ContinuousMap.sum_apply, ContinuousMap.smul_apply, smul_eq_mul]
 
 private theorem circleL2Sq_slowBandPoly {L : Nat} (p : Fin L -> ℂ) :
     circleL2Sq (slowBandPoly p) = ∑ m : Fin L, ‖p m‖ ^ 2 := by
