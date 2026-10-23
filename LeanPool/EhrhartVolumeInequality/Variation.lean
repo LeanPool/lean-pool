@@ -10,6 +10,9 @@ public import LeanPool.EhrhartVolumeInequality.Foundations
 public import Mathlib.Analysis.Complex.Exponential
 import all LeanPool.EhrhartVolumeInequality.Foundations
 import Mathlib.Analysis.Calculus.LineDeriv.IntegrationByParts
+import Mathlib.Analysis.Calculus.FDeriv.Symmetric
+import Mathlib.Analysis.Complex.MeanValue
+import Mathlib.Analysis.Complex.Conformal
 import Mathlib.Analysis.Matrix.PosDef
 import Mathlib.MeasureTheory.Measure.FiniteMeasure
 import Mathlib.MeasureTheory.Measure.RegularityCompacts
@@ -49,7 +52,6 @@ private theorem finiteEnergySourceGradient_eq_of_phase_maximizer
       phase p F.potential z ≤ phase p F.potential x) :
     SpatialBergmanFatouScheffe.actualGradient
       F.potential x = p := by
-  classical
   ext i
   let w : Space n := Pi.single i (1 : ℝ)
   have hline : HasDerivAt
@@ -70,18 +72,11 @@ private theorem finiteEnergySourceGradient_eq_of_phase_maximizer
       ((fderiv ℝ F.potential x) w) 0 := by
     have hzero : x = (fun t : ℝ => x + t • w) 0 := by
       simp only [zero_smul, add_zero]
-    simpa only [comp_def] using
-      hx.hasFDerivAt.comp_hasDerivAt_of_eq 0 hline hzero
+    exact hx.hasFDerivAt.comp_hasDerivAt_of_eq 0 hline hzero
   have hphase : HasDerivAt
       (fun t : ℝ => phase p F.potential (x + t • w))
       (SupportFunction.pairing p w -
         (fderiv ℝ F.potential x) w) 0 := by
-    change HasDerivAt
-      (fun t : ℝ =>
-        SupportFunction.pairing p (x + t • w) -
-          F.potential (x + t • w))
-      (SupportFunction.pairing p w -
-        (fderiv ℝ F.potential x) w) 0
     exact hpair.fun_sub hpot
   have hlocal : IsLocalMax
       (fun t : ℝ => phase p F.potential (x + t • w)) 0 :=
@@ -92,14 +87,14 @@ private theorem finiteEnergySourceGradient_eq_of_phase_maximizer
         (fderiv ℝ F.potential x) w = 0 := by
     have hd := hphase.deriv
     rw [hlocal.deriv_eq_zero] at hd
-    linarith
+    exact (hd).symm
   have hpairing :
       SupportFunction.pairing
         (SpatialBergmanFatouScheffe.actualGradient
           F.potential x) w =
         SupportFunction.pairing p w := by
     rw [SpatialBergmanFatouScheffe.pairing_actualGradient_eq_fderiv]
-    linarith
+    exact (sub_eq_zero.mp hzero).symm
   simpa only [w, SupportFunction.pairing, Pi.single_apply, mul_ite, mul_one, mul_zero,
     Finset.sum_ite_eq', Finset.mem_univ, ↓reduceIte]
     using hpairing
@@ -146,7 +141,6 @@ private theorem finiteEnergyTargetQuadraticApproximateMaximizer_mem
     (t : ℝ) :
     finiteEnergyTargetQuadraticApproximateMaximizer F v x t ∈
       finiteEnergyFiniteTargetSet F := by
-  classical
   unfold finiteEnergyTargetQuadraticApproximateMaximizer
   split_ifs with ht
   · exact zero_mem_finiteEnergyFiniteTargetSet F
@@ -164,7 +158,6 @@ private theorem finiteEnergyTargetQuadraticApproximateMaximizer_phase
       finiteEnergyTargetDualPhase F v t
         (finiteEnergyTargetQuadraticApproximateMaximizer
           F v x t) x := by
-  classical
   unfold finiteEnergyTargetQuadraticApproximateMaximizer
   simp only [dite_eq_right ht]
   exact
@@ -206,8 +199,6 @@ private theorem finiteEnergyTargetQuadraticApproximateMaximizer_phase_defect
       _ = |t| * |v p| := abs_mul _ _
       _ ≤ |t| * finiteEnergyTargetTestBound K v :=
         mul_le_mul_of_nonneg_left htest (abs_nonneg t)
-  unfold finiteEnergyTargetDualPhase at happrox
-  unfold phase
   change
     SupportFunction.pairing p z - F.potential z -
       (SupportFunction.pairing p x - F.potential x) ≤ _
@@ -220,7 +211,7 @@ private theorem finiteEnergyTargetQuadraticApproximateMaximizer_phase_defect
       SupportFunction.pairing p x -
         (sourceExtendedBodyLegendre F.potential p).toReal -
           t * v p at happrox
-  linarith
+  linarith only [happrox, hfenchel, htbound, hclose]
 
 private theorem tendsto_finiteEnergyTargetQuadraticApproximateMaximizer
     {n : ℕ} {K : CenteredBody n}
@@ -249,7 +240,6 @@ private theorem tendsto_finiteEnergyTargetQuadraticApproximateMaximizer
       add_zero] using
       (hcont.tendsto (0 : ℝ)).mono_left nhdsWithin_le_nhds
   have hne : ∀ᶠ t : ℝ in (𝓝[≠] (0 : ℝ)), t ≠ 0 := by
-    change ({0}ᶜ : Set ℝ) ∈ 𝓝[({0}ᶜ : Set ℝ)] (0 : ℝ)
     exact self_mem_nhdsWithin
   refine K.compact.tendsto_nhds_of_unique_mapClusterPt ?_ ?_
   · exact Filter.Eventually.of_forall fun t =>
@@ -296,12 +286,10 @@ private theorem tendsto_finiteEnergyTargetQuadraticApproximateMaximizer
     have : l.NeBot := hcluster
     have hphasez : Continuous
         (fun p : Space n => phase p F.potential z) := by
-      unfold phase
       exact (SupportFunction.continuous_pairing_left z).fun_sub
         continuous_const
     have hphasex : Continuous
         (fun p : Space n => phase p F.potential x) := by
-      unfold phase
       exact (SupportFunction.continuous_pairing_left x).fun_sub
         continuous_const
     have hlimit :
@@ -314,7 +302,7 @@ private theorem tendsto_finiteEnergyTargetQuadraticApproximateMaximizer
         inf_le_left
     have hle := le_of_tendsto hlimit
       (hmap.filter_mono inf_le_right)
-    linarith
+    linarith only [hgap, hle]
 
 private theorem finiteEnergyTargetGeodesic_gradient_support
     {n : ℕ} {K : CenteredBody n}
@@ -345,7 +333,7 @@ private theorem finiteEnergyTargetGeodesic_gradient_support
   change
     (sourceExtendedBodyLegendre F.potential p).toReal =
       SupportFunction.pairing p x - F.potential x at hleg
-  linarith
+  linarith only [h, hleg]
 
 private theorem finiteEnergyTargetGeodesic_le_quadraticApproximate
     {n : ℕ} {K : CenteredBody n}
@@ -366,7 +354,6 @@ private theorem finiteEnergyTargetGeodesic_le_quadraticApproximate
     finiteEnergyTargetQuadraticApproximateMaximizer_phase
       F v x ht
   have hfenchel := finiteEnergyFiniteTarget_fenchel F hp x
-  unfold finiteEnergyTargetDualPhase at happrox
   change
     SupportFunction.pairing p x -
       (sourceExtendedBodyLegendre F.potential p).toReal ≤
@@ -376,7 +363,7 @@ private theorem finiteEnergyTargetGeodesic_le_quadraticApproximate
       SupportFunction.pairing p x -
         (sourceExtendedBodyLegendre F.potential p).toReal -
           t * v p at happrox
-  linarith
+  linarith only [hfenchel, happrox]
 
 private theorem finiteEnergyTargetGeodesic_differenceQuotient_error
     {n : ℕ} {K : CenteredBody n}
@@ -405,7 +392,7 @@ private theorem finiteEnergyTargetGeodesic_differenceQuotient_error
   have hnum :
       0 ≤ finiteEnergyTargetGeodesic F v t x - F.potential x +
         t * v q := by
-    linarith
+    linarith only [hlower]
   have hterm :
       t * (v q - v p) ≤ |t| * |v p - v q| := by
     calc
@@ -417,7 +404,7 @@ private theorem finiteEnergyTargetGeodesic_differenceQuotient_error
           t * v q ≤
         |t| * (|v p - v q| + |t|) := by
     have habssq : |t| ^ 2 = t ^ 2 := sq_abs t
-    nlinarith
+    linarith only [habssq, hterm, hupper]
   have hfrac :
       (finiteEnergyTargetGeodesic F v t x - F.potential x) / t +
         v q =
@@ -468,7 +455,6 @@ private theorem hasDerivAt_finiteEnergyTargetGeodesic
       tendsto_const_nhds
     simpa only [sub_self, abs_zero, add_zero] using (htarget.sub hconst).abs.add htzero
   have hne : ∀ᶠ t : ℝ in (𝓝[≠] (0 : ℝ)), t ≠ 0 := by
-    change ({0}ᶜ : Set ℝ) ∈ 𝓝[({0}ᶜ : Set ℝ)] (0 : ℝ)
     exact self_mem_nhdsWithin
   have herr :
       Tendsto
@@ -502,7 +488,7 @@ theorem abs_exp_sub_one_le_mul_exp_abs (z : ℝ) :
       simp only [neg_add_cancel, Real.exp_zero]
     rw [hinverse] at hmul
     rw [abs_of_nonneg hfirst, abs_of_nonneg hz]
-    nlinarith
+    linarith only [hmul]
   · have hz' : z ≤ 0 := le_of_not_ge hz
     have he : 0 < Real.exp (-z) := Real.exp_pos (-z)
     have hfirst : Real.exp z - 1 ≤ 0 := by
@@ -515,7 +501,7 @@ theorem abs_exp_sub_one_le_mul_exp_abs (z : ℝ) :
     rw [abs_of_nonpos hfirst, abs_of_nonpos hz']
     have hnonneg : 0 ≤ -z := neg_nonneg.mpr hz'
     have hscaled := mul_le_mul_of_nonneg_left hunit hnonneg
-    nlinarith
+    linarith only [hscaled, htan]
 
 private def finiteEnergyTargetDensityDifferenceQuotient
     {n : ℕ} {K : CenteredBody n}
@@ -639,7 +625,6 @@ private theorem hasDerivAt_finiteEnergyTargetGeodesicPartition
       (volume : Measure (Space n)) :=
     (F.densityIntegrable.const_mul (Real.exp M)).const_mul M
   have hne : ∀ᶠ t : ℝ in (𝓝[≠] (0 : ℝ)), t ≠ 0 := by
-    change ({0}ᶜ : Set ℝ) ∈ 𝓝[({0}ᶜ : Set ℝ)] (0 : ℝ)
     exact self_mem_nhdsWithin
   have htlim : Tendsto (fun t : ℝ => |t|)
       (𝓝[≠] (0 : ℝ)) (𝓝 (0 : ℝ)) := by
@@ -649,7 +634,7 @@ private theorem hasDerivAt_finiteEnergyTargetGeodesicPartition
   have hsmall : ∀ᶠ t : ℝ in (𝓝[≠] (0 : ℝ)), |t| ≤ 1 := by
     exact
       (htlim.eventually
-        (Iio_mem_nhds (by norm_num : (0 : ℝ) < 1))).mono
+        (Iio_mem_nhds (by exact zero_lt_one : (0 : ℝ) < 1))).mono
         (fun _ ht => le_of_lt ht)
   have hmeas :
       ∀ᶠ t : ℝ in (𝓝[≠] (0 : ℝ)),
@@ -672,8 +657,7 @@ private theorem hasDerivAt_finiteEnergyTargetGeodesicPartition
             M * (Real.exp M * Real.exp (-F.potential x)) := by
     filter_upwards [hne, hsmall] with t ht htsmall
     filter_upwards with x
-    simpa only [Real.norm_eq_abs] using
-      finiteEnergyTargetDensityDifferenceQuotient_le
+    exact finiteEnergyTargetDensityDifferenceQuotient_le
         F v ht htsmall x
   have hlim :
       ∀ᵐ x : Space n
@@ -813,11 +797,11 @@ private theorem exists_exact_optimizer_gradientPushforward_integral_eq
         (fun t : ℝ =>
           Real.log (finiteEnergyTargetGeodesicPartition F v t) -
             t * A) 0 = 0 := by
-    simpa only using hlocal.deriv_eq_zero
+    exact hlocal.deriv_eq_zero
   change
     (∫ p : Space n, v p
       ∂(finiteEnergySourceGradientPushforward F)) = A
-  linarith
+  linarith only [hderiv, hzero]
 
 private theorem exists_exact_optimizer_gradientPushforward_eq
     {n : ℕ} (K : CenteredBody n) :
@@ -913,12 +897,6 @@ private theorem volume_absolutelyContinuous_finiteEnergySourceGibbs
     (F : SourceFiniteEnergyPotential K) :
     (volume : Measure (Space n)) ≪
       finiteEnergySourceGibbsProbability F := by
-  change
-    (volume : Measure (Space n)) ≪
-      (volume : Measure (Space n)).withDensity
-        (fun x => ENNReal.ofReal
-          (WeightedPoincare.normalizedDensity
-            F.potential x))
   apply MeasureTheory.withDensity_absolutelyContinuous'
   · exact
       ((Real.continuous_exp.comp F.potential.continuous.neg).div_const
@@ -946,7 +924,6 @@ private theorem ae_finiteEnergySourceGradient_mem_interior_gibbs
         p ∈ interior K.carrier := by
     rw [htransport]
     exact ae_normalizedTargetBodyMeasure_mem_interior K
-  unfold finiteEnergySourceGradientPushforward at htarget
   exact
     (MeasureTheory.ae_map_iff
       (measurable_finiteEnergySourceGradient F).aemeasurable
@@ -1011,7 +988,6 @@ private theorem exp_neg_momentNormalizedPotential
       0 < finiteEnergySourcePartition F /
         normalizedVolume K.carrier :=
     div_pos (finiteEnergySourcePartition_pos F) K.volume_pos
-  unfold momentNormalizedPotential
   calc
     Real.exp
         (-(F.potential x +
@@ -1194,12 +1170,12 @@ private theorem convex_finiteEnergyFiniteTargetSet
         phase p F.potential x ≤
           (sourceExtendedBodyLegendre F.potential p).toReal := by
       unfold phase
-      linarith
+      linarith only [hpfen]
     have hqbound :
         phase q F.potential x ≤
           (sourceExtendedBodyLegendre F.potential q).toReal := by
       unfold phase
-      linarith
+      linarith only [hqfen]
     exact add_le_add
       (mul_le_mul_of_nonneg_left hpbound ha)
       (mul_le_mul_of_nonneg_left hqbound hb)
@@ -1307,7 +1283,7 @@ private theorem finiteEnergySourcePhase_bddAbove_of_mem_interior
   rintro _ ⟨x, rfl⟩
   have hfen := finiteEnergyFiniteTarget_fenchel F hfinite x
   unfold phase
-  linarith
+  linarith only [hfen]
 
 private theorem convexOn_finiteEnergySourceLegendre_interior
     {n : ℕ} {K : CenteredBody n}
@@ -1467,7 +1443,7 @@ private theorem exists_finiteEnergySource_interior_phase_linear_coercivity
     pairing_signVector] at hphase
   have hnorm := SupportFunction.norm_le_sum_abs x
   have hscaled := mul_le_mul_of_nonneg_left hnorm hδ.le
-  linarith
+  linarith only [hscaled, hphase, hbound]
 
 private theorem integrable_monomialWeight_finiteEnergySource_of_mem_interior
     {n : ℕ} {K : CenteredBody n}
@@ -1496,7 +1472,7 @@ private theorem integrable_monomialWeight_finiteEnergySource_of_mem_interior
     ← Real.exp_add]
   apply Real.exp_le_exp.mpr
   have h := hcoerc x
-  nlinarith
+  nlinarith only [hk, hδ, h]
 
 private theorem monomialWeight_momentNormalizedPotential_eq
     {n : ℕ} {K : CenteredBody n}
@@ -1542,7 +1518,6 @@ private theorem monomialIntegral_momentNormalized_pos
     {u : Space n} (hu : u ∈ interior K.carrier)
     {k : ℝ} (hk : 0 < k) :
     0 < monomialIntegral k u (momentNormalizedPotential F) := by
-  unfold monomialIntegral monomialWeight
   exact MeasureTheory.integral_exp_pos
     (integrable_monomialWeight_momentNormalized_of_mem_interior
       F htransport hu hk)
@@ -1564,15 +1539,13 @@ private theorem radial_exp_integrable_momentNormalized
   have hfinite : ∀ᵐ x ∂(volume : Measure (Space n)),
       radialWeight k (momentNormalizedPotential F) x < ⊤ :=
     Filter.Eventually.of_forall fun _ => ENNReal.ofReal_lt_top
-  unfold radialMeasure
   apply (MeasureTheory.integrable_withDensity_iff_integrable_smul'
     (radialWeight_measurable k hφ) hfinite).2
   have hmono :=
     integrable_monomialWeight_momentNormalized_of_mem_interior
       F htransport hu hkreal
   refine hmono.congr (Filter.Eventually.of_forall fun x => ?_)
-  simpa only [smul_eq_mul] using
-    (radialWeight_mul_exp_pairing k
+  exact (radialWeight_mul_exp_pairing k
       (momentNormalizedPotential F) m u hm x).symm
 
 private theorem torusMonomial_sq_integrable_momentNormalized
@@ -1644,7 +1617,6 @@ private theorem momentIndexedMonomialLp_ae
       LogTorus n → ℂ) =ᵐ[
         weightedTorusMeasure k (momentNormalizedPotential F)]
       torusMonomial (integerExponent K hk u) := by
-  unfold momentIndexedMonomialLp
   exact MeasureTheory.MemLp.coeFn_toLp _
 
 private theorem momentMonomialNormSquared_pos
@@ -1749,7 +1721,6 @@ private theorem momentNormalizedMonomialLp_orthonormal
       normalizedTargetBodyMeasure K) :
     Orthonormal ℂ
       (momentNormalizedMonomialLp K hk F htransport) := by
-  classical
   rw [orthonormal_iff_ite]
   intro u v
   unfold momentNormalizedMonomialLp
@@ -1773,7 +1744,7 @@ private theorem momentNormalizedMonomialLp_orthonormal
     simp only [map_inv₀, Complex.conj_ofReal]
     field_simp
     exact_mod_cast hsquare.symm
-  · simp only [map_inv₀, Complex.conj_ofReal, huv, ↓reduceIte, mul_zero]
+  · simp only [huv, ↓reduceIte, mul_zero]
 
 private def momentMonomialSpan
     {n k : ℕ} (K : CenteredBody n) (hk : 0 < k)
@@ -1794,7 +1765,6 @@ private theorem finrank_momentMonomialSpan
       (momentMonomialSpan K hk F htransport) =
       bergmanDimension K k := by
   let := (monomialIndex_finite K hk).fintype
-  unfold momentMonomialSpan
   calc
     Module.finrank ℂ
       (Submodule.span ℂ
@@ -1805,7 +1775,7 @@ private theorem finrank_momentMonomialSpan
             (momentNormalizedMonomialLp_orthonormal
               K hk F htransport).linearIndependent
     _ = bergmanDimension K k := by
-      simp only [fintypeCard_eq_ncard, bergmanDimension, Nat.card_eq_fintype_card]
+      simp only [bergmanDimension, Nat.card_eq_fintype_card]
 
 private def momentLatticeMonomialBasis
     {n k : ℕ} (K : CenteredBody n) (hk : 0 < k)
@@ -1882,7 +1852,6 @@ private theorem momentMonomialOrthonormalBasis_apply
           momentMonomialSpan K hk F htransport) :
       weightedHilbert k (momentNormalizedPotential F)) =
         momentNormalizedMonomialLp K hk F htransport u := by
-  classical
   let := (monomialIndex_finite K hk).fintype
   simpa only [momentMonomialOrthonormalBasis, OrthonormalBasis.reindex_apply,
     Equiv.symm_apply_apply, Basis.coe_toOrthonormalBasis] using
@@ -1923,7 +1892,6 @@ private theorem momentHolomorphicRepresentative_latticeMonomialBasis
       (momentLatticeMonomialBasis K hk F htransport u) =
       normalizedHolomorphicMonomial K hk
         (momentNormalizedPotential F) u := by
-  classical
   simp only [momentHolomorphicRepresentative, LinearMap.coe_comp, LinearEquiv.coe_coe, comp_apply,
     Basis.repr_self, Finsupp.linearCombination_single, one_smul]
 
@@ -1935,7 +1903,6 @@ private theorem differentiable_momentHolomorphicRepresentative
     (s : momentMonomialSpan K hk F htransport) :
     Differentiable ℂ
       (momentHolomorphicRepresentative K hk F htransport s) := by
-  classical
   unfold momentHolomorphicRepresentative
   rw [LinearMap.comp_apply, Finsupp.linearCombination_apply]
   unfold Finsupp.sum
@@ -2088,7 +2055,6 @@ private theorem monomialNormSquared_momentNormalized_global_lower_bound
           apply setIntegral_mono_on hconst hweight.integrableOn
             Metric.isOpen_ball.measurableSet
           intro v hv
-          unfold monomialWeight
           apply Real.exp_le_exp.mpr
           have hphase := phase_lower_on_inv_nat_ball
             K hk hφ u x v hv
@@ -2107,7 +2073,6 @@ private theorem monomialNormSquared_momentNormalized_global_lower_bound
           exact hscaled
     _ ≤ monomialNormSquared k (u : Space n)
           (momentNormalizedPotential F) := by
-          unfold monomialNormSquared monomialIntegral
           apply setIntegral_le_integral hweight
           exact Filter.Eventually.of_forall
             (fun _ => (Real.exp_pos _).le)
@@ -2128,12 +2093,6 @@ private theorem normalizedMonomialDensity_momentNormalized_global_upper_bound
   have hlower :=
     monomialNormSquared_momentNormalized_global_lower_bound
       K hk F htransport u x
-  change
-    Real.exp ((k : ℝ) * phase (u : Space n)
-      (momentNormalizedPotential F) x) /
-        monomialNormSquared k (u : Space n)
-          (momentNormalizedPotential F) ≤
-      Real.exp (bodyPhaseSlopeBound K) * ((k : ℝ) / 2) ^ n
   apply (div_le_iff₀ hnormpos).mpr
   have hcancel :
       (Real.exp (bodyPhaseSlopeBound K) * ((k : ℝ) / 2) ^ n) *
@@ -2204,8 +2163,8 @@ private theorem weightedDiagonalKernel_momentNormalized_global_upper_bound
                 K hk F htransport u x
     _ = (bergmanDimension K k : ℝ) *
         (Real.exp (bodyPhaseSlopeBound K) * ((k : ℝ) / 2) ^ n) := by
-          simp only [Finset.sum_const, Finset.card_univ, fintypeCard_eq_ncard, nsmul_eq_mul,
-            bergmanDimension, Nat.card_eq_fintype_card]
+          simp only [Finset.sum_const, Finset.card_univ, nsmul_eq_mul, bergmanDimension,
+            Nat.card_eq_fintype_card]
 
 private theorem weightedDiagonalKernel_momentNormalized_pos
     {n k : ℕ} (K : CenteredBody n) (hk : 0 < k)
@@ -2332,7 +2291,6 @@ private theorem eventually_log_momentNormalized_diagonalKernel_div_le
     push_cast
     ring
   rw [hexpand] at hlog
-  unfold globalKernelLogError
   apply (div_le_iff₀ hkreal).mpr
   calc
     Real.log (diagonalKernel K k φ x) ≤
@@ -2394,7 +2352,6 @@ private theorem momentJetFiltration_antitone
     {j l : ℕ} (hjl : j ≤ l) :
     momentJetFiltration K hk F htransport p l ≤
       momentJetFiltration K hk F htransport p j := by
-  classical
   intro s hs
   change momentHolomorphicJetMap K hk F htransport p l s = 0 at hs
   change momentHolomorphicJetMap K hk F htransport p j s = 0
@@ -2418,7 +2375,6 @@ private theorem exists_momentSimultaneousJetBasis
       ∀ (j : ℕ) (i : Fin (bergmanDimension K k)),
         b i ∈ momentJetFiltration K hk F htransport p j ∨
         b i ∈ (momentJetFiltration K hk F htransport p j)ᗮ := by
-  classical
   let := finiteDimensional_momentMonomialSpan K hk F htransport
   obtain ⟨b, hb⟩ := exists_orthonormalBasis_simultaneously_adapted
     (momentJetFiltration K hk F htransport p)
@@ -2544,18 +2500,6 @@ private theorem sum_momentTruncatedJetOrder_eq_sum_upper_card
         K hk F htransport p (j + 1)).card := by
       apply Finset.sum_congr rfl
       intro j _
-      change
-        (∑ i : Fin (bergmanDimension K k),
-          if momentSimultaneousJetBasis
-            K hk F htransport p i ∈
-            momentJetFiltration K hk F htransport p (j + 1)
-          then 1 else 0) =
-          (Finset.univ.filter
-            (fun i : Fin (bergmanDimension K k) =>
-              momentSimultaneousJetBasis
-                K hk F htransport p i ∈
-                momentJetFiltration
-                  K hk F htransport p (j + 1))).card
       exact (Finset.card_filter
         (fun i : Fin (bergmanDimension K k) =>
           momentSimultaneousJetBasis K hk F htransport p i ∈
@@ -2665,7 +2609,6 @@ private theorem exists_positive_momentHolomorphicBasisWeight
     (z : TorusCharacters.LogSpace n) :
     ∃ i, 0 < momentHolomorphicBasisWeight
       K hk F htransport b z i := by
-  classical
   by_contra! hzero
   have hvanish : ∀ i,
       momentHolomorphicRepresentative
@@ -2686,7 +2629,6 @@ private theorem exists_positive_momentHolomorphicBasisWeight
       Finset.sum_const_zero]
   rw [momentHolomorphicRepresentative_latticeMonomialBasis]
     at hrep
-  unfold normalizedHolomorphicMonomial at hrep
   have hnorm := momentMonomialNormSquared_pos
     K hk F htransport u
   have hsqrt :
@@ -2719,7 +2661,6 @@ private theorem differentiable_momentJointJetSection
     (i : Fin (bergmanDimension K k)) :
     Differentiable ℂ
       (momentJointJetSection K hk F htransport p N i) := by
-  unfold momentJointJetSection
   exact
     ((differentiable_momentHolomorphicRepresentative
       K hk F htransport
@@ -2775,12 +2716,6 @@ private theorem momentJointJetSectionVector_norm_sq
       K hk F htransport p N q‖ ^ 2 =
       momentJointJetDiagonal K hk F htransport p N q := by
   rw [EuclideanSpace.norm_sq_eq]
-  change
-    (∑ i, ‖momentJointJetSection
-      K hk F htransport p N i q‖ ^ 2) =
-      ∑ i, Complex.normSq
-        (momentJointJetSection
-          K hk F htransport p N i q)
   exact Finset.sum_congr rfl
     (fun i _ => (Complex.normSq_eq_norm_sq _).symm)
 
@@ -2794,7 +2729,6 @@ private theorem momentJointJetDiagonal_pos
     {τ : ℂ} (hτ : τ ≠ 0) :
     0 < momentJointJetDiagonal
       K hk F htransport p N (z, τ) := by
-  classical
   obtain ⟨i, hi⟩ :=
     exists_positive_momentHolomorphicBasisWeight
       K hk F htransport
@@ -2809,7 +2743,6 @@ private theorem momentJointJetDiagonal_pos
       momentJointJetSection
         K hk F htransport p N i (z, τ) ≠ 0 := by
     exact mul_ne_zero hvalue (pow_ne_zero _ hτ)
-  unfold momentJointJetDiagonal
   apply lt_of_lt_of_le (Complex.normSq_pos.mpr hsection)
   have hnonneg :
       ∀ j ∈ (Finset.univ : Finset (Fin (bergmanDimension K k))),
@@ -2950,7 +2883,6 @@ private theorem momentHolomorphicEvaluationRepresenter_inner
         K hk F htransport b z) s =
       momentHolomorphicRepresentative
         K hk F htransport s z := by
-  classical
   have hrepr := congrArg
     (fun v : momentMonomialSpan K hk F htransport =>
       momentHolomorphicRepresentative
@@ -2966,9 +2898,7 @@ private theorem momentHolomorphicEvaluationRepresenter_inner
           rw [momentHolomorphicEvaluationRepresenter, sum_inner]
           apply Finset.sum_congr rfl
           intro i _
-          simp only [Submodule.coe_inner, inner_smul_left,
-            RingHomCompTriple.comp_apply,
-            RingHom.id_apply]
+          simp only [inner_smul_left, RingHomCompTriple.comp_apply, RingHom.id_apply]
     _ = ∑ i, (@inner ℂ _ _ (b i) s) *
         (momentHolomorphicRepresentative
           K hk F htransport (b i) z) := by
@@ -2994,7 +2924,6 @@ private theorem sum_normSq_momentHolomorphicRepresentative_eq_representer_norm_s
         K hk F htransport (b i) z)) =
       ‖momentHolomorphicEvaluationRepresenter
         K hk F htransport b₀ z‖ ^ 2 := by
-  classical
   calc
     (∑ i, Complex.normSq
       (momentHolomorphicRepresentative
@@ -3022,7 +2951,6 @@ private theorem sum_momentHolomorphicBasisWeight_eq_of_orthonormalBases
       K hk F htransport b z i) =
       ∑ i, momentHolomorphicBasisWeight
         K hk F htransport b' z i := by
-  unfold momentHolomorphicBasisWeight
   calc
     (∑ i, Complex.normSq
       (momentHolomorphicRepresentative
@@ -3049,7 +2977,6 @@ private theorem sum_momentMonomialHolomorphicBasisWeight_eq_diagonalKernel
         z i) =
       diagonalKernel K k (momentNormalizedPotential F)
         (realLogCoordinate z) := by
-  classical
   let := (monomialIndex_finite K hk).fintype
   unfold momentHolomorphicBasisWeight
   calc
@@ -3185,7 +3112,7 @@ private theorem eventually_normalizedMomentTruncatedJetOrderProfile_ge
         t - t ^ (n + 1) /
           (((n + 1).factorial : ℝ) *
             normalizedVolume K.carrier) := by
-    linarith
+    linarith only [hε]
   filter_upwards [eventually_ge_atTop (1 : ℕ),
     (tendsto_order.mp hlimit).1 _ hstrict] with k hk hlower
   exact le_trans (le_of_lt hlower)
@@ -3249,7 +3176,6 @@ private theorem momentJointJetDiagonal_realTime
           K hk F htransport
           (momentSimultaneousJetBasis K hk F htransport p) z)
         (momentTruncatedJetOrder K hk F htransport p N) t := by
-  classical
   unfold momentJointJetDiagonal exponentialPartition
     exponentialMoment
   simp only [pow_zero, mul_one]
@@ -3298,7 +3224,6 @@ private theorem convexOn_momentJetGeodesic
     (z : TorusCharacters.LogSpace n) :
     ConvexOn ℝ Set.univ
       (momentJetGeodesic K hk F htransport p N z) := by
-  unfold momentJetGeodesic
   apply convexOn_logarithmicPotential
   · exact momentHolomorphicBasisWeight_nonneg
       K hk F htransport
@@ -3317,7 +3242,6 @@ private theorem momentJetGeodesic_deriv_nonneg
     (z : TorusCharacters.LogSpace n) (t : ℝ) :
     0 ≤ deriv (momentJetGeodesic
       K hk F htransport p N z) t := by
-  unfold momentJetGeodesic
   apply logarithmicPotential_deriv_nonneg
   · exact momentHolomorphicBasisWeight_nonneg
       K hk F htransport
@@ -3337,7 +3261,6 @@ private theorem momentJetGeodesic_deriv_le_cutoff
     deriv (momentJetGeodesic
       K hk F htransport p N z) t ≤
       (N : ℝ) / (k : ℝ) := by
-  unfold momentJetGeodesic
   apply logarithmicPotential_deriv_le
   · exact momentHolomorphicBasisWeight_nonneg
       K hk F htransport
@@ -3511,7 +3434,7 @@ private theorem exists_mem_ball_sub_lt_upperRegularization
     Filter.mem_of_superset (Metric.ball_mem_nhds x hε) h
   have hle :=
     upperRegularization_le_of_eventually f x hev
-  linarith
+  linarith only [hδ, hle]
 
 private theorem exists_mem_ball_family_sub_lt_upperRegularization
     {X : Type*} [PseudoMetricSpace X]
@@ -3789,8 +3712,7 @@ private theorem limsup_integral_sub_const_le_of_upperSemicontinuous
   have hshift : UpperSemicontinuous (fun z : X => u z - L) := by
     have hconst : UpperSemicontinuous (fun _ : X => -L) :=
       (continuous_const : Continuous (fun _ : X => -L)).upperSemicontinuous
-    simpa only [sub_eq_add_neg] using
-      hu.add hconst
+    exact hu.add hconst
   have hmeas (m : ℕ) :
       Measurable (fun a : α => u (γ m a) - L) := by
     exact (hshift.comp (hγ m)).measurable
@@ -3866,7 +3788,6 @@ private theorem momentJointJetDiagonal_eq_radial
           Real.log (Complex.normSq τ) / 2 =
         Real.log (Complex.normSq τ) by ring,
       Real.exp_log hsq]
-  unfold momentJointJetDiagonal
   apply Finset.sum_congr rfl
   intro i _
   simp only [momentJointJetSection,
@@ -3902,7 +3823,7 @@ private theorem momentPositiveJointGeodesic_eq_momentJetGeodesic
           (jointLogTime q) := by
   have hτ : q.val.2 ≠ 0 :=
     Complex.normSq_pos.mp
-      (lt_trans (by norm_num : (0 : ℝ) < 1) q.property)
+      (lt_trans (by exact zero_lt_one : (0 : ℝ) < 1) q.property)
   unfold momentPositiveJointGeodesic jointLogTime
   rw [momentJointJetDiagonal_eq_radial
     K (Nat.zero_lt_succ k) F htransport p q.val.1
@@ -3926,7 +3847,6 @@ private theorem continuous_momentJointMajorant
     {n : ℕ} (K : CenteredBody n)
     (F : SourceFiniteEnergyPotential K) :
     Continuous (momentJointMajorant K F) := by
-  unfold momentJointMajorant
   exact (continuous_momentNormalizedPotential F).comp
       (continuous_jointRealCoordinate n) |>.add
         (continuous_const.mul (continuous_jointLogTime n))
@@ -3976,7 +3896,7 @@ private theorem momentPositiveJointGeodesic_le_majorant_add_one_of_tail
       momentJointMajorant K F q + 1 := by
   exact (Classical.choose_spec (Filter.eventually_atTop.mp
     (eventually_momentPositiveJointGeodesic_le_majorant_add
-      K F htransport p (by norm_num : (0 : ℝ) < 1)))) k hk q
+      K F htransport p (by exact zero_lt_one : (0 : ℝ) < 1)))) k hk q
 
 private def momentJointTailSup
     {n : ℕ} (K : CenteredBody n)
@@ -4197,7 +4117,7 @@ private theorem momentZeroMonomialNorm_le_partition
     unfold monomialWeight pairing
     simp only [Pi.zero_apply, zero_mul, Finset.sum_const_zero, zero_sub]
     apply Real.exp_le_exp.mpr
-    nlinarith [F.nonnegative x]
+    nlinarith only [hkone, F.nonnegative x]
   have hshift :
       monomialNormSquared k (0 : Space n)
           (momentNormalizedPotential F) =
@@ -4250,8 +4170,7 @@ private theorem momentJointGlobalLowerBound_le_zeroMonomial
   have hZ := finiteEnergySourcePartition_pos F
   have hnorm : 0 < monomialNormSquared k (0 : Space n)
       (momentNormalizedPotential F) := by
-    simpa only using
-      (momentMonomialNormSquared_pos K hk F htransport u₀)
+    exact (momentMonomialNormSquared_pos K hk F htransport u₀)
   have hbound := momentZeroMonomialNorm_le_partition
     K hk F htransport
   have hlog := Real.log_le_log hnorm hbound
@@ -4264,11 +4183,11 @@ private theorem momentJointGlobalLowerBound_le_zeroMonomial
       Real.log (finiteEnergySourcePartition F) ≤
         |Real.log (finiteEnergySourcePartition F)| := le_abs_self _
       _ ≤ (k : ℝ) * |Real.log (finiteEnergySourcePartition F)| := by
-        nlinarith [abs_nonneg
-          (Real.log (finiteEnergySourcePartition F))]
+        nlinarith only [hkone, hZ, hnorm, hbound, hlog, abs_nonneg (Real.log
+          (finiteEnergySourcePartition F))]
   unfold momentJointGlobalLowerBound
   apply (le_div_iff₀ hkreal).mpr
-  nlinarith
+  linarith only [hlog, habs]
 
 private theorem inv_momentZeroMonomialNorm_le_diagonalKernel
     {n k : ℕ} (K : CenteredBody n) (hk : 0 < k)
@@ -4279,7 +4198,6 @@ private theorem inv_momentZeroMonomialNorm_le_diagonalKernel
     (monomialNormSquared k (0 : Space n)
       (momentNormalizedPotential F))⁻¹ ≤
       diagonalKernel K k (momentNormalizedPotential F) x := by
-  classical
   let := (monomialIndex_finite K hk).fintype
   let u₀ : monomialIndex K k :=
     ⟨0, zero_mem_monomialIndex K hk⟩
@@ -4316,8 +4234,7 @@ private theorem momentJointGlobalLowerBound_le_log_diagonalKernel
     ⟨0, zero_mem_monomialIndex K hk⟩
   have hnorm : 0 < monomialNormSquared k (0 : Space n)
       (momentNormalizedPotential F) := by
-    simpa only using
-      (momentMonomialNormSquared_pos K hk F htransport u₀)
+    exact (momentMonomialNormSquared_pos K hk F htransport u₀)
   have hbound := inv_momentZeroMonomialNorm_le_diagonalKernel
     K hk F htransport x
   have hlog := Real.log_le_log (inv_pos.mpr hnorm) hbound
@@ -4344,7 +4261,6 @@ private theorem monotone_momentJetGeodesic
       K hk F htransport p N z) := by
   apply monotone_of_deriv_nonneg
   · intro t
-    unfold momentJetGeodesic
     exact (hasDerivAt_logarithmicPotential
       (momentHolomorphicBasisWeight
         K hk F htransport
@@ -4412,7 +4328,6 @@ private theorem momentJointGlobalLowerBound_le_tailSup
         K F htransport p
         (momentJointTailStart K F htransport p + r) q
     _ ≤ momentJointTailSup K F htransport p r q := by
-      unfold momentJointTailSup
       apply le_csSup
         (momentJointTailSup_range_bddAbove
           K F htransport p r q)
@@ -4633,7 +4548,6 @@ private def euclideanGradient {n : ℕ}
 private theorem continuous_euclideanGradient {n : ℕ}
     {f : Space n → ℝ}
     (hf : ContDiff ℝ 1 f) : Continuous (euclideanGradient f) := by
-  unfold euclideanGradient
   apply (PiLp.continuous_toLp 2 (fun _ : Fin n => ℝ)).comp
   exact continuous_pi (fun i =>
     (hf.continuous_fderiv (by simp only [ne_eq, one_ne_zero, not_false_eq_true])).clm_apply
@@ -4674,7 +4588,7 @@ private theorem growingBump_eventually_one {n : ℕ} (x : Space n) :
   rw [Metric.mem_closedBall, dist_zero_right]
   change ‖x‖ ≤ (k : ℝ) + 1
   have hNk : (N : ℝ) ≤ (k : ℝ) := by exact_mod_cast hk
-  linarith
+  linarith only [hN, hk, hNk]
 
 private theorem growingBump_fderiv {n : ℕ} (k : ℕ) (x : Space n) :
     fderiv ℝ (fun y : Space n => growingBump k y) x =
@@ -4839,7 +4753,6 @@ private theorem angularSlice_sq_integrable_ae {n k : ℕ}
         (WeightedTorusHilbert.weightedTorusMeasure k φ) :=
     (MeasureTheory.memLp_two_iff_integrable_sq_norm
       (MeasureTheory.Lp.aestronglyMeasurable f)).mp (MeasureTheory.Lp.memLp f)
-  unfold WeightedTorusHilbert.weightedTorusMeasure at hsquare
   exact hsquare.prod_right_ae
 
 private theorem angularSlice_memLp_ae {n k : ℕ}
@@ -4857,7 +4770,6 @@ private theorem angularSlice_memLp_ae {n k : ℕ}
             f (x, θ))
           (WeightedTorusHilbert.angularMeasure n) := by
     have hf := (MeasureTheory.Lp.aestronglyMeasurable f)
-    unfold WeightedTorusHilbert.weightedTorusMeasure at hf
     exact hf.prodMk_left
   filter_upwards [hmeas, angularSlice_sq_integrable_ae φ f]
     with x hx hsquare
@@ -4882,7 +4794,6 @@ private theorem angularFourierCoefficient_aestronglyMeasurable {n k : ℕ}
         ((WeightedTorusHilbert.radialMeasure k φ).prod
           (WeightedTorusHilbert.angularMeasure n)) := by
     have hf := (MeasureTheory.Lp.aestronglyMeasurable f)
-    unfold WeightedTorusHilbert.weightedTorusMeasure at hf
     exact hchar.comp_snd.mul hf
   have hcoeff := hprod.integral_prod_right'
   refine hcoeff.congr (Filter.Eventually.of_forall fun x => ?_)
@@ -4912,10 +4823,9 @@ private theorem angularFourierCoefficient_sq_le_slice_energy_ae {n k : ℕ}
       UnitAddTorus.mFourierCoeff
         (fun θ : TorusCharacters.AngularTorus n => fx θ) m =
         angularFourierCoefficient φ f m x := by
-    unfold angularFourierCoefficient UnitAddTorus.mFourierCoeff
     apply MeasureTheory.integral_congr_ae
     filter_upwards [hfx] with θ hθ
-    simp only [hθ, smul_eq_mul]
+    simp only [hθ]
   have henergy :
       (∫ θ : TorusCharacters.AngularTorus n,
         ‖fx θ‖ ^ 2 ∂(WeightedTorusHilbert.angularMeasure n)) =
@@ -4945,7 +4855,6 @@ private theorem angularFourierCoefficient_sq_integrable {n k : ℕ}
         (WeightedTorusHilbert.weightedTorusMeasure k φ) :=
     (MeasureTheory.memLp_two_iff_integrable_sq_norm
       (MeasureTheory.Lp.aestronglyMeasurable f)).mp (MeasureTheory.Lp.memLp f)
-  unfold WeightedTorusHilbert.weightedTorusMeasure at hsquare
   have hmajor := hsquare.integral_prod_left
   refine hmajor.mono'
     ((angularFourierCoefficient_aestronglyMeasurable φ f m).norm.pow 2) ?_
@@ -4965,9 +4874,6 @@ private theorem differentiable_coordinateHolomorphicSlice {n : ℕ}
     (ζ : TorusCharacters.LogSpace n)
     (i : Fin n) :
     Differentiable ℂ (coordinateHolomorphicSlice F ζ i) := by
-  unfold coordinateHolomorphicSlice
-  change Differentiable ℂ
-    (F ∘ fun w : ℂ => fun j => if j = i then w else ζ j)
   apply hF.comp
   apply differentiable_pi.mpr
   intro j
@@ -5038,8 +4944,7 @@ private theorem mFourierCoefficient_torusMonomial {n : ℕ}
             conj (UnitAddTorus.mFourier m θ) *
               UnitAddTorus.mFourier q θ) =
             if m = q then (1 : ℂ) else 0 := by
-        simpa only [WeightedTorusHilbert.angularMeasure] using
-          WeightedTorusHilbert.angularCharacter_inner m q
+        exact WeightedTorusHilbert.angularCharacter_inner m q
       rw [hinner]
       split_ifs <;> simp
 
@@ -5119,7 +5024,7 @@ private theorem forbidden_angularFourierCoefficient_constant_eq_zero
       φ x ≤ SupportFunction.supportFunction K.carrier x + C := by
     intro x
     have h := (abs_le.mp (hbounded x)).2
-    linarith
+    linarith only [h]
   have hkreal : 0 < (k : ℝ) := by exact_mod_cast hk
   exact MonomialDivergence.not_integrable_monomialWeight_of_centeredBody_not_mem_interior
     K hu hupper hkreal hmono
@@ -5161,10 +5066,9 @@ private theorem weightedHilbert_eq_zero_of_fourier
         UnitAddTorus.mFourierCoeff
             (fun θ : TorusCharacters.AngularTorus n => fx θ) m =
           angularFourierCoefficient φ f m x := by
-            unfold angularFourierCoefficient UnitAddTorus.mFourierCoeff
             apply MeasureTheory.integral_congr_ae
             filter_upwards [hfx] with θ hθ
-            simp only [hθ, smul_eq_mul]
+            simp only [hθ]
         _ = 0 := hx m
     have hparse := UnitAddTorus.hasSum_sq_mFourierCoeff fx
     have hsumzero :
@@ -5478,7 +5382,7 @@ private theorem angularBoxIntegral_eq_of_coordinate_slice
               ∫ t : ℝ in Set.Ioc (0 : ℝ) 1,
                 h (i.insertNth t y)
           simpa only [← intervalIntegral.integral_of_le
-            (by norm_num : (0 : ℝ) ≤ 1)] using hslice y
+            (by exact zero_le_one : (0 : ℝ) ≤ 1)] using hslice y
     _ = ∫ z : ℝ × (Fin n → ℝ),
           h (i.insertNth z.1 z.2) ∂((μ i).prod ν) :=
         (MeasureTheory.integral_prod_symm _ hhi).symm
@@ -5558,7 +5462,6 @@ private theorem twistedAngularIntegral_coordinate_update {n : ℕ}
               else logarithmicPoint x (i.insertNth 0 y) j) := by
             apply intervalIntegral.integral_congr
             intro t ht
-            unfold twistedAngularIntegrand
             apply congrArg (globalLaurentTwist F m)
             simpa only [Complex.ofReal_div,
               Complex.ofReal_ofNat] using
@@ -5574,7 +5477,6 @@ private theorem twistedAngularIntegral_coordinate_update {n : ℕ}
             (Function.update x i a) (i.insertNth t y) := by
             apply intervalIntegral.integral_congr
             intro t ht
-            unfold twistedAngularIntegrand
             apply congrArg (globalLaurentTwist F m)
             symm
             simpa only [Complex.ofReal_div,
@@ -5607,7 +5509,6 @@ private theorem twistedAngularAverage_eq_zero {n : ℕ}
     (m : Fin n → ℤ) (x : Space n) :
     twistedAngularAverage F m x =
       twistedAngularAverage F m 0 := by
-  classical
   have hreset : ∀ s : Finset (Fin n),
       twistedAngularAverage F m x =
         twistedAngularAverage F m
@@ -5703,7 +5604,6 @@ private theorem fourier_times_cover_eq_radial_twist {n : ℕ}
 
 private theorem measurableSet_angularBox (n : ℕ) :
     MeasurableSet (angularBox n) := by
-  unfold angularBox
   exact MeasurableSet.univ_pi fun _ => measurableSet_Ioc
 
 private theorem angularBox_eq_setOf (n : ℕ) :
@@ -5824,7 +5724,7 @@ private theorem angularFourierCoefficient_of_holomorphic_representative_ae
           UnitAddTorus.mFourierCoeff
         apply MeasureTheory.integral_congr_ae
         filter_upwards [hx] with θ hθ
-        simp only [hθ, smul_eq_mul]
+        simp only [hθ]
     _ = UnitAddTorus.mFourierCoeff
           (coverRepresentative F 0) m *
         WeightedTorusHilbert.radialCharacter m x :=
@@ -5884,7 +5784,6 @@ private theorem angularFourierCoefficient_sub_ae
           HolomorphicLaurentFourierCompletenessBridge.angularFourierCoefficient
             φ g m x := by
   have hsub := MeasureTheory.Lp.coeFn_sub f g
-  unfold WeightedTorusHilbert.weightedTorusMeasure at hsub
   have hslices :
       ∀ᵐ x ∂(WeightedTorusHilbert.radialMeasure k φ),
         (fun θ : TorusCharacters.AngularTorus n =>
@@ -5933,13 +5832,12 @@ private theorem indexedMonomial_finite_sum_ae
       ∑ u ∈ s, c u *
         WeightedTorusHilbert.torusMonomial
           (WeightedTorusHilbert.integerExponent K hk u) z) := by
-  classical
   induction s using Finset.induction_on with
   | empty =>
     filter_upwards [MeasureTheory.Lp.coeFn_zero ℂ 2
       (WeightedTorusHilbert.weightedTorusMeasure k φ)]
       with z hz
-    simpa only [Finset.sum_empty, Pi.zero_apply] using hz
+    exact hz
   | @insert u s hu ih =>
     have hadd :=
       MeasureTheory.Lp.coeFn_add
@@ -6068,8 +5966,7 @@ private theorem angularFourierCoefficient_indexed_finite_sum_ae
                   (volume : Measure
                     (TorusCharacters.AngularTorus n)) := by
             intro u hu
-            simpa only [WeightedTorusHilbert.angularMeasure] using
-              angularCharacter_mul_slice_integrable
+            exact angularCharacter_mul_slice_integrable
               ((torusMonomial_angular_memLp
                 (WeightedTorusHilbert.integerExponent
                   K hk u) x).const_mul (c u)) m
@@ -6193,7 +6090,6 @@ private theorem finiteLaurentCoefficient_sum_eq
           else 0)) =
       laurentCoefficient F m *
         WeightedTorusHilbert.radialCharacter m x := by
-  classical
   by_cases hinside : scaledExponent k m ∈ interior K.carrier
   · let u : LatticeAsymptotics.monomialIndex K k :=
       ⟨scaledExponent k m,
@@ -6333,7 +6229,6 @@ private theorem holomorphic_representative_eq_finite_laurent_sum
     rw [finiteLaurentCoefficient_sum_eq
       K hk hφ hbounded f hF hperiod hrepresentative m x]
     exact sub_self _
-  change f = g
   exact sub_eq_zero.mp hzero
 
 end JointHolomorphicLaurentFourierCompatibility
@@ -6423,7 +6318,6 @@ private theorem differentiableAt_complex_of_barPartialCoordinate_eq_zero
         Complex.I • D (Pi.single j (1 : ℂ)) := by
     intro j
     have hz := hbar j
-    unfold barPartialCoordinate at hz
     have hnum :
         (fderiv ℝ F z) (Pi.single j (1 : ℂ)) +
           Complex.I * (fderiv ℝ F z)
@@ -6456,8 +6350,6 @@ private theorem translatedRealKernel_contDiff {n : ℕ}
     (x : TorusCharacters.LogSpace n) :
     ContDiff ℝ 1
       (fun t : TorusCharacters.LogSpace n => κ (x - t)) := by
-  change ContDiff ℝ 1
-    (κ ∘ (fun t : TorusCharacters.LogSpace n => x - t))
   exact hκ.comp (contDiff_const.sub contDiff_id)
 
 private theorem translatedRealKernel_hasCompactSupport {n : ℕ}
@@ -7026,8 +6918,7 @@ private theorem complexReal_convolution_periodic {n : ℕ}
           abel
     _ = ∫ t : TorusCharacters.LogSpace n,
       H t ∂(volume : Measure (TorusCharacters.LogSpace n)) := by
-      simpa only [sub_eq_add_neg] using
-        (integral_add_right_eq_self H (-d))
+      exact (integral_add_right_eq_self H (-d))
     _ = _ := rfl
 
 private theorem normalizedShrinkingConvolution_periodic {n : ℕ}
@@ -7062,7 +6953,6 @@ private theorem continuous_coverBarPartialTest {n : ℕ}
     {ψ : TorusCharacters.LogSpace n → ℝ}
     (hψ : ContDiff ℝ 1 ψ) (j : Fin n) :
     Continuous (coverBarPartialTest ψ j) := by
-  unfold coverBarPartialTest
   exact
     (Complex.continuous_ofReal.comp
       ((hψ.continuous_fderiv (by simp only [ne_eq, one_ne_zero, not_false_eq_true])).clm_apply
@@ -7076,7 +6966,6 @@ private theorem compactSupport_coverBarPartialTest {n : ℕ}
     {ψ : TorusCharacters.LogSpace n → ℝ}
     (hψ : HasCompactSupport ψ) (j : Fin n) :
     HasCompactSupport (coverBarPartialTest ψ j) := by
-  unfold coverBarPartialTest
   exact
     (compactSupport_complexOfReal
       (hψ.fderiv_apply ℝ (Pi.single j (1 : ℂ)))).add
@@ -7087,8 +6976,6 @@ private theorem continuous_coverAdjointScalarTest {n : ℕ}
     {ψ : TorusCharacters.LogSpace n → ℝ}
     (hψ : ContDiff ℝ 1 ψ) (j : Fin n) :
     Continuous (coverAdjointScalarTest ψ j) := by
-  change Continuous
-    (fun z => (starRingEnd ℂ) (coverBarPartialTest ψ j z))
   exact Complex.continuous_conj.comp
     (continuous_coverBarPartialTest hψ j)
 
@@ -7104,7 +6991,6 @@ private theorem continuous_coverAdjointVectorTest {n : ℕ}
     {ψ : TorusCharacters.LogSpace n → ℝ}
     (hψ : Continuous ψ) (j : Fin n) :
     Continuous (coverAdjointVectorTest ψ j) := by
-  classical
   have hs : Continuous
       (fun z : TorusCharacters.LogSpace n =>
         (2 : ℂ) * (ψ z : ℂ)) :=
@@ -7121,10 +7007,6 @@ private theorem continuous_coverAdjointVectorTest {n : ℕ}
         (continuous_const :
           Continuous
             (fun _ : TorusCharacters.LogSpace n => (0 : ℂ)))
-  change Continuous
-    (fun z : TorusCharacters.LogSpace n =>
-      WithLp.toLp 2
-        (Pi.single j ((2 : ℂ) * (ψ z : ℂ)) : Fin n → ℂ))
   exact (PiLp.continuous_toLp 2 (fun _ : Fin n => ℂ)).comp hpi
 
 end DolbeaultGraphDistributionBridge
@@ -7155,7 +7037,6 @@ private theorem coverWeightedMeasure_isLocallyFinite {n : ℕ}
     {a : TorusCharacters.LogSpace n → ℝ}
     (ha : Continuous a) :
     IsLocallyFiniteMeasure (coverWeightedMeasure a) := by
-  unfold coverWeightedMeasure
   exact IsLocallyFiniteMeasure.withDensity_ofReal
     (continuous_coverWeight ha)
 
@@ -7302,7 +7183,6 @@ private theorem weighted_complex_coordinate_integration_by_parts_volume
     contDiff_complexCoverWeight ha
   have hW : ContDiff ℝ 1 W := hG.mul hweight
   have hWcompact : HasCompactSupport W := by
-    change HasCompactSupport (G * complexCoverWeight a)
     exact hGcompact.mul_right
   have hFd : Continuous (fun z : E => (fderiv ℝ F z) v) :=
     (hF.continuous_fderiv (by simp only [ne_eq, one_ne_zero, not_false_eq_true])).clm_apply
@@ -7334,8 +7214,7 @@ private theorem weighted_complex_coordinate_integration_by_parts_volume
         (fderiv ℝ (G * complexCoverWeight a) z) v =
           G z * (fderiv ℝ (complexCoverWeight a) z) v +
             complexCoverWeight a z * (fderiv ℝ G z) v := by
-      simpa only [_root_.add_apply,
-        _root_.smul_apply, smul_eq_mul] using hp
+      exact hp
     change (fderiv ℝ
       (fun y => G y * complexCoverWeight a y) z) v = _
     change
@@ -7453,7 +7332,6 @@ private theorem continuous_weightedRealDerivative {n : ℕ}
     (hF : ContDiff ℝ 1 F)
     (v : TorusCharacters.LogSpace n) :
     Continuous (weightedRealDerivative a F v) := by
-  unfold weightedRealDerivative
   exact ((hF.continuous_fderiv (by simp only [ne_eq, one_ne_zero, not_false_eq_true])).clm_apply
     continuous_const).sub
       (hF.continuous.mul
@@ -7467,7 +7345,6 @@ private theorem compactSupport_weightedRealDerivative {n : ℕ}
     (hF : HasCompactSupport F)
     (v : TorusCharacters.LogSpace n) :
     HasCompactSupport (weightedRealDerivative a F v) := by
-  unfold weightedRealDerivative
   exact (hF.fderiv_apply ℝ v).sub hF.mul_right
 
 private theorem integrable_fderiv_mul_coverWeightedMeasure {n : ℕ}
@@ -7557,7 +7434,6 @@ private theorem weighted_barPartial_integration_by_parts
           Complex.I * ((fderiv ℝ F z) v₁ * G z)) / 2 ∂μ := by
         apply MeasureTheory.integral_congr_ae
         filter_upwards [] with z
-        unfold barPartialCoordinate
         change
           (((fderiv ℝ F z) v₀ +
             Complex.I * (fderiv ℝ F z) v₁) / 2) * G z = _
@@ -7624,7 +7500,7 @@ private theorem fderiv_conj {n : ℕ}
   calc
     (fderiv ℝ (Complex.conjCLE ∘ F) z) v =
         (Complex.conjCLE : ℂ →L[ℝ] ℂ) ((fderiv ℝ F z) v) := by
-      simpa only [ContinuousLinearMap.comp_apply] using hp
+      exact hp
     _ = conj ((fderiv ℝ F z) v) := rfl
 
 private theorem barPartial_conj_eq_conj_holomorphic {n : ℕ}
@@ -7723,7 +7599,7 @@ private theorem contDiff_directional {n : ℕ}
       (fun p : TorusCharacters.LogSpace n ×
           TorusCharacters.LogSpace n =>
         (fderiv ℝ F p.1) p.2) :=
-    hF.contDiff_fderiv_apply (by norm_num)
+    hF.contDiff_fderiv_apply (by rfl)
   have hp : ContDiff ℝ 1
       (fun z : TorusCharacters.LogSpace n => (z, v)) :=
     contDiff_id.prodMk contDiff_const
@@ -7738,7 +7614,7 @@ private theorem fderiv_directional {n : ℕ}
         (fderiv ℝ F ζ) v) z) w =
       ((fderiv ℝ (fderiv ℝ F) z) w) v := by
   have hd : DifferentiableAt ℝ (fderiv ℝ F) z :=
-    (hF.fderiv_right (m := 1) (by norm_num)).differentiable
+    (hF.fderiv_right (m := 1) (by rfl)).differentiable
       (by simp only [ne_eq, one_ne_zero, not_false_eq_true]) |>.differentiableAt
   have he := fderiv_clm_apply hd
     (differentiableAt_const (c := v))
@@ -7767,7 +7643,6 @@ private theorem contDiff_holomorphicCoordinate {n : ℕ}
     (hF : ContDiff ℝ 2 F)
     (j : Fin n) :
     ContDiff ℝ 1 (fun z => holomorphicCoordinate F z j) := by
-  unfold holomorphicCoordinate
   exact ((contDiff_directional hF (Pi.single j (1 : ℂ))).sub
     (contDiff_const.mul
       (contDiff_directional hF (Pi.single j Complex.I)))).div_const 2
@@ -7777,7 +7652,6 @@ private theorem contDiff_barPartialCoordinate {n : ℕ}
     (hF : ContDiff ℝ 2 F)
     (j : Fin n) :
     ContDiff ℝ 1 (fun z => barPartialCoordinate F z j) := by
-  unfold barPartialCoordinate
   exact ((contDiff_directional hF (Pi.single j (1 : ℂ))).add
     (contDiff_const.mul
       (contDiff_directional hF (Pi.single j Complex.I)))).div_const 2
@@ -7791,9 +7665,8 @@ private theorem contDiff_weightedHolomorphicDerivative {n : ℕ}
     ContDiff ℝ 1 (weightedHolomorphicDerivative a F j) := by
   have hac : ContDiff ℝ 2 (fun z => (a z : ℂ)) :=
     Complex.ofRealCLM.contDiff.comp ha
-  unfold weightedHolomorphicDerivative
   exact (contDiff_holomorphicCoordinate hF j).sub
-    ((hF.of_le (by norm_num)).mul
+    ((hF.of_le (by decide)).mul
       (contDiff_holomorphicCoordinate hac j))
 
 private theorem compactSupport_barPartialCoordinate {n : ℕ}
@@ -7813,11 +7686,6 @@ private theorem compactSupport_barPartialCoordinate {n : ℕ}
   have hp := hs.mul_right
     (f' := fun _ : TorusCharacters.LogSpace n =>
       ((2 : ℂ)⁻¹))
-  unfold barPartialCoordinate
-  change HasCompactSupport
-    ((fun z : TorusCharacters.LogSpace n =>
-      (fderiv ℝ F z) v₀ + Complex.I * (fderiv ℝ F z) v₁) *
-      fun _ : TorusCharacters.LogSpace n => (2 : ℂ)⁻¹)
   exact hp
 
 private theorem fderiv_holomorphicCoordinate {n : ℕ}
@@ -7975,8 +7843,8 @@ private theorem barPartial_weightedHolomorphicDerivative_commutator
       weightedHolomorphicDerivative a
         (fun w => barPartialCoordinate F w j) i z -
           F z * complexHessian a z i j := by
-  have haone : ContDiff ℝ 1 a := ha.of_le (by norm_num)
-  have hfone : ContDiff ℝ 1 F := hF.of_le (by norm_num)
+  have haone : ContDiff ℝ 1 a := ha.of_le (by decide)
+  have hfone : ContDiff ℝ 1 F := hF.of_le (by decide)
   have hac : ContDiff ℝ 2 (fun w => (a w : ℂ)) :=
     Complex.ofRealCLM.contDiff.comp ha
   have hholF := contDiff_holomorphicCoordinate hF i
@@ -7997,7 +7865,6 @@ private theorem continuous_barPartialCoordinate {n : ℕ}
     (hF : ContDiff ℝ 1 F)
     (j : Fin n) :
     Continuous (fun z => barPartialCoordinate F z j) := by
-  unfold barPartialCoordinate
   exact (((hF.continuous_fderiv (by simp only [ne_eq, one_ne_zero, not_false_eq_true])).clm_apply
     continuous_const).add
     (continuous_const.mul
@@ -8009,7 +7876,6 @@ private theorem continuous_holomorphicCoordinate {n : ℕ}
     (hF : ContDiff ℝ 1 F)
     (j : Fin n) :
     Continuous (fun z => holomorphicCoordinate F z j) := by
-  unfold holomorphicCoordinate
   exact (((hF.continuous_fderiv (by simp only [ne_eq, one_ne_zero, not_false_eq_true])).clm_apply
     continuous_const).sub
     (continuous_const.mul
@@ -8025,7 +7891,6 @@ private theorem continuous_weightedHolomorphicDerivative {n : ℕ}
     Continuous (weightedHolomorphicDerivative a F j) := by
   have hac : ContDiff ℝ 1 (fun z => (a z : ℂ)) :=
     Complex.ofRealCLM.contDiff.comp ha
-  unfold weightedHolomorphicDerivative
   exact (continuous_holomorphicCoordinate hF j).sub
     (hF.continuous.mul (continuous_holomorphicCoordinate hac j))
 
@@ -8169,7 +8034,7 @@ private theorem complex_schur_energy_le {n : ℕ}
         (0 : Fin 1) (0 : Fin 1)).re at hreal
   rw [complexSchurColumn_mul_apply] at hreal
   change 0 ≤ c - complexSchurEnergyDensity A b at hreal
-  linarith
+  exact sub_nonneg.mp hreal
 
 private def sourceCoverComplexHessian {n : ℕ}
     (a : TorusCharacters.LogSpace n → ℝ)
@@ -8395,10 +8260,9 @@ private def sourceLocalPolynomialConstant {n : ℕ}
 private theorem sourceLocalPolynomialConstant_pos
     {n : ℕ} (K : CenteredBody n) :
     0 < sourceLocalPolynomialConstant K := by
-  unfold sourceLocalPolynomialConstant
   exact mul_pos
     (GlobalBergmanKernelBound.globalKernelPolynomialConstant_pos K)
-    (by have hv := K.volume_pos; linarith)
+    (by have hv := K.volume_pos; linarith only [hv])
 
 private def sourceLocalKernelLogError {n : ℕ}
     (K : CenteredBody n) (k : ℕ) : ℝ :=
@@ -8443,7 +8307,6 @@ private def sourceLocalJointRegion {n : ℕ}
 private theorem isOpen_sourceLocalJointRegion {n : ℕ}
     (p : TorusCharacters.LogSpace n) (R : ℝ) :
     IsOpen (sourceLocalJointRegion p R) := by
-  unfold sourceLocalJointRegion
   have htime : Continuous (jointLogTime (n := n)) :=
     continuous_jointLogTime n
   exact isOpen_lt (by fun_prop) (by fun_prop)
@@ -8564,26 +8427,23 @@ private def sourceLocalBoxRadius (R t : ℝ) : ℝ :=
 
 private theorem sourceLocalBoxScale_pos {R : ℝ} (hR : 0 < R) :
     0 < sourceLocalBoxScale R := by
-  unfold sourceLocalBoxScale
-  exact lt_min (by norm_num)
+  exact lt_min (by exact zero_lt_one)
     (div_pos hR (by positivity))
 
 private theorem sourceLocalBoxRadius_pos {R : ℝ} (hR : 0 < R)
     (t : ℝ) :
     0 < sourceLocalBoxRadius R t := by
-  unfold sourceLocalBoxRadius
   exact mul_pos (sourceLocalBoxScale_pos hR) (Real.exp_pos _)
 
 private theorem sourceLocalBoxRadius_le_one {R t : ℝ}
     (hR : 0 < R) (ht : 0 ≤ t) :
     sourceLocalBoxRadius R t ≤ 1 := by
-  unfold sourceLocalBoxRadius
   calc
     sourceLocalBoxScale R * Real.exp (-t / 2) ≤
       sourceLocalBoxScale R * 1 := by
         gcongr
         · exact (sourceLocalBoxScale_pos hR).le
-        · exact Real.exp_le_one_iff.mpr (by linarith)
+        · exact Real.exp_le_one_iff.mpr (by linarith only [ht])
     _ ≤ 1 := by
       simp only [sourceLocalBoxScale, mul_one, inf_le_left]
 
@@ -8685,7 +8545,6 @@ private def sourceLocalBallVolumeConstant (n : ℕ) (R : ℝ) : ℝ :=
 private theorem sourceLocalBallVolumeConstant_pos
     (n : ℕ) {R : ℝ} (hR : 0 < R) :
     0 < sourceLocalBallVolumeConstant n R := by
-  unfold sourceLocalBallVolumeConstant
   exact mul_pos (pow_pos (by norm_num) n)
     (pow_pos (sourceLocalBoxScale_pos hR) (2 * n))
 
@@ -8741,8 +8600,8 @@ private def sourceJointCoverTime {n : ℕ}
 
 private theorem continuous_sourceJointCoverTime (n : ℕ) :
     Continuous (sourceJointCoverTime (n := n)) := by
-  unfold sourceJointCoverTime
-  fun_prop
+  exact Continuous.const_mul (Continuous.comp' Complex.continuous_re (Continuous.snd
+    continuous_id')) 2
 
 private theorem normSq_mul_of_norm_one
     (u : ℂ) (hu : ‖u‖ = 1) (z : ℂ) :
@@ -8813,13 +8672,12 @@ private theorem normSq_sourceJointCoverExp
     {n : ℕ} (q : SourceJointComplexCover n) :
     Complex.normSq (sourceJointCoverExp q).2 =
       Real.exp (sourceJointCoverTime q) := by
-  unfold sourceJointCoverExp sourceJointCoverTime
   calc
     Complex.normSq (Complex.exp q.2) =
         Real.exp q.2.re ^ 2 := by
       rw [Complex.normSq_eq_norm_sq, Complex.norm_exp]
     _ = Real.exp (2 * q.2.re) := by
-      simpa only [Nat.cast_ofNat] using (Real.exp_nat_mul q.2.re 2).symm
+      exact (Real.exp_nat_mul q.2.re 2).symm
 
 private def sourceJointExpPositiveLift {n : ℕ}
     (q : SourceJointComplexCover n)
@@ -8842,8 +8700,8 @@ private theorem sourceJointAuxiliaryPhase_norm
     (η : ℂ) :
     ‖Complex.exp ((η.im : ℂ) * Complex.I)‖ = 1 := by
   rw [Complex.norm_exp]
-  simp only [Complex.mul_re, Complex.ofReal_re, Complex.I_re, mul_zero, Complex.ofReal_im,
-    Complex.I_im, mul_one, sub_self, Real.exp_zero]
+  simp only [Complex.mul_re, Complex.I_re, mul_zero, Complex.ofReal_im, Complex.I_im, mul_one,
+    sub_self, Real.exp_zero]
 
 private theorem sourceJointExpPositiveLift_eq_phase_radialLift
     {n : ℕ}
@@ -8876,8 +8734,7 @@ private theorem sourceJointCircleAverage_eq_setAverage
   rw [MeasureTheory.setAverage_eq, Real.circleAverage_def,
     intervalIntegral.integral_of_le Real.two_pi_pos.le]
   simp only [measureReal_def, Real.volume_Ioc, sub_zero, Nat.ofNat_nonneg, ENNReal.ofReal_mul,
-    ENNReal.ofReal_ofNat, ENNReal.toReal_mul, ENNReal.toReal_ofNat, Real.pi_pos.le,
-    ENNReal.toReal_ofReal, mul_inv_rev]
+    ENNReal.toReal_mul, Real.pi_pos.le, ENNReal.toReal_ofReal]
 
 private theorem sourceJointSpatialLine_circleAverage
     {n : ℕ} (q v : SourceJointComplexCover n) (R : ℝ) :
@@ -8984,11 +8841,10 @@ private theorem momentHolomorphicRepresentative_spatial_periodic
     Function.Periodic
       (momentHolomorphicRepresentative K hk F htransport s)
       (imaginaryShift m) := by
-  classical
   intro z
-  simp only [momentHolomorphicRepresentative, LinearMap.coe_comp, LinearEquiv.coe_coe, comp_apply,
+  simp only [momentHolomorphicRepresentative, LinearMap.coe_comp, comp_apply,
     Finsupp.linearCombination_apply, Finsupp.sum, Finset.sum_apply, Pi.smul_apply,
-    normalizedHolomorphicMonomial, torusCharacter_imaginaryShift, smul_eq_mul]
+    normalizedHolomorphicMonomial, torusCharacter_imaginaryShift]
 
 private theorem momentJointJetSection_spatial_periodic
     {n k : ℕ} (K : CenteredBody n) (hk : 0 < k)
@@ -9027,7 +8883,6 @@ private theorem momentJointJetDiagonal_spatial_periodic
         momentJointJetDiagonal K hk F htransport p N (z, τ))
       (imaginaryShift m) := by
   intro z
-  unfold momentJointJetDiagonal
   apply Finset.sum_congr rfl
   intro i _
   congr 1

@@ -8,6 +8,7 @@ module
 
 public import LeanPool.EhrhartVolumeInequality.Convexity
 import all LeanPool.EhrhartVolumeInequality.Convexity
+import Mathlib.Analysis.BoxIntegral.UnitPartition
 
 /-!
 # Ehrhart volume inequality: Convergence
@@ -39,7 +40,6 @@ private theorem ae_differentiableAt_of_locallyLipschitzOn_open
     (hf : LocallyLipschitzOn s f) :
     ∀ᵐ x : Space n ∂(volume : Measure (Space n)),
       x ∈ s → DifferentiableAt ℝ f x := by
-  classical
   have hlocal : ∀ x : s,
       ∃ (u : Set (Space n)) (C : ℝ≥0),
         IsOpen u ∧ (x : Space n) ∈ u ∧
@@ -75,7 +75,7 @@ private theorem ae_differentiableAt_of_locallyLipschitzOn_open
         ∀ᵐ x : Space n
           ∂((volume : Measure (Space n)).restrict (u i)),
           DifferentiableWithinAt ℝ f (u i) x :=
-      (hflip i).ae_differentiableWithinAt (huopen i).measurableSet
+      ae_differentiableWithinAt_lipschitzOn_realPi (hflip i) (huopen i).measurableSet
     filter_upwards [hrad,
       ae_restrict_mem (huopen i).measurableSet] with x hx hxu
     exact hx.differentiableAt ((huopen i).mem_nhds hxu)
@@ -141,7 +141,6 @@ private theorem finiteEnergySourceLegendre_gradient_eq_phaseMaximizer
       phase u F.potential z ≤ phase u F.potential x) :
     SpatialBergmanFatouScheffe.actualGradient
       (legendreTransform F.potential) u = x := by
-  classical
   ext i
   let v : Space n := Pi.single i (1 : ℝ)
   have hline : HasDerivAt
@@ -185,7 +184,7 @@ private theorem finiteEnergySourceLegendre_gradient_eq_phaseMaximizer
     simp only [zero_smul, add_zero]
     rw [hbase]
     unfold phase at hfen ⊢
-    linarith
+    linarith only [hfen]
   have hzero :
       (fderiv ℝ (legendreTransform F.potential) u) v -
         pairing v x = 0 := by
@@ -198,7 +197,7 @@ private theorem finiteEnergySourceLegendre_gradient_eq_phaseMaximizer
           (fderiv ℝ (legendreTransform F.potential) u) v -
             pairing v x at hd
     rw [hlocal.deriv_eq_zero] at hd
-    linarith
+    exact (hd).symm
   have hcoordinate :
       pairing
         (SpatialBergmanFatouScheffe.actualGradient
@@ -207,7 +206,7 @@ private theorem finiteEnergySourceLegendre_gradient_eq_phaseMaximizer
     rw [SpatialBergmanFatouScheffe.pairing_actualGradient_eq_fderiv]
     have hcomm : pairing v x = pairing x v := by
       simp only [pairing, mul_comm]
-    linarith
+    linarith only [hzero, hcomm]
   simpa only [v, pairing, Pi.single_apply, mul_ite, mul_one, mul_zero, Finset.sum_ite_eq',
     Finset.mem_univ, ↓reduceIte] using hcoordinate
 
@@ -223,10 +222,10 @@ private theorem momentNormalized_phaseMaximizer_iff
   constructor <;> intro h z
   · have hz := h z
     simp only [phase, momentNormalizedPotential] at hz ⊢
-    linarith
+    linarith only [hz]
   · have hz := h z
     simp only [phase, momentNormalizedPotential] at hz ⊢
-    linarith
+    linarith only [hz]
 
 end BergmanJetDualPhaseConcentration
 
@@ -284,7 +283,7 @@ private theorem momentNormalized_off_phase_setIntegral_le_exp_mul_base
       apply Real.exp_le_exp.mpr
       have h := hphase x hx
       unfold phase at h
-      nlinarith
+      nlinarith only [hk, hkpos, h]
     _ ≤ ∫ x : Space n,
         Real.exp ((k - 1) * M) *
           monomialWeight 1 u (momentNormalizedPotential F) x
@@ -337,7 +336,7 @@ private theorem exists_momentNormalized_phase_gap_outside_ball
       simpa only [ge_iff_le, mul_comm] using (div_le_iff₀ hδ).mp hle
     have hscale := mul_lt_mul_of_pos_left hxnorm hδ
     have hcoerce := hcoercive x
-    nlinarith
+    linarith only [hR, hscale, hcoerce]
   let t : Set (Space n) :=
     Metric.closedBall (0 : Space n) R ∩
       (Metric.ball x₀ r)ᶜ
@@ -390,10 +389,10 @@ private theorem exists_momentNormalized_phase_gap_outside_ball
           η ≤ phase u (momentNormalizedPotential F) x₀ -
             phase u (momentNormalizedPotential F) z :=
         min_le_right _ _
-      linarith
+      linarith only [hzx, hηle]
     · have hout := houter x hxR
       have hηle : η ≤ (1 : ℝ) := min_le_left _ _
-      linarith
+      linarith only [hout, hηle]
   · refine ⟨1, zero_lt_one, fun x hx => ?_⟩
     apply houter x
     intro hxR
@@ -471,7 +470,7 @@ private theorem concave_radial_gap_of_off_ball
     simpa only [ge_iff_le, smul_eq_mul] using hraw
   have hygap := hgap y hyout
   have htbound : t * (f x - f x₀) ≤ -η := by
-    linarith
+    linarith only [hsegle, hygap]
   have hquot : (r * (f x - f x₀)) / d ≤ -η := by
     calc
       (r * (f x - f x₀)) / d =
@@ -484,7 +483,7 @@ private theorem concave_radial_gap_of_off_ball
   have h1 : f x - f x₀ ≤ (-η * d) / r := (le_div_iff₀' hr).mpr hscale
   have h2 : (-η * d) / r = -((η / r) * d) := by ring
   rw [h2] at h1
-  linarith
+  linarith only [h1]
 
 private theorem exists_eventual_momentNormalized_moving_phase_gap_outside_ball
     {n : ℕ} {K : CenteredBody n}
@@ -525,7 +524,7 @@ private theorem exists_eventual_momentNormalized_moving_phase_gap_outside_ball
     simpa only [ge_iff_le, dist_eq_norm] using hd
   have hradial := concave_radial_gap_of_off_ball
     (concaveOn_momentNormalized_phase F u₀)
-    x₀ (half_pos hr) hgap x (le_trans (by linarith) hdist)
+    x₀ (half_pos hr) hgap x (le_trans (by linarith only [hr]) hdist)
   have hpert :
       pairing (u k - u₀) (x - x₀) ≤
         (η / r) * ‖x - x₀‖ := by
@@ -596,7 +595,7 @@ private theorem exists_eventual_momentNormalized_moving_ball_volume_exp_le_monom
       {x : Space n |
         phase u₀ φ x₀ - ε / 2 < phase u₀ φ x} := by
     change phase u₀ φ x₀ - ε / 2 < phase u₀ φ x₀
-    linarith
+    linarith only [hε]
   obtain ⟨r, hr, hball⟩ :=
     (Metric.isOpen_iff.mp hopen) x₀ hx₀
   have hballpos :
@@ -678,12 +677,10 @@ private theorem exists_eventual_momentNormalized_moving_ball_volume_exp_le_monom
       have hphase : phase (u j) φ x₀ - ε ≤ phase (u j) φ x := by
         have habs := (abs_lt.mp hpair).1
         change phase u₀ φ x₀ - ε / 2 < phase u₀ φ x at hlocal
-        linarith
-      unfold monomialWeight
+        linarith only [hsplit, habs, hlocal]
       apply Real.exp_le_exp.mpr
       apply mul_le_mul_of_nonneg_left hphase hk.le
     _ ≤ monomialIntegral k (u j) φ := by
-      unfold monomialIntegral
       apply setIntegral_le_integral hkint
       exact Filter.Eventually.of_forall fun x => (Real.exp_pos _).le
 
@@ -742,13 +739,12 @@ private theorem exists_eventual_momentNormalized_moving_off_ball_exponential
   have hptendsto :
       Tendsto (fun k : ℕ => phase (u k) φ x₀)
         atTop (𝓝 P₀) := by
-    simpa only [P₀, phase, comp_apply] using
-      (((continuous_pairing_left x₀).continuousAt.tendsto.comp hu).sub_const
+    exact (((continuous_pairing_left x₀).continuousAt.tendsto.comp hu).sub_const
         (φ x₀))
   have hplower :
       ∀ᶠ k : ℕ in atTop,
         P₀ - 1 < phase (u k) φ x₀ :=
-    hptendsto (Ioi_mem_nhds (by linarith))
+    hptendsto (Ioi_mem_nhds (by linarith only []))
   have hinterior :
       ∀ᶠ k : ℕ in atTop, u k ∈ interior K.carrier :=
     hu.eventually (isOpen_interior.mem_nhds hu₀)
@@ -825,7 +821,7 @@ private theorem exists_eventual_momentNormalized_moving_off_ball_exponential
       apply mul_le_mul_of_nonneg_right _ (Real.exp_pos _).le
       apply mul_le_mul_of_nonneg_left _ (div_pos hB hV).le
       apply Real.exp_le_exp.mpr
-      linarith
+      linarith only [hkp, hkone, hkreal, hkpos, hnum, hupper, hden', hquot]
     _ = A * Real.exp (-((k : ℝ) * (η / 2))) := rfl
 
 private theorem tendsto_momentNormalized_moving_off_ball_probability
@@ -880,7 +876,6 @@ private theorem tendsto_momentNormalized_moving_off_ball_probability
       (setIntegral_nonneg Metric.isOpen_ball.measurableSet.compl
         fun x _ => (Real.exp_pos _).le)
       (by
-        unfold monomialIntegral
         exact integral_nonneg fun x => (Real.exp_pos _).le)
 
 end BergmanJetMovingMonomialTailConvergence
@@ -1068,7 +1063,7 @@ private theorem tendsto_integral_bounded_continuous_of_concentrating_normalized_
       have hb :=
         mul_le_mul_of_nonneg_left hballmass (half_pos hε).le
       exact add_le_add_left (hb.trans_eq (mul_one _)) _
-    _ < ε := by linarith
+    _ < ε := by linarith only [hktail]
 
 private theorem tendsto_momentNormalized_moving_monomial_bounded_observable
     {n : ℕ} {K : CenteredBody n}
@@ -1117,7 +1112,6 @@ private theorem tendsto_momentNormalized_moving_monomial_bounded_observable
     intro k x
     dsimp [w]
     apply div_nonneg (Real.exp_pos _).le
-    unfold monomialIntegral
     exact integral_nonneg fun y => (Real.exp_pos _).le
   have hwmass :
       ∀ᶠ k : ℕ in atTop,
@@ -1173,8 +1167,6 @@ private theorem triangularUnitLatticeStep_integrable {n : ℕ}
     (k : ℕ) :
     Integrable (triangularUnitLatticeStep B s G k)
       (volume : Measure (Space n)) := by
-  classical
-  unfold triangularUnitLatticeStep
   apply integrable_finsetSum
   intro J hJ
   exact (integrableOn_const
@@ -1196,7 +1188,6 @@ private theorem integral_triangularUnitLatticeStep_eq_integralSum {n : ℕ}
         (BoxIntegral.BoxAdditiveMap.toSMul
           (Measure.toBoxAdditive (volume : Measure (Space n))))
         (BoxIntegral.unitPartition.prepartition (k + 1) B) := by
-  classical
   unfold triangularUnitLatticeStep
   rw [MeasureTheory.integral_finsetSum]
   · unfold BoxIntegral.integralSum
@@ -1278,7 +1269,6 @@ private theorem triangularUnitLatticeStep_eq_tag_of_mem {n : ℕ}
       s.indicator (G (k + 1))
         (BoxIntegral.unitPartition.tag (k + 1)
           (BoxIntegral.unitPartition.index (k + 1) x)) := by
-  classical
   let ν : Fin n → ℤ := BoxIntegral.unitPartition.index (k + 1) x
   let J : BoxIntegral.Box (Fin n) :=
     BoxIntegral.unitPartition.box (k + 1) ν
@@ -1311,8 +1301,6 @@ private theorem triangularUnitLatticeStep_eq_zero_of_not_mem {n : ℕ}
     (k : ℕ) (x : Space n)
     (hx : x ∉ (B : Set (Space n))) :
     triangularUnitLatticeStep B s G k x = 0 := by
-  classical
-  unfold triangularUnitLatticeStep
   apply Finset.sum_eq_zero
   intro J hJ
   apply Set.indicator_of_notMem
@@ -1345,7 +1333,6 @@ private theorem tendsto_moving_lattice_sum_of_ae_tag_convergence {n : ℕ}
           G (k + 1) u) / ((k + 1 : ℕ) : ℝ) ^ n)
       atTop (𝓝 (∫ x in s, g x
         ∂(volume : Measure (Space n)))) := by
-  classical
   have hmajor : Integrable
       ((B : Set (Space n)).indicator
         (fun _ : Space n => C))
@@ -1459,7 +1446,6 @@ private theorem ae_finiteEnergySourceLegendreGradient_left_inverse_gibbs
     rw [htransport]
     exact ae_differentiableAt_finiteEnergySourceLegendre_target
       F htransport
-  unfold finiteEnergySourceGradientPushforward at htarget
   have hdual :
       ∀ᵐ x : Space n
         ∂(finiteEnergySourceGibbsProbability F),
@@ -1502,11 +1488,6 @@ private theorem finiteEnergySourceLegendreGradient_pushforward_target
     filter_upwards
       [ae_finiteEnergySourceLegendreGradient_left_inverse_gibbs
         F htransport] with x hx
-    change
-      SpatialBergmanFatouScheffe.actualGradient
-          (legendreTransform F.potential)
-          (SpatialBergmanFatouScheffe.actualGradient
-            F.potential x) = x
     exact hx
   change Measure.map D (normalizedTargetBodyMeasure K) =
     finiteEnergySourceGibbsProbability F
@@ -1516,7 +1497,6 @@ private theorem finiteEnergySourceLegendreGradient_pushforward_target
       rw [htransport]
     _ = Measure.map (D ∘ G)
           (finiteEnergySourceGibbsProbability F) := by
-      unfold finiteEnergySourceGradientPushforward
       exact Measure.map_map hD hG
     _ = Measure.map (fun x : Space n => x)
           (finiteEnergySourceGibbsProbability F) :=
@@ -1652,7 +1632,7 @@ private theorem abs_momentNormalizedLaurentObservable_le
         (volume : Measure (Space n)) :=
     hρ.bdd_mul hf.aestronglyMeasurable
       (Filter.Eventually.of_forall fun x => by
-        simpa only [Real.norm_eq_abs] using hC x)
+        exact hC x)
   change |∫ x : Space n, f x * ρ x
     ∂(volume : Measure (Space n))| ≤ C
   calc
@@ -1660,8 +1640,7 @@ private theorem abs_momentNormalizedLaurentObservable_le
       ∂(volume : Measure (Space n))| ≤
         ∫ x : Space n, ‖f x * ρ x‖
           ∂(volume : Measure (Space n)) := by
-      simpa only [norm_mul, Real.norm_eq_abs] using
-        (MeasureTheory.norm_integral_le_integral_norm
+      exact (MeasureTheory.norm_integral_le_integral_norm
           (fun x : Space n => f x * ρ x))
     _ ≤ ∫ x : Space n, C * ρ x
           ∂(volume : Measure (Space n)) := by
@@ -1699,7 +1678,6 @@ private theorem integral_momentNormalizedDiagonal_eq_laurentObservable_average
         momentNormalizedLaurentObservable
           F k f (u : Space n)) /
         (bergmanDimension K k : ℝ) := by
-  classical
   let := (monomialIndex_finite K hk).fintype
   have hmono : ∀ u : monomialIndex K k,
       Integrable
@@ -1713,7 +1691,7 @@ private theorem integral_momentNormalizedDiagonal_eq_laurentObservable_average
         K hk F htransport u).bdd_mul
         hf.aestronglyMeasurable
         (Filter.Eventually.of_forall fun x => by
-          simpa only [Real.norm_eq_abs] using hC x)
+          exact hC x)
   calc
     (∫ x : Space n,
       f x * normalizedDiagonalDensity
@@ -1862,7 +1840,6 @@ private theorem tendsto_momentTaggedLaurentObservable_unitPartition_tag
         (𝓝 (f
           (SpatialBergmanFatouScheffe.actualGradient
             (legendreTransform F.potential) u))) := by
-    unfold momentNormalizedLaurentObservable
     exact tendsto_momentNormalized_moving_monomial_bounded_observable
       F htransport hu hdu
       (SpatialBergmanFatouScheffe.actualGradient
@@ -1930,8 +1907,6 @@ private theorem ae_tendsto_momentTaggedLaurentObservable_interior_unitPartition_
   · have hxclosure : x ∉ closure (interior K.carrier) := by
       intro hcl
       apply hxfront
-      change x ∈ closure (interior K.carrier) \
-        interior (interior K.carrier)
       exact ⟨hcl, by simpa only [interior_interior] using hx⟩
     have hcomp :
         (closure (interior K.carrier))ᶜ ∈ 𝓝 x :=
