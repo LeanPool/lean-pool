@@ -10,6 +10,7 @@ import pytest
 from lean_pool.quality import (
     _axiom_audit_missing,
     _axiom_audit_resolved,
+    _check_proof_sizes,
     _Declaration,
     _parse_axiom_output,
     _parse_declarations,
@@ -435,6 +436,327 @@ def test_quality_check_allows_extra_documented_main_results(tmp_path: Path) -> N
     assert not any(
         "main_results missing main declarations" in e.message for e in errors
     )
+
+
+@pytest.mark.parametrize(
+    "following",
+    [
+        "def later : True := by\n" + "  skip\n" * 220 + "  trivial\n",
+        "private noncomputable def later : True := by\n"
+        + "  skip\n" * 220
+        + "  trivial\n",
+        "abbrev later : True := by\n" + "  skip\n" * 220 + "  trivial\n",
+        "scoped instance : Inhabited Nat := by\n" + "  skip\n" * 220 + "  exact ⟨0⟩\n",
+        "structure Later where\n" + "".join(f"  field{i} : Nat\n" for i in range(220)),
+        "class Later where\n" + "".join(f"  field{i} : Nat\n" for i in range(220)),
+        "inductive Later where\n"
+        + "".join(f"  | constructor{i} : Later\n" for i in range(220)),
+        "namespace Later\n" + "variable (n : Nat)\n" * 220 + "end Later\n",
+        "attribute [local simp] tiny\n" * 220,
+    ],
+)
+def test_proof_size_excludes_following_commands(tmp_path: Path, following: str) -> None:
+    """An unrelated definition, instance or command is not part of a tiny proof."""
+    _write_minimal_repo(tmp_path, "theorem tiny : True := by\n  trivial\n" + following)
+    assert _check_proof_sizes(tmp_path) == []
+
+
+@pytest.mark.parametrize("lines", [199, 200])
+def test_proof_size_enforces_actual_body_limit(tmp_path: Path, lines: int) -> None:
+    """The assignment line counts, and unrelated following code does not."""
+    _write_minimal_repo(
+        tmp_path,
+        "public theorem large : True := by\n"
+        + "  skip\n" * (lines - 1)
+        + "  trivial\n"
+        + "def later := 0\n",
+    )
+    errors = _check_proof_sizes(tmp_path)
+    if lines == 199:
+        assert errors == []
+    else:
+        assert len(errors) == 1
+        assert errors[0].line == len(HEADER.splitlines()) + 2
+        assert errors[0].message == "proof has 201 code lines; limit is 200"
+
+
+@pytest.mark.parametrize("indent", [" ", "  ", "    "])
+def test_proof_size_separates_differently_indented_theorems(
+    tmp_path: Path, indent: str
+) -> None:
+    """Independent short proofs do not merge merely because their columns differ."""
+    _write_minimal_repo(
+        tmp_path,
+        "theorem first : True := by\n"
+        + "  skip\n" * 100
+        + "  trivial\n"
+        + f"{indent}lemma second : True := by\n"
+        + f"{indent}  skip\n" * 100
+        + f"{indent}  trivial\n",
+    )
+    assert _check_proof_sizes(tmp_path) == []
+
+
+def test_proof_size_checks_later_indented_theorem(tmp_path: Path) -> None:
+    """A later independently indented theorem must still be checked on its own."""
+    _write_minimal_repo(
+        tmp_path,
+        "theorem first : True := by\n  trivial\n"
+        + " theorem second : True := by\n"
+        + "   skip\n" * 200
+        + "   trivial\n",
+    )
+    errors = _check_proof_sizes(tmp_path)
+    assert len(errors) == 1
+    assert errors[0].line == len(HEADER.splitlines()) + 4
+    assert errors[0].message == "proof has 202 code lines; limit is 200"
+
+
+@pytest.mark.parametrize(
+    "opening",
+    [
+        "  open Nat in\n",
+        "  open scoped BigOperators in\n",
+        "  open Nat in by\n",
+        "  open Nat\n    in\n",
+        "  open Nat in open List in\n",
+        "  open Nat in\n  open List in\n",
+    ],
+)
+def test_proof_size_counts_proof_internal_scoped_opens(
+    tmp_path: Path, opening: str
+) -> None:
+    """Term/tactic-level scoped opens cannot hide the remainder of a long proof."""
+    _write_minimal_repo(
+        tmp_path,
+        "theorem large : True := by\n" + opening + "    skip\n" * 200 + "    trivial\n",
+    )
+    errors = _check_proof_sizes(tmp_path)
+    assert len(errors) == 1
+    assert errors[0].message == (
+        f"proof has {202 + len(opening.splitlines())} code lines; limit is 200"
+    )
+
+
+@pytest.mark.parametrize(
+    "opening",
+    [
+        "open Nat in\n",
+        " open Nat in ",
+        "open Nat\n  in ",
+        "open Nat in open List in ",
+        "open Nat in\nopen List in\n",
+        "open Nat in @[simp]\n",
+    ],
+)
+def test_proof_size_attaches_scoped_opens_to_following_declarations(
+    tmp_path: Path, opening: str
+) -> None:
+    """Outer scoped opens belong to the next theorem, not to the preceding proof."""
+    _write_minimal_repo(
+        tmp_path,
+        "theorem first : True := by\n"
+        + "  skip\n" * 198
+        + "  trivial\n"
+        + opening
+        + "theorem second : True := by\n  trivial\n",
+    )
+    assert _check_proof_sizes(tmp_path) == []
+
+
+def test_proof_size_checks_inline_open_scoped_theorem(tmp_path: Path) -> None:
+    """A theorem following `open ... in` on the same line is still checked."""
+    _write_minimal_repo(
+        tmp_path,
+        "open Nat in theorem large : True := by\n" + "  skip\n" * 200 + "  trivial\n",
+    )
+    errors = _check_proof_sizes(tmp_path)
+    assert len(errors) == 1
+    assert errors[0].message == "proof has 202 code lines; limit is 200"
+
+
+def test_proof_size_scoped_open_stops_before_next_command(tmp_path: Path) -> None:
+    """A later `in` inside a theorem must not turn a global open into a scope."""
+    _write_minimal_repo(
+        tmp_path,
+        "theorem first : True := by\n  trivial\nopen Nat\n"
+        + "theorem large : True := by\n"
+        + "  let _ := (Id.run do for i in [0] do pure ())\n"
+        + "  skip\n" * 200
+        + "  trivial\n",
+    )
+    errors = _check_proof_sizes(tmp_path)
+    assert len(errors) == 1
+    assert errors[0].line == len(HEADER.splitlines()) + 5
+    assert errors[0].message == "proof has 203 code lines; limit is 200"
+
+
+def test_proof_size_excludes_indented_definition(tmp_path: Path) -> None:
+    """Definitions also end a preceding proof regardless of their indentation."""
+    _write_minimal_repo(
+        tmp_path,
+        "theorem first : True := by\n  trivial\n"
+        + " def later : True := by\n"
+        + "   skip\n" * 220
+        + "   trivial\n",
+    )
+    assert _check_proof_sizes(tmp_path) == []
+
+
+@pytest.mark.parametrize("binder", ["let", "have", "letI", "haveI", "letI'"])
+def test_proof_size_ignores_local_binders_in_statement(
+    tmp_path: Path, binder: str
+) -> None:
+    """A type-level local assignment is not the theorem's proof assignment."""
+    _write_minimal_repo(
+        tmp_path,
+        f"theorem tiny : {binder} x := 0\n"
+        + "\n".join("  " + "/- padding -/ True ∧" for _ in range(220))
+        + "\n  True := by\n  repeat constructor\n",
+    )
+    assert _check_proof_sizes(tmp_path) == []
+
+
+def test_proof_size_ignores_assignments_in_statement(tmp_path: Path) -> None:
+    """Binder defaults and comments do not start the proof body."""
+    binders = "".join(f"    (x{i} : Nat := 0)\n" for i in range(220))
+    _write_minimal_repo(
+        tmp_path,
+        "theorem tiny\n-- := not the body\n"
+        + binders
+        + "    : True := by\n  trivial\n",
+    )
+    assert _check_proof_sizes(tmp_path) == []
+
+
+def test_proof_size_ignores_fake_commands_in_comments_and_strings(
+    tmp_path: Path,
+) -> None:
+    """Command-looking lines in comments and multiline literals do not end a proof."""
+    _write_minimal_repo(
+        tmp_path,
+        "theorem large : True := by\n"
+        + "/- outer /- nested -/\ndef fake := 0\n-/\n"
+        + '  let _ := "first line\ndef fake := 0\nlast line"\n'
+        + "  skip\n" * 200
+        + "  trivial\n",
+    )
+    errors = _check_proof_sizes(tmp_path)
+    assert len(errors) == 1
+    assert errors[0].message == "proof has 203 code lines; limit is 200"
+
+
+def test_proof_size_keeps_quoted_commands_in_body(tmp_path: Path) -> None:
+    """Bracketed syntax quotations do not introduce outer declaration boundaries."""
+    _write_minimal_repo(
+        tmp_path,
+        "theorem large : True := by\n"
+        + "  let _ := `(command|\ndef fake := 0\n)\n"
+        + "  skip\n" * 200
+        + "  trivial\n",
+    )
+    errors = _check_proof_sizes(tmp_path)
+    assert len(errors) == 1
+    assert errors[0].message == "proof has 205 code lines; limit is 200"
+
+
+@pytest.mark.parametrize("attribute", ["", "  @[simp]\n", "  @[\n    simp\n  ]\n"])
+def test_proof_size_counts_where_helpers(tmp_path: Path, attribute: str) -> None:
+    """Local helpers remain part of the declaration rather than escaping its limit."""
+    _write_minimal_repo(
+        tmp_path,
+        "theorem large : True := helper\nwhere\n"
+        + attribute
+        + "  helper : True := by\n"
+        + "    skip\n" * 200
+        + "    trivial\n",
+    )
+    errors = _check_proof_sizes(tmp_path)
+    assert len(errors) == 1
+    assert errors[0].message == (
+        f"proof has {204 + len(attribute.splitlines())} code lines; limit is 200"
+    )
+
+
+def test_proof_size_excludes_following_attributes(tmp_path: Path) -> None:
+    """A following multiline attribute is outside the preceding proof."""
+    _write_minimal_repo(
+        tmp_path,
+        "theorem tiny : True := by\n  trivial\n@[\n"
+        + "simp,\n" * 220
+        + "]\ntheorem next : True := by\n  trivial\n",
+    )
+    assert _check_proof_sizes(tmp_path) == []
+
+
+def test_proof_size_reports_original_line_after_string_gaps(tmp_path: Path) -> None:
+    """String gaps before a theorem cannot shift its diagnostic location."""
+    _write_minimal_repo(
+        tmp_path,
+        'def s := "one\\\n  two\\\n  three"\n'
+        + "theorem large : True := by\n"
+        + "  skip\n" * 200
+        + "  trivial\n",
+    )
+    errors = _check_proof_sizes(tmp_path)
+    assert len(errors) == 1
+    assert errors[0].line == len(HEADER.splitlines()) + 5
+
+
+def test_proof_size_ignores_brackets_and_quotes_in_character_literals(
+    tmp_path: Path,
+) -> None:
+    """Character literals before a theorem do not hide its commands or proof."""
+    _write_minimal_repo(
+        tmp_path,
+        "def opening := '('\ndef quote := '\"'\n"
+        + "theorem large : True := by\n"
+        + "  skip\n" * 200
+        + "  trivial\n",
+    )
+    errors = _check_proof_sizes(tmp_path)
+    assert len(errors) == 1
+    assert errors[0].message == "proof has 202 code lines; limit is 200"
+
+
+@pytest.mark.parametrize("identifier", ["(", ")", "[", "]", "where", '"/-['])
+def test_proof_size_ignores_syntax_in_escaped_identifiers(
+    tmp_path: Path, identifier: str
+) -> None:
+    """Quoted names cannot change nesting or hide later oversized proofs."""
+    _write_minimal_repo(
+        tmp_path,
+        f"def «{identifier}» := 0\n"
+        + "theorem large : True := by\n"
+        + "  skip\n" * 200
+        + "  trivial\n",
+    )
+    errors = _check_proof_sizes(tmp_path)
+    assert len(errors) == 1
+    assert errors[0].line == len(HEADER.splitlines()) + 3
+    assert errors[0].message == "proof has 202 code lines; limit is 200"
+
+
+def test_proof_size_handles_escaped_theorem_name(tmp_path: Path) -> None:
+    """An escaped theorem name is not mistaken for a statement/body boundary."""
+    _write_minimal_repo(
+        tmp_path,
+        "theorem «where» : True := by\n" + "  skip\n" * 200 + "  trivial\n",
+    )
+    errors = _check_proof_sizes(tmp_path)
+    assert len(errors) == 1
+    assert errors[0].message == "proof has 202 code lines; limit is 200"
+
+
+def test_proof_size_counts_lines_containing_only_escaped_names(tmp_path: Path) -> None:
+    """Masking escaped identifiers must not remove nonblank lines from the count."""
+    _write_minimal_repo(
+        tmp_path,
+        "theorem large : True := by\n" + "  «skip»\n" * 200 + "  trivial\n",
+    )
+    errors = _check_proof_sizes(tmp_path)
+    assert len(errors) == 1
+    assert errors[0].message == "proof has 202 code lines; limit is 200"
 
 
 def test_quality_check_finds_prefixed_declarations(tmp_path: Path) -> None:
