@@ -480,6 +480,50 @@ def test_proof_size_enforces_actual_body_limit(tmp_path: Path, lines: int) -> No
         assert errors[0].message == "proof has 201 code lines; limit is 200"
 
 
+@pytest.mark.parametrize("indent", [" ", "  ", "    "])
+def test_proof_size_separates_differently_indented_theorems(
+    tmp_path: Path, indent: str
+) -> None:
+    """Independent short proofs do not merge merely because their columns differ."""
+    _write_minimal_repo(
+        tmp_path,
+        "theorem first : True := by\n"
+        + "  skip\n" * 100
+        + "  trivial\n"
+        + f"{indent}lemma second : True := by\n"
+        + f"{indent}  skip\n" * 100
+        + f"{indent}  trivial\n",
+    )
+    assert _check_proof_sizes(tmp_path) == []
+
+
+def test_proof_size_checks_later_indented_theorem(tmp_path: Path) -> None:
+    """A later independently indented theorem must still be checked on its own."""
+    _write_minimal_repo(
+        tmp_path,
+        "theorem first : True := by\n  trivial\n"
+        + " theorem second : True := by\n"
+        + "   skip\n" * 200
+        + "   trivial\n",
+    )
+    errors = _check_proof_sizes(tmp_path)
+    assert len(errors) == 1
+    assert errors[0].line == len(HEADER.splitlines()) + 4
+    assert errors[0].message == "proof has 202 code lines; limit is 200"
+
+
+def test_proof_size_excludes_indented_definition(tmp_path: Path) -> None:
+    """Definitions also end a preceding proof regardless of their indentation."""
+    _write_minimal_repo(
+        tmp_path,
+        "theorem first : True := by\n  trivial\n"
+        + " def later : True := by\n"
+        + "   skip\n" * 220
+        + "   trivial\n",
+    )
+    assert _check_proof_sizes(tmp_path) == []
+
+
 @pytest.mark.parametrize("binder", ["let", "have", "letI", "haveI", "letI'"])
 def test_proof_size_ignores_local_binders_in_statement(
     tmp_path: Path, binder: str
@@ -537,17 +581,22 @@ def test_proof_size_keeps_quoted_commands_in_body(tmp_path: Path) -> None:
     assert errors[0].message == "proof has 205 code lines; limit is 200"
 
 
-def test_proof_size_counts_where_helpers(tmp_path: Path) -> None:
+@pytest.mark.parametrize("attribute", ["", "  @[simp]\n", "  @[\n    simp\n  ]\n"])
+def test_proof_size_counts_where_helpers(tmp_path: Path, attribute: str) -> None:
     """Local helpers remain part of the declaration rather than escaping its limit."""
     _write_minimal_repo(
         tmp_path,
-        "theorem large : True := helper\nwhere\n  helper : True := by\n"
+        "theorem large : True := helper\nwhere\n"
+        + attribute
+        + "  helper : True := by\n"
         + "    skip\n" * 200
         + "    trivial\n",
     )
     errors = _check_proof_sizes(tmp_path)
     assert len(errors) == 1
-    assert errors[0].message == "proof has 204 code lines; limit is 200"
+    assert errors[0].message == (
+        f"proof has {204 + len(attribute.splitlines())} code lines; limit is 200"
+    )
 
 
 def test_proof_size_excludes_following_attributes(tmp_path: Path) -> None:
@@ -585,6 +634,46 @@ def test_proof_size_ignores_brackets_and_quotes_in_character_literals(
         + "theorem large : True := by\n"
         + "  skip\n" * 200
         + "  trivial\n",
+    )
+    errors = _check_proof_sizes(tmp_path)
+    assert len(errors) == 1
+    assert errors[0].message == "proof has 202 code lines; limit is 200"
+
+
+@pytest.mark.parametrize("identifier", ["(", ")", "[", "]", "where", '"/-['])
+def test_proof_size_ignores_syntax_in_escaped_identifiers(
+    tmp_path: Path, identifier: str
+) -> None:
+    """Quoted names cannot change nesting or hide later oversized proofs."""
+    _write_minimal_repo(
+        tmp_path,
+        f"def «{identifier}» := 0\n"
+        + "theorem large : True := by\n"
+        + "  skip\n" * 200
+        + "  trivial\n",
+    )
+    errors = _check_proof_sizes(tmp_path)
+    assert len(errors) == 1
+    assert errors[0].line == len(HEADER.splitlines()) + 3
+    assert errors[0].message == "proof has 202 code lines; limit is 200"
+
+
+def test_proof_size_handles_escaped_theorem_name(tmp_path: Path) -> None:
+    """An escaped theorem name is not mistaken for a statement/body boundary."""
+    _write_minimal_repo(
+        tmp_path,
+        "theorem «where» : True := by\n" + "  skip\n" * 200 + "  trivial\n",
+    )
+    errors = _check_proof_sizes(tmp_path)
+    assert len(errors) == 1
+    assert errors[0].message == "proof has 202 code lines; limit is 200"
+
+
+def test_proof_size_counts_lines_containing_only_escaped_names(tmp_path: Path) -> None:
+    """Masking escaped identifiers must not remove nonblank lines from the count."""
+    _write_minimal_repo(
+        tmp_path,
+        "theorem large : True := by\n" + "  «skip»\n" * 200 + "  trivial\n",
     )
     errors = _check_proof_sizes(tmp_path)
     assert len(errors) == 1

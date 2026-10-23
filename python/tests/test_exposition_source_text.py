@@ -60,6 +60,15 @@ def test_code_view_masks_characters_without_eating_prime_names() -> None:
     assert code_view(text, blank_strings=False) == text
 
 
+def test_code_view_preserves_or_masks_escaped_identifiers() -> None:
+    """Escaped names are atomic even when they contain quotes or comment markers."""
+    text = 'def «(/-"» := 0\ntheorem after : True := by trivial\n'
+    assert code_view(text) == text
+    masked = code_view(text, mask_escaped_identifiers=True)
+    assert len(masked) == len(text)
+    assert masked == "def ______ := 0\ntheorem after : True := by trivial\n"
+
+
 def test_theorem_with_assignment_boundary() -> None:
     """Doc comment, attribute, and modifier are skipped; body is cut at :=."""
     kind, statement, statement_end = _slice_full(THEOREM_BLOCK, [1, 0, 5, 6], [3, 16])

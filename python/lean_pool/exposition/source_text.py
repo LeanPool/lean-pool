@@ -68,7 +68,9 @@ _CHAR_LITERAL_RE = re.compile(
 )
 
 
-def code_view(text: str, blank_strings: bool = True) -> str:
+def code_view(
+    text: str, blank_strings: bool = True, *, mask_escaped_identifiers: bool = False
+) -> str:
     """Return ``text`` with comments (and optionally string/character literals) blanked.
 
     Copied from ``scripts/proof-profile/statements.py``. Length and newline
@@ -77,6 +79,8 @@ def code_view(text: str, blank_strings: bool = True) -> str:
     doc comments (``/-- -/``) and module docs (``/-! -/``). With
     ``blank_strings=False`` string literals keep their content (used when
     trimming trailing comments off a command without eating a final string).
+    With ``mask_escaped_identifiers=True``, escaped names become neutral identifier
+    characters, preserving code-line counts without affecting bracket/keyword scans.
     """
     out: list[str] = []
     i, n = 0, len(text)
@@ -87,6 +91,16 @@ def code_view(text: str, blank_strings: bool = True) -> str:
         c = text[i]
         two = text[i : i + 2]
         if state == normal:
+            if c == "«":
+                end = text.find("»", i + 1)
+                end = n if end < 0 else end + 1
+                literal = text[i:end]
+                if mask_escaped_identifiers:
+                    out.extend("\n" if c == "\n" else "_" for c in literal)
+                else:
+                    out.append(literal)
+                i = end
+                continue
             if two == "--":
                 out.append("  ")
                 i += 2

@@ -400,28 +400,36 @@ def _file_size_errors(paths: list[Path], limit: int) -> list[_QualityError]:
     return errors
 
 
-def _command_starts(code: str) -> list[tuple[int, int, int, str]]:
+def _command_starts(code: str) -> list[tuple[int, int, str]]:
     """Locate standard line-leading commands outside bracketed terms and quotations.
 
-    Each entry is (line number, indentation, offset, keyword). This remains a
-    textual heuristic: indentation distinguishes outer commands from local
-    declarations in a theorem's `where` block.
+    Each entry is (line number, offset, keyword). Independent commands may
+    have different indentation. Local `where` helpers use declaration names
+    rather than command keywords, so they remain inside the enclosing proof.
     """
     keywords = "|".join(PROOF_COMMAND_KEYWORDS)
     prefix = (
         r"(?:@\[[^\n\]]+\]\s+)*"
         r"(?:(?:public|private|protected|noncomputable|scoped|local|nonrec|unsafe|partial)\s+)*"
     )
-    pattern = re.compile(rf"^([ \t]*){prefix}({keywords})\b")
+    pattern = re.compile(rf"^[ \t]*{prefix}({keywords})\b")
     starts = []
     depth = offset = 0
+    attribute_start = None
     for number, line in enumerate(code.splitlines(keepends=True), start=1):
         if depth == 0:
             if match := pattern.match(line):
-                starts.append((number, len(match[1]), offset, match[2]))
-            elif re.match(r"\s*(?:@\[|#)", line):
-                indent = len(line) - len(line.lstrip())
-                starts.append((number, indent, offset, "attribute"))
+                start = offset if attribute_start is None else attribute_start
+                starts.append((number, start, match[1]))
+                attribute_start = None
+            elif re.match(r"\s*@\[", line):
+                if attribute_start is None:
+                    attribute_start = offset
+            elif re.match(r"\s*#", line):
+                starts.append((number, offset, "diagnostic"))
+                attribute_start = None
+            elif line.strip():
+                attribute_start = None
         for character in line:
             if character in "([{⟨⦃":
                 depth += 1
@@ -435,19 +443,12 @@ def _check_proof_sizes(root: Path) -> list[_QualityError]:
     errors: list[_QualityError] = []
     for path in _lean_content_files(root):
         text = path.read_text()
-        code = code_view(text)
+        code = code_view(text, mask_escaped_identifiers=True)
         starts = _command_starts(code)
-        for index, (start_line, indent, start, keyword) in enumerate(starts):
+        for index, (start_line, start, keyword) in enumerate(starts):
             if keyword not in ("theorem", "lemma"):
                 continue
-            end = next(
-                (
-                    offset
-                    for _, column, offset, _ in starts[index + 1 :]
-                    if column <= indent
-                ),
-                len(text),
-            )
+            end = starts[index + 1][1] if index + 1 < len(starts) else len(text)
             body_start = _find_boundary(code, start, end)
             if body_start == end:
                 continue
