@@ -20,6 +20,50 @@ namespace HNNLemmas
 variable {G : Type*} [Group G]
 variable {A B : Subgroup G} {phi : A ≃* B}
 
+/-- Homomorphisms out of a generated subgroup agree when they agree on its generators. -/
+theorem closure_hom_ext {Q : Type*} [Group Q] {s : Set G}
+    {f g : Subgroup.closure s →* Q}
+    (h : ∀ x (hx : x ∈ s),
+      f ⟨x, Subgroup.subset_closure hx⟩ = g ⟨x, Subgroup.subset_closure hx⟩) :
+    f = g := by
+  apply MonoidHom.ext
+  intro x
+  refine Subgroup.closure_induction
+    (p := fun y hy ↦ f ⟨y, hy⟩ = g ⟨y, hy⟩) h ?_ ?_ ?_ x.property
+  · exact (map_one f).trans (map_one g).symm
+  · intro a b ha hb hfa hfb
+    change f (⟨a, ha⟩ * ⟨b, hb⟩) = g (⟨a, ha⟩ * ⟨b, hb⟩)
+    rw [map_mul, map_mul]
+    exact congrArg₂ (fun u v : Q ↦ u * v) hfa hfb
+  · intro a ha hfa
+    change f (⟨a, ha⟩⁻¹) = g (⟨a, ha⟩⁻¹)
+    rw [map_inv, map_inv]
+    exact congrArg (fun u : Q ↦ u⁻¹) hfa
+
+/-- Transport the base-and-stable-letter extensionality criterion through an equivalence. -/
+theorem hom_ext_of_equiv {K Q : Type*} [Group K] [Group Q]
+    (e : HNNExtension G A B phi ≃* K) {f g : K →* Q}
+    (hbase : f.comp (e.toMonoidHom.comp HNNExtension.of) =
+      g.comp (e.toMonoidHom.comp HNNExtension.of))
+    (hstable : f (e HNNExtension.t) = g (e HNNExtension.t)) : f = g := by
+  apply (MonoidHom.cancel_right (f := e.toMonoidHom) e.surjective).mp
+  exact HNNExtension.hom_ext hbase hstable
+
+/-- A cyclic-base HNN model is determined by the base generator and stable letter. -/
+theorem cyclic_hom_ext_of_equiv {K Q : Type*} [Group K] [Group Q]
+    (c : G) {A' B' : Subgroup (Subgroup.closure ({c} : Set G))} {phi' : A' ≃* B'}
+    (e : HNNExtension (Subgroup.closure ({c} : Set G)) A' B' phi' ≃* K)
+    {f g : K →* Q}
+    (hc : f (e (HNNExtension.of ⟨c, Subgroup.subset_closure (by rfl)⟩)) =
+      g (e (HNNExtension.of ⟨c, Subgroup.subset_closure (by rfl)⟩)))
+    (hstable : f (e HNNExtension.t) = g (e HNNExtension.t)) : f = g := by
+  apply hom_ext_of_equiv e
+  · apply closure_hom_ext
+    intro x hx
+    rcases Set.mem_singleton_iff.mp hx with rfl
+    exact hc
+  · exact hstable
+
 /-- An injective homomorphism identifies its domain with its range. -/
 noncomputable abbrev equivRangeOfInjective
     {H : Type*} [Group H] (f : H →* G) (hf : Function.Injective f) :
