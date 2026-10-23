@@ -10,6 +10,8 @@ public import LeanPool.PDL.Completeness.TableauGame
 public import LeanPool.PDL.Local.Path
 public import LeanPool.PDL.PdlSteps
 
+public import LeanPool.PDL.Soundness -- shake: keep
+
 /-! # From winning strategies to model graphs, part 1: BuildTree and PreState (Section 6.3) -/
 
 @[expose] public section

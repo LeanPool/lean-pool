@@ -6,8 +6,11 @@ Authors: PDL formalization contributors (see project card)
 
 module
 
-public import LeanPool.PDL.Flip
-public import LeanPool.PDL.KeepRight
+public import LeanPool.PDL.TableauPath
+
+import Mathlib.Data.Nat.SuccPred
+import Mathlib.Algebra.Order.Ring.Nat
+import Mathlib.Algebra.Order.BigOperators.Group.List
 
 /-! # Fine paths in local tableaux and in tableaux
 

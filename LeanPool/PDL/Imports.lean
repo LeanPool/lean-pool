@@ -19,9 +19,12 @@ public import LeanPool.PDL.Discon
 public import LeanPool.PDL.Distance
 public import LeanPool.PDL.FischerLadner
 public import LeanPool.PDL.Flip
+public import LeanPool.PDL.FlipCore
 public import LeanPool.PDL.General.FinReach
 public import LeanPool.PDL.General.Game
+public import LeanPool.PDL.General.ImportCompatibility
 public import LeanPool.PDL.General.ListFinset
+public import LeanPool.PDL.General.NaturalBounds
 public import LeanPool.PDL.Interpolation.Cluster
 public import LeanPool.PDL.Interpolation.ClusterInterpolation
 public import LeanPool.PDL.Interpolation.ClusterItp
@@ -38,6 +41,7 @@ public import LeanPool.PDL.Interpolation.QuasiTableau
 public import LeanPool.PDL.Interpolation.SingletonCluster
 public import LeanPool.PDL.Interpolation.Theorem
 public import LeanPool.PDL.Interpolation.Uniformity
+public import LeanPool.PDL.Interpolation.UniformityCore
 public import LeanPool.PDL.KeepRight
 public import LeanPool.PDL.Local.AllLocalTab
 public import LeanPool.PDL.Local.Path
