@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from lean_pool.exposition.source_text import (
     SourceFile,
+    code_view,
     module_skeleton,
     statement_slice,
 )
@@ -37,6 +38,26 @@ def _slice_full(
     """Run statement_slice over freshly parsed source text (full result)."""
     source = SourceFile.from_text(text)
     return statement_slice(source, declaration_range, selection, fallback)
+
+
+def test_code_view_preserves_string_gap_line_positions() -> None:
+    """Blanking escaped newlines must preserve both offsets and line numbers."""
+    text = 'def s := "one\\\n  two\\\n  three"\ntheorem t : True := by trivial\n'
+    code = code_view(text)
+    assert len(code) == len(text)
+    assert [i for i, c in enumerate(code) if c == "\n"] == [
+        i for i, c in enumerate(text) if c == "\n"
+    ]
+    assert code_view(text, blank_strings=False) == text
+
+
+def test_code_view_masks_characters_without_eating_prime_names() -> None:
+    """Quotation and bracket characters in literals cannot affect lexical scanning."""
+    text = "def x' := '('\ndef y' := '\"'\ndef z' := '\\\\'\n"
+    code = code_view(text)
+    assert len(code) == len(text)
+    assert code.splitlines() == ["def x' :=    ", "def y' :=    ", "def z' :=     "]
+    assert code_view(text, blank_strings=False) == text
 
 
 def test_theorem_with_assignment_boundary() -> None:

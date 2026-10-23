@@ -62,10 +62,14 @@ STATEMENT_CHARACTER_LIMIT = 1200
 
 _WHERE_RE = re.compile(r"(?<![\w.'])where(?![\w'])")
 _IN_RE = re.compile(r"(?<![\w.'])in(?![\w'])")
+_TYPE_BINDER_RE = re.compile(r"(?:let|have)(?:I'?)?(?=\s)")
+_CHAR_LITERAL_RE = re.compile(
+    r"'(?:\\(?:u\{[0-9a-fA-F]+\}|x[0-9a-fA-F]{2}|[^\n])|[^'\\\n])'"
+)
 
 
 def code_view(text: str, blank_strings: bool = True) -> str:
-    """Return ``text`` with comments (and optionally strings) blanked.
+    """Return ``text`` with comments (and optionally string/character literals) blanked.
 
     Copied from ``scripts/proof-profile/statements.py``. Length and newline
     positions are preserved so indices computed on the result line up with
@@ -94,6 +98,12 @@ def code_view(text: str, blank_strings: bool = True) -> str:
                 state = block
                 block_depth = 1
                 continue
+            if c == "'" and (i == 0 or not _ident_char(text[i - 1])):
+                if match := _CHAR_LITERAL_RE.match(text, i):
+                    literal = match[0]
+                    out.append(" " * len(literal) if blank_strings else literal)
+                    i = match.end()
+                    continue
             if c == '"':
                 out.append(" " if blank_strings else '"')
                 i += 1
@@ -126,7 +136,7 @@ def code_view(text: str, blank_strings: bool = True) -> str:
         else:  # string literal
             if c == "\\":
                 if blank_strings:
-                    out.append("  " if i + 1 < n else " ")
+                    out.extend("\n" if c == "\n" else " " for c in text[i : i + 2])
                 else:
                     out.append(text[i : i + 2])
                 i += 2
@@ -222,11 +232,7 @@ def _find_boundary(
     while i < end:
         c = code[i]
         if depth == 0:
-            if code[i : i + 4] in ("let ", "let\n", "let\t") and not _ident_char(
-                code[i - 1] if i > start else " "
-            ):
-                pending_binders += 1
-            elif code[i : i + 5] in ("have ", "have\n", "have\t") and not _ident_char(
+            if _TYPE_BINDER_RE.match(code, i, end) and not _ident_char(
                 code[i - 1] if i > start else " "
             ):
                 pending_binders += 1

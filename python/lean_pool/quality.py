@@ -13,6 +13,7 @@ from typing import Any
 
 import yaml
 
+from lean_pool.exposition.source_text import _find_boundary, code_view
 from lean_pool.indexes import (
     discovers_modules,
     project_modules,
@@ -56,6 +57,43 @@ DECLARATION_PREFIX = (
     r"(?:@\[[^\n\]]+\]\s+)*"
     r"(?:(?:private|protected|noncomputable|scoped)\s+)*"
 )
+PROOF_COMMAND_KEYWORDS = (
+    *DECLARATION_KEYWORDS,
+    "example",
+    "opaque",
+    "axiom",
+    "constant",
+    "namespace",
+    "section",
+    "end",
+    "open",
+    "export",
+    "variable",
+    "include",
+    "omit",
+    "attribute",
+    "initialize",
+    "builtin_initialize",
+    "syntax",
+    "macro",
+    "macro_rules",
+    "elab",
+    "elab_rules",
+    "notation",
+    "infix",
+    "infixl",
+    "infixr",
+    "prefix",
+    "postfix",
+    "declare_syntax_cat",
+    "register_option",
+    "register_builtin_option",
+    "universe",
+    "universes",
+    "set_option",
+    "mutual",
+)
+
 # A (possibly dotted) Lean identifier: a leading letter or `_`, then letters /
 # digits / `_` / `'` / `.`. `\w` and `\W` are Unicode-aware in Python 3, so
 # this matches names with subscripts or Greek letters (`c₀`, `α`) that an
@@ -362,36 +400,60 @@ def _file_size_errors(paths: list[Path], limit: int) -> list[_QualityError]:
     return errors
 
 
-def _declaration_starts(stripped: str) -> list[tuple[int, str]]:
-    starts: list[tuple[int, str]] = []
-    pattern = re.compile(rf"^\s*{DECLARATION_PREFIX}(?:theorem|lemma)\b")
-    for index, line in enumerate(stripped.splitlines(), start=1):
-        if pattern.match(line):
-            starts.append((index, line))
+def _command_starts(code: str) -> list[tuple[int, int, int, str]]:
+    """Locate standard line-leading commands outside bracketed terms and quotations.
+
+    Each entry is (line number, indentation, offset, keyword). This remains a
+    textual heuristic: indentation distinguishes outer commands from local
+    declarations in a theorem's `where` block.
+    """
+    keywords = "|".join(PROOF_COMMAND_KEYWORDS)
+    prefix = (
+        r"(?:@\[[^\n\]]+\]\s+)*"
+        r"(?:(?:public|private|protected|noncomputable|scoped|local|nonrec|unsafe|partial)\s+)*"
+    )
+    pattern = re.compile(rf"^([ \t]*){prefix}({keywords})\b")
+    starts = []
+    depth = offset = 0
+    for number, line in enumerate(code.splitlines(keepends=True), start=1):
+        if depth == 0:
+            if match := pattern.match(line):
+                starts.append((number, len(match[1]), offset, match[2]))
+            elif re.match(r"\s*(?:@\[|#)", line):
+                indent = len(line) - len(line.lstrip())
+                starts.append((number, indent, offset, "attribute"))
+        for character in line:
+            if character in "([{⟨⦃":
+                depth += 1
+            elif character in ")]}⟩⦄":
+                depth = max(0, depth - 1)
+        offset += len(line)
     return starts
 
 
 def _check_proof_sizes(root: Path) -> list[_QualityError]:
     errors: list[_QualityError] = []
     for path in _lean_content_files(root):
-        original_lines = path.read_text().splitlines()
-        stripped = _strip_lean_comments("\n".join(original_lines))
-        starts = _declaration_starts(stripped)
-        for index, (start_line, _) in enumerate(starts):
-            end_line = (
-                starts[index + 1][0]
-                if index + 1 < len(starts)
-                else len(original_lines) + 1
-            )
-            block = original_lines[start_line - 1 : end_line - 1]
-            try:
-                body_start = next(
-                    offset for offset, line in enumerate(block) if ":=" in line
-                )
-            except StopIteration:
+        text = path.read_text()
+        code = code_view(text)
+        starts = _command_starts(code)
+        for index, (start_line, indent, start, keyword) in enumerate(starts):
+            if keyword not in ("theorem", "lemma"):
                 continue
-            body = "\n".join(block[body_start:])
-            proof_lines = _non_comment_code_lines(body)
+            end = next(
+                (
+                    offset
+                    for _, column, offset, _ in starts[index + 1 :]
+                    if column <= indent
+                ),
+                len(text),
+            )
+            body_start = _find_boundary(code, start, end)
+            if body_start == end:
+                continue
+            proof_lines = sum(
+                bool(line.strip()) for line in code[body_start:end].splitlines()
+            )
             if proof_lines > 200:
                 errors.append(
                     _QualityError(
