@@ -6,11 +6,13 @@ Authors: Arseniy Akopyan
 module
 
 
-public import Mathlib.Algebra.Order.Archimedean.Real.Hom
-public import Mathlib.Algebra.Ring.IsFormallyReal
-public import Mathlib.Tactic
 public import LeanPool.NandakumarRamanaRao.NRR.ConvexBody
 public import LeanPool.NandakumarRamanaRao.NRR.Geometry.ConvexBody.HalfspaceCut
+import Mathlib.Algebra.Order.Archimedean.Real.Hom
+import Mathlib.Algebra.Ring.IsFormallyReal
+import Mathlib.MeasureTheory.Measure.Lebesgue.EqHaar
+import Mathlib.Tactic.Basify
+import Mathlib.Tactic.ENatToNat
 
 /-!
 # `NRR.HalfSpace` — public halfspace definitions

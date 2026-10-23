@@ -7,6 +7,9 @@ module
 
 
 public import LeanPool.NandakumarRamanaRao.NRR.Geometry.ConvexBody.Basic
+public import Mathlib.Topology.MetricSpace.Pseudo.Defs
+import Mathlib.Tactic.Measurability.Init
+import Mathlib.Topology.MetricSpace.Bounded
 public import LeanPool.NandakumarRamanaRao.NRR.Geometry.ConvexBody.Topology
 
 /-!

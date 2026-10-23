@@ -6,10 +6,17 @@ Authors: Alexander Bentkamp, Yury Kudryashov, Yaël Dillies, Joël Riou
 module
 
 
-public import Mathlib.Analysis.Convex.Combination
-public import Mathlib.Geometry.Convex.ConvexSpace.CompactSpaceStdSimplex
-public import Mathlib.Topology.Algebra.Monoid.FunOnFinite
-public import Mathlib.Tactic
+public import Mathlib.Topology.UnitInterval
+public import Mathlib.Analysis.Convex.Hull
+public import Mathlib.Geometry.Convex.ConvexSpace.Defs
+public import Mathlib.LinearAlgebra.Finsupp.Pi
+import Mathlib.Analysis.Convex.Combination
+import Mathlib.Tactic.Basify
+import Mathlib.Tactic.ENatToNat
+import Mathlib.Tactic.Measurability.Init
+import Mathlib.Tactic.Polynomial.Basic
+import Mathlib.Tactic.ReduceModChar
+import Mathlib.Topology.Algebra.Monoid.FunOnFinite
 
 /-! # Finite coordinate simplices
 

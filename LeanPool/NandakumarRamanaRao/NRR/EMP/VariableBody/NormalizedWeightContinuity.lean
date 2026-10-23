@@ -6,13 +6,14 @@ Authors: Arseniy Akopyan
 module
 
 
-public import Mathlib.Tactic
-public import LeanPool.NandakumarRamanaRao.NRR.EMP.VariableBody.Basic
 public import LeanPool.NandakumarRamanaRao.NRR.EMP.VariableBody.AreaVector
-public import LeanPool.NandakumarRamanaRao.NRR.EMP.VariableBody.EqualAreaRelation
 public import LeanPool.NandakumarRamanaRao.NRR.EMP.VariableBody.WeightBounds
 public import LeanPool.NandakumarRamanaRao.NRR.EMP.VariableBody.WeightBox
 public import LeanPool.NandakumarRamanaRao.NRR.EMP.VariableBody.ClosedGraph
+public import LeanPool.NandakumarRamanaRao.NRR.EMP.VariableBody.EqualAreaRelation
+import Mathlib.Combinatorics.Matroid.Init
+import Mathlib.Tactic.Positivity.Finset
+public import LeanPool.NandakumarRamanaRao.NRR.EMP.VariableBody.Basic
 
 /-!
 # `NRR.EMP.VariableBody.NormalizedWeightContinuity` — continuity of the selected weight

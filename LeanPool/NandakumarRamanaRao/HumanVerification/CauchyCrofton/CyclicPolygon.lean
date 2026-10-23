@@ -7,6 +7,11 @@ module
 
 
 public import LeanPool.NandakumarRamanaRao.HumanVerification.CauchyCrofton.Radial
+import Mathlib.Analysis.SpecialFunctions.Trigonometric.Arctan
+import Mathlib.Tactic.Basify
+import Mathlib.Tactic.ENatToNat
+import Mathlib.Tactic.Positivity.Finset
+import Mathlib.Tactic.ReduceModChar
 
 /-!
 # Cyclic convex polygons inscribed in a planar convex body

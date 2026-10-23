@@ -6,9 +6,13 @@ Authors: Arseniy Akopyan
 module
 
 
-public import LeanPool.NandakumarRamanaRao.NRR.OddSphereDegree.AlgebraicTopology.Backports.StdSimplexOne
 public import Mathlib.AlgebraicTopology.SimplicialObject.ChainHomotopy
 public import LeanPool.NandakumarRamanaRao.NRR.OddSphereDegree.AlgebraicTopology.PrismOperator
+public import LeanPool.NandakumarRamanaRao.NRR.OddSphereDegree.AlgebraicTopology.HomotopyToChainHomotopy
+public import Mathlib.Algebra.Category.ModuleCat.Colimits
+public import Mathlib.AlgebraicTopology.SimplicialSet.StdSimplexOne
+import Mathlib.Algebra.Order.Algebra
+public import LeanPool.NandakumarRamanaRao.NRR.OddSphereDegree.AlgebraicTopology.Backports.StdSimplexOne
 
 /-!
 # Combinatorial simplicial homotopy from a topological homotopy (prism, link L4)

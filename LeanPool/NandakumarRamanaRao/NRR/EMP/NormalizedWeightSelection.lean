@@ -6,11 +6,12 @@ Authors: Arseniy Akopyan
 module
 
 
-public import Mathlib.Tactic
+public import LeanPool.NandakumarRamanaRao.NRR.EMP.NormalizedWeights
+public import LeanPool.NandakumarRamanaRao.NRR.EMP.EqualAreaWeightsUniqueness
+import Mathlib.Combinatorics.Matroid.Init
+import Mathlib.Tactic.Positivity.Finset
 public import LeanPool.NandakumarRamanaRao.NRR.ConvexBody
 public import LeanPool.NandakumarRamanaRao.NRR.EMP.EqualAreaWeights
-public import LeanPool.NandakumarRamanaRao.NRR.EMP.EqualAreaWeightsUniqueness
-public import LeanPool.NandakumarRamanaRao.NRR.EMP.NormalizedWeights
 
 /-!
 # `NRR.EMP.NormalizedWeightSelection` — canonical normalized equal‑area weight

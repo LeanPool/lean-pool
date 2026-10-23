@@ -6,8 +6,8 @@ Authors: Arseniy Akopyan
 module
 
 
-public import Mathlib.Tactic
 public import LeanPool.NandakumarRamanaRao.NRR.EMP.VariableBody.Phase1Interface
+import LeanPool.NandakumarRamanaRao.NRR.Geometry.ConvexBody.SupportFunctionContinuity
 
 /-!
 # `NRR.EMP.VariableBody.CompactSiteFamily` — uniform bounds and separation

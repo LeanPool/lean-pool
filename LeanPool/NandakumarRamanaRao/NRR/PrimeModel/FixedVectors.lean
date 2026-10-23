@@ -7,6 +7,11 @@ module
 
 
 public import LeanPool.NandakumarRamanaRao.NRR.PrimeModel.Actions
+public import LeanPool.NandakumarRamanaRao.NRR.PrimeModel.CoordinateDecomposition
+import Mathlib.Combinatorics.Matroid.Init
+import Mathlib.Tactic.Basify
+import Mathlib.Tactic.ENatToNat
+import Mathlib.Tactic.Positivity.Finset
 
 /-!
 # Fixed-vector rigidity

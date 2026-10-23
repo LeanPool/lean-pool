@@ -6,8 +6,7 @@ Authors: Arseniy Akopyan
 module
 
 
-public import Mathlib.MeasureTheory.Measure.Typeclasses.Finite
-public import Mathlib.Topology.MetricSpace.Pseudo.Defs
+public import Mathlib.MeasureTheory.Measure.MeasureSpaceDef
 /-!
 # Route B, Step 1: avoidance of a finite family of null bad sets
 

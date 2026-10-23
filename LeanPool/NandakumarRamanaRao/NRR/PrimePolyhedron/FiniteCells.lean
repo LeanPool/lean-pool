@@ -7,9 +7,9 @@ module
 
 
 public import Mathlib.Algebra.BigOperators.Group.Finset.Defs
-public import Mathlib.Order.CompletePartialOrder
-public import Mathlib.Tactic
 public import Mathlib.Topology.MetricSpace.Pseudo.Defs
+import Mathlib.Combinatorics.Matroid.Init
+import Mathlib.Tactic.Positivity.Finset
 public import LeanPool.NandakumarRamanaRao.NRR.PrimeModel
 
 /-!

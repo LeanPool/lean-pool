@@ -6,10 +6,12 @@ Authors: Arseniy Akopyan
 module
 
 
-public import Mathlib.Analysis.SpecialFunctions.Integrals.Basic
-public import Mathlib.MeasureTheory.Integral.IntervalIntegral.Periodic
 public import LeanPool.NandakumarRamanaRao.HumanVerification.CauchyCrofton.PolygonHausdorff
 public import LeanPool.NandakumarRamanaRao.HumanVerification.CauchyCrofton.CyclicSum
+import Mathlib.Analysis.SpecialFunctions.Integrals.Basic
+import Mathlib.MeasureTheory.Integral.IntervalIntegral.Periodic
+import Mathlib.Tactic.Basify
+import Mathlib.Tactic.ReduceModChar
 
 /-!
 # Cauchy perimeter of an inscribed cyclic polygon

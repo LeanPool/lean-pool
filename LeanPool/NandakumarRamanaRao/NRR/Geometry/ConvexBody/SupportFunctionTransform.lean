@@ -6,7 +6,12 @@ Authors: Arseniy Akopyan
 module
 
 
+public import LeanPool.NandakumarRamanaRao.NRR.Geometry.ConvexBody.AffineOps
+public import LeanPool.NandakumarRamanaRao.NRR.Geometry.ConvexBody.LinearImage
+public import LeanPool.NandakumarRamanaRao.NRR.Geometry.ConvexBody.SupportFunction
+public import Mathlib.Analysis.InnerProductSpace.Adjoint
 public import LeanPool.NandakumarRamanaRao.NRR.Geometry.ConvexBody.SupportFunctionBasic
+import Mathlib.Tactic.Measurability.Init
 
 /-!
 # `NRR.Geometry.ConvexBody` — support-function transformation API

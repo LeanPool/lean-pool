@@ -6,6 +6,9 @@ Authors: Arseniy Akopyan
 module
 
 
+public import LeanPool.NandakumarRamanaRao.NRR.OddSphereDegree.Antipodal
+public import LeanPool.NandakumarRamanaRao.NRR.OddSphereDegree.SphereTopHomology
+import LeanPool.NandakumarRamanaRao.NRR.OddSphereDegree.DegreeAPIStrengthening
 public import LeanPool.NandakumarRamanaRao.NRR.OddSphereDegree.DegreeFunctorialityAndHomotopy
 
 /-!

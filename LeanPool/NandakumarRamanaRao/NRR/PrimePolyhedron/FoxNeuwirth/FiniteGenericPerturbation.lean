@@ -7,10 +7,16 @@ module
 
 
 public import Mathlib.Basic.Real.Basic
-public import Mathlib.RingTheory.Etale.Weakly
-public import Mathlib.RingTheory.Flat.TorsionFree
-public import Mathlib.RingTheory.TotallySplit
-public import Mathlib.Tactic
+public import Mathlib.Algebra.Polynomial.Eval.Defs
+public import Mathlib.CategoryTheory.Category.Basic
+public import Mathlib.LinearAlgebra.Matrix.Determinant.Basic
+import Mathlib.RingTheory.Etale.Weakly
+import Mathlib.RingTheory.Flat.TorsionFree
+import Mathlib.RingTheory.TotallySplit
+import Mathlib.Tactic.Basify
+import Mathlib.Tactic.ENatToNat
+import Mathlib.Tactic.Measurability.Init
+import Mathlib.Tactic.ReduceModChar
 
 /-!
 # Finite generic scalar perturbations

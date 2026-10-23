@@ -7,6 +7,7 @@ module
 
 
 public import LeanPool.NandakumarRamanaRao.NRR.Geometry.ConvexBody.PlanarCircle
+import LeanPool.NandakumarRamanaRao.NRR.Geometry.ConvexBody.WidthContinuity
 
 /-!
 # `NRR.Geometry.ConvexBody` — the planar Cauchy perimeter

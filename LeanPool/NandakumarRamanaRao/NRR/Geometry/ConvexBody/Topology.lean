@@ -7,6 +7,10 @@ module
 
 
 public import LeanPool.NandakumarRamanaRao.NRR.Geometry.ConvexBody.Basic
+public import Mathlib.Topology.Separation.Hausdorff
+public import Mathlib.Topology.MetricSpace.Pseudo.Defs
+import Mathlib.Tactic.Measurability.Init
+import Mathlib.Topology.MetricSpace.Bounded
 
 /-!
 # `NRR.Geometry.ConvexBody` — topological accessor API
@@ -22,10 +26,8 @@ re-used here rather than duplicated.
 
 ## Import policy
 
-Following the library-wide policy, `Basic.lean` already pulls in `import Mathlib`, so no extra
-imports are required here; the topological lemmas used
-(`IsCompact.isClosed`, `IsCompact.isBounded`, `IsClosed.closure_eq`, `IsClosed.frontier_subset`,
-`interior_subset`) are all available transitively.
+Hausdorff-space compactness and metric boundedness are imported here, keeping those
+dependencies out of the basic body type.
 -/
 
 @[expose] public section

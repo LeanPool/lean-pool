@@ -6,11 +6,15 @@ Authors: Arseniy Akopyan
 module
 
 
-public import Mathlib.Data.Nat.Factors
 public import LeanPool.NandakumarRamanaRao.NRR.PrimeRefinement.Core
 public import LeanPool.NandakumarRamanaRao.NRR.PrimeRefinement.IndexedPartition
 public import LeanPool.NandakumarRamanaRao.NRR.BodySpace.FullBody
 public import LeanPool.NandakumarRamanaRao.NRR.Multivalued.PerimeterObservable
+public import LeanPool.NandakumarRamanaRao.NRR.FairPartition.Predicates
+import Mathlib.Combinatorics.Matroid.Init
+import Mathlib.Tactic.Basify
+import Mathlib.Tactic.ENatToNat
+import Mathlib.Tactic.Positivity.Finset
 /-!
 # Iteration of the prime-refinement lemma
 

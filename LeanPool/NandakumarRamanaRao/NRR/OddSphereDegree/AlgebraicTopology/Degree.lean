@@ -7,9 +7,8 @@ module
 
 
 public import LeanPool.NandakumarRamanaRao.NRR.OddSphereDegree.TopCatBridge
-public import LeanPool.NandakumarRamanaRao.NRR.OddSphereDegree.AlgebraicTopology.SingularHomologyFunctorAPI
 public import LeanPool.NandakumarRamanaRao.NRR.OddSphereDegree.AlgebraicTopology.HomotopyInvariance
-public import Mathlib.LinearAlgebra.Determinant
+public import LeanPool.NandakumarRamanaRao.NRR.OddSphereDegree.AlgebraicTopology.SingularHomologyFunctorAPI
 
 /-!
 # Topological degree relative to a sphere orientation

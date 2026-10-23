@@ -6,8 +6,11 @@ Authors: Arseniy Akopyan
 module
 
 
+public import LeanPool.NandakumarRamanaRao.NRR.FairPartition.Predicates
 public import LeanPool.NandakumarRamanaRao.NRR.AAK.SimplestRouteS6Refined
 public import LeanPool.NandakumarRamanaRao.NRR.PrimePolyhedron.FoxNeuwirth.StableHomotopyInvarianceAffinePullback
+import Mathlib.Combinatorics.Matroid.Init
+import Mathlib.Tactic.Positivity.Finset
 
 /-!
 # Unconditional AAK theorem from the affine-pullback stable collar

@@ -6,7 +6,13 @@ Authors: Arseniy Akopyan
 module
 
 
+public import LeanPool.NandakumarRamanaRao.NRR.AreaPerimeter
+public import LeanPool.NandakumarRamanaRao.NRR.EMP.VariableBody.CanonicalCell
+import LeanPool.NandakumarRamanaRao.NRR.BodySpace.AreaContinuity
+import LeanPool.NandakumarRamanaRao.NRR.BodySpace.PerimeterContinuity
 public import LeanPool.NandakumarRamanaRao.NRR.EMP.VariableBody.CanonicalCellContinuity
+import Mathlib.Combinatorics.Matroid.Init
+import Mathlib.Tactic.Positivity.Finset
 
 /-!
 # `NRR.EMP.VariableBody.Children` — canonical children in the lower-area `BodySpace`

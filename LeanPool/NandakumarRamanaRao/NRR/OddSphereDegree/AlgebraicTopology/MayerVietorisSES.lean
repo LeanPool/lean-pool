@@ -7,10 +7,15 @@ module
 
 
 public import Mathlib.Algebra.Category.ModuleCat.Biproducts
-public import Mathlib.Algebra.Homology.HomologicalComplexAbelian
 public import Mathlib.Algebra.Homology.HomologicalComplexBiprod
-public import Mathlib.Tactic
 public import LeanPool.NandakumarRamanaRao.NRR.OddSphereDegree.AlgebraicTopology.CoordinateProjection
+public import Mathlib.Topology.Sets.Opens
+import Mathlib.Algebra.Homology.HomologicalComplexAbelian
+import Mathlib.Data.EReal.Inv
+import Mathlib.Tactic.Basify
+import Mathlib.Tactic.ENatToNat
+import Mathlib.Tactic.Measurability.Init
+import Mathlib.Tactic.ReduceModChar
 public import LeanPool.NandakumarRamanaRao.NRR.OddSphereDegree.AlgebraicTopology.SmallChainsQuasiIso
 
 /-! # Mayer Vietoris SES -/

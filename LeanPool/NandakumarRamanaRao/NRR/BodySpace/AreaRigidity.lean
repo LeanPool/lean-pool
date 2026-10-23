@@ -8,7 +8,6 @@ module
 
 public import Mathlib.Analysis.LocallyConvex.AbsConvexOpen
 public import Mathlib.Order.CompletePartialOrder
-public import Mathlib.Tactic
 public import LeanPool.NandakumarRamanaRao.NRR.BodySpace.Basic
 public import LeanPool.NandakumarRamanaRao.NRR.Geometry.ConvexBody.PositiveAreaInterior
 /-!

@@ -7,6 +7,9 @@ module
 
 
 public import LeanPool.NandakumarRamanaRao.NRR.Geometry.ConvexBody.Basic
+public import Mathlib.Analysis.Normed.Module.Basic
+import Mathlib.Tactic.Measurability.Init
+import Mathlib.Tactic.ReduceModChar
 
 /-!
 # `NRR.Geometry.ConvexBody` — translations and positive scalings
@@ -40,8 +43,8 @@ by the downstream width / support-function development.
 
 ## Import policy
 
-Following the library-wide policy, `Basic.lean` already pulls in `import Mathlib`, so no extra
-imports are required here.
+The basic body type is independent of a norm. This module imports the normed-space API
+needed by translations, scalings and their homeomorphisms explicitly.
 -/
 
 @[expose] public section

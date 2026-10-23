@@ -6,9 +6,8 @@ Authors: Arseniy Akopyan
 module
 
 
-public import Mathlib.Analysis.Convex.Measure
-public import Mathlib.Tactic
 public import LeanPool.NandakumarRamanaRao.NRR.BodySpace.Basic
+import Mathlib.Analysis.Convex.Measure
 
 /-!
 # Boundary nullity for compact convex subbodies

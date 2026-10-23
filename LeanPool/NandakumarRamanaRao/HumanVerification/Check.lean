@@ -6,6 +6,10 @@ Authors: Arseniy Akopyan
 module
 
 
+import Mathlib.Analysis.SpecialFunctions.Trigonometric.Arctan
+import Mathlib.Combinatorics.Matroid.Init
+import Mathlib.MeasureTheory.Covering.Besicovitch
+import Mathlib.Tactic.Positivity.Finset
 public import LeanPool.NandakumarRamanaRao.HumanVerification.Main
 
 /-! # Check -/

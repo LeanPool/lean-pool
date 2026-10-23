@@ -6,6 +6,11 @@ Authors: Arseniy Akopyan
 module
 
 
+public import LeanPool.NandakumarRamanaRao.NRR.PrimeModel.PrimeSymmetry
+public import Mathlib.Basic.Real.Basic
+public import Mathlib.Tactic.Continuity
+import Mathlib.Combinatorics.Matroid.Init
+import Mathlib.Tactic.Positivity.Finset
 public import LeanPool.NandakumarRamanaRao.NRR.PrimeModel.FixedVectors
 
 /-!

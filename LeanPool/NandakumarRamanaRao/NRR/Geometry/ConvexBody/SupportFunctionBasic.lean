@@ -10,6 +10,7 @@ public import Mathlib.Analysis.InnerProductSpace.Adjoint
 public import LeanPool.NandakumarRamanaRao.NRR.Geometry.ConvexBody.SupportFunction
 public import LeanPool.NandakumarRamanaRao.NRR.Geometry.ConvexBody.AffineOps
 public import LeanPool.NandakumarRamanaRao.NRR.Geometry.ConvexBody.LinearImage
+import Mathlib.Tactic.Measurability.Init
 
 /-!
 # `NRR.Geometry.ConvexBody` — algebraic and geometric properties of the support function

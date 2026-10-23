@@ -6,9 +6,16 @@ Authors: Arseniy Akopyan
 module
 
 
+public import LeanPool.NandakumarRamanaRao.NRR.PrimePolyhedron.FoxNeuwirth.RouteBBadSetNullity
+public import LeanPool.NandakumarRamanaRao.NRR.PrimePolyhedron.FoxNeuwirth.RouteBCanonicalCoordinateSplit
 public import LeanPool.NandakumarRamanaRao.NRR.PrimePolyhedron.FoxNeuwirth.RouteBMixedFaceBadSetMeasurable
-public import Mathlib.MeasureTheory.Measure.Lebesgue.EqHaar
-public import Mathlib.LinearAlgebra.Dimension.Constructions
+import Mathlib.Combinatorics.Matroid.Init
+import Mathlib.MeasureTheory.Measure.Lebesgue.EqHaar
+import Mathlib.Tactic.Basify
+import Mathlib.Tactic.ENatToNat
+import Mathlib.Tactic.Polynomial.Basic
+import Mathlib.Tactic.Positivity.Finset
+import Mathlib.Tactic.ReduceModChar
 /-!
 # Route B: full mixed-face bad-set nullity
 
@@ -244,8 +251,7 @@ theorem weightedSum_eq_selected_add_other
             w κ.retained • V κ.retained := by
               symm
               exact Finset.sum_erase_add _ _ hmemr
-        _ = _ := by
-          simp [s1, s0, otherRetainedIndices, add_comm]
+        _ = _ := add_comm _ _
 
 /-- A complete bad selected-vector fiber is contained in its proper span. -/
 theorem selectedFiber_subset_badFiberSubmodule

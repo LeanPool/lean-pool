@@ -6,8 +6,13 @@ Authors: Arseniy Akopyan
 module
 
 
-public import LeanPool.NandakumarRamanaRao.NRR.EMP.VariableBody.AreaVector
+public import LeanPool.NandakumarRamanaRao.NRR.EMP.VariableBody.Basic
+public import LeanPool.NandakumarRamanaRao.NRR.EMP.VariableBody.Phase1Interface
+import LeanPool.NandakumarRamanaRao.NRR.EMP.PowerCellPositiveArea
 public import LeanPool.NandakumarRamanaRao.NRR.EMP.VariableBody.NormalizedWeightContinuity
+import Mathlib.Combinatorics.Matroid.Init
+import Mathlib.Tactic.Positivity.Finset
+public import LeanPool.NandakumarRamanaRao.NRR.EMP.VariableBody.AreaVector
 
 /-!
 # `NRR.EMP.VariableBody.CanonicalCell` — the canonical variable-body power cell

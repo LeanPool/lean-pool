@@ -6,8 +6,12 @@ Authors: Arseniy Akopyan
 module
 
 
-public import Mathlib.Tactic
-public import Mathlib.Topology.Metrizable.Uniformity
+public import Mathlib.Algebra.BigOperators.Group.Finset.Defs
+public import Mathlib.Algebra.Group.End
+public import Mathlib.Topology.MetricSpace.Pseudo.Defs
+public import Mathlib.Topology.Separation.Hausdorff
+import Mathlib.Tactic.Measurability.Init
+import Mathlib.Topology.Metrizable.Uniformity
 
 /-!
 # `NRR.Representation.ZeroSum` — zero-sum real-valued target type (public API)

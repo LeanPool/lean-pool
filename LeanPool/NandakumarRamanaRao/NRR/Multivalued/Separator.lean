@@ -13,6 +13,8 @@ public import LeanPool.NandakumarRamanaRao.NRR.Multivalued.Separator.Fibers
 public import LeanPool.NandakumarRamanaRao.NRR.Multivalued.Separator.ObstructionValue
 public import LeanPool.NandakumarRamanaRao.NRR.Multivalued.Separator.SignedDistance
 public import LeanPool.NandakumarRamanaRao.NRR.Multivalued.Separator.ToNiceMV
+import Mathlib.Combinatorics.Matroid.Init
+import Mathlib.Tactic.Positivity.Finset
 
 /-! Supporting modules for Equal-area and equal-perimeter convex partitions. -/
 
