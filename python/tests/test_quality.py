@@ -512,6 +512,85 @@ def test_proof_size_checks_later_indented_theorem(tmp_path: Path) -> None:
     assert errors[0].message == "proof has 202 code lines; limit is 200"
 
 
+@pytest.mark.parametrize(
+    "opening",
+    [
+        "  open Nat in\n",
+        "  open scoped BigOperators in\n",
+        "  open Nat in by\n",
+        "  open Nat\n    in\n",
+        "  open Nat in open List in\n",
+        "  open Nat in\n  open List in\n",
+    ],
+)
+def test_proof_size_counts_proof_internal_scoped_opens(
+    tmp_path: Path, opening: str
+) -> None:
+    """Term/tactic-level scoped opens cannot hide the remainder of a long proof."""
+    _write_minimal_repo(
+        tmp_path,
+        "theorem large : True := by\n" + opening + "    skip\n" * 200 + "    trivial\n",
+    )
+    errors = _check_proof_sizes(tmp_path)
+    assert len(errors) == 1
+    assert errors[0].message == (
+        f"proof has {202 + len(opening.splitlines())} code lines; limit is 200"
+    )
+
+
+@pytest.mark.parametrize(
+    "opening",
+    [
+        "open Nat in\n",
+        " open Nat in ",
+        "open Nat\n  in ",
+        "open Nat in open List in ",
+        "open Nat in\nopen List in\n",
+        "open Nat in @[simp]\n",
+    ],
+)
+def test_proof_size_attaches_scoped_opens_to_following_declarations(
+    tmp_path: Path, opening: str
+) -> None:
+    """Outer scoped opens belong to the next theorem, not to the preceding proof."""
+    _write_minimal_repo(
+        tmp_path,
+        "theorem first : True := by\n"
+        + "  skip\n" * 198
+        + "  trivial\n"
+        + opening
+        + "theorem second : True := by\n  trivial\n",
+    )
+    assert _check_proof_sizes(tmp_path) == []
+
+
+def test_proof_size_checks_inline_open_scoped_theorem(tmp_path: Path) -> None:
+    """A theorem following `open ... in` on the same line is still checked."""
+    _write_minimal_repo(
+        tmp_path,
+        "open Nat in theorem large : True := by\n" + "  skip\n" * 200 + "  trivial\n",
+    )
+    errors = _check_proof_sizes(tmp_path)
+    assert len(errors) == 1
+    assert errors[0].message == "proof has 202 code lines; limit is 200"
+
+
+def test_proof_size_scoped_open_stops_before_next_command(tmp_path: Path) -> None:
+    """A later `in` inside a theorem must not turn a global open into a scope."""
+    _write_minimal_repo(
+        tmp_path,
+        "theorem first : True := by\n  trivial\nopen Nat\n"
+        + "theorem large : True := by\n"
+        + "  let _ := (Id.run do for i in [0] do pure ())\n"
+        + "  skip\n" * 200
+        + "  trivial\n",
+    )
+    errors = _check_proof_sizes(tmp_path)
+    assert len(errors) == 1
+    assert errors[0].line == len(HEADER.splitlines()) + 5
+    assert errors[0].message == "proof has 203 code lines; limit is 200"
+
+
 def test_proof_size_excludes_indented_definition(tmp_path: Path) -> None:
     """Definitions also end a preceding proof regardless of their indentation."""
     _write_minimal_repo(

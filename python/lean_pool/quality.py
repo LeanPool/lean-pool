@@ -13,7 +13,7 @@ from typing import Any
 
 import yaml
 
-from lean_pool.exposition.source_text import _find_boundary, code_view
+from lean_pool.exposition.source_text import _find_boundary, _strip_prefixes, code_view
 from lean_pool.indexes import (
     discovers_modules,
     project_modules,
@@ -400,6 +400,31 @@ def _file_size_errors(paths: list[Path], limit: int) -> list[_QualityError]:
     return errors
 
 
+def _resolve_open_scopes(
+    code: str, starts: list[tuple[int, int, str]], pattern: re.Pattern[str]
+) -> list[tuple[int, int, str]]:
+    """Attach scoped opens to commands, but leave term/tactic opens inside proofs."""
+    commands = []
+    scope_start = None
+    for index, (line, start, keyword) in enumerate(starts):
+        prefix_start = start if scope_start is None else scope_start
+        scope_start = None
+        if keyword == "open":
+            end = starts[index + 1][1] if index + 1 < len(starts) else len(code)
+            position = _strip_prefixes(code, start, end)
+            if position == end:
+                scope_start = prefix_start
+                continue
+            match = pattern.match(code[position:end])
+            if match is None:
+                # An `open ... in` followed by a term/tactic is part of the proof.
+                continue
+            line = _line_number(code, position)
+            keyword = match[1]
+        commands.append((line, prefix_start, keyword))
+    return commands
+
+
 def _command_starts(code: str) -> list[tuple[int, int, str]]:
     """Locate standard line-leading commands outside bracketed terms and quotations.
 
@@ -436,7 +461,7 @@ def _command_starts(code: str) -> list[tuple[int, int, str]]:
             elif character in ")]}⟩⦄":
                 depth = max(0, depth - 1)
         offset += len(line)
-    return starts
+    return _resolve_open_scopes(code, starts, pattern)
 
 
 def _check_proof_sizes(root: Path) -> list[_QualityError]:
