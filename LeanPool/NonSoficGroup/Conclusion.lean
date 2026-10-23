@@ -949,8 +949,6 @@ private theorem exists_prescribed_radius_union_source_completed_tolerance
       push_cast
       ring
     · norm_num
-  have hdreal : (0 : ℝ) < d := by
-    exact_mod_cast hd
   have hden : 0 < (2 : ℝ) * (ell + 8 * (d : ℝ)) := by
     positivity
   have htarget (n : ℕ) :
@@ -983,7 +981,6 @@ private theorem exists_prescribed_radius_union_source_completed_tolerance
   let c : ℝ :=
     5 * (4 + ell *
       (216 / ((d : ℝ) * (1 - q) ^ 2) + 1 / (d : ℝ)))
-  have hdiff : 0 < 1 - q := sub_pos.mpr hq
   have hc : 0 < c := by
     dsimp [c]
     positivity
