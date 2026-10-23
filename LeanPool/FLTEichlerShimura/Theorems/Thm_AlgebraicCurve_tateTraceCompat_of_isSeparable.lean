@@ -3559,7 +3559,6 @@ theorem kwF4R1V386a_isSeparable_algebraMap_fiberCompletion
     Polynomial.Separable.map (Algebra.IsSeparable.isSeparable E g)
   exact hmapsep.of_dvd (minpoly.dvd v.adicCompletion _ hroot)
 
-set_option synthInstance.maxHeartbeats 8000000 in
 theorem kwF4R1V386a_isSeparable_fiberCompletion
     [HasPrincipalDivisors K E] [HasPrincipalDivisors K F]
     [FiniteDimensional E F] [Algebra.IsSeparable E F]

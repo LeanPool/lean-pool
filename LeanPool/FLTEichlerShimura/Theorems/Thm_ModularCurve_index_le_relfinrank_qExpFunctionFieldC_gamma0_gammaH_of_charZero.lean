@@ -194,7 +194,6 @@ open scoped MatrixGroups in
 open _root_.ModularCurve
   _root_.P2MW.S_OVERLONG_e39f7e7d.ModularCurve
   ModularCurve.IgusaGammaH IntermediateField in
-set_option synthInstance.maxHeartbeats 1600000 in
 theorem solution
     (K : Type*) [Field K] [CharZero K] (M : ℕ) [NeZero M] (H : Subgroup (ZMod M)ˣ) :
     (H ⊔ Subgroup.zpowers (-1 : (ZMod M)ˣ)).index ≤

@@ -17,6 +17,7 @@ public import LeanPool.FLTEichlerShimura.Definitions.Def_ModularCurve_PhiGen
 public import Mathlib.RingTheory.RootsOfUnity.PrimitiveRoots
 
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_coeffMap_qExpand
+import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_coeffEmb_qExpand
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_PhiGen_splits_of_prime
 import Mathlib.Algebra.Polynomial.Roots
 import Mathlib.Algebra.BigOperators.Fin
@@ -63,6 +64,8 @@ https://github.com/anthropics/fermats-last-theorem/blob/aa2d8b34692b16c70f699536
 
 section privateSection
 
+open _root_.ModularCurve.ModularPolynomialHelpers
+
 open _root_.ModularCurve.W1
 
 
@@ -92,13 +95,7 @@ variable {K : Type*} [Field K] [Algebra ℚ K]
 
 
 
-theorem coeffEmb_qExpand (n : ℕ) [NeZero n] (x : LaurentSeries ℚ) :
-    coeffEmb K (qExpand ℚ n x) = qExpand K n (coeffEmb K x) :=
-  coeffMap_qExpand (algebraMap ℚ K) n x
 
-theorem iota_jqN (N d : ℕ) [NeZero N] [NeZero d] :
-    coeffEmb K (qExpand ℚ N (jqN d)) = TS K (N * d) 1 := by
-  rw [jqN, coeffEmb_qExpand, coeffEmb_qExpand, qExpand_qExpand, TS_eq_coeffEmb, qTwist_one_apply]
 
 theorem iota_jq (N : ℕ) [NeZero N] : coeffEmb K (qExpand ℚ N jq) = TS K N 1 := by
   rw [coeffEmb_qExpand, TS_eq_coeffEmb, qTwist_one_apply]
@@ -130,17 +127,6 @@ p2m_open "ModularCurve"
 
 variable {K : Type*} [Field K]
 
-theorem isPrimitiveRoot_pow_div {N : ℕ} [NeZero N] {ζ : Kˣ} (hζ : IsPrimitiveRoot (ζ : K) N)
-    {p : ℕ} (hpN : p ∣ N) : IsPrimitiveRoot ((ζ ^ (N / p) : Kˣ) : K) p := by
-  have hN : N ≠ 0 := NeZero.ne N
-  have hd0 : N / p ≠ 0 := by
-    intro h0
-    have hc := Nat.div_mul_cancel hpN
-    rw [h0, zero_mul] at hc
-    exact hN hc.symm
-  have h := hζ.pow_of_dvd hd0 (Nat.div_dvd_of_dvd hpN)
-  rw [Nat.div_div_self hpN hN] at h
-  rwa [← Units.val_pow_eq_pow_val] at h
 
 theorem qExpand_qTwist_TS (e : ℕ) [NeZero e] (u : Kˣ) (m : ℕ) [NeZero m] (w : Kˣ) :
     qExpand K e (qTwist u (TS K m w)) = TS K (e * m) (u ^ (m : ℤ) * w) := by
@@ -165,7 +151,7 @@ private theorem ModularCurve.PhiGen.splits_prime_at_slot {K : Type*} [Field K] [
       (qTwist (u ^ (p * p)) (coeffEmb K jq)))) * ∏ b ∈ Finset.range p, (Polynomial.X - Polynomial.C
       (qExpand K e (qTwist (u * ζ ^ (b * (N / p))) (coeffEmb K jq)))) := by
   have hζp : IsPrimitiveRoot ((ζ ^ (N / p) : Kˣ) : K) p :=
-    ModularCurve.W1.isPrimitiveRoot_pow_div hζ hpN
+    isPrimitiveRoot_pow_div hζ hpN
   have h0 := ModularCurve.PhiGen.splits_of_prime p (ζ ^ (N / p)) hζp data
   have hhom : Polynomial.eval₂RingHom (Int.castRingHom (LaurentSeries K))
       (qExpand K (p * e) (qTwist (u ^ p) (coeffEmb K jq)))

@@ -30,7 +30,6 @@ import Mathlib.RingTheory.DedekindDomain.IntegralClosure
 import Mathlib.RingTheory.DedekindDomain.AdicValuation
 import Mathlib.RingTheory.Localization.Integral
 import Mathlib.RingTheory.Adjoin.Polynomial.Basic
-import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
 
 /-!
 # Places above a finite j-value as ℚ̄-points of the coordinate ring
@@ -49,7 +48,7 @@ the $j$-function. Let $j_0 \in \bar{\mathbb{Q}}$, and assume that every place of
 $\bar{\mathbb{Q}}$ — a proper valuation subring of $\bar F_N$ containing $\bar{\mathbb{Q}}$ and
 which is a principal ideal ring — has degree one, i.e. its residue field has
 $\bar{\mathbb{Q}}$-dimension $1$. Let $A_N$ denote the integral closure of
-$\bar{\mathbb{Q}}[\bar\jmath] =$ `Algebra.adjoin (AlgebraicClosure ℚ) {jBar N}` in $\bar F_N$. Then
+$\bar{\mathbb{Q}}[\bar\jmath] =$ `Algebra.adjoin ℚ̄ {jBar N}` in $\bar F_N$. Then
 the type of bijections between the set of places $v$ of $\bar F_N$ over $\bar{\mathbb{Q}}$ with
 $\operatorname{ord}_v(\bar\jmath - j_0) > 0$, where $\operatorname{ord}_v$ is minus the logarithm of
 the associated $\mathbb{Z}^{m0}$-valued adic valuation, and the set of $\bar{\mathbb{Q}}$-algebra
@@ -75,12 +74,11 @@ section privateSection
 open AlgebraicCurve Place
 
 
-namespace P2MW.S_ModularCurve_nonempty_equiv_place_pos_ord_algHom_integralClosure
-
+local notation "ℚ̄" => AlgebraicClosure ℚ
 
 noncomputable section
 
-p2m_open "AlgebraicCurve ModularCurve IsDedekindDomain"
+open ModularCurve IsDedekindDomain
 
 namespace B2Places
 
@@ -195,8 +193,7 @@ theorem evalHom_apply (t : F) (w : Place K F) (hrat : w.IsRational)
 
 theorem evalHom_eq_iff (t : F) (w : Place K F) (hrat : w.IsRational)
     (ht : t ∈ w.toValuationSubring) (a : normalization K t) (c : K) :
-    evalHom t w hrat ht a = c ↔
-      (⟨(a : F), forall_mem_of_mem t w ht a⟩ : w.toValuationSubring)
+    evalHom t w hrat ht a = c ↔ (⟨(a : F), forall_mem_of_mem t w ht a⟩ : w.toValuationSubring)
           - algebraMap K w.toValuationSubring c ∈
         IsLocalRing.maximalIdeal w.toValuationSubring := by
   rw [← IsLocalRing.residue_eq_zero_iff, map_sub, sub_eq_zero, evalHom_apply,
@@ -383,38 +380,27 @@ end Dictionary
 
 end General
 
-set_option synthInstance.maxHeartbeats 80000 in -- this is needed (DL)
 scoped instance finiteDimensional_adjoin_jBar (N : ℕ) [NeZero N] :
-    FiniteDimensional
-      (IntermediateField.adjoin (AlgebraicClosure ℚ)
-        ({(jBar N : modularFunctionFieldBar N)} : Set (modularFunctionFieldBar N)))
-      (modularFunctionFieldBar N) := by
-  have hcm : IntermediateField.comap (modularFunctionFieldBar N).val
-        (IntermediateField.adjoin (AlgebraicClosure ℚ)
-          ({((jBar N : modularFunctionFieldBar N) : LaurentSeries (AlgebraicClosure ℚ))} :
-            Set (LaurentSeries (AlgebraicClosure ℚ))))
-      = IntermediateField.adjoin (AlgebraicClosure ℚ)
-          ({(jBar N : modularFunctionFieldBar N)} : Set (modularFunctionFieldBar N)) := by
+    FiniteDimensional (IntermediateField.adjoin ℚ̄ {jBar N}) (modularFunctionFieldBar N) := by
+  have : Module.Free (IntermediateField.adjoin ℚ̄ {jBar N}) (modularFunctionFieldBar N) :=
+    Module.Free.of_divisionRing _ _
+  have hcm : IntermediateField.comap (modularFunctionFieldBar N).val (IntermediateField.adjoin ℚ̄
+          ({(jBar N : LaurentSeries ℚ̄)} : Set (LaurentSeries ℚ̄)))
+      = IntermediateField.adjoin ℚ̄ {jBar N} := by
     rw [← IntermediateField.lift_adjoin_simple]
     exact IntermediateField.comap_map (modularFunctionFieldBar N).val _
   have h1 := IntermediateField.finrank_comap
-    (IntermediateField.adjoin (AlgebraicClosure ℚ)
-      ({((jBar N : modularFunctionFieldBar N) : LaurentSeries (AlgebraicClosure ℚ))} :
-        Set (LaurentSeries (AlgebraicClosure ℚ))))
+    (IntermediateField.adjoin ℚ̄
+      ({(jBar N : LaurentSeries ℚ̄)} : Set (LaurentSeries ℚ̄)))
     (modularFunctionFieldBar N).val
   rw [hcm, IntermediateField.fieldRange_val] at h1
-  have h2 : IntermediateField.relfinrank
-      (IntermediateField.adjoin (AlgebraicClosure ℚ)
-        ({((jBar N : modularFunctionFieldBar N) : LaurentSeries (AlgebraicClosure ℚ))} :
-          Set (LaurentSeries (AlgebraicClosure ℚ))))
+  have h2 : IntermediateField.relfinrank (IntermediateField.adjoin ℚ̄
+        ({(jBar N : LaurentSeries ℚ̄)} : Set (LaurentSeries ℚ̄)))
       (modularFunctionFieldBar N) = dedekindPsi N := by
     rw [← ModularCurve.relfinrank_full_eq_dedekindPsi N,
-      ← ModularCurve.relfinrank_laurentBaseChange_modularFunctionFieldFull (AlgebraicClosure ℚ) N]
-  have hpos : 0 < IntermediateField.relfinrank
-      (IntermediateField.adjoin (AlgebraicClosure ℚ)
-        ({((jBar N : modularFunctionFieldBar N) : LaurentSeries (AlgebraicClosure ℚ))} :
-          Set (LaurentSeries (AlgebraicClosure ℚ))))
-      (modularFunctionFieldBar N) := by
+      ← ModularCurve.relfinrank_laurentBaseChange_modularFunctionFieldFull ℚ̄ N]
+  have hpos : 0 < IntermediateField.relfinrank (IntermediateField.adjoin ℚ̄
+        ({(jBar N : LaurentSeries ℚ̄)} : Set (LaurentSeries ℚ̄))) (modularFunctionFieldBar N) := by
     rw [h2]
     exact ModularCurve.dedekindPsi_pos N (NeZero.ne N)
   rw [← h1] at hpos
@@ -422,89 +408,55 @@ scoped instance finiteDimensional_adjoin_jBar (N : ℕ) [NeZero N] :
 
 end B2Places
 
-namespace ModularCurve
-p2m_export "ModularCurve" "jBar modularFunctionFieldBar dedekindPsi \
-  relfinrank_laurentBaseChange_modularFunctionFieldFull relfinrank_full_eq_dedekindPsi \
-  dedekindPsi_pos transcendental_coeffEmb_jq"
-end ModularCurve
-p2m_open_scoped "ModularCurve" in
+open scoped ModularCurve in
 open B2Places in
-def ModularCurve.placesOverEquivAlgHom (N : ℕ) [NeZero N] (j₀ : AlgebraicClosure ℚ)
-    (hdeg : ∀ w : Place (AlgebraicClosure ℚ) (modularFunctionFieldBar N), w.deg = 1) :
-    {v : Place (AlgebraicClosure ℚ) (modularFunctionFieldBar N) //
-        0 < v.ord (jBar N - algebraMap (AlgebraicClosure ℚ) (modularFunctionFieldBar N) j₀)} ≃
-      {ψ : normalization (AlgebraicClosure ℚ) (jBar N : modularFunctionFieldBar N)
-          →ₐ[AlgebraicClosure ℚ] AlgebraicClosure ℚ //
-        ψ (gen (jBar N : modularFunctionFieldBar N)) = j₀} :=
-  placesOverEquiv (jBar N : modularFunctionFieldBar N)
-    (ModularCurve.transcendental_coeffEmb_jq (AlgebraicClosure ℚ) N) hdeg j₀
+def B2Places.placesOverEquivAlgHom (N : ℕ) [NeZero N] (j₀ : ℚ̄)
+    (hdeg : ∀ w : Place ℚ̄ (modularFunctionFieldBar N), w.deg = 1) :
+    {v : Place ℚ̄ (modularFunctionFieldBar N) //
+        0 < v.ord (jBar N - algebraMap ℚ̄ (modularFunctionFieldBar N) j₀)} ≃
+      {ψ : normalization ℚ̄ (jBar N)
+          →ₐ[ℚ̄] ℚ̄ //
+        ψ (gen (jBar N)) = j₀} :=
+  placesOverEquiv (jBar N)
+    (ModularCurve.transcendental_coeffEmb_jq ℚ̄ N) hdeg j₀
 
-p2m_open_scoped "ModularCurve" in
+open scoped ModularCurve in
 open B2Places in
-theorem ModularCurve.nonempty_equiv_place_pos_ord_algHom_normalization (N : ℕ) [NeZero N]
-    (j₀ : AlgebraicClosure ℚ)
-    (hdeg : ∀ w : Place (AlgebraicClosure ℚ) (modularFunctionFieldBar N), w.deg = 1) :
-    Nonempty ({v : Place (AlgebraicClosure ℚ) (modularFunctionFieldBar N) //
-        0 < v.ord (jBar N - algebraMap (AlgebraicClosure ℚ) (modularFunctionFieldBar N) j₀)} ≃
-      {ψ : normalization (AlgebraicClosure ℚ) (jBar N : modularFunctionFieldBar N)
-          →ₐ[AlgebraicClosure ℚ] AlgebraicClosure ℚ //
-        ψ (gen (jBar N : modularFunctionFieldBar N)) = j₀}) :=
-  ⟨ModularCurve.placesOverEquivAlgHom N j₀ hdeg⟩
+theorem B2Places.nonempty_equiv_place_pos_ord_algHom_normalization (N : ℕ) [NeZero N] (j₀ : ℚ̄)
+    (hdeg : ∀ w : Place ℚ̄ (modularFunctionFieldBar N), w.deg = 1) :
+    Nonempty ({v : Place ℚ̄ (modularFunctionFieldBar N) //
+        0 < v.ord (jBar N - algebraMap ℚ̄ (modularFunctionFieldBar N) j₀)} ≃
+      {ψ : normalization ℚ̄ (jBar N) →ₐ[ℚ̄] ℚ̄ // ψ (gen (jBar N)) = j₀}) :=
+  ⟨B2Places.placesOverEquivAlgHom N j₀ hdeg⟩
 
-p2m_open_scoped "ModularCurve" in
+open scoped ModularCurve in
 open B2Places in
-private theorem ModularCurve.nonempty_equiv_place_pos_ord_algHom_integralClosure (N : ℕ) [NeZero N]
-    (j₀ : AlgebraicClosure ℚ)
-    (hdeg : ∀ w : Place (AlgebraicClosure ℚ) (modularFunctionFieldBar N), w.deg = 1) :
-    Nonempty ({v : Place (AlgebraicClosure ℚ) (modularFunctionFieldBar N) //
-        0 < v.ord (jBar N - algebraMap (AlgebraicClosure ℚ) (modularFunctionFieldBar N) j₀)} ≃
-      {ψ : ↥(integralClosure
-            ↥(Algebra.adjoin (AlgebraicClosure ℚ)
-              ({(jBar N : modularFunctionFieldBar N)} : Set (modularFunctionFieldBar N)))
-            (modularFunctionFieldBar N)) →ₐ[AlgebraicClosure ℚ] AlgebraicClosure ℚ //
-        ψ (algebraMap
-            ↥(Algebra.adjoin (AlgebraicClosure ℚ)
-              ({(jBar N : modularFunctionFieldBar N)} : Set (modularFunctionFieldBar N)))
-            ↥(integralClosure
-              ↥(Algebra.adjoin (AlgebraicClosure ℚ)
-                ({(jBar N : modularFunctionFieldBar N)} : Set (modularFunctionFieldBar N)))
-              (modularFunctionFieldBar N))
-            ⟨jBar N, Algebra.self_mem_adjoin_singleton (AlgebraicClosure ℚ)
-              (jBar N : modularFunctionFieldBar N)⟩) = j₀}) :=
-  ⟨ModularCurve.placesOverEquivAlgHom N j₀ hdeg⟩
+private theorem B2Places.nonempty_equiv_place_pos_ord_algHom_integralClosure (N : ℕ) [NeZero N]
+    (j₀ : ℚ̄) (hdeg : ∀ w : Place ℚ̄ (modularFunctionFieldBar N), w.deg = 1) :
+    Nonempty ({v : Place ℚ̄ (modularFunctionFieldBar N) //
+        0 < v.ord (jBar N - algebraMap ℚ̄ (modularFunctionFieldBar N) j₀)} ≃
+      {ψ : ↥(integralClosure ↥(Algebra.adjoin ℚ̄ {jBar N}) (modularFunctionFieldBar N)) →ₐ[ℚ̄] ℚ̄ //
+        ψ (algebraMap ↥(Algebra.adjoin ℚ̄ {jBar N}) ↥(integralClosure ↥(Algebra.adjoin ℚ̄ {jBar N})
+              (modularFunctionFieldBar N)) ⟨jBar N, Algebra.self_mem_adjoin_singleton ℚ̄
+              (jBar N)⟩) = j₀}) :=
+  ⟨B2Places.placesOverEquivAlgHom N j₀ hdeg⟩
 
 end
 
-open AlgebraicCurve _root_.ModularCurve
-  _root_.P2MW.S_ModularCurve_nonempty_equiv_place_pos_ord_algHom_integralClosure.ModularCurve in
-theorem solution (N : ℕ) [NeZero N]
-    (j₀ : AlgebraicClosure ℚ)
-    (hdeg : ∀ w : Place (AlgebraicClosure ℚ) (modularFunctionFieldBar N), w.deg = 1) :
-    Nonempty ({v : Place (AlgebraicClosure ℚ) (modularFunctionFieldBar N) //
-        0 < v.ord (jBar N - algebraMap (AlgebraicClosure ℚ) (modularFunctionFieldBar N) j₀)} ≃
-      {ψ : ↥(integralClosure
-            ↥(Algebra.adjoin (AlgebraicClosure ℚ)
-              ({(jBar N : modularFunctionFieldBar N)} : Set (modularFunctionFieldBar N)))
-            (modularFunctionFieldBar N)) →ₐ[AlgebraicClosure ℚ] AlgebraicClosure ℚ //
-        ψ (algebraMap
-            ↥(Algebra.adjoin (AlgebraicClosure ℚ)
-              ({(jBar N : modularFunctionFieldBar N)} : Set (modularFunctionFieldBar N)))
-            ↥(integralClosure
-              ↥(Algebra.adjoin (AlgebraicClosure ℚ)
-                ({(jBar N : modularFunctionFieldBar N)} : Set (modularFunctionFieldBar N)))
-              (modularFunctionFieldBar N))
-            ⟨jBar N, Algebra.self_mem_adjoin_singleton (AlgebraicClosure ℚ)
-              (jBar N : modularFunctionFieldBar N)⟩) = j₀}) :=
-  ModularCurve.nonempty_equiv_place_pos_ord_algHom_integralClosure N j₀ hdeg
+open AlgebraicCurve ModularCurve in
+theorem solution (N : ℕ) [NeZero N] (j₀ : ℚ̄)
+    (hdeg : ∀ w : Place ℚ̄ (modularFunctionFieldBar N), w.deg = 1) :
+    Nonempty ({v : Place ℚ̄ (modularFunctionFieldBar N) //
+        0 < v.ord (jBar N - algebraMap ℚ̄ (modularFunctionFieldBar N) j₀)} ≃
+      {ψ : (integralClosure (Algebra.adjoin ℚ̄ {jBar N}) (modularFunctionFieldBar N)) →ₐ[ℚ̄] ℚ̄ //
+        ψ (algebraMap (Algebra.adjoin ℚ̄ {jBar N}) _
+          ⟨_, Algebra.self_mem_adjoin_singleton _ _⟩) = j₀}) :=
+  B2Places.nonempty_equiv_place_pos_ord_algHom_integralClosure N j₀ hdeg
 
-end S_ModularCurve_nonempty_equiv_place_pos_ord_algHom_integralClosure
-end P2MW
-export P2MW.S_ModularCurve_nonempty_equiv_place_pos_ord_algHom_integralClosure (solution)
 
 end privateSection
 
 public section publicSection
-
 
 open AlgebraicCurve ModularCurve
 
@@ -515,17 +467,17 @@ theorem ModularCurve.nonempty_equiv_place_pos_ord_algHom_integralClosure (N : �
         0 < v.ord (jBar N - algebraMap (AlgebraicClosure ℚ) (modularFunctionFieldBar N) j₀)} ≃
       {ψ : ↥(integralClosure
             ↥(Algebra.adjoin (AlgebraicClosure ℚ)
-              ({(jBar N : modularFunctionFieldBar N)} : Set (modularFunctionFieldBar N)))
+              ({(jBar N)} : Set (modularFunctionFieldBar N)))
             (modularFunctionFieldBar N)) →ₐ[AlgebraicClosure ℚ] AlgebraicClosure ℚ //
         ψ (algebraMap
             ↥(Algebra.adjoin (AlgebraicClosure ℚ)
-              ({(jBar N : modularFunctionFieldBar N)} : Set (modularFunctionFieldBar N)))
+              ({(jBar N)} : Set (modularFunctionFieldBar N)))
             ↥(integralClosure
               ↥(Algebra.adjoin (AlgebraicClosure ℚ)
-                ({(jBar N : modularFunctionFieldBar N)} : Set (modularFunctionFieldBar N)))
+                ({(jBar N)} : Set (modularFunctionFieldBar N)))
               (modularFunctionFieldBar N))
             ⟨jBar N, Algebra.self_mem_adjoin_singleton (AlgebraicClosure ℚ)
-              (jBar N : modularFunctionFieldBar N)⟩) = j₀}) :=
+              (jBar N)⟩) = j₀}) :=
   solution N j₀ hdeg
 
 end publicSection

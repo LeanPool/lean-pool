@@ -158,7 +158,6 @@ private theorem kaehler_free_rank_one_adjoin (x : LF) (hx : Transcendental K x) 
 
 end Adjoin
 
-set_option synthInstance.maxHeartbeats 1600000 in
 open ModularCurve in
 private theorem isCurveOver_laurentBaseChange (L : Type*) [Field L] {instQL : Algebra ℚ L} (N : ℕ)
     [NeZero N] : IsCurveOver L (laurentBaseChange L (modularFunctionFieldFull N)) := by
@@ -168,6 +167,7 @@ private theorem isCurveOver_laurentBaseChange (L : Type*) [Field L] {instQL : Al
   have hfin : ∀ E : IntermediateField L (LaurentSeries L), E = modularFunctionFieldC L N →
       ∀ w : Place L E, Module.Finite L w.ResidueField := by
     rintro E rfl w
+    have : Module.Free L w.ResidueField := Module.Free.of_divisionRing _ _
     exact Module.finite_of_finrank_pos (Nat.pos_of_ne_zero (deg_ne_zero_modularFunctionFieldC L N
       w))
   have hkae : ∀ E : IntermediateField L (LaurentSeries L),

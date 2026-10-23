@@ -100,7 +100,24 @@ theorem laurentBaseChange_full_eq_adjoin (L : Type*) [Field L] [Algebra ℚ L] (
     rintro _ ⟨y, hy, rfl⟩
     exact coeffEmb_mem_laurentBaseChange L (IntermediateField.subset_adjoin ℚ _ hy)
 
-set_option synthInstance.maxHeartbeats 1600000 in
+private theorem finiteDimensional_of_integral_generators
+    {K F : Type*} [Field K] [Field F] [Algebra K F]
+    {ι : Type*} [Finite ι] (J : F) (g : ι → F)
+    (hint : ∀ i, IsIntegral K⟮J⟯ (g i))
+    (hgen : IntermediateField.adjoin K ({J} ∪ Set.range g) = ⊤) :
+    FiniteDimensional K⟮J⟯ F := by
+  have htop : IntermediateField.adjoin K⟮J⟯ (Set.range g) = ⊤ := by
+    apply IntermediateField.restrictScalars_injective K
+    rw [IntermediateField.restrictScalars_top, IntermediateField.adjoin_adjoin_left]
+    exact hgen
+  have : FiniteDimensional K⟮J⟯ (IntermediateField.adjoin K⟮J⟯ (Set.range g)) :=
+    IntermediateField.finiteDimensional_adjoin fun _ hy => by
+      obtain ⟨i, rfl⟩ := hy
+      exact hint i
+  rw [htop] at this
+  exact LinearEquiv.finiteDimensional
+    (IntermediateField.topEquiv (F := K⟮J⟯) (E := F)).toLinearEquiv
+
 theorem finiteDimensional_adjoin_coeffEmb_jq (L : Type*) [Field L] [Algebra ℚ L] (N : ℕ) [NeZero N]
     (hjq : jq ∈ modularFunctionFieldFull N) :
     FiniteDimensional
@@ -158,11 +175,8 @@ theorem finiteDimensional_adjoin_coeffEmb_jq (L : Type*) [Field L] [Algebra ℚ 
     rw [← Polynomial.hom_eval₂]
     have h0 : Polynomial.eval₂ evalAtJ (qExpand ℚ d jq) data.Φ = 0 := data.eval_eq_zero
     rw [h0, map_zero]
-  have hgen : IntermediateField.adjoin
-      (IntermediateField.adjoin L ({J} : Set (laurentBaseChange L (modularFunctionFieldFull N))))
-      (Set.range g) = ⊤ := by
-    apply IntermediateField.restrictScalars_injective L
-    rw [IntermediateField.restrictScalars_top, IntermediateField.adjoin_adjoin_left]
+  have hgen : IntermediateField.adjoin L
+      ({J} ∪ Set.range g : Set (laurentBaseChange L (modularFunctionFieldFull N))) = ⊤ := by
     apply IntermediateField.lift_injective
     erw [IntermediateField.lift_adjoin, IntermediateField.lift_top]
     apply le_antisymm
@@ -175,21 +189,7 @@ theorem finiteDimensional_adjoin_coeffEmb_jq (L : Type*) [Field L] [Algebra ℚ 
       apply IntermediateField.subset_adjoin
       refine ⟨g ⟨d, hdvd, hd0.ne⟩, Or.inr ⟨⟨d, hdvd, hd0.ne⟩, rfl⟩, ?_⟩
       rfl
-  have hfin : FiniteDimensional
-      (IntermediateField.adjoin L ({J} : Set (laurentBaseChange L (modularFunctionFieldFull N))))
-      (IntermediateField.adjoin
-        (IntermediateField.adjoin L ({J} : Set (laurentBaseChange L (modularFunctionFieldFull N))))
-        (Set.range g)) :=
-    IntermediateField.finiteDimensional_adjoin fun y hy => by
-      obtain ⟨d, rfl⟩ := hy
-      exact hint d
-  rw [hgen] at hfin
-  exact LinearEquiv.finiteDimensional
-    (IntermediateField.topEquiv :
-      (⊤ : IntermediateField
-        (IntermediateField.adjoin L ({J} : Set (laurentBaseChange L (modularFunctionFieldFull N))))
-        (laurentBaseChange L (modularFunctionFieldFull N))) ≃ₐ[_]
-        laurentBaseChange L (modularFunctionFieldFull N)).toLinearEquiv
+  exact finiteDimensional_of_integral_generators J g hint hgen
 
 end BFall
 

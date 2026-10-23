@@ -2063,7 +2063,6 @@ theorem kwF4R1V384a_trace_algebraMap_eq_completionTraceAt
   subst hv
   rfl
 
-set_option synthInstance.maxHeartbeats 80000 in -- this is needed (DL)
 theorem kwF4R1V384a_completionTraceSum_of_semilocalBij
     (hbij : KwF4R1V384aCompletionSemilocalBij K F E) :
     AlgebraicCurve.KwHgfV352CompletionTraceSum K F E := by
@@ -2072,6 +2071,8 @@ theorem kwF4R1V384a_completionTraceSum_of_semilocalBij
   let e : v.adicCompletion ⊗[E] F ≃ₐ[v.adicCompletion]
       ((w' : v.fiber F) → w'.1.adicCompletion) :=
     AlgEquiv.ofBijective (kwF4R1V384a_semilocalDiag F v) (hbij v)
+  have : ∀ w' : v.fiber F, Module.Free v.adicCompletion w'.1.adicCompletion :=
+    fun _ => Module.Free.of_divisionRing _ _
   rw [gapsw7_x3x_trace_decomposition_of_prod_iso E v.adicCompletion F
         (fun w' : v.fiber F => w'.1.adicCompletion) e g]
   refine Finset.sum_congr rfl fun w' _ => ?_

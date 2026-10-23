@@ -70,8 +70,6 @@ open WeierstrassCurve Affine CoordinateRing AlgebraicCurve Place Polynomial IsDe
 
 open scoped Bivariate
 
---set_option linter.unusedSectionVars false
-
 noncomputable section
 
 namespace WeierstrassCurve

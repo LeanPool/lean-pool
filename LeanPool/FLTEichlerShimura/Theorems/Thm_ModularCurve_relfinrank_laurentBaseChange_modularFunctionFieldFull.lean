@@ -130,12 +130,11 @@ theorem ψ_compat (ht : t ∈ F₀) :
   apply Subtype.ext
   rfl
 
-set_option synthInstance.maxHeartbeats 80000 in -- this is needed (DL)
 theorem isAlgebraic_coeffEmb (ht : t ∈ F₀) [FiniteDimensional (K₀ t) (E₀ F₀ t ht)]
     (f : LaurentSeries ℚ) (hf : f ∈ F₀) :
     IsAlgebraic (K L t) (coeffEmb L f) := by
   have h1 : IsIntegral (K₀ t) (⟨f, (mem_extendScalars _).mpr hf⟩ : E₀ F₀ t ht) :=
-    Algebra.IsIntegral.isIntegral _
+    IsIntegral.of_finite (K₀ t) _
   have h2 := h1.map_of_comp_eq (φ L) (ψ L ht) (ψ_compat L ht)
   have h3 : IsIntegral (K L t) ((ψ L ht ⟨f, (mem_extendScalars _).mpr hf⟩ : E L F₀ t ht) :
     LaurentSeries L) :=
@@ -353,10 +352,11 @@ theorem linearIndependent_ψ (ht : t ∈ F₀) (htr : Transcendental ℚ t) {ι 
     rw [hP i (Finset.mem_univ i), hP0, map_zero]
   exact Subtype.ext ((mul_eq_zero.mp h3).resolve_left hd)
 
-set_option synthInstance.maxHeartbeats 40000 in -- this is needed (DL)
 theorem relfinrank_eq (ht : t ∈ F₀) (htr : Transcendental ℚ t) :
     relfinrank (K L t) (laurentBaseChange L F₀) = relfinrank (K₀ t) F₀ := by
   classical
+  have : Module.Free (K₀ t) (E₀ F₀ t ht) := Module.Free.of_divisionRing _ _
+  have : Module.Free (K L t) (E L F₀ t ht) := Module.Free.of_divisionRing _ _
   rw [relfinrank_eq_finrank_of_le (K_le L ht), relfinrank_eq_finrank_of_le (K₀_le ht)]
   change Module.finrank (K L t) (E L F₀ t ht) = Module.finrank (K₀ t) (E₀ F₀ t ht)
   by_cases hfin : FiniteDimensional (K₀ t) (E₀ F₀ t ht)

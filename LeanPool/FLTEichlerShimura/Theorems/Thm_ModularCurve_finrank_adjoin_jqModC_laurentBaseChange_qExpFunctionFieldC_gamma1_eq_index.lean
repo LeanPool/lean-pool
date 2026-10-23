@@ -264,7 +264,6 @@ p2m_open "ModularCurve \
 open scoped MatrixGroups
 
 open ModularCurve.FullnessGamma1 IntermediateField in
-set_option synthInstance.maxHeartbeats 1600000 in
 theorem solution
     (K : Type*) [Field K] [Algebra ℚ K] [IsAlgClosed K]
     (M : ℕ) [NeZero M]

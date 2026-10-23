@@ -15,17 +15,14 @@ public import LeanPool.FLTEichlerShimura.Definitions.Def_ModularCurve_Specialisa
 
 import Mathlib.Algebra.Category.Grp.Injective
 import Mathlib.AlgebraicGeometry.EllipticCurve.DivisionPolynomial.Degree
-import LeanPool.FLTEichlerShimura.Definitions.Def_ModularCurve_EMD
 import LeanPool.FLTEichlerShimura.Definitions.Def_HahnSeries_Monodromy
 import LeanPool.FLTEichlerShimura.Definitions.Def_WeierstrassCurve_VariableChangePointEquiv
-import LeanPool.FLTEichlerShimura.Theorems.Thm_WeierstrassCurve_Affine_Point_vcInvFun_add
+import LeanPool.FLTEichlerShimura.Definitions.Def_ModularCurve_HahnSpecialise
 import LeanPool.FLTEichlerShimura.Theorems.Thm_WeierstrassCurve_card_torsionBy_eq_sq_of_isAlgClosed
-import LeanPool.FLTEichlerShimura.Theorems.Thm_HahnSeries_isAlgClosed_rat
 import LeanPool.FLTEichlerShimura.Theorems.Thm_WeierstrassCurve_Affine_Point_zsmul_some_eq_some_div
 import LeanPool.FLTEichlerShimura.Theorems.Thm_WeierstrassCurve_Affine_evalEval_psi_sq
 import LeanPool.FLTEichlerShimura.Theorems.Thm_WeierstrassCurve_mem_stabilizer_variableChange_iff_of_isShortNF_of_a4_eq_zero
 import LeanPool.FLTEichlerShimura.Theorems.Thm_WeierstrassCurve_mem_stabilizer_variableChange_iff_of_isShortNF_of_a6_eq_zero
-import LeanPool.FLTEichlerShimura.Definitions.Def_ModularCurve_HahnSpecialise
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_HahnSpecialise_specialiseCycSub_bijective
 
 /-!
@@ -1742,4 +1739,3 @@ theorem ModularCurve.B3.specialisationEquivariance_level (N : ℕ) [NeZero N] (j
   solution N j₀
 
 end publicSection
-#min_imports

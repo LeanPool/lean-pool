@@ -88,6 +88,11 @@ noncomputable section
 
 namespace DimLBEven
 
+private def vectorSpaceSMul {K V : Type*}
+    [Field K] [AddCommGroup V] [Module K V] (a : K) (v : V) : V :=
+  a • v
+
+
 theorem finite_doubleCoset_quotient {G : Type*} [Group G] (H K : Subgroup G) [H.FiniteIndex] :
     Finite (DoubleCoset.Quotient (H : Set G) (K : Set G)) := by
   classical
@@ -178,12 +183,22 @@ theorem ofPowerSeries_smul (a : ℂ) (p : PowerSeries ℂ) :
   rw [PowerSeries.smul_eq_C_mul, map_mul]
   congr 1
 
+private noncomputable def vectorSpaceFinBasis (K V : Type*)
+    [Field K] [AddCommGroup V] [Module K V] [FiniteDimensional K V] :
+    Module.Basis (Fin (Module.finrank K V)) K V :=
+  Module.finBasis K V
+
+-- Abstract fields prevent instance search from exploring unrelated intermediate-field towers.
+private theorem isSeparable_of_finiteDimensional {K F : Type*}
+    [Field K] [Field F] [Algebra K F] [FiniteDimensional K F] [CharZero K] :
+    Algebra.IsSeparable K F := by
+  infer_instance
+
 end DimLBEven
 
 end
 
 open DimLBEven in
-set_option synthInstance.maxHeartbeats 80000 in -- this is needed (DL)
 theorem solution
     (M : ℕ) [NeZero M] (hM : 5 ≤ M) (k : ℕ) (hk : 3 ≤ k) (hke : Even k) :
     ∃ (d : ℕ) (f : Fin d → ModularForm (Gamma1 M) (k : ℤ)), LinearIndependent ℂ f ∧
@@ -222,7 +237,8 @@ theorem solution
     ModularCurve.finrank_adjoin_jqModC_laurentBaseChange_qExpFunctionFieldC_gamma1_eq_index ℂ M y hy
   have hsep : Algebra.IsSeparable ↥(IntermediateField.adjoin ℂ ({y} : Set ↥(laurentBaseChange ℂ
     (qExpFunctionFieldC ℚ (CongruenceSubgroup.Gamma1 M)))))
-      ↥(laurentBaseChange ℂ (qExpFunctionFieldC ℚ (CongruenceSubgroup.Gamma1 M))) := inferInstance
+      ↥(laurentBaseChange ℂ (qExpFunctionFieldC ℚ (CongruenceSubgroup.Gamma1 M))) :=
+    isSeparable_of_finiteDimensional
   obtain ⟨h0, h1728⟩ :=
     ModularCurve.ord_eq_three_of_ord_pos_and_ord_sub_eq_two_laurentBaseChange_gamma1 ℂ M (by
       omega) y hy
@@ -256,7 +272,7 @@ theorem solution
       D
   set d : ℕ := Module.finrank ℂ ↥(riemannRochSpace D) with hddef
   have hell : (ell D : ℤ) = d := rfl
-  let b := Module.finBasis ℂ ↥(riemannRochSpace D)
+  let b := vectorSpaceFinBasis ℂ ↥(riemannRochSpace D)
   have hshape : ∀ i : Fin d, _ := fun i =>
     ModularCurve.isIntegral_and_isIntegral_of_mem_riemannRochSpace_weightFloor ℂ
       (laurentBaseChange ℂ (qExpFunctionFieldC ℚ (CongruenceSubgroup.Gamma1 M))) y hy m D hD ((b i :
@@ -280,18 +296,21 @@ theorem solution
       (CongruenceSubgroup.Gamma1 M)))) : LaurentSeries ℂ) =
         (laurentBaseChange ℂ (qExpFunctionFieldC ℚ (CongruenceSubgroup.Gamma1 M))).val
           ((riemannRochSpace D).subtype v) := fun v => rfl
-    have h3 : (((∑ i, g i • b i : ↥(riemannRochSpace D)) : ↥(laurentBaseChange ℂ (qExpFunctionFieldC
-      ℚ (CongruenceSubgroup.Gamma1 M)))) : LaurentSeries ℂ) =
+    have h3 : (((∑ i, vectorSpaceSMul (g i) (b i) : ↥(riemannRochSpace D)) :
+        ↥(laurentBaseChange ℂ (qExpFunctionFieldC ℚ (CongruenceSubgroup.Gamma1 M)))) :
+          LaurentSeries ℂ) =
         ∑ i, algebraMap ℂ (LaurentSeries ℂ) (g i) * (((b i : ↥(riemannRochSpace D)) :
           ↥(laurentBaseChange ℂ (qExpFunctionFieldC ℚ (CongruenceSubgroup.Gamma1 M)))) :
           LaurentSeries ℂ) := by
+      dsimp only [vectorSpaceSMul]
       rw [Submodule.coe_sum, AddSubmonoidClass.coe_finsetSum]
       refine Finset.sum_congr rfl fun i _ => ?_
       rw [Submodule.coe_smul, IntermediateField.coe_smul]
       first
         | rw [Algebra.smul_def]
-    have hL : (((∑ i, g i • b i : ↥(riemannRochSpace D)) : ↥(laurentBaseChange ℂ (qExpFunctionFieldC
-      ℚ (CongruenceSubgroup.Gamma1 M)))) : LaurentSeries ℂ) * thetaL ℂ (jqModC ℂ) ^ m = 0 :=
+    have hL : (((∑ i, vectorSpaceSMul (g i) (b i) : ↥(riemannRochSpace D)) :
+        ↥(laurentBaseChange ℂ (qExpFunctionFieldC ℚ (CongruenceSubgroup.Gamma1 M)))) :
+          LaurentSeries ℂ) * thetaL ℂ (jqModC ℂ) ^ m = 0 :=
       by
       have h1 := congrArg (HahnSeries.ofPowerSeries ℤ ℂ) hq
       rw [map_sum, map_zero] at h1
@@ -305,7 +324,7 @@ theorem solution
       rw [h3]; exact h1
     have hθ : thetaL ℂ (jqModC ℂ) ^ m ≠ 0 := pow_ne_zero _ thetaL_jqModC_ne_zero
     have hsum := (mul_eq_zero.1 hL).resolve_right hθ
-    have hsumF : (∑ i, g i • b i) = 0 := by
+    have hsumF : (∑ i, vectorSpaceSMul (g i) (b i)) = 0 := by
       apply Subtype.val_injective; apply Subtype.val_injective
       rw [hsum]; rfl
     exact Fintype.linearIndependent_iff.1 b.linearIndependent g hsumF i

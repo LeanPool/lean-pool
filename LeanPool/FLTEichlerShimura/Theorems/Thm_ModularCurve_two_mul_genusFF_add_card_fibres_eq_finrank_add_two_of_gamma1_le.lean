@@ -72,8 +72,13 @@ namespace P2MW.S_ModularCurve_two_mul_genusFF_add_card_fibres_eq_finrank_add_two
 open ModularCurve CongruenceSubgroup AlgebraicCurve
 open scoped MatrixGroups
 
+-- Abstract fields prevent searches through concrete modular-function-field towers.
+private theorem isSeparable_of_finiteDimensional {K F : Type*}
+    [Field K] [Field F] [Algebra K F] [FiniteDimensional K F] [CharZero K] :
+    Algebra.IsSeparable K F := by
+  infer_instance
+
 open IntermediateField in
-set_option synthInstance.maxHeartbeats 1600000 in
 theorem solution
     (M : ℕ) [NeZero M] (Γ : Subgroup (Matrix.SpecialLinearGroup (Fin 2) ℤ))
     (hΓ : CongruenceSubgroup.Gamma1 M ≤ Γ)
@@ -187,7 +192,7 @@ theorem solution
           (ModularCurve.qExpFunctionFieldC ℚ Γ))))
       ↥(ModularCurve.laurentBaseChange (AlgebraicClosure ℚ) (ModularCurve.qExpFunctionFieldC ℚ Γ))
         :=
-    Algebra.IsAlgebraic.isSeparable_of_perfectField
+    isSeparable_of_finiteDimensional
   have hst :=
     AlgebraicCurve.sum_ord_sub_one_le_two_mul_genusFF_of_isSeparable (AlgebraicClosure ℚ) y htr hfin
       hsep

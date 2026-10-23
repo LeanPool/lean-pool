@@ -60,6 +60,11 @@ https://github.com/anthropics/fermats-last-theorem/blob/aa2d8b34692b16c70f699536
 
 section privateSection
 
+private theorem charZero_intermediateField {K F : Type*}
+    [Field K] [Field F] [Algebra K F] [CharZero K]
+    (A : IntermediateField K F) : CharZero A := by
+  infer_instance
+
 
 namespace P2MW.S_ModularCurve_finiteDimensional_adjoin_coeffEmb_jq_full
 
@@ -70,8 +75,14 @@ p2m_export "ModularCurve" "jq dedekindPsi modularFunctionFieldFull coeffEmb laur
   coeffEmb_mem_laurentBaseChange relfinrank_laurentBaseChange_modularFunctionFieldFull jq_mem_full \
   relfinrank_full_eq_dedekindPsi dedekindPsi_pos"
 end ModularCurve
+
+-- Abstract fields prevent instance search from exploring unrelated intermediate-field towers.
+private theorem isSeparable_of_finiteDimensional {K F : Type*}
+    [Field K] [Field F] [Algebra K F] [FiniteDimensional K F] [CharZero K] :
+    Algebra.IsSeparable K F := by
+  infer_instance
+
 p2m_open_scoped "ModularCurve" in
-set_option synthInstance.maxHeartbeats 80000 in -- this is needed (DL)
 private theorem ModularCurve.finiteDimensional_adjoin_coeffEmb_jq_full (L : Type*) [Field L]
     [Algebra ℚ L] (N : ℕ) [NeZero N] :
     FiniteDimensional (IntermediateField.adjoin L ({⟨coeffEmb L jq, coeffEmb_mem_laurentBaseChange L
@@ -101,6 +112,11 @@ private theorem ModularCurve.finiteDimensional_adjoin_coeffEmb_jq_full (L : Type
       (laurentBaseChange L (modularFunctionFieldFull N)) = dedekindPsi N := by
     rw [IntermediateField.finrank_comap, IntermediateField.fieldRange_val,
       relfinrank_laurentBaseChange_modularFunctionFieldFull, relfinrank_full_eq_dedekindPsi]
+  have : Module.Free
+      ((IntermediateField.adjoin L ({coeffEmb L jq} : Set (LaurentSeries L))).comap
+        (laurentBaseChange L (modularFunctionFieldFull N)).val)
+      (laurentBaseChange L (modularFunctionFieldFull N)) :=
+    Module.Free.of_divisionRing _ _
   have hfin : FiniteDimensional
       ((IntermediateField.adjoin L ({coeffEmb L jq} : Set (LaurentSeries L))).comap
         (laurentBaseChange L (modularFunctionFieldFull N)).val)
@@ -109,7 +125,6 @@ private theorem ModularCurve.finiteDimensional_adjoin_coeffEmb_jq_full (L : Type
   rwa [hcomap] at hfin
 
 p2m_open_scoped "ModularCurve" in
-set_option synthInstance.maxHeartbeats 400000 in
 private theorem ModularCurve.isSeparable_adjoin_coeffEmb_jq_full (L : Type*) [Field L] [Algebra ℚ L]
     (N : ℕ) [NeZero N] :
     Algebra.IsSeparable (IntermediateField.adjoin L ({⟨coeffEmb L jq, coeffEmb_mem_laurentBaseChange
@@ -122,8 +137,8 @@ private theorem ModularCurve.isSeparable_adjoin_coeffEmb_jq_full (L : Type*) [Fi
   have : FiniteDimensional X (laurentBaseChange L (modularFunctionFieldFull N)) :=
     finiteDimensional_adjoin_coeffEmb_jq_full L N
   have : CharZero L := charZero_of_injective_algebraMap (algebraMap ℚ L).injective
-  have : CharZero X := charZero_of_injective_algebraMap (algebraMap L X).injective
-  infer_instance
+  have : CharZero X := charZero_intermediateField X
+  exact isSeparable_of_finiteDimensional
 
 p2m_open "ModularCurve\
   " in

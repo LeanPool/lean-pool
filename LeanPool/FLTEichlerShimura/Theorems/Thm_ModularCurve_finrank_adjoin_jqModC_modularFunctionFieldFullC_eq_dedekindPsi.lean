@@ -14,6 +14,8 @@ module
 public import LeanPool.FLTEichlerShimura.Definitions.Def_ModularCurve_X0ModL
 
 import Mathlib.Algebra.Order.Ring.Star
+import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_dedekindPsi_prime
+import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_dedekindPsi_pos
 import Mathlib.Data.Int.Star
 import Mathlib.FieldTheory.Relrank
 import Mathlib.RingTheory.Henselian
@@ -131,22 +133,7 @@ theorem finrank_adjoin_eq (N : ℕ) (hN : (N : K) ≠ 0) (d : ℕ) [NeZero d] (h
   finrank_adjoin_jqNModC_eq_dedekindPsi_of_socket d
     (fun p _ hp => socket_of_dvd K N hN p (hp.trans hd))
 
-theorem dedekindPsi_prime (p : ℕ) [hp : Fact p.Prime] : dedekindPsi p = p + 1 := by
-  have h := hp.out
-  rw [dedekindPsi, h.divisors, Finset.filter_eq_self.mpr, Finset.sum_pair h.one_lt.ne, Nat.div_one,
-    Nat.div_self h.pos]
-  intro d hd
-  simp only [Finset.mem_insert, Finset.mem_singleton] at hd
-  rcases hd with rfl | rfl
-  exacts [squarefree_one, h.prime.squarefree]
 
-theorem dedekindPsi_pos (d : ℕ) (hd : d ≠ 0) : 0 < dedekindPsi d := by
-  unfold dedekindPsi
-  have h1 : (1 : ℕ) ∈ d.divisors.filter Squarefree :=
-    Finset.mem_filter.mpr ⟨Nat.one_mem_divisors.mpr hd, squarefree_one⟩
-  calc 0 < d / 1 := by rw [Nat.div_one]; exact Nat.pos_of_ne_zero hd
-    _ ≤ ∑ e ∈ d.divisors with Squarefree e, d / e :=
-        Finset.single_le_sum (f := fun e => d / e) (fun _ _ => Nat.zero_le _) h1
 
 theorem mul_dedekindPsi_le (p d : ℕ) (hp : p ≠ 0) (hd : d ≠ 0) :
     p * dedekindPsi d ≤ dedekindPsi (d * p) := by
@@ -196,7 +183,7 @@ theorem mem_adjoin_mul_prime (d p : ℕ) [NeZero d] [hp : Fact p.Prime]
     ⟨jqNModC K d, mem_adjoin_simple_self _ _⟩ rfl
   have hpsi : 0 < dedekindPsi d := dedekindPsi_pos d (NeZero.ne d)
   refine mem_adjoin_of_degree_count _ _ hd hdp hpsi hint hdegle ?_
-  rw [dedekindPsi_prime p]
+  rw [ModularCurve.dedekindPsi_prime (p := p) Fact.out]
   have hppsi := mul_dedekindPsi_le p d hp.out.ne_zero (NeZero.ne d)
   have h2 : 2 * dedekindPsi d ≤ p * dedekindPsi d := Nat.mul_le_mul_right _ hp.out.two_le
   nlinarith [hppsi, h2, hpsi]

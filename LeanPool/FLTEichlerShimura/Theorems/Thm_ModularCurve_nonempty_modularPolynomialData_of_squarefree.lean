@@ -14,6 +14,7 @@ module
 public import LeanPool.FLTEichlerShimura.Definitions.Def_ModularCurve_X0
 
 import LeanPool.FLTEichlerShimura.Definitions.Def_ModularCurve_PhiGen
+import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_dedekindPsi_pos
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_modularPolynomialFamily
 import Mathlib.NumberTheory.ArithmeticFunction.Misc
 import Mathlib.RingTheory.Polynomial.Resultant.Basic
@@ -116,8 +117,6 @@ private theorem le_dedekindPsi (N : ℕ) (hN : N ≠ 0) : N ≤ dedekindPsi N :=
     Finset.mem_filter.mpr ⟨Nat.one_mem_divisors.mpr hN, squarefree_one⟩
   simpa using Finset.single_le_sum (f := fun d => N / d) (fun d _ => Nat.zero_le _) h1
 
-private theorem dedekindPsi_pos (N : ℕ) (hN : N ≠ 0) : 0 < dedekindPsi N :=
-  lt_of_lt_of_le (Nat.pos_of_ne_zero hN) (le_dedekindPsi N hN)
 
 end DedekindPsi
 

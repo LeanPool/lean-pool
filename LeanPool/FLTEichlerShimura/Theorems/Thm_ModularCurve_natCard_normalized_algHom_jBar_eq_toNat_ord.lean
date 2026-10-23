@@ -114,7 +114,6 @@ p2m_export "ModularCurve" "dedekindPsi jBar modularFunctionFieldBar \
   relfinrank_laurentBaseChange_modularFunctionFieldFull relfinrank_full_eq_dedekindPsi"
 end ModularCurve
 p2m_open_scoped "ModularCurve" in
-set_option synthInstance.maxHeartbeats 80000 in -- this is needed (DL)
 private theorem ModularCurve.natCard_normalized_algHom_jBar_eq_toNat_ord (N : ℕ) [NeZero N]
     (j₀ : AlgebraicClosure ℚ) :
     ∀ w : Place (AlgebraicClosure ℚ) (modularFunctionFieldBar N),
@@ -124,6 +123,11 @@ private theorem ModularCurve.natCard_normalized_algHom_jBar_eq_toNat_ord (N : �
         ψ (jBar N) = HahnSeries.C j₀ + HahnSeries.single (1 : ℚ) (1 : AlgebraicClosure ℚ) ∧
         ∃ g : ℚ, 0 < g ∧ ∀ x, (w.ord x : ℚ) * g = (ψ x).order} =
       (w.ord (jBar N - algebraMap (AlgebraicClosure ℚ) (modularFunctionFieldBar N) j₀)).toNat := by
+  have : Module.Free
+      ↥(IntermediateField.adjoin (AlgebraicClosure ℚ)
+        ({jBar N} : Set ↥(modularFunctionFieldBar N)))
+      ↥(modularFunctionFieldBar N) :=
+    Module.Free.of_divisionRing _ _
   have : FiniteDimensional
       ↥(IntermediateField.adjoin (AlgebraicClosure ℚ)
         ({jBar N} : Set ↥(modularFunctionFieldBar N)))

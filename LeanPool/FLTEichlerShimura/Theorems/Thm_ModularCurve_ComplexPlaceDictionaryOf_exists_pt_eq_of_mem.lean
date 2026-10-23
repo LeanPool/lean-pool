@@ -133,22 +133,17 @@ def B : Subalgebra (A Γ x) (CF Γ) := integralClosure (A Γ x) (CF Γ)
 
 theorem mem_B_iff {y : CF Γ} : y ∈ B Γ x ↔ IsIntegral (A Γ x) y := Iff.rfl
 
-scoped instance instCommRingB : CommRing (B Γ x) := (B Γ x).toCommRing
-scoped instance instIsDomainB : IsDomain (B Γ x) := Subalgebra.isDomain (B Γ x)
-scoped instance instAlgebraAB : Algebra (A Γ x) (B Γ x) := (B Γ x).algebra
-scoped instance instSMulAB : SMul (A Γ x) (B Γ x) := Algebra.toSMul
-scoped instance instAlgebraBCF : Algebra (B Γ x) (CF Γ) := (B Γ x).toAlgebra
-scoped instance instSMulBCF : SMul (B Γ x) (CF Γ) := Algebra.toSMul
-scoped instance instIsScalarTowerABCF : IsScalarTower (A Γ x) (B Γ x) (CF Γ) :=
-  IsScalarTower.subalgebra' (A Γ x) (CF Γ) (CF Γ) (B Γ x)
+scoped instance : CommRing (B Γ x) := (B Γ x).toCommRing
 
-set_option synthInstance.maxHeartbeats 80000 in -- this is needed (DL)
 scoped instance instIsDedekindDomainB [Γ.FiniteIndex] [hT : Fact (ModularGroup.T ∈ Γ)]
     [hx : Fact ((x : LaurentSeries ℂ) = jqModC ℂ)] : IsDedekindDomain (B Γ x) :=
+  have : Algebra.IsAlgebraic (Kj Γ x) (CF Γ) := Algebra.IsAlgebraic.of_finite _ _
+  have : Algebra.IsSeparable (Kj Γ x) (CF Γ) :=
+    Algebra.IsAlgebraic.isSeparable_of_perfectField
   integralClosure.isDedekindDomain (A Γ x) (Kj Γ x) (CF Γ)
 
-scoped instance instIsFractionRingB [Γ.FiniteIndex] [hT : Fact (ModularGroup.T ∈ Γ)] [hx : Fact ((x
-  : LaurentSeries ℂ) = jqModC ℂ)] : IsFractionRing (B Γ x) (CF Γ) := by
+scoped instance instIsFractionRingB [Γ.FiniteIndex] [hT : Fact (ModularGroup.T ∈ Γ)]
+  [hx : Fact ((x : LaurentSeries ℂ) = jqModC ℂ)] : IsFractionRing (B Γ x) (CF Γ) := by
   unfold B; exact integralClosure.isFractionRing_of_finite_extension (Kj Γ x) (CF Γ)
 
 theorem algebraMap_B_apply (b : B Γ x) : algebraMap (B Γ x) (CF Γ) b = (b : CF Γ) := rfl

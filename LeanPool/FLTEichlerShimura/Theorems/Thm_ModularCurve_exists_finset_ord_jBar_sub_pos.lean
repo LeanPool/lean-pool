@@ -29,7 +29,6 @@ import Mathlib.RingTheory.DedekindDomain.AdicValuation
 import Mathlib.RingTheory.Adjoin.Polynomial.Basic
 import Mathlib.RingTheory.Algebraic.Basic
 import Mathlib.RingTheory.PrincipalIdealDomain
-import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
 
 /-!
 # Finiteness of the zero locus of jmath̄ - j₀
@@ -73,21 +72,19 @@ https://github.com/anthropics/fermats-last-theorem/blob/aa2d8b34692b16c70f699536
 
 section privateSection
 
+local notation "ℚ̄" => AlgebraicClosure ℚ
+
 open AlgebraicCurve Place
-
-
-namespace P2MW.S_ModularCurve_exists_finset_ord_jBar_sub_pos
 
 noncomputable section
 
-p2m_open "AlgebraicCurve ModularCurve IsDedekindDomain WithZero"
+open ModularCurve IsDedekindDomain WithZero
 
 namespace B2Peo3
 
 section General
 
 variable {K F : Type*} [Field K] [Field F] [Algebra K F]
-
 
 
 theorem mem_of_ord_sub_pos (w : Place K F) {f : F} {c : K}
@@ -192,8 +189,7 @@ def basePlace (c : K) : Place K (IntermediateField.adjoin K ({t} : Set F)) :=
 
 theorem algebraMap_linGen (c : K) :
     algebraMap (Algebra.adjoin K ({t} : Set F)) (IntermediateField.adjoin K ({t} : Set F))
-        (linGen t c) =
-      IntermediateField.AdjoinSimple.gen K t - algebraMap K _ c := by
+        (linGen t c) = IntermediateField.AdjoinSimple.gen K t - algebraMap K _ c := by
   apply Subtype.ext
   rw [IntermediateField.algebraAdjoinAdjoin.coe_algebraMap, coe_linGen]
   simp
@@ -254,15 +250,13 @@ variable [CharZero K] [FiniteDimensional (IntermediateField.adjoin K ({t} : Set 
 omit [CharZero K] [FiniteDimensional (IntermediateField.adjoin K ({t} : Set F)) F] in
 theorem algebraMap_gen_sub (c : K) :
     algebraMap (IntermediateField.adjoin K ({t} : Set F)) F
-        (IntermediateField.AdjoinSimple.gen K t - algebraMap K _ c) =
-      t - algebraMap K F c := by
+        (IntermediateField.AdjoinSimple.gen K t - algebraMap K _ c) = t - algebraMap K F c := by
   rw [map_sub, IntermediateField.AdjoinSimple.algebraMap_gen,
     ← IsScalarTower.algebraMap_apply]
 
 omit [CharZero K] in
 theorem ord_sub_eq_mul (w : Place K F) (c : K) :
-    w.ord (t - algebraMap K F c) =
-      w.ramificationIndex (IntermediateField.adjoin K ({t} : Set F)) *
+    w.ord (t - algebraMap K F c) = w.ramificationIndex (IntermediateField.adjoin K ({t} : Set F)) *
         (w.restrict (IntermediateField.adjoin K ({t} : Set F))).ord
           (IntermediateField.AdjoinSimple.gen K t - algebraMap K _ c) := by
   rw [← algebraMap_gen_sub t c, Place.ord_restrict]
@@ -322,86 +316,65 @@ end Transcendental
 end General
 
 theorem finrank_adjoin_jBar_eq_dedekindPsi (N : ℕ) [NeZero N] :
-    Module.finrank
-      (IntermediateField.adjoin (AlgebraicClosure ℚ)
-        ({(jBar N : modularFunctionFieldBar N)} : Set (modularFunctionFieldBar N)))
+    Module.finrank (IntermediateField.adjoin ℚ̄
+      ({(jBar N : modularFunctionFieldBar N)} : Set (modularFunctionFieldBar N)))
       (modularFunctionFieldBar N) = dedekindPsi N := by
-  have hcm : IntermediateField.comap (modularFunctionFieldBar N).val
-        (IntermediateField.adjoin (AlgebraicClosure ℚ)
-          ({((jBar N : modularFunctionFieldBar N) : LaurentSeries (AlgebraicClosure ℚ))} :
-            Set (LaurentSeries (AlgebraicClosure ℚ))))
-      = IntermediateField.adjoin (AlgebraicClosure ℚ)
+  have hcm : IntermediateField.comap (modularFunctionFieldBar N).val (IntermediateField.adjoin ℚ̄
+          ({((jBar N : modularFunctionFieldBar N) : LaurentSeries ℚ̄)} : Set (LaurentSeries ℚ̄)))
+      = IntermediateField.adjoin ℚ̄
           ({(jBar N : modularFunctionFieldBar N)} : Set (modularFunctionFieldBar N)) := by
     rw [← IntermediateField.lift_adjoin_simple]
     exact IntermediateField.comap_map (modularFunctionFieldBar N).val _
   have h1 := IntermediateField.finrank_comap
-    (IntermediateField.adjoin (AlgebraicClosure ℚ)
-      ({((jBar N : modularFunctionFieldBar N) : LaurentSeries (AlgebraicClosure ℚ))} :
-        Set (LaurentSeries (AlgebraicClosure ℚ))))
+    (IntermediateField.adjoin ℚ̄
+      ({((jBar N : modularFunctionFieldBar N) : LaurentSeries ℚ̄)} : Set (LaurentSeries ℚ̄)))
     (modularFunctionFieldBar N).val
   rw [hcm, IntermediateField.fieldRange_val] at h1
-  have h2 : IntermediateField.relfinrank
-      (IntermediateField.adjoin (AlgebraicClosure ℚ)
-        ({((jBar N : modularFunctionFieldBar N) : LaurentSeries (AlgebraicClosure ℚ))} :
-          Set (LaurentSeries (AlgebraicClosure ℚ))))
+  have h2 : IntermediateField.relfinrank (IntermediateField.adjoin ℚ̄
+        ({((jBar N : modularFunctionFieldBar N) : LaurentSeries ℚ̄)} : Set (LaurentSeries ℚ̄)))
       (modularFunctionFieldBar N) = dedekindPsi N := by
     rw [← ModularCurve.relfinrank_full_eq_dedekindPsi N,
-      ← ModularCurve.relfinrank_laurentBaseChange_modularFunctionFieldFull (AlgebraicClosure ℚ) N]
+      ← ModularCurve.relfinrank_laurentBaseChange_modularFunctionFieldFull ℚ̄ N]
   rw [← h2]
   exact h1
 
-set_option synthInstance.maxHeartbeats 40000 in -- this is needed (DL)
 scoped instance finiteDimensional_adjoin_jBar (N : ℕ) [NeZero N] :
-    FiniteDimensional
-      (IntermediateField.adjoin (AlgebraicClosure ℚ)
-        ({(jBar N : modularFunctionFieldBar N)} : Set (modularFunctionFieldBar N)))
-      (modularFunctionFieldBar N) :=
-  Module.finite_of_finrank_pos (by
+    FiniteDimensional (IntermediateField.adjoin ℚ̄
+      ({(jBar N : modularFunctionFieldBar N)} : Set (modularFunctionFieldBar N)))
+      (modularFunctionFieldBar N) := by
+  have : Module.Free (IntermediateField.adjoin ℚ̄ {jBar N}) (modularFunctionFieldBar N) :=
+    Module.Free.of_divisionRing _ _
+  exact Module.finite_of_finrank_pos (by
     rw [finrank_adjoin_jBar_eq_dedekindPsi]
     exact ModularCurve.dedekindPsi_pos N (NeZero.ne N))
 
 end B2Peo3
 
-namespace ModularCurve
-p2m_export "ModularCurve" "jBar modularFunctionFieldBar dedekindPsi \
-  relfinrank_laurentBaseChange_modularFunctionFieldFull relfinrank_full_eq_dedekindPsi \
-  dedekindPsi_pos transcendental_coeffEmb_jq"
-end ModularCurve
-p2m_open_scoped "ModularCurve" in
-open B2Peo3 in
-private theorem ModularCurve.sum_ord_jBar_sub_eq_dedekindPsi (N : ℕ) [NeZero N]
-    (j₀ : AlgebraicClosure ℚ)
-    (hdeg : ∀ w : Place (AlgebraicClosure ℚ) (modularFunctionFieldBar N), w.deg = 1)
-    (S : Finset (Place (AlgebraicClosure ℚ) (modularFunctionFieldBar N)))
-    (hS : ∀ v, v ∈ S ↔
-      0 < v.ord (jBar N - algebraMap (AlgebraicClosure ℚ) (modularFunctionFieldBar N) j₀)) :
-    ∑ v ∈ S, v.ord (jBar N - algebraMap (AlgebraicClosure ℚ) (modularFunctionFieldBar N) j₀) =
-      dedekindPsi N := by
+open scoped ModularCurve in
+private theorem B2Peo3.sum_ord_jBar_sub_eq_dedekindPsi (N : ℕ) [NeZero N] (j₀ : ℚ̄)
+    (hdeg : ∀ w : Place ℚ̄ (modularFunctionFieldBar N), w.deg = 1)
+    (S : Finset (Place ℚ̄ (modularFunctionFieldBar N))) (hS : ∀ v, v ∈ S ↔
+      0 < v.ord (jBar N - algebraMap ℚ̄ (modularFunctionFieldBar N) j₀)) :
+    ∑ v ∈ S, v.ord (jBar N - algebraMap ℚ̄ (modularFunctionFieldBar N) j₀) = dedekindPsi N := by
   rw [← finrank_adjoin_jBar_eq_dedekindPsi N]
   exact_mod_cast sum_ord_sub_eq_finrank (jBar N : modularFunctionFieldBar N)
-    (ModularCurve.transcendental_coeffEmb_jq (AlgebraicClosure ℚ) N) hdeg j₀ S hS
+    (ModularCurve.transcendental_coeffEmb_jq ℚ̄ N) hdeg j₀ S hS
 
-p2m_open_scoped "ModularCurve" in
-open B2Peo3 in
-private theorem ModularCurve.exists_finset_ord_jBar_sub_pos (N : ℕ) [NeZero N]
-    (j₀ : AlgebraicClosure ℚ) :
-    ∃ S : Finset (Place (AlgebraicClosure ℚ) (modularFunctionFieldBar N)), ∀ v, v ∈ S ↔
-      0 < v.ord (jBar N - algebraMap (AlgebraicClosure ℚ) (modularFunctionFieldBar N) j₀) :=
+open scoped ModularCurve in
+private theorem B2Peo3.exists_finset_ord_jBar_sub_pos (N : ℕ) [NeZero N] (j₀ : ℚ̄) :
+    ∃ S : Finset (Place ℚ̄ (modularFunctionFieldBar N)), ∀ v, v ∈ S ↔
+      0 < v.ord (jBar N - algebraMap ℚ̄ (modularFunctionFieldBar N) j₀) :=
   exists_finset_ord_sub_pos (jBar N : modularFunctionFieldBar N)
-    (ModularCurve.transcendental_coeffEmb_jq (AlgebraicClosure ℚ) N) j₀
+    (ModularCurve.transcendental_coeffEmb_jq ℚ̄ N) j₀
 
 end
 
-open AlgebraicCurve _root_.ModularCurve
-  _root_.P2MW.S_ModularCurve_exists_finset_ord_jBar_sub_pos.ModularCurve in
-theorem solution (N : ℕ) [NeZero N] (j₀ : AlgebraicClosure ℚ) :
-    ∃ S : Finset (Place (AlgebraicClosure ℚ) (modularFunctionFieldBar N)), ∀ v, v ∈ S ↔
-      0 < v.ord (jBar N - algebraMap (AlgebraicClosure ℚ) (modularFunctionFieldBar N) j₀) :=
-  ModularCurve.exists_finset_ord_jBar_sub_pos N j₀
+open AlgebraicCurve ModularCurve in
+theorem solution (N : ℕ) [NeZero N] (j₀ : ℚ̄) :
+    ∃ S : Finset (Place ℚ̄ (modularFunctionFieldBar N)), ∀ v, v ∈ S ↔
+      0 < v.ord (jBar N - algebraMap ℚ̄ (modularFunctionFieldBar N) j₀) :=
+  B2Peo3.exists_finset_ord_jBar_sub_pos N j₀
 
-end S_ModularCurve_exists_finset_ord_jBar_sub_pos
-end P2MW
-export P2MW.S_ModularCurve_exists_finset_ord_jBar_sub_pos (solution)
 
 end privateSection
 

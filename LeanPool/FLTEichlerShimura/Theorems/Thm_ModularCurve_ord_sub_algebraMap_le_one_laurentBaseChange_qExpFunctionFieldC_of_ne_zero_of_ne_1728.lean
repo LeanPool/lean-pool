@@ -940,22 +940,17 @@ def B : Subalgebra (A y) (CF Γ) := integralClosure (A y) (CF Γ)
 theorem mem_B_iff {x : CF Γ} : x ∈ B y ↔ IsIntegral (A y) x := Iff.rfl
 
 scoped instance instCommRingB : CommRing (B y) := (B y).toCommRing
-scoped instance instIsDomainB : IsDomain (B y) := Subalgebra.isDomain (B y)
-scoped instance instAlgebraAB : Algebra (A y) (B y) := (B y).algebra
-scoped instance instSMulAB : SMul (A y) (B y) := Algebra.toSMul
-scoped instance instAlgebraBCF : Algebra (B y) (CF Γ) := (B y).toAlgebra
-scoped instance instSMulBCF : SMul (B y) (CF Γ) := Algebra.toSMul
-scoped instance instIsScalarTowerABCF : IsScalarTower (A y) (B y) (CF Γ) :=
-  IsScalarTower.subalgebra' (A y) (CF Γ) (CF Γ) (B y)
 
 theorem algebraMap_B_apply (b : B y) : algebraMap (B y) (CF Γ) b = (b : CF Γ) := rfl
 
-set_option synthInstance.maxHeartbeats 40000 in -- this is needed (DL)
 include hT hy hΓ in
 theorem isDedekindDomain_B : IsDedekindDomain (B y) := by
   have := isPrincipalIdealRing_A y hy
   have : IsDedekindDomain (A y) := inferInstance
   have := finiteDimensional_Kj hT y hy M hΓ
+  have : Algebra.IsAlgebraic (Kj y) (CF Γ) := Algebra.IsAlgebraic.of_finite _ _
+  have : Algebra.IsSeparable (Kj y) (CF Γ) :=
+    Algebra.IsAlgebraic.isSeparable_of_perfectField
   unfold B; exact integralClosure.isDedekindDomain (A y) (Kj y) (CF Γ)
 
 include hT hy hΓ in

@@ -48,7 +48,6 @@ Common declarations from the dual-endomorphism and pointwise-addition proofs, to
 the supporting helpers needed to make those declarations independent of either proof file.
 -/
 
-set_option maxHeartbeats 800000
 
 section privateSection
 

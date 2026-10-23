@@ -121,7 +121,12 @@ theorem kw_aleph0_lt_mk_transcendenceBasis_complex
   exact absurd hℂ <| not_le.mpr <| Cardinal.aleph0_lt_continuum.trans_le
     (Cardinal.mk_real ▸ Cardinal.mk_le_of_injective Complex.ofReal_injective)
 
-set_option synthInstance.maxHeartbeats 6400000 in
+-- Abstract fields keep custom scalar actions out of the torsion-freeness search.
+private theorem nonempty_ringHom_of_isAlgebraic
+    {R S T : Type*} [Field R] [Field S] [Field T] [Algebra R S] [Algebra R T]
+    [Algebra.IsAlgebraic R S] [IsAlgClosed T] : Nonempty (S →+* T) :=
+  ⟨(IsAlgClosed.lift (R := R) (S := S) (M := T)).toRingHom⟩
+
 theorem kw_nonempty_ringHom_algebraicClosure_complex (K₀ : Type u) [Field K₀] [Algebra ℚ K₀]
     [Countable K₀] : Nonempty (AlgebraicClosure K₀ →+* ℂ) := by
   let ACK := AlgebraicClosure K₀
@@ -143,7 +148,7 @@ theorem kw_nonempty_ringHom_algebraicClosure_complex (K₀ : Type u) [Field K₀
         (kw_d5eu_ratEquivStrip hs.1.aevalEquivField).symm.toRingHom
   let : Algebra Qs ℂ := φQs.toAlgebra
   have : Algebra.IsAlgebraic Qs ACK := hs.isAlgebraic_field
-  exact ⟨(IsAlgClosed.lift (R := Qs) (M := ℂ) (S := ACK)).toRingHom⟩
+  exact nonempty_ringHom_of_isAlgebraic (R := Qs)
 
 end ModularCurve
 

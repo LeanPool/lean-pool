@@ -69,6 +69,8 @@ https://github.com/anthropics/fermats-last-theorem/blob/aa2d8b34692b16c70f699536
 
 section privateSection
 
+open _root_.ModularCurve.ModularPolynomialHelpers
+
 open _root_.ModularCurve.W1
 
 
@@ -98,15 +100,8 @@ theorem qExpand_qTwist_TS (e : ℕ) [NeZero e] (u : Kˣ) (m : ℕ) [NeZero m] (w
 theorem jqModC_eq_TS : jqModC K = TS K 1 1 := by
   rw [TS, qTwist_one_apply, qExpand_one_apply]
 
-theorem jqNModC_eq_TS (d : ℕ) [NeZero d] : jqNModC K d = TS K d 1 := by
-  rw [jqNModC, TS, qTwist_one_apply]
 
-theorem qExpand_jqNModC (A d : ℕ) [NeZero A] [NeZero d] :
-    qExpand K A (jqNModC K d) = TS K (A * d) 1 := by
-  rw [jqNModC_eq_TS, qExpand_TS]
 
-theorem qExpand_jqModC_eq_TS (A : ℕ) [NeZero A] : qExpand K A (jqModC K) = TS K A 1 := by
-  rw [TS, qTwist_one_apply]
 
 theorem qTwist_qExpand_of_pow_eq_one (A : ℕ) [NeZero A] (v : Kˣ) (hv : v ^ A = 1)
     (x : LaurentSeries K) :
@@ -176,17 +171,6 @@ theorem qTwist_TS_one_cycle (ζ : Kˣ) {p : ℕ} (hζp : ζ ^ p = 1) (b : ℕ) :
   rw [this]
   conv_lhs => rw [← Nat.mod_add_div (b + 1) p, pow_add, pow_mul, hζp, one_pow, mul_one]
 
-theorem isPrimitiveRoot_pow_div {N : ℕ} [NeZero N] {ζ : Kˣ} (hζ : IsPrimitiveRoot (ζ : K) N)
-    {p : ℕ} (hpN : p ∣ N) : IsPrimitiveRoot ((ζ ^ (N / p) : Kˣ) : K) p := by
-  have hN : N ≠ 0 := NeZero.ne N
-  have hd0 : N / p ≠ 0 := by
-    intro h0
-    have hc := Nat.div_mul_cancel hpN
-    rw [h0, zero_mul] at hc
-    exact hN hc.symm
-  have h := hζ.pow_of_dvd hd0 (Nat.div_dvd_of_dvd hpN)
-  rw [Nat.div_div_self hpN hN] at h
-  rwa [← Units.val_pow_eq_pow_val] at h
 
 theorem units_pow_eq_one_of_isPrimitiveRoot {N : ℕ} {ζ : Kˣ} (hζ : IsPrimitiveRoot (ζ : K) N) :
     ζ ^ N = 1 :=
@@ -209,26 +193,7 @@ p2m_open "ModularCurve"
 
 
 
-theorem phiAtSeed_jqNModC_eval {R : Type*} [CommRing R] (n : ℕ) [NeZero n]
-    (data : ModularPolynomialData n)
-    (d : ℕ) [NeZero d] : (phiAtSeed data (jqNModC R d)).eval (jqNModC R (d * n)) = 0 := by
-  have h := data.eval_jqNModC_mul_eq_zero R d
-  rw [phiAtSeed, Polynomial.eval_map]
-  convert h using 2
-  refine Polynomial.ringHom_ext' ?_ ?_
-  · exact RingHom.ext_int _ _
-  · simp
 
-theorem phiAtSeed_jqNModC_eval_symm {R : Type*} [CommRing R] (n : ℕ) [NeZero n]
-    (data : ModularPolynomialData n)
-    (hsymm : EvalSymm data.Φ) (d : ℕ) [NeZero d] :
-    (phiAtSeed data (jqNModC R (d * n))).eval (jqNModC R d) = 0 := by
-  have h := data.eval_jqNModC_of_mul_eq_zero hsymm R d
-  rw [phiAtSeed, Polynomial.eval_map]
-  convert h using 2
-  refine Polynomial.ringHom_ext' ?_ ?_
-  · exact RingHom.ext_int _ _
-  · simp
 
 theorem phiAtSeed_TS_eval {K : Type*} [Field K] (A : ℕ) [NeZero A] (n : ℕ) [NeZero n]
     (data : ModularPolynomialData n) (d : ℕ) [NeZero d] :

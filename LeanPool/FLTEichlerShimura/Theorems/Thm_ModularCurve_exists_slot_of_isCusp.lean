@@ -84,7 +84,6 @@ https://github.com/anthropics/fermats-last-theorem/blob/aa2d8b34692b16c70f699536
 
 section privateSection
 
-set_option synthInstance.maxHeartbeats 50000 -- was 400k, 50k seems to suffice
 
 namespace P2MW.S_ModularCurve_exists_slot_of_isCusp
 
@@ -486,7 +485,10 @@ private theorem cd3_slotWidth (N : ℕ) [NeZero N] (ζ : Kˣ) (a b : ℕ) (ha : 
     | algebraMap c =>
       rw [AlgHom.commutes]
       exact IntermediateField.algebraMap_mem _ c
-    | add y z _ _ ihy ihz => rw [map_add]; exact add_mem ihy ihz
+    | add y z _ _ ihy ihz =>
+        have hadd : ι (y + z) = ι y + ι z := ι.map_add' y z
+        rw [hadd]
+        exact add_mem ihy ihz
     | inv y _ ih => rw [map_inv₀]; exact inv_mem ih
     | mul y z _ _ ihy ihz => rw [map_mul]; exact mul_mem ihy ihz
   obtain ⟨π, hπ⟩ := IsDiscreteValuationRing.exists_irreducible w.toValuationSubring
@@ -773,6 +775,8 @@ open Polynomial IntermediateField
 
 theorem slots_isIntegral_jqN (N : ℕ) [NeZero N] :
     IsIntegral (IntermediateField.adjoin ℚ ({jq} : Set (LaurentSeries ℚ))) (jqN N) := by
+  have : Module.Free ℚ⟮jq⟯ (IntermediateField.adjoin ℚ⟮jq⟯ {jqN N}) :=
+    Module.Free.of_divisionRing _ _
   have hfin : FiniteDimensional (IntermediateField.adjoin ℚ ({jq} : Set (LaurentSeries ℚ)))
       (IntermediateField.adjoin (IntermediateField.adjoin ℚ ({jq} : Set (LaurentSeries ℚ)))
         ({jqN N} : Set (LaurentSeries ℚ))) :=

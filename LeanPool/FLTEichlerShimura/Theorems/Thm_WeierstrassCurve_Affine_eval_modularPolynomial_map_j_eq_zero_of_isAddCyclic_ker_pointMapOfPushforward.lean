@@ -263,7 +263,6 @@ scoped instance instIsEllipticWeierstrassCurve (L : PeriodPair) : L.weierstrassC
 theorem jLattice_eq_j (L : PeriodPair) : L.jLattice = L.weierstrassCurve.j := by
   rw [PeriodPair.jLattice_eq_c₄_pow_three_div_Δ, j_eq_div]
 
-set_option synthInstance.maxHeartbeats 1600000 in
 theorem complexCase (E E' : WeierstrassCurve.Affine ℂ) [E.IsElliptic] [E'.IsElliptic]
     [GenusOnePlaceGate E] [GenusOnePlaceGate.IsCentred E] [AbelTheorem E]
     [GenusOnePlaceGate E'] [GenusOnePlaceGate.IsCentred E'] [AbelTheorem E']
@@ -337,7 +336,6 @@ end F4Proof
 namespace F4Proof
 open WeierstrassCurve WeierstrassCurve.Affine AlgebraicCurve
 
-set_option synthInstance.maxHeartbeats 1600000 in
 theorem solution0
     {K : Type} [Field K] [DecidableEq K] [IsAlgClosed K] [CharZero K]
     (E E' : WeierstrassCurve.Affine K) [E.IsElliptic] [E'.IsElliptic]

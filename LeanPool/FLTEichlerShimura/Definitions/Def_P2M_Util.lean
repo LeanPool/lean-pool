@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node P2M_Util
 (217e943d-2223-5c63-9415-3c10daa2cd91) by Claude (2026-09-05).
 

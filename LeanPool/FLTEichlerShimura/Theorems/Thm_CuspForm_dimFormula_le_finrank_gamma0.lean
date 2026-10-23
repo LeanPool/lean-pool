@@ -115,7 +115,6 @@ theorem thetaL_coeffEmb_jq_pow_ne_zero (m : ℕ) :
     map_one, HahnSeries.coeff_zero] at h2
   norm_num at h2
 
-set_option synthInstance.maxHeartbeats 80000 in -- this is needed (DL)
 theorem solution (N : ℕ) [NeZero N] (k : ℕ) (hk : 4 ≤ k) (hke : Even k) :
     (((k : ℚ) - 1) * (ModularCurve.genusFormula N - 1) + ((k / 4 : ℕ) : ℚ) * (ModularCurve.nuTwo N :
       ℚ)
@@ -160,6 +159,8 @@ theorem solution (N : ℕ) [NeZero N] (k : ℕ) (hk : 4 ≤ k) (hke : Even k) :
   by_cases hfin : Module.Finite (AlgebraicClosure ℚ) ↥(riemannRochSpace D)
   swap
   · rw [Module.finrank_of_not_finite hfin]; exact Nat.zero_le _
+  have : Module.Free (AlgebraicClosure ℚ) ↥(riemannRochSpace D) :=
+    Module.Free.of_divisionRing _ _
   let b := Module.finBasis (AlgebraicClosure ℚ) ↥(riemannRochSpace D)
   set r := Module.finrank (AlgebraicClosure ℚ) ↥(riemannRochSpace D) with hr
   have : Algebra.IsAlgebraic ℚ (AlgebraicClosure ℚ) := AlgebraicClosure.isAlgebraic ℚ

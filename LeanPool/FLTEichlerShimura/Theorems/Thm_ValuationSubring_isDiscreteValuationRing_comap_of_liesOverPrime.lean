@@ -78,7 +78,6 @@ local notation "Qb" => AlgebraicClosure ℚ
 
 namespace ComapDVR
 
-set_option synthInstance.maxHeartbeats 800000 in
 theorem comap_isDiscreteValuationRing (L : IntermediateField ℚ Qb)
     [FiniteDimensional ℚ L] (A : ValuationSubring Qb) (q : ℕ) (hq_prime : q.Prime)
     (hA : A.valuation (q : Qb) < 1) :
@@ -130,7 +129,6 @@ theorem comap_isDiscreteValuationRing (L : IntermediateField ℚ Qb)
     exact hqS
   have hq0 : ((q : ℕ) : 𝓞 ↥L) ≠ 0 := Nat.cast_ne_zero.mpr hq_prime.ne_zero
   have hp_ne : p ≠ ⊥ := fun h => hq0 (Ideal.mem_bot.mp (h ▸ hp_mem))
-
   have hcompl_le : p.primeCompl ≤ nonZeroDivisors (𝓞 ↥L) := p.primeCompl_le_nonZeroDivisors
   have hu : ∀ y : p.primeCompl, IsUnit (algebraMap (𝓞 ↥L) ↥L y) := by
     rintro y

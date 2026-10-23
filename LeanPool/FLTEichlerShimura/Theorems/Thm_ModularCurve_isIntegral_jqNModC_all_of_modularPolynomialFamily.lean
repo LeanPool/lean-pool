@@ -15,6 +15,7 @@ public import LeanPool.FLTEichlerShimura.Definitions.Def_ModularCurve_JqCoeff
 public import LeanPool.FLTEichlerShimura.Definitions.Def_ModularCurve_PhiGen
 
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_isIntegral_jqNModC_mul
+import LeanPool.FLTEichlerShimura.Definitions.Defs_modularPolynomial_sharedLibrary
 import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
 
 /-!
@@ -59,6 +60,8 @@ https://github.com/anthropics/fermats-last-theorem/blob/aa2d8b34692b16c70f699536
 
 section privateSection
 
+open _root_.ModularCurve.ModularPolynomialHelpers
+
 
 namespace P2MW.S_ModularCurve_isIntegral_jqNModC_all_of_modularPolynomialFamily
 
@@ -91,8 +94,6 @@ theorem step {ℓ : ℕ} [NeZero ℓ] (data : ModularPolynomialData ℓ) (d : �
 theorem base : IsIntegral F₀ (jqModC K) :=
   isIntegral_algebraMap (x := (⟨jqModC K, mem_adjoin_simple_self K (jqModC K)⟩ : F₀))
 
-theorem jqNModC_congr {M N : ℕ} [NeZero M] [NeZero N] (h : M = N) : jqNModC K M = jqNModC K N := by
-  subst h; rfl
 
 theorem isIntegral_jqNModC_all (hΦ : ModularPolynomialFamily) :
     ∀ (N : ℕ) [NeZero N], IsIntegral F₀ (jqNModC K N) := by
@@ -119,7 +120,7 @@ theorem isIntegral_jqNModC_all (hΦ : ModularPolynomialFamily) :
       omega
     obtain ⟨data, -⟩ := hΦ N.minFac hp
     have hstepd : IsIntegral F₀ (jqNModC K (d * N.minFac)) := step K data d (ih d hdlt)
-    rwa [jqNModC_congr K hN']
+    rwa [jqNModC_congr hN']
 
 end AllLevels
 

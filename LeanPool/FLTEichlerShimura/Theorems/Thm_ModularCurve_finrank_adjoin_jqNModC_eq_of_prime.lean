@@ -15,6 +15,7 @@ public import LeanPool.FLTEichlerShimura.Definitions.Def_ModularCurve_X0
 public import LeanPool.FLTEichlerShimura.Definitions.Def_ModularCurve_JqCoeff
 
 import LeanPool.FLTEichlerShimura.Definitions.Def_ModularCurve_CuspidalClass
+import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_dedekindPsi_prime
 import LeanPool.FLTEichlerShimura.Definitions.Def_AlgebraicCurve_PlacesOverDVR
 import Mathlib.FieldTheory.RatFunc.AsPolynomial
 import LeanPool.FLTEichlerShimura.Theorems.Thm_AlgebraicCurve_Place_sum_ramificationIndex_mul_inertiaDeg_le_finrank
@@ -91,16 +92,6 @@ variable (ℓ : ℕ) [Fact ℓ.Prime]
 
 theorem prime' : ℓ.Prime := Fact.out
 
-theorem dedekindPsi_prime : dedekindPsi ℓ = ℓ + 1 := by
-  have hℓ : ℓ.Prime := Fact.out
-  rw [dedekindPsi, hℓ.divisors, Finset.filter_true_of_mem, Finset.sum_pair hℓ.one_lt.ne,
-    Nat.div_one,
-    Nat.div_self hℓ.pos, add_comm]
-  intro d hd
-  simp only [Finset.mem_insert, Finset.mem_singleton] at hd
-  rcases hd with rfl | rfl
-  · exact squarefree_one
-  · exact hℓ.squarefree
 
 def jb :
     modularFunctionFieldBar ℓ := ⟨coeffEmb 𝕂 jq, coeffEmb_mem_laurentBaseChange 𝕂 (jq_mem_full ℓ)⟩
@@ -195,7 +186,7 @@ theorem finrank_le : Module.finrank (RatFunc 𝕂) (modularFunctionFieldBar ℓ)
   have hℓ : ℓ.Prime := Fact.out
   obtain ⟨data⟩ := nonempty_modularPolynomialData_of_squarefree ℓ hℓ.squarefree hℓ.one_lt
   rw [← Algebra.finrank_eq_of_equiv_equiv (σa.symm.toRingEquiv : 𝕂⟮jqModC 𝕂⟯ ≃+* RatFunc 𝕂) (jTr ℓ)
-    (he_compat ℓ), ← dedekindPsi_prime ℓ]
+    (he_compat ℓ), ← ModularCurve.dedekindPsi_prime (p := ℓ) Fact.out]
   exact finrank_adjoin_jqNModC_le 𝕂 data
 
 theorem isSeparable_ratFunc : Algebra.IsSeparable (RatFunc 𝕂) (modularFunctionFieldBar ℓ) :=
@@ -331,7 +322,8 @@ theorem solution (ℓ : ℕ) [Fact ℓ.Prime] :
   apply le_antisymm
   · have hℓ : ℓ.Prime := Fact.out
     obtain ⟨data⟩ := nonempty_modularPolynomialData_of_squarefree ℓ hℓ.squarefree hℓ.one_lt
-    simpa [DegAux.dedekindPsi_prime ℓ] using finrank_adjoin_jqNModC_le (AlgebraicClosure ℚ) data
+    simpa [ModularCurve.dedekindPsi_prime hℓ] using
+      finrank_adjoin_jqNModC_le (AlgebraicClosure ℚ) data
   · have h := DegAux.le_finrank ℓ
     rw [← DegAux.finrank_tower_eq ℓ] at h
     exact h

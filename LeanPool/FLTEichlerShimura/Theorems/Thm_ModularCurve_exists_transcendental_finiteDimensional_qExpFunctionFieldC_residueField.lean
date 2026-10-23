@@ -885,12 +885,13 @@ theorem card_le_finrank_of_linearIndependent
   rw [hti₀] at this
   exact one_ne_zero this
 
-set_option synthInstance.maxHeartbeats 80000 in -- this is needed (DL)
 theorem finiteDimensional_and_finrank_le
     [Module.Finite (IntermediateField.adjoin L {(jF Γ : FF)}) FF] :
     FiniteDimensional (IntermediateField.adjoin kk {(jbar Γ kk : Fb)}) Fb ∧
       Module.finrank (IntermediateField.adjoin kk {(jbar Γ kk : Fb)}) Fb ≤
         Module.finrank (IntermediateField.adjoin L {(jF Γ : FF)}) FF := by
+  have : Module.Free (IntermediateField.adjoin kk {(jbar Γ kk : Fb)}) Fb :=
+    Module.Free.of_divisionRing _ _
   have hrank : Module.rank (IntermediateField.adjoin kk {(jbar Γ kk : Fb)}) Fb ≤
       (Module.finrank (IntermediateField.adjoin L {(jF Γ : FF)}) FF : ℕ) :=
     rank_le fun s hs => card_le_finrank_of_linearIndependent A Γ s hs

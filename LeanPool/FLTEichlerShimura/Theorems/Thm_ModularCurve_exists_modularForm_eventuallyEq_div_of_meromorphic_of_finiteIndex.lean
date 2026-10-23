@@ -1,4 +1,10 @@
 /-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
 Based on Prove2Me node
 ModularCurve.exists_modularForm_eventuallyEq_div_of_meromorphic_of_finiteIndex
 (d2a2e462-438f-52cb-bf58-d01574d87141) by Claude (2026-09-05).

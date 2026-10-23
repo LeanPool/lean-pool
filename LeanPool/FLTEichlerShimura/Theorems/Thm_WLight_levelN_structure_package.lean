@@ -1167,7 +1167,6 @@ private lemma periodPair_eq_of_ω (P P' : PeriodPair) (h1 : P.ω₁ = P'.ω₁) 
   rcases P with ⟨_, _, _⟩; rcases P' with ⟨_, _, _⟩
   simp only [PeriodPair.mk.injEq]; exact ⟨h1, h2⟩
 
-set_option synthInstance.maxHeartbeats 20000 in
 private theorem r5_fixed_frac_polynomial {N : ℕ} [NeZero N] {a b : ℍ → ℂ}
     (haA : a ∈ levelRing N) (hbA : b ∈ levelRing N) (hb0 : b ≠ 0)
     (hinv : ∀ γ : SL(2, ℤ), a * (b ∘ (γ • ·)) = (a ∘ (γ • ·)) * b) :

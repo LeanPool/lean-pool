@@ -952,7 +952,6 @@ local notation "ℚ̄" => AlgebraicClosure ℚ
 local notation "FF" => laurentBaseChange (AlgebraicClosure ℚ) (qExpFunctionFieldC ℚ Γ)
 
 include K hΓ in
-set_option synthInstance.maxHeartbeats 80000 in -- this is needed (DL)
 theorem main_K (ι : ℚ̄ →+* ℂ) (y : FF) (hy : (y : LaurentSeries ℚ̄) = jqModC ℚ̄)
     (hfull : Module.finrank ℚ̄⟮y⟯ FF = (Γ ⊔ Subgroup.zpowers (-1)).index) :
     Nat.card (DoubleCoset.Quotient (Γ : Set SL(2, ℤ))
@@ -992,6 +991,7 @@ theorem main_K (ι : ℚ̄ →+* ℂ) (y : FF) (hy : (y : LaurentSeries ℚ̄) =
   have hΓfi : (Γ ⊔ Subgroup.zpowers (-1 : SL(2, ℤ))).FiniteIndex :=
     Subgroup.finiteIndex_of_le (hΓ.trans le_sup_left)
   have hfin : FiniteDimensional ℚ̄⟮y⟯ FF := by
+    have : Module.Free ℚ̄⟮y⟯ FF := Module.Free.of_divisionRing _ _
     apply Module.finite_of_finrank_pos
     rw [hfull]
     exact Nat.pos_of_ne_zero Subgroup.FiniteIndex.index_ne_zero

@@ -71,12 +71,13 @@ namespace P2MW.S_OVERLONG_c0856186
 open ModularCurve CongruenceSubgroup AlgebraicCurve
 open scoped MatrixGroups
 
-set_option synthInstance.maxHeartbeats 80000 in -- this is needed (DL)
 theorem solution
     (K : Type*) [Field K] [Algebra ℚ K] [IsAlgClosed K] (M : ℕ) [NeZero M]
     (D : AlgebraicCurve.Divisor K ↥(ModularCurve.laurentBaseChange K
       (ModularCurve.qExpFunctionFieldC ℚ (CongruenceSubgroup.Gamma1 M)))) :
     FiniteDimensional K ↥(AlgebraicCurve.riemannRochSpace D) := by
+  let : Algebra K ↥(laurentBaseChange K (qExpFunctionFieldC ℚ (Gamma1 M))) :=
+    (laurentBaseChange K (qExpFunctionFieldC ℚ (Gamma1 M))).toSubalgebra.algebra
   obtain ⟨x, htr, hfd⟩ : ∃ x : ↥(ModularCurve.laurentBaseChange K (ModularCurve.qExpFunctionFieldC ℚ
     (CongruenceSubgroup.Gamma1 M))),
       Transcendental K x ∧ FiniteDimensional ↥(IntermediateField.adjoin K ({x} : Set _)) _ :=

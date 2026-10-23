@@ -14,6 +14,7 @@ module
 public import LeanPool.FLTEichlerShimura.Definitions.Def_ModularCurve_X0
 
 import LeanPool.FLTEichlerShimura.Definitions.Def_ModularCurve_LaurentCoeff
+import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_coeffEmb_qExpand
 import LeanPool.FLTEichlerShimura.Definitions.Def_ModularCurve_PhiGen
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_coeffMap_qExpand
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_PhiGen_splits_prime_at_slot
@@ -67,6 +68,8 @@ https://github.com/anthropics/fermats-last-theorem/blob/aa2d8b34692b16c70f699536
 
 section privateSection
 
+open _root_.ModularCurve.ModularPolynomialHelpers
+
 open _root_.ModularCurve.W1
 
 
@@ -98,13 +101,7 @@ variable {K : Type*} [Field K] [Algebra ℚ K]
 
 
 
-theorem coeffEmb_qExpand (n : ℕ) [NeZero n] (x : LaurentSeries ℚ) :
-    coeffEmb K (qExpand ℚ n x) = qExpand K n (coeffEmb K x) :=
-  coeffMap_qExpand (algebraMap ℚ K) n x
 
-theorem iota_jqN (N d : ℕ) [NeZero N] [NeZero d] :
-    coeffEmb K (qExpand ℚ N (jqN d)) = TS K (N * d) 1 := by
-  rw [jqN, coeffEmb_qExpand, coeffEmb_qExpand, qExpand_qExpand, TS_eq_coeffEmb, qTwist_one_apply]
 
 theorem iota_jq (N : ℕ) [NeZero N] : coeffEmb K (qExpand ℚ N jq) = TS K N 1 := by
   rw [coeffEmb_qExpand, TS_eq_coeffEmb, qTwist_one_apply]
@@ -213,21 +210,8 @@ theorem roots_phiProd_conj_nodup (p : ℕ) [hp : Fact p.Prime] (ζ : Kˣ)
     have hζu : IsPrimitiveRoot ζ p := IsPrimitiveRoot.coe_units_iff.mp hζ
     exact hζu.pow_inj hb hb' hu
 
-theorem exists_isPrimitiveRoot_cyclotomicField (N : ℕ) [NeZero N] :
-    ∃ z : CyclotomicField N ℚ, IsPrimitiveRoot z N := by
-  have : NeZero ((N : ℕ) : ℚ) := ⟨Nat.cast_ne_zero.mpr (NeZero.ne N)⟩
-  have : IsCyclotomicExtension {N} ℚ (CyclotomicField N ℚ) :=
-    CyclotomicField.isCyclotomicExtension N ℚ
-  exact IsCyclotomicExtension.exists_isPrimitiveRoot ℚ (CyclotomicField N ℚ) (Set.mem_singleton N)
-    (NeZero.ne N)
 
-def cycUnit (N : ℕ) [NeZero N] : (CyclotomicField N ℚ)ˣ :=
-  ((exists_isPrimitiveRoot_cyclotomicField N).choose_spec.isUnit (NeZero.ne N)).unit
 
-theorem cycUnit_spec (N : ℕ) [NeZero N] :
-    IsPrimitiveRoot ((cycUnit N : (CyclotomicField N ℚ)ˣ) : CyclotomicField N ℚ) N := by
-  rw [cycUnit, IsUnit.unit_spec]
-  exact (exists_isPrimitiveRoot_cyclotomicField N).choose_spec
 
 theorem cycUnit_pow (N : ℕ) [NeZero N] : cycUnit N ^ N = 1 :=
   Units.ext (by rw [Units.val_pow_eq_pow_val, (cycUnit_spec N).pow_eq_one, Units.val_one])
@@ -246,17 +230,6 @@ p2m_open "ModularCurve"
 
 variable {K : Type*} [Field K]
 
-theorem isPrimitiveRoot_pow_div {N : ℕ} [NeZero N] {ζ : Kˣ} (hζ : IsPrimitiveRoot (ζ : K) N)
-    {p : ℕ} (hpN : p ∣ N) : IsPrimitiveRoot ((ζ ^ (N / p) : Kˣ) : K) p := by
-  have hN : N ≠ 0 := NeZero.ne N
-  have hd0 : N / p ≠ 0 := by
-    intro h0
-    have hc := Nat.div_mul_cancel hpN
-    rw [h0, zero_mul] at hc
-    exact hN hc.symm
-  have h := hζ.pow_of_dvd hd0 (Nat.div_dvd_of_dvd hpN)
-  rw [Nat.div_div_self hpN hN] at h
-  rwa [← Units.val_pow_eq_pow_val] at h
 
 theorem qExpand_qTwist_TS (e : ℕ) [NeZero e] (u : Kˣ) (m : ℕ) [NeZero m] (w : Kˣ) :
     qExpand K e (qTwist u (TS K m w)) = TS K (e * m) (u ^ (m : ℤ) * w) := by
@@ -384,19 +357,8 @@ p2m_open "ModularCurve"
 
 
 
-theorem phiAtSeed_jq_eval (n : ℕ) [NeZero n] (data : ModularPolynomialData n) :
-    (phiAtSeed data jq).eval (jqN n) = 0 := by
-  have h := data.eval_eq_zero
-  rw [phiAtSeed, Polynomial.eval_map]
-  convert h using 2
-  refine Polynomial.ringHom_ext' (RingHom.ext_int _ _) ?_
-  simp [evalAtJ_X]
 
 
-theorem phiAtSeed_jqN_eval (n : ℕ) [NeZero n] (data : ModularPolynomialData n) (M : ℕ) [NeZero M] :
-    (phiAtSeed data (jqN M)).eval (jqN (M * n)) = 0 := by
-  have h := phiAtSeed_eval_map data jq (jqN n) (qExpand ℚ M) (phiAtSeed_jq_eval n data)
-  rwa [jqN, qExpand_qExpand] at h
 
 theorem phiAtSeed_iota_eval {K : Type*} [Field K] [Algebra ℚ K] (A : ℕ) [NeZero A] (n : ℕ)
     [NeZero n]

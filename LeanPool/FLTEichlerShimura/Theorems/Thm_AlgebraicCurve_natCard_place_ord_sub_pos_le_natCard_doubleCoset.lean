@@ -149,7 +149,6 @@ p2m_open "AlgebraicCurve \
   bleCoset"
 open scoped IntermediateField
 
-set_option synthInstance.maxHeartbeats 1600000 in
 theorem solution
     (K : Type*) [Field K] [IsAlgClosed K] {L : Type*} [Field L] [Algebra K L]
     (t : L) (hfin : FiniteDimensional K⟮t⟯ L) (hgal : IsGalois K⟮t⟯ L)

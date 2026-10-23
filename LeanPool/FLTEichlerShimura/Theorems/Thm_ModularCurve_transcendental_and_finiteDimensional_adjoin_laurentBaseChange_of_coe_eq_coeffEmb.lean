@@ -142,13 +142,13 @@ private theorem emb_mem_adjoin {j f : ↥F₀} (hf : f ∈ IntermediateField.adj
   rw [map_div₀, Polynomial.map_aeval_eq_aeval_map (emb_comp_algebraMap L F₀),
     Polynomial.map_aeval_eq_aeval_map (emb_comp_algebraMap L F₀)]
 
-set_option synthInstance.maxHeartbeats 80000 in -- this is needed (DL)
 private theorem finiteDimensional_adjoin_emb [Algebra.IsAlgebraic ℚ L] (j : ↥F₀)
     [FiniteDimensional ↥(IntermediateField.adjoin ℚ ({j} : Set ↥F₀)) ↥F₀] :
     FiniteDimensional ↥(IntermediateField.adjoin L ({emb L F₀ j} : Set ↥(laurentBaseChange L F₀)))
       ↥(laurentBaseChange L F₀) := by
   classical
   set E := IntermediateField.adjoin L ({emb L F₀ j} : Set ↥(laurentBaseChange L F₀)) with hE
+  let : Algebra L ↥E := E.toSubalgebra.algebra
   let K := IntermediateField.adjoin ℚ ({j} : Set ↥F₀)
   let bK := Module.finBasis ↥K ↥F₀
   let W : Submodule ↥E ↥(laurentBaseChange L F₀) :=

@@ -159,7 +159,6 @@ p2m_export "ModularCurve" "qExpand jq ModularPolynomialData FunctionFieldGenerat
   isRoot_map_Phi_apply_jBar adjoin_jBar_jNBar_eq_top nonempty_modularPolynomialData"
 p2m_open "ModularCurve"
 
-set_option synthInstance.maxHeartbeats 1600000 in
 private theorem engine_generic (N : ℕ) [NeZero N] (data : ModularPolynomialData N)
     (j₀ : AlgebraicClosure ℚ) {d : ℕ} (hd : 0 < d)
     (htrio : ∀ r : HahnSeries ℚ (AlgebraicClosure ℚ),

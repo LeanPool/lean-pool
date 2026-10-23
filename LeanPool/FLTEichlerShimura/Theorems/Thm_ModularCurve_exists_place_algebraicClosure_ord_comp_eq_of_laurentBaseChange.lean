@@ -142,7 +142,6 @@ theorem coe_liftHom (x : ↥(laurentBaseChange L F₀)) :
 theorem liftHom_toRingHom :
     letI := algebraOfLift τ F₀; (liftHom τ F₀).toRingHom = liftRingHom τ F₀ := rfl
 
-set_option synthInstance.maxHeartbeats 1600000 in
 theorem adjoin_range_liftRingHom_eq_top :
     IntermediateField.adjoin Ω (Set.range (liftRingHom τ F₀)) = ⊤ := by
   rw [eq_top_iff]
@@ -170,7 +169,6 @@ end CoeffLift
 
 end ModularCurve.T1Aux
 
-set_option synthInstance.maxHeartbeats 1600000 in
 open ModularCurve.T1Aux in
 theorem solution
     (K : Type*) [Field K] [Algebra ℚ K] [IsAlgClosed K]
