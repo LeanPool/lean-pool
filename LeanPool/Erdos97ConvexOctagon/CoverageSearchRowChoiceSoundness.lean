@@ -44,13 +44,72 @@ theorem searchRowChoiceAt_mem (centre : Vertex) (index : Fin 35) :
   rw [hequal]
   exact Array.getElem_mem hindex
 
+-- Check each centre separately to keep the kernel reduction caches bounded.
+private theorem searchRowChoices_complete_centre_0 :
+    (rowOptions 0).reverse =
+      List.ofFn (fun index : Fin 35 =>
+        packedRow (searchRowChoiceAt 0 index).rowMask) := by
+  decide +kernel
+
+private theorem searchRowChoices_complete_centre_1 :
+    (rowOptions 1).reverse =
+      List.ofFn (fun index : Fin 35 =>
+        packedRow (searchRowChoiceAt 1 index).rowMask) := by
+  decide +kernel
+
+private theorem searchRowChoices_complete_centre_2 :
+    (rowOptions 2).reverse =
+      List.ofFn (fun index : Fin 35 =>
+        packedRow (searchRowChoiceAt 2 index).rowMask) := by
+  decide +kernel
+
+private theorem searchRowChoices_complete_centre_3 :
+    (rowOptions 3).reverse =
+      List.ofFn (fun index : Fin 35 =>
+        packedRow (searchRowChoiceAt 3 index).rowMask) := by
+  decide +kernel
+
+private theorem searchRowChoices_complete_centre_4 :
+    (rowOptions 4).reverse =
+      List.ofFn (fun index : Fin 35 =>
+        packedRow (searchRowChoiceAt 4 index).rowMask) := by
+  decide +kernel
+
+private theorem searchRowChoices_complete_centre_5 :
+    (rowOptions 5).reverse =
+      List.ofFn (fun index : Fin 35 =>
+        packedRow (searchRowChoiceAt 5 index).rowMask) := by
+  decide +kernel
+
+private theorem searchRowChoices_complete_centre_6 :
+    (rowOptions 6).reverse =
+      List.ofFn (fun index : Fin 35 =>
+        packedRow (searchRowChoiceAt 6 index).rowMask) := by
+  decide +kernel
+
+private theorem searchRowChoices_complete_centre_7 :
+    (rowOptions 7).reverse =
+      List.ofFn (fun index : Fin 35 =>
+        packedRow (searchRowChoiceAt 7 index).rowMask) := by
+  decide +kernel
+
 /-- The generated table is the complete legal-row enumeration, in search order. -/
 theorem searchRowChoices_complete (centre : Vertex) :
     (rowOptions centre).reverse =
       List.ofFn (fun index : Fin 35 =>
         packedRow (searchRowChoiceAt centre index).rowMask) := by
   revert centre
-  decide +kernel
+  as_aux_lemma =>
+    intro centre
+    fin_cases centre
+    · exact searchRowChoices_complete_centre_0
+    · exact searchRowChoices_complete_centre_1
+    · exact searchRowChoices_complete_centre_2
+    · exact searchRowChoices_complete_centre_3
+    · exact searchRowChoices_complete_centre_4
+    · exact searchRowChoices_complete_centre_5
+    · exact searchRowChoices_complete_centre_6
+    · exact searchRowChoices_complete_centre_7
 
 /-- Every mathematical incidence row occurs at one lightweight search index. -/
 theorem exists_searchRowChoiceIndex (Q : OctagonIncidence) (centre : Vertex) :
@@ -63,12 +122,71 @@ theorem exists_searchRowChoiceIndex (Q : OctagonIncidence) (centre : Vertex) :
   obtain ⟨index, hrow⟩ := hrow
   exact ⟨index, hrow.symm⟩
 
+-- Reuse the same bounded checks for the independently generated pair masks.
+private theorem searchRowChoiceAt_pairMask_centre_0 (index : Fin 35) :
+    (searchRowChoiceAt 0 index).pairMask =
+      rowPairMask (searchRowChoiceAt 0 index).rowMask := by
+  revert index
+  decide +kernel
+
+private theorem searchRowChoiceAt_pairMask_centre_1 (index : Fin 35) :
+    (searchRowChoiceAt 1 index).pairMask =
+      rowPairMask (searchRowChoiceAt 1 index).rowMask := by
+  revert index
+  decide +kernel
+
+private theorem searchRowChoiceAt_pairMask_centre_2 (index : Fin 35) :
+    (searchRowChoiceAt 2 index).pairMask =
+      rowPairMask (searchRowChoiceAt 2 index).rowMask := by
+  revert index
+  decide +kernel
+
+private theorem searchRowChoiceAt_pairMask_centre_3 (index : Fin 35) :
+    (searchRowChoiceAt 3 index).pairMask =
+      rowPairMask (searchRowChoiceAt 3 index).rowMask := by
+  revert index
+  decide +kernel
+
+private theorem searchRowChoiceAt_pairMask_centre_4 (index : Fin 35) :
+    (searchRowChoiceAt 4 index).pairMask =
+      rowPairMask (searchRowChoiceAt 4 index).rowMask := by
+  revert index
+  decide +kernel
+
+private theorem searchRowChoiceAt_pairMask_centre_5 (index : Fin 35) :
+    (searchRowChoiceAt 5 index).pairMask =
+      rowPairMask (searchRowChoiceAt 5 index).rowMask := by
+  revert index
+  decide +kernel
+
+private theorem searchRowChoiceAt_pairMask_centre_6 (index : Fin 35) :
+    (searchRowChoiceAt 6 index).pairMask =
+      rowPairMask (searchRowChoiceAt 6 index).rowMask := by
+  revert index
+  decide +kernel
+
+private theorem searchRowChoiceAt_pairMask_centre_7 (index : Fin 35) :
+    (searchRowChoiceAt 7 index).pairMask =
+      rowPairMask (searchRowChoiceAt 7 index).rowMask := by
+  revert index
+  decide +kernel
+
 /-- Every stored unordered-pair mask is exactly computed from its row mask. -/
 theorem searchRowChoiceAt_pairMask (centre : Vertex) (index : Fin 35) :
     (searchRowChoiceAt centre index).pairMask =
       rowPairMask (searchRowChoiceAt centre index).rowMask := by
   revert centre index
-  decide +kernel
+  as_aux_lemma =>
+    intro centre
+    fin_cases centre
+    · exact searchRowChoiceAt_pairMask_centre_0
+    · exact searchRowChoiceAt_pairMask_centre_1
+    · exact searchRowChoiceAt_pairMask_centre_2
+    · exact searchRowChoiceAt_pairMask_centre_3
+    · exact searchRowChoiceAt_pairMask_centre_4
+    · exact searchRowChoiceAt_pairMask_centre_5
+    · exact searchRowChoiceAt_pairMask_centre_6
+    · exact searchRowChoiceAt_pairMask_centre_7
 
 /-- The centre-two row table uses exactly the public fixed-branch ordering. -/
 theorem searchRowChoiceAt_two_mask (index : Fin 35) :
