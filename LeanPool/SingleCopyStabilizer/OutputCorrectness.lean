@@ -50,14 +50,8 @@ theorem sameRay_inverse_iff (U : Amplitude ι ≃ₗ[ℂ] Amplitude ι)
     simpa only [map_smul, LinearEquiv.apply_symm_apply] using h
 
 theorem roundEquiv_apply (u : Bits ι) (b : ZMod 2) (ψ : Amplitude ι) :
-    Circuit.roundEquiv u b ψ = QuantumRound.applyRoundAmplitude u b ψ := by
-  classical
-  by_cases hu : u = 0
-  · subst u
-    simp
-  · rw [Circuit.roundEquiv_apply_of_ne u b hu,
-      QuantumRound.applyRoundAmplitude_of_ne u b ψ hu, Circuit.correctionEquiv_apply]
-    rfl
+    Circuit.roundEquiv u b ψ = QuantumRound.applyRoundAmplitude u b ψ :=
+  QuantumRound.roundEquiv_apply_eq_applyRoundAmplitude u b ψ
 
 /-- The actual adaptive learner's returned amplitude. The terminal experiment
 reads one computational outcome. Each recursive step performs two fresh-copy
