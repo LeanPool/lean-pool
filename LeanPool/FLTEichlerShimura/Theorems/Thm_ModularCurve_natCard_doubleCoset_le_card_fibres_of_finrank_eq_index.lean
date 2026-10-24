@@ -1,0 +1,1226 @@
+/-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
+Based on Prove2Me node ModularCurve.natCard_doubleCoset_le_card_fibres_of_finrank_eq_index
+(028fa6e7-01b7-5d70-8ba5-0d1fef0abfc1) by Claude (2026-09-05).
+
+Proof based on Prove2Me submission 1154a053-82e5-590d-9478-44a39ec89606
+by Claude (2026-09-05); locally adapted.
+
+Licensed under Apache License 2.0
+(https://www.apache.org/licenses/LICENSE-2.0).
+-/
+
+module
+
+public import Mathlib.GroupTheory.DoubleCoset
+public import LeanPool.FLTEichlerShimura.Definitions.Def_ModularCurve_JqCoeff
+public import LeanPool.FLTEichlerShimura.Definitions.Def_ModularCurve_X1
+
+import Mathlib.Algebra.Lie.OfAssociative
+import Mathlib.Analysis.Complex.Polynomial.Basic
+import Mathlib.Data.Int.Star
+import Mathlib.NumberTheory.ModularForms.LevelOne.GradedRing
+import Mathlib.RingTheory.PicardGroup
+import LeanPool.FLTEichlerShimura.Theorems.Thm_AlgebraicCurve_Place_ord_restrictAlong_eq_natCard_algHom_of_isGalois
+import LeanPool.FLTEichlerShimura.Theorems.Thm_AlgebraicCurve_finrank_le_and_natCard_places_le_of_constantFieldExtension_adjoin
+import LeanPool.FLTEichlerShimura.Theorems.Thm_AlgebraicCurve_isCurveOver_of_transcendental_of_perfectField
+import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_LevelN_exists_monoidHom_algEquiv_fixedField_eq_adjoin
+import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_LevelN_exists_place_ord_jGen_le_two_three_level
+import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_LevelN_exists_place_ord_neg_forall_smul_eq
+import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_LevelN_exists_place_ord_sub_pos_forall_smul_eq
+import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_exists_ringHom_laurentBaseChange_qExpFunctionFieldC_levelN
+import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_transcendental_jqModC
+import LeanPool.FLTEichlerShimura.Theorems.Thm_WLight_levelN_structure_package
+import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
+
+/-!
+# Lower bounds for the fibres of j over 0, 1728, ∞
+
+Theorem statement: `ModularCurve.natCard_doubleCoset_le_card_fibres_of_finrank_eq_index`
+(`028fa6e7-01b7-5d70-8ba5-0d1fef0abfc1`), by Claude, 2026-09-05.
+
+Proof: submission `1154a053-82e5-590d-9478-44a39ec89606`, by Claude, 2026-09-05 (ACCEPTED); locally
+adapted.
+
+Let $M$ be a nonzero natural number and $\Gamma\le \mathrm{SL}(2,\mathbb Z)$ a subgroup with
+$\Gamma_1(M)\le\Gamma$. Write $F(\Gamma)\subseteq\mathbb Q((q))$ for the subfield generated over
+$\mathbb Q$ by all quotients $\mathrm{intSeriesC}(p_f)/\mathrm{intSeriesC}(p_g)$ with $f,g$ modular
+forms of some common weight $k$ for $\Gamma$ (regarded inside $\mathrm{GL}(2,\mathbb R)$) admitting
+integral $q$-expansions $p_f,p_g\in\mathbb Z[[q]]$ and $\mathrm{intSeriesC}(p_g)\neq 0$, and let
+$F=\mathrm{laurentBaseChange}$ be the subfield of $\overline{\mathbb Q}((q))$ generated over
+$\overline{\mathbb Q}$ by the coefficientwise image of $F(\Gamma)$. Let $y\in F$ be an element whose
+underlying Laurent series is $\mathrm{jqModC}$, namely $q^{-1}$ times the power series
+$E_4^3\cdot\eta^{-24}$ over $\overline{\mathbb Q}$, i.e. the $q$-expansion of $j$. Assume the degree
+hypothesis $[F:\overline{\mathbb Q}(y)]=[\mathrm{SL}(2,\mathbb Z):\Gamma\cdot\{\pm 1\}]$, the index
+of $\Gamma\sqcup\langle -1\rangle$. Then three inequalities hold simultaneously, where places of $F$
+over $\overline{\mathbb Q}$ are valuation subrings of $F$ containing $\overline{\mathbb Q}$, proper,
+with principal ideals, and $\mathrm{ord}$ is minus the logarithm of the associated adic valuation:
+the number of double cosets $\Gamma\backslash \mathrm{SL}(2,\mathbb Z)/\langle ST\rangle$ is at most
+the number of places $P$ with $\mathrm{ord}_P(y)>0$; the number of $\Gamma\backslash
+\mathrm{SL}(2,\mathbb Z)/\langle S\rangle$ is at most the number of places with
+$\mathrm{ord}_P(y-1728)>0$; and the number of $\Gamma\backslash \mathrm{SL}(2,\mathbb Z)/\langle
+T,-1\rangle$ is at most the number of places with $\mathrm{ord}_P(y)<0$.
+
+Classically the fibres of $j\colon X(\Gamma)\to X(1)$ over $0$, $1728$ and $\infty$ are in bijection
+with the double coset spaces $\Gamma\backslash\mathrm{SL}(2,\mathbb Z)/\langle ST\rangle$,
+$\Gamma\backslash\mathrm{SL}(2,\mathbb Z)/\langle S\rangle$ and
+$\Gamma\backslash\mathrm{SL}(2,\mathbb Z)/\langle T,-1\rangle$, the stabilisers being those of
+$\rho$, $i$ and of the cusp $\infty$; here only the inequalities in one direction are asserted, for
+the $q$-expansion model of the function field over $\overline{\mathbb Q}$. It feeds the exact count
+of these fibres and, through it, the genus comparisons used for the modular curves of the Fermat
+argument.
+
+## Explanation of the source proof
+
+Proof transplanted from the FLT repository:
+https://github.com/anthropics/fermats-last-theorem/blob/aa2d8b34692b16c70f699536de0d8e75b9a3e9ef/P2M/Sol/S_ModularCurve_natCard_doubleCoset_le_card_fibres_of_finrank_eq_index.lean
+
+<!-- Generated by add_prove2me_provenance.py -->
+-/
+
+
+section privateSection
+
+
+namespace P2MW.S_ModularCurve_natCard_doubleCoset_le_card_fibres_of_finrank_eq_index
+
+
+open UpperHalfPlane
+open scoped MatrixGroups IntermediateField Manifold
+
+noncomputable section
+
+namespace ModularCurve
+p2m_export "ModularCurve" "qExpFunctionFieldC jGen laurentBaseChange jqModC LevelN.wp \
+  LevelN.fricke LevelN.jAnalytic LevelN.ring LevelN.jGen \
+  LevelN.exists_monoidHom_algEquiv_fixedField_eq_adjoin \
+  LevelN.exists_place_ord_sub_pos_forall_smul_eq LevelN.exists_place_ord_neg_forall_smul_eq \
+  exists_ringHom_laurentBaseChange_qExpFunctionFieldC_levelN \
+  LevelN.exists_place_ord_jGen_le_two_three_level transcendental_jqModC"
+namespace SpecialFibresLB
+p2m_open "ModularCurve"
+
+theorem E₄_smul (γ : SL(2, ℤ)) (τ : ℍ) :
+    ModularForm.E₄ (γ • τ) = denom γ τ ^ (4 : ℤ) * ModularForm.E₄ τ := by
+  have h := SlashInvariantForm.slash_action_eqn'' (Γ := 𝒮ℒ) (k := (4 : ℤ)) ModularForm.E₄
+    (γ := (γ : GL (Fin 2) ℝ)) ⟨γ, rfl⟩ τ
+  simpa [ModularGroup.sl_moeb] using h
+
+theorem E₆_smul (γ : SL(2, ℤ)) (τ : ℍ) :
+    ModularForm.E₆ (γ • τ) = denom γ τ ^ (6 : ℤ) * ModularForm.E₆ τ := by
+  have h := SlashInvariantForm.slash_action_eqn'' (Γ := 𝒮ℒ) (k := (6 : ℤ)) ModularForm.E₆
+    (γ := (γ : GL (Fin 2) ℝ)) ⟨γ, rfl⟩ τ
+  simpa [ModularGroup.sl_moeb] using h
+
+theorem S_smul_I : ModularGroup.S • UpperHalfPlane.I = UpperHalfPlane.I :=
+  ModularGroup.stabilizer_I.mpr (by simp)
+
+theorem ST_smul_ρ : (ModularGroup.S * ModularGroup.T) • ρ = ρ :=
+  ModularGroup.stabilizer_ρ.mpr (by simp)
+
+theorem TinvS_smul_ρ : (ModularGroup.T⁻¹ * ModularGroup.S) • ρ = ρ :=
+  ModularGroup.stabilizer_ρ.mpr (by simp)
+
+theorem E₆_I : ModularForm.E₆ UpperHalfPlane.I = 0 := by
+  have h := E₆_smul ModularGroup.S UpperHalfPlane.I
+  rw [S_smul_I, ModularGroup.denom_S, UpperHalfPlane.coe_I] at h
+  have hI6 : Complex.I ^ (6 : ℤ) = -1 := by
+    rw [show (6 : ℤ) = ((6 : ℕ) : ℤ) from rfl, zpow_natCast]
+    calc Complex.I ^ 6 = (Complex.I ^ 2) ^ 3 := by ring
+      _ = -1 := by rw [Complex.I_sq]; norm_num
+  rw [hI6] at h
+  linear_combination h / 2
+
+theorem denom_TinvS_ρ :
+    denom (↑(ModularGroup.T⁻¹ * ModularGroup.S) : GL (Fin 2) ℝ) ρ = (ρ : ℂ) := by
+  rw [ModularGroup.denom_apply]
+  have h10 : (ModularGroup.T⁻¹ * ModularGroup.S) 1 0 = 1 := by
+    rw [Matrix.SpecialLinearGroup.coe_mul, ModularGroup.coe_T_inv, ModularGroup.coe_S]
+    simp
+  have h11 : (ModularGroup.T⁻¹ * ModularGroup.S) 1 1 = 0 := by
+    rw [Matrix.SpecialLinearGroup.coe_mul, ModularGroup.coe_T_inv, ModularGroup.coe_S]
+    simp
+  rw [h10, h11]
+  simp
+
+theorem ρ_ne_one : (ρ : ℂ) ≠ 1 := by
+  intro h
+  have := congrArg Complex.im h
+  rw [UpperHalfPlane.coe_im] at this
+  simp only [Complex.one_im] at this
+  exact ρ.im_pos.ne' this
+
+theorem E₄_ρ : ModularForm.E₄ ρ = 0 := by
+  have h := E₄_smul (ModularGroup.T⁻¹ * ModularGroup.S) ρ
+  rw [TinvS_smul_ρ, denom_TinvS_ρ] at h
+  have hρ4 : (ρ : ℂ) ^ (4 : ℤ) = (ρ : ℂ) := by
+    rw [show (4 : ℤ) = ((4 : ℕ) : ℤ) from rfl, zpow_natCast]
+    linear_combination ((ρ : ℂ) ^ 2 - ρ) * ρ_sq
+  rw [hρ4] at h
+  have : ((ρ : ℂ) - 1) * ModularForm.E₄ ρ = 0 := by linear_combination -h
+  rcases mul_eq_zero.mp this with h1 | h1
+  · exact absurd (sub_eq_zero.mp h1) ρ_ne_one
+  · exact h1
+
+theorem jAnalytic_ρ : LevelN.jAnalytic ρ = 0 := by
+  rw [LevelN.jAnalytic, E₄_ρ]
+  simp
+
+theorem jAnalytic_I : LevelN.jAnalytic UpperHalfPlane.I = 1728 := by
+  have hΔ := ModularForm.discriminant_eq_E₄_cube_sub_E₆_sq UpperHalfPlane.I
+  rw [E₆_I] at hΔ
+  have hΔ0 := ModularForm.discriminant_ne_zero UpperHalfPlane.I
+  have hE4 : ModularForm.E₄ UpperHalfPlane.I ≠ 0 := by
+    intro h
+    apply hΔ0
+    rw [hΔ, h]
+    norm_num
+  rw [LevelN.jAnalytic, hΔ]
+  field_simp
+  ring
+
+abbrev Gpm (N : ℕ) : Subgroup SL(2, ℤ) :=
+  CongruenceSubgroup.Gamma N ⊔ Subgroup.zpowers (-1 : SL(2, ℤ))
+
+theorem mem_Gpm_imp (N : ℕ) {g : SL(2, ℤ)} (hg : g ∈ Gpm N) :
+    g ∈ CongruenceSubgroup.Gamma N ∨ -g ∈ CongruenceSubgroup.Gamma N := by
+  have : (CongruenceSubgroup.Gamma N).Normal := CongruenceSubgroup.Gamma_normal N
+  obtain ⟨y, hy, z, hz, rfl⟩ := Subgroup.mem_sup_of_normal_left.mp hg
+  obtain ⟨k, rfl⟩ := Subgroup.mem_zpowers_iff.mp hz
+  have h2 : ((-1 : SL(2, ℤ)) ^ (2 : ℤ)) = 1 := by rw [zpow_two]; simp
+  rcases Int.even_or_odd k with ⟨m, rfl⟩ | ⟨m, rfl⟩
+  · left
+    rw [← two_mul, zpow_mul, h2, one_zpow, mul_one]
+    exact hy
+  · right
+    rw [zpow_add, zpow_mul, h2, one_zpow, one_mul, zpow_one, mul_neg_one, neg_neg]
+    exact hy
+
+theorem mem_Gpm_of (N : ℕ) {g : SL(2, ℤ)}
+    (hg : g ∈ CongruenceSubgroup.Gamma N ∨ -g ∈ CongruenceSubgroup.Gamma N) : g ∈ Gpm N := by
+  rcases hg with h | h
+  · exact Subgroup.mem_sup_left h
+  · have : g = -g * (-1) := by simp
+    rw [this]
+    exact Subgroup.mul_mem _ (Subgroup.mem_sup_left h)
+      (Subgroup.mem_sup_right (Subgroup.mem_zpowers _))
+
+theorem entry_10_eq_zero_of_mem_Gpm (N : ℕ) {g : SL(2, ℤ)} (hg : g ∈ Gpm N) :
+    ((g 1 0 : ℤ) : ZMod N) = 0 := by
+  rcases mem_Gpm_imp N hg with h | h
+  · exact (CongruenceSubgroup.Gamma_mem.mp h).2.2.1
+  · have := (CongruenceSubgroup.Gamma_mem.mp h).2.2.1
+    rw [Matrix.SpecialLinearGroup.coe_neg, Matrix.neg_apply, Int.cast_neg, neg_eq_zero] at this
+    exact this
+
+theorem entry_01_eq_zero_of_mem_Gpm (N : ℕ) {g : SL(2, ℤ)} (hg : g ∈ Gpm N) :
+    ((g 0 1 : ℤ) : ZMod N) = 0 := by
+  rcases mem_Gpm_imp N hg with h | h
+  · exact (CongruenceSubgroup.Gamma_mem.mp h).2.1
+  · have := (CongruenceSubgroup.Gamma_mem.mp h).2.1
+    rw [Matrix.SpecialLinearGroup.coe_neg, Matrix.neg_apply, Int.cast_neg, neg_eq_zero] at this
+    exact this
+
+theorem dvd_of_T_pow_mem (N : ℕ) {n : ℕ} (h : ModularGroup.T ^ n ∈ Gpm N) : N ∣ n := by
+  have h01 := entry_01_eq_zero_of_mem_Gpm N h
+  rw [← zpow_natCast, ModularGroup.coe_T_zpow] at h01
+  simp only [Matrix.of_apply, Matrix.cons_val', Matrix.cons_val_one, Matrix.cons_val_fin_one,
+    Matrix.cons_val_zero, Int.cast_natCast] at h01
+  exact (ZMod.natCast_eq_zero_iff n N).mp h01
+
+theorem T_pow_mem_Gamma (N : ℕ) : ModularGroup.T ^ N ∈ CongruenceSubgroup.Gamma N := by
+  rw [CongruenceSubgroup.Gamma_mem, ← zpow_natCast, ModularGroup.coe_T_zpow]
+  simp
+
+theorem one_ne_zero_zmod {N : ℕ} (hN : 2 ≤ N) : (1 : ZMod N) ≠ 0 := by
+  have : Fact (1 < N) := ⟨hN⟩
+  exact one_ne_zero
+
+theorem S_sq : (ModularGroup.S : SL(2, ℤ)) ^ 2 = -1 := by
+  ext i j
+  fin_cases i <;> fin_cases j <;>
+    simp [pow_two, ModularGroup.coe_S, Matrix.mul_apply, Fin.sum_univ_two]
+
+theorem dvd_of_S_pow_mem {N : ℕ} (hN : 2 ≤ N) {n : ℕ} (h : ModularGroup.S ^ n ∈ Gpm N) : 2 ∣ n := by
+  by_contra hodd
+  rw [Nat.two_dvd_ne_zero, ← Nat.odd_iff] at hodd
+  obtain ⟨k, rfl⟩ := hodd
+  have hpow : (ModularGroup.S : SL(2, ℤ)) ^ (2 * k + 1) = (-1) ^ k * ModularGroup.S := by
+    rw [pow_succ, pow_mul, S_sq]
+  rw [hpow] at h
+  have h10 := entry_10_eq_zero_of_mem_Gpm N h
+  rcases neg_one_pow_eq_or SL(2, ℤ) k with hk | hk
+  · rw [hk, one_mul, ModularGroup.coe_S] at h10
+    simp only [Matrix.of_apply, Matrix.cons_val', Matrix.cons_val_zero, Matrix.cons_val_one,
+      Matrix.cons_val_fin_one, Int.cast_one] at h10
+    exact one_ne_zero_zmod hN h10
+  · rw [hk, neg_one_mul, Matrix.SpecialLinearGroup.coe_neg, ModularGroup.coe_S] at h10
+    simp only [Matrix.neg_apply, Matrix.of_apply, Matrix.cons_val', Matrix.cons_val_zero,
+      Matrix.cons_val_one, Matrix.cons_val_fin_one, Int.cast_neg, Int.cast_one, neg_eq_zero] at h10
+    exact one_ne_zero_zmod hN h10
+
+theorem coe_ST : ((ModularGroup.S * ModularGroup.T : SL(2, ℤ)) : Matrix (Fin 2) (Fin 2) ℤ) =
+    !![0, -1; 1, 1] := by
+  rw [Matrix.SpecialLinearGroup.coe_mul, ModularGroup.coe_S, ModularGroup.coe_T]
+  ext i j
+  fin_cases i <;> fin_cases j <;> simp [Matrix.mul_apply, Fin.sum_univ_two]
+
+theorem ST_cube : (ModularGroup.S * ModularGroup.T : SL(2, ℤ)) ^ 3 = -1 := by
+  ext i j
+  rw [Matrix.SpecialLinearGroup.coe_pow, coe_ST]
+  fin_cases i <;> fin_cases j <;>
+    simp [pow_succ, Matrix.mul_apply, Fin.sum_univ_two]
+
+theorem dvd_of_ST_pow_mem {N : ℕ} (hN : 2 ≤ N) {n : ℕ}
+    (h : (ModularGroup.S * ModularGroup.T) ^ n ∈ Gpm N) : 3 ∣ n := by
+  have hST2 : (((ModularGroup.S * ModularGroup.T) ^ 2 : SL(2, ℤ)) : Matrix (Fin 2) (Fin 2) ℤ) =
+      !![-1, -1; 1, 0] := by
+    rw [Matrix.SpecialLinearGroup.coe_pow, coe_ST]
+    ext i j
+    fin_cases i <;> fin_cases j <;> simp [pow_two, Matrix.mul_apply, Fin.sum_univ_two]
+  obtain ⟨q, r, hr, rfl⟩ : ∃ q r : ℕ, r < 3 ∧ n = 3 * q + r :=
+    ⟨n / 3, n % 3, Nat.mod_lt _ (by norm_num), (Nat.div_add_mod n 3).symm⟩
+  have hpow : (ModularGroup.S * ModularGroup.T : SL(2, ℤ)) ^ (3 * q + r) =
+      (-1) ^ q * (ModularGroup.S * ModularGroup.T) ^ r := by
+    rw [pow_add, pow_mul, ST_cube]
+  rw [hpow] at h
+  have h10 := entry_10_eq_zero_of_mem_Gpm N h
+  interval_cases r
+  · exact ⟨q, by ring⟩
+  · exfalso
+    rcases neg_one_pow_eq_or SL(2, ℤ) q with hk | hk
+    · rw [hk, one_mul, pow_one, coe_ST] at h10
+      simp only [Matrix.of_apply, Matrix.cons_val', Matrix.cons_val_zero, Matrix.cons_val_one,
+        Matrix.cons_val_fin_one, Int.cast_one] at h10
+      exact one_ne_zero_zmod hN h10
+    · rw [hk, neg_one_mul, Matrix.SpecialLinearGroup.coe_neg, pow_one, coe_ST] at h10
+      simp only [Matrix.neg_apply, Matrix.of_apply, Matrix.cons_val', Matrix.cons_val_zero,
+        Matrix.cons_val_one, Matrix.cons_val_fin_one, Int.cast_neg, Int.cast_one,
+        neg_eq_zero] at h10
+      exact one_ne_zero_zmod hN h10
+  · exfalso
+    rcases neg_one_pow_eq_or SL(2, ℤ) q with hk | hk
+    · rw [hk, one_mul, hST2] at h10
+      simp only [Matrix.of_apply, Matrix.cons_val', Matrix.cons_val_zero, Matrix.cons_val_one,
+        Matrix.cons_val_fin_one, Int.cast_one] at h10
+      exact one_ne_zero_zmod hN h10
+    · rw [hk, neg_one_mul, Matrix.SpecialLinearGroup.coe_neg, hST2] at h10
+      simp only [Matrix.neg_apply, Matrix.of_apply, Matrix.cons_val', Matrix.cons_val_zero,
+        Matrix.cons_val_one, Matrix.cons_val_fin_one, Int.cast_neg, Int.cast_one,
+        neg_eq_zero] at h10
+      exact one_ne_zero_zmod hN h10
+
+theorem Gamma_le_Gamma1 (M : ℕ) : CongruenceSubgroup.Gamma M ≤ CongruenceSubgroup.Gamma1 M := by
+  intro g hg
+  rw [CongruenceSubgroup.Gamma_mem] at hg
+  rw [CongruenceSubgroup.Gamma1_mem]
+  exact ⟨hg.1, hg.2.2.2, hg.2.2.1⟩
+
+theorem neg_one_mem_zpowers_ST :
+    (-1 : SL(2, ℤ)) ∈ Subgroup.zpowers (ModularGroup.S * ModularGroup.T) := by
+  rw [← ST_cube]; exact Subgroup.pow_mem _ (Subgroup.mem_zpowers _) _
+
+theorem neg_one_mem_zpowers_S : (-1 : SL(2, ℤ)) ∈ Subgroup.zpowers ModularGroup.S := by
+  rw [← S_sq]; exact Subgroup.pow_mem _ (Subgroup.mem_zpowers _) _
+
+theorem neg_one_mem_zpowers_T_sup :
+    (-1 : SL(2, ℤ)) ∈ Subgroup.zpowers ModularGroup.T ⊔ Subgroup.zpowers (-1 : SL(2, ℤ)) :=
+  Subgroup.mem_sup_right (Subgroup.mem_zpowers _)
+
+section Galois
+
+variable {L : Type*} [Field L] [Algebra ℂ L]
+
+theorem apply_eq_self_of_mem_adjoin (ψ : L →ₐ[ℂ] L) (t : L) (hψ : ψ t = t) {x : L}
+    (hx : x ∈ ℂ⟮t⟯) : ψ x = x := by
+  let S : IntermediateField ℂ L := (AlgHom.equalizer ψ (AlgHom.id ℂ L)).toIntermediateField
+    (fun y hy => by
+      rw [AlgHom.mem_equalizer] at hy ⊢
+      simp only [AlgHom.coe_id, id_eq] at hy ⊢
+      rw [map_inv₀, hy])
+  have hle : ℂ⟮t⟯ ≤ S := by
+    rw [IntermediateField.adjoin_le_iff, Set.singleton_subset_iff]
+    change t ∈ AlgHom.equalizer ψ (AlgHom.id ℂ L)
+    rw [AlgHom.mem_equalizer]
+    simpa using hψ
+  have := hle hx
+  change x ∈ AlgHom.equalizer ψ (AlgHom.id ℂ L) at this
+  rw [AlgHom.mem_equalizer] at this
+  simpa using this
+
+theorem isIntegral_of_apply_eq (t : L) [FiniteDimensional ℂ⟮t⟯ L] (ψ : L →ₐ[ℂ] L)
+    (hψ : ψ t = t) : ψ.toRingHom.IsIntegral := by
+  intro y
+  have hy : IsIntegral ℂ⟮t⟯ y := IsIntegral.of_finite ℂ⟮t⟯ y
+  refine ⟨(minpoly ℂ⟮t⟯ y).map (algebraMap ℂ⟮t⟯ L), (minpoly.monic hy).map _, ?_⟩
+  rw [Polynomial.eval₂_map]
+  have hcomp : ψ.toRingHom.comp (algebraMap ℂ⟮t⟯ L) = algebraMap ℂ⟮t⟯ L := by
+    ext e
+    exact apply_eq_self_of_mem_adjoin ψ t hψ e.2
+  rw [hcomp]
+  exact minpoly.aeval ℂ⟮t⟯ y
+
+theorem algHom_apply_algebraMap (t : L) (E : IntermediateField ℂ⟮t⟯ L) (x : E) (hx : (x : L) = t)
+    (ψ : E →ₐ[ℂ] L) (hψ : ψ x = t) (l : ℂ⟮t⟯) : ψ (algebraMap ℂ⟮t⟯ E l) = l := by
+  let θ : ℂ⟮t⟯ →ₐ[ℂ] L := ψ.comp (IsScalarTower.toAlgHom ℂ ℂ⟮t⟯ E)
+  have hgen : ∀ (z : L) (hz : z ∈ ({t} : Set L)),
+      θ ⟨z, IntermediateField.subset_adjoin _ _ hz⟩ =
+        (IntermediateField.val ℂ⟮t⟯) ⟨z, IntermediateField.subset_adjoin _ _ hz⟩ := by
+    intro z hz
+    rw [Set.mem_singleton_iff] at hz
+    have hz' : (⟨z, IntermediateField.subset_adjoin _ _ (by rw [hz]; rfl)⟩ : ℂ⟮t⟯) =
+        ⟨t, IntermediateField.mem_adjoin_simple_self ℂ t⟩ := Subtype.ext hz
+    rw [hz']
+    change ψ (algebraMap ℂ⟮t⟯ E ⟨t, _⟩) = t
+    have : algebraMap ℂ⟮t⟯ E ⟨t, IntermediateField.mem_adjoin_simple_self ℂ t⟩ = x := by
+      apply Subtype.ext
+      rw [hx]
+      rfl
+    rw [this, hψ]
+  have hθ : θ = IntermediateField.val ℂ⟮t⟯ := IntermediateField.adjoin_algHom_ext ℂ hgen
+  exact congrArg (fun φ : ℂ⟮t⟯ →ₐ[ℂ] L => φ l) hθ
+
+theorem isIntegral_of_apply_eq_sub (t : L) [FiniteDimensional ℂ⟮t⟯ L]
+    (E : IntermediateField ℂ⟮t⟯ L) (x : E) (hx : (x : L) = t)
+    (ψ : E →ₐ[ℂ] L) (hψ : ψ x = t) : ψ.toRingHom.IsIntegral := by
+  intro y
+  have hy : IsIntegral ℂ⟮t⟯ y := IsIntegral.of_finite ℂ⟮t⟯ y
+  refine ⟨(minpoly ℂ⟮t⟯ y).map (algebraMap ℂ⟮t⟯ E), (minpoly.monic hy).map _, ?_⟩
+  rw [Polynomial.eval₂_map]
+  have hcomp : ψ.toRingHom.comp (algebraMap ℂ⟮t⟯ E) = algebraMap ℂ⟮t⟯ L := by
+    ext e
+    exact algHom_apply_algebraMap t E x hx ψ hψ e
+  rw [hcomp]
+  exact minpoly.aeval ℂ⟮t⟯ y
+
+theorem adjoin_inv_eq (t : L) : ℂ⟮t⁻¹⟯ = ℂ⟮t⟯ := by
+  apply le_antisymm
+  · rw [IntermediateField.adjoin_le_iff, Set.singleton_subset_iff]
+    exact IntermediateField.inv_mem _ (IntermediateField.mem_adjoin_simple_self ℂ t)
+  · rw [IntermediateField.adjoin_le_iff, Set.singleton_subset_iff]
+    have := IntermediateField.inv_mem _ (IntermediateField.mem_adjoin_simple_self ℂ t⁻¹)
+    rwa [inv_inv] at this
+
+theorem ord_sub_eq_ord_sub (t : L) (L₀ : IntermediateField ℂ L) (hL₀ : L₀ = ℂ⟮t⟯)
+    [FiniteDimensional L₀ L] [IsGalois L₀ L]
+    (W w : AlgebraicCurve.Place ℂ L) (c : ℂ)
+    (hW : 0 < W.ord (t - algebraMap ℂ L c)) (hw : 0 < w.ord (t - algebraMap ℂ L c)) :
+    w.ord (t - algebraMap ℂ L c) = W.ord (t - algebraMap ℂ L c) := by
+  subst hL₀
+  have hint : ∀ ψ : L →ₐ[ℂ] L, ψ t = t → ψ.toRingHom.IsIntegral :=
+    fun ψ hψ => isIntegral_of_apply_eq t ψ hψ
+  have key : ∀ (W₁ W₂ : AlgebraicCurve.Place ℂ L), 0 < W₁.ord (t - algebraMap ℂ L c) →
+      0 < W₂.ord (t - algebraMap ℂ L c) →
+      W₂.ord (t - algebraMap ℂ L c) ≤ W₁.ord (t - algebraMap ℂ L c) := by
+    intro W₁ W₂ h₁ h₂
+    obtain ⟨ψ, hψ, hres⟩ :=
+      (AlgebraicCurve.Place.ord_restrictAlong_eq_natCard_algHom_of_isGalois ℂ t t c
+        (AlgHom.id ℂ L) rfl inferInstance inferInstance hint W₁ h₁).2.2.1 W₂ h₂
+    have hord := AlgebraicCurve.Place.ord_restrictAlong ψ (hint ψ hψ) W₁ (t - algebraMap ℂ L c)
+    rw [hres, map_sub, hψ, AlgHom.commutes] at hord
+    set e := (AlgebraicCurve.Place.ramificationIndexAlong ψ W₁ : ℤ) with he
+    have he0 : (0 : ℤ) ≤ e := by rw [he]; exact_mod_cast Nat.zero_le _
+    have he1 : 1 ≤ e := by
+      by_contra hlt
+      have : e = 0 := by omega
+      rw [this, zero_mul] at hord
+      omega
+    nlinarith
+  exact le_antisymm (key W w hW hw) (key w W hw hW)
+
+def stab (L₀ : IntermediateField ℂ L) (W : AlgebraicCurve.Place ℂ L) : Subgroup (L ≃ₐ[L₀] L) where
+  carrier := {g | AlgebraicCurve.SemilinearAut.ofAlgAut (g.restrictScalars ℂ) • W = W}
+  one_mem' := by
+    change AlgebraicCurve.SemilinearAut.ofAlgAut _ • W = W
+    have : ((1 : L ≃ₐ[L₀] L).restrictScalars ℂ) = 1 := AlgEquiv.ext fun _ => rfl
+    rw [this, map_one, one_smul]
+  mul_mem' {a b} ha hb := by
+    change AlgebraicCurve.SemilinearAut.ofAlgAut _ • W = W at ha hb ⊢
+    have : ((a * b).restrictScalars ℂ) = a.restrictScalars ℂ * b.restrictScalars ℂ :=
+      AlgEquiv.ext fun _ => rfl
+    rw [this, map_mul, mul_smul, hb, ha]
+  inv_mem' {a} ha := by
+    change AlgebraicCurve.SemilinearAut.ofAlgAut _ • W = W at ha ⊢
+    have : (a⁻¹.restrictScalars ℂ) = (a.restrictScalars ℂ)⁻¹ := AlgEquiv.ext fun _ => rfl
+    rw [this, map_inv, inv_smul_eq_iff, ha]
+
+theorem mem_stab_iff (L₀ : IntermediateField ℂ L) (W : AlgebraicCurve.Place ℂ L) (g : L ≃ₐ[L₀] L) :
+    g ∈ stab L₀ W ↔ AlgebraicCurve.SemilinearAut.ofAlgAut (g.restrictScalars ℂ) • W = W := Iff.rfl
+
+theorem natCard_stab_eq_ord (t : L) (L₀ : IntermediateField ℂ L) (hL₀ : L₀ = ℂ⟮t⟯)
+    [FiniteDimensional L₀ L] [IsGalois L₀ L]
+    (W : AlgebraicCurve.Place ℂ L) (c : ℂ) (hW : 0 < W.ord (t - algebraMap ℂ L c)) :
+    (Nat.card (stab L₀ W) : ℤ) = W.ord (t - algebraMap ℂ L c) := by
+  subst hL₀
+  rw [(AlgebraicCurve.Place.ord_restrictAlong_eq_natCard_algHom_of_isGalois ℂ t t c
+    (AlgHom.id ℂ L) rfl inferInstance inferInstance
+    (fun ψ hψ => isIntegral_of_apply_eq t ψ hψ) W hW).1]
+  rfl
+
+theorem stab_eq_zpowers (t : L) (L₀ : IntermediateField ℂ L) (hL₀ : L₀ = ℂ⟮t⟯)
+    [FiniteDimensional L₀ L] [IsGalois L₀ L]
+    (W : AlgebraicCurve.Place ℂ L) (c : ℂ) (hW : 0 < W.ord (t - algebraMap ℂ L c))
+    (g : L ≃ₐ[L₀] L) (hg : g ∈ stab L₀ W) (hle : W.ord (t - algebraMap ℂ L c) ≤ orderOf g) :
+    stab L₀ W = Subgroup.zpowers g := by
+  symm
+  apply Subgroup.eq_of_le_of_card_ge
+  · rw [Subgroup.zpowers_le]; exact hg
+  · rw [Nat.card_zpowers]
+    have := natCard_stab_eq_ord t L₀ hL₀ W c hW
+    omega
+
+theorem natCard_doubleCoset_le (t : L) (L₀ : IntermediateField ℂ L) (hL₀ : L₀ = ℂ⟮t⟯)
+    [FiniteDimensional L₀ L] [IsGalois L₀ L]
+    {Γ₀ : Type*} [Group Γ₀] (σ : Γ₀ →* (L ≃ₐ[L₀] L)) (Γ Kst : Subgroup Γ₀)
+    (E : IntermediateField L₀ L)
+    (hE : ∀ g₀ : Γ₀, (∀ e : E, σ g₀ e = e) →
+      ∃ a ∈ Γ, ∃ z ∈ Kst, z ∈ Subgroup.center Γ₀ ∧ g₀ = a * z)
+    (W : AlgebraicCurve.Place ℂ L) (c : ℂ) (hW : 0 < W.ord (t - algebraMap ℂ L c))
+    (hD : ∀ g : L ≃ₐ[L₀] L, g ∈ stab L₀ W → ∃ k ∈ Kst, σ k = g)
+    (x : E) (hx : (x : L) = t)
+    [Finite {P : AlgebraicCurve.Place ℂ E // 0 < P.ord (x - algebraMap ℂ E c)}] :
+    Nat.card (DoubleCoset.Quotient (Γ : Set Γ₀) (Kst : Set Γ₀)) ≤
+      Nat.card {P : AlgebraicCurve.Place ℂ E // 0 < P.ord (x - algebraMap ℂ E c)} := by
+  subst hL₀
+  classical
+  have hint : ∀ ψ : E →ₐ[ℂ] L, ψ x = t → ψ.toRingHom.IsIntegral :=
+    fun ψ hψ => isIntegral_of_apply_eq_sub t E x hx ψ hψ
+  have hDH := AlgebraicCurve.Place.ord_restrictAlong_eq_natCard_algHom_of_isGalois ℂ x t c
+    (E.val.restrictScalars ℂ) hx inferInstance inferInstance hint W hW
+  let ψ : Γ₀ → (E →ₐ[ℂ] L) := fun γ =>
+    ((σ γ⁻¹).restrictScalars ℂ : L →ₐ[ℂ] L).comp (E.val.restrictScalars ℂ)
+  have hψapply : ∀ (γ : Γ₀) (e : E), ψ γ e = σ γ⁻¹ e := fun _ _ => rfl
+  have hψ : ∀ γ, ψ γ x = t := by
+    intro γ
+    rw [hψapply]
+    have : (x : L) = ((⟨t, IntermediateField.mem_adjoin_simple_self ℂ t⟩ : ℂ⟮t⟯) : L) := hx
+    rw [this]
+    exact (σ γ⁻¹).commutes (⟨t, IntermediateField.mem_adjoin_simple_self ℂ t⟩ : ℂ⟮t⟯)
+  let T := {P : AlgebraicCurve.Place ℂ E // 0 < P.ord (x - algebraMap ℂ E c)}
+  let f : Γ₀ → T := fun γ => ⟨W.restrictAlong (ψ γ) (hint _ (hψ γ)), hDH.2.1 (ψ γ) (hψ γ)⟩
+  have key : ∀ γ γ' : Γ₀, f γ = f γ' → ∃ a ∈ Γ, ∃ b ∈ Kst, γ' = a * γ * b := by
+    intro γ γ' hff
+    have hres : W.restrictAlong (ψ γ) (hint _ (hψ γ)) = W.restrictAlong (ψ γ') (hint _ (hψ γ')) :=
+      congrArg Subtype.val hff
+    obtain ⟨d, hdW, hd⟩ := (hDH.2.2.2.1 (ψ γ) (ψ γ') (hψ γ) (hψ γ')).mp hres
+    obtain ⟨k, hk, hkd⟩ := hD d hdW
+    have hfixE : ∀ e : E, σ (γ * k⁻¹ * γ'⁻¹) e = e := by
+      intro e
+      have h1 : ψ γ' e = d (ψ γ e) := by rw [hd]; rfl
+      rw [hψapply, hψapply, ← hkd] at h1
+      rw [map_mul, map_mul, AlgEquiv.mul_apply, AlgEquiv.mul_apply, h1, map_inv, AlgEquiv.aut_inv,
+        AlgEquiv.symm_apply_apply, map_inv, AlgEquiv.aut_inv, AlgEquiv.apply_symm_apply]
+    obtain ⟨a, ha, z, hz, hzc, heq⟩ := hE _ hfixE
+    refine ⟨a⁻¹, Γ.inv_mem ha, k⁻¹ * z⁻¹, Kst.mul_mem (Kst.inv_mem hk) (Kst.inv_mem hz), ?_⟩
+    have hzc' : ∀ g : Γ₀, g * z = z * g := fun g => (Subgroup.mem_center_iff.mp hzc g)
+    have h2 : γ' = z⁻¹ * a⁻¹ * γ * k⁻¹ := by
+      have h3 : γ'⁻¹ = k * γ⁻¹ * (a * z) := by
+        rw [← heq]; group
+      have h4 : γ' = (k * γ⁻¹ * (a * z))⁻¹ := by rw [← h3, inv_inv]
+      rw [h4]; group
+    rw [h2]
+    have h5 : z⁻¹ * a⁻¹ * γ * k⁻¹ = a⁻¹ * γ * k⁻¹ * z⁻¹ := by
+      have := hzc' (a⁻¹ * γ * k⁻¹)
+      calc z⁻¹ * a⁻¹ * γ * k⁻¹ = z⁻¹ * ((a⁻¹ * γ * k⁻¹) * z) * z⁻¹ := by group
+        _ = z⁻¹ * (z * (a⁻¹ * γ * k⁻¹)) * z⁻¹ := by rw [this]
+        _ = a⁻¹ * γ * k⁻¹ * z⁻¹ := by group
+    rw [h5]; group
+  have : Finite (Set.range f) := inferInstance
+  let π : Set.range f → DoubleCoset.Quotient (Γ : Set Γ₀) (Kst : Set Γ₀) :=
+    fun p => DoubleCoset.mk Γ Kst p.2.choose
+  have hπ : Function.Surjective π := by
+    intro r
+    obtain ⟨γ, rfl⟩ : ∃ γ, DoubleCoset.mk Γ Kst γ = r := ⟨r.out, DoubleCoset.out_eq' r⟩
+    refine ⟨⟨f γ, γ, rfl⟩, ?_⟩
+    change DoubleCoset.mk _ _ _ = _
+    have hch : f (Exists.choose (⟨γ, rfl⟩ : ∃ y, f y = f γ)) = f γ :=
+      Exists.choose_spec (⟨γ, rfl⟩ : ∃ y, f y = f γ)
+    obtain ⟨a, ha, b, hb, hab⟩ := key _ _ hch
+    rw [DoubleCoset.eq]
+    exact ⟨a, ha, b, hb, hab⟩
+  calc Nat.card (DoubleCoset.Quotient (Γ : Set Γ₀) (Kst : Set Γ₀))
+        ≤ Nat.card (Set.range f) := Nat.card_le_card_of_surjective π hπ
+    _ ≤ Nat.card T := Nat.card_le_card_of_injective (fun p : Set.range f => (p : T))
+        Subtype.val_injective
+
+end Galois
+
+section Lift
+
+variable {L : Type*} [Field L] [Algebra ℂ L]
+
+def liftE (E' : IntermediateField ℂ L) (φ : L ≃ₐ[ℂ] L) (hφ : ∀ x ∈ E', φ x = x) : L ≃ₐ[E'] L :=
+  { φ.toRingEquiv with commutes' := fun e => hφ e e.2 }
+
+@[scoped simp]
+theorem liftE_apply (E' : IntermediateField ℂ L) (φ : L ≃ₐ[ℂ] L) (hφ : ∀ x ∈ E', φ x = x) (x : L) :
+    liftE E' φ hφ x = φ x := rfl
+
+theorem restrictScalars_liftE (E' : IntermediateField ℂ L) (φ : L ≃ₐ[ℂ] L) (hφ : ∀ x ∈ E', φ x = x)
+    :
+    (liftE E' φ hφ).restrictScalars ℂ = φ :=
+  AlgEquiv.ext fun _ => rfl
+
+def liftHom {Γ : Type*} [Group Γ] (E' : IntermediateField ℂ L) (σ : Γ →* (L ≃ₐ[ℂ] L))
+    (hσ : ∀ (γ : Γ), ∀ x ∈ E', σ γ x = x) : Γ →* (L ≃ₐ[E'] L) where
+  toFun γ := liftE E' (σ γ) (hσ γ)
+  map_one' := by ext x; simp
+  map_mul' γ δ := by ext x; simp
+
+@[scoped simp]
+theorem liftHom_apply {Γ : Type*} [Group Γ] (E' : IntermediateField ℂ L)
+    (σ : Γ →* (L ≃ₐ[ℂ] L)) (hσ : ∀ (γ : Γ), ∀ x ∈ E', σ γ x = x) (γ : Γ) (x : L) :
+    liftHom E' σ hσ γ x = σ γ x := rfl
+
+theorem restrictScalars_liftHom {Γ : Type*} [Group Γ] (E' : IntermediateField ℂ L)
+    (σ : Γ →* (L ≃ₐ[ℂ] L)) (hσ : ∀ (γ : Γ), ∀ x ∈ E', σ γ x = x) (γ : Γ) :
+    (liftHom E' σ hσ γ).restrictScalars ℂ = σ γ :=
+  restrictScalars_liftE E' (σ γ) (hσ γ)
+
+theorem liftHom_eq_one_iff {Γ : Type*} [Group Γ] (E' : IntermediateField ℂ L)
+    (σ : Γ →* (L ≃ₐ[ℂ] L)) (hσ : ∀ (γ : Γ), ∀ x ∈ E', σ γ x = x) (γ : Γ) :
+    liftHom E' σ hσ γ = 1 ↔ γ ∈ σ.ker := by
+  rw [MonoidHom.mem_ker]
+  constructor
+  · intro h
+    have := congrArg (AlgEquiv.restrictScalars ℂ) h
+    rw [restrictScalars_liftHom] at this
+    rw [this]
+    ext x
+    rfl
+  · intro h
+    ext x
+    change σ γ x = x
+    rw [h]
+    rfl
+
+theorem liftHom_ker {Γ : Type*} [Group Γ] (E' : IntermediateField ℂ L)
+    (σ : Γ →* (L ≃ₐ[ℂ] L)) (hσ : ∀ (γ : Γ), ∀ x ∈ E', σ γ x = x) :
+    (liftHom E' σ hσ).ker = σ.ker := by
+  ext γ
+  rw [MonoidHom.mem_ker, liftHom_eq_one_iff]
+
+end Lift
+
+section LevelN
+
+variable (M : ℕ) [NeZero M]
+variable (K : Type*) [Field K] [Algebra ℂ K] [Algebra (LevelN.ring M) K]
+  [IsScalarTower ℂ (LevelN.ring M) K] [IsFractionRing (LevelN.ring M) K]
+
+theorem galoisPackage :
+    ∃ (hst : ∀ γ : SL(2, ℤ), ∀ F ∈ ModularCurve.LevelN.ring M,
+        (fun τ : UpperHalfPlane => F (γ • τ)) ∈ ModularCurve.LevelN.ring M)
+      (σ : SL(2, ℤ) →* (K ≃ₐ[ℂ] K)),
+      (∀ (γ : SL(2, ℤ)) (F : UpperHalfPlane → ℂ) (hF : F ∈ ModularCurve.LevelN.ring M),
+          σ γ (algebraMap (ModularCurve.LevelN.ring M) K ⟨F, hF⟩) =
+            algebraMap (ModularCurve.LevelN.ring M) K
+              ⟨fun τ : UpperHalfPlane => F (γ⁻¹ • τ), hst γ⁻¹ F hF⟩) ∧
+      σ.ker = CongruenceSubgroup.Gamma M ⊔ Subgroup.zpowers (-1 : SL(2, ℤ)) ∧
+      IntermediateField.fixedField σ.range =
+        IntermediateField.adjoin ℂ
+          ({algebraMap (ModularCurve.LevelN.ring M) K (ModularCurve.LevelN.jGen M)} : Set K) ∧
+      Transcendental ℂ (algebraMap (ModularCurve.LevelN.ring M) K (ModularCurve.LevelN.jGen M)) ∧
+      FiniteDimensional
+          (IntermediateField.adjoin ℂ
+            ({algebraMap (ModularCurve.LevelN.ring M) K (ModularCurve.LevelN.jGen M)} : Set K)) K ∧
+      Module.finrank
+          (IntermediateField.adjoin ℂ
+            ({algebraMap (ModularCurve.LevelN.ring M) K (ModularCurve.LevelN.jGen M)} : Set K)) K =
+        (CongruenceSubgroup.Gamma M ⊔ Subgroup.zpowers (-1 : SL(2, ℤ))).index ∧
+      IsGalois
+          (IntermediateField.adjoin ℂ
+            ({algebraMap (ModularCurve.LevelN.ring M) K (ModularCurve.LevelN.jGen M)} : Set K)) K :=
+  ModularCurve.LevelN.exists_monoidHom_algEquiv_fixedField_eq_adjoin M K
+
+include K in
+theorem comp_smul_mem (γ : SL(2, ℤ)) (F : ℍ → ℂ) (hF : F ∈ LevelN.ring M) :
+    (fun τ : ℍ => F (γ • τ)) ∈ LevelN.ring M :=
+  (galoisPackage M K).choose γ F hF
+
+def σK : SL(2, ℤ) →* (K ≃ₐ[ℂ] K) := (galoisPackage M K).choose_spec.choose
+
+abbrev jK : K := algebraMap (LevelN.ring M) K (LevelN.jGen M)
+
+theorem σK_algebraMap (γ : SL(2, ℤ)) (F : ℍ → ℂ) (hF : F ∈ LevelN.ring M) :
+    σK M K γ (algebraMap (LevelN.ring M) K ⟨F, hF⟩) =
+      algebraMap (LevelN.ring M) K ⟨fun τ : ℍ => F (γ⁻¹ • τ), comp_smul_mem M K γ⁻¹ F hF⟩ :=
+  (galoisPackage M K).choose_spec.choose_spec.1 γ F hF
+
+theorem σK_ker : (σK M K).ker = Gpm M := (galoisPackage M K).choose_spec.choose_spec.2.1
+
+theorem fixedField_σK : IntermediateField.fixedField (σK M K).range = ℂ⟮jK M K⟯ :=
+  (galoisPackage M K).choose_spec.choose_spec.2.2.1
+
+theorem transcendental_jK : Transcendental ℂ (jK M K) :=
+  (galoisPackage M K).choose_spec.choose_spec.2.2.2.1
+
+theorem finiteDimensional_jK : FiniteDimensional ℂ⟮jK M K⟯ K :=
+  (galoisPackage M K).choose_spec.choose_spec.2.2.2.2.1
+
+theorem finrank_jK : Module.finrank ℂ⟮jK M K⟯ K = (Gpm M).index :=
+  (galoisPackage M K).choose_spec.choose_spec.2.2.2.2.2.1
+
+theorem isGalois_jK : IsGalois ℂ⟮jK M K⟯ K :=
+  (galoisPackage M K).choose_spec.choose_spec.2.2.2.2.2.2
+
+theorem σK_fix (γ : SL(2, ℤ)) : ∀ x ∈ ℂ⟮jK M K⟯, σK M K γ x = x := fun x hx => by
+  rw [← fixedField_σK] at hx
+  exact (IntermediateField.mem_fixedField_iff (σK M K).range x).mp hx (σK M K γ) ⟨γ, rfl⟩
+
+def σ' : SL(2, ℤ) →* (K ≃ₐ[ℂ⟮jK M K⟯] K) := liftHom ℂ⟮jK M K⟯ (σK M K) (σK_fix M K)
+
+theorem restrictScalars_σ' (γ : SL(2, ℤ)) : (σ' M K γ).restrictScalars ℂ = σK M K γ :=
+  restrictScalars_liftHom _ _ _ γ
+
+@[scoped simp]
+theorem σ'_apply (γ : SL(2, ℤ)) (x : K) : σ' M K γ x = σK M K γ x := rfl
+
+theorem σ'_ker : (σ' M K).ker = Gpm M := by
+  rw [σ', liftHom_ker, σK_ker]
+
+theorem σ'_eq_one_iff (γ : SL(2, ℤ)) : σ' M K γ = 1 ↔ γ ∈ Gpm M := by
+  rw [← MonoidHom.mem_ker, σ'_ker]
+
+theorem σ'_pow_eq_one_iff (γ : SL(2, ℤ)) (n : ℕ) : σ' M K γ ^ n = 1 ↔ γ ^ n ∈ Gpm M := by
+  rw [← map_pow, σ'_eq_one_iff]
+
+theorem mem_stab_σ'_iff (W : AlgebraicCurve.Place ℂ K) (γ : SL(2, ℤ)) :
+    σ' M K γ ∈ stab ℂ⟮jK M K⟯ W ↔ AlgebraicCurve.SemilinearAut.ofAlgAut (σK M K γ) • W = W := by
+  rw [mem_stab_iff, restrictScalars_σ']
+
+theorem σ'_surjective : Function.Surjective (σ' M K) := by
+  have := finiteDimensional_jK M K
+  have := isGalois_jK M K
+  rw [← MonoidHom.range_eq_top]
+  apply Subgroup.eq_top_of_card_eq
+  rw [← Subgroup.index_ker, σ'_ker, ← finrank_jK M K, IsGalois.card_aut_eq_finrank]
+
+end LevelN
+
+section Stabilisers
+
+variable (M : ℕ) [NeZero M]
+variable (K : Type*) [Field K] [Algebra ℂ K] [Algebra (LevelN.ring M) K]
+  [IsScalarTower ℂ (LevelN.ring M) K] [IsFractionRing (LevelN.ring M) K]
+
+theorem orderOf_σ'_S (hM : 2 ≤ M) : orderOf (σ' M K ModularGroup.S) = 2 := by
+  have : Fact (Nat.Prime 2) := ⟨Nat.prime_two⟩
+  apply orderOf_eq_prime
+  · rw [σ'_pow_eq_one_iff, S_sq]
+    exact mem_Gpm_of M (Or.inr (by rw [neg_neg]; exact one_mem _))
+  · rw [ne_eq, σ'_eq_one_iff]
+    intro h
+    have := dvd_of_S_pow_mem hM (n := 1) (by rwa [pow_one])
+    omega
+
+theorem orderOf_σ'_ST (hM : 2 ≤ M) : orderOf (σ' M K (ModularGroup.S * ModularGroup.T)) = 3 := by
+  have : Fact (Nat.Prime 3) := ⟨Nat.prime_three⟩
+  apply orderOf_eq_prime
+  · rw [σ'_pow_eq_one_iff, ST_cube]
+    exact mem_Gpm_of M (Or.inr (by rw [neg_neg]; exact one_mem _))
+  · rw [ne_eq, σ'_eq_one_iff]
+    intro h
+    have := dvd_of_ST_pow_mem hM (n := 1) (by rwa [pow_one])
+    omega
+
+theorem orderOf_σ'_T : orderOf (σ' M K ModularGroup.T) = M := by
+  apply Nat.dvd_antisymm
+  · apply orderOf_dvd_of_pow_eq_one
+    rw [σ'_pow_eq_one_iff]
+    exact Subgroup.mem_sup_left (T_pow_mem_Gamma M)
+  · have h := pow_orderOf_eq_one (σ' M K ModularGroup.T)
+    rw [σ'_pow_eq_one_iff] at h
+    exact dvd_of_T_pow_mem M h
+
+theorem subsingleton_gal_of_lt_two (hM : M < 2) : Subsingleton (K ≃ₐ[ℂ⟮jK M K⟯] K) := by
+  have := finiteDimensional_jK M K
+  have := isGalois_jK M K
+  have hM1 : M = 1 := by have := NeZero.ne M; omega
+  have hcard : Nat.card (K ≃ₐ[ℂ⟮jK M K⟯] K) = 1 := by
+    rw [IsGalois.card_aut_eq_finrank, finrank_jK]
+    subst hM1
+    have : Gpm 1 = ⊤ := by
+      rw [Gpm, CongruenceSubgroup.Gamma_one_top, top_sup_eq]
+    rw [this, Subgroup.index_top]
+  exact (Nat.card_eq_one_iff_unique.mp hcard).1
+
+theorem exists_place_1728 :
+    ∃ W : AlgebraicCurve.Place ℂ K, 0 < W.ord (jK M K - algebraMap ℂ K 1728) ∧
+      ∀ g ∈ stab ℂ⟮jK M K⟯ W, ∃ k ∈ Subgroup.zpowers (ModularGroup.S : SL(2, ℤ)), σ' M K k = g := by
+  have := finiteDimensional_jK M K
+  have := isGalois_jK M K
+  obtain ⟨W, hW, hWfix⟩ :=
+    ModularCurve.LevelN.exists_place_ord_sub_pos_forall_smul_eq M K UpperHalfPlane.I
+  rw [jAnalytic_I] at hW
+  refine ⟨W, hW, ?_⟩
+  have hS : σ' M K ModularGroup.S ∈ stab ℂ⟮jK M K⟯ W := by
+    rw [mem_stab_σ'_iff]
+    exact hWfix ModularGroup.S S_smul_I (comp_smul_mem M K _) (σK M K _) (σK_algebraMap M K _)
+  rcases Nat.lt_or_ge M 2 with hM | hM
+  · intro g hg
+    have := subsingleton_gal_of_lt_two M K hM
+    exact ⟨1, one_mem _, Subsingleton.elim _ _⟩
+  · obtain ⟨⟨W', hW'pos, hW'le⟩, -, -⟩ :=
+      ModularCurve.LevelN.exists_place_ord_jGen_le_two_three_level M K
+    rw [← map_ofNat (algebraMap ℂ K) 1728] at hW'pos hW'le
+    have hle : W.ord (jK M K - algebraMap ℂ K 1728) ≤ 2 := by
+      rw [← ord_sub_eq_ord_sub (jK M K) ℂ⟮jK M K⟯ rfl W W' 1728 hW hW'pos]
+      exact hW'le
+    have hstab := stab_eq_zpowers (jK M K) ℂ⟮jK M K⟯ rfl W 1728 hW (σ' M K ModularGroup.S) hS
+      (by rw [orderOf_σ'_S M K hM]; exact hle)
+    intro g hg
+    rw [hstab, Subgroup.mem_zpowers_iff] at hg
+    obtain ⟨i, rfl⟩ := hg
+    exact ⟨ModularGroup.S ^ i, ⟨i, rfl⟩, map_zpow _ _ _⟩
+
+theorem exists_place_zero :
+    ∃ W : AlgebraicCurve.Place ℂ K, 0 < W.ord (jK M K - algebraMap ℂ K 0) ∧
+      ∀ g ∈ stab ℂ⟮jK M K⟯ W,
+        ∃ k ∈ Subgroup.zpowers (ModularGroup.S * ModularGroup.T : SL(2, ℤ)), σ' M K k = g := by
+  have := finiteDimensional_jK M K
+  have := isGalois_jK M K
+  obtain ⟨W, hW, hWfix⟩ :=
+    ModularCurve.LevelN.exists_place_ord_sub_pos_forall_smul_eq M K ρ
+  rw [jAnalytic_ρ] at hW
+  refine ⟨W, hW, ?_⟩
+  have hS : σ' M K (ModularGroup.S * ModularGroup.T) ∈ stab ℂ⟮jK M K⟯ W := by
+    rw [mem_stab_σ'_iff]
+    exact hWfix _ ST_smul_ρ (comp_smul_mem M K _) (σK M K _) (σK_algebraMap M K _)
+  rcases Nat.lt_or_ge M 2 with hM | hM
+  · intro g hg
+    have := subsingleton_gal_of_lt_two M K hM
+    exact ⟨1, one_mem _, Subsingleton.elim _ _⟩
+  · obtain ⟨-, ⟨W', hW'pos, hW'le⟩, -⟩ :=
+      ModularCurve.LevelN.exists_place_ord_jGen_le_two_three_level M K
+    rw [← sub_zero (algebraMap (LevelN.ring M) K (LevelN.jGen M)), ← map_zero (algebraMap ℂ K)]
+      at hW'pos hW'le
+    have hle : W.ord (jK M K - algebraMap ℂ K 0) ≤ 3 := by
+      rw [← ord_sub_eq_ord_sub (jK M K) ℂ⟮jK M K⟯ rfl W W' 0 hW hW'pos]
+      exact hW'le
+    have hstab := stab_eq_zpowers (jK M K) ℂ⟮jK M K⟯ rfl W 0 hW
+      (σ' M K (ModularGroup.S * ModularGroup.T)) hS (by rw [orderOf_σ'_ST M K hM]; exact hle)
+    intro g hg
+    rw [hstab, Subgroup.mem_zpowers_iff] at hg
+    obtain ⟨i, rfl⟩ := hg
+    exact ⟨(ModularGroup.S * ModularGroup.T) ^ i, ⟨i, rfl⟩, map_zpow _ _ _⟩
+
+theorem exists_place_infty :
+    ∃ W : AlgebraicCurve.Place ℂ K, 0 < W.ord ((jK M K)⁻¹ - algebraMap ℂ K 0) ∧
+      ∀ g ∈ stab ℂ⟮jK M K⟯ W,
+        ∃ k ∈ Subgroup.zpowers (ModularGroup.T : SL(2, ℤ)) ⊔ Subgroup.zpowers (-1 : SL(2, ℤ)),
+          σ' M K k = g := by
+  have := finiteDimensional_jK M K
+  have := isGalois_jK M K
+  obtain ⟨W, hW, hWfix⟩ :=
+    ModularCurve.LevelN.exists_place_ord_neg_forall_smul_eq M K (comp_smul_mem M K ModularGroup.T⁻¹)
+  change W.ord (jK M K) < 0 at hW
+  have hjK0 : jK M K ≠ 0 := by
+    intro h; rw [h, AlgebraicCurve.Place.ord_zero] at hW; exact lt_irrefl _ hW
+  have hW' : 0 < W.ord ((jK M K)⁻¹ - algebraMap ℂ K 0) := by
+    rw [map_zero, sub_zero, AlgebraicCurve.Place.ord_inv]; omega
+  refine ⟨W, hW', ?_⟩
+  have hT : σ' M K ModularGroup.T ∈ stab ℂ⟮jK M K⟯ W := by
+    rw [mem_stab_σ'_iff]
+    exact hWfix (σK M K _) (σK_algebraMap M K _)
+  rcases Nat.lt_or_ge M 2 with hM | hM
+  · intro g hg
+    have := subsingleton_gal_of_lt_two M K hM
+    exact ⟨1, one_mem _, Subsingleton.elim _ _⟩
+  · obtain ⟨-, -, ⟨W₁, hW₁neg, hW₁ge⟩⟩ :=
+      ModularCurve.LevelN.exists_place_ord_jGen_le_two_three_level M K
+    change W₁.ord (jK M K) < 0 at hW₁neg
+    change -(M : ℤ) ≤ W₁.ord (jK M K) at hW₁ge
+    have hW₁ : 0 < W₁.ord ((jK M K)⁻¹ - algebraMap ℂ K 0) := by
+      rw [map_zero, sub_zero, AlgebraicCurve.Place.ord_inv]; omega
+    have hle : W.ord ((jK M K)⁻¹ - algebraMap ℂ K 0) ≤ M := by
+      rw [← ord_sub_eq_ord_sub (jK M K)⁻¹ ℂ⟮jK M K⟯ (adjoin_inv_eq _).symm W W₁ 0 hW' hW₁,
+        map_zero, sub_zero, AlgebraicCurve.Place.ord_inv]
+      omega
+    have hstab := stab_eq_zpowers (jK M K)⁻¹ ℂ⟮jK M K⟯ (adjoin_inv_eq _).symm W 0 hW'
+      (σ' M K ModularGroup.T) hT (by rw [orderOf_σ'_T M K]; exact hle)
+    intro g hg
+    rw [hstab, Subgroup.mem_zpowers_iff] at hg
+    obtain ⟨i, rfl⟩ := hg
+    exact ⟨ModularGroup.T ^ i, Subgroup.mem_sup_left ⟨i, rfl⟩, map_zpow _ _ _⟩
+
+end Stabilisers
+
+section ConstantField
+
+variable {F : Type*} [Field F]
+variable {L : Type*} [Field L] [Algebra ℂ L] (t : L) (E : IntermediateField ℂ⟮t⟯ L) [Algebra F E]
+
+theorem adjoin_adjoin_subset {L : Type*} [Field L] [Algebra ℂ L] (S : Set L) (t : L)
+    (ht : t ∈ IntermediateField.adjoin ℂ S) :
+    ((IntermediateField.adjoin ℂ⟮t⟯ S : IntermediateField ℂ⟮t⟯ L) : Set L) ⊆
+      ((IntermediateField.adjoin ℂ S : IntermediateField ℂ L) : Set L) := by
+  have h1 : ((IntermediateField.adjoin ℂ⟮t⟯ S : IntermediateField ℂ⟮t⟯ L) : Set L) =
+      (IntermediateField.restrictScalars ℂ (IntermediateField.adjoin ℂ⟮t⟯ S) : Set L) := rfl
+  rw [h1, IntermediateField.restrictScalars_adjoin]
+  have hle : IntermediateField.adjoin ℂ ((ℂ⟮t⟯ : Set L) ∪ S) ≤ IntermediateField.adjoin ℂ S := by
+    rw [IntermediateField.adjoin_le_iff]
+    apply Set.union_subset
+    · have : ℂ⟮t⟯ ≤ IntermediateField.adjoin ℂ S := IntermediateField.adjoin_simple_le_iff.mpr ht
+      exact SetLike.coe_subset_coe.mpr this
+    · exact IntermediateField.subset_adjoin _ _
+  exact SetLike.coe_subset_coe.mpr hle
+
+theorem adjoin_range_eq_top
+    (hEle : (E : Set L) ⊆
+      ((IntermediateField.adjoin ℂ (Set.range fun u : F => (algebraMap F E u : L)) :
+        IntermediateField ℂ L) : Set L)) :
+    IntermediateField.adjoin ℂ (Set.range (algebraMap F E)) = ⊤ := by
+  let f : E →ₐ[ℂ] L := E.val.restrictScalars ℂ
+  set A := IntermediateField.adjoin ℂ (Set.range (algebraMap F E)) with hA
+  have hmapA : A.map f = IntermediateField.adjoin ℂ (Set.range fun u : F => (algebraMap F E u : L))
+    :=
+    by
+    rw [hA, IntermediateField.adjoin_map, ← Set.range_comp]
+    rfl
+  rw [eq_top_iff]
+  intro e _
+  have he : (e : L) ∈ A.map f := by
+    rw [hmapA]; exact hEle e.2
+  obtain ⟨a, ha, hae⟩ := (IntermediateField.mem_map A).mp he
+  have : a = e := Subtype.ext hae
+  rw [← this]; exact ha
+
+end ConstantField
+
+section Main
+
+variable (M : ℕ) [NeZero M]
+
+omit [NeZero M] in
+theorem T_mem_Gamma1 : ModularGroup.T ∈ CongruenceSubgroup.Gamma1 M := by
+  rw [CongruenceSubgroup.Gamma1_mem]
+  refine ⟨?_, ?_, ?_⟩ <;> simp [ModularGroup.coe_T]
+
+theorem neg_one_mem_center : (-1 : SL(2, ℤ)) ∈ Subgroup.center SL(2, ℤ) := by
+  rw [Subgroup.mem_center_iff]
+  intro g
+  rw [mul_neg_one, neg_one_mul]
+
+theorem isDomain_ring : IsDomain (LevelN.ring M) := by
+  have h := WLight.levelN_structure_package M PeriodPair.ofTau (fun τ => ⟨rfl, rfl⟩) (LevelN.wp M)
+    (fun v τ => rfl) (LevelN.fricke M) (fun v τ => rfl) LevelN.jAnalytic (fun τ => rfl)
+  have hzd := h.2.2.2.2.2
+  have hnz : NoZeroDivisors (LevelN.ring M) := ⟨fun {a b} hab => by
+    rcases hzd a b a.2 b.2 (by simpa using congrArg Subtype.val hab) with h | h
+    · exact Or.inl (Subtype.ext h)
+    · exact Or.inr (Subtype.ext h)⟩
+  have hnt : Nontrivial (LevelN.ring M) := ⟨⟨0, 1, fun h => by
+    have := congrFun (congrArg Subtype.val h) UpperHalfPlane.I
+    simp at this⟩⟩
+  exact NoZeroDivisors.to_isDomain _
+
+variable (K : Type*) [Field K] [Algebra ℂ K] [Algebra (LevelN.ring M) K]
+  [IsScalarTower ℂ (LevelN.ring M) K] [IsFractionRing (LevelN.ring M) K]
+
+theorem finrank_fixedField_map (Γ : Subgroup SL(2, ℤ)) (hΓ : CongruenceSubgroup.Gamma M ≤ Γ) :
+    haveI := finiteDimensional_jK M K
+    Module.finrank ℂ⟮jK M K⟯ (IntermediateField.fixedField (Γ.map (σ' M K))) =
+      (Γ ⊔ Subgroup.zpowers (-1 : SL(2, ℤ))).index := by
+  have := finiteDimensional_jK M K
+  have := isGalois_jK M K
+  set H := Γ.map (σ' M K) with hH
+  have h1 : Module.finrank (IntermediateField.fixedField H) K = Nat.card H :=
+    IntermediateField.finrank_fixedField_eq_card H
+  have h2 := Module.finrank_mul_finrank ℂ⟮jK M K⟯ (IntermediateField.fixedField H) K
+  have h3 : Module.finrank ℂ⟮jK M K⟯ K = Nat.card (K ≃ₐ[ℂ⟮jK M K⟯] K) :=
+    (IsGalois.card_aut_eq_finrank _ _).symm
+  have h4 := Subgroup.card_mul_index H
+  have hidx : H.index = (Γ ⊔ Subgroup.zpowers (-1 : SL(2, ℤ))).index := by
+    rw [hH, Subgroup.index_map, σ'_ker, MonoidHom.range_eq_top.mpr (σ'_surjective M K),
+      Subgroup.index_top, mul_one]
+    congr 1
+    apply le_antisymm
+    · exact sup_le le_sup_left (sup_le (hΓ.trans le_sup_left) le_sup_right)
+    · exact sup_le le_sup_left (le_sup_right.trans le_sup_right)
+  have hcard : 0 < Nat.card H := Nat.card_pos
+  rw [h1, h3, ← h4] at h2
+  rw [← hidx]
+  have : Module.finrank ℂ⟮jK M K⟯ (IntermediateField.fixedField H) * Nat.card H = H.index * Nat.card
+    H :=
+    by
+    rw [h2, mul_comm]
+  exact Nat.eq_of_mul_eq_mul_right hcard this
+
+variable (Γ : Subgroup SL(2, ℤ)) (hΓ : CongruenceSubgroup.Gamma1 M ≤ Γ)
+
+local notation "ℚ̄" => AlgebraicClosure ℚ
+local notation "FF" => laurentBaseChange (AlgebraicClosure ℚ) (qExpFunctionFieldC ℚ Γ)
+
+include K hΓ in
+theorem main_K (ι : ℚ̄ →+* ℂ) (y : FF) (hy : (y : LaurentSeries ℚ̄) = jqModC ℚ̄)
+    (hfull : Module.finrank ℚ̄⟮y⟯ FF = (Γ ⊔ Subgroup.zpowers (-1)).index) :
+    Nat.card (DoubleCoset.Quotient (Γ : Set SL(2, ℤ))
+        (Subgroup.zpowers (ModularGroup.S * ModularGroup.T) : Set SL(2, ℤ))) ≤
+        Nat.card {P : AlgebraicCurve.Place ℚ̄ FF // 0 < P.ord y} ∧
+      Nat.card (DoubleCoset.Quotient (Γ : Set SL(2, ℤ))
+          (Subgroup.zpowers ModularGroup.S : Set SL(2, ℤ))) ≤
+        Nat.card {P : AlgebraicCurve.Place ℚ̄ FF // 0 < P.ord (y - 1728)} ∧
+      Nat.card (DoubleCoset.Quotient (Γ : Set SL(2, ℤ))
+          ((Subgroup.zpowers ModularGroup.T ⊔ Subgroup.zpowers (-1) : Subgroup SL(2, ℤ)) :
+            Set SL(2, ℤ))) ≤
+        Nat.card {P : AlgebraicCurve.Place ℚ̄ FF // P.ord y < 0} := by
+  classical
+  have := finiteDimensional_jK M K
+  have := isGalois_jK M K
+  have hΓM : CongruenceSubgroup.Gamma M ≤ Γ := (Gamma_le_Gamma1 M).trans hΓ
+  have hT : ModularGroup.T ∈ Γ := hΓ (T_mem_Gamma1 M)
+  obtain ⟨Φ, hΦc, hΦy, hΦfix⟩ :=
+    ModularCurve.exists_ringHom_laurentBaseChange_qExpFunctionFieldC_levelN M Γ hΓM hT ι K
+  set L₀ : IntermediateField ℂ K := ℂ⟮jK M K⟯ with hL₀
+  let E : IntermediateField L₀ K := IntermediateField.adjoin L₀ (Set.range Φ)
+  have hΦE : ∀ u, Φ u ∈ E := fun u => IntermediateField.subset_adjoin _ _ ⟨u, rfl⟩
+  let ΦE : FF →+* E := Φ.codRestrict E hΦE
+  let : Algebra ℚ̄ ℂ := ι.toAlgebra
+  let : Algebra FF E := ΦE.toAlgebra
+  let : Algebra ℚ̄ E := ((algebraMap ℂ E).comp ι).toAlgebra
+  have : IsScalarTower ℚ̄ ℂ E := IsScalarTower.of_algebraMap_eq (fun _ => rfl)
+  have : IsScalarTower ℚ̄ FF E := IsScalarTower.of_algebraMap_eq (fun c => by
+    apply Subtype.ext
+    change algebraMap ℂ K (ι c) = Φ (algebraMap ℚ̄ FF c)
+    rw [hΦc])
+  have hyT : Transcendental ℚ̄ y := by
+    have h := transcendental_jqModC ℚ̄
+    rw [← hy] at h
+    exact (transcendental_algebraMap_iff (R := ℚ̄) (A := LaurentSeries ℚ̄)
+      (algebraMap FF (LaurentSeries ℚ̄)).injective).mp h
+  have hΓfi : (Γ ⊔ Subgroup.zpowers (-1 : SL(2, ℤ))).FiniteIndex :=
+    Subgroup.finiteIndex_of_le (hΓ.trans le_sup_left)
+  have hfin : FiniteDimensional ℚ̄⟮y⟯ FF := by
+    have : Module.Free ℚ̄⟮y⟯ FF := Module.Free.of_divisionRing _ _
+    apply Module.finite_of_finrank_pos
+    rw [hfull]
+    exact Nat.pos_of_ne_zero Subgroup.FiniteIndex.index_ne_zero
+  have : AlgebraicCurve.IsCurveOver ℚ̄ FF :=
+    AlgebraicCurve.isCurveOver_of_transcendental_of_perfectField hyT hfin
+  have hjE : jK M K ∈ E :=
+    E.algebraMap_mem (⟨jK M K, IntermediateField.mem_adjoin_simple_self ℂ _⟩ : L₀)
+  let xE : E := ⟨jK M K, hjE⟩
+  have hyt : ((algebraMap FF E y : E) : K) = jK M K := hΦy y hy
+  have hΦEy : algebraMap FF E y = xE := Subtype.ext hyt
+  have : FiniteDimensional L₀ E := IntermediateField.finiteDimensional_left E
+  have hgen : IntermediateField.adjoin ℂ (Set.range (algebraMap FF E)) = ⊤ := by
+    apply adjoin_range_eq_top (jK M K) E
+    change ((IntermediateField.adjoin L₀ (Set.range Φ) : IntermediateField L₀ K) : Set K) ⊆
+      ((IntermediateField.adjoin ℂ (Set.range fun u => Φ u) : IntermediateField ℂ K) : Set K)
+    apply adjoin_adjoin_subset
+    exact IntermediateField.subset_adjoin _ _ ⟨y, hΦy y hy⟩
+  have hσE : ∀ γ ∈ Γ, ∀ e ∈ E, σ' M K γ e = e := by
+    intro γ hγ e he
+    have hle : E ≤ IntermediateField.fixedField (Subgroup.zpowers (σ' M K γ)) := by
+      apply IntermediateField.adjoin_le_iff.mpr
+      rintro _ ⟨u, rfl⟩
+      rw [SetLike.mem_coe, IntermediateField.mem_fixedField_iff]
+      intro g hg
+      have hst : σ' M K γ ∈ MulAction.stabilizer (K ≃ₐ[L₀] K) (Φ u) := by
+        rw [MulAction.mem_stabilizer_iff, AlgEquiv.smul_def, σ'_apply]
+        exact hΦfix γ hγ (comp_smul_mem M K γ⁻¹) (σK M K γ) (σK_algebraMap M K γ) u
+      have := (Subgroup.zpowers_le.mpr hst) hg
+      rwa [MulAction.mem_stabilizer_iff, AlgEquiv.smul_def] at this
+    exact (IntermediateField.mem_fixedField_iff _ e).mp (hle he) _ (Subgroup.mem_zpowers _)
+  set H := Γ.map (σ' M K) with hH
+  have hEle : E ≤ IntermediateField.fixedField H := by
+    rw [IntermediateField.le_iff_le]
+    rintro _ ⟨γ, hγ, rfl⟩
+    rw [IntermediateField.mem_fixingSubgroup_iff]
+    intro e he
+    exact hσE γ hγ e he
+  obtain ⟨hdeg, hplaces⟩ :=
+    AlgebraicCurve.finrank_le_and_natCard_places_le_of_constantFieldExtension_adjoin y hyT
+      (jK M K) (transcendental_jK M K) E hyt hgen
+  have hEeq : E = IntermediateField.fixedField H := by
+    apply IntermediateField.eq_of_le_of_finrank_le hEle
+    rw [finrank_fixedField_map M K Γ hΓM, ← hfull]
+    exact hdeg
+  have hfixers : ∀ (Kst : Subgroup SL(2, ℤ)), (-1 : SL(2, ℤ)) ∈ Kst →
+      ∀ g₀ : SL(2, ℤ), (∀ e : E, σ' M K g₀ e = e) →
+        ∃ a ∈ Γ, ∃ z ∈ Kst, z ∈ Subgroup.center SL(2, ℤ) ∧ g₀ = a * z := by
+    intro Kst hKst g₀ hg₀
+    have hmem : σ' M K g₀ ∈ E.fixingSubgroup := by
+      rw [IntermediateField.mem_fixingSubgroup_iff]
+      intro e he
+      exact hg₀ ⟨e, he⟩
+    rw [hEeq, IntermediateField.fixingSubgroup_fixedField, hH] at hmem
+    obtain ⟨a, ha, hag⟩ := Subgroup.mem_map.mp hmem
+    have hker : a⁻¹ * g₀ ∈ Gpm M := by
+      rw [← σ'_ker M K, MonoidHom.mem_ker, map_mul, map_inv, hag, inv_mul_cancel]
+    rcases mem_Gpm_imp M hker with h | h
+    · refine ⟨a * (a⁻¹ * g₀), Γ.mul_mem ha (hΓM h), 1, one_mem _, Subgroup.one_mem _, by group⟩
+    · refine ⟨a * -(a⁻¹ * g₀), Γ.mul_mem ha (hΓM h), -1, hKst, neg_one_mem_center, ?_⟩
+      simp
+  have hy0 : y ≠ 0 := fun h => by
+    rw [h] at hyT; exact hyT isAlgebraic_zero
+  have hy1728 : y - 1728 ≠ 0 := fun h => by
+    rw [sub_eq_zero] at h
+    rw [h] at hyT
+    refine hyT ?_
+    rw [show (1728 : FF) = algebraMap ℚ̄ FF 1728 from (map_ofNat (algebraMap ℚ̄ FF) 1728).symm]
+    exact isAlgebraic_algebraMap _
+  have hposE : ∀ u : FF, u ≠ 0 →
+      Finite {P : AlgebraicCurve.Place ℂ E // 0 < P.ord (algebraMap FF E u)} ∧
+        Nat.card {P : AlgebraicCurve.Place ℂ E // 0 < P.ord (algebraMap FF E u)} ≤
+          Nat.card {P : AlgebraicCurve.Place ℚ̄ FF // 0 < P.ord u} := fun u hu =>
+    (hplaces u hu).1
+  have hnegE : ∀ u : FF, u ≠ 0 →
+      Finite {P : AlgebraicCurve.Place ℂ E // P.ord (algebraMap FF E u) < 0} ∧
+        Nat.card {P : AlgebraicCurve.Place ℂ E // P.ord (algebraMap FF E u) < 0} ≤
+          Nat.card {P : AlgebraicCurve.Place ℚ̄ FF // P.ord u < 0} := fun u hu =>
+    (hplaces u hu).2
+  refine ⟨?_, ?_, ?_⟩
+  · obtain ⟨W, hW, hD⟩ := exists_place_zero M K
+    obtain ⟨hfinE, hle⟩ := hposE y hy0
+    have hset : algebraMap FF E y = xE - algebraMap ℂ E 0 := by rw [map_zero, sub_zero, hΦEy]
+    rw [hset] at hfinE hle
+    have := hfinE
+    exact (natCard_doubleCoset_le (jK M K) L₀ rfl (σ' M K) Γ
+      (Subgroup.zpowers (ModularGroup.S * ModularGroup.T)) E (hfixers _ neg_one_mem_zpowers_ST)
+      W 0 hW hD xE rfl).trans hle
+  · obtain ⟨W, hW, hD⟩ := exists_place_1728 M K
+    obtain ⟨hfinE, hle⟩ := hposE (y - 1728) hy1728
+    have hset : algebraMap FF E (y - 1728) = xE - algebraMap ℂ E 1728 := by
+      rw [map_sub, hΦEy, map_ofNat, map_ofNat]
+    rw [hset] at hfinE hle
+    have := hfinE
+    exact (natCard_doubleCoset_le (jK M K) L₀ rfl (σ' M K) Γ
+      (Subgroup.zpowers ModularGroup.S) E (hfixers _ neg_one_mem_zpowers_S)
+      W 1728 hW hD xE rfl).trans hle
+  · obtain ⟨W, hW, hD⟩ := exists_place_infty M K
+    obtain ⟨hfinE, hle⟩ := hnegE y hy0
+    have hxE0 : xE ≠ 0 := by
+      intro h
+      have := congrArg (fun e : E => (e : K)) h
+      change jK M K = 0 at this
+      exact (transcendental_jK M K) (this ▸ isAlgebraic_zero)
+    have hiff : ∀ P : AlgebraicCurve.Place ℂ E,
+        0 < P.ord (xE⁻¹ - algebraMap ℂ E 0) ↔ P.ord (algebraMap FF E y) < 0 := by
+      intro P
+      rw [map_zero, sub_zero, AlgebraicCurve.Place.ord_inv, hΦEy]
+      omega
+    let eqv : {P : AlgebraicCurve.Place ℂ E // 0 < P.ord (xE⁻¹ - algebraMap ℂ E 0)} ≃
+        {P : AlgebraicCurve.Place ℂ E // P.ord (algebraMap FF E y) < 0} :=
+      Equiv.subtypeEquivRight hiff
+    have : Finite {P : AlgebraicCurve.Place ℂ E // 0 < P.ord (xE⁻¹ - algebraMap ℂ E 0)} :=
+      Finite.of_equiv _ eqv.symm
+    have h1 := natCard_doubleCoset_le (jK M K)⁻¹ L₀ (adjoin_inv_eq _).symm (σ' M K) Γ
+      (Subgroup.zpowers ModularGroup.T ⊔ Subgroup.zpowers (-1 : SL(2, ℤ))) E
+      (hfixers _ neg_one_mem_zpowers_T_sup) W 0 hW hD xE⁻¹ rfl
+    rw [Nat.card_congr eqv] at h1
+    exact h1.trans hle
+
+include hΓ in
+theorem main (y : FF) (hy : (y : LaurentSeries ℚ̄) = jqModC ℚ̄)
+    (hfull : Module.finrank ℚ̄⟮y⟯ FF = (Γ ⊔ Subgroup.zpowers (-1)).index) :
+    Nat.card (DoubleCoset.Quotient (Γ : Set SL(2, ℤ))
+        (Subgroup.zpowers (ModularGroup.S * ModularGroup.T) : Set SL(2, ℤ))) ≤
+        Nat.card {P : AlgebraicCurve.Place ℚ̄ FF // 0 < P.ord y} ∧
+      Nat.card (DoubleCoset.Quotient (Γ : Set SL(2, ℤ))
+          (Subgroup.zpowers ModularGroup.S : Set SL(2, ℤ))) ≤
+        Nat.card {P : AlgebraicCurve.Place ℚ̄ FF // 0 < P.ord (y - 1728)} ∧
+      Nat.card (DoubleCoset.Quotient (Γ : Set SL(2, ℤ))
+          ((Subgroup.zpowers ModularGroup.T ⊔ Subgroup.zpowers (-1) : Subgroup SL(2, ℤ)) :
+            Set SL(2, ℤ))) ≤
+        Nat.card {P : AlgebraicCurve.Place ℚ̄ FF // P.ord y < 0} := by
+  have := isDomain_ring M
+  have : Algebra.IsAlgebraic ℚ ℚ̄ := AlgebraicClosure.isAlgebraic ℚ
+  let ι : ℚ̄ →+* ℂ := (IsAlgClosed.lift (R := ℚ) (M := ℂ) (S := ℚ̄)).toRingHom
+  exact main_K M (FractionRing (LevelN.ring M)) Γ hΓ ι y hy hfull
+
+end Main
+
+end ModularCurve.SpecialFibresLB
+end
+
+open AlgebraicCurve _root_.ModularCurve
+  _root_.P2MW.S_ModularCurve_natCard_doubleCoset_le_card_fibres_of_finrank_eq_index.ModularCurve
+  ModularCurve.SpecialFibresLB in
+theorem solution
+    (M : ℕ) [NeZero M] (Γ : Subgroup (Matrix.SpecialLinearGroup (Fin 2) ℤ))
+    (hΓ : CongruenceSubgroup.Gamma1 M ≤ Γ)
+    (y : ModularCurve.laurentBaseChange (AlgebraicClosure ℚ) (ModularCurve.qExpFunctionFieldC ℚ Γ))
+    (hy : (y : LaurentSeries (AlgebraicClosure ℚ)) = ModularCurve.jqModC (AlgebraicClosure ℚ))
+    (hfull : Module.finrank
+          (IntermediateField.adjoin (AlgebraicClosure ℚ)
+            ({y} : Set (ModularCurve.laurentBaseChange (AlgebraicClosure ℚ)
+              (ModularCurve.qExpFunctionFieldC ℚ Γ))))
+          (ModularCurve.laurentBaseChange (AlgebraicClosure ℚ) (ModularCurve.qExpFunctionFieldC ℚ
+            Γ)) =
+        (Γ ⊔ Subgroup.zpowers (-1)).index) :
+    Nat.card (DoubleCoset.Quotient (Γ : Set (Matrix.SpecialLinearGroup (Fin 2) ℤ))
+        (Subgroup.zpowers (ModularGroup.S * ModularGroup.T) :
+          Set (Matrix.SpecialLinearGroup (Fin 2) ℤ))) ≤
+        Nat.card {P : AlgebraicCurve.Place (AlgebraicClosure ℚ)
+          (ModularCurve.laurentBaseChange (AlgebraicClosure ℚ) (ModularCurve.qExpFunctionFieldC ℚ
+            Γ)) //
+            0 < P.ord y} ∧
+      Nat.card (DoubleCoset.Quotient (Γ : Set (Matrix.SpecialLinearGroup (Fin 2) ℤ))
+          (Subgroup.zpowers ModularGroup.S : Set (Matrix.SpecialLinearGroup (Fin 2) ℤ))) ≤
+        Nat.card {P : AlgebraicCurve.Place (AlgebraicClosure ℚ)
+          (ModularCurve.laurentBaseChange (AlgebraicClosure ℚ) (ModularCurve.qExpFunctionFieldC ℚ
+            Γ)) //
+            0 < P.ord (y - 1728)} ∧
+      Nat.card (DoubleCoset.Quotient (Γ : Set (Matrix.SpecialLinearGroup (Fin 2) ℤ))
+          ((Subgroup.zpowers ModularGroup.T ⊔ Subgroup.zpowers (-1) :
+              Subgroup (Matrix.SpecialLinearGroup (Fin 2) ℤ)) :
+            Set (Matrix.SpecialLinearGroup (Fin 2) ℤ))) ≤
+        Nat.card {P : AlgebraicCurve.Place (AlgebraicClosure ℚ)
+          (ModularCurve.laurentBaseChange (AlgebraicClosure ℚ) (ModularCurve.qExpFunctionFieldC ℚ
+            Γ)) //
+            P.ord y < 0} :=
+  ModularCurve.SpecialFibresLB.main M Γ hΓ y hy hfull
+
+end S_ModularCurve_natCard_doubleCoset_le_card_fibres_of_finrank_eq_index
+end P2MW
+export P2MW.S_ModularCurve_natCard_doubleCoset_le_card_fibres_of_finrank_eq_index (solution)
+
+end privateSection
+
+public section publicSection
+
+
+open scoped MatrixGroups
+theorem ModularCurve.natCard_doubleCoset_le_card_fibres_of_finrank_eq_index
+    (M : ℕ) [NeZero M] (Γ : Subgroup (Matrix.SpecialLinearGroup (Fin 2) ℤ))
+    (hΓ : CongruenceSubgroup.Gamma1 M ≤ Γ)
+    (y : ModularCurve.laurentBaseChange (AlgebraicClosure ℚ) (ModularCurve.qExpFunctionFieldC ℚ Γ))
+    (hy : (y : LaurentSeries (AlgebraicClosure ℚ)) = ModularCurve.jqModC (AlgebraicClosure ℚ))
+    (hfull : Module.finrank
+          (IntermediateField.adjoin (AlgebraicClosure ℚ)
+            ({y} : Set (ModularCurve.laurentBaseChange (AlgebraicClosure ℚ)
+              (ModularCurve.qExpFunctionFieldC ℚ Γ))))
+          (ModularCurve.laurentBaseChange (AlgebraicClosure ℚ) (ModularCurve.qExpFunctionFieldC ℚ
+            Γ)) =
+        (Γ ⊔ Subgroup.zpowers (-1)).index) :
+    Nat.card (DoubleCoset.Quotient (Γ : Set (Matrix.SpecialLinearGroup (Fin 2) ℤ))
+        (Subgroup.zpowers (ModularGroup.S * ModularGroup.T) :
+          Set (Matrix.SpecialLinearGroup (Fin 2) ℤ))) ≤
+        Nat.card {P : AlgebraicCurve.Place (AlgebraicClosure ℚ)
+          (ModularCurve.laurentBaseChange (AlgebraicClosure ℚ) (ModularCurve.qExpFunctionFieldC ℚ
+            Γ)) //
+            0 < P.ord y} ∧
+      Nat.card (DoubleCoset.Quotient (Γ : Set (Matrix.SpecialLinearGroup (Fin 2) ℤ))
+          (Subgroup.zpowers ModularGroup.S : Set (Matrix.SpecialLinearGroup (Fin 2) ℤ))) ≤
+        Nat.card {P : AlgebraicCurve.Place (AlgebraicClosure ℚ)
+          (ModularCurve.laurentBaseChange (AlgebraicClosure ℚ) (ModularCurve.qExpFunctionFieldC ℚ
+            Γ)) //
+            0 < P.ord (y - 1728)} ∧
+      Nat.card (DoubleCoset.Quotient (Γ : Set (Matrix.SpecialLinearGroup (Fin 2) ℤ))
+          ((Subgroup.zpowers ModularGroup.T ⊔ Subgroup.zpowers (-1) :
+              Subgroup (Matrix.SpecialLinearGroup (Fin 2) ℤ)) :
+            Set (Matrix.SpecialLinearGroup (Fin 2) ℤ))) ≤
+        Nat.card {P : AlgebraicCurve.Place (AlgebraicClosure ℚ)
+          (ModularCurve.laurentBaseChange (AlgebraicClosure ℚ) (ModularCurve.qExpFunctionFieldC ℚ
+            Γ)) //
+            P.ord y < 0} :=
+  solution M Γ hΓ y hy hfull
+
+end publicSection

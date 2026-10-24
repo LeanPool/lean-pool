@@ -1,0 +1,461 @@
+/-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
+Based on Prove2Me node
+WeierstrassCurve.Affine.IsogenyHomDatum.exists_pointHom_comp_eq_of_ker_le_of_isCentred
+(217861b0-b122-56d6-87cc-27a3f701a2a1) by Claude (2026-09-05).
+
+Proof based on Prove2Me submission 114a08cd-9b12-573a-8e8d-bb9fb4412caf
+by Claude (2026-09-05); locally adapted.
+
+Licensed under Apache License 2.0
+(https://www.apache.org/licenses/LICENSE-2.0).
+-/
+
+module
+
+public import LeanPool.FLTEichlerShimura.Definitions.Def_Isogeny_ConditionalCurrency
+public import LeanPool.FLTEichlerShimura.Definitions.Def_WeierstrassCurve_GenusOnePlaceGateCentred
+
+import Mathlib.FieldTheory.Relrank
+import Mathlib.Order.CompletePartialOrder
+import Mathlib.RingTheory.Flat.TorsionFree
+import LeanPool.FLTEichlerShimura.Theorems.Thm_AlgebraicCurve_Place_restrictAlong_restrictAlong
+import LeanPool.FLTEichlerShimura.Theorems.Thm_AlgebraicCurve_normFormulaAlong
+import LeanPool.FLTEichlerShimura.Theorems.Thm_WeierstrassCurve_Affine_IsogenyHomDatum_pointHom_apply_eq_sub
+import LeanPool.FLTEichlerShimura.Theorems.Thm_WeierstrassCurve_Affine_algHom_ext_of_forall_restrictAlong_placeOfPoint_eq
+import LeanPool.FLTEichlerShimura.Theorems.Thm_WeierstrassCurve_Affine_exists_algEquiv_restrictAlong_placeOfPoint_eq_add
+import LeanPool.FLTEichlerShimura.Theorems.Thm_WeierstrassCurve_Affine_hasPrincipalDivisors_functionField
+import LeanPool.FLTEichlerShimura.Theorems.Thm_WeierstrassCurve_Affine_natCard_ker_pointMapOfPushforward_eq_finrankAlong
+
+/-!
+# Factoring an isogeny through one with smaller kernel
+
+Theorem statement:
+`WeierstrassCurve.Affine.IsogenyHomDatum.exists_pointHom_comp_eq_of_ker_le_of_isCentred`
+(`217861b0-b122-56d6-87cc-27a3f701a2a1`), by Claude, 2026-09-05.
+
+Proof: submission `114a08cd-9b12-573a-8e8d-bb9fb4412caf`, by Claude, 2026-09-05 (ACCEPTED); locally
+adapted.
+
+Let $F$ be an algebraically closed field of characteristic zero and let $V_0, V_1, V_2$ be affine
+Weierstrass curves over $F$, each elliptic and each equipped with two pieces of structure: a
+`GenusOnePlaceGate`, i.e. a bijection between the group of points $V_i.\mathrm{Point}$ and the set
+of places of $F(V_i)$ over $F$ together with the assertion that every such place has degree $1$; and
+`AbelTheorem`, i.e. the assertion that a divisor of degree $0$ on $F(V_i)$ is principal (a divisor
+of some nonzero function, place by place) exactly when its divisor sum in the point group vanishes.
+Assume moreover that the gate on $V_0$ is centred (`GenusOnePlaceGate.IsCentred`): for every affine
+nonsingular point $(x,y)$ of $V_0$, the images in $F(V_0)$ of the coordinate-ring classes
+$\mathrm{XClass}\,x$ and $\mathrm{YClass}\,(C\,y)$ lie in the nonunits of the valuation subring of
+the place attached to `Point.some x y h`. Let $\varphi$ be an `IsogenyHomDatum V₀ V₁`, that is an
+$F$-algebra map $\iota_\varphi \colon F(V_1) \to F(V_0)$ which is integral and for which $F(V_0)$ is
+a finite module over $F(V_1)$ along $\iota_\varphi$, and let $h_{N\varphi}$ be a push-forward
+norm-formula witness for $\iota_\varphi$: for every nonzero $f \in F(V_0)$, every divisor $D$ with
+$D(w) = \mathrm{ord}_w f$ at all places $w$ of $F(V_0)$, and every place $v$ of $F(V_1)$, the
+push-forward of $D$ at $v$ equals $\mathrm{ord}_v(\mathrm{Norm}(f))$. Let $\psi$ together with
+$h_{N\psi}$ be such a datum for $V_0$ and $V_2$. Write $\varphi_*, \psi_*$ for the induced group
+homomorphisms $V_0.\mathrm{Point} \to V_1.\mathrm{Point}$, $V_2.\mathrm{Point}$ obtained by
+transporting the push-forward on degree-zero divisor classes through the gates. Assume that every
+$P$ with $\varphi_*(P) = 0$ also satisfies $\psi_*(P) = 0$. Then there exist an `IsogenyHomDatum V₁
+V₂`, that is an integral $F$-algebra map $F(V_2) \to F(V_1)$ making $F(V_1)$ finite over $F(V_2)$,
+and a norm-formula witness for it, whose induced homomorphism $\chi_* \colon V_1.\mathrm{Point} \to
+V_2.\mathrm{Point}$ satisfies $\chi_*(\varphi_*(P)) = \psi_*(P)$ for all $P \in V_0.\mathrm{Point}$.
+The conclusion is an equality of maps on points, not an equality of maps of function fields.
+
+This is the factorisation property of isogenies: if $\ker\varphi \subseteq \ker\psi$ then $\psi$
+factors as $\chi \circ \varphi$ for an isogeny $\chi$, here in the form tied to the place-gate
+presentation of the point group and requiring the gate on the source curve to be centred. It is used
+in the computation of kernels of push-forward maps and in the identification of the subgroup of
+multiples attached to Vélu quotients with equal $j$-invariants.
+
+## Explanation of the source proof
+
+Proof transplanted from the FLT repository:
+https://github.com/anthropics/fermats-last-theorem/blob/aa2d8b34692b16c70f699536de0d8e75b9a3e9ef/P2M/Sol/S_WeierstrassCurve_Affine_IsogenyHomDatum_exists_pointHom_comp_eq_of_ker_le_of_isCentred.lean
+
+<!-- Generated by add_prove2me_provenance.py -->
+-/
+
+
+section privateSection
+
+noncomputable section
+
+open WeierstrassCurve WeierstrassCurve.Affine AlgebraicCurve
+
+universe u
+
+namespace S13CIII
+
+section Generic
+
+variable {K A B : Type*} [Field K] [Field A] [Field B] [Algebra K A] [Algebra K B]
+
+theorem exists_factor_of_range_le {C : Type*} [Field C] [Algebra K C]
+    (ι : A →ₐ[K] B) (μ : C →ₐ[K] B) (hrange : μ.range ≤ ι.range) :
+    ∃ ξ : C →ₐ[K] A, ι.comp ξ = μ := by
+  have hιinj : Function.Injective ι := RingHom.injective ι.toRingHom
+  let e : A ≃ₐ[K] ι.range := AlgEquiv.ofInjective ι hιinj
+  refine ⟨e.symm.toAlgHom.comp ((Subalgebra.inclusion hrange).comp μ.rangeRestrict), ?_⟩
+  ext b
+  have key : ∀ x : ι.range, ι (e.symm x) = ↑x := fun x => by
+    conv_rhs => rw [← e.apply_symm_apply x]
+    rfl
+  simp only [AlgHom.comp_apply]
+  exact key _
+
+theorem finiteAlong_factor {C : Type*} [Field C] [Algebra K C]
+    (ι : A →ₐ[K] B) (ξ : C →ₐ[K] A)
+    (hfin : FiniteAlong K (ι.comp ξ)) : FiniteAlong K ξ := by
+  let mCA : Module C A := (algebraAlong ξ).toModule
+  let mCB : Module C B := (algebraAlong (ι.comp ξ)).toModule
+  let ιLin : @LinearMap C C _ _ (RingHom.id C) A B _ _ mCA mCB :=
+    { toFun := ι
+      map_add' := map_add ι
+      map_smul' := fun r a => by
+        change ι (ξ r * a) = ι (ξ r) * ι a
+        exact map_mul ι (ξ r) a }
+  have hCB : @FiniteDimensional C B _ _ mCB := hfin
+  exact @FiniteDimensional.of_injective C A _ _ mCA B _ mCB ιLin
+    (RingHom.injective ι.toRingHom) hCB
+
+theorem isIntegral_of_finiteAlong {C : Type*} [Field C] [Algebra K C] (ξ : C →ₐ[K] A)
+    (hfin : FiniteAlong K ξ) : ξ.toRingHom.IsIntegral := by
+  let := algebraAlong ξ
+  have : Module.Finite C A := hfin
+  have h : Algebra.IsIntegral C A := Algebra.IsIntegral.of_finite C A
+  intro a
+  exact h.isIntegral a
+
+theorem finrankAlong_eq_finrank_fieldRange (φ : A →ₐ[K] B) :
+    finrankAlong K φ = Module.finrank φ.fieldRange B := by
+  change (letI := algebraAlong φ; Module.finrank A B) = Module.finrank φ.fieldRange B
+  let := algebraAlong φ
+  exact Algebra.finrank_eq_of_equiv_equiv
+    (AlgEquiv.ofInjectiveField φ).toRingEquiv (RingEquiv.refl B) (by ext x; rfl)
+
+theorem finrank_toSubfield_eq {L : Type*} [Field L] [Algebra K L] (E : IntermediateField K L) :
+    Module.finrank E.toSubfield L = Module.finrank E L :=
+  Algebra.finrank_eq_of_equiv_equiv
+    (⟨⟨fun x => ⟨x.1, x.2⟩, fun x => ⟨x.1, x.2⟩, fun _ => rfl, fun _ => rfl⟩,
+      fun _ _ => rfl, fun _ _ => rfl⟩ : E.toSubfield ≃+* E)
+    (RingEquiv.refl L) (by ext x; rfl)
+
+theorem restrictAlong_congr {φ₁ φ₂ : A →ₐ[K] B} (h : φ₁ = φ₂)
+    (h₁ : φ₁.toRingHom.IsIntegral) (h₂ : φ₂.toRingHom.IsIntegral) (w : Place K B) :
+    w.restrictAlong φ₁ h₁ = w.restrictAlong φ₂ h₂ := by subst h; rfl
+
+theorem restrictAlong_algHomId (w : Place K A) (h : (AlgHom.id K A).toRingHom.IsIntegral) :
+    w.restrictAlong (AlgHom.id K A) h = w :=
+  Place.ext (SetLike.ext fun _ => Iff.rfl)
+
+theorem isRational_of_deg_eq_one (v : Place K A) (h : v.deg = 1) : v.IsRational := by
+  intro x
+  have hbot : (⊥ : Subalgebra K v.ResidueField) = ⊤ :=
+    Subalgebra.bot_eq_top_iff_finrank_eq_one.mpr h
+  have hx : x ∈ (⊥ : Subalgebra K v.ResidueField) := by
+    rw [hbot]; exact Algebra.mem_top
+  exact Algebra.mem_bot.mp hx
+
+theorem normFormulaAlong_of_finiteAlong [CharZero K] [HasPrincipalDivisors K B]
+    (ι : A →ₐ[K] B) (hfin : FiniteAlong K ι) : NormFormulaAlong K ι hfin := by
+  have : CharZero A := charZero_of_injective_algebraMap (algebraMap K A).injective
+  have hsep : SeparableAlong K ι := by
+    let := algebraAlong ι
+    have := isScalarTower_along ι
+    have : Module.Finite A B := hfin
+    change Algebra.IsSeparable A B
+    infer_instance
+  exact AlgebraicCurve.normFormulaAlong ι hfin hsep
+
+end Generic
+
+section HMap
+
+variable {F : Type u} [Field F] [DecidableEq F] [IsAlgClosed F] [CharZero F]
+variable {U V : WeierstrassCurve.Affine F}
+variable [U.IsElliptic] [GenusOnePlaceGate U] [AbelTheorem U]
+variable [V.IsElliptic] [GenusOnePlaceGate V] [AbelTheorem V]
+
+def hmap (η : IsogenyHomDatum U V) (P : U.Point) : V.Point :=
+  (pointEquivPlace (W := V)).symm ((placeOfPoint P).restrictAlong η.ι η.hι)
+
+omit [DecidableEq F] [IsAlgClosed F] [CharZero F] [WeierstrassCurve.IsElliptic U] [U.AbelTheorem]
+  [WeierstrassCurve.IsElliptic V] [V.AbelTheorem] in
+theorem hmap_seam (η : IsogenyHomDatum U V) (P : U.Point) :
+    (placeOfPoint P).restrictAlong η.ι η.hι = placeOfPoint (hmap η P) :=
+  ((pointEquivPlace (W := V)).apply_symm_apply _).symm
+
+theorem pointHom_eq_hmap_sub (η : IsogenyHomDatum U V) (hN : NormFormulaAlong F η.ι η.hfin)
+    (P : U.Point) :
+    η.pointHom hN P = hmap η P - hmap η 0 :=
+  IsogenyHomDatum.pointHom_apply_eq_sub η hN P
+
+theorem hmap_add_of_ker (η : IsogenyHomDatum U V) (hN : NormFormulaAlong F η.ι η.hfin)
+    (P T : U.Point)
+    (hT : η.pointHom hN T = 0) : hmap η (P + T) = hmap η P := by
+  have h1 := pointHom_eq_hmap_sub η hN (P + T)
+  have h2 := pointHom_eq_hmap_sub η hN P
+  rw [map_add, hT, add_zero, h2] at h1
+  exact (sub_left_inj.mp h1).symm
+
+omit [DecidableEq F] in
+omit [IsAlgClosed F] [CharZero F] in
+theorem placeOfPoint_inj {W : WeierstrassCurve.Affine F} [GenusOnePlaceGate W] {P Q : W.Point}
+    (h : placeOfPoint P = placeOfPoint Q) : P = Q := by
+  classical
+  exact
+    (pointEquivPlace (W := W)).injective h
+
+end HMap
+
+section Main
+
+variable {F : Type u} [Field F] [DecidableEq F] [IsAlgClosed F] [CharZero F]
+variable {V₀ V₁ V₂ : WeierstrassCurve.Affine F}
+variable [V₀.IsElliptic] [GenusOnePlaceGate V₀] [AbelTheorem V₀]
+variable [V₁.IsElliptic] [GenusOnePlaceGate V₁] [AbelTheorem V₁]
+variable [V₂.IsElliptic] [GenusOnePlaceGate V₂] [AbelTheorem V₂]
+variable [GenusOnePlaceGate.IsCentred V₀]
+
+omit [DecidableEq F] in
+omit [IsAlgClosed F] [CharZero F] in
+theorem hrat_of_gate {V : WeierstrassCurve.Affine F} [V.IsElliptic] [GenusOnePlaceGate V] :
+    ∀ w : Place F V.FunctionField, w.IsRational := by
+  classical
+  exact
+    fun w => isRational_of_deg_eq_one w (GenusOnePlaceGate.deg_eq_one w)
+
+def τ (R : V₀.Point) : V₀.FunctionField ≃ₐ[F] V₀.FunctionField :=
+  (exists_algEquiv_restrictAlong_placeOfPoint_eq_add (W := V₀) R).choose
+
+theorem τ_isIntegral (R : V₀.Point) : (τ R).toAlgHom.toRingHom.IsIntegral :=
+  (exists_algEquiv_restrictAlong_placeOfPoint_eq_add (W := V₀) R).choose_spec.choose
+
+theorem τ_seam (R Q : V₀.Point) :
+    (placeOfPoint Q).restrictAlong (τ R).toAlgHom (τ_isIntegral R) = placeOfPoint (Q + R) :=
+  (exists_algEquiv_restrictAlong_placeOfPoint_eq_add (W := V₀) R).choose_spec.choose_spec Q
+
+omit [DecidableEq F] [IsAlgClosed F] [CharZero F] [WeierstrassCurve.IsElliptic V₀]
+  [V₀.GenusOnePlaceGate] [V₀.AbelTheorem] [GenusOnePlaceGate.IsCentred V₀] in
+theorem algEquiv_isIntegral (e : V₀.FunctionField ≃ₐ[F] V₀.FunctionField) :
+    e.toAlgHom.toRingHom.IsIntegral :=
+  RingHom.isIntegral_of_surjective _ e.surjective
+
+theorem τ_add (S T : V₀.Point) : τ (S + T) = (τ S) * (τ T) := by
+  apply AlgEquiv.ext
+  intro f
+  have hint : ((τ S).toAlgHom.comp (τ T).toAlgHom).toRingHom.IsIntegral :=
+    RingHom.IsIntegral.trans _ _ (τ_isIntegral T) (τ_isIntegral S)
+  have key : (τ (S + T)).toAlgHom = (τ S).toAlgHom.comp (τ T).toAlgHom := by
+    refine algHom_ext_of_forall_restrictAlong_placeOfPoint_eq (V := V₀) hrat_of_gate
+      (τ (S + T)).toAlgHom ((τ S).toAlgHom.comp (τ T).toAlgHom) (τ_isIntegral (S + T))
+      hint (fun P => ?_)
+    rw [τ_seam, ← Place.restrictAlong_restrictAlong (τ T).toAlgHom (τ S).toAlgHom (τ_isIntegral T)
+      (τ_isIntegral S) hint (placeOfPoint P), τ_seam, τ_seam, add_assoc]
+  exact DFunLike.congr_fun key f
+
+theorem τ_zero : τ (0 : V₀.Point) = 1 := by
+  apply AlgEquiv.ext
+  intro f
+  have key : (τ (0 : V₀.Point)).toAlgHom = (1 : V₀.FunctionField ≃ₐ[F] V₀.FunctionField).toAlgHom :=
+    by
+    refine algHom_ext_of_forall_restrictAlong_placeOfPoint_eq (V := V₀) hrat_of_gate
+      _ _ (τ_isIntegral 0) (algEquiv_isIntegral _) (fun P => ?_)
+    rw [τ_seam, add_zero]
+    exact (restrictAlong_algHomId (placeOfPoint P) _).symm
+  exact DFunLike.congr_fun key f
+
+theorem τ_eq_one_imp {T : V₀.Point} (h : τ T = 1) : T = 0 := by
+  have h1 := τ_seam T 0
+  have h2 : (placeOfPoint (0 : V₀.Point)).restrictAlong (τ T).toAlgHom (τ_isIntegral T)
+      = placeOfPoint (0 : V₀.Point) := by
+    have : (τ T).toAlgHom = AlgHom.id F V₀.FunctionField := by rw [h]; rfl
+    simp only [this]
+    exact restrictAlong_algHomId _ _
+  rw [h2, zero_add] at h1
+  exact ((placeOfPoint_injective' (W := V₀)) h1).symm
+where
+  placeOfPoint_injective' {W : WeierstrassCurve.Affine F} [GenusOnePlaceGate W] :
+      Function.Injective (placeOfPoint (W := W)) := (pointEquivPlace (W := W)).injective
+
+variable (φ : IsogenyHomDatum V₀ V₁) (hNφ : NormFormulaAlong F φ.ι φ.hfin)
+
+def kerActHom :
+    Multiplicative (φ.pointHom hNφ).ker →* (V₀.FunctionField ≃ₐ[F] V₀.FunctionField) where
+  toFun T := τ ((Multiplicative.toAdd T : (φ.pointHom hNφ).ker) : V₀.Point)
+  map_one' := by
+    change τ ((Multiplicative.toAdd 1 : (φ.pointHom hNφ).ker) : V₀.Point) = 1
+    rw [toAdd_one]; exact τ_zero
+  map_mul' S T := by
+    change τ (((Multiplicative.toAdd (S * T)) : (φ.pointHom hNφ).ker) : V₀.Point) = _
+    rw [toAdd_mul, AddSubgroup.coe_add, τ_add]
+
+omit [WeierstrassCurve.IsElliptic V₁] in
+theorem kerActHom_injective : Function.Injective (kerActHom φ hNφ) := by
+  rw [injective_iff_map_eq_one]
+  intro T hT
+  have h0 : ((Multiplicative.toAdd T : (φ.pointHom hNφ).ker) : V₀.Point) = 0 := τ_eq_one_imp hT
+  have : Multiplicative.toAdd T = (0 : (φ.pointHom hNφ).ker) := Subtype.ext h0
+  exact Multiplicative.toAdd.injective this
+
+scoped instance instMulSemiringActionKer :
+    MulSemiringAction (Multiplicative (φ.pointHom hNφ).ker) V₀.FunctionField :=
+  MulSemiringAction.compHom _ (kerActHom φ hNφ)
+
+scoped instance instFaithfulKer :
+    FaithfulSMul (Multiplicative (φ.pointHom hNφ).ker) V₀.FunctionField where
+  eq_of_smul_eq_smul h := kerActHom_injective φ hNφ (AlgEquiv.ext h)
+
+omit [WeierstrassCurve.IsElliptic V₁] in
+theorem mem_fixedPoints_iff (f : V₀.FunctionField) :
+    f ∈ FixedPoints.subfield (Multiplicative (φ.pointHom hNφ).ker) V₀.FunctionField ↔
+      ∀ T : V₀.Point, φ.pointHom hNφ T = 0 → τ T f = f := by
+  constructor
+  · intro hf T hT
+    exact hf (Multiplicative.ofAdd (⟨T, hT⟩ : (φ.pointHom hNφ).ker))
+  · intro hf g
+    exact hf ((Multiplicative.toAdd g : (φ.pointHom hNφ).ker) : V₀.Point) (Multiplicative.toAdd g).2
+
+theorem τ_comp_eq_of_ker {V : WeierstrassCurve.Affine F} [V.IsElliptic] [GenusOnePlaceGate V]
+    [AbelTheorem V]
+    (η : IsogenyHomDatum V₀ V) (hN : NormFormulaAlong F η.ι η.hfin) (T : V₀.Point)
+    (hT : η.pointHom hN T = 0) : (τ T).toAlgHom.comp η.ι = η.ι := by
+  have hint : ((τ T).toAlgHom.comp η.ι).toRingHom.IsIntegral :=
+    RingHom.IsIntegral.trans _ _ η.hι (τ_isIntegral T)
+  refine algHom_ext_of_forall_restrictAlong_placeOfPoint_eq (V := V₀) hrat_of_gate
+    _ _ hint η.hι (fun P => ?_)
+  rw [← Place.restrictAlong_restrictAlong η.ι (τ T).toAlgHom η.hι (τ_isIntegral T) hint,
+    τ_seam, hmap_seam, hmap_seam, hmap_add_of_ker η hN P T hT]
+
+theorem fieldRange_le_fixedPoints :
+    φ.ι.fieldRange.toSubfield
+      ≤ FixedPoints.subfield (Multiplicative (φ.pointHom hNφ).ker) V₀.FunctionField := by
+  intro f hf
+  rw [mem_fixedPoints_iff]
+  intro T hT
+  obtain ⟨g, rfl⟩ : ∃ g, φ.ι g = f := by
+    simpa [AlgHom.fieldRange, IntermediateField.mem_toSubfield] using hf
+  exact DFunLike.congr_fun (τ_comp_eq_of_ker φ hNφ T hT) g
+
+omit [GenusOnePlaceGate.IsCentred V₀] in
+theorem natCard_ker : Nat.card (φ.pointHom hNφ).ker = finrankAlong F φ.ι :=
+  natCard_ker_pointMapOfPushforward_eq_finrankAlong V₀ V₁ φ.ι φ.hι φ.hfin hNφ
+
+omit [DecidableEq F] [IsAlgClosed F] [CharZero F] [WeierstrassCurve.IsElliptic V₀]
+  [V₀.GenusOnePlaceGate] [V₀.AbelTheorem] [WeierstrassCurve.IsElliptic V₁] [V₁.GenusOnePlaceGate]
+  [V₁.AbelTheorem] [GenusOnePlaceGate.IsCentred V₀] in
+theorem finrankAlong_pos : 0 < finrankAlong F φ.ι := by
+  let := algebraAlong φ.ι
+  have : Module.Finite V₁.FunctionField V₀.FunctionField := φ.hfin
+  exact Module.finrank_pos
+
+scoped instance instFiniteKer : Finite (φ.pointHom hNφ).ker :=
+  Nat.finite_of_card_ne_zero (by rw [natCard_ker]; exact (finrankAlong_pos φ).ne')
+
+scoped instance instFintypeKerMul : Fintype (Multiplicative (φ.pointHom hNφ).ker) :=
+  Fintype.ofFinite _
+
+theorem fieldRange_eq_fixedPoints :
+    φ.ι.fieldRange.toSubfield
+      = FixedPoints.subfield (Multiplicative (φ.pointHom hNφ).ker) V₀.FunctionField := by
+  set A : Subfield V₀.FunctionField := φ.ι.fieldRange.toSubfield with hA
+  set B : Subfield V₀.FunctionField :=
+    FixedPoints.subfield (Multiplicative (φ.pointHom hNφ).ker) V₀.FunctionField with hB
+  have hAB : A ≤ B := fieldRange_le_fixedPoints φ hNφ
+  have hcard : Fintype.card (Multiplicative (φ.pointHom hNφ).ker) = finrankAlong F φ.ι := by
+    rw [← Nat.card_eq_fintype_card, Nat.card_congr (Multiplicative.toAdd : Multiplicative
+      (φ.pointHom hNφ).ker ≃ _),
+      natCard_ker]
+  have hfA : Module.finrank A V₀.FunctionField = finrankAlong F φ.ι := by
+    rw [hA, finrank_toSubfield_eq, ← finrankAlong_eq_finrank_fieldRange]
+  have hfB : Module.finrank B V₀.FunctionField = finrankAlong F φ.ι := by
+    rw [hB, FixedPoints.finrank_eq_card (Multiplicative (φ.pointHom hNφ).ker) V₀.FunctionField,
+      hcard]
+  have htower := Subfield.relfinrank_mul_finrank_top hAB
+  rw [hfA, hfB] at htower
+  have hpos := finrankAlong_pos φ
+  have hrel : Subfield.relfinrank A B = 1 :=
+    Nat.eq_of_mul_eq_mul_right hpos (htower.trans (one_mul _).symm)
+  exact le_antisymm hAB (Subfield.relfinrank_eq_one_iff.mp hrel)
+
+variable (ψ : IsogenyHomDatum V₀ V₂) (hNψ : NormFormulaAlong F ψ.ι ψ.hfin)
+variable (hker : ∀ P : V₀.Point, φ.pointHom hNφ P = 0 → ψ.pointHom hNψ P = 0)
+
+include hker in
+theorem psi_range_le : ψ.ι.range ≤ φ.ι.range := by
+  intro f hf
+  obtain ⟨g, rfl⟩ := (AlgHom.mem_range ψ.ι).mp hf
+  have hfix : ψ.ι g ∈ FixedPoints.subfield (Multiplicative (φ.pointHom hNφ).ker) V₀.FunctionField :=
+    by
+    rw [mem_fixedPoints_iff]
+    intro T hT
+    exact DFunLike.congr_fun (τ_comp_eq_of_ker ψ hNψ T (hker T hT)) g
+  rw [← fieldRange_eq_fixedPoints φ hNφ] at hfix
+  obtain ⟨g', hg'⟩ : ∃ g', φ.ι g' = ψ.ι g := by
+    simpa [AlgHom.fieldRange, IntermediateField.mem_toSubfield] using hfix
+  exact (AlgHom.mem_range φ.ι).mpr ⟨g', hg'⟩
+
+end Main
+
+end S13CIII
+
+open S13CIII in
+theorem solution
+    {F : Type u} [Field F] [DecidableEq F] [IsAlgClosed F] [CharZero F]
+    {V₀ V₁ V₂ : WeierstrassCurve.Affine F} [V₀.IsElliptic] [GenusOnePlaceGate V₀] [AbelTheorem V₀]
+    [V₁.IsElliptic] [GenusOnePlaceGate V₁] [AbelTheorem V₁] [V₂.IsElliptic] [GenusOnePlaceGate V₂]
+    [AbelTheorem V₂]
+    [GenusOnePlaceGate.IsCentred V₀]
+    (φ : IsogenyHomDatum V₀ V₁) (hNφ : NormFormulaAlong F φ.ι φ.hfin)
+    (ψ : IsogenyHomDatum V₀ V₂) (hNψ : NormFormulaAlong F ψ.ι ψ.hfin)
+    (hker : ∀ P : V₀.Point, φ.pointHom hNφ P = 0 → ψ.pointHom hNψ P = 0) :
+    ∃ (χ : IsogenyHomDatum V₁ V₂) (hNχ : NormFormulaAlong F χ.ι χ.hfin),
+      ∀ P : V₀.Point, χ.pointHom hNχ (φ.pointHom hNφ P) = ψ.pointHom hNψ P := by
+  obtain ⟨ξ, hξ⟩ := exists_factor_of_range_le φ.ι ψ.ι (psi_range_le φ hNφ ψ hNψ hker)
+  have hξfin : FiniteAlong F ξ := finiteAlong_factor φ.ι ξ (by rw [hξ]; exact ψ.hfin)
+  have hξint : ξ.toRingHom.IsIntegral := isIntegral_of_finiteAlong ξ hξfin
+  let χ : IsogenyHomDatum V₁ V₂ := ⟨ξ, hξint, hξfin⟩
+  have : HasPrincipalDivisors F V₁.FunctionField := hasPrincipalDivisors_functionField V₁
+  have hNχ : NormFormulaAlong F χ.ι χ.hfin := normFormulaAlong_of_finiteAlong ξ hξfin
+  refine ⟨χ, hNχ, fun P => ?_⟩
+  have hcomp : ∀ Q : V₀.Point, hmap ψ Q = hmap χ (hmap φ Q) := by
+    intro Q
+    have hint : (φ.ι.comp ξ).toRingHom.IsIntegral := RingHom.IsIntegral.trans _ _ hξint φ.hι
+    apply placeOfPoint_inj
+    rw [← hmap_seam ψ Q, restrictAlong_congr hξ.symm ψ.hι hint (placeOfPoint Q),
+      ← Place.restrictAlong_restrictAlong ξ φ.ι hξint φ.hι hint (placeOfPoint Q), hmap_seam φ Q]
+    exact hmap_seam χ (hmap φ Q)
+  rw [pointHom_eq_hmap_sub ψ hNψ P, pointHom_eq_hmap_sub φ hNφ P, map_sub,
+    pointHom_eq_hmap_sub χ hNχ, pointHom_eq_hmap_sub χ hNχ, hcomp P, hcomp 0]
+  abel
+
+end
+
+end privateSection
+
+public section publicSection
+
+
+open WeierstrassCurve AlgebraicCurve
+open WeierstrassCurve.Affine
+
+universe u
+theorem WeierstrassCurve.Affine.IsogenyHomDatum.exists_pointHom_comp_eq_of_ker_le_of_isCentred
+    {F : Type u} [Field F] [DecidableEq F] [IsAlgClosed F] [CharZero F]
+    {V₀ V₁ V₂ : WeierstrassCurve.Affine F} [V₀.IsElliptic] [GenusOnePlaceGate V₀] [AbelTheorem V₀]
+    [V₁.IsElliptic] [GenusOnePlaceGate V₁] [AbelTheorem V₁] [V₂.IsElliptic] [GenusOnePlaceGate V₂]
+    [AbelTheorem V₂]
+    [GenusOnePlaceGate.IsCentred V₀]
+    (φ : IsogenyHomDatum V₀ V₁) (hNφ : NormFormulaAlong F φ.ι φ.hfin)
+    (ψ : IsogenyHomDatum V₀ V₂) (hNψ : NormFormulaAlong F ψ.ι ψ.hfin)
+    (hker : ∀ P : V₀.Point, φ.pointHom hNφ P = 0 → ψ.pointHom hNψ P = 0) :
+    ∃ (χ : IsogenyHomDatum V₁ V₂) (hNχ : NormFormulaAlong F χ.ι χ.hfin),
+      ∀ P : V₀.Point, χ.pointHom hNχ (φ.pointHom hNφ P) = ψ.pointHom hNψ P :=
+  solution φ hNφ ψ hNψ hker
+
+end publicSection

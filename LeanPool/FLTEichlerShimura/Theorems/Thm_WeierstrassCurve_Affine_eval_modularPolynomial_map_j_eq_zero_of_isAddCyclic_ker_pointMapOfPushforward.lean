@@ -1,0 +1,483 @@
+/-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
+Based on Prove2Me node
+WeierstrassCurve.Affine.
+eval_modularPolynomial_map_j_eq_zero_of_isAddCyclic_ker_pointMapOfPushforward
+(0ba6c717-ebcf-50c6-806e-c735eb48a2e9) by Claude (2026-09-05).
+
+Proof based on Prove2Me submission 285a9016-3821-511c-ba86-36440e5c0200
+by Claude (2026-09-05); locally adapted.
+
+Licensed under Apache License 2.0
+(https://www.apache.org/licenses/LICENSE-2.0).
+-/
+
+module
+
+public import LeanPool.FLTEichlerShimura.Definitions.Def_Isogeny_ConditionalCurrency
+public import LeanPool.FLTEichlerShimura.Definitions.Def_ModularCurve_X0
+public import LeanPool.FLTEichlerShimura.Definitions.Def_WeierstrassCurve_GenusOnePlaceGateCentred
+
+import Mathlib.Analysis.Complex.Polynomial.Basic
+
+import LeanPool.FLTEichlerShimura.Theorems.Thm_AlgebraicCurve_normFormulaAlong
+import LeanPool.FLTEichlerShimura.Theorems.Thm_Field_nonempty_ringHom_complex_of_countable
+import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_ModularPolynomialData_eval_jLattice_eq_zero_of_isAddCyclic
+import LeanPool.FLTEichlerShimura.Theorems.Thm_PeriodPair_discriminant_ne_zero
+import LeanPool.FLTEichlerShimura.Theorems.Thm_PeriodPair_exists_scale_lattice_subset_and_sublatticeIndex_eq_and_isAddCyclic_sublatticeQuotient
+import LeanPool.FLTEichlerShimura.Theorems.Thm_PeriodPair_exists_variableChange_smul_weierstrassCurve_eq
+import LeanPool.FLTEichlerShimura.Theorems.Thm_WeierstrassCurve_Affine_CoordinateRing_isDedekindDomain
+import LeanPool.FLTEichlerShimura.Theorems.Thm_WeierstrassCurve_Affine_exists_algHom_baseChange_of_isAddCyclic_ker_pointMapOfPushforward
+import LeanPool.FLTEichlerShimura.Theorems.Thm_WeierstrassCurve_Affine_exists_genusOnePlaceGate_isCentred_and_abelTheorem
+import LeanPool.FLTEichlerShimura.Theorems.Thm_WeierstrassCurve_Affine_exists_intermediateField_countable_map_eq_of_isAddCyclic_ker_pointMapOfPushforward
+import LeanPool.FLTEichlerShimura.Theorems.Thm_WeierstrassCurve_Affine_hasPrincipalDivisors_functionField
+import LeanPool.FLTEichlerShimura.Theorems.Thm_WeierstrassCurve_Affine_isAddCyclic_ker_pointMapOfPushforward_of_algEquiv_conj
+import LeanPool.FLTEichlerShimura.Theorems.Thm_WeierstrassCurve_nonempty_functionField_algEquiv_of_variableChange
+
+/-!
+# Cyclic kernel of order N forces Φ_N(j(E),j(E'))=0
+
+Theorem statement:
+`WeierstrassCurve.Affine.
+eval_modularPolynomial_map_j_eq_zero_of_isAddCyclic_ker_pointMapOfPushforward`
+(`0ba6c717-ebcf-50c6-806e-c735eb48a2e9`), by Claude, 2026-09-05.
+
+Proof: submission `285a9016-3821-511c-ba86-36440e5c0200`, by Claude, 2026-09-05 (ACCEPTED); locally
+adapted.
+
+Let $K$ be an algebraically closed field of characteristic $0$, and let $E,E'$ be affine Weierstrass
+curves over $K$ which are elliptic. For each of $E$ and $E'$ assume the genus-one gate data: a
+bijection between the points of the curve and the places of its function field over $K$, all of
+which have degree $1$; the centring condition that for every nonsingular affine point $(x,y)$ the
+classes of $X-x$ and $Y-y$ lie in the nonunits of the valuation subring of the place attached to
+that point; and Abel's theorem, that a divisor of degree $0$ is principal exactly when its divisor
+sum vanishes. Let $\iota : K(E') \to K(E)$ be a $K$-algebra homomorphism which is integral, makes
+$K(E)$ a finite module over $K(E')$, and satisfies the pushforward norm formula (for nonzero $f \in
+K(E)$ and a divisor $D$ with $D(w)=\operatorname{ord}_w f$ at every place $w$ of $K(E)$, the
+pushforward of $D$ has value $\operatorname{ord}_v(\mathrm{N}_{K(E)/K(E')} f)$ at every place $v$ of
+$K(E')$). Let $N$ be a nonzero natural number and suppose the kernel of the induced homomorphism
+$E(K) \to E'(K)$ — obtained by transporting divisor-class pushforward along $\iota$ through the
+identifications of the points of a curve with its degree-zero divisor class group — is cyclic of
+cardinality $N$. Then for any datum consisting of a monic $\Phi \in \mathbb{Z}[X][Y]$ of degree
+$\sum_{d \mid N,\ d \text{ squarefree}} N/d$ in $Y$ whose $q$-expansion identity $\Phi(j(q), j(q^N))
+= 0$ holds, one has $\Phi(j(E), j(E')) = 0$, the coefficients being specialised at $j(E)$ and the
+resulting polynomial over $K$ evaluated at $j(E')$.
+
+This is the forward half of the moduli interpretation of $X_0(N)$: a cyclic $N$-isogeny between
+elliptic curves gives a point on the modular curve, i.e. the pair of $j$-invariants is a root of the
+modular polynomial of level $N$. It is used by the statements identifying $j$ of a Vélu quotient by
+a cyclic subgroup of order $N$ as a root of $\Phi_N(j(E), \cdot)$, and thence by the
+transcendence-based criterion for membership in the modular curve.
+
+## Explanation of the source proof
+
+Proof transplanted from the FLT repository:
+https://github.com/anthropics/fermats-last-theorem/blob/aa2d8b34692b16c70f699536de0d8e75b9a3e9ef/P2M/Sol/S_WeierstrassCurve_Affine_eval_modularPolynomial_map_j_eq_zero_of_isAddCyclic_ker_pointMapOfPushforward.lean
+
+<!-- Generated by add_prove2me_provenance.py -->
+-/
+
+
+section privateSection
+
+
+
+noncomputable section
+
+namespace PeriodPair
+
+open Complex
+variable (L : PeriodPair)
+section Scale
+
+variable (α : ℂˣ)
+
+private def mulLeftR (a : ℂ) : ℂ →ₗ[ℝ] ℂ := Algebra.lmul ℝ ℂ a
+
+@[scoped simp] private theorem mulLeftR_apply (a z : ℂ) : mulLeftR a z = a * z := rfl
+
+private theorem mulLeftR_injective {a : ℂ} (ha : a ≠ 0) :
+    Function.Injective (mulLeftR a) := fun _ _ h => by
+  simpa using mul_left_cancel₀ ha h
+
+private def mulLeftZ (a : ℂ) : ℂ →ₗ[ℤ] ℂ := (mulLeftR a).restrictScalars ℤ
+
+@[scoped simp] private theorem mulLeftZ_apply (a z : ℂ) : mulLeftZ a z = a * z := rfl
+
+private theorem _root_.PeriodPair.scale_lattice :
+    (L.scale α).lattice = Submodule.map (mulLeftZ (α : ℂ)) L.lattice := by
+  unfold lattice scale
+  rw [Submodule.map_span]
+  congr 1
+  ext z
+  simp only [Set.mem_insert_iff, Set.mem_singleton_iff, Set.mem_image, mulLeftZ_apply]
+  constructor
+  · rintro (rfl | rfl)
+    · exact ⟨L.ω₁, Or.inl rfl, rfl⟩
+    · exact ⟨L.ω₂, Or.inr rfl, rfl⟩
+  · rintro ⟨w, hw | hw, rfl⟩ <;> simp [hw]
+
+theorem mem_scale_lattice_iff {z : ℂ} :
+    z ∈ (L.scale α).lattice ↔ ∃ l ∈ L.lattice, z = (α : ℂ) * l := by
+  rw [scale_lattice, Submodule.mem_map]; simp only [mulLeftZ_apply]; tauto
+
+private def _root_.PeriodPair.scaleLatticeEquiv : L.lattice ≃ₗ[ℤ] (L.scale α).lattice :=
+  (Submodule.equivMapOfInjective (mulLeftZ (α : ℂ))
+    (fun _ _ h => mul_left_cancel₀ α.ne_zero (by simpa using h)) L.lattice).trans
+    (LinearEquiv.ofEq _ _ (L.scale_lattice α).symm)
+
+@[scoped simp] theorem scaleLatticeEquiv_apply (l : L.lattice) :
+    ((L.scaleLatticeEquiv α l : (L.scale α).lattice) : ℂ) = (α : ℂ) * (l : ℂ) := rfl
+
+end Scale
+
+section Homogeneity
+
+variable (α : ℂˣ)
+
+theorem G_scale (n : ℕ) : (L.scale α).G n = ((α : ℂ) ^ n)⁻¹ * L.G n := by
+  unfold G
+  rw [← (L.scaleLatticeEquiv α).toEquiv.tsum_eq]
+  simp only [LinearEquiv.coe_toEquiv, scaleLatticeEquiv_apply, mul_pow, mul_inv]
+  exact tsum_mul_left
+
+theorem g₂_scale : (L.scale α).g₂ = ((α : ℂ) ^ 4)⁻¹ * L.g₂ := by
+  unfold g₂; rw [G_scale]; ring
+
+theorem g₃_scale : (L.scale α).g₃ = ((α : ℂ) ^ 6)⁻¹ * L.g₃ := by
+  unfold g₃; rw [G_scale]; ring
+
+theorem discriminant_scale :
+    (L.scale α).g₂ ^ 3 - 27 * (L.scale α).g₃ ^ 2
+      = ((α : ℂ) ^ 12)⁻¹ * (L.g₂ ^ 3 - 27 * L.g₃ ^ 2) := by
+  rw [g₂_scale, g₃_scale]; ring
+
+theorem g₂_cubed_scale : (L.scale α).g₂ ^ 3 = ((α : ℂ) ^ 12)⁻¹ * L.g₂ ^ 3 := by
+  rw [g₂_scale, mul_pow, inv_pow, ← pow_mul]
+
+theorem jLattice_scale : (L.scale α).jLattice = L.jLattice := by
+  have hα : ((α : ℂ) ^ 12)⁻¹ ≠ 0 := inv_ne_zero (pow_ne_zero _ α.ne_zero)
+  unfold jLattice
+  rw [discriminant_scale, g₂_cubed_scale, mul_left_comm (1728 : ℂ), mul_div_mul_left _ _ hα]
+
+theorem discriminantNeZero_scale_iff :
+    (L.scale α).DiscriminantNeZero ↔ L.DiscriminantNeZero := by
+  unfold DiscriminantNeZero
+  rw [discriminant_scale]
+  simp only [mul_ne_zero_iff, and_iff_right (inv_ne_zero (pow_ne_zero 12 α.ne_zero))]
+
+end Homogeneity
+end PeriodPair
+
+namespace F4Proof
+open WeierstrassCurve WeierstrassCurve.Affine AlgebraicCurve
+
+section ConjHelpers
+variable {K : Type*} [Field K]
+variable {E E' F F' : WeierstrassCurve.Affine K}
+
+def conjSeam
+    (eE : F.FunctionField ≃ₐ[K] E.FunctionField)
+    (eE' : F'.FunctionField ≃ₐ[K] E'.FunctionField)
+    (ι : E'.FunctionField →ₐ[K] E.FunctionField) :
+    F'.FunctionField →ₐ[K] F.FunctionField :=
+  (eE.symm.toAlgHom.comp ι).comp eE'.toAlgHom
+
+theorem conjSeam_apply (eE : F.FunctionField ≃ₐ[K] E.FunctionField)
+    (eE' : F'.FunctionField ≃ₐ[K] E'.FunctionField)
+    (ι : E'.FunctionField →ₐ[K] E.FunctionField) (x : F'.FunctionField) :
+    conjSeam eE eE' ι x = eE.symm (ι (eE' x)) := rfl
+
+theorem conjSeam_isIntegral
+    (eE : F.FunctionField ≃ₐ[K] E.FunctionField)
+    (eE' : F'.FunctionField ≃ₐ[K] E'.FunctionField)
+    (ι : E'.FunctionField →ₐ[K] E.FunctionField) (hι : ι.toRingHom.IsIntegral) :
+    (conjSeam eE eE' ι).toRingHom.IsIntegral :=
+  RingHom.IsIntegral.trans eE'.toAlgHom.toRingHom (eE.symm.toAlgHom.comp ι).toRingHom
+    (RingHom.isIntegral_of_surjective _ eE'.surjective)
+    (RingHom.IsIntegral.trans ι.toRingHom eE.symm.toAlgHom.toRingHom hι
+      (RingHom.isIntegral_of_surjective _ eE.symm.surjective))
+
+theorem conjSeam_finiteAlong
+    (eE : F.FunctionField ≃ₐ[K] E.FunctionField)
+    (eE' : F'.FunctionField ≃ₐ[K] E'.FunctionField)
+    (ι : E'.FunctionField →ₐ[K] E.FunctionField) (hfin : FiniteAlong K ι) :
+    FiniteAlong K (conjSeam eE eE' ι) := by
+  have hfin' : RingHom.Finite ι.toRingHom := hfin
+  have h1 : RingHom.Finite eE'.toAlgHom.toRingHom :=
+    RingHom.Finite.of_surjective _ eE'.surjective
+  have h2 : RingHom.Finite eE.symm.toAlgHom.toRingHom :=
+    RingHom.Finite.of_surjective _ eE.symm.surjective
+  have hcomp : RingHom.Finite (conjSeam eE eE' ι).toRingHom :=
+    RingHom.Finite.comp (g := (eE.symm.toAlgHom.comp ι).toRingHom)
+      (RingHom.Finite.comp (g := eE.symm.toAlgHom.toRingHom) h2 hfin') h1
+  exact hcomp
+
+end ConjHelpers
+
+section AutoNorm
+variable {K : Type*} [Field K] [CharZero K]
+
+theorem separableAlong_of_charZero {E E' : WeierstrassCurve.Affine K}
+    (ι : E'.FunctionField →ₐ[K] E.FunctionField) (hfin : FiniteAlong K ι) :
+    SeparableAlong K ι := by
+  let := algebraAlong ι
+  have := isScalarTower_along ι
+  have : Module.Finite E'.FunctionField E.FunctionField := hfin
+  have : CharZero E'.FunctionField :=
+    charZero_of_injective_algebraMap (algebraMap K E'.FunctionField).injective
+  change Algebra.IsSeparable E'.FunctionField E.FunctionField
+  infer_instance
+
+theorem normFormulaAlong_of_charZero {E E' : WeierstrassCurve.Affine K}
+    (ι : E'.FunctionField →ₐ[K] E.FunctionField) (hfin : FiniteAlong K ι) :
+    NormFormulaAlong K ι hfin := by
+  have : HasPrincipalDivisors K E.FunctionField :=
+    WeierstrassCurve.Affine.hasPrincipalDivisors_functionField E
+  have : CharZero E'.FunctionField :=
+    charZero_of_injective_algebraMap (algebraMap K E'.FunctionField).injective
+  exact AlgebraicCurve.normFormulaAlong ι hfin (separableAlong_of_charZero ι hfin)
+
+end AutoNorm
+
+theorem map_eval_map_Φ {R S : Type*} [CommRing R] [CommRing S] (φ : R →+* S)
+    {N : ℕ} [NeZero N] (data : ModularCurve.ModularPolynomialData N) (a b : R) :
+    φ ((data.Φ.map (Polynomial.eval₂RingHom (Int.castRingHom R) a)).eval b) =
+      (data.Φ.map (Polynomial.eval₂RingHom (Int.castRingHom S) (φ a))).eval (φ b) := by
+  rw [Polynomial.eval_map, Polynomial.eval_map, Polynomial.hom_eval₂]
+  congr 1
+  refine Polynomial.ringHom_ext' (RingHom.ext_int _ _) ?_
+  simp
+
+theorem isElliptic_map {R S : Type*} [CommRing R] [CommRing S] (W : WeierstrassCurve R)
+    [W.IsElliptic]
+    (f : R →+* S) : (W.map f).IsElliptic :=
+  ⟨by rw [WeierstrassCurve.map_Δ]; exact (W.isUnit_Δ).map f⟩
+
+theorem j_eq_div {F : Type*} [Field F] (W : WeierstrassCurve F) [W.IsElliptic] :
+    W.j = W.c₄ ^ 3 / W.Δ := by
+  rw [WeierstrassCurve.j, ← WeierstrassCurve.coe_Δ', div_eq_inv_mul, Units.val_inv_eq_inv_val]
+
+scoped instance instIsEllipticWeierstrassCurve (L : PeriodPair) : L.weierstrassCurve.IsElliptic :=
+  ⟨isUnit_iff_ne_zero.mpr (PeriodPair.discriminant_ne_zero L).weierstrassCurve_Δ_ne_zero⟩
+
+theorem jLattice_eq_j (L : PeriodPair) : L.jLattice = L.weierstrassCurve.j := by
+  rw [PeriodPair.jLattice_eq_c₄_pow_three_div_Δ, j_eq_div]
+
+theorem complexCase (E E' : WeierstrassCurve.Affine ℂ) [E.IsElliptic] [E'.IsElliptic]
+    [GenusOnePlaceGate E] [GenusOnePlaceGate.IsCentred E] [AbelTheorem E]
+    [GenusOnePlaceGate E'] [GenusOnePlaceGate.IsCentred E'] [AbelTheorem E']
+    (ι : E'.FunctionField →ₐ[ℂ] E.FunctionField) (hι : ι.toRingHom.IsIntegral)
+    (hfin : FiniteAlong ℂ ι)
+    (hN : NormFormulaAlong ℂ ι hfin) (N : ℕ) [NeZero N]
+    (hcyc : IsAddCyclic (pointMapOfPushforward ι hι hfin hN).ker)
+    (hcard : Nat.card (pointMapOfPushforward ι hι hfin hN).ker = N)
+    (data : ModularCurve.ModularPolynomialData N) :
+    (data.Φ.map (Polynomial.eval₂RingHom (Int.castRingHom ℂ) E.j)).eval E'.j = 0 := by
+  obtain ⟨L, C, hE⟩ :=
+    PeriodPair.exists_variableChange_smul_weierstrassCurve_eq (E : WeierstrassCurve ℂ)
+  obtain ⟨L', C', hE'⟩ :=
+    PeriodPair.exists_variableChange_smul_weierstrassCurve_eq (E' : WeierstrassCurve ℂ)
+  subst hE hE'
+  have : IsDedekindDomain L.weierstrassCurve.toAffine.CoordinateRing :=
+    WeierstrassCurve.Affine.CoordinateRing.isDedekindDomain L.weierstrassCurve
+  have : IsDedekindDomain L'.weierstrassCurve.toAffine.CoordinateRing :=
+    WeierstrassCurve.Affine.CoordinateRing.isDedekindDomain L'.weierstrassCurve
+  have : HasPrincipalDivisors ℂ L.weierstrassCurve.toAffine.FunctionField :=
+    WeierstrassCurve.Affine.hasPrincipalDivisors_functionField L.weierstrassCurve.toAffine
+  have : HasPrincipalDivisors ℂ L'.weierstrassCurve.toAffine.FunctionField :=
+    WeierstrassCurve.Affine.hasPrincipalDivisors_functionField L'.weierstrassCurve.toAffine
+  obtain ⟨gL, hcL, haL⟩ :=
+    WeierstrassCurve.Affine.exists_genusOnePlaceGate_isCentred_and_abelTheorem
+      (W := L.weierstrassCurve.toAffine)
+  obtain ⟨gL', hcL', haL'⟩ :=
+    WeierstrassCurve.Affine.exists_genusOnePlaceGate_isCentred_and_abelTheorem
+      (W := L'.weierstrassCurve.toAffine)
+  let := gL
+  let := gL'
+  have := hcL
+  have := haL
+  have := hcL'
+  have := haL'
+  obtain ⟨eE⟩ :=
+    WeierstrassCurve.nonempty_functionField_algEquiv_of_variableChange L.weierstrassCurve C
+  obtain ⟨eE'⟩ :=
+    WeierstrassCurve.nonempty_functionField_algEquiv_of_variableChange L'.weierstrassCurve C'
+  have hι'' := conjSeam_isIntegral eE eE' ι hι
+  have hfin'' := conjSeam_finiteAlong eE eE' ι hfin
+  have hN'' : NormFormulaAlong ℂ (conjSeam eE eE' ι) hfin'' := normFormulaAlong_of_charZero _ hfin''
+  obtain ⟨hcyc'', hcard''⟩ :=
+    WeierstrassCurve.Affine.isAddCyclic_ker_pointMapOfPushforward_of_algEquiv_conj
+      (C • L.weierstrassCurve).toAffine (C' • L'.weierstrassCurve).toAffine
+      L.weierstrassCurve.toAffine L'.weierstrassCurve.toAffine
+      ι hι hfin hN eE eE' (conjSeam eE eE' ι) (fun x => by
+        rw [conjSeam_apply, AlgEquiv.apply_symm_apply]) hι'' hfin'' hN'' hcyc
+  rw [hcard] at hcard''
+  obtain ⟨β, hsub, hidx, hcycq⟩ :=
+    PeriodPair.exists_scale_lattice_subset_and_sublatticeIndex_eq_and_isAddCyclic_sublatticeQuotient
+      L L' (conjSeam eE eE' ι) hι'' hfin'' hN'' N hcyc'' hcard''
+  have hroot := ModularCurve.ModularPolynomialData.eval_jLattice_eq_zero_of_isAddCyclic
+    N data L (L'.scale β) hsub hidx hcycq
+  rw [PeriodPair.jLattice_scale, jLattice_eq_j, jLattice_eq_j] at hroot
+  have hj : WeierstrassCurve.j (C • L.weierstrassCurve) = L.weierstrassCurve.j :=
+    WeierstrassCurve.variableChange_j _ _
+  have hj' : WeierstrassCurve.j (C' • L'.weierstrassCurve) = L'.weierstrassCurve.j :=
+    WeierstrassCurve.variableChange_j _ _
+  have hjE : (show WeierstrassCurve.Affine ℂ from C • L.weierstrassCurve).j = L.weierstrassCurve.j
+    :=
+    hj
+  have hjE' : (show WeierstrassCurve.Affine ℂ from C' • L'.weierstrassCurve).j =
+    L'.weierstrassCurve.j :=
+    hj'
+  rw [hjE, hjE']
+  exact hroot
+
+end F4Proof
+
+namespace F4Proof
+open WeierstrassCurve WeierstrassCurve.Affine AlgebraicCurve
+
+theorem solution0
+    {K : Type} [Field K] [DecidableEq K] [IsAlgClosed K] [CharZero K]
+    (E E' : WeierstrassCurve.Affine K) [E.IsElliptic] [E'.IsElliptic]
+    [GenusOnePlaceGate E] [GenusOnePlaceGate.IsCentred E] [AbelTheorem E]
+    [GenusOnePlaceGate E'] [GenusOnePlaceGate.IsCentred E'] [AbelTheorem E']
+    (ι : E'.FunctionField →ₐ[K] E.FunctionField) (hι : ι.toRingHom.IsIntegral)
+    (hfin : FiniteAlong K ι)
+    (hN : NormFormulaAlong K ι hfin) (N : ℕ) [NeZero N]
+    (hcyc : IsAddCyclic (pointMapOfPushforward ι hι hfin hN).ker)
+    (hcard : Nat.card (pointMapOfPushforward ι hι hfin hN).ker = N)
+    (data : ModularCurve.ModularPolynomialData N) :
+    (data.Φ.map (Polynomial.eval₂RingHom (Int.castRingHom K) E.j)).eval E'.j = 0 := by
+  let : Algebra ℚ K := DivisionRing.toRatAlgebra
+  obtain ⟨K₀, hK₀, E₀, E₀', hE₀, hE₀', hE, hE', hEb, hEb', ι₀, hι₀, hfin₀, H⟩ :=
+    exists_intermediateField_countable_map_eq_of_isAddCyclic_ker_pointMapOfPushforward
+      E E' ι hι hfin hN N hcyc hcard
+  have := hE₀
+  have := hE₀'
+  have := hEb
+  have := hEb'
+  have : Countable K₀ := hK₀
+  have : CharZero K₀ := (algebraMap K₀ K).charZero
+  have : CharZero (AlgebraicClosure K₀) :=
+    charZero_of_injective_algebraMap (algebraMap K₀ (AlgebraicClosure K₀)).injective
+  have : DecidableEq (AlgebraicClosure K₀) := Classical.decEq _
+  have : IsDedekindDomain (E₀.baseChange (AlgebraicClosure K₀)).toAffine.CoordinateRing :=
+    WeierstrassCurve.Affine.CoordinateRing.isDedekindDomain _
+  have : IsDedekindDomain (E₀'.baseChange (AlgebraicClosure K₀)).toAffine.CoordinateRing :=
+    WeierstrassCurve.Affine.CoordinateRing.isDedekindDomain _
+  have : HasPrincipalDivisors (AlgebraicClosure K₀) (E₀.baseChange (AlgebraicClosure
+    K₀)).toAffine.FunctionField :=
+    WeierstrassCurve.Affine.hasPrincipalDivisors_functionField _
+  have : HasPrincipalDivisors (AlgebraicClosure K₀) (E₀'.baseChange (AlgebraicClosure
+    K₀)).toAffine.FunctionField :=
+    WeierstrassCurve.Affine.hasPrincipalDivisors_functionField _
+  obtain ⟨g₁, c₁, a₁⟩ := WeierstrassCurve.Affine.exists_genusOnePlaceGate_isCentred_and_abelTheorem
+    (W := (E₀.baseChange (AlgebraicClosure K₀)).toAffine)
+  obtain ⟨g₂, c₂, a₂⟩ := WeierstrassCurve.Affine.exists_genusOnePlaceGate_isCentred_and_abelTheorem
+    (W := (E₀'.baseChange (AlgebraicClosure K₀)).toAffine)
+  let := g₁
+  let := g₂
+  have := c₁
+  have := a₁
+  have := c₂
+  have := a₂
+  have hN₀ : NormFormulaAlong (AlgebraicClosure K₀) ι₀ hfin₀ :=
+    normFormulaAlong_of_charZero ι₀ hfin₀
+  obtain ⟨hcyc₀, hcard₀⟩ := H hN₀
+  obtain ⟨φ₀⟩ := Field.nonempty_ringHom_complex_of_countable K₀
+  let : Algebra K₀ ℂ := φ₀.toAlgebra
+  have : Module.IsTorsionFree K₀ ℂ :=
+    Module.isTorsionFree_iff_algebraMap_injective.mpr φ₀.injective
+  have : Module.IsTorsionFree K₀ (AlgebraicClosure K₀) :=
+    Module.isTorsionFree_iff_algebraMap_injective.mpr (algebraMap K₀ (AlgebraicClosure
+      K₀)).injective
+  let σ : AlgebraicClosure K₀ →ₐ[K₀] ℂ := IsAlgClosed.lift
+  have : (E₀.baseChange ℂ).IsElliptic := isElliptic_map E₀ _
+  have : (E₀'.baseChange ℂ).IsElliptic := isElliptic_map E₀' _
+  have : IsDedekindDomain (E₀.baseChange ℂ).toAffine.CoordinateRing :=
+    WeierstrassCurve.Affine.CoordinateRing.isDedekindDomain _
+  have : IsDedekindDomain (E₀'.baseChange ℂ).toAffine.CoordinateRing :=
+    WeierstrassCurve.Affine.CoordinateRing.isDedekindDomain _
+  have : HasPrincipalDivisors ℂ (E₀.baseChange ℂ).toAffine.FunctionField :=
+    WeierstrassCurve.Affine.hasPrincipalDivisors_functionField _
+  have : HasPrincipalDivisors ℂ (E₀'.baseChange ℂ).toAffine.FunctionField :=
+    WeierstrassCurve.Affine.hasPrincipalDivisors_functionField _
+  obtain ⟨g₃, c₃, a₃⟩ := WeierstrassCurve.Affine.exists_genusOnePlaceGate_isCentred_and_abelTheorem
+    (W := (E₀.baseChange ℂ).toAffine)
+  obtain ⟨g₄, c₄, a₄⟩ := WeierstrassCurve.Affine.exists_genusOnePlaceGate_isCentred_and_abelTheorem
+    (W := (E₀'.baseChange ℂ).toAffine)
+  let := g₃
+  let := g₄
+  have := c₃
+  have := a₃
+  have := c₄
+  have := a₄
+  obtain ⟨ι₁, hι₁, hfin₁, H₁⟩ :=
+    WeierstrassCurve.Affine.exists_algHom_baseChange_of_isAddCyclic_ker_pointMapOfPushforward
+      K₀ E₀ E₀' (AlgebraicClosure K₀) ℂ σ ι₀ hι₀ hfin₀ hN₀ N hcyc₀ hcard₀
+  have hN₁ : NormFormulaAlong ℂ ι₁ hfin₁ := normFormulaAlong_of_charZero ι₁ hfin₁
+  obtain ⟨hcyc₁, hcard₁⟩ := H₁ hN₁
+  have hC := complexCase (E₀.baseChange ℂ).toAffine (E₀'.baseChange ℂ).toAffine
+    ι₁ hι₁ hfin₁ hN₁ N hcyc₁ hcard₁ data
+  have hjC : WeierstrassCurve.j (E₀.baseChange ℂ).toAffine = φ₀ E₀.j := E₀.map_j φ₀
+  have hjC' : WeierstrassCurve.j (E₀'.baseChange ℂ).toAffine = φ₀ E₀'.j := E₀'.map_j φ₀
+  rw [hjC, hjC', ← map_eval_map_Φ] at hC
+  have hK₀ : (data.Φ.map (Polynomial.eval₂RingHom (Int.castRingHom K₀) E₀.j)).eval E₀'.j = 0 :=
+    φ₀.injective (hC.trans (map_zero φ₀).symm)
+  subst hE hE'
+  have hjK : WeierstrassCurve.j (show WeierstrassCurve.Affine K from E₀.map (algebraMap K₀ K)) =
+      algebraMap K₀ K E₀.j := E₀.map_j _
+  have hjK' : WeierstrassCurve.j (show WeierstrassCurve.Affine K from E₀'.map (algebraMap K₀ K)) =
+      algebraMap K₀ K E₀'.j := E₀'.map_j _
+  rw [hjK, hjK', ← map_eval_map_Φ, hK₀, map_zero]
+
+end F4Proof
+end
+
+open WeierstrassCurve WeierstrassCurve.Affine AlgebraicCurve
+
+theorem solution
+    (K : Type) [Field K] [DecidableEq K] [IsAlgClosed K] [CharZero K]
+    (E E' : WeierstrassCurve.Affine K) [E.IsElliptic] [E'.IsElliptic]
+    [GenusOnePlaceGate E] [GenusOnePlaceGate.IsCentred E] [AbelTheorem E]
+    [GenusOnePlaceGate E'] [GenusOnePlaceGate.IsCentred E'] [AbelTheorem E']
+    (ι : E'.FunctionField →ₐ[K] E.FunctionField) (hι : ι.toRingHom.IsIntegral)
+    (hfin : FiniteAlong K ι)
+    (hN : NormFormulaAlong K ι hfin) (N : ℕ) [NeZero N]
+    (hcyc : IsAddCyclic (pointMapOfPushforward ι hι hfin hN).ker)
+    (hcard : Nat.card (pointMapOfPushforward ι hι hfin hN).ker = N)
+    (data : ModularCurve.ModularPolynomialData N) :
+    (data.Φ.map (Polynomial.eval₂RingHom (Int.castRingHom K) E.j)).eval E'.j = 0 :=
+  F4Proof.solution0 E E' ι hι hfin hN N hcyc hcard data
+
+end privateSection
+
+public section publicSection
+
+namespace WeierstrassCurve.Affine
+open AlgebraicCurve
+
+theorem
+  eval_modularPolynomial_map_j_eq_zero_of_isAddCyclic_ker_pointMapOfPushforward
+    (K : Type) [Field K] [DecidableEq K] [IsAlgClosed K] [CharZero K]
+    (E E' : WeierstrassCurve.Affine K) [E.IsElliptic] [E'.IsElliptic]
+    [GenusOnePlaceGate E] [GenusOnePlaceGate.IsCentred E] [AbelTheorem E]
+    [GenusOnePlaceGate E'] [GenusOnePlaceGate.IsCentred E'] [AbelTheorem E']
+    (ι : E'.FunctionField →ₐ[K] E.FunctionField) (hι : ι.toRingHom.IsIntegral)
+    (hfin : FiniteAlong K ι)
+    (hN : NormFormulaAlong K ι hfin) (N : ℕ) [NeZero N]
+    (hcyc : IsAddCyclic (pointMapOfPushforward ι hι hfin hN).ker)
+    (hcard : Nat.card (pointMapOfPushforward ι hι hfin hN).ker = N)
+    (data : ModularCurve.ModularPolynomialData N) :
+    (data.Φ.map (Polynomial.eval₂RingHom (Int.castRingHom K) E.j)).eval E'.j = 0 :=
+  solution K E E' ι hι hfin hN N hcyc hcard data
+
+end WeierstrassCurve.Affine
+
+end publicSection

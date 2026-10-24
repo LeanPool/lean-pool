@@ -1,0 +1,453 @@
+/-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
+Based on Prove2Me node
+WeierstrassCurve.Affine.isAddCyclic_ker_pointMapOfPushforward_of_baseChange_algHom
+(f4d949d7-d2e9-583c-970a-d2c81be54545) by Claude (2026-09-05).
+
+Proof based on Prove2Me submission dc1eabf7-1867-53e3-b324-7414996a1c99
+by Claude (2026-09-05); locally adapted.
+
+Licensed under Apache License 2.0
+(https://www.apache.org/licenses/LICENSE-2.0).
+-/
+
+module
+
+public import LeanPool.FLTEichlerShimura.Definitions.Def_Isogeny_ConditionalCurrency
+public import LeanPool.FLTEichlerShimura.Definitions.Def_WeierstrassCurve_FunctionFieldQuadratic
+public import LeanPool.FLTEichlerShimura.Definitions.Def_WeierstrassCurve_GenusOnePlaceGateCentred
+
+import Mathlib.Algebra.Algebra.Field
+import Mathlib.Algebra.Polynomial.Basis
+import Mathlib.AlgebraicTopology.FundamentalGroupoid.SimplyConnected
+import Mathlib.Analysis.Complex.Polynomial.Basic
+import Mathlib.Order.CompletePartialOrder
+
+import LeanPool.FLTEichlerShimura.Definitions.Defs_IsogenyBaseChange_sharedLibrary
+import LeanPool.FLTEichlerShimura.Definitions.Def_AlgebraicCurve_PlacesOverDVR
+import LeanPool.FLTEichlerShimura.Definitions.Def_AlgebraicCurve_RatFuncPlaces
+import LeanPool.FLTEichlerShimura.Definitions.Def_EllipticCurve_FunctionFieldPullback
+
+import LeanPool.FLTEichlerShimura.Theorems.Thm_AddCommGroup_nonempty_zmod_prod_addEquiv_torsionBy_of_card_torsionBy_eq_sq
+import LeanPool.FLTEichlerShimura.Theorems.Thm_AlgebraicCurve_Place_evalAt_inv
+import LeanPool.FLTEichlerShimura.Theorems.Thm_AlgebraicCurve_Place_evalAt_mul
+import LeanPool.FLTEichlerShimura.Theorems.Thm_AlgebraicCurve_normFormulaAlong
+import LeanPool.FLTEichlerShimura.Theorems.Thm_PeriodPair_isUniformization_toPoint
+import LeanPool.FLTEichlerShimura.Theorems.Thm_WeierstrassCurve_Affine_CoordinateRing_XYIdeal_ne_bot
+import LeanPool.FLTEichlerShimura.Theorems.Thm_WeierstrassCurve_Affine_algebraMap_mk_C_X_notMem_toValuationSubring_placeOfPoint_zero
+import LeanPool.FLTEichlerShimura.Theorems.Thm_WeierstrassCurve_Affine_hasPrincipalDivisors_functionField
+import LeanPool.FLTEichlerShimura.Theorems.Thm_WeierstrassCurve_Affine_natCard_ker_pointMapOfPushforward_eq_finrankAlong
+import LeanPool.FLTEichlerShimura.Theorems.Thm_WeierstrassCurve_card_torsionBy_eq_sq_of_isAlgClosed
+import LeanPool.FLTEichlerShimura.Theorems.Thm_WeierstrassCurve_Affine_CoordinateRing_isDedekindDomain
+import LeanPool.FLTEichlerShimura.Theorems.Thm_WeierstrassCurve_Affine_placeOfPoint_some_eq_ofHeightOneSpectrum
+import LeanPool.FLTEichlerShimura.Theorems.Thm_PeriodPair_discriminant_ne_zero
+import LeanPool.FLTEichlerShimura.Theorems.Thm_AlgebraicCurve_Place_min_ord_le_ord_add_v2
+
+/-!
+# Cyclic kernel of order N descends along base change
+
+Theorem statement:
+`WeierstrassCurve.Affine.isAddCyclic_ker_pointMapOfPushforward_of_baseChange_algHom`
+(`f4d949d7-d2e9-583c-970a-d2c81be54545`), by Claude, 2026-09-05.
+
+Proof: submission `dc1eabf7-1867-53e3-b324-7414996a1c99`, by Claude, 2026-09-05 (ACCEPTED); locally
+adapted.
+
+Let $R_0$ be a field, let $E_0,E_0'$ be elliptic Weierstrass curves over $R_0$, and let
+$F_1\subseteq F_2$ be algebraically closed $R_0$-algebras of characteristic $0$ forming a scalar
+tower over $R_0$ (all in one universe), such that the four base changes $E_0\otimes F_i$,
+$E_0'\otimes F_i$ are elliptic and each of their affine models carries: a `GenusOnePlaceGate`, i.e.
+a bijection between its group of points and the places of its function field over the base field,
+all of degree $1$; the centredness condition that at the place attached to a point $(x,y)$ the
+classes of $X-x$ and $Y-y$ are nonunits of the valuation subring; and `AbelTheorem`, i.e. a
+degree-zero divisor is principal exactly when its divisor sum vanishes. Let $\chi$, resp. $\chi'$,
+be $F_1$-algebra maps from the function field of $E_0\otimes F_1$, resp. $E_0'\otimes F_1$, to that
+of $E_0\otimes F_2$, resp. $E_0'\otimes F_2$, carrying the coordinate function $x$ to $x$ and $y$ to
+$y$. Let $\iota_1$ be an $F_1$-algebra map from the function field of $E_0'\otimes F_1$ to that of
+$E_0\otimes F_1$ whose underlying ring map is integral, which makes the target a finite module over
+the source, and which satisfies the pushforward norm formula (for nonzero $f$ and a divisor $D$ with
+$D(w)=\mathrm{ord}_w f$ for all places $w$ upstairs, the pushforward of $D$ has value
+$\mathrm{ord}_v(\mathrm{N}f)$ at each place $v$ downstairs); let $\iota_2$ be the analogous datum
+over $F_2$, compatible with base change in the sense that $\iota_2(\chi'(x))=\chi(\iota_1(x))$ for
+all $x$. Let $N$ be a nonzero natural number. If the kernel of the map $(E_0\otimes
+F_2)(F_2)\to(E_0'\otimes F_2)(F_2)$ induced by divisor pushforward along $\iota_2$ is additively
+cyclic of cardinality $N$, then the kernel of the corresponding map $(E_0\otimes
+F_1)(F_1)\to(E_0'\otimes F_1)(F_1)$ induced by pushforward along $\iota_1$ is additively cyclic of
+cardinality $N$ as well.
+
+The statement transports the cyclicity and the order of the kernel of an isogeny, realised here as
+the map on points coming from divisor pushforward along an inclusion of function fields, downwards
+along an extension of algebraically closed fields of characteristic $0$ over a common base. It is
+used by
+[`WeierstrassCurve.Affine.
+exists_intermediateField_countable_map_eq_of_isAddCyclic_ker_pointMapOfPushforward`]
+(thm.html#WeierstrassCurve.Affine.
+exists_intermediateField_countable_map_eq_of_isAddCyclic_ker_pointMapOfPushforward),
+which descends such a configuration to a countable intermediate field.
+
+## Explanation of the source proof
+
+Proof transplanted from the FLT repository:
+https://github.com/anthropics/fermats-last-theorem/blob/aa2d8b34692b16c70f699536de0d8e75b9a3e9ef/P2M/Sol/S_WeierstrassCurve_Affine_isAddCyclic_ker_pointMapOfPushforward_of_baseChange_algHom.lean
+
+<!-- Generated by add_prove2me_provenance.py -->
+-/
+
+section privateSection
+
+noncomputable section
+
+section
+
+section
+
+section
+
+namespace ModularCurve
+open WeierstrassCurve  WeierstrassCurve.Affine  Polynomial  AlgebraicCurve
+universe u
+attribute [local instance] Classical.propDecidable
+section GeomMorphBC
+variable {K : Type u} [Field K] [DecidableEq K] [IsAlgClosed K] [CharZero K]
+variable {E E' : Affine K} [E.IsElliptic] [GenusOnePlaceGate E] [AbelTheorem E]
+  [E'.IsElliptic] [GenusOnePlaceGate E'] [AbelTheorem E']
+variable (ι : E'.FunctionField →ₐ[K] E.FunctionField)
+variable (hι : ι.toRingHom.IsIntegral) (hfin : FiniteAlong K ι) (hN : NormFormulaAlong K ι hfin)
+
+local notation "gBC" => kw_fdn2_qephod_hend7_geomMorphBC ι hι
+
+end GeomMorphBC
+end ModularCurve
+end
+end
+
+section
+
+section
+
+section
+
+section
+
+open WeierstrassCurve  WeierstrassCurve.Affine   AlgebraicCurve
+open Polynomial
+open scoped TensorProduct Polynomial.Bivariate
+
+namespace ModularCurve
+
+universe u
+
+section Setup
+
+variable {R₀ : Type u} [Field R₀]
+variable (W : WeierstrassCurve R₀) [W.IsElliptic]
+variable (F : Type u) [Field F] [Algebra R₀ F] [DecidableEq F] [IsAlgClosed F] [CharZero F]
+variable (F' : Type u) [Field F'] [Algebra R₀ F'] [DecidableEq F'] [IsAlgClosed F'] [CharZero F']
+variable [Algebra F F'] [IsScalarTower R₀ F F']
+
+variable [WeierstrassCurve.Affine.GenusOnePlaceGate (W⁄F).toAffine]
+    [WeierstrassCurve.Affine.GenusOnePlaceGate.IsCentred (W⁄F).toAffine]
+    [WeierstrassCurve.Affine.AbelTheorem (W⁄F).toAffine]
+variable [WeierstrassCurve.Affine.GenusOnePlaceGate (W⁄F').toAffine]
+    [WeierstrassCurve.Affine.GenusOnePlaceGate.IsCentred (W⁄F').toAffine]
+    [WeierstrassCurve.Affine.AbelTheorem (W⁄F').toAffine]
+
+attribute [local instance] Algebra.TensorProduct.rightAlgebra
+
+end Setup
+end ModularCurve
+end
+
+section
+
+section
+
+open WeierstrassCurve  WeierstrassCurve.Affine   AlgebraicCurve
+open Polynomial
+open scoped TensorProduct Polynomial
+
+namespace ModularCurve
+
+universe u
+
+section Setup
+
+variable {R₀ : Type u} [Field R₀]
+variable (W : WeierstrassCurve R₀) [W.IsElliptic]
+variable (F : Type u) [Field F] [Algebra R₀ F] [DecidableEq F] [IsAlgClosed F] [CharZero F]
+variable (F' : Type u) [Field F'] [Algebra R₀ F'] [DecidableEq F'] [IsAlgClosed F'] [CharZero F']
+variable [Algebra F F'] [IsScalarTower R₀ F F']
+
+variable [WeierstrassCurve.Affine.GenusOnePlaceGate (W⁄F).toAffine]
+    [WeierstrassCurve.Affine.GenusOnePlaceGate.IsCentred (W⁄F).toAffine]
+    [WeierstrassCurve.Affine.AbelTheorem (W⁄F).toAffine]
+variable [WeierstrassCurve.Affine.GenusOnePlaceGate (W⁄F').toAffine]
+    [WeierstrassCurve.Affine.GenusOnePlaceGate.IsCentred (W⁄F').toAffine]
+    [WeierstrassCurve.Affine.AbelTheorem (W⁄F').toAffine]
+attribute [local instance] Algebra.TensorProduct.rightAlgebra
+
+end Setup
+end ModularCurve
+end
+
+section
+
+section
+
+section
+
+open WeierstrassCurve  WeierstrassCurve.Affine  Polynomial AlgebraicCurve
+open scoped TensorProduct Polynomial  Polynomial.Bivariate
+
+namespace ModularCurve
+
+universe u
+
+attribute [local instance] Classical.propDecidable
+section KerTransportMint
+
+def KwD5BetweenCurvesKerTransportAlongEmbed : Prop :=
+  ∀ (R₀ : Type u) [Field R₀] (E₀ E₀' : WeierstrassCurve R₀) [E₀.IsElliptic] [E₀'.IsElliptic]
+    (F₁ : Type u) [Field F₁] [Algebra R₀ F₁] [DecidableEq F₁] [IsAlgClosed F₁] [CharZero F₁]
+    (F₂ : Type u) [Field F₂] [Algebra R₀ F₂] [DecidableEq F₂] [IsAlgClosed F₂] [CharZero F₂]
+    [Algebra F₁ F₂] [IsScalarTower R₀ F₁ F₂]
+    [(E₀⁄F₁).IsElliptic] [WeierstrassCurve.Affine.GenusOnePlaceGate (E₀⁄F₁).toAffine]
+    [WeierstrassCurve.Affine.GenusOnePlaceGate.IsCentred (E₀⁄F₁).toAffine]
+    [WeierstrassCurve.Affine.AbelTheorem (E₀⁄F₁).toAffine] [(E₀'⁄F₁).IsElliptic]
+    [WeierstrassCurve.Affine.GenusOnePlaceGate (E₀'⁄F₁).toAffine]
+    [WeierstrassCurve.Affine.GenusOnePlaceGate.IsCentred (E₀'⁄F₁).toAffine]
+    [WeierstrassCurve.Affine.AbelTheorem (E₀'⁄F₁).toAffine] [(E₀⁄F₂).IsElliptic]
+    [WeierstrassCurve.Affine.GenusOnePlaceGate (E₀⁄F₂).toAffine]
+    [WeierstrassCurve.Affine.GenusOnePlaceGate.IsCentred (E₀⁄F₂).toAffine]
+    [WeierstrassCurve.Affine.AbelTheorem (E₀⁄F₂).toAffine] [(E₀'⁄F₂).IsElliptic]
+    [WeierstrassCurve.Affine.GenusOnePlaceGate (E₀'⁄F₂).toAffine]
+    [WeierstrassCurve.Affine.GenusOnePlaceGate.IsCentred (E₀'⁄F₂).toAffine]
+    [WeierstrassCurve.Affine.AbelTheorem (E₀'⁄F₂).toAffine]
+    (ι₁ : (E₀'⁄F₁).toAffine.FunctionField →ₐ[F₁] (E₀⁄F₁).toAffine.FunctionField)
+    (hι₁ : ι₁.toRingHom.IsIntegral) (hfin₁ : FiniteAlong F₁ ι₁)
+    (ι₂ : (E₀'⁄F₂).toAffine.FunctionField →ₐ[F₂] (E₀⁄F₂).toAffine.FunctionField)
+    (hι₂ : ι₂.toRingHom.IsIntegral) (hfin₂ : FiniteAlong F₂ ι₂)
+    (_hχ : ∀ x : (E₀'⁄F₁).toAffine.FunctionField,
+      ι₂ (kw_functionFieldMapAlongGeneral E₀' F₁ F₂ x)
+        = kw_functionFieldMapAlongGeneral E₀ F₁ F₂ (ι₁ x))
+    (N : ℕ) [NeZero N],
+    IsAddCyclic (AddMonoidHom.ker
+      (pointMapOfPushforward ι₂ hι₂ hfin₂ (normFormulaAlong_of_elliptic ι₂ hfin₂))) →
+    Nat.card (AddMonoidHom.ker
+      (pointMapOfPushforward ι₂ hι₂ hfin₂ (normFormulaAlong_of_elliptic ι₂ hfin₂))) = N →
+    IsAddCyclic (AddMonoidHom.ker
+      (pointMapOfPushforward ι₁ hι₁ hfin₁ (normFormulaAlong_of_elliptic ι₁ hfin₁))) ∧
+    Nat.card (AddMonoidHom.ker
+      (pointMapOfPushforward ι₁ hι₁ hfin₁ (normFormulaAlong_of_elliptic ι₁ hfin₁))) = N
+end KerTransportMint
+end ModularCurve
+end
+
+section
+
+section
+
+open WeierstrassCurve  WeierstrassCurve.Affine  Polynomial AlgebraicCurve
+
+open TensorProduct Polynomial  Polynomial.Bivariate
+
+namespace ModularCurve
+
+attribute [local instance] Classical.propDecidable
+attribute [local instance] Algebra.TensorProduct.rightAlgebra
+
+universe u
+
+theorem kw_surgehgf4_hfgkd_ktd_kerTransport_proved :
+    KwD5BetweenCurvesKerTransportAlongEmbed.{u} := by
+  intro R₀ _ E₀ E₀' _ _ F₁ _ _ _ _ _ F₂ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+    ι₁ hι₁ hfin₁ ι₂ hι₂ hfin₂ hχ N _ hcyc₂ hcard₂
+  obtain ⟨ι₂', _, _, hD, hcompat, hnat'⟩ :=
+    exists_functionFieldHom_baseChange_compatible E₀ E₀' F₁ F₂ ι₁ hι₁ hfin₁
+  have heq : ι₂ = ι₂' := by
+    refine kw_functionField_algHom_ext ?_ ?_
+    · rw [show polyToFunctionField (E₀'⁄F₂).toAffine X
+            = kw_functionFieldMapAlongGeneral E₀' F₁ F₂
+                (polyToFunctionField (E₀'⁄F₁).toAffine X) from
+          (kw_functionFieldMapAlongGeneral_polyToFunctionField_X E₀' F₁ F₂).symm,
+        hχ, hcompat]
+    · rw [show yGen (E₀'⁄F₂).toAffine
+            = kw_functionFieldMapAlongGeneral E₀' F₁ F₂ (yGen (E₀'⁄F₁).toAffine) from
+          (kw_functionFieldMapAlongGeneral_yGen E₀' F₁ F₂).symm,
+        hχ, hcompat]
+  subst ι₂'
+  clear hχ
+  let φ₁ := pointMapOfPushforward ι₁ hι₁ hfin₁ (normFormulaAlong_of_elliptic ι₁ hfin₁)
+  let φ₂ := pointMapOfPushforward _ hι₂ hfin₂ (normFormulaAlong_of_elliptic _ hfin₂)
+  have hker₁ : Nat.card (AddMonoidHom.ker φ₁) = N := by
+    rw [show φ₁ = _ from rfl,
+      natCard_ker_pointMapOfPushforward_eq_finrankAlong
+        (E₀⁄F₁).toAffine (E₀'⁄F₁).toAffine ι₁ hι₁ hfin₁
+        (normFormulaAlong_of_elliptic ι₁ hfin₁), ← hD,
+      ← natCard_ker_pointMapOfPushforward_eq_finrankAlong
+        (E₀⁄F₂).toAffine (E₀'⁄F₂).toAffine _ hι₂ hfin₂
+        (normFormulaAlong_of_elliptic _ hfin₂)]
+    exact hcard₂
+  let σ : F₁ →ₐ[R₀] F₂ := IsScalarTower.toAlgHom R₀ F₁ F₂
+  let σE : (E₀⁄F₁).toAffine.Point →+ (E₀⁄F₂).toAffine.Point :=
+    WeierstrassCurve.Affine.Point.map (W' := E₀.toAffine) σ
+  let σE' : (E₀'⁄F₁).toAffine.Point →+ (E₀'⁄F₂).toAffine.Point :=
+    WeierstrassCurve.Affine.Point.map (W' := E₀'.toAffine) σ
+  have hσE_inj : Function.Injective σE :=
+    WeierstrassCurve.Affine.Point.map_injective (W' := E₀.toAffine) σ
+  have hnat : ∀ P, φ₂ (σE P) = σE' (φ₁ P) :=
+    hnat'
+  have hker_sub : ∀ P ∈ AddMonoidHom.ker φ₁, σE P ∈ AddMonoidHom.ker φ₂ := by
+    intro P hP
+    rw [AddMonoidHom.mem_ker] at hP ⊢
+    rw [hnat P, hP, map_zero]
+  let σE_ker : (AddMonoidHom.ker φ₁) →+ (AddMonoidHom.ker φ₂) :=
+    { toFun := fun ⟨P, hP⟩ => ⟨σE P, hker_sub P hP⟩
+      map_zero' := Subtype.ext (map_zero σE)
+      map_add' := fun ⟨P, _⟩ ⟨Q, _⟩ => Subtype.ext (map_add σE P Q) }
+  have hσE_ker_inj : Function.Injective σE_ker := fun ⟨P, _⟩ ⟨Q, _⟩ hPQ =>
+    Subtype.ext (hσE_inj (Subtype.ext_iff.mp hPQ))
+  have hcard_eq : Nat.card (AddMonoidHom.ker φ₁) = Nat.card (AddMonoidHom.ker φ₂) := by
+    rw [hker₁, hcard₂]
+  have hfin_ker₁ : Finite (AddMonoidHom.ker φ₁) :=
+    Nat.finite_of_card_ne_zero (hker₁ ▸ (NeZero.ne N))
+  have hfin_ker₂ : Finite (AddMonoidHom.ker φ₂) :=
+    Nat.finite_of_card_ne_zero (hcard₂ ▸ (NeZero.ne N))
+  have hσE_ker_bij : Function.Bijective σE_ker :=
+    (Nat.bijective_iff_injective_and_card _).mpr ⟨hσE_ker_inj, hcard_eq⟩
+  let e : (AddMonoidHom.ker φ₁) ≃+ (AddMonoidHom.ker φ₂) :=
+    AddEquiv.ofBijective σE_ker hσE_ker_bij
+  have hcyc₁ : IsAddCyclic (AddMonoidHom.ker φ₁) := by
+    obtain ⟨⟨g₂, hg₂⟩⟩ := hcyc₂
+    exact ⟨⟨e.symm g₂, fun y => by
+      obtain ⟨k, hk⟩ := hg₂ (e y)
+      exact ⟨k, e.injective (by rw [map_zsmul, e.apply_symm_apply]; exact hk)⟩⟩⟩
+  exact ⟨hcyc₁, hker₁⟩
+
+end ModularCurve
+end
+end
+
+universe u_kt in
+theorem kerTransport_s17 :
+    ModularCurve.KwD5BetweenCurvesKerTransportAlongEmbed.{u_kt} :=
+      ModularCurve.kw_surgehgf4_hfgkd_ktd_kerTransport_proved.{u_kt}
+
+universe u_sol in
+open WeierstrassCurve AlgebraicCurve WeierstrassCurve.Affine in
+theorem solution
+    (R₀ : Type u_sol) [Field R₀] (E₀ E₀' : WeierstrassCurve R₀) [E₀.IsElliptic] [E₀'.IsElliptic]
+    (F₁ : Type u_sol) [Field F₁] [Algebra R₀ F₁] [DecidableEq F₁] [IsAlgClosed F₁] [CharZero F₁]
+    (F₂ : Type u_sol) [Field F₂] [Algebra R₀ F₂] [DecidableEq F₂] [IsAlgClosed F₂] [CharZero F₂]
+    [Algebra F₁ F₂] [IsScalarTower R₀ F₁ F₂]
+    [(E₀.baseChange F₁).IsElliptic] [(E₀'.baseChange F₁).IsElliptic]
+    [(E₀.baseChange F₂).IsElliptic] [(E₀'.baseChange F₂).IsElliptic]
+    [GenusOnePlaceGate (E₀.baseChange F₁).toAffine]
+    [GenusOnePlaceGate.IsCentred (E₀.baseChange F₁).toAffine]
+    [AbelTheorem (E₀.baseChange F₁).toAffine]
+    [GenusOnePlaceGate (E₀'.baseChange F₁).toAffine]
+    [GenusOnePlaceGate.IsCentred (E₀'.baseChange F₁).toAffine]
+    [AbelTheorem (E₀'.baseChange F₁).toAffine]
+    [GenusOnePlaceGate (E₀.baseChange F₂).toAffine]
+    [GenusOnePlaceGate.IsCentred (E₀.baseChange F₂).toAffine]
+    [AbelTheorem (E₀.baseChange F₂).toAffine]
+    [GenusOnePlaceGate (E₀'.baseChange F₂).toAffine]
+    [GenusOnePlaceGate.IsCentred (E₀'.baseChange F₂).toAffine]
+    [AbelTheorem (E₀'.baseChange F₂).toAffine]
+    (χ : (E₀.baseChange F₁).toAffine.FunctionField →ₐ[F₁] (E₀.baseChange F₂).toAffine.FunctionField)
+    (hχX : χ (polyToFunctionField (E₀.baseChange F₁).toAffine Polynomial.X)
+      = polyToFunctionField (E₀.baseChange F₂).toAffine Polynomial.X)
+    (hχY : χ (yCoord (E₀.baseChange F₁).toAffine) = yCoord (E₀.baseChange F₂).toAffine)
+    (χ' : (E₀'.baseChange F₁).toAffine.FunctionField →ₐ[F₁] (E₀'.baseChange
+      F₂).toAffine.FunctionField)
+    (hχ'X : χ' (polyToFunctionField (E₀'.baseChange F₁).toAffine Polynomial.X)
+      = polyToFunctionField (E₀'.baseChange F₂).toAffine Polynomial.X)
+    (hχ'Y : χ' (yCoord (E₀'.baseChange F₁).toAffine) = yCoord (E₀'.baseChange F₂).toAffine)
+    (ι₁ : (E₀'.baseChange F₁).toAffine.FunctionField →ₐ[F₁] (E₀.baseChange
+      F₁).toAffine.FunctionField)
+    (hι₁ : ι₁.toRingHom.IsIntegral) (hfin₁ : FiniteAlong F₁ ι₁) (hN₁ : NormFormulaAlong F₁ ι₁ hfin₁)
+    (ι₂ : (E₀'.baseChange F₂).toAffine.FunctionField →ₐ[F₂] (E₀.baseChange
+      F₂).toAffine.FunctionField)
+    (hι₂ : ι₂.toRingHom.IsIntegral) (hfin₂ : FiniteAlong F₂ ι₂) (hN₂ : NormFormulaAlong F₂ ι₂ hfin₂)
+    (hcompat : ∀ x, ι₂ (χ' x) = χ (ι₁ x))
+    (N : ℕ) [NeZero N]
+    (hcyc : IsAddCyclic (pointMapOfPushforward ι₂ hι₂ hfin₂ hN₂).ker)
+    (hcard : Nat.card (pointMapOfPushforward ι₂ hι₂ hfin₂ hN₂).ker = N) :
+    IsAddCyclic (pointMapOfPushforward ι₁ hι₁ hfin₁ hN₁).ker ∧
+      Nat.card (pointMapOfPushforward ι₁ hι₁ hfin₁ hN₁).ker = N := by
+  have hχE : χ = ModularCurve.kw_functionFieldMapAlongGeneral E₀ F₁ F₂ := by
+    refine WeierstrassCurve.Affine.kw_functionField_algHom_ext ?_ ?_
+    · rw [hχX, ModularCurve.kw_functionFieldMapAlongGeneral_polyToFunctionField_X]
+    · rw [ModularCurve.kw_functionFieldMapAlongGeneral_yGen]; exact hχY
+  have hχE' : χ' = ModularCurve.kw_functionFieldMapAlongGeneral E₀' F₁ F₂ := by
+    refine WeierstrassCurve.Affine.kw_functionField_algHom_ext ?_ ?_
+    · rw [hχ'X, ModularCurve.kw_functionFieldMapAlongGeneral_polyToFunctionField_X]
+    · rw [ModularCurve.kw_functionFieldMapAlongGeneral_yGen]; exact hχ'Y
+  subst hχE; subst hχE'
+  exact kerTransport_s17.{u_sol} R₀ E₀ E₀' F₁ F₂ ι₁ hι₁ hfin₁ ι₂ hι₂ hfin₂ hcompat N hcyc hcard
+
+end
+end
+end
+end
+end
+end
+end
+end
+
+end privateSection
+
+public section publicSection
+
+open WeierstrassCurve WeierstrassCurve.Affine AlgebraicCurve
+
+universe u
+theorem WeierstrassCurve.Affine.isAddCyclic_ker_pointMapOfPushforward_of_baseChange_algHom
+    (R₀ : Type u) [Field R₀] (E₀ E₀' : WeierstrassCurve R₀) [E₀.IsElliptic] [E₀'.IsElliptic]
+    (F₁ : Type u) [Field F₁] [Algebra R₀ F₁] [DecidableEq F₁] [IsAlgClosed F₁] [CharZero F₁]
+    (F₂ : Type u) [Field F₂] [Algebra R₀ F₂] [DecidableEq F₂] [IsAlgClosed F₂] [CharZero F₂]
+    [Algebra F₁ F₂] [IsScalarTower R₀ F₁ F₂]
+    [(E₀.baseChange F₁).IsElliptic] [(E₀'.baseChange F₁).IsElliptic]
+    [(E₀.baseChange F₂).IsElliptic] [(E₀'.baseChange F₂).IsElliptic]
+    [GenusOnePlaceGate (E₀.baseChange F₁).toAffine]
+    [GenusOnePlaceGate.IsCentred (E₀.baseChange F₁).toAffine]
+    [AbelTheorem (E₀.baseChange F₁).toAffine]
+    [GenusOnePlaceGate (E₀'.baseChange F₁).toAffine]
+    [GenusOnePlaceGate.IsCentred (E₀'.baseChange F₁).toAffine]
+    [AbelTheorem (E₀'.baseChange F₁).toAffine]
+    [GenusOnePlaceGate (E₀.baseChange F₂).toAffine]
+    [GenusOnePlaceGate.IsCentred (E₀.baseChange F₂).toAffine]
+    [AbelTheorem (E₀.baseChange F₂).toAffine]
+    [GenusOnePlaceGate (E₀'.baseChange F₂).toAffine]
+    [GenusOnePlaceGate.IsCentred (E₀'.baseChange F₂).toAffine]
+    [AbelTheorem (E₀'.baseChange F₂).toAffine]
+    (χ : (E₀.baseChange F₁).toAffine.FunctionField →ₐ[F₁] (E₀.baseChange F₂).toAffine.FunctionField)
+    (hχX : χ (polyToFunctionField (E₀.baseChange F₁).toAffine Polynomial.X)
+      = polyToFunctionField (E₀.baseChange F₂).toAffine Polynomial.X)
+    (hχY : χ (yCoord (E₀.baseChange F₁).toAffine) = yCoord (E₀.baseChange F₂).toAffine)
+    (χ' : (E₀'.baseChange F₁).toAffine.FunctionField →ₐ[F₁] (E₀'.baseChange
+      F₂).toAffine.FunctionField)
+    (hχ'X : χ' (polyToFunctionField (E₀'.baseChange F₁).toAffine Polynomial.X)
+      = polyToFunctionField (E₀'.baseChange F₂).toAffine Polynomial.X)
+    (hχ'Y : χ' (yCoord (E₀'.baseChange F₁).toAffine) = yCoord (E₀'.baseChange F₂).toAffine)
+    (ι₁ : (E₀'.baseChange F₁).toAffine.FunctionField →ₐ[F₁] (E₀.baseChange
+      F₁).toAffine.FunctionField)
+    (hι₁ : ι₁.toRingHom.IsIntegral) (hfin₁ : FiniteAlong F₁ ι₁) (hN₁ : NormFormulaAlong F₁ ι₁ hfin₁)
+    (ι₂ : (E₀'.baseChange F₂).toAffine.FunctionField →ₐ[F₂] (E₀.baseChange
+      F₂).toAffine.FunctionField)
+    (hι₂ : ι₂.toRingHom.IsIntegral) (hfin₂ : FiniteAlong F₂ ι₂) (hN₂ : NormFormulaAlong F₂ ι₂ hfin₂)
+    (hcompat : ∀ x, ι₂ (χ' x) = χ (ι₁ x))
+    (N : ℕ) [NeZero N]
+    (hcyc : IsAddCyclic (pointMapOfPushforward ι₂ hι₂ hfin₂ hN₂).ker)
+    (hcard : Nat.card (pointMapOfPushforward ι₂ hι₂ hfin₂ hN₂).ker = N) :
+    IsAddCyclic (pointMapOfPushforward ι₁ hι₁ hfin₁ hN₁).ker ∧
+      Nat.card (pointMapOfPushforward ι₁ hι₁ hfin₁ hN₁).ker = N :=
+  solution R₀ E₀ E₀' F₁ F₂ χ hχX hχY χ' hχ'X hχ'Y ι₁ hι₁ hfin₁ hN₁ ι₂ hι₂ hfin₂ hN₂ hcompat N hcyc
+    hcard
+
+end publicSection
