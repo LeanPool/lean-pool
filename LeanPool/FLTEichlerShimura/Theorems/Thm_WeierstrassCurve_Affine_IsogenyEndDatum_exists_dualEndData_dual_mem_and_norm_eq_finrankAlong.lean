@@ -860,18 +860,6 @@ namespace Place
 open AlgebraicCurve.Place
 variable {K F : Type*} [Field K] [Field F] [Algebra K F] (v : Place K F)
 
-private theorem ord_algebraMap_s18priv (c : K) : v.ord (algebraMap K F c) = 0 := by
-  rcases eq_or_ne c 0 with rfl | hc
-  · simp
-  have hmem : algebraMap K F c ∈ v.toValuationSubring := v.algebraMap_mem' c
-  have hmem' : (algebraMap K F c)⁻¹ ∈ v.toValuationSubring := by
-    rw [← map_inv₀]
-    exact v.algebraMap_mem' c⁻¹
-  have h1 := AlgebraicCurve.Place.ord_nonneg_of_mem v hmem
-  have h2 := AlgebraicCurve.Place.ord_nonneg_of_mem v hmem'
-  rw [v.ord_inv] at h2
-  omega
-
 private theorem ord_pow (f : F) (n : ℕ) :
     v.ord (f ^ n) = n * v.ord f := by
   rw [← zpow_natCast, v.ord_zpow]
@@ -1356,112 +1344,6 @@ theorem ramificationIndex_eq_ramificationIdx_fiberCenter (hw : w.restrict F = v)
 
 end ValuationDictionary
 
-section ResidueDictionary
-
-variable {v : Place K F} {w : Place K F'}
-
-def toValuationSubringOfRestrictEq (hw : w.restrict F = v) :
-    integralClosureAt F' v →+* w.toValuationSubring :=
-  (algebraMap (integralClosureAt F' v) F').codRestrict
-    w.toValuationSubring.toSubring (forall_mem_of_restrict_eq hw)
-
-def residueOfCenter (hw : w.restrict F = v) :
-    integralClosureAt F' v →+* w.ResidueField :=
-  (IsLocalRing.residue w.toValuationSubring).comp (toValuationSubringOfRestrictEq hw)
-
-omit [FiniteDimensional F F'] in
-theorem residueOfCenter_apply (hw : w.restrict F = v) (c : integralClosureAt F' v) :
-    residueOfCenter hw c = IsLocalRing.residue w.toValuationSubring
-      (toValuationSubringOfRestrictEq hw c) := rfl
-
-theorem ker_residueOfCenter (hw : w.restrict F = v) :
-    RingHom.ker (residueOfCenter hw) = (fiberCenter F' v hw).asIdeal := by
-  ext c
-  rw [RingHom.mem_ker, residueOfCenter_apply, IsLocalRing.residue_eq_zero_iff]
-  exact Iff.rfl
-
-theorem surjective_residueOfCenter (hw : w.restrict F = v) :
-    Function.Surjective (residueOfCenter hw) := by
-  classical
-  intro y
-  obtain ⟨x, rfl⟩ := IsLocalRing.residue_surjective y
-  have hx : (x : F') ∈ HeightOneSpectrum.valuationSubringAtPrime F' (fiberCenter F' v hw) := by
-    rw [← toValuationSubring_eq_of_restrict_eq hw]
-    exact x.2
-  obtain ⟨a, s, hs, hxas⟩ := hx
-  have hsP : s ∉ (fiberCenter F' v hw).asIdeal := hs
-  have hs0 : s ≠ 0 := fun h => hsP (h ▸ (fiberCenter F' v hw).asIdeal.zero_mem)
-  have hsF : algebraMap (integralClosureAt F' v) F' s ≠ 0 := by
-    simpa using (IsFractionRing.injective (integralClosureAt F' v) F').ne_iff.mpr hs0
-  have hsord : w.ord (algebraMap (integralClosureAt F' v) F' s) = 0 := by
-    have h1 : ¬ 0 < w.ord (algebraMap (integralClosureAt F' v) F' s) := by
-      rw [← mem_fiberCenter_iff_ord_pos hw hs0]
-      exact hsP
-    have h2 : 0 ≤ w.ord (algebraMap (integralClosureAt F' v) F' s) :=
-      AlgebraicCurve.Place.ord_nonneg_of_mem w (forall_mem_of_restrict_eq hw s)
-    omega
-  have hmax : (fiberCenter F' v hw).asIdeal.IsMaximal :=
-    (fiberCenter F' v hw).isPrime.isMaximal (fiberCenter F' v hw).ne_bot
-  obtain ⟨t, i, hi, hti⟩ := hmax.exists_inv hsP
-  have hst : s * t - 1 ∈ (fiberCenter F' v hw).asIdeal := by
-    have h1 : s * t - 1 = -i := by linear_combination hti
-    rw [h1]
-    exact neg_mem hi
-  refine ⟨a * t, ?_⟩
-  rw [residueOfCenter_apply, ← sub_eq_zero, ← map_sub, IsLocalRing.residue_eq_zero_iff]
-  have hcoe : ((toValuationSubringOfRestrictEq hw (a * t) - x : w.toValuationSubring) : F')
-      = algebraMap (integralClosureAt F' v) F' (a * t) - (x : F') := rfl
-  rcases eq_or_ne (toValuationSubringOfRestrictEq hw (a * t) - x) 0 with hzero | hne
-  · rw [hzero]
-    exact (IsLocalRing.maximalIdeal w.toValuationSubring).zero_mem
-  have hcoene : algebraMap (integralClosureAt F' v) F' (a * t) - (x : F') ≠ 0 := by
-    intro h
-    exact hne (by rwa [← hcoe, ZeroMemClass.coe_eq_zero] at h)
-  have hfactor : algebraMap (integralClosureAt F' v) F' (a * t) - (x : F')
-      = algebraMap (integralClosureAt F' v) F' (a * t * s - a)
-          * (algebraMap (integralClosureAt F' v) F' s)⁻¹ := by
-    rw [hxas, RingHom.map_sub (algebraMap (integralClosureAt F' v) F') _ _,
-      map_mul (algebraMap (integralClosureAt F' v) F') (a * t) s,
-      sub_mul, mul_assoc, mul_inv_cancel₀ hsF, mul_one]
-  have hdiffC : a * t * s - a ≠ 0 := by
-    intro h
-    apply hcoene
-    rw [hfactor, h, _root_.map_zero, zero_mul]
-  have hdiffP : a * t * s - a ∈ (fiberCenter F' v hw).asIdeal := by
-    have h1 : a * t * s - a = a * (s * t - 1) := by ring
-    rw [h1]
-    exact Ideal.mul_mem_left _ _ hst
-  have hmem' : algebraMap (integralClosureAt F' v) F' (a * t) - (x : F')
-      ∈ w.toValuationSubring := by
-    rw [← hcoe]
-    exact Subtype.coe_prop _
-  rw [show (toValuationSubringOfRestrictEq hw (a * t) - x)
-      = (⟨_, hmem'⟩ : w.toValuationSubring) from Subtype.ext hcoe,
-    w.mem_maximalIdeal_iff_ord_pos hcoene hmem']
-  rw [hfactor, w.ord_mul (by
-      simpa using (IsFractionRing.injective (integralClosureAt F' v) F').ne_iff.mpr hdiffC)
-    (inv_ne_zero hsF), w.ord_inv, hsord, _root_.neg_zero, add_zero]
-  exact (mem_fiberCenter_iff_ord_pos hw hdiffC).mp hdiffP
-
-def residueFieldEquivQuotientCenter (hw : w.restrict F = v) :
-    integralClosureAt F' v ⧸ (fiberCenter F' v hw).asIdeal ≃+* w.ResidueField :=
-  (Ideal.quotEquivOfEq (ker_residueOfCenter hw).symm).trans
-    ((residueOfCenter hw).quotientKerEquivOfSurjective (surjective_residueOfCenter hw))
-
-def placeCongrEquiv {u u' : Place K F} (h : u = u') :
-    u.toValuationSubring ≃+* u'.toValuationSubring where
-  toFun x := ⟨x.1, h ▸ x.2⟩
-  invFun x := ⟨x.1, h.symm ▸ x.2⟩
-  left_inv _ := rfl
-  right_inv _ := rfl
-  map_mul' _ _ := rfl
-  map_add' _ _ := rfl
-
-def restrictResidueFieldEquiv (hw : w.restrict F = v) :
-    (w.restrict F).ResidueField ≃+* IsLocalRing.ResidueField v.toValuationSubring :=
-  IsLocalRing.ResidueField.mapEquiv (placeCongrEquiv hw)
-
-end ResidueDictionary
 end Place
 end AlgebraicCurve
 end
@@ -2578,11 +2460,6 @@ def kw_dualEndData_of_traceWitness (htw : KwDualTraceWitness W)
     D.pointEnd' (kw_dualPointEnd D) (htw D).choose (D.degree : ℤ)
     (htw D).choose_spec (kw_pointEnd_mul_dualPointEnd D)
 
-omit [IsAlgClosed F] in
-@[scoped simp] theorem kw_dualEndData_of_traceWitness_dual (htw : KwDualTraceWitness W)
-    (D : IsogenyEndDatum W) :
-    (kw_dualEndData_of_traceWitness htw D).dual = kw_dualPointEnd D := rfl
-
 end GeneralW
 end Affine
 end WeierstrassCurve
@@ -3642,10 +3519,47 @@ theorem kw_dcao_sumDatum_Y_of_hgm (D₁ D₂ D₃ : IsogenyEndDatum W)
   exact placeOfPoint_injective
     (((⟨_, hι, hfin⟩ : IsogenyEndDatum W).placeOfPoint_geomMorph P).symm.trans hseam)
 
-theorem kw_dcao_specLineOrdMatch_allAffine_proved :
-    KwDCAOSpecLineOrdMatchAllAffine W := by
-  have _pin := Classical.em True
-  intro D₁ D₂ D₃ hgm hX a b h hκ P hQ1 hQ2 hQ12
+/-- Pullback coordinates are regular wherever the image of the point is affine. -/
+private theorem coords_mem_of_affine_image (P : W.Point) :
+    ∀ (D : IsogenyEndDatum W) {r s hns},
+    D.geomMorph P = Point.some r s hns →
+    D.ι (polyToFunctionField W X) ∈ (placeOfPoint P).toValuationSubring
+      ∧ D.ι (yGen W) ∈ (placeOfPoint P).toValuationSubring := by
+  intro D r s hns hDeq
+  have hmem : ∀ g : W.CoordinateRing,
+      D.ι (algebraMap _ _ g) ∈ (placeOfPoint P).toValuationSubring := by
+    intro g
+    rcases eq_or_ne (D.ι (algebraMap _ _ g)) 0 with h0 | hne
+    · exact h0 ▸ zero_mem _
+    · refine AlgebraicCurve.Place.mem_of_ord_nonneg (placeOfPoint P) hne ?_
+      rw [kw_dcao_ord_Dtransport D, hDeq, placeOfPoint_some]
+      exact ord_placeOfEquation_nonneg hns.left g
+  exact ⟨by rw [polyToFunctionField_apply, algebraMap_polynomial_eq_mk_C]; exact hmem _,
+    hmem _⟩
+
+/-- Coordinates of a nonzero image, together with their regularity and specialization. -/
+private theorem affine_image_coords (D : IsogenyEndDatum W) (P : W.Point)
+    (hQ : D.geomMorph P ≠ 0) :
+    ∃ (r s : F) (hns : W.Nonsingular r s),
+      D.geomMorph P = Point.some r s hns ∧
+      D.ι (polyToFunctionField W X) ∈ (placeOfPoint P).toValuationSubring ∧
+      D.ι (yGen W) ∈ (placeOfPoint P).toValuationSubring ∧
+      (placeOfPoint P).evalAt (D.ι (polyToFunctionField W X)) = r ∧
+      (placeOfPoint P).evalAt (D.ι (yGen W)) = s := by
+  obtain ⟨r, s, hns, hDeq⟩ : ∃ r s hns, D.geomMorph P = Point.some r s hns := by
+    rcases hDeq : D.geomMorph P with _ | ⟨r, s, hns⟩
+    · exact absurd (show D.geomMorph P = 0 by exact_mod_cast hDeq) hQ
+    · exact ⟨r, s, hns, rfl⟩
+  obtain ⟨hxm, hym⟩ := coords_mem_of_affine_image P D hDeq
+  obtain ⟨hex, hey⟩ := mmr73_cs_geomMorph_some_coords D P hDeq hxm hym
+  exact ⟨r, s, hns, hDeq, hxm, hym, hex, hey⟩
+
+/-- The moving secant slope is regular when both images and their sum are affine. -/
+private theorem secant_slope_mem_of_images_affine (D₁ D₂ : IsogenyEndDatum W)
+    (hX : D₁.ι (polyToFunctionField W X) ≠ D₂.ι (polyToFunctionField W X))
+    (P : W.Point) (hQ1 : D₁.geomMorph P ≠ 0) (hQ2 : D₂.geomMorph P ≠ 0)
+    (hQ12 : D₁.geomMorph P + D₂.geomMorph P ≠ 0) :
+    kw_dcao_lineSlope D₁ D₂ ∈ (placeOfPoint P).toValuationSubring := by
   have hrat : (placeOfPoint P).IsRational :=
     (placeOfPoint P).isRational_of_deg_eq_one (deg_placeOfPoint P)
   set x₁ := D₁.ι (polyToFunctionField W X) with hx1d
@@ -3655,51 +3569,10 @@ theorem kw_dcao_specLineOrdMatch_allAffine_proved :
   set Λ := kw_dcao_lineSlope D₁ D₂ with hΛd
   have hXne : x₁ ≠ x₂ := hX
   have hδne : x₁ - x₂ ≠ 0 := sub_ne_zero.mpr hXne
-  set b' := W.toAffine.negY a b with hb'd
-  have hLne := kw_dcao_specLine_ne_zero_of_hgm D₁ D₂ D₃ hgm hX h
-  have hL'ne : kw_dcao_specLine D₁ D₂ a b' ≠ 0 :=
-    kw_dcao_specLine_ne_zero_of_hgm D₁ D₂ D₃ hgm hX
-      ((Affine.nonsingular_neg a b).mpr h)
-  have hVne := kw_dcao_specVert_ne_zero_of_hgm D₁ D₂ D₃ hgm a
-  have hmemOfD : ∀ (D : IsogenyEndDatum W) {r s hns},
-      D.geomMorph P = Point.some r s hns →
-      D.ι (polyToFunctionField W X) ∈ (placeOfPoint P).toValuationSubring
-        ∧ D.ι (yGen W) ∈ (placeOfPoint P).toValuationSubring := by
-    intro D r s hns hDeq
-    have hmem : ∀ g : W.CoordinateRing,
-        D.ι (algebraMap _ _ g) ∈ (placeOfPoint P).toValuationSubring := by
-      intro g
-      rcases eq_or_ne (D.ι (algebraMap _ _ g)) 0 with h0 | hne
-      · exact h0 ▸ zero_mem _
-      · refine AlgebraicCurve.Place.mem_of_ord_nonneg (placeOfPoint P) hne ?_
-        rw [kw_dcao_ord_Dtransport D, hDeq, placeOfPoint_some]
-        exact ord_placeOfEquation_nonneg hns.left g
-    exact ⟨by rw [polyToFunctionField_apply, algebraMap_polynomial_eq_mk_C]; exact hmem _,
-      hmem _⟩
-  obtain ⟨r₁, s₁, hns₁, hQ1eq⟩ : ∃ r s hns, D₁.geomMorph P = Point.some r s hns := by
-    rcases hQ : D₁.geomMorph P with _ | ⟨r, s, hns⟩
-    · exact absurd (show D₁.geomMorph P = 0 by exact_mod_cast hQ) hQ1
-    · exact ⟨r, s, hns, rfl⟩
-  obtain ⟨r₂, s₂, hns₂, hQ2eq⟩ : ∃ r s hns, D₂.geomMorph P = Point.some r s hns := by
-    rcases hQ : D₂.geomMorph P with _ | ⟨r, s, hns⟩
-    · exact absurd (show D₂.geomMorph P = 0 by exact_mod_cast hQ) hQ2
-    · exact ⟨r, s, hns, rfl⟩
-  obtain ⟨hx1m, hy1m⟩ := hmemOfD D₁ hQ1eq
-  obtain ⟨hx2m, hy2m⟩ := hmemOfD D₂ hQ2eq
-  obtain ⟨hex1, hey1⟩ := mmr73_cs_geomMorph_some_coords D₁ P hQ1eq hx1m hy1m
-  obtain ⟨hex2, hey2⟩ := mmr73_cs_geomMorph_some_coords D₂ P hQ2eq hx2m hy2m
+  obtain ⟨r₁, s₁, hns₁, hQ1eq, hx1m, hy1m, hex1, hey1⟩ := affine_image_coords D₁ P hQ1
+  obtain ⟨r₂, s₂, hns₂, hQ2eq, hx2m, hy2m, hex2, hey2⟩ := affine_image_coords D₂ P hQ2
   rw [← hx1d] at hx1m hex1; rw [← hy1d] at hy1m hey1
   rw [← hx2d] at hx2m hex2; rw [← hy2d] at hy2m hey2
-  obtain ⟨Ds, hXs, hYs, hgms⟩ := kw_dcao_sumDatum_Y_of_hgm D₁ D₂ D₃ hgm hX
-  obtain ⟨rs, ss, hnss, hQseq⟩ : ∃ r s hns, Ds.geomMorph P = Point.some r s hns := by
-    rcases hQ : Ds.geomMorph P with _ | ⟨r, s, hns⟩
-    · exact absurd ((hgms P).symm.trans (show Ds.geomMorph P = 0 by exact_mod_cast hQ)) hQ12
-    · exact ⟨r, s, hns, rfl⟩
-  obtain ⟨hxsm, hysm⟩ := hmemOfD Ds hQseq
-  obtain ⟨hexs, heys⟩ := mmr73_cs_geomMorph_some_coords Ds P hQseq hxsm hysm
-  rw [hXs] at hexs hxsm; rw [hYs] at heys hysm
-  have hQsum : D₁.geomMorph P + D₂.geomMorph P = Point.some rs ss hnss :=
-    (hgms P).symm.trans hQseq
   have hΛeq : Λ = (y₁ - y₂) / (x₁ - x₂) := Affine.slope_of_X_ne hXne
   have hΛδ : Λ * (x₁ - x₂) = y₁ - y₂ := by rw [hΛeq, div_mul_cancel₀ _ hδne]
   set σ := y₁ + y₂ + algebraMap F W.FunctionField W.a₁ * x₁
@@ -3723,11 +3596,7 @@ theorem kw_dcao_specLineOrdMatch_allAffine_proved :
       simp only [WeierstrassCurve.map_a₁, WeierstrassCurve.map_a₂, WeierstrassCurve.map_a₃,
         WeierstrassCurve.map_a₄,
         WeierstrassCurve.map_a₆, ← hx2d, ← hy2d] at hE₂
-      have hcub : (y₁ - y₂) * σ = (x₁ - x₂) * ξ' := by
-        rw [hσd, hξd]; linear_combination hE₁ - hE₂
-      have heq : (x₁ - x₂) * (Λ * σ) = (x₁ - x₂) * ξ' := by
-        rw [← mul_assoc, mul_comm (x₁ - x₂) Λ, hΛδ, hcub]
-      exact mul_left_cancel₀ hδne heq
+      grind
     · rw [hξd]
       exact sub_mem (add_mem (add_mem (add_mem (add_mem (mul_mem hx1m hx1m)
         (mul_mem hx1m hx2m)) (mul_mem hx2m hx2m))
@@ -3743,10 +3612,6 @@ theorem kw_dcao_specLineOrdMatch_allAffine_proved :
       0 < (placeOfPoint P).ord f → (placeOfPoint P).evalAt f = 0 := fun hfm hpos =>
     mmr73_cs_evalAt_eq_of_ord_sub_pos (placeOfPoint P) hrat hfm
       (a := 0) (by rwa [_root_.map_zero, sub_zero])
-  have hopz : ∀ {f}, f ≠ 0 → f ∈ (placeOfPoint P).toValuationSubring →
-      (placeOfPoint P).evalAt f = 0 → 0 < (placeOfPoint P).ord f := fun hfne hfm he0 =>
-    lt_of_le_of_ne (AlgebraicCurve.Place.ord_nonneg_of_mem (placeOfPoint P) hfm)
-      (fun h0 => (placeOfPoint P).evalAt_ne_zero hrat hfne h0.symm he0)
   have hnotBoth : (placeOfPoint P).evalAt (x₁ - x₂) ≠ 0
       ∨ (placeOfPoint P).evalAt σ ≠ 0 := by
     rw [or_iff_not_imp_left, not_not]; intro hδ0
@@ -3780,8 +3645,61 @@ theorem kw_dcao_specLineOrdMatch_allAffine_proved :
           (by rw [(placeOfPoint P).ord_inv, hσord]; omega)
       rw [show Λ = ξ * σ⁻¹ by field_simp; linear_combination hΛσ]
       exact mul_mem hξm hσinv
-  set u := (placeOfPoint P).ord (kw_dcao_specLine D₁ D₂ a b) with hud
-  set v := (placeOfPoint P).ord (kw_dcao_specLine D₁ D₂ a b') with hvd
+  exact hΛm
+
+/-- Nonnegative line orders with disjoint zero loci are determined by their sum. -/
+private theorem secant_order_of_zero_loci {α : Type*} [DecidableEq α]
+    (Q₁ Q₂ Q₁₂ L L' : α) (u v : ℤ)
+    (hSum : u + v =
+      ((if Q₁ = L then 1 else 0) + (if Q₁ = L' then 1 else 0)) +
+      ((if Q₂ = L then 1 else 0) + (if Q₂ = L' then 1 else 0)) +
+      ((if Q₁₂ = L then 1 else 0) + (if Q₁₂ = L' then 1 else 0)))
+    (hZF1 : Q₁ ≠ L ∨ 0 < u) (hZF2 : Q₂ ≠ L ∨ 0 < u)
+    (hZF1' : Q₁ ≠ L' ∨ 0 < v) (hZF2' : Q₂ ≠ L' ∨ 0 < v)
+    (hZF12 : Q₁₂ ≠ L ∨ 0 < v) (hZF12' : Q₁₂ ≠ L' ∨ 0 < u)
+    (huv0 : u = 0 ∨ v = 0) (hunn : 0 ≤ u) (hvnn : 0 ≤ v) :
+    u = ((if Q₁₂ = L then 1 else 0) + (if Q₁₂ = L' then 1 else 0)) -
+      ((if Q₁₂ = L then 1 else 0) - (if Q₁ = L then 1 else 0) -
+        (if Q₂ = L then 1 else 0)) := by
+  set l₁ : ℤ := if Q₁ = L then 1 else 0 with hl1d
+  set m₁ : ℤ := if Q₁ = L' then 1 else 0 with hm1d
+  set l₂ : ℤ := if Q₂ = L then 1 else 0 with hl2d
+  set m₂ : ℤ := if Q₂ = L' then 1 else 0 with hm2d
+  set l₁₂ : ℤ := if Q₁₂ = L then 1 else 0 with hl12d
+  set m₁₂ : ℤ := if Q₁₂ = L' then 1 else 0 with hm12d
+  have hF1 : l₁ = 0 ∨ 0 < u := hZF1.imp (fun h => by rw [hl1d, ite_eq_right h]) id
+  have hF2 : l₂ = 0 ∨ 0 < u := hZF2.imp (fun h => by rw [hl2d, ite_eq_right h]) id
+  grind
+
+omit [DecidableEq F] [IsAlgClosed F] [CharZero F] [W.IsElliptic]
+  [GenusOnePlaceGate W] [GenusOnePlaceGate.IsCentred W] [AbelTheorem W] in
+/-- The moving secant line can be written using either summand or the negative sum. -/
+private theorem specialized_secant_line_formulas (D₁ D₂ : IsogenyEndDatum W)
+    (hX : D₁.ι (polyToFunctionField W X) ≠ D₂.ι (polyToFunctionField W X)) (a : F) :
+    let x₁ := D₁.ι (polyToFunctionField W X)
+    let x₂ := D₂.ι (polyToFunctionField W X)
+    let y₁ := D₁.ι (yGen W)
+    let y₂ := D₂.ι (yGen W)
+    let Λ := kw_dcao_lineSlope D₁ D₂
+    (∀ c : F, kw_dcao_specLine D₁ D₂ a c
+      = (algebraMap F W.FunctionField c - y₁)
+        - Λ * (algebraMap F W.FunctionField a - x₁)) ∧
+    (∀ c : F, kw_dcao_specLine D₁ D₂ a c
+      = (algebraMap F W.FunctionField c - y₂)
+        - Λ * (algebraMap F W.FunctionField a - x₂)) ∧
+    (∀ c : F, kw_dcao_specLine D₁ D₂ a c
+      = (es1a6_addSumY W D₁.ι D₂.ι + algebraMap F W.FunctionField (c + W.a₃)
+          + algebraMap F W.FunctionField W.a₁ * es1a6_addSumX W D₁.ι D₂.ι)
+        - Λ * (algebraMap F W.FunctionField a - es1a6_addSumX W D₁.ι D₂.ι)) := by
+  set x₁ := D₁.ι (polyToFunctionField W X) with hx1d
+  set x₂ := D₂.ι (polyToFunctionField W X) with hx2d
+  set y₁ := D₁.ι (yGen W) with hy1d
+  set y₂ := D₂.ι (yGen W) with hy2d
+  set Λ := kw_dcao_lineSlope D₁ D₂ with hΛd
+  have hXne : x₁ ≠ x₂ := hX
+  have hδne : x₁ - x₂ ≠ 0 := sub_ne_zero.mpr hXne
+  have hΛeq : Λ = (y₁ - y₂) / (x₁ - x₂) := Affine.slope_of_X_ne hXne
+  have hΛδ : Λ * (x₁ - x₂) = y₁ - y₂ := by rw [hΛeq, div_mul_cancel₀ _ hδne]
   have hLform1 : ∀ c : F, kw_dcao_specLine D₁ D₂ a c
       = (algebraMap F W.FunctionField c - y₁)
         - Λ * (algebraMap F W.FunctionField a - x₁) := by
@@ -3801,6 +3719,45 @@ theorem kw_dcao_specLineOrdMatch_allAffine_proved :
       Affine.addY, Affine.negY, Affine.negAddY, WeierstrassCurve.map_a₁, WeierstrassCurve.map_a₃,
       map_add]
     ring
+  exact ⟨hLform1, hLform2, hLform3⟩
+
+theorem kw_dcao_specLineOrdMatch_allAffine_proved :
+    KwDCAOSpecLineOrdMatchAllAffine W := by
+  have _pin := Classical.em True
+  intro D₁ D₂ D₃ hgm hX a b h hκ P hQ1 hQ2 hQ12
+  have hrat : (placeOfPoint P).IsRational :=
+    (placeOfPoint P).isRational_of_deg_eq_one (deg_placeOfPoint P)
+  set x₁ := D₁.ι (polyToFunctionField W X) with hx1d
+  set x₂ := D₂.ι (polyToFunctionField W X) with hx2d
+  set y₁ := D₁.ι (yGen W) with hy1d
+  set y₂ := D₂.ι (yGen W) with hy2d
+  set Λ := kw_dcao_lineSlope D₁ D₂ with hΛd
+  set b' := W.toAffine.negY a b with hb'd
+  have hLne := kw_dcao_specLine_ne_zero_of_hgm D₁ D₂ D₃ hgm hX h
+  have hL'ne : kw_dcao_specLine D₁ D₂ a b' ≠ 0 :=
+    kw_dcao_specLine_ne_zero_of_hgm D₁ D₂ D₃ hgm hX
+      ((Affine.nonsingular_neg a b).mpr h)
+  obtain ⟨r₁, s₁, hns₁, hQ1eq, hx1m, hy1m, hex1, hey1⟩ := affine_image_coords D₁ P hQ1
+  obtain ⟨r₂, s₂, hns₂, hQ2eq, hx2m, hy2m, hex2, hey2⟩ := affine_image_coords D₂ P hQ2
+  rw [← hx1d] at hx1m hex1; rw [← hy1d] at hy1m hey1
+  rw [← hx2d] at hx2m hex2; rw [← hy2d] at hy2m hey2
+  obtain ⟨Ds, hXs, hYs, hgms⟩ := kw_dcao_sumDatum_Y_of_hgm D₁ D₂ D₃ hgm hX
+  have hQs : Ds.geomMorph P ≠ 0 := fun h0 => hQ12 ((hgms P).symm.trans h0)
+  obtain ⟨rs, ss, hnss, hQseq, hxsm, hysm, hexs, heys⟩ := affine_image_coords Ds P hQs
+  rw [hXs] at hexs hxsm; rw [hYs] at heys hysm
+  have hQsum : D₁.geomMorph P + D₂.geomMorph P = Point.some rs ss hnss :=
+    (hgms P).symm.trans hQseq
+  have ha1m : algebraMap F W.FunctionField W.a₁
+      ∈ (placeOfPoint P).toValuationSubring := (placeOfPoint P).algebraMap_mem' W.a₁
+  have hopz : ∀ {f}, f ≠ 0 → f ∈ (placeOfPoint P).toValuationSubring →
+      (placeOfPoint P).evalAt f = 0 → 0 < (placeOfPoint P).ord f := fun hfne hfm he0 =>
+    lt_of_le_of_ne (AlgebraicCurve.Place.ord_nonneg_of_mem (placeOfPoint P) hfm)
+      (fun h0 => (placeOfPoint P).evalAt_ne_zero hrat hfne h0.symm he0)
+  have hΛm : Λ ∈ (placeOfPoint P).toValuationSubring :=
+    secant_slope_mem_of_images_affine D₁ D₂ hX P hQ1 hQ2 hQ12
+  set u := (placeOfPoint P).ord (kw_dcao_specLine D₁ D₂ a b) with hud
+  set v := (placeOfPoint P).ord (kw_dcao_specLine D₁ D₂ a b') with hvd
+  obtain ⟨hLform1, hLform2, hLform3⟩ := specialized_secant_line_formulas D₁ D₂ hX a
   have ham : algebraMap F W.FunctionField a
       ∈ (placeOfPoint P).toValuationSubring := (placeOfPoint P).algebraMap_mem' a
   have hLmem : ∀ c : F, kw_dcao_specLine D₁ D₂ a c
@@ -3931,27 +3888,9 @@ theorem kw_dcao_specLineOrdMatch_allAffine_proved :
   rw [kw_dcao_ord_aSubX_formula h (D₁.geomMorph P + D₂.geomMorph P),
     ite_eq_right hQ1, ite_eq_right hQ2, ite_eq_right hQ12]
   simp only [mul_zero, sub_zero, ← hLdef, ← hud, ← hvd] at hSum ⊢
-  set l₁ : ℤ := if D₁.geomMorph P = L then 1 else 0 with hl1d
-  set m₁ : ℤ := if D₁.geomMorph P = -L then 1 else 0 with hm1d
-  set l₂ : ℤ := if D₂.geomMorph P = L then 1 else 0 with hl2d
-  set m₂ : ℤ := if D₂.geomMorph P = -L then 1 else 0 with hm2d
-  set l₁₂ : ℤ := if D₁.geomMorph P + D₂.geomMorph P = L then 1 else 0 with hl12d
-  set m₁₂ : ℤ := if D₁.geomMorph P + D₂.geomMorph P = -L then 1 else 0 with hm12d
-  have hF1 : l₁ = 0 ∨ 0 < u := hZF1.imp (fun h => by rw [hl1d, ite_eq_right h]) id
-  have hF2 : l₂ = 0 ∨ 0 < u := hZF2.imp (fun h => by rw [hl2d, ite_eq_right h]) id
-  have hF1' : m₁ = 0 ∨ 0 < v := hZF1'.imp (fun h => by rw [hm1d, ite_eq_right h]) id
-  have hF2' : m₂ = 0 ∨ 0 < v := hZF2'.imp (fun h => by rw [hm2d, ite_eq_right h]) id
-  have hF12 : l₁₂ = 0 ∨ 0 < v := hZF12.imp (fun h => by rw [hl12d, ite_eq_right h]) id
-  have hF12' : m₁₂ = 0 ∨ 0 < u := hZF12'.imp (fun h => by rw [hm12d, ite_eq_right h]) id
-  have hb1 : 0 ≤ l₁ ∧ 0 ≤ m₁ := ⟨by rw [hl1d]; split_ifs <;> omega,
-    by rw [hm1d]; split_ifs <;> omega⟩
-  have hb2 : 0 ≤ l₂ ∧ 0 ≤ m₂ := ⟨by rw [hl2d]; split_ifs <;> omega,
-    by rw [hm2d]; split_ifs <;> omega⟩
-  have hb12 : 0 ≤ l₁₂ ∧ 0 ≤ m₁₂ := ⟨by rw [hl12d]; split_ifs <;> omega,
-    by rw [hm12d]; split_ifs <;> omega⟩
-  clear_value u v l₁ m₁ l₂ m₂ l₁₂ m₁₂
-  clear * - hSum hF1 hF2 hF1' hF2' hF12 hF12' hb1 hb2 hb12 huv0 hunn hvnn
-  omega
+  exact secant_order_of_zero_loci (D₁.geomMorph P) (D₂.geomMorph P)
+    (D₁.geomMorph P + D₂.geomMorph P) L (-L) u v hSum
+    hZF1 hZF2 hZF1' hZF2' hZF12 hZF12' huv0 hunn hvnn
 
 end GeneralW
 end Affine

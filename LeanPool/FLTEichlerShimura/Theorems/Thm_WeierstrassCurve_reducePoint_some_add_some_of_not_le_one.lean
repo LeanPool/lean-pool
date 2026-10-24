@@ -182,48 +182,17 @@ theorem le_exp_sub {a b : ℤ} {A : WithZero (Multiplicative ℤ)}
   rw [show (b - a : ℤ) = -a + b by omega]
   exact h2
 
-theorem reducePoint_add_int_pole [DecidableEq K]
-    {x₁ y₁ x₂ y₂ : K} (h₁ : W.toAffine.Nonsingular x₁ y₁) (h₂ : W.toAffine.Nonsingular x₂ y₂)
-    (hx₁ : valuation K (maximalIdeal R) x₁ ≤ 1) (hx₂ : ¬ valuation K (maximalIdeal R) x₂ ≤ 1) :
-    reducePoint_alt R W (.some x₁ y₁ h₁ + .some x₂ y₂ h₂)
-      = reducePoint_alt R W (.some x₁ y₁ h₁) := by
-  classical
-  obtain ⟨s, hs, hvx₂, hvy₂⟩ := valuation_dichotomy R W h₂.1 hx₂
-  have hy₁ : valuation K (maximalIdeal R) y₁ ≤ 1 := valuation_y_le_one R W h₁.1 hx₁
-  have hxne : x₁ ≠ x₂ := fun h => hx₂ (h ▸ hx₁)
-  have hxy : ¬(x₁ = x₂ ∧ y₁ = W.toAffine.negY x₂ y₂) := fun hc => hxne hc.1
-  rw [Affine.Point.add_some hxy]
-  have h1lt2s : (1 : WithZero (Multiplicative ℤ)) < WithZero.exp (2 * (s : ℤ)) := by
-    rw [← WithZero.exp_zero]; exact WithZero.exp_lt_exp.mpr (by omega)
-  have h1lt3s : (1 : WithZero (Multiplicative ℤ)) < WithZero.exp (3 * (s : ℤ)) := by
-    rw [← WithZero.exp_zero]; exact WithZero.exp_lt_exp.mpr (by omega)
-  have hnegs1 : WithZero.exp (-(s : ℤ)) < 1 := by
-    rw [← WithZero.exp_zero]; exact WithZero.exp_lt_exp.mpr (by omega)
-  have hvdx : valuation K (maximalIdeal R) (x₁ - x₂) = WithZero.exp (2 * (s : ℤ)) := by
-    rw [sub_eq_add_neg, Valuation.map_add_eq_of_lt_right _
-      (by rw [Valuation.map_neg, hvx₂]; exact lt_of_le_of_lt hx₁ h1lt2s),
-      Valuation.map_neg, hvx₂]
-  have hvdy : valuation K (maximalIdeal R) (y₁ - y₂) = WithZero.exp (3 * (s : ℤ)) := by
-    rw [sub_eq_add_neg, Valuation.map_add_eq_of_lt_right _
-      (by rw [Valuation.map_neg, hvy₂]; exact lt_of_le_of_lt hy₁ h1lt3s),
-      Valuation.map_neg, hvy₂]
-  have hpow2 : valuation K (maximalIdeal R) ((x₁ - x₂) ^ 2)
-      = WithZero.exp (4 * (s : ℤ)) := by
-    rw [map_pow, hvdx, ← WithZero.exp_nsmul, nsmul_eq_mul]
-    congr 1
-    push_cast
-    ring
-  have hpow3 : valuation K (maximalIdeal R) ((x₁ - x₂) ^ 3)
-      = WithZero.exp (6 * (s : ℤ)) := by
-    rw [map_pow, hvdx, ← WithZero.exp_nsmul, nsmul_eq_mul]
-    congr 1
-    push_cast
-    ring
-  have hℓx : W.toAffine.slope x₁ x₂ y₁ y₂ * (x₁ - x₂) = y₁ - y₂ := by
-    rw [Affine.slope_of_X_ne hxne, div_mul_cancel₀ _ (sub_ne_zero.mpr hxne)]
-  have e₁ := h₁.1
-  have e₂ := h₂.1
-  rw [Affine.equation_iff] at e₁ e₂
+/-- The three coefficients in the cleared addition formulas are integral
+when the first point has integral coordinates. -/
+private theorem integral_addition_coefficients {x₁ y₁ : K}
+    (hx₁ : valuation K (maximalIdeal R) x₁ ≤ 1)
+    (hy₁ : valuation K (maximalIdeal R) y₁ ≤ 1) :
+    valuation K (maximalIdeal R)
+      (-x₁ ^ 3 + W.toAffine.a₄ * x₁ + 2 * W.toAffine.a₆ + -(W.toAffine.a₃ * y₁)) ≤ 1 ∧
+    valuation K (maximalIdeal R)
+      (3 * x₁ ^ 2 + 2 * W.toAffine.a₂ * x₁ + W.toAffine.a₄ - W.toAffine.a₁ * y₁) ≤ 1 ∧
+    valuation K (maximalIdeal R)
+      (2 * y₁ + W.toAffine.a₁ * x₁ + W.toAffine.a₃) ≤ 1 := by
   obtain ⟨r1x, h1x⟩ := exists_algebraMap_eq_of_valuation_le_one R hx₁
   obtain ⟨r1y, h1y⟩ := exists_algebraMap_eq_of_valuation_le_one R hy₁
   have hAK : -x₁ ^ 3 + W.toAffine.a₄ * x₁ + 2 * W.toAffine.a₆ + -(W.toAffine.a₃ * y₁)
@@ -250,20 +219,59 @@ theorem reducePoint_add_int_pole [DecidableEq K]
   have hvd : valuation K (maximalIdeal R)
       (2 * y₁ + W.toAffine.a₁ * x₁ + W.toAffine.a₃) ≤ 1 := by
     rw [hdK]; exact valuation_le_one _ _
-  have hM : (x₁ - x₂) ^ 2
+  exact ⟨hvA, hvn, hvd⟩
+
+/-- Clearing the secant denominator in the change of x-coordinate. -/
+private theorem addX_difference_identity [DecidableEq K] {x₁ y₁ x₂ y₂ : K}
+    (h₁ : W.toAffine.Equation x₁ y₁) (h₂ : W.toAffine.Equation x₂ y₂)
+    (hxne : x₁ ≠ x₂) : (x₁ - x₂) ^ 2
+      * (W.toAffine.addX x₁ x₂ (W.toAffine.slope x₁ x₂ y₁ y₂) - x₁)
+    = (-x₁ ^ 3 + W.toAffine.a₄ * x₁ + 2 * W.toAffine.a₆ + -(W.toAffine.a₃ * y₁))
+      + (3 * x₁ ^ 2 + 2 * W.toAffine.a₂ * x₁ + W.toAffine.a₄ - W.toAffine.a₁ * y₁) * x₂
+      + -((2 * y₁ + W.toAffine.a₁ * x₁ + W.toAffine.a₃) * y₂) := by
+  have hℓx : W.toAffine.slope x₁ x₂ y₁ y₂ * (x₁ - x₂) = y₁ - y₂ := by
+    rw [Affine.slope_of_X_ne hxne, div_mul_cancel₀ _ (sub_ne_zero.mpr hxne)]
+  have e₁ := h₁
+  have e₂ := h₂
+  rw [Affine.equation_iff] at e₁ e₂
+  have hexp : (x₁ - x₂) ^ 2
         * (W.toAffine.addX x₁ x₂ (W.toAffine.slope x₁ x₂ y₁ y₂) - x₁)
-      = (-x₁ ^ 3 + W.toAffine.a₄ * x₁ + 2 * W.toAffine.a₆ + -(W.toAffine.a₃ * y₁))
-        + (3 * x₁ ^ 2 + 2 * W.toAffine.a₂ * x₁ + W.toAffine.a₄ - W.toAffine.a₁ * y₁) * x₂
-        + -((2 * y₁ + W.toAffine.a₁ * x₁ + W.toAffine.a₃) * y₂) := by
-    have hexp : (x₁ - x₂) ^ 2
-          * (W.toAffine.addX x₁ x₂ (W.toAffine.slope x₁ x₂ y₁ y₂) - x₁)
-        = (W.toAffine.slope x₁ x₂ y₁ y₂ * (x₁ - x₂)) ^ 2
-          + W.toAffine.a₁ * (W.toAffine.slope x₁ x₂ y₁ y₂ * (x₁ - x₂)) * (x₁ - x₂)
-          - (W.toAffine.a₂ + 2 * x₁ + x₂) * (x₁ - x₂) ^ 2 := by
-      simp only [Affine.addX]
-      ring
-    rw [hexp, hℓx]
-    linear_combination e₁ + e₂
+      = (W.toAffine.slope x₁ x₂ y₁ y₂ * (x₁ - x₂)) ^ 2
+        + W.toAffine.a₁ * (W.toAffine.slope x₁ x₂ y₁ y₂ * (x₁ - x₂)) * (x₁ - x₂)
+        - (W.toAffine.a₂ + 2 * x₁ + x₂) * (x₁ - x₂) ^ 2 := by
+    simp only [Affine.addX]
+    ring
+  rw [hexp, hℓx]
+  linear_combination e₁ + e₂
+
+/-- The x-coordinate changes by at most the inverse pole parameter. -/
+private theorem addX_difference_bound [DecidableEq K]
+    {x₁ y₁ x₂ y₂ : K}
+    (hx₁ : valuation K (maximalIdeal R) x₁ ≤ 1)
+    (hy₁ : valuation K (maximalIdeal R) y₁ ≤ 1)
+    (s : ℕ) (hs : 0 < s)
+    (hvx₂ : valuation K (maximalIdeal R) x₂ = WithZero.exp (2 * (s : ℤ)))
+    (hvy₂ : valuation K (maximalIdeal R) y₂ = WithZero.exp (3 * (s : ℤ)))
+    (h₁ : W.toAffine.Equation x₁ y₁) (h₂ : W.toAffine.Equation x₂ y₂)
+    (hxne : x₁ ≠ x₂) : valuation K (maximalIdeal R)
+      (W.toAffine.addX x₁ x₂ (W.toAffine.slope x₁ x₂ y₁ y₂) - x₁)
+      ≤ WithZero.exp (-(s : ℤ)) := by
+  have h1lt2s : (1 : WithZero (Multiplicative ℤ)) < WithZero.exp (2 * (s : ℤ)) := by
+    rw [← WithZero.exp_zero]; exact WithZero.exp_lt_exp.mpr (by omega)
+  have h1lt3s : (1 : WithZero (Multiplicative ℤ)) < WithZero.exp (3 * (s : ℤ)) := by
+    rw [← WithZero.exp_zero]; exact WithZero.exp_lt_exp.mpr (by omega)
+  have hvdx : valuation K (maximalIdeal R) (x₁ - x₂) = WithZero.exp (2 * (s : ℤ)) := by
+    rw [sub_eq_add_neg, Valuation.map_add_eq_of_lt_right _
+      (by rw [Valuation.map_neg, hvx₂]; exact lt_of_le_of_lt hx₁ h1lt2s),
+      Valuation.map_neg, hvx₂]
+  have hpow2 : valuation K (maximalIdeal R) ((x₁ - x₂) ^ 2)
+      = WithZero.exp (4 * (s : ℤ)) := by
+    rw [map_pow, hvdx, ← WithZero.exp_nsmul, nsmul_eq_mul]
+    congr 1
+    push_cast
+    ring
+  obtain ⟨hvA, hvn, hvd⟩ := integral_addition_coefficients R W hx₁ hy₁
+  have hM := addX_difference_identity W h₁ h₂ hxne
   have hvM : valuation K (maximalIdeal R)
       ((-x₁ ^ 3 + W.toAffine.a₄ * x₁ + 2 * W.toAffine.a₆ + -(W.toAffine.a₃ * y₁))
         + (3 * x₁ ^ 2 + 2 * W.toAffine.a₂ * x₁ + W.toAffine.a₄ - W.toAffine.a₁ * y₁) * x₂
@@ -295,10 +303,183 @@ theorem reducePoint_add_int_pole [DecidableEq K]
     have h1 := le_exp_sub h0
     rw [show (3 * (s : ℤ) - 4 * (s : ℤ)) = -(s : ℤ) by omega] at h1
     exact h1
-  have hvx₃ : valuation K (maximalIdeal R)
-      (W.toAffine.addX x₁ x₂ (W.toAffine.slope x₁ x₂ y₁ y₂)) ≤ 1 := by
-    rw [← sub_add_cancel (W.toAffine.addX x₁ x₂ (W.toAffine.slope x₁ x₂ y₁ y₂)) x₁]
-    exact Valuation.map_add_le _ (le_trans hv31 (le_of_lt hnegs1)) hx₁
+  exact hv31
+
+/-- Bound the cleared y-coordinate numerator using only integral coefficients
+and the valuations of the pole point. -/
+private theorem addY_numerator_bound
+    {x₁ y₁ x₂ y₂ : K}
+    (hx₁ : valuation K (maximalIdeal R) x₁ ≤ 1)
+    (hy₁ : valuation K (maximalIdeal R) y₁ ≤ 1)
+    (s : ℕ) (hs : 0 < s)
+    (hvx₂ : valuation K (maximalIdeal R) x₂ = WithZero.exp (2 * (s : ℤ)))
+    (hvy₂ : valuation K (maximalIdeal R) y₂ = WithZero.exp (3 * (s : ℤ))) :
+    valuation K (maximalIdeal R)
+    ((-x₁ ^ 3 + W.toAffine.a₄ * x₁ + 2 * W.toAffine.a₆ + -(W.toAffine.a₃ * y₁))
+        * (y₁ - y₂)
+      + (3 * x₁ ^ 2 + 2 * W.toAffine.a₂ * x₁ + W.toAffine.a₄ - W.toAffine.a₁ * y₁)
+        * (x₂ * (y₁ - y₂))
+      + -((2 * y₁ + W.toAffine.a₁ * x₁ + W.toAffine.a₃) * (y₁ * y₂))
+      + (2 * y₁ + W.toAffine.a₁ * x₁ + W.toAffine.a₃)
+        * (W.toAffine.a₂ * x₂ ^ 2 + W.toAffine.a₄ * x₂ + W.toAffine.a₆
+          + -(W.toAffine.a₁ * (x₂ * y₂)) + -(W.toAffine.a₃ * y₂))
+      + (2 * y₁ + W.toAffine.a₁ * x₁ + W.toAffine.a₃)
+        * (x₁ ^ 3 + -(3 * (x₁ ^ 2 * x₂)) + 3 * (x₁ * x₂ ^ 2)))
+    ≤ WithZero.exp (5 * (s : ℤ)) := by
+  have h1lt3s : (1 : WithZero (Multiplicative ℤ)) < WithZero.exp (3 * (s : ℤ)) := by
+    rw [← WithZero.exp_zero]; exact WithZero.exp_lt_exp.mpr (by omega)
+  have hvdy : valuation K (maximalIdeal R) (y₁ - y₂) = WithZero.exp (3 * (s : ℤ)) := by
+    rw [sub_eq_add_neg, Valuation.map_add_eq_of_lt_right _
+      (by rw [Valuation.map_neg, hvy₂]; exact lt_of_le_of_lt hy₁ h1lt3s),
+      Valuation.map_neg, hvy₂]
+  obtain ⟨hvA, hvn, hvd⟩ := integral_addition_coefficients R W hx₁ hy₁
+  have hx₂2 : valuation K (maximalIdeal R) (x₂ ^ 2)
+      = WithZero.exp (4 * (s : ℤ)) := by
+    rw [map_pow, hvx₂, ← WithZero.exp_nsmul, nsmul_eq_mul]
+    congr 1
+    push_cast
+    ring
+  refine Valuation.map_add_le _ (Valuation.map_add_le _ (Valuation.map_add_le _
+    (Valuation.map_add_le _ ?_ ?_) ?_) ?_) ?_
+  · rw [map_mul]
+    calc valuation K (maximalIdeal R)
+          (-x₁ ^ 3 + W.toAffine.a₄ * x₁ + 2 * W.toAffine.a₆ + -(W.toAffine.a₃ * y₁))
+          * valuation K (maximalIdeal R) (y₁ - y₂)
+        ≤ 1 * WithZero.exp (3 * (s : ℤ)) := mul_le_mul' hvA (le_of_eq hvdy)
+      _ = WithZero.exp (3 * (s : ℤ)) := one_mul _
+      _ ≤ WithZero.exp (5 * (s : ℤ)) := WithZero.exp_le_exp.mpr (by omega)
+  · rw [map_mul, map_mul]
+    calc valuation K (maximalIdeal R)
+          (3 * x₁ ^ 2 + 2 * W.toAffine.a₂ * x₁ + W.toAffine.a₄ - W.toAffine.a₁ * y₁)
+          * (valuation K (maximalIdeal R) x₂ * valuation K (maximalIdeal R) (y₁ - y₂))
+        ≤ 1 * (WithZero.exp (2 * (s : ℤ)) * WithZero.exp (3 * (s : ℤ))) :=
+          mul_le_mul' hvn (mul_le_mul' (le_of_eq hvx₂) (le_of_eq hvdy))
+      _ = WithZero.exp (5 * (s : ℤ)) := by
+          rw [one_mul, ← WithZero.exp_add]
+          congr 1
+          ring
+  · rw [Valuation.map_neg, map_mul, map_mul]
+    calc valuation K (maximalIdeal R) (2 * y₁ + W.toAffine.a₁ * x₁ + W.toAffine.a₃)
+          * (valuation K (maximalIdeal R) y₁ * valuation K (maximalIdeal R) y₂)
+        ≤ 1 * (1 * WithZero.exp (3 * (s : ℤ))) :=
+          mul_le_mul' hvd (mul_le_mul' hy₁ (le_of_eq hvy₂))
+      _ = WithZero.exp (3 * (s : ℤ)) := by rw [one_mul, one_mul]
+      _ ≤ WithZero.exp (5 * (s : ℤ)) := WithZero.exp_le_exp.mpr (by omega)
+  · rw [map_mul]
+    have hinner : valuation K (maximalIdeal R)
+        (W.toAffine.a₂ * x₂ ^ 2 + W.toAffine.a₄ * x₂ + W.toAffine.a₆
+          + -(W.toAffine.a₁ * (x₂ * y₂)) + -(W.toAffine.a₃ * y₂))
+        ≤ WithZero.exp (5 * (s : ℤ)) := by
+      refine Valuation.map_add_le _ (Valuation.map_add_le _ (Valuation.map_add_le _
+        (Valuation.map_add_le _ ?_ ?_) ?_) ?_) ?_
+      · rw [map_mul]
+        calc valuation K (maximalIdeal R) W.toAffine.a₂
+              * valuation K (maximalIdeal R) (x₂ ^ 2)
+            ≤ 1 * WithZero.exp (4 * (s : ℤ)) :=
+              mul_le_mul' (valuation_a₂_le_one R W) (le_of_eq hx₂2)
+          _ = WithZero.exp (4 * (s : ℤ)) := one_mul _
+          _ ≤ WithZero.exp (5 * (s : ℤ)) := WithZero.exp_le_exp.mpr (by omega)
+      · rw [map_mul]
+        calc valuation K (maximalIdeal R) W.toAffine.a₄
+              * valuation K (maximalIdeal R) x₂
+            ≤ 1 * WithZero.exp (2 * (s : ℤ)) :=
+              mul_le_mul' (valuation_a₄_le_one R W) (le_of_eq hvx₂)
+          _ = WithZero.exp (2 * (s : ℤ)) := one_mul _
+          _ ≤ WithZero.exp (5 * (s : ℤ)) := WithZero.exp_le_exp.mpr (by omega)
+      · exact le_trans (valuation_a₆_le_one R W)
+          (le_of_lt (by rw [← WithZero.exp_zero]; exact WithZero.exp_lt_exp.mpr (by omega)))
+      · rw [Valuation.map_neg, map_mul, map_mul]
+        calc valuation K (maximalIdeal R) W.toAffine.a₁
+              * (valuation K (maximalIdeal R) x₂ * valuation K (maximalIdeal R) y₂)
+            ≤ 1 * (WithZero.exp (2 * (s : ℤ)) * WithZero.exp (3 * (s : ℤ))) :=
+              mul_le_mul' (valuation_a₁_le_one R W)
+                (mul_le_mul' (le_of_eq hvx₂) (le_of_eq hvy₂))
+          _ = WithZero.exp (5 * (s : ℤ)) := by
+              rw [one_mul, ← WithZero.exp_add]
+              congr 1
+              ring
+      · rw [Valuation.map_neg, map_mul]
+        calc valuation K (maximalIdeal R) W.toAffine.a₃
+              * valuation K (maximalIdeal R) y₂
+            ≤ 1 * WithZero.exp (3 * (s : ℤ)) :=
+              mul_le_mul' (valuation_a₃_le_one R W) (le_of_eq hvy₂)
+          _ = WithZero.exp (3 * (s : ℤ)) := one_mul _
+          _ ≤ WithZero.exp (5 * (s : ℤ)) := WithZero.exp_le_exp.mpr (by omega)
+    calc valuation K (maximalIdeal R) (2 * y₁ + W.toAffine.a₁ * x₁ + W.toAffine.a₃)
+          * valuation K (maximalIdeal R)
+            (W.toAffine.a₂ * x₂ ^ 2 + W.toAffine.a₄ * x₂ + W.toAffine.a₆
+              + -(W.toAffine.a₁ * (x₂ * y₂)) + -(W.toAffine.a₃ * y₂))
+        ≤ 1 * WithZero.exp (5 * (s : ℤ)) := mul_le_mul' hvd hinner
+      _ = WithZero.exp (5 * (s : ℤ)) := one_mul _
+  · rw [map_mul]
+    have hinner : valuation K (maximalIdeal R)
+        (x₁ ^ 3 + -(3 * (x₁ ^ 2 * x₂)) + 3 * (x₁ * x₂ ^ 2))
+        ≤ WithZero.exp (4 * (s : ℤ)) := by
+      have h3le : valuation K (maximalIdeal R) (3 : K) ≤ 1 := by
+        rw [show ((3 : K)) = algebraMap R K 3 from (map_ofNat _ 3).symm]
+        exact valuation_le_one _ _
+      have hx₂2 : valuation K (maximalIdeal R) (x₂ ^ 2)
+          = WithZero.exp (4 * (s : ℤ)) := by
+        rw [map_pow, hvx₂, ← WithZero.exp_nsmul, nsmul_eq_mul]
+        congr 1
+        push_cast
+        ring
+      refine Valuation.map_add_le _ (Valuation.map_add_le _ ?_ ?_) ?_
+      · rw [map_pow]
+        exact le_trans (pow_le_one' hx₁ 3)
+          (le_of_lt (by rw [← WithZero.exp_zero]; exact WithZero.exp_lt_exp.mpr (by omega)))
+      · rw [Valuation.map_neg, map_mul, map_mul, map_pow]
+        calc valuation K (maximalIdeal R) (3 : K)
+              * (valuation K (maximalIdeal R) x₁ ^ 2 * valuation K (maximalIdeal R) x₂)
+            ≤ 1 * (1 * WithZero.exp (2 * (s : ℤ))) :=
+              mul_le_mul' h3le (mul_le_mul' (pow_le_one' hx₁ 2) (le_of_eq hvx₂))
+          _ = WithZero.exp (2 * (s : ℤ)) := by rw [one_mul, one_mul]
+          _ ≤ WithZero.exp (4 * (s : ℤ)) := WithZero.exp_le_exp.mpr (by omega)
+      · rw [map_mul, map_mul]
+        calc valuation K (maximalIdeal R) (3 : K)
+              * (valuation K (maximalIdeal R) x₁ * valuation K (maximalIdeal R) (x₂ ^ 2))
+            ≤ 1 * (1 * WithZero.exp (4 * (s : ℤ))) :=
+              mul_le_mul' h3le (mul_le_mul' hx₁ (le_of_eq hx₂2))
+          _ = WithZero.exp (4 * (s : ℤ)) := by rw [one_mul, one_mul]
+    calc valuation K (maximalIdeal R) (2 * y₁ + W.toAffine.a₁ * x₁ + W.toAffine.a₃)
+          * valuation K (maximalIdeal R)
+            (x₁ ^ 3 + -(3 * (x₁ ^ 2 * x₂)) + 3 * (x₁ * x₂ ^ 2))
+        ≤ 1 * WithZero.exp (4 * (s : ℤ)) := mul_le_mul' hvd hinner
+      _ = WithZero.exp (4 * (s : ℤ)) := one_mul _
+      _ ≤ WithZero.exp (5 * (s : ℤ)) := WithZero.exp_le_exp.mpr (by omega)
+
+/-- The y-coordinate also changes by at most the inverse pole parameter. -/
+private theorem addY_difference_bound [DecidableEq K]
+    {x₁ y₁ x₂ y₂ : K}
+    (hx₁ : valuation K (maximalIdeal R) x₁ ≤ 1)
+    (hy₁ : valuation K (maximalIdeal R) y₁ ≤ 1)
+    (s : ℕ) (hs : 0 < s)
+    (hvx₂ : valuation K (maximalIdeal R) x₂ = WithZero.exp (2 * (s : ℤ)))
+    (hvy₂ : valuation K (maximalIdeal R) y₂ = WithZero.exp (3 * (s : ℤ)))
+    (h₁ : W.toAffine.Equation x₁ y₁) (h₂ : W.toAffine.Equation x₂ y₂)
+    (hxne : x₁ ≠ x₂)
+    (hv31 : valuation K (maximalIdeal R)
+      (W.toAffine.addX x₁ x₂ (W.toAffine.slope x₁ x₂ y₁ y₂) - x₁)
+      ≤ WithZero.exp (-(s : ℤ))) : valuation K (maximalIdeal R)
+      (W.toAffine.addY x₁ x₂ y₁ (W.toAffine.slope x₁ x₂ y₁ y₂) - y₁)
+      ≤ WithZero.exp (-(s : ℤ)) := by
+  have h1lt2s : (1 : WithZero (Multiplicative ℤ)) < WithZero.exp (2 * (s : ℤ)) := by
+    rw [← WithZero.exp_zero]; exact WithZero.exp_lt_exp.mpr (by omega)
+  have hvdx : valuation K (maximalIdeal R) (x₁ - x₂) = WithZero.exp (2 * (s : ℤ)) := by
+    rw [sub_eq_add_neg, Valuation.map_add_eq_of_lt_right _
+      (by rw [Valuation.map_neg, hvx₂]; exact lt_of_le_of_lt hx₁ h1lt2s),
+      Valuation.map_neg, hvx₂]
+  have hpow3 : valuation K (maximalIdeal R) ((x₁ - x₂) ^ 3)
+      = WithZero.exp (6 * (s : ℤ)) := by
+    rw [map_pow, hvdx, ← WithZero.exp_nsmul, nsmul_eq_mul]
+    congr 1
+    push_cast
+    ring
+  have hℓx : W.toAffine.slope x₁ x₂ y₁ y₂ * (x₁ - x₂) = y₁ - y₂ := by
+    rw [Affine.slope_of_X_ne hxne, div_mul_cancel₀ _ (sub_ne_zero.mpr hxne)]
+  have e₂ := h₂
+  rw [Affine.equation_iff] at e₂
+  have hM := addX_difference_identity W h₁ h₂ hxne
   have hM₂ : (x₁ - x₂) ^ 3
         * (W.toAffine.slope x₁ x₂ y₁ y₂
             * (W.toAffine.addX x₁ x₂ (W.toAffine.slope x₁ x₂ y₁ y₂) - x₁)
@@ -324,132 +505,7 @@ theorem reducePoint_add_int_pole [DecidableEq K]
       ring
     rw [h0, hℓx, hM]
     linear_combination (2 * y₁ + W.toAffine.a₁ * x₁ + W.toAffine.a₃) * e₂
-  have hvM₂ : valuation K (maximalIdeal R)
-      ((-x₁ ^ 3 + W.toAffine.a₄ * x₁ + 2 * W.toAffine.a₆ + -(W.toAffine.a₃ * y₁))
-          * (y₁ - y₂)
-        + (3 * x₁ ^ 2 + 2 * W.toAffine.a₂ * x₁ + W.toAffine.a₄ - W.toAffine.a₁ * y₁)
-          * (x₂ * (y₁ - y₂))
-        + -((2 * y₁ + W.toAffine.a₁ * x₁ + W.toAffine.a₃) * (y₁ * y₂))
-        + (2 * y₁ + W.toAffine.a₁ * x₁ + W.toAffine.a₃)
-          * (W.toAffine.a₂ * x₂ ^ 2 + W.toAffine.a₄ * x₂ + W.toAffine.a₆
-            + -(W.toAffine.a₁ * (x₂ * y₂)) + -(W.toAffine.a₃ * y₂))
-        + (2 * y₁ + W.toAffine.a₁ * x₁ + W.toAffine.a₃)
-          * (x₁ ^ 3 + -(3 * (x₁ ^ 2 * x₂)) + 3 * (x₁ * x₂ ^ 2)))
-      ≤ WithZero.exp (5 * (s : ℤ)) := by
-    have hx₂2 : valuation K (maximalIdeal R) (x₂ ^ 2)
-        = WithZero.exp (4 * (s : ℤ)) := by
-      rw [map_pow, hvx₂, ← WithZero.exp_nsmul, nsmul_eq_mul]
-      congr 1
-      push_cast
-      ring
-    refine Valuation.map_add_le _ (Valuation.map_add_le _ (Valuation.map_add_le _
-      (Valuation.map_add_le _ ?_ ?_) ?_) ?_) ?_
-    · rw [map_mul]
-      calc valuation K (maximalIdeal R)
-            (-x₁ ^ 3 + W.toAffine.a₄ * x₁ + 2 * W.toAffine.a₆ + -(W.toAffine.a₃ * y₁))
-            * valuation K (maximalIdeal R) (y₁ - y₂)
-          ≤ 1 * WithZero.exp (3 * (s : ℤ)) := mul_le_mul' hvA (le_of_eq hvdy)
-        _ = WithZero.exp (3 * (s : ℤ)) := one_mul _
-        _ ≤ WithZero.exp (5 * (s : ℤ)) := WithZero.exp_le_exp.mpr (by omega)
-    · rw [map_mul, map_mul]
-      calc valuation K (maximalIdeal R)
-            (3 * x₁ ^ 2 + 2 * W.toAffine.a₂ * x₁ + W.toAffine.a₄ - W.toAffine.a₁ * y₁)
-            * (valuation K (maximalIdeal R) x₂ * valuation K (maximalIdeal R) (y₁ - y₂))
-          ≤ 1 * (WithZero.exp (2 * (s : ℤ)) * WithZero.exp (3 * (s : ℤ))) :=
-            mul_le_mul' hvn (mul_le_mul' (le_of_eq hvx₂) (le_of_eq hvdy))
-        _ = WithZero.exp (5 * (s : ℤ)) := by
-            rw [one_mul, ← WithZero.exp_add]
-            congr 1
-            ring
-    · rw [Valuation.map_neg, map_mul, map_mul]
-      calc valuation K (maximalIdeal R) (2 * y₁ + W.toAffine.a₁ * x₁ + W.toAffine.a₃)
-            * (valuation K (maximalIdeal R) y₁ * valuation K (maximalIdeal R) y₂)
-          ≤ 1 * (1 * WithZero.exp (3 * (s : ℤ))) :=
-            mul_le_mul' hvd (mul_le_mul' hy₁ (le_of_eq hvy₂))
-        _ = WithZero.exp (3 * (s : ℤ)) := by rw [one_mul, one_mul]
-        _ ≤ WithZero.exp (5 * (s : ℤ)) := WithZero.exp_le_exp.mpr (by omega)
-    · rw [map_mul]
-      have hinner : valuation K (maximalIdeal R)
-          (W.toAffine.a₂ * x₂ ^ 2 + W.toAffine.a₄ * x₂ + W.toAffine.a₆
-            + -(W.toAffine.a₁ * (x₂ * y₂)) + -(W.toAffine.a₃ * y₂))
-          ≤ WithZero.exp (5 * (s : ℤ)) := by
-        refine Valuation.map_add_le _ (Valuation.map_add_le _ (Valuation.map_add_le _
-          (Valuation.map_add_le _ ?_ ?_) ?_) ?_) ?_
-        · rw [map_mul]
-          calc valuation K (maximalIdeal R) W.toAffine.a₂
-                * valuation K (maximalIdeal R) (x₂ ^ 2)
-              ≤ 1 * WithZero.exp (4 * (s : ℤ)) :=
-                mul_le_mul' (valuation_a₂_le_one R W) (le_of_eq hx₂2)
-            _ = WithZero.exp (4 * (s : ℤ)) := one_mul _
-            _ ≤ WithZero.exp (5 * (s : ℤ)) := WithZero.exp_le_exp.mpr (by omega)
-        · rw [map_mul]
-          calc valuation K (maximalIdeal R) W.toAffine.a₄
-                * valuation K (maximalIdeal R) x₂
-              ≤ 1 * WithZero.exp (2 * (s : ℤ)) :=
-                mul_le_mul' (valuation_a₄_le_one R W) (le_of_eq hvx₂)
-            _ = WithZero.exp (2 * (s : ℤ)) := one_mul _
-            _ ≤ WithZero.exp (5 * (s : ℤ)) := WithZero.exp_le_exp.mpr (by omega)
-        · exact le_trans (valuation_a₆_le_one R W)
-            (le_of_lt (by rw [← WithZero.exp_zero]; exact WithZero.exp_lt_exp.mpr (by omega)))
-        · rw [Valuation.map_neg, map_mul, map_mul]
-          calc valuation K (maximalIdeal R) W.toAffine.a₁
-                * (valuation K (maximalIdeal R) x₂ * valuation K (maximalIdeal R) y₂)
-              ≤ 1 * (WithZero.exp (2 * (s : ℤ)) * WithZero.exp (3 * (s : ℤ))) :=
-                mul_le_mul' (valuation_a₁_le_one R W)
-                  (mul_le_mul' (le_of_eq hvx₂) (le_of_eq hvy₂))
-            _ = WithZero.exp (5 * (s : ℤ)) := by
-                rw [one_mul, ← WithZero.exp_add]
-                congr 1
-                ring
-        · rw [Valuation.map_neg, map_mul]
-          calc valuation K (maximalIdeal R) W.toAffine.a₃
-                * valuation K (maximalIdeal R) y₂
-              ≤ 1 * WithZero.exp (3 * (s : ℤ)) :=
-                mul_le_mul' (valuation_a₃_le_one R W) (le_of_eq hvy₂)
-            _ = WithZero.exp (3 * (s : ℤ)) := one_mul _
-            _ ≤ WithZero.exp (5 * (s : ℤ)) := WithZero.exp_le_exp.mpr (by omega)
-      calc valuation K (maximalIdeal R) (2 * y₁ + W.toAffine.a₁ * x₁ + W.toAffine.a₃)
-            * valuation K (maximalIdeal R)
-              (W.toAffine.a₂ * x₂ ^ 2 + W.toAffine.a₄ * x₂ + W.toAffine.a₆
-                + -(W.toAffine.a₁ * (x₂ * y₂)) + -(W.toAffine.a₃ * y₂))
-          ≤ 1 * WithZero.exp (5 * (s : ℤ)) := mul_le_mul' hvd hinner
-        _ = WithZero.exp (5 * (s : ℤ)) := one_mul _
-    · rw [map_mul]
-      have hinner : valuation K (maximalIdeal R)
-          (x₁ ^ 3 + -(3 * (x₁ ^ 2 * x₂)) + 3 * (x₁ * x₂ ^ 2))
-          ≤ WithZero.exp (4 * (s : ℤ)) := by
-        have h3le : valuation K (maximalIdeal R) (3 : K) ≤ 1 := by
-          rw [show ((3 : K)) = algebraMap R K 3 from (map_ofNat _ 3).symm]
-          exact valuation_le_one _ _
-        have hx₂2 : valuation K (maximalIdeal R) (x₂ ^ 2)
-            = WithZero.exp (4 * (s : ℤ)) := by
-          rw [map_pow, hvx₂, ← WithZero.exp_nsmul, nsmul_eq_mul]
-          congr 1
-          push_cast
-          ring
-        refine Valuation.map_add_le _ (Valuation.map_add_le _ ?_ ?_) ?_
-        · rw [map_pow]
-          exact le_trans (pow_le_one' hx₁ 3)
-            (le_of_lt (by rw [← WithZero.exp_zero]; exact WithZero.exp_lt_exp.mpr (by omega)))
-        · rw [Valuation.map_neg, map_mul, map_mul, map_pow]
-          calc valuation K (maximalIdeal R) (3 : K)
-                * (valuation K (maximalIdeal R) x₁ ^ 2 * valuation K (maximalIdeal R) x₂)
-              ≤ 1 * (1 * WithZero.exp (2 * (s : ℤ))) :=
-                mul_le_mul' h3le (mul_le_mul' (pow_le_one' hx₁ 2) (le_of_eq hvx₂))
-            _ = WithZero.exp (2 * (s : ℤ)) := by rw [one_mul, one_mul]
-            _ ≤ WithZero.exp (4 * (s : ℤ)) := WithZero.exp_le_exp.mpr (by omega)
-        · rw [map_mul, map_mul]
-          calc valuation K (maximalIdeal R) (3 : K)
-                * (valuation K (maximalIdeal R) x₁ * valuation K (maximalIdeal R) (x₂ ^ 2))
-              ≤ 1 * (1 * WithZero.exp (4 * (s : ℤ))) :=
-                mul_le_mul' h3le (mul_le_mul' hx₁ (le_of_eq hx₂2))
-            _ = WithZero.exp (4 * (s : ℤ)) := by rw [one_mul, one_mul]
-      calc valuation K (maximalIdeal R) (2 * y₁ + W.toAffine.a₁ * x₁ + W.toAffine.a₃)
-            * valuation K (maximalIdeal R)
-              (x₁ ^ 3 + -(3 * (x₁ ^ 2 * x₂)) + 3 * (x₁ * x₂ ^ 2))
-          ≤ 1 * WithZero.exp (4 * (s : ℤ)) := mul_le_mul' hvd hinner
-        _ = WithZero.exp (4 * (s : ℤ)) := one_mul _
-        _ ≤ WithZero.exp (5 * (s : ℤ)) := WithZero.exp_le_exp.mpr (by omega)
+  have hvM₂ := addY_numerator_bound R W hx₁ hy₁ s hs hvx₂ hvy₂
   have hvly : valuation K (maximalIdeal R)
       (W.toAffine.slope x₁ x₂ y₁ y₂
           * (W.toAffine.addX x₁ x₂ (W.toAffine.slope x₁ x₂ y₁ y₂) - x₁)
@@ -487,6 +543,42 @@ theorem reducePoint_add_int_pole [DecidableEq K]
                 (W.toAffine.addX x₁ x₂ (W.toAffine.slope x₁ x₂ y₁ y₂) - x₁)
           ≤ 1 * WithZero.exp (-(s : ℤ)) := mul_le_mul' (valuation_a₁_le_one R W) hv31
         _ = WithZero.exp (-(s : ℤ)) := one_mul _
+  exact hvy₃1
+
+/-- Integral coordinates whose difference is in the maximal ideal have the same residue. -/
+private theorem reduceCoord_eq_of_sub_lt {x y : K}
+    (hx : valuation K (maximalIdeal R) x ≤ 1)
+    (hy : valuation K (maximalIdeal R) y ≤ 1)
+    (hxy : valuation K (maximalIdeal R) (x - y) < 1) :
+    reduceCoord R x = reduceCoord R y := by
+  obtain ⟨rx, hrx⟩ := exists_algebraMap_eq_of_valuation_le_one R hx
+  obtain ⟨ry, hry⟩ := exists_algebraMap_eq_of_valuation_le_one R hy
+  have hsub : x - y = algebraMap R K (rx - ry) := by rw [map_sub, hrx, hry]
+  have hsub_le : valuation K (maximalIdeal R) (x - y) ≤ 1 := le_of_lt hxy
+  have hzero := (reduceCoord_eq_zero_iff_lt R hsub_le).mpr hxy
+  rw [hsub, reduceCoord_algebraMap, map_sub, sub_eq_zero] at hzero
+  rw [← hrx, ← hry, reduceCoord_algebraMap, reduceCoord_algebraMap]
+  exact hzero
+
+theorem reducePoint_add_int_pole [DecidableEq K]
+    {x₁ y₁ x₂ y₂ : K} (h₁ : W.toAffine.Nonsingular x₁ y₁) (h₂ : W.toAffine.Nonsingular x₂ y₂)
+    (hx₁ : valuation K (maximalIdeal R) x₁ ≤ 1) (hx₂ : ¬ valuation K (maximalIdeal R) x₂ ≤ 1) :
+    reducePoint_alt R W (.some x₁ y₁ h₁ + .some x₂ y₂ h₂)
+      = reducePoint_alt R W (.some x₁ y₁ h₁) := by
+  classical
+  obtain ⟨s, hs, hvx₂, hvy₂⟩ := valuation_dichotomy R W h₂.1 hx₂
+  have hy₁ : valuation K (maximalIdeal R) y₁ ≤ 1 := valuation_y_le_one R W h₁.1 hx₁
+  have hxne : x₁ ≠ x₂ := fun h => hx₂ (h ▸ hx₁)
+  have hxy : ¬(x₁ = x₂ ∧ y₁ = W.toAffine.negY x₂ y₂) := fun hc => hxne hc.1
+  rw [Affine.Point.add_some hxy]
+  have hnegs1 : WithZero.exp (-(s : ℤ)) < 1 := by
+    rw [← WithZero.exp_zero]; exact WithZero.exp_lt_exp.mpr (by omega)
+  have hv31 := addX_difference_bound R W hx₁ hy₁ s hs hvx₂ hvy₂ h₁.1 h₂.1 hxne
+  have hvx₃ : valuation K (maximalIdeal R)
+      (W.toAffine.addX x₁ x₂ (W.toAffine.slope x₁ x₂ y₁ y₂)) ≤ 1 := by
+    rw [← sub_add_cancel (W.toAffine.addX x₁ x₂ (W.toAffine.slope x₁ x₂ y₁ y₂)) x₁]
+    exact Valuation.map_add_le _ (le_trans hv31 (le_of_lt hnegs1)) hx₁
+  have hvy₃1 := addY_difference_bound R W hx₁ hy₁ s hs hvx₂ hvy₂ h₁.1 h₂.1 hxne hv31
   have hvy₃ : valuation K (maximalIdeal R)
       (W.toAffine.addY x₁ x₂ y₁ (W.toAffine.slope x₁ x₂ y₁ y₂)) ≤ 1 := by
     rw [← sub_add_cancel (W.toAffine.addY x₁ x₂ y₁ (W.toAffine.slope x₁ x₂ y₁ y₂)) y₁]
@@ -494,34 +586,9 @@ theorem reducePoint_add_int_pole [DecidableEq K]
   obtain ⟨h₃', hrS⟩ := reducePoint_some R W (Affine.nonsingular_add h₁ h₂ hxy) hvx₃ hvy₃
   obtain ⟨h₁', hrP⟩ := reducePoint_some R W h₁ hx₁ hy₁
   rw [hrS, hrP]
-  obtain ⟨r3x, h3x⟩ := exists_algebraMap_eq_of_valuation_le_one R hvx₃
-  obtain ⟨r3y, h3y⟩ := exists_algebraMap_eq_of_valuation_le_one R hvy₃
   simp only [Affine.Point.some.injEq]
-  constructor
-  · have hsubK : W.toAffine.addX x₁ x₂ (W.toAffine.slope x₁ x₂ y₁ y₂) - x₁
-        = algebraMap R K (r3x - r1x) := by
-      simp only [map_sub, h3x, h1x]
-    have hsub_le : valuation K (maximalIdeal R)
-        (W.toAffine.addX x₁ x₂ (W.toAffine.slope x₁ x₂ y₁ y₂) - x₁) ≤ 1 := by
-      rw [hsubK]; exact valuation_le_one _ _
-    have h0 : reduceCoord R
-        (W.toAffine.addX x₁ x₂ (W.toAffine.slope x₁ x₂ y₁ y₂) - x₁) = 0 :=
-      (reduceCoord_eq_zero_iff_lt R hsub_le).mpr (lt_of_le_of_lt hv31 hnegs1)
-    rw [hsubK, reduceCoord_algebraMap, map_sub, sub_eq_zero] at h0
-    rw [← h3x, ← h1x, reduceCoord_algebraMap, reduceCoord_algebraMap]
-    exact h0
-  · have hsubK : W.toAffine.addY x₁ x₂ y₁ (W.toAffine.slope x₁ x₂ y₁ y₂) - y₁
-        = algebraMap R K (r3y - r1y) := by
-      simp only [map_sub, h3y, h1y]
-    have hsub_le : valuation K (maximalIdeal R)
-        (W.toAffine.addY x₁ x₂ y₁ (W.toAffine.slope x₁ x₂ y₁ y₂) - y₁) ≤ 1 := by
-      rw [hsubK]; exact valuation_le_one _ _
-    have h0 : reduceCoord R
-        (W.toAffine.addY x₁ x₂ y₁ (W.toAffine.slope x₁ x₂ y₁ y₂) - y₁) = 0 :=
-      (reduceCoord_eq_zero_iff_lt R hsub_le).mpr (lt_of_le_of_lt hvy₃1 hnegs1)
-    rw [hsubK, reduceCoord_algebraMap, map_sub, sub_eq_zero] at h0
-    rw [← h3y, ← h1y, reduceCoord_algebraMap, reduceCoord_algebraMap]
-    exact h0
+  exact ⟨reduceCoord_eq_of_sub_lt R hvx₃ hx₁ (lt_of_le_of_lt hv31 hnegs1),
+    reduceCoord_eq_of_sub_lt R hvy₃ hy₁ (lt_of_le_of_lt hvy₃1 hnegs1)⟩
 
 end Deep
 

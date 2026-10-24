@@ -1032,120 +1032,154 @@ private lemma kPole_aeval [NeZero N]
     | none => exact hkjf
     | some v => exact hkfr v
 
-end AevalKit
-
-end WLight
-
-open _root_.WLight _root_.P2MW.S_WLight_exists_monicRel_j_K_of_mdifferentiable_frickeQuotient.WLight
-  WLight.R8cGlue in
-theorem solution
-    (N : ℕ) [NeZero N]
-    (L : ℍ → PeriodPair) (hL : ∀ τ : ℍ, (L τ).ω₁ = (τ : ℂ) ∧ (L τ).ω₂ = 1)
-    (W : (Fin 2 → ZMod N) → ℍ → ℂ)
-    (hW : ∀ (v : Fin 2 → ZMod N) (τ : ℍ), W v τ = ((2 * (Real.pi : ℂ) * Complex.I) ^ 2)⁻¹ *
-      PeriodPair.weierstrassP (L τ) ((((v 0).val : ℂ) * (τ : ℂ) + ((v 1).val : ℂ)) / (N : ℂ)))
-    (fricke : (Fin 2 → ZMod N) → ℍ → ℂ)
-    (hfricke : ∀ (v : Fin 2 → ZMod N) (τ : ℍ), fricke v τ =
-      -(ModularForm.E₄ τ * ModularForm.E₆ τ / ModularForm.discriminant τ) / 2592 * W v τ)
-    (jf : ℍ → ℂ)
-    (hjf : ∀ τ : ℍ, jf τ = ModularForm.E₄ τ ^ 3 / ModularForm.discriminant τ)
-    (K : IntermediateField ℚ ℂ)
-    (hK : K = IntermediateField.adjoin ℚ
-      {Complex.exp (2 * (Real.pi : ℂ) * Complex.I / (N : ℂ))})
-    (G : ℍ → ℂ) (hG : MDifferentiable 𝓘(ℂ) 𝓘(ℂ) G)
-    (P₀ Q₀ : MvPolynomial (Option {v : Fin 2 → ZMod N // v ≠ 0}) ↥K)
-    (hQ0 : MvPolynomial.aeval (fun o : Option {v : Fin 2 → ZMod N // v ≠ 0} =>
-      o.elim jf fun v => fricke v.1) (Q₀.map (algebraMap ↥K ℂ)) ≠ 0)
-    (hGQ : G * MvPolynomial.aeval (fun o : Option {v : Fin 2 → ZMod N // v ≠ 0} =>
-        o.elim jf fun v => fricke v.1) (Q₀.map (algebraMap ↥K ℂ)) =
-      MvPolynomial.aeval (fun o : Option {v : Fin 2 → ZMod N // v ≠ 0} =>
-        o.elim jf fun v => fricke v.1) (P₀.map (algebraMap ↥K ℂ)))
-    :
-    ∃ (d : ℕ) (p : Fin d → Polynomial ℂ), (∀ (i : Fin d) (n : ℕ), (p i).coeff n ∈ K) ∧
-      ∀ τ : ℍ, G τ ^ d + ∑ i : Fin d, (p i).eval (jf τ) * G τ ^ (i : ℕ) = 0 := by
-  have hR6h3 : ∀ {a b F : ℍ → ℂ},
-      a ∈ Algebra.adjoin ℂ
-        (insert jf {g : ℍ → ℂ | ∃ v : Fin 2 → ZMod N, v ≠ 0 ∧ g = fricke v}) →
-      b ∈ Algebra.adjoin ℂ
-        (insert jf {g : ℍ → ℂ | ∃ v : Fin 2 → ZMod N, v ≠ 0 ∧ g = fricke v}) →
-      b ≠ 0 → MDifferentiable 𝓘(ℂ) 𝓘(ℂ) F → F * b = a →
-      (∀ γ : Matrix.SpecialLinearGroup (Fin 2) ℤ, ∃ m : ℕ,
-        IsBoundedAtImInfty ((F ∘ (γ • ·)) * ModularForm.discriminant ^ m)) →
-      ∃ (d : ℕ) (p : Fin d → Polynomial ℂ), ∀ τ : ℍ,
-        F τ ^ d + ∑ i : Fin d, (p i).eval (jf τ) * F τ ^ (i : ℕ) = 0 :=
-    fun ha hb hb0 hF hFb hpb =>
-      exists_monicRel_j_of_mdifferentiable_levelFraction N L hL W hW fricke hfricke jf hjf
-        ha hb hb0 hF hFb hpb
-  have hR7a : ∀ {ι : Type} (f : ι → ℍ → ℂ),
-      (∀ i, MDifferentiable 𝓘(ℂ) 𝓘(ℂ) (f i) ∧ ∃ m : ℕ,
-        Function.Periodic ((f i * ModularForm.discriminant ^ m) ∘
-          UpperHalfPlane.ofComplex) N ∧
-        IsBoundedAtImInfty (f i * ModularForm.discriminant ^ m) ∧
-        ∀ n : ℕ, (UpperHalfPlane.qExpansion N
-          (f i * ModularForm.discriminant ^ m)).coeff n ∈ K) →
-      LinearIndependent ↥K f → LinearIndependent ℂ f :=
-    fun f hf hli => UpperHalfPlane.linearIndependent_complex_of_qExpansion_coeff_mem N K f hf hli
-  have hR4b12 : (MDifferentiable 𝓘(ℂ) 𝓘(ℂ) jf ∧
-        ∃ m : ℕ, IsBoundedAtImInfty (jf * ModularForm.discriminant ^ m)) ∧
-      (∀ v : Fin 2 → ZMod N, v ≠ 0 → MDifferentiable 𝓘(ℂ) 𝓘(ℂ) (fricke v) ∧
-        ∃ m : ℕ, IsBoundedAtImInfty (fricke v * ModularForm.discriminant ^ m)) :=
-    ⟨(frickeFunction_orbit_package N L hL W hW fricke hfricke jf hjf).1,
-      (frickeFunction_orbit_package N L hL W hW fricke hfricke jf hjf).2.1⟩
-  have hfeq : fricke = fun a τ =>
-      -(ModularForm.E₄ τ * ModularForm.E₆ τ / ModularForm.discriminant τ) / 2592 *
-        (((2 * (Real.pi : ℂ) * Complex.I) ^ 2)⁻¹ *
-          PeriodPair.weierstrassP (L τ)
-            ((((a 0).val : ℂ) * (τ : ℂ) + ((a 1).val : ℂ)) / (N : ℂ))) := by
-    funext a τ; rw [hfricke, hW]
-  have hR4a := frickeFunction_modularity_package N L hL
-  dsimp only at hR4a
-  have hR4c : ∀ (v : Fin 2 → ZMod N) (γ : Matrix.SpecialLinearGroup (Fin 2) ℤ) (τ : ℍ),
-      fricke v (γ • τ) = fricke (Matrix.vecMul v
-        ((Matrix.SpecialLinearGroup.map (Int.castRingHom (ZMod N)) γ :
-          Matrix.SpecialLinearGroup (Fin 2) (ZMod N)) : Matrix (Fin 2) (Fin 2) (ZMod N))) τ := by
-    intro v γ τ; rw [hfeq]; exact hR4a.1 v γ τ
-  have hQrat : ∀ v : Fin 2 → ZMod N, v ≠ 0 →
-      Function.Periodic ((fricke v * ModularForm.discriminant ^ 1) ∘
-        UpperHalfPlane.ofComplex) N ∧
-      IsBoundedAtImInfty (fricke v * ModularForm.discriminant ^ 1) ∧
-      ∀ n : ℕ, (UpperHalfPlane.qExpansion N
-        (fricke v * ModularForm.discriminant ^ 1)).coeff n ∈ K := by
-    intro v hv; rw [pow_one, hfeq, hK]
-    exact ⟨(hR4a.2.2.2.2.1 v hv).1, hR4a.2.2.2.1 v hv, (hR4a.2.2.2.2.1 v hv).2⟩
-  clear hR4a
+/-- A complex linear relation among functions with `K`-rational q-expansions
+can be chosen over `K`, keeping the distinguished coefficient equal to one. -/
+private lemma descend_KPole_relation (N : ℕ) [NeZero N] (K : IntermediateField ℚ ℂ)
+    {ι : Type} [Fintype ι] (u : Option ι → ℍ → ℂ)
+    (hkU : ∀ o, KPole K N (u o)) (lam : ι → ℂ)
+    (hfunrel : u none + ∑ i, lam i • u (some i) = 0) :
+    ∃ y : ι → ↥K, u none + ∑ i, (y i : ℂ) • u (some i) = 0 := by
   classical
-  set gen : Option {v : Fin 2 → ZMod N // v ≠ 0} → ℍ → ℂ :=
-    fun o => o.elim jf fun v => fricke v.1 with hgen
+  obtain ⟨b, hbsub, hbspan, hbind⟩ := exists_linearIndependent ↥K (Set.range u)
+  have hbfin : b.Finite := (Set.finite_range u).subset hbsub
+  have : Fintype ↥b := hbfin.fintype
+  have hdata : ∀ w : ↥b, MDifferentiable 𝓘(ℂ) 𝓘(ℂ) ((w : ℍ → ℂ)) ∧ ∃ m : ℕ,
+      Function.Periodic (((w : ℍ → ℂ) * ModularForm.discriminant ^ m) ∘
+        UpperHalfPlane.ofComplex) N ∧
+      IsBoundedAtImInfty ((w : ℍ → ℂ) * ModularForm.discriminant ^ m) ∧
+      ∀ n : ℕ, (UpperHalfPlane.qExpansion N
+        ((w : ℍ → ℂ) * ModularForm.discriminant ^ m)).coeff n ∈ K := by
+    intro w
+    obtain ⟨o, ho⟩ := hbsub w.2
+    obtain ⟨hmd, m, hper, hbd, hmem⟩ := ho ▸ hkU o
+    have hsh : ((w : ℍ → ℂ) * ⇑CuspForm.discriminant ^ m : ℍ → ℂ) =
+        (w : ℍ → ℂ) * ModularForm.discriminant ^ m := by
+      funext τ
+      simp only [Pi.mul_apply, Pi.pow_apply]
+      rw [congrFun CuspForm.coe_discriminant τ]
+    rw [hsh] at hper hbd hmem
+    exact ⟨hmd, m, hper, hbd, hmem⟩
+  have hCind : LinearIndependent ℂ (fun w : ↥b => (w : ℍ → ℂ)) :=
+    UpperHalfPlane.linearIndependent_complex_of_qExpansion_coeff_mem N K
+      (fun w : ↥b => (w : ℍ → ℂ)) hdata hbind
+  have hcoords : ∀ o, ∃ c : ↥b → ↥K, ∑ w : ↥b, c w • (w : ℍ → ℂ) = u o := by
+    intro o
+    have h1 : u o ∈ Submodule.span ↥K (Set.range ((↑) : b → ℍ → ℂ)) := by
+      rw [Subtype.range_coe, hbspan]
+      exact Submodule.subset_span (Set.mem_range_self o)
+    exact (Submodule.mem_span_range_iff_exists_fun ↥K).mp h1
+  choose co hco using hcoords
+  have hKsmul : ∀ (c : ↥K) (g : ℍ → ℂ), c • g = (c : ℂ) • g := fun c g =>
+    (algebraMap_smul ℂ c g).symm
+  have hpiece : ∀ o, ∑ w : ↥b, (co o w : ℂ) • (w : ℍ → ℂ) = u o := by
+    intro o
+    rw [← hco o]
+    exact Finset.sum_congr rfl fun w _ => (hKsmul _ _).symm
+  have hsys : ∀ w : ↥b, (co none w : ℂ) +
+      ∑ ik : ι, lam ik * (co (some ik) w : ℂ) = 0 := by
+    have hcomb : ∑ w : ↥b, ((co none w : ℂ) +
+        ∑ ik : ι, lam ik * (co (some ik) w : ℂ)) • (w : ℍ → ℂ) = 0 := by
+      have hstep : ∑ w : ↥b, ((co none w : ℂ) +
+          ∑ ik : ι, lam ik * (co (some ik) w : ℂ)) • (w : ℍ → ℂ) =
+          ∑ w : ↥b, (co none w : ℂ) • (w : ℍ → ℂ) +
+          ∑ ik : ι, lam ik •
+            ∑ w : ↥b, (co (some ik) w : ℂ) • (w : ℍ → ℂ) := by
+        simp only [add_smul, Finset.sum_smul, mul_smul]
+        rw [Finset.sum_add_distrib]
+        congr 1
+        rw [Finset.sum_comm]
+        exact Finset.sum_congr rfl fun ik _ => (Finset.smul_sum).symm
+      rw [hstep, hpiece none]
+      rw [Finset.sum_congr rfl fun ik _ => congrArg (lam ik • ·) (hpiece (some ik))]
+      exact hfunrel
+    intro w
+    exact (Fintype.linearIndependent_iff.mp hCind) _ hcomb w
+  set em : (ι) ≃ Fin (Fintype.card (ι)) :=
+    Fintype.equivFin (ι) with hem
+  set eb : ↥b ≃ Fin (Fintype.card ↥b) := Fintype.equivFin ↥b with heb
+  obtain ⟨y0, hy0⟩ := exists_K_point_of_C_point K
+    (A := fun j i => co (some (em.symm i)) (eb.symm j))
+    (bv := fun j => - co none (eb.symm j))
+    (x := fun i => lam (em.symm i))
+    (by
+      intro j
+      have h0 := hsys (eb.symm j)
+      calc ∑ i, ((co (some (em.symm i)) (eb.symm j) : ↥K) : ℂ) * lam (em.symm i)
+          = ∑ ik : ι, (co (some ik) (eb.symm j) : ℂ) * lam ik :=
+            Equiv.sum_comp em.symm fun ik => (co (some ik) (eb.symm j) : ℂ) * lam ik
+        _ = ∑ ik : ι, lam ik * (co (some ik) (eb.symm j) : ℂ) :=
+            Finset.sum_congr rfl fun ik _ => mul_comm _ _
+        _ = ((- co none (eb.symm j) : ↥K) : ℂ) := by
+            push_cast
+            linear_combination h0)
+  set y : ι → ↥K := fun ik => y0 (em ik) with hy
+  have hyK : ∀ w : ↥b, co none w + ∑ ik : ι, co (some ik) w * y ik = 0 := by
+    intro w
+    have h0 := hy0 (eb w)
+    simp only [Equiv.symm_apply_apply] at h0
+    have hre : ∑ ik : ι, co (some ik) w * y ik =
+        ∑ i, co (some (em.symm i)) w * y0 i := by
+      rw [← Equiv.sum_comp em.symm (fun ik => co (some ik) w * y ik)]
+      refine Finset.sum_congr rfl fun i _ => ?_
+      rw [hy]
+      simp only [Equiv.apply_symm_apply]
+    rw [hre, h0]
+    ring
+  have hKfun : u none + ∑ ik : ι, ((y ik : ↥K) : ℂ) • u (some ik) = 0 := by
+    calc u none + ∑ ik : ι, ((y ik : ↥K) : ℂ) • u (some ik)
+        = ∑ w : ↥b, ((co none w : ℂ) +
+            ∑ ik : ι, (co (some ik) w : ℂ) * ((y ik : ↥K) : ℂ)) •
+              (w : ℍ → ℂ) := by
+          rw [← hpiece none,
+            Finset.sum_congr rfl fun ik _ =>
+              congrArg (((y ik : ↥K) : ℂ) • ·) (hpiece (some ik)).symm]
+          simp only [Finset.smul_sum]
+          rw [Finset.sum_comm, ← Finset.sum_add_distrib]
+          refine Finset.sum_congr rfl fun w _ => ?_
+          rw [add_smul, Finset.sum_smul]
+          congr 1
+          refine Finset.sum_congr rfl fun ik _ => ?_
+          rw [smul_smul, mul_comm]
+      _ = 0 := by
+          refine Finset.sum_eq_zero fun w _ => ?_
+          have h3 : (co none w : ℂ) +
+              ∑ ik : ι, (co (some ik) w : ℂ) * ((y ik : ↥K) : ℂ) = 0 := by
+            exact_mod_cast congrArg (fun z : ↥K => (z : ℂ)) (hyK w)
+          rw [h3, zero_smul]
+  exact ⟨y, hKfun⟩
+
+private lemma mdifferentiable_polynomial_eval {f : ℍ → ℂ}
+    (p : Polynomial ℂ) (hf : MDifferentiable 𝓘(ℂ) 𝓘(ℂ) f) :
+    MDifferentiable 𝓘(ℂ) 𝓘(ℂ) (fun τ => p.eval (f τ)) := by
+  induction p using Polynomial.induction_on' with
+  | add p q hp hq =>
+    convert hp.add hq using 1
+    funext τ
+    simp only [Polynomial.eval_add, Pi.add_apply]
+  | monomial n c =>
+    convert (mdifferentiable_const (c := c)).mul (hf.pow n) using 1
+    funext τ
+    simp only [Polynomial.eval_monomial, Pi.mul_apply, Pi.pow_apply]
+
+/-- Descend a monic relation for a holomorphic fraction by clearing its denominator,
+descending the resulting linear relation, and cancelling analytically. -/
+private lemma exists_monicRel_K_of_KPole_fraction
+    (N : ℕ) [NeZero N] (K : IntermediateField ℚ ℂ) {σ : Type}
+    (gen : Option σ → ℍ → ℂ) (jf G : ℍ → ℂ) (hgen : gen none = jf)
+    (hG : MDifferentiable 𝓘(ℂ) 𝓘(ℂ) G) (hjfmd : MDifferentiable 𝓘(ℂ) 𝓘(ℂ) jf)
+    (hkA : ∀ r : MvPolynomial (Option σ) ↥K,
+      KPole K N (MvPolynomial.aeval gen (r.map (algebraMap ↥K ℂ))))
+    (P₀ Q₀ : MvPolynomial (Option σ) ↥K)
+    (hQ0 : MvPolynomial.aeval gen (Q₀.map (algebraMap ↥K ℂ)) ≠ 0)
+    (hGQ : G * MvPolynomial.aeval gen (Q₀.map (algebraMap ↥K ℂ)) =
+      MvPolynomial.aeval gen (P₀.map (algebraMap ↥K ℂ)))
+    (d : ℕ) (p : Fin d → Polynomial ℂ)
+    (hrel : ∀ τ : ℍ, G τ ^ d + ∑ i : Fin d, (p i).eval (jf τ) * G τ ^ (i : ℕ) = 0) :
+    ∃ (d : ℕ) (p : Fin d → Polynomial ℂ), (∀ i n, (p i).coeff n ∈ K) ∧
+      ∀ τ : ℍ, G τ ^ d + ∑ i : Fin d, (p i).eval (jf τ) * G τ ^ (i : ℕ) = 0 := by
+  classical
   set Pt : ℍ → ℂ := MvPolynomial.aeval gen (P₀.map (algebraMap ↥K ℂ)) with hPt
   set Qt : ℍ → ℂ := MvPolynomial.aeval gen (Q₀.map (algebraMap ↥K ℂ)) with hQt
-  have hkjf : KPole K N jf := kPole_jf K hjf
-  have hkfr : ∀ v : {v : Fin 2 → ZMod N // v ≠ 0}, KPole K N (fricke v.1) := fun v =>
-    kPole_fricke ((hR4b12.2 v.1 v.2).1) (hQrat v.1 v.2).1 (hQrat v.1 v.2).2.1
-      (hQrat v.1 v.2).2.2
-  have hkA : ∀ r : MvPolynomial (Option {v : Fin 2 → ZMod N // v ≠ 0}) ↥K,
-      KPole K N (MvPolynomial.aeval gen (r.map (algebraMap ↥K ℂ))) := fun r =>
-    kPole_aeval hkjf hkfr r
-  have hrange : Set.range gen =
-      insert jf {g : ℍ → ℂ | ∃ v : Fin 2 → ZMod N, v ≠ 0 ∧ g = fricke v} := by
-    ext g
-    constructor
-    · rintro ⟨o, rfl⟩
-      cases o with
-      | none => exact Set.mem_insert _ _
-      | some v => exact Set.mem_insert_of_mem _ ⟨v.1, v.2, rfl⟩
-    · rintro (rfl | ⟨v, hv, rfl⟩)
-      · exact ⟨none, rfl⟩
-      · exact ⟨some ⟨v, hv⟩, rfl⟩
-  have hmemA : ∀ r : MvPolynomial (Option {v : Fin 2 → ZMod N // v ≠ 0}) ℂ,
-      MvPolynomial.aeval gen r ∈ Algebra.adjoin ℂ
-        (insert jf {g : ℍ → ℂ | ∃ v : Fin 2 → ZMod N, v ≠ 0 ∧ g = fricke v}) := by
-    intro r
-    rw [← hrange, Algebra.adjoin_range_eq_range_aeval]
-    exact ⟨r, rfl⟩
-  have hpb := R8cGlue.isBoundedAtImInfty_smul_quotient_of_aeval N L hL W hW fricke hfricke
-    jf hjf K hK hR4c hR4b12 hG P₀ Q₀ hQ0 hGQ
-  obtain ⟨d, p, hrel⟩ := hR6h3 (hmemA (P₀.map (algebraMap ↥K ℂ)))
-    (hmemA (Q₀.map (algebraMap ↥K ℂ))) hQ0 hG hGQ hpb
   rcases Nat.eq_zero_or_pos d with hd0 | hdpos
   · exfalso
     have h0 := hrel ⟨Complex.I, by simp⟩
@@ -1218,90 +1252,7 @@ theorem solution
       rw [hu_mon (i, k) τ, hlam]
     rw [hsum]
     exact hcleared τ
-  obtain ⟨b, hbsub, hbspan, hbind⟩ := exists_linearIndependent ↥K (Set.range u)
-  have hbfin : b.Finite := (Set.finite_range u).subset hbsub
-  have : Fintype ↥b := hbfin.fintype
-  have hdata : ∀ w : ↥b, MDifferentiable 𝓘(ℂ) 𝓘(ℂ) ((w : ℍ → ℂ)) ∧ ∃ m : ℕ,
-      Function.Periodic (((w : ℍ → ℂ) * ModularForm.discriminant ^ m) ∘
-        UpperHalfPlane.ofComplex) N ∧
-      IsBoundedAtImInfty ((w : ℍ → ℂ) * ModularForm.discriminant ^ m) ∧
-      ∀ n : ℕ, (UpperHalfPlane.qExpansion N
-        ((w : ℍ → ℂ) * ModularForm.discriminant ^ m)).coeff n ∈ K := by
-    intro w
-    obtain ⟨o, ho⟩ := hbsub w.2
-    obtain ⟨hmd, m, hper, hbd, hmem⟩ := ho ▸ hkU o
-    have hsh : ((w : ℍ → ℂ) * ⇑CuspForm.discriminant ^ m : ℍ → ℂ) =
-        (w : ℍ → ℂ) * ModularForm.discriminant ^ m := by
-      funext τ
-      simp only [Pi.mul_apply, Pi.pow_apply]
-      rw [congrFun CuspForm.coe_discriminant τ]
-    rw [hsh] at hper hbd hmem
-    exact ⟨hmd, m, hper, hbd, hmem⟩
-  have hCind : LinearIndependent ℂ (fun w : ↥b => (w : ℍ → ℂ)) :=
-    hR7a (fun w : ↥b => (w : ℍ → ℂ)) hdata hbind
-  have hcoords : ∀ o, ∃ c : ↥b → ↥K, ∑ w : ↥b, c w • (w : ℍ → ℂ) = u o := by
-    intro o
-    have h1 : u o ∈ Submodule.span ↥K (Set.range ((↑) : b → ℍ → ℂ)) := by
-      rw [Subtype.range_coe, hbspan]
-      exact Submodule.subset_span (Set.mem_range_self o)
-    exact (Submodule.mem_span_range_iff_exists_fun ↥K).mp h1
-  choose co hco using hcoords
-  have hKsmul : ∀ (c : ↥K) (g : ℍ → ℂ), c • g = (c : ℂ) • g := fun c g =>
-    (algebraMap_smul ℂ c g).symm
-  have hpiece : ∀ o, ∑ w : ↥b, (co o w : ℂ) • (w : ℍ → ℂ) = u o := by
-    intro o
-    rw [← hco o]
-    exact Finset.sum_congr rfl fun w _ => (hKsmul _ _).symm
-  have hsys : ∀ w : ↥b, (co none w : ℂ) +
-      ∑ ik : Fin d × Fin D, lam ik * (co (some ik) w : ℂ) = 0 := by
-    have hcomb : ∑ w : ↥b, ((co none w : ℂ) +
-        ∑ ik : Fin d × Fin D, lam ik * (co (some ik) w : ℂ)) • (w : ℍ → ℂ) = 0 := by
-      have hstep : ∑ w : ↥b, ((co none w : ℂ) +
-          ∑ ik : Fin d × Fin D, lam ik * (co (some ik) w : ℂ)) • (w : ℍ → ℂ) =
-          ∑ w : ↥b, (co none w : ℂ) • (w : ℍ → ℂ) +
-          ∑ ik : Fin d × Fin D, lam ik •
-            ∑ w : ↥b, (co (some ik) w : ℂ) • (w : ℍ → ℂ) := by
-        simp only [add_smul, Finset.sum_smul, mul_smul]
-        rw [Finset.sum_add_distrib]
-        congr 1
-        rw [Finset.sum_comm]
-        exact Finset.sum_congr rfl fun ik _ => (Finset.smul_sum).symm
-      rw [hstep, hpiece none]
-      rw [Finset.sum_congr rfl fun ik _ => congrArg (lam ik • ·) (hpiece (some ik))]
-      exact hfunrel
-    intro w
-    exact (Fintype.linearIndependent_iff.mp hCind) _ hcomb w
-  set em : (Fin d × Fin D) ≃ Fin (Fintype.card (Fin d × Fin D)) :=
-    Fintype.equivFin (Fin d × Fin D) with hem
-  set eb : ↥b ≃ Fin (Fintype.card ↥b) := Fintype.equivFin ↥b with heb
-  obtain ⟨y0, hy0⟩ := exists_K_point_of_C_point K
-    (A := fun j i => co (some (em.symm i)) (eb.symm j))
-    (bv := fun j => - co none (eb.symm j))
-    (x := fun i => lam (em.symm i))
-    (by
-      intro j
-      have h0 := hsys (eb.symm j)
-      calc ∑ i, ((co (some (em.symm i)) (eb.symm j) : ↥K) : ℂ) * lam (em.symm i)
-          = ∑ ik : Fin d × Fin D, (co (some ik) (eb.symm j) : ℂ) * lam ik :=
-            Equiv.sum_comp em.symm fun ik => (co (some ik) (eb.symm j) : ℂ) * lam ik
-        _ = ∑ ik : Fin d × Fin D, lam ik * (co (some ik) (eb.symm j) : ℂ) :=
-            Finset.sum_congr rfl fun ik _ => mul_comm _ _
-        _ = ((- co none (eb.symm j) : ↥K) : ℂ) := by
-            push_cast
-            linear_combination h0)
-  set y : Fin d × Fin D → ↥K := fun ik => y0 (em ik) with hy
-  have hyK : ∀ w : ↥b, co none w + ∑ ik : Fin d × Fin D, co (some ik) w * y ik = 0 := by
-    intro w
-    have h0 := hy0 (eb w)
-    simp only [Equiv.symm_apply_apply] at h0
-    have hre : ∑ ik : Fin d × Fin D, co (some ik) w * y ik =
-        ∑ i, co (some (em.symm i)) w * y0 i := by
-      rw [← Equiv.sum_comp em.symm (fun ik => co (some ik) w * y ik)]
-      refine Finset.sum_congr rfl fun i _ => ?_
-      rw [hy]
-      simp only [Equiv.apply_symm_apply]
-    rw [hre, h0]
-    ring
+  obtain ⟨y, hKfun⟩ := descend_KPole_relation N K u hkU lam hfunrel
   set p' : Fin d → Polynomial ℂ := fun i =>
     ∑ k : Fin D, Polynomial.C ((y (i, k) : ↥K) : ℂ) * Polynomial.X ^ (k : ℕ) with hp'
   have hp'coeff : ∀ (i : Fin d) (n : ℕ), (p' i).coeff n ∈ K := by
@@ -1320,27 +1271,6 @@ theorem solution
     rw [hp', Polynomial.eval_finsetSum]
     refine Finset.sum_congr rfl fun k _ => ?_
     rw [Polynomial.eval_mul, Polynomial.eval_C, Polynomial.eval_pow, Polynomial.eval_X]
-  have hKfun : u none + ∑ ik : Fin d × Fin D, ((y ik : ↥K) : ℂ) • u (some ik) = 0 := by
-    calc u none + ∑ ik : Fin d × Fin D, ((y ik : ↥K) : ℂ) • u (some ik)
-        = ∑ w : ↥b, ((co none w : ℂ) +
-            ∑ ik : Fin d × Fin D, (co (some ik) w : ℂ) * ((y ik : ↥K) : ℂ)) •
-              (w : ℍ → ℂ) := by
-          rw [← hpiece none,
-            Finset.sum_congr rfl fun ik _ =>
-              congrArg (((y ik : ↥K) : ℂ) • ·) (hpiece (some ik)).symm]
-          simp only [Finset.smul_sum]
-          rw [Finset.sum_comm, ← Finset.sum_add_distrib]
-          refine Finset.sum_congr rfl fun w _ => ?_
-          rw [add_smul, Finset.sum_smul]
-          congr 1
-          refine Finset.sum_congr rfl fun ik _ => ?_
-          rw [smul_smul, mul_comm]
-      _ = 0 := by
-          refine Finset.sum_eq_zero fun w _ => ?_
-          have h3 : (co none w : ℂ) +
-              ∑ ik : Fin d × Fin D, (co (some ik) w : ℂ) * ((y ik : ↥K) : ℂ) = 0 := by
-            exact_mod_cast congrArg (fun z : ↥K => (z : ℂ)) (hyK w)
-          rw [h3, zero_smul]
   have hfinal0 : ∀ τ : ℍ, Pt τ ^ d + ∑ ik : Fin d × Fin D,
       ((y ik : ↥K) : ℂ) * (jf τ ^ (ik.2 : ℕ) *
         (Qt τ ^ (d - (ik.1 : ℕ)) * Pt τ ^ (ik.1 : ℕ))) = 0 := by
@@ -1375,48 +1305,15 @@ theorem solution
     rw [Fintype.sum_prod_type] at h0
     exact h0
   have hQtmd : MDifferentiable 𝓘(ℂ) 𝓘(ℂ) Qt := (hkA Q₀).1
-  have hjfmd : MDifferentiable 𝓘(ℂ) 𝓘(ℂ) jf := hR4b12.1.1
   have hhmd : MDifferentiable 𝓘(ℂ) 𝓘(ℂ)
       (fun τ => G τ ^ d + ∑ i : Fin d, (p' i).eval (jf τ) * G τ ^ (i : ℕ)) := by
-    have hsummd : ∀ i : Fin d, MDifferentiable 𝓘(ℂ) 𝓘(ℂ)
-        (fun τ => (p' i).eval (jf τ) * G τ ^ (i : ℕ)) := by
-      intro i
-      have hev : MDifferentiable 𝓘(ℂ) 𝓘(ℂ) (fun τ => (p' i).eval (jf τ)) := by
-        have hsh : (fun τ => (p' i).eval (jf τ)) =
-            fun τ => ∑ k : Fin D, ((y (i, k) : ↥K) : ℂ) * jf τ ^ (k : ℕ) := by
-          funext τ
-          rw [hp'eval]
-        rw [hsh]
-        have : ∀ s : Finset (Fin D), MDifferentiable 𝓘(ℂ) 𝓘(ℂ)
-            (fun τ => ∑ k ∈ s, ((y (i, k) : ↥K) : ℂ) * jf τ ^ (k : ℕ)) := by
-          intro s
-          induction s using Finset.induction_on with
-          | empty => simpa using mdifferentiable_const
-          | insert a t ha ih =>
-            have hsh2 : (fun τ => ∑ k ∈ insert a t,
-                ((y (i, k) : ↥K) : ℂ) * jf τ ^ (k : ℕ)) =
-                (fun τ => ((y (i, a) : ↥K) : ℂ) * jf τ ^ (a : ℕ)) +
-                fun τ => ∑ k ∈ t, ((y (i, k) : ↥K) : ℂ) * jf τ ^ (k : ℕ) := by
-              funext τ
-              simp [Finset.sum_insert ha]
-            rw [hsh2]
-            exact (mdifferentiable_const.mul (hjfmd.pow _)).add ih
-        exact this Finset.univ
-      exact hev.mul (hG.pow _)
-    have : ∀ s : Finset (Fin d), MDifferentiable 𝓘(ℂ) 𝓘(ℂ)
-        (fun τ => ∑ i ∈ s, (p' i).eval (jf τ) * G τ ^ (i : ℕ)) := by
-      intro s
-      induction s using Finset.induction_on with
-      | empty => simpa using mdifferentiable_const
-      | insert a t ha ih =>
-        have hsh2 : (fun τ => ∑ i ∈ insert a t, (p' i).eval (jf τ) * G τ ^ (i : ℕ)) =
-            (fun τ => (p' a).eval (jf τ) * G τ ^ (a : ℕ)) +
-            fun τ => ∑ i ∈ t, (p' i).eval (jf τ) * G τ ^ (i : ℕ) := by
-          funext τ
-          simp [Finset.sum_insert ha]
-        rw [hsh2]
-        exact (hsummd a).add ih
-    exact (hG.pow d).add (this Finset.univ)
+    have hsummd : MDifferentiable 𝓘(ℂ) 𝓘(ℂ)
+        (∑ i : Fin d, fun τ => (p' i).eval (jf τ) * G τ ^ (i : ℕ)) :=
+      MDifferentiable.sum fun i _ =>
+        (mdifferentiable_polynomial_eval (p' i) hjfmd).mul (hG.pow _)
+    convert (hG.pow d).add hsummd using 1
+    funext τ
+    simp only [Pi.add_apply, Pi.pow_apply, Finset.sum_apply]
   have hmul0 : ((fun τ => G τ ^ d + ∑ i : Fin d, (p' i).eval (jf τ) * G τ ^ (i : ℕ)) *
       Qt ^ d : ℍ → ℂ) = 0 := by
     funext τ
@@ -1433,6 +1330,112 @@ theorem solution
     simp only [Pi.pow_apply, Pi.zero_apply] at h1
     have h2 := pow_eq_zero_iff hdpos.ne' |>.mp h1
     simpa using h2
+
+end AevalKit
+
+end WLight
+
+open _root_.WLight _root_.P2MW.S_WLight_exists_monicRel_j_K_of_mdifferentiable_frickeQuotient.WLight
+  WLight.R8cGlue in
+theorem solution
+    (N : ℕ) [NeZero N]
+    (L : ℍ → PeriodPair) (hL : ∀ τ : ℍ, (L τ).ω₁ = (τ : ℂ) ∧ (L τ).ω₂ = 1)
+    (W : (Fin 2 → ZMod N) → ℍ → ℂ)
+    (hW : ∀ (v : Fin 2 → ZMod N) (τ : ℍ), W v τ = ((2 * (Real.pi : ℂ) * Complex.I) ^ 2)⁻¹ *
+      PeriodPair.weierstrassP (L τ) ((((v 0).val : ℂ) * (τ : ℂ) + ((v 1).val : ℂ)) / (N : ℂ)))
+    (fricke : (Fin 2 → ZMod N) → ℍ → ℂ)
+    (hfricke : ∀ (v : Fin 2 → ZMod N) (τ : ℍ), fricke v τ =
+      -(ModularForm.E₄ τ * ModularForm.E₆ τ / ModularForm.discriminant τ) / 2592 * W v τ)
+    (jf : ℍ → ℂ)
+    (hjf : ∀ τ : ℍ, jf τ = ModularForm.E₄ τ ^ 3 / ModularForm.discriminant τ)
+    (K : IntermediateField ℚ ℂ)
+    (hK : K = IntermediateField.adjoin ℚ
+      {Complex.exp (2 * (Real.pi : ℂ) * Complex.I / (N : ℂ))})
+    (G : ℍ → ℂ) (hG : MDifferentiable 𝓘(ℂ) 𝓘(ℂ) G)
+    (P₀ Q₀ : MvPolynomial (Option {v : Fin 2 → ZMod N // v ≠ 0}) ↥K)
+    (hQ0 : MvPolynomial.aeval (fun o : Option {v : Fin 2 → ZMod N // v ≠ 0} =>
+      o.elim jf fun v => fricke v.1) (Q₀.map (algebraMap ↥K ℂ)) ≠ 0)
+    (hGQ : G * MvPolynomial.aeval (fun o : Option {v : Fin 2 → ZMod N // v ≠ 0} =>
+        o.elim jf fun v => fricke v.1) (Q₀.map (algebraMap ↥K ℂ)) =
+      MvPolynomial.aeval (fun o : Option {v : Fin 2 → ZMod N // v ≠ 0} =>
+        o.elim jf fun v => fricke v.1) (P₀.map (algebraMap ↥K ℂ)))
+    :
+    ∃ (d : ℕ) (p : Fin d → Polynomial ℂ), (∀ (i : Fin d) (n : ℕ), (p i).coeff n ∈ K) ∧
+      ∀ τ : ℍ, G τ ^ d + ∑ i : Fin d, (p i).eval (jf τ) * G τ ^ (i : ℕ) = 0 := by
+  have hR6h3 : ∀ {a b F : ℍ → ℂ},
+      a ∈ Algebra.adjoin ℂ
+        (insert jf {g : ℍ → ℂ | ∃ v : Fin 2 → ZMod N, v ≠ 0 ∧ g = fricke v}) →
+      b ∈ Algebra.adjoin ℂ
+        (insert jf {g : ℍ → ℂ | ∃ v : Fin 2 → ZMod N, v ≠ 0 ∧ g = fricke v}) →
+      b ≠ 0 → MDifferentiable 𝓘(ℂ) 𝓘(ℂ) F → F * b = a →
+      (∀ γ : Matrix.SpecialLinearGroup (Fin 2) ℤ, ∃ m : ℕ,
+        IsBoundedAtImInfty ((F ∘ (γ • ·)) * ModularForm.discriminant ^ m)) →
+      ∃ (d : ℕ) (p : Fin d → Polynomial ℂ), ∀ τ : ℍ,
+        F τ ^ d + ∑ i : Fin d, (p i).eval (jf τ) * F τ ^ (i : ℕ) = 0 :=
+    fun ha hb hb0 hF hFb hpb =>
+      exists_monicRel_j_of_mdifferentiable_levelFraction N L hL W hW fricke hfricke jf hjf
+        ha hb hb0 hF hFb hpb
+  have hR4b12 : (MDifferentiable 𝓘(ℂ) 𝓘(ℂ) jf ∧
+        ∃ m : ℕ, IsBoundedAtImInfty (jf * ModularForm.discriminant ^ m)) ∧
+      (∀ v : Fin 2 → ZMod N, v ≠ 0 → MDifferentiable 𝓘(ℂ) 𝓘(ℂ) (fricke v) ∧
+        ∃ m : ℕ, IsBoundedAtImInfty (fricke v * ModularForm.discriminant ^ m)) :=
+    ⟨(frickeFunction_orbit_package N L hL W hW fricke hfricke jf hjf).1,
+      (frickeFunction_orbit_package N L hL W hW fricke hfricke jf hjf).2.1⟩
+  have hfeq : fricke = fun a τ =>
+      -(ModularForm.E₄ τ * ModularForm.E₆ τ / ModularForm.discriminant τ) / 2592 *
+        (((2 * (Real.pi : ℂ) * Complex.I) ^ 2)⁻¹ *
+          PeriodPair.weierstrassP (L τ)
+            ((((a 0).val : ℂ) * (τ : ℂ) + ((a 1).val : ℂ)) / (N : ℂ))) := by
+    funext a τ; rw [hfricke, hW]
+  have hR4a := frickeFunction_modularity_package N L hL
+  dsimp only at hR4a
+  have hR4c : ∀ (v : Fin 2 → ZMod N) (γ : Matrix.SpecialLinearGroup (Fin 2) ℤ) (τ : ℍ),
+      fricke v (γ • τ) = fricke (Matrix.vecMul v
+        ((Matrix.SpecialLinearGroup.map (Int.castRingHom (ZMod N)) γ :
+          Matrix.SpecialLinearGroup (Fin 2) (ZMod N)) : Matrix (Fin 2) (Fin 2) (ZMod N))) τ := by
+    intro v γ τ; rw [hfeq]; exact hR4a.1 v γ τ
+  have hQrat : ∀ v : Fin 2 → ZMod N, v ≠ 0 →
+      Function.Periodic ((fricke v * ModularForm.discriminant ^ 1) ∘
+        UpperHalfPlane.ofComplex) N ∧
+      IsBoundedAtImInfty (fricke v * ModularForm.discriminant ^ 1) ∧
+      ∀ n : ℕ, (UpperHalfPlane.qExpansion N
+        (fricke v * ModularForm.discriminant ^ 1)).coeff n ∈ K := by
+    intro v hv; rw [pow_one, hfeq, hK]
+    exact ⟨(hR4a.2.2.2.2.1 v hv).1, hR4a.2.2.2.1 v hv, (hR4a.2.2.2.2.1 v hv).2⟩
+  clear hR4a
+  classical
+  set gen : Option {v : Fin 2 → ZMod N // v ≠ 0} → ℍ → ℂ :=
+    fun o => o.elim jf fun v => fricke v.1 with hgen
+  have hkjf : KPole K N jf := kPole_jf K hjf
+  have hkfr : ∀ v : {v : Fin 2 → ZMod N // v ≠ 0}, KPole K N (fricke v.1) := fun v =>
+    kPole_fricke ((hR4b12.2 v.1 v.2).1) (hQrat v.1 v.2).1 (hQrat v.1 v.2).2.1
+      (hQrat v.1 v.2).2.2
+  have hkA : ∀ r : MvPolynomial (Option {v : Fin 2 → ZMod N // v ≠ 0}) ↥K,
+      KPole K N (MvPolynomial.aeval gen (r.map (algebraMap ↥K ℂ))) := fun r =>
+    kPole_aeval hkjf hkfr r
+  have hrange : Set.range gen =
+      insert jf {g : ℍ → ℂ | ∃ v : Fin 2 → ZMod N, v ≠ 0 ∧ g = fricke v} := by
+    ext g
+    constructor
+    · rintro ⟨o, rfl⟩
+      cases o with
+      | none => exact Set.mem_insert _ _
+      | some v => exact Set.mem_insert_of_mem _ ⟨v.1, v.2, rfl⟩
+    · rintro (rfl | ⟨v, hv, rfl⟩)
+      · exact ⟨none, rfl⟩
+      · exact ⟨some ⟨v, hv⟩, rfl⟩
+  have hmemA : ∀ r : MvPolynomial (Option {v : Fin 2 → ZMod N // v ≠ 0}) ℂ,
+      MvPolynomial.aeval gen r ∈ Algebra.adjoin ℂ
+        (insert jf {g : ℍ → ℂ | ∃ v : Fin 2 → ZMod N, v ≠ 0 ∧ g = fricke v}) := by
+    intro r
+    rw [← hrange, Algebra.adjoin_range_eq_range_aeval]
+    exact ⟨r, rfl⟩
+  have hpb := R8cGlue.isBoundedAtImInfty_smul_quotient_of_aeval N L hL W hW fricke hfricke
+    jf hjf K hK hR4c hR4b12 hG P₀ Q₀ hQ0 hGQ
+  obtain ⟨d, p, hrel⟩ := hR6h3 (hmemA (P₀.map (algebraMap ↥K ℂ)))
+    (hmemA (Q₀.map (algebraMap ↥K ℂ))) hQ0 hG hGQ hpb
+  exact exists_monicRel_K_of_KPole_fraction N K gen jf G rfl hG hR4b12.1.1
+    hkA P₀ Q₀ hQ0 hGQ d p hrel
 
 end
 end S_WLight_exists_monicRel_j_K_of_mdifferentiable_frickeQuotient
