@@ -584,18 +584,17 @@ theorem tangent_intercept_identity {x₁ y₁ : L}
   rw [Affine.equation_iff] at h₁
   linear_combination 2 * h₁
 
-theorem slope_div_intercept_estimate {x₁ y₁ x₂ y₂ τ : L}
+private theorem tangent_slope_div_intercept_estimate {x₁ y₁ x₂ y₂ τ : L}
     (h₁ : (W.map A.subtype).toAffine.Equation x₁ y₁)
     (h₂ : (W.map A.subtype).toAffine.Equation x₂ y₂)
     (hx₁ : x₁ ∉ A) (hx₂ : x₂ ∉ A)
     (hxy : ¬(x₁ = x₂ ∧ y₁ = (W.map A.subtype).toAffine.negY x₂ y₂))
-    (hτ : τ ∈ A.nonunits) (hτ0 : τ ≠ 0)
-    (ht₁ : (x₁ / y₁) / τ ∈ A) (ht₂ : (x₂ / y₂) / τ ∈ A) :
+    (hτ0 : τ ≠ 0)
+    (ht₁ : (x₁ / y₁) / τ ∈ A) (ht₂ : (x₂ / y₂) / τ ∈ A)
+    (hx : x₁ = x₂) :
     y₁ - (W.map A.subtype).toAffine.slope x₁ x₂ y₁ y₂ * x₁ ≠ 0 ∧
       ((W.map A.subtype).toAffine.slope x₁ x₂ y₁ y₂
-          / (y₁ - (W.map A.subtype).toAffine.slope x₁ x₂ y₁ y₂ * x₁)) / τ ∈ A.nonunits ∧
-      ((1 : L) / (y₁ - (W.map A.subtype).toAffine.slope x₁ x₂ y₁ y₂ * x₁)) / τ
-        ∈ A.nonunits := by
+        / (y₁ - (W.map A.subtype).toAffine.slope x₁ x₂ y₁ y₂ * x₁)) / τ ∈ A.nonunits := by
   have ha1A : (W.map A.subtype).toAffine.a₁ ∈ A := SetLike.coe_mem W.a₁
   have ha2A : (W.map A.subtype).toAffine.a₂ ∈ A := SetLike.coe_mem W.a₂
   have ha3A : (W.map A.subtype).toAffine.a₃ ∈ A := SetLike.coe_mem W.a₃
@@ -618,235 +617,283 @@ theorem slope_div_intercept_estimate {x₁ y₁ x₂ y₂ τ : L}
     exact A.inv_mem_nonunits_of_notMem (Y_notMem_of_X_notMem W h₂ hx₂)
   have hs₁A : (1 : L) / y₁ ∈ A := A.nonunits_subset hs₁'
   have hs₂A : (1 : L) / y₂ ∈ A := A.nonunits_subset hs₂'
+  have hy : y₁ ≠ (W.map A.subtype).toAffine.negY x₂ y₂ := fun h => hxy ⟨hx, h⟩
+  have hyy : y₁ = y₂ := Y_eq_of_Y_ne h₁ h₂ hx hy
+  subst hx
+  subst hyy
+  have hψ0 : y₁ - (W.map A.subtype).toAffine.negY x₁ y₁ ≠ 0 := sub_ne_zero_of_ne hy
+  have hxinv : x₁⁻¹ ∈ A.nonunits := A.inv_mem_nonunits_of_notMem hx₁
+  have hxinvA : x₁⁻¹ ∈ A := A.nonunits_subset hxinv
+  have hxτ : x₁⁻¹ / τ ∈ A.nonunits := inv_X_mul_div_mem_nonunits h₁ hx₁ hτ0 ht₁
+  have hcube := X_cubed_div_Y_sq_notMem_nonunits W h₁ hx₁
+  have hcubeinvA : (x₁ ^ 3 / y₁ ^ 2)⁻¹ ∈ A := A.inv_mem_of_notMem_nonunits hcube.2
+  have hI_eq : (x₁ ^ 3 - (W.map A.subtype).toAffine.a₄ * x₁
+        - 2 * (W.map A.subtype).toAffine.a₆ + (W.map A.subtype).toAffine.a₃ * y₁) / x₁ ^ 3
+      = 1 + ((-((W.map A.subtype).toAffine.a₄ * x₁⁻¹)
+          - ((W.map A.subtype).toAffine.a₆ + (W.map A.subtype).toAffine.a₆)
+            * (x₁⁻¹ * x₁⁻¹)) * x₁⁻¹
+        + ((W.map A.subtype).toAffine.a₃ * (x₁ ^ 3 / y₁ ^ 2)⁻¹) * (1 / y₁)) := by
+    field_simp
+    ring
+  have hIm : ((-((W.map A.subtype).toAffine.a₄ * x₁⁻¹)
+        - ((W.map A.subtype).toAffine.a₆ + (W.map A.subtype).toAffine.a₆)
+          * (x₁⁻¹ * x₁⁻¹)) * x₁⁻¹
+      + ((W.map A.subtype).toAffine.a₃ * (x₁ ^ 3 / y₁ ^ 2)⁻¹) * (1 / y₁)) ∈ A.nonunits :=
+    add_mem
+      (A.mul_mem_nonunits (sub_mem (neg_mem (mul_mem ha4A hxinvA))
+        (mul_mem (add_mem ha6A ha6A) (mul_mem hxinvA hxinvA))) hxinv)
+      (A.mul_mem_nonunits (mul_mem ha3A hcubeinvA) hs₁')
+  have hInot : (x₁ ^ 3 - (W.map A.subtype).toAffine.a₄ * x₁
+        - 2 * (W.map A.subtype).toAffine.a₆ + (W.map A.subtype).toAffine.a₃ * y₁) / x₁ ^ 3
+      ∉ A.nonunits := by
+    rw [hI_eq]
+    exact A.one_add_notMem_nonunits hIm
+  have hI0 : x₁ ^ 3 - (W.map A.subtype).toAffine.a₄ * x₁
+      - 2 * (W.map A.subtype).toAffine.a₆ + (W.map A.subtype).toAffine.a₃ * y₁ ≠ 0 := by
+    intro h0
+    exact hInot (by rw [h0, zero_div]; exact A.nonunits.zero_mem)
+  have hIinvA : ((x₁ ^ 3 - (W.map A.subtype).toAffine.a₄ * x₁
+        - 2 * (W.map A.subtype).toAffine.a₆
+        + (W.map A.subtype).toAffine.a₃ * y₁) / x₁ ^ 3)⁻¹ ∈ A :=
+    A.inv_mem_of_notMem_nonunits hInot
+  have hψ_eq : y₁ - (W.map A.subtype).toAffine.negY x₁ y₁
+      = y₁ + y₁ + (W.map A.subtype).toAffine.a₁ * x₁ + (W.map A.subtype).toAffine.a₃ := by
+    simp only [negY]
+    ring
+  have h₁' := h₁
+  rw [Affine.equation_iff] at h₁'
+  have hkey : (y₁ - (W.map A.subtype).toAffine.slope x₁ x₁ y₁ y₁ * x₁)
+        * (y₁ - (W.map A.subtype).toAffine.negY x₁ y₁)
+      = -(x₁ ^ 3 - (W.map A.subtype).toAffine.a₄ * x₁
+        - 2 * (W.map A.subtype).toAffine.a₆ + (W.map A.subtype).toAffine.a₃ * y₁) := by
+    rw [Affine.slope_of_Y_ne rfl hy, sub_mul, div_mul_eq_mul_div, div_mul_cancel₀ _ hψ0,
+      hψ_eq]
+    linear_combination (2 : L) * h₁'
+  have hν0 : y₁ - (W.map A.subtype).toAffine.slope x₁ x₁ y₁ y₁ * x₁ ≠ 0 := by
+    intro h0
+    rw [h0, zero_mul] at hkey
+    exact hI0 (by linear_combination hkey)
+  refine ⟨hν0, ?_⟩
+  have hslope_mul : (W.map A.subtype).toAffine.slope x₁ x₁ y₁ y₁
+        * (y₁ - (W.map A.subtype).toAffine.negY x₁ y₁)
+      = 3 * x₁ ^ 2 + 2 * (W.map A.subtype).toAffine.a₂ * x₁
+        + (W.map A.subtype).toAffine.a₄ - (W.map A.subtype).toAffine.a₁ * y₁ := by
+    rw [Affine.slope_of_Y_ne rfl hy, div_mul_cancel₀ _ hψ0]
+  have hℓν : (W.map A.subtype).toAffine.slope x₁ x₁ y₁ y₁
+        / (y₁ - (W.map A.subtype).toAffine.slope x₁ x₁ y₁ y₁ * x₁)
+      = -(3 * x₁ ^ 2 + 2 * (W.map A.subtype).toAffine.a₂ * x₁
+          + (W.map A.subtype).toAffine.a₄ - (W.map A.subtype).toAffine.a₁ * y₁)
+        / (x₁ ^ 3 - (W.map A.subtype).toAffine.a₄ * x₁
+          - 2 * (W.map A.subtype).toAffine.a₆ + (W.map A.subtype).toAffine.a₃ * y₁) := by
+    rw [div_eq_div_iff hν0 hI0]
+    linear_combination (-(y₁ - (W.map A.subtype).toAffine.slope x₁ x₁ y₁ y₁ * x₁))
+      * hslope_mul + (W.map A.subtype).toAffine.slope x₁ x₁ y₁ y₁ * hkey
+  rw [hℓν]
+  have hsplit : (-(3 * x₁ ^ 2 + 2 * (W.map A.subtype).toAffine.a₂ * x₁
+          + (W.map A.subtype).toAffine.a₄ - (W.map A.subtype).toAffine.a₁ * y₁)
+        / (x₁ ^ 3 - (W.map A.subtype).toAffine.a₄ * x₁
+          - 2 * (W.map A.subtype).toAffine.a₆
+          + (W.map A.subtype).toAffine.a₃ * y₁)) / τ
+      = ((x₁ ^ 3 - (W.map A.subtype).toAffine.a₄ * x₁
+          - 2 * (W.map A.subtype).toAffine.a₆
+          + (W.map A.subtype).toAffine.a₃ * y₁) / x₁ ^ 3)⁻¹
+        * (-(((1 + 1 + 1) + ((W.map A.subtype).toAffine.a₂
+              + (W.map A.subtype).toAffine.a₂) * x₁⁻¹
+            + (W.map A.subtype).toAffine.a₄ * (x₁⁻¹ * x₁⁻¹)) * (x₁⁻¹ / τ)
+          - ((W.map A.subtype).toAffine.a₁ * (x₁ ^ 3 / y₁ ^ 2)⁻¹) * ((1 / y₁) / τ))) := by
+    field_simp
+    ring
+  rw [hsplit]
+  refine A.mul_mem_nonunits hIinvA (A.nonunits.neg_mem (sub_mem ?_ ?_))
+  · exact A.mul_mem_nonunits
+      (add_mem (add_mem (add_mem (add_mem A.one_mem A.one_mem) A.one_mem)
+        (mul_mem (add_mem ha2A ha2A) hxinvA)) (mul_mem ha4A (mul_mem hxinvA hxinvA))) hxτ
+  · exact A.mul_mem_nonunits (mul_mem ha1A hcubeinvA) hs₁
+
+private theorem secant_slope_div_intercept_estimate {x₁ y₁ x₂ y₂ τ : L}
+    (h₁ : (W.map A.subtype).toAffine.Equation x₁ y₁)
+    (h₂ : (W.map A.subtype).toAffine.Equation x₂ y₂)
+    (hx₁ : x₁ ∉ A) (hx₂ : x₂ ∉ A)
+    (hτ0 : τ ≠ 0)
+    (ht₁ : (x₁ / y₁) / τ ∈ A) (ht₂ : (x₂ / y₂) / τ ∈ A)
+    (hx : x₁ ≠ x₂) :
+    y₁ - (W.map A.subtype).toAffine.slope x₁ x₂ y₁ y₂ * x₁ ≠ 0 ∧
+      ((W.map A.subtype).toAffine.slope x₁ x₂ y₁ y₂
+        / (y₁ - (W.map A.subtype).toAffine.slope x₁ x₂ y₁ y₂ * x₁)) / τ ∈ A.nonunits := by
+  have ha1A : (W.map A.subtype).toAffine.a₁ ∈ A := SetLike.coe_mem W.a₁
+  have ha2A : (W.map A.subtype).toAffine.a₂ ∈ A := SetLike.coe_mem W.a₂
+  have ha3A : (W.map A.subtype).toAffine.a₃ ∈ A := SetLike.coe_mem W.a₃
+  have ha4A : (W.map A.subtype).toAffine.a₄ ∈ A := SetLike.coe_mem W.a₄
+  have ha6A : (W.map A.subtype).toAffine.a₆ ∈ A := SetLike.coe_mem W.a₆
+  have hy₁0 : y₁ ≠ 0 := Y_ne_zero_of_X_notMem W h₁ hx₁
+  have hy₂0 : y₂ ≠ 0 := Y_ne_zero_of_X_notMem W h₂ hx₂
+  have hx₁0 : x₁ ≠ 0 := fun h0 => hx₁ (h0 ▸ A.zero_mem)
+  have hT₁ : x₁ / y₁ ∈ A.nonunits := X_div_Y_mem_nonunits W h₁ hx₁
+  have hT₂ : x₂ / y₂ ∈ A.nonunits := X_div_Y_mem_nonunits W h₂ hx₂
+  have hT₁A : x₁ / y₁ ∈ A := A.nonunits_subset hT₁
+  have hT₂A : x₂ / y₂ ∈ A := A.nonunits_subset hT₂
+  have hs₁ : (1 / y₁) / τ ∈ A.nonunits := inv_Y_div_mem_nonunits h₁ hx₁ ht₁
+  have hs₂ : (1 / y₂) / τ ∈ A.nonunits := inv_Y_div_mem_nonunits h₂ hx₂ ht₂
+  have hs₁' : (1 : L) / y₁ ∈ A.nonunits := by
+    rw [one_div]
+    exact A.inv_mem_nonunits_of_notMem (Y_notMem_of_X_notMem W h₁ hx₁)
+  have hs₂' : (1 : L) / y₂ ∈ A.nonunits := by
+    rw [one_div]
+    exact A.inv_mem_nonunits_of_notMem (Y_notMem_of_X_notMem W h₂ hx₂)
+  have hs₁A : (1 : L) / y₁ ∈ A := A.nonunits_subset hs₁'
+  have hs₂A : (1 : L) / y₂ ∈ A := A.nonunits_subset hs₂'
+  have hxx0 : x₁ - x₂ ≠ 0 := sub_ne_zero_of_ne hx
+  have hsec := secant_slope_identity (W := W) h₁ h₂
+  have hU_eq : (y₁ ^ 2 * y₂ ^ 2 + (W.map A.subtype).toAffine.a₁ * x₁ * y₁ * y₂ ^ 2
+        - (W.map A.subtype).toAffine.a₂ * x₁ ^ 2 * y₂ ^ 2
+        + (W.map A.subtype).toAffine.a₃ * (y₁ * y₂ ^ 2 + y₁ ^ 2 * y₂)
+        - (W.map A.subtype).toAffine.a₄ * x₁ * (y₂ ^ 2 + y₁ * y₂)
+        - (W.map A.subtype).toAffine.a₆ * (y₂ ^ 2 + y₁ * y₂ + y₁ ^ 2)) / (y₁ ^ 2 * y₂ ^ 2)
+      = 1 + (((W.map A.subtype).toAffine.a₁
+            - (W.map A.subtype).toAffine.a₂ * (x₁ / y₁)
+            - (W.map A.subtype).toAffine.a₄ * (1 / y₁)
+            - (W.map A.subtype).toAffine.a₄ * (1 / y₂)) * (x₁ / y₁)
+          + ((W.map A.subtype).toAffine.a₃ - (W.map A.subtype).toAffine.a₆ * (1 / y₁)
+            - (W.map A.subtype).toAffine.a₆ * (1 / y₂)) * (1 / y₁)
+          + ((W.map A.subtype).toAffine.a₃
+            - (W.map A.subtype).toAffine.a₆ * (1 / y₂)) * (1 / y₂)) := by
+    field_simp
+    ring
+  have hUm : (((W.map A.subtype).toAffine.a₁
+          - (W.map A.subtype).toAffine.a₂ * (x₁ / y₁)
+          - (W.map A.subtype).toAffine.a₄ * (1 / y₁)
+          - (W.map A.subtype).toAffine.a₄ * (1 / y₂)) * (x₁ / y₁)
+        + ((W.map A.subtype).toAffine.a₃ - (W.map A.subtype).toAffine.a₆ * (1 / y₁)
+          - (W.map A.subtype).toAffine.a₆ * (1 / y₂)) * (1 / y₁)
+        + ((W.map A.subtype).toAffine.a₃
+          - (W.map A.subtype).toAffine.a₆ * (1 / y₂)) * (1 / y₂)) ∈ A.nonunits := by
+    refine add_mem (add_mem (A.mul_mem_nonunits ?_ hT₁) (A.mul_mem_nonunits ?_ hs₁'))
+      (A.mul_mem_nonunits ?_ hs₂')
+    · exact sub_mem (sub_mem (sub_mem ha1A (mul_mem ha2A hT₁A)) (mul_mem ha4A hs₁A))
+        (mul_mem ha4A hs₂A)
+    · exact sub_mem (sub_mem ha3A (mul_mem ha6A hs₁A)) (mul_mem ha6A hs₂A)
+    · exact sub_mem ha3A (mul_mem ha6A hs₂A)
+  have hUnot : (y₁ ^ 2 * y₂ ^ 2 + (W.map A.subtype).toAffine.a₁ * x₁ * y₁ * y₂ ^ 2
+        - (W.map A.subtype).toAffine.a₂ * x₁ ^ 2 * y₂ ^ 2
+        + (W.map A.subtype).toAffine.a₃ * (y₁ * y₂ ^ 2 + y₁ ^ 2 * y₂)
+        - (W.map A.subtype).toAffine.a₄ * x₁ * (y₂ ^ 2 + y₁ * y₂)
+        - (W.map A.subtype).toAffine.a₆ * (y₂ ^ 2 + y₁ * y₂ + y₁ ^ 2)) / (y₁ ^ 2 * y₂ ^ 2)
+      ∉ A.nonunits := by
+    rw [hU_eq]
+    exact A.one_add_notMem_nonunits hUm
+  have hUA : (y₁ ^ 2 * y₂ ^ 2 + (W.map A.subtype).toAffine.a₁ * x₁ * y₁ * y₂ ^ 2
+        - (W.map A.subtype).toAffine.a₂ * x₁ ^ 2 * y₂ ^ 2
+        + (W.map A.subtype).toAffine.a₃ * (y₁ * y₂ ^ 2 + y₁ ^ 2 * y₂)
+        - (W.map A.subtype).toAffine.a₄ * x₁ * (y₂ ^ 2 + y₁ * y₂)
+        - (W.map A.subtype).toAffine.a₆ * (y₂ ^ 2 + y₁ * y₂ + y₁ ^ 2)) / (y₁ ^ 2 * y₂ ^ 2)
+      ∈ A := by
+    rw [hU_eq]
+    exact add_mem A.one_mem (A.nonunits_subset hUm)
+  have hUinvA : ((y₁ ^ 2 * y₂ ^ 2 + (W.map A.subtype).toAffine.a₁ * x₁ * y₁ * y₂ ^ 2
+        - (W.map A.subtype).toAffine.a₂ * x₁ ^ 2 * y₂ ^ 2
+        + (W.map A.subtype).toAffine.a₃ * (y₁ * y₂ ^ 2 + y₁ ^ 2 * y₂)
+        - (W.map A.subtype).toAffine.a₄ * x₁ * (y₂ ^ 2 + y₁ * y₂)
+        - (W.map A.subtype).toAffine.a₆ * (y₂ ^ 2 + y₁ * y₂ + y₁ ^ 2))
+          / (y₁ ^ 2 * y₂ ^ 2))⁻¹ ∈ A :=
+    A.inv_mem_of_notMem_nonunits hUnot
+  have hU0 : y₁ ^ 2 * y₂ ^ 2 + (W.map A.subtype).toAffine.a₁ * x₁ * y₁ * y₂ ^ 2
+        - (W.map A.subtype).toAffine.a₂ * x₁ ^ 2 * y₂ ^ 2
+        + (W.map A.subtype).toAffine.a₃ * (y₁ * y₂ ^ 2 + y₁ ^ 2 * y₂)
+        - (W.map A.subtype).toAffine.a₄ * x₁ * (y₂ ^ 2 + y₁ * y₂)
+        - (W.map A.subtype).toAffine.a₆ * (y₂ ^ 2 + y₁ * y₂ + y₁ ^ 2) ≠ 0 := by
+    intro h0
+    exact hUnot (by rw [h0, zero_div]; exact A.nonunits.zero_mem)
+  have hxy21 : x₁ * y₂ - x₂ * y₁ ≠ 0 := by
+    intro h0
+    have hUV : (y₁ - y₂) * (y₁ ^ 2 * y₂ ^ 2
+          + (W.map A.subtype).toAffine.a₁ * x₁ * y₁ * y₂ ^ 2
+          - (W.map A.subtype).toAffine.a₂ * x₁ ^ 2 * y₂ ^ 2
+          + (W.map A.subtype).toAffine.a₃ * (y₁ * y₂ ^ 2 + y₁ ^ 2 * y₂)
+          - (W.map A.subtype).toAffine.a₄ * x₁ * (y₂ ^ 2 + y₁ * y₂)
+          - (W.map A.subtype).toAffine.a₆ * (y₂ ^ 2 + y₁ * y₂ + y₁ ^ 2)) = 0 := by
+      rw [hsec]
+      linear_combination (-(-((W.map A.subtype).toAffine.a₁ * y₁ ^ 2 * y₂)
+        + (W.map A.subtype).toAffine.a₂ * x₁ * y₁ * y₂
+        + (W.map A.subtype).toAffine.a₂ * x₂ * y₁ ^ 2
+        + (W.map A.subtype).toAffine.a₄ * y₁ ^ 2 + x₁ ^ 2 * y₂ ^ 2
+        + x₁ * x₂ * y₁ * y₂ + x₂ ^ 2 * y₁ ^ 2)) * h0
+    rcases mul_eq_zero.mp hUV with h | h
+    · refine hx ?_
+      have hy12 : y₁ = y₂ := by linear_combination h
+      have hxx : (x₁ - x₂) * y₁ = 0 := by linear_combination h0 + x₁ * hy12
+      rcases mul_eq_zero.mp hxx with h' | h'
+      · exact sub_eq_zero.mp h'
+      · exact absurd h' hy₁0
+    · exact hU0 h
+  have hkey : (y₁ - (W.map A.subtype).toAffine.slope x₁ x₂ y₁ y₂ * x₁) * (x₁ - x₂)
+      = x₁ * y₂ - x₂ * y₁ := by
+    rw [Affine.slope_of_X_ne hx]
+    field_simp
+    ring
+  have hν0 : y₁ - (W.map A.subtype).toAffine.slope x₁ x₂ y₁ y₂ * x₁ ≠ 0 := by
+    intro h0
+    exact hxy21 (by rw [← hkey, h0, zero_mul])
+  refine ⟨hν0, ?_⟩
+  have hℓν : (W.map A.subtype).toAffine.slope x₁ x₂ y₁ y₂
+        / (y₁ - (W.map A.subtype).toAffine.slope x₁ x₂ y₁ y₂ * x₁)
+      = (y₁ - y₂) / (x₁ * y₂ - x₂ * y₁) := by
+    rw [div_eq_div_iff hν0 hxy21, Affine.slope_of_X_ne hx]
+    field_simp
+    ring
+  have hVU : (y₁ - y₂) / (x₁ * y₂ - x₂ * y₁)
+      = -((-((W.map A.subtype).toAffine.a₁ * y₁ ^ 2 * y₂)
+          + (W.map A.subtype).toAffine.a₂ * x₁ * y₁ * y₂
+          + (W.map A.subtype).toAffine.a₂ * x₂ * y₁ ^ 2
+          + (W.map A.subtype).toAffine.a₄ * y₁ ^ 2 + x₁ ^ 2 * y₂ ^ 2
+          + x₁ * x₂ * y₁ * y₂ + x₂ ^ 2 * y₁ ^ 2)
+        / (y₁ ^ 2 * y₂ ^ 2 + (W.map A.subtype).toAffine.a₁ * x₁ * y₁ * y₂ ^ 2
+          - (W.map A.subtype).toAffine.a₂ * x₁ ^ 2 * y₂ ^ 2
+          + (W.map A.subtype).toAffine.a₃ * (y₁ * y₂ ^ 2 + y₁ ^ 2 * y₂)
+          - (W.map A.subtype).toAffine.a₄ * x₁ * (y₂ ^ 2 + y₁ * y₂)
+          - (W.map A.subtype).toAffine.a₆ * (y₂ ^ 2 + y₁ * y₂ + y₁ ^ 2))) := by
+    rw [← neg_div, div_eq_div_iff hxy21 hU0]
+    linear_combination hsec
+  have hVsplit : ((y₁ - y₂) / (x₁ * y₂ - x₂ * y₁)) / τ
+      = ((y₁ ^ 2 * y₂ ^ 2 + (W.map A.subtype).toAffine.a₁ * x₁ * y₁ * y₂ ^ 2
+          - (W.map A.subtype).toAffine.a₂ * x₁ ^ 2 * y₂ ^ 2
+          + (W.map A.subtype).toAffine.a₃ * (y₁ * y₂ ^ 2 + y₁ ^ 2 * y₂)
+          - (W.map A.subtype).toAffine.a₄ * x₁ * (y₂ ^ 2 + y₁ * y₂)
+          - (W.map A.subtype).toAffine.a₆ * (y₂ ^ 2 + y₁ * y₂ + y₁ ^ 2))
+            / (y₁ ^ 2 * y₂ ^ 2))⁻¹
+        * (-((-(W.map A.subtype).toAffine.a₁
+              + (W.map A.subtype).toAffine.a₂ * (x₁ / y₁)
+              + (W.map A.subtype).toAffine.a₂ * (x₂ / y₂)
+              + (W.map A.subtype).toAffine.a₄ * (1 / y₂)) * ((1 / y₂) / τ)
+            + ((x₁ / y₁) / τ) * (x₁ / y₁)
+            + ((x₂ / y₂) / τ) * (x₁ / y₁ + x₂ / y₂))) := by
+    rw [hVU]
+    first
+    | (field_simp; ring1)
+  rw [hℓν, hVsplit]
+  refine A.mul_mem_nonunits hUinvA (A.nonunits.neg_mem
+    (add_mem (add_mem (A.mul_mem_nonunits ?_ hs₂) (A.mul_mem_nonunits ht₁ hT₁))
+      (A.mul_mem_nonunits ht₂ (add_mem hT₁ hT₂))))
+  exact add_mem (add_mem (add_mem (neg_mem ha1A) (mul_mem ha2A hT₁A))
+    (mul_mem ha2A hT₂A)) (mul_mem ha4A hs₂A)
+
+theorem slope_div_intercept_estimate {x₁ y₁ x₂ y₂ τ : L}
+    (h₁ : (W.map A.subtype).toAffine.Equation x₁ y₁)
+    (h₂ : (W.map A.subtype).toAffine.Equation x₂ y₂)
+    (hx₁ : x₁ ∉ A) (hx₂ : x₂ ∉ A)
+    (hxy : ¬(x₁ = x₂ ∧ y₁ = (W.map A.subtype).toAffine.negY x₂ y₂))
+    (hτ : τ ∈ A.nonunits) (hτ0 : τ ≠ 0)
+    (ht₁ : (x₁ / y₁) / τ ∈ A) (ht₂ : (x₂ / y₂) / τ ∈ A) :
+    y₁ - (W.map A.subtype).toAffine.slope x₁ x₂ y₁ y₂ * x₁ ≠ 0 ∧
+      ((W.map A.subtype).toAffine.slope x₁ x₂ y₁ y₂
+          / (y₁ - (W.map A.subtype).toAffine.slope x₁ x₂ y₁ y₂ * x₁)) / τ ∈ A.nonunits ∧
+      ((1 : L) / (y₁ - (W.map A.subtype).toAffine.slope x₁ x₂ y₁ y₂ * x₁)) / τ
+        ∈ A.nonunits := by
   have main : y₁ - (W.map A.subtype).toAffine.slope x₁ x₂ y₁ y₂ * x₁ ≠ 0 ∧
       ((W.map A.subtype).toAffine.slope x₁ x₂ y₁ y₂
         / (y₁ - (W.map A.subtype).toAffine.slope x₁ x₂ y₁ y₂ * x₁)) / τ ∈ A.nonunits := by
     by_cases hx : x₁ = x₂
-    · have hy : y₁ ≠ (W.map A.subtype).toAffine.negY x₂ y₂ := fun h => hxy ⟨hx, h⟩
-      have hyy : y₁ = y₂ := Y_eq_of_Y_ne h₁ h₂ hx hy
-      subst hx
-      subst hyy
-      have hψ0 : y₁ - (W.map A.subtype).toAffine.negY x₁ y₁ ≠ 0 := sub_ne_zero_of_ne hy
-      have hxinv : x₁⁻¹ ∈ A.nonunits := A.inv_mem_nonunits_of_notMem hx₁
-      have hxinvA : x₁⁻¹ ∈ A := A.nonunits_subset hxinv
-      have hxτ : x₁⁻¹ / τ ∈ A.nonunits := inv_X_mul_div_mem_nonunits h₁ hx₁ hτ0 ht₁
-      have hcube := X_cubed_div_Y_sq_notMem_nonunits W h₁ hx₁
-      have hcubeinvA : (x₁ ^ 3 / y₁ ^ 2)⁻¹ ∈ A := A.inv_mem_of_notMem_nonunits hcube.2
-      have hI_eq : (x₁ ^ 3 - (W.map A.subtype).toAffine.a₄ * x₁
-            - 2 * (W.map A.subtype).toAffine.a₆ + (W.map A.subtype).toAffine.a₃ * y₁) / x₁ ^ 3
-          = 1 + ((-((W.map A.subtype).toAffine.a₄ * x₁⁻¹)
-              - ((W.map A.subtype).toAffine.a₆ + (W.map A.subtype).toAffine.a₆)
-                * (x₁⁻¹ * x₁⁻¹)) * x₁⁻¹
-            + ((W.map A.subtype).toAffine.a₃ * (x₁ ^ 3 / y₁ ^ 2)⁻¹) * (1 / y₁)) := by
-        field_simp
-        ring
-      have hIm : ((-((W.map A.subtype).toAffine.a₄ * x₁⁻¹)
-            - ((W.map A.subtype).toAffine.a₆ + (W.map A.subtype).toAffine.a₆)
-              * (x₁⁻¹ * x₁⁻¹)) * x₁⁻¹
-          + ((W.map A.subtype).toAffine.a₃ * (x₁ ^ 3 / y₁ ^ 2)⁻¹) * (1 / y₁)) ∈ A.nonunits :=
-        add_mem
-          (A.mul_mem_nonunits (sub_mem (neg_mem (mul_mem ha4A hxinvA))
-            (mul_mem (add_mem ha6A ha6A) (mul_mem hxinvA hxinvA))) hxinv)
-          (A.mul_mem_nonunits (mul_mem ha3A hcubeinvA) hs₁')
-      have hInot : (x₁ ^ 3 - (W.map A.subtype).toAffine.a₄ * x₁
-            - 2 * (W.map A.subtype).toAffine.a₆ + (W.map A.subtype).toAffine.a₃ * y₁) / x₁ ^ 3
-          ∉ A.nonunits := by
-        rw [hI_eq]
-        exact A.one_add_notMem_nonunits hIm
-      have hI0 : x₁ ^ 3 - (W.map A.subtype).toAffine.a₄ * x₁
-          - 2 * (W.map A.subtype).toAffine.a₆ + (W.map A.subtype).toAffine.a₃ * y₁ ≠ 0 := by
-        intro h0
-        exact hInot (by rw [h0, zero_div]; exact A.nonunits.zero_mem)
-      have hIinvA : ((x₁ ^ 3 - (W.map A.subtype).toAffine.a₄ * x₁
-            - 2 * (W.map A.subtype).toAffine.a₆
-            + (W.map A.subtype).toAffine.a₃ * y₁) / x₁ ^ 3)⁻¹ ∈ A :=
-        A.inv_mem_of_notMem_nonunits hInot
-      have hψ_eq : y₁ - (W.map A.subtype).toAffine.negY x₁ y₁
-          = y₁ + y₁ + (W.map A.subtype).toAffine.a₁ * x₁ + (W.map A.subtype).toAffine.a₃ := by
-        simp only [negY]
-        ring
-      have h₁' := h₁
-      rw [Affine.equation_iff] at h₁'
-      have hkey : (y₁ - (W.map A.subtype).toAffine.slope x₁ x₁ y₁ y₁ * x₁)
-            * (y₁ - (W.map A.subtype).toAffine.negY x₁ y₁)
-          = -(x₁ ^ 3 - (W.map A.subtype).toAffine.a₄ * x₁
-            - 2 * (W.map A.subtype).toAffine.a₆ + (W.map A.subtype).toAffine.a₃ * y₁) := by
-        rw [Affine.slope_of_Y_ne rfl hy, sub_mul, div_mul_eq_mul_div, div_mul_cancel₀ _ hψ0,
-          hψ_eq]
-        linear_combination (2 : L) * h₁'
-      have hν0 : y₁ - (W.map A.subtype).toAffine.slope x₁ x₁ y₁ y₁ * x₁ ≠ 0 := by
-        intro h0
-        rw [h0, zero_mul] at hkey
-        exact hI0 (by linear_combination hkey)
-      refine ⟨hν0, ?_⟩
-      have hslope_mul : (W.map A.subtype).toAffine.slope x₁ x₁ y₁ y₁
-            * (y₁ - (W.map A.subtype).toAffine.negY x₁ y₁)
-          = 3 * x₁ ^ 2 + 2 * (W.map A.subtype).toAffine.a₂ * x₁
-            + (W.map A.subtype).toAffine.a₄ - (W.map A.subtype).toAffine.a₁ * y₁ := by
-        rw [Affine.slope_of_Y_ne rfl hy, div_mul_cancel₀ _ hψ0]
-      have hℓν : (W.map A.subtype).toAffine.slope x₁ x₁ y₁ y₁
-            / (y₁ - (W.map A.subtype).toAffine.slope x₁ x₁ y₁ y₁ * x₁)
-          = -(3 * x₁ ^ 2 + 2 * (W.map A.subtype).toAffine.a₂ * x₁
-              + (W.map A.subtype).toAffine.a₄ - (W.map A.subtype).toAffine.a₁ * y₁)
-            / (x₁ ^ 3 - (W.map A.subtype).toAffine.a₄ * x₁
-              - 2 * (W.map A.subtype).toAffine.a₆ + (W.map A.subtype).toAffine.a₃ * y₁) := by
-        rw [div_eq_div_iff hν0 hI0]
-        linear_combination (-(y₁ - (W.map A.subtype).toAffine.slope x₁ x₁ y₁ y₁ * x₁))
-          * hslope_mul + (W.map A.subtype).toAffine.slope x₁ x₁ y₁ y₁ * hkey
-      rw [hℓν]
-      have hsplit : (-(3 * x₁ ^ 2 + 2 * (W.map A.subtype).toAffine.a₂ * x₁
-              + (W.map A.subtype).toAffine.a₄ - (W.map A.subtype).toAffine.a₁ * y₁)
-            / (x₁ ^ 3 - (W.map A.subtype).toAffine.a₄ * x₁
-              - 2 * (W.map A.subtype).toAffine.a₆
-              + (W.map A.subtype).toAffine.a₃ * y₁)) / τ
-          = ((x₁ ^ 3 - (W.map A.subtype).toAffine.a₄ * x₁
-              - 2 * (W.map A.subtype).toAffine.a₆
-              + (W.map A.subtype).toAffine.a₃ * y₁) / x₁ ^ 3)⁻¹
-            * (-(((1 + 1 + 1) + ((W.map A.subtype).toAffine.a₂
-                  + (W.map A.subtype).toAffine.a₂) * x₁⁻¹
-                + (W.map A.subtype).toAffine.a₄ * (x₁⁻¹ * x₁⁻¹)) * (x₁⁻¹ / τ)
-              - ((W.map A.subtype).toAffine.a₁ * (x₁ ^ 3 / y₁ ^ 2)⁻¹) * ((1 / y₁) / τ))) := by
-        field_simp
-        ring
-      rw [hsplit]
-      refine A.mul_mem_nonunits hIinvA (A.nonunits.neg_mem (sub_mem ?_ ?_))
-      · exact A.mul_mem_nonunits
-          (add_mem (add_mem (add_mem (add_mem A.one_mem A.one_mem) A.one_mem)
-            (mul_mem (add_mem ha2A ha2A) hxinvA)) (mul_mem ha4A (mul_mem hxinvA hxinvA))) hxτ
-      · exact A.mul_mem_nonunits (mul_mem ha1A hcubeinvA) hs₁
-    · have hxx0 : x₁ - x₂ ≠ 0 := sub_ne_zero_of_ne hx
-      have hsec := secant_slope_identity (W := W) h₁ h₂
-      have hU_eq : (y₁ ^ 2 * y₂ ^ 2 + (W.map A.subtype).toAffine.a₁ * x₁ * y₁ * y₂ ^ 2
-            - (W.map A.subtype).toAffine.a₂ * x₁ ^ 2 * y₂ ^ 2
-            + (W.map A.subtype).toAffine.a₃ * (y₁ * y₂ ^ 2 + y₁ ^ 2 * y₂)
-            - (W.map A.subtype).toAffine.a₄ * x₁ * (y₂ ^ 2 + y₁ * y₂)
-            - (W.map A.subtype).toAffine.a₆ * (y₂ ^ 2 + y₁ * y₂ + y₁ ^ 2)) / (y₁ ^ 2 * y₂ ^ 2)
-          = 1 + (((W.map A.subtype).toAffine.a₁
-                - (W.map A.subtype).toAffine.a₂ * (x₁ / y₁)
-                - (W.map A.subtype).toAffine.a₄ * (1 / y₁)
-                - (W.map A.subtype).toAffine.a₄ * (1 / y₂)) * (x₁ / y₁)
-              + ((W.map A.subtype).toAffine.a₃ - (W.map A.subtype).toAffine.a₆ * (1 / y₁)
-                - (W.map A.subtype).toAffine.a₆ * (1 / y₂)) * (1 / y₁)
-              + ((W.map A.subtype).toAffine.a₃
-                - (W.map A.subtype).toAffine.a₆ * (1 / y₂)) * (1 / y₂)) := by
-        field_simp
-        ring
-      have hUm : (((W.map A.subtype).toAffine.a₁
-              - (W.map A.subtype).toAffine.a₂ * (x₁ / y₁)
-              - (W.map A.subtype).toAffine.a₄ * (1 / y₁)
-              - (W.map A.subtype).toAffine.a₄ * (1 / y₂)) * (x₁ / y₁)
-            + ((W.map A.subtype).toAffine.a₃ - (W.map A.subtype).toAffine.a₆ * (1 / y₁)
-              - (W.map A.subtype).toAffine.a₆ * (1 / y₂)) * (1 / y₁)
-            + ((W.map A.subtype).toAffine.a₃
-              - (W.map A.subtype).toAffine.a₆ * (1 / y₂)) * (1 / y₂)) ∈ A.nonunits := by
-        refine add_mem (add_mem (A.mul_mem_nonunits ?_ hT₁) (A.mul_mem_nonunits ?_ hs₁'))
-          (A.mul_mem_nonunits ?_ hs₂')
-        · exact sub_mem (sub_mem (sub_mem ha1A (mul_mem ha2A hT₁A)) (mul_mem ha4A hs₁A))
-            (mul_mem ha4A hs₂A)
-        · exact sub_mem (sub_mem ha3A (mul_mem ha6A hs₁A)) (mul_mem ha6A hs₂A)
-        · exact sub_mem ha3A (mul_mem ha6A hs₂A)
-      have hUnot : (y₁ ^ 2 * y₂ ^ 2 + (W.map A.subtype).toAffine.a₁ * x₁ * y₁ * y₂ ^ 2
-            - (W.map A.subtype).toAffine.a₂ * x₁ ^ 2 * y₂ ^ 2
-            + (W.map A.subtype).toAffine.a₃ * (y₁ * y₂ ^ 2 + y₁ ^ 2 * y₂)
-            - (W.map A.subtype).toAffine.a₄ * x₁ * (y₂ ^ 2 + y₁ * y₂)
-            - (W.map A.subtype).toAffine.a₆ * (y₂ ^ 2 + y₁ * y₂ + y₁ ^ 2)) / (y₁ ^ 2 * y₂ ^ 2)
-          ∉ A.nonunits := by
-        rw [hU_eq]
-        exact A.one_add_notMem_nonunits hUm
-      have hUA : (y₁ ^ 2 * y₂ ^ 2 + (W.map A.subtype).toAffine.a₁ * x₁ * y₁ * y₂ ^ 2
-            - (W.map A.subtype).toAffine.a₂ * x₁ ^ 2 * y₂ ^ 2
-            + (W.map A.subtype).toAffine.a₃ * (y₁ * y₂ ^ 2 + y₁ ^ 2 * y₂)
-            - (W.map A.subtype).toAffine.a₄ * x₁ * (y₂ ^ 2 + y₁ * y₂)
-            - (W.map A.subtype).toAffine.a₆ * (y₂ ^ 2 + y₁ * y₂ + y₁ ^ 2)) / (y₁ ^ 2 * y₂ ^ 2)
-          ∈ A := by
-        rw [hU_eq]
-        exact add_mem A.one_mem (A.nonunits_subset hUm)
-      have hUinvA : ((y₁ ^ 2 * y₂ ^ 2 + (W.map A.subtype).toAffine.a₁ * x₁ * y₁ * y₂ ^ 2
-            - (W.map A.subtype).toAffine.a₂ * x₁ ^ 2 * y₂ ^ 2
-            + (W.map A.subtype).toAffine.a₃ * (y₁ * y₂ ^ 2 + y₁ ^ 2 * y₂)
-            - (W.map A.subtype).toAffine.a₄ * x₁ * (y₂ ^ 2 + y₁ * y₂)
-            - (W.map A.subtype).toAffine.a₆ * (y₂ ^ 2 + y₁ * y₂ + y₁ ^ 2))
-              / (y₁ ^ 2 * y₂ ^ 2))⁻¹ ∈ A :=
-        A.inv_mem_of_notMem_nonunits hUnot
-      have hU0 : y₁ ^ 2 * y₂ ^ 2 + (W.map A.subtype).toAffine.a₁ * x₁ * y₁ * y₂ ^ 2
-            - (W.map A.subtype).toAffine.a₂ * x₁ ^ 2 * y₂ ^ 2
-            + (W.map A.subtype).toAffine.a₃ * (y₁ * y₂ ^ 2 + y₁ ^ 2 * y₂)
-            - (W.map A.subtype).toAffine.a₄ * x₁ * (y₂ ^ 2 + y₁ * y₂)
-            - (W.map A.subtype).toAffine.a₆ * (y₂ ^ 2 + y₁ * y₂ + y₁ ^ 2) ≠ 0 := by
-        intro h0
-        exact hUnot (by rw [h0, zero_div]; exact A.nonunits.zero_mem)
-      have hxy21 : x₁ * y₂ - x₂ * y₁ ≠ 0 := by
-        intro h0
-        have hUV : (y₁ - y₂) * (y₁ ^ 2 * y₂ ^ 2
-              + (W.map A.subtype).toAffine.a₁ * x₁ * y₁ * y₂ ^ 2
-              - (W.map A.subtype).toAffine.a₂ * x₁ ^ 2 * y₂ ^ 2
-              + (W.map A.subtype).toAffine.a₃ * (y₁ * y₂ ^ 2 + y₁ ^ 2 * y₂)
-              - (W.map A.subtype).toAffine.a₄ * x₁ * (y₂ ^ 2 + y₁ * y₂)
-              - (W.map A.subtype).toAffine.a₆ * (y₂ ^ 2 + y₁ * y₂ + y₁ ^ 2)) = 0 := by
-          rw [hsec]
-          linear_combination (-(-((W.map A.subtype).toAffine.a₁ * y₁ ^ 2 * y₂)
-            + (W.map A.subtype).toAffine.a₂ * x₁ * y₁ * y₂
-            + (W.map A.subtype).toAffine.a₂ * x₂ * y₁ ^ 2
-            + (W.map A.subtype).toAffine.a₄ * y₁ ^ 2 + x₁ ^ 2 * y₂ ^ 2
-            + x₁ * x₂ * y₁ * y₂ + x₂ ^ 2 * y₁ ^ 2)) * h0
-        rcases mul_eq_zero.mp hUV with h | h
-        · refine hx ?_
-          have hy12 : y₁ = y₂ := by linear_combination h
-          have hxx : (x₁ - x₂) * y₁ = 0 := by linear_combination h0 + x₁ * hy12
-          rcases mul_eq_zero.mp hxx with h' | h'
-          · exact sub_eq_zero.mp h'
-          · exact absurd h' hy₁0
-        · exact hU0 h
-      have hkey : (y₁ - (W.map A.subtype).toAffine.slope x₁ x₂ y₁ y₂ * x₁) * (x₁ - x₂)
-          = x₁ * y₂ - x₂ * y₁ := by
-        rw [Affine.slope_of_X_ne hx]
-        field_simp
-        ring
-      have hν0 : y₁ - (W.map A.subtype).toAffine.slope x₁ x₂ y₁ y₂ * x₁ ≠ 0 := by
-        intro h0
-        exact hxy21 (by rw [← hkey, h0, zero_mul])
-      refine ⟨hν0, ?_⟩
-      have hℓν : (W.map A.subtype).toAffine.slope x₁ x₂ y₁ y₂
-            / (y₁ - (W.map A.subtype).toAffine.slope x₁ x₂ y₁ y₂ * x₁)
-          = (y₁ - y₂) / (x₁ * y₂ - x₂ * y₁) := by
-        rw [div_eq_div_iff hν0 hxy21, Affine.slope_of_X_ne hx]
-        field_simp
-        ring
-      have hVU : (y₁ - y₂) / (x₁ * y₂ - x₂ * y₁)
-          = -((-((W.map A.subtype).toAffine.a₁ * y₁ ^ 2 * y₂)
-              + (W.map A.subtype).toAffine.a₂ * x₁ * y₁ * y₂
-              + (W.map A.subtype).toAffine.a₂ * x₂ * y₁ ^ 2
-              + (W.map A.subtype).toAffine.a₄ * y₁ ^ 2 + x₁ ^ 2 * y₂ ^ 2
-              + x₁ * x₂ * y₁ * y₂ + x₂ ^ 2 * y₁ ^ 2)
-            / (y₁ ^ 2 * y₂ ^ 2 + (W.map A.subtype).toAffine.a₁ * x₁ * y₁ * y₂ ^ 2
-              - (W.map A.subtype).toAffine.a₂ * x₁ ^ 2 * y₂ ^ 2
-              + (W.map A.subtype).toAffine.a₃ * (y₁ * y₂ ^ 2 + y₁ ^ 2 * y₂)
-              - (W.map A.subtype).toAffine.a₄ * x₁ * (y₂ ^ 2 + y₁ * y₂)
-              - (W.map A.subtype).toAffine.a₆ * (y₂ ^ 2 + y₁ * y₂ + y₁ ^ 2))) := by
-        rw [← neg_div, div_eq_div_iff hxy21 hU0]
-        linear_combination hsec
-      have hVsplit : ((y₁ - y₂) / (x₁ * y₂ - x₂ * y₁)) / τ
-          = ((y₁ ^ 2 * y₂ ^ 2 + (W.map A.subtype).toAffine.a₁ * x₁ * y₁ * y₂ ^ 2
-              - (W.map A.subtype).toAffine.a₂ * x₁ ^ 2 * y₂ ^ 2
-              + (W.map A.subtype).toAffine.a₃ * (y₁ * y₂ ^ 2 + y₁ ^ 2 * y₂)
-              - (W.map A.subtype).toAffine.a₄ * x₁ * (y₂ ^ 2 + y₁ * y₂)
-              - (W.map A.subtype).toAffine.a₆ * (y₂ ^ 2 + y₁ * y₂ + y₁ ^ 2))
-                / (y₁ ^ 2 * y₂ ^ 2))⁻¹
-            * (-((-(W.map A.subtype).toAffine.a₁
-                  + (W.map A.subtype).toAffine.a₂ * (x₁ / y₁)
-                  + (W.map A.subtype).toAffine.a₂ * (x₂ / y₂)
-                  + (W.map A.subtype).toAffine.a₄ * (1 / y₂)) * ((1 / y₂) / τ)
-                + ((x₁ / y₁) / τ) * (x₁ / y₁)
-                + ((x₂ / y₂) / τ) * (x₁ / y₁ + x₂ / y₂))) := by
-        rw [hVU]
-        first
-        | (field_simp; ring1)
-      rw [hℓν, hVsplit]
-      refine A.mul_mem_nonunits hUinvA (A.nonunits.neg_mem
-        (add_mem (add_mem (A.mul_mem_nonunits ?_ hs₂) (A.mul_mem_nonunits ht₁ hT₁))
-          (A.mul_mem_nonunits ht₂ (add_mem hT₁ hT₂))))
-      exact add_mem (add_mem (add_mem (neg_mem ha1A) (mul_mem ha2A hT₁A))
-        (mul_mem ha2A hT₂A)) (mul_mem ha4A hs₂A)
+    · exact tangent_slope_div_intercept_estimate h₁ h₂ hx₁ hx₂ hxy hτ0 ht₁ ht₂ hx
+    · exact secant_slope_div_intercept_estimate h₁ h₂ hx₁ hx₂ hτ0 ht₁ ht₂ hx
   obtain ⟨hν0, hℓν⟩ := main
   refine ⟨hν0, hℓν, ?_⟩
   have hℓν' : (W.map A.subtype).toAffine.slope x₁ x₂ y₁ y₂

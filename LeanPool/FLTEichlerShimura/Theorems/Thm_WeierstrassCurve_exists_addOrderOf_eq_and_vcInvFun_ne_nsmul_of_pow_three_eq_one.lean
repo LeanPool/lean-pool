@@ -232,6 +232,109 @@ end Degree
 end P2MWs13.NonScalar
 
 open P2MWs13.NonScalar in
+private theorem order_two_point_not_scalar
+    {L : Type*} [Field L] [DecidableEq L] [CharZero L] [IsAlgClosed L]
+    (W : WeierstrassCurve L) [W.IsElliptic]
+    (B : L) (hWdef : W = ⟨0, 0, 0, 0, B⟩) (hB : B ≠ 0)
+    (u : Lˣ) (hu1 : (u : L) ≠ 1) :
+    ∃ (x y : L) (h : W.toAffine.Nonsingular x y),
+      addOrderOf (Point.some x y h) = 2 ∧
+      ∀ k : ℕ, xco (k • Point.some x y h) ≠ some ((u : L) * x) := by
+  obtain ⟨a, ha⟩ : ∃ a : L, a ^ 3 = -B := by
+    obtain ⟨a, ha⟩ := IsAlgClosed.exists_pow_nat_eq (-B) (n := 3) (by norm_num)
+    exact ⟨a, ha⟩
+  have ha0 : a ≠ 0 := by rintro rfl; apply hB; simpa using ha.symm
+  have heq : W.toAffine.Equation a 0 := by
+    rw [WeierstrassCurve.Affine.equation_iff]; simp [hWdef]; linear_combination -ha
+  have h3 : (3 : L) ≠ 0 := three_ne_zero
+  have hns : W.toAffine.Nonsingular a 0 := by
+    rw [WeierstrassCurve.Affine.nonsingular_iff']
+    refine ⟨heq, Or.inl ?_⟩
+    simp only [hWdef]
+    change (0 : L) * 0 - (3 * a ^ 2 + 2 * 0 * a + 0) ≠ 0
+    intro h3a
+    apply ha0
+    have : (3 : L) * a ^ 2 = 0 := by linear_combination -h3a
+    simpa [h3] using this
+  have hneg : -Point.some a 0 hns = Point.some a 0 hns := by
+    rw [Point.neg_some]; congr 1; simp [WeierstrassCurve.Affine.negY, hWdef]
+  have h2T : (2 : ℕ) • Point.some a 0 hns = 0 := by
+    rw [two_nsmul]; nth_rewrite 1 [← hneg]; rw [neg_add_cancel]
+  have hord : addOrderOf (Point.some a 0 hns) = 2 := by
+    refine (addOrderOf_eq_prime_iff.mpr ⟨h2T, ?_⟩)
+    exact Point.some_ne_zero hns
+  refine ⟨a, 0, hns, hord, fun k => ?_⟩
+  have hkT : k • Point.some a 0 hns = 0 ∨ k • Point.some a 0 hns = Point.some a 0 hns := by
+    rcases Nat.even_or_odd k with ⟨j, rfl⟩ | ⟨j, rfl⟩
+    · left; rw [← two_mul, mul_nsmul, h2T, nsmul_zero]
+    · right; rw [add_nsmul, mul_nsmul, h2T, nsmul_zero, zero_add, one_nsmul]
+  rcases hkT with h0 | h1
+  · rw [h0, xco_zero]; simp
+  · rw [h1, xco_some]; simp only [ne_eq, Option.some.injEq]
+    intro h; apply hu1
+    have : (1 - (u : L)) * a = 0 := by linear_combination h
+    rcases mul_eq_zero.mp this with h' | h'
+    · exact (sub_eq_zero.mp h').symm
+    · exact absurd h' ha0
+
+open P2MWs13.NonScalar in
+private theorem torsion_root_count_contradiction
+    {L : Type*} [Field L] [DecidableEq L]
+    (W : WeierstrassCurve L) [W.IsElliptic]
+    (p : ℕ) (hp : p.Prime) (m : ℕ) (hmle : 2 * m ≤ p - 1)
+    (F : L[X]) (hF0 : F ≠ 0) (hFdeg : F.natDegree ≤ m ^ 2)
+    (Ep : AddSubgroup W.toAffine.Point) (hcard : Nat.card Ep = p ^ 2)
+    (hEp_mem : ∀ T : W.toAffine.Point, T ∈ Ep ↔ (p : ℤ) • T = 0)
+    (hroot : ∀ (x y : L) (h : W.toAffine.Nonsingular x y),
+      (p : ℤ) • Point.some x y h = 0 → F.IsRoot x) : False := by
+  have hp2 : 2 ≤ p := hp.two_le
+  have hfinEp : Finite Ep :=
+    Nat.finite_of_card_ne_zero (by rw [show Nat.card Ep = p ^ 2 from hcard]; positivity)
+  have : Fintype Ep := Fintype.ofFinite Ep
+  classical
+  let g : Ep → Option L := fun T => xco (T.1 : W.toAffine.Point)
+  let s : Finset Ep := Finset.univ.filter (fun T => T ≠ 0)
+  have hs_card : s.card = p ^ 2 - 1 := by
+    have : s.card + 1 = p ^ 2 := by
+      rw [show s = Finset.univ.erase 0 by
+        ext T; simp [s], Finset.card_erase_of_mem (Finset.mem_univ _),
+        Finset.card_univ, ← Nat.card_eq_fintype_card, show Nat.card Ep = p ^ 2 from hcard]
+      have : 1 ≤ p ^ 2 := Nat.one_le_iff_ne_zero.mpr (by positivity); omega
+    omega
+  have hfib : ∀ b ∈ s.image g, (s.filter (fun T => g T = b)).card ≤ 2 := by
+    intro b hb
+    obtain ⟨T₁, hT₁, rfl⟩ := Finset.mem_image.mp hb
+    have hsub : s.filter (fun T => g T = g T₁) ⊆ {T₁, -T₁} := by
+      intro T hT
+      rw [Finset.mem_filter] at hT
+      have hx : xco (T.1 : W.toAffine.Point) = xco (T₁.1 : W.toAffine.Point) := hT.2
+      rcases eq_or_eq_neg_of_xco_eq hx with h1 | h1
+      · rw [Finset.mem_insert]; left; exact Subtype.ext h1
+      · rw [Finset.mem_insert, Finset.mem_singleton]; right
+        exact Subtype.ext (by rw [h1]; rfl)
+    exact (Finset.card_le_card hsub).trans (Finset.card_insert_le _ _ |>.trans (by simp))
+  have hle : s.card ≤ 2 * (s.image g).card := Finset.card_le_mul_card_image s 2 hfib
+  have himg : s.image g ⊆ (F.roots.toFinset).image some := by
+    intro b hb
+    obtain ⟨T, hT, rfl⟩ := Finset.mem_image.mp hb
+    rw [Finset.mem_filter] at hT
+    obtain ⟨⟨T, hTp⟩, hT0⟩ := T, hT.2
+    rcases T with _ | ⟨x, y, h⟩
+    · exact absurd rfl (fun h => hT0 (Subtype.ext h))
+    · refine Finset.mem_image.mpr ⟨x, ?_, rfl⟩
+      rw [Multiset.mem_toFinset, mem_roots hF0]
+      exact hroot x y h ((hEp_mem _).mp hTp)
+  have hR : ((F.roots.toFinset).image some).card ≤ m ^ 2 := by
+    refine Finset.card_image_le.trans ((Multiset.toFinset_card_le _).trans ?_)
+    exact (Polynomial.card_roots' F).trans hFdeg
+  have hfinal : p ^ 2 - 1 ≤ 2 * m ^ 2 := by
+    rw [← hs_card]; exact hle.trans (Nat.mul_le_mul_left 2 ((Finset.card_le_card himg).trans hR))
+  have h4 : 4 * m ^ 2 ≤ (p - 1) ^ 2 := by nlinarith
+  have hp1 : 1 ≤ p := hp.one_lt.le
+  zify [hp1, Nat.one_le_iff_ne_zero.mpr (show p ^ 2 ≠ 0 by positivity)] at hfinal h4 hmle
+  nlinarith
+
+open P2MWs13.NonScalar in
 theorem solution
     {L : Type*} [Field L] [DecidableEq L] [Algebra ℚ L] [IsAlgClosed L]
     (B : L) (hB : B ≠ 0) (u : Lˣ) (hu : (u : L) ^ 3 = 1) (hu1 : (u : L) ≠ 1)
@@ -279,41 +382,7 @@ theorem solution
       have : castPt hW (e P) = castPt hW (e 0) := by rw [map_zero, map_zero]; exact h0
       exact e.injective ((castPt hW).injective this), fun h0 => by rw [h0, map_zero]⟩
   rcases hp.eq_two_or_odd' with rfl | hpodd
-  · obtain ⟨a, ha⟩ : ∃ a : L, a ^ 3 = -B := by
-      obtain ⟨a, ha⟩ := IsAlgClosed.exists_pow_nat_eq (-B) (n := 3) (by norm_num)
-      exact ⟨a, ha⟩
-    have ha0 : a ≠ 0 := by rintro rfl; apply hB; simpa using ha.symm
-    have heq : W.toAffine.Equation a 0 := by
-      rw [WeierstrassCurve.Affine.equation_iff]; simp [hWdef]; linear_combination -ha
-    have h3 : (3 : L) ≠ 0 := three_ne_zero
-    have hns : W.toAffine.Nonsingular a 0 := by
-      rw [WeierstrassCurve.Affine.nonsingular_iff']
-      refine ⟨heq, Or.inl ?_⟩
-      change (0 : L) * 0 - (3 * a ^ 2 + 2 * 0 * a + 0) ≠ 0
-      intro h3a
-      apply ha0
-      have : (3 : L) * a ^ 2 = 0 := by linear_combination -h3a
-      simpa [h3] using this
-    have hneg : -Point.some a 0 hns = Point.some a 0 hns := by
-      rw [Point.neg_some]; congr 1; simp [WeierstrassCurve.Affine.negY, hWdef]
-    have h2T : (2 : ℕ) • Point.some a 0 hns = 0 := by
-      rw [two_nsmul]; nth_rewrite 1 [← hneg]; rw [neg_add_cancel]
-    have hord : addOrderOf (Point.some a 0 hns) = 2 := by
-      refine (addOrderOf_eq_prime_iff.mpr ⟨h2T, ?_⟩)
-      exact Point.some_ne_zero hns
-    refine ⟨a, 0, hns, hord, fun k => ?_⟩
-    have hkT : k • Point.some a 0 hns = 0 ∨ k • Point.some a 0 hns = Point.some a 0 hns := by
-      rcases Nat.even_or_odd k with ⟨j, rfl⟩ | ⟨j, rfl⟩
-      · left; rw [← two_mul, mul_nsmul, h2T, nsmul_zero]
-      · right; rw [add_nsmul, mul_nsmul, h2T, nsmul_zero, zero_add, one_nsmul]
-    rcases hkT with h0 | h1
-    · rw [h0, xco_zero]; simp
-    · rw [h1, xco_some]; simp only [ne_eq, Option.some.injEq]
-      intro h; apply hu1
-      have : (1 - (u : L)) * a = 0 := by linear_combination h
-      rcases mul_eq_zero.mp this with h' | h'
-      · exact (sub_eq_zero.mp h').symm
-      · exact absurd h' ha0
+  · exact order_two_point_not_scalar W B hWdef hB u hu1
   · have hp2 : p ≠ 2 := by rintro rfl; exact (Nat.not_even_iff_odd.mpr hpodd) even_two
     have hp3 : 3 ≤ p := by have := hp.two_le; omega
     have hcard : Nat.card (Submodule.torsionBy ℤ W.toAffine.Point p) = p ^ 2 := by
@@ -444,51 +513,8 @@ theorem solution
       change F.eval x = 0
       rw [hFdef, eval_sub, eval_mul, eval_mul, eval_C, eval_X]
       linear_combination hx
-    have hfinEp : Finite Ep :=
-      Nat.finite_of_card_ne_zero (by rw [show Nat.card Ep = p ^ 2 from hcard]; positivity)
-    have : Fintype Ep := Fintype.ofFinite Ep
-    classical
-    let g : Ep → Option L := fun T => xco (T.1 : W.toAffine.Point)
-    let s : Finset Ep := Finset.univ.filter (fun T => T ≠ 0)
-    have hs_card : s.card = p ^ 2 - 1 := by
-      have : s.card + 1 = p ^ 2 := by
-        rw [show s = Finset.univ.erase 0 by
-          ext T; simp [s], Finset.card_erase_of_mem (Finset.mem_univ _),
-          Finset.card_univ, ← Nat.card_eq_fintype_card, show Nat.card Ep = p ^ 2 from hcard]
-        have : 1 ≤ p ^ 2 := Nat.one_le_iff_ne_zero.mpr (by positivity); omega
-      omega
-    have hfib : ∀ b ∈ s.image g, (s.filter (fun T => g T = b)).card ≤ 2 := by
-      intro b hb
-      obtain ⟨T₁, hT₁, rfl⟩ := Finset.mem_image.mp hb
-      have hsub : s.filter (fun T => g T = g T₁) ⊆ {T₁, -T₁} := by
-        intro T hT
-        rw [Finset.mem_filter] at hT
-        have hx : xco (T.1 : W.toAffine.Point) = xco (T₁.1 : W.toAffine.Point) := hT.2
-        rcases eq_or_eq_neg_of_xco_eq hx with h1 | h1
-        · rw [Finset.mem_insert]; left; exact Subtype.ext h1
-        · rw [Finset.mem_insert, Finset.mem_singleton]; right
-          exact Subtype.ext (by rw [h1]; rfl)
-      exact (Finset.card_le_card hsub).trans (Finset.card_insert_le _ _ |>.trans (by simp))
-    have hle : s.card ≤ 2 * (s.image g).card := Finset.card_le_mul_card_image s 2 hfib
-    have himg : s.image g ⊆ (F.roots.toFinset).image some := by
-      intro b hb
-      obtain ⟨T, hT, rfl⟩ := Finset.mem_image.mp hb
-      rw [Finset.mem_filter] at hT
-      obtain ⟨⟨T, hTp⟩, hT0⟩ := T, hT.2
-      rcases T with _ | ⟨x, y, h⟩
-      · exact absurd rfl (fun h => hT0 (Subtype.ext h))
-      · refine Finset.mem_image.mpr ⟨x, ?_, rfl⟩
-        rw [Multiset.mem_toFinset, mem_roots hF0]
-        exact hroot x y h ((hEp_mem _).mp hTp)
-    have hR : ((F.roots.toFinset).image some).card ≤ m ^ 2 := by
-      refine Finset.card_image_le.trans ((Multiset.toFinset_card_le _).trans ?_)
-      exact (Polynomial.card_roots' F).trans hFdeg
-    have hfinal : p ^ 2 - 1 ≤ 2 * m ^ 2 := by
-      rw [← hs_card]; exact hle.trans (Nat.mul_le_mul_left 2 ((Finset.card_le_card himg).trans hR))
-    have h4 : 4 * m ^ 2 ≤ (p - 1) ^ 2 := by nlinarith
-    have hp1 : 1 ≤ p := hp.one_lt.le
-    zify [hp1, Nat.one_le_iff_ne_zero.mpr (show p ^ 2 ≠ 0 by positivity)] at hfinal h4 hmle
-    nlinarith
+    exact torsion_root_count_contradiction W p hp m hmle F hF0 hFdeg
+      Ep hcard hEp_mem hroot
 
 end S_WeierstrassCurve_exists_addOrderOf_eq_and_vcInvFun_ne_nsmul_of_pow_three_eq_one
 end P2MW
