@@ -664,6 +664,79 @@ p2m_open "ModularCurve"
 variable {K : Type*} [Field K] [Algebra ℚ K]
 
 
+private theorem chain_embeddings (M p : ℕ) [NeZero M] [hp : Fact (Nat.Prime p)]
+    (a : ℕ) (ζ : Kˣ) (hζ : IsPrimitiveRoot (ζ : K) (M * p ^ (a + 2)))
+    (dp : ModularPolynomialData p)
+    (hnot : ∀ i : ℕ, i ≤ a → jqN (p ^ i * p) ∉ chainField M p i) :
+    ∀ i : ℕ, i ≤ a →
+      ∃ (σ : chainField M p i →+* LaurentSeries K) (t : ℕ),
+        (σ ⟨jqN (p ^ i), mem_chainField M p (le_refl i)⟩
+          = qExpand K (M * p ^ (a + 2 - i))
+            (qTwist (ζ ^ (t * (M * p ^ (a + 2 - i)))) (coeffEmb K jq))) ∧
+        (∀ y : chainField M p i, σ y ∈ (qExpand K (M * p ^ (a + 2 - i))).range) := by
+  classical
+  intro i
+  induction i with
+  | zero =>
+    intro _
+    refine ⟨((coeffEmb K).comp (qExpand ℚ (M * p ^ (a + 2)))).comp
+      (algebraMap (chainField M p 0) (LaurentSeries ℚ)), 0, ?_, ?_⟩
+    · change coeffEmb K (qExpand ℚ (M * p ^ (a + 2)) (jqN (p ^ 0))) = _
+      rw [show jqN (p ^ 0) = jq from (jqN_congr (pow_zero p)).trans jqN_one, iota_jq,
+        zero_mul, pow_zero]
+      suffices TS K (M * p ^ (a + 2)) 1 = TS K (M * p ^ (a + 2 - 0)) 1 by
+        simpa only [TS_eq_coeffEmb] using this
+      exact TS_congr (by rw [Nat.sub_zero]) 1
+    · intro y
+      change coeffEmb K (qExpand ℚ (M * p ^ (a + 2)) (y : LaurentSeries ℚ)) ∈ _
+      rw [coeffEmb_qExpand]
+      rw [← range_qExpand_congr (show (M * p ^ (a + 2) : ℕ) = M * p ^ (a + 2 - 0) from by
+        rw [Nat.sub_zero])]
+      exact RingHom.mem_range.mpr ⟨coeffEmb K (y : LaurentSeries ℚ), rfl⟩
+  | succ i ih =>
+    intro hi
+    obtain ⟨σ, t, hσtop, hσrange⟩ := ih (Nat.le_of_succ_le hi)
+    have hpow_step : M * p ^ (a + 2 - i) = p * (M * p ^ (a + 2 - (i + 1))) := by
+      rw [show a + 2 - i = (a + 2 - (i + 1)) + 1 from by omega, pow_succ]
+      ring
+    have hσtop' : σ ⟨jqN (p ^ i), mem_chainField M p (le_refl i)⟩
+        = qExpand K (p * (M * p ^ (a + 2 - (i + 1))))
+          (qTwist (ζ ^ (t * (p * (M * p ^ (a + 2 - (i + 1)))))) (coeffEmb K jq)) := by
+      rw [hσtop]
+      have h1 : ζ ^ (t * (M * p ^ (a + 2 - i)))
+          = ζ ^ (t * (p * (M * p ^ (a + 2 - (i + 1))))) := by
+        rw [hpow_step]
+      rw [h1]
+      suffices TS K (M * p ^ (a + 2 - i)) _ = TS K (p * (M * p ^ (a + 2 - (i + 1)))) _ by
+        simpa only [TS_eq_coeffEmb] using this
+      exact TS_congr hpow_step _
+    have hζ' : IsPrimitiveRoot (ζ : K) (p * (M * p ^ (a + 2 - (i + 1))) * p ^ i) := by
+      have hBs : M * p ^ (a + 2) = p * (M * p ^ (a + 2 - (i + 1))) * p ^ i := by
+        have h1 : (1 : ℕ) + (a + 2 - (i + 1)) + i = a + 2 := by omega
+        calc M * p ^ (a + 2) = M * p ^ (1 + (a + 2 - (i + 1)) + i) := by rw [h1]
+          _ = p * (M * p ^ (a + 2 - (i + 1))) * p ^ i := by
+              rw [pow_add, pow_add, pow_one]; ring
+      exact hBs ▸ hζ
+    have hσrange' : ∀ y : chainField M p i,
+        σ y ∈ (qExpand K (p * (M * p ^ (a + 2 - (i + 1))))).range := by
+      intro y
+      have h := hσrange y
+      rwa [range_qExpand_congr hpow_step] at h
+    obtain ⟨σ', t', hcompat, hσ'new, hσ'range⟩ :=
+      chain_extend p (M * p ^ (a + 2 - (i + 1))) (p ^ i) ζ hζ' dp (chainField M p i) σ
+        (p ^ i) (mem_chainField M p (le_refl i)) (hnot i (Nat.le_of_succ_le hi)) t
+        hσtop' hσrange' (chainField M p (i + 1)) (chainField_succ M p i)
+    refine ⟨σ', t', ?_, hσ'range⟩
+    have hxmem : jqN (p ^ i * p) ∈ chainField M p (i + 1) := by
+      rw [show jqN (p ^ i * p) = jqN (p ^ (i + 1)) from jqN_congr (pow_succ p i).symm]
+      exact mem_chainField M p (le_refl (i + 1))
+    have hmk : (⟨jqN (p ^ (i + 1)), mem_chainField M p (le_refl (i + 1))⟩ :
+        chainField M p (i + 1)) = ⟨jqN (p ^ i * p), hxmem⟩ :=
+      Subtype.ext (jqN_congr (pow_succ p i))
+    rw [hmk]
+    exact hσ'new hxmem
+
+
 private theorem chain_endgame (M p : ℕ) [NeZero M] [hp : Fact (Nat.Prime p)] (a : ℕ)
     (ζ : Kˣ) (hζ : IsPrimitiveRoot (ζ : K) (M * p ^ (a + 2)))
     (dp : ModularPolynomialData p) (hsp : EvalSymm dp.Φ)
@@ -687,72 +760,7 @@ private theorem chain_endgame (M p : ℕ) [NeZero M] [hp : Fact (Nat.Prime p)] (
         congrArg (chainField M p) (by omega)
       rw [heq1, heq2]
       exact hIH (i - 1) (by omega)
-  have chain : ∀ i : ℕ, i ≤ a →
-      ∃ (σ : chainField M p i →+* LaurentSeries K) (t : ℕ),
-        (σ ⟨jqN (p ^ i), mem_chainField M p (le_refl i)⟩
-          = qExpand K (M * p ^ (a + 2 - i))
-            (qTwist (ζ ^ (t * (M * p ^ (a + 2 - i)))) (coeffEmb K jq))) ∧
-        (∀ y : chainField M p i, σ y ∈ (qExpand K (M * p ^ (a + 2 - i))).range) := by
-    intro i
-    induction i with
-    | zero =>
-      intro _
-      refine ⟨((coeffEmb K).comp (qExpand ℚ (M * p ^ (a + 2)))).comp
-        (algebraMap (chainField M p 0) (LaurentSeries ℚ)), 0, ?_, ?_⟩
-      · change coeffEmb K (qExpand ℚ (M * p ^ (a + 2)) (jqN (p ^ 0))) = _
-        rw [show jqN (p ^ 0) = jq from (jqN_congr (pow_zero p)).trans jqN_one, iota_jq,
-          zero_mul, pow_zero]
-        suffices TS K (M * p ^ (a + 2)) 1 = TS K (M * p ^ (a + 2 - 0)) 1 by
-          simpa only [TS_eq_coeffEmb] using this
-        exact TS_congr (by rw [Nat.sub_zero]) 1
-      · intro y
-        change coeffEmb K (qExpand ℚ (M * p ^ (a + 2)) (y : LaurentSeries ℚ)) ∈ _
-        rw [coeffEmb_qExpand]
-        rw [← range_qExpand_congr (show (M * p ^ (a + 2) : ℕ) = M * p ^ (a + 2 - 0) from by
-          rw [Nat.sub_zero])]
-        exact RingHom.mem_range.mpr ⟨coeffEmb K (y : LaurentSeries ℚ), rfl⟩
-    | succ i ih =>
-      intro hi
-      obtain ⟨σ, t, hσtop, hσrange⟩ := ih (Nat.le_of_succ_le hi)
-      have hpow_step : M * p ^ (a + 2 - i) = p * (M * p ^ (a + 2 - (i + 1))) := by
-        rw [show a + 2 - i = (a + 2 - (i + 1)) + 1 from by omega, pow_succ]
-        ring
-      have hσtop' : σ ⟨jqN (p ^ i), mem_chainField M p (le_refl i)⟩
-          = qExpand K (p * (M * p ^ (a + 2 - (i + 1))))
-            (qTwist (ζ ^ (t * (p * (M * p ^ (a + 2 - (i + 1)))))) (coeffEmb K jq)) := by
-        rw [hσtop]
-        have h1 : ζ ^ (t * (M * p ^ (a + 2 - i)))
-            = ζ ^ (t * (p * (M * p ^ (a + 2 - (i + 1))))) := by
-          rw [hpow_step]
-        rw [h1]
-        suffices TS K (M * p ^ (a + 2 - i)) _ = TS K (p * (M * p ^ (a + 2 - (i + 1)))) _ by
-          simpa only [TS_eq_coeffEmb] using this
-        exact TS_congr hpow_step _
-      have hζ' : IsPrimitiveRoot (ζ : K) (p * (M * p ^ (a + 2 - (i + 1))) * p ^ i) := by
-        have hBs : M * p ^ (a + 2) = p * (M * p ^ (a + 2 - (i + 1))) * p ^ i := by
-          have h1 : (1 : ℕ) + (a + 2 - (i + 1)) + i = a + 2 := by omega
-          calc M * p ^ (a + 2) = M * p ^ (1 + (a + 2 - (i + 1)) + i) := by rw [h1]
-            _ = p * (M * p ^ (a + 2 - (i + 1))) * p ^ i := by
-                rw [pow_add, pow_add, pow_one]; ring
-        exact hBs ▸ hζ
-      have hσrange' : ∀ y : chainField M p i,
-          σ y ∈ (qExpand K (p * (M * p ^ (a + 2 - (i + 1))))).range := by
-        intro y
-        have h := hσrange y
-        rwa [range_qExpand_congr hpow_step] at h
-      obtain ⟨σ', t', hcompat, hσ'new, hσ'range⟩ :=
-        chain_extend p (M * p ^ (a + 2 - (i + 1))) (p ^ i) ζ hζ' dp (chainField M p i) σ
-          (p ^ i) (mem_chainField M p (le_refl i)) (hnot i (Nat.le_of_succ_le hi)) t
-          hσtop' hσrange' (chainField M p (i + 1)) (chainField_succ M p i)
-      refine ⟨σ', t', ?_, hσ'range⟩
-      have hxmem : jqN (p ^ i * p) ∈ chainField M p (i + 1) := by
-        rw [show jqN (p ^ i * p) = jqN (p ^ (i + 1)) from jqN_congr (pow_succ p i).symm]
-        exact mem_chainField M p (le_refl (i + 1))
-      have hmk : (⟨jqN (p ^ (i + 1)), mem_chainField M p (le_refl (i + 1))⟩ :
-          chainField M p (i + 1)) = ⟨jqN (p ^ i * p), hxmem⟩ :=
-        Subtype.ext (jqN_congr (pow_succ p i))
-      rw [hmk]
-      exact hσ'new hxmem
+  have chain := chain_embeddings M p a ζ hζ dp hnot
   obtain ⟨σa, ta, hatop, harange⟩ := chain a (le_refl a)
   have hpow_top : M * p ^ (a + 2 - a) = p * (M * p) := by
     rw [show a + 2 - a = 2 from by omega]

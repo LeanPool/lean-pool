@@ -30,6 +30,8 @@ import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_qExpansion_discrimin
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_relfinrank_laurentBaseChange
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_transcendental_jqModC
 
+import LeanPool.FLTEichlerShimura.Definitions.Defs_UpperHalfPlane_niceFunctionSubalgebra
+
 /-!
 # Degree over L(j) bounded by the index of Γ'
 
@@ -76,6 +78,8 @@ https://github.com/anthropics/fermats-last-theorem/blob/aa2d8b34692b16c70f699536
 -/
 
 section privateSection
+
+open UpperHalfPlane (NiceAtInfty)
 
 -- Avoid an instance diamond involving subfields.
 attribute [-instance] DivisionRing.toRatAlgebra
@@ -454,69 +458,16 @@ theorem sum_coeffForm_mul_pow_eq_zero (τ : ℍ) :
   simp only [OneMemClass.coe_one, inv_one, SlashAction.slash_one]
   ring
 
-def Nice (F : ℍ → ℂ) : Prop := AnalyticAt ℂ (cuspFunction 1 F) 0
-
-theorem Nice.mul {F G : ℍ → ℂ} (hF : Nice F) (hG : Nice G) : Nice (F * G) := by
-  unfold Nice at *
-  rw [cuspFunction_mul hF.continuousAt hG.continuousAt]
-  exact hF.mul hG
-
-theorem Nice.add {F G : ℍ → ℂ} (hF : Nice F) (hG : Nice G) : Nice (F + G) := by
-  unfold Nice at *
-  rw [cuspFunction_add hF.continuousAt hG.continuousAt]
-  exact hF.add hG
-
-theorem nice_one : Nice (1 : ℍ → ℂ) := by
-  have : (1 : ℍ → ℂ) = ⇑(1 : ModularForm 𝒮ℒ 0) := rfl
-  unfold Nice; rw [this]
-  exact ModularFormClass.analyticAt_cuspFunction_zero _ one_pos one_mem_strictPeriods_SL
-
-theorem nice_zero : Nice (0 : ℍ → ℂ) := by
-  have : (0 : ℍ → ℂ) = ⇑(0 : ModularForm 𝒮ℒ 0) := rfl
-  unfold Nice; rw [this]
-  exact ModularFormClass.analyticAt_cuspFunction_zero _ one_pos one_mem_strictPeriods_SL
-
-theorem Nice.pow {F : ℍ → ℂ} (hF : Nice F) : ∀ n : ℕ, Nice (F ^ n)
-  | 0 => by rw [pow_zero]; exact nice_one
-  | n + 1 => by rw [pow_succ]; exact (Nice.pow hF n).mul hF
-
-theorem qExpansion_pow' {F : ℍ → ℂ} (hF : Nice F) :
-    ∀ n : ℕ, qExpansion 1 (F ^ n) = qExpansion 1 F ^ n
-  | 0 => by rw [pow_zero, pow_zero, qExpansion_one]
-  | n + 1 => by
-    rw [pow_succ, pow_succ, qExpansion_mul (Nice.pow hF n) hF, qExpansion_pow' hF n]
-
-theorem Nice.sum {ι : Type*} (s : Finset ι) {F : ι → ℍ → ℂ} (hF : ∀ i ∈ s, Nice (F i)) :
-    Nice (∑ i ∈ s, F i) := by
-  classical
-  induction s using Finset.induction_on with
-  | empty => rw [Finset.sum_empty]; exact nice_zero
-  | insert a s ha ih =>
-    rw [Finset.sum_insert ha]
-    exact (hF a (Finset.mem_insert_self a s)).add (ih fun i hi => hF i (Finset.mem_insert_of_mem
-      hi))
-
-theorem qExpansion_sum' {ι : Type*} (s : Finset ι) {F : ι → ℍ → ℂ} (hF : ∀ i ∈ s, Nice (F i)) :
-    qExpansion 1 (∑ i ∈ s, F i) = ∑ i ∈ s, qExpansion 1 (F i) := by
-  classical
-  induction s using Finset.induction_on with
-  | empty => rw [Finset.sum_empty, Finset.sum_empty, qExpansion_zero]
-  | insert a s ha ih =>
-    rw [Finset.sum_insert ha, Finset.sum_insert ha,
-      qExpansion_add (hF a (Finset.mem_insert_self a s))
-        (Nice.sum s fun i hi => hF i (Finset.mem_insert_of_mem hi)),
-      ih fun i hi => hF i (Finset.mem_insert_of_mem hi)]
-
 variable (hT : ModularGroup.T ∈ Γ)
 include hT
 
 omit [Γ.FiniteIndex] in
 theorem nice_of_modularForm {k' : ℤ} (h : ModularForm (Γ : Subgroup (GL (Fin 2) ℝ)) k') :
-    Nice (h : ℍ → ℂ) :=
+    NiceAtInfty (h : ℍ → ℂ) :=
   ModularFormClass.analyticAt_cuspFunction_zero _ one_pos (one_mem_strictPeriods hT)
 
 omit hT in
-theorem nice_of_levelOne {k' : ℤ} (h : ModularForm 𝒮ℒ k') : Nice (h : ℍ → ℂ) :=
+theorem nice_of_levelOne {k' : ℤ} (h : ModularForm 𝒮ℒ k') : NiceAtInfty (h : ℍ → ℂ) :=
   ModularFormClass.analyticAt_cuspFunction_zero _ one_pos one_mem_strictPeriods_SL
 
 theorem sum_qExpansion_coeffForm_mul_pow_eq_zero :
@@ -530,17 +481,19 @@ theorem sum_qExpansion_coeffForm_mul_pow_eq_zero :
     simp only [hR, Finset.sum_apply, Pi.mul_apply, Pi.pow_apply, Pi.zero_apply]
     exact sum_coeffForm_mul_pow_eq_zero f g τ
   have hnice : ∀ i ∈ Finset.range (Nat.card (Cos Γ) + 1),
-      Nice ((coeffForm f g i : ℍ → ℂ) * (f : ℍ → ℂ) ^ i * (g : ℍ → ℂ) ^ (Nat.card (Cos Γ) - i)) :=
+      NiceAtInfty ((coeffForm f g i : ℍ → ℂ) * (f : ℍ → ℂ) ^ i *
+        (g : ℍ → ℂ) ^ (Nat.card (Cos Γ) - i)) :=
     fun i _ => ((nice_of_levelOne _).mul ((nice_of_modularForm hT f).pow i)).mul
       ((nice_of_modularForm hT g).pow _)
   have h := congrArg (qExpansion 1) hR0
-  rw [qExpansion_zero, hR, qExpansion_sum' _ hnice] at h
+  rw [qExpansion_zero, hR, NiceAtInfty.qExpansion_sum _ hnice] at h
   rw [← h]
   refine Finset.sum_congr rfl fun i _ => ?_
   rw [qExpansion_mul ((nice_of_levelOne _).mul ((nice_of_modularForm hT f).pow i))
       ((nice_of_modularForm hT g).pow _),
     qExpansion_mul (nice_of_levelOne _) ((nice_of_modularForm hT f).pow i),
-    qExpansion_pow' (nice_of_modularForm hT f), qExpansion_pow' (nice_of_modularForm hT g)]
+    NiceAtInfty.qExpansion_pow (nice_of_modularForm hT f),
+    NiceAtInfty.qExpansion_pow (nice_of_modularForm hT g)]
 
 omit hT in
 theorem qExpansion_coeffForm_card_ne_zero (hg : g ≠ 0) :

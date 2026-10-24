@@ -232,6 +232,34 @@ def coeAddHom (k : ℤ) : ModularForm Γ k →+ (ℍ → ℂ) :=
 
 end Mono
 
+private theorem formal_modularPolynomial_relation (N : ℕ) [NeZero N]
+    (data : ModularCurve.ModularPolynomialData N) (J : LaurentSeries ℂ) (hJ : J = jqModC ℂ) :
+    (data.Φ.map (Polynomial.eval₂RingHom (Int.castRingHom (LaurentSeries ℂ)) J)).eval
+    (qExpand ℂ N J) = 0  := by
+  have h0 := data.eval_eq_zero
+  have h1 := congrArg (coeffMap (algebraMap ℚ ℂ)) h0
+  rw [map_zero, Polynomial.hom_eval₂] at h1
+  have hcomp : (coeffMap (algebraMap ℚ ℂ)).comp evalAtJ
+      = Polynomial.eval₂RingHom (Int.castRingHom (LaurentSeries ℂ)) J := by
+    refine Polynomial.ringHom_ext' (Subsingleton.elim _ _) ?_
+    rw [RingHom.coe_comp, Function.comp_apply, evalAtJ_X, Polynomial.coe_eval₂RingHom,
+      Polynomial.eval₂_X,
+      hJ, ← jqModC_rat]
+    exact map_jqModC (algebraMap ℚ ℂ)
+  have hjN : coeffMap (algebraMap ℚ ℂ) (jqN N) = qExpand ℂ N J := by
+    rw [hJ, ← map_jqModC (algebraMap ℚ ℂ) (K := ℚ), jqModC_rat]
+    change coeffMap (algebraMap ℚ ℂ) (qExpand ℚ N jq) = qExpand ℂ N (coeffMap (algebraMap ℚ ℂ) jq)
+    ext k
+    by_cases hk : (N : ℤ) ∣ k
+    · obtain ⟨r, rfl⟩ := hk
+      rw [coeffMap_coeff, qExpand_coeff_mul, qExpand_coeff_mul, coeffMap_coeff]
+    · rw [coeffMap_coeff, qExpand_coeff_of_not_dvd N _ hk, qExpand_coeff_of_not_dvd N _ hk,
+        map_zero]
+  rw [hcomp, hjN] at h1
+  rw [Polynomial.eval_map]
+  first
+  | exact h1
+
 end ModularCurve.DeepCosetAux
 
 open ModularCurve.DeepCosetAux in
@@ -347,32 +375,7 @@ theorem solution (N : ℕ) [NeZero N]
     rw [FunLike.coe_smul]
     funext τ
     simp only [Pi.smul_apply, Complex.real_smul, smul_eq_mul]
-  have hformal : (data.Φ.map (Polynomial.eval₂RingHom (Int.castRingHom (LaurentSeries ℂ)) J)).eval
-    (qExpand ℂ N J) = 0 :=
-    by
-    have h0 := data.eval_eq_zero
-    have h1 := congrArg (coeffMap (algebraMap ℚ ℂ)) h0
-    rw [map_zero, Polynomial.hom_eval₂] at h1
-    have hcomp : (coeffMap (algebraMap ℚ ℂ)).comp evalAtJ
-        = Polynomial.eval₂RingHom (Int.castRingHom (LaurentSeries ℂ)) J := by
-      refine Polynomial.ringHom_ext' (Subsingleton.elim _ _) ?_
-      rw [RingHom.coe_comp, Function.comp_apply, evalAtJ_X, Polynomial.coe_eval₂RingHom,
-        Polynomial.eval₂_X,
-        hJ, ← jqModC_rat]
-      exact map_jqModC (algebraMap ℚ ℂ)
-    have hjN : coeffMap (algebraMap ℚ ℂ) (jqN N) = qExpand ℂ N J := by
-      rw [hJ, ← map_jqModC (algebraMap ℚ ℂ) (K := ℚ), jqModC_rat]
-      change coeffMap (algebraMap ℚ ℂ) (qExpand ℚ N jq) = qExpand ℂ N (coeffMap (algebraMap ℚ ℂ) jq)
-      ext k
-      by_cases hk : (N : ℤ) ∣ k
-      · obtain ⟨r, rfl⟩ := hk
-        rw [coeffMap_coeff, qExpand_coeff_mul, qExpand_coeff_mul, coeffMap_coeff]
-      · rw [coeffMap_coeff, qExpand_coeff_of_not_dvd N _ hk, qExpand_coeff_of_not_dvd N _ hk,
-          map_zero]
-    rw [hcomp, hjN] at h1
-    rw [Polynomial.eval_map]
-    first
-    | exact h1
+  have hformal := formal_modularPolynomial_relation N data J hJ
   have hqH : qExpansion 1 (H : ℍ → ℂ) = 0 := by
     apply HahnSeries.ofPowerSeries_injective (Γ := ℤ) (R := ℂ)
     rw [map_zero]

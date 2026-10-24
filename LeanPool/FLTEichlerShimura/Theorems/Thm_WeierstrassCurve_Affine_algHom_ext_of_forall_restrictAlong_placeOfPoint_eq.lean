@@ -21,6 +21,7 @@ public import LeanPool.FLTEichlerShimura.Definitions.Def_AlgebraicCurve_Correspo
 public import LeanPool.FLTEichlerShimura.Definitions.Def_AlgebraicCurve_PlaceEvaluation
 public import LeanPool.FLTEichlerShimura.Definitions.Def_WeierstrassCurve_GenusOnePlaceGateCentred
 
+import LeanPool.FLTEichlerShimura.Definitions.Defs_IsogenyEndDatum_sharedLibrary
 import Mathlib.Algebra.Order.Ring.Star
 import Mathlib.Tactic.NormNum.Prime
 import LeanPool.FLTEichlerShimura.Definitions.Def_Isogeny_ConditionalCurrency
@@ -94,119 +95,7 @@ theorem S13_ofHeightOneSpectrum_injective {R : Type*} [CommRing R] [IsDedekindDo
   rw [Valuation.isEquiv_iff_valuationSubring]
   exact congrArg AlgebraicCurve.Place.toValuationSubring h
 
-namespace CoordinateRing
-
-theorem algebraMap_eq_mk_C_C (a : F) :
-    algebraMap F W.CoordinateRing a = CoordinateRing.mk W (C (C a)) := by
-  rw [AdjoinRoot.algebraMap_eq', RingHom.comp_apply, Polynomial.algebraMap_apply,
-    Algebra.algebraMap_self_apply]
-  rfl
-
-theorem eq_of_XYIdeal_eq {x₁ y₁ x₂ y₂ : F} (h₂ : W.Equation x₂ y₂)
-    (h : XYIdeal W x₁ (C y₁) = XYIdeal W x₂ (C y₂)) : x₁ = x₂ ∧ y₁ = y₂ := by
-  have hne : XYIdeal W x₂ (C y₂) ≠ ⊤ := (XYIdeal_isMaximal h₂).ne_top
-  have hX₁ : XClass W x₁ ∈ XYIdeal W x₂ (C y₂) :=
-    h ▸ Ideal.subset_span (Set.mem_insert _ _)
-  have hX₂ : XClass W x₂ ∈ XYIdeal W x₂ (C y₂) := Ideal.subset_span (Set.mem_insert _ _)
-  have hY₁ : YClass W (C y₁) ∈ XYIdeal W x₂ (C y₂) :=
-    h ▸ Ideal.subset_span (Set.mem_insert_of_mem _ rfl)
-  have hY₂ : YClass W (C y₂) ∈ XYIdeal W x₂ (C y₂) :=
-    Ideal.subset_span (Set.mem_insert_of_mem _ rfl)
-  constructor
-  · by_contra hx
-    apply hne
-    have hsub : XClass W x₁ - XClass W x₂ = algebraMap F W.CoordinateRing (x₂ - x₁) := by
-      rw [XClass, XClass, ← map_sub, algebraMap_eq_mk_C_C]
-      grind
-    have hmem := (XYIdeal W x₂ (C y₂)).sub_mem hX₁ hX₂
-    rw [hsub] at hmem
-    exact Ideal.eq_top_of_isUnit_mem _ hmem
-      ((isUnit_iff_ne_zero.mpr (sub_ne_zero.mpr fun hxy => hx hxy.symm)).map
-        (algebraMap F W.CoordinateRing))
-  · by_contra hy
-    apply hne
-    have hsub : YClass W (C y₁) - YClass W (C y₂) = algebraMap F W.CoordinateRing (y₂ - y₁) := by
-      rw [YClass, YClass, ← map_sub, algebraMap_eq_mk_C_C]
-      grind
-    have hmem := (XYIdeal W x₂ (C y₂)).sub_mem hY₁ hY₂
-    rw [hsub] at hmem
-    exact Ideal.eq_top_of_isUnit_mem _ hmem
-      ((isUnit_iff_ne_zero.mpr (sub_ne_zero.mpr fun hxy => hy hxy.symm)).map
-        (algebraMap F W.CoordinateRing))
-
-def heightOneSpectrumOfEquation {x y : F} (h : W.Equation x y) :
-    HeightOneSpectrum W.CoordinateRing where
-  asIdeal := XYIdeal W x (C y)
-  isPrime := (XYIdeal_isMaximal h).isPrime
-  ne_bot := XYIdeal_ne_bot x (C y)
-
-@[scoped simp]
-theorem heightOneSpectrumOfEquation_asIdeal {x y : F} (h : W.Equation x y) :
-    (heightOneSpectrumOfEquation h).asIdeal = XYIdeal W x (C y) := rfl
-
-theorem exists_sub_algebraMap_mem {x y : F} (h : W.Equation x y) (r : W.CoordinateRing) :
-    ∃ c : F, r - algebraMap F W.CoordinateRing c ∈ XYIdeal W x (C y) := by
-  set e := quotientXYIdealEquiv (W' := W) (x := x) (y := C y) h
-  refine ⟨e (Ideal.Quotient.mk _ r), ?_⟩
-  rw [← Ideal.Quotient.eq_zero_iff_mem, map_sub, sub_eq_zero]
-  apply e.injective
-  rw [← Ideal.Quotient.algebraMap_eq, ← IsScalarTower.algebraMap_apply, AlgEquiv.commutes,
-    Algebra.algebraMap_self_apply]
-
-end CoordinateRing
-
-def IsFinitePlace (v : AlgebraicCurve.Place F W.FunctionField) : Prop :=
-  ∀ r : W.CoordinateRing, algebraMap W.CoordinateRing W.FunctionField r ∈ v.toValuationSubring
-
-def IsFinitePlace.ringHom {v : AlgebraicCurve.Place F W.FunctionField} (hv : IsFinitePlace v) :
-    W.CoordinateRing →+* v.toValuationSubring where
-  toFun r := ⟨algebraMap W.CoordinateRing W.FunctionField r, hv r⟩
-  map_one' := Subtype.ext (map_one _)
-  map_mul' a b := Subtype.ext (map_mul _ a b)
-  map_zero' := Subtype.ext (map_zero _)
-  map_add' a b := Subtype.ext (map_add _ a b)
-
-@[scoped simp]
-theorem IsFinitePlace.coe_ringHom_apply {v : AlgebraicCurve.Place F W.FunctionField}
-    (hv : IsFinitePlace v) (r : W.CoordinateRing) :
-    (hv.ringHom r : W.FunctionField) = algebraMap W.CoordinateRing W.FunctionField r := rfl
-
-def IsFinitePlace.centre {v : AlgebraicCurve.Place F W.FunctionField} (hv : IsFinitePlace v) :
-    Ideal W.CoordinateRing :=
-  (IsLocalRing.maximalIdeal v.toValuationSubring).comap hv.ringHom
-
-theorem IsFinitePlace.centre_isPrime {v : AlgebraicCurve.Place F W.FunctionField}
-    (hv : IsFinitePlace v) : hv.centre.IsPrime :=
-  Ideal.IsPrime.comap _
-
-theorem IsFinitePlace.inv_mem {v : AlgebraicCurve.Place F W.FunctionField}
-    (hv : IsFinitePlace v) {r : W.CoordinateRing} (hr : r ∉ hv.centre) :
-    (algebraMap W.CoordinateRing W.FunctionField r)⁻¹ ∈ v.toValuationSubring := by
-  have hunit : IsUnit (hv.ringHom r) := by
-    simpa [IsFinitePlace.centre, IsLocalRing.mem_maximalIdeal] using hr
-  obtain ⟨t, ht⟩ := hunit.exists_right_inv
-  have ht' : algebraMap W.CoordinateRing W.FunctionField r * (t : W.FunctionField) = 1 := by
-    simpa using congrArg (fun a : v.toValuationSubring => (a : W.FunctionField)) ht
-  grind
-
-theorem IsFinitePlace.centre_ne_bot {v : AlgebraicCurve.Place F W.FunctionField}
-    (hv : IsFinitePlace v) : hv.centre ≠ ⊥ := by
-  intro hbot
-  apply v.ne_top'
-  rw [eq_top_iff]
-  rintro z -
-  obtain ⟨r, s, hs, hz⟩ := IsFractionRing.div_surjective (A := W.CoordinateRing) z
-  have hs0 : s ∉ hv.centre := by
-    rw [hbot, Ideal.mem_bot]
-    exact fun h => nonZeroDivisors.ne_zero hs h
-  rw [← hz, div_eq_mul_inv]
-  exact mul_mem (hv r) (hv.inv_mem hs0)
-
 variable [IsDedekindDomain W.CoordinateRing]
-
-def placeOfEquation {x y : F} (h : W.Equation x y) :
-    AlgebraicCurve.Place F W.FunctionField :=
-  AlgebraicCurve.Place.ofHeightOneSpectrum (heightOneSpectrumOfEquation h)
 
 theorem placeOfEquation_injective {x₁ y₁ x₂ y₂ : F} (h₁ : W.Equation x₁ y₁)
     (h₂ : W.Equation x₂ y₂) (h : placeOfEquation h₁ = placeOfEquation h₂) :
@@ -214,124 +103,23 @@ theorem placeOfEquation_injective {x₁ y₁ x₂ y₂ : F} (h₁ : W.Equation x
   eq_of_XYIdeal_eq h₂
     (congrArg HeightOneSpectrum.asIdeal (S13_ofHeightOneSpectrum_injective h))
 
-theorem isFinitePlace_placeOfEquation {x y : F} (h : W.Equation x y) :
-    IsFinitePlace (placeOfEquation h) := fun r =>
-  (heightOneSpectrumOfEquation h).valuation_le_one r
-
-theorem isFinitePlace_iff_exists_placeOfEquation [IsAlgClosed F]
-    (v : AlgebraicCurve.Place F W.FunctionField) :
-    IsFinitePlace v ↔ ∃ (x y : F) (h : W.Equation x y), v = placeOfEquation h := by
-  constructor
-  · intro hv
-    have := hv.centre_isPrime
-    have hmax : hv.centre.IsMaximal := Ideal.IsPrime.isMaximal hv.centre_isPrime hv.centre_ne_bot
-    obtain ⟨x, y, hxy, hXY⟩ :=
-      CoordinateRing.exists_eq_XYIdeal (W := W) (P := hv.centre) hv.centre_ne_bot
-    refine ⟨x, y, hxy, ?_⟩
-    set w : HeightOneSpectrum W.CoordinateRing := heightOneSpectrumOfEquation hxy with hw
-    set A : ValuationSubring W.FunctionField :=
-      HeightOneSpectrum.valuationSubringAtPrime W.FunctionField w with hA
-    have hAded : IsDedekindDomain A := by rw [hA]; infer_instance
-    have hle : A ≤ v.toValuationSubring := by
-      intro z hz
-      rw [hA] at hz
-      obtain ⟨r, s, hs, rfl⟩ := hz
-      have hs' : s ∉ hv.centre := by
-        intro hmem
-        rw [hXY] at hmem
-        exact hs hmem
-      exact mul_mem (hv r) (hv.inv_mem hs')
-    have hSP : A.ofPrime (A.idealOfLE v.toValuationSubring hle) = v.toValuationSubring :=
-      ValuationSubring.ofPrime_idealOfLE A v.toValuationSubring hle
-    rcases eq_or_ne (A.idealOfLE v.toValuationSubring hle) ⊥ with hP | hP
-    · exfalso
-      apply v.ne_top'
-      have h2 : A.ofPrime ⊥ ≤ A.ofPrime (A.idealOfLE v.toValuationSubring hle) :=
-        ValuationSubring.ofPrime_le_of_le (h := hP.le)
-      rw [ValuationSubring.ofPrime_bot] at h2
-      grind
-    · have hPmax : (A.idealOfLE v.toValuationSubring hle).IsMaximal :=
-        Ideal.IsPrime.isMaximal inferInstance hP
-      have hPeq : A.idealOfLE v.toValuationSubring hle = IsLocalRing.maximalIdeal A :=
-        IsLocalRing.eq_maximalIdeal hPmax
-      have h3 : A.ofPrime (A.idealOfLE v.toValuationSubring hle)
-          = A.ofPrime (IsLocalRing.maximalIdeal A) :=
-        le_antisymm (ValuationSubring.ofPrime_le_of_le (h := hPeq.ge))
-          (ValuationSubring.ofPrime_le_of_le (h := hPeq.le))
-      rw [ValuationSubring.ofPrime_top] at h3
-      have hAv : A = v.toValuationSubring := h3.symm.trans hSP
-      refine (AlgebraicCurve.Place.ext ?_).symm
-      change (AlgebraicCurve.Place.ofHeightOneSpectrum w).toValuationSubring = v.toValuationSubring
-      rw [AlgebraicCurve.Place.ofHeightOneSpectrum_toValuationSubring,
-        ← HeightOneSpectrum.valuationSubringAtPrime_eq_valuationSubring]
-      exact hAv
-  · rintro ⟨x, y, h, rfl⟩
-    exact isFinitePlace_placeOfEquation h
-
-scoped instance S13_instIsDedekindDomainCoordinateRing [IsAlgClosed F] [W.IsElliptic] :
-    IsDedekindDomain W.CoordinateRing :=
-  CoordinateRing.isDedekindDomain (W := W)
-
 section CentredGate
 
 variable [DecidableEq F] [GenusOnePlaceGate W] [GenusOnePlaceGate.IsCentred W]
 
-omit [DecidableEq F] in
-@[scoped simp]
-theorem placeOfPoint_some {x y : F} (h : W.Nonsingular x y) :
-    placeOfPoint (.some x y h) = placeOfEquation h.left := by
-  classical
-  exact
-    placeOfPoint_some_eq_ofHeightOneSpectrum h (heightOneSpectrumOfEquation h.left) rfl
-
 namespace InfinitePlace
 
-def place : AlgebraicCurve.Place F W.FunctionField := placeOfPoint (0 : W.Point)
-
 omit [DecidableEq F] [IsDedekindDomain W.CoordinateRing] [GenusOnePlaceGate.IsCentred W] in
-theorem deg_eq_one : (place : AlgebraicCurve.Place F W.FunctionField).deg = 1 := by
+theorem deg_eq_one : (InfinitePlace.place : AlgebraicCurve.Place F W.FunctionField).deg = 1 := by
   classical
   exact
     deg_placeOfPoint (W := W) 0
 
-omit [DecidableEq F] [IsDedekindDomain W.CoordinateRing] in
-theorem not_isFinitePlace [IsAlgClosed F] [W.IsElliptic] :
-    ¬ IsFinitePlace (place : AlgebraicCurve.Place F W.FunctionField) := by
-  classical
-  exact
-    fun h =>
-     algebraMap_mk_C_X_notMem_toValuationSubring_placeOfPoint_zero (W := W) (h _)
-
-omit [DecidableEq F] in
-theorem eq_of_not_isFinitePlace
-    (v : AlgebraicCurve.Place F W.FunctionField) (hv : ¬ IsFinitePlace v) :
-    v = place := by
-  classical
-  obtain ⟨P, rfl⟩ : ∃ P : W.Point, placeOfPoint P = v :=
-    ⟨(pointEquivPlace (W := W)).symm v, (pointEquivPlace (W := W)).apply_symm_apply v⟩
-  cases P with
-  | zero => rfl
-  | some x y h =>
-      exact absurd (placeOfPoint_some (W := W) h ▸ isFinitePlace_placeOfEquation h.left) hv
-
 end InfinitePlace
-
-omit [DecidableEq F] [IsDedekindDomain W.CoordinateRing] [GenusOnePlaceGate.IsCentred W] in
-@[scoped simp]
-theorem placeOfPoint_zero : placeOfPoint (.zero : W.Point) = InfinitePlace.place :=
-  rfl
 
 omit [DecidableEq F] [IsDedekindDomain W.CoordinateRing] [GenusOnePlaceGate.IsCentred W] in
 theorem placeOfPoint_zero' : placeOfPoint (0 : W.Point) = InfinitePlace.place :=
   rfl
-
-omit [DecidableEq F] [IsDedekindDomain W.CoordinateRing] [GenusOnePlaceGate.IsCentred W] in
-theorem placeOfPoint_injective : Function.Injective (placeOfPoint (W := W)) :=
-  (pointEquivPlace (W := W)).injective
-
-omit [DecidableEq F] [IsDedekindDomain W.CoordinateRing] [GenusOnePlaceGate.IsCentred W] in
-theorem placeOfPoint_surjective (_hΔ : W.Δ ≠ 0) : Function.Surjective (placeOfPoint (W := W)) :=
-  (pointEquivPlace (W := W)).surjective
 
 omit [DecidableEq F] [IsDedekindDomain W.CoordinateRing] [GenusOnePlaceGate.IsCentred W] in
 theorem placeOfPoint_surjective' : Function.Surjective (placeOfPoint (W := W)) :=
@@ -350,28 +138,6 @@ scoped instance instHasPrincipalDivisorsFunctionField_s13 {F : Type*} [Field F] 
     {W : Affine F} : HasPrincipalDivisors F W.FunctionField :=
   hasPrincipalDivisors_functionField W
 
-section AutoNorm
-variable {F : Type*} [Field F] [CharZero F]
-variable {V W : Affine F} [V.IsElliptic] [W.IsElliptic]
-
-omit [WeierstrassCurve.IsElliptic V]
-  [WeierstrassCurve.IsElliptic W] in
-theorem normFormulaAlong_of_elliptic (ι : V.FunctionField →ₐ[F] W.FunctionField)
-    (hfin : FiniteAlong F ι) : NormFormulaAlong F ι hfin := by
-  classical
-  have : HasPrincipalDivisors F W.FunctionField := hasPrincipalDivisors_functionField W
-  have : CharZero V.FunctionField :=
-    charZero_of_injective_algebraMap (algebraMap F V.FunctionField).injective
-  have hsep : SeparableAlong F ι := by
-    let := algebraAlong ι
-    have := isScalarTower_along ι
-    have : Module.Finite V.FunctionField W.FunctionField := hfin
-    change Algebra.IsSeparable V.FunctionField W.FunctionField
-    infer_instance
-  exact AlgebraicCurve.normFormulaAlong ι hfin hsep
-
-end AutoNorm
-
 namespace IsogenyEndDatum
 
 open WeierstrassCurve.Affine.IsogenyEndDatum
@@ -379,31 +145,9 @@ open WeierstrassCurve.Affine.IsogenyEndDatum
 variable {F : Type*} [Field F] [DecidableEq F] [IsAlgClosed F] [CharZero F]
 variable {W : Affine F} [W.IsElliptic] [GenusOnePlaceGate W] [AbelTheorem W]
 
-omit [DecidableEq F] [IsAlgClosed F] [WeierstrassCurve.IsElliptic W] [W.GenusOnePlaceGate]
-  [W.AbelTheorem] in
-private theorem normFormulaAlong_auto
-    (D : IsogenyEndDatum W) :
-    NormFormulaAlong F D.ι D.hfin :=
-  normFormulaAlong_of_elliptic D.ι D.hfin
-
-private def _root_.WeierstrassCurve.Affine.IsogenyEndDatum.pointEnd' (D : IsogenyEndDatum W) :
-    AddMonoid.End W.Point := D.pointEnd D.normFormulaAlong_auto
-
 omit [IsAlgClosed F] [WeierstrassCurve.IsElliptic W] in
 theorem pointEnd_eq_pointEnd' (D : IsogenyEndDatum W) (hN : NormFormulaAlong F D.ι D.hfin) :
     D.pointEnd hN = D.pointEnd' := rfl
-
-omit [IsAlgClosed F] [WeierstrassCurve.IsElliptic W] in
-theorem pointEnd'_apply (D : IsogenyEndDatum W) (P : W.Point) :
-    D.pointEnd' P = genusOnePic0Equiv W
-      (Pic0.pushforwardAlongHom D.ι D.hι D.hfin D.normFormulaAlong_auto (pointClass P)) :=
-  pointEnd_apply D _ P
-
-omit [IsAlgClosed F] [WeierstrassCurve.IsElliptic W] in
-theorem pointEnd'_eq_of_seam (D : IsogenyEndDatum W) (g : W.Point → W.Point) (hg0 : g 0 = 0)
-    (hg : ∀ P, (placeOfPoint P).restrictAlong D.ι D.hι = placeOfPoint (g P)) (P : W.Point) :
-    D.pointEnd' P = g P :=
-  pointEnd_eq_of_seam D _ g hg0 hg P
 
 end IsogenyEndDatum
 
@@ -443,27 +187,6 @@ theorem exists_equation [IsAlgClosed F] (W : Affine F) (x₀ : F) :
   linear_combination h3
 
 end WeierstrassCurve.Affine
-end
-
-section
-
-open Polynomial
-
-universe u r s v
-
-namespace WeierstrassCurve
-
-open WeierstrassCurve
-
-variable {F : Type u} [Field F] [IsAlgClosed F] (W : WeierstrassCurve F) [W.IsElliptic]
-
-lemma point_infinite : Infinite W.toAffine.Point := by
-  refine Infinite.of_injective
-    (fun x => .some x _ (equation_iff_nonsingular.mp (exists_equation W x).choose_spec))
-    (fun x x' hxx' => by grind)
-
-end WeierstrassCurve
-
 end
 
 section

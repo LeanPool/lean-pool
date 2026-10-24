@@ -358,6 +358,23 @@ theorem slope_spec [DecidableEq K] [DecidableEq (ResidueField R)]
         _ = residue R (r1y - r2y) := by rw [hld]
         _ = residue R r1y - residue R r2y := map_sub _ _ _
 
+private theorem valuation_div_gt_one {u v : K}
+    (hu : valuation K (maximalIdeal R) u = 1)
+    (hv : valuation K (maximalIdeal R) v < 1) (hv0 : v ≠ 0) :
+    1 < valuation K (maximalIdeal R) (u / v) := by
+  have hvv : valuation K (maximalIdeal R) v ≠ 0 := (Valuation.ne_zero_iff _).mpr hv0
+  by_contra hle
+  rw [not_lt] at hle
+  have hlt : valuation K (maximalIdeal R) u < 1 := by
+    calc valuation K (maximalIdeal R) u
+        = valuation K (maximalIdeal R) (u / v) * valuation K (maximalIdeal R) v := by
+            rw [map_div₀, div_mul_cancel₀ _ hvv]
+      _ ≤ 1 * valuation K (maximalIdeal R) v := mul_le_mul_left hle _
+      _ = valuation K (maximalIdeal R) v := one_mul _
+      _ < 1 := hv
+  rw [hu] at hlt
+  exact lt_irrefl _ hlt
+
 theorem slope_pole [DecidableEq K]
     {x₁ y₁ x₂ y₂ : K} (h₁ : W.toAffine.Nonsingular x₁ y₁) (h₂ : W.toAffine.Nonsingular x₂ y₂)
     (hx₁ : valuation K (maximalIdeal R) x₁ ≤ 1) (hy₁ : valuation K (maximalIdeal R) y₁ ≤ 1)
@@ -404,8 +421,6 @@ theorem slope_pole [DecidableEq K]
       rw [hdK, reduceCoord_algebraMap, hdbar, hdbar0]
     have hd0 : y₁ - W.toAffine.negY x₁ y₁ ≠ 0 :=
       sub_ne_zero.mpr (fun hcon => hyne (hcon.trans (by rw [hxK, hy12])))
-    have hvd0 : valuation K (maximalIdeal R) (y₁ - W.toAffine.negY x₁ y₁) ≠ 0 :=
-      (Valuation.ne_zero_iff _).mpr hd0
     have hnK : 3 * x₁ ^ 2 + 2 * W.toAffine.a₂ * x₁ + W.toAffine.a₄ - W.toAffine.a₁ * y₁
         = algebraMap R K (3 * r1x ^ 2 + 2 * (integralModel R W).a₂ * r1x
             + (integralModel R W).a₄ - (integralModel R W).a₁ * r1y) := by
@@ -440,22 +455,7 @@ theorem slope_pole [DecidableEq K]
         rw [hnK, reduceCoord_algebraMap, hnbar] at h0
         exact absurd h0 hnbarne
       · exact heq
-    by_contra hle
-    rw [not_lt] at hle
-    have hlt : valuation K (maximalIdeal R) (3 * x₁ ^ 2 + 2 * W.toAffine.a₂ * x₁
-        + W.toAffine.a₄ - W.toAffine.a₁ * y₁) < 1 := by
-      calc valuation K (maximalIdeal R) (3 * x₁ ^ 2 + 2 * W.toAffine.a₂ * x₁
-              + W.toAffine.a₄ - W.toAffine.a₁ * y₁)
-          = valuation K (maximalIdeal R) ((3 * x₁ ^ 2 + 2 * W.toAffine.a₂ * x₁
-              + W.toAffine.a₄ - W.toAffine.a₁ * y₁) / (y₁ - W.toAffine.negY x₁ y₁))
-            * valuation K (maximalIdeal R) (y₁ - W.toAffine.negY x₁ y₁) := by
-            rw [map_div₀, div_mul_cancel₀ _ hvd0]
-        _ ≤ 1 * valuation K (maximalIdeal R) (y₁ - W.toAffine.negY x₁ y₁) :=
-            mul_le_mul_left hle _
-        _ = valuation K (maximalIdeal R) (y₁ - W.toAffine.negY x₁ y₁) := one_mul _
-        _ < 1 := hvd_lt
-    rw [hvn_one] at hlt
-    exact lt_irrefl _ hlt
+    exact valuation_div_gt_one R hvn_one hvd_lt hd0
   · rw [Affine.slope_of_X_ne hxK]
     have hdxK : x₁ - x₂ = algebraMap R K (r1x - r2x) := by
       simp only [map_sub, h1x, h2x]
@@ -466,8 +466,6 @@ theorem slope_pole [DecidableEq K]
       rw [hdxK, reduceCoord_algebraMap, map_sub, sub_eq_zero]
       exact hcolx
     have hdx0 : x₁ - x₂ ≠ 0 := sub_ne_zero.mpr hxK
-    have hvdx0 : valuation K (maximalIdeal R) (x₁ - x₂) ≠ 0 :=
-      (Valuation.ne_zero_iff _).mpr hdx0
     by_cases hybar : residue R r1y = residue R r2y
     · simp only [Affine.negY] at hcoly
       have hd₂K : y₁ + y₂ + W.toAffine.a₁ * x₁ + W.toAffine.a₃
@@ -537,9 +535,6 @@ theorem slope_pole [DecidableEq K]
         have hN0 := (mul_eq_zero.mp hid.symm).resolve_left hdx0
         rw [hN0, map_zero] at hvN_one
         exact zero_ne_one hvN_one
-      have hvd₂0 : valuation K (maximalIdeal R)
-          (y₁ + y₂ + W.toAffine.a₁ * x₁ + W.toAffine.a₃) ≠ 0 :=
-        (Valuation.ne_zero_iff _).mpr hd₂0
       have hℓeq : (y₁ - y₂) / (x₁ - x₂)
           = (x₁ ^ 2 + x₁ * x₂ + x₂ ^ 2 + W.toAffine.a₂ * (x₁ + x₂) + W.toAffine.a₄
               - W.toAffine.a₁ * y₂)
@@ -547,26 +542,7 @@ theorem slope_pole [DecidableEq K]
         rw [div_eq_div_iff (sub_ne_zero.mpr hxK) hd₂0]
         linear_combination slope_identity W h₁.1 h₂.1
       rw [hℓeq]
-      by_contra hle
-      rw [not_lt] at hle
-      have hlt : valuation K (maximalIdeal R) (x₁ ^ 2 + x₁ * x₂ + x₂ ^ 2
-          + W.toAffine.a₂ * (x₁ + x₂) + W.toAffine.a₄ - W.toAffine.a₁ * y₂) < 1 := by
-        calc valuation K (maximalIdeal R) (x₁ ^ 2 + x₁ * x₂ + x₂ ^ 2
-                + W.toAffine.a₂ * (x₁ + x₂) + W.toAffine.a₄ - W.toAffine.a₁ * y₂)
-            = valuation K (maximalIdeal R) ((x₁ ^ 2 + x₁ * x₂ + x₂ ^ 2
-                + W.toAffine.a₂ * (x₁ + x₂) + W.toAffine.a₄ - W.toAffine.a₁ * y₂)
-                  / (y₁ + y₂ + W.toAffine.a₁ * x₁ + W.toAffine.a₃))
-              * valuation K (maximalIdeal R)
-                  (y₁ + y₂ + W.toAffine.a₁ * x₁ + W.toAffine.a₃) := by
-              rw [map_div₀, div_mul_cancel₀ _ hvd₂0]
-          _ ≤ 1 * valuation K (maximalIdeal R)
-                (y₁ + y₂ + W.toAffine.a₁ * x₁ + W.toAffine.a₃) :=
-              mul_le_mul_left hle _
-          _ = valuation K (maximalIdeal R)
-                (y₁ + y₂ + W.toAffine.a₁ * x₁ + W.toAffine.a₃) := one_mul _
-          _ < 1 := hvd₂_lt
-      rw [hvN_one] at hlt
-      exact lt_irrefl _ hlt
+      exact valuation_div_gt_one R hvN_one hvd₂_lt hd₂0
     · have hdyK : y₁ - y₂ = algebraMap R K (r1y - r2y) := by
         simp only [map_sub, h1y, h2y]
       have hvdy_le : valuation K (maximalIdeal R) (y₁ - y₂) ≤ 1 := by
@@ -577,18 +553,7 @@ theorem slope_pole [DecidableEq K]
           rw [hdyK, reduceCoord_algebraMap, map_sub, sub_eq_zero] at h0
           exact absurd h0 hybar
         · exact heq
-      by_contra hle
-      rw [not_lt] at hle
-      have hlt : valuation K (maximalIdeal R) (y₁ - y₂) < 1 := by
-        calc valuation K (maximalIdeal R) (y₁ - y₂)
-            = valuation K (maximalIdeal R) ((y₁ - y₂) / (x₁ - x₂))
-              * valuation K (maximalIdeal R) (x₁ - x₂) := by
-              rw [map_div₀, div_mul_cancel₀ _ hvdx0]
-          _ ≤ 1 * valuation K (maximalIdeal R) (x₁ - x₂) := mul_le_mul_left hle _
-          _ = valuation K (maximalIdeal R) (x₁ - x₂) := one_mul _
-          _ < 1 := hvdx_lt
-      rw [hvdy_one] at hlt
-      exact lt_irrefl _ hlt
+      exact valuation_div_gt_one R hvdy_one hvdx_lt hdx0
 
 theorem valuation_a₁_le_one : valuation K (maximalIdeal R) W.a₁ ≤ 1 := by
   rw [← integralModel_a₁_eq R W]; exact valuation_le_one (maximalIdeal R) _

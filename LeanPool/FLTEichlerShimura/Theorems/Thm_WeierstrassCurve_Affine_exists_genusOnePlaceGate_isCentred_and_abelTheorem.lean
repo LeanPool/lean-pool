@@ -19,6 +19,7 @@ module
 
 public import LeanPool.FLTEichlerShimura.Definitions.Def_WeierstrassCurve_GenusOnePlaceGateCentred
 
+import LeanPool.FLTEichlerShimura.Definitions.Defs_IsogenyEndDatum_sharedLibrary
 import Mathlib.RingTheory.Polynomial.DegreeLT
 import LeanPool.FLTEichlerShimura.Definitions.Def_AlgebraicCurve_PlacesOverDVR
 import LeanPool.FLTEichlerShimura.Definitions.Def_AlgebraicCurve_RatFuncPlaces
@@ -428,7 +429,6 @@ end Affine
 end WeierstrassCurve
 end
 
-
 noncomputable section
 
 open IsDedekindDomain Polynomial
@@ -533,12 +533,6 @@ variable {F : Type*} [Field F] {W : Affine F}
 namespace CoordinateRing
 p2m_open "WeierstrassCurve.Affine.CoordinateRing"
 
-theorem algebraMap_eq_mk_C_C (a : F) :
-    algebraMap F W.CoordinateRing a = CoordinateRing.mk W (C (C a)) := by
-  rw [AdjoinRoot.algebraMap_eq', RingHom.comp_apply, Polynomial.algebraMap_apply,
-    Algebra.algebraMap_self_apply]
-  rfl
-
 theorem XYIdeal_isMaximal {x y : F} (h : W.Equation x y) :
     (XYIdeal W x (C y)).IsMaximal :=
   Ideal.Quotient.maximal_of_isField _
@@ -551,115 +545,13 @@ theorem XYIdeal_ne_bot (x : F) (y : F[X]) : XYIdeal W x y ≠ ⊥ := by
   rw [hbot, Ideal.mem_bot] at hX
   exact XClass_ne_zero x hX
 
-theorem eq_of_XYIdeal_eq {x₁ y₁ x₂ y₂ : F} (h₂ : W.Equation x₂ y₂)
-    (h : XYIdeal W x₁ (C y₁) = XYIdeal W x₂ (C y₂)) : x₁ = x₂ ∧ y₁ = y₂ := by
-  have hne : XYIdeal W x₂ (C y₂) ≠ ⊤ := (XYIdeal_isMaximal h₂).ne_top
-  have hX₁ : XClass W x₁ ∈ XYIdeal W x₂ (C y₂) :=
-    h ▸ Ideal.subset_span (Set.mem_insert _ _)
-  have hX₂ : XClass W x₂ ∈ XYIdeal W x₂ (C y₂) := Ideal.subset_span (Set.mem_insert _ _)
-  have hY₁ : YClass W (C y₁) ∈ XYIdeal W x₂ (C y₂) :=
-    h ▸ Ideal.subset_span (Set.mem_insert_of_mem _ rfl)
-  have hY₂ : YClass W (C y₂) ∈ XYIdeal W x₂ (C y₂) :=
-    Ideal.subset_span (Set.mem_insert_of_mem _ rfl)
-  constructor
-  · by_contra hx
-    apply hne
-    have hsub : XClass W x₁ - XClass W x₂ = algebraMap F W.CoordinateRing (x₂ - x₁) := by
-      rw [XClass, XClass, ← map_sub, algebraMap_eq_mk_C_C]
-      grind
-    have hmem := (XYIdeal W x₂ (C y₂)).sub_mem hX₁ hX₂
-    rw [hsub] at hmem
-    exact Ideal.eq_top_of_isUnit_mem _ hmem
-      ((isUnit_iff_ne_zero.mpr (sub_ne_zero.mpr fun hxy => hx hxy.symm)).map
-        (algebraMap F W.CoordinateRing))
-  · by_contra hy
-    apply hne
-    have hsub : YClass W (C y₁) - YClass W (C y₂) = algebraMap F W.CoordinateRing (y₂ - y₁) := by
-      rw [YClass, YClass, ← map_sub, algebraMap_eq_mk_C_C]
-      grind
-    have hmem := (XYIdeal W x₂ (C y₂)).sub_mem hY₁ hY₂
-    rw [hsub] at hmem
-    exact Ideal.eq_top_of_isUnit_mem _ hmem
-      ((isUnit_iff_ne_zero.mpr (sub_ne_zero.mpr fun hxy => hy hxy.symm)).map
-        (algebraMap F W.CoordinateRing))
-
-def heightOneSpectrumOfEquation {x y : F} (h : W.Equation x y) :
-    HeightOneSpectrum W.CoordinateRing where
-  asIdeal := XYIdeal W x (C y)
-  isPrime := (XYIdeal_isMaximal h).isPrime
-  ne_bot := XYIdeal_ne_bot x (C y)
-
-@[scoped simp]
-theorem heightOneSpectrumOfEquation_asIdeal {x y : F} (h : W.Equation x y) :
-    (heightOneSpectrumOfEquation h).asIdeal = XYIdeal W x (C y) := rfl
-
-theorem exists_sub_algebraMap_mem {x y : F} (h : W.Equation x y) (r : W.CoordinateRing) :
-    ∃ c : F, r - algebraMap F W.CoordinateRing c ∈ XYIdeal W x (C y) := by
-  set e := quotientXYIdealEquiv (W' := W) (x := x) (y := C y) h
-  refine ⟨e (Ideal.Quotient.mk _ r), ?_⟩
-  rw [← Ideal.Quotient.eq_zero_iff_mem, map_sub, sub_eq_zero]
-  apply e.injective
-  rw [← Ideal.Quotient.algebraMap_eq, ← IsScalarTower.algebraMap_apply, AlgEquiv.commutes,
-    Algebra.algebraMap_self_apply]
-
 end CoordinateRing
 
 p2m_open "WeierstrassCurve.Affine.CoordinateRing \
   P2MW.S_OVERLONG_a3e19da5.WeierstrassCurv\
   e.Affine.CoordinateRing"
 
-def IsFinitePlace (v : AlgebraicCurve.Place F W.FunctionField) : Prop :=
-  ∀ r : W.CoordinateRing, algebraMap W.CoordinateRing W.FunctionField r ∈ v.toValuationSubring
-
-def IsFinitePlace.ringHom {v : AlgebraicCurve.Place F W.FunctionField} (hv : IsFinitePlace v) :
-    W.CoordinateRing →+* v.toValuationSubring where
-  toFun r := ⟨algebraMap W.CoordinateRing W.FunctionField r, hv r⟩
-  map_one' := Subtype.ext (map_one _)
-  map_mul' a b := Subtype.ext (map_mul _ a b)
-  map_zero' := Subtype.ext (_root_.map_zero _)
-  map_add' a b := Subtype.ext (map_add _ a b)
-
-def IsFinitePlace.centre {v : AlgebraicCurve.Place F W.FunctionField} (hv : IsFinitePlace v) :
-    Ideal W.CoordinateRing :=
-  (IsLocalRing.maximalIdeal v.toValuationSubring).comap hv.ringHom
-
-theorem IsFinitePlace.centre_isPrime {v : AlgebraicCurve.Place F W.FunctionField}
-    (hv : IsFinitePlace v) : hv.centre.IsPrime :=
-  Ideal.IsPrime.comap _
-
-theorem IsFinitePlace.inv_mem {v : AlgebraicCurve.Place F W.FunctionField}
-    (hv : IsFinitePlace v) {r : W.CoordinateRing} (hr : r ∉ hv.centre) :
-    (algebraMap W.CoordinateRing W.FunctionField r)⁻¹ ∈ v.toValuationSubring := by
-  have hunit : IsUnit (hv.ringHom r) := by
-    rw [IsFinitePlace.centre, Ideal.mem_comap, IsLocalRing.mem_maximalIdeal,
-      mem_nonunits_iff, not_not] at hr
-    exact hr
-  obtain ⟨t, ht⟩ := hunit.exists_right_inv
-  have ht' : algebraMap W.CoordinateRing W.FunctionField r * (t : W.FunctionField) = 1 := by
-    have := congrArg (fun a : v.toValuationSubring => (a : W.FunctionField)) ht
-    simp only [MulMemClass.coe_mul, OneMemClass.coe_one] at this
-    exact this
-  rw [inv_eq_of_mul_eq_one_right ht']
-  exact t.2
-
-theorem IsFinitePlace.centre_ne_bot {v : AlgebraicCurve.Place F W.FunctionField}
-    (hv : IsFinitePlace v) : hv.centre ≠ ⊥ := by
-  intro hbot
-  apply v.ne_top'
-  rw [eq_top_iff]
-  rintro z -
-  obtain ⟨r, s, hs, hz⟩ := IsFractionRing.div_surjective (A := W.CoordinateRing) z
-  have hs0 : s ∉ hv.centre := by
-    rw [hbot, Ideal.mem_bot]
-    exact fun h => nonZeroDivisors.ne_zero hs h
-  rw [← hz, div_eq_mul_inv]
-  exact mul_mem (hv r) (hv.inv_mem hs0)
-
 variable [IsDedekindDomain W.CoordinateRing]
-
-def placeOfEquation {x y : F} (h : W.Equation x y) :
-    AlgebraicCurve.Place F W.FunctionField :=
-  AlgebraicCurve.Place.ofHeightOneSpectrum (heightOneSpectrumOfEquation h)
 
 theorem deg_placeOfEquation {x y : F} (h : W.Equation x y) : (placeOfEquation h).deg = 1 :=
   AlgebraicCurve.Place.deg_ofHeightOneSpectrum_eq_one _ (exists_sub_algebraMap_mem h)
@@ -669,59 +561,6 @@ theorem placeOfEquation_injective {x₁ y₁ x₂ y₂ : F} (h₁ : W.Equation x
     x₁ = x₂ ∧ y₁ = y₂ :=
   eq_of_XYIdeal_eq h₂
     (congrArg HeightOneSpectrum.asIdeal (AlgebraicCurve.Place.ofHeightOneSpectrum_injective h))
-
-theorem isFinitePlace_placeOfEquation {x y : F} (h : W.Equation x y) :
-    IsFinitePlace (placeOfEquation h) := fun r =>
-  (heightOneSpectrumOfEquation h).valuation_le_one r
-
-theorem isFinitePlace_iff_exists_placeOfEquation [IsAlgClosed F]
-    (v : AlgebraicCurve.Place F W.FunctionField) :
-    IsFinitePlace v ↔ ∃ (x y : F) (h : W.Equation x y), v = placeOfEquation h := by
-  constructor
-  · intro hv
-    have := hv.centre_isPrime
-    have hmax : hv.centre.IsMaximal := Ideal.IsPrime.isMaximal hv.centre_isPrime hv.centre_ne_bot
-    obtain ⟨x, y, hxy, hXY⟩ := CoordinateRing.exists_eq_XYIdeal_of_isMaximal hv.centre hmax
-    refine ⟨x, y, hxy, ?_⟩
-    set w : HeightOneSpectrum W.CoordinateRing := heightOneSpectrumOfEquation hxy with hw
-    set A : ValuationSubring W.FunctionField :=
-      HeightOneSpectrum.valuationSubringAtPrime W.FunctionField w with hA
-    have hAded : IsDedekindDomain A := by rw [hA]; infer_instance
-    have hle : A ≤ v.toValuationSubring := by
-      intro z hz
-      rw [hA] at hz
-      obtain ⟨r, s, hs, rfl⟩ := hz
-      have hs' : s ∉ hv.centre := by
-        intro hmem
-        rw [← hXY] at hmem
-        exact hs hmem
-      exact mul_mem (hv r) (hv.inv_mem hs')
-    have hSP : A.ofPrime (A.idealOfLE v.toValuationSubring hle) = v.toValuationSubring :=
-      ValuationSubring.ofPrime_idealOfLE A v.toValuationSubring hle
-    rcases eq_or_ne (A.idealOfLE v.toValuationSubring hle) ⊥ with hP | hP
-    · exfalso
-      apply v.ne_top'
-      have h2 : A.ofPrime ⊥ ≤ A.ofPrime (A.idealOfLE v.toValuationSubring hle) :=
-        ValuationSubring.ofPrime_le_of_le (h := hP.le)
-      rw [ValuationSubring.ofPrime_bot] at h2
-      exact top_le_iff.mp (le_trans h2 hSP.le)
-    · have hPmax : (A.idealOfLE v.toValuationSubring hle).IsMaximal :=
-        Ideal.IsPrime.isMaximal inferInstance hP
-      have hPeq : A.idealOfLE v.toValuationSubring hle = IsLocalRing.maximalIdeal A :=
-        IsLocalRing.eq_maximalIdeal hPmax
-      have h3 : A.ofPrime (A.idealOfLE v.toValuationSubring hle)
-          = A.ofPrime (IsLocalRing.maximalIdeal A) :=
-        le_antisymm (ValuationSubring.ofPrime_le_of_le (h := hPeq.ge))
-          (ValuationSubring.ofPrime_le_of_le (h := hPeq.le))
-      rw [ValuationSubring.ofPrime_top] at h3
-      have hAv : A = v.toValuationSubring := h3.symm.trans hSP
-      refine (AlgebraicCurve.Place.ext ?_).symm
-      change (AlgebraicCurve.Place.ofHeightOneSpectrum w).toValuationSubring = v.toValuationSubring
-      rw [AlgebraicCurve.Place.ofHeightOneSpectrum_toValuationSubring,
-        ← HeightOneSpectrum.valuationSubringAtPrime_eq_valuationSubring]
-      exact hAv
-  · rintro ⟨x, y, h, rfl⟩
-    exact isFinitePlace_placeOfEquation h
 
 variable (W) in
 class InfinitePlace : Type _ where
@@ -812,7 +651,6 @@ class GeomAbelTheorem : Prop where
 end Affine
 end WeierstrassCurve
 end
-
 
 noncomputable section
 
@@ -926,55 +764,6 @@ p2m_open "WeierstrassCurve.Affine.CoordinateRing \
 
 variable {F : Type*} [Field F] {W : Affine F}
 
-def polyToFunctionField (W : Affine F) : F[X] →+* W.FunctionField :=
-  (algebraMap W.CoordinateRing W.FunctionField).comp (algebraMap F[X] W.CoordinateRing)
-
-theorem polyToFunctionField_apply (p : F[X]) :
-    polyToFunctionField W p
-      = algebraMap W.CoordinateRing W.FunctionField (algebraMap F[X] W.CoordinateRing p) := rfl
-
-theorem algebraMap_smul_one (p : F[X]) :
-    algebraMap W.CoordinateRing W.FunctionField (p • (1 : W.CoordinateRing))
-      = polyToFunctionField W p := by
-  rw [polyToFunctionField_apply, smul, mul_one]
-  rfl
-
-theorem polyToFunctionField_injective : Function.Injective (polyToFunctionField W) := by
-  intro p q h
-  rw [polyToFunctionField_apply, polyToFunctionField_apply] at h
-  have h2 := IsFractionRing.injective W.CoordinateRing W.FunctionField h
-  have h0 : (p - q) • (1 : W.CoordinateRing) + (0 : F[X]) • CoordinateRing.mk W Y = 0 := by
-    rw [zero_smul, add_zero, sub_smul, ← Algebra.algebraMap_eq_smul_one,
-      ← Algebra.algebraMap_eq_smul_one, h2, sub_self]
-  exact sub_eq_zero.mp (smul_basis_eq_zero h0).1
-
-theorem polyToFunctionField_C (c : F) :
-    polyToFunctionField W (C c) = algebraMap F W.FunctionField c := by
-  rw [polyToFunctionField_apply,
-    show algebraMap F[X] W.CoordinateRing (C c) = algebraMap F W.CoordinateRing c from
-      (IsScalarTower.algebraMap_apply F F[X] W.CoordinateRing c).symm]
-  exact (IsScalarTower.algebraMap_apply F W.CoordinateRing W.FunctionField c).symm
-
-theorem polyToFunctionField_ne_zero {p : F[X]} (hp : p ≠ 0) :
-    polyToFunctionField W p ≠ 0 := by
-  intro h
-  exact hp (polyToFunctionField_injective (by simpa using h))
-
-theorem algebraMap_smul_basis (p q : F[X]) :
-    algebraMap W.CoordinateRing W.FunctionField
-        (p • (1 : W.CoordinateRing) + q • CoordinateRing.mk W Y)
-      = polyToFunctionField W p + polyToFunctionField W q
-          * algebraMap W.CoordinateRing W.FunctionField (CoordinateRing.mk W Y) := by
-  rw [map_add, algebraMap_smul_one, smul, map_mul, polyToFunctionField_apply]
-  rfl
-
-theorem Y_image_ne_zero :
-    algebraMap W.CoordinateRing W.FunctionField (CoordinateRing.mk W Y) ≠ 0 := by
-  have h1 : (CoordinateRing.mk W Y) ≠ 0 := by
-    have h2 := YClass_ne_zero (W' := W) 0
-    simpa [YClass] using h2
-  exact (map_ne_zero_iff _ (IsFractionRing.injective W.CoordinateRing W.FunctionField)).mpr h1
-
 theorem natDegree_norm_smul_basis_left {p : F[X]} (hp : p ≠ 0) :
     ((Algebra.norm F[X] (p • (1 : W.CoordinateRing)
         + (0 : F[X]) • CoordinateRing.mk W Y)).natDegree : ℤ) = 2 * p.natDegree := by
@@ -1017,63 +806,6 @@ theorem natDegree_norm_smul_basis_max {p q : F[X]} (hp : p ≠ 0) (hq : q ≠ 0)
     omega
 
 variable (v : AlgebraicCurve.Place F W.FunctionField)
-
-theorem isFinitePlace_of_mem
-    (hx : polyToFunctionField W X ∈ v.toValuationSubring) : IsFinitePlace v := by
-  have hpoly : ∀ p : F[X], polyToFunctionField W p ∈ v.toValuationSubring := by
-    intro p
-    induction p using Polynomial.induction_on' with
-    | add f g hf hg => rw [map_add]; exact add_mem hf hg
-    | monomial n c =>
-        rw [← C_mul_X_pow_eq_monomial, map_mul, map_pow]
-        refine mul_mem ?_ (pow_mem hx n)
-        rw [polyToFunctionField_C]
-        exact v.algebraMap_mem' c
-  set η := algebraMap W.CoordinateRing W.FunctionField (CoordinateRing.mk W Y) with hηdef
-  set c₁ : F[X] := C W.a₁ * X + C W.a₃ with hc₁def
-  set cb : F[X] := X ^ 3 + C W.a₂ * X ^ 2 + C W.a₄ * X + C W.a₆ with hcbdef
-  have hrel : η * η = polyToFunctionField W cb - polyToFunctionField W c₁ * η := by
-    have h1 := smul_basis_mul_Y (W' := W) 0 1
-    rw [zero_smul, zero_add, one_smul, one_mul, one_mul, zero_sub] at h1
-    have h2 := congrArg (algebraMap W.CoordinateRing W.FunctionField) h1
-    rw [map_mul, algebraMap_smul_basis, _root_.map_neg, neg_mul, ← sub_eq_add_neg] at h2
-    exact h2
-  have hy : η ∈ v.toValuationSubring := by
-    refine v.mem_of_eval_monic_eq_zero (P := Polynomial.X ^ 2
-      + (Polynomial.C (polyToFunctionField W c₁) * Polynomial.X
-        - Polynomial.C (polyToFunctionField W cb))) ?_ ?_ (x := η) ?_
-    · refine Polynomial.monic_X_pow_add (n := 2) ?_
-      rw [sub_eq_add_neg, ← Polynomial.C_neg]
-      refine lt_of_le_of_lt Polynomial.degree_linear_le ?_
-      exact_mod_cast Nat.one_lt_two
-    · intro i
-      rw [show (Polynomial.C (polyToFunctionField W c₁) * Polynomial.X : Polynomial _)
-          = Polynomial.C (polyToFunctionField W c₁) * Polynomial.X ^ 1 by ring]
-      simp only [Polynomial.coeff_add, Polynomial.coeff_sub, Polynomial.coeff_X_pow,
-        Polynomial.coeff_C_mul, Polynomial.coeff_C]
-      refine add_mem ?_ (sub_mem ?_ ?_)
-      · split <;> simp [v.toValuationSubring.one_mem, v.toValuationSubring.zero_mem]
-      · split
-        · rw [mul_one]; exact hpoly _
-        · rw [mul_zero]; exact v.toValuationSubring.zero_mem
-      · split
-        · exact hpoly _
-        · exact v.toValuationSubring.zero_mem
-    · simp only [Polynomial.eval_add, Polynomial.eval_sub, Polynomial.eval_pow,
-        Polynomial.eval_mul, Polynomial.eval_C, Polynomial.eval_X]
-      rw [sq]
-      linear_combination hrel
-  intro r
-  obtain ⟨p, q, rfl⟩ := exists_smul_basis_eq r
-  rw [algebraMap_smul_basis]
-  exact add_mem (hpoly p) (mul_mem (hpoly q) hy)
-
-theorem ord_X_neg_of_not_isFinitePlace (hv : ¬ IsFinitePlace v) :
-    v.ord (polyToFunctionField W X) < 0 := by
-  by_contra hcon
-  push Not at hcon
-  exact hv (isFinitePlace_of_mem v
-    (v.mem_of_ord_nonneg (polyToFunctionField_ne_zero Polynomial.X_ne_zero) hcon))
 
 theorem two_mul_ord_Y_eq_three_mul_ord_X (hv : ¬ IsFinitePlace v) :
     2 * v.ord (algebraMap W.CoordinateRing W.FunctionField (CoordinateRing.mk W Y))

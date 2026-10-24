@@ -138,6 +138,39 @@ private theorem faith_sum_even {M : ℕ} [NeZero M] (hM : 3 ≤ M) (A : Finset (
 
 end FaithHelpers
 
+private theorem sum_faithCoeff_one (M : ℕ) [NeZero M] (s : Finset (ZMod M)ˣ)
+    (v : (ZMod M)ˣ) :
+    ∑ c ∈ s, faithCoeff M (c * v) 1 =
+      ((s.filter fun c => c * v = 1 ∨ c * v = -1).card : ℤ) := by
+  classical
+  have hPQ : ∀ w : (ZMod M)ˣ,
+      ((1 : ZMod M) = (w : ZMod M) ∨ (1 : ZMod M) = -(w : ZMod M)) ↔ (w = 1 ∨ w = -1) := by
+    intro w
+    rw [← Units.val_neg]
+    constructor
+    · rintro (h | h)
+      · exact Or.inl (Units.val_eq_one.mp h.symm)
+      · exact Or.inr (neg_eq_iff_eq_neg.mp (Units.val_eq_one.mp h.symm))
+    · rintro (rfl | rfl) <;> simp
+  rw [Finset.natCast_card_filter]
+  refine Finset.sum_congr rfl fun c _ => ?_
+  simp only [faithCoeff_one, hPQ]
+
+private theorem card_filter_one_or_neg_one (M : ℕ) [NeZero M] (hM3 : 3 ≤ M) :
+    ∀ (s : Finset (ZMod M)ˣ), (1 : (ZMod M)ˣ) ∈ s → (-1 : (ZMod M)ˣ) ∈ s →
+      (s.filter fun c => c * 1 = 1 ∨ c * 1 = -1).card = 2 := by
+  classical
+  have hone_ne : (1 : (ZMod M)ˣ) ≠ -1 := faith_ne_neg hM3 1
+  intro s h1 hm1
+  rw [show (s.filter fun c => c * 1 = 1 ∨ c * 1 = -1) = {1, -1} from ?_, Finset.card_pair hone_ne]
+  ext c
+  simp only [Finset.mem_filter, mul_one, Finset.mem_insert, Finset.mem_singleton]
+  constructor
+  · exact fun h => h.2
+  · rintro (rfl | rfl)
+    · exact ⟨h1, Or.inl rfl⟩
+    · exact ⟨hm1, Or.inr rfl⟩
+
 open UpperHalfPlane
 
 open scoped MatrixGroups ModularForm in
@@ -288,33 +321,8 @@ theorem solution
       Int.mul_ediv_cancel_left _ two_ne_zero]
     push_cast
     ring
-  have hone_ne : (1 : (ZMod M)ˣ) ≠ -1 := faith_ne_neg hM3 1
-  have hPQ : ∀ w : (ZMod M)ˣ,
-      ((1 : ZMod M) = (w : ZMod M) ∨ (1 : ZMod M) = -(w : ZMod M)) ↔ (w = 1 ∨ w = -1) := by
-    intro w
-    rw [← Units.val_neg]
-    constructor
-    · rintro (h | h)
-      · exact Or.inl (Units.val_eq_one.mp h.symm)
-      · exact Or.inr (neg_eq_iff_eq_neg.mp (Units.val_eq_one.mp h.symm))
-    · rintro (rfl | rfl) <;> simp
-  have hcount : ∀ (s : Finset (ZMod M)ˣ) (v : (ZMod M)ˣ),
-      ∑ c ∈ s, faithCoeff M (c * v) 1 = ((s.filter fun c => c * v = 1 ∨ c * v = -1).card : ℤ) := by
-    intro s v
-    rw [Finset.natCast_card_filter]
-    refine Finset.sum_congr rfl fun c _ => ?_
-    simp only [faithCoeff_one, hPQ]
-  have hpair : ∀ (s : Finset (ZMod M)ˣ), (1 : (ZMod M)ˣ) ∈ s → (-1 : (ZMod M)ˣ) ∈ s →
-      (s.filter fun c => c * 1 = 1 ∨ c * 1 = -1).card = 2 := by
-    intro s h1 hm1
-    rw [show (s.filter fun c => c * 1 = 1 ∨ c * 1 = -1) = {1, -1} from ?_, Finset.card_pair hone_ne]
-    ext c
-    simp only [Finset.mem_filter, mul_one, Finset.mem_insert, Finset.mem_singleton]
-    constructor
-    · exact fun h => h.2
-    · rintro (rfl | rfl)
-      · exact ⟨h1, Or.inl rfl⟩
-      · exact ⟨hm1, Or.inr rfl⟩
+  have hcount := sum_faithCoeff_one M
+  have hpair := card_filter_one_or_neg_one M hM3
   have hempty : (A.filter fun c => c * u⁻¹ = 1 ∨ c * u⁻¹ = -1).card = 0 := by
     rw [Finset.card_eq_zero, Finset.filter_eq_empty_iff]
     intro c hc h

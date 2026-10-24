@@ -233,6 +233,45 @@ theorem Phi_add_X_mul_PsiSq_ne_zero [CharZero L] (m : ℕ) (hm : 1 ≤ m) :
 
 end Degree
 
+private theorem exists_two_torsion_x_ne_neg
+    {L : Type*} [Field L] [DecidableEq L] [IsAlgClosed L] [CharZero L]
+    (W : WeierstrassCurve L) {A : L} (hWdef : W = ⟨0, 0, 0, A, 0⟩) (hA : A ≠ 0) :
+    ∃ (x y : L) (h : W.toAffine.Nonsingular x y), addOrderOf (Point.some x y h) = 2 ∧
+      ∀ k : ℕ, xco (k • Point.some x y h) ≠ some (-x) := by
+  have h2 : (2 : L) ≠ 0 := two_ne_zero
+  obtain ⟨a, ha⟩ : ∃ a : L, a ^ 2 = -A := by
+    obtain ⟨a, ha⟩ := IsAlgClosed.exists_pow_nat_eq (-A) (n := 2) (by norm_num)
+    exact ⟨a, ha⟩
+  have ha0 : a ≠ 0 := by rintro rfl; apply hA; simpa using ha.symm
+  have heq : W.toAffine.Equation a 0 := by
+    rw [WeierstrassCurve.Affine.equation_iff]; simp [hWdef]; linear_combination -a * ha
+  have hns : W.toAffine.Nonsingular a 0 := by
+    rw [WeierstrassCurve.Affine.nonsingular_iff']
+    refine ⟨heq, Or.inl ?_⟩
+    simp only [hWdef, mul_zero, zero_mul, add_zero, zero_sub, neg_add_rev, ne_eq]
+    intro h3a
+    apply ha0
+    have : (2 : L) * a ^ 2 = 0 := by linear_combination -h3a - ha
+    simpa [h2] using this
+  have hneg : -Point.some a 0 hns = Point.some a 0 hns := by
+    rw [Point.neg_some]; congr 1; simp [WeierstrassCurve.Affine.negY, hWdef]
+  have h2T : (2 : ℕ) • Point.some a 0 hns = 0 := by
+    rw [two_nsmul]; nth_rewrite 1 [← hneg]; rw [neg_add_cancel]
+  have hord : addOrderOf (Point.some a 0 hns) = 2 := by
+    refine (addOrderOf_eq_prime_iff.mpr ⟨h2T, ?_⟩)
+    exact Point.some_ne_zero hns
+  refine ⟨a, 0, hns, hord, fun k => ?_⟩
+  have hkT : k • Point.some a 0 hns = 0 ∨ k • Point.some a 0 hns = Point.some a 0 hns := by
+    rcases Nat.even_or_odd k with ⟨j, rfl⟩ | ⟨j, rfl⟩
+    · left; rw [← two_mul, mul_nsmul, h2T, nsmul_zero]
+    · right; rw [add_nsmul, mul_nsmul, h2T, nsmul_zero, zero_add, one_nsmul]
+  rcases hkT with h0 | h1
+  · rw [h0, xco_zero]; simp
+  · rw [h1, xco_some]; simp only [ne_eq, Option.some.injEq]
+    intro h; apply ha0
+    have : (2 : L) * a = 0 := by linear_combination h
+    simpa [h2] using this
+
 end P2MWs13.NonScalar
 
 open P2MWs13.NonScalar in
@@ -252,7 +291,6 @@ theorem solution
   have huinv2 : ((u⁻¹ : Lˣ) : L) ^ 2 = -1 := by
     rw [Units.val_inv_eq_inv_val, inv_pow, hu]; norm_num
   have hu2inv : ((u : L) ^ 2)⁻¹ = -1 := by rw [hu]; norm_num
-  have h2 : (2 : L) ≠ 0 := two_ne_zero
   have hΔ : W.Δ = -64 * A ^ 3 := by
     simp only [hWdef, WeierstrassCurve.Δ, WeierstrassCurve.b₂, WeierstrassCurve.b₄,
       WeierstrassCurve.b₆,
@@ -280,38 +318,7 @@ theorem solution
       have : castPt hW (e P) = castPt hW (e 0) := by rw [map_zero, map_zero]; exact h0
       exact e.injective ((castPt hW).injective this), fun h0 => by rw [h0, map_zero]⟩
   rcases hp.eq_two_or_odd' with rfl | hpodd
-  · obtain ⟨a, ha⟩ : ∃ a : L, a ^ 2 = -A := by
-      obtain ⟨a, ha⟩ := IsAlgClosed.exists_pow_nat_eq (-A) (n := 2) (by norm_num)
-      exact ⟨a, ha⟩
-    have ha0 : a ≠ 0 := by rintro rfl; apply hA; simpa using ha.symm
-    have heq : W.toAffine.Equation a 0 := by
-      rw [WeierstrassCurve.Affine.equation_iff]; simp [hWdef]; linear_combination -a * ha
-    have hns : W.toAffine.Nonsingular a 0 := by
-      rw [WeierstrassCurve.Affine.nonsingular_iff']
-      refine ⟨heq, Or.inl ?_⟩
-      simp only [hWdef, mul_zero, zero_mul, add_zero, zero_sub, neg_add_rev, ne_eq]
-      intro h3a
-      apply ha0
-      have : (2 : L) * a ^ 2 = 0 := by linear_combination -h3a - ha
-      simpa [h2] using this
-    have hneg : -Point.some a 0 hns = Point.some a 0 hns := by
-      rw [Point.neg_some]; congr 1; simp [WeierstrassCurve.Affine.negY, hWdef]
-    have h2T : (2 : ℕ) • Point.some a 0 hns = 0 := by
-      rw [two_nsmul]; nth_rewrite 1 [← hneg]; rw [neg_add_cancel]
-    have hord : addOrderOf (Point.some a 0 hns) = 2 := by
-      refine (addOrderOf_eq_prime_iff.mpr ⟨h2T, ?_⟩)
-      exact Point.some_ne_zero hns
-    refine ⟨a, 0, hns, hord, fun k => ?_⟩
-    have hkT : k • Point.some a 0 hns = 0 ∨ k • Point.some a 0 hns = Point.some a 0 hns := by
-      rcases Nat.even_or_odd k with ⟨j, rfl⟩ | ⟨j, rfl⟩
-      · left; rw [← two_mul, mul_nsmul, h2T, nsmul_zero]
-      · right; rw [add_nsmul, mul_nsmul, h2T, nsmul_zero, zero_add, one_nsmul]
-    rcases hkT with h0 | h1
-    · rw [h0, xco_zero]; simp
-    · rw [h1, xco_some]; simp only [ne_eq, Option.some.injEq]
-      intro h; apply ha0
-      have : (2 : L) * a = 0 := by linear_combination h
-      simpa [h2] using this
+  · exact exists_two_torsion_x_ne_neg W hWdef hA
   · have hp2 : p ≠ 2 := by rintro rfl; exact (Nat.not_even_iff_odd.mpr hpodd) even_two
     have hp3 : 3 ≤ p := by have := hp.two_le; omega
     have hcard : Nat.card (Submodule.torsionBy ℤ W.toAffine.Point p) = p ^ 2 := by

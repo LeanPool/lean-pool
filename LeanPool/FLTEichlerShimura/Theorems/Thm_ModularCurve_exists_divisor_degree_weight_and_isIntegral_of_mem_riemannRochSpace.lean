@@ -228,6 +228,125 @@ theorem recipe_eq_zero {v : Place ℚb 𝔽} (h0 : v.ord (jBar N) = 0)
   rw [recipe_of_nonneg N m h0.ge, h0, he]
   simp
 
+private theorem sum_recipe_over_j_zero (S0 : Finset (Place ℚb 𝔽))
+    (hS0 : ∀ v, v ∈ S0 ↔ 0 < v.ord (jBar N)) :
+    3 * ∑ v ∈ S0, recipe N m v
+      = 3 * ((2 * m / 3 : ℕ) : ℤ) * ((S0.filter fun v => v.ord (jBar N) = 1).card : ℤ)
+        + 2 * (m : ℤ) * ((dedekindPsi N : ℤ) - ((S0.filter fun v => v.ord (jBar N) = 1).card : ℤ))
+          := by
+  classical
+  have hdeg := deg_eq_one_modularFunctionFieldBar N
+  have hψ₀ : ∑ v ∈ S0, v.ord (jBar N) = (dedekindPsi N : ℤ) := by
+    have h :=
+      sum_ord_jBar_sub_eq_dedekindPsi N 0 hdeg S0 (fun v => by rw [hS0, map_zero, sub_zero])
+    simpa [map_zero, sub_zero] using h
+  have hcase : ∀ v ∈ S0, (v.ord (jBar N) = 1 ∧ recipe N m v = ((2 * m / 3 : ℕ) : ℤ)) ∨
+      (v.ord (jBar N) = 3 ∧ recipe N m v = 2 * (m : ℤ)) := by
+    intro v hv
+    have hpos := (hS0 v).1 hv
+    have hdvd := ord_jBar_dvd_three N v hpos
+    rw [recipe_of_pos N m hpos]
+    rcases int_eq_of_pos_of_dvd_three hpos hdvd with h1 | h3
+    · left; refine ⟨h1, ?_⟩; rw [h1]; push_cast; omega
+    · right; refine ⟨h3, ?_⟩; rw [h3]; omega
+  rw [Finset.mul_sum, ← Finset.sum_filter_add_sum_filter_not S0 (fun v => v.ord (jBar N) = 1)]
+  rw [← Finset.sum_filter_add_sum_filter_not S0 (fun v => v.ord (jBar N) = 1)] at hψ₀
+  have hA : ∑ v ∈ S0.filter (fun v => v.ord (jBar N) = 1), 3 * recipe N m v
+      = 3 * ((2 * m / 3 : ℕ) : ℤ) * ((S0.filter fun v => v.ord (jBar N) = 1).card : ℤ) := by
+    rw [Finset.sum_congr rfl (g := fun _ => 3 * ((2 * m / 3 : ℕ) : ℤ)) (fun v hv => ?_)]
+    · rw [Finset.sum_const, nsmul_eq_mul]; ring
+    · obtain ⟨hv, h1⟩ := Finset.mem_filter.mp hv
+      rcases hcase v hv with ⟨-, hr⟩ | ⟨h3, -⟩
+      · rw [hr]
+      · omega
+  have hB : ∑ v ∈ S0.filter (fun v => ¬ v.ord (jBar N) = 1), 3 * recipe N m v
+      = 6 * (m : ℤ) * ((S0.filter fun v => ¬ v.ord (jBar N) = 1).card : ℤ) := by
+    rw [Finset.sum_congr rfl (g := fun _ => 6 * (m : ℤ)) (fun v hv => ?_)]
+    · rw [Finset.sum_const, nsmul_eq_mul]; ring
+    · obtain ⟨hv, h1⟩ := Finset.mem_filter.mp hv
+      rcases hcase v hv with ⟨h1', -⟩ | ⟨-, hr⟩
+      · exact absurd h1' h1
+      · rw [hr]; ring
+  have hψA : ∑ v ∈ S0.filter (fun v => v.ord (jBar N) = 1), v.ord (jBar N)
+      = ((S0.filter fun v => v.ord (jBar N) = 1).card : ℤ) := by
+    rw [Finset.sum_congr rfl (g := fun _ => (1 : ℤ)) (fun v hv => (Finset.mem_filter.mp hv).2)]
+    rw [Finset.sum_const, nsmul_eq_mul, mul_one]
+  have hψB : ∑ v ∈ S0.filter (fun v => ¬ v.ord (jBar N) = 1), v.ord (jBar N)
+      = 3 * ((S0.filter fun v => ¬ v.ord (jBar N) = 1).card : ℤ) := by
+    rw [Finset.sum_congr rfl (g := fun _ => (3 : ℤ)) (fun v hv => ?_)]
+    · rw [Finset.sum_const, nsmul_eq_mul, mul_comm]
+    · obtain ⟨hv, h1⟩ := Finset.mem_filter.mp hv
+      rcases hcase v hv with ⟨h1', -⟩ | ⟨h3, -⟩
+      · exact absurd h1' h1
+      · exact h3
+  rw [hA, hB]
+  rw [hψA, hψB] at hψ₀
+  linear_combination (2 * (m : ℤ)) * hψ₀
+
+
+private theorem sum_recipe_over_j_1728 (S1 : Finset (Place ℚb 𝔽))
+    (hS1 : ∀ v, v ∈ S1 ↔ 0 < v.ord (jBar N - algebraMap ℚb 𝔽 1728)) :
+    2 * ∑ v ∈ S1, recipe N m v
+      = 2 * ((m / 2 : ℕ) : ℤ) * ((S1.filter fun v => v.ord (jBar N - algebraMap ℚb 𝔽 1728) = 1).card
+        : ℤ)
+        + (m : ℤ) * ((dedekindPsi N : ℤ) - ((S1.filter fun v => v.ord (jBar N - algebraMap ℚb 𝔽
+          1728) = 1).card : ℤ)) := by
+  classical
+  have hdeg := deg_eq_one_modularFunctionFieldBar N
+  have hψ₁ : ∑ v ∈ S1, v.ord (jBar N - algebraMap ℚb 𝔽 1728) = (dedekindPsi N : ℤ) :=
+    sum_ord_jBar_sub_eq_dedekindPsi N 1728 hdeg S1 hS1
+  have hcase : ∀ v ∈ S1, (v.ord (jBar N - algebraMap ℚb 𝔽 1728) = 1 ∧ recipe N m v = ((m / 2 : ℕ)
+    : ℤ)) ∨
+      (v.ord (jBar N - algebraMap ℚb 𝔽 1728) = 2 ∧ recipe N m v = (m : ℤ)) := by
+    intro v hv
+    have hpos := (hS1 v).1 hv
+    have hdvd := ord_jBar_sub_1728_dvd_two N v hpos
+    rw [recipe_of_pos_1728 N m hpos]
+    rcases int_eq_of_pos_of_dvd_two hpos hdvd with h1 | h2
+    · left; refine ⟨h1, ?_⟩; rw [h1]; push_cast; omega
+    · right; refine ⟨h2, ?_⟩; rw [h2]; omega
+  rw [Finset.mul_sum, ← Finset.sum_filter_add_sum_filter_not S1 (fun v => v.ord (jBar N -
+    algebraMap ℚb 𝔽 1728) = 1)]
+  rw [← Finset.sum_filter_add_sum_filter_not S1 (fun v => v.ord (jBar N - algebraMap ℚb 𝔽 1728) =
+    1)] at hψ₁
+  have hA : ∑ v ∈ S1.filter (fun v => v.ord (jBar N - algebraMap ℚb 𝔽 1728) = 1), 2 * recipe N m v
+      = 2 * ((m / 2 : ℕ) : ℤ) * ((S1.filter fun v => v.ord (jBar N - algebraMap ℚb 𝔽 1728) =
+        1).card : ℤ) := by
+    rw [Finset.sum_congr rfl (g := fun _ => 2 * ((m / 2 : ℕ) : ℤ)) (fun v hv => ?_)]
+    · rw [Finset.sum_const, nsmul_eq_mul]; ring
+    · obtain ⟨hv, h1⟩ := Finset.mem_filter.mp hv
+      rcases hcase v hv with ⟨-, hr⟩ | ⟨h2, -⟩
+      · rw [hr]
+      · omega
+  have hB : ∑ v ∈ S1.filter (fun v => ¬ v.ord (jBar N - algebraMap ℚb 𝔽 1728) = 1), 2 * recipe N m
+    v
+      = 2 * (m : ℤ) * ((S1.filter fun v => ¬ v.ord (jBar N - algebraMap ℚb 𝔽 1728) = 1).card : ℤ)
+        := by
+    rw [Finset.sum_congr rfl (g := fun _ => 2 * (m : ℤ)) (fun v hv => ?_)]
+    · rw [Finset.sum_const, nsmul_eq_mul]; ring
+    · obtain ⟨hv, h1⟩ := Finset.mem_filter.mp hv
+      rcases hcase v hv with ⟨h1', -⟩ | ⟨-, hr⟩
+      · exact absurd h1' h1
+      · rw [hr]
+  have hψA : ∑ v ∈ S1.filter (fun v => v.ord (jBar N - algebraMap ℚb 𝔽 1728) = 1), v.ord (jBar N -
+    algebraMap ℚb 𝔽 1728)
+      = ((S1.filter fun v => v.ord (jBar N - algebraMap ℚb 𝔽 1728) = 1).card : ℤ) := by
+    rw [Finset.sum_congr rfl (g := fun _ => (1 : ℤ)) (fun v hv => (Finset.mem_filter.mp hv).2)]
+    rw [Finset.sum_const, nsmul_eq_mul, mul_one]
+  have hψB : ∑ v ∈ S1.filter (fun v => ¬ v.ord (jBar N - algebraMap ℚb 𝔽 1728) = 1), v.ord (jBar N
+    - algebraMap ℚb 𝔽 1728)
+      = 2 * ((S1.filter fun v => ¬ v.ord (jBar N - algebraMap ℚb 𝔽 1728) = 1).card : ℤ) := by
+    rw [Finset.sum_congr rfl (g := fun _ => (2 : ℤ)) (fun v hv => ?_)]
+    · rw [Finset.sum_const, nsmul_eq_mul, mul_comm]
+    · obtain ⟨hv, h1⟩ := Finset.mem_filter.mp hv
+      rcases hcase v hv with ⟨h1', -⟩ | ⟨h2, -⟩
+      · exact absurd h1' h1
+      · exact h2
+  rw [hA, hB]
+  rw [hψA, hψB] at hψ₁
+  linear_combination (m : ℤ) * hψ₁
+
+
 theorem exists_weightDivisor :
     ∃ D : AlgebraicCurve.Divisor (AlgebraicClosure ℚ) ↥(ModularCurve.modularFunctionFieldBar N),
       ((D.degree : ℚ) + 1 - ModularCurve.genusFormula N =
@@ -296,113 +415,8 @@ theorem exists_weightDivisor :
   have hsplit : ∑ v ∈ S, recipe N m v
       = ∑ v ∈ S0, recipe N m v + ∑ v ∈ S1, recipe N m v + ∑ v ∈ Sinf, recipe N m v := by
     rw [hSdef, Finset.sum_union hdisj0I, Finset.sum_union hdisj01]
-  have hsum0 : 3 * ∑ v ∈ S0, recipe N m v
-      = 3 * ((2 * m / 3 : ℕ) : ℤ) * ((S0.filter fun v => v.ord (jBar N) = 1).card : ℤ)
-        + 2 * (m : ℤ) * ((dedekindPsi N : ℤ) - ((S0.filter fun v => v.ord (jBar N) = 1).card : ℤ))
-          := by
-    have hψ₀ : ∑ v ∈ S0, v.ord (jBar N) = (dedekindPsi N : ℤ) := by
-      have h :=
-        sum_ord_jBar_sub_eq_dedekindPsi N 0 hdeg S0 (fun v => by rw [hS0, map_zero, sub_zero])
-      simpa [map_zero, sub_zero] using h
-    have hcase : ∀ v ∈ S0, (v.ord (jBar N) = 1 ∧ recipe N m v = ((2 * m / 3 : ℕ) : ℤ)) ∨
-        (v.ord (jBar N) = 3 ∧ recipe N m v = 2 * (m : ℤ)) := by
-      intro v hv
-      have hpos := (hS0 v).1 hv
-      have hdvd := ord_jBar_dvd_three N v hpos
-      rw [recipe_of_pos N m hpos]
-      rcases int_eq_of_pos_of_dvd_three hpos hdvd with h1 | h3
-      · left; refine ⟨h1, ?_⟩; rw [h1]; push_cast; omega
-      · right; refine ⟨h3, ?_⟩; rw [h3]; omega
-    rw [Finset.mul_sum, ← Finset.sum_filter_add_sum_filter_not S0 (fun v => v.ord (jBar N) = 1)]
-    rw [← Finset.sum_filter_add_sum_filter_not S0 (fun v => v.ord (jBar N) = 1)] at hψ₀
-    have hA : ∑ v ∈ S0.filter (fun v => v.ord (jBar N) = 1), 3 * recipe N m v
-        = 3 * ((2 * m / 3 : ℕ) : ℤ) * ((S0.filter fun v => v.ord (jBar N) = 1).card : ℤ) := by
-      rw [Finset.sum_congr rfl (g := fun _ => 3 * ((2 * m / 3 : ℕ) : ℤ)) (fun v hv => ?_)]
-      · rw [Finset.sum_const, nsmul_eq_mul]; ring
-      · obtain ⟨hv, h1⟩ := Finset.mem_filter.mp hv
-        rcases hcase v hv with ⟨-, hr⟩ | ⟨h3, -⟩
-        · rw [hr]
-        · omega
-    have hB : ∑ v ∈ S0.filter (fun v => ¬ v.ord (jBar N) = 1), 3 * recipe N m v
-        = 6 * (m : ℤ) * ((S0.filter fun v => ¬ v.ord (jBar N) = 1).card : ℤ) := by
-      rw [Finset.sum_congr rfl (g := fun _ => 6 * (m : ℤ)) (fun v hv => ?_)]
-      · rw [Finset.sum_const, nsmul_eq_mul]; ring
-      · obtain ⟨hv, h1⟩ := Finset.mem_filter.mp hv
-        rcases hcase v hv with ⟨h1', -⟩ | ⟨-, hr⟩
-        · exact absurd h1' h1
-        · rw [hr]; ring
-    have hψA : ∑ v ∈ S0.filter (fun v => v.ord (jBar N) = 1), v.ord (jBar N)
-        = ((S0.filter fun v => v.ord (jBar N) = 1).card : ℤ) := by
-      rw [Finset.sum_congr rfl (g := fun _ => (1 : ℤ)) (fun v hv => (Finset.mem_filter.mp hv).2)]
-      rw [Finset.sum_const, nsmul_eq_mul, mul_one]
-    have hψB : ∑ v ∈ S0.filter (fun v => ¬ v.ord (jBar N) = 1), v.ord (jBar N)
-        = 3 * ((S0.filter fun v => ¬ v.ord (jBar N) = 1).card : ℤ) := by
-      rw [Finset.sum_congr rfl (g := fun _ => (3 : ℤ)) (fun v hv => ?_)]
-      · rw [Finset.sum_const, nsmul_eq_mul, mul_comm]
-      · obtain ⟨hv, h1⟩ := Finset.mem_filter.mp hv
-        rcases hcase v hv with ⟨h1', -⟩ | ⟨h3, -⟩
-        · exact absurd h1' h1
-        · exact h3
-    rw [hA, hB]
-    rw [hψA, hψB] at hψ₀
-    linear_combination (2 * (m : ℤ)) * hψ₀
-  have hsum1 : 2 * ∑ v ∈ S1, recipe N m v
-      = 2 * ((m / 2 : ℕ) : ℤ) * ((S1.filter fun v => v.ord (jBar N - algebraMap ℚb 𝔽 1728) = 1).card
-        : ℤ)
-        + (m : ℤ) * ((dedekindPsi N : ℤ) - ((S1.filter fun v => v.ord (jBar N - algebraMap ℚb 𝔽
-          1728) = 1).card : ℤ)) := by
-    have hψ₁ : ∑ v ∈ S1, v.ord (jBar N - algebraMap ℚb 𝔽 1728) = (dedekindPsi N : ℤ) :=
-      sum_ord_jBar_sub_eq_dedekindPsi N 1728 hdeg S1 hS1
-    have hcase : ∀ v ∈ S1, (v.ord (jBar N - algebraMap ℚb 𝔽 1728) = 1 ∧ recipe N m v = ((m / 2 : ℕ)
-      : ℤ)) ∨
-        (v.ord (jBar N - algebraMap ℚb 𝔽 1728) = 2 ∧ recipe N m v = (m : ℤ)) := by
-      intro v hv
-      have hpos := (hS1 v).1 hv
-      have hdvd := ord_jBar_sub_1728_dvd_two N v hpos
-      rw [recipe_of_pos_1728 N m hpos]
-      rcases int_eq_of_pos_of_dvd_two hpos hdvd with h1 | h2
-      · left; refine ⟨h1, ?_⟩; rw [h1]; push_cast; omega
-      · right; refine ⟨h2, ?_⟩; rw [h2]; omega
-    rw [Finset.mul_sum, ← Finset.sum_filter_add_sum_filter_not S1 (fun v => v.ord (jBar N -
-      algebraMap ℚb 𝔽 1728) = 1)]
-    rw [← Finset.sum_filter_add_sum_filter_not S1 (fun v => v.ord (jBar N - algebraMap ℚb 𝔽 1728) =
-      1)] at hψ₁
-    have hA : ∑ v ∈ S1.filter (fun v => v.ord (jBar N - algebraMap ℚb 𝔽 1728) = 1), 2 * recipe N m v
-        = 2 * ((m / 2 : ℕ) : ℤ) * ((S1.filter fun v => v.ord (jBar N - algebraMap ℚb 𝔽 1728) =
-          1).card : ℤ) := by
-      rw [Finset.sum_congr rfl (g := fun _ => 2 * ((m / 2 : ℕ) : ℤ)) (fun v hv => ?_)]
-      · rw [Finset.sum_const, nsmul_eq_mul]; ring
-      · obtain ⟨hv, h1⟩ := Finset.mem_filter.mp hv
-        rcases hcase v hv with ⟨-, hr⟩ | ⟨h2, -⟩
-        · rw [hr]
-        · omega
-    have hB : ∑ v ∈ S1.filter (fun v => ¬ v.ord (jBar N - algebraMap ℚb 𝔽 1728) = 1), 2 * recipe N m
-      v
-        = 2 * (m : ℤ) * ((S1.filter fun v => ¬ v.ord (jBar N - algebraMap ℚb 𝔽 1728) = 1).card : ℤ)
-          := by
-      rw [Finset.sum_congr rfl (g := fun _ => 2 * (m : ℤ)) (fun v hv => ?_)]
-      · rw [Finset.sum_const, nsmul_eq_mul]; ring
-      · obtain ⟨hv, h1⟩ := Finset.mem_filter.mp hv
-        rcases hcase v hv with ⟨h1', -⟩ | ⟨-, hr⟩
-        · exact absurd h1' h1
-        · rw [hr]
-    have hψA : ∑ v ∈ S1.filter (fun v => v.ord (jBar N - algebraMap ℚb 𝔽 1728) = 1), v.ord (jBar N -
-      algebraMap ℚb 𝔽 1728)
-        = ((S1.filter fun v => v.ord (jBar N - algebraMap ℚb 𝔽 1728) = 1).card : ℤ) := by
-      rw [Finset.sum_congr rfl (g := fun _ => (1 : ℤ)) (fun v hv => (Finset.mem_filter.mp hv).2)]
-      rw [Finset.sum_const, nsmul_eq_mul, mul_one]
-    have hψB : ∑ v ∈ S1.filter (fun v => ¬ v.ord (jBar N - algebraMap ℚb 𝔽 1728) = 1), v.ord (jBar N
-      - algebraMap ℚb 𝔽 1728)
-        = 2 * ((S1.filter fun v => ¬ v.ord (jBar N - algebraMap ℚb 𝔽 1728) = 1).card : ℤ) := by
-      rw [Finset.sum_congr rfl (g := fun _ => (2 : ℤ)) (fun v hv => ?_)]
-      · rw [Finset.sum_const, nsmul_eq_mul, mul_comm]
-      · obtain ⟨hv, h1⟩ := Finset.mem_filter.mp hv
-        rcases hcase v hv with ⟨h1', -⟩ | ⟨h2, -⟩
-        · exact absurd h1' h1
-        · exact h2
-    rw [hA, hB]
-    rw [hψA, hψB] at hψ₁
-    linear_combination (m : ℤ) * hψ₁
+  have hsum0 := sum_recipe_over_j_zero N m S0 hS0
+  have hsum1 := sum_recipe_over_j_1728 N m S1 hS1
   have hsumI : ∑ v ∈ Sinf, recipe N m v = -(m : ℤ) * (dedekindPsi N : ℤ) - (Sinf.card : ℤ) := by
     have hψinf : ∑ v ∈ Sinf, -v.ord (jBar N) = (dedekindPsi N : ℤ) :=
       sum_neg_ord_jBar_eq_dedekindPsi N Sinf hSI

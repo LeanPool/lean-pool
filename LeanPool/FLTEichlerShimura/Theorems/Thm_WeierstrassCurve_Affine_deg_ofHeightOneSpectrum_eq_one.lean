@@ -22,6 +22,7 @@ public import Mathlib.RingTheory.SimpleRing.Principal
 
 public import LeanPool.FLTEichlerShimura.Definitions.Def_AlgebraicCurve_DivisorClassGroup
 
+import LeanPool.FLTEichlerShimura.Definitions.Defs_IsogenyEndDatum_sharedLibrary
 import Mathlib.RingTheory.Henselian
 import Mathlib.RingTheory.RegularLocalRing.Defs
 import LeanPool.FLTEichlerShimura.Definitions.Def_EllipticCurve_FunctionFieldPullback
@@ -166,21 +167,6 @@ theorem deg_ofHeightOneSpectrum_eq_one (w : HeightOneSpectrum R)
 
 end GenericDedekind
 
-section Weierstrass
-
-variable {F : Type*} [Field F] (W : WeierstrassCurve.Affine F)
-
-theorem exists_sub_algebraMap_mem {x y : F} (h : W.Equation x y) (r : W.CoordinateRing) :
-    ∃ c : F, r - algebraMap F W.CoordinateRing c ∈ XYIdeal W x (C y) := by
-  set e := CoordinateRing.quotientXYIdealEquiv (W' := W) (x := x) (y := C y) h
-  refine ⟨e (Ideal.Quotient.mk _ r), ?_⟩
-  rw [← Ideal.Quotient.eq_zero_iff_mem, map_sub, sub_eq_zero]
-  apply e.injective
-  rw [← Ideal.Quotient.algebraMap_eq, ← IsScalarTower.algebraMap_apply, AlgEquiv.commutes,
-    Algebra.algebraMap_self_apply]
-
-end Weierstrass
-
 end D5S
 
 theorem solution {F : Type*} [Field F] [IsAlgClosed F] (W : WeierstrassCurve.Affine F)
@@ -190,7 +176,7 @@ theorem solution {F : Type*} [Field F] [IsAlgClosed F] (W : WeierstrassCurve.Aff
   intro r
   obtain ⟨a, b, hab, hw⟩ :=
     WeierstrassCurve.Affine.CoordinateRing.exists_eq_XYIdeal (W := W) (P := w.asIdeal) w.ne_bot
-  obtain ⟨c, hc⟩ := D5S.exists_sub_algebraMap_mem W hab r
+  obtain ⟨c, hc⟩ := WeierstrassCurve.Affine.CoordinateRing.exists_sub_algebraMap_mem hab r
   exact ⟨c, hw ▸ hc⟩
 
 end

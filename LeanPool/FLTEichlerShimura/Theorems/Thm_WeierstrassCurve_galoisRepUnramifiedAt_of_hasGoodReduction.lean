@@ -119,6 +119,25 @@ theorem point_descend_of_mem (W : WeierstrassCurve ℚ) (L : IntermediateField �
       h
   exact ⟨h', rfl⟩
 
+private theorem torsion_fixed_of_reduction_fixed
+    (S : Type*) [CommRing S] [IsDomain S] [IsDiscreteValuationRing S]
+    {L : Type*} [Field L] [DecidableEq L] [Algebra S L] [IsFractionRing S L]
+    (W : WeierstrassCurve L) [W.HasGoodReduction S] {n : ℕ}
+    (hn : (n : ResidueField S) ≠ 0) (f : W.toAffine.Point →+ W.toAffine.Point)
+    (hred : ∀ P, reducePoint_alt S W (f P) = reducePoint_alt S W P)
+    (P : W.toAffine.Point) (hP : n • P = 0) : f P = P := by
+  classical
+  have hnD : n • (f P - P) = 0 := by
+    rw [nsmul_sub, ← map_nsmul, hP, map_zero, sub_zero]
+  have hred0 : reducePoint_alt S W (f P - P) = 0 := by
+    have h : reducePoint_alt S W (f P - P) + reducePoint_alt S W P
+        = 0 + reducePoint_alt S W P := by
+      rw [← WeierstrassCurve.reducePoint_add, sub_add_cancel, zero_add]
+      exact hred P
+    exact add_right_cancel h
+  exact sub_eq_zero.mp
+    (WeierstrassCurve.eq_zero_of_smul_eq_zero_of_reducePoint_eq_zero S W hn _ hnD hred0)
+
 end NOSAssembly
 
 open NOSAssembly
@@ -304,29 +323,9 @@ theorem galoisRepUnramifiedAt_of_hasGoodReduction'
       have h3 : (algebraMap ℤ S (n : ℤ)) = ((n : ℕ) : S) := by push_cast; rfl
       rw [h3] at h2
       exact isUnit_of_mul_isUnit_right h2
-  have hD : WeierstrassCurve.Affine.Point.map τL.toAlgHom PL = PL := by
-    have hnPLτ : n • WeierstrassCurve.Affine.Point.map τL.toAlgHom PL = 0 :=
-      calc n • WeierstrassCurve.Affine.Point.map τL.toAlgHom PL
-          = WeierstrassCurve.Affine.Point.map τL.toAlgHom (n • PL) := (map_nsmul _ _ _).symm
-        _ = WeierstrassCurve.Affine.Point.map τL.toAlgHom 0 := by rw [hnPL']
-        _ = 0 := map_zero _
-    have hnD : n • (WeierstrassCurve.Affine.Point.map τL.toAlgHom PL - PL) = 0 :=
-      calc n • (WeierstrassCurve.Affine.Point.map τL.toAlgHom PL - PL)
-          = n • WeierstrassCurve.Affine.Point.map τL.toAlgHom PL - n • PL := nsmul_sub _ _ _
-        _ = 0 - 0 := by rw [hnPLτ, hnPL']
-        _ = 0 := by rw [sub_zero]
-    have hred0 : reducePoint_alt S (E.baseChange L)
-        (WeierstrassCurve.Affine.Point.map τL.toAlgHom PL - PL) = 0 := by
-      have h4 : reducePoint_alt S (E.baseChange L)
-            (WeierstrassCurve.Affine.Point.map τL.toAlgHom PL - PL)
-          + reducePoint_alt S (E.baseChange L) PL
-          = 0 + reducePoint_alt S (E.baseChange L) PL := by
-        rw [← WeierstrassCurve.reducePoint_add, sub_add_cancel, zero_add]
-        exact hred_fix PL
-      exact add_right_cancel h4
-    have := WeierstrassCurve.eq_zero_of_smul_eq_zero_of_reducePoint_eq_zero S (E.baseChange L)
-      hn0 _ hnD hred0
-    exact sub_eq_zero.mp this
+  have hD : WeierstrassCurve.Affine.Point.map τL.toAlgHom PL = PL :=
+    torsion_fixed_of_reduction_fixed S (E.baseChange L) hn0
+      (WeierstrassCurve.Affine.Point.map τL.toAlgHom) hred_fix PL hnPL'
   have hcoe2 : ∀ z : L, τL.toAlgHom z = τL z := fun z => rfl
   have hD' := hD
   rw [hPLdef, WeierstrassCurve.Affine.Point.map_some] at hD'

@@ -330,6 +330,44 @@ lemma qExpansion_Sform {K : ℕ} [𝒢.IsArithmetic] [𝒢.HasDetOne]
 
 end PenA.ALG
 
+private theorem isIntegral_of_signed_relation {K : Type*} [Field K] [Algebra ℂ K]
+    (j f : K) (Pc : ℕ → Polynomial ℂ) (n : ℕ)
+    (hsum1 : (∑ r ∈ Finset.range n, Polynomial.aeval j (Pc r) * f ^ r)
+      + (-1 : K) ^ n * f ^ n = 0) : IsIntegral (Algebra.adjoin ℂ {j}) f := by
+  classical
+  have hmem : ∀ r : ℕ, (-1 : K) ^ n * Polynomial.aeval j (Pc r)
+      ∈ Algebra.adjoin ℂ {j} := fun r =>
+    Subalgebra.mul_mem _ (pow_mem (neg_mem (one_mem _)) _)
+      (Polynomial.aeval_mem_adjoin_singleton ℂ _)
+  refine ⟨Polynomial.X ^ n + ∑ r ∈ Finset.range n,
+    Polynomial.C (⟨_, hmem r⟩ : Algebra.adjoin ℂ {j}) * Polynomial.X ^ r, ?_, ?_⟩
+  · refine Polynomial.monic_X_pow_add ?_
+    refine lt_of_le_of_lt (Polynomial.degree_sum_le _ _) ?_
+    rw [Finset.sup_lt_iff (WithBot.bot_lt_coe _)]
+    intro r hr
+    exact lt_of_le_of_lt (Polynomial.degree_C_mul_X_pow_le r _)
+      (by exact_mod_cast Finset.mem_range.mp hr)
+  · rw [← Polynomial.aeval_def, map_add, map_pow, Polynomial.aeval_X, map_sum]
+    have hterm : ∀ r ∈ Finset.range n,
+        Polynomial.aeval f
+          (Polynomial.C (⟨_, hmem r⟩ : Algebra.adjoin ℂ {j})
+            * Polynomial.X ^ r)
+          = ((-1 : K) ^ n * Polynomial.aeval j (Pc r)) * f ^ r := by
+      intro r _
+      rw [map_mul, Polynomial.aeval_C, map_pow, Polynomial.aeval_X]
+      rfl
+    rw [Finset.sum_congr rfl hterm]
+    have hdist : ∑ r ∈ Finset.range n, ((-1 : K) ^ n * Polynomial.aeval j (Pc r)) * f ^ r
+        = (-1 : K) ^ n * ∑ r ∈ Finset.range n, Polynomial.aeval j (Pc r) * f ^ r := by
+      rw [Finset.mul_sum]
+      exact Finset.sum_congr rfl fun r _ => by ring
+    rw [hdist]
+    have h11 : (-1 : K) ^ n * (-1 : K) ^ n = 1 := by
+      rw [← pow_add, ← two_mul, pow_mul]
+      norm_num
+    linear_combination (-1 : K) ^ n * hsum1 - f ^ n * h11
+
+
 open PenA.ALG SlashInvariantForm in
 theorem solution {𝒢 : Subgroup (GL (Fin 2) ℝ)} [𝒢.IsArithmetic] [𝒢.HasDetOne]
     (h1 : 1 ∈ 𝒢.strictPeriods) (m : ℕ) {k : ℤ} (hk : k = 12 * m) (g : ModularForm 𝒢 k) :
@@ -507,55 +545,7 @@ theorem solution {𝒢 : Subgroup (GL (Fin 2) ℝ)} [𝒢.IsArithmetic] [𝒢.Ha
     have h4 := (hP (Nat.card (𝒮ℒ ⧸ (𝒢 ⊓ 𝒮ℒ).subgroupOf 𝒮ℒ))).symm.trans hqAnL
     exact mul_right_cancel₀ (pow_ne_zero _ hΔL) h4
   rw [hPn] at hsum1
-  have hmem : ∀ r : ℕ, ((-1 : LaurentSeries ℂ) ^ (Nat.card (𝒮ℒ ⧸ (𝒢 ⊓ 𝒮ℒ).subgroupOf 𝒮ℒ))
-        * Polynomial.aeval ((qExpansion 1 ModularForm.E₄ : LaurentSeries ℂ) ^ 3 /
-          (qExpansion 1 Δ : LaurentSeries ℂ)) (Pc r))
-      ∈ Algebra.adjoin ℂ ({((qExpansion 1 ModularForm.E₄ : LaurentSeries ℂ) ^ 3 /
-        (qExpansion 1 Δ : LaurentSeries ℂ))}) := fun r =>
-    Subalgebra.mul_mem _ (pow_mem (neg_mem (one_mem _)) _)
-      (Polynomial.aeval_mem_adjoin_singleton ℂ _)
-  refine ⟨Polynomial.X ^ (Nat.card (𝒮ℒ ⧸ (𝒢 ⊓ 𝒮ℒ).subgroupOf 𝒮ℒ))
-    + ∑ r ∈ Finset.range (Nat.card (𝒮ℒ ⧸ (𝒢 ⊓ 𝒮ℒ).subgroupOf 𝒮ℒ)),
-      Polynomial.C (⟨_, hmem r⟩ : Algebra.adjoin ℂ ({((qExpansion 1 ModularForm.E₄ :
-        LaurentSeries ℂ) ^ 3 / (qExpansion 1 Δ : LaurentSeries ℂ))}))
-      * Polynomial.X ^ r, ?_, ?_⟩
-  · refine Polynomial.monic_X_pow_add ?_
-    refine lt_of_le_of_lt (Polynomial.degree_sum_le _ _) ?_
-    rw [Finset.sup_lt_iff (WithBot.bot_lt_coe _)]
-    intro r hr
-    exact lt_of_le_of_lt (Polynomial.degree_C_mul_X_pow_le r _)
-      (by exact_mod_cast Finset.mem_range.mp hr)
-  · rw [← Polynomial.aeval_def, map_add, map_pow, Polynomial.aeval_X, map_sum]
-    have hterm : ∀ r ∈ Finset.range (Nat.card (𝒮ℒ ⧸ (𝒢 ⊓ 𝒮ℒ).subgroupOf 𝒮ℒ)),
-        Polynomial.aeval FL
-          (Polynomial.C (⟨_, hmem r⟩ : Algebra.adjoin ℂ ({((qExpansion 1 ModularForm.E₄ :
-            LaurentSeries ℂ) ^ 3 / (qExpansion 1 Δ : LaurentSeries ℂ))}))
-            * Polynomial.X ^ r)
-          = ((-1 : LaurentSeries ℂ) ^ (Nat.card (𝒮ℒ ⧸ (𝒢 ⊓ 𝒮ℒ).subgroupOf 𝒮ℒ))
-            * Polynomial.aeval ((qExpansion 1 ModularForm.E₄ : LaurentSeries ℂ) ^ 3 /
-              (qExpansion 1 Δ : LaurentSeries ℂ)) (Pc r)) * FL ^ r := by
-      intro r _
-      rw [map_mul, Polynomial.aeval_C, map_pow, Polynomial.aeval_X]
-      rfl
-    rw [Finset.sum_congr rfl hterm]
-    have hdist : ∑ r ∈ Finset.range (Nat.card (𝒮ℒ ⧸ (𝒢 ⊓ 𝒮ℒ).subgroupOf 𝒮ℒ)),
-        ((-1 : LaurentSeries ℂ) ^ (Nat.card (𝒮ℒ ⧸ (𝒢 ⊓ 𝒮ℒ).subgroupOf 𝒮ℒ))
-        * Polynomial.aeval ((qExpansion 1 ModularForm.E₄ : LaurentSeries ℂ) ^ 3 /
-        (qExpansion 1 Δ : LaurentSeries ℂ)) (Pc r)) * FL ^ r
-        = (-1 : LaurentSeries ℂ) ^ (Nat.card (𝒮ℒ ⧸ (𝒢 ⊓ 𝒮ℒ).subgroupOf 𝒮ℒ))
-          * ∑ r ∈ Finset.range (Nat.card (𝒮ℒ ⧸ (𝒢 ⊓ 𝒮ℒ).subgroupOf 𝒮ℒ)),
-            Polynomial.aeval ((qExpansion 1 ModularForm.E₄ : LaurentSeries ℂ) ^ 3 /
-              (qExpansion 1 Δ : LaurentSeries ℂ)) (Pc r) * FL ^ r := by
-      rw [Finset.mul_sum]
-      exact Finset.sum_congr rfl fun r _ => by ring
-    rw [hdist]
-    have h11 : ((-1 : LaurentSeries ℂ) ^ (Nat.card (𝒮ℒ ⧸ (𝒢 ⊓ 𝒮ℒ).subgroupOf 𝒮ℒ)))
-        * ((-1 : LaurentSeries ℂ) ^ (Nat.card (𝒮ℒ ⧸ (𝒢 ⊓ 𝒮ℒ).subgroupOf 𝒮ℒ))) = 1 :=
-      by
-      rw [← pow_add, ← two_mul, pow_mul]
-      norm_num
-    linear_combination ((-1 : LaurentSeries ℂ) ^ (Nat.card (𝒮ℒ ⧸ (𝒢 ⊓ 𝒮ℒ).subgroupOf 𝒮ℒ))) * hsum1
-      - (FL ^ (Nat.card (𝒮ℒ ⧸ (𝒢 ⊓ 𝒮ℒ).subgroupOf 𝒮ℒ))) * h11
+  exact isIntegral_of_signed_relation _ FL Pc _ hsum1
 
 end privateSection
 

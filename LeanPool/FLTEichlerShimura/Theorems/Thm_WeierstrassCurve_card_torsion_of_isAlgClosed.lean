@@ -659,6 +659,36 @@ theorem Ψ₂Sq_ne_zero_of_isElliptic [W.IsElliptic] : (W.baseChange K).Ψ₂Sq 
       (-27 * E.b₆) * hb₆ + (-4 * E.b₄ ^ 3) * h2
   exact E.isUnit_Δ.ne_zero hΔ
 
+private theorem card_equation_fiber_of_psiTwo_ne_zero [W.IsElliptic] (x : K)
+    (hx : (W.baseChange K).Ψ₂Sq.eval x ≠ 0) :
+    ((qpoly W x).roots.toFinset.image (fun y => (x, y))).card = 2 := by
+  classical
+  obtain ⟨y₀, hy₀⟩ := exists_equation_y W x
+  have hny₀ : (W.baseChange K).toAffine.Equation x
+      ((W.baseChange K).toAffine.negY x y₀) :=
+    (WeierstrassCurve.Affine.equation_neg x y₀).mpr hy₀
+  have hyne : y₀ ≠ (W.baseChange K).toAffine.negY x y₀ := by
+    intro hy
+    apply hx
+    have hsq := sub_negY_sq_eq_Ψ₂Sq_eval ((W.baseChange K).toAffine) hy₀
+    rw [← hsq, ← hy, sub_self]
+    ring
+  rw [Finset.card_image_of_injective _ (fun a b hab => (Prod.ext_iff.mp hab).2)]
+  refine le_antisymm ?_ ?_
+  · refine le_trans (Multiset.toFinset_card_le _) (le_trans (card_roots' _) ?_)
+    rw [natDegree_eq_of_degree_eq_some (degree_qpoly W x)]
+  · have hsub : ({y₀, (W.baseChange K).toAffine.negY x y₀} : Finset K) ⊆
+        (qpoly W x).roots.toFinset := by
+      intro y hy
+      rw [Finset.mem_insert, Finset.mem_singleton] at hy
+      rw [Multiset.mem_toFinset, mem_roots (qpoly_ne_zero W x)]
+      rcases hy with rfl | rfl
+      · exact (isRoot_qpoly_iff W x y).mpr hy₀
+      · exact (isRoot_qpoly_iff W x _).mpr hny₀
+    calc 2 = ({y₀, (W.baseChange K).toAffine.negY x y₀} : Finset K).card :=
+          (Finset.card_pair hyne).symm
+      _ ≤ _ := Finset.card_le_card hsub
+
 theorem exists_double_fiber_card [W.IsElliptic] {n : ℕ} (hodd : Odd n)
     (hn : (n : K) ≠ 0) :
     ∃ Q : W.toAffine⟮K⟯,
@@ -761,31 +791,7 @@ theorem exists_double_fiber_card [W.IsElliptic] {n : ℕ} (hodd : Odd n)
       ((qpoly W x).roots.toFinset.image (fun y => (x, y))).card = 2 := by
     intro x hx
     rw [Multiset.mem_toFinset, mem_roots hpne] at hx
-    obtain ⟨y₀, hy₀⟩ := exists_equation_y W x
-    have hny₀ : (W.baseChange K).toAffine.Equation x
-        ((W.baseChange K).toAffine.negY x y₀) :=
-      (WeierstrassCurve.Affine.equation_neg x y₀).mpr hy₀
-    have hyne : y₀ ≠ (W.baseChange K).toAffine.negY x y₀ := by
-      intro hy
-      refine key_Ψ₂ x hx ?_
-      have hsq := sub_negY_sq_eq_Ψ₂Sq_eval ((W.baseChange K).toAffine) hy₀
-      rw [← hsq, ← hy, sub_self]
-      ring
-    rw [Finset.card_image_of_injective _ (fun a b hab => (Prod.ext_iff.mp hab).2)]
-    refine le_antisymm ?_ ?_
-    · refine le_trans (Multiset.toFinset_card_le _) (le_trans (card_roots' _) ?_)
-      rw [natDegree_eq_of_degree_eq_some (degree_qpoly W x)]
-    · have hsub : ({y₀, (W.baseChange K).toAffine.negY x y₀} : Finset K) ⊆
-          (qpoly W x).roots.toFinset := by
-        intro y hy
-        rw [Finset.mem_insert, Finset.mem_singleton] at hy
-        rw [Multiset.mem_toFinset, mem_roots (qpoly_ne_zero W x)]
-        rcases hy with rfl | rfl
-        · exact (isRoot_qpoly_iff W x y).mpr hy₀
-        · exact (isRoot_qpoly_iff W x _).mpr hny₀
-      calc 2 = ({y₀, (W.baseChange K).toAffine.negY x y₀} : Finset K).card :=
-            (Finset.card_pair hyne).symm
-        _ ≤ _ := Finset.card_le_card hsub
+    exact card_equation_fiber_of_psiTwo_ne_zero W x (key_Ψ₂ x hx)
   have hR2card : R2fin.card = 2 * n ^ 2 := by
     rw [hR2def, Finset.card_biUnion]
     · rw [Finset.sum_congr rfl hfiber2, Finset.sum_const, smul_eq_mul, hroots_card,

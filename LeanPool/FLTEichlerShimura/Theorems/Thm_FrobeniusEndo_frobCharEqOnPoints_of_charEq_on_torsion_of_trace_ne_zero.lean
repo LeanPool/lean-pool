@@ -1249,6 +1249,67 @@ private lemma charEq_elim_six (ha : a ≠ 0) (hr : r.Prime)
 
 end Elim
 
+open scoped Classical in
+private theorem card_smallOrder_torsion_translate {G : Type*} [AddCommGroup G]
+    (r m : ℕ) [Fintype (Submodule.torsionBy ℤ G r)] (hr : r.Prime) (hm : m < r) (P : G) :
+    (Finset.univ.filter (fun T : Submodule.torsionBy ℤ G r =>
+      ∃ j : ℕ, 1 ≤ j ∧ j ≤ m ∧ j • (P + (T : G)) = 0)).card ≤ m := by
+  classical
+  set Sdeg := Finset.univ.filter (fun T : Submodule.torsionBy ℤ G r =>
+    ∃ j : ℕ, 1 ≤ j ∧ j ≤ m ∧ j • (P + (T : G)) = 0) with hSdeg_def
+  have htorsub : ∀ T₁ T₂ : Submodule.torsionBy ℤ G r,
+      (r : ℤ) • ((T₁ : G) - (T₂ : G)) = 0 := by
+    intro T₁ T₂
+    rw [zsmul_sub, (Submodule.mem_torsionBy_iff _ _).mp T₁.2,
+      (Submodule.mem_torsionBy_iff _ _).mp T₂.2, sub_zero]
+  have htransub : ∀ T₁ T₂ : Submodule.torsionBy ℤ G r,
+      (P + (T₁ : G)) - (P + (T₂ : G))
+        = (T₁ : G) - (T₂ : G) := by
+    intro T₁ T₂
+    abel
+  have hsubset : Sdeg ⊆ (Finset.Icc 1 m).biUnion (fun j =>
+      Finset.univ.filter
+        (fun T : Submodule.torsionBy ℤ G r =>
+          j • (P + (T : G)) = 0)) := by
+    intro T hT
+    rw [hSdeg_def, Finset.mem_filter] at hT
+    obtain ⟨_, j, hj1, hjM, hj0⟩ := hT
+    exact Finset.mem_biUnion.mpr ⟨j, Finset.mem_Icc.mpr ⟨hj1, hjM⟩,
+      Finset.mem_filter.mpr ⟨Finset.mem_univ _, hj0⟩⟩
+  calc Sdeg.card
+      ≤ ((Finset.Icc 1 m).biUnion (fun j =>
+          Finset.univ.filter
+            (fun T : Submodule.torsionBy ℤ G r =>
+              j • (P + (T : G)) = 0))).card :=
+        Finset.card_le_card hsubset
+    _ ≤ ∑ j ∈ Finset.Icc 1 m,
+          (Finset.univ.filter
+            (fun T : Submodule.torsionBy ℤ G r =>
+              j • (P + (T : G)) = 0)).card :=
+        Finset.card_biUnion_le
+    _ ≤ ∑ _j ∈ Finset.Icc 1 m, 1 := by
+        apply Finset.sum_le_sum
+        intro j hj
+        rw [Finset.card_le_one]
+        intro T₁ hT₁ T₂ hT₂
+        rw [Finset.mem_filter] at hT₁ hT₂
+        have hd : j • ((T₁ : G) - (T₂ : G)) = 0 := by
+          have hsub : j • ((P + (T₁ : G))
+              - (P + (T₂ : G))) = 0 := by
+            rw [nsmul_sub, hT₁.2, hT₂.2, sub_zero]
+          rwa [htransub] at hsub
+        have hd_r : r • ((T₁ : G) - (T₂ : G)) = 0 := by
+          have h0 := htorsub T₁ T₂
+          rwa [natCast_zsmul] at h0
+        have hj1 : 1 ≤ j := (Finset.mem_Icc.mp hj).1
+        have hjM : j ≤ m := (Finset.mem_Icc.mp hj).2
+        have hzero : (T₁ : G) - (T₂ : G) = 0 :=
+          eq_zero_of_nsmul_eq_zero_of_lt_prime hr (by omega) (by omega) hd_r hd
+        exact Subtype.ext (sub_eq_zero.mp hzero)
+    _ = m := by
+        rw [Finset.sum_const, smul_eq_mul, mul_one, Nat.card_Icc]
+        omega
+
 include hFr hinj in
 theorem frobPointCharEq_of_charEq_on_torsionBy (hq1 : 1 ≤ q)
     {a : ℤ} (ha : a ≠ 0) {r : ℕ} (hr : r.Prime)
@@ -1335,49 +1396,8 @@ theorem frobPointCharEq_of_charEq_on_torsionBy (hq1 : 1 ≤ q)
         = (T₁ : V.toAffine.Point) - (T₂ : V.toAffine.Point) := by
     intro T₁ T₂
     abel
-  have hSdeg_card : Sdeg.card ≤ q + a.natAbs := by
-    have hsubset : Sdeg ⊆ (Finset.Icc 1 (q + a.natAbs)).biUnion (fun j =>
-        Finset.univ.filter
-          (fun T : Submodule.torsionBy ℤ V.toAffine.Point r =>
-            j • (P + (T : V.toAffine.Point)) = 0)) := by
-      intro T hT
-      rw [hSdeg_def, Finset.mem_filter] at hT
-      obtain ⟨_, j, hj1, hjM, hj0⟩ := hT
-      exact Finset.mem_biUnion.mpr ⟨j, Finset.mem_Icc.mpr ⟨hj1, hjM⟩,
-        Finset.mem_filter.mpr ⟨Finset.mem_univ _, hj0⟩⟩
-    calc Sdeg.card
-        ≤ ((Finset.Icc 1 (q + a.natAbs)).biUnion (fun j =>
-            Finset.univ.filter
-              (fun T : Submodule.torsionBy ℤ V.toAffine.Point r =>
-                j • (P + (T : V.toAffine.Point)) = 0))).card :=
-          Finset.card_le_card hsubset
-      _ ≤ ∑ j ∈ Finset.Icc 1 (q + a.natAbs),
-            (Finset.univ.filter
-              (fun T : Submodule.torsionBy ℤ V.toAffine.Point r =>
-                j • (P + (T : V.toAffine.Point)) = 0)).card :=
-          Finset.card_biUnion_le
-      _ ≤ ∑ _j ∈ Finset.Icc 1 (q + a.natAbs), 1 := by
-          apply Finset.sum_le_sum
-          intro j hj
-          rw [Finset.card_le_one]
-          intro T₁ hT₁ T₂ hT₂
-          rw [Finset.mem_filter] at hT₁ hT₂
-          have hd : j • ((T₁ : V.toAffine.Point) - (T₂ : V.toAffine.Point)) = 0 := by
-            have hsub : j • ((P + (T₁ : V.toAffine.Point))
-                - (P + (T₂ : V.toAffine.Point))) = 0 := by
-              rw [nsmul_sub, hT₁.2, hT₂.2, sub_zero]
-            rwa [htransub] at hsub
-          have hd_r : r • ((T₁ : V.toAffine.Point) - (T₂ : V.toAffine.Point)) = 0 := by
-            have h0 := htorsub T₁ T₂
-            rwa [natCast_zsmul] at h0
-          have hj1 : 1 ≤ j := (Finset.mem_Icc.mp hj).1
-          have hjM : j ≤ q + a.natAbs := (Finset.mem_Icc.mp hj).2
-          have hzero : (T₁ : V.toAffine.Point) - (T₂ : V.toAffine.Point) = 0 :=
-            eq_zero_of_nsmul_eq_zero_of_lt_prime hr (by omega) (by omega) hd_r hd
-          exact Subtype.ext (sub_eq_zero.mp hzero)
-      _ = q + a.natAbs := by
-          rw [Finset.sum_const, smul_eq_mul, mul_one, Nat.card_Icc]
-          omega
+  have hSdeg_card : Sdeg.card ≤ q + a.natAbs :=
+    card_smallOrder_torsion_translate r (q + a.natAbs) hr (by omega) P
   have hS2_card : S2.card ≤ 1 := by
     rw [hS2_def, Finset.card_le_one]
     intro T₁ hT₁ T₂ hT₂

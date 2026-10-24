@@ -12,6 +12,15 @@ Extracted from Prove2Me proofs by Claude (2026-09-05):
 * WeierstrassCurve.Affine.IsogenyEndDatum.exists_restrictAlong_placeOfPoint_eq_add
   (f8a39c1e-1459-50cb-893b-11563e5e5727), submission
   52dbf7a5-8da4-5f91-a7ee-93f5d4b10c7e.
+* WeierstrassCurve.Affine.isAddCyclic_ker_pointMapOfPushforward_of_baseChange_algHom
+  (f4d949d7-d2e9-583c-970a-d2c81be54545), submission
+  dc1eabf7-1867-53e3-b324-7414996a1c99.
+* WeierstrassCurve.Affine.exists_algHom_baseChange_of_isAddCyclic_ker_pointMapOfPushforward
+  (e43a54a4-70bb-5551-8efe-0ba1b5eb4b2c), submission
+  3e4feffd-4b48-5cc6-aa05-ac80b8acf609.
+* WeierstrassCurve.Affine.exists_algHom_functionField_baseChange_finrankAlong_eq
+  (f9fb6037-8f9d-5c67-be82-66f7e78fec74), submission
+  b3015788-82b4-558c-8e89-28fc2203960b.
 -/
 
 module
@@ -36,6 +45,11 @@ public import LeanPool.FLTEichlerShimura.Theorems.Thm_WeierstrassCurve_Affine_ha
 public import LeanPool.FLTEichlerShimura.Theorems.Thm_WeierstrassCurve_Affine_placeOfPoint_some_eq_ofHeightOneSpectrum
 public import LeanPool.FLTEichlerShimura.Theorems.Thm_AlgebraicCurve_Place_min_ord_le_ord_add_v2
 
+public import Mathlib.Algebra.Polynomial.Basis
+import Mathlib.RingTheory.Flat.TorsionFree
+import LeanPool.FLTEichlerShimura.Theorems.Thm_AddCommGroup_nonempty_zmod_prod_addEquiv_torsionBy_of_card_torsionBy_eq_sq
+import LeanPool.FLTEichlerShimura.Theorems.Thm_WeierstrassCurve_card_torsionBy_eq_sq_of_isAlgClosed
+
 import LeanPool.FLTEichlerShimura.Theorems.Thm_AlgebraicCurve_Place_evalAt_algebraMap
 import LeanPool.FLTEichlerShimura.Theorems.Thm_AlgebraicCurve_Place_evalAt_mul
 import LeanPool.FLTEichlerShimura.Theorems.Thm_AlgebraicCurve_Place_evalAt_ne_zero
@@ -48,6 +62,8 @@ import LeanPool.FLTEichlerShimura.Definitions.Defs_AlgebraicCurve_residueTheorem
 
 Common declarations from the dual-endomorphism and pointwise-addition proofs, together with
 the supporting helpers needed to make those declarations independent of either proof file.
+Also contains general coordinate-ring pullbacks, scalar-extension constructions for function
+fields, and compatibility of point maps with geometric morphisms.
 -/
 
 
@@ -71,13 +87,13 @@ variable {F : Type*} [Field F] {W : Affine F}
 
 namespace CoordinateRing
 
-theorem algebraMap_eq_mk_C_C (a : F) :
+public theorem algebraMap_eq_mk_C_C (a : F) :
     algebraMap F W.CoordinateRing a = CoordinateRing.mk W (C (C a)) := by
   rw [AdjoinRoot.algebraMap_eq', RingHom.comp_apply, Polynomial.algebraMap_apply,
     Algebra.algebraMap_self_apply]
   rfl
 
-theorem eq_of_XYIdeal_eq {x₁ y₁ x₂ y₂ : F} (h₂ : W.Equation x₂ y₂)
+public theorem eq_of_XYIdeal_eq {x₁ y₁ x₂ y₂ : F} (h₂ : W.Equation x₂ y₂)
     (h : XYIdeal W x₁ (C y₁) = XYIdeal W x₂ (C y₂)) : x₁ = x₂ ∧ y₁ = y₂ := by
   have hne : XYIdeal W x₂ (C y₂) ≠ ⊤ := (XYIdeal_isMaximal h₂).ne_top
   have hX₁ : XClass W x₁ ∈ XYIdeal W x₂ (C y₂) :=
@@ -122,7 +138,7 @@ theorem eq_of_XYIdeal_eq {x₁ y₁ x₂ y₂ : F} (h₂ : W.Equation x₂ y₂)
   ne_bot := XYIdeal_ne_bot x (C y)
 
 @[scoped simp]
-theorem heightOneSpectrumOfEquation_asIdeal {x y : F} (h : W.Equation x y) :
+public theorem heightOneSpectrumOfEquation_asIdeal {x y : F} (h : W.Equation x y) :
     (heightOneSpectrumOfEquation h).asIdeal = XYIdeal W x (C y) := rfl
 
 
@@ -131,7 +147,8 @@ end CoordinateRing
 @[expose] public def IsFinitePlace (v : AlgebraicCurve.Place F W.FunctionField) : Prop :=
   ∀ r : W.CoordinateRing, algebraMap W.CoordinateRing W.FunctionField r ∈ v.toValuationSubring
 
-def IsFinitePlace.ringHom {v : AlgebraicCurve.Place F W.FunctionField} (hv : IsFinitePlace v) :
+@[expose] public def IsFinitePlace.ringHom {v : AlgebraicCurve.Place F W.FunctionField}
+    (hv : IsFinitePlace v) :
     W.CoordinateRing →+* v.toValuationSubring where
   toFun r := ⟨algebraMap W.CoordinateRing W.FunctionField r, hv r⟩
   map_one' := Subtype.ext (map_one _)
@@ -140,19 +157,20 @@ def IsFinitePlace.ringHom {v : AlgebraicCurve.Place F W.FunctionField} (hv : IsF
   map_add' a b := Subtype.ext (map_add _ a b)
 
 @[scoped simp]
-theorem IsFinitePlace.coe_ringHom_apply {v : AlgebraicCurve.Place F W.FunctionField}
+public theorem IsFinitePlace.coe_ringHom_apply {v : AlgebraicCurve.Place F W.FunctionField}
     (hv : IsFinitePlace v) (r : W.CoordinateRing) :
     (hv.ringHom r : W.FunctionField) = algebraMap W.CoordinateRing W.FunctionField r := rfl
 
-def IsFinitePlace.centre {v : AlgebraicCurve.Place F W.FunctionField} (hv : IsFinitePlace v) :
+@[expose] public def IsFinitePlace.centre {v : AlgebraicCurve.Place F W.FunctionField}
+    (hv : IsFinitePlace v) :
     Ideal W.CoordinateRing :=
   (IsLocalRing.maximalIdeal v.toValuationSubring).comap hv.ringHom
 
-theorem IsFinitePlace.centre_isPrime {v : AlgebraicCurve.Place F W.FunctionField}
+public theorem IsFinitePlace.centre_isPrime {v : AlgebraicCurve.Place F W.FunctionField}
     (hv : IsFinitePlace v) : hv.centre.IsPrime :=
   Ideal.IsPrime.comap _
 
-theorem IsFinitePlace.inv_mem {v : AlgebraicCurve.Place F W.FunctionField}
+public theorem IsFinitePlace.inv_mem {v : AlgebraicCurve.Place F W.FunctionField}
     (hv : IsFinitePlace v) {r : W.CoordinateRing} (hr : r ∉ hv.centre) :
     (algebraMap W.CoordinateRing W.FunctionField r)⁻¹ ∈ v.toValuationSubring := by
   have hunit : IsUnit (hv.ringHom r) := by
@@ -165,7 +183,7 @@ theorem IsFinitePlace.inv_mem {v : AlgebraicCurve.Place F W.FunctionField}
   rw [inv_eq_of_mul_eq_one_right ht']
   exact t.2
 
-theorem IsFinitePlace.centre_ne_bot {v : AlgebraicCurve.Place F W.FunctionField}
+public theorem IsFinitePlace.centre_ne_bot {v : AlgebraicCurve.Place F W.FunctionField}
     (hv : IsFinitePlace v) : hv.centre ≠ ⊥ := by
   intro hbot
   apply v.ne_top'
@@ -185,11 +203,11 @@ variable [IsDedekindDomain W.CoordinateRing]
   AlgebraicCurve.Place.ofHeightOneSpectrum (heightOneSpectrumOfEquation h)
 
 
-theorem isFinitePlace_placeOfEquation {x y : F} (h : W.Equation x y) :
+public theorem isFinitePlace_placeOfEquation {x y : F} (h : W.Equation x y) :
     IsFinitePlace (placeOfEquation h) := fun r =>
   (heightOneSpectrumOfEquation h).valuation_le_one r
 
-theorem isFinitePlace_iff_exists_placeOfEquation [IsAlgClosed F]
+public theorem isFinitePlace_iff_exists_placeOfEquation [IsAlgClosed F]
     (v : AlgebraicCurve.Place F W.FunctionField) :
     IsFinitePlace v ↔ ∃ (x y : F) (h : W.Equation x y), v = placeOfEquation h := by
   constructor
@@ -270,7 +288,7 @@ public theorem not_isFinitePlace [IsAlgClosed F] [W.IsElliptic] :
      algebraMap_mk_C_X_notMem_toValuationSubring_placeOfPoint_zero (W := W) (h _)
 
 omit [DecidableEq F] in
-theorem eq_of_not_isFinitePlace
+public theorem eq_of_not_isFinitePlace
     (v : AlgebraicCurve.Place F W.FunctionField) (hv : ¬ IsFinitePlace v) :
     v = place := by
   classical
@@ -286,7 +304,7 @@ end InfinitePlace
 omit [DecidableEq F] in
 omit [IsDedekindDomain W.CoordinateRing] [GenusOnePlaceGate.IsCentred W] in
 @[scoped simp]
-theorem placeOfPoint_zero : placeOfPoint (.zero : W.Point) = InfinitePlace.place := by
+public theorem placeOfPoint_zero : placeOfPoint (.zero : W.Point) = InfinitePlace.place := by
   classical
   exact
     rfl
@@ -482,11 +500,13 @@ omit [DecidableEq F] [IsAlgClosed F] [CharZero F] [W.GenusOnePlaceGate]
   [GenusOnePlaceGate.IsCentred W] [W.AbelTheorem] in
 public theorem Δ_ne_zero_of_isElliptic : W.Δ ≠ 0 := W.isUnit_Δ.ne_zero
 
+omit [DecidableEq F] [IsAlgClosed F] [CharZero F] [W.IsElliptic]
+  [GenusOnePlaceGate.IsCentred W] [W.AbelTheorem] in
 @[expose] public def placeOfPointEquiv : W.Point ≃ AlgebraicCurve.Place F W.FunctionField :=
-  Equiv.ofBijective placeOfPoint
-    ⟨placeOfPoint_injective, placeOfPoint_surjective (Δ_ne_zero_of_isElliptic W)⟩
+  pointEquivPlace (W := W)
 
-omit [DecidableEq F] [IsAlgClosed F] [CharZero F] [GenusOnePlaceGate.IsCentred W] [W.AbelTheorem] in
+omit [DecidableEq F] [IsAlgClosed F] [CharZero F] [W.IsElliptic]
+  [GenusOnePlaceGate.IsCentred W] [W.AbelTheorem] in
 public theorem placeOfPoint_placeOfPointEquiv_symm (w : AlgebraicCurve.Place F W.FunctionField) :
     placeOfPoint ((placeOfPointEquiv W).symm w) = w :=
   (placeOfPointEquiv W).apply_symm_apply w
@@ -501,7 +521,8 @@ variable {W}
     W.Point → W.Point :=
   fun P => (placeOfPointEquiv W).symm ((placeOfPoint P).restrictAlong D.ι D.hι)
 
-omit [DecidableEq F] [IsAlgClosed F] [CharZero F] [GenusOnePlaceGate.IsCentred W] [W.AbelTheorem] in
+omit [DecidableEq F] [IsAlgClosed F] [CharZero F] [W.IsElliptic]
+  [GenusOnePlaceGate.IsCentred W] [W.AbelTheorem] in
 public theorem placeOfPoint_geomMorph (D :
   IsogenyEndDatum W) (P : W.Point) :
     (placeOfPoint P).restrictAlong D.ι D.hι = placeOfPoint (D.geomMorph P) :=
@@ -633,7 +654,8 @@ open WeierstrassCurve.Affine.IsogenyEndDatum
 
 variable {W}
 
-omit [DecidableEq F] [IsAlgClosed F] [CharZero F] [GenusOnePlaceGate.IsCentred W] [W.AbelTheorem] in
+omit [DecidableEq F] [IsAlgClosed F] [CharZero F] [W.IsElliptic]
+  [GenusOnePlaceGate.IsCentred W] [W.AbelTheorem] in
 theorem pushforwardAlongDegZero_pointDivisor_geomMorph (D : IsogenyEndDatum W)
     (P : W.Point) :
     Pic0.pushforwardAlongDegZero D.ι D.hι (pointDivisor P)
@@ -645,7 +667,8 @@ theorem pushforwardAlongDegZero_pointDivisor_geomMorph (D : IsogenyEndDatum W)
   push_cast
   rw [coe_pointDivisor, coe_pointDivisor, sub_sub_sub_cancel_right]
 
-omit [DecidableEq F] [IsAlgClosed F] [GenusOnePlaceGate.IsCentred W] [W.AbelTheorem] in
+omit [DecidableEq F] [IsAlgClosed F] [W.IsElliptic]
+  [GenusOnePlaceGate.IsCentred W] [W.AbelTheorem] in
 theorem pushforwardAlongHom_pointClass_eq_sub (D : IsogenyEndDatum W) (P : W.Point) :
     Pic0.pushforwardAlongHom D.ι D.hι D.hfin (normFormulaAlong_of_elliptic D.ι D.hfin)
         (pointClass P)
@@ -655,7 +678,7 @@ theorem pushforwardAlongHom_pointClass_eq_sub (D : IsogenyEndDatum W) (P : W.Poi
   rw [Pic0.pushforwardAlongHom_mk, pushforwardAlongDegZero_pointDivisor_geomMorph D P]
   rfl
 
-omit [IsAlgClosed F] [GenusOnePlaceGate.IsCentred W] in
+omit [IsAlgClosed F] [W.IsElliptic] [GenusOnePlaceGate.IsCentred W] in
 public theorem
   pointEnd_eq_geomMorph_sub_geomMorph_zero (D :
   IsogenyEndDatum W) (P : W.Point) :
@@ -679,7 +702,7 @@ variable {F : Type*} [Field F] {W : Affine F}
 
 variable (v : AlgebraicCurve.Place F W.FunctionField)
 
-theorem isFinitePlace_of_mem
+public theorem isFinitePlace_of_mem
     (hx : polyToFunctionField W X ∈ v.toValuationSubring) : IsFinitePlace v := by
   have hpoly : ∀ p : F[X], polyToFunctionField W p ∈ v.toValuationSubring := by
     intro p
@@ -784,7 +807,7 @@ public abbrev KwIsogenyEndAddGeomMorphSupply : Prop :=
     ∃ D₃ : IsogenyEndDatum W, ∀ P : W.Point,
       D₃.geomMorph P = D₁.geomMorph P + D₂.geomMorph P
 
-omit [IsAlgClosed F] [GenusOnePlaceGate.IsCentred W] in
+omit [IsAlgClosed F] [W.IsElliptic] [GenusOnePlaceGate.IsCentred W] in
 theorem kw_isogenyEndAddDatumSupply_of_addGeomMorphSupply
     (hgm : KwIsogenyEndAddGeomMorphSupply W) :
     KwIsogenyEndAddDatumSupply W := by
@@ -807,19 +830,19 @@ namespace AlgebraicCurve
 
 variable {K F F' : Type*} [Field K] [Field F] [Field F'] [Algebra K F] [Algebra K F']
 
-theorem Place.mem_restrictAlong_iff (φ : F →ₐ[K] F') (hφ : φ.toRingHom.IsIntegral)
+public theorem Place.mem_restrictAlong_iff (φ : F →ₐ[K] F') (hφ : φ.toRingHom.IsIntegral)
     (w : Place K F') (f : F) :
     f ∈ (w.restrictAlong φ hφ).toValuationSubring ↔ φ f ∈ w.toValuationSubring :=
   Iff.rfl
 
-theorem Place.ramificationIndexAlong_pos (φ : F →ₐ[K] F') (hφ : φ.toRingHom.IsIntegral)
+public theorem Place.ramificationIndexAlong_pos (φ : F →ₐ[K] F') (hφ : φ.toRingHom.IsIntegral)
     (w : Place K F') : 0 < Place.ramificationIndexAlong φ w := by
   let := algebraAlong φ
   have := isScalarTower_along φ
   have := isIntegral_along φ hφ
   exact w.ramificationIndex_pos
 
-theorem Place.ord_restrictAlong_ne_zero_iff (φ : F →ₐ[K] F') (hφ : φ.toRingHom.IsIntegral)
+public theorem Place.ord_restrictAlong_ne_zero_iff (φ : F →ₐ[K] F') (hφ : φ.toRingHom.IsIntegral)
     (w : Place K F') (f : F) :
     (w.restrictAlong φ hφ).ord f ≠ 0 ↔ w.ord (φ f) ≠ 0 := by
   rw [w.ord_restrictAlong φ hφ f]
@@ -843,7 +866,7 @@ public theorem algebraMap_polynomial_eq_mk_C (p : F[X]) :
     algebraMap F[X] W.CoordinateRing p = CoordinateRing.mk W (C p) :=
   rfl
 
-theorem algebraMap_coordinateRing_ne_zero {r : W.CoordinateRing} (hr : r ≠ 0) :
+public theorem algebraMap_coordinateRing_ne_zero {r : W.CoordinateRing} (hr : r ≠ 0) :
     algebraMap W.CoordinateRing W.FunctionField r ≠ 0 :=
   (map_ne_zero_iff _ (IsFractionRing.injective W.CoordinateRing W.FunctionField)).mpr hr
 
@@ -868,7 +891,7 @@ theorem mk_mem_XYIdeal_iff {x y : F} (h : W.Equation x y) (P : F[X][Y]) :
   · intro hP
     exact Ideal.mem_map_of_mem _ (mem_span_C_X_sub_C_X_sub_C_iff_eval_eval_eq_zero.mpr hP)
 
-theorem ord_placeOfEquation_ne_zero_iff [IsDedekindDomain W.CoordinateRing] {x y : F}
+public theorem ord_placeOfEquation_ne_zero_iff [IsDedekindDomain W.CoordinateRing] {x y : F}
     (h : W.Equation x y) {r : W.CoordinateRing} (hr : r ≠ 0) :
     (placeOfEquation h).ord (algebraMap W.CoordinateRing W.FunctionField r) ≠ 0
       ↔ r ∈ XYIdeal W x (C y) := by
@@ -880,7 +903,7 @@ public theorem ord_placeOfEquation_nonneg [IsDedekindDomain W.CoordinateRing] {x
     0 ≤ (placeOfEquation h).ord (algebraMap W.CoordinateRing W.FunctionField r) :=
   AlgebraicCurve.Place.ord_nonneg_of_mem (placeOfEquation h) (isFinitePlace_placeOfEquation h r)
 
-theorem ord_placeOfEquation_pos_iff [IsDedekindDomain W.CoordinateRing] {x y : F}
+public theorem ord_placeOfEquation_pos_iff [IsDedekindDomain W.CoordinateRing] {x y : F}
     (h : W.Equation x y) {r : W.CoordinateRing} (hr : r ≠ 0) :
     0 < (placeOfEquation h).ord (algebraMap W.CoordinateRing W.FunctionField r)
       ↔ r ∈ XYIdeal W x (C y) := by
@@ -888,7 +911,7 @@ theorem ord_placeOfEquation_pos_iff [IsDedekindDomain W.CoordinateRing] {x y : F
   have := ord_placeOfEquation_nonneg h r
   omega
 
-theorem IsFinitePlace.mem_centre_iff_ord_ne_zero {v : Place F W.FunctionField}
+public theorem IsFinitePlace.mem_centre_iff_ord_ne_zero {v : Place F W.FunctionField}
     (hv : IsFinitePlace v) {r : W.CoordinateRing} (hr : r ≠ 0) :
     r ∈ hv.centre ↔ v.ord (algebraMap W.CoordinateRing W.FunctionField r) ≠ 0 := by
   have hr' : algebraMap W.CoordinateRing W.FunctionField r ≠ 0 :=
@@ -897,7 +920,7 @@ theorem IsFinitePlace.mem_centre_iff_ord_ne_zero {v : Place F W.FunctionField}
     ne_eq, v.ord_eq_zero_iff_adicValuation_eq_one hr']
   exact not_congr (v.adicValuation_coe_eq_one_iff (hv.ringHom r)).symm
 
-theorem centre_placeOfEquation [IsDedekindDomain W.CoordinateRing] {x y : F}
+public theorem centre_placeOfEquation [IsDedekindDomain W.CoordinateRing] {x y : F}
     (h : W.Equation x y) :
     (isFinitePlace_placeOfEquation h).centre = XYIdeal W x (C y) := by
   ext r
@@ -906,7 +929,7 @@ theorem centre_placeOfEquation [IsDedekindDomain W.CoordinateRing] {x y : F}
   rw [(isFinitePlace_placeOfEquation h).mem_centre_iff_ord_ne_zero hr,
     ord_placeOfEquation_ne_zero_iff h hr]
 
-theorem eq_placeOfEquation_of_le_centre [IsAlgClosed F] [IsDedekindDomain W.CoordinateRing]
+public theorem eq_placeOfEquation_of_le_centre [IsAlgClosed F] [IsDedekindDomain W.CoordinateRing]
     {v : Place F W.FunctionField} (hv : IsFinitePlace v) {x y : F} (h : W.Equation x y)
     (hle : XYIdeal W x (C y) ≤ hv.centre) : v = placeOfEquation h := by
   obtain ⟨x', y', h', hveq⟩ := (isFinitePlace_iff_exists_placeOfEquation v).mp hv
@@ -1125,7 +1148,7 @@ section GenericPoint
 
 variable {W : Affine F}
 
-theorem polyToFunctionField_eq_aeval (p : F[X]) :
+public theorem polyToFunctionField_eq_aeval (p : F[X]) :
     polyToFunctionField W p = Polynomial.aeval (polyToFunctionField W X) p := by
   have h1 : (polyToFunctionField W : F[X] →+* W.FunctionField)
       = algebraMap F[X] W.FunctionField :=
@@ -1177,7 +1200,7 @@ variable (ι : V.FunctionField →ₐ[F] W.FunctionField)
   (hY : ι (yGen V) = η)
 
 include hX in
-theorem map_XClass (c : F) :
+public theorem map_XClass (c : F) :
     ι (algebraMap V.CoordinateRing V.FunctionField (XClass V c))
       = ξ - algebraMap F W.FunctionField c := by
   have h1 : algebraMap V.CoordinateRing V.FunctionField (XClass V c)
@@ -1187,7 +1210,7 @@ theorem map_XClass (c : F) :
   rw [h1, map_sub, hX, AlgHom.commutes]
 
 include hY in
-theorem map_YClass (c : F) :
+public theorem map_YClass (c : F) :
     ι (algebraMap V.CoordinateRing V.FunctionField (YClass V (C c)))
       = η - algebraMap F W.FunctionField c := by
   have h1 : algebraMap V.CoordinateRing V.FunctionField (YClass V (C c))
@@ -1201,7 +1224,7 @@ section Cases
 variable [IsDedekindDomain V.CoordinateRing]
 
 include hX hY in
-theorem restrictAlong_placeOfEquation [IsAlgClosed F] [W.IsElliptic]
+public theorem restrictAlong_placeOfEquation [IsAlgClosed F] [W.IsElliptic]
     {x y : F} (h : W.Equation x y) {a b : F} (h' : V.Equation a b)
     (hreg : ξ ∈ (placeOfEquation h).toValuationSubring)
     (hdx : 0 < (placeOfEquation h).ord (ξ - algebraMap F W.FunctionField a))
@@ -1224,7 +1247,7 @@ theorem restrictAlong_placeOfEquation [IsAlgClosed F] [W.IsElliptic]
     omega
 
 include hX in
-theorem restrictAlong_eq_infinitePlace
+public theorem restrictAlong_eq_infinitePlace
     [GenusOnePlaceGate V] [GenusOnePlaceGate.IsCentred V]
     (v : AlgebraicCurve.Place F W.FunctionField)
     (hpole : ξ ∉ v.toValuationSubring) :
@@ -1356,7 +1379,7 @@ variable {W : Affine F} (hΔ : W.Δ ≠ 0) {a b : F} (hA : W.Equation a b)
 
 local notation "ι" => algebraMap F W.FunctionField
 
-theorem transcendental_polyToFunctionField_X :
+public theorem transcendental_polyToFunctionField_X :
     Transcendental F (polyToFunctionField W X) := by
   rw [transcendental_iff]
   intro p hp
@@ -3079,7 +3102,7 @@ variable {F : Type u} [Field F] [DecidableEq F] [IsAlgClosed F] [CharZero F]
 variable (W : Affine F) [W.IsElliptic] [WeierstrassCurve.Affine.GenusOnePlaceGate W]
     [WeierstrassCurve.Affine.GenusOnePlaceGate.IsCentred W] [WeierstrassCurve.Affine.AbelTheorem W]
 
-omit [IsAlgClosed F] [GenusOnePlaceGate.IsCentred W] in
+omit [IsAlgClosed F] [W.IsElliptic] [GenusOnePlaceGate.IsCentred W] in
 theorem kw_hk5f_two_datum_pointEnd_add_eq_geomMorph
     (D₁ D₂ : IsogenyEndDatum W) (Q : W.Point) :
     (D₁.pointEnd' + D₂.pointEnd') Q
@@ -3195,5 +3218,625 @@ end
 
 end
 end
+
+section FunctionFieldBaseChange
+
+universe u v w
+
+open Polynomial IsDedekindDomain IsLocalRing WithZero WeierstrassCurve Affine CoordinateRing
+  AlgebraicCurve
+open scoped TensorProduct Polynomial.Bivariate
+
+noncomputable section
+
+namespace WeierstrassCurve.Affine.CoordinateRing
+
+variable {F : Type*} [Field F] {W : Affine F}
+
+public theorem exists_sub_algebraMap_mem {x y : F} (h : W.Equation x y) (r : W.CoordinateRing) :
+    ∃ c : F, r - algebraMap F W.CoordinateRing c ∈ XYIdeal W x (C y) := by
+  set e := quotientXYIdealEquiv (W' := W) (x := x) (y := C y) h
+  refine ⟨e (Ideal.Quotient.mk _ r), ?_⟩
+  rw [← Ideal.Quotient.eq_zero_iff_mem, map_sub, sub_eq_zero]
+  apply e.injective
+  rw [← Ideal.Quotient.algebraMap_eq, ← IsScalarTower.algebraMap_apply, AlgEquiv.commutes,
+    Algebra.algebraMap_self_apply]
+
+end WeierstrassCurve.Affine.CoordinateRing
+
+open scoped WeierstrassCurve in
+public theorem WeierstrassCurve.nonempty_pointTorsionBy_zmod {K : Type*} [Field K] [DecidableEq K]
+    [IsAlgClosed K] [CharZero K]
+    (W : WeierstrassCurve K) [W.IsElliptic] {n : ℕ} (hn : 1 ≤ n) :
+    Nonempty (↥(Submodule.torsionBy ℤ W.toAffine.Point (n : ℤ)) ≃+ (Fin 2 → ZMod n)) := by
+  obtain ⟨e⟩ := AddCommGroup.nonempty_zmod_prod_addEquiv_torsionBy_of_card_torsionBy_eq_sq
+    (A := W.toAffine.Point) (n := n) (by omega)
+    (fun d hd => WeierstrassCurve.card_torsionBy_eq_sq_of_isAlgClosed W (n := d)
+      (by exact_mod_cast (Nat.pos_of_dvd_of_pos hd (by omega)).ne'))
+  exact ⟨e.symm.trans (LinearEquiv.piFinTwo ℤ (fun _ : Fin 2 => ZMod n)).toAddEquiv.symm⟩
+
+namespace ModularCurve
+
+@[expose] public def kw_coordinateRingBasis {R : Type*} [CommRing R] (V : Affine R) :
+    Module.Basis (ℕ × Fin 2) R V.CoordinateRing :=
+  (Polynomial.basisMonomials R).smulTower (CoordinateRing.basis V)
+
+end ModularCurve
+
+namespace WeierstrassCurve.Affine
+
+section
+
+variable {F : Type*} [Field F] {W : Affine F}
+
+public theorem kw_functionField_algHom_ext {L : Type*} [Field L] [Algebra F L]
+    {f g : W.FunctionField →ₐ[F] L}
+    (hX : f (polyToFunctionField W X) = g (polyToFunctionField W X))
+    (hy : f (yGen W) = g (yGen W)) : f = g := by
+  have hCR : ∀ r : W.CoordinateRing,
+      f (algebraMap W.CoordinateRing W.FunctionField r)
+        = g (algebraMap W.CoordinateRing W.FunctionField r) := by
+    intro r
+    obtain ⟨p, rfl⟩ := AdjoinRoot.mk_surjective r
+    have hFX : ∀ c : F[X], f (algebraMap W.CoordinateRing W.FunctionField
+          (algebraMap F[X] W.CoordinateRing c))
+        = g (algebraMap W.CoordinateRing W.FunctionField
+          (algebraMap F[X] W.CoordinateRing c)) :=
+      fun c => DFunLike.congr_fun
+        (Polynomial.algHom_ext (f := (f.comp (IsScalarTower.toAlgHom F W.CoordinateRing
+            W.FunctionField)).comp (IsScalarTower.toAlgHom F F[X] W.CoordinateRing))
+          (g := (g.comp (IsScalarTower.toAlgHom F W.CoordinateRing W.FunctionField)).comp
+            (IsScalarTower.toAlgHom F F[X] W.CoordinateRing)) hX) c
+    have hFX' : ∀ c : F[X], f (algebraMap W.CoordinateRing W.FunctionField
+          (AdjoinRoot.mk W.polynomial (C c)))
+        = g (algebraMap W.CoordinateRing W.FunctionField
+          (AdjoinRoot.mk W.polynomial (C c))) := fun c => by
+      rw [show AdjoinRoot.mk W.polynomial (C c) = algebraMap F[X] W.CoordinateRing c from rfl]
+      exact hFX c
+    have hy' : f (algebraMap W.CoordinateRing W.FunctionField (AdjoinRoot.mk W.polynomial Y))
+        = g (algebraMap W.CoordinateRing W.FunctionField (AdjoinRoot.mk W.polynomial Y)) := hy
+    induction p using Polynomial.induction_on with
+    | C c => exact hFX' c
+    | monomial n c _ => simp only [map_mul, map_pow, hy', hFX' c]
+    | add p q hp hq => simp only [map_add, hp, hq]
+  refine AlgHom.ext fun a => ?_
+  obtain ⟨p, q, hq, rfl⟩ := IsFractionRing.div_surjective (A := W.CoordinateRing) a
+  simp only [map_div₀, hCR p, hCR q]
+
+end
+
+section PointPullbackTo
+
+variable {F : Type u} [Field F] {W : Affine F} {L : Type v} [Field L] [Algebra F L]
+
+public theorem eval₂_polynomial_of_equation_map_target {xP yP : L}
+    (h : (W.map (algebraMap F L)).toAffine.Equation xP yP) :
+    W.polynomial.eval₂
+      (Polynomial.aeval xP : F[X] →ₐ[F] L).toRingHom yP = 0 := by
+  rw [equation_iff'] at h
+  simp only [map_a₁, map_a₂, map_a₃, map_a₄, map_a₆] at h
+  simp only [WeierstrassCurve.Affine.polynomial, eval₂_add, eval₂_sub, eval₂_mul, eval₂_pow,
+    eval₂_X, eval₂_C, AlgHom.toRingHom_eq_coe, RingHom.coe_coe, map_add, map_mul, map_pow,
+    Polynomial.aeval_C, Polynomial.aeval_X]
+  linear_combination h
+
+@[expose] public def pointPullbackCoordHomTo {xP yP : L}
+    (h : (W.map (algebraMap F L)).toAffine.Equation xP yP) :
+    W.CoordinateRing →ₐ[F] L where
+  __ := AdjoinRoot.lift
+    (Polynomial.aeval xP : F[X] →ₐ[F] L).toRingHom
+    yP (eval₂_polynomial_of_equation_map_target h)
+  commutes' c := by
+    change AdjoinRoot.lift _ _ (eval₂_polynomial_of_equation_map_target h) (algebraMap F _ c)
+      = algebraMap F L c
+    rw [CoordinateRing.algebraMap_eq_mk_C_C, AdjoinRoot.lift_mk, eval₂_C]
+    exact Polynomial.aeval_C _ c
+
+public theorem pointPullbackCoordHomTo_mk {xP yP : L}
+    (h : (W.map (algebraMap F L)).toAffine.Equation xP yP) (g : F[X][Y]) :
+    pointPullbackCoordHomTo h (CoordinateRing.mk W g)
+      = g.eval₂ (Polynomial.aeval xP : F[X] →ₐ[F] L).toRingHom yP :=
+  AdjoinRoot.lift_mk (eval₂_polynomial_of_equation_map_target h) g
+
+public theorem pointPullbackCoordHomTo_comp_algebraMap {xP yP : L}
+    (h : (W.map (algebraMap F L)).toAffine.Equation xP yP) :
+    (pointPullbackCoordHomTo h).toRingHom.comp (algebraMap F[X] W.CoordinateRing)
+      = (Polynomial.aeval xP : F[X] →ₐ[F] L).toRingHom := by
+  refine RingHom.ext fun p => ?_
+  change pointPullbackCoordHomTo h (algebraMap F[X] _ p) = _
+  rw [algebraMap_polynomial_eq_mk_C, pointPullbackCoordHomTo_mk, eval₂_C]
+
+public theorem pointPullbackCoordHomTo_injective {xP yP : L}
+    (h : (W.map (algebraMap F L)).toAffine.Equation xP yP)
+    (hx : Function.Injective (Polynomial.aeval (R := F) xP)) :
+    Function.Injective (pointPullbackCoordHomTo h) := by
+  have hker : RingHom.ker (pointPullbackCoordHomTo h).toRingHom = ⊥ := by
+    have : Module.Finite F[X] W.CoordinateRing :=
+      Module.Finite.of_basis (CoordinateRing.basis W)
+    refine Ideal.eq_bot_of_under_eq_bot (R := F[X]) ?_
+    rw [Ideal.under_def, RingHom.comap_ker, pointPullbackCoordHomTo_comp_algebraMap,
+      ← RingHom.injective_iff_ker_eq_bot]
+    exact hx
+  exact (RingHom.injective_iff_ker_eq_bot (pointPullbackCoordHomTo h).toRingHom).mpr hker
+
+@[expose] public def pointPullbackHomTo {xP yP : L}
+    (h : (W.map (algebraMap F L)).toAffine.Equation xP yP)
+    (hx : Function.Injective (Polynomial.aeval (R := F) xP)) :
+    W.FunctionField →ₐ[F] L :=
+  IsFractionRing.liftAlgHom (pointPullbackCoordHomTo_injective h hx)
+
+public theorem pointPullbackHomTo_algebraMap {xP yP : L}
+    (h : (W.map (algebraMap F L)).toAffine.Equation xP yP)
+    (hx : Function.Injective (Polynomial.aeval (R := F) xP)) (r : W.CoordinateRing) :
+    pointPullbackHomTo h hx (algebraMap W.CoordinateRing W.FunctionField r)
+      = pointPullbackCoordHomTo h r :=
+  IsFractionRing.lift_algebraMap (pointPullbackCoordHomTo_injective h hx) r
+
+public theorem pointPullbackHomTo_polyToFunctionField_X {xP yP : L}
+    (h : (W.map (algebraMap F L)).toAffine.Equation xP yP)
+    (hx : Function.Injective (Polynomial.aeval (R := F) xP)) :
+    pointPullbackHomTo h hx (polyToFunctionField W X) = xP := by
+  rw [polyToFunctionField_apply, pointPullbackHomTo_algebraMap,
+    algebraMap_polynomial_eq_mk_C, pointPullbackCoordHomTo_mk, eval₂_C]
+  exact Polynomial.aeval_X _
+
+public theorem pointPullbackHomTo_yGen {xP yP : L}
+    (h : (W.map (algebraMap F L)).toAffine.Equation xP yP)
+    (hx : Function.Injective (Polynomial.aeval (R := F) xP)) :
+    pointPullbackHomTo h hx (yGen W) = yP := by
+  change pointPullbackHomTo h hx (algebraMap _ _ (CoordinateRing.mk W Y)) = _
+  rw [pointPullbackHomTo_algebraMap, pointPullbackCoordHomTo_mk]
+  exact eval₂_X _ _
+
+end PointPullbackTo
+
+end WeierstrassCurve.Affine
+
+namespace ModularCurve
+
+section GeomMorphBC
+
+variable {K : Type*} [Field K] [DecidableEq K]
+variable {E E' : Affine K} [GenusOnePlaceGate E] [AbelTheorem E]
+  [GenusOnePlaceGate E'] [AbelTheorem E']
+variable (ι : E'.FunctionField →ₐ[K] E.FunctionField)
+variable (hι : ι.toRingHom.IsIntegral) (hfin : FiniteAlong K ι) (hN : NormFormulaAlong K ι hfin)
+
+@[expose] public def kw_fdn2_qephod_hend7_geomMorphBC : E.Point → E'.Point :=
+  fun P => (placeOfPointEquiv E').symm ((placeOfPoint P).restrictAlong ι hι)
+
+local notation "gBC" => kw_fdn2_qephod_hend7_geomMorphBC ι hι
+
+omit [DecidableEq K] [E.AbelTheorem] [E'.AbelTheorem] in
+public theorem kw_fdn2_qephod_hend7_placeOfPoint_geomMorphBC (P : E.Point) :
+    (placeOfPoint P).restrictAlong ι hι = placeOfPoint (gBC P) :=
+  (placeOfPoint_placeOfPointEquiv_symm E' _).symm
+
+omit [DecidableEq K] [E.AbelTheorem] [E'.AbelTheorem] in
+public theorem kw_fdn2_qephod_hend7_pushforwardDegZero_pointDivisor_geomMorphBC (P : E.Point) :
+    Pic0.pushforwardAlongDegZero ι hι (pointDivisor P)
+      = pointDivisor (gBC P) - pointDivisor (gBC 0) := by
+  refine Subtype.ext ?_
+  rw [Pic0.coe_pushforwardAlongDegZero, coe_pointDivisor, map_sub,
+    pushforwardAlong_single_eq ι hι, pushforwardAlong_single_eq ι hι,
+    kw_fdn2_qephod_hend7_placeOfPoint_geomMorphBC ι hι P,
+    kw_fdn2_qephod_hend7_placeOfPoint_geomMorphBC ι hι 0]
+  push_cast
+  rw [coe_pointDivisor, coe_pointDivisor, sub_sub_sub_cancel_right]
+
+omit [DecidableEq K] [E.AbelTheorem] [E'.AbelTheorem] in
+public theorem kw_fdn2_qephod_hend7_pushforwardHom_pointClass_eq_sub (P : E.Point) :
+    Pic0.pushforwardAlongHom ι hι hfin hN
+        (pointClass P)
+      = pointClass (gBC P) - pointClass (gBC 0) := by
+  change Pic0.pushforwardAlongHom ι hι hfin _ (Pic0.mk (pointDivisor P))
+      = Pic0.mk (pointDivisor (gBC P)) - Pic0.mk (pointDivisor (gBC 0))
+  rw [Pic0.pushforwardAlongHom_mk,
+    kw_fdn2_qephod_hend7_pushforwardDegZero_pointDivisor_geomMorphBC ι hι P]
+  rfl
+
+public theorem kw_fdn2_qephod_hend7_pmop_eq_geomMorphBC_sub (P : E.Point) :
+    pointMapOfPushforward ι hι hfin hN P
+      = gBC P - gBC 0 := by
+  rw [pointMapOfPushforward_apply,
+    kw_fdn2_qephod_hend7_pushforwardHom_pointClass_eq_sub ι hι hfin hN P, map_sub,
+    genusOnePic0Equiv_apply, genusOnePic0Equiv_apply, pic0ToPoint_pointClass,
+    pic0ToPoint_pointClass]
+
+end GeomMorphBC
+
+section ScalarExtension
+
+variable {R₀ : Type u} [Field R₀] (W : WeierstrassCurve R₀)
+variable (F : Type v) [Field F] [Algebra R₀ F]
+variable (F' : Type w) [Field F'] [Algebra R₀ F']
+variable [Algebra F F'] [IsScalarTower R₀ F F']
+
+attribute [local instance] Algebra.TensorProduct.rightAlgebra
+
+omit [Algebra R₀ F] [IsScalarTower R₀ F F'] in
+public theorem kw_transcendental_polyToFunctionField_X_over_baseGeneral :
+    Transcendental F (polyToFunctionField (W⁄F') X) := by
+  classical
+  exact
+    Transcendental.of_tower_top F (L := F')
+      (transcendental_polyToFunctionField_X (W := (W⁄F')))
+
+public theorem kw_equation_map_polyToFunctionField_yGen_over_baseGeneral :
+    ((W⁄F).map (algebraMap F (W⁄F').FunctionField)).toAffine.Equation
+      (polyToFunctionField (W⁄F') X) (yGen (W⁄F')) := by
+  classical
+  have hcurve : (W⁄F).map (algebraMap F (W⁄F').FunctionField)
+      = (W⁄F').map (algebraMap F' (W⁄F').FunctionField) := by
+    change (W.map _).map _ = (W.map _).map _
+    rw [WeierstrassCurve.map_map, WeierstrassCurve.map_map]
+    congr 1
+    exact ((IsScalarTower.algebraMap_eq R₀ F (W⁄F').FunctionField).symm).trans
+      (IsScalarTower.algebraMap_eq R₀ F' (W⁄F').FunctionField)
+  exact hcurve ▸ equation_map_polyToFunctionField_yGen (W := (W⁄F'))
+
+@[expose] public def kw_functionFieldMapAlongGeneral :
+    (W⁄F).FunctionField →ₐ[F] (W⁄F').FunctionField :=
+  pointPullbackHomTo (kw_equation_map_polyToFunctionField_yGen_over_baseGeneral W F F')
+    ((injective_iff_map_eq_zero _).mpr fun p hp =>
+      transcendental_iff.mp (kw_transcendental_polyToFunctionField_X_over_baseGeneral W F F') p
+        hp)
+
+public theorem kw_functionFieldMapAlongGeneral_polyToFunctionField_X :
+    kw_functionFieldMapAlongGeneral W F F' (polyToFunctionField (W⁄F) X)
+      = polyToFunctionField (W⁄F') X := by
+  classical
+  exact
+    pointPullbackHomTo_polyToFunctionField_X _ _
+
+public theorem kw_functionFieldMapAlongGeneral_yGen :
+    kw_functionFieldMapAlongGeneral W F F' (yGen (W⁄F)) = yGen (W⁄F') := by
+  classical
+  exact
+    pointPullbackHomTo_yGen _ _
+
+@[expose] public def KwFunctionFieldTensorIsDomainGeneral : Prop :=
+  IsDomain ((W⁄F).FunctionField ⊗[F] F')
+
+public scoped instance kw_isScalarTower_base_right_tensorGeneral :
+    IsScalarTower R₀ F' ((W⁄F).FunctionField ⊗[F] F') := by
+  refine IsScalarTower.of_algebraMap_eq' (RingHom.ext fun r => ?_)
+  rw [RingHom.comp_apply, Algebra.TensorProduct.right_algebraMap_apply,
+    IsScalarTower.algebraMap_apply R₀ F F',
+    show algebraMap R₀ ((W⁄F).FunctionField ⊗[F] F') r
+      = (algebraMap F ((W⁄F).FunctionField ⊗[F] F')) (algebraMap R₀ F r) from
+        IsScalarTower.algebraMap_apply R₀ F ((W⁄F).FunctionField ⊗[F] F') r,
+    Algebra.TensorProduct.algebraMap_apply, Algebra.algebraMap_eq_smul_one,
+    Algebra.algebraMap_eq_smul_one, TensorProduct.smul_tmul, Algebra.algebraMap_eq_smul_one]
+
+section
+
+variable [IsDomain ((W⁄F).FunctionField ⊗[F] F')]
+
+public scoped instance kw_isScalarTower_base_right_fracTensorGeneral :
+    IsScalarTower R₀ F' (FractionRing ((W⁄F).FunctionField ⊗[F] F')) :=
+  IsScalarTower.of_algebraMap_eq fun r =>
+    (IsScalarTower.algebraMap_apply R₀ ((W⁄F).FunctionField ⊗[F] F')
+        (FractionRing ((W⁄F).FunctionField ⊗[F] F')) r).trans <|
+      (congrArg (algebraMap ((W⁄F).FunctionField ⊗[F] F')
+          (FractionRing ((W⁄F).FunctionField ⊗[F] F')))
+        (IsScalarTower.algebraMap_apply R₀ F' ((W⁄F).FunctionField ⊗[F] F') r)).trans
+      (IsScalarTower.algebraMap_apply F' ((W⁄F).FunctionField ⊗[F] F')
+        (FractionRing ((W⁄F).FunctionField ⊗[F] F')) (algebraMap R₀ F' r)).symm
+
+
+end
+
+public theorem kw_equation_tensorFracXYGeneral :
+    ((W⁄F').map (algebraMap F' (FractionRing ((W⁄F).FunctionField ⊗[F] F')))).toAffine.Equation
+      (algebraMap ((W⁄F).FunctionField ⊗[F] F') (FractionRing ((W⁄F).FunctionField ⊗[F] F'))
+        ((polyToFunctionField (W⁄F) X) ⊗ₜ[F] (1 : F')))
+      (algebraMap ((W⁄F).FunctionField ⊗[F] F') (FractionRing ((W⁄F).FunctionField ⊗[F] F'))
+        ((yGen (W⁄F)) ⊗ₜ[F] (1 : F'))) := by
+  classical
+  have hcurve : (W⁄F').map (algebraMap F' (FractionRing ((W⁄F).FunctionField ⊗[F] F')))
+      = W⁄(FractionRing ((W⁄F).FunctionField ⊗[F] F')) := by
+    change (W.map _).map _ = W.map _
+    rw [WeierstrassCurve.map_map]; congr 1
+    exact (IsScalarTower.algebraMap_eq R₀ F'
+      (FractionRing ((W⁄F).FunctionField ⊗[F] F'))).symm
+  rw [hcurve]
+  exact Equation.baseChange (W := W) (S := R₀)
+    (f := (IsScalarTower.toAlgHom R₀ ((W⁄F).FunctionField ⊗[F] F')
+            (FractionRing ((W⁄F).FunctionField ⊗[F] F'))).comp
+          (Algebra.TensorProduct.includeLeft (R := F) (S := R₀)))
+    (equation_map_polyToFunctionField_yGen (W := (W⁄F)))
+
+omit [Algebra R₀ F'] [IsScalarTower R₀ F F'] in
+public theorem kw_transcendental_tensorFracXGeneral :
+    Function.Injective (Polynomial.aeval (R := F')
+      (algebraMap ((W⁄F).FunctionField ⊗[F] F') (FractionRing ((W⁄F).FunctionField ⊗[F] F'))
+        ((polyToFunctionField (W⁄F) X) ⊗ₜ[F] (1 : F')))) := by
+  classical
+  rw [show algebraMap ((W⁄F).FunctionField ⊗[F] F') (FractionRing ((W⁄F).FunctionField ⊗[F] F'))
+        ((polyToFunctionField (W⁄F) X) ⊗ₜ[F] (1 : F'))
+      = IsScalarTower.toAlgHom F' ((W⁄F).FunctionField ⊗[F] F')
+          (FractionRing ((W⁄F).FunctionField ⊗[F] F'))
+          ((polyToFunctionField (W⁄F) X) ⊗ₜ[F] (1 : F')) from rfl,
+    Polynomial.aeval_algHom]
+  refine (IsFractionRing.injective ((W⁄F).FunctionField ⊗[F] F')
+    (FractionRing ((W⁄F).FunctionField ⊗[F] F'))).comp ?_
+  have heq : (Polynomial.aeval (R := F')
+        ((polyToFunctionField (W⁄F) X) ⊗ₜ[F] (1 : F')
+          : (W⁄F).FunctionField ⊗[F] F')).toRingHom
+      = ((Algebra.TensorProduct.map
+            (Polynomial.aeval (R := F) (polyToFunctionField (W⁄F) X))
+            (AlgHom.id F F')).toRingHom.comp
+          (Algebra.TensorProduct.comm F F' F[X]).toAlgHom.toRingHom).comp
+          (polyEquivTensor' F F').toAlgHom.toRingHom := by
+    refine Polynomial.ringHom_ext (fun c => ?_) ?_
+    · change aeval _ (C c) = Algebra.TensorProduct.map _ _
+          (Algebra.TensorProduct.comm F F' F[X] (polyEquivTensor' F F' (C c)))
+      rw [show (polyEquivTensor' F F') (C c) = c ⊗ₜ[F] (1 : F[X]) from by
+            rw [coe_polyEquivTensor', polyEquivTensor_apply, eval₂_C]; rfl,
+        Algebra.TensorProduct.comm_tmul, Algebra.TensorProduct.map_tmul, Polynomial.aeval_C,
+        Algebra.TensorProduct.right_algebraMap_apply, AlgHom.coe_id, id_eq, map_one]
+    · change aeval _ (X : F'[X]) = Algebra.TensorProduct.map _ _
+          (Algebra.TensorProduct.comm F F' F[X] (polyEquivTensor' F F' X))
+      rw [show (polyEquivTensor' F F') X = (1:F') ⊗ₜ[F] (X : F[X]) from by
+            rw [coe_polyEquivTensor', polyEquivTensor_apply, eval₂_X],
+        Algebra.TensorProduct.comm_tmul, Algebra.TensorProduct.map_tmul, Polynomial.aeval_X,
+        AlgHom.coe_id, id_eq, Polynomial.aeval_X]
+  have hinj : Function.Injective
+      (((Algebra.TensorProduct.map
+          (Polynomial.aeval (R := F) (polyToFunctionField (W⁄F) X))
+          (AlgHom.id F F')).toRingHom.comp
+        (Algebra.TensorProduct.comm F F' F[X]).toAlgHom.toRingHom).comp
+        (polyEquivTensor' F F').toAlgHom.toRingHom) :=
+    ((Module.Flat.rTensor_preserves_injective_linearMap (M := F')
+        (Polynomial.aeval (R := F) (polyToFunctionField (W⁄F) X)).toLinearMap
+        ((injective_iff_map_eq_zero _).mpr fun p hp =>
+          transcendental_iff.mp (transcendental_polyToFunctionField_X (W := (W⁄F))) p hp)).comp
+      (Algebra.TensorProduct.comm F F' F[X]).injective).comp (polyEquivTensor' F F').injective
+  intro p q hpq
+  refine hinj ?_
+  have := DFunLike.congr_fun heq
+  exact (this p).symm.trans (hpq.trans (this q))
+
+section
+
+variable [IsDomain ((W⁄F).FunctionField ⊗[F] F')]
+
+@[expose] public def kw_functionFieldTensorFracHomGeneral :
+    (W⁄F').FunctionField →ₐ[F'] FractionRing ((W⁄F).FunctionField ⊗[F] F') :=
+  pointPullbackHomTo (kw_equation_tensorFracXYGeneral W F F')
+    (kw_transcendental_tensorFracXGeneral W F F')
+
+public theorem kw_functionFieldTensorFracHomGeneral_X :
+    kw_functionFieldTensorFracHomGeneral W F F' (polyToFunctionField (W⁄F') X)
+      = algebraMap ((W⁄F).FunctionField ⊗[F] F') _
+          ((polyToFunctionField (W⁄F) X) ⊗ₜ[F] (1 : F')) := by
+  classical
+  exact
+    pointPullbackHomTo_polyToFunctionField_X _ _
+
+public theorem kw_functionFieldTensorFracHomGeneral_yGen :
+    kw_functionFieldTensorFracHomGeneral W F F' (yGen (W⁄F'))
+      = algebraMap ((W⁄F).FunctionField ⊗[F] F') _ ((yGen (W⁄F)) ⊗ₜ[F] (1 : F')) := by
+  classical
+  exact
+    pointPullbackHomTo_yGen _ _
+
+public theorem kw_functionFieldTensorFracHomGeneral_bijective :
+    Function.Bijective (kw_functionFieldTensorFracHomGeneral W F F') := by
+  classical
+  refine ⟨(kw_functionFieldTensorFracHomGeneral W F F').injective, ?_⟩
+  set ψ := kw_functionFieldTensorFracHomGeneral W F F'
+  have hκ : (ψ.restrictScalars F).comp (kw_functionFieldMapAlongGeneral W F F')
+      = (IsScalarTower.toAlgHom F ((W⁄F).FunctionField ⊗[F] F')
+          (FractionRing ((W⁄F).FunctionField ⊗[F] F'))).comp
+          (Algebra.TensorProduct.includeLeft (R := F)) := by
+    refine kw_functionField_algHom_ext ?_ ?_
+    · change ψ (kw_functionFieldMapAlongGeneral W F F' (polyToFunctionField (W⁄F) X)) = _
+      rw [kw_functionFieldMapAlongGeneral_polyToFunctionField_X,
+        kw_functionFieldTensorFracHomGeneral_X]
+      rfl
+    · change ψ (kw_functionFieldMapAlongGeneral W F F' (yGen (W⁄F))) = _
+      rw [kw_functionFieldMapAlongGeneral_yGen, kw_functionFieldTensorFracHomGeneral_yGen]
+      rfl
+  have hT_sub : ∀ t : (W⁄F).FunctionField ⊗[F] F',
+      algebraMap ((W⁄F).FunctionField ⊗[F] F') (FractionRing _) t ∈ ψ.toRingHom.fieldRange := by
+    intro t
+    induction t with
+    | add _ _ hx hy => simp only [map_add]; exact add_mem hx hy
+    | tmul a c =>
+      rw [show (a ⊗ₜ[F] c : (W⁄F).FunctionField ⊗[F] F') = (a ⊗ₜ[F] 1) * (1 ⊗ₜ[F] c) from
+            by rw [Algebra.TensorProduct.tmul_mul_tmul, mul_one, one_mul],
+        map_mul]
+      refine mul_mem ?_ ⟨algebraMap F' _ c, ?_⟩
+      · exact ⟨kw_functionFieldMapAlongGeneral W F F' a, DFunLike.congr_fun hκ a⟩
+      · simp only [AlgHom.toRingHom_eq_coe, RingHom.coe_coe, ψ.commutes,
+          IsScalarTower.algebraMap_apply F' ((W⁄F).FunctionField ⊗[F] F')
+            (FractionRing ((W⁄F).FunctionField ⊗[F] F')),
+          Algebra.TensorProduct.right_algebraMap_apply]
+  intro z
+  obtain ⟨t, s, _, rfl⟩ := IsFractionRing.div_surjective
+    (A := (W⁄F).FunctionField ⊗[F] F') (K := FractionRing _) z
+  exact div_mem (hT_sub t) (hT_sub s)
+
+@[expose] public def kw_functionFieldTensorFracEquivGeneral :
+    (W⁄F').FunctionField ≃ₐ[F'] FractionRing ((W⁄F).FunctionField ⊗[F] F') :=
+  AlgEquiv.ofBijective _ (kw_functionFieldTensorFracHomGeneral_bijective W F F')
+
+end
+
+local notation3 "CR" => (W⁄F).toAffine.CoordinateRing
+local notation3 "FFₗ" => (W⁄F).FunctionField
+
+omit [Algebra R₀ F'] [IsScalarTower R₀ F F'] in
+public theorem kw_coordinateRingMap_basisGeneral (i : ℕ × Fin 2) :
+    CoordinateRing.map (W⁄F).toAffine (algebraMap F F')
+        (kw_coordinateRingBasis (W⁄F).toAffine i)
+      = kw_coordinateRingBasis ((W⁄F).toAffine.map (algebraMap F F')) i := by
+  classical
+  obtain ⟨n, j⟩ := i
+  simp only [kw_coordinateRingBasis, Module.Basis.smulTower_apply,
+    Polynomial.coe_basisMonomials, CoordinateRing.map_smul]
+  congr 1
+  · simp [Polynomial.map_monomial]
+  · rcases j with ⟨j, hj⟩
+    interval_cases j <;>
+      simp [CoordinateRing.basis_apply, CoordinateRing.map,
+        AdjoinRoot.lift_root, AdjoinRoot.powerBasis'_gen]
+
+@[expose] public def kw_coordinateRingMapAlongGeneral :
+    CR →ₐ[F] ((W⁄F).toAffine.map (algebraMap F F')).CoordinateRing where
+  __ := CoordinateRing.map (W⁄F).toAffine (algebraMap F F')
+  commutes' r := by
+    simp only [RingHom.toMonoidHom_eq_coe, OneHom.toFun_eq_coe, MonoidHom.toOneHom_coe,
+      MonoidHom.coe_ofClass]
+    change CoordinateRing.map (W⁄F).toAffine (algebraMap F F') (algebraMap F CR r) = algebraMap F _
+      r
+    rw [IsScalarTower.algebraMap_apply F F[X] CR,
+      show (algebraMap F F[X] r) = Polynomial.C r from rfl,
+      show (algebraMap F[X] CR) (C r) = (C r : F[X]) • (1 : CR) by
+        rw [Algebra.smul_def, mul_one],
+      CoordinateRing.map_smul, map_one, Polynomial.map_C,
+      IsScalarTower.algebraMap_apply F F' ((W⁄F).toAffine.map (algebraMap F F')).CoordinateRing,
+      IsScalarTower.algebraMap_apply F' F'[X]
+        ((W⁄F).toAffine.map (algebraMap F F')).CoordinateRing,
+      show (algebraMap F' F'[X]) ((algebraMap F F') r) = Polynomial.C ((algebraMap F F') r)
+        from rfl,
+      Algebra.smul_def, mul_one]
+
+omit [Algebra R₀ F'] [IsScalarTower R₀ F F'] in
+public theorem kw_coordinateRingTensor_isDomainGeneral : IsDomain (CR ⊗[F] F') := by
+  classical
+  suffices h : IsDomain (F' ⊗[F] CR) by
+    have := h
+    exact Function.Injective.isDomain (Algebra.TensorProduct.comm F CR F').toRingHom
+      (Algebra.TensorProduct.comm F CR F').injective
+  set W'' := (W⁄F).toAffine.map (algebraMap F F') with hW''
+  let θ : F' ⊗[F] CR →ₐ[F'] W''.CoordinateRing :=
+    AlgHom.liftEquiv F F' CR W''.CoordinateRing (kw_coordinateRingMapAlongGeneral W F F')
+  have hθ : Function.Injective θ := by
+    let bT : Module.Basis (ℕ × Fin 2) F' (F' ⊗[F] CR) :=
+      Algebra.TensorProduct.basis F' (kw_coordinateRingBasis (W⁄F).toAffine)
+    let bD : Module.Basis (ℕ × Fin 2) F' W''.CoordinateRing := kw_coordinateRingBasis W''
+    have key : ∀ i, θ.toLinearMap (bT i) = (bT.equiv bD (Equiv.refl _)) (bT i) := fun i => by
+      rw [Module.Basis.equiv_apply, Equiv.refl_apply, AlgHom.toLinearMap_apply]
+      simp only [bT, Algebra.TensorProduct.basis_apply, θ, AlgHom.liftEquiv_tmul, one_smul]
+      exact kw_coordinateRingMap_basisGeneral W F F' i
+    have heq : (θ : F' ⊗[F] CR → W''.CoordinateRing) = bT.equiv bD (Equiv.refl _) :=
+      funext fun x => DFunLike.congr_fun (bT.ext key : θ.toLinearMap = _) x
+    exact heq ▸ (bT.equiv bD (Equiv.refl _)).injective
+  exact Function.Injective.isDomain θ.toRingHom hθ
+
+omit [Algebra R₀ F'] [IsScalarTower R₀ F F'] in
+public theorem kw_functionFieldTensorIsDomain_dischargeGeneral :
+    KwFunctionFieldTensorIsDomainGeneral W F F' := by
+  classical
+  change IsDomain (FFₗ ⊗[F] F')
+  have hCR : IsDomain (CR ⊗[F] F') := kw_coordinateRingTensor_isDomainGeneral W F F'
+  let : Algebra (CR ⊗[F] F') (FFₗ ⊗[F] F') :=
+    (Algebra.TensorProduct.map (IsScalarTower.toAlgHom F CR FFₗ)
+      (AlgHom.id F F')).toRingHom.toAlgebra
+  have hst : IsScalarTower CR (CR ⊗[F] F') (FFₗ ⊗[F] F') :=
+    IsScalarTower.of_algebraMap_eq (R := CR) (S := CR ⊗[F] F') (A := FFₗ ⊗[F] F') fun c => by
+      change Algebra.TensorProduct.map (IsScalarTower.toAlgHom F CR FFₗ) (AlgHom.id F F')
+          (algebraMap CR (CR ⊗[F] F') c) = algebraMap CR (FFₗ ⊗[F] F') c
+      rfl
+  have hloc : IsLocalization
+      (Algebra.algebraMapSubmonoid (CR ⊗[F] F') (nonZeroDivisors CR)) (FFₗ ⊗[F] F') :=
+    IsLocalization.tensorProduct_tensorProduct F F' (nonZeroDivisors CR) FFₗ (by
+      ext x; simp [RingHom.algebraMap_toAlgebra, Algebra.TensorProduct.map_tmul])
+  have hle : Algebra.algebraMapSubmonoid (CR ⊗[F] F') (nonZeroDivisors CR)
+      ≤ nonZeroDivisors (CR ⊗[F] F') := by
+    rintro _ ⟨c, hc, rfl⟩
+    refine mem_nonZeroDivisors_of_ne_zero ?_
+    have hinj : Function.Injective (algebraMap CR (CR ⊗[F] F')) :=
+      Algebra.TensorProduct.includeLeft_injective (S := F) (algebraMap F F').injective
+    exact fun h => (nonZeroDivisors.ne_zero hc) (hinj (by
+      simp only [_root_.map_zero] at h ⊢; exact h))
+  exact IsLocalization.isDomain_of_le_nonZeroDivisors
+    (M := Algebra.algebraMapSubmonoid (CR ⊗[F] F') (nonZeroDivisors CR)) _ hle
+
+end ScalarExtension
+
+public theorem fractionRing_span_and_independent
+    {T : Type u} {T' : Type v} [CommRing T] [IsDomain T] [CommRing T'] [IsDomain T']
+    {ι : Type*} [Fintype ι]
+    (ιT : T' →+* T) (ιFr : FractionRing T' →+* FractionRing T)
+    (hιT_inj : Function.Injective ιT) (hιT_fin : ιT.Finite)
+    (hιFr_am : ∀ t, ιFr (algebraMap T' (FractionRing T') t) =
+      algebraMap T (FractionRing T) (ιT t))
+    (e : ι → T)
+    (hspanT : ∀ t, ∃ c : ι → T', t = ∑ i, ιT (c i) * e i)
+    (hliT : ∀ c : ι → T', ∑ i, ιT (c i) * e i = 0 → ∀ j, c j = 0) :
+    (∀ z : FractionRing T, ∃ d : ι → FractionRing T',
+      z = ∑ i, ιFr (d i) * algebraMap T (FractionRing T) (e i)) ∧
+    (∀ d : ι → FractionRing T',
+      ∑ i, ιFr (d i) * algebraMap T (FractionRing T) (e i) = 0 → ∀ j, d j = 0) := by
+  classical
+  let FrT := FractionRing T
+  let FrT' := FractionRing T'
+  let bFr : ι → FrT := fun i => algebraMap T FrT (e i)
+  have hint : ∀ s : T, s ≠ 0 → ∃ (u : T) (s₀ : T'), s₀ ≠ 0 ∧ s * u = ιT s₀ := by
+    intro s hs
+    obtain ⟨p, hp_monic, hp_eval⟩ : ιT.IsIntegralElem s := hιT_fin.to_isIntegral s
+    obtain ⟨q, hq_eq, hq_ndvd⟩ := Polynomial.exists_eq_pow_rootMultiplicity_mul_and_not_dvd p
+      hp_monic.ne_zero 0
+    simp only [Polynomial.C_0, sub_zero] at hq_eq hq_ndvd
+    have hq0 : q.coeff 0 ≠ 0 := fun h => hq_ndvd (Polynomial.X_dvd_iff.mpr h)
+    have hqs : q.eval₂ ιT s = 0 := by
+      have h := hp_eval
+      rw [hq_eq, Polynomial.eval₂_mul, Polynomial.eval₂_pow, Polynomial.eval₂_X,
+        mul_eq_zero] at h
+      exact h.resolve_left (pow_ne_zero _ hs)
+    have h3 : ιT (q.coeff 0) + s * (q.divX).eval₂ ιT s = 0 := by
+      have h := congrArg (Polynomial.eval₂ ιT s) (Polynomial.divX_mul_X_add q)
+      rw [Polynomial.eval₂_add, Polynomial.eval₂_mul, Polynomial.eval₂_X,
+        Polynomial.eval₂_C, hqs] at h
+      simpa only [add_comm, mul_comm] using h
+    exact ⟨(q.divX).eval₂ ιT s, -q.coeff 0, neg_ne_zero.mpr hq0,
+      by rw [map_neg]; exact eq_neg_of_add_eq_zero_right h3⟩
+  have hspanFr : ∀ z : FrT, ∃ d : ι → FrT', z = ∑ i, ιFr (d i) * bFr i := by
+    intro z
+    obtain ⟨t, s, _, rfl⟩ := IsFractionRing.div_surjective (A := T) (K := FrT) z
+    rcases eq_or_ne s 0 with rfl | hs'
+    · exact ⟨0, by simp⟩
+    obtain ⟨u, s₀, hs₀, hsu⟩ := hint s hs'
+    have hιTs₀ : ιT s₀ ≠ 0 := fun h => hs₀ (hιT_inj (h.trans (map_zero ιT).symm))
+    have hu_ne : u ≠ 0 := fun h => hιTs₀ (by rw [← hsu, h, mul_zero])
+    obtain ⟨c, hc⟩ := hspanT (t * u)
+    refine ⟨fun i => (algebraMap T' FrT' s₀)⁻¹ * algebraMap T' FrT' (c i), ?_⟩
+    have hum := (map_ne_zero_iff _ (IsFractionRing.injective T FrT)).mpr hu_ne
+    have hz : (algebraMap T FrT t) / (algebraMap T FrT s)
+        = (algebraMap T FrT (ιT s₀))⁻¹ * algebraMap T FrT (t * u) := by
+      rw [← div_eq_inv_mul, ← hsu, map_mul, map_mul,
+        ← div_mul_div_comm, div_self hum, mul_one]
+    rw [hz, hc, map_sum, Finset.mul_sum]
+    refine Finset.sum_congr rfl fun i _ => ?_
+    rw [map_mul, map_mul, ← hιFr_am s₀, ← hιFr_am (c i), ← map_inv₀ ιFr, mul_assoc]
+  have hliFr : ∀ d : ι → FrT', ∑ i, ιFr (d i) * bFr i = 0 → ∀ j, d j = 0 := by
+    intro d hd j
+    obtain ⟨q, hq⟩ := IsLocalization.exist_integer_multiples_of_finset
+      (nonZeroDivisors T') (Finset.univ.image d)
+    choose p hp using fun i => hq (d i) (Finset.mem_image_of_mem d (Finset.mem_univ i))
+    have hq0 : (algebraMap T' FrT' (q : T')) ≠ 0 :=
+      (map_ne_zero_iff _ (IsFractionRing.injective T' FrT')).mpr (nonZeroDivisors.ne_zero q.2)
+    have hp' : ∀ i, algebraMap T' FrT' (p i) = algebraMap T' FrT' (q : T') * d i := fun i => by
+      rw [hp i, Algebra.smul_def]
+    have hd' : algebraMap T FrT (∑ i, ιT (p i) * e i) = 0 := by
+      have h1 : ∑ i, ιFr (algebraMap T' FrT' (q : T')) * (ιFr (d i) * bFr i) = 0 := by
+        rw [← Finset.mul_sum, hd, mul_zero]
+      rw [map_sum, ← h1]; refine Finset.sum_congr rfl fun i _ => ?_
+      rw [map_mul, ← hιFr_am (p i), ← mul_assoc, ← map_mul, ← hp' i]
+    have hpj : p j = 0 :=
+      hliT p ((IsFractionRing.injective T FrT) (by simpa using hd')) j
+    have hthis : algebraMap T' FrT' (q : T') * d j = 0 := by
+      rw [← hp' j, hpj, map_zero]
+    exact (mul_eq_zero.mp hthis).resolve_left hq0
+  exact ⟨hspanFr, hliFr⟩
+
+end ModularCurve
+
+end
+end FunctionFieldBaseChange
 
 end privateSection

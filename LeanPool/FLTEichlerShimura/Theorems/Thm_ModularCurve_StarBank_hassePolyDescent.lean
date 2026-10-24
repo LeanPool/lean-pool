@@ -158,6 +158,72 @@ p2m_export "ModularCurve" "jqModC etaProd dedekindEtaUnit constantCoeff_dedekind
   jqModC_eq_qExpansion_E4_cube_div_discriminant"
 end ModularCurve
 p2m_open_scoped "ModularCurve" in
+private theorem ModularCurve.StarBank.coeff_integral_of_triangular_relation
+    (N : ℕ) (P : Polynomial ℂ) (T : PowerSeries ℤ)
+    (hkey : ∀ i : ℕ, i ≤ N →
+      ((PowerSeries.coeff (N - i) T : ℤ) : ℂ)
+        = ∑ a ∈ Finset.range (N + 1), P.coeff a *
+            (if i ≤ a
+              then ((PowerSeries.coeff (a - i) (jNum ^ a * dedekindEtaUnit ^ N) : ℤ) : ℂ)
+              else 0))
+    (hdiag : ∀ i : ℕ, PowerSeries.coeff 0 (jNum ^ i * dedekindEtaUnit ^ N) = 1) :
+    ∀ i : ℕ, i ≤ N → P.coeff i ∈ Set.range ⇑(Int.castRingHom ℂ) := by
+  classical
+  have hstep : ∀ i : ℕ, i ≤ N →
+      (∀ a : ℕ, a ≤ N → i < a → P.coeff a ∈ Set.range ⇑(Int.castRingHom ℂ)) →
+      P.coeff i ∈ Set.range ⇑(Int.castRingHom ℂ) := by
+    intro i hi hIH
+    have hk := hkey i hi
+    have hmem : i ∈ Finset.range (N + 1) := Finset.mem_range.mpr (by omega)
+    have hdiagterm : (if i ≤ i
+        then ((PowerSeries.coeff (i - i) (jNum ^ i * dedekindEtaUnit ^ N) : ℤ) : ℂ)
+        else 0) = 1 := by
+      rw [ite_eq_left le_rfl, Nat.sub_self, hdiag i, Int.cast_one]
+    rw [← Finset.add_sum_erase _ _ hmem, hdiagterm, mul_one] at hk
+    have hPi : P.coeff i
+        = ((PowerSeries.coeff (N - i) T : ℤ) : ℂ)
+          - ∑ a ∈ (Finset.range (N + 1)).erase i, P.coeff a *
+              (if i ≤ a
+                then ((PowerSeries.coeff (a - i) (jNum ^ a * dedekindEtaUnit ^ N) : ℤ) : ℂ)
+                else 0) := by
+      rw [hk]
+      ring
+    rw [hPi]
+    have hSmem : (∑ a ∈ (Finset.range (N + 1)).erase i, P.coeff a *
+        (if i ≤ a
+          then ((PowerSeries.coeff (a - i) (jNum ^ a * dedekindEtaUnit ^ N) : ℤ) : ℂ)
+          else 0)) ∈ (Int.castRingHom ℂ).range := by
+      refine Subring.sum_mem _ fun a ha => ?_
+      by_cases hia : i ≤ a
+      · have haN : a ≤ N := by
+          have := Finset.mem_range.mp (Finset.mem_of_mem_erase ha)
+          omega
+        have hlt : i < a := lt_of_le_of_ne hia (Ne.symm (Finset.ne_of_mem_erase ha))
+        obtain ⟨z, hz⟩ := hIH a haN hlt
+        rw [ite_eq_left hia, ← hz]
+        refine Subring.mul_mem _ (RingHom.mem_range.mpr ⟨z, rfl⟩)
+          (RingHom.mem_range.mpr
+            ⟨PowerSeries.coeff (a - i) (jNum ^ a * dedekindEtaUnit ^ N),
+              by rw [Int.coe_castRingHom]⟩)
+      · rw [ite_eq_right hia, mul_zero]
+        exact Subring.zero_mem _
+    obtain ⟨zS, hzS⟩ := RingHom.mem_range.mp hSmem
+    exact ⟨PowerSeries.coeff (N - i) T - zS, by rw [map_sub, hzS, Int.coe_castRingHom]⟩
+  have hmemP : ∀ i : ℕ, i ≤ N → P.coeff i ∈ Set.range ⇑(Int.castRingHom ℂ) := by
+    have H : ∀ j : ℕ, ∀ i : ℕ, i ≤ N → N - i ≤ j →
+        P.coeff i ∈ Set.range ⇑(Int.castRingHom ℂ) := by
+      intro j
+      induction j with
+      | zero =>
+        intro i hi hj
+        exact hstep i hi fun a ha hia => absurd hia (by omega)
+      | succ j IH =>
+        intro i hi hj
+        exact hstep i hi fun a ha hia => IH a ha (by omega)
+    exact fun i hi => H N i hi (by omega)
+  exact hmemP
+
+p2m_open_scoped "ModularCurve" in
 private theorem ModularCurve.StarBank.hassePolyDescent {N : ℕ}
     (F : ModularForm 𝒮ℒ (12 * (N : ℤ))) {T : PowerSeries ℤ}
     (hT : T.map (Int.castRingHom ℂ) = UpperHalfPlane.qExpansion 1 ⇑F)
@@ -250,58 +316,7 @@ private theorem ModularCurve.StarBank.hassePolyDescent {N : ℕ}
     rw [← hk]
     congr 1
     exact congrFun PowerSeries.coeff_zero_eq_constantCoeff T
-  have hstep : ∀ i : ℕ, i ≤ N →
-      (∀ a : ℕ, a ≤ N → i < a → P.coeff a ∈ Set.range ⇑(Int.castRingHom ℂ)) →
-      P.coeff i ∈ Set.range ⇑(Int.castRingHom ℂ) := by
-    intro i hi hIH
-    have hk := hkey i hi
-    have hmem : i ∈ Finset.range (N + 1) := Finset.mem_range.mpr (by omega)
-    have hdiagterm : (if i ≤ i
-        then ((PowerSeries.coeff (i - i) (jNum ^ i * dedekindEtaUnit ^ N) : ℤ) : ℂ)
-        else 0) = 1 := by
-      rw [ite_eq_left le_rfl, Nat.sub_self, hdiag i, Int.cast_one]
-    rw [← Finset.add_sum_erase _ _ hmem, hdiagterm, mul_one] at hk
-    have hPi : P.coeff i
-        = ((PowerSeries.coeff (N - i) T : ℤ) : ℂ)
-          - ∑ a ∈ (Finset.range (N + 1)).erase i, P.coeff a *
-              (if i ≤ a
-                then ((PowerSeries.coeff (a - i) (jNum ^ a * dedekindEtaUnit ^ N) : ℤ) : ℂ)
-                else 0) := by
-      rw [hk]
-      ring
-    rw [hPi]
-    have hSmem : (∑ a ∈ (Finset.range (N + 1)).erase i, P.coeff a *
-        (if i ≤ a
-          then ((PowerSeries.coeff (a - i) (jNum ^ a * dedekindEtaUnit ^ N) : ℤ) : ℂ)
-          else 0)) ∈ (Int.castRingHom ℂ).range := by
-      refine Subring.sum_mem _ fun a ha => ?_
-      by_cases hia : i ≤ a
-      · have haN : a ≤ N := by
-          have := Finset.mem_range.mp (Finset.mem_of_mem_erase ha)
-          omega
-        have hlt : i < a := lt_of_le_of_ne hia (Ne.symm (Finset.ne_of_mem_erase ha))
-        obtain ⟨z, hz⟩ := hIH a haN hlt
-        rw [ite_eq_left hia, ← hz]
-        refine Subring.mul_mem _ (RingHom.mem_range.mpr ⟨z, rfl⟩)
-          (RingHom.mem_range.mpr
-            ⟨PowerSeries.coeff (a - i) (jNum ^ a * dedekindEtaUnit ^ N),
-              by rw [Int.coe_castRingHom]⟩)
-      · rw [ite_eq_right hia, mul_zero]
-        exact Subring.zero_mem _
-    obtain ⟨zS, hzS⟩ := RingHom.mem_range.mp hSmem
-    exact ⟨PowerSeries.coeff (N - i) T - zS, by rw [map_sub, hzS, Int.coe_castRingHom]⟩
-  have hmemP : ∀ i : ℕ, i ≤ N → P.coeff i ∈ Set.range ⇑(Int.castRingHom ℂ) := by
-    have H : ∀ j : ℕ, ∀ i : ℕ, i ≤ N → N - i ≤ j →
-        P.coeff i ∈ Set.range ⇑(Int.castRingHom ℂ) := by
-      intro j
-      induction j with
-      | zero =>
-        intro i hi hj
-        exact hstep i hi fun a ha hia => absurd hia (by omega)
-      | succ j IH =>
-        intro i hi hj
-        exact hstep i hi fun a ha hia => IH a ha (by omega)
-    exact fun i hi => H N i hi (by omega)
+  have hmemP := ModularCurve.StarBank.coeff_integral_of_triangular_relation N P T hkey hdiag
   have hlifts : P ∈ Polynomial.lifts (Int.castRingHom ℂ) := by
     rw [Polynomial.lifts_iff_coeff_lifts]
     intro n

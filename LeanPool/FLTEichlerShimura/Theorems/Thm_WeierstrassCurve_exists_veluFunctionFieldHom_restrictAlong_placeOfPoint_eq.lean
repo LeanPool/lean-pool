@@ -22,6 +22,7 @@ public import LeanPool.FLTEichlerShimura.Definitions.Def_WeierstrassCurve_GenusO
 public import LeanPool.FLTEichlerShimura.Definitions.Def_WeierstrassCurve_OddOrderSummingSet
 public import LeanPool.FLTEichlerShimura.Definitions.Def_WeierstrassCurve_VeluPointMap
 
+import LeanPool.FLTEichlerShimura.Definitions.Defs_IsogenyEndDatum_sharedLibrary
 import Mathlib.AlgebraicGeometry.EllipticCurve.DivisionPolynomial.Degree
 import LeanPool.FLTEichlerShimura.Definitions.Def_EllipticCurve_FunctionFieldPullback
 import LeanPool.FLTEichlerShimura.Definitions.Def_AlgebraicCurve_RatFuncPlaces
@@ -83,8 +84,6 @@ https://github.com/anthropics/fermats-last-theorem/blob/aa2d8b34692b16c70f699536
 
 section privateSection
 
-
-
 open AlgebraicCurve Place WeierstrassCurve Polynomial IsDedekindDomain Affine CoordinateRing
   WithZero IsLocalRing
 
@@ -107,52 +106,6 @@ theorem S13_ofHeightOneSpectrum_injective {R : Type*} [CommRing R] [IsDedekindDo
   rw [Valuation.isEquiv_iff_valuationSubring]
   exact congrArg AlgebraicCurve.Place.toValuationSubring h
 
-namespace CoordinateRing
-theorem eq_of_XYIdeal_eq {x₁ y₁ x₂ y₂ : F} (h₂ : W.Equation x₂ y₂)
-    (h : XYIdeal W x₁ (C y₁) = XYIdeal W x₂ (C y₂)) : x₁ = x₂ ∧ y₁ = y₂ := by
-  have hne : XYIdeal W x₂ (C y₂) ≠ ⊤ := (XYIdeal_isMaximal h₂).ne_top
-  have hX₁ : XClass W x₁ ∈ XYIdeal W x₂ (C y₂) :=
-    h ▸ Ideal.subset_span (Set.mem_insert _ _)
-  have hX₂ : XClass W x₂ ∈ XYIdeal W x₂ (C y₂) := Ideal.subset_span (Set.mem_insert _ _)
-  have hY₁ : YClass W (C y₁) ∈ XYIdeal W x₂ (C y₂) :=
-    h ▸ Ideal.subset_span (Set.mem_insert_of_mem _ rfl)
-  have hY₂ : YClass W (C y₂) ∈ XYIdeal W x₂ (C y₂) :=
-    Ideal.subset_span (Set.mem_insert_of_mem _ rfl)
-  constructor
-  · by_contra hx
-    apply hne
-    have hsub : XClass W x₁ - XClass W x₂ = algebraMap F W.CoordinateRing (x₂ - x₁) := by
-      rw [XClass, XClass, ← map_sub, algebraMap_eq_mk_C_C]
-      congr 1
-      rw [← map_sub]
-      congr 1
-      rw [map_sub]
-      ring
-    have hmem := (XYIdeal W x₂ (C y₂)).sub_mem hX₁ hX₂
-    rw [hsub] at hmem
-    exact Ideal.eq_top_of_isUnit_mem _ hmem
-      ((isUnit_iff_ne_zero.mpr (sub_ne_zero.mpr fun hxy => hx hxy.symm)).map
-        (algebraMap F W.CoordinateRing))
-  · by_contra hy
-    apply hne
-    have hsub : YClass W (C y₁) - YClass W (C y₂) = algebraMap F W.CoordinateRing (y₂ - y₁) := by
-      rw [YClass, YClass, ← map_sub, algebraMap_eq_mk_C_C]
-      congr 1
-      simp only [map_sub]
-      ring
-    have hmem := (XYIdeal W x₂ (C y₂)).sub_mem hY₁ hY₂
-    rw [hsub] at hmem
-    exact Ideal.eq_top_of_isUnit_mem _ hmem
-      ((isUnit_iff_ne_zero.mpr (sub_ne_zero.mpr fun hxy => hy hxy.symm)).map
-        (algebraMap F W.CoordinateRing))
-
-end CoordinateRing
-
-@[scoped simp]
-theorem IsFinitePlace.coe_ringHom_apply {v : AlgebraicCurve.Place F W.FunctionField}
-    (hv : IsFinitePlace v) (r : W.CoordinateRing) :
-    (hv.ringHom r : W.FunctionField) = algebraMap W.CoordinateRing W.FunctionField r := rfl
-
 variable [IsDedekindDomain W.CoordinateRing]
 
 theorem placeOfEquation_injective {x₁ y₁ x₂ y₂ : F} (h₁ : W.Equation x₁ y₁)
@@ -169,32 +122,12 @@ namespace InfinitePlace
 
 omit [DecidableEq F] in
 omit [IsDedekindDomain W.CoordinateRing] [GenusOnePlaceGate.IsCentred W] in
-theorem deg_eq_one : (place : AlgebraicCurve.Place F W.FunctionField).deg = 1 := by
+theorem deg_eq_one : (InfinitePlace.place : AlgebraicCurve.Place F W.FunctionField).deg = 1 := by
   classical
   exact
     deg_placeOfPoint (W := W) 0
 
-omit [DecidableEq F] in
-theorem eq_of_not_isFinitePlace
-    (v : AlgebraicCurve.Place F W.FunctionField) (hv : ¬ IsFinitePlace v) :
-    v = place := by
-  classical
-  obtain ⟨P, rfl⟩ : ∃ P : W.Point, placeOfPoint P = v :=
-    ⟨(pointEquivPlace (W := W)).symm v, (pointEquivPlace (W := W)).apply_symm_apply v⟩
-  cases P with
-  | zero => rfl
-  | some x y h =>
-      exact absurd (placeOfPoint_some (W := W) h ▸ isFinitePlace_placeOfEquation h.left) hv
-
 end InfinitePlace
-
-omit [DecidableEq F] in
-omit [IsDedekindDomain W.CoordinateRing] [GenusOnePlaceGate.IsCentred W] in
-@[scoped simp]
-theorem placeOfPoint_zero : placeOfPoint (.zero : W.Point) = InfinitePlace.place := by
-  classical
-  exact
-    rfl
 
 omit [DecidableEq F] in
 omit [IsDedekindDomain W.CoordinateRing] [GenusOnePlaceGate.IsCentred W] in
@@ -358,7 +291,6 @@ section
 section
 
 open Ideal Module
-
 
 namespace WeierstrassCurve
 namespace Affine
@@ -531,61 +463,6 @@ end
 end
 
 section
-
-namespace AlgebraicCurve
-variable {K F F' : Type*} [Field K] [Field F] [Field F'] [Algebra K F] [Algebra K F']
-
-open scoped _root_.AlgebraicCurve.Place in
-theorem Place.mem_restrictAlong_iff (φ : F →ₐ[K] F') (hφ : φ.toRingHom.IsIntegral)
-    (w : Place K F') (f : F) :
-    f ∈ (w.restrictAlong φ hφ).toValuationSubring ↔ φ f ∈ w.toValuationSubring :=
-  Iff.rfl
-
-open scoped _root_.AlgebraicCurve.Place in
-theorem Place.ramificationIndexAlong_pos (φ : F →ₐ[K] F') (hφ : φ.toRingHom.IsIntegral)
-    (w : Place K F') : 0 < Place.ramificationIndexAlong φ w := by
-  let := algebraAlong φ
-  have := isScalarTower_along φ
-  have := isIntegral_along φ hφ
-  exact w.ramificationIndex_pos
-
-open scoped _root_.AlgebraicCurve.Place in
-theorem Place.ord_restrictAlong_ne_zero_iff (φ : F →ₐ[K] F') (hφ : φ.toRingHom.IsIntegral)
-    (w : Place K F') (f : F) :
-    (w.restrictAlong φ hφ).ord f ≠ 0 ↔ w.ord (φ f) ≠ 0 := by
-  rw [w.ord_restrictAlong φ hφ f]
-  have hpos := Place.ramificationIndexAlong_pos φ hφ w
-  constructor
-  · intro h hcon
-    rcases mul_eq_zero.mp hcon with h1 | h1
-    · omega
-    · exact h h1
-  · intro h hcon
-    exact h (by rw [hcon, mul_zero])
-
-end AlgebraicCurve
-
-namespace WeierstrassCurve
-namespace Affine
-variable {F : Type*} [Field F] {W : Affine F}
-
-theorem eq_placeOfEquation_of_le_centre [IsAlgClosed F] [IsDedekindDomain W.CoordinateRing]
-    {v : Place F W.FunctionField} (hv : IsFinitePlace v) {x y : F} (h : W.Equation x y)
-    (hle : XYIdeal W x (C y) ≤ hv.centre) : v = placeOfEquation h := by
-  obtain ⟨x', y', h', hveq⟩ := (isFinitePlace_iff_exists_placeOfEquation v).mp hv
-  subst hveq
-  have hc : hv.centre = XYIdeal W x' (C y') := by
-    rw [Subsingleton.elim hv (isFinitePlace_placeOfEquation h')]
-    exact centre_placeOfEquation h'
-  rw [hc] at hle
-  have heq : XYIdeal W x (C y) = XYIdeal W x' (C y') :=
-    (CoordinateRing.XYIdeal_isMaximal h).eq_of_le (CoordinateRing.XYIdeal_isMaximal h').ne_top
-      hle
-  obtain ⟨rfl, rfl⟩ := CoordinateRing.eq_of_XYIdeal_eq h' heq
-  rfl
-
-end Affine
-end WeierstrassCurve
 
 namespace WeierstrassCurve
 namespace Affine
@@ -868,7 +745,6 @@ section
 
 open WeierstrassCurve.Affine.Point
 
-
 section
 
 namespace WeierstrassCurve
@@ -960,7 +836,6 @@ theorem kw_kwVeluMapEquationAt_oddOrderSummingSet_odd
 end WeierstrassCurve
 
 section
-
 
 namespace WeierstrassCurve
 universe u
