@@ -17,11 +17,6 @@ status: verified
 provenance: AI
 main_declarations:
 - HeckeEis.exists_eichlerShimura_heckeEquivariant
-- WeierstrassCurve.tateModuleRep_charpoly_frobenius
-- WeierstrassCurve.isogenyEnd_eq_zsmul_of_transcendental_j
-- ModularCurve.x0_modularPolynomialPresentation
-- ModularCurve.LevelN.frickeFunctionFieldModel
-- ModularCurve.genusFF_gamma1_formula_of_isAlgClosed
 main_results:
 - declaration: HeckeEis.exists_eichlerShimura_heckeEquivariant
   informal: The Eichler-Shimura isomorphism for Gamma_0(N), identifying parabolic

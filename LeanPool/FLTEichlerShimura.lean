@@ -18,7 +18,7 @@ public import LeanPool.FLTEichlerShimura.Theorems.Thm_WeierstrassCurve_tateModul
 Source: url:https://github.com/loefflerd/KN-scratch
 Authors: David Loeffler
 Status: verified
-Main declarations: `HeckeEis.exists_eichlerShimura_heckeEquivariant`, `WeierstrassCurve.tateModuleRep_charpoly_frobenius`, `WeierstrassCurve.isogenyEnd_eq_zsmul_of_transcendental_j`, `ModularCurve.x0_modularPolynomialPresentation`, `ModularCurve.LevelN.frickeFunctionFieldModel`, `ModularCurve.genusFF_gamma1_formula_of_isAlgClosed`
+Main declarations: `HeckeEis.exists_eichlerShimura_heckeEquivariant`
 Tags: number-theory, modular-forms, elliptic-curves, galois-representations
 MSC: 11F11
 -/
