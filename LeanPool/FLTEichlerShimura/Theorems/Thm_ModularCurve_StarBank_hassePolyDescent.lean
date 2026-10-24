@@ -157,6 +157,7 @@ p2m_export "ModularCurve" "jqModC etaProd dedekindEtaUnit constantCoeff_dedekind
   qExpansion_discriminant_eq_map_X_mul_dedekindEtaUnit \
   jqModC_eq_qExpansion_E4_cube_div_discriminant"
 end ModularCurve
+
 p2m_open_scoped "ModularCurve" in
 private theorem ModularCurve.StarBank.coeff_integral_of_triangular_relation
     (N : ℕ) (P : Polynomial ℂ) (T : PowerSeries ℤ)
@@ -398,77 +399,6 @@ private theorem ModularCurve.StarBank.hassePolyDescent {N : ℕ}
         exact (map_sum (Int.castRingHom ℂ) _ _).symm
   exact_mod_cast hfinal
 
-example : (PowerSeries.X * ModularCurve.dedekindEtaUnit).map (Int.castRingHom ℂ)
-    = UpperHalfPlane.qExpansion 1 ModularForm.discriminant :=
-  ModularCurve.qExpansion_discriminant_eq_map_X_mul_dedekindEtaUnit.symm
-
-example : PowerSeries.constantCoeff (PowerSeries.X * ModularCurve.dedekindEtaUnit) = (0 : ℤ) := by
-  simp
-
-example : ¬ ∃ G : Polynomial ℤ, G.natDegree = 1 ∧
-    HahnSeries.ofPowerSeries ℤ ℤ (PowerSeries.X * ModularCurve.dedekindEtaUnit)
-      = Polynomial.aeval (ModularCurve.jqModC ℤ) G
-        * (HahnSeries.single (1 : ℤ) 1
-            * HahnSeries.ofPowerSeries ℤ ℤ ModularCurve.etaProd ^ 24) ^ 1 := by
-  rintro ⟨G, hdeg, hid⟩
-  have hblock : HahnSeries.single (1 : ℤ) (1 : ℤ)
-      * HahnSeries.ofPowerSeries ℤ ℤ ModularCurve.etaProd ^ 24
-      = HahnSeries.single (1 : ℤ) 1
-        * HahnSeries.ofPowerSeries ℤ ℤ (dedekindEtaUnit.map (Int.castRingHom ℤ)) := by
-    rw [← map_pow, ← dedekindEtaUnit, ModularCurve.W1.powerSeries_map_intCast_self]
-  have hsum1 : Polynomial.aeval (ModularCurve.jqModC ℤ) G
-      * (HahnSeries.single (1 : ℤ) 1
-          * HahnSeries.ofPowerSeries ℤ ℤ ModularCurve.etaProd ^ 24) ^ 1
-      = ∑ a ∈ Finset.range (1 + 1),
-          HahnSeries.single (0 : ℤ) (G.coeff a)
-            * (jqModC ℤ ^ a
-                * (HahnSeries.single (1 : ℤ) 1
-                    * HahnSeries.ofPowerSeries ℤ ℤ
-                        (dedekindEtaUnit.map (Int.castRingHom ℤ))) ^ 1) := by
-    rw [hblock, Polynomial.aeval_def, Polynomial.eval₂_eq_sum,
-      Polynomial.sum_over_range' G (fun n => by rw [map_zero, zero_mul]) (1 + 1)
-        (show G.natDegree < 1 + 1 by omega), Finset.sum_mul]
-    refine Finset.sum_congr rfl fun a _ => ?_
-    rw [mul_assoc, ModularCurve.W1.algebraMap_laurent_eq_single]
-  rw [hsum1] at hid
-  have hterm0 : (jqModC ℤ ^ 0
-      * (HahnSeries.single (1 : ℤ) 1
-          * HahnSeries.ofPowerSeries ℤ ℤ
-              (dedekindEtaUnit.map (Int.castRingHom ℤ))) ^ 1).coeff (0 : ℤ) = 0 := by
-    rw [ModularCurve.W1.jqModC_pow_mul_etaBlock ℤ 0 1]
-    exact ModularCurve.W1.coeff_single_mul_ofPowerSeries_neg _ _ (by omega)
-  have hterm1 : (jqModC ℤ ^ 1
-      * (HahnSeries.single (1 : ℤ) 1
-          * HahnSeries.ofPowerSeries ℤ ℤ
-              (dedekindEtaUnit.map (Int.castRingHom ℤ))) ^ 1).coeff (0 : ℤ) = 1 := by
-    rw [ModularCurve.W1.jqModC_pow_mul_etaBlock ℤ 1 1,
-      show ((0 : ℤ)) = (((1 : ℕ) : ℤ) - ((1 : ℕ) : ℤ)) + ((0 : ℕ) : ℤ) from by omega,
-      ModularCurve.W1.coeff_single_mul_ofPowerSeries_nonneg,
-      ModularCurve.W1.powerSeries_map_intCast_self,
-      ModularCurve.W1.powerSeries_map_intCast_self, pow_one, pow_one]
-    have h1 : PowerSeries.constantCoeff (jNum * dedekindEtaUnit) = 1 := by
-      rw [map_mul, ModularCurve.constantCoeff_jNum,
-        ModularCurve.constantCoeff_dedekindEtaUnit, one_mul]
-    rw [← h1]
-    exact congrFun PowerSeries.coeff_zero_eq_constantCoeff _
-  have hL0 : (HahnSeries.ofPowerSeries ℤ ℤ
-      (PowerSeries.X * ModularCurve.dedekindEtaUnit)).coeff (0 : ℤ) = 0 := by
-    rw [show ((0 : ℤ)) = (((0 : ℕ) : ℤ)) from rfl, HahnSeries.ofPowerSeries_apply_coeff,
-      congrFun PowerSeries.coeff_zero_eq_constantCoeff
-        (PowerSeries.X * ModularCurve.dedekindEtaUnit)]
-    simp
-  have hid0 := congrArg (fun x : LaurentSeries ℤ => x.coeff (0 : ℤ)) hid
-  rw [hL0, HahnSeries.coeff_sum, Finset.sum_range_succ, Finset.sum_range_one,
-    ModularCurve.W1.coeff_single_zero_mul, ModularCurve.W1.coeff_single_zero_mul,
-    hterm0, hterm1, mul_zero, mul_one, zero_add] at hid0
-  have hGne : G ≠ 0 := fun h => by
-    rw [h, Polynomial.natDegree_zero] at hdeg
-    exact absurd hdeg (by norm_num)
-  have hlead : G.leadingCoeff = 0 := by
-    rw [Polynomial.leadingCoeff, hdeg]
-    exact hid0.symm
-  exact hGne (Polynomial.leadingCoeff_eq_zero.mp hlead)
-
 p2m_open "Polynomial HahnSeries ModularCurve \
   P2MW.S_ModularCurve_StarBank_hassePolyDescent.ModularCurve UpperHalfPlane"
 open scoped MatrixGroups in
@@ -490,7 +420,6 @@ export P2MW.S_ModularCurve_StarBank_hassePolyDescent (solution)
 end privateSection
 
 public section publicSection
-
 
 open Polynomial HahnSeries ModularCurve UpperHalfPlane
 open scoped MatrixGroups

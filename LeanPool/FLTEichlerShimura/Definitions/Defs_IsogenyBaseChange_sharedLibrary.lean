@@ -129,18 +129,18 @@ variable (E₀ E₀' : WeierstrassCurve R₀) [E₀.IsElliptic] [E₀'.IsEllipti
 variable (F : Type u) [Field F] [Algebra R₀ F] [DecidableEq F] [IsAlgClosed F] [CharZero F]
 variable (F' : Type u) [Field F'] [Algebra R₀ F'] [DecidableEq F'] [IsAlgClosed F'] [CharZero F']
 variable [Algebra F F'] [IsScalarTower R₀ F F']
-variable [(E₀⁄F).IsElliptic] [WeierstrassCurve.Affine.GenusOnePlaceGate (E₀⁄F).toAffine]
-    [WeierstrassCurve.Affine.GenusOnePlaceGate.IsCentred (E₀⁄F).toAffine]
-    [WeierstrassCurve.Affine.AbelTheorem (E₀⁄F).toAffine] [(E₀'⁄F).IsElliptic]
-    [WeierstrassCurve.Affine.GenusOnePlaceGate (E₀'⁄F).toAffine]
-    [WeierstrassCurve.Affine.GenusOnePlaceGate.IsCentred (E₀'⁄F).toAffine]
-    [WeierstrassCurve.Affine.AbelTheorem (E₀'⁄F).toAffine] [(E₀⁄F').IsElliptic]
-    [WeierstrassCurve.Affine.GenusOnePlaceGate (E₀⁄F').toAffine]
-    [WeierstrassCurve.Affine.GenusOnePlaceGate.IsCentred (E₀⁄F').toAffine]
-    [WeierstrassCurve.Affine.AbelTheorem (E₀⁄F').toAffine] [(E₀'⁄F').IsElliptic]
-    [WeierstrassCurve.Affine.GenusOnePlaceGate (E₀'⁄F').toAffine]
-    [WeierstrassCurve.Affine.GenusOnePlaceGate.IsCentred (E₀'⁄F').toAffine]
-    [WeierstrassCurve.Affine.AbelTheorem (E₀'⁄F').toAffine]
+variable [(E₀⁄F).IsElliptic] [(E₀⁄F).toAffine.GenusOnePlaceGate]
+    [GenusOnePlaceGate.IsCentred (E₀⁄F).toAffine]
+    [(E₀⁄F).toAffine.AbelTheorem] [(E₀'⁄F).IsElliptic]
+    [(E₀'⁄F).toAffine.GenusOnePlaceGate]
+    [GenusOnePlaceGate.IsCentred (E₀'⁄F).toAffine]
+    [(E₀'⁄F).toAffine.AbelTheorem] [(E₀⁄F').IsElliptic]
+    [(E₀⁄F').toAffine.GenusOnePlaceGate]
+    [GenusOnePlaceGate.IsCentred (E₀⁄F').toAffine]
+    [(E₀⁄F').toAffine.AbelTheorem] [(E₀'⁄F').IsElliptic]
+    [(E₀'⁄F').toAffine.GenusOnePlaceGate]
+    [GenusOnePlaceGate.IsCentred (E₀'⁄F').toAffine]
+    [(E₀'⁄F').toAffine.AbelTheorem]
 variable (ι₀ : (E₀'⁄F).toAffine.FunctionField →ₐ[F] (E₀⁄F).toAffine.FunctionField)
 
 attribute [local instance] Algebra.TensorProduct.rightAlgebra
@@ -460,18 +460,15 @@ theorem kw_surge_hgf4_toAffine_map_eq (V : WeierstrassCurve R₀) :
     F')).toAffine
   rw [WeierstrassCurve.map_map, ← IsScalarTower.algebraMap_eq R₀ F F']
 
-open WeierstrassCurve.Affine.CoordinateRing in
-open
-  _root_.WeierstrassCurve.Affine.CoordinateRing
-  in
+open CoordinateRing in
 omit [IsAlgClosed F] [CharZero F] [IsAlgClosed F'] [CharZero F'] in
 theorem kw_surge_hgf4_χE_algebraMap_XClass (V : WeierstrassCurve R₀) [V.IsElliptic]
-    [(V⁄F).IsElliptic] [WeierstrassCurve.Affine.GenusOnePlaceGate (V⁄F).toAffine]
-    [WeierstrassCurve.Affine.GenusOnePlaceGate.IsCentred (V⁄F).toAffine]
-    [WeierstrassCurve.Affine.AbelTheorem (V⁄F).toAffine] [(V⁄F').IsElliptic]
-    [WeierstrassCurve.Affine.GenusOnePlaceGate (V⁄F').toAffine]
-    [WeierstrassCurve.Affine.GenusOnePlaceGate.IsCentred (V⁄F').toAffine]
-    [WeierstrassCurve.Affine.AbelTheorem (V⁄F').toAffine] (x : F) :
+    [(V⁄F).IsElliptic] [(V⁄F).toAffine.GenusOnePlaceGate]
+    [GenusOnePlaceGate.IsCentred (V⁄F).toAffine]
+    [(V⁄F).toAffine.AbelTheorem] [(V⁄F').IsElliptic]
+    [(V⁄F').toAffine.GenusOnePlaceGate]
+    [GenusOnePlaceGate.IsCentred (V⁄F').toAffine]
+    [(V⁄F').toAffine.AbelTheorem] (x : F) :
     kw_functionFieldMapAlongGeneral V F F'
         (algebraMap (V⁄F).toAffine.CoordinateRing (V⁄F).toAffine.FunctionField
           (XClass (V⁄F).toAffine x))
@@ -489,18 +486,13 @@ theorem kw_surge_hgf4_χE_algebraMap_XClass (V : WeierstrassCurve R₀) [V.IsEll
   rw [hF, hF', map_sub, kw_functionFieldMapAlongGeneral_polyToFunctionField_X,
     AlgHom.commutes, IsScalarTower.algebraMap_apply F F' (V⁄F').toAffine.FunctionField]
 
-open WeierstrassCurve.Affine.CoordinateRing in
-open
-  _root_.WeierstrassCurve.Affine.CoordinateRing
-  in
+open CoordinateRing in
 omit [IsAlgClosed F] [CharZero F] [IsAlgClosed F'] [CharZero F'] in
 theorem kw_surge_hgf4_χE_algebraMap_YClass (V : WeierstrassCurve R₀) [V.IsElliptic]
-    [(V⁄F).IsElliptic] [WeierstrassCurve.Affine.GenusOnePlaceGate (V⁄F).toAffine]
-    [WeierstrassCurve.Affine.GenusOnePlaceGate.IsCentred (V⁄F).toAffine]
-    [WeierstrassCurve.Affine.AbelTheorem (V⁄F).toAffine] [(V⁄F').IsElliptic]
-    [WeierstrassCurve.Affine.GenusOnePlaceGate (V⁄F').toAffine]
-    [WeierstrassCurve.Affine.GenusOnePlaceGate.IsCentred (V⁄F').toAffine]
-    [WeierstrassCurve.Affine.AbelTheorem (V⁄F').toAffine] (y : F) :
+    [(V⁄F).IsElliptic] [(V⁄F).toAffine.GenusOnePlaceGate]
+    [GenusOnePlaceGate.IsCentred (V⁄F).toAffine] [(V⁄F).toAffine.AbelTheorem] [(V⁄F').IsElliptic]
+    [(V⁄F').toAffine.GenusOnePlaceGate] [GenusOnePlaceGate.IsCentred (V⁄F').toAffine]
+    [(V⁄F').toAffine.AbelTheorem] (y : F) :
     kw_functionFieldMapAlongGeneral V F F'
         (algebraMap (V⁄F).toAffine.CoordinateRing (V⁄F).toAffine.FunctionField
           (YClass (V⁄F).toAffine (C y)))
@@ -820,20 +812,16 @@ omit [E₀'.IsElliptic] in
 theorem kw_surge_hgf4_pmop_naturality :
     let hι₁ := kw_surge_hgf4_bcIota₁_isIntegral E₀ E₀' F F' ι₀ hfin₀
     let hfin₁ := kw_surge_hgf4_bcIota₁_finiteAlong E₀ E₀' F F' ι₀ hfin₀
-    let σE : (E₀⁄F).toAffine.Point →+ (E₀⁄F').toAffine.Point :=
-      WeierstrassCurve.Affine.Point.map (W' := E₀.toAffine) σ
-    let σE' : (E₀'⁄F).toAffine.Point →+ (E₀'⁄F').toAffine.Point :=
-      WeierstrassCurve.Affine.Point.map (W' := E₀'.toAffine) σ
+    let σE : (E₀⁄F).toAffine.Point →+ (E₀⁄F').toAffine.Point := Point.map (W' := E₀.toAffine) σ
+    let σE' : (E₀'⁄F).toAffine.Point →+ (E₀'⁄F').toAffine.Point := Point.map (W' := E₀'.toAffine) σ
     let φ₀ := pointMapOfPushforward ι₀ hι₀ hfin₀ (normFormulaAlong_of_elliptic ι₀ hfin₀)
     let φ₁ := pointMapOfPushforward (ι₁) hι₁ hfin₁ (normFormulaAlong_of_elliptic (ι₁) hfin₁)
     ∀ P, φ₁ (σE P) = σE' (φ₀ P) := by
   intro hι₁ hfin₁ σE σE' φ₀ φ₁
-  have hgBC₀ :=
-    kw_fdn2_qephod_hend7_pmop_eq_geomMorphBC_sub ι₀ hι₀ hfin₀ (normFormulaAlong_of_elliptic ι₀
-      hfin₀)
-  have hgBC₁ :=
-    kw_fdn2_qephod_hend7_pmop_eq_geomMorphBC_sub (ι₁) hι₁ hfin₁ (normFormulaAlong_of_elliptic ι₁
-      hfin₁)
+  have hgBC₀ := kw_fdn2_qephod_hend7_pmop_eq_geomMorphBC_sub ι₀ hι₀ hfin₀
+    (normFormulaAlong_of_elliptic ι₀ hfin₀)
+  have hgBC₁ := kw_fdn2_qephod_hend7_pmop_eq_geomMorphBC_sub (ι₁) hι₁ hfin₁
+    (normFormulaAlong_of_elliptic ι₁ hfin₁)
   let g₀ := kw_fdn2_qephod_hend7_geomMorphBC ι₀ hι₀
   let g₁ := kw_fdn2_qephod_hend7_geomMorphBC (ι₁) hι₁
   have hgBC_nat_affine : ∀ {x y : F} (hP : (E₀⁄F).toAffine.Nonsingular x y),
@@ -842,13 +830,9 @@ theorem kw_surge_hgf4_pmop_naturality :
     have hσP : (E₀⁄F').toAffine.Nonsingular (algebraMap F F' x) (algebraMap F F' y) :=
       kw_surge_hgf4_toAffine_map_eq F F' E₀ ▸
         (((E₀⁄F).toAffine.map_nonsingular (algebraMap F F').injective x y).mpr hP)
-    have hσE_some : σE (.some x y hP)
-        = .some (algebraMap F F' x) (algebraMap F F' y) hσP := by
-      have h := Point.map_some (W' := E₀.toAffine) (F := F) (K := F') σ hP
-      rw [show σE (.some x y hP) = Point.map (W' := E₀.toAffine) σ (.some x y hP) from rfl, h]
-      congr 1 <;> exact hσ _
+    have hσE_some : σE (.some x y hP) = .some _ _ hσP := by grind [Point.map_some]
     refine placeOfPoint_injective ?_
-    rw [← kw_fdn2_qephod_hend7_placeOfPoint_geomMorphBC (ι₁) hι₁ (σE (.some x y hP)),
+    rw [← kw_fdn2_qephod_hend7_placeOfPoint_geomMorphBC ι₁ hι₁ (σE (.some x y hP)),
       hσE_some, placeOfPoint_some]
     have hseam₀ : (placeOfEquation hP.left).restrictAlong ι₀ hι₀
         = placeOfPoint (g₀ (.some x y hP)) := by
@@ -888,9 +872,7 @@ theorem kw_surge_hgf4_pmop_naturality :
       have hσE'_some : σE' (.some qx qy hQ₀ns)
           = .some (algebraMap F F' qx) (algebraMap F F' qy) hσQ := by
         have h := Point.map_some (W' := E₀'.toAffine) (F := F) (K := F') σ hQ₀ns
-        rw [show σE' (.some qx qy hQ₀ns)
-            = Point.map (W' := E₀'.toAffine) σ (.some qx qy hQ₀ns) from rfl, h]
-        congr 1 <;> exact hσ _
+        grind
       rw [hσE'_some, placeOfPoint_some]
       have hseam₀' : (placeOfEquation hP.left).restrictAlong ι₀ hι₀
           = placeOfEquation hQ₀ns.left := by rw [hseam₀, hQ₀_case, placeOfPoint_some]
@@ -951,13 +933,9 @@ theorem kw_surge_hgf4_pmop_naturality :
       δ (.some x y hP) = σE' (g₀ 0) - g₁ 0 := by
     intro x y hP
     change φ₁ (σE (.some x y hP)) - σE' (φ₀ (.some x y hP)) = _
-    have h1 : φ₁ (σE (.some x y hP)) = g₁ (σE (.some x y hP)) - g₁ 0 := hgBC₁ _
-    have h0 : φ₀ (.some x y hP) = g₀ (.some x y hP) - g₀ 0 := hgBC₀ _
-    rw [h1, h0, map_sub, hgBC_nat_affine hP]
-    abel
+    grind [hgBC_nat_affine hP]
   have hC_zero : σE' (g₀ 0) - g₁ 0 = 0 := by
-    obtain ⟨e3⟩ :=
-      WeierstrassCurve.nonempty_pointTorsionBy_zmod (W := (E₀⁄F)) (n := 3) (by omega)
+    obtain ⟨e3⟩ := nonempty_pointTorsionBy_zmod (W := (E₀⁄F)) (n := 3) (by omega)
     let P₀ : (E₀⁄F).toAffine.Point := (e3.symm (fun _ => 1) : _)
     have hP₀_3 : (3 : ℤ) • P₀ = 0 := by
       have := (e3.symm (fun _ => 1)).2
@@ -971,27 +949,14 @@ theorem kw_surge_hgf4_pmop_naturality :
         rwa [e3.apply_symm_apply, map_zero] at this
       exact one_ne_zero (congrFun hfun 0)
     have h2P₀_ne : (2 : ℤ) • P₀ ≠ 0 := by
-      intro h2
+      refine fun h2 ↦ hP₀_ne ?_
       have : (3 : ℤ) • P₀ - (2 : ℤ) • P₀ = 0 := by rw [hP₀_3, h2, sub_zero]
-      have hP₀_eq : P₀ = 0 := by
-        have : ((3 : ℤ) - 2) • P₀ = 0 := by rw [sub_smul]; exact this
-        simpa using this
-      exact hP₀_ne hP₀_eq
+      simpa [← sub_smul]
     rcases hP₀_case : P₀ with _ | ⟨px, py, hpP⟩
     · exact (hP₀_ne hP₀_case).elim
     rcases h2P₀_case : (2 : ℤ) • P₀ with _ | ⟨qx, qy, hqQ⟩
     · exact (h2P₀_ne h2P₀_case).elim
-    have h2C : (2 : ℤ) • (σE' (g₀ 0) - g₁ 0) = σE' (g₀ 0) - g₁ 0 := by
-      calc (2 : ℤ) • (σE' (g₀ 0) - g₁ 0)
-          = (2 : ℤ) • δ (.some px py hpP) := by rw [hδ_affine hpP]
-        _ = δ ((2 : ℤ) • (.some px py hpP : (E₀⁄F).toAffine.Point)) :=
-            (map_zsmul δ 2 _).symm
-        _ = δ ((2 : ℤ) • P₀) := by rw [hP₀_case]
-        _ = δ (.some qx qy hqQ) := by rw [h2P₀_case]
-        _ = σE' (g₀ 0) - g₁ 0 := hδ_affine hqQ
-    have hC' : ((2 : ℤ) - 1) • (σE' (g₀ 0) - g₁ 0) = 0 := by
-      rw [sub_smul, one_smul, h2C, sub_self]
-    simpa using hC'
+    · grind
   intro P
   have hδP : δ P = 0 := by
     rcases P with _ | ⟨x, y, hP⟩
@@ -1008,30 +973,25 @@ namespace WeierstrassCurve.Affine
 
 universe u
 
-section
+public section
 
-variable {R₀ : Type u} [Field R₀]
-variable (E₀ E₀' : WeierstrassCurve R₀) [E₀.IsElliptic]
+variable {R₀ : Type u} [Field R₀] (E₀ E₀' : WeierstrassCurve R₀) [E₀.IsElliptic]
 variable (F : Type u) [Field F] [Algebra R₀ F] [DecidableEq F] [IsAlgClosed F] [CharZero F]
 variable (F' : Type u) [Field F'] [Algebra R₀ F'] [DecidableEq F'] [IsAlgClosed F'] [CharZero F']
 variable [Algebra F F'] [IsScalarTower R₀ F F']
-variable [(E₀⁄F).IsElliptic] [WeierstrassCurve.Affine.GenusOnePlaceGate (E₀⁄F).toAffine]
-    [WeierstrassCurve.Affine.GenusOnePlaceGate.IsCentred (E₀⁄F).toAffine]
-    [WeierstrassCurve.Affine.AbelTheorem (E₀⁄F).toAffine] [(E₀'⁄F).IsElliptic]
-    [WeierstrassCurve.Affine.GenusOnePlaceGate (E₀'⁄F).toAffine]
-    [WeierstrassCurve.Affine.GenusOnePlaceGate.IsCentred (E₀'⁄F).toAffine]
-    [WeierstrassCurve.Affine.AbelTheorem (E₀'⁄F).toAffine] [(E₀⁄F').IsElliptic]
-    [WeierstrassCurve.Affine.GenusOnePlaceGate (E₀⁄F').toAffine]
-    [WeierstrassCurve.Affine.GenusOnePlaceGate.IsCentred (E₀⁄F').toAffine]
-    [WeierstrassCurve.Affine.AbelTheorem (E₀⁄F').toAffine] [(E₀'⁄F').IsElliptic]
-    [WeierstrassCurve.Affine.GenusOnePlaceGate (E₀'⁄F').toAffine]
-    [WeierstrassCurve.Affine.GenusOnePlaceGate.IsCentred (E₀'⁄F').toAffine]
-    [WeierstrassCurve.Affine.AbelTheorem (E₀'⁄F').toAffine]
+variable [(E₀⁄F).IsElliptic] [(E₀⁄F).toAffine.GenusOnePlaceGate]
+    [GenusOnePlaceGate.IsCentred (E₀⁄F).toAffine] [(E₀⁄F).toAffine.AbelTheorem]
+    [(E₀'⁄F).IsElliptic] [(E₀'⁄F).toAffine.GenusOnePlaceGate]
+    [GenusOnePlaceGate.IsCentred (E₀'⁄F).toAffine] [(E₀'⁄F).toAffine.AbelTheorem]
+    [(E₀⁄F').IsElliptic] [(E₀⁄F').toAffine.GenusOnePlaceGate]
+    [GenusOnePlaceGate.IsCentred (E₀⁄F').toAffine] [(E₀⁄F').toAffine.AbelTheorem]
+    [(E₀'⁄F').IsElliptic] [(E₀'⁄F').toAffine.GenusOnePlaceGate]
+    [GenusOnePlaceGate.IsCentred (E₀'⁄F').toAffine] [(E₀'⁄F').toAffine.AbelTheorem]
 variable (ι₀ : (E₀'⁄F).toAffine.FunctionField →ₐ[F] (E₀⁄F).toAffine.FunctionField)
 
 /-- A finite function-field map base changes with the same degree, compatibly with scalar
 extension on function fields and with the induced homomorphisms on elliptic-curve points. -/
-public theorem exists_functionFieldHom_baseChange_compatible
+theorem exists_functionFieldHom_baseChange_compatible
     (hι₀ : ι₀.toRingHom.IsIntegral) (hfin₀ : FiniteAlong F ι₀) :
     ∃ (ι₁ : (E₀'⁄F').toAffine.FunctionField →ₐ[F'] (E₀⁄F').toAffine.FunctionField)
       (hι₁ : ι₁.toRingHom.IsIntegral) (hfin₁ : FiniteAlong F' ι₁),
@@ -1057,4 +1017,5 @@ public theorem exists_functionFieldHom_baseChange_compatible
     (IsScalarTower.toAlgHom R₀ F F') (fun _ => rfl)
 
 end
-end WeierstrassCurve.Affine
+end Affine
+end WeierstrassCurve

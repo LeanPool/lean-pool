@@ -171,6 +171,88 @@ private theorem card_filter_one_or_neg_one (M : ℕ) [NeZero M] (hM3 : 3 ≤ M) 
     · exact ⟨h1, Or.inl rfl⟩
     · exact ⟨hm1, Or.inr rfl⟩
 
+section SumHelpers
+
+open scoped MatrixGroups ModularForm
+open UpperHalfPlane
+
+variable (M : ℕ)
+
+private theorem weight_four_sum_slash
+    (s : Finset (ZMod M)ˣ) (φ : (ZMod M)ˣ → ℍ → ℂ) (B : GL (Fin 2) ℝ) :
+    ((∑ c ∈ s, φ c) ∣[(4 : ℤ)] B) = ∑ c ∈ s, (φ c ∣[(4 : ℤ)] B) := by
+  induction s using Finset.induction_on with
+  | empty => simp [SlashAction.zero_slash]
+  | insert a s ha ih => rw [Finset.sum_insert ha, Finset.sum_insert ha, SlashAction.add_slash, ih]
+
+private theorem weight_four_coe_sum
+    (s : Finset (ZMod M)ˣ)
+    (Φ : (ZMod M)ˣ → ModularForm (CongruenceSubgroup.Gamma1 M : Subgroup (GL (Fin 2) ℝ)) 4) :
+    (⇑(∑ c ∈ s, Φ c) : ℍ → ℂ) = ∑ c ∈ s, ⇑(Φ c) :=
+  map_sum (FunLike.coeAddMonoidHom (ModularForm _ 4) ℍ ℂ) Φ s
+
+private theorem weight_four_qExpansion_sum
+    (s : Finset (ZMod M)ˣ)
+    (Φ : (ZMod M)ˣ → ModularForm (CongruenceSubgroup.Gamma1 M : Subgroup (GL (Fin 2) ℝ)) 4) :
+    qExpansion 1 (⇑(∑ c ∈ s, Φ c)) = ∑ c ∈ s, qExpansion 1 (⇑(Φ c)) := by
+  have h1per : (1 : ℝ) ∈
+      (CongruenceSubgroup.Gamma1 M : Subgroup (GL (Fin 2) ℝ)).strictPeriods := by
+    rw [CongruenceSubgroup.strictPeriods_Gamma1]
+    exact AddSubgroup.mem_zmultiples 1
+  induction s using Finset.induction_on with
+  | empty => simp [UpperHalfPlane.qExpansion_zero]
+  | insert a s ha ih =>
+    rw [Finset.sum_insert ha, Finset.sum_insert ha, FunLike.coe_add,
+      ModularForm.qExpansion_add one_pos h1per (Φ a) (∑ c ∈ s, Φ c), ih]
+
+private theorem gamma1_le_gammaH (H : Subgroup (ZMod M)ˣ) :
+    CongruenceSubgroup.Gamma1 M ≤ CohCarrier.GammaH M H := by
+  intro β hβ
+  rw [CohCarrier.mem_GammaH_iff]
+  have hβ' := (CongruenceSubgroup.Gamma1_mem M β).mp hβ
+  refine ⟨CongruenceSubgroup.Gamma1_in_Gamma0 M hβ, ?_⟩
+  have h1 : CohCarrier.gamma0Units M ⟨β, CongruenceSubgroup.Gamma1_in_Gamma0 M hβ⟩ = 1 := by
+    refine Units.ext ?_
+    rw [CohCarrier.val_gamma0Units]
+    simpa [CongruenceSubgroup.Gamma0Map] using hβ'.2.1
+  rw [h1]
+  exact H.one_mem
+
+variable [NeZero M]
+
+/-- Negation-stable sums of the faithful weight-four forms have integral half-sums. -/
+private theorem half_faith_sum_integral
+    (hM3 : 3 ≤ M) (H : Subgroup (ZMod M)ˣ)
+    (R : (ZMod M)ˣ →
+      ModularForm (CongruenceSubgroup.Gamma1 M : Subgroup (GL (Fin 2) ℝ)) 4)
+    (hRq' : ∀ c, qExpansion 1 (⇑(R c)) =
+      (PowerSeries.mk (faithCoeff M c)).map (Int.castRingHom ℂ)) :
+    ∀ (s : Finset (ZMod M)ˣ), (∀ c ∈ s, -c ∈ s) → ∀ (v : (ZMod M)ˣ)
+      (Φ : ModularForm (CohCarrier.GammaH M H : Subgroup (GL (Fin 2) ℝ)) 4),
+      (⇑Φ : ℍ → ℂ) = ⇑(∑ c ∈ s, R (c * v)) →
+      ModularCurve.IsIntegralQExp (⇑((2⁻¹ : ℂ) • Φ))
+        (PowerSeries.mk fun n => (∑ c ∈ s, faithCoeff M (c * v) n) / 2) := by
+  have h1per : (1 : ℝ) ∈
+      (CongruenceSubgroup.Gamma1 M : Subgroup (GL (Fin 2) ℝ)).strictPeriods := by
+    rw [CongruenceSubgroup.strictPeriods_Gamma1]
+    exact AddSubgroup.mem_zmultiples 1
+  intro s hs v Φ hΦ
+  unfold ModularCurve.IsIntegralQExp
+  rw [FunLike.coe_smul, hΦ, ModularForm.qExpansion_smul one_pos h1per, weight_four_qExpansion_sum M]
+  ext n
+  have hterm : ∀ c : (ZMod M)ˣ,
+      (PowerSeries.coeff n) (qExpansion 1 (⇑(R (c * v)))) = ((faithCoeff M (c * v) n : ℤ) : ℂ) :=
+    fun c => by rw [hRq' (c * v), PowerSeries.coeff_map, PowerSeries.coeff_mk, eq_intCast]
+  simp only [PowerSeries.coeff_map, PowerSeries.coeff_mk, map_smul, map_sum, smul_eq_mul,
+    eq_intCast, hterm]
+  rw [← Int.cast_sum,
+    faith_sum_even hM3 s hs (fun c => faithCoeff M (c * v) n)
+      (fun c => by simp only [neg_mul, faithCoeff_neg]),
+    Int.mul_ediv_cancel_left _ two_ne_zero]
+  grind
+
+end SumHelpers
+
 open UpperHalfPlane
 
 open scoped MatrixGroups ModularForm in
@@ -216,34 +298,12 @@ theorem solution
   have hnegA : ∀ c ∈ A, -c ∈ A := fun c hc => (hmemA _).mpr (hnegH' c ((hmemA c).mp hc))
   have hnegU : ∀ c ∈ (Finset.univ : Finset (ZMod M)ˣ), -c ∈ (Finset.univ : Finset (ZMod M)ˣ) :=
     fun c _ => Finset.mem_univ _
-  have h1per : (1 : ℝ) ∈ (CongruenceSubgroup.Gamma1 M : Subgroup (GL (Fin 2) ℝ)).strictPeriods := by
-    rw [CongruenceSubgroup.strictPeriods_Gamma1]
-    exact AddSubgroup.mem_zmultiples 1
-  have hsum_slash : ∀ (s : Finset (ZMod M)ˣ) (φ : (ZMod M)ˣ → ℍ → ℂ) (B : GL (Fin 2) ℝ),
-      ((∑ c ∈ s, φ c) ∣[(4 : ℤ)] B) = ∑ c ∈ s, (φ c ∣[(4 : ℤ)] B) := by
-    intro s φ B
-    induction s using Finset.induction_on with
-    | empty => simp [SlashAction.zero_slash]
-    | insert a s ha ih => rw [Finset.sum_insert ha, Finset.sum_insert ha, SlashAction.add_slash, ih]
-  have hcoe_sum : ∀ (s : Finset (ZMod M)ˣ)
-      (Φ : (ZMod M)ˣ → ModularForm (CongruenceSubgroup.Gamma1 M : Subgroup (GL (Fin 2) ℝ)) 4),
-      (⇑(∑ c ∈ s, Φ c) : ℍ → ℂ) = ∑ c ∈ s, ⇑(Φ c) := fun s Φ => map_sum (FunLike.coeAddMonoidHom
-        (ModularForm _ 4) ℍ ℂ) Φ s
-  have hqsum : ∀ (s : Finset (ZMod M)ˣ)
-      (Φ : (ZMod M)ˣ → ModularForm (CongruenceSubgroup.Gamma1 M : Subgroup (GL (Fin 2) ℝ)) 4),
-      qExpansion 1 (⇑(∑ c ∈ s, Φ c)) = ∑ c ∈ s, qExpansion 1 (⇑(Φ c)) := by
-    intro s Φ
-    induction s using Finset.induction_on with
-    | empty => simp [UpperHalfPlane.qExpansion_zero]
-    | insert a s ha ih =>
-      rw [Finset.sum_insert ha, Finset.sum_insert ha, FunLike.coe_add,
-        ModularForm.qExpansion_add one_pos h1per (Φ a) (∑ c ∈ s, Φ c), ih]
   have hslash_sum : ∀ (s : Finset (ZMod M)ˣ) (v : (ZMod M)ˣ) (β : SL(2, ℤ))
       (hβ : β ∈ CongruenceSubgroup.Gamma0 M),
       ((⇑(∑ c ∈ s, R (c * v))) ∣[(4 : ℤ)] (β : GL (Fin 2) ℝ)) =
         ∑ c ∈ s, ⇑(R (c * v * (CohCarrier.gamma0Units M ⟨β, hβ⟩)⁻¹)) := by
     intro s v β hβ
-    rw [hcoe_sum, hsum_slash]
+    rw [weight_four_coe_sum M, weight_four_sum_slash M]
     exact Finset.sum_congr rfl fun c _ => hRs (c * v) β hβ
   have hreindexA : ∀ (v w : (ZMod M)ˣ), w ∈ H' →
       ∑ c ∈ A, (⇑(R (c * v * w⁻¹)) : ℍ → ℂ) = ∑ c ∈ A, ⇑(R (c * v)) := by
@@ -265,24 +325,14 @@ theorem solution
       ((⇑(∑ c ∈ A, R (c * v))) ∣[(4 : ℤ)] (β : GL (Fin 2) ℝ)) = ⇑(∑ c ∈ A, R (c * v)) := by
     intro v β hβ
     obtain ⟨hβ0, hβH⟩ := CohCarrier.mem_GammaH_iff.mp hβ
-    rw [hslash_sum A v β hβ0, hreindexA v _ (hHle hβH), hcoe_sum]
+    rw [hslash_sum A v β hβ0, hreindexA v _ (hHle hβH), weight_four_coe_sum M]
   have hinvU : ∀ (β : SL(2, ℤ)), β ∈ CohCarrier.GammaH M H →
       ((⇑(∑ c ∈ (Finset.univ : Finset (ZMod M)ˣ), R (c * 1))) ∣[(4 : ℤ)] (β : GL (Fin 2) ℝ)) =
         ⇑(∑ c ∈ (Finset.univ : Finset (ZMod M)ˣ), R (c * 1)) := by
     intro β hβ
     obtain ⟨hβ0, _⟩ := CohCarrier.mem_GammaH_iff.mp hβ
-    rw [hslash_sum _ 1 β hβ0, hreindexU, hcoe_sum]
-  have hle1 : CongruenceSubgroup.Gamma1 M ≤ CohCarrier.GammaH M H := by
-    intro β hβ
-    rw [CohCarrier.mem_GammaH_iff]
-    have hβ' := (CongruenceSubgroup.Gamma1_mem M β).mp hβ
-    refine ⟨CongruenceSubgroup.Gamma1_in_Gamma0 M hβ, ?_⟩
-    have h1 : CohCarrier.gamma0Units M ⟨β, CongruenceSubgroup.Gamma1_in_Gamma0 M hβ⟩ = 1 := by
-      refine Units.ext ?_
-      rw [CohCarrier.val_gamma0Units]
-      simpa [CongruenceSubgroup.Gamma0Map] using hβ'.2.1
-    rw [h1]
-    exact H.one_mem
+    rw [hslash_sum _ 1 β hβ0, hreindexU, weight_four_coe_sum M]
+  have hle1 := gamma1_le_gammaH M H
   have hfinH : (CohCarrier.GammaH M H).FiniteIndex := Subgroup.finiteIndex_of_le hle1
   have hcusp : ∀ {c : OnePoint ℝ}, IsCusp c (CohCarrier.GammaH M H : Subgroup (GL (Fin 2) ℝ)) →
       IsCusp c (CongruenceSubgroup.Gamma1 M : Subgroup (GL (Fin 2) ℝ)) := fun hc =>
@@ -301,26 +351,7 @@ theorem solution
   let fH := lift (∑ c ∈ A, R (c * 1)) (hinvA 1)
   let f₁H := lift (∑ c ∈ A, R (c * u⁻¹)) (hinvA u⁻¹)
   let gH := lift (∑ c ∈ (Finset.univ : Finset (ZMod M)ˣ), R (c * 1)) hinvU
-  have hint : ∀ (s : Finset (ZMod M)ˣ) (hs : ∀ c ∈ s, -c ∈ s) (v : (ZMod M)ˣ)
-      (Φ : ModularForm (CohCarrier.GammaH M H : Subgroup (GL (Fin 2) ℝ)) 4),
-      (⇑Φ : ℍ → ℂ) = ⇑(∑ c ∈ s, R (c * v)) →
-      ModularCurve.IsIntegralQExp (⇑((2⁻¹ : ℂ) • Φ))
-        (PowerSeries.mk fun n => (∑ c ∈ s, faithCoeff M (c * v) n) / 2) := by
-    intro s hs v Φ hΦ
-    unfold ModularCurve.IsIntegralQExp
-    rw [FunLike.coe_smul, hΦ, ModularForm.qExpansion_smul one_pos h1per, hqsum]
-    ext n
-    have hterm : ∀ c : (ZMod M)ˣ,
-        (PowerSeries.coeff n) (qExpansion 1 (⇑(R (c * v)))) = ((faithCoeff M (c * v) n : ℤ) : ℂ) :=
-      fun c => by rw [hRq' (c * v), PowerSeries.coeff_map, PowerSeries.coeff_mk, eq_intCast]
-    simp only [PowerSeries.coeff_map, PowerSeries.coeff_mk, map_smul, map_sum, smul_eq_mul,
-      eq_intCast, hterm]
-    rw [← Int.cast_sum,
-      faith_sum_even hM3 s hs (fun c => faithCoeff M (c * v) n)
-        (fun c => by simp only [neg_mul, faithCoeff_neg]),
-      Int.mul_ediv_cancel_left _ two_ne_zero]
-    push_cast
-    ring
+  have hint := half_faith_sum_integral M hM3 H R hRq'
   have hcount := sum_faithCoeff_one M
   have hpair := card_filter_one_or_neg_one M hM3
   have hempty : (A.filter fun c => c * u⁻¹ = 1 ∨ c * u⁻¹ = -1).card = 0 := by
@@ -369,11 +400,10 @@ theorem solution
     hint A hnegA u⁻¹ f₁H (hlift _ (hinvA u⁻¹)), hint _ hnegU 1 gH (hlift _ hinvU), ?_, ?_, hg0, hg0,
       ?_⟩
   · rw [one_smul, FunLike.coe_smul, FunLike.coe_smul, hlift _ (hinvA u⁻¹),
-      hlift _ (hinvA 1), key, hslash_sum A 1 γ hγ, ← hu, hcoe_sum]
-    congr 1
-    exact Finset.sum_congr rfl fun c _ => by rw [mul_one]
+      hlift _ (hinvA 1), key, hslash_sum A 1 γ hγ, ← hu, weight_four_coe_sum M]
+    grind
   · rw [one_smul, FunLike.coe_smul, hlift _ hinvU, key, hslash_sum _ 1 γ hγ, ← hu,
-      hreindexU u, hcoe_sum]
+      hreindexU u, weight_four_coe_sum M]
   · intro h
     rw [mul_comm (ModularCurve.intSeriesC K (PowerSeries.mk fun n =>
       (∑ c ∈ (Finset.univ : Finset (ZMod M)ˣ), faithCoeff M (c * 1) n) / 2))] at h

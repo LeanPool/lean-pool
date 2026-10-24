@@ -50,7 +50,9 @@ namespace AlgebraicCurve
 
 open Place
 
-private theorem polyMem {K : Type*} [Field K] (u : Place K (RatFunc K))
+section privateSection
+
+theorem polyMem {K : Type*} [Field K] (u : Place K (RatFunc K))
     (hX : (RatFunc.X : RatFunc K) ∈ u.toValuationSubring) (p : Polynomial K) :
     algebraMap (Polynomial K) (RatFunc K) p ∈ u.toValuationSubring := by
   induction p using Polynomial.induction_on' with
@@ -64,7 +66,7 @@ private theorem polyMem {K : Type*} [Field K] (u : Place K (RatFunc K))
     · rw [RatFunc.algebraMap_X]
       exact hX
 
-private theorem isLocalization_valuationSubring {K Φ : Type*} [Field K] [Field Φ] [Algebra K Φ]
+theorem isLocalization_valuationSubring {K Φ : Type*} [Field K] [Field Φ] [Algebra K Φ]
     (w : Place K Φ) {R : Type*} [CommRing R] [IsDedekindDomain R] [Algebra R Φ]
     [IsFractionRing R Φ] (P : HeightOneSpectrum R) [Algebra R w.toValuationSubring]
     (halg : ∀ r : R, (algebraMap R w.toValuationSubring r : Φ) = algebraMap R Φ r)
@@ -110,7 +112,7 @@ private theorem isLocalization_valuationSubring {K Φ : Type*} [Field K] [Field 
       exact congrArg (Subtype.val : w.toValuationSubring → Φ) h
     exact ⟨1, by rw [IsFractionRing.injective R Φ hΦ]⟩
 
-private theorem isAlgebraic_residue {R S : Type*} [CommRing R] [CommRing S] [Algebra R S]
+theorem isAlgebraic_residue {R S : Type*} [CommRing R] [CommRing S] [Algebra R S]
     [IsLocalRing R] [IsLocalRing S] [IsLocalHom (algebraMap R S)]
     {x : S} (hx : ∃ p : Polynomial R, p.Monic ∧ Polynomial.eval₂ (algebraMap R S) x p = 0) :
     IsAlgebraic (IsLocalRing.ResidueField R) (IsLocalRing.residue S x) := by
@@ -122,7 +124,7 @@ private theorem isAlgebraic_residue {R S : Type*} [CommRing R] [CommRing S] [Alg
     RingHom.ext fun r => IsLocalRing.ResidueField.algebraMap_residue r
   rw [hcomp, ← Polynomial.hom_eval₂, hpe, map_zero]
 
-private theorem isAlgebraic_residueField_of_X_mem {K : Type*} [Field K] (u : Place K (RatFunc K))
+theorem isAlgebraic_residueField_of_X_mem {K : Type*} [Field K] (u : Place K (RatFunc K))
     [Algebra (Polynomial K) u.toValuationSubring]
     (halg : ∀ p : Polynomial K, (algebraMap (Polynomial K) u.toValuationSubring p : RatFunc K)
       = algebraMap (Polynomial K) (RatFunc K) p)
@@ -175,28 +177,28 @@ variable {K F F' : Type*} [Field K] [Field F] [Field F']
 
 variable {v : Place K F} {w : Place K F'}
 
-private def toValuationSubringOfRestrictEq (hw : w.restrict F = v) :
+def toValuationSubringOfRestrictEq (hw : w.restrict F = v) :
     integralClosureAt F' v →+* w.toValuationSubring :=
   (algebraMap (integralClosureAt F' v) F').codRestrict
     w.toValuationSubring.toSubring (forall_mem_of_restrict_eq hw)
 
 omit [FiniteDimensional F F'] in
 @[scoped simp]
-private theorem coe_toValuationSubringOfRestrictEq (hw : w.restrict F = v)
+theorem coe_toValuationSubringOfRestrictEq (hw : w.restrict F = v)
     (c : integralClosureAt F' v) :
     (toValuationSubringOfRestrictEq hw c : F')
       = algebraMap (integralClosureAt F' v) F' c := rfl
 
-private def residueOfCenter (hw : w.restrict F = v) :
+def residueOfCenter (hw : w.restrict F = v) :
     integralClosureAt F' v →+* w.ResidueField :=
   (IsLocalRing.residue w.toValuationSubring).comp (toValuationSubringOfRestrictEq hw)
 
 omit [FiniteDimensional F F'] in
-private theorem residueOfCenter_apply (hw : w.restrict F = v) (c : integralClosureAt F' v) :
+theorem residueOfCenter_apply (hw : w.restrict F = v) (c : integralClosureAt F' v) :
     residueOfCenter hw c = IsLocalRing.residue w.toValuationSubring
       (toValuationSubringOfRestrictEq hw c) := rfl
 
-private theorem surjective_residueOfCenter (hw : w.restrict F = v) :
+theorem surjective_residueOfCenter (hw : w.restrict F = v) :
     Function.Surjective (residueOfCenter hw) := by
   classical
   intro y
@@ -262,7 +264,7 @@ end Dict
 
 /-- Formal unramifiedness over the polynomial parameter makes the derivative of a
 regular function a regular multiple of the parameter's differential. -/
-private theorem exists_regular_derivative_of_formallyUnramified
+theorem exists_regular_derivative_of_formallyUnramified
     {K F : Type*} [Field K] [Field F] [Algebra K F] (v : Place K F)
     [Algebra (Polynomial K) v.toValuationSubring]
     [IsScalarTower K (Polynomial K) v.toValuationSubring]
@@ -315,7 +317,7 @@ private theorem exists_regular_derivative_of_formallyUnramified
   rw [← hgsmul] at hpush
   exact ⟨g, v.ord_nonneg_of_mem g.2, hpush.symm⟩
 
-private theorem exists_regular_derivative_ratFunc {K : Type*} [Field K] [PerfectField K]
+theorem exists_regular_derivative_ratFunc {K : Type*} [Field K] [PerfectField K]
     {F : Type*} [Field F] [Algebra K F]
     [Algebra (RatFunc K) F] [IsScalarTower K (RatFunc K) F] [FiniteDimensional (RatFunc K) F]
     [Algebra.IsSeparable (RatFunc K) F]
@@ -510,9 +512,13 @@ private theorem exists_regular_derivative_ratFunc {K : Type*} [Field K] [Perfect
     rw [halgOuOv, halgKXOu, RatFunc.algebraMap_X]
   exact exists_regular_derivative_of_formallyUnramified v hXOvF hf
 
+end privateSection
+
+public section publicSection
+
 /-- A function regular at a place has a regular derivative with respect to any
 uniformizer `t`, provided `F/K(t)` is finite and separable and `K` is perfect. -/
-public theorem Place.exists_regular_derivative {K F : Type*} [Field K] [Field F]
+theorem Place.exists_regular_derivative {K F : Type*} [Field K] [Field F]
     [Algebra K F] [PerfectField K] (v : Place K F) {t : F}
     [FiniteDimensional (IntermediateField.adjoin K ({t} : Set F)) F]
     [Algebra.IsSeparable (IntermediateField.adjoin K ({t} : Set F)) F]
@@ -552,5 +558,7 @@ public theorem Place.exists_regular_derivative {K F : Type*} [Field K] [Field F]
   have ht' : v.ord (algebraMap (RatFunc K) F RatFunc.X) = 1 := by rw [hXt]; exact ht
   obtain ⟨g, hg, hDf⟩ := exists_regular_derivative_ratFunc v rfl ht' hf
   exact ⟨g, hg, by simpa only [hXt] using hDf⟩
+
+end publicSection
 
 end AlgebraicCurve

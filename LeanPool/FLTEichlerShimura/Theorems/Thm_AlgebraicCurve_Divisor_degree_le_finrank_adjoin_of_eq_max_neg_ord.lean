@@ -385,6 +385,105 @@ private theorem rescale_principal_part {L : Type*} [Field L]
     rw [← zpow_add₀ ht, add_neg_cancel, zpow_zero]
   grind
 
+/-- The least-order principal parts cannot have zero residue sum, by residue independence. -/
+private theorem principal_parts_residue_contradiction
+    (x : F) (hx0 : x ≠ 0)
+    (D : Divisor K F) (S : Finset (Place K F))
+    (t : Place K F → F) (ht0 : ∀ v ∈ S, t v ≠ 0)
+    (z : (v : Place K F) → v ∈ S → Fin v.deg → F)
+    (hz_reg : ∀ v hv k, ∀ v' ∈ S, z v hv k ∈ v'.toValuationSubring)
+    (hDv : ∀ v ∈ S, D v = -v.ord x)
+    (hres_E : ∀ v ∈ S, ∀ g : IntermediateField.adjoin K ({x} : Set F),
+      (g : F) ≠ 0 → v.ord (g : F) = 0 →
+      ∃ c : K, c ≠ 0 ∧ ∀ hmem : (g : F) ∈ v.toValuationSubring,
+        IsLocalRing.residue _ (⟨(g : F), hmem⟩ : v.toValuationSubring) =
+          algebraMap K v.ResidueField c)
+    (hz_li : ∀ (v : Place K F) (hv : v ∈ S), LinearIndependent K (fun k => IsLocalRing.residue _
+      (⟨z v hv k, hz_reg v hv k v hv⟩ : v.toValuationSubring))) :
+    let E := IntermediateField.adjoin K ({x} : Set F)
+    let ι := (v : S) × Fin (D v.1).toNat × Fin v.1.deg
+    let T : ι → F := fun i => z i.1.1 i.1.2 i.2.2 * (t i.1.1) ^ (-((i.2.1 : ℤ) + 1))
+    ∀ (φ : ι → E) (supp : Finset ι),
+    (∀ i ∈ supp, ((φ i : E) : F) ≠ 0) →
+    ∀ (q : ∀ i, i ∈ supp → ℤ),
+    (∀ i hi, ∀ v ∈ S, v.ord ((φ i : E) : F) = q i hi * D v) →
+    ∀ (q₂ : ℤ) (i₃ : ι) (hi₃ : i₃ ∈ supp),
+    let vv := i₃.1.1
+    let a₃ : ℤ := (i₃.2.1 : ℤ)
+    let Q := q i₃ hi₃ - q₂
+    let m := vv.ord (x ^ q₂ * ((φ i₃ : E) : F) * T i₃)
+    (∀ i hi, i.1.1 = vv →
+      vv.ord (x ^ q₂ * ((φ i : E) : F) * T i) = m →
+      (i.2.1 : ℤ) = a₃ ∧ q i hi - q₂ = Q) →
+    let μ := x ^ Q * (t vv) ^ (a₃ + 1)
+    ∀ (hμψT_mem : ∀ i, μ * (x ^ q₂ * ((φ i : E) : F) * T i) ∈ vv.toValuationSubring),
+    (∀ i, ¬(i ∈ supp ∧ vv.ord (x ^ q₂ * ((φ i : E) : F) * T i) = m) →
+      IsLocalRing.residue _ (⟨_, hμψT_mem i⟩ : vv.toValuationSubring) = 0) →
+    let j : Fin vv.deg → ι := fun k => ⟨i₃.1, i₃.2.1, k⟩
+    ∑ k, IsLocalRing.residue _ (⟨_, hμψT_mem (j k)⟩ : vv.toValuationSubring) = 0 → False := by
+  classical
+  intro E ι T φ supp hφne q hq q₂ i₃ hi₃ vv a₃ Q m hmin_char μ hμψT_mem hres_zero j hres_sum
+  let xE : E := ⟨x, IntermediateField.mem_adjoin_simple_self K x⟩
+  have hv₀ : vv ∈ S := i₃.1.2
+  have hμdef : μ = x ^ Q * (t vv) ^ (a₃ + 1) := rfl
+  have hmdef : m = vv.ord (x ^ q₂ * ((φ i₃ : E) : F) * T i₃) := rfl
+  have hjk_T : ∀ k, T (j k) = z vv i₃.1.2 k * (t vv) ^ (-(a₃+1)) := fun k => rfl
+  have hjk_simp : ∀ k (hjk : j k ∈ supp)
+      (heq : vv.ord (x ^ q₂ * ((φ (j k) : E) : F) * T (j k)) = m),
+      μ * (x ^ q₂ * ((φ (j k) : E) : F) * T (j k))
+        = (x ^ (q (j k) hjk) * ((φ (j k) : E) : F)) * z vv i₃.1.2 k := by
+    intro k hjk heq
+    obtain ⟨_, hqeq⟩ := hmin_char (j k) hjk rfl heq
+    have hqjk : q (j k) hjk = q₂ + Q := by linarith
+    simpa only [hμdef, hjk_T, hqjk] using
+      rescale_principal_part x (t vv) ((φ (j k) : E) : F) (z vv i₃.1.2 k)
+        hx0 (ht0 vv hv₀) q₂ Q (a₃ + 1)
+  have hxEpow : ∀ (r : ℤ), ((xE ^ r : E) : F) = x ^ r := fun r => by
+    rw [show ((xE ^ r : E) : F) = E.val (xE ^ r) from rfl, map_zpow₀]; rfl
+  have hEgk : ∀ k (hjk : j k ∈ supp),
+      ((xE ^ (q (j k) hjk) * φ (j k) : E) : F) = x ^ (q (j k) hjk) * ((φ (j k) : E) : F) := by
+    intro k hjk; push_cast; rw [hxEpow]
+  have hEgk_ne0 : ∀ k (hjk : j k ∈ supp), ((xE ^ (q (j k) hjk) * φ (j k) : E) : F) ≠ 0 := by
+    intro k hjk; rw [hEgk]; exact mul_ne_zero (zpow_ne_zero _ hx0) (hφne (j k) hjk)
+  have hEgk_ord0 : ∀ k (hjk : j k ∈ supp),
+      vv.ord ((xE ^ (q (j k) hjk) * φ (j k) : E) : F) = 0 := by
+    intro k hjk
+    rw [hEgk, vv.ord_mul (zpow_ne_zero _ hx0) (hφne (j k) hjk), vv.ord_zpow,
+        hq (j k) hjk vv hv₀, hDv vv hv₀]; ring
+  let γ : Fin vv.deg → K := fun k =>
+    if hjk : j k ∈ supp ∧ vv.ord (x ^ q₂ * ((φ (j k) : E) : F) * T (j k)) = m
+    then Classical.choose (hres_E vv hv₀ _ (hEgk_ne0 k hjk.1) (hEgk_ord0 k hjk.1))
+    else 0
+  have hγ_res : ∀ k, IsLocalRing.residue _ (⟨_, hμψT_mem (j k)⟩ : vv.toValuationSubring)
+      = γ k • IsLocalRing.residue _
+        (⟨z vv i₃.1.2 k, hz_reg vv i₃.1.2 k vv hv₀⟩ : vv.toValuationSubring) := by
+    intro k
+    by_cases hjk : j k ∈ supp ∧ vv.ord (x ^ q₂ * ((φ (j k) : E) : F) * T (j k)) = m
+    · have hgmem : ((xE ^ (q (j k) hjk.1) * φ (j k) : E) : F) ∈ vv.toValuationSubring :=
+        vv.mem_of_ord_nonneg (hEgk_ne0 k hjk.1) (hEgk_ord0 k hjk.1).ge
+      have hsplit : (⟨_, hμψT_mem (j k)⟩ : vv.toValuationSubring)
+          = ⟨_, hgmem⟩ * ⟨z vv i₃.1.2 k, hz_reg vv i₃.1.2 k vv hv₀⟩ := by
+        refine Subtype.ext ?_
+        change μ * (x ^ q₂ * ((φ (j k):E):F) * T (j k))
+          = ((xE ^ (q (j k) hjk.1) * φ (j k) : E) : F) * z vv i₃.1.2 k
+        rw [hjk_simp k hjk.1 hjk.2, hEgk k hjk.1]
+      rw [hsplit, map_mul]
+      simp only [γ, dite_eq_left hjk, Algebra.smul_def]
+      grind
+    · rw [hres_zero (j k) hjk]; simp only [γ, dite_eq_right hjk, zero_smul]
+  rw [show (∑ k, IsLocalRing.residue _ (⟨_, hμψT_mem (j k)⟩ : vv.toValuationSubring))
+      = ∑ k, γ k • IsLocalRing.residue _
+          (⟨z vv i₃.1.2 k, hz_reg vv i₃.1.2 k vv hv₀⟩ : vv.toValuationSubring) from
+    Finset.sum_congr rfl fun k _ => hγ_res k] at hres_sum
+  have hγk0 := Fintype.linearIndependent_iff.mp (hz_li vv i₃.1.2) γ hres_sum i₃.2.2
+  have hji₃ : j i₃.2.2 = i₃ := rfl
+  have hi₃cond : j i₃.2.2 ∈ supp ∧
+      vv.ord (x ^ q₂ * ((φ (j i₃.2.2) : E) : F) * T (j i₃.2.2)) = m := by
+    rw [hji₃]; exact ⟨hi₃, hmdef.symm⟩
+  simp only [γ, dite_eq_left hi₃cond] at hγk0
+  exact (Classical.choose_spec
+    (hres_E vv hv₀ _ (hEgk_ne0 i₃.2.2 hi₃cond.1) (hEgk_ord0 i₃.2.2 hi₃cond.1))).1 hγk0
+
 /-- Principal parts at distinct poles, with independent residue coefficients,
 are linearly independent over the rational function subfield. -/
 private theorem principal_parts_linearIndependent
@@ -541,74 +640,11 @@ private theorem principal_parts_linearIndependent
     apply sum_eq_fiber _
       (fun i => i ∈ supp ∧ vv.ord (x ^ q₂ * ((φ i : E) : F) * T i) = m)
       i₃.1 i₃.2.1 hres_zero
-    · intro i ⟨hi, heq⟩
-      apply Subtype.ext
-      by_contra hne
-      exact absurd (hψT_ord_ge0_other i hi hne) (heq ▸ hm_neg).not_ge
-    · intro a k ⟨hi, heq⟩
-      obtain ⟨hai, _⟩ := hmin_char ⟨i₃.1, a, k⟩ hi rfl heq
-      apply Fin.ext
-      have hai' : (a : ℤ) = (i₃.2.1 : ℤ) := by simpa [ha₃def] using hai
-      exact_mod_cast hai'
+    · grind
+    · grind
   rw [hreindex] at hres_sum
-  have hjk_T : ∀ k, T (j k) = z vv i₃.1.2 k * (t vv) ^ (-(a₃+1)) := fun k => rfl
-  have hjk_simp : ∀ k (hjk : j k ∈ supp)
-      (heq : vv.ord (x ^ q₂ * ((φ (j k) : E) : F) * T (j k)) = m),
-      μ * (x ^ q₂ * ((φ (j k) : E) : F) * T (j k))
-        = (x ^ (q (j k) hjk) * ((φ (j k) : E) : F)) * z vv i₃.1.2 k := by
-    intro k hjk heq
-    obtain ⟨_, hqeq⟩ := hmin_char (j k) hjk rfl heq
-    have hqjk : q (j k) hjk = q₂ + Q := by linarith
-    simpa only [hμdef, hjk_T, hqjk] using
-      rescale_principal_part x (t vv) ((φ (j k) : E) : F) (z vv i₃.1.2 k)
-        hx0 (ht0 vv hv₀) q₂ Q (a₃ + 1)
-  have hxEpow : ∀ (r : ℤ), ((xE ^ r : E) : F) = x ^ r := fun r => by
-    rw [show ((xE ^ r : E) : F) = E.val (xE ^ r) from rfl, map_zpow₀]; rfl
-  have hEgk : ∀ k (hjk : j k ∈ supp),
-      ((xE ^ (q (j k) hjk) * φ (j k) : E) : F) = x ^ (q (j k) hjk) * ((φ (j k) : E) : F) := by
-    intro k hjk; push_cast; rw [hxEpow]
-  have hEgk_ne0 : ∀ k (hjk : j k ∈ supp), ((xE ^ (q (j k) hjk) * φ (j k) : E) : F) ≠ 0 := by
-    intro k hjk; rw [hEgk]; exact mul_ne_zero (zpow_ne_zero _ hx0) (hφne (j k) hjk)
-  have hEgk_ord0 : ∀ k (hjk : j k ∈ supp),
-      vv.ord ((xE ^ (q (j k) hjk) * φ (j k) : E) : F) = 0 := by
-    intro k hjk
-    rw [hEgk, vv.ord_mul (zpow_ne_zero _ hx0) (hφne (j k) hjk), vv.ord_zpow,
-        hq (j k) hjk vv hv₀, hDv vv hv₀]; ring
-  let γ : Fin vv.deg → K := fun k =>
-    if hjk : j k ∈ supp ∧ vv.ord (x ^ q₂ * ((φ (j k) : E) : F) * T (j k)) = m
-    then Classical.choose (hres_E vv hv₀ _ (hEgk_ne0 k hjk.1) (hEgk_ord0 k hjk.1))
-    else 0
-  have hγ_res : ∀ k, IsLocalRing.residue _ (⟨_, hμψT_mem (j k)⟩ : vv.toValuationSubring)
-      = γ k • IsLocalRing.residue _
-        (⟨z vv i₃.1.2 k, hz_reg vv i₃.1.2 k vv hv₀⟩ : vv.toValuationSubring) := by
-    intro k
-    by_cases hjk : j k ∈ supp ∧ vv.ord (x ^ q₂ * ((φ (j k) : E) : F) * T (j k)) = m
-    · have hgmem : ((xE ^ (q (j k) hjk.1) * φ (j k) : E) : F) ∈ vv.toValuationSubring :=
-        vv.mem_of_ord_nonneg (hEgk_ne0 k hjk.1) (hEgk_ord0 k hjk.1).ge
-      have hsplit : (⟨_, hμψT_mem (j k)⟩ : vv.toValuationSubring)
-          = ⟨_, hgmem⟩ * ⟨z vv i₃.1.2 k, hz_reg vv i₃.1.2 k vv hv₀⟩ := by
-        refine Subtype.ext ?_
-        change μ * (x ^ q₂ * ((φ (j k):E):F) * T (j k))
-          = ((xE ^ (q (j k) hjk.1) * φ (j k) : E) : F) * z vv i₃.1.2 k
-        rw [hjk_simp k hjk.1 hjk.2, hEgk k hjk.1]
-      rw [hsplit, map_mul]
-      simp only [γ, dite_eq_left hjk, Algebra.smul_def]
-      congr 1
-      exact (Classical.choose_spec
-        (hres_E vv hv₀ _ (hEgk_ne0 k hjk.1) (hEgk_ord0 k hjk.1))).2 hgmem
-    · rw [hres_zero (j k) hjk]; simp only [γ, dite_eq_right hjk, zero_smul]
-  rw [show (∑ k, IsLocalRing.residue _ (⟨_, hμψT_mem (j k)⟩ : vv.toValuationSubring))
-      = ∑ k, γ k • IsLocalRing.residue _
-          (⟨z vv i₃.1.2 k, hz_reg vv i₃.1.2 k vv hv₀⟩ : vv.toValuationSubring) from
-    Finset.sum_congr rfl fun k _ => hγ_res k] at hres_sum
-  have hγk0 := Fintype.linearIndependent_iff.mp (hz_li vv i₃.1.2) γ hres_sum i₃.2.2
-  have hji₃ : j i₃.2.2 = i₃ := rfl
-  have hi₃cond : j i₃.2.2 ∈ supp ∧
-      vv.ord (x ^ q₂ * ((φ (j i₃.2.2) : E) : F) * T (j i₃.2.2)) = m := by
-    rw [hji₃]; exact ⟨hi₃, hmdef.symm⟩
-  simp only [γ, dite_eq_left hi₃cond] at hγk0
-  exact (Classical.choose_spec
-    (hres_E vv hv₀ _ (hEgk_ne0 i₃.2.2 hi₃cond.1) (hEgk_ord0 i₃.2.2 hi₃cond.1))).1 hγk0
+  exact principal_parts_residue_contradiction x hx0 D S t ht0 z hz_reg hDv hres_E hz_li
+    φ supp hφne q hq q₂ i₃ hi₃ hmin_char hμψT_mem hres_zero hres_sum
 
 theorem solution
     {K F : Type*} [Field K] [Field F] [Algebra K F] [IsCurveOver K F]
