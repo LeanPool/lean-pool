@@ -8,6 +8,7 @@ module
 
 public import LeanPool.BrillNoetherGraphs.LowGenus.GenusFiveClosedCover
 public import LeanPool.BrillNoetherGraphs.LowGenus.GenusFiveCoreAtlas
+public import LeanPool.BrillNoetherGraphs.Utilities.Subdivision.IndexedClosedCheck
 
 /-! **Independent generated check.** This module provides an additional generated proof of row 04
 and is not imported by the main `LowGenus` root.
@@ -368,5 +369,19 @@ def witnesses : List (AnchorWitness 12 8 12) :=
   witness9, witness10, witness11, witness12, witness13, witness14, witness15, witness16, witness17,
   witness18, witness19, witness20, witness21, witness22, witness23, witness24, witness25, witness26,
   witness27, witness28, witness29, witness30]
+
+/-! Anchor geometry does not depend on the cone; check each used pair once. -/
+
+/-- Witness indices used at each anchor by the generated closed-cover cells. -/
+def witnessGeometryRows : List (List ℕ) :=
+  [[0], [1, 8, 11, 13, 15, 16, 17, 19, 20], [0], [2, 5, 21, 23, 25, 26, 27, 29, 30], [3, 8, 9, 10,
+   12, 14, 18], [0], [0], [4, 5, 6, 7, 22, 24, 28]]
+
+/-- Every used anchor/witness pair passes the original slope and endpoint checks. -/
+theorem witnessGeometryChecked :
+    CertificateData.checkWitnessPool row04Core rowDivisor witnesses defaultWitness
+      witnessGeometryRows = true := by
+  decide +kernel
+
 
 end AtanasovRanganathan.GenusFiveRow04CoverBase
