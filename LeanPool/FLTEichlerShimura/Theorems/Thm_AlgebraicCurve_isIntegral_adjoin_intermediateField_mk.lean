@@ -17,11 +17,11 @@ Licensed under Apache License 2.0
 
 module
 
-public import Mathlib.RingTheory.IntegralClosure.IsIntegral.Basic
 public import Mathlib.FieldTheory.IntermediateField.Basic
+public import Mathlib.RingTheory.IntegralClosure.IsIntegral.Defs
 
-import Mathlib.Algebra.Algebra.Subalgebra.Lattice
-import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
+import Mathlib.RingTheory.IntegralClosure.IsIntegral.Basic
+
 
 /-!
 # Integrality over L[j] descends to an intermediate field

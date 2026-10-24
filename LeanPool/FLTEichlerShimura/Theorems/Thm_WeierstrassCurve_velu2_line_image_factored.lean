@@ -12,9 +12,8 @@ module
 
 public import LeanPool.FLTEichlerShimura.Definitions.Def_WeierstrassCurve_VeluPointMap2
 
-import Mathlib.Tactic.FieldSimp
-import Mathlib.Tactic.LinearCombination
-import Mathlib.Tactic.Ring
+import Mathlib.RingTheory.SimpleRing.Principal
+
 
 /-!
 # Vélu sends curve intersections with a line to another line

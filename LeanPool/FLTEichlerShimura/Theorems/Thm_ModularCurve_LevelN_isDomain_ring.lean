@@ -20,7 +20,7 @@ module
 public import LeanPool.FLTEichlerShimura.Definitions.Def_ModularCurve_LevelNFunctionField
 
 import LeanPool.FLTEichlerShimura.Theorems.Thm_WLight_levelN_structure_package
-import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
+import Mathlib.CategoryTheory.Category.Init
 
 /-!
 # The level-M modular function algebra is a domain

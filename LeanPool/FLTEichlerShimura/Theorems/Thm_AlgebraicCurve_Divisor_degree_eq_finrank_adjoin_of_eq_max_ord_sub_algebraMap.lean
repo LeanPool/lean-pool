@@ -21,7 +21,6 @@ public import LeanPool.FLTEichlerShimura.Definitions.Def_AlgebraicCurve_AdelicIn
 public import LeanPool.FLTEichlerShimura.Definitions.Def_AlgebraicCurve_IsCurveOver
 
 import LeanPool.FLTEichlerShimura.Theorems.Thm_AlgebraicCurve_Divisor_degree_eq_finrank_adjoin_of_eq_max_neg_ord
-import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
 
 /-!
 # Zero divisor of x-a has degree [F:K(x)]

@@ -18,13 +18,7 @@ Licensed under Apache License 2.0
 module
 
 public import Mathlib.Analysis.SpecialFunctions.Elliptic.Weierstrass
-public import Mathlib.NumberTheory.ModularForms.EisensteinSeries.Basic
 public import Mathlib.NumberTheory.ModularForms.Discriminant
-public import Mathlib.NumberTheory.ModularForms.QExpansion
-public import Mathlib.NumberTheory.ModularForms.CongruenceSubgroups
-public import Mathlib.Analysis.Complex.UpperHalfPlane.Manifold
-public import Mathlib.Geometry.Manifold.Notation
-public import Mathlib.FieldTheory.IntermediateField.Adjoin.Basic
 
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularForm_weierstrassP_torsion_qExpansion_package
 

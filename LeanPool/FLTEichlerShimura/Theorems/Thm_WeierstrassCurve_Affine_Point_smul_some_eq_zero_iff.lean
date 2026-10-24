@@ -19,25 +19,7 @@ module
 
 public import Mathlib.AlgebraicGeometry.EllipticCurve.DivisionPolynomial.Basic
 
-import Mathlib.NumberTheory.EllipticDivisibilitySequence
-import Mathlib.Algebra.Ring.NegOnePow
-import Mathlib.Data.Fin.VecNotation
-import Mathlib.Data.Fin.Tuple.Sort
-import Mathlib.Algebra.GroupWithZero.NonZeroDivisors
-import Mathlib.Algebra.MvPolynomial.CommRing
-import Mathlib.Algebra.MvPolynomial.Basic
-import Mathlib.Tactic.LinearCombination
-import Mathlib.Tactic.Ring
-import Mathlib.Tactic.Abel
-import Mathlib.Tactic.IntervalCases
-import Mathlib.Tactic.FieldSimp
-import Mathlib.GroupTheory.Perm.Basic
-import Mathlib.GroupTheory.Perm.Sign
-import Mathlib.Algebra.Polynomial.Bivariate
-import Mathlib.AlgebraicGeometry.EllipticCurve.Affine.Point
-import Mathlib.AlgebraicGeometry.EllipticCurve.Jacobian.Point
 import LeanPool.FLTEichlerShimura.Definitions.Def_WeierstrassCurve_EDSEngine
-import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
 
 /-!
 # nP=O if and only if ψₙ(P)=0

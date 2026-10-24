@@ -26,6 +26,7 @@ import LeanPool.FLTEichlerShimura.Definitions.Def_AlgebraicCurve_RatFuncPlaceCla
 import LeanPool.FLTEichlerShimura.Theorems.Thm_AlgebraicCurve_RationalFunctionField_deg_placeInfty
 import LeanPool.FLTEichlerShimura.Theorems.Thm_AlgebraicCurve_RationalFunctionField_hasPrincipalDivisors
 import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
+import Mathlib.RingTheory.Henselian
 
 /-!
 # The rational function field K(X) is a curve over K

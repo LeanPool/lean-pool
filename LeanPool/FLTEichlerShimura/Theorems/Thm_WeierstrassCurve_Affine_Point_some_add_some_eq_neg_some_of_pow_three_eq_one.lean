@@ -20,7 +20,6 @@ module
 public import Mathlib.AlgebraicGeometry.EllipticCurve.Affine.Point
 
 import Mathlib.RingTheory.SimpleRing.Principal
-import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
 
 /-!
 # Collinear points (x,y),(ω x,y),(ω² x,y) on y²=x³+B

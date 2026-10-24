@@ -27,7 +27,7 @@ import LeanPool.FLTEichlerShimura.Theorems.Thm_AlgebraicCurve_finiteDimensional_
 import LeanPool.FLTEichlerShimura.Theorems.Thm_AlgebraicCurve_nonempty_place_of_transcendental_of_finiteDimensional
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_JOneES_exists_transcendental_finiteDimensional_laurentBaseChange
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_isCurveOver_laurentBaseChange_qExpFunctionFieldC_gamma1
-import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
+import Mathlib.RingTheory.Henselian
 
 /-!
 # Riemann–Roch spaces of K·ℚ(X₁(M)) are finite-dimensional

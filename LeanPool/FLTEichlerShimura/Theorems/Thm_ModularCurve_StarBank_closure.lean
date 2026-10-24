@@ -20,7 +20,6 @@ module
 public import LeanPool.FLTEichlerShimura.Definitions.Def_ModularCurve_PhiGen
 public import LeanPool.FLTEichlerShimura.Definitions.Def_ModularCurve_JqCoeff
 
-import Mathlib.FieldTheory.IsAlgClosed.Basic
 import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
 
 /-!

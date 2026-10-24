@@ -20,10 +20,13 @@ module
 public import Mathlib.AlgebraicGeometry.EllipticCurve.Affine.Point
 
 import LeanPool.FLTEichlerShimura.Definitions.Defs_IsogenyEndDatum_sharedLibrary
-import Mathlib.AlgebraicGeometry.EllipticCurve.DivisionPolynomial.Basic
-import Mathlib.FieldTheory.IsAlgClosed.AlgebraicClosure
-import LeanPool.FLTEichlerShimura.Definitions.Def_WeierstrassCurve_FunctionFieldQuadratic
 import LeanPool.FLTEichlerShimura.Definitions.Def_WeierstrassCurve_VariableChangePointEquiv
+import Mathlib.Tactic.NormNum.Prime
+import Mathlib.Analysis.Normed.Group.Basic
+import Mathlib.Topology.MetricSpace.Bounded
+import Mathlib.Data.EReal.Operations
+import Mathlib.Topology.Algebra.InfiniteSum.Order
+import Mathlib.RingTheory.Henselian
 
 /-!
 # Variable changes induce isomorphic Weierstrass function fields

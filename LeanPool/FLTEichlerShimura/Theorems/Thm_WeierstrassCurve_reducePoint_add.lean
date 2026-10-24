@@ -24,7 +24,6 @@ import LeanPool.FLTEichlerShimura.Theorems.Thm_WeierstrassCurve_reducePoint_some
 import LeanPool.FLTEichlerShimura.Theorems.Thm_WeierstrassCurve_valuation_le_one_of_equation
 import LeanPool.FLTEichlerShimura.Theorems.Thm_WeierstrassCurve_reducePoint_some
 import LeanPool.FLTEichlerShimura.Theorems.Thm_WeierstrassCurve_reducePoint_some_eq_zero_iff
-import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
 
 /-!
 # Reduction of points is additive under good reduction

@@ -21,12 +21,6 @@ public import Mathlib.Algebra.CharP.IntermediateField
 public import Mathlib.FieldTheory.IsAlgClosed.AlgebraicClosure
 public import Mathlib.RingTheory.Valuation.RamificationGroup
 
-import Mathlib.RingTheory.Valuation.ValuationSubring
-import Mathlib.FieldTheory.Normal.Closure
-import Mathlib.FieldTheory.Normal.Defs
-import Mathlib.FieldTheory.IntermediateField.Basic
-import Mathlib.RingTheory.LocalRing.ResidueField.Basic
-import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
 
 /-!
 # Inertia subgroups restrict along finite normal subextensions of ℚ̄

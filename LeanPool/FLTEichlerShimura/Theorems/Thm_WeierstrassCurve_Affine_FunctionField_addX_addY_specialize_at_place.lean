@@ -19,8 +19,10 @@ module
 
 public import LeanPool.FLTEichlerShimura.Definitions.Def_AlgebraicCurve_DivisorClassGroup
 public import LeanPool.FLTEichlerShimura.Definitions.Def_WeierstrassCurve_FunctionFieldQuadratic
+
 import LeanPool.FLTEichlerShimura.Definitions.Def_AlgebraicCurve_DivisorPushPull
 import LeanPool.FLTEichlerShimura.Theorems.Thm_AlgebraicCurve_Place_min_ord_le_ord_add_v2
+import Mathlib.RingTheory.Henselian
 
 /-!
 # Chord formulas on generic points specialise to the group law

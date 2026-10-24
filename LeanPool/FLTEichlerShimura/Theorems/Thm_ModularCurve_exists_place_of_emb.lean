@@ -18,9 +18,6 @@ Licensed under Apache License 2.0
 module
 
 public import LeanPool.FLTEichlerShimura.Definitions.Def_ModularCurve_EMD
-public import LeanPool.FLTEichlerShimura.Definitions.Def_ModularCurve_MazurStepThreeInputs
-public import LeanPool.FLTEichlerShimura.Definitions.Def_HahnSeries_RamificationBound
-public import LeanPool.FLTEichlerShimura.Definitions.Def_AlgebraicCurve_DivisorClassGroup
 
 import LeanPool.FLTEichlerShimura.Definitions.Def_AlgebraicCurve_RatFuncPlaces
 import LeanPool.FLTEichlerShimura.Theorems.Thm_AlgebraicCurve_Place_exists_ord_mul_eq_order_of_hasRamBound
@@ -28,7 +25,7 @@ import LeanPool.FLTEichlerShimura.Theorems.Thm_HahnSeries_hasRamBound_natDegree_
 import LeanPool.FLTEichlerShimura.Theorems.Thm_HahnSeries_mem_puiseuxRamSubfield_iff
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_adjoin_jBar_jNBar_eq_top
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_nonempty_modularPolynomialData
-import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
+import Mathlib.RingTheory.Henselian
 
 /-!
 # Normalised Hahn-series embeddings induce places of F_N

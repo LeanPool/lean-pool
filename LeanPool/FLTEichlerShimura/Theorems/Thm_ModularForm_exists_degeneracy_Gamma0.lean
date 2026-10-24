@@ -19,7 +19,6 @@ module
 
 public import LeanPool.FLTEichlerShimura.Definitions.Def_ModularForm_HeckeOperator
 public import Mathlib.NumberTheory.ModularForms.Basic
-public import Mathlib.NumberTheory.ModularForms.CongruenceSubgroups
 
 import Mathlib.NumberTheory.ModularForms.NormTrace
 import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util

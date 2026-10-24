@@ -24,9 +24,10 @@ import Mathlib.Algebra.Order.Ring.Star
 import Mathlib.Analysis.Complex.Polynomial.Basic
 import Mathlib.Data.Int.Star
 import Mathlib.RingTheory.Flat.TorsionFree
-import Mathlib.RingTheory.PicardGroup
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_finrank_adjoin_jqModC_laurentBaseChange_qExpFunctionFieldC_gamma1_eq_index
 import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
+import Mathlib.RingTheory.SimpleRing.Principal
+import Mathlib.RingTheory.Henselian
 
 /-!
 # Elements fixing Φ pointwise lie in ±Γ₁(M)

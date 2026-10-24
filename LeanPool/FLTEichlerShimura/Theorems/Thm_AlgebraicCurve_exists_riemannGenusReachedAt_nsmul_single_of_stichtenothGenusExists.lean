@@ -24,7 +24,8 @@ public import LeanPool.FLTEichlerShimura.Definitions.Def_AlgebraicCurve_IsCurveO
 import LeanPool.FLTEichlerShimura.Theorems.Thm_AlgebraicCurve_exists_indexOfSpecialty_nsmul_single_eq_zero_of_genusReached
 import LeanPool.FLTEichlerShimura.Theorems.Thm_AlgebraicCurve_finiteDimensional_lSpace
 import LeanPool.FLTEichlerShimura.Theorems.Thm_AlgebraicCurve_indexOfSpecialty_eq_of_genusReached
-import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
+import Mathlib.Data.Int.Star
+import Mathlib.Algebra.Order.Ring.Star
 
 /-!
 # Genus bound attained at a multiple of any single place

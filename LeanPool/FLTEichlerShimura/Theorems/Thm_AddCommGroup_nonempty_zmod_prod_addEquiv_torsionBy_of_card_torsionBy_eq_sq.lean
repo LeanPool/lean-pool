@@ -27,7 +27,6 @@ import Mathlib.FieldTheory.Finiteness
 import Mathlib.LinearAlgebra.FreeModule.PID
 import Mathlib.RingTheory.Flat.TorsionFree
 import Mathlib.RingTheory.SimpleRing.Principal
-import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
 
 /-!
 # #A[d]=d² for all d∣ n forces A[n]≅(ℤ/n)²

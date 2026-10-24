@@ -17,14 +17,10 @@ Licensed under Apache License 2.0
 
 module
 
-public import Mathlib.LinearAlgebra.Charpoly.Basic
 public import Mathlib.LinearAlgebra.Trace
 public import Mathlib.LinearAlgebra.Determinant
 
 import LeanPool.FLTEichlerShimura.Theorems.Thm_LinearMap_charpoly_of_finrank_eq_two
-import Mathlib.Tactic.Module
-import Mathlib.Tactic.LinearCombination
-import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
 
 /-!
 # Trace from a quadratic relation and the determinant in rank two

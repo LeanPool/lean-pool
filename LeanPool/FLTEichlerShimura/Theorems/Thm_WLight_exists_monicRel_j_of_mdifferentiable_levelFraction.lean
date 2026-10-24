@@ -19,7 +19,6 @@ module
 
 public import Mathlib.Analysis.SpecialFunctions.Elliptic.Weierstrass
 public import Mathlib.NumberTheory.ModularForms.Discriminant
-public import Mathlib.Geometry.Manifold.Notation
 
 import LeanPool.FLTEichlerShimura.Theorems.Thm_WLight_frickeFunction_modularity_package
 import LeanPool.FLTEichlerShimura.Theorems.Thm_WLight_levelOne_hauptmodul_package

@@ -19,9 +19,6 @@ module
 
 public import LeanPool.FLTEichlerShimura.Definitions.Def_ModularCurve_X0
 
-import Mathlib.NumberTheory.Divisors
-import Mathlib.Data.Nat.Squarefree
-import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
 
 /-!
 # Dedekind ψ dominates its argument

@@ -24,6 +24,7 @@ import Mathlib.RingTheory.RegularLocalRing.Defs
 import LeanPool.FLTEichlerShimura.Theorems.Thm_WLight_frickeFunction_modularity_package
 import LeanPool.FLTEichlerShimura.Theorems.Thm_WLight_levelN_structure_package
 import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
+import Mathlib.RingTheory.SimpleRing.Principal
 
 /-!
 # Galois structure of the level-N modular function field

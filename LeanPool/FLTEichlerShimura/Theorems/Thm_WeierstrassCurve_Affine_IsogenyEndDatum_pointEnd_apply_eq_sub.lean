@@ -19,7 +19,6 @@ module
 
 public import LeanPool.FLTEichlerShimura.Definitions.Def_Isogeny_ConditionalCurrency
 
-import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
 
 /-!
 # Point endomorphism of an isogeny datum equals h(P)-h(O)

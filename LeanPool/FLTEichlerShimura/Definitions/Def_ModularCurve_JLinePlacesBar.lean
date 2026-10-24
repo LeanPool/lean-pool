@@ -16,8 +16,10 @@ module
 
 public import LeanPool.FLTEichlerShimura.Definitions.Def_AlgebraicCurve_RatFuncPlaceInfty
 public import LeanPool.FLTEichlerShimura.Definitions.Def_AlgebraicCurve_RatFuncPlaces
+public import LeanPool.FLTEichlerShimura.Definitions.Def_ModularCurve_QAdicPlace
 public import LeanPool.FLTEichlerShimura.Definitions.Def_ModularCurve_ArithmeticGalois
-public import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_transcendental_coeffEmb_jq
+
+import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_transcendental_coeffEmb_jq
 
 /-!
 # The j-line inside the base-changed modular function field

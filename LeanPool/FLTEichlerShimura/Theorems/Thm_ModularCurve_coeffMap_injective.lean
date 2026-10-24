@@ -19,7 +19,6 @@ module
 
 public import LeanPool.FLTEichlerShimura.Definitions.Def_ModularCurve_LaurentCoeff
 
-import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
 
 /-!
 # Coefficientwise map on Laurent series preserves injectivity

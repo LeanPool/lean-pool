@@ -19,15 +19,10 @@ module
 
 public import LeanPool.FLTEichlerShimura.Definitions.Def_EllipticCurve_WeilPairingFun
 
-import Mathlib.Data.Set.Card
-import Mathlib.Algebra.BigOperators.Group.Finset.Piecewise
-import Mathlib.Tactic.Ring
-import Mathlib.Tactic.FieldSimp
 import LeanPool.FLTEichlerShimura.Theorems.Thm_WeierstrassCurve_Affine_Point_exists_zsmul_eq_of_isAlgClosed
 import LeanPool.FLTEichlerShimura.Theorems.Thm_WeierstrassCurve_Affine_FunctionField_exists_eq_algebraMap_of_valuation_eq_one
 import LeanPool.FLTEichlerShimura.Theorems.Thm_WeierstrassCurve_Affine_valuation_transEquiv_weilFun
 import LeanPool.FLTEichlerShimura.Theorems.Thm_WeierstrassCurve_Affine_weilFun_ne_zero
-import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
 
 /-!
 # The pairing e₀ is trivial on the diagonal: e₀(T,T)=1

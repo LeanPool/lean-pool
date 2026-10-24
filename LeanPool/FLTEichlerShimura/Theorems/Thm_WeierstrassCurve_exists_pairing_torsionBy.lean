@@ -19,8 +19,6 @@ module
 
 public import LeanPool.FLTEichlerShimura.Definitions.Def_FLTPrelim_GaloisRep
 
-import Mathlib.Tactic.Ring
-import LeanPool.FLTEichlerShimura.Definitions.Def_EllipticCurve_WeilPairingFun
 import LeanPool.FLTEichlerShimura.Theorems.Thm_WeierstrassCurve_Affine_CoordinateRing_isDedekindDomain
 import LeanPool.FLTEichlerShimura.Theorems.Thm_WeierstrassCurve_Affine_eq_zero_of_forall_transEquiv_eq
 import LeanPool.FLTEichlerShimura.Theorems.Thm_WeierstrassCurve_Affine_valuation_mulPull_le_of_ne_zero
@@ -30,7 +28,6 @@ import LeanPool.FLTEichlerShimura.Theorems.Thm_WeierstrassCurve_Affine_weilPairi
 import LeanPool.FLTEichlerShimura.Theorems.Thm_WeierstrassCurve_Affine_weilPairing0_self
 import LeanPool.FLTEichlerShimura.Theorems.Thm_WeierstrassCurve_Affine_valuation_weilFun
 import LeanPool.FLTEichlerShimura.Theorems.Thm_WeierstrassCurve_Affine_weilPairing0_galois
-import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
 
 /-!
 # Existence of the Weil pairing on n-torsion

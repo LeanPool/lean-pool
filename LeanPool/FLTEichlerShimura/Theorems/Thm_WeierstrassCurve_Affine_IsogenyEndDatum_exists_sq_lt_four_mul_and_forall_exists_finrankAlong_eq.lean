@@ -28,7 +28,9 @@ import LeanPool.FLTEichlerShimura.Theorems.Thm_WeierstrassCurve_Affine_IsogenyEn
 import LeanPool.FLTEichlerShimura.Theorems.Thm_WeierstrassCurve_Affine_IsogenyEndDatum_exists_pointEnd_eq_of_mem_isogenyEndSubring
 import LeanPool.FLTEichlerShimura.Theorems.Thm_WeierstrassCurve_Affine_Point_exists_zsmul_eq_of_isAlgClosed
 import LeanPool.FLTEichlerShimura.Theorems.Thm_WeierstrassCurve_card_torsionBy_eq_sq_of_isAlgClosed
-import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
+import Mathlib.Analysis.Normed.Ring.Lemmas
+import Mathlib.Data.Int.Star
+import Mathlib.Algebra.Order.Ring.Star
 
 /-!
 # Non-integral isogeny endomorphism forces an imaginary quadratic degree form

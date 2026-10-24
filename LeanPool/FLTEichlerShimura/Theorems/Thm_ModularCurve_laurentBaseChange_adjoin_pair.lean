@@ -17,22 +17,14 @@ Licensed under Apache License 2.0
 
 module
 
-public import LeanPool.FLTEichlerShimura.Definitions.Def_ModularCurve_DegeneracyTower
 public import LeanPool.FLTEichlerShimura.Definitions.Def_ModularCurve_JqCoeff
+public import LeanPool.FLTEichlerShimura.Definitions.Def_ModularCurve_LaurentCoeff
 
-import LeanPool.FLTEichlerShimura.Definitions.Def_ModularCurve_X0
-import LeanPool.FLTEichlerShimura.Definitions.Def_ModularCurve_LaurentCoeff
-import LeanPool.FLTEichlerShimura.Definitions.Def_ModularCurve_PhiGen
-import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_coeffMap_qExpand
-import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_PhiGen_splits_prime_at_slot
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_laurentBaseChange_modularFunctionField
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_functionFieldGeneration_iff_full_eq
-import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_laurentBaseChange_mono
-import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_isIntegral_jqNModC_mul
-import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_coeffEmb_jqN
-import Mathlib.RingTheory.RootsOfUnity.PrimitiveRoots
-import Mathlib.NumberTheory.Cyclotomic.Basic
-import LeanPool.FLTEichlerShimura.Definitions.Defs_modularPolynomial_sharedLibrary
+import Mathlib.Analysis.SpecialFunctions.Log.Basic
+import Mathlib.Analysis.SpecialFunctions.Trigonometric.Basic
+import Mathlib.NumberTheory.ArithmeticFunction.Misc
 
 /-!
 # Base change of the full divisor-expansion field equals L(j,j_M)
@@ -73,7 +65,7 @@ https://github.com/anthropics/fermats-last-theorem/blob/aa2d8b34692b16c70f699536
 
 section privateSection
 
-open ModularCurve W1 PhiGen
+open ModularCurve
 
 private theorem ModularCurve.laurentBaseChange_adjoin_pair' (L : Type*) [Field L] [Algebra ℚ L]
     (M : ℕ) [NeZero M] (hgenQ : FunctionFieldGeneration M) :

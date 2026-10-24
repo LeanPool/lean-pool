@@ -24,9 +24,9 @@ public import Mathlib.GroupTheory.Index
 
 import Mathlib.Algebra.GroupWithZero.Action.Hom
 import Mathlib.Data.Finsupp.Basic
-import Mathlib.LinearAlgebra.Span.Basic
 import Mathlib.Data.ZMod.QuotientGroup
 import Mathlib.GroupTheory.SemidirectProduct
+import Mathlib.LinearAlgebra.Span.Defs
 
 /-!
 # Sum-zero cusp functions arise from characters of H

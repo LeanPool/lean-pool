@@ -19,12 +19,7 @@ module
 
 public import LeanPool.FLTEichlerShimura.Definitions.Def_EllipticCurve_WeilPairingFun
 
-import Mathlib.Data.Set.Card
-import Mathlib.Algebra.BigOperators.Group.Finset.Piecewise
-import Mathlib.Tactic.Ring
-import Mathlib.Tactic.FieldSimp
 import LeanPool.FLTEichlerShimura.Theorems.Thm_WeierstrassCurve_Affine_weilNum_ne_zero
-import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
 
 /-!
 # Nonvanishing of the Weil function g_T for T ∈ E[n]

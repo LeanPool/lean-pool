@@ -20,7 +20,6 @@ module
 public import LeanPool.FLTEichlerShimura.Definitions.Def_AlgebraicCurve_DivisorClassGroup
 
 import LeanPool.FLTEichlerShimura.Theorems.Thm_AlgebraicCurve_Pic0_nsmul_mk_eq_zero_of_isPrincipal
-import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
 
 /-!
 # Order of a divisor class divides m when mD is principal

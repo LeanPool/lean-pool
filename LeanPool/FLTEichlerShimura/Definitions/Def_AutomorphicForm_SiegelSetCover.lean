@@ -14,10 +14,11 @@ Licensed under Apache License 2.0
 
 module
 
-public import Mathlib.Algebra.Order.Ring.Star
-public import Mathlib.Data.Int.Star
 public import Mathlib.NumberTheory.Modular
 public import Mathlib.NumberTheory.ModularForms.CongruenceSubgroups
+
+import Mathlib.Data.Int.Star
+import Mathlib.Algebra.Order.Ring.Star
 
 /-!
 # Siegel-set covers of the modular fundamental domain

@@ -25,9 +25,9 @@ import Mathlib.LinearAlgebra.Lagrange
 import Mathlib.NumberTheory.ModularForms.LevelOne.GradedRing
 import Mathlib.NumberTheory.ModularForms.NormTrace
 import Mathlib.RingTheory.Valuation.Integral
-import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
-
 import LeanPool.FLTEichlerShimura.Definitions.Defs_UpperHalfPlane_niceFunctionSubalgebra
+import Mathlib.RingTheory.SimpleRing.Principal
+import Mathlib.RingTheory.Henselian
 
 /-!
 # The q-expansion function field over ℚ is a one-variable function field

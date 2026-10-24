@@ -19,8 +19,7 @@ module
 
 public import LeanPool.FLTEichlerShimura.Definitions.Def_AlgebraicCurve_PlaceEvaluation
 
-import LeanPool.FLTEichlerShimura.Theorems.Thm_P2M_Dup_AlgebraicCurve_Place_mem_of_ord_nonneg
-import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
+import LeanPool.FLTEichlerShimura.Definitions.Def_AlgebraicCurve_DivisorPushPull
 
 /-!
 # Nonvanishing of the value at a rational place of a function of order zero

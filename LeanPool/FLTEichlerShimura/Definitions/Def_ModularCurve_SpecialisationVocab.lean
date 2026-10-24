@@ -14,8 +14,8 @@ Licensed under Apache License 2.0
 
 module
 
-public import LeanPool.FLTEichlerShimura.Definitions.Def_ModularCurve_EMD
 public import LeanPool.FLTEichlerShimura.Definitions.Def_ModularCurve_TatePoint
+public import LeanPool.FLTEichlerShimura.Definitions.Def_FLTPrelim_GaloisRep
 
 /-!
 # Integral Hahn series, specialisation and good Weierstrass models

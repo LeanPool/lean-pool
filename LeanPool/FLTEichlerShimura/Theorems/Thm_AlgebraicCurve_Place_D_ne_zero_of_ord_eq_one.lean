@@ -17,12 +17,12 @@ Licensed under Apache License 2.0
 
 module
 
-public import LeanPool.FLTEichlerShimura.Definitions.Def_AlgebraicCurve_Differentials
+public import Mathlib.RingTheory.Kaehler.Basic
+public import LeanPool.FLTEichlerShimura.Definitions.Def_AlgebraicCurve_DivisorClassGroup
 
 import LeanPool.FLTEichlerShimura.Theorems.Thm_AlgebraicCurve_Place_isSeparable_adjoin_of_ord_eq_one
 import LeanPool.FLTEichlerShimura.Theorems.Thm_KaehlerDifferential_D_ne_zero_of_transcendental
 import LeanPool.FLTEichlerShimura.Theorems.Thm_AlgebraicCurve_Place_transcendental_of_ord_ne_zero
-import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
 
 /-!
 # A uniformiser at a place has nonzero differential

@@ -18,10 +18,12 @@ Licensed under Apache License 2.0
 module
 
 public import Mathlib.FieldTheory.IntermediateField.Adjoin.Defs
-
 public import LeanPool.FLTEichlerShimura.Definitions.Def_WeierstrassCurve_FunctionFieldQuadratic
 
-import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
+import Mathlib.Tactic.Continuity.Init
+import Mathlib.CategoryTheory.Category.Init
+import Mathlib.Data.Rat.Floor
+
 
 /-!
 # The function field is generated over F(x) by y

@@ -22,7 +22,7 @@ public import Mathlib.Algebra.Squarefree.Basic
 import Mathlib.Algebra.Order.Ring.Star
 import Mathlib.Data.Int.Star
 import LeanPool.FLTEichlerShimura.Theorems.Thm_Nat_exists_squarefree_sq_add
-import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
+meta import Lean.Meta.Tactic.NormCast
 
 /-!
 # Positive-definite binary form represents a squarefree integer ≥ 2

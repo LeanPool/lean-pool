@@ -20,12 +20,7 @@ module
 public import Mathlib.RingTheory.SimpleRing.Principal
 public import LeanPool.FLTEichlerShimura.Definitions.Def_EllipticCurve_WeilPairingFun
 
-import Mathlib.Data.Set.Card
-import Mathlib.Algebra.BigOperators.Group.Finset.Piecewise
-import Mathlib.Tactic.Ring
-import Mathlib.Tactic.FieldSimp
 import LeanPool.FLTEichlerShimura.Theorems.Thm_WeierstrassCurve_Affine_valuation_weilNum
-import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
 
 /-!
 # Valuation of the Weil function g_T at an affine place

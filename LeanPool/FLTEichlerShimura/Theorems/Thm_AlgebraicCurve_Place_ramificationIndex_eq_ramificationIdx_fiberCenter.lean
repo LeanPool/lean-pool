@@ -19,8 +19,10 @@ module
 
 public import LeanPool.FLTEichlerShimura.Definitions.Def_AlgebraicCurve_PlacesOverDVR
 
-import LeanPool.FLTEichlerShimura.Theorems.Thm_P2M_Dup_AlgebraicCurve_Place_mem_iff_ord_nonneg
 import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
+import Mathlib.RingTheory.Henselian
+import Mathlib.RingTheory.RegularLocalRing.Defs
+import Mathlib.RingTheory.SimpleRing.Principal
 
 /-!
 # e(w∣ v) equals the ramification index of the fibre centre

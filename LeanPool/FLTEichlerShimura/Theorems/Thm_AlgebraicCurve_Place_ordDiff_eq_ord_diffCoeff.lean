@@ -25,9 +25,10 @@ import LeanPool.FLTEichlerShimura.Theorems.Thm_AlgebraicCurve_Place_diffCoeff_sm
 import LeanPool.FLTEichlerShimura.Theorems.Thm_AlgebraicCurve_Place_exists_ord_eq_one
 import LeanPool.FLTEichlerShimura.Theorems.Thm_AlgebraicCurve_Place_ord_diffCoeff_D_nonneg
 import LeanPool.FLTEichlerShimura.Theorems.Thm_AlgebraicCurve_Place_ord_add_eq_of_lt
-import LeanPool.FLTEichlerShimura.Theorems.Thm_P2M_Dup_AlgebraicCurve_Place_ord_neg
 import LeanPool.FLTEichlerShimura.Theorems.Thm_AlgebraicCurve_Place_ord_natCast
 import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
+import LeanPool.FLTEichlerShimura.Definitions.Def_AlgebraicCurve_PlacesOverDVR
+import Mathlib.RingTheory.Flat.TorsionFree
 
 /-!
 # Order of a differential is independent of the uniformiser

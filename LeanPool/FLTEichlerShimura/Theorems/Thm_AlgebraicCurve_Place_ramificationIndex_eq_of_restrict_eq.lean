@@ -18,9 +18,7 @@ Licensed under Apache License 2.0
 module
 
 public import LeanPool.FLTEichlerShimura.Definitions.Def_AlgebraicCurve_DivisorPushPull
-public import Mathlib.FieldTheory.Galois.Basic
 
-import LeanPool.FLTEichlerShimura.Definitions.Def_AlgebraicCurve_Correspondence
 import LeanPool.FLTEichlerShimura.Theorems.Thm_AlgebraicCurve_Place_exists_algEquiv_smul_eq_of_restrict_eq
 import LeanPool.FLTEichlerShimura.Theorems.Thm_AlgebraicCurve_SemilinearAut_ramificationIndex_smul
 import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util

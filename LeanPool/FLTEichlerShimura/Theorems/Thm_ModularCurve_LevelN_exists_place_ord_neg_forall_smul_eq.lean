@@ -20,7 +20,6 @@ module
 public import LeanPool.FLTEichlerShimura.Definitions.Def_AlgebraicCurve_BaseChangeGalois
 public import LeanPool.FLTEichlerShimura.Definitions.Def_ModularCurve_LevelNFunctionField
 
-import Mathlib.Algebra.CharP.Pi
 import Mathlib.Order.CompletePartialOrder
 import LeanPool.FLTEichlerShimura.Theorems.Thm_WLight_frickeFunction_modularity_package
 import LeanPool.FLTEichlerShimura.Theorems.Thm_WLight_frickeFunction_orbit_package

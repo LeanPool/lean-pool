@@ -21,7 +21,6 @@ public import LeanPool.FLTEichlerShimura.Definitions.Def_CohCarrier_Level
 
 import Mathlib.Algebra.Order.Ring.Star
 import Mathlib.Data.Int.Star
-import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
 
 /-!
 # Index of Γ_H(M) as product of indices

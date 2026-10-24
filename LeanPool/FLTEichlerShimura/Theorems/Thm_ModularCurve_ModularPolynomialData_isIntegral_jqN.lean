@@ -19,7 +19,6 @@ module
 
 public import LeanPool.FLTEichlerShimura.Definitions.Def_ModularCurve_X0
 
-import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
 
 /-!
 # j(q^N) is integral over ℚ(j(q))

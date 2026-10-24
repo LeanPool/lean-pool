@@ -26,6 +26,7 @@ import Mathlib.RingTheory.Flat.TorsionFree
 import LeanPool.FLTEichlerShimura.Definitions.Def_AlgebraicCurve_RatFuncPlaceClassification
 import LeanPool.FLTEichlerShimura.Theorems.Thm_AlgebraicCurve_Place_ord_algebraMap
 import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
+import Mathlib.RingTheory.Henselian
 
 /-!
 # The rational function field K(t) is a curve over K

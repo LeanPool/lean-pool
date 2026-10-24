@@ -17,8 +17,9 @@ Licensed under Apache License 2.0
 
 module
 
-public import LeanPool.FLTEichlerShimura.Definitions.Def_ModularCurve_JZeroHeightForm
-public import LeanPool.FLTEichlerShimura.Definitions.Def_AlgebraicCurve_RiemannRochRows
+public import LeanPool.FLTEichlerShimura.Definitions.Def_ModularCurve_ArithmeticGalois
+public import LeanPool.FLTEichlerShimura.Definitions.Def_AlgebraicCurve_CanonicalDivisor
+public import LeanPool.FLTEichlerShimura.Definitions.Def_AlgebraicCurve_Repartitions
 
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_functionFieldRiemannRoch_modularFunctionFieldBar
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_isCurveOver_modularFunctionFieldBar
@@ -26,7 +27,9 @@ import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_hasCanonicalDivisor_
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_essFiniteType_modularFunctionFieldBar
 import LeanPool.FLTEichlerShimura.Theorems.Thm_AlgebraicCurve_dCoordGenerates_of_isCurveOver
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_genus_eq_genusFF_modularFunctionFieldBar
-import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
+import Mathlib.NumberTheory.Height.NumberField
+import Mathlib.Data.Int.Star
+import Mathlib.Algebra.Order.Ring.Star
 
 /-!
 # Riemann's inequality for the function field of X₀(N) over ℚ̄

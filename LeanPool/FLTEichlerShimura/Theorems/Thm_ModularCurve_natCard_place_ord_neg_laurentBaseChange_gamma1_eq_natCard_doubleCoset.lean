@@ -40,6 +40,10 @@ import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_natCard_doubleCoset_
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_transcendental_and_finiteDimensional_adjoin_laurentBaseChange_qExpFunctionFieldC_of_coe_eq_jqModC
 import LeanPool.FLTEichlerShimura.Theorems.Thm_WLight_levelN_structure_package
 import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
+import Mathlib.RingTheory.Flat.TorsionFree
+import Mathlib.RingTheory.SimpleRing.Principal
+import Mathlib.RingTheory.Flat.FaithfullyFlat.Algebra
+import Mathlib.RingTheory.Henselian
 
 /-!
 # Poles of j on X₁(M) counted by cusps

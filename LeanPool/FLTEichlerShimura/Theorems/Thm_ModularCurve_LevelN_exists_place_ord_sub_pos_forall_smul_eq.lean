@@ -20,7 +20,6 @@ module
 public import LeanPool.FLTEichlerShimura.Definitions.Def_AlgebraicCurve_BaseChangeGalois
 public import LeanPool.FLTEichlerShimura.Definitions.Def_ModularCurve_LevelNFunctionField
 
-import Mathlib.Algebra.CharP.Pi
 import Mathlib.Order.CompletePartialOrder
 import LeanPool.FLTEichlerShimura.Theorems.Thm_WLight_levelN_structure_package
 import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util

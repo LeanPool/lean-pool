@@ -16,7 +16,6 @@ module
 
 public import LeanPool.FLTEichlerShimura.Definitions.Def_AlgebraicCurve_DivisorClassGroup
 public import Mathlib.RingTheory.Kaehler.Basic
-public import Mathlib.FieldTheory.IsAlgClosed.Basic
 
 /-!
 # The curve axioms `IsCurveOver` for a function field

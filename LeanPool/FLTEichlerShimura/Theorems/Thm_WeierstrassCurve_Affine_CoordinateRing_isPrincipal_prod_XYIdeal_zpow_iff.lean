@@ -19,7 +19,6 @@ module
 
 public import Mathlib.AlgebraicGeometry.EllipticCurve.Affine.Point
 
-import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
 
 /-!
 # Principality of prod 𝔪_{P_i}^{mᵢ} versus sum mᵢ Pᵢ = O

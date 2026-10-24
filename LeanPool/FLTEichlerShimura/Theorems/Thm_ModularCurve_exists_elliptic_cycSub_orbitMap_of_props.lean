@@ -17,13 +17,9 @@ Licensed under Apache License 2.0
 
 module
 
-public import LeanPool.FLTEichlerShimura.Definitions.Def_ModularCurve_EMD
-public import LeanPool.FLTEichlerShimura.Definitions.Def_ModularCurve_MazurStepThreeInputs
 public import LeanPool.FLTEichlerShimura.Definitions.Def_ModularCurve_CycSubRootBridgeN
 public import LeanPool.FLTEichlerShimura.Definitions.Def_ModularCurve_SpecialisationBridge
 
-import LeanPool.FLTEichlerShimura.Definitions.Def_ModularCurve_TatePoint
-import LeanPool.FLTEichlerShimura.Definitions.Def_HahnSeries_Monodromy
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_exists_place_of_emb
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_samePlace_iff_exists_monodromy
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_natCard_normalized_algHom_jBar_eq_toNat_ord
@@ -31,8 +27,6 @@ import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_place_eq_of_induces
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_exists_emb_equiv_rootsAt
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_nonempty_modularPolynomialData
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_B3_specialisationEquivariance_level
-import Mathlib.RingTheory.HahnSeries.PowerSeries
-import Mathlib.SetTheory.Cardinal.Finite
 
 /-!
 # Orbit correspondence for cyclic N-subgroups over a given j₀

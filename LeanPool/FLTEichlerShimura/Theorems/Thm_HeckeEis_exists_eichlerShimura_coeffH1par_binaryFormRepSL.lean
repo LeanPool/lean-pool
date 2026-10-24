@@ -22,7 +22,6 @@ public import LeanPool.FLTEichlerShimura.Definitions.Def_HeckeEis_BinaryFormRep
 public import LeanPool.FLTEichlerShimura.Definitions.Def_ModularForm_HeckeOperatorForms
 
 import LeanPool.FLTEichlerShimura.Theorems.Thm_HeckeEis_exists_eichlerShimura_coeffH1par_binaryFormRepSL_forall_prime
-import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
 
 /-!
 # Hecke-equivariant Eichler–Shimura decomposition of parabolic cohomology

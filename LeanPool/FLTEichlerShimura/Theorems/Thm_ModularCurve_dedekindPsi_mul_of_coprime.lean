@@ -19,12 +19,9 @@ module
 
 public import LeanPool.FLTEichlerShimura.Definitions.Def_ModularCurve_X0
 
-import LeanPool.FLTEichlerShimura.Definitions.Def_ModularCurve_PhiGen
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_dedekindPsi_pos
 import Mathlib.NumberTheory.ArithmeticFunction.Misc
 import Mathlib.RingTheory.Polynomial.Resultant.Basic
-import Mathlib.FieldTheory.IsAlgClosed.Basic
-import Mathlib.FieldTheory.IsAlgClosed.AlgebraicClosure
 import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
 
 /-!
@@ -501,8 +498,7 @@ theorem nonempty_modularPolynomialData_mul_of_coprime {m n : ℕ} [NeZero m] [Ne
 end ModularCurve
 end
 
-open _root_.ModularCurve _root_.P2MW.S_ModularCurve_dedekindPsi_mul_of_coprime.ModularCurve
-  ModularCurve.PhiGen in
+open _root_.ModularCurve _root_.P2MW.S_ModularCurve_dedekindPsi_mul_of_coprime.ModularCurve in
 theorem solution (M N : ℕ) (h : Nat.Coprime M N) :
     dedekindPsi (M * N) = dedekindPsi M * dedekindPsi N :=
   ModularCurve.dedekindPsi_mul_of_coprime M N h

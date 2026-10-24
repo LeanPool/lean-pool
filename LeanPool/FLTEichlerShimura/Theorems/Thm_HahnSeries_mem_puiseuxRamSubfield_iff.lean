@@ -20,7 +20,6 @@ module
 public import LeanPool.FLTEichlerShimura.Definitions.Def_HahnSeries_RamificationBound
 
 import Mathlib.Order.CompletePartialOrder
-import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
 
 /-!
 # Membership in the e-ramified Puiseux subfield

@@ -21,7 +21,7 @@ public import LeanPool.FLTEichlerShimura.Definitions.Def_ModularCurve_JqCoeff
 public import LeanPool.FLTEichlerShimura.Definitions.Def_ModularCurve_X1
 
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_qExpansion_discriminant_eq_map_X_mul_dedekindEtaUnit
-import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
+import Mathlib.RingTheory.Henselian
 
 /-!
 # j-series lies in the integral form ratios over any K, Γ

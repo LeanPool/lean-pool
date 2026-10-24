@@ -24,6 +24,8 @@ import Mathlib.Analysis.InnerProductSpace.OfNorm
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_exists_hasEquivariantPrimitiveOf
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_periodOf_apply_eq_sub_of_hasEquivariantPrimitiveOf
 import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
+import Mathlib.Analysis.SpecialFunctions.Bernstein
+import Mathlib.MeasureTheory.Covering.Besicovitch
 
 /-!
 # Real periods detect vanishing of weight-2 cusp forms

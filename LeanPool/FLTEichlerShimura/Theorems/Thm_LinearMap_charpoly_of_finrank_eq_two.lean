@@ -19,11 +19,8 @@ module
 
 public import Mathlib.LinearAlgebra.Charpoly.Basic
 public import Mathlib.LinearAlgebra.Trace
-public import Mathlib.LinearAlgebra.Determinant
 
 import Mathlib.LinearAlgebra.Charpoly.ToMatrix
-import Mathlib.LinearAlgebra.Matrix.Charpoly.Coeff
-import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
 
 /-!
 # Characteristic polynomial of a rank-two endomorphism

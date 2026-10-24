@@ -21,7 +21,6 @@ public import Mathlib.FieldTheory.Relrank
 public import LeanPool.FLTEichlerShimura.Definitions.Def_CohCarrier_Level
 public import LeanPool.FLTEichlerShimura.Definitions.Def_ModularCurve_X1
 
-import Mathlib.Data.Int.Star
 import Mathlib.RingTheory.Flat.TorsionFree
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_JOneES_exists_transcendental_finiteDimensional_laurentBaseChange
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_exists_intSeriesC_mul_ne_of_gamma0Units_not_mem
@@ -30,6 +29,8 @@ import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_finrank_adjoin_qExpF
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_jqModC_mem_intFormRatiosC
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_transcendental_jqModC
 import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
+import Mathlib.RingTheory.SimpleRing.Principal
+import Mathlib.RingTheory.Henselian
 
 /-!
 # Index of H{±1} bounds the degree of F_H/F₀

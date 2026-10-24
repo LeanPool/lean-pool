@@ -18,10 +18,10 @@ Licensed under Apache License 2.0
 module
 
 public import Mathlib.Dynamics.PeriodicPts.Defs
-public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
+public import Mathlib.Algebra.BigOperators.Group.Finset.Defs
 
-import Mathlib.Tactic.Push
 import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
+import Mathlib.Algebra.BigOperators.Group.Finset.Basic
 
 /-!
 # Vanishing orbit sums give a coboundary G∘ f-G

@@ -25,7 +25,6 @@ public import Mathlib.RingTheory.EssentialFiniteness
 import Mathlib.FieldTheory.RatFunc.AsPolynomial
 import Mathlib.RingTheory.SimpleRing.Principal
 import Mathlib.RingTheory.TotallySplit
-import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
 
 /-!
 # Finite extensions of K(x) are essentially of finite type

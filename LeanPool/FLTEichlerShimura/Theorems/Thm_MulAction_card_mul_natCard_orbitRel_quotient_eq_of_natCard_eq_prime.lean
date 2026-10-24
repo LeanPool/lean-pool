@@ -22,7 +22,6 @@ public import Mathlib.GroupTheory.GroupAction.Defs
 public import Mathlib.SetTheory.Cardinal.Finite
 
 import Mathlib.Data.ZMod.QuotientGroup
-import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
 
 /-!
 # Orbit count for an action of a group of prime order

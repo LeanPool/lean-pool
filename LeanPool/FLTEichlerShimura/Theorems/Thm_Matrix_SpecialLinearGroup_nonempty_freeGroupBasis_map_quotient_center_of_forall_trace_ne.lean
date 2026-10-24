@@ -26,7 +26,6 @@ import Mathlib.Analysis.Normed.Ring.Lemmas
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularGroup_exists_mulEquiv_freeProduct_quotient_center
 import LeanPool.FLTEichlerShimura.Theorems.Thm_Monoid_CoprodI_nonempty_freeGroupBasis_fin_kuroshRank
 import LeanPool.FLTEichlerShimura.Theorems.Thm_Subgroup_card_orbitRelQuotient_mul_card_eq_index
-import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
 
 /-!
 # Free image in PSL₂(ℤ) of a torsion-free congruence-type subgroup

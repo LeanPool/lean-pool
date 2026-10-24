@@ -23,7 +23,6 @@ public import LeanPool.FLTEichlerShimura.Definitions.Def_HeckeEis_EichlerIntegra
 import LeanPool.FLTEichlerShimura.Theorems.Thm_HeckeEis_exists_isEichlerIntegral
 import LeanPool.FLTEichlerShimura.Theorems.Thm_HeckeEis_isEquivariantPrimitiveWith_of_isEichlerIntegral
 import LeanPool.FLTEichlerShimura.Theorems.Thm_HeckeEis_isParabolicCocycle_cocycle_of_isEichlerIntegral
-import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
 
 /-!
 # Existence of a parabolic Eichler integral for Γ₀(N) cusp forms

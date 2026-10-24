@@ -24,6 +24,7 @@ public import LeanPool.FLTEichlerShimura.Definitions.Def_AlgebraicCurve_DivisorC
 import LeanPool.FLTEichlerShimura.Definitions.Def_AlgebraicCurve_RatFuncPlaces
 import LeanPool.FLTEichlerShimura.Theorems.Thm_AlgebraicCurve_RationalFunctionField_toValuationSubring_eq_of_forall_ne_ofHeightOneSpectrum
 import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
+import Mathlib.RingTheory.Henselian
 
 /-!
 # The place at infinity of K(t) has degree one

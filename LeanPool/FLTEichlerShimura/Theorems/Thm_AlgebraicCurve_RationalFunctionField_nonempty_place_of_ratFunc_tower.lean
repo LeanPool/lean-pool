@@ -23,7 +23,6 @@ public import LeanPool.FLTEichlerShimura.Definitions.Def_AlgebraicCurve_DivisorC
 
 import LeanPool.FLTEichlerShimura.Definitions.Def_AlgebraicCurve_RatFuncPlaceInfty
 import LeanPool.FLTEichlerShimura.Theorems.Thm_AlgebraicCurve_Place_exists_restrict_eq
-import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
 
 /-!
 # Existence of a place for a finite separable extension of K(X)

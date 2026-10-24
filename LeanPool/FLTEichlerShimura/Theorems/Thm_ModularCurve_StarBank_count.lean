@@ -21,15 +21,6 @@ public import Mathlib.FieldTheory.IsAlgClosed.Basic
 
 import Mathlib.FieldTheory.IsAlgClosed.AlgebraicClosure
 import Mathlib.Algebra.Field.ZMod
-import Mathlib.Data.ZMod.Basic
-import Mathlib.Data.Nat.Prime.Basic
-import Mathlib.Algebra.Order.BigOperators.Group.Finset
-import Mathlib.Algebra.Polynomial.Roots
-import Mathlib.Algebra.Polynomial.Splits
-import Mathlib.Algebra.Polynomial.Coeff
-import Mathlib.Algebra.Polynomial.Monic
-import Mathlib.Algebra.Polynomial.Degree.Lemmas
-import Mathlib.Data.Nat.Choose.Basic
 import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
 
 /-!

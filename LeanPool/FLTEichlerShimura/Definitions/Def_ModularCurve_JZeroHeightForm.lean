@@ -17,7 +17,6 @@ module
 public import LeanPool.FLTEichlerShimura.Definitions.Def_ModularCurve_JZeroNaiveHeight
 public import LeanPool.FLTEichlerShimura.Definitions.Def_AlgebraicCurve_PlaceEvaluation
 public import LeanPool.FLTEichlerShimura.Definitions.Def_AlgebraicCurve_Repartitions
-public import LeanPool.FLTEichlerShimura.Definitions.Def_Compat_Mathlib430
 
 /-!
 # Height form on divisors; divisor representatives in J_0(N)

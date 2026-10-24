@@ -19,13 +19,10 @@ module
 
 public import Mathlib.FieldTheory.RatFunc.Basic
 public import LeanPool.FLTEichlerShimura.Definitions.Def_AlgebraicCurve_DivisorClassGroup
-public import LeanPool.FLTEichlerShimura.Definitions.Def_AlgebraicCurve_RatFuncPlaces
+public import Mathlib.RingTheory.SimpleRing.Principal
 
-import Mathlib.RingTheory.AdjoinRoot
-import LeanPool.FLTEichlerShimura.Theorems.Thm_P2M_Dup_AlgebraicCurve_Place_mem_iff_adicValuation_le_one
-import LeanPool.FLTEichlerShimura.Theorems.Thm_P2M_Dup_AlgebraicCurve_Place_mem_maximalIdeal_iff_adicValuation_lt_one
-import LeanPool.FLTEichlerShimura.Theorems.Thm_P2M_Dup_AlgebraicCurve_Place_isEquiv_adicValuation_ofHeightOneSpectrum
 import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
+import LeanPool.FLTEichlerShimura.Definitions.Def_AlgebraicCurve_RatFuncPlaces
 
 /-!
 # Degree of a finite place of K(t) equals deg p

@@ -20,11 +20,11 @@ module
 public import Mathlib.FieldTheory.RatFunc.Basic
 public import LeanPool.FLTEichlerShimura.Definitions.Def_AlgebraicCurve_IsCurveOver
 public import LeanPool.FLTEichlerShimura.Definitions.Def_AlgebraicCurve_LocalResidue
+public import Mathlib.RingTheory.SimpleRing.Principal
 
 import LeanPool.FLTEichlerShimura.Theorems.Thm_AlgebraicCurve_constantsAreBase_of_isAlgClosed
 import LeanPool.FLTEichlerShimura.Theorems.Thm_AlgebraicCurve_degree_canonicalDivisor_eq_of_riemannRoch
 import LeanPool.FLTEichlerShimura.Theorems.Thm_AlgebraicCurve_functionFieldRiemannRoch_of_isAlgClosed
-import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
 
 /-!
 # Degree of a canonical divisor is 2g-2 over ̄ K

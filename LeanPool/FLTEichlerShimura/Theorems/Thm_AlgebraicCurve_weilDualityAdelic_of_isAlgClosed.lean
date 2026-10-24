@@ -20,6 +20,7 @@ module
 public import Mathlib.FieldTheory.RatFunc.Basic
 public import LeanPool.FLTEichlerShimura.Definitions.Def_AlgebraicCurve_LocalResidue
 public import LeanPool.FLTEichlerShimura.Definitions.Def_AlgebraicCurve_RiemannRochRows
+public import Mathlib.RingTheory.SimpleRing.Principal
 
 import Mathlib.RingTheory.Finiteness.ModuleFinitePresentation
 import Mathlib.RingTheory.TotallySplit
@@ -27,7 +28,6 @@ import LeanPool.FLTEichlerShimura.Theorems.Thm_AlgebraicCurve_constantsAreBase_o
 import LeanPool.FLTEichlerShimura.Theorems.Thm_AlgebraicCurve_functionFieldRiemannRoch_of_isAlgClosed
 import LeanPool.FLTEichlerShimura.Theorems.Thm_AlgebraicCurve_stichtenothGenusExists_of_isCurveOver
 import LeanPool.FLTEichlerShimura.Theorems.Thm_AlgebraicCurve_weilDualityAdelic_of_functionFieldRiemannRoch_of_stichtenothGenusExists
-import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
 
 /-!
 # Adelic Weil duality over an algebraically closed constant field

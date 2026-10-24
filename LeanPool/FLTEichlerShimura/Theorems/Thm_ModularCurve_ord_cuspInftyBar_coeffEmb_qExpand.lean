@@ -22,7 +22,6 @@ public import LeanPool.FLTEichlerShimura.Definitions.Def_ModularCurve_AtkinLehne
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_ord_cuspInftyBar
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_order_coeffEmb
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_order_qExpand
-import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
 
 /-!
 # Order of j(qᵈ) at the cusp at infinity

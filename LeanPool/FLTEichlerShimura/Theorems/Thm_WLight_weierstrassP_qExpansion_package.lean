@@ -20,30 +20,9 @@ module
 public import Mathlib.Analysis.SpecialFunctions.Elliptic.Weierstrass
 public import Mathlib.Analysis.Complex.UpperHalfPlane.Manifold
 public import Mathlib.Analysis.Complex.IntegerCompl
-public import Mathlib.Geometry.Manifold.Notation
 
 import Mathlib.NumberTheory.ModularForms.EisensteinSeries.QExpansion
-import Mathlib.NumberTheory.ModularForms.LevelOne.GradedRing
-import Mathlib.RingTheory.DedekindDomain.IntegralClosure
-import Mathlib.RingTheory.DedekindDomain.Ideal.Lemmas
-import Mathlib.RingTheory.Unramified.Field
-import Mathlib.Analysis.Meromorphic.NormalForm
-import Mathlib.RingTheory.Discriminant
-import Mathlib.RingTheory.Adjoin.PowerBasis
-import Mathlib.FieldTheory.PrimitiveElement
-import Mathlib.RingTheory.RootsOfUnity.Complex
-import Mathlib.Analysis.Complex.Polynomial.Basic
-import Mathlib.LinearAlgebra.Lagrange
-import Mathlib.FieldTheory.LinearDisjoint
-import Mathlib.FieldTheory.Galois.Infinite
-import Mathlib.RingTheory.AlgebraicIndependent.TranscendenceBasis
-import Mathlib.RingTheory.AlgebraicIndependent.AlgebraicClosure
-import Mathlib.RingTheory.AlgebraicIndependent.Adjoin
-import Mathlib.RingTheory.Polynomial.RationalRoot
-import Mathlib.Analysis.Analytic.Order
-import Mathlib.RingTheory.PowerSeries.Order
-import Mathlib.RingTheory.Polynomial.IsIntegral
-import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
+import Mathlib.CategoryTheory.Category.Init
 
 /-!
 # Lipschitz's formula and the q-expansion of wp at torsion points

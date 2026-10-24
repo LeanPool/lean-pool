@@ -18,11 +18,8 @@ Licensed under Apache License 2.0
 module
 
 public import LeanPool.FLTEichlerShimura.Definitions.Def_EllipticCurve_FrobeniusEndo
-public import Mathlib.AlgebraicGeometry.EllipticCurve.DivisionPolynomial.Basic
-public import Mathlib.Algebra.Polynomial.Derivative
 
 import LeanPool.FLTEichlerShimura.Theorems.Thm_FrobeniusEndo_kerDeg_frobEnd_line_one_pos_and_eq
-import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
 
 /-!
 # Finiteness of ker([m]-π) on W(k)

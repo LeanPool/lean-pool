@@ -17,11 +17,10 @@ Licensed under Apache License 2.0
 
 module
 
-public import Mathlib.Analysis.Complex.UpperHalfPlane.Exp
 public import Mathlib.RingTheory.LaurentSeries
 public import LeanPool.FLTEichlerShimura.Definitions.Def_ModularForm_HeckeOperator
+public import Mathlib.Analysis.Complex.Periodic
 
-import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
 
 /-!
 # Twisted q-expansion at period ℓ under τ↦(τ+b)/ℓ

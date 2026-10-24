@@ -17,10 +17,10 @@ Licensed under Apache License 2.0
 
 module
 
-public import Mathlib.Analysis.Complex.UpperHalfPlane.Exp
 public import Mathlib.RingTheory.LaurentSeries
+public import Mathlib.Analysis.Complex.Periodic
+public import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
 
-import Mathlib.NumberTheory.ModularForms.QExpansion
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_hasSum_qParam_mul
 import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
 

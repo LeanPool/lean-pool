@@ -19,14 +19,13 @@ module
 
 public import LeanPool.FLTEichlerShimura.Definitions.Def_ModularCurve_CycSubRootBridgeN
 
-import Mathlib.Algebra.Field.ZMod
-import LeanPool.FLTEichlerShimura.Definitions.Def_WeierstrassCurve_VeluPointMap2
 import LeanPool.FLTEichlerShimura.Theorems.Thm_WeierstrassCurve_exists_addMonoidHom_coe_eq_veluPointMap2
 import LeanPool.FLTEichlerShimura.Theorems.Thm_WeierstrassCurve_fiberAdd_veluGx_cleared_four
 import LeanPool.FLTEichlerShimura.Theorems.Thm_WeierstrassCurve_fiberAdd_asymWeight_cleared_sixteen
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_TatePoint_fullKernelDiscAt_of_odd
 import LeanPool.FLTEichlerShimura.Theorems.Thm_WeierstrassCurve_isElliptic_veluQuotient2_of_isElliptic
 import LeanPool.FLTEichlerShimura.Theorems.Thm_WeierstrassCurve_Affine_Point_two_smul_some_eq_zero_iff
+import Mathlib.RingTheory.SimpleRing.Principal
 
 /-!
 # Nonvanishing discriminant of the full-kernel quotient at every level
@@ -752,17 +751,6 @@ private theorem _root_.ModularCurve.TatePoint.fullKernelDiscAt_of_even
   ModularCurve.TatePoint.DiscEvenEngine.fullKernelDiscAt_of_even N hE
 
 end ModularCurve.TatePoint
-
-section Char3Gate
-
-example [DecidableEq (AlgebraicClosure (ZMod 3))]
-    (h2 : (2 : AlgebraicClosure (ZMod 3)) ≠ 0)
-    (W : WeierstrassCurve (AlgebraicClosure (ZMod 3))) [W.IsElliptic]
-    (Q : W.toAffine.Point) (hQ : addOrderOf Q = 6) :
-    (W.fullKernelQuotient Q 6).Δ ≠ 0 :=
-  ModularCurve.TatePoint.fullKernelDiscAt_of_even 6 (by decide) h2 W Q hQ
-
-end Char3Gate
 
 open ModularCurve TatePoint in
 theorem solution (N : ℕ) [NeZero N] : FullKernelDiscAt N := by

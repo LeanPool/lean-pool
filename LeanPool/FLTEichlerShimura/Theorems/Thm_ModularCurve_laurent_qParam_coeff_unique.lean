@@ -17,8 +17,9 @@ Licensed under Apache License 2.0
 
 module
 
-public import Mathlib.Analysis.Complex.UpperHalfPlane.Exp
 public import Mathlib.RingTheory.LaurentSeries
+public import Mathlib.Analysis.Complex.Periodic
+public import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
 
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_qParam_coeff_unique
 import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util

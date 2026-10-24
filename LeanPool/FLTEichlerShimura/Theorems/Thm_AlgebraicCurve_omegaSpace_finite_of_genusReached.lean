@@ -28,6 +28,10 @@ import LeanPool.FLTEichlerShimura.Theorems.Thm_AlgebraicCurve_Divisor_degree_eq_
 import LeanPool.FLTEichlerShimura.Theorems.Thm_AlgebraicCurve_ell_eq_zero_of_degree_neg
 import LeanPool.FLTEichlerShimura.Theorems.Thm_AlgebraicCurve_indexOfSpecialty_eq_of_genusReached
 import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
+import Mathlib.RingTheory.SimpleRing.Principal
+import Mathlib.RingTheory.RegularLocalRing.Defs
+import Mathlib.Data.Int.Star
+import Mathlib.Algebra.Order.Ring.Star
 
 /-!
 # Finite-dimensionality of the space Ω(D)

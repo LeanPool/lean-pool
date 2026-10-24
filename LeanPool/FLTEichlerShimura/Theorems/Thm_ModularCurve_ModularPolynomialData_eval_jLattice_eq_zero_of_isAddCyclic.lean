@@ -23,7 +23,6 @@ public import LeanPool.FLTEichlerShimura.Definitions.Def_PeriodPair_Uniformizati
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_ModularPolynomialData_eval_E4_cube_div_discriminant_coset_eq_zero
 import LeanPool.FLTEichlerShimura.Theorems.Thm_PeriodPair_exists_mem_primCosetReps_and_jLattice_eq_of_isAddCyclic
 import LeanPool.FLTEichlerShimura.Theorems.Thm_PeriodPair_jLattice_ofTau
-import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
 
 /-!
 # Φ_N(j(Λ),j(Λ'))=0 for cyclic sublattices of index N

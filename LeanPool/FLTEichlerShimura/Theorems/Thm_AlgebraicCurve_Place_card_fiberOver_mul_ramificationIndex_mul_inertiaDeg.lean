@@ -18,7 +18,6 @@ Licensed under Apache License 2.0
 module
 
 public import LeanPool.FLTEichlerShimura.Definitions.Def_AlgebraicCurve_PlacesOverDVR
-public import Mathlib.FieldTheory.Galois.Basic
 
 import LeanPool.FLTEichlerShimura.Theorems.Thm_AlgebraicCurve_Place_ramificationIndex_eq_of_restrict_eq
 import LeanPool.FLTEichlerShimura.Theorems.Thm_AlgebraicCurve_Place_inertiaDeg_eq_of_restrict_eq

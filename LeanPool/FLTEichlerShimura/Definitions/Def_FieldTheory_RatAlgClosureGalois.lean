@@ -14,8 +14,6 @@ Licensed under Apache License 2.0
 
 module
 
-public import Mathlib.Algebra.Algebra.Rat
-public import Mathlib.FieldTheory.IsAlgClosed.AlgebraicClosure
 public import Mathlib.FieldTheory.Galois.Basic
 
 /-!

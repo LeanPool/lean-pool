@@ -14,13 +14,18 @@ Licensed under Apache License 2.0
 
 module
 
-public import Mathlib.Data.Finsupp.Pointwise
-public import LeanPool.FLTEichlerShimura.Definitions.Def_AlgebraicCurve_FrobeniusEndoPic0
 public import LeanPool.FLTEichlerShimura.Definitions.Def_AlgebraicCurve_IsCurveOver
 public import LeanPool.FLTEichlerShimura.Definitions.Def_AlgebraicCurve_RatFuncPlaces
 public import LeanPool.FLTEichlerShimura.Definitions.Def_HeckeGalois_EichlerShimura
 public import LeanPool.FLTEichlerShimura.Definitions.Def_ModularCurve_KroneckerTransport
-public import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_frobenius_identity_geom_unconditional
+public import LeanPool.FLTEichlerShimura.Definitions.Def_ModularCurve_JqCoeff
+public import LeanPool.FLTEichlerShimura.Definitions.Def_AlgebraicCurve_FrobeniusEndo
+public import LeanPool.FLTEichlerShimura.Definitions.Def_AlgebraicCurve_Correspondence
+
+import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_frobenius_identity_geom_unconditional
+import Mathlib.Data.Finsupp.Pointwise
+import LeanPool.FLTEichlerShimura.Definitions.Def_AlgebraicCurve_FrobeniusEndoPic0
+import Mathlib.RingTheory.Henselian
 
 /-!
 # Characteristic-ℓ Frobenius and Hecke operators on modular function fields

@@ -20,7 +20,8 @@ module
 public import LeanPool.FLTEichlerShimura.Definitions.Def_PeriodPair_Uniformization
 
 import Mathlib.NumberTheory.ModularForms.LevelOne.DimensionFormula
-import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
+import Mathlib.RingTheory.SimpleRing.Principal
+import Mathlib.CategoryTheory.Category.Init
 
 /-!
 # Non-vanishing of the discriminant g₂³-27g₃²

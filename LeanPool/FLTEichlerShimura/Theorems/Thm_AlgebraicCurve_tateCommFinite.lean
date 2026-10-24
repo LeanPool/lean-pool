@@ -21,6 +21,8 @@ public import LeanPool.FLTEichlerShimura.Definitions.Def_AlgebraicCurve_TateResi
 
 import Mathlib.Algebra.GroupWithZero.Submonoid.CancelMulZero
 import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
+import Mathlib.Algebra.Order.Algebra
+import Mathlib.RingTheory.SimpleRing.Principal
 
 /-!
 # Tate's commutator has finite K-rank at every place

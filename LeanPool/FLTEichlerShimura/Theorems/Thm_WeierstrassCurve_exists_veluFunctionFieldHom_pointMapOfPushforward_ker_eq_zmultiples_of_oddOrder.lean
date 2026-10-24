@@ -24,7 +24,6 @@ public import LeanPool.FLTEichlerShimura.Definitions.Def_WeierstrassCurve_OddOrd
 public import LeanPool.FLTEichlerShimura.Definitions.Def_WeierstrassCurve_Velu
 
 import LeanPool.FLTEichlerShimura.Theorems.Thm_WeierstrassCurve_exists_veluFunctionFieldHom_restrictAlong_placeOfPoint_eq
-import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
 
 /-!
 # Vélu pushforward point map has kernel ℤQ

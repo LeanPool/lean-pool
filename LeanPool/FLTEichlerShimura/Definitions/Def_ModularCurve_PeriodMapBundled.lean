@@ -15,9 +15,7 @@ Licensed under Apache License 2.0
 module
 
 public import LeanPool.FLTEichlerShimura.Definitions.Def_ModularCurve_PeriodMap
-public import Mathlib.Analysis.Complex.UpperHalfPlane.FunctionsBoundedAtInfty
 public import Mathlib.NumberTheory.ModularForms.Basic
-public import Mathlib.NumberTheory.ModularForms.CongruenceSubgroups
 
 /-!
 # Period homomorphism of a weight-two cusp form

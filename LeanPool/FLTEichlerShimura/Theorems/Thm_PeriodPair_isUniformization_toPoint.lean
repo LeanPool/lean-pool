@@ -19,14 +19,13 @@ module
 
 public import LeanPool.FLTEichlerShimura.Definitions.Def_PeriodPair_Uniformization
 
-import Mathlib.Analysis.Calculus.Deriv.Pow
-import Mathlib.Analysis.Complex.CauchyIntegral
 import Mathlib.Analysis.Complex.Liouville
 import Mathlib.Analysis.Complex.RemovableSingularity
 import Mathlib.Analysis.Normed.Module.Connected
-
 import LeanPool.FLTEichlerShimura.Theorems.Thm_PeriodPair_discriminant_ne_zero
 import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
+import Mathlib.RingTheory.SimpleRing.Principal
+import Mathlib.CategoryTheory.Category.Init
 
 /-!
 # Uniformisation: z ↦ (wp(z), wp'(z)/2) parametrises E_Λ(ℂ)

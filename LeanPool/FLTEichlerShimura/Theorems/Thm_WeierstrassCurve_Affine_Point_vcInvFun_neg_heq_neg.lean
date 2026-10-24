@@ -21,6 +21,7 @@ public import LeanPool.FLTEichlerShimura.Definitions.Def_WeierstrassCurve_Variab
 
 import LeanPool.FLTEichlerShimura.Definitions.Def_ModularCurve_ModuliPoint
 import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
+import Mathlib.Combinatorics.Matroid.Init
 
 /-!
 # The variable change (-1,0,-a₁,-a₃) acts as negation on points

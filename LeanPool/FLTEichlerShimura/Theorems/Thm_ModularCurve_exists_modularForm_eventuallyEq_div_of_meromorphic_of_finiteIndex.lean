@@ -18,22 +18,11 @@ Licensed under Apache License 2.0
 
 module
 
-public import Mathlib.NumberTheory.ModularForms.CongruenceSubgroups
 public import Mathlib.NumberTheory.ModularForms.Basic
-public import Mathlib.Analysis.Meromorphic.Basic
 
 import Mathlib.Analysis.Meromorphic.NormalForm
 import Mathlib.Analysis.Real.Pi.Bounds
-import Mathlib.Analysis.Complex.UpperHalfPlane.Manifold
 import Mathlib.NumberTheory.ModularForms.Discriminant
-import Mathlib.NumberTheory.ModularForms.EisensteinSeries.QExpansion
-import Mathlib.NumberTheory.ModularForms.Bounds
-import Mathlib.Tactic.Choose
-import Mathlib.Tactic.FieldSimp
-import Mathlib.Tactic.Linarith
-import Mathlib.Tactic.NormNum
-import Mathlib.Tactic.Positivity
-import Mathlib.Tactic.Ring
 
 /-!
 # Meromorphic modular functions as quotients of modular forms

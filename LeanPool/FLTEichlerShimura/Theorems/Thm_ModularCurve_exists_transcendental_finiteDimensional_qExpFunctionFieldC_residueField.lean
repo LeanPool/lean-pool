@@ -26,6 +26,9 @@ import LeanPool.FLTEichlerShimura.Definitions.Def_ModularCurve_X0ModL
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_JOneES_exists_transcendental_finiteDimensional_laurentBaseChange
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_jqModC_mem_intFormRatiosC
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_transcendental_jqModC
+import Mathlib.RingTheory.SimpleRing.Principal
+import Mathlib.RingTheory.RegularLocalRing.Defs
+import Mathlib.RingTheory.Henselian
 
 /-!
 # Deuring's inequality for reduced q-expansion function fields

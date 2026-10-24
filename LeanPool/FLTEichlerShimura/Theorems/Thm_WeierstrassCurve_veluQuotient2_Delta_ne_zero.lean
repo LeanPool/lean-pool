@@ -22,7 +22,6 @@ public import LeanPool.FLTEichlerShimura.Definitions.Def_WeierstrassCurve_VeluOr
 import LeanPool.FLTEichlerShimura.Theorems.Thm_WeierstrassCurve_velu2QuadDisc_ne_zero_of_two_torsion
 import LeanPool.FLTEichlerShimura.Theorems.Thm_WeierstrassCurve_veluGx_ne_zero_of_two_torsion
 import LeanPool.FLTEichlerShimura.Theorems.Thm_WeierstrassCurve_veluQuotient2_Delta_eq
-import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
 
 /-!
 # Nonvanishing discriminant of the order-two Vélu quotient

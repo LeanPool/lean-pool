@@ -21,8 +21,6 @@ public import LeanPool.FLTEichlerShimura.Definitions.Def_ModularCurve_ModularUni
 public import LeanPool.FLTEichlerShimura.Definitions.Def_ModularForm_HeckeOperator
 public import Mathlib.NumberTheory.ModularForms.Discriminant
 
-import Mathlib.NumberTheory.ModularForms.QExpansion
-import Mathlib.NumberTheory.ModularForms.LevelOne.Basic
 import Mathlib.Analysis.Complex.TaylorSeries
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_qExpansion_discriminant_eq_map_X_mul_dedekindEtaUnit
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_hasSum_qParam_mul_laurent

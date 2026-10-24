@@ -17,11 +17,8 @@ Licensed under Apache License 2.0
 
 module
 
-public import LeanPool.FLTEichlerShimura.Definitions.Def_ModularCurve_X0
 public import LeanPool.FLTEichlerShimura.Definitions.Def_ModularCurve_PhiGen
 
-import Mathlib.RingTheory.IntegralClosure.IntegrallyClosed
-import Mathlib.RingTheory.Polynomial.RationalRoot
 import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
 
 /-!

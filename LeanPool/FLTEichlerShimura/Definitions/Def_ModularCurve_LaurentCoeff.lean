@@ -15,7 +15,6 @@ Licensed under Apache License 2.0
 module
 
 public import Mathlib.RingTheory.LaurentSeries
-public import Mathlib.FieldTheory.IntermediateField.Adjoin.Basic
 
 /-!
 # Coefficientwise maps of Laurent series; base change of subfields

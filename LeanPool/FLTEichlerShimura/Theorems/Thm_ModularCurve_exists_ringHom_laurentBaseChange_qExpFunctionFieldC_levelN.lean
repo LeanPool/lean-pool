@@ -28,6 +28,7 @@ import LeanPool.FLTEichlerShimura.Theorems.Thm_WLight_frickeFunction_modularity_
 import LeanPool.FLTEichlerShimura.Theorems.Thm_WLight_frickeFunction_orbit_package
 import LeanPool.FLTEichlerShimura.Theorems.Thm_WLight_levelN_structure_package
 import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
+import Mathlib.RingTheory.SimpleRing.Principal
 
 /-!
 # q-expansion field of X(Γ) embeds into level-M modular functions

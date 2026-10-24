@@ -15,12 +15,7 @@ Licensed under Apache License 2.0
 module
 
 public import Mathlib.NumberTheory.ModularForms.QExpansion
-public import Mathlib.NumberTheory.ModularForms.CongruenceSubgroups
-public import Mathlib.NumberTheory.ModularForms.ArithmeticSubgroups
 public import Mathlib.AlgebraicGeometry.EllipticCurve.Affine.Point
-public import Mathlib.AlgebraicGeometry.EllipticCurve.VariableChange
-public import Mathlib.Data.ZMod.Basic
-public import Mathlib.SetTheory.Cardinal.NatCard
 
 /-!
 # Modularity of elliptic curves over ℚ via eigenform coefficients

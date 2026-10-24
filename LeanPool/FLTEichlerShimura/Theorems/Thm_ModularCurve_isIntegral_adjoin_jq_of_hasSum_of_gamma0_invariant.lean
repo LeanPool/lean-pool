@@ -18,20 +18,11 @@ Licensed under Apache License 2.0
 module
 
 public import LeanPool.FLTEichlerShimura.Definitions.Def_ModularCurve_X0
-public import Mathlib.Analysis.Complex.UpperHalfPlane.Exp
 public import Mathlib.Analysis.Complex.UpperHalfPlane.MoebiusAction
 public import Mathlib.NumberTheory.ModularForms.CongruenceSubgroups
+public import Mathlib.Analysis.Complex.Periodic
 
-import LeanPool.FLTEichlerShimura.Definitions.Def_ModularCurve_PhiGen
-import LeanPool.FLTEichlerShimura.Definitions.Def_ModularForm_HeckeOperator
-import Mathlib.RingTheory.RootsOfUnity.PrimitiveRoots
-import Mathlib.NumberTheory.Cyclotomic.Basic
 import Mathlib.NumberTheory.Cyclotomic.PrimitiveRoots
-import Mathlib.RingTheory.RootsOfUnity.Complex
-import Mathlib.FieldTheory.Galois.Basic
-import Mathlib.GroupTheory.Perm.Fin
-import Mathlib.NumberTheory.ModularForms.EisensteinSeries.Basic
-import Mathlib.NumberTheory.ModularForms.Discriminant
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_coeffMap_qExpand
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_coeffEmb_qExpand
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_PhiGen_exists_galoisPerm

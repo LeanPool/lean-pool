@@ -21,7 +21,8 @@ public import LeanPool.FLTEichlerShimura.Definitions.Def_CohCarrier_Level
 public import LeanPool.FLTEichlerShimura.Definitions.Def_ModularCurve_X1
 
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularForm_exists_gamma1_weight_four_isIntegralQExp_partialDivisorSum_slash_eq
-import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
+import Mathlib.RingTheory.SimpleRing.Principal
+import Mathlib.RingTheory.Henselian
 
 /-!
 # Diamond operators act faithfully on reduced q-expansions

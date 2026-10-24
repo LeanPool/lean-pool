@@ -17,27 +17,27 @@ Licensed under Apache License 2.0
 
 module
 
-public import Mathlib.FieldTheory.RatFunc.Basic
 public import LeanPool.FLTEichlerShimura.Definitions.Def_AlgebraicCurve_LocalResidue
+public import LeanPool.FLTEichlerShimura.Definitions.Def_AlgebraicCurve_RatFuncPlaces
 
-import Mathlib.Algebra.BigOperators.Field
-import Mathlib.Algebra.GroupWithZero.Submonoid.CancelMulZero
-import Mathlib.Algebra.Polynomial.PartialFractions
-import Mathlib.Analysis.Normed.Ring.Lemmas
-import Mathlib.FieldTheory.Galois.Abelian
-import Mathlib.NumberTheory.RatFunc.Ostrowski
-import Mathlib.RingTheory.AdicCompletion.Completeness
-import Mathlib.RingTheory.Artinian.Instances
-import Mathlib.RingTheory.Norm.Transitivity
-import Mathlib.RingTheory.PicardGroup
-
-import LeanPool.FLTEichlerShimura.Definitions.Def_AlgebraicCurve_CanonicalLocalResidueInstanceV2
-import LeanPool.FLTEichlerShimura.Definitions.Def_AlgebraicCurve_IsCurveOver
-import LeanPool.FLTEichlerShimura.Definitions.Def_AlgebraicCurve_PlacesOverDVR
-import LeanPool.FLTEichlerShimura.Definitions.Def_AlgebraicCurve_RatFuncPlaces
 import LeanPool.FLTEichlerShimura.Definitions.Defs_AlgebraicCurve_residueTheorem_sharedLibrary
 import LeanPool.FLTEichlerShimura.Theorems.Thm_AlgebraicCurve_RationalFunctionField_ord_placeInfty_X
 import LeanPool.FLTEichlerShimura.Theorems.Thm_AlgebraicCurve_RationalFunctionField_deg_placeInfty
+import Mathlib.Algebra.Polynomial.PartialFractions
+import Mathlib.Algebra.BigOperators.Field
+import LeanPool.FLTEichlerShimura.Definitions.Def_AlgebraicCurve_RatFuncPlaceClassification
+import Mathlib.Analysis.Normed.Ring.Lemmas
+import Mathlib.RingTheory.PicardGroup
+import Mathlib.RingTheory.Unramified.Field
+import LeanPool.FLTEichlerShimura.Definitions.Def_AlgebraicCurve_CanonicalLocalResidueInstanceV2
+import LeanPool.FLTEichlerShimura.Definitions.Def_ModularCurve_CanonicalDivisorUniformizer
+import Mathlib.RingTheory.Valuation.LocalSubring
+import Mathlib.RingTheory.Flat.TorsionFree
+import Mathlib.RingTheory.Flat.FaithfullyFlat.Basic
+import Mathlib.Data.Int.Star
+import Mathlib.Algebra.Order.Ring.Star
+import Mathlib.Data.Nat.Choose.Multinomial
+import Mathlib.RingTheory.RegularLocalRing.Defs
 
 /-!
 # Residue theorem for K(x), K algebraically closed

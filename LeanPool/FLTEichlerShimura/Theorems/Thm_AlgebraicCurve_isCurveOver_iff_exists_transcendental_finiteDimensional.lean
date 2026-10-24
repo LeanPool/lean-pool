@@ -21,7 +21,6 @@ public import LeanPool.FLTEichlerShimura.Definitions.Def_AlgebraicCurve_IsCurveO
 
 import LeanPool.FLTEichlerShimura.Theorems.Thm_AlgebraicCurve_IsCurveOver_exists_separating_transcendental
 import LeanPool.FLTEichlerShimura.Theorems.Thm_AlgebraicCurve_isCurveOver_of_transcendental
-import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
 
 /-!
 # Curves over a perfect field: separating transcendence element

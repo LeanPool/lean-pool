@@ -21,7 +21,6 @@ public import Mathlib.AlgebraicGeometry.EllipticCurve.Affine.Point
 public import Mathlib.FieldTheory.IsAlgClosed.Basic
 
 import LeanPool.FLTEichlerShimura.Theorems.Thm_WeierstrassCurve_card_torsion_of_isAlgClosed
-import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
 
 /-!
 # The n-torsion points of an elliptic curve sum to O

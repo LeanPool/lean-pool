@@ -17,7 +17,6 @@ Licensed under Apache License 2.0
 
 module
 
-public import LeanPool.FLTEichlerShimura.Definitions.Def_ModularCurve_X0
 public import LeanPool.FLTEichlerShimura.Definitions.Def_ModularCurve_LaurentCoeff
 public import LeanPool.FLTEichlerShimura.Definitions.Def_ModularCurve_QAdicPlace
 

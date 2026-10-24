@@ -22,7 +22,6 @@ public import LeanPool.FLTEichlerShimura.Definitions.Def_ModularCurve_FibrePoly
 
 import Mathlib.RingTheory.Henselian
 import Mathlib.RingTheory.RegularLocalRing.Defs
-import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
 
 /-!
 # Monic fibres have exactly degΦ roots over ̄ K

@@ -28,7 +28,6 @@ import LeanPool.FLTEichlerShimura.Theorems.Thm_WeierstrassCurve_Affine_FunctionF
 import LeanPool.FLTEichlerShimura.Theorems.Thm_WeierstrassCurve_Affine_deg_ofHeightOneSpectrum_eq_one
 import LeanPool.FLTEichlerShimura.Theorems.Thm_WeierstrassCurve_Affine_exists_infinitePlace_deg_eq_one
 import LeanPool.FLTEichlerShimura.Theorems.Thm_WeierstrassCurve_Affine_hasPrincipalDivisors_of_isAlgClosed
-import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
 
 /-!
 # Existence of a centred genus-one place gate with Abel's theorem

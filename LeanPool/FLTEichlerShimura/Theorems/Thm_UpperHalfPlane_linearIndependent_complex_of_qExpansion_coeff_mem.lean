@@ -17,13 +17,9 @@ Licensed under Apache License 2.0
 
 module
 
-public import Mathlib.NumberTheory.ModularForms.QExpansion
 public import Mathlib.NumberTheory.ModularForms.Discriminant
-public import Mathlib.FieldTheory.IntermediateField.Basic
 
-import Mathlib.NumberTheory.ModularForms.EisensteinSeries.QExpansion
 import Mathlib.NumberTheory.ModularForms.LevelOne.GradedRing
-import Mathlib.Geometry.Manifold.Notation
 import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
 
 /-!

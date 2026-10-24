@@ -18,13 +18,12 @@ Licensed under Apache License 2.0
 module
 
 public import LeanPool.FLTEichlerShimura.Definitions.Def_ModularCurve_MazurStepThreeInputs
-public import LeanPool.FLTEichlerShimura.Definitions.Def_ModularCurve_GenusNumerics
 
 import Mathlib.Algebra.Order.Ring.Star
 import Mathlib.Data.Int.Star
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_isCurveOver_modularFunctionFieldBar
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_sum_ord_jBar_sub_eq_dedekindPsi
-import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
+import Mathlib.RingTheory.Henselian
 
 /-!
 # The polar divisor of jmath̄ has degree ψ(N)

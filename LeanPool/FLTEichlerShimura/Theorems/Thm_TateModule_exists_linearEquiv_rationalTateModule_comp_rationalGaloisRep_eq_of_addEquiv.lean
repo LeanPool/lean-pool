@@ -18,9 +18,7 @@ Licensed under Apache License 2.0
 
 module
 
-public import LeanPool.FLTEichlerShimura.Definitions.Def_AlgebraicCurve_DivisorClassGroup
 public import LeanPool.FLTEichlerShimura.Definitions.Def_ModularCurve_JZeroTateModule
-public import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
 
 import LeanPool.FLTEichlerShimura.Theorems.Thm_TateModule_exists_linearMap_apply_eq_of_addMonoidHom
 

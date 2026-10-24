@@ -22,7 +22,6 @@ public import LeanPool.FLTEichlerShimura.Definitions.Def_AlgebraicCurve_DivisorC
 import Mathlib.RingTheory.Henselian
 import Mathlib.RingTheory.RegularLocalRing.Defs
 import Mathlib.RingTheory.SimpleRing.Principal
-import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
 
 /-!
 # Existence of the divisor of zeros of x-a

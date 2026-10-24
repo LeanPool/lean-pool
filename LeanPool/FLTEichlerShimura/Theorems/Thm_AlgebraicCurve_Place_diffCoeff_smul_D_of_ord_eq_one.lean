@@ -22,7 +22,6 @@ public import LeanPool.FLTEichlerShimura.Definitions.Def_AlgebraicCurve_Differen
 import LeanPool.FLTEichlerShimura.Theorems.Thm_AlgebraicCurve_Place_isSeparable_adjoin_of_ord_eq_one
 import LeanPool.FLTEichlerShimura.Theorems.Thm_KaehlerDifferential_span_D_eq_top_of_transcendental
 import LeanPool.FLTEichlerShimura.Theorems.Thm_AlgebraicCurve_Place_transcendental_of_ord_ne_zero
-import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
 
 /-!
 # A uniformiser's differential spans Ω_{F/K} over a perfect field

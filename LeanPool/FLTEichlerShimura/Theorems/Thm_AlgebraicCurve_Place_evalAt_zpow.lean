@@ -21,8 +21,8 @@ public import LeanPool.FLTEichlerShimura.Definitions.Def_AlgebraicCurve_PlaceEva
 
 import LeanPool.FLTEichlerShimura.Theorems.Thm_AlgebraicCurve_Place_evalAt_mul
 import LeanPool.FLTEichlerShimura.Theorems.Thm_AlgebraicCurve_Place_evalAt_inv
-import LeanPool.FLTEichlerShimura.Theorems.Thm_P2M_Dup_AlgebraicCurve_Place_mem_of_ord_nonneg
-import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
+import LeanPool.FLTEichlerShimura.Definitions.Def_AlgebraicCurve_DivisorPushPull
+import Mathlib.RingTheory.SimpleRing.Principal
 
 /-!
 # Evaluation at a rational place respects integer powers

@@ -20,11 +20,8 @@ module
 
 public import LeanPool.FLTEichlerShimura.Definitions.Def_AlgebraicCurve_RatFuncPlaceInfty
 
-import Mathlib.FieldTheory.RatFunc.AsPolynomial
 import LeanPool.FLTEichlerShimura.Definitions.Def_AlgebraicCurve_RatFuncPlaceClassification
-import LeanPool.FLTEichlerShimura.Theorems.Thm_P2M_Dup_AlgebraicCurve_RationalFunctionField_placeInfty_ne_ofHeightOneSpectrum
 import LeanPool.FLTEichlerShimura.Theorems.Thm_AlgebraicCurve_RationalFunctionField_subsingleton_setOf_forall_ne_ofHeightOneSpectrum
-import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
 
 /-!
 # The infinite place of K(t) characterised among all places

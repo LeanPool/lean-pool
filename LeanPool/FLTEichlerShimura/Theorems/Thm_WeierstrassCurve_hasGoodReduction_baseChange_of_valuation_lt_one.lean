@@ -19,13 +19,6 @@ module
 
 public import Mathlib.AlgebraicGeometry.EllipticCurve.Reduction
 
-import Mathlib.RingTheory.Valuation.ValuationSubring
-import Mathlib.FieldTheory.IsAlgClosed.AlgebraicClosure
-import Mathlib.FieldTheory.IntermediateField.Basic
-import Mathlib.RingTheory.DedekindDomain.AdicValuation
-import Mathlib.RingTheory.Valuation.Discrete.Basic
-import Mathlib.RingTheory.Int.Basic
-import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
 
 /-!
 # Good reduction persists under finite base change

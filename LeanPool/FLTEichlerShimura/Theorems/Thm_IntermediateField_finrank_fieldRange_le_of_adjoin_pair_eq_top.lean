@@ -20,10 +20,9 @@ module
 public import Mathlib.FieldTheory.IntermediateField.Adjoin.Defs
 public import Mathlib.LinearAlgebra.FiniteDimensional.Defs
 
-import Mathlib.FieldTheory.Galois.Basic
 import Mathlib.FieldTheory.IntermediateField.Adjoin.Basic
-import Mathlib.FieldTheory.IntermediateField.Algebraic
-import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
+import Mathlib.Combinatorics.Matroid.Init
+import Mathlib.Data.Nat.Totient
 
 /-!
 # Degree bound for a K-endomorphism of a quadratic extension

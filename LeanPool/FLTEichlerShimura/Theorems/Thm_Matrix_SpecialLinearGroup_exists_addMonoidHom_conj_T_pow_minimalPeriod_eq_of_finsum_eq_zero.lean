@@ -23,7 +23,6 @@ public import Mathlib.LinearAlgebra.Matrix.SpecialLinearGroup
 import Mathlib.Analysis.Normed.Ring.Lemmas
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularGroup_exists_mulEquiv_freeProduct_quotient_center
 import LeanPool.FLTEichlerShimura.Theorems.Thm_Monoid_CoprodI_exists_addMonoidHom_conj_pow_minimalPeriod_eq_of_finsum_eq_zero
-import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
 
 /-!
 # Sum-zero functions on cusps realised by homomorphisms of Γ

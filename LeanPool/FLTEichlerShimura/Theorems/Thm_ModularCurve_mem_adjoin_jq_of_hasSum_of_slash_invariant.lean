@@ -18,16 +18,9 @@ Licensed under Apache License 2.0
 module
 
 public import LeanPool.FLTEichlerShimura.Definitions.Def_ModularCurve_X0
-public import Mathlib.Analysis.Complex.UpperHalfPlane.Exp
 public import Mathlib.Analysis.Complex.UpperHalfPlane.MoebiusAction
+public import Mathlib.Analysis.Complex.Periodic
 
-import LeanPool.FLTEichlerShimura.Definitions.Def_ModularCurve_PhiGen
-import LeanPool.FLTEichlerShimura.Definitions.Def_ModularForm_HeckeOperator
-import Mathlib.NumberTheory.Cyclotomic.PrimitiveRoots
-import Mathlib.NumberTheory.Cyclotomic.Basic
-import Mathlib.RingTheory.RootsOfUnity.Complex
-import Mathlib.NumberTheory.ModularForms.EisensteinSeries.Basic
-import Mathlib.NumberTheory.ModularForms.Discriminant
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_hasSum_jq_qParam
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_coeff_eq_zero_of_hasSum_of_slash_invariant
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_hasSum_qParam_mul_laurent

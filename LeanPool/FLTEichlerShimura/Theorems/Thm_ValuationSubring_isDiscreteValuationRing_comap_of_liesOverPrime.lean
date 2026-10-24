@@ -20,21 +20,10 @@ module
 public import Mathlib.RingTheory.DiscreteValuationRing.Basic
 public import LeanPool.FLTEichlerShimura.Definitions.Def_FLTPrelim_Ramification
 
-import Mathlib.RingTheory.Valuation.RamificationGroup
-import Mathlib.RingTheory.Valuation.ValuationSubring
-import Mathlib.RingTheory.Valuation.Discrete.Basic
 import Mathlib.RingTheory.DedekindDomain.Dvr
-import Mathlib.RingTheory.DedekindDomain.AdicValuation
-import Mathlib.RingTheory.DedekindDomain.IntegralClosure
 import Mathlib.NumberTheory.NumberField.Basic
-import Mathlib.FieldTheory.IsAlgClosed.AlgebraicClosure
-import Mathlib.FieldTheory.IntermediateField.Basic
-import Mathlib.RingTheory.Localization.AtPrime.Basic
-import Mathlib.RingTheory.Valuation.ValuationRing
-import LeanPool.FLTEichlerShimura.Definitions.Def_FLTPrelim_FreyPackage
-import LeanPool.FLTEichlerShimura.Definitions.Def_FLTPrelim_GaloisRep
 import Mathlib.RingTheory.Valuation.LocalSubring
-import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
+import Mathlib.Basic.NNReal.Defs
 
 /-!
 # A place of ℚ̄ restricts to a DVR on a number field
@@ -77,7 +66,7 @@ section privateSection
 
 namespace P2MW.S_ValuationSubring_isDiscreteValuationRing_comap_of_liesOverPrime
 
-open IsDiscreteValuationRing IsLocalRing IsDedekindDomain.HeightOneSpectrum
+open IsDiscreteValuationRing IsLocalRing
 open scoped NumberField Pointwise
 
 local notation "Qb" => AlgebraicClosure ℚ

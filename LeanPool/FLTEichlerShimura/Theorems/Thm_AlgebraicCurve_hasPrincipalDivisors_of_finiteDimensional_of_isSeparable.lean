@@ -17,8 +17,8 @@ Licensed under Apache License 2.0
 
 module
 
-public import LeanPool.FLTEichlerShimura.Definitions.Def_AlgebraicCurve_IsCurveOver
 public import Mathlib.FieldTheory.RatFunc.Basic
+public import LeanPool.FLTEichlerShimura.Definitions.Def_AlgebraicCurve_DivisorClassGroup
 
 import Mathlib.Analysis.Normed.Ring.Lemmas
 import Mathlib.RingTheory.Henselian
@@ -29,7 +29,8 @@ import LeanPool.FLTEichlerShimura.Theorems.Thm_AlgebraicCurve_Divisor_degree_eq_
 import LeanPool.FLTEichlerShimura.Theorems.Thm_AlgebraicCurve_Place_sum_ramificationIndex_mul_inertiaDeg_fiberOver
 import LeanPool.FLTEichlerShimura.Theorems.Thm_AlgebraicCurve_RationalFunctionField_hasPrincipalDivisors
 import LeanPool.FLTEichlerShimura.Theorems.Thm_AlgebraicCurve_finite_setOf_ord_ne_zero_of_finiteDimensional
-import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
+import Mathlib.RingTheory.Flat.TorsionFree
+import Mathlib.RingTheory.Flat.FaithfullyFlat.Algebra
 
 /-!
 # Degree-zero principal divisors for separable extensions of K(t)

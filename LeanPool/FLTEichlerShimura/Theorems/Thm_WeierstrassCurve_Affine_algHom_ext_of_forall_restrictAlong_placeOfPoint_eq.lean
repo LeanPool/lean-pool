@@ -22,16 +22,15 @@ public import LeanPool.FLTEichlerShimura.Definitions.Def_AlgebraicCurve_PlaceEva
 public import LeanPool.FLTEichlerShimura.Definitions.Def_WeierstrassCurve_GenusOnePlaceGateCentred
 
 import LeanPool.FLTEichlerShimura.Definitions.Defs_IsogenyEndDatum_sharedLibrary
-import Mathlib.Algebra.Order.Ring.Star
-import Mathlib.Tactic.NormNum.Prime
-import LeanPool.FLTEichlerShimura.Definitions.Def_Isogeny_ConditionalCurrency
-import LeanPool.FLTEichlerShimura.Theorems.Thm_AlgebraicCurve_normFormulaAlong
-import LeanPool.FLTEichlerShimura.Theorems.Thm_WeierstrassCurve_Affine_CoordinateRing_XYIdeal_ne_bot
-import LeanPool.FLTEichlerShimura.Theorems.Thm_WeierstrassCurve_Affine_algebraMap_mk_C_X_notMem_toValuationSubring_placeOfPoint_zero
 import LeanPool.FLTEichlerShimura.Theorems.Thm_WeierstrassCurve_Affine_hasPrincipalDivisors_functionField
-import LeanPool.FLTEichlerShimura.Definitions.Def_EllipticCurve_FunctionFieldPullback
-import LeanPool.FLTEichlerShimura.Theorems.Thm_WeierstrassCurve_Affine_CoordinateRing_isDedekindDomain
-import LeanPool.FLTEichlerShimura.Theorems.Thm_WeierstrassCurve_Affine_placeOfPoint_some_eq_ofHeightOneSpectrum
+import Mathlib.Tactic.NormNum.Prime
+import Mathlib.Analysis.Normed.Group.Basic
+import Mathlib.Topology.MetricSpace.Bounded
+import Mathlib.Data.EReal.Operations
+import Mathlib.Topology.Algebra.InfiniteSum.Order
+import Mathlib.RingTheory.Henselian
+import Mathlib.Order.CompletePartialOrder
+import Mathlib.Algebra.Order.Ring.Star
 
 /-!
 # Integral maps into K(E) determined by action on places

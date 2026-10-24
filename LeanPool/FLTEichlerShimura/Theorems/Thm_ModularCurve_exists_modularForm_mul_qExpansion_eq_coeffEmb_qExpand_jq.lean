@@ -23,6 +23,11 @@ public import LeanPool.FLTEichlerShimura.Definitions.Def_ModularCurve_X0
 
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_exists_gamma0_qExpansion_div_eq_jqNModC
 import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
+import Mathlib.Tactic.NormNum.Parity
+import Mathlib.NumberTheory.ArithmeticFunction.VonMangoldt
+import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
+import Mathlib.Analysis.SpecialFunctions.Bernstein
+import Mathlib.Data.Nat.Choose.Multinomial
 
 /-!
 # j(qᵈ) as a ratio of weight-12 forms on Γ₀(N)

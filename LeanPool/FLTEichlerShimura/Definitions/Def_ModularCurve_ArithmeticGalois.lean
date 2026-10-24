@@ -17,7 +17,6 @@ module
 public import LeanPool.FLTEichlerShimura.Definitions.Def_ModularCurve_X0
 public import LeanPool.FLTEichlerShimura.Definitions.Def_ModularCurve_LaurentCoeff
 public import LeanPool.FLTEichlerShimura.Definitions.Def_AlgebraicCurve_BaseChangeGalois
-public import Mathlib.FieldTheory.IsAlgClosed.AlgebraicClosure
 
 /-!
 # Coefficientwise Galois action on base-changed Laurent subfields; J0​(N)

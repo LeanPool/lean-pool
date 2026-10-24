@@ -36,7 +36,10 @@ import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_ord_eq_three_of_ord_
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_theta_coeff
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_transcendental_and_finiteDimensional_adjoin_laurentBaseChange_qExpFunctionFieldC_of_coe_eq_jqModC
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_twelve_mul_genusFF_laurentBaseChange_gamma1_add_six_mul_natCard_doubleCoset_eq_index_add_twelve_of_isAlgClosed
-import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
+import Mathlib.RingTheory.SimpleRing.Principal
+import Mathlib.RingTheory.Henselian
+import Mathlib.Data.Int.Star
+import Mathlib.Algebra.Order.Ring.Star
 
 /-!
 # Even-weight dimension lower bound for M_k(Γ₁(M))

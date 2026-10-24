@@ -18,7 +18,7 @@ Licensed under Apache License 2.0
 module
 
 public import LeanPool.FLTEichlerShimura.Definitions.Def_EllipticCurve_FrobeniusEndo
-public import Mathlib.LinearAlgebra.Determinant
+public import Mathlib.Algebra.Field.ZMod
 
 import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
 

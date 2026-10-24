@@ -23,11 +23,14 @@ public import Mathlib.RingTheory.SimpleRing.Principal
 public import LeanPool.FLTEichlerShimura.Definitions.Def_AlgebraicCurve_Correspondence
 
 import LeanPool.FLTEichlerShimura.Definitions.Defs_IsogenyEndDatum_sharedLibrary
-import Mathlib.Algebra.Polynomial.Basis
-import Mathlib.RingTheory.Flat.TorsionFree
-import LeanPool.FLTEichlerShimura.Definitions.Def_Isogeny_ConditionalCurrency
-import LeanPool.FLTEichlerShimura.Definitions.Def_WeierstrassCurve_FunctionFieldQuadratic
 import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
+import Mathlib.Tactic.NormNum.Prime
+import Mathlib.Analysis.Normed.Group.Basic
+import Mathlib.Topology.MetricSpace.Bounded
+import Mathlib.Data.EReal.Operations
+import Mathlib.Topology.Algebra.InfiniteSum.Order
+import Mathlib.RingTheory.Flat.FaithfullyFlat.Basic
+import Mathlib.RingTheory.Henselian
 
 /-!
 # Base change of a finite self-embedding preserves its degree

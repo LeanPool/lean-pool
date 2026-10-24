@@ -18,15 +18,9 @@ Licensed under Apache License 2.0
 module
 
 public import LeanPool.FLTEichlerShimura.Definitions.Def_ModularCurve_X0
-public import Mathlib.FieldTheory.IntermediateField.Adjoin.Basic
 
-import LeanPool.FLTEichlerShimura.Definitions.Def_ModularCurve_LaurentCoeff
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_coeffEmb_qExpand
-import LeanPool.FLTEichlerShimura.Definitions.Def_ModularCurve_PhiGen
-import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_coeffMap_qExpand
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_PhiGen_splits_prime_at_slot
-import Mathlib.RingTheory.RootsOfUnity.PrimitiveRoots
-import Mathlib.NumberTheory.Cyclotomic.Basic
 import LeanPool.FLTEichlerShimura.Theorems.Thm_Polynomial_mem_range_of_unique_common_root
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_coeffMap_injective
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_exists_phiIrreducible_evalSymm

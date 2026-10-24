@@ -20,7 +20,6 @@ module
 public import LeanPool.FLTEichlerShimura.Definitions.Def_ModularCurve_X0
 
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_le_dedekindPsi
-import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
 
 /-!
 # Positivity of ψ(N) for N ≠ 0

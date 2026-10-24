@@ -22,10 +22,6 @@ public import LeanPool.FLTEichlerShimura.Definitions.Def_GaloisRep_LocalConditio
 
 import LeanPool.FLTEichlerShimura.Theorems.Thm_WeierstrassCurve_exists_pairing_torsionBy
 import Mathlib.RingTheory.RootsOfUnity.PrimitiveRoots
-import Mathlib.LinearAlgebra.Matrix.ToLin
-import Mathlib.LinearAlgebra.Matrix.Determinant.Basic
-import Mathlib.Algebra.Group.TypeTags.Basic
-import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
 
 /-!
 # Determinant of the Tate module representation is cyclotomic

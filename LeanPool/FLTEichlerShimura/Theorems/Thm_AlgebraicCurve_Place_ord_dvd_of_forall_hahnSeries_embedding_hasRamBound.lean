@@ -23,8 +23,6 @@ public import Mathlib.RingTheory.SimpleRing.Principal
 public import LeanPool.FLTEichlerShimura.Definitions.Def_AlgebraicCurve_DivisorClassGroup
 public import LeanPool.FLTEichlerShimura.Definitions.Def_HahnSeries_RamificationBound
 
-import Mathlib.Algebra.Algebra.IsSimpleRing
-import Mathlib.Algebra.Lie.OfAssociative
 import Mathlib.RingTheory.Flat.TorsionFree
 import Mathlib.RingTheory.Henselian
 import Mathlib.RingTheory.RegularLocalRing.Defs

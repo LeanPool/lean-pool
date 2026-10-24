@@ -20,12 +20,10 @@ module
 public import LeanPool.FLTEichlerShimura.Definitions.Def_EllipticCurve_WeilPairingFun
 public import LeanPool.FLTEichlerShimura.Definitions.Def_FLTPrelim_GaloisRep
 
-import Mathlib.Tactic.Ring
 import LeanPool.FLTEichlerShimura.Theorems.Thm_WeierstrassCurve_Affine_valuation_placeOf_smul_of_algEquiv
 import LeanPool.FLTEichlerShimura.Theorems.Thm_WeierstrassCurve_Affine_valuation_weilFun
 import LeanPool.FLTEichlerShimura.Theorems.Thm_WeierstrassCurve_Affine_weilFun_ne_zero
 import LeanPool.FLTEichlerShimura.Theorems.Thm_WeierstrassCurve_Affine_FunctionField_exists_eq_algebraMap_of_valuation_eq_one
-import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
 
 /-!
 # Galois conjugation of the Weil function up to a constant

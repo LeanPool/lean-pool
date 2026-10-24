@@ -20,10 +20,7 @@ module
 public import LeanPool.FLTEichlerShimura.Definitions.Def_AlgebraicCurve_RatFuncPlaceInfty
 public import LeanPool.FLTEichlerShimura.Definitions.Def_AlgebraicCurve_RatFuncPlaces
 
-import Mathlib.FieldTheory.RatFunc.AsPolynomial
-import Mathlib.FieldTheory.IsAlgClosed.Basic
 import LeanPool.FLTEichlerShimura.Definitions.Def_AlgebraicCurve_RatFuncPlaceClassification
-import LeanPool.FLTEichlerShimura.Theorems.Thm_P2M_Dup_AlgebraicCurve_RationalFunctionField_eq_ofHeightOneSpectrum_or_eq_placeInfty
 import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
 
 /-!

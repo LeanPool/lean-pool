@@ -21,6 +21,8 @@ public import LeanPool.FLTEichlerShimura.Definitions.Def_HeckeEis_BinaryFormRep
 
 import LeanPool.FLTEichlerShimura.Theorems.Thm_HeckeEis_exists_eq_smul_X_pow_of_binaryFormRepSL_T_zpow_eq_self
 import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
+import Mathlib.Tactic.Positivity.Finset
+import Mathlib.Algebra.Order.Field.Basic
 
 /-!
 # Fixed forms of a lower unipotent are multiples of X₁ⁿ

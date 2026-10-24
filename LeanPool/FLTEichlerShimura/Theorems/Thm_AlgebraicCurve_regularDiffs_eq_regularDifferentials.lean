@@ -24,7 +24,6 @@ public import LeanPool.FLTEichlerShimura.Definitions.Def_AlgebraicCurve_RegularD
 import LeanPool.FLTEichlerShimura.Definitions.Def_AlgebraicCurve_RatFuncPlaces
 import LeanPool.FLTEichlerShimura.Theorems.Thm_AlgebraicCurve_Place_ordDiff_eq_ordDifferential
 import LeanPool.FLTEichlerShimura.Theorems.Thm_AlgebraicCurve_dCoordGenerates_of_isCurveOver
-import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
 
 /-!
 # Two descriptions of the regular differentials agree

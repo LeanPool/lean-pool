@@ -19,10 +19,11 @@ module
 
 public import Mathlib.FieldTheory.RatFunc.Basic
 public import LeanPool.FLTEichlerShimura.Definitions.Def_AlgebraicCurve_RiemannRochRows
+public import Mathlib.RingTheory.SimpleRing.Principal
 
 import LeanPool.FLTEichlerShimura.Definitions.Def_AlgebraicCurve_CanonicalLocalResidueInstanceV2
 import LeanPool.FLTEichlerShimura.Theorems.Thm_AlgebraicCurve_functionFieldRiemannRoch_of_isAlgClosed
-import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
+import Mathlib.Data.Nat.Choose.Multinomial
 
 /-!
 # Riemann–Roch over an algebraically closed constant field

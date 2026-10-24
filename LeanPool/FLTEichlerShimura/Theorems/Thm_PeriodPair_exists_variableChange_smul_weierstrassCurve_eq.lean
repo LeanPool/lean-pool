@@ -22,7 +22,7 @@ public import LeanPool.FLTEichlerShimura.Definitions.Def_PeriodPair_Uniformizati
 import Mathlib.AlgebraicGeometry.EllipticCurve.IsomOfJ
 import Mathlib.Analysis.Complex.Polynomial.Basic
 import LeanPool.FLTEichlerShimura.Theorems.Thm_PeriodPair_jLattice_surjective
-import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
+import Mathlib.CategoryTheory.Category.Init
 
 /-!
 # Every complex elliptic curve is a lattice curve

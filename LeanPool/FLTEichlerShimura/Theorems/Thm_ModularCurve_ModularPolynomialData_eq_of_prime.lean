@@ -19,13 +19,10 @@ module
 
 public import LeanPool.FLTEichlerShimura.Definitions.Def_ModularCurve_X0
 
-import LeanPool.FLTEichlerShimura.Definitions.Def_ModularCurve_PhiGen
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_finrank_adjoin_jqN_eq_of_prime
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_dedekindPsi_prime
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_PhiGen_evalAtJ_injective
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_exists_phiIrreducible_evalSymm
-import Mathlib.FieldTheory.IntermediateField.Adjoin.Basic
-import Mathlib.FieldTheory.Minpoly.Field
 import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
 
 /-!

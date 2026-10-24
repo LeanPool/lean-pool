@@ -15,13 +15,7 @@ Licensed under Apache License 2.0
 module
 
 public import Mathlib.AlgebraicGeometry.EllipticCurve.Affine.Point
-public import Mathlib.RingTheory.DedekindDomain.Dvr
 public import Mathlib.RingTheory.DedekindDomain.AdicValuation
-public import Mathlib.RingTheory.DiscreteValuationRing.TFAE
-public import Mathlib.FieldTheory.IsAlgClosed.Basic
-public import Mathlib.RingTheory.Ideal.GoingUp
-public import Mathlib.RingTheory.Localization.FractionRing
-public import Mathlib.Tactic.FieldSimp
 
 /-!
 # Generic point and function-field pull-backs for elliptic curves

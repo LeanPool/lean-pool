@@ -18,7 +18,6 @@ Licensed under Apache License 2.0
 module
 
 public import LeanPool.FLTEichlerShimura.Definitions.Def_ModularCurve_MazurStepThreeInputs
-public import LeanPool.FLTEichlerShimura.Definitions.Def_ModularCurve_GenusNumerics
 
 import Mathlib.Algebra.CharP.Invertible
 import Mathlib.RingTheory.Henselian
@@ -29,7 +28,6 @@ import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_nonempty_modularPoly
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_ord_jBar_dvd_three_of_pos_of_forall_isRoot_hasRamBound
 import LeanPool.FLTEichlerShimura.Theorems.Thm_WeierstrassCurve_exists_isUnit_discriminant_and_c4_cube_eq_mul_X_cube_powerSeries
 import LeanPool.FLTEichlerShimura.Theorems.Thm_WeierstrassCurve_hasRamBound_one_of_nsmul_eq_zero_of_isUnit_discriminant_powerSeries
-import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
 
 /-!
 # Order of jmath̄ at a zero divides 3

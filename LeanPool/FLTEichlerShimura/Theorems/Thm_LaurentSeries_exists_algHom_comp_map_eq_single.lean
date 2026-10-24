@@ -18,15 +18,9 @@ Licensed under Apache License 2.0
 module
 
 public import Mathlib.RingTheory.LaurentSeries
-public import Mathlib.FieldTheory.IsAlgClosed.Basic
 
-import Mathlib.RingTheory.PowerSeries.Substitution
-import Mathlib.RingTheory.PowerSeries.Inverse
 import Mathlib.RingTheory.Henselian
 import Mathlib.RingTheory.AdicCompletion.Completeness
-import Mathlib.Algebra.Polynomial.Derivative
-import Mathlib.Algebra.Polynomial.Monic
-import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
 
 /-!
 # Order-preserving renormalisation of an embedding into K((X))

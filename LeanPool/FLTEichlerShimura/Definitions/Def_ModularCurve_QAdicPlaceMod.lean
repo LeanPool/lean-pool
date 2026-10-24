@@ -15,12 +15,12 @@ Licensed under Apache License 2.0
 module
 
 public import Mathlib.Algebra.Field.ZMod
-public import Mathlib.RingTheory.Henselian
-public import Mathlib.RingTheory.RegularLocalRing.Defs
-public import Mathlib.RingTheory.SimpleRing.Principal
 public import LeanPool.FLTEichlerShimura.Definitions.Def_ModularCurve_QAdicPlace
-public import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_coeff_jqModC_neg_one
-public import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_coeff_jqModC_pow_of_lt
+public import LeanPool.FLTEichlerShimura.Definitions.Def_ModularCurve_JqCoeff
+
+import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_coeff_jqModC_pow_of_lt
+import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_coeff_jqModC_neg_one
+import Mathlib.RingTheory.SimpleRing.Principal
 
 /-!
 # The cusp at infinity as a place over any coefficient field

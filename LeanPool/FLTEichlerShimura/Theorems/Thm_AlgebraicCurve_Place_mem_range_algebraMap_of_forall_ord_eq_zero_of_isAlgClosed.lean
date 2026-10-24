@@ -19,17 +19,10 @@ Licensed under Apache License 2.0
 module
 
 public import LeanPool.FLTEichlerShimura.Definitions.Def_AlgebraicCurve_DivisorClassGroup
-public import Mathlib.FieldTheory.IntermediateField.Adjoin.Basic
-public import Mathlib.RingTheory.Algebraic.Basic
 
 import Mathlib.RingTheory.Unramified.Field
 import Mathlib.FieldTheory.Relrank
 import Mathlib.FieldTheory.RatFunc.IntermediateField
-import Mathlib.FieldTheory.IsAlgClosed.Basic
-import Mathlib.FieldTheory.IntermediateField.Adjoin.Algebra
-import Mathlib.RingTheory.Adjoin.Polynomial.Basic
-import Mathlib.FieldTheory.RatFunc.Degree
-import Mathlib.FieldTheory.Separable
 import LeanPool.FLTEichlerShimura.Theorems.Thm_AlgebraicCurve_RationalFunctionField_exists_forall_ne_ofHeightOneSpectrum
 import LeanPool.FLTEichlerShimura.Theorems.Thm_AlgebraicCurve_RationalFunctionField_ord_eq_neg_intDegree_of_forall_ne_ofHeightOneSpectrum
 import LeanPool.FLTEichlerShimura.Theorems.Thm_AlgebraicCurve_Place_exists_comap_eq_toValuationSubring

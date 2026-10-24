@@ -17,14 +17,15 @@ Licensed under Apache License 2.0
 
 module
 
-public import LeanPool.FLTEichlerShimura.Definitions.Def_AlgebraicCurve_PlacesOverDVR
 public import Mathlib.FieldTheory.RatFunc.Basic
+public import LeanPool.FLTEichlerShimura.Definitions.Def_AlgebraicCurve_DivisorClassGroup
 
-import LeanPool.FLTEichlerShimura.Theorems.Thm_P2M_Dup_AlgebraicCurve_Place_ord_nonneg_of_mem
-import LeanPool.FLTEichlerShimura.Theorems.Thm_P2M_Dup_AlgebraicCurve_Place_mem_of_ord_nonneg
 import LeanPool.FLTEichlerShimura.Theorems.Thm_AlgebraicCurve_RationalFunctionField_finite_setOf_ord_ne_zero
-import Mathlib.FieldTheory.Minpoly.Field
 import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
+import Mathlib.RingTheory.Henselian
+import Mathlib.RingTheory.RegularLocalRing.Defs
+import Mathlib.RingTheory.SimpleRing.Principal
+import LeanPool.FLTEichlerShimura.Definitions.Def_AlgebraicCurve_PlacesOverDVR
 
 /-!
 # Finiteness of zeros and poles in a finite separable extension of K(X)
@@ -78,7 +79,7 @@ p2m_open "AlgebraicCurve"
 namespace Place
 p2m_export "AlgebraicCurve.Place" "ord_neg mem_of_eval_monic_eq_zero finite_setOf_restrict_eq \
   restrict ord_restrict ord ord_mul toValuationSubring ord_nonneg_of_mem mem_of_ord_nonneg"
-p2m_open "AlgebraicCurve.Place~ord_eq_zero_iff_adicValuation_eq_one~exists_ord_pos"
+p2m_open "AlgebraicCurve.Place~exists_ord_pos"
 
 section SupportTransfer
 

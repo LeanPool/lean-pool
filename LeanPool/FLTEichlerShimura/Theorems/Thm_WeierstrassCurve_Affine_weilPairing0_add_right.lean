@@ -19,17 +19,12 @@ module
 
 public import LeanPool.FLTEichlerShimura.Definitions.Def_EllipticCurve_WeilPairingFun
 
-import Mathlib.Data.Set.Card
-import Mathlib.Algebra.BigOperators.Group.Finset.Piecewise
-import Mathlib.Tactic.Ring
-import Mathlib.Tactic.FieldSimp
 import LeanPool.FLTEichlerShimura.Theorems.Thm_WeierstrassCurve_Affine_Point_exists_zsmul_eq_of_isAlgClosed
 import LeanPool.FLTEichlerShimura.Theorems.Thm_WeierstrassCurve_Affine_FunctionField_exists_eq_algebraMap_of_valuation_eq_one
 import LeanPool.FLTEichlerShimura.Theorems.Thm_WeierstrassCurve_Affine_valuation_transEquiv_weilFun
 import LeanPool.FLTEichlerShimura.Theorems.Thm_WeierstrassCurve_Affine_exists_transEquiv_weilFun_eq
 import LeanPool.FLTEichlerShimura.Theorems.Thm_WeierstrassCurve_Affine_weilFun_ne_zero
 import LeanPool.FLTEichlerShimura.Theorems.Thm_WeierstrassCurve_Affine_valuation_weilFun
-import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
 
 /-!
 # Additivity of e₀(S,·) in the second variable

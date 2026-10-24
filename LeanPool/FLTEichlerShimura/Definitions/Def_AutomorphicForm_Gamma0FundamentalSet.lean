@@ -14,8 +14,15 @@ Licensed under Apache License 2.0
 
 module
 
-public import LeanPool.FLTEichlerShimura.Definitions.Def_AutomorphicForm_FundamentalDomainVolume
-public import LeanPool.FLTEichlerShimura.Definitions.Def_AutomorphicForm_SiegelSetCover
+public import Mathlib.NumberTheory.ModularForms.CongruenceSubgroups
+public import Mathlib.NumberTheory.Modular
+public import Mathlib.Analysis.Complex.UpperHalfPlane.Measure
+
+import LeanPool.FLTEichlerShimura.Definitions.Def_AutomorphicForm_SiegelSetCover
+import LeanPool.FLTEichlerShimura.Definitions.Def_AutomorphicForm_FundamentalDomainVolume
+import LeanPool.FLTEichlerShimura.Definitions.Def_AutomorphicForm_HyperbolicMeasure
+import Mathlib.Algebra.Order.Star.Real
+import Mathlib.Order.CompletePartialOrder
 
 /-!
 # Fundamental sets for subgroups of SL2​(Z) on H

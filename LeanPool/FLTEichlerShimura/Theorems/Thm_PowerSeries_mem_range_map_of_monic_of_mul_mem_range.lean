@@ -21,11 +21,12 @@ public import Mathlib.RingTheory.Localization.FractionRing
 public import Mathlib.RingTheory.PowerSeries.Basic
 
 import Mathlib.FieldTheory.PurelyInseparable.Basic
-import Mathlib.RingTheory.Henselian
 import Mathlib.RingTheory.PowerSeries.Ideal
-import Mathlib.RingTheory.RegularLocalRing.Defs
 import Mathlib.RingTheory.SimpleRing.Principal
-import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
+import Mathlib.CategoryTheory.Category.Init
+import Mathlib.Data.Rat.Floor
+import Mathlib.RingTheory.Polynomial.RationalRoot
+import Mathlib.Tactic.Continuity.Init
 
 /-!
 # Integrality plus a denominator forces descent of power series

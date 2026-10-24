@@ -24,7 +24,7 @@ import Mathlib.NumberTheory.LSeries.Nonvanishing
 import Mathlib.NumberTheory.ModularForms.LevelOne.GradedRing
 import LeanPool.FLTEichlerShimura.Definitions.Def_PeriodPair_Uniformization
 import LeanPool.FLTEichlerShimura.Theorems.Thm_PeriodPair_lattice_eq_of_g2_eq_of_g3_eq
-import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
+import Mathlib.RingTheory.SimpleRing.Principal
 
 /-!
 # E₄³/Δ separates SL₂(ℤ)-orbits on H

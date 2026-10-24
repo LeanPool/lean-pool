@@ -18,7 +18,6 @@ Licensed under Apache License 2.0
 module
 
 public import LeanPool.FLTEichlerShimura.Definitions.Def_AlgebraicCurve_IsCurveOver
-public import Mathlib.FieldTheory.IntermediateField.Adjoin.Basic
 
 import Mathlib.FieldTheory.RatFunc.AsPolynomial
 import Mathlib.RingTheory.Henselian
@@ -27,7 +26,6 @@ import LeanPool.FLTEichlerShimura.Theorems.Thm_AlgebraicCurve_Place_finite_resid
 import LeanPool.FLTEichlerShimura.Theorems.Thm_AlgebraicCurve_hasPrincipalDivisors_of_transcendental_of_isSeparable
 import LeanPool.FLTEichlerShimura.Theorems.Thm_AlgebraicCurve_instIsCurveOverRatFunc
 import LeanPool.FLTEichlerShimura.Theorems.Thm_AlgebraicCurve_kaehlerRankOne_of_transcendental
-import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
 
 /-!
 # Finite separable extensions of K(x) are curves over K

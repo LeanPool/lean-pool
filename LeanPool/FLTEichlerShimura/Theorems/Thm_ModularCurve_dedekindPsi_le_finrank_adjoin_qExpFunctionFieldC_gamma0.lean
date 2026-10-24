@@ -24,7 +24,8 @@ import Mathlib.FieldTheory.Relrank
 import Mathlib.RingTheory.Flat.TorsionFree
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_finrank_adjoin_jqModC_modularFunctionFieldFullC_eq_dedekindPsi
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_modularFunctionFieldFullC_le_qExpFunctionFieldC_gamma0
-import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
+import Mathlib.RingTheory.SimpleRing.Principal
+import Mathlib.RingTheory.Henselian
 
 /-!
 # Degree at least ψ(M) over K(j) for X₀(M)

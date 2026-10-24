@@ -19,8 +19,7 @@ module
 
 public import LeanPool.FLTEichlerShimura.Definitions.Def_ModularCurve_QAdicPlace
 
-import LeanPool.FLTEichlerShimura.Theorems.Thm_P2M_Dup_AlgebraicCurve_Place_mem_iff_ord_nonneg
-import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
+import LeanPool.FLTEichlerShimura.Definitions.Def_AlgebraicCurve_DivisorPushPull
 
 /-!
 # Cusps are the places where j has negative order

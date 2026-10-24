@@ -23,7 +23,6 @@ import Mathlib.RingTheory.Henselian
 import Mathlib.RingTheory.RegularLocalRing.Defs
 import Mathlib.RingTheory.SimpleRing.Principal
 import LeanPool.FLTEichlerShimura.Theorems.Thm_WeierstrassCurve_veluQuotient2_Delta_ne_zero
-import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
 
 /-!
 # The order-two Vélu quotient of an elliptic curve is elliptic

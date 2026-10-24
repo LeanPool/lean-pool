@@ -18,19 +18,9 @@ Licensed under Apache License 2.0
 module
 
 public import LeanPool.FLTEichlerShimura.Definitions.Def_ModularCurve_PhiGen
-public import LeanPool.FLTEichlerShimura.Definitions.Def_ModularCurve_QAdicPlace
-public import LeanPool.FLTEichlerShimura.Definitions.Def_ModularCurve_AtkinLehner
-public import LeanPool.FLTEichlerShimura.Definitions.Def_AlgebraicCurve_DivisorPushPull
-public import LeanPool.FLTEichlerShimura.Definitions.Def_AlgebraicCurve_RatFuncPlaces
-public import LeanPool.FLTEichlerShimura.Definitions.Def_AlgebraicCurve_PlacesOverDVR
 public import Mathlib.RingTheory.RootsOfUnity.PrimitiveRoots
-public import Mathlib.FieldTheory.RatFunc.AsPolynomial
-public import Mathlib.FieldTheory.Relrank
-public import Mathlib.FieldTheory.IntermediateField.Adjoin.Basic
-public import Mathlib.Tactic.LinearCombination
-public import Mathlib.Data.Int.CardIntervalMod
+public import LeanPool.FLTEichlerShimura.Definitions.Def_ModularCurve_QAdicPlace
 
-import LeanPool.FLTEichlerShimura.Definitions.Def_ModularCurve_CharLFrobeniusGeomLevel
 import LeanPool.FLTEichlerShimura.Theorems.Thm_AlgebraicCurve_Place_exists_ord_mul_eq_order_of_hasRamBound
 import LeanPool.FLTEichlerShimura.Theorems.Thm_AlgebraicCurve_Place_inertiaDeg_pos
 import LeanPool.FLTEichlerShimura.Theorems.Thm_AlgebraicCurve_Place_sum_ramificationIndex_mul_inertiaDeg_le_finrank
@@ -49,7 +39,10 @@ import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_order_qExpand
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_relfinrank_full_eq_dedekindPsi
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_relfinrank_laurentBaseChange_modularFunctionFieldFull
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_transcendental_jqModC
-import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
+import Mathlib.Data.Int.CardIntervalMod
+import LeanPool.FLTEichlerShimura.Definitions.Def_ModularCurve_AtkinLehner
+import Mathlib.RingTheory.SimpleRing.Principal
+import Mathlib.RingTheory.Henselian
 
 /-!
 # Every cusp place of X₀(N) arises from a slot

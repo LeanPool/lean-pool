@@ -21,7 +21,6 @@ public import LeanPool.FLTEichlerShimura.Definitions.Def_ModularCurve_AtkinLehne
 
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_isCusp_iff_ord_neg
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_ord_cuspInftyBar_coeffEmb_jq
-import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
 
 /-!
 # The place at infinity is a cusp for j

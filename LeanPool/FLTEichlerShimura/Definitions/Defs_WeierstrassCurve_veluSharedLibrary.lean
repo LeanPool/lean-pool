@@ -16,26 +16,23 @@ Extracted from Prove2Me proofs by Claude (2026-09-05):
 
 module
 
-public import LeanPool.FLTEichlerShimura.Definitions.Def_AlgebraicCurve_DivisorClassGroup
-public import LeanPool.FLTEichlerShimura.Definitions.Def_AlgebraicCurve_PlaceEvaluation
-public import LeanPool.FLTEichlerShimura.Definitions.Def_WeierstrassCurve_FunctionFieldQuadratic
 public import LeanPool.FLTEichlerShimura.Definitions.Def_WeierstrassCurve_OddOrderSummingSet
 public import LeanPool.FLTEichlerShimura.Definitions.Def_WeierstrassCurve_VeluPointMap
-public import LeanPool.FLTEichlerShimura.Definitions.Def_WeierstrassCurve_VeluQuotientMap
 public import LeanPool.FLTEichlerShimura.Definitions.Defs_IsogenyEndDatum_sharedLibrary
 
 import Mathlib.AlgebraicGeometry.EllipticCurve.DivisionPolynomial.Degree
-
-import LeanPool.FLTEichlerShimura.Definitions.Def_AlgebraicCurve_PlacesOverDVR
-import LeanPool.FLTEichlerShimura.Definitions.Def_AlgebraicCurve_RatFuncPlaceClassification
-import LeanPool.FLTEichlerShimura.Definitions.Def_EllipticCurve_FunctionFieldPullback
-
 import LeanPool.FLTEichlerShimura.Definitions.Def_WeierstrassCurve_RatPointHom
-
 import LeanPool.FLTEichlerShimura.Theorems.Thm_AlgebraicCurve_Divisor_degree_eq_sum_support
 import LeanPool.FLTEichlerShimura.Theorems.Thm_AlgebraicCurve_Place_ord_algebraMap
-import LeanPool.FLTEichlerShimura.Theorems.Thm_WeierstrassCurve_Affine_CoordinateRing_XYIdeal_ne_bot
 import LeanPool.FLTEichlerShimura.Theorems.Thm_AlgebraicCurve_Place_min_ord_le_ord_add_v2
+import Mathlib.Tactic.NormNum.Prime
+import LeanPool.FLTEichlerShimura.Definitions.Def_AlgebraicCurve_PlacesOverDVR
+import Mathlib.Analysis.Normed.Ring.Lemmas
+import Mathlib.RingTheory.Etale.Basic
+import Mathlib.RingTheory.RegularLocalRing.Defs
+import Mathlib.RingTheory.Henselian
+import Mathlib.Algebra.Order.Ring.Star
+import Mathlib.Logic.Equiv.PartialEquiv
 
 /-!
 # Shared library for the odd-order Vélu construction

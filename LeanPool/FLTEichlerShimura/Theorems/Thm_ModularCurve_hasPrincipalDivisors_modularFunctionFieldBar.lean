@@ -21,7 +21,6 @@ public import LeanPool.FLTEichlerShimura.Definitions.Def_ModularCurve_Arithmetic
 public import LeanPool.FLTEichlerShimura.Definitions.Def_ModularCurve_PhiGen
 
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_hasPrincipalDivisors_laurentBaseChange_modularFunctionFieldFull
-import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
 
 /-!
 # Principal divisors on the function field of X₀(N) over ℚ̄

@@ -44,7 +44,8 @@ import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_ord_jBar_sub_eq_one_
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_sum_neg_ord_jBar_eq_dedekindPsi
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_sum_ord_jBar_sub_eq_dedekindPsi
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_transcendental_coeffEmb_jq
-import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
+import Mathlib.RingTheory.SimpleRing.Principal
+import Mathlib.RingTheory.Henselian
 
 /-!
 # Genus of the modular function field equals 1+ψ/12-ν₂/4-ν₃/3-c_∞/2

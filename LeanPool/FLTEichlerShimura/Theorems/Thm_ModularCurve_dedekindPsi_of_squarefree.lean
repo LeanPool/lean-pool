@@ -21,7 +21,6 @@ public import LeanPool.FLTEichlerShimura.Definitions.Def_ModularCurve_X0
 
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_dedekindPsi_mul_of_coprime
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_dedekindPsi_prime
-import Mathlib.Data.Nat.Factorization.Induction
 import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
 
 /-!

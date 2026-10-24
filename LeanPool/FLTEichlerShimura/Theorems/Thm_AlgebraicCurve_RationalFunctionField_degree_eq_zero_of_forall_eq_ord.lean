@@ -22,7 +22,6 @@ public import LeanPool.FLTEichlerShimura.Definitions.Def_AlgebraicCurve_DivisorC
 
 import LeanPool.FLTEichlerShimura.Theorems.Thm_AlgebraicCurve_RationalFunctionField_degree_eq_zero_of_forall_eq_ord_algebraMap
 import LeanPool.FLTEichlerShimura.Theorems.Thm_AlgebraicCurve_RationalFunctionField_finite_setOf_ord_ne_zero
-import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
 
 /-!
 # Divisors of rational functions on P¹ have degree zero

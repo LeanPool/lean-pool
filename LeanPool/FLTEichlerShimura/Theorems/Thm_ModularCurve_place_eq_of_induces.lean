@@ -18,12 +18,10 @@ Licensed under Apache License 2.0
 module
 
 public import LeanPool.FLTEichlerShimura.Definitions.Def_ModularCurve_EMD
-public import LeanPool.FLTEichlerShimura.Definitions.Def_AlgebraicCurve_DivisorClassGroup
 
 import Mathlib.Algebra.Order.Ring.Star
 import Mathlib.Data.Rat.Star
 import LeanPool.FLTEichlerShimura.Definitions.Def_AlgebraicCurve_RatFuncPlaces
-import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
 
 /-!
 # A Hahn-series embedding induces at most one place

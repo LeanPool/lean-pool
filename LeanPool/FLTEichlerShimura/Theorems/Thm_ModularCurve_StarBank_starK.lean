@@ -19,8 +19,6 @@ module
 
 public import LeanPool.FLTEichlerShimura.Definitions.Def_ModularCurve_JqCoeff
 
-import Mathlib.Algebra.Polynomial.Degree.Lemmas
-import Mathlib.Algebra.CharP.Lemmas
 import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
 
 /-!

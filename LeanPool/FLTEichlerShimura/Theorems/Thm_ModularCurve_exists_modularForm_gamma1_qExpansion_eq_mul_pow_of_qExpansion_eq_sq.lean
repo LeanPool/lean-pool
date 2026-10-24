@@ -23,7 +23,6 @@ public import LeanPool.FLTEichlerShimura.Definitions.Def_ModularCurve_X1
 import Mathlib.Order.CompletePartialOrder
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_exists_modularForm_mul_qExpansion_eq_of_mem_laurentBaseChange_qExpFunctionFieldC
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularForm_exists_modularForm_mul_eq_of_analyticOrderAt_le_of_finiteIndex
-import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
 
 /-!
 # Weight-k form from a square on Γ₁(M)

@@ -18,14 +18,9 @@ Licensed under Apache License 2.0
 module
 
 public import LeanPool.FLTEichlerShimura.Definitions.Def_EllipticCurve_TateModule
-public import LeanPool.FLTEichlerShimura.Definitions.Def_FLTPrelim_Ramification
-public import LeanPool.FLTEichlerShimura.Definitions.Def_EllipticCurve_FrobeniusTrace
-public import Mathlib.LinearAlgebra.Determinant
 
-import LeanPool.FLTEichlerShimura.Definitions.Def_GaloisRep_LocalConditions
 import LeanPool.FLTEichlerShimura.Theorems.Thm_WeierstrassCurve_tateModuleRep_detIsCyclotomic
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ValuationSubring_IsFrobeniusAt_apply_eq_pow_of_pow_prime_pow_eq_one
-import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
 
 /-!
 # Determinant of Frobenius at ℓ ≠ p on the Tate module

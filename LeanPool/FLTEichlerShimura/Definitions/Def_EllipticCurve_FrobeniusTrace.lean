@@ -15,9 +15,8 @@ Licensed under Apache License 2.0
 module
 
 public import Mathlib.LinearAlgebra.Trace
-public import Mathlib.RingTheory.Valuation.RamificationGroup
 public import LeanPool.FLTEichlerShimura.Definitions.Def_FLTPrelim_GaloisRep
-public import LeanPool.FLTEichlerShimura.Definitions.Def_FLTPrelim_Ramification
+public import Mathlib.RingTheory.Valuation.RamificationGroup
 
 /-!
 # Mod-n Galois trace on torsion; Frobenius at a place

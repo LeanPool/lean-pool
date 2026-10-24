@@ -16,31 +16,26 @@ Extracted from Prove2Me proofs by Claude (2026-09-05):
 
 module
 
-public import Mathlib.Algebra.BigOperators.Field
-public import Mathlib.Algebra.GroupWithZero.Submonoid.CancelMulZero
-public import Mathlib.Algebra.Polynomial.PartialFractions
-public import Mathlib.Analysis.Normed.Ring.Lemmas
-public import Mathlib.FieldTheory.Galois.Abelian
-public import Mathlib.FieldTheory.RatFunc.Basic
-public import Mathlib.NumberTheory.RatFunc.Ostrowski
-public import Mathlib.RingTheory.AdicCompletion.Completeness
-public import Mathlib.RingTheory.Artinian.Instances
-public import Mathlib.RingTheory.Norm.Transitivity
-public import Mathlib.RingTheory.PicardGroup
-
-public import LeanPool.FLTEichlerShimura.Definitions.Def_AlgebraicCurve_CanonicalLocalResidueInstanceV2
-public import LeanPool.FLTEichlerShimura.Definitions.Def_AlgebraicCurve_IsCurveOver
-public import LeanPool.FLTEichlerShimura.Definitions.Def_AlgebraicCurve_LocalResidue
 public import LeanPool.FLTEichlerShimura.Definitions.Def_AlgebraicCurve_PlacesOverDVR
-public import LeanPool.FLTEichlerShimura.Definitions.Def_AlgebraicCurve_RatFuncPlaceClassification
-public import LeanPool.FLTEichlerShimura.Definitions.Def_AlgebraicCurve_RatFuncPlaces
-
 public import LeanPool.FLTEichlerShimura.Theorems.Thm_AlgebraicCurve_instIsCurveOverRatFunc
+public import LeanPool.FLTEichlerShimura.Definitions.Def_AlgebraicCurve_RatFuncPlaceInfty
+public import LeanPool.FLTEichlerShimura.Definitions.Def_AlgebraicCurve_LocalResidue
+public import Mathlib.RingTheory.Henselian
 
 import LeanPool.FLTEichlerShimura.Theorems.Thm_AlgebraicCurve_Place_ord_algebraMap
-import LeanPool.FLTEichlerShimura.Theorems.Thm_AlgebraicCurve_Place_ramificationIndex_eq_ramificationIdx_fiberCenter
 import LeanPool.FLTEichlerShimura.Theorems.Thm_AlgebraicCurve_RationalFunctionField_deg_placeInfty
 import LeanPool.FLTEichlerShimura.Theorems.Thm_AlgebraicCurve_RationalFunctionField_ord_placeInfty_X
+import Mathlib.RingTheory.Artinian.Instances
+import LeanPool.FLTEichlerShimura.Definitions.Def_AlgebraicCurve_RatFuncPlaceClassification
+import Mathlib.RingTheory.DedekindDomain.Factorization
+import Mathlib.Analysis.Normed.Group.Basic
+import Mathlib.RingTheory.PicardGroup
+import Mathlib.Topology.MetricSpace.Bounded
+import Mathlib.Data.EReal.Operations
+import Mathlib.Topology.Algebra.InfiniteSum.Order
+import LeanPool.FLTEichlerShimura.Definitions.Def_AlgebraicCurve_CanonicalLocalResidueInstanceV2
+import LeanPool.FLTEichlerShimura.Definitions.Def_ModularCurve_CanonicalDivisorUniformizer
+import Mathlib.Data.Nat.Choose.Multinomial
 
 /-!
 # Shared library for the residue theorems

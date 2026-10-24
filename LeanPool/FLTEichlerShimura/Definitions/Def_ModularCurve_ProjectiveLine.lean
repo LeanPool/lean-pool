@@ -15,8 +15,6 @@ Licensed under Apache License 2.0
 module
 
 public import Mathlib.LinearAlgebra.Matrix.SpecialLinearGroup
-public import Mathlib.GroupTheory.GroupAction.Quotient
-public import Mathlib.Basic.Finite.Prod
 
 /-!
 # Projective line over a commutative ring; Borel subgroup of SL₂

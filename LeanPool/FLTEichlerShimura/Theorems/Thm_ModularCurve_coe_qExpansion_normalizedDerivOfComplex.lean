@@ -19,9 +19,6 @@ module
 
 public import LeanPool.FLTEichlerShimura.Definitions.Def_ModularCurve_QExpansionDiff
 public import Mathlib.NumberTheory.ModularForms.Derivative
-public import Mathlib.NumberTheory.ModularForms.QExpansion
-public import Mathlib.Analysis.Calculus.FDeriv.Analytic
-public import Mathlib.Analysis.SpecialFunctions.ExpDeriv
 
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_theta_coeff
 import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util

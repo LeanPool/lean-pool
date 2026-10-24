@@ -19,10 +19,6 @@ module
 
 public import Mathlib.NumberTheory.ModularForms.Cusps
 
-import Mathlib.NumberTheory.ModularForms.CongruenceSubgroups
-import Mathlib.Algebra.Lie.OfAssociative
-import Mathlib.Algebra.Algebra.Rat
-import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
 
 /-!
 # 1 is a strict period of Γ₀(N)

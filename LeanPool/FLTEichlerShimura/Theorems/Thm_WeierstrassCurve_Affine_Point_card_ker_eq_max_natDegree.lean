@@ -18,16 +18,9 @@ Licensed under Apache License 2.0
 module
 
 public import Mathlib.AlgebraicGeometry.EllipticCurve.Affine.Point
-public import Mathlib.Algebra.Polynomial.Derivative
 public import Mathlib.FieldTheory.IsAlgClosed.Basic
 
 import Mathlib.AlgebraicGeometry.EllipticCurve.DivisionPolynomial.Degree
-import Mathlib.Algebra.Polynomial.FieldDivision
-import Mathlib.Algebra.Polynomial.Roots
-import Mathlib.Algebra.Polynomial.Splits
-import Mathlib.SetTheory.Cardinal.Finite
-import Mathlib.Tactic.LinearCombination
-import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
 
 /-!
 # Kernel size equals degree of a separable abscissa map

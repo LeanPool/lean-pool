@@ -18,16 +18,14 @@ Licensed under Apache License 2.0
 module
 
 public import LeanPool.FLTEichlerShimura.Definitions.Def_ModularCurve_JqCoeff
-public import LeanPool.FLTEichlerShimura.Definitions.Def_ModularCurve_PhiGen
 
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_coeff_jqModC_neg_one
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_coeffMap_qExpand
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_dedekindPsi_prime
-import Mathlib.RingTheory.RootsOfUnity.PrimitiveRoots
 import Mathlib.Algebra.Polynomial.Bivariate
-import Mathlib.FieldTheory.Separable
 import Mathlib.RingTheory.RootsOfUnity.AlgebraicallyClosed
 import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
+import LeanPool.FLTEichlerShimura.Definitions.Def_ModularCurve_PhiGen
 
 /-!
 # Integrality of ̄ j(q^N) over K(̄ j(q))

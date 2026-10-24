@@ -19,17 +19,15 @@ module
 
 public import LeanPool.FLTEichlerShimura.Definitions.Def_AlgebraicCurve_PlacesOverDVR
 
-import LeanPool.FLTEichlerShimura.Theorems.Thm_P2M_Dup_AlgebraicCurve_Place_mem_iff_ord_nonneg
-import LeanPool.FLTEichlerShimura.Theorems.Thm_P2M_Dup_AlgebraicCurve_Place_ord_nonneg_of_mem
-import LeanPool.FLTEichlerShimura.Theorems.Thm_P2M_Dup_AlgebraicCurve_Place_mem_of_ord_nonneg
 import LeanPool.FLTEichlerShimura.Theorems.Thm_AlgebraicCurve_RationalFunctionField_finite_setOf_ord_ne_zero
 import LeanPool.FLTEichlerShimura.Theorems.Thm_AlgebraicCurve_RationalFunctionField_degree_eq_zero_of_forall_eq_ord
-import Mathlib.FieldTheory.Minpoly.Field
 import Mathlib.RingTheory.Ideal.Norm.RelNorm
-import Mathlib.FieldTheory.Perfect
-import Mathlib.Algebra.CharP.Algebra
 import Mathlib.FieldTheory.RatFunc.AsPolynomial
 import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
+import Mathlib.RingTheory.Henselian
+import Mathlib.RingTheory.RegularLocalRing.Defs
+import Mathlib.RingTheory.SimpleRing.Principal
+import Mathlib.RingTheory.Valuation.LocalSubring
 
 /-!
 # Degree-zero principal divisors over K(x), characteristic 0

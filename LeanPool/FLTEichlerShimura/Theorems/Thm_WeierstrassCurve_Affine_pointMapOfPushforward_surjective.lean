@@ -22,7 +22,6 @@ public import LeanPool.FLTEichlerShimura.Definitions.Def_Isogeny_ConditionalCurr
 import Mathlib.RingTheory.Henselian
 import Mathlib.RingTheory.RegularLocalRing.Defs
 import LeanPool.FLTEichlerShimura.Theorems.Thm_AlgebraicCurve_Place_restrictAlong_surjective
-import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
 
 /-!
 # Pushforward map on points of an elliptic curve is surjective

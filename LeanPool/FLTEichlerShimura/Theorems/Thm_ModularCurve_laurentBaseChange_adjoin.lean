@@ -20,7 +20,6 @@ module
 public import LeanPool.FLTEichlerShimura.Definitions.Def_ModularCurve_LaurentCoeff
 
 import LeanPool.FLTEichlerShimura.Definitions.Def_ModularCurve_X0
-import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
 
 /-!
 # Base change of a Laurent-series subfield commutes with adjunction

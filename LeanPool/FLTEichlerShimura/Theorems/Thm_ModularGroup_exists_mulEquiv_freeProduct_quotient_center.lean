@@ -25,7 +25,6 @@ import Mathlib.LinearAlgebra.Matrix.FixedDetMatrices
 import Mathlib.NumberTheory.Real.Irrational
 import Mathlib.Order.CompletePartialOrder
 import Mathlib.Tactic.LinearCombination
-import Mathlib.Tactic.LinearCombination.Lemmas
 
 /-!
 # PSL₂(ℤ) is the free product C₂ * C₃

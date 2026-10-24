@@ -25,10 +25,7 @@ import LeanPool.FLTEichlerShimura.Theorems.Thm_WeierstrassCurve_Affine_Point_nat
 import LeanPool.FLTEichlerShimura.Theorems.Thm_FrobeniusEndo_exists_x_linePencil_frobEnd_mul_collision_sq
 import LeanPool.FLTEichlerShimura.Theorems.Thm_WeierstrassCurve_Affine_Point_zsmul_x_mul_psi_sq
 import Mathlib.AlgebraicGeometry.EllipticCurve.DivisionPolynomial.Degree
-import Mathlib.Algebra.Polynomial.Derivative
 import Mathlib.FieldTheory.RatFunc.Basic
-import Mathlib.FieldTheory.IsAlgClosed.Basic
-import Mathlib.Tactic.LinearCombination
 import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
 
 /-!

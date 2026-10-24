@@ -21,7 +21,6 @@ public import LeanPool.FLTEichlerShimura.Definitions.Def_AlgebraicCurve_IsCurveO
 
 import LeanPool.FLTEichlerShimura.Theorems.Thm_AlgebraicCurve_exists_separating_transcendental_of_perfectField
 import LeanPool.FLTEichlerShimura.Theorems.Thm_AlgebraicCurve_isCurveOver_of_transcendental
-import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
 
 /-!
 # One-variable function fields over perfect fields are curves

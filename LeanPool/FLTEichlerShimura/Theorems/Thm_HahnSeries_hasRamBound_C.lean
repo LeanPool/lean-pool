@@ -19,11 +19,16 @@ module
 
 public import LeanPool.FLTEichlerShimura.Definitions.Def_HahnSeries_RamificationBound
 
-import Mathlib.RingTheory.Henselian
-import Mathlib.RingTheory.RegularLocalRing.Defs
-import Mathlib.RingTheory.SimpleRing.Principal
 import LeanPool.FLTEichlerShimura.Theorems.Thm_HahnSeries_mem_puiseuxRamSubfield_iff
 import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
+import Mathlib.Algebra.EuclideanDomain.Field
+import Mathlib.CategoryTheory.Category.Init
+import Mathlib.Data.Nat.Totient
+import Mathlib.Data.Rat.Floor
+import Mathlib.Data.Sym.Sym2.Init
+import Mathlib.Tactic.Continuity.Init
+import Mathlib.Tactic.NormNum.GCD
+import Mathlib.Tactic.Positivity.Finset
 
 /-!
 # Constant Hahn series have ramification bound e

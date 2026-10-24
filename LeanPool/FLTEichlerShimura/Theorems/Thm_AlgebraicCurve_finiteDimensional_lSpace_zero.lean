@@ -20,7 +20,10 @@ module
 public import LeanPool.FLTEichlerShimura.Definitions.Def_AlgebraicCurve_AdelicIndex
 public import LeanPool.FLTEichlerShimura.Definitions.Def_AlgebraicCurve_IsCurveOver
 
-import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
+import Mathlib.RingTheory.SimpleRing.Principal
+import Mathlib.Data.Int.Star
+import Mathlib.Algebra.Order.Ring.Star
+
 
 /-!
 # Finite-dimensionality of L(0) on a curve

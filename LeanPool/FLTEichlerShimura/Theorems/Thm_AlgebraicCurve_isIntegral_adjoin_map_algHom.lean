@@ -17,10 +17,11 @@ Licensed under Apache License 2.0
 
 module
 
-public import Mathlib.RingTheory.IntegralClosure.IsIntegral.Basic
+public import Mathlib.RingTheory.IntegralClosure.IsIntegral.Defs
+public import Mathlib.Algebra.Algebra.Subalgebra.Lattice
 
-import Mathlib.Algebra.Algebra.Subalgebra.Lattice
-import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
+import Mathlib.RingTheory.IntegralClosure.IsIntegral.Basic
+
 
 /-!
 # Integrality over K[j] transports along K-algebra maps

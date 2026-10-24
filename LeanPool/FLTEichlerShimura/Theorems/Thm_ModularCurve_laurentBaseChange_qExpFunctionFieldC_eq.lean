@@ -20,6 +20,7 @@ module
 public import LeanPool.FLTEichlerShimura.Definitions.Def_ModularCurve_X1
 
 import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
+import Mathlib.RingTheory.Henselian
 
 /-!
 # Base change of the q-expansion function field

@@ -17,7 +17,6 @@ Licensed under Apache License 2.0
 
 module
 
-public import LeanPool.FLTEichlerShimura.Definitions.Def_ModularCurve_X0
 public import LeanPool.FLTEichlerShimura.Definitions.Def_ModularCurve_PhiGen
 public import Mathlib.RingTheory.RootsOfUnity.PrimitiveRoots
 
@@ -26,14 +25,7 @@ import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_coeffMap_qExpand
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_coeffEmb_qExpand
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_transcendental_jq
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_dedekindPsi_prime
-import Mathlib.Algebra.Polynomial.Roots
-import Mathlib.FieldTheory.IntermediateField.Adjoin.Algebra
-import Mathlib.FieldTheory.Minpoly.Field
 import Mathlib.NumberTheory.Cyclotomic.Basic
-import Mathlib.RingTheory.Polynomial.GaussLemma
-import Mathlib.RingTheory.Polynomial.RationalRoot
-import Mathlib.Tactic.Linarith
-import Mathlib.Tactic.LinearCombination
 import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
 
 /-!

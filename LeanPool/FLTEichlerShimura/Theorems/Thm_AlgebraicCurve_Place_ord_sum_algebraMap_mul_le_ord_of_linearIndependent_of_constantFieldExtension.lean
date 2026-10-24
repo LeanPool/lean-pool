@@ -26,7 +26,6 @@ import Mathlib.RingTheory.Henselian
 import Mathlib.RingTheory.RegularLocalRing.Defs
 import Mathlib.RingTheory.SimpleRing.Principal
 import LeanPool.FLTEichlerShimura.Definitions.Def_AlgebraicCurve_DivisorPushPull
-import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
 
 /-!
 # No cancellation of K'-weighted F-sums at lifted places

@@ -20,15 +20,10 @@ module
 public import LeanPool.FLTEichlerShimura.Definitions.Def_ModularCurve_LaurentCoeff
 public import Mathlib.FieldTheory.Relrank
 
-import LeanPool.FLTEichlerShimura.Definitions.Def_ModularCurve_GeometricBaseChange
-import Mathlib.RingTheory.AlgebraTower
-import Mathlib.FieldTheory.IntermediateField.Adjoin.Algebra
-import LeanPool.FLTEichlerShimura.Definitions.Def_ModularCurve_QAdicPlace
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_transcendental_jq
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_finrank_adjoin_jqNModC_eq_of_prime
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_modularFunctionFieldBar_eq_restrictScalars
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_coeffEmb_jq
-import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
 
 /-!
 # Relative degree is preserved by constant field extension

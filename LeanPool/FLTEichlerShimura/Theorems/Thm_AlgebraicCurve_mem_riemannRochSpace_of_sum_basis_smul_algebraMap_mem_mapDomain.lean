@@ -22,7 +22,6 @@ public import LeanPool.FLTEichlerShimura.Definitions.Def_AlgebraicCurve_AdelicIn
 public import LeanPool.FLTEichlerShimura.Definitions.Def_AlgebraicCurve_IsCurveOver
 
 import LeanPool.FLTEichlerShimura.Theorems.Thm_AlgebraicCurve_Place_ord_sum_algebraMap_mul_le_ord_of_linearIndependent_of_constantFieldExtension
-import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
 
 /-!
 # Coefficients of a constant-field-extension Riemann–Roch element descend

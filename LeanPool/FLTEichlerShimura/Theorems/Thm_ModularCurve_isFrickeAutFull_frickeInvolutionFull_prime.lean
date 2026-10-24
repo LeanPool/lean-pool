@@ -20,7 +20,6 @@ module
 public import LeanPool.FLTEichlerShimura.Definitions.Def_ModularCurve_AtkinLehner
 
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_exists_isFrickeAutFull
-import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
 
 /-!
 # At prime level `frickeInvolutionFull` is a Fricke automorphism

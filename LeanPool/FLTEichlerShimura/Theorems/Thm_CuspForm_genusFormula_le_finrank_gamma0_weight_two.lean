@@ -32,7 +32,9 @@ import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_exists_cuspForm_coef
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_genus_modularFunctionFieldBar_eq_genusFormula
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_hasCanonicalDivisor_modularFunctionFieldBar
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_isCurveOver_modularFunctionFieldBar
-import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
+import Mathlib.RingTheory.Flat.TorsionFree
+import Mathlib.RingTheory.SimpleRing.Principal
+import Mathlib.RingTheory.Flat.FaithfullyFlat.Basic
 
 /-!
 # Genus formula bounds dim_ℂ S₂(Γ₀(N)) from below

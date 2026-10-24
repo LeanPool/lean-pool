@@ -17,7 +17,6 @@ Licensed under Apache License 2.0
 
 module
 
-public import LeanPool.FLTEichlerShimura.Definitions.Def_ModularCurve_X0
 public import LeanPool.FLTEichlerShimura.Definitions.Def_ModularCurve_PhiGen
 
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_PhiGen_exists_phiGenDescends
@@ -27,7 +26,6 @@ import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_PhiGen_exists_modula
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_PhiGen_evalSymm_of_coeff_evalAtJ_eq
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_PhiGen_splits_of_coeff_evalAtJ_eq
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_PhiGen_phiIrreducible_of_splits
-import Mathlib.NumberTheory.Cyclotomic.Basic
 import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
 
 /-!

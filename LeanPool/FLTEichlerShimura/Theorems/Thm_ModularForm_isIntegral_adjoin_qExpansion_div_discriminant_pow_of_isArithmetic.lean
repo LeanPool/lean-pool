@@ -17,16 +17,12 @@ Licensed under Apache License 2.0
 
 module
 
-public import Mathlib.NumberTheory.ModularForms.NormTrace
-public import Mathlib.NumberTheory.ModularForms.LevelOne.DimensionFormula
-public import Mathlib.NumberTheory.ModularForms.QExpansion
 public import Mathlib.RingTheory.LaurentSeries
-public import Mathlib.RingTheory.IntegralClosure.IsIntegral.Defs
+public import Mathlib.NumberTheory.ModularForms.Discriminant
 
 import Mathlib.LinearAlgebra.Lagrange
-import Mathlib.RingTheory.Adjoin.Polynomial.Basic
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularForm_exists_qExpansion_eq_aeval_mul_pow_levelOne
-import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
+import Mathlib.NumberTheory.ModularForms.NormTrace
 
 /-!
 # Integrality of ̃ g/Δ̃^{ m} over ℂ[jmath̃]

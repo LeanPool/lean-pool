@@ -17,11 +17,12 @@ Licensed under Apache License 2.0
 
 module
 
-public import Mathlib.Analysis.Complex.UpperHalfPlane.Exp
 public import Mathlib.RingTheory.PowerSeries.Basic
+public import Mathlib.Analysis.Complex.Periodic
+public import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
 
-import Mathlib.NumberTheory.ModularForms.QExpansion
-import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
+import Mathlib.Combinatorics.Matroid.Init
+import Mathlib.Analysis.Complex.UpperHalfPlane.Exp
 
 /-!
 # Products of convergent q-expansions on H

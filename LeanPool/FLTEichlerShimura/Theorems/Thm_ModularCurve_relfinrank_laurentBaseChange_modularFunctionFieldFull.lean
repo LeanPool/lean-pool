@@ -17,18 +17,14 @@ Licensed under Apache License 2.0
 
 module
 
-public import LeanPool.FLTEichlerShimura.Definitions.Def_ModularCurve_QAdicPlace
 public import LeanPool.FLTEichlerShimura.Definitions.Def_ModularCurve_LaurentCoeff
 public import Mathlib.FieldTheory.Relrank
+public import LeanPool.FLTEichlerShimura.Definitions.Def_ModularCurve_X0
 
-import LeanPool.FLTEichlerShimura.Definitions.Def_ModularCurve_GeometricBaseChange
-import Mathlib.RingTheory.AlgebraTower
-import Mathlib.FieldTheory.IntermediateField.Adjoin.Algebra
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_transcendental_jq
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_finrank_adjoin_jqNModC_eq_of_prime
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_modularFunctionFieldBar_eq_restrictScalars
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_coeffEmb_jq
-import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
 
 /-!
 # Relative degree over the j-line under base change of constants

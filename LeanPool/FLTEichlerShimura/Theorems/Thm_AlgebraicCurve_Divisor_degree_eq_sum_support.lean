@@ -23,6 +23,8 @@ import LeanPool.FLTEichlerShimura.Definitions.Def_AlgebraicCurve_AdelicIndex
 import LeanPool.FLTEichlerShimura.Definitions.Def_AlgebraicCurve_IsCurveOver
 import LeanPool.FLTEichlerShimura.Definitions.Def_AlgebraicCurve_DivisorPushPull
 import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
+import Mathlib.Data.Int.Star
+import Mathlib.Algebra.Order.Ring.Star
 
 /-!
 # Degree of a divisor as a sum over its support

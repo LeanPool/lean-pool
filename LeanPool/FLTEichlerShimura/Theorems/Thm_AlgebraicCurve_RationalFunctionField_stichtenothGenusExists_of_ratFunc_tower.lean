@@ -20,21 +20,23 @@ module
 public import Mathlib.FieldTheory.RatFunc.Basic
 public import LeanPool.FLTEichlerShimura.Definitions.Def_AlgebraicCurve_AdelicIndex
 public import LeanPool.FLTEichlerShimura.Definitions.Def_AlgebraicCurve_IsCurveOver
+public import Mathlib.RingTheory.SimpleRing.Principal
 
 import Mathlib.Algebra.Polynomial.Basis
 import Mathlib.Data.Int.LeastGreatest
-import Mathlib.LinearAlgebra.Matrix.FiniteDimensional
 import Mathlib.RingTheory.Flat.TorsionFree
 import Mathlib.RingTheory.PicardGroup
 import LeanPool.FLTEichlerShimura.Definitions.Def_AlgebraicCurve_PoleDivisorPackage
 import LeanPool.FLTEichlerShimura.Definitions.Def_AlgebraicCurve_RatFuncPlaceClassification
-import LeanPool.FLTEichlerShimura.Theorems.Thm_AlgebraicCurve_Place_exists_restrict_eq
 import LeanPool.FLTEichlerShimura.Theorems.Thm_AlgebraicCurve_Place_sum_ramificationIndex_mul_inertiaDeg
 import LeanPool.FLTEichlerShimura.Theorems.Thm_AlgebraicCurve_RationalFunctionField_deg_placeInfty
 import LeanPool.FLTEichlerShimura.Theorems.Thm_AlgebraicCurve_RationalFunctionField_ord_placeInfty
 import LeanPool.FLTEichlerShimura.Theorems.Thm_AlgebraicCurve_Divisor_degree_eq_sum_support
-import LeanPool.FLTEichlerShimura.Theorems.Thm_AlgebraicCurve_ell_eq_zero_of_degree_neg
-import LeanPool.FLTEichlerShimura.Theorems.Thm_AlgebraicCurve_indexOfSpecialty_eq_of_genusReached
+import Mathlib.RingTheory.Valuation.LocalSubring
+import Mathlib.RingTheory.RegularLocalRing.Defs
+import Mathlib.RingTheory.Henselian
+import Mathlib.Data.Int.Star
+import Mathlib.Algebra.Order.Ring.Star
 
 /-!
 # Riemann's theorem over a rational function subfield

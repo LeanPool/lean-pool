@@ -26,6 +26,7 @@ import LeanPool.FLTEichlerShimura.Theorems.Thm_HeckeEis_eichlerShimuraMap_eq_coe
 import LeanPool.FLTEichlerShimura.Theorems.Thm_HeckeEis_exists_isEichlerIntegral_isParabolicCocycle
 import LeanPool.FLTEichlerShimura.Theorems.Thm_HeckeEis_isParabolicCocycle_cocycle_of_isEichlerIntegral
 import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
+import Mathlib.Data.Nat.Prime.Int
 
 /-!
 # Eichler–Shimura map intertwines T_ℓ with cohomological T_ℓ

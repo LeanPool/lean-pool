@@ -18,16 +18,12 @@ Licensed under Apache License 2.0
 module
 
 public import LeanPool.FLTEichlerShimura.Definitions.Def_ModularCurve_EMD
-public import LeanPool.FLTEichlerShimura.Definitions.Def_ModularCurve_MazurStepThreeInputs
 
-import LeanPool.FLTEichlerShimura.Definitions.Def_ModularCurve_CycSubRootBridgeN
-import LeanPool.FLTEichlerShimura.Definitions.Def_ModularCurve_SpecialisationBridge
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_exists_elliptic_cycSub_orbitMap_of_props
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_TatePoint_fullKernelIsRootAt
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_TatePoint_fullKernelInjAt
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_TatePoint_fullKernelDiscAt
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_TatePoint_b3Act_dictN_of_monodromy
-import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
 
 /-!
 # Places above j₀ and orbits of cyclic N-subgroups

@@ -21,7 +21,6 @@ public import LeanPool.FLTEichlerShimura.Definitions.Def_AlgebraicCurve_DivisorC
 
 import Mathlib.RingTheory.Valuation.LocalSubring
 import LeanPool.FLTEichlerShimura.Theorems.Thm_AlgebraicCurve_Place_exists_of_valuationSubring_of_isSeparable
-import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
 
 /-!
 # Integrality over K[t] from membership in all places containing t

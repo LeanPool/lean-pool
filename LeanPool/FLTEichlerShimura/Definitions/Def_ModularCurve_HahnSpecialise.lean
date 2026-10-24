@@ -16,9 +16,9 @@ module
 
 public import LeanPool.FLTEichlerShimura.Definitions.Def_WeierstrassCurve_ReduceHom
 public import LeanPool.FLTEichlerShimura.Definitions.Def_ModularCurve_SpecialisationVocab
-public import Mathlib.RingTheory.LocalRing.ResidueField.Basic
-public import Mathlib.RingTheory.Ideal.Quotient.Operations
-public import Mathlib.GroupTheory.OrderOfElement
+public import LeanPool.FLTEichlerShimura.Definitions.Def_ModularCurve_EMD
+
+import LeanPool.FLTEichlerShimura.Definitions.Def_WeierstrassCurve_TorsionIntegral
 
 /-!
 # Specialisation of points and cyclic subgroups over Hahn series

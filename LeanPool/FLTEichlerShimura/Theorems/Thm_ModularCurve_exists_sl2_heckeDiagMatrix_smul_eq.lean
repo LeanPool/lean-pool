@@ -17,11 +17,9 @@ Licensed under Apache License 2.0
 
 module
 
-public import Mathlib.Analysis.Complex.UpperHalfPlane.MoebiusAction
 public import Mathlib.NumberTheory.ModularForms.CongruenceSubgroups
 public import LeanPool.FLTEichlerShimura.Definitions.Def_ModularForm_HeckeOperator
 
-import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
 
 /-!
 # Conjugating Γ₀(N) past diag(N,1) with equal denominators

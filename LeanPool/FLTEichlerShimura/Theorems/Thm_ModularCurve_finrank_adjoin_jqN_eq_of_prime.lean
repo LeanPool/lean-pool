@@ -19,10 +19,8 @@ module
 
 public import LeanPool.FLTEichlerShimura.Definitions.Def_ModularCurve_X0
 
-import LeanPool.FLTEichlerShimura.Definitions.Def_ModularCurve_PhiGen
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_exists_phiIrreducible_evalSymm
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_dedekindPsi_prime
-import Mathlib.FieldTheory.IntermediateField.Adjoin.Basic
 import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
 
 /-!

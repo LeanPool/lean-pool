@@ -17,11 +17,11 @@ Licensed under Apache License 2.0
 
 module
 
+public import Mathlib.AlgebraicGeometry.EllipticCurve.Affine.Point
 public import Mathlib.FieldTheory.IsAlgClosed.Basic
-public import LeanPool.FLTEichlerShimura.Definitions.Def_FLTPrelim_GaloisRep
+public import Mathlib.Algebra.Module.Torsion.Basic
 
 import LeanPool.FLTEichlerShimura.Theorems.Thm_WeierstrassCurve_card_torsion_of_isAlgClosed
-import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
 
 /-!
 # The n-torsion of an elliptic curve has n² points

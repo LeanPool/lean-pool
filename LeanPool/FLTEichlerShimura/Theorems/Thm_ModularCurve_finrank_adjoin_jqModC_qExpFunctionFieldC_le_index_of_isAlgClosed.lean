@@ -30,6 +30,8 @@ import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_jqModC_mem_intFormRa
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_transcendental_jqModC
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ValuationSubring_exists_liesOverPrime_algebraicClosure_rat
 import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
+import Mathlib.RingTheory.SimpleRing.Principal
+import Mathlib.RingTheory.Henselian
 
 /-!
 # Deuring's inequality for the q-expansion function field over K(jmath̄)

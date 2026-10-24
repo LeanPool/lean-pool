@@ -14,7 +14,10 @@ Licensed under Apache License 2.0
 
 module
 
-public import Mathlib.NumberTheory.ModularForms.Cusps
+public import Mathlib.Topology.Compactification.OnePoint.ProjectiveLine
+public import Mathlib.NumberTheory.ModularForms.CongruenceSubgroups
+
+import Mathlib.NumberTheory.ModularForms.Cusps
 
 /-!
 # Cusps of Γ0​(N): orbit space, denominator, width

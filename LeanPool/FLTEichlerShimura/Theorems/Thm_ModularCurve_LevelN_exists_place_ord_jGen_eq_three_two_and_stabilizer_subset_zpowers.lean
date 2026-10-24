@@ -23,11 +23,11 @@ public import LeanPool.FLTEichlerShimura.Definitions.Def_ModularCurve_LevelNFunc
 
 import Mathlib.Analysis.Complex.Polynomial.Basic
 import Mathlib.NumberTheory.ModularForms.LevelOne.GradedRing
-
 import LeanPool.FLTEichlerShimura.Theorems.Thm_AlgebraicCurve_Place_ord_restrictAlong_eq_natCard_algHom_of_isGalois
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_LevelN_exists_place_analyticOrderAt_eq_mul_ord
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_meromorphicOrderAt_E4_cube_div_discriminant_sub_eq_card_stabilizer_div_two
 import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
+import Mathlib.RingTheory.SimpleRing.Principal
 
 /-!
 # Ramification of X(M)→ X(1) at j=0 and j=1728

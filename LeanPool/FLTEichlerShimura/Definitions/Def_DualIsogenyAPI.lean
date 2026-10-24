@@ -14,10 +14,13 @@ Licensed under Apache License 2.0
 
 module
 
-public import Mathlib.Algebra.Order.Ring.Star
-public import Mathlib.Analysis.Normed.Ring.Lemmas
-public import Mathlib.Data.Int.Star
-public import Mathlib.Tactic.NoncommRing
+public import Mathlib.Algebra.Ring.Subring.Basic
+public import Mathlib.Algebra.Group.Hom.End
+
+import Mathlib.Tactic.NoncommRing
+import Mathlib.Analysis.Normed.Ring.Lemmas
+import Mathlib.Data.Int.Star
+import Mathlib.Algebra.Order.Ring.Star
 
 /-!
 # Abstract dual pairs and dual endomorphism data

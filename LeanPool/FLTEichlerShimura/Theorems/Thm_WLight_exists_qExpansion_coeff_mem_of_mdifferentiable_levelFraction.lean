@@ -18,12 +18,8 @@ Licensed under Apache License 2.0
 module
 
 public import Mathlib.Analysis.SpecialFunctions.Elliptic.Weierstrass
-public import Mathlib.NumberTheory.ModularForms.QExpansion
 public import Mathlib.NumberTheory.ModularForms.Discriminant
-public import Mathlib.Geometry.Manifold.Notation
-public import Mathlib.FieldTheory.IntermediateField.Basic
 
-import Mathlib.NumberTheory.ModularForms.CuspFormSubmodule
 import Mathlib.NumberTheory.ModularForms.LevelOne.GradedRing
 
 import LeanPool.FLTEichlerShimura.Theorems.Thm_WLight_frickeFunction_modularity_package

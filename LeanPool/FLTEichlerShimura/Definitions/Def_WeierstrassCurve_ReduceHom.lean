@@ -14,7 +14,9 @@ Licensed under Apache License 2.0
 
 module
 
-public import LeanPool.FLTEichlerShimura.Definitions.Def_WeierstrassCurve_TorsionIntegral
+public import LeanPool.FLTEichlerShimura.Definitions.Def_WeierstrassCurve_ReductionMap
+
+import LeanPool.FLTEichlerShimura.Definitions.Def_WeierstrassCurve_TorsionIntegral
 
 /-!
 # Reduction of points as an additive group homomorphism

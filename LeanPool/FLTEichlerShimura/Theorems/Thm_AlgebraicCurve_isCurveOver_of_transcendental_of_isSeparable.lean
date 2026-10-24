@@ -20,7 +20,6 @@ module
 public import LeanPool.FLTEichlerShimura.Definitions.Def_AlgebraicCurve_IsCurveOver
 
 import LeanPool.FLTEichlerShimura.Theorems.Thm_AlgebraicCurve_isCurveOver_of_transcendental
-import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
 
 /-!
 # Finite separable extensions of K(x) are curves over K

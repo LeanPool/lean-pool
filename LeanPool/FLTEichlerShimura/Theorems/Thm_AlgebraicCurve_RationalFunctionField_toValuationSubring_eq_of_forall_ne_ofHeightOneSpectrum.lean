@@ -22,10 +22,9 @@ public import Mathlib.FieldTheory.RatFunc.Valuation
 public import LeanPool.FLTEichlerShimura.Definitions.Def_AlgebraicCurve_DivisorClassGroup
 
 import Mathlib.NumberTheory.RatFunc.Ostrowski
-import LeanPool.FLTEichlerShimura.Theorems.Thm_P2M_Dup_AlgebraicCurve_Place_adicValuation_valuationSubring
 import LeanPool.FLTEichlerShimura.Theorems.Thm_AlgebraicCurve_Place_adicValuation_isRankOneDiscrete
 import LeanPool.FLTEichlerShimura.Theorems.Thm_AlgebraicCurve_Place_adicValuation_isTrivialOn
-import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
+import LeanPool.FLTEichlerShimura.Definitions.Def_AlgebraicCurve_RatFuncPlaces
 
 /-!
 # Places of K(t)/K other than the finite ones lie at infinity

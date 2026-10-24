@@ -20,7 +20,6 @@ module
 public import Mathlib.AlgebraicGeometry.EllipticCurve.DivisionPolynomial.Basic
 
 import Mathlib.AlgebraicGeometry.EllipticCurve.DivisionPolynomial.Degree
-import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
 
 /-!
 # Degree of Φₙ - c Ψₙ² is n²

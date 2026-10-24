@@ -20,12 +20,12 @@ module
 public import LeanPool.FLTEichlerShimura.Definitions.Def_AlgebraicCurve_DivisorClassGroup
 public import LeanPool.FLTEichlerShimura.Definitions.Def_ModularCurve_LevelNFunctionField
 
-import Mathlib.Algebra.CharP.Pi
 import Mathlib.Order.CompletePartialOrder
 import Mathlib.RingTheory.Henselian
 import Mathlib.RingTheory.RegularLocalRing.Defs
 import LeanPool.FLTEichlerShimura.Theorems.Thm_WLight_levelN_structure_package
 import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
+import Mathlib.RingTheory.SimpleRing.Principal
 
 /-!
 # Analytic order at τ₀ is e times the order at a place

@@ -37,6 +37,10 @@ import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_exists_ringHom_laure
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_transcendental_jqModC
 import LeanPool.FLTEichlerShimura.Theorems.Thm_WLight_levelN_structure_package
 import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
+import Mathlib.RingTheory.Flat.TorsionFree
+import Mathlib.RingTheory.SimpleRing.Principal
+import Mathlib.RingTheory.Flat.FaithfullyFlat.Algebra
+import Mathlib.RingTheory.Henselian
 
 /-!
 # Lower bounds for the fibres of j over 0, 1728, ∞

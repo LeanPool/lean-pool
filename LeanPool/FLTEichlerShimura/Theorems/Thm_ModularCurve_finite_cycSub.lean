@@ -20,7 +20,6 @@ module
 public import LeanPool.FLTEichlerShimura.Definitions.Def_ModularCurve_EMD
 
 import LeanPool.FLTEichlerShimura.Theorems.Thm_WeierstrassCurve_finite_torsionBy_of_natCast_ne_zero
-import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
 
 /-!
 # Finitely many cyclic subgroups of order N on an elliptic curve over ℚ̄

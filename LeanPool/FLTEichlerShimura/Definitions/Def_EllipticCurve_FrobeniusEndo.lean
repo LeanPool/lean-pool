@@ -14,7 +14,6 @@ Licensed under Apache License 2.0
 
 module
 
-public import LeanPool.FLTEichlerShimura.Definitions.Def_FLTPrelim_GaloisRep
 public import LeanPool.FLTEichlerShimura.Definitions.Def_EllipticCurve_FrobeniusTrace
 
 /-!

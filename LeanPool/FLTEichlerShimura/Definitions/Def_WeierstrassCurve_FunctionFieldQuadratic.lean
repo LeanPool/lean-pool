@@ -16,9 +16,12 @@ module
 
 public import Mathlib.AlgebraicGeometry.EllipticCurve.Affine.Point
 public import Mathlib.FieldTheory.RatFunc.Basic
-public import Mathlib.RingTheory.Henselian
-public import Mathlib.RingTheory.RegularLocalRing.Defs
 public import Mathlib.RingTheory.SimpleRing.Principal
+
+import Mathlib.RingTheory.Henselian
+import Mathlib.CategoryTheory.Category.Init
+import Mathlib.Data.Rat.Floor
+import Mathlib.Tactic.Continuity.Init
 
 /-!
 # Function field of a Weierstrass curve over F(x)

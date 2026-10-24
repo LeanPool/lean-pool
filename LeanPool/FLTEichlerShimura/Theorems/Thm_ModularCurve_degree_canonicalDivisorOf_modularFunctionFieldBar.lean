@@ -31,7 +31,8 @@ import LeanPool.FLTEichlerShimura.Theorems.Thm_AlgebraicCurve_instIsCurveOverRat
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_essFiniteType_modularFunctionFieldBar
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_finiteDimensional_adjoin_coeffEmb_jq_of_neZero
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_isCurveOver_modularFunctionFieldBar
-import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
+import Mathlib.RingTheory.RegularLocalRing.Defs
+import Mathlib.Data.Nat.Choose.Multinomial
 
 /-!
 # Degree of a canonical divisor on X₀(N) over ℚ̄ is 2g-2

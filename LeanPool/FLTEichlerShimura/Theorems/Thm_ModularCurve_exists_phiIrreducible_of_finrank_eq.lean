@@ -17,14 +17,10 @@ Licensed under Apache License 2.0
 
 module
 
-public import LeanPool.FLTEichlerShimura.Definitions.Def_ModularCurve_X0
 public import LeanPool.FLTEichlerShimura.Definitions.Def_ModularCurve_PhiGen
-public import Mathlib.FieldTheory.IntermediateField.Adjoin.Basic
 
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_exists_monic_evalAtJ_jqN_eq_zero
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_PhiGen_evalAtJ_injective
-import Mathlib.FieldTheory.Minpoly.IsIntegrallyClosed
-import Mathlib.RingTheory.Localization.Integral
 import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
 
 /-!

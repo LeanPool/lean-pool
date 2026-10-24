@@ -22,7 +22,6 @@ public import LeanPool.FLTEichlerShimura.Definitions.Def_ModularCurve_JqCoeff
 
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_coeffEmb_jq
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_coeffEmb_jqN
-import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
 
 /-!
 # Base change of the modular function field along ℚ↪ L

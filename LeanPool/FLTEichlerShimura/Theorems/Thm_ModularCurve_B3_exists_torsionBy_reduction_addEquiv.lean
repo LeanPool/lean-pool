@@ -18,12 +18,9 @@ Licensed under Apache License 2.0
 module
 
 public import LeanPool.FLTEichlerShimura.Definitions.Def_ModularCurve_SpecialisationVocab
-public import LeanPool.FLTEichlerShimura.Definitions.Def_ModularCurve_TatePoint
 
-import LeanPool.FLTEichlerShimura.Definitions.Def_ModularCurve_HahnSpecialise
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_HahnSpecialise_specialise_bijOn_torsion
-import Mathlib.Algebra.Module.Torsion.Basic
-import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
+import LeanPool.FLTEichlerShimura.Definitions.Def_WeierstrassCurve_TorsionIntegral
 
 /-!
 # Reduction is an isomorphism on p-torsion

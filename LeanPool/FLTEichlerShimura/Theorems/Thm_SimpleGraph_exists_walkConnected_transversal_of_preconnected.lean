@@ -21,7 +21,6 @@ public import Mathlib.Combinatorics.SimpleGraph.Connectivity.Connected
 public import Mathlib.GroupTheory.GroupAction.Defs
 
 import Mathlib.Order.CompletePartialOrder
-import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
 
 /-!
 # Walk-connected orbit transversal in a preconnected graph

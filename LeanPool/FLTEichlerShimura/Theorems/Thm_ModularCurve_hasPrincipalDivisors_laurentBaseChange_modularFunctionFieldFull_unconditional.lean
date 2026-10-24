@@ -18,12 +18,12 @@ Licensed under Apache License 2.0
 
 module
 
-public import LeanPool.FLTEichlerShimura.Definitions.Def_ModularCurve_ArithmeticGalois
+public import LeanPool.FLTEichlerShimura.Definitions.Def_ModularCurve_LaurentCoeff
+public import LeanPool.FLTEichlerShimura.Definitions.Def_ModularCurve_X0
+public import LeanPool.FLTEichlerShimura.Definitions.Def_AlgebraicCurve_DivisorClassGroup
 
-import LeanPool.FLTEichlerShimura.Definitions.Def_ModularCurve_PhiGen
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_hasPrincipalDivisors_laurentBaseChange_modularFunctionFieldFull
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_modularPolynomialFamily
-import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
 
 /-!
 # Principal divisors of degree zero on L· F_N^{full}

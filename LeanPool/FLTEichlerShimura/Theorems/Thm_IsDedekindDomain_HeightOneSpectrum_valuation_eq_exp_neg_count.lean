@@ -20,7 +20,6 @@ module
 public import Mathlib.RingTheory.DedekindDomain.AdicValuation
 public import Mathlib.RingTheory.DedekindDomain.Factorization
 
-import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
 
 /-!
 # v-adic valuation as exp of minus the multiplicity of v

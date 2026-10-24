@@ -19,15 +19,13 @@ module
 
 public import LeanPool.FLTEichlerShimura.Definitions.Def_ModularCurve_PhiGen
 public import LeanPool.FLTEichlerShimura.Definitions.Def_ModularCurve_QAdicPlace
-public import LeanPool.FLTEichlerShimura.Definitions.Def_ModularCurve_AtkinLehner
-public import Mathlib.RingTheory.RootsOfUnity.PrimitiveRoots
 
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_order_qExpand
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_laurentBaseChange_adjoin_pair
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_functionFieldGeneration
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_coeffEmb_jq
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_coeffEmb_jqN
-import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
+import LeanPool.FLTEichlerShimura.Definitions.Def_ModularCurve_AtkinLehner
 
 /-!
 # Cusp width and orders of j(q), j(q^N) at a place

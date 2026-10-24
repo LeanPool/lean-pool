@@ -25,7 +25,6 @@ import Mathlib.RingTheory.RegularLocalRing.Defs
 import Mathlib.RingTheory.SimpleRing.Principal
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_adjoin_jBar_jNBar_eq_top
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_exists_algHom_of_isRoot
-import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
 
 /-!
 # Normalised embeddings at j₀ versus roots of Φ_N(j₀+t,Y)

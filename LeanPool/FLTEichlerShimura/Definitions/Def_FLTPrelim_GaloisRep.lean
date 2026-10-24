@@ -23,8 +23,6 @@ Adapted from the Imperial College London FLT formalization
 
 public import Mathlib.AlgebraicGeometry.EllipticCurve.Affine.Point
 public import Mathlib.Algebra.Module.Torsion.Basic
-public import Mathlib.Algebra.GroupWithZero.Action.Basic
-public import Mathlib.Algebra.Module.ZMod
 public import Mathlib.FieldTheory.IsAlgClosed.AlgebraicClosure
 
 /-!

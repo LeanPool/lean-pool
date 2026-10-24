@@ -17,12 +17,10 @@ Licensed under Apache License 2.0
 
 module
 
-public import Mathlib.NumberTheory.ModularForms.EisensteinSeries.QExpansion
+public import Mathlib.NumberTheory.Bernoulli
 
-import Mathlib.NumberTheory.Bernoulli
 import Mathlib.Algebra.GCDMonoid.FinsetLemmas
-import Mathlib.Data.Rat.Lemmas
-import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
+import Mathlib.NumberTheory.ModularForms.EisensteinSeries.QExpansion
 
 /-!
 # A prime ℓ ≥ 5 does not divide num(B_{ℓ-1})

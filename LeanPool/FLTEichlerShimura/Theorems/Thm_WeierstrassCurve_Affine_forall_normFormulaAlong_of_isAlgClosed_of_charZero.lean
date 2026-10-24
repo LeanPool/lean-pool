@@ -25,7 +25,6 @@ import Mathlib.RingTheory.RegularLocalRing.Defs
 import LeanPool.FLTEichlerShimura.Theorems.Thm_AlgebraicCurve_normFormulaAlong
 import LeanPool.FLTEichlerShimura.Theorems.Thm_AlgebraicCurve_separableAlong_of_charZero
 import LeanPool.FLTEichlerShimura.Theorems.Thm_WeierstrassCurve_Affine_hasPrincipalDivisors_functionField
-import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
 
 /-!
 # Norm formula along isogeny endomorphism data in characteristic zero

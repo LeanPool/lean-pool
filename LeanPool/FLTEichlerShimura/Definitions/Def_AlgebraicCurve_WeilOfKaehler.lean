@@ -15,8 +15,11 @@ Licensed under Apache License 2.0
 module
 
 public import LeanPool.FLTEichlerShimura.Definitions.Def_AlgebraicCurve_LocalResidue
-public import Mathlib.RingTheory.Etale.Weakly
-public import Mathlib.RingTheory.TotallySplit
+
+import Mathlib.RingTheory.Flat.TorsionFree
+import Mathlib.RingTheory.SimpleRing.Principal
+import Mathlib.Data.Int.Star
+import Mathlib.Algebra.Order.Ring.Star
 
 /-!
 # Traced Kähler residue functional on adèles; residue-theorem predicates

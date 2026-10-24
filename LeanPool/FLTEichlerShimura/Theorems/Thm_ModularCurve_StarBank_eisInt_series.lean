@@ -17,12 +17,12 @@ Licensed under Apache License 2.0
 
 module
 
-public import Mathlib.NumberTheory.ModularForms.EisensteinSeries.QExpansion
+public import Mathlib.NumberTheory.ModularForms.EisensteinSeries.Basic
+public import Mathlib.NumberTheory.Bernoulli
+public import Mathlib.NumberTheory.ModularForms.QExpansion
 
-import Mathlib.NumberTheory.Bernoulli
 import Mathlib.Algebra.GCDMonoid.FinsetLemmas
-import Mathlib.Data.Rat.Lemmas
-import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
+import Mathlib.NumberTheory.ModularForms.EisensteinSeries.QExpansion
 
 /-!
 # Integral model of num(B_{ℓ-1})E_{ℓ-1}, positive coefficients divisible by ℓ

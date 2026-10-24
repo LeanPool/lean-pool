@@ -19,10 +19,11 @@ module
 
 public import LeanPool.FLTEichlerShimura.Definitions.Def_ModularCurve_X1
 
-import Mathlib.Algebra.GroupWithZero.Submonoid.CancelMulZero
 import Mathlib.Order.CompletePartialOrder
 import LeanPool.FLTEichlerShimura.Theorems.Thm_AlgebraicCurve_finiteDimensional_adjoin_of_transcendental
 import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
+import Mathlib.RingTheory.SimpleRing.Principal
+import Mathlib.RingTheory.Henselian
 
 /-!
 # Degree inequality for reduced q-expansion function fields

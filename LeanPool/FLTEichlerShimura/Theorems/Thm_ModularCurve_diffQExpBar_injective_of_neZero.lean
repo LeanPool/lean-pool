@@ -19,11 +19,11 @@ module
 
 public import LeanPool.FLTEichlerShimura.Definitions.Def_ModularCurve_HeckeDifferential
 
-import LeanPool.FLTEichlerShimura.Definitions.Def_ModularCurve_ArithmeticGalois
 import LeanPool.FLTEichlerShimura.Theorems.Thm_KaehlerDifferential_span_D_eq_top_of_transcendental
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_transcendental_coeffEmb_jq
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_isSeparable_adjoin_coeffEmb_jq_full
 import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
+import Mathlib.RingTheory.SimpleRing.Principal
 
 /-!
 # Injectivity of the q-expansion map on differentials

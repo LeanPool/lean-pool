@@ -16,6 +16,9 @@ module
 
 public import LeanPool.FLTEichlerShimura.Definitions.Def_ModularCurve_CycSubRootBridge
 
+import LeanPool.FLTEichlerShimura.Theorems.Thm_WeierstrassCurve_zmultiples_eq_of_veluQuotient_j_eq_of_transcendental
+import LeanPool.FLTEichlerShimura.Theorems.Thm_WeierstrassCurve_veluQuotient_oddOrderSummingSet_discriminant_ne_zero
+
 /-!
 # Odd level: roots of the modular polynomial versus cyclic subgroups
 

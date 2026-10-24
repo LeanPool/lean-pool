@@ -28,7 +28,6 @@ import LeanPool.FLTEichlerShimura.Theorems.Thm_HeckeEis_eichlerShimuraMap_inject
 import LeanPool.FLTEichlerShimura.Theorems.Thm_HeckeEis_existsEichlerShimuraMapLinear
 import LeanPool.FLTEichlerShimura.Theorems.Thm_HeckeEis_exists_coeffH1par_semilinearMap_starRingEnd
 import LeanPool.FLTEichlerShimura.Theorems.Thm_HeckeEis_isCompl_range_eichlerShimuraMap_range_conj
-import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
 
 /-!
 # Hecke-equivariant Eichler–Shimura decomposition of parabolic cohomology

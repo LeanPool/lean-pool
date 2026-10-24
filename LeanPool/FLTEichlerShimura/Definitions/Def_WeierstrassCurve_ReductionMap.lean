@@ -15,9 +15,8 @@ Licensed under Apache License 2.0
 module
 
 public import LeanPool.FLTEichlerShimura.Definitions.Def_FLTPrelim_Ramification
-public import LeanPool.FLTEichlerShimura.Definitions.Def_FreyPackage_GaloisRep
-public import Mathlib.RingTheory.Valuation.RamificationGroup
-public import Mathlib.RingTheory.Valuation.LocalSubring
+
+import Mathlib.RingTheory.Valuation.LocalSubring
 
 /-!
 # Reduction of Weierstrass points along a valuation subring

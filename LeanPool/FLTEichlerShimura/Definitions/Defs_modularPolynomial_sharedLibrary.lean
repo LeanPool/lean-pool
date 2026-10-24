@@ -20,14 +20,8 @@ public import LeanPool.FLTEichlerShimura.Definitions.Def_ModularCurve_JqCoeff
 public import LeanPool.FLTEichlerShimura.Definitions.Def_ModularCurve_PhiGen
 
 public import Mathlib.NumberTheory.Cyclotomic.Basic
-public import Mathlib.RingTheory.RootsOfUnity.PrimitiveRoots
 
-import Mathlib.Tactic.Linarith
-import Mathlib.NumberTheory.Cyclotomic.PrimitiveRoots
-import Mathlib.Data.Nat.Factorization.Induction
-import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_coeffMap_qExpand
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_coeffEmb_qExpand
-import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_dedekindPsi_pos
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_dedekindPsi_prime
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_ModularPolynomialData_eval_jqNModC_mul_eq_zero
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_ModularPolynomialData_eval_jqNModC_of_mul_eq_zero
@@ -35,6 +29,7 @@ import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_dedekindPsi_prime_po
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_dedekindPsi_mul_of_coprime
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_coeff_jqModC_neg_one
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_order_jqModC
+import Mathlib.Algebra.Order.Algebra
 
 /-!
 # Shared modular-polynomial and Laurent-series helpers

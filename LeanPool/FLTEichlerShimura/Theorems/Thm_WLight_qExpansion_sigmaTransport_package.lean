@@ -17,19 +17,9 @@ Licensed under Apache License 2.0
 
 module
 
-public import Mathlib.Analysis.SpecialFunctions.Elliptic.Weierstrass
-public import Mathlib.NumberTheory.ModularForms.EisensteinSeries.Basic
 public import Mathlib.NumberTheory.ModularForms.Discriminant
-public import Mathlib.NumberTheory.ModularForms.CongruenceSubgroups
-public import Mathlib.FieldTheory.IntermediateField.Basic
 
-import Mathlib.NumberTheory.ModularForms.QExpansion
-import Mathlib.NumberTheory.ModularForms.EisensteinSeries.QExpansion
 import Mathlib.NumberTheory.ModularForms.LevelOne.GradedRing
-import Mathlib.NumberTheory.ModularForms.CuspFormSubmodule
-import Mathlib.NumberTheory.ModularForms.LevelOne.Basic
-import Mathlib.Geometry.Manifold.Notation
-import Mathlib.RingTheory.PowerSeries.Order
 import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
 
 /-!

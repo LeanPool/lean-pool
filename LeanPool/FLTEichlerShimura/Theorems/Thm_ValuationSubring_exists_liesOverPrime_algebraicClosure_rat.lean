@@ -20,7 +20,6 @@ module
 public import LeanPool.FLTEichlerShimura.Definitions.Def_FLTPrelim_Ramification
 
 import Mathlib.RingTheory.Valuation.LocalSubring
-import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
 
 /-!
 # Existence of a place of ℚ̄ above each prime p

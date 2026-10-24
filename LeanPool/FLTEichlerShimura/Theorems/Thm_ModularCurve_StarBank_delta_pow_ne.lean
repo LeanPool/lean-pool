@@ -17,7 +17,7 @@ Licensed under Apache License 2.0
 
 module
 
-public import LeanPool.FLTEichlerShimura.Definitions.Def_ModularCurve_JqCoeff
+public import LeanPool.FLTEichlerShimura.Definitions.Def_ModularCurve_X0
 
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_map_intCast_pow_char_eq_qExpand
 import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util

@@ -26,7 +26,7 @@ import Mathlib.RingTheory.PicardGroup
 import Mathlib.RingTheory.RegularLocalRing.Defs
 import Mathlib.RingTheory.SimpleRing.Principal
 import LeanPool.FLTEichlerShimura.Definitions.Def_ModularCurve_GeometricBaseChange
-import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
+import Mathlib.RingTheory.Flat.FaithfullyFlat.Basic
 
 /-!
 # Transcendence and finiteness under constant field extension of F₀

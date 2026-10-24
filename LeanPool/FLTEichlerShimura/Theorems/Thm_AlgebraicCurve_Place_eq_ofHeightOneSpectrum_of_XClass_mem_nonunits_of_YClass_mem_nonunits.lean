@@ -23,7 +23,6 @@ public import Mathlib.RingTheory.SimpleRing.Principal
 public import LeanPool.FLTEichlerShimura.Definitions.Def_AlgebraicCurve_DivisorClassGroup
 
 import LeanPool.FLTEichlerShimura.Theorems.Thm_WeierstrassCurve_Affine_FunctionField_exists_eq_valuationSubring_of_X_mem
-import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
 
 /-!
 # A place centred at an affine point is the point's place

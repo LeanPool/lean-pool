@@ -19,9 +19,6 @@ module
 
 public import LeanPool.FLTEichlerShimura.Definitions.Def_EllipticCurve_PointReduction
 
-import Mathlib.AlgebraicGeometry.EllipticCurve.Reduction
-import Mathlib.AlgebraicGeometry.EllipticCurve.Affine.Point
-import Mathlib.Tactic.LinearCombination
 import LeanPool.FLTEichlerShimura.Theorems.Thm_WeierstrassCurve_valuation_le_one_of_equation
 import LeanPool.FLTEichlerShimura.Theorems.Thm_WeierstrassCurve_reducePoint_some
 import LeanPool.FLTEichlerShimura.Theorems.Thm_WeierstrassCurve_reducePoint_some_eq_zero_iff

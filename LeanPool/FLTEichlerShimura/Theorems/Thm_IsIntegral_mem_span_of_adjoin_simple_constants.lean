@@ -17,14 +17,13 @@ Licensed under Apache License 2.0
 
 module
 
-public import Mathlib.FieldTheory.IntermediateField.Adjoin.Basic
-public import Mathlib.RingTheory.IntegralClosure.IsIntegral.Basic
-public import Mathlib.Analysis.Complex.Polynomial.Basic
+public import Mathlib.Basic.Complex.Basic
+public import Mathlib.FieldTheory.IntermediateField.Adjoin.Defs
+public import Mathlib.RingTheory.IntegralClosure.IsIntegral.Defs
+public import Mathlib.RingTheory.Algebraic.Defs
 
-import Mathlib.FieldTheory.AlgebraicClosure
-import Mathlib.FieldTheory.Perfect
 import Mathlib.LinearAlgebra.Lagrange
-import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
+import Mathlib.Analysis.Complex.Polynomial.Basic
 
 /-!
 # Adjoining an algebraic constant does not enlarge the span

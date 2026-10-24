@@ -21,7 +21,6 @@ public import Mathlib.NumberTheory.ArithmeticFunction.Misc
 public import LeanPool.FLTEichlerShimura.Definitions.Def_ModularCurve_X1
 
 import Mathlib.NumberTheory.ModularForms.EisensteinSeries.QExpansion
-import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
 
 /-!
 # Integral q-expansions of E₄ and E₆ on Γ₁(M)

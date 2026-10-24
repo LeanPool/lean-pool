@@ -20,7 +20,6 @@ module
 public import LeanPool.FLTEichlerShimura.Definitions.Def_ModularForm_HeckeOperatorForms
 
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularFormClass_heckeT_heckeT_comm
-import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
 
 /-!
 # Hecke operators Tₚ, T_q commute on cusp forms

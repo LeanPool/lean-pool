@@ -14,10 +14,12 @@ Licensed under Apache License 2.0
 
 module
 
-public import Mathlib.NumberTheory.ModularForms.Bounds
-public import Mathlib.NumberTheory.ModularForms.CongruenceSubgroups
 public import Mathlib.Analysis.Complex.UpperHalfPlane.Measure
-public import Mathlib.MeasureTheory.Integral.Bochner.Basic
+public import Mathlib.NumberTheory.ModularForms.Petersson
+public import Mathlib.NumberTheory.Modular
+
+import Mathlib.Analysis.SpecialFunctions.Bernstein
+import Mathlib.MeasureTheory.Covering.Besicovitch
 
 /-!
 # Petersson inner product of cusp forms for Γ₀(N)

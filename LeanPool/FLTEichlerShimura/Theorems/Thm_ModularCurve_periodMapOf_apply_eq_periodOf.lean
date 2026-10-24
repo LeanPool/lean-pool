@@ -21,7 +21,8 @@ public import LeanPool.FLTEichlerShimura.Definitions.Def_ModularCurve_PeriodOf
 
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_exists_hasEquivariantPrimitiveOf
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_periodOf_apply_eq_sub_of_hasEquivariantPrimitiveOf
-import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
+import Mathlib.Analysis.SpecialFunctions.Bernstein
+import Mathlib.MeasureTheory.Covering.Besicovitch
 
 /-!
 # Period homomorphism of a weight-2 cusp form equals its segment period

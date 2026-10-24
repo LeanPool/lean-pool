@@ -26,7 +26,6 @@ import LeanPool.FLTEichlerShimura.Definitions.Def_EllipticCurve_FunctionFieldPul
 import LeanPool.FLTEichlerShimura.Theorems.Thm_WeierstrassCurve_Affine_CoordinateRing_isDedekindDomain
 import LeanPool.FLTEichlerShimura.Theorems.Thm_WeierstrassCurve_Affine_FunctionField_exists_eq_valuationSubring_of_X_mem
 import LeanPool.FLTEichlerShimura.Theorems.Thm_WeierstrassCurve_Affine_placeOfPoint_some_eq_ofHeightOneSpectrum
-import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
 
 /-!
 # At the place of the origin, x is not integral

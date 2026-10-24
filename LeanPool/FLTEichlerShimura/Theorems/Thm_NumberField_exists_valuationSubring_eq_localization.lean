@@ -20,14 +20,7 @@ module
 public import Mathlib.NumberTheory.NumberField.Basic
 public import Mathlib.RingTheory.Valuation.ValuationSubring
 
-import LeanPool.FLTEichlerShimura.Definitions.Def_FieldTheory_RatAlgClosureGalois
 import Mathlib.RingTheory.DedekindDomain.AdicValuation
-import Mathlib.RingTheory.DedekindDomain.IntegralClosure
-import Mathlib.FieldTheory.IntermediateField.Adjoin.Basic
-import Mathlib.RingTheory.Ideal.GoingUp
-import Mathlib.Algebra.Lie.OfAssociative
-import Mathlib.Algebra.Algebra.Rat
-import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
 
 /-!
 # Localisation of ℤ̄ at a maximal ideal is a valuation subring

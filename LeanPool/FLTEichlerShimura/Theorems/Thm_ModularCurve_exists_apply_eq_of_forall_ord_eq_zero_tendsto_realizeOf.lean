@@ -23,7 +23,6 @@ public import LeanPool.FLTEichlerShimura.Definitions.Def_ModularCurve_X1
 
 import LeanPool.FLTEichlerShimura.Theorems.Thm_AlgebraicCurve_Place_exists_forall_ord_eq_finset
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_ord_eq_zero_of_not_mem_of_realizeOf_tendsto
-import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
 
 /-!
 # Cusp places of ℂ·ℚ(X(Γ)) are exhausted by Pl

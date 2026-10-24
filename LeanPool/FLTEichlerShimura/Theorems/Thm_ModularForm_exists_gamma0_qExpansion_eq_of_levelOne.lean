@@ -17,13 +17,15 @@ Licensed under Apache License 2.0
 
 module
 
-public import Mathlib.NumberTheory.ModularForms.LevelOne.DimensionFormula
-public import Mathlib.NumberTheory.ModularForms.CongruenceSubgroups
-public import Mathlib.NumberTheory.ModularForms.QExpansion
-public import Mathlib.RingTheory.LaurentSeries
+public import Mathlib.NumberTheory.ModularForms.Basic
 
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularForm_exists_degeneracy_Gamma0
-import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
+import Mathlib.Tactic.NormNum.Parity
+import Mathlib.NumberTheory.ArithmeticFunction.VonMangoldt
+import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
+import Mathlib.Analysis.SpecialFunctions.Bernstein
+import Mathlib.Data.Nat.Choose.Multinomial
+import Mathlib.CategoryTheory.Category.Init
 
 /-!
 # A level-one form is a form for Γ₀(N)

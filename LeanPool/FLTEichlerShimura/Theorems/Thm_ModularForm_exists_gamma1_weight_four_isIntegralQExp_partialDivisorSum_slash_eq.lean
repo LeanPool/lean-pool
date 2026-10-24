@@ -23,7 +23,6 @@ public import LeanPool.FLTEichlerShimura.Definitions.Def_ModularCurve_X1
 
 import LeanPool.FLTEichlerShimura.Theorems.Thm_EisensteinSeries_exists_modularForm_coe_eq_eisensteinG
 import LeanPool.FLTEichlerShimura.Theorems.Thm_EisensteinSeries_sum_eisensteinG_vecCons_eq_mul_tsum_divisorSum_mul_cexp_pow
-import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
 
 /-!
 # Weight-four Eisenstein series with partial divisor-sum q-expansions

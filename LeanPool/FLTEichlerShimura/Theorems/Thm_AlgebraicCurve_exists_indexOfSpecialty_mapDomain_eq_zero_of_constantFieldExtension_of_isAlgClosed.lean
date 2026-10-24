@@ -27,7 +27,8 @@ import LeanPool.FLTEichlerShimura.Theorems.Thm_AlgebraicCurve_essFiniteType_of_t
 import LeanPool.FLTEichlerShimura.Theorems.Thm_AlgebraicCurve_exists_riemannGenusReachedAt_nsmul_single_of_stichtenothGenusExists
 import LeanPool.FLTEichlerShimura.Theorems.Thm_AlgebraicCurve_indexOfSpecialty_eq_zero_of_genusReached
 import LeanPool.FLTEichlerShimura.Theorems.Thm_AlgebraicCurve_stichtenothGenusExists_of_isCurveOver
-import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
+import Mathlib.Data.Int.Star
+import Mathlib.Algebra.Order.Ring.Star
 
 /-!
 # Vanishing index of specialty for a lifted divisor

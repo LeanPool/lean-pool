@@ -15,7 +15,6 @@ Licensed under Apache License 2.0
 module
 
 public import Mathlib.AlgebraicGeometry.EllipticCurve.DivisionPolynomial.Basic
-public import Mathlib.AlgebraicGeometry.EllipticCurve.Affine.Formula
 
 /-!
 # Vélu quantities and the Vélu quotient Weierstrass curve

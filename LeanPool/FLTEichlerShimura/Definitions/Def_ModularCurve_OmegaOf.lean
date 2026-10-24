@@ -17,9 +17,10 @@ module
 public import LeanPool.FLTEichlerShimura.Definitions.Def_ModularCurve_QAdicPlace
 public import LeanPool.FLTEichlerShimura.Definitions.Def_ModularCurve_ArithmeticGalois
 public import LeanPool.FLTEichlerShimura.Definitions.Def_ModularCurve_QExpansionDiff
-public import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_theta_coeff
-public import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_coeffMap_injective
 public import Mathlib.NumberTheory.ModularForms.QExpansion
+
+import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_theta_coeff
+import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_coeffMap_injective
 
 /-!
 # The differential attached to a q-expansion

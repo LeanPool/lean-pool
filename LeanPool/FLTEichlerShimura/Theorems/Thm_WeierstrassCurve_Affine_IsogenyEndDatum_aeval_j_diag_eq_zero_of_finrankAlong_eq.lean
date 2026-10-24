@@ -21,7 +21,6 @@ module
 public import LeanPool.FLTEichlerShimura.Definitions.Def_Isogeny_ConditionalCurrency
 public import LeanPool.FLTEichlerShimura.Definitions.Def_ModularCurve_X0
 
-import Mathlib.AlgebraicTopology.FundamentalGroupoid.SimplyConnected
 import Mathlib.Analysis.Complex.Polynomial.Basic
 import Mathlib.RingTheory.Algebraic.Cardinality
 import LeanPool.FLTEichlerShimura.Theorems.Thm_AlgebraicCurve_normFormulaAlong
@@ -39,6 +38,8 @@ import LeanPool.FLTEichlerShimura.Theorems.Thm_WeierstrassCurve_Affine_natCard_k
 import LeanPool.FLTEichlerShimura.Theorems.Thm_WeierstrassCurve_exists_intermediateField_countable_map_eq_and_finrankAlong_eq
 import LeanPool.FLTEichlerShimura.Theorems.Thm_WeierstrassCurve_nonempty_functionField_algEquiv_of_variableChange
 import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
+import Mathlib.RingTheory.Flat.TorsionFree
+import Mathlib.RingTheory.Flat.FaithfullyFlat.Algebra
 
 /-!
 # Degree-N endomorphism forces Φ_N(j(E),j(E))=0

@@ -18,9 +18,10 @@ Licensed under Apache License 2.0
 module
 
 public import LeanPool.FLTEichlerShimura.Definitions.Def_ModularCurve_ModuliPoint
+public import Mathlib.FieldTheory.IsAlgClosed.Basic
 
 import LeanPool.FLTEichlerShimura.Theorems.Thm_WeierstrassCurve_Affine_Point_vcInvFun_add
-import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
+import Mathlib.AlgebraicGeometry.EllipticCurve.IsomOfJ
 
 /-!
 # Fibre of Y₀(N) over j(W) as order-N points modulo Aut(W)

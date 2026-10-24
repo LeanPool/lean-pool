@@ -23,7 +23,6 @@ public import LeanPool.FLTEichlerShimura.Definitions.Def_ModularCurve_Arithmetic
 import LeanPool.FLTEichlerShimura.Theorems.Thm_AlgebraicCurve_hasCanonicalDivisor_of_isCurveOver
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_essFiniteType_modularFunctionFieldBar
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_isCurveOver_modularFunctionFieldBar
-import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
 
 /-!
 # Canonical divisors exist for X₀(N) over ℚ̄

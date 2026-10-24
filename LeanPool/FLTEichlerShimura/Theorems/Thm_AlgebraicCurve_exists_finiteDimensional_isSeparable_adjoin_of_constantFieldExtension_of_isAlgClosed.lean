@@ -24,7 +24,6 @@ import Mathlib.FieldTheory.SeparableClosure
 import Mathlib.LinearAlgebra.FreeModule.PID
 import Mathlib.RingTheory.Flat.TorsionFree
 import Mathlib.RingTheory.Henselian
-import Mathlib.RingTheory.PicardGroup
 import Mathlib.RingTheory.RegularLocalRing.Defs
 import Mathlib.RingTheory.SimpleRing.Principal
 import LeanPool.FLTEichlerShimura.Theorems.Thm_AlgebraicCurve_exists_separating_transcendental_of_perfectField

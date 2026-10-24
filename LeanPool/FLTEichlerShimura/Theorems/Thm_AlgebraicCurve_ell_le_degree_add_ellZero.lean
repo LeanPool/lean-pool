@@ -23,8 +23,10 @@ public import LeanPool.FLTEichlerShimura.Definitions.Def_AlgebraicCurve_IsCurveO
 import Mathlib.RingTheory.Flat.TorsionFree
 import LeanPool.FLTEichlerShimura.Definitions.Def_AlgebraicCurve_DivisorPushPull
 import LeanPool.FLTEichlerShimura.Theorems.Thm_AlgebraicCurve_Divisor_degree_eq_sum_support
-import LeanPool.FLTEichlerShimura.Theorems.Thm_AlgebraicCurve_ell_eq_zero_of_degree_neg
 import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
+import Mathlib.RingTheory.SimpleRing.Principal
+import Mathlib.Data.Int.Star
+import Mathlib.Algebra.Order.Ring.Star
 
 /-!
 # Riemann's inequality: ℓ(D)≤deg D+ℓ(0)

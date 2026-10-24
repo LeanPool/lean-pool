@@ -22,7 +22,6 @@ public import Mathlib.Analysis.Calculus.Deriv.Basic
 
 import Mathlib.Analysis.Complex.CauchyIntegral
 import Mathlib.Analysis.LocallyConvex.AbsConvexOpen
-import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
 
 /-!
 # Primitives of holomorphic functions on star-shaped domains

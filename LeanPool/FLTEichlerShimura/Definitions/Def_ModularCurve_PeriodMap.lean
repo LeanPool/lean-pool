@@ -15,7 +15,6 @@ Licensed under Apache License 2.0
 module
 
 public import Mathlib.Analysis.Complex.UpperHalfPlane.MoebiusAction
-public import Mathlib.Algebra.Module.Hom
 
 /-!
 # Equivariant primitives, period characters, parabolic homomorphisms

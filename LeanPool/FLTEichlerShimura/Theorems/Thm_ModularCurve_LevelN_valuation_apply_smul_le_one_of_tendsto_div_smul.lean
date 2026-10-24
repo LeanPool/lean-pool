@@ -17,14 +17,15 @@ Licensed under Apache License 2.0
 
 module
 
-public import LeanPool.FLTEichlerShimura.Definitions.Def_ModularCurve_JqCoeff
 public import LeanPool.FLTEichlerShimura.Definitions.Def_ModularCurve_LevelNFunctionField
+public import LeanPool.FLTEichlerShimura.Definitions.Def_ModularCurve_X0
 
 import Mathlib.Data.Int.Star
 import LeanPool.FLTEichlerShimura.Theorems.Thm_WLight_frickeFunction_modularity_package
 import LeanPool.FLTEichlerShimura.Theorems.Thm_WLight_frickeFunction_orbit_package
 import LeanPool.FLTEichlerShimura.Theorems.Thm_WLight_levelN_structure_package
 import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
+import Mathlib.RingTheory.SimpleRing.Principal
 
 /-!
 # Valuation bound for E(σ_γ z) under a non-zero limit

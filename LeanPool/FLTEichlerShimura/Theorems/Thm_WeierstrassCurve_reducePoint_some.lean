@@ -19,10 +19,6 @@ module
 
 public import LeanPool.FLTEichlerShimura.Definitions.Def_EllipticCurve_PointReduction
 
-import Mathlib.AlgebraicGeometry.EllipticCurve.Reduction
-import Mathlib.AlgebraicGeometry.EllipticCurve.Affine.Point
-import Mathlib.RingTheory.DedekindDomain.AdicValuation
-import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
 
 /-!
 # Reduction of an integral affine point has residue coordinates

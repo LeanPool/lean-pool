@@ -20,8 +20,6 @@ module
 public import Mathlib.NumberTheory.ModularForms.CongruenceSubgroups
 
 import Mathlib.Algebra.Field.ZMod
-import Mathlib.Tactic.Group
-import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
 
 /-!
 # Right multiplication permutes the Γ₀(ℓ) coset slots

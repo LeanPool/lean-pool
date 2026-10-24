@@ -18,10 +18,11 @@ public import Mathlib.AlgebraicGeometry.EllipticCurve.Affine.Point
 public import Mathlib.Analysis.CStarAlgebra.Classes
 public import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
 public import Mathlib.Analysis.SpecialFunctions.Elliptic.Weierstrass
-public import Mathlib.FieldTheory.Perfect
-public import Mathlib.RingTheory.Flat.FaithfullyFlat.Algebra
-public import Mathlib.RingTheory.Flat.TorsionFree
-public import Mathlib.RingTheory.SimpleRing.Principal
+
+import Mathlib.RingTheory.Flat.TorsionFree
+import Mathlib.FieldTheory.Perfect
+import Mathlib.RingTheory.SimpleRing.Principal
+import Mathlib.RingTheory.Flat.FaithfullyFlat.Algebra
 
 /-!
 # Weierstrass curve, ℘-parametrisation and j-invariant of a lattice

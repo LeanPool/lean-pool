@@ -21,7 +21,6 @@ public import LeanPool.FLTEichlerShimura.Definitions.Def_ModularCurve_X0
 
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_functionFieldGeneration_iff_full_eq
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_functionFieldGeneration_of_prime
-import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
 
 /-!
 # At prime level the two modular function fields agree

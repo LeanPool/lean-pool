@@ -20,7 +20,6 @@ module
 public import Mathlib.AlgebraicGeometry.EllipticCurve.Affine.Basic
 public import Mathlib.AlgebraicGeometry.EllipticCurve.Reduction
 
-import Mathlib.RingTheory.DedekindDomain.AdicValuation
 
 /-!
 # Integral x forces integral y on an integral Weierstrass model

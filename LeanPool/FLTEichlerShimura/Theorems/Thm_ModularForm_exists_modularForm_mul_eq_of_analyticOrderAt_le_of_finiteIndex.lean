@@ -21,7 +21,6 @@ public import Mathlib.Analysis.CStarAlgebra.Classes
 public import Mathlib.NumberTheory.ModularForms.Basic
 
 import Mathlib.Algebra.Order.Star.Real
-import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
 
 /-!
 # Division of modular forms on a finite-index subgroup

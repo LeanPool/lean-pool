@@ -26,6 +26,7 @@ import LeanPool.FLTEichlerShimura.Theorems.Thm_WLight_frickeFunction_modularity_
 import LeanPool.FLTEichlerShimura.Theorems.Thm_WLight_frickeFunction_orbit_package
 import LeanPool.FLTEichlerShimura.Theorems.Thm_WLight_levelN_structure_package
 import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
+import Mathlib.RingTheory.SimpleRing.Principal
 
 /-!
 # A q_N-expansion algebra map on the level-N function field

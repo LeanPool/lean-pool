@@ -34,7 +34,7 @@ import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_realizeOf_eq_div
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_thetaL_coeffMap_eq_coeffMap_single_mul_derivative
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularForm_exists_coe_eq_of_levelOne
 import LeanPool.FLTEichlerShimura.Theorems.Thm_omegaRow_T2
-import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
+import LeanPool.FLTEichlerShimura.Definitions.Def_AlgebraicCurve_DivisorPushPull
 
 /-!
 # Interior parity of ord_P(v) plus the weight-floor term

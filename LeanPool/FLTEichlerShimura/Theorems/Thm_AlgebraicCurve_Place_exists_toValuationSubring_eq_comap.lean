@@ -20,8 +20,6 @@ module
 public import LeanPool.FLTEichlerShimura.Definitions.Def_AlgebraicCurve_DivisorClassGroup
 
 import Mathlib.RingTheory.Valuation.LocalSubring
-import Mathlib.RingTheory.IntegralClosure.IntegrallyClosed
-import Mathlib.RingTheory.IntegralClosure.Algebra.Basic
 import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
 
 /-!

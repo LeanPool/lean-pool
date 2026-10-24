@@ -14,10 +14,11 @@ Licensed under Apache License 2.0
 
 module
 
-public import Mathlib.Algebra.Group.Int.TypeTags
 public import Mathlib.RingTheory.DedekindDomain.AdicValuation
 public import Mathlib.RingTheory.RamificationInertia.Inertia
-public import Mathlib.RingTheory.Valuation.Discrete.RankOne
+
+import Mathlib.RingTheory.Valuation.Discrete.RankOne
+import Mathlib.Algebra.Group.Int.TypeTags
 
 /-!
 # Adic completions of Dedekind domains: integers, uniformizers, residue fields
@@ -362,22 +363,23 @@ noncomputable def ResidueFieldToCompletionResidueField :
 
 open IsLocalRing in
 noncomputable def ResidueFieldEquivCompletionResidueField :
-    A ⧸ v.asIdeal ≃+* ResidueField (v.adicCompletionIntegers K) := by
-  apply RingEquiv.ofBijective (ResidueFieldToCompletionResidueField K v)
-    ⟨Ideal.quotientMap_injective' <| ge_of_eq Ideal.LiesOver.over, ?_⟩
-  intro z
-  obtain ⟨x, hx⟩ :=
-    Submodule.Quotient.mk_surjective (p := maximalIdeal ↥(adicCompletionIntegers K v)) z
-  rw [← hx, Ideal.Quotient.mk_eq_mk]
-  suffices ∃ a : A, (ResidueFieldToCompletionResidueField K v) a = Ideal.Quotient.mk _ x by
-    obtain ⟨a, ha⟩ := this
-    refine ⟨a, ha⟩
-  change ∃ a, Ideal.Quotient.mk (maximalIdeal (v.adicCompletionIntegers K)) _ = _
-  simp_rw [Ideal.Quotient.mk_eq_mk_iff_sub_mem, mem_maximalIdeal, mem_nonunits_iff]
-  have hunit (y : v.adicCompletionIntegers K) : ¬IsUnit y ↔ Valued.v y.val < 1 :=
-    Valuation.Integer.not_isUnit_iff_valuation_lt_one
-  simp_rw [hunit]
-  exact exists_adicValued_sub_lt_of_adicCompletionInteger K v x 1
+    A ⧸ v.asIdeal ≃+* ResidueField (v.adicCompletionIntegers K) :=
+  .ofBijective (ResidueFieldToCompletionResidueField K v)
+    ⟨Ideal.quotientMap_injective' <| ge_of_eq Ideal.LiesOver.over, by
+      intro z
+      obtain ⟨x, hx⟩ :=
+        Submodule.Quotient.mk_surjective (p := maximalIdeal ↥(adicCompletionIntegers K v)) z
+      rw [← hx, Ideal.Quotient.mk_eq_mk]
+      suffices ∃ a : A, (ResidueFieldToCompletionResidueField K v) a = Ideal.Quotient.mk _ x by
+        obtain ⟨a, ha⟩ := this
+        refine ⟨a, ha⟩
+      change ∃ a, Ideal.Quotient.mk (maximalIdeal (v.adicCompletionIntegers K)) _ = _
+      simp_rw [Ideal.Quotient.mk_eq_mk_iff_sub_mem, mem_maximalIdeal, mem_nonunits_iff]
+      have hunit (y : v.adicCompletionIntegers K) : ¬IsUnit y ↔ Valued.v y.val < 1 :=
+        Valuation.Integer.not_isUnit_iff_valuation_lt_one
+      simp_rw [hunit]
+      exact exists_adicValued_sub_lt_of_adicCompletionInteger K v x 1⟩
+
 
 theorem inertiaDeg_asIdeal_completionIdeal :
     Ideal.inertiaDeg (v.completionIdeal K) A = 1 := by

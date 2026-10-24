@@ -14,14 +14,10 @@ Licensed under Apache License 2.0
 
 module
 
-public import Mathlib.Algebra.Order.Ring.Star
-public import Mathlib.Data.Int.Star
-public import Mathlib.Order.CompletePartialOrder
-public import Mathlib.RingTheory.Henselian
-public import Mathlib.RingTheory.RegularLocalRing.Defs
-public import Mathlib.RingTheory.SimpleRing.Principal
-
 public import LeanPool.FLTEichlerShimura.Definitions.Def_AlgebraicCurve_Repartitions
+
+import Mathlib.Data.Int.Star
+import Mathlib.Algebra.Order.Ring.Star
 
 /-!
 # Adelic vocabulary for Riemann–Roch: L-spaces, Weil differentials

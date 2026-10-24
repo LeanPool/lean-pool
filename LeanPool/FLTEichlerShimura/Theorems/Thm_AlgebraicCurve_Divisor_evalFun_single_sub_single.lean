@@ -20,7 +20,6 @@ module
 public import LeanPool.FLTEichlerShimura.Definitions.Def_AlgebraicCurve_PlaceEvaluation
 
 import LeanPool.FLTEichlerShimura.Theorems.Thm_AlgebraicCurve_Divisor_evalFun_add
-import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
 
 /-!
 # Evaluation of f at a two-point divisor (v₁)-(v₂)

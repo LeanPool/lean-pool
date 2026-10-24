@@ -34,7 +34,6 @@ import LeanPool.FLTEichlerShimura.Theorems.Thm_HeckeEis_exists_coeffH1par_semili
 import LeanPool.FLTEichlerShimura.Theorems.Thm_HeckeEis_finrank_coeffH1par_le_two_mul_dimFormula
 import LeanPool.FLTEichlerShimura.Theorems.Thm_HeckeEis_finrank_coeffH1par_zero_le_two_mul_genusFormula
 import LeanPool.FLTEichlerShimura.Theorems.Thm_HeckeEis_range_eichlerShimuraMap_inf_range_conj_eq_bot
-import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
 
 /-!
 # Eichler–Shimura: images of ES and ̄ES are complementary

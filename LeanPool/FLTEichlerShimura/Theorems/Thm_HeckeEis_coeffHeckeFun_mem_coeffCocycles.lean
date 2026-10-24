@@ -17,7 +17,6 @@ Licensed under Apache License 2.0
 
 module
 
-public import LeanPool.FLTEichlerShimura.Definitions.Def_Gamma0HeckeOperatorHom
 public import LeanPool.FLTEichlerShimura.Definitions.Def_Gamma0CoeffCohomology
 
 import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util

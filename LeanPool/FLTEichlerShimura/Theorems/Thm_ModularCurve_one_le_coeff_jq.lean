@@ -19,8 +19,6 @@ module
 
 public import LeanPool.FLTEichlerShimura.Definitions.Def_ModularCurve_X0
 
-import Mathlib.Algebra.Order.BigOperators.Group.Finset
-import Mathlib.Algebra.BigOperators.Intervals
 import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
 
 /-!

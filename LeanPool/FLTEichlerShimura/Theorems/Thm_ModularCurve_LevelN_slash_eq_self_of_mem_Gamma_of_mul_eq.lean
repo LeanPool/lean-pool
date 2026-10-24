@@ -22,6 +22,8 @@ public import LeanPool.FLTEichlerShimura.Definitions.Def_ModularCurve_LevelNFunc
 import LeanPool.FLTEichlerShimura.Theorems.Thm_WLight_frickeFunction_modularity_package
 import LeanPool.FLTEichlerShimura.Theorems.Thm_WLight_levelN_structure_package
 import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
+import Mathlib.RingTheory.SimpleRing.Principal
+import Mathlib.CategoryTheory.Category.Init
 
 /-!
 # Weight-two Γ(N)-invariance of (a/b) (c/e)'

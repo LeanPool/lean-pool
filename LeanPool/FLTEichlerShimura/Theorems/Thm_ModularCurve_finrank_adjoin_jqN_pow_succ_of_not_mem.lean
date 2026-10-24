@@ -19,18 +19,13 @@ module
 
 public import LeanPool.FLTEichlerShimura.Definitions.Def_ModularCurve_X0
 
-import LeanPool.FLTEichlerShimura.Definitions.Def_ModularCurve_LaurentCoeff
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_coeffEmb_qExpand
-import LeanPool.FLTEichlerShimura.Definitions.Def_ModularCurve_PhiGen
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_coeffMap_qExpand
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_PhiGen_splits_prime_at_slot
-import Mathlib.RingTheory.RootsOfUnity.PrimitiveRoots
-import Mathlib.NumberTheory.Cyclotomic.Basic
 import LeanPool.FLTEichlerShimura.Theorems.Thm_Polynomial_irreducible_of_transitive_ringAut
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_exists_phiIrreducible_evalSymm
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_dedekindPsi_prime
 import Mathlib.NumberTheory.Cyclotomic.Gal
-import Mathlib.FieldTheory.Finite.Basic
 import LeanPool.FLTEichlerShimura.Definitions.Defs_modularPolynomial_sharedLibrary
 import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
 

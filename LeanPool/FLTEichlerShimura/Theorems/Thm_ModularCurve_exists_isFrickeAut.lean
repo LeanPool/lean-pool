@@ -21,7 +21,6 @@ public import LeanPool.FLTEichlerShimura.Definitions.Def_ModularCurve_AtkinLehne
 
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_exists_isFrickeAut_of_modularPolynomialData
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_exists_phiIrreducible_evalSymm
-import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
 
 /-!
 # Existence of a Fricke automorphism at prime level

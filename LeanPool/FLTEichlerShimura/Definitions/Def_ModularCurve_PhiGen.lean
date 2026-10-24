@@ -16,7 +16,6 @@ module
 
 public import LeanPool.FLTEichlerShimura.Definitions.Def_ModularCurve_X0
 public import LeanPool.FLTEichlerShimura.Definitions.Def_ModularCurve_LaurentCoeff
-public import Mathlib.Algebra.Polynomial.BigOperators
 
 /-!
 # Coset substitutions and the generic modular polynomial Φℓ​

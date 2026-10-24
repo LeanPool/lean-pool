@@ -20,7 +20,6 @@ module
 public import LeanPool.FLTEichlerShimura.Definitions.Def_ModularCurve_ModularUnit
 
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_modularUnitSeries_mem_modularFunctionField
-import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
 
 /-!
 # Ogg's modular unit lies in the full level-N function field

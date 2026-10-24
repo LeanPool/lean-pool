@@ -29,6 +29,9 @@ import LeanPool.FLTEichlerShimura.Theorems.Thm_AlgebraicCurve_IsCurveOver_exists
 import LeanPool.FLTEichlerShimura.Theorems.Thm_KaehlerDifferential_D_ne_zero_of_transcendental
 import LeanPool.FLTEichlerShimura.Theorems.Thm_KaehlerDifferential_span_D_eq_top_of_transcendental
 import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
+import Mathlib.RingTheory.DedekindDomain.Factorization
+import Mathlib.RingTheory.Valuation.LocalSubring
+import Mathlib.RingTheory.SimpleRing.Principal
 
 /-!
 # Existence of canonical divisors on a curve over a perfect field

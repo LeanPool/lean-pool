@@ -16,12 +16,7 @@ module
 
 public import LeanPool.FLTEichlerShimura.Definitions.Def_EllipticCurve_FrobeniusTrace
 public import LeanPool.FLTEichlerShimura.Definitions.Def_FLTPrelim_Modularity
-public import Mathlib.RingTheory.IntegralClosure.Algebra.Basic
-public import Mathlib.LinearAlgebra.Charpoly.Basic
-public import Mathlib.LinearAlgebra.Determinant
-public import Mathlib.LinearAlgebra.TensorProduct.Tower
-public import Mathlib.LinearAlgebra.Dimension.Constructions
-public import Mathlib.FieldTheory.Finiteness
+public import LeanPool.FLTEichlerShimura.Definitions.Def_FLTPrelim_Ramification
 
 /-!
 # Two-dimensional residual Galois representations and their properties

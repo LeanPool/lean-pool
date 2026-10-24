@@ -21,6 +21,8 @@ public import LeanPool.FLTEichlerShimura.Definitions.Def_ModularCurve_PeriodOf
 
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularGroup_exists_eq_conj_T_zpow_of_trace_sq_eq_four
 import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
+import Mathlib.Analysis.SpecialFunctions.Bernstein
+import Mathlib.MeasureTheory.Covering.Besicovitch
 
 /-!
 # Period maps of weight-2 cusp forms are parabolic

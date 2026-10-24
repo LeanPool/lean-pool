@@ -17,9 +17,8 @@ Licensed under Apache License 2.0
 
 module
 
-public import Mathlib.NumberTheory.ModularForms.QExpansion
+public import Mathlib.NumberTheory.ModularForms.Basic
 
-import Mathlib.RingTheory.PowerSeries.Order
 import LeanPool.FLTEichlerShimura.Theorems.Thm_Subgroup_IsArithmetic_exists_nat_mem_strictPeriods_conj
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularForm_eq_zero_of_lt_order_qExpansion_of_isArithmetic
 import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util

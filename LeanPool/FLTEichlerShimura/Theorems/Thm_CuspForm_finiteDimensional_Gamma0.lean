@@ -17,11 +17,9 @@ Licensed under Apache License 2.0
 
 module
 
-public import Mathlib.NumberTheory.ModularForms.QExpansion
-public import Mathlib.NumberTheory.ModularForms.CongruenceSubgroups
+public import Mathlib.NumberTheory.ModularForms.Basic
 
 import LeanPool.FLTEichlerShimura.Theorems.Thm_CuspForm_finiteDimensional_of_isArithmetic
-import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
 
 /-!
 # Finite-dimensionality of S_k(Γ₀(N))

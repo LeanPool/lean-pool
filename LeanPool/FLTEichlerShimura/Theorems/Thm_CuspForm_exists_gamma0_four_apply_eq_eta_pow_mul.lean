@@ -22,7 +22,6 @@ public import Mathlib.NumberTheory.ModularForms.DedekindEta
 import Mathlib.Data.Int.Star
 import Mathlib.NumberTheory.ModularForms.Discriminant
 import LeanPool.FLTEichlerShimura.Theorems.Thm_CuspForm_exists_gamma0_apply_eq_eta_mul_pow_twentyfour
-import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
 
 /-!
 # Eta products of level 4 are cusp forms on Γ₀(4)

@@ -18,15 +18,12 @@ Licensed under Apache License 2.0
 module
 
 public import LeanPool.FLTEichlerShimura.Definitions.Def_ModularCurve_JqCoeff
-public import Mathlib.NumberTheory.ModularForms.LevelOne.DimensionFormula
-public import Mathlib.NumberTheory.ModularForms.CongruenceSubgroups
+public import Mathlib.NumberTheory.ModularForms.Discriminant
 
-import LeanPool.FLTEichlerShimura.Definitions.Def_ModularCurve_LaurentCoeff
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_hasSum_jq_qParam
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_hasSum_qParam_mul_laurent
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_laurent_qParam_coeff_unique
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_coeffEmb_jq
-import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
 
 /-!
 # j-series over ℂ equals E₄³/Δ in ℂ((q))

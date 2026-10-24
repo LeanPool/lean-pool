@@ -21,7 +21,6 @@ public import Mathlib.NumberTheory.ModularForms.CongruenceSubgroups
 public import LeanPool.FLTEichlerShimura.Definitions.Def_ModularCurve_GenusNumerics
 
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_CuspSpace_card_cuspSpace_eq_cuspCount
-import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
 
 /-!
 # Number of ⟨ T⟩-orbits on SL₂(ℤ)/Γ₀(N)

@@ -28,7 +28,6 @@ import LeanPool.FLTEichlerShimura.Theorems.Thm_WeierstrassCurve_natCard_addSubgr
 import LeanPool.FLTEichlerShimura.Theorems.Thm_WeierstrassCurve_veluQuotient_j_mem_of_mem
 import LeanPool.FLTEichlerShimura.Theorems.Thm_WeierstrassCurve_veluQuotient_oddOrderSummingSet_discriminant_ne_zero
 import LeanPool.FLTEichlerShimura.Theorems.Thm_WeierstrassCurve_zmultiples_eq_of_veluQuotient_j_eq_of_transcendental
-import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
 
 /-!
 # Roots of Φ_N(j(E),Y) lie in L

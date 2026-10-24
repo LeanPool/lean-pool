@@ -29,6 +29,9 @@ import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_periodMapOf_apply_eq
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_periodMapOf_mem_parabolicHoms
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_periodOf_apply_eq_sub_of_hasEquivariantPrimitiveOf
 import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
+import Mathlib.NumberTheory.ModularForms.NormTrace
+import Mathlib.Analysis.SpecialFunctions.Bernstein
+import Mathlib.MeasureTheory.Covering.Besicovitch
 
 /-!
 # Descent of the parabolic rank bound along a normal subgroup

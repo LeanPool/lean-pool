@@ -17,6 +17,7 @@ module
 public import LeanPool.FLTEichlerShimura.Definitions.Def_AlgebraicCurve_DifferentialPushPull
 public import LeanPool.FLTEichlerShimura.Definitions.Def_AlgebraicCurve_RegularDifferentials
 public import LeanPool.FLTEichlerShimura.Definitions.Def_ModularCurve_HeckeOperator
+public import LeanPool.FLTEichlerShimura.Definitions.Def_ModularCurve_ArithmeticGalois
 
 /-!
 # Euler derivation, q-expansion of differentials, Hecke action

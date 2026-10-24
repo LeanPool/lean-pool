@@ -19,8 +19,6 @@ module
 
 public import LeanPool.FLTEichlerShimura.Definitions.Def_AlgebraicCurve_DivisorClassGroup
 
-import Mathlib.RingTheory.DedekindDomain.IntegralClosure
-import Mathlib.RingTheory.Ideal.GoingUp
 import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
 
 /-!

@@ -17,12 +17,10 @@ Licensed under Apache License 2.0
 
 module
 
-public import Mathlib.Analysis.SpecialFunctions.Elliptic.Weierstrass
-public import Mathlib.NumberTheory.ModularForms.Discriminant
-public import Mathlib.Geometry.Manifold.Notation
+public import Mathlib.Analysis.Analytic.Basic
 
-import Mathlib.NumberTheory.ModularForms.CongruenceSubgroups
 import Mathlib.Analysis.Meromorphic.NormalForm
+import Mathlib.NumberTheory.ModularForms.Discriminant -- shake: keep
 import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
 
 /-!

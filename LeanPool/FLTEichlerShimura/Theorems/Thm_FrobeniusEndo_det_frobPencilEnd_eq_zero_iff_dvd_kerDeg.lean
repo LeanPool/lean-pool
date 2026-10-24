@@ -18,9 +18,8 @@ Licensed under Apache License 2.0
 module
 
 public import LeanPool.FLTEichlerShimura.Definitions.Def_EllipticCurve_FrobeniusEndo
-public import Mathlib.LinearAlgebra.Determinant
+public import Mathlib.Algebra.Field.ZMod
 
-import Mathlib.GroupTheory.Perm.Cycle.Type
 import LeanPool.FLTEichlerShimura.Theorems.Thm_FrobeniusEndo_dvd_kerDeg_of_det_frobPencilEnd_eq_zero
 import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
 

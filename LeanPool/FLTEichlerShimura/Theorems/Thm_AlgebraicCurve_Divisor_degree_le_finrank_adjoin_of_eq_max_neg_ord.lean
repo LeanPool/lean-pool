@@ -24,7 +24,9 @@ import Mathlib.Analysis.Normed.Ring.Lemmas
 import Mathlib.RingTheory.Flat.TorsionFree
 import LeanPool.FLTEichlerShimura.Definitions.Def_AlgebraicCurve_DivisorPushPull
 import LeanPool.FLTEichlerShimura.Theorems.Thm_AlgebraicCurve_Place_exists_forall_ord_eq
-import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
+import Mathlib.RingTheory.SimpleRing.Principal
+import Mathlib.Data.Int.Star
+import Mathlib.Algebra.Order.Ring.Star
 
 /-!
 # Pole divisor degree at most [F:K(x)]

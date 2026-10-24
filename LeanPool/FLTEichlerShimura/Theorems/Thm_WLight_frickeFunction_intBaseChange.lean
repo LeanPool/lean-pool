@@ -19,16 +19,8 @@ module
 
 public import Mathlib.Analysis.SpecialFunctions.Elliptic.Weierstrass
 public import Mathlib.NumberTheory.ModularForms.Discriminant
-public import Mathlib.Geometry.Manifold.Notation
-public import Mathlib.FieldTheory.IntermediateField.Adjoin.Basic
-public import Mathlib.RingTheory.Adjoin.Basic
 
-import Mathlib.NumberTheory.ModularForms.QExpansion
 import Mathlib.NumberTheory.ModularForms.LevelOne.GradedRing
-import Mathlib.RingTheory.Adjoin.Polynomial.Basic
-import Mathlib.RingTheory.IntegralClosure.IsIntegral.Basic
-import Mathlib.RingTheory.Localization.FractionRing
-import Mathlib.Algebra.Polynomial.Lifts
 import LeanPool.FLTEichlerShimura.Theorems.Thm_WLight_frickeFunction_modularity_package
 import LeanPool.FLTEichlerShimura.Theorems.Thm_WLight_frickeFunction_orbit_package
 import LeanPool.FLTEichlerShimura.Theorems.Thm_WLight_exists_mdifferentiable_div_of_monicRel

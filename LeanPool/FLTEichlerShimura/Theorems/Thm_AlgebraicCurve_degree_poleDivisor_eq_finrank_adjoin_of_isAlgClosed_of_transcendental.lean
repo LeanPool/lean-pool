@@ -23,7 +23,6 @@ public import LeanPool.FLTEichlerShimura.Definitions.Def_AlgebraicCurve_DivisorC
 import LeanPool.FLTEichlerShimura.Theorems.Thm_AlgebraicCurve_Divisor_degree_eq_finrank_adjoin_of_eq_max_neg_ord
 import LeanPool.FLTEichlerShimura.Theorems.Thm_AlgebraicCurve_constantsAreBase_of_isAlgClosed_of_transcendental
 import LeanPool.FLTEichlerShimura.Theorems.Thm_AlgebraicCurve_isCurveOver_of_isAlgClosed_of_transcendental
-import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
 
 /-!
 # Degree of the pole divisor of x equals [F:K(x)]

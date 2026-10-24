@@ -29,6 +29,7 @@ import LeanPool.FLTEichlerShimura.Theorems.Thm_AlgebraicCurve_Place_exists_ord_m
 import LeanPool.FLTEichlerShimura.Theorems.Thm_AlgebraicCurve_Place_ramificationIndex_eq_of_restrict_eq
 import LeanPool.FLTEichlerShimura.Theorems.Thm_AlgebraicCurve_RationalFunctionField_ord_placeInfty_algebraMap
 import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
+import Mathlib.RingTheory.Henselian
 
 /-!
 # Puiseux bound d forces ord_W(p)∣ d

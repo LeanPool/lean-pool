@@ -20,9 +20,7 @@ module
 
 public import LeanPool.FLTEichlerShimura.Definitions.Def_AlgebraicCurve_RatFuncPlaceInfty
 
-import Mathlib.FieldTheory.RatFunc.AsPolynomial
 import Mathlib.NumberTheory.RatFunc.Ostrowski
-import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
 
 /-!
 # The place at infinity of K(t) is not a finite place

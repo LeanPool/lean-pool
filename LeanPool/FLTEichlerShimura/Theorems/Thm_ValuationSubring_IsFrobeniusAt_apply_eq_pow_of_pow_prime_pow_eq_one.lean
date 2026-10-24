@@ -17,10 +17,9 @@ Licensed under Apache License 2.0
 
 module
 
-public import LeanPool.FLTEichlerShimura.Definitions.Def_FLTPrelim_Ramification
 public import LeanPool.FLTEichlerShimura.Definitions.Def_EllipticCurve_FrobeniusTrace
+public import LeanPool.FLTEichlerShimura.Definitions.Def_FLTPrelim_Ramification
 
-import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
 
 /-!
 # Frobenius at q raises p^k-th roots of unity to the q-th power

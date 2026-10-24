@@ -21,6 +21,7 @@ public import LeanPool.FLTEichlerShimura.Definitions.Def_PeriodPair_Uniformizati
 
 import Mathlib.Data.Int.Star
 import Mathlib.NumberTheory.ModularForms.LevelOne.DimensionFormula
+import Mathlib.CategoryTheory.Category.Init
 
 /-!
 # Surjectivity of the j-invariant of period pairs

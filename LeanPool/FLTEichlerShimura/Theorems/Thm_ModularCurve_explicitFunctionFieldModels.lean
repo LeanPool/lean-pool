@@ -6,17 +6,13 @@ Authors: David Loeffler
 
 module
 
-public import LeanPool.FLTEichlerShimura.Definitions.Def_ModularCurve_X0
 public import LeanPool.FLTEichlerShimura.Definitions.Def_ModularCurve_X1
 public import LeanPool.FLTEichlerShimura.Definitions.Def_ModularCurve_LevelNFunctionField
 public import LeanPool.FLTEichlerShimura.Definitions.Def_ModularCurve_PhiGen
 public import Mathlib.FieldTheory.Relrank
-public import Mathlib.RingTheory.AdjoinRoot
-public import Mathlib.Analysis.Meromorphic.Basic
 
 import Mathlib.Algebra.Polynomial.Eval.Irreducible
 import Mathlib.Algebra.Algebra.Hom.Rat
-import Mathlib.FieldTheory.RatFunc.AsPolynomial
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_Gamma0_index
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_LevelN_exists_monoidHom_algEquiv_fixedField_eq_adjoin
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_finiteDimensional_and_finrank_adjoin_jqModC_qExpFunctionFieldC_le_index
@@ -28,6 +24,9 @@ import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_exists_phiIrreducibl
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_transcendental_jqModC
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_exists_modularForm_eventuallyEq_div_of_meromorphic_of_finiteIndex
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_LevelN_exists_frickeFraction_of_modularForm
+import Mathlib.RingTheory.Flat.TorsionFree
+import Mathlib.RingTheory.SimpleRing.Principal
+import Mathlib.RingTheory.Henselian
 
 /-!
 # Explicit function-field models for X₀(N) and X(N)

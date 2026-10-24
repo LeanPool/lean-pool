@@ -19,10 +19,10 @@ Licensed under Apache License 2.0
 module
 
 public import Mathlib.RingTheory.RegularLocalRing.Defs
-
 public import LeanPool.FLTEichlerShimura.Definitions.Def_AdicCompletionLocalRing
 
-import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
+import Mathlib.RingTheory.AdicCompletion.LocalRing
+
 
 /-!
 # Adic completion of a DVR is a complete DVR

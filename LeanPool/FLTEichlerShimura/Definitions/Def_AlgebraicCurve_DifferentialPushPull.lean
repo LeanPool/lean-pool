@@ -14,9 +14,8 @@ Licensed under Apache License 2.0
 
 module
 
-public import Mathlib.RingTheory.Etale.Field
-
 public import LeanPool.FLTEichlerShimura.Definitions.Def_AlgebraicCurve_Correspondence
+public import Mathlib.RingTheory.Etale.Field -- shake: keep
 
 /-!
 # Pull-back, trace and correspondence maps on Kähler differentials

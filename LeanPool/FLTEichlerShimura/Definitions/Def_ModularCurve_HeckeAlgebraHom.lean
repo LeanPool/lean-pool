@@ -16,10 +16,9 @@ module
 
 public import LeanPool.FLTEichlerShimura.Definitions.Def_Gamma0HeckeOperatorHom
 public import LeanPool.FLTEichlerShimura.Definitions.Def_ModularCurve_PeriodMap
-public import Mathlib.RingTheory.Finiteness.Subalgebra
-public import Mathlib.GroupTheory.Schreier
-public import Mathlib.LinearAlgebra.Matrix.FixedDetMatrices
-public import Mathlib.GroupTheory.Finiteness
+
+import Mathlib.GroupTheory.Schreier
+import Mathlib.LinearAlgebra.Matrix.FixedDetMatrices
 
 /-!
 # Integral Hecke algebra on characters of Γ0​(N)

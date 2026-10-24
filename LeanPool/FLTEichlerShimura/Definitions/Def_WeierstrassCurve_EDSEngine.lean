@@ -14,34 +14,11 @@ Licensed under Apache License 2.0
 
 module
 
-public import Mathlib.NumberTheory.EllipticDivisibilitySequence
 public import LeanPool.FLTEichlerShimura.Definitions.Def_Compat_Mathlib430
-public import Mathlib.Algebra.Ring.NegOnePow
-public import Mathlib.Data.Fin.VecNotation
-public import Mathlib.Data.Fin.Tuple.Sort
-public import Mathlib.Algebra.GroupWithZero.NonZeroDivisors
-public import Mathlib.Algebra.MvPolynomial.CommRing
-public import Mathlib.Algebra.MvPolynomial.Basic
-public import Mathlib.Tactic.LinearCombination
-public import Mathlib.Tactic.Ring
-public import Mathlib.Tactic.Abel
-public import Mathlib.Tactic.IntervalCases
-public import Mathlib.Tactic.FieldSimp
-public import Mathlib.GroupTheory.Perm.Basic
-public import Mathlib.GroupTheory.Perm.Sign
-public import Mathlib.GroupTheory.Perm.Cycle.Type
-public import Mathlib.Algebra.Polynomial.Bivariate
-public import Mathlib.AlgebraicGeometry.EllipticCurve.Affine.Point
 public import Mathlib.AlgebraicGeometry.EllipticCurve.Jacobian.Point
 public import Mathlib.AlgebraicGeometry.EllipticCurve.DivisionPolynomial.Basic
-public import Mathlib.AlgebraicGeometry.EllipticCurve.DivisionPolynomial.Degree
-public import Mathlib.FieldTheory.IsAlgClosed.Basic
-public import Mathlib.FieldTheory.Separable
-public import Mathlib.Data.Nat.Factorization.Induction
-public import Mathlib.Logic.Embedding.Set
-public import Mathlib.SetTheory.Cardinal.Finite
-public import Mathlib.Data.Set.Card
-public import Mathlib.Algebra.Module.Torsion.Basic
+
+import Mathlib.Data.Fin.Tuple.Sort
 
 /-!
 # Elliptic divisibility sequences, universal Weierstrass curve, division polynomial ω

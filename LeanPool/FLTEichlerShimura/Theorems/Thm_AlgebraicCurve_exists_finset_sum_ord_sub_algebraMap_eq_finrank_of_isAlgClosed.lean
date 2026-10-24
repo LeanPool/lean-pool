@@ -24,7 +24,6 @@ import LeanPool.FLTEichlerShimura.Theorems.Thm_AlgebraicCurve_Divisor_degree_eq_
 import LeanPool.FLTEichlerShimura.Theorems.Thm_AlgebraicCurve_constantsAreBase_of_isAlgClosed_of_transcendental
 import LeanPool.FLTEichlerShimura.Theorems.Thm_AlgebraicCurve_exists_divisor_eq_max_ord_sub_algebraMap
 import LeanPool.FLTEichlerShimura.Theorems.Thm_AlgebraicCurve_isCurveOver_of_isAlgClosed_of_transcendental
-import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
 
 /-!
 # Zero sum of x-a equals [F:k(x)] over ̄ k

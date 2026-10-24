@@ -21,7 +21,8 @@ public import LeanPool.FLTEichlerShimura.Definitions.Def_ModularCurve_X1
 
 import Mathlib.RingTheory.Flat.TorsionFree
 import LeanPool.FLTEichlerShimura.Definitions.Def_ModularCurve_X0ModL
-import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
+import Mathlib.RingTheory.SimpleRing.Principal
+import Mathlib.RingTheory.Henselian
 
 /-!
 # Finiteness and degree bound descend under coefficientwise field maps

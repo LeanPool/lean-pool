@@ -19,13 +19,10 @@ module
 
 public import LeanPool.FLTEichlerShimura.Definitions.Def_ModularCurve_X0
 
-import LeanPool.FLTEichlerShimura.Definitions.Def_ModularCurve_PhiGen
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_dedekindPsi_pos
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_modularPolynomialFamily
 import Mathlib.NumberTheory.ArithmeticFunction.Misc
 import Mathlib.RingTheory.Polynomial.Resultant.Basic
-import Mathlib.FieldTheory.IsAlgClosed.Basic
-import Mathlib.FieldTheory.IsAlgClosed.AlgebraicClosure
 import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
 
 /-!

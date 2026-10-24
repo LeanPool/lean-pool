@@ -22,7 +22,6 @@ public import Mathlib.LinearAlgebra.Matrix.SpecialLinearGroup
 public import Mathlib.LinearAlgebra.Matrix.Trace
 
 import LeanPool.FLTEichlerShimura.Theorems.Thm_Matrix_SpecialLinearGroup_nonempty_freeGroupBasis_map_quotient_center_of_forall_trace_ne
-import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
 
 /-!
 # Free basis modulo ± 1 for torsion-free ΓleSL₂(ℤ)

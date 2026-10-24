@@ -19,7 +19,6 @@ module
 
 public import LeanPool.FLTEichlerShimura.Definitions.Def_ModularCurve_JqCoeff
 
-import LeanPool.FLTEichlerShimura.Definitions.Def_ModularCurve_PhiGen
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_jqNModC_prime_not_mem_adjoin_of_forall_aeval_ne
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_StarBank_closure
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_StarBank_count
@@ -31,11 +30,13 @@ import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_StarBank_hassePolyDe
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_StarBank_onePoint
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_StarBank_press
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_StarBank_starK
-import Mathlib.FieldTheory.IsAlgClosed.Basic
 import Mathlib.RingTheory.RootsOfUnity.AlgebraicallyClosed
-import Mathlib.Algebra.Field.ZMod
-import Mathlib.Algebra.CharP.Algebra
 import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
+import Mathlib.Tactic.NormNum.Parity
+import Mathlib.NumberTheory.ArithmeticFunction.VonMangoldt
+import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
+import Mathlib.NumberTheory.ModularForms.LevelOne.Basic
+import Mathlib.Analysis.SpecialFunctions.Bernstein
 
 /-!
 # In characteristic ℓ, j(qᵖ)notin K(j(q)) for p≠ℓ

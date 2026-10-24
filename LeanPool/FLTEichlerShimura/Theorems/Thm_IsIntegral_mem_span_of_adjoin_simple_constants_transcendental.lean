@@ -17,16 +17,16 @@ Licensed under Apache License 2.0
 
 module
 
-public import Mathlib.FieldTheory.IntermediateField.Adjoin.Basic
-public import Mathlib.RingTheory.IntegralClosure.IsIntegral.Basic
-public import Mathlib.Analysis.Complex.Polynomial.Basic
+public import Mathlib.Basic.Complex.Basic
+public import Mathlib.FieldTheory.IntermediateField.Adjoin.Defs
+public import Mathlib.RingTheory.IntegralClosure.IsIntegral.Defs
+public import Mathlib.RingTheory.Algebraic.Defs
 
-import Mathlib.FieldTheory.IntermediateField.Adjoin.Algebra
 import Mathlib.RingTheory.DedekindDomain.IntegralClosure
-import Mathlib.FieldTheory.RatFunc.AsPolynomial
 import Mathlib.RingTheory.Polynomial.IsIntegral
-import Mathlib.RingTheory.Polynomial.GaussLemma
-import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
+import Mathlib.CategoryTheory.Category.Init
+import Mathlib.RingTheory.Adjoin.Polynomial.Transcendental
+import Mathlib.MeasureTheory.Integral.Bochner.Basic
 
 /-!
 # Descent of integrality along a transcendental constant

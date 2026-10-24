@@ -14,9 +14,11 @@ Licensed under Apache License 2.0
 
 module
 
-public import Mathlib.Algebra.Order.Star.Real
+public import Mathlib.NumberTheory.Modular
+public import Mathlib.Analysis.Complex.UpperHalfPlane.Measure
 
-public import LeanPool.FLTEichlerShimura.Definitions.Def_AutomorphicForm_HyperbolicMeasure
+import LeanPool.FLTEichlerShimura.Definitions.Def_AutomorphicForm_HyperbolicMeasure
+import Mathlib.Algebra.Order.Star.Real
 
 /-!
 # Finite positive hyperbolic volume of the modular fundamental domain

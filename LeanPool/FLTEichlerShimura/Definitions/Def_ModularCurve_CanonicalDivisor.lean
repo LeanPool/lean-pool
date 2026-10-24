@@ -14,12 +14,12 @@ Licensed under Apache License 2.0
 
 module
 
-public import Mathlib.RingTheory.Flat.FaithfullyFlat.Basic
-public import Mathlib.RingTheory.Flat.TorsionFree
 public import Mathlib.RingTheory.Kaehler.Basic
-public import Mathlib.RingTheory.SimpleRing.Principal
-
 public import LeanPool.FLTEichlerShimura.Definitions.Def_AlgebraicCurve_DivisorClassGroup
+
+import Mathlib.RingTheory.Flat.TorsionFree
+import Mathlib.RingTheory.SimpleRing.Principal
+import Mathlib.RingTheory.Flat.FaithfullyFlat.Basic
 
 /-!
 # Order of a Kähler differential at a place of a function field

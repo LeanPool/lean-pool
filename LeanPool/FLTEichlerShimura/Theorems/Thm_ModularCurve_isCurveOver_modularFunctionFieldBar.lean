@@ -20,7 +20,6 @@ module
 public import LeanPool.FLTEichlerShimura.Definitions.Def_AlgebraicCurve_IsCurveOver
 public import LeanPool.FLTEichlerShimura.Definitions.Def_ModularCurve_ArithmeticGalois
 
-import LeanPool.FLTEichlerShimura.Definitions.Def_ModularCurve_JqCoeff
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_hasPrincipalDivisors_laurentBaseChange_modularFunctionFieldFull_unconditional
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_laurentBaseChange_adjoin_pair
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_functionFieldGeneration
@@ -29,9 +28,6 @@ import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_transcendental_jqMod
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_isIntegral_jqNModC_all
 import LeanPool.FLTEichlerShimura.Theorems.Thm_KaehlerDifferential_D_ne_zero_of_transcendental
 import LeanPool.FLTEichlerShimura.Theorems.Thm_KaehlerDifferential_span_D_eq_top_of_transcendental
-import Mathlib.FieldTheory.Perfect
-import Mathlib.Algebra.CharP.Algebra
-import Mathlib.LinearAlgebra.FiniteDimensional.Basic
 import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
 
 /-!

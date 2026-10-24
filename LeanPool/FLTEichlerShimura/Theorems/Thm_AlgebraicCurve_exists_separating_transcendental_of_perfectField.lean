@@ -24,12 +24,13 @@ import Mathlib.Algebra.CharP.IntermediateField
 import Mathlib.FieldTheory.Relrank
 import Mathlib.RingTheory.AlgebraicIndependent.AlgebraicClosure
 import Mathlib.RingTheory.AlgebraicIndependent.TranscendenceBasis
-import Mathlib.RingTheory.Henselian
-import Mathlib.RingTheory.RegularLocalRing.Defs
 import Mathlib.RingTheory.SimpleRing.Principal
 import LeanPool.FLTEichlerShimura.Theorems.Thm_Algebra_IsSeparable_of_finrank_fieldRange_frobenius_eq
 import LeanPool.FLTEichlerShimura.Theorems.Thm_AlgebraicCurve_finrank_frobeniusSubfield_eq_of_transcendental
 import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
+import Mathlib.CategoryTheory.Category.Init
+import Mathlib.Data.Rat.Floor
+import Mathlib.Tactic.Continuity.Init
 
 /-!
 # Existence of a separating transcendental over a perfect field

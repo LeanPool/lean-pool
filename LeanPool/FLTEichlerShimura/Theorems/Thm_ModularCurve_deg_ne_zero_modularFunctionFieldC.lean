@@ -21,13 +21,12 @@ public import LeanPool.FLTEichlerShimura.Definitions.Def_ModularCurve_JqCoeff
 public import LeanPool.FLTEichlerShimura.Definitions.Def_AlgebraicCurve_DivisorClassGroup
 
 import LeanPool.FLTEichlerShimura.Definitions.Def_AlgebraicCurve_RatFuncPlaces
-import LeanPool.FLTEichlerShimura.Definitions.Def_AlgebraicCurve_DivisorPushPull
 import LeanPool.FLTEichlerShimura.Theorems.Thm_AlgebraicCurve_RationalFunctionField_deg_ne_zero
 import LeanPool.FLTEichlerShimura.Theorems.Thm_AlgebraicCurve_Place_inertiaDeg_pos_of_finiteDimensional
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_transcendental_jqModC
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_finiteDimensional_adjoin_jqNModC
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_nonempty_modularPolynomialData
-import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
+import Mathlib.RingTheory.Henselian
 
 /-!
 # Places of K(j,j_N) have nonzero degree

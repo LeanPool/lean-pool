@@ -27,6 +27,7 @@ import Mathlib.RingTheory.RegularLocalRing.Defs
 import Mathlib.RingTheory.Unramified.Field
 import Mathlib.RingTheory.Valuation.LocalSubring
 import LeanPool.FLTEichlerShimura.Theorems.Thm_AlgebraicCurve_IsCurveOver_exists_separating_transcendental
+import Mathlib.RingTheory.SimpleRing.Principal
 
 /-!
 # Differential of a uniformiser generates Ω_{F/K}

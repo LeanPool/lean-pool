@@ -23,6 +23,12 @@ import Mathlib.Algebra.GroupWithZero.Submonoid.CancelMulZero
 import Mathlib.Algebra.Lie.OfAssociative
 import Mathlib.Analysis.Normed.Unbundled.SpectralNorm
 import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
+import Mathlib.RingTheory.PicardGroup
+import Mathlib.RingTheory.Valuation.Integral
+import Mathlib.RingTheory.Flat.TorsionFree
+import Mathlib.RingTheory.SimpleRing.Principal
+import Mathlib.RingTheory.RegularLocalRing.Defs
+import Mathlib.RingTheory.Flat.FaithfullyFlat.Basic
 
 /-!
 # Trace compatibility of Tate's local residue for separable F/E

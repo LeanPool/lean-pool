@@ -29,7 +29,7 @@ import LeanPool.FLTEichlerShimura.Theorems.Thm_AlgebraicCurve_exists_divisor_for
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_even_ord_add_ord_of_not_mem_toValuationSubring_laurentBaseChange_gamma1
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_even_ord_add_weightFloor_of_mem_toValuationSubring_laurentBaseChange_gamma1
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_isCurveOver_laurentBaseChange_qExpFunctionFieldC_gamma1
-import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
+import Mathlib.RingTheory.Henselian
 
 /-!
 # Divisor of a weight-one form on X₁(M), M≥ 5

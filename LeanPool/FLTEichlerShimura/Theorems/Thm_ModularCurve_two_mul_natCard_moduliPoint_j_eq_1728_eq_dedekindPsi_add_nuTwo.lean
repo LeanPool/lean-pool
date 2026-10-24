@@ -21,7 +21,6 @@ public import LeanPool.FLTEichlerShimura.Definitions.Def_ModularCurve_GenusNumer
 public import LeanPool.FLTEichlerShimura.Definitions.Def_ModularCurve_ModuliPoint
 
 import Mathlib.Algebra.CharP.Invertible
-import Mathlib.Algebra.Order.Monoid.NatCast
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_natCard_moduliPoint_j_eq_eq_natCard_quot_addOrderOf_eq
 import LeanPool.FLTEichlerShimura.Theorems.Thm_MulAction_card_mul_natCard_orbitRel_quotient_eq_of_natCard_eq_prime
 import LeanPool.FLTEichlerShimura.Theorems.Thm_WeierstrassCurve_Affine_Point_vcInvFun_add
@@ -31,6 +30,7 @@ import LeanPool.FLTEichlerShimura.Theorems.Thm_WeierstrassCurve_natCard_addSubgr
 import LeanPool.FLTEichlerShimura.Theorems.Thm_WeierstrassCurve_natCard_isAddCyclic_addSubgroup_card_eq_fixed_vcInvFun_eq_nuTwo
 import LeanPool.FLTEichlerShimura.Theorems.Thm_WeierstrassCurve_variableChange_mk_smul_eq_self_of_sq_eq_neg_one
 import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
+import Mathlib.Algebra.Field.ZMod
 
 /-!
 # Moduli points with j=1728: 2 #=ψ(N)+ν₂(N)

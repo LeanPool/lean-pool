@@ -18,12 +18,11 @@ Licensed under Apache License 2.0
 module
 
 public import LeanPool.FLTEichlerShimura.Definitions.Def_ModularCurve_JqCoeff
-public import Mathlib.NumberTheory.ModularForms.LevelOne.DimensionFormula
+public import Mathlib.NumberTheory.ModularForms.QExpansion
 
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularForm_exists_qExpansion_eq_aeval_mul_pow_levelOne
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_qExpansion_discriminant_eq_map_X_mul_dedekindEtaUnit
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_jqModC_eq_qExpansion_E4_cube_div_discriminant
-import Mathlib.Algebra.Polynomial.Lifts
 import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
 
 /-!

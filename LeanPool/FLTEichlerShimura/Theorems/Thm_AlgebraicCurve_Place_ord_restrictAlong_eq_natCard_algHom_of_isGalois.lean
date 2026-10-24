@@ -31,7 +31,9 @@ import LeanPool.FLTEichlerShimura.Theorems.Thm_AlgebraicCurve_Place_exists_algEq
 import LeanPool.FLTEichlerShimura.Theorems.Thm_AlgebraicCurve_Place_ord_algebraMap
 import LeanPool.FLTEichlerShimura.Theorems.Thm_AlgebraicCurve_Place_restrictAlong_surjective
 import LeanPool.FLTEichlerShimura.Theorems.Thm_AlgebraicCurve_Place_restrict_ofAlgAut_smul
-import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
+import Mathlib.RingTheory.Flat.TorsionFree
+import Mathlib.RingTheory.Flat.FaithfullyFlat.Algebra
+import Mathlib.RingTheory.Henselian
 
 /-!
 # Hilbert decomposition over a rational place of K(t)

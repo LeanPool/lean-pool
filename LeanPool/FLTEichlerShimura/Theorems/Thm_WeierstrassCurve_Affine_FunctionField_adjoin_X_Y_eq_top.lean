@@ -21,7 +21,7 @@ public import Mathlib.AlgebraicGeometry.EllipticCurve.Affine.Point
 public import Mathlib.FieldTheory.IntermediateField.Adjoin.Defs
 public import Mathlib.RingTheory.SimpleRing.Principal
 
-import Mathlib.FieldTheory.IntermediateField.Adjoin.Basic
+import Mathlib.FieldTheory.IntermediateField.Adjoin.Algebra
 
 /-!
 # The function field of a Weierstrass curve is K(x,y)

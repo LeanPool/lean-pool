@@ -17,15 +17,9 @@ Licensed under Apache License 2.0
 
 module
 
-public import Mathlib.Algebra.CharP.Frobenius
-public import Mathlib.Algebra.Field.Subfield.Basic
-public import Mathlib.LinearAlgebra.Dimension.Finrank
-public import Mathlib.LinearAlgebra.FiniteDimensional.Defs
 public import Mathlib.FieldTheory.Separable
 
 import Mathlib.RingTheory.Unramified.Field
-import Mathlib.FieldTheory.IntermediateField.Adjoin.Basic
-import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
 
 /-!
 # Separability from [F:Fᵖ]=p and a non-p-th-power in E

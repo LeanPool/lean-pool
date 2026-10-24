@@ -20,7 +20,6 @@ module
 public import LeanPool.FLTEichlerShimura.Definitions.Def_ModularForm_HeckeOperatorForms
 
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularFormClass_heckeU_heckeU_comm
-import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
 
 /-!
 # Commutativity of Uₚ and U_q on S_k(Γ₀(N))

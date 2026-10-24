@@ -19,12 +19,9 @@ module
 
 public import Mathlib.NumberTheory.NumberField.Basic
 
-import Mathlib.Algebra.Algebra.Rat
-import Mathlib.FieldTheory.IsAlgClosed.AlgebraicClosure
 import Mathlib.FieldTheory.Galois.Profinite
 import Mathlib.FieldTheory.Galois.Infinite
 import Mathlib.RingTheory.Invariant.Profinite
-import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
 
 /-!
 # Lifting inertia from a finite Galois subfield to G_ℚ

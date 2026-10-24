@@ -18,7 +18,6 @@ Licensed under Apache License 2.0
 
 module
 
-public import Mathlib.AlgebraicGeometry.EllipticCurve.Affine.Point
 public import LeanPool.FLTEichlerShimura.Definitions.Def_ModularCurve_X0
 
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ZMod_natCard_isAddCyclic_addSubgroup_prod_eq_dedekindPsi
@@ -139,7 +138,6 @@ end privateSection
 
 public section publicSection
 
-open WeierstrassCurve WeierstrassCurve.Affine WeierstrassCurve.Affine.Point
 theorem AddCommGroup.natCard_isAddCyclic_addSubgroup_eq_dedekindPsi_of_addEquiv_torsionBy
     (n : ℕ) [NeZero n] {A : Type*} [AddCommGroup A]
     (e : ZMod n × ZMod n ≃+ Submodule.torsionBy ℤ A n) :

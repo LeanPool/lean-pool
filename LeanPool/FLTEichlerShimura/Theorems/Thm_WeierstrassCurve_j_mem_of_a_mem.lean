@@ -19,7 +19,6 @@ module
 
 public import Mathlib.AlgebraicGeometry.EllipticCurve.Weierstrass
 
-import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
 
 /-!
 # The j-invariant lies in any subfield containing the aᵢ

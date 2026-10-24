@@ -18,13 +18,12 @@ Licensed under Apache License 2.0
 module
 
 public import LeanPool.FLTEichlerShimura.Definitions.Def_ModularCurve_JqCoeff
-public import Mathlib.NumberTheory.ModularForms.LevelOne.DimensionFormula
-public import Mathlib.NumberTheory.ModularForms.CongruenceSubgroups
+public import Mathlib.NumberTheory.ModularForms.QExpansion
 
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_jqModC_eq_qExpansion_E4_cube_div_discriminant
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularForm_exists_degeneracy_Gamma0
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_laurent_qParam_coeff_unique
-import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
+import Mathlib.NumberTheory.ModularForms.CuspFormSubmodule
 
 /-!
 # j(q^ℓ) as a ratio of weight-12 forms on Γ₀(ℓ)

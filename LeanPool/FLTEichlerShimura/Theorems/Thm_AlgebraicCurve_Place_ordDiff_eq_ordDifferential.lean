@@ -27,7 +27,7 @@ import LeanPool.FLTEichlerShimura.Theorems.Thm_AlgebraicCurve_Place_diffCoeff_sm
 import LeanPool.FLTEichlerShimura.Theorems.Thm_AlgebraicCurve_Place_ordDiff_eq_ord_diffCoeff
 import LeanPool.FLTEichlerShimura.Theorems.Thm_AlgebraicCurve_dCoordGenerates_of_isCurveOver
 import LeanPool.FLTEichlerShimura.Theorems.Thm_AlgebraicCurve_isCurveOver_iff_exists_transcendental_finiteDimensional
-import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
+import Mathlib.RingTheory.SimpleRing.Principal
 
 /-!
 # The two orders of a differential at a place agree

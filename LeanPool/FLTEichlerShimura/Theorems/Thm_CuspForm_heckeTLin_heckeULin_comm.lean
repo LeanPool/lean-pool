@@ -20,7 +20,6 @@ module
 public import LeanPool.FLTEichlerShimura.Definitions.Def_ModularForm_HeckeOperatorForms
 
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularFormClass_heckeT_heckeU_comm
-import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
 
 /-!
 # Tₚ and U_q commute on S_k(Γ₀(N))

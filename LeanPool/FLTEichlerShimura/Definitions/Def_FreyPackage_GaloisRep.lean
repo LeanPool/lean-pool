@@ -14,10 +14,8 @@ Licensed under Apache License 2.0
 
 module
 
-public import LeanPool.FLTEichlerShimura.Definitions.Def_FLTPrelim_FreyPackage
-public import LeanPool.FLTEichlerShimura.Definitions.Def_FLTPrelim_GaloisRep
 public import LeanPool.FLTEichlerShimura.Definitions.Def_EllipticCurve_FrobeniusTrace
-public import Mathlib.LinearAlgebra.FiniteDimensional.Defs
+public import LeanPool.FLTEichlerShimura.Definitions.Def_FLTPrelim_FreyPackage
 
 /-!
 # Mod-n Galois representation of a Weierstrass curve; Frey case

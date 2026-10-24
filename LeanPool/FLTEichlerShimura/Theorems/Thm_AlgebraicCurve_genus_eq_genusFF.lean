@@ -21,7 +21,6 @@ public import LeanPool.FLTEichlerShimura.Definitions.Def_AlgebraicCurve_RiemannR
 
 import LeanPool.FLTEichlerShimura.Theorems.Thm_AlgebraicCurve_ell_canonicalDivisor_eq_genus_of_riemannRoch
 import LeanPool.FLTEichlerShimura.Theorems.Thm_AlgebraicCurve_indexOfSpecialty_eq_finrank_H1
-import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
 
 /-!
 # Canonical-degree genus equals the adelic genus dim_K H¹(0)

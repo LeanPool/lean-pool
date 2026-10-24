@@ -19,12 +19,11 @@ module
 
 public import LeanPool.FLTEichlerShimura.Definitions.Def_AlgebraicCurve_DivisorPushPull
 public import LeanPool.FLTEichlerShimura.Definitions.Def_AlgebraicCurve_BaseChangeGalois
-public import Mathlib.FieldTheory.Galois.Basic
 
 import LeanPool.FLTEichlerShimura.Definitions.Def_AlgebraicCurve_PlacesOverDVR
 import Mathlib.NumberTheory.RamificationInertia.Galois
-import Mathlib.RingTheory.Invariant.Basic
 import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
+import Mathlib.RingTheory.Valuation.LocalSubring
 
 /-!
 # Galois transitivity on places above a fixed place

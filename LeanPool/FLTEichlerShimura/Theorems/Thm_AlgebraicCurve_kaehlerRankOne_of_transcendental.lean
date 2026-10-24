@@ -23,10 +23,7 @@ public import Mathlib.RingTheory.Kaehler.Basic
 
 import Mathlib.FieldTheory.RatFunc.AsPolynomial
 import Mathlib.RingTheory.Etale.Field
-import Mathlib.RingTheory.Henselian
-import Mathlib.RingTheory.RegularLocalRing.Defs
 import Mathlib.RingTheory.SimpleRing.Principal
-import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
 
 /-!
 # Ω_{F/K} is free of rank one over a separable extension of K(x)

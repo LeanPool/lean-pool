@@ -21,12 +21,18 @@ public import LeanPool.FLTEichlerShimura.Definitions.Def_WeierstrassCurve_GenusO
 
 import LeanPool.FLTEichlerShimura.Definitions.Defs_IsogenyEndDatum_sharedLibrary
 import Mathlib.RingTheory.Polynomial.DegreeLT
-import LeanPool.FLTEichlerShimura.Definitions.Def_AlgebraicCurve_PlacesOverDVR
-import LeanPool.FLTEichlerShimura.Definitions.Def_AlgebraicCurve_RatFuncPlaces
+import Mathlib.RingTheory.DedekindDomain.Factorization -- shake: keep
 import LeanPool.FLTEichlerShimura.Theorems.Thm_AlgebraicCurve_Place_ord_algebraMap
 import LeanPool.FLTEichlerShimura.Theorems.Thm_AlgebraicCurve_Place_ord_eq_neg_log_of_valuationSubring_eq
-import LeanPool.FLTEichlerShimura.Theorems.Thm_AlgebraicCurve_Place_min_ord_le_ord_add_v2
 import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
+import LeanPool.FLTEichlerShimura.Theorems.Thm_AlgebraicCurve_Place_min_ord_le_ord_add_v2
+import Mathlib.Tactic.NormNum.Prime
+import LeanPool.FLTEichlerShimura.Definitions.Def_AlgebraicCurve_RatFuncPlaces
+import LeanPool.FLTEichlerShimura.Definitions.Def_AlgebraicCurve_PlacesOverDVR
+import Mathlib.Analysis.Normed.Ring.Lemmas
+import Mathlib.RingTheory.RegularLocalRing.Defs
+import Mathlib.RingTheory.Henselian
+import Mathlib.Algebra.Order.Ring.Star
 
 /-!
 # Existence of a centred genus-one place gate with Abel's theorem

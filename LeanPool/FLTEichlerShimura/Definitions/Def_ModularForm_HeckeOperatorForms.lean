@@ -14,16 +14,15 @@ Licensed under Apache License 2.0
 
 module
 
-public import Mathlib.NumberTheory.ModularForms.CongruenceSubgroups
-public import LeanPool.FLTEichlerShimura.Definitions.Def_ModularForm_HeckeOperator
-public import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularForm_heckeT_slash_eq_self_of_mem_Gamma0
-public import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularForm_heckeU_slash_eq_self_of_mem_Gamma0
-public import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularForm_mdifferentiable_heckeT
-public import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularForm_mdifferentiable_heckeU
-public import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularFormClass_isBoundedAt_heckeT
-public import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularFormClass_isBoundedAt_heckeU
-public import LeanPool.FLTEichlerShimura.Theorems.Thm_CuspFormClass_isZeroAt_heckeT
-public import LeanPool.FLTEichlerShimura.Theorems.Thm_CuspFormClass_isZeroAt_heckeU
+
+public import LeanPool.FLTEichlerShimura.Theorems.Thm_CuspFormClass_isZeroAt_heckeU -- shake: keep
+public import LeanPool.FLTEichlerShimura.Theorems.Thm_CuspFormClass_isZeroAt_heckeT -- shake: keep
+public import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularFormClass_isBoundedAt_heckeU -- shake: keep
+public import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularFormClass_isBoundedAt_heckeT -- shake: keep
+public import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularForm_mdifferentiable_heckeU -- shake: keep
+public import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularForm_mdifferentiable_heckeT -- shake: keep
+public import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularForm_heckeU_slash_eq_self_of_mem_Gamma0 -- shake: keep
+public import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularForm_heckeT_slash_eq_self_of_mem_Gamma0 -- shake: keep
 
 /-!
 # Hecke operators Tp​, Up​ on modular and cusp forms

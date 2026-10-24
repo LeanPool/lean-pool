@@ -22,6 +22,9 @@ public import LeanPool.FLTEichlerShimura.Definitions.Def_AlgebraicCurve_TateResi
 import Mathlib.Algebra.GroupWithZero.Submonoid.CancelMulZero
 import Mathlib.Algebra.Lie.OfAssociative
 import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
+import Mathlib.Algebra.Order.Algebra
+import Mathlib.RingTheory.Flat.TorsionFree
+import Mathlib.RingTheory.SimpleRing.Principal
 
 /-!
 # Chain rule for Tate's residue along F/E
@@ -463,7 +466,7 @@ noncomputable section
 
 p2m_open "IsDedekindDomain P2MW.S_AlgebraicCurve_tateChainRule.IsDedekindDomain WithZero \
   P2MW.S_AlgebraicCurve_tateChainRule.WithZero Module P2MW.S_AlgebraicCurve_tateChainRule.Module \
-  IsLocalRing P2MW.S_AlgebraicCurve_tateChainRule.IsLocalRing Module.IsLocalRing"
+  IsLocalRing P2MW.S_AlgebraicCurve_tateChainRule.IsLocalRing"
 
 namespace AlgebraicCurve
 p2m_export "AlgebraicCurve" "Place Divisor HasPrincipalDivisors Pic0 IsCurveOver \

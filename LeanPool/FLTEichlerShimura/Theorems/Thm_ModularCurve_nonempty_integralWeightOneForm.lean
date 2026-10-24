@@ -26,6 +26,8 @@ import Mathlib.NumberTheory.DirichletCharacter.Orthogonality
 import Mathlib.RingTheory.RootsOfUnity.AlgebraicallyClosed
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularForm_exists_weightOne_eisenstein_qCoeff_eq_of_isPrimitive_of_odd
 import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
+import Mathlib.RingTheory.SimpleRing.Principal
+import Mathlib.RingTheory.Henselian
 
 /-!
 # Existence of an integral weight-one form on Γ₁(M)

@@ -19,6 +19,7 @@ module
 
 public import LeanPool.FLTEichlerShimura.Definitions.Def_ModularCurve_QExpansionDiff
 public import LeanPool.FLTEichlerShimura.Definitions.Def_ModularCurve_TateFormal
+public import LeanPool.FLTEichlerShimura.Definitions.Def_ModularCurve_X0
 
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_thetaL_jq_mul_deltaSeries
 import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util

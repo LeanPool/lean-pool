@@ -19,7 +19,6 @@ module
 
 public import Mathlib.Algebra.Polynomial.Splits
 
-import Mathlib.Algebra.Polynomial.FieldDivision
 import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
 
 /-!

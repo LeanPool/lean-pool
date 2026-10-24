@@ -27,7 +27,7 @@ import LeanPool.FLTEichlerShimura.Definitions.Def_AlgebraicCurve_RatFuncPlaces
 import LeanPool.FLTEichlerShimura.Definitions.Def_AlgebraicCurve_Repartitions
 import LeanPool.FLTEichlerShimura.Theorems.Thm_AlgebraicCurve_degree_poleDivisor_eq_finrank_adjoin_of_isAlgClosed_of_transcendental
 import LeanPool.FLTEichlerShimura.Theorems.Thm_AlgebraicCurve_isCurveOver_of_transcendental_of_perfectField
-import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
+import Mathlib.RingTheory.Henselian
 
 /-!
 # Degree of the weight-m floor divisor without elliptic places

@@ -14,11 +14,12 @@ Licensed under Apache License 2.0
 
 module
 
-public import Mathlib.FieldTheory.Finite.Basic
 public import Mathlib.RepresentationTheory.Basic
 public import Mathlib.RingTheory.MvPolynomial.IrreducibleQuadratic
-
 public import LeanPool.FLTEichlerShimura.Definitions.Def_ModularCurve_ProjectiveLine
+public import Mathlib.Algebra.Field.ZMod
+
+import Mathlib.FieldTheory.Finite.Basic
 
 /-!
 # Binary forms: substitution action and evaluation on the projective line

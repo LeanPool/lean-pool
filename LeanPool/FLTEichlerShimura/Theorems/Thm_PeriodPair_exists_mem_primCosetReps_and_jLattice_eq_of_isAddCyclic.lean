@@ -21,11 +21,11 @@ public import LeanPool.FLTEichlerShimura.Definitions.Def_ModularCurve_PrimCosetR
 public import LeanPool.FLTEichlerShimura.Definitions.Def_PeriodPair_Uniformization
 
 import Mathlib.Algebra.Order.Ring.Star
-import Mathlib.Algebra.Quaternion
 import Mathlib.Data.Int.Star
-import Mathlib.GroupTheory.SpecificGroups.Cyclic
-import Mathlib.NumberTheory.ModularForms.Basic
 import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
+import Mathlib.RingTheory.Flat.TorsionFree
+import Mathlib.RingTheory.SimpleRing.Principal
+import Mathlib.RingTheory.Flat.FaithfullyFlat.Algebra
 
 /-!
 # Cyclic index-N sublattices come from primitive coset representatives
@@ -235,7 +235,7 @@ end
 noncomputable section
 
 open scoped UpperHalfPlane Real
-open Complex UpperHalfPlane ModularForm
+open Complex UpperHalfPlane
 
 namespace PeriodPair
 p2m_export "PeriodPair" "lattice ω₁ mk latticeEquivProd g₃ ω₂ indep latticeEquiv_symm_apply \
@@ -274,7 +274,6 @@ section
 
 namespace QuaternionAlgebra
 p2m_export "QuaternionAlgebra" "re smul_mk mk_sub_mk mk.injEq mk_add_mk im mk"
-p2m_open "QuaternionAlgebra"
 
 open AddSubgroup AddMonoidHom
 
@@ -496,7 +495,6 @@ p2m_open_scoped "PeriodPair \
   UpperHalfPlane"
 p2m_open "PeriodPair \
   P2MW.S_PeriodPair_exists_mem_primCosetReps_and_jLattice_eq_of_isAddCyclic.PeriodPair Polynomial \
-  QuaternionAlgebra \
   P2MW.S_PeriodPair_exists_mem_primCosetReps_and_jLattice_eq_of_isAddCyclic.QuaternionAlgebra"
 
 namespace ModularCurve
@@ -584,7 +582,6 @@ p2m_open_scoped "PeriodPair \
   UpperHalfPlane MatrixGroups"
 p2m_open "PeriodPair \
   P2MW.S_PeriodPair_exists_mem_primCosetReps_and_jLattice_eq_of_isAddCyclic.PeriodPair Polynomial \
-  QuaternionAlgebra \
   P2MW.S_PeriodPair_exists_mem_primCosetReps_and_jLattice_eq_of_isAddCyclic.QuaternionAlgebra \
   ModularCurve \
   P2MW.S_PeriodPair_exists_mem_primCosetReps_and_jLattice_eq_of_isAddCyclic.ModularCurve"
@@ -777,7 +774,6 @@ end
 
 open _root_.ModularCurve
   _root_.P2MW.S_PeriodPair_exists_mem_primCosetReps_and_jLattice_eq_of_isAddCyclic.ModularCurve
-  _root_.QuaternionAlgebra
   _root_.P2MW.S_PeriodPair_exists_mem_primCosetReps_and_jLattice_eq_of_isAddCyclic.QuaternionAlgebra
   _root_.PeriodPair
   _root_.P2MW.S_PeriodPair_exists_mem_primCosetReps_and_jLattice_eq_of_isAddCyclic.PeriodPair

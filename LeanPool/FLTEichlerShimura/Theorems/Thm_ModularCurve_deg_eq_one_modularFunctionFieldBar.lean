@@ -18,20 +18,14 @@ Licensed under Apache License 2.0
 module
 
 public import LeanPool.FLTEichlerShimura.Definitions.Def_ModularCurve_ArithmeticGalois
-public import LeanPool.FLTEichlerShimura.Definitions.Def_AlgebraicCurve_DivisorClassGroup
 
-import LeanPool.FLTEichlerShimura.Definitions.Def_ModularCurve_QAdicPlace
 import LeanPool.FLTEichlerShimura.Definitions.Def_AlgebraicCurve_DivisorPushPull
 import LeanPool.FLTEichlerShimura.Definitions.Def_AlgebraicCurve_IsCurveOver
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_relfinrank_laurentBaseChange_modularFunctionFieldFull
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_relfinrank_full_eq_dedekindPsi
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_dedekindPsi_pos
 import LeanPool.FLTEichlerShimura.Theorems.Thm_AlgebraicCurve_isAlgebraic_adjoin_of_transcendental
-import Mathlib.FieldTheory.Relrank
-import Mathlib.FieldTheory.IsAlgClosed.Basic
-import Mathlib.FieldTheory.IntermediateField.Adjoin.Basic
-import Mathlib.FieldTheory.Minpoly.Basic
-import Mathlib.RingTheory.Algebraic.Integral
+import LeanPool.FLTEichlerShimura.Definitions.Def_ModularCurve_QAdicPlace
 
 /-!
 # All places of ℚ̄·F_M have degree one

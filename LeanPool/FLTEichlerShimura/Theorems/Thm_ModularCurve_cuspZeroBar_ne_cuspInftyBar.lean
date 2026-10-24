@@ -21,7 +21,6 @@ public import LeanPool.FLTEichlerShimura.Definitions.Def_ModularCurve_CuspidalCl
 
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_ord_cuspZeroBar_coeffEmb_jq
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_ord_cuspInftyBar_coeffEmb_jq
-import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
 
 /-!
 # The cusps ̄ 0 and ∞̄ are distinct for N>1

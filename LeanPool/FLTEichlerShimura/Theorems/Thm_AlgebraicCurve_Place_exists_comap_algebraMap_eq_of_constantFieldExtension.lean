@@ -27,7 +27,6 @@ import Mathlib.RingTheory.SimpleRing.Principal
 import Mathlib.RingTheory.Valuation.LocalSubring
 import LeanPool.FLTEichlerShimura.Theorems.Thm_AlgebraicCurve_Place_exists_toValuationSubring_eq_comap_ringHom
 import LeanPool.FLTEichlerShimura.Theorems.Thm_AlgebraicCurve_linearIndependent_of_constantFieldExtension
-import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
 
 /-!
 # Unique unramified place above P in a constant-field extension

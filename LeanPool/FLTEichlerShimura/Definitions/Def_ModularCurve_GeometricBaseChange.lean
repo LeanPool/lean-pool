@@ -15,9 +15,10 @@ Licensed under Apache License 2.0
 module
 
 public import Mathlib.Algebra.Algebra.Hom.Rat
-public import Mathlib.Algebra.Module.LinearMap.Rat
-public import Mathlib.FieldTheory.LinearDisjoint
 public import LeanPool.FLTEichlerShimura.Definitions.Def_ModularCurve_LaurentCoeff
+
+import Mathlib.FieldTheory.LinearDisjoint
+import Mathlib.Algebra.Module.LinearMap.Rat
 
 /-!
 # Geometric base change of subfields of Q((q))

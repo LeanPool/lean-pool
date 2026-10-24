@@ -17,12 +17,10 @@ Licensed under Apache License 2.0
 
 module
 
-public import Mathlib.Analysis.Complex.UpperHalfPlane.Exp
-public import Mathlib.Analysis.Complex.UpperHalfPlane.Manifold
-public import Mathlib.Analysis.Complex.UpperHalfPlane.FunctionsBoundedAtInfty
+public import Mathlib.Analysis.Complex.Periodic
+public import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
 
 import Mathlib.NumberTheory.ModularForms.QExpansion
-import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
 
 /-!
 # Uniqueness of q-expansion coefficients at period h

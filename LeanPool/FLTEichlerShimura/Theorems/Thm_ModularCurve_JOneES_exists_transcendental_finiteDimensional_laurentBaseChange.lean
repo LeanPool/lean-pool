@@ -19,10 +19,11 @@ module
 
 public import LeanPool.FLTEichlerShimura.Definitions.Def_ModularCurve_X1
 
-import Mathlib.Data.Int.Star
 import Mathlib.RingTheory.Valuation.Integral
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_JOneES_exists_transcendental_finiteDimensional_qExpFunctionFieldC
-import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
+import Mathlib.RingTheory.SimpleRing.Principal
+import Mathlib.RingTheory.RegularLocalRing.Defs
+import Mathlib.RingTheory.Henselian
 
 /-!
 # Base change of the q-expansion function field is a function field

@@ -25,7 +25,6 @@ import Mathlib.Algebra.Ring.IsFormallyReal
 import Mathlib.Analysis.Normed.Ring.Lemmas
 import Mathlib.Data.Int.Star
 import Mathlib.Tactic.LinearCombination
-import Mathlib.Tactic.LinearCombination.Lemmas
 import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
 
 /-!

@@ -23,7 +23,6 @@ public import Mathlib.NumberTheory.ModularForms.Discriminant
 import Mathlib.RingTheory.RootsOfUnity.Complex
 import Mathlib.Topology.UniformSpace.Uniformizable
 import LeanPool.FLTEichlerShimura.Theorems.Thm_WLight_weierstrassP_qExpansion_package
-import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
 
 /-!
 # Bounded denominators for Fricke functions of level N

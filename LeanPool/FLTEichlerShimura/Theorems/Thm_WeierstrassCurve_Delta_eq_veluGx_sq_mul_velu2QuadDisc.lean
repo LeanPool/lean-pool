@@ -19,7 +19,6 @@ module
 
 public import LeanPool.FLTEichlerShimura.Definitions.Def_WeierstrassCurve_VeluOrderTwo
 
-import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
 
 /-!
 # Δ = gₓ(Q)² d(x₀) at a 2-torsion point

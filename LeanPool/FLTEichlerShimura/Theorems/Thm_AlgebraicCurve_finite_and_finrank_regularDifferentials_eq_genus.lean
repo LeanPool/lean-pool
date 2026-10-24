@@ -31,6 +31,10 @@ import LeanPool.FLTEichlerShimura.Theorems.Thm_AlgebraicCurve_functionFieldRiema
 import LeanPool.FLTEichlerShimura.Theorems.Thm_AlgebraicCurve_isCurveOver_ratFunc
 import LeanPool.FLTEichlerShimura.Theorems.Thm_AlgebraicCurve_IsCurveOver_exists_separating_transcendental
 import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
+import Mathlib.RingTheory.Flat.TorsionFree
+import Mathlib.RingTheory.Flat.FaithfullyFlat.Basic
+import Mathlib.Data.Int.Star
+import Mathlib.Algebra.Order.Ring.Star
 
 /-!
 # Regular differentials form a space of dimension the genus

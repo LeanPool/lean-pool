@@ -14,8 +14,7 @@ Licensed under Apache License 2.0
 
 module
 
-public import Lean
-public meta import Lean.Elab.Tactic.ElabTerm
+public meta import Lean.Elab.Command
 
 
 /-!

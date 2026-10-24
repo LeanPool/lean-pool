@@ -25,37 +25,36 @@ Extracted from Prove2Me proofs by Claude (2026-09-05):
 
 module
 
-public import Mathlib.Algebra.Order.Ring.Star
-public import Mathlib.Analysis.Normed.Ring.Lemmas
-public import Mathlib.Order.CompletePartialOrder
-public import Mathlib.Tactic.NormNum.Prime
-
 public import LeanPool.FLTEichlerShimura.Definitions.Def_AlgebraicCurve_PlaceEvaluation
-public import LeanPool.FLTEichlerShimura.Definitions.Def_AlgebraicCurve_PlacesOverDVR
-public import LeanPool.FLTEichlerShimura.Definitions.Def_AlgebraicCurve_RatFuncPlaces
-public import LeanPool.FLTEichlerShimura.Definitions.Def_EllipticCurve_FunctionFieldPullback
 public import LeanPool.FLTEichlerShimura.Definitions.Def_Isogeny_ConditionalCurrency
-public import LeanPool.FLTEichlerShimura.Definitions.Def_WeierstrassCurve_GenusOnePlaceGateCentred
 public import LeanPool.FLTEichlerShimura.Definitions.Def_WeierstrassCurve_FunctionFieldQuadratic
-public import LeanPool.FLTEichlerShimura.Theorems.Thm_AlgebraicCurve_normFormulaAlong
-public import LeanPool.FLTEichlerShimura.Theorems.Thm_WeierstrassCurve_Affine_CoordinateRing_XYIdeal_ne_bot
-public import LeanPool.FLTEichlerShimura.Theorems.Thm_WeierstrassCurve_Affine_CoordinateRing_isDedekindDomain
-public import LeanPool.FLTEichlerShimura.Theorems.Thm_WeierstrassCurve_Affine_algebraMap_mk_C_X_notMem_toValuationSubring_placeOfPoint_zero
-public import LeanPool.FLTEichlerShimura.Theorems.Thm_WeierstrassCurve_Affine_hasPrincipalDivisors_functionField
-public import LeanPool.FLTEichlerShimura.Theorems.Thm_WeierstrassCurve_Affine_placeOfPoint_some_eq_ofHeightOneSpectrum
-public import LeanPool.FLTEichlerShimura.Theorems.Thm_AlgebraicCurve_Place_min_ord_le_ord_add_v2
-
 public import Mathlib.Algebra.Polynomial.Basis
-import Mathlib.RingTheory.Flat.TorsionFree
+public import LeanPool.FLTEichlerShimura.Definitions.Def_WeierstrassCurve_GenusOnePlaceGateCentred
+public import LeanPool.FLTEichlerShimura.Definitions.Def_EllipticCurve_FunctionFieldPullback -- shake: keep
+public import LeanPool.FLTEichlerShimura.Theorems.Thm_WeierstrassCurve_Affine_CoordinateRing_XYIdeal_ne_bot -- shake: keep
+
 import LeanPool.FLTEichlerShimura.Theorems.Thm_AddCommGroup_nonempty_zmod_prod_addEquiv_torsionBy_of_card_torsionBy_eq_sq
 import LeanPool.FLTEichlerShimura.Theorems.Thm_WeierstrassCurve_card_torsionBy_eq_sq_of_isAlgClosed
-
 import LeanPool.FLTEichlerShimura.Theorems.Thm_AlgebraicCurve_Place_evalAt_algebraMap
 import LeanPool.FLTEichlerShimura.Theorems.Thm_AlgebraicCurve_Place_evalAt_mul
 import LeanPool.FLTEichlerShimura.Theorems.Thm_AlgebraicCurve_Place_evalAt_ne_zero
 import LeanPool.FLTEichlerShimura.Theorems.Thm_AlgebraicCurve_Place_ord_algebraMap
 import LeanPool.FLTEichlerShimura.Theorems.Thm_WeierstrassCurve_Affine_FunctionField_addX_addY_specialize_at_place
-import LeanPool.FLTEichlerShimura.Definitions.Defs_AlgebraicCurve_residueTheorem_sharedLibrary
+import Mathlib.Data.Nat.Choose.Multinomial
+import LeanPool.FLTEichlerShimura.Theorems.Thm_AlgebraicCurve_Place_min_ord_le_ord_add_v2
+import LeanPool.FLTEichlerShimura.Theorems.Thm_WeierstrassCurve_Affine_hasPrincipalDivisors_functionField
+import LeanPool.FLTEichlerShimura.Theorems.Thm_WeierstrassCurve_Affine_algebraMap_mk_C_X_notMem_toValuationSubring_placeOfPoint_zero
+import LeanPool.FLTEichlerShimura.Theorems.Thm_WeierstrassCurve_Affine_placeOfPoint_some_eq_ofHeightOneSpectrum
+import Mathlib.Tactic.NormNum.Prime
+import LeanPool.FLTEichlerShimura.Theorems.Thm_WeierstrassCurve_Affine_CoordinateRing_isDedekindDomain
+import LeanPool.FLTEichlerShimura.Theorems.Thm_AlgebraicCurve_normFormulaAlong
+import LeanPool.FLTEichlerShimura.Definitions.Def_AlgebraicCurve_RatFuncPlaces
+import LeanPool.FLTEichlerShimura.Definitions.Def_AlgebraicCurve_PlacesOverDVR
+import Mathlib.Analysis.Normed.Ring.Lemmas
+import Mathlib.RingTheory.Flat.FaithfullyFlat.Basic
+import Mathlib.Order.CompletePartialOrder
+import Mathlib.Algebra.Order.Ring.Star
+import Mathlib.Logic.Equiv.PartialEquiv
 
 /-!
 # Shared library for isogeny endomorphism data
@@ -2116,7 +2115,8 @@ def es1a4_negDatum (W : Affine F) [W.IsElliptic] [WeierstrassCurve.Affine.GenusO
 variable {W : Affine F} [W.IsElliptic] [WeierstrassCurve.Affine.GenusOnePlaceGate W]
     [WeierstrassCurve.Affine.GenusOnePlaceGate.IsCentred W] [WeierstrassCurve.Affine.AbelTheorem W]
 
-omit [DecidableEq F] [W.GenusOnePlaceGate] [GenusOnePlaceGate.IsCentred W] [W.AbelTheorem] in
+omit [DecidableEq F] [CharZero F] [W.GenusOnePlaceGate]
+  [GenusOnePlaceGate.IsCentred W] [W.AbelTheorem] in
 theorem es1a4_negDatum_seam_some {x₀ y₀ : F} (h : W.Nonsingular x₀ y₀) :
     (placeOfEquation h.left).restrictAlong (es1a4_negPullbackHom W)
         (es1a4_negPullbackHom_isIntegral W)
@@ -2181,6 +2181,7 @@ theorem es1a4_negDatum_seam_zero :
     ord_X_neg_of_not_isFinitePlace _ InfinitePlace.not_isFinitePlace
   omega
 
+omit [CharZero F] in
 theorem es1a4_negDatum_seam (P : W.Point) :
     (placeOfPoint P).restrictAlong (es1a4_negDatum W).ι (es1a4_negDatum W).hι
       = placeOfPoint (-P) := by
@@ -2393,7 +2394,7 @@ theorem mmr73_cs_geomMorph_ne_zero (D : IsogenyEndDatum W) (Q : W.Point)
 
 public section publicSection
 
-omit [DecidableEq F] [W.AbelTheorem] in
+omit [DecidableEq F] [CharZero F] [W.AbelTheorem] in
 theorem mmr73_cs_geomMorph_some_coords (D : IsogenyEndDatum W) (Q : W.Point)
     {a b : F} {hab : W.Nonsingular a b}
     (hQ : D.geomMorph Q = Point.some a b hab)
@@ -2468,7 +2469,7 @@ theorem mmr73_cs_geomMorph_some_coords (D : IsogenyEndDatum W) (Q : W.Point)
 
 end publicSection
 
-omit [W.AbelTheorem] in
+omit [CharZero F] [W.AbelTheorem] in
 theorem mmr73_cs_geomMorph_add_eq_of_addSum_const (D₁ D₂ : IsogenyEndDatum W)
     (hX : D₁.ι (polyToFunctionField W X) ≠ D₂.ι (polyToFunctionField W X))
     {c d : F} (hcd : W.Nonsingular c d)
@@ -2808,6 +2809,7 @@ variable {W : WeierstrassCurve.Affine F} [W.IsElliptic]
     [WeierstrassCurve.Affine.GenusOnePlaceGate W]
     [WeierstrassCurve.Affine.GenusOnePlaceGate.IsCentred W] [WeierstrassCurve.Affine.AbelTheorem W]
 
+omit [CharZero F] in
 theorem es1a8_addCollapse_geomMorph_eq_neg_cmp (D₁ D₂ : IsogenyEndDatum W)
     (hcol : es1a8_addCollapse_cmp W D₁.ι D₂.ι) (P : W.Point) :
     D₁.geomMorph P = -(D₂.geomMorph P) := by

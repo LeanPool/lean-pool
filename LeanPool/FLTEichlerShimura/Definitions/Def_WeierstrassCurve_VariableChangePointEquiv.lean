@@ -15,7 +15,6 @@ Licensed under Apache License 2.0
 module
 
 public import Mathlib.AlgebraicGeometry.EllipticCurve.Affine.Point
-public import Mathlib.AlgebraicGeometry.EllipticCurve.VariableChange
 
 /-!
 # Point bijection induced by a Weierstrass variable change

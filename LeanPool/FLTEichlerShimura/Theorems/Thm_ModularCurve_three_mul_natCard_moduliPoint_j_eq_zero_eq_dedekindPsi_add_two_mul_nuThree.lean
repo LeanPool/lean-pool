@@ -22,7 +22,6 @@ public import LeanPool.FLTEichlerShimura.Definitions.Def_ModularCurve_GenusNumer
 public import LeanPool.FLTEichlerShimura.Definitions.Def_ModularCurve_ModuliPoint
 
 import Mathlib.Algebra.CharP.Invertible
-import Mathlib.AlgebraicGeometry.EllipticCurve.Reduction
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_natCard_moduliPoint_j_eq_eq_natCard_quot_addOrderOf_eq
 import LeanPool.FLTEichlerShimura.Theorems.Thm_MulAction_card_mul_natCard_orbitRel_quotient_eq_of_natCard_eq_prime
 import LeanPool.FLTEichlerShimura.Theorems.Thm_WeierstrassCurve_Affine_Point_vcInvFun_add
@@ -32,6 +31,7 @@ import LeanPool.FLTEichlerShimura.Theorems.Thm_WeierstrassCurve_natCard_addSubgr
 import LeanPool.FLTEichlerShimura.Theorems.Thm_WeierstrassCurve_natCard_isAddCyclic_addSubgroup_card_eq_fixed_vcInvFun_eq_nuThree
 import LeanPool.FLTEichlerShimura.Theorems.Thm_WeierstrassCurve_variableChange_mk_smul_eq_self_of_pow_three_eq_one
 import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
+import Mathlib.Algebra.Field.ZMod
 
 /-!
 # Moduli points with j = 0: 3#=ψ(N)+2ν₃(N)

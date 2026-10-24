@@ -20,8 +20,6 @@ module
 public import LeanPool.FLTEichlerShimura.Definitions.Def_ModularCurve_PhiGen
 public import LeanPool.FLTEichlerShimura.Definitions.Def_ModularCurve_QAdicPlace
 public import Mathlib.RingTheory.RootsOfUnity.PrimitiveRoots
-public import Mathlib.FieldTheory.Relrank
-public import Mathlib.FieldTheory.IntermediateField.Adjoin.Basic
 
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_minpoly_jqN_map_eq_prod_slots
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_finrank_adjoin_jqN_eq_dedekindPsi
@@ -34,7 +32,6 @@ import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_coeffEmb_jq
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_coeffEmb_jqN
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_laurentBaseChange_adjoin
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_dedekindPsi_pos
-import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
 
 /-!
 # Cusp-label embedding of the base-changed modular function field

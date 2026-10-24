@@ -20,12 +20,12 @@ module
 public import Mathlib.FieldTheory.RatFunc.Basic
 public import LeanPool.FLTEichlerShimura.Definitions.Def_AlgebraicCurve_AdelicIndex
 public import LeanPool.FLTEichlerShimura.Definitions.Def_AlgebraicCurve_IsCurveOver
+public import Mathlib.RingTheory.SimpleRing.Principal
 
 import LeanPool.FLTEichlerShimura.Theorems.Thm_AlgebraicCurve_Place_isRational_iff_deg_eq_one
 import LeanPool.FLTEichlerShimura.Theorems.Thm_AlgebraicCurve_Place_isRational_of_isAlgClosed
 import LeanPool.FLTEichlerShimura.Theorems.Thm_AlgebraicCurve_RationalFunctionField_nonempty_place_of_ratFunc_tower
 import LeanPool.FLTEichlerShimura.Theorems.Thm_AlgebraicCurve_constantsAreBase_of_exists_isRational
-import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
 
 /-!
 # Over an algebraically closed base, the constants are K

@@ -18,13 +18,11 @@ Licensed under Apache License 2.0
 module
 
 public import LeanPool.FLTEichlerShimura.Definitions.Def_EllipticCurve_FrobeniusEndo
-public import Mathlib.AlgebraicGeometry.EllipticCurve.DivisionPolynomial.Basic
 
 import LeanPool.FLTEichlerShimura.Theorems.Thm_FrobeniusEndo_kerDeg_frobEnd_line_one_pos_and_eq_of_torsion
 import LeanPool.FLTEichlerShimura.Theorems.Thm_WeierstrassCurve_Affine_Point_smul_some_eq_zero_iff
 import LeanPool.FLTEichlerShimura.Theorems.Thm_WeierstrassCurve_Affine_evalEval_psi_sq
 import LeanPool.FLTEichlerShimura.Theorems.Thm_WeierstrassCurve_isCoprime_Phi_PsiSq
-import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
 
 /-!
 # Degree formula for the Frobenius pencil [m]-π

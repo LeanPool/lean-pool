@@ -20,7 +20,6 @@ module
 public import LeanPool.FLTEichlerShimura.Definitions.Def_ModularCurve_AtkinLehner
 
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_ord_cuspInftyBar
-import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
 
 /-!
 # The q-expansion of j has order -1 at ∞

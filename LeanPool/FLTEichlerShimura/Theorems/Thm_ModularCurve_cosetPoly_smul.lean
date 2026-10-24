@@ -21,7 +21,6 @@ public import LeanPool.FLTEichlerShimura.Definitions.Def_ModularForm_HeckeOperat
 
 import Mathlib.Algebra.Field.ZMod
 import Mathlib.Topology.Compactification.OnePoint.ProjectiveLine
-import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
 
 /-!
 # SL₂(ℤ)-invariance of the Hecke coset polynomial at ℓ

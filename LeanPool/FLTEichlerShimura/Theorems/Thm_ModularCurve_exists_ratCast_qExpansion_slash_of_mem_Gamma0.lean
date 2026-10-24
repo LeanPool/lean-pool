@@ -23,6 +23,7 @@ import LeanPool.FLTEichlerShimura.Definitions.Def_ModularCurve_X1
 import LeanPool.FLTEichlerShimura.Theorems.Thm_EisensteinWeightOne_e1Chi3IsModular
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_exists_ratCast_qExpansion_comp_smul_of_mem_Gamma0
 import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
+import Mathlib.RingTheory.SimpleRing.Principal
 
 /-!
 # Rationality of q-expansions under slashing by Γ₀(M)

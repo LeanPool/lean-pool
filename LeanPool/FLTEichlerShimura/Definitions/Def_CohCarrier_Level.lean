@@ -16,9 +16,7 @@ module
 
 public import Mathlib.NumberTheory.ModularForms.CongruenceSubgroups
 public import Mathlib.GroupTheory.Transfer
-public import Mathlib.Algebra.Module.Hom
 public import Mathlib.Data.ZMod.Units
-public import Mathlib.Algebra.BigOperators.GroupWithZero.Action
 
 /-!
 # Level subgroups ΓH​(M) and the Hom carrier with operators

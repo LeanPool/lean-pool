@@ -30,7 +30,9 @@ import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_genus_eq_genusFF_mod
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_genus_modularFunctionFieldBar_eq_genusFormula
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_hasCanonicalDivisor_modularFunctionFieldBar
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_theta_coeff
-import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
+import Mathlib.NumberTheory.Height.NumberField
+import Mathlib.RingTheory.SimpleRing.Principal
+import Mathlib.RingTheory.Henselian
 
 /-!
 # Lower bound for dim S_k(Γ₀(N)), k≥ 4 even

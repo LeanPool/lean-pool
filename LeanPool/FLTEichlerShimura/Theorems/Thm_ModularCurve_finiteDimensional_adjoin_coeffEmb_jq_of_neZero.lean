@@ -17,15 +17,13 @@ Licensed under Apache License 2.0
 
 module
 
-public import LeanPool.FLTEichlerShimura.Definitions.Def_ModularCurve_CuspidalClass
+public import LeanPool.FLTEichlerShimura.Definitions.Def_ModularCurve_QAdicPlace
+public import LeanPool.FLTEichlerShimura.Definitions.Def_ModularCurve_ArithmeticGalois
 
 import Mathlib.RingTheory.Henselian
 import Mathlib.RingTheory.RegularLocalRing.Defs
 import Mathlib.RingTheory.SimpleRing.Principal
-import LeanPool.FLTEichlerShimura.Definitions.Def_ModularCurve_ArithmeticGalois
-import LeanPool.FLTEichlerShimura.Definitions.Def_ModularCurve_QAdicPlace
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_nonempty_modularPolynomialData
-import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
 
 /-!
 # Finiteness of the level-M modular function field over ℚ̄(j)

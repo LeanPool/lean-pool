@@ -21,7 +21,6 @@ public import LeanPool.FLTEichlerShimura.Definitions.Def_ModularCurve_CuspidalCl
 
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_frickeInvolutionBar_coeffEmb_qExpand
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_ord_cuspInftyBar_coeffEmb_qExpand
-import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
 
 /-!
 # Order of j(qᵇ) at the cusp ̄ 0

@@ -24,7 +24,6 @@ import Mathlib.Analysis.SpecialFunctions.Gaussian.PoissonSummation
 import Mathlib.Analysis.PSeries
 import Mathlib.LinearAlgebra.Complex.FiniteDimensional
 import Mathlib.Topology.Separation.CompletelyRegular
-import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
 
 /-!
 # Theta series of x²+xy+y²: convergence and Fricke law

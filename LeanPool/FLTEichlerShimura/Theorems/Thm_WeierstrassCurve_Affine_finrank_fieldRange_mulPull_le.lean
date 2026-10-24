@@ -17,13 +17,9 @@ Licensed under Apache License 2.0
 
 module
 
-public import Mathlib.RingTheory.Henselian
-public import Mathlib.RingTheory.RegularLocalRing.Defs
 public import Mathlib.RingTheory.SimpleRing.Principal
 public import LeanPool.FLTEichlerShimura.Definitions.Def_EllipticCurve_FunctionFieldPullback
 
-import Mathlib.FieldTheory.IntermediateField.Adjoin.Basic
-import Mathlib.AlgebraicGeometry.EllipticCurve.DivisionPolynomial.Degree
 import LeanPool.FLTEichlerShimura.Theorems.Thm_WeierstrassCurve_Affine_FunctionField_adjoin_X_Y_eq_top
 import LeanPool.FLTEichlerShimura.Theorems.Thm_IntermediateField_finrank_fieldRange_le_of_adjoin_pair_eq_top
 import LeanPool.FLTEichlerShimura.Theorems.Thm_WeierstrassCurve_Affine_Point_smul_some_eq_zero_iff
@@ -32,7 +28,6 @@ import LeanPool.FLTEichlerShimura.Theorems.Thm_WeierstrassCurve_Affine_evalEval_
 import LeanPool.FLTEichlerShimura.Theorems.Thm_WeierstrassCurve_Psi2Sq_ne_zero_of_isElliptic
 import LeanPool.FLTEichlerShimura.Theorems.Thm_WeierstrassCurve_Affine_Point_zsmul_some_eq_some_div
 import LeanPool.FLTEichlerShimura.Theorems.Thm_WeierstrassCurve_Affine_Point_two_smul_some_eq_zero_iff
-import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
 
 /-!
 # Pull-back by [n] has index at most n²

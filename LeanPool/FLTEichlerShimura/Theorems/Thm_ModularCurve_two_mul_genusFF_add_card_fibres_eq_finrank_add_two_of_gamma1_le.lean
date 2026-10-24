@@ -29,7 +29,7 @@ import LeanPool.FLTEichlerShimura.Theorems.Thm_AlgebraicCurve_exists_finset_sum_
 import LeanPool.FLTEichlerShimura.Theorems.Thm_AlgebraicCurve_sum_ord_sub_one_le_two_mul_genusFF_of_isSeparable
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_transcendental_and_finiteDimensional_adjoin_laurentBaseChange_qExpFunctionFieldC_of_coe_eq_jqModC
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_two_mul_genusFF_add_card_fibres_le_finrank_add_two_of_gamma1_le
-import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
+import Mathlib.RingTheory.Henselian
 
 /-!
 # Fibre identity for j on X(Γ) over ℚ̄

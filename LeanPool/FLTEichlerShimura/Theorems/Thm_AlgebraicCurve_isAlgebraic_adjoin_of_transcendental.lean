@@ -21,11 +21,7 @@ public import Mathlib.FieldTheory.IntermediateField.Adjoin.Defs
 public import Mathlib.RingTheory.Algebraic.Defs
 
 import Mathlib.RingTheory.AlgebraicIndependent.TranscendenceBasis
-import Mathlib.RingTheory.AlgebraicIndependent.Transcendental
 import Mathlib.RingTheory.AlgebraicIndependent.AlgebraicClosure
-import Mathlib.FieldTheory.IntermediateField.Adjoin.Basic
-import Mathlib.LinearAlgebra.Dimension.FreeAndStrongRankCondition
-import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
 
 /-!
 # Transcendence degree one: F algebraic over K(t) for any transcendental t

@@ -19,8 +19,8 @@ module
 
 public import LeanPool.FLTEichlerShimura.Definitions.Def_AlgebraicCurve_RatFuncPlaces
 
-import Mathlib.FieldTheory.RatFunc.AsPolynomial
 import LeanPool.FLTEichlerShimura.Theorems.Thm_AlgebraicCurve_RationalFunctionField_ord_ofHeightOneSpectrum_of_span
+import Mathlib.RingTheory.Henselian
 
 /-!
 # Order at the place t=a equals root multiplicity

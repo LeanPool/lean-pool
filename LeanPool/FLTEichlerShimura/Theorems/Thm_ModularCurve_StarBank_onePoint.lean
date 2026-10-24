@@ -19,8 +19,6 @@ module
 
 public import LeanPool.FLTEichlerShimura.Definitions.Def_ModularCurve_JqCoeff
 
-import Mathlib.Data.ZMod.Basic
-import Mathlib.Data.Nat.Choose.Basic
 import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
 
 /-!

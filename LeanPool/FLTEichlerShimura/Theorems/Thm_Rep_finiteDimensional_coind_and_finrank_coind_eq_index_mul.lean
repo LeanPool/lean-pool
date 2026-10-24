@@ -25,7 +25,6 @@ import Mathlib.RingTheory.Flat.TorsionFree
 import Mathlib.RingTheory.Henselian
 import Mathlib.RingTheory.RegularLocalRing.Defs
 import Mathlib.RingTheory.SimpleRing.Principal
-import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
 
 /-!
 # Finite-dimensionality and dimension of a coinduced representation

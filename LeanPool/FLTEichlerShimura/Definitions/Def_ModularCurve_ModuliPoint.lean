@@ -14,10 +14,11 @@ Licensed under Apache License 2.0
 
 module
 
-public import Mathlib.AlgebraicGeometry.EllipticCurve.IsomOfJ
-
-public import LeanPool.FLTEichlerShimura.Definitions.Def_WeierstrassCurve_RatPointHom
 public import LeanPool.FLTEichlerShimura.Definitions.Def_WeierstrassCurve_VariableChangePointEquiv
+public import LeanPool.FLTEichlerShimura.Definitions.Def_WeierstrassCurve_RatPointMap_probe
+
+import LeanPool.FLTEichlerShimura.Definitions.Def_WeierstrassCurve_RatPointHom
+import Mathlib.Combinatorics.Matroid.Init
 
 /-!
 # Naive moduli set of Γ₀(N)-structures and its base change

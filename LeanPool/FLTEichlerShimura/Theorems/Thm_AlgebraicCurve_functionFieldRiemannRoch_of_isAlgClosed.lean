@@ -20,10 +20,10 @@ module
 public import Mathlib.FieldTheory.RatFunc.Basic
 public import LeanPool.FLTEichlerShimura.Definitions.Def_AlgebraicCurve_LocalResidue
 public import LeanPool.FLTEichlerShimura.Definitions.Def_AlgebraicCurve_RiemannRochRows
+public import Mathlib.RingTheory.SimpleRing.Principal
 
 import LeanPool.FLTEichlerShimura.Theorems.Thm_AlgebraicCurve_residueTheoremK_of_isAlgClosed
 import LeanPool.FLTEichlerShimura.Theorems.Thm_AlgebraicCurve_functionFieldRiemannRoch_of_residueTheoremK_of_isAlgClosed
-import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
 
 /-!
 # Riemann–Roch over an algebraically closed base field

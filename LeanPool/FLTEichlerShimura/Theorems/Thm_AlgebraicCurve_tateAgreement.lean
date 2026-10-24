@@ -22,6 +22,16 @@ public import LeanPool.FLTEichlerShimura.Definitions.Def_AlgebraicCurve_TateResi
 
 import Mathlib.RingTheory.AdicCompletion.Noetherian
 import Mathlib.RingTheory.AdicCompletion.RingHom
+import Mathlib.Algebra.Order.Algebra
+import Mathlib.RingTheory.PicardGroup
+import LeanPool.FLTEichlerShimura.Definitions.Def_ModularCurve_CanonicalDivisorUniformizer
+import Mathlib.Algebra.GroupWithZero.Submonoid.CancelMulZero
+import Mathlib.RingTheory.Flat.TorsionFree
+import Mathlib.RingTheory.SimpleRing.Principal
+import Mathlib.RingTheory.RegularLocalRing.Defs
+import Mathlib.Data.Int.Star
+import Mathlib.Algebra.Order.Ring.Star
+import Mathlib.Data.Nat.Choose.Multinomial
 
 /-!
 # Tate's residue agrees with the local residue trace

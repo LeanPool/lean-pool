@@ -18,7 +18,8 @@ Licensed under Apache License 2.0
 module
 
 public import LeanPool.FLTEichlerShimura.Definitions.Def_FLTPrelim_GaloisRep
-public import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
+
+import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
 
 /-!
 # Variable change over F gives Galois-equivariant isomorphism of K-points

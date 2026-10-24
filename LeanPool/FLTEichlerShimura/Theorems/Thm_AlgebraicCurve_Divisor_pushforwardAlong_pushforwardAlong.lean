@@ -21,7 +21,6 @@ public import LeanPool.FLTEichlerShimura.Definitions.Def_AlgebraicCurve_Correspo
 
 import LeanPool.FLTEichlerShimura.Theorems.Thm_AlgebraicCurve_Place_inertiaDegAlong_comp
 import LeanPool.FLTEichlerShimura.Theorems.Thm_AlgebraicCurve_Place_restrictAlong_restrictAlong
-import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
 
 /-!
 # Functoriality of divisor push-forward along composites

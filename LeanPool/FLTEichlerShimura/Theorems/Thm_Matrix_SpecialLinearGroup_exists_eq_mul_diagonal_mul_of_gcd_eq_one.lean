@@ -21,7 +21,6 @@ public import Mathlib.LinearAlgebra.Matrix.SpecialLinearGroup
 
 import Mathlib.Algebra.BigOperators.Associated
 import Mathlib.Tactic.LinearCombination
-import Mathlib.Tactic.LinearCombination.Lemmas
 import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
 
 /-!

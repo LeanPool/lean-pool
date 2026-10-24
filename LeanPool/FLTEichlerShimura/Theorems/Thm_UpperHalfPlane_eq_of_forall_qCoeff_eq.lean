@@ -18,10 +18,8 @@ Licensed under Apache License 2.0
 module
 
 public import Mathlib.Analysis.CStarAlgebra.Classes
-
 public import LeanPool.FLTEichlerShimura.Definitions.Def_FLTPrelim_Modularity
 
-import Mathlib.NumberTheory.ModularForms.QExpansion
 import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
 
 /-!

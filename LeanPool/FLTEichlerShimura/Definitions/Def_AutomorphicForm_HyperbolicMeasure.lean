@@ -14,10 +14,11 @@ Licensed under Apache License 2.0
 
 module
 
-public import Mathlib.Analysis.CStarAlgebra.Classes
 public import Mathlib.Analysis.Complex.UpperHalfPlane.Measure
-public import Mathlib.NumberTheory.Modular
-public import Mathlib.Order.CompletePartialOrder
+
+import Mathlib.NumberTheory.Modular
+import Mathlib.Analysis.CStarAlgebra.Classes
+import Mathlib.Order.CompletePartialOrder
 
 /-!
 # Hyperbolic measure on the upper half-plane: invariance, infinite mass

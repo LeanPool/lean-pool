@@ -18,13 +18,11 @@ Licensed under Apache License 2.0
 
 module
 
-import Mathlib.FieldTheory.Relrank
-
 public import LeanPool.FLTEichlerShimura.Definitions.Def_ModularCurve_JqCoeff
 public import LeanPool.FLTEichlerShimura.Definitions.Def_ModularCurve_X1
 
+import Mathlib.FieldTheory.Relrank
 import Mathlib.Algebra.Algebra.ZMod
-import Mathlib.RingTheory.PicardGroup
 import LeanPool.FLTEichlerShimura.Definitions.Def_WeierstrassCurve_ReductionMap
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_exists_transcendental_finiteDimensional_qExpFunctionFieldC_residueField
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_finiteDimensional_and_finrank_adjoin_le_of_eq_coeffMap
@@ -33,7 +31,9 @@ import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_jqModC_mem_intFormRa
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_transcendental_jqModC
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ValuationSubring_exists_liesOverPrime_algebraicClosure_rat
 import LeanPool.FLTEichlerShimura.Definitions.Def_ModularCurve_X0ModL
-import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
+import Mathlib.RingTheory.SimpleRing.Principal
+import Mathlib.RingTheory.RegularLocalRing.Defs
+import Mathlib.RingTheory.Henselian
 
 /-!
 # Degree of the q-expansion function field over the j-line

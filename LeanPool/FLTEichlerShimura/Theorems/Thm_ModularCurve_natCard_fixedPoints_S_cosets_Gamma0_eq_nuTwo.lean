@@ -20,7 +20,6 @@ module
 public import Mathlib.NumberTheory.ModularForms.CongruenceSubgroups
 public import LeanPool.FLTEichlerShimura.Definitions.Def_ModularCurve_GenusNumerics
 
-import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
 
 /-!
 # Cosets of Γ₀(N) fixed by S number ν₂(N)

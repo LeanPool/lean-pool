@@ -15,7 +15,8 @@ Licensed under Apache License 2.0
 module
 
 public import LeanPool.FLTEichlerShimura.Definitions.Def_TaylorWiles_Primes
-public import Mathlib.FieldTheory.Galois.IsGaloisGroup
+public import Mathlib.FieldTheory.Galois.IsGaloisGroup -- shake: keep
+public import Mathlib.RingTheory.Frobenius
 
 /-!
 # Frobenius-labelled prime counts over a cyclic subgroup

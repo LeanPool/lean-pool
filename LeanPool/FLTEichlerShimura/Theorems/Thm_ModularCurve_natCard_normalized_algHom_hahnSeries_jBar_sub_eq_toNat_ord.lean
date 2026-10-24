@@ -17,14 +17,11 @@ Licensed under Apache License 2.0
 
 module
 
-public import LeanPool.FLTEichlerShimura.Definitions.Def_AlgebraicCurve_DivisorClassGroup
-public import LeanPool.FLTEichlerShimura.Definitions.Def_HahnSeries_RamificationBound
-public import LeanPool.FLTEichlerShimura.Definitions.Def_ModularCurve_PhiGen
 public import LeanPool.FLTEichlerShimura.Definitions.Def_ModularCurve_MazurStepThreeInputs
 
 import Mathlib.RingTheory.Polynomial.Cyclotomic.Roots
-import LeanPool.FLTEichlerShimura.Definitions.Def_AlgebraicCurve_DivisorPushPull
-import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
+import LeanPool.FLTEichlerShimura.Definitions.Def_ModularCurve_PhiGen
+import LeanPool.FLTEichlerShimura.Definitions.Def_HahnSeries_RamificationBound
 
 /-!
 # Normalised Hahn-series embeddings inducing a place above j₀

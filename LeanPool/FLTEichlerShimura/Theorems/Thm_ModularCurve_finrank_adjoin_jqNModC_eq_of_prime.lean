@@ -17,13 +17,9 @@ Licensed under Apache License 2.0
 
 module
 
-public import LeanPool.FLTEichlerShimura.Definitions.Def_ModularCurve_X0
 public import LeanPool.FLTEichlerShimura.Definitions.Def_ModularCurve_JqCoeff
 
-import LeanPool.FLTEichlerShimura.Definitions.Def_ModularCurve_CuspidalClass
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_dedekindPsi_prime
-import LeanPool.FLTEichlerShimura.Definitions.Def_AlgebraicCurve_PlacesOverDVR
-import Mathlib.FieldTheory.RatFunc.AsPolynomial
 import LeanPool.FLTEichlerShimura.Theorems.Thm_AlgebraicCurve_Place_sum_ramificationIndex_mul_inertiaDeg_le_finrank
 import LeanPool.FLTEichlerShimura.Theorems.Thm_AlgebraicCurve_Place_inertiaDeg_pos
 import LeanPool.FLTEichlerShimura.Theorems.Thm_AlgebraicCurve_RationalFunctionField_subsingleton_setOf_forall_ne_ofHeightOneSpectrum
@@ -41,6 +37,7 @@ import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_isCusp_cuspZeroBar
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_isCusp_cuspInftyBar
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_isFrickeAutFull_frickeInvolutionFull_prime
 import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
+public import LeanPool.FLTEichlerShimura.Definitions.Def_ModularCurve_CuspidalClass
 
 /-!
 # Geometric degree of X₀(ℓ)→ X(1) is ℓ+1

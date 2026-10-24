@@ -29,7 +29,7 @@ import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_thetaL_coeffMap_eq_c
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularForm_exists_cuspForm_mul_eq_of_analyticOrderAt_le
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularForm_exists_gamma0_qExpansion_eq_of_levelOne
 import LeanPool.FLTEichlerShimura.Theorems.Thm_omegaRow_T2
-import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
+import Mathlib.NumberTheory.ModularForms.CuspFormSubmodule
 
 /-!
 # Integrality criterion making X θ j a weight-two cusp form

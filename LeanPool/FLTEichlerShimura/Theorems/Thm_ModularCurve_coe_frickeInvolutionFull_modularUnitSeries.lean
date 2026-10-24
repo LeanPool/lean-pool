@@ -20,13 +20,10 @@ module
 public import LeanPool.FLTEichlerShimura.Definitions.Def_ModularCurve_ModularUnit
 public import LeanPool.FLTEichlerShimura.Definitions.Def_ModularCurve_AtkinLehner
 
-import LeanPool.FLTEichlerShimura.Definitions.Def_ModularForm_HeckeOperator
-import Mathlib.NumberTheory.ModularForms.Discriminant
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_hasSum_modularUnitSeries_qParam
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_hasSum_smul_modularUnitSeries_inv_qParam
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_discriminant_div_discriminant_heckeDiagMatrix_smul
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_coe_frickeInvolutionFull_eq_of_hasSum_of_gamma0_invariant
-import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
 
 /-!
 # Fricke involution sends Ogg's unit to ℓ¹²u_ℓ⁻¹

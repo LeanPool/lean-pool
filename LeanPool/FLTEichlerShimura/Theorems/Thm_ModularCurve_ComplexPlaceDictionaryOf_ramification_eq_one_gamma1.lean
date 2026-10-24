@@ -22,13 +22,14 @@ public import LeanPool.FLTEichlerShimura.Definitions.Def_ModularCurve_X1
 
 import Mathlib.Analysis.Complex.Polynomial.Basic
 import Mathlib.NumberTheory.ModularForms.LevelOne.GradedRing
-
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_jqModC_eq_qExpansion_E4_cube_div_discriminant
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_jqModC_mem_intFormRatiosC
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_meromorphicOrderAt_E4_cube_div_discriminant_sub_eq_card_stabilizer_div_two
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_ord_eq_three_of_ord_pos_and_ord_sub_eq_two_laurentBaseChange_gamma1
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_realizeOf_eq_div
 import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
+import Mathlib.RingTheory.SimpleRing.Principal
+import Mathlib.RingTheory.Henselian
 
 /-!
 # Ramification index one for Γ₁(M), M ≥ 4

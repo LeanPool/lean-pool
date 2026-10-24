@@ -20,8 +20,6 @@ module
 public import Mathlib.RingTheory.SimpleRing.Principal
 public import LeanPool.FLTEichlerShimura.Definitions.Def_EllipticCurve_FunctionFieldPullback
 
-import Mathlib.AlgebraicGeometry.EllipticCurve.Affine.Point
-import Mathlib.RingTheory.DedekindDomain.AdicValuation
 import Mathlib.RingTheory.Norm.Basic
 import LeanPool.FLTEichlerShimura.Theorems.Thm_WeierstrassCurve_Affine_FunctionField_exists_valuation_eq_exp_natDegree_norm
 import LeanPool.FLTEichlerShimura.Theorems.Thm_WeierstrassCurve_Affine_FunctionField_eq_valuationSubring_of_X_not_mem

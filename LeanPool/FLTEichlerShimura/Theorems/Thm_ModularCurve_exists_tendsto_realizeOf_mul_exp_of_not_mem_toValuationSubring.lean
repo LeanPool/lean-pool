@@ -27,7 +27,6 @@ import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_exists_apply_eq_of_f
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_exists_ringHom_place_order_eq_mul_ord_of_qExpansion_slash
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_ord_eq_neg_width_of_order_eq_mul_ord_of_qExpansion_slash
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_realizeOf_eq_div
-import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
 
 /-!
 # Cusp places of X(Γ): width, ord_P y = -h, and limits

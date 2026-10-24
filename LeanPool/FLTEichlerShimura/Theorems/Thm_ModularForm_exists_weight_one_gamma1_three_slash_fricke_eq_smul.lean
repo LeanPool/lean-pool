@@ -26,7 +26,6 @@ import Mathlib.NumberTheory.ModularForms.JacobiTheta.TwoVariable
 import Mathlib.Tactic.NormNum.Prime
 import LeanPool.FLTEichlerShimura.Theorems.Thm_CongruenceSubgroup_closure_T_U_neg_one_eq_Gamma0_three
 import LeanPool.FLTEichlerShimura.Theorems.Thm_HexagonalLattice_summable_thetaTerm_and_tsum_neg_inv_three_mul
-import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
 
 /-!
 # A weight-one form on Γ₁(3) with Fricke eigenvalue -i/√3

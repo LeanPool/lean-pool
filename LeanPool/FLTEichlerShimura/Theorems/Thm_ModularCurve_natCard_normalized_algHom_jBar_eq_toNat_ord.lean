@@ -17,9 +17,6 @@ Licensed under Apache License 2.0
 
 module
 
-public import LeanPool.FLTEichlerShimura.Definitions.Def_AlgebraicCurve_DivisorClassGroup
-public import LeanPool.FLTEichlerShimura.Definitions.Def_HahnSeries_RamificationBound
-public import LeanPool.FLTEichlerShimura.Definitions.Def_ModularCurve_PhiGen
 public import LeanPool.FLTEichlerShimura.Definitions.Def_ModularCurve_MazurStepThreeInputs
 
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_sum_ord_jBar_sub_eq_dedekindPsi
@@ -31,10 +28,8 @@ import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_natCard_normalized_a
 import LeanPool.FLTEichlerShimura.Theorems.Thm_LaurentSeries_exists_algHom_comp_map_eq_single
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_relfinrank_laurentBaseChange_modularFunctionFieldFull
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_relfinrank_full_eq_dedekindPsi
-import Mathlib.FieldTheory.Relrank
-import Mathlib.FieldTheory.IntermediateField.Adjoin.Algebra
-import Mathlib.RingTheory.LaurentSeries
 import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
+import Mathlib.RingTheory.Henselian
 
 /-!
 # Normalised Hahn-series embeddings at a place above j₀

@@ -19,11 +19,8 @@ module
 
 public import LeanPool.FLTEichlerShimura.Definitions.Def_EllipticCurve_FrobeniusTrace
 public import Mathlib.NumberTheory.NumberField.Basic
+public import LeanPool.FLTEichlerShimura.Definitions.Def_FLTPrelim_Ramification
 
-import Mathlib.RingTheory.LocalRing.ResidueField.Basic
-import Mathlib.Algebra.Lie.OfAssociative
-import Mathlib.Algebra.Algebra.Rat
-import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
 
 /-!
 # Localisation at a maximal ideal of ℤ̄ gives a Frobenius

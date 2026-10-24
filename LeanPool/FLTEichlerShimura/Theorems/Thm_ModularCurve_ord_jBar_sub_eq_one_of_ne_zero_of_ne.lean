@@ -18,7 +18,6 @@ Licensed under Apache License 2.0
 module
 
 public import LeanPool.FLTEichlerShimura.Definitions.Def_ModularCurve_MazurStepThreeInputs
-public import LeanPool.FLTEichlerShimura.Definitions.Def_ModularCurve_GenusNumerics
 
 import Mathlib.RingTheory.Henselian
 import Mathlib.RingTheory.RegularLocalRing.Defs
@@ -26,7 +25,6 @@ import Mathlib.RingTheory.SimpleRing.Principal
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_exists_elliptic_cycSub_orbitMap
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_finite_cycSub
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_sameOrbit_iff_eq_of_c4_ne_zero_of_c6_ne_zero
-import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
 
 /-!
 # Order one for jmath̄ - c when c ≠ 0, 1728

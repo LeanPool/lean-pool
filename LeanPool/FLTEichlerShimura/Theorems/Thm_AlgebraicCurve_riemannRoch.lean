@@ -6,8 +6,8 @@ Authors: David Loeffler
 
 module
 
-public import LeanPool.FLTEichlerShimura.Definitions.Def_AlgebraicCurve_RiemannRochRows
-public import LeanPool.FLTEichlerShimura.Definitions.Def_AlgebraicCurve_Repartitions
+public import LeanPool.FLTEichlerShimura.Definitions.Def_ModularCurve_CanonicalDivisor
+public import LeanPool.FLTEichlerShimura.Definitions.Def_AlgebraicCurve_AdelicIndex
 
 import Mathlib.FieldTheory.RatFunc.AsPolynomial
 import LeanPool.FLTEichlerShimura.Theorems.Thm_AlgebraicCurve_IsCurveOver_exists_separating_transcendental

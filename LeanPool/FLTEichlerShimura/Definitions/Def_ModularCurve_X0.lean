@@ -16,10 +16,6 @@ module
 
 public import Mathlib.RingTheory.LaurentSeries
 public import Mathlib.RingTheory.PowerSeries.PiTopology
-public import Mathlib.RingTheory.PowerSeries.Inverse
-public import Mathlib.FieldTheory.IntermediateField.Adjoin.Basic
-public import Mathlib.RingTheory.Algebraic.Basic
-public import Mathlib.NumberTheory.Divisors
 public import Mathlib.Data.Nat.Squarefree
 
 /-!

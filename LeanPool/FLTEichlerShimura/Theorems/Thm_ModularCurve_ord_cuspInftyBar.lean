@@ -20,7 +20,6 @@ module
 public import LeanPool.FLTEichlerShimura.Definitions.Def_ModularCurve_AtkinLehner
 
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_ord_qInftyPlaceBar
-import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
 
 /-!
 # Order at the cusp ∞ is the q-order

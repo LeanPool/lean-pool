@@ -26,7 +26,7 @@ public import LeanPool.FLTEichlerShimura.Definitions.Def_HahnSeries_Ramification
 import LeanPool.FLTEichlerShimura.Definitions.Def_WeierstrassCurve_TorsionIntegral
 import LeanPool.FLTEichlerShimura.Theorems.Thm_HahnSeries_hasRamBound_one_of_forall_ringEquiv_apply_eq
 import LeanPool.FLTEichlerShimura.Theorems.Thm_WeierstrassCurve_Affine_Point_smul_some_eq_zero_iff
-import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
+import LeanPool.FLTEichlerShimura.Definitions.Def_WeierstrassCurve_ReductionMap
 
 /-!
 # Torsion coordinates of a good-reduction model are Laurent

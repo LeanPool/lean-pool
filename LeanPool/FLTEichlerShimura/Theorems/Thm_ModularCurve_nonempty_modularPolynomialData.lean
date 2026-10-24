@@ -27,7 +27,6 @@ import LeanPool.FLTEichlerShimura.Definitions.Def_ModularCurve_RouteBCoordRing
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_evalAtJGen_injective
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_exists_monic_evalAtJ_jqN_eq_zero
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_finrank_adjoin_jqN_eq_dedekindPsi
-import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
 
 /-!
 # Existence of a modular polynomial datum at every level N

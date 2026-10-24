@@ -21,11 +21,10 @@ public import LeanPool.FLTEichlerShimura.Definitions.Def_WeierstrassCurve_VeluPo
 
 import Mathlib.RingTheory.Henselian
 import Mathlib.RingTheory.RegularLocalRing.Defs
-import LeanPool.FLTEichlerShimura.Theorems.Thm_WeierstrassCurve_velu2_tangent_addX_cleared_identity
-import LeanPool.FLTEichlerShimura.Theorems.Thm_WeierstrassCurve_velu2_tangent_negAddY_cleared_identity
 import LeanPool.FLTEichlerShimura.Theorems.Thm_WeierstrassCurve_velu2_line_image_factored
 import LeanPool.FLTEichlerShimura.Theorems.Thm_WeierstrassCurve_veluQuotient2_Delta_eq
 import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
+import Mathlib.RingTheory.SimpleRing.Principal
 
 /-!
 # Vélu's order-2 quotient map is additive

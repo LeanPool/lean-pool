@@ -18,35 +18,8 @@ Licensed under Apache License 2.0
 module
 
 public import LeanPool.FLTEichlerShimura.Definitions.Def_EllipticCurve_DivisionPolynomialOmega
-public import Mathlib.AlgebraicGeometry.EllipticCurve.Affine.Point
 
 import LeanPool.FLTEichlerShimura.Theorems.Thm_WeierstrassCurve_Affine_Point_smul_some_eq_zero_iff
-import Mathlib.NumberTheory.EllipticDivisibilitySequence
-import Mathlib.Algebra.Ring.NegOnePow
-import Mathlib.Data.Fin.VecNotation
-import Mathlib.Data.Fin.Tuple.Sort
-import Mathlib.Algebra.GroupWithZero.NonZeroDivisors
-import Mathlib.Algebra.MvPolynomial.CommRing
-import Mathlib.Algebra.MvPolynomial.Basic
-import Mathlib.Tactic.LinearCombination
-import Mathlib.Tactic.Ring
-import Mathlib.Tactic.Abel
-import Mathlib.Tactic.IntervalCases
-import Mathlib.Tactic.FieldSimp
-import Mathlib.GroupTheory.Perm.Basic
-import Mathlib.GroupTheory.Perm.Sign
-import Mathlib.GroupTheory.Perm.Cycle.Type
-import Mathlib.Algebra.Polynomial.Bivariate
-import Mathlib.AlgebraicGeometry.EllipticCurve.Jacobian.Point
-import Mathlib.AlgebraicGeometry.EllipticCurve.DivisionPolynomial.Basic
-import Mathlib.AlgebraicGeometry.EllipticCurve.DivisionPolynomial.Degree
-import Mathlib.FieldTheory.IsAlgClosed.Basic
-import Mathlib.FieldTheory.Separable
-import Mathlib.Data.Nat.Factorization.Induction
-import Mathlib.Logic.Embedding.Set
-import Mathlib.SetTheory.Cardinal.Finite
-import Mathlib.Data.Set.Card
-import Mathlib.Algebra.Module.Torsion.Basic
 import LeanPool.FLTEichlerShimura.Definitions.Def_WeierstrassCurve_EDSEngine
 import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
 

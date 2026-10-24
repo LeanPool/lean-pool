@@ -21,7 +21,6 @@ public import LeanPool.FLTEichlerShimura.Definitions.Def_AlgebraicCurve_DivisorC
 
 import LeanPool.FLTEichlerShimura.Theorems.Thm_AlgebraicCurve_Pic0_mk_eq_zero_iff
 import LeanPool.FLTEichlerShimura.Theorems.Thm_AlgebraicCurve_Pic0_zsmul_mk
-import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
 
 /-!
 # Torsion criterion in Pic⁰: mD principal kills m[D]

@@ -7,11 +7,10 @@ Authors: David Loeffler
 module
 
 public import LeanPool.FLTEichlerShimura.Definitions.Def_ModularCurve_LevelNFunctionField
-public import Mathlib.NumberTheory.ModularForms.Basic
-public import Mathlib.NumberTheory.ModularForms.CongruenceSubgroups
 
 import LeanPool.FLTEichlerShimura.Theorems.Thm_WLight_exists_levelFraction_of_stable_family
 import LeanPool.FLTEichlerShimura.Theorems.Thm_WLight_levelN_structure_package
+import Mathlib.CategoryTheory.Category.Init
 
 /-!
 # Ratios of modular forms as Fricke fractions

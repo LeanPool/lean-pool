@@ -20,11 +20,12 @@ module
 public import LeanPool.FLTEichlerShimura.Definitions.Def_PeriodPair_Uniformization
 
 import Mathlib.Algebra.Module.ZLattice.Covolume
-import Mathlib.FieldTheory.IsAlgClosed.Basic
 import Mathlib.LinearAlgebra.FreeModule.ModN
 import LeanPool.FLTEichlerShimura.Theorems.Thm_PeriodPair_discriminant_ne_zero
 import LeanPool.FLTEichlerShimura.Theorems.Thm_PeriodPair_isUniformization_toPoint
 import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
+import Mathlib.RingTheory.Flat.TorsionFree
+import Mathlib.RingTheory.SimpleRing.Principal
 
 /-!
 # Dual homothety for a homomorphism of lattice curves

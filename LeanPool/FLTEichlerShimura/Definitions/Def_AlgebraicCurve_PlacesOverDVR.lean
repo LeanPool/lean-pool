@@ -15,10 +15,12 @@ Licensed under Apache License 2.0
 module
 
 public import LeanPool.FLTEichlerShimura.Definitions.Def_AlgebraicCurve_DivisorPushPull
-public import Mathlib.RingTheory.DedekindDomain.IntegralClosure
-public import Mathlib.RingTheory.RamificationInertia.Basic
-public import Mathlib.RingTheory.DedekindDomain.Factorization
-public import Mathlib.Algebra.Polynomial.Lifts
+public import Mathlib.NumberTheory.RamificationInertia.Ramification
+public import Mathlib.RingTheory.RamificationInertia.Inertia
+
+import Mathlib.RingTheory.DedekindDomain.Factorization
+import Mathlib.RingTheory.RamificationInertia.Basic
+import Mathlib.RingTheory.Valuation.LocalSubring
 
 /-!
 # Places above a place via primes of the integral closure

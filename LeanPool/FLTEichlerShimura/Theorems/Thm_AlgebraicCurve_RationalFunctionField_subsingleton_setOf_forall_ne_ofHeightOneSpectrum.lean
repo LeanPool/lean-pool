@@ -22,7 +22,6 @@ public import Mathlib.FieldTheory.RatFunc.Basic
 public import LeanPool.FLTEichlerShimura.Definitions.Def_AlgebraicCurve_DivisorClassGroup
 
 import Mathlib.NumberTheory.RatFunc.Ostrowski
-import Mathlib.RingTheory.DedekindDomain.Factorization
 import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
 
 /-!

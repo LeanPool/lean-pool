@@ -19,7 +19,6 @@ module
 
 public import Mathlib.AlgebraicGeometry.EllipticCurve.VariableChange
 
-import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
 
 /-!
 # Scaling by u with u²=-1 fixes y²=x³+Ax

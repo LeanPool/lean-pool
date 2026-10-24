@@ -25,6 +25,8 @@ import LeanPool.FLTEichlerShimura.Theorems.Thm_AlgebraicCurve_tateChainRule
 import LeanPool.FLTEichlerShimura.Theorems.Thm_AlgebraicCurve_tateCommFinite
 import LeanPool.FLTEichlerShimura.Theorems.Thm_AlgebraicCurve_tateTraceCompat_of_isSeparable
 import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
+import Mathlib.Algebra.Order.Algebra
+import Mathlib.Data.Nat.Choose.Multinomial
 
 /-!
 # Residue–trace commutation through the completion, F/E separable
@@ -478,7 +480,7 @@ section
 noncomputable section
 
 p2m_open "IsDedekindDomain P2MW.S_AlgebraicCurve_residueTraceCompletionCommute.IsDedekindDomain \
-  WithZero Module IsLocalRing Module.IsLocalRing"
+  WithZero Module IsLocalRing"
 
 namespace AlgebraicCurve
 p2m_export "AlgebraicCurve" "Place Divisor HasPrincipalDivisors Pic0 IsCurveOver diagonalHom_apply \

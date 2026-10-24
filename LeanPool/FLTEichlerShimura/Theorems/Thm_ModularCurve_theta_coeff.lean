@@ -17,9 +17,8 @@ Licensed under Apache License 2.0
 
 module
 
-public import LeanPool.FLTEichlerShimura.Definitions.Def_ModularCurve_PhiGen
+public import Mathlib.RingTheory.LaurentSeries
 
-import Mathlib.RingTheory.RootsOfUnity.PrimitiveRoots
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_PhiGen_sum_qTwist_coeff
 import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
 

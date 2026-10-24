@@ -26,7 +26,7 @@ import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_nonempty_integralWei
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_thetaL_jq_mul_eisenstein4_eq_neg_jq_mul_eisenstein6
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_theta_coeff
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularForm_exists_gamma1_isIntegralQExp_eisenstein_four_six
-import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
+import Mathlib.RingTheory.Henselian
 
 /-!
 # Weight-one form on Γ₁(M) with v vartheta j = w²

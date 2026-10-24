@@ -15,11 +15,6 @@ Licensed under Apache License 2.0
 module
 
 public import Mathlib.NumberTheory.ModularForms.CongruenceSubgroups
-public import Mathlib.GroupTheory.Index
-public import Mathlib.GroupTheory.GroupAction.Quotient
-public import Mathlib.Tactic.Group
-public import Mathlib.Tactic.LinearCombination
-public import Mathlib.Tactic.FinCases
 
 /-!
 # Hecke operators on homomorphisms out of Γ0​(N) via transfer

@@ -29,7 +29,6 @@ import LeanPool.FLTEichlerShimura.Theorems.Thm_WLight_exists_qExpansion_coeff_me
 import LeanPool.FLTEichlerShimura.Theorems.Thm_WLight_frickeFunction_intBaseChange
 import LeanPool.FLTEichlerShimura.Theorems.Thm_WLight_levelN_structure_package
 import LeanPool.FLTEichlerShimura.Theorems.Thm_WLight_linearIndependent_complex_of_qExpansion_rational
-import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
 
 /-!
 # Descent by Fourier coefficients to K(j,fᵥ)

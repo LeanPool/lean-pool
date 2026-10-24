@@ -18,12 +18,8 @@ Licensed under Apache License 2.0
 module
 
 public import LeanPool.FLTEichlerShimura.Definitions.Def_ModularCurve_X0
-public import Mathlib.FieldTheory.IntermediateField.Adjoin.Basic
 
-import LeanPool.FLTEichlerShimura.Definitions.Def_ModularCurve_LaurentCoeff
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_coeffEmb_qExpand
-import LeanPool.FLTEichlerShimura.Definitions.Def_ModularCurve_PhiGen
-import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_coeffMap_qExpand
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_PhiGen_splits_prime_at_slot
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_full_eq_adjoin_primes
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_relfinrank_full_of_squarefree
@@ -31,13 +27,6 @@ import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_finrank_adjoin_jqN_e
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_dedekindPsi_prime
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_exists_phiIrreducible_evalSymm
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_dedekindPsi_of_squarefree
-import Mathlib.RingTheory.RootsOfUnity.PrimitiveRoots
-import Mathlib.NumberTheory.Cyclotomic.Basic
-import Mathlib.RingTheory.Coprime.Lemmas
-import Mathlib.Data.Nat.ModEq
-import Mathlib.FieldTheory.PrimitiveElement
-import Mathlib.FieldTheory.Relrank
-import Mathlib.Data.Nat.Factorization.Induction
 import LeanPool.FLTEichlerShimura.Definitions.Defs_modularPolynomial_sharedLibrary
 import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
 

@@ -20,7 +20,6 @@ module
 public import LeanPool.FLTEichlerShimura.Definitions.Def_ModularCurve_LaurentCoeff
 
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_coeffMap_injective
-import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
 
 /-!
 # Injectivity of the coefficient embedding ℚ((q)) → L((q))

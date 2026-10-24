@@ -17,21 +17,14 @@ Licensed under Apache License 2.0
 
 module
 
+public import Mathlib.RingTheory.Frobenius
 public import LeanPool.FLTEichlerShimura.Definitions.Def_TaylorWiles_Primes
-public import Mathlib.NumberTheory.NumberField.Basic
-public import Mathlib.FieldTheory.Normal.Defs
+public import Mathlib.FieldTheory.Galois.IsGaloisGroup
 
 import LeanPool.FLTEichlerShimura.Definitions.Def_FieldTheory_RatAlgClosureGalois
 import Mathlib.RingTheory.Invariant.Profinite
 import Mathlib.FieldTheory.Galois.Profinite
 import Mathlib.FieldTheory.Galois.Infinite
-import Mathlib.FieldTheory.KrullTopology
-import Mathlib.FieldTheory.Normal.Closure
-import Mathlib.Topology.Algebra.MulAction
-import Mathlib.FieldTheory.IsAlgClosed.Basic
-import Mathlib.Algebra.Lie.OfAssociative
-import Mathlib.Algebra.Algebra.Rat
-import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
 
 /-!
 # Lifting the arithmetic Frobenius at Q to Gal(ℚ̄/ℚ)

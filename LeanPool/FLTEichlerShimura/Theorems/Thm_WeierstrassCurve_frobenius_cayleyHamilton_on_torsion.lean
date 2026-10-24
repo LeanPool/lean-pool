@@ -18,17 +18,14 @@ Licensed under Apache License 2.0
 module
 
 public import LeanPool.FLTEichlerShimura.Definitions.Def_EllipticCurve_FrobeniusTrace
+public import LeanPool.FLTEichlerShimura.Definitions.Def_FLTPrelim_Ramification
 
-import LeanPool.FLTEichlerShimura.Definitions.Def_FLTPrelim_GaloisRep
-import LeanPool.FLTEichlerShimura.Definitions.Def_FLTPrelim_Ramification
-import LeanPool.FLTEichlerShimura.Definitions.Def_EllipticCurve_ZeroComponentAt
-import LeanPool.FLTEichlerShimura.Definitions.Def_EllipticCurve_FrobeniusEndo
-import LeanPool.FLTEichlerShimura.Definitions.Def_WeierstrassCurve_ReductionMap
-import LeanPool.FLTEichlerShimura.Definitions.Def_WeierstrassCurve_TorsionIntegral
 import LeanPool.FLTEichlerShimura.Definitions.Def_WeierstrassCurve_ReduceHom
 import LeanPool.FLTEichlerShimura.Definitions.Def_ValuationSubring_ReduceAt
 import LeanPool.FLTEichlerShimura.Theorems.Thm_FrobeniusEndo_frobCharEqOnPoints_of_frobenius
-import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
+import LeanPool.FLTEichlerShimura.Definitions.Def_WeierstrassCurve_TorsionIntegral
+import Mathlib.Combinatorics.Matroid.Init
+import Mathlib.RingTheory.Henselian
 
 /-!
 # Frobenius satisfies its characteristic equation on prime-to-ℓ torsion

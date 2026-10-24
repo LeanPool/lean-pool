@@ -17,10 +17,11 @@ Licensed under Apache License 2.0
 
 module
 
-public import Mathlib.NumberTheory.ModularForms.LevelOne.DimensionFormula
 public import Mathlib.RingTheory.LaurentSeries
+public import Mathlib.NumberTheory.ModularForms.Discriminant
 
-import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
+import Mathlib.NumberTheory.ModularForms.LevelOne.DimensionFormula
+
 
 /-!
 # Level one: weight 12N forms are P(j) Δ^N in ℂ((q))

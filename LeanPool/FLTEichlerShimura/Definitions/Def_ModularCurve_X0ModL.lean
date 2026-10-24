@@ -15,9 +15,12 @@ Licensed under Apache License 2.0
 module
 
 public import LeanPool.FLTEichlerShimura.Definitions.Def_AlgebraicCurve_DivisorClassGroup
-public import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_coeffMap_qExpand
-public import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_coeff_jqModC_neg_one
-public import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_coeff_jqModC_pow_of_lt
+public import LeanPool.FLTEichlerShimura.Definitions.Def_ModularCurve_JqCoeff
+public import LeanPool.FLTEichlerShimura.Definitions.Def_ModularCurve_LaurentCoeff
+
+import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_coeff_jqModC_pow_of_lt
+import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_coeff_jqModC_neg_one
+import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_coeffMap_qExpand
 
 /-!
 # j-expansions and modular function fields over an arbitrary field

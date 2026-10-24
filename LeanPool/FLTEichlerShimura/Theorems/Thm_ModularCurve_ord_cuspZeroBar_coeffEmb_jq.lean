@@ -20,7 +20,6 @@ module
 public import LeanPool.FLTEichlerShimura.Definitions.Def_ModularCurve_CuspidalClass
 
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_ord_cuspZeroBar_coeffEmb_qExpand
-import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
 
 /-!
 # Order of j at the cusp 0 equals -N

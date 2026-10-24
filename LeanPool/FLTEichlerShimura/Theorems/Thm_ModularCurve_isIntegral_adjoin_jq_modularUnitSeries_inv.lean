@@ -19,15 +19,10 @@ module
 
 public import LeanPool.FLTEichlerShimura.Definitions.Def_ModularCurve_ModularUnit
 
-import LeanPool.FLTEichlerShimura.Definitions.Def_ModularForm_HeckeOperator
-import Mathlib.NumberTheory.ModularForms.Discriminant
-import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_hasSum_modularUnitSeries_qParam
-import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_hasSum_smul_modularUnitSeries_inv_qParam
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_hasSum_modularUnitSeries_inv_qParam
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_hasSum_smul_modularUnitSeries_qParam
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_discriminant_div_discriminant_heckeDiagMatrix_smul
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_isIntegral_adjoin_jq_of_hasSum_of_gamma0_invariant
-import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
 
 /-!
 # Inverse of Ogg's modular unit is integral over ℚ[j]

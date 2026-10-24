@@ -17,7 +17,8 @@ Licensed under Apache License 2.0
 
 module
 
-public import LeanPool.FLTEichlerShimura.Definitions.Def_AlgebraicCurve_Differentials
+public import Mathlib.RingTheory.Kaehler.Basic
+public import LeanPool.FLTEichlerShimura.Definitions.Def_AlgebraicCurve_DivisorClassGroup
 
 import LeanPool.FLTEichlerShimura.Theorems.Thm_AlgebraicCurve_Place_transcendental_of_ord_ne_zero
 import LeanPool.FLTEichlerShimura.Theorems.Thm_AlgebraicCurve_isAlgebraic_adjoin_of_transcendental

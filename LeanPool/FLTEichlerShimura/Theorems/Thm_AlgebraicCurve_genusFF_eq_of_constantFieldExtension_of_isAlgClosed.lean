@@ -22,7 +22,6 @@ public import LeanPool.FLTEichlerShimura.Definitions.Def_AlgebraicCurve_Repartit
 
 import LeanPool.FLTEichlerShimura.Theorems.Thm_AlgebraicCurve_genusFF_le_of_constantFieldExtension_of_isAlgClosed
 import LeanPool.FLTEichlerShimura.Theorems.Thm_AlgebraicCurve_le_genusFF_of_constantFieldExtension_of_isAlgClosed
-import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
 
 /-!
 # Genus invariance under algebraically closed constant field extension

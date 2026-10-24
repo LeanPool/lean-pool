@@ -20,7 +20,6 @@ module
 public import LeanPool.FLTEichlerShimura.Definitions.Def_ModularCurve_ArithmeticGalois
 
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_adjoin_jBar_jNBar_eq_top
-import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
 
 /-!
 # Essential finite type of ℚ̄-function field of X₀(N)

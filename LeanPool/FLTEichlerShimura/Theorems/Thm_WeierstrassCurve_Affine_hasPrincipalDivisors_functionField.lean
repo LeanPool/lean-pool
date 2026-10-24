@@ -21,17 +21,13 @@ public import Mathlib.AlgebraicGeometry.EllipticCurve.Affine.Point
 public import Mathlib.RingTheory.SimpleRing.Principal
 public import LeanPool.FLTEichlerShimura.Definitions.Def_AlgebraicCurve_DivisorClassGroup
 
-import Mathlib.Algebra.Order.Ring.Star
-import Mathlib.Analysis.Normed.Ring.Lemmas
-import Mathlib.Data.Int.Star
-import Mathlib.FieldTheory.PurelyInseparable.Exponent
-import Mathlib.RingTheory.PicardGroup
-import Mathlib.RingTheory.Polynomial.DegreeLT
-import Mathlib.RingTheory.TotallySplit
-import LeanPool.FLTEichlerShimura.Definitions.Def_AlgebraicCurve_RatFuncPlaces
-import LeanPool.FLTEichlerShimura.Theorems.Thm_AlgebraicCurve_Place_ord_eq_neg_log_of_valuationSubring_eq
 import LeanPool.FLTEichlerShimura.Theorems.Thm_AlgebraicCurve_hasPrincipalDivisors_of_finiteDimensional_ratFunc
-import LeanPool.FLTEichlerShimura.Theorems.Thm_AlgebraicCurve_Place_min_ord_le_ord_add_v2
+import Mathlib.Analysis.Normed.Group.Basic
+import Mathlib.Data.EReal.Operations
+import Mathlib.RingTheory.Henselian
+import Mathlib.RingTheory.RegularLocalRing.Defs
+import Mathlib.Topology.Algebra.InfiniteSum.Order
+import Mathlib.Topology.MetricSpace.Bounded
 
 /-!
 # Principal divisors on a Weierstrass curve have degree zero

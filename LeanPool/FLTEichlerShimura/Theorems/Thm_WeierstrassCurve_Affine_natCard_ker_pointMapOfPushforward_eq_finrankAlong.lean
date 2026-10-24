@@ -20,17 +20,22 @@ module
 public import LeanPool.FLTEichlerShimura.Definitions.Def_Isogeny_ConditionalCurrency
 
 import LeanPool.FLTEichlerShimura.Definitions.Defs_IsogenyEndDatum_sharedLibrary
-import Mathlib.Algebra.Order.Ring.Star
 import Mathlib.Data.Int.Star
 import Mathlib.RingTheory.DedekindDomain.Different
-import Mathlib.RingTheory.Henselian
-import Mathlib.RingTheory.RegularLocalRing.Defs
 import LeanPool.FLTEichlerShimura.Theorems.Thm_AlgebraicCurve_Place_ramificationIndex_eq_ramificationIdx_fiberCenter
 import LeanPool.FLTEichlerShimura.Theorems.Thm_AlgebraicCurve_Place_sum_ramificationIndex_mul_inertiaDeg
-import LeanPool.FLTEichlerShimura.Theorems.Thm_WeierstrassCurve_Affine_hasPrincipalDivisors_functionField
 import LeanPool.FLTEichlerShimura.Theorems.Thm_WeierstrassCurve_Affine_pointMapOfPushforward_surjective
 import LeanPool.FLTEichlerShimura.Theorems.Thm_WeierstrassCurve_card_torsionBy_eq_sq_of_isAlgClosed
 import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
+import LeanPool.FLTEichlerShimura.Theorems.Thm_WeierstrassCurve_Affine_hasPrincipalDivisors_functionField
+import Mathlib.Tactic.NormNum.Prime
+import Mathlib.Analysis.Normed.Group.Basic
+import Mathlib.Topology.MetricSpace.Bounded
+import Mathlib.Data.EReal.Operations
+import Mathlib.Topology.Algebra.InfiniteSum.Order
+import Mathlib.RingTheory.Valuation.LocalSubring
+import Mathlib.RingTheory.Henselian
+import Mathlib.Algebra.Order.Ring.Star
 
 /-!
 # Kernel of a pushforward point map has order the degree

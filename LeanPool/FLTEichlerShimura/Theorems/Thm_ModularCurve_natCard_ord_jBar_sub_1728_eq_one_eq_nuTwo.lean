@@ -18,19 +18,14 @@ Licensed under Apache License 2.0
 module
 
 public import LeanPool.FLTEichlerShimura.Definitions.Def_ModularCurve_MazurStepThreeInputs
-public import LeanPool.FLTEichlerShimura.Definitions.Def_AlgebraicCurve_DivisorClassGroup
-public import LeanPool.FLTEichlerShimura.Definitions.Def_AlgebraicCurve_DivisorPushPull
-public import LeanPool.FLTEichlerShimura.Definitions.Def_ModularCurve_JLinePlaces
 public import LeanPool.FLTEichlerShimura.Definitions.Def_ModularCurve_GenusNumerics
 public import LeanPool.FLTEichlerShimura.Definitions.Def_ModularCurve_ModuliPoint
 
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_deg_eq_one_modularFunctionFieldBar
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_exists_finset_ord_jBar_sub_pos
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_sum_ord_jBar_sub_eq_dedekindPsi
-import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_three_mul_natCard_moduliPoint_j_eq_zero_eq_dedekindPsi_add_two_mul_nuThree
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_two_mul_natCard_moduliPoint_j_eq_1728_eq_dedekindPsi_add_nuTwo
 
-import Batteries.Tactic.ShowUnused
 
 /-!
 # Simple zeros of ̄ j-1728 number ν₂(N)
@@ -76,7 +71,7 @@ https://github.com/anthropics/fermats-last-theorem/blob/aa2d8b34692b16c70f699536
 
 section privateSection
 
-open IntermediateField AlgebraicCurve AlgebraicCurve.RationalFunctionField ModularCurve
+open IntermediateField AlgebraicCurve ModularCurve
   IsDedekindDomain WithZero
 
 section EFIX

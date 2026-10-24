@@ -16,6 +16,8 @@ module
 
 public import LeanPool.FLTEichlerShimura.Definitions.Def_AlgebraicCurve_LocalResidue
 public import LeanPool.FLTEichlerShimura.Definitions.Def_AlgebraicCurve_PlaceCompletion
+
+import Mathlib.Algebra.Order.Algebra
 /-!
 # Tate's abstract residue and cotrace–residue identities
 

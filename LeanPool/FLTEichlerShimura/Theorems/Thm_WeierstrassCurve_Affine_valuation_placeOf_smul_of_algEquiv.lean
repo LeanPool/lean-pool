@@ -21,8 +21,6 @@ public import Mathlib.RingTheory.SimpleRing.Principal
 public import LeanPool.FLTEichlerShimura.Definitions.Def_EllipticCurve_FunctionFieldPullback
 public import LeanPool.FLTEichlerShimura.Definitions.Def_FLTPrelim_GaloisRep
 
-import Mathlib.RingTheory.DedekindDomain.AdicValuation
-import Mathlib.RingTheory.DedekindDomain.Ideal.Lemmas
 import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
 
 /-!

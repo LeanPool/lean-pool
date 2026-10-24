@@ -21,7 +21,6 @@ public import Mathlib.Algebra.Squarefree.Basic
 public import Mathlib.SetTheory.Cardinal.Finite
 
 import Mathlib.GroupTheory.SpecificGroups.ZGroup
-import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
 
 /-!
 # Abelian groups of squarefree order are cyclic

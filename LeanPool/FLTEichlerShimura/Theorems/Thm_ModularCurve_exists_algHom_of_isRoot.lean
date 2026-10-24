@@ -17,8 +17,6 @@ Licensed under Apache License 2.0
 
 module
 
-public import LeanPool.FLTEichlerShimura.Definitions.Def_ModularCurve_X0
-public import LeanPool.FLTEichlerShimura.Definitions.Def_ModularCurve_JqCoeff
 public import LeanPool.FLTEichlerShimura.Definitions.Def_ModularCurve_LaurentCoeff
 public import LeanPool.FLTEichlerShimura.Definitions.Def_ModularCurve_QAdicPlace
 
@@ -28,12 +26,7 @@ import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_laurentBaseChange_ad
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_functionFieldGeneration
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_coeffEmb_jq
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_coeffEmb_jqN
-import Mathlib.FieldTheory.Relrank
-import Mathlib.FieldTheory.IntermediateField.Adjoin.Basic
-import Mathlib.FieldTheory.Minpoly.Field
-import Mathlib.Algebra.Polynomial.Div
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_transcendental_jqModC
-import Mathlib.FieldTheory.RatFunc.AsPolynomial
 import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
 
 /-!

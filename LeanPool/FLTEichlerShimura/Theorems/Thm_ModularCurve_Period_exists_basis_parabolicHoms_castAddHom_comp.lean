@@ -18,18 +18,12 @@ Licensed under Apache License 2.0
 module
 
 public import LeanPool.FLTEichlerShimura.Definitions.Def_ModularCurve_PeriodMap
-public import Mathlib.LinearAlgebra.Basis.Defs
 
 import LeanPool.FLTEichlerShimura.Theorems.Thm_Matrix_SpecialLinearGroup_exists_generators_free_mod_neg_one_of_forall_trace_ne
-import Mathlib.LinearAlgebra.Basis.Basic
 import Mathlib.GroupTheory.Schreier
-import Mathlib.GroupTheory.FreeGroup.Basic
 import Mathlib.NumberTheory.ModularForms.CongruenceSubgroups
 import Mathlib.LinearAlgebra.FreeModule.PID
-import Mathlib.LinearAlgebra.Dimension.Free
-import Mathlib.LinearAlgebra.Finsupp.LinearCombination
 import Mathlib.Algebra.Module.Torsion.Basic
-import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
 
 /-!
 # An integral basis of parabolic characters survives base change

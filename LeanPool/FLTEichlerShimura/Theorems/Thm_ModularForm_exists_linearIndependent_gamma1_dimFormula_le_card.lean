@@ -22,7 +22,6 @@ public import Mathlib.NumberTheory.ModularForms.Basic
 
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularForm_exists_linearIndependent_gamma1_dimFormula_le_card_of_even
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularForm_exists_linearIndependent_gamma1_dimFormula_le_card_of_odd
-import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
 
 /-!
 # Lower bound for dim M_k(Γ₁(M)), k≥ 3, M≥ 5

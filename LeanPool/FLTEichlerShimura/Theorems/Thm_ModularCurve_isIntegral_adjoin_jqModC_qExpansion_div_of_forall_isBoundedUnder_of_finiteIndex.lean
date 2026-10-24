@@ -25,6 +25,7 @@ import Mathlib.RingTheory.SimpleRing.Principal
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_jqModC_eq_qExpansion_E4_cube_div_discriminant
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularForm_isIntegral_adjoin_qExpansion_div_discriminant_pow_of_isArithmetic
 import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
+import Mathlib.NumberTheory.ModularForms.NormTrace
 
 /-!
 # Integrality over ℂ[j] of q-expansion quotients of modular forms

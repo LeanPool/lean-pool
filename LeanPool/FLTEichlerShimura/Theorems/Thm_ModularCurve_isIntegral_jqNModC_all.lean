@@ -19,10 +19,8 @@ module
 
 public import LeanPool.FLTEichlerShimura.Definitions.Def_ModularCurve_JqCoeff
 
-import LeanPool.FLTEichlerShimura.Definitions.Def_ModularCurve_PhiGen
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_isIntegral_jqNModC_all_of_modularPolynomialFamily
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_modularPolynomialFamily
-import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
 
 /-!
 # Integrality of ̄ j(q^N) over K(̄ j(q))

@@ -26,7 +26,7 @@ import LeanPool.FLTEichlerShimura.Theorems.Thm_HahnSeries_mem_puiseuxRamSubfield
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_adjoin_jBar_jNBar_eq_top
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_natCard_normalized_algHom_jBar_eq_toNat_ord
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_nonempty_modularPolynomialData
-import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
+import Mathlib.RingTheory.Henselian
 
 /-!
 # Places where jmath̄-j₀ vanishes count embedding classes

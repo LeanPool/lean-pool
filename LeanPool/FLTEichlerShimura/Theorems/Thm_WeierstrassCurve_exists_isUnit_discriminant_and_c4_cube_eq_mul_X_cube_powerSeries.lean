@@ -23,7 +23,6 @@ public import Mathlib.RingTheory.PowerSeries.Basic
 
 import Mathlib.RingTheory.PowerSeries.Inverse
 import Mathlib.RingTheory.SimpleRing.Principal
-import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
 
 /-!
 # Good-reduction Weierstrass model over K[[t]] with j=t³

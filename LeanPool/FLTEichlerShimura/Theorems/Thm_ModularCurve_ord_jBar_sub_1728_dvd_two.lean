@@ -18,7 +18,6 @@ Licensed under Apache License 2.0
 module
 
 public import LeanPool.FLTEichlerShimura.Definitions.Def_ModularCurve_MazurStepThreeInputs
-public import LeanPool.FLTEichlerShimura.Definitions.Def_ModularCurve_GenusNumerics
 
 import Mathlib.Algebra.CharP.Invertible
 import Mathlib.RingTheory.PicardGroup
@@ -32,6 +31,7 @@ import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_nonempty_modularPoly
 import LeanPool.FLTEichlerShimura.Theorems.Thm_WeierstrassCurve_exists_isUnit_discriminant_and_c6_sq_eq_mul_X_sq_powerSeries
 import LeanPool.FLTEichlerShimura.Theorems.Thm_WeierstrassCurve_hasRamBound_one_of_nsmul_eq_zero_of_isUnit_discriminant_powerSeries
 import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
+import Mathlib.RingTheory.Henselian
 
 /-!
 # Ramification over j = 1728 divides 2 on X₀(N)

@@ -22,7 +22,6 @@ public import Mathlib.AlgebraicGeometry.EllipticCurve.Affine.Point
 public import Mathlib.FieldTheory.IsAlgClosed.Basic
 
 import LeanPool.FLTEichlerShimura.Theorems.Thm_WeierstrassCurve_card_torsion_of_isAlgClosed_light
-import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
 
 /-!
 # n-torsion of an elliptic curve over an algebraically closed field

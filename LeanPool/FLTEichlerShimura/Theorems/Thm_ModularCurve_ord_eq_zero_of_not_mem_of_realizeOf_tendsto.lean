@@ -31,6 +31,7 @@ import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_LevelN_valuation_app
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_exists_modularForm_mul_qExpansion_eq_of_mem_laurentBaseChange_qExpFunctionFieldC_of_T_mem
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_exists_tendsto_div_smul_of_eventuallyEq_realizeOf_of_tendsto
 import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
+import Mathlib.RingTheory.Henselian
 
 /-!
 # Modular functions with nonzero cusp limits are units at cuspidal places

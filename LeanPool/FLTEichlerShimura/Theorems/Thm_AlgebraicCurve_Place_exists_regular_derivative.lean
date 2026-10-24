@@ -14,20 +14,16 @@ AlgebraicCurve.Place.ord_diffCoeff_D_nonneg_of_isSeparable (submission
 
 module
 
-public import LeanPool.FLTEichlerShimura.Definitions.Def_AlgebraicCurve_Differentials
-public import Mathlib.FieldTheory.Perfect
+public import Mathlib.RingTheory.Kaehler.Basic
+public import LeanPool.FLTEichlerShimura.Definitions.Def_AlgebraicCurve_DivisorClassGroup
 
 import LeanPool.FLTEichlerShimura.Definitions.Def_AlgebraicCurve_PlacesOverDVR
-import LeanPool.FLTEichlerShimura.Theorems.Thm_P2M_Dup_AlgebraicCurve_Place_ord_nonneg_of_mem
-import LeanPool.FLTEichlerShimura.Theorems.Thm_P2M_Dup_AlgebraicCurve_Place_mem_of_ord_nonneg
 import LeanPool.FLTEichlerShimura.Theorems.Thm_AlgebraicCurve_Place_transcendental_of_ord_ne_zero
-import LeanPool.FLTEichlerShimura.Theorems.Thm_AlgebraicCurve_finiteDimensional_adjoin_of_transcendental
-import LeanPool.FLTEichlerShimura.Theorems.Thm_KaehlerDifferential_D_ne_zero_of_transcendental
-import Mathlib.RingTheory.Unramified.Basic
-import Mathlib.RingTheory.Unramified.LocalRing
-import Mathlib.RingTheory.Kaehler.Polynomial
-import Mathlib.RingTheory.EssentialFiniteness
 import Mathlib.FieldTheory.RatFunc.AsPolynomial
+import Mathlib.RingTheory.Henselian
+import Mathlib.RingTheory.RegularLocalRing.Defs
+import Mathlib.RingTheory.SimpleRing.Principal
+import Mathlib.RingTheory.Unramified.LocalRing
 
 /-!
 # Regular derivatives with respect to a uniformizer

@@ -19,7 +19,6 @@ module
 
 public import Mathlib.NumberTheory.ModularForms.Cusps
 
-import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
 
 /-!
 # A uniform integer period for all SL₂(ℤ)-conjugates

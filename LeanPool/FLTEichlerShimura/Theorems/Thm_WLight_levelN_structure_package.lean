@@ -19,35 +19,15 @@ module
 
 public import Mathlib.Analysis.SpecialFunctions.Elliptic.Weierstrass
 public import Mathlib.NumberTheory.ModularForms.Discriminant
-public import Mathlib.NumberTheory.ModularForms.CongruenceSubgroups
-public import Mathlib.Geometry.Manifold.Notation
 
-import Mathlib.NumberTheory.ModularForms.EisensteinSeries.QExpansion
-import Mathlib.NumberTheory.ModularForms.LevelOne.GradedRing
 import Mathlib.RingTheory.DedekindDomain.IntegralClosure
-import Mathlib.RingTheory.DedekindDomain.Ideal.Lemmas
-import Mathlib.RingTheory.Unramified.Field
-import Mathlib.Analysis.Meromorphic.NormalForm
-import Mathlib.RingTheory.Discriminant
-import Mathlib.RingTheory.Adjoin.PowerBasis
 import Mathlib.RingTheory.Adjoin.Polynomial.Transcendental
-import Mathlib.FieldTheory.PrimitiveElement
-import Mathlib.RingTheory.RootsOfUnity.Complex
 import Mathlib.Analysis.Complex.Polynomial.Basic
-import Mathlib.LinearAlgebra.Lagrange
-import Mathlib.FieldTheory.LinearDisjoint
-import Mathlib.FieldTheory.Galois.Infinite
-import Mathlib.RingTheory.AlgebraicIndependent.TranscendenceBasis
-import Mathlib.RingTheory.AlgebraicIndependent.AlgebraicClosure
-import Mathlib.RingTheory.AlgebraicIndependent.Adjoin
-import Mathlib.RingTheory.Polynomial.RationalRoot
-import Mathlib.Analysis.Analytic.Order
-import Mathlib.RingTheory.PowerSeries.Order
-import Mathlib.RingTheory.Polynomial.IsIntegral
 import LeanPool.FLTEichlerShimura.Theorems.Thm_WLight_levelOne_hauptmodul_package
 import LeanPool.FLTEichlerShimura.Theorems.Thm_WLight_frickeFunction_modularity_package
 import LeanPool.FLTEichlerShimura.Theorems.Thm_WLight_frickeFunction_orbit_package
 import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
+import Mathlib.CategoryTheory.Category.Init
 
 /-!
 # Fixer of the Fricke functions and structure of A_N
@@ -107,7 +87,7 @@ p2m_open "WLight"
 
 section Floor
 open scoped UpperHalfPlane Manifold MatrixGroups ModularForm
-p2m_open "PeriodPair ModularForm CuspForm ModularForm.CuspForm"
+p2m_open "PeriodPair ModularForm CuspForm"
 p2m_open "UpperHalfPlane~I"
 
 def j : ℍ → ℂ := fun z => E₄ z ^ 3 / ModularForm.discriminant z
@@ -341,7 +321,7 @@ end B3_spelling2
 
 section B6Instance
 
-p2m_open "UpperHalfPlane ModularForm CuspForm ModularForm.CuspForm Polynomial Real.Polynomial"
+p2m_open "UpperHalfPlane ModularForm CuspForm Polynomial Real.Polynomial"
 open scoped MatrixGroups Manifold
 
 theorem frickeF_integral_over_j (N : ℕ) [NeZero N] :
@@ -358,7 +338,7 @@ end B6Instance
 section B6Ring
 
 p2m_open "UpperHalfPlane ModularForm SlashInvariantForm ModularFormClass CuspForm \
-  ModularForm.CuspForm Polynomial Real.Polynomial Filter"
+  Polynomial Real.Polynomial Filter"
 open scoped MatrixGroups Manifold
 
 def PoleBounded (f : ℍ → ℂ) : Prop :=

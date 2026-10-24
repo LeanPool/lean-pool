@@ -15,9 +15,10 @@ Licensed under Apache License 2.0
 module
 
 public import LeanPool.FLTEichlerShimura.Definitions.Def_ModularForm_HeckeOperatorForms
-public import LeanPool.FLTEichlerShimura.Theorems.Thm_CuspForm_heckeTLin_comm
-public import LeanPool.FLTEichlerShimura.Theorems.Thm_CuspForm_heckeTLin_heckeULin_comm
-public import LeanPool.FLTEichlerShimura.Theorems.Thm_CuspForm_heckeULin_comm
+
+import LeanPool.FLTEichlerShimura.Theorems.Thm_CuspForm_heckeULin_comm
+import LeanPool.FLTEichlerShimura.Theorems.Thm_CuspForm_heckeTLin_heckeULin_comm
+import LeanPool.FLTEichlerShimura.Theorems.Thm_CuspForm_heckeTLin_comm
 
 /-!
 # Hecke algebras acting on cusp forms for Γ0​(N)

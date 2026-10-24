@@ -21,7 +21,6 @@ module
 public import LeanPool.FLTEichlerShimura.Definitions.Def_ModularCurve_GenusNumerics
 
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ZMod_natCard_isAddCyclic_addSubgroup_prod_map_eq_nuThree
-import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
 
 /-!
 # Counting σ-stable cyclic n-subgroups: the count is ν₃(n)

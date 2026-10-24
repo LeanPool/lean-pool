@@ -19,6 +19,9 @@ module
 
 public import LeanPool.FLTEichlerShimura.Definitions.Def_AlgebraicCurve_RiemannRochRows
 
+import Mathlib.Data.Int.Star
+import Mathlib.Algebra.Order.Ring.Star
+
 /-!
 # Degree of a canonical divisor is 2g-2
 

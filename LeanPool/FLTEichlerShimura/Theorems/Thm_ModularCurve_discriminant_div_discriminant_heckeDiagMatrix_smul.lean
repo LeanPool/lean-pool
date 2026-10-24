@@ -17,7 +17,6 @@ Licensed under Apache License 2.0
 
 module
 
-public import Mathlib.NumberTheory.ModularForms.CongruenceSubgroups
 public import Mathlib.NumberTheory.ModularForms.Discriminant
 public import LeanPool.FLTEichlerShimura.Definitions.Def_ModularForm_HeckeOperator
 

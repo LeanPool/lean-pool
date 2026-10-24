@@ -15,7 +15,8 @@ Licensed under Apache License 2.0
 module
 
 public import LeanPool.FLTEichlerShimura.Definitions.Def_AlgebraicCurve_Correspondence
-public import LeanPool.FLTEichlerShimura.Definitions.Def_ModularCurve_ArithmeticGalois
+public import LeanPool.FLTEichlerShimura.Definitions.Def_ModularCurve_LaurentCoeff
+public import LeanPool.FLTEichlerShimura.Definitions.Def_ModularCurve_X0
 
 /-!
 # Hecke correspondences on base-changed modular function fields
@@ -47,8 +48,7 @@ $N\ell$. `heckeDivBarTranspose` and `heckePic0BarTranspose` are the same constru
 roles of $\alpha$ and $\beta$ exchanged. The module only constructs these maps: no primality of
 $\ell$ is assumed, $\ell \mid N$ and $\ell = 1$ are permitted, nothing is proved about the
 operators, and neither orientation is identified with the classical action $a_n \mapsto a_{n\ell} +
-\ell a_{n/\ell}$ on $q$-expansions. Two `example`s check that at $L = \overline{\mathbb{Q}}$ the
-maps land on `modularFunctionFieldBar` and give an endomorphism of `JZero N`.
+\ell a_{n/\ell}$ on $q$-expansions.
 
 **Relation to Mathlib.** Mathlib has no Hecke correspondence on Jacobians of modular curves; the
 function-field carriers (`modularFunctionFieldFull`, `laurentBaseChange`, `qExpand`), the divisor
@@ -223,23 +223,6 @@ def heckePic0BarTranspose
   Pic0.correspondence (heckeAlphaBar L N ℓ) (heckeBetaBar L N ℓ) hα hβ hFI hfin hN
 
 end Transpose
-
-section ModularInstance
-
-example :
-    (modularFunctionFieldBar N) →ₐ[AlgebraicClosure ℚ] (modularFunctionFieldBar (N * ℓ)) :=
-  heckeAlphaBar (AlgebraicClosure ℚ) N ℓ
-
-example (hα : HeckeAlphaBarIntegral (AlgebraicClosure ℚ) N ℓ)
-    (hβ : HeckeBetaBarIntegral (AlgebraicClosure ℚ) N ℓ)
-    [HasPrincipalDivisors (AlgebraicClosure ℚ) (modularFunctionFieldBar (N * ℓ))]
-    (hFI : FundamentalIdentityAlong (AlgebraicClosure ℚ) (heckeBetaBar (AlgebraicClosure ℚ) N ℓ) hβ)
-    (hfin : FiniteAlong (AlgebraicClosure ℚ) (heckeAlphaBar (AlgebraicClosure ℚ) N ℓ))
-    (hN : NormFormulaAlong (AlgebraicClosure ℚ) (heckeAlphaBar (AlgebraicClosure ℚ) N ℓ) hfin) :
-    JZero N →+ JZero N :=
-  heckePic0Bar hα hβ hFI hfin hN
-
-end ModularInstance
 
 end ModularCurve
 

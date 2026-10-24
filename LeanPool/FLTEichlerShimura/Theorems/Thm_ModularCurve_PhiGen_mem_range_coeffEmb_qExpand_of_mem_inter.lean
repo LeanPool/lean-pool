@@ -17,13 +17,13 @@ Licensed under Apache License 2.0
 
 module
 
+public import LeanPool.FLTEichlerShimura.Definitions.Def_ModularCurve_LaurentCoeff
 public import LeanPool.FLTEichlerShimura.Definitions.Def_ModularCurve_X0
-public import LeanPool.FLTEichlerShimura.Definitions.Def_ModularCurve_PhiGen
 
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_coeffMap_qExpand
 import Mathlib.RingTheory.RootsOfUnity.PrimitiveRoots
-import Mathlib.FieldTheory.Galois.Basic
 import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
+import LeanPool.FLTEichlerShimura.Definitions.Def_ModularCurve_PhiGen
 
 /-!
 # Joint descent for q-expansions with rational coefficients

@@ -19,7 +19,9 @@ module
 
 public import LeanPool.FLTEichlerShimura.Definitions.Def_HeckeEis_BinaryFormRep
 
-import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
+import Mathlib.Tactic.Positivity.Finset
+import Mathlib.Algebra.Order.Field.Basic
+
 
 /-!
 # X₁ⁿ-coefficient of a binary form as its value at (0,1)

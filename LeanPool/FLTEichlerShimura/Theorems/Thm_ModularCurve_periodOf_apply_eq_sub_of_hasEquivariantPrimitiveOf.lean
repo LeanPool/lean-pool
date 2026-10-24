@@ -20,6 +20,9 @@ module
 public import LeanPool.FLTEichlerShimura.Definitions.Def_ModularCurve_PeriodOf
 
 import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
+import Mathlib.Analysis.LocallyConvex.AbsConvexOpen
+import Mathlib.Analysis.SpecialFunctions.Bernstein
+import Mathlib.MeasureTheory.Covering.Besicovitch
 
 /-!
 # Segment period equals difference of primitive values

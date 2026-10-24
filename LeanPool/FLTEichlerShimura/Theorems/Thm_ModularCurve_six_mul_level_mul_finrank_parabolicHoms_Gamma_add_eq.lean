@@ -29,7 +29,6 @@ import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_Period_existsUnique_
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_Period_exists_basis_parabolicHoms_castAddHom_comp
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_Period_finrank_parabolicHoms_add_natCard_le_finrank_addMonoidHom_add_one
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularGroup_exists_eq_conj_T_zpow_of_trace_sq_eq_four
-import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
 
 /-!
 # Parabolic cohomology rank of Γ(N), denominator-free form

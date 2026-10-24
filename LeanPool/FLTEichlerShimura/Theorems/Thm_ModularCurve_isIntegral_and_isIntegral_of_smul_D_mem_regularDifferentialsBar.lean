@@ -18,6 +18,7 @@ Licensed under Apache License 2.0
 module
 
 public import LeanPool.FLTEichlerShimura.Definitions.Def_ModularCurve_HeckeDifferential
+public import LeanPool.FLTEichlerShimura.Definitions.Def_ModularCurve_MazurStepThreeInputs
 
 import Mathlib.Algebra.Order.Ring.Star
 import Mathlib.Analysis.Normed.Ring.Lemmas
@@ -38,7 +39,8 @@ import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_ord_jBar_dvd_three
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_ord_jBar_sub_1728_dvd_two
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_ord_jBar_sub_eq_one_of_ne_zero_of_ne
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_sum_neg_ord_jBar_eq_dedekindPsi
-import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
+import Mathlib.RingTheory.Valuation.LocalSubring
+import Mathlib.RingTheory.SimpleRing.Principal
 
 /-!
 # Integrality bounds from regularity of x djmath̄ on X₀(N)_ℚ̄

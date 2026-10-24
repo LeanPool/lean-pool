@@ -31,7 +31,7 @@ import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_thetaL_coeffMap_eq_c
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularForm_exists_coe_eq_of_levelOne
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularForm_exists_tendsto_slash_div_qParam_pow_of_conj_T_pow_mem
 import LeanPool.FLTEichlerShimura.Theorems.Thm_omegaRow_T2
-import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
+import Mathlib.NumberTheory.ModularForms.CuspFormSubmodule
 
 /-!
 # Even parity of ord_P v+ord_P y at cusp places

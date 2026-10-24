@@ -21,7 +21,6 @@ public import LeanPool.FLTEichlerShimura.Definitions.Def_ModularCurve_EMD
 public import LeanPool.FLTEichlerShimura.Definitions.Def_HahnSeries_Monodromy
 
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_samePlace_iff_exists_hahnTwist
-import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
 
 /-!
 # Places of normalised Hahn-series embeddings differ by monodromy

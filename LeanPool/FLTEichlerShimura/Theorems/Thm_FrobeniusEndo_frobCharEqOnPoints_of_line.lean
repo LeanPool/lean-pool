@@ -24,8 +24,6 @@ import LeanPool.FLTEichlerShimura.Theorems.Thm_FrobeniusEndo_charEq_on_torsionBy
 import LeanPool.FLTEichlerShimura.Theorems.Thm_FrobeniusEndo_frobCharEqOnPoints_of_charEq_on_torsion_of_trace_ne_zero
 import LeanPool.FLTEichlerShimura.Theorems.Thm_FrobeniusEndo_frobCharEqOnPoints_of_charEq_on_torsion_of_trace_zero
 import Mathlib.FieldTheory.Finite.Basic
-import Mathlib.Algebra.CharP.Algebra
-import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
 
 /-!
 # Pointwise characteristic equation of Frobenius from the kernel-count line

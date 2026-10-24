@@ -14,12 +14,18 @@ Licensed under Apache License 2.0
 
 module
 
-public import Mathlib.Algebra.GroupWithZero.Submonoid.CancelMulZero
-public import Mathlib.RingTheory.AdicCompletion.LocalRing
-
 public import LeanPool.FLTEichlerShimura.Definitions.Def_AlgebraicCurve_DivisorPushPull
 public import LeanPool.FLTEichlerShimura.Definitions.Def_AlgebraicCurve_IsCurveOver
 public import LeanPool.FLTEichlerShimura.Definitions.Def_AlgebraicCurve_LocalResidue
+public import Mathlib.RingTheory.Henselian
+public import Mathlib.Order.CompletePartialOrder
+public import Mathlib.RingTheory.AdicCompletion.Algebra
+
+import LeanPool.FLTEichlerShimura.Definitions.Def_ModularCurve_CanonicalDivisorUniformizer
+import Mathlib.Algebra.GroupWithZero.Submonoid.CancelMulZero
+import Mathlib.RingTheory.SimpleRing.Principal
+import Mathlib.RingTheory.RegularLocalRing.Defs
+import Mathlib.RingTheory.AdicCompletion.LocalRing
 
 /-!
 # Local residues at places: pole filtration, canonical data, sections

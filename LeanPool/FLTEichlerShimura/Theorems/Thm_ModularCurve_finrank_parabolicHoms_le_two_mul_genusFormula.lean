@@ -28,7 +28,6 @@ import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_Gamma0_index
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_Period_six_mul_finrank_parabolicHoms_add_le_index
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_natCard_fixedPoints_ST_cosets_Gamma0_eq_nuThree
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_natCard_fixedPoints_S_cosets_Gamma0_eq_nuTwo
-import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
 
 /-!
 # dim_K H¹ₚₐᵣ(Γ₀(N),K) ≤ 2g(N)

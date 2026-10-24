@@ -15,7 +15,6 @@ Licensed under Apache License 2.0
 module
 
 public import Mathlib.AlgebraicGeometry.EllipticCurve.DivisionPolynomial.Basic
-public import Mathlib.Algebra.MvPolynomial.CommRing
 
 /-!
 # Division polynomial ω for Weierstrass curves

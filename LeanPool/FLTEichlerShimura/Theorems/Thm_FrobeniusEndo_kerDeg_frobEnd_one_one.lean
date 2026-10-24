@@ -18,9 +18,9 @@ Licensed under Apache License 2.0
 module
 
 public import LeanPool.FLTEichlerShimura.Definitions.Def_EllipticCurve_FrobeniusEndo
-public import Mathlib.FieldTheory.Finite.Basic
 
-import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
+import Mathlib.FieldTheory.Finite.Basic
+
 
 /-!
 # Fixed points of the q-power Frobenius are the F-rational points

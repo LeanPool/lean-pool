@@ -20,7 +20,6 @@ module
 public import Mathlib.NumberTheory.ModularForms.Basic
 public import LeanPool.FLTEichlerShimura.Definitions.Def_ModularForm_HeckeOperator
 
-import LeanPool.FLTEichlerShimura.Definitions.Def_FLTPrelim_Modularity
 import LeanPool.FLTEichlerShimura.Theorems.Thm_UpperHalfPlane_qCoeff_heckeU
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularForm_mdifferentiable_heckeU
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularForm_isBoundedAtImInfty_heckeU

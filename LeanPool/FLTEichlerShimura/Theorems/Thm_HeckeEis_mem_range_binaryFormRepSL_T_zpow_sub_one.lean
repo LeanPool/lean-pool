@@ -21,6 +21,8 @@ public import LeanPool.FLTEichlerShimura.Definitions.Def_HeckeEis_BinaryFormRep
 
 import Mathlib.RingTheory.SimpleRing.Principal
 import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
+import Mathlib.Tactic.Positivity.Finset
+import Mathlib.Algebra.Order.Field.Basic
 
 /-!
 # Forms with no X₁ⁿ term lie in the image of T^h-1

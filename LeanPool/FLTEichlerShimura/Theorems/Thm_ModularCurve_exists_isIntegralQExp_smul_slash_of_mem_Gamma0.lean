@@ -21,7 +21,6 @@ public import LeanPool.FLTEichlerShimura.Definitions.Def_ModularCurve_X1
 
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_exists_isIntegralQExp_smul_of_ratCast_qExpansion
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_exists_ratCast_qExpansion_slash_of_mem_Gamma0
-import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
 
 /-!
 # Slash by Γ₀(M) has integral q-expansion after scaling

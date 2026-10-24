@@ -30,7 +30,6 @@ import LeanPool.FLTEichlerShimura.Theorems.Thm_Valuation_eq_comap_of_valuationSu
 import LeanPool.FLTEichlerShimura.Theorems.Thm_WeierstrassCurve_Affine_valuation_placeOf_neg_transEquiv_algebraMap
 import LeanPool.FLTEichlerShimura.Theorems.Thm_WeierstrassCurve_Affine_valuation_transEquiv_le
 import LeanPool.FLTEichlerShimura.Theorems.Thm_WeierstrassCurve_Affine_valuation_transEquiv_le_self
-import Mathlib.Data.Set.Card.Arithmetic
 import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
 
 /-!

@@ -23,7 +23,6 @@ public import Mathlib.NumberTheory.ModularForms.QExpansion
 
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularForm_exists_degeneracy_Gamma0
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_laurent_qParam_coeff_unique
-import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
 
 /-!
 # q-expansion of τ↦ F(Nτ) for level-one F

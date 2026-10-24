@@ -17,13 +17,10 @@ Licensed under Apache License 2.0
 
 module
 
-public import LeanPool.FLTEichlerShimura.Definitions.Def_ModularCurve_X0
 public import LeanPool.FLTEichlerShimura.Definitions.Def_ModularCurve_JqCoeff
 
-import LeanPool.FLTEichlerShimura.Definitions.Def_ModularCurve_LaurentCoeff
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_coeffMap_qExpand
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_coeffMap_injective
-import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
 
 /-!
 # Modular equation Φ_ℓ(j(qᵈ),j(q^{dℓ}))=0 over any base ring

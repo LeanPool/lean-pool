@@ -21,7 +21,6 @@ public import LeanPool.FLTEichlerShimura.Definitions.Def_AlgebraicCurve_DivisorP
 public import LeanPool.FLTEichlerShimura.Definitions.Def_ModularCurve_JLinePlaces
 
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_ord_jLinePlaceZero_jGen
-import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
 
 /-!
 # Ramification index over j=0 equals ord_w(j)

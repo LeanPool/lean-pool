@@ -20,7 +20,6 @@ module
 public import LeanPool.FLTEichlerShimura.Definitions.Def_ModularCurve_GenusNumerics
 
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ZMod_natCard_isAddCyclic_addSubgroup_prod_map_eq_nuTwo
-import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
 
 /-!
 # σ-stable cyclic subgroups of order n number ν₂(n)

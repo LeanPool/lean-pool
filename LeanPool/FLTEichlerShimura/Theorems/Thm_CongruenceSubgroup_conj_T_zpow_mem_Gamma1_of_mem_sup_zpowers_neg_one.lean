@@ -19,7 +19,6 @@ module
 
 public import Mathlib.NumberTheory.ModularForms.CongruenceSubgroups
 
-import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
 
 /-!
 # Regularity of the cusps of Γ₁(M) for M ∤ 4

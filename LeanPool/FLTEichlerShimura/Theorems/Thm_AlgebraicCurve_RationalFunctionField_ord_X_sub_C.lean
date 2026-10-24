@@ -23,6 +23,7 @@ public import LeanPool.FLTEichlerShimura.Definitions.Def_AlgebraicCurve_RatFuncP
 import LeanPool.FLTEichlerShimura.Definitions.Def_AlgebraicCurve_RatFuncPlaceClassification
 import LeanPool.FLTEichlerShimura.Theorems.Thm_AlgebraicCurve_RationalFunctionField_ord_ofHeightOneSpectrum_of_span
 import LeanPool.FLTEichlerShimura.Theorems.Thm_AlgebraicCurve_RationalFunctionField_ord_placeInfty_algebraMap
+import Mathlib.RingTheory.Henselian
 
 /-!
 # Divisor of X-b on the rational function field

@@ -32,7 +32,6 @@ import Mathlib.RingTheory.Int.Basic
 import Mathlib.Tactic.NormNum.Prime
 import Mathlib.Topology.Separation.CompletelyRegular
 import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
-import Batteries.Tactic.ShowUnused
 
 /-!
 # Modularity of the weight-one Eisenstein series E₁(1,χ₋₃)

@@ -19,7 +19,9 @@ module
 
 public import LeanPool.FLTEichlerShimura.Definitions.Def_AlgebraicCurve_RiemannRochRows
 
-import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
+import Mathlib.Data.Int.Star
+import Mathlib.Algebra.Order.Ring.Star
+
 
 /-!
 # ℓ of a canonical divisor equals the genus

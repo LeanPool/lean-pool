@@ -18,14 +18,11 @@ Licensed under Apache License 2.0
 module
 
 public import LeanPool.FLTEichlerShimura.Definitions.Def_EllipticCurve_FrobeniusEndo
-public import Mathlib.LinearAlgebra.Determinant
-public import Mathlib.FieldTheory.IsAlgClosed.Basic
 
 import LeanPool.FLTEichlerShimura.Theorems.Thm_FrobeniusEndo_frobCharEqOnPoints_of_line
 import LeanPool.FLTEichlerShimura.Theorems.Thm_FrobeniusEndo_kerDeg_frobEnd_line_one
 import LeanPool.FLTEichlerShimura.Theorems.Thm_FrobeniusEndo_kerDeg_frobEnd_line_one_ne_zero
 import LeanPool.FLTEichlerShimura.Theorems.Thm_WeierstrassCurve_card_torsion_of_isAlgClosed
-import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
 
 /-!
 # Frobenius satisfies π²-aπ+q=0 on all k-points

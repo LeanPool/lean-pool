@@ -20,10 +20,8 @@ module
 public import LeanPool.FLTEichlerShimura.Definitions.Def_ModularCurve_GenusNumerics
 
 import Mathlib.Algebra.Order.Ring.Star
-import Mathlib.Data.Int.ConditionallyCompleteOrder
 import Mathlib.Data.Int.Star
 import Mathlib.Order.CompletePartialOrder
-import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
 
 /-!
 # Counting τ-stable cyclic subgroups of order n in (ℤ/n)²

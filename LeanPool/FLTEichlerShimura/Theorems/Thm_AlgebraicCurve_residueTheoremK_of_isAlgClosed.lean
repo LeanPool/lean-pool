@@ -20,18 +20,23 @@ module
 public import Mathlib.FieldTheory.RatFunc.Basic
 public import LeanPool.FLTEichlerShimura.Definitions.Def_AlgebraicCurve_IsCurveOver
 public import LeanPool.FLTEichlerShimura.Definitions.Def_AlgebraicCurve_LocalResidue
+public import Mathlib.RingTheory.SimpleRing.Principal
 
 import Mathlib.Algebra.Module.StablyFree.Basic
 import Mathlib.Analysis.Normed.Unbundled.SpectralNorm
 import Mathlib.RingTheory.Etale.Weakly
-import Mathlib.RingTheory.Norm.Transitivity
 import Mathlib.RingTheory.TotallySplit
-import LeanPool.FLTEichlerShimura.Definitions.Def_AlgebraicCurve_PlacesOverDVR
-import LeanPool.FLTEichlerShimura.Definitions.Def_AlgebraicCurve_RatFuncPlaceClassification
 import LeanPool.FLTEichlerShimura.Definitions.Defs_AlgebraicCurve_residueTheorem_sharedLibrary
 import LeanPool.FLTEichlerShimura.Theorems.Thm_AlgebraicCurve_residueTheoremK_ratFunc_of_isAlgClosed
 import LeanPool.FLTEichlerShimura.Theorems.Thm_AlgebraicCurve_residueTraceCompletionCommute
 import LeanPool.FLTEichlerShimura.Theorems.Thm_AlgebraicCurve_Place_ramificationIndex_eq_ramificationIdx_fiberCenter
+import Mathlib.RingTheory.RamificationInertia.Basic
+import Mathlib.RingTheory.PicardGroup
+import Mathlib.RingTheory.Valuation.Integral
+import Mathlib.Data.Int.Star
+import Mathlib.Algebra.Order.Ring.Star
+import Mathlib.Data.Nat.Choose.Multinomial
+import Mathlib.RingTheory.RegularLocalRing.Defs
 
 
 /-!

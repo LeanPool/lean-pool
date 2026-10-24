@@ -22,7 +22,6 @@ public import Mathlib.NumberTheory.ModularForms.Discriminant
 import Mathlib.NumberTheory.ModularForms.LevelOne.DimensionFormula
 import Mathlib.RingTheory.SimpleRing.Principal
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularForm_exists_rankinCohen_one_qExpansion_eq
-import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
 
 /-!
 # First Rankin–Cohen bracket of E₄ and Δ

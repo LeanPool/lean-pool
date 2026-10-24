@@ -15,8 +15,9 @@ Licensed under Apache License 2.0
 module
 
 public import Mathlib.NumberTheory.ModularForms.Discriminant
-
 public import LeanPool.FLTEichlerShimura.Definitions.Def_PeriodPair_Uniformization
+
+import Mathlib.CategoryTheory.Category.Init
 
 /-!
 # Fricke functions and the level-N analytic coordinate ring

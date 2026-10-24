@@ -25,7 +25,6 @@ import LeanPool.FLTEichlerShimura.Theorems.Thm_CongruenceSubgroup_Gamma0_le_clos
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularFormClass_qCoeff_comp_heckeDiagMatrix_smul
 import LeanPool.FLTEichlerShimura.Theorems.Thm_CuspForm_finiteDimensional_Gamma0
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularFormClass_eq_of_forall_qCoeff_eq
-import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
 
 /-!
 # Vanishing of a cusp form supported on multiples of p ∤ m

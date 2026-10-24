@@ -17,9 +17,11 @@ Licensed under Apache License 2.0
 
 module
 
-public import Mathlib.NumberTheory.ModularForms.LevelOne.DimensionFormula
+public import Mathlib.NumberTheory.ModularForms.QExpansion
+public import Mathlib.RingTheory.PowerSeries.Order
 
-import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
+import Mathlib.NumberTheory.ModularForms.LevelOne.DimensionFormula
+
 
 /-!
 # Level-one vanishing from q-expansion order at width M

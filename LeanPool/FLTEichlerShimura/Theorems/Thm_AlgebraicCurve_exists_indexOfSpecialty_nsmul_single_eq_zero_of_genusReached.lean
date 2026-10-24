@@ -21,7 +21,9 @@ public import LeanPool.FLTEichlerShimura.Definitions.Def_AlgebraicCurve_AdelicIn
 public import LeanPool.FLTEichlerShimura.Definitions.Def_AlgebraicCurve_IsCurveOver
 
 import LeanPool.FLTEichlerShimura.Theorems.Thm_AlgebraicCurve_omegaSpace_finite_of_genusReached
-import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
+import Mathlib.RingTheory.SimpleRing.Principal
+import Mathlib.Data.Int.Star
+import Mathlib.Algebra.Order.Ring.Star
 
 /-!
 # Strong approximation: i(nQ)=0 for some n

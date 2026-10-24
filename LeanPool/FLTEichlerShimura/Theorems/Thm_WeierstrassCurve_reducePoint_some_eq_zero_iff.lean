@@ -21,7 +21,6 @@ public import LeanPool.FLTEichlerShimura.Definitions.Def_EllipticCurve_PointRedu
 
 import LeanPool.FLTEichlerShimura.Theorems.Thm_WeierstrassCurve_valuation_le_one_of_equation
 import LeanPool.FLTEichlerShimura.Theorems.Thm_WeierstrassCurve_reducePoint_some
-import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
 
 /-!
 # Affine point reduces to O iff x is non-integral

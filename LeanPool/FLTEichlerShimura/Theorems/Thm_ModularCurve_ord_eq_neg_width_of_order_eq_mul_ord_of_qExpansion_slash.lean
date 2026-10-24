@@ -23,7 +23,6 @@ public import LeanPool.FLTEichlerShimura.Definitions.Def_ModularCurve_X1
 import Mathlib.Algebra.Order.Ring.Star
 import Mathlib.Analysis.Complex.Polynomial.Basic
 import Mathlib.Data.Int.Star
-import Mathlib.NumberTheory.Modular
 import Mathlib.NumberTheory.ModularForms.NormTrace
 import LeanPool.FLTEichlerShimura.Definitions.Def_AlgebraicCurve_Repartitions
 import LeanPool.FLTEichlerShimura.Theorems.Thm_AlgebraicCurve_exists_finset_sum_ord_sub_algebraMap_eq_finrank_of_isAlgClosed
@@ -37,7 +36,7 @@ import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_neg_width_le_ord_of_
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_realizeOf_eq_div
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_transcendental_and_finiteDimensional_adjoin_laurentBaseChange_qExpFunctionFieldC_of_coe_eq_jqModC
 import LeanPool.FLTEichlerShimura.Theorems.Thm_UpperHalfPlane_qExpansion_coeff_mul_width
-import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
+import Mathlib.RingTheory.SimpleRing.Principal
 
 /-!
 # Order of j at a cusp place equals minus its width

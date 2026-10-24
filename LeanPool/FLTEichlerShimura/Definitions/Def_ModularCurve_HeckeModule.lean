@@ -16,6 +16,7 @@ module
 
 public import LeanPool.FLTEichlerShimura.Definitions.Def_ModularCurve_HeckeOperatorTotal
 public import LeanPool.FLTEichlerShimura.Definitions.Def_HeckeGalois_EichlerShimura
+public import LeanPool.FLTEichlerShimura.Definitions.Def_ModularCurve_ArithmeticGalois
 
 /-!
 # Hecke algebra action on J0​(N)(Q​), guarded by commutation

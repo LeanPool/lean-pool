@@ -17,7 +17,7 @@ Licensed under Apache License 2.0
 
 module
 
-public import Mathlib.NumberTheory.ModularForms.QExpansion
+public import Mathlib.NumberTheory.ModularForms.Basic
 
 import Mathlib.NumberTheory.ModularForms.CuspFormSubmodule
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularForm_finiteDimensional_of_isArithmetic

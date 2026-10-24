@@ -19,7 +19,6 @@ module
 
 public import Mathlib.RingTheory.DedekindDomain.AdicValuation
 
-import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
 
 /-!
 # Principality of a height-one prime from a pulled-back simple zero

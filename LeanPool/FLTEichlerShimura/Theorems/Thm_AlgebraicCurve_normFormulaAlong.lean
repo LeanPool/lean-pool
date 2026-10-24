@@ -20,7 +20,6 @@ module
 public import LeanPool.FLTEichlerShimura.Definitions.Def_AlgebraicCurve_Correspondence
 
 import LeanPool.FLTEichlerShimura.Theorems.Thm_AlgebraicCurve_Divisor_pushforwardNormFormula
-import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
 
 /-!
 # Pushforward norm formula along a finite separable K-morphism

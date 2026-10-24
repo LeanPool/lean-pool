@@ -14,9 +14,10 @@ Licensed under Apache License 2.0
 
 module
 
-public import Mathlib.Analysis.LocallyConvex.AbsConvexOpen
 public import LeanPool.FLTEichlerShimura.Definitions.Def_CuspForm_HeckeAlgebra
 public import LeanPool.FLTEichlerShimura.Definitions.Def_HeckeGalois_EichlerShimura
+
+import Mathlib.Analysis.LocallyConvex.AbsConvexOpen
 
 /-!
 # Period lattice of weight-two forms and its Hecke action

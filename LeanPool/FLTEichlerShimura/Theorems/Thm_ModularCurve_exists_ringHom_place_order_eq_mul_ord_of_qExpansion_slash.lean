@@ -27,6 +27,8 @@ import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_exists_modularForm_m
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_exists_modularForm_mul_qExpansion_eq_of_mem_laurentBaseChange_qExpFunctionFieldC
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_jqModC_mem_intFormRatiosC
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_realizeOf_eq_div
+import Mathlib.RingTheory.SimpleRing.Principal
+import Mathlib.RingTheory.Henselian
 
 /-!
 # Cuspidal place and q_N-expansion at σ∞ on X(Γ)

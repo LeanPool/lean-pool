@@ -20,7 +20,6 @@ module
 public import LeanPool.FLTEichlerShimura.Definitions.Def_WeierstrassCurve_VeluOrderTwo
 
 import LeanPool.FLTEichlerShimura.Theorems.Thm_WeierstrassCurve_Delta_eq_veluGx_sq_mul_velu2QuadDisc
-import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
 
 /-!
 # Nonvanishing of `velu2QuadDisc` at a 2-torsion point

@@ -21,7 +21,9 @@ public import LeanPool.FLTEichlerShimura.Definitions.Def_WeierstrassCurve_Functi
 
 import Mathlib.FieldTheory.IntermediateField.Adjoin.Basic
 import LeanPool.FLTEichlerShimura.Theorems.Thm_WeierstrassCurve_Affine_adjoin_yCoord_eq_top
-import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
+import Mathlib.Tactic.Continuity.Init
+import Mathlib.CategoryTheory.Category.Init
+import Mathlib.Data.Rat.Floor
 
 /-!
 # The function field of a Weierstrass curve is finite over F(x)

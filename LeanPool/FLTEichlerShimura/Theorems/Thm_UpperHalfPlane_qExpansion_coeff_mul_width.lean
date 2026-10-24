@@ -20,7 +20,6 @@ module
 public import Mathlib.Analysis.CStarAlgebra.Classes
 public import Mathlib.NumberTheory.ModularForms.QExpansion
 
-import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
 
 /-!
 # Change of width in a q-expansion

@@ -24,7 +24,7 @@ import Mathlib.Algebra.MvPolynomial.Monad
 import Mathlib.Algebra.Order.Ring.Star
 import Mathlib.Analysis.CStarAlgebra.Classes
 import Mathlib.RingTheory.RootsOfUnity.Complex
-import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
+import Mathlib.Tactic.Positivity.Finset
 
 /-!
 # Lower bounds for S- and ST-fixed binary forms

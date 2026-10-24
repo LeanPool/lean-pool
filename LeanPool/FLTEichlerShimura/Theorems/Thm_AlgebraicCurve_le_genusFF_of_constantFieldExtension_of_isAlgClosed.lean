@@ -29,7 +29,8 @@ import LeanPool.FLTEichlerShimura.Theorems.Thm_AlgebraicCurve_exists_genus_riema
 import LeanPool.FLTEichlerShimura.Theorems.Thm_AlgebraicCurve_indexOfSpecialty_eq_finrank_H1
 import LeanPool.FLTEichlerShimura.Theorems.Thm_AlgebraicCurve_indexOfSpecialty_eq_zero_of_genusReached
 import LeanPool.FLTEichlerShimura.Theorems.Thm_AlgebraicCurve_stichtenothGenusExists_of_isCurveOver
-import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
+import Mathlib.Data.Int.Star
+import Mathlib.Algebra.Order.Ring.Star
 
 /-!
 # Genus does not drop under algebraically closed constant field extension

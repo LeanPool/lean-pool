@@ -20,7 +20,6 @@ module
 public import LeanPool.FLTEichlerShimura.Definitions.Def_ModularCurve_JqCoeff
 
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_map_intCast_pow_char_eq_qExpand
-import Mathlib.RingTheory.Algebraic.Basic
 import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
 
 /-!

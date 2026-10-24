@@ -20,7 +20,6 @@ module
 public import LeanPool.FLTEichlerShimura.Definitions.Def_AlgebraicCurve_Correspondence
 
 import LeanPool.FLTEichlerShimura.Theorems.Thm_AlgebraicCurve_SemilinearAut_ord_algebraMap_smul
-import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
 
 /-!
 # Ramification index is invariant under intertwined semilinear automorphisms

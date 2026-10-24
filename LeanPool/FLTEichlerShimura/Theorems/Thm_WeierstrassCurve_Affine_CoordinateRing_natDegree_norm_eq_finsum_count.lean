@@ -22,9 +22,6 @@ public import Mathlib.RingTheory.DedekindDomain.Factorization
 public import Mathlib.RingTheory.SimpleRing.Principal
 
 import Mathlib.RingTheory.Ideal.Norm.AbsNorm
-import Mathlib.LinearAlgebra.FiniteDimensional.Lemmas
-import Mathlib.LinearAlgebra.FreeModule.Norm
-import Mathlib.FieldTheory.IsAlgClosed.Basic
 import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
 
 /-!

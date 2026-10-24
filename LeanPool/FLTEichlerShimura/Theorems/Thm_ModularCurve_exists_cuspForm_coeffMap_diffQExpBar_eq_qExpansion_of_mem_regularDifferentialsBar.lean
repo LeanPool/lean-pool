@@ -25,7 +25,6 @@ import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_exists_cuspForm_qExp
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_isCurveOver_modularFunctionFieldBar
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_isIntegral_and_isIntegral_of_smul_D_mem_regularDifferentialsBar
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_theta_coeff
-import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
 
 /-!
 # Regular differentials on X₀(N)_ℚ̄ are weight-two cusp forms

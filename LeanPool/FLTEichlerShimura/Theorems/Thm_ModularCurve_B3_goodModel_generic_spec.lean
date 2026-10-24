@@ -18,7 +18,6 @@ Licensed under Apache License 2.0
 module
 
 public import LeanPool.FLTEichlerShimura.Definitions.Def_ModularCurve_SpecialisationVocab
-public import LeanPool.FLTEichlerShimura.Definitions.Def_ModularCurve_TatePoint
 
 import Mathlib.RingTheory.SimpleRing.Principal
 

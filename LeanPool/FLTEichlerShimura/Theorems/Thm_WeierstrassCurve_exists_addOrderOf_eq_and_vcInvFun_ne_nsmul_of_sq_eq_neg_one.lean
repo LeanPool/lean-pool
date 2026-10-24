@@ -21,10 +21,8 @@ public import Mathlib.FieldTheory.IsAlgClosed.Basic
 public import LeanPool.FLTEichlerShimura.Definitions.Def_WeierstrassCurve_VariableChangePointEquiv
 
 import Mathlib.AlgebraicGeometry.EllipticCurve.DivisionPolynomial.Degree
-import Mathlib.AlgebraicGeometry.EllipticCurve.Reduction
 import Mathlib.RingTheory.Henselian
 import Mathlib.RingTheory.RegularLocalRing.Defs
-import LeanPool.FLTEichlerShimura.Theorems.Thm_AlgebraicCurve_Place_eq_ofHeightOneSpectrum_of_XClass_mem_nonunits_of_YClass_mem_nonunits
 import LeanPool.FLTEichlerShimura.Theorems.Thm_WeierstrassCurve_Affine_Point_smul_some_eq_zero_iff
 import LeanPool.FLTEichlerShimura.Theorems.Thm_WeierstrassCurve_Affine_Point_zsmul_some_eq_some_div
 import LeanPool.FLTEichlerShimura.Theorems.Thm_WeierstrassCurve_Affine_evalEval_psi_sq
@@ -32,7 +30,11 @@ import LeanPool.FLTEichlerShimura.Theorems.Thm_WeierstrassCurve_exists_addEquiv_
 import LeanPool.FLTEichlerShimura.Theorems.Thm_WeierstrassCurve_nonempty_torsionBy_addEquiv_zmod_prod_of_isAlgClosed
 import LeanPool.FLTEichlerShimura.Theorems.Thm_WeierstrassCurve_variableChange_mk_smul_eq_self_of_sq_eq_neg_one
 import LeanPool.FLTEichlerShimura.Theorems.Thm_WeierstrassCurve_card_torsion_of_isAlgClosed
-import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
+import Mathlib.Algebra.CharP.Algebra
+import Mathlib.Algebra.Order.BigOperators.Ring.Finset
+import Mathlib.Basic.NNReal.Defs
+import Mathlib.Combinatorics.Matroid.Init
+import Mathlib.RingTheory.SimpleRing.Principal
 
 /-!
 # Non-scalar action of [i] on p-torsion of y²=x³+Ax

@@ -25,8 +25,6 @@ import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_relfinrank_full_of_s
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_relfinrank_modularFunctionField
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_functionFieldGeneration_iff_full_eq
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_dedekindPsi_of_squarefree
-import Mathlib.FieldTheory.Relrank
-import Mathlib.FieldTheory.Minpoly.Field
 import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
 
 /-!

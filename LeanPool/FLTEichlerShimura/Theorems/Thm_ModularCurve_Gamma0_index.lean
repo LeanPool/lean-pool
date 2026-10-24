@@ -19,10 +19,8 @@ module
 
 public import LeanPool.FLTEichlerShimura.Definitions.Def_ModularCurve_X0
 public import Mathlib.NumberTheory.ModularForms.CongruenceSubgroups
-public import Mathlib.GroupTheory.Index
 
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_card_projectiveLine_zmod
-import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
 
 /-!
 # Index of Γ₀(N) equals ψ(N)

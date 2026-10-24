@@ -22,6 +22,9 @@ public import LeanPool.FLTEichlerShimura.Definitions.Def_ModularCurve_PeriodOf
 import Mathlib.Analysis.Complex.HasPrimitives
 import LeanPool.FLTEichlerShimura.Theorems.Thm_Subgroup_IsArithmetic_exists_nat_mem_strictPeriods_conj
 import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
+import Mathlib.NumberTheory.ModularForms.NormTrace
+import Mathlib.Analysis.SpecialFunctions.Bernstein
+import Mathlib.MeasureTheory.Covering.Besicovitch
 
 /-!
 # Existence of an admissible equivariant primitive of a weight-2 cusp form

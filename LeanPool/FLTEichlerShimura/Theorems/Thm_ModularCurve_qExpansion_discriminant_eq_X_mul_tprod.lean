@@ -18,12 +18,9 @@ Licensed under Apache License 2.0
 module
 
 public import Mathlib.NumberTheory.ModularForms.Discriminant
-public import Mathlib.RingTheory.PowerSeries.PiTopology
 
 import Mathlib.Analysis.Complex.TaylorSeries
 import Mathlib.Analysis.Calculus.Deriv.Polynomial
-import Mathlib.Analysis.Complex.LocallyUniformLimit
-import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
 
 /-!
 # q-expansion of Δ as a formal product

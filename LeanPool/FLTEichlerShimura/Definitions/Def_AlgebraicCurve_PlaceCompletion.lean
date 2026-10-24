@@ -14,20 +14,19 @@ Licensed under Apache License 2.0
 
 module
 
-public import Mathlib.Algebra.Order.Ring.Star
-public import Mathlib.Algebra.Order.Star.Real
-public import Mathlib.Data.Int.Star
-public import Mathlib.RingTheory.Flat.TorsionFree
-public import Mathlib.RingTheory.Henselian
-public import Mathlib.RingTheory.PicardGroup
-public import Mathlib.RingTheory.RegularLocalRing.Defs
-public import Mathlib.RingTheory.SimpleRing.Principal
-public import Mathlib.Topology.Algebra.Module.FiniteDimension
+public import Mathlib.RingTheory.Valuation.Discrete.RankOne
 public import Mathlib.Topology.Algebra.Valued.NormedValued
-public import Mathlib.Topology.UniformSpace.Uniformizable
-
 public import LeanPool.FLTEichlerShimura.Definitions.Def_AlgebraicCurve_DivisorPushPull
-public import LeanPool.FLTEichlerShimura.Definitions.Def_DedekindDomain_AdicValuation_InlineSpecific
+public import LeanPool.FLTEichlerShimura.Definitions.Def_DedekindDomain_AdicValuation_InlineSpecific -- shake: keep
+
+import Mathlib.Topology.Separation.CompletelyRegular
+import Mathlib.Topology.Algebra.Module.FiniteDimension
+import Mathlib.RingTheory.PicardGroup
+import Mathlib.RingTheory.Flat.TorsionFree
+import Mathlib.RingTheory.SimpleRing.Principal
+import Mathlib.RingTheory.Henselian
+import Mathlib.Data.Int.Star
+import Mathlib.Algebra.Order.Ring.Star
 
 /-!
 # Adic completions at places and their functoriality

@@ -18,6 +18,9 @@ public import LeanPool.FLTEichlerShimura.Definitions.Def_CuspForm_Petersson
 public import LeanPool.FLTEichlerShimura.Definitions.Def_ModularCurve_PeriodLattice
 public import LeanPool.FLTEichlerShimura.Definitions.Def_ModularCurve_PeriodMapBundled
 
+import Mathlib.Analysis.SpecialFunctions.Bernstein
+import Mathlib.MeasureTheory.Covering.Besicovitch
+
 /-!
 # Periods, period lattice and Petersson product for general Γ
 

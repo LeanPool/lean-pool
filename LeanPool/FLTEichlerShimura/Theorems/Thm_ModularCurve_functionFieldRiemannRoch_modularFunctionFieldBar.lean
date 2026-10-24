@@ -31,6 +31,8 @@ import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_isCurveOver_modularF
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_isIntegral_jqNModC_all
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_laurentBaseChange_adjoin_pair
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_transcendental_jqModC
+import Mathlib.RingTheory.RegularLocalRing.Defs
+import Mathlib.Data.Nat.Choose.Multinomial
 
 /-!
 # Riemann–Roch for the modular function field over ℚ̄

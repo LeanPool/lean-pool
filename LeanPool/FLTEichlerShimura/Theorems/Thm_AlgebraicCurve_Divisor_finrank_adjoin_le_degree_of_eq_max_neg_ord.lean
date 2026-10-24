@@ -27,7 +27,9 @@ import LeanPool.FLTEichlerShimura.Theorems.Thm_AlgebraicCurve_Place_mem_toValuat
 import LeanPool.FLTEichlerShimura.Theorems.Thm_AlgebraicCurve_ell_le_degree_add_ellZero
 import LeanPool.FLTEichlerShimura.Theorems.Thm_AlgebraicCurve_finiteDimensional_lSpace
 import LeanPool.FLTEichlerShimura.Theorems.Thm_AlgebraicCurve_linearIndependent_pow_mul
-import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
+import Mathlib.RingTheory.SimpleRing.Principal
+import Mathlib.Data.Int.Star
+import Mathlib.Algebra.Order.Ring.Star
 
 /-!
 # Lower bound [F:K(x)] ≤ deg of the pole divisor

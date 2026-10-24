@@ -19,11 +19,6 @@ module
 
 public import LeanPool.FLTEichlerShimura.Definitions.Def_ModularForm_HeckeOperator
 
-import Mathlib.Data.Nat.GCD.Basic
-import Mathlib.Basic.Complex.Basic
-import Mathlib.Algebra.Lie.OfAssociative
-import Mathlib.Algebra.Algebra.Rat
-import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
 
 /-!
 # Commutativity of the coefficient operators Uₚ and U_q

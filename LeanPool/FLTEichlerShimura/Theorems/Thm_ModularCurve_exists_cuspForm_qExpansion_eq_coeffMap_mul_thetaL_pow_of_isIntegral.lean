@@ -23,7 +23,6 @@ public import LeanPool.FLTEichlerShimura.Definitions.Def_ModularCurve_MazurStepT
 public import LeanPool.FLTEichlerShimura.Definitions.Def_ModularCurve_QExpansionDiff
 
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_exists_cuspForm_qExpansion_eq_mul_thetaL_pow_of_isIntegral
-import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
 
 /-!
 # Cusp forms from ℚ̄-rational modular functions via ι₀(x)(vartheta j)^m

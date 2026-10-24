@@ -20,7 +20,6 @@ module
 public import Mathlib.NumberTheory.ModularForms.Basic
 public import LeanPool.FLTEichlerShimura.Definitions.Def_HeckeEis_EichlerIntegral
 
-import Mathlib.NumberTheory.ModularForms.QExpansion
 import Mathlib.NumberTheory.ModularForms.NormTrace
 import LeanPool.FLTEichlerShimura.Theorems.Thm_HeckeEis_IsEichlerIntegral_slash
 import LeanPool.FLTEichlerShimura.Theorems.Thm_HeckeEis_IsEichlerIntegral_vadd_sub_T_zpow_apply_mem_range

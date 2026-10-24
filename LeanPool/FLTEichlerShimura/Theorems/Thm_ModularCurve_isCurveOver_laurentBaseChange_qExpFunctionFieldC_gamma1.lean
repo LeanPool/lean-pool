@@ -22,7 +22,6 @@ public import LeanPool.FLTEichlerShimura.Definitions.Def_ModularCurve_X1
 
 import LeanPool.FLTEichlerShimura.Theorems.Thm_AlgebraicCurve_isCurveOver_of_transcendental_of_perfectField
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_JOneES_exists_transcendental_finiteDimensional_laurentBaseChange
-import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
 
 /-!
 # K·ℚ(X₁(M)) is a curve over K

@@ -18,7 +18,6 @@ Licensed under Apache License 2.0
 module
 
 public import LeanPool.FLTEichlerShimura.Definitions.Def_EllipticCurve_TateModule
-public import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
 
 /-!
 # Functoriality of the p-adic Tate module in M

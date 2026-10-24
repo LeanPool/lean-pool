@@ -18,23 +18,14 @@ Licensed under Apache License 2.0
 module
 
 public import LeanPool.FLTEichlerShimura.Definitions.Def_ModularCurve_MazurStepThreeInputs
-public import LeanPool.FLTEichlerShimura.Definitions.Def_AlgebraicCurve_DivisorClassGroup
-public import LeanPool.FLTEichlerShimura.Definitions.Def_AlgebraicCurve_DivisorPushPull
-public import LeanPool.FLTEichlerShimura.Definitions.Def_AlgebraicCurve_PlacesOverDVR
-public import LeanPool.FLTEichlerShimura.Definitions.Def_AlgebraicCurve_RatFuncPlaces
 
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_relfinrank_laurentBaseChange_modularFunctionFieldFull
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_relfinrank_full_eq_dedekindPsi
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_dedekindPsi_pos
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_transcendental_coeffEmb_jq
 import LeanPool.FLTEichlerShimura.Theorems.Thm_AlgebraicCurve_Place_sum_ramificationIndex_mul_inertiaDeg_fiberOver
-import Mathlib.FieldTheory.Relrank
-import Mathlib.FieldTheory.IntermediateField.Adjoin.Algebra
-import Mathlib.FieldTheory.Perfect
-import Mathlib.RingTheory.DedekindDomain.AdicValuation
-import Mathlib.RingTheory.Adjoin.Polynomial.Basic
-import Mathlib.RingTheory.Algebraic.Basic
-import Mathlib.RingTheory.PrincipalIdealDomain
+import LeanPool.FLTEichlerShimura.Definitions.Def_AlgebraicCurve_RatFuncPlaces
+import Mathlib.RingTheory.Henselian
 
 /-!
 # Finiteness of the zero locus of jmath̄ - j₀

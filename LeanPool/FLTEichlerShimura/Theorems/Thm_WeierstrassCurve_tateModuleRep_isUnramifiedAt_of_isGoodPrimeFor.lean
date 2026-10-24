@@ -18,7 +18,6 @@ Licensed under Apache License 2.0
 module
 
 public import LeanPool.FLTEichlerShimura.Definitions.Def_EllipticCurve_TateModule
-public import LeanPool.FLTEichlerShimura.Definitions.Def_FLTPrelim_Modularity
 
 import LeanPool.FLTEichlerShimura.Theorems.Thm_WeierstrassCurve_galoisRepUnramifiedAt_of_hasGoodReduction
 import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
