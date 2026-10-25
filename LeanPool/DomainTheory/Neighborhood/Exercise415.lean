@@ -7,13 +7,9 @@ module
 
 public import LeanPool.DomainTheory.Neighborhood.Exercise124
 import LeanPool.DomainTheory.Neighborhood.Exercise413
-import Mathlib.Data.Finset.Attr
-import Mathlib.Data.Rat.Cast.Order
 import Mathlib.Order.Zorn
-import Mathlib.Tactic.NormNum.Abs
-import Mathlib.Tactic.NormNum.DivMod
-import Mathlib.Tactic.NormNum.OfScientific
-import Mathlib.Tactic.NormNum.Pow
+
+import Mathlib.Tactic.Set -- shake: keep
 
 /-!
 # Exercise 4.15 (Scott 1981, PRG-19, Lecture IV) — a maximal (and a least) fixed
@@ -78,7 +74,7 @@ theorem exists_maximal_fixedPoint (f : V.Element → V.Element) (hf : Monotone f
     intro c hcS hchain
     rcases c.eq_empty_or_nonempty with rfl | hne
     · refine ⟨⊥, ?_, fun z hz => ((Set.mem_empty_iff_false z).mp hz).elim⟩
-      simp_all
+      simp_all only [Set.empty_subset, IsChain.empty, Set.mem_ofPred_eq, _root_.bot_le]
     · refine ⟨V.chainUnion c hne hchain, ?_, fun z hz => V.le_chainUnion c hne hchain hz⟩
       -- `⊔c` is post-fixed: each `x ∈ c` has `x ⊑ f x ⊑ f(⊔c)`.
       change V.chainUnion c hne hchain ≤ f (V.chainUnion c hne hchain)

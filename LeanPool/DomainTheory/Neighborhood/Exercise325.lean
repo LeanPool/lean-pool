@@ -7,12 +7,6 @@ module
 
 public import LeanPool.DomainTheory.Neighborhood.Exercise122
 public import LeanPool.DomainTheory.Neighborhood.FunctionSpace
-import Mathlib.Data.Finset.Attr
-import Mathlib.Data.Rat.Cast.Order
-import Mathlib.Tactic.NormNum.Abs
-import Mathlib.Tactic.NormNum.DivMod
-import Mathlib.Tactic.NormNum.OfScientific
-import Mathlib.Tactic.NormNum.Pow
 
 /-!
 # Exercise 3.25 (Scott 1981, PRG-19, §3) — the open sets of `|𝒟|` form a domain
@@ -117,7 +111,7 @@ theorem mapOfOpen_rel_empty (U : Set V.Element) (X : Set α) :
     rcases h with h | ⟨_, h⟩
     · exact absurd h Set.empty_ne_univ
     · exact h
-  · simp_all
+  · simp_all only [and_self, or_true, implies_true]
 
 /-! ### From an approximable map `𝒟 → 𝒪` to an open set. -/
 

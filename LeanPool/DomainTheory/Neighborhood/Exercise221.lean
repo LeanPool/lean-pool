@@ -7,7 +7,6 @@ module
 
 public import LeanPool.DomainTheory.Neighborhood.ApproximableExercises
 public import LeanPool.DomainTheory.Neighborhood.ExampleB
-import Mathlib.Order.BooleanAlgebra.Set
 import Mathlib.Tactic.Attr.Core
 
 /-!
@@ -86,7 +85,7 @@ theorem cone_not_subset_singleton (σ τ : Str) : ¬ cone σ ⊆ ({τ} : Set Str
 theorem cone_ne_singleton (σ τ : Str) : cone σ ≠ ({τ} : Set Str) := by
   intro h
   refine cone_not_subset_singleton σ τ ?_
-  simp_all
+  exact le_of_le_of_eq (fun ⦃a⦄ a_1 => a_1) h
 
 /-- Nested-or-disjoint for a cone vs. a terminator singleton: `{τ} ⊆ σΣ*` iff `σ prefix
 τ`, else
@@ -97,7 +96,7 @@ theorem cone_singleton_nd (σ τ : Str) :
     Or.inr (Or.inl (Set.singleton_subset_iff.mpr (mem_cone.mpr h)))
   else
     Or.inr (Or.inr (by
-      simp_all))
+      exact Set.inter_singleton_of_notMem h))
 
 /-- Nested-or-disjoint for a terminator singleton vs. a cone (the mirror of
 `cone_singleton_nd`). -/
@@ -107,7 +106,7 @@ theorem singleton_cone_nd (σ τ : Str) :
     Or.inl (Set.singleton_subset_iff.mpr (mem_cone.mpr h))
   else
     Or.inr (Or.inr (by
-      simp_all))
+      exact Set.singleton_inter_eq_empty.mpr h))
 
 /-- Nested-or-disjoint for two terminator singletons: equal or disjoint. -/
 theorem singleton_singleton_nd (σ τ : Str) :
@@ -115,7 +114,8 @@ theorem singleton_singleton_nd (σ τ : Str) :
       ({σ} : Set Str) ∩ ({τ} : Set Str) = ∅ := by
   by_cases h : σ = τ
   · subst h; exact Or.inl subset_rfl
-  · simp_all
+  · simp_all only [Set.subset_singleton_iff, Set.mem_singleton_iff, imp_false, forall_eq,
+    not_false_eq_true, Set.singleton_inter_of_notMem, or_true]
 
 /-- **`𝒞` is pairwise nested-or-disjoint.** Cone/cone is the `𝔹` trichotomy; the
 mixed and
@@ -158,7 +158,7 @@ theorem subset_singleton_eq {W : Set Str} {σ : Str} (hW : C.mem W) (hsub : W �
     W = ({σ} : Set Str) := by
   rcases hW with ⟨ρ, rfl⟩ | ⟨ρ, rfl⟩
   · exact absurd hsub (cone_not_subset_singleton ρ σ)
-  · simp_all
+  · exact Set.singleton_eq_singleton_iff.mpr (hsub rfl)
 
 /-! ### Total elements: finite sequences `↑{σ}`, and `⊥ ⊏ Λ`. -/
 
@@ -202,7 +202,7 @@ theorem bot_lt_Lambda : C.bot < Lambda := by
 /-- `σ{ρ} = {σρ}`: prepending `σ` to a terminator singleton. -/
 theorem prepend_singleton (σ ρ : Str) : prepend σ ({ρ} : Set Str) = ({σ ++ ρ} : Set Str) := by
   ext w
-  simp_all
+  simp_all only [mem_prepend, Set.mem_singleton_iff, exists_eq_left]
 
 /-- Prepending preserves `𝒞`-membership (cone ↦ cone, singleton ↦ singleton). -/
 theorem memC_prepend (σ : Str) {Y : Set Str} (hY : C.mem Y) : C.mem (prepend σ Y) := by
@@ -306,7 +306,7 @@ theorem juxtapose_singleton_mem (σ : Str) (y : C.Element) {Z : Set Str} :
       rw [C_master, prepend_univ]
       exact (cone_subset_cone.mpr hρσ).trans hsub
     · obtain rfl : σ = ρ := by
-        simp_all
+        exact cone_injective (congrArg cone (hsingleX rfl))
       exact ⟨Y, hYmem, hsub⟩
   · rintro ⟨hZ, Y', hY'mem, hsub⟩
     exact ⟨{σ}, Y', ⟨memC_singleton σ, subset_rfl⟩, hY'mem, y.sub hY'mem, hZ,

@@ -9,13 +9,7 @@ public import LeanPool.DomainTheory.Neighborhood.Exercise316
 public import LeanPool.DomainTheory.Neighborhood.FunctionSpace
 public import LeanPool.DomainTheory.Neighborhood.Example12
 public import LeanPool.DomainTheory.Neighborhood.ExampleB
-public import Mathlib.Tactic.ToAdditive
-import Mathlib.Data.Finset.Attr
-import Mathlib.Data.Rat.Cast.Order
-import Mathlib.Tactic.NormNum.Abs
-import Mathlib.Tactic.NormNum.DivMod
-import Mathlib.Tactic.NormNum.OfScientific
-import Mathlib.Tactic.NormNum.Pow
+import Mathlib.Algebra.Order.Ring.Nat
 
 /-!
 # Exercise 3.17 (Scott 1981, PRG-19, §3) — `B` is a retract of `T^∞`
@@ -75,15 +69,15 @@ theorem bitNbhd_mem (b : Bool) : T.mem (bitNbhd b) := by
 
 theorem exists_not_mem_bitNbhd (b : Bool) : ∃ t : Token, t ∉ bitNbhd b := by
   cases b
-  · exact ⟨1, by simp [bitNbhd, Example12.zero]⟩
-  · exact ⟨0, by simp [bitNbhd, Example12.one]⟩
+  · exact ⟨1, by change (1 : Fin 2) ≠ 0; decide⟩
+  · exact ⟨0, by change (0 : Fin 2) ≠ 1; decide⟩
 
 /-- `T`-neighbourhoods are non-empty (`∅ ∉ T`). -/
 theorem T_nbhd_nonempty {F : Set Token} (hF : T.mem F) : F.Nonempty := by
   rcases (Example12.mem_iff F).mp hF with rfl | rfl | rfl
-  · exact ⟨0, by simp [Example12.master]⟩
-  · exact ⟨0, by simp [Example12.zero]⟩
-  · exact ⟨1, by simp [Example12.one]⟩
+  · exact ⟨0, by simp only [Example12.master, Fin.isValue, Set.mem_univ]⟩
+  · exact ⟨0, by simp only [Example12.zero, Fin.isValue, Set.mem_singleton_iff]⟩
+  · exact ⟨1, by simp only [Example12.one, Fin.isValue, Set.mem_singleton_iff]⟩
 
 /-! ### The encoding set `encSet σ`. -/
 
@@ -97,15 +91,17 @@ def encSet (σ : Str) : Set (ℕ × Token) := {p | ∀ b, σ[p.1]? = some b → 
 theorem fiber_encSet_some {σ : Str} {i : ℕ} {b : Bool} (h : σ[i]? = some b) :
     fiber (encSet σ) i = bitNbhd b := by
   ext t
-  simp_all
+  simp_all only [mem_fiber, mem_encSet, Option.some.injEq, forall_eq']
 
 theorem fiber_encSet_none {σ : Str} {i : ℕ} (h : σ[i]? = none) :
     fiber (encSet σ) i = Set.univ := by
   ext t
-  simp_all
+  simp_all only [getElem?_eq_none_iff, not_lt, mem_fiber, mem_encSet, getElem?_neg,
+    reduceCtorEq, IsEmpty.forall_iff, implies_true, Set.mem_univ]
 
 @[simp] theorem encSet_nil : encSet [] = Set.univ := by
-  ext p; simp [encSet]
+  ext p; simp only [encSet, List.getElem?_nil, reduceCtorEq, IsEmpty.forall_iff, implies_true,
+    Set.ofPred_true, Set.mem_univ]
 
 /-- `encSet σ` is a `T^∞`-neighbourhood. -/
 theorem encSet_mem (σ : Str) : (iterSys T).mem (encSet σ) := by
@@ -163,7 +159,9 @@ theorem prefix_of_encSet_subset {σ τ : Str} (h : encSet σ ⊆ encSet τ) : τ
       have hb' : τ[σ.length]? = some τ[σ.length] := List.getElem?_eq_getElem hlt
       obtain ⟨t, ht⟩ := exists_not_mem_bitNbhd τ[σ.length]
       have hmemσ : (σ.length, t) ∈ encSet σ := by
-        simp_all
+        simp_all only [Bool.forall_bool, implies_true, Bool.false_eq_true, imp_false, true_and,
+          Bool.true_eq_false, and_true, getElem?_pos, mem_encSet, lt_self_iff_false,
+          not_false_eq_true, getElem?_neg, reduceCtorEq, IsEmpty.forall_iff]
       exact ht ((h hmemσ) _ hb')
   · exact hτσ
 

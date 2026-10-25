@@ -7,11 +7,6 @@ module
 
 public import LeanPool.DomainTheory.Neighborhood.Exercise617
 import Mathlib.Data.Fintype.EquivFin
-import Mathlib.Data.Rat.Cast.Order
-import Mathlib.Tactic.NormNum.Abs
-import Mathlib.Tactic.NormNum.DivMod
-import Mathlib.Tactic.NormNum.OfScientific
-import Mathlib.Tactic.NormNum.Pow
 
 /-!
 # Exercise 6.17 part 2 (Scott 1981, PRG-19) — the generalization `Cₐ ≅ 𝟙 + Σₐ Cₐ`
@@ -61,7 +56,8 @@ omit [DecidableEq A] in
 @[simp] theorem mem_coneN {σ w : Strn A} : w ∈ coneN σ ↔ σ <+: w := Iff.rfl
 
 omit [DecidableEq A] in
-theorem coneN_nil : coneN ([] : Strn A) = Set.univ := by ext w; simp [coneN]
+theorem coneN_nil : coneN ([] : Strn A) = Set.univ := by ext w; simp only [coneN,
+  List.nil_prefix, Set.ofPred_true, Set.mem_univ]
 
 omit [DecidableEq A] in
 theorem coneN_subset_coneN {σ τ : Strn A} : coneN σ ⊆ coneN τ ↔ τ <+: σ := by
@@ -107,7 +103,8 @@ theorem singleton_coneN_nd (σ τ : Strn A) :
     ({τ} : Set (Strn A)) ⊆ coneN σ ∨ coneN σ ⊆ {τ} ∨ ({τ} : Set (Strn A)) ∩ coneN σ = ∅ := by
   by_cases h : σ <+: τ
   · exact Or.inl (singleton_subset_coneN.mpr h)
-  · simp_all
+  · simp_all only [Set.singleton_subset_iff, mem_coneN, Set.subset_singleton_iff,
+    not_false_eq_true, Set.singleton_inter_of_notMem, or_true]
 
 omit [DecidableEq A] in
 theorem nestedOrDisjointN : NestedOrDisjoint (memCn (A := A)) := by
@@ -123,7 +120,8 @@ theorem nestedOrDisjointN : NestedOrDisjoint (memCn (A := A)) := by
     · exact Or.inr (Or.inr h)
   · by_cases h : σ = τ
     · subst h; exact Or.inl (Set.Subset.refl _)
-    · simp_all
+    · simp_all only [Set.subset_singleton_iff, Set.mem_singleton_iff, imp_false, forall_eq,
+      not_false_eq_true, Set.singleton_inter_of_notMem, or_true]
 
 /-- **The generic domain `Cₐ`** of finite-or-infinite `A`-sequences. -/
 def Cn (A : Type) : NeighborhoodSystem (Strn A) :=
@@ -172,7 +170,7 @@ theorem prependN_coneN (σ ρ : Strn A) : prependN σ (coneN ρ) = coneN (σ ++ 
 omit [DecidableEq A] in
 theorem prependN_singleton (σ τ : Strn A) : prependN σ {τ} = {σ ++ τ} := by
   ext w
-  simp_all
+  simp_all only [mem_prependN, Set.mem_singleton_iff, exists_eq_left]
 
 omit [DecidableEq A] in
 theorem prependN_mono (σ : Strn A) {X X' : Set (Strn A)} (h : X' ⊆ X) :
@@ -286,20 +284,22 @@ omit [DecidableEq A] in
 
 omit [DecidableEq A] in
 theorem none_not_mem_jU : (none : SigTok A β) ∉ (jU : Set (SigTok A β)) := by
-  simp [jU, tu]
+  simp only [jU, tu, Set.mem_singleton_iff, reduceCtorEq, not_false_eq_true]
 
 omit [DecidableEq A] in
 @[simp] theorem none_not_mem_jc {a : A} {X : Set β} : (none : SigTok A β) ∉ jc a X := by
-  rintro ⟨t, heq, -⟩; exact absurd heq (by simp [tc])
+  rintro ⟨t, heq, -⟩; exact absurd heq (by simp only [tc, reduceCtorEq, not_false_eq_true])
 
 omit [DecidableEq A] in
 @[simp] theorem tu_not_mem_jc {a : A} {X : Set β} : (tu : SigTok A β) ∉ jc a X := by
-  rintro ⟨t, heq, -⟩; exact absurd heq (by simp [tu, tc])
+  rintro ⟨t, heq, -⟩; exact absurd heq (by simp only [tu, tc, Option.some.injEq, reduceCtorEq,
+    not_false_eq_true])
 
 omit [DecidableEq A] in
 theorem tc_not_mem_jU {a : A} {t : β} :
     (tc a t : SigTok A β) ∉ (jU : Set (SigTok A β)) := by
-  simp [jU, tu, tc]
+  simp only [jU, tu, tc, Set.mem_singleton_iff, Option.some.injEq, reduceCtorEq,
+    not_false_eq_true]
 
 omit [DecidableEq A] in
 theorem tc_mem_jc_ne {a a' : A} (h : a ≠ a') {X : Set β} {t : β} :
@@ -326,7 +326,8 @@ theorem jc_inter_jc_ne {a a' : A} (h : a ≠ a') (X X' : Set β) :
 omit [DecidableEq A] in
 theorem jU_inter_jc (a : A) (X : Set β) : (jU ∩ jc a X : Set (SigTok A β)) = ∅ := by
   ext w
-  simp_all
+  simp_all only [Set.mem_inter_iff, mem_jU, Set.mem_empty_iff_false, iff_false, not_and,
+    tu_not_mem_jc, not_false_eq_true, implies_true]
 
 omit [DecidableEq A] in
 theorem jU_nonempty : (jU : Set (SigTok A β)).Nonempty := ⟨tu, rfl⟩
@@ -694,28 +695,19 @@ theorem sumMapSig_id :
       = idMap (sumSig A V₀ h₀) := by
   apply ApproximableMap.ext
   intro W W'
-  constructor
-  · rintro ⟨hW, hW', hd⟩
-    refine ⟨hW, hW', ?_⟩
+  apply (sumMapSig (A := A) (V₀ := V₀) (V₁ := V₀) (h₀ := h₀) (h₁ := h₀)
+    (idMap V₀)).relation_iff_subset_of_diagonal
+  · intro W hW
+    refine ⟨hW, hW, ?_⟩
+    rcases hW with rfl | rfl | ⟨a, X, hX, rfl⟩
+    · exact Or.inl rfl
+    · exact Or.inr (Or.inl ⟨rfl, rfl⟩)
+    · exact Or.inr (Or.inr ⟨a, X, X, rfl, rfl, hX, hX, subset_rfl⟩)
+  · rintro W W' ⟨hW, _, hd⟩
     rcases hd with rfl | ⟨rfl, rfl⟩ | ⟨a, X, Y', rfl, rfl, -, -, hXY⟩
     · exact (sumSig A V₀ h₀).sub_master hW
     · exact subset_rfl
     · exact jc_subset_jc.mpr hXY
-  · rintro ⟨hW, hW', hsub⟩
-    refine ⟨hW, hW', ?_⟩
-    rcases hW with rfl | rfl | ⟨a, X, hX, rfl⟩
-    · exact Or.inl (eq_masterSig_of_subset hsub ((sumSig A V₀ h₀).sub_master hW'))
-    · rcases hW' with rfl | rfl | ⟨a', X', hX', rfl⟩
-      · exact Or.inl rfl
-      · exact Or.inr (Or.inl ⟨rfl, rfl⟩)
-      · exact absurd (hsub (show tu ∈ jU from rfl)) tu_not_mem_jc
-    · rcases hW' with rfl | rfl | ⟨a', X', hX', rfl⟩
-      · exact Or.inl rfl
-      · obtain ⟨t, ht⟩ := h₀ X hX; exact absurd (hsub (tc_mem_jc.mpr ht)) tc_not_mem_jU
-      · obtain ⟨t, ht⟩ := h₀ X hX
-        obtain ⟨t', he, -⟩ := hsub (tc_mem_jc.mpr ht)
-        obtain ⟨rfl, -⟩ := tc_injective he
-        exact Or.inr (Or.inr ⟨a, X, X', rfl, rfl, hX, hX', jc_subset_jc.mp hsub⟩)
 
 /-- **Functoriality (composition): `Σ(g∘f) = Σg ∘ Σf`.** -/
 theorem sumMapSig_comp (g : ApproximableMap V₁ V₂) (f : ApproximableMap V₀ V₁) :
@@ -832,7 +824,8 @@ theorem memCn_embA (a : A) {X : Set (Strn A)} (hX : memCn X) : memCn (embA a X) 
 
 omit [DecidableEq A] [Inhabited A] in
 theorem nil_not_mem_embA {a : A} {X : Set (Strn A)} : ([] : Strn A) ∉ embA a X := by
-  rintro ⟨w', heq, -⟩; exact absurd heq (by simp)
+  rintro ⟨w', heq, -⟩; exact absurd heq (by simp only [List.nil_eq, reduceCtorEq,
+    not_false_eq_true])
 
 omit [DecidableEq A] [Inhabited A] in
 theorem embA_ne_univ (a : A) (X : Set (Strn A)) : embA a X ≠ Set.univ := by
@@ -843,14 +836,17 @@ theorem embA_inter (a : A) (X X' : Set (Strn A)) : embA a X ∩ embA a X' = embA
   ext w
   simp only [Set.mem_inter_iff, mem_embA]
   constructor
-  · simp_all
+  · simp_all only [and_imp, forall_exists_index, List.cons.injEq, true_and, exists_eq_left',
+    and_true, forall_eq', implies_true]
   · rintro ⟨w', rfl, hX, hX'⟩; exact ⟨⟨w', rfl, hX⟩, ⟨w', rfl, hX'⟩⟩
 
 omit [DecidableEq A] [Inhabited A] in
 theorem embA_inter_ne {a a' : A} (h : a ≠ a') (X Y : Set (Strn A)) :
     embA a X ∩ embA a' Y = ∅ := by
   ext w
-  simp_all
+  simp_all only [ne_eq, Set.mem_inter_iff, mem_embA, Set.mem_empty_iff_false, iff_false,
+    not_and, not_exists, forall_exists_index, List.cons.injEq, false_and, IsEmpty.forall_iff,
+    implies_true]
 
 omit [DecidableEq A] [Inhabited A] in
 theorem embA_subset {a : A} {X X' : Set (Strn A)} : embA a X ⊆ embA a X' ↔ X ⊆ X' := by
@@ -884,16 +880,17 @@ theorem embA_ne {a a' : A} (h : a ≠ a') {X Y : Set (Strn A)} (hX : X.Nonempty)
   intro heq
   obtain ⟨w', hw'⟩ := hX
   have hmem : (a :: w') ∈ embA a' Y := heq ▸ (⟨w', rfl, hw'⟩ : (a :: w') ∈ embA a X)
-  simp_all
+  simp_all only [ne_eq, mem_embA, List.cons.injEq, false_and, exists_const]
 
 omit [DecidableEq A] [Inhabited A] in
 theorem singleton_nil_inter_embA (a : A) (X : Set (Strn A)) :
     (({[]} : Set (Strn A)) ∩ embA a X) = ∅ := by
-  simp_all
+  simp_all only [mem_embA, List.nil_eq, reduceCtorEq, false_and, exists_const,
+    not_false_eq_true, Set.singleton_inter_of_notMem]
 
 omit [DecidableEq A] in
 theorem singleton_nil_ne_univ : ({[]} : Set (Strn A)) ≠ Set.univ := by
-  simp_all
+  exact Set.singleton_ne_univ []
 
 omit [DecidableEq A] [Inhabited A] in
 theorem singleton_nil_ne_embA (a : A) (X : Set (Strn A)) :
@@ -1179,7 +1176,8 @@ theorem consMapN_not_mem_nil {a : A} {z : (Cn A).Element} :
   rintro ⟨X', hzX', hX'mem, -, hsub⟩
   obtain ⟨t, ht⟩ := Cn_nonempty X' hX'mem
   rw [← embA_eq_prependN] at hsub
-  simp_all
+  simp_all only [Set.subset_singleton_iff, mem_embA, forall_exists_index, reduceCtorEq,
+    imp_false, not_and]
 
 omit [Inhabited A] in
 /-- **`toCC ∘ (a·) = inj_a`.** Prepending the letter `a` to `z` is, across `Cₐ ≅
@@ -1258,7 +1256,7 @@ theorem not_coneN_subset_singleton (τ σ : Strn A) : ¬ coneN τ ⊆ ({σ} : Se
   have h2 : (τ ++ [default]) ∈ ({σ} : Set (Strn A)) := h (List.prefix_append τ [default])
   rw [Set.mem_singleton_iff] at h1 h2
   have : τ = τ ++ [default] := h1.trans h2.symm
-  simp at this
+  simp only [List.self_eq_append_right, List.cons_ne_self] at this
 
 omit [DecidableEq A] in
 theorem coneN_ne_singleton (τ σ : Strn A) : coneN τ ≠ ({σ} : Set (Strn A)) := fun h =>
@@ -1336,7 +1334,7 @@ theorem liftCn_strElem (V : NeighborhoodSystem β) (coneVal singVal : Strn A →
     · have hpre : σ' <+: σ := by
         apply singleton_subset_coneN.mp; rw [← hXcone]; exact hsub
       exact hsing hpre Y hY
-    · simp_all
+    · simp_all only [Cn_mem, Set.subset_singleton_iff, Set.mem_singleton_iff, forall_eq]
   · intro hY
     exact ⟨{σ}, ⟨memCn_singleton σ, subset_rfl⟩, Or.inr ⟨σ, rfl, hY⟩⟩
 

@@ -7,8 +7,6 @@ module
 
 public import LeanPool.DomainTheory.Neighborhood.Approximable
 public import LeanPool.DomainTheory.Neighborhood.Example12
-import Mathlib.Data.Finset.Attr
-import Mathlib.Data.Set.Insert
 import Mathlib.Tactic.Attr.Core
 import Mathlib.Tactic.SetLike
 
@@ -49,19 +47,22 @@ abbrev T : NeighborhoodSystem Example12.Token := Example12.neighborhoodSystem
 private theorem one_ne_zero : (Example12.one) ≠ Example12.zero := by
   intro h
   rw [Example12.one, Example12.zero, Set.ext_iff] at h
-  simp_all
+  simp_all only [Fin.isValue, Set.mem_singleton_iff, eq_iff_eq_cancel_left, Fin.one_eq_zero_iff,
+    Nat.succ_ne_self]
 
 /-- `{1} ≠ Δ` as tokens. -/
 private theorem one_ne_master : (Example12.one) ≠ Example12.master := by
   intro h
   rw [Example12.one, Example12.master, Set.ext_iff] at h
-  simp_all
+  simp_all only [Fin.isValue, Set.mem_singleton_iff, Set.mem_univ, iff_true, Fin.forall_fin_two,
+    Fin.zero_eq_one_iff, Nat.succ_ne_self, and_true]
 
 /-- `{0} ≠ Δ` as tokens. -/
 private theorem zero_ne_master : (Example12.zero) ≠ Example12.master := by
   intro h
   rw [Example12.zero, Example12.master, Set.ext_iff] at h
-  simp_all
+  simp_all only [Fin.isValue, Set.mem_singleton_iff, Set.mem_univ, iff_true, Fin.forall_fin_two,
+    Fin.one_eq_zero_iff, Nat.succ_ne_self, and_false]
 
 /-- The two total elements are incomparable: `elemOne ⋢ elemZero`. -/
 theorem elemOne_not_le_elemZero : ¬ elemOne ≤ elemZero := by

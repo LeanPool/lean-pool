@@ -9,7 +9,6 @@ public import LeanPool.DomainTheory.Neighborhood.Example62
 public import LeanPool.DomainTheory.Neighborhood.Product
 import LeanPool.DomainTheory.Neighborhood.Exercise319Sum
 import Mathlib.Data.List.Monad
-import Mathlib.Order.BooleanAlgebra.Set
 import Mathlib.Tactic.Attr.Core
 
 /-!
@@ -442,12 +441,14 @@ def prodTokNbhd (X Y : Set Str) : Set Str := insert [] (embBit false X ∪ embBi
 @[simp] theorem mem_prodTokNbhd_false {X Y : Set Str} {w' : Str} :
     (false :: w') ∈ prodTokNbhd X Y ↔ w' ∈ X := by
   simp only [prodTokNbhd, Set.mem_insert_iff, Set.mem_union, mem_embBit]
-  simp_all
+  simp_all only [reduceCtorEq, List.cons.injEq, true_and, exists_eq_left', Bool.false_eq_true,
+    false_and, exists_const, or_false, false_or]
 
 @[simp] theorem mem_prodTokNbhd_true {X Y : Set Str} {w' : Str} :
     (true :: w') ∈ prodTokNbhd X Y ↔ w' ∈ Y := by
   simp only [prodTokNbhd, Set.mem_insert_iff, Set.mem_union, mem_embBit]
-  simp_all
+  simp_all only [reduceCtorEq, List.cons.injEq, Bool.true_eq_false, false_and, exists_const,
+    true_and, exists_eq_left', false_or]
 
 /-- `prodTokNbhd D₀.master D₁.master` is exactly the sum master `{Λ} ∪ 0Δ₀ ∪ 1Δ₁`. -/
 theorem prodTokNbhd_master_eq : prodTokNbhd D₀.master D₁.master = sumTokMaster D₀ D₁ := rfl
@@ -457,7 +458,7 @@ theorem prodTokNbhd_inter (X X' Y Y' : Set Str) :
     prodTokNbhd X Y ∩ prodTokNbhd X' Y' = prodTokNbhd (X ∩ X') (Y ∩ Y') := by
   ext w
   cases w with
-  | nil => simp [Set.mem_inter_iff]
+  | nil => simp only [Set.mem_inter_iff, mem_prodTokNbhd_nil, and_self]
   | cons b w' => cases b <;> simp [Set.mem_inter_iff]
 
 /-- Scott's (1) for the product: inclusion of product neighbourhoods is

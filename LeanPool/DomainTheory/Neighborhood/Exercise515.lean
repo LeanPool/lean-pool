@@ -119,7 +119,7 @@ theorem star_eq (z : Set S) : star z = (1 : Set S) ∪ z * star z := by
     obtain ⟨n, hn⟩ := mem_star.mp hs
     cases n with
     | zero =>
-        simp_all
+        exact Set.mem_union_left (z * star z) hn
     | succ m =>
         rw [kpow_succ, Set.mem_mul] at hn
         obtain ⟨a, ha, t, ht, rfl⟩ := hn
@@ -188,8 +188,8 @@ theorem mem_kpow_singleton (e s : S) (n : ℕ) : s ∈ kpow ({e} : Set S) n ↔ 
   | succ m ih =>
       rw [kpow_succ, pow_succ', Set.mem_mul]
       constructor
-      · simp_all
-      · simp_all
+      · simp_all only [Set.mem_singleton_iff, exists_eq_left, implies_true]
+      · simp_all only [Set.mem_singleton_iff, exists_eq_left, implies_true]
 
 /-- `{e}* = e* = {Λ, e, e², …}`: a point lies in `star {e}` iff it is some power
 of `e`. -/
@@ -234,8 +234,8 @@ theorem parkX_eq (a b c d : Set S) :
   have hfix : parkA a b * parkX a b c d ∪ parkC a b c d = parkX a b c d :=
     star_mul_isFixed (parkA a b) (parkC a b c d)
   conv_lhs => rw [← hfix]
-  simp only [parkA, parkC, parkY, sunion_mul, smul_union, smul_assoc,
-    Set.union_comm, Set.union_left_comm]
+  simp only [parkA, parkC, parkY, sunion_mul, smul_union, smul_assoc, Set.union_comm,
+    Set.union_left_comm]
 
 /-- `y₀` satisfies the second equation `y = b·x ∪ a·y ∪ d`. -/
 theorem parkY_eq (a b c d : Set S) :
