@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import argparse
+import json
 import re
 import subprocess
 import sys
@@ -419,6 +420,13 @@ def _declarations_in(
         rf"^\s*{DECLARATION_PREFIX}({keyword_pattern})\s+"
         rf"({LEAN_IDENT})(?![\w'.])"
     )
+    # Match Lean's sectionHeader modifiers without interpreting their visibility.
+    # Missing an opening section makes its closing `end` pop a namespace instead.
+    section_pattern = re.compile(
+        rf"^\s*(?:@\[\s*expose\s*\]\s*)?"
+        rf"(?:public\s+)?(?:noncomputable\s+)?(?:meta\s+)?"
+        rf"section(?:\s+({LEAN_IDENT}))?\s*$"
+    )
     for path in paths:
         # Track `namespace` and `section` opens together so that an
         # `end <section>` pops the section rather than the enclosing namespace.
@@ -432,15 +440,24 @@ def _declarations_in(
         for line_number, line in enumerate(stripped.splitlines(), start=1):
             namespace_match = re.match(rf"^\s*namespace\s+({LEAN_IDENT})\s*$", line)
             if namespace_match:
-                scope_stack.append((True, namespace_match.group(1)))
+                # Lean opens one scope per name component, allowing both
+                # `end A.B` and `end B; end A` after `namespace A.B`.
+                scope_stack.extend(
+                    (True, name) for name in namespace_match.group(1).split(".")
+                )
                 continue
-            section_match = re.match(rf"^\s*section(?:\s+({LEAN_IDENT}))?\s*$", line)
+            section_match = section_pattern.match(line)
             if section_match:
-                scope_stack.append((False, section_match.group(1)))
+                label = section_match.group(1)
+                scope_stack.extend(
+                    (False, name) for name in (label.split(".") if label else [None])
+                )
                 continue
-            if re.match(rf"^\s*end(?:\s+{LEAN_IDENT})?\s*$", line):
-                if scope_stack:
-                    scope_stack.pop()
+            end_match = re.match(rf"^\s*end(?:\s+({LEAN_IDENT}))?\s*$", line)
+            if end_match:
+                label = end_match.group(1)
+                count = len(label.split(".")) if label else 1
+                del scope_stack[-count:]
                 continue
             match = decl_pattern.match(line)
             if match and not include_private and _is_private_declaration_line(line):
@@ -488,10 +505,10 @@ def _qualify_name(namespace_stack: list[str], name: str) -> str:
 #     both surface here),
 #   - directly references an axiom-injecting constant (`sorryAx`,
 #     `ofReduceBool`, ...), or
-#   - IS an axiom declared inside a pool module — this extends the
-#     `#print axioms` audit to declarations it cannot enumerate textually (on
-#     this toolchain `native_decide` compiles to a generated per-theorem
-#     axiom in the module, which is exactly what the kind check rejects; an
+#   - IS an axiom declared inside a pool module — independently of whether
+#     a public declaration depends on it (on this toolchain `native_decide`
+#     compiles to a generated per-theorem axiom in the module, which is
+#     exactly what the kind check rejects; an
 #     elaborator calling `addDecl (Declaration.axiomDecl ...)` is the same
 #     hole).
 # Candidate constants absent from the current toolchain are skipped, so core
@@ -690,169 +707,183 @@ def _parse_option_audit_output(
     return errors
 
 
+_AXIOM_AUDIT_PREFIX = "LEANPOOL_AXIOM_AUDIT|"
+_AXIOM_AUDIT_LEAN = """
+import Lean
+
+open Lean Core
+
+def emitAxiomAudit (record : Json) : IO Unit :=
+  IO.println s!"LEANPOOL_AXIOM_AUDIT|{record.compress}"
+
+def initializeAxiomCache (env : Environment) : IO Environment := do
+  -- collectAxioms needs its imported cache, but loadExts would also initialize
+  -- project extensions. Initialize only Lean's own axiom-cache extension.
+  let some ext := (← persistentEnvExtensionsRef.get).find? fun ext =>
+      privateToUserName ext.name == `Lean.exportedAxiomsExt
+    | throw <| IO.userError "Lean's exported axiom-cache extension is unavailable"
+  let state := ext.toEnvExtension.getState (asyncMode := .sync) env
+  let imported ← ext.addImportedFn state.importedEntries { env, opts := {} }
+  return ext.toEnvExtension.setState (asyncMode := .sync) env
+    { state with state := imported }
+
+def auditAxioms (env : Environment) (modules : List Name) : CoreM Unit := do
+  let mut count := 0
+  for (moduleName, data) in env.header.moduleNames.zip env.header.moduleData do
+    unless modules.contains moduleName do continue
+    for declName in data.constNames do
+      -- Private declarations are dependencies, not independent audit roots.
+      if isPrivateName declName then continue
+      unless env.contains declName do
+        throwError "missing declaration in audit environment: {declName}"
+      let axioms ← collectAxioms declName
+      let ranges ← findDeclarationRanges? declName
+      let line := ranges.map (·.range.pos.line) |>.getD 1
+      liftM <| emitAxiomAudit <| Json.mkObj [
+        ("kind", toJson "declaration"), ("module", toJson moduleName.toString),
+        ("name", toJson declName.toString), ("line", toJson line),
+        ("axioms", toJson (axioms.map Name.toString))]
+      count := count + 1
+  liftM <| emitAxiomAudit <| Json.mkObj [
+    ("kind", toJson "complete"), ("modules", toJson (modules.map Name.toString)),
+    ("declarations", toJson count)]
+
+def main : IO Unit := do
+  let input ← (← IO.getStdin).readToEnd
+  let json ← IO.ofExcept (Json.parse input)
+  let moduleStrings : List String ← IO.ofExcept (fromJson? json)
+  if moduleStrings.isEmpty then throw <| IO.userError "no modules to audit"
+  let modules := moduleStrings.map String.toName
+  Lean.initSearchPath (← Lean.findSysroot)
+  let imports := modules.toArray.map fun module => ({ module } : Lean.Import)
+  -- Load private bodies too: public declarations may depend on private helpers.
+  -- Do not activate project-defined extensions or execute their initializers.
+  let env ← Lean.importModules imports {} (trustLevel := 1024) (level := .private)
+  let env ← initializeAxiomCache env
+  for moduleName in modules do
+    unless env.header.moduleNames.contains moduleName do
+      throw <| IO.userError s!"missing module in audit environment: {moduleName}"
+  let _ ← CoreM.toIO (ctx := { fileName := "", fileMap := default })
+    (s := { env }) (auditAxioms env modules)
+"""
+
+
 def _check_axioms(root: Path) -> list[_QualityError]:
-    """Audit pooled declarations: allowlisted axioms only, never `sorry`."""
-    return _audit_axioms(
-        root,
-        _parse_declarations(root),
-        [m for unit in pool_units(root) for m in unit]
-        if discovers_modules(root)
-        else "LeanPool",
-    )
+    """Audit every non-private pool declaration, including generated declarations."""
+    return _audit_axioms(root, [m for unit in pool_units(root) for m in unit])
 
 
-def _audit_axioms(
-    root: Path,
-    declarations: list[_Declaration],
-    import_module: str | list[str],
-) -> list[_QualityError]:
-    """Run `#print axioms` over ``declarations`` and grade the results."""
-    if not declarations:
+def _audit_axioms(root: Path, modules: list[str]) -> list[_QualityError]:
+    """Enumerate compiled module declarations and collect their axioms in Lean."""
+    if not modules:
         return []
-
-    modules = [import_module] if isinstance(import_module, str) else import_module
     index_path = _module_to_path(root, modules[0])
-    commands = "".join(f"import {module}\n" for module in modules) + "\n".join(
-        f"#print axioms _root_.{declaration.name}" for declaration in declarations
-    )
     with tempfile.NamedTemporaryFile("w", suffix=".lean", delete=False) as temp_file:
         temp_path = Path(temp_file.name)
-        temp_file.write(commands)
+        temp_file.write(_AXIOM_AUDIT_LEAN)
         temp_file.flush()
 
     try:
         try:
             process = subprocess.run(
-                ["lake", "env", "lean", str(temp_path)],
+                ["lake", "env", "lean", "--run", str(temp_path)],
                 cwd=root,
                 check=False,
                 capture_output=True,
                 text=True,
+                input=json.dumps(modules),
             )
         except FileNotFoundError:
-            # `lake` not on PATH; surface a single advisory error rather
-            # than crashing the whole quality run.
             return [
                 _QualityError(
                     index_path,
                     1,
-                    "axiom audit skipped: `lake` not found",
+                    "axiom audit failed: `lake` not found",
                 )
             ]
     finally:
         temp_path.unlink(missing_ok=True)
 
-    errors = _parse_axiom_output(root, declarations, process.stdout)
-    resolved = _axiom_audit_resolved(process.stdout)
-    missing = [
-        declaration for declaration in declarations if declaration.name not in resolved
-    ]
-    # Distinguish "Lean ran but couldn't resolve some declarations" (per-decl
-    # localization is useful) from "Lean failed before any #print axioms ran"
-    # (a single root-cause error is more useful than N copies).
-    if missing and not resolved and process.returncode != 0:
-        return errors + [
-            _QualityError(
-                index_path,
-                1,
-                f"axiom audit failed before any declaration was checked: "
-                f"{process.stderr.strip() or '(no stderr)'}",
-            )
-        ]
-    errors.extend(_axiom_audit_missing(missing, process.stderr))
-    return errors
+    return _parse_axiom_output(
+        root, modules, process.stdout, process.stderr, process.returncode
+    )
 
 
 def _parse_axiom_output(
     root: Path,
-    declarations: list[_Declaration],
+    modules: list[str],
     output: str,
+    stderr: str = "",
+    returncode: int = 0,
 ) -> list[_QualityError]:
+    """Grade structured Lean results; fail closed on incomplete or invalid audits."""
     errors: list[_QualityError] = []
-    by_name = {declaration.name: declaration for declaration in declarations}
-    by_name.update(
-        {f"_root_.{declaration.name}": declaration for declaration in declarations}
-    )
-    # Names may contain `'` (e.g. `foo'`); see _axiom_audit_resolved comment.
-    pattern = re.compile(r"^'(.+?)' depends on axioms: \[([^\]]*)\]", re.MULTILINE)
-    for match in pattern.finditer(output):
-        name = match.group(1)
-        if name not in by_name:
-            continue
-        declaration = by_name[name]
-        axioms = {item.strip() for item in match.group(2).split(",") if item.strip()}
-        errors.extend(_axiom_errors(declaration, name, axioms))
+    try:
+        records = [
+            json.loads(line.removeprefix(_AXIOM_AUDIT_PREFIX))
+            for line in output.splitlines()
+            if line.startswith(_AXIOM_AUDIT_PREFIX)
+        ]
+        _validate_axiom_records(records, modules)
+        for record in records[:-1]:
+            extra = sorted(set(record["axioms"]) - ALLOWED_AXIOMS)
+            if extra:
+                errors.append(
+                    _QualityError(
+                        _module_to_path(root, record["module"]),
+                        record["line"],
+                        f"{record['name']} depends on unallowlisted axioms: "
+                        f"{', '.join(extra)}",
+                    )
+                )
+    except (ValueError, KeyError, TypeError) as exc:
+        errors.append(
+            _QualityError(
+                _module_to_path(root, modules[0]),
+                1,
+                f"axiom audit did not complete: {exc}",
+            )
+        )
+    if returncode:
+        detail = (stderr.strip() or output.strip() or "no diagnostics")[-2000:]
+        errors.append(
+            _QualityError(
+                _module_to_path(root, modules[0]),
+                1,
+                f"axiom audit failed (exit {returncode}): {detail}",
+            )
+        )
     return errors
 
 
-def _axiom_errors(
-    declaration: _Declaration, name: str, axioms: set[str]
-) -> list[_QualityError]:
-    """Grade one declaration's axiom set without proof-hole exceptions."""
-    extra_axioms = sorted(axioms - ALLOWED_AXIOMS)
-    if not extra_axioms:
-        return []
-    return [
-        _QualityError(
-            declaration.path,
-            declaration.line,
-            f"{name} depends on unallowlisted axioms: {', '.join(extra_axioms)}",
-        )
-    ]
-
-
-def _axiom_audit_resolved(stdout: str) -> set[str]:
-    """Return the set of declaration names that `#print axioms` resolved."""
-    # `#print axioms NAME` produces one of two messages on stdout:
-    #   'NAME' depends on axioms: [a, b, c]
-    #   'NAME' does not depend on any axioms
-    # Both indicate the lookup resolved; only the first list is interesting
-    # for the trusted-axiom check, but both must count as "seen" so we don't
-    # emit a spurious "produced no result" for axiom-free declarations.
-    #
-    # Names may contain `'` (e.g. `foo'`), so we cannot use `[^']+` for the
-    # name. Use a non-greedy match anchored on `' ` (closing quote followed
-    # by space) — Lean always emits one space between the echoed name and
-    # the verb, and a name cannot end with whitespace.
-    pattern = re.compile(
-        r"^'(.+?)' (?:depends on axioms: \[|does not depend on any axioms)",
-        re.MULTILINE,
-    )
-    resolved: set[str] = set()
-    for match in pattern.finditer(stdout):
-        name = match.group(1)
-        # Lean echoes back the qualified name we passed in; strip _root_. so it
-        # matches the unqualified names we collected via _parse_declarations.
-        if name.startswith("_root_."):
-            name = name[len("_root_.") :]
-        resolved.add(name)
-    return resolved
-
-
-def _axiom_audit_missing(
-    missing: list[_Declaration],
-    stderr: str,
-) -> list[_QualityError]:
-    """Emit one error per declaration that `#print axioms` could not resolve."""
-    errors: list[_QualityError] = []
-    for declaration in missing:
-        snippet = _stderr_snippet_for(stderr, declaration.name)
-        message = (
-            f"axiom audit failed for {declaration.name}: {snippet}"
-            if snippet
-            else f"axiom audit produced no result for {declaration.name}"
-        )
-        errors.append(_QualityError(declaration.path, declaration.line, message))
-    return errors
-
-
-def _stderr_snippet_for(stderr: str, name: str) -> str:
-    """Find the most relevant stderr line mentioning `name`, or ''."""
-    error_lines = [line for line in stderr.splitlines() if name in line]
-    for line in error_lines:
-        if "error" in line.lower():
-            return line.strip()
-    return error_lines[0].strip() if error_lines else ""
+def _validate_axiom_records(records: list[Any], modules: list[str]) -> None:
+    """Require complete coverage and well-formed, uniquely identified results."""
+    if not records or not all(isinstance(record, dict) for record in records):
+        raise ValueError("missing completion record or invalid JSON records")
+    complete = records[-1]
+    if complete != {
+        "kind": "complete",
+        "modules": modules,
+        "declarations": len(records) - 1,
+    }:
+        raise ValueError("missing or inconsistent completion record")
+    seen: set[tuple[str, str]] = set()
+    for record in records[:-1]:
+        if (
+            record.get("kind") != "declaration"
+            or record.get("module") not in modules
+            or not isinstance(record.get("name"), str)
+            or not record["name"]
+            or type(record.get("line")) is not int
+            or record["line"] < 1
+            or not isinstance(record.get("axioms"), list)
+            or not all(isinstance(axiom, str) for axiom in record["axioms"])
+        ):
+            raise ValueError("invalid declaration record")
+        key = (record["module"], record["name"])
+        if key in seen:
+            raise ValueError(f"duplicate declaration record: {key}")
+        seen.add(key)
 
 
 def _load_projects_yaml(
@@ -1513,12 +1544,11 @@ def _cached_pool_audits(root: Path, cache: ValidationCache) -> list[_QualityErro
     """Cover all pool declarations, with current static reachability checked above."""
     errors: list[_QualityError] = []
     for modules in pool_units(root):
-        paths = [_module_to_path(root, module) for module in modules]
         errors.extend(
             cache.check(
                 "axioms",
                 modules,
-                lambda: _audit_axioms(root, _declarations_in(paths), modules),
+                lambda: _audit_axioms(root, modules),
             )
         )
         errors.extend(
