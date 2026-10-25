@@ -114,7 +114,7 @@ theorem exists_Ici_of_mem {X : Set Δ} (hX : (finalSegmentSystem Δ).mem X) :
     ∃ a, X = Set.Ici a := by
   obtain ⟨a, haX, hmin⟩ := (wellFounded_lt (α := Δ)).has_min X hX.1
   refine ⟨a, Set.ext fun b => ⟨fun hb => ?_, fun hb => ?_⟩⟩
-  · simp_all
+  · simp_all only [mem_def, not_lt, Set.mem_Ici]
   · exact hX.2 (Set.mem_Ici.mp hb) haX
 
 /-! ### The classification of `|𝒟|` as the non-empty lower sets (initial

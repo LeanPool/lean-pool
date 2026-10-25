@@ -9,7 +9,6 @@ public import LeanPool.DomainTheory.Neighborhood.ExampleB
 public import LeanPool.DomainTheory.Neighborhood.Exercise318
 import LeanPool.DomainTheory.Neighborhood.Exercise319Sum
 import Mathlib.Data.List.Monad
-import Mathlib.Order.BooleanAlgebra.Set
 import Mathlib.Tactic.Attr.Core
 
 /-!
@@ -85,7 +84,8 @@ theorem memB_embBit (b : Bool) {X : Set Str} (hX : B.mem X) : B.mem (embBit b X)
   rw [embBit_eq_prepend]; exact memB_prepend [b] hX
 
 theorem nil_not_mem_embBit {b : Bool} {X : Set Str} : ([] : Str) ∉ embBit b X := by
-  rintro ⟨w', heq, -⟩; exact absurd heq (by simp)
+  rintro ⟨w', heq, -⟩; exact absurd heq (by simp only [List.nil_eq, reduceCtorEq,
+    not_false_eq_true])
 
 theorem embBit_ne_univ (b : Bool) (X : Set Str) : embBit b X ≠ Set.univ := by
   intro h; exact nil_not_mem_embBit (X := X) (b := b) (by rw [h]; trivial)
@@ -95,20 +95,24 @@ theorem embBit_inter (b : Bool) (X X' : Set Str) :
   ext w
   simp only [Set.mem_inter_iff, mem_embBit]
   constructor
-  · simp_all
-  · simp_all
+  · simp_all only [and_imp, forall_exists_index, List.cons.injEq, true_and, exists_eq_left',
+    and_true, forall_eq', implies_true]
+  · simp_all only [forall_exists_index, List.cons.injEq, true_and, exists_eq_left', and_self,
+    implies_true]
 
 theorem embBit_inter_ne {b b' : Bool} (h : b ≠ b') (X Y : Set Str) :
     embBit b X ∩ embBit b' Y = ∅ := by
   ext w
-  simp_all
+  simp_all only [ne_eq, Set.mem_inter_iff, mem_embBit, Set.mem_empty_iff_false, iff_false,
+    not_and, not_exists, forall_exists_index, List.cons.injEq, false_and, IsEmpty.forall_iff,
+    implies_true]
 
 theorem embBit_subset {b : Bool} {X X' : Set Str} :
     embBit b X ⊆ embBit b X' ↔ X ⊆ X' := by
   constructor
   · intro h w' hw'
     obtain ⟨w'', heq, hX'⟩ := h ⟨w', rfl, hw'⟩
-    simp_all
+    simp_all only [List.cons.injEq, true_and]
   · rintro h w ⟨w', rfl, hX⟩
     exact ⟨w', rfl, h hX⟩
 
@@ -134,7 +138,7 @@ theorem embBit_ne {b b' : Bool} (h : b ≠ b') {X Y : Set Str} (hX : X.Nonempty)
   intro heq
   obtain ⟨w', hw'⟩ := hX
   have hmem : (b :: w') ∈ embBit b' Y := heq ▸ (⟨w', rfl, hw'⟩ : (b :: w') ∈ embBit b X)
-  simp_all
+  simp_all only [ne_eq, mem_embBit, List.cons.injEq, false_and, exists_const]
 
 /-! ### `B` is positive (no empty neighbourhood) and its neighbourhood-shape
 classification. -/

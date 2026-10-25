@@ -7,11 +7,8 @@ module
 
 public import LeanPool.DomainTheory.Neighborhood.Theorem75
 public import LeanPool.DomainTheory.Neighborhood.Theorem41
-import Mathlib.Data.Rat.Cast.Order
-import Mathlib.Tactic.NormNum.Abs
-import Mathlib.Tactic.NormNum.DivMod
-import Mathlib.Tactic.NormNum.OfScientific
-import Mathlib.Tactic.NormNum.Pow
+
+import Mathlib.Tactic.Set -- shake: keep
 
 /-!
 # Theorem 7.6 (Scott 1981, PRG-19, §7) — `fix : (𝒟 → 𝒟) → 𝒟` is computable
@@ -335,7 +332,7 @@ theorem fixPStep_foldl_snd (fincl : ℕ → ℕ) (c : ℕ) :
     intro prev fl _
     change (Nat.pair prev fl).unpair.2 = 1 ↔ fl = 1 ∧ chainDec fincl c prev []
     rw [unpair_pair_snd]
-    simp [chainDec]
+    simp only [chainDec, and_true]
   | cons b rest ih =>
     intro prev fl _
     rw [List.foldl_cons]
@@ -353,8 +350,8 @@ theorem fixPStep_foldl_snd (fincl : ℕ → ℕ) (c : ℕ) :
     have hnf1 : nf = 1 ↔ (fl = 1 ∧ fincl (Nat.pair c (codePair prev b)) = 1) := by
       rw [hnf]
       rcases (show fl = 0 ∨ fl = 1 by omega) with h | h <;> rw [h]
-      · rw [selectFn_zero]; simp
-      · rw [selectFn_one, isOne_eq_one_iff]; simp
+      · rw [selectFn_zero]; simp only [zero_ne_one, false_and]
+      · rw [selectFn_one, isOne_eq_one_iff]; simp only [true_and]
     rw [hnf1]
     constructor
     · rintro ⟨⟨hfl1, hfincl1⟩, hrest⟩; exact ⟨hfl1, hfincl1, hrest⟩
@@ -369,7 +366,7 @@ theorem fixChainChar_spec (fincl : ℕ → ℕ) (c i : ℕ) :
   rw [fixChainChar_eq]
   refine ⟨fixPStep_foldl_fst fincl c (decodeList i) P.masterIdx 1, ?_⟩
   rw [fixPStep_foldl_snd fincl c (decodeList i) P.masterIdx 1 (le_refl 1)]
-  simp
+  simp only [true_and]
 
 /-- **Theorem 7.6 (Scott 1981, PRG-19) — `fix` is computable (choice-free).** For
 any effectively
@@ -426,7 +423,7 @@ theorem fixMap_isComputable
       rw [hdec] at hfst hsnd
       refine ⟨hsnd.mpr
         ((chainDec_iff_gStepsOK P gN hgN fincl hfincl t.unpair.1 full P.masterIdx).mpr hsteps), ?_⟩
-      simp_all
+      simp_all only [Nat.unpair_pair]
     · rintro ⟨i, hi⟩
       simp only [unpair_pair_fst, unpair_pair_snd] at hi
       obtain ⟨hi1, hi2⟩ := hi
@@ -434,6 +431,6 @@ theorem fixMap_isComputable
       refine ⟨decodeList i, ?_, ?_⟩
       · exact (chainDec_iff_gStepsOK P gN hgN fincl hfincl t.unpair.1 (decodeList i)
           P.masterIdx).mp (hsnd.mp hi1)
-      · simp_all
+      · simp_all only [Nat.unpair_pair, iff_true]
 
 end Domain.Neighborhood

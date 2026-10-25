@@ -9,12 +9,9 @@ public import LeanPool.DomainTheory.Neighborhood.Exercise407
 public import LeanPool.DomainTheory.Neighborhood.Theorem41
 public import LeanPool.DomainTheory.Neighborhood.Exercise408
 public import LeanPool.DomainTheory.Neighborhood.Exercise411
-import Mathlib.Data.Finset.Attr
-import Mathlib.Data.Rat.Cast.Order
-import Mathlib.Tactic.NormNum.Abs
-import Mathlib.Tactic.NormNum.DivMod
-import Mathlib.Tactic.NormNum.OfScientific
 import Mathlib.Tactic.Ring.RingNF
+
+import Mathlib.Tactic.Set -- shake: keep
 
 /-!
 # Exercise 5.9 (Scott 1981, PRG-19, Lecture V)
@@ -88,7 +85,7 @@ theorem commuting_least_common_fixed {f g : ApproximableMap V V} (hcomm : f.comp
   have hfx : f.toElementMap x = x := by
     apply le_antisymm
     · rw [hx_def, fixAbove, toElementMap_iSupDirected]
-      simp_all
+      simp_all only [Std.le_refl]
     · rw [hx_def, fixAbove]
       apply NeighborhoodSystem.iSupDirected_le
       intro n

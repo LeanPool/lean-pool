@@ -6,7 +6,6 @@ Authors: Catskills Research Company
 module
 
 public import LeanPool.DomainTheory.Neighborhood.Basic
-import Mathlib.Data.Set.Basic
 
 /-!
 # Exercise 1.23 (Scott 1981, PRG-19, §1) — the greedy total element of a countable
@@ -140,7 +139,7 @@ theorem acc_eq_interUpTo : ∀ n, acc V enum n = V.interUpTo (Y V enum) (n + 1) 
     by_cases h : cond V enum n
     · rw [acc_succ_pos V enum h, Y_succ_pos V enum h]
     · rw [acc_succ_neg V enum h, Y_succ_neg V enum h]
-      simp_all
+      simp_all only [interUpTo_succ, Set.left_eq_inter, Set.inter_subset_right]
 
 variable (henum : ∀ n, V.mem (enum n))
 include henum
@@ -266,7 +265,7 @@ theorem filters_sequence_determined (x : V.Element) :
       obtain ⟨k, hk⟩ := hsurj (x.sub hZ)
       have hxk : x.mem (enum k) := by rw [hk]; exact hZ
       refine ⟨x.sub hZ, k, ?_⟩
-      simp_all
+      simp_all only [↓reduceIte, Std.le_refl]
     · rintro ⟨hZmem, n, hn⟩
       have hsx : x.mem (if x.mem (enum n) then enum n else V.master) := by
         by_cases h : x.mem (enum n)

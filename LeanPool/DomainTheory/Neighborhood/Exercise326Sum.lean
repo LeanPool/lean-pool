@@ -8,8 +8,6 @@ module
 public import LeanPool.DomainTheory.Neighborhood.Exercise326
 public import LeanPool.DomainTheory.Neighborhood.Exercise318
 import LeanPool.DomainTheory.Neighborhood.Exercise319Sum
-import Mathlib.Data.Finset.Attr
-import Mathlib.Order.BooleanAlgebra.Set
 import Mathlib.Tactic.Attr.Core
 import Mathlib.Tactic.SetLike
 
@@ -109,16 +107,20 @@ theorem Tmem_ge_zero {C : Set Example12.Token} (hC : Example12.mem C)
   rcases (Example12.mem_iff C).mp hC with rfl | rfl | rfl
   · exact Or.inr rfl
   · exact Or.inl rfl
-  · exact absurd (h (by simp [Example12.zero] : (0 : Example12.Token) ∈ Example12.zero))
-      (by simp [Example12.one])
+  · exact absurd (h (by simp only [Example12.zero, Fin.isValue,
+    Set.mem_singleton_iff] : (0 : Example12.Token) ∈ Example12.zero))
+      (by simp only [Example12.one, Fin.isValue, Set.mem_singleton_iff, Fin.zero_eq_one_iff,
+        Nat.succ_ne_self, not_false_eq_true])
 
 /-- A `T`-neighbourhood containing `{1}` is `{1}` or `Δ`. -/
 theorem Tmem_ge_one {C : Set Example12.Token} (hC : Example12.mem C)
     (h : Example12.one ⊆ C) : C = Example12.one ∨ C = Example12.master := by
   rcases (Example12.mem_iff C).mp hC with rfl | rfl | rfl
   · exact Or.inr rfl
-  · exact absurd (h (by simp [Example12.one] : (1 : Example12.Token) ∈ Example12.one))
-      (by simp [Example12.zero])
+  · exact absurd (h (by simp only [Example12.one, Fin.isValue,
+    Set.mem_singleton_iff] : (1 : Example12.Token) ∈ Example12.one))
+      (by simp only [Example12.zero, Fin.isValue, Set.mem_singleton_iff, Fin.one_eq_zero_iff,
+        Nat.succ_ne_self, not_false_eq_true])
   · exact Or.inl rfl
 
 theorem inter_in_zeroset {C C' : Set Example12.Token} (hc : C = Example12.master ∨ C =
@@ -156,7 +158,7 @@ theorem whichGuard_left {W : Set (Option (α ⊕ β))} {C : Set Example12.Token}
   · exact hc
   · refine absurd (hW.symm.trans hWY) ?_
     intro h; exact not_inj₀_subset_inj₁ hX h.subset
-  · simp_all
+  · simp_all only [true_or]
 
 theorem whichGuard_right {W : Set (Option (α ⊕ β))} {C : Set Example12.Token} {Y : Set β}
     (hg : whichGuard V₀ V₁ W C) (hW : W = inj₁ Y) (hY : Y.Nonempty) :
@@ -165,7 +167,7 @@ theorem whichGuard_right {W : Set (Option (α ⊕ β))} {C : Set Example12.Token
   · refine absurd (hW.symm.trans hWX) ?_
     intro h; exact not_inj₁_subset_inj₀ hY h.subset
   · exact hc
-  · simp_all
+  · simp_all only [true_or]
 
 theorem whichGuard_masterC {W : Set (Option (α ⊕ β))} {C : Set Example12.Token}
     (hg : whichGuard V₀ V₁ W C) (hW : W = sumMaster V₀ V₁) : C = Example12.master := by

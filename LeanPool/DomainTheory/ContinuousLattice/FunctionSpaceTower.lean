@@ -7,6 +7,8 @@ module
 
 public import LeanPool.DomainTheory.ContinuousLattice.InverseLimits
 
+import Mathlib.Tactic.Set -- shake: keep
+
 /-!
 # The function-space tower and Scott's `D_∞ ≅ [D_∞ → D_∞]` (Scott 1972, §4,
 Theorem 4.4)
@@ -246,10 +248,8 @@ noncomputable def embInfInf : ScottMap (DInf D₀ j₀) (DInfFn D₀ j₀) :=
 /-- `i_∞` evaluated at `x` is the pointwise supremum of the summands `iInfTerm n
 x`. -/
 theorem embInfInf_apply (x : DInf D₀ j₀) :
-    embInfInf D₀ j₀ x = ⨆ n, iInfTerm D₀ j₀ n x := by
-  change (sSup (Set.range (iInfTerm D₀ j₀)) : ScottMap _ _) x = _
-  rw [ScottMap.sSup_apply, ← Set.range_comp, sSup_range]
-  rfl
+    embInfInf D₀ j₀ x = ⨆ n, iInfTerm D₀ j₀ n x :=
+  ScottMap.iSup_apply (iInfTerm D₀ j₀) x
 
 /-- The `n`-th summand of `j_∞`: the Scott map `f ↦ i_{(n+1)∞}(j_{∞n} ∘ f ∘
 i_{n∞})`. As a map
@@ -276,10 +276,8 @@ noncomputable def projInfInf : ScottMap (DInfFn D₀ j₀) (DInf D₀ j₀) :=
 
 /-- `j_∞` evaluated at `f` is the supremum of the summands `jInfTerm n f`. -/
 theorem projInfInf_apply (f : DInfFn D₀ j₀) :
-    projInfInf D₀ j₀ f = ⨆ n, jInfTerm D₀ j₀ n f := by
-  change (sSup (Set.range (jInfTerm D₀ j₀)) : ScottMap _ _) f = _
-  rw [ScottMap.sSup_apply, ← Set.range_comp, sSup_range]
-  rfl
+    projInfInf D₀ j₀ f = ⨆ n, jInfTerm D₀ j₀ n f :=
+  ScottMap.iSup_apply (jInfTerm D₀ j₀) f
 
 /-- `i_∞` is Scott-continuous (it is a bundled `ScottMap`). -/
 theorem embInfInf_preservesDirectedSup :
@@ -312,26 +310,17 @@ directed suprema. -/
 theorem conjMap_iSup (n : ℕ) (post : ScottMap (DInf D₀ j₀) (towerType D₀ n))
     (pre : ScottMap (towerType D₀ n) (DInf D₀ j₀))
     (f : ℕ → ScottMap (DInf D₀ j₀) (DInf D₀ j₀)) (hf : Monotone f) :
-    conjMap post pre (⨆ m, f m) = ⨆ m, conjMap post pre (f m) := by
-  have hdir : DirectedOn (· ≤ ·) (Set.range f) :=
-    directedOn_range.2 fun a b => ⟨max a b, hf (le_max_left a b), hf (le_max_right a b)⟩
-  have hne := Set.range_nonempty f
-  rw [show (⨆ m, f m) = sSup (Set.range f) from sSup_range.symm,
-    (conjMap post pre).preservesDirectedSup_coe (Set.range f) hne hdir, ← Set.range_comp]
-  rfl
+    conjMap post pre (⨆ m, f m) = ⨆ m, conjMap post pre (f m) :=
+  (conjMap post pre).map_iSup_of_directed f
+    (fun a b => ⟨max a b, hf (le_max_left a b), hf (le_max_right a b)⟩)
 
 /-- The inverse-limit embedding commutes with a supremum in `D_{n+1}` (monotone ⇒
 directed). -/
 theorem embInf_succ_iSup (n : ℕ) (f : ℕ → towerType D₀ (n + 1)) (hf : Monotone f) :
     embInf (towerType D₀) (towerProj D₀ j₀) (n + 1) (⨆ m, f m) =
-      ⨆ m, embInf (towerType D₀) (towerProj D₀ j₀) (n + 1) (f m) := by
-  have hdir : DirectedOn (· ≤ ·) (Set.range f) :=
-    directedOn_range.2 fun a b => ⟨max a b, hf (le_max_left a b), hf (le_max_right a b)⟩
-  have hne := Set.range_nonempty f
-  rw [show (⨆ m, f m) = sSup (Set.range f) from sSup_range.symm,
-    (embInf (towerType D₀) (towerProj D₀ j₀) (n + 1)).preservesDirectedSup_coe
-      (Set.range f) hne hdir, ← Set.range_comp]
-  rfl
+      ⨆ m, embInf (towerType D₀) (towerProj D₀ j₀) (n + 1) (f m) :=
+  (embInf (towerType D₀) (towerProj D₀ j₀) (n + 1)).map_iSup_of_directed f
+    (fun a b => ⟨max a b, hf (le_max_left a b), hf (le_max_right a b)⟩)
 
 /-- **Diagonal simplification.** `conjMap (j_{∞n}, i_{n∞})` applied to the `n`-th
 summand of `i_∞`
@@ -483,7 +472,7 @@ theorem projInfInf_embInfInf_eq (x : DInf D₀ j₀) :
   have g_mono_n (m : ℕ) : Monotone (fun n => g n m) :=
     monotone_nat_of_le_succ (g_mono_n_succ m)
   have hin : (⨆ n, jInfTerm D₀ j₀ n (embInfInf D₀ j₀ x)) = ⨆ n, ⨆ m, g n m := by
-    simp_all
+    simp_all only [jInfTerm_apply]
   rw [hin, iSup₂_monotone_eq_diagonal g g_mono_m g_mono_n]
   congr 1
   funext n
@@ -554,7 +543,7 @@ theorem embInfInf_comp_projInfInf :
   have hrw : ∀ n (w : DInf D₀ j₀), r n w
       = embInf (towerType D₀) (towerProj D₀ j₀) n
           (projInf (towerType D₀) (towerProj D₀ j₀) n w) := by
-    simp_all
+    simp_all only [ScottMap.comp_apply, implies_true]
   have hr_mono : ∀ (w : DInf D₀ j₀), Monotone (fun m => r m w) := by
     intro w
     refine monotone_nat_of_le_succ (fun m => ?_)
@@ -574,20 +563,13 @@ theorem embInfInf_comp_projInfInf :
   -- Evaluating a supremum of Scott maps `D_∞ → D_∞` at a point is pointwise.
   have hsup_apply : ∀ (g : ℕ → ScottMap (DInf D₀ j₀) (DInf D₀ j₀)) (w : DInf D₀ j₀),
       (⨆ n, g n) w = ⨆ n, g n w := by
-    intro g w
-    rw [show (⨆ n, g n) = sSup (Set.range g) from sSup_range.symm,
-      ScottMap.sSup_apply, ← Set.range_comp, sSup_range]
-    rfl
+    exact fun g w => ScottMap.iSup_apply g w
   -- A Scott map commutes with a monotone `ℕ`-indexed supremum.
   have hcont : ∀ (g : ScottMap (DInf D₀ j₀) (DInf D₀ j₀)) (a : ℕ → DInf D₀ j₀),
       Monotone a → g (⨆ m, a m) = ⨆ m, g (a m) := by
     intro g a ha
-    have hdir : DirectedOn (· ≤ ·) (Set.range a) :=
-      directedOn_range.2 fun i j => ⟨max i j, ha (le_max_left i j), ha (le_max_right i j)⟩
-    rw [show (⨆ m, a m) = sSup (Set.range a) from sSup_range.symm,
-      g.preservesDirectedSup_coe (Set.range a) (Set.range_nonempty a) hdir,
-      ← Set.range_comp, sSup_range]
-    rfl
+    exact g.map_iSup_of_directed a
+      (fun i j => ⟨max i j, ha (le_max_left i j), ha (le_max_right i j)⟩)
   -- `j_∞(f) = ⨆ₖ i_{(k+1)∞}(j_{∞k} ∘ f ∘ i_{k∞})`.
   have hpi : projInfInf D₀ j₀ f
       = ⨆ k, embInf (towerType D₀) (towerProj D₀ j₀) (k + 1)
@@ -659,12 +641,12 @@ variable (D₀ : CLat.{u})
 theorem projInfInf_embInfInf (x : DInf D₀ j₀) :
     projInfInf D₀ j₀ (embInfInf D₀ j₀ x) = x := by
   have h := congrArg (fun g => g x) (projInfInf_comp_embInfInf D₀ j₀)
-  simpa [ScottMap.comp_apply, ScottMap.idMap_apply] using h
+  simpa only [ScottMap.comp_apply, ScottMap.idMap_apply] using h
 
 theorem embInfInf_projInfInf (f : DInfFn D₀ j₀) :
     embInfInf D₀ j₀ (projInfInf D₀ j₀ f) = f := by
   have h := congrArg (fun g => g f) (embInfInf_comp_projInfInf D₀ j₀)
-  simpa [ScottMap.comp_apply, ScottMap.idMap_apply] using h
+  simpa only [ScottMap.comp_apply, ScottMap.idMap_apply] using h
 
 theorem embInfInf_le_iff (x y : DInf D₀ j₀) :
     embInfInf D₀ j₀ x ≤ embInfInf D₀ j₀ y ↔ x ≤ y := by

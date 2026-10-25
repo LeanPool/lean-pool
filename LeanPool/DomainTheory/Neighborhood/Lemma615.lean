@@ -9,12 +9,6 @@ public import LeanPool.DomainTheory.Neighborhood.Definition610
 public import LeanPool.DomainTheory.Neighborhood.FunctionSpace
 public meta import Mathlib.Tactic.ToAdditive
 public meta import Mathlib.Tactic.ToDual
-import Mathlib.Data.Finset.Attr
-import Mathlib.Data.Rat.Cast.Order
-import Mathlib.Tactic.NormNum.Abs
-import Mathlib.Tactic.NormNum.DivMod
-import Mathlib.Tactic.NormNum.OfScientific
-import Mathlib.Tactic.NormNum.Pow
 
 /-!
 # Lecture VI — Lemma 6.15 (Scott 1981, PRG-19): the converse of Proposition 6.12
@@ -125,7 +119,7 @@ theorem isGen_mono (hji : j.comp i = idMap D) {X X' : Set α} {Z W : Set β}
   have hiXW : i.rel X W :=
     i.mono hiXZ subset_rfl hZW (i.rel_dom hiXZ) (j.rel_dom hjWX')
   have hrel : (j.comp i).rel X X' := ⟨W, hiXW, hjWX'⟩
-  simp_all
+  simp_all only [idMap_rel]
 
 /-- **The generator correspondence is monotone, other direction** (uses `i ∘ j ⊆
 I_E`): if `Z, W`

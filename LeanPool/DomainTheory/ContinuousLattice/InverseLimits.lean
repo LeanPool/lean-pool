@@ -8,6 +8,8 @@ module
 public import LeanPool.DomainTheory.ContinuousLattice.FunctionSpaces
 import LeanPool.DomainTheory.ContinuousLattice.Constructions
 
+import Mathlib.Tactic.Set -- shake: keep
+
 /-!
 # Inverse limits of continuous lattices (Scott 1972, §4)
 
@@ -163,7 +165,8 @@ noncomputable def invLimRetr (y : ∀ n, D n) : InverseLimit D P :=
 
 theorem le_coe_invLimRetr (y : ∀ n, D n) : y ≤ (invLimRetr D P y).1 := by
   rw [invLimRetr, coe_sInf]
-  simp_all
+  simp_all only [le_sInf_iff, mem_image, mem_ofPred_eq, Subtype.exists, exists_and_left,
+    exists_prop, exists_eq_right_right, implies_true]
 
 /-- `r ⊣ incl`: the retraction is left adjoint to the inclusion. -/
 theorem invLimRetr_galoisConnection :
@@ -187,7 +190,7 @@ theorem invLimRetr_incl (x : InverseLimit D P) : invLimRetr D P x.1 = x := by
   refine le_antisymm ?_ ?_
   · exact sInf_le (show x ∈ {x' : InverseLimit D P | (x.1 : ∀ n, D n) ≤ x'.1} from le_refl x.1)
   · refine le_sInf ?_
-    simp_all
+    simp_all only [Subtype.coe_le_coe, mem_ofPred_eq, implies_true]
 
 /-- `D_∞` is a Scott-continuous retract of the product `∏ Dₙ`. -/
 noncomputable def inverseLimitRetraction :
@@ -347,7 +350,7 @@ theorem embLE_preservesDirectedSup {n m : ℕ} (h : n ≤ m) :
   induction m, h using Nat.le_induction with
   | base =>
       have hid : embLE D P (le_refl n) = id := funext (fun x => embLE_self D P (le_refl n) x)
-      rw [hid]; intro S _ _; simp
+      rw [hid]; intro S _ _; simp only [id_eq, image_id']
   | succ k hk ih =>
       have hfun : embLE D P (Nat.le_succ_of_le hk)
           = (fun y : D k => (P k).incl y) ∘ embLE D P hk :=
@@ -362,7 +365,7 @@ theorem projLE_preservesDirectedSup {m n : ℕ} (h : m ≤ n) :
   induction n, h using Nat.le_induction with
   | base =>
       have hid : projLE D P (le_refl m) = id := funext (fun x => projLE_self D P (le_refl m) x)
-      rw [hid]; intro S _ _; simp
+      rw [hid]; intro S _ _; simp only [id_eq, image_id']
   | succ k hk ih =>
       have hfun : projLE D P (Nat.le_succ_of_le hk)
           = projLE D P hk ∘ (fun z : D (k + 1) => (P k).retr z) :=
@@ -634,10 +637,8 @@ theorem corollary_4_3 (f : ∀ n, ScottMap (D n) D')
     -- `g x = f∞ x`, since `x = ⨆ₙ i_{n∞}(xₙ)` and `g` is continuous on this
     -- directed family
     calc g x = g (⨆ n, embInf D P n (x.1 n)) := by rw [← inverseLimit_eq_iSup D P x]
-      _ = g (sSup (Set.range fun n => embInf D P n (x.1 n))) := by rw [sSup_range]
-      _ = sSup (g '' Set.range fun n => embInf D P n (x.1 n)) :=
-          g.preservesDirectedSup_coe _ (Set.range_nonempty _) (embInf_family_directed D P x)
-      _ = ⨆ n, g (embInf D P n (x.1 n)) := by rw [← Set.range_comp, sSup_range]; rfl
+      _ = ⨆ n, g (embInf D P n (x.1 n)) :=
+          g.map_iSup_of_directed _ (directedOn_range.mp (embInf_family_directed D P x))
       _ = ⨆ n, f n (x.1 n) := by simp_rw [← hg]
 
 end InverseLimit

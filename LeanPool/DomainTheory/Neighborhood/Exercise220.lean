@@ -7,7 +7,6 @@ module
 
 public import LeanPool.DomainTheory.Neighborhood.ApproximableExercises
 public import Mathlib.Basic.Finite.Defs
-public import Mathlib.Data.Set.Basic
 import Mathlib.Data.Set.Finite.Basic
 
 /-!
@@ -128,7 +127,7 @@ theorem toSet_ofSet (S : Set ℕ) : toSet (ofSet S) = S := by
   simp only [mem_toSet]
   constructor
   · rintro ⟨_, hsub⟩
-    simp_all
+    exact Set.mem_of_subset_of_mem hsub fun a => a rfl
   · intro hn
     exact ⟨mem_compl_singleton n, by rw [compl_compl]; exact Set.singleton_subset_iff.mpr hn⟩
 
@@ -238,7 +237,7 @@ theorem toSet_predMap (x : powerSet.Element) :
     exact x.up_mem hxX (mem_compl_singleton (k + 1)) (Set.subset_compl_singleton_iff.mpr hk)
   · intro hk
     refine ⟨{k + 1}ᶜ, hk, mem_compl_singleton (k + 1), mem_compl_singleton k, ?_⟩
-    simp_all
+    simp_all only [compl_compl, Set.singleton_subset_iff, mem_predSet, Set.mem_singleton_iff]
 
 /-! ### Union and intersection as two-variable approximable maps. -/
 
