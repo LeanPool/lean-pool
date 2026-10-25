@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import os
+import shlex
 import subprocess
 from pathlib import Path
 
@@ -651,6 +652,8 @@ def test_scoped_checks_handle_large_diffs(tmp_path, filename):
         ("lake-manifest.json", "true", "false", True),
         ("python/lean_pool/ci_pr_build.py", "true", "false", True),
         ("python/tests/test_ci_pr_build.py", "true", "false", True),
+        ("python/lean_pool/quality.py", "true", "false", True),
+        ("python/tests/test_axiom_audit_lean.py", "true", "false", True),
         ('"python/lean_pool/quoted.py"', "true", "false", True),
         ("scripts/ProjectIndexes.lean", "true", "false", True),
         ("scripts/exposition/Extract.lean", "true", "false", True),
@@ -693,6 +696,24 @@ def test_dependency_tracking_tests_scope(
             == "Check compiled artifact dependency tracking with pinned Lean"
         )
         assert tracking["if"] == "needs.plan.outputs.dependency_tests == 'true'"
+
+
+@pytest.mark.parametrize("job_name", ["build", "finalize", "rebase"])
+def test_pinned_lean_ci_runs_compiled_axiom_audit(job_name: str) -> None:
+    """The compiled axiom fixture must run rather than silently skip in CI."""
+    jobs = yaml.safe_load((WORKFLOWS / "lean_action_ci.yml").read_text())["jobs"]
+    step = next(
+        step
+        for step in jobs[job_name]["steps"]
+        if step.get("name")
+        == "Check compiled artifact dependency tracking with pinned Lean"
+    )
+    assert step["env"]["LEAN_POOL_REQUIRE_TEST_TOOLCHAIN"] == "1"
+    command = shlex.split(step["run"])
+    assert "python/tests/test_axiom_audit_lean.py" in command
+    assert command[command.index("-k") + 1] == (
+        "test_lake_ or test_compiled_axiom_audit"
+    )
 
 
 def test_profiling_is_automatic_and_cache_pruning_is_scheduled() -> None:

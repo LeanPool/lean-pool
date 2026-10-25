@@ -258,7 +258,8 @@ jobs:
         run: >-
           uv run --project python --group test pytest -q
           python/tests/test_ci_pr_build.py python/tests/test_indexes.py
-          -k 'test_lake_'
+          python/tests/test_axiom_audit_lean.py
+          -k 'test_lake_ or test_compiled_axiom_audit'
 
       - name: Install Mathlib cache
         id: mathlib-cache
@@ -608,7 +609,8 @@ jobs:
         run: >-
           uv run --project python --group test pytest -q
           python/tests/test_ci_pr_build.py python/tests/test_indexes.py
-          -k 'test_lake_'
+          python/tests/test_axiom_audit_lean.py
+          -k 'test_lake_ or test_compiled_axiom_audit'
 
       - name: Install Mathlib cache
         id: mathlib-cache
@@ -882,7 +884,8 @@ jobs:
         run: >-
           uv run --project python --group test pytest -q
           python/tests/test_ci_pr_build.py python/tests/test_indexes.py
-          -k 'test_lake_'
+          python/tests/test_axiom_audit_lean.py
+          -k 'test_lake_ or test_compiled_axiom_audit'
 
       - name: Install Mathlib cache
         run: |
