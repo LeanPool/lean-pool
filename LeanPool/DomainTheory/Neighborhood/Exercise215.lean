@@ -73,7 +73,7 @@ open Domain.Neighborhood NeighborhoodSystem
 def memO (X : Set (Fin 1)) : Prop := X = Set.univ ∨ X = ∅
 
 theorem univ_ne_empty : (Set.univ : Set (Fin 1)) ≠ ∅ := by
-  simp_all
+  exact Ne.symm Set.empty_ne_univ
 
 theorem nestedOrDisjoint_O : NestedOrDisjoint memO := by
   rintro X Y (rfl | rfl) (rfl | rfl)
@@ -223,7 +223,7 @@ theorem toElementMap_openToMap_principal_mem_empty (U : Set V.Element) (hU : IsO
   rw [← (openToMap V U hU).rel_iff_mem_principal hX]
   constructor
   · rintro ⟨_, _, fimpl⟩
-    simp_all
+    simp_all only [O_mem, exists_true_left, forall_const]
   · intro h
     exact ⟨hX, O_mem_empty, fun _ => ⟨hX, h⟩⟩
 

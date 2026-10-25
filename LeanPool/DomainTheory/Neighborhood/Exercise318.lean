@@ -6,7 +6,6 @@ Authors: Catskills Research Company
 module
 
 public import LeanPool.DomainTheory.Neighborhood.Approximable
-import Mathlib.Data.Set.Image
 
 /-!
 # Exercise 3.18 (Scott 1981, PRG-19, §3) — the sum (coproduct) system
@@ -59,23 +58,25 @@ def inj₁ (Y : Set β) : Set (Option (α ⊕ β)) := ir '' Y
 
 @[simp] theorem il_mem_inj₀ {X : Set α} {a : α} : (il a : Option (α ⊕ β)) ∈ inj₀ X ↔ a ∈ X := by
   simp only [inj₀, Set.mem_image, il]
-  simp_all
+  simp_all only [Option.some.injEq, Sum.inl.injEq, exists_eq_right]
 
 @[simp] theorem ir_mem_inj₀ {X : Set α} {b : β} : (ir b : Option (α ⊕ β)) ∉ inj₀ X := by
-  rintro ⟨a, _, hb⟩; exact absurd hb (by simp [il, ir])
+  rintro ⟨a, _, hb⟩; exact absurd hb (by simp only [il, ir, Option.some.injEq, reduceCtorEq,
+    not_false_eq_true])
 
 @[simp] theorem none_mem_inj₀ {X : Set α} : (none : Option (α ⊕ β)) ∉ inj₀ X := by
-  rintro ⟨a, _, hb⟩; exact absurd hb (by simp [il])
+  rintro ⟨a, _, hb⟩; exact absurd hb (by simp only [il, reduceCtorEq, not_false_eq_true])
 
 @[simp] theorem ir_mem_inj₁ {Y : Set β} {b : β} : (ir b : Option (α ⊕ β)) ∈ inj₁ Y ↔ b ∈ Y := by
   simp only [inj₁, Set.mem_image, ir]
-  simp_all
+  simp_all only [Option.some.injEq, Sum.inr.injEq, exists_eq_right]
 
 @[simp] theorem il_mem_inj₁ {Y : Set β} {a : α} : (il a : Option (α ⊕ β)) ∉ inj₁ Y := by
-  rintro ⟨b, _, hb⟩; exact absurd hb (by simp [il, ir])
+  rintro ⟨b, _, hb⟩; exact absurd hb (by simp only [ir, il, Option.some.injEq, reduceCtorEq,
+    not_false_eq_true])
 
 @[simp] theorem none_mem_inj₁ {Y : Set β} : (none : Option (α ⊕ β)) ∉ inj₁ Y := by
-  rintro ⟨b, _, hb⟩; exact absurd hb (by simp [ir])
+  rintro ⟨b, _, hb⟩; exact absurd hb (by simp only [ir, reduceCtorEq, not_false_eq_true])
 
 theorem inj₀_inter (X X' : Set α) :
     (inj₀ X ∩ inj₀ X' : Set (Option (α ⊕ β))) = inj₀ (X ∩ X') := by
@@ -210,10 +211,10 @@ def sum (V₀ : NeighborhoodSystem α) (V₁ : NeighborhoodSystem β)
 /-! ### The injections `inᵢ` and projections `outᵢ`. -/
 
 theorem il_injective : Function.Injective (il : α → Option (α ⊕ β)) := by
-  intro a a' h; simpa [il] using h
+  intro a a' h; simpa only [il, Option.some.injEq, Sum.inl.injEq] using h
 
 theorem ir_injective : Function.Injective (ir : β → Option (α ⊕ β)) := by
-  intro b b' h; simpa [ir] using h
+  intro b b' h; simpa only [ir, Option.some.injEq, Sum.inr.injEq] using h
 
 @[simp] theorem il_preimage_inj₀ (X : Set α) :
     ((il : α → Option (α ⊕ β)) ⁻¹' inj₀ X) = X :=
@@ -262,12 +263,14 @@ theorem rightPart_mono (V₁ : NeighborhoodSystem β) {W W' : Set (Option (α �
 @[simp] theorem leftPart_inj₀ (V₀ : NeighborhoodSystem α) (X : Set α) :
     leftPart V₀ (inj₀ X : Set (Option (α ⊕ β))) = X := by
   ext a
-  simp_all
+  simp_all only [mem_leftPart, il_mem_inj₀, ir_mem_inj₀, exists_false, none_mem_inj₀, or_self,
+    and_false, or_false]
 
 @[simp] theorem rightPart_inj₁ (V₁ : NeighborhoodSystem β) (Y : Set β) :
     rightPart V₁ (inj₁ Y : Set (Option (α ⊕ β))) = Y := by
   ext b
-  simp_all
+  simp_all only [mem_rightPart, ir_mem_inj₁, il_mem_inj₁, exists_false, none_mem_inj₁, or_self,
+    and_false, or_false]
 
 theorem leftPart_sumMaster (V₀ : NeighborhoodSystem α) (V₁ : NeighborhoodSystem β) :
     leftPart V₀ (sumMaster V₀ V₁) = V₀.master := by
@@ -277,8 +280,8 @@ theorem leftPart_sumMaster (V₀ : NeighborhoodSystem α) (V₁ : NeighborhoodSy
   · rintro (h | h)
     · have : (il a : Option (α ⊕ β)) ∈ sumMaster V₀ V₁ := h
       rcases Set.mem_insert_iff.mp this with h' | h'
-      · exact absurd h' (by simp [il])
-      · simp_all
+      · exact absurd h' (by simp only [il, reduceCtorEq, not_false_eq_true])
+      · simp_all only [Set.mem_union, il_mem_inj₀, il_mem_inj₁, or_false]
     · exact h
   · intro ha; exact Or.inr ha
 
@@ -298,8 +301,8 @@ theorem rightPart_sumMaster (V₀ : NeighborhoodSystem α) (V₁ : NeighborhoodS
   · rintro (h | h)
     · have : (ir b : Option (α ⊕ β)) ∈ sumMaster V₀ V₁ := h
       rcases Set.mem_insert_iff.mp this with h' | h'
-      · exact absurd h' (by simp [ir])
-      · simp_all
+      · exact absurd h' (by simp only [ir, reduceCtorEq, not_false_eq_true])
+      · simp_all only [Set.mem_union, ir_mem_inj₀, ir_mem_inj₁, false_or]
     · exact h
   · intro hb; exact Or.inr hb
 

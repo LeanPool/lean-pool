@@ -8,7 +8,6 @@ module
 public import LeanPool.DomainTheory.Neighborhood.Approximable
 public import LeanPool.DomainTheory.Neighborhood.ExampleB
 public import Mathlib.Tactic.Attr.Core
-import Mathlib.Order.BooleanAlgebra.Set
 import Mathlib.Tactic.Widget.Calc
 
 /-!
@@ -68,9 +67,9 @@ def hOut : Str → Str
 /-- `hOut` grows under extension: `hOut σ <+: hOut (σ ++ t)`. -/
 theorem hOut_append (σ t : Str) : hOut σ <+: hOut (σ ++ t) := by
   induction σ with
-  | nil => simp
+  | nil => simp only [hOut_nil, List.nil_append, List.nil_prefix]
   | cons b s ih =>
-    simp_all
+    simp_all only [hOut_cons, List.cons_append, List.cons_prefix_cons, and_self]
 
 /-- **Prefix-monotonicity of `hOut`.** `σ <+: σ' → hOut σ <+: hOut σ'`. -/
 theorem hOut_mono {σ σ' : Str} (h : σ <+: σ') : hOut σ <+: hOut σ' := by
@@ -100,10 +99,10 @@ theorem kOut_hOut (σ : Str) : kOut (hOut σ) = σ := by
 /-- `kOut` grows under extension: `kOut σ <+: kOut (σ ++ t)`. -/
 theorem kOut_append (σ t : Str) : kOut σ <+: kOut (σ ++ t) := by
   induction σ using kOut.induct with
-  | case1 => simp
-  | case2 _ => simp
+  | case1 => simp only [kOut_nil, List.nil_append, List.nil_prefix]
+  | case2 _ => simp only [kOut_single, List.cons_append, List.nil_append, List.nil_prefix]
   | case3 b c t' ih =>
-    simp_all
+    simp_all only [kOut_cons, List.cons_append, List.cons_prefix_cons, and_self]
 
 /-- **Prefix-monotonicity of `kOut`.** `σ <+: σ' → kOut σ <+: kOut σ'`. -/
 theorem kOut_mono {σ σ' : Str} (h : σ <+: σ') : kOut σ <+: kOut σ' := by
@@ -172,7 +171,7 @@ theorem toElementMap_hMap_cone (σ : Str) :
   constructor
   · rintro ⟨ρ, hcone, hYmem, hsub⟩
     have : σ = ρ := cone_injective hcone
-    simp_all
+    simp_all only [B_mem, and_self]
   · rintro ⟨hYmem, hsub⟩
     exact ⟨σ, rfl, hYmem, hsub⟩
 
@@ -186,7 +185,7 @@ theorem toElementMap_kMap_cone (σ : Str) :
   constructor
   · rintro ⟨ρ, hcone, hYmem, hsub⟩
     have : σ = ρ := cone_injective hcone
-    simp_all
+    simp_all only [B_mem, and_self]
   · rintro ⟨hYmem, hsub⟩
     exact ⟨σ, rfl, hYmem, hsub⟩
 
@@ -224,7 +223,7 @@ theorem kMap_not_injective : ¬ Function.Injective kMap.toElementMap := by
     rw [toElementMap_kMap_cone, toElementMap_kMap_cone]; rfl
   have h2 := hinj h1
   have hcone := cone_injective (B.principal_injective (memB_cone _) (memB_cone _) h2)
-  simp at hcone
+  simp only [List.cons.injEq, Bool.false_eq_true, and_true] at hcone
 
 /-- **Exercise 2.18 — `h` is not an isomorphism.** It is not surjective: `↑(01Σ*)`
 is not in the
@@ -238,6 +237,7 @@ theorem hMap_not_surjective : ¬ Function.Surjective hMap.toElementMap := by
   rw [hx, toElementMap_kMap_cone] at hkhx
   rw [← hkhx, toElementMap_hMap_cone] at hx
   have hcone := cone_injective (B.principal_injective (memB_cone _) (memB_cone _) hx)
-  simp at hcone
+  simp only [kOut_cons, kOut_nil, hOut_cons, hOut_nil, List.cons.injEq, Bool.false_eq_true,
+    and_true, and_false] at hcone
 
 end Domain.Neighborhood.Exercise218

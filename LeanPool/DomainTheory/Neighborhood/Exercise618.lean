@@ -8,13 +8,6 @@ module
 public import LeanPool.DomainTheory.Neighborhood.Exercise316
 public import LeanPool.DomainTheory.Neighborhood.Exercise319
 public import LeanPool.DomainTheory.Neighborhood.Exercise617
-import LeanPool.DomainTheory.Neighborhood.Theorem69
-import Mathlib.Data.Finset.Attr
-import Mathlib.Data.Rat.Cast.Order
-import Mathlib.Tactic.NormNum.Abs
-import Mathlib.Tactic.NormNum.DivMod
-import Mathlib.Tactic.NormNum.OfScientific
-import Mathlib.Tactic.NormNum.Pow
 
 /-!
 # Exercise 6.18 (Scott 1981, PRG-19, §6) — `𝒟^∞` as an initial algebra
@@ -127,7 +120,7 @@ theorem iterProdIso_symm_pair (a : V.Element) (b : (iterSys V).Element) :
     (iterProdIso V).symm (pair a b) = ofSeq (consSeq a b) := by
   have hkey : iterProdIso V (ofSeq (consSeq a b)) = pair a b := by
     rw [iterProdIso_apply]
-    simp_all
+    simp_all only [component_ofSeq, consSeq_zero, consSeq_succ, ofSeq_component]
   rw [← hkey, OrderIso.symm_apply_apply]
 
 /-! ## Bottom-element computations -/
@@ -156,7 +149,8 @@ theorem iterBot_eq : (iterSys V).bot = ofSeq (fun _ : ℕ => V.bot) := by
 theorem pair_bot {α β : Type*} {V₀ : NeighborhoodSystem α} {V₁ : NeighborhoodSystem β} :
     pair V₀.bot V₁.bot = (prod V₀ V₁).bot := by
   apply Element.ext
-  simp_all
+  simp_all only [mem_pair, mem_bot, exists_and_left, ↓existsAndEq, true_and, exists_eq_left,
+    prod_master, implies_true]
 
 /-! ## The structure isomorphism `i, j` as approximable maps -/
 
@@ -356,7 +350,7 @@ theorem descMap_strict (k : ApproximableMap (prod V E) E) (hk : IsStrict k) :
   · rintro ⟨n, hn⟩
     have hs := descSeq_strict k hk n
     rw [isStrict_iff_apply_bot] at hs
-    simp_all
+    simp_all only [mem_bot]
   · rintro rfl
     have hs := descSeq_strict k hk 0
     rw [isStrict_iff_apply_bot] at hs
@@ -403,9 +397,9 @@ theorem rho_apply (n : ℕ) (z : (iterSys V).Element) :
     funext j
     cases j with
     | zero =>
-      simp_all
+      simp only [component_ofSeq, consSeq_zero, Nat.zero_lt_succ, ↓reduceIte]
     | succ k =>
-      simp_all
+      simp only [component_ofSeq, consSeq_succ, Nat.add_lt_add_iff_right]
 
 /-- **`⋃ₙ ρₙ = I`.** Every `z` is the directed union of its truncations: the
 cofinite-`Δ` structure

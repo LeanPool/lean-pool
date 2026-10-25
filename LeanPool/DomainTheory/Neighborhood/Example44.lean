@@ -7,12 +7,6 @@ module
 
 public import LeanPool.DomainTheory.Neighborhood.Theorem41
 public import LeanPool.DomainTheory.Neighborhood.ExampleB
-import Mathlib.Data.Finset.Attr
-import Mathlib.Data.Rat.Cast.Order
-import Mathlib.Tactic.NormNum.Abs
-import Mathlib.Tactic.NormNum.DivMod
-import Mathlib.Tactic.NormNum.OfScientific
-import Mathlib.Tactic.NormNum.Pow
 
 /-!
 # Example 4.4 (Scott 1981, PRG-19, §4) — the domain `C` of binary sequences
@@ -70,7 +64,7 @@ open Domain.Neighborhood NeighborhoodSystem ApproximableMap ExampleB
 concatenation. -/
 theorem prepend_singleton (σ τ : Str) : prepend σ {τ} = {σ ++ τ} := by
   ext w
-  simp_all
+  simp_all only [mem_prepend, Set.mem_singleton_iff, exists_eq_left]
 
 /-- Prepending is monotone in its set argument. -/
 theorem prepend_mono (σ : Str) {X X' : Set Str} (h : X' ⊆ X) : prepend σ X' ⊆ prepend σ X := by
@@ -95,7 +89,8 @@ theorem singleton_cone_nd (σ τ : Str) :
     ({τ} : Set Str) ⊆ cone σ ∨ cone σ ⊆ {τ} ∨ ({τ} : Set Str) ∩ cone σ = ∅ := by
   by_cases h : σ <+: τ
   · exact Or.inl (singleton_subset_cone.mpr h)
-  · simp_all
+  · simp_all only [Set.singleton_subset_iff, mem_cone, Set.subset_singleton_iff,
+    not_false_eq_true, Set.singleton_inter_of_notMem, or_true]
 
 /-- Any two neighbourhoods of `C` are nested or disjoint. -/
 theorem nestedOrDisjoint : NestedOrDisjoint memC := by
@@ -111,7 +106,8 @@ theorem nestedOrDisjoint : NestedOrDisjoint memC := by
     · exact Or.inr (Or.inr h)
   · by_cases h : σ = τ
     · subst h; exact Or.inl (Set.Subset.refl _)
-    · simp_all
+    · simp_all only [Set.subset_singleton_iff, Set.mem_singleton_iff, imp_false, forall_eq,
+      not_false_eq_true, Set.singleton_inter_of_notMem, or_true]
 
 /-- **Example 4.4 (Scott 1981, PRG-19).** The neighbourhood system `C` of finite
 or infinite binary

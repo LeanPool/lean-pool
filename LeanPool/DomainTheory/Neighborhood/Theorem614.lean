@@ -286,7 +286,8 @@ theorem Tcolim_sub_colim (s : Setup.{w}) {X : Set s.Tok} (hX : (Tcolim s).mem X)
     exact ⟨Dsys s (max n m), ⟨max n m, rfl⟩,
       chain_le s (le_max_left n m), chain_le s (le_max_right n m)⟩
   have hU : ∀ Y, (colim s).mem Y ↔ ∃ D ∈ ℱ, D.mem Y := by
-    simp_all
+    simp_all only [Set.mem_range, forall_exists_index, forall_apply_eq_imp_iff, mem_colim,
+      exists_exists_eq_and, implies_true]
   have heq := hC ℱ hℱ hne hdir (Subsystem.refl (colim s)) hU
   set Y₀ : Set (s.T.obj ⟨s.Tok, colim s⟩).carrier := (colimCeq s).symm ▸ X with hY₀
   -- `X ∈ T(𝒟)` says `Y₀ ∈ targetFam (refl 𝒟)` = the neighbourhood family of
@@ -305,7 +306,8 @@ theorem Tcolim_sub_colim (s : Setup.{w}) {X : Set s.Tok} (hX : (Tcolim s).mem X)
   have key : ((Dceq s n).symm ▸ X : Set (s.T.obj ⟨s.Tok, Dsys s n⟩).carrier)
       = (s.hmono (hℱ ⟨n, rfl⟩)).carrier_eq ▸ Y₀ := by
     rw [hY₀, set_rec_trans]
-  simp_all
+  simp_all only [mem_colim, Set.mem_range, exists_exists_eq_and, implies_true,
+    Set.iUnion_exists]
 
 /-- **`T(𝒟) = 𝒟`** (Scott's `𝒟 = T(𝒟)`): the two systems have the same
 neighbourhoods (mutual
@@ -502,7 +504,7 @@ theorem map_comp_proj_heq {Tok : Type w} {Pc Qc : Type w} (cn : Pc = Tok) (cc : 
   subst cc
   obtain rfl := hDn1
   obtain rfl := hCol
-  simp_all
+  simp_all only [heq_eq_eq]
 
 /-- **`T(ρₙ) = ρₙ₊₁`, heterogeneously.** The image `T(ρₙ)` of the `n`-th
 projection, living over

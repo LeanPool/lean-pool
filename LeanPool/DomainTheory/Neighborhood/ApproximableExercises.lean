@@ -6,7 +6,6 @@ Authors: Catskills Research Company
 module
 
 public import LeanPool.DomainTheory.Neighborhood.Approximable
-import Mathlib.Data.Set.Image
 
 /-!
 # Lecture II (§2) — Exercises 2.8–2.12 and 2.19 (the algebra of approximable

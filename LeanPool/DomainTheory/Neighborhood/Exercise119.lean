@@ -6,7 +6,6 @@ Authors: Catskills Research Company
 module
 
 public import LeanPool.DomainTheory.Neighborhood.Basic
-public import Mathlib.Data.Set.Basic
 import Mathlib.Data.Fintype.Basic
 import Mathlib.Tactic.FinCases
 
@@ -93,21 +92,32 @@ theorem a_inter_b : a ∩ b = ({1} : Set Tok) := by ext x; fin_cases x <;> simp 
 theorem one_not_mem : ¬ mem ({1} : Set Tok) := by
   intro h
   rcases (mem_iff _).mp h with h | h | h
-  · have h0 : (0 : Tok) ∈ master := by simp [master]
-    rw [← h] at h0; simp at h0
-  · have h0 : (0 : Tok) ∈ a := by simp [a]
-    rw [← h] at h0; simp at h0
-  · have h2 : (2 : Tok) ∈ b := by simp [b]
-    rw [← h] at h2; simp at h2
+  · have h0 : (0 : Tok) ∈ master := by simp only [master, Fin.isValue, Set.mem_univ]
+    rw [← h] at h0; simp only [Fin.isValue, Set.mem_singleton_iff, Fin.zero_eq_one_iff,
+      Nat.reduceEqDiff] at h0
+  · have h0 : (0 : Tok) ∈ a := by simp only [a, Fin.isValue, Set.mem_insert_iff,
+    Set.mem_singleton_iff, Fin.zero_eq_one_iff, Nat.reduceEqDiff, or_false]
+    rw [← h] at h0; simp only [Fin.isValue, Set.mem_singleton_iff, Fin.zero_eq_one_iff,
+      Nat.reduceEqDiff] at h0
+  · have h2 : (2 : Tok) ∈ b := by simp only [b, Fin.isValue, Set.mem_insert_iff, Fin.reduceEq,
+    Set.mem_singleton_iff, or_true]
+    rw [← h] at h2; simp only [Fin.isValue, Set.mem_singleton_iff, Fin.reduceEq] at h2
 
 /-- No neighbourhood is contained in `{1}` (each contains a token other than `1`).
 This is why
 the overlapping pair `{0,1}`, `{1,2}` never triggers condition (ii). -/
 theorem not_mem_sub_one {Z : Set Tok} (hZ : mem Z) (hsub : Z ⊆ ({1} : Set Tok)) : False := by
   rcases (mem_iff Z).mp hZ with rfl | rfl | rfl
-  · exact absurd (hsub (show (0 : Tok) ∈ master by simp [master])) (by simp)
-  · exact absurd (hsub (show (0 : Tok) ∈ a by simp [a])) (by simp)
-  · exact absurd (hsub (show (2 : Tok) ∈ b by simp [b])) (by simp)
+  · exact absurd (hsub (show (0 : Tok) ∈ master by simp only [master, Fin.isValue,
+    Set.mem_univ])) (by simp only [Fin.isValue, Set.mem_singleton_iff, Fin.zero_eq_one_iff,
+      Nat.reduceEqDiff, not_false_eq_true])
+  · exact absurd (hsub (show (0 : Tok) ∈ a by simp only [a, Fin.isValue, Set.mem_insert_iff,
+    Set.mem_singleton_iff, Fin.zero_eq_one_iff, Nat.reduceEqDiff,
+    or_false])) (by simp only [Fin.isValue, Set.mem_singleton_iff, Fin.zero_eq_one_iff,
+      Nat.reduceEqDiff, not_false_eq_true])
+  · exact absurd (hsub (show (2 : Tok) ∈ b by simp only [b, Fin.isValue, Set.mem_insert_iff,
+    Fin.reduceEq, Set.mem_singleton_iff, or_true])) (by simp only [Fin.isValue,
+      Set.mem_singleton_iff, Fin.reduceEq, not_false_eq_true])
 
 /-- Classification of binary intersections in `𝒟`. -/
 theorem inter_eq (X Y : Set Tok) (hX : mem X) (hY : mem Y) :
