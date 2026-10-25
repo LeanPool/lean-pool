@@ -420,13 +420,6 @@ def _declarations_in(
         rf"^\s*{DECLARATION_PREFIX}({keyword_pattern})\s+"
         rf"({LEAN_IDENT})(?![\w'.])"
     )
-    # Match Lean's sectionHeader modifiers without interpreting their visibility.
-    # Missing an opening section makes its closing `end` pop a namespace instead.
-    section_pattern = re.compile(
-        rf"^\s*(?:@\[\s*expose\s*\]\s*)?"
-        rf"(?:public\s+)?(?:noncomputable\s+)?(?:meta\s+)?"
-        rf"section(?:\s+({LEAN_IDENT}))?\s*$"
-    )
     for path in paths:
         # Track `namespace` and `section` opens together so that an
         # `end <section>` pops the section rather than the enclosing namespace.
@@ -440,24 +433,15 @@ def _declarations_in(
         for line_number, line in enumerate(stripped.splitlines(), start=1):
             namespace_match = re.match(rf"^\s*namespace\s+({LEAN_IDENT})\s*$", line)
             if namespace_match:
-                # Lean opens one scope per name component, allowing both
-                # `end A.B` and `end B; end A` after `namespace A.B`.
-                scope_stack.extend(
-                    (True, name) for name in namespace_match.group(1).split(".")
-                )
+                scope_stack.append((True, namespace_match.group(1)))
                 continue
-            section_match = section_pattern.match(line)
+            section_match = re.match(rf"^\s*section(?:\s+({LEAN_IDENT}))?\s*$", line)
             if section_match:
-                label = section_match.group(1)
-                scope_stack.extend(
-                    (False, name) for name in (label.split(".") if label else [None])
-                )
+                scope_stack.append((False, section_match.group(1)))
                 continue
-            end_match = re.match(rf"^\s*end(?:\s+({LEAN_IDENT}))?\s*$", line)
-            if end_match:
-                label = end_match.group(1)
-                count = len(label.split(".")) if label else 1
-                del scope_stack[-count:]
+            if re.match(rf"^\s*end(?:\s+{LEAN_IDENT})?\s*$", line):
+                if scope_stack:
+                    scope_stack.pop()
                 continue
             match = decl_pattern.match(line)
             if match and not include_private and _is_private_declaration_line(line):
