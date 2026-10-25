@@ -105,33 +105,6 @@ LeanPool/FLTEichlerShimura/Theorems/Thm_*.lean with the same suffix.
   Material identified by upstream: the same proof of
   `EisensteinSeries.isBoundedAtImInfty_eisensteinSeriesSIF`, adapted (≈15 lines)
 
-### Mathlib compatibility copies
-
-Definitions/Def_Compat_Mathlib430.lean also carries the Mathlib compatibility material listed in
-the first table of upstream ATTRIBUTION.md §4. Its source comments identify the copied or adapted
-blocks and Mathlib v4.30.0 commit c5ea00351c28e24afc9f0f84379aa41082b1188f. The notices for those
-eight source files are:
-
-- `Mathlib/RepresentationTheory/Basic.lean`
-  Copyright (c) 2022 Antoine Labelle; Authors: Antoine Labelle
-- `Mathlib/RepresentationTheory/Rep/Basic.lean`
-  Copyright (c) 2026 Yunzhou Xie; Authors: Edison Xie, Kim Morrison
-- `Mathlib/Algebra/Group/End.lean`
-  Copyright (c) 2018 Johannes Hölzl; Authors: Johannes Hölzl, Callum Sutton, Yury Kudryashov
-- `Mathlib/Algebra/GroupWithZero/Action/Basic.lean`
-  Copyright (c) 2018 Chris Hughes; Authors: Chris Hughes, Yury Kudryashov
-- `Mathlib/Algebra/Ring/AddAut.lean`
-  Copyright (c) 2022 Yury Kudryashov; Authors: Yury Kudryashov
-- `Mathlib/Algebra/Ring/Action/Submonoid.lean`
-  Copyright (c) 2024 David Ang; Authors: David Ang
-- `Mathlib/NumberTheory/EllipticDivisibilitySequence.lean`
-  Copyright (c) 2024 David Kurniadi Angdinata; Authors: David Kurniadi Angdinata
-- `Mathlib/NumberTheory/RamificationInertia/Galois.lean`
-  Copyright (c) 2024 Yongle Hu; Authors: Yongle Hu, Jiedong Jiang
-
-These Mathlib file notices continue: All rights reserved. Released under Apache 2.0 license as
-described in the file LICENSE.
-
 The frozen upstream table records approximate extents and acknowledges incomplete detection of
 small passages. Its §2 paths and author lists are recorded intermediate-port notes, except that
 the FLT/EllipticCurve/Torsion.lean notice was checked at commit
